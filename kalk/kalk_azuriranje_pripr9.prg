@@ -33,11 +33,11 @@ FUNCTION kalk_azuriranje_tabele_pripr9()
    GO TOP
 
    IF kalk_pripr->( RecCount() ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF Pitanje( "p1", "Želite li pripremu prebaciti u smeće (D/N) ?", "N" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    _a_pripr := kalk_dokumenti_iz_pripreme_u_matricu()
@@ -84,7 +84,7 @@ FUNCTION kalk_azuriranje_tabele_pripr9()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

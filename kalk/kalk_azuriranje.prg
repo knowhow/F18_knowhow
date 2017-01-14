@@ -254,7 +254,7 @@ STATIC FUNCTION kalk_generisi_fakt_dokument()
       ENDIF
 
       IF Pitanje(, "Formirati dokument u FAKT ?", cOdg ) == "D"
-         P_Fakt()
+         kalk_prenos_fakt()
          o_kalk_za_azuriranje()
       ENDIF
 

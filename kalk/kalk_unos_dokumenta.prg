@@ -634,7 +634,7 @@ FUNCTION kalk_unos_nova_stavka()
          Box( "", BOX_HEIGHT, BOX_WIDTH, .F., "Protustavka" )
 
          IF _idvd == "16"
-            Get1_16bPDV()
+            kalk_get_16_1()
 
          ELSE
             kalk_get_1_80_protustavka()

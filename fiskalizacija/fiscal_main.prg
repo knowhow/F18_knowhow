@@ -240,4 +240,4 @@ FUNCTION fisc_init( cFPath, aPor, aRoba, aRobGr, aPartn, aObj, aOper )
    // upisi operatere
    fiscal_array_to_file( cFPath, _F_FOPER, aS_oper, aOper )
 
-   RETURN
+   RETURN .T.

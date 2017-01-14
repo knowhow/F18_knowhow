@@ -126,7 +126,7 @@ FUNCTION kalk_get_1_16()
 
 // _odlval nalazi se u knjiz, filuje staru vrijednost
 // _odlvalb nalazi se u knjiz, filuje staru vrijednost nabavke
-FUNCTION Get1_16bPDV()
+FUNCTION kalk_get_16_1()
 
    LOCAL cSvedi := " "
 

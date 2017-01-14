@@ -290,7 +290,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
       closeret
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // ---------------------------------------------
 // prikazi sta nije ukljuceno u prenos

@@ -287,6 +287,8 @@ FUNCTION find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cO
 
    RETURN !Eof()
 
+
+
 FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport, cAlias, cDistinct )
 
    LOCAL hParams := hb_Hash()

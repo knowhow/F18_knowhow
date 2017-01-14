@@ -84,7 +84,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
    SET ORDER TO TAG "1"
    GO TOP
 
-   IF _lFromKumulativ == .F.
+   IF !_lFromKumulativ
       cIdFirma := field->idfirma
       cIdVd := field->idvd
       cBrDok := field->brdok
@@ -191,7 +191,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
       my_close_all_dbf()
 
 
-
    ENDIF
 
    my_close_all_dbf()
@@ -258,7 +257,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
    LOCAL _table_name := "katops.dbf"
    LOCAL _table_path := my_home()
    LOCAL cExportHomeDir, cExporPosDir
-   LOCAL _ret := ""
+   LOCAL cRet := ""
    LOCAL cTopsDest
 
 
@@ -279,7 +278,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
       _dest_patt := get_tops_kalk_export_file( "2", cExporPosDir, datum ) // pronadji naziv fajla koji je dozvoljen
 
       _dest_file := cExporPosDir + StrTran( _table_name, "katops.", _dest_patt + "." ) // kopiraj katops.dbf na destinaciju
-      _ret := _dest_file
+      cRet := _dest_file
 
       IF FileCopy( _table_path + _table_name, _dest_file ) > 0
          _dest_file := StrTran( _dest_file, ".dbf", ".txt" ) // kopiraj txt fajl
@@ -291,7 +290,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
 
    NEXT
 
-   RETURN _ret
+   RETURN cRet
 
 
 // ---------------------------------------------------------------
@@ -389,7 +388,7 @@ STATIC FUNCTION _cre_katops_dbf( dbf_table, lFromKumulativ )
 
 STATIC FUNCTION kalk_tops_prenos_prerequisites()
 
-   LOCAL _ret := .F.
+   LOCAL _ret := .F., cTopsDest
 
    cTopsDest := kalk_destinacija_topska()
 

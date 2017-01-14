@@ -25,14 +25,15 @@ FUNCTION fakt_mnu_generacija_dokumenta()
 
    AAdd( _opc, "1. početno stanje                    " )
    AAdd( _opcexe, {|| fakt_pocetno_stanje() } )
-   AAdd( _opc, "2. dokument inventure     " )
-   AAdd( _opcexe, {|| fakt_unos_inventure() } )
+   //AAdd( _opc, "2. dokument inventure     " )
+   //AAdd( _opcexe, {|| fakt_unos_inventure() } )
 
    f18_menu( "mgdok", .F., _izbor, _opc, _opcexe )
 
    my_close_all_dbf()
 
    RETURN .T.
+
 
 
 FUNCTION fakt_generisi_inventuru( cIdRj )

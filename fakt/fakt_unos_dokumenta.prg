@@ -37,11 +37,11 @@ FUNCTION fakt_unos_dokumenta()
    close_open_fakt_tabele()
    select_fakt_pripr()
 
-   IF field->idtipdok == "IM"
-      my_close_all_dbf()
-      fakt_unos_inventure()
-      RETURN .T.
-   ENDIF
+  // IF field->idtipdok == "IM"
+  //    my_close_all_dbf()
+  //    fakt_unos_inventure()
+  //    RETURN .T.
+  // ENDIF
 
    PRIVATE ImeKol := { ;
       { "Red.br",  {|| dbSelectArea( F_FAKT_PRIPR ), Rbr()                   } }, ;

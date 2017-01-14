@@ -127,4 +127,4 @@ FUNCTION sif_uv_naziv( cId )
    ENDIF
    cId := PadR( AllTrim( cId ) + ".", 10 )
 
-   RETURN
+   RETURN .T.

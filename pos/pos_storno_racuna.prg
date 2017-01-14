@@ -13,7 +13,6 @@
 
 
 
-
 FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( fisc_rn, broj_racuna, datum_racuna )
 
    LOCAL _qry, _qry_ret, _table

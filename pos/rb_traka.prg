@@ -186,20 +186,18 @@ FUNCTION get_rb_ukupno()
 
 FUNCTION get_rn_mjesto()
 
-   // {
    LOCAL cMjesto := get_dtxt_opis( "R01" )
 
    RETURN cMjesto
-// }
+
 
 
 FUNCTION rb_traka_line( cLine )
 
-   // {
    cLine := Replicate( "-", LEN_RBR ) + " " + Replicate( "-", LEN_NAZIV ) + " " + Replicate( "-", LEN_UKUPNO )
 
    RETURN
-// }
+
 
 
 // st_rb_traka() - funkcija za stampu stavki trake

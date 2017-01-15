@@ -166,7 +166,7 @@ STATIC FUNCTION lista_racuna_key_handler()
    LOCAL ii
    LOCAL nTrec
    LOCAL nTrec2
-   LOCAL _rec
+   LOCAL hRec
 
    IF M->Ch == 0
       RETURN ( DE_CONT )
@@ -228,10 +228,10 @@ STATIC FUNCTION lista_racuna_key_handler()
 
       IF LastKey() <> K_ESC
 
-         _rec := dbf_get_rec()
-         _rec[ "fisc_rn" ] := nFisc_no
+         hRec := dbf_get_rec()
+         hRec[ "fisc_rn" ] := nFisc_no
 
-         update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
+         update_rec_server_and_dbf( "pos_doks", hRec, 1, "FULL" )
 
          RETURN DE_REFRESH
 

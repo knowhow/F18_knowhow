@@ -17,7 +17,7 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
 
    LOCAL lOk := .T.
    LOCAL lRet := .F.
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nCount := 0
    LOCAL cDokument := ""
    LOCAL hParams
@@ -47,9 +47,9 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
       ENDIF
    ENDIF
 
-   _rec := get_hash_record_from_global_vars()
+   hRec := get_hash_record_from_global_vars()
 
-   lOk := update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( "pos_doks", hRec, 1, "CONT" )
 
    IF lOk
 
@@ -76,9 +76,9 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
          _idvd := cIdVd
          _rbr := PadL( AllTrim( Str( ++nCount ) ), 5 )
 
-         _rec := get_hash_record_from_global_vars()
+         hRec := get_hash_record_from_global_vars()
 
-         lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "pos_pos", hRec, 1, "CONT" )
 
          IF !lOk
             EXIT
@@ -155,7 +155,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    LOCAL lRet := .F.
    LOCAL nTotalCount
    LOCAL nCount := 0
-   LOCAL _rec, _t_rec
+   LOCAL hRec, _t_rec
    LOCAL cTipDok, cDokument
    LOCAL hParams
 
@@ -179,26 +179,26 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    SELECT pos_doks
    APPEND BLANK
 
-   _rec := dbf_get_rec()
-   _rec[ "idpos" ] := priprz->idpos
-   _rec[ "idvd" ] := priprz->idvd
-   _rec[ "datum" ] := priprz->datum
-   _rec[ "brdok" ] := priprz->brdok
-   _rec[ "vrijeme" ] := priprz->vrijeme
-   _rec[ "idvrstep" ] := priprz->idvrstep
-   _rec[ "idgost" ] := priprz->idgost
-   _rec[ "idradnik" ] := priprz->idradnik
-   _rec[ "m1" ] := priprz->m1
-   _rec[ "prebacen" ] := priprz->prebacen
-   _rec[ "smjena" ] := priprz->smjena
+   hRec := dbf_get_rec()
+   hRec[ "idpos" ] := priprz->idpos
+   hRec[ "idvd" ] := priprz->idvd
+   hRec[ "datum" ] := priprz->datum
+   hRec[ "brdok" ] := priprz->brdok
+   hRec[ "vrijeme" ] := priprz->vrijeme
+   hRec[ "idvrstep" ] := priprz->idvrstep
+   hRec[ "idgost" ] := priprz->idgost
+   hRec[ "idradnik" ] := priprz->idradnik
+   hRec[ "m1" ] := priprz->m1
+   hRec[ "prebacen" ] := priprz->prebacen
+   hRec[ "smjena" ] := priprz->smjena
 
-   cTipDok := _rec[ "idvd" ]
-   cDokument := AllTrim( _rec[ "idpos" ] ) + "-" + _rec[ "idvd" ] + "-" + AllTrim( _rec[ "brdok" ] ) + " " + DToC( _rec[ "datum" ] )
+   cTipDok := hRec[ "idvd" ]
+   cDokument := AllTrim( hRec[ "idpos" ] ) + "-" + hRec[ "idvd" ] + "-" + AllTrim( hRec[ "brdok" ] ) + " " + DToC( hRec[ "datum" ] )
 
    @ m_x + 1, m_y + 2 SAY8 "    AŽURIRANJE DOKUMENTA U TOKU ..."
    @ m_x + 2, m_y + 2 SAY "Formiran dokument: " + cDokument +  " / zap: " + AllTrim( Str( nTotalCount ) )
 
-   lOk := update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( "pos_doks", hRec, 1, "CONT" )
 
    IF lOk
 
@@ -211,33 +211,33 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
          SELECT POS
          APPEND BLANK
 
-         _rec := dbf_get_rec()
-         _rec[ "idpos" ] := priprz->idpos
-         _rec[ "idvd" ] := priprz->idvd
-         _rec[ "datum" ] := priprz->datum
-         _rec[ "brdok" ] := priprz->brdok
-         _rec[ "m1" ] := priprz->m1
-         _rec[ "prebacen" ] := priprz->prebacen
-         _rec[ "iddio" ] := priprz->iddio
-         _rec[ "idodj" ] := priprz->idodj
-         _rec[ "idcijena" ] := priprz->idcijena
-         _rec[ "idradnik" ] := priprz->idradnik
-         _rec[ "idroba" ] := priprz->idroba
-         _rec[ "idtarifa" ] := priprz->idtarifa
-         _rec[ "kolicina" ] := priprz->kolicina
-         _rec[ "kol2" ] := priprz->kol2
-         _rec[ "mu_i" ] := priprz->mu_i
-         _rec[ "ncijena" ] := priprz->ncijena
-         _rec[ "cijena" ] := priprz->cijena
-         _rec[ "smjena" ] := priprz->smjena
-         _rec[ "c_1" ] := priprz->c_1
-         _rec[ "c_2" ] := priprz->c_2
-         _rec[ "c_3" ] := priprz->c_3
-         _rec[ "rbr" ] := PadL( AllTrim( Str( ++nCount ) ), 5 )
+         hRec := dbf_get_rec()
+         hRec[ "idpos" ] := priprz->idpos
+         hRec[ "idvd" ] := priprz->idvd
+         hRec[ "datum" ] := priprz->datum
+         hRec[ "brdok" ] := priprz->brdok
+         hRec[ "m1" ] := priprz->m1
+         hRec[ "prebacen" ] := priprz->prebacen
+         hRec[ "iddio" ] := priprz->iddio
+         hRec[ "idodj" ] := priprz->idodj
+         hRec[ "idcijena" ] := priprz->idcijena
+         hRec[ "idradnik" ] := priprz->idradnik
+         hRec[ "idroba" ] := priprz->idroba
+         hRec[ "idtarifa" ] := priprz->idtarifa
+         hRec[ "kolicina" ] := priprz->kolicina
+         hRec[ "kol2" ] := priprz->kol2
+         hRec[ "mu_i" ] := priprz->mu_i
+         hRec[ "ncijena" ] := priprz->ncijena
+         hRec[ "cijena" ] := priprz->cijena
+         hRec[ "smjena" ] := priprz->smjena
+         hRec[ "c_1" ] := priprz->c_1
+         hRec[ "c_2" ] := priprz->c_2
+         hRec[ "c_3" ] := priprz->c_3
+         hRec[ "rbr" ] := PadL( AllTrim( Str( ++nCount ) ), 5 )
 
-         @ m_x + 3, m_y + 2 SAY "Stavka " + AllTrim( Str( nCount ) ) + " roba: " + _rec[ "idroba" ]
+         @ m_x + 3, m_y + 2 SAY "Stavka " + AllTrim( Str( nCount ) ) + " roba: " + hRec[ "idroba" ]
 
-         lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "pos_pos", hRec, 1, "CONT" )
 
          IF !lOk
             EXIT
@@ -283,7 +283,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
 STATIC FUNCTION azuriraj_artikal_u_sifrarniku()
 
    LOCAL lOk := .T.
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _field_mpc
    LOCAL _update := .F.
 
@@ -303,36 +303,36 @@ STATIC FUNCTION azuriraj_artikal_u_sifrarniku()
 
    IF !Found()
       APPEND BLANK
-      _rec := dbf_get_rec()
-      _rec[ "id" ] := priprz->idroba
+      hRec := dbf_get_rec()
+      hRec[ "id" ] := priprz->idroba
       _update := .T.
    ELSE
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
    ENDIF
 
-   _rec[ "naz" ] := priprz->robanaz
-   _rec[ "jmj" ] := priprz->jmj
+   hRec[ "naz" ] := priprz->robanaz
+   hRec[ "jmj" ] := priprz->jmj
 
 
 
    IF cIdVd == "NI"
-      _rec[ _field_mpc ] := Round( priprz->ncijena, 3 )
+      hRec[ _field_mpc ] := Round( priprz->ncijena, 3 )
    ELSE
-      _rec[ _field_mpc ] := Round( priprz->cijena, 3 )
+      hRec[ _field_mpc ] := Round( priprz->cijena, 3 )
    ENDIF
 
 
 
-   _rec[ "idtarifa" ] := priprz->idtarifa
-   _rec[ "k1" ] := priprz->k1
-   _rec[ "k2" ] := priprz->k2
-   _rec[ "k7" ] := priprz->k7
-   _rec[ "k8" ] := priprz->k8
-   _rec[ "k9" ] := priprz->k9
-   _rec[ "n1" ] := priprz->n1
-   _rec[ "n2" ] := priprz->n2
-   _rec[ "barkod" ] := priprz->barkod
+   hRec[ "idtarifa" ] := priprz->idtarifa
+   hRec[ "k1" ] := priprz->k1
+   hRec[ "k2" ] := priprz->k2
+   hRec[ "k7" ] := priprz->k7
+   hRec[ "k8" ] := priprz->k8
+   hRec[ "k9" ] := priprz->k9
+   hRec[ "n1" ] := priprz->n1
+   hRec[ "n2" ] := priprz->n2
+   hRec[ "barkod" ] := priprz->barkod
 
-   lOk := update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( "roba", hRec, 1, "CONT" )
 
    RETURN lOk

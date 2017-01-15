@@ -12,44 +12,41 @@
 #include "f18.ch"
 
 
-// ------------------------------------------------------------------
-// pos, uzimanje novog broja za tops dokument
-// ------------------------------------------------------------------
-FUNCTION pos_novi_broj_dokumenta( id_pos, tip_dokumenta, dat_dok )
+FUNCTION pos_novi_broj_dokumenta( cIdPos, cIdTipDokumenta, dDatDok )
 
-   LOCAL _broj := 0
+   LOCAL nBrojDokumenta := 0
    LOCAL _broj_doks := 0
-   LOCAL _param
+   LOCAL cPosBrojacParam
    LOCAL _tmp, _rest
    LOCAL _ret := ""
    LOCAL nDbfArea := Select()
 
-   IF dat_dok == NIL
-      dat_dok := gDatum
+   IF dDatDok == NIL
+      dDatDok := gDatum
    ENDIF
 
-   _param := "pos" + "/" + id_pos + "/" + tip_dokumenta
-   _broj := fetch_metric( _param, nil, _broj )
+   cPosBrojacParam := "pos" + "/" + cIdPos + "/" + cIdTipDokumenta
+   nBrojDokumenta := fetch_metric( cPosBrojacParam, nil, nBrojDokumenta )
 
    o_pos_doks()
    SET ORDER TO TAG "1"
    GO TOP
-   SEEK id_pos + tip_dokumenta + DToS( dat_dok ) + "Ž"
+   SEEK cIdPos + cIdTipDokumenta + DToS( dDatDok ) + "Ž"
    SKIP -1
 
-   IF field->idpos == id_pos .AND. field->idvd == tip_dokumenta .AND. DToS( field->datum ) == DToS( dat_dok )
+   IF field->idpos == cIdPos .AND. field->idvd == cIdTipDokumenta .AND. DToS( field->datum ) == DToS( dDatDok )
       _broj_doks := Val( field->brdok )
    ELSE
       _broj_doks := 0
    ENDIF
 
-   _broj := Max( _broj, _broj_doks )
+   nBrojDokumenta := Max( nBrojDokumenta, _broj_doks )
 
-   ++_broj
+   ++nBrojDokumenta
 
-   _ret := PadL( AllTrim( Str( _broj ) ), 6  )
+   _ret := PadL( AllTrim( Str( nBrojDokumenta ) ), 6  )
 
-   set_metric( _param, nil, _broj )
+   set_metric( cPosBrojacParam, nil, nBrojDokumenta )
 
    SELECT ( nDbfArea )
 
@@ -58,8 +55,8 @@ FUNCTION pos_novi_broj_dokumenta( id_pos, tip_dokumenta, dat_dok )
 
 FUNCTION pos_set_param_broj_dokumenta()
 
-   LOCAL _param
-   LOCAL _broj := 0
+   LOCAL cPosBrojacParam
+   LOCAL nBrojDokumenta := 0
    LOCAL _broj_old
    LOCAL _id_pos := gIdPos
    LOCAL _tip_dok := "42"
@@ -73,22 +70,22 @@ FUNCTION pos_set_param_broj_dokumenta()
 
    IF LastKey() == K_ESC
       BoxC()
-      RETURN
+      RETURN .F.
    ENDIF
 
-   _param := "pos" + "/" + _id_pos + "/" + _tip_dok
-   _broj := fetch_metric( _param, nil, _broj )
-   _broj_old := _broj
+   cPosBrojacParam := "pos" + "/" + _id_pos + "/" + _tip_dok
+   nBrojDokumenta := fetch_metric( cPosBrojacParam, nil, nBrojDokumenta )
+   _broj_old := nBrojDokumenta
 
-   @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "999999"
+   @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET nBrojDokumenta PICT "999999"
 
    READ
 
    BoxC()
 
    IF LastKey() != K_ESC
-      IF _broj <> _broj_old
-         set_metric( _param, nil, _broj )
+      IF nBrojDokumenta <> _broj_old
+         set_metric( cPosBrojacParam, nil, nBrojDokumenta )
       ENDIF
    ENDIF
 
@@ -96,17 +93,17 @@ FUNCTION pos_set_param_broj_dokumenta()
 
 
 
-FUNCTION pos_reset_broj_dokumenta( id_pos, tip_dok, broj_dok )
+FUNCTION pos_reset_broj_dokumenta( cIdPos, tip_dok, broj_dok )
 
-   LOCAL _param
-   LOCAL _broj := 0
+   LOCAL cPosBrojacParam
+   LOCAL nBrojDokumenta := 0
 
-   _param := "pos" + "/" + id_pos + "/" + tip_dok
-   _broj := fetch_metric( _param, nil, _broj )
+   cPosBrojacParam := "pos" + "/" + cIdPos + "/" + tip_dok
+   nBrojDokumenta := fetch_metric( cPosBrojacParam, nil, nBrojDokumenta )
 
-   IF Val( AllTrim( broj_dok ) ) == _broj
-      --_broj
-      set_metric( _param, nil, _broj )
+   IF Val( AllTrim( broj_dok ) ) == nBrojDokumenta
+      --nBrojDokumenta
+      set_metric( cPosBrojacParam, nil, nBrojDokumenta )
    ENDIF
 
    RETURN .T.

@@ -114,7 +114,7 @@ FUNCTION Zaduzenje
 
    IF !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    fSadAz := .F.
@@ -134,7 +134,6 @@ FUNCTION Zaduzenje
             ENDIF
 
             o_pos_tables()
-
             IF Pitanje(, "Ako je sve u redu, želite li staviti dokument na stanje (D/N) ?", " " ) == "D"
                fSadAz := .T.
             ENDIF
@@ -148,20 +147,20 @@ FUNCTION Zaduzenje
 
       my_close_all_dbf()
       pos_inventura_nivelacija( .F., .T., fSadaz, dDatRada )
-      RETURN
+      RETURN .T.
 
    ELSEIF cIdVd == "IN"
 
       my_close_all_dbf()
       pos_inventura_nivelacija( .T., .T., fSadAz, dDatRada )
-      RETURN
+      RETURN .T.
 
    ENDIF
 
    SELECT ( F_PRIPRZ )
 
    IF !Used()
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !fSadAz
@@ -228,7 +227,7 @@ FUNCTION Zaduzenje
             WHEN {|| _idroba := PadR( _idroba, Val( cDSFINI ) ), .T. } ;
             VALID Eval ( bRSblok, 2, 25 ) .AND. ( gDupliArt == "D" .OR. ZadProvDuple( _idroba ) )
          @ m_x + 4, m_y + 5 SAY8 "Količina:" GET _Kolicina PICT "999999.999" ;
-            WHEN{|| OsvPrikaz(), ShowGets(), .T. } ;
+            WHEN{|| ShowGets(), .T. } ;
             VALID ZadKolOK( _Kolicina )
 
          IF gZadCij == "D"
@@ -315,31 +314,11 @@ FUNCTION Zaduzenje
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
 
-FUNCTION OsvPrikaz()
-
-   IF gZadCij == "D"
-      nArr := Select()
-      SELECT ( F_TARIFA )
-      IF !Used()
-         O_TARIFA
-      ENDIF
-      SEEK ROBA->idtarifa
-      SELECT ( nArr )
-      @ m_x + 5,  m_y + 2 SAY "PPP (%):"
-      @ Row(), Col() + 2 SAY TARIFA->OPP PICTURE "99.99"
-      @ m_x + 5, Col() + 8 SAY "PPU (%):"
-      @ Row(), Col() + 2 SAY TARIFA->PPP PICTURE "99.99"
-      @ m_x + 5, Col() + 8 SAY "PP (%):"
-      @ Row(), Col() + 2 SAY TARIFA->ZPP PICTURE "99.99"
-      _cijena := &( "ROBA->cijena" + gIdCijena )
-   ENDIF
-
-   RETURN
 
 
 
@@ -350,7 +329,7 @@ FUNCTION OsvPrikaz()
 FUNCTION StUSif()
 
    LOCAL nDbfArea := Select()
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _tmp
 
    IF gSetMPCijena == "1"
@@ -364,17 +343,17 @@ FUNCTION StUSif()
       IF _cijena <> pos_get_mpc() .AND. Pitanje(, "Staviti u šifarnik novu cijenu? (D/N)", "D" ) == "D"
 
          SELECT ( F_ROBA )
-         _rec := dbf_get_rec()
-         _rec[ _tmp ] := _cijena
+         hRec := dbf_get_rec()
+         hRec[ _tmp ] := _cijena
 
-         update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+         update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
 
          SELECT ( nDbfArea )
       ENDIF
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -143,7 +143,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    LOCAL _id_pos := PARAM[ "id_pos" ]
    LOCAL _qry, _table, _row
    LOCAL _count := 0
-   LOCAL _rec, _id_roba, _kolicina, _vrijednost
+   LOCAL hRec, cIdRoba, _kolicina, _vrijednost
    LOCAL _n_br_dok
    LOCAL lOk := .T.
    LOCAL hParams
@@ -196,7 +196,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
 
       _row := _table:GetRow()
 
-      _id_roba := hb_UTF8ToStr( _row:FieldGet( _row:FieldPos( "idroba" ) ) )
+      cIdRoba := hb_UTF8ToStr( _row:FieldGet( _row:FieldPos( "idroba" ) ) )
 
       _kolicina := _row:FieldGet( _row:FieldPos( "kolicina" ) )
       __stanje += _kolicina
@@ -205,30 +205,30 @@ STATIC FUNCTION pocetno_stanje_sql( param )
       __vrijednost += _vrijednost
 
       SELECT roba
-      HSEEK _id_roba
+      HSEEK cIdRoba
 
       IF Round( _kolicina, 2 ) <> 0
 
          SELECT pos
          APPEND BLANK
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         _rec[ "idpos" ] := _id_pos
-         _rec[ "idvd" ] := "16"
-         _rec[ "brdok" ] := _n_br_dok
-         _rec[ "rbr" ] := PadL( AllTrim( Str( ++_count ) ), 5 )
-         _rec[ "idroba" ] := _id_roba
-         _rec[ "kolicina" ] := _kolicina
-         _rec[ "cijena" ] := pos_get_mpc()
-         _rec[ "datum" ] := _date_ps
-         _rec[ "idradnik" ] := "XXXX"
-         _rec[ "idtarifa" ] := roba->idtarifa
-         _rec[ "prebacen" ] := "1"
-         _rec[ "smjena" ] := "1"
-         _rec[ "mu_i" ] := "1"
+         hRec[ "idpos" ] := _id_pos
+         hRec[ "idvd" ] := "16"
+         hRec[ "brdok" ] := _n_br_dok
+         hRec[ "rbr" ] := PadL( AllTrim( Str( ++_count ) ), 5 )
+         hRec[ "idroba" ] := cIdRoba
+         hRec[ "kolicina" ] := _kolicina
+         hRec[ "cijena" ] := pos_get_mpc()
+         hRec[ "datum" ] := _date_ps
+         hRec[ "idradnik" ] := "XXXX"
+         hRec[ "idtarifa" ] := roba->idtarifa
+         hRec[ "prebacen" ] := "1"
+         hRec[ "smjena" ] := "1"
+         hRec[ "mu_i" ] := "1"
 
-         lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "pos_pos", hRec, 1, "CONT" )
 
       ENDIF
 
@@ -245,17 +245,17 @@ STATIC FUNCTION pocetno_stanje_sql( param )
       SELECT pos_doks
       APPEND BLANK
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "idpos" ] := _id_pos
-      _rec[ "idvd" ] := "16"
-      _rec[ "brdok" ] := _n_br_dok
-      _rec[ "datum" ] := _date_ps
-      _rec[ "idradnik" ] := "XXXX"
-      _rec[ "prebacen" ] := "1"
-      _rec[ "smjena" ] := "1"
+      hRec[ "idpos" ] := _id_pos
+      hRec[ "idvd" ] := "16"
+      hRec[ "brdok" ] := _n_br_dok
+      hRec[ "datum" ] := _date_ps
+      hRec[ "idradnik" ] := "XXXX"
+      hRec[ "prebacen" ] := "1"
+      hRec[ "smjena" ] := "1"
 
-      lOk := update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "pos_doks", hRec, 1, "CONT" )
 
    ENDIF
 

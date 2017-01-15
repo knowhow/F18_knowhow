@@ -16,7 +16,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
    LOCAL lOk := .T.
    LOCAL lRet := .F.
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nTArea := Select()
    LOCAL cDokument
    LOCAL hParams
@@ -43,8 +43,8 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
    SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
 
    IF Found()
-      _rec := dbf_get_rec()
-      lOk := delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
+      hRec := dbf_get_rec()
+      lOk := delete_rec_server_and_dbf( "pos_pos", hRec, 2, "CONT" )
    ENDIF
 
    IF lOk
@@ -54,8 +54,8 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
       SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
 
       IF Found()
-         _rec := dbf_get_rec()
-         lOk := delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+         hRec := dbf_get_rec()
+         lOk := delete_rec_server_and_dbf( "pos_doks", hRec, 1, "CONT" )
       ENDIF
    ENDIF
 
@@ -110,7 +110,7 @@ FUNCTION pos_dokument_postoji( cIdPos, cIdvd, dDatum, cBroj )
 FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
 
    LOCAL nTArea := Select()
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nCount := 0
    PRIVATE GetList := {}
 
@@ -136,15 +136,15 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
 
       SELECT pos
 
-      _rec := dbf_get_rec()
-      hb_HDel( _rec, "rbr" )
+      hRec := dbf_get_rec()
+      hb_HDel( hRec, "rbr" )
 
       SELECT _pos_pripr
       APPEND BLANK
 
-      _rec[ "robanaz" ] := roba->naz
+      hRec[ "robanaz" ] := roba->naz
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       ++ nCount
 
@@ -195,7 +195,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
 
    LOCAL cDokument
    LOCAL nCount := 0
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nDbfArea := Select()
    LOCAL _oper := "1"
    LOCAL _exist, _rec2
@@ -225,21 +225,21 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
    DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ;
          pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      hb_HDel( _rec, "rbr" )
+      hb_HDel( hRec, "rbr" )
 
       SELECT roba
-      HSEEK _rec[ "idroba" ]
+      HSEEK hRec[ "idroba" ]
 
-      _rec[ "robanaz" ] := roba->naz
-      _rec[ "jmj" ] := roba->jmj
-      _rec[ "barkod" ] := roba->barkod
+      hRec[ "robanaz" ] := roba->naz
+      hRec[ "jmj" ] := roba->jmj
+      hRec[ "barkod" ] := roba->barkod
 
       IF _oper == "2"
-         _rec[ "idpos" ] := _rec2[ "idpos" ]
-         _rec[ "idvd" ] := _rec2[ "idvd" ]
-         _rec[ "brdok" ] := _rec2[ "brdok" ]
+         hRec[ "idpos" ] := _rec2[ "idpos" ]
+         hRec[ "idvd" ] := _rec2[ "idvd" ]
+         hRec[ "brdok" ] := _rec2[ "brdok" ]
       ENDIF
 
       SELECT priprz
@@ -251,18 +251,18 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
       IF _oper == "2"
 
          SET ORDER TO TAG "1"
-         HSEEK _rec[ "idroba" ]
+         HSEEK hRec[ "idroba" ]
 
          IF !Found()
             APPEND BLANK
          ELSE
             _exist := dbf_get_rec()
-            _rec[ "kol2" ] := _rec[ "kol2" ] + _exist[ "kol2" ]
+            hRec[ "kol2" ] := hRec[ "kol2" ] + _exist[ "kol2" ]
          ENDIF
 
       ENDIF
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       ++ nCount
 

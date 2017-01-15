@@ -136,7 +136,7 @@ STATIC FUNCTION _fix_rn_no( racun )
 FUNCTION pos_storno_fisc_no()
 
    LOCAL nTArea := Select()
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _datum, _broj_rn
    LOCAL _fisc_broj := 0
    PRIVATE GetList := {}
@@ -171,7 +171,7 @@ FUNCTION pos_storno_fisc_no()
 FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 
    LOCAL nTArea := Select()
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _datum := gDatum
    LOCAL _danasnji := "D"
    PRIVATE GetList := {}
@@ -270,7 +270,7 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 STATIC FUNCTION napravi_u_pripremi_storno_dokument( rn_datum, storno_rn, broj_fiscal )
 
    LOCAL nDbfArea := Select()
-   LOCAL _t_roba, _rec
+   LOCAL _t_roba, hRec
 
    SELECT ( F_POS )
    IF !Used()
@@ -290,25 +290,25 @@ STATIC FUNCTION napravi_u_pripremi_storno_dokument( rn_datum, storno_rn, broj_fi
 
       SELECT pos
 
-      _rec := dbf_get_rec()
-      hb_HDel( _rec, "rbr" )
+      hRec := dbf_get_rec()
+      hb_HDel( hRec, "rbr" )
 
       SELECT _pos_pripr
       APPEND BLANK
 
-      _rec[ "brdok" ] :=  "PRIPRE"
-      _rec[ "kolicina" ] := ( _rec[ "kolicina" ] * -1 )
-      _rec[ "robanaz" ] := roba->naz
-      _rec[ "datum" ] := gDatum
-      _rec[ "idvrstep" ] := "01"
+      hRec[ "brdok" ] :=  "PRIPRE"
+      hRec[ "kolicina" ] := ( hRec[ "kolicina" ] * -1 )
+      hRec[ "robanaz" ] := roba->naz
+      hRec[ "datum" ] := gDatum
+      hRec[ "idvrstep" ] := "01"
 
       IF Empty( broj_fiscal )
-         _rec[ "c_1" ] := AllTrim( storno_rn )
+         hRec[ "c_1" ] := AllTrim( storno_rn )
       ELSE
-         _rec[ "c_1" ] := AllTrim( broj_fiscal )
+         hRec[ "c_1" ] := AllTrim( broj_fiscal )
       ENDIF
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       SELECT pos
       SKIP

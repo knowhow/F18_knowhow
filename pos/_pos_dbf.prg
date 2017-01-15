@@ -56,7 +56,7 @@ STATIC FUNCTION cre_priprz()
 STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
 
    LOCAL lOk := .T.
-   LOCAL _rec
+   LOCAL hRec
 
    IF Select( "STRAD" ) == 0
       o_pos_strad()
@@ -66,12 +66,12 @@ STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
 
    APPEND BLANK
 
-   _rec := dbf_get_rec()
-   _rec[ "id" ] := PadR( cSifra, Len( _rec[ "id" ] ) )
-   _rec[ "prioritet" ] := PadR( cPrioritet, Len( _rec[ "prioritet" ] ) )
-   _rec[ "naz" ] := PadR( cOpis, Len( _rec[ "naz" ] ) )
+   hRec := dbf_get_rec()
+   hRec[ "id" ] := PadR( cSifra, Len( hRec[ "id" ] ) )
+   hRec[ "prioritet" ] := PadR( cPrioritet, Len( hRec[ "prioritet" ] ) )
+   hRec[ "naz" ] := PadR( cOpis, Len( hRec[ "naz" ] ) )
 
-   lOk := update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( "pos_strad", hRec, 1, "CONT" )
 
    RETURN lOk
 
@@ -81,7 +81,7 @@ STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
 STATIC FUNCTION dodaj_u_sifrarnik_radnika( cSifra, cLozinka, cOpis, cStatus )
 
    LOCAL lOk := .T.
-   LOCAL _rec
+   LOCAL hRec
 
    IF Select( "OSOB" ) == 0
       o_pos_osob()
@@ -91,13 +91,13 @@ STATIC FUNCTION dodaj_u_sifrarnik_radnika( cSifra, cLozinka, cOpis, cStatus )
 
    APPEND BLANK
 
-   _rec := dbf_get_rec()
-   _rec[ "id" ] := PadR( cSifra, Len( _rec[ "id" ] ) )
-   _rec[ "korsif" ] := PadR( CryptSc( PadR( cLozinka, 6 ) ), 6 )
-   _rec[ "naz" ] := PadR( cOpis, Len( _rec[ "naz" ] ) )
-   _rec[ "status" ] := PadR( cStatus, Len( _rec[ "status" ] ) )
+   hRec := dbf_get_rec()
+   hRec[ "id" ] := PadR( cSifra, Len( hRec[ "id" ] ) )
+   hRec[ "korsif" ] := PadR( CryptSc( PadR( cLozinka, 6 ) ), 6 )
+   hRec[ "naz" ] := PadR( cOpis, Len( hRec[ "naz" ] ) )
+   hRec[ "status" ] := PadR( cStatus, Len( hRec[ "status" ] ) )
 
-   lOk := update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( "pos_osob", hRec, 1, "CONT" )
 
    RETURN lOk
 
@@ -424,7 +424,7 @@ FUNCTION pos_import_fmk_roba()
 
    LOCAL _location := fetch_metric( "pos_import_fmk_roba_path", my_user(), PadR( "", 300 ) )
    LOCAL _cnt := 0
-   LOCAL _rec
+   LOCAL hRec
    LOCAL lOk := .T.
    LOCAL hParams
 
@@ -465,35 +465,35 @@ FUNCTION pos_import_fmk_roba()
 
    DO WHILE !Eof()
 
-      _id_roba := field->id
+      cIdRoba := field->id
 
       SELECT roba
       GO TOP
-      SEEK _id_roba
+      SEEK cIdRoba
 
       IF !Found()
          APPEND BLANK
       ENDIF
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "id" ] := tops_roba->id
+      hRec[ "id" ] := tops_roba->id
 
-      _rec[ "naz" ] := tops_roba->naz
-      _rec[ "jmj" ] := tops_roba->jmj
-      _rec[ "idtarifa" ] := tops_roba->idtarifa
-      _rec[ "barkod" ] := tops_roba->barkod
-      _rec[ "tip" ] := tops_roba->tip
-      _rec[ "mpc" ] := tops_roba->cijena1
-      _rec[ "mpc2" ] := tops_roba->cijena2
+      hRec[ "naz" ] := tops_roba->naz
+      hRec[ "jmj" ] := tops_roba->jmj
+      hRec[ "idtarifa" ] := tops_roba->idtarifa
+      hRec[ "barkod" ] := tops_roba->barkod
+      hRec[ "tip" ] := tops_roba->tip
+      hRec[ "mpc" ] := tops_roba->cijena1
+      hRec[ "mpc2" ] := tops_roba->cijena2
 
       IF tops_roba->( FieldPos( "fisc_plu" ) ) <> 0
-         _rec[ "fisc_plu" ] := tops_roba->fisc_plu
+         hRec[ "fisc_plu" ] := tops_roba->fisc_plu
       ENDIF
 
       ++ _cnt
-      @ m_x + 1, m_y + 2 SAY "import roba: " + _rec[ "id" ] + ":" + PadR( _rec[ "naz" ], 20 ) + "..."
-      lOk := update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+      @ m_x + 1, m_y + 2 SAY "import roba: " + hRec[ "id" ] + ":" + PadR( hRec[ "naz" ], 20 ) + "..."
+      lOk := update_rec_server_and_dbf( "roba", hRec, 1, "CONT" )
 
       IF !lOk
          EXIT

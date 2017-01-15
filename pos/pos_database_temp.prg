@@ -45,7 +45,7 @@ FUNCTION pos_cre_pom_dbf( aDbf, cPom )
 
 FUNCTION pos2_pripr()
 
-   LOCAL _rec
+   LOCAL hRec
 
    SELECT _pos_pripr
 
@@ -59,18 +59,18 @@ FUNCTION pos2_pripr()
 
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-      _rec := dbf_get_rec()
-      hb_HDel( _rec, "rbr" )
+      hRec := dbf_get_rec()
+      hb_HDel( hRec, "rbr" )
 
       SELECT roba
       HSEEK _IdRoba
-      _rec[ "robanaz" ] := roba->naz
-      _rec[ "jmj" ] := roba->jmj
+      hRec[ "robanaz" ] := roba->naz
+      hRec[ "jmj" ] := roba->jmj
 
       SELECT _pos_pripr
       APPEND BLANK
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       SELECT pos
       SKIP

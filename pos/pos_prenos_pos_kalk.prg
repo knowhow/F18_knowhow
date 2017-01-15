@@ -267,7 +267,7 @@ STATIC FUNCTION _o_real_table()
 
 FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
 
-   LOCAL _r_br, _rec
+   LOCAL _r_br, hRec
    LOCAL _kol
    LOCAL _iznos
    LOCAL nDbfArea := Select()
@@ -306,31 +306,31 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
    DO WHILE !Eof() .AND. field->idpos == id_pos .AND. field->idvd == id_vd .AND. ;
          field->datum == dat_dok .AND. field->brdok == br_dok
 
-      _id_roba := field->idroba
+      cIdRoba := field->idroba
 
       SELECT roba
-      HSEEK _id_roba
+      HSEEK cIdRoba
 
       SELECT pom
       APPEND BLANK
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "idpos" ] := pos->idpos
-      _rec[ "idvd" ] := pos->idvd
-      _rec[ "datum" ] := pos->datum
-      _rec[ "brdok" ] := pos->brdok
-      _rec[ "kolicina" ] := pos->kolicina
-      _rec[ "idroba" ] := pos->idroba
-      _rec[ "idtarifa" ] := pos->idtarifa
-      _rec[ "kol2" ] := pos->kol2
-      _rec[ "mpc" ] := pos->cijena
-      _rec[ "stmpc" ] := pos->ncijena
-      _rec[ "barkod" ] := roba->barkod
-      _rec[ "robanaz" ] := roba->naz
-      _rec[ "jmj" ] := roba->jmj
+      hRec[ "idpos" ] := pos->idpos
+      hRec[ "idvd" ] := pos->idvd
+      hRec[ "datum" ] := pos->datum
+      hRec[ "brdok" ] := pos->brdok
+      hRec[ "kolicina" ] := pos->kolicina
+      hRec[ "idroba" ] := pos->idroba
+      hRec[ "idtarifa" ] := pos->idtarifa
+      hRec[ "kol2" ] := pos->kol2
+      hRec[ "mpc" ] := pos->cijena
+      hRec[ "stmpc" ] := pos->ncijena
+      hRec[ "barkod" ] := roba->barkod
+      hRec[ "robanaz" ] := roba->naz
+      hRec[ "jmj" ] := roba->jmj
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       ++ _r_br
 
@@ -372,7 +372,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
    LOCAL _dat_od, _dat_do, _file
    LOCAL _tmp
    LOCAL _auto_prenos := .F.
-   LOCAL _rec
+   LOCAL hRec
 
    IF cIdPM <> NIL
       _auto_prenos := .T.
@@ -499,9 +499,9 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
             ++ _r_br
          ELSE
 
-            _rec := dbf_get_rec()
-            _rec[ "kolicina" ] := _rec[ "kolicina" ] + pos->kolicina
-            dbf_update_rec( _rec )
+            hRec := dbf_get_rec()
+            hRec[ "kolicina" ] := hRec[ "kolicina" ] + pos->kolicina
+            dbf_update_rec( hRec )
 
          ENDIF
 

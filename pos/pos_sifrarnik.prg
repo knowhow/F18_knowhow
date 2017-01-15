@@ -232,7 +232,7 @@ FUNCTION EdOsob()
 
    LOCAL lSystemLevel := ( pos_admin() )
    LOCAL nVrati := DE_CONT
-   LOCAL _rec
+   LOCAL hRec
 
    DO CASE
 
@@ -258,9 +258,9 @@ FUNCTION EdOsob()
                APPEND BLANK
 
                // daj mi iz globalnih varijabli
-               _rec := get_hash_record_from_global_vars()
+               hRec := get_hash_record_from_global_vars()
 
-               update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+               update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
                nVrati := DE_REFRESH
 
@@ -284,9 +284,9 @@ FUNCTION EdOsob()
                // azuriranje OSOB.DBF
                _korsif := CryptSC( _korsif )
                // daj mi iz globalnih varijabli
-               _rec := get_hash_record_from_global_vars()
+               hRec := get_hash_record_from_global_vars()
 
-               update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+               update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
                nVrati := DE_REFRESH
 
@@ -304,8 +304,8 @@ FUNCTION EdOsob()
             IF Pitanje(, "Izbrisati korisnika " + Trim( naz ) + ":" + CryptSC( korsif ) + " D/N ?", "N" ) == "D"
 
                SELECT osob
-               _rec := dbf_get_rec()
-               delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+               hRec := dbf_get_rec()
+               delete_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
                nVrati := DE_REFRESH
 
             ENDIF

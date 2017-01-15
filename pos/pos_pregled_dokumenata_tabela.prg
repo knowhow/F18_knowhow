@@ -173,7 +173,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
    LOCAL nRecNo
    LOCAL ctIdPos
    LOCAL dtDatum
-   LOCAL _rec, _id_pos, _id_vd, _dat_dok, _br_dok
+   LOCAL hRec, _id_pos, _id_vd, _dat_dok, _br_dok
    LOCAL nDbfArea := Select()
    LOCAL _tbl_filter := dbFilter()
    LOCAL _rec_no, _ok
@@ -207,10 +207,10 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
             RETURN DE_CONT
          ENDIF
 
-         _rec := dbf_get_rec()
-         _rec[ "idvrstep" ] := cVrPl
+         hRec := dbf_get_rec()
+         hRec[ "idvrstep" ] := cVrPl
 
-         update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
+         update_rec_server_and_dbf( "pos_doks", hRec, 1, "FULL" )
 
          RETURN DE_REFRESH
 
@@ -382,7 +382,7 @@ FUNCTION pos_pregled_stavki_racuna()
 
    LOCAL oBrowse
    LOCAL cPrevCol
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nMaxRow := maxrows() -15
    LOCAL nMaxCol := maxcols() -35
 
@@ -409,20 +409,20 @@ FUNCTION pos_pregled_stavki_racuna()
 
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       SELECT roba
-      HSEEK _rec[ "idroba" ]
+      HSEEK hRec[ "idroba" ]
 
-      _rec[ "robanaz" ] := roba->naz
-      _rec[ "jmj" ] := roba->jmj
+      hRec[ "robanaz" ] := roba->naz
+      hRec[ "jmj" ] := roba->jmj
 
-      hb_HDel( _rec, "rbr" )
+      hb_HDel( hRec, "rbr" )
 
       SELECT _pos_pripr
       APPEND BLANK
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
       SELECT POS
       SKIP
 

@@ -33,7 +33,7 @@ FUNCTION pos_inventura_nivelacija()
 
    IF gSamoProdaja == "D"
       MsgBeep( "Ne možete vršiti unos zaduženja !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF dDatRada == nil
@@ -98,7 +98,7 @@ FUNCTION pos_inventura_nivelacija()
 
       IF !VarEdit( aNiz, 9, 15, 15, 64, cNazDok + "A", "B1" )
          CLOSE ALL
-         RETURN
+         RETURN .F.
       ENDIF
 
    ENDIF
@@ -112,7 +112,7 @@ FUNCTION pos_inventura_nivelacija()
 
    IF !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT priprz
@@ -156,7 +156,7 @@ FUNCTION pos_inventura_nivelacija()
                LOOP
             ENDIF
 
-            _kolicina := 0
+            nKolicina := 0
             _idroba := pos->idroba
 
             DO WHILE !Eof() .AND. pos->( idodj + idroba ) == ( cIdOdj + _idroba ) .AND. pos->datum <= dDatRada
@@ -177,21 +177,21 @@ FUNCTION pos_inventura_nivelacija()
                ENDIF
 
                IF pos->idvd $ "16#00"
-                  _kolicina += pos->kolicina
+                  nKolicina += pos->kolicina
 
                ELSEIF pos->idvd $ "42#96#01#IN#NI"
                   DO CASE
                   CASE pos->idvd == VD_INV
-                     _kolicina -= pos->kolicina - pos->kol2
+                     nKolicina -= pos->kolicina - pos->kol2
                   CASE pos->idvd == VD_NIV
                   OTHERWISE
-                     _kolicina -= pos->kolicina
+                     nKolicina -= pos->kolicina
                   ENDCASE
                ENDIF
                SKIP
             ENDDO
 
-            IF Round( _kolicina, 3 ) <> 0
+            IF Round( nKolicina, 3 ) <> 0
 
                SELECT ( cRSdbf )
                HSEEK _idroba
@@ -214,7 +214,7 @@ FUNCTION pos_inventura_nivelacija()
                _IdPos := gIdPos
                _datum := dDatRada
                _Smjena := gSmjena
-               _Kol2 := _Kolicina
+               _Kol2 := nKolicina
                _MU_I := cUI_I
 
                APPEND BLANK
@@ -290,7 +290,7 @@ FUNCTION pos_inventura_nivelacija()
          IF priprz->( RecCount() ) == 0
             pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
             CLOSE ALL
-            RETURN
+            RETURN .F.
          ENDIF
 
          i := KudaDalje( "ZAVRSAVATE SA PRIPREMOM " + cNazDok + "E. STA RADITI S NJOM?", { ;
@@ -358,7 +358,7 @@ FUNCTION pos_inventura_nivelacija()
 STATIC FUNCTION check_before_azur( dDatRada )
 
    LOCAL _ret := .T.
-   LOCAL _rec
+   LOCAL hRec
 
    MsgO( "Provjera unesenih podataka prije ažuriranja u toku ..." )
 
@@ -367,9 +367,9 @@ STATIC FUNCTION check_before_azur( dDatRada )
    DO WHILE !Eof()
 
       IF field->datum <> dDatRada
-         _rec := dbf_get_rec()
-         _rec[ "datum" ] := dDatRada
-         dbf_update_rec( _rec )
+         hRec := dbf_get_rec()
+         hRec[ "datum" ] := dDatRada
+         dbf_update_rec( hRec )
       ENDIF
       SKIP
    ENDDO
@@ -401,6 +401,7 @@ FUNCTION EditInvNiv( dat_inv_niv )
       GO nRec
 
       lVrati := DE_REFRESH
+
 
    CASE Upper( Chr( Ch ) ) == "D"
 
@@ -490,7 +491,7 @@ FUNCTION EditInvNiv( dat_inv_niv )
 STATIC FUNCTION _calc_priprz()
 
    LOCAL nDbfArea := Select()
-   LOCAL _t_rec := RecNo()
+   LOCAL nDbfArea := RecNo()
 
    SELECT priprz
    GO TOP
@@ -513,9 +514,9 @@ STATIC FUNCTION _calc_priprz()
    ENDDO
 
    SELECT ( nDbfArea )
-   GO ( _t_rec )
+   GO ( nDbfArea )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -567,7 +568,7 @@ FUNCTION edprinv( nInd, datum )
          _idodj := cIdOdj
          _iddio := cIdDio
          _idroba := Space( 10 )
-         _kolicina := 0
+         nKolicina := 0
          _kol2 := 0
          _brdok := cBrDok
          _idvd := cIdVd
@@ -594,10 +595,10 @@ FUNCTION edprinv( nInd, datum )
       nLX ++
 
       IF cIdVd == VD_INV
-         @ nLX, m_y + 3 SAY8 "Knj. količina:" GET _kolicina PICT _pict ;
+         @ nLX, m_y + 3 SAY8 "Knj. količina:" GET nKolicina PICT _pict ;
             WHEN {|| .F. }
       ELSE
-         @ nLX, m_y + 3 SAY8 "     Količina:" GET _kolicina PICT _pict ;
+         @ nLX, m_y + 3 SAY8 "     Količina:" GET nKolicina PICT _pict ;
             WHEN {|| .T. }
       ENDIF
 
@@ -707,8 +708,8 @@ FUNCTION edprinv( nInd, datum )
 STATIC FUNCTION update_ip_razlika()
 
    LOCAL _id_odj := Space( 2 )
-   LOCAL ip_kol, ip_roba
-   LOCAL _rec2, _rec
+   LOCAL nKolicinaZaInventuru, ip_roba
+   LOCAL _rec2, hRec
 
    IF Pitanje(, "Generisati razliku artikala sa stanja ?", "N" ) == "N"
       RETURN 0
@@ -732,7 +733,7 @@ STATIC FUNCTION update_ip_razlika()
          LOOP
       ENDIF
 
-      ip_kol := 0
+      nKolicinaZaInventuru := 0
       ip_roba := pos->idroba
 
       SELECT priprz
@@ -756,15 +757,15 @@ STATIC FUNCTION update_ip_razlika()
          ENDIF
 
          IF pos->idvd $ "16#00"
-            ip_kol += pos->kolicina
+            nKolicinaZaInventuru += pos->kolicina
 
          ELSEIF pos->idvd $ "42#96#01#IN#NI"
             DO CASE
             CASE pos->idvd == VD_INV
-               ip_kol -= pos->kolicina - pos->kol2
+               nKolicinaZaInventuru -= pos->kolicina - pos->kol2
             CASE pos->idvd == VD_NIV
             OTHERWISE
-               ip_kol -= pos->kolicina
+               nKolicinaZaInventuru -= pos->kolicina
             ENDCASE
          ENDIF
 
@@ -772,7 +773,7 @@ STATIC FUNCTION update_ip_razlika()
 
       ENDDO
 
-      IF Round( ip_kol, 3 ) <> 0
+      IF Round( nKolicinaZaInventuru, 3 ) <> 0
 
          SELECT roba
          SET ORDER TO TAG "ID"
@@ -782,27 +783,27 @@ STATIC FUNCTION update_ip_razlika()
          SELECT priprz
          APPEND BLANK
 
-         _rec := dbf_get_rec()
-         _rec[ "cijena" ] := pos_get_mpc()
-         _rec[ "ncijena" ] := 0
-         _rec[ "idroba" ] := ip_roba
-         _rec[ "barkod" ] := roba->barkod
-         _rec[ "robanaz" ] := roba->naz
-         _rec[ "jmj" ] := roba->jmj
-         _rec[ "idtarifa" ] := roba->idtarifa
-         _rec[ "kol2" ] := 0
-         _rec[ "kolicina" ] := ip_kol
-         _rec[ "brdok" ] := _rec2[ "brdok" ]
-         _rec[ "datum" ] := _rec2[ "datum" ]
-         _rec[ "idcijena" ] := _rec2[ "idcijena" ]
-         _rec[ "idpos" ] := _rec2[ "idpos" ]
-         _rec[ "idradnik" ] := _rec2[ "idradnik" ]
-         _rec[ "idvd" ] := _rec2[ "idvd" ]
-         _rec[ "mu_i" ] := _rec2[ "mu_i" ]
-         _rec[ "prebacen" ] := _rec2[ "prebacen" ]
-         _rec[ "smjena" ] := _rec2[ "smjena" ]
+         hRec := dbf_get_rec()
+         hRec[ "cijena" ] := pos_get_mpc()
+         hRec[ "ncijena" ] := 0
+         hRec[ "idroba" ] := ip_roba
+         hRec[ "barkod" ] := roba->barkod
+         hRec[ "robanaz" ] := roba->naz
+         hRec[ "jmj" ] := roba->jmj
+         hRec[ "idtarifa" ] := roba->idtarifa
+         hRec[ "kol2" ] := 0
+         hRec[ "kolicina" ] := nKolicinaZaInventuru
+         hRec[ "brdok" ] := _rec2[ "brdok" ]
+         hRec[ "datum" ] := _rec2[ "datum" ]
+         hRec[ "idcijena" ] := _rec2[ "idcijena" ]
+         hRec[ "idpos" ] := _rec2[ "idpos" ]
+         hRec[ "idradnik" ] := _rec2[ "idradnik" ]
+         hRec[ "idvd" ] := _rec2[ "idvd" ]
+         hRec[ "mu_i" ] := _rec2[ "mu_i" ]
+         hRec[ "prebacen" ] := _rec2[ "prebacen" ]
+         hRec[ "smjena" ] := _rec2[ "smjena" ]
 
-         dbf_update_rec( _rec )
+         dbf_update_rec( hRec )
 
       ENDIF
 
@@ -822,6 +823,7 @@ STATIC FUNCTION update_ip_razlika()
    RETURN 1
 
 
+
 STATIC FUNCTION update_knj_kol()
 
    SELECT priprz
@@ -829,7 +831,7 @@ STATIC FUNCTION update_knj_kol()
 
    DO WHILE !Eof()
       Scatter()
-      RacKol( _idodj, _idroba, @_kolicina )
+      RacKol( _idodj, _idroba, @nKolicina )
       SELECT priprz
       Gather()
       SKIP
@@ -853,7 +855,7 @@ STATIC FUNCTION valid_pos_inv_niv( cIdVd, ind )
 
    pos_postoji_roba( @_IdRoba, 1, 31 )
 
-   RacKol( _idodj, _idroba, @_kolicina )
+   RacKol( _idodj, _idroba, @nKolicina )
 
    _set_cijena_artikla( cIdVd, _idroba )
 
@@ -909,7 +911,7 @@ FUNCTION _postoji_artikal_u_pripremi( id_roba )
 
    LOCAL _ok := .T.
    LOCAL nDbfArea := Select()
-   LOCAL _t_rec := RecNo()
+   LOCAL nDbfArea := RecNo()
 
    SELECT priprz
    SET ORDER TO TAG "1"
@@ -922,7 +924,7 @@ FUNCTION _postoji_artikal_u_pripremi( id_roba )
    ENDIF
 
    SELECT ( nDbfArea )
-   GO ( _t_rec )
+   GO ( nDbfArea )
 
    RETURN _ok
 

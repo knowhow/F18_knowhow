@@ -127,5 +127,4 @@ FUNCTION PrepisKumPr()
    ENDPRINT
    SELECT pos_doks
 
-   RETURN
-// }
+   RETURN .T.

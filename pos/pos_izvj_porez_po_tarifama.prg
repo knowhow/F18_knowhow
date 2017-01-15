@@ -217,7 +217,7 @@ FUNCTION PorPoTar
          ? Space( 6 ), Str( Round( aTarife[ nCnt ][ 6 ], 2 ), 10, 2 ), Space( 9 )
 
          IF fPP
-            ?? Str( aTarife[nCnt ][ 5 ], 8, 2 )
+            ?? Str( aTarife[ nCnt ][ 5 ], 8, 2 )
          ENDIF
 
          // nTotOsn += round(aTarife [nCnt][2],2)
@@ -263,7 +263,7 @@ FUNCTION PorPoTar
 
    SET FILTER TO
    CLOSERET
-   // }
+
 
 
    // cIdvd - tip dokumenta za koji se obracun poreza vrsi
@@ -275,7 +275,7 @@ FUNCTION PorPoTar
 
 /* Porezi(cIdVd,cDat0,aTarife,cNaplaceno)
  *     Pravi matricu sa izracunatim porezima za zadani period
- *  \return aTarife - matrica izracunatih poreza po tarifama
+ *  return aTarife - matrica izracunatih poreza po tarifama
  */
 
 FUNCTION Porezi( cIdVd, cDat0, aTarife, cNaplaceno )
@@ -337,18 +337,11 @@ FUNCTION Porezi( cIdVd, cDat0, aTarife, cNaplaceno )
          ENDIF
 
          SELECT POS
-         // nPPU := nIzn * (1 - 100 / (100+TARIFA->PPP))
-         // nPPP := (nIzn - nPPU) * (1 - 100 / (100+TARIFA->OPP))
-         // nOsn := nIzn - nPPU - nPPP
-         IF my_get_from_ini( "POREZI", "PPUgostKaoPPU", "N" ) == "D"
-            nOsn := nIzn / ( 1 + tarifa->zpp / 100 + tarifa->ppp / 100 ) / ( 1 + tarifa->opp / 100 )
-            nPPP := nOsn * tarifa->opp / 100
-            nPP := ( nOsn + nPPP ) * tarifa->zpp / 100
-         ELSE
-            nOsn := nIzn / ( tarifa->zpp / 100 + ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 ) )
-            nPPP := nOsn * tarifa->opp / 100
-            nPP := nOsn * tarifa->zpp / 100
-         ENDIF
+
+         nOsn := nIzn / ( tarifa->zpp / 100 + ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 ) )
+         nPPP := nOsn * tarifa->opp / 100
+         nPP := nOsn * tarifa->zpp / 100
+
          nPPU := ( nOsn + nPPP ) * tarifa->ppp / 100
 
          IF gStariObrPor

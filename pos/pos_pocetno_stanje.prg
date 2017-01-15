@@ -18,7 +18,7 @@ STATIC __dok_br
 
 
 
-FUNCTION p_poc_stanje()
+FUNCTION pos_pocetno_stanje()
 
    LOCAL _params := hb_Hash()
    LOCAL _cnt := 0
@@ -28,12 +28,12 @@ FUNCTION p_poc_stanje()
    __vrijednost := 0
    __dok_br := ""
 
-   // parametri prenosa...
+
    IF _get_vars( @_params ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
-   // prenesi pocetno stanje...
+
    _cnt := pocetno_stanje_sql( _params )
 
    IF _cnt > 0
@@ -44,7 +44,7 @@ FUNCTION p_poc_stanje()
 
    MsgBeep( _txt )
 
-   RETURN
+   RETURN .F.
 
 
 // --------------------------------------------
@@ -70,16 +70,13 @@ STATIC FUNCTION _get_vars( params )
    @ m_x + _x, m_y + 2 SAY "Parametri prenosa u novu godinu" COLOR "BG+/B"
 
    _x += 2
-
    @ m_x + _x, m_y + 2 SAY "pos ID" GET _id_pos VALID !Empty( _id_pos )
 
    _x += 2
-
    @ m_x + _x, m_y + 2 SAY "Datum prenosa od:" GET _dat_od VALID !Empty( _dat_od )
    @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do VALID !Empty( _dat_do )
 
    _x += 2
-
    @ m_x + _x, m_y + 2 SAY "Datum dokumenta pocetnog stanja:" GET _dat_ps VALID !Empty( _dat_ps )
 
    READ
@@ -128,25 +125,23 @@ STATIC FUNCTION prebaci_se_u_bazu( db_params, database, year )
 
 
 
-// -----------------------------------------------------
-// pocetno stanje POS na osnovu sql upita...
-// -----------------------------------------------------
-STATIC FUNCTION pocetno_stanje_sql( param )
+
+STATIC FUNCTION pocetno_stanje_sql( hParams )
 
    LOCAL _db_params := my_server_params()
    LOCAL _tek_database := my_server_params()[ "database" ]
-   LOCAL _date_from := PARAM[ "datum_od" ]
-   LOCAL _date_to := PARAM[ "datum_do" ]
-   LOCAL _date_ps := PARAM[ "datum_ps" ]
+   LOCAL _date_from := hParams[ "datum_od" ]
+   LOCAL _date_to := hParams[ "datum_do" ]
+   LOCAL dDatDok := hParams[ "datum_ps" ]
    LOCAL _year_sez := Year( _date_to )
-   LOCAL _year_tek := Year( _date_ps )
-   LOCAL _id_pos := PARAM[ "id_pos" ]
-   LOCAL _qry, _table, _row
-   LOCAL _count := 0
-   LOCAL hRec, cIdRoba, _kolicina, _vrijednost
-   LOCAL _n_br_dok
+   LOCAL _year_tek := Year( dDatDok )
+   LOCAL _id_pos := hParams[ "id_pos" ]
+   LOCAL _qry, oDataset, oRow
+   LOCAL nCount := 0
+   LOCAL hRec, cIdRoba, nKolicina, nVrijednost
+   LOCAL cBrDok
    LOCAL lOk := .T.
-   LOCAL hParams
+
 
    prebaci_se_u_bazu( _db_params, _tek_database, _year_sez )
 
@@ -172,7 +167,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    _qry += " ORDER BY idroba "
 
    MsgO( "pocetno stanje sql query u toku..." )
-   _table := run_sql_query( _qry )
+   oDataset := run_sql_query( _qry )
    MsgC()
 
    prebaci_se_u_bazu( _db_params, _tek_database, _year_tek )
@@ -181,7 +176,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    o_pos_doks()
    O_ROBA
 
-   _n_br_dok := pos_novi_broj_dokumenta( _id_pos, "16", _date_ps )
+   cBrDok := pos_novi_broj_dokumenta( _id_pos, "16", dDatDok )
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
@@ -192,22 +187,22 @@ STATIC FUNCTION pocetno_stanje_sql( param )
 
    MsgO( "Formiranje dokumenta početnog stanja u toku ..." )
 
-   DO WHILE !_table:Eof()
+   DO WHILE !oDataset:Eof()
 
-      _row := _table:GetRow()
+      oRow := oDataset:GetRow()
 
-      cIdRoba := hb_UTF8ToStr( _row:FieldGet( _row:FieldPos( "idroba" ) ) )
+      cIdRoba := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idroba" ) ) )
 
-      _kolicina := _row:FieldGet( _row:FieldPos( "kolicina" ) )
-      __stanje += _kolicina
+      nKolicina := oRow:FieldGet( oRow:FieldPos( "kolicina" ) )
+      __stanje += nKolicina
 
-      _vrijednost := _row:FieldGet( _row:FieldPos( "vrijednost" ) )
-      __vrijednost += _vrijednost
+      nVrijednost := oRow:FieldGet( oRow:FieldPos( "vrijednost" ) )
+      __vrijednost += nVrijednost
 
       SELECT roba
       HSEEK cIdRoba
 
-      IF Round( _kolicina, 2 ) <> 0
+      IF Round( nKolicina, 2 ) <> 0
 
          SELECT pos
          APPEND BLANK
@@ -216,12 +211,12 @@ STATIC FUNCTION pocetno_stanje_sql( param )
 
          hRec[ "idpos" ] := _id_pos
          hRec[ "idvd" ] := "16"
-         hRec[ "brdok" ] := _n_br_dok
-         hRec[ "rbr" ] := PadL( AllTrim( Str( ++_count ) ), 5 )
+         hRec[ "brdok" ] := cBrDok
+         hRec[ "rbr" ] := PadL( AllTrim( Str( ++nCount ) ), 5 )
          hRec[ "idroba" ] := cIdRoba
-         hRec[ "kolicina" ] := _kolicina
+         hRec[ "kolicina" ] := nKolicina
          hRec[ "cijena" ] := pos_get_mpc()
-         hRec[ "datum" ] := _date_ps
+         hRec[ "datum" ] := dDatDok
          hRec[ "idradnik" ] := "XXXX"
          hRec[ "idtarifa" ] := roba->idtarifa
          hRec[ "prebacen" ] := "1"
@@ -236,11 +231,11 @@ STATIC FUNCTION pocetno_stanje_sql( param )
          EXIT
       ENDIF
 
-      _table:Skip()
+      oDataset:Skip()
 
    ENDDO
 
-   IF lOk .AND. _count > 0
+   IF lOk .AND. nCount > 0
 
       SELECT pos_doks
       APPEND BLANK
@@ -249,8 +244,8 @@ STATIC FUNCTION pocetno_stanje_sql( param )
 
       hRec[ "idpos" ] := _id_pos
       hRec[ "idvd" ] := "16"
-      hRec[ "brdok" ] := _n_br_dok
-      hRec[ "datum" ] := _date_ps
+      hRec[ "brdok" ] := cBrDok
+      hRec[ "datum" ] := dDatDok
       hRec[ "idradnik" ] := "XXXX"
       hRec[ "prebacen" ] := "1"
       hRec[ "smjena" ] := "1"
@@ -276,4 +271,4 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    SELECT ( F_POS )
    USE
 
-   RETURN _count
+   RETURN nCount

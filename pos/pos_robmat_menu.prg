@@ -38,8 +38,8 @@ FUNCTION pos_menu_gendok()
    PRIVATE opcexe := {}
    PRIVATE Izbor := 1
 
-   AAdd( opc, "1. generacija dokumenta pocetnog stanja     " )
-   AAdd( opcexe, {|| p_poc_stanje() } )
+   AAdd( opc, "1. generacija dokumenta početnog stanja     " )
+   AAdd( opcexe, {|| pos_pocetno_stanje() } )
    AAdd( opc, "2. import sifrarnika ROBA iz fmk-tops     " )
    AAdd( opcexe, {|| pos_import_fmk_roba() } )
 
@@ -47,4 +47,4 @@ FUNCTION pos_menu_gendok()
    Izbor := 1
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "gdok" )
 
-   RETURN
+   RETURN .T.

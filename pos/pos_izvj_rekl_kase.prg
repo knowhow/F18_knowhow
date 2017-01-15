@@ -80,7 +80,7 @@ FUNCTION ReklKase( dDOd, dDDo, cVarijanta )
  */
 STATIC FUNCTION FrmRptVars( cIdPos, dDat0, dDat1 )
 
-   // {
+
    LOCAL aNiz
 
    aNiz := {}
@@ -103,7 +103,7 @@ STATIC FUNCTION FrmRptVars( cIdPos, dDat0, dDat1 )
    ENDDO
 
    RETURN 1
-// }
+
 
 
 STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos )

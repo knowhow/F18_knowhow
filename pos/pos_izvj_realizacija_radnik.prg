@@ -29,7 +29,7 @@ STATIC FUNCTION o_tables()
    o_pos_pos()
    o_pos_doks()
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------
@@ -399,7 +399,7 @@ FUNCTION C_RealRadn()
    SELECT POM
    USE
 
-   RETURN
+   RETURN .T.
 
 
 /* RadnIzvuci(cIdVd)
@@ -408,7 +408,7 @@ FUNCTION C_RealRadn()
 
 FUNCTION RadnIzvuci( cIdVd )
 
-   // {
+
    SEEK cIdVd + DToS ( dDatOd )
    DO WHILE ! Eof() .AND. IdVd == cIdVd .AND. pos_doks->Datum <= dDatDo
 
@@ -469,4 +469,4 @@ FUNCTION RadnIzvuci( cIdVd )
       SKIP
    ENDDO
 
-   RETURN
+   RETURN .T.

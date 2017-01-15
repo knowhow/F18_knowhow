@@ -113,5 +113,4 @@ Sifra    Naziv              JMJ Kolicina
    ENDPRINT
    SELECT pos_doks
 
-   RETURN
-// }
+   RETURN .T.

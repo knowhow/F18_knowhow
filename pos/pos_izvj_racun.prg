@@ -37,7 +37,6 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
 
    IF !Used()
       O_ODJ
-      // otvori odjeljenje radi APOTEKA....
    ENDIF
 
    IF lPrepis

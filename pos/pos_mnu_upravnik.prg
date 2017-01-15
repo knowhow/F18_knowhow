@@ -22,7 +22,7 @@ FUNCTION pos_main_menu_upravnik()
       MMenuUpS()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

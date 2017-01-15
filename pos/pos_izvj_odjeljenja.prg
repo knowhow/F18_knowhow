@@ -12,19 +12,6 @@
 #include "f18.ch"
 
 
-STATIC FUNCTION _o_tables()
-
-   O_DIO
-   O_ODJ
-   O_SIFK
-   O_SIFV
-   O_KASE
-   O_ROBA
-   o_pos_pos()
-   o_pos_doks()
-
-   RETURN .T.
-
 
 
 FUNCTION realizacija_odjeljenja()
@@ -304,7 +291,6 @@ FUNCTION realizacija_odjeljenja()
  */
 
 FUNCTION DioIzvuci( cIdVd )
-
 
    IF cGotZir == nil
       cGotZir := " "
@@ -791,7 +777,7 @@ FUNCTION realizacija_dio_objekta
                   SKIP
                ENDDO
                ? Space ( 10 ) + _IdCijena, Str ( nKol, 12, 3 ), Str ( nIzn, 15, 2 )
-               nSetova ++
+               nSetova++
                nRobaKol += nKol
                nRobaIzn += nIzn
                nRobaIzn2 += nIzn2
@@ -892,7 +878,7 @@ FUNCTION OdjIzvuci( cIdVd )
             REPLACE IdOdj  WITH POS->IdOdj,   IdDio    WITH POS->IdDio, ;
                IdRoba WITH POS->IdRoba,  IdCijena WITH POS->IdCijena, ;
                IdPos  WITH pos_doks->IdPos,  Kolicina WITH POS->Kolicina, ;
-               Iznos  WITH POS->Kolicina * POS->Cijena,;
+               Iznos  WITH POS->Kolicina * POS->Cijena, ;
                iznos3 WITH iznos3 + nNeplaca
             IF gPopVar == "A"
                REPLACE iznos2 WITH iznos2 + pos->( ncijena )
@@ -909,4 +895,18 @@ FUNCTION OdjIzvuci( cIdVd )
 
    ENDDO
 
-   RETURN
+   RETURN .T.
+
+
+STATIC FUNCTION _o_tables()
+
+   O_DIO
+   O_ODJ
+   O_SIFK
+   O_SIFV
+   O_KASE
+   O_ROBA
+   o_pos_pos()
+   o_pos_doks()
+
+   RETURN .T.

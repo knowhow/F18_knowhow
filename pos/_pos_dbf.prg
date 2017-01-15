@@ -132,7 +132,7 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
       MsgC()
 
       IF lOk
-         hParams := hb_hash()
+         hParams := hb_Hash()
          hParams[ "unlock" ] := { "pos_strad" }
          run_sql_query( "COMMIT", hParams )
 
@@ -283,7 +283,7 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
 
 
 
-FUNCTION pos_stanje_artikla( id_pos, id_roba )
+FUNCTION pos_stanje_artikla( cIdPos, cIdRoba )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
@@ -291,8 +291,8 @@ FUNCTION pos_stanje_artikla( id_pos, id_roba )
    LOCAL _stanje := 0
 
    _qry := "SELECT SUM( CASE WHEN idvd IN ('16') THEN kolicina WHEN idvd IN ('42') THEN -kolicina WHEN idvd IN ('IN') THEN -(kolicina - kol2) ELSE 0 END ) AS stanje FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos " + ;
-      " WHERE idpos = " + sql_quote( id_pos ) + ;
-      " AND idroba = " + sql_quote( id_roba )
+      " WHERE idpos = " + sql_quote( cIdPos ) + ;
+      " AND idroba = " + sql_quote( cIdRoba )
 
    _table := run_sql_query( _qry )
    oRow := _table:GetRow( 1 )
@@ -491,7 +491,7 @@ FUNCTION pos_import_fmk_roba()
          hRec[ "fisc_plu" ] := tops_roba->fisc_plu
       ENDIF
 
-      ++ _cnt
+      ++_cnt
       @ m_x + 1, m_y + 2 SAY "import roba: " + hRec[ "id" ] + ":" + PadR( hRec[ "naz" ], 20 ) + "..."
       lOk := update_rec_server_and_dbf( "roba", hRec, 1, "CONT" )
 
@@ -507,7 +507,7 @@ FUNCTION pos_import_fmk_roba()
    BoxC()
 
    IF lOk
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "roba" }
       run_sql_query( "COMMIT", hParams )
    ELSE
@@ -588,7 +588,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
          RETURN .F.
       ENDIF
 
-      ++ nCount
+      ++nCount
 
       oQry:Skip()
 

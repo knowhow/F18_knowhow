@@ -201,7 +201,7 @@ FUNCTION cre_all_pos( ver )
    AAdd ( aDbf, { "IDRADNIK",  "C",  4, 0 } )
    AAdd ( aDbf, { "IDROBA",    "C", 10, 0 } )
    AAdd ( aDbf, { "IDTARIFA",  "C",  6, 0 } )
-   AAdd ( aDbf, { "KOL2",      "N", 18, 3 } )
+   AAdd ( aDbf, { "KOL2",      "N", 18, 3 } )  // za dokument IN - inventuru
    AAdd ( aDbf, { "KOLICINA",  "N", 18, 3 } )
    AAdd ( aDbf, { "M1",        "C",  1, 0 } )
    AAdd ( aDbf, { "MU_I",      "C",  1, 0 } )
@@ -257,22 +257,6 @@ FUNCTION cre_all_pos( ver )
 
 
 
-   // RNGPLA - izmirenje dugovanja po racunima gostiju
-   aDbf := { { "IDGOST",   "C",  8, 0 }, ;
-      { "DATUM",    "D",  8, 0 }, ;
-      { "IZNOS",    "N", 20, 3 }, ;
-      { "IDVALUTA", "C",  4, 0 }, ;
-      { "DAT_OD",   "D",  8, 0 }, ;
-      { "DAT_DO",   "D",  8, 0 }, ;
-      { "IDRADNIK", "C",  4, 0 }  ;
-      }
-
-   _alias := "RNGPLA"
-   _table_name := "rngpla"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX ( "1", "IdGost", _alias )
 
 
    // ----------------------------------------------------------

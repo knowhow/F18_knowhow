@@ -369,18 +369,17 @@ STATIC FUNCTION ZaglZ( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP,
    ENDIF
    ?
 
-   RETURN
-// }
+   RETURN .T.
 
 
 
-/* RekVrstePl()
+/* RekVrstePl
  *     Rekapitulacija realizacije kase po vrstama placanja
  */
 
 FUNCTION RekVrstePl()
 
-   // {
+
    // Rekapitulacija vrsta placanja
 
    LOCAL nTotal

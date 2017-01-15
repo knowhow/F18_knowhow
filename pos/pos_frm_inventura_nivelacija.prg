@@ -282,7 +282,7 @@ FUNCTION pos_inventura_nivelacija()
 
          SET CURSOR ON
 
-         my_db_edit( "PripInv", MAXROWS() - 15, MAXCOLS() - 3, {|| EditInvNiv( dDatRada ) }, ;
+         my_db_edit( "PripInv", MAXROWS() -15, MAXCOLS() -3, {|| EditInvNiv( dDatRada ) }, ;
             "Broj dokumenta: " + AllTrim( cBrDok ) + " datum: " + DToC( dDatRada ), ;
             "PRIPREMA " + cNazDok + "E", nil, ;
             { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka", "<D> ispravi datum" }, 2, , , )
@@ -435,7 +435,7 @@ FUNCTION EditInvNiv( dat_inv_niv )
 
       _calc_priprz()
 
-      IF !( EdPrInv( 1, dat_inv_niv ) == 0 )
+      IF !( pos_ed_priprema_inventura( 1, dat_inv_niv ) == 0 )
          lVrati := DE_REFRESH
       ENDIF
 
@@ -453,7 +453,7 @@ FUNCTION EditInvNiv( dat_inv_niv )
    CASE Ch == K_CTRL_A
 
       DO WHILE !Eof()
-         IF EdPrInv( 1, dat_inv_niv ) == 0
+         IF pos_ed_priprema_inventura( 1, dat_inv_niv ) == 0
             EXIT
          ENDIF
          SKIP
@@ -469,7 +469,7 @@ FUNCTION EditInvNiv( dat_inv_niv )
 
       _calc_priprz()
 
-      EdPrInv( 0, dat_inv_niv )
+      pos_ed_priprema_inventura( 0, dat_inv_niv )
 
       lVrati := DE_REFRESH
 
@@ -490,8 +490,9 @@ FUNCTION EditInvNiv( dat_inv_niv )
 
 STATIC FUNCTION _calc_priprz()
 
-   LOCAL nDbfArea := Select()
-   LOCAL nDbfArea := RecNo()
+   LOCAL _saldo_kol, _saldo_izn
+
+   PushWa()
 
    SELECT priprz
    GO TOP
@@ -513,15 +514,14 @@ STATIC FUNCTION _calc_priprz()
 
    ENDDO
 
-   SELECT ( nDbfArea )
-   GO ( nDbfArea )
+   PopWa()
 
    RETURN .T.
 
 
 
 
-FUNCTION edprinv( nInd, datum )
+FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
    LOCAL nVrati := 0
    LOCAL aNiz := {}
@@ -592,7 +592,7 @@ FUNCTION edprinv( nInd, datum )
          VALID valid_pos_inv_niv( cIdVd, nInd )
 
 
-      nLX ++
+      nLX++
 
       IF cIdVd == VD_INV
          @ nLX, m_y + 3 SAY8 "Knj. količina:" GET nKolicina PICT _pict ;
@@ -602,7 +602,7 @@ FUNCTION edprinv( nInd, datum )
             WHEN {|| .T. }
       ENDIF
 
-      nLX ++
+      nLX++
 
       IF cIdVd == VD_INV
 
@@ -610,7 +610,7 @@ FUNCTION edprinv( nInd, datum )
             VALID _pop_kol( _kol2 ) ;
             WHEN {|| .T. }
 
-         nLX ++
+         nLX++
 
       ENDIF
 
@@ -620,7 +620,7 @@ FUNCTION edprinv( nInd, datum )
 
       IF cIdVd == VD_NIV
 
-         nLX ++
+         nLX++
 
          @ nLX, m_y + 3 SAY "  Nova cijena:" GET _ncijena PICT _pict ;
             WHEN {|| .T. }
@@ -892,7 +892,7 @@ FUNCTION _pop_kol( kol )
 
 FUNCTION _set_cijena_artikla( id_vd, id_roba )
 
-   LOCAL nDbfArea := Select()
+   PushWa()
 
    IF id_vd == VD_INV
 
@@ -902,7 +902,7 @@ FUNCTION _set_cijena_artikla( id_vd, id_roba )
 
    ENDIF
 
-   SELECT ( nDbfArea )
+   PopWa()
 
    RETURN .T.
 
@@ -910,8 +910,8 @@ FUNCTION _set_cijena_artikla( id_vd, id_roba )
 FUNCTION _postoji_artikal_u_pripremi( id_roba )
 
    LOCAL _ok := .T.
-   LOCAL nDbfArea := Select()
-   LOCAL nDbfArea := RecNo()
+
+   PushWA()
 
    SELECT priprz
    SET ORDER TO TAG "1"
@@ -923,8 +923,7 @@ FUNCTION _postoji_artikal_u_pripremi( id_roba )
       MsgBeep( "Artikal " + AllTrim( id_roba ) + " se već nalazi u pripremi! Ako nastavite sa unosom #dodat će se vrijednost na postojeću stavku..." )
    ENDIF
 
-   SELECT ( nDbfArea )
-   GO ( nDbfArea )
+   PopWa()
 
    RETURN _ok
 

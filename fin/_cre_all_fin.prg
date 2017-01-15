@@ -356,6 +356,7 @@ FUNCTION cre_all_fin( ver )
 
    AFTER_CREATE_INDEX
 
+/*
    // -----------------------------------------------------------
    // FIN_BUIZ
    // -----------------------------------------------------------
@@ -370,7 +371,7 @@ FUNCTION cre_all_fin( ver )
    CREATE_INDEX( "ID", "ID", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    /*
    // FIN_ULIMIT

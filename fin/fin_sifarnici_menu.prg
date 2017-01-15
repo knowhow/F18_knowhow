@@ -86,8 +86,9 @@ STATIC FUNCTION _menu_budzet()
    AAdd( _opcexe, {|| P_ParEK() } )
    AAdd( _opc, "5. fond   " )
    AAdd( _opcexe, {|| P_Fond() } )
-   AAdd( _opc, "6. konta-izuzeci" )
-   AAdd( _opcexe, {|| P_BuIZ() } )
+   
+  // AAdd( _opc, "6. konta-izuzeci" )
+  // AAdd( _opcexe, {|| P_BuIZ() } )
 
    f18_menu( "sbdz", .F., _izbor, _opc, _opcexe )
 

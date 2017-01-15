@@ -244,11 +244,9 @@ STATIC FUNCTION form_zakljuci_racun( params )
    LOCAL _id_partner := params[ "idpartner" ]
    LOCAL _uplaceno := params[ "uplaceno" ]
 
-   IF gClanPopust
-      _id_vrsta_p := Space( 2 )
-   ELSE
+
       _id_vrsta_p := gGotPlac
-   ENDIF
+   
 
    Box(, 8, 67 )
 

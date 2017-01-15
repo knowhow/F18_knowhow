@@ -309,7 +309,7 @@ FUNCTION P_Fond( cId, dx, dy )
  *   param: cId
  *   param: dx
  *   param: dy
- */
+
 
 FUNCTION P_BuIz( cId, dx, dy )
 
@@ -322,7 +322,9 @@ FUNCTION P_BuIz( cId, dx, dy )
 
    RETURN PostojiSifra( F_BUIZ, 1, 10, 70, "Lista: konta-izuzeci u sortiranju", @cId, dx, dy )
 
+ */
 
+ 
 
 /* P_Budzet(cId,dx,dy)
  *     Otvara sifrarnik plana budzeta

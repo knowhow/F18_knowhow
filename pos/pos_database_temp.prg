@@ -79,7 +79,7 @@ FUNCTION pos2_pripr()
 
    SELECT _pos_pripr
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-
+/*
 
 FUNCTION IzvrsBudz()
 
@@ -51,11 +51,13 @@ FUNCTION IzvrsBudz()
    cSTKI1 := "N"
    cProv := "D"
 
-   PRIVATE cBRZaZ := PadR( my_get_from_ini( 'BUDZET', 'BrRedZaZagl', '0', KUMPATH ), 2 )
+   //PRIVATE cBRZaZ := PadR( my_get_from_ini( 'BUDZET', 'BrRedZaZagl', '0', KUMPATH ), 2 )
+   PRIVATE cBRZaZ := '0'
 
-   IF gBuIz == "D"
-      O_BUIZ
-   ENDIF
+//   IF gBuIz == "D"
+//      O_BUIZ
+//   ENDIF
+
    O_PARTN
 
    DO WHILE .T.
@@ -96,7 +98,7 @@ FUNCTION IzvrsBudz()
       ESC_BCR
       BoxC()
 
-      UzmiIzIni( KUMPATH + 'fmk.ini', 'BUDZET', 'BrRedZaZagl', cBRZaZ, 'WRITE' )
+      //UzmiIzIni( KUMPATH + 'fmk.ini', 'BUDZET', 'BrRedZaZagl', cBRZaZ, 'WRITE' )
 
       IF ( aUslK == NIL .OR. aUslRJ == NIL .OR. aUslFunk == NIL )
          LOOP
@@ -948,9 +950,6 @@ FUNCTION IB_Zagl1()
 
 
 
-/* IB_Zagl2()
- *     Zaglavlje izvjestaja izvrsenje budzeta 2
- */
 
 FUNCTION IB_Zagl2()
 
@@ -992,9 +991,6 @@ FUNCTION IB_Zagl3()
 
 
 
-/* IB_Zagl4()
- *     Zaglavlje izvjestaja izvrsenje budzeta varijanta 4
- */
 
 FUNCTION IB_Zagl4()
 
@@ -1016,10 +1012,6 @@ FUNCTION IB_Zagl4()
    RETURN
 
 
-
-/* Prihodi()
- *     Prihodi
- */
 
 FUNCTION Prihodi()
 
@@ -1418,10 +1410,6 @@ FUNCTION Prihodi()
 
 
 
-/* PR_Zagl()
- *     Zaglavlje prihoda
- */
-
 FUNCTION PR_Zagl()
 
    IF fPrvaStr
@@ -1441,13 +1429,6 @@ FUNCTION PR_Zagl()
 
 
 
-
-/* Razmak(nBrRed)
- *     Daje nBrRed praznih redova
- *  \todo Treba prebaciti u /sclib
- *   param: nBrRed  - broj redova
- */
-
 STATIC FUNCTION Razmak( nBrRed )
 
    PRIVATE i
@@ -1461,10 +1442,6 @@ STATIC FUNCTION Razmak( nBrRed )
 
 
 
-/* BuIz(cKonto)
- *     Sortiraj izuzetke u budzetu
- *   param: cKonto
- */
 
 FUNCTION BuIz( cKonto )
 
@@ -1485,3 +1462,6 @@ FUNCTION BuIz( cKonto )
    SELECT ( nSelect )
 
    RETURN PadR( cKonto, 10 )
+
+
+*/

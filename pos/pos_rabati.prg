@@ -40,9 +40,7 @@ FUNCTION FrmGetRabat( aRabat, nCijena )
    // Popust preko odredjenog iznosa
    GetPopPrekoOdrIznosa( aRabat, nCijena )
 
-   // 5. varijanta
-   // Popust za clanove
-   GetPopClanovi( aRabat, nCijena )
+
 
    // 6. varijanta
    // Popust zadavanjem procenta
@@ -58,7 +56,7 @@ FUNCTION FrmGetRabat( aRabat, nCijena )
  */
 FUNCTION GetPopZadavanjemNoveCijene( aRabat, nCijena )
 
-   // {
+
    LOCAL nNovaCijena := 0
 
    IF ( gPopZCj == "D" .AND. roba->tip <> "T" )
@@ -69,7 +67,7 @@ FUNCTION GetPopZadavanjemNoveCijene( aRabat, nCijena )
    ENDIF
 
    RETURN
-// }
+
 
 /* GetPopGeneral(aRabat, nCijena)
  *     Generalni popust za sve artikle
@@ -78,7 +76,6 @@ FUNCTION GetPopZadavanjemNoveCijene( aRabat, nCijena )
  */
 FUNCTION GetPopGeneral( aRabat, nCijena )
 
-   // {
    LOCAL nNovaCijena := 0
 
    IF ( !Empty( gPopust ) .AND. gPopust <> 99 .AND. gPopust <> 0 )
@@ -89,7 +86,7 @@ FUNCTION GetPopGeneral( aRabat, nCijena )
    ENDIF
 
    RETURN
-// }
+
 
 
 /* GetPopFromN2(aRabat, nCijena)
@@ -99,7 +96,7 @@ FUNCTION GetPopGeneral( aRabat, nCijena )
  */
 FUNCTION GetPopFromN2( aRabat, nCijena )
 
-   // {
+
    LOCAL nNovaCijena := 0
 
    IF ( !Empty( gPopust ) .AND. gPopust == 99 )
@@ -110,7 +107,7 @@ FUNCTION GetPopFromN2( aRabat, nCijena )
    ENDIF
 
    RETURN
-// }
+
 
 
 /* GetPopPrekoOdrIznosa(aRabat, nCijena)
@@ -129,26 +126,8 @@ FUNCTION GetPopPrekoOdrIznosa( aRabat, nCijena )
    ENDIF
 
    RETURN
-// }
 
 
-/* GetPopClanovi(aRabat, nCijena)
- *     Popust za clanove
- *   param: aRabat
- *   param: nCijena
- */
-FUNCTION GetPopClanovi( aRabat, nCijena )
-
-   // {
-   LOCAL nNovaCijena := 0
-
-   IF ( gUpitNP == "D" .AND. gClanPopust )
-      nNovaCijena = Round( nCijena * roba->n1 / 100, gPopDec )
-      AddToArrRabat( aRabat, roba->id, nil, nil, nil, nil, nNovaCijena )
-   ENDIF
-
-   RETURN
-// }
 
 /* GetPopProcent(aRabat, nCijena)
  *     Popust zadavanjem procenta
@@ -157,7 +136,7 @@ FUNCTION GetPopClanovi( aRabat, nCijena )
  */
 FUNCTION GetPopProcent( aRabat, nCijena )
 
-   // {
+
    LOCAL nNovaCijena := 0
 
    IF gPopProc == "D"
@@ -167,7 +146,7 @@ FUNCTION GetPopProcent( aRabat, nCijena )
    ENDIF
 
    RETURN
-// }
+
 
 
 /* AddToArrRabat(aRabat, cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6)
@@ -183,7 +162,6 @@ FUNCTION GetPopProcent( aRabat, nCijena )
  */
 FUNCTION AddToArrRabat( aRabat, cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6 )
 
-   // {
 
    // ako je neki od parametara nPopVar(N)==NIL setuj na 0
    IF nPopVar1 == NIL
@@ -235,7 +213,7 @@ FUNCTION AddToArrRabat( aRabat, cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4,
    ENDIF
 
    RETURN
-// }
+
 
 
 /* RptArrRabat(aRabat)
@@ -261,7 +239,7 @@ FUNCTION RptArrRabat( aRabat )
    ENDPRINT
 
    RETURN
-// }
+
 
 
 /* CalcArrRabat(aRabat, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
@@ -276,7 +254,7 @@ FUNCTION RptArrRabat( aRabat )
  */
 FUNCTION CalcArrRabat( aRabat, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6 )
 
-   // {
+
    LOCAL nIznos := 0
 
 
@@ -302,7 +280,7 @@ FUNCTION CalcArrRabat( aRabat, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5,
    NEXT
 
    RETURN nIznos
-// }
+
 
 
 /* CalcRabatForArticle(aRabat, cIdRoba, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
@@ -468,19 +446,7 @@ FUNCTION RecalcRabat( cIdVrsteP )
             Gather()
          ENDIF
          SKIP
-      ELSEIF gClanPopust
-         IF cIdVrsteP <> "02"
-            IF Len( aRabat ) > 0
-               nNIznos := CalcRabatForArticle( aRabat, idroba, .T., .T., .T., .T., .F., .T. )
-            ELSE
-               nNIznos := 0
-            ENDIF
-            Scatter()
-            _ncijena := nNIznos
-            Gather()
 
-         ENDIF
-         SKIP
       ELSE
          SKIP
          LOOP
@@ -488,7 +454,7 @@ FUNCTION RecalcRabat( cIdVrsteP )
    ENDDO
 
    RETURN
-// }
+
 
 
 /* Scan_PriprForRabat(aRabat)

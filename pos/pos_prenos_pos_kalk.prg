@@ -13,24 +13,7 @@
 
 
 
-STATIC FUNCTION _get_vd( tip_dokumenta )
-
-   LOCAL _ret := "16"
-
-   DO CASE
-   CASE tip_dokumenta $ "11#80#81"
-      _ret := "16"
-   CASE tip_dokumenta $ "19"
-      _ret := "NI"
-   CASE tip_dokumenta $ "IP"
-      _ret := "IN"
-   ENDCASE
-
-   RETURN _ret
-
-
-
-FUNCTION pos_preuzmi_iz_kalk( tip_dok, br_dok, rs_dbf )
+FUNCTION pos_preuzmi_iz_kalk( tip_dok, cBrDok, rs_dbf )
 
    LOCAL _imp_table := ""
    LOCAL _destination := ""
@@ -74,7 +57,7 @@ FUNCTION pos_preuzmi_iz_kalk( tip_dok, br_dok, rs_dbf )
    SET ORDER TO TAG "1"
 
    _br_dok := pos_novi_broj_dokumenta( _id_pos, tip_dok )
-   br_dok := _br_dok
+   cBrDok := _br_dok
 
    SELECT katops
    GO TOP
@@ -108,6 +91,24 @@ FUNCTION pos_preuzmi_iz_kalk( tip_dok, br_dok, rs_dbf )
    RETURN .T.
 
 
+
+
+
+STATIC FUNCTION _get_vd( tip_dokumenta )
+
+   LOCAL _ret := "16"
+
+   DO CASE
+   CASE tip_dokumenta $ "11#80#81"
+      _ret := "16"
+   CASE tip_dokumenta $ "19"
+      _ret := "NI"
+   CASE tip_dokumenta $ "IP"
+      _ret := "IN"
+   ENDCASE
+
+   RETURN _ret
+
 STATIC FUNCTION _brisi_fajlove_importa( import_file )
 
    FileDelete( import_file )
@@ -128,7 +129,7 @@ STATIC FUNCTION uslovi_za_insert_ispunjeni()
    RETURN lOk
 
 
-STATIC FUNCTION import_row( id_vd, br_dok, id_odj )
+STATIC FUNCTION import_row( cIdTipDk, cBrDok, cIdOdj )
 
    LOCAL nDbfArea := Select()
 
@@ -144,11 +145,11 @@ STATIC FUNCTION import_row( id_vd, br_dok, id_odj )
 
    REPLACE kolicina WITH katops->kolicina
 
-   IF id_vd == "NI"
+   IF cIdTipDk == "NI"
       REPLACE ncijena WITH katops->mpc2
    ENDIF
 
-   IF id_vd == "IN"
+   IF cIdTipDk == "IN"
       REPLACE kolicina WITH katops->kol2
       REPLACE kol2 WITH katops->kolicina
    ENDIF
@@ -167,10 +168,10 @@ STATIC FUNCTION import_row( id_vd, br_dok, id_odj )
    REPLACE PREBACEN WITH OBR_NIJE
    REPLACE IDRADNIK WITH gIdRadnik
    REPLACE IdPos WITH KATOPS->IdPos
-   REPLACE IdOdj WITH id_odj
-   REPLACE IdVd WITH id_vd
+   REPLACE IdOdj WITH cIdOdj
+   REPLACE IdVd WITH cIdTipDk
    REPLACE Smjena WITH gSmjena
-   REPLACE BrDok WITH br_dok
+   REPLACE BrDok WITH cBrDok
    REPLACE DATUM WITH gDatum
 
    SELECT ( nDbfArea )
@@ -178,7 +179,8 @@ STATIC FUNCTION import_row( id_vd, br_dok, id_odj )
    RETURN 1
 
 
-STATIC FUNCTION get_import_file( br_dok, destinacija, import_fajl )
+
+STATIC FUNCTION get_import_file( cBrDok, destinacija, import_fajl )
 
    LOCAL _filter
    LOCAL _prodajno_mjesto, _id_pos, cPrefixLocal
@@ -244,11 +246,11 @@ STATIC FUNCTION get_import_file( br_dok, destinacija, import_fajl )
    RETURN .T.
 
 
-STATIC FUNCTION GetPm( id_pos )
+STATIC FUNCTION GetPm( cIdPos )
 
    LOCAL _pm
 
-   _pm := AllTrim( id_pos )
+   _pm := AllTrim( cIdPos )
 
    RETURN _pm
 
@@ -265,7 +267,7 @@ STATIC FUNCTION _o_real_table()
 
 
 
-FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
+FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dat_dok, cBrDok )
 
    LOCAL _r_br, hRec
    LOCAL _kol
@@ -273,16 +275,16 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
    LOCAL nDbfArea := Select()
    LOCAL _count
 
-   IF id_vd <> VD_INV
+   IF cIdTipDk <> VD_INV
       RETURN .F.
    ENDIF
 
-   _cre_pom_table()
+   cre_pom_topska_dbf()
 
    _o_real_table()
 
-   IF !pos_dokument_postoji( id_pos, id_vd, dat_dok, br_dok )
-      MsgBeep( "Dokument: " + id_pos + "-" + id_vd + "-" + PadL( br_dok, 6 ) + " ne postoji !" )
+   IF !pos_dokument_postoji( cIdPos, cIdTipDk, dat_dok, cBrDok )
+      MsgBeep( "Dokument: " + cIdPos + "-" + cIdTipDk + "-" + PadL( cBrDok, 6 ) + " ne postoji !" )
       RETURN .F.
    ENDIF
 
@@ -293,7 +295,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
    SELECT pos
    SET ORDER TO TAG "1"
    GO TOP
-   SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
+   SEEK cIdPos + cIdTipDk + DToS( dat_dok ) + cBrDok
 
    IF !Found()
       MsgBeep( "POS tabela nema stavki !" )
@@ -303,8 +305,8 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
 
    MsgO( "Eksport dokumenta u toku ..." )
 
-   DO WHILE !Eof() .AND. field->idpos == id_pos .AND. field->idvd == id_vd .AND. ;
-         field->datum == dat_dok .AND. field->brdok == br_dok
+   DO WHILE !Eof() .AND. field->idpos == cIdPos .AND. field->idvd == cIdTipDk .AND. ;
+         field->datum == dat_dok .AND. field->brdok == cBrDok
 
       cIdRoba := field->idroba
 
@@ -332,7 +334,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
 
       dbf_update_rec( hRec )
 
-      ++ _r_br
+      ++_r_br
 
       SELECT pos
       SKIP
@@ -350,7 +352,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
    SELECT pom
    USE
 
-   _file := tops_kalk_create_topska( id_pos, dat_dok, dat_dok, id_vd, "tk_p" )
+   _file := tops_kalk_create_topska( cIdPos, dat_dok, dat_dok, cIdTipDk, "tk_p" )
    MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
 
 
@@ -415,7 +417,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
 
    gIdPos := cIdPos
 
-   _cre_pom_table()
+   cre_pom_topska_dbf()
    _o_real_table()
 
    SELECT pos_doks
@@ -496,7 +498,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
                REPLACE idpartner WITH pos_doks->idgost
             ENDIF
 
-            ++ _r_br
+            ++_r_br
          ELSE
 
             hRec := dbf_get_rec()
@@ -530,14 +532,14 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
    RETURN .T.
 
 
-STATIC FUNCTION _print_report( datum_od, datum_do, kolicina, iznos, broj_stavki )
+STATIC FUNCTION _print_report( dDatOd, dDatDo, kolicina, iznos, broj_stavki )
 
    START PRINT CRET
 
    ?
    ? "PRENOS PODATAKA TOPS->KALK za ", DToC( Date() )
    ?
-   ? "Datumski period od", DToC( datum_od ), "do", DToC( datum_do )
+   ? "Datumski period od", DToC( dDatOd ), "do", DToC( dDatDo )
    ? "Broj stavki:", AllTrim( Str( broj_stavki ) )
    ?
    ?U "Ukupna količina:", AllTrim( Str( kolicina, 12, 2 ) )
@@ -549,7 +551,8 @@ STATIC FUNCTION _print_report( datum_od, datum_do, kolicina, iznos, broj_stavki 
    RETURN .T.
 
 
-STATIC FUNCTION _cre_pom_table()
+
+STATIC FUNCTION cre_pom_topska_dbf()
 
    LOCAL aDbf := {}
 
@@ -595,7 +598,7 @@ STATIC FUNCTION _cre_pom_table()
  kreira izlazni fajl za multi prodajna mjesta režim
 */
 
-STATIC FUNCTION tops_kalk_create_topska( id_pos, datum_od, datum_do, v_dok, cPrefix )
+STATIC FUNCTION tops_kalk_create_topska( cIdPos, dDatOd, dDatDo, cIdTipDok, cPrefix )
 
    LOCAL cPrefixLocal := "tk"
    LOCAL cExportDirektorij
@@ -615,7 +618,7 @@ STATIC FUNCTION tops_kalk_create_topska( id_pos, datum_od, datum_do, v_dok, cPre
 
    direktorij_kreiraj_ako_ne_postoji( AllTrim( gKalkDest ) )
 
-   cIdPM := GetPm( id_pos )
+   cIdPM := GetPm( cIdPos )
 
    cExportDirektorij := AllTrim( gKalkDest ) + cIdPM + SLASH
 
@@ -623,7 +626,7 @@ STATIC FUNCTION tops_kalk_create_topska( id_pos, datum_od, datum_do, v_dok, cPre
 
    DirChange( my_home() )
 
-   cTableName := get_tops_kalk_export_file( "1", cExportDirektorij, datum_do, cPrefix )
+   cTableName := get_tops_kalk_export_file( "1", cExportDirektorij, dDatDo, cPrefix )
 
    cFajlDestinacija := cExportDirektorij + cTableName + ".dbf"
 

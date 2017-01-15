@@ -83,7 +83,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC gDatNal := "N"
    PUBLIC gSAKrIz := "N"
    PUBLIC gBezVracanja := "N"
-   PUBLIC gBuIz := "N"
+   //PUBLIC gBuIz := "N"
    PUBLIC gFinRj := "N"
    PUBLIC gTroskovi := "N"
    PUBLIC gVSubOp := "N"

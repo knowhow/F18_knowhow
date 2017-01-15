@@ -99,9 +99,8 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
 
    @ m_x + nX, m_y + 2  SAY "Limit za otvorene stavke (" + ValDomaca() + ")" GET gnLOst PICT "99999.99"
 
-   ++ nX
-
-   @ m_x + nX, m_y + 2 SAY "Koristiti konta-izuzetke u FIN-BUDZET-u? (D/N)" GET gBuIz VALID gBuIz $ "DN" PICT "@!"
+   //++ nX
+   //@ m_x + nX, m_y + 2 SAY "Koristiti konta-izuzetke u FIN-BUDZET-u? (D/N)" GET gBuIz VALID gBuIz $ "DN" PICT "@!"
 
    ++ nX
 
@@ -199,7 +198,7 @@ FUNCTION fin_read_params()
    gnLOst := fetch_metric( "fin_limit_otvorene_stavke", nil, gnLOst )
    gDUFRJ := fetch_metric( "fin_dugi_uslov_za_rj", nil, gDUFRJ )
    gBezVracanja := fetch_metric( "fin_zabrana_povrata_naloga", nil, gBezVracanja )
-   gBuIz := fetch_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
+   //gBuIz := fetch_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
    gPicDem := fetch_metric( "fin_picdem", nil, gPicDEM )
    gPicBHD := fetch_metric( "fin_picbhd", nil, gPicBHD )
 
@@ -239,7 +238,7 @@ FUNCTION fin_write_params()
    set_metric( "fin_limit_otvorene_stavke", nil, gnLOst )
    set_metric( "fin_dugi_uslov_za_rj", nil, gDUFRJ )
    set_metric( "fin_zabrana_povrata_naloga", nil, gBezVracanja )
-   set_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
+   //set_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
    set_metric( "fin_picdem", nil, gPicDEM )
    set_metric( "fin_picbhd", nil, gPicBHD )
    set_metric( "fin_kreiranje_sintetike", nil, gSaKrIz )

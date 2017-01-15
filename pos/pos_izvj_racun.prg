@@ -91,13 +91,9 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
             nNeplaca += Kolicina * Cijena / 2 - ncijena
          ENDIF
 
-         IF ( gPopVar = "P" .AND. gClanPopust )
-            IF !Empty( cPartner )
-               nNeplaca += kolicina * NCijena
-            ENDIF
-         ENDIF
 
-         IF ( gPopVar = "P" .AND. !gClanPopust )
+
+         IF ( gPopVar == "P" )
             nNeplaca += kolicina * NCijena
          ENDIF
 
@@ -1042,11 +1038,8 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
 
          // popust - ovo treba jos dobro pregledati
          DO CASE
-         CASE gPopVar = "P" .AND. gClanPopust
-            IF !Empty( cPartner )
-               nIznPop := field->ncijena
-            ENDIF
-         CASE gPopVar = "P" .AND. !gClanPopust
+
+         CASE gPopVar = "P" 
             nIznPop := field->ncijena
          ENDCASE
 

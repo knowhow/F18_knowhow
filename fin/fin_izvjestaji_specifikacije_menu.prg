@@ -79,8 +79,9 @@ STATIC FUNCTION fin_izvj_specif_txt_menu()
    AAdd( _opcexe, {|| PartVanProm() } )
 
    IF gFinRj == "D" .OR. gTroskovi == "D"
-      AAdd( _opc, "A. izvrsenje budzeta/pregled rashoda" )
-      AAdd( _opcexe, {|| IzvrsBudz() } )
+      //AAdd( _opc, "A. izvrsenje budzeta/pregled rashoda" )
+      //AAdd( _opcexe, {|| IzvrsBudz() } )
+
       AAdd( _opc, "B. pregled prihoda" )
       AAdd( _opcexe, {|| Prihodi() } )
    ENDIF

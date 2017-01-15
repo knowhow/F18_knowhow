@@ -268,7 +268,6 @@ METHOD set_module_gvars()
    PUBLIC gKolDec := 2
    PUBLIC gCijDec := 2
    PUBLIC gStariObrPor := .F.
-   PUBLIC gClanPopust := .F.
    PUBLIC gPoreziRaster := "D"
    PUBLIC gPratiStanje := "N"
    PUBLIC gIdPos := "1 "

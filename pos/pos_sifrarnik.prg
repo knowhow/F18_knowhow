@@ -186,7 +186,7 @@ FUNCTION P_Osob( cId, dx, dy )
 
    RETURN PostojiSifra( F_OSOB, 2, 10, 55, "Sifrarnik osoblja", @cid, dx, dy, {|| EdOsob() } )
 
-   RETURN
+   RETURN .T.
 
 
 

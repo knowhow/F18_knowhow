@@ -41,11 +41,6 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
 
    cDokument := AllTrim( _idpos ) + "-" + _idvd + "-" + AllTrim( _brdok ) + " " + DToC( _datum )
 
-   IF gBrojSto == "D"
-      IF cIdVd <> VD_RN
-         _zakljucen := "Z"
-      ENDIF
-   ENDIF
 
    hRec := get_hash_record_from_global_vars()
 

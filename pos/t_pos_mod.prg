@@ -179,8 +179,7 @@ METHOD set_module_gvars()
 
    PUBLIC gDirZaklj        // ako se ne koristi princip radnih racuna, da li se
    // racuni zakljucuju odmah po unosu stavki
-   PUBLIC gBrojSto         // da li je broj stola obavezan
-   // D-da, N-ne, 0-uopce se ne vodi
+
    PUBLIC gPoreziRaster    // da li se porezi stampaju pojedinacno ili
    // zbirno
    PUBLIC gPocStaSmjene    // da li se uvodi pocetno stanje smjene
@@ -304,7 +303,6 @@ METHOD set_module_gvars()
 
    // fiskalni parametri
    gVodiOdj := "N"
-   gBrojSto := "0"
    gRnSpecOpc := "N"
    gRadniRac := "N"
    gDirZaklj := "D"
@@ -349,7 +347,6 @@ METHOD set_module_gvars()
    gRadniRac := fetch_metric( "RadniRacuni", nil, gRadniRac )
    gDirZaklj := fetch_metric( "DirektnoZakljucivanjeRacuna", nil, gDirZaklj )
    gRnSpecOpc := fetch_metric( "RacunSpecifOpcije", nil, gRnSpecOpc )
-   gBrojSto := fetch_metric( "BrojStolova", nil, gBrojSto )
    gDupliArt := fetch_metric( "DupliArtikli", nil, gDupliArt )
    gDupliUpoz := fetch_metric( "DupliUnosUpozorenje", nil, gDupliUpoz )
    gPratiStanje := fetch_metric( "PratiStanjeRobe", nil, gPratiStanje )

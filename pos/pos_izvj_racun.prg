@@ -444,9 +444,6 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
    cIdRadnik := pos_doks->IdRadnik
    cSmjena := pos_doks->Smjena
 
-   IF gBrojSto == "D" .AND. !glUgostOpc
-      cZakljucen := pos_doks->zakljucen
-   ENDIF
 
    SELECT pos
 
@@ -459,9 +456,7 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
       SELECT pos
       SEEK ( aVezani[ nCnt ][ 1 ] + VD_RN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
       DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( aVezani[ nCnt ][ 1 ] + VD_RN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
-         IF gBrojSto == "D"
-            //
-         ENDIF
+        
 
          // select pom
          // seek POS->IdRoba+POS->IdCijena+STR (POS->Cijena, 10, 3)
@@ -1039,7 +1034,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          // popust - ovo treba jos dobro pregledati
          DO CASE
 
-         CASE gPopVar = "P" 
+         CASE gPopVar = "P"
             nIznPop := field->ncijena
          ENDCASE
 

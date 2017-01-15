@@ -53,7 +53,7 @@ FUNCTION pos_izvjestaji_tops()
       AAdd( opc, "4. kartice artikala" )
       AAdd( opcexe, {|| pos_kartica_artikla() } )
       AAdd( opc, "5. porezi po tarifama" )
-      AAdd( opcexe, {|| IF( IsPDV(), PDVPorPoTar(), PorPoTar() ) } )
+      AAdd( opcexe, {||  PDVPorPoTar() } )
       AAdd( opc, "6. najprometniji artikli" )
       AAdd( opcexe, {|| pos_top_narudzbe() } )
       AAdd( opc, "7. stanje partnera" )
@@ -114,7 +114,7 @@ FUNCTION pos_izvjestaji_hops()
       AAdd( opc, "5. kartice artikala" )
       AAdd( opcexe, {|| pos_kartica_artikla() } )
       AAdd( opc, "6. porezi po tarifama" )
-      AAdd( opcexe, {|| IF( IsPDV(), PDVPorPoTar(), PorPoTar() ) } )
+      AAdd( opcexe, {|| PDVPorPoTar() } )
       AAdd( opc, "7. najprometniji artikli" )
       AAdd( opcexe, {|| pos_top_narudzbe() } )
    ENDIF
@@ -126,7 +126,7 @@ FUNCTION pos_izvjestaji_hops()
 
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "izvh" )
 
-   RETURN
+   RETURN .T.
 
 
 

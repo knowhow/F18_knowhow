@@ -55,9 +55,9 @@ FUNCTION StKalk81( fzatops )
 
       m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
 
-      IF IsPDV()
-         m += " -----------"
-      ENDIF
+
+      m += " -----------"
+
 
       IF lPrikPRUC
          m += " ----------"
@@ -125,7 +125,7 @@ FUNCTION StKalk81( fzatops )
          nMarza2 := nMarza2 - nPRUC
       ENDIF
 
-      IF PRow() > page_length() - 4
+      IF PRow() > page_length() -4
          FF
          @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF
@@ -198,9 +198,9 @@ FUNCTION StKalk81( fzatops )
          @ PRow(), PCol() + 1 SAY Kolicina             PICTURE PicCDEM
       ENDIF
       @ PRow(), PCol() + 1 SAY MPC                   PICTURE PicCDEM
-      IF IsPDV()
-         @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ] PICTURE PicProc
-      ENDIF
+
+      @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ] PICTURE PicProc
+
       @ PRow(), PCol() + 1 SAY MPCSaPP               PICTURE PicCDEM
 
       // drugi red
@@ -221,9 +221,9 @@ FUNCTION StKalk81( fzatops )
          ELSE
             @ PRow(), PCol() + 1 SAY Space( Len( PicCDEM ) )
          ENDIF
-         IF IsPDV()
-            @ PRow(), PCol() + 1 SAY nPor1 PICTURE PicCDEM
-         ENDIF
+
+         @ PRow(), PCol() + 1 SAY nPor1 PICTURE PicCDEM
+
       ENDIF
 
       // treci red
@@ -242,17 +242,17 @@ FUNCTION StKalk81( fzatops )
             @ PRow(), PCol() + 1  SAY nU9a        PICTURE         PICDEM
          ENDIF
       ELSE
-         @ PRow() + 1, nCol1 - 1   SAY Space( Len( picdem ) )
+         @ PRow() + 1, nCol1 -1   SAY Space( Len( picdem ) )
       ENDIF
       @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
-      IF IsPDV()
-         @ PRow(), PCol() + 1  SAY nUC  PICTURE PICDEM
-      ENDIF
+
+      @ PRow(), PCol() + 1  SAY nUC  PICTURE PICDEM
+
       @ PRow(), PCol() + 1  SAY nUB         PICTURE         PICDEM
       SKIP
    ENDDO
 
-   IF PRow() > page_length() - 3
+   IF PRow() > page_length() -3
       FF
       @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF
@@ -276,12 +276,12 @@ FUNCTION StKalk81( fzatops )
          @ PRow(), PCol() + 1  SAY nTot9a        PICTURE         PICDEM
       ENDIF
    ELSE
-      @ PRow() + 1, nCol1 - 1   SAY Space( Len( picdem ) )
+      @ PRow() + 1, nCol1 -1   SAY Space( Len( picdem ) )
    ENDIF
    @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
-   IF IsPDV()
-      @ PRow(), PCol() + 1 SAY nTotC PICTURE PICDEM
-   ENDIF
+
+   @ PRow(), PCol() + 1 SAY nTotC PICTURE PICDEM
+
    @ PRow(), PCol() + 1  SAY nTotB         PICTURE         PICDEM
 
    ? m
@@ -348,34 +348,22 @@ FUNCTION kalk_stampa_dok_81()
    m := "---- ---------- ---------- ---------- ---------- ---------- ---------- ----------" + ;
       IF( lPrikPRUC, " ----------", "" ) + " ---------- -----------"
 
-   IF IsPDV()
-      m += " ----------"
-   ENDIF
+
+   m += " ----------"
+
 
    ? m
 
-   IF !IsPDV()
-      IF lPrikPRUC
-         ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   * POREZ NA *   MPC    * MPCSaPP  *"
-         ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *   MARZU  *          *          *"
-         ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *   sum    *"
-      ELSE
-         ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   *   MPC    * MPCSaPP  *"
-         ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *          *          *"
-         ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *"
-      ENDIF
+   IF lPrikPRUC
+      ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   * POREZ NA *   MPC    * MPCSaPDV *"
+      ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *   MARZU  *          *          *"
+      ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *   sum    *"
    ELSE
-      IF lPrikPRUC
-         ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   * POREZ NA *   MPC    * MPCSaPDV *"
-         ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *   MARZU  *          *          *"
-         ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *   sum    *"
-      ELSE
-         ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   *    PC    *  PDV(%)  *    PC    *"
-         ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *  BEZ PDV *  PDV     *  SA PDV  *"
-         ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *          *"
-      ENDIF
-
+      ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   *    PC    *  PDV(%)  *    PC    *"
+      ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *  BEZ PDV *  PDV     *  SA PDV  *"
+      ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *          *"
    ENDIF
+
 
    ? m
    nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := nTotb := 0
@@ -480,9 +468,9 @@ FUNCTION kalk_stampa_dok_81()
          @ PRow(), PCol() + 1 SAY aPorezi[ POR_PRUCMP ] PICTURE PicProc
       ENDIF
       @ PRow(), PCol() + 1 SAY MPC                   PICTURE PicCDEM
-      IF IsPDV()
-         @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ] PICTURE PicProc
-      ENDIF
+
+      @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ] PICTURE PicProc
+
       @ PRow(), PCol() + 1 SAY MPCSaPP               PICTURE PicCDEM
 
       // drugi red
@@ -496,10 +484,10 @@ FUNCTION kalk_stampa_dok_81()
       IF lPrikPRUC
          @ PRow(), PCol() + 1 SAY nPRUC              PICTURE PicCDEM
       ENDIF
-      IF IsPDV()
-         @ PRow(), PCol() + 1 SAY Space( Len( picdem ) )
-         @ PRow(), PCol() + 1 SAY nPor1  PICTURE PicCDEM
-      ENDIF
+
+      @ PRow(), PCol() + 1 SAY Space( Len( picdem ) )
+      @ PRow(), PCol() + 1 SAY nPor1  PICTURE PicCDEM
+
       // treci red
       @ PRow() + 1, nCol1   SAY nU          PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nU2         PICTURE         PICDEM
@@ -511,9 +499,9 @@ FUNCTION kalk_stampa_dok_81()
          @ PRow(), PCol() + 1  SAY nU9a         PICTURE         PICDEM
       ENDIF
       @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
-      IF IsPDV()
-         @ PRow(), PCol() + 1 SAY nUC  PICTURE  PICDEM
-      ENDIF
+
+      @ PRow(), PCol() + 1 SAY nUC  PICTURE  PICDEM
+
       @ PRow(), PCol() + 1  SAY nUB         PICTURE         PICDEM
 
       SKIP
@@ -536,9 +524,9 @@ FUNCTION kalk_stampa_dok_81()
    ENDIF
    @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
 
-   IF IsPDV()
-      @ PRow(), PCol() + 1  SAY nTotC  PICTURE         PICDEM
-   ENDIF
+
+   @ PRow(), PCol() + 1  SAY nTotC  PICTURE         PICDEM
+
 
    @ PRow(), PCol() + 1  SAY nTotB         PICTURE         PICDEM
 

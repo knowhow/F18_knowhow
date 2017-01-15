@@ -508,11 +508,8 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
    SELECT pos
 
    IF !gStariObrPor
-      IF IsPDV()
-         pos_stampa_racuna_pdv( cIdPos, pos_doks->brdok, .T., pos_doks->idvrstep, pos_doks->datum, aVezani, lViseOdjednom, lOnlyFill )
-      ELSE
-         pos_stampa_racuna( cIdPos, pos_doks->brdok, .T., pos_doks->idvrstep, pos_doks->datum, aVezani )
-      ENDIF
+
+      pos_stampa_racuna_pdv( cIdPos, pos_doks->brdok, .T., pos_doks->idvrstep, pos_doks->datum, aVezani, lViseOdjednom, lOnlyFill )
 
       RETURN
    ENDIF
@@ -845,7 +842,7 @@ FUNCTION SetujZakljuceno()
 
    DO WHILE !Eof()
       REPLACE field->zakljucen WITH "Z"
-      ++ nCounter
+      ++nCounter
       SKIP
    ENDDO
 
@@ -1096,7 +1093,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
             nUkStavka := nUBPDVPopust
          ENDIF
 
-         ++ nCSum
+         ++nCSum
 
          dodaj_stavku_racuna( cStalRac, Str( nCSum, 3 ), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round( nCjenPDV, 3 ), Round( nCjenBPDV, 3 ), Round( nCjen2PDV, 3 ), Round( nCjen2BPDV, 3 ), Round( nPopust, 2 ), Round( nPPDV, 2 ), Round( nVPDV, 3 ), Round( nUkStavka, 3 ), 0, 0 )
 

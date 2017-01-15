@@ -55,15 +55,15 @@ FUNCTION kalk_unos_dok_81( hParams )
 
    IF nRbr == 1 .OR. !kalk_is_novi_dokument()
 
-      ++ _x
+      ++_x
       _kord_x := m_x + _x
 
       @ m_x + _x, m_y + 2 SAY8 "DOBAVLJAČ:" GET _IdPartner PICT "@!" ;
-         VALID {|| Empty( _IdPartner ) .OR. p_partner( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ) }
+         VALID {|| Empty( _IdPartner ) .OR. p_partner( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x -1, 22, 20 ) }
       @ m_x + _x, 50 SAY "Broj fakture:" GET _brfaktp
       @ m_x + _x, Col() + 1 SAY "Datum:" GET _datfaktp
 
-      ++ _x
+      ++_x
       _kord_x := m_x + _x
 
       @ m_x + _x, m_y + 2 SAY8 "Konto zadužuje:" GET _idkonto ;
@@ -79,7 +79,7 @@ FUNCTION kalk_unos_dok_81( hParams )
 
    ELSE
 
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY8 "DOBAVLJAČ: "
       ?? _idpartner
       @  m_x + _x, Col() + 1 SAY "Faktura broj: "
@@ -87,7 +87,7 @@ FUNCTION kalk_unos_dok_81( hParams )
       @  m_x + _x, Col() + 1 SAY "Datum: "
       ?? _datfaktp
 
-      ++ _x
+      ++_x
 
       @ m_x + _x, m_y + 2 SAY "Konto zaduzuje: "
       ?? _idkonto
@@ -108,7 +108,7 @@ FUNCTION kalk_unos_dok_81( hParams )
 
 
 
-   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N"  VALID P_Tarifa( @_IdTarifa )
+   @ m_x + _x, m_y + ( MAXCOLS() -20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N"  VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -125,9 +125,9 @@ FUNCTION kalk_unos_dok_81( hParams )
    SELECT kalk_pripr
 
    _pkonto := _idkonto
-   //kalk_dat_poslj_promjene_prod()
+   // kalk_dat_poslj_promjene_prod()
 
-   ++ _x
+   ++_x
    IF _use_rok
       @ m_x + _x, m_y + 2 SAY8 "Datum isteka roka:" GET _rok
    ENDIF
@@ -136,7 +136,7 @@ FUNCTION kalk_unos_dok_81( hParams )
       @ m_x + _x, m_y + 30 SAY8 "Opis:" GET _opis PICT "@S40"
    ENDIF
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Količina " GET _kolicina PICT PicKol VALID _kolicina <> 0
 
    IF kalk_is_novi_dokument()
@@ -152,13 +152,13 @@ FUNCTION kalk_unos_dok_81( hParams )
 
    SELECT kalk_pripr
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Fakturna cijena:"
 
-   //IF gDokKVal == "D"
-      // konverzija valute...
-      @ m_x + _x, Col() + 1 SAY "EUR->" GET __k_val VALID kalk_ulaz_preracun_fakturne_cijene( __k_val ) PICT "@!"
-   //ENDIF
+   // IF gDokKVal == "D"
+   // konverzija valute...
+   @ m_x + _x, Col() + 1 SAY "EUR->" GET __k_val VALID kalk_ulaz_preracun_fakturne_cijene( __k_val ) PICT "@!"
+   // ENDIF
 
    @ m_x + _x, m_y + _unos_left GET _fcj ;
       PICT PicDEM ;
@@ -167,7 +167,7 @@ FUNCTION kalk_unos_dok_81( hParams )
    @ m_x + _x, Col() + 1 SAY "*** <ALT+T> unos ukupne FV"
 
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2   SAY "Rabat (%):"
    @ m_x + _x, m_y + _unos_left GET _rabat PICT PicDEM ;
       WHEN {|| SetKey( K_ALT_T, {|| _kaskadni_rabat( @_krabat ) } ), .T. } ;
@@ -230,7 +230,7 @@ STATIC FUNCTION _kaskadni_rabat( krabat )
       RETURN _ok
    ENDIF
 
-   _rabat := ( 100 - 100 * ( 1 - _r_1 / 100 ) * ;
+   _rabat := ( 100 -100 * ( 1 - _r_1 / 100 ) * ;
       IF( _r_2 > 0, ( 1 - _r_2 / 100 ), 1 ) * ;
       IF( _r_3 > 0, ( 1 - _r_3 / 100 ), 1 ) * ;
       IF( _r_4 > 0, ( 1 - _r_4 / 100 ), 1 ) ;
@@ -326,25 +326,25 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
       @ m_x + _x, m_y + _unos_left SAY c10T1 + cSPom GET _TPrevoz VALID _TPrevoz $ "%AUR" PICT "@!"
       @ m_x + _x, Col() + 2 GET _Prevoz PICT PicDEM
 
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + _unos_left SAY c10T2 + cSPom GET _TBankTr VALID _TBankTr $ "%AUR" PICT "@!"
       @ m_x + _x, Col() + 2 GET _BankTr PICT PicDEM
 
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + _unos_left SAY c10T3 + cSPom GET _TSpedTr VALID _TSpedTr $ "%AUR" PICT "@!"
       @ m_x + _x, Col() + 2 GET _SpedTr PICT PicDEM
 
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + _unos_left SAY c10T4 + cSPom GET _TCarDaz VALID _TCarDaz $ "%AUR" PICT "@!"
       @ m_x + _x, Col() + 2 GET _CarDaz PICT PicDEM
 
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + _unos_left SAY c10T5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICT "@!"
       @ m_x + _x, Col() + 2 GET _ZavTr PICT PicDEM ;
          VALID {|| kalk_nabcj(), .T. }
 
-      ++ _x
-      ++ _x
+      ++_x
+      ++_x
 
    ENDIF
 
@@ -354,25 +354,23 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
    @ m_x + _x, m_y + _unos_left GET _nc PICT PicDEM
 
    // MARZA
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "MARZA:" GET _TMarza2 VALID _Tmarza2 $ "%AU" PICT "@!"
    @ m_x + _x, m_y + _unos_left GET _marza2 PICT PicDEM VALID {|| _vpc := _nc, .T. }
    @ m_x + _x, Col() + 1 GET fMarza PICT "@!"
 
    // PRODAJNA CIJENA
-   ++ _x
+   ++_x
 
-   IF IsPDV()
-      @ m_x + _x, m_y + 2 SAY "PC BEZ PDV:"
-   ELSE
-      @ m_x + _x, m_y + 2 SAY "MALOPROD. CIJENA (MPC):"
-   ENDIF
+
+   @ m_x + _x, m_y + 2 SAY "PC BEZ PDV:"
+
 
    @ m_x + _x, m_y + _unos_left GET _mpc PICT PicDEM ;
       WHEN W_MPC_( "81", ( fMarza == "F" ), @aPorezi ) ;
       VALID V_Mpc_( "81", ( fMarza == "F" ), @aPorezi )
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "PDV (%):"
    @ m_x + _x, Col() + 2 SAY TARIFA->OPP PICTURE "99.99"
@@ -382,7 +380,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
       @ m_x + _x, Col() + 2 SAY TARIFA->ZPP PICTURE "99.99"
    ENDIF
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "PC SA PDV:"
 

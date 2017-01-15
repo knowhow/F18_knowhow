@@ -235,7 +235,7 @@ FUNCTION lager_lista_prodavnica()
    m += " " + REPL( "-", nPom )
 
    IF cPredhstanje == "D"
-      nPom := Len( gPicKol ) - 2
+      nPom := Len( gPicKol ) -2
       m += " " + REPL( "-", nPom )
    ENDIF
    IF cSredCij == "D"
@@ -590,7 +590,7 @@ FUNCTION lager_lista_prodavnica()
             IF Len( aNaz ) > 1
                @ PRow(), nCR  SAY aNaz[ 2 ]
             ENDIF
-            @ PRow(), nCol0 - 1 SAY ""
+            @ PRow(), nCol0 -1 SAY ""
          ENDIF
 
          IF ( cKontrolnaTabela == "D" )
@@ -649,7 +649,7 @@ FUNCTION lager_lista_prodavnica()
    ? __line
    ? "UKUPNO:"
 
-   @ PRow(), nCol0 - 1 SAY ""
+   @ PRow(), nCol0 -1 SAY ""
 
    IF cPredhStanje == "D"
       @ PRow(), PCol() + 1 SAY nTPMPV PICT gpickol
@@ -668,7 +668,7 @@ FUNCTION lager_lista_prodavnica()
    @ PRow(), PCol() + 1 SAY nTMpv PICT gpicdem
 
    IF cPNab == "D"
-      @ PRow() + 1, nCol0 - 1 SAY ""
+      @ PRow() + 1, nCol0 -1 SAY ""
       IF cPredhStanje == "D"
          @ PRow(), PCol() + 1 SAY nTPNV PICT gpickol
       ENDIF
@@ -740,41 +740,23 @@ FUNCTION ZaglLLP( lSint )
 
    IF cPredhStanje == "D"
 
-      IF IsPDV()
 
-         cTmp := " R.  * Artikal  *   Naziv            *jmj*"
-         nPom := Len( gPicKol )
-         cTmp += PadC( "Predh.st", nPom ) + "*"
-         cTmp += PadC( "ulaz", nPom ) + " " + PadC( "izlaz", nPom ) + "*"
-         cTmp += PadC( "STANJE", nPom ) + "*"
-         nPom := Len( gPicDem )
-         cTmp += PadC( "PV.Dug.", nPom ) + "*"
-         cTmp += PadC( "PV.Pot.", nPom ) + "*"
-         cTmp += PadC( "PV", nPom ) + "*"
-         nPom := Len( gPicCDem )
-         cTmp += PadC( "PC.SA PDV", nPom ) + "*"
-         cTmp += cSC1
+      cTmp := " R.  * Artikal  *   Naziv            *jmj*"
+      nPom := Len( gPicKol )
+      cTmp += PadC( "Predh.st", nPom ) + "*"
+      cTmp += PadC( "ulaz", nPom ) + " " + PadC( "izlaz", nPom ) + "*"
+      cTmp += PadC( "STANJE", nPom ) + "*"
+      nPom := Len( gPicDem )
+      cTmp += PadC( "PV.Dug.", nPom ) + "*"
+      cTmp += PadC( "PV.Pot.", nPom ) + "*"
+      cTmp += PadC( "PV", nPom ) + "*"
+      nPom := Len( gPicCDem )
+      cTmp += PadC( "PC.SA PDV", nPom ) + "*"
+      cTmp += cSC1
 
-         ?U cTmp
+      ?U cTmp
 
-      ELSE
 
-         cTmp := " R.  * Artikal  *   Naziv            *jmj*"
-         nPom := Len( gPicKol )
-         cTmp += PadC( "Predh.st", nPom ) + "*"
-         cTmp += PadC( "ulaz", nPom ) + " " + PadC( "izlaz", nPom ) + "*"
-         cTmp += PadC( "STANJE", nPom ) + "*"
-         nPom := Len( gPicDem )
-         cTmp += PadC( "MPV.Dug.", nPom ) + "*"
-         cTmp += PadC( "MPV.Pot.", nPom ) + "*"
-         cTmp += PadC( "MPV", nPom ) + "*"
-         nPom := Len( gPicCDem )
-         cTmp += PadC( "MPC sa PP", nPom ) + "*"
-         cTmp += cSC1
-
-         ?U cTmp
-
-      ENDIF
 
       cTmp := " br. *          *                    *   *"
       nPom := Len( gPicKol )

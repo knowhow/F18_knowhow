@@ -183,7 +183,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
       // red 2
       @ PRow() + 1, 4 SAY IdTarifa + roba->tip
       IF g11bezNC == "D"
-         @ PRow(), nCol0 - 1    SAY  ""
+         @ PRow(), nCol0 -1    SAY  ""
       ELSE
          @ PRow(), nCol0    SAY  fcj * kolicina      PICTURE picdem
       ENDIF
@@ -207,13 +207,10 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
          @ PRow(), nCol1    SAY aPorezi[ POR_PPP ]   PICTURE picproc
 
       ENDIF
-      IF IsPDV()
-         @ PRow(),  PCol() + 1 SAY  nU6             PICTURE piccdem
-         @ PRow(),  PCol() + 1 SAY  nU7             PICTURE piccdem
-      ELSE
-         @ PRow(),  PCol() + 1 SAY  nPor1             PICTURE piccdem
-         @ PRow(),  PCol() + 1 SAY  nU7               PICTURE piccdem
-      ENDIF
+
+      @ PRow(),  PCol() + 1 SAY  nU6             PICTURE piccdem
+      @ PRow(),  PCol() + 1 SAY  nU7             PICTURE piccdem
+
 
       // red 3
       IF Round( nc, 5 ) <> 0
@@ -229,7 +226,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
    ? m
    @ PRow() + 1, 0        SAY "Ukupno:"
    IF g11bezNC == "D"
-      @ PRow(), nCol0 - 1      SAY  ""
+      @ PRow(), nCol0 -1      SAY  ""
    ELSE
       @ PRow(), nCol0      SAY  nTot1        PICTURE       PicDEM
    ENDIF

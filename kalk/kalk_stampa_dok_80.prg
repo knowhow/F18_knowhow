@@ -54,26 +54,16 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
 
    ? m
 
-   IF !IsPdv()
-      // 1. red
-      ? "*R.* Roba                                       * kolicina *" + ;
-         iif( fBezNC, "", "  Nab.cj  * marza    *" ) + ;
-         "   MPC    *  MPC    *"
-      // 2.red
-      ? "*br* Tarifa                                     *          *" + ;
-         iif( fBezNC, "", "          *          *" ) + ;
-         "          * sa PPP  *"
-   ELSE
-      // 1. red
-      ? "*R.* Roba                                       * kolicina *" + ;
-         iif( fBezNC, "", "  Nab.cj  * marza    *" ) + ;
-         "   MPC    *  MPC    *"
-      // 2.red
-      ? "*br* Tarifa                                     *          *" + ;
-         iif( fBezNC, "", "          *          *" ) + ;
-         "  bez PDV * sa PDV  *"
 
-   ENDIF
+   // 1. red
+   ? "*R.* Roba                                       * kolicina *" + ;
+      iif( fBezNC, "", "  Nab.cj  * marza    *" ) + ;
+      "   MPC    *  MPC    *"
+   // 2.red
+   ? "*br* Tarifa                                     *          *" + ;
+      iif( fBezNC, "", "          *          *" ) + ;
+      "  bez PDV * sa PDV  *"
+
 
    ? m
 

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,363 +16,355 @@
 // -------------------------------------------
 // realizacija vp po partnerima
 // -------------------------------------------
-function kalk_real_partnera()
-local nT0:=nT1:=nT2:=nT3:=nT4:=0
-local nCol1:=0
-local nPom
-local PicCDEM:=gPicCDEM       // "999999.999"
-local PicProc:=gPicProc       // "999999.99%"
-local PicDEM:=gPicDEM         // "9999999.99"
-local Pickol:=gPicKol         // "999999.999"
+FUNCTION kalk_real_partnera()
 
-O_SIFK
-O_SIFV
-O_ROBA
-O_KONTO
-O_TARIFA
-O_PARTN
+   LOCAL nT0 := nT1 := nT2 := nT3 := nT4 := 0
+   LOCAL nCol1 := 0
+   LOCAL nPom
+   LOCAL PicCDEM := gPicCDEM       // "999999.999"
+   LOCAL PicProc := gPicProc       // "999999.99%"
+   LOCAL PicDEM := gPicDEM         // "9999999.99"
+   LOCAL Pickol := gPicKol         // "999999.999"
 
-private dDat1:=dDat2:=ctod("")
-cIdFirma:=self_organizacija_id()
-cIdKonto:=padr("1310",7)
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_KONTO
+   O_TARIFA
+   O_PARTN
 
-if IsVindija()
-	cOpcine:=SPACE(50)
-endif
+   PRIVATE dDat1 := dDat2 := CToD( "" )
+   cIdFirma := self_organizacija_id()
+   cIdKonto := PadR( "1310", 7 )
 
-qqPartn:=space(60)
+   IF IsVindija()
+      cOpcine := Space( 50 )
+   ENDIF
 
-cPRUC:="N"
-Box(,8,70)
- do while .t.
- set cursor on
-  if gNW $ "DX"
-   @ m_x+1,m_y+2 SAY "Firma "; ?? self_organizacija_id(),"-",self_organizacija_naziv()
-  else
-   @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| p_partner(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-  endif
-  @ m_x+2,m_y+2 SAY "Magacinski konto:" GET cidKonto pict "@!" valid P_Konto(@cIdKonto)
-  @ m_x+4,m_y+2 SAY "Period:" GET dDat1
-  @ m_x+4,col()+1 SAY "do" GET dDat2
+   qqPartn := Space( 60 )
 
-  @ m_x+6,m_y+2 SAY "Partneri:" GET qqPartn pict "@!S40"
-  
-  if IsVindija()
-  	@ m_x+8,m_y+2 SAY "Opcine:" GET cOpcine pict "@!S40"
-  endif
-  
-  read
-  
-  ESC_BCR
+   cPRUC := "N"
+   Box(, 8, 70 )
+   DO WHILE .T.
+      SET CURSOR ON
+      IF gNW $ "DX"
+         @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      ELSE
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+      @ m_x + 2, m_y + 2 SAY "Magacinski konto:" GET cidKonto PICT "@!" VALID P_Konto( @cIdKonto )
+      @ m_x + 4, m_y + 2 SAY "Period:" GET dDat1
+      @ m_x + 4, Col() + 1 SAY "do" GET dDat2
 
-  aUslP:=Parsiraj(qqPartn,"Idpartner")
-  if auslp<>NIL
-     exit
-  endif
-  enddo
-BoxC()
+      @ m_x + 6, m_y + 2 SAY "Partneri:" GET qqPartn PICT "@!S40"
 
+      IF IsVindija()
+         @ m_x + 8, m_y + 2 SAY "Opcine:" GET cOpcine PICT "@!S40"
+      ENDIF
 
-O_TARIFA
-o_kalk()
-set order to tag PMAG
+      READ
 
-private cFilt1:=""
+      ESC_BCR
 
-cFilt1 := ".t."+IF(EMPTY(dDat1),"",".and.DATDOK>="+dbf_quote(dDat1))+;
-                IF(EMPTY(dDat2),"",".and.DATDOK<="+dbf_quote(dDat2))
-
-cFilt1:=STRTRAN(cFilt1,".t..and.","")
+      aUslP := Parsiraj( qqPartn, "Idpartner" )
+      IF auslp <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
 
-IF !(cFilt1==".t.")
-  SET FILTER TO &cFilt1
-ENDIF
+   O_TARIFA
+   o_kalk()
+   SET ORDER TO TAG PMAG
 
-HSEEK cIdFirma
-EOF CRET
+   PRIVATE cFilt1 := ""
 
-private M:="   -------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------" + IF(!IsPDV(), " ----------","")
+   cFilt1 := ".t." + IF( Empty( dDat1 ), "", ".and.DATDOK>=" + dbf_quote( dDat1 ) ) + ;
+      IF( Empty( dDat2 ), "", ".and.DATDOK<=" + dbf_quote( dDat2 ) )
 
-START PRINT CRET
-?
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
-B:=0
 
-private nStrana:=0
-kalk_zagl_real_partnera()
+   IF !( cFilt1 == ".t." )
+      SET FILTER TO &cFilt1
+   ENDIF
 
-seek cIdFirma + cIdkonto
+   HSEEK cIdFirma
+   EOF CRET
 
-nVPV:=nNV:=nVPVBP:=nPRUC:=nPP:=nZarada:=nRabat:=0
-nRuc:=0
-nNivP:=nNivS:=0             
-// nivelacija povecanje, snizenje
-nUlazD:=nUlazND:=0
-nUlazO:=nUlazNO:=0 
-// ostali ulazi
-nUlazPS:=nUlazNPS:=0  
-// pocetno stanje
-nIzlazP:=nIzlazNP:=0  
-// izlazi prodavnica
-nIzlazO:=nIzlazNO:=0  
-// ostali izlazi
+   PRIVATE M := "   -------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------" + IF( !IsPDV(), " ----------", "" )
 
-DO WHILE !EOF() .and. idfirma==cidfirma .and. cidkonto=mkonto .and. IspitajPrekid()
+   START PRINT CRET
+   ?
 
-	nPaNV:=nPaVPV:=nPaPruc:=nPaRuc:=nPaPP:=nPaZarada:=nPaRabat:=0
-  	cIdPartner:=idpartner
-  
-  	//Vindija - ispitaj opcine za partnera
-  	if IsVindija() .and. !Empty(cOpcine)
-  		select partn
-		HSEEK cIdPartner
-		if AT(ALLTRIM(partn->idops), cOpcine)==0
-			select kalk
-			skip
-			loop
-		endif
-		select kalk
-  	endif
-  
-  	do WHILE !EOF() .and. idfirma==cidfirma .and. idpartner==cidpartner  .and. cidkonto=mkonto .and. IspitajPrekid()
+   B := 0
 
-   		select roba
-   		HSEEK kalk->idroba
-   		select tarifa
-   		HSEEK kalk->idtarifa
-   		select kalk
+   PRIVATE nStrana := 0
+   kalk_zagl_real_partnera()
 
-   		if idvd = "14"
-     			
-			if aUslp<>".t." .and. ! &aUslP
-        			skip
-				loop
-     			endif
+   SEEK cIdFirma + cIdkonto
 
-     			set_pdv_public_vars()
-     
-     			nVPVBP := nVPV / (1 + _PORVT)
-     			nPaNV += round( NC*kolicina  , gZaokr)
-     			nPaVPV += round( VPC*(Kolicina), gZaokr)
-     			nPaPP += round( MPC/100 * VPC * (1-RabatV / 100) * Kolicina , gZaokr)
+   nVPV := nNV := nVPVBP := nPRUC := nPP := nZarada := nRabat := 0
+   nRuc := 0
+   nNivP := nNivS := 0
+   // nivelacija povecanje, snizenje
+   nUlazD := nUlazND := 0
+   nUlazO := nUlazNO := 0
+   // ostali ulazi
+   nUlazPS := nUlazNPS := 0
+   // pocetno stanje
+   nIzlazP := nIzlazNP := 0
+   // izlazi prodavnica
+   nIzlazO := nIzlazNO := 0
+   // ostali izlazi
 
-     			nPaRabat += round( RabatV/100*VPC*Kolicina , gZaokr)
-			nPom := VPC * (1-RabatV/100) - NC
-     			nPaRuc += round(nPom*Kolicina,gZaokr)
+   DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cidkonto = mkonto .AND. IspitajPrekid()
 
-     			if nPom > 0   
-				// porez na ruc se obracunava 
-				// samo ako je pozit. razlika
-      				if gVarVP=="1"
-         				nPaPRUC+=round(nPom*Kolicina*tarifa->VPP/100,gZaokr)
-      				else
-         				nPaPRUC+=round(nPom*Kolicina*tarifa->VPP/100/(1+tarifa->VPP/100),gZaokr)
-         				// Preracunata stopa
-      				endif
-     			endif
+      nPaNV := nPaVPV := nPaPruc := nPaRuc := nPaPP := nPaZarada := nPaRabat := 0
+      cIdPartner := idpartner
 
-   		elseif idvd=="18"
-     			// nivelacija
-     			if vpc>0
-       				nNivP+=vpc*kolicina
-    			else
-       				nNivS+=vpc*kolicina
-     			endif
+      // Vindija - ispitaj opcine za partnera
+      IF IsVindija() .AND. !Empty( cOpcine )
+         SELECT partn
+         HSEEK cIdPartner
+         IF At( AllTrim( partn->idops ), cOpcine ) == 0
+            SELECT kalk
+            SKIP
+            LOOP
+         ENDIF
+         SELECT kalk
+      ENDIF
 
-   		elseif idvd $ "11#12#13"  
-			//prodavnica
-      			nIzlazNP += round(NC*(Kolicina-GKolicina-GKolicin2), gZaokr)
-      			nIzlazP += round(VPC*(Kolicina-GKolicina-GKolicin2), gZaokr)
-   		elseif mu_i == "2"  
-			// ostali izlazi
-      			nIzlazNO += round(NC*(Kolicina-GKolicina-GKolicin2), gZaokr)
-      			nIzlazO += round(VPC*(Kolicina-GKolicina-GKolicin2), gZaokr)
-   		elseif idvd == "10"
-      			nUlazND += round(NC*(Kolicina-GKolicina-GKolicin2), gZaokr)
-      			nUlazD += round(VPC*(Kolicina-GKolicina-GKolicin2), gZaokr)
+      DO WHILE !Eof() .AND. idfirma == cidfirma .AND. idpartner == cidpartner  .AND. cidkonto = mkonto .AND. IspitajPrekid()
 
-   		elseif mu_i == "1"  
-			//ostali ulazi
-      			if day(datdok)=1 .and. month(datdok)=1 
-				// datum 01.01
-        			nUlazNPS += round(NC*(Kolicina-GKolicina-GKolicin2), gZaokr)
-        			nUlazPS += round(VPC*(Kolicina-GKolicina-GKolicin2), gZaokr)
-      			else
-        			nUlazNO += round(NC*(Kolicina-GKolicina-GKolicin2), gZaokr)
-        			nUlazO += round(VPC*(Kolicina-GKolicina-GKolicin2), gZaokr)
-      			endif
+         SELECT roba
+         HSEEK kalk->idroba
+         SELECT tarifa
+         HSEEK kalk->idtarifa
+         SELECT kalk
 
-   		endif
-		skip
-  	enddo
+         IF idvd = "14"
 
-	if IsPDV()
-		nPaZarada := nPaVPV - nPaNV 
-	else
-		nPaZarada := nPaRuc - nPaPRUC
-	endif
-	// zarada
+            IF aUslp <> ".t." .AND. ! &aUslP
+               SKIP
+               LOOP
+            ENDIF
 
-  	if nPaNV=0 .and. nPAVPV=0 .and. nPaRabat=0 .and. nPaPP=0 .and. nPaZarada=0
-    		loop
-  	endif
+            set_pdv_public_vars()
 
-  	if prow() > RPT_PAGE_LEN
-  		FF
- 		kalk_zagl_real_partnera()
-  	endif
-  	select partn
-  	HSEEK cIdPartner
-  	select kalk
-  
-  	? space(2), cIdPartner, PADR(partn->naz, 25)
-  
-  	nCol1 := pcol()+1
-  
-  	@ prow(), nCol1    SAY nPaNV   pict gpicdem
-  	@ prow(), pcol()+1 SAY nPaRUC  pict gpicdem
-  
-  	if !IsPDV()
-  		@ prow(), pcol()+1 SAY nPaPRuc pict gpicdem
-  	endif
-  
-  	@ prow(), pcol()+1 SAY nPaZarada pict gpicdem
-	@ prow(), pcol()+1 SAY nPaVPV  pict gpicdem
-  	@ prow(), pcol()+1 SAY nPaRabat pict gpicdem
-  	@ prow(), pcol()+1 SAY nPaPP  pict gpicdem
-  	@ prow(), pcol()+1 SAY nPaVPV-nPaRabat+nPaPP  pict gpicdem
+            nVPVBP := nVPV / ( 1 + _PORVT )
+            nPaNV += Round( NC * kolicina, gZaokr )
+            nPaVPV += Round( VPC * ( Kolicina ), gZaokr )
+            nPaPP += Round( MPC / 100 * VPC * ( 1 -RabatV / 100 ) * Kolicina, gZaokr )
 
-	nNV+=nPaNV
-  	nVPV+=nPaVPV
-  	nPRuc+=nPaPruc
-  	nZarada+=nPaZarada
-  	nRuc+=nPaRuc
-  	nPP+=nPaPP
-  	nRabat+=nPaRabat
+            nPaRabat += Round( RabatV / 100 * VPC * Kolicina, gZaokr )
+            nPom := VPC * ( 1 -RabatV / 100 ) - NC
+            nPaRuc += Round( nPom * Kolicina, gZaokr )
 
-enddo
+            IF nPom > 0
+               // porez na ruc se obracunava
+               // samo ako je pozit. razlika
+               IF gVarVP == "1"
+                  nPaPRUC += Round( nPom * Kolicina * tarifa->VPP / 100, gZaokr )
+               ELSE
+                  nPaPRUC += Round( nPom * Kolicina * tarifa->VPP / 100 / ( 1 + tarifa->VPP / 100 ), gZaokr )
+                  // Preracunata stopa
+               ENDIF
+            ENDIF
 
-if prow() > RPT_PAGE_LEN
-	FF
-	kalk_zagl_real_partnera()
-endif
+         ELSEIF idvd == "18"
+            // nivelacija
+            IF vpc > 0
+               nNivP += vpc * kolicina
+            ELSE
+               nNivS += vpc * kolicina
+            ENDIF
 
-? m
-? "   Ukupno:"
-@ prow(), nCol1    SAY nNV   pict gpicdem
-@ prow(), pcol()+1 SAY nRUC  pict gpicdem
-if !IsPDV()
-	@ prow(), pcol()+1 SAY nPRuc pict gpicdem
-endif
-@ prow(), pcol()+1 SAY nZarada pict gpicdem
-@ prow(), pcol()+1 SAY nVPV  pict gpicdem
-@ prow(), pcol()+1 SAY nRabat pict gpicdem
-@ prow(),pcol()+1  SAY nPP  pict gpicdem
-@ prow(), pcol()+1 SAY nVPV-nRabat+nPP  pict gpicdem
+         ELSEIF idvd $ "11#12#13"
+            // prodavnica
+            nIzlazNP += Round( NC * ( Kolicina - GKolicina - GKolicin2 ), gZaokr )
+            nIzlazP += Round( VPC * ( Kolicina - GKolicina - GKolicin2 ), gZaokr )
+         ELSEIF mu_i == "2"
+            // ostali izlazi
+            nIzlazNO += Round( NC * ( Kolicina - GKolicina - GKolicin2 ), gZaokr )
+            nIzlazO += Round( VPC * ( Kolicina - GKolicina - GKolicin2 ), gZaokr )
+         ELSEIF idvd == "10"
+            nUlazND += Round( NC * ( Kolicina - GKolicina - GKolicin2 ), gZaokr )
+            nUlazD += Round( VPC * ( Kolicina - GKolicina - GKolicin2 ), gZaokr )
 
-? m
+         ELSEIF mu_i == "1"
+            // ostali ulazi
+            IF Day( datdok ) = 1 .AND. Month( datdok ) = 1
+               // datum 01.01
+               nUlazNPS += Round( NC * ( Kolicina - GKolicina - GKolicin2 ), gZaokr )
+               nUlazPS += Round( VPC * ( Kolicina - GKolicina - GKolicin2 ), gZaokr )
+            ELSE
+               nUlazNO += Round( NC * ( Kolicina - GKolicina - GKolicin2 ), gZaokr )
+               nUlazO += Round( VPC * ( Kolicina - GKolicina - GKolicin2 ), gZaokr )
+            ENDIF
 
-if prow() > 50
-	FF
-	kalk_zagl_real_partnera(.f.)
-endif
+         ENDIF
+         SKIP
+      ENDDO
 
-P_12CPI
-?
-? replicate("=",45)
-? "Rekapitulacija  prometa za period :"
-? replicate("=",45)
-?
-? "--------------------------------- ---------- --------"
-if IsPDV()
-	? "                        Nab.vr.    Prod.vr     Ruc%"
-else
-	? "                        Nab.vr.       VPV      Ruc%"
-endif
-? "--------------------------------- ---------- --------"
-?
 
-? "**** ULAZI: ********"
-if nulazPS<>0
-? "-    pocetno stanje:  "
-@ prow(),pcol()+1 SAY nUlazNPS pict gpicdem
-@ prow(),pcol()+1 SAY nUlazPS pict gpicdem
-if nulazPS<>0
-  @ prow(),pcol()+1 SAY (nUlazPS-nUlazNPS)/nUlazPS*100 pict "999.99%"
-endif
+      nPaZarada := nPaVPV - nPaNV
 
-endif
-if nulazd<>0
- ? "-       Dobavljaci :  "
- @ prow(),pcol()+1 SAY nUlazND pict gpicdem
- @ prow(),pcol()+1 SAY nUlazD pict gpicdem
-if nulazD<>0
-  @ prow(),pcol()+1 SAY (nUlazD-nUlazND)/nUlazD*100 pict "999.99%"
-endif
-endif
+      // zarada
 
-if nulazo<>0
-? "-           ostalo :  "
-@ prow(),pcol()+1 SAY nUlazNO pict gpicdem
-@ prow(),pcol()+1 SAY nUlazO pict gpicdem
-if nulazO<>0
-  @ prow(),pcol()+1 SAY (nUlazO-nUlazNO)/nUlazO*100 pict "999.99%"
-endif
-endif
+      IF nPaNV = 0 .AND. nPAVPV = 0 .AND. nPaRabat = 0 .AND. nPaPP = 0 .AND. nPaZarada = 0
+         LOOP
+      ENDIF
 
-if nNivP<>0 .or. nNivS<>0
-?
-? "**** Nivelacije ****"
-if nNivP<>0
-? "-        povecanje :  "
-@ prow(),pcol()+1 SAY space(len(gpicdem))
-@ prow(),pcol()+1 SAY nNivP pict gpicdem
-endif
-if nNivS<>0
-? "-        snizenje  :  "
-@ prow(),pcol()+1 SAY space(len(gpicdem))
-@ prow(),pcol()+1 SAY nNivS pict gpicdem
-endif
-endif
+      IF PRow() > RPT_PAGE_LEN
+         FF
+         kalk_zagl_real_partnera()
+      ENDIF
+      SELECT partn
+      HSEEK cIdPartner
+      SELECT kalk
 
-?
-if IsPDV()
-	? "**** IZLAZI (Prod.vr.-Rabat) **"
-else
-	? "**** IZLAZI (VPV-Rabat) **"
-endif
-? "-      realizacija :  "
-@ prow(),pcol()+1 SAY nNV pict gpicdem
-@ prow(),pcol()+1 SAY nVPV-nRabat pict gpicdem
-if (nVPV-nRabat)<>0
-  @ prow(),pcol()+1 SAY nZarada/(nVPV-nRabat)*100 pict "999.99%"
-endif
+      ? Space( 2 ), cIdPartner, PadR( partn->naz, 25 )
 
-if nIzlazP<>0
-? "-       prodavnice :  "
-@ prow(),pcol()+1 SAY nIzlazNP pict gpicdem
-@ prow(),pcol()+1 SAY nIzlazP pict gpicdem
-if nIzlazP<>0
-  @ prow(),pcol()+1 SAY (nIzlazP-nIzlazNP)/nIzlazP*100 pict "999.99%"
-endif
-endif
+      nCol1 := PCol() + 1
 
-if nIzlazO<>0
-? "-           ostalo :  "
-@ prow(),pcol()+1 SAY nIzlazNo pict gpicdem
-@ prow(),pcol()+1 SAY nIzlazo pict gpicdem
-if nIzlazO<>0
-  @ prow(),pcol()+1 SAY (nIzlazO-nIzlazNO)/nIzlazO*100 pict "999.99%"
-endif
-endif
+      @ PRow(), nCol1    SAY nPaNV   PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nPaRUC  PICT gpicdem
 
-FF
 
-ENDPRINT
-closeret
-return
-*}
+
+      @ PRow(), PCol() + 1 SAY nPaZarada PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nPaVPV  PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nPaRabat PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nPaPP  PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nPaVPV - nPaRabat + nPaPP  PICT gpicdem
+
+      nNV += nPaNV
+      nVPV += nPaVPV
+      nPRuc += nPaPruc
+      nZarada += nPaZarada
+      nRuc += nPaRuc
+      nPP += nPaPP
+      nRabat += nPaRabat
+
+   ENDDO
+
+   IF PRow() > RPT_PAGE_LEN
+      FF
+      kalk_zagl_real_partnera()
+   ENDIF
+
+   ? m
+   ? "   Ukupno:"
+   @ PRow(), nCol1    SAY nNV   PICT gpicdem
+   @ PRow(), PCol() + 1 SAY nRUC  PICT gpicdem
+
+   @ PRow(), PCol() + 1 SAY nZarada PICT gpicdem
+   @ PRow(), PCol() + 1 SAY nVPV  PICT gpicdem
+   @ PRow(), PCol() + 1 SAY nRabat PICT gpicdem
+   @ PRow(), PCol() + 1  SAY nPP  PICT gpicdem
+   @ PRow(), PCol() + 1 SAY nVPV - nRabat + nPP  PICT gpicdem
+
+   ? m
+
+   IF PRow() > 50
+      FF
+      kalk_zagl_real_partnera( .F. )
+   ENDIF
+
+   P_12CPI
+   ?
+   ? Replicate( "=", 45 )
+   ? "Rekapitulacija  prometa za period :"
+   ? Replicate( "=", 45 )
+   ?
+   ? "--------------------------------- ---------- --------"
+
+   ? "                        Nab.vr.    Prod.vr     Ruc%"
+
+   ? "--------------------------------- ---------- --------"
+   ?
+
+   ? "**** ULAZI: ********"
+   IF nulazPS <> 0
+      ? "-    pocetno stanje:  "
+      @ PRow(), PCol() + 1 SAY nUlazNPS PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nUlazPS PICT gpicdem
+      IF nulazPS <> 0
+         @ PRow(), PCol() + 1 SAY ( nUlazPS - nUlazNPS ) / nUlazPS * 100 PICT "999.99%"
+      ENDIF
+
+   ENDIF
+   IF nulazd <> 0
+      ? "-       Dobavljaci :  "
+      @ PRow(), PCol() + 1 SAY nUlazND PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nUlazD PICT gpicdem
+      IF nulazD <> 0
+         @ PRow(), PCol() + 1 SAY ( nUlazD - nUlazND ) / nUlazD * 100 PICT "999.99%"
+      ENDIF
+   ENDIF
+
+   IF nulazo <> 0
+      ? "-           ostalo :  "
+      @ PRow(), PCol() + 1 SAY nUlazNO PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nUlazO PICT gpicdem
+      IF nulazO <> 0
+         @ PRow(), PCol() + 1 SAY ( nUlazO - nUlazNO ) / nUlazO * 100 PICT "999.99%"
+      ENDIF
+   ENDIF
+
+   IF nNivP <> 0 .OR. nNivS <> 0
+      ?
+      ? "**** Nivelacije ****"
+      IF nNivP <> 0
+         ? "-        povecanje :  "
+         @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+         @ PRow(), PCol() + 1 SAY nNivP PICT gpicdem
+      ENDIF
+      IF nNivS <> 0
+         ? "-        snizenje  :  "
+         @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+         @ PRow(), PCol() + 1 SAY nNivS PICT gpicdem
+      ENDIF
+   ENDIF
+
+   ?
+
+   ? "**** IZLAZI (Prod.vr.-Rabat) **"
+
+   ? "-      realizacija :  "
+   @ PRow(), PCol() + 1 SAY nNV PICT gpicdem
+   @ PRow(), PCol() + 1 SAY nVPV - nRabat PICT gpicdem
+   IF ( nVPV - nRabat ) <> 0
+      @ PRow(), PCol() + 1 SAY nZarada / ( nVPV - nRabat ) * 100 PICT "999.99%"
+   ENDIF
+
+   IF nIzlazP <> 0
+      ? "-       prodavnice :  "
+      @ PRow(), PCol() + 1 SAY nIzlazNP PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nIzlazP PICT gpicdem
+      IF nIzlazP <> 0
+         @ PRow(), PCol() + 1 SAY ( nIzlazP - nIzlazNP ) / nIzlazP * 100 PICT "999.99%"
+      ENDIF
+   ENDIF
+
+   IF nIzlazO <> 0
+      ? "-           ostalo :  "
+      @ PRow(), PCol() + 1 SAY nIzlazNo PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nIzlazo PICT gpicdem
+      IF nIzlazO <> 0
+         @ PRow(), PCol() + 1 SAY ( nIzlazO - nIzlazNO ) / nIzlazO * 100 PICT "999.99%"
+      ENDIF
+   ENDIF
+
+   FF
+
+   ENDPRINT
+   closeret
+
+   RETURN
+// }
 
 
 
@@ -380,38 +372,35 @@ return
 /* kalk_zagl_real_partnera(fTabela)
  *     Zaglavlje izvjestaja "realizacija veleprodaje po partnerima"
  */
- 
-function kalk_zagl_real_partnera(fTabela)
-*{
-if ftabela=NIL
-  ftabela:=.t.
-endif
 
-Preduzece()
-P_12CPI
+FUNCTION kalk_zagl_real_partnera( fTabela )
 
-set century on
-? "  KALK: REALIZACIJA VELEPRODAJE PO PARTNERIMA    na dan:",DATE()
-?? space(6),"Strana:",str(++nStrana,3)
-? "        Magacin:",cIdkonto,"   period:",dDat1,"DO",dDat2
-set century off
+   // {
+   IF ftabela = NIL
+      ftabela := .T.
+   ENDIF
 
-P_COND
+   Preduzece()
+   P_12CPI
 
-if ftabela
-?
-? m
-if IsPDV()
-? "   *           Partner            *    NV     *  ZARADA  *   RUC    * Prod.vr  *  Rabat   *   PDV    *  Ukupno *"
-else
-	? "   *           Partner            *    NV     *   RUC    *   PRUC   *   NETO   *   VPV    *  Rabat   *   PP     *  Ukupno *"
-endif
+   SET CENTURY ON
+   ? "  KALK: REALIZACIJA VELEPRODAJE PO PARTNERIMA    na dan:", Date()
+   ?? Space( 6 ), "Strana:", Str( ++nStrana, 3 )
+   ? "        Magacin:", cIdkonto, "   period:", dDat1, "DO", dDat2
+   SET CENTURY OFF
 
-? "   *                              *           *(RUC-RAB.)* (PV - NV) *         *          *          *          *" + IF(!IsPDV(), "         *", "")
+   P_COND
 
-? m
-endif
+   IF ftabela
+      ?
+      ? m
 
-return
+      ? "   *           Partner            *    NV     *  ZARADA  *   RUC    * Prod.vr  *  Rabat   *   PDV    *  Ukupno *"
 
 
+      ? "   *                              *           *(RUC-RAB.)* (PV - NV) *         *          *          *          *" + IF( !IsPDV(), "         *", "" )
+
+      ? m
+   ENDIF
+
+   RETURN

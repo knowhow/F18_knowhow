@@ -103,7 +103,7 @@ FUNCTION pos_kartica_artikla()
       Seek2( cIdOdj + cRoba )
       IF pos->idroba <> cRoba
          MsgBeep( "Ne postoje traženi podaci !" )
-         RETURN
+         RETURN .F.
       ENDIF
    ENDIF
 

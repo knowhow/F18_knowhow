@@ -666,7 +666,7 @@ FUNCTION st_res_niv_p( cVar, cKolNula )
    O_ROBA
    O_TARIFA
 
-   IF IsPDV()
+   --IF IsPDV()
       cPorez := "PDV"
    ELSE
       cPorez := "PP"

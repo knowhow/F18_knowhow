@@ -181,7 +181,7 @@ STATIC FUNCTION import_row( id_vd, br_dok, id_odj )
 STATIC FUNCTION get_import_file( br_dok, destinacija, import_fajl )
 
    LOCAL _filter
-   LOCAL _prodajno_mjesto, _id_pos, _prefix
+   LOCAL _prodajno_mjesto, _id_pos, cPrefixLocal
    LOCAL _imp_files := {}
    LOCAL _opc := {}
    LOCAL _h, nI
@@ -193,12 +193,12 @@ STATIC FUNCTION get_import_file( br_dok, destinacija, import_fajl )
 
    IF !Empty( _prodajno_mjesto )
       _id_pos := _prodajno_mjesto
-      _prefix := ( Trim( _prodajno_mjesto ) ) + SLASH
+      cPrefixLocal := ( Trim( _prodajno_mjesto ) ) + SLASH
    ELSE
-      _prefix := ""
+      cPrefixLocal := ""
    ENDIF
 
-   destinacija := AllTrim( gKalkDest ) + _prefix
+   destinacija := AllTrim( gKalkDest ) + cPrefixLocal
 
    BrisiSFajlove( destinacija )
 
@@ -220,7 +220,6 @@ STATIC FUNCTION get_import_file( br_dok, destinacija, import_fajl )
       CLOSE ALL
       RETURN .F.
    ENDIF
-
 
 
    _izbor := 1
@@ -275,7 +274,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
    LOCAL _count
 
    IF id_vd <> VD_INV
-      RETURN
+      RETURN .F.
    ENDIF
 
    _cre_pom_table()
@@ -284,7 +283,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
 
    IF !pos_dokument_postoji( id_pos, id_vd, dat_dok, br_dok )
       MsgBeep( "Dokument: " + id_pos + "-" + id_vd + "-" + PadL( br_dok, 6 ) + " ne postoji !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _r_br := 0
@@ -522,7 +521,6 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
    my_close_all_dbf()
 
    IF !_auto_prenos
-
       _print_report( _dat_od, _dat_do, _kol, _iznos, _r_br )
       _file := tops_kalk_create_topska( cIdPos, _dat_od, _dat_do, cIdVd )
       MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
@@ -597,18 +595,18 @@ STATIC FUNCTION _cre_pom_table()
  kreira izlazni fajl za multi prodajna mjesta režim
 */
 
-STATIC FUNCTION tops_kalk_create_topska( id_pos, datum_od, datum_do, v_dok, prefix )
+STATIC FUNCTION tops_kalk_create_topska( id_pos, datum_od, datum_do, v_dok, cPrefix )
 
-   LOCAL _prefix := "tk"
-   LOCAL _export_location
-   LOCAL _table_name
+   LOCAL cPrefixLocal := "tk"
+   LOCAL cExportDirektorij
+   LOCAL cTableName
    LOCAL _table_path
-   LOCAL _dest_file := ""
+   LOCAL cFajlDestinacija := ""
    LOCAL _bytes := 0
    LOCAL cIdPM
 
-   IF prefix != NIL
-      _prefix := prefix
+   IF cPrefix != NIL
+      cPrefixLocal := cPrefix
    ENDIF
 
    IF Right( AllTrim( gKalkDest ), 1 ) <> SLASH
@@ -619,20 +617,20 @@ STATIC FUNCTION tops_kalk_create_topska( id_pos, datum_od, datum_do, v_dok, pref
 
    cIdPM := GetPm( id_pos )
 
-   _export_location := AllTrim( gKalkDest ) + cIdPM + SLASH
+   cExportDirektorij := AllTrim( gKalkDest ) + cIdPM + SLASH
 
-   direktorij_kreiraj_ako_ne_postoji( AllTrim( _export_location ) )
+   direktorij_kreiraj_ako_ne_postoji( AllTrim( cExportDirektorij ) )
 
    DirChange( my_home() )
 
-   _table_name := get_tops_kalk_export_file( "1", _export_location, datum_do, prefix )
+   cTableName := get_tops_kalk_export_file( "1", cExportDirektorij, datum_do, cPrefix )
 
-   _dest_file := _export_location + _table_name + ".dbf"
+   cFajlDestinacija := cExportDirektorij + cTableName + ".dbf"
 
-   IF FileCopy( my_home() + "pom.dbf", _dest_file ) > 0
-      FileCopy( my_home() + OUTF_FILE, StrTran( _dest_file, ".dbf", ".txt" ) )
+   IF FileCopy( my_home() + "pom.dbf", cFajlDestinacija ) > 0
+      FileCopy( my_home() + OUTF_FILE, StrTran( cFajlDestinacija, ".dbf", ".txt" ) )
    ELSE
-      MsgBeep( "Problem sa kopiranjem fajla na lokaciju #" + _export_location )
+      MsgBeep( "Problem sa kopiranjem fajla na lokaciju #" + cExportDirektorij )
    ENDIF
 
-   RETURN _dest_file
+   RETURN cFajlDestinacija

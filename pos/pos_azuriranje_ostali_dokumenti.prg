@@ -313,19 +313,15 @@ STATIC FUNCTION azuriraj_artikal_u_sifrarniku()
    _rec[ "naz" ] := priprz->robanaz
    _rec[ "jmj" ] := priprz->jmj
 
-   IF !IsPDV()
-      IF katops->idtarifa <> "PDV17"
-         _rec[ _field_mpc ] := Round( priprz->cijena, 3 )
-      ENDIF
+
+
+   IF cIdVd == "NI"
+      _rec[ _field_mpc ] := Round( priprz->ncijena, 3 )
    ELSE
-
-      IF cIdVd == "NI"
-         _rec[ _field_mpc ] := Round( priprz->ncijena, 3 )
-      ELSE
-         _rec[ _field_mpc ] := Round( priprz->cijena, 3 )
-      ENDIF
-
+      _rec[ _field_mpc ] := Round( priprz->cijena, 3 )
    ENDIF
+
+
 
    _rec[ "idtarifa" ] := priprz->idtarifa
    _rec[ "k1" ] := priprz->k1

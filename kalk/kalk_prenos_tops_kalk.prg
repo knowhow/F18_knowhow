@@ -228,7 +228,6 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
       // SELECT roba
       // SEEK topska->idroba
       IF !find_roba_by_id( topska->idroba )
-
          // IF !Found()
          MsgBeep( "artikal " + topska->idroba + " ne postoji u KALK roba ?!#STOP operacije!" )
          my_close_all_dbf()
@@ -322,6 +321,126 @@ STATIC FUNCTION get_topska_ime_txt( cTopskaImeDbf )
    cRet := StrTran( cRet, ".DBF", ".TXT" )
 
    RETURN cRet
+
+
+
+
+STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, nRbr )
+
+   LOCAL _tip_dok := "IP"
+   LOCAL nDbfArea := Select()
+   LOCAL _kolicina := 0
+   LOCAL _nc := 0
+   LOCAL _fc := 0
+   LOCAL _mpcsapp := 0
+   LOCAL _marzap := 50
+
+   IF ( topska->kol2 == 0 )
+      RETURN .F.
+   ENDIF
+
+
+   kalk_roba_prodavnica_stanje( cIdKontoProdavnica, topska->idroba, topska->datum, @_kolicina, @_nc, @_fc, @_mpcsapp ) // sracunaj za ovu stavku stanje inventurno u kalk-u
+
+   IF _kolicina == 0 // nema ga na stanju, morat cemo preci na rucni rad racunice
+      _mpcsapp := topska->mpc
+      _nc := Round( _mpcsapp * ( _marzap / 100 ), 2 )
+
+   ENDIF
+
+   _mpcsapp := topska->mpc // uvijek uzmi iz topska ovu cijenu pri prenosu
+
+   SELECT kalk_pripr
+
+   my_flock()
+
+   LOCATE FOR field->idroba == topska->idroba
+
+   IF !Found() // kalk_pripr
+
+      APPEND BLANK
+      REPLACE field->idfirma WITH self_organizacija_id()
+      REPLACE field->idvd WITH _tip_dok
+      REPLACE field->brdok WITH cBrDok
+      REPLACE field->datdok WITH topska->datum
+      REPLACE field->datfaktp WITH topska->datum
+      REPLACE field->kolicina WITH topska->kol2
+      REPLACE field->gkolicina WITH _kolicina
+      REPLACE field->gkolicin2 with ( gkolicina - kolicina )
+      REPLACE field->idkonto WITH cIdKontoProdavnica
+      // REPLACE field->idkonto2 WITH cIdKontoProdavnica
+      REPLACE field->pkonto WITH cIdKontoProdavnica
+      REPLACE field->idroba WITH topska->idroba
+      REPLACE field->rbr WITH nRbr
+      REPLACE field->idtarifa WITH topska->idtarifa
+      REPLACE field->mpcsapp WITH _mpcsapp
+      REPLACE field->nc WITH _nc
+      REPLACE field->fcj WITH _fc
+      REPLACE field->pu_i WITH "I"
+      REPLACE field->error WITH "0"
+
+   ELSE
+
+      REPLACE field->kolicina WITH field->kolicina + topska->kol2
+      REPLACE field->gkolicin2 with ( gkolicina - kolicina )
+
+   ENDIF
+
+   my_unlock()
+
+   SELECT ( nDbfArea )
+
+   RETURN .T.
+
+
+STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, nRbr )
+
+   LOCAL nDbfArea := Select()
+   LOCAL _opp
+
+   IF ( topska->kolicina == 0 )
+      RETURN .F.
+   ENDIF
+
+   SELECT tarifa
+   HSEEK topska->idtarifa
+   _opp := tarifa->opp
+
+   SELECT kalk_pripr
+
+   my_flock()
+
+   APPEND BLANK
+
+   REPLACE field->idfirma WITH self_organizacija_id()
+   REPLACE field->idvd WITH topska->idvd
+   REPLACE field->brdok WITH cBrDok
+   REPLACE field->datdok WITH topska->datum
+   REPLACE field->datfaktp WITH topska->datum
+   REPLACE field->kolicina WITH topska->kolicina
+   REPLACE field->idkonto WITH cIdKontoProdavnica
+   REPLACE field->idroba WITH topska->idroba
+   REPLACE field->rbr WITH nRbr
+   REPLACE field->tmarza2 WITH "%"
+   REPLACE field->idtarifa WITH topska->idtarifa
+   REPLACE field->mpcsapp WITH topska->mpc
+
+   IF Round( topska->stmpc, 2 ) <> 0
+      IF _opp > 0
+         REPLACE field->rabatv with ( topska->stmpc / ( 1 + ( _opp / 100 ) ) )  // izbijamo PDV iz ove stavke ako je tarifa PDV17
+      ELSE
+         REPLACE field->rabatv WITH topska->stmpc // tarifa nije PDV17
+      ENDIF
+   ENDIF
+
+   my_unlock()
+
+   SELECT ( nDbfArea )
+
+   RETURN .T.
+
+
+
 
 /*
 FUNCTION kalk_preuzmi_tops_dokumente_auto()
@@ -600,73 +719,6 @@ STATIC FUNCTION tops_kalk_import_roba( cTipMpc )
      formiraj stavku inventure prodavnice
 */
 
-STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, nRbr )
-
-   LOCAL _tip_dok := "IP"
-   LOCAL nDbfArea := Select()
-   LOCAL _kolicina := 0
-   LOCAL _nc := 0
-   LOCAL _fc := 0
-   LOCAL _mpcsapp := 0
-   LOCAL _marzap := 50
-
-   IF ( topska->kol2 == 0 )
-      RETURN .F.
-   ENDIF
-
-
-   kalk_roba_prodavnica_stanje( cIdKontoProdavnica, topska->idroba, topska->datum, @_kolicina, @_nc, @_fc, @_mpcsapp ) // sracunaj za ovu stavku stanje inventurno u kalk-u
-
-   IF _kolicina == 0 // nema ga na stanju, morat cemo preci na rucni rad racunice
-      _mpcsapp := topska->mpc
-      _nc := Round( _mpcsapp * ( _marzap / 100 ), 2 )
-
-   ENDIF
-
-   _mpcsapp := topska->mpc // uvijek uzmi iz topska ovu cijenu pri prenosu
-
-   SELECT kalk_pripr
-
-   my_flock()
-
-   LOCATE FOR field->idroba == topska->idroba
-
-   IF !Found() // kalk_pripr
-
-      APPEND BLANK
-      REPLACE field->idfirma WITH self_organizacija_id()
-      REPLACE field->idvd WITH _tip_dok
-      REPLACE field->brdok WITH cBrDok
-      REPLACE field->datdok WITH topska->datum
-      REPLACE field->datfaktp WITH topska->datum
-      REPLACE field->kolicina WITH topska->kol2
-      REPLACE field->gkolicina WITH _kolicina
-      REPLACE field->gkolicin2 with ( gkolicina - kolicina )
-      REPLACE field->idkonto WITH cIdKontoProdavnica
-      // REPLACE field->idkonto2 WITH cIdKontoProdavnica
-      REPLACE field->pkonto WITH cIdKontoProdavnica
-      REPLACE field->idroba WITH topska->idroba
-      REPLACE field->rbr WITH nRbr
-      REPLACE field->idtarifa WITH topska->idtarifa
-      REPLACE field->mpcsapp WITH _mpcsapp
-      REPLACE field->nc WITH _nc
-      REPLACE field->fcj WITH _fc
-      REPLACE field->pu_i WITH "I"
-      REPLACE field->error WITH "0"
-
-   ELSE
-
-      REPLACE field->kolicina WITH field->kolicina + topska->kol2
-      REPLACE field->gkolicin2 with ( gkolicina - kolicina )
-
-   ENDIF
-
-   my_unlock()
-
-   SELECT ( nDbfArea )
-
-   RETURN .T.
-
 
 /*
 STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, nRbr )
@@ -705,54 +757,6 @@ STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMag
 
    RETURN .T.
 */
-
-
-STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, nRbr )
-
-   LOCAL nDbfArea := Select()
-   LOCAL _opp
-
-   IF ( topska->kolicina == 0 )
-      RETURN .F.
-   ENDIF
-
-   SELECT tarifa
-   HSEEK topska->idtarifa
-   _opp := tarifa->opp
-
-   SELECT kalk_pripr
-
-   my_flock()
-
-   APPEND BLANK
-
-   REPLACE field->idfirma WITH self_organizacija_id()
-   REPLACE field->idvd WITH topska->idvd
-   REPLACE field->brdok WITH cBrDok
-   REPLACE field->datdok WITH topska->datum
-   REPLACE field->datfaktp WITH topska->datum
-   REPLACE field->kolicina WITH topska->kolicina
-   REPLACE field->idkonto WITH cIdKontoProdavnica
-   REPLACE field->idroba WITH topska->idroba
-   REPLACE field->rbr WITH nRbr
-   REPLACE field->tmarza2 WITH "%"
-   REPLACE field->idtarifa WITH topska->idtarifa
-   REPLACE field->mpcsapp WITH topska->mpc
-
-   IF Round( topska->stmpc, 2 ) <> 0
-      IF _opp > 0
-         REPLACE field->rabatv with ( topska->stmpc / ( 1 + ( _opp / 100 ) ) )  // izbijamo PDV iz ove stavke ako je tarifa PDV17
-      ELSE
-         REPLACE field->rabatv WITH topska->stmpc // tarifa nije PDV17
-      ENDIF
-   ENDIF
-
-   my_unlock()
-
-   SELECT ( nDbfArea )
-
-   RETURN .T.
-
 
 
 

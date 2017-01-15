@@ -141,19 +141,12 @@ FUNCTION kalk_stampa_dok_19()
 
 FUNCTION head_19()
 
-   // {
-   IF IsPDV()
-      ? "*R * ROBA     * Kolicina *  STARA   * RAZLIKA  * PDV   %  *IZN. PDV  * UK. PDV  * RAZLIKA  *  NOVA   *"
-      ? "*BR*          *          *MPC SA PDV*   MPC    *          *          *          *MPC SA PDV*MPC SA PDV*"
-      ? "*  *          *          *   sum    *   sum    *          *   sum    *   sum    *   sum    *   sum   *"
-   ELSE
-      ? "*R * ROBA     * Kolicina *  STARA   * RAZLIKA  * PPP   %  *IZN. PPP  * UK. PPP  * RAZLIKA  *  NOVA   *"
-      ? "*BR*          *          *MPC SA PP *   MPC    * PPU   %  *IZN. PPU  * UK. PPU  * MPC SA PP*MPC SA PP*"
-      ? "*  *          *          *   sum    *   sum    *          *   sum    *   sum    *   sum    *   sum   *"
-   ENDIF
+   ? "*R * ROBA     * Kolicina *  STARA   * RAZLIKA  * PDV   %  *IZN. PDV  * UK. PDV  * RAZLIKA  *  NOVA   *"
+   ? "*BR*          *          *MPC SA PDV*   MPC    *          *          *          *MPC SA PDV*MPC SA PDV*"
+   ? "*  *          *          *   sum    *   sum    *          *   sum    *   sum    *   sum    *   sum   *"
 
    RETURN
-// }
+
 
 
 /* Obraz19()

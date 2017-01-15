@@ -14,10 +14,10 @@
 
 FUNCTION kalk_stampa_dok_18()
 
-
    LOCAL nCol1 := nCol2 := 0, npom := 0, nCR := 0
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
+
    // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    IF cSeek != 'IZDOKS'  // stampa se vise dokumenata odjednom
@@ -44,13 +44,10 @@ FUNCTION kalk_stampa_dok_18()
    m := "--- ------------------------------------------------ ----------- ---------- ---------- ---------- ---------- ---------- ----------"
 
    ? m
-   IF IsPDV()
-      ? "*RB*       ROBA                                     * Kolicina  * STARA PC *  RAZLIKA *  NOVA  PC*  IZNOS   *   PDV%  *  IZNOS   *"
-      ? "*  *                                                *           *  BEZ PDV *PC BEZ PDV*  BEZ PDV *  RAZLIKE *         *   PDV    *"
-   ELSE
-      ? "*RB*       ROBA                                     * Kolicina  * STARA VPC*  RAZLIKA *  NOVA VPC*  IZNOS   *   PPP%  *  IZNOS   *"
-      ? "*  *                                                *           *          *    VPC   *          *  RAZLIKE *         *   PPP    *"
-   ENDIF
+
+   ? "*RB*       ROBA                                     * Kolicina  * STARA PC *  RAZLIKA *  NOVA  PC*  IZNOS   *   PDV%  *  IZNOS   *"
+   ? "*  *                                                *           *  BEZ PDV *PC BEZ PDV*  BEZ PDV *  RAZLIKE *         *   PDV    *"
+
    ? m
    nTotA := nTotB := nTotC := 0
 

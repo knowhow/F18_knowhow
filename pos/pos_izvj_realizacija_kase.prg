@@ -59,7 +59,7 @@ FUNCTION realizacija_kase
       cK1 := "D"
    ENDIF
 
-   TblCrePom()
+   pos_realizacija_tbl_cre_pom()
 
    o_pos_tables()
    o_pom_table()
@@ -143,19 +143,14 @@ FUNCTION realizacija_kase
 
       // Porezi po tarifama
 
-      IF IsPDV()
-         PDVPorPoTar( dDat0, dDat1, cIdPos, nil, cIdodj )
-      ELSE
-         PorPoTar( dDat0, dDat1, cIdPos, nil, cIdodj )
-      ENDIF
+      PDVPorPoTar( dDat0, dDat1, cIdPos, nil, cIdodj )
+
 
       IF Round( Abs( nTotal2 ) + Abs( nTotal3 ), 4 ) <> 0
          o_pos_tables()
-         IF IsPDV()
-            PDVPorPoTar( dDat0, dDat1, cIdPos, "3" )  // STA JE OVO? => APOTEKE!!
-         ELSE
-            PorPoTar( dDat0, dDat1, cIdPos, "3" )  // STA JE OVO? => APOTEKE!!
-         ENDIF
+
+         PDVPorPoTar( dDat0, dDat1, cIdPos, "3" )  // STA JE OVO? => APOTEKE!!
+
       ENDIF
 
    ENDIF
@@ -471,7 +466,7 @@ FUNCTION RekVrstePl()
 
 
 
-STATIC FUNCTION TblCrePom()
+STATIC FUNCTION pos_realizacija_tbl_cre_pom()
 
    LOCAL aDbf := {}
 

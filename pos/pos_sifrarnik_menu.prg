@@ -20,78 +20,6 @@ FUNCTION pos_sifarnici()
 
 
 
-
-
-
-FUNCTION SifreHOpc()
-
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := {}
-
-   AAdd( opc, "1. vrste placanja                   " )
-   AAdd( opcexe, {|| P_VrsteP() } )
-   AAdd( opc, "2. valute" )
-   AAdd( opcexe, {|| P_Valuta(), SetNazDVal() } )
-   AAdd( opc, "3. partneri" )
-   AAdd( opcexe, {|| p_partner() } )
-   AAdd( opc, "4. sifk" )
-   AAdd( opcexe, {|| P_SifK() } )
-   AAdd( opc, "5. uredjaji za stampu" )
-   AAdd( opcexe, {|| P_Uredj() } )
-
-   IF gVrstaRS == "K"
-      // metalurg ...
-      AAdd ( opc, "6. uredjaji-odjeljenja" )
-      AAdd( opcexe, {|| NotImp() } )
-      AAdd ( opc, "7. robe-iznimci" )
-      AAdd( opcexe, {|| NotImp() } )
-   ENDIF
-
-   Izbor := 1
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "sifo" )
-
-   RETURN
-
-
-FUNCTION SifreHSpec()
-
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := {}
-
-   AAdd( opc, "1. robe/artikli                     " )
-   AAdd( opcexe, {|| P_Roba() } )
-   AAdd( opc, "2. -------" )
-   AAdd( opcexe, {|| nil } )
-   AAdd( opc, "3. tarife" )
-   AAdd( opcexe, {|| P_Tarifa() } )
-   AAdd( opc, "4. odjeljenja" )
-   AAdd( opcexe, {|| P_Odj() } )
-   AAdd( opc, "5. dijelovi objekta" )
-   AAdd( opcexe, {|| P_Dio() } )
-   AAdd( opc, "6. kase (prodajna mjesta)" )
-   AAdd( opcexe, {|| P_Kase() } )
-   AAdd( opc, "7. normativi" )
-   AAdd( opcexe, {|| P_Sast() } )
-   AAdd( opc, "8. stampa normativa" )
-   AAdd( opcexe, {|| ISast() } )
-
-   IF pos_admin()
-      AAdd ( opc, "9. statusi radnika" )
-      AAdd( opcexe, {|| P_StRad() } )
-      AAdd ( opc, "10. osoblje" )
-      AAdd( opcexe, {|| P_Osob() } )
-   ENDIF
-
-   Izbor := 1
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "sifs" )
-
-   RETURN
-
-
-
-
 FUNCTION tops_sifarnici()
 
    PRIVATE opc := {}
@@ -129,4 +57,4 @@ FUNCTION tops_sifarnici()
    Izbor := 1
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "sift" )
 
-   RETURN
+   RETURN .T.

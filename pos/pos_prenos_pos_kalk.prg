@@ -13,7 +13,7 @@
 
 
 
-FUNCTION pos_preuzmi_iz_kalk( tip_dok, cBrDok, rs_dbf )
+FUNCTION pos_preuzmi_iz_kalk( cIdTipDok, cBrDok )
 
    LOCAL _imp_table := ""
    LOCAL _destination := ""
@@ -51,12 +51,12 @@ FUNCTION pos_preuzmi_iz_kalk( tip_dok, cBrDok, rs_dbf )
    my_use_temp( "KATOPS", _imp_table )
 
    _id_tip_dok := _get_vd( katops->idvd )
-   tip_dok := _id_tip_dok
+   cIdTipDok := _id_tip_dok
 
    SELECT pos_doks
    SET ORDER TO TAG "1"
 
-   _br_dok := pos_novi_broj_dokumenta( _id_pos, tip_dok )
+   _br_dok := pos_novi_broj_dokumenta( _id_pos, cIdTipDok )
    cBrDok := _br_dok
 
    SELECT katops

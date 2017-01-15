@@ -12,78 +12,6 @@
 #include "f18.ch"
 
 
-
-STATIC FUNCTION _o_pos_prepis_tbl()
-
-   SELECT ( F_PARTN )
-   IF !Used()
-      O_PARTN
-   ENDIF
-
-   SELECT ( F_VRSTEP )
-   IF !Used()
-      O_VRSTEP
-   ENDIF
-
-   SELECT ( F_DIO )
-   IF !Used()
-      O_DIO
-   ENDIF
-
-   SELECT ( F_ODJ )
-   IF !Used()
-      O_ODJ
-   ENDIF
-
-   SELECT ( F_KASE )
-   IF !Used()
-      O_KASE
-   ENDIF
-
-   SELECT ( F_OSOB )
-   IF !Used()
-      O_OSOB
-      SET ORDER TO TAG "NAZ"
-   ENDIF
-
-   SELECT ( F_TARIFA )
-   IF !Used()
-      O_TARIFA
-   ENDIF
-
-   SELECT ( F_VALUTE )
-   IF !Used()
-      O_VALUTE
-   ENDIF
-
-   SELECT ( F_SIFK )
-   IF !Used()
-      O_SIFK
-   ENDIF
-
-   SELECT ( F_SIFV )
-   IF !Used()
-      O_SIFV
-   ENDIF
-
-   SELECT ( F_ROBA )
-   IF !Used()
-      O_ROBA
-   ENDIF
-
-   SELECT ( F_POS_DOKS )
-   IF !Used()
-      o_pos_doks()
-   ENDIF
-
-   SELECT ( F_POS )
-   IF !Used()
-      o_pos_pos()
-   ENDIF
-
-   RETURN .T.
-
-
 FUNCTION pos_lista_azuriranih_dokumenata()
 
    LOCAL aOpc
@@ -157,7 +85,7 @@ FUNCTION pos_lista_azuriranih_dokumenata()
 
 
    my_db_edit( "pos_doks", MAXROWS() -10, MAXCOLS() -15, ;  // params cImeBoxa, xw, yw
-      {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), "POS", ; // bUserF, cMessTop, cMessBot
+   {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), "POS", ; // bUserF, cMessTop, cMessBot
    .F., aOpc ) // lInvert, aMessage
 
    CLOSE ALL
@@ -286,8 +214,8 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
          PrepisZad( "OTPIS " )
       CASE pos_doks->IdVd == VD_REK
          PrepisZad( "REKLAMACIJA" )
-  //    CASE pos_doks->IdVd == VD_RZS
-  //       PrepisRazd()
+         // CASE pos_doks->IdVd == VD_RZS
+         // PrepisRazd()
 
       CASE pos_doks->IdVd == "IN"
          PrepisInvNiv( .T. )
@@ -469,5 +397,77 @@ STATIC FUNCTION browse_kolone( aImeKol, aKol )
    FOR i := 1 TO Len( aImeKol )
       AAdd( aKol, i )
    NEXT
+
+   RETURN .T.
+
+
+
+STATIC FUNCTION _o_pos_prepis_tbl()
+
+   SELECT ( F_PARTN )
+   IF !Used()
+      O_PARTN
+   ENDIF
+
+   SELECT ( F_VRSTEP )
+   IF !Used()
+      O_VRSTEP
+   ENDIF
+
+   SELECT ( F_DIO )
+   IF !Used()
+      O_DIO
+   ENDIF
+
+   SELECT ( F_ODJ )
+   IF !Used()
+      O_ODJ
+   ENDIF
+
+   SELECT ( F_KASE )
+   IF !Used()
+      O_KASE
+   ENDIF
+
+   SELECT ( F_OSOB )
+   IF !Used()
+      O_OSOB
+      SET ORDER TO TAG "NAZ"
+   ENDIF
+
+   SELECT ( F_TARIFA )
+   IF !Used()
+      O_TARIFA
+   ENDIF
+
+   SELECT ( F_VALUTE )
+   IF !Used()
+      O_VALUTE
+   ENDIF
+
+   SELECT ( F_SIFK )
+   IF !Used()
+      O_SIFK
+   ENDIF
+
+   SELECT ( F_SIFV )
+   IF !Used()
+      O_SIFV
+   ENDIF
+
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
+
+   SELECT ( F_POS_DOKS )
+   IF !Used()
+      o_pos_doks()
+   ENDIF
+
+   SELECT ( F_POS )
+   IF !Used()
+      o_pos_pos()
+   ENDIF
 
    RETURN .T.

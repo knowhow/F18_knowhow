@@ -97,7 +97,6 @@ FUNCTION Zaduzenje
 
    BoxC()
 
-   cRSdbf := "ROBA"
    bRSblok := {| x, y| pos_postoji_roba( @_idroba, x, y ), pos_set_key_handler_ispravka_zaduzenja() }
    cUI_I := R_I
    cUI_U := R_U
@@ -119,7 +118,7 @@ FUNCTION Zaduzenje
 
    fSadAz := .F.
 
-   IF ( cIdVd <> VD_REK ) .AND. pos_preuzmi_iz_kalk( @cIdVd, @cBrDok, @cRsDBF )
+   IF ( cIdVd <> VD_REK ) .AND. pos_preuzmi_iz_kalk( @cIdVd, @cBrDok )
 
       _from_kalk := .T.
 
@@ -317,12 +316,6 @@ FUNCTION Zaduzenje
    RETURN .T.
 
 
-
-
-
-
-
-
 // ----------------------------------------------------------
 // setuje u sifranik mpc
 // ----------------------------------------------------------
@@ -390,7 +383,7 @@ FUNCTION ZadKolOK( nKol )
 /* ZadProvDuple(cSif)
  *     Provjera postojanja sifre u zaduzenju
  *   param: cSif
- *  \return
+ *
  */
 FUNCTION ZadProvDuple( cSif )
 
@@ -488,7 +481,7 @@ FUNCTION EditStavZaduz()
    IF LastKey() <> K_ESC
       my_rlock()
       IF _idroba <> PrevRoba
-         REPLACE RobaNaz WITH &cRSdbf.->Naz, Jmj WITH &cRSdbf.->Jmj, Cijena WITH &cRSdbf.->Cijena, IdRoba WITH _IdRoba
+         REPLACE RobaNaz WITH roba->Naz, Jmj WITH roba->Jmj, Cijena WITH roba->Cijena, IdRoba WITH _IdRoba
       ENDIF
       REPLACE Kolicina WITH _Kolicina
       my_unlock()

@@ -12,16 +12,16 @@
 #include "f18.ch"
 
 
-FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
+FUNCTION pos_brisi_dokument( cIdPos, cIdTipDok, dDatDok, cBrDok )
 
    LOCAL lOk := .T.
    LOCAL lRet := .F.
    LOCAL hRec
-   LOCAL nTArea := Select()
+   LOCAL nDbfArea := Select()
    LOCAL cDokument
    LOCAL hParams
 
-   IF !pos_dokument_postoji( id_pos, id_vd, dat_dok, br_dok )
+   IF !pos_dokument_postoji( cIdPos, cIdTipDok, dDatDok, cBrDok )
       RETURN lRet
    ENDIF
 
@@ -29,18 +29,18 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
       run_sql_query( "ROLLBACK" )
       SELECT ( nDbfArea )
-      RETURN _ret
+      RETURN lRet
    ENDIF
 
    MsgO( "Brisanje dokumenta iz glavne tabele u toku ..." )
 
-   cDokument := ALLTRIM( id_pos ) + "-" + id_vd + "-" + ALLTRIM( br_dok ) + " " + DTOC( dat_dok )
+   cDokument := ALLTRIM( cIdPos ) + "-" + cIdTipDok + "-" + ALLTRIM( cBrDok ) + " " + DTOC( dDatDok )
 
    SELECT pos
    SET ORDER TO TAG "1"
    GO TOP
 
-   SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
+   SEEK cIdPos + cIdTipDok + DToS( dDatDok ) + cBrDok
 
    IF Found()
       hRec := dbf_get_rec()
@@ -51,7 +51,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
       SELECT pos_doks
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
+      SEEK cIdPos + cIdTipDok + DToS( dDatDok ) + cBrDok
 
       IF Found()
          hRec := dbf_get_rec()
@@ -73,7 +73,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
       log_write( "F18_DOK_OPER, greška sa brisanjem pos dokumenta: " + cDokument, 2 )
    ENDIF
 
-   SELECT ( nTArea )
+   SELECT ( nDbfArea )
 
    RETURN lRet
 

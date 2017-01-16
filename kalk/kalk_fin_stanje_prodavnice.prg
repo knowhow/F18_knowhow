@@ -308,10 +308,10 @@ FUNCTION finansijsko_stanje_prodavnica()
       @ PRow(), PCol() + 1 SAY nMPVU PICT cPicIznos
       @ PRow(), PCol() + 1 SAY nMPVI PICT cPicIznos
 
-      IF IsPDV()
-         @ PRow(), PCol() + 1 SAY nPopust PICT cPicIznos
-         @ PRow(), PCol() + 1 SAY nMPVIP PICT cPicIznos
-      ENDIF
+
+      @ PRow(), PCol() + 1 SAY nPopust PICT cPicIznos
+      @ PRow(), PCol() + 1 SAY nMPVIP PICT cPicIznos
+
 
       @ PRow(), PCol() + 1 SAY ntMPVU - ntMPVI PICT cPicIznos
 
@@ -329,10 +329,9 @@ FUNCTION finansijsko_stanje_prodavnica()
    @ PRow(), PCol() + 1 SAY ntMPVU PICT cPicIznos
    @ PRow(), PCol() + 1 SAY ntMPVI PICT cPicIznos
 
-   IF IsPDV()
-      @ PRow(), PCol() + 1 SAY ntPopust PICT cPicIznos
-      @ PRow(), PCol() + 1 SAY ntMPVIP PICT cPicIznos
-   ENDIF
+   @ PRow(), PCol() + 1 SAY ntPopust PICT cPicIznos
+   @ PRow(), PCol() + 1 SAY ntMPVIP PICT cPicIznos
+
 
    @ PRow(), PCol() + 1 SAY ntMPVU - ntMPVI PICT cPicIznos
 

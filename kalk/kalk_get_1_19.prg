@@ -96,9 +96,9 @@ FUNCTION kalk_get_1_19()
 
    nNCJ := nStCj + _MPCSaPP
 
-   @ m_x + 16, m_y + 2  SAY "STARA CIJENA " + if( IsPDV(), "(MPCSAPDV):", "(MPCSAPP):" )
+   @ m_x + 16, m_y + 2  SAY "STARA CIJENA " + "(MPCSAPDV):"
    @ m_x + 16, m_y + 50 GET nStCj    PICT "999999.9999"
-   @ m_x + 17, m_y + 2  SAY "NOVA CIJENA  " + if( IsPDV(), "(MPCSAPDV):", "(MPCSAPP):" )
+   @ m_x + 17, m_y + 2  SAY "NOVA CIJENA  " +  "(MPCSAPDV):"
    @ m_x + 17, m_y + 50 GET nNCj     PICT "999999.9999"
 
    SayPorezi( 19 )

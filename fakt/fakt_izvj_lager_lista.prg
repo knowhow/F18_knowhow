@@ -556,11 +556,9 @@ FUNCTION fakt_lager_lista()
          ENDIF
          IF gVarC == "4"
             ? Space( gnLMarg )
-            IF IsPDV()
-               ?? " Ukupno  PV:"
-            ELSE
-               ?? " Ukupno MPV:"
-            ENDIF
+
+            ?? " Ukupno  PV:"
+
 
             @ PRow(), nCol1 SAY nIzn2  PICT picdem
          ENDIF
@@ -576,11 +574,11 @@ FUNCTION fakt_lager_lista()
          @ PRow(), nCol1 SAY nKU - nKI PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
       ELSE
          IF cUI $ "US"
-            @ PRow(), nCol1 - ( Len( picdem ) + 1 ) * 4 - 2  SAY nKU  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+            @ PRow(), nCol1 - ( Len( picdem ) + 1 ) * 4 -2  SAY nKU  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
          ENDIF
          IF cUI $ "IS"
             IF cUI == "I"
-               @ PRow(), nCol1 - ( Len( picdem ) + 1 ) * 4 - 2 SAY nKI  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+               @ PRow(), nCol1 - ( Len( picdem ) + 1 ) * 4 -2 SAY nKI  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
             ELSE
                @ PRow(), PCol() + 1 SAY nKI  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
             ENDIF
@@ -717,13 +715,10 @@ FUNCTION fakt_zagl_lager_lista()
          IF( cUI $ "IS", PadC( "Izlaz", 12 ), "" ) + ;
          IF( cUI $ "S", PadC( "Stanje", 12 ), "" )
       IF cRR $ "NF"
-         IF IsPDV()
-            ?? "R.br  Sifra       Naziv                                  " + cPomZK + "jmj     " + iif( _rj_tip $ "N1#M1#M2" .AND. !Empty( cIdFirma ), "Cij.", iif( cRealizacija == "D", "PR.C", " PC " ) ) + ;
-               iif( cREalizacija == "N", "      Iznos", "       PV        Rabat      Realizovano" )
-         ELSE
-            ?? "R.br  Sifra       Naziv                                  " + cPomZK + "jmj     " + iif( _rj_tip $ "N1#M1#M2" .AND. !Empty( cIdFirma ), "Cij.", iif( cRealizacija == "D", "PR.C", "VPC " ) ) + ;
-               iif( cREalizacija == "N", "      Iznos", "      VPV        Rabat      Realizovano" )
-         ENDIF
+
+         ?? "R.br  Sifra       Naziv                                  " + cPomZK + "jmj     " + iif( _rj_tip $ "N1#M1#M2" .AND. !Empty( cIdFirma ), "Cij.", iif( cRealizacija == "D", "PR.C", " PC " ) ) + ;
+            iif( cREalizacija == "N", "      Iznos", "       PV        Rabat      Realizovano" )
+
       ELSE
          ?? "R.br  Sifra       Naziv                                  " + "  Stanje       Revers    Rezervac.   Ostalo     jmj     " + IF( RJ->tip $ "N1#M1#M2" .AND. !Empty( cIdFirma ), "Cij.  Cij.", "VPC    VPC" ) + "*Stanje"
       ENDIF
@@ -778,28 +773,28 @@ FUNCTION fakt_lager_lista_vars( param, lPocetnoStanje )
 
    @ m_x + _x, m_y + 2 SAY "RJ (prazno-sve): " GET _id_firma VALID {|| Empty( _id_firma ), P_RJ( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Datum od:" GET _date_from
    @ m_x + _x, Col() + 1 SAY "do:" GET _date_to
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Roba   " GET _usl_roba PICT "@S40"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Naziv partnera (prazno - svi)" GET _usl_partn PICT "@S40"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Tip dokumenta (prazno - svi)" GET _usl_tip_dok PICT "@S40"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    " GET _stavke_nula PICT "@!" VALID _stavke_nula $ "DN"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Prikaz količina ( U-samo ulaz, I-samo izlaz, S-sve )" GET _tip_prikaza VALID _tip_prikaza $ "UIS" PICT "@!"
 
    IF lPocetnoStanje
-      ++ _x
-      ++ _x
+      ++_x
+      ++_x
       @ m_x + _x, m_y + 2 SAY8 "Datum početnog stanja:" GET _date_ps
    ENDIF
 
@@ -971,7 +966,7 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, lPocetnoStanje )
 
    IF lPocetnoStanje
       my_server_logout()
-      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_from ) ) )
+      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) -4 ) + AllTrim( Str( Year( _date_from ) ) )
       my_server_params( _db_params )
       my_server_login( _db_params )
       set_sql_search_path()
@@ -1018,7 +1013,7 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, lPocetnoStanje )
 
    IF lPocetnoStanje
       my_server_logout()
-      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )
+      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) -4 ) + AllTrim( Str( Year( _date_ps ) ) )
       my_server_params( _db_params )
       my_server_login( _db_params )
       set_sql_search_path()

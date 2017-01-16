@@ -17,7 +17,7 @@
 // ------------------------------------------------------------
 FUNCTION Get1_80( atrib )
 
-   LOCAL _x := 5
+   LOCAL nX := 5
    LOCAL _kord_x := 0
    LOCAL _unos_left := 40
    PRIVATE aPorezi := {}
@@ -29,25 +29,25 @@ FUNCTION Get1_80( atrib )
 
    IF nRbr == 1 .OR. !kalk_is_novi_dokument()
 
-      _kord_x := m_x + _x
+      _kord_x := m_x + nX
 
-      @ m_x + _x, m_y + 2 SAY "Temeljnica:" GET _BrFaktP
-      @ m_x + _x, Col() + 1 SAY "Datum:" GET _DatFaktP
+      @ m_x + nX, m_y + 2 SAY "Temeljnica:" GET _BrFaktP
+      @ m_x + nX, Col() + 1 SAY "Datum:" GET _DatFaktP
 
-      ++ _x
-      @ m_x + _x, m_y + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x - 1, 40, 20 ) } PICT "@!"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x -1, 40, 20 ) } PICT "@!"
 
       // IF gNW <> "X"
-      // @ m_x + _x, m_y + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
+      // @ m_x + nX, m_y + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
       // ENDIF
 
-      ++ _x
-      _kord_x := m_x + _x
+      ++nX
+      _kord_x := m_x + nX
 
-      @ m_x + _x, m_y + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_sifre( F_KONTO, _idkonto2, _kord_x, 30, 20 )  } PICT "@!"
+      @ m_x + nX, m_y + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_sifre( F_KONTO, _idkonto2, _kord_x, 30, 20 )  } PICT "@!"
 
       // IF gNW <> "X"
-      // @ m_x + _x, m_y + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz2 )
+      // @ m_x + nX, m_y + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz2 )
       // ENDIF
 
       READ
@@ -57,25 +57,25 @@ FUNCTION Get1_80( atrib )
 
    ELSE
 
-      @ m_x + _x, m_y + 2 SAY "Temeljnica: "
+      @ m_x + nX, m_y + 2 SAY "Temeljnica: "
       ?? _BrFaktP
-      @ m_x + _x, Col() + 2 SAY "Datum: "
+      @ m_x + nX, Col() + 2 SAY "Datum: "
       ?? _DatFaktP
 
-      ++ _x
+      ++nX
 
-      @ m_x + _x, m_y + 2 SAY "Konto zaduzuje/razduzuje: "
+      @ m_x + nX, m_y + 2 SAY "Konto zaduzuje/razduzuje: "
       ?? _IdKonto
       // IF gNW <> "X"
-      // @ m_x + _x, Col() + 2  SAY "Partner zaduzuje: "
+      // @ m_x + nX, Col() + 2  SAY "Partner zaduzuje: "
       // ?? _IdZaduz
       // ENDIF
 
-      ++ _x
-      @ m_x + _x, m_y + 2 SAY "Prenos na konto: "
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Prenos na konto: "
       ?? _IdKonto2
       // IF gNW <> "X"
-      // @ m_x + _x, Col() + 2 SAY "Partner zaduzuje: "
+      // @ m_x + nX, Col() + 2 SAY "Partner zaduzuje: "
       // ?? _IdZaduz2
       // ENDIF
 
@@ -86,16 +86,16 @@ FUNCTION Get1_80( atrib )
 
    SELECT kalk_pripr
 
-   _x += 2
+   nX += 2
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + _x, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + nX, m_y + 2, @aPorezi )
 
-   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ m_x + nX, m_y + ( MAXCOLS() -20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    set_pdv_public_vars()
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
    READ
    ESC_RETURN K_ESC
@@ -139,37 +139,35 @@ FUNCTION Get1_80( atrib )
    SELECT kalk_pripr
 
 
-   _x += 2 // NC
+   nX += 2 // NC
 
 
-   _kord_x := m_x + _x
+   _kord_x := m_x + nX
 
-   @ m_x + _x, m_y + 2 SAY "NABAVNA CJENA:"
-   @ m_x + _x, m_y + _unos_left GET _nc WHEN VKol( _kord_x - 2 ) PICT PicDEM
+   @ m_x + nX, m_y + 2 SAY "NABAVNA CJENA:"
+   @ m_x + nX, m_y + _unos_left GET _nc WHEN VKol( _kord_x -2 ) PICT PicDEM
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "MARZA:" GET _TMarza2 VALID _Tmarza2 $ "%AU" PICT "@!"
-   @ m_x + _x, m_y + _unos_left GET _Marza2 PICT PicDEM VALID {|| _vpc := _nc, .T. }
-   @ m_x + _x, Col() + 1 GET fMarza PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "MARZA:" GET _TMarza2 VALID _Tmarza2 $ "%AU" PICT "@!"
+   @ m_x + nX, m_y + _unos_left GET _Marza2 PICT PicDEM VALID {|| _vpc := _nc, .T. }
+   @ m_x + nX, Col() + 1 GET fMarza PICT "@!"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "MALOPROD. CIJENA (MPC):"
-   @ m_x + _x, m_y + _unos_left GET _mpc ;
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "MALOPROD. CIJENA (MPC):"
+   @ m_x + nX, m_y + _unos_left GET _mpc ;
       PICT PicDEM;
       WHEN W_MPC_( "80", ( fMarza == "F" ), @aPorezi ) ;
       VALID V_Mpc_( "80", ( fMarza == "F" ), @aPorezi )
 
-   ++ _x
-   SayPorezi_lv( _x, aPorezi )
+   ++nX
+   SayPorezi_lv( nX, aPorezi )
 
-   ++ _x
-   IF IsPDV()
-      @ m_x + _x, m_y + 2 SAY "PC SA PDV:"
-   ELSE
-      @ m_x + _x, m_y + 2 SAY "MPC SA POREZOM:"
-   ENDIF
+   ++nX
 
-   @ m_x + _x, m_y + _unos_left GET _MPCSaPP PICT PicDEM VALID V_MpcSaPP_( "80", .F., @aPorezi, .T. )
+   @ m_x + nX, m_y + 2 SAY "PC SA PDV:"
+
+
+   @ m_x + nX, m_y + _unos_left GET _MPCSaPP PICT PicDEM VALID V_MpcSaPP_( "80", .F., @aPorezi, .T. )
 
    READ
    ESC_RETURN K_ESC
@@ -200,7 +198,7 @@ FUNCTION Get1_80( atrib )
 FUNCTION kalk_get_1_80_protustavka()
 
    LOCAL cSvedi := fetch_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), " " )
-   LOCAL _x := 2
+   LOCAL nX := 2
    LOCAL _kord_x := 0
    LOCAL _unos_left := 40
    PRIVATE aPorezi := {}
@@ -213,22 +211,22 @@ FUNCTION kalk_get_1_80_protustavka()
 
    Beep( 1 )
 
-   @ m_x + _x, m_y + 2 SAY "PROTUSTAVKA   ( S - svedi M - mpc sifr i ' ' - ne diraj ):"
-   @ m_x + _x, Col() + 2 GET cSvedi VALID cSvedi $ " SM" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY "PROTUSTAVKA   ( S - svedi M - mpc sifr i ' ' - ne diraj ):"
+   @ m_x + nX, Col() + 2 GET cSvedi VALID cSvedi $ " SM" PICT "@!"
 
    READ
 
 
    set_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), cSvedi ) // zapamti zadnji unos
 
-   _x := 12
-   _kord_x := m_x + _x
+   nX := 12
+   _kord_x := m_x + nX
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + _x, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + nX, m_y + 2, @aPorezi )
 
 
 
-   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" ;
+   @ m_x + nX, m_y + ( MAXCOLS() -20 ) SAY "Tarifa:" ;
       GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
@@ -246,8 +244,8 @@ FUNCTION kalk_get_1_80_protustavka()
 
    PRIVATE fMarza := " "
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
    SELECT koncij
    SEEK Trim( _idkonto )
@@ -264,43 +262,38 @@ FUNCTION kalk_get_1_80_protustavka()
    SELECT kalk_pripr
 
    // NC
-   ++ _x
+   ++nX
 
-   _kord_x := m_x + _x
+   _kord_x := m_x + nX
 
-   @ m_x + _x, m_y + 2 SAY "NABAVNA CIJENA:"
-   @ m_x + _x, m_y + _unos_left GET _NC PICT PicDEM WHEN VKol( _kord_x )
+   @ m_x + nX, m_y + 2 SAY "NABAVNA CIJENA:"
+   @ m_x + nX, m_y + _unos_left GET _NC PICT PicDEM WHEN VKol( _kord_x )
 
    // MARZA
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "MARZA:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICT "@!"
-   @ m_x + _x, m_y + _unos_left  GET _Marza2 PICT PicDEM valid {|| _vpc := _nc, .T. }
-   @ m_x + _x, Col() + 1 GET fMarza PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "MARZA:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICT "@!"
+   @ m_x + nX, m_y + _unos_left  GET _Marza2 PICT PicDEM valid {|| _vpc := _nc, .T. }
+   @ m_x + nX, Col() + 1 GET fMarza PICT "@!"
 
-   ++ _x
-   IF IsPDV()
-      @ m_x + _x, m_y + 2  SAY "PROD.CIJENA BEZ PDV:"
-   ELSE
-      @ m_x + _x, m_y + 2  SAY "MALOPROD. CJENA (MPC):"
-   ENDIF
+   ++nX
 
-   @ m_x + _x, m_y + _unos_left GET _mpc PICT PicDEM ;
+   @ m_x + nX, m_y + 2  SAY "PROD.CIJENA BEZ PDV:"
+
+
+   @ m_x + nX, m_y + _unos_left GET _mpc PICT PicDEM ;
       WHEN WMpc_lv( nil, nil, aPorezi ) ;
       VALID VMpc_lv( nil, nil, aPorezi )
 
-   ++ _x
+   ++nX
 
-   SayPorezi_lv( _x, aPorezi )
+   SayPorezi_lv( nX, aPorezi )
 
-   ++ _x
+   ++nX
 
-   IF IsPDV()
-      @ m_x + _x, m_y + 2 SAY "P.CIJENA SA PDV:"
-   ELSE
-      @ m_x + _x, m_y + 2 SAY "MPC SA POREZOM:"
-   ENDIF
+   @ m_x + nX, m_y + 2 SAY "P.CIJENA SA PDV:"
 
-   @ m_x + _x, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
+
+   @ m_x + nX, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
       valid {|| Svedi( cSvedi ), VMpcSapp_lv( nil, nil, aPorezi ) }
 
    READ

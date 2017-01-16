@@ -109,7 +109,7 @@ FUNCTION g_rel_val( cType, cFrom, cTo, cId )
 FUNCTION add_to_relation( f_from, f_to, f_from_id, f_to_id )
 
    LOCAL nDbfArea := Select()
-   LOCAL _rec
+   LOCAL hRec
 
    SELECT ( F_RELATION )
    IF !Used()
@@ -119,18 +119,18 @@ FUNCTION add_to_relation( f_from, f_to, f_from_id, f_to_id )
    SELECT RELATION
 
    APPEND BLANK
-   _rec := dbf_get_rec()
+   hRec := dbf_get_rec()
 
-   _rec[ "tfrom" ] := PadR( f_from, 10 )
-   _rec[ "tto" ] := PadR( f_to, 10 )
-   _rec[ "tfromid" ] := PadR( f_from_id, 10 )
-   _rec[ "ttoid" ] := PadR( f_to_id, 10 )
+   hRec[ "tfrom" ] := PadR( f_from, 10 )
+   hRec[ "tto" ] := PadR( f_to, 10 )
+   hRec[ "tfromid" ] := PadR( f_from_id, 10 )
+   hRec[ "ttoid" ] := PadR( f_to_id, 10 )
 
-   update_rec_server_and_dbf( "relation", _rec, 1, "FULL" )
+   update_rec_server_and_dbf( "relation", hRec, 1, "FULL" )
 
    SELECT ( nDbfArea )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -140,7 +140,7 @@ FUNCTION add_to_relation( f_from, f_to, f_from_id, f_to_id )
 FUNCTION p_relation( cId, dx, dy )
 
    LOCAL nTArea := Select()
-   LOCAL i
+   LOCAL nI
    LOCAL bFrom
    LOCAL bTo
    PRIVATE ImeKol
@@ -159,50 +159,10 @@ FUNCTION p_relation( cId, dx, dy )
    AAdd( ImeKol, { "Tab.1 ID", {|| tfromid }, "tfromid" } )
    AAdd( ImeKol, { "Tab.2 ID", {|| ttoid }, "ttoid" } )
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    SELECT ( nTArea )
 
    RETURN PostojiSifra( F_RELATION, 1, 10, 65, "Lista relacija konverzije", @cId, dx, dy )
-
-
-
-
-// ---------------------------------------------
-// vraca cijenu artikla iz sifrarnika robe
-// ---------------------------------------------
-FUNCTION g_art_price( cId, cPriceType )
-
-   LOCAL nPrice := 0
-   LOCAL nTArea := Select()
-
-   IF cPriceType == nil
-      cPriceType := "VPC1"
-   ENDIF
-
-   SELECT ( F_ROBA )
-   IF !Used()
-      O_ROBA
-   ENDIF
-
-   SELECT roba
-   SEEK cId
-
-   IF Found() .AND. field->id == cID
-      DO CASE
-      CASE cPriceType == "VPC1"
-         nPrice := field->vpc
-      CASE cPriceType == "VPC2"
-         nPrice := field->vpc2
-      CASE cPriceType == "MPC1"
-         nPrice := field->mpc
-      CASE cPriceType == "MPC2"
-         nPrice := field->mpc2
-      CASE cPriceType == "NC"
-         nPrice := field->nc
-      ENDCASE
-   ENDIF
-
-   RETURN nPrice

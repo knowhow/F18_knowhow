@@ -110,12 +110,4 @@ FUNCTION parametri_organizacije( set_params )
 
 
 FUNCTION SetValuta()
-
-
-
-   RETURN .T.
-
-
-FUNCTION IsPDV()
-
    RETURN .T.

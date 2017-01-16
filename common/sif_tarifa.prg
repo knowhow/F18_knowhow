@@ -32,7 +32,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   lRet := p_sifra( F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy )
+   lRet := p_sifra( F_TARIFA, 1, MAXROWS() -15, MAXCOLS() -25, "Tarifne grupe", @cid, dx, dy )
 
    PopWa()
 
@@ -174,13 +174,12 @@ FUNCTION MpcSaPor( nMPCBp, aPorezi, aPoreziIzn )
       nPP := 0
    ENDIF
 
-   IF IsPdv()
-      // bez poreza * ( 0.17 + 0 + 1)
-      nPom := nMpcBp * ( nPDV + nPP + 1 )
-      RETURN nPom
-   ELSE
-      RETURN MpcSaPorO( nMPCBp, aPorezi, aPoreziIzn )
-   ENDIF
+
+   // bez poreza * ( 0.17 + 0 + 1)
+   nPom := nMpcBp * ( nPDV + nPP + 1 )
+
+   RETURN nPom
+
 
 FUNCTION MpcSaPorO( nMPCBp, aPorezi, aPoreziIzn )
 

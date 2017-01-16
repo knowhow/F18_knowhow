@@ -52,7 +52,7 @@ FUNCTION omp_print( lStartPrint )
 // stampa otpremnica maloprodaja
 FUNCTION otpr_mp( lStartPrint )
 
-   // {
+
    LOCAL cBrDok
    LOCAL dDatDok
    LOCAL aRNaz

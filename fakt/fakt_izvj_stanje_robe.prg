@@ -479,7 +479,7 @@ FUNCTION ZaglSRobe()
    IF lBezUlaza
       ?? "R.br  Sifra       Naziv                                 " + "   Stanje      jmj     "
    ELSE
-      ?? "R.br  Sifra       Naziv                                 " + "   Stanje      jmj     " + IF( _rj_tip $ "M1#M2" .AND. !Empty( cIdFirma ), "Cij.", if( IsPDV(), " PC ", "VPC " ) ) + "      Iznos"
+      ?? "R.br  Sifra       Naziv                                 " + "   Stanje      jmj     " + IF( _rj_tip $ "M1#M2" .AND. !Empty( cIdFirma ), "Cij.", " PC " ) + "      Iznos"
    ENDIF
 
    ? Space( gnLMarg )

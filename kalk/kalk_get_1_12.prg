@@ -74,8 +74,8 @@ FUNCTION kalk_get_1_12()
 
    _PKonto := _Idkonto
    _MKonto := _Idkonto2
-   //kalk_dat_poslj_promjene_prod()
-   //check_datum_posljednje_kalkulacije()
+   // kalk_dat_poslj_promjene_prod()
+   // check_datum_posljednje_kalkulacije()
    // DuplRoba()
 
    _GKolicina := 0
@@ -135,11 +135,9 @@ FUNCTION kalk_get_1_12()
 
    SayPorezi( 19 )
 
-   IF IsPDV()
-      @ m_x + 19, m_y + 2 SAY "MPC SA PDV    :"
-   ELSE
-      @ m_x + 19, m_y + 2 SAY "MPC SA POREZOM:"
-   ENDIF
+
+   @ m_x + 19, m_y + 2 SAY "MPC SA PDV    :"
+
 
    @ m_x + 19, m_y + 50 GET _MPCSaPP PICT PicDEM VALID VMpcSaPP()
 

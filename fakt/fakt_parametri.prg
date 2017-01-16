@@ -42,10 +42,10 @@ FUNCTION mnu_fakt_params()
    AAdd( opc, "3. izgled dokumenata      " )
    AAdd( opcexe, {|| par_fakt_izgled_dokumenta() } )
 
-   IF IsPDV()
-      AAdd( opc, "4. izgled dokumenata - zaglavlje " )
-      AAdd( opcexe, {|| fakt_zagl_params() } )
-   ENDIF
+
+   AAdd( opc, "4. izgled dokumenata - zaglavlje " )
+   AAdd( opcexe, {|| fakt_zagl_params() } )
+
 
    AAdd( opc, "5. nazivi dokumenata i teksta na kraju (potpis)" )
    AAdd( opcexe, {|| fakt_par_nazivi_dokumenata() } )
@@ -158,62 +158,62 @@ FUNCTION fakt_par_razno()
 
    gKomLin := PadR( gKomLin, 70 )
 
-   Box(, MAXROWS() - 5, MAXCOLS() - 15, .F., "OSTALI PARAMETRI (RAZNO)" )
+   Box(, MAXROWS() -5, MAXCOLS() -15, .F., "OSTALI PARAMETRI (RAZNO)" )
 
    _x := 2
    @ m_x + _x, m_y + 2 SAY8 "Fakt tekući dokument (1-9)" GET gIMenu VALID gIMenu $ "123456789" PICT "@!"
    _x += 2
    @ m_x + _x, m_y + 2 SAY8 "Tekuća radna jedinica kod unosa dokumenta:" GET _def_rj
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Unos dokumenata pomoću barkod-a (D/N) ?" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Pregled zadnjih izlaza kod unosa dokumenta (D/N) ?" GET _rabat VALID _rabat $ "DN" PICT "@!"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Dužina sifre artikla sintetički " GET gnDS VALID gnDS > 0 PICT "9"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Voditi samo količine " GET gSamoKol PICT "@!" VALID gSamoKol $ "DN"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Tekuća vrijednost za rok placanja  " GET gRokPl PICT "999"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Prikaz barkod-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Račun na email:" GET _racun_na_email PICT "@S50"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "LibreOffice fakturu konvertuj u PDF na lokaciju:" GET _ext_pdf PICT "@S35"
 
    _x += 2
    @ m_x + _x, m_y + 2 SAY "   Uzorak fakture (VP):" GET _def_vp_template PICT "@S35"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "   Uzorak fakture (MP):" GET _def_mp_template PICT "@S35"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "     Uzorak otpremince:" GET _def_kol_template PICT "@S35"
 
    _x += 2
    read_dn_parametar( "Praćenje po destinacijama", m_x + _x, m_y + 2, @_unos_dest )
-   ++ _x
+   ++_x
    read_dn_parametar( "Unos brojeva veze", m_x + _x, m_y + 2, @_unos_br_veza )
-   ++ _x
+   ++_x
    read_dn_parametar( "Fakturisanje po prodajnim mjestima", m_x + _x, m_y + 2, @_pm )
-   ++ _x
+   ++_x
    read_dn_parametar( "Fakturisanje po objektima", m_x + _x, m_y + 2, @_unos_objekta )
-   ++ _x
+   ++_x
    read_dn_parametar( "Fakturisanje po vrstama placanja", m_x + _x, m_y + 2, @_vr_pl )
-   ++ _x
+   ++_x
    read_dn_parametar( "Fakt dodatni opis po stavkama", m_x + _x, m_y + 2, @_unos_opisa )
-   ++ _x
+   ++_x
    read_dn_parametar( "REF/LOT brojevi", m_x + _x, m_y + 2, @_unos_ref_lot )
-   ++ _x
+   ++_x
    read_dn_parametar( "Brojač otpremnica po dokumentu 22 (D/N)", m_x + _x, m_y + 2, @_otpr_brojac_22 )
-   ++ _x
+   ++_x
 
    read_dn_parametar( "Generacija otpremnica ver.2 (D/N)", m_x + _x, m_y + 2, @_otpr_gen )
-   ++ _x
+   ++_x
 
    read_dn_parametar( "Kontrola brojača dokumenta (D/N)", m_x + _x, m_y + 2, @_kontrola_brojaca )
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY8 "Ispis računa MP na traku (D/N/X)" GET gMPPrint  PICT "@!"   VALID gMPPrint $ "DNXT"
 
@@ -221,17 +221,17 @@ FUNCTION fakt_par_razno()
 
    IF gMPPrint $ "DXT"
 
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY "Oznaka lokalnog porta za stampu: LPT" GET gMPLocPort VALID gMPLocPort $ "1234567" PICT "@!"
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY "Redukcija trake (0/1/2):" ;
          GET gMPRedTraka ;
          VALID gMPRedTraka $ "012"
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY "Ispis id artikla na racunu (D/N):" ;
          GET gMPArtikal ;
          VALID gMPArtikal $ "DN" PICT "@!"
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" ;
          GET gMPCjenPDV ;
          VALID gMPCjenPDV $ "12"
@@ -573,15 +573,6 @@ FUNCTION par_fakt_izgled_dokumenta()
    nX := 2
    Box( , 22, 76, .F., "Izgled dokumenata" )
 
-   IF !IsPdv()
-
-      @ m_x + nX, m_y + 2 SAY "Prikaz cijena podstavki/cijena u glavnoj stavci (1/2)" GET cIzvj
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Izgled fakture 1/2/3" GET gTipF VALID gTipF $ "123"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Varijanta 1/2/3/4/9/A/B" GET gVarF VALID gVarF $ "12349AB"
-      nX++
-   ENDIF
 
    @ m_x + nX, m_y + 2 SAY "Dodat.redovi po listu " GET gERedova ;
       PICT "999"
@@ -589,118 +580,72 @@ FUNCTION par_fakt_izgled_dokumenta()
    @ m_x + nX, m_y + 2 SAY "Lijeva margina pri stampanju " GET gnLMarg PICT "99"
    nX++
 
-   // legacy
-   IF !IsPdv()
-      @ m_x + nX, m_y + 35 SAY "L.marg.za v.2/9/A5 " GET gnLMargA5 PICT "99"
-      nX++
-   ENDIF
+
 
    @ m_x + nX, m_y + 2 SAY "Gornja margina " GET gnTMarg PICT "99"
    nX++
 
-   // legacy
-   IF !IsPdv()
-      @ m_x + nX, m_y + 2 SAY "Koristiti A5 obrazac u varijanti 9 D/N/0" GET gFormatA5 PICT "@!" VALID gFormatA5 $ "DN0"
-      nX++
 
-      @ m_x + nX, m_y + 58 SAY "A4   A5"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Horizont.pomjeranje zaglavlja u varijanti 9 (br.kolona)" GET gFPzag PICT "99"
-      @ m_x + nX, m_y + 63 GET gFPzagA5 PICT "99"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Vertikalno pomjeranje stavki u fakturi var.9(br.redova)" GET gnTmarg2 PICT "99"
-      @ m_x + nX, m_y + 63 GET gnTmarg2A5 PICT "99"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Vertikalno pomjeranje totala u fakturi var.9(br.redova)" GET gnTmarg3 PICT "99"
-      @ m_x + nX, m_y + 63 GET gnTmarg3A5 PICT "99"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Vertikalno pomj.donjeg dijela fakture  var.9(br.redova)" GET gnTmarg4 PICT "99"
-      @ m_x + nX, m_y + 63 GET gnTmarg4A5 PICT "99"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Vertik.pomj.znakova krizanja i br.dok.var.9(br.red.>=0)" GET gKriz PICT "99"
-      @ m_x + nX, m_y + 63 GET gKrizA5 PICT "99"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Znak kojim se precrtava dio teksta na papiru" GET gZnPrec
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Broj linija za odvajanje tabele od broja dokumenta" GET gOdvT2 VALID gOdvT2 >= 0 PICT "9"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Nacin crtanja tabele (0/1/2) ?" GET gTabela VALID gTabela < 3 .AND. gTabela >= 0 PICT "9"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Zaglavlje na svakoj stranici D/N  (1/2) ? " GET gZagl VALID gZagl $ "12" PICT "@!"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Crni-masni prikaz fakture D/N  (1/2) ? " GET gBold VALID gBold $ "12" PICT "@!"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Var.RTF-fakt.,izgled tipa 2 (' '-standardno, 1-MINEX, 2-LIKOM, 3-ZENELA)" GET gVarRF VALID gVarRF $ " 123"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Prikaz rekapitulacije po tarifama na 13-ci:" GET gRekTar VALID gRekTar $ "DN" PICT "@!"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Prikaz horizot. linija:" GET gHLinija VALID gHLinija $ "DN" PICT "@!"
-      nX++
-      @ m_x + nX, m_y + 2 SAY "Prikaz rabata u %(procentu)? (D/N):" GET gRabProc VALID gRabProc $ "DN" PICT "@!"
-      nX++
-   ENDIF
 
-   IF IsPdv()
 
-      @ m_x + nX, m_y + 2 SAY "Koristi ODT template automatski (D/N) ?" GET _auto_odt VALID _auto_odt $ "DN" PICT "!@"
+   @ m_x + nX, m_y + 2 SAY "Koristi ODT template automatski (D/N) ?" GET _auto_odt VALID _auto_odt $ "DN" PICT "!@"
 
-      nX ++
+   nX++
 
-      @ m_x + nX, m_y + 2 SAY "PDV Delphi RB prikaz (D/N)" GET gPDVDrb PICT "@!" VALID gPDVDrb $ "DN"
-      nX ++
+   @ m_x + nX, m_y + 2 SAY "PDV Delphi RB prikaz (D/N)" GET gPDVDrb PICT "@!" VALID gPDVDrb $ "DN"
+   nX++
 
-      @ m_x + nX, m_y + 2 SAY "PDV TXT dokument varijanta " GET gPDVDokVar PICT "@!" VALID gPDVDokVar $ "123"
-      nX ++
+   @ m_x + nX, m_y + 2 SAY "PDV TXT dokument varijanta " GET gPDVDokVar PICT "@!" VALID gPDVDokVar $ "123"
+   nX++
 
-      nX += 2
-      @ m_x + nX, m_y + 2 SAY "Koordinate iznad kupac/ispod kupac/nar_otp-tabela"
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY "Koordinate iznad kupac/ispod kupac/nar_otp-tabela"
 
-      nX ++
-      @ m_x + nX, m_y + 2 SAY "DX-1 :" GET nDx1 ;
-         PICT "99"
-      @ m_x + nX, Col() + 2 SAY "DX-2 :" GET nDx2 ;
-         PICT "99"
-      @ m_x + nX, Col() + 2 SAY "DX-3 :" GET nDx3 ;
-         PICT "99"
-      nX += 2
-      @ m_x + nX, m_y + 2 SAY "SW-1 :" GET nSw1 ;
-         PICT "99"
-      @ m_x + nX, Col() + 2 SAY "SW-2 :" GET nSw2 ;
-         PICT "99"
-      @ m_x + nX, Col() + 2 SAY "SW-3 :" GET nSw3 ;
-         PICT "99"
-      @ m_x + nX, Col() + 2 SAY "SW-4 :" GET nSw4 ;
-         PICT "99"
-      @ m_x + nX, Col() + 2 SAY "SW-5 :" GET nSw5 ;
-         PICT "99"
-      nX += 2
-      @ m_x + nX, m_y + 2 SAY "SW-6 :" GET nSw6 ;
-         PICT "9"
-      @ m_x + nX, Col() + 2 SAY "SW-7 :" GET nSw7 ;
-         PICT "9"
-      nX += 2
+   nX++
+   @ m_x + nX, m_y + 2 SAY "DX-1 :" GET nDx1 ;
+      PICT "99"
+   @ m_x + nX, Col() + 2 SAY "DX-2 :" GET nDx2 ;
+      PICT "99"
+   @ m_x + nX, Col() + 2 SAY "DX-3 :" GET nDx3 ;
+      PICT "99"
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY "SW-1 :" GET nSw1 ;
+      PICT "99"
+   @ m_x + nX, Col() + 2 SAY "SW-2 :" GET nSw2 ;
+      PICT "99"
+   @ m_x + nX, Col() + 2 SAY "SW-3 :" GET nSw3 ;
+      PICT "99"
+   @ m_x + nX, Col() + 2 SAY "SW-4 :" GET nSw4 ;
+      PICT "99"
+   @ m_x + nX, Col() + 2 SAY "SW-5 :" GET nSw5 ;
+      PICT "99"
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY "SW-6 :" GET nSw6 ;
+      PICT "9"
+   @ m_x + nX, Col() + 2 SAY "SW-7 :" GET nSw7 ;
+      PICT "9"
+   nX += 2
 
-      // parametri fin.stanje na dod.txt...
-      @ m_x + nX, m_y + 2 SAY "Ispis grupacije robe poslije naziva (D/N)" GET glRGrPrn PICT "@!" VALID glRGrPrn $ "DN"
+   // parametri fin.stanje na dod.txt...
+   @ m_x + nX, m_y + 2 SAY "Ispis grupacije robe poslije naziva (D/N)" GET glRGrPrn PICT "@!" VALID glRGrPrn $ "DN"
 
-      nX += 2
+   nX += 2
 
-      // parametri fin.stanje na dod.txt...
-      @ m_x + nX, m_y + 2 SAY "Prikaz fin.salda kupca/dobavljaca na dodatnom tekstu (D/N)" GET gShSld PICT "@!" VALID gShSld $ "DN"
+   // parametri fin.stanje na dod.txt...
+   @ m_x + nX, m_y + 2 SAY "Prikaz fin.salda kupca/dobavljaca na dodatnom tekstu (D/N)" GET gShSld PICT "@!" VALID gShSld $ "DN"
 
-      nX += 1
+   nX += 1
 
-      @ m_x + nX, m_y + 2 SAY PadL( "Konto duguje:", 20 ) GET gFinKtoDug VALID !Empty( gFinKtoDug ) .AND. P_Konto( @gFinKtoDug ) WHEN gShSld == "D"
+   @ m_x + nX, m_y + 2 SAY PadL( "Konto duguje:", 20 ) GET gFinKtoDug VALID !Empty( gFinKtoDug ) .AND. P_Konto( @gFinKtoDug ) WHEN gShSld == "D"
 
-      nX += 1
+   nX += 1
 
-      @ m_x + nX, m_y + 2 SAY PadL( "Konto potrazuje:", 20 ) GET gFinKtoPot VALID !Empty( gFinKtoPot ) .AND. P_Konto( @gFinKtoPot ) WHEN gShSld == "D"
+   @ m_x + nX, m_y + 2 SAY PadL( "Konto potrazuje:", 20 ) GET gFinKtoPot VALID !Empty( gFinKtoPot ) .AND. P_Konto( @gFinKtoPot ) WHEN gShSld == "D"
 
-      nX += 1
+   nX += 1
 
-      @ m_x + nX, m_y + 2 SAY "Varijanta prikaza podataka (1/2)" GET gShSldVar PICT "9" VALID gShSldVar > 0 .AND. gShSldVar < 3 WHEN gShSld == "D"
+   @ m_x + nX, m_y + 2 SAY "Varijanta prikaza podataka (1/2)" GET gShSldVar PICT "9" VALID gShSldVar > 0 .AND. gShSldVar < 3 WHEN gShSld == "D"
 
-   ENDIF
 
    READ
 

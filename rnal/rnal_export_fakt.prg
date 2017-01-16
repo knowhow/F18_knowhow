@@ -28,25 +28,25 @@ STATIC FUNCTION _export_cond( params )
 
    @ m_x + _x, m_y + 2 SAY "Uslovi prenosa naloga u otpremnicu:"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY " Tip otpremnice: [V] vp (dok 12)"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "                 [M] mp (dok 13)" GET _tip VALID _tip $ "VM" PICT "@!"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Sumirati stavke naloga (D/N)" GET _suma VALID _suma $ "DN" PICT "@!"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Valuta u koju mjenjamo otpremnicu (KM/EUR)" GET _valuta PICT "@!"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Promjeniti podatke isporuke naloga (D/N)" GET _pr_isp VALID _pr_isp $ "DN" PICT "@!"
 
@@ -768,7 +768,7 @@ STATIC FUNCTION fnd_partn( xPartn, nCustId, cDesc  )
 
    xPartn := Space( 6 )
 
-   Box(, 5, MAXCOLS() - 15 )
+   Box(, 5, MAXCOLS() -15 )
    @ m_x + 1, m_y + 2 SAY8 "Naručioc: "
    @ m_x + 1, Col() + 1 SAY AllTrim( Str( nCustId ) ) COLOR f18_color_i()
    @ m_x + 1, Col() + 1 SAY " -> "
@@ -906,4 +906,41 @@ STATIC FUNCTION a_to_txt( cVal, lEmpty )
 
    SELECT ( nTArr )
 
-   RETURN
+   RETURN .T.
+
+// ---------------------------------------------
+// vraca cijenu artikla iz sifrarnika robe
+// ---------------------------------------------
+FUNCTION g_art_price( cId, cPriceType )
+
+   LOCAL nPrice := 0
+   LOCAL nTArea := Select()
+
+   IF cPriceType == nil
+      cPriceType := "VPC1"
+   ENDIF
+
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
+
+   SELECT roba
+   SEEK cId
+
+   IF Found() .AND. field->id == cID
+      DO CASE
+      CASE cPriceType == "VPC1"
+         nPrice := field->vpc
+      CASE cPriceType == "VPC2"
+         nPrice := field->vpc2
+      CASE cPriceType == "MPC1"
+         nPrice := field->mpc
+      CASE cPriceType == "MPC2"
+         nPrice := field->mpc2
+      CASE cPriceType == "NC"
+         nPrice := field->nc
+      ENDCASE
+   ENDIF
+
+   RETURN nPrice

@@ -93,7 +93,7 @@ FUNCTION kalk_real_partnera()
    HSEEK cIdFirma
    EOF CRET
 
-   PRIVATE M := "   -------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------" + IF( !IsPDV(), " ----------", "" )
+   PRIVATE M := "   -------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------" + ""
 
    START PRINT CRET
    ?
@@ -375,7 +375,7 @@ FUNCTION kalk_real_partnera()
 
 FUNCTION kalk_zagl_real_partnera( fTabela )
 
-   // {
+
    IF ftabela = NIL
       ftabela := .T.
    ENDIF
@@ -398,9 +398,9 @@ FUNCTION kalk_zagl_real_partnera( fTabela )
       ? "   *           Partner            *    NV     *  ZARADA  *   RUC    * Prod.vr  *  Rabat   *   PDV    *  Ukupno *"
 
 
-      ? "   *                              *           *(RUC-RAB.)* (PV - NV) *         *          *          *          *" + IF( !IsPDV(), "         *", "" )
+      ? "   *                              *           *(RUC-RAB.)* (PV - NV) *         *          *          *          *" +  ""
 
       ? m
    ENDIF
 
-   RETURN
+   RETURN .Y.

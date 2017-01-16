@@ -450,11 +450,9 @@ FUNCTION V_Roba( lPrikTar )
       @ m_x + 16, m_y + 28 SAY "TBr: "
       ?? roba->idtarifa, "PDV", Str( tarifa->opp, 7, 2 ) + "%"
       IF _IdTipdok == "13"
-         IF IsPDV()
-            @ m_X + 18, m_y + 47 SAY "MPC.s.PDV sif:"
-         ELSE
-            @ m_X + 18, m_y + 47 SAY "MPC u sif:"
-         ENDIF
+
+         @ m_X + 18, m_y + 47 SAY "MPC.s.PDV sif:"
+
          ?? Str( roba->mpc, 8, 2 )
       ENDIF
    ENDIF
@@ -571,12 +569,12 @@ FUNCTION UzorTxt()
       ENDIF
    ENDIF
 
-   IF IsPdv() .AND. _IdTipDok == "12" .AND. IsProfil( _IdPartner, "KMS" )
-      KmsKlauzula()
-      IF Empty( AllTrim( _txt2 ) )
-         cId := "KS"
-      ENDIF
+
+
+   IF Empty( AllTrim( _txt2 ) )
+      cId := "KS"
    ENDIF
+
 
    IF ( nRbr == 1 .AND. Val( _podbr ) < 1 )
 
@@ -667,20 +665,14 @@ FUNCTION UzorTxt2( cList, redni_broj )
       ENDIF
    ENDIF
 
-   IF _IdTipDok == "12" .AND. IsProfil( _IdPartner, "KMS" )
-      KmsKlauzula()
-      IF Empty( AllTrim( _txt2 ) )
-         cId := "KS"
-         AAdd( aList, cId )
-      ENDIF
-   ENDIF
+
 
    IF !Empty( cList )
       FOR i := 1 TO Len( aList )
          cU_txt := aList[ i ]
          _add_to_txt( cU_txt, nCount, .T. )
          cId := "MX"
-         ++ nCount
+         ++nCount
       NEXT
    ENDIF
 
@@ -705,7 +697,7 @@ FUNCTION UzorTxt2( cList, redni_broj )
             IF cId <> "MX"
                P_Ftxt( @cId )
                _add_to_txt( cId, nCount, .T. )
-               ++ nCount
+               ++nCount
                cId := "  "
             ENDIF
          ENDIF
@@ -814,35 +806,6 @@ FUNCTION InoKlauzula()
    RETURN
 
 
-// ----------------------------
-// komision klauzula
-// ----------------------------
-FUNCTION KmsKlauzula()
-
-   LOCAL _rec
-
-   PushWA()
-
-   SELECT FTXT
-   SEEK "KS"
-
-   IF !Found()
-
-      APPEND BLANK
-      _rec := dbf_get_rec()
-
-      _rec[ "id" ] := "KS"
-      _rec[ "naz" ] := "Dostava nije oporeziva, na osnovu Pravilnika o primjeni Zakona o PDV-u" + Chr( 13 ) + Chr( 10 ) + "clan 6. tacka 3."
-
-      update_rec_server_and_dbf( "ftxt", _rec, 1, "FULL" )
-
-
-
-   ENDIF
-
-   PopWa()
-
-   RETURN
 
 
 // -------------------------------------------------------
@@ -874,7 +837,7 @@ FUNCTION artikal_kao_usluga( fNovi )
 
       _porez := 0
 
-      @ Row() - 1, m_y + 25 SAY "opis usl.:" GET _txt1 PICT "@S50"
+      @ Row() -1, m_y + 25 SAY "opis usl.:" GET _txt1 PICT "@S50"
 
       READ
 

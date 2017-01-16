@@ -101,16 +101,6 @@ FUNCTION AddBS( cPath )
    ENDIF
 
 
-FUNCTION DiskPrazan( cDisk )
-
-   IF DiskSpace( Asc( cDisk ) -64 ) < 15000
-      Beep( 4 )
-      Msg( "Nema dovoljno prostora na ovom disku, stavite drugu disketu", 6 )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
-
 
 
 

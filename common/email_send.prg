@@ -201,7 +201,7 @@ FUNCTION f18_email_test()
 
    f18_email_send( _mail_params, _attach )
 
-   RETURN
+   RETURN .T.
 
 
 

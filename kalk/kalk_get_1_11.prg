@@ -89,9 +89,9 @@ FUNCTION kalk_get_1_11()
 
    SELECT kalk_pripr  // napuni tarifu
 
-   //check_datum_posljednje_kalkulacije()
-   //kalk_dat_poslj_promjene_prod()
-   //DuplRoba()
+   // check_datum_posljednje_kalkulacije()
+   // kalk_dat_poslj_promjene_prod()
+   // DuplRoba()
 
 
    _GKolicina := _GKolicin2 := 0
@@ -186,21 +186,17 @@ FUNCTION kalk_get_1_11()
       _marza := _vpc / ( 1 + _PORVT ) -_fcj, .T. }
    @ m_x + 16, Col() + 1 GET fMarza PICT "@!"   VALID {|| Marza2( fMarza ), fMarza := " ", .T. }
 
-   IF IsPDV()
-      @ m_x + 18, m_y + 2  SAY "PRODAJNA CJENA       :"
-   ELSE
-      @ m_x + 18, m_y + 2  SAY "MALOPROD. CJENA (MPC):"
-   ENDIF
+
+   @ m_x + 18, m_y + 2  SAY "PRODAJNA CJENA       :"
+
 
    @ m_x + 18, m_y + 50 GET _MPC PICTURE PicDEM VALID VMpc( .F., fMarza ) WHEN WMpc( .F., fMarza )
 
    SayPorezi( 19 )
 
-   IF IsPDV()
-      @ m_x + 20, m_y + 2 SAY "PROD.C. SA PDV:"
-   ELSE
-      @ m_x + 20, m_y + 2 SAY "MPC SA POREZOM:"
-   ENDIF
+
+   @ m_x + 20, m_y + 2 SAY "PROD.C. SA PDV:"
+
    @ m_x + 20, m_y + 50 GET _MPCSaPP  PICTURE PicDEM VALID VMPCSaPP( .F., fMarza )
 
    READ

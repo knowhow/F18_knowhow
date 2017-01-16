@@ -29,11 +29,11 @@ FUNCTION os_rpt_default_valute()
    ENDIF
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION PrikazVal()
-   RETURN ( IF( gDrugaVal == "D", " VALUTA:'" + Trim( cBBV ) + "'", "" ) )
+   RETURN ( IIF( gDrugaVal == "D", " VALUTA:'" + Trim( cBBV ) + "'", "" ) )
 
 
 

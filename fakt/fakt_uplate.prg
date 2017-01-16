@@ -16,10 +16,7 @@
 #define Y_POS_STANJE MAXCOLS() - 45
 
 
-// ------------------
-// Uplate
-// -----------------
-FUNCTION Uplate()
+FUNCTION fakt_uplate()
 
    O_FAKT_DOKS
 
@@ -227,7 +224,7 @@ FUNCTION UkUplata( lPushWA )
 
 
 /* SkipDBBK(nRequest)
- *    
+ *
  *   param: nRequest
  */
 

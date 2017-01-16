@@ -19,7 +19,7 @@ FUNCTION mnu_fakt_uplate()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. evidentiranje uplata                   " )
-   AAdd( _opcexe, {|| Uplate() } )
+   AAdd( _opcexe, {|| fakt_uplate() } )
    AAdd( _opc, "2. lista salda kupaca" )
 
 /* TODO: fix or out?

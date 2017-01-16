@@ -12,18 +12,17 @@
 #include "f18.ch"
 
 
-
 STATIC slChanged := .F.
 
 
-FUNCTION IzSifre( silent )
+FUNCTION IzSifre( lSilent )
 
    LOCAL _pos
    LOCAL _sif := _idpartner
    LOCAL _tmp
 
-   IF silent == NIL
-      silent := .F.
+   IF lSilent == NIL
+      lSilent := .F.
    ENDIF
 
    IF Right( _sif, 1 ) = "." .AND. Len( _sif ) <= 7
@@ -31,7 +30,7 @@ FUNCTION IzSifre( silent )
       _pos := RAt( ".", _sif )
       _sif := Left( _sif, _pos - 1 )
 
-      IF !silent
+      IF !lSilent
          p_partner( PadR( _sif, 6 ) )
       ENDIF
 

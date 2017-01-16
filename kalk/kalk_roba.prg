@@ -54,8 +54,6 @@ FUNCTION kalk_pripr_form_get_roba( cIdRoba, cIdTarifa, cIdVd, lNoviDokument, nKo
       kalk_zadnji_ulazi_info( cIdpartner, cIdroba, cProdMag ) }
 
 
-
-
    // _ocitani_barkod := _idroba, ;
    // P_Roba( @_IdRoba ), ;
    // if ( !tezinski_barkod_get_tezina( @_ocitani_barkod, @_kolicina ), .T., .T. ), ;
@@ -284,10 +282,10 @@ STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
 STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
 
    LOCAL GetList := {}
-   LOCAL _line := ""
+   LOCAL cLine := ""
    LOCAL _head := ""
    LOCAL _ok := " "
-   LOCAL _n := 4
+   LOCAL nX := 4
    LOCAL nI, _len
 
    _len := Len( ulazi )
@@ -304,7 +302,7 @@ STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
 
    DO WHILE .T.
 
-      _n := 4
+      nX := 4
 
       Box(, 5 + ul_count, 60 )
 
@@ -316,26 +314,26 @@ STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
 
          IF nI > 0
 
-            _line := PadR( ulazi[ nI, 1 ], 7 )
-            _line += " "
-            _line += PadR( ulazi[ nI, 2 ], 10 )
-            _line += " "
-            _line += DToC( ulazi[ nI, 3 ] )
-            _line += " "
-            _line += Str( ulazi[ nI, 4 ], 12, 3 )
-            _line += " "
-            _line += Str( ulazi[ nI, 5 ], 12, 3 ) + "%"
+            cLine := PadR( ulazi[ nI, 1 ], 7 )
+            cLine += " "
+            cLine += PadR( ulazi[ nI, 2 ], 10 )
+            cLine += " "
+            cLine += DToC( ulazi[ nI, 3 ] )
+            cLine += " "
+            cLine += Str( ulazi[ nI, 4 ], 12, 3 )
+            cLine += " "
+            cLine += Str( ulazi[ nI, 5 ], 12, 3 ) + "%"
 
-            @ m_x + _n, m_y + 2 SAY _line
-            ++ _n
+            @ m_x + nX, m_y + 2 SAY cLine
+            ++ nX
 
          ENDIF
 
       NEXT
 
-      @ m_x + _n, m_y + 2 SAY Replicate( "-", 59 )
-      ++ _n
-      @ m_x + _n, m_y + 2 SAY "Pritisni 'ENTER' za nastavak ..." GET _ok
+      @ m_x + nX, m_y + 2 SAY Replicate( "-", 59 )
+      ++ nX
+      @ m_x + nX, m_y + 2 SAY "Pritisni 'ENTER' za nastavak ..." GET _ok
 
       READ
 

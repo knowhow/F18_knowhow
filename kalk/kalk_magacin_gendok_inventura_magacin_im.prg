@@ -221,7 +221,6 @@ FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
 
    cIdVd := "IM"
 
-   AltD()
    IF !kalk_copy_kalk_azuriran_u_pript( cIdFirma, cIdVd, cOldBrDok )  // kopiraj postojecu IM u pript
       RETURN .F.
    ENDIF

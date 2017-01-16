@@ -14,18 +14,18 @@
 
 FUNCTION ld_sifarnici()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
 
    o_ld_sif_tables()
 
-   AAdd( _opc, "1. opći šifarnici                     " )
-   AAdd( _opcexe, {|| ld_opci_sifarnici() } )
-   AAdd( _opc, "2. ostali šifarnici" )
-   AAdd( _opcexe, {|| ld_specificni_sifarnici() } )
+   AAdd( aOpc, "1. opći šifarnici                     " )
+   AAdd( aOpcExe, {|| ld_opci_sifarnici() } )
+   AAdd( aOpc, "2. ostali šifarnici" )
+   AAdd( aOpcExe, {|| ld_specificni_sifarnici() } )
 
-   f18_menu( "sif", .F., _izbor, _opc, _opcexe )
+   f18_menu( "sif", .F., _izbor, aOpc, aOpcExe )
 
    RETURN .T.
 
@@ -33,34 +33,34 @@ FUNCTION ld_sifarnici()
 
 FUNCTION ld_opci_sifarnici()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. radnici                            " )
-   AAdd( _opcexe, {|| P_Radn() } )
-   AAdd( _opc,  "5. radne jedinice" )
-   AAdd( _opcexe, {|| P_LD_RJ() } )
-   AAdd( _opc, "6. opštine" )
-   AAdd( _opcexe, {|| P_Ops() } )
-   AAdd( _opc, "9. vrste posla" )
-   AAdd( _opcexe, {|| P_VPosla() } )
-   AAdd( _opc, "B. stručne spreme" )
-   AAdd( _opcexe, {|| P_StrSpr() } )
-   AAdd( _opc, "C. kreditori" )
-   AAdd( _opcexe, {|| P_Kred() } )
-   AAdd( _opc, "F. banke" )
-   AAdd( _opcexe, {|| P_Banke() } )
-   AAdd( _opc, "G. sifk" )
-   AAdd( _opcexe, {|| P_SifK() } )
+   AAdd( aOpc, "1. radnici                            " )
+   AAdd( aOpcExe, {|| P_Radn() } )
+   AAdd( aOpc,  "5. radne jedinice" )
+   AAdd( aOpcExe, {|| P_LD_RJ() } )
+   AAdd( aOpc, "6. opštine" )
+   AAdd( aOpcExe, {|| P_Ops() } )
+   AAdd( aOpc, "9. vrste posla" )
+   AAdd( aOpcExe, {|| P_VPosla() } )
+   AAdd( aOpc, "B. stručne spreme" )
+   AAdd( aOpcExe, {|| P_StrSpr() } )
+   AAdd( aOpc, "C. kreditori" )
+   AAdd( aOpcExe, {|| P_Kred() } )
+   AAdd( aOpc, "F. banke" )
+   AAdd( aOpcExe, {|| P_Banke() } )
+   AAdd( aOpc, "G. sifk" )
+   AAdd( aOpcExe, {|| P_SifK() } )
 
    IF ( IsRamaGlas() )
-      AAdd( _opc,  "H. objekti"  )
-      AAdd( _opcexe, {|| P_fakt_objekti() } )
+      AAdd( aOpc,  "H. objekti"  )
+      AAdd( aOpcExe, {|| P_fakt_objekti() } )
    ENDIF
 
 
-   f18_menu( "op", .F., _izbor, _opc, _opcexe )
+   f18_menu( "op", .F., _izbor, aOpc, aOpcExe )
 
    RETURN .T.
 
@@ -68,36 +68,36 @@ FUNCTION ld_opci_sifarnici()
 
 FUNCTION ld_specificni_sifarnici()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. parametri obračuna                  " )
-   AAdd( _opcexe, {|| P_ParObr() } )
-   AAdd( _opc, "2. tipovi primanja" )
-   AAdd( _opcexe, {|| P_TipPr() } )
-   AAdd( _opc, "3. tipovi primanja / ostali obračuni" )
-   AAdd( _opcexe, {|| P_TipPr2() } )
-   AAdd( _opc, "4. porezne stope " )
-   AAdd( _opcexe, {|| P_Por() } )
-   AAdd( _opc, "5. doprinosi " )
-   AAdd( _opcexe, {|| P_Dopr() } )
-   AAdd( _opc, "6. koef.benef.rst" )
-   AAdd( _opcexe, {|| P_KBenef() } )
+   AAdd( aOpc, "1. parametri obračuna                  " )
+   AAdd( aOpcExe, {|| P_ParObr() } )
+   AAdd( aOpc, "2. tipovi primanja" )
+   AAdd( aOpcExe, {|| P_TipPr() } )
+   AAdd( aOpc, "3. tipovi primanja / ostali obračuni" )
+   AAdd( aOpcExe, {|| P_TipPr2() } )
+   AAdd( aOpc, "4. porezne stope " )
+   AAdd( aOpcExe, {|| P_Por() } )
+   AAdd( aOpc, "5. doprinosi " )
+   AAdd( aOpcExe, {|| P_Dopr() } )
+   AAdd( aOpc, "6. koef.benef.rst" )
+   AAdd( aOpcExe, {|| P_KBenef() } )
 
    IF gSihtarica == "D"
-      AAdd( _opc, "7. tipovi primanja u šihtarici" )
-      AAdd( _opcexe, {|| P_TprSiht() } )
-      AAdd( _opc, "8. norme radova u šihtarici   " )
-      AAdd( _opcexe, {|| P_NorSiht() } )
+      AAdd( aOpc, "7. tipovi primanja u šihtarici" )
+      AAdd( aOpcExe, {|| P_TprSiht() } )
+      AAdd( aOpc, "8. norme radova u šihtarici   " )
+      AAdd( aOpcExe, {|| P_NorSiht() } )
    ENDIF
 
    IF gSihtGroup == "D"
-      AAdd( _opc, "8. lista konta   " )
-      AAdd( _opcexe, {|| p_konto() } )
+      AAdd( aOpc, "8. lista konta   " )
+      AAdd( aOpcExe, {|| p_konto() } )
    ENDIF
 
-   f18_menu( "spc", .F., _izbor, _opc, _opcexe )
+   f18_menu( "spc", .F., _izbor, aOpc, aOpcExe )
 
    RETURN .T.
 

@@ -288,7 +288,6 @@ FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
       lAutoConnect := .T.
    ENDIF
 
-   AltD()
    oLogin := my_login()
 
    DO WHILE .T.

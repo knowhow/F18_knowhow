@@ -101,7 +101,6 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
 
    //info_bar( "init", "gen odaberi_programski_modul start" )
 
-altd()
    init_parameters_cache()
    set_screen_dimensions()
 
@@ -117,7 +116,6 @@ altd()
       ++ _count
       CLEAR SCREEN
       hDbParams := my_server_params()
-      altd()
 
       nX := 1
       @ nX, mnu_left + 1 SAY8 "Tekuća baza: " + AllTrim( hDbParams[ "database" ] ) + " / db ver: " + cServerDbVersion + " / nivo logiranja: " + AllTrim( Str( log_level() ) )

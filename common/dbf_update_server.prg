@@ -18,25 +18,24 @@
  update_rec_server_and_dbf( cTabela, hRecord, 1, "FULL") - zapocni/zavrsi transakciju unutar funkcije
 */
 
-FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
+FUNCTION update_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
 
    LOCAL _ids := {}
    LOCAL _pos
    LOCAL _full_id_dbf, _full_id_mem
    LOCAL _dbf_pkey_search
    LOCAL _field
-   LOCAL _where_str, _where_str_dbf
+   LOCAL cWhereString, cWhereStringDbf
    LOCAL _t_field, _t_field_dec
-   LOCAL _a_dbf_rec, _alg
+   LOCAL hDbfRec, _alg
    LOCAL cMsg
-   LOCAL _values_dbf
+   LOCAL hRecDbf
    LOCAL _alg_tag := ""
-   LOCAL _ret
+   LOCAL lRet
    LOCAL lLock
    LOCAL hParams
 
-   _ret := .T.
-
+   lRet := .T.
 
    IF cTransaction == "FULL"
       lLock := .T.
@@ -46,10 +45,10 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
 
 
    // trebamo where str za hRecord rec
-   set_table_values_algoritam_vars( @cTabela, @hRecord, @algoritam, @cTransaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag )
+   set_table_values_algoritam_vars( @cTabela, @hRecord, @nAlgoritam, @cTransaction, @hDbfRec, @_alg, @cWhereString, @_alg_tag )
 
-   IF Alias() <> _a_dbf_rec[ "alias" ]
-      cMsg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
+   IF Alias() <> hDbfRec[ "alias" ]
+      cMsg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + hDbfRec[ "alias" ]
       log_write( cMsg, 2 )
       Alert( cMsg )
       error_bar( "update", cMsg )
@@ -57,10 +56,10 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
    ENDIF
 
    // log_write( "START: update_rec_server_and_dbf " + cTabela, 9 )
-   _values_dbf := dbf_get_rec()
+   hRecDbf := dbf_get_rec()
 
    // trebamo where str za stanje dbf-a
-   set_table_values_algoritam_vars( @cTabela, @_values_dbf, @algoritam, @cTransaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag )
+   set_table_values_algoritam_vars( @cTabela, @hRecDbf, @nAlgoritam, @cTransaction, @hDbfRec, @_alg, @cWhereStringDbf, @_alg_tag )
 
    IF cTransaction $ "FULL#BEGIN"
       run_sql_query( "BEGIN" )
@@ -68,23 +67,23 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
       lock_semaphore( cTabela )
    ENDIF
 
-   IF !sql_table_update( cTabela, "del", nil, _where_str ) // izbrisi sa servera stare vrijednosti za hRecord
+   IF !sql_table_update( cTabela, "del", nil, cWhereString ) // izbrisi sa servera stare vrijednosti za hRecord
 
       IF cTransaction == "FULL"
          run_sql_query( "ROLLBACK" )
       ENDIF
 
-      cMsg := "ERROR: sql delete " + cTabela +  " , ROLLBACK, where: " + _where_str
+      cMsg := "ERROR: sql delete " + cTabela +  " , ROLLBACK, where: " + cWhereString
       log_write( cMsg, 1 )
       Alert( cMsg )
 
-      _ret := .F.
+      lRet := .F.
 
    ENDIF
 
-   IF _ret .AND.  ( _where_str_dbf != _where_str )
+   IF lRet .AND.  ( cWhereStringDbf != cWhereString )
 
-      // izbrisi i stare vrijednosti za _values_dbf
+      // izbrisi i stare vrijednosti za hRecDbf
       // ovo nam treba ako se uradi npr. ispravku ID-a sifre
       // id je u dbf = ID=id_stari, NAZ=stari
       //
@@ -95,13 +94,13 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
       // trebamo uraditi i delete id=id_stari
       // to radimo upravo u sljedecoj sekvenci
       //
-      IF !sql_table_update( cTabela, "del", nil, _where_str_dbf )
+      IF !sql_table_update( cTabela, "del", nil, cWhereStringDbf )
 
          IF cTransaction == "FULL"
             run_sql_query( "ROLLBACK" )
          ENDIF
 
-         cMsg := "ERROR: sql delete " + cTabela +  " , ROLLBACK, where: " + _where_str_dbf
+         cMsg := "ERROR: sql delete " + cTabela +  " , ROLLBACK, where: " + cWhereStringDbf
          ?E cMsg
          error_bar( "sql_table", cMsg )
 
@@ -111,7 +110,7 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
 
    ENDIF
 
-   IF _ret .AND. !sql_table_update( cTabela, "ins", hRecord )
+   IF lRet .AND. !sql_table_update( cTabela, "ins", hRecord )
 
       IF cTransaction == "FULL"
          run_sql_query( "ROLLBACK" )
@@ -127,7 +126,7 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
    ENDIF
 
 
-   _full_id_dbf := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], _values_dbf ) // stanje u dbf-u (_values_dbf)
+   _full_id_dbf := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], hRecDbf ) // stanje u dbf-u (hRecDbf)
    _full_id_mem := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], hRecord ) // stanje podataka u mem rec varijabli hRecord
 
 
@@ -145,11 +144,11 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
 
       // log_write( cMsg, 1 )
       // Alert( cMsg )
-      _ret := .F.
+      lRet := .F.
 
    ENDIF
 
-   IF _ret
+   IF lRet
 
       IF dbf_update_rec( hRecord )
 
@@ -158,7 +157,7 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
             hParams[ "unlock" ] := { cTabela }
             run_sql_query( "COMMIT" )
          ENDIF
-         _ret := .T.
+         lRet := .T.
 
       ELSE
 
@@ -170,7 +169,7 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
          log_write( cMsg, 1 )
          Alert( cMsg )
 
-         _ret := .F.
+         lRet := .F.
 
       ENDIF
 
@@ -178,26 +177,26 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
 
    // log_write( "END update_rec_server_and_dbf " + cTabela, 9 )
 
-   RETURN _ret
+   RETURN lRet
 
 
 /*
-   algoritam = 1 - nivo zapisa, 2 - dokument ...
+   nAlgoritam = 1 - nivo zapisa, 2 - dokument ...
 */
 
-FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
+FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
 
    LOCAL _ids := {}
    LOCAL _pos
    LOCAL _full_id
    LOCAL _dbf_pkey_search
-   LOCAL _field, _count
-   LOCAL _where_str
+   LOCAL _field, nCount
+   LOCAL cWhereString
    LOCAL _t_field, _t_field_dec
-   LOCAL _a_dbf_rec, _alg
+   LOCAL hDbfRec, _alg
    LOCAL cMsg
    LOCAL _alg_tag := ""
-   LOCAL _ret
+   LOCAL lRet
    LOCAL lIndex := .T.
    LOCAL lLock
    LOCAL hParams
@@ -208,12 +207,12 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
       lLock := .F.
    ENDIF
 
-   _ret := .T.
+   lRet := .T.
 
-   set_table_values_algoritam_vars( @cTabela, @hRecord, @algoritam, @cTransaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag )
+   set_table_values_algoritam_vars( @cTabela, @hRecord, @nAlgoritam, @cTransaction, @hDbfRec, @_alg, @cWhereString, @_alg_tag )
 
-   IF Alias() <> _a_dbf_rec[ "alias" ]
-      cMsg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
+   IF Alias() <> hDbfRec[ "alias" ]
+      cMsg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + hDbfRec[ "alias" ]
       log_write( cMsg, 1 )
       error_bar( "del_rec", cMsg )
       RaiseError( cMsg )
@@ -228,22 +227,22 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
    ENDIF
 
 
-   IF sql_table_update( cTabela, "del", nil, _where_str )
+   IF sql_table_update( cTabela, "del", nil, cWhereString )
 
-      IF !_a_dbf_rec[ "sql" ]
+      IF !hDbfRec[ "sql" ]
          _full_id := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], hRecord )
          AAdd( _ids, _alg_tag + _full_id )
          push_ids_to_semaphore( cTabela, _ids )
 
-         SELECT ( _a_dbf_rec[ "wa" ] )
+         SELECT ( hDbfRec[ "wa" ] )
          IF !Used()
-            my_use( _a_dbf_rec[ "table" ] )
+            my_use( hDbfRec[ "table" ] )
          ENDIF
       ENDIF
 
 
       IF index_tag_num( _alg[ "dbf_tag" ] ) < 1
-         IF !_a_dbf_rec[ "sql" ]
+         IF !hDbfRec[ "sql" ]
 
             IF cTransaction == "FULL"
                run_sql_query( "ROLLBACK" )
@@ -265,13 +264,13 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
 
       IF my_flock()
 
-         _count := 0
+         nCount := 0
 
          IF lIndex
             SEEK _full_id
 
             WHILE Found()
-               ++ _count
+               ++ nCount
                DELETE
                // sve dok budes nalazio pod ovim kljucem brisi
                SEEK _full_id
@@ -285,7 +284,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
          my_unlock()
 
 #ifdef F18_DEBUG_SYNC
-         ?E "cTabela: " + cTabela + ", pobrisano iz lokalnog dbf-a broj zapisa = " + AllTrim( Str( _count ) )
+         ?E "cTabela: " + cTabela + ", pobrisano iz lokalnog dbf-a broj zapisa = " + AllTrim( Str( nCount ) )
 #endif
 
          IF cTransaction $ "FULL#END"
@@ -294,7 +293,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
             run_sql_query( "COMMIT", hParams )
          ENDIF
 
-         _ret := .T.
+         lRet := .T.
 
       ELSE
 
@@ -306,7 +305,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
          ENDIF
 
 
-         _ret := .F.
+         lRet := .F.
 
       ENDIF
 
@@ -318,13 +317,13 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
          Alert( cMsg )
          ?E cMsg
       ENDIF
-      _ret := .F.
+      lRet := .F.
 
    ENDIF
 
    // log_write( "delete rec server, zavrsio", 9 )
 
-   RETURN _ret
+   RETURN lRet
 
 
 
@@ -334,30 +333,30 @@ FUNCTION delete_all_dbf_and_server( cTabela )
    LOCAL _ids := {}
    LOCAL _pos
    LOCAL _field
-   LOCAL _where_str
-   LOCAL _a_dbf_rec
+   LOCAL cWhereString
+   LOCAL hDbfRec
    LOCAL cMsg
-   LOCAL _rec
+   LOCAL hRec
 
-   _a_dbf_rec := get_a_dbf_rec( cTabela, .T. )
-   reopen_exclusive( _a_dbf_rec[ "table" ] )
+   hDbfRec := get_a_dbf_rec( cTabela, .T. )
+   reopen_exclusive( hDbfRec[ "table" ] )
 
-   unlock_semaphore(  _a_dbf_rec[ "table" ] )
-   IF !lock_semaphore( _a_dbf_rec[ "table" ] )
+   unlock_semaphore(  hDbfRec[ "table" ] )
+   IF !lock_semaphore( hDbfRec[ "table" ] )
       RETURN .F.
    ENDIF
    run_sql_query( "BEGIN" )
 
-   _rec := hb_Hash()
-   _rec[ "id" ] := NIL
+   hRec := hb_Hash()
+   hRec[ "id" ] := NIL
 
 
-   IF sql_table_update( _a_dbf_rec[ "table" ], "del", _rec, "true" )
+   IF sql_table_update( hDbfRec[ "table" ], "del", hRec, "true" )
 
-      push_ids_to_semaphore( _a_dbf_rec[ "table" ], { "#F" } )
+      push_ids_to_semaphore( hDbfRec[ "table" ], { "#F" } )
       run_sql_query( "COMMIT" )
-      unlock_semaphore( _a_dbf_rec[ "table" ] )
-      my_dbf_zap( _a_dbf_rec[ "table" ] )
+      unlock_semaphore( hDbfRec[ "table" ] )
+      my_dbf_zap( hDbfRec[ "table" ] )
 
       RETURN .T.
 
@@ -378,12 +377,12 @@ FUNCTION delete_all_dbf_and_server( cTabela )
 // --------------------------------------------------------------------------------------------------------------
 // inicijalizacija varijabli koje koriste update and delete_from_server_and_dbf  funkcije
 // ---------------------------------------------------------------------------------------------------------------
-STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, algoritam, cTransaction, a_dbf_rec, alg, where_str, alg_tag )
+STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, nAlgoritam, cTransaction, hDbfRec, alg, where_str, alg_tag )
 
-   LOCAL _key
-   LOCAL _count := 0
+   LOCAL cKey
+   LOCAL nCount := 0
    LOCAL _use_tag := .F.
-   LOCAL _alias
+   LOCAL cAlias
    LOCAL lSqlTable, uValue
    LOCAL cMsg
 
@@ -391,72 +390,70 @@ STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, algoritam, cT
       cTabela := Alias()
    ENDIF
 
-   a_dbf_rec := get_a_dbf_rec( cTabela )
+   hDbfRec := get_a_dbf_rec( cTabela )
 
-   // ako je alias proslijedjen kao ulazni parametar, prebaci se na dbf_table
-   cTabela := a_dbf_rec[ "table" ]
+   cTabela := hDbfRec[ "table" ]    // ako je alias proslijedjen kao ulazni parametar, prebaci se na dbf_table
 
 
    IF hRecord == NIL
-      _alias := Alias()
+      cAlias := Alias()
       hRecord := dbf_get_rec()
 
-      IF ( a_dbf_rec[ "alias" ] != _alias )
-         RaiseError( "hRecord matrica razlicita od tabele ALIAS():" + _alias + " cTabela=" + cTabela )
+      IF ( hDbfRec[ "alias" ] != cAlias )
+         RaiseError( "hRecord matrica razlicita od tabele ALIAS():" + cAlias + " cTabela=" + cTabela )
       ENDIF
 
    ENDIF
 
-   IF algoritam == NIL
-      algoritam = 1
-   ENDIF
-
-   // nema zapoceta transakcija
-   IF cTransaction == NIL
-      // pocni i zavrsi trasakciju
-      cTransaction := "FULL"
+   IF nAlgoritam == NIL
+      nAlgoritam = 1
    ENDIF
 
 
-   alg := a_dbf_rec[ "algoritam" ][ algoritam ]
-   lSqlTable := a_dbf_rec[ "sql" ]
+   IF cTransaction == NIL  // nema zapoceta transakcija
+      cTransaction := "FULL"   // pocni i zavrsi trasakciju
+   ENDIF
 
-   FOR EACH _key in alg[ "dbf_key_fields" ]
 
-      ++ _count
-      IF ValType( _key ) == "C"
+   alg := hDbfRec[ "algoritam" ][ nAlgoritam ]
+   lSqlTable := hDbfRec[ "sql" ]
+
+   FOR EACH cKey in alg[ "dbf_key_fields" ]
+
+      ++ nCount
+      IF ValType( cKey ) == "C"
 
          // ne gledaj numericke kljuceve, koji su array stavke
-         IF !hb_HHasKey( hRecord, _key )
-            cMsg := RECI_GDJE_SAM + "# tabela:" + cTabela + "#bug - nepostojeći kljuc:" + _key +  "#hRecord:" + pp( hRecord )
+         IF !hb_HHasKey( hRecord, cKey )
+            cMsg := RECI_GDJE_SAM + "# tabela:" + cTabela + "#bug - nepostojeći kljuc:" + cKey +  "#hRecord:" + pp( hRecord )
             log_write( cMsg, 1 )
             MsgBeep( cMsg )
             error_bar( "set_t_alg", cMsg )
             RETURN .F.
          ENDIF
 
-         IF ValType( hRecord[ _key ] ) == "C"
+         IF ValType( hRecord[ cKey ] ) == "C"
 
             // ako je dbf_fields_len['id'][2] = 6
             // karakterna polja se moraju PADR-ovati
             // hRecord['id'] = '0' => '0     '
-            set_rec_from_dbstruct( @a_dbf_rec )
+            set_rec_from_dbstruct( @hDbfRec )
 
 
 /* uvijek je  hRecord db_get_rec()  uvijek cp852 enkodiran
-            uValue := Unicode():New( hRecord[ _key ], lSqlTable ) // unicode value
+            uValue := Unicode():New( hRecord[ cKey ], lSqlTable ) // unicode value
 
-            hRecord[ _key ] := uValue:PadR( a_dbf_rec[ "dbf_fields_len" ][ _key ][ 2 ] )
+            hRecord[ cKey ] := uValue:PadR( hDbfRec[ "dbf_fields_len" ][ cKey ][ 2 ] )
             IF !lSqlTable
                // DBFCDX tabela mora sadržati CP 852 string
-               hRecord[ _key ] := hb_UTF8ToStr( hRecord[ _key ] )
+               hRecord[ cKey ] := hb_UTF8ToStr( hRecord[ cKey ] )
             ENDIF
 */
 
             // provjeri prvi dio kljuca
             // ako je # onda obavezno setuj tag
-            IF _count == 1
-               IF PadR( hRecord[ _key ], 1 ) == "#"
+            IF nCount == 1
+               IF PadR( hRecord[ cKey ], 1 ) == "#"
                   _use_tag := .T.
                ENDIF
             ENDIF
@@ -471,8 +468,8 @@ STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, algoritam, cT
       where_str := sql_where_from_dbf_key_fields( alg[ "dbf_key_fields" ], hRecord, lSqlTable )
    END SEQUENCE
 
-   IF algoritam > 1 .OR. _use_tag == .T.
-      alg_tag := "#" + AllTrim( Str( algoritam ) )
+   IF nAlgoritam > 1 .OR. _use_tag == .T.
+      alg_tag := "#" + AllTrim( Str( nAlgoritam ) )
    ENDIF
 
    RETURN .T.

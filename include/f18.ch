@@ -150,13 +150,7 @@
 #define DBFENGINE "DBFCDX"
 // CDX end
 
-// komande koje se koriste
-// koje nam ne trebaju
-#command REPLSQL <f1> WITH <v1> [, <fN> WITH <vN> ] ;
-    => replsql_dummy()
 
-#command REPLSQL TYPE <cTip> <f1> WITH <v1> [, <fN> WITH <vN> ] ;
-    => replsql_dummy()
 
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 1
 #define SEMAPHORE_LOCK_RETRY_NUM 100

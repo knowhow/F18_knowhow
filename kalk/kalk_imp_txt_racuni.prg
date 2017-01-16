@@ -43,7 +43,7 @@ FUNCTION meni_import_vindija()
    AAdd( opcexe, {|| kalk_imp_continue_from_check_point() } )
    AAdd( opc, "6. podešenja importa " )
    AAdd( opcexe, {|| kalk_auto_import_setup() } )
-  
+
    AAdd( opc, "P. parametri kontiranja poslovnica" )
    AAdd( opcexe, {|| set_kalk_imp_parametri_za_poslovnica() } )
    AAdd( opc, "R. parametri kontiranja prodavnica" )
@@ -412,7 +412,6 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
       ENDIF
 
-      AltD()
       REPLACE kolicina WITH kalk_imp_temp->kolicina, ;
          idroba WITH roba->id, ;
          nc WITH ROBA->nc, ;

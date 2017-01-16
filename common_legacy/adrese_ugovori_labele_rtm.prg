@@ -18,7 +18,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
    LOCAL _n_sort, _dat_do, _g_dat
    LOCAL _filter := ""
    LOCAL _index_sort := ""
-   LOCAL _rec, cFiltUslovPartner, _usl_mjesto, _usl_ptt
+   LOCAL hRec, cFiltUslovPartner, _usl_mjesto, _usl_ptt
    LOCAL _ima_destinacija
    LOCAL _count := 0
    LOCAL _total_kolicina := 0
@@ -45,8 +45,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
       @ m_x + 3, m_y + 2 SAY "Partner  :" GET _partner PICT "@S50!"
       @ m_x + 4, m_y + 2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
       @ m_x + 5, m_y + 2 SAY "PTT      :" GET _ptt PICT "@S50!"
-      @ m_x + 6, m_y + 2 SAY "Gledati tekuci datum (D/N):" GET _g_dat ;
-         VALID _g_dat $ "DN" PICT "@!"
+      @ m_x + 6, m_y + 2 SAY "Gledati tekuci datum (D/N):" GET _g_dat VALID _g_dat $ "DN" PICT "@!"
       @ m_x + 7, m_y + 2 SAY "**** Nacin sortiranja podataka u pregledu: "
       @ m_x + 8, m_y + 2 SAY " 1 - kolicina + mjesto + naziv"
       @ m_x + 9, m_y + 2 SAY " 2 - mjesto + naziv + kolicina"
@@ -175,12 +174,12 @@ FUNCTION kreiraj_adrese_iz_ugovora()
       SELECT labelu
       APPEND BLANK
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "idpartner" ] := ugov->idpartner
-      _rec[ "kolicina" ] := rugov->kolicina
-      _rec[ "idroba" ] := rugov->idroba
-      _rec[ "kol_c" ] := PadL( AllTrim( Str( rugov->kolicina, 12, 0 ) ), 5, "0" )
+      hRec[ "idpartner" ] := ugov->idpartner
+      hRec[ "kolicina" ] := rugov->kolicina
+      hRec[ "idroba" ] := rugov->idroba
+      hRec[ "kol_c" ] := PadL( AllTrim( Str( rugov->kolicina, 12, 0 ) ), 5, "0" )
 
       _total_kolicina += rugov->kolicina
 
@@ -205,29 +204,29 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
       IF _ima_destinacija
 
-         _rec[ "destin" ] := dest->id
-         _rec[ "naz" ] := dest->naziv
-         _rec[ "naz2" ] := dest->naziv2
-         _rec[ "ptt" ] := Upper( dest->ptt )
-         _rec[ "mjesto" ] := Upper( dest->mjesto )
-         _rec[ "telefon" ] := dest->telefon
-         _rec[ "fax" ] := dest->fax
-         _rec[ "adresa" ] := dest->adresa
+         hRec[ "destin" ] := dest->id
+         hRec[ "naz" ] := dest->naziv
+         hRec[ "naz2" ] := dest->naziv2
+         hRec[ "ptt" ] := Upper( dest->ptt )
+         hRec[ "mjesto" ] := Upper( dest->mjesto )
+         hRec[ "telefon" ] := dest->telefon
+         hRec[ "fax" ] := dest->fax
+         hRec[ "adresa" ] := dest->adresa
 
       ELSE
 
-         _rec[ "destin" ] := ""
-         _rec[ "naz" ] := partn->naz
-         _rec[ "naz2" ] := partn->naz2
-         _rec[ "ptt" ] := Upper( partn->ptt )
-         _rec[ "mjesto" ] := Upper( partn->mjesto )
-         _rec[ "telefon" ] := partn->telefon
-         _rec[ "fax" ] := partn->fax
-         _rec[ "adresa" ] := partn->adresa
+         hRec[ "destin" ] := ""
+         hRec[ "naz" ] := partn->naz
+         hRec[ "naz2" ] := partn->naz2
+         hRec[ "ptt" ] := Upper( partn->ptt )
+         hRec[ "mjesto" ] := Upper( partn->mjesto )
+         hRec[ "telefon" ] := partn->telefon
+         hRec[ "fax" ] := partn->fax
+         hRec[ "adresa" ] := partn->adresa
 
       ENDIF
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       @ m_x + 3, m_y + 2 SAY "Ukupno prebaceno: " + AllTrim( Str( ++_count ) )
 
@@ -260,9 +259,10 @@ FUNCTION kreiraj_adrese_iz_ugovora()
    RETURN .T.
 
 
+
 STATIC FUNCTION label_to_lab2( index_sort )
 
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _count := 0
 
    SELECT labelu
@@ -271,14 +271,14 @@ STATIC FUNCTION label_to_lab2( index_sort )
 
    DO WHILE !Eof()
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       SELECT lab2
       APPEND BLANK
 
-      _rec[ "idx" ] := ++_count
+      hRec[ "idx" ] := ++_count
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       SELECT labelu
       SKIP

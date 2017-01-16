@@ -111,9 +111,7 @@ FUNCTION set_a_dbfs_key_fields()
    RETURN .T.
 
 
-// ------------------------------------
-// dodaj stavku u f18_dbfs
-// ------------------------------------
+
 FUNCTION f18_dbfs_add( cTable, _item )
 
    LOCAL cDatabase := my_database()
@@ -153,14 +151,14 @@ FUNCTION set_a_dbf_temp( table, alias, wa )
    RETURN .T.
 
 
-FUNCTION set_a_sql_sifarnik( dbf_table, alias, wa, rec )
+FUNCTION set_a_sql_sifarnik( dbf_table, alias, wa, hRec )
 
-   set_a_dbf_sifarnik( dbf_table, alias, wa, rec, .T. )
+   set_a_dbf_sifarnik( dbf_table, alias, wa, hRec, .T. )
 
    RETURN .T.
 
 
-FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
+FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, hRec, lSql )
 
    LOCAL _alg, _item
 
@@ -183,17 +181,17 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
 
    _alg := hb_Hash()
 
-   IF rec == NIL
+   IF hRec == NIL
       _alg[ "dbf_key_fields" ] := { "id" }
       _alg[ "dbf_tag" ]        := "ID"
       _alg[ "sql_in" ]        := "id"
       _alg[ "dbf_key_block" ] := {|| field->id }
 
    ELSE
-      _alg[ "dbf_key_fields" ] := rec[ "dbf_key_fields" ]
-      _alg[ "dbf_tag" ]        := rec[ "dbf_tag" ]
-      _alg[ "sql_in" ]        := rec[ "sql_in" ]
-      _alg[ "dbf_key_block" ] := rec[ "dbf_key_block" ]
+      _alg[ "dbf_key_fields" ] := hRec[ "dbf_key_fields" ]
+      _alg[ "dbf_tag" ]        := hRec[ "dbf_tag" ]
+      _alg[ "sql_in" ]        := hRec[ "sql_in" ]
+      _alg[ "dbf_key_block" ] := hRec[ "dbf_key_block" ]
    ENDIF
 
    AAdd( _item[ "algoritam" ], _alg )
@@ -532,7 +530,7 @@ FUNCTION print_a_dbfs()
 
 
 
-FUNCTION sql_order_from_key_fields( dbf_key_fields ) // "sql_order" hash na osnovu rec["dbf_fields"]
+FUNCTION sql_order_from_key_fields( dbf_key_fields ) // "sql_order" hash na osnovu hRec["dbf_fields"]
 
    LOCAL nI, _len
    LOCAL _sql_order
@@ -561,7 +559,7 @@ FUNCTION sql_order_from_key_fields( dbf_key_fields ) // "sql_order" hash na osno
 // ----------------------------------------------
 // setujem "dbf_fields" hash na osnovu stukture
 // dbf-a
-// rec["dbf_fields"]
+// hRec["dbf_fields"]
 // ----------------------------------------------
 FUNCTION set_dbf_fields_from_struct( xRec )
 
@@ -647,43 +645,43 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
 
 
-FUNCTION set_rec_from_dbstruct( rec )
+FUNCTION set_rec_from_dbstruct( hRec )
 
-   LOCAL _struct, nI
-   LOCAL _fields := {}, _fields_len
+   LOCAL aDbfStruct, nI
+   LOCAL hDbfFields := {}, hDbfFieldsLen
 
-   IF rec[ "dbf_fields" ] != NIL
+   IF hRec[ "dbf_fields" ] != NIL
       RETURN NIL // dbf_fields, dbf_fields_len su vec popunjena
    ENDIF
 
    hb_mutexLock( s_mtxMutex )
 
-   _struct := dbStruct()
+   aDbfStruct := dbStruct()
 
-   _fields_len := hb_Hash()
-   FOR nI := 1 TO Len( _struct )
-      AAdd( _fields, Lower( _struct[ nI, 1 ] ) )
+   hDbfFieldsLen := hb_Hash()
+   FOR nI := 1 TO Len( aDbfStruct )
+      AAdd( hDbfFields, Lower( aDbfStruct[ nI, 1 ] ) )
       // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
 
-      IF _struct[ nI, 2 ] == "B"
+      IF aDbfStruct[ nI, 2 ] == "B"
 
          // double
-         _fields_len[ Lower( _struct[ nI, 1 ] ) ] := { _struct[ nI, 2 ], 18, 8 }
+         hDbfFieldsLen[ Lower( aDbfStruct[ nI, 1 ] ) ] := { aDbfStruct[ nI, 2 ], 18, 8 }
 
-      ELSEIF _struct[ nI, 2 ] == "Y" .OR. ( _struct[ nI, 2 ] == "I" .AND. _struct[ nI, 4 ] > 0 )
+      ELSEIF aDbfStruct[ nI, 2 ] == "Y" .OR. ( aDbfStruct[ nI, 2 ] == "I" .AND. aDbfStruct[ nI, 4 ] > 0 )
 
          // za currency polje stoji I 8 4 - sto znaci currency sa cetiri decimale
          // mislim da se ovdje radi o tome da se u 4 bajta stavlja integer dio, a u ostala 4 decimalni dio
-         _fields_len[ Lower( _struct[ nI, 1 ] ) ] := { _struct[ nI, 2 ], 18, _struct[ nI, 4 ] }
+         hDbfFieldsLen[ Lower( aDbfStruct[ nI, 1 ] ) ] := { aDbfStruct[ nI, 2 ], 18, aDbfStruct[ nI, 4 ] }
 
       ELSE
-         _fields_len[ Lower( _struct[ nI, 1 ] ) ] := { _struct[ nI, 2 ], _struct[ nI, 3 ], _struct[ nI, 4 ] }
+         hDbfFieldsLen[ Lower( aDbfStruct[ nI, 1 ] ) ] := { aDbfStruct[ nI, 2 ], aDbfStruct[ nI, 3 ], aDbfStruct[ nI, 4 ] }
 
       ENDIF
    NEXT
 
-   rec[ "dbf_fields" ]     := _fields
-   rec[ "dbf_fields_len" ] := _fields_len
+   hRec[ "dbf_fields" ]     := hDbfFields
+   hRec[ "dbf_fields_len" ] := hDbfFieldsLen
 
    hb_mutexUnlock( s_mtxMutex )
 
@@ -705,7 +703,7 @@ FUNCTION my_close_all_dbf()
    DO WHILE nPos > 0
 
       // ako je neki dbf ostao otvoren nPos ce vratiti poziciju tog a_dbf_recorda
-      nPos := hb_HScan( s_hF18Dbfs[ hServerParams[ "database" ] ], {| key, rec | zatvori_dbf( rec ) == .F.  } )
+      nPos := hb_HScan( s_hF18Dbfs[ hServerParams[ "database" ] ], {| key, hRec | zatvori_dbf( hRec ) == .F.  } )
       IF nPos > 0
          hb_idleSleep( 0.1 )
       ELSE
@@ -716,6 +714,7 @@ FUNCTION my_close_all_dbf()
    ENDDO
 
    RETURN .T.
+
 
 
 FUNCTION is_sql_table( cDbf )

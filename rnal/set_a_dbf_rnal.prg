@@ -56,30 +56,30 @@ FUNCTION set_a_dbf_rnal()
 
 FUNCTION set_a_dbf_rnal_docs()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_docs"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "DOCS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_DOCS
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "DOCS"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_DOCS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
    _alg := hb_Hash()
 
    _alg[ "dbf_key_block" ]  := {|| Str( field->doc_no, 10 ) }
    _alg[ "dbf_key_fields" ] := { { "doc_no", 10 } }
    _alg[ "sql_in" ]         := "lpad( doc_no::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "doc_no"
+   hItem[ "sql_order" ] := "doc_no"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -87,26 +87,26 @@ FUNCTION set_a_dbf_rnal_docs()
 
 FUNCTION set_a_dbf_rnal_doc_it()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_doc_it"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "DOC_IT"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_DOC_IT
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "DOC_IT"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_DOC_IT
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
    _alg[ "dbf_key_block" ]  := {|| Str( field->doc_no, 10 ) + Str( field->doc_it_no, 4 ) + Str( field->art_id, 10 ) }
    _alg[ "dbf_key_fields" ] := { { "doc_no", 10 }, { "doc_it_no", 4 }, { "art_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( doc_no::char(10), 10) || lpad( doc_it_no::char(4),4)  || lpad(art_id::char(10),10) "
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
    // algoritam 2 - nivo dokumenta
    // -------------------------------------------------------------------------------
@@ -115,11 +115,11 @@ FUNCTION set_a_dbf_rnal_doc_it()
    _alg[ "dbf_key_fields" ] := { { "doc_no", 10 } }
    _alg[ "sql_in" ]         := "lpad( doc_no::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "doc_no, doc_it_no, art_id"
+   hItem[ "sql_order" ] := "doc_no, doc_it_no, art_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -127,37 +127,37 @@ FUNCTION set_a_dbf_rnal_doc_it()
 
 FUNCTION set_a_dbf_rnal_doc_it2()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_doc_it2"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "DOC_IT2"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_DOC_IT2
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "DOC_IT2"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_DOC_IT2
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
    _alg[ "dbf_key_block" ]  := {|| Str( field->doc_no, 10 ) + Str( field->doc_it_no, 4 ) + Str( field->it_no, 4 ) }
    _alg[ "dbf_key_fields" ] := { { "doc_no", 10 }, { "doc_it_no", 4 }, { "it_no", 4 } }
    _alg[ "sql_in" ]         := "lpad( doc_no::char(10), 10) || lpad( doc_it_no::char(4),4)  || lpad(it_no::char(4),4) "
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
    _alg := hb_Hash()
    _alg[ "dbf_key_block" ]  := {|| Str( field->doc_no, 10 )  }
    _alg[ "dbf_key_fields" ] := { { "doc_no", 10 } }
    _alg[ "sql_in" ]         := "lpad( doc_no::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "doc_no, doc_it_no, it_no"
+   hItem[ "sql_order" ] := "doc_no, doc_it_no, it_no"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -165,26 +165,26 @@ FUNCTION set_a_dbf_rnal_doc_it2()
 
 FUNCTION set_a_dbf_rnal_doc_ops()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_doc_ops"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "DOC_OPS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_DOC_OPS
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "DOC_OPS"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_DOC_OPS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
    _alg[ "dbf_key_block" ]  := {|| Str( field->doc_no, 10 ) + Str( field->doc_it_no, 4 ) + Str( field->doc_op_no, 4 ) }
    _alg[ "dbf_key_fields" ] := { { "doc_no", 10 }, { "doc_it_no", 4 }, { "doc_op_no", 4 } }
    _alg[ "sql_in" ]         := "lpad( doc_no::char(10), 10) || lpad( doc_it_no::char(4),4)  || lpad( doc_op_no::char(4),4) "
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
    // algoritam 2 - nivo dokumenta
    // -------------------------------------------------------------------------------
@@ -193,11 +193,11 @@ FUNCTION set_a_dbf_rnal_doc_ops()
    _alg[ "dbf_key_fields" ] := { { "doc_no", 10 } }
    _alg[ "sql_in" ]         := "lpad( doc_no::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "doc_no, doc_it_no, doc_op_no"
+   hItem[ "sql_order" ] := "doc_no, doc_it_no, doc_op_no"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -205,20 +205,20 @@ FUNCTION set_a_dbf_rnal_doc_ops()
 
 FUNCTION set_a_dbf_rnal_doc_log()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_doc_log"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "DOC_LOG"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_DOC_LOG
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ]  := .T.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "DOC_LOG"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_DOC_LOG
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ]  := .T.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -226,11 +226,11 @@ FUNCTION set_a_dbf_rnal_doc_log()
    _alg[ "dbf_key_fields" ] := { { "doc_no", 10 }, { "doc_log_no", 10 }, "doc_log_da", "doc_log_ti" }
    _alg[ "sql_in" ]         := "lpad( doc_no::char(10), 10 ) || lpad( doc_log_no::char(10), 10 ) || to_char( doc_log_da, 'YYYYMMDD' ) || rpad( doc_log_ti, 8 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "doc_no, doc_log_no, doc_log_da, doc_log_ti"
+   hItem[ "sql_order" ] := "doc_no, doc_log_no, doc_log_da, doc_log_ti"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -240,27 +240,27 @@ FUNCTION set_a_dbf_rnal_doc_log()
 
 FUNCTION set_a_dbf_rnal_doc_lit()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_doc_lit"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "DOC_LIT"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_DOC_LIT
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ]  := .T.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "DOC_LIT"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_DOC_LIT
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ]  := .T.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
    _alg[ "dbf_key_block" ]  := {|| Str( field->doc_no, 10 ) + Str( field->doc_log_no, 10 ) + Str( field->doc_lit_no, 10 ) }
    _alg[ "dbf_key_fields" ] := { { "doc_no", 10 }, { "doc_log_no", 10 }, { "doc_lit_no", 10 } }
    _alg[ "sql_in" ]         := "lpad( doc_no::char(10), 10) || lpad( doc_log_no::char(10),10)  || lpad( doc_lit_no::char(10),10) "
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
    // algoritam 2 - nivo dokumenta
    // -------------------------------------------------------------------------------
@@ -269,11 +269,11 @@ FUNCTION set_a_dbf_rnal_doc_lit()
    _alg[ "dbf_key_fields" ] := { { "doc_no", 10 } }
    _alg[ "sql_in" ]         := "lpad( doc_no::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "doc_no, doc_log_no, doc_lit_no"
+   hItem[ "sql_order" ] := "doc_no, doc_log_no, doc_lit_no"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -282,19 +282,19 @@ FUNCTION set_a_dbf_rnal_doc_lit()
 
 FUNCTION set_a_dbf_rnal_articles()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_articles"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "ARTICLES"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_ARTICLES
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "ARTICLES"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_ARTICLES
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -302,11 +302,11 @@ FUNCTION set_a_dbf_rnal_articles()
    _alg[ "dbf_key_fields" ] := { { "art_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( art_id::char(10), 10 ) "
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "art_id"
+   hItem[ "sql_order" ] := "art_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -315,19 +315,19 @@ FUNCTION set_a_dbf_rnal_articles()
 
 FUNCTION set_a_dbf_rnal_elements()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_elements"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "ELEMENTS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_ELEMENTS
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "ELEMENTS"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_ELEMENTS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -335,7 +335,7 @@ FUNCTION set_a_dbf_rnal_elements()
    _alg[ "dbf_key_fields" ] := { { "art_id", 10 }, { "el_no", 4 }, { "el_id", 10 }, { "e_gr_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( art_id::char(10), 10 ) || lpad( el_no::char(4), 4 ) || lpad( el_id::char(10), 10 ) || lpad( e_gr_id::char(10), 10 ) "
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
    // algoritam 2 - brisanje kompletnog artikla
    // -------------------------------------------------------------------------------
@@ -345,13 +345,13 @@ FUNCTION set_a_dbf_rnal_elements()
    _alg[ "dbf_key_fields" ] := { { "art_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( art_id::char(10), 10 ) "
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
 
 
-   _item[ "sql_order" ] := "art_id, el_no, el_id"
+   hItem[ "sql_order" ] := "art_id, el_no, el_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -360,19 +360,19 @@ FUNCTION set_a_dbf_rnal_elements()
 
 FUNCTION set_a_dbf_rnal_e_aops()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_e_aops"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "E_AOPS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_E_AOPS
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "E_AOPS"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_E_AOPS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -380,11 +380,11 @@ FUNCTION set_a_dbf_rnal_e_aops()
    _alg[ "dbf_key_fields" ] := { { "el_id", 10 }, { "el_op_id", 10 }, { "aop_id", 10 }, { "aop_att_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( el_id::char(10), 10 ) || lpad( el_op_id::char(10), 10 ) || lpad( aop_id::char(10), 10) || lpad( aop_att_id::char(10), 10 ) "
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "el_id, el_op_id"
+   hItem[ "sql_order" ] := "el_id, el_op_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -393,19 +393,19 @@ FUNCTION set_a_dbf_rnal_e_aops()
 
 FUNCTION set_a_dbf_rnal_e_att()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_e_att"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "E_ATT"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_E_ATT
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "E_ATT"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_E_ATT
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -413,11 +413,11 @@ FUNCTION set_a_dbf_rnal_e_att()
    _alg[ "dbf_key_fields" ] := { { "el_id", 10 }, { "el_att_id", 10 }, { "e_gr_at_id", 10 }, { "e_gr_vl_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( el_id::char(10), 10 ) || lpad( el_att_id::char(10), 10 ) || lpad( e_gr_at_id::char(10), 10 ) || lpad( e_gr_vl_id::char(10), 10 ) "
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "el_id, el_att_id"
+   hItem[ "sql_order" ] := "el_id, el_att_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -427,19 +427,19 @@ FUNCTION set_a_dbf_rnal_e_att()
 
 FUNCTION set_a_dbf_rnal_e_groups()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_e_groups"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "E_GROUPS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_E_GROUPS
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "E_GROUPS"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_E_GROUPS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -447,11 +447,11 @@ FUNCTION set_a_dbf_rnal_e_groups()
    _alg[ "dbf_key_fields" ] := { { "e_gr_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( e_gr_id::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "e_gr_id"
+   hItem[ "sql_order" ] := "e_gr_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -459,19 +459,19 @@ FUNCTION set_a_dbf_rnal_e_groups()
 
 FUNCTION set_a_dbf_rnal_e_gr_att()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_e_gr_att"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "E_GR_ATT"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_E_GR_ATT
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "E_GR_ATT"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_E_GR_ATT
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -479,11 +479,11 @@ FUNCTION set_a_dbf_rnal_e_gr_att()
    _alg[ "dbf_key_fields" ] := { { "e_gr_at_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( e_gr_at_id::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "e_gr_at_id"
+   hItem[ "sql_order" ] := "e_gr_at_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -493,19 +493,19 @@ FUNCTION set_a_dbf_rnal_e_gr_att()
 
 FUNCTION set_a_dbf_rnal_e_gr_val()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_e_gr_val"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "E_GR_VAL"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_E_GR_VAL
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "E_GR_VAL"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_E_GR_VAL
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -513,11 +513,11 @@ FUNCTION set_a_dbf_rnal_e_gr_val()
    _alg[ "dbf_key_fields" ] := { { "e_gr_vl_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( e_gr_vl_id::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "e_gr_vl_id"
+   hItem[ "sql_order" ] := "e_gr_vl_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -527,19 +527,19 @@ FUNCTION set_a_dbf_rnal_e_gr_val()
 
 FUNCTION set_a_dbf_rnal_cust()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_customs"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "CUSTOMS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_CUSTOMS
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "CUSTOMS"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_CUSTOMS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -547,11 +547,11 @@ FUNCTION set_a_dbf_rnal_cust()
    _alg[ "dbf_key_fields" ] := { { "cust_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( cust_id::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "cust_id"
+   hItem[ "sql_order" ] := "cust_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -560,19 +560,19 @@ FUNCTION set_a_dbf_rnal_cust()
 
 FUNCTION set_a_dbf_rnal_cont()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_contacts"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "CONTACTS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_CONTACTS
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "CONTACTS"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_CONTACTS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -580,11 +580,11 @@ FUNCTION set_a_dbf_rnal_cont()
    _alg[ "dbf_key_fields" ] := { { "cust_id", 10 }, { "cont_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( cust_id::char(10), 10 ) || lpad( cont_id::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "2"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "cont_id"
+   hItem[ "sql_order" ] := "cont_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -595,19 +595,19 @@ FUNCTION set_a_dbf_rnal_cont()
 
 FUNCTION set_a_dbf_rnal_objects()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_objects"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "OBJECTS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_OBJECTS
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "OBJECTS"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_OBJECTS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -615,11 +615,11 @@ FUNCTION set_a_dbf_rnal_objects()
    _alg[ "dbf_key_fields" ] := { { "obj_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( obj_id::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "obj_id"
+   hItem[ "sql_order" ] := "obj_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -627,19 +627,19 @@ FUNCTION set_a_dbf_rnal_objects()
 
 FUNCTION set_a_dbf_rnal_aops()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_aops"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "AOPS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_AOPS
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "AOPS"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_AOPS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -647,11 +647,11 @@ FUNCTION set_a_dbf_rnal_aops()
    _alg[ "dbf_key_fields" ] := { { "aop_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( aop_id::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "aop_id"
+   hItem[ "sql_order" ] := "aop_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -660,19 +660,19 @@ FUNCTION set_a_dbf_rnal_aops()
 
 FUNCTION set_a_dbf_rnal_aops_att()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_aops_att"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "AOPS_ATT"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_AOPS_ATT
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "AOPS_ATT"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_AOPS_ATT
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -680,31 +680,31 @@ FUNCTION set_a_dbf_rnal_aops_att()
    _alg[ "dbf_key_fields" ] := { { "aop_att_id", 10 } }
    _alg[ "sql_in" ]         := "lpad( aop_att_id::char(10), 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "aop_att_id"
+   hItem[ "sql_order" ] := "aop_att_id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
 
 FUNCTION set_a_dbf_rnal_ral()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "rnal_ral"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "RAL"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_RAL
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ]   := .T.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "RAL"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_RAL
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ]   := .T.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    _alg := hb_Hash()
 
@@ -712,39 +712,39 @@ FUNCTION set_a_dbf_rnal_ral()
    _alg[ "dbf_key_fields" ] := { { "id", 5 }, { "gl_tick", 2 } }
    _alg[ "sql_in" ]         := "lpad( id::char(5), 5 ) || lpad( gl_tick::char(2), 2 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "id, gl_tick"
+   hItem[ "sql_order" ] := "id, gl_tick"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
 
 FUNCTION set_a_dbf_rnal_relation()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, _alg, _tbl
 
    _tbl := "relation"
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "RELATION"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_RELATION
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "RELATION"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_RELATION
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
    _alg := hb_Hash()
 
    _alg[ "dbf_key_block" ]  := {|| field->tfrom + field->tto + field->tfromid }
    _alg[ "dbf_key_fields" ] := { "tfrom", "tto", "tfromid" }
    _alg[ "sql_in" ]         := "rpad( tfrom, 10 ) || rpad( tto, 10 ) || rpad( tfromid, 10 )"
    _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   _item[ "sql_order" ] := "tfrom, tto, tfromid"
+   hItem[ "sql_order" ] := "tfrom, tto, tfromid"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.

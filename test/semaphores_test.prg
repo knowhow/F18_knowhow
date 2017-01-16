@@ -182,8 +182,7 @@ FUNCTION test_sem_1_from_sql_server( algoritam )
    RETURN _result
 
 
-// -----------------------------------------
-// -----------------------------------------
+
 FUNCTION test_sem_2_from_sql_server( algoritam )
 
    LOCAL _result := .F.
@@ -195,8 +194,7 @@ FUNCTION test_sem_2_from_sql_server( algoritam )
    RETURN _result
 
 
-// -------------------------------
-// -------------------------------
+
 STATIC FUNCTION login_as( user )
 
    LOCAL _server_params
@@ -233,9 +231,12 @@ FUNCTION create_semaphore( table_name )
 
    IF ValType( _ret )  == "O"
       RETURN .T.
-   ELSE
-      RETURN .F.
    ENDIF
+
+   RETURN .F.
+
+
+
 
 FUNCTION upgrade_test_tables_semaphore_v2()
 
@@ -258,8 +259,8 @@ FUNCTION upgrade_test_tables_semaphore_v2()
 
    RETURN .T.
 
-// ---------------------------------
-// ---------------------------------
+
+
 FUNCTION alter_table_semaphore_v2( table )
 
    LOCAL _qry, _ret

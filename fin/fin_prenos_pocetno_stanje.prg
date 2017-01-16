@@ -480,7 +480,6 @@ STATIC FUNCTION fin_pocetno_stanje_get_data( hParam, oFinQuery, oKontoDataset, o
    cWhere += " AND " + _sql_cond_parse( "sub.idfirma", self_organizacija_id() )
 
    IF !Empty( hParam[ "konto_uslov" ] )
-      AltD()
       IF Left( hParam[ "konto_uslov" ], 1 ) == "!"   // !211;
          cKtoUslov :=  SubStr( hParam[ "konto_uslov" ], 2 )
          cWhere += " AND NOT " + _sql_cond_parse( "sub.idkonto", cKtoUslov )

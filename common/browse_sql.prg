@@ -590,7 +590,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
       // azuriraj samo ako nije zadan when blok !
       REPLACE &cPom77I WITH &cPom77U
       sql_azur( .T. )
-      // REPLSQL &cPom77I WITH &cPom77U
+
    ELSE
       IF LastKey() != K_ESC .AND. cPom77I <> cPom77U  // field varijabla
          Gather()
@@ -640,7 +640,7 @@ STATIC FUNCTION TBPomjeranje( TB, cPomjeranje )
    ENDIF
 
    RETURN .T.
-   
+
 
 FUNCTION browse_brisi_stavku( lPack )
 

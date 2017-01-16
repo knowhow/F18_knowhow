@@ -17,30 +17,30 @@ STATIC s_cDbfPrefix := ""
 FUNCTION f18_ime_dbf( xTableRec )
 
    LOCAL _pos
-   LOCAL _a_dbf_rec
+   LOCAL hRecDbf
    LOCAL cRet
 
    SWITCH ValType( xTableRec )
 
    CASE "H"
-      _a_dbf_rec := xTableRec
+      hRecDbf := xTableRec
       EXIT
    CASE "C"
-      _a_dbf_rec := get_a_dbf_rec( FILEBASE( xTableRec, .T. ), .T. )
+      hRecDbf := get_a_dbf_rec( FILEBASE( xTableRec, .T. ), .T. )
       EXIT
    OTHERWISE
       ?E  "f18_ime_dbf arg ?! " + hb_ValToStr( xTableRec )
    ENDSWITCH
 
-   IF _a_dbf_rec[ "table" ] == "x"
+   IF hRecDbf[ "table" ] == "x"
       Alert( "f18_ime_dbf alias :" + ToStr( xTableRec ) )
    ENDIF
 
-   IF ValType( _a_dbf_rec[ "table" ] ) != "C" .OR. ValType( my_home() ) != "C"
+   IF ValType( hRecDbf[ "table" ] ) != "C" .OR. ValType( my_home() ) != "C"
       cRet := "xyz"
-      ?E "ERROR_f18_ime_dbf", my_home(), _a_dbf_rec[ "table" ]
+      ?E "ERROR_f18_ime_dbf", my_home(), hRecDbf[ "table" ]
    ELSE
-      cRet := my_home() + my_dbf_prefix( @_a_dbf_rec ) + _a_dbf_rec[ "table" ] + "." + DBFEXT
+      cRet := my_home() + my_dbf_prefix( @hRecDbf ) + hRecDbf[ "table" ] + "." + DBFEXT
    ENDIF
 
    RETURN cRet
@@ -96,35 +96,35 @@ FUNCTION my_dbf_prefix( aDbfRec )
 
 FUNCTION dbf_get_rec( lConvertToUtf )
 
-   LOCAL _ime_polja, nI, _struct
+   LOCAL cImeDbfPolja, nI, aDbfStruct
    LOCAL cRet := hb_Hash()
    LOCAL lSql := ( rddName() ==  "SQLMIX" )
 
    hb_default( @lConvertToUtf, .F. )
 
-   _struct := dbStruct()
-   FOR nI := 1 TO Len( _struct )
+   aDbfStruct := dbStruct()
+   FOR nI := 1 TO Len( aDbfStruct )
 
-      _ime_polja := Lower( _struct[ nI, 1 ] )
+      cImeDbfPolja := Lower( aDbfStruct[ nI, 1 ] )
 
-      IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
+      IF !( "#" + cImeDbfPolja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
 
-         cRet[ _ime_polja ] := Eval( FieldBlock( _ime_polja ) )
+         cRet[ cImeDbfPolja ] := Eval( FieldBlock( cImeDbfPolja ) )
 
-         IF _struct[ nI, 2 ] == "C"
-            IF cRet[ _ime_polja ] == NIL
-               cRet[ _ime_polja ] := Space( _struct[ nI, 3 ] )
+         IF aDbfStruct[ nI, 2 ] == "C"
+            IF cRet[ cImeDbfPolja ] == NIL
+               cRet[ cImeDbfPolja ] := Space( aDbfStruct[ nI, 3 ] )
             ENDIF
             IF lSql // sql tabela utf->str
-               cRet[ _ime_polja ] := hb_UTF8ToStr( cRet[ _ime_polja ] )
+               cRet[ cImeDbfPolja ] := hb_UTF8ToStr( cRet[ cImeDbfPolja ] )
             ENDIF
             IF lConvertToUtf // str->utf
-               cRet[ _ime_polja ] := hb_StrToUTF8( cRet[ _ime_polja ] )
+               cRet[ cImeDbfPolja ] := hb_StrToUTF8( cRet[ cImeDbfPolja ] )
             ENDIF
 
          ENDIF
-         IF  _struct[ nI, 2 ] == "D"
-            cRet[ _ime_polja ]  := fix_dat_var( cRet[ _ime_polja ] )
+         IF  aDbfStruct[ nI, 2 ] == "D"
+            cRet[ cImeDbfPolja ]  := fix_dat_var( cRet[ cImeDbfPolja ] )
          ENDIF
       ENDIF
 
@@ -315,8 +315,8 @@ FUNCTION reopen_exclusive( xArg1, lOpenIndex )
 
 FUNCTION reopen_dbf( lExclusive, xArg1, lOpenIndex )
 
-   LOCAL _a_dbf_rec, _err
-   LOCAL _dbf
+   LOCAL hRecDbf, _err
+   LOCAL cDbfIme
    LOCAL lRet
    LOCAL cMsg
 
@@ -325,35 +325,35 @@ FUNCTION reopen_dbf( lExclusive, xArg1, lOpenIndex )
    ENDIF
 
    IF ValType( xArg1 ) == "H"
-      _a_dbf_rec := xArg1
+      hRecDbf := xArg1
    ELSE
-      _a_dbf_rec  := get_a_dbf_rec( xArg1, .T. )
+      hRecDbf  := get_a_dbf_rec( xArg1, .T. )
    ENDIF
 
-   IF _a_dbf_rec[ "sql" ]
+   IF hRecDbf[ "sql" ]
       RETURN .F.
    ENDIF
 
 
-   SELECT ( _a_dbf_rec[ "wa" ] )
+   SELECT ( hRecDbf[ "wa" ] )
    USE
 
-   _dbf := my_home() + my_dbf_prefix( @_a_dbf_rec ) + _a_dbf_rec[ "table" ]
+   cDbfIme := my_home() + my_dbf_prefix( @hRecDbf ) + hRecDbf[ "table" ]
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-      dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( lExclusive, .F., .T. ), .F. )
+      dbUseArea( .F., DBFENGINE, cDbfIme, hRecDbf[ "alias" ], iif( lExclusive, .F., .T. ), .F. )
       IF lOpenIndex
-         IF File( ImeDbfCdx( _dbf ) )
-            dbSetIndex( ImeDbfCDX( _dbf ) )
+         IF File( ImeDbfCdx( cDbfIme ) )
+            dbSetIndex( ImeDbfCDX( cDbfIme ) )
          ENDIF
          lRet := .T.
       ENDIF
 
    RECOVER USING _err
 
-      cMsg := "tbl:" + _a_dbf_rec[ "table" ] + " : " + _err:description +  " excl:" + ToStr( lExclusive )
-      info_bar( "reop_dbf:" + _a_dbf_rec[ "table" ], cMsg )
+      cMsg := "tbl:" + hRecDbf[ "table" ] + " : " + _err:description +  " excl:" + ToStr( lExclusive )
+      info_bar( "reop_dbf:" + hRecDbf[ "table" ], cMsg )
       ?E "ERR-reopen_dbf " + cMsg
       lRet := .F.
 
@@ -508,18 +508,18 @@ FUNCTION my_dbf_pack( lOpenUSharedRezimu )
 
 
 
-FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
+FUNCTION pakuj_dbf( hDbfRec, lSilent )
 
    LOCAL _err
 
-   log_write( "PACK table " + a_dbf_rec[ "alias" ], 2 )
+   log_write( "PACK table " + hDbfRec[ "alias" ], 2 )
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-      SELECT ( a_dbf_rec[ "wa" ] )
-      my_use_temp( a_dbf_rec[ "alias" ], my_home() + my_dbf_prefix( @a_dbf_rec ) + a_dbf_rec[ "table" ], .F., .T. )
+      SELECT ( hDbfRec[ "wa" ] )
+      my_use_temp( hDbfRec[ "alias" ], my_home() + my_dbf_prefix( @hDbfRec ) + hDbfRec[ "table" ], .F., .T. )
 
-      ?E "PACK-TABELA", a_dbf_rec[ "table" ]
+      ?E "PACK-TABELA", hDbfRec[ "table" ]
 
       PACK
 
@@ -534,7 +534,7 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
 
 
    RECOVER using _err
-      log_write( "NOTIFY: PACK neuspjesan dbf: " + a_dbf_rec[ "table" ] + "  " + _err:Description, 3 )
+      log_write( "NOTIFY: PACK neuspjesan dbf: " + hDbfRec[ "table" ] + "  " + _err:Description, 3 )
 
    END SEQUENCE
 
@@ -543,9 +543,9 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
 
 
 
-STATIC FUNCTION zatvori_dbf( value )
+STATIC FUNCTION zatvori_dbf( hDbfRec )
 
-   Select( value[ 'wa' ] )
+   Select( hDbfRec[ 'wa' ] )
 
    IF Used()
       // ostalo je još otvorenih DBF-ova

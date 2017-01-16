@@ -24,8 +24,23 @@ FUNCTION harbour_init()
 
    f18_init_threads()
 
+altd()
+
    hb_cdpSelect( "SL852" )
    hb_SetTermCP( "SLISO" )
+
+   hb_cdpSelect( "cp852" )
+   hb_SetTermCP( "cp852" )
+? "1 Šć"
+
+hb_cdpSelect( "SLISO" )
+hb_SetTermCP( "SLISO" )
+? "2 Šć"
+
+hb_cdpSelect( "UTF8" )
+hb_SetTermCP( "UTF8" )
+? "3 Šć"
+
 
    SET DELETED ON
 

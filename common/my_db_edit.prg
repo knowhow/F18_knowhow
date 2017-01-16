@@ -186,7 +186,6 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
       // ycpos := Col()
 
 
-      // AltD()
       // @ xcpos, ycpos SAY ""
       // ELSE
       // nKeyHandlerRetEvent := DE_CONT
@@ -589,7 +588,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    LOCAL nRec := RecNo()
    LOCAL nOrder := IndexOrd()
    LOCAL lImaSemafor := dbf_alias_has_semaphore()
-   LOCAL _rec
+   LOCAL hRec
    LOCAL cAlias
    LOCAL hParams
 
@@ -616,13 +615,13 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
 
       IF Empty( cUslov ) .OR. &( cUslov )
 
-         _rec := dbf_get_rec()
-         _rec[ Lower( cKolona ) ] := cTrazi
+         hRec := dbf_get_rec()
+         hRec[ Lower( cKolona ) ] := cTrazi
 
          IF lImaSemafor
-            lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+            lOk := ( Alias(), hRec, 1, "CONT" )
          ELSE
-            dbf_update_rec( _rec )
+            dbf_update_rec( hRec )
          ENDIF
 
       ENDIF
@@ -664,7 +663,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    LOCAL nOrder
    LOCAL _saved
    LOCAL _has_semaphore
-   LOCAL _rec
+   LOCAL hRec
    LOCAL cDio1, cDio2
    LOCAL _sect
    LOCAL lOk := .T.
@@ -694,13 +693,13 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
       IF Eval( FieldBlock( cKolona ) ) == trazi_val
 
-         _rec := dbf_get_rec()
-         _rec[ Lower( cKolona ) ] := zamijeni_val
+         hRec := dbf_get_rec()
+         hRec[ Lower( cKolona ) ] := zamijeni_val
 
          IF _has_semaphore
-            lOk := update_rec_server_and_dbf( cAlias, _rec, 1, "CONT" )
+            lOk := update_rec_server_and_dbf( cAlias, hRec, 1, "CONT" )
          ELSE
-            dbf_update_rec( _rec )
+            dbf_update_rec( hRec )
          ENDIF
 
          IF !_saved .AND. last_search == "D"
@@ -721,19 +720,19 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
       IF ValType( trazi_val ) == "C"
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
          cDio1 := Left( trazi_val, Len( Trim( trazi_val ) ) -2 )
          cDio2 := Left( zamijeni_val, Len( Trim( zamijeni_val ) ) -2 )
 
-         IF Right( Trim( trazi_val ), 2 ) == "**" .AND. cDio1 $  _rec[ Lower( cKolona ) ]
+         IF Right( Trim( trazi_val ), 2 ) == "**" .AND. cDio1 $  hRec[ Lower( cKolona ) ]
 
-            _rec[ Lower( cKolona ) ] := StrTran( _rec[ Lower( cKolona ) ], cDio1, cDio2 )
+            hRec[ Lower( cKolona ) ] := StrTran( hRec[ Lower( cKolona ) ], cDio1, cDio2 )
 
             IF _has_semaphore
-               lOk := update_rec_server_and_dbf( cAlias, _rec, 1, "CONT" )
+               lOk := update_rec_server_and_dbf( cAlias, hRec, 1, "CONT" )
             ELSE
-               dbf_update_rec( _rec )
+               dbf_update_rec( hRec )
             ENDIF
 
          ENDIF
@@ -850,7 +849,6 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid )
       // azuriraj samo ako nije zadan when blok !!!
       REPLACE &cPom77I WITH &cPom77U
       sql_azur( .T. )
-      // REPLSQL &cPom77I WITH &cPom77U
    ELSE
       IF LastKey() != K_ESC .AND. cPom77I <> cPom77U  // field varijabla
          Gather()

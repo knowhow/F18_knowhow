@@ -551,7 +551,7 @@ FUNCTION g_tp_naz( cId )
    LOCAL nTArea := Select()
    LOCAL xRet := ""
 
-   O_TIPPR
+   o_tippr()
    SELECT tippr
    SEEK cId
 

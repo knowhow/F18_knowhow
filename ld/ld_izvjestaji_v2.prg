@@ -67,7 +67,7 @@ FUNCTION ld_pregled_primanja_za_period()
    ENDIF
    BoxC()
 
-   tipprn_use()
+   o_tippr_ili_tippr2( cObracun )
 
    SELECT tippr
    HSEEK ctip

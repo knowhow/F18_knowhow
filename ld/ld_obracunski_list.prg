@@ -31,7 +31,7 @@ FUNCTION ol_o_tbl()
    O_RADN
    O_KBENEF
    O_VPOSLA
-   O_TIPPR
+   o_tippr()
    O_KRED
    O_DOPR
    O_POR

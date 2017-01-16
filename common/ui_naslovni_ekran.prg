@@ -46,7 +46,6 @@ FUNCTION crtaj_naslovni_ekran()
 
    CLEAR
 
-
    // start zaglavlje
    @ 0, 2 SAY '<ESC> Izlaz' COLOR f18_color_invert()
    @ 0, Col() + 2 SAY Date() COLOR f18_color_invert()

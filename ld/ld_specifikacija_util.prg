@@ -165,7 +165,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
    SELECT ( F_TMP_1 )
    my_use_temp( "MTEMP", my_home() + "mtemp" )
 
-   O_TIPPR
+   o_tippr()
 
    SELECT LD
 

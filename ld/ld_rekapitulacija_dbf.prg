@@ -921,7 +921,7 @@ STATIC FUNCTION ORekap()
    O_KRED
    O_LD
 
-   tipprn_use()
+   o_tippr_ili_tippr2( cObracun )
 
    RETURN
 

@@ -266,7 +266,7 @@
 #xcommand O_STRSPR  => o_str_spr()
 #xcommand O_VPOSLA  => select (F_VPOSLA)  ;  my_use  ("vposla")  ; set order to tag "ID"
 #xcommand O_PAROBR  => select (F_PAROBR)  ;  my_use ("parobr")   ; set order to tag "ID"
-#xcommand O_TIPPR   => select (F_TIPPR)   ;  my_use ("tippr")    ; set order to tag "ID"
+
 #xcommand O_TIPPR2  => select (F_TIPPR2)  ;  my_use ("tippr2")   ; set order to tag "ID"
 #xcommand O_OBRACUNI => select (F_OBRACUNI) ; my_use("obracuni"); set order to tag "RJ"
 #xcommand O_RADSAT  => select (F_RADSAT)  ; my_use ("radsat")    ; set order to tag "IDRADN"
@@ -275,15 +275,7 @@
 
 #xcommand O_LDT22 => select (F_LDT22)  ; my_use ("LDT22")        ; set order to tag "1"
 
-#xcommand O_TIPPRN  => IF cObracun <> "1" .and. !EMPTY( cObracun );
-                      ;  select (F_TIPPR2)                  ;
-                      ;  my_use ("tippr", "tippr2")   ;
-                      ;  set order to tag "ID"              ;
-                      ;ELSE                                 ;
-                      ;  select (F_TIPPR)                   ;
-                      ;  my_use ("tippr")              ;
-                      ;  set order to tag "ID"              ;
-                      ;ENDIF
+
 
 // modul OS
 #xcommand O_OS => select (F_OS) ; my_use ( "os" ) ;  set order to tag "1"

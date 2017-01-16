@@ -191,6 +191,7 @@ FUNCTION get_set_user_param( cParamName, xValue, def_value )
 FUNCTION init_parameters_cache()
 
    s_hParametri := hb_Hash()
+   organizacija_params_init()
 
    RETURN .T.
 

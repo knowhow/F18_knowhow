@@ -112,7 +112,7 @@ STATIC FUNCTION o_ld_sif_tables()
    O_NORSIHT
    O_RADN
    O_PAROBR
-   O_TIPPR
+   o_tippr()
    O_LD_RJ
    O_POR
    O_DOPR

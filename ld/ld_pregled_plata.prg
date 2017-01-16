@@ -79,7 +79,7 @@ FUNCTION pregled_plata()
 
    ParObr( cMjesec, cGodina, iif( lViseObr, cObracun, ) )
 
-   tipprn_use()
+   o_tippr_ili_tippr2( cObracun )
 
    IF !Empty( cKbenef )
       SELECT kbenef

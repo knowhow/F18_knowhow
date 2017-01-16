@@ -16,8 +16,10 @@ FUNCTION set_a_dbf_ld_sif()
 
    set_a_dbf_sifarnik( "ld_rj", "LD_RJ", F_LD_RJ      )
    set_a_dbf_sifarnik( "por", "POR", F_POR        )
-   set_a_dbf_sifarnik( "tippr", "TIPPR", F_TIPPR      )
-   set_a_dbf_sifarnik( "tippr2", "TIPPR2", F_TIPPR2     )
+
+   set_a_sql_sifarnik( "tippr", "TIPPR", F_TIPPR      )
+   set_a_sql_sifarnik( "tippr2", "TIPPR2", F_TIPPR2     )
+
    set_a_dbf_sifarnik( "kred", "KRED", F_KRED       )
    set_a_dbf_sifarnik( "strspr", "STRSPR", F_STRSPR     )
    set_a_dbf_sifarnik( "vposla", "VPOSLA", F_VPOSLA     )

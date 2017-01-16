@@ -19,8 +19,14 @@ FUNCTION programski_modul()
    RETURN gModul
 
 
-FUNCTION self_organizacija_id( cId )
+FUNCTION organizacija_params_init()
 
+   s_cFirma := NIL
+   s_cFirmaNaz := NIL
+
+   RETURN .T.
+
+FUNCTION self_organizacija_id( cId )
 
    IF cId != NIL
       s_cFirma := cId

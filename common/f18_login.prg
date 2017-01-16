@@ -23,7 +23,7 @@ CLASS F18Login
 
    METHOD New()
    METHOD postgres_db_login( lForceConnect )
-   METHOD login_odabir_organizacije()
+
    METHOD promjena_sezone( cDatabase, cSezona )
    METHOD promjena_sezone_box()
    METHOD browse_odabir_organizacije()
@@ -37,10 +37,17 @@ CLASS F18Login
    METHOD show_info_bar()
    METHOD server_login_form()
    METHOD odabir_organizacije()
+
    METHOD connect( nConnType )
+   METHOD connect_postgresql()
+   METHOD connect_user_database()
+
    METHOD disconnect( nConn )
-   METHOD set_hDbPostgresConnectionParams( hSqlParams )
-   METHOD set_hDbDataConnectionParams( hSqpParams )
+   METHOD disconnect_postgresql()
+   METHOD disconnect_user_database()
+
+   METHOD set_postgresql_connection_params( hSqlParams )
+   METHOD set_data_connection_params( hSqpParams )
    METHOD included_databases_for_user()
    METHOD write_to_ini_server_params()
 
@@ -49,11 +56,11 @@ CLASS F18Login
    DATA oMainDbServer
    DATA lOrganizacijaSpojena
 
-   DATA _company_db_curr_choice
-   DATA _company_db_curr_session
+   DATA cOrganizacijaOdabranaUBrowse
+   DATA cTekucaSezona
    DATA hDbPostgresConnectionParams
    DATA hDbDataConnectionParams
-   DATA _include_db_filter
+   DATA cIncludeDbFilter
 
 ENDCLASS
 
@@ -61,7 +68,6 @@ ENDCLASS
 /* my_login obezbjedjuje da je login objekat singleton */
 
 FUNCTION my_login()
-
 
    IF s_oLogin == NIL
       s_oLogin := F18Login():New()
@@ -73,13 +79,13 @@ FUNCTION my_login()
 
 METHOD F18Login:New()
 
-   LOCAL _key, _ini_params
+   LOCAL _key, hDbParamsIni
 
    ::hDbPostgresConnectionParams := hb_Hash()
    ::hDbDataConnectionParams := hb_Hash()
-   ::_company_db_curr_choice := ""
-   ::_company_db_curr_session := ""
-   ::_include_db_filter := ""
+   ::cOrganizacijaOdabranaUBrowse := ""
+   ::cTekucaSezona := ""
+   ::cIncludeDbFilter := ""
    ::lOrganizacijaSpojena := .F.
    ::lPostgresDbSpojena := .F.
    s_cTekucaSezona := AllTrim( Str( Year( Date() ) ) )
@@ -87,29 +93,29 @@ METHOD F18Login:New()
    s_lPrvoPokretanje := .T.
 
 
-   _ini_params := hb_Hash()
-   _ini_params[ "host" ] := nil
-   _ini_params[ "database" ] := nil
-   _ini_params[ "user" ] := nil
-   _ini_params[ "schema" ] := nil
-   _ini_params[ "port" ] := nil
-   _ini_params[ "session" ] := nil
+   hDbParamsIni := hb_Hash()
+   hDbParamsIni[ "host" ] := nil
+   hDbParamsIni[ "database" ] := nil
+   hDbParamsIni[ "user" ] := nil
+   hDbParamsIni[ "schema" ] := nil
+   hDbParamsIni[ "port" ] := nil
+   hDbParamsIni[ "session" ] := nil
 
-   IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @_ini_params, .T. )
+   IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @hDbParamsIni, .T. )
       error_bar( "ini", "problem f18 ini read" )
    ENDIF
 
-   IF ValType( _ini_params[ "port" ] ) == "C" // port je numeric
-      _ini_params[ "port" ] := Val( _ini_params[ "port" ] )
+   IF ValType( hDbParamsIni[ "port" ] ) == "C" // port je numeric
+      hDbParamsIni[ "port" ] := Val( hDbParamsIni[ "port" ] )
    ENDIF
-   _ini_params[ "password" ] := _ini_params[ "user" ]
+   hDbParamsIni[ "password" ] := hDbParamsIni[ "user" ]
 
-   my_server_params( _ini_params )
+   my_server_params( hDbParamsIni )
 
-   ::set_hDbDataConnectionParams( _ini_params )
+   ::set_data_connection_params( hDbParamsIni )
 
-   _ini_params[ "database" ] := "postgres"
-   ::set_hDbPostgresConnectionParams( _ini_params )
+   hDbParamsIni[ "database" ] := "postgres"
+   ::set_postgresql_connection_params( hDbParamsIni )
 
    RETURN SELF
 
@@ -117,30 +123,30 @@ METHOD F18Login:New()
 
 METHOD F18Login:included_databases_for_user()
 
-   LOCAL _ini_sect := "login_options"
-   LOCAL _ini_var := "database_filter"
-   LOCAL _ini_params := hb_Hash()
+   LOCAL cIniSection := "login_options"
+   LOCAL cFilterKey := "database_filter"
+   LOCAL hDbParamsIni := hb_Hash()
    LOCAL _inc_filter := ""
 
-   _ini_params[ _ini_var ] := NIL
+   hDbParamsIni[ cFilterKey ] := NIL
 
-   f18_ini_config_read( _ini_sect, @_ini_params, .T. )
+   f18_ini_config_read( cIniSection, @hDbParamsIni, .T. )
 
-   IF _ini_params[ _ini_var ] == NIL
-      ::_include_db_filter := ""
+   IF hDbParamsIni[ cFilterKey ] == NIL
+      ::cIncludeDbFilter := ""
    ELSE
-      ::_include_db_filter := _ini_params[ _ini_var ]
+      ::cIncludeDbFilter := hDbParamsIni[ cFilterKey ]
    ENDIF
 
    RETURN .T.
 
 
-METHOD F18Login:connect( nConnType, silent )
+METHOD F18Login:connect( nConnType, lSilent )
 
    LOCAL lConnected, hSqlParams
 
-   IF silent == NIL
-      silent := .F.
+   IF lSilent == NIL
+      lSilent := .F.
    ENDIF
 
    IF nConnType == 0
@@ -180,6 +186,17 @@ METHOD F18Login:connect( nConnType, silent )
    RETURN lConnected
 
 
+
+METHOD F18Login:connect_postgresql()
+
+   RETURN ::connect( 0 )
+
+
+METHOD F18Login:connect_user_database()
+
+   RETURN ::connect( 1 )
+
+
 METHOD F18Login:write_to_ini_server_params()
 
    LOCAL cKey, hIniParams := hb_Hash()
@@ -213,10 +230,17 @@ METHOD F18Login:disconnect( nConn )
    RETURN lDisconnected
 
 
+METHOD F18Login:disconnect_postgresql()
+
+   RETURN  server_postgres_db_close()
 
 
+METHOD F18Login:disconnect_user_database()
 
-METHOD F18Login:set_hDbPostgresConnectionParams( hSqlParams )
+   RETURN  my_server_close()
+
+
+METHOD F18Login:set_postgresql_connection_params( hSqlParams )
 
    ::hDbPostgresConnectionParams := hb_Hash()
    ::hDbPostgresConnectionParams[ "user" ] := hSqlParams[ "user" ]
@@ -230,7 +254,7 @@ METHOD F18Login:set_hDbPostgresConnectionParams( hSqlParams )
    RETURN .T.
 
 
-METHOD F18Login:set_hDbDataConnectionParams( hSqlParams )
+METHOD F18Login:set_data_connection_params( hSqlParams )
 
    ::hDbDataConnectionParams[ "database" ] := hSqlParams[ "database" ]
    ::hDbDataConnectionParams[ "session" ] := hSqlParams[ "session" ]
@@ -259,7 +283,7 @@ METHOD F18Login:postgres_db_login( lForceConnect )
       RETURN .F.
    ENDIF
 
-   IF ::connect( 0 )
+   IF ::connect_postgresql()
       ::lPostgresDbSpojena := .T.
       RETURN .T.
    ENDIF
@@ -269,22 +293,6 @@ METHOD F18Login:postgres_db_login( lForceConnect )
 
 
 
-METHOD F18Login:login_odabir_organizacije()
-
-   LOCAL nI
-   LOCAL _ret_comp
-
-   IF ! ::odabir_organizacije()
-      RETURN .F.
-   ENDIF
-
-   IF !::connect( 1 )
-      RETURN .F.
-   ENDIF
-
-   ::lOrganizacijaSpojena := .T.
-
-   RETURN .T.
 
 
 METHOD F18Login:promjena_sezone_box( cSession )
@@ -306,7 +314,7 @@ METHOD F18Login:promjena_sezone_box( cSession )
 
 METHOD F18Login:promjena_sezone( cDatabase, cSezona )
 
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
    LOCAL cTrenutnaDatabase
    LOCAL cTrenutnaSezona
    LOCAL _show_box := .T.
@@ -360,20 +368,20 @@ METHOD F18Login:promjena_sezone( cDatabase, cSezona )
    ::hDbDataConnectionParams[ "database" ] := StrTran( cTrenutnaDatabase, "_" + cTrenutnaSezona, "_" + cNovaSezona )
    ::hDbDataConnectionParams[ "session" ] := cNovaSezona
 
-   IF ::connect( 1 )
-      _ok := .T.
+   IF ::connect_user_database()
+      lOk := .T.
    ELSE
       MsgBeep( "Traženo sezonsko područje " + cNovaSezona + " ne postoji !" )
       ::hDbDataConnectionParams[ "database" ] := cSaveDatabase // vrati posljednju ispravnu bazu
       ::hDbDataConnectionParams[ "session" ] := cTrenutnaSezona
-      IF !::connect( 1 )
+      IF !::connect_user_database()
          MsgBeep( "Ne mogu se spojiti na " +  cSaveDatabase + "?!" )
          QUIT_1
       ENDIF
    ENDIF
 
 
-   IF _ok .AND. _show_box
+   IF lOk .AND. _show_box
 
       IF _modul_name != NIL .AND. !f18_use_module( _modul_name )
          MsgBeep( "U " + AllTrim( s_cPredhodnaSezona ) + " programski modul " + Upper( _modul_name ) + " vam nije aktiviran !" )
@@ -395,7 +403,7 @@ METHOD F18Login:promjena_sezone( cDatabase, cSezona )
 
    f18_ini_config_write( "sezona", @hParams, .T. )
 
-   RETURN _ok
+   RETURN lOk
 
 
 
@@ -403,11 +411,11 @@ METHOD F18Login:promjena_sezone( cDatabase, cSezona )
 METHOD F18Login:server_login_form()
 
    LOCAL cUser, cPassword, _port, _host, _schema
-   LOCAL _x := 5
+   LOCAL nX := 5
    LOCAL _left := 7
    LOCAL _srv_config := "N"
-   LOCAL _session
-   LOCAL _key, _ini_params := hb_Hash()
+   LOCAL cSezona
+   LOCAL _key, hDbParamsIni := hb_Hash()
 
    cUser := ::hDbPostgresConnectionParams[ "user" ]
    cPassword := ""
@@ -444,29 +452,29 @@ METHOD F18Login:server_login_form()
 
    @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
-   ++_x
-   @ _x, _left SAY PadC( "**** Unesite podatke za pristup *****", 60 )
+   ++nX
+   @ nX, _left SAY PadC( "**** Unesite podatke za pristup *****", 60 )
 
-   _x += 2
-   @ _x, _left SAY PadL( "Konfigurisati server ?:", 21 ) GET _srv_config ;
+   nX += 2
+   @ nX, _left SAY PadL( "Konfigurisati server ?:", 21 ) GET _srv_config ;
       VALID _srv_config $ "DN" PICT "@!"
-   ++_x
+   ++nX
 
    READ
 
    IF _srv_config == "D"
-      ++_x
-      @ _x, _left SAY PadL( "Server:", 8 ) GET _host PICT "@S20"
-      @ _x, 37 SAY "Port:" GET _port PICT "9999"
+      ++nX
+      @ nX, _left SAY PadL( "Server:", 8 ) GET _host PICT "@S20"
+      @ nX, 37 SAY "Port:" GET _port PICT "9999"
    ELSE
-      ++_x
+      ++nX
    ENDIF
 
-   _x += 2
-   @ _x, _left SAY PadL( "KORISNIK:", 15 ) GET cUser PICT "@S30"
+   nX += 2
+   @ nX, _left SAY PadL( "KORISNIK:", 15 ) GET cUser PICT "@S30"
 
-   _x += 2
-   @ _x, _left SAY PadL( "LOZINKA:", 15 ) GET cPassword PICT "@S30" COLOR F18_COLOR_PASSWORD
+   nX += 2
+   @ nX, _left SAY PadL( "LOZINKA:", 15 ) GET cPassword PICT "@S30" COLOR F18_COLOR_PASSWORD
 
    READ
 
@@ -495,14 +503,14 @@ METHOD F18Login:server_login_form()
 
 METHOD F18Login:odabir_organizacije()
 
-   LOCAL _session
-   LOCAL _x := 5
+   LOCAL cSezona
+   LOCAL nX := 5
    LOCAL _left := 7
    LOCAL _srv_config := "N"
-   LOCAL _arr, _tmp
+   LOCAL aOrganizacijeZaBrowse, aOrganizacije
    LOCAL hParams := hb_Hash()
    LOCAL hIniParams := hb_Hash(), cKey
-   LOCAL nOrganizacija
+   LOCAL nOrgBrowseReturn
 
    ::included_databases_for_user()  // filter baza dostupnih useru, ako postoji !
 
@@ -517,33 +525,38 @@ METHOD F18Login:odabir_organizacije()
       RETURN .T.
    ENDIF
 
-   _tmp := ::database_array()
+   aOrganizacije := ::database_array()
 
-   IF HB_ISNIL( _tmp ) .OR. Len( _tmp ) == 0
+   IF HB_ISNIL( aOrganizacije ) .OR. Len( aOrganizacije ) == 0
       MsgBeep( "Na serveru ne postoji definisana nijedna baza !" )
       RETURN .F.
    ENDIF
 
-   _arr := ::get_database_browse_array( _tmp ) // odaberi organizaciju
-   nOrganizacija := ::browse_odabir_organizacije( _arr ) // browsaj listu organizacija
 
-   IF nOrganizacija < 1
+   aOrganizacijeZaBrowse := ::get_database_browse_array( aOrganizacije ) // odaberi organizaciju
+   nOrgBrowseReturn := ::browse_odabir_organizacije( aOrganizacijeZaBrowse ) // browsaj listu organizacija
+
+   IF nOrgBrowseReturn < 1
+      // vraca 0 - ESC, -1 - loop,  1 - ENTER
       RETURN .F.
    ENDIF
 
-   IF ::_company_db_curr_session == NIL
-      _session := ::get_database_top_session( ::_company_db_curr_choice ) // ako nije zadata sezona odaberi top sezonu, NIL je ako nije zadata
+   IF ::cTekucaSezona == NIL
+      cSezona := ::get_database_top_session( ::cOrganizacijaOdabranaUBrowse ) // ako nije zadata sezona odaberi top sezonu, NIL je ako nije zadata
    ELSE
-      _session := AllTrim( ::_company_db_curr_session ) // ako je zadata uzmi nju
+      cSezona := AllTrim( ::cTekucaSezona ) // ako je zadata uzmi nju
    ENDIF
 
-   ::hDbDataConnectionParams[ "database" ] := AllTrim( ::_company_db_curr_choice ) + ;
-      iif( !Empty( _session ), "_" + AllTrim( _session ), "" )
-   ::hDbDataConnectionParams[ "session" ] := AllTrim( _session )
+   ::hDbDataConnectionParams[ "database" ] := AllTrim( ::cOrganizacijaOdabranaUBrowse ) + iif( !Empty( cSezona ), "_" + AllTrim( cSezona ), "" )
+   ::hDbDataConnectionParams[ "session" ] := AllTrim( cSezona )
 
    hParams[ "posljednji_put" ] := ::hDbDataConnectionParams[ "session" ]
    hParams[ "posljednja_org" ] := StrTran( ::hDbDataConnectionParams[ "database" ], "_" + ::hDbDataConnectionParams[ "session" ], "" )
    f18_ini_config_write( "sezona", @hParams, .T. ) // nakon odabira organizacije upisi izbor
+
+
+   ::lOrganizacijaSpojena := .T.
+
 
    RETURN .T.
 
@@ -552,9 +565,9 @@ METHOD F18Login:odabir_organizacije()
 
 METHOD F18Login:get_database_sessions( database )
 
-   LOCAL _session := ""
+   LOCAL cSezona := ""
    LOCAL oDataSet, oRow, _db, cQuery
-   LOCAL _arr := {}
+   LOCAL aOrganizacijeZaBrowse := {}
 
    IF Empty( database )
       RETURN NIL
@@ -574,24 +587,24 @@ METHOD F18Login:get_database_sessions( database )
    DO WHILE !oDataSet:Eof()
 
       oRow := oDataSet:GetRow()
-      _session := oRow:FieldGet( oRow:FieldPos( "godina" ) )
+      cSezona := oRow:FieldGet( oRow:FieldPos( "godina" ) )
 
-      IF !Empty( _session )
-         AAdd( _arr, { _session } )
+      IF !Empty( cSezona )
+         AAdd( aOrganizacijeZaBrowse, { cSezona } )
       ENDIF
 
       oDataSet:skip()
 
    ENDDO
 
-   RETURN _arr
+   RETURN aOrganizacijeZaBrowse
 
 
 
 
 METHOD F18Login:get_database_top_session( database )
 
-   LOCAL _session := ""
+   LOCAL cSezona := ""
    LOCAL oDataSet, oRow, _db, cQuery
 
    cQuery := "SELECT MAX( DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') ) AS godina " + ;
@@ -604,9 +617,9 @@ METHOD F18Login:get_database_top_session( database )
    ENDIF
 
    oRow := oDataSet:GetRow()
-   _session := oRow:FieldGet( oRow:FieldPos( "godina" ) )
+   cSezona := oRow:FieldGet( oRow:FieldPos( "godina" ) )
 
-   RETURN _session
+   RETURN cSezona
 
 
 
@@ -620,7 +633,7 @@ METHOD F18Login:get_database_description( database, cSezona )
       RETURN _descr
    ENDIF
 
-   _database_name := database + IF( !Empty( cSezona ), "_" + cSezona, "" )
+   _database_name := database + iif( !Empty( cSezona ), "_" + cSezona, "" )
 
    cQuery := "SELECT description AS opis " + ;
       "FROM pg_shdescription " + ;
@@ -645,39 +658,39 @@ METHOD F18Login:get_database_description( database, cSezona )
 
 
 
-METHOD F18Login:get_database_browse_array( arr )
+METHOD F18Login:get_database_browse_array( aArray )
 
-   LOCAL _arr := {}
-   LOCAL _count, _n, _x
+   LOCAL aOrganizacijeZaBrowse := {}
+   LOCAL _count, _n, nX
    LOCAL _len := 20
 
    _count := 0
    FOR _n := 1 TO 30
 
-      AAdd( _arr, { "", "", "", "" } )
+      AAdd( aOrganizacijeZaBrowse, { "", "", "", "" } )
 
-      FOR _x := 1 TO 4
+      FOR nX := 1 TO 4
          ++_count
-         _arr[ _n, _x ] := IF( _count > Len( arr ), PadR( "", _len ), PadR( arr[ _count, 1 ], _len ) )
+         aOrganizacijeZaBrowse[ _n, nX ] := IF( _count > Len( aArray ), PadR( "", _len ), PadR( aArray[ _count, 1 ], _len ) )
       NEXT
 
    NEXT
 
-   RETURN _arr
+   RETURN aOrganizacijeZaBrowse
 
 
 
 METHOD F18Login:database_array()
 
    LOCAL oDataSet, oRow, _db, cQuery
-   LOCAL _tmp := {}
+   LOCAL aOrganizacije := {}
    LOCAL _filter_db := "empty#empty_sezona"
    LOCAL _where := ""
 
    _where := " WHERE has_database_privilege( CURRENT_USER, datname, 'connect' ) "
 
-   IF !Empty( ::_include_db_filter )
-      _where += " AND " + _sql_cond_parse( "datname", ::_include_db_filter + " " )
+   IF !Empty( ::cIncludeDbFilter )
+      _where += " AND " + _sql_cond_parse( "datname", ::cIncludeDbFilter + " " )
    ENDIF
 
    cQuery := "SELECT DISTINCT substring( datname, '(.*)_[0-9]+') AS datab " + ;
@@ -699,24 +712,24 @@ METHOD F18Login:database_array()
 
       // filter za tabele
       IF !Empty( _db ) .AND. ! ( AllTrim( _db ) $ _filter_db )
-         AAdd( _tmp, { _db } )
+         AAdd( aOrganizacije, { _db } )
       ENDIF
 
       oDataSet:Skip()
 
    ENDDO
 
-   RETURN _tmp
+   RETURN aOrganizacije
 
 
 
 
 METHOD F18Login:administrative_options( x_pos, y_pos )
 
-   LOCAL _x, _y
+   LOCAL nX, _y
    LOCAL aMeniOpcije, _menuexec, _mnu_choice
 
-   _x := x_pos
+   nX := x_pos
    _y := ( MAXCOLS() / 2 ) -5
 
 
@@ -727,7 +740,7 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
 
    DO WHILE .T.
 
-      _mnu_choice := meni_0_inkey( _x, _y + 1, _x + 5, _y + 40, aMeniOpcije, 1 )
+      _mnu_choice := meni_0_inkey( nX, _y + 1, nX + 5, _y + 40, aMeniOpcije, 1 )
 
       DO CASE
       CASE _mnu_choice == 0
@@ -774,21 +787,21 @@ STATIC FUNCTION _set_menu_choices( menuop, menuexec )
 
 METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
 
-   LOCAL _x
+   LOCAL nX
    LOCAL _y := 3
    LOCAL _db := Space( 20 )
-   LOCAL _session := AllTrim( Str( Year( Date() ) ) )
+   LOCAL cSezona := AllTrim( Str( Year( Date() ) ) )
 
-   _x := x_pos
+   nX := x_pos
 
-   @ _x, _y + 1 SAY hb_UTF8ToStr( "Pristupiti sljedećoj bazi:" )
+   @ nX, _y + 1 SAY hb_UTF8ToStr( "Pristupiti sljedećoj bazi:" )
 
-   _x += 2
-   @ _x, _y + 3 SAY Space( 30 )
-   @ _x, _y + 3 SAY "  Baza:" GET _db VALID !Empty( _db )
+   nX += 2
+   @ nX, _y + 3 SAY Space( 30 )
+   @ nX, _y + 3 SAY "  Baza:" GET _db VALID !Empty( _db )
 
-   ++_x
-   @ _x, _y  + 3 SAY "Sezona:" GET _session
+   ++nX
+   @ nX, _y  + 3 SAY "Sezona:" GET cSezona
 
    READ
 
@@ -797,21 +810,16 @@ METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
    ENDIF
 
    IF LastKey() == K_ENTER
-      ::_company_db_curr_choice := AllTrim( _db )
-      ::_company_db_curr_session := AllTrim( _session )
+      ::cOrganizacijaOdabranaUBrowse := AllTrim( _db )
+      ::cTekucaSezona := AllTrim( cSezona )
    ENDIF
 
    RETURN .T.
 
 
 
-// -------------------------------------------------------
-// vraca 0 - ESC
-// -1 - loop
-// 1 - ENTER
-// -------------------------------------------------------
 
-METHOD F18Login:browse_odabir_organizacije( arr, table_type )
+METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
 
    LOCAL nI, _l
    LOCAL _key
@@ -831,13 +839,13 @@ METHOD F18Login:browse_odabir_organizacije( arr, table_type )
 
    PRIVATE _row := 1
 
-   IF arr == NIL
+   IF aArray == NIL
       MsgBeep( "Nema podataka za prikaz..." )
       RETURN NIL
    ENDIF
 
-   // stvarni broj aktuelenih firmi
-   _company_count := _get_company_count( arr )
+
+   _company_count := _get_company_count( aArray )    // stvarni broj aktuelenih firmi
 
    CLEAR SCREEN
 
@@ -885,18 +893,16 @@ METHOD F18Login:browse_odabir_organizacije( arr, table_type )
       _br:ColSep := hb_UTF8ToStr( "│" )
    ENDIF
 
-   _br:skipBlock := {| _skip | _skip := _skip_it( arr, _row, _skip ), _row += _skip, _skip }
+   _br:skipBlock := {| _skip | _skip := _skip_it( aArray, _row, _skip ), _row += _skip, _skip }
    _br:goTopBlock := {|| _row := 1 }
-   _br:goBottomBlock := {|| _row := Len( arr ) }
+   _br:goBottomBlock := {|| _row := Len( aArray ) }
 
-   FOR _l := 1 TO Len( arr[ 1 ] )
-      _br:addColumn( TBColumnNew( "", _browse_block( arr, _l ) ) )
+   FOR _l := 1 TO Len( aArray[ 1 ] )
+      _br:addColumn( TBColumnNew( "", _browse_block( aArray, _l ) ) )
    NEXT
 
 
-
    DO WHILE ( _key <> K_ESC ) .AND. ( _key <> K_RETURN ) // main key handler loop
-
 
       _br:forcestable() // stabilize the browse and wait for a keystroke
       ::show_info_bar( AllTrim( Eval( _br:GetColumn( _br:colpos ):block ) ), _pos_bottom + 4 )
@@ -925,8 +931,8 @@ METHOD F18Login:browse_odabir_organizacije( arr, table_type )
             ENDIF
          CASE ( _key == K_ENTER )
 
-            ::_company_db_curr_choice := AllTrim( Eval( _br:GetColumn( _br:colpos ):block ) ) // ovo je firma koju smo odabrali...
-            ::_company_db_curr_session := NIL // sezona treba da bude uzeta kao TOP sezona
+            ::cOrganizacijaOdabranaUBrowse := AllTrim( Eval( _br:GetColumn( _br:colpos ):block ) ) // ovo je firma koju smo odabrali
+            ::cTekucaSezona := NIL // sezona treba da bude uzeta kao TOP sezona
             RETURN 1
          ENDCASE
 
@@ -940,42 +946,42 @@ METHOD F18Login:browse_odabir_organizacije( arr, table_type )
 
 METHOD F18Login:show_info_bar( database, x_pos )
 
-   LOCAL _x := x_pos + 7
+   LOCAL nX := x_pos + 7
    LOCAL _y := 3
    LOCAL _info := ""
-   LOCAL _arr := ::get_database_sessions( database )
+   LOCAL aOrganizacijeZaBrowse := ::get_database_sessions( database )
    LOCAL _max_len := MAXCOLS() -2
    LOCAL _descr := ""
 
-   IF !_arr == NIL .AND. Len( _arr ) > 0
+   IF !aOrganizacijeZaBrowse == NIL .AND. Len( aOrganizacijeZaBrowse ) > 0
 
-      _descr := ::get_database_description( database, _arr[ Len( _arr ), 1 ] )
+      _descr := ::get_database_description( database, aOrganizacijeZaBrowse[ Len( aOrganizacijeZaBrowse ), 1 ] )
 
       _info += AllTrim( _descr )
 
-      IF Len( _arr ) > 1
-         _info += ", dostupne sezone: " + _arr[ 1, 1 ] + " ... " + _arr[ Len( _arr ), 1 ]
+      IF Len( aOrganizacijeZaBrowse ) > 1
+         _info += ", dostupne sezone: " + aOrganizacijeZaBrowse[ 1, 1 ] + " ... " + aOrganizacijeZaBrowse[ Len( aOrganizacijeZaBrowse ), 1 ]
       ELSE
-         _info += ", sezona: " + _arr[ 1, 1 ]
+         _info += ", sezona: " + aOrganizacijeZaBrowse[ 1, 1 ]
       ENDIF
 
    ENDIF
 
-   @ _x, _y SAY PadR( "Info: " + _info, _max_len )
-   ++_x
-   @ _x, _y SAY "F18 version: " + f18_ver() + " lib: " + f18_lib_ver()
+   @ nX, _y SAY PadR( "Info: " + _info, _max_len )
+   ++nX
+   @ nX, _y SAY "F18 version: " + f18_ver() + " lib: " + f18_lib_ver()
 
    RETURN .T.
 
 
 
-STATIC FUNCTION _get_company_count( arr )
+STATIC FUNCTION _get_company_count( aArray )
 
    LOCAL _count := 0, nI, _n
 
-   FOR nI := 1 TO Len( arr )
+   FOR nI := 1 TO Len( aArray )
       FOR _n := 1 TO 4
-         IF !Empty( arr[ nI, _n ] )
+         IF !Empty( aArray[ nI, _n ] )
             ++_count
          ENDIF
       NEXT
@@ -986,19 +992,19 @@ STATIC FUNCTION _get_company_count( arr )
 
 
 
-STATIC FUNCTION _browse_block( arr, x )
-   RETURN ( {| p| iif( PCount() == 0, arr[ _row, x ], arr[ _row, x ] := p ) } )
+STATIC FUNCTION _browse_block( aArray, nX )
+   RETURN ( {| p| iif( PCount() == 0, aArray[ _row, nX ], aArray[ _row, nX ] := p ) } )
 
 
 
-STATIC FUNCTION _skip_it( arr, curr, skiped )
+STATIC FUNCTION _skip_it( aArray, curr, skiped )
 
    IF ( curr + skiped < 1 )
       // Would skip past the top...
       RETURN( -curr + 1 )
-   ELSEIF ( curr + skiped > Len( arr ) )
+   ELSEIF ( curr + skiped > Len( aArray ) )
       // Would skip past the bottom...
-      RETURN ( Len( arr ) - curr )
+      RETURN ( Len( aArray ) - curr )
    ENDIF
 
    RETURN( skiped )

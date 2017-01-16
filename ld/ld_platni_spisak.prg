@@ -664,7 +664,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    cVarSort := "2"
    cIdTipPr := "  "
 
-   O_TIPPR
+   o_tippr()
    O_KRED
    O_LD_RJ
    O_RADN

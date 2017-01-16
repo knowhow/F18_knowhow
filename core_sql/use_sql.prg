@@ -14,7 +14,7 @@
 
 FIELD ID, NAZ
 
-FUNCTION use_sql_sif( cTable, lMakeIndex )
+FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
 
    LOCAL pConn
    LOCAL nI, cMsg, cLogMsg := ""
@@ -25,6 +25,10 @@ FUNCTION use_sql_sif( cTable, lMakeIndex )
 
    IF lMakeIndex == NIL
       lMakeIndex = .T.
+   ENDIF
+
+   IF cAlias == NIL
+      cAlias := cTable
    ENDIF
 
    pConn := sql_data_conn():pDB
@@ -43,12 +47,12 @@ FUNCTION use_sql_sif( cTable, lMakeIndex )
       RETURN .F.
    ENDIF
 
-   dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable + " ORDER BY ID",  cTable )
+   dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable + " ORDER BY ID",  cAlias )
 
    IF lMakeIndex
-      INDEX ON ID TAG ID TO ( cTable )
+      INDEX ON ID TAG ID TO ( cAlias )
       IF FieldPos( "NAZ" ) > 0
-         INDEX ON NAZ TAG NAZ TO ( cTable )
+         INDEX ON NAZ TAG NAZ TO ( cAlias )
       ENDIF
    ENDIF
 

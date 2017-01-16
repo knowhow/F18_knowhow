@@ -280,7 +280,7 @@ FUNCTION my_server_login( hSqlParams, nConnType )
 
 
 
-FUNCTION f18_login_loop( lAutoConnect, arg_v )
+FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
 
    LOCAL oLogin
 
@@ -288,6 +288,7 @@ FUNCTION f18_login_loop( lAutoConnect, arg_v )
       lAutoConnect := .T.
    ENDIF
 
+   AltD()
    oLogin := my_login()
 
    DO WHILE .T.
@@ -300,18 +301,25 @@ FUNCTION f18_login_loop( lAutoConnect, arg_v )
          lAutoConnect := .T.
       ENDIF
 
-      IF !oLogin:login_odabir_organizacije()
+      IF !oLogin:odabir_organizacije()
 
          IF LastKey() == K_ESC
             RETURN .F.
          ENDIF
+
       ELSE
-         IF oLogin:lOrganizacijaSpojena
-            // show_sacekaj()
-            oLogin:disconnect( 0 )
-            program_module_menu( arg_v )
-            oLogin:disconnect( 1 )
-         ENDIF
+         // IF oLogin:lOrganizacijaSpojena
+
+         // show_sacekaj()
+         //oLogin:disconnect_postgresql()
+
+         oLogin:disconnect_user_database()
+         oLogin:connect_user_database()
+         odaberi_programski_modul( hProgramParametri )
+
+
+
+         // ENDIF
       ENDIF
 
    ENDDO

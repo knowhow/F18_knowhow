@@ -186,7 +186,7 @@ FUNCTION OObracun()
       O_FAKT_OBJEKTI
    ENDIF
 
-   tipprn_use()
+   o_tippr_ili_tippr2( cObracun )
 
    RETURN
 

@@ -319,7 +319,7 @@ STATIC FUNCTION zaglavlje_izvjestaja()
 
 STATIC FUNCTION otvori_tabele()
 
-   tipprn_use()
+   o_tippr_ili_tippr2( cObracun )
 
    O_PAROBR
    O_LD_RJ

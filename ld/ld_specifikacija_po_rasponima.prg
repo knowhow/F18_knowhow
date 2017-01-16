@@ -128,7 +128,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    SELECT params
    USE
 
-   tipprn_use()
+   o_tippr_ili_tippr2( cObracun )
 
    aRasponi := { nDo1, nDo2, nDo3, nDo4, nDo5, nDo6, nDo7, nDo8, nDo9,;
       nDo10, nDo11, nDo12, nDo13, nDo14, nDo15, nDo16, nDo17,;

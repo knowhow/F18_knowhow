@@ -94,7 +94,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       WPar( "NK", cNKNS )
       SELECT PARAMS
       USE
-      tipprn_use()
+      o_tippr_ili_tippr2( cObracun )
    ENDIF
 
    PoDoIzSez( cGodina, cMjesec )

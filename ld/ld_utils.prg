@@ -517,21 +517,6 @@ FUNCTION TagVO( cT, cI )
 
 
 
-FUNCTION tipprn_use()
-
-   SELECT ( F_TIPPR )
-   IF Used()
-      USE
-   ENDIF
-
-   SELECT ( F_TIPPR2 )
-   IF Used()
-      USE
-   ENDIF
-
-   O_TIPPRN
-
-   RETURN
 
 
 

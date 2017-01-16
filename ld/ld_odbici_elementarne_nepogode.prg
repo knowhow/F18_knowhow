@@ -231,7 +231,7 @@ STATIC FUNCTION dodaj_tip_primanja_elementarnih_nepogoda( cTip )
    LOCAL hRec
    LOCAL lOk := .T.
 
-   O_TIPPR
+   o_tippr()
 
    APPEND BLANK
    hRec := dbf_get_rec()

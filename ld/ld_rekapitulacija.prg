@@ -52,6 +52,8 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
       lSvi := .F.
    ENDIF
 
+altd()
+
    ORekap()
 
    cIdRadn := Space( 6 )
@@ -90,7 +92,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    hParams[ 'obracun' ] := cObracun
    hParams[ 'godina' ] := nGodina
-   
+
    cFilt1 := get_ld_rekap_filter( hParams )
 
    use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta, cFilt1 )
@@ -444,7 +446,7 @@ STATIC FUNCTION nStr()
       FF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
@@ -525,7 +527,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
          cTprField := PadL( AllTrim( Str( i ) ), 2, "0" )
          cTpr := "_I" + cTprField
 
-         if &cTpr == 0
+         IF &cTpr == 0
             LOOP
          ENDIF
 

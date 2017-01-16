@@ -72,7 +72,7 @@ FUNCTION ld_pregled_primanja()
    SELECT PARAMS
    USE
 
-   tipprn_use()
+   o_tippr_ili_tippr2( cObracun )
 
    SELECT tippr
    HSEEK cTip

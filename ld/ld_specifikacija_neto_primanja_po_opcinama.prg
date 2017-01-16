@@ -302,7 +302,7 @@ STATIC FUNCTION zaglavlje_izvjestaja( cVPosla, cKBenef )
 
 STATIC FUNCTION otvori_tabele()
 
-   tipprn_use()
+   o_tippr_ili_tippr2( cObracun )
 
    O_OPS
    O_KBENEF

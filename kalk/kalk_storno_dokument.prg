@@ -42,7 +42,8 @@ FUNCTION storno_kalk_dokument()
       _kolicina  := -_kolicina
       _error     := "0"
       Gather()
-      SELECT KALK; PopWA()
+      SELECT KALK
+      PopWA()
       SKIP 1
    ENDDO
 

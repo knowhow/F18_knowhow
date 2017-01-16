@@ -36,20 +36,199 @@ FUNCTION P_Konto( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   lRet := PostojiSifra( F_KONTO, 1, MAXROWS() - 15, MAXCOLS() - 20, "LKT: Lista: Konta", @cId, dx, dy )
+   lRet := PostojiSifra( F_KONTO, 1, MAXROWS() -15, MAXCOLS() -20, "LKT: Lista: Konta", @cId, dx, dy )
 
    PopWa()
 
    RETURN lRet
 
 
+
+
 /*
-   Funkcija vraca vrijednost polja naziv po zadatom idkonto
+    *     Otvara sifrarnik konta spec. za FIN
+    *   param: cId
+    *   param: dx
+    *   param: dy
+    *   param: lBlag
+*/
+
+FUNCTION P_KontoFin( cId, dx, dy, lBlag )
+
+   LOCAL i
+   LOCAL nDbfArea := Select()
+   PRIVATE ImeKol := {}
+   PRIVATE Kol := {}
+
+   O_KONTO
+
+   ImeKol := { { PadR( "ID", 7 ),  {|| id },     "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+      { "Naziv",       {|| naz },     "naz"      };
+      }
+
+   IF KONTO->( FieldPos( "POZBILS" ) ) <> 0
+      AAdd ( ImeKol, { PadR( "Poz.u bil.st.", 20 ), {|| pozbils }, "pozbils" } )
+   ENDIF
+   IF KONTO->( FieldPos( "POZBILU" ) ) <> 0
+      AAdd ( ImeKol, { PadR( "Poz.u bil.usp.", 20 ), {|| pozbilu }, "pozbilu" } )
+   ENDIF
+   IF KONTO->( FieldPos( "OZNAKA" ) ) <> 0
+      AAdd ( ImeKol, { PadR( "Oznaka", 20 ), {|| oznaka }, "oznaka" } )
+   ENDIF
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   IF lBlag == NIL
+      lBlag := .F.
+   ENDIF
+
+   SELECT konto
+   sifk_fill_ImeKol( "KONTO", @ImeKol, @Kol )
+
+   /*
+      IF lBlag .AND. !Left( cId, 1 ) $ "0123456789"
+         SELECT KONTO
+         // ukini zaostali filter
+         SET FILTER TO
+         // postavi filter za zadanu vrijednost karakteristike BLOP
+         cFilter := "DaUSifV('KONTO','BLOP',ID," + dbf_quote( Trim( cId ) ) + ")"
+         SET FILTER TO &cFilter
+         GO TOP
+         cId := Space( Len( cId ) )
+      ENDIF
+   */
+
+   SELECT KONTO
+   SET ORDER TO TAG "ID"
+
+   PostojiSifra( F_KONTO, 1, MAXROWS() -17, MAXCOLS() -10, "LKTF Lista: Konta ", @cId, dx, dy, {| Ch| KontoBlok( Ch ) },,,,, { "ID" } )
+
+   SELECT ( nDbfArea )
+
+   RETURN .T.
+
+
+
+
+/*
+    *     Obradjuje funkcije nad sifrarnikom konta
+    *   param: Ch  - pritisnuti taster
+*/
+
+FUNCTION KontoBlok( Ch )
+
+   LOCAL nRec := RecNo(), cId := ""
+   LOCAL cSif := KONTO->id, cSif2 := ""
+
+   // @ m_x+11,45 SAY "<a-P> - stampa k.plana"
+
+   IF Ch == K_CTRL_T .AND. gSKSif == "D"
+
+      // provjerimo da li je sifra dupla
+      PushWA()
+      SET ORDER TO TAG "ID"
+      SEEK cSif
+      SKIP 1
+      cSif2 := KONTO->id
+      PopWA()
+      IF !( cSif == cSif2 )
+         IF is_konto_ima_u_prometu( KONTO->id )
+            Beep( 1 )
+            Msg( "Stavka konta se ne moze brisati jer se vec nalazi u knjizenjima!" )
+            RETURN 7
+         ENDIF
+      ENDIF
+   ELSEIF Ch == K_F2 .AND. gSKSif == "D"
+      IF is_konto_ima_u_prometu( KONTO->id )
+         RETURN 99
+      ENDIF
+   ENDIF
+
+   IF Ch <> K_ALT_P
+      RETURN DE_CONT
+   ENDIF
+
+   PRIVATE cKonto := Space( 60 )
+   PRIVATE cSirIs := "0", cOdvKlas := "N", cOstran := "D"
+
+   DO WHILE .T.
+      IF !VarEdit( { { "Konto (prazno-sva)", "cKonto",, "@!S30", }, ;
+            { "Sirina ispisa (0 - 10CPI, 1 - 12CPI, 2 - 17CPI, 3 - 20CPI)", "cSirIs", "cSirIs$'0123'",, }, ;
+            { "Odvajati klase novom stranicom (D - da, N - ne) ?", "cOdvKlas", "cOdvKlas$'DN'", "@!", }, ;
+            { "Ukljuceno ostranicavanje ? (D - da, N - ne) ?", "cOstran", "cOstran$'DN'", "@!", } }, ;
+            10, 3, 17, 76, ;
+            'POSTAVLJANJE USLOVA ZA PRIKAZ KONTA', ;
+            "B1" )
+         RETURN DE_CONT
+      ENDIF
+      aUsl1 := Parsiraj( cKonto, "id" )
+      IF aUsl1 <> NIL
+         EXIT
+      ELSE
+         MsgBeep ( "Kriterij za konto nije korektno postavljen!" )
+      ENDIF
+   ENDDO
+
+
+   SET FILTER TO &aUsl1
+
+
+   IF !start_print()
+      RETURN .F.
+   ENDIF
+
+   ?
+   B_ON
+   ? "K O N T N I    P L A N"
+   ? "----------------------"
+   B_OFF
+   ?
+
+   IF cSirIs == "1"
+      F12CPI
+   ELSEIF cSirIs == "2"
+      P_COND
+   ELSEIF cSirIs == "3"
+      P_COND2
+   ENDIF
+
+   GO TOP
+   DO WHILE ! Eof()
+      cId := RTrim( id )
+
+      ? Space( IF( Len( cId ) > 3, 6, IF( Len( cId ) == 3, 3, Len( cId ) -1 ) ) )
+      ?? PadR( cId, 15 -PCol(), "." )
+      ?? naz
+      SKIP 1
+      IF cOdvKlas == "D" .AND. Left( cId, 1 ) != Left( id, 1 ) .OR. cOstran == "D" .AND. PRow() > 60 + dodatni_redovi_po_stranici()
+         FF
+         LOOP
+      ENDIF
+      IF Len( cId ) > 3 .AND. Len( RTrim( id ) ) < 4 .OR. Len( cId ) == Len( RTrim( id ) ) .AND. Len( cId ) < 4 .OR. Left( cId, 3 ) != Left( id, 3 )
+         ?
+      ENDIF
+   ENDDO
+
+   FF
+   end_print()
+
+   SET FILTER TO
+
+   GO nRec
+
+   RETURN DE_CONT
+
+
+
+/*
+      Funkcija vraca vrijednost polja naziv po zadatom idkonto
 */
 
 FUNCTION GetNameFromKonto( cIdKonto )
 
-   LOCAL nArr
+   LOCAL nArr, cRet
 
    nArr := Select()
    SELECT konto

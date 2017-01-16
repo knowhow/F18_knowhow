@@ -112,12 +112,12 @@ FUNCTION set_a_dbfs_key_fields()
 
 
 
-FUNCTION f18_dbfs_add( cTable, _item )
+FUNCTION f18_dbfs_add( cTable, hItem )
 
    LOCAL cDatabase := my_database()
 
    hb_mutexLock( s_mtxMutex )
-   s_hF18Dbfs[ cDatabase ][ cTable ] := _item
+   s_hF18Dbfs[ cDatabase ][ cTable ] := hItem
    hb_mutexUnlock( s_mtxMutex )
 
    RETURN .T.

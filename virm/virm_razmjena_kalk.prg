@@ -32,7 +32,7 @@ FUNCTION virm_prenos_kalk()
    O_PARAMS
    o_kalk()
    O_TARIFA
-   O_JPRIH
+   o_jprih()
    O_KALVIR
    O_VRPRIM
    O_VIRM_PRIPR

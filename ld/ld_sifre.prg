@@ -22,7 +22,7 @@ STATIC __filter_radn := .F.
 
 FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
 
-   LOCAL i, lRet
+   LOCAL nI, lRet
    LOCAL cPom, nPom, cPom2
    LOCAL aKol
 
@@ -43,12 +43,12 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
    aktivni_radnici_filter( .T. ) // filterisanje tabele radnika
 
    ImeKol := {}
-   AAdd( ImeKol, { _l( PadR( "Id", 6 ) ), {|| field->id }, "id", {|| .T. }, {|| vpsifra( wId, "1" ) } } )
-   AAdd( ImeKol, { _l( PadR( "Prezime", 20 ) ), {|| field->naz }, "naz" } )
-   AAdd( ImeKol, { _l( PadR( "Ime roditelja", 15 ) ), {|| field->imerod }, "imerod" } )
-   AAdd( ImeKol, { _l( PadR( "Ime", 15 ) ), {|| field->ime }, "ime" } )
-   AAdd( ImeKol, { PadR( iif( gBodK == "1", _l( "Br.bodova" ), _l( "Koeficij." ) ), 10 ), {|| field->brbod }, "brbod" } )
-   AAdd( ImeKol, { _l( PadR( "MinR%", 5 ) ), {|| field->kminrad }, "kminrad" } )
+   AAdd( ImeKol, { PadR( "Id", 6 ) , {|| field->id }, "id", {|| .T. }, {|| vpsifra( wId, "1" ) } } )
+   AAdd( ImeKol, { PadR( "Prezime", 20 ) , {|| field->naz }, "naz" } )
+   AAdd( ImeKol, { PadR( "Ime roditelja", 15 ) , {|| field->imerod }, "imerod" } )
+   AAdd( ImeKol, { PadR( "Ime", 15 ) , {|| field->ime }, "ime" } )
+   AAdd( ImeKol, { PadR( iif( gBodK == "1",  "Br.bodova",  "Koeficij." ), 10 ), {|| field->brbod }, "brbod" } )
+   AAdd( ImeKol, { PadR( "MinR%", 5 ) , {|| field->kminrad }, "kminrad" } )
 
    IF RADN->( FieldPos( "KLO" ) ) <> 0
 
@@ -134,8 +134,8 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
       ImeKol[ 6 ] := { PadR( "MinR", 7 ), {|| Transform( field->kminrad, "9999.99" ) }, "kminrad" }
    ENDIF
 
-   FOR i := 1 TO 9
-      cPom := "S" + AllTrim( Str( i ) )
+   FOR nI := 1 TO 9
+      cPom := "S" + AllTrim( Str( nI ) )
       nPom := Len( ImeKol )
       IF radn->( FieldPos( cPom ) <> 0 )
          cPom2 := my_get_from_ini( "LD", "OpisRadn" + cPom, "KOEF_" + cPom, KUMPATH )
@@ -153,8 +153,8 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
    AAdd( ImeKol,  aKol )
 
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, I )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    lRet := PostojiSifra( F_RADN, 1, MAXROWS() -15, MAXCOLS() -15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, {| Ch| RadBl( Ch ) },,,,, { "ID" } )
@@ -515,7 +515,7 @@ FUNCTION MsgIspl()
 FUNCTION P_ParObr( cId, nDeltaX, nDeltaY )
 
    LOCAL _tmp_id
-   LOCAL i
+   LOCAL nI
    PRIVATE imekol := {}
    PRIVATE kol := {}
 
@@ -539,8 +539,8 @@ FUNCTION P_ParObr( cId, nDeltaX, nDeltaY )
    AAdd( ImeKol, { PadR( "mn sat.", 12 ), {|| m_net_sat }, "m_net_sat"  } )
    AAdd( ImeKol, { PadR( "mb sat.", 12 ), {|| m_br_sat }, "m_br_sat"  } )
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( kol, nI )
    NEXT
 
    RETURN PostojiSifra( F_PAROBR, 1, MAXROWS() -15, MAXCOLS() -20, _u( "Parametri obračuna" ), @cId, nDeltaX, nDeltaY )
@@ -674,8 +674,8 @@ FUNCTION P_LD_RJ( cId, nDeltaX, nDeltaY )
       AAdd( ImeKol, { "oporeziv", {||  opor }, "opor"  } )
    ENDIF
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    lRet := PostojiSifra( F_LD_RJ, 1, MAXROWS() -15, 60, "Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
@@ -834,7 +834,7 @@ FUNCTION ImaUObrac( cKljuc, cTag )
 
 FUNCTION P_POR( cId, nDeltaX, nDeltaY )
 
-   LOCAL i, lRet
+   LOCAL nI, lRet
    LOCAL _st_stopa := fetch_metric( "ld_porezi_stepenasta_stopa", NIL, "N" )
    PRIVATE Imekol := {}
    PRIVATE Kol := {}
@@ -868,8 +868,8 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
 
    ENDIF
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    PushWA()
@@ -905,7 +905,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
          ENDIF
       ENDIF
 
-      AAdd( Kol, iif( sifk->UBrowsu = '1', ++i, 0 ) )
+      AAdd( Kol, iif( sifk->UBrowsu = '1', ++nI, 0 ) )
       SKIP
    ENDDO
 
@@ -963,8 +963,8 @@ FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
    AAdd( ImeKol, { PadR( "Donji limit", 12 ), {||  dlimit }, "dlimit" } )
    AAdd( ImeKol, { PadR( "PoOpst", 6 ), {||  poopst }, "poopst" }  )
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    PushWA()
@@ -998,7 +998,7 @@ FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
             ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina )
          ENDIF
       ENDIF
-      AAdd  ( Kol, iif( sifk->UBrowsu = '1', ++i, 0 ) )
+      AAdd  ( Kol, iif( sifk->UBrowsu = '1', ++nI, 0 ) )
       SKIP
    ENDDO
 
@@ -1266,8 +1266,7 @@ FUNCTION PrTotBr( cIdRadn )
    @ m_x + 5, m_y + 2 SAY "POSLJEDNJA RATA KREDITA:"
    @ m_x + 5, m_y + 27 SAY IF( RADKR->idradn == cIdRadn, Str( RADKR->mjesec, 2 ) + "/" + Str( RADKR->godina, 4 ), "nema podatka" ) COLOR cBI
 
-   RETURN IF( RADN->id == cIdRadn .OR. LD->idradn == cIdRadn .OR. ;
-      LDSM->idradn == cIdRadn .OR. RADKR->idradn == cIdRadn, .T., .F. )
+   RETURN IIF( RADN->id == cIdRadn .OR. LD->idradn == cIdRadn .OR.  LDSM->idradn == cIdRadn .OR. RADKR->idradn == cIdRadn, .T., .F. )
 
 
 

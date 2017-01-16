@@ -26,20 +26,26 @@ FUNCTION harbour_init()
 
 altd()
 
+SET( _SET_OSCODEPAGE, hb_cdpOS() )
+
+? SET( _SET_OSCODEPAGE )
+
+
    hb_cdpSelect( "SL852" )
-   hb_SetTermCP( "SLISO" )
+   //hb_SetTermCP( "SLISO" )
 
-   hb_cdpSelect( "cp852" )
-   hb_SetTermCP( "cp852" )
-? "1 Šć"
 
-hb_cdpSelect( "SLISO" )
-hb_SetTermCP( "SLISO" )
-? "2 Šć"
+   //hb_cdpSelect( "cp852" )
+   //hb_SetTermCP( "cp852" )
 
-hb_cdpSelect( "UTF8" )
-hb_SetTermCP( "UTF8" )
-? "3 Šć"
+
+//hb_cdpSelect( "SLISO" )
+//hb_SetTermCP( "SLISO" )
+
+
+//hb_cdpSelect( "UTF8" )
+//hb_SetTermCP( "UTF8" )
+
 
 
    SET DELETED ON

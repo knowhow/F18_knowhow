@@ -692,7 +692,7 @@ STATIC FUNCTION virm_o_tables()
 
    SELECT ( F_JPRIH )
    IF !Used()
-      O_JPRIH
+      o_jprih()
    ENDIF
 
    SELECT ( F_SIFK )

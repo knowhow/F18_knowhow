@@ -80,7 +80,7 @@ O_VRPRIM2
 O_VALUTE
 O_LDVIRM
 O_KALVIR
-O_JPRIH
+o_jprih()
 O_BANKE
 O_OPS
 return

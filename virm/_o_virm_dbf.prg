@@ -12,5 +12,18 @@
 #include "f18.ch"
 
 
+/*
 FUNCTION o_jprih()
    RETURN o_dbf_table( F_JPRIH, "jprih", "ID" )
+
+*/
+
+
+FUNCTION o_jprih()
+
+   SELECT ( F_JPRIH )
+
+   IF !use_sql_sif ( "jprih" )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"

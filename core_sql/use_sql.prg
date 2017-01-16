@@ -47,15 +47,23 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
       RETURN .F.
    ENDIF
 
-   dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable + " ORDER BY ID",  cAlias )
+   //hb_cdpSelect( "UTF8" )
+   Set( _SET_DBCODEPAGE, "UTF8")
+
+   dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable + " ORDER BY ID",  cAlias, NIL, NIL, "UTF8" )
+ Set( _SET_DBCODEPAGE, "CP852")
 
    IF lMakeIndex
       INDEX ON ID TAG ID TO ( cAlias )
       IF FieldPos( "NAZ" ) > 0
          INDEX ON NAZ TAG NAZ TO ( cAlias )
       ENDIF
+      SET ORDER TO TAG "ID"
+      GO TOP
    ENDIF
 
+altd()
+ //hb_cdpSelect( "SL852" )
    rddSetDefault( "DBFCDX" )
 
    RETURN .T.

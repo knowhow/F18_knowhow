@@ -21,6 +21,7 @@ FUNCTION o_tippr()
    ENDIF
    SET ORDER TO TAG "ID"
 
+
 FUNCTION o_tippr_ili_tippr2( cObracun )
 
    SELECT ( F_TIPPR )

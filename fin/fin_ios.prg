@@ -231,6 +231,7 @@ STATIC FUNCTION mnu_ios_print()
       SKIP
 
       @ m_x + 1, m_y + 2 SAY "Cnt: " + Str( nCount, 5 ) + " / limit: " + Str( nCountLimit, 5 )
+
       IF nCount > nCountLimit
          MsgBeep( "Posljednja obuhvaćena šifra parnera: " + cIdPartnerTekuci)
          EXIT
@@ -242,10 +243,8 @@ STATIC FUNCTION mnu_ios_print()
    IF _print_tip == "2"
       end_print()
    ELSE
-
       xml_subnode( "ios", .T. )
       close_xml()
-
    ENDIF
 
    IF _print_tip == "2" .AND. _export_dbf == "D"
@@ -256,7 +255,7 @@ STATIC FUNCTION mnu_ios_print()
 
    IF _print_tip == "1"
 
-      IF Empty( cIdPartner )
+      IF Empty( cIdPartner ) .OR. cNastavak == "D"
          _template := "ios_2.odt"
       ENDIF
 
@@ -429,8 +428,8 @@ STATIC FUNCTION print_ios_xml( hParams )
 
          ELSE
 
-            // zatvorene stavke
-            IF field->d_p == "1"
+
+            IF field->d_p == "1"   // zatvorene stavke
                _u_dug_1z += field->IznosBHD
                _u_dug_2z += field->IznosDEM
             ELSE
@@ -992,8 +991,7 @@ STATIC FUNCTION ios_xml_partner( cSubnode, cIdPartner )
    SEEK cIdPartner
 
    IF !Found() .AND. !Empty( cIdPartner )
-      _ret := .F.
-      RETURN _ret
+      RETURN .F.
    ENDIF
 
    xml_subnode( cSubnode, .F. )

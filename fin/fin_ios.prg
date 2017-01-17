@@ -70,7 +70,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL cXmlIos := my_home() + "data.xml"
    LOCAL _template := "ios.odt"
    LOCAL cIdPartnerTekuci
-   LOCAL nCount, nCountLimit := 15000 // broj izgenerisanih stavki
+   LOCAL nCount, nCountLimit := 12000 // broj izgenerisanih stavki
    LOCAL cNastavak := "D"
 
    O_KONTO
@@ -376,7 +376,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
       __br_dok := field->brdok
       __dat_dok := field->datdok
-      __opis := AllTrim( field->opis )
+      __opis := hb_UTF8ToStr( AllTrim( field->opis ) )
       __dat_val := fix_dat_var( field->datval )
       _dug_1 := 0
       _pot_1 := 0
@@ -401,7 +401,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
                xml_node( "rbr", AllTrim( Str( ++_rbr ) ) )
                xml_node( "brdok", to_xml_encoding( field->brdok ) )
-               xml_node( "opis", to_xml_encoding( field->opis ) )
+               xml_node( "opis", to_xml_encoding( hb_Utf8ToStr( field->opis ) )
                xml_node( "datdok", DToC( field->datdok ) )
                xml_node( "datval", DToC( fix_dat_var( field->datval ) ) )
 

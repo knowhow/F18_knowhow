@@ -232,6 +232,7 @@ STATIC FUNCTION mnu_ios_print()
 
       @ m_x + 1, m_y + 2 SAY "Cnt: " + Str( nCount, 5 ) + " / limit: " + Str( nCountLimit, 5 )
       IF nCount > nCountLimit
+         MsgBeep( "Posljednja obuhvaćena šifra parnera: " + cIdPartnerTekuci)
          EXIT
       ENDIF
    ENDDO

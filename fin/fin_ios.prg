@@ -70,7 +70,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL cXmlIos := my_home() + "data.xml"
    LOCAL _template := "ios.odt"
    LOCAL cIdPartnerTekuci
-   LOCAL nCount, nCountLimit := 25000 // broj izgenerisanih stavki
+   LOCAL nCount, nCountLimit := 15000 // broj izgenerisanih stavki
    LOCAL cNastavak := "D"
 
    O_KONTO
@@ -114,8 +114,11 @@ STATIC FUNCTION mnu_ios_print()
    @ m_x + nX, m_y + 2 SAY8 "Eksport podataka u dbf (D/N) ?" GET _export_dbf   VALID _export_dbf $ "DN" PICT "@!"
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
+
+
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Limit za broj izgenerisanih stavki ?" GET nCountLimit
 
    // ++nX
    // @ m_x + nX, m_y + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen  VALID _auto_gen $ "DN" PICT "@!"

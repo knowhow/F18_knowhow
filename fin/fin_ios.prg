@@ -70,7 +70,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL cXmlIos := my_home() + "data.xml"
    LOCAL _template := "ios.odt"
    LOCAL cIdPartnerTekuci
-   LOCAL nCount, nCountLimit := 50000 // broj izgenerisanih stavki
+   LOCAL nCount, nCountLimit := 30000 // broj izgenerisanih stavki
    LOCAL cNastavak := "D"
 
    O_KONTO

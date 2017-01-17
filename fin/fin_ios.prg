@@ -198,12 +198,12 @@ STATIC FUNCTION mnu_ios_print()
       cIdPartnerTekuci := field->idpartner
 
       IF !Empty( cIdPartner )
-         IF cNastavak == "N" .AND. ( cIdPartner <> cIdPartnerTekuci )// samo jedan partner
+         IF cNastavak == "N" .AND. ( cIdPartner <> cIdPartnerTekuci ) // samo jedan partner
             SKIP
             LOOP
          ENDIF
 
-         IF cNastavak == "N" .AND. ( cIdPartnerTekuci < cIdPartner )
+         IF cNastavak == "D" .AND. ( cIdPartnerTekuci < cIdPartner ) // nastavi od zadatog partnera
             SKIP
             LOOP
          ENDIF

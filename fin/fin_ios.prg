@@ -62,62 +62,66 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL _prelomljeno := fetch_metric( "ios_print_prelom", my_user(), "N" )
    LOCAL _export_dbf := "N"
    LOCAL _print_tip := fetch_metric( "ios_print_tip", my_user(), "1" )
-   LOCAL _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
+
+   // LOCAL _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
    LOCAL _ios_date := Date()
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _launch, _exp_fields
-   LOCAL _xml_file := my_home() + "data.xml"
+   LOCAL cXmlIos := my_home() + "data.xml"
    LOCAL _template := "ios.odt"
    LOCAL cIdPartnerTekuci
+   LOCAL nCount, nCountLimit := 50000 // broj izgenerisanih stavki
+   LOCAL cNastavak := "D"
 
    O_KONTO
    O_PARTN
 
    Box(, 16, 65, .F. )
 
-   @ m_x + _x, m_y + 2 SAY8 " Štampa IOS-a **** "
+   @ m_x + nX, m_y + 2 SAY8 " Štampa IOS-a **** "
 
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "       Datum IOS-a:" GET _ios_date
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "       Datum IOS-a:" GET _ios_date
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY " Gledati period do:" GET _datum_do
+   ++nX
+   @ m_x + nX, m_y + 2 SAY " Gledati period do:" GET _datum_do
 
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Firma "
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Konto       :" GET cIdKonto VALID P_Konto( @cIdKonto )
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Partner     :" GET cIdPartner VALID Empty( cIdPartner ) .OR.  p_partner( @cIdPartner ) PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Konto       :" GET cIdKonto VALID P_Konto( @cIdKonto )
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Partner     :" GET cIdPartner VALID Empty( cIdPartner ) .OR.  p_partner( @cIdPartner ) PICT "@!"
+   @ m_x + nX, Col() + 2 SAY "nastavak od ovog partnera " GET cNastavak PICT "@!" VALID cNastavak $ "DN"
 
    IF fin_dvovalutno()
-      ++_x
-      @ m_x + _x, m_y + 2 SAY "Prikaz " +   AllTrim( ValDomaca() ) + "/" +  AllTrim( ValPomocna() ) + " (1/2)" ;
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Prikaz " +   AllTrim( ValDomaca() ) + "/" +  AllTrim( ValPomocna() ) + " (1/2)" ;
          GET _din_dem VALID _din_dem $ "12"
    ENDIF
 
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Prikaz prebijenog stanja " GET _prelomljeno  VALID _prelomljeno $ "DN" PICT "@!"
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Prikaz prebijenog stanja " GET _prelomljeno  VALID _prelomljeno $ "DN" PICT "@!"
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Prikaz identično kartici " GET _kao_kartica  VALID _kao_kartica $ "DN" PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Prikaz identično kartici " GET _kao_kartica  VALID _kao_kartica $ "DN" PICT "@!"
 
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Eksport podataka u dbf (D/N) ?" GET _export_dbf   VALID _export_dbf $ "DN" PICT "@!"
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Eksport podataka u dbf (D/N) ?" GET _export_dbf   VALID _export_dbf $ "DN" PICT "@!"
 
-   ++_x
+   ++nX
 
-   @ m_x + _x, m_y + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
+   @ m_x + nX, m_y + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
 
-   ++_x
+   // ++nX
+   // @ m_x + nX, m_y + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen  VALID _auto_gen $ "DN" PICT "@!"
 
-   @ m_x + _x, m_y + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen  VALID _auto_gen $ "DN" PICT "@!"
 
 
    READ
@@ -136,21 +140,21 @@ STATIC FUNCTION mnu_ios_print()
 
    ios_clan_setup( .F. )    // definisi clan i setuj staticku varijablu
 
-   IF _auto_gen == "D"    // generisi podatke u tabelu prije same stampe
+   // IF _auto_gen == "D"    // generisi podatke u tabelu prije same stampe
 
-      hParametriGenIOS := hb_Hash()
-      hParametriGenIOS[ "id_konto" ] := cIdKonto
-      hParametriGenIOS[ "id_firma" ] := cIdFirma
-      hParametriGenIOS[ "id_partner" ] := NIL
-      IF !Empty( cIdPartner )
-         hParametriGenIOS[ "id_partner" ] := cIdPartner
-      ENDIF
-
-      hParametriGenIOS[ "saldo_nula" ] := "D"
-      hParametriGenIOS[ "datum_do" ] := _datum_do
-      ios_generacija_podataka( hParametriGenIOS )     // generisi podatke u IOS tabelu
-
+   hParametriGenIOS := hb_Hash()
+   hParametriGenIOS[ "id_konto" ] := cIdKonto
+   hParametriGenIOS[ "id_firma" ] := cIdFirma
+   hParametriGenIOS[ "id_partner" ] := NIL
+   IF !Empty( cIdPartner )
+      hParametriGenIOS[ "id_partner" ] := cIdPartner
    ENDIF
+
+   hParametriGenIOS[ "saldo_nula" ] := "D"
+   hParametriGenIOS[ "datum_do" ] := _datum_do
+   ios_generacija_podataka( hParametriGenIOS )     // generisi podatke u IOS tabelu
+
+   // ENDIF
 
 
    IF _export_dbf == "D"    // eksport podataka u dbf tabelu
@@ -173,26 +177,34 @@ STATIC FUNCTION mnu_ios_print()
 
    NFOUND CRET
 
-
    IF _print_tip == "2" // txt forma
       IF !start_print()
          RETURN .F.
       ENDIF
    ELSE
-      create_xml( _xml_file )
+      create_xml( cXmlIos )
       xml_head()
       xml_subnode( "ios", .F. )
    ENDIF
 
    SELECT ios
+   nCount := 0
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
       cIdPartnerTekuci := field->idpartner
 
-      IF !Empty( cIdPartner ) .AND. cIdPartner <> cIdPartnerTekuci
-         SKIP
-         LOOP
+      IF !Empty( cIdPartner )
+         IF cNastavak == "N" .AND. ( cIdPartner <> cIdPartnerTekuci )// samo jedan partner
+            SKIP
+            LOOP
+         ENDIF
+
+         IF cNastavak == "N" .AND. ( cIdPartnerTekuci < cIdPartner )
+            SKIP
+            LOOP
+         ENDIF
+
       ENDIF
 
       hParams := hb_Hash()
@@ -211,11 +223,14 @@ STATIC FUNCTION mnu_ios_print()
       IF _print_tip == "2"
          print_ios_txt( hParams )
       ELSE
-         print_ios_xml( hParams )
+         nCount += print_ios_xml( hParams )
       ENDIF
 
       SKIP
 
+      IF nCount > nCountLimit
+         EXIT
+      ENDIF
    ENDDO
 
    IF _print_tip == "2"
@@ -239,7 +254,7 @@ STATIC FUNCTION mnu_ios_print()
          _template := "ios_2.odt"
       ENDIF
 
-      IF generisi_odt_iz_xml( _template, _xml_file )
+      IF generisi_odt_iz_xml( _template, cXmlIos )
          prikazi_odt()
       ENDIF
 
@@ -265,6 +280,10 @@ STATIC FUNCTION print_ios_xml( hParams )
    LOCAL _dug_1, _dug_2, _u_dug_1, _u_dug_2, _u_dug_1z, _u_dug_2z
    LOCAL _pot_1, _pot_2, _u_pot_1, _u_pot_2, _u_pot_1z, _u_pot_2z
 
+   LOCAL _total_bhd
+   LOCAL _total_dem
+   LOCAL nCount
+
    // <ios_item>
    //
    // <firma>
@@ -286,7 +305,6 @@ STATIC FUNCTION print_ios_xml( hParams )
    // </ios_item>
 
    xml_subnode( "ios_item", .F. )
-
 
    ios_xml_partner( "firma", cIdFirma )
 
@@ -345,9 +363,10 @@ STATIC FUNCTION print_ios_xml( hParams )
       _prelomljeno := "N"
    ENDIF
 
+   nCount := 0
    _rbr := 0
 
-   DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == suban->IdKonto  .AND. cIdPartner == hb_Utf8ToStr( suban->IdPartner )
+   DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == suban->IdKonto  .AND. cIdPartner == hb_UTF8ToStr( suban->IdPartner )
 
       __br_dok := field->brdok
       __dat_dok := field->datdok
@@ -359,8 +378,7 @@ STATIC FUNCTION print_ios_xml( hParams )
       _pot_2 := 0
       __otv_st := field->otvst
 
-      DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == field->IdKonto ;
-            .AND. cIdPartner == hb_Utf8ToStr( suban->IdPartner ) ;
+      DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == field->IdKonto  .AND. cIdPartner == hb_UTF8ToStr( suban->IdPartner ) ;
             .AND. ( _kao_kartica == "D" .OR. suban->brdok == __br_dok )
 
          IF field->datdok > _datum_do
@@ -372,6 +390,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
             IF _kao_kartica == "D"
 
+               nCount++
                xml_subnode( "data_kartica", .F. )
 
                xml_node( "rbr", AllTrim( Str( ++_rbr ) ) )
@@ -451,7 +470,7 @@ STATIC FUNCTION print_ios_xml( hParams )
             IF !( Round( _dug_1, 2 ) == 0 .AND. Round( _pot_1, 2 ) == 0 ) // ispisi ove stavke ako dug i pot <> 0
 
                xml_subnode( "data_kartica", .F. )
-
+               ++nCount
                xml_node( "rbr", AllTrim( Str( ++_rbr ) ) )
                xml_node( "brdok", to_xml_encoding( __br_dok ) )
                xml_node( "opis", to_xml_encoding( __opis ) )
@@ -528,7 +547,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
    SELECT ios
 
-   RETURN .T.
+   RETURN nCount
 
 
 
@@ -884,7 +903,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
-      cIdPartnerTekuci := hb_Utf8ToStr( field->idpartner ) // idpartner cp852
+      cIdPartnerTekuci := hb_UTF8ToStr( field->idpartner ) // idpartner cp852
 
       _dug_1 := 0
       _u_dug_1 := 0
@@ -897,7 +916,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
       nSaldo1 := 0
       nSaldo2 := 0
 
-      DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. cIdPartnerTekuci == hb_Utf8ToStr( field->idpartner )
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. cIdPartnerTekuci == hb_UTF8ToStr( field->idpartner )
 
          IF field->datdok > _datum_do // ako je datum veci od datuma do kojeg generisem
             SKIP

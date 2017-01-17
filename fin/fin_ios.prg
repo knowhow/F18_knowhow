@@ -147,7 +147,7 @@ STATIC FUNCTION mnu_ios_print()
    hParametriGenIOS[ "id_konto" ] := cIdKonto
    hParametriGenIOS[ "id_firma" ] := cIdFirma
    hParametriGenIOS[ "id_partner" ] := NIL
-   IF !Empty( cIdPartner )
+   IF !Empty( cIdPartner ) .AND. cNastavak == "N" // samo jedan partner
       hParametriGenIOS[ "id_partner" ] := cIdPartner
    ENDIF
 

@@ -401,7 +401,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
                xml_node( "rbr", AllTrim( Str( ++_rbr ) ) )
                xml_node( "brdok", to_xml_encoding( field->brdok ) )
-               xml_node( "opis", to_xml_encoding( hb_Utf8ToStr( field->opis ) )
+               xml_node( "opis", to_xml_encoding( hb_Utf8ToStr( field->opis ) ) )
                xml_node( "datdok", DToC( field->datdok ) )
                xml_node( "datval", DToC( fix_dat_var( field->datval ) ) )
 

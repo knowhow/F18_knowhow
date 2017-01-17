@@ -51,7 +51,7 @@ FUNCTION fin_ios_meni()
 
 STATIC FUNCTION mnu_ios_print()
 
-   LOCAL _datum_do := Date()
+   LOCAL dDatumDo := Date()
    LOCAL hParams := hb_Hash()
    LOCAL hParametriGenIOS := hb_Hash()
    LOCAL cIdFirma := self_organizacija_id()
@@ -64,7 +64,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL _print_tip := fetch_metric( "ios_print_tip", my_user(), "1" )
 
    // LOCAL _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
-   LOCAL _ios_date := Date()
+   LOCAL dDatumIOS := Date()
    LOCAL nX := 1
    LOCAL _launch, _exp_fields
    LOCAL cXmlIos := my_home() + "data.xml"
@@ -80,15 +80,13 @@ STATIC FUNCTION mnu_ios_print()
 
    @ m_x + nX, m_y + 2 SAY8 " Štampa IOS-a **** "
 
-   ++nX
-   ++nX
-   @ m_x + nX, m_y + 2 SAY "       Datum IOS-a:" GET _ios_date
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY "       Datum IOS-a:" GET dDatumIOS
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY " Gledati period do:" GET _datum_do
+   @ m_x + nX, m_y + 2 SAY " Gledati period do:" GET dDatumDo
 
-   ++nX
-   ++nX
+   nX += 2
    @ m_x + nX, m_y + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
@@ -151,7 +149,7 @@ STATIC FUNCTION mnu_ios_print()
    ENDIF
 
    hParametriGenIOS[ "saldo_nula" ] := "D"
-   hParametriGenIOS[ "datum_do" ] := _datum_do
+   hParametriGenIOS[ "datum_do" ] := dDatumDo
    ios_generacija_podataka( hParametriGenIOS )     // generisi podatke u IOS tabelu
 
    // ENDIF
@@ -190,6 +188,8 @@ STATIC FUNCTION mnu_ios_print()
    SELECT ios
    nCount := 0
 
+   Box( "#IOS generacija xml", 3, 60 )
+
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
       cIdPartnerTekuci := field->idpartner
@@ -204,7 +204,6 @@ STATIC FUNCTION mnu_ios_print()
             SKIP
             LOOP
          ENDIF
-
       ENDIF
 
       hParams := hb_Hash()
@@ -212,8 +211,8 @@ STATIC FUNCTION mnu_ios_print()
       hParams[ "id_konto" ] := cIdKonto
       hParams[ "id_firma" ] := cIdFirma
       hParams[ "din_dem" ] := _din_dem
-      hParams[ "datum_do" ] := _datum_do
-      hParams[ "ios_datum" ] := _ios_date
+      hParams[ "datum_do" ] := dDatumDo
+      hParams[ "ios_datum" ] := dDatumIOS
       hParams[ "export_dbf" ] := _export_dbf
       hParams[ "iznos_bhd" ] := ios->iznosbhd
       hParams[ "iznos_dem" ] := ios->iznosdem
@@ -228,10 +227,13 @@ STATIC FUNCTION mnu_ios_print()
 
       SKIP
 
+      @ m_x + 1, m_y + 2 SAY "Cnt: " + Str( nCount, 5 ) + " / limit: " + Str( nCountLimit, 5 )
       IF nCount > nCountLimit
          EXIT
       ENDIF
    ENDDO
+
+   BoxC()
 
    IF _print_tip == "2"
       end_print()
@@ -272,8 +274,8 @@ STATIC FUNCTION print_ios_xml( hParams )
    LOCAL _iznos_bhd := hParams[ "iznos_bhd" ]
    LOCAL _iznos_dem := hParams[ "iznos_dem" ]
    LOCAL _din_dem := hParams[ "din_dem" ]
-   LOCAL _datum_do := hParams[ "datum_do" ]
-   LOCAL _ios_date := hParams[ "ios_datum" ]
+   LOCAL dDatumDo := hParams[ "datum_do" ]
+   LOCAL dDatumIOS := hParams[ "ios_datum" ]
    LOCAL _kao_kartica := hParams[ "kartica" ]
    LOCAL _prelomljeno := hParams[ "prelom" ]
    LOCAL nSaldo1, nSaldo2, __saldo_1, __saldo_2
@@ -310,7 +312,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
    ios_xml_partner( "partner", cIdPartner )
 
-   xml_node( "ios_datum", DToC( _ios_date ) )
+   xml_node( "ios_datum", DToC( dDatumIOS ) )
    xml_node( "id_konto", to_xml_encoding( cIdKonto ) )
    xml_node( "id_partner", to_xml_encoding( cIdPartner ) )
 
@@ -381,7 +383,7 @@ STATIC FUNCTION print_ios_xml( hParams )
       DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == field->IdKonto  .AND. cIdPartner == hb_UTF8ToStr( suban->IdPartner ) ;
             .AND. ( _kao_kartica == "D" .OR. suban->brdok == __br_dok )
 
-         IF field->datdok > _datum_do
+         IF field->datdok > dDatumDo
             SKIP
             LOOP
          ENDIF
@@ -600,7 +602,7 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdKonto := fetch_metric( "ios_spec_id_konto", my_user(), Space( 7 ) )
    LOCAL cPrikazSaSaldoNulaDN := "D"
-   LOCAL _datum_do := Date()
+   LOCAL dDatumDo := Date()
 
    O_KONTO
 
@@ -609,7 +611,7 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    @ m_x + 3, m_y + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
    @ m_x + 4, m_y + 2 SAY "Konto: " GET cIdKonto VALID P_Konto( @cIdKonto )
-   @ m_x + 5, m_y + 2 SAY "Datum do kojeg se generise  :" GET _datum_do
+   @ m_x + 5, m_y + 2 SAY "Datum do kojeg se generise  :" GET dDatumDo
    @ m_x + 6, m_y + 2 SAY "Prikaz partnera sa saldom 0 :" GET cPrikazSaSaldoNulaDN VALID cPrikazSaSaldoNulaDN $ "DN" PICT "@!"
    READ
    BoxC()
@@ -628,7 +630,7 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    hParams[ "id_konto" ] := cIdKonto
    hParams[ "id_firma" ] := cIdFirma
    hParams[ "saldo_nula" ] := cPrikazSaSaldoNulaDN
-   hParams[ "datum_do" ] := _datum_do
+   hParams[ "datum_do" ] := dDatumDo
 
    RETURN .T.
 
@@ -638,7 +640,7 @@ STATIC FUNCTION _ios_spec_vars( hParams )
 /*
 STATIC FUNCTION ios_specifikacija( hParams )
 
-   LOCAL _datum_do, cIdFirma, cIdKonto, cPrikazSaSaldoNulaDN
+   LOCAL dDatumDo, cIdFirma, cIdKonto, cPrikazSaSaldoNulaDN
    LOCAL _line
    LOCAL cIdPartner, _rbr
    LOCAL _auto := .F.
@@ -657,7 +659,7 @@ STATIC FUNCTION ios_specifikacija( hParams )
    // iz parametara uzmi uslove
    cIdFirma := hParams[ "id_firma" ]
    cIdKonto := hParams[ "id_konto" ]
-   _datum_do := hParams[ "datum_do" ]
+   dDatumDo := hParams[ "datum_do" ]
    cPrikazSaSaldoNulaDN := hParams[ "saldo_nula" ]
 
    _line := _ios_spec_get_line()
@@ -692,7 +694,7 @@ STATIC FUNCTION ios_specifikacija( hParams )
 
          // ako je datum veci od datuma do kojeg generisem
          // preskoci
-         IF field->datdok > _datum_do
+         IF field->datdok > dDatumDo
             SKIP
             LOOP
          ENDIF
@@ -853,7 +855,7 @@ STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
 
 STATIC FUNCTION ios_generacija_podataka( hParams )
 
-   LOCAL _datum_do, cIdFirma, cIdKonto, cPrikazSaSaldoNulaDN
+   LOCAL dDatumDo, cIdFirma, cIdKonto, cPrikazSaSaldoNulaDN
    LOCAL cIdPartner, hRec, nCount
    LOCAL _auto := .F.
    LOCAL _dug_1, _dug_2, _u_dug_1, _u_dug_2
@@ -877,7 +879,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    cIdKonto := hParams[ "id_konto" ]
    cIdPartner := hParams[ "id_partner" ]
 
-   _datum_do := hParams[ "datum_do" ]
+   dDatumDo := hParams[ "datum_do" ]
    cPrikazSaSaldoNulaDN := hParams[ "saldo_nula" ]
 
    O_PARTN
@@ -918,7 +920,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
       DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. cIdPartnerTekuci == hb_UTF8ToStr( field->idpartner )
 
-         IF field->datdok > _datum_do // ako je datum veci od datuma do kojeg generisem
+         IF field->datdok > dDatumDo // ako je datum veci od datuma do kojeg generisem
             SKIP
             LOOP
          ENDIF
@@ -1039,8 +1041,8 @@ STATIC FUNCTION print_ios_txt( hParams )
    LOCAL _iznos_bhd := hParams[ "iznos_bhd" ]
    LOCAL _iznos_dem := hParams[ "iznos_dem" ]
    LOCAL _din_dem := hParams[ "din_dem" ]
-   LOCAL _datum_do := hParams[ "datum_do" ]
-   LOCAL _ios_date := hParams[ "ios_datum" ]
+   LOCAL dDatumDo := hParams[ "datum_do" ]
+   LOCAL dDatumIOS := hParams[ "ios_datum" ]
    LOCAL _export_dbf := hParams[ "export_dbf" ]
    LOCAL _kao_kartica := hParams[ "kartica" ]
    LOCAL _prelomljeno := hParams[ "prelom" ]
@@ -1085,14 +1087,14 @@ STATIC FUNCTION print_ios_txt( hParams )
    ?
    ?
    @ PRow(), 6 SAY "IZVOD OTVORENIH STAVKI NA DAN :"
-   @ PRow(), PCol() + 2 SAY _ios_date
+   @ PRow(), PCol() + 2 SAY dDatumIOS
    @ PRow(), PCol() + 1 SAY "GODINE"
    ?
    ?
    @ PRow(), 0 SAY8 "VAŠE STANJE NA KONTU" ; @ PRow(), PCol() + 1 SAY cIdKonto
    @ PRow(), PCol() + 1 SAY " - " + cIdPartner
    @ PRow() + 1, 0 SAY8 "PREMA NAŠIM POSLOVNIM KNJIGAMA NA DAN:"
-   @ PRow(), 39 SAY _ios_date
+   @ PRow(), 39 SAY dDatumIOS
    @ PRow(), 48 SAY "GODINE"
    ?
    ?
@@ -1171,7 +1173,7 @@ STATIC FUNCTION print_ios_txt( hParams )
       DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cIdKonto == field->IdKonto ;
             .AND. cIdPartner == field->IdPartner .AND. ( _kao_kartica == "D" .OR. field->brdok == cBrdok )
 
-         IF field->datdok > _datum_do
+         IF field->datdok > dDatumDo
             SKIP
             LOOP
          ENDIF

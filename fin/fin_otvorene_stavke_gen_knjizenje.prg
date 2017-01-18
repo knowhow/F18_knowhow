@@ -148,6 +148,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    // fPrviprolaz := .T.
    SELECT ostav
    my_flock()
+
    SELECT SUBAN
 
    nCnt := 0
@@ -170,8 +171,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
       ENDIF
       aFaktura := { CToD( "" ), CToD( "" ), CToD( "" ) }
 
-      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. cIdKonto == field->idkonto .AND. cIdPartner == field->idpartner ;
-            .AND. field->brdok == cBrDok
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. cIdKonto == field->idkonto .AND. cIdPartner == field->idpartner .AND. field->brdok == cBrDok
 
          dDatDok := Min( Max( fix_dat_var( field->datval, .T. ), fix_dat_var( field->datdok, .T. ) ), dDatDok )
 

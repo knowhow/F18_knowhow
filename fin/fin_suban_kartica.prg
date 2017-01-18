@@ -428,7 +428,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    bEvalSubanKartFirma := {|| !Eof() .AND. iif( gDUFRJ != "D", field->IdFirma == cIdFirma, .T. ) }
    bEvalSubanKartKonto := {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. iif( gDUFRJ != "D", field->IdFirma == cIdFirma, .T. ) }
-   bEvalSubanKartPartner :=  {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. ( cIdPartner == hb_UTF8ToStr( field->IdPartner ) ;
+   bEvalSubanKartPartner :=  {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. ( cIdPartner == field->IdPartner ;
       .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ;
       .AND. Rasclan() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. ) }
 
@@ -480,7 +480,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          nZDugDEM := 0
          nZPotDEM := 0
 
-         cIdPartner := hb_UTF8ToStr( field->IdPartner )
+         cIdPartner := field->IdPartner
          nTarea := Select()
 
          IF !Empty( cOpcine )
@@ -1104,7 +1104,7 @@ FUNCTION Telefon( cTel )
 
    nSelect := Select()
    SELECT partn
-   HSEEK hb_UTF8ToStr( suban->idpartner )
+   HSEEK  suban->idpartner
    SELECT ( nSelect )
 
    RETURN ( partn->telefon == cTel )

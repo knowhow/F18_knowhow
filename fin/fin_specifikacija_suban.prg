@@ -323,7 +323,7 @@ FUNCTION fin_specifikacija_suban()
          nTArea := Select()
 
          cIdKonto := IdKonto
-         cIdPartner := hb_UTF8ToStr( field->idPartner )
+         cIdPartner := field->idPartner
 
          IF !Empty( cOpcine )
             SELECT partn
@@ -357,7 +357,7 @@ FUNCTION fin_specifikacija_suban()
             nDugujeBHD := 0
             nPotrazujeBHD := 0
          ENDIF
-         DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. hb_UTF8ToStr( field->IdPartner ) == cIdPartner .AND. RasclanRJ()
+         DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. field->IdPartner == cIdPartner .AND. RasclanRJ()
             IF cRascFunkFond == "D"
                cGetFunkFond := idrj + funk + fond
                cGetIdRj := idrj
@@ -366,16 +366,16 @@ FUNCTION fin_specifikacija_suban()
             ENDIF
             // racuna duguje/potrazuje
             IF d_P == "1"
-               nD += iznosbhd
+               nD += field->iznosbhd
                nD2 += iznosdem
                IF cRascFunkFond == "D"
-                  nDugujeBHD := iznosbhd
+                  nDugujeBHD := field->iznosbhd
                ENDIF
             ELSE
-               nP += iznosbhd
+               nP += field->iznosbhd
                nP2 += iznosdem
                IF cRascFunkFond == "D"
-                  nPotrazujeBHD := iznosbhd
+                  nPotrazujeBHD := field->iznosbhd
                ENDIF
             ENDIF
 

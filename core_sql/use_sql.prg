@@ -40,8 +40,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
 
    rddSetDefault( "SQLMIX" )
 
-
-   IF  !HB_ISPOINTER( pConn )  // #define RDDI_CONNECT          1001
+   IF rddInfo( 1001, { "POSTGRESQL", pConn } ) == 0  // #define RDDI_CONNECT          1001
       LOG_CALL_STACK cLogMsg
       ?E "Unable connect to the PSQLserver", cLogMsg
       error_bar( "PSQL", "SQLMIX connect " + cTable )
@@ -90,7 +89,7 @@ FUNCTION use_sql( cTable, sql_query, cAlias )
 
    rddSetDefault( "SQLMIX" )
 
-   IF !HB_ISPOINTER( pConn )
+   IF rddInfo( 1001, { "POSTGRESQL", pConn } ) == 0  // #define RDDI_CONNECT          1001
       LOG_CALL_STACK cLogMsg
       ?E "Unable connect to the PSQLserver", cLogMsg
       error_bar( "SQL", "SQLMIX connect " + cTable )

@@ -6,14 +6,14 @@
 #define INI_FNAME ".f18_config.ini"
 #endif
 
-FUNCTION f18_ini_config_read( sect, ini, global )
+FUNCTION f18_ini_config_read( cSection, ini, lGlobalno )
 
    LOCAL tmp_ini_section
    LOCAL tmp_key
    LOCAL ini_file
    LOCAL ini_read
 
-   IF ( global == NIL ) .OR. ( global == .F. )
+   IF ( lGlobalno == NIL ) .OR. ( lGlobalno == .F. )
       ini_file := my_home() + INI_FNAME
    ELSE
       ini_file := my_home_root() + INI_FNAME
@@ -31,9 +31,9 @@ FUNCTION f18_ini_config_read( sect, ini, global )
       log_write( "Fajl je prazan: " + ini_file )
 
    ELSE
-      IF hb_HHasKey( ini_read, sect )
+      IF hb_HHasKey( ini_read, cSection )
 
-         tmp_ini_section := ini_read[ sect ]
+         tmp_ini_section := ini_read[ cSection ]
          FOR EACH tmp_key in ini:Keys
             // napuni ini sa onim sto si procitao
             IF hb_HHasKey( tmp_ini_section, tmp_key )
@@ -47,13 +47,13 @@ FUNCTION f18_ini_config_read( sect, ini, global )
    RETURN .T.
 
 
-FUNCTION f18_ini_config_write( sect, ini, global )
+FUNCTION f18_ini_config_write( cSection, ini, lGlobalno )
 
    LOCAL tmp_key
    LOCAL ini_file
    LOCAL ini_read
 
-   IF ( global == NIL ) .OR. ( global == .F. )
+   IF ( lGlobalno == NIL ) .OR. ( lGlobalno == .F. )
       ini_file := my_home() + INI_FNAME
    ELSE
       ini_file := my_home_root() + INI_FNAME
@@ -65,13 +65,13 @@ FUNCTION f18_ini_config_write( sect, ini, global )
       ini_read := hb_Hash()
    ENDIF
 
-   IF !hb_HHasKey( ini_read, sect )
-      ini_read[ sect ] := hb_Hash()
+   IF !hb_HHasKey( ini_read, cSection )
+      ini_read[ cSection ] := hb_Hash()
    ENDIF
 
    // napuni ini_read sa vrijednostima iz ini matrice
    FOR EACH tmp_key in ini:Keys
-      ini_read[ sect ][ tmp_key ] := ini[ tmp_key ]
+      ini_read[ cSection ][ tmp_key ] := ini[ tmp_key ]
    NEXT
 
 

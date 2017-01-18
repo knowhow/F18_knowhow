@@ -403,7 +403,7 @@ STATIC FUNCTION _o_tbl()
    // o_kalk()
    O_SIFK
    O_SIFV
-   O_TDOK
+   o_tdok()
    O_ROBA
    o_koncij()
    O_KONTO

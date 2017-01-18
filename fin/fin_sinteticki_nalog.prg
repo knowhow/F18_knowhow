@@ -262,7 +262,7 @@ STATIC FUNCTION close_open_panal()
 
    O_KONTO
    O_PARTN
-   O_TNAL
+   o_tnal()
    o_nalog()
 
    RETURN .T.

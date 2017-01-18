@@ -114,7 +114,7 @@ FUNCTION fin_anal_kartica()
       m := Stuff( m, 30, 0, " -- ------------- ---------- --------------------" )
       o_sql_suban_kto_partner( cIdFirma )
       SET ORDER TO TAG 4
-      O_TDOK
+      o_tdok()
    ENDIF
 
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0

@@ -104,8 +104,8 @@ FUNCTION mat_o_edit()
    O_MAT_PRIPR
    O_KONTO
    O_PARTN
-   O_TNAL
-   O_TDOK
+   o_tnal()
+   o_tdok()
    O_ROBA
    O_SIFK
    O_SIFV
@@ -650,7 +650,7 @@ FUNCTION mat_st_anal_nalog( fnovi )
       fnovi := .T.
    ENDIF
 
-   O_TNAL
+   o_tnal()
    O_ROBA
 
    IF fnovi

@@ -1555,7 +1555,7 @@ FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
    O_TARIFA
    O_PARTN
    O_KONTO
-   O_TDOK
+   o_tdok()
 
    IF lAzuriraniDok
       open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
@@ -1611,7 +1611,7 @@ FUNCTION o_kalk_edit()
    O_ROBA
    // o_kalk()
    O_KONTO
-   O_TDOK
+   o_tdok()
    O_VALUTE
    O_TARIFA
    o_koncij()

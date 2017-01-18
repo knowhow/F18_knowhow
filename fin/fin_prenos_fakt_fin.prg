@@ -89,7 +89,7 @@ FUNCTION fakt_fin_prenos()
    O_FINMAT
    O_KONTO
    O_PARTN
-   O_TDOK
+   o_tdok()
    O_ROBA
    O_TARIFA
 

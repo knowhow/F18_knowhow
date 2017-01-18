@@ -47,8 +47,8 @@ FUNCTION DnevnikNaloga()
    SET KEY K_F5 TO
 
    O_VRSTEP
-   O_TNAL
-   O_TDOK
+   o_tnal()
+   o_tdok()
    O_PARTN
    O_KONTO
    o_nalog()

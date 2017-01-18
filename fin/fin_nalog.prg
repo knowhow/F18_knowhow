@@ -28,8 +28,8 @@ FUNCTION fin_nalog_azurirani()
 
    O_KONTO
    O_PARTN
-   O_TNAL
-   O_TDOK
+   o_tnal()
+   o_tdok()
 
    cIdVN := Space( 2 )
    cIdFirma := self_organizacija_id()

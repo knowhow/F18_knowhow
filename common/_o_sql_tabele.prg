@@ -25,3 +25,34 @@ FUNCTION o_vrste_placanja()
    SET ORDER TO TAG "ID"
 
    RETURN .T.
+
+
+FUNCTION o_tdok()
+
+   LOCAL cTabela := "tdok"
+
+   SELECT ( F_TDOK )
+   IF !use_sql_sif  ( cTabela )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
+
+FUNCTION o_tnal()
+
+   LOCAL cTabela := "tnal"
+
+   SELECT ( F_TNAL )
+   IF !use_sql_sif  ( cTabela )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.

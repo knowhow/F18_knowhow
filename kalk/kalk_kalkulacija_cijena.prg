@@ -166,7 +166,7 @@ STATIC FUNCTION o_tables( azurirana )
 
    SELECT F_TDOK
    IF !Used()
-      O_TDOK
+      o_tdok()
    ENDIF
 
    IF azurirana

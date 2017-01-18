@@ -114,8 +114,8 @@ FUNCTION OSifBaze()
    O_KONTO
    o_koncij()
    O_PARTN
-   O_TNAL
-   O_TDOK
+   o_tnal()
+   o_tdok()
    O_TRFP
    O_TRMP
    O_VALUTE

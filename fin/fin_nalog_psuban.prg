@@ -472,8 +472,8 @@ FUNCTION fin_gen_psuban_stavke_auto_import()
    O_FIN_PRIPR
    O_KONTO
    O_PARTN
-   O_TNAL
-   O_TDOK
+   o_tnal()
+   o_tdok()
    O_PSUBAN
 
    SELECT PSUBAN

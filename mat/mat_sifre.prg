@@ -21,8 +21,8 @@ FUNCTION mat_sifrarnik()
 
    O_KONTO
    O_PARTN
-   O_TNAL
-   O_TDOK
+   o_tnal()
+   o_tdok()
    O_ROBA
    O_VALUTE
    O_KARKON

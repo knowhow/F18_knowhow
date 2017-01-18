@@ -1297,6 +1297,6 @@ STATIC FUNCTION kartica_otvori_tabele()
    O_SIFV
    O_RJ
    // o_suban()
-   O_TDOK
+   o_tdok()
 
    RETURN .T.

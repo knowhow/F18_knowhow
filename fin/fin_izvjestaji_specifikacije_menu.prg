@@ -12,85 +12,90 @@
 #include "f18.ch"
 
 
-// ------------------------------------------------------
-// meni specifikacija
-// ------------------------------------------------------
+
 FUNCTION fin_menu_specifikacije()
 
    LOCAL _izbor := 1
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   AAdd( _opc, "1. fin specifikacije (txt)          " )
-   AAdd( _opcexe, {|| fin_izvj_specif_txt_menu() } )
-   AAdd( _opc, "2. fin specifikacije / 2          " )
-   AAdd( _opcexe, {|| fin_izvjestaji_specif_2_menu() } )
-   AAdd( _opc, "3. kupci pregled dugovanja" )
-   AAdd( _opcexe, {|| fin_kupci_pregled_dugovanja() } )
+   AAdd( _opc, "1. finansijske specifikacije        " )
+   AAdd( _opcexe, {|| fin_specifikacije_meni() } )
+
+   AAdd( _opc, "1. kupci" )
+   AAdd( _opcexe, {|| fin_specif_kupci() } )
 
    f18_menu( "spec", .F., _izbor, _opc, _opcexe )
 
    RETURN .T.
 
 
-// ------------------------------------------------------
-// meni specifikacija sql
-// ------------------------------------------------------
-STATIC FUNCTION fin_izvjestaji_specif_2_menu()
+
+STATIC FUNCTION fin_specif_kupci()
 
    LOCAL _izbor := 1
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   AAdd( _opc, "1. specifikacija po subanalitičkim kontima-2          " )
-   AAdd( _opcexe, {|| fin_suban_specifikacija_sql() } )
+   AAdd( _opc, "1. kupci pregled dugovanja                                  " )
+   AAdd( _opcexe, {|| fin_kupci_pregled_dugovanja() } )
+
+   AAdd( _opc, "2. partnera na kontu" )
+   AAdd( _opcexe, {|| fin_spec_partnera_na_kontu() } )
+   AAdd( _opc, "3. otvorene stavke preko-do odredjenog broja dana za konto" )
+   AAdd( _opcexe, {|| fin_spec_otv_stavke_preko_dana() } )
 
 
-   f18_menu( "spsql", .F., _izbor, _opc, _opcexe )
+   AAdd( _opc, "4. konta za partnera" )
+   AAdd( _opcexe, {|| SpecPop() } )
+   AAdd( _opc, "5. pregled novih dugovanja/potraživanja" )
+   AAdd( _opcexe, {|| PregNDP() } )
+   AAdd( _opc, "6. pregled partnera bez prometa" )
+   AAdd( _opcexe, {|| PartVanProm() } )
+
+   f18_menu( "fsp2", .F., _izbor, _opc, _opcexe )
 
    RETURN .T.
 
 
 
 
-STATIC FUNCTION fin_izvj_specif_txt_menu()
+STATIC FUNCTION fin_specifikacije_meni()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. partnera na kontu                                        " )
-   AAdd( _opcexe, {|| fin_spec_partnera_na_kontu() } )
-   AAdd( _opc, "2. otvorene stavke preko-do odredjenog broja dana za konto" )
-   AAdd( _opcexe, {|| fin_spec_otv_stavke_preko_dana() } )
-   AAdd( _opc, "3. konta za partnera" )
-   AAdd( _opcexe, {|| SpecPop() } )
-   AAdd( _opc, "4. po analitičkim kontima" )
-   AAdd( _opcexe, {|| SpecPoK() } )
-   AAdd( _opc, "5. po subanalitičkim kontima" )
+
+   AAdd( _opc, "1. po subanalitičkim kontima                          " )
    AAdd( _opcexe, {|| fin_specifikacija_suban() } )
-   AAdd( _opc, "6. za subanalitički konto / 2" )
-   AAdd( _opcexe, {|| SpecSubPro() } )
-   AAdd( _opc, "7. za subanalitički konto/konto2" )
+
+   AAdd( _opc, "2. specifikacija po subanalitičkim kontima / sql" )
+   AAdd( _opcexe, {|| fin_suban_specifikacija_sql() } )
+
+   // AAdd( _opc, "4. za subanalitički konto / 2" )
+   // AAdd( _opcexe, {|| SpecSubPro() } )
+
+   AAdd( _opc, "3. za subanalitički konto/konto2" )
    AAdd( _opcexe, {|| SpecKK2() } )
-   AAdd( _opc, "8. pregled novih dugovanja/potraživanja" )
-   AAdd( _opcexe, {|| PregNDP() } )
-   AAdd( _opc, "9. pregled partnera bez prometa" )
-   AAdd( _opcexe, {|| PartVanProm() } )
 
-   IF gFinRj == "D" .OR. gTroskovi == "D"
-      //AAdd( _opc, "A. izvrsenje budzeta/pregled rashoda" )
-      //AAdd( _opcexe, {|| IzvrsBudz() } )
 
-      AAdd( _opc, "B. pregled prihoda" )
-      AAdd( _opcexe, {|| Prihodi() } )
-   ENDIF
+   AAdd( _opc, "A. po analitičkim kontima" )
+   AAdd( _opcexe, {|| SpecPoK() } )
 
+
+   //IF gFinRj == "D" .OR. gTroskovi == "D"
+      // AAdd( _opc, "A. izvrsenje budzeta/pregled rashoda" )
+      // AAdd( _opcexe, {|| IzvrsBudz() } )
+
+      // AAdd( _opc, "B. pregled prihoda" )
+      // AAdd( _opcexe, {|| Prihodi() } )
+   //ENDIF
 
 
    AAdd( _opc, "S. specifikacija troskova po gradilištima " )
    AAdd( _opcexe, {|| r_spec_tr() } )
 
-   f18_menu( "spct", .F., _izbor, _opc, _opcexe )
+   f18_menu( "spfin", .F., _izbor, _opc, _opcexe )
 
    RETURN .T.

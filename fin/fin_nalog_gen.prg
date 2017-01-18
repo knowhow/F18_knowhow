@@ -153,8 +153,8 @@ FUNCTION fin_open_psuban_and_ostalo()
    O_VRSTEP
    O_KONTO
    O_PARTN
-   O_TNAL
-   O_TDOK
+   o_tnal()
+   o_tdok()
    o_fin_psuban()
    O_FIN_PRIPR
 
@@ -172,7 +172,7 @@ FUNCTION fin_open_lock_panal( lZap )
 
    O_PARTN
    O_KONTO
-   O_TNAL
+   o_tnal()
 
    IF !lock_fin_priprema( lZap )
       Alert( "lock fin priprema error ?" )
@@ -262,7 +262,7 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
    O_PNALOG
    O_PSUBAN
    O_KONTO
-   O_TNAL
+   o_tnal()
 
    IF lAuto == NIL
       lAuto := .F.

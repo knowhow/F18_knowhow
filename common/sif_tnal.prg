@@ -24,7 +24,7 @@ FUNCTION browse_tnal( cId, dx, dy )
 
    nTArea := Select()
 
-   O_TNAL
+   o_tnal()
 
    AAdd( ImeKol, { "ID", {|| field->id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| PadR( field->naz , 30 ) }, "naz" } )

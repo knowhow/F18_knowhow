@@ -196,7 +196,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    ENDIF
 
 
-   O_TDOK
+   o_tdok()
 
    // SELECT SUBAN
 

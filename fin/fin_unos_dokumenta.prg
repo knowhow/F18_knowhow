@@ -675,8 +675,8 @@ FUNCTION o_fin_edit()
    O_PAREK
    O_KONTO
    O_PARTN
-   O_TNAL
-   O_TDOK
+   o_tnal()
+   o_tdok()
    o_nalog()
    O_FIN_PRIPR
 

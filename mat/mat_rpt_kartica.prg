@@ -611,7 +611,7 @@ FUNCTION KSuban()
    USE
 
    O_MAT_SUBAN
-   O_TDOK
+   o_tdok()
 
    SELECT mat_suban
    SET ORDER TO TAG "3"

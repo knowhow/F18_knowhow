@@ -16,8 +16,8 @@ FUNCTION open_sif_tables_1()
 
    O_KONTO
    O_PARTN
-   O_TNAL
-   O_TDOK
+   o_tnal()
+   o_tdok()
    O_VALUTE
    O_RJ
    O_BANKE

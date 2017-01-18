@@ -41,7 +41,7 @@ FUNCTION mat_st_sint_nalog( fnovi )
    ENDIF
 
    O_KONTO
-   O_TNAL
+   o_tnal()
    IF fnovi
       O_MAT_PANAL2
       cIdFirma := idFirma

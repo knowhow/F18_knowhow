@@ -167,7 +167,7 @@ STATIC FUNCTION mnu_ios_print()
    O_KONTO
    O_PARTN
    o_suban()
-   O_TNAL
+   o_tnal()
    o_suban()
    O_IOS
 

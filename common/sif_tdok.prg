@@ -15,7 +15,7 @@
 MEMVAR ImeKol, Kol
 MEMVAR wId
 
-FUNCTION browse_tdok( cId, dx, dy )
+FUNCTION browse_tdok( cId, nDeltaX, nDeltaY )
 
    LOCAL nI, xRet
    PRIVATE ImeKol
@@ -25,7 +25,7 @@ FUNCTION browse_tdok( cId, dx, dy )
    Kol := {}
 
    PushWA()
-   O_TDOK
+   o_tdok()
 
    AAdd( ImeKol, { "ID",    {|| PadR( field->id, 2 ) },  "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| PadR(  field->naz, 35 ) }, "naz" } )
@@ -34,12 +34,13 @@ FUNCTION browse_tdok( cId, dx, dy )
       AAdd( Kol, nI )
    NEXT
 
-   xRet := p_sifra( F_TDOK, 1, Max( maxrows() - 20, 10 ), Max( maxcols() - 30, 35 ), "OsnPod: Vrste dokumenata", @cId, dx, dy )
+   xRet := p_sifra( F_TDOK, 1, Max( maxrows() - 20, 10 ), Max( maxcols() - 30, 35 ), "OsnPod: Vrste dokumenata", @cId, nDeltaX, nDeltaY )
 
    PopWa()
 
    RETURN xRet
 
-FUNCTION P_TipDok( cId, dx, dy )
 
-   RETURN browse_tdok( @cId, dx, dy )
+FUNCTION P_TipDok( cId, nDeltaX, nDeltaY )
+
+   RETURN browse_tdok( @cId, nDeltaX, nDeltaY )

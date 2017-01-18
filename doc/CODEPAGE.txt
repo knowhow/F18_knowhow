@@ -35,9 +35,9 @@ F18
 SELECT F_LD
 use_sql( cTable, cSql, "LD" )
 
-IF F18_DBF_ENCODING  != "UTF8"
-   dbEval( {|| field->idRadn := hb_UTF8ToStr( field->idradn ) } )
-ENDIF
+//IF F18_DBF_ENCODING  != "UTF8"
+//   dbEval( {|| field->idRadn := hb_UTF8ToStr( field->idradn ) } )
+//ENDIF
 
 #define F18_SQL_ENCODING   "CP852"
 

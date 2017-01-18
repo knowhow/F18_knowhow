@@ -164,7 +164,7 @@ STATIC FUNCTION query_log_data( hParams )
 
 STATIC FUNCTION print_log_data( data, hParams, print_to_file )
 
-   LOCAL _row
+   LOCAL oRow
    LOCAL _user, _txt, _date
    LOCAL _a_txt, _tmp, nI, _pos_y
    LOCAL _txt_len := 100
@@ -196,7 +196,7 @@ STATIC FUNCTION print_log_data( data, hParams, print_to_file )
 
    DO WHILE !data:Eof()
 
-      _row := data:GetRow()
+      oRow := data:GetRow()
 
       _date := data:FieldGet( data:FieldPos( "l_time" ) )
       _user := hb_UTF8ToStr( data:FieldGet( data:FieldPos( "user_code" ) ) )

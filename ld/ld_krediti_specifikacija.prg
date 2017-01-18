@@ -33,30 +33,30 @@ FUNCTION ld_kred_specifikacija()
 
 
 
-STATIC FUNCTION _get_data( params )
+STATIC FUNCTION _get_data( hParams )
 
    LOCAL _data := {}
    LOCAL _qry
    LOCAL _where
    LOCAL _order
 
-   _where := " lk.godina = " + AllTrim( Str( params[ "godina" ] ) )
-   _where += " AND lk.mjesec = " + AllTrim( Str( params[ "mjesec" ] ) )
+   _where := " lk.godina = " + AllTrim( Str( hParams[ "godina" ] ) )
+   _where += " AND lk.mjesec = " + AllTrim( Str( hParams[ "mjesec" ] ) )
 
-   IF !Empty( params[ "kreditor" ] )
-      _where += " AND lk.idkred = " + sql_quote( params[ "kreditor" ] )
+   IF !Empty( hParams[ "kreditor" ] )
+      _where += " AND lk.idkred = " + sql_quote( hParams[ "kreditor" ] )
    ENDIF
 
-   IF !Empty( params[ "radnik" ] )
-      _where += " AND lk.idradn = " + sql_quote( params[ "radnik" ] )
+   IF !Empty( hParams[ "radnik" ] )
+      _where += " AND lk.idradn = " + sql_quote( hParams[ "radnik" ] )
    ENDIF
 
-   IF !Empty( params[ "osnova" ] )
-      _where += " AND " + _sql_cond_parse( "lk.naosnovu", params[ "osnova" ] )
+   IF !Empty( hParams[ "osnova" ] )
+      _where += " AND " + _sql_cond_parse( "lk.naosnovu", hParams[ "osnova" ] )
    ENDIF
 
-   IF !Empty( params[ "rj" ] )
-      _where += " AND " + _sql_cond_parse( "ld.idrj", params[ "rj" ] )
+   IF !Empty( hParams[ "rj" ] )
+      _where += " AND " + _sql_cond_parse( "ld.idrj", hParams[ "rj" ] )
    ENDIF
 
    _order := " lk.idkred, lk.idradn, lk.naosnovu "
@@ -76,7 +76,7 @@ STATIC FUNCTION _get_data( params )
       " ( SELECT SUM(iznos) FROM " + F18_PSQL_SCHEMA_DOT + "ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu) AS kredit_ukupno, " + ;
       " ( SELECT SUM(iznos) FROM " + F18_PSQL_SCHEMA_DOT + "ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu AND placeno <> 0) AS kredit_uplaceno " + ;
       " FROM " + F18_PSQL_SCHEMA_DOT + "ld_radkr lk " + ;
-      " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_ld ld ON lk.idradn = ld.idradn AND ld.mjesec = " + AllTrim( Str( params[ "mjesec" ] ) ) + " AND ld.godina = " + AllTrim( Str( params[ "godina" ] ) ) + ;
+      " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_ld ld ON lk.idradn = ld.idradn AND ld.mjesec = " + AllTrim( Str( hParams[ "mjesec" ] ) ) + " AND ld.godina = " + AllTrim( Str( hParams[ "godina" ] ) ) + ;
       " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_radn rd ON lk.idradn = rd.id " + ;
       " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " kred kr ON lk.idkred = kr.id " + ;
       " WHERE " + _where + ;
@@ -95,43 +95,39 @@ STATIC FUNCTION _get_data( params )
    RETURN _data
 
 
-STATIC FUNCTION _get_vars( params )
+STATIC FUNCTION _get_vars( hParams )
 
    LOCAL _ok := .F.
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _godina, _mjesec
-   LOCAL _id_radn, _id_kred, _sort, _rj
+   LOCAL cIdRadnik, cIdKreditor, _sort, _rj
    LOCAL _osnova := Space( 200 )
 
    _godina := fetch_metric( "ld_kred_spec_godina", my_user(), 2013 )
    _mjesec := fetch_metric( "ld_kred_spec_mjesec", my_user(), 1 )
-   _id_radn := fetch_metric( "ld_kred_spec_radnik", my_user(), Space( 6 ) )
-   _id_kred := fetch_metric( "ld_kred_spec_kreditor", my_user(), Space( 6 ) )
+   cIdRadnik := fetch_metric( "ld_kred_spec_radnik", my_user(), Space( 6 ) )
+   cIdKreditor := fetch_metric( "ld_kred_spec_kreditor", my_user(), Space( 6 ) )
    _sort := fetch_metric( "ld_kred_spec_sort", my_user(), 2 )
    _rj := fetch_metric( "ld_kred_spec_rj", my_user(), Space( 200 ) )
 
    Box(, 15, 60 )
 
-   @ m_x + _x, m_y + 2 SAY "Godina" GET _godina PICT "9999"
-   @ m_x + _x, Col() + 1 SAY "mjesec" GET _mjesec PICT "99"
+   @ m_x + nX, m_y + 2 SAY "Godina" GET _godina PICT "9999"
+   @ m_x + nX, Col() + 1 SAY "mjesec" GET _mjesec PICT "99"
 
-   ++ _x
-   ++ _x
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Radnik (prazno-svi):" GET cIdRadnik VALID Empty( cIdRadnik ) .OR. P_Radn( @cIdRadnik )
 
-   @ m_x + _x, m_y + 2 SAY "Radnik (prazno-svi):" GET _id_radn VALID Empty( _id_radn ) .OR. P_Radn( @_id_radn )
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Kreditor (prazno-svi):" GET cIdKreditor VALID Empty( cIdKreditor ) .OR. P_Kred( @cIdKreditor )
 
-   ++ _x
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "   Filter po osnovi kredita:" GET _osnova PICT "@S30"
 
-   @ m_x + _x, m_y + 2 SAY "Kreditor (prazno-svi):" GET _id_kred VALID Empty( _id_kred ) .OR. P_Kred( @_id_kred )
-
-   ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "   Filter po osnovi kredita:" GET _osnova PICT "@S30"
-
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Filter po radnim jedinicama:" GET _rj PICT "@S30"
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Filter po radnim jedinicama:" GET _rj PICT "@S30"
 
    READ
 
@@ -143,8 +139,8 @@ STATIC FUNCTION _get_vars( params )
 
    set_metric( "ld_kred_spec_godina", my_user(), _godina )
    set_metric( "ld_kred_spec_mjesec", my_user(), _mjesec )
-   set_metric( "ld_kred_spec_radnik", my_user(), _id_radn )
-   set_metric( "ld_kred_spec_kreditor", my_user(), _id_kred )
+   set_metric( "ld_kred_spec_radnik", my_user(), cIdRadnik )
+   set_metric( "ld_kred_spec_kreditor", my_user(), cIdKreditor )
    set_metric( "ld_kred_spec_sort", my_user(), _sort )
    set_metric( "ld_kred_spec_rj", my_user(), _rj )
 
@@ -156,37 +152,39 @@ STATIC FUNCTION _get_vars( params )
       _rj := AllTrim( _rj ) + " "
    ENDIF
 
-   params[ "godina" ] := _godina
-   params[ "mjesec" ] := _mjesec
-   params[ "kreditor" ] := _id_kred
-   params[ "radnik" ] := _id_radn
-   params[ "tip_sorta" ] := _sort
-   params[ "osnova" ] := _osnova
-   params[ "rj" ] := _rj
+   hParams[ "godina" ] := _godina
+   hParams[ "mjesec" ] := _mjesec
+   hParams[ "kreditor" ] := cIdKreditor
+   hParams[ "radnik" ] := cIdRadnik
+   hParams[ "tip_sorta" ] := _sort
+   hParams[ "osnova" ] := _osnova
+   hParams[ "rj" ] := _rj
 
    _ok := .T.
 
    RETURN _ok
 
 
-STATIC FUNCTION _print_data( data, params )
+STATIC FUNCTION _print_data( oDataset, hParams )
 
    LOCAL _template := "kred_spec.odt"
 
-   _cre_xml( data, params )
+   _cre_xml( oDataset, hParams )
 
    IF generisi_odt_iz_xml( _template )
       prikazi_odt()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
-STATIC FUNCTION _cre_xml( data, params )
+
+
+STATIC FUNCTION _cre_xml( oDataset, hParams )
 
    LOCAL oRow
-   LOCAL _xml_file := my_home() + "data.xml"
-   LOCAL _id_kred
-   LOCAL _sort := params[ "tip_sorta" ]
+   LOCAL _xml_file := my_home() + "oDataset.xml"
+   LOCAL cIdKreditor
+   LOCAL _sort := hParams[ "tip_sorta" ]
    LOCAL _t_rata_iznos := 0
    LOCAL _t_rata_ukupno := 0
    LOCAL _t_rata_uplaceno := 0
@@ -200,24 +198,24 @@ STATIC FUNCTION _cre_xml( data, params )
    xml_subnode( "spec", .F. )
 
    xml_node( "firma", to_xml_encoding( self_organizacija_naziv() ) )
-   xml_node( "godina", Str( params[ "godina" ] ) )
-   xml_node( "mjesec", Str( params[ "mjesec" ] ) )
-   xml_node( "kreditor", to_xml_encoding( params[ "kreditor" ] ) )
-   xml_node( "radnik", to_xml_encoding( params[ "radnik" ] ) )
+   xml_node( "godina", Str( hParams[ "godina" ] ) )
+   xml_node( "mjesec", Str( hParams[ "mjesec" ] ) )
+   xml_node( "kreditor", to_xml_encoding( hParams[ "kreditor" ] ) )
+   xml_node( "radnik", to_xml_encoding( hParams[ "radnik" ] ) )
 
-   data:GoTo( 1 )
+   oDataset:GoTo( 1 )
 
-   DO WHILE !data:Eof()
+   DO WHILE !oDataset:Eof()
 
-      oRow := data:GetRow()
+      oRow := oDataset:GetRow()
 
-      _id_kred := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idkred" ) ) )
-      _id_radn := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idradn" ) ) )
+      cIdKreditor := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idkred" ) ) )
+      cIdRadnik := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idradn" ) ) )
 
       xml_subnode( "kred", .F. )
 
       xml_node( "k_naz", to_xml_encoding( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "kred_naz" ) ) ) ) )
-      xml_node( "k_id", to_xml_encoding( _id_kred ) )
+      xml_node( "k_id", to_xml_encoding( cIdKreditor ) )
 
       _t_rata_iznos := 0
       _t_rata_ukupno := 0
@@ -226,11 +224,11 @@ STATIC FUNCTION _cre_xml( data, params )
       _t_kred_uplaceno := 0
       _t_ostatak := 0
 
-      DO WHILE !data:Eof() .AND. _id_kred == hb_UTF8ToStr( data:FieldGet( data:FieldPos( "idkred" ) ) )
+      DO WHILE !oDataset:Eof() .AND. cIdKreditor == hb_UTF8ToStr( oDataset:FieldGet( oDataset:FieldPos( "idkred" ) ) )
 
-         oRow2 := data:GetRow()
+         oRow2 := oDataset:GetRow()
 
-         xml_subnode( "data", .F. )
+         xml_subnode( "oDataset", .F. )
 
          xml_node( "r_id", to_xml_encoding( hb_UTF8ToStr( oRow2:FieldGet( oRow2:FieldPos( "idradn" ) ) ) ) )
          xml_node( "r_prez", to_xml_encoding( hb_UTF8ToStr( oRow2:FieldGet( oRow2:FieldPos( "radn_prezime" ) ) ) ) )
@@ -255,9 +253,9 @@ STATIC FUNCTION _cre_xml( data, params )
          _t_ostatak += oRow2:FieldGet( oRow2:FieldPos( "kredit_ukupno" ) ) - ;
             oRow2:FieldGet( oRow2:FieldPos( "kredit_uplaceno" ) )
 
-         xml_subnode( "data", .T. )
+         xml_subnode( "oDataset", .T. )
 
-         data:Skip()
+         oDataset:Skip()
 
       ENDDO
 

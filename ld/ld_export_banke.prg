@@ -265,9 +265,9 @@ METHOD LDExportTxt:copy_existing_formula( id_formula )
 METHOD LDExportTxt:fill_data_from_ld()
 
    LOCAL _ok := .F.
-   LOCAL _qry, _table
+   LOCAL cQuery, oDataset
    LOCAL _server := sql_data_conn()
-   LOCAL _count, _rec
+   LOCAL _count, hRec
    LOCAL _dod_polja := ::export_params[ "dodatna_polja" ]
    LOCAL _pro_polja, _a_polja, nI
    LOCAL _a_kreditor
@@ -288,7 +288,7 @@ METHOD LDExportTxt:fill_data_from_ld()
 
    ENDIF
 
-   _qry := "SELECT " + ;
+   cQuery := "SELECT " + ;
       " ld.godina, " + ;
       " ld.mjesec, " + ;
       " ld.obr, " + ;
@@ -307,111 +307,111 @@ METHOD LDExportTxt:fill_data_from_ld()
       " ld.uiznos "
 
    IF ::export_params[ "krediti_export" ]
-      _qry += " , kr.placeno AS kredit, "
-      _qry += " kr.naosnovu AS partija, "
-      _qry += " kred.ziro AS bank_part "
+      cQuery += " , kr.placeno AS kredit, "
+      cQuery += " kr.naosnovu AS partija, "
+      cQuery += " kred.ziro AS bank_part "
    ENDIF
 
-   _qry += " FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld ld "
-   _qry += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_radn rd ON ld.idradn = rd.id "
+   cQuery += " FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld ld "
+   cQuery += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_radn rd ON ld.idradn = rd.id "
 
    IF ::export_params[ "krediti_export" ]
-      _qry += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_radkr kr ON ld.idradn = kr.idradn AND "
-      _qry += "             ld.mjesec = kr.mjesec AND ld.godina = kr.godina "
-      _qry += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " kred kred ON kr.idkred = kred.id "
+      cQuery += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_radkr kr ON ld.idradn = kr.idradn AND "
+      cQuery += "             ld.mjesec = kr.mjesec AND ld.godina = kr.godina "
+      cQuery += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " kred kred ON kr.idkred = kred.id "
    ENDIF
 
-   _qry += " WHERE ld.godina = " + AllTrim( Str( ::export_params[ "godina" ] ) )
-   _qry += " AND ld.mjesec = " + AllTrim( Str( ::export_params[ "mjesec" ] ) )
-   _qry += " AND ld.obr = " + sql_quote( ::export_params[ "obracun" ] )
-   _qry += " AND rd.isplata = " + sql_quote( "TR" )
+   cQuery += " WHERE ld.godina = " + AllTrim( Str( ::export_params[ "godina" ] ) )
+   cQuery += " AND ld.mjesec = " + AllTrim( Str( ::export_params[ "mjesec" ] ) )
+   cQuery += " AND ld.obr = " + sql_quote( ::export_params[ "obracun" ] )
+   cQuery += " AND rd.isplata = " + sql_quote( "TR" )
 
    IF !::export_params[ "krediti_export" ]
-      _qry += " AND rd.idbanka = " + sql_quote( ::export_params[ "banka" ] )
+      cQuery += " AND rd.idbanka = " + sql_quote( ::export_params[ "banka" ] )
    ENDIF
 
    IF !Empty( ::export_params[ "rj" ] )
-      _qry += " AND " + _sql_cond_parse( "ld.idrj", AllTrim( ::export_params[ "rj" ] ) )
+      cQuery += " AND " + _sql_cond_parse( "ld.idrj", AllTrim( ::export_params[ "rj" ] ) )
    ENDIF
 
    if ::export_params[ "krediti_export" ] .AND. !Empty( ::export_params[ "kreditori" ] )
-      _qry += " AND kr.idkred IN ( "
+      cQuery += " AND kr.idkred IN ( "
       _a_kreditor := TokToNiz( AllTrim( ::export_params[ "kreditori" ] ), ";" )
       FOR nI := 1 TO Len( _a_kreditor )
          IF nI > 1
-            _qry += ", "
+            cQuery += ", "
          ENDIF
-         _qry += sql_quote( _a_kreditor[ nI ] )
+         cQuery += sql_quote( _a_kreditor[ nI ] )
       NEXT
-      _qry += " ) "
+      cQuery += " ) "
    ENDIF
 
 
-   _qry += " ORDER BY ld.godina, ld.mjesec, ld.obr, rd.naz " // sortiranje exporta po prezimenu
+   cQuery += " ORDER BY ld.godina, ld.mjesec, ld.obr, rd.naz " // sortiranje exporta po prezimenu
 
    MsgO( "formiranje sql upita u toku ..." )
-   _table := run_sql_query( _qry )
+   oDataset := run_sql_query( cQuery )
    MsgC()
 
-   IF sql_error_in_query( _table )
+   IF sql_error_in_query( oDataset )
       RETURN NIL
    ENDIF
 
-   _table:GoTo( 1 )
+   oDataset:GoTo( 1 )
    _count := 0
 
 
-   DO WHILE !_table:Eof() // napuniti tabelu export
+   DO WHILE !oDataset:Eof() // napuniti tabelu export
 
       ++ _count
-      oRow := _table:GetRow()
+      oRow := oDataset:GetRow()
 
       SELECT exp_bank
       APPEND BLANK
 
-      _rec := dbf_get_rec()
-      _rec[ "godina" ] := oRow:FieldGet( oRow:FieldPos( "godina" ) )
-      _rec[ "mjesec" ] := oRow:FieldGet( oRow:FieldPos( "mjesec" ) )
-      _rec[ "idrj" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idrj" ) ) )
-      _rec[ "obr" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "obr" ) ) )
-      _rec[ "idradn" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idradn" ) ) )
-      _rec[ "jmbg" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "jmbg" ) ) )
-      _rec[ "tekrn" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "tekrn" ) ) )
-      _rec[ "knjiz" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "knjiz" ) ) )
+      hRec := dbf_get_rec()
+      hRec[ "godina" ] := oRow:FieldGet( oRow:FieldPos( "godina" ) )
+      hRec[ "mjesec" ] := oRow:FieldGet( oRow:FieldPos( "mjesec" ) )
+      hRec[ "idrj" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idrj" ) ) )
+      hRec[ "obr" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "obr" ) ) )
+      hRec[ "idradn" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idradn" ) ) )
+      hRec[ "jmbg" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "jmbg" ) ) )
+      hRec[ "tekrn" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "tekrn" ) ) )
+      hRec[ "knjiz" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "knjiz" ) ) )
 
-      _rec[ "punoime" ] := ;
+      hRec[ "punoime" ] := ;
          AllTrim( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "ime" ) ) ) ) + " (" + ;
          AllTrim( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "imerod" ) ) ) ) + ") " + ;
          AllTrim( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "naz" ) ) ) )
 
-      _rec[ "ime" ] := AllTrim( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "ime" ) ) ) )
-      _rec[ "imerod" ] := AllTrim( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "imerod" ) ) ) )
-      _rec[ "prezime" ] := AllTrim( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "naz" ) ) ) )
+      hRec[ "ime" ] := AllTrim( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "ime" ) ) ) )
+      hRec[ "imerod" ] := AllTrim( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "imerod" ) ) ) )
+      hRec[ "prezime" ] := AllTrim( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "naz" ) ) ) )
 
-      _rec[ "iznos_1" ] := oRow:FieldGet( oRow:FieldPos( "uiznos" ) )
+      hRec[ "iznos_1" ] := oRow:FieldGet( oRow:FieldPos( "uiznos" ) )
       // iznos_2 ostavljam prazno...
 
-      _rec[ "usati" ] := oRow:FieldGet( oRow:FieldPos( "usati" ) )
-      _rec[ "uneto" ] := oRow:FieldGet( oRow:FieldPos( "uneto" ) )
+      hRec[ "usati" ] := oRow:FieldGet( oRow:FieldPos( "usati" ) )
+      hRec[ "uneto" ] := oRow:FieldGet( oRow:FieldPos( "uneto" ) )
 
       if ::export_params[ "krediti_export" ]
          // kredit
-         _rec[ "kredit" ] := oRow:FieldGet( oRow:FieldPos( "kredit" ) )
-         _rec[ "partija" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "partija" ) ) )
-         _rec[ "bank_part" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "bank_part" ) ) )
+         hRec[ "kredit" ] := oRow:FieldGet( oRow:FieldPos( "kredit" ) )
+         hRec[ "partija" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "partija" ) ) )
+         hRec[ "bank_part" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "bank_part" ) ) )
       ENDIF
 
       IF !Empty( _dod_polja )
          FOR nI := 1 TO Len( _a_polja )
             IF !Empty( _a_polja[ nI ] )
-               _rec[ Lower( _a_polja[ nI ] ) ] := oRow:FieldGet( oRow:FieldPos( Lower( _a_polja[ nI ] ) ) )
+               hRec[ Lower( _a_polja[ nI ] ) ] := oRow:FieldGet( oRow:FieldPos( Lower( _a_polja[ nI ] ) ) )
             ENDIF
          NEXT
       ENDIF
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
-      _table:Skip()
+      oDataset:Skip()
 
    ENDDO
 

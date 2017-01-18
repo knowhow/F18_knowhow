@@ -83,9 +83,6 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
    SELECT F_LD
    use_sql( cTable, cSql, "LD" )
 
-   IF F18_DBF_ENCODING  != "UTF8"
-      dbEval( {|| field->idRadn := hb_UTF8ToStr( field->idradn ) } )
-   ENDIF
 
    hIndexes := h_ld_ld_indexes()
 

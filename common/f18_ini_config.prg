@@ -1,6 +1,6 @@
 #include "f18.ch"
 
-#ifdef __PLATFORM__DARWIN
+#ifdef __PLATFORM__UNIX
 #define INI_FNAME "f18_config.ini"
 #else
 #define INI_FNAME ".f18_config.ini"

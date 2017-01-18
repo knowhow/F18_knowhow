@@ -20,7 +20,6 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    LOCAL _arg_v := hb_Hash()
 
-
    cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
@@ -40,12 +39,75 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
       RETURN .T.
    ENDIF
 
+
    f18_login_loop( NIL, _arg_v )
 
    RETURN .T.
 
 #endif
 
+
+
+PROCEDURE f18_http_server()
+
+   LOCAL oLogAccess, oLogError, nPort, oServer
+
+   DO WHILE !open_thread( "f18_http_server" )
+      ?E "ERRO open_thread f18_http_server"
+   ENDDO
+
+   oLogAccess := UHttpdLog():New( "f18_access.log" )
+
+   IF ! oLogAccess:Add( "" )
+      oLogAccess:Close()
+      ? "Access log file open error", hb_ntos( FError() )
+      RETURN
+   ENDIF
+
+   oLogError := UHttpdLog():New( "f18_error.log" )
+
+   IF ! oLogError:Add( "" )
+      oLogError:Close()
+      oLogAccess:Close()
+      ? "Error log file open error", hb_ntos( FError() )
+      RETURN
+   ENDIF
+
+   ? "Listening on port:", nPort := 8080
+
+   oServer := UHttpdNew()
+
+   // "PrivateKeyFilename"  => _FN_PKEY, ;
+   // "CertificateFilename" => _FN_CERT, ;
+   // "SSL"                 => .T., ;
+
+   IF ! oServer:Run( { ;
+         "FirewallFilter"      => "", ;
+         "LogAccess"           => {| m | oLogAccess:Add( m + hb_eol() ) }, ;
+         "LogError"            => {| m | oLogError:Add( m + hb_eol() ) }, ;
+         "Trace"               => {| ... | QOut( ... ) }, ;
+         "Port"                => nPort, ;
+         "Idle"                => {| o | iif( hb_vfExists( ".uhttpd.stop" ), ( hb_vfErase( ".uhttpd.stop" ), o:Stop() ), NIL ) }, ;
+         "Mount"             => { ;
+         "/hello"            => {|| UWrite( "Hello!" ) }, ;
+         "/info"             => {|| UProcInfo() }, ;
+         "/files/*"          => {| x | QOut( hb_DirBase() + "files/" + X ), UProcFiles( hb_DirBase() + "files/" + X, .F. ) }, ;
+         "/"                 => {|| URedirect( "/hello" ) } ;
+         } ;
+         } )
+      oLogError:Close()
+      oLogAccess:Close()
+      ? "Server error:", oServer:cError
+      ErrorLevel( 1 )
+      RETURN
+   ENDIF
+
+   oLogError:Close()
+   oLogAccess:Close()
+
+    close_thread( "f18_http_server" )
+
+   RETURN
 
 /*
     vraca hash matricu sa parametrima
@@ -99,7 +161,7 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
    LOCAL _tmp
    LOCAL cOldColors
 
-   //info_bar( "init", "gen odaberi_programski_modul start" )
+   // info_bar( "init", "gen odaberi_programski_modul start" )
 
    init_parameters_cache()
    set_screen_dimensions()
@@ -113,15 +175,15 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
       cOldColors := SetColor( F18_COLOR_ORGANIZACIJA )
       cServerDbVersion := get_version_str( server_db_version( .T. ) )
 
-      ++ _count
+      ++_count
       CLEAR SCREEN
       hDbParams := my_server_params()
 
       nX := 1
       @ nX, mnu_left + 1 SAY8 "Tekuća baza: " + AllTrim( hDbParams[ "database" ] ) + " / db ver: " + cServerDbVersion + " / nivo logiranja: " + AllTrim( Str( log_level() ) )
-      ++ nX
+      ++nX
       @ nX, mnu_left + 1 SAY "   Korisnik: " + AllTrim( hDbParams[ "user" ] ) + "   u grupama " + _user_roles
-      ++ nX
+      ++nX
       @ nX, mnu_left SAY Replicate( "-", 55 )
 
 
@@ -140,7 +202,7 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
       aMeniExec := {}
 
       set_program_module_menu( @aMeniOpcije, @aMeniExec, hProgramArgumenti[ "p3" ], hProgramArgumenti[ "p4" ], hProgramArgumenti[ "p5" ], hProgramArgumenti[ "p6" ], hProgramArgumenti[ "p7" ] )
-      //info_bar( "init", "gen odaberi_programski_modul end" )
+      // info_bar( "init", "gen odaberi_programski_modul end" )
 
       nMeniIzbor := meni_0_inkey( mnu_top, mnu_left, mnu_bottom, mnu_right, aMeniOpcije, 1 )
       SetColor( cOldColors )
@@ -164,7 +226,7 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
 
    ENDDO
 
-   //info_bar( hDbParams[ "database" ], "odaberi_programski_modul end" )
+   // info_bar( hDbParams[ "database" ], "odaberi_programski_modul end" )
 
    RETURN .T.
 
@@ -174,7 +236,6 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
 
    LOCAL _count := 0
    LOCAL cMenuBrojac
-
 
    IF f18_use_module( "fin" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )

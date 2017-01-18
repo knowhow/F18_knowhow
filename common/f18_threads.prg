@@ -98,6 +98,8 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection, cTable )
 
    RETURN .T.
 
+
+
 FUNCTION is_in_dbf_refresh_queue( cTable )
 
    LOCAL nPos

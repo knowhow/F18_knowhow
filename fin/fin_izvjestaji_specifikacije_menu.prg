@@ -93,8 +93,8 @@ STATIC FUNCTION fin_specifikacije_meni()
    //ENDIF
 
 
-   AAdd( _opc, "S. specifikacija troskova po gradilištima " )
-   AAdd( _opcexe, {|| r_spec_tr() } )
+   //AAdd( _opc, "S. specifikacija troskova po gradilištima " )
+   //AAdd( _opcexe, {|| r_spec_tr() } )
 
    f18_menu( "spfin", .F., _izbor, _opc, _opcexe )
 

@@ -13,10 +13,10 @@
 #include "f18.ch"
 
 
-// ---------------------------------------------
+/*
 // izvjestaj specifikacija troskova
 // fuelboss - specifican
-// ---------------------------------------------
+
 FUNCTION r_spec_tr()
 
    LOCAL dD_from
@@ -1135,3 +1135,6 @@ STATIC FUNCTION g_vars( dD_from, dD_to, cGroup, cKtoListZ, cKtoList, ;
    SELECT ( nTArea )
 
    RETURN nRet
+
+
+*/

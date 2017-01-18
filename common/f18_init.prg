@@ -117,6 +117,7 @@ FUNCTION post_login()
    set_vars_za_specificne_slucajeve()
 
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
+   thread_dbfs( hb_threadStart( @f18_http_server() ) )
 
    IF !check_server_db_version()
       RETURN .F.

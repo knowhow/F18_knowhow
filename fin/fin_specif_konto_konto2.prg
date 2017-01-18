@@ -1,9 +1,9 @@
 #include "f18.ch"
 
-/* SpecKK2(lOtvSt)
+/* SpecKK2
  *     Specifikacija konto/konto2 partner
  *   param: lOtvSt
- */
+
 
 FUNCTION SpecKK2( lOtvSt )
 
@@ -127,7 +127,7 @@ FUNCTION SpecKK2( lOtvSt )
    EOF CRET
 
    nStr := 0
-  
+
    IF !start_print()
       RETURN .F.
    ENDIF
@@ -255,9 +255,6 @@ FUNCTION SpecKK2( lOtvSt )
 
 
 
-/* Zagl7()
- *     Zaglavlje specifikacije konto/konto2
- */
 STATIC FUNCTION Zagl7()
 
    ?
@@ -292,3 +289,6 @@ STATIC FUNCTION Zagl7()
    ? m
 
    RETURN
+
+
+ */

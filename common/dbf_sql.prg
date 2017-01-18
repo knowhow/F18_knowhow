@@ -55,7 +55,7 @@ FUNCTION dbf_update_rec( hRec, lNoLock )
             _field_b := FieldBlock( _key )
 
             // napuni field sa vrijednosti
-            IF ValType( hRec[ _key ] ) == "C" .AND. lSql
+            IF ValType( hRec[ _key ] ) == "C" .AND. lSql .AND. F18_SQL_ENCODING == "UTF8"
                hRec[ _key ] := hb_StrToUTF8( hRec[ _key ] )  // proklete_kvacice - konvertuj SQLMix record u UTF-8
             ENDIF
             Eval( _field_b, hRec[ _key ] )

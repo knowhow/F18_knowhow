@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,77 +13,79 @@
 #include "f18.ch"
 
 
-function virm_sifarnici()
-local _opc:={}
-local _opcexe:={}
-local _izbor:=1
+FUNCTION virm_sifarnici()
 
-OSifVirm()
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-AADD(_opc, "1. opci sifarnici          ")
-AADD(_opcexe, {|| _sif_opc()})
-AADD(_opc, "2. specificni sifarnici ")
-AADD(_opcexe, {|| _sif_spec()})
+   OSifVirm()
 
-f18_menu( "sif", .f. , _izbor, _opc, _opcexe )
-return
+   AAdd( _opc, "1. opci sifarnici          " )
+   AAdd( _opcexe, {|| _sif_opc() } )
+   AAdd( _opc, "2. specificni sifarnici " )
+   AAdd( _opcexe, {|| _sif_spec() } )
 
+   f18_menu( "sif", .F., _izbor, _opc, _opcexe )
 
-
-static function _sif_opc()
-local _opc:={}
-local _opcexe:={}
-local _izbor:=1
-
-AADD(_opc, "1. partneri                    ")
-AADD(_opcexe, {|| p_partner()})
-AADD(_opc, "2. valute")
-AADD(_opcexe, {|| P_Valuta()})
-AADD(_opc, "3. opcine")
-AADD(_opcexe, {|| P_Ops()})
-AADD(_opc, "4. banke")
-AADD(_opcexe, {|| P_Banke()})
-AADD(_opc, "5. sifk")
-AADD(_opcexe, {|| P_SifK()})
-
-f18_menu("sopc", .f., _izbor, _opc, _opcexe )
-return
+   RETURN
 
 
 
-static function _sif_spec()
-local _opc:={}
-local _opcexe:={}
-local _izbor:=1
+STATIC FUNCTION _sif_opc()
 
-AADD(_opc, "1. vrste primalaca                          ")
-AADD(_opcexe, {|| P_VrPrim()})
-AADD(_opc, "2. javni prihodi")
-AADD(_opcexe, {|| P_JPrih()})
-AADD(_opc, "3. ld   -> virm")
-AADD(_opcexe, {|| P_LdVirm()})
-AADD(_opc, "4. kalk -> virm")
-AADD(_opcexe, {|| P_KalVir()})
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-f18_menu("ssp", .f., _izbor, _opc, _opcexe )
+   AAdd( _opc, "1. partneri                    " )
+   AAdd( _opcexe, {|| p_partner() } )
+   AAdd( _opc, "2. valute" )
+   AAdd( _opcexe, {|| P_Valuta() } )
+   AAdd( _opc, "3. opcine" )
+   AAdd( _opcexe, {|| P_Ops() } )
+   AAdd( _opc, "4. banke" )
+   AAdd( _opcexe, {|| P_Banke() } )
+   AAdd( _opc, "5. sifk" )
+   AAdd( _opcexe, {|| P_SifK() } )
 
-return
+   f18_menu( "sopc", .F., _izbor, _opc, _opcexe )
 
-
-
-function OSifVirm()
-O_SIFK
-O_SIFV
-O_PARTN
-O_VRPRIM
-O_VRPRIM2
-O_VALUTE
-O_LDVIRM
-O_KALVIR
-o_jprih()
-O_BANKE
-O_OPS
-return
+   RETURN
 
 
 
+STATIC FUNCTION _sif_spec()
+
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
+
+   AAdd( _opc, "1. vrste primalaca                          " )
+   AAdd( _opcexe, {|| P_VrPrim() } )
+   AAdd( _opc, "2. javni prihodi" )
+   AAdd( _opcexe, {|| P_JPrih() } )
+   AAdd( _opc, "3. ld   -> virm" )
+   AAdd( _opcexe, {|| P_LdVirm() } )
+
+
+   f18_menu( "ssp", .F., _izbor, _opc, _opcexe )
+
+   RETURN
+
+
+
+FUNCTION OSifVirm()
+
+   O_SIFK
+   O_SIFV
+   O_PARTN
+   O_VRPRIM
+   O_VRPRIM2
+   O_VALUTE
+   o_ldvirm()
+   o_jprih()
+   O_BANKE
+   O_OPS
+
+   RETURN

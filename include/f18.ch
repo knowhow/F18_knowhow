@@ -61,6 +61,7 @@
 #define D_ZELITE_LI_IZBRISATI_PRIPREMU "Želite li izbrisati pripremu !?"
 
 #define F18_DBF_ENCODING   "CP852"
+#define F18_SQL_ENCODING   "CP852"
 
 #define MAX_THREAD_COUNT 7
 #define MIN_LAST_REFRESH_SEC 10

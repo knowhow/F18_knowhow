@@ -47,7 +47,7 @@ FUNCTION opci_sifarnici()
    AAdd( opcexe, {|| P_RJ() } )
 
 
-   AAdd( opc, "7. opštine" )
+   AAdd( opc, "7. općine" )
    AAdd( opcexe, {|| P_Ops() } )
 
 

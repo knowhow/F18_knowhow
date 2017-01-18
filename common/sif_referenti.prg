@@ -22,9 +22,9 @@ FUNCTION p_refer( cId, dx, dy )
 
    hWorkArea := PushWA()
 
-   IF !hWorkArea[ 'sql' ] .AND. cId != NIL
-      // ako je SQL tabela onda je cId UTF8 string
-      cId := hb_StrToUTF8( cId )
+   IF !hWorkArea[ 'sql' ] .AND. F18_SQL_ENCODING == "UTF8" .AND. cId != NIL
+
+      cId := hb_StrToUTF8( cId ) // ako je SQL tabela i SQL encoding UTF8 onda je cId UTF8 string
    ENDIF
 
 
@@ -45,7 +45,7 @@ FUNCTION p_refer( cId, dx, dy )
 
    hWorkArea := PopWA()
 
-   IF !hWorkArea[ 'sql' ]
+   IF !hWorkArea[ 'sql' ] .AND. F18_SQL_ENCODING == "UTF8"
       // ako smo na pocetku uradili konverziju moramo napraviti novu obrnutu konverziju
       cId := hb_UTF8ToStr( cId )
    ENDIF

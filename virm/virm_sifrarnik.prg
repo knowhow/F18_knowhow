@@ -62,34 +62,17 @@ FUNCTION P_LDVIRM( cId, dx, dy )
    LOCAL vrati
    PRIVATE ImeKol, Kol
 
-   ImeKol := { { "ID", {|| id }, "id", {|| .T. }, {|| P_VRPRIM( @wId ), wnaz := AllTrim( PadR( vrprim->naz, 40 ) ) + "...", .T. } }, ;
+   ImeKol := { { "ID", {|| id }, "id", {|| .T. }, {|| P_VRPRIM( @wId ), wNaz := AllTrim( PadR( vrprim->naz, 40 ) ) + "...", .T. } }, ;
       { "Opis", {|| NAZ }, "NAZ"      }, ;
       { "FORMULA", {|| formula          }, "formula"  };
       }
    Kol := { 1, 2, 3 }
+
    vrati := PostojiSifra( F_LDVIRM, 1, 10, 77, "LISTA LD->VIRM:", @cId, dx, dy )
 
    RETURN vrati
 
 
-
-
-FUNCTION P_KALVIR( cId, dx, dy )
-
-   LOCAL vrati
-   PRIVATE ImeKol, Kol := {}
-
-   ImeKol := { { "ID", {|| id }, "id", {|| .T. }, {|| P_VRPRIM( @wId ), wnaz := vrprim->naz, .T. } }, ;
-      { "Opis", {|| NAZ }, "NAZ"      }, ;
-      { "FORMULA", {|| formula          }, "formula"  };
-      }
-   IF KALVIR->( FieldPos( "pnabr" ) ) <> 0
-      AAdd ( ImeKol, { "Poz.na br.", {|| pnabr }, "pnabr" } )
-   ENDIF
-   FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
-   vrati := PostojiSifra( F_KALVIR, 1, 10, 77, "LISTA KALK->VIRM:", @cId, dx, dy )
-
-   RETURN vrati
 
 
 

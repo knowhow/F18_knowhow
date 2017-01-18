@@ -27,3 +27,16 @@ FUNCTION o_jprih()
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+FUNCTION o_ldvirm()
+
+   SELECT ( F_LDVIRM )
+
+   IF !use_sql_sif ( "ldvirm" )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.

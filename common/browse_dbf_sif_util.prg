@@ -24,7 +24,7 @@ THREAD STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, 
     p_sifra( F_TIPDOK, cIdVD, -2 ) => vrijednost polja "Naz" za ID == cIdVd
 */
 
-FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
+FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
 
    LOCAL cRet, cIdBK
    LOCAL nI
@@ -55,7 +55,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
 
    SELECT ( nDbf )
    IF !Used()
-      MsgBeep( "Tabela nije otvorena u radnom području !#Prekidam operaciju." )
+      MsgBeep( "Tabela nije otvorena u radnom području !#Prekid operacije!" )
       RETURN .F.
    ENDIF
 
@@ -68,15 +68,15 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
       lTraziPoNazivu := .T.
    ENDIF
 
-   IF ValType( dx ) == "N" .AND. dx < 0
+   IF ValType( nDeltaX ) == "N" .AND. nDeltaX < 0
 
       IF !Found()
          GO BOTTOM
          SKIP
-         cRet := Eval( ImeKol[ - dx, 2 ] )
+         cRet := Eval( ImeKol[ - nDeltaX, 2 ] )
          SKIP -1
       ELSE
-         cRet := Eval( ImeKol[ - dx, 2 ] )
+         cRet := Eval( ImeKol[ - nDeltaX, 2 ] )
       ENDIF
 
       PopSifV()
@@ -127,7 +127,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
 
    __A_SIFV__[ __PSIF_NIVO__, 2 ] := RecNo()
 
-   sif_ispisi_naziv( nDbf, dx, dy )
+   sif_ispisi_naziv( nDbf, nDeltaX, nDeltaY )
 
    SELECT ( nDbf )
    ordSetFocus( cOrderTag )
@@ -496,7 +496,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
    LOCAL i
    LOCAL j
    LOCAL _alias
-   LOCAL _jg
+   LOCAL nForJg
    LOCAL imin
    LOCAL imax
    LOCAL nGet
@@ -561,9 +561,9 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
       NEXT
 
       i := 1
-      FOR _jg := 1 TO 3
+      FOR nForJg := 1 TO 3
 
-         IF _jg == 1
+         IF nForJg == 1
             Box( NIL, Min( MAXROWS() -7, nTrebaRedova ) + 1, MAXCOLS() -20, .F. )
          ELSE
             BoxCLS()
@@ -836,13 +836,13 @@ STATIC FUNCTION set_w_var( ImeKol, nI, show_grup )
 
 
 
-FUNCTION sif_sql_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, i, nTekRed )
+FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, i, nTekRed )
 
    LOCAL bWhen, bValid, cPic
    LOCAL nRed, nKolona
    LOCAL cWhenSifk, cValidSifk
    LOCAL _when_block, _valid_block
-   LOCAL _m_block := MemVarBlock( var_name )
+   LOCAL _m_block := MemVarBlock( cVariableName )
    LOCAL tmpRec
 
    // uzmi when, valid kodne blokove
@@ -860,10 +860,10 @@ FUNCTION sif_sql_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nG
       bValid := Imekol[ i, 5 ]
    ENDIF
 
-   _m_block := MemVarBlock( var_name )
+   _m_block := MemVarBlock( cVariableName )
 
    IF _m_block == NIL
-      MsgBeep( "var_name nedefinisana :" + var_name )
+      MsgBeep( "cVariableName nedefinisana :" + cVariableName )
    ENDIF
 
    IF Len( ToStr( Eval( _m_block ) ) ) > 50
@@ -895,12 +895,12 @@ FUNCTION sif_sql_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nG
 
    // stampaj grupu za stavku "GRUP"
    IF lShowPGroup
-      p_gr( &var_name, m_x + nXP, m_y + nYP + 1 )
+      p_gr( &cVariableName, m_x + nXP, m_y + nYP + 1 )
    ENDIF
 
-   IF "wSifk_" $ var_name
+   IF "wSifk_" $ cVariableName
 
-      IzSifKWV( Alias(), SubStr( var_name, 7 ), @cWhenSifk, @cValidSifk )
+      IzSifKWV( Alias(), SubStr( cVariableName, 7 ), @cWhenSifk, @cValidSifk )
 
       IF !Empty( cWhenSifk )
          _when_block := & ( "{|| " + cWhenSifk + "}" )
@@ -920,20 +920,20 @@ FUNCTION sif_sql_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nG
 
    @ m_x + nTekRed, m_y + nKolona SAY  iif( nKolona > 1, "  " + AllTrim( ImeKol[ i, 1 ] ), PadL( AllTrim( ImeKol[ i, 1 ] ), 15 ) )  + " "
 
-   if &var_name == NIL
+   if &cVariableName == NIL
       tmpRec = RecNo()
       GO BOTTOM
       SKIP
-      &var_name := Eval( ImeKol[ i, 2 ] )
+      &cVariableName := Eval( ImeKol[ i, 2 ] )
       GO tmpRec
    ENDIF
 
 
-   IF ValType( &var_name ) == "C"
-      &var_name = hb_UTF8ToStr( &var_name )
+   IF ValType( &cVariableName ) == "C" .AND. F18_SQL_ENCODING == "UTF8" // samo ako sql vraca UTF8 stringove izvrsitiŽŽŽ ovu konverziju
+      &cVariableName = hb_UTF8ToStr( &cVariableName )
    ENDIF
 
-   AAdd( GetList, _GET_( &var_name, var_name,  cPic, _valid_block, _when_block ) ) ;;
+   AAdd( GetList, _GET_( &cVariableName, cVariableName,  cPic, _valid_block, _when_block ) ) ;;
       ATail( GetList ):display()
 
    RETURN .T.

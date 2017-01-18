@@ -726,7 +726,7 @@ STATIC FUNCTION virm_o_tables()
 
    SELECT ( F_LDVIRM )
    IF !Used()
-      O_LDVIRM
+      o_ldvirm()
    ENDIF
 
    SELECT ( F_VIPRIPR )

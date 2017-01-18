@@ -21,9 +21,8 @@ FUNCTION P_Ops( cId, dx, dy )
 
    hWorkArea := PushWA()
 
-   IF !hWorkArea[ 'sql' ] .AND. cId != NIL
-      // ako je SQL tabela onda je cId UTF8 string
-      cId := hb_StrToUTF8( cId )
+   IF !hWorkArea[ 'sql' ] .AND. F18_SQL_ENCODING == "UTF8" .AND. cId != NIL
+      cId := hb_StrToUTF8( cId ) // ako je SQL tabela onda je cId UTF8 string, SAMO ako je F18_SQL_ENCODING UTF8
    ENDIF
 
    O_OPS
@@ -31,12 +30,12 @@ FUNCTION P_Ops( cId, dx, dy )
    ImeKol := {}
    Kol := {}
 
-   AAdd( ImeKol, { PadR( "Id", 4 ),  {|| PadrU( field->id, 4 ) }, "id", {|| .T. }, {|| sifra_postoji( wid ) } } )
-   AAdd( ImeKol, { PadR( "IDJ", 3 ), {|| idj }, "idj" } )
-   AAdd( ImeKol, { PadR( "Kan", 3 ), {|| idkan }, "idkan" } )
-   AAdd( ImeKol, { PadR( "N0", 3 ),  {|| idN0 }, "idN0" } )
-   AAdd( ImeKol, { PadR( "Naziv", 25 ), {|| PadR( ToStrU( naz ), 25 ) }, "naz" } )
-   AAdd( ImeKol, { PadR( "Reg", 3 ), {|| reg }, "reg" } )
+   AAdd( ImeKol, { PadR( "Id", 4 ),  {|| Padr( field->id, 4 ) }, "id", {|| .T. }, {|| sifra_postoji( wid ) } } )
+   AAdd( ImeKol, { PadR( "IDJ", 3 ), {|| field->idj }, "idj" } )
+   AAdd( ImeKol, { PadR( "Kan", 3 ), {|| field->idkan }, "idkan" } )
+   AAdd( ImeKol, { PadR( "N0", 3 ),  {|| field->idN0 }, "idN0" } )
+   AAdd( ImeKol, { PadR( "Naziv", 25 ), {|| PadR( field->naz , 25 ) }, "naz" } )
+   AAdd( ImeKol, { PadR( "Reg", 3 ), {|| field->reg }, "reg" } )
 
    FOR nI := 1 TO Len( ImeKol )
       AAdd( Kol, nI )
@@ -46,7 +45,7 @@ FUNCTION P_Ops( cId, dx, dy )
 
    hWorkArea := PopWA()
 
-   IF !hWorkArea[ 'sql' ]
+   IF !hWorkArea[ 'sql' ] .AND. F18_SQL_ENCODING == "UTF8"
       // ako smo na pocetku uradili konverziju moramo napraviti novu obrnutu konverziju
       cId := hb_UTF8ToStr( cId )
    ENDIF

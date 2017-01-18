@@ -255,7 +255,7 @@ STATIC FUNCTION mnu_ios_print()
 
    IF _print_tip == "1"
 
-      IF Empty( cIdPartner ) .OR. cNastavak == "D"
+      IF Empty( cIdPartner ) .OR. cNastavak == "D" // vise partnera
          _template := "ios_2.odt"
       ENDIF
 

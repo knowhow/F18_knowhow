@@ -47,11 +47,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
       RETURN .F.
    ENDIF
 
-   //hb_cdpSelect( "UTF8" )
-   Set( _SET_DBCODEPAGE, "UTF8")
-
-   dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable + " ORDER BY ID",  cAlias, NIL, NIL, "UTF8" )
- Set( _SET_DBCODEPAGE, "CP852")
+   dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable + " ORDER BY ID",  cAlias, NIL, NIL )
 
    IF lMakeIndex
       INDEX ON ID TAG ID TO ( cAlias )
@@ -62,8 +58,6 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
       GO TOP
    ENDIF
 
-altd()
- //hb_cdpSelect( "SL852" )
    rddSetDefault( "DBFCDX" )
 
    RETURN .T.

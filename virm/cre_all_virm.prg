@@ -76,7 +76,7 @@ FUNCTION cre_all_virm_sif( ver )
    AFTER_CREATE_INDEX
 
 
-   // -------------------
+   /*
    // KALVIR
    // -------------------
 
@@ -86,13 +86,14 @@ FUNCTION cre_all_virm_sif( ver )
    AAdd( aDBf, { 'FORMULA', 'C',  70,   0 } )
    AAdd( aDBf, { 'PNABR', 'C',  10,   0 } )
 
-   _table_name := "kalvir"
-   _alias := "KALVIR"
+   -- _table_name := "kalvir"
+   -- _alias := "KALVIR"
 
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "ID", "id", _alias )
    AFTER_CREATE_INDEX
+   */
 
 
    // -------------------

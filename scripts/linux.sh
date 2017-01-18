@@ -9,8 +9,8 @@ export QT_ROOT=/usr/local/Qt
 export HB_COMPILER=gcc
 
 unset HB_INSTALL_PREFIX
-export HB_INC_INSTALL=/usr/include/harbour
-export HB_LIB_INSTALL=/usr/lib/harbour
+export HB_INC_INSTALL=/usr/local
+export HB_LIB_INSTALL=/usr/local/lib/harbour
 
 export INCLUDE=$HB_INC_INSTALL
 
@@ -36,9 +36,13 @@ then
    export QT_ROOT=$QT_ROOT/$gcc_qt
    echo "Qt: $QT_ROOT"
 fi
+
+export PGSQL_ROOT=$HOME/F18_knowhow/pgsql
+
 export PATH=$QT_ROOT/bin:$HB_ROOT/bin:$PATH
 export HB_WITH_QT=$QT_ROOT/include
 export HB_WITH_PGSQL=$PGSQL_ROOT/include
+
 export LD_LIBRARY_PATH=$QT_ROOT/lib:$HB_ROOT/lib:$PGSQL_ROOT/lib
 
 export QT_PLUGIN_PATH=$QT_ROOT/plugins

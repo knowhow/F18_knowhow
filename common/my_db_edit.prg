@@ -260,7 +260,7 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
       SWITCH nKeyHandlerRetEvent
       CASE DE_REFRESH
          TB:RefreshAll()
-         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
+         @ m_x + 1, m_y + yw -6 SAY Str( RecCount2(), 5 )
          EXIT
 
       CASE DE_ABORT
@@ -343,8 +343,8 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
 
    NEXT
 
-   TB:headSep := hb_UTF8ToStr(BROWSE_HEAD_SEP)
-   TB:colsep :=  hb_UTF8ToStr(BROWSE_COL_SEP)
+   TB:headSep := hb_UTF8ToStrBox( BROWSE_HEAD_SEP )
+   TB:colsep :=  hb_UTF8ToStrBox( BROWSE_COL_SEP )
 
    IF params[ "freeze" ] == NIL
       TB:Freeze := 1
@@ -835,7 +835,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid )
       IF nY + nSirina > MAXCOLS() -2
 
          FOR i := 1 TO Len( aTBGets )
-            aTBGets[ i ]:Col := aTBGets[ i ]:Col   - ( nY + nSirina - 78 )
+            aTBGets[ i ]:Col := aTBGets[ i ]:Col   - ( nY + nSirina -78 )
             // smanji col koordinate
          NEXT
       ENDIF

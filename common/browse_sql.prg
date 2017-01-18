@@ -293,8 +293,8 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
 
    NEXT
 
-   TB:headSep := hb_UTF8ToStr(BROWSE_HEAD_SEP)
-   TB:colsep :=  hb_UTF8ToStr(BROWSE_COL_SEP)
+   TB:headSep := hb_UTF8ToStrBox(BROWSE_HEAD_SEP)
+   TB:colsep :=  hb_UTF8ToStrBox(BROWSE_COL_SEP)
 
    IF params[ "freeze" ] == NIL
       TB:Freeze := 1

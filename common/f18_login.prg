@@ -888,9 +888,9 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
       oTBrowse:footSep := "-"
       oTBrowse:colSep := "|"
    ELSEIF table_type == 2
-      oTBrowse:HeadSep := hb_UTF8ToStr( BROWSE_HEAD_SEP )
-      oTBrowse:FootSep := hb_UTF8ToStr( BROWSE_FOOT_SEP )
-      oTBrowse:ColSep := hb_UTF8ToStr( BROWSE_COL_SEP )
+      oTBrowse:HeadSep := hb_UTF8ToStrBox(BROWSE_HEAD_SEP )
+      oTBrowse:FootSep := hb_UTF8ToStrBox( BROWSE_FOOT_SEP )
+      oTBrowse:ColSep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    ENDIF
 
    oTBrowse:skipBlock := {| _skip | _skip := _skip_it( aArray, _row, _skip ), _row += _skip, _skip }

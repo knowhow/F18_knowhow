@@ -9,9 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#define BROWSE_HEAD_SEP "└─┘"
-#define BROWSE_FOOT_SEP "╧═"
 
-#define BROWSE_COL_SEP "│"
-#define BROWSE_PODVUCI  "="
-#define BROWSE_PODVUCI_2 "-"
+#define BROWSE_HEAD_SEP "├─"
+#define BROWSE_FOOT_SEP "╧═"
+#define BROWSE_COL_SEP  "│"
+
+#define BROWSE_PODVUCI   hb_UTF8ToStrBox( "─" )
+#define BROWSE_PODVUCI_2 hb_UTF8ToStrBox( "━" )

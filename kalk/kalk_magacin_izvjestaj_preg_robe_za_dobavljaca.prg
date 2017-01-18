@@ -17,7 +17,7 @@
 // pregled robe za dobavljaca
 FUNCTION PRobDob()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_PARTN

@@ -35,7 +35,7 @@ FUNCTION kalk_generacija_inventura_magacin_im()
 
    O_KONTO
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 
@@ -226,7 +226,7 @@ FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
    ENDIF
 
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    o_kalk_pripr()

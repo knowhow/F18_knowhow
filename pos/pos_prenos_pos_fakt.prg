@@ -76,7 +76,7 @@ FUNCTION PripTOPSFAKT( cIdPartnG )
 FUNCTION Stanje2Fakt()
 
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PARTN
    O_KASE

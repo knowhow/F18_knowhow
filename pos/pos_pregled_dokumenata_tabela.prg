@@ -448,7 +448,7 @@ STATIC FUNCTION _o_pos_prepis_tbl()
 
    SELECT ( F_SIFK )
    IF !Used()
-      O_SIFK
+      o_sifk()
    ENDIF
 
    SELECT ( F_SIFV )

@@ -27,7 +27,7 @@ FUNCTION label_bkod()
    PRIVATE Kol
    PRIVATE ImeKol
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PARTN
    O_ROBA

@@ -67,7 +67,7 @@ FUNCTION sifk_sifv_test()
    _karakteristika := "ka1"
    _karakteristika_n := "kaN"
 
-   O_SIFK
+   o_sifk()
    SET ORDER TO TAG "ID2"
    SEEK _id_sif + _karakteristika
 

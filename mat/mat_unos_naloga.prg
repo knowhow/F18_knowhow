@@ -107,7 +107,7 @@ FUNCTION mat_o_edit()
    o_tnal()
    o_tdok()
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_VALUTE
    O_MAT_NALOG

@@ -202,7 +202,7 @@ FUNCTION o_partn_sifk()
    SELECT F_SIFV
    USE
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PARTN
 

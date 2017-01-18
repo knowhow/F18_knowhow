@@ -128,7 +128,7 @@ FUNCTION close_open_kuf_kif_sif()
    O_PARTN
    O_ROBA
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    RETURN .T.

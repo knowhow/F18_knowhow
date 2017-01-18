@@ -32,7 +32,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    o_kalk() // usporedna lista fakt kalk
    O_KONTO
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_RJ

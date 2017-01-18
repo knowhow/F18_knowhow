@@ -52,7 +52,7 @@ FUNCTION roba_pregled_prodaje_po_grupama()
    BoxC()
 
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
 
 

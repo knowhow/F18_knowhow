@@ -18,7 +18,7 @@ FUNCTION virm_prenos_fin()
    LOCAL _firma := PadR( fetch_metric( "virm_org_id", nil, "" ), 6 )
 
    o_jprih()
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_BANKE
    O_PARTN

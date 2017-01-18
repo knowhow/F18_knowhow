@@ -22,7 +22,7 @@ STATIC FUNCTION _o_tables()
    O_MAT_NALOG
    O_MAT_PRIPR
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    RETURN

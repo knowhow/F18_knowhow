@@ -187,7 +187,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
    O_FAKT_DOKS
    O_FAKT
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_VRSTEP
    O_TARIFA

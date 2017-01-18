@@ -129,7 +129,7 @@ FUNCTION fill_part()
    LOCAL cOznaka
 
    SELECT ( F_SIFK )
-   O_SIFK
+   o_sifk()
    SET ORDER TO TAG "ID"
    cId := PadR( "PARTN", 8 )
    cNaz := PadR( "PDV oslob. ZPDV", Len( naz ) )
@@ -138,7 +138,7 @@ FUNCTION fill_part()
    add_n_found( cId, cNaz, cRbr, cOznaka, 3 )
 
    SELECT ( F_SIFK )
-   O_SIFK
+   o_sifk()
    SET ORDER TO TAG "ID"
    cId := PadR( "PARTN", 8 )
    cNaz := PadR( "Profil partn.", Len( naz ) )

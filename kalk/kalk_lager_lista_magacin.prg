@@ -1452,7 +1452,7 @@ STATIC FUNCTION _gen_xml( params )
 // ---------------------------------
 STATIC FUNCTION kalk_open_tables()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    IF o_koncij()

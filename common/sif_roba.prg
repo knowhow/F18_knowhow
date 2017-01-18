@@ -290,7 +290,7 @@ FUNCTION RobaZastCijena( cIdTarifa )
 
 FUNCTION OFmkRoba()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_KONTO
    o_koncij()

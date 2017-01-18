@@ -19,7 +19,7 @@ FUNCTION Otpis16SI()
    o_kalk_pripr()
    o_kalk_pripr2()
    //o_kalk()
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 

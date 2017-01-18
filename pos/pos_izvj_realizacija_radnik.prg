@@ -17,7 +17,7 @@
 // -------------------------------------------
 STATIC FUNCTION o_tables()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_DIO
    O_KASE

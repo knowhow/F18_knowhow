@@ -40,7 +40,7 @@ FUNCTION p_epdv_sheme_generacije( cTabela, cId, dx, dy )
    ENDIF
 
 
-   O_SIFK
+   o_sifk()
    O_SIFV
 
 

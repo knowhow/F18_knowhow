@@ -24,7 +24,7 @@ STATIC PicKol := "99999999.999"
 STATIC FUNCTION _o_rpt_tables()
 
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_MAT_SUBAN
    O_PARTN

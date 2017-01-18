@@ -135,7 +135,7 @@ FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
    LOCAL cNaz
    LOCAL cId
 
-   O_SIFK
+   o_sifk()
 
    // id + SORT + naz
    SET ORDER TO TAG "ID"

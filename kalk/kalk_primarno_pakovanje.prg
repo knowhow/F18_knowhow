@@ -28,7 +28,7 @@ FUNCTION NaPrimPak()
    o_kalk_pripr()
    -- o_kalk_doks()
    -- o_kalk()
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    dDatKalk := Date()
@@ -210,7 +210,7 @@ FUNCTION NaPrPak2()
    o_kalk_pripr()
    -- o_kalk_doks()
    -- o_kalk()
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    dDatKalk := kalk_pripr->datdok

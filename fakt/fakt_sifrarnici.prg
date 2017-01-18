@@ -356,7 +356,7 @@ STATIC FUNCTION ObSif()
       O_KALPOS
    ENDIF
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_KONTO
    O_PARTN

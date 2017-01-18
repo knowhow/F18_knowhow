@@ -186,7 +186,7 @@ FUNCTION p_group()
 
    LOCAL lRet := .F.
 
-   O_SIFK
+   o_sifk()
    SELECT sifk
    SET ORDER TO TAG "ID"
    GO TOP
@@ -407,7 +407,7 @@ FUNCTION set_sifk_partn_bank()
    LOCAL cId
 
    SELECT ( F_SIFK )
-   O_SIFK
+   o_sifk()
 
    SET ORDER TO TAG "ID"
    // id + SORT + naz

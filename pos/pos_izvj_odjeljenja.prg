@@ -358,7 +358,7 @@ FUNCTION realizacija_dio_objekta
    SET ORDER TO tag ( "NAZ" )
    O_VRSTEP
    O_KASE
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    o_pos_pos()
@@ -902,7 +902,7 @@ STATIC FUNCTION _o_tables()
 
    O_DIO
    O_ODJ
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_KASE
    O_ROBA

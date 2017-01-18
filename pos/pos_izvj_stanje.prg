@@ -48,7 +48,7 @@ FUNCTION pos_stanje_artikala
    O_KASE
    O_ODJ
    O_DIO
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    o_pos_pos()

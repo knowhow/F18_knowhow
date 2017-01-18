@@ -117,7 +117,7 @@ FUNCTION kalk_generisi_ip()
 
    O_KONTO
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 
@@ -306,7 +306,7 @@ FUNCTION gen_ip_razlika()
 
    // otvori potrebne tabele
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    o_koncij()

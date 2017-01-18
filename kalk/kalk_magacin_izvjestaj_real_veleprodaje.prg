@@ -26,7 +26,7 @@ FUNCTION kalk_real_partnera()
    LOCAL PicDEM := gPicDEM         // "9999999.99"
    LOCAL Pickol := gPicKol         // "999999.999"
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_KONTO

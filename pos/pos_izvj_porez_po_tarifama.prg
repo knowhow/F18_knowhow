@@ -48,7 +48,7 @@ FUNCTION PorPoTar
    O_TARIFA
 
    IF fSolo
-      O_SIFK
+      o_sifk()
       O_SIFV
       O_KASE
       O_ROBA

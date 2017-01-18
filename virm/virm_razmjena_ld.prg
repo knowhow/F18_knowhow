@@ -697,7 +697,7 @@ STATIC FUNCTION virm_o_tables()
 
    SELECT ( F_SIFK )
    IF !Used()
-      O_SIFK
+      o_sifk()
    ENDIF
 
    SELECT ( F_SIFV )

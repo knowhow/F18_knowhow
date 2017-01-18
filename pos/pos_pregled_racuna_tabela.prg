@@ -22,7 +22,7 @@ FUNCTION pos_pregled_racuna_tabela()
    PRIVATE aVezani := {}
    PRIVATE dMinDatProm := CToD( "" )
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_KASE
    O_ROBA

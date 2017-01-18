@@ -65,7 +65,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    cPodvuci := "N"
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_K1

@@ -579,7 +579,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
    O_FAKT_DOKS2
    O_FAKT_DOKS
    O_RJ
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    IF lOpenFaktAsPripr == .T.

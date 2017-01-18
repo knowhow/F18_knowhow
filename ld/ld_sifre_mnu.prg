@@ -105,7 +105,7 @@ FUNCTION ld_specificni_sifarnici()
 
 STATIC FUNCTION o_ld_sif_tables()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_BANKE
    O_TPRSIHT

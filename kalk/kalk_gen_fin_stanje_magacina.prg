@@ -401,7 +401,7 @@ STATIC FUNCTION kalk_fin_stanje_add_to_r_export( id_firma, id_tip_dok, broj_dok,
 STATIC FUNCTION _o_tbl()
 
    // o_kalk()
-   O_SIFK
+   o_sifk()
    O_SIFV
    o_tdok()
    O_ROBA

@@ -21,7 +21,7 @@ STATIC PicKol := "999999.999"
 FUNCTION mat_specifikacija()
 
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_TARIFA
    O_MAT_SUBAN
@@ -314,7 +314,7 @@ FUNCTION IArtPoPogonima()
 
    O_PARTN         // pogoni
    O_ROBA          // artikli
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_MAT_SUBAN         // dokumenti
 

@@ -22,7 +22,7 @@ FUNCTION pornar()
    O_TARIFA
    O_MAT_SUBAN
    O_KONTO
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 

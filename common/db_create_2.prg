@@ -22,7 +22,7 @@ FUNCTION open_sif_tables_1()
    O_RJ
    O_BANKE
    O_OPS
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_FAKT_OBJEKTI
 
@@ -52,7 +52,7 @@ FUNCTION OSifUgov()
    O_DEST
    O_PARTN
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    RETURN .T.

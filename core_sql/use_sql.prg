@@ -96,7 +96,7 @@ FUNCTION use_sql( cTable, sql_query, cAlias )
       RETURN .F.
    ENDIF
 
-   BEGIN SEQUENCE WITH {| err| Break( err ) }
+   BEGIN SEQUENCE WITH {| err | Break( err ) }
       dbUseArea( .F., "SQLMIX", sql_query, iif( cAlias == NIL, cTable, cAlias ) )
    RECOVER USING oError
       ?E "SQL ERR", oError:description, sql_query
@@ -386,6 +386,14 @@ STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
 
 
 
+
+FUNCTION o_sifk()
+
+   Select( F_SIFK )
+   USE
+
+   RETURN use_sql_sifk()
+
 /*
    use_sql_sifk() => otvori citavu tabelu
    use_sql_sifk( "ROBA", "GR1  " ) =>  filter na ROBA/GR1
@@ -419,7 +427,7 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    // IF cDbf == NIL .AND. cOznaka == NIL
    INDEX ON ID + SORT + NAZ TAG ID  TO ( cTable )
    INDEX ON ID + OZNAKA TAG ID2  TO ( cTable )
-   INDEX ON NAZ             TAG NAZ TO ( cTable )
+   INDEX ON NAZ  TAG NAZ TO ( cTable )
    SET ORDER TO TAG ID
    GO TOP  // ovo obavezno inace ostane na eof() poziciji?!
    // ENDIF

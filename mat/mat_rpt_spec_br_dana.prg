@@ -23,7 +23,7 @@ STATIC FUNCTION _o_rpt_tables()
 
    O_MAT_SUBAN
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PARTN
    O_KONTO

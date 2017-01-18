@@ -874,7 +874,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
 
    PushWA()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    SELECT sifk
    SET ORDER TO TAG "ID"
@@ -969,7 +969,7 @@ FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
 
    PushWA()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    SELECT sifk

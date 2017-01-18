@@ -857,7 +857,7 @@ FUNCTION o_fin_za_azuriranje()
 
    O_KONTO
    O_PARTN
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    o_suban()

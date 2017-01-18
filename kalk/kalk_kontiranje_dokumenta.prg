@@ -63,7 +63,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
    SELECT F_SIFK
    IF !Used()
-      O_SIFK
+      o_sifk()
    ENDIF
 
    SELECT F_SIFV

@@ -1041,7 +1041,7 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    CREATE ( use_path + "e_partn" ) from ( my_home() + "struct" )
 
    // tabela sifk
-   O_SIFK
+   o_sifk()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_sifk" ) from ( my_home() + "struct" )
@@ -1063,7 +1063,7 @@ STATIC FUNCTION _o_tables()
    O_FAKT
    O_FAKT_DOKS
    O_FAKT_DOKS2
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PARTN
    O_ROBA

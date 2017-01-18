@@ -205,7 +205,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    O_SAST
    O_ROBA
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PRIPRZ
    O_PRIPRG
@@ -243,7 +243,7 @@ FUNCTION o_pos_sifre()
    O_PARTN
    O_OSOB
    O_STRAD
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    RETURN .T.

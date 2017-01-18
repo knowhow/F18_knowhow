@@ -34,7 +34,7 @@ FUNCTION pos_kartica_artikla()
 
    O_KASE
    O_DIO
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    o_pos_pos()

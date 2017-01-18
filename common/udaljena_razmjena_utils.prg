@@ -722,7 +722,7 @@ FUNCTION fill_sifk_sifv( cSifarnik, cIdSifra )
 
    IF RecCount2() == 0
 
-      O_SIFK
+      o_sifk()
       SELECT sifk
       SET ORDER TO TAG "ID"
       GO TOP

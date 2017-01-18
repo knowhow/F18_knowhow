@@ -1615,7 +1615,7 @@ FUNCTION o_kalk_edit()
    O_VALUTE
    O_TARIFA
    o_koncij()
-   O_SIFK
+   o_sifk()
    O_SIFV
    o_kalk_pripr()
 

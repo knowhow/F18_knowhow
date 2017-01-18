@@ -17,7 +17,7 @@ STATIC FUNCTION _o_tables()
 
    O_ODJ
    O_KASE
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    o_pos_pos()

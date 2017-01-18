@@ -929,7 +929,7 @@ STATIC FUNCTION FormNum1( nIznos )
 
 STATIC FUNCTION _o_virm_edit()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    o_jprih()
    O_BANKE

@@ -20,13 +20,6 @@ FUNCTION o_sifv()
    RETURN use_sql_sifv()
 
 
-FUNCTION o_sifk()
-
-   Select( F_SIFK )
-   USE
-
-   RETURN use_sql_sifk()
-
 
 /*
    CREATE TABLE fmk.koncij

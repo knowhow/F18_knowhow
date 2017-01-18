@@ -28,7 +28,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "132.", gDuzKonto )
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_TARIFA

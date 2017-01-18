@@ -14,18 +14,18 @@
 
 
 
-FUNCTION P_Sifk( cId, dx, dy )
+FUNCTION P_Sifk( cId, nDeltaX, nDeltaY )
 
    LOCAL i
    PRIVATE imekol, kol
 
    Kol := {}
-   O_SIFK
+   o_sifk()
    O_SIFV
-   ImeKol := { { PadR( "Id", 15 ),      {|| ToStrU( id ) }, "id"  }, ;
-      { PadR( "Naz", 25 ),     {|| ToStrU( naz ) }, "naz" }, ;
+   ImeKol := { { PadR( "Id", 15 ),      {|| id }, "id"  }, ;
+      { PadR( "Naz", 25 ),     {||  naz }, "naz" }, ;
       { PadR( "Sort", 4 ),     {|| sort }, "sort" }, ;
-      { PadR( "Oznaka", 4 ),   {|| ToStrU( oznaka ) }, "oznaka" }, ;
+      { PadR( "Oznaka", 4 ),   {||  oznaka }, "oznaka" }, ;
       { PadR( "Veza", 4 ),     {|| veza }, "veza" }, ;
       { PadR( "Izvor", 15 ),   {|| izvor }, "izvor" }, ;
       { PadR( "Uslov", 30 ),   {|| PadR( uslov, 30 ) }, "uslov" }, ;
@@ -47,4 +47,4 @@ FUNCTION P_Sifk( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_SIFK, 1, MAXROWS() -15, MAXCOLS() -15, "sifk - Karakteristike", @cId, dx, dy )
+   RETURN PostojiSifra( F_SIFK, 1, MAXROWS() -15, MAXCOLS() -15, "sifk - Karakteristike", @cId, nDeltaX, nDeltaY )

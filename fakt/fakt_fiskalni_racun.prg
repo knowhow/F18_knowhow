@@ -352,7 +352,7 @@ STATIC FUNCTION fakt_fiscal_o_tables()
    O_FAKT_DOKS
    O_FAKT
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    RETURN

@@ -261,7 +261,7 @@ STATIC FUNCTION _o_sif_tables()
    O_RJ
    O_K1
    O_PARTN
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    RETURN .T.

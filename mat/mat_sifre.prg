@@ -26,7 +26,7 @@ FUNCTION mat_sifrarnik()
    O_ROBA
    O_VALUTE
    O_KARKON
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_TARIFA
 

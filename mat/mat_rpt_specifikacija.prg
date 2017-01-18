@@ -169,7 +169,7 @@ STATIC FUNCTION TekRec()
 FUNCTION CArDob()
 
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PARTN
    O_MAT_SUBAN

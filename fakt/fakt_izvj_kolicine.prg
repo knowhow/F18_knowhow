@@ -369,7 +369,7 @@ STATIC FUNCTION _o_tables()
    O_PARTN
    O_VALUTE
    O_RJ
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_OPS

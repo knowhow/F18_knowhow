@@ -716,7 +716,7 @@ STATIC FUNCTION set_banku_za_partnera( cPartn, cBank )
    ENDIF
 
    PushWA()
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    cNewBank := ""

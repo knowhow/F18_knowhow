@@ -892,7 +892,7 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    CREATE ( cDbfPath + "e_konto" ) from ( cDbfPath + "struct" )
 
    // tabela sifk
-   O_SIFK
+   o_sifk()
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_sifk" ) from ( cDbfPath + "struct" )
@@ -913,7 +913,7 @@ STATIC FUNCTION kalk_o_tabele()
 
    // o_kalk()
    // o_kalk_doks()
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_KONTO
    O_PARTN

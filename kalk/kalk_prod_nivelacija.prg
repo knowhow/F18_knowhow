@@ -24,7 +24,7 @@ FUNCTION kalk_nivelacija_11()
    o_kalk_pripr2()
    o_kalk_pripr()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 

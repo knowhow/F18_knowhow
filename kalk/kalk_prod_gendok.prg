@@ -118,7 +118,7 @@ FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
 
    O_KONTO
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 
@@ -257,7 +257,7 @@ FUNCTION NivPoProc()
 
    O_KONTO
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 
@@ -423,7 +423,7 @@ FUNCTION VratiZadNiv()
 
    O_KONTO
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 
@@ -714,7 +714,7 @@ FUNCTION kalk_13_to_11()
    o_kalk_pripr()
    o_kalk_pripr2()
    //o_kalk()
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 

@@ -1293,7 +1293,7 @@ STATIC FUNCTION kartica_otvori_tabele()
 
    O_KONTO
    O_PARTN
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_RJ
    // o_suban()

@@ -19,7 +19,7 @@ FUNCTION sint_lager_lista_prodavnice()
 
    cIdFirma := self_organizacija_id()
    qqKonto := PadR( "132;", 60 )
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_KONTO

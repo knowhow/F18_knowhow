@@ -450,7 +450,7 @@ STATIC FUNCTION _o_tbl()
 
    // o_kalk_doks()
    // o_kalk()
-   O_SIFK
+   o_sifk()
    O_SIFV
    o_tdok()
    O_ROBA

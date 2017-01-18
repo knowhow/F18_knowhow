@@ -136,7 +136,7 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
    LOCAL cTmpSif, hRec, lOk := .T., hParams, lPromjena
 
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    SELECT kalk_imp_temp
@@ -391,7 +391,7 @@ STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
    LOCAL hRec, lNovi, cTmpPar
 
    O_PARTN
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    SELECT kalk_imp_temp

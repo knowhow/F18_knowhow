@@ -44,7 +44,7 @@ FUNCTION fakt_pocetno_stanje()
 
    O_ROBA
    O_PARTN
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_FAKT_PRIPR
 

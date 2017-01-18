@@ -77,7 +77,7 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
    LOCAL _box_y := 65
    LOCAL _x := 1
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_KONTO
    O_PARTN

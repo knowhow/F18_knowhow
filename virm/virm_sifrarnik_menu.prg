@@ -77,7 +77,7 @@ STATIC FUNCTION _sif_spec()
 
 FUNCTION OSifVirm()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PARTN
    O_VRPRIM

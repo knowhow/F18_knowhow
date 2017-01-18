@@ -62,7 +62,7 @@ STATIC FUNCTION prenos()
    O_MAT_PRIPR
    O_MAT_NALOG
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_KONTO
    O_PARTN

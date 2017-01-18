@@ -503,7 +503,7 @@ STATIC FUNCTION _add_to_exp( broj_dok, datum_dok, vrsta_dok, id_partner, ;
 // -----------------------------------
 STATIC FUNCTION _o_tbl()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    o_tdok()
    O_ROBA

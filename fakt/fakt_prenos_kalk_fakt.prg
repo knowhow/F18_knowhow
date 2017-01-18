@@ -310,7 +310,7 @@ STATIC FUNCTION _o_tables()
    // o_kalk()
    O_FAKT
    O_FAKT_PRIPR
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PARTN
 

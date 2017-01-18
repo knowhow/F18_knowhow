@@ -67,7 +67,7 @@ FUNCTION fakt_lager_lista()
    O_FAKT_DOKS
    O_TARIFA
    O_PARTN
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_RJ

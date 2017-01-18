@@ -32,7 +32,7 @@ FUNCTION datum_not_empty_upozori_godina( dDate, cMsg )
 
 FUNCTION o_kalk_tabele_izvj()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_TARIFA
    O_ROBA

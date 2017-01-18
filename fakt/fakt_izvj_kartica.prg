@@ -25,7 +25,7 @@ FUNCTION fakt_kartica()
 
    my_close_all_dbf()
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PARTN
    O_ROBA

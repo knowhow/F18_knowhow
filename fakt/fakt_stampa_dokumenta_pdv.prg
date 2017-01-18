@@ -700,7 +700,7 @@ STATIC FUNCTION _op_gr( cId, cSifK )
    LOCAL nTArea := Select()
    LOCAL cRet := ""
 
-   O_SIFK
+   o_sifk()
    SELECT sifk
    SET ORDER TO TAG "ID2"
    GO TOP

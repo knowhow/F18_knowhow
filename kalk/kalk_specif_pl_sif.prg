@@ -69,7 +69,7 @@ FUNCTION PlFill_Sezona()
    IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
       nI := 0
       O_ROBA
-      O_SIFK
+      o_sifk()
       O_SIFV
       SELECT roba
       GO TOP
@@ -113,7 +113,7 @@ FUNCTION PlFill_Vrsta()
    IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
 
       O_ROBA
-      O_SIFK
+      o_sifk()
       O_SIFV
       SELECT roba
       GO TOP

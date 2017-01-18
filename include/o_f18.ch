@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#xcommand O_SIFK     => o_sifk()
+
 #xcommand O_SIFV     => o_sifv()
 
 #xcommand O_ROBA     => select (F_ROBA)    ;  my_use  ("roba")      ; set order to tag "ID"

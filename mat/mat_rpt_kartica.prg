@@ -387,7 +387,7 @@ FUNCTION KAnKKonto()
    O_MAT_SUBAN
    O_KONTO
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    SELECT mat_anal
@@ -518,7 +518,7 @@ FUNCTION KSuban()
 
    O_PARTN
    O_KONTO
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 

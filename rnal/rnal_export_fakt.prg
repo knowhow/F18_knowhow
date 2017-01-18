@@ -794,7 +794,7 @@ STATIC FUNCTION fnd_roba( xRoba, nArtId, cDesc )
    PRIVATE GetList := {}
 
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    xRoba := Space( 10 )

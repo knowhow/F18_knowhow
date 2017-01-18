@@ -46,7 +46,7 @@ FUNCTION RekMagTar()
    BoxC()
 
    SET SOFTSEEK OFF
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_TARIFA

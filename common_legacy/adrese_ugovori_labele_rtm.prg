@@ -332,7 +332,7 @@ STATIC FUNCTION _open_tables()
    O_DEST
    O_PARTN
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
 
    SELECT ugov

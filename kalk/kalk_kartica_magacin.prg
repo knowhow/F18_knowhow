@@ -698,7 +698,7 @@ STATIC FUNCTION kartica_magacin_open_tabele()
 
    O_PARTN
    O_TARIFA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_KONTO

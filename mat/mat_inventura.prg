@@ -200,7 +200,7 @@ FUNCTION mat_inv_tabela()
 
    O_MAT_INVENT
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_PARTN
 
@@ -460,7 +460,7 @@ FUNCTION mat_pregl_unesenih_stavki()
 
    O_MAT_INVENT
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_KONTO
    O_PARTN
@@ -598,7 +598,7 @@ FUNCTION mat_obracun_inv()
 
    O_MAT_INVENT
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_MAT_SUBAN
    SET ORDER TO TAG "3"
@@ -745,7 +745,7 @@ FUNCTION mat_nal_inventure()
    O_MAT_PRIPR
    O_MAT_INVENT
    O_ROBA
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_MAT_SUBAN
    SET ORDER TO TAG "3"
@@ -833,7 +833,7 @@ FUNCTION mat_inv_obr_poreza()
    cIdTipDok := "09"
    O_TARIFA; O_KONTO
    O_MAT_INVENT
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    nMjes := Month( cIdD )
@@ -926,7 +926,7 @@ FUNCTION mat_popisna_lista()
    C := 0
 
    O_MAT_SUBAN
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
 

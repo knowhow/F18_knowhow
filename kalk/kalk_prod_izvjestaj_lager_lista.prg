@@ -45,7 +45,7 @@ FUNCTION lager_lista_prodavnica()
    cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "1320", gDuzKonto )
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_KONTO
@@ -173,7 +173,7 @@ FUNCTION lager_lista_prodavnica()
       lPrikK2 := .T.
    ENDIF
 
-   O_SIFK
+   o_sifk()
    O_SIFV
    O_ROBA
    O_TARIFA

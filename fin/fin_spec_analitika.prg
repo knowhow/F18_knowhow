@@ -13,7 +13,7 @@
 
 /*
  * Specifikacija po analitickim kontima
- */
+
 
 FUNCTION SpecPoK()
 
@@ -164,9 +164,7 @@ FUNCTION SpecPoK()
 
 
 
-/* Zagl5()
- *  brief Zaglavlje specifikacije po kontima
- */
+
 
 STATIC FUNCTION Zagl5()
 
@@ -197,3 +195,5 @@ STATIC FUNCTION Zagl5()
    ? m
 
    RETURN .T.
+
+ */

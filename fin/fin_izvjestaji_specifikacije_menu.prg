@@ -80,8 +80,8 @@ STATIC FUNCTION fin_specifikacije_meni()
    AAdd( _opcexe, {|| SpecKK2() } )
 
 
-   AAdd( _opc, "A. po analitičkim kontima" )
-   AAdd( _opcexe, {|| SpecPoK() } )
+   //AAdd( _opc, "A. po analitičkim kontima" )
+   //AAdd( _opcexe, {|| SpecPoK() } )
 
 
    //IF gFinRj == "D" .OR. gTroskovi == "D"

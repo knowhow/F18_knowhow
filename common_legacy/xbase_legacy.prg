@@ -96,7 +96,7 @@ FUNCTION set_global_vars_from_dbf( zn, lConvertToUtf )
          __mvPublic( _var ) // wNaz
          Eval( MemVarBlock( _var ), Eval( FieldBlock( _field ) ) ) // wNaz <-- SADRŽAJ
          IF ValType( &_var ) == "C"
-            IF lSql // sql tabela utf->str
+            IF lSql .AND. F18_SQL_ENCODING == "UTF8"// sql tabela utf->str
                &_var := hb_UTF8ToStr( &_var )
             ENDIF
             IF lConvertToUtf // str->utf

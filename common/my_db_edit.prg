@@ -343,8 +343,8 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
 
    NEXT
 
-   TB:headSep := BROWSE_HEAD_SEP
-   TB:colsep :=  BROWSE_COL_SEP
+   TB:headSep := hb_UTF8ToStr(BROWSE_HEAD_SEP)
+   TB:colsep :=  hb_UTF8ToStr(BROWSE_COL_SEP)
 
    IF params[ "freeze" ] == NIL
       TB:Freeze := 1

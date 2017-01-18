@@ -930,7 +930,7 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
 
 
    IF ValType( &cVariableName ) == "C" .AND. F18_SQL_ENCODING == "UTF8" // samo ako sql vraca UTF8 stringove izvrsitiŽŽŽ ovu konverziju
-      &cVariableName = hb_UTF8ToStr( &cVariableName )
+      &cVariableName = hb_UTF8ToStr( &cVariableName ) // F18 SQL ENCODING UTF8
    ENDIF
 
    AAdd( GetList, _GET_( &cVariableName, cVariableName,  cPic, _valid_block, _when_block ) ) ;;

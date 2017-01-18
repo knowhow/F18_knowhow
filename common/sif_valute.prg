@@ -25,7 +25,7 @@
  */
 FUNCTION Kurs( datum, val_iz, val_u )
 
-   LOCAL _data, _qry, _tmp_1, _tmp_2, oRow
+   LOCAL oDataSet, cQuery, _tmp_1, _tmp_2, oRow
 
    _tmp_1 := 1
    _tmp_2 := 1
@@ -52,15 +52,15 @@ FUNCTION Kurs( datum, val_iz, val_u )
       _where += " AND ( " + _sql_date_parse( "datum", NIL, datum ) + ") "
    ENDIF
 
-   _qry := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "valute "
-   _qry += "WHERE " + _where
-   _qry += " ORDER BY id, datum"
+   cQuery := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "valute "
+   cQuery += "WHERE " + _where
+   cQuery += " ORDER BY id, datum"
 
-   _data := run_sql_query( _qry )
-   _data:GoTo( 1 )
-   oRow := _data:GetRow( 1 )
+   oDataSet := run_sql_query( cQuery )
+   oDataSet:GoTo( 1 )
+   oRow := oDataSet:GetRow( 1 )
 
-   IF _data:LastRec() == 0
+   IF oDataSet:LastRec() == 0
       Msg( "Nepostojeća valuta iz koje se pretvara iznos:## '" + val_iz + "' !" )
       _tmp_1 := 1
    ELSEIF !Empty( datum ) .AND. ( DToS( datum ) < DToS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
@@ -68,11 +68,11 @@ FUNCTION Kurs( datum, val_iz, val_u )
       _tmp_1 := 1
    ELSE
       _id := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
-      DO WHILE !_data:Eof() .AND. _id == hb_UTF8ToStr( _data:FieldGet( _data:FieldPos( "id" ) ) )
-         oRow := _data:GetRow()
+      DO WHILE !oDataSet:Eof() .AND. _id == hb_UTF8ToStr( oDataSet:FieldGet( oDataSet:FieldPos( "id" ) ) )
+         oRow := oDataSet:GetRow()
          _tmp_1 := oRow:FieldGet( oRow:FieldPos( "kurs1" ) )
          IF !Empty( datum ) .AND. ( DToS( datum ) >= DToS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
-            _data:Skip()
+            oDataSet:Skip()
          ELSE
             EXIT
          ENDIF
@@ -90,15 +90,15 @@ FUNCTION Kurs( datum, val_iz, val_u )
       _where += " AND ( " + _sql_date_parse( "datum", NIL, datum ) + ") "
    ENDIF
 
-   _qry := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "valute "
-   _qry += "WHERE " + _where
-   _qry += " ORDER BY id, datum"
+   cQuery := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "valute "
+   cQuery += "WHERE " + _where
+   cQuery += " ORDER BY id, datum"
 
-   _data := run_sql_query( _qry )
-   _data:GoTo( 1 )
-   oRow := _data:GetRow( 1 )
+   oDataSet := run_sql_query( cQuery )
+   oDataSet:GoTo( 1 )
+   oRow := oDataSet:GetRow( 1 )
 
-   IF _data:LastRec() == 0
+   IF oDataSet:LastRec() == 0
       Msg( "Nepostojeća valuta u koju se pretvara iznos:## '" + val_u + "' !" )
       _tmp_1 := 1
       _tmp_2 := 1
@@ -108,11 +108,11 @@ FUNCTION Kurs( datum, val_iz, val_u )
       _tmp_2 := 1
    ELSE
       _id := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
-      DO WHILE !_data:Eof() .AND. _id == hb_UTF8ToStr( _data:FieldGet( _data:FieldPos( "id" ) ) )
-         oRow := _data:GetRow()
+      DO WHILE !oDataSet:Eof() .AND. _id == hb_UTF8ToStr( oDataSet:FieldGet( oDataSet:FieldPos( "id" ) ) )
+         oRow := oDataSet:GetRow()
          _tmp_2 := oRow:FieldGet( oRow:FieldPos( "kurs1" ) )
          IF !Empty( datum ) .AND. ( DToS( datum ) >= DToS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
-            _data:Skip()
+            oDataSet:Skip()
          ELSE
             EXIT
          ENDIF

@@ -34,7 +34,7 @@ FUNCTION f18_view_log( _params )
 
 
 
-STATIC FUNCTION uslovi_pregleda_loga( params )
+STATIC FUNCTION uslovi_pregleda_loga( hParams )
 
    LOCAL _ok := .F.
    LOCAL _limit := 0
@@ -97,33 +97,33 @@ STATIC FUNCTION uslovi_pregleda_loga( params )
       _conds_false := ""
    ENDIF
 
-   params := hb_Hash()
-   params[ "date_from" ] := _datum_od
-   params[ "date_to" ] := _datum_do
-   params[ "user" ] := AllTrim( _user )
-   params[ "limit" ] := _limit
-   params[ "conds_true" ] := _conds_true
-   params[ "conds_false" ] := _conds_false
-   params[ "doc_oper" ] := _f18_doc_oper
+   hParams := hb_Hash()
+   hParams[ "date_from" ] := _datum_od
+   hParams[ "date_to" ] := _datum_do
+   hParams[ "user" ] := AllTrim( _user )
+   hParams[ "limit" ] := _limit
+   hParams[ "conds_true" ] := _conds_true
+   hParams[ "conds_false" ] := _conds_false
+   hParams[ "doc_oper" ] := _f18_doc_oper
 
    RETURN _ok
 
 
-STATIC FUNCTION query_log_data( params )
+STATIC FUNCTION query_log_data( hParams )
 
    LOCAL _user := ""
-   LOCAL _dat_from := params[ "date_from" ]
-   LOCAL _dat_to := params[ "date_to" ]
-   LOCAL _limit := params[ "limit" ]
-   LOCAL _conds_true := params[ "conds_true" ]
-   LOCAL _conds_false := params[ "conds_false" ]
-   LOCAL _is_doc_oper := params[ "doc_oper" ] == "D"
-   LOCAL _qry, _where
+   LOCAL _dat_from := hParams[ "date_from" ]
+   LOCAL _dat_to := hParams[ "date_to" ]
+   LOCAL _limit := hParams[ "limit" ]
+   LOCAL _conds_true := hParams[ "conds_true" ]
+   LOCAL _conds_false := hParams[ "conds_false" ]
+   LOCAL _is_doc_oper := hParams[ "doc_oper" ] == "D"
+   LOCAL cQuery, _where
    LOCAL _server := sql_data_conn()
    LOCAL _data
 
-   IF hb_HHasKey( params, "user" )
-      _user := params[ "user" ]
+   IF hb_HHasKey( hParams, "user" )
+      _user := hParams[ "user" ]
    ENDIF
 
    _where := _sql_date_parse( "l_time", _dat_from, _dat_to )
@@ -144,16 +144,16 @@ STATIC FUNCTION query_log_data( params )
       _where += " AND ( msg LIKE '%F18_DOK_OPER%' ) "
    ENDIF
 
-   _qry := "SELECT id, user_code, l_time, msg "
-   _qry += "FROM " + F18_PSQL_SCHEMA_DOT + "log "
-   _qry += "WHERE " + _where
-   _qry += " ORDER BY l_time DESC "
+   cQuery := "SELECT id, user_code, l_time, msg "
+   cQuery += "FROM " + F18_PSQL_SCHEMA_DOT + "log "
+   cQuery += "WHERE " + _where
+   cQuery += " ORDER BY l_time DESC "
    IF _limit > 0
-      _qry += " LIMIT " + AllTrim( Str( _limit ) )
+      cQuery += " LIMIT " + AllTrim( Str( _limit ) )
    ENDIF
 
-   info_bar( "log_get_data", "qry:" + _qry )
-   _data := run_sql_query( _qry )
+   info_bar( "log_get_data", "qry:" + cQuery )
+   _data := run_sql_query( cQuery )
 
    IF sql_error_in_query( _data, "SELECT" )
       RETURN NIL
@@ -162,7 +162,7 @@ STATIC FUNCTION query_log_data( params )
    RETURN _data
 
 
-STATIC FUNCTION print_log_data( data, params, print_to_file )
+STATIC FUNCTION print_log_data( data, hParams, print_to_file )
 
    LOCAL _row
    LOCAL _user, _txt, _date
@@ -259,14 +259,14 @@ FUNCTION f18_log_delete()
    RETURN .T.
 
 
-STATIC FUNCTION sql_log_delete( params )
+STATIC FUNCTION sql_log_delete( hParams )
 
    LOCAL _ok := .T.
-   LOCAL _qry, _where
+   LOCAL cQuery, _where
    LOCAL _result
    LOCAL _dok_oper := "%F18_DOK_OPER%"
-   LOCAL _delete_level := params[ "delete_level" ]
-   LOCAL _curr_date := params[ "current_date" ]
+   LOCAL _delete_level := hParams[ "delete_level" ]
+   LOCAL _curr_date := hParams[ "current_date" ]
    LOCAL _delete_date := ( _curr_date - _delete_level )
 
    _where := "( l_time::char(8) <= " + sql_quote( _delete_date )
@@ -276,10 +276,10 @@ STATIC FUNCTION sql_log_delete( params )
    _where += " AND "
    _where += " msg LIKE " + sql_quote( _dok_oper ) + " ) "
 
-   _qry := "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "log "
-   _qry += "WHERE " + _where
+   cQuery := "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "log "
+   cQuery += "WHERE " + _where
 
-   _result := run_sql_query( _qry )
+   _result := run_sql_query( cQuery )
 
    IF sql_error_in_query( _result )
       RETURN .F.

@@ -823,7 +823,7 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
 
    LOCAL nI, _l
    LOCAL _key
-   LOCAL _br
+   LOCAL oTBrowse
    LOCAL _opt := 0
    LOCAL _pos_left := 3
    LOCAL _pos_top := 5
@@ -877,49 +877,49 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
    @ _pos_bottom + 3,  ( _pos_right / 2 ), _pos_bottom + 10, _pos_right + 2 BOX B_DOUBLE_SINGLE
    @ _pos_bottom + 6, ( _pos_right / 2 ) + 12 SAY hb_UTF8ToStr( "<<< pritisni F10 >>>" )
 
-   _br := TBrowseNew( _pos_top, _pos_left, _pos_bottom, _pos_right )
+   oTBrowse := TBrowseNew( _pos_top, _pos_left, _pos_bottom, _pos_right )
 
    IF table_type == 0
-      _br:HeadSep := ""
-      _br:FootSep := ""
-      _br:ColSep := " "
+      oTBrowse:HeadSep := ""
+      oTBrowse:FootSep := ""
+      oTBrowse:ColSep := " "
    ELSEIF table_type == 1
-      _br:headSep := "-"
-      _br:footSep := "-"
-      _br:colSep := "|"
+      oTBrowse:headSep := "-"
+      oTBrowse:footSep := "-"
+      oTBrowse:colSep := "|"
    ELSEIF table_type == 2
-      _br:HeadSep := hb_UTF8ToStr( "╤═" )
-      _br:FootSep := hb_UTF8ToStr( "╧═" )
-      _br:ColSep := hb_UTF8ToStr( "│" )
+      oTBrowse:HeadSep := hb_UTF8ToStr( BROWSE_HEAD_SEP )
+      oTBrowse:FootSep := hb_UTF8ToStr( BROWSE_FOOT_SEP )
+      oTBrowse:ColSep := hb_UTF8ToStr( BROWSE_COL_SEP )
    ENDIF
 
-   _br:skipBlock := {| _skip | _skip := _skip_it( aArray, _row, _skip ), _row += _skip, _skip }
-   _br:goTopBlock := {|| _row := 1 }
-   _br:goBottomBlock := {|| _row := Len( aArray ) }
+   oTBrowse:skipBlock := {| _skip | _skip := _skip_it( aArray, _row, _skip ), _row += _skip, _skip }
+   oTBrowse:goTopBlock := {|| _row := 1 }
+   oTBrowse:goBottomBlock := {|| _row := Len( aArray ) }
 
    FOR _l := 1 TO Len( aArray[ 1 ] )
-      _br:addColumn( TBColumnNew( "", _browse_block( aArray, _l ) ) )
+      oTBrowse:addColumn( TBColumnNew( "", _browse_block( aArray, _l ) ) )
    NEXT
 
 
    DO WHILE ( _key <> K_ESC ) .AND. ( _key <> K_RETURN ) // main key handler loop
 
-      _br:forcestable() // stabilize the browse and wait for a keystroke
-      ::show_info_bar( AllTrim( Eval( _br:GetColumn( _br:colpos ):block ) ), _pos_bottom + 4 )
+      oTBrowse:forcestable() // stabilize the browse and wait for a keystroke
+      ::show_info_bar( AllTrim( Eval( oTBrowse:GetColumn( oTBrowse:colpos ):block ) ), _pos_bottom + 4 )
       _key := Inkey( 0 )
 
-      IF _br:stable
+      IF oTBrowse:stable
 
          DO CASE
 
          CASE ( _key == K_DOWN )
-            _br:down()
+            oTBrowse:down()
          CASE ( _key == K_UP )
-            _br:up()
+            oTBrowse:up()
          CASE ( _key == K_RIGHT )
-            _br:Right()
+            oTBrowse:Right()
          CASE ( _key == K_LEFT )
-            _br:Left()
+            oTBrowse:Left()
          CASE ( _key == K_F10 )
             ::administrative_options( _pos_bottom + 4, _pos_left )
             RETURN -1
@@ -931,7 +931,7 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
             ENDIF
          CASE ( _key == K_ENTER )
 
-            ::cOrganizacijaOdabranaUBrowse := AllTrim( Eval( _br:GetColumn( _br:colpos ):block ) ) // ovo je firma koju smo odabrali
+            ::cOrganizacijaOdabranaUBrowse := AllTrim( Eval( oTBrowse:GetColumn( oTBrowse:colpos ):block ) ) // ovo je firma koju smo odabrali
             ::cTekucaSezona := NIL // sezona treba da bude uzeta kao TOP sezona
             RETURN 1
          ENDCASE

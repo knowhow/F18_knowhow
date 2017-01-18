@@ -28,8 +28,8 @@ FUNCTION BrowseKey( y1, x1, y2, x2, ImeKol, bfunk, uslov, traz, brkol, dx, dy, b
    &usl = uslov
    TB := TBrowseDB( y1, x1, y2, x2 )
 
-   TB:headsep := BROWSE_HEAD_SEP
-   TB:colsep := BROWSE_COL_SEP
+   TB:headsep := hb_UTF8ToStr(BROWSE_HEAD_SEP)
+   TB:colsep := hb_UTF8ToStr(BROWSE_COL_SEP)
 
    IF Eof()
       SKIP -1

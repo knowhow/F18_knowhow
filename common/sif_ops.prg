@@ -46,8 +46,7 @@ FUNCTION P_Ops( cId, dx, dy )
    hWorkArea := PopWA()
 
    IF !hWorkArea[ 'sql' ] .AND. F18_SQL_ENCODING == "UTF8"
-      // ako smo na pocetku uradili konverziju moramo napraviti novu obrnutu konverziju
-      cId := hb_UTF8ToStr( cId )
+      cId := hb_UTF8ToStr( cId )   // ako smo na pocetku uradili konverziju moramo napraviti novu obrnutu konverziju
    ENDIF
 
    RETURN xRet

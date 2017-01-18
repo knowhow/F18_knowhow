@@ -115,8 +115,8 @@ FUNCTION dbf_get_rec( lConvertToUtf )
             IF cRet[ cImeDbfPolja ] == NIL
                cRet[ cImeDbfPolja ] := Space( aDbfStruct[ nI, 3 ] )
             ENDIF
-            IF lSql // sql tabela utf->str
-               cRet[ cImeDbfPolja ] := hb_UTF8ToStr( cRet[ cImeDbfPolja ] )
+            IF lSql .AND. F18_SQL_ENCODING == "UTF8" // sql tabela utf->str
+               cRet[ cImeDbfPolja ] := hb_UTF8ToStr( cRet[ cImeDbfPolja ] ) // F18_SQL_ENCODING UTF8
             ENDIF
             IF lConvertToUtf // str->utf
                cRet[ cImeDbfPolja ] := hb_StrToUTF8( cRet[ cImeDbfPolja ] )

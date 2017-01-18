@@ -15,15 +15,15 @@ THREAD STATIC s_hParametri := NIL
 THREAD STATIC s_lError := .F.
 
 
-FUNCTION fetch_metric( cSection, cUser, default_value )
+FUNCTION fetch_metric( cSection, cUser, xDefaultValue )
 
    LOCAL cQuery
    LOCAL oQuery
    LOCAL cRet := ""
    LOCAL xRet
 
-   IF default_value == NIL
-      default_value := ""
+   IF xDefaultValue == NIL
+      xDefaultValue := ""
    ENDIF
 
    IF cUser != NIL
@@ -48,23 +48,23 @@ FUNCTION fetch_metric( cSection, cUser, default_value )
 
    IF sql_error_in_query( oQuery, "SELECT" )
       s_lError := .T.
-      RETURN default_value
+      RETURN xDefaultValue
    ELSE
       s_lError := .F.
    ENDIF
 
 
    IF sql_query_bez_zapisa( oQuery )
-      RETURN default_value
+      RETURN xDefaultValue
    ENDIF
 
    cRet := oQuery:FieldGet( 1 )
 
    IF cRet == "!!notfound!!"
-      xRet := default_value
+      xRet := xDefaultValue
    ELSE
 
-      xRet := str_to_val( cRet, default_value )
+      xRet := str_to_val( cRet, xDefaultValue )
       s_hParametri[ cSection ] :=  xRet
    ENDIF
 
@@ -130,19 +130,19 @@ FUNCTION set_metric( cSection, cUser, xValue )
 
 
 
-STATIC FUNCTION str_to_val( str_val, default_value )
+STATIC FUNCTION str_to_val( xValue, xDefaultValue )
 
-   LOCAL _val_type := ValType( default_value )
+   LOCAL _val_type := ValType( xDefaultValue )
 
    DO CASE
    CASE _val_type == "C"
-      RETURN hb_UTF8ToStr( str_val )
+      RETURN hb_UTF8ToStr( xValue )
    CASE _val_type == "N"
-      RETURN Val( str_val )
+      RETURN Val( xValue )
    CASE _val_type == "D"
-      RETURN CToD( str_val )
+      RETURN CToD( xValue )
    CASE _val_type == "L"
-      IF Lower( str_val ) == ".t."
+      IF Lower( xValue ) == ".t."
          RETURN .T.
       ELSE
          RETURN .F.
@@ -155,12 +155,12 @@ STATIC FUNCTION str_to_val( str_val, default_value )
 // ----------------------------------------------------------
 // set/get globalne parametre F18
 // ----------------------------------------------------------
-FUNCTION get_set_global_param( cParamName, xValue, def_value )
+FUNCTION get_set_global_param( cParamName, xValue, xDefaultValue )
 
    LOCAL cRet
 
    IF xValue == NIL
-      cRet := fetch_metric( cParamName, NIL, def_value )
+      cRet := fetch_metric( cParamName, NIL, xDefaultValue )
    ELSE
       set_metric( cParamName, NIL, xValue )
       cRet := xValue
@@ -172,12 +172,12 @@ FUNCTION get_set_global_param( cParamName, xValue, def_value )
 // ----------------------------------------------------------
 // set/get user parametre F18
 // ----------------------------------------------------------
-FUNCTION get_set_user_param( cParamName, xValue, def_value )
+FUNCTION get_set_user_param( cParamName, xValue, xDefaultValue )
 
    LOCAL cRet
 
    IF xValue == NIL
-      cRet := fetch_metric( cParamName, my_user(), def_value )
+      cRet := fetch_metric( cParamName, my_user(), xDefaultValue )
    ELSE
       set_metric( cParamName, my_user(), xValue )
       cRet := xValue

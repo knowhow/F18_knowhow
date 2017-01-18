@@ -46,8 +46,7 @@ FUNCTION p_refer( cId, dx, dy )
    hWorkArea := PopWA()
 
    IF !hWorkArea[ 'sql' ] .AND. F18_SQL_ENCODING == "UTF8"
-      // ako smo na pocetku uradili konverziju moramo napraviti novu obrnutu konverziju
-      cId := hb_UTF8ToStr( cId )
+      cId := hb_UTF8ToStr( cId ) // F18_SQL_ENCODING UTF8
    ENDIF
 
    RETURN xRet

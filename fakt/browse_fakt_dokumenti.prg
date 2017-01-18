@@ -44,8 +44,8 @@ METHOD BrowseFaktDokumenti:New( top, left, bottom, right, fakt_dokumenti )
    ::GoBottomBlock := {||  ::tekuci_item := iif( ::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:aItems[ ::fakt_dokumenti:count ] ), 1 }
    ::GoTopBlock    := {||  ::tekuci_item := iif( ::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:aItems[ 1 ] ), 1 }
 
-   ::headSep := BROWSE_HEAD_SEP
-   ::colsep :=  BROWSE_COL_SEP
+   ::headSep := hb_UTF8ToStr(BROWSE_HEAD_SEP)
+   ::colsep :=  hb_UTF8ToStr(BROWSE_COL_SEP)
 
    RETURN Self
 

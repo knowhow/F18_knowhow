@@ -239,9 +239,7 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          nRecnoSuban := suban->( RecNo() )
 
          _datum := suban->datdok  // datum kuf-a
-         _id_part := hb_Utf8ToStr( suban->idpartner )
-         _opis := cOpis
-
+         _id_part := suban->idpartner
          // ##opis## je djoker - zamjenjuje se sa opisom koji se nalazi u
          // stavci
          cOpisSuban := AllTrim( suban->opis )
@@ -568,7 +566,7 @@ STATIC FUNCTION kuf_fin_trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr
       cKto := Left( idkonto, 3 )
 
       IF ( cKto $ AllTrim( gL_kto_dob ) ) .AND. ( IdFirma ==  cIdFirma ) .AND. ( IdVn == cIdVn ) .AND. ( BrNal == cBrNal ) .AND. ( BrDok == cBrDok )
-         cIdPartner := hb_Utf8ToStr( suban->idpartner )
+         cIdPartner := suban->idpartner
          PopWa()
          PopWa()
          RETURN cIdPartner

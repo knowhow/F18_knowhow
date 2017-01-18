@@ -211,13 +211,13 @@ FUNCTION kalk_kartica_magacin()
 
    zagl_mag_kart()
 
-   DO WHILE !Eof() .AND. iif( fVeci, idfirma + mkonto + hb_UTF8ToStr( field->idroba ) >= cIdFirma + cIdKonto + cIdR, idfirma + mkonto + hb_UTF8ToStr( field->idroba ) == cIdFirma + cIdKonto + cIdR )
+   DO WHILE !Eof() .AND. iif( fVeci, idfirma + mkonto + field->idroba >= cIdFirma + cIdKonto + cIdR, idfirma + mkonto + field->idroba == cIdFirma + cIdKonto + cIdR )
 
       IF field->mkonto <> cIdKonto .OR. field->idfirma <> cIdFirma
          EXIT
       ENDIF
 
-      cIdRoba := hb_UTF8ToStr( field->idroba )
+      cIdRoba := field->idroba
       SELECT roba
       HSEEK cIdRoba
 
@@ -239,7 +239,7 @@ FUNCTION kalk_kartica_magacin()
       cLastPar := ""
       cSKGrup := ""
 
-      DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == field->idFirma + field->mkonto + hb_UTF8ToStr( field->idroba )
+      DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == field->idFirma + field->mkonto + field->idroba
          nNVd := nNVp := nVPVd := nVPVp := 0
 
          IF lBezG2 .AND. field->idvd == "14"

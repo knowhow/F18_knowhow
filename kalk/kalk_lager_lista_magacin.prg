@@ -378,10 +378,9 @@ FUNCTION lager_lista_magacin()
 
    PRIVATE nRbr := 0
 
-   DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, idfirma, idfirma + mkonto ) == ;
-         cIdfirma + cSintK .AND. IspitajPrekid()
+   DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, idfirma, idfirma + mkonto ) == cIdfirma + cSintK .AND. IspitajPrekid()
 
-      cIdRoba := hb_UTF8ToStr( field->Idroba )
+      cIdRoba := field->Idroba
 
       nUlaz := 0
       nIzlaz := 0
@@ -478,7 +477,7 @@ FUNCTION lager_lista_magacin()
 
 
 
-      DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, cIdFirma + cIdRoba == idFirma + hb_UTF8ToStr( field->idroba ), cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + hb_UTF8ToStr( field->idroba ) ) .AND. IspitajPrekid()
+      DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, cIdFirma + cIdRoba == idFirma + field->idroba, cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + hb_UTF8ToStr( field->idroba ) ) .AND. IspitajPrekid()
 
          IF roba->tip $ "TU"
             SKIP

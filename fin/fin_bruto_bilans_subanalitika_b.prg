@@ -156,10 +156,10 @@ FUNCTION fin_bb_subanalitika_b( params )
             D1PS := P1PS := D1TP := P1TP := D1KP := P1KP := D1S := P1S := 0
             DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. cIdKonto == IdKonto
 
-               cIdPartner := hb_UTF8ToStr( field->IdPartner )
+               cIdPartner := field->IdPartner
                D0PS := P0PS := D0TP := P0TP := D0KP := P0KP := D0S := P0S := 0
 
-               DO WHILE !Eof() .AND. IdFirma == cIdFirma .AND. cIdKonto == IdKonto .AND. cIdPartner == hb_UTF8ToStr( field->IdPartner )
+               DO WHILE !Eof() .AND. IdFirma == cIdFirma .AND. cIdKonto == IdKonto .AND. cIdPartner == field->IdPartner
 
                   IF nValuta == 1
                      IF D_P = "1"

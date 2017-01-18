@@ -66,7 +66,7 @@ FUNCTION kalk_get_nabavna_mag( dDatDo, cIdFirma, cIdRoba, cIdKonto, ;
    find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    GO BOTTOM
 
-   IF ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idfirma + field->mkonto + hb_UTF8ToStr( field->idroba ) ) ;
+   IF ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idfirma + field->mkonto + field->idroba ) ;
          .AND. dDatDo < field->datdok
       error_bar( "KA_" + cIdfirma + "/" + cIdKonto + "/" + cIdRoba, "Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ), 4 )
       // _ERROR := "1"
@@ -85,7 +85,7 @@ FUNCTION kalk_get_nabavna_mag( dDatDo, cIdFirma, cIdRoba, cIdKonto, ;
 
 
    GO TOP
-   DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idFirma + field->mkonto + hb_UTF8ToStr( field->idroba ) ) ) ;
+   DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idFirma + field->mkonto + field->idroba ) ) ;
          .AND. dDatDo >= field->datdok
 
       IF field->mu_i == "1" .OR. field->mu_i == "5"

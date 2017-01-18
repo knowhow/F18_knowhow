@@ -231,7 +231,7 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
 
          // datum kuf-a
          _datum := kalk->datdok
-         _id_part := hb_Utf8ToStr( kalk->idpartner )
+         _id_part := kalk->idpartner
          _opis := cOpis
 
          IF !Empty( cIdPart )

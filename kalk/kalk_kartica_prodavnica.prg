@@ -161,9 +161,9 @@ FUNCTION kalk_kartica_prodavnica()
    nMPVP := 0
    fPrviProl := .T.
 
-   DO WHILE !Eof() .AND. field->idfirma + field->pkonto + hb_UTF8ToStr( field->idroba ) == cIdFirma + cIdKonto + cIdR
+   DO WHILE !Eof() .AND. field->idfirma + field->pkonto + field->idroba == cIdFirma + cIdKonto + cIdR
 
-      cIdRoba := hb_UTF8ToStr( field->idroba )
+      cIdRoba := field->idroba
 
       SELECT roba
       HSEEK cIdRoba
@@ -188,7 +188,7 @@ FUNCTION kalk_kartica_prodavnica()
       nColDok := 9
       nColFCJ2 := 68
 
-      DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + hb_UTF8ToStr( field->idroba )
+      DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + field->idroba
 
          IF field->datdok < dDatOd .AND. cPredh == "N"
             SKIP

@@ -71,7 +71,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL _template := "ios.odt"
    LOCAL cIdPartnerTekuci
    LOCAL nCount, nCountLimit := 12000 // broj izgenerisanih stavki
-   LOCAL cNastavak := "D"
+   LOCAL cNastavak := "N"
 
    O_KONTO
    O_PARTN
@@ -94,7 +94,7 @@ STATIC FUNCTION mnu_ios_print()
    @ m_x + nX, m_y + 2 SAY "Konto       :" GET cIdKonto VALID P_Konto( @cIdKonto )
    ++nX
    @ m_x + nX, m_y + 2 SAY "Partner     :" GET cIdPartner VALID Empty( cIdPartner ) .OR.  p_partner( @cIdPartner ) PICT "@!"
-   @ m_x + nX, Col() + 2 SAY "nastavak od ovog partnera " GET cNastavak PICT "@!" VALID cNastavak $ "DN"
+   @ m_x + nX, Col() + 2 SAY "nastavak od ovog partnera D/N " GET cNastavak PICT "@!" VALID cNastavak $ "DN"
 
    IF fin_dvovalutno()
       ++nX
@@ -371,7 +371,7 @@ STATIC FUNCTION print_ios_xml( hParams )
    nCount := 0
    _rbr := 0
 
-   DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == suban->IdKonto  .AND. cIdPartner == hb_UTF8ToStr( suban->IdPartner )
+   DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == suban->IdKonto  .AND. cIdPartner == suban->IdPartner
 
       __br_dok := field->brdok
       __dat_dok := field->datdok
@@ -383,7 +383,7 @@ STATIC FUNCTION print_ios_xml( hParams )
       _pot_2 := 0
       __otv_st := field->otvst
 
-      DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == field->IdKonto  .AND. cIdPartner == hb_UTF8ToStr( suban->IdPartner ) ;
+      DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == field->IdKonto  .AND. cIdPartner == suban->IdPartner ;
             .AND. ( _kao_kartica == "D" .OR. suban->brdok == __br_dok )
 
          IF field->datdok > dDatumDo
@@ -904,11 +904,11 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    nCount := 0
    Box(, 3, 65 )
 
-   @ m_x + 1, m_y + 2 SAY8 "sačekajte ... generacija ios pomoćne tabele"
+   @ m_x + 1, m_y + 2 SAY8 "sačekajte ... generacija ios tabele"
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
-      cIdPartnerTekuci := hb_UTF8ToStr( field->idpartner ) // idpartner cp852
+      cIdPartnerTekuci := field->idpartner
 
       _dug_1 := 0
       _u_dug_1 := 0
@@ -921,7 +921,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
       nSaldo1 := 0
       nSaldo2 := 0
 
-      DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. cIdPartnerTekuci == hb_UTF8ToStr( field->idpartner )
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. cIdPartnerTekuci == field->idpartner
 
          IF field->datdok > dDatumDo // ako je datum veci od datuma do kojeg generisem
             SKIP

@@ -275,7 +275,7 @@ FUNCTION lager_lista_prodavnica()
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->pkonto .AND. IspitajPrekid()
 
-      cIdRoba := hb_UTF8ToStr( field->Idroba )
+      cIdRoba := field->Idroba
 
       IF lSMark .AND. SkLoNMark( "ROBA", cIdroba )
          SKIP
@@ -324,7 +324,7 @@ FUNCTION lager_lista_prodavnica()
          LOOP
       ENDIF
 
-      DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + hb_UTF8ToStr( field->idroba ) .AND. IspitajPrekid()
+      DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + field->idroba .AND. IspitajPrekid()
 
          IF lSMark .AND. SkLoNMark( "ROBA", cIdroba )
             SKIP

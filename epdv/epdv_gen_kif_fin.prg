@@ -252,7 +252,7 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
          nRecnoSuban := suban->( RecNo() )
          // datum kif-a
          _datum := suban->datdok
-         _id_part := hb_Utf8ToStr( suban->idpartner )
+         _id_part := suban->idpartner
          _opis := cOpis
 
          // ##opis## je djoker - zamjenjuje se sa opisom koji se nalazi u

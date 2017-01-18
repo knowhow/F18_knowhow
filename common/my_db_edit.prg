@@ -303,7 +303,7 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
       ENDIF
       Box( params[ "ime" ], _rows, _width, params[ "invert" ], params[ "msgs" ] )
    ELSE
-      @ m_x + params[ "xw" ] - _rows_prazno, m_y + 1 SAY Replicate( BROWSE_PODVUCI, params[ "yw" ] )
+      @ m_x + params[ "xw" ] - _rows_prazno, m_y + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI), params[ "yw" ] )
 
    ENDIF
 
@@ -312,10 +312,10 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
       Kol := azKol
    ENDIF
 
-   @ m_x, m_y + 2                         SAY params[ "msg_top" ] + iif( !lIzOBJDB, REPL( BROWSE_PODVUCI_2,  42 ), "" )
+   @ m_x, m_y + 2                         SAY params[ "msg_top" ] + iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox(BROWSE_PODVUCI_2),  42 ), "" )
    @ m_x + params[ "xw" ] + 1,  m_y + 2   SAY params[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
 
-   @ m_x + params[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( BROWSE_PODVUCI_2, 42 ), "" )
+   @ m_x + params[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox(BROWSE_PODVUCI_2), 42 ), "" )
    @ m_x + 1, m_y + params[ "yw" ] -6    SAY Str( my_reccount(), 5 )
 
 
@@ -557,7 +557,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
 
       PRIVATE GetList := {}
       nRez := IndexOrd()
-      Prozor1( 12, 20, 17 + nPored, 59, "UTVRĐIVANJE PORETKA", F18_COLOR_NASLOV, F18_COLOR_OKVIR, F18_COLOR_TEKST, 2 )
+      box_crno_na_zuto( 12, 20, 17 + nPored, 59, "UTVRĐIVANJE PORETKA", F18_COLOR_NASLOV, F18_COLOR_OKVIR, F18_COLOR_TEKST, 2 )
       FOR i := 1 TO nPored
          @ 13 + i, 23 SAY PadR( "poredak po " + aPoredak[ i ], 33, "ú" ) + Str( i, 1 )
       NEXT

@@ -426,7 +426,7 @@ FUNCTION PromIdCijena()
    LOCAL i := 0, j := Len( SC_Opisi )
    LOCAL cbsstara := ShemaBoja( "B1" )
 
-   Prozor1( 5, 1, 6 + j + 2, 78, "SETOVI CIJENA", cbnaslova,, cbokvira, cbteksta, 0 )
+   box_crno_na_zuto( 5, 1, 6 + j + 2, 78, "SETOVI CIJENA", cbnaslova,, cbokvira, cbteksta, 0 )
    FOR i := 1 TO j
       @ 6 + i, 2 SAY IF( Val( gIdCijena ) == i, "->", "  " ) + ;
          Str( i, 3 ) + ". " + PadR( SC_Opisi[ i ], 40 ) + ;

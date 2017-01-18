@@ -46,9 +46,10 @@ MEMVAR cKolona
  param - [10] NIL - prikazi u sljedecem redu,  15 - prikazi u koloni my+15  broj kolone pri editu sa <F2>
 */
 
-FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock )
+FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
+      aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock )
 
-   LOCAL _params := hb_Hash()
+   LOCAL hParams := hb_Hash()
    LOCAL nBroji2
    LOCAL cSmj, nRez, i, K, aUF, cPomDB, nTTrec
    LOCAL cLoc := Space( 40 )
@@ -101,7 +102,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
    ENDIF
 
    IF ( nPored := Len( aPoredak ) ) > 1
-      AAdd( aMessage, "<c+U> - Uredi" )
+      AAdd( aOpcije, "<c+U> - Uredi" )
    ENDIF
 
    PRIVATE TB
@@ -110,19 +111,19 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
       lInvert := .F.
    ENDIF
 
-   _params[ "ime" ]           := cImeBoxa
-   _params[ "xw" ]            := xw
-   _params[ "yw" ]            := yw
-   _params[ "invert" ]        := lInvert
-   _params[ "msgs" ]          := aMessage
-   _params[ "freeze" ]        := nFreeze
-   _params[ "msg_bott" ]      := cMessBot
-   _params[ "msg_top" ]       := cMessTop
-   _params[ "prazno" ]        := nPrazno
-   _params[ "gprazno" ]       := nGPrazno
-   _params[ "podvuci_b" ]     := bPodvuci
+   hParams[ "ime" ]           := cImeBoxa
+   hParams[ "xw" ]            := xw
+   hParams[ "yw" ]            := yw
+   hParams[ "invert" ]        := lInvert
+   hParams[ "msgs" ]          := aOpcije
+   hParams[ "freeze" ]        := nFreeze
+   hParams[ "msg_bott" ]      := cMessBot
+   hParams[ "msg_top" ]       := cMessTop
+   hParams[ "prazno" ]        := nPrazno
+   hParams[ "gprazno" ]       := nGPrazno
+   hParams[ "podvuci_b" ]     := bPodvuci
 
-   browse_only( _params, .T. )
+   browse_only( hParams, .T. )
 
    DO WHILE .T.
 
@@ -203,7 +204,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
 
       CASE nRez == DE_REFRESH
          TB:RefreshAll()
-         @ m_x + 1, m_y + yw -6 SAY Str( RecCount(), 5 )
+         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount(), 5 )
 
       CASE Ch == K_ESC
 
@@ -228,7 +229,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
    RETURN .T.
 
 
-STATIC FUNCTION browse_only( params, lIzOBJDB )
+STATIC FUNCTION browse_only( hParams, lIzOBJDB )
 
    LOCAL i, j, k
    LOCAL _rows, _width
@@ -239,18 +240,18 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
       lIzOBJDB := .F.
    ENDIF
 
-   _rows        :=  params[ "xw" ]
-   _rows_poruke :=  params[ "prazno" ] + iif( params[ "prazno" ] <> 0, 1, 0 )
-   _width       :=  params[ "yw" ]
+   _rows        :=  hParams[ "xw" ]
+   _rows_poruke :=  hParams[ "prazno" ] + iif( hParams[ "prazno" ] <> 0, 1, 0 )
+   _width       :=  hParams[ "yw" ]
 
-   IF params[ "prazno" ] == 0
+   IF hParams[ "prazno" ] == 0
 
       IF !lIzOBJDB
          BoxC()
       ENDIF
-      Box( params[ "ime" ], _rows, _width, params[ "invert" ], params[ "msgs" ] )
+      Box( hParams[ "ime" ], _rows, _width, hParams[ "invert" ], hParams[ "msgs" ] )
    ELSE
-      @ m_x + params[ "xw" ] - params[ "prazno" ], m_y + 1 SAY Replicate( BROWSE_PODVUCI, params[ "yw" ] )
+      @ m_x + hParams[ "xw" ] - hParams[ "prazno" ], m_y + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI ), hParams[ "yw" ] )
 
    ENDIF
 
@@ -259,15 +260,15 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
       Kol := azKol
    ENDIF
 
-   @ m_x, m_y + 2                         SAY params[ "msg_top" ] + iif( !lIzOBJDB, REPL( BROWSE_PODVUCI_2,  42 ), "" )
-   @ m_x + params[ "xw" ] + 1,  m_y + 2   SAY params[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
+   @ m_x, m_y + 2                          SAY hParams[ "msg_top" ] + iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ),  42 ), "" )
+   @ m_x + hParams[ "xw" ] + 1,  m_y + 2   SAY hParams[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
 
 
-   @ m_x + params[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( BROWSE_PODVUCI_2, 42 ), "" )
-   @ m_x + 1, m_y + params[ "yw" ] -6    SAY Str( RecCount(), 5 )
+   @ m_x + hParams[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), 42 ), "" )
+   @ m_x + 1, m_y + hParams[ "yw" ] -6    SAY Str( RecCount(), 5 )
 
 
-   TB := TBrowseDB( m_x + 2 + params[ "prazno" ], m_y + 1, m_x + _rows - _rows_poruke, m_y + _width )
+   TB := TBrowseDB( m_x + 2 + hParams[ "prazno" ], m_y + 1, m_x + _rows - _rows_poruke, m_y + _width )
 
    IF TBSkipBlock <> NIL
       Tb:skipBlock := TBSkipBlock
@@ -284,8 +285,8 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
          TCol := TBColumnNew( ImeKol[ i, 1 ], bShowField )
 
 
-         IF params[ "podvuci_b" ] <> NIL
-            TCol:colorBlock := {|| iif( Eval( params[ "podvuci_b" ] ), { 5, 2 }, { 1, 2 } ) }
+         IF hParams[ "podvuci_b" ] <> NIL
+            TCol:colorBlock := {|| iif( Eval( hParams[ "podvuci_b" ] ), { 5, 2 }, { 1, 2 } ) }
          ENDIF
 
          TB:addColumn( TCol )
@@ -293,13 +294,13 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
 
    NEXT
 
-   TB:headSep := hb_UTF8ToStrBox(BROWSE_HEAD_SEP)
-   TB:colsep :=  hb_UTF8ToStrBox(BROWSE_COL_SEP)
+   TB:headSep := hb_UTF8ToStrBox( BROWSE_HEAD_SEP )
+   TB:colsep :=  hb_UTF8ToStrBox( BROWSE_COL_SEP )
 
-   IF params[ "freeze" ] == NIL
+   IF hParams[ "freeze" ] == NIL
       TB:Freeze := 1
    ELSE
-      Tb:Freeze := params[ "freeze" ]
+      Tb:Freeze := hParams[ "freeze" ]
    ENDIF
 
    RETURN .T.
@@ -482,7 +483,7 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
 
       PRIVATE GetList := {}
       nRez := IndexOrd()
-      Prozor1( 12, 20, 17 + nPored, 59, "UTVRĐIVANJE PORETKA", F18_COLOR_NASLOV, F18_COLOR_OKVIR, F18_COLOR_TEKST, 2 )
+      box_crno_na_zuto( 12, 20, 17 + nPored, 59, "UTVRĐIVANJE PORETKA", F18_COLOR_NASLOV, F18_COLOR_OKVIR, F18_COLOR_TEKST, 2 )
       FOR i := 1 TO nPored
          @ 13 + i, 23 SAY PadR( "poredak po " + aPoredak[ i ], 33, "ú" ) + Str( i, 1 )
       NEXT
@@ -577,7 +578,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
       IF nY + nSirina > MAXCOLS() -2
 
          FOR i := 1 TO Len( aTBGets )
-            aTBGets[ i ]:Col := aTBGets[ i ]:Col  - ( nY + nSirina -78 ) // smanji col koordinate
+            aTBGets[ i ]:Col := aTBGets[ i ]:Col  - ( nY + nSirina - 78 ) // smanji col koordinate
 
          NEXT
       ENDIF

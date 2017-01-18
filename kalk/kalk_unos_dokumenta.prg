@@ -47,7 +47,7 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    LOCAL nMaxRow := MAXROWS() - 4
    LOCAL nI
    LOCAL _opt_row, _opt_d
-   LOCAL _sep := BROWSE_COL_SEP
+   LOCAL _sep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    LOCAL cPicKol := "999999.999"
    LOCAL bPodvuci := {|| iif( field->ERROR == "1", .T., .F. ) }
 

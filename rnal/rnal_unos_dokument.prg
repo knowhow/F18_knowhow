@@ -217,9 +217,9 @@ STATIC FUNCTION header_footer()
 
    @ m_x, m_y + 2 SAY8 cHeader
 
-   @ m_x + 6, m_y + 1 SAY Replicate( BROWSE_PODVUCI_2, __dok_y + 1 ) COLOR cLineClr
+   @ m_x + 6, m_y + 1 SAY Replicate( hb_UTF8ToStrBox(BROWSE_PODVUCI_2), __dok_y + 1 ) COLOR cLineClr
 
-   @ m_x + __dok_x - 1, m_y + 1 SAY Replicate( BROWSE_PODVUCI, __dok_y + 1 ) COLOR cLineClr
+   @ m_x + __dok_x - 1, m_y + 1 SAY Replicate( hb_UTF8ToStrBox(BROWSE_PODVUCI), __dok_y + 1 ) COLOR cLineClr
 
    @ m_x + __dok_x, m_y + 1 SAY8 cFooter
 

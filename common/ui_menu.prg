@@ -87,7 +87,7 @@ FUNCTION meni_fiksna_lokacija( nX1, nY1, aNiz, nIzb )
    xM := Len( aNiz )
    AEval( aNiz, {| x| iif( Len( x ) > nYm, nYm := Len( x ), ) } )
 
-   Prozor1( nX1, nY1, nX1 + xM + 1, nY1 + nYm + 1,,,,,, 0 )
+   box_crno_na_zuto( nX1, nY1, nX1 + xM + 1, nY1 + nYm + 1,,,,,, 0 )
 
    nIzb := meni_0_inkey( nX1 + 1, nY1 + 1, nX1 + xM, nY1 + nYm, aNiz, nIzb )
 

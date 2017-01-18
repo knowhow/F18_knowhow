@@ -790,7 +790,7 @@ FUNCTION opcije_browse_pregleda()
    @ _x + 1, _y SAY8 " <K>    Uključi/isključi račun za kamate         <F5> uzmi broj dok.        "
    @ _x + 2, _y SAY '<ENTER> Postavi/ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
 
-   @ _x + 3, _y SAY REPL( BROWSE_PODVUCI, MAXCOLS() - 12 )
+   @ _x + 3, _y SAY REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI), MAXCOLS() - 12 )
 
    @ _x + 4, _y SAY ""
 

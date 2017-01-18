@@ -89,7 +89,7 @@ FUNCTION pos_unos_racuna()
    @ m_x, m_y + 23 SAY8 PadC ( "RAČUN BR: " + AllTrim( cBrojRn ), 40 ) COLOR f18_color_invert()
 
    oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + _max_rows - 12, m_y + _max_cols - 2, ;
-      ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
+      ImeKol, Kol, { hb_UTF8ToStrBox(BROWSE_PODVUCI_2), hb_UTF8ToStrBox(BROWSE_PODVUCI), hb_UTF8ToStrBox(BROWSE_COL_SEP) }, 0 )
 
    oBrowse:autolite := .F.
 
@@ -495,7 +495,7 @@ FUNCTION pos_ispravi_racun()
 
    pos_unset_key_handler_ispravka_racuna()
 
-   OpcTipke( { "<Enter>-Ispravi stavku", hb_utf8tostr( "<B>-Briši stavku" ), hb_utf8tostr( "<Esc>-Završi" ) } )
+   prikaz_dostupnih_opcija( { "<Enter>-Ispravi stavku", hb_utf8tostr( "<B>-Briši stavku" ), hb_utf8tostr( "<Esc>-Završi" ) } )
 
    oBrowse:autolite := .T.
    oBrowse:configure()

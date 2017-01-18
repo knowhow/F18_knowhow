@@ -42,8 +42,8 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
    _o_tables()
 
-   __box_x := MAXROWS() - 5
-   __box_y := MAXCOLS() - 5
+   __box_x := MAXROWS() -5
+   __box_y := MAXCOLS() -5
 
    IF lNew == nil
       lNew := .F.
@@ -60,8 +60,8 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
    IF nArtType <> 0
       __el_schema := cSchema
-      IF !EMPTY( cSchema )
-          generisi_elemente_iz_sheme( nArt_id, nArtType, cSchema )
+      IF !Empty( cSchema )
+         generisi_elemente_iz_sheme( nArt_id, nArtType, cSchema )
       ENDIF
    ENDIF
 
@@ -69,20 +69,20 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
    @ m_x, m_y + 15 SAY " DEFINISANJE ELEMENATA ARTIKLA: " + artid_str( art_id ) + " "
 
-   @ m_x + __box_x - 1, m_y + 1 SAY Replicate( BROWSE_PODVUCI, __box_y + 1 ) COLOR cLineClr
+   @ m_x + __box_x -1, m_y + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI ), __box_y + 1 ) COLOR cLineClr
 
-   @ m_x + __box_x - 4, m_y + 1 SAY "<c+N> nova"
-   @ m_x + __box_x - 3, m_y + 1 SAY "<F2> ispravka"
-   @ m_x + __box_x - 2, m_y + 1 SAY8 "<c+T> briši"
+   @ m_x + __box_x -4, m_y + 1 SAY "<c+N> nova"
+   @ m_x + __box_x -3, m_y + 1 SAY "<F2> ispravka"
+   @ m_x + __box_x -2, m_y + 1 SAY8 "<c+T> briši"
    @ m_x + __box_x, m_y + 1 SAY "<TAB>-brow.tabela | <ESC> snimi "
 
    _sh_piccode( __el_schema )
 
-   FOR i := 1 to ( __box_x - 2 )
+   FOR i := 1 to ( __box_x -2 )
       @ m_x + i, m_y + __box_x SAY BROWSE_COL_SEP COLOR cLineClr
    NEXT
 
-   @ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY Replicate( BROWSE_PODVUCI_2, ( __box_y - __box_x ) + 1 ) COLOR cLineClr
+   @ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ( __box_y - __box_x ) + 1 ) COLOR cLineClr
 
    SELECT e_att
    GO TOP
@@ -98,9 +98,9 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
       IF Alias() == "ELEMENTS"
 
          // bilo: 16
-         nX := __box_x - 5
+         nX := __box_x -5
          // bilo: 20
-         nY := __box_x - 1
+         nY := __box_x -1
 
          // bilo: 21
          m_y -= __box_x
@@ -130,7 +130,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
       ELSEIF Alias() == "E_AOPS"
 
          // bilo: 10
-         nX := ( __box_x / 2 ) - 1
+         nX := ( __box_x / 2 ) -1
 
          // bilo: 56
          nY := ( __box_y - __box_x ) + 1
@@ -782,7 +782,9 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
 
 
 STATIC FUNCTION el_restore()
+
    LOCAL nRet := DE_CONT
+
    RETURN nRet
 
 
@@ -960,7 +962,7 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
    SEEK e_gr_id_str( __gr_id ) + "*"
 
    DO WHILE !Eof() .AND. field->e_gr_id == __gr_id ;
-      .AND. field->e_gr_at_re == "*"
+         .AND. field->e_gr_at_re == "*"
 
       nEl_att_id := 0
 

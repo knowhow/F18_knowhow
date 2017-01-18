@@ -196,16 +196,16 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
    RETURN .T.
 
 
-/* Box(cBoxId, N, nSirina, Inv, chMsg, cHelpT)
+/* Box(cBoxId, N, nSirina, Inv, aOpcijeIliCPoruka, cHelpT)
  *     Otvara prozor cBoxId dimenzija (N x nSirina), f18_color_invert() ovan
  *         (Inv=.T. ili ne)
  *
- *   param: chMsg - tip C -> prikaz poruke
- *   param: A -> ispisuje opcije pomocu fje OpcTipke
+ *   param: aOpcijeIliCPoruka - tip C -> prikaz poruke
+ *   param: A -> ispisuje opcije pomocu fje prikaz_dostupnih_opcija
  *   param: cBoxId se ne koristi
  */
 
-FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, chMsg, cHelpT )
+FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, aOpcijeIliCPoruka, cHelpT )
 
    LOCAL nX1, nY1, nX2, nY2
    LOCAL cColor, cPom, cNaslovBoxa
@@ -228,9 +228,9 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, chMsg, cHelpT )
    Calc_xy( @_m_x, @_m_y, @_nA1, nSirina )
 
    // stvori prostor za prikaz
-   IF ValType( chMsg ) == "A"
+   IF ValType( aOpcijeIliCPoruka ) == "A"
 
-      cBoxId := OpcTipke( chMsg )
+      cBoxId := prikaz_dostupnih_opcija( aOpcijeIliCPoruka )
 
       IF _m_x + _NA1 > MAXROWS() - 3 - cBoxId
 
@@ -245,8 +245,8 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, chMsg, cHelpT )
 
    ENDIF
 
-   IF  chMsg == NIL
-      cHMsg := ""
+   IF  aOpcijeIliCPoruka == NIL
+      aOpcijeIliCPoruka := ""
    ENDIF
 
    m_x := _m_x
@@ -259,7 +259,7 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, chMsg, cHelpT )
       nVisina,   ;
       nSirina, ;
       SaveScreen( m_x, m_y, m_x + nVisina + 1, m_Y + nSirina + 2 ), ;
-      iif( ValType( chMsg ) != "A", "", cBoxId ), ;
+      iif( ValType( aOpcijeIliCPoruka ) != "A", "", cBoxId ), ;
       Row(), ;
       Col(), ;
       iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), ;
@@ -285,6 +285,7 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, chMsg, cHelpT )
    SET( _SET_DEVICE, cPom )
 
    RETURN .T.
+
 
 
 FUNCTION BoxC()
@@ -325,14 +326,14 @@ FUNCTION BoxC()
    RETURN .T.
 
 
-/*  OpcTipke(aNiz)
+/*  prikaz_dostupnih_opcija(aNiz)
  *  prikaz opcija u Browse-u
  *
  *  aNiz:={"<c-N> Novi","<a-A> Ispravka"}
  *
  */
 
-FUNCTION OpcTipke( aNiz )
+FUNCTION prikaz_dostupnih_opcija( aNiz )
 
    LOCAL i := 0, j := 0, k := 0, nOmax := 0
    LOCAL nBrKol, nOduz, nBrRed, xVrati := ""
@@ -345,7 +346,7 @@ FUNCTION OpcTipke( aNiz )
       nBrRed := Int( Len( aNiz ) / nBrKol ) + iif( Mod( Len( aNiz ), nBrKol ) != 0, 1, 0 )
       nOduz := iif( nOmax < 10, 10, iif( nOmax < 16, 16, iif( nOmax < 20, 20, iif( nOmax < 27, 27, 40 ) ) ) )
 
-      Prozor1( MAXROWS() - 3 - nBrRed, 0,  MAXROWS() - 2, MAXCOLS(),,, Space( 9 ), , F18_COLOR_TEKST )
+      box_crno_na_zuto( MAXROWS() - 3 - nBrRed, 0,  MAXROWS() - 2, MAXCOLS(),,, Space( 9 ), , F18_COLOR_TEKST )
 
       FOR i := 1 TO nBrRed * nBrKol
 
@@ -358,13 +359,14 @@ FUNCTION OpcTipke( aNiz )
          IF aNiz[ i ] == NIL
             aNiz[ i ] := ""
          ENDIF
-         @ MAXROWS() - 3 - nBrRed + j, k SAY PadR( aNiz[ i ], nOduz - 1 ) + iif( Mod( i - 1, nBrKol ) == nBrKol - 1, "", BROWSE_COL_SEP )
+         @ MAXROWS() - 3 - nBrRed + j, k SAY PadR( aNiz[ i ], nOduz - 1 ) + iif( Mod( i - 1, nBrKol ) == nBrKol - 1, "", hb_UTF8ToStrBox(BROWSE_COL_SEP) )
 
       NEXT
 
-      FOR i := 1 TO nBrKol
-         @ MAXROWS() - 3 - nBrRed, ( i - 1 ) * nOduz SAY Replicate( BROWSE_PODVUCI_2, nOduz - iif( i == nBrKol, 0, 1 ) ) + iif( i == nBrKol, "", BROWSE_COL_SEP )
-      NEXT
+      //FOR i := 1 TO nBrKol
+      //   @ MAXROWS() - 3 - nBrRed, ( i - 1 ) * nOduz SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ;
+      //      nOduz - iif( i == nBrKol, 0, 1 ) ) + iif( i == nBrKol, "", hb_UTF8ToStrBox(BROWSE_COL_SEP) )
+      //NEXT
 
       xVrati := nBrRed + 1
    ENDIF
@@ -425,7 +427,7 @@ FUNCTION CentrTxt( tekst, lin )
 
 
 
-FUNCTION Prozor1( v1, h1, v2, h2, cNaslov, cBojaN, cOkvir, cBojaO, cBojaT, nKursor )
+FUNCTION box_crno_na_zuto( v1, h1, v2, h2, cNaslov, cBojaN, cOkvir, cBojaO, cBojaT, nKursor )
 
    LOCAL _device := Set( _SET_DEVICE )
 
@@ -515,7 +517,7 @@ FUNCTION Postotak( nIndik, nUkupno, cTekst, cBNasl, cBOkv, lZvuk )
       cNas := iif( cBNasl == NIL, F18_COLOR_NASLOV, cBNasl )
       nCilj := nUkupno
       cKraj := cTekst + " zavrseno."
-      Prozor1( 10, 13, 14, 66, cTekst + " u toku...", cNas, , cOkv, F18_COLOR_TEKST, 0 )
+      box_crno_na_zuto( 10, 13, 14, 66, cTekst + " u toku...", cNas, , cOkv, F18_COLOR_TEKST, 0 )
       @ 12, 15 SAY Replicate( "X", 50 ) COLOR F18_COLOR_STATUS
       IF lZvuk
          f18_tone( 1900, 0 )
@@ -617,7 +619,7 @@ FUNCTION KudaDalje( cTekst, aOpc, cPom )
    NEXT
    nRedova := Int( ( nOpc - 1 ) / 3 + 1 )
    nXp := Int( ( MAXROWS() -nRedova * 4 -2 ) / 2 ) + 2
-   Prozor1( nXp - 2, 4, nXp + 1 + 4 * nRedova, 75,, "N/W", "²ß²²²Ü²² ", "N/W", "W/W", 0 )
+   box_crno_na_zuto( nXp - 2, 4, nXp + 1 + 4 * nRedova, 75,, "N/W", "²ß²²²Ü²² ", "N/W", "W/W", 0 )
    @ nXp - 1, 5 SAY PadC( cTekst, 70 ) COLOR "N/W"
    DO WHILE .T.
       FOR j = 1 TO nRedova
@@ -867,7 +869,7 @@ FUNCTION VarEdit( aNiz, nX1, nY1, nX2, nY2, cNaslov, cBoje )
 
    PushWa()
    SET DEVICE TO SCREEN
-   Prozor1( nX1, nY1, nX2, nY2, cNaslov, cBNaslova,, cBOkvira, cBTeksta, 2 )
+   box_crno_na_zuto( nX1, nY1, nX2, nY2, cNaslov, cBNaslova,, cBOkvira, cBTeksta, 2 )
    FOR i := 1 TO Len( aNiz )
       cPom := aNiz[ i, 2 ]
       IF aNiz[ i, 3 ] == NIL .OR. Len( aNiz[ i, 3 ] ) == 0; aNiz[ i, 3 ] := ".t."; ENDIF

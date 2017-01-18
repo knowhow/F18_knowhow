@@ -306,7 +306,7 @@ FUNCTION P_FTxt( cId, dx, dy )
    _p_left := 1
    _p_right := maxcols() -3
 
-   Prozor1( _p_top, _p_left, _p_bottom, _p_right, "PREGLED TEKSTA" )
+   box_crno_na_zuto( _p_top, _p_left, _p_bottom, _p_right, "PREGLED TEKSTA" )
 
    @ _p_bottom, 0 SAY ""
 

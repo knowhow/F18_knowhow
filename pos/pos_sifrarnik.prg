@@ -394,7 +394,7 @@ FUNCTION PomMenu1( aNiz )
    sP += 3
    xN := IF( xP > 11, xP - dP, xP + 1 )
    yN := IF( yP > 39, yP - sP, yP + 1 )
-   Prozor1( xN, yN, xN + dP, yN + sP - 1, "POMOC" )
+   box_crno_na_zuto( xN, yN, xN + dP, yN + sP - 1, "POMOC" )
 
    FOR i := 1 TO dP - 1
       @ xN + i, yN + 1 SAY PadR( aNiz[ i, 1 ] + "-" + aNiz[ i, 2 ], sP - 2 )

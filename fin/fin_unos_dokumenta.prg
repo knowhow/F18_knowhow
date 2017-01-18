@@ -48,7 +48,7 @@ FUNCTION fin_unos_naloga()
 
 FUNCTION fin_knjizenje_naloga()
 
-   LOCAL _sep := BROWSE_COL_SEP
+   LOCAL _sep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    LOCAL _w := 25
    LOCAL _d := MAXCOLS() - 6
    LOCAL _x_row := MAXROWS() - 5

@@ -174,7 +174,7 @@ FUNCTION Zaduzenje
          "-" + DIO->Naz, "" ), 70 ) COLOR f18_color_invert()
 
       oBrowse := FormBrowse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, ;
-         { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
+         { hb_UTF8ToStrBox(BROWSE_PODVUCI_2), hb_UTF8ToStrBox(BROWSE_PODVUCI), hb_UTF8ToStrBox(BROWSE_COL_SEP) }, 0 )
       oBrowse:autolite := .F.
 
       pos_set_key_handler_ispravka_zaduzenja()
@@ -419,7 +419,7 @@ FUNCTION IspraviZaduzenje()
    cGetId := _idroba
    nGetKol := _Kolicina
 
-   OpcTipke( { "<Enter>-Ispravi stavku", "<B>-Brisi stavku", "<Esc>-Zavrsi" } )
+   prikaz_dostupnih_opcija( { "<Enter>-Ispravi stavku", "<B>-Brisi stavku", "<Esc>-Zavrsi" } )
 
    oBrowse:autolite := .T.
    oBrowse:configure()

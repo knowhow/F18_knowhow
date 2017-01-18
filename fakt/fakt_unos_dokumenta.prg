@@ -26,7 +26,7 @@ FUNCTION fakt_unos_dokumenta()
 
    LOCAL nI, _x_pos, _y_pos, _x, _y
    LOCAL _opt_d, _opt_row
-   LOCAL _sep := BROWSE_COL_SEP
+   LOCAL _sep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    PRIVATE ImeKol, Kol
 
 #ifdef F18_POS

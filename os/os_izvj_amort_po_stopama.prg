@@ -26,7 +26,7 @@ FUNCTION os_amortizacija_po_stopama()
    ENDIF
 
    O_AMORT
-   O_RJ
+   o_rj()
 
    o_os_sii_promj()
    o_os_sii()
@@ -76,7 +76,7 @@ FUNCTION os_amortizacija_po_stopama()
    ENDIF
 
    O_AMORT
-   O_RJ
+   o_rj()
 
    o_os_sii_promj()
    o_os_sii()

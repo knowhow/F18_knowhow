@@ -508,7 +508,7 @@ FUNCTION os_validate_date( os_date )
 STATIC FUNCTION _o_tables()
 
    O_K1
-   O_RJ
+   o_rj()
    o_konto()
    O_AMORT
    O_REVAL

@@ -28,7 +28,7 @@ FUNCTION os_pregled_amortizacije()
    ENDIF
 
    o_konto()
-   O_RJ
+   o_rj()
 
    o_os_sii_promj()
    o_os_sii()

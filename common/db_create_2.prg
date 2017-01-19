@@ -19,7 +19,7 @@ FUNCTION open_sif_tables_1()
    o_tnal()
    o_tdok()
    o_valute()
-   O_RJ
+   o_rj()
    o_banke()
    o_ops()
    o_sifk()

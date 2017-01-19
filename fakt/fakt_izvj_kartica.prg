@@ -30,7 +30,7 @@ FUNCTION fakt_kartica()
    select_o_partner()
    select_o_roba()
    o_tarifa()
-   O_RJ
+   o_rj()
 
    IF _params[ "fakt_objekti" ]
       O_FAKT_OBJEKTI

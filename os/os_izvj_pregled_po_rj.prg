@@ -20,7 +20,7 @@ FUNCTION os_pregled_po_rj()
    LOCAL _export := .F.
    LOCAL _start_cmd
 
-   O_RJ
+   o_rj()
    o_os_sii()
 
    cIdrj := Space( Len( field->idrj ) )
@@ -79,7 +79,7 @@ FUNCTION os_pregled_po_rj()
       create_dbf_r_export( _g_exp_flds() )
 
       // otvori ponovo tabele...
-      O_RJ
+      o_rj()
       o_os_sii()
 
    ENDIF

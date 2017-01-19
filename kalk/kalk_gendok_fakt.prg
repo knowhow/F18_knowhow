@@ -32,7 +32,7 @@ FUNCTION kalk_prenos_fakt()
    o_partner()
    o_konto()
    o_kalk_pripr()
-   O_RJ
+   o_rj()
 
    SET ORDER TO TAG "ID"
    SELECT kalk_pripr

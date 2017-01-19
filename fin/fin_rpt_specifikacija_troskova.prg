@@ -37,7 +37,7 @@ FUNCTION r_spec_tr()
    PRIVATE nKALK_ras := 0
 
    o_konto()
-   O_RJ
+   o_rj()
 
    // uslovi izvjestaja
    IF g_vars( @dD_from, @dD_to, @cGroup, @cKtoListZ, @cKtoList, @cSp_ld ) == 0
@@ -163,7 +163,7 @@ STATIC FUNCTION _g_gr_kto( cId )
    LOCAL xRet := ""
    LOCAL nTArea := Select()
 
-   O_RJ
+   o_rj()
    SELECT rj
    SEEK cId
 
@@ -184,7 +184,7 @@ STATIC FUNCTION _g_gr_naz( cId )
    LOCAL xRet := ""
    LOCAL nTArea := Select()
 
-   O_RJ
+   o_rj()
    SELECT rj
    SEEK cId
 

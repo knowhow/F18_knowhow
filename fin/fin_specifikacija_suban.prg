@@ -177,7 +177,7 @@ FUNCTION fin_specifikacija_suban()
    ENDIF
 
    IF cRasclaniti == "D"
-      O_RJ
+      o_rj()
    ENDIF
 
    o_partner()

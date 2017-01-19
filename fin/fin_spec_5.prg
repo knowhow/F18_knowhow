@@ -76,7 +76,7 @@ FUNCTION PregNDP()
    find_suban_by_konto_partner( cIdFirma, cIdkonto)
 
    IF cPoRP == "1"
-      O_RJ
+      o_rj()
       SELECT suban
       INDEX ON idfirma + idkonto + idrj + DToS( datdok ) TO SUBSUB
       SET ORDER TO TAG "SUBSUB"

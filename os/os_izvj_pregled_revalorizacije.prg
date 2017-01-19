@@ -20,7 +20,7 @@ FUNCTION os_pregled_revalorizacije()
    LOCAL _sr_id
 
    o_konto()
-   O_RJ
+   o_rj()
 
    o_os_sii_promj()
    o_os_sii()

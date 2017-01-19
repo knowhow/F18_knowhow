@@ -35,7 +35,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    o_sifk()
    o_sifv()
    o_roba()
-   O_RJ
+   o_rj()
    o_fakt()
 
    SELECT fakt

@@ -807,7 +807,7 @@ FUNCTION open_otv_stavke_tabele( lOsuban )
 
    o_partner()
    o_konto()
-   O_RJ
+   o_rj()
 
    IF lOSuban
 

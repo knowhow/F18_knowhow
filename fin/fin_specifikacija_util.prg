@@ -270,7 +270,7 @@ FUNCTION prikaz_k1_k4_rj( lK )
    IF gFinRJ == "D" .AND. Len( cIdRJ ) <> 0
       cRjNaz := ""
       nArr := Select()
-      O_RJ
+      o_rj()
       SELECT rj
       HSEEK cIdRj
 

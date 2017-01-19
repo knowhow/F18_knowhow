@@ -33,7 +33,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    O_VRSTEP
    o_ops()
    o_valute()
-   O_RJ
+   o_rj()
    O_FAKT_OBJEKTI
    o_fakt()
    o_partner()
@@ -711,7 +711,7 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
    o_ops()
    o_fakt_doks2()
    o_valute()
-   O_RJ
+   o_rj()
    O_FAKT_OBJEKTI
    o_fakt()
    o_partner()
@@ -733,7 +733,7 @@ FUNCTION fakt_real_partnera()
    o_fakt_doks()
    o_partner()
    o_valute()
-   O_RJ
+   o_rj()
 
    cIdfirma := self_organizacija_id()
    dDatOd := CToD( "" )

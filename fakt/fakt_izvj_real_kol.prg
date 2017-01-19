@@ -645,7 +645,7 @@ STATIC FUNCTION _o_tables()
    o_fakt_doks()
    o_partner()
    o_valute()
-   O_RJ
+   o_rj()
    o_sifk()
    o_sifv()
    o_roba()

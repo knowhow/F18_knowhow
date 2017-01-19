@@ -97,7 +97,7 @@ STATIC FUNCTION _menu_budzet()
 
 FUNCTION OSifBudzet()
 
-   O_RJ
+   o_rj()
    //o_funk()
    //o_fond()
    //O_BUDZET

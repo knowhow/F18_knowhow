@@ -12,9 +12,7 @@
 #include "f18.ch"
 
 
-// ------------------------------------
-// ispisi naziv kod pretrage sifarnika
-// ------------------------------------
+
 FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
 
    LOCAL cTmp  := ""
@@ -27,9 +25,9 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
       cTmp := Trim( ( nDbf )->naziv  )
    ENDIF
 
-   IF ( nDbf )->( rddName() ) == "SQLMIX" // sql data utf-8
-      cTmp := _u( cTmp )
-   ENDIF
+   //IF ( nDbf )->( rddName() ) == "SQLMIX" // sql data utf-8
+      //cTmp := _u( cTmp )
+   //ENDIF
 
    IF dx <> NIL .AND. dy <> nil
 

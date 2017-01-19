@@ -364,7 +364,7 @@ STATIC FUNCTION ObSif()
    o_fakt_txt()
    o_tarifa()
    o_valute()
-   O_RJ
+   o_rj()
    O_SAST
    O_UGOV
    O_RUGOV

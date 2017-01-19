@@ -306,7 +306,7 @@ STATIC FUNCTION _o_tables()
 
    o_fakt_doks()
    o_roba()
-   O_RJ
+   o_rj()
    // o_kalk()
    o_fakt()
    o_fakt_pripr()

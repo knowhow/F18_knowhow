@@ -12,6 +12,17 @@
 #include "f18.ch"
 
 
+
+FUNCTION o_rj()
+
+   SELECT ( F_RJ )
+   use_sql_rj()
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+   
+
+
 FUNCTION o_fakt()
    RETURN o_dbf_table( F_FAKT, "fakt", "1" )
 

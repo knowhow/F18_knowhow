@@ -36,7 +36,7 @@ FUNCTION P_Konto( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   lRet := PostojiSifra( F_KONTO, 1, MAXROWS() -15, MAXCOLS() -20, "LKT: Lista: Konta", @cId, dx, dy )
+   lRet := p_sifra( F_KONTO, 1, MAXROWS() -15, MAXCOLS() -20, "LKT: Lista: Konta", @cId, dx, dy )
 
    PopWa()
 

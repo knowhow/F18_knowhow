@@ -251,8 +251,7 @@ FUNCTION edit_fin_priprema()
       @ m_x + 12, m_y + 44 SAY "      Fond." GET _Fond VALID Empty( _Fond ) .OR. P_Fond( @_Fond ) PICT "@!"
    ENDIF
 
-   @ m_x + 13, m_y + 2 SAY "Konto  :" GET _IdKonto ;
-      PICT "@!" ;
+   @ m_x + 13, m_y + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
       VALID Partija( @_IdKonto ) .AND. P_Konto( @_IdKonto, 13, 20 ) ;
       .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
 
@@ -661,7 +660,7 @@ FUNCTION o_fin_edit()
       O_FAKT_OBJEKTI
    ENDIF
 
-   O_RJ
+   o_rj()
 
    IF gTroskovi == "D"
     //  o_fond()

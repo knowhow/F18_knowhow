@@ -63,7 +63,7 @@ STATIC FUNCTION bterm_to_pripr()
    o_fakt_pripr()
    o_fakt()
    o_roba()
-   O_RJ
+   o_rj()
    o_partner()
 
    SELECT ( F_TMP_1 )

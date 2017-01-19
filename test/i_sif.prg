@@ -40,7 +40,7 @@ FUNCTION i_dodaj_sifru_rj()
    test_var( "ok", .F. )
    test_var( "rec_99", 0 )
 
-   O_RJ
+   o_rj()
    _kod := PadR( "99", Len( ID ) )
    _naz := "RJ 99"
 

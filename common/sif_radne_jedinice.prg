@@ -25,7 +25,7 @@ FUNCTION P_RJ( cId, nDeltaX, nDeltaY )
 
    nTArea := Select()
 
-   O_RJ
+   o_rj()
 
    AAdd( ImeKol, { PadR( "Id",  2 ),       {|| id },   "id",     {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ),    {|| PadR( naz, 35 ) },  "naz" } )

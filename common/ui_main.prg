@@ -662,31 +662,7 @@ FUNCTION KudaDalje( cTekst, aOpc, cPom )
    RETURN nVrati
 
 
-FUNCTION Ocitaj( nObl, xKljuc, nPbr, lInd )
 
-   // vraca trazeno polje (nPbr+1) iz
-   // sifrarn.za zadanu vrijednost indeksa 'xKljuc'
-   // Primjer : xRez:=Ocitaj(F_VALUTE,"D","naz2")
-
-   LOCAL xVrati
-   IF lInd == NIL; lInd := .F. ; ENDIF
-   PRIVATE cPom := ""
-   IF ValType( nPbr ) == "C"
-      cPom := nPbr  // za makro evaluaciju mora biti priv varijabla
-   ENDIF
-
-   PushWA()
-   SELECT ( nObl )
-   SEEK xKljuc
-   xPom := iif( ValType( nPbr ) == "C", &cPom, FieldGet( 1 + nPbr ) )
-   IF lInd
-      xVrati := iif( Found(), xPom, Blank( xPom ) )
-   ELSE
-      xVrati := iif( Found(), xPom, Space( LENx( xPom ) ) )
-   ENDIF
-   PopWA()
-
-   RETURN xVrati
 
 
 FUNCTION LENx( xVrij )

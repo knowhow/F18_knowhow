@@ -49,9 +49,9 @@ FUNCTION lager_lista_magacin()
    LOCAL dL_ulaz := CToD( "" )
    LOCAL dL_izlaz := CToD( "" )
 
-   //pPicDem := global_pic_iznos()
-   //pPicCDem := global_pic_cijena()
-   //pPicKol := global_pic_kolicina()
+   // pPicDem := global_pic_iznos()
+   // pPicCDem := global_pic_cijena()
+   // pPicKol := global_pic_kolicina()
 
    cIdFirma := self_organizacija_id()
    cPrikazDob := "N"
@@ -153,7 +153,7 @@ FUNCTION lager_lista_magacin()
 
       @ m_x + 11, m_y + 2 SAY8 "Vrsta štampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
 
-      @ m_x + 12, m_y + 2 SAY8 "Postaviti srednju NC u sifrarnik" GET cNCSif PICT "@!" valid ( ( cpnab == "D" .AND. cncsif == "D" ) .OR. cNCSif == "N" )
+      @ m_x + 12, m_y + 2 SAY8 "Postaviti srednju NC u sifrarnik" GET cNCSif PICT "@!" VALID ( ( cpnab == "D" .AND. cncsif == "D" ) .OR. cNCSif == "N" )
 
       IF fPocStanje
          @ m_x + 13, m_y + 2 SAY8 "Sredi samo stavke kol=0, nv<>0 (0/1/2)" ;
@@ -301,7 +301,7 @@ FUNCTION lager_lista_magacin()
    IF cFilt == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
    ENDIF
    GO TOP
 
@@ -538,27 +538,27 @@ FUNCTION lager_lista_magacin()
             nIzlaz += nKolicina
             kalk_sumiraj_kolicinu( 0, nKolicina, @nTUlazP, @nTIzlazP )
             IF koncij->naz == "P2"
-               nVPVI += Round( roba->plc * ( -kolicina ), gZaokr )
-               nVPVRI += Round( roba->plc * ( -kolicina ), gZaokr )
+               nVPVI += Round( roba->plc * ( - kolicina ), gZaokr )
+               nVPVRI += Round( roba->plc * ( - kolicina ), gZaokr )
             ELSE
-               nVPVI += Round( roba->vpc * ( -kolicina ), gZaokr )
-               nVPVRI += Round( field->vpc * ( -kolicina ), gZaokr )
+               nVPVI += Round( roba->vpc * ( - kolicina ), gZaokr )
+               nVPVRI += Round( field->vpc * ( - kolicina ), gZaokr )
             ENDIF
-            nRabat += Round(  rabatv / 100 * vpc * ( -kolicina ), gZaokr )
-            nNVI += Round( nc * ( -kolicina ), gZaokr )
+            nRabat += Round(  rabatv / 100 * vpc * ( - kolicina ), gZaokr )
+            nNVI += Round( nc * ( - kolicina ), gZaokr )
             nKolicina := -field->kolicina
             nUlaz += nKolicina
             kalk_sumiraj_kolicinu( nKolicina, 0, @nTUlazP, @nTIzlazP )
 
             IF koncij->naz == "P2"
-               nVPVU += Round( -roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
-               nVPVRU += Round( -roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+               nVPVU += Round( - roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+               nVPVRU += Round( - roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             ELSE
-               nVPVU += Round( -roba->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
-               nVPVRU += Round( -field->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+               nVPVU += Round( - roba->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+               nVPVRU += Round( - field->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             ENDIF
 
-            nNVU += Round( -nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+            nNVU += Round( - nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
          ENDIF
 
          cMIPart := field->idpartner
@@ -799,10 +799,7 @@ FUNCTION lager_lista_magacin()
                   .OR. ( cNula == "D" )
 
                cTmp := ""
-
-               IF roba->( FieldPos( "SIFRADOB" ) ) <> 0
-                  cTmp := roba->sifradob
-               ENDIF
+               cTmp := roba->sifradob
 
                IF cNula == "D" .AND. Round( nUlaz - nIzlaz, 4 ) = 0
                   fill_exp_tbl( 0, roba->id, cTmp, ;
@@ -1309,27 +1306,27 @@ STATIC FUNCTION _gen_xml( params )
             _izlaz += _kolicina
             kalk_sumiraj_kolicinu( 0, _kolicina, @_t_ulaz_p, @_t_izlaz_p )
             IF koncij->naz == "P2"
-               _vpv_i += Round( roba->plc * ( -kolicina ), gZaokr )
-               _vpv_ri += Round( roba->plc * ( -kolicina ), gZaokr )
+               _vpv_i += Round( roba->plc * ( - kolicina ), gZaokr )
+               _vpv_ri += Round( roba->plc * ( - kolicina ), gZaokr )
             ELSE
-               _vpv_i += Round( roba->vpc * ( -kolicina ), gZaokr )
-               _vpv_ri += Round( field->vpc * ( -kolicina ), gZaokr )
+               _vpv_i += Round( roba->vpc * ( - kolicina ), gZaokr )
+               _vpv_ri += Round( field->vpc * ( - kolicina ), gZaokr )
             ENDIF
-            _rabat += Round(  rabatv / 100 * vpc * ( -kolicina ), gZaokr )
-            _nv_i += Round( nc * ( -kolicina ), gZaokr )
+            _rabat += Round(  rabatv / 100 * vpc * ( - kolicina ), gZaokr )
+            _nv_i += Round( nc * ( - kolicina ), gZaokr )
             _kolicina := -field->kolicina
             _ulaz += _kolicina
             kalk_sumiraj_kolicinu( _kolicina, 0, @_t_ulaz_p, @_t_izlaz_p )
 
             IF koncij->naz == "P2"
-               _vpv_u += Round( -roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
-               _vpv_ru += Round( -roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+               _vpv_u += Round( - roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+               _vpv_ru += Round( - roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             ELSE
-               _vpv_u += Round( -roba->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
-               _vpv_ru += Round( -field->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+               _vpv_u += Round( - roba->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+               _vpv_ru += Round( - field->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             ENDIF
 
-            _nv_u += Round( -nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+            _nv_u += Round( - nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
          ENDIF
 
          SKIP

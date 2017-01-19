@@ -356,9 +356,9 @@ STATIC FUNCTION provjera_roba_po_sifradob_postoji()
 
 /*
       SELECT roba
-      SET ORDER TO TAG "SIFRADOB"
+      -- SET ORDER TO TAG "SIFRADOB"
       GO TOP
-      SEEK kalk_imp_temp->sifradob
+      -- SEEK kalk_imp_temp->sifradob
 
       IF Found()
 */

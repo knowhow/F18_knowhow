@@ -1369,34 +1369,6 @@ FUNCTION kalk_plus_minus_kol()
 
 
 
-/*
-
-
--- FUNCTION UzmiTarIzSif()
-
-   o_kalk_edit()
-   SELECT kalk_pripr
-   GO TOP
-   my_flock()
-   DO WHILE !Eof()
-      Scatter()
-      _idtarifa := Ocitaj( F_ROBA, _idroba, "idtarifa" )
-      _ERROR := " "
-      Gather()
-      SKIP 1
-   ENDDO
-   my_unlock()
-   Msg( "Automatski pokrećem asistenta (opcija A)!", 1 )
-   --lKalkAsistentAuto := .T.
-   -- KEYBOARD Chr( K_ESC )
-   my_close_all_dbf()
-
-   RETURN
-
-   *     Filuje tarifu u svim stavkama u kalk_pripremi odgovarajucom sifrom tarife iz sifrarnika robe
-*/
-
-
 
 /*
  *     Formira diskontnu maloprodajnu cijenu u svim stavkama u kalk_pripremi

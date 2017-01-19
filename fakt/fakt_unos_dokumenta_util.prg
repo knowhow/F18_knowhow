@@ -78,7 +78,7 @@ FUNCTION V_Podbr()
       nPKolicina := _kolicina
       _idroba := Space( Len( _idroba ) )
       Box(, 5, 50 )
-      @ m_x + 1, m_y + 2 SAY "Proizvod:" GET _idroba valid {|| Empty( _idroba ) .OR. P_roba( @_idroba ) } PICT "@!"
+      @ m_x + 1, m_y + 2 SAY "Proizvod:" GET _idroba VALID {|| Empty( _idroba ) .OR. P_roba( @_idroba ) } PICT "@!"
       READ
       IF !Empty( _idroba )
          @ m_x + 3, m_y + 2 SAY8 "količina        :" GET nPkolicina PICT pickol
@@ -429,7 +429,7 @@ FUNCTION V_Roba( lPrikTar )
    ENDIF
 
    IF Right( Trim ( &cVarIdRoba ), 2 ) = "--"
-      cPom := PadR( Left( &cVarIdRoba, Len( Trim( &cVarIdRoba ) ) -2 ), Len( &cVarIdRoba ) )
+      cPom := PadR( Left( &cVarIdRoba, Len( Trim( &cVarIdRoba ) ) - 2 ), Len( &cVarIdRoba ) )
       SELECT roba
       SEEK cPom
       IF Found()
@@ -438,7 +438,7 @@ FUNCTION V_Roba( lPrikTar )
       ENDIF
    ENDIF
 
-   P_Roba( @_Idroba, nil, nil, roba_trazi_po_sifradob() )
+   P_Roba( @_Idroba, NIL, NIL, roba_trazi_po_sifradob() )
 
    SELECT roba
    SELECT fakt_pripr
@@ -837,7 +837,7 @@ FUNCTION artikal_kao_usluga( fNovi )
 
       _porez := 0
 
-      @ Row() -1, m_y + 25 SAY "opis usl.:" GET _txt1 PICT "@S50"
+      @ Row() - 1, m_y + 25 SAY "opis usl.:" GET _txt1 PICT "@S50"
 
       READ
 

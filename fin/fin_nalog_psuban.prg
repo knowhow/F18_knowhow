@@ -347,10 +347,10 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
 
 
-   /*
+/*
        fin_nalog_zaglavlje()
        Zaglavlje (sub)analitickog naloga
-   */
+*/
 
 FUNCTION fin_nalog_zaglavlje( dDatNal )
 

@@ -138,7 +138,7 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
       cPomTag := "ID"
    ENDIF
 
-   xRet := PostojiSifra( F_ROBA, ( cPomTag ), MAXROWS() - 11, MAXCOLS() - 5, "Lista artikala - robe", @cId, dx, dy, bRoba,,,,, { "ID" } )
+   xRet := p_sifra( F_ROBA, ( cPomTag ), MAXROWS() - 11, MAXCOLS() - 5, "Lista artikala - robe", @cId, dx, dy, bRoba,,,,, { "ID" } )
 
    PopWa()
 

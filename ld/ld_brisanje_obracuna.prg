@@ -42,7 +42,7 @@ FUNCTION BrisiRadnika()
    LOCAL hParams
 
    nUser := 001
-   O_RADN
+   o_ld_radn()
    O_LD
 
 
@@ -162,7 +162,7 @@ FUNCTION BrisiMjesec()
 
    nUser := 001
 
-   O_RADN
+   o_ld_radn()
 
    lLogBrMjesec := .F.
 

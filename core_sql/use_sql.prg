@@ -51,10 +51,10 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
 
    IF lMakeIndex
 
-      IF cTable == "radn" // RADN je izuzetak sa imenima tagova "1", "2"
-         INDEX ON ID TAG 1 TO ( cAlias )
+      IF cTable == "ld_radn" // RADN je izuzetak sa imenima tagova "1", "2"
+         INDEX ON ID TAG "1" TO ( cAlias )
          IF FieldPos( "NAZ" ) > 0
-            INDEX ON NAZ TAG 2 TO ( cAlias )
+            INDEX ON NAZ TAG "2" TO ( cAlias )
          ENDIF
          SET ORDER TO TAG "1"
       ELSE

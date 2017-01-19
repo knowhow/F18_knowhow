@@ -18,7 +18,7 @@ FUNCTION P_RVrsta( cid, dx, dy )
    LOCAL nSelect
    PRIVATE ImeKol, Kol := {}
 
-   ImeKol := { { "ID ",  {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) }      }, ;
+   ImeKol := { { "ID ",  {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) }      }, ;
       { PadC( "Naziv", 30 ), {|| Left( naz, 30 ) },      "naz"       };
       }
    FOR i := 1 TO Len( ImeKol )

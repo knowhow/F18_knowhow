@@ -910,12 +910,12 @@ STATIC FUNCTION ORekap()
 
    o_por()
    o_dopr()
-   O_PAROBR
+   o_ld_parametri_obracuna()
    o_ld_rj()
-   O_RADN
-   O_STRSPR
-   O_KBENEF
-   O_VPOSLA
+   o_ld_radn()
+   o_str_spr()
+   o_koef_beneficiranog_radnog_staza()
+   o_ld_vrste_posla()
    O_OPS
    O_RADKR
    o_kred()

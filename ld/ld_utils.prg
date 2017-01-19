@@ -541,7 +541,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    BoxC()
 
-   O_RADN
+   o_ld_radn()
    O_LD
 
    SET ORDER TO TAG "2"
@@ -656,7 +656,7 @@ FUNCTION SortPrez( cId, lSql )
 
    SELECT F_RADN
    IF !Used()
-      O_RADN
+      o_ld_radn()
    ENDIF
 
    HSEEK cId

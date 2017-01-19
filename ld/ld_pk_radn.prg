@@ -19,9 +19,7 @@ STATIC I_CL_P := "3"
 STATIC I_CL_PI := "4"
 
 
-// ---------------------------------------
-// forma za unos poreske kartice
-// ---------------------------------------
+/*
 FUNCTION p_kartica( cIdRadn )
 
    LOCAL nZ_id := 0
@@ -218,6 +216,7 @@ STATIC FUNCTION unos_osn( lNew, cIdRadn, nZ_id )
 
    RETURN field->lo_ufakt
 
+*/
 
 
 // ---------------------------------------

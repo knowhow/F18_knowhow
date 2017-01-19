@@ -25,12 +25,12 @@ STATIC __xml := 0
 FUNCTION ol_o_tbl()
 
    O_OBRACUNI
-   O_PAROBR
+   o_ld_parametri_obracuna()
    O_PARAMS
    o_ld_rj()
-   O_RADN
-   O_KBENEF
-   O_VPOSLA
+   o_ld_radn()
+   o_koef_beneficiranog_radnog_staza()
+   o_ld_vrste_posla()
    o_tippr()
    o_kred()
    o_dopr()

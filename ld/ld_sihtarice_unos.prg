@@ -395,7 +395,7 @@ FUNCTION P_TPRSiht( cId, dx, dy )
    ENDIF
    SELECT ( nArr )
 
-   ImeKol := { { PadR( "Id", 4 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "Id", 4 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 30 ), {||  naz }, "naz" }, ;
       { PadC( "K1", 3 ), {|| PadC( K1, 3 ) }, "k1"  }  ;
       }

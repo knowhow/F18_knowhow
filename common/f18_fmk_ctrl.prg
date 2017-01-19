@@ -441,7 +441,7 @@ STATIC FUNCTION f18_pr_rezultat( a_ctrl, a_data, a_sif )
 FUNCTION f18_sif_data( data, checksum )
 
    O_ROBA
-   O_RADN
+   o_ld_radn()
    O_PARTN
    O_KONTO
    O_TRFP

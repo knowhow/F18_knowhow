@@ -229,7 +229,7 @@ STATIC FUNCTION otvori_tabele()
    O_RADKR
    SET ORDER TO TAG "1"
    o_ld_rj()
-   O_RADN
+   o_ld_radn()
    O_LD
    O_LDT22
    SET ORDER TO TAG "1"

@@ -21,7 +21,7 @@ FUNCTION P_VrPrim( cId, dx, dy )
    ImeKol := {}
    Kol := {}
 
-   AAdd( Imekol, { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
+   AAdd( Imekol, { "ID", {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } } )
    AAdd( Imekol, { "Opis", {|| NAZ              }, "NAZ"      } )
    AAdd( Imekol, { "Pomocni tekst", {|| POM_TXT          }, "POM_TXT"  } )
    AAdd( Imekol, { "Konto ", {|| idkonto          }, "idkonto"  } )
@@ -41,7 +41,7 @@ FUNCTION P_VrPrim2( cId, dx, dy )
    LOCAL vrati
    PRIVATE ImeKol, Kol
 
-   ImeKol := { { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { "ID", {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { "Opis", {|| NAZ              }, "NAZ"      }, ;
       { "Pomocni tekst", {|| POM_TXT          }, "POM_TXT"  }, ;
       { "Konto ", {|| idkonto          }, "idkonto"  }, ;

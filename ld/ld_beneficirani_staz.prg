@@ -44,7 +44,7 @@ FUNCTION BenefStepen()
 
    SELECT F_KBENEF
    IF !Used()
-      O_KBENEF
+      o_koef_beneficiranog_radnog_staza()
    ENDIF
 
    SELECT kbenef

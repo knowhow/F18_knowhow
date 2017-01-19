@@ -42,10 +42,10 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       cGodina := gGodina
       cObracun := gObracun
 
-      O_PAROBR
+      o_ld_parametri_obracuna()
       o_ld_rj()
-      O_RADN
-      O_VPOSLA
+      o_ld_radn()
+      o_ld_vrste_posla()
       O_RADKR
       o_kred()
       O_LD
@@ -233,10 +233,10 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
          O_RADSAT
       ENDIF
 
-      O_PAROBR
+      o_ld_parametri_obracuna()
       o_ld_rj()
-      O_RADN
-      O_VPOSLA
+      o_ld_radn()
+      o_ld_vrste_posla()
       O_RADKR
       o_kred()
       O_LD

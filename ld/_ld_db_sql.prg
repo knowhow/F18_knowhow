@@ -20,6 +20,7 @@ FUNCTION o_tippr()
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   
 
 
 FUNCTION o_tippr_ili_tippr2( cObracun )

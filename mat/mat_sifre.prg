@@ -59,7 +59,7 @@ FUNCTION P_KarKon( cid, dx, dy )
 
    PRIVATE ImeKol, Kol
 
-   ImeKol := { { "ID ", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } }, ;
+   ImeKol := { { "ID ", {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) } }, ;
       { "T.NC( /1/2/3/P)", {|| PadC( tip_nc, 17 ) }, "tip_nc", {|| .T. }, {|| wtip_nc $ " 123P" } }, ;
       { "T.PC( /1/2/3/P)", {|| PadC( tip_pc, 17 ) }, "tip_pc", {|| .T. }, {|| wtip_pc $ " 123P" } };
       }

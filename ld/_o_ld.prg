@@ -12,11 +12,11 @@
 #include "f18.ch"
 
 
-FUNCTION o_radn()
+FUNCTION o_ld_radn()
 
    SELECT ( F_RADN )
 
-   IF !use_sql_sif ( "radn" )
+   IF !use_sql_sif ( "ld_radn", .T., "RADN" )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "1"
@@ -117,17 +117,60 @@ FUNCTION select_o_rekld()
 
 
 
-
-
-/*
- strucne spreme
-*/
-
 FUNCTION o_str_spr()
 
-   RETURN o_dbf_table( F_STRSPR, "strspr", "ID" )
+   SELECT ( F_STRSPR )
+
+   IF !use_sql_sif ( "strspr" )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
 
 
 FUNCTION select_o_str_spr()
 
-   RETURN select_o_dbf( "STRSPR", F_STRSPR, "strspr", "ID" )
+   SELECT ( F_STRSPR )
+   IF Used()
+      RETURN .T.
+   ENDIF
+
+   RETURN o_str_spr()
+
+
+
+FUNCTION o_ld_vrste_posla()
+
+   SELECT ( F_VPOSLA )
+   IF !use_sql_sif ( "vposla" )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
+FUNCTION o_koef_beneficiranog_radnog_staza()
+
+   SELECT ( F_KBENEF )
+
+   IF !use_sql_sif ( "kbenef" )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
+FUNCTION o_ld_parametri_obracuna()
+
+   SELECT ( F_PAROBR )
+
+   IF !use_sql_sif ( "ld_parobr", .T., "PAROBR" )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.

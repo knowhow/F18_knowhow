@@ -126,7 +126,7 @@ FUNCTION P_Odj( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol := {}
 
-   ImeKol := { { "ID ", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } }, { PadC( "Naziv", 25 ), {|| naz }, "naz" }, { "Konto u KALK", {|| IdKonto }, "IdKonto" } }
+   ImeKol := { { "ID ", {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) } }, { PadC( "Naziv", 25 ), {|| naz }, "naz" }, { "Konto u KALK", {|| IdKonto }, "IdKonto" } }
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
@@ -141,7 +141,7 @@ FUNCTION P_Dio( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol := {}
 
-   ImeKol := { { "ID ", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } }, { PadC( "Naziv", 25 ), {|| naz }, "naz" } }
+   ImeKol := { { "ID ", {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) } }, { PadC( "Naziv", 25 ), {|| naz }, "naz" } }
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
@@ -156,7 +156,7 @@ FUNCTION P_StRad( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol := {}
 
-   ImeKol := { { "ID ",  {|| id },       "id", {|| .T. }, {|| vpsifra( wId ) }      }, ;
+   ImeKol := { { "ID ",  {|| id },       "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) }      }, ;
       { PadC( "Naziv", 15 ), {|| naz },       "naz"       }, ;
       { "Prioritet", {|| PadC( prioritet, 9 ) }, "prioritet", {|| .T. }, {|| ( "0" <= wPrioritet ) .AND. ( wPrioritet <= "3" ) } } ;
       }
@@ -174,7 +174,7 @@ FUNCTION P_Osob( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol := {}
 
-   ImeKol := { { "ID ",          {|| id },    "id", {|| .T. }, {|| vpsifra( wId ) } }, ;
+   ImeKol := { { "ID ",          {|| id },    "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) } }, ;
       { PadC( "Naziv", 40 ), {|| naz },  "naz"    }, ;
       { "Korisn.sifra", {|| korsif }, "korsif" }, ;
       { "Status",       {|| status }, "status" };
@@ -196,7 +196,7 @@ FUNCTION P_Uredj( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol := {}
 
-   ImeKol := { { "ID ",  {|| id },       "id", {|| .T. }, {|| vpsifra( wId ) }      }, ;
+   ImeKol := { { "ID ",  {|| id },       "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) }      }, ;
       { PadC( "Naziv", 30 ), {|| naz },      "naz"       }, ;
       { "Port", {|| port },      "port"       };
       }
@@ -333,7 +333,7 @@ FUNCTION GetOsob( fNovi )
    SET CURSOR ON
 
    IF fNovi .OR. pos_admin()
-      @ m_x + 1, m_y + 2 SAY "Sifra radnika (ID)." GET _id VALID vpsifra( _id )
+      @ m_x + 1, m_y + 2 SAY "Sifra radnika (ID)." GET _id VALID validacija_postoji_sifra( _id )
    ELSE
       @ m_x + 1, m_y + 2 SAY "Sifra radnika (ID). " + _id
    ENDIF

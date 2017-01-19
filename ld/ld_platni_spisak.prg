@@ -27,7 +27,7 @@ FUNCTION ld_platni_spisak()
    cObracun := gObracun
 
    o_ld_rj()
-   O_RADN
+   o_ld_radn()
    O_LD
 
    cProred := "N"
@@ -324,7 +324,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
    o_kred()
    o_ld_rj()
-   O_RADN
+   o_ld_radn()
    O_LD
 
    PRIVATE cIsplata := ""
@@ -667,7 +667,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    o_tippr()
    o_kred()
    o_ld_rj()
-   O_RADN
+   o_ld_radn()
    O_LD
    SET RELATION TO idradn into radn
 

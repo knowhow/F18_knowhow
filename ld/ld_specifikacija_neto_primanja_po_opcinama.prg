@@ -305,10 +305,10 @@ STATIC FUNCTION otvori_tabele()
    o_tippr_ili_tippr2( cObracun )
 
    O_OPS
-   O_KBENEF
-   O_VPOSLA
+   o_koef_beneficiranog_radnog_staza()
+   o_ld_vrste_posla()
    o_ld_rj()
-   O_RADN
+   o_ld_radn()
    O_LD
 
    RETURN .T.

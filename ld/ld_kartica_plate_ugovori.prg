@@ -92,7 +92,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
    SELECT ( F_KBENEF )
 
    IF !Used()
-      O_KBENEF
+      o_koef_beneficiranog_radnog_staza()
    ENDIF
 
    nBO := 0

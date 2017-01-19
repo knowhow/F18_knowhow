@@ -62,7 +62,7 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
 
    O_KONTO
 
-   ImeKol := { { PadR( "ID", 7 ),  {|| id },     "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "ID", 7 ),  {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { "Naziv",       {|| naz },     "naz"      };
       }
 

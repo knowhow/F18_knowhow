@@ -158,7 +158,7 @@ FUNCTION edRadniSati()
 
    PushWA()
 
-   O_RADN
+   o_ld_radn()
    O_RADSAT
    SELECT radsat
    SET ORDER TO TAG "IDRADN"

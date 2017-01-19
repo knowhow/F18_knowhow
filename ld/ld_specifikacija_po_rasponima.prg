@@ -24,7 +24,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    cObracun := gObracun
 
    o_ld_rj()
-   O_RADN
+   o_ld_radn()
    O_LD
 
    PRIVATE cFormula := PadR( "UNETO", 40 )

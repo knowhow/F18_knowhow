@@ -126,9 +126,9 @@ FUNCTION ld_specifikacija_po_mjesecima()
    my_close_all_dbf()
 
    o_ld_rj()
-   O_STRSPR
+   o_str_spr()
    O_OPS
-   O_RADN
+   o_ld_radn()
    O_LD
 
    cIdRadn := fetch_metric( "ld_spec_po_rasponu_id_radnik", my_user(), cIdRadn )
@@ -428,11 +428,11 @@ FUNCTION OSpecif()
 
    o_dopr()
    o_por()
-   O_PAROBR
-   O_KBENEF
-   O_VPOSLA
+   o_ld_parametri_obracuna()
+   o_koef_beneficiranog_radnog_staza()
+   o_ld_vrste_posla()
    o_ld_rj()
-   O_RADN
+   o_ld_radn()
    O_PARAMS
    O_LD
    O_OPS

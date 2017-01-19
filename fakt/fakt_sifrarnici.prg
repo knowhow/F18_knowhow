@@ -26,7 +26,7 @@ FUNCTION p_fakt_objekti( cId, dx, dy )
 
    O_FAKT_OBJEKTI
 
-   AAdd( ImeKol, { PadC( "Id", 10 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( ImeKol, { PadC( "Id", 10 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) } } )
    AAdd( ImeKol, { PadC( "Naziv", 60 ), {|| naz }, "naz" } )
 
    FOR i := 1 TO Len( ImeKol )
@@ -292,7 +292,7 @@ FUNCTION P_FTxt( cId, dx, dy )
    ImeKol := {}
    Kol := {}
 
-   AAdd( ImeKol, { PadR( "ID", 2 ),   {|| id },     "id", {|| .T. }, {|| vpsifra( wid ) }    } )
+   AAdd( ImeKol, { PadR( "ID", 2 ),   {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    } )
    add_mcode( @ImeKol )
    AAdd( ImeKol, { "Naziv",  {|| naz },  "naz", {|| .T. }, ;
       {|| wnaz := StrTran( wnaz, "##", hb_eol() ), .T. }, NIL, "@S50" } )

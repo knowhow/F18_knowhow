@@ -66,7 +66,7 @@ FUNCTION P_OS( cId, dx, dy )
       _n_area := F_SII
    ENDIF
 
-   ImeKol := { { PadR( "Inv.Broj", 15 ), {|| id },     "id", {|| .T. }, {|| vpsifra( wId ) .AND. os_promjena_id_zabrana( lNovi ) } }, ;
+   ImeKol := { { PadR( "Inv.Broj", 15 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) .AND. os_promjena_id_zabrana( lNovi ) } }, ;
       { PadR( "Naziv", 30 ), {|| naz },     "naz"      }, ;
       { PadR( "Kolicina", 8 ), {|| kolicina },    "kolicina"     }, ;
       { PadR( "jmj", 3 ), {|| jmj },    "jmj"     }, ;
@@ -187,7 +187,7 @@ FUNCTION P_AMORT( cId, dx, dy )
 
    PRIVATE ImeKol, Kol
 
-   ImeKol := { { PadR( "Id", 8 ), {|| id },     "id", {|| .T. }, {|| vpsifra( wid ) }    }, ;
+   ImeKol := { { PadR( "Id", 8 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;
       { PadR( "Naziv", 25 ), {|| naz },     "naz"      }, ;
       { PadR( "Iznos", 7 ), {|| iznos },    "iznos"     };
       }
@@ -201,7 +201,7 @@ FUNCTION P_REVAL( cId, dx, dy )
 
    PRIVATE ImeKol, Kol
 
-   ImeKol := { { PadR( "Id", 4 ), {|| id },     "id", {|| .T. }, {|| vpsifra( wid ) }    }, ;
+   ImeKol := { { PadR( "Id", 4 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;
       { PadR( "Naziv", 10 ), {|| naz },     "naz"      }, ;
       { PadR( "I1", 7 ), {|| i1 },    "i1"     }, ;
       { PadR( "I2", 7 ), {|| i2 },    "i2"     }, ;
@@ -222,7 +222,7 @@ FUNCTION P_REVAL( cId, dx, dy )
 
 
 
-STATIC FUNCTION vpsifra( wid )
+STATIC FUNCTION validacija_postoji_sifra( wid )
 
    LOCAL _t_rec := RecNo()
    LOCAL _ret

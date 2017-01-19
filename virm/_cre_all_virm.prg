@@ -44,9 +44,7 @@ FUNCTION cre_all_virm_sif( ver )
    AFTER_CREATE_INDEX
 
 
-   // -------------------
-   // VRPRIM2
-   // -------------------
+   /* -------------------
 
    _table_name := "vrprim2"
    _alias := "VRPRIM2"
@@ -56,6 +54,7 @@ FUNCTION cre_all_virm_sif( ver )
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "naz", _alias )
    CREATE_INDEX( "IDKONTO", "idkonto+idpartner", _alias )
+   */
 
    // -------------------
    // LDVIRM

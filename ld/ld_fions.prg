@@ -797,7 +797,7 @@ FUNCTION Bruto( nbruto, ndopr )
    SELECT ( F_KBENEF )
 
    IF !Used()
-      O_KBENEF
+      o_koef_beneficiranog_radnog_staza()
    ENDIF
 
    nBO := 0

@@ -750,10 +750,10 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
 STATIC FUNCTION o_tables()
 
    O_OBRACUNI
-   O_PAROBR
+   o_ld_parametri_obracuna()
    O_PARAMS
    o_ld_rj()
-   O_RADN
+   o_ld_radn()
    o_dopr()
    o_por()
    O_LD

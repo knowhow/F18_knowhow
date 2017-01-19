@@ -110,15 +110,15 @@ STATIC FUNCTION o_ld_sif_tables()
    O_BANKE
    O_TPRSIHT
    O_NORSIHT
-   O_RADN
-   O_PAROBR
+   o_ld_radn()
+   o_ld_parametri_obracuna()
    o_tippr()
    o_ld_rj()
    o_por()
    o_dopr()
-   O_STRSPR
-   O_KBENEF
-   O_VPOSLA
+   o_str_spr()
+   o_koef_beneficiranog_radnog_staza()
+   o_ld_vrste_posla()
    O_OPS
    o_kred()
    O_TIPPR2

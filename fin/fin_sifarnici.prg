@@ -25,7 +25,7 @@ FUNCTION P_PKonto( CId, dx, dy )
 
    PRIVATE ImeKol, Kol
 
-   ImeKol := { { "ID  ",  {|| id },   "id", {|| .T. }, {|| vpsifra( wid ) }    }, ;
+   ImeKol := { { "ID  ",  {|| id },   "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;
       { PadC( "Tip prenosa", 25 ), {|| PadC( TipPkonto( tip ), 25 ) },     "tip", {|| .T. }, {|| wtip $ "123456" }     };
       }
    Kol := { 1, 2 }
@@ -69,7 +69,7 @@ FUNCTION P_Funk( cId, dx, dy )
 
    PRIVATE imekol, kol
 
-   ImeKol := { { PadR( "Id", 5 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "Id", 5 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 50 ), {||  naz }, "naz" } ;
       }
    Kol := { 1, 2 }
@@ -88,7 +88,7 @@ FUNCTION P_KS( cId, dx, dy )
 
    O_KS
 
-   AAdd( imekol, { PadR( "ID", 3 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
+   AAdd( imekol, { PadR( "ID", 3 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } } )
    AAdd( imekol, { PadR( "Tip", 3 ), {|| PadC( tip, 3 ) }, "tip" } )
    AAdd( imekol, { PadR( "DatOd", 8 ), {|| datod }, "datod" } )
    AAdd( imekol, { PadR( "DatDo", 8 ), {|| datdo }, "datdo" } )
@@ -117,7 +117,7 @@ FUNCTION P_Fond( cId, dx, dy )
 
    PRIVATE imekol, kol
 
-   ImeKol := { { PadR( "Id", 3 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "Id", 3 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 50 ), {||  naz }, "naz" } ;
       }
    Kol := { 1, 2 }
@@ -137,7 +137,7 @@ FUNCTION P_BuIz( cId, dx, dy )
 
    PRIVATE imekol, kol
 
-   ImeKol := { { PadR( "Konto", 10 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "Konto", 10 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "pretvori u", 10 ), {||  naz }, "naz" } ;
       }
    Kol := { 1, 2 }
@@ -184,7 +184,7 @@ FUNCTION P_ParEK( cId, dx, dy )
 
    PRIVATE imekol, kol
 
-   ImeKol := { { "Partija", {|| IdPartija }, "idpartija",, {|| vpsifra ( wIdPartija ) } }, ;
+   ImeKol := { { "Partija", {|| IdPartija }, "idpartija",, {|| validacija_postoji_sifra ( wIdPartija ) } }, ;
       { "Konto", {|| IdKonto }, "Idkonto",, {|| gMeniSif := .F., P_KontoFin ( @wIdKonto ), gMeniSif := .T., .T. } };
       }
    Kol := { 1, 2 }
@@ -273,7 +273,7 @@ FUNCTION P_ULIMIT( cId, dx, dy )
 
    PRIVATE ImeKol, Kol := {}
 
-   ImeKol := { { "ID ", {|| id       }, "id", {|| .T. }, {|| vpsifra( wId ) },, "999" }, ;
+   ImeKol := { { "ID ", {|| id       }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) },, "999" }, ;
       { "ID partnera", {|| idpartner }, "idpartner", {|| .T. }, {|| p_partner( @wIdPartner ) } }, ;
       { "Limit", {|| f_limit    }, "f_limit"      };
       }

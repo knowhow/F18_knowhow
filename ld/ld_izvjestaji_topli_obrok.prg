@@ -254,7 +254,7 @@ STATIC FUNCTION o_tables()
 
    o_ld_rj()
    o_kred()
-   O_RADN
+   o_ld_radn()
    O_LD
 
    RETURN .T.

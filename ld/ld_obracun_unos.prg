@@ -121,22 +121,22 @@ FUNCTION OObracun()
 
    SELECT F_PAROBR
    IF !Used()
-      O_PAROBR
+      o_ld_parametri_obracuna()
    ENDIF
 
    SELECT F_RADN
    IF !Used()
-      O_RADN
+      o_ld_radn()
    ENDIF
 
    SELECT F_VPOSLA
    IF !Used()
-      O_VPOSLA
+      o_ld_vrste_posla()
    ENDIF
 
    SELECT F_STRSPR
    IF !Used()
-      O_STRSPR
+      o_str_spr()
    ENDIF
 
    SELECT F_DOPR
@@ -151,7 +151,7 @@ FUNCTION OObracun()
 
    SELECT F_KBENEF
    IF !Used()
-      O_KBENEF
+      o_koef_beneficiranog_radnog_staza()
    ENDIF
 
    SELECT F_OPS

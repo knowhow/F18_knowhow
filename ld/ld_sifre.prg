@@ -39,11 +39,10 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
    O_RADN_NOT_USED
 
 
-
    aktivni_radnici_filter( .T. ) // filterisanje tabele radnika
 
    ImeKol := {}
-   AAdd( ImeKol, { PadR( "Id", 6 ) , {|| field->id }, "id", {|| .T. }, {|| vpsifra( wId, "1" ) } } )
+   AAdd( ImeKol, { PadR( "Id", 6 ) , {|| field->id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId, "1" ) } } )
    AAdd( ImeKol, { PadR( "Prezime", 20 ) , {|| field->naz }, "naz" } )
    AAdd( ImeKol, { PadR( "Ime roditelja", 15 ) , {|| field->imerod }, "imerod" } )
    AAdd( ImeKol, { PadR( "Ime", 15 ) , {|| field->ime }, "ime" } )
@@ -52,8 +51,8 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
 
    IF RADN->( FieldPos( "KLO" ) ) <> 0
 
-      AAdd( ImeKol, { _l( PadR( "Koef.l.odb.", 15 ) ), {|| field->klo }, "klo" } )
-      AAdd( ImeKol, { _l( PadR( "Tip rada", 15 ) ), {|| field->tiprada }, "tiprada", ;
+      AAdd( ImeKol, { PadR( "Koef.l.odb.", 15 ), {|| field->klo }, "klo" } )
+      AAdd( ImeKol, { PadR( "Tip rada", 15 ), {|| field->tiprada }, "tiprada", ;
          {|| .T. }, {|| wtiprada $ " #I#A#S#N#P#U#R" .OR. MsgTipRada() } } )
 
       IF RADN->( FieldPos( "SP_KOEF" ) ) <> 0
@@ -196,7 +195,7 @@ STATIC FUNCTION aktivni_radnici_filter( lFiltered )
 
 
 
-/* P_HiredFrom(dHiredFrom)
+/*
  *
  *   param: dHiredFrom
  */
@@ -207,6 +206,7 @@ FUNCTION P_HiredFrom( dHiredFrom )
    ENDIF
 
    RETURN .T.
+
 
 /* P_StreetNum(cStreetNum)
  *
@@ -221,7 +221,7 @@ FUNCTION P_StreetNum( cStreetNum )
    RETURN .T.
 
 
-// ---------------------------------------------
+/*
 // ispisuje info o poreskoj kartici
 // ---------------------------------------------
 STATIC FUNCTION p_pkartica( cIdRadn )
@@ -241,7 +241,7 @@ STATIC FUNCTION p_pkartica( cIdRadn )
    SELECT ( nTA )
 
    RETURN .T.
-
+*/
 
 
 // --------------------------------------------
@@ -253,10 +253,12 @@ FUNCTION RadBl( Ch )
    LOCAL _rec
    LOCAL hParams
 
+/*
    IF lPInfo == .T.
       // ispisi info o poreskoj kartici
       p_pkartica( field->id )
    ENDIF
+*/
 
    __filter_radn := .F.
 
@@ -334,9 +336,10 @@ FUNCTION RadBl( Ch )
          RETURN 99
       ENDIF
 
+/*
    ELSEIF ( Upper( Chr( Ch ) ) == "P" )
 
-      // poreska kartica, vraca faktor odbitka...
+      // poreska kartica, vraca faktor odbitka
       nFakt := p_kartica( field->id )
 
       SELECT radn
@@ -350,7 +353,9 @@ FUNCTION RadBl( Ch )
       ENDIF
 
       RETURN DE_CONT
+*/
 
+/*
    ELSEIF ( Upper( Chr( Ch ) ) == "D" )
 
       pk_delete( field->id )
@@ -376,7 +381,7 @@ FUNCTION RadBl( Ch )
       __filter_radn := .T.
       RETURN DE_REFRESH
 
-
+*/
    ELSEIF ( Upper( Chr( Ch ) ) == "S" )
 
       // filter po radnicima
@@ -472,8 +477,8 @@ STATIC FUNCTION _filter_radn()
 
    IF Empty( _filter )
 
-      // ukidam filter, setujem pravi sort...
-      SET FILTER TO
+
+      SET FILTER TO   // ukidam filter, setujem pravi sort
       SET ORDER TO TAG "1"
       GO TOP
 
@@ -481,10 +486,8 @@ STATIC FUNCTION _filter_radn()
 
    ENDIF
 
-   // postavi filter
    SET FILTER to &( _filter )
 
-   // kako da slozim podatke ?
    IF _sort == 2
       SET ORDER TO TAG "2"
    ELSE
@@ -509,6 +512,7 @@ FUNCTION MsgIspl()
    BoxC()
 
    RETURN .F.
+
 
 
 
@@ -572,7 +576,7 @@ FUNCTION P_TipPr( cId, nDeltaX, nDeltaY )
    PRIVATE imekol := {}
    PRIVATE kol := {}
 
-   AAdd( ImeKol, { PadR( "Id", 2 ), {|| field->id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
+   AAdd( ImeKol, { PadR( "Id", 2 ), {|| field->id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 20 ), {||  field->naz }, "naz" } )
    AAdd( ImeKol, { "Aktivan", {||  PadC( field->aktivan, 7 ) }, "aktivan" } )
    AAdd( ImeKol, { "Fiksan", {||  PadC( field->fiksan, 7 ) }, "fiksan" } )
@@ -632,7 +636,7 @@ FUNCTION P_TipPr2( cId, nDeltaX, nDeltaY )
    PRIVATE imekol
    PRIVATE kol
 
-   ImeKol := { { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 20 ), {||  naz }, "naz" }, ;
       {      "Aktivan", {||  PadC( aktivan, 7 ) }, "aktivan" }, ;
       {      "Fiksan", {||  PadC( fiksan, 7 ) }, "fiksan" }, ;
@@ -664,7 +668,7 @@ FUNCTION P_LD_RJ( cId, nDeltaX, nDeltaY )
 
    select_open_ld_rj()
 
-   AAdd( ImeKol, { PadR( "Id", 2 ),      {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
+   AAdd( ImeKol, { PadR( "Id", 2 ),      {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ), {||  naz }, "naz" } )
 
    IF ld_rj->( FieldPos( "TIPRADA" ) ) <> 0
@@ -714,7 +718,7 @@ FUNCTION P_Kred( cId, nDeltaX, nDeltaY )
 
    select_o_kred()
 
-   ImeKol := { { PadR( "Id", 6 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "Id", 6 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 30 ), {||  naz }, "naz" }, ;
       { PadR( "Adresa", 30 ), {||  adresa }, "adresa" }, ;
       { PadR( "Mjesto", 20 ), {||  mjesto }, "mjesto" }, ;
@@ -839,7 +843,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
    PRIVATE Imekol := {}
    PRIVATE Kol := {}
 
-   AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
+   AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } } )
 
    IF POR->( FieldPos( "ALGORITAM" ) ) <> 0 .AND. _st_stopa == "D"
       AAdd( ImeKol, { "Algor.", {|| algoritam }, "algoritam" } )
@@ -1018,7 +1022,7 @@ FUNCTION P_KBenef( cId, nDeltaX, nDeltaY )
    PRIVATE kol
 
    PushWa()
-   ImeKol := { { PadR( "Id", 3 ), {|| PadC( id, 3 ) }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "Id", 3 ), {|| PadC( id, 3 ) }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 8 ), {||  naz }, "naz" }, ;
       { PadR( "Iznos", 5 ), {||  iznos }, "iznos" }                       ;
       }
@@ -1038,7 +1042,7 @@ FUNCTION P_StrSpr( cId, nDeltaX, nDeltaY )
    LOCAL xRet
    PRIVATE imekol, kol
 
-   ImeKol := { { PadR( "Id", 3 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "Id", 3 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 20 ), {||  naz }, "naz" }, ;
       { PadR( "naz2", 6 ), {|| naz2 }, "naz2" }                     ;
       }
@@ -1061,7 +1065,7 @@ FUNCTION P_VPosla( cId, nDeltaX, nDeltaY )
    PRIVATE imekol
    PRIVATE kol
 
-   ImeKol := { { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 20 ), {||  naz }, "naz" }, ;
       { PadR( "KBenef", 5 ), {|| PadC( idkbenef, 5 ) }, "idkbenef", {|| .T. }, {|| P_KBenef( @widkbenef ) }  }  ;
       }
@@ -1080,7 +1084,7 @@ FUNCTION P_NorSiht( cId, nDeltaX, nDeltaY )
    PRIVATE imekol
    PRIVATE kol
 
-   ImeKol := { { PadR( "Id", 4 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+   ImeKol := { { PadR( "Id", 4 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 20 ), {||  naz }, "naz" }, ;
       { PadR( "JMJ", 3 ), {|| PadC( jmj, 3 ) }, "jmj"  }, ;
       { PadR( "Iznos", 8 ), {|| Iznos }, "Iznos"  }  ;
@@ -1107,7 +1111,7 @@ FUNCTION TotBrisRadn()
       RETURN .F.
    ENDIF
 
-   O_RADN         // id, "1"
+   o_ld_radn()         // id, "1"
    O_RADKR        // idradn, "2"
    O_LD           // idradn, "RADN"
    O_LDSM         // idradn, "RADN"

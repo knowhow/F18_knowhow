@@ -161,7 +161,7 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
 
    SELECT F_RADN
    IF !Used()
-      O_RADN
+      o_ld_radn()
    ENDIF
 
    IF PCount() <= 1
@@ -257,7 +257,7 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
 
    SELECT F_RADN
    IF !Used()
-      O_RADN
+      o_ld_radn()
    ENDIF
 
    SELECT F_RADSIHT
@@ -299,7 +299,7 @@ FUNCTION get_siht2()
 
    SELECT F_RADN
    IF !Used()
-      O_RADN
+      o_ld_radn()
    ENDIF
 
    IF g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
@@ -391,7 +391,7 @@ FUNCTION get_siht2()
 
    SELECT F_RADN
    IF !Used()
-      O_RADN
+      o_ld_radn()
    ENDIF
 
    SELECT F_RADSIHT
@@ -528,7 +528,7 @@ FUNCTION _rad_ime( cId, lImeOca )
 
    SELECT ( F_RADN )
    IF !Used()
-      O_RADN
+      o_ld_radn()
    ENDIF
 
    SEEK cId

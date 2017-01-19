@@ -101,8 +101,8 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
       ENDIF
 
       my_db_edit_sql( NIL, nVisina, nSirina,  ;
-           {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
-           ToStrU( cNaslov ), "", lInvert, aOpcije, 1, bPodvuci, , , aPoredak )
+         {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
+         ToStrU( cNaslov ), "", lInvert, aOpcije, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
          cID := ( nDbf )->( FieldGet( 1 ) )
@@ -168,20 +168,20 @@ STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
 
    CASE ValType( xIndex ) == "C" .AND. Right( Upper( Trim( xIndex ) ), 2 ) == "_J"
 
-      SET ORDER TO tag ( xIndex )
+      SET ORDER TO TAG ( xIndex )
       fID_J := .T.
 
    OTHERWISE
 
       nPos := At( "_", xIndex )
       IF nPos <> 0
-         IF Empty( Left( xIndex, nPos -1 ) )
+         IF Empty( Left( xIndex, nPos - 1 ) )
             dbSetIndex( SubStr( xIndex, nPos + 1 ) )
          ELSE
-            SET ORDER TO tag ( Left( xIndex, nPos -1 ) ) IN ( SubStr( xIndex, nPos + 1 ) )
+            SET ORDER TO TAG ( Left( xIndex, nPos - 1 ) ) IN ( SubStr( xIndex, nPos + 1 ) )
          ENDIF
       ELSE
-         SET ORDER TO tag ( xIndex )
+         SET ORDER TO TAG ( xIndex )
       ENDIF
 
    END CASE
@@ -198,7 +198,7 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
    IF  FieldPos( "KATBR" ) <> 0
       SET ORDER TO TAG "KATBR"
-      SEEK Left( cId, Len( Trim( cId ) ) -1 )
+      SEEK Left( cId, Len( Trim( cId ) ) - 1 )
       cId := id
    ELSE
       SEEK Chr( 250 ) + Chr( 250 ) + Chr( 250 )
@@ -206,7 +206,7 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
    IF !Found()
 
-      cIdBK := Left( cId, Len( Trim( cId ) ) -1 )
+      cIdBK := Left( cId, Len( Trim( cId ) ) - 1 )
       cId   := ""
 
       ImauSifV( "ROBA", "KATB", cIdBK, @cId )
@@ -266,14 +266,14 @@ FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
 
    ELSEIF Right( Trim( cId ), 1 ) == "$"
 
-      _filter := _filter_quote( Left( Upper( cId ), Len( Trim( cId ) ) -1 ) ) + " $ UPPER(naz)"
+      _filter := _filter_quote( Left( Upper( cId ), Len( Trim( cId ) ) - 1 ) ) + " $ UPPER(naz)"
       SET FILTER TO
-      SET FILTER to &( _filter )
+      SET FILTER TO &( _filter )
       GO TOP
 
    ELSE
 
-      SEEK Left( cId, Len( Trim( cId ) ) -1 )
+      SEEK Left( cId, Len( Trim( cId ) ) - 1 )
 
    ENDIF
 
@@ -486,7 +486,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       RETURN DE_CONT
 
    OTHERWISE
-      IF nRet >-1
+      IF nRet > -1
          RETURN nRet
       ELSE
          RETURN DE_CONT
@@ -571,7 +571,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
       FOR nForJg := 1 TO 3
 
          IF nForJg == 1
-            Box( NIL, Min( MAXROWS() -7, nTrebaRedova ) + 1, MAXCOLS() -20, .F. )
+            Box( NIL, Min( MAXROWS() - 7, nTrebaRedova ) + 1, MAXCOLS() - 20, .F. )
          ELSE
             BoxCLS()
          ENDIF
@@ -618,7 +618,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
             i++
 
-            IF ( Len( ImeKol ) < i ) .OR. ( nTekRed > Min( MAXROWS() -7, nTrebaRedova ) .AND. !( Len( ImeKol[ i ] ) >= 10 .AND. imekol[ i, 10 ] <> NIL )  )
+            IF ( Len( ImeKol ) < i ) .OR. ( nTekRed > Min( MAXROWS() - 7, nTrebaRedova ) .AND. !( Len( ImeKol[ i ] ) >= 10 .AND. imekol[ i, 10 ] <> NIL )  )
                EXIT
             ENDIF
 
@@ -855,13 +855,13 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
    // uzmi when, valid kodne blokove
    IF ( Ch == K_F2 .AND. lZabIsp .AND. AScan( aZabIsp, Upper( ImeKol[ i, 3 ] ) ) > 0 )
       bWhen := {|| .F. }
-   ELSEIF ( Len( ImeKol[ i ] ) < 4 .OR. ImeKol[ i, 4 ] == nil )
+   ELSEIF ( Len( ImeKol[ i ] ) < 4 .OR. ImeKol[ i, 4 ] == NIL )
       bWhen := {|| .T. }
    ELSE
       bWhen := Imekol[ i, 4 ]
    ENDIF
 
-   IF ( Len( ImeKol[ i ] ) < 5 .OR. ImeKol[ i, 5 ] == nil )
+   IF ( Len( ImeKol[ i ] ) < 5 .OR. ImeKol[ i, 5 ] == NIL )
       bValid := {|| .T. }
    ELSE
       bValid := Imekol[ i, 5 ]
@@ -927,7 +927,7 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
 
    @ m_x + nTekRed, m_y + nKolona SAY  iif( nKolona > 1, "  " + AllTrim( ImeKol[ i, 1 ] ), PadL( AllTrim( ImeKol[ i, 1 ] ), 15 ) )  + " "
 
-   if &cVariableName == NIL
+   IF &cVariableName == NIL
       tmpRec = RecNo()
       GO BOTTOM
       SKIP
@@ -954,7 +954,7 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
 
    IF ( cMCField )->( FieldPos( "MATCH_CODE" ) ) <> 0
 
-      _pos := AScan( ImeKol, {| xImeKol| Upper( xImeKol[ 3 ] ) == "MATCH_CODE" } )
+      _pos := AScan( ImeKol, {| xImeKol | Upper( xImeKol[ 3 ] ) == "MATCH_CODE" } )
 
       IF _pos == 0
          AAdd( ImeKol, { "MATCH_CODE", {|| match_code }, "match_code" } )
@@ -982,7 +982,7 @@ FUNCTION vrati_vrijednosti_polja_sifarnika_u_string( cMarker )
 
    FOR i := 1 TO FCount()
 
-      cFName := AllTrim( FIELD( i ) )
+      cFName := AllTrim( Field( i ) )
 
       xFVal := FieldGet( i )
 
@@ -1186,55 +1186,6 @@ STATIC FUNCTION PopSifV()
 
 
 
-FUNCTION sifra_postoji( wId, cTag )
-
-   LOCAL nRec := RecNo()
-   LOCAL nRet := .T.
-   LOCAL cUpozorenje
-
-   IF cTag == NIL
-      cTag := "ID"
-   ENDIF
-
-   IF index_tag_num( cTag ) == 0
-      _msg := "alias: " + Alias() + ", tag ne postoji :" + cTag
-      log_write( _msg )
-      MsgBeep( _msg )
-      RETURN nRet
-   ENDIF
-
-   IF cTag <> "ID" .AND. Empty( wId )
-      RETURN nRet
-   ENDIF
-
-   cUpozorenje := "Vrijednost polja " + cTag + " već postoji !"
-
-   PushWA()
-
-   SET ORDER TO TAG ( cTag )
-   SEEK wId
-
-   IF ( Found() .AND. ( Ch == K_CTRL_N .OR. Ch == K_F4 ) )
-
-      MsgBeep( cUpozorenje )
-      nRet := .F.
-
-   ELSEIF ( gSKSif == "D" .AND. Found() )
-      IF nRec <> RecNo()
-         MsgBeep( cUpozorenje )
-         nRet := .F.
-      ELSE
-         SKIP 1
-         IF ( !Eof() .AND. wId == id )
-            MsgBeep( cUpozorenje )
-            nRet := .F.
-         ENDIF
-      ENDIF
-   ENDIF
-
-   PopWa()
-
-   RETURN nRet
 
 
 
@@ -1355,7 +1306,7 @@ FUNCTION k_f5_nadji_novu_sifru()
    ENDIF
 
    wk1 := cK1
-   AEval( GetList, {| o| o:display() } )
+   AEval( GetList, {| o | o:display() } )
    PopWA()
    KEYBOARD Chr( K_END )
 
@@ -1416,7 +1367,7 @@ FUNCTION k_f8_nadji_novu_sifru()
                   nKor := nDuzSif - Len( Trim( id ) )
                   EXIT
                ENDIF
-            ELSEIF Val( SubStr( id, nDuzUn + 1 ) ) -Val( cLast ) > 1
+            ELSEIF Val( SubStr( id, nDuzUn + 1 ) ) - Val( cLast ) > 1
                // rupa izmeÐu
                EXIT
             ENDIF
@@ -1434,7 +1385,7 @@ FUNCTION k_f8_nadji_novu_sifru()
 
       ENDIF
 
-      AEval( GetList, {| o| o:display() } )
+      AEval( GetList, {| o | o:display() } )
       PopWA()
    ENDIF
 
@@ -1478,7 +1429,7 @@ FUNCTION UslovSif()
    nPos :=   AScan( aStruct, {| aItem | aItem[ 1 ] == "MATCH_CODE" } )
    IF nPos > 0
       ADel( aStruct, nPos )
-      ASize( aStruct, Len( aStruct ) -1 )
+      ASize( aStruct, Len( aStruct ) - 1 )
    ENDIF
 #endif
 
@@ -1489,9 +1440,9 @@ FUNCTION UslovSif()
       ENDIF
       AAdd( aQQ, Space( 100 ) )
       AAdd( aUsl, NIL )
-      @ m_x + IF( i > 22, i -22, i ), m_y + 67 SAY Chr( 16 )
-      @ m_x + IF( i > 22, i -22, i ), m_y + 1 SAY PadL( AllTrim( aStruct[ i, 1 ] ), 15 ) GET aQQ[ i ] PICTURE "@S50" ;
-         valid {|| aUsl[ i ] := Parsiraj( aQQ[ i ] := _fix_usl( aQQ[ i ] ), aStruct[ i, 1 ], iif( aStruct[ i, 2 ] == "M", "C", aStruct[ i, 2 ] ) ), aUsl[ i ] <> NIL  }
+      @ m_x + IF( i > 22, i - 22, i ), m_y + 67 SAY Chr( 16 )
+      @ m_x + IF( i > 22, i - 22, i ), m_y + 1 SAY PadL( AllTrim( aStruct[ i, 1 ] ), 15 ) GET aQQ[ i ] PICTURE "@S50" ;
+         VALID {|| aUsl[ i ] := Parsiraj( aQQ[ i ] := _fix_usl( aQQ[ i ] ), aStruct[ i, 1 ], iif( aStruct[ i, 2 ] == "M", "C", aStruct[ i, 2 ] ) ), aUsl[ i ] <> NIL  }
       READ
       IF LastKey() == K_ESC
          EXIT
@@ -1525,7 +1476,7 @@ FUNCTION UslovSif()
    ELSE
       IF Left( cFilter, 8 ) == ".t..and."
          cFilter := SubStr( cFilter, 9 )
-         SET FILTER to &cFilter
+         SET FILTER TO &cFilter
       ENDIF
    ENDIF
    GO TOP
@@ -1586,8 +1537,60 @@ FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
 
 
 
-FUNCTION VpSifra( wId, cTag )
+FUNCTION validacija_postoji_sifra( wId, cTag )
    RETURN sifra_postoji( wId, cTag )
+
+
+FUNCTION sifra_postoji( wId, cTag )
+
+   LOCAL nRec := RecNo()
+   LOCAL nRet := .T.
+   LOCAL cUpozorenje
+
+   IF cTag == NIL
+      cTag := "ID"
+   ENDIF
+
+   IF index_tag_num( cTag ) == 0
+      _msg := "alias: " + Alias() + ", tag ne postoji :" + cTag
+      log_write( _msg )
+      MsgBeep( _msg )
+      RETURN nRet
+   ENDIF
+
+   IF cTag <> "ID" .AND. Empty( wId )
+      RETURN nRet
+   ENDIF
+
+   cUpozorenje := "Vrijednost polja " + cTag + " već postoji !"
+
+   PushWA()
+
+   SET ORDER TO TAG ( cTag )
+   SEEK wId
+
+   IF ( Found() .AND. ( Ch == K_CTRL_N .OR. Ch == K_F4 ) )
+
+      MsgBeep( cUpozorenje )
+      nRet := .F.
+
+   ELSEIF ( gSKSif == "D" .AND. Found() )
+      IF nRec <> RecNo()
+         MsgBeep( cUpozorenje )
+         nRet := .F.
+      ELSE
+         SKIP 1
+         IF ( !Eof() .AND. wId == id )
+            MsgBeep( cUpozorenje )
+            nRet := .F.
+         ENDIF
+      ENDIF
+   ENDIF
+
+   PopWa()
+
+   RETURN nRet
+
 
 
 // prikaz idroba
@@ -1626,7 +1629,7 @@ FUNCTION n_num_sif()
       nDuzSif := Len( cPom )
 
 
-      SET FILTER to &cFilter // postavi filter na numericke sifre
+      SET FILTER TO &cFilter // postavi filter na numericke sifre
 
       // kreiraj indeks
       INDEX ON Val( id ) TAG "_VAL"
@@ -1694,7 +1697,7 @@ FUNCTION n_num_sif()
 
    ENDIF
 
-   AEval( GetList, {| o| o:display() } )
+   AEval( GetList, {| o | o:display() } )
    PopWA()
 
    RETURN NIL

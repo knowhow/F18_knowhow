@@ -305,7 +305,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       SELECT ( F_KBENEF )
       IF !Used()
-         O_KBENEF
+         o_koef_beneficiranog_radnog_staza()
       ENDIF
 
       nBO := 0

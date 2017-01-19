@@ -139,7 +139,7 @@ FUNCTION index_tag_num( cName )
       RETURN ordNumber( cName )
    ELSE
       FOR nI := 1 TO ordCount()
-         IF ordKey( nI ) == cName
+         IF ordName( nI ) == cName
             RETURN nI
          ENDIF
       NEXT

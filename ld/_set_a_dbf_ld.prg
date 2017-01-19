@@ -21,10 +21,10 @@ FUNCTION set_a_dbf_ld_sif()
    set_a_sql_sifarnik( "tippr2", "TIPPR2", F_TIPPR2     )
    set_a_sql_sifarnik( "kred", "KRED", F_KRED       )
 
-   set_a_dbf_sifarnik( "strspr", "STRSPR", F_STRSPR     )
-   set_a_dbf_sifarnik( "vposla", "VPOSLA", F_VPOSLA     )
-   set_a_dbf_sifarnik( "strspr", "STRSPR", F_STRSPR     )
-   set_a_dbf_sifarnik( "kbenef", "KBENEF", F_KBENEF     )
+   set_a_sql_sifarnik( "strspr", "STRSPR", F_STRSPR     )
+
+   set_a_sql_sifarnik( "vposla", "VPOSLA", F_VPOSLA     )
+   set_a_sql_sifarnik( "kbenef", "KBENEF", F_KBENEF     )
 
    RETURN .T.
 
@@ -36,8 +36,8 @@ FUNCTION set_a_dbf_ld()
    set_a_dbf_ld_dopr()
    set_a_dbf_ld_radkr()
    set_a_dbf_ld_obracuni()
-   set_a_dbf_ld_pk_data()
-   set_a_dbf_ld_pk_radn()
+   //set_a_dbf_ld_pk_data()
+   //set_a_dbf_ld_pk_radn()
    set_a_dbf_ld_radsat()
    set_a_dbf_ld_radsiht()
    set_a_dbf_ld_radn()
@@ -135,14 +135,13 @@ FUNCTION set_a_dbf_ld_parobr()
    LOCAL _alg, _tbl, _item
 
    _tbl := "ld_parobr"
-
    _item := hb_Hash()
 
    _item[ "alias" ] := "PAROBR"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_PAROBR
    _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
    _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
@@ -175,7 +174,6 @@ FUNCTION set_a_dbf_ld_dopr()
    _item[ "temp" ]  := .F.
    _item[ "sql" ] := .T.
    _item[ "sif" ] := .T.
-
 
    _item[ "algoritam" ] := {}
 
@@ -224,7 +222,7 @@ FUNCTION set_a_dbf_ld_obracuni()
 
    RETURN .T.
 
-
+/*
 FUNCTION set_a_dbf_ld_pk_radn()
 
    LOCAL _alg, _tbl, _item
@@ -294,7 +292,7 @@ FUNCTION set_a_dbf_ld_pk_data()
    f18_dbfs_add( _tbl, @_item )
 
    RETURN .T.
-
+*/
 
 FUNCTION set_a_dbf_ld_radsat()
 

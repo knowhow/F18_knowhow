@@ -49,7 +49,7 @@ FUNCTION cre_all_ld_sif( ver )
    _table_name := "_kred"
    IF_NOT_FILE_DBF_CREATE
 
-   // ------------------------------------------------------------
+   /*
    // POR.DBF
    // ------------------------------------------------------------
 
@@ -195,6 +195,7 @@ FUNCTION cre_all_ld_sif( ver )
 
    CREATE_INDEX( "ID", "id", _alias )
    AFTER_CREATE_INDEX
+  */
 
    RETURN .T.
 
@@ -206,8 +207,8 @@ FUNCTION cre_all_ld( ver )
    LOCAL _created
    LOCAL _tmp
 
-   // -----------------------
-   // RADN.DBF
+
+   // RADN
    // -----------------------
 
    aDbf := {}
@@ -421,7 +422,7 @@ FUNCTION cre_all_ld( ver )
    AFTER_CREATE_INDEX
 
 
-   // -----------------------------------------------------------
+   /*
    // PK_RADN
    // -----------------------------------------------------------
 
@@ -521,7 +522,7 @@ FUNCTION cre_all_ld( ver )
 
    CREATE_INDEX( "1", "idradn+ident+STR(rbr)", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
 
    // -------------------------------------

@@ -36,7 +36,7 @@ FUNCTION ld_pregled_primanja_za_period()
    cObracun := gObracun
 
    o_ld_rj()
-   O_RADN
+   o_ld_radn()
    O_LD
 
    PRIVATE cTip := "  "

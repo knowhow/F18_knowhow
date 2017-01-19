@@ -347,6 +347,7 @@ FUNCTION f18_promjena_sezone()
 
    LOCAL oLogin := my_login()
 
+altd()
    oLogin:promjena_sezone()
 
    RETURN .T.

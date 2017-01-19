@@ -60,7 +60,7 @@ FUNCTION P_Banke( cId, dx, dy )
    PRIVATE Kol
 
    _arr := Select()
-   O_BANKE
+   o_banke()
 
    ImeKol := {}
    AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )

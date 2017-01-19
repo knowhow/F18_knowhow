@@ -54,8 +54,8 @@ FUNCTION set_a_dbf_ld()
    set_a_dbf_temp( "exp_bank", "EXP_BANK", F_EXP_BANK  )
    set_a_dbf_temp( "_tmp", "_TMP", F__TMP  )
 
-   set_a_dbf_sifarnik( "ld_norsiht", "NORSIHT", F_NORSIHT   )
-   set_a_dbf_sifarnik( "ld_tprsiht", "TPRSIHT", F_TPRSIHT   )
+   set_a_sql_sifarnik( "ld_norsiht", "NORSIHT", F_NORSIHT   )
+   set_a_sql_sifarnik( "ld_tprsiht", "TPRSIHT", F_TPRSIHT   )
 
    RETURN .T.
 

@@ -687,7 +687,7 @@ STATIC FUNCTION virm_o_tables()
 
    SELECT ( F_BANKE )
    IF !Used()
-      O_BANKE
+      o_banke()
    ENDIF
 
    SELECT ( F_JPRIH )

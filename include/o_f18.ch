@@ -25,7 +25,7 @@
 #xcommand O_VRSTEP   => o_vrste_placanja()
 #xcommand O_PKONTO   => select (F_PKONTO); use_sql_pkonto()  ; set order to tag "ID"
 #xcommand O_KS       => select (F_KS);     use_sql_ks() ; set order to tag "ID"
-#xcommand O_BANKE    => select (F_BANKE)   ;  use_sql_sif  ("banke")     ; set order to tag "ID"
+
 
 #xcommand O__ROBA    => select (F__ROBA)   ;  my_usex("_roba")
 #xcommand O__PARTN   => select (F__PARTN)  ;  my_use  ("_partn")
@@ -223,8 +223,7 @@
 
 
 #xcommand O__RADN   => select (F__RADN)   ;  my_use ("_radn")
-#xcommand O_TPRSIHT => select (F_TPRSIHT) ;  my_use ("tprsiht")  ; set order to tag "ID"
-#xcommand O_NORSIHT => select (F_NORSIHT) ;  my_use ("norsiht")  ; set order to tag "ID"
+
 #xcommand O_RADSIHT => select (F_RADSIHT) ;  my_use ("radsiht")  ; set order to tag "1"
 #xcommand O_RADKR   => select (F_RADKR)   ;  my_use ("radkr")    ; set order to tag "1"
 #xcommand O_RADKRX  => select (F_RADKR)   ;  my_use ("radkr")    ; set order to tag "0"

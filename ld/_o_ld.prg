@@ -12,6 +12,16 @@
 #include "f18.ch"
 
 
+FUNCTION o_banke()
+
+   SELECT ( F_BANKE )
+   use_sql_sif  ( "banke" )
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
+
 FUNCTION o_ld_radn()
 
    SELECT ( F_RADN )
@@ -32,6 +42,34 @@ FUNCTION select_o_radn()
    ENDIF
 
    RETURN o_kred()
+
+
+
+FUNCTION o_tprsiht()
+
+   SELECT ( F_TPRSIHT )
+
+   IF !use_sql_sif( "ld_tprsiht", .T., "TPRSIHT" )
+      RETURN .F.
+   ENDIF
+
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
+
+FUNCTION o_norsiht()
+
+   SELECT ( F_NORSIHT )
+
+   IF !use_sql_sif( "ld_norsiht", .T., "NORSIHT" )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
 
 
 FUNCTION o_kred()

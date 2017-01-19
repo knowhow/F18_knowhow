@@ -20,7 +20,7 @@ FUNCTION virm_prenos_fin()
    o_jprih()
    o_sifk()
    o_sifv()
-   O_BANKE
+   o_banke()
    o_partner()
    o_vrprim()
    O_VIRM_PRIPR

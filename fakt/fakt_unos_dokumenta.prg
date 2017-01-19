@@ -1518,7 +1518,7 @@ FUNCTION IspisBankeNar( cBanke )
 
    LOCAL aOpc
 
-   O_BANKE
+   o_banke()
    aOpc := TokToNiz( cBanke, "," )
    cVrati := ""
 

@@ -29,8 +29,8 @@ FUNCTION UnosSiht()
       cIDradn := _Idradn
       cIDrj := _IdRj
 
-      O_NORSIHT   // sifrarnik normi koje se koriste u sihtarici
-      O_TPRSIHT   // tipovi primanja koji se unose u kroz sihtarice
+      o_norsiht()   // sifrarnik normi koje se koriste u sihtarici
+      o_tprsiht()   // tipovi primanja koji se unose u kroz sihtarice
 
 
       SELECT ( F_RADSIHT )
@@ -210,7 +210,9 @@ FUNCTION UnosSiht()
 
             ?? " "
 
-            SELECT TPRSiht; GO TOP
+            SELECT TPRSiht
+            GO TOP
+            
             fPRvi := .T.
 
             nPozicija := 0
@@ -391,7 +393,7 @@ FUNCTION P_TPRSiht( cId, dx, dy )
 
    SELECT ( F_TPRSIHT )
    IF ( !Used() )
-      O_TPRSIHT
+      o_tprsiht()
    ENDIF
    SELECT ( nArr )
 

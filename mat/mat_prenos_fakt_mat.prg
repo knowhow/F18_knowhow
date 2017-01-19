@@ -61,12 +61,12 @@ STATIC FUNCTION prenos()
 
    O_MAT_PRIPR
    O_MAT_NALOG
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
-   O_KONTO
-   O_PARTN
-   O_VALUTE
+   o_sifv()
+   o_konto()
+   o_partner()
+   o_valute()
    O_FAKT
 
    dDatMat := Date()

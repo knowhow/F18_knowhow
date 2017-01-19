@@ -451,12 +451,12 @@ STATIC FUNCTION _o_tbl()
    // o_kalk_doks()
    // o_kalk()
    o_sifk()
-   O_SIFV
+   o_sifv()
    o_tdok()
-   O_ROBA
-   O_TARIFA
+   o_roba()
+   o_tarifa()
    o_koncij()
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
 
    RETURN .T.

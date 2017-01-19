@@ -33,12 +33,12 @@ FUNCTION datum_not_empty_upozori_godina( dDate, cMsg )
 FUNCTION o_kalk_tabele_izvj()
 
    o_sifk()
-   O_SIFV
-   O_TARIFA
-   O_ROBA
+   o_sifv()
+   o_tarifa()
+   o_roba()
    o_koncij()
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_kalk_doks()
    o_kalk()
 
@@ -693,7 +693,7 @@ FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
    Select( F_ROBA )
    IF !Used()
       lUsedRoba := .F.
-      O_ROBA
+      o_roba()
    ELSE
       Select( F_ROBA )
    ENDIF
@@ -736,7 +736,7 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
    Select( F_ROBA )
    IF !Used()
       lUsedRoba := .F.
-      O_ROBA
+      o_roba()
    ELSE
       Select( F_ROBA )
    ENDIF
@@ -849,9 +849,9 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
    LOCAL nArr
 
    nArr := Select()
-   O_TARIFA
+   o_tarifa()
    o_koncij()
-   O_ROBA
+   o_roba()
    o_kalk_pripr9()
    cOtpremnica := Space( 10 )
    cIdKonto := "1320   "
@@ -1003,7 +1003,7 @@ FUNCTION kopiraj_set_cijena()
 
    ENDCASE
 
-   O_ROBA
+   o_roba()
    _count := RecCount()
 
    SELECT roba

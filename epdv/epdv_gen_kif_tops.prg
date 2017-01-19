@@ -62,7 +62,7 @@ FUNCTION tops_kif( dD1, dD2, cSezona )
 
    SELECT F_ROBA
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT sg_kif
@@ -182,12 +182,12 @@ STATIC FUNCTION  gen_sg_item( cSezona )
 
    SELECT F_ROBA
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT F_TARIFA
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
 
    SELECT F_SIFK
@@ -197,7 +197,7 @@ STATIC FUNCTION  gen_sg_item( cSezona )
 
    SELECT F_SIFV
    IF !Used()
-      O_SIFV
+      o_sifv()
    ENDIF
 
 

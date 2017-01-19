@@ -26,10 +26,10 @@ FUNCTION fakt_kartica()
    my_close_all_dbf()
 
    o_sifk()
-   O_SIFV
-   O_PARTN
-   O_ROBA
-   O_TARIFA
+   o_sifv()
+   o_partner()
+   o_roba()
+   o_tarifa()
    O_RJ
 
    IF _params[ "fakt_objekti" ]

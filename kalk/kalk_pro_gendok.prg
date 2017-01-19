@@ -40,10 +40,10 @@ FUNCTION Iz47u96Norm()
 
    o_kalk_pripr()
    -- o_kalk()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
    O_SAST
 
    XO_KALK

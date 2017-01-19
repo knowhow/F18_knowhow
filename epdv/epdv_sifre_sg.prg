@@ -36,12 +36,12 @@ FUNCTION p_epdv_sheme_generacije( cTabela, cId, dx, dy )
 
    SELECT ( F_PARTN )
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
 
 
    o_sifk()
-   O_SIFV
+   o_sifv()
 
 
    SELECT ( nArea )

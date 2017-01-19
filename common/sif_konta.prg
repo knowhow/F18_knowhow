@@ -27,7 +27,7 @@ FUNCTION P_Konto( cId, dx, dy )
    Kol := {}
 
    PushWA()
-   O_KONTO_NOT_USED
+   select_o_konto()
 
    AAdd( ImeKol, { PadC( "ID", 7 ), {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| naz }, "naz" } )
@@ -60,7 +60,7 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
-   O_KONTO
+   o_konto()
 
    ImeKol := { { PadR( "ID", 7 ),  {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { "Naziv",       {|| naz },     "naz"      };

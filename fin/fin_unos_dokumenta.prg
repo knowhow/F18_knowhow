@@ -673,8 +673,8 @@ FUNCTION o_fin_edit()
    O_PSINT
    O_PNALOG
    O_PAREK
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_tnal()
    o_tdok()
    o_nalog()

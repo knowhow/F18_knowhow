@@ -48,8 +48,8 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
    LOCAL lFoundUPripremi
 
    O_FAKT_DOKS
-   O_ROBA
-   O_TARIFA
+   o_roba()
+   o_tarifa()
    O_FAKT_PRIPR
    SET ORDER TO TAG "3"
 
@@ -146,7 +146,7 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
 
    O_FAKT
    O_FAKT_PRIPR
-   O_ROBA
+   o_roba()
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
 
@@ -220,7 +220,7 @@ FUNCTION fakt_inventura_visak( cIdRj, cBrDok )
 
    O_FAKT
    O_FAKT_PRIPR
-   O_ROBA
+   o_roba()
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
 

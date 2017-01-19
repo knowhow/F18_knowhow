@@ -156,7 +156,7 @@ FUNCTION P_Valuta( cid, dx, dy )
 
    PushWA()
 
-   O_VALUTE
+   o_valute()
 
    AAdd( ImeKol,   { "ID ",    {|| id }, "id"        } )
    AAdd( ImeKol,   { "Naziv",  {|| naz }, "naz"       } )
@@ -198,7 +198,7 @@ FUNCTION OmjerVal( ckU, ckIz, dD )
 
    SELECT ( F_VALUTE )
    IF !Used()
-      O_VALUTE
+      o_valute()
    ENDIF
 
    PRIVATE cFiltV := "( naz2==" + dbf_quote( PadR( ckU, 4 ) ) + " .or. naz2==" + dbf_quote( PadR( ckIz, 4 ) ) + " ) .and. DTOS(datum)<=" + dbf_quote( DToS( dD ) )
@@ -234,7 +234,7 @@ FUNCTION ImaUSifVal( cKratica )
 
    SELECT ( F_VALUTE )
    IF !Used()
-      O_VALUTE
+      o_valute()
    ENDIF
    GO TOP
    DO WHILE !Eof()

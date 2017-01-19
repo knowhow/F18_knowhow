@@ -29,8 +29,8 @@ FUNCTION fin_anal_kartica()
       M := "------- -------- ---- -------- ---------------- ----------------- ------------------"
    ENDIF
 
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
 
    dDatOd := dDAtDo := CToD( "" )
    cPredh := "2"
@@ -130,7 +130,7 @@ FUNCTION fin_anal_kartica()
 
    ENDIF
 
-   O_KONTO
+   o_konto()
 
    SELECT ANAL
 

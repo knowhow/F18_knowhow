@@ -10,30 +10,14 @@
  */
 
 
-#xcommand O_SIFV     => o_sifv()
-
-#xcommand O_ROBA     => select (F_ROBA)    ;  my_use  ("roba")      ; set order to tag "ID"
-#xcommand O_ROBA_NOT_USED  => select (F_ROBA) ;  IF !USED(); my_use("roba" ); ENDIF  ; set order to tag "ID"
 
 #xcommand O_BARKOD   => select (F_BARKOD)  ;  my_use  ("barkod")    ; set order to tag "1"
-
-#xcommand O_KONTO    => o_konto()
-#xcommand O_KONTO_NOT_USED  => select (F_KONTO) ;  IF !USED(); my_use("konto" ); ENDIF  ; set order to tag "ID"
-
-#xcommand O_PARTN    => o_partn()
-#xcommand O_PARTN_NOT_USED  => select (F_PARTN) ;  IF !USED(); my_use("partn" ); ENDIF  ; set order to tag "ID"
-
 #xcommand O_SAST     => select (F_SAST)    ;  my_use  ("sast")      ; set order to tag "ID"
 
-#xcommand O_TARIFA   => o_tarifa()
-#xcommand O_TRFP     => select (F_TRFP)    ;  use_sql_trfp()      ; set order to tag "ID"
-#xcommand O_TRFP2    => select (F_TRFP2)   ;  use_sql_trfp2()     ; set order to tag "ID"
+
 //#xcommand O_TRFP3    => select (F_TRFP3)   ;  use_sql_sif  ("trfp3")     ; set order to tag "ID"
 #xcommand O_TRMP     => select (F_TRMP)    ;  use_sql_sif  ("trmp")      ; set order to tag "ID"
 
-#xcommand O_VALUTE   => select (F_VALUTE)  ;  use_sql_valute()    ; set order to tag "ID"
-#xcommand O_REFER    => select (F_REFER)   ;  use_sql_sif  ("refer" )     ; set order to tag "ID"
-#xcommand O_OPS      => select (F_OPS)     ;  use_sql_opstine()      ; set order to tag "ID"
 #xcommand O_FAKT_OBJEKTI  => select (F_FAKT_OBJEKTI) ;  use_sql_sif ( "fakt_objekti" ) ; set order to tag "ID"
 
 #xcommand O_LOKAL    => select (F_LOKAL)   ;  use_sql_lokalizacija()
@@ -258,7 +242,7 @@
 
 #xcommand O__KRED   => select (F__KRED)   ;  my_use ("_kred")    ; set order to tag "ID"
 
-  
+
 
 #xcommand O_TIPPR2  => select (F_TIPPR2)  ;  my_use ("tippr2")   ; set order to tag "ID"
 #xcommand O_OBRACUNI => select (F_OBRACUNI) ; my_use("obracuni"); set order to tag "RJ"
@@ -333,7 +317,6 @@
 // legacy - izbaciti donje tabele
 // --------------------------------------------------------------------------------------
 #xcommand O_ADRES     => select (F_ADRES)     ; my_use ( "adres" )  ; set order to tag "ID"
-#xcommand O_SQLPAR    => select (F_SQLPAR)    ; my_use ( "SQLPAR" )
 
 // proizvoljni izvjestaji
 #xcommand O_KONIZ  => select (F_KONIZ) ; my_use("koniz") ; set order to tag "ID"
@@ -367,7 +350,6 @@
 
 #xcommand O_KALKSEZ        => select(F_KALK);  my_use  ("kalk")  ; set order to tag "1"
 #xcommand O_ROBASEZ        => select(F_ROBA);  my_use  ("roba")  ; set order to tag "ID"
-#xcommand O_CACHE          => select(F_CACHE);  my_use  ("cache")  ; set order to tag "1"
 
 
 #xcommand O_POBJEKTI       => select(F_POBJEKTI);  my_use  ("pobjekti") ; set order to tag "1"

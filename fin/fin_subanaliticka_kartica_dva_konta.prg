@@ -42,8 +42,8 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    RPar( "y2", @qqKonto2 )
    RPar( "y3", @qqPartner )
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
 
    PRIVATE cSazeta := "N"
    PRIVATE cK14 := "1"

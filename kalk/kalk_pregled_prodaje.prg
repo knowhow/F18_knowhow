@@ -16,7 +16,7 @@
 FUNCTION roba_pregled_prodaje_po_grupama()
 
    cre_prodaja()
-   O_PARTN
+   o_partner()
 
    cPA := "N"
    dOd := CToD( "" )
@@ -51,9 +51,9 @@ FUNCTION roba_pregled_prodaje_po_grupama()
    ENDDO
    BoxC()
 
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
 
    MsgO( "Preuzimanje podataka sa SQL servera" )

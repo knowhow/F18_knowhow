@@ -533,9 +533,9 @@ STATIC FUNCTION kalk_raspored_troskova_azuriranje()
          field->idvd $ "RN"
 
       o_sifk()
-      O_SIFV
-      O_ROBA
-      O_TARIFA
+      o_sifv()
+      o_roba()
+      o_tarifa()
       o_koncij()
 
       SELECT kalk_pripr

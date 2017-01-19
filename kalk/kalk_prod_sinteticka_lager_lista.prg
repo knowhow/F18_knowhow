@@ -20,10 +20,10 @@ FUNCTION sint_lager_lista_prodavnice()
    cIdFirma := self_organizacija_id()
    qqKonto := PadR( "132;", 60 )
    o_sifk()
-   O_SIFV
-   O_ROBA
-   O_KONTO
-   O_PARTN
+   o_sifv()
+   o_roba()
+   o_konto()
+   o_partner()
 
    dDatOd := CToD( "" )
    dDatDo := Date()

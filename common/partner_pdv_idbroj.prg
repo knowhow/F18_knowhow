@@ -40,7 +40,7 @@ FUNCTION fill_all_partneri_idbr_pdvb()
 
    LOCAL nCnt := 0
 
-   O_PARTN
+   o_partner()
    SELECT partn
 
 

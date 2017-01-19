@@ -20,8 +20,8 @@ FUNCTION Otpis16SI()
    o_kalk_pripr2()
    //o_kalk()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    SELECT kalk_pripr
    GO TOP

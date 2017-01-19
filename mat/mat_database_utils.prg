@@ -21,9 +21,9 @@ STATIC FUNCTION _o_tables()
    O_MAT_SINT
    O_MAT_NALOG
    O_MAT_PRIPR
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    RETURN
 

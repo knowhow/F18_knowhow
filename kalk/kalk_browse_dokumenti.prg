@@ -34,10 +34,10 @@ FUNCTION browse_kalk_dokumenti()
       RETURN .F.
    ENDIF
 
-   O_ROBA
+   o_roba()
    o_koncij()
 
-   O_KONTO
+   o_konto()
    find_kalk_doks_by_tip_datum( cFirma, NIL, dDatOd, dDatDo )
    set_filter_kalk_doks( cFirma, cIdVd, dDatOd, dDatDo, cMagKto, cProdKto, cPartner )
    GO TOP
@@ -237,10 +237,10 @@ STATIC FUNCTION usl_browse_kalk_dokumenti( cFirma, cIdVd, dDatOd, dDatDo, ;
 
 FUNCTION kalk_pregled_dokumenata_hronoloski()
 
-   O_ROBA
+   o_roba()
    o_koncij()
    -- o_kalk()
-   O_KONTO
+   o_konto()
 
    cIdFirma := self_organizacija_id()
    cIdFirma := Left( cIdFirma, 2 )

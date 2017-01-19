@@ -402,11 +402,11 @@ STATIC FUNCTION _o_tbl()
 
    // o_kalk()
    o_sifk()
-   O_SIFV
+   o_sifv()
    o_tdok()
-   O_ROBA
+   o_roba()
    o_koncij()
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
 
    RETURN .T.

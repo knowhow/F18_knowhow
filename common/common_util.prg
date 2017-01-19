@@ -219,7 +219,7 @@ FUNCTION preduzece()
      ELSE
       SELECT ( F_PARTN )
       IF !Used()
-         O_PARTN
+         o_partner()
       ENDIF
       SELECT partn
       HSEEK self_organizacija_id()

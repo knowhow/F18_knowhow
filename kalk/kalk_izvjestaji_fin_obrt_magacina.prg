@@ -48,8 +48,8 @@ FUNCTION kalk_finansijski_obrt()
    PRIVATE PREDOVA2 := 62
 
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    cLegenda := "D"
 
@@ -125,9 +125,9 @@ FUNCTION kalk_finansijski_obrt()
    O_REKAP2
    O_REKA22
    o_koncij()
-   O_ROBA
-   O_KONTO
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_tarifa()
    //o_kalk()
    O_K1
    O_OBJEKTI

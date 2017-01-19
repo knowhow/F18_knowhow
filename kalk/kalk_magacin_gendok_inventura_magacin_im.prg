@@ -33,11 +33,11 @@ FUNCTION kalk_generacija_inventura_magacin_im()
       ENDIF
    ENDIF
 
-   O_KONTO
-   O_TARIFA
+   o_konto()
+   o_tarifa()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    IF lOsvjezi
       cIdFirma := self_organizacija_id()
@@ -192,7 +192,7 @@ FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
    LOCAL cIdFirma, cIdKonto, dDatDok, cArtikli, cPosition, cOldBrDok
    LOCAL cIdRoba, cCijenaTIP, cIdVd, cBrDok
 
-   O_KONTO
+   o_konto()
 
    Box(, 8, 70 )
    cIdFirma := self_organizacija_id()
@@ -225,10 +225,10 @@ FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
       RETURN .F.
    ENDIF
 
-   O_TARIFA
+   o_tarifa()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
    o_kalk_pripr()
    o_kalk_pript()
    o_koncij()

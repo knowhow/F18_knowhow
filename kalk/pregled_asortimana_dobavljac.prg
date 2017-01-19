@@ -338,7 +338,7 @@ STATIC FUNCTION print_frm_asort_nar( vars )
    SET ORDER TO TAG "roba"
    GO TOP
 
-   O_PARTN
+   o_partner()
    SELECT partn
    HSEEK r_export->idpartner
 
@@ -419,13 +419,13 @@ STATIC FUNCTION print_report( vars )
    ?U "Za period od", DToC( vars[ "datum_od" ] ), "do", DToC( vars[ "datum_do" ] )
    ?U "Prodavnički konto:", vars[ "p_konto" ]
 
-   O_KONTO
+   o_konto()
    SEEK vars[ "p_konto" ]
    ?? AllTrim( konto->naz )
 
    ?U "Dobavljač:", vars[ "dobavljac" ]
 
-   O_PARTN
+   o_partner()
    SEEK vars[ "dobavljac" ]
    ?? AllTrim( partn->naz )
 

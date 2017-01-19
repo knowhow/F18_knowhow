@@ -116,11 +116,11 @@ STATIC FUNCTION kalk_prod_gen_ip()
 
 FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
 
-   O_KONTO
-   O_TARIFA
+   o_konto()
+   o_tarifa()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    Box(, 4, 70 )
 
@@ -255,11 +255,11 @@ FUNCTION NivPoProc()
    LOCAL nStopa := 0.0
    LOCAL nZaokr := 1
 
-   O_KONTO
-   O_TARIFA
+   o_konto()
+   o_tarifa()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    cVarijanta := "2"
 
@@ -421,11 +421,11 @@ FUNCTION VratiZadNiv()
 
    LOCAL nSlog := 0, nPom := 0, cStBrDok := ""
 
-   O_KONTO
-   O_TARIFA
+   o_konto()
+   o_tarifa()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    Box(, 4, 60 )
    cIdFirma := self_organizacija_id()
@@ -514,7 +514,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
    LOCAL nPom := 0
    PRIVATE cIdKontoProdavnica := fetch_metric( "kalk_sredi_karicu_mpc", my_user(), PadR( "1330", 7 ) )
 
-   O_KONTO
+   o_konto()
 
    cSravnitiD := "D"
 
@@ -534,7 +534,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
    o_koncij()
    SEEK Trim( cIdKontoProdavnica )
 
-   O_ROBA
+   o_roba()
    o_kalk_pripr()
 
 
@@ -710,13 +710,13 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
 // Generisanje dokumenta tipa 11 na osnovu 13-ke
 FUNCTION kalk_13_to_11()
 
-   O_KONTO
+   o_konto()
    o_kalk_pripr()
    o_kalk_pripr2()
    //o_kalk()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    SELECT kalk_pripr
    GO TOP
@@ -786,8 +786,8 @@ FUNCTION Gen41S()
       RETURN .F.
    ENDIF
 
-   O_TARIFA
-   O_ROBA
+   o_tarifa()
+   o_roba()
    -- o_kalk()
 
    SELECT kalk_pripr

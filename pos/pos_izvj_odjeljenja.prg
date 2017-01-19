@@ -359,8 +359,8 @@ FUNCTION realizacija_dio_objekta
    O_VRSTEP
    O_KASE
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
    o_pos_pos()
    o_pos_doks()
 
@@ -903,9 +903,9 @@ STATIC FUNCTION _o_tables()
    O_DIO
    O_ODJ
    o_sifk()
-   O_SIFV
+   o_sifv()
    O_KASE
-   O_ROBA
+   o_roba()
    o_pos_pos()
    o_pos_doks()
 

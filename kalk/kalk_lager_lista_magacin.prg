@@ -1453,8 +1453,8 @@ STATIC FUNCTION _gen_xml( params )
 STATIC FUNCTION kalk_open_tables()
 
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
    IF o_koncij()
       ?E "open koncij ok"
    ELSE
@@ -1465,7 +1465,7 @@ STATIC FUNCTION kalk_open_tables()
    ELSE
       ?E "open konto ERROR"
    ENDIF
-   IF o_partn()
+   IF o_partner()
       ?E "open partn ok"
    ELSE
       ?E "open partn error"

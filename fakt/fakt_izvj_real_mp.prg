@@ -186,12 +186,12 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
    O_FAKT_DOKS
    O_FAKT
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
    O_VRSTEP
-   O_TARIFA
-   O_PARTN
+   o_tarifa()
+   o_partner()
 
    // parametri
    _d_od := params[ "datum_od" ]

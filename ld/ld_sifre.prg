@@ -696,7 +696,7 @@ FUNCTION g_ops_code( cId )
    LOCAL cRet := ""
 
    PushWa()
-   O_OPS
+   o_ops()
    SELECT ops
    SEEK cId
    IF Found()
@@ -879,7 +879,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
    PushWA()
 
    o_sifk()
-   O_SIFV
+   o_sifv()
    SELECT sifk
    SET ORDER TO TAG "ID"
    SEEK "POR"
@@ -974,7 +974,7 @@ FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
    PushWA()
 
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    SELECT sifk
    SET ORDER TO TAG "ID"

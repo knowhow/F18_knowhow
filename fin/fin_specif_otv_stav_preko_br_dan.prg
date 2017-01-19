@@ -21,8 +21,8 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
 
    cIdFirma := self_organizacija_id(); nIznosBHD := 0; nDana := 30; cIdKonto := Space( 7 )
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    dDatumOd := CToD( "" )
    dDatum := Date()
    cUkupnoPartner := "D"

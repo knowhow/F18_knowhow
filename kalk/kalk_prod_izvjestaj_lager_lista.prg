@@ -46,10 +46,10 @@ FUNCTION lager_lista_prodavnica()
    cIdKonto := PadR( "1320", gDuzKonto )
 
    o_sifk()
-   O_SIFV
-   O_ROBA
-   O_KONTO
-   O_PARTN
+   o_sifv()
+   o_roba()
+   o_konto()
+   o_partner()
 
    cKontrolnaTabela := "N"
 
@@ -174,11 +174,11 @@ FUNCTION lager_lista_prodavnica()
    ENDIF
 
    o_sifk()
-   O_SIFV
-   O_ROBA
-   O_TARIFA
-   O_KONTO
-   O_PARTN
+   o_sifv()
+   o_roba()
+   o_tarifa()
+   o_konto()
+   o_partner()
    o_koncij()
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )

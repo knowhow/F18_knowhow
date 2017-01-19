@@ -22,12 +22,12 @@ FUNCTION epdv_otvori_kuf_tabele( lPriprema )
 
    SELECT F_TARIFA
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
 
    SELECT F_PARTN
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
 
    SELECT F_KUF
@@ -54,12 +54,12 @@ FUNCTION epdv_otvori_kif_tabele( lPriprema )
 
    SELECT F_TARIFA
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
 
    SELECT F_PARTN
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
 
    SELECT F_KIF

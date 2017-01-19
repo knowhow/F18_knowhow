@@ -248,7 +248,7 @@ STATIC FUNCTION _g_r_opc( cOpc )
    LOCAL nTArea := Select()
    LOCAL cRet := ""
 
-   O_OPS
+   o_ops()
    SEEK cOpc
 
    cRet := field->naz
@@ -266,7 +266,7 @@ STATIC FUNCTION _g_r_kopc( cOpc )
    LOCAL nTArea := Select()
    LOCAL cRet := ""
 
-   O_OPS
+   o_ops()
    SEEK cOpc
 
    cRet := field->puccity

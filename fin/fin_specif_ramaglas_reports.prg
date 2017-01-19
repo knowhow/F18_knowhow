@@ -30,7 +30,7 @@ qqRN:=SPACE(40)
 dOd:=CTOD("")
 dDo:=DATE()
 
-O_PARTN
+o_partner()
 
 Box("#SPECIFIKACIJA TROSKOVA PO RADNIM NALOZIMA",10,75)
 
@@ -60,7 +60,7 @@ BoxC()
 cIdFirma:=left(cIdFirma,2)
 
 O_FAKT_OBJEKTI
-O_KONTO
+o_konto()
 o_suban()
 
 // 1) utvrditi ukupne troskove (nUkTros)

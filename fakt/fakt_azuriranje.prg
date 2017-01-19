@@ -342,7 +342,7 @@ STATIC FUNCTION naziv_partnera_za_tabelu_doks( cId_partner )
 
    SELECT ( F_PARTN )
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
 
    SELECT partn
@@ -568,19 +568,19 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
    ENDIF
 
    O_VRSTEP
-   O_OPS
-   O_KONTO
+   o_ops()
+   o_konto()
    O_SAST
-   O_PARTN
-   O_ROBA
+   o_partner()
+   o_roba()
    o_fakt_txt()
-   O_TARIFA
-   O_VALUTE
+   o_tarifa()
+   o_valute()
    O_FAKT_DOKS2
    O_FAKT_DOKS
    O_RJ
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    IF lOpenFaktAsPripr == .T.
 
@@ -703,8 +703,8 @@ FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
 
    O_FAKT
    O_FAKT_DOKS
-   O_ROBA
-   O_PARTN
+   o_roba()
+   o_partner()
 
    _novi_br_dok := AllTrim( br_dok ) + "/S"
 

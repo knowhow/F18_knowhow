@@ -57,7 +57,7 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
    ENDIF
 
    // otvori tabele
-   O_ROBA
+   o_roba()
 
    SELECT ( F_TMP_1 )
    USE

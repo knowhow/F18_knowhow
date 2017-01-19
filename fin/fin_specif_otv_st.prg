@@ -29,9 +29,9 @@ FUNCTION fin_specif_otvorene_stavke()
 
    qqBrDok := Space( 40 )
 
-   O_PARTN
+   o_partner()
    M := "---- " + REPL( "-", Len( PARTN->id ) ) + " ------------------------------------- ----- ----------------- ---------- ---------------------- --------------------"
-   O_KONTO
+   o_konto()
    dDatOd := dDatDo := CToD( "" )
 
    cPrelomljeno := "D"

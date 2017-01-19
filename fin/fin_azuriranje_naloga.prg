@@ -855,10 +855,10 @@ FUNCTION o_fin_za_azuriranje()
 
    my_close_all_dbf()
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    o_suban()
    o_anal()

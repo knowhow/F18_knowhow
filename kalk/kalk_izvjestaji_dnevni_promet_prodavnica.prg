@@ -174,7 +174,7 @@ STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
    LOCAL cTKumP
    LOCAL nMpcBp
 
-   O_TARIFA
+   o_tarifa()
    o_koncij()
 
    IF FieldPos( "KUMTOPS" ) = 0
@@ -280,7 +280,7 @@ STATIC FUNCTION ScanKalk( dDan, aR, dDatDo, cPKto )
 
 
 
-   O_ROBA
+   o_roba()
    -- o_kalk() // idFirma+dtos(datdok)+podbr+idvd+brdok
    SET ORDER TO TAG "5"
 

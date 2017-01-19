@@ -28,7 +28,7 @@ FUNCTION p_refer( cId, dx, dy )
    ENDIF
 
 
-   O_REFER
+   o_refer()
 
    ImeKol := {}
    Kol := {}
@@ -61,7 +61,7 @@ FUNCTION g_refer( cReferId )
    LOCAL cNaz := ""
    LOCAL nTarea := Select()
 
-   O_REFER
+   o_refer()
    SEEK cReferId
    IF Found() .AND. refer->id == cReferId
       cNaz := AllTrim( refer->naz )

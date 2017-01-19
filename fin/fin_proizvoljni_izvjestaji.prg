@@ -65,8 +65,8 @@ FUNCTION PrPromRn()
    WPar( "q5", cNazivFirme )
    SELECT PARAMS; USE
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_suban()
 
 

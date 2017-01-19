@@ -29,12 +29,12 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    cIdKonto := PadR( "132.", gDuzKonto )
 
    o_sifk()
-   O_SIFV
-   O_ROBA
-   O_TARIFA
+   o_sifv()
+   o_roba()
+   o_tarifa()
    o_koncij()
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
 
    dDatOd := CToD( "" )
    dDatDo := Date()

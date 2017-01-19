@@ -159,8 +159,8 @@ FUNCTION kalk_generisi_95_za_manjak_16_za_visak()
    o_kalk_pripr2()
    // o_kalk()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    SELECT kalk_pripr
    GO TOP
@@ -286,11 +286,11 @@ FUNCTION MNivPoProc()
 
    LOCAL nStopa := 0.0, nZaokr := 1
 
-   O_KONTO
-   O_TARIFA
+   o_konto()
+   o_tarifa()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
    cVarijanta := "3"
    Box(, 7, 60 )
    cIdFirma := self_organizacija_id()
@@ -425,7 +425,7 @@ FUNCTION KorekPC()
    PRIVATE cMagac := PadR( "1310   ", gDuzKonto )
 
    o_koncij()
-   O_KONTO
+   o_konto()
    PRIVATE cSravnitiD := "D"
    PRIVATE cUvijekSif := "D"
 
@@ -437,7 +437,7 @@ FUNCTION KorekPC()
    @ m_x + 6, m_y + 2 SAY "Datum do kojeg se sravnjava" GET dDok
    read;ESC_BCR
    BoxC()
-   O_ROBA
+   o_roba()
    o_kalk_pripr()
 
 
@@ -585,8 +585,8 @@ FUNCTION kalk_generisi_prijem16_iz_otpreme96()
    o_kalk_pripr()
    // o_kalk()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    SELECT kalk_pripr
    GO TOP

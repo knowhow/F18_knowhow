@@ -41,7 +41,7 @@ FUNCTION prefin_unos_naloga()
    cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
-   O_PARTN
+   o_partner()
 
    dDatOd := CToD( "" )
    dDatDo := CToD( "" )
@@ -140,7 +140,7 @@ FUNCTION prefin_unos_naloga()
    cIdFirma := Left( cIdFirma, 2 )
 
    O_FIN_PRIPR
-   O_KONTO
+   o_konto()
    //o_suban()
    find_suban_za_period( cIdFirma, dDatOd, dDatDo )
 

@@ -531,7 +531,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
 
    SELECT ( F_PARTN )
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
 
    SELECT fakt

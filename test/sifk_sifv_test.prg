@@ -77,7 +77,7 @@ FUNCTION sifk_sifv_test()
    _karakteristika   := PadR( _karakteristika, 4 )
    _karakteristika_n := PadR( _karakteristika_n, 4 )
 
-   O_SIFV
+   o_sifv()
 
 #define K1_LEN 9
 #define KN_LEN 7

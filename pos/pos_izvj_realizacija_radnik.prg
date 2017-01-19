@@ -18,11 +18,11 @@
 STATIC FUNCTION o_tables()
 
    o_sifk()
-   O_SIFV
+   o_sifv()
    O_DIO
    O_KASE
    O_ODJ
-   O_ROBA
+   o_roba()
    O_OSOB
    SET ORDER TO TAG "NAZ"
    O_VRSTEP

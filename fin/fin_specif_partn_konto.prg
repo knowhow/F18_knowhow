@@ -27,7 +27,7 @@ FUNCTION fin_spec_partnera_na_kontu()
    cDP := "1"
    qqKonto := qqPartner := Space( 100 )
 
-   O_PARTN
+   o_partner()
 
    Box( "skpoi", 10, 70, .F. )
    @ m_x + 1, m_y + 2 SAY "SPECIFIKACIJA PARTNERA NA KONTU"

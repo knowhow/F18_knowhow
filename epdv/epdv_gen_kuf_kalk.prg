@@ -59,7 +59,7 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
 
    SELECT F_ROBA
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT sg_kuf

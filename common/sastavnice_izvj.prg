@@ -46,7 +46,7 @@ FUNCTION ISast()
 
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
    SET ORDER TO TAG "ID"
 

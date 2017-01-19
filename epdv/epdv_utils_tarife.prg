@@ -21,7 +21,7 @@ FUNCTION s_tarifa( cIdTar )
    SELECT ( F_TARIFA )
 
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
    SET ORDER TO TAG "ID"
 
@@ -50,7 +50,7 @@ FUNCTION g_pdv_stopa( cIdTar )
    SELECT ( F_TARIFA )
 
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
    SET ORDER TO TAG "ID"
 

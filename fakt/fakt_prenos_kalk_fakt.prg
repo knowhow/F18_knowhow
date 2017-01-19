@@ -305,14 +305,14 @@ FUNCTION kalk_2_fakt()
 STATIC FUNCTION _o_tables()
 
    O_FAKT_DOKS
-   O_ROBA
+   o_roba()
    O_RJ
    // o_kalk()
    O_FAKT
    O_FAKT_PRIPR
    o_sifk()
-   O_SIFV
-   O_PARTN
+   o_sifv()
+   o_partner()
 
    RETURN .T.
 

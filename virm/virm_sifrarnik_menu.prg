@@ -78,13 +78,13 @@ STATIC FUNCTION _sif_spec()
 FUNCTION OSifVirm()
 
    o_sifk()
-   O_SIFV
-   O_PARTN
+   o_sifv()
+   o_partner()
    o_vrprim()
-   O_VALUTE
+   o_valute()
    o_ldvirm()
    o_jprih()
    O_BANKE
-   O_OPS
+   o_ops()
 
    RETURN .T.

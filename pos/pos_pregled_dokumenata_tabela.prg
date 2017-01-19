@@ -407,7 +407,7 @@ STATIC FUNCTION _o_pos_prepis_tbl()
 
    SELECT ( F_PARTN )
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
 
    SELECT ( F_VRSTEP )
@@ -438,12 +438,12 @@ STATIC FUNCTION _o_pos_prepis_tbl()
 
    SELECT ( F_TARIFA )
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
 
    SELECT ( F_VALUTE )
    IF !Used()
-      O_VALUTE
+      o_valute()
    ENDIF
 
    SELECT ( F_SIFK )
@@ -453,12 +453,12 @@ STATIC FUNCTION _o_pos_prepis_tbl()
 
    SELECT ( F_SIFV )
    IF !Used()
-      O_SIFV
+      o_sifv()
    ENDIF
 
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT ( F_POS_DOKS )

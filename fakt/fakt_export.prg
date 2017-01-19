@@ -116,7 +116,7 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
    LOCAL nCount := 0
 
    O_R_EXP
-   O_ROBA
+   o_roba()
    O_FAKT_DOKS
    O_FAKT
 

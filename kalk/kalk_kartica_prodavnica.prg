@@ -41,12 +41,12 @@ FUNCTION kalk_kartica_prodavnica()
 
    _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
-   O_TARIFA
+   o_tarifa()
    o_sifk()
-   O_SIFV
-   O_ROBA
-   O_KONTO
-   O_PARTN
+   o_sifv()
+   o_roba()
+   o_konto()
+   o_partner()
 
    cPredh := "N"
    dDatOd := Date()
@@ -598,7 +598,7 @@ FUNCTION naprometniji_artikli_prodavnica()
    SELECT params
    USE
 
-   O_ROBA
+   o_roba()
 
    find_kalk_za_period( self_organizacija_id(), NIL, NIL, NIL, dDat0, dDat1, "idroba,idvd" )
 

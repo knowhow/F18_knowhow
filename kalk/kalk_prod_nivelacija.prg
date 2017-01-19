@@ -19,14 +19,14 @@ FUNCTION kalk_nivelacija_11()
 
    LOCAL _sufix, hRec
 
-   O_TARIFA
+   o_tarifa()
    o_koncij()
    o_kalk_pripr2()
    o_kalk_pripr()
 
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    SELECT kalk_pripr
    GO TOP

@@ -26,7 +26,7 @@ FUNCTION os_amortizacija_po_kontima()
    ENDIF
 
    O_AMORT
-   O_KONTO
+   o_konto()
    O_RJ
 
    o_os_sii_promj()

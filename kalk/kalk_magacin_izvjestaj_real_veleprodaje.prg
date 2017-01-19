@@ -27,11 +27,11 @@ FUNCTION kalk_real_partnera()
    LOCAL Pickol := gPicKol         // "999999.999"
 
    o_sifk()
-   O_SIFV
-   O_ROBA
-   O_KONTO
-   O_TARIFA
-   O_PARTN
+   o_sifv()
+   o_roba()
+   o_konto()
+   o_tarifa()
+   o_partner()
 
    PRIVATE dDat1 := dDat2 := CToD( "" )
    cIdFirma := self_organizacija_id()
@@ -74,7 +74,7 @@ FUNCTION kalk_real_partnera()
    BoxC()
 
 
-   O_TARIFA
+   o_tarifa()
    o_kalk()
    SET ORDER TO TAG PMAG
 

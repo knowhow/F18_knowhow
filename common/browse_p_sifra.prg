@@ -1110,7 +1110,7 @@ FUNCTION sifarnik_brisi_stavku()
 
    IF lOk .AND. Alias() != "SIFK" .AND. hb_HHasKey( _rec_dbf, "id" )
       o_sifk()
-      O_SIFV
+      o_sifv()
       _rec := hb_Hash()
       _rec[ "id" ]    := PadR( cAlias, 8 )
       _rec[ "idsif" ] := PadR( _rec_dbf[ "id" ], 15 )

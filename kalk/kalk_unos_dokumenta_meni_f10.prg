@@ -197,9 +197,9 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
    IF _opt == 2
 
       o_kalk_pripr()
-      O_ROBA
+      o_roba()
       o_koncij()
-      O_KONTO
+      o_konto()
 
       Box(, 1, 50 )
       @ m_x + 1, m_y + 2 SAY8 "Prodavnički konto:" GET _konto VALID p_konto( @_konto )
@@ -314,7 +314,7 @@ STATIC FUNCTION kalk_printaj_duple_stavke_iz_pripreme()
    LOCAL aRobaDupli := {}
    LOCAL nScan, nI
 
-   O_ROBA
+   o_roba()
    o_kalk_pripr()
 
    SELECT kalk_pripr

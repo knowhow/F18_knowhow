@@ -28,9 +28,9 @@ FUNCTION label_bkod()
    PRIVATE ImeKol
 
    o_sifk()
-   O_SIFV
-   O_PARTN
-   O_ROBA
+   o_sifv()
+   o_partner()
+   o_roba()
    SET ORDER TO TAG "ID"
    O_BARKOD
    O_FAKT_PRIPR

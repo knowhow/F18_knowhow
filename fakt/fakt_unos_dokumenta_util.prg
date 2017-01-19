@@ -1160,11 +1160,11 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
    ENDIF
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
    SELECT ( F_TARIFA )
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
 
    SELECT fakt_pripr
@@ -1230,14 +1230,14 @@ FUNCTION TarifaR( cRegion, cIdRoba, aPorezi )
 
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
    SEEK cIdRoba
    cTarifa := &cPolje
 
    SELECT ( F_TARIFA )
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
    SEEK cTarifa
 
@@ -1751,7 +1751,7 @@ FUNCTION Roba()
       SELECT F_ROBA
 
       IF !Used()
-         O_ROBA
+         o_roba()
       ENDIF
 
       SELECT roba

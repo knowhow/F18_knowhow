@@ -706,8 +706,8 @@ FUNCTION fin_prekart()
 
    ENDDO
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_sint()
    SET ORDER TO TAG "2"
    o_anal()

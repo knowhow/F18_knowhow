@@ -248,18 +248,18 @@ FUNCTION o_ugov()
 
    o_fakt_txt()
    o_sifk()
-   O_SIFV
+   o_sifv()
    O_FAKT
    O_FAKT_DOKS
-   O_ROBA
-   O_TARIFA
-   O_PARTN
+   o_roba()
+   o_tarifa()
+   o_partner()
    O_DEST
    O_UGOV
    O_RUGOV
    O_GEN_UG
    O_G_UG_P
-   O_KONTO
+   o_konto()
 
    RETURN
 

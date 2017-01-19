@@ -199,7 +199,7 @@ STATIC FUNCTION o_tables()
 
    O_LD
    o_ld_radn()
-   O_KONTO
+   o_konto()
    O_RADSIHT
    o_dopr()
    o_por()

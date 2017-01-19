@@ -1132,7 +1132,7 @@ STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
 
    IF !Empty( kanton )
 
-      O_OPS
+      o_ops()
       HSEEK radn->idopsst
 
       IF Found() .AND. !( ops->idkan $ kanton )

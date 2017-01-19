@@ -990,7 +990,7 @@ STATIC FUNCTION info_generated_data( data )
 
    START PRINT CRET
 
-   O_PARTN
+   o_partner()
 
    ?
    ? "Pregled generisanih dokumenata prema kupcima:"

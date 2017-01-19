@@ -337,9 +337,9 @@ STATIC FUNCTION o_tables()
    o_kalk_pripr()
    // o_kalk()
    o_kalk_doks()
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_konto()
+   o_partner()
+   o_tarifa()
    O_FAKT
 
    RETURN .T.
@@ -375,7 +375,7 @@ STATIC FUNCTION o_tbl_roba( lTest, cSezSif )
       SET ORDER TO TAG "ID"
 
    ELSE
-      O_ROBA
+      o_roba()
       O_SAST
    ENDIF
 
@@ -529,10 +529,10 @@ FUNCTION PrenosNo2()
 
    o_kalk_pripr()
    // o_kalk()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
    O_SAST
    O_FAKT
 

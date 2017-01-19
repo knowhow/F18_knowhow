@@ -157,7 +157,7 @@ FUNCTION export_BTerm_data()
    O_R_EXP
    INDEX ON barkod TAG "ID"
 
-   O_ROBA
+   o_roba()
    SET ORDER TO TAG "BARKOD"
    GO TOP
 

@@ -146,22 +146,22 @@ STATIC FUNCTION o_tables( azurirana )
 
    SELECT F_ROBA
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT F_TARIFA
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
 
    SELECT F_PARTN
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
 
    SELECT F_KONTO
    IF !Used()
-      O_KONTO
+      o_konto()
    ENDIF
 
    SELECT F_TDOK

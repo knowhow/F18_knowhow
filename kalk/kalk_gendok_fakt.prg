@@ -29,8 +29,8 @@ FUNCTION kalk_prenos_fakt()
 
    O_FAKT
    O_FAKT_PRIPR
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
    o_kalk_pripr()
    O_RJ
 

@@ -75,10 +75,10 @@ FUNCTION PripTOPSFAKT( cIdPartnG )
 
 FUNCTION Stanje2Fakt()
 
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
-   O_PARTN
+   o_sifv()
+   o_partner()
    O_KASE
    o_pos_pos()
    o_pos_doks()

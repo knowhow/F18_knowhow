@@ -111,16 +111,16 @@ FUNCTION KalkRobaBlock( Ch )
 
 FUNCTION OSifBaze()
 
-   O_KONTO
+   o_konto()
    o_koncij()
-   O_PARTN
+   o_partner()
    o_tnal()
    o_tdok()
-   O_TRFP
+   o_trfp()
    O_TRMP
-   O_VALUTE
-   O_TARIFA
-   O_ROBA
+   o_valute()
+   o_tarifa()
+   o_roba()
    O_SAST
 
    RETURN

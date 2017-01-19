@@ -33,7 +33,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
    my_close_all_dbf()
 
-   O_PARTN
+   o_partner()
 
    dDatOd := CToD( "" )
    dDatDo := Date()

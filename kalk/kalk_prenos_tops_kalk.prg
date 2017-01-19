@@ -597,7 +597,7 @@ STATIC FUNCTION tops_kalk_get_magacinski_konto()
    LOCAL _konto := PadR( "1320", 7 )
    LOCAL nDbfArea := Select()
 
-   O_KONTO
+   o_konto()
    SELECT konto
 
    Box(, 3, 60 )
@@ -790,12 +790,12 @@ STATIC FUNCTION tops_kalk_o_import_tabele()
 
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT ( F_TARIFA )
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
 
    SELECT ( F_KALK_PRIPR )

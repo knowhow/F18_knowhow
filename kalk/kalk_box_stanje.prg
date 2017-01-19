@@ -196,7 +196,7 @@ FUNCTION BoxStanje( aStanje, cIdroba )
 
          IF "TARIFA->" $ Upper( cPom777 )
             SELECT ( F_TARIFA )
-            IF !Used(); O_TARIFA; ENDIF
+            IF !Used(); o_tarifa(); ENDIF
             SET ORDER TO TAG "ID"
             HSEEK ROBA->idtarifa
             SELECT ROBA

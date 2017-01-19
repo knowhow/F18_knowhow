@@ -55,8 +55,8 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    cPrelomljeno := "N"
 
    o_suban()
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
 
 
    cIdFirma := self_organizacija_id()
@@ -136,7 +136,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
 
    SELECT ( F_TRFP2 )
    IF !Used()
-      O_TRFP2
+      o_trfp2()
    ENDIF
 
    HSEEK "99 " + Left( cIdKonto, 1 )
@@ -157,10 +157,10 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    fin_create_pom_table( nil, FIELD_PARTNER_ID_LENGTH )
    // kreiraj pomocnu bazu
 
-   O_TRFP2
+   o_trfp2()
    o_suban()
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
 
    IF cPoRN == "D"
       gaZagFix := { 5, 3 }

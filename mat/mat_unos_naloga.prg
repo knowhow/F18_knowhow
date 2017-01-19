@@ -102,16 +102,16 @@ FUNCTION mat_o_edit()
    O_MAT_SUBAN
    O_KARKON
    O_MAT_PRIPR
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_tnal()
    o_tdok()
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
-   O_VALUTE
+   o_sifv()
+   o_valute()
    O_MAT_NALOG
-   O_TARIFA
+   o_tarifa()
 
    SELECT mat_pripr
    SET ORDER TO TAG "1"
@@ -651,7 +651,7 @@ FUNCTION mat_st_anal_nalog( fnovi )
    ENDIF
 
    o_tnal()
-   O_ROBA
+   o_roba()
 
    IF fnovi
 

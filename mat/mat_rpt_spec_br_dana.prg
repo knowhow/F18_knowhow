@@ -22,11 +22,11 @@ STATIC _skip_docs := "#00#"
 STATIC FUNCTION _o_rpt_tables()
 
    O_MAT_SUBAN
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
-   O_PARTN
-   O_KONTO
+   o_sifv()
+   o_partner()
+   o_konto()
 
    RETURN
 

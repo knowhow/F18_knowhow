@@ -30,11 +30,11 @@ FUNCTION usporedna_lista_fakt_kalk()
 
    O_FAKT_DOKS
    o_kalk() // usporedna lista fakt kalk
-   O_KONTO
-   O_TARIFA
+   o_konto()
+   o_tarifa()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
    O_RJ
    O_FAKT
 

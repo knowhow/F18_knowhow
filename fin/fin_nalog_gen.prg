@@ -151,8 +151,8 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 FUNCTION fin_open_psuban_and_ostalo()
 
    O_VRSTEP
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_tnal()
    o_tdok()
    o_fin_psuban()
@@ -170,8 +170,8 @@ FUNCTION fin_open_lock_panal( lZap )
    O_PSINT
    O_PNALOG
 
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
    o_tnal()
 
    IF !lock_fin_priprema( lZap )
@@ -261,7 +261,7 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
    O_PSINT
    O_PNALOG
    O_PSUBAN
-   O_KONTO
+   o_konto()
    o_tnal()
 
    IF lAuto == NIL

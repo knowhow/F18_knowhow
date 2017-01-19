@@ -64,10 +64,10 @@ FUNCTION fakt_11_kalk_prenos_11()
    o_kalk_pripr()
    o_koncij()
    // o_kalk()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
 
    O_FAKT
 
@@ -288,10 +288,10 @@ FUNCTION fakt_13_kalk_11()
    o_kalk_pripr()
    o_koncij()
    // o_kalk()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
 
    O_FAKT
 
@@ -447,10 +447,10 @@ FUNCTION fakt_11_kalk_41()
 
    o_kalk_pripr()
    o_kalk()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
 
    O_FAKT
 
@@ -699,10 +699,10 @@ FUNCTION fakt_01_kalk_81()
 
    o_kalk_pripr()
    o_kalk()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
 
    O_FAKT
 
@@ -832,10 +832,10 @@ FUNCTION fakt_13_kalk_80()
    o_kalk_pripr()
    o_koncij()
    o_kalk()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
 
    O_FAKT
 
@@ -997,10 +997,10 @@ FUNCTION fakt_15_kalk_15()
    o_koncij()
    o_kalk()
    IF File( KUMPATH + "DOKS2.DBF" ); fDoks2 := .T. ; o_kalk_doks2(); ENDIF
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
 
    O_FAKT
 
@@ -1494,10 +1494,10 @@ STATIC FUNCTION _o_prenos_tbls()
 
    o_kalk_pripr()
    o_kalk()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
    O_FAKT
 
    RETURN .T.

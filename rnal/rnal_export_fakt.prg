@@ -764,7 +764,7 @@ STATIC FUNCTION fnd_partn( xPartn, nCustId, cDesc  )
    LOCAL nTArea := Select()
    PRIVATE GetList := {}
 
-   O_PARTN
+   o_partner()
 
    xPartn := Space( 6 )
 
@@ -793,9 +793,9 @@ STATIC FUNCTION fnd_roba( xRoba, nArtId, cDesc )
    LOCAL nTArea := Select()
    PRIVATE GetList := {}
 
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    xRoba := Space( 10 )
 
@@ -825,7 +825,7 @@ STATIC FUNCTION _g_pfmk_desc( cPart )
    LOCAL xRet := ""
    LOCAL nTArea := Select()
 
-   O_PARTN
+   o_partner()
    SELECT partn
    SET ORDER TO TAG "ID"
    SEEK cPart
@@ -847,7 +847,7 @@ STATIC FUNCTION _g_pfmk_addr( cPart )
    LOCAL xRet := ""
    LOCAL nTArea := Select()
 
-   O_PARTN
+   o_partner()
    SELECT partn
    SET ORDER TO TAG "ID"
    SEEK cPart
@@ -869,7 +869,7 @@ STATIC FUNCTION _g_pfmk_place( cPart )
    LOCAL xRet := ""
    LOCAL nTArea := Select()
 
-   O_PARTN
+   o_partner()
    SELECT partn
    SET ORDER TO TAG "ID"
    SEEK cPart
@@ -922,7 +922,7 @@ FUNCTION g_art_price( cId, cPriceType )
 
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT roba

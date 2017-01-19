@@ -24,12 +24,12 @@ FUNCTION NaPrimPak()
    ENDIF
 
    o_koncij()
-   O_ROBA
+   o_roba()
    o_kalk_pripr()
    -- o_kalk_doks()
    -- o_kalk()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    dDatKalk := Date()
    qqProd := PadR( "132;", 80 )
@@ -206,12 +206,12 @@ FUNCTION NaPrPak2()
 
    O__KALK
    o_koncij()
-   O_ROBA
+   o_roba()
    o_kalk_pripr()
    -- o_kalk_doks()
    -- o_kalk()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    dDatKalk := kalk_pripr->datdok
 

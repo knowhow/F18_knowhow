@@ -304,7 +304,7 @@ STATIC FUNCTION otvori_tabele()
 
    o_tippr_ili_tippr2( cObracun )
 
-   O_OPS
+   o_ops()
    o_koef_beneficiranog_radnog_staza()
    o_ld_vrste_posla()
    o_ld_rj()

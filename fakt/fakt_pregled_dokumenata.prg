@@ -31,12 +31,12 @@ FUNCTION fakt_pregled_liste_dokumenata()
    PRIVATE cFilter := ".t."
 
    O_VRSTEP
-   O_OPS
-   O_VALUTE
+   o_ops()
+   o_valute()
    O_RJ
    O_FAKT_OBJEKTI
    O_FAKT
-   O_PARTN
+   o_partner()
    O_FAKT_DOKS
 
    qqVrsteP := Space( 20 )
@@ -241,7 +241,7 @@ FUNCTION print_porezna_faktura( lOpcine )
    USE
 
    O_FAKT_DOKS
-   O_PARTN
+   o_partner()
    SELECT fakt_doks
    IF cFilter == ".t."
       SET FILTER TO
@@ -270,7 +270,7 @@ FUNCTION fakt_print_odt( lOpcine )
    SELECT ( F_FAKT_DOKS )
    USE
    O_FAKT_DOKS
-   O_PARTN
+   o_partner()
    SELECT fakt_doks
    IF cFilter == ".t."
       SET FILTER TO
@@ -414,7 +414,7 @@ FUNCTION generisi_fakturu( is_opcine )
 
    SELECT fakt_doks
 
-   O_PARTN
+   o_partner()
    SELECT fakt_doks
 
    IF cFilter == ".t."
@@ -708,13 +708,13 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
    my_close_all_dbf()
 
    O_VRSTEP
-   O_OPS
+   o_ops()
    O_FAKT_DOKS2
-   O_VALUTE
+   o_valute()
    O_RJ
    O_FAKT_OBJEKTI
    O_FAKT
-   O_PARTN
+   o_partner()
    O_FAKT_DOKS
 
    SELECT fakt_doks
@@ -731,8 +731,8 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
 FUNCTION fakt_real_partnera()
 
    O_FAKT_DOKS
-   O_PARTN
-   O_VALUTE
+   o_partner()
+   o_valute()
    O_RJ
 
    cIdfirma := self_organizacija_id()

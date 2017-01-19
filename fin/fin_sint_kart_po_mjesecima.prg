@@ -25,7 +25,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
       M := "------------- ---------------- ----------------- ------------------"
    ENDIF
 
-   O_PARTN
+   o_partner()
 
    O_PARAMS
    PRIVATE cSection := "2", cHistory := " ", aHistory := {}
@@ -80,7 +80,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
    ELSE
       o_sint()
    ENDIF
-   O_KONTO
+   o_konto()
 
    SELECT SINT
 

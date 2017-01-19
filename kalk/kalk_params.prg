@@ -24,7 +24,7 @@ FUNCTION kalk_params()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   O_KONTO
+   o_konto()
 
    AAdd( _opc, "1. osnovni podaci o firmi                                 " )
    AAdd( _opcexe, {|| parametri_organizacije() } )

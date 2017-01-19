@@ -67,7 +67,7 @@ FUNCTION i_dodaj_sifru_partner()
    test_var( "ok", .F. )
    test_var( "rec_part_99", 0 )
 
-   O_PARTN
+   o_partner()
    _kod := Replicate( "9", Len( id ) )
    _naz := "PARTN 99"
 
@@ -97,7 +97,7 @@ FUNCTION i_dodaj_sifre_roba()
    test_var( "rec_roba_t1", 0 )
    test_var( "rec_roba_t2", 0 )
 
-   O_ROBA
+   o_roba()
    _kod := PadR( "TEST1", Len( id ) )
    _naz := "Naziv Test 1"
    _vpc := "1"

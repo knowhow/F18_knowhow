@@ -36,8 +36,8 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
    cPrelomljeno := "N"
 
    o_suban()
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
 
 
    cIdFirma := self_organizacija_id()
@@ -88,7 +88,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
    // --------------------------------------------------
    SELECT ( F_TRFP2 )
    IF !Used()
-      O_TRFP2
+      o_trfp2()
    ENDIF
    HSEEK "99 " + Left( cIdKonto, 1 )
    DO WHILE !Eof() .AND. IDVD == "99" .AND. Trim( idkonto ) != Left( cIdKonto, Len( Trim( idkonto ) ) )

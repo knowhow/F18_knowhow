@@ -15,8 +15,8 @@ FUNCTION SpecKK2( lOtvSt )
    PRIVATE picDEM := FormPicL( "9 " + gPicDEM, 14 ), cPG := "D"
    PRIVATE lOtvoreneStavke := lOtvSt
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
 
 
    cDinDem := "1"

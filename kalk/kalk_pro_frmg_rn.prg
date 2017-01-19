@@ -17,7 +17,7 @@
 FUNCTION BrowseRn()
 
    -- o_kalk()
-   O_KONTO
+   o_konto()
    cmkonto := Space( 7 )
    cIdFirma := self_organizacija_id()
    Box(, 7, 66, )

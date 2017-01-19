@@ -42,9 +42,9 @@ FUNCTION r_ct_sast()
    PRIVATE nRslt := 0
    --PRIVATE lKalkAsistentUToku := .T.
 
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    // uslovi izvjestaja
    IF g_vars( @dD_from, @dD_to, @cIdFirma, @cIdKonto, @cProdKto, ;
@@ -60,12 +60,12 @@ FUNCTION r_ct_sast()
 
    cre_r_tbl( nVar )
 
-   O_PARTN
+   o_partner()
    o_kalk_pripr()
    -- o_kalk()
    o_kalk_doks()
-   O_ROBA
-   O_KONTO
+   o_roba()
+   o_konto()
 
    IF nVar == 1
 
@@ -91,7 +91,7 @@ FUNCTION r_ct_sast()
    ENDIF
 
    my_close_all_dbf()
-   O_ROBA
+   o_roba()
 
    o_rxp( nVar )
 

@@ -62,10 +62,10 @@ FUNCTION fin_bb_subanalitika_b( params )
       create_dbf_r_export( aExpFields )
    ENDIF
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_sql_suban_kto_partner( cIdFirma )
-   O_KONTO
+   o_konto()
    O_BBKLAS
 
    SELECT BBKLAS

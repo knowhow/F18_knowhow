@@ -174,7 +174,7 @@ STATIC FUNCTION pocetno_stanje_sql( hParams )
 
    o_pos_pos()
    o_pos_doks()
-   O_ROBA
+   o_roba()
 
    cBrDok := pos_novi_broj_dokumenta( _id_pos, "16", dDatDok )
 

@@ -22,8 +22,8 @@ FUNCTION PartVanProm()
    PRIVATE cIdKonto := Space ( 7 ), cIdFirma := Space ( Len ( self_organizacija_id() ) ), ;
       cKrit := Space ( 60 ), aUsl
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_suban()
 
    Box (, 11, 60 )

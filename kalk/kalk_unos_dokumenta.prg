@@ -1551,10 +1551,10 @@ FUNCTION VPCSifUDok()
 FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
 
    o_koncij()
-   O_ROBA
-   O_TARIFA
-   O_PARTN
-   O_KONTO
+   o_roba()
+   o_tarifa()
+   o_partner()
+   o_konto()
    o_tdok()
 
    IF lAzuriraniDok
@@ -1606,17 +1606,17 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
 FUNCTION o_kalk_edit()
 
-   O_PARTN
+   o_partner()
    // o_kalk_doks()
-   O_ROBA
+   o_roba()
    // o_kalk()
-   O_KONTO
+   o_konto()
    o_tdok()
-   O_VALUTE
-   O_TARIFA
+   o_valute()
+   o_tarifa()
    o_koncij()
    o_sifk()
-   O_SIFV
+   o_sifv()
    o_kalk_pripr()
 
    SELECT kalk_pripr

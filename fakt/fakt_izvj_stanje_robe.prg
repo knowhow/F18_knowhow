@@ -492,11 +492,11 @@ FUNCTION ZaglSRobe()
 STATIC FUNCTION _o_tables()
 
    O_FAKT_DOKS
-   O_TARIFA
-   O_PARTN
+   o_tarifa()
+   o_partner()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
    O_RJ
    O_FAKT
    SET ORDER TO TAG "3"

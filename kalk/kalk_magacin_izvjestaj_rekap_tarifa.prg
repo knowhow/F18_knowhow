@@ -47,9 +47,9 @@ FUNCTION RekMagTar()
 
    SET SOFTSEEK OFF
    o_sifk()
-   O_SIFV
-   O_ROBA
-   O_TARIFA
+   o_sifv()
+   o_roba()
+   o_tarifa()
    -- o_kalk()
    SET ORDER TO TAG "6"
    // "idFirma+IDTarifa+idroba"

@@ -509,7 +509,7 @@ STATIC FUNCTION _o_tables()
 
    O_K1
    O_RJ
-   O_KONTO
+   o_konto()
    O_AMORT
    O_REVAL
    o_os_sii()

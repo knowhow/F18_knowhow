@@ -25,7 +25,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
 
    lSumiraj := .F.
 
-   O_KONTO
+   o_konto()
    o_anal()
    O_FIN_PRIPR
 
@@ -364,8 +364,8 @@ FUNCTION blag_azur()
    // lSumiraj := ( my_get_from_ini("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
    lSumiraj := .F.
 
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
    o_anal()
    o_suban()
 

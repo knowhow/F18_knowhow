@@ -26,7 +26,7 @@ FUNCTION pos_rpt_stanje_partnera()
    PRIVATE cGotZir := Space( 1 )
    PRIVATE cSifraDob := Space( 8 )
 
-   O_PARTN
+   o_partner()
 
    DO WHILE .T.
       IF !VarEdit( { ;
@@ -44,10 +44,10 @@ FUNCTION pos_rpt_stanje_partnera()
       ENDIF
    ENDDO
 
-   O_ROBA
+   o_roba()
    o_pos_pos()
    o_pos_doks()
-   O_PARTN
+   o_partner()
 
    START PRINT CRET
    ?? gP12cpi

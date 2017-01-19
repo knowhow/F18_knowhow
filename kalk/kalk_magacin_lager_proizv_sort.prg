@@ -209,10 +209,10 @@ FUNCTION KaLagM()
 
 METHOD openDb
 
-   O_TARIFA
-   O_ROBA
-   O_TARIFA
-   O_KONTO
+   o_tarifa()
+   o_roba()
+   o_tarifa()
+   o_konto()
    o_kalk_doks()
    -- o_kalk()
 
@@ -333,7 +333,7 @@ METHOD getVars
    @ m_x + 1, m_y + 2 SAY "Datum " GET ::dDatOd
    @ m_x + 1, Col() + 2 SAY "-" GET ::dDatDo
 
-   O_KONTO
+   o_konto()
 
    ::cSort := "R"
    ::cNabIliProd := "P"

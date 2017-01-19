@@ -982,7 +982,7 @@ STATIC FUNCTION PrikaziPorez( nIznosSt, cIdTarifa )
    // obracun poreza
    SELECT ( F_TARIFA )
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
    Seek2( cIdTarifa )
 

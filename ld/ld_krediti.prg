@@ -1212,7 +1212,7 @@ FUNCTION ld_otvori_tabele_kredita()
    o_ld_rj()
    o_kred()
    o_str_spr()
-   O_OPS
+   o_ops()
    o_ld_radn()
    O_RADKR
 

@@ -27,7 +27,7 @@ FUNCTION get_nivel_p()
    LOCAL cGlStanje := "D"
 
 
-   O_KONTO
+   o_konto()
 
    Box(, 4, 70 )
    cProd := Space( 7 )
@@ -113,10 +113,10 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
 
    o_kalk_pript()
    -- o_kalk()
-   O_ROBA
-   O_KONTO
+   o_roba()
+   o_konto()
    o_koncij()
-   O_TARIFA
+   o_tarifa()
 
    nRbr := 0
 
@@ -237,7 +237,7 @@ FUNCTION zaniv2_zaniv()
    ENDIF
 
    IF !Used( F_ROBA )
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT roba
@@ -303,7 +303,7 @@ FUNCTION set_mpc_2()
    ENDIF
 
    IF !Used( F_ROBA )
-      O_ROBA
+      o_roba()
    ENDIF
 
    IF cUzCj == "1"
@@ -373,7 +373,7 @@ FUNCTION set_mpc_iz_zanivel()
    ENDIF
 
    IF !Used( F_ROBA )
-      O_ROBA
+      o_roba()
    ENDIF
 
 
@@ -429,10 +429,10 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
 
    o_kalk_pript()
    -- o_kalk()
-   O_ROBA
-   O_KONTO
+   o_roba()
+   o_konto()
    o_koncij()
-   O_TARIFA
+   o_tarifa()
 
    nRbr := 0
 
@@ -663,8 +663,8 @@ FUNCTION st_res_niv_p( cVar, cKolNula )
 
    o_kalk_pript()
    O_POBJEKTI
-   O_ROBA
-   O_TARIFA
+   o_roba()
+   o_tarifa()
 
    --IF IsPDV()
       cPorez := "PDV"
@@ -959,9 +959,9 @@ FUNCTION o_pr_cijena()
       RETURN
    ENDIF
 
-   O_PARTN
-   O_ROBA
-   O_TARIFA
+   o_partner()
+   o_roba()
+   o_tarifa()
    o_kalk_pript()
 
    // uzmi u matricu prodavnice
@@ -1134,7 +1134,7 @@ FUNCTION rpt_zanivel()
    LOCAL cRazmak := Space( 1 )
    LOCAL nCnt
 
-   O_ROBA
+   o_roba()
    SELECT roba
    SET ORDER TO TAG "ID"
    GO TOP

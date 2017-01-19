@@ -127,7 +127,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
 
    o_ld_rj()
    o_str_spr()
-   O_OPS
+   o_ops()
    o_ld_radn()
    O_LD
 
@@ -435,6 +435,6 @@ FUNCTION OSpecif()
    o_ld_radn()
    O_PARAMS
    O_LD
-   O_OPS
+   o_ops()
 
    RETURN

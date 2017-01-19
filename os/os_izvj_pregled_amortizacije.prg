@@ -27,7 +27,7 @@ FUNCTION os_pregled_amortizacije()
       _mod_name := "SII"
    ENDIF
 
-   O_KONTO
+   o_konto()
    O_RJ
 
    o_os_sii_promj()

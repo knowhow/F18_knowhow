@@ -114,7 +114,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
       SELECT ( F_PARTN )
       IF !Used()
-         O_PARTN
+         o_partner()
       ENDIF
       SELECT partn
       hseek cIdPartner

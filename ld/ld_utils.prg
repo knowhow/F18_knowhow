@@ -741,7 +741,7 @@ FUNCTION PozicOps( cSR )
    SELECT ( F_OPS )
 
    IF !Used()
-      O_OPS
+      o_ops()
    ENDIF
 
    SEEK cO

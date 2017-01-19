@@ -99,7 +99,7 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    ENDIF
 
    PushWA()
-   O_PARTN_NOT_USED
+   select_o_partner()
 
    ImeKol := {}
 
@@ -288,7 +288,7 @@ FUNCTION g_part_fax( cIdPartner )
 
    SELECT F_PARTN
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
    SEEK cIdPartner
    IF !Found()
@@ -312,7 +312,7 @@ FUNCTION g_part_name( cIdPartner )
 
    SELECT F_PARTN
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
    SEEK cIdPartner
    IF !Found()
@@ -382,7 +382,7 @@ STATIC FUNCTION _ck_status( cId, cFld )
    LOCAL lRet := .F.
    LOCAL nSelect := Select()
 
-   O_PARTN
+   o_partner()
    SELECT partn
    SEEK cId
 

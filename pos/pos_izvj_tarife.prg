@@ -71,8 +71,8 @@ FUNCTION pos_setuj_tarife( cIdRoba, nIzn, aTarife, nPPP, nPPU, nOsn, nPP )
 
    nArr := Select()
 
-   O_ROBA
-   O_TARIFA
+   o_roba()
+   o_tarifa()
 
    SELECT ( F_ROBA )
    SEEK cIdRoba

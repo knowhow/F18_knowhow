@@ -22,7 +22,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
    Kol := {}
 
    PushWA()
-   O_TARIFA
+   o_tarifa()
 
    AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) }  } )
    AAdd( ImeKol, { PadC( "Naziv", 35 ), {|| PadR( ToStrU( naz ), 35 ) }, "naz" } )
@@ -92,7 +92,7 @@ FUNCTION get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPore
       Select( F_ROBA )
       IF ( !Used() )
          lUsedRoba := .F.
-         O_ROBA
+         o_roba()
       ENDIF
       SEEK cIdRoba
       cTarifa := &cPolje
@@ -100,7 +100,7 @@ FUNCTION get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPore
       Select( F_TARIFA )
       IF ( !Used() )
          lUsedTarifa := .F.
-         O_TARIFA
+         o_tarifa()
       ENDIF
       SEEK cTarifa
       cIdTarifa := tarifa->id
@@ -109,7 +109,7 @@ FUNCTION get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPore
       Select( F_TARIFA )
       IF ( !Used() )
          lUsedTarifa := .F.
-         O_TARIFA
+         o_tarifa()
       ENDIF
       SEEK cTarifa
       cIdTarifa := cIdTar
@@ -251,7 +251,7 @@ FUNCTION KorekTar()
 
    my_close_all_dbf()
 
-   O_ROBA
+   o_roba()
 
    SELECT 0
 

@@ -19,7 +19,7 @@ FUNCTION os_pregled_revalorizacije()
    LOCAL nCol1 := 10
    LOCAL _sr_id
 
-   O_KONTO
+   o_konto()
    O_RJ
 
    o_os_sii_promj()

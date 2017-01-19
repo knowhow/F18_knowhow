@@ -916,7 +916,7 @@ STATIC FUNCTION ORekap()
    o_str_spr()
    o_koef_beneficiranog_radnog_staza()
    o_ld_vrste_posla()
-   O_OPS
+   o_ops()
    O_RADKR
    o_kred()
    O_LD

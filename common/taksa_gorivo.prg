@@ -133,7 +133,7 @@ FUNCTION dodaj_taksu_za_gorivo( nKolicina )
    LOCAL hRec, hPrviRec
    LOCAL lRet := .T.
 
-   O_ROBA
+   o_roba()
    HSEEK s_cId_taksa
 
    IF !FOUND()
@@ -240,7 +240,7 @@ STATIC FUNCTION dodaj_sifru_takse_u_tarife()
       RETURN lOk
    ENDIF
 
-   O_TARIFA
+   o_tarifa()
 
    APPEND BLANK
    hRec := dbf_get_rec()

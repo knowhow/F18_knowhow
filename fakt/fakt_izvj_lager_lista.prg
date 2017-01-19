@@ -65,11 +65,11 @@ FUNCTION fakt_lager_lista()
    ENDIF
 
    O_FAKT_DOKS
-   O_TARIFA
-   O_PARTN
+   o_tarifa()
+   o_partner()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
    O_RJ
 
    IF fId_J
@@ -840,8 +840,8 @@ STATIC FUNCTION lager_lista_xml( table, params )
    LOCAL _t_izlaz := 0
    LOCAL _t_stanje := 0
 
-   O_ROBA
-   O_PARTN
+   o_roba()
+   o_partner()
 
    // ima li zapisa...
    IF table:LastRec() == 0

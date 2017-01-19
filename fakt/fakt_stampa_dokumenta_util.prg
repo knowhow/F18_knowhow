@@ -31,7 +31,7 @@ FUNCTION GetRegion()
    nArr := Select()
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    IF ROBA->( FieldPos( "IDTARIFA2" ) <> 0 )

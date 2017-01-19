@@ -260,8 +260,8 @@ STATIC FUNCTION close_open_panal()
 
    SET ORDER TO TAG "2"
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_tnal()
    o_nalog()
 

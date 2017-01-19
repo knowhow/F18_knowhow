@@ -556,12 +556,12 @@ STATIC FUNCTION open_tabele_za_pocetno_stanje()
 
    SELECT ( F_KONTO )
    IF !Used()
-      O_KONTO
+      o_konto()
    ENDIF
 
    SELECT ( F_PARTN )
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
 
    SELECT ( F_FIN_PRIPR )

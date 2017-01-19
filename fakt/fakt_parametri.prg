@@ -26,7 +26,7 @@ FUNCTION mnu_fakt_params()
    PRIVATE opc := {}
    PRIVATE opcexe := {}
 
-   O_ROBA
+   o_roba()
    O_PARAMS
 
    SELECT params

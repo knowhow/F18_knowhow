@@ -58,7 +58,7 @@ FUNCTION IzvrsBudz()
 //      O_BUIZ
 //   ENDIF
 
-   O_PARTN
+   o_partner()
 
    DO WHILE .T.
 
@@ -111,7 +111,7 @@ FUNCTION IzvrsBudz()
    O_BUDZET
    SET ORDER TO TAG "2"
 
-   O_KONTO
+   o_konto()
    O_RJ
    O_FUNK
    o_suban()
@@ -1041,7 +1041,7 @@ FUNCTION Prihodi()
 
    cProv := "D"
 
-   O_PARTN
+   o_partner()
 
    DO WHILE .T.
 
@@ -1079,7 +1079,7 @@ FUNCTION Prihodi()
    ENDDO
 
    O_BUDZET
-   O_KONTO
+   o_konto()
    o_suban()
 
 

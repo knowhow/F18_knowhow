@@ -16,7 +16,7 @@
 // po mjestima troskova
 FUNCTION PoMjeTros()
 
-   O_PARTN
+   o_partner()
    O_MAT_SUBAN
 
    qqRoba1 := Space( 60 ); cRoba1 := Space( 10 )
@@ -168,10 +168,10 @@ STATIC FUNCTION TekRec()
 // OPCINA - pregled cijene artikla po dobavljacima
 FUNCTION CArDob()
 
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
-   O_PARTN
+   o_sifv()
+   o_partner()
    O_MAT_SUBAN
 
    qqIDVN := Space( 30 )

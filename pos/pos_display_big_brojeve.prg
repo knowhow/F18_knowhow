@@ -91,7 +91,7 @@ FUNCTION SetNazDVal()
    lOpened := .T.
 
    IF !Used()
-      O_VALUTE
+      o_valute()
       lOpened := .F.
    ENDIF
 

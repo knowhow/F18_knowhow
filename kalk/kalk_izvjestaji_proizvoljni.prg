@@ -23,8 +23,8 @@ FUNCTION ProizvKalk()
 
 FUNCTION OtBazPIKalk()
 
-   O_ROBA
-   O_TARIFA
+   o_roba()
+   o_tarifa()
    OProizv()
 
    RETURN

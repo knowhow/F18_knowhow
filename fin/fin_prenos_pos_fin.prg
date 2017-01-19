@@ -250,13 +250,13 @@ STATIC FUNCTION GetVrPlIznos( cField )
 STATIC FUNCTION O_PrVP_DB()
 
    o_koncij()
-   O_PARTN
+   o_partner()
    o_suban()
-   O_KONTO
+   o_konto()
    O_FAKT_OBJEKTI
    o_nalog()
    O_FIN_PRIPR
-   O_TRFP2
+   o_trfp2()
 
    RETURN
 

@@ -27,8 +27,8 @@ FUNCTION fin_asistent_otv_st()
    PRIVATE cIdPartner
    PRIVATE cBrDok
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_suban()
 
    // ovo su parametri kartice
@@ -805,8 +805,8 @@ FUNCTION open_otv_stavke_tabele( lOsuban )
       lOSuban := .F.
    ENDIF
 
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
    O_RJ
 
    IF lOSuban

@@ -62,9 +62,9 @@ STATIC FUNCTION bterm_to_pripr()
    O_FAKT_DOKS
    O_FAKT_PRIPR
    O_FAKT
-   O_ROBA
+   o_roba()
    O_RJ
-   O_PARTN
+   o_partner()
 
    SELECT ( F_TMP_1 )
    USE

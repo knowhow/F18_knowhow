@@ -163,7 +163,7 @@ FUNCTION gen_all_plu( lSilent )
       RETURN lRet
    ENDIF
 
-   O_ROBA
+   o_roba()
    SELECT ROBA
    GO TOP
 

@@ -62,10 +62,10 @@ FUNCTION fakt_kalk_prenos_10_14()
    // o_kalk()
    // o_kalk_doks()
    // o_kalk_doks2()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
    O_FAKT
 
    dDatKalk := fetch_metric( "kalk_fakt_prenos_10_14_datum", my_user(), Date() )
@@ -697,10 +697,10 @@ STATIC FUNCTION _o_prenos_tbls()
 
    o_koncij()
    o_kalk_pripr()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
+   o_roba()
+   o_konto()
+   o_partner()
+   o_tarifa()
    O_FAKT
 
    RETURN .T.

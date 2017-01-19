@@ -203,12 +203,12 @@ STATIC FUNCTION fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdo
 
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT ( F_TARIFA )
    IF !Used()
-      O_TARIFA
+      o_tarifa()
    ENDIF
 
    cIdPartner := idpartner_sa_fakt_dokumenta( idfirma, idtipdok, brdok )
@@ -348,12 +348,12 @@ STATIC FUNCTION fakt_dok_is_storno( id_firma, tip_dok, br_dok )
 
 STATIC FUNCTION fakt_fiscal_o_tables()
 
-   O_TARIFA
+   o_tarifa()
    O_FAKT_DOKS
    O_FAKT
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    RETURN
 

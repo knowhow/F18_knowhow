@@ -73,8 +73,8 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL nCount, nCountLimit := 12000 // broj izgenerisanih stavki
    LOCAL cNastavak := "N"
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
 
    Box(, 16, 65, .F. )
 
@@ -164,8 +164,8 @@ STATIC FUNCTION mnu_ios_print()
    ENDIF
 
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_suban()
    o_tnal()
    o_suban()
@@ -607,7 +607,7 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    LOCAL cPrikazSaSaldoNulaDN := "D"
    LOCAL dDatumDo := Date()
 
-   O_KONTO
+   o_konto()
 
    Box( "", 6, 60 )
    @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA IOS-a"
@@ -667,8 +667,8 @@ STATIC FUNCTION ios_specifikacija( hParams )
 
    _line := _ios_spec_get_line()
 
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
 
    find_suban_by_broj_dokumenta(  cIdFirma, cIdKonto )
 
@@ -885,8 +885,8 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    dDatumDo := hParams[ "datum_do" ]
    cPrikazSaSaldoNulaDN := hParams[ "saldo_nula" ]
 
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
    o_suban()
    O_IOS
 

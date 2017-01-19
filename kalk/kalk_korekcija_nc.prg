@@ -24,7 +24,7 @@ FUNCTION KorekNC()
       RETURN
    ENDIF
 
-   O_KONTO
+   o_konto()
    IF !VarEdit( { { "Magacinski konto", "cMagac", "P_Konto(@cMagac)",, } }, 12, 5, 16, 74, ;
          'DEFINISANJE MAGACINA NA KOME CE BITI IZVRSENE PROMJENE', ;
          "B1" )

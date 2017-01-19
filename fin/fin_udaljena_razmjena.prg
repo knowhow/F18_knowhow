@@ -917,13 +917,13 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    CREATE ( use_path + "e_anal" ) from ( my_home() + "struct" )
 
    // tabela partn
-   O_PARTN
+   o_partner()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_partn" ) from ( my_home() + "struct" )
 
    // tabela konta
-   O_KONTO
+   o_konto()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_konto" ) from ( my_home() + "struct" )
@@ -935,7 +935,7 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    CREATE ( use_path + "e_sifk" ) from ( my_home() + "struct" )
 
    // tabela sifv
-   O_SIFV
+   o_sifv()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_sifv" ) from ( my_home() + "struct" )
@@ -953,9 +953,9 @@ STATIC FUNCTION _o_tables()
    o_anal()
    o_sint()
    o_sifk()
-   O_SIFV
-   O_KONTO
-   O_PARTN
+   o_sifv()
+   o_konto()
+   o_partner()
 
    RETURN .T.
 

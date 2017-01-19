@@ -106,7 +106,7 @@ FUNCTION ld_specificni_sifarnici()
 STATIC FUNCTION o_ld_sif_tables()
 
    o_sifk()
-   O_SIFV
+   o_sifv()
    O_BANKE
    O_TPRSIHT
    O_NORSIHT
@@ -119,7 +119,7 @@ STATIC FUNCTION o_ld_sif_tables()
    o_str_spr()
    o_koef_beneficiranog_radnog_staza()
    o_ld_vrste_posla()
-   O_OPS
+   o_ops()
    o_kred()
    O_TIPPR2
 

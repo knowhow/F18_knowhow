@@ -41,8 +41,8 @@ FUNCTION TopsFakt()
    ENDIF
    BoxC()
 
-   O_ROBA
-   O_PARTN
+   o_roba()
+   o_partner()
    O_FAKT_DOKS
    O_FAKT_PRIPR
 

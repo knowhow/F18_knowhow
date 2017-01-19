@@ -311,11 +311,11 @@ FUNCTION ZaglPGP()
    STATIC FUNCTION _o_tables()
 
       o_sifk()
-      O_SIFV
-      O_ROBA
+      o_sifv()
+      o_roba()
       o_koncij()
-      O_KONTO
-      O_PARTN
+      o_konto()
+      o_partner()
 
       RETURN .T.
 

@@ -197,16 +197,16 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    SET ORDER TO TAG "NAZ"
 
    O_VRSTEP
-   O_PARTN
+   o_partner()
    O_DIO
    O_K2C
    O_MJTRUR
    O_KASE
    O_SAST
-   O_ROBA
-   O_TARIFA
+   o_roba()
+   o_tarifa()
    o_sifk()
-   O_SIFV
+   o_sifv()
    O_PRIPRZ
    O_PRIPRG
    O__POS
@@ -236,15 +236,15 @@ FUNCTION o_pos_sifre()
    O_KASE
    O_UREDJ
    O_ODJ
-   O_ROBA
-   O_TARIFA
+   o_roba()
+   o_tarifa()
    O_VRSTEP
-   O_VALUTE
-   O_PARTN
+   o_valute()
+   o_partner()
    O_OSOB
    O_STRAD
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    RETURN .T.
 
@@ -428,7 +428,7 @@ FUNCTION pos_import_fmk_roba()
    LOCAL lOk := .T.
    LOCAL hParams
 
-   O_ROBA
+   o_roba()
 
    _location := PadR( AllTrim( _location ), 300 )
 

@@ -20,8 +20,8 @@ FUNCTION st_sv_nal()
    create_dbf_r_export( aFields )
 
    o_suban()
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
 
    SELECT suban
    SET ORDER TO TAG "4" // "4", "idFirma+IdVN+BrNal+Rbr"

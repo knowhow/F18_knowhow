@@ -859,7 +859,7 @@ FUNCTION OpcRada()
    SELECT ( F_OPS )
 
    IF !Used()
-      O_OPS
+      o_ops()
       SEEK cOR
       IF Found()
          cVrati := IDJ
@@ -930,11 +930,11 @@ STATIC FUNCTION FormNum1( nIznos )
 STATIC FUNCTION _o_virm_edit()
 
    o_sifk()
-   O_SIFV
+   o_sifv()
    o_jprih()
    O_BANKE
    o_vrprim()
-   O_PARTN
+   o_partner()
    O_VIRM_PRIPR
 
    RETURN .T.

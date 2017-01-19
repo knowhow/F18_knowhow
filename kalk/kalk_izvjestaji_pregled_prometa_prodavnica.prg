@@ -322,7 +322,7 @@ STATIC FUNCTION ScanKoncij( dDatumOd, dDatumDo )
    LOCAL nMpcBp
    LOCAL aPorezi
 
-   O_TARIFA
+   o_tarifa()
    o_koncij()
 
    IF ( FieldPos( "KUMTOPS" ) == 0 )

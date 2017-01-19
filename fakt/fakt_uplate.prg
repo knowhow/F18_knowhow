@@ -23,7 +23,7 @@ FUNCTION fakt_uplate()
    // "6","IdFirma+idpartner+idtipdok", "DOKS"
    SET ORDER TO TAG "6"
 
-   O_PARTN
+   o_partner()
    O_UPL
 
    cIdPartner := Space( 6 )
@@ -347,7 +347,7 @@ FUNCTION SaldaKupaca( lPocStanje )
 
    // "6","IdFirma+idpartner+idtipdok", "DOKS"
    SET ORDER TO TAG "6"
-   O_PARTN
+   o_partner()
    O_UPL
    SET ORDER TO TAG "2"
 

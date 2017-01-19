@@ -859,7 +859,7 @@ FUNCTION kalk_imp_partn_exist()
 
    LOCAL aRet, nCount := 0
 
-   O_PARTN
+   o_partner()
    select_o_kalk_imp_temp()
 
    GO TOP
@@ -898,7 +898,7 @@ FUNCTION kalk_imp_roba_exist_sifradob()
 
    LOCAL aRet, cIdRobaSifraDobavljaca, nRes, cNazRoba, nCount := 0
 
-   // O_ROBA
+   // o_roba()
    select_o_kalk_imp_temp()
    GO TOP
 
@@ -1673,7 +1673,7 @@ STATIC FUNCTION FillDobSifra()
       RETURN .F.
    ENDIF
 
-   O_ROBA
+   o_roba()
 
    SELECT roba
    SET ORDER TO TAG "ID"

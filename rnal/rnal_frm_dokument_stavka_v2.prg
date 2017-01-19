@@ -341,7 +341,7 @@ FUNCTION g_roba_desc( cId )
 
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT roba
@@ -368,7 +368,7 @@ FUNCTION g_roba_price( cId )
 
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    SELECT roba

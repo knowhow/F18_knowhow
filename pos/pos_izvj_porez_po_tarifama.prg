@@ -45,13 +45,13 @@ FUNCTION PorPoTar
    ENDIF
 
    // otvaranje potrebnih baza
-   O_TARIFA
+   o_tarifa()
 
    IF fSolo
       o_sifk()
-      O_SIFV
+      o_sifv()
       O_KASE
-      O_ROBA
+      o_roba()
       O_ODJ
       o_pos_doks()
       o_pos_pos()
@@ -396,7 +396,7 @@ FUNCTION POSRekapTar( aRekPor )
 
    nArr := Select()
 
-   O_TARIFA
+   o_tarifa()
 
    ASort( aRekPor,,, {| x, y| x[ 1 ] < y[ 1 ] } )
    lPP := .F. // ima posebnog poreza

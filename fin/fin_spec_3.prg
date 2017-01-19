@@ -14,7 +14,7 @@ FUNCTION SpecPop()
    picBHD := FormPicL( "9 " + gPicBHD, 16 )
    picDEM := FormPicL( "9 " + gPicDEM, 12 )
 
-   O_PARTN
+   o_partner()
 
 
 
@@ -40,7 +40,7 @@ FUNCTION SpecPop()
    nDugBHD := nPotBHD := nUkDugBHD := nUkPotBHD := 0
    nDugDEM := nPotDEM := nUKDugDEM := nUkPotDEM := 0
 
-   O_KONTO
+   o_konto()
    o_suban()
 
    SELECT SUBAN; SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto

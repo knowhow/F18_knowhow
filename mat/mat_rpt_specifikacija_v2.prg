@@ -20,13 +20,13 @@ STATIC PicKol := "999999.999"
 
 FUNCTION mat_specifikacija()
 
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
-   O_TARIFA
+   o_sifv()
+   o_tarifa()
    O_MAT_SUBAN
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
 
    cIdFirma := self_organizacija_id()
    qqKonto := qqPartn := Space( 55 )
@@ -312,10 +312,10 @@ FUNCTION KonSekS( cNaz )
 
 FUNCTION IArtPoPogonima()
 
-   O_PARTN         // pogoni
-   O_ROBA          // artikli
+   o_partner()         // pogoni
+   o_roba()          // artikli
    o_sifk()
-   O_SIFV
+   o_sifv()
    O_MAT_SUBAN         // dokumenti
 
    cIdRoba := Space( Len( ROBA->id ) )

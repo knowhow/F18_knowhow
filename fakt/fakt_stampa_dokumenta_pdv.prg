@@ -1128,7 +1128,7 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
       aMemo := ParsMemo( txt )
       lFromMemo := .T.
    ELSE
-      O_PARTN
+      o_partner()
       SELECT partn
       SET ORDER TO TAG "ID"
       HSEEK cId

@@ -49,8 +49,8 @@ FUNCTION DnevnikNaloga()
    O_VRSTEP
    o_tnal()
    o_tdok()
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
    o_nalog()
    o_suban()
 

@@ -31,7 +31,7 @@ FUNCTION finansijsko_stanje_prodavnica()
    cIdKonto := PadR( "133", gDuzKonto )
 
    o_koncij()
-   O_ROBA
+   o_roba()
    o_tarifa()
    o_konto()
 

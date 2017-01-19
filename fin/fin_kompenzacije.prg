@@ -19,8 +19,8 @@ STATIC FUNCTION _o_tables()
 
    O_KOMP_POT
    O_KOMP_DUG
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
 
    RETURN
 

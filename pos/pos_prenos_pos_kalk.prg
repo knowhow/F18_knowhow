@@ -258,7 +258,7 @@ STATIC FUNCTION GetPm( cIdPos )
 
 STATIC FUNCTION _o_real_table()
 
-   O_ROBA
+   o_roba()
    O_KASE
    o_pos_pos()
    o_pos_doks()

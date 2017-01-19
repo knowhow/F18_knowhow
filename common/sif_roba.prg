@@ -35,7 +35,7 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
    ImeKol := {}
 
    PushWA()
-   O_ROBA_NOT_USED
+   select_o_roba()
 
    AAdd( ImeKol, { PadC( "ID", 10 ),  {|| field->id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( field->naz, _naz_len ) }, "naz", {|| .T. }, {|| .T. } } )
@@ -291,12 +291,12 @@ FUNCTION RobaZastCijena( cIdTarifa )
 FUNCTION OFmkRoba()
 
    o_sifk()
-   O_SIFV
-   O_KONTO
+   o_sifv()
+   o_konto()
    o_koncij()
-   O_TRFP
-   O_TARIFA
-   O_ROBA
+   o_trfp()
+   o_tarifa()
+   o_roba()
    O_SAST
 
    RETURN
@@ -315,7 +315,7 @@ FUNCTION sifre_artikli_provjera_mp_cijena()
 
    SELECT ( F_ROBA )
    IF !Used()
-      O_ROBA
+      o_roba()
    ENDIF
 
    MsgO( "Provjera šifarnika artikala u toku ..." )
@@ -578,8 +578,8 @@ FUNCTION roba_setuj_mpc_iz_vpc()
       RETURN .F.
    ENDIF
 
-   O_TARIFA
-   O_ROBA
+   o_tarifa()
+   o_roba()
    GO TOP
 
    // koji cu set mpc gledati...

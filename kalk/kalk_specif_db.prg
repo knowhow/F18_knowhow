@@ -1153,7 +1153,7 @@ FUNCTION kalk_prod_generacija_dokumenataNc()
    LOCAL dDatDok
 
    O_PRODNC
-   O_ROBA
+   o_roba()
    o_kalk()
    o_kalk_pripr()
    o_koncij()
@@ -1280,8 +1280,8 @@ FUNCTION SetIdPartnerRoba()
    LOCAL dDatDok
 
 
-   O_ROBA
-   O_PARTN
+   o_roba()
+   o_partner()
    GO TOP
 
    Box(, 3, 60 )

@@ -47,13 +47,13 @@ FUNCTION PDVPorPoTar
       cIdOdj := Space( 2 )
    ENDIF
 
-   O_TARIFA
+   o_tarifa()
 
    IF fSolo
       o_sifk()
-      O_SIFV
+      o_sifv()
       O_KASE
-      O_ROBA
+      o_roba()
       O_ODJ
       o_pos_doks()
       o_pos_pos()

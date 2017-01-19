@@ -14,16 +14,16 @@
 
 FUNCTION open_sif_tables_1()
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_tnal()
    o_tdok()
-   O_VALUTE
+   o_valute()
    O_RJ
    O_BANKE
-   O_OPS
+   o_ops()
    o_sifk()
-   O_SIFV
+   o_sifv()
    O_FAKT_OBJEKTI
 
    RETURN .T.
@@ -50,10 +50,10 @@ FUNCTION OSifUgov()
    O_UGOV
    O_RUGOV
    O_DEST
-   O_PARTN
-   O_ROBA
+   o_partner()
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    RETURN .T.
 
@@ -84,7 +84,7 @@ FUNCTION index_mcode( dummy, alias )
 // --------------------------------------------
 FUNCTION PoljeExist( cNazPolja )
 
-   O_OPS
+   o_ops()
 
    IF OPS->( FieldPos( cNazPolja ) ) <> 0
       USE

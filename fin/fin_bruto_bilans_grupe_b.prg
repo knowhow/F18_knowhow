@@ -49,8 +49,8 @@ FUNCTION fin_bb_grupe_b( params )
 
    fin_bb_txt_header()
 
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
    O_BBKLAS
 
    SELECT BBKLAS

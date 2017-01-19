@@ -251,8 +251,8 @@ FUNCTION os_fld_partn_exist()
 
 STATIC FUNCTION _o_sif_tables()
 
-   O_VALUTE
-   O_KONTO
+   o_valute()
+   o_konto()
 
    o_os_sii()
 
@@ -260,8 +260,8 @@ STATIC FUNCTION _o_sif_tables()
    O_REVAL
    O_RJ
    O_K1
-   O_PARTN
+   o_partner()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    RETURN .T.

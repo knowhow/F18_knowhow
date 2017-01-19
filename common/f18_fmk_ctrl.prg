@@ -440,13 +440,13 @@ STATIC FUNCTION f18_pr_rezultat( a_ctrl, a_data, a_sif )
 // -----------------------------------------
 FUNCTION f18_sif_data( data, checksum )
 
-   O_ROBA
+   o_roba()
    o_ld_radn()
-   O_PARTN
-   O_KONTO
-   O_TRFP
-   O_OPS
-   O_VALUTE
+   o_partner()
+   o_konto()
+   o_trfp()
+   o_ops()
+   o_valute()
    o_koncij()
 
    SELECT roba

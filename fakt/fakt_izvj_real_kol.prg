@@ -40,7 +40,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    ENDIF
 
    _o_tables()
-   O_OPS
+   o_ops()
 
    // partneri po grupama
    lGroup := p_group()
@@ -643,12 +643,12 @@ STATIC FUNCTION _o_tables()
 
    O_FAKT
    O_FAKT_DOKS
-   O_PARTN
-   O_VALUTE
+   o_partner()
+   o_valute()
    O_RJ
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    RETURN .T.
 

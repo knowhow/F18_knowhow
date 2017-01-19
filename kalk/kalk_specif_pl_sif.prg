@@ -68,9 +68,9 @@ FUNCTION PlFill_Sezona()
 
    IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
       nI := 0
-      O_ROBA
+      o_roba()
       o_sifk()
-      O_SIFV
+      o_sifv()
       SELECT roba
       GO TOP
       Box(, 3, 60 )
@@ -112,9 +112,9 @@ FUNCTION PlFill_Vrsta()
    nI := 0
    IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
 
-      O_ROBA
+      o_roba()
       o_sifk()
-      O_SIFV
+      o_sifv()
       SELECT roba
       GO TOP
       MsgO( "Koverzija ..." )
@@ -142,7 +142,7 @@ FUNCTION PlFillIdPartner( cIdPartner, cIdRoba )
       RETURN
    ENDIF
    nArr := Select()
-   O_ROBA
+   o_roba()
    SELECT roba
    HSEEK cIdRoba
    REPLACE field->idpartner WITH cIdPartner

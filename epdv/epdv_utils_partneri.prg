@@ -203,8 +203,8 @@ FUNCTION o_partn_sifk()
    USE
 
    o_sifk()
-   O_SIFV
-   O_PARTN
+   o_sifv()
+   o_partner()
 
    RETURN .T.
 

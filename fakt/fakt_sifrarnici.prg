@@ -248,7 +248,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
          IF "TARIFA->" $ Upper( cPom777 )
             SELECT ( F_TARIFA )
-            IF !Used(); O_TARIFA; ENDIF
+            IF !Used(); o_tarifa(); ENDIF
             SET ORDER TO TAG "ID"
             HSEEK ROBA->idtarifa
             SELECT ROBA
@@ -357,13 +357,13 @@ STATIC FUNCTION ObSif()
    ENDIF
 
    o_sifk()
-   O_SIFV
-   O_KONTO
-   O_PARTN
-   O_ROBA
+   o_sifv()
+   o_konto()
+   o_partner()
+   o_roba()
    o_fakt_txt()
-   O_TARIFA
-   O_VALUTE
+   o_tarifa()
+   o_valute()
    O_RJ
    O_SAST
    O_UGOV
@@ -379,7 +379,7 @@ STATIC FUNCTION ObSif()
    ENDIF
 
    O_VRSTEP
-   O_OPS
+   o_ops()
 
    RETURN
 

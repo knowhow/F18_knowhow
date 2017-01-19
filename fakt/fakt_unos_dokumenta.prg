@@ -1631,8 +1631,8 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          ENDIF
          my_close_all_dbf()
       CASE izbor == 4
-         O_ROBA
-         O_TARIFA
+         o_roba()
+         o_tarifa()
          O_FAKT_S_PRIPR
          GO TOP
          nDug := 0

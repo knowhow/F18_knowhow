@@ -156,7 +156,7 @@ FUNCTION OObracun()
 
    SELECT F_OPS
    IF !Used()
-      O_OPS
+      o_ops()
    ENDIF
 
    SELECT F_LD_RJ

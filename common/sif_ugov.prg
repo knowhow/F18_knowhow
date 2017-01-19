@@ -1146,12 +1146,12 @@ FUNCTION IzfUgovor()
 
       SELECT ( F_ROBA )
       IF !Used()
-         O_ROBA
+         o_roba()
       ENDIF
 
       SELECT ( F_TARIFA )
       IF !Used()
-         O_TARIFA
+         o_tarifa()
       ENDIF
 
       PRIVATE DFTkolicina := 1

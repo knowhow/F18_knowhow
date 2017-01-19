@@ -412,7 +412,7 @@ STATIC FUNCTION importost()
    LOCAL cRefId
    LOCAL nCnt := 0
 
-   O_PARTN
+   o_partner()
 
    SELECT temp
    GO TOP
@@ -781,7 +781,7 @@ STATIC FUNCTION TTbl2Kalk()
    o_kalk_pripr()
    // o_kalk()
    // o_kalk_doks()
-   O_ROBA
+   o_roba()
 
    SELECT temp
    SET ORDER TO TAG "1"

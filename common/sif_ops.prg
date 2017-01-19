@@ -25,7 +25,7 @@ FUNCTION P_Ops( cId, dx, dy )
       cId := hb_StrToUTF8( cId ) // ako je SQL tabela onda je cId UTF8 string, SAMO ako je F18_SQL_ENCODING UTF8
    ENDIF
 
-   O_OPS
+   o_ops()
 
    ImeKol := {}
    Kol := {}

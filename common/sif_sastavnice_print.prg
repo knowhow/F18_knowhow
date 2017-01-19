@@ -468,7 +468,7 @@ FUNCTION pr_dupl_sast()
    INDEX ON sast TAG "1"
 
    O_SAST
-   O_ROBA
+   o_roba()
    SELECT roba
    SET ORDER TO TAG "ID"
    GO TOP
@@ -676,7 +676,7 @@ FUNCTION _exp_sast_dbf()
 
    O_R_EXP
    O_SAST
-   O_ROBA
+   o_roba()
 
    SELECT sast
    SET ORDER TO TAG "ID"

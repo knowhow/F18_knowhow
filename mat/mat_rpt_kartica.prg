@@ -49,7 +49,7 @@ FUNCTION KSintKont()
 
    LOCAL nC1 := 30
 
-   O_PARTN
+   o_partner()
 
    cIdFirma := self_organizacija_id()
    qqKonto := Space( 100 )
@@ -74,7 +74,7 @@ FUNCTION KSintKont()
    cIdFirma := Left( cIdFirma, 2 )
 
    O_MAT_SINT
-   O_KONTO
+   o_konto()
 
    SELECT mat_sint
    SET FILTER TO Tacno( aUsl1 ) .AND. IdFirma == cIdFirma
@@ -230,7 +230,7 @@ FUNCTION KAnKPoj()
    cIdFirma := "  "
    qqKonto := Space( 100 )
 
-   O_PARTN
+   o_partner()
 
    Box( "KANP", 3, 70, .F. )
 
@@ -252,7 +252,7 @@ FUNCTION KAnKPoj()
    BoxC()
 
    O_MAT_ANAL
-   O_KONTO
+   o_konto()
 
    SELECT mat_anal
    SET FILTER TO Tacno( aUsl1 ) .AND. IdFirma == cIdFirma
@@ -368,7 +368,7 @@ FUNCTION KAnKKonto()
 
    cIdFirma := "  "
 
-   O_PARTN
+   o_partner()
    O_MAT_ANAL
 
    Box( "kankko", 2, 60, .F. )
@@ -385,10 +385,10 @@ FUNCTION KAnKKonto()
    // cIdFirma:=left(cIdFirma,2)
 
    O_MAT_SUBAN
-   O_KONTO
-   O_ROBA
+   o_konto()
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    SELECT mat_anal
    SET ORDER TO TAG "2"
@@ -516,11 +516,11 @@ FUNCTION KSuban()
    LOCAL _dat_od := CToD( "" )
    LOCAL _dat_do := CToD( "" )
 
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    Box( "", 10, 70, .F. )
 

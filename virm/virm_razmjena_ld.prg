@@ -702,7 +702,7 @@ STATIC FUNCTION virm_o_tables()
 
    SELECT ( F_SIFV )
    IF !Used()
-      O_SIFV
+      o_sifv()
    ENDIF
 
    SELECT ( F_KRED )
@@ -716,7 +716,7 @@ STATIC FUNCTION virm_o_tables()
 
    SELECT ( F_PARTN )
    IF !Used()
-      O_PARTN
+      o_partner()
    ENDIF
 
    SELECT ( F_VRPRIM )

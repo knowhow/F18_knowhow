@@ -717,7 +717,7 @@ STATIC FUNCTION set_banku_za_partnera( cPartn, cBank )
 
    PushWA()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    cNewBank := ""
    cOldBank := AllTrim( IzSifKPartn( "BANK", cPartn ) )  // stara banka
@@ -743,7 +743,7 @@ STATIC FUNCTION get_partner_by_banka( cBanka )
 
    LOCAL cIdPartner := ""
 
-   O_PARTN
+   o_partner()
    IF ImaUSifv( "PARTN", "BANK", cBanka, @cIdPartner )
       RETURN PadR( cIdPartner, 6 )
    ENDIF
@@ -778,7 +778,7 @@ STATIC FUNCTION get_partner_by_elba_partner_opis( cDesc )
 
    ENDIF
 
-   O_PARTN
+   o_partner()
    SET ORDER TO TAG "naz"
    GO TOP
    SEEK cTemp

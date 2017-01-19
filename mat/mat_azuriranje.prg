@@ -19,7 +19,7 @@
 // ----------------------------------------------------
 STATIC FUNCTION _o_tbls()
 
-   O_PARTN
+   o_partner()
    O_MAT_PRIPR
    O_MAT_SUBAN
    O_MAT_PSUBAN
@@ -29,7 +29,7 @@ STATIC FUNCTION _o_tbls()
    O_MAT_PSINT
    O_MAT_NALOG
    O_MAT_PNALOG
-   O_ROBA
+   o_roba()
 
    RETURN
 

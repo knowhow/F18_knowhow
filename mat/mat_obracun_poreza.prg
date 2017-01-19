@@ -18,13 +18,13 @@ FUNCTION pornar()
 
    // obracun poreza na realizaciju
 
-   O_PARTN
-   O_TARIFA
+   o_partner()
+   o_tarifa()
    O_MAT_SUBAN
-   O_KONTO
+   o_konto()
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    dDatOd := CToD( "" )
    dDatDo := Date()

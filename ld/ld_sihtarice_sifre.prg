@@ -22,7 +22,7 @@ FUNCTION gr_pos( cId )
 
    SELECT ( F_KONTO )
    IF !Used()
-      O_KONTO
+      o_konto()
    ENDIF
    SELECT konto
    SEEK cId

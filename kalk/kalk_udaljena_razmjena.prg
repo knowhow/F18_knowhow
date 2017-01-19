@@ -874,19 +874,19 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    CREATE ( cDbfPath + "e_doks" ) from ( cDbfPath + "struct" )
 
 
-   O_ROBA // tabela roba
+   o_roba() // tabela roba
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_roba" ) from ( cDbfPath + "struct" )
 
 
-   O_PARTN // tabela partn
+   o_partner() // tabela partn
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_partn" ) from ( cDbfPath + "struct" )
 
    // tabela konta
-   O_KONTO
+   o_konto()
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_konto" ) from ( cDbfPath + "struct" )
@@ -898,7 +898,7 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    CREATE ( cDbfPath + "e_sifk" ) from ( cDbfPath + "struct" )
 
    // tabela sifv
-   O_SIFV
+   o_sifv()
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_sifv" ) from ( cDbfPath + "struct" )
@@ -914,10 +914,10 @@ STATIC FUNCTION kalk_o_tabele()
    // o_kalk()
    // o_kalk_doks()
    o_sifk()
-   O_SIFV
-   O_KONTO
-   O_PARTN
-   O_ROBA
+   o_sifv()
+   o_konto()
+   o_partner()
+   o_roba()
 
    RETURN .T.
 

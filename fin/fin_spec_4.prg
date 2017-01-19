@@ -15,7 +15,7 @@ FUNCTION SpecOstPop()
    picBHD := FormPicL( "9 " + gPicBHD, 13 )
    picDEM := FormPicL( "9 " + gPicDEM, 10 )
 
-   O_PARTN
+   o_partner()
 
 
    Box( "SSK", 6, 60, .F. )
@@ -40,7 +40,7 @@ FUNCTION SpecOstPop()
    nDugBHD := nPotBHD := nUkDugBHD := nUkPotBHD := 0
    nDugDEM := nPotDEM := nUKDugDEM := nUkPotDEM := 0
 
-   O_KONTO
+   o_konto()
    o_suban()
 
    SELECT SUBAN; SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto

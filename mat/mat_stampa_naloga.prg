@@ -40,7 +40,7 @@ FUNCTION mat_st_sint_nalog( fnovi )
       fnovi := .F.
    ENDIF
 
-   O_KONTO
+   o_konto()
    o_tnal()
    IF fnovi
       O_MAT_PANAL2

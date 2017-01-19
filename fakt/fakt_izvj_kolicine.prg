@@ -366,12 +366,12 @@ STATIC FUNCTION _reset_aroba( arr )
 STATIC FUNCTION _o_tables()
 
    O_FAKT
-   O_PARTN
-   O_VALUTE
+   o_partner()
+   o_valute()
    O_RJ
    o_sifk()
-   O_SIFV
-   O_ROBA
-   O_OPS
+   o_sifv()
+   o_roba()
+   o_ops()
 
    RETURN .T.

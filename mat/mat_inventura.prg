@@ -85,8 +85,8 @@ FUNCTION mat_inv_gen()
    LOCAL _partner, _partn_usl, _id_partner
    LOCAL _filter
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
 
    IF !_get_inv_vars( @_vars )
       my_close_all_dbf()
@@ -199,10 +199,10 @@ FUNCTION mat_inv_tabela()
    PRIVATE imekol := {}
 
    O_MAT_INVENT
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
-   O_PARTN
+   o_sifv()
+   o_partner()
 
    SELECT MAT_INVENT
    GO TOP
@@ -459,11 +459,11 @@ FUNCTION mat_pregl_unesenih_stavki()
    LOCAL _vars := hb_Hash()
 
    O_MAT_INVENT
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
-   O_KONTO
-   O_PARTN
+   o_sifv()
+   o_konto()
+   o_partner()
 
    IF !_get_inv_vars( @_vars )
       my_close_all_dbf()
@@ -579,7 +579,7 @@ FUNCTION mat_obracun_inv()
    cIdD := Date()
    cIdF := Left( cIdF, 2 )
 
-   O_PARTN; O_KONTO
+   o_partner(); o_konto()
    Box( "", 4, 60 )
    @ m_x + 1, m_y + 6 SAY "OBRACUN INVENTURE"
    IF gNW $ "DR"
@@ -597,9 +597,9 @@ FUNCTION mat_obracun_inv()
    picK := '@Z 99999.99'
 
    O_MAT_INVENT
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
    O_MAT_SUBAN
    SET ORDER TO TAG "3"
    SET FILTER TO DatDok <= cIdD
@@ -721,7 +721,7 @@ FUNCTION mat_nal_inventure()
    cIdZaduz := Space( 6 )
    cidvn := "  "; cBrNal := Space( 4 )
    cIdTipDok := "09"
-   O_PARTN; O_KONTO
+   o_partner(); o_konto()
    Box( "", 7, 60 )
    @ m_x + 1, m_y + 6 SAY "FORMIRANJE NALOGA IZLAZA - USAGLASAVANJE"
    @ m_x + 2, m_y + 6 SAY "KNJIZNOG I STVARNOG STANJA"
@@ -741,12 +741,12 @@ FUNCTION mat_nal_inventure()
    picD1 := '@Z 99999999.99'
    picK := '@Z 99999.99'
 
-   O_VALUTE
+   o_valute()
    O_MAT_PRIPR
    O_MAT_INVENT
-   O_ROBA
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
    O_MAT_SUBAN
    SET ORDER TO TAG "3"
    SET FILTER TO DatDok <= cIdD
@@ -831,11 +831,11 @@ FUNCTION mat_inv_obr_poreza()
    cIdZaduz := Space( 6 )
    cidvn := "  "; cBrNal := Space( 4 )
    cIdTipDok := "09"
-   O_TARIFA; O_KONTO
+   o_tarifa(); o_konto()
    O_MAT_INVENT
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
    nMjes := Month( cIdD )
    Box( "", 7, 60 )
    @ m_x + 1, m_y + 6 SAY "PRENOS INV. STANJA U OBRACUN POREZA MP"
@@ -908,8 +908,8 @@ FUNCTION mat_popisna_lista()
    LOCAL _filter := ""
    LOCAL _my_xml := my_home() + "data.xml"
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
 
    IF !_get_inv_vars( @_vars )
       my_close_all_dbf()
@@ -927,8 +927,8 @@ FUNCTION mat_popisna_lista()
 
    O_MAT_SUBAN
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
 
    SELECT mat_suban
    SET ORDER TO TAG "3"

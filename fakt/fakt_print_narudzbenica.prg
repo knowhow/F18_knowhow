@@ -23,7 +23,7 @@ FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )
 
    print_narudzbenica()
 
-   O_PARTN
+   o_partner()
    SELECT ( F_FAKT_DOKS )
    USE
    O_FAKT_DOKS

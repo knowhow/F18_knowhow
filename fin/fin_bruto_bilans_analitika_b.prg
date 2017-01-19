@@ -56,8 +56,8 @@ FUNCTION fin_bb_analitika_b( hParams )
 
    fin_bb_txt_header()
 
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    O_BBKLAS
 
    IF gFinRj == "D" .AND. Len( cIdRJ ) <> 0

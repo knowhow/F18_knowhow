@@ -330,10 +330,10 @@ STATIC FUNCTION _open_tables()
    O_UGOV
    O_RUGOV
    O_DEST
-   O_PARTN
-   O_ROBA
+   o_partner()
+   o_roba()
    o_sifk()
-   O_SIFV
+   o_sifv()
 
    SELECT ugov
 

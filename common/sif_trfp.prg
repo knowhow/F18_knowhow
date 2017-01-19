@@ -236,7 +236,7 @@ FUNCTION UndoSheme( lKopi )
       USE
       COPY File ( cTekuci ) TO ( cStari )
       COPY File ( cTekuci2 ) TO ( cStari2 )
-      O_TRFP
+      o_trfp()
       PopWA()
    ELSE
       IF File( cStari ) .AND. File( cStari2 )
@@ -245,7 +245,7 @@ FUNCTION UndoSheme( lKopi )
          USE
          FRename( cStari, cPom ); FRename( cTekuci, cStari );  FRename( cPom, cTekuci )
          FRename( cStari2, cPom ); FRename( cTekuci2, cStari2 ); FRename( cPom, cTekuci2 )
-         O_TRFP
+         o_trfp()
          PopWA()
       ENDIF
    ENDIF
@@ -282,7 +282,7 @@ FUNCTION v_setform()
       ! &cKomLin
       RESTORE SCREEN FROM cscr
       SELECT F_TRFP
-      IF !Used(); O_TRFP; ENDIF
+      IF !Used(); o_trfp(); ENDIF
       P_Trfp()
       SELECT F_TRMP
       IF !Used(); O_TRMP; ENDIF

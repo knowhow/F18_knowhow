@@ -49,8 +49,8 @@ FUNCTION pos_stanje_artikala
    O_ODJ
    O_DIO
    o_sifk()
-   O_SIFV
-   O_ROBA
+   o_sifv()
+   o_roba()
    o_pos_pos()
 
    cIdPos := gIdPos

@@ -28,7 +28,7 @@ FUNCTION fin_sint_kartica()
 
    cPredh := "2"
 
-   O_PARTN
+   o_partner()
    O_PARAMS
 
    PRIVATE cSection := "1"; cHistory := " ";aHistory := {}
@@ -106,7 +106,7 @@ FUNCTION fin_sint_kartica()
          find_sint_by_konto_za_period( cIdFirma, NIL, dDatOd, dDatDo )
       ENDIF
    ENDIF
-   O_KONTO
+   o_konto()
 
    SELECT SINT
 

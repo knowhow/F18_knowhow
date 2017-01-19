@@ -40,7 +40,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
    _vrste_placanja := .F.
 
-   O_PARTN
+   o_partner()
 
    PicBHD := "@Z " + FormPicL( gPicBHD, 15 )
    PicDEM := "@Z " + FormPicL( gPicDEM, 10 )
@@ -470,8 +470,8 @@ FUNCTION fin_gen_psuban_stavke_auto_import()
    my_close_all_dbf()
 
    O_FIN_PRIPR
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_tnal()
    o_tdok()
    O_PSUBAN

@@ -80,7 +80,7 @@ FUNCTION fin_specifikacija_suban()
    SELECT params
    USE
 
-   O_PARTN
+   o_partner()
 
    cTip := "1"
    Box( "", 20, 65 )
@@ -180,8 +180,8 @@ FUNCTION fin_specifikacija_suban()
       O_RJ
    ENDIF
 
-   O_PARTN
-   O_KONTO
+   o_partner()
+   o_konto()
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    find_suban_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto,idpartner,brdok", cSqlWhere )
    Msgc()

@@ -87,11 +87,11 @@ FUNCTION fakt_fin_prenos()
 
 
    O_FINMAT
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partner()
    o_tdok()
-   O_ROBA
-   O_TARIFA
+   o_roba()
+   o_tarifa()
 
    IF lNCPoSast
       O_SAST
@@ -300,11 +300,11 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
    LOCAL cidfirma, cidvd, cbrdok, lafin, lafin2
 
-   O_ROBA
+   o_roba()
    O_FINMAT
-   O_TRFP2
+   o_trfp2()
    o_koncij()
-   O_VALUTE
+   o_valute()
 
    lAFin := .T.
    IF lafin

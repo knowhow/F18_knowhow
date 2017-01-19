@@ -119,7 +119,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
    SELECT ( F_TRFP2 )
    IF !Used()
-      O_TRFP2
+      o_trfp2()
    ENDIF
 
    HSEEK "99 " + Left( cIdKonto, 1 )

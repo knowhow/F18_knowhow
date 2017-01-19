@@ -10,19 +10,3 @@
  */
 
 #include "f18.ch"
-
-FUNCTION o_fakt()
-   RETURN o_dbf_table( F_FAKT, "fakt", "1" )
-
-FUNCTION o_fakt_doks()
-   RETURN o_dbf_table( F_FAKT_DOKS, "fakt_doks", "1" )
-
-FUNCTION select_fakt_doks()
-
-   select_o_dbf( "FAKT_DOKS", F_FAKT_DOKS, "fakt_doks", "1" )
-   IF Alias() != "FAKT_DOKS"
-      Alert( "Nije FAKT DOKS ?!" )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.

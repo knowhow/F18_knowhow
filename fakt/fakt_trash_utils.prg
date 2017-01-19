@@ -212,7 +212,7 @@ FUNCTION azuriraj_smece( lSilent )
    ENDIF
 
    O_FAKT_PRIPR9
-   O_FAKT_PRIPR
+   o_fakt_pripr()
 
    lFound := .F.
    nCount := 0
@@ -306,7 +306,7 @@ FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
    lSilent := .T.
 
    O_FAKT_PRIPR9
-   O_FAKT_PRIPR
+   o_fakt_pripr()
 
    SELECT fakt_pripr9
    SET ORDER TO TAG 1

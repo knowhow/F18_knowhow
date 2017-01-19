@@ -117,8 +117,8 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
 
    O_R_EXP
    o_roba()
-   O_FAKT_DOKS
-   O_FAKT
+   o_fakt_doks()
+   o_fakt()
 
    IF !Empty( cId_f )
       cFilt += Parsiraj( AllTrim( cId_f ), "idfirma", "C" )

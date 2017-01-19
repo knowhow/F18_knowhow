@@ -46,7 +46,7 @@ FUNCTION LdFin()
 
    O_FAKT_OBJEKTI
    o_nalog()
-   O_FIN_PRIPR
+   o_fin_pripr()
    O_TRFP3
    open_rekld()
 

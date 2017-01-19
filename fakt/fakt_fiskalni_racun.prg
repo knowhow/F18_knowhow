@@ -349,8 +349,8 @@ STATIC FUNCTION fakt_dok_is_storno( id_firma, tip_dok, br_dok )
 STATIC FUNCTION fakt_fiscal_o_tables()
 
    o_tarifa()
-   O_FAKT_DOKS
-   O_FAKT
+   o_fakt_doks()
+   o_fakt()
    o_roba()
    o_sifk()
    o_sifv()

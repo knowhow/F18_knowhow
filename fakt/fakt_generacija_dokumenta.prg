@@ -47,13 +47,13 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
    LOCAL nRbr
    LOCAL lFoundUPripremi
 
-   O_FAKT_DOKS
+   o_fakt_doks()
    o_roba()
    o_tarifa()
-   O_FAKT_PRIPR
+   o_fakt_pripr()
    SET ORDER TO TAG "3"
 
-   O_FAKT
+   o_fakt()
    MsgO( "scaniram tabelu fakt" )
    nRbr := 0
 
@@ -144,8 +144,8 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
 
    nRBr := 0
 
-   O_FAKT
-   O_FAKT_PRIPR
+   o_fakt()
+   o_fakt_pripr()
    o_roba()
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
@@ -218,8 +218,8 @@ FUNCTION fakt_inventura_visak( cIdRj, cBrDok )
 
    nRBr := 0
 
-   O_FAKT
-   O_FAKT_PRIPR
+   o_fakt()
+   o_fakt_pripr()
    o_roba()
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )

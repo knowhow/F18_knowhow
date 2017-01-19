@@ -59,9 +59,9 @@ STATIC FUNCTION bterm_to_pripr()
 
    PRIVATE cTipVPC := "1"
 
-   O_FAKT_DOKS
-   O_FAKT_PRIPR
-   O_FAKT
+   o_fakt_doks()
+   o_fakt_pripr()
+   o_fakt()
    o_roba()
    O_RJ
    o_partner()

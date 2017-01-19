@@ -178,8 +178,8 @@ FUNCTION gen_ug_2()
    ENDIF
 
    // otvori i fakt
-   O_FAKT
-   O_FAKT_PRIPR
+   o_fakt()
+   o_fakt_pripr()
 
    IF RecCount2() <> 0
       MsgBeep( "U pripremi postoje dokumenti#Prekidam generaciju!" )
@@ -1043,8 +1043,8 @@ STATIC FUNCTION postoji_generacija( dDatObr, cIdArt )
       my_close_all_dbf()
       o_ugov()
       // otvori i fakt
-      O_FAKT
-      O_FAKT_PRIPR
+      o_fakt()
+      o_fakt_pripr()
       SELECT gen_ug
       SET ORDER TO TAG "dat_obr"
       SEEK DToS( dDatObr )
@@ -1085,7 +1085,7 @@ STATIC FUNCTION vrati_nazad( dDatObr, cIdArt )
    ENDIF
 
    // izbrisi pripremu
-   O_FAKT_PRIPR
+   o_fakt_pripr()
 
    fakt_brisanje_pripreme()
 

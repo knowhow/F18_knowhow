@@ -24,7 +24,7 @@ FUNCTION virm_prenos_fin()
    o_partner()
    o_vrprim()
    O_VIRM_PRIPR
-   O_FIN_PRIPR
+   o_fin_pripr()
 
    cKome_Txt := ""
 

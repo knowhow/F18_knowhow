@@ -66,7 +66,7 @@ FUNCTION fakt_kalk_prenos_10_14()
    o_konto()
    o_partner()
    o_tarifa()
-   O_FAKT
+   o_fakt()
 
    dDatKalk := fetch_metric( "kalk_fakt_prenos_10_14_datum", my_user(), Date() )
    cIdKonto := fetch_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), PadR( "1200", 7 ) )
@@ -701,7 +701,7 @@ STATIC FUNCTION _o_prenos_tbls()
    o_konto()
    o_partner()
    o_tarifa()
-   O_FAKT
+   o_fakt()
 
    RETURN .T.
 

@@ -180,7 +180,7 @@ FUNCTION chk_dok_11()
    ENDIF
 
    // otvori fakt doks
-   O_FAKT_DOKS
+   o_fakt_doks()
 
    // otvori potrebne tabele
    rnal_o_tables( .F. )
@@ -292,7 +292,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
    INDEX ON Str( doc_no, 10 ) TAG "1"
 
    // fakt mi otvori
-   O_FAKT
+   o_fakt()
 
    // otvori potrebne tabele
    rnal_o_tables( .F. )

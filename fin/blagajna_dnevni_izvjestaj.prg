@@ -27,7 +27,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
 
    o_konto()
    o_anal()
-   O_FIN_PRIPR
+   o_fin_pripr()
 
    GO TOP
 

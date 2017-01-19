@@ -28,7 +28,7 @@ FUNCTION SetDatUPripr()
       CLOSERET
    ENDIF
 
-   O_FIN_PRIPR
+   o_fin_pripr()
    GO TOP
    DO WHILE !Eof()
       IF IDVN <> cTDok

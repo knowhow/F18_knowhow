@@ -36,8 +36,8 @@ FUNCTION fakt_kartica()
       O_FAKT_OBJEKTI
    ENDIF
 
-   O_FAKT_DOKS
-   O_FAKT
+   o_fakt_doks()
+   o_fakt()
 
    SELECT fakt
    IF fId_J
@@ -195,7 +195,7 @@ FUNCTION fakt_kartica()
    BoxC()
 
    IF cPPArtn == "D"
-      O_FAKT_DOKS
+      o_fakt_doks()
    ENDIF
 
    SELECT FAKT

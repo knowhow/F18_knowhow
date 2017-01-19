@@ -177,7 +177,7 @@ FUNCTION PrenosFin()
    // SET ORDER TO TAG "ID"
    O_PKONTO
 
-   O_FIN_PRIPR
+   o_fin_pripr()
 
    IF reccount2() <> 0
       MsgBeep( "Priprema mora biti prazna" )
@@ -1124,7 +1124,7 @@ FUNCTION ZadnjiRBR()
    LOCAL nZRBR := 0
    LOCAL nObl := Select()
 
-   O_FIN_PRIPR
+   o_fin_pripr()
    GO BOTTOM
    nZRBR := Val( rbr )
    SELECT ( nObl )

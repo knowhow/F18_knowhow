@@ -48,7 +48,7 @@ FUNCTION fakt_lager_lista()
       lPocStanje := .F.
    ELSE
       lPocStanje := .T.
-      O_FAKT_PRIPR
+      o_fakt_pripr()
       nRbrPst := 0
       cBrPSt := "00001   "
       Box(, 2, 60 )
@@ -64,7 +64,7 @@ FUNCTION fakt_lager_lista()
       ENDIF
    ENDIF
 
-   O_FAKT_DOKS
+   o_fakt_doks()
    o_tarifa()
    o_partner()
    o_sifk()
@@ -73,11 +73,11 @@ FUNCTION fakt_lager_lista()
    O_RJ
 
    IF fId_J
-      O_FAKT
+      o_fakt()
       // idroba+dtos(datDok)
       SET ORDER TO TAG "3J"
    ELSE
-      O_FAKT
+      o_fakt()
       // idroba+dtos(datDok)
       SET ORDER TO TAG "3"
    ENDIF

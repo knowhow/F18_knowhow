@@ -113,7 +113,7 @@ FUNCTION FaktStanje( cIdRoba )
    SELECT roba
    SELECT ( F_FAKT )
    IF !Used()
-      O_FAKT; fOtv := .T.
+      o_fakt(); fOtv := .T.
    ELSE
       nIOrd := IndexOrd()
       nFRec := RecNo()
@@ -399,7 +399,7 @@ FUNCTION ima_u_fakt_kumulativ( cKljuc, cTag )
 
    IF !Used()
       lUsed := .F.
-      O_FAKT
+      o_fakt()
    ELSE
       PushWA()
    ENDIF

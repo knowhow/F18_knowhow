@@ -1011,19 +1011,19 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    direktorij_kreiraj_ako_ne_postoji( use_path )
 
    // tabela fakt
-   O_FAKT
+   o_fakt()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_fakt" ) from ( my_home() + "struct" )
 
    // tabela doks
-   O_FAKT_DOKS
+   o_fakt_doks()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_doks" ) from ( my_home() + "struct" )
 
    // tabela doks
-   O_FAKT_DOKS2
+   o_fakt_doks2()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_doks2" ) from ( my_home() + "struct" )
@@ -1060,9 +1060,9 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
 // ----------------------------------------------------
 STATIC FUNCTION _o_tables()
 
-   O_FAKT
-   O_FAKT_DOKS
-   O_FAKT_DOKS2
+   o_fakt()
+   o_fakt_doks()
+   o_fakt_doks2()
    o_sifk()
    o_sifv()
    o_partner()

@@ -469,7 +469,7 @@ FUNCTION fin_gen_psuban_stavke_auto_import()
 
    my_close_all_dbf()
 
-   O_FIN_PRIPR
+   o_fin_pripr()
    o_konto()
    o_partner()
    o_tnal()

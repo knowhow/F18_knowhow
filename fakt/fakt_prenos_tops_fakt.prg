@@ -43,8 +43,8 @@ FUNCTION TopsFakt()
 
    o_roba()
    o_partner()
-   O_FAKT_DOKS
-   O_FAKT_PRIPR
+   o_fakt_doks()
+   o_fakt_pripr()
 
    USE ( Trim( cLokacija ) + "TOPSFAKT.DBF" ) new
    SET ORDER TO TAG "1"

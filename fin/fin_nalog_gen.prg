@@ -156,7 +156,7 @@ FUNCTION fin_open_psuban_and_ostalo()
    o_tnal()
    o_tdok()
    o_fin_psuban()
-   O_FIN_PRIPR
+   o_fin_pripr()
 
    RETURN .T.
 

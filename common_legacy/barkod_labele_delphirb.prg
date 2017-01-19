@@ -33,7 +33,7 @@ FUNCTION label_bkod()
    o_roba()
    SET ORDER TO TAG "ID"
    O_BARKOD
-   O_FAKT_PRIPR
+   o_fakt_pripr()
 
    SELECT FAKT_PRIPR
 

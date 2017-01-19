@@ -32,7 +32,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    PRIVATE cSvediJmj := "N"
 
    // da li se koriste relacije
-   O_FAKT
+   o_fakt()
    SELECT fakt
 
    IF fakt->( FieldPos( "idrelac" ) ) <> 0
@@ -641,8 +641,8 @@ STATIC FUNCTION zagl_sp_prod()
 // ---------------------------------
 STATIC FUNCTION _o_tables()
 
-   O_FAKT
-   O_FAKT_DOKS
+   o_fakt()
+   o_fakt_doks()
    o_partner()
    o_valute()
    O_RJ

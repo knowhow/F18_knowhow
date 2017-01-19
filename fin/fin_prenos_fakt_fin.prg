@@ -101,7 +101,7 @@ FUNCTION fakt_fin_prenos()
 
    SELECT ( F_FAKT )
    IF !Used()
-      O_FAKT
+      o_fakt()
    ENDIF
 
 
@@ -315,7 +315,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    cBrNalF := ""
 
    // o_nalog()
-   O_FIN_PRIPR
+   o_fin_pripr()
 
    SELECT FINMAT
    GO TOP

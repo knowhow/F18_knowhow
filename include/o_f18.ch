@@ -75,7 +75,6 @@
 #xcommand O_ERRORS  => SELECT (F_ERRORS)    ; my_usex ("errors")   ; set order to tag "1"
 
 // modul FIN
-#xcommand O_FIN_PRIPR    => o_fin_pripr()
 
 #xcommand O_PNALOG       => o_fin_pnalog()
 #xcommand O_PSUBAN       => o_fin_psuban()
@@ -117,8 +116,7 @@
 #xcommand O__KALK         => select(F__KALK); my_usex ("_kalk" )
 #xcommand O_KALK_FINMAT   => select(F_KALK_FINMAT); my_usex ("kalk_finmat")    ; set order to tag "1"
 
-#xcommand O_KALKSEZ       => select(F_KALKSEZ);  my_use  ("KALK")  ; set order to "1"
-#xcommand O_ROBASEZ       => select(F_ROBASEZ);  my_use  ("ROBA")  ; set order to tag "ID"
+
 #xcommand O_KALKX         => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"
 
 
@@ -137,15 +135,11 @@
 #xcommand O_RPT_TMP        => select(F_RPT_TMP)  ;  my_use  ("rpt_tmp")
 
 
-// modul FAKT
-#xcommand O_FAKT           => o_fakt()
-#xcommand O_FAKT_DOKS      => o_fakt_doks()
 
 
-#xcommand O_FAKT_DOKS2     => select(F_FAKT_DOKS2) ; my_use ( "fakt_doks2" )  ; set order to tag "1"
 
 // fakt pripr
-#xcommand O_FAKT_PRIPR     => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr", NIL, .F.)   ; set order to tag "1"
+
 #xcommand O_FAKT_PRIPRRP   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to tag  "1"
 #xcommand O_FAKT_S_PRIPR   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to "1"
 

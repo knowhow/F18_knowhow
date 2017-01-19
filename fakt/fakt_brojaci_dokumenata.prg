@@ -235,7 +235,7 @@ FUNCTION fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
    _broj := fetch_metric( _param, nil, _broj )
 
    // konsultuj i doks uporedo
-   O_FAKT_DOKS
+   o_fakt_doks()
    SET ORDER TO TAG "1"
    GO TOP
    SEEK firma + tip_dokumenta + "Ž"
@@ -526,7 +526,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
 
    SELECT ( F_FAKT )
    IF !Used()
-      O_FAKT
+      o_fakt()
    ENDIF
 
    SELECT ( F_PARTN )

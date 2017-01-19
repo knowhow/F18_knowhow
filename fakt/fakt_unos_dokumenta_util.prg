@@ -1156,7 +1156,7 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
 
    SELECT ( F_FAKT_PRIPR )
    IF !Used()
-      O_FAKT_PRIPR
+      o_fakt_pripr()
    ENDIF
    SELECT ( F_ROBA )
    IF !Used()

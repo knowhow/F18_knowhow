@@ -566,7 +566,7 @@ STATIC FUNCTION open_tabele_za_pocetno_stanje()
 
    SELECT ( F_FIN_PRIPR )
    IF !Used()
-      O_FIN_PRIPR
+      o_fin_pripr()
    ENDIF
 
    RETURN .T.

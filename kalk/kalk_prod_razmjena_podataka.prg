@@ -69,7 +69,7 @@ FUNCTION fakt_11_kalk_prenos_11()
    o_partner()
    o_tarifa()
 
-   O_FAKT
+   o_fakt()
 
    SET ORDER TO TAG "7" // idfirma + DTOS(datdok)
 
@@ -293,7 +293,7 @@ FUNCTION fakt_13_kalk_11()
    o_partner()
    o_tarifa()
 
-   O_FAKT
+   o_fakt()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320", 7 )
@@ -452,7 +452,7 @@ FUNCTION fakt_11_kalk_41()
    o_partner()
    o_tarifa()
 
-   O_FAKT
+   o_fakt()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1330", 7 )
@@ -704,7 +704,7 @@ FUNCTION fakt_01_kalk_81()
    o_partner()
    o_tarifa()
 
-   O_FAKT
+   o_fakt()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320", 7 )
@@ -837,7 +837,7 @@ FUNCTION fakt_13_kalk_80()
    o_partner()
    o_tarifa()
 
-   O_FAKT
+   o_fakt()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320999", 7 )
@@ -1002,7 +1002,7 @@ FUNCTION fakt_15_kalk_15()
    o_partner()
    o_tarifa()
 
-   O_FAKT
+   o_fakt()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320", 7 )
@@ -1498,6 +1498,6 @@ STATIC FUNCTION _o_prenos_tbls()
    o_konto()
    o_partner()
    o_tarifa()
-   O_FAKT
+   o_fakt()
 
    RETURN .T.

@@ -255,7 +255,7 @@ STATIC FUNCTION O_PrVP_DB()
    o_konto()
    O_FAKT_OBJEKTI
    o_nalog()
-   O_FIN_PRIPR
+   o_fin_pripr()
    o_trfp2()
 
    RETURN

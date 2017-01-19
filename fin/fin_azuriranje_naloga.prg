@@ -870,6 +870,6 @@ FUNCTION o_fin_za_azuriranje()
    O_PSINT
    O_PNALOG
 
-   O_FIN_PRIPR
+   o_fin_pripr()
 
    RETURN .T.

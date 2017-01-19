@@ -30,7 +30,7 @@ FUNCTION fin_povrat_naloga( lStorno )
    ENDIF
 
 
-   O_FIN_PRIPR
+   o_fin_pripr()
 
 
 

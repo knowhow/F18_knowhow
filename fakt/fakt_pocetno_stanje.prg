@@ -46,7 +46,7 @@ FUNCTION fakt_pocetno_stanje()
    o_partner()
    o_sifk()
    o_sifv()
-   O_FAKT_PRIPR
+   o_fakt_pripr()
 
    _n_br_dok := PadR( "00000", 8 )
 

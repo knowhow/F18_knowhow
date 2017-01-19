@@ -141,7 +141,7 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
 
    SELECT F_FIN_PRIPR
    IF !Used()
-      O_FIN_PRIPR
+      o_fin_pripr()
    ENDIF
 
    SELECT fin_pripr

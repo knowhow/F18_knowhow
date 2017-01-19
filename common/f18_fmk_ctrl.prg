@@ -143,7 +143,7 @@ STATIC FUNCTION f18_fakt_data( data, checksum )
    LOCAL _n_c_iznos := 0
    LOCAL _n_c_stavke := 0
 
-   O_FAKT
+   o_fakt()
 
    Box(, 2, 60 )
 

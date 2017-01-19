@@ -19,7 +19,7 @@ FUNCTION kontrola_zbira_naloga()
 
    SELECT ( F_FIN_PRIPR )
    IF !Used()
-      O_FIN_PRIPR
+      o_fin_pripr()
    ENDIF
 
    Box( "kzb", 12, 70, .F., "Kontrola zbira naloga" )

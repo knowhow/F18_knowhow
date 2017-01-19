@@ -24,7 +24,7 @@ FUNCTION RobaIdSredi()
 
    o_roba()
    o_kalk()
-   O_FAKT
+   o_fakt()
    fSrediF := .T.
 
    Box(, 10, 60 )

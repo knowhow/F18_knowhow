@@ -35,9 +35,9 @@ FUNCTION fakt_pregled_liste_dokumenata()
    o_valute()
    O_RJ
    O_FAKT_OBJEKTI
-   O_FAKT
+   o_fakt()
    o_partner()
-   O_FAKT_DOKS
+   o_fakt_doks()
 
    qqVrsteP := Space( 20 )
    dDatVal0 := dDatVal1 := CToD( "" )
@@ -240,7 +240,7 @@ FUNCTION print_porezna_faktura( lOpcine )
    SELECT ( F_FAKT_DOKS )
    USE
 
-   O_FAKT_DOKS
+   o_fakt_doks()
    o_partner()
    SELECT fakt_doks
    IF cFilter == ".t."
@@ -269,7 +269,7 @@ FUNCTION fakt_print_odt( lOpcine )
    close_open_fakt_tabele()
    SELECT ( F_FAKT_DOKS )
    USE
-   O_FAKT_DOKS
+   o_fakt_doks()
    o_partner()
    SELECT fakt_doks
    IF cFilter == ".t."
@@ -302,8 +302,8 @@ FUNCTION generisi_fakturu( is_opcine )
       RETURN DE_CONT
    ENDIF
 
-   O_FAKT_PRIPR
-   O_FAKT
+   o_fakt_pripr()
+   o_fakt()
 
    IF fakt_pripr->( RecCount() ) <> 0
       MsgBeep( "Priprema mora biti prazna !!!" )
@@ -490,7 +490,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
       SELECT fakt_doks
       USE
-      O_FAKT_DOKS
+      o_fakt_doks()
 
       nRet := DE_REFRESH
       _refresh := .T.
@@ -674,7 +674,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
       _tmp := povrat_fakt_dokumenta( .F., field->idfirma, field->idtipdok, field->brdok )
 
-      O_FAKT_DOKS
+      o_fakt_doks()
 
       IF _tmp <> 0 .AND. Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.
@@ -709,13 +709,13 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
 
    O_VRSTEP
    o_ops()
-   O_FAKT_DOKS2
+   o_fakt_doks2()
    o_valute()
    O_RJ
    O_FAKT_OBJEKTI
-   O_FAKT
+   o_fakt()
    o_partner()
-   O_FAKT_DOKS
+   o_fakt_doks()
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
@@ -730,7 +730,7 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
 
 FUNCTION fakt_real_partnera()
 
-   O_FAKT_DOKS
+   o_fakt_doks()
    o_partner()
    o_valute()
    O_RJ

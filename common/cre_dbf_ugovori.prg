@@ -249,8 +249,8 @@ FUNCTION o_ugov()
    o_fakt_txt()
    o_sifk()
    o_sifv()
-   O_FAKT
-   O_FAKT_DOKS
+   o_fakt()
+   o_fakt_doks()
    o_roba()
    o_tarifa()
    o_partner()

@@ -320,7 +320,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
    LOCAL _log_info
 
    IF Select( "fin_pripr" ) == 0
-      O_FIN_PRIPR
+      o_fin_pripr()
    ELSE
       SELECT FIN_PRIPR
    ENDIF
@@ -678,7 +678,7 @@ FUNCTION o_fin_edit()
    o_tnal()
    o_tdok()
    o_nalog()
-   O_FIN_PRIPR
+   o_fin_pripr()
 
    SELECT fin_pripr
    SET ORDER TO TAG "1"

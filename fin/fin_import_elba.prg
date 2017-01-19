@@ -37,7 +37,7 @@ FUNCTION import_elba( cTxt )
    IF provjeri_priprema_prazna() > 0
       IF Pitanje( , "Nulirati pripremu ?", "N" ) == "D"
          open_exclusive_zap_close( "fin_pripr" )
-         O_FIN_PRIPR
+         o_fin_pripr()
       ELSE
          MsgBeep( "Priprema mora biti prazna !#Ispraznite pripremu i ponovite proceduru." )
          RETURN .F.
@@ -50,7 +50,7 @@ FUNCTION import_elba( cTxt )
       RETURN .F.
    ENDIF
 
-   O_FIN_PRIPR
+   o_fin_pripr()
    o_nalog()
 
 
@@ -93,7 +93,7 @@ STATIC FUNCTION provjeri_priprema_prazna()
 
    LOCAL nReturn := 0
 
-   O_FIN_PRIPR
+   o_fin_pripr()
    SELECT fin_pripr
    nReturn := RecCount2()
 

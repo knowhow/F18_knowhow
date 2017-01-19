@@ -115,7 +115,7 @@ FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
    SELECT ( F_FAKT )
 
    IF !Used()
-      O_FAKT
+      o_fakt()
    ENDIF
 
    SELECT fakt
@@ -172,7 +172,7 @@ FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
 
    SELECT ( F_FAKT )
    IF !Used()
-      O_FAKT
+      o_fakt()
    ENDIF
 
    SELECT fakt
@@ -203,7 +203,7 @@ FUNCTION fakt_priprema_prazna()
 
    SELECT ( F_FAKT_PRIPR )
    IF !Used()
-      O_FAKT_PRIPR
+      o_fakt_pripr()
    ENDIF
 
    IF RECCOUNT2() == 0

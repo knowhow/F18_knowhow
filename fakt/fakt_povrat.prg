@@ -38,10 +38,10 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
       _vars[ "brdok" ]    := br_dok
    ENDIF
 
-   O_FAKT
-   O_FAKT_PRIPR
-   O_FAKT_DOKS2
-   O_FAKT_DOKS
+   o_fakt()
+   o_fakt_pripr()
+   o_fakt_doks2()
+   o_fakt_doks()
 
    SELECT fakt
    SET FILTER TO
@@ -293,10 +293,10 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    ENDIF
 
-   O_FAKT
-   O_FAKT_PRIPR
-   O_FAKT_DOKS
-   O_FAKT_DOKS2
+   o_fakt()
+   o_fakt_pripr()
+   o_fakt_doks()
+   o_fakt_doks2()
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
@@ -492,7 +492,7 @@ FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
 
    SELECT ( F_FAKT_PRIPR )
    IF !Used()
-      O_FAKT_PRIPR
+      o_fakt_pripr()
    ENDIF
 
    _qry := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt " + ;

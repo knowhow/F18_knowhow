@@ -108,7 +108,7 @@ FUNCTION azur_fakt( lSilent )
 
    MsgC()
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN _a_fakt_doks
 
@@ -145,7 +145,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
    LOCAL oAttr
    LOCAL hParams
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    _tbl_fakt  := "fakt_fakt"
    _tbl_doks  := "fakt_doks"
@@ -569,10 +569,10 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
 
    O_VRSTEP
    o_ops()
-   o_konto()
+   select_o_konto()
    O_SAST
-   o_partner()
-   o_roba()
+   select_o_partner()
+   select_o_roba()
    o_fakt_txt()
    o_tarifa()
    o_valute()

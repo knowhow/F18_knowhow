@@ -1158,10 +1158,9 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
    IF !Used()
       o_fakt_pripr()
    ENDIF
-   SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
+
+   select_o_roba()
+
    SELECT ( F_TARIFA )
    IF !Used()
       o_tarifa()
@@ -1208,7 +1207,6 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
 
 FUNCTION TarifaR( cRegion, cIdRoba, aPorezi )
 
-   // {
    LOCAL cTarifa
    PRIVATE cPolje
 
@@ -1229,9 +1227,9 @@ FUNCTION TarifaR( cRegion, cIdRoba, aPorezi )
    ENDIF
 
    SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
+
+   select_o_roba()
+
    SEEK cIdRoba
    cTarifa := &cPolje
 

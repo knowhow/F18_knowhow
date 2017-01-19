@@ -64,6 +64,10 @@ FUNCTION o_dest()
 FUNCTION o_fakt_pripr()
 
    SELECT ( F_FAKT_PRIPR )
+   IF Used()
+      RETURN .T.
+   ENDIF
+
    my_use ( "fakt_pripr", NIL, .F. )
    SET ORDER TO TAG "1"
 

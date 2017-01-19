@@ -30,7 +30,7 @@ FUNCTION fakt_mnu_generacija_dokumenta()
 
    f18_menu( "mgdok", .F., _izbor, _opc, _opcexe )
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN .T.
 

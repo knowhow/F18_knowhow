@@ -66,10 +66,10 @@ FUNCTION fakt_lager_lista()
 
    o_fakt_doks()
    o_tarifa()
-   o_partner()
+   select_o_partner()
    o_sifk()
    o_sifv()
-   o_roba()
+   select_o_roba()
    O_RJ
 
    IF fId_J

@@ -68,7 +68,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
          INDEX ON ID TAG "ID" TO ( cAlias )
          INDEX ON Left( NAZ, 40 ) TAG "NAZ" TO ( cAlias )
          INDEX ON barkod TAG "BARKOD" TO ( cAlias )
-         INDEX ON SIFRADOB TAG "SIFRADOB" TO ( cAlias )
+         //INDEX ON SIFRADOB TAG "SIFRADOB" TO ( cAlias )
          INDEX ON Str( fisc_plu, 10 ) TAG "PLU" TO ( cAlias )
          INDEX ON id + tip TAG "IDP" TO ( cAlias ) FOR tip = "P"
 

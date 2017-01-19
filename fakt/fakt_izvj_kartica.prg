@@ -27,8 +27,8 @@ FUNCTION fakt_kartica()
 
    o_sifk()
    o_sifv()
-   o_partner()
-   o_roba()
+   select_o_partner()
+   select_o_roba()
    o_tarifa()
    O_RJ
 

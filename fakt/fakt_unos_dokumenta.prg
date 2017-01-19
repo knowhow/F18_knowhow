@@ -115,7 +115,7 @@ FUNCTION fakt_unos_dokumenta()
 
    BoxC()
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN .T.
 
@@ -498,7 +498,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
    PopWA()
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------------------------------------------------------------------
@@ -545,7 +545,7 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
       izmjeni_sve_stavke_dokumenta( item_hash, new_hash )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -692,7 +692,7 @@ STATIC FUNCTION fakt_print_dokument()
    fakt_stamp_txt_dokumenta( nil, nil, nil )
    close_open_fakt_tabele()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------
@@ -763,7 +763,7 @@ STATIC FUNCTION _init_vars_from_txt_memo()
       _objekti := PadR( _memo[ 20 ], 10 )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1631,7 +1631,8 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          ENDIF
          my_close_all_dbf()
       CASE izbor == 4
-         o_roba()
+
+         select_o_roba()
          o_tarifa()
          O_FAKT_S_PRIPR
          GO TOP

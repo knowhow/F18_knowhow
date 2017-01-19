@@ -142,7 +142,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
    log_write( "fiskalni racun " + _dev_drv + " za dokument: " + ;
       AllTrim( id_firma ) + "-" + AllTrim( tip_dok ) + "-" + AllTrim( br_dok ) + ;
       " err level: " + AllTrim( Str( _err_level ) ) + ;
-      " partner: " + IIF( _partn_data <> NIL, AllTrim( _partn_data[ 1, 1 ] ) + ;
+      " partner: " + iif( _partn_data <> NIL, AllTrim( _partn_data[ 1, 1 ] ) + ;
       " - " + AllTrim( _partn_data[ 1, 2 ] ), "NIL" ), 3 )
 
    IF _err_level > 0
@@ -201,10 +201,7 @@ STATIC FUNCTION fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdo
    LOCAL aIznosi, _data_total
    LOCAL cIdPartner := ""
 
-   SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
+   select_o_roba()
 
    SELECT ( F_TARIFA )
    IF !Used()
@@ -449,7 +446,7 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
          _tar := PadR( "PDV17", 6 )
       ENDIF
 
-      _scan := AScan( _a_iznos, {| var| VAR[ 1 ] == _tar } )
+      _scan := AScan( _a_iznos, {| var | VAR[ 1 ] == _tar } )
 
       IF _scan == 0
          AAdd( _a_iznos, { PadR( _tar, 6 ), _iznos } )
@@ -581,7 +578,7 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
       IF __device_params[ "plu_type" ] == "D" .AND.  ;
             ( __device_params[ "vp_sum" ] <> 1 .OR. tip_dok $ "11" .OR. Len( _a_iznosi ) > 1 )
 
-         _art_plu := auto_plu( nil, nil,  __device_params )
+         _art_plu := auto_plu( NIL, NIL,  __device_params )
 
          IF __DRV_CURRENT == "FPRINT" .AND. _art_plu == 0
             MsgBeep( "PLU artikla = 0, to nije moguce !" )
@@ -953,7 +950,7 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, aRacunData, head, sto
 
    IF !Empty( param_racun_na_email() ) .AND. tip_dok $ "#11#"
       _partn_naz := _get_partner_for_email( id_firma, tip_dok, br_dok )
-      _snd_eml( _fiscal_no, tip_dok + "-" + AllTrim( br_dok ), _partn_naz, nil, _total )
+      _snd_eml( _fiscal_no, tip_dok + "-" + AllTrim( br_dok ), _partn_naz, NIL, _total )
    ENDIF
 
    set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no, storno )
@@ -1060,7 +1057,7 @@ STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
    izdavanje fiskalnog isjecka na TREMOL uredjaj
 */
 
-STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, aRacunData, head, storno, cont )
+STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, aRacunData, head, storno, CONT )
 
    LOCAL _err_level := 0
    LOCAL _f_name
@@ -1069,12 +1066,12 @@ STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, aRacunData, head, sto
    // identifikator CONTINUE
    // nesto imamo mogucnost ako racun zapne da kazemo drugi identifikator
    // pa on navodno nastavi
-   IF cont == NIL
-      cont := "0"
+   IF CONT == NIL
+      CONT := "0"
    ENDIF
 
 
-   _err_level := tremol_rn( __device_params, aRacunData, head, storno, cont ) // stampaj racun
+   _err_level := tremol_rn( __device_params, aRacunData, head, storno, CONT ) // stampaj racun
 
    _f_name := AllTrim( fiscal_out_filename( __device_params[ "out_file" ], br_dok ) )
 
@@ -1087,7 +1084,7 @@ STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, aRacunData, head, sto
       _err_level := -99
    ENDIF
 
-   IF _err_level == 0 .AND. !storno .AND. cont <> "2"
+   IF _err_level == 0 .AND. !storno .AND. CONT <> "2"
       // vrati broj fiskalnog racuna
       IF _fiscal_no > 0
          // prikazi poruku samo u direktnoj stampi
@@ -1181,7 +1178,7 @@ STATIC FUNCTION set_fiscal_rn_zbirni( aRacunData )
       nKolicina, ;
       aRacunData[ 1, 7 ], ;
       aRacunData[ 1, 8 ], ;
-      auto_plu( nil, nil, __device_params ), ;
+      auto_plu( NIL, NIL, __device_params ), ;
       _total, ;
       0, ;
       "", ;
@@ -1325,8 +1322,8 @@ STATIC FUNCTION _snd_eml( fisc_rn, fakt_dok, kupac, eml_file, u_total )
 
    _body := "podaci kupca i racuna"
 
-   _mail_param := f18_email_prepare( _subject, _body, nil, _to )
+   _mail_param := f18_email_prepare( _subject, _body, NIL, _to )
 
-   f18_email_send( _mail_param, nil )
+   f18_email_send( _mail_param, NIL )
 
    RETURN NIL

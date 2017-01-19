@@ -129,6 +129,7 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
 
    IF is_modul_fakt()  .AND. is_roba_trazi_po_sifradob() .AND. !Empty( cTraziPoSifraDob )
       cPomTag := TRIM( cTraziPoSifraDob )
+      INDEX ON SIFRADOB TAG "SIFRADOB" TO ( "ROBA" )
       IF cPomTag == "SIFRADOB" .AND. LEN( TRIM( cId )) < 5 // https://redmine.bring.out.ba/issues/36373
         cId := PadL( Trim(cId), 5, "0") // 7148 => 07148, 22 => 00022
       ENDIF

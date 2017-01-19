@@ -92,10 +92,10 @@ FUNCTION ld_specificni_sifarnici()
       AAdd( aOpcExe, {|| P_NorSiht() } )
    ENDIF
 
-   IF gSihtGroup == "D"
-      AAdd( aOpc, "8. lista konta   " )
-      AAdd( aOpcExe, {|| p_konto() } )
-   ENDIF
+   //IF gSihtGroup == "D"
+    //  AAdd( aOpc, "8. lista konta   " )
+    //  AAdd( aOpcExe, {|| p_konto() } )
+   //ENDIF
 
    f18_menu( "spc", .F., _izbor, aOpc, aOpcExe )
 

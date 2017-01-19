@@ -604,7 +604,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
                nRed := 1
                nKolona := 1
                IF Len( ImeKol[ i ] ) >= 10 .AND. Imekol[ i, 10 ] <> NIL
-                  nKolona := imekol[ i, 10 ]
+                  nKolona := ImeKol[ i, 10 ]
                   nRed := 0
                ENDIF
 
@@ -618,7 +618,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
             i++
 
-            IF ( Len( ImeKol ) < i ) .OR. ( nTekRed > Min( MAXROWS() - 7, nTrebaRedova ) .AND. !( Len( ImeKol[ i ] ) >= 10 .AND. imekol[ i, 10 ] <> NIL )  )
+            IF ( Len( ImeKol ) < i ) .OR. ( nTekRed > Min( MAXROWS() - 7, nTrebaRedova ) .AND. !( Len( ImeKol[ i ] ) >= 10 .AND. ImeKol[ i, 10 ] <> NIL )  )
                EXIT
             ENDIF
 
@@ -737,7 +737,6 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
       hParams := hb_Hash()
       hParams[ "unlock" ] :=  { cAlias }
       run_sql_query( "COMMIT", hParams )
-
       log_write( "F18_DOK_OPER: dodavanje/ispravka zapisa u sifarnik " + cAlias, 2 )
 
    ELSE
@@ -1084,9 +1083,8 @@ STATIC FUNCTION _fix_usl( xUsl )
 
 FUNCTION sifarnik_brisi_stavku()
 
-   LOCAL _rec_dbf, _rec, cAlias
+   LOCAL hRecDbf, hRec, cAlias
    LOCAL lOk
-   LOCAL hRec
    LOCAL hParams
 
    IF Pitanje( , "Želite li izbrisati ovu stavku (D/N) ?", "D" ) == "N"
@@ -1095,26 +1093,26 @@ FUNCTION sifarnik_brisi_stavku()
 
    cAlias := Lower( Alias() )
 
-
    IF !begin_sql_tran_lock_tables( { cAlias } )
       RETURN DE_CONT
    ENDIF
 
 
    PushWA()
-   _rec_dbf := dbf_get_rec()
+   hRecDbf := dbf_get_rec()
 
-   hRec := _rec_dbf
+   hRec := hRecDbf
 
-   lOk := delete_rec_server_and_dbf( cAlias, _rec_dbf, 1, "CONT" )
+   lOk := delete_rec_server_and_dbf( cAlias, hRecDbf, 1, "CONT" )
+   altd()
 
-   IF lOk .AND. Alias() != "SIFK" .AND. hb_HHasKey( _rec_dbf, "id" )
+   IF lOk .AND. Alias() != "SIFK" .AND. hb_HHasKey( hRecDbf, "id" )
       o_sifk()
       o_sifv()
-      _rec := hb_Hash()
-      _rec[ "id" ]    := PadR( cAlias, 8 )
-      _rec[ "idsif" ] := PadR( _rec_dbf[ "id" ], 15 )
-      lOk := delete_rec_server_and_dbf( "sifv", _rec, 3, "CONT" )
+      hRec := hb_Hash()
+      hRec[ "id" ]    := PadR( cAlias, 8 )
+      hRec[ "idsif" ] := PadR( hRecDbf[ "id" ], 15 )
+      lOk := delete_rec_server_and_dbf( "sifv", hRec, 3, "CONT" )
 
    ENDIF
 
@@ -1140,6 +1138,7 @@ FUNCTION sifarnik_brisi_stavku()
    ENDIF
 
    RETURN DE_CONT
+
 
 
 FUNCTION sifarnik_brisi_sve()

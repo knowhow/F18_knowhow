@@ -86,7 +86,7 @@ FUNCTION ld_get_params( hParams )
    // ---------
    gVarObracun := fetch_metric( "ld_varijanta_obracuna", NIL, gVarObracun )
    gSihtarica := fetch_metric( "ld_obrada_sihtarica", NIL, gSihtarica )
-   gSihtGroup := fetch_metric( "ld_obrada_sihtarica_po_grupama", NIL, gSihtGroup )
+   gSihtGroup := fetch_metric( "ld_obrada_sihtarica_po_grupama", NIL, "N" )
 
 
    // ----------

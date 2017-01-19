@@ -12,57 +12,6 @@
 #include "f18.ch"
 
 
-FUNCTION o_tippr()
-
-   SELECT ( F_TIPPR )
-
-   IF !use_sql_sif ( "tippr" )
-      RETURN .F.
-   ENDIF
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
-
-
-
-FUNCTION o_tippr2()
-
-   SELECT ( F_TIPPR )
-
-   IF !use_sql_sif ( "tippr2" )
-      RETURN .F.
-   ENDIF
-   SET ORDER TO TAG "ID"
-
-FUNCTION o_tippr_ili_tippr2( cObracun )
-
-   SELECT ( F_TIPPR )
-   IF Used()
-      USE
-   ENDIF
-
-   SELECT ( F_TIPPR2 )
-   IF Used()
-      USE
-   ENDIF
-
-   IF cObracun <> "1" .AND. !Empty( cObracun )
-      SELECT ( F_TIPPR2 )
-      IF !use_sql_sif ( "tippr", .T., "TIPPR2" )
-         RETURN .F.
-      ENDIF
-   ELSE
-      SELECT ( F_TIPPR )
-      IF !use_sql_sif ( "tippr" )
-         RETURN .F.
-      ENDIF
-   ENDIF
-
-   SELECT TIPPR
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
-
 
 
 FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFilter )

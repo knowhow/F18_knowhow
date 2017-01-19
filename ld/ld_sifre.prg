@@ -42,12 +42,12 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
    aktivni_radnici_filter( .T. ) // filterisanje tabele radnika
 
    ImeKol := {}
-   AAdd( ImeKol, { PadR( "Id", 6 ) , {|| field->id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId, "1" ) } } )
-   AAdd( ImeKol, { PadR( "Prezime", 20 ) , {|| field->naz }, "naz" } )
-   AAdd( ImeKol, { PadR( "Ime roditelja", 15 ) , {|| field->imerod }, "imerod" } )
-   AAdd( ImeKol, { PadR( "Ime", 15 ) , {|| field->ime }, "ime" } )
+   AAdd( ImeKol, { PadR( "Id", 6 ), {|| field->id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId, "1" ) } } )
+   AAdd( ImeKol, { PadR( "Prezime", 20 ), {|| field->naz }, "naz" } )
+   AAdd( ImeKol, { PadR( "Ime roditelja", 15 ), {|| field->imerod }, "imerod" } )
+   AAdd( ImeKol, { PadR( "Ime", 15 ), {|| field->ime }, "ime" } )
    AAdd( ImeKol, { PadR( iif( gBodK == "1",  "Br.bodova",  "Koeficij." ), 10 ), {|| field->brbod }, "brbod" } )
-   AAdd( ImeKol, { PadR( "MinR%", 5 ) , {|| field->kminrad }, "kminrad" } )
+   AAdd( ImeKol, { PadR( "MinR%", 5 ), {|| field->kminrad }, "kminrad" } )
 
    IF RADN->( FieldPos( "KLO" ) ) <> 0
 
@@ -142,7 +142,7 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
       ENDIF
    NEXT
 
-   aKol := { PadR( "vr.invalid", 10 ), {|| Transform( field_num_nil( field->vr_invalid) , "9" ) }, "vr_invalid", ;
+   aKol := { PadR( "vr.invalid", 10 ), {|| Transform( field_num_nil( field->vr_invalid ), "9" ) }, "vr_invalid", ;
       {|| .T. }, {|| Wvr_invalid == 0 .OR. valid_vrsta_invaliditeta( Wvr_invalid ) }, NIL,  "9" }
 
    AAdd( ImeKol,  aKol )
@@ -156,7 +156,7 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := PostojiSifra( F_RADN, 1, MAXROWS() -15, MAXCOLS() -15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, {| Ch| RadBl( Ch ) },,,,, { "ID" } )
+   lRet := PostojiSifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, {| Ch | RadBl( Ch ) },,,,, { "ID" } )
 
    PopWa( F_RADN )
 
@@ -184,7 +184,7 @@ STATIC FUNCTION aktivni_radnici_filter( lFiltered )
    SELECT RADN
 
    IF lFiltered == .T. .AND. gRadnFilter == "D"
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
       GO TOP
    ELSE
       SET FILTER TO
@@ -486,7 +486,7 @@ STATIC FUNCTION _filter_radn()
 
    ENDIF
 
-   SET FILTER to &( _filter )
+   SET FILTER TO &( _filter )
 
    IF _sort == 2
       SET ORDER TO TAG "2"
@@ -547,7 +547,7 @@ FUNCTION P_ParObr( cId, nDeltaX, nDeltaY )
       AAdd( kol, nI )
    NEXT
 
-   RETURN PostojiSifra( F_PAROBR, 1, MAXROWS() -15, MAXCOLS() -20, _u( "Parametri obračuna" ), @cId, nDeltaX, nDeltaY )
+   RETURN PostojiSifra( F_PAROBR, 1, MAXROWS() - 15, MAXCOLS() - 20, _u( "Parametri obračuna" ), @cId, nDeltaX, nDeltaY )
 
 
 FUNCTION g_tp_naz( cId )
@@ -593,7 +593,7 @@ FUNCTION P_TipPr( cId, nDeltaX, nDeltaY )
    NEXT
 
 
-   lRet := p_sifra( F_TIPPR, 1, MAXROWS() -15, MAXCOLS() -25, "LD Tipovi primanja", @cId, nDeltaX, nDeltaY, {| Ch| TprBl( Ch ) },,,,, { "ID" } )
+   lRet := p_sifra( F_TIPPR, 1, MAXROWS() - 15, MAXCOLS() - 25, "LD Tipovi primanja", @cId, nDeltaX, nDeltaY, {| Ch | TprBl( Ch ) },,,,, { "ID" } )
 
    RETURN lRet
 
@@ -647,8 +647,8 @@ FUNCTION P_TipPr2( cId, nDeltaX, nDeltaY )
       }
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
-   RETURN PostojiSifra( F_TIPPR2, 1, MAXROWS() -15, MAXCOLS() -20, _l( "Tipovi primanja za obracun 2" ),  @cId, nDeltaX, nDeltaY, ;
-      {| Ch| Tpr2Bl( Ch ) },,,,, { "ID" } )
+   RETURN PostojiSifra( F_TIPPR2, 1, MAXROWS() - 15, MAXCOLS() - 20, _l( "Tipovi primanja za obracun 2" ),  @cId, nDeltaX, nDeltaY, ;
+      {| Ch | Tpr2Bl( Ch ) },,,,, { "ID" } )
 
 
 
@@ -682,7 +682,7 @@ FUNCTION P_LD_RJ( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := PostojiSifra( F_LD_RJ, 1, MAXROWS() -15, 60, "Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
+   lRet := PostojiSifra( F_LD_RJ, 1, MAXROWS() - 15, 60, "Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
 
    PopWa( F_LD_RJ )
 
@@ -731,7 +731,7 @@ FUNCTION P_Kred( cId, nDeltaX, nDeltaY )
    // Dorade 2001
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
-   lRet := PostojiSifra( F_KRED, 1, MAXROWS() -15, MAXCOLS() -20, _u( "Lista kreditora" ), @cId, nDeltaX, nDeltaY )
+   lRet := PostojiSifra( F_KRED, 1, MAXROWS() - 15, MAXCOLS() - 20, _u( "Lista kreditora" ), @cId, nDeltaX, nDeltaY )
 
    PopWa()
 
@@ -771,7 +771,7 @@ FUNCTION ImaURadKr( cKljuc, cTag )
       PushWA()
    ENDIF
 
-   SET ORDER TO tag ( cTag )
+   SET ORDER TO TAG ( cTag )
    SEEK cKljuc
 
    lVrati := Found()
@@ -802,7 +802,7 @@ FUNCTION ImaUObrac( cKljuc, cTag )
       PushWA()
    ENDIF
 
-   SET ORDER TO tag ( cTag )
+   SET ORDER TO TAG ( cTag )
    SEEK cKljuc
 
    lVrati := Found()
@@ -821,7 +821,7 @@ FUNCTION ImaUObrac( cKljuc, cTag )
       ELSE
          PushWA()
       ENDIF
-      SET ORDER TO tag ( cTag )
+      SET ORDER TO TAG ( cTag )
       SEEK cKljuc
       lVrati := Found()
       IF !lUsed
@@ -850,27 +850,28 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
    ENDIF
 
    AAdd( ImeKol, { PadR( "Naziv", 20 ), {|| naz }, "naz" } )
-   AAdd( ImeKol, { PadR( "Iznos", 20 ), {||  iznos }, "iznos", {|| IF( POR->( FieldPos( "ALGORITAM" ) ) <> 0, wh_oldpor( walgoritam ), .T. ) } } )
-   AAdd( ImeKol, { PadR( "Donji limit", 12 ), {||  dlimit }, "dlimit" } )
+   AAdd( ImeKol, { PadR( "Iznos", 20 ), {||  Transform( iznos, "99.99" ) }, "iznos", {|| iif( POR->( FieldPos( "ALGORITAM" ) ) <> 0, wh_oldpor( walgoritam ), .T. ) } } )
+   AAdd( ImeKol, { PadR( "Donji limit", 12 ), {||  Transform( dlimit, "99999.99" ) }, "dlimit" } )
    AAdd( ImeKol, { PadR( "PoOpst", 6 ), {||  poopst }, "poopst" } )
 
    AAdd( ImeKol, { "p.tip", {|| por_tip }, "por_tip" } )
 
-   // nove stope i iznosi....
+/*
    IF POR->( FieldPos( "ALGORITAM" ) ) <> 0 .AND. _st_stopa == "D"
 
-      AAdd( ImeKol, { "St.1", {|| s_sto_1 }, "s_sto_1", {|| wh_por( walgoritam ) } } )
-      AAdd( ImeKol, { "Izn.1", {|| s_izn_1 }, "s_izn_1", {|| wh_por( walgoritam ) } } )
-      AAdd( ImeKol, { "St.2", {|| s_sto_2 }, "s_sto_2", {|| wh_por( walgoritam ) } } )
-      AAdd( ImeKol, { "Izn.2", {|| s_izn_2 }, "s_izn_2", {|| wh_por( walgoritam ) } } )
-      AAdd( ImeKol, { "St.3", {|| s_sto_3 }, "s_sto_3", {|| wh_por( walgoritam ) } } )
-      AAdd( ImeKol, { "Izn.3", {|| s_izn_3 }, "s_izn_3", {|| wh_por( walgoritam ) } } )
-      AAdd( ImeKol, { "St.4", {|| s_sto_4 }, "s_sto_4", {|| wh_por( walgoritam ) } } )
-      AAdd( ImeKol, { "Izn.4", {|| s_izn_4 }, "s_izn_4", {|| wh_por( walgoritam ) } } )
-      AAdd( ImeKol, { "St.5", {|| s_sto_5 }, "s_sto_5", {|| wh_por( walgoritam ) } } )
-      AAdd( ImeKol, { "Izn.5", {|| s_izn_5 }, "s_izn_5", {|| wh_por( walgoritam ) } } )
+      AAdd( ImeKol, { "St.1", {|| s_sto_1 }, "s_sto_1", {|| ld_when_porez( walgoritam ) } } )
+      AAdd( ImeKol, { "Izn.1", {|| s_izn_1 }, "s_izn_1", {|| ld_when_porez( walgoritam ) } } )
+      AAdd( ImeKol, { "St.2", {|| s_sto_2 }, "s_sto_2", {|| ld_when_porez( walgoritam ) } } )
+      AAdd( ImeKol, { "Izn.2", {|| s_izn_2 }, "s_izn_2", {|| ld_when_porez( walgoritam ) } } )
+      AAdd( ImeKol, { "St.3", {|| s_sto_3 }, "s_sto_3", {|| ld_when_porez( walgoritam ) } } )
+      AAdd( ImeKol, { "Izn.3", {|| s_izn_3 }, "s_izn_3", {|| ld_when_porez( walgoritam ) } } )
+      AAdd( ImeKol, { "St.4", {|| s_sto_4 }, "s_sto_4", {|| ld_when_porez( walgoritam ) } } )
+      AAdd( ImeKol, { "Izn.4", {|| s_izn_4 }, "s_izn_4", {|| ld_when_porez( walgoritam ) } } )
+      AAdd( ImeKol, { "St.5", {|| s_sto_5 }, "s_sto_5", {|| ld_when_porez( walgoritam ) } } )
+      AAdd( ImeKol, { "Izn.5", {|| s_izn_5 }, "s_izn_5", {|| ld_when_porez( walgoritam ) } } )
 
    ENDIF
+*/
 
    FOR nI := 1 TO Len( ImeKol )
       AAdd( Kol, nI )
@@ -903,7 +904,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
       // postavi picture za brojeve
       IF ( sifk->Tip = "N" )
          IF ( f_decimal > 0 )
-            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina - sifk->f_decimal -1 ) + "." + Replicate( "9", sifk->f_decimal )
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina - sifk->f_decimal - 1 ) + "." + Replicate( "9", sifk->f_decimal )
          ELSE
             ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina )
          ENDIF
@@ -914,8 +915,8 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
    ENDDO
 
 
-   lRet := PostojiSifra( F_POR, 1, MAXROWS() -15, MAXCOLS() -20, _u( "Lista poreza na platu" ), ;
-      @cId, nDeltaX, nDeltaY, {| Ch| PorBl( Ch ) } )
+   lRet := p_sifra( F_POR, 1, MAXROWS() - 15, MAXCOLS() - 20, "Lista poreza na platu", ;
+      @cId, nDeltaX, nDeltaY, {| Ch | PorBl( Ch ) } )
 
 
    PopWa()
@@ -926,7 +927,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
 // -------------------------------
 // when porez
 // -------------------------------
-FUNCTION wh_por( cAlg )
+FUNCTION ld_when_porez( cAlg )
 
    LOCAL lRet := .F.
 
@@ -997,7 +998,7 @@ FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
       // postavi picture za brojeve
       IF ( sifk->tip = "N" )
          IF ( f_decimal > 0 )
-            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina - sifk->f_decimal -1 ) + "." + Replicate( "9", sifk->f_decimal )
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina - sifk->f_decimal - 1 ) + "." + Replicate( "9", sifk->f_decimal )
          ELSE
             ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina )
          ENDIF
@@ -1008,8 +1009,8 @@ FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
 
    SELECT dopr
 
-   lRet := PostojiSifra( F_DOPR, 1, MAXROWS() -15, MAXCOLS() -20, ;
-      _u( "Lista doprinosa na platu" ), @cId, nDeltaX, nDeltaY, {| Ch| DoprBl( Ch ) } )
+   lRet := PostojiSifra( F_DOPR, 1, MAXROWS() - 15, MAXCOLS() - 20, ;
+      _u( "Lista doprinosa na platu" ), @cId, nDeltaX, nDeltaY, {| Ch | DoprBl( Ch ) } )
 
    PopWa()
 
@@ -1029,7 +1030,7 @@ FUNCTION P_KBenef( cId, nDeltaX, nDeltaY )
 
    Kol := { 1, 2, 3 }
 
-   xRet := PostojiSifra( F_KBENEF, 1, MAXROWS() -15, MAXCOLS() -20,  "Lista koef.beneficiranog radnog staza", @cId, nDeltaX, nDeltaY )
+   xRet := PostojiSifra( F_KBENEF, 1, MAXROWS() - 15, MAXCOLS() - 20,  "Lista koef.beneficiranog radnog staza", @cId, nDeltaX, nDeltaY )
 
    PopWa()
 
@@ -1051,7 +1052,7 @@ FUNCTION P_StrSpr( cId, nDeltaX, nDeltaY )
    PushWa()
 
    select_o_str_spr()
-   xRet := PostojiSifra( F_STRSPR, 1, MAXROWS() -15, MAXCOLS() -15,  _u( "Lista: stručne spreme" ), @cId, nDeltaX, nDeltaY )
+   xRet := PostojiSifra( F_STRSPR, 1, MAXROWS() - 15, MAXCOLS() - 15,  _u( "Lista: stručne spreme" ), @cId, nDeltaX, nDeltaY )
 
    PopWa()
 
@@ -1092,7 +1093,7 @@ FUNCTION P_NorSiht( cId, nDeltaX, nDeltaY )
    Kol := { 1, 2, 3, 4 }
 
    PushWa()
-   xRet := PostojiSifra( F_NORSIHT, 1, MAXROWS() -15, MAXCOLS() -20, "Lista: Norme u sihtarici", @cId, nDeltaX, nDeltaY )
+   xRet := PostojiSifra( F_NORSIHT, 1, MAXROWS() - 15, MAXCOLS() - 20, "Lista: Norme u sihtarici", @cId, nDeltaX, nDeltaY )
    PopWa()
 
    RETURN xRet
@@ -1270,7 +1271,7 @@ FUNCTION PrTotBr( cIdRadn )
    @ m_x + 5, m_y + 2 SAY "POSLJEDNJA RATA KREDITA:"
    @ m_x + 5, m_y + 27 SAY IF( RADKR->idradn == cIdRadn, Str( RADKR->mjesec, 2 ) + "/" + Str( RADKR->godina, 4 ), "nema podatka" ) COLOR cBI
 
-   RETURN IIF( RADN->id == cIdRadn .OR. LD->idradn == cIdRadn .OR.  LDSM->idradn == cIdRadn .OR. RADKR->idradn == cIdRadn, .T., .F. )
+   RETURN iif( RADN->id == cIdRadn .OR. LD->idradn == cIdRadn .OR.  LDSM->idradn == cIdRadn .OR. RADKR->idradn == cIdRadn, .T., .F. )
 
 
 

@@ -60,7 +60,7 @@ FUNCTION o_dbf_table( nArea, xTable, cTag )
 
 
 /*
-   select_o_dbf( "fakt_doks", F_FAKT_DOKS, "fakt_doks", "1" )
+   select_o_dbf( "FAKT_DOKS", F_FAKT_DOKS, "fakt_doks", "1" )
 */
 
 FUNCTION select_o_dbf( cAlias, nArea, xTable, cTag )

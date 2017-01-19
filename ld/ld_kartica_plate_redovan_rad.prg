@@ -413,10 +413,10 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
          @ PRow(), PCol() + 1 SAY iznos PICT "99.99%"
 
-         IF Empty( idkbenef )
+         IF Empty( field->idkbenef )
             @ PRow(), PCol() + 1 SAY nBoMin PICT gpici
             nC1 := PCol() + 1
-            @ PRow(), PCol() + 1 SAY nPom := Max( dlimit, Round( iznos / 100 * nBOMin, gZaok2 ) ) PICT gpici
+            @ PRow(), PCol() + 1 SAY nPom := Max( dopr->dlimit, Round( iznos / 100 * nBOMin, gZaok2 ) ) PICT gpici
             IF dopr->id == "1X"
                nUkDoprIz += nPom
             ENDIF

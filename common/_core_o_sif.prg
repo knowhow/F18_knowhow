@@ -18,7 +18,7 @@ FUNCTION o_konto()
 
 FUNCTION select_o_konto()
 
-   RETURN select_o_dbf( F_KONTO, "konto", "ID" )
+   RETURN select_o_dbf( "KONTO", F_KONTO, "konto", "ID" )
 
 
 

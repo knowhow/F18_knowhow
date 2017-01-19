@@ -220,7 +220,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
 
    // log_write( "delete rec server, poceo", 9 )
 
-   IF cTransaction $ "FULL#BEGIN"
+   IF  !hDbfRec[ "sql" ] .AND. cTransaction $ "FULL#BEGIN"
       run_sql_query( "BEGIN" )
       unlock_semaphore( cTabela )
       lock_semaphore( cTabela )
@@ -229,7 +229,10 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
 
    IF sql_table_update( cTabela, "del", nil, cWhereString )
 
-      IF !hDbfRec[ "sql" ]
+      IF hDbfRec[ "sql" ]
+         DELETE
+         RETURN .T.
+      ELSE
          _full_id := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], hRecord )
          AAdd( _ids, _alg_tag + _full_id )
          push_ids_to_semaphore( cTabela, _ids )
@@ -265,7 +268,6 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
       IF my_flock()
 
          nCount := 0
-
          IF lIndex
             SEEK _full_id
 
@@ -292,7 +294,6 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
             hParams[ "unlock" ] := { cTabela }
             run_sql_query( "COMMIT", hParams )
          ENDIF
-
          lRet := .T.
 
       ELSE
@@ -303,8 +304,6 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
             ?E cMsg
             Alert( cMsg )
          ENDIF
-
-
          lRet := .F.
 
       ENDIF

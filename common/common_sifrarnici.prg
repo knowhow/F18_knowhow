@@ -23,7 +23,6 @@ FUNCTION opci_sifarnici()
 
    IF ( programski_modul() <> "FIN" )
       AAdd( opc, "2. konta" )
-
       AAdd( opcexe, {|| P_Konto() } )
 
    ELSE

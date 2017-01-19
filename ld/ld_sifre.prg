@@ -142,12 +142,12 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
       ENDIF
    NEXT
 
-   aKol := { PadR( "vr.invalid", 10 ), {|| Transform( field->vr_invalid, "9" ) }, "vr_invalid", ;
+   aKol := { PadR( "vr.invalid", 10 ), {|| Transform( field_num_nil( field->vr_invalid) , "9" ) }, "vr_invalid", ;
       {|| .T. }, {|| Wvr_invalid == 0 .OR. valid_vrsta_invaliditeta( Wvr_invalid ) }, NIL,  "9" }
 
    AAdd( ImeKol,  aKol )
 
-   aKol := { PadR( "st.invalid", 10 ), {|| Transform( field->st_invalid, "999" ) }, "st_invalid", ;
+   aKol := { PadR( "st.invalid", 10 ), {|| Transform( field_num_nil( field->st_invalid ), "999" ) }, "st_invalid", ;
       {|| .T. }, {|| Wst_invalid >= 0 }, NIL, "999"  }
    AAdd( ImeKol,  aKol )
 

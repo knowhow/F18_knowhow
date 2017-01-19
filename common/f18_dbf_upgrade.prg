@@ -20,14 +20,14 @@ FUNCTION read_dbf_version_from_config()
    LOCAL hIniParams
    LOCAL _current_dbf_ver, _new_dbf_ver
    LOCAL s_cIniSection := "DBF_version"
-   LOCAL _ret
+   LOCAL hRet
 
    hIniParams := hb_Hash()
    hIniParams[ "major" ] := "0"
    hIniParams[ "minor" ] := "0"
    hIniParams[ "patch" ] := "0"
 
-   _ret := hb_Hash()
+   hRet := hb_Hash()
 
    IF !f18_ini_config_read( s_cIniSection, @hIniParams, .F. )
       ?E "problem sa ini_params " + s_cIniSection
@@ -38,10 +38,10 @@ FUNCTION read_dbf_version_from_config()
    ?E "current dbf version:" + Str( _current_dbf_ver )
    ?E "    F18 dbf version:" + Str( _new_dbf_ver )
 
-   _ret[ "current" ] := _current_dbf_ver
-   _ret[ "new" ]     := _new_dbf_ver
+   hRet[ "current" ] := _current_dbf_ver
+   hRet[ "new" ]     := _new_dbf_ver
 
-   RETURN _ret
+   RETURN hRet
 
 
 

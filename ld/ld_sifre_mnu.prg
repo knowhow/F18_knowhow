@@ -121,7 +121,7 @@ STATIC FUNCTION o_ld_sif_tables()
    o_ld_vrste_posla()
    o_ops()
    o_kred()
-   O_TIPPR2
+   o_tippr2()
 
    IF ( IsRamaGlas() )
       O_FAKT_OBJEKTI

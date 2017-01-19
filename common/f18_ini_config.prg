@@ -1,10 +1,10 @@
 #include "f18.ch"
 
-#ifdef __PLATFORM__UNIX
+//#ifdef __PLATFORM__UNIX
 #define INI_FNAME "f18_config.ini"
-#else
-#define INI_FNAME ".f18_config.ini"
-#endif
+//#else
+//#define INI_FNAME ".f18_config.ini"
+//#endif
 
 FUNCTION f18_ini_config_read( cSection, hIniParams, lGlobalno )
 

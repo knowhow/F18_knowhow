@@ -28,7 +28,7 @@
 
 
 #xcommand O__ROBA    => select (F__ROBA)   ;  my_usex("_roba")
-#xcommand O__PARTN   => select (F__PARTN)  ;  my_use  ("_partn")
+//#xcommand O__PARTN   => select (F__PARTN)  ;  my_use  ("_partn")
 
 
 #xcommand O_VOZILA   => SELECT (F_VOZILA)  ;  my_use  ("vozila")    ; set order to tag "ID"
@@ -104,7 +104,7 @@
 #xcommand OX_PKONTO   => select (F_PKONTO); my_use  ("pkonto")  ; set order to tag "ID"
 #xcommand OX_VALUTE   => select(F_VALUTE);  my_usex  ("valute")  ; set order to tag "ID"
 #xcommand O__KONTO => select(F__KONTO); MY_USE  ("_konto")
-#xcommand O__PARTN => select(F__PARTN); MY_USE  ("_partn")
+//#xcommand O__PARTN => select(F__PARTN); MY_USE  ("_partn")
 #xcommand O_PRENHH   => select(F_PRENHH); my_usex ("prenhh"); set order to tag "1"
 #xcommand O_OSTAV   => o_ostav()
 

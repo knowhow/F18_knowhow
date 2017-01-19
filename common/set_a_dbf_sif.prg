@@ -13,30 +13,30 @@
 
 FUNCTION set_a_dbf_sif()
 
-   LOCAL _rec
+   LOCAL hRec
 
    // tabele sa strukturom sifarnika (id je primarni ključ)
    set_a_dbf_sifarnik( "adres", "ADRES", F_ADRES      )
-   
+
    set_a_sql_sifarnik( "roba", "ROBA", F_ROBA       )
    set_a_sql_sifarnik( "konto", "KONTO", F_KONTO      )
-   set_a_sql_sifarnik( "partn", "PARTN", F_PARTN      )
-   _rec := hb_Hash()
-   _rec[ "dbf_key_fields" ] := { "id", "id2" }
-   _rec[ "dbf_tag" ]        := "ID"
-   _rec[ "sql_in" ]        := "rpad( id, 10 ) || rpad(id2, 10)"
-   _rec[ "dbf_key_block" ] := {|| field->id + field->id2 }
-   set_a_dbf_sifarnik( "sast", "SAST", F_SAST, _rec  )
+   set_a_sql_sifarnik( "partn", "PARTN", F_PARTN    )
+
+   hRec := hb_Hash()
+   hRec[ "dbf_key_fields" ] := { "id", "id2" }
+   hRec[ "dbf_tag" ]        := "ID"
+   hRec[ "sql_in" ]        := "rpad( id, 10 ) || rpad(id2, 10)"
+   hRec[ "dbf_key_block" ] := {|| field->id + field->id2 }
+   set_a_dbf_sifarnik( "sast", "SAST", F_SAST, hRec  )
 
 
-
-   _rec := hb_Hash()
-   _rec[ "dbf_key_fields" ] := { { "rule_id", 10, 0 } }
-   _rec[ "dbf_tag" ]        := "1"
-   _rec[ "sql" ]            := .T.
-   _rec[ "sql_in" ]        := "rpad(rule_id::char(10),10)"
-   _rec[ "dbf_key_block" ] := {|| Str( field->rule_id, 10, 0 ) }
-   set_a_sql_sifarnik( "f18_rules", "FMKRULES", F_RULES, _rec  )
+   hRec := hb_Hash()
+   hRec[ "dbf_key_fields" ] := { { "rule_id", 10, 0 } }
+   hRec[ "dbf_tag" ]        := "1"
+   hRec[ "sql" ]            := .T.
+   hRec[ "sql_in" ]        := "rpad(rule_id::char(10),10)"
+   hRec[ "dbf_key_block" ] := {|| Str( field->rule_id, 10, 0 ) }
+   set_a_sql_sifarnik( "f18_rules", "FMKRULES", F_RULES, hRec  )
 
    set_a_sql_sifarnik( "rj", "RJ", F_RJ         )
    set_a_sql_sifarnik( "lokal", "LOKAL", F_LOKAL  )

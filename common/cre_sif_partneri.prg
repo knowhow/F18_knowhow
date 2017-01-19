@@ -58,12 +58,14 @@ FUNCTION cre_sif_partn( ver )
    AFTER_CREATE_INDEX
 */
 
+/*
    _alias := "_PARTN"
    _table_name := "_partn"
 
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "ID", "id", _alias )
+*/
 
    RETURN .T.
 

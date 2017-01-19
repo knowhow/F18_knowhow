@@ -35,7 +35,7 @@ FUNCTION kalk_meni_mag_izvjestaji()
 
    f18_menu( "izvj", .F., _izbor, _opc, _opcexe )
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN .T.
 
@@ -60,6 +60,6 @@ FUNCTION kalk_izvjestaji_mag_i_pro()
 
    f18_menu( "izmp", .F., _izbor, _opc, _opcexe )
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN .T.

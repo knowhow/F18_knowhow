@@ -156,4 +156,4 @@ FUNCTION KM94()
    GO nR3
    SELECT kalk_pripr
 
-   RETURN
+   RETURN .T.

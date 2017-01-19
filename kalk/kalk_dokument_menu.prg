@@ -43,7 +43,7 @@ FUNCTION kalk_pregled_dokumenata()
 
    f18_menu( "razp", .F., _izbor, _opc, _opcexe )
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN .T.
 
@@ -64,6 +64,6 @@ FUNCTION kalk_ostale_operacije_doks()
 
    f18_menu( "mazd", .F., _izbor, _opc, _opcexe )
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN .T.

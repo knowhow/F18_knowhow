@@ -30,19 +30,20 @@ FUNCTION datum_not_empty_upozori_godina( dDate, cMsg )
 
    RETURN .T.
 
+
 FUNCTION o_kalk_tabele_izvj()
 
    o_sifk()
    o_sifv()
    o_tarifa()
-   o_roba()
+   select_o_roba()
    o_koncij()
-   o_konto()
-   o_partner()
+   select_o_konto()
+   select_o_partner()
    o_kalk_doks()
    o_kalk()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION Gen9999()

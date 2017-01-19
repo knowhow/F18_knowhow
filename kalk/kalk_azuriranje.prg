@@ -534,7 +534,7 @@ STATIC FUNCTION kalk_raspored_troskova_azuriranje()
 
       o_sifk()
       o_sifv()
-      o_roba()
+      select_o_roba()
       o_tarifa()
       o_koncij()
 

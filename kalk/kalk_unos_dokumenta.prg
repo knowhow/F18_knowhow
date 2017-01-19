@@ -41,6 +41,7 @@ FUNCTION kalk_pripr_obrada_stavki_sa_asistentom()
    RETURN kalk_pripr_obrada( .T. ) // kalk unos sa pozovi asistenta
 
 
+
 FUNCTION kalk_pripr_obrada( lAsistentObrada )
 
    LOCAL nMaxCol := MAXCOLS() - 3
@@ -149,7 +150,7 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
       kalk_asistent_stop()
    ENDIF
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN .T.
 
@@ -1551,10 +1552,10 @@ FUNCTION VPCSifUDok()
 FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
 
    o_koncij()
-   o_roba()
+   select_o_roba()
    o_tarifa()
-   o_partner()
-   o_konto()
+   select_o_partner()
+   select_o_konto()
    o_tdok()
 
    IF lAzuriraniDok
@@ -1606,11 +1607,11 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
 FUNCTION o_kalk_edit()
 
-   o_partner()
+   select_o_partner()
    // o_kalk_doks()
-   o_roba()
+   select_o_roba()
    // o_kalk()
-   o_konto()
+   select_o_konto()
    o_tdok()
    o_valute()
    o_tarifa()

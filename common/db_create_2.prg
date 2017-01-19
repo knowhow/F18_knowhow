@@ -31,9 +31,9 @@ FUNCTION open_sif_tables_1()
 
 FUNCTION OSifVindija()
 
-   O_RELAC
-   O_VOZILA
-   O_KALPOS
+   //o_relac()
+   //O_VOZILA
+   //O_KALPOS
 
    RETURN .T.
 
@@ -49,7 +49,7 @@ FUNCTION OSifUgov()
 
    O_UGOV
    O_RUGOV
-   O_DEST
+   o_dest()
    o_partner()
    o_roba()
    o_sifk()

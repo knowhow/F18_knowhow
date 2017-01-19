@@ -19,6 +19,7 @@ STATIC __dest_len
 STATIC _x_pos
 STATIC _y_pos
 
+
 // ----------------------------------
 // pregled destinacije
 // ----------------------------------

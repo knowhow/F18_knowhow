@@ -329,7 +329,7 @@ STATIC FUNCTION _open_tables()
 
    O_UGOV
    O_RUGOV
-   O_DEST
+   o_dest()
    o_partner()
    o_roba()
    o_sifk()

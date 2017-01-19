@@ -350,11 +350,11 @@ FUNCTION PrikFTxt( top_pos, left_pos, bott_pos, text_length )
 
 STATIC FUNCTION ObSif()
 
-   IF glDistrib
-      O_RELAC
-      O_VOZILA
-      O_KALPOS
-   ENDIF
+   //IF glDistrib
+      //o_relac()
+      //O_VOZILA
+    //  O_KALPOS
+   //ENDIF
 
    o_sifk()
    o_sifv()
@@ -370,7 +370,7 @@ STATIC FUNCTION ObSif()
    O_RUGOV
 
    IF RUGOV->( FieldPos( "DEST" ) ) <> 0
-      O_DEST
+      o_dest()
    ENDIF
 
    IF gNW == "T"

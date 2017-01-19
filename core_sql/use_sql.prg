@@ -57,6 +57,13 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
             INDEX ON NAZ TAG "2" TO ( cAlias )
          ENDIF
          SET ORDER TO TAG "1"
+
+      ELSEIF cTable == "dest"
+
+         INDEX ON IDPARTNER + ID TAG "ID" TO ( cAlias )
+         INDEX ON ID TAG "IDDEST" TO ( cAlias )
+         SET ORDER TO TAG "ID"
+
       ELSE
          INDEX ON ID TAG ID TO ( cAlias )
          IF FieldPos( "NAZ" ) > 0

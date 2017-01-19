@@ -207,7 +207,7 @@ STATIC FUNCTION ug_key_handler( Ch )
 
       kreiraj_adrese_iz_ugovora()
       O_RUGOV
-      O_DEST
+      o_dest()
       O_UGOV
 
       GO ( nRec )
@@ -1141,7 +1141,7 @@ FUNCTION IzfUgovor()
 
       SELECT ( F_DEST )
       IF !Used()
-         O_DEST
+         o_dest()
       ENDIF
 
       SELECT ( F_ROBA )

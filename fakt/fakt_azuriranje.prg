@@ -559,11 +559,11 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
    ENDIF
 
    IF glDistrib = .T.
-      SELECT F_RELAC
+      //SELECT F_RELAC
       IF !Used()
-         O_RELAC
-         O_VOZILA
-         O_KALPOS
+         //o_relac()
+        // O_VOZILA
+         //O_KALPOS
       ENDIF
    ENDIF
 

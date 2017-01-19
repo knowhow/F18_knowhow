@@ -112,8 +112,8 @@
 #define F_LABELU    118
 #define F_LABELU2   156
 #define F_VRSTEP    119
-#define F_RELAC     120
-#define F_VOZILA    121
+//#define F_RELAC     120
+//#define F_VOZILA    121
 #define F_POR       122
 #define F_UGOV     123
 #define F_RUGOV    124

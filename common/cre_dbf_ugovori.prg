@@ -22,7 +22,7 @@ FUNCTION db_cre_ugov( ver )
    cre_tbl( "RUGOV", ver )
    cre_tbl( "GEN_UG", ver )
    cre_tbl( "GEN_UG_P", ver )
-   cre_tbl( "DEST", ver )
+   //cre_tbl( "DEST", ver )
 
    RETURN .T.
 
@@ -254,14 +254,14 @@ FUNCTION o_ugov()
    o_roba()
    o_tarifa()
    o_partner()
-   O_DEST
+   o_dest()
    O_UGOV
    O_RUGOV
    O_GEN_UG
    O_G_UG_P
    o_konto()
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------
@@ -296,7 +296,7 @@ FUNCTION a_to_gen_p( dDatObr, cIdUgov, cUPartner,  ;
 
    update_rec_server_and_dbf( "fakt_gen_ug_p", _rec, 1, "FULL" )
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------
@@ -307,8 +307,7 @@ FUNCTION is_dest()
    LOCAL lRet := .F.
    LOCAL nTArea := Select()
 
-   IF rugov->( FieldPos( "dest" ) ) <> 0 .AND. ;
-         File( f18_ime_dbf( "dest" ) )
+   IF rugov->( FieldPos( "dest" ) ) <> 0 .AND.  File( f18_ime_dbf( "dest" ) )
 
       lRet := .T.
 

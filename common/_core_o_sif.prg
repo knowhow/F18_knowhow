@@ -64,6 +64,36 @@ FUNCTION o_vrste_placanja()
    RETURN .T.
 
 
+/*
+
+FUNCTION o_vrnal()
+
+--   LOCAL cTabela := "vrnal"
+
+   SELECT ( F_VRNAL )
+   IF !use_sql_sif  ( cTabela )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+  */
+
+/*
+--FUNCTION o_relac()
+
+   LOCAL cTabela := "relac"
+
+   SELECT ( F_RELAC )
+   IF !use_sql_sif  ( cTabela )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+*/
+
+
 FUNCTION o_tdok()
 
    LOCAL cTabela := "tdok"

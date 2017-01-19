@@ -553,7 +553,7 @@ STATIC FUNCTION s_gen_info( dDat )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------

@@ -225,10 +225,10 @@ STATIC FUNCTION zapuj_pomocnu_tabelu()
 STATIC FUNCTION otvori_tabele()
 
    o_tippr()
-   O_KRED
+   o_kred()
    O_RADKR
    SET ORDER TO TAG "1"
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
    O_LD
    O_LDT22

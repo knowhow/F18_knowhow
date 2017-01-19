@@ -252,8 +252,8 @@ STATIC FUNCTION _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 // ----------------------------------------------
 STATIC FUNCTION o_tables()
 
-   O_LD_RJ
-   O_KRED
+   o_ld_rj()
+   o_kred()
    O_RADN
    O_LD
 

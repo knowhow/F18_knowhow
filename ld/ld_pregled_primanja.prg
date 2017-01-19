@@ -27,7 +27,7 @@ FUNCTION ld_pregled_primanja()
    cSifKred := ""
 
    nRbr := 0
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
    O_LD
 
@@ -85,7 +85,7 @@ FUNCTION ld_pregled_primanja()
       // jednog kreditora
       // ------------------------------------------------------------
       lKredit := .T.
-      O_KRED
+      o_kred()
       cSifKred := Space( Len( id ) )
       Box(, 6, 75 )
       @ m_x + 2, m_y + 2 SAY "Izabrani tip primanja je kredit ili se tretira na isti nacin kao i kredit."

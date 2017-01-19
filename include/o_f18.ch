@@ -238,7 +238,6 @@
 #xcommand O_RADN    => o_radn()
 #xcommand O_RADN_NOT_USED  => select_o_radn()
 
-#xcommand O_LD_RJ   => open_ld_rj()
 
 #xcommand O__RADN   => select (F__RADN)   ;  my_use ("_radn")
 #xcommand O_TPRSIHT => select (F_TPRSIHT) ;  my_use ("tprsiht")  ; set order to tag "ID"
@@ -258,9 +257,8 @@
 #xcommand O_REKLDP  => select (F_REKLDP)  ;  my_usex ("rekldp")  ; set order to tag "1"
 
 #xcommand O_KBENEF  => select (F_KBENEF)  ;  my_use ("kbenef")   ; set order to tag "ID"
-#xcommand O_POR     => select (F_POR)     ;  my_use ("por")      ; set order to tag "ID"
-#xcommand O_DOPR    => select (F_DOPR)    ;  my_use ("dopr")     ; set order to tag "ID"
-#xcommand O_KRED    => o_kred()
+
+
 #xcommand O__KRED   => select (F__KRED)   ;  my_use ("_kred")    ; set order to tag "ID"
 #xcommand O_STRSPR  => o_str_spr()
 #xcommand O_VPOSLA  => select (F_VPOSLA)  ;  my_use  ("vposla")  ; set order to tag "ID"
@@ -329,8 +327,7 @@
 
 // modul VIRM
 #xcommand O_VIRM_PRIPR   => select (F_VIPRIPR); my_use("virm_pripr") ; set order to tag "1"
-#xcommand O_VRPRIM   => select (F_VRPRIM) ; my_use  ("vrprim") ; set order to tag "ID"
-#xcommand O_VRPRIM2  => select (F_VRPRIM2); my_use  ("vrprim2") ; set order to tag "ID"
+
 
 //#xcommand O_KALVIR   => select (F_KALVIR) ; my_use ("kalvir") ; set order to tag "ID"
 #xcommand O_IZLAZ   => select (F_IZLAZ) ; my_use ("izlaz") ; set order to tag "1"

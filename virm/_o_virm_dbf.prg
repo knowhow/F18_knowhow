@@ -19,6 +19,18 @@ FUNCTION o_jprih()
 */
 
 
+FUNCTION o_vrprim()
+
+   SELECT ( F_VRPRIM )
+
+   IF !use_sql_sif ( "vrprim" )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
 FUNCTION o_jprih()
 
    SELECT ( F_JPRIH )

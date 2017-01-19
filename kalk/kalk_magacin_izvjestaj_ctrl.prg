@@ -297,13 +297,13 @@ STATIC FUNCTION _g_kalk_tp( cIdFirma, cKto_list, dD_from, dD_to )
                IF !( idvd $ "12#22#94" )
                   nKolicina := field->kolicina - field->gkolicina - field->gkolicin2
                   nUlKol += nKolicina
-                  // SumirajKolicinu(nKolicina, 0, @nTUlazP, @nTIzlazP)
+                  // kalk_sumiraj_kolicinu(nKolicina, 0, @nTUlazP, @nTIzlazP)
                   nUlNv += Round( field->nc * ( field->kolicina - field->gkolicina - field->gkolicin2 ), gZaokr )
                ELSE
                   nKolicina := -field->kolicina
                   nIzlKol += nKolicina
 
-                  // SumirajKolicinu(0, nKolicina, @nTUlazP, @nTIzlazP)
+                  // kalk_sumiraj_kolicinu(0, nKolicina, @nTUlazP, @nTIzlazP)
 
                   nIzlNV -= Round( field->nc * field->kolicina, gZaokr )
                ENDIF
@@ -313,20 +313,20 @@ STATIC FUNCTION _g_kalk_tp( cIdFirma, cKto_list, dD_from, dD_to )
                nKolicina := field->kolicina
                nIzlKol += nKolicina
 
-               // SumirajKolicinu(0, nKolicina, @nTUlazP, @nTIzlazP)
+               // kalk_sumiraj_kolicinu(0, nKolicina, @nTUlazP, @nTIzlazP)
 
                nIzlNV += Round( field->nc * field->kolicina, gZaokr )
 
             ELSEIF mu_i == "8"
                nKolicina := -field->kolicina
                nIzlKol += nKolicina
-               // SumirajKolicinu(0, nKolicina , @nTUlazP, @nTIzlazP)
+               // kalk_sumiraj_kolicinu(0, nKolicina , @nTUlazP, @nTIzlazP)
 
                nIzlNV += Round( field->nc * ( -kolicina ), gZaokr )
                nKolicina := -field->kolicina
 
                nUlKol += nKolicina
-               // SumirajKolicinu(nKolicina, 0, @nTUlazP, @nTIzlazP)
+               // kalk_sumiraj_kolicinu(nKolicina, 0, @nTUlazP, @nTIzlazP)
 
 
                nUlKol += Round( -nc * ( field->kolicina - gkolicina - gkolicin2 ), gZaokr )

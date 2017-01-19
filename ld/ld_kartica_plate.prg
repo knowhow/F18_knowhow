@@ -43,11 +43,11 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       cObracun := gObracun
 
       O_PAROBR
-      O_LD_RJ
+      o_ld_rj()
       O_RADN
       O_VPOSLA
       O_RADKR
-      O_KRED
+      o_kred()
       O_LD
 
    ELSE
@@ -234,11 +234,11 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       ENDIF
 
       O_PAROBR
-      O_LD_RJ
+      o_ld_rj()
       O_RADN
       O_VPOSLA
       O_RADKR
-      O_KRED
+      o_kred()
       O_LD
 
       SET ORDER TO tag ( TagVO( "1" ) )

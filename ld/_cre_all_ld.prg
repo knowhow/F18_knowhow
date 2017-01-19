@@ -19,7 +19,7 @@ FUNCTION cre_all_ld_sif( ver )
    LOCAL _table_name, _alias, _created
    LOCAL aDbf
 
-   // ---------------------------------------------------------
+
    // KRED.DBF
    // ---------------------------------------------------------
    aDBf := {}
@@ -34,6 +34,8 @@ FUNCTION cre_all_ld_sif( ver )
    AAdd( aDBf, { 'PTT', 'C',   5,  0 } )
    AAdd( aDBf, { 'FIL', 'C',  30,  0 } )
 
+
+/*
    _alias := "KRED"
    _table_name := "kred"
 
@@ -41,10 +43,10 @@ FUNCTION cre_all_ld_sif( ver )
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "naz", _alias )
    AFTER_CREATE_INDEX
+*/
 
    _alias := "_KRED"
    _table_name := "_kred"
-
    IF_NOT_FILE_DBF_CREATE
 
    // ------------------------------------------------------------
@@ -261,7 +263,7 @@ FUNCTION cre_all_ld( ver )
    AAdd( aDBf, { 'ST_INVALID', 'I',   1,  0 } )
    AAdd( aDBf, { 'VR_INVALID', 'I',   1,  0 } )
 
-
+/*
    _alias := "RADN"
    _table_name := "ld_radn"
 
@@ -273,7 +275,7 @@ FUNCTION cre_all_ld( ver )
    CREATE_INDEX( "1", "id", _alias )
    CREATE_INDEX( "2", "naz", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    // -------------------------------------
    // _RADN
@@ -287,9 +289,8 @@ FUNCTION cre_all_ld( ver )
       modstru( { "*" + _table_name, "A ST_INVALID I 1 0", "A VR_INVALID I 1 0" } )
    ENDIF
 
-   // ----------------------------------------------
+   /*
    // LD_RJ
-   // ----------------------------------------------
 
    aDBf := {}
    AAdd( aDBf, { 'ID', 'C',   2,  0 } )
@@ -304,7 +305,7 @@ FUNCTION cre_all_ld( ver )
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "ID", "id", _alias )
    AFTER_CREATE_INDEX
-
+   */
 
    // -----------------------------------------------
    // RADKR.DBF
@@ -326,7 +327,7 @@ FUNCTION cre_all_ld( ver )
    CREATE_INDEX( "3", "idkred+naosnovu+idradn+str(godina)+str(mjesec)", _alias )
    CREATE_INDEX( "4", "str(godina)+str(mjesec)+idradn+naosnovu", _alias )
    AFTER_CREATE_INDEX
-   
+
 
    // --------------------------------------------------
    // _RADKR.DBF
@@ -338,7 +339,6 @@ FUNCTION cre_all_ld( ver )
 
    // ---------------------------------------------------
    // LD
-   // ---------------------------------------------------
 
    aDbf := a_dbf_ld_ld()
    hIndexes := h_ld_ld_indexes()

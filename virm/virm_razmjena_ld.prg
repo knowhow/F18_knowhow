@@ -119,7 +119,7 @@ FUNCTION virm_prenos_ld( prenos_ld )
 STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
 
    LOCAL _oznaka := "IS_"
-   LOCAL _id_kred, _rec
+   LOCAL _id_kred, hRec
    LOCAL _formula, _izr_formula
    LOCAL _svrha_placanja
    LOCAL _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), Space( 16 ) )
@@ -225,7 +225,7 @@ STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------------------------------------------------------
@@ -371,7 +371,7 @@ STATIC FUNCTION virm_ld_obrada( godina, mjesec, dat_virm, r_br, dod_opis, per_od
 
 STATIC FUNCTION _ld_vrprim_kredit()
 
-   LOCAL _rec
+   LOCAL hRec
 
    SELECT vrprim
    HSEEK PadR( "KR", Len( field->id ) )
@@ -379,24 +379,24 @@ STATIC FUNCTION _ld_vrprim_kredit()
    IF !Found()
 
       APPEND BLANK
-      _rec := dbf_get_rec()
-      _rec[ "id" ] := "KR"
-      _rec[ "naz" ] := "Kredit"
-      _rec[ "pom_txt" ] := "Kredit"
-      _rec[ "nacin_pl" ] := "1"
-      _rec[ "dobav" ] := "D"
+      hRec := dbf_get_rec()
+      hRec[ "id" ] := "KR"
+      hRec[ "naz" ] := "Kredit"
+      hRec[ "pom_txt" ] := "Kredit"
+      hRec[ "nacin_pl" ] := "1"
+      hRec[ "dobav" ] := "D"
 
-      update_rec_server_and_dbf( "vrprim", _rec, 1, "FULL" )
+      update_rec_server_and_dbf( "vrprim", hRec, 1, "FULL" )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
 STATIC FUNCTION _ld_vrprim_isplata()
 
-   LOCAL _rec
+   LOCAL hRec
 
    SELECT vrprim
    HSEEK PadR( "IS", Len( field->id ) )
@@ -404,14 +404,14 @@ STATIC FUNCTION _ld_vrprim_isplata()
    IF !Found()
 
       APPEND BLANK
-      _rec := dbf_get_rec()
-      _rec[ "id" ] := "IS"
-      _rec[ "naz" ] := "Isplata na tekuci racun"
-      _rec[ "pom_txt" ] := "Plata"
-      _rec[ "nacin_pl" ] := "1"
-      _rec[ "dobav" ] := "D"
+      hRec := dbf_get_rec()
+      hRec[ "id" ] := "IS"
+      hRec[ "naz" ] := "Isplata na tekuci racun"
+      hRec[ "pom_txt" ] := "Plata"
+      hRec[ "nacin_pl" ] := "1"
+      hRec[ "dobav" ] := "D"
 
-      update_rec_server_and_dbf( "vrprim", _rec, 1, "FULL" )
+      update_rec_server_and_dbf( "vrprim", hRec, 1, "FULL" )
 
    ENDIF
 
@@ -420,7 +420,7 @@ STATIC FUNCTION _ld_vrprim_isplata()
 
 STATIC FUNCTION _ld_kreditor( id_kred )
 
-   LOCAL _rec
+   LOCAL hRec
 
    SELECT kred
    HSEEK PadR( id_kred, Len( kred->id ) )
@@ -433,12 +433,12 @@ STATIC FUNCTION _ld_kreditor( id_kred )
       // dodaj kreditora u listu partnera
       APPEND BLANK
 
-      _rec := dbf_get_rec()
-      _rec[ "id" ] := kred->id
-      _rec[ "naz" ] := kred->naz
-      _rec[ "ziror" ] := kred->ziro
+      hRec := dbf_get_rec()
+      hRec[ "id" ] := kred->id
+      hRec[ "naz" ] := kred->naz
+      hRec[ "ziror" ] := kred->ziro
 
-      update_rec_server_and_dbf( "partn", _rec, 1, "FULL" )
+      update_rec_server_and_dbf( "partn", hRec, 1, "FULL" )
 
    ENDIF
 
@@ -451,7 +451,7 @@ STATIC FUNCTION _ld_kreditor( id_kred )
 STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nula )
 
    LOCAL _oznaka := "KRED"
-   LOCAL _id_kred, _rec
+   LOCAL _id_kred, hRec
    LOCAL _svrha_placanja, _u_korist
    LOCAL _kome_txt, _kome_zr, _kome_sjed, _nacin_pl
    LOCAL _ko_zr, _ko_txt
@@ -707,7 +707,7 @@ STATIC FUNCTION virm_o_tables()
 
    SELECT ( F_KRED )
    IF !Used()
-      O_KRED
+      o_kred()
    ENDIF
 
 
@@ -721,7 +721,7 @@ STATIC FUNCTION virm_o_tables()
 
    SELECT ( F_VRPRIM )
    IF !Used()
-      O_VRPRIM
+      o_vrprim()
    ENDIF
 
    SELECT ( F_LDVIRM )

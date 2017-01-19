@@ -605,12 +605,12 @@ FUNCTION ld_lista_kredita()
    PRIVATE lRjRadn := .F.
    PRIVATE cIdRj
 
-   O_KRED
+   o_kred()
    O_RADN
 
    IF FieldPos( "IDRJ" ) <> 0
       lRjRadn := .T.
-      O_LD_RJ
+      o_ld_rj()
       cIdRj := "  "
    ENDIF
 
@@ -1209,8 +1209,8 @@ FUNCTION ld_brisanje_kredita()
 
 FUNCTION ld_otvori_tabele_kredita()
 
-   O_LD_RJ
-   O_KRED
+   o_ld_rj()
+   o_kred()
    O_STRSPR
    O_OPS
    O_RADN

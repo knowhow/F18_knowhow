@@ -35,7 +35,7 @@ FUNCTION ld_pregled_primanja_za_period()
    cGodina := gGodina
    cObracun := gObracun
 
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
    O_LD
 

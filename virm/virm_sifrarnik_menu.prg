@@ -51,7 +51,7 @@ STATIC FUNCTION _sif_opc()
 
    f18_menu( "sopc", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -71,7 +71,7 @@ STATIC FUNCTION _sif_spec()
 
    f18_menu( "ssp", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -80,12 +80,11 @@ FUNCTION OSifVirm()
    o_sifk()
    O_SIFV
    O_PARTN
-   O_VRPRIM
-   O_VRPRIM2
+   o_vrprim()
    O_VALUTE
    o_ldvirm()
    o_jprih()
    O_BANKE
    O_OPS
 
-   RETURN
+   RETURN .T.

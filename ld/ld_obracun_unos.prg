@@ -141,12 +141,12 @@ FUNCTION OObracun()
 
    SELECT F_DOPR
    IF !Used()
-      O_DOPR
+      o_dopr()
    ENDIF
 
    SELECT F_POR
    IF !Used()
-      O_POR
+      o_por()
    ENDIF
 
    SELECT F_KBENEF
@@ -161,7 +161,7 @@ FUNCTION OObracun()
 
    SELECT F_LD_RJ
    IF !Used()
-      O_LD_RJ
+      o_ld_rj()
    ENDIF
 
    SELECT F_RADKR
@@ -171,7 +171,7 @@ FUNCTION OObracun()
 
    SELECT F_KRED
    IF !Used()
-      O_KRED
+      o_kred()
    ENDIF
 
    SELECT F_RADSAT

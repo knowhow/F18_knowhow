@@ -702,17 +702,17 @@ FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
    SELECT ( nSelect )
 
    IF field->pu_i == "1"
-      SumirajKolicinu( kolicina, 0, @nTotalUlaz, 0 )
+      kalk_sumiraj_kolicinu( kolicina, 0, @nTotalUlaz, 0 )
    ELSEIF field->pu_i == "5"
       IF field->idvd $ "12#13"
-         SumirajKolicinu( -kolicina, 0, @nTotalUlaz, 0 )
+         kalk_sumiraj_kolicinu( -kolicina, 0, @nTotalUlaz, 0 )
       ELSE
-         SumirajKolicinu( 0, kolicina, 0, @nTotalIzlaz )
+         kalk_sumiraj_kolicinu( 0, kolicina, 0, @nTotalIzlaz )
       ENDIF
    ELSEIF field->pu_i == "3"
       // nivelacija
    ELSEIF field->pu_i == "I"
-      SumirajKolicinu( 0, gkolicin2, 0, @nTotalIzlaz )
+      kalk_sumiraj_kolicinu( 0, gkolicin2, 0, @nTotalIzlaz )
    ENDIF
 
    RETURN
@@ -745,20 +745,20 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
    SELECT ( nSelect )
    IF field->mu_i == "1"
       IF !( field->idVd $ "12#22#94" )
-         SumirajKolicinu( field->kolicina - field->gKolicina - field->gKolicin2, 0, @nTotalUlaz, 0 )
+         kalk_sumiraj_kolicinu( field->kolicina - field->gKolicina - field->gKolicin2, 0, @nTotalUlaz, 0 )
 
       ELSE
-         SumirajKolicinu( 0, -field->kolicina, 0, @nTotalIzlaz )
+         kalk_sumiraj_kolicinu( 0, -field->kolicina, 0, @nTotalIzlaz )
       ENDIF
 
    ELSEIF field->mu_i == "5"
-      SumirajKolicinu( 0, field->kolicina, 0, @nTotalIzlaz )
+      kalk_sumiraj_kolicinu( 0, field->kolicina, 0, @nTotalIzlaz )
 
    ELSEIF field->mu_i == "3"
 
    ELSEIF field->mu_i == "8"
       // sta je mu_i==8 ??
-      SumirajKolicinu( -field->kolicina, -field->kolicina, @nTotUlaz, @nTotalIzlaz )
+      kalk_sumiraj_kolicinu( -field->kolicina, -field->kolicina, @nTotUlaz, @nTotalIzlaz )
    ENDIF
 
    RETURN

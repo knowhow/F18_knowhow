@@ -23,7 +23,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    cGodina := gGodina
    cObracun := gObracun
 
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
    O_LD
 

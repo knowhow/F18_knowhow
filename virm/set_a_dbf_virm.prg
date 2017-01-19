@@ -21,12 +21,11 @@ FUNCTION set_a_dbf_virm()
    //set_a_dbf_virm_jprih()
 	 set_a_sql_sifarnik( "jprih", "JPRIH", F_JPRIH )
 
-   set_a_dbf_sifarnik( "vrprim", "VRPRIM", F_VRPRIM )
+   set_a_sql_sifarnik( "vrprim", "VRPRIM", F_VRPRIM )
    set_a_sql_sifarnik( "ldvirm", "LDVIRM", F_LDVIRM )
    //set_a_dbf_sifarnik( "kalvir", "KALVIR", F_KALVIR )
 
    set_a_dbf_temp( "virm_pripr", "VIRM_PRIPR", F_VIPRIPR )
-   set_a_dbf_temp( "vrprim2", "VRPRIM2", F_VRPRIM2 )
    set_a_dbf_temp( "izlaz", "IZLAZ", F_IZLAZ )
 
    RETURN .T.

@@ -488,7 +488,7 @@ FUNCTION lager_lista_magacin()
             IF !( idvd $ "12#22#94" )
                nKolicina := field->kolicina - field->gkolicina - field->gkolicin2
                nUlaz += nKolicina
-               SumirajKolicinu( nKolicina, 0, @nTUlazP, @nTIzlazP )
+               kalk_sumiraj_kolicinu( nKolicina, 0, @nTUlazP, @nTIzlazP )
                nCol1 := PCol() + 1
                IF koncij->naz == "P2"
                   nVPVU += Round( roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
@@ -502,7 +502,7 @@ FUNCTION lager_lista_magacin()
             ELSE
                nKolicina := -field->kolicina
                nIzlaz += nKolicina
-               SumirajKolicinu( 0, nKolicina, @nTUlazP, @nTIzlazP )
+               kalk_sumiraj_kolicinu( 0, nKolicina, @nTUlazP, @nTIzlazP )
                IF koncij->naz == "P2"
                   nVPVI -= Round( roba->plc * kolicina, gZaokr )
                   nVPVRI -= Round( roba->plc * kolicina, gZaokr )
@@ -519,7 +519,7 @@ FUNCTION lager_lista_magacin()
          ELSEIF mu_i == "5"
             nKolicina := field->kolicina
             nIzlaz += nKolicina
-            SumirajKolicinu( 0, nKolicina, @nTUlazP, @nTIzlazP )
+            kalk_sumiraj_kolicinu( 0, nKolicina, @nTUlazP, @nTIzlazP )
             IF koncij->naz == "P2"
                nVPVI += Round( roba->plc * kolicina, gZaokr )
                nVPVRI += Round( roba->plc * kolicina, gZaokr )
@@ -536,7 +536,7 @@ FUNCTION lager_lista_magacin()
          ELSEIF mu_i == "8"
             nKolicina := -field->kolicina
             nIzlaz += nKolicina
-            SumirajKolicinu( 0, nKolicina, @nTUlazP, @nTIzlazP )
+            kalk_sumiraj_kolicinu( 0, nKolicina, @nTUlazP, @nTIzlazP )
             IF koncij->naz == "P2"
                nVPVI += Round( roba->plc * ( -kolicina ), gZaokr )
                nVPVRI += Round( roba->plc * ( -kolicina ), gZaokr )
@@ -548,7 +548,7 @@ FUNCTION lager_lista_magacin()
             nNVI += Round( nc * ( -kolicina ), gZaokr )
             nKolicina := -field->kolicina
             nUlaz += nKolicina
-            SumirajKolicinu( nKolicina, 0, @nTUlazP, @nTIzlazP )
+            kalk_sumiraj_kolicinu( nKolicina, 0, @nTUlazP, @nTIzlazP )
 
             IF koncij->naz == "P2"
                nVPVU += Round( -roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
@@ -1266,7 +1266,7 @@ STATIC FUNCTION _gen_xml( params )
             IF !( field->idvd $ "12#22#94" )
                _kolicina := field->kolicina - field->gkolicina - field->gkolicin2
                _ulaz += _kolicina
-               SumirajKolicinu( _kolicina, 0, @_t_ulaz_p, @_t_izlaz_p )
+               kalk_sumiraj_kolicinu( _kolicina, 0, @_t_ulaz_p, @_t_izlaz_p )
                IF koncij->naz == "P2"
                   _vpv_u += Round( roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
                   _vpv_ru += Round( roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
@@ -1279,7 +1279,7 @@ STATIC FUNCTION _gen_xml( params )
             ELSE
                _kolicina := -field->kolicina
                _izlaz += _kolicina
-               SumirajKolicinu( 0, _kolicina, @_t_ulaz_p, @_t_izlaz_p )
+               kalk_sumiraj_kolicinu( 0, _kolicina, @_t_ulaz_p, @_t_izlaz_p )
                IF koncij->naz == "P2"
                   _vpv_i -= Round( roba->plc * kolicina, gZaokr )
                   _vpv_ri -= Round( roba->plc * kolicina, gZaokr )
@@ -1293,7 +1293,7 @@ STATIC FUNCTION _gen_xml( params )
          ELSEIF field->mu_i == "5"
             _kolicina := field->kolicina
             _izlaz += _kolicina
-            SumirajKolicinu( 0, _kolicina, @_t_ulaz_p, @_t_izlaz_p )
+            kalk_sumiraj_kolicinu( 0, _kolicina, @_t_ulaz_p, @_t_izlaz_p )
             IF koncij->naz == "P2"
                _vpv_i += Round( roba->plc * kolicina, gZaokr )
                _vpv_ri += Round( roba->plc * kolicina, gZaokr )
@@ -1307,7 +1307,7 @@ STATIC FUNCTION _gen_xml( params )
          ELSEIF field->mu_i == "8"
             _kolicina := -field->kolicina
             _izlaz += _kolicina
-            SumirajKolicinu( 0, _kolicina, @_t_ulaz_p, @_t_izlaz_p )
+            kalk_sumiraj_kolicinu( 0, _kolicina, @_t_ulaz_p, @_t_izlaz_p )
             IF koncij->naz == "P2"
                _vpv_i += Round( roba->plc * ( -kolicina ), gZaokr )
                _vpv_ri += Round( roba->plc * ( -kolicina ), gZaokr )
@@ -1319,7 +1319,7 @@ STATIC FUNCTION _gen_xml( params )
             _nv_i += Round( nc * ( -kolicina ), gZaokr )
             _kolicina := -field->kolicina
             _ulaz += _kolicina
-            SumirajKolicinu( _kolicina, 0, @_t_ulaz_p, @_t_izlaz_p )
+            kalk_sumiraj_kolicinu( _kolicina, 0, @_t_ulaz_p, @_t_izlaz_p )
 
             IF koncij->naz == "P2"
                _vpv_u += Round( -roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )

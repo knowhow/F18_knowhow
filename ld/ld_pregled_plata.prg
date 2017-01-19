@@ -26,9 +26,9 @@ FUNCTION pregled_plata()
 
    O_KBENEF
    O_VPOSLA
-   O_LD_RJ
-   O_DOPR
-   O_POR
+   o_ld_rj()
+   o_dopr()
+   o_por()
    O_RADN
    O_LD
    O_PAROBR

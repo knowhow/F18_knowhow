@@ -22,7 +22,7 @@ FUNCTION virm_prenos_fin()
    O_SIFV
    O_BANKE
    O_PARTN
-   O_VRPRIM
+   o_vrprim()
    O_VIRM_PRIPR
    O_FIN_PRIPR
 

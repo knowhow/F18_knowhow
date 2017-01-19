@@ -113,14 +113,14 @@ STATIC FUNCTION o_ld_sif_tables()
    O_RADN
    O_PAROBR
    o_tippr()
-   O_LD_RJ
-   O_POR
-   O_DOPR
+   o_ld_rj()
+   o_por()
+   o_dopr()
    O_STRSPR
    O_KBENEF
    O_VPOSLA
    O_OPS
-   O_KRED
+   o_kred()
    O_TIPPR2
 
    IF ( IsRamaGlas() )

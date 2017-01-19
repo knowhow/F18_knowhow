@@ -908,17 +908,17 @@ STATIC FUNCTION rekap_ld_dbf( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, c
 
 STATIC FUNCTION ORekap()
 
-   O_POR
-   O_DOPR
+   o_por()
+   o_dopr()
    O_PAROBR
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
    O_STRSPR
    O_KBENEF
    O_VPOSLA
    O_OPS
    O_RADKR
-   O_KRED
+   o_kred()
    O_LD
 
    o_tippr_ili_tippr2( cObracun )
@@ -1913,7 +1913,7 @@ STATIC FUNCTION ZaglSvi()
 
    SELECT por
    GO TOP
-   O_LD_RJ
+   o_ld_rj()
    SELECT ld_rj
    P_10CPI
 
@@ -1952,7 +1952,7 @@ STATIC FUNCTION ZaglSvi()
 // ----------------------------
 STATIC FUNCTION zagl_rekapitulacija_plata_rj()
 
-   O_LD_RJ
+   o_ld_rj()
    SELECT ld_rj
    hseek cIdRj
    SELECT por

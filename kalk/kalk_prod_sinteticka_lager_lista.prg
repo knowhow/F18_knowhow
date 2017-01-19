@@ -198,17 +198,17 @@ FUNCTION sint_lager_lista_prodavnice()
          ENDIF
 
          IF pu_i == "1"
-            SumirajKolicinu( field->kolicina, 0, @nUlaz, 0 )
+            kalk_sumiraj_kolicinu( field->kolicina, 0, @nUlaz, 0 )
             nCol1 := PCol() + 1
             nMPVU += mpcsapp * kolicina
             nNVU += nc * ( kolicina )
          ELSEIF pu_i == "5"
             IF idvd $ "12#13"
-               SumirajKolicinu( -field->kolicina, 0, @nUlaz, 0 )
+               kalk_sumiraj_kolicinu( -field->kolicina, 0, @nUlaz, 0 )
                nMPVU -= mpcsapp * kolicina
                nNVU -= nc * kolicina
             ELSE
-               SumirajKolicinu( 0, field->kolicina, 0, @nIzlaz )
+               kalk_sumiraj_kolicinu( 0, field->kolicina, 0, @nIzlaz )
                nMPVI += mpcsapp * kolicina
                nNVI += nc * kolicina
             ENDIF
@@ -216,7 +216,7 @@ FUNCTION sint_lager_lista_prodavnice()
             // nivelacija
             nMPVU += mpcsapp * kolicina
          ELSEIF pu_i == "I"
-            SumirajKolicinu( 0, field->gkolicin2, 0, @nIzlaz )
+            kalk_sumiraj_kolicinu( 0, field->gkolicin2, 0, @nIzlaz )
             nMPVI += mpcsapp * gkolicin2
             nNVI += nc * gkolicin2
          ENDIF

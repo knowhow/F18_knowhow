@@ -201,8 +201,8 @@ STATIC FUNCTION o_tables()
    O_RADN
    O_KONTO
    O_RADSIHT
-   O_DOPR
-   O_POR
+   o_dopr()
+   o_por()
 
    RETURN
 

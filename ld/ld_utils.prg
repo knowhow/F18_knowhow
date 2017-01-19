@@ -133,7 +133,7 @@ FUNCTION get_dopr( cDopr, cTipRada )
       cTipRada := " "
    ENDIF
 
-   O_DOPR
+   o_dopr()
    GO TOP
    SEEK cDopr
    DO WHILE !Eof() .AND. dopr->id == cDopr

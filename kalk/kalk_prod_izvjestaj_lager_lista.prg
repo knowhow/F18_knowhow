@@ -337,7 +337,7 @@ FUNCTION lager_lista_prodavnica()
             IF field->datdok < dDatOd
                IF field->pu_i == "1"
 
-                  SumirajKolicinu( field->kolicina, 0, @nPKol, 0, lPocStanje, lPrikK2 )
+                  kalk_sumiraj_kolicinu( field->kolicina, 0, @nPKol, 0, lPocStanje, lPrikK2 )
                   nPMPV += field->mpcsapp * field->kolicina
                   nPNV += field->nc * ( field->kolicina )
 
@@ -349,7 +349,7 @@ FUNCTION lager_lista_prodavnica()
                   nPor1 := aIPor[ 1 ]
                   set_pdv_public_vars()
 
-                  SumirajKolicinu( -( field->kolicina ), 0, @nPKol, 0, lPocStanje, lPrikK2 )
+                  kalk_sumiraj_kolicinu( -( field->kolicina ), 0, @nPKol, 0, lPocStanje, lPrikK2 )
 
                   // vrijednost sa popustom
                   // nPMPV -= ( field->mpc + nPor1 ) * field->kolicina
@@ -361,7 +361,7 @@ FUNCTION lager_lista_prodavnica()
                   // nivelacija
                   nPMPV += field->mpcsapp * field->kolicina
                ELSEIF pu_i == "I"
-                  SumirajKolicinu( -( field->gKolicin2 ), 0, @nPKol, 0, lPocStanje, lPrikK2 )
+                  kalk_sumiraj_kolicinu( -( field->gKolicin2 ), 0, @nPKol, 0, lPocStanje, lPrikK2 )
                   nPMPV -= field->mpcsapp * field->gkolicin2
                   nPNV -= field->nc * field->gkolicin2
                ENDIF
@@ -388,7 +388,7 @@ FUNCTION lager_lista_prodavnica()
          IF field->DatDok >= dDatOd
             // nisu predhodni podaci
             IF field->pu_i == "1"
-               SumirajKolicinu( field->kolicina, 0, @nUlaz, 0, lPocStanje, lPrikK2 )
+               kalk_sumiraj_kolicinu( field->kolicina, 0, @nUlaz, 0, lPocStanje, lPrikK2 )
                nCol1 := PCol() + 1
                nMPVU += field->mpcsapp * field->kolicina
                nNVU += field->nc * ( field->kolicina )
@@ -401,11 +401,11 @@ FUNCTION lager_lista_prodavnica()
                set_pdv_public_vars()
 
                IF idvd $ "12#13"
-                  SumirajKolicinu( -( field->kolicina ), 0, @nUlaz, 0, lPocStanje, lPrikK2 )
+                  kalk_sumiraj_kolicinu( -( field->kolicina ), 0, @nUlaz, 0, lPocStanje, lPrikK2 )
                   nMPVU -= field->mpcsapp * field->kolicina
                   nNVU -= field->nc * field->kolicina
                ELSE
-                  SumirajKolicinu( 0, field->kolicina, 0, @nIzlaz, lPocStanje, lPrikK2 )
+                  kalk_sumiraj_kolicinu( 0, field->kolicina, 0, @nIzlaz, lPocStanje, lPrikK2 )
                   // vrijednost sa popustom
                   // nMPVI += ( field->mpc + nPor1 ) * field->kolicina
                   nMPVI += field->mpcsapp * field->kolicina
@@ -416,7 +416,7 @@ FUNCTION lager_lista_prodavnica()
                // nivelacija
                nMPVU += field->mpcsapp * field->kolicina
             ELSEIF field->pu_i == "I"
-               SumirajKolicinu( 0, field->gkolicin2, 0, @nIzlaz, lPocStanje, lPrikK2 )
+               kalk_sumiraj_kolicinu( 0, field->gkolicin2, 0, @nIzlaz, lPocStanje, lPrikK2 )
                nMPVI += field->mpcsapp * field->gkolicin2
                nNVI += field->nc * field->gkolicin2
             ENDIF
@@ -995,7 +995,7 @@ STATIC FUNCTION _gen_xml( params )
          IF field->datdok >= params[ "datum_od" ]
             // nisu predhodni podaci
             IF field->pu_i == "1"
-               SumirajKolicinu( field->kolicina, 0, @_ulaz, 0, .F., .F. )
+               kalk_sumiraj_kolicinu( field->kolicina, 0, @_ulaz, 0, .F., .F. )
                _mpv_u += field->mpcsapp * field->kolicina
                _nv_u += field->nc * ( field->kolicina )
             ELSEIF field->pu_i == "5"
@@ -1005,11 +1005,11 @@ STATIC FUNCTION _gen_xml( params )
                nPor1 := aIPor[ 1 ]
                set_pdv_public_vars()
                IF field->idvd $ "12#13"
-                  SumirajKolicinu( -( field->kolicina ), 0, @_ulaz, 0, .F., .F. )
+                  kalk_sumiraj_kolicinu( -( field->kolicina ), 0, @_ulaz, 0, .F., .F. )
                   _mpv_u -= field->mpcsapp * field->kolicina
                   _nv_u -= field->nc * field->kolicina
                ELSE
-                  SumirajKolicinu( 0, field->kolicina, 0, @_izlaz, .F., .F. )
+                  kalk_sumiraj_kolicinu( 0, field->kolicina, 0, @_izlaz, .F., .F. )
                   _mpv_i += field->mpcsapp * field->kolicina
                   _nv_i += field->nc * field->kolicina
                ENDIF
@@ -1018,7 +1018,7 @@ STATIC FUNCTION _gen_xml( params )
                // nivelacija
                _mpv_u += field->mpcsapp * field->kolicina
             ELSEIF field->pu_i == "I"
-               SumirajKolicinu( 0, field->gkolicin2, 0, @_izlaz, .F., .F. )
+               kalk_sumiraj_kolicinu( 0, field->gkolicin2, 0, @_izlaz, .F., .F. )
                _mpv_i += field->mpcsapp * field->gkolicin2
                _nv_i += field->nc * field->gkolicin2
             ENDIF

@@ -50,11 +50,21 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
    dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable + " ORDER BY ID",  cAlias, NIL, NIL )
 
    IF lMakeIndex
-      INDEX ON ID TAG ID TO ( cAlias )
-      IF FieldPos( "NAZ" ) > 0
-         INDEX ON NAZ TAG NAZ TO ( cAlias )
+
+      IF cTable == "radn" // RADN je izuzetak sa imenima tagova "1", "2"
+         INDEX ON ID TAG 1 TO ( cAlias )
+         IF FieldPos( "NAZ" ) > 0
+            INDEX ON NAZ TAG 2 TO ( cAlias )
+         ENDIF
+         SET ORDER TO TAG "1"
+      ELSE
+         INDEX ON ID TAG ID TO ( cAlias )
+         IF FieldPos( "NAZ" ) > 0
+            INDEX ON NAZ TAG NAZ TO ( cAlias )
+         ENDIF
+         SET ORDER TO TAG "ID"
       ENDIF
-      SET ORDER TO TAG "ID"
+
       GO TOP
    ENDIF
 

@@ -13,7 +13,7 @@
 
 
 
-FUNCTION SumirajKolicinu( nUlaz, nIzlaz, nTotalUlaz, nTotalIzlaz, fPocStanje, lPrikazK2 )
+FUNCTION kalk_sumiraj_kolicinu( nUlaz, nIzlaz, nTotalUlaz, nTotalIzlaz, fPocStanje, lPrikazK2 )
 
    IF fPocStanje == nil
       fPocStanje := .F.

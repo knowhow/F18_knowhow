@@ -14,13 +14,13 @@
 
 FUNCTION set_a_dbf_ld_sif()
 
-   set_a_dbf_sifarnik( "ld_rj", "LD_RJ", F_LD_RJ      )
-   set_a_dbf_sifarnik( "por", "POR", F_POR        )
+   set_a_sql_sifarnik( "ld_rj", "LD_RJ", F_LD_RJ      )
+   set_a_sql_sifarnik( "por", "POR", F_POR        )
 
    set_a_sql_sifarnik( "tippr", "TIPPR", F_TIPPR      )
    set_a_sql_sifarnik( "tippr2", "TIPPR2", F_TIPPR2     )
+   set_a_sql_sifarnik( "kred", "KRED", F_KRED       )
 
-   set_a_dbf_sifarnik( "kred", "KRED", F_KRED       )
    set_a_dbf_sifarnik( "strspr", "STRSPR", F_STRSPR     )
    set_a_dbf_sifarnik( "vposla", "VPOSLA", F_VPOSLA     )
    set_a_dbf_sifarnik( "strspr", "STRSPR", F_STRSPR     )
@@ -113,7 +113,7 @@ FUNCTION set_a_dbf_ld_radn()
    _item[ "wa" ]    := F_RADN
    _item[ "temp" ]  := .F.
    _item[ "algoritam" ] := {}
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
    _item[ "sif" ] := .T.
 
    // algoritam 1 - default
@@ -127,6 +127,7 @@ FUNCTION set_a_dbf_ld_radn()
    f18_dbfs_add( _tbl, @_item )
 
    RETURN .T.
+
 
 
 FUNCTION set_a_dbf_ld_parobr()
@@ -172,7 +173,7 @@ FUNCTION set_a_dbf_ld_dopr()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_DOPR
    _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
    _item[ "sif" ] := .T.
 
 
@@ -196,7 +197,7 @@ FUNCTION set_a_dbf_ld_dopr()
 
 FUNCTION set_a_dbf_ld_obracuni()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "ld_obracuni"
 
@@ -221,12 +222,12 @@ FUNCTION set_a_dbf_ld_obracuni()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION set_a_dbf_ld_pk_radn()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "ld_pk_radn"
 
@@ -292,7 +293,7 @@ FUNCTION set_a_dbf_ld_pk_data()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION set_a_dbf_ld_radsat()

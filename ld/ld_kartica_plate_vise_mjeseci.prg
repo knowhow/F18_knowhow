@@ -322,11 +322,11 @@ STATIC FUNCTION otvori_tabele()
    o_tippr_ili_tippr2( cObracun )
 
    O_PAROBR
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
    O_VPOSLA
    O_RADKR
-   O_KRED
+   o_kred()
    O__LD
    SET ORDER TO TAG "1"
    O_LD

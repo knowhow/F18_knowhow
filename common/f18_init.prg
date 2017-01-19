@@ -70,9 +70,6 @@ FUNCTION f18_error_block()
 
    RETURN .T.
 
-// -----------------------------------------------------
-// inicijalne opcije kod pokretanja firme
-// -----------------------------------------------------
 
 FUNCTION f18_init_app_opts()
 
@@ -117,7 +114,7 @@ FUNCTION post_login()
    set_vars_za_specificne_slucajeve()
 
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
-   thread_dbfs( hb_threadStart( @f18_http_server() ) )
+   //thread_dbfs( hb_threadStart( @f18_http_server() ) )
 
    IF !check_server_db_version()
       RETURN .F.

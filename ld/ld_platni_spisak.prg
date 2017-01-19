@@ -26,7 +26,7 @@ FUNCTION ld_platni_spisak()
    cGodina := gGodina
    cObracun := gObracun
 
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
    O_LD
 
@@ -322,8 +322,8 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    nProcenat := 100
    nZkk := gZaok
 
-   O_KRED
-   O_LD_RJ
+   o_kred()
+   o_ld_rj()
    O_RADN
    O_LD
 
@@ -665,8 +665,8 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    cIdTipPr := "  "
 
    o_tippr()
-   O_KRED
-   O_LD_RJ
+   o_kred()
+   o_ld_rj()
    O_RADN
    O_LD
    SET RELATION TO idradn into radn

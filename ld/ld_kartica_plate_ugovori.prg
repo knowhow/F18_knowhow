@@ -80,13 +80,13 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
    SELECT ( F_POR )
 
    IF !Used()
-      O_POR
+      o_por()
    ENDIF
 
    SELECT ( F_DOPR )
 
    IF !Used()
-      O_DOPR
+      o_dopr()
    ENDIF
 
    SELECT ( F_KBENEF )

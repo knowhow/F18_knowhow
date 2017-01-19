@@ -126,13 +126,13 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
    SELECT ( F_POR )
 
    IF !Used()
-      O_POR
+      o_por()
    ENDIF
 
    SELECT ( F_DOPR )
 
    IF !Used()
-      O_DOPR
+      o_dopr()
    ENDIF
 
    SELECT ( F_KBENEF )

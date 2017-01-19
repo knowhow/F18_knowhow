@@ -21,7 +21,7 @@ FUNCTION ld_parametri()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   O_LD_RJ
+   o_ld_rj()
    O_PARAMS
 
    PRIVATE cSection := "1"

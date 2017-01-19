@@ -752,10 +752,10 @@ STATIC FUNCTION o_tables()
    O_OBRACUNI
    O_PAROBR
    O_PARAMS
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
-   O_DOPR
-   O_POR
+   o_dopr()
+   o_por()
    O_LD
 
    RETURN .T.

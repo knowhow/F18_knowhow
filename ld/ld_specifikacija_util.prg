@@ -125,7 +125,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
 
    my_close_all_dbf()
 
-   O_LD_RJ
+   o_ld_rj()
    O_STRSPR
    O_OPS
    O_RADN
@@ -426,12 +426,12 @@ FUNCTION FormNum2( nIznos, nDuz, pici )
 
 FUNCTION OSpecif()
 
-   O_DOPR
-   O_POR
+   o_dopr()
+   o_por()
    O_PAROBR
    O_KBENEF
    O_VPOSLA
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
    O_PARAMS
    O_LD

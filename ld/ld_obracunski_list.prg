@@ -27,14 +27,14 @@ FUNCTION ol_o_tbl()
    O_OBRACUNI
    O_PAROBR
    O_PARAMS
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
    O_KBENEF
    O_VPOSLA
    o_tippr()
-   O_KRED
-   O_DOPR
-   O_POR
+   o_kred()
+   o_dopr()
+   o_por()
    O_LD
 
    RETURN .T.

@@ -112,13 +112,13 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
       SELECT ( F_POR ) // prikaz bruto iznosa
 
       IF !Used()
-         O_POR
+         o_por()
       ENDIF
 
       SELECT ( F_DOPR )
 
       IF !Used()
-         O_DOPR
+         o_dopr()
       ENDIF
 
       SELECT ( F_KBENEF )

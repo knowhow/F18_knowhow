@@ -332,7 +332,7 @@ FUNCTION izr_porez( nOsnovica, cTipPor )
       cTipPor := ""
    ENDIF
 
-   O_POR
+   o_por()
 
    SELECT por
    GO TOP

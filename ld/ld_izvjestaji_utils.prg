@@ -18,7 +18,7 @@ FUNCTION ShowKreditor( cKreditor )
 
    nArr := Select()
 
-   O_KRED
+   o_kred()
    SELECT kred
    SEEK cKreditor
    // ispis
@@ -215,7 +215,7 @@ FUNCTION PoDoIzSez( cG, cM )
          // tekuci
          SELECT F_POR
          USE
-         O_POR
+         o_por()
       ENDIF
 
    ENDIF
@@ -230,7 +230,7 @@ FUNCTION PoDoIzSez( cG, cM )
          // tekuci
          SELECT F_DOPR
          USE
-         O_DOPR
+         o_dopr()
       ENDIF
 
    ENDIF

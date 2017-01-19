@@ -76,7 +76,7 @@ FUNCTION unos_datuma_isplate_place()
    my_close_all_dbf()
 
    O_OBRACUNI
-   O_LD_RJ
+   o_ld_rj()
 
 
    Box(, 20, 65 )

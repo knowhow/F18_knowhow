@@ -144,7 +144,7 @@ METHOD LDExportTxt:params()
    LOCAL _dod_polja := PadR( fetch_metric( "ld_export_banke_dodatna_polja", my_user(), "" ), 500 )
 
    // citaj parametre
-   O_KRED
+   o_kred()
 
    Box(, 16, 70 )
 

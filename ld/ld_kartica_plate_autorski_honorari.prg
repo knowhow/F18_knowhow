@@ -75,13 +75,13 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
    SELECT ( F_POR )
 
    IF !Used()
-      O_POR
+      o_por()
    ENDIF
 
    SELECT ( F_DOPR )
 
    IF !Used()
-      O_DOPR
+      o_dopr()
    ENDIF
 
    SELECT ( F_KBENEF )

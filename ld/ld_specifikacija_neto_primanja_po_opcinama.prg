@@ -307,7 +307,7 @@ STATIC FUNCTION otvori_tabele()
    O_OPS
    O_KBENEF
    O_VPOSLA
-   O_LD_RJ
+   o_ld_rj()
    O_RADN
    O_LD
 

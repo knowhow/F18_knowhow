@@ -33,7 +33,7 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
       lJFill := .F.
    ENDIF
 
-   IF PCount() == 4 .AND. ( cIdtipDok <> nil )
+   IF PCount() == 4 .AND. ( cIdtipDok <> NIL )
       lPrepisDok := .T.
       _fill_params[ "from_server" ] := .T.
       close_open_fakt_tabele( .T. )
@@ -83,7 +83,7 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
       ENDIF
    ENDIF
 
-   IF ! ( Val( podbr ) == 0 .AND. Val( rbr ) == 1 )
+   IF !( Val( podbr ) == 0 .AND. Val( rbr ) == 1 )
       Beep( 2 )
       Msg( "Prva stavka mora biti  '1.'  ili '1 ' !", 4 )
       RETURN .F.
@@ -129,15 +129,15 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
             gPrinter := cPrn
 
          ELSE
-            pf_a4_print( nil, cDocumentName )
+            pf_a4_print( NIL, cDocumentName )
          ENDIF
 
       ELSE
-         pf_a4_print( nil, cDocumentName )
+         pf_a4_print( NIL, cDocumentName )
       ENDIF
 
 #else
-      pf_a4_print( nil, cDocumentName )
+      pf_a4_print( NIL, cDocumentName )
 #endif
 
    ENDIF
@@ -243,6 +243,9 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
    // napuni firmine podatke
    fill_firm_data()
+
+
+   select_o_roba()
 
    SELECT fakt_pripr
 

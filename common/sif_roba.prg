@@ -46,12 +46,12 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
 
    // DEBLJINA i TIP
    IF roba->( FieldPos( "DEBLJINA" ) ) <> 0
-      AAdd( ImeKol, { PadC( "Debljina", 10 ), {|| Transform( field->debljina, "999999.99" ) }, "debljina", nil, nil, "999999.99" } )
+      AAdd( ImeKol, { PadC( "Debljina", 10 ), {|| Transform( field->debljina, "999999.99" ) }, "debljina", NIL, NIL, "999999.99" } )
 
       AAdd( ImeKol, { PadC( "Roba tip", 10 ), {|| field->roba_tip }, "roba_tip", {|| .T. }, {|| .T. } } )
    ENDIF
 
-   AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc", nil, nil, nil, gPicCDEM  } )
+   AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc", NIL, NIL, NIL, gPicCDEM  } )
    AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( field->VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, gPicCDEM   } )
    AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( field->PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, gPicCDEM    } )
    AAdd( ImeKol, { PadC( "MPC1", 10 ), {|| Transform( field->MPC, "999999.999" ) }, "mpc", NIL, NIL, NIL, gPicCDEM  } )
@@ -63,10 +63,10 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
 
       IF roba->( FieldPos( cPom ) )  <>  0
 
-         cPrikazi := fetch_metric( "roba_prikaz_" + cPom, nil, "D" )
+         cPrikazi := fetch_metric( "roba_prikaz_" + cPom, NIL, "D" )
 
          IF cPrikazi == "D"
-            AAdd( ImeKol, { PadC( Upper( cPom ), 10 ), &( cPom2 ), cPom, nil, nil, nil, gPicCDEM } )
+            AAdd( ImeKol, { PadC( Upper( cPom ), 10 ), &( cPom2 ), cPom, NIL, NIL, NIL, gPicCDEM } )
          ENDIF
 
       ENDIF
@@ -81,20 +81,20 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
 
    AAdd ( ImeKol, { PadC( "K1", 4 ), {|| field->k1 }, "k1"   } )
    AAdd ( ImeKol, { PadC( "K2", 4 ), {|| field->k2 }, "k2", ;
-      {|| .T. }, {|| .T. }, nil, nil, nil, nil, 35   } )
+      {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 35   } )
    AAdd ( ImeKol, { PadC( "N1", 12 ), {|| field->N1 }, "N1"   } )
    AAdd ( ImeKol, { PadC( "N2", 12 ), {|| field->N2 }, "N2", ;
-      {|| .T. }, {|| .T. }, nil, nil, nil, nil, 35   } )
+      {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 35   } )
 
 
    // AUTOMATSKI TROSKOVI ROBE, samo za KALK
    IF programski_modul() == "KALK" .AND. roba->( FieldPos( "TROSK1" ) ) <> 0
       AAdd ( ImeKol, { PadR( c10T1, 8 ), {|| trosk1 }, "trosk1", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { PadR( c10T2, 8 ), {|| trosk2 }, "trosk2", ;
-         {|| .T. }, {|| .T. }, nil, nil, nil, nil, 30 } )
+         {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 30 } )
       AAdd ( ImeKol, { PadR( c10T3, 8 ), {|| trosk3 }, "trosk3", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { PadR( c10T4, 8 ), {|| trosk4 }, "trosk4", ;
-         {|| .T. }, {|| .T. }, nil, nil, nil, nil, 30 } )
+         {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 30 } )
       AAdd ( ImeKol, { PadR( c10T5, 8 ), {|| trosk5 }, "trosk5"   } )
    ENDIF
 
@@ -128,10 +128,13 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
    bRoba := gRobaBlock
 
    IF is_modul_fakt()  .AND. is_roba_trazi_po_sifradob() .AND. !Empty( cTraziPoSifraDob )
-      cPomTag := TRIM( cTraziPoSifraDob )
-      INDEX ON SIFRADOB TAG "SIFRADOB" TO ( "ROBA" )
-      IF cPomTag == "SIFRADOB" .AND. LEN( TRIM( cId )) < 5 // https://redmine.bring.out.ba/issues/36373
-        cId := PadL( Trim(cId), 5, "0") // 7148 => 07148, 22 => 00022
+      cPomTag := Trim( cTraziPoSifraDob )
+      SELECT ( F_ROBA )
+      IF index_tag_num( "SIFRADOB" ) == 0
+         INDEX ON SIFRADOB TAG "SIFRADOB" TO ( "ROBA" )
+      ENDIF
+      IF cPomTag == "SIFRADOB" .AND. Len( Trim( cId ) ) < 5 // https://redmine.bring.out.ba/issues/36373
+         cId := PadL( Trim( cId ), 5, "0" ) // 7148 => 07148, 22 => 00022
       ENDIF
 
    ELSE
@@ -269,7 +272,7 @@ FUNCTION WhenBK()
 
    IF Empty( wBarKod )
       wBarKod := PadR( wId, Len( wBarKod ) )
-      AEval( GetList, {| o| o:display() } )
+      AEval( GetList, {| o | o:display() } )
    ENDIF
 
    RETURN .T.
@@ -497,7 +500,6 @@ STATIC FUNCTION __dupli_bk_sql()
 
    LOCAL _qry, _table
 
-
    _qry := "SELECT id, naz, barkod " + ;
       "FROM " + F18_PSQL_SCHEMA + ".roba r1 " + ;
       "WHERE barkod <> '' AND barkod IN ( " + ;
@@ -510,9 +512,8 @@ STATIC FUNCTION __dupli_bk_sql()
 
    _table := run_sql_query( _qry )
    IF sql_error_in_query( _table, "SELECT" )
-       RETURN NIL
+      RETURN NIL
    ENDIF
-
 
    RETURN _table
 
@@ -520,11 +521,11 @@ STATIC FUNCTION __dupli_bk_sql()
 // -----------------------------------------------
 // prikaz duplih barkodova iz sifrarnika
 // -----------------------------------------------
-STATIC FUNCTION __dupli_bk_rpt( data )
+STATIC FUNCTION __dupli_bk_rpt( DATA )
 
    LOCAL nI
 
-   IF ValType( data ) == "L" .OR. Len( data ) == 0
+   IF ValType( DATA ) == "L" .OR. Len( DATA ) == 0
       MsgBeep( "Nema podataka za prikaz !" )
       RETURN
    ENDIF
@@ -650,7 +651,7 @@ FUNCTION roba_setuj_mpc_iz_vpc()
 
          lOk := update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
 
-         ++ _count
+         ++_count
 
       ENDIF
 
@@ -665,7 +666,7 @@ FUNCTION roba_setuj_mpc_iz_vpc()
    BoxC()
 
    IF lOk
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] :=  { "roba" }
       run_sql_query( "COMMIT", hParams )
    ELSE
@@ -691,9 +692,9 @@ STATIC FUNCTION _get_params( params )
 
    _x += 2
    @ m_x + _x, m_y + 2 SAY "Setovati MPC (1/2/.../9)" GET _mpc_no VALID _mpc_no >= 1 .AND. _mpc_no < 10 PICT "9"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Zaokruženje 0.5pf (D/N) ?" GET _zaok_5pf VALID _zaok_5pf $ "DN" PICT "@!"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Setovati samo gdje je MPC = 0 (D/N) ?" GET _mpc_nula VALID _mpc_nula $ "DN" PICT "@!"
    _x += 2
    @ m_x + _x, m_y + 2 SAY "Filter po polju ID:" GET _filter_id PICT "@S40"

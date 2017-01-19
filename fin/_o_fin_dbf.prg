@@ -97,13 +97,14 @@ FUNCTION o_relac()
    RETURN o_dbf_table( F_RELAC, "relac", "ID" )
 
 
+/*
 FUNCTION o_funk()
    RETURN o_dbf_table( F_FUNK, "funk", "ID" )
 
 
 FUNCTION o_fond()
    RETURN o_dbf_table( F_FOND, "fond", "ID" )
-
+*/
 
 FUNCTION o_ostav()
    RETURN o_dbf_table( F_OSTAV, "ostav", "1" )

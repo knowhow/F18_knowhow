@@ -664,15 +664,15 @@ FUNCTION o_fin_edit()
    O_RJ
 
    IF gTroskovi == "D"
-      O_FOND
-      O_FUNK
+    //  o_fond()
+    //  o_funk()
    ENDIF
 
    O_PSUBAN
    O_PANAL
    O_PSINT
    O_PNALOG
-   O_PAREK
+   //O_PAREK
    o_konto()
    o_partner()
    o_tnal()

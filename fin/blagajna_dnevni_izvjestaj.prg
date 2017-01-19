@@ -73,8 +73,8 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
             ENDIF
 
             IF gTroskovi == "D"
-               _rec[ "funk" ] := Space( Len( _rec[ "funk" ] ) )
-               _rec[ "fond" ] := Space( Len( _rec[ "fond" ] ) )
+            //   _rec[ "funk" ] := Space( Len( _rec[ "funk" ] ) )
+            //   _rec[ "fond" ] := Space( Len( _rec[ "fond" ] ) )
             ENDIF
 
             dbf_update_rec( _rec, .T. )

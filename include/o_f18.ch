@@ -90,14 +90,12 @@
 #xcommand O_RSUBAN    => select (F_SUBAN);    my_usex("suban")    ; set order to tag "1"
 #xcommand O_RANAL     => select (F_ANAL);     my_usex("anal")     ; set order to tag "1"
 //#xcommand o_sint()SUB   => select (F_SUBAN);    my_use("suban")     ; set order to tag "1"
-#xcommand O_BUDZET    => select (F_BUDZET);   my_use("budzet")    ; set order to tag "1"
-#xcommand O_PAREK     => select (F_PAREK);    my_use("parek")     ; set order to tag "1"
+//#xcommand O_BUDZET    => select (F_BUDZET);   my_use("budzet")    ; set order to tag "1"
+//#xcommand O_PAREK     => select (F_PAREK);    my_use("parek")     ; set order to tag "1"
 #xcommand O_BBKLAS    => select (F_BBKLAS);   my_use("bbklas")    ; set order to tag "1"
 #xcommand O_IOS       => select (F_IOS);      my_use("ios")      ; set order to tag "1"
 
-#xcommand O_FUNK   => o_funk()
-#xcommand O_FOND   => o_fond()
-#xcommand O_BUIZ   => select (F_BUIZ);    MY_USE  ("buiz") ; set order to tag "ID"
+
 #xcommand OX_KONTO    => select (F_KONTO);  my_usex ("konto")  ;  set order to tag "ID"
 #xcommand O_RKONTO    => select (F_KONTO);  my_usex ("konto") ; set order to tag "ID"
 #xcommand OX_PARTN    => select (F_PARTN);  my_usex ("partn") ; set order to tag "ID"

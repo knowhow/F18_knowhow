@@ -78,15 +78,15 @@ STATIC FUNCTION _menu_budzet()
 
    AAdd( _opc, "1. radne jedinice              " )
    AAdd( _opcexe, {|| P_Rj() } )
-   AAdd( _opc, "2. funkc.kval       " )
-   AAdd( _opcexe, {|| P_FunK() } )
-   AAdd( _opc, "3. plan budzeta" )
-   AAdd( _opcexe, {|| P_Budzet() } )
-   AAdd( _opc, "4. partije->konta " )
-   AAdd( _opcexe, {|| P_ParEK() } )
-   AAdd( _opc, "5. fond   " )
-   AAdd( _opcexe, {|| P_Fond() } )
-   
+   //AAdd( _opc, "2. funkc.kval       " )
+   //AAdd( _opcexe, {|| P_FunK() } )
+   //AAdd( _opc, "3. plan budzeta" )
+   //AAdd( _opcexe, {|| P_Budzet() } )
+   //AAdd( _opc, "4. partije->konta " )
+   //AAdd( _opcexe, {|| P_ParEK() } )
+   //AAdd( _opc, "5. fond   " )
+   //AAdd( _opcexe, {|| P_Fond() } )
+
   // AAdd( _opc, "6. konta-izuzeci" )
   // AAdd( _opcexe, {|| P_BuIZ() } )
 
@@ -98,12 +98,12 @@ STATIC FUNCTION _menu_budzet()
 FUNCTION OSifBudzet()
 
    O_RJ
-   O_FUNK
-   O_FOND
-   O_BUDZET
-   O_PAREK
-   O_BUIZ
+   //o_funk()
+   //o_fond()
+   //O_BUDZET
+   //O_PAREK
+   //o_buiz()
    o_konto()
    o_trfp2()
 
-   RETURN
+   RETURN .T.

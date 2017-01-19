@@ -17,9 +17,10 @@ FUNCTION set_a_dbf_sif()
 
    // tabele sa strukturom sifarnika (id je primarni ključ)
    set_a_dbf_sifarnik( "adres", "ADRES", F_ADRES      )
-   set_a_dbf_sifarnik( "roba", "ROBA", F_ROBA       )
-   set_a_dbf_sifarnik( "konto", "KONTO", F_KONTO      )
-
+   
+   set_a_sql_sifarnik( "roba", "ROBA", F_ROBA       )
+   set_a_sql_sifarnik( "konto", "KONTO", F_KONTO      )
+   set_a_sql_sifarnik( "partn", "PARTN", F_PARTN      )
    _rec := hb_Hash()
    _rec[ "dbf_key_fields" ] := { "id", "id2" }
    _rec[ "dbf_tag" ]        := "ID"
@@ -27,7 +28,7 @@ FUNCTION set_a_dbf_sif()
    _rec[ "dbf_key_block" ] := {|| field->id + field->id2 }
    set_a_dbf_sifarnik( "sast", "SAST", F_SAST, _rec  )
 
-   set_a_dbf_sifarnik( "partn", "PARTN", F_PARTN      )
+
 
    _rec := hb_Hash()
    _rec[ "dbf_key_fields" ] := { { "rule_id", 10, 0 } }

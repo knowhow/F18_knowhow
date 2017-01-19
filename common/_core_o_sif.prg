@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+/*
 FUNCTION o_konto()
 
    RETURN o_dbf_table( F_KONTO, "konto", "ID" )
@@ -21,17 +22,14 @@ FUNCTION select_o_konto()
    RETURN select_o_dbf( "KONTO", F_KONTO, "konto", "ID" )
 
 
-
 FUNCTION o_partner()
 
    RETURN o_dbf_table( F_PARTN, "partn", "ID" )
 
 
-
 FUNCTION select_o_partner()
 
    RETURN select_o_dbf( "PARTN", F_PARTN, "partn", "ID" )
-
 
 
 FUNCTION o_roba()
@@ -43,10 +41,85 @@ FUNCTION o_roba()
    RETURN .T.
 
 
-
 FUNCTION select_o_roba()
 
    RETURN select_o_dbf( "ROBA", F_ROBA, "roba", "ID" )
+*/
+
+
+FUNCTION o_roba()
+
+   LOCAL cTabela := "roba"
+
+   SELECT ( F_ROBA )
+   IF !use_sql_sif  ( cTabela )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
+FUNCTION select_o_roba()
+
+   SELECT ( F_ROBA )
+   IF Used()
+      RETURN .T.
+   ENDIF
+
+   RETURN o_roba()
+
+
+FUNCTION o_partner()
+
+   LOCAL cTabela := "partn"
+
+   SELECT ( F_PARTN )
+   IF !use_sql_sif  ( cTabela )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
+FUNCTION select_o_partner()
+
+   SELECT ( F_PARTN )
+   IF Used()
+      RETURN .T.
+   ENDIF
+
+   RETURN o_partner()
+
+
+FUNCTION o_konto()
+
+   LOCAL cTabela := "konto"
+
+   SELECT ( F_KONTO )
+   IF !use_sql_sif  ( cTabela )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
+FUNCTION select_o_konto()
+
+   SELECT ( F_KONTO )
+   IF Used()
+      RETURN .T.
+   ENDIF
+
+   RETURN o_konto()
 
 
 FUNCTION o_vrste_placanja()
@@ -127,21 +200,27 @@ FUNCTION o_tnal()
 
 FUNCTION o_valute()
 
-   SELECT ( F_VALUTE )  ;  use_sql_valute()    ; SET ORDER TO TAG "ID"
+   SELECT ( F_VALUTE )
+   use_sql_valute()
+   SET ORDER TO TAG "ID"
 
    RETURN .T.
 
 
 FUNCTION o_refer()
 
-   SELECT ( F_REFER )   ;  use_sql_sif  ( "refer" )     ; SET ORDER TO TAG "ID"
+   SELECT ( F_REFER )
+   use_sql_sif  ( "refer" )
+   SET ORDER TO TAG "ID"
 
    RETURN .T.
 
 
 FUNCTION o_ops()
 
-   SELECT ( F_OPS )     ;  use_sql_opstine()      ; SET ORDER TO TAG "ID"
+   SELECT ( F_OPS )
+   use_sql_opstine()
+   SET ORDER TO TAG "ID"
 
    RETURN .T.
 
@@ -149,13 +228,17 @@ FUNCTION o_ops()
 
 FUNCTION o_trfp()
 
-   SELECT ( F_TRFP )    ;  use_sql_trfp()      ; SET ORDER TO TAG "ID"
+   SELECT ( F_TRFP )
+   use_sql_trfp()
+   SET ORDER TO TAG "ID"
 
    RETURN .T.
 
 
 FUNCTION o_trfp2()
 
-   SELECT ( F_TRFP2 )   ;  use_sql_trfp2()     ; SET ORDER TO TAG "ID"
+   SELECT ( F_TRFP2 )
+   use_sql_trfp2()
+   SET ORDER TO TAG "ID"
 
    RETURN .T.

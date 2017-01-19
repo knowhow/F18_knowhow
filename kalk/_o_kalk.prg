@@ -18,6 +18,7 @@ FUNCTION o_kalk()
    RETURN use_sql_kalk()
 
 
+
 FUNCTION o_kalk_doks()
 
    RETURN use_sql_kalk_doks()
@@ -26,6 +27,18 @@ FUNCTION o_kalk_doks()
 FUNCTION o_kalk_doks2()
 
    RETURN use_sql_kalk_doks2()
+
+
+
+FUNCTION select_o_kalk_doks2()
+
+   SELECT ( F_KALK_DOKS2 )
+   IF Used()
+      RETURN .T.
+   ENDIF
+
+   RETURN o_kalk_doks2()
+
 
 
 
@@ -47,9 +60,6 @@ FUNCTION select_o_kalk_pript()
    RETURN select_o_dbf( "PRIPT", F_PRIPT, { "PRIPT", "kalk_pript" }, "1" )
 
 
-
-FUNCTION select_o_kalk_doks2()
-   RETURN select_o_dbf( "KALK_DOKS2", F_KALK_DOKS2, "kalk_doks2", "1" )
 
 
 FUNCTION open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )

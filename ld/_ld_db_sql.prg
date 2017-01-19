@@ -20,8 +20,19 @@ FUNCTION o_tippr()
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
-   
 
+   RETURN .T.
+
+
+
+FUNCTION o_tippr2()
+
+   SELECT ( F_TIPPR )
+
+   IF !use_sql_sif ( "tippr2" )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
 
 FUNCTION o_tippr_ili_tippr2( cObracun )
 

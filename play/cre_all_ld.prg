@@ -164,7 +164,7 @@ FUNCTION cre_all_ld_sif( ver )
    AFTER_CREATE_INDEX
 
 
-   // ---------------------------------------------------------
+   /*
    // TIPPR.DBF
    // ---------------------------------------------------------
 
@@ -195,6 +195,7 @@ FUNCTION cre_all_ld_sif( ver )
 
    CREATE_INDEX( "ID", "id", _alias )
    AFTER_CREATE_INDEX
+   */
 
    RETURN .T.
 

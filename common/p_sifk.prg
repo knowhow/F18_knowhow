@@ -47,4 +47,4 @@ FUNCTION P_Sifk( cId, nDeltaX, nDeltaY )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_SIFK, 1, MAXROWS() -15, MAXCOLS() -15, "sifk - Karakteristike", @cId, nDeltaX, nDeltaY )
+   RETURN p_sifra( F_SIFK, 1, MAXROWS() -15, MAXCOLS() -15, "sifk - Karakteristike", @cId, nDeltaX, nDeltaY )

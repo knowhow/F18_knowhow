@@ -72,7 +72,7 @@ FUNCTION sql_quote( xVar )
    RETURN cOut
 
 
-// ------------------------------
+/*
 // xVar je vec UTF-8 enkodiran
 // ------------------------------
 FUNCTION sql_quote_u( xVar )
@@ -88,7 +88,7 @@ FUNCTION sql_quote_u( xVar )
 
    RETURN cOut
 
-
+*/
 
 
 FUNCTION sql_where_from_dbf_key_fields( aDbfKeyFields, hRecord, lSqlTable )

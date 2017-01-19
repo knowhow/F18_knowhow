@@ -81,7 +81,6 @@ FUNCTION o_partner()
       error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.
    ENDIF
-
    SET ORDER TO TAG "ID"
 
    RETURN .T.

@@ -64,6 +64,15 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
          INDEX ON ID TAG "IDDEST" TO ( cAlias )
          SET ORDER TO TAG "ID"
 
+      ELSEIF cTable == "roba"
+         INDEX ON ID TAG "ID" TO ( cAlias )
+         INDEX ON Left( NAZ, 40 ) TAG "NAZ" TO ( cAlias )
+         INDEX ON barkod TAG "BARKOD" TO ( cAlias )
+         INDEX ON SIFRADOB TAG "SIFRADOB" TO ( cAlias )
+         INDEX ON Str( fisc_plu, 10 ) TAG "PLU" TO ( cAlias )
+         INDEX ON id + tip TAG "IDP" TO ( cAlias ) FOR tip = "P"
+
+
       ELSE
          INDEX ON ID TAG ID TO ( cAlias )
          IF FieldPos( "NAZ" ) > 0
@@ -474,14 +483,14 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
       cOznaka := field->oznaka
    ENDIF
 
-   lSql := is_sql_table( cDbf )
+   // lSql := is_sql_table( cDbf )
 
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + "sifv"
 
-   cSql += " WHERE id=" + sql_quote_u( cDbf )
+   cSql += " WHERE id=" + sql_quote( cDbf )
 
    IF cOznaka != "*" // * - sve oznake
-      cSql += " AND oznaka=" + sql_quote_u( cOznaka )
+      cSql += " AND oznaka=" + sql_quote( cOznaka )
    ENDIF
 
    IF xIdSif == NIL
@@ -494,18 +503,20 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
          ELSE
             xIdSif := Space( 6 )
          ENDIF
-         uIdSif := ( Unicode():New( xIdSif, lSql ) ):getString()
-         cSql += " AND idsif=" + sql_quote_u( uIdSif )
+         // uIdSif := ( Unicode():New( xIdSif, lSql ) ):getString()
+         // cSql += " AND idsif=" + sql_quote_u( uIdSif )
+         cSql += " AND idsif=" + sql_quote( xIdSif )
       ENDIF
    ELSE
 
-      uIdSif := ( Unicode():New( xIdSif, .F. ) ):getString()
-      cSql += " AND idsif=" + sql_quote_u( uIdSif )
+      // uIdSif := ( Unicode():New( xIdSif, .F. ) ):getString()
+      // cSql += " AND idsif=" + sql_quote_u( uIdSif )
+      cSql += " AND idsif=" + sql_quote( xIdSif )
    ENDIF
 
 
    IF xVrijednost != NIL
-      uVrijednost := ( Unicode():New( xVrijednost, lSql ) ):getString()
+      // uVrijednost := ( Unicode():New( xVrijednost, lSql ) ):getString()
       cSql += " AND naz=" + sql_quote( xVrijednost )
    ENDIF
 

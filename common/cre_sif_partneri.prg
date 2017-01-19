@@ -21,6 +21,7 @@ FUNCTION cre_sif_partn( ver )
    LOCAL aDbf := {}
    LOCAL _created, _table_name, _alias
 
+/*
    AAdd( aDBf, { 'ID', 'C',   6,  0 } )
    add_f_mcode( @aDbf )
    AAdd( aDBf, { 'NAZ', 'C', 250,  0 } )
@@ -55,6 +56,7 @@ FUNCTION cre_sif_partn( ver )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
    index_mcode( "", _alias )
    AFTER_CREATE_INDEX
+*/
 
    _alias := "_PARTN"
    _table_name := "_partn"
@@ -405,6 +407,7 @@ FUNCTION set_sifk_partn_bank()
    LOCAL cSeek
    LOCAL cNaz
    LOCAL cId
+   LOCAL hRec
 
    SELECT ( F_SIFK )
    o_sifk()
@@ -422,16 +425,16 @@ FUNCTION set_sifk_partn_bank()
 
       APPEND BLANK
 
-      _rec := dbf_get_rec()
-      _rec[ "id" ] := cId
-      _rec[ "naz" ] := cNaz
-      _rec[ "oznaka" ] := "BANK"
-      _rec[ "sort" ] := "05"
-      _rec[ "tip" ] := "C"
-      _rec[ "duzina" ] := 16
-      _rec[ "veza" ] := "N"
+      hRec := dbf_get_rec()
+      hRec[ "id" ] := cId
+      hRec[ "naz" ] := cNaz
+      hRec[ "oznaka" ] := "BANK"
+      hRec[ "sort" ] := "05"
+      hRec[ "tip" ] := "C"
+      hRec[ "duzina" ] := 16
+      hRec[ "veza" ] := "N"
 
-      IF !update_rec_server_and_dbf( "sifk", _rec, 1, "FULL" )
+      IF !update_rec_server_and_dbf( "sifk", hRec, 1, "FULL" )
          delete_with_rlock()
       ENDIF
 

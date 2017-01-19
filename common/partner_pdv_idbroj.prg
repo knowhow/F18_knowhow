@@ -81,16 +81,18 @@ FUNCTION fill_sifk_partn_pdvb()
 
 FUNCTION update_idbr_pdvb_from_regb()
 
-   LOCAL oPartnId, cRegB, cIdBr, cPdvBr
+   LOCAL cPartnId, cRegB, cIdBr, cPdvBr
 
    PushWA()
 
    SELECT PARTN
 
-   oPartnId := Unicode():New( partn->id, is_partn_sql() )
-   cRegB := get_partn_regb( oPartnId )
-   cIdBr := get_partn_idbr( oPartnId )
-   cPdvBr := get_partn_pdvb( oPartnId )
+   // oPartnId := Unicode():New( partn->id, is_partn_sql() )
+   cPartnId := partn->id
+
+   cRegB := get_partn_regb( cPartnId )
+   cIdBr := get_partn_idbr( cPartnId )
+   cPdvBr := get_partn_pdvb( cPartnId )
 
 
    IF !Empty( cIdBr ) .OR. !Empty( cPdvBr )
@@ -101,14 +103,14 @@ FUNCTION update_idbr_pdvb_from_regb()
 
    CASE 12
 
-      USifK( "PARTN", "IDBR", oPartnID, "4" + cRegB )
-      USifK( "PARTN", "PDVB", oPartnID, cRegB )
+      USifK( "PARTN", "IDBR", cPartnID, "4" + cRegB )
+      USifK( "PARTN", "PDVB", cPartnID, cRegB )
       EXIT
 
    CASE 13
 
-      USifK( "PARTN", "IDBR", oPartnId, cRegB )
-      USifK( "PARTN", "PDVB", oPartnId, "" )
+      USifK( "PARTN", "IDBR", cPartnId, cRegB )
+      USifK( "PARTN", "PDVB", cPartnId, "" )
       EXIT
 
    CASE 0
@@ -118,8 +120,8 @@ FUNCTION update_idbr_pdvb_from_regb()
 
    OTHERWISE
 
-      USifK( "PARTN", "IDBR", oPartnId, cRegB )
-      USifK( "PARTN", "PDVB", oPartnId, "" )
+      USifK( "PARTN", "IDBR", cPartnId, cRegB )
+      USifK( "PARTN", "PDVB", cPartnId, "" )
 
    ENDSWITCH
 
@@ -134,6 +136,7 @@ FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
    LOCAL cSeek
    LOCAL cNaz
    LOCAL cId
+   LOCAL hRec
 
    o_sifk()
 
@@ -150,16 +153,16 @@ FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
 
       APPEND BLANK
 
-      _rec := dbf_get_rec()
-      _rec[ "id" ] := cId
-      _rec[ "naz" ] := cNaz
-      _rec[ "oznaka" ] := cIdSifk
-      _rec[ "sort" ] := cSort
-      _rec[ "tip" ] := "C"
-      _rec[ "duzina" ] := nLen
-      _rec[ "veza" ] := "1"
+      hRec := dbf_get_rec()
+      hRec[ "id" ] := cId
+      hRec[ "naz" ] := cNaz
+      hRec[ "oznaka" ] := cIdSifk
+      hRec[ "sort" ] := cSort
+      hRec[ "tip" ] := "C"
+      hRec[ "duzina" ] := nLen
+      hRec[ "veza" ] := "1"
 
-      IF !update_rec_server_and_dbf( "sifk", _rec, 1, "FULL" )
+      IF !update_rec_server_and_dbf( "sifk", hRec, 1, "FULL" )
          delete_with_rlock()
       ENDIF
 

@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+
 FUNCTION cre_sif_roba( ver )
 
    LOCAL aDbf
@@ -59,6 +60,7 @@ FUNCTION cre_sif_roba( ver )
    AAdd( aDBf, { 'TROSK5', 'N',  15,  5 } )
    AAdd( aDBf, { 'IDKONTO', 'C',   7,  5 } )
 
+/*
    _alias := "ROBA"
    _table_name := "roba"
 
@@ -89,6 +91,7 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "PLU", "str(fisc_plu, 10)",  _alias )
    CREATE_INDEX( "IDP", { "id+tip", 'tip=="P"' },  _alias )
    AFTER_CREATE_INDEX
+*/
 
    // -------------------------------------------------
    // _ROBA

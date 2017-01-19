@@ -18,6 +18,7 @@ FUNCTION cre_sif_konto( ver )
    LOCAL _alias
    LOCAL aDbf
 
+/*
    _alias := "KONTO"
    _table_name := "konto"
 
@@ -35,5 +36,6 @@ FUNCTION cre_sif_konto( ver )
    index_mcode( my_home(), _alias )
 
    AFTER_CREATE_INDEX
+*/
 
    RETURN .T.

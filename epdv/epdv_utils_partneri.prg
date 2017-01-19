@@ -121,7 +121,8 @@ FUNCTION my_firma( lRetArray )
 
          update_rec_server_and_dbf( nil, _fields, 1, "FULL" )
 
-         USifK( "PARTN", "REGB", self_organizacija_id(), Unicode():New( cIdBroj, .F. ) )
+         //USifK( "PARTN", "REGB", self_organizacija_id(), Unicode():New( cIdBroj, .F. ) )
+         USifK( "PARTN", "REGB", self_organizacija_id(), cIdBroj )
 
       ELSE
          MsgBeep( "Nepopunjeni podaci o matičnoj firmi !" )
@@ -183,7 +184,8 @@ FUNCTION part_rejon( cIdPart )
    GO TOP
    SEEK self_organizacija_id()
 
-   cRejon := IzSifKPartn( "REJO", Unicode():New( cIdPart, .F. ), .F. )
+   //cRejon := IzSifKPartn( "REJO", Unicode():New( cIdPart, .F. ), .F. )
+   cRejon := IzSifKPartn( "REJO", cIdPart, .F. )
 
    PopWa()
 

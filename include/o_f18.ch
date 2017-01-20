@@ -220,7 +220,7 @@
 #xcommand O_RADKR   => select (F_RADKR)   ;  my_use ("radkr")    ; set order to tag "1"
 #xcommand O_RADKRX  => select (F_RADKR)   ;  my_use ("radkr")    ; set order to tag "0"
 #xcommand O__RADKR  => select (F__RADKR)  ;  my_use ("_radkr")
-#xcommand O_LD      => select (F_LD)      ;  my_use ("ld")       ; set order to tag "1"
+
 #xcommand O_LDX     => select (F_LD)      ;  my_use ("ld")       ; set order to tag "1"
 #xcommand O__LD     => select (F__LD)     ;  my_use ("_ld")
 #xcommand O_LDSM    => select (F_LDSM)    ;  my_use ("ldsm")     ; set order to tag "1"

@@ -117,10 +117,10 @@ FUNCTION ld_specifikacija_po_mjesecima()
    qqOstPrim := ""
    cSamoAktivna := "D"
 
-   O_LD
+   select_o_ld()
 
    IF !_create_mtemp()
-      RETURN
+      RETURN .T.
    ENDIF
 
    my_close_all_dbf()
@@ -129,7 +129,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
    o_str_spr()
    o_ops()
    o_ld_radn()
-   O_LD
+   select_o_ld()
 
    cIdRadn := fetch_metric( "ld_spec_po_rasponu_id_radnik", my_user(), cIdRadn )
    cSvaPrim := fetch_metric( "ld_spec_po_rasponu_sva_primanja", my_user(), cSvaPrim )
@@ -434,7 +434,7 @@ FUNCTION OSpecif()
    o_ld_rj()
    o_ld_radn()
    O_PARAMS
-   O_LD
+   select_o_ld()
    o_ops()
 
-   RETURN
+   RETURN .T.

@@ -12,6 +12,21 @@
 #include "f18.ch"
 
 
+FUNCTION o_ld()
+
+   SELECT ( F_LD )
+   my_use ( "ld" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+FUNCTION select_o_ld()
+   RETURN  select_o_dbf( "LD", F_LD, "ld_ld", "1" )
+
+
+
+
 FUNCTION o_banke()
 
    SELECT ( F_BANKE )

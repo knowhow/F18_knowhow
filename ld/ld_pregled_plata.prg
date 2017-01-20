@@ -30,7 +30,7 @@ FUNCTION pregled_plata()
    o_dopr()
    o_por()
    o_ld_radn()
-   O_LD
+   select_o_ld()
    o_ld_parametri_obracuna()
    O_PARAMS
 

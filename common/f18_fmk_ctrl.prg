@@ -234,7 +234,7 @@ STATIC FUNCTION f18_ld_data( data, checksum )
    LOCAL _n_c_iznos := 0
    LOCAL _n_c_stavke := 0
 
-   O_LD
+   o_ld()
 
    Box(, 2, 60 )
 

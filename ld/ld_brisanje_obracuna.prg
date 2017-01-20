@@ -43,7 +43,7 @@ FUNCTION BrisiRadnika()
 
    nUser := 001
    o_ld_radn()
-   O_LD
+   select_o_ld()
 
 
    lLogBrRadn := .F.
@@ -75,7 +75,7 @@ FUNCTION BrisiRadnika()
 
       IF cIdRadn <> "XXXXXX"
 
-         O_LD
+         select_o_ld()
          SELECT ld
          SEEK Str( cGodina, 4 ) + cIdRj + Str( cMjesec, 2 ) + BrojObracuna() + cIdRadn
 
@@ -169,7 +169,7 @@ FUNCTION BrisiMjesec()
 
    DO WHILE .T.
 
-      O_LD
+      select_o_ld()
 
       cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gLDRadnaJedinica

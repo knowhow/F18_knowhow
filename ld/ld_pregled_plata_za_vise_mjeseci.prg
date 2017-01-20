@@ -1283,6 +1283,6 @@ STATIC FUNCTION otvori_tabele()
    o_kred()
    o_dopr()
    o_por()
-   O_LD
+   select_o_ld()
 
    RETURN .T.

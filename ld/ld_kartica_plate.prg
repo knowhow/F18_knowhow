@@ -48,7 +48,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       o_ld_vrste_posla()
       O_RADKR
       o_kred()
-      O_LD
+      select_o_ld()
 
    ELSE
       cObracun := cObrac
@@ -239,13 +239,13 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       o_ld_vrste_posla()
       O_RADKR
       o_kred()
-      O_LD
+      select_o_ld()
 
       SET ORDER TO tag ( TagVO( "1" ) )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

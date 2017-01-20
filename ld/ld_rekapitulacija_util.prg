@@ -75,7 +75,7 @@ FUNCTION ORekap()
    o_ops()
    O_RADKR
    o_kred()
-   O_LD
+   o_ld()
 
    o_tippr_ili_tippr2( cObracun )
 

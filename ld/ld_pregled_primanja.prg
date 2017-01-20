@@ -29,7 +29,7 @@ FUNCTION ld_pregled_primanja()
    nRbr := 0
    o_ld_rj()
    o_ld_radn()
-   O_LD
+   select_o_ld()
 
    PRIVATE cTip := "  "
 

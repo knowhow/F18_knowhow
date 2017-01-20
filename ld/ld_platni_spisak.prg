@@ -28,7 +28,7 @@ FUNCTION ld_platni_spisak()
 
    o_ld_rj()
    o_ld_radn()
-   O_LD
+   select_o_ld()
 
    cProred := "N"
    cPrikIzn := "D"
@@ -325,7 +325,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    o_kred()
    o_ld_rj()
    o_ld_radn()
-   O_LD
+   select_o_ld()
 
    PRIVATE cIsplata := ""
    PRIVATE cLokacija
@@ -668,7 +668,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    o_kred()
    o_ld_rj()
    o_ld_radn()
-   O_LD
+   select_o_ld()
    SET RELATION TO idradn into radn
 
    cProred := "N"

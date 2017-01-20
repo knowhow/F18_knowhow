@@ -542,7 +542,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
    BoxC()
 
    o_ld_radn()
-   O_LD
+   select_o_ld()
 
    SET ORDER TO TAG "2"
    GO TOP

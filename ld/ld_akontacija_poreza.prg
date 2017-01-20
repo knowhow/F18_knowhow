@@ -756,6 +756,6 @@ STATIC FUNCTION o_tables()
    o_ld_radn()
    o_dopr()
    o_por()
-   O_LD
+   select_o_ld()
 
    RETURN .T.

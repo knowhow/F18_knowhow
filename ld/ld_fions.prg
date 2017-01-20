@@ -192,9 +192,9 @@ FUNCTION Prosj3( cTip, cTip2 )
 
    PushWA()
 
-   //  "1","str(godina)+idrj+str(mjesec)+idradn"
+   // "1","str(godina)+idrj+str(mjesec)+idradn"
    // "2","str(godina)+str(mjesec)+idradn"
-   SET ORDER TO tag ( TagVO( "2", "I" ) )
+   SET ORDER TO TAG ( TagVO( "2", "I" ) )
 
    i := 0
    IF cTip2 == "2" // "2"  -> vracam se mjesec unazad u kome nije bilo godisnjeg
@@ -207,7 +207,7 @@ FUNCTION Prosj3( cTip, cTip2 )
             SEEK Str( _Godina, 4 ) + Str( _mjesec - i, 2 ) + _idradn
             cMj1 := Str( _mjesec - i, 2 ) + "." + Str( _godina, 4 )
          ENDIF
-         if &gFUGod <> 0  // formula za godisnji, default: I06
+         IF &gFUGod <> 0  // formula za godisnji, default: I06
             nPomak++
          ELSE
             EXIT
@@ -218,12 +218,12 @@ FUNCTION Prosj3( cTip, cTip2 )
       ENDDO
    ENDIF
 
-   IF _mjesec - 1 -nPomak < 1
-      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1 -nPomak, 2 ) + _idradn
-      cMj1 := Str( 12 + _mjesec - 1 -nPomak, 2 ) + "." + Str( _godina - 1, 4 )
+   IF _mjesec - 1 - nPomak < 1
+      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1 - nPomak, 2 ) + _idradn
+      cMj1 := Str( 12 + _mjesec - 1 - nPomak, 2 ) + "." + Str( _godina - 1, 4 )
    ELSE
-      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 1 -nPomak, 2 ) + _idradn
-      cMj1 := Str( _mjesec - 1 -nPomak, 2 ) + "." + Str( _godina, 4 )
+      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 1 - nPomak, 2 ) + _idradn
+      cMj1 := Str( _mjesec - 1 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
    IF Found()
       IF lViseObr
@@ -256,12 +256,12 @@ FUNCTION Prosj3( cTip, cTip2 )
          ++nDijeli
       ENDIF
    ENDIF
-   IF _mjesec - 2 -nPomak < 1
-      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 2 -nPomak, 2 ) + _idradn
-      cMj2 := Str( 12 + _mjesec - 2 -nPomak, 2 ) + "." + Str( _godina - 1, 4 )
+   IF _mjesec - 2 - nPomak < 1
+      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 2 - nPomak, 2 ) + _idradn
+      cMj2 := Str( 12 + _mjesec - 2 - nPomak, 2 ) + "." + Str( _godina - 1, 4 )
    ELSE
-      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 2 -nPomak, 2 ) + _idradn
-      cMj2 := Str( _mjesec - 2 -nPomak, 2 ) + "." + Str( _godina, 4 )
+      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 2 - nPomak, 2 ) + _idradn
+      cMj2 := Str( _mjesec - 2 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
    IF Found()
       IF lViseObr
@@ -295,12 +295,12 @@ FUNCTION Prosj3( cTip, cTip2 )
       ENDIF
    ENDIF
 
-   IF _mjesec - 3 -nPomak < 1
-      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 3 -nPomak, 2 ) + _idradn
-      cMj3 := Str( 12 + _mjesec - 3 -nPomak, 2 ) + "." + Str( _godina - 1, 4 )
+   IF _mjesec - 3 - nPomak < 1
+      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 3 - nPomak, 2 ) + _idradn
+      cMj3 := Str( 12 + _mjesec - 3 - nPomak, 2 ) + "." + Str( _godina - 1, 4 )
    ELSE
-      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 3 -nPomak, 2 ) + _idradn
-      cMj3 := Str( _mjesec - 3 -nPomak, 2 ) + "." + Str( _godina, 4 )
+      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 3 - nPomak, 2 ) + _idradn
+      cMj3 := Str( _mjesec - 3 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
    IF Found()
       IF lViseObr
@@ -338,7 +338,7 @@ FUNCTION Prosj3( cTip, cTip2 )
       nDijeli := 99999999
    ENDIF
 
-   nSumsat := IIF( nSS1 + nSS2 + nSS3 <> 0, nSS1 + nSS2 + nSS3, 99999999 )
+   nSumsat := iif( nSS1 + nSS2 + nSS3 <> 0, nSS1 + nSS2 + nSS3, 99999999 )
 
    Box( "#" + IF( cTip $ "57", "UKUPNA PRIMANJA", "Prosjek" ) + " ZA MJESECE UNAZAD:", 6, 60 )
    @ m_x + 2, m_y + 2 SAY cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
@@ -350,13 +350,13 @@ FUNCTION Prosj3( cTip, cTip2 )
    @ m_x + 4, m_y + 2 SAY cmj3; @ Row(), Col() + 2 SAY nMj3 PICT "999999.999"
    IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp3, "/", nSS3; ENDIF
    IF cTip $ "57"; ?? "  sati:"; ?? nSS3; ENDIF
-   @ m_x + 6, m_y + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY ( nMj3 + nMj2 + nMj1 ) / IIF( cTip $ "57", nSumsat, nDijeli ) PICT "999999.999"
+   @ m_x + 6, m_y + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY ( nMj3 + nMj2 + nMj1 ) / iif( cTip $ "57", nSumsat, nDijeli ) PICT "999999.999"
    Inkey( 0 )
    BoxC()
 
    PopWa()
 
-   RETURN  ( nMj3 + nMj2 + nMj1 ) / IIF( cTip $ "57", nSumsat, nDijeli )
+   RETURN  ( nMj3 + nMj2 + nMj1 ) / iif( cTip $ "57", nSumsat, nDijeli )
 
 
 
@@ -374,7 +374,7 @@ FUNCTION UPrim()
       c719 := gFUPrim
    ENDIF
 
-   return &c719
+   RETURN &c719
 
 
 /*
@@ -387,7 +387,7 @@ FUNCTION USati()
    ENDIF
    c719 := UbaciPrefix( gFUSati, "w" )
 
-   return &c719
+   RETURN &c719
 
 
 
@@ -402,7 +402,7 @@ FUNCTION URPrim()
 
    c719 := UbaciPrefix( gFURaz, "w" )
 
-   return &c719
+   RETURN &c719
 
 
 // -----------------------------------------------
@@ -416,7 +416,7 @@ FUNCTION URSati()
 
    c719 := UbaciPrefix( gFURSati, "w" )
 
-   return &c719
+   RETURN &c719
 
 
 FUNCTION Prosj1( cTip, cTip2, cF0 )
@@ -448,7 +448,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
 
    // "1","str(godina)+idrj+str(mjesec)+idradn"
    // "2","str(godina)+str(mjesec)+idradn"
-   SET ORDER TO tag ( TagVO( "2", "I" ) )
+   SET ORDER TO TAG ( TagVO( "2", "I" ) )
 
    i := 0
 
@@ -565,7 +565,7 @@ FUNCTION Predhodni( i, cVar, cObr )
 
    // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
    // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
-   SET ORDER TO tag ( TagVO( "2", "I" ) )
+   SET ORDER TO TAG ( TagVO( "2", "I" ) )
 
    IF _Mjesec - i < 1
       HSEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1, 2 ) + _idradn
@@ -682,7 +682,7 @@ FUNCTION GETR( cPrompt, xValue )
    BoxC()
 
    IF LastKey() == K_ESC
-      return &xValue
+      RETURN &xValue
    ENDIF
 
    _rec := dbf_get_rec()
@@ -855,7 +855,7 @@ FUNCTION Bruto( nbruto, ndopr )
          nBruto += nPom
          nPorDopr += nPom
       ELSE
-         nPom0 := AScan( aNeta, {| x| x[ 1 ] == idkbenef } )
+         nPom0 := AScan( aNeta, {| x | x[ 1 ] == idkbenef } )
          IF nPom0 <> 0
             nPom2 := parobr->k3 / 100 * aNeta[ nPom0, 2 ]
          ELSE
@@ -951,10 +951,7 @@ FUNCTION PrimLD( cOznaka, cTipPr )
    PRIVATE cTipa := ""
    PRIVATE cpom := ""
 
-   SELECT ( F_LD )
-   IF !Used()
-      O_LD
-   ENDIF
+   select_o_ld()
 
    PushWA()
 
@@ -979,4 +976,4 @@ FUNCTION PrimLD( cOznaka, cTipPr )
 
 
 FUNCTION Unos2()
-   RETURN ( nil )
+   RETURN ( NIL )

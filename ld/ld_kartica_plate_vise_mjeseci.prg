@@ -329,6 +329,6 @@ STATIC FUNCTION otvori_tabele()
    o_kred()
    O__LD
    SET ORDER TO TAG "1"
-   O_LD
+   select_o_ld()
 
    RETURN .T.

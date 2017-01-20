@@ -309,6 +309,6 @@ STATIC FUNCTION otvori_tabele()
    o_ld_vrste_posla()
    o_ld_rj()
    o_ld_radn()
-   O_LD
+   select_o_ld()
 
    RETURN .T.

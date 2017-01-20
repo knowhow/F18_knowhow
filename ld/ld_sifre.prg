@@ -793,25 +793,25 @@ FUNCTION ImaUObrac( cKljuc, cTag )
    LOCAL lUsed := .T.
    LOCAL nArr := Select()
 
-   SELECT ( F_LD )
+   //SELECT ( F_LD )
 
-   IF !Used()
-      lUsed := .F.
-      O_LD
-   ELSE
-      PushWA()
-   ENDIF
+   //IF !Used()
+    //  lUsed := .F.
+    select_o_ld()
+   //ELSE
+  //  PushWA()
+   //ENDIF
 
    SET ORDER TO TAG ( cTag )
    SEEK cKljuc
 
    lVrati := Found()
 
-   IF !lUsed
-      USE
-   ELSE
-      PopWA()
-   ENDIF
+   //IF !lUsed
+    //  USE
+   //ELSE
+  //    PopWA()
+   //ENDIF
 
    IF !lVrati  // ako nema u LD, provjerimo ima li u 1.dijelu obracuna (smece)
       SELECT ( F_LDSM )
@@ -1114,7 +1114,7 @@ FUNCTION TotBrisRadn()
 
    o_ld_radn()         // id, "1"
    O_RADKR        // idradn, "2"
-   O_LD           // idradn, "RADN"
+   select_o_ld()           // idradn, "RADN"
    O_LDSM         // idradn, "RADN"
 
    Box(, 7, 75 )

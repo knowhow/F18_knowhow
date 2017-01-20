@@ -66,9 +66,13 @@ FUNCTION o_dbf_table( nArea, xTable, cTag )
 FUNCTION select_o_dbf( cAlias, nArea, xTable, cTag )
 
    IF Select( cAlias ) == 0
-      o_dbf_table( nArea, xTable, cTag )
+      RETURN o_dbf_table( nArea, xTable, cTag )
    ENDIF
 
    Select( nArea )
+   IF rddName() == "SQLMIX" // ako je otvoren kao sql, zatvori, pa otvori kao dbf
+      USE
+      RETURN o_dbf_table( nArea, xTable, cTag )
+   ENDIF
 
    RETURN .T.

@@ -17,7 +17,7 @@ FUNCTION ld_unos_obracuna()
    LOCAL lSaveObracun
    LOCAL _vals
    LOCAL _fields
-   LOCAL _pr_kart_pl := fetch_metric( "ld_obracun_prikaz_kartice_na_unosu", nil, "N" )
+   LOCAL _pr_kart_pl := fetch_metric( "ld_obracun_prikaz_kartice_na_unosu", NIL, "N" )
    PRIVATE lNovi
    PRIVATE GetList
    PRIVATE cIdRadn
@@ -29,10 +29,7 @@ FUNCTION ld_unos_obracuna()
    nGodina := gGodina
    nMjesec := gMjesec
 
-   SELECT ( F_LD )
-   IF !Used()
-      O_LD
-   ENDIF
+   select_o_ld()
 
    DO WHILE .T.
 
@@ -65,7 +62,7 @@ FUNCTION ld_unos_obracuna()
             IF !update_rec_server_and_dbf( "ld_ld",  _vals, 1, "FULL" )
                delete_with_rlock()
             ELSE
-               log_write( "F18_DOK_OPER: ld, " + IIF( lNovi, "unos novog", "korekcija" ) + " obracuna plate - radnik: " + ld->idradn + ", mjesec: " + AllTrim( Str( ld->mjesec ) ) + ", godina: " + AllTrim( Str( ld->godina ) ), 2 )
+               log_write( "F18_DOK_OPER: ld, " + iif( lNovi, "unos novog", "korekcija" ) + " obracuna plate - radnik: " + ld->idradn + ", mjesec: " + AllTrim( Str( ld->mjesec ) ) + ", godina: " + AllTrim( Str( ld->godina ) ), 2 )
             ENDIF
 
          ELSE
@@ -107,17 +104,17 @@ FUNCTION ld_unos_obracuna()
 
 
 FUNCTION QQOUTC( cTekst, cBoja )
+
    @ Row(), Col() SAY cTekst COLOR cBoja
+
    RETURN
 
 
 
 FUNCTION OObracun()
 
-   SELECT F_LD
-   IF !Used()
-      O_LD
-   ENDIF
+   select_o_ld()
+
 
    SELECT F_PAROBR
    IF !Used()
@@ -199,7 +196,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    LOCAL cMinRadOpis, cMinRadPict
    LOCAL cTrosk
    LOCAL cOpor
-   LOCAL _radni_sati := fetch_metric( "ld_radni_sati", nil, "N" )
+   LOCAL _radni_sati := fetch_metric( "ld_radni_sati", NIL, "N" )
    PRIVATE cIdRj
    PRIVATE cGodina
    PRIVATE cIdRadn
@@ -219,7 +216,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    lNovi := .F.
 
-   Box( , MAXROWS() - 3, MAXCOLS() -10 )
+   Box( , MAXROWS() - 3, MAXCOLS() - 10 )
 
    @ m_x + 1, m_y + 2 SAY _l( "Radna jedinica: " )
 
@@ -255,7 +252,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    ESC_BCR
 
-   nO_Ret := ParObr( cMjesec, cGodina, IF( lViseObr, cObracun, nil ), cIdRj )
+   nO_Ret := ParObr( cMjesec, cGodina, IF( lViseObr, cObracun, NIL ), cIdRj )
 
    IF nO_ret = 0
 
@@ -347,7 +344,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    @ m_x + 3, Col() + 2 SAY cMinRadOpis GET _kminrad PICT cMinRadPict VALID set_koeficijent_minulog_rada( _kminrad )
 
    @ m_x + 4, m_y + 2 SAY8 "Lič.odb:" GET _ulicodb PICT "9999.99"
-   @ m_x + 4, Col() + 1 SAY _l( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla valid ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
+   @ m_x + 4, Col() + 1 SAY _l( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla VALID ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
 
    READ
 
@@ -395,10 +392,10 @@ STATIC FUNCTION kalkulisi_uneto_usati_uiznos_za_radnika()
 
    hData := izracunaj_uneto_usati_za_radnika()
 
-   _usati := hData["usati"]
-   _uneto := hData["uneto"]
-   _uodbici := hData["uodbici"]
-   _uiznos := hData["uneto"] + hData["uodbici"]
+   _usati := hData[ "usati" ]
+   _uneto := hData[ "uneto" ]
+   _uodbici := hData[ "uodbici" ]
+   _uiznos := hData[ "uneto" ] + hData[ "uodbici" ]
 
    RETURN NIL
 
@@ -535,7 +532,7 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
 
       // zato što naknadno radimo definisanje tip primanja, moramo napraviti rekalkulaciju
       hData := izracunaj_uneto_usati_za_radnika()
-      _uodbici := hData["uodbici"]
+      _uodbici := hData[ "uodbici" ]
       izracunaj_ukupno_za_isplatu_za_radnika( cTipRada, cTrosk, nTrosk, lInRs )
 
       MsgBeep( "Za radnika je obračnuat odbitak radi elementarnih nepogoda." )
@@ -578,7 +575,6 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
       lSaveObracun := .T.
    ENDIF
 
-
    RETURN .T.
 
 
@@ -616,7 +612,7 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
       IF LD->( FieldPos( cPoljeIznos ) = 0 ) .AND. LD->( FieldPos( cPoljeSati ) = 0 )
          MsgBeep( "Broj polja u LD -> 30, potrebna modifikacija struktura !!!" )
-         RETURN
+         RETURN .F.
       ENDIF
 
       cW := "WhUnos(" + dbf_quote( cIdTp ) + ")"
@@ -624,13 +620,13 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
       IF ( tippr->( Found() ) .AND. tippr->aktivan == "D" )
          IF ( tippr->fiksan $ "DN" )
-            @ m_x + nRedTP, m_Y + 2 SAY tippr->id + "-" + tippr->naz + " (SATI) " GET &cVarTP PICT gPics when &cW valid &cV
+            @ m_x + nRedTP, m_Y + 2 SAY tippr->id + "-" + tippr->naz + " (SATI) " GET &cVarTP PICT gPics WHEN &cW VALID &cV
          ELSEIF ( tippr->fiksan == "P" )
-            @ m_x + nRedTP, m_Y + 2 SAY tippr->id + "-" + tippr->naz + " (%)    " GET &cVarTP. PICT "999.99" when &cW valid &cV
+            @ m_x + nRedTP, m_Y + 2 SAY tippr->id + "-" + tippr->naz + " (%)    " GET &cVarTP. PICT "999.99" WHEN &cW VALID &cV
          ELSEIF tippr->fiksan == "B"
-            @ m_x + nRedTP, m_Y + 2 SAY tippr->id + "-" + tippr->naz + "(BODOVA)" GET &cVarTP. PICT gPici when &cW valid &cV
+            @ m_x + nRedTP, m_Y + 2 SAY tippr->id + "-" + tippr->naz + "(BODOVA)" GET &cVarTP. PICT gPici WHEN &cW VALID &cV
          ELSEIF tippr->fiksan == "C"
-            @ m_x + nRedTP, m_Y + 2 SAY tippr->id + "-" + tippr->naz + "        " GET cTipPrC when &cW valid &cV
+            @ m_x + nRedTP, m_Y + 2 SAY tippr->id + "-" + tippr->naz + "        " GET cTipPrC WHEN &cW VALID &cV
          ENDIF
 
          @ m_x + nRedTP, m_y + 50 SAY "IZNOS" GET &cIznosTP PICT gPici
@@ -653,7 +649,9 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
 
 FUNCTION WhUnos( cTP )
+
    tippr->( dbSeek( cTP ) )
+
    RETURN .T.
 
 

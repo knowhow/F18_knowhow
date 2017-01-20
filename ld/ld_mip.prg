@@ -488,11 +488,11 @@ STATIC FUNCTION mipmip_glavna_fill_xml( cFile )
       ENDIF
 
 
-      cT_radnik := field->idradn // po radniku
+      cIdRadnikTekuci := field->idradn // po radniku
 
 
       SELECT radn
-      SEEK cT_radnik
+      SEEK cIdRadnikTekuci
 
       SELECT r_export
 
@@ -517,7 +517,7 @@ STATIC FUNCTION mipmip_glavna_fill_xml( cFile )
 
       lImaBolovanjePreko42 := .F.
 
-      DO WHILE !Eof() .AND. field->idradn == cT_radnik
+      DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
          IF field->PRINT == "X"
             SKIP
@@ -775,7 +775,7 @@ STATIC FUNCTION mip_glavna_fill_xml( xml_file )
       ENDIF
 
 
-      cT_radnik := field->idradn // po radniku
+      cIdRadnikTekuci := field->idradn // po radniku
 
       xml_subnode( "radnik", .F. )
 
@@ -808,7 +808,7 @@ STATIC FUNCTION mip_glavna_fill_xml( xml_file )
       lImaBolovanjePreko42 := .F.
 
 
-      DO WHILE !Eof() .AND. field->idradn == cT_radnik // provrti obracune
+      DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci // provrti obracune
 
          IF field->PRINT == "X"
             SKIP
@@ -909,8 +909,9 @@ STATIC FUNCTION g_por_per()
 
 
 FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
-      cRadnik, cTipPrimIsplateUslugeIliDobra,  cTipoviPrimanjaNeUlazeBeneficirani, cTipoviPrimanjaBolovanje, cTipoviPrimanjaBolovanjePreko, cDopr10, ;
-      cDopr11, cDopr12, ;
+      cRadnik, ;
+      cTipPrimIsplateUslugeIliDobra,  cTipoviPrimanjaNeUlazeBeneficirani, cTipoviPrimanjaBolovanje, cTipoviPrimanjaBolovanjePreko, ;
+      cDopr10, cDopr11, cDopr12, ;
       cDopr1X, cDopr20, cDopr21, cDopr22, cDoprDod, cDopr2D, cObracun, cNule )
 
    LOCAL i
@@ -928,10 +929,11 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
    LOCAL lImaBovanjaPreko42, nBolovanjaPreko42Iznos := 0, nBolovanjaPreko42Sati := 0
    LOCAL nBrojRadnihSati
    LOCAL cTipRada, lDatIspl
-   LOCAL cT_radnik
+   LOCAL cIdRadnikTekuci
    LOCAL m
    LOCAL aBeneficiraniRadniStaz
    LOCAL nGodina, nMjesec
+   LOCAL nFondSati
 
 
    lDatIspl := .F.
@@ -953,12 +955,12 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          LOOP
       ENDIF
 
-      cT_radnik := field->idradn
+      cIdRadnikTekuci := field->idradn
       nGodina := field->godina
       nMjesec := field->mjesec
 
       IF !Empty( cRadnik )
-         IF cT_radnik <> cRadnik
+         IF cIdRadnikTekuci <> cRadnik
             SKIP
             LOOP
          ENDIF
@@ -967,13 +969,14 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
-
       ParObr( ld->mjesec, ld->godina, ld->obr, ld->idrj ) // samo pozicionira bazu PAROBR na odgovarajuci zapis
 
       SELECT radn
-      SEEK cT_radnik
+      SEEK cIdRadnikTekuci
 
-      IF !( cTipRada $ " #I#N" )
+     //https://redmine.bring.out.ba/projects/klijenti/wiki/Modul_LD
+      IF !( cTipRada $ " #I#N" ) // ako nije " " ili "I" ili "N" - neto-neto
+         MsgBeep( "preskace se radnik " + ld->idradn + " jer tip rada nije 'I/N/ ' !")
          SELECT ld
          SKIP
          LOOP
@@ -1016,7 +1019,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       cR_opc := ""
       cSifraRadnogMjestaUvecanoTrajanje := ""
 
-      DO WHILE !Eof() .AND. field->idradn == cT_radnik
+      DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
          IF ld_date( field->godina, field->mjesec ) <  ld_date( cGod, cMj )
             SKIP
@@ -1031,14 +1034,12 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          cRadJed := ld->idrj // radna jedinica
 
          SELECT radn
-
          cR_ime := AllTrim( radn->ime ) + " " + AllTrim( radn->naz )
          cR_jmb := AllTrim( radn->matbr )
          cR_opc := g_ops_code( radn->idopsst )
          cSifraRadnogMjestaUvecanoTrajanje := ""
 
          SELECT ld
-
          cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj ) // uvijek provjeri tip rada, ako ima vise obracuna
          cTrosk := radn->trosk
          lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
@@ -1049,7 +1050,6 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          ENDIF
 
          ParObr( ld->mjesec, ld->godina, ld->obr, ld->idrj )
-
          nFondSati := parobr->k1 // puni fond sati za ovaj mjesec
 
          nPrimanjaUslugeIliDobraIznos := 0
@@ -1064,8 +1064,6 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanjePreko, @nBolovanjaPreko42Iznos, @nBolovanjaPreko42Sati )
          IF Round( nBolovanjaPreko42Iznos, 2 ) != 0 .OR. Round( nBolovanjaPreko42Sati, 2 ) != 0
             lImaBovanjaPreko42 := .T.
-            nPrimanjaUslugeIliDobraIznos += 0.0000001 // bjasko prijavio da ako nema iznosa redovnog rada
-                                                      // ne prikazuje u mipu one kojima je isplacivano za bolovanje preko42d
          ENDIF
 
          nNeto := ld->uneto
@@ -1077,6 +1075,8 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          IF lImaBovanjaPreko42  // uzmi puni fond sati
             nBrojRadnihSati := nFondSati
             nSatiB := nFondSati
+            // bolovanje preko42d nije unutar neto
+            nNeto += 0.0000001
          ENDIF
 
          nRadnihSatiUvecanoTrajanje := 0
@@ -1123,7 +1123,6 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             // nRadnihSatiUvecanoTrajanje := field->usati
             // ENDIF
 
-
             nStUv := benefstepen() // benef.stepen
             cBen_stopa := AllTrim( radn->k3 )
 
@@ -1132,7 +1131,6 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             gBFForm := StrTran( gBFForm, "_", "" )
 
             nBr_Benef := bruto_osn( nNeto - iif( !Empty( gBFForm ), &gBFForm, 0 ), cTipRada, nL_odb )
-
             add_to_a_benef( @aBeneficiraniRadniStaz, cBen_stopa, nStUv, nBr_Benef )
 
             gBFForm := cFFtmp // vrati parametre
@@ -1163,10 +1161,10 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
          IF !Empty( cDoprDod ) // dodatni doprinosi iz beneficije
 
-            aD_Dopr := TokToNiz( cDoprDod, ";" )
+            aDodatniDoprinosiIzBeneficije := TokToNiz( cDoprDod, ";" )
 
-            FOR m := 1 TO Len( aD_dopr )
-               nDoprTmp := get_dopr( aD_dopr[ m ], cTipRada )
+            FOR m := 1 TO Len( aDodatniDoprinosiIzBeneficije )
+               nDoprTmp := get_dopr( aDodatniDoprinosiIzBeneficije[ m ], cTipRada )
                IF !Empty( dopr->idkbenef ) .AND. cBen_stopa == dopr->idkbenef
                   nU_d_pms += Round( get_benef_osnovica( aBeneficiraniRadniStaz, dopr->idkbenef ) * nDoprTmp / 100, 4 )
                ENDIF
@@ -1177,9 +1175,9 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
          IF !Empty( cDopr2D ) // dodatni doprinosi na
 
-            aD2_Dopr := TokToNiz( cDopr2D, ";" )
-            FOR c := 1 TO Len( aD2_dopr )
-               nDoprTmp := get_dopr( aD2_dopr[ c ], cTipRada )
+            aDodatniDoprinosiNaZaBeneficiju := TokToNiz( cDopr2D, ";" )
+            FOR c := 1 TO Len( aDodatniDoprinosiNaZaBeneficiju )
+               nDoprTmp := get_dopr( aDodatniDoprinosiNaZaBeneficiju[ c ], cTipRada )
                IF !Empty( dopr->idkbenef ) .AND. cBen_stopa == dopr->idkbenef
                   nU_dn_dz += Round( nBr_benef * nDoprTmp / 100, 4 )
                ELSE
@@ -1203,7 +1201,6 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          nNaRuke := Round( nBruto - nU_d_iz - nPorez + nTrosk, 2 ) // na ruke je
 
          nIsplata := nNaRuke
-
 
          IF cTipRada $ " #I#N#"  // da li se radi o minimalcu ?
             nIsplata := min_neto( nIsplata, field->usati )
@@ -1237,7 +1234,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             cVrstaIspl := AllTrim( field->v_ispl )
          ENDIF
 
-         mip_insert_record_r_export( cT_radnik, ;
+         mip_insert_record_r_export( cIdRadnikTekuci, ;
             cRadJed, ;
             nGodina, ;
             nMjesec, ;

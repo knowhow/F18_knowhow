@@ -67,6 +67,7 @@ FUNCTION get_ld_rj_tip_rada( cRadn, cRj )
    RETURN cTipRada
 
 
+
 FUNCTION g_oporeziv( cRadn, cRj )
 
    LOCAL cOpor := " "

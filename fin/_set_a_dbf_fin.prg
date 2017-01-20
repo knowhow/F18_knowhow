@@ -223,7 +223,7 @@ FUNCTION set_a_dbf_fin_nalog()
    RETURN .T.
 
 
-
+/*
 FUNCTION set_a_dbf_fin_parek()
 
    LOCAL _alg, _tbl, _item
@@ -429,3 +429,4 @@ FUNCTION set_a_dbf_fin_budzet()
    f18_dbfs_add( _tbl, @_item )
 
    RETURN .T.
+*/

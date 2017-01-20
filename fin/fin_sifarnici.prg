@@ -111,7 +111,7 @@ FUNCTION P_KS( cId, dx, dy )
  *   param: cId
  *   param: dx
  *   param: dy
- */
+
 
 FUNCTION P_Fond( cId, dx, dy )
 
@@ -123,7 +123,7 @@ FUNCTION P_Fond( cId, dx, dy )
    Kol := { 1, 2 }
 
    RETURN PostojiSifra( F_FOND, 1, 10, 70, "Lista: Fondovi", @cId, dx, dy )
-
+ */
 
 
 /* P_BuIz(cId,dx,dy)
@@ -153,7 +153,7 @@ FUNCTION P_BuIz( cId, dx, dy )
  *   param: cId
  *   param: dx
  *   param: dy
- */
+
 
 FUNCTION P_Budzet( cId, dx, dy )
 
@@ -169,7 +169,7 @@ FUNCTION P_Budzet( cId, dx, dy )
    Kol := { 1, 2, 3, 4, 5, 6 }
 
    RETURN PostojiSifra( F_BUDZET, 1, 10, 55, "Plan budzeta za tekucu godinu", @cId, dx, dy )
-
+ */
 
 
 
@@ -178,7 +178,6 @@ FUNCTION P_Budzet( cId, dx, dy )
  *   param: cId
  *   param: dx
  *   param: dy
- */
 
 FUNCTION P_ParEK( cId, dx, dy )
 
@@ -191,7 +190,7 @@ FUNCTION P_ParEK( cId, dx, dy )
 
    RETURN PostojiSifra( F_PAREK, 1, 10, 55, "Partije->Konta", @cId, dx, dy )
 
-
+*/
 
 
 

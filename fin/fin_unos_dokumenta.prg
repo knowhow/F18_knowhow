@@ -246,13 +246,13 @@ FUNCTION edit_fin_priprema()
       @ m_x + 11, Col() + 2 SAY "RJ" GET _idrj VALID Empty( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
    ENDIF
 
-   IF gTroskovi == "D"
-      @ m_x + 12, m_y + 22 SAY "      Funk." GET _Funk VALID Empty( _Funk ) .OR. P_Funk( @_Funk ) PICT "@!"
-      @ m_x + 12, m_y + 44 SAY "      Fond." GET _Fond VALID Empty( _Fond ) .OR. P_Fond( @_Fond ) PICT "@!"
-   ENDIF
+   //IF gTroskovi == "D"
+    //  @ m_x + 12, m_y + 22 SAY "      Funk." GET _Funk VALID Empty( _Funk ) .OR. P_Funk( @_Funk ) PICT "@!"
+    //  @ m_x + 12, m_y + 44 SAY "      Fond." GET _Fond VALID Empty( _Fond ) .OR. P_Fond( @_Fond ) PICT "@!"
+   //ENDIF
 
    @ m_x + 13, m_y + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
-      VALID Partija( @_IdKonto ) .AND. P_Konto( @_IdKonto, 13, 20 ) ;
+      VALID P_Konto( @_IdKonto, 13, 20 ) ;
       .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
 
 
@@ -729,7 +729,7 @@ FUNCTION CheckMark( cIdKonto, cIdPartner, cNewPartner )
 /* Partija(cIdKonto)
  *
  *   param: cIdKonto - oznaka konta
- */
+
 
 FUNCTION Partija( cIdKonto )
 
@@ -742,7 +742,7 @@ FUNCTION Partija( cIdKonto )
 
    RETURN .T.
 
-
+ */
 
 // -----------------------------------------------------
 // Ispis duguje/potrazuje u domacoj i pomocnoj valuti

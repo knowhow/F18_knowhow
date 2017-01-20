@@ -343,7 +343,7 @@ FUNCTION cre_all_fin( ver )
    // FIN_PAREK
    // -----------------------------------------------------------
 
-   _alias := "PAREK"
+   --_alias := "PAREK"
    _table_name := "fin_parek"
 
    aDBf := {}

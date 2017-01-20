@@ -92,7 +92,7 @@ STATIC FUNCTION _menu_budzet()
 
    f18_menu( "sbdz", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION OSifBudzet()

@@ -157,6 +157,7 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
    LOCAL cBrDok, cIdKontoProdavnica
    LOCAL _bk_tmp
    LOCAL _app_rec
+   LOCAL lError := .F.
 
    // LOCAL aRobaReportData := {}
    LOCAL nCount := 0
@@ -230,8 +231,9 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
       IF !find_roba_by_id( topska->idroba )
          // IF !Found()
          MsgBeep( "artikal " + topska->idroba + " ne postoji u KALK roba ?!#STOP operacije!" )
-         my_close_all_dbf()
-         RETURN .F.
+         //my_close_all_dbf()
+         //RETURN .F.
+         lError := .T.
       ENDIF
       SELECT topska
       SKIP
@@ -299,11 +301,12 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
    IF ( nCount > 0 ) // .AND. lAutoRazduzenje == "N"
       IF FErase( cTopskaImeDbf ) == -1 // pobrisi fajlove
          MsgBeep( "Problem sa brisanjem fajla !" )
+         lError := .T.
       ENDIF
       FErase( get_topska_ime_txt( cTopskaImeDbf ) )
    ENDIF
 
-   RETURN .T.
+   RETURN lError
 
 
 STATIC FUNCTION tops_kalk_view_txt( cTopskaImeDbf )
@@ -396,7 +399,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, nRbr )
 STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, nRbr )
 
    LOCAL nDbfArea := Select()
-   LOCAL _opp
+   LOCAL cTarifaPDVD
 
    IF ( topska->kolicina == 0 )
       RETURN .F.
@@ -404,7 +407,7 @@ STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, nRbr )
 
    SELECT tarifa
    HSEEK topska->idtarifa
-   _opp := tarifa->opp
+   cTarifaPDVD := tarifa->opp
 
    SELECT kalk_pripr
 
@@ -426,8 +429,8 @@ STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, nRbr )
    REPLACE field->mpcsapp WITH topska->mpc
 
    IF Round( topska->stmpc, 2 ) <> 0
-      IF _opp > 0
-         REPLACE field->rabatv with ( topska->stmpc / ( 1 + ( _opp / 100 ) ) )  // izbijamo PDV iz ove stavke ako je tarifa PDV17
+      IF cTarifaPDVD > 0
+         REPLACE field->rabatv with ( topska->stmpc / ( 1 + ( cTarifaPDVD / 100 ) ) )  // izbijamo PDV iz ove stavke ako je tarifa PDV17
       ELSE
          REPLACE field->rabatv WITH topska->stmpc // tarifa nije PDV17
       ENDIF

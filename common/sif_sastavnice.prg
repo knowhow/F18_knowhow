@@ -28,9 +28,9 @@ FUNCTION p_sast( cId, dx, dy )
 
    GO TOP
 
-   RETURN PostojiSifra( F_ROBA, "IDP", MAXROWS() -15, MAXCOLS() -3, ;
+   RETURN PostojiSifra( F_ROBA, "IDP", MAXROWS() - 15, MAXCOLS() - 3, ;
       "Gotovi proizvodi: <ENTER> Unos norme, <Ctrl-F4> Kopiraj normu, <F7>-lista norm.", ;
-      @cId, dx, dy, {| Ch| sast_key_handler( Ch ) } )
+      @cId, dx, dy, {| Ch | sast_key_handler( Ch ) } )
 
 
 FUNCTION show_sast()
@@ -52,7 +52,7 @@ FUNCTION show_sast()
    // setuj kolone sastavnice tabele
    sast_a_kol( @ImeKol, @Kol )
 
-   PostojiSifra( F_SAST, "IDRBR", MAXROWS() - 18, 80, cIdTek + "-" + Left( roba->naz, 40 ),,,, {| Char| EdSastBlok( Char ) },,,, .F. )
+   PostojiSifra( F_SAST, "IDRBR", MAXROWS() - 18, 80, cIdTek + "-" + Left( roba->naz, 40 ),,,, {| Char | EdSastBlok( Char ) },,,, .F. )
 
    PopWa()
 
@@ -241,7 +241,10 @@ FUNCTION exp_roba_dbf() // export robe u dbf
    AAdd( aDbf, { "VPC", "N", 12, 2 } )
    AAdd( aDbf, { "MPC", "N", 12, 2 } )
 
-   create_dbf_r_export( aDbf )
+   IF !create_dbf_r_export( aDbf )
+      RETURN .F.
+   ENDIF
+   
    O_R_EXP
    o_roba()
    SELECT roba

@@ -160,7 +160,9 @@ STATIC FUNCTION mnu_ios_print()
 
    IF _export_dbf == "D"    // eksport podataka u dbf tabelu
       _exp_fields := g_exp_fields()
-      create_dbf_r_export( _exp_fields )
+      IF !create_dbf_r_export( _exp_fields )
+         RETURN .F.
+      ENDIF
    ENDIF
 
 
@@ -233,7 +235,7 @@ STATIC FUNCTION mnu_ios_print()
       @ m_x + 1, m_y + 2 SAY "Cnt: " + Str( nCount, 5 ) + " / limit: " + Str( nCountLimit, 5 )
 
       IF nCount > nCountLimit
-         MsgBeep( "Posljednja obuhvaćena šifra parnera: " + cIdPartnerTekuci)
+         MsgBeep( "Posljednja obuhvaćena šifra parnera: " + cIdPartnerTekuci )
          EXIT
       ENDIF
    ENDDO
@@ -400,7 +402,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
                xml_node( "rbr", AllTrim( Str( ++_rbr ) ) )
                xml_node( "brdok", to_xml_encoding( field->brdok ) )
-               xml_node( "opis", to_xml_encoding( hb_Utf8ToStr( field->opis ) ) )
+               xml_node( "opis", to_xml_encoding( hb_UTF8ToStr( field->opis ) ) )
                xml_node( "datdok", DToC( field->datdok ) )
                xml_node( "datval", DToC( fix_dat_var( field->datval ) ) )
 

@@ -74,7 +74,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
       cIdFirma := PadR( cIdFirma, 2 )
 
-      @ m_x + nX, m_y + 2 SAY "RJ            " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      @ m_x + nX, m_y + 2 SAY "RJ            " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
       ++nX
 
@@ -86,13 +86,13 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
       @ m_x + nX, Col() + 1 SAY "do"  GET dDatDo
 
-      ++ nX
+      ++nX
 
       @ m_x + nX, m_y + 2 SAY "gledati dat. (D)dok. (O)otpr. (V)valute:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
 
       nX := nX + 3
 
-      @ m_x + nX, m_y + 2 SAY "Uslov po sifri partnera (prazno svi) "  GET qqPartn PICT "@!" valid {|| Empty( qqPartn ) .OR. p_partner( @qqPartn ) }
+      @ m_x + nX, m_y + 2 SAY "Uslov po sifri partnera (prazno svi) "  GET qqPartn PICT "@!" VALID {|| Empty( qqPartn ) .OR. p_partner( @qqPartn ) }
 
       ++nX
 
@@ -104,7 +104,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
 
       IF lRelations == .T.
-         ++ nX
+         ++nX
          @ m_x + nX, m_y + 2 SAY "Relacija (prazno sve):" GET cRelation
       ENDIF
 
@@ -163,7 +163,9 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    IF lExpRpt == .T. // export dokumenta
       aExpFields := get_rpt_fields()
-      create_dbf_r_export( aExpFields )
+      IF !create_dbf_r_export( aExpFields )
+         RETURN .F.
+      ENDIF
    ENDIF
 
    _o_tables()
@@ -210,7 +212,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    IF ( cFilter == ".t." )
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
 
    EOF CRET
@@ -442,7 +444,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             ENDIF
 
             // pojedinacna osnova
-            nPojOsn := Round( kolicina * Cijena * ( 1 -Rabat / 100 ) * ( 1 + Porez / 100 ), ZAOKRUZENJE )
+            nPojOsn := Round( kolicina * Cijena * ( 1 - Rabat / 100 ) * ( 1 + Porez / 100 ), ZAOKRUZENJE )
 
 
             nPojUk := nPojOsn // ukupni iznos sa PDV
@@ -470,7 +472,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             nOsn += nPojOsn
             nUkupno += nPojUk
 
-            ++ nCounter
+            ++nCounter
 
             // ispisi progres u box-u
             IF nCounter % 50 == 0

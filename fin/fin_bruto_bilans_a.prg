@@ -61,7 +61,7 @@ METHOD FinBrutoBilans:New( _tip_ )
 
    ::tip := 1
    ::klase := {}
-   ::data := NIL
+   ::DATA := NIL
    ::broj_stranice := 0
    ::txt_rpt_len := 60
    ::init_params()
@@ -101,16 +101,16 @@ METHOD FinBrutoBilans:init_params()
 METHOD FinBrutoBilans:set_bb_params()
 
    DO CASE
-   case ::tip == 1
+   CASE ::tip == 1
       ::hParams[ "naziv" ] := "SUBANALITIČKI BRUTO BILANS"
       ::hParams[ "odt_template" ] := "fin_bbl.odt"
-   case ::tip == 2
+   CASE ::tip == 2
       ::hParams[ "naziv" ] := "ANALITIČKI BRUTO BILANS"
       ::hParams[ "odt_template" ] := "fin_bbl.odt"
-   case ::tip == 3
+   CASE ::tip == 3
       ::hParams[ "naziv" ] := "SINTETIČKI BRUTO BILANS"
       ::hParams[ "odt_template" ] := "fin_bbl.odt"
-   case ::tip == 4
+   CASE ::tip == 4
       ::hParams[ "naziv" ] := "BRUTO BILANS PO GRUPAMA"
       ::hParams[ "odt_template" ] := "fin_bbl.odt"
    ENDCASE
@@ -121,13 +121,13 @@ METHOD FinBrutoBilans:set_bb_params()
 METHOD FinBrutoBilans:print_b_rpt()
 
    DO CASE
-   case ::tip == 1
+   CASE ::tip == 1
       fin_bb_subanalitika_b( ::hParams )
-   case ::tip == 2
+   CASE ::tip == 2
       fin_bb_analitika_b( ::hParams )
-   case ::tip == 3
+   CASE ::tip == 3
       fin_bb_sintetika_b( ::hParams )
-   case ::tip == 4
+   CASE ::tip == 4
       fin_bb_grupe_b( ::hParams )
    ENDCASE
 
@@ -156,7 +156,7 @@ METHOD FinBrutoBilans:get_vars()
    LOCAL _export_dbf := "N"
    LOCAL _tip := 1
 
-   if ::tip <> NIL
+   IF ::tip <> NIL
       _tip := ::tip
    ENDIF
 
@@ -164,21 +164,21 @@ METHOD FinBrutoBilans:get_vars()
 
    @ m_x + _x, m_y + 2 SAY "***** BRUTO BILANS *****"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "ODABERI VRSTU BILANSA:"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY8 "[1] subanalitički [2] analitički [3] sintetički [4] po grupama :" GET _tip PICT "9"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY8 "VRSTA ŠTAMPE:"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY8 "[1] TXT [2] ODT (Libre Office) :" GET _var_txt PICT "@!" VALID _var_txt $ "12"
 
@@ -195,48 +195,48 @@ METHOD FinBrutoBilans:get_vars()
       _var_ab := "A"
    ENDIF
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY8 "**** USLOVI IZVJEŠTAJA:"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Konta (prazno-sva):" GET _konto PICT "@!S40"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Za period od:" GET _dat_od
    @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do
 
-   ++ _x
+   ++_x
 
    IF _var_txt == "1"
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY8 "Varijanta izvještaja (A/B):" GET _var_ab PICT "@!" VALID _var_ab $ "AB"
    ENDIF
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Prikaz stavki sa saldom 0 (D/N) ?" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Prikaz kolone tekući promet (D/N) ?" GET _tek_prom VALID _tek_prom $ "DN" PICT "@!"
 
    @ m_x + _x, Col() + 1 SAY8 "Klase unutar izvještaja (D/N) ?" GET _podklase VALID _podklase $ "DN" PICT "@!"
 
    IF gFinRj == "D"
-      ++ _x
+      ++_x
       _id_rj := Space( 6 )
       @ m_x + _x, m_y + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj
    ENDIF
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Format izvještaja (1 - A3, 2 - A4, 3 - A4L) ?" GET _format PICT "@S1" VALID _format $ "123"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Export izvještaja u DBF (D/N) ?" GET _export_dbf VALID _export_dbf $ "DN" PICT "@!"
 
    READ
@@ -298,7 +298,7 @@ METHOD FinBrutoBilans:get_data()
    LOCAL _table := F18_PSQL_SCHEMA_DOT + "fin_suban"
    LOCAL _date_field := "sub.datdok"
 
-   if ::tip == 2
+   IF ::tip == 2
 
       _table := F18_PSQL_SCHEMA_DOT + "fin_anal"
       _date_field := "sub.datnal"
@@ -306,7 +306,7 @@ METHOD FinBrutoBilans:get_data()
       _iznos_dug := "dugbhd"
       _iznos_pot := "potbhd"
 
-   elseif ::tip > 2
+   ELSEIF ::tip > 2
 
       _table := F18_PSQL_SCHEMA_DOT + "fin_sint"
       _date_field := "sub.datnal"
@@ -317,12 +317,12 @@ METHOD FinBrutoBilans:get_data()
    ENDIF
 
    // valuta 1 = domaca
-   if ::hParams[ "valuta" ] == 2
+   IF ::hParams[ "valuta" ] == 2
 
       _iznos_dug := "iznosdem"
       _iznos_pot := "iznosdem"
 
-      if ::tip > 1
+      IF ::tip > 1
          _iznos_dug := "dugdem"
          _iznos_pot := "potdem"
       ENDIF
@@ -336,7 +336,7 @@ METHOD FinBrutoBilans:get_data()
       _where += " AND " + _sql_cond_parse( "sub.idkonto", _konto + " " )
    ENDIF
 
-   if ::tip == 1
+   IF ::tip == 1
       IF !Empty( _id_rj ) .AND. _id_rj <> "999999"
          _where += " AND sub.idrj = " + sql_quote( _id_rj )
       ENDIF
@@ -344,22 +344,22 @@ METHOD FinBrutoBilans:get_data()
 
    _qry := "SELECT "
 
-   if ::tip == 1 .OR. ::tip == 2
+   IF ::tip == 1 .OR. ::tip == 2
       _qry += "sub.idkonto, "
-   elseif ::tip == 3
+   ELSEIF ::tip == 3
       _qry += " rpad( sub.idkonto, 3 ) AS idkonto, "
-   elseif ::tip == 4
+   ELSEIF ::tip == 4
       _qry += " rpad( sub.idkonto, 2 ) AS idkonto, "
    ENDIF
 
-   if ::tip == 1
+   IF ::tip == 1
 
       _qry += "sub.idpartner, "
 
       _qry += "SUM( CASE WHEN sub.d_p = '1' AND sub.idvn = '00' THEN sub." + _iznos_dug + " END ) as ps_dug, "
       _qry += "SUM( CASE WHEN sub.d_p = '2' AND sub.idvn = '00' THEN sub." + _iznos_pot + " END ) as ps_pot, "
 
-      if ::hParams[ "kolona_tek_prom" ]
+      IF ::hParams[ "kolona_tek_prom" ]
          _qry += "SUM( CASE WHEN sub.d_p = '1' AND sub.idvn <> '00' THEN sub." + _iznos_dug + " END ) as tek_dug, "
          _qry += "SUM( CASE WHEN sub.d_p = '2' AND sub.idvn <> '00' THEN sub." + _iznos_pot + " END ) as tek_pot, "
       ENDIF
@@ -367,12 +367,12 @@ METHOD FinBrutoBilans:get_data()
       _qry += "SUM( CASE WHEN sub.d_p = '1' THEN sub." + _iznos_dug + " END ) as kum_dug, "
       _qry += "SUM( CASE WHEN sub.d_p = '2' THEN sub." + _iznos_pot + " END ) as kum_pot "
 
-   elseif ::tip > 1
+   ELSEIF ::tip > 1
 
       _qry += "SUM( CASE WHEN sub.idvn = '00' THEN sub." + _iznos_dug + " END ) as ps_dug, "
       _qry += "SUM( CASE WHEN sub.idvn = '00' THEN sub." + _iznos_pot + " END ) as ps_pot, "
 
-      if ::hParams[ "kolona_tek_prom" ]
+      IF ::hParams[ "kolona_tek_prom" ]
          _qry += "SUM( CASE WHEN sub.idvn <> '00' THEN sub." + _iznos_dug + " END ) as tek_dug, "
          _qry += "SUM( CASE WHEN sub.idvn <> '00' THEN sub." + _iznos_pot + " END ) as tek_pot, "
       ENDIF
@@ -386,16 +386,16 @@ METHOD FinBrutoBilans:get_data()
 
    _qry += _where + " "
 
-   if ::tip == 1
+   IF ::tip == 1
       _qry += "GROUP BY sub.idkonto, sub.idpartner "
       _qry += "ORDER BY sub.idkonto, sub.idpartner "
-   elseif ::tip == 2
+   ELSEIF ::tip == 2
       _qry += "GROUP BY sub.idkonto "
       _qry += "ORDER BY sub.idkonto "
-   elseif ::tip == 3
+   ELSEIF ::tip == 3
       _qry += "GROUP BY rpad( sub.idkonto, 3 ) "
       _qry += "ORDER BY rpad( sub.idkonto, 3 ) "
-   elseif ::tip == 4
+   ELSEIF ::tip == 4
       _qry += "GROUP BY rpad( sub.idkonto, 2 ) "
       _qry += "ORDER BY rpad( sub.idkonto, 2 ) "
    ENDIF
@@ -409,7 +409,7 @@ METHOD FinBrutoBilans:get_data()
       RETURN NIL
    ENDIF
 
-   ::data := _data
+   ::DATA := _data
 
    RETURN SELF
 
@@ -426,7 +426,7 @@ METHOD FinBrutoBilans:set_txt_lines()
    _tmp := 4
    AAdd( _arr, { _tmp, PadC( "R.", _tmp ), PadC( "br.", _tmp ), PadC( "", _tmp ) } )
 
-   if ::tip == 4
+   IF ::tip == 4
       // grupa konta
       _tmp := 7
       AAdd( _arr, { _tmp, PadC( "GRUPA", _tmp ), PadC( "KONTA", _tmp ), PadC( "", _tmp ) } )
@@ -436,18 +436,18 @@ METHOD FinBrutoBilans:set_txt_lines()
       AAdd( _arr, { _tmp, PadC( "KONTO", _tmp ), PadC( "", _tmp ), PadC( "", _tmp ) } )
    ENDIF
 
-   if ::tip == 1
+   IF ::tip == 1
       // partner
       _tmp := 6
       AAdd( _arr, { _tmp, PadC( "PART-", _tmp ), PadC( "NER", _tmp ), PadC( "", _tmp ) } )
       // naziv konto/partner
       _tmp := 40
       AAdd( _arr, { _tmp, PadC( "NAZIV KONTA ILI PARTNERA", _tmp ), PadC( "", _tmp ), PadC( "", _tmp ) } )
-   elseif ::tip == 2
+   ELSEIF ::tip == 2
       // naziv konto/partner
       _tmp := 40
       AAdd( _arr, { _tmp, PadC( "NAZIV ANALITIČKOG KONTA", _tmp ), PadC( "", _tmp ), PadC( "", _tmp ) } )
-   elseif ::tip == 3
+   ELSEIF ::tip == 3
       // naziv konto/partner
       _tmp := 40
       AAdd( _arr, { _tmp, PadC( "NAZIV SINTETIČKOG KONTA", _tmp ), PadC( "", _tmp ), PadC( "", _tmp ) } )
@@ -457,7 +457,7 @@ METHOD FinBrutoBilans:set_txt_lines()
    _tmp := ( Len( ::pict_iznos ) * 2 ) + 1
    AAdd( _arr, { _tmp, PadC( "POČETNO STANJE", _tmp ), PadC( REPL( "-", _tmp ), _tmp ), PadC( "DUGUJE     POTRAŽUJE", _tmp ) } )
 
-   if ::hParams[ "kolona_tek_prom" ]
+   IF ::hParams[ "kolona_tek_prom" ]
       // tekuci promet
       AAdd( _arr, { _tmp, PadC( "TEKUĆI PROMET", _tmp ), PadC( REPL( "-", _tmp ), _tmp ), PadC( "DUGUJE     POTRAŽUJE", _tmp ) } )
    ENDIF
@@ -524,7 +524,7 @@ METHOD FinBrutoBilans:gen_xml()
    LOCAL _tt_ps_dug := _tt_ps_pot := _tt_kum_dug := _tt_kum_pot := _tt_tek_dug := _tt_tek_pot := _tt_sld_dug := _tt_sld_pot := 0
    LOCAL _ok := .F.
 
-   if ::tip == 4
+   IF ::tip == 4
       _sint_len := 2
    ENDIF
 
@@ -596,7 +596,7 @@ METHOD FinBrutoBilans:gen_xml()
             xml_node( "rb", AllTrim( Str( ++_count ) ) )
             xml_node( "kto", to_xml_encoding( field->idkonto ) )
 
-            if ::tip == 1
+            IF ::tip == 1
 
                xml_node( "part", to_xml_encoding( field->idpartner ) )
 
@@ -606,7 +606,7 @@ METHOD FinBrutoBilans:gen_xml()
                   xml_node( "naz", to_xml_encoding( field->konto ) )
                ENDIF
 
-            elseif ::tip == 2 .OR. ::tip == 3
+            ELSEIF ::tip == 2 .OR. ::tip == 3
 
                xml_node( "part", "" )
                xml_node( "naz", to_xml_encoding( field->konto ) )
@@ -657,7 +657,7 @@ METHOD FinBrutoBilans:gen_xml()
             _tt_sld_dug += field->sld_dug
             _tt_sld_pot += field->sld_pot
 
-            _scan := AScan( _a_klase, {| var| VAR[ 1 ] == Left( _sint, 1 ) } )
+            _scan := AScan( _a_klase, {| var | VAR[ 1 ] == Left( _sint, 1 ) } )
 
             IF _scan == 0
                AAdd( _a_klase, { Left( _sint, 1 ), ;
@@ -688,7 +688,7 @@ METHOD FinBrutoBilans:gen_xml()
 
          ENDDO
 
-         if ::tip < 3
+         IF ::tip < 3
             xml_node( "ps_dug", AllTrim( Str( _u_ps_dug, 12, 2 ) ) )
             xml_node( "ps_pot", AllTrim( Str( _u_ps_pot, 12, 2 ) ) )
             xml_node( "kum_dug", AllTrim( Str( _u_kum_dug, 12, 2 ) ) )
@@ -778,7 +778,7 @@ METHOD FinBrutoBilans:print()
 
    ::get_data()
 
-   IF ::data == NIL
+   IF ::DATA == NIL
       RETURN SELF
    ENDIF
 
@@ -790,7 +790,7 @@ METHOD FinBrutoBilans:print()
       RETURN SELF
    ENDIF
 
-   if ::hParams[ "txt" ]
+   IF ::hParams[ "txt" ]
       ::print_txt()
    ELSE
       ::print_odt()
@@ -803,7 +803,7 @@ METHOD FinBrutoBilans:print_odt()
 
    LOCAL _template := "fin_bbl.odt"
 
-   if ::gen_xml()
+   IF ::gen_xml()
       IF generisi_odt_iz_xml( _template )
          prikazi_odt()
       ENDIF
@@ -831,7 +831,7 @@ METHOD FinBrutoBilans:print_txt()
    LOCAL _kl_len := 1
    LOCAL _sint_len := 3
 
-   if ::tip == 4
+   IF ::tip == 4
       // po grupama
       _sint_len := 2
    ENDIF
@@ -881,18 +881,18 @@ METHOD FinBrutoBilans:print_txt()
             @ PRow() + 1, 0 SAY + + _rbr PICT "9999"
             @ PRow(), PCol() + 1 SAY field->idkonto
 
-            if ::tip < 4
+            IF ::tip < 4
 
                __konto := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", field->idkonto )
 
-               if ::tip == 1
+               IF ::tip == 1
                   @ PRow(), PCol() + 1 SAY field->idpartner
                   __partn := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "partn", field->idpartner )
                   // ovdje mogu biti šifre koje nemaju partnera a da u sifarniku nemamo praznog zapisa
                   // znači __partn može biti NIL
                ENDIF
 
-               if ::tip == 1 .AND. !Empty( field->idpartner )
+               IF ::tip == 1 .AND. !Empty( field->idpartner )
                   IF __partn <> NIL
                      _opis := __partn[ "naz" ]
                   ELSE
@@ -920,7 +920,7 @@ METHOD FinBrutoBilans:print_txt()
             @ PRow(), PCol() + 1 SAY field->ps_dug PICT ::pict_iznos
             @ PRow(), PCol() + 1 SAY field->ps_pot PICT ::pict_iznos
 
-            if ::hParams[ "kolona_tek_prom" ]
+            IF ::hParams[ "kolona_tek_prom" ]
                @ PRow(), PCol() + 1 SAY field->tek_dug PICT ::pict_iznos
                @ PRow(), PCol() + 1 SAY field->tek_pot PICT ::pict_iznos
             ENDIF
@@ -962,7 +962,7 @@ METHOD FinBrutoBilans:print_txt()
             _tt_sld_pot += field->sld_pot
 
             // dodaj u matricu sa klasama, takodjer totale...
-            _scan := AScan( _a_klase, {| var| VAR[ 1 ] == Left( _sint, 1 ) } )
+            _scan := AScan( _a_klase, {| var | VAR[ 1 ] == Left( _sint, 1 ) } )
 
             IF _scan == 0
                // dodaj novu stavku u matricu...
@@ -994,7 +994,7 @@ METHOD FinBrutoBilans:print_txt()
 
          ENDDO
 
-         if ::tip < 3
+         IF ::tip < 3
 
             // nova stranica i zaglavlje...
             IF PRow() + 3 > ::txt_rpt_len
@@ -1017,7 +1017,7 @@ METHOD FinBrutoBilans:print_txt()
             @ PRow(), _i_col SAY _u_ps_dug PICT ::pict_iznos
             @ PRow(), PCol() + 1 SAY _u_ps_pot PICT ::pict_iznos
 
-            if ::hParams[ "kolona_tek_prom" ]
+            IF ::hParams[ "kolona_tek_prom" ]
                @ PRow(), PCol() + 1 SAY _u_tek_dug PICT ::pict_iznos
                @ PRow(), PCol() + 1 SAY _u_tek_pot PICT ::pict_iznos
             ENDIF
@@ -1046,7 +1046,7 @@ METHOD FinBrutoBilans:print_txt()
       @ PRow() + 1, 2 SAY + + _rbr_3 PICT "9999"
       @ PRow(), PCol() + 1 SAY _klasa
 
-      if ::tip < 3
+      IF ::tip < 3
          IF __klasa == NIL
             @ PRow(), PCol() + 1 SAY PadR( "Klasa " + _klasa, 40 )
          ELSE
@@ -1057,7 +1057,7 @@ METHOD FinBrutoBilans:print_txt()
       @ PRow(), _i_col SAY _t_ps_dug PICT ::pict_iznos
       @ PRow(), PCol() + 1 SAY _t_ps_pot PICT ::pict_iznos
 
-      if ::hParams[ "kolona_tek_prom" ]
+      IF ::hParams[ "kolona_tek_prom" ]
          @ PRow(), PCol() + 1 SAY _t_tek_dug PICT ::pict_iznos
          @ PRow(), PCol() + 1 SAY _t_tek_pot PICT ::pict_iznos
       ENDIF
@@ -1085,7 +1085,7 @@ METHOD FinBrutoBilans:print_txt()
    @ PRow(), _i_col SAY _tt_ps_dug PICT ::pict_iznos
    @ PRow(), PCol() + 1 SAY _tt_ps_pot PICT ::pict_iznos
 
-   if ::hParams[ "kolona_tek_prom" ]
+   IF ::hParams[ "kolona_tek_prom" ]
       @ PRow(), PCol() + 1 SAY _tt_tek_dug PICT ::pict_iznos
       @ PRow(), PCol() + 1 SAY _tt_tek_pot PICT ::pict_iznos
    ENDIF
@@ -1194,7 +1194,7 @@ METHOD FinBrutoBilans:fill_r_export()
       _id_konto := query_row( oRow, "idkonto" )
       __konto := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", _id_konto )
 
-      if ::tip == 1
+      IF ::tip == 1
          _id_partn := query_row( oRow, "idpartner" )
          __partn := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "partn", _id_partn )
       ENDIF
@@ -1211,7 +1211,7 @@ METHOD FinBrutoBilans:fill_r_export()
 
       _rec[ "idkonto" ] := _id_konto
 
-      if ::tip == 1
+      IF ::tip == 1
          _rec[ "idpartner" ] := _id_partn
          IF !Empty( _id_partn ) .AND. __partn <> NIL
             _rec[ "partner" ] := PadR( __partn[ "naz" ], 100 )
@@ -1223,7 +1223,7 @@ METHOD FinBrutoBilans:fill_r_export()
       _rec[ "ps_dug" ] := query_row( oRow, "ps_dug" )
       _rec[ "ps_pot" ] := query_row( oRow, "ps_pot" )
 
-      if ::hParams[ "kolona_tek_prom" ]
+      IF ::hParams[ "kolona_tek_prom" ]
          _rec[ "tek_dug" ] := query_row( oRow, "tek_dug" )
          _rec[ "tek_pot" ] := query_row( oRow, "tek_pot" )
       ELSE
@@ -1243,7 +1243,7 @@ METHOD FinBrutoBilans:fill_r_export()
          _rec[ "sld_dug" ] := 0
       ENDIF
 
-      ++ _count
+      ++_count
 
       dbf_update_rec( _rec )
 
@@ -1267,7 +1267,7 @@ METHOD FinBrutoBilans:create_r_export()
    AAdd( _dbf, { "idkonto", "C", 7, 0 } )
    AAdd( _dbf, { "konto", "C", 60, 0 } )
 
-   if ::tip == 1
+   IF ::tip == 1
       AAdd( _dbf, { "idpartner", "C", 6, 0 } )
       AAdd( _dbf, { "partner", "C", 100, 0 } )
    ENDIF
@@ -1284,14 +1284,16 @@ METHOD FinBrutoBilans:create_r_export()
    AAdd( _dbf, { "sld_dug", "N", 18, 2 } )
    AAdd( _dbf, { "sld_pot", "N", 18, 2 } )
 
-   create_dbf_r_export( _dbf )
-
+   IF !create_dbf_r_export( _dbf )
+      RETURN .F.
+   ENDIF
+   
    O_R_EXP
 
-   if ::tip == 1
-      INDEX on ( idkonto + idpartner ) TAG "1"
+   IF ::tip == 1
+      INDEX ON ( idkonto + idpartner ) TAG "1"
    ELSE
-      INDEX on ( idkonto ) TAG "1"
+      INDEX ON ( idkonto ) TAG "1"
    ENDIF
 
    RETURN SELF

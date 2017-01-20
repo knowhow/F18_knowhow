@@ -52,8 +52,8 @@ FUNCTION fakt_real_maloprodaje()
    ENDIF
 
    ?
-   ? "REALIZACIJA PRODAJE na dan: " + DToC( Date() ), SPACE(6), f18_ver_info()
-   ? REPLICATE( "-", 80)
+   ? "REALIZACIJA PRODAJE na dan: " + DToC( Date() ), Space( 6 ), f18_ver_info()
+   ? Replicate( "-", 80 )
    ? "Period od:" + DToC( _params[ "datum_od" ] ) + " do:" + DToC( _params[ "datum_do" ] )
    ?
 
@@ -116,23 +116,23 @@ STATIC FUNCTION fakt_mp_uzmi_parametre_izvjestaja( params )
    @ m_x + _x, m_y + 2 SAY "**** REALIZACIJA PRODAJE ****"
    _x += 2
    @ m_x + _x, m_y + 2 SAY "Firma (prazno-sve):" GET _id_firma PICT "@S20"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Obuhvatiti period od:" GET _d_from
    @ m_x + _x, Col() + 1 SAY "do:" GET _d_to
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Vrste dokumenata:" GET _dok_tip PICT "@S30"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Partner (prazno-svi):" GET _partner PICT "@S40"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Vrsta plaćanja (prazno-svi):" GET _vrsta_p VALID Empty( _vrsta_p ) .OR. P_VRSTEP( @_vrsta_p )
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Operater (0-svi):" GET _operater PICT "9999999999" ;
       VALID {|| _operater == 0, iif( _operater == -99, choose_f18_user_from_list( @_operater ), .T. ) }
    _x += 2
    @ m_x + _x, m_y + 2 SAY8 "Razvrstati po tipu partnera (D/N)?" GET _tip_partnera VALID _tip_partnera $ "DN" PICT "@!"
    _x += 2
    @ m_x + _x, m_y + 2 SAY8 "Varijanta prikaza 1-po robi 2-po dokumentima"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "                  3-samo total" GET _varijanta PICT "9"
 
    READ
@@ -257,7 +257,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
    MsgO( "Generacija podataka ..." )
 
    SELECT fakt_doks
-   SET FILTER to &_filter
+   SET FILTER TO &_filter
    GO TOP
 
    DO WHILE !Eof()
@@ -444,7 +444,10 @@ STATIC FUNCTION fakt_realiz_pdv_cre_open_r_export_table()
    AAdd( aDbf, { "c_pdv", "N", _FNUM, _FDEC } )
    AAdd( aDbf, { "uk_fakt", "N", _FNUM, _FDEC } )
 
-   create_dbf_r_export( aDbf )
+   IF !create_dbf_r_export( aDbf )
+      RETURN .F.
+   ENDIF
+   
    SELECT ( F_R_EXP )
    my_usex ( "r_export" )
 
@@ -511,17 +514,17 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
       nS_pdv := 0
       nUk_fakt := 0
 
-     lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id ) .OR. IsIno( cPart_id )
+      lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id ) .OR. IsIno( cPart_id )
 
       DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + field->brdok == cIdFirma + cIdTipDok + cBrDok
 
          nOsnovica += field->kolicina * field->c_bpdv
 
          IF !lOslobodjenPDV
-           nPDV += field->kolicina * field->pdv
-           nS_pdv := field->s_pdv
+            nPDV += field->kolicina * field->pdv
+            nS_pdv := field->s_pdv
          ELSE
-           nS_pdv := 0
+            nS_pdv := 0
          ENDIF
 
          nUk_fakt := field->uk_fakt

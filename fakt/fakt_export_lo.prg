@@ -23,7 +23,10 @@ FUNCTION fakt_export_dokument_lo()
 
    aDbf := _g_fields()
 
-   create_dbf_r_export( aDbf )
+   IF !create_dbf_r_export( aDbf )
+      RETURN .F.
+   ENDIF
+   
    _exp_dok()
    open_r_export_table()
 
@@ -41,7 +44,7 @@ STATIC FUNCTION _exp_dok()
    LOCAL cParRegb
 
    // pripremi fakturu za stampu, samo napuni tabele...
-   fakt_stdok_pdv( nil, nil, nil, .T. )
+   fakt_stdok_pdv( NIL, NIL, NIL, .T. )
 
    O_R_EXP
    O_DRN

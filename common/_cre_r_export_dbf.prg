@@ -28,10 +28,16 @@ FUNCTION create_dbf_r_export( aFieldList, lCloseDbfs )
    cImeDBf := f18_ime_dbf( "r_export" )
    cImeCdx := ImeDbfCdx( cImeDbf )
 
+   IF Select( "R_EXPORT" ) != 0
+      SELECT r_export
+      USE
+   ENDIF
+
    FErase( cImeDbf )
    FErase( cImeCdx )
    IF File( cImeDbf )
-      ?E "Ne mogu obrisati", cImeDbf
+      MsgBeep( "Ne mogu obrisati" +  cImeDbf )
+      RETURN .F.
    ENDIF
    DbCreate2( cImeDbf, aFieldList )
 

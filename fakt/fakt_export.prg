@@ -46,9 +46,11 @@ STATIC FUNCTION cre_export_table()
    LOCAL aDbf
 
    aDbf := get_export_fields()
-   create_dbf_r_export( aDbf )
+   IF !create_dbf_r_export( aDbf )
+      RETURN .F.
+   ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -81,7 +83,7 @@ STATIC FUNCTION get_vars( dD_f, dD_t, cId_f, cId_td )
    LOCAL nRet := 1
    LOCAL GetList := {}
 
-   dD_f := Date() -60
+   dD_f := Date() - 60
    dD_t := Date()
    cId_f := PadR( self_organizacija_id() + ";", 100 )
    cId_td := PadR( "10;", 100 )
@@ -137,7 +139,7 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
    SET ORDER TO TAG "1"
 
    IF !Empty( cFilt )
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
       GO TOP
    ENDIF
 
@@ -161,7 +163,7 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
       SELECT r_export
       APPEND BLANK
 
-      ++ nCount
+      ++nCount
 
       REPLACE idfirma WITH fakt->idfirma
       REPLACE idtipdok WITH fakt->idtipdok

@@ -39,8 +39,8 @@ STATIC FUNCTION set_articles()
 
    @ m_x + _x, m_y + 2 SAY "Izvjestaj se pravi za sljedece artikle:"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    nI := 1
 
@@ -52,7 +52,7 @@ STATIC FUNCTION set_articles()
 
       IF nI % 2 == 0
          @ m_x + _x, Col() + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
-         ++ _x
+         ++_x
       ELSE
          @ m_x + _x, m_y + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
       ENDIF
@@ -96,7 +96,7 @@ STATIC FUNCTION _g_ini_roba()
       _item := fetch_metric( "fakt_pregled_prodaje_rpt_artikal_" + PadL( AllTrim( Str( nI ) ), 2, "0" ), NIL, "" )
 
       IF !Empty( _item )
-         ++ _count
+         ++_count
          AAdd( _arr, { _item, "ROBA" + AllTrim( Str( _count ) ), 0 } )
       ENDIF
 
@@ -203,17 +203,17 @@ FUNCTION spec_kol_partn()
       VALID {|| Empty( cIdFirma ) .OR. ;
       cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Od datuma " GET dDatOd
    @ m_x + _x, Col() + 1 SAY "do" GET dDatDo
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Distributer   " GET cDistrib VALID p_partner( @cDistrib )
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Definisi artikle za izvjestaj (D/N) ?" GET _define VALID _define $ "DN" PICT "@!"
 
@@ -237,7 +237,9 @@ FUNCTION spec_kol_partn()
    ENDIF
 
    aExpFields := _g_exp_fields( aRoba )
-   create_dbf_r_export( aExpFields )
+   IF !create_dbf_r_export( aExpFields )
+      RETURN .F.
+   ENDIF
 
    _o_tables()
 
@@ -261,7 +263,7 @@ FUNCTION spec_kol_partn()
    ENDIF
 
    // postavi filter
-   SET FILTER to &cFilter
+   SET FILTER TO &cFilter
 
    SELECT fakt
    GO TOP
@@ -288,7 +290,7 @@ FUNCTION spec_kol_partn()
          cRoba := field->idroba
          nKol := field->kolicina
 
-         nScan := AScan( aRoba, {| xvar| xvar[ 1 ] == AllTrim( cRoba )  } )
+         nScan := AScan( aRoba, {| xvar | xvar[ 1 ] == AllTrim( cRoba )  } )
 
          // ubaci u matricu...
          IF nScan <> 0

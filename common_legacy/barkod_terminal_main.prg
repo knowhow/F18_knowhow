@@ -45,15 +45,16 @@ FUNCTION import_BTerm_data( cI_File )
 // -----------------------------------------------------
 // Vraca podesenje putanje do exportovanih fajlova
 // -----------------------------------------------------
-STATIC FUNCTION get_export_path( path )
+STATIC FUNCTION get_export_path( PATH )
 
    LOCAL _path
 
-   #ifdef __PLATFORM__WINDOWS
-      _path := "c:" + SLASH + "import" + SLASH
-   #else
-      _path := SLASH + "home" + SLASH + my_user() + SLASH + "import" + SLASH
-   #endif
+#ifdef __PLATFORM__WINDOWS
+
+   _path := "c:" + SLASH + "import" + SLASH
+#else
+   _path := SLASH + "home" + SLASH + my_user() + SLASH + "import" + SLASH
+#endif
 
    _path := PadR( fetch_metric( "bterm_imp_exp_path", my_user(), AllTrim( _path ) ), 500 )
 
@@ -64,12 +65,12 @@ STATIC FUNCTION get_export_path( path )
    BoxC()
 
    IF LastKey() == K_ESC
-      path := NIL
+      PATH := NIL
       RETURN .F.
    ENDIF
 
-   path := AllTrim( _path )
-   set_metric( "bterm_imp_exp_path", my_user(), path )
+   PATH := AllTrim( _path )
+   set_metric( "bterm_imp_exp_path", my_user(), PATH )
 
    RETURN .T.
 
@@ -86,11 +87,11 @@ STATIC FUNCTION check_barkod_import()
    LOCAL i
    LOCAL nCnt
 
-   SELECT temp
+   SELECT TEMP
    SET ORDER TO TAG "3"
    GO TOP
 
-   DO WHILE !Eof() .AND. field->status = 0
+   DO WHILE !Eof() .AND. field->STATUS = 0
 
       cTmp := field->barkod
 
@@ -182,7 +183,7 @@ FUNCTION export_BTerm_data()
          REPLACE field->tk WITH 0
          REPLACE field->tc WITH roba->vpc
 
-         ++ nCnt
+         ++nCnt
       ENDIF
 
       SELECT roba
@@ -239,6 +240,8 @@ STATIC FUNCTION cre_tmp()
    AAdd( aFields, { "tk", "N", 8, 2 } )
    AAdd( aFields, { "tc", "N", 8, 2 } )
 
-   create_dbf_r_export( aFields )
+   IF !create_dbf_r_export( aFields )
+      RETURN .F.
+   ENDIF
 
-   RETURN
+   RETURN .T.

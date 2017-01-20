@@ -59,7 +59,9 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    IF lExpRpt
       aExpFields := struktura_pomocne_tabele_eksporta()
-      create_dbf_r_export( aExpFields )
+      IF !create_dbf_r_export( aExpFields )
+         RETURN .F.
+      ENDIF
    ENDIF
 
    o_konto()
@@ -222,7 +224,7 @@ FUNCTION fin_bb_subanalitika_b( params )
                   HSEEK cIdPartner
 
                   IF cFormat == "2"
-                     @ PRow(), PCol() + 1 SAY PadR( naz, 48 -Len ( cIdPartner ) )
+                     @ PRow(), PCol() + 1 SAY PadR( naz, 48 - Len ( cIdPartner ) )
                   ELSE
                      @ PRow(), PCol() + 1 SAY PadR( naz, 20 )
                      @ PRow(), PCol() + 1 SAY PadR( naz2, 20 )

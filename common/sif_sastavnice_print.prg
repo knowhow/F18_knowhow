@@ -53,7 +53,7 @@ FUNCTION pr_pr_sast() // lista sastavnica sa pretpostavljenim sirovinama
       ENDIF
 
       IF !Empty( cArtikli )
-         if &bUsl
+         IF &bUsl
             // idi dalje...
          ELSE
             SKIP
@@ -213,7 +213,7 @@ FUNCTION pr_br_sast()
       ENDIF
 
       IF !Empty( cArtikli )
-         if &bUsl
+         IF &bUsl
             // idi dalje...
          ELSE
             SKIP
@@ -238,7 +238,7 @@ FUNCTION pr_br_sast()
 
       // koliko ima sastavnica ?
       DO WHILE !Eof() .AND. field->id == cIdRoba
-         ++ nTmp
+         ++nTmp
          SKIP
       ENDDO
 
@@ -342,7 +342,7 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
       ENDIF
 
       IF !Empty( cArtikli )
-         if &bUsl
+         IF &bUsl
          ELSE
             SKIP
             LOOP
@@ -372,7 +372,7 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
 
          // sirovina za
          cUzorak := AllTrim( field->id2 )
-         nScan := AScan( aSast, {| xVal| xVal $ cUzorak } )
+         nScan := AScan( aSast, {| xVal | xVal $ cUzorak } )
 
          IF nScan <> 0
             lPostoji := .T.
@@ -455,7 +455,7 @@ FUNCTION pr_dupl_sast()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    AAdd( aDbf, { "IDROBA", "C", 10, 0 } )
@@ -463,7 +463,10 @@ FUNCTION pr_dupl_sast()
    AAdd( aDbf, { "SAST", "C", 150, 0 } )
    AAdd( aDbf, { "MARK", "C", 1, 0 } )
 
-   create_dbf_r_export( aDbf )
+   IF !create_dbf_r_export( aDbf )
+      RETURN .F.
+   ENDIF
+
    O_R_EXP
    INDEX ON sast TAG "1"
 
@@ -489,7 +492,7 @@ FUNCTION pr_dupl_sast()
       ENDIF
 
       IF !Empty( cArtikli )
-         if &bUsl
+         IF &bUsl
          ELSE
             SKIP
             LOOP
@@ -549,7 +552,7 @@ FUNCTION pr_dupl_sast()
       ENDIF
 
       IF !Empty( cArtikli )
-         if &bUsl
+         IF &bUsl
          ELSE
             SKIP
             LOOP
@@ -672,8 +675,10 @@ FUNCTION _exp_sast_dbf()
    AAdd( aDbf, { "VPC", "N", 12, 2 } )
    AAdd( aDbf, { "MPC", "N", 12, 2 } )
 
-   create_dbf_r_export( aDbf )
-
+   IF !create_dbf_r_export( aDbf )
+      RETURN .F.
+   ENDIF
+   
    O_R_EXP
    O_SAST
    o_roba()

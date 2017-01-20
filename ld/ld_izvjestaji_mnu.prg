@@ -60,7 +60,7 @@ STATIC FUNCTION izvjestaji_obrasci()
    LOCAL _Izbor := 1
 
    AAdd( _opc, "1. mjesečni obrazac MIP-1023                  " )
-   AAdd( _opcexe, {|| ld_mip_obrazac() } )
+   AAdd( _opcexe, {|| ld_mip_obrazac_1023() } )
    AAdd( _opc, "2. obračunski listovi (obrasci OLP i GIP)" )
    AAdd( _opcexe, {|| ld_olp_gip_obrazac() } )
    AAdd( _opc, "3. akontacije poreza (obrasci ASD i AUG)" )

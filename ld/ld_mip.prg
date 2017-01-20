@@ -18,7 +18,7 @@ STATIC __ispl_s := 0
 
 
 
-FUNCTION ld_mip_obrazac()
+FUNCTION ld_mip_obrazac_1023()
 
    LOCAL nC1 := 20
    LOCAL i
@@ -45,7 +45,7 @@ FUNCTION ld_mip_obrazac()
    LOCAL cStampaExport := "E"
    LOCAL nOper := 1
    LOCAL cIsplSaberi := "D"
-   LOCAL cNule := "N"
+   LOCAL cNulePrikazatiDN := "D" // ako je bolovanje preko 42dana samo, trebamo
    LOCAL cMipView := "N"
    LOCAL _pojed := .F.
    LOCAL cErr := ""
@@ -113,10 +113,10 @@ FUNCTION ld_mip_obrazac()
    @ m_x + nX++, m_y + 2 SAY "Sifra djelatnosti: " GET cPredSDJ PICT "@S20"
    @ m_x + nX, m_y + 2 SAY "Def.RJ" GET cRJDef
    @ m_x + nX, Col() + 2 SAY "Sabrati isplate za isti mj ?" GET cIsplSaberi VALID cIsplSaberi $ "DN" PICT "@!"
-   @ m_x + nX, Col() + 2 SAY "obracun 0 ?" GET cNule VALID cNule $ "DN" PICT "@!"
-   @ m_x + nX++, Col() + 2 SAY "pregled ?" GET cMipView VALID cMipView $ "DN" PICT "@!"
+   @ m_x + ++nX, m_y + 2 SAY8 "Za bruto iznos 0 prikazati radnika ?" GET cNulePrikazatiDN VALID cNulePrikazatiDN $ "DN" PICT "@!"
+   @ m_x + nX, Col() + 2 SAY "pregled ?" GET cMipView VALID cMipView $ "DN" PICT "@!"
 
-   @ m_x + nX++, m_y + 2 SAY "Stampa/Export ?" GET cStampaExport PICT "@!"  VALID cStampaExport $ "ES"
+   @ m_x + ++nX, m_y + 2 SAY8 "(S)tampa/(E)xport ?" GET cStampaExport PICT "@!"  VALID cStampaExport $ "ES"
 
    READ
 
@@ -199,7 +199,7 @@ FUNCTION ld_mip_obrazac()
    mip_fill_data( cRj, cRjDef, cGod, cMj, cRadnik, ;
       cTipPrimIsplateUslugeIliDobra, cTipoviPrimanjaNeUlazeBeneficirani, cTipoviPrimanjaBolovanje, cTipoviPrimanjaBolovanjePreko, cDopr10, cDopr11, cDopr12, ;
       cDopr1X, cDopr20, cDopr21, cDopr22, cDoprDod, cDopr2D, cObracun, ;
-      cNule )
+      cNulePrikazatiDN )
 
    IF cMipView == "D"
       mip_view()
@@ -208,7 +208,7 @@ FUNCTION ld_mip_obrazac()
    IF s_lExportXml
       nBrZahtjeva := g_br_zaht()
       mip_xml_export( cMj, cGod )
-      MsgBeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " radnika." )
+      MsgBeep( "Obrađeno " + AllTrim( Str( nBrZahtjeva ) ) + " radnika." )
    ELSE
       mip_print_odt( _pojed )
    ENDIF
@@ -852,7 +852,6 @@ STATIC FUNCTION mip_glavna_fill_xml( xml_file )
                nRadnihSatiUvecanoTrajanje := field->r_sati
             ENDIF
 */
-
          ENDIF
 
          SKIP
@@ -912,7 +911,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       cRadnik, ;
       cTipPrimIsplateUslugeIliDobra,  cTipoviPrimanjaNeUlazeBeneficirani, cTipoviPrimanjaBolovanje, cTipoviPrimanjaBolovanjePreko, ;
       cDopr10, cDopr11, cDopr12, ;
-      cDopr1X, cDopr20, cDopr21, cDopr22, cDoprDod, cDopr2D, cObracun, cNule )
+      cDopr1X, cDopr20, cDopr21, cDopr22, cDoprDod, cDopr2D, cObracun, cNulePrikazatiDN )
 
    LOCAL i
    LOCAL b
@@ -974,7 +973,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       SELECT radn
       SEEK cIdRadnikTekuci
 
-     //https://redmine.bring.out.ba/projects/klijenti/wiki/Modul_LD
+       //https://redmine.bring.out.ba/projects/klijenti/wiki/Modul_LD
       IF !( cTipRada $ " #I#N" ) // ako nije " " ili "I" ili "N" - neto-neto
          MsgBeep( "preskace se radnik " + ld->idradn + " jer tip rada nije 'I/N/ ' !")
          SELECT ld
@@ -1018,6 +1017,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       cR_jmb := ""
       cR_opc := ""
       cSifraRadnogMjestaUvecanoTrajanje := ""
+
 
       DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
@@ -1076,7 +1076,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             nBrojRadnihSati := nFondSati
             nSatiB := nFondSati
             // bolovanje preko42d nije unutar neto
-            nNeto += 0.0000001
+            //nNeto += 0.0000001
          ENDIF
 
          nRadnihSatiUvecanoTrajanje := 0
@@ -1097,7 +1097,8 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          ENDIF
 
 
-         IF nMBruto <= 0 .AND. cNule == "N" // ovo preskoci, nema ovdje GIP-a
+         IF nMBruto <= 0 .AND. cNulePrikazatiDN == "N"
+             MsgBeep( "Preskacemo za 0 " + cIdRadnikTekuci )
             SELECT ld
             SKIP
             LOOP

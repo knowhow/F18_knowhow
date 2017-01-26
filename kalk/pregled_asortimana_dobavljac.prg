@@ -325,6 +325,7 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
 // ---------------------------------------------------------
 // printanje obrasca narudzbe na osnovu podataka
 // ---------------------------------------------------------
+
 STATIC FUNCTION print_frm_asort_nar( vars )
 
    LOCAL _my_xml := my_home() + "data.xml"
@@ -368,10 +369,10 @@ STATIC FUNCTION print_frm_asort_nar( vars )
       xml_subnode( "item", .F. )
 
       xml_node( "rbr", AllTrim( Str( _count ) ) )
-      xml_node( "idroba", to_xml_encoding( hb_UTF8ToStr( field->idroba ) ) )
-      xml_node( "barkod", to_xml_encoding( hb_UTF8ToStr( field->barkod ) ) )
-      xml_node( "naziv", to_xml_encoding( hb_UTF8ToStr( field->naziv ) ) )
-      xml_node( "jmj", to_xml_encoding( hb_UTF8ToStr( field->jmj ) ) )
+      xml_node( "idroba", to_xml_encoding( field->idroba ) )
+      xml_node( "barkod", to_xml_encoding( field->barkod ) )
+      xml_node( "naziv", to_xml_encoding( field->naziv ) )
+      xml_node( "jmj", to_xml_encoding( field->jmj ) )
 
       xml_subnode( "item", .T. )
 
@@ -450,7 +451,7 @@ STATIC FUNCTION print_report( vars )
 
       @ PRow(), PCol() + 1 SAY field->idroba
       @ PRow(), PCol() + 1 SAY field->barkod
-      @ PRow(), PCol() + 1 SAY PadR( hb_UTF8ToStr( field->naziv ), 40 )
+      @ PRow(), PCol() + 1 SAY PadR( field->naziv, 40 )
       @ PRow(), PCol() + 1 SAY field->tarifa
       @ PRow(), _n_pos := PCol() + 1 SAY Str( field->ulaz, 12, 2 )
       @ PRow(), PCol() + 1 SAY Str( field->izlaz, 12, 2 )

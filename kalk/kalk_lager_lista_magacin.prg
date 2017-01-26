@@ -48,6 +48,7 @@ FUNCTION lager_lista_magacin()
    LOCAL cSrKolNula := "0"
    LOCAL dL_ulaz := CToD( "" )
    LOCAL dL_izlaz := CToD( "" )
+   LOCAL hParams
 
    // pPicDem := global_pic_iznos()
    // pPicCDem := global_pic_cijena()
@@ -100,7 +101,7 @@ FUNCTION lager_lista_magacin()
 
    PRIVATE cPNab := "N"
    PRIVATE cDoNab := "N"
-   PRIVATE cNula := "N"
+   PRIVATE cNulaDN := "N"
    PRIVATE cErr := "N"
    PRIVATE cNCSif := "N"
    PRIVATE cMink := "N"
@@ -115,7 +116,7 @@ FUNCTION lager_lista_magacin()
 
       cIdKonto := fetch_metric( "kalk_lager_lista_id_konto", _curr_user, cIdKonto )
       cPNab := fetch_metric( "kalk_lager_lista_po_nabavnoj", _curr_user, cPNab )
-      cNula := fetch_metric( "kalk_lager_lista_prikaz_nula", _curr_user, cNula )
+      cNulaDN := fetch_metric( "kalk_lager_lista_prikaz_nula", _curr_user, cNulaDN )
       dDatOd := fetch_metric( "kalk_lager_lista_datum_od", _curr_user, dDatOd )
       dDatDo := fetch_metric( "kalk_lager_lista_datum_do", _curr_user, dDatDo )
       cDoNab := fetch_metric( "kalk_lager_Lista_prikaz_do_nabavne", _curr_user, cDoNab )
@@ -143,7 +144,7 @@ FUNCTION lager_lista_magacin()
 
       @ m_x + 7, Col() + 1 SAY "Prikaz samo do nab.vr. D/N" GET cDoNab  VALID cDoNab $ "DN" PICT "@!"
 
-      @ m_x + 8, m_y + 2 SAY8 "Pr.stavki kojima je NV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
+      @ m_x + 8, m_y + 2 SAY8 "Pr.stavki kojima je NV 0 D/N" GET cNulaDN  VALID cNulaDN $ "DN" PICT "@!"
       @ m_x + 9, m_y + 2 SAY8 "Prikaz 'ERR' ako je NV/Kolicina<>NC " GET cErr PICT "@!" VALID cErr $ "DN"
       @ m_x + 9, Col() + 1 SAY8 "VPC iz sifrarnika robe (D/N)?" GET _vpc_iz_sif PICT "@!" VALID _vpc_iz_sif $ "DN"
 
@@ -156,9 +157,7 @@ FUNCTION lager_lista_magacin()
       @ m_x + 12, m_y + 2 SAY8 "Postaviti srednju NC u sifrarnik" GET cNCSif PICT "@!" VALID ( ( cpnab == "D" .AND. cncsif == "D" ) .OR. cNCSif == "N" )
 
       IF fPocStanje
-         @ m_x + 13, m_y + 2 SAY8 "Sredi samo stavke kol=0, nv<>0 (0/1/2)" ;
-            GET cSrKolNula VALID cSrKolNula $ "012" ;
-            PICT "@!"
+         @ m_x + 13, m_y + 2 SAY8 "Sredi samo stavke kol=0, nv<>0 (0/1/2)"  GET cSrKolNula VALID cSrKolNula $ "012" PICT "@!"
       ENDIF
 
       @ m_x + 14, m_y + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
@@ -181,7 +180,7 @@ FUNCTION lager_lista_magacin()
          @ m_x + 19, m_y + 2 SAY "Broj radnog naloga:"  GET cRNalBroj PICT "@S20"
       ENDIF
 
-      @ m_x + 20, m_y + 2 SAY "Export izvjestaja u dbf?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
+      @ m_x + 20, m_y + 2 SAY8 "Export izvještaja u dbf?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
 
       @ m_x + 20, Col() + 1 SAY "Pr.dodatnih informacija ?" GET cMoreInfo VALID cMoreInfo $ "DN" PICT "@!"
 
@@ -211,7 +210,7 @@ FUNCTION lager_lista_magacin()
 
       set_metric( "kalk_lager_lista_id_konto", f18_user(), cIdKonto )
       set_metric( "kalk_lager_lista_po_nabavnoj", f18_user(), cPNab )
-      set_metric( "kalk_lager_lista_prikaz_nula", f18_user(), cNula )
+      set_metric( "kalk_lager_lista_prikaz_nula", f18_user(), cNulaDN )
       set_metric( "kalk_lager_lista_datum_od", f18_user(), dDatOd )
       set_metric( "kalk_lager_lista_datum_do", f18_user(), dDatDo )
       set_metric( "kalk_lager_lista_prikaz_do_nabavne", f18_user(), cDoNab )
@@ -244,7 +243,6 @@ FUNCTION lager_lista_magacin()
    ENDIF
 
    IF lExpDbf == .T.
-      // exportuj report....
       aExpFields := g_exp_fields()
       create_dbf_r_export( aExpFields )
    ENDIF
@@ -313,18 +311,18 @@ FUNCTION lager_lista_magacin()
 
    IF _print == "2"
       // stampa dokumenta u odt formatu
-      _params := hb_Hash()
-      _params[ "idfirma" ] := self_organizacija_id()
-      _params[ "idkonto" ] := cIdKonto
-      _params[ "roba_naz" ] := cArtikalNaz
-      _params[ "group_1" ] := qqRGr
-      _params[ "group_2" ] := qqRGr2
-      _params[ "nule" ] := ( cNula == "D" )
-      _params[ "svodi_jmj" ] := lSvodi
-      _params[ "vpc_sif" ] := ( _vpc_iz_sif == "D" )
-      _params[ "datum_od" ] := dDatOd
-      _params[ "datum_do" ] := dDatDo
-      kalk_magacin_llm_odt( _params )
+      hParams := hb_Hash()
+      hParams[ "idfirma" ] := self_organizacija_id()
+      hParams[ "idkonto" ] := cIdKonto
+      hParams[ "roba_naz" ] := cArtikalNaz
+      hParams[ "group_1" ] := qqRGr
+      hParams[ "group_2" ] := qqRGr2
+      hParams[ "nule" ] := ( cNulaDN == "D" )
+      hParams[ "svodi_jmj" ] := lSvodi
+      hParams[ "vpc_sif" ] := ( _vpc_iz_sif == "D" )
+      hParams[ "datum_od" ] := dDatOd
+      hParams[ "datum_do" ] := dDatDo
+      kalk_magacin_llm_odt( hParams )
       RETURN .F.
    ENDIF
 
@@ -477,7 +475,7 @@ FUNCTION lager_lista_magacin()
 
 
 
-      DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, cIdFirma + cIdRoba == idFirma + field->idroba, cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + hb_UTF8ToStr( field->idroba ) ) .AND. IspitajPrekid()
+      DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, cIdFirma + cIdRoba == idFirma + field->idroba, cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + field->idroba ) .AND. IspitajPrekid()
 
          IF roba->tip $ "TU"
             SKIP
@@ -573,7 +571,7 @@ FUNCTION lager_lista_magacin()
          LOOP
       ENDIF
 
-      IF cNula == "D" .OR. Round( nNVU - nNVI, 4 ) <> 0
+      IF cNulaDN == "D" .OR. Round( nNVU - nNVI, 4 ) <> 0
 
          aNaz := Sjecistr( roba->naz, 20 )
          NovaStrana( bZagl )
@@ -795,13 +793,13 @@ FUNCTION lager_lista_magacin()
          ENDIF
 
          IF lExpDbf == .T.
-            IF ( cNula == "N" .AND. Round( nUlaz - nIzlaz, 4 ) <> 0 ) ;
-                  .OR. ( cNula == "D" )
+            IF ( cNulaDN == "N" .AND. Round( nUlaz - nIzlaz, 4 ) <> 0 ) ;
+                  .OR. ( cNulaDN == "D" )
 
                cTmp := ""
                cTmp := roba->sifradob
 
-               IF cNula == "D" .AND. Round( nUlaz - nIzlaz, 4 ) = 0
+               IF cNulaDN == "D" .AND. Round( nUlaz - nIzlaz, 4 ) = 0
                   fill_exp_tbl( 0, roba->id, cTmp, ;
                      roba->naz, roba->idtarifa, cJmj, ;
                      nUlaz, nIzlaz, ( nUlaz - nIzlaz ), ;
@@ -1153,9 +1151,9 @@ FUNCTION IsInGroup( cGr, cPodGr, cIdRoba )
 
 
 
-STATIC FUNCTION kalk_magacin_llm_odt( params )
+STATIC FUNCTION kalk_magacin_llm_odt( hParams )
 
-   IF !_gen_xml( params )
+   IF !_gen_xml( hParams )
       MsgBeep( "Problem sa generisanjem podataka ili nema podataka !" )
       RETURN
    ENDIF
@@ -1167,16 +1165,16 @@ STATIC FUNCTION kalk_magacin_llm_odt( params )
    RETURN
 
 
-STATIC FUNCTION _gen_xml( params )
+STATIC FUNCTION _gen_xml( hParams )
 
-   LOCAL _idfirma := params[ "idfirma" ]
-   LOCAL _sintk := params[ "idkonto" ]
-   LOCAL _art_naz := params[ "roba_naz" ]
-   LOCAL _group_1 := params[ "group_1" ]
-   LOCAL _group_2 := params[ "group_2" ]
-   LOCAL _nule := params[ "nule" ]
-   LOCAL _svodi_jmj := params[ "svodi_jmj" ]
-   LOCAL _vpc_iz_sif := params[ "vpc_sif" ]
+   LOCAL _idfirma := hParams[ "idfirma" ]
+   LOCAL _sintk := hParams[ "idkonto" ]
+   LOCAL _art_naz := hParams[ "roba_naz" ]
+   LOCAL _group_1 := hParams[ "group_1" ]
+   LOCAL _group_2 := hParams[ "group_2" ]
+     LOCAL lPrikazatiNulaNV := hParams[ "nule" ]
+   LOCAL _svodi_jmj := hParams[ "svodi_jmj" ]
+   LOCAL _vpc_iz_sif := hParams[ "vpc_sif" ]
    LOCAL _idroba, _idkonto, _vpc_sif, _jmj
    LOCAL _rbr := 0
    LOCAL _t_ulaz_p := _t_izlaz_p := 0
@@ -1189,7 +1187,7 @@ STATIC FUNCTION _gen_xml( params )
    _t_rabat := _t_vpv_ru := _t_vpv_ri := _t_nv := 0
 
    SELECT konto
-   HSEEK params[ "idkonto" ]
+   HSEEK hParams[ "idkonto" ]
 
    SELECT kalk
 
@@ -1199,10 +1197,10 @@ STATIC FUNCTION _gen_xml( params )
    xml_subnode( "ll", .F. )
 
    // header
-   xml_node( "dat_od", DToC( params[ "datum_od" ] ) )
-   xml_node( "dat_do", DToC( params[ "datum_do" ] ) )
+   xml_node( "dat_od", DToC( hParams[ "datum_od" ] ) )
+   xml_node( "dat_do", DToC( hParams[ "datum_do" ] ) )
    xml_node( "dat", DToC( Date() ) )
-   xml_node( "kid", to_xml_encoding( params[ "idkonto" ] ) )
+   xml_node( "kid", to_xml_encoding( hParams[ "idkonto" ] ) )
    xml_node( "knaz", to_xml_encoding( AllTrim( konto->naz ) ) )
    xml_node( "fid", to_xml_encoding( self_organizacija_id() ) )
    xml_node( "fnaz", to_xml_encoding( self_organizacija_naziv() ) )
@@ -1333,7 +1331,7 @@ STATIC FUNCTION _gen_xml( params )
 
       ENDDO
 
-      IF _nule .OR. ( Round( _ulaz - _izlaz, 4 ) <> 0 .OR. Round( _nv_u - _nv_i, 4 ) <> 0 )
+      IF lPrikazatiNulaNV .OR. ( Round( _ulaz - _izlaz, 4 ) <> 0 .OR. Round( _nv_u - _nv_i, 4 ) <> 0 )
 
          xml_subnode( "items", .F. )
 

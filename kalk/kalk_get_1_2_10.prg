@@ -285,7 +285,7 @@ STATIC FUNCTION kalk_get_2_10( x_kord, cIdPartner )
    ENDIF
 
    @ m_x + nX, m_y + 2 SAY "NABAVNA CJENA:"
-   @ m_x + nX, m_y + _unos_left GET _nc PICT gPicNC WHEN VALID {|| kalk_nabcj(), .T. }
+   @ m_x + nX, m_y + _unos_left GET _nc PICT gPicNC WHEN {|| kalk_nabcj(), .T. }
 
 
 

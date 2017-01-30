@@ -242,8 +242,8 @@ METHOD F18Admin:update_app_run_script( update_file )
 METHOD F18Admin:update_app_form( upd_params )
 
    LOCAL lOk := .F.
-   LOCAL _f_ver_prim := 1
-   LOCAL _f_ver_sec := 7
+   LOCAL _f_ver_prim := 2
+   LOCAL _f_ver_sec := 3
    LOCAL _f_ver_third := Space( 10 )
    LOCAL _t_ver_prim := 1
    LOCAL _t_ver_sec := 5

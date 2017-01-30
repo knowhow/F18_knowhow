@@ -19,7 +19,7 @@ FUNCTION prenos_fakt_kalk_magacin()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. fakt->kalk (10->14) racun veleprodaje               " )
+   AAdd( _opc, "1. fakt->kalk (10->14) račun veleprodaje               " )
    AAdd( _opcexe, {||  fakt_kalk_prenos_10_14() } )
    AAdd( _opc, "2. fakt->kalk (12->96) otpremnica" )
    AAdd( _opcexe, {||  fakt_kalk_prenos()  } )
@@ -461,20 +461,20 @@ FUNCTION fakt_kalk_prenos( cIndik )
             hRec[ "idzaduz2" ] := cIdZaduz2
             hRec[ "kolicina" ] := fakt->kolicina
             hRec[ "idroba" ] := fakt->idroba
-            hRec[ "nc" ] := roba->nc
-            hRec[ "fcj" ] := roba->nc
+            hRec[ "nc" ] := fakt->cijena
+            hRec[ "fcj" ] := fakt->cijena
             hRec[ "vpc" ] := fakt->cijena
             hRec[ "rabatv" ] := fakt->rabat
+            hRec[ "trabat" ] := "%"
             hRec[ "mpc" ] := fakt->porez
 
             IF cTipKalk $ "10#16"
-               // kod ulaza puni sa cijenama iz sifranika
+               // kod ulaza puni sa cijenama iz sifanika
                // replace vpc with roba->vpc
                hRec[ "vpc" ] := KoncijVPC()
             ENDIF
 
-            IF cTipKalk $ "96"
-               // veza radni nalog !
+            IF cTipKalk $ "96"  // veza radni nalog !
                _tmp := aMemo[ 20 ]
                IF !Empty( _tmp )
                   hRec[ "idzaduz2" ] := _tmp
@@ -665,6 +665,10 @@ FUNCTION kalk_fakt_prenos_period()
 
             IF _tip_kalk $ "96" .AND. fakt->( FieldPos( "idrnal" ) ) <> 0
                REPLACE idzaduz2 WITH fakt->idRNal
+            ENDIF
+
+            IF _tip_kalk $ "10"
+               REPLACE idzaduz2 WITH fakt->rabat
             ENDIF
 
          ENDIF

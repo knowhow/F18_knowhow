@@ -18,6 +18,7 @@ FUNCTION storno_kalk_dokument()
    cIdFirma := self_organizacija_id()
    cIdVdU   := "  "
    cBrDokU  := Space( Len( kalk_pripr->brdok ) )
+   cBrDokI := cBrDokU
    dDatDok    := CToD( "" )
 
    Box(, 6, 75 )
@@ -35,7 +36,8 @@ FUNCTION storno_kalk_dokument()
    DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
       PushWA()
       Scatter()
-      SELECT kalk_pripr; APPEND BLANK
+      SELECT kalk_pripr
+      APPEND BLANK
       _brdok     := cBrDokI
       _datdok    := dDatDok
       _brfaktp   := Trim( _BrFaktP ) + "/STORNO"

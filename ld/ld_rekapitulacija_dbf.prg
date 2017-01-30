@@ -445,7 +445,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    ENDPRINT
 
-   IF f18_use_module( "virm" ) .AND. Pitanje(, "Generisati virmane za ovaj obračun plate ? (D/N)", "N" ) == "D"
+   IF f18_use_module( "virm" ) .AND. Pitanje(, "Generisati virmane za ovaj obračun plate ? (D/N)", "D" ) == "D"
       virm_set_global_vars()
       set_metric( "virm_godina", my_user(), nGodina )
       set_metric( "virm_mjesec", my_user(), nMjesec )

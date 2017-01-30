@@ -19,7 +19,7 @@ FUNCTION cre_all_virm_sif( ver )
    LOCAL _alias, _table_name
    LOCAL _created
 
-   // -------------------
+/*
    // VRPRIM
    // -------------------
 
@@ -73,7 +73,7 @@ FUNCTION cre_all_virm_sif( ver )
 
    CREATE_INDEX( "ID", "id", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    /*
    // KALVIR
@@ -95,7 +95,7 @@ FUNCTION cre_all_virm_sif( ver )
    */
 
 
-   // -------------------
+/*
    // JPRIH
    // -------------------
 
@@ -117,6 +117,7 @@ FUNCTION cre_all_virm_sif( ver )
    CREATE_INDEX( "Id", "id+IdOps+IdKan+IdN0+Racun", _alias )
    CREATE_INDEX( "Naz", "Naz+IdOps", _alias )
    AFTER_CREATE_INDEX
+*/
 
    RETURN .T.
 

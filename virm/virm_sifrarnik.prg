@@ -42,12 +42,12 @@ FUNCTION P_VrPrim2( cId, dx, dy )
    PRIVATE ImeKol, Kol
 
    ImeKol := { { "ID", {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
-      { "Opis", {|| NAZ              }, "NAZ"      }, ;
-      { "Pomocni tekst", {|| POM_TXT          }, "POM_TXT"  }, ;
-      { "Konto ", {|| idkonto          }, "idkonto"  }, ;
-      { "Partner ", {|| idpartner         }, "idpartner"  }, ;
+      { "Opis", {|| NAZ  }, "NAZ"      }, ;
+      { "Pomocni tekst", {|| POM_TXT   }, "POM_TXT"  }, ;
+      { "Konto ", {|| idkonto }, "idkonto"  }, ;
+      { "Partner ", {|| idpartner  }, "idpartner"  }, ;
       { "Valuta ( ,1,2)", {|| PadC( NACIN_PL, 14 ) }, "NACIN_PL" }, ;
-      { "Racun", {|| Racun          }, "Racun"   }, ;
+      { "Racun", {|| Racun  }, "Racun"   }, ;
       { "Unos dobavlj (D/N)", {|| PadC( DOBAV, 13 )   }, "DOBAV"    };
       }
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
@@ -62,13 +62,13 @@ FUNCTION P_LDVIRM( cId, dx, dy )
    LOCAL vrati
    PRIVATE ImeKol, Kol
 
-   ImeKol := { { "ID", {|| id }, "id", {|| .T. }, {|| P_VRPRIM( @wId ), wNaz := AllTrim( PadR( vrprim->naz, 40 ) ) + "...", .T. } }, ;
-      { "Opis", {|| NAZ }, "NAZ"      }, ;
-      { "FORMULA", {|| formula          }, "formula"  };
+   ImeKol := { { "ID", {|| id }, "id", {|| .T. }, {|| P_VRPRIM( @wId ), wNaz := Padr( wNaz, 50), .T. } }, ;
+      { "Opis", {|| field->naz }, "naz"   }, ;
+      { "FORMULA", {|| field->formula }, "formula"  };
       }
    Kol := { 1, 2, 3 }
 
-   vrati := PostojiSifra( F_LDVIRM, 1, 10, 77, "LISTA LD->VIRM:", @cId, dx, dy )
+   vrati := PostojiSifra( F_LDVIRM, 1, maxrows()-10, maxcols()-20, "LISTA LD->VIRM:", @cId, dx, dy )
 
    RETURN vrati
 

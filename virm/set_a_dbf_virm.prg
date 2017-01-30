@@ -17,13 +17,11 @@ FUNCTION set_a_dbf_virm()
 
    LOCAL hAlg
 
-   // kumulativne tabele
-   //set_a_dbf_virm_jprih()
-	 set_a_sql_sifarnik( "jprih", "JPRIH", F_JPRIH )
+   set_a_dbf_virm_jprih()
 
    set_a_sql_sifarnik( "vrprim", "VRPRIM", F_VRPRIM )
    set_a_sql_sifarnik( "ldvirm", "LDVIRM", F_LDVIRM )
-   //set_a_dbf_sifarnik( "kalvir", "KALVIR", F_KALVIR )
+   // set_a_dbf_sifarnik( "kalvir", "KALVIR", F_KALVIR )
 
    set_a_dbf_temp( "virm_pripr", "VIRM_PRIPR", F_VIPRIPR )
    set_a_dbf_temp( "izlaz", "IZLAZ", F_IZLAZ )
@@ -31,21 +29,18 @@ FUNCTION set_a_dbf_virm()
    RETURN .T.
 
 
-/*
-
-
 STATIC FUNCTION set_a_dbf_virm_jprih()
 
    LOCAL hItem, hAlg, cTable
 
-altd()
+   AltD()
    cTable := "jprih"
    hItem := hb_Hash()
 
-   hItem[ "alias" ] := "JPRIH"
    hItem[ "table" ] := cTable
+   hItem[ "alias" ] := "JPRIH"
    hItem[ "wa" ]    := F_JPRIH
-
+   hItem[ "sql" ] := .T.
    hItem[ "temp" ]  := .F.
    hItem[ "algoritam" ] := {}
 
@@ -63,4 +58,3 @@ altd()
    f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
-*/

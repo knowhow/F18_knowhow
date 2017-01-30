@@ -40,7 +40,7 @@ FUNCTION virm_prenos_fin()
 
    @ m_x + 1, m_y + 2 SAY "PRENOS FIN NALOGA (koji je trenutno u pripremi) u VIRM"
    cIdBanka := PadR( cko_zr, 3 )
-   @ m_x + 2, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka VALID  OdBanku( _firma, @cIdBanka )
+   @ m_x + 2, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka VALID  virm_odredi_ziro_racun( _firma, @cIdBanka )
    READ
    cKo_zr := cIdBanka
    SELECT partn
@@ -96,15 +96,15 @@ FUNCTION virm_prenos_fin()
             _IdBanka2 := Space( 3 )
             _u_korist := cu_korist
             _kome_txt := cKome_txt
-            _kome_zr := cKome_zr
+            _KOME_ZR := cKome_zr
             Beep( 1 )
             cIdBanka2 := Space( 3 )
             @ m_x + 1, m_y + 2 SAY ckome_txt + " " + fin_pripr->brdok + Str( fin_pripr->iznosbhd, 12, 2 )
             @ m_x + 2, m_y + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID p_partner( @_u_korist )  PICT "@!"
-            @ m_x + 2, Col() + 2 GET _IdBanka2 valid {|| OdBanku( cu_korist, @_IdBanka2 ), SetPrimaoc() }
+            @ m_x + 2, Col() + 2 GET _IdBanka2 valid {|| virm_odredi_ziro_racun( cu_korist, @_IdBanka2 ), SetPrimaoc() }
             READ
             cKome_txt := _kome_txt
-            cKome_zr := _kome_zr
+            cKome_zr := _KOME_ZR
             cu_korist := _u_korist
 
             BoxC()

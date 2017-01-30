@@ -42,6 +42,18 @@ FUNCTION o_jprih()
 
    RETURN .T.
 
+
+FUNCTION select_o_jprih()
+
+   SELECT ( F_JPRIH )
+   IF Used()
+      RETURN .T.
+   ENDIF
+
+   RETURN o_jprih()
+
+   
+
 FUNCTION o_ldvirm()
 
    SELECT ( F_LDVIRM )

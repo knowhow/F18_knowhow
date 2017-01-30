@@ -464,7 +464,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
             hRec[ "nc" ] := fakt->cijena
             hRec[ "fcj" ] := fakt->cijena
             hRec[ "vpc" ] := fakt->cijena
-            hRec[ "rabatv" ] := fakt->rabat
+            hRec[ "rabat" ] := fakt->rabat
             hRec[ "trabat" ] := "%"
             hRec[ "mpc" ] := fakt->porez
 

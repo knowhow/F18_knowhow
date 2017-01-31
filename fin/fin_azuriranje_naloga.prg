@@ -588,8 +588,7 @@ FUNCTION psuban_partner_check( arr, silent )
       silent := .F.
    ENDIF
 
-   SELECT partn
-   HSEEK psuban->idpartner
+   select_o_partner( psuban->idpartner )
 
    IF !Found()
 
@@ -856,7 +855,7 @@ FUNCTION o_fin_za_azuriranje()
    my_close_all_dbf()
 
    o_konto()
-   o_partner()
+   //o_partner()
    o_sifk()
    o_sifv()
 

@@ -29,7 +29,7 @@ FUNCTION fin_specif_otvorene_stavke()
 
    qqBrDok := Space( 40 )
 
-   o_partner()
+   // o_partner()
    M := "---- " + REPL( "-", Len( PARTN->id ) ) + " ------------------------------------- ----- ----------------- ---------- ---------------------- --------------------"
    o_konto()
    dDatOd := dDatDo := CToD( "" )
@@ -233,12 +233,12 @@ FUNCTION ZaglSpK()
 
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
-   IF gNW == "D"
+   //IF gNW == "D"
       ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
-   ELSE
-      SELECT PARTN; HSEEK cIdFirma
-      ? "Firma:", cidfirma, partn->naz, partn->naz2
-   ENDIF
+   //ELSE
+  //    SELECT PARTN; HSEEK cIdFirma
+  //    ? "Firma:", cidfirma, partn->naz, partn->naz2
+   //ENDIF
 
    IF cPrelomljeno == "N"
       P_COND2

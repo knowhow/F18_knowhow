@@ -23,7 +23,7 @@ FUNCTION SpecPoK()
    cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
-   o_partner()
+   -- o_partner()
 
    dDatOd := dDatDo := CToD( "" )
 

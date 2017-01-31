@@ -16,7 +16,7 @@ FUNCTION SpecKK2( lOtvSt )
    PRIVATE lOtvoreneStavke := lOtvSt
 
    o_konto()
-   o_partner()
+--   o_partner()
 
 
    cDinDem := "1"
@@ -122,7 +122,7 @@ FUNCTION SpecKK2( lOtvSt )
       SET FILTER TO &cFilt1
    ENDIF
 
-   HSEEK cidfirma
+   -- HSEEK cidfirma
 
    EOF CRET
 
@@ -205,7 +205,7 @@ FUNCTION SpecKK2( lOtvSt )
          @ PRow() + 1, 0 SAY cidpartner
 
          SELECT partn
-         HSEEK cIdPartner
+      --   HSEEK cIdPartner
          SELECT suban
 
          @ PRow(), PCol() + 1 SAY PadR( partn->naz, 25 )
@@ -274,7 +274,7 @@ STATIC FUNCTION Zagl7()
    IF gNW == "D"
       ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
-      SELECT PARTN; HSEEK cIdFirma
+    --  SELECT PARTN; HSEEK cIdFirma
       ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
    ENDIF
 

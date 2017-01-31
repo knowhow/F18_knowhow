@@ -152,7 +152,7 @@ FUNCTION fin_open_psuban_and_ostalo()
 
    O_VRSTEP
    o_konto()
-   o_partner()
+   //o_partner()
    o_tnal()
    o_tdok()
    o_fin_psuban()
@@ -170,7 +170,7 @@ FUNCTION fin_open_lock_panal( lZap )
    O_PSINT
    O_PNALOG
 
-   o_partner()
+   //o_partner()
    o_konto()
    o_tnal()
 

@@ -662,10 +662,10 @@ FUNCTION o_fin_edit()
 
    o_rj()
 
-   IF gTroskovi == "D"
+   //IF gTroskovi == "D"
     //  o_fond()
     //  o_funk()
-   ENDIF
+  // ENDIF
 
    O_PSUBAN
    O_PANAL
@@ -673,7 +673,7 @@ FUNCTION o_fin_edit()
    O_PNALOG
    //O_PAREK
    o_konto()
-   o_partner()
+  // o_partner()
    o_tnal()
    o_tdok()
    o_nalog()

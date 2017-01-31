@@ -14,7 +14,7 @@ FUNCTION SpecPop()
    picBHD := FormPicL( "9 " + gPicBHD, 16 )
    picDEM := FormPicL( "9 " + gPicDEM, 12 )
 
-   o_partner()
+   //o_partner()
 
 
 
@@ -43,10 +43,11 @@ FUNCTION SpecPop()
    o_konto()
    o_suban()
 
-   SELECT SUBAN; SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto
+   SELECT SUBAN
+   SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto
    cIdFirma := Left( cIdFirma, 2 )
 
-   IF ausl1 <> ".t." .OR. ausl2 <> ".t."
+   IF aUsl1 <> ".t." .OR. aUsl2 <> ".t."
       cFilt1 := aUsl1 + ".and." + aUsl2
       SET FILTER to  &cFilt1
    ELSE
@@ -116,7 +117,7 @@ FUNCTION SpecPop()
       ? M
       ? "Uk:"
       @ PRow(), PCol() + 1 SAY cIdPartner
-      SELECT PARTN; HSEEK cIdPartner
+      select_o_partner( cIdPartner )
       @ PRow(), PCol() + 1 SAY Left( naz, 28 )
       SELECT SUBAN
       @ PRow(), nCol1    SAY nUkDugBHD PICT picBHD

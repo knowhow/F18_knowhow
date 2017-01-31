@@ -226,7 +226,7 @@ STATIC FUNCTION _g_pt_naz( cId )
    LOCAL xRet := ""
    LOCAL nTArea := Select()
 
-   o_partner()
+--   o_partner()
    SELECT partn
    SEEK cId
 
@@ -343,7 +343,7 @@ STATIC FUNCTION __gen_fin( dD_from, dD_to, cGroup, cKtoList )
 
    SET FILTER to &cFilter
    GO TOP
-   HSEEK cIdFirma
+   --HSEEK cIdFirma
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma
 
@@ -537,7 +537,7 @@ STATIC FUNCTION __gen2_fin( dD_from, dD_to, cGroup, cKtoList )
 
    SET FILTER to &cFilter
    GO TOP
-   HSEEK cIdFirma
+   --HSEEK cIdFirma
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma
 

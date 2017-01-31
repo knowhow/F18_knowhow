@@ -49,7 +49,7 @@ FUNCTION fin_bb_grupe_b( params )
 
    fin_bb_txt_header()
 
-   o_partner()
+   //o_partner()
    o_konto()
    O_BBKLAS
 
@@ -89,7 +89,7 @@ FUNCTION fin_bb_grupe_b( params )
    ENDIF
 
    GO TOP
-   
+
    EOF CRET
 
    nStr := 0
@@ -340,8 +340,7 @@ STATIC FUNCTION zagl_bb_grupe( params, nStr )
    ELSE
       ? "Firma:"
       @ PRow(), PCol() + 2 SAY params[ "idfirma" ]
-      SELECT PARTN
-      HSEEK params[ "idfirma" ]
+      select_o_partner( params[ "idfirma" ] )
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF

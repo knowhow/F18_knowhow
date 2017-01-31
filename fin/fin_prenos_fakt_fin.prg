@@ -27,7 +27,7 @@ FUNCTION fakt_fin_prenos()
 
    Rpar( "a1", @gFaktKum )
    Rpar( "a2", @gDzokerF1 )
-  
+
 
    gDzokerF1 := Trim( gDzokerF1 )
 
@@ -88,7 +88,7 @@ FUNCTION fakt_fin_prenos()
 
    O_FINMAT
    o_konto()
-   o_partner()
+   //o_partner()
    o_tdok()
    o_roba()
    o_tarifa()

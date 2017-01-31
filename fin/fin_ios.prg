@@ -75,7 +75,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL cNastavak := "N"
 
    o_konto()
-   o_partner()
+   //o_partner()
 
    Box(, 16, 65, .F. )
 
@@ -168,7 +168,7 @@ STATIC FUNCTION mnu_ios_print()
 
 
    o_konto()
-   o_partner()
+   //o_partner()
    o_suban()
    o_tnal()
    o_suban()
@@ -670,7 +670,7 @@ STATIC FUNCTION ios_specifikacija( hParams )
 
    _line := _ios_spec_get_line()
 
-   o_partner()
+   -- o_partner()
    o_konto()
 
    find_suban_by_broj_dokumenta(  cIdFirma, cIdKonto )
@@ -741,7 +741,7 @@ STATIC FUNCTION ios_specifikacija( hParams )
          @ PRow(), 5 SAY cIdPartner
 
          SELECT PARTN
-         HSEEK cIdPartner
+         -- HSEEK cIdPartner
 
          @ PRow(), 12 SAY PadR( AllTrim( partn->naz ), 20 )
          @ PRow(), 37 SAY AllTrim( partn->naz2 ) PICT 'XXXXXXXXXXXX'
@@ -840,7 +840,7 @@ STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
    @ PRow(), PCol() + 1 SAY id_firma
 
    SELECT partn
-   HSEEK id_partner
+   -- HSEEK id_partner
 
    @ PRow(), PCol() + 1 SAY AllTrim( naz )
    @ PRow(), PCol() + 1 SAY AllTrim( naz2 )
@@ -888,7 +888,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    dDatumDo := hParams[ "datum_do" ]
    cPrikazSaSaldoNulaDN := hParams[ "saldo_nula" ]
 
-   o_partner()
+   //o_partner()
    o_konto()
    o_suban()
    O_IOS
@@ -989,9 +989,7 @@ STATIC FUNCTION ios_xml_partner( cSubnode, cIdPartner )
    LOCAL _ret := .T.
    LOCAL _jib, cPdvBroj, cIdBroj
 
-   SELECT partn
-   GO TOP
-   SEEK cIdPartner
+   select_o_partner( cIdPartner )
 
    IF !Found() .AND. !Empty( cIdPartner )
       RETURN .F.
@@ -1058,8 +1056,7 @@ STATIC FUNCTION print_ios_txt( hParams )
    @ PRow(), 58 SAY "OBRAZAC: I O S"
    @ PRow() + 1, 1 SAY cIdFirma
 
-   SELECT partn
-   HSEEK cIdFirma
+   select_o_partner( cIdFirma )
 
    @ PRow(), 5 SAY AllTrim( partn->naz )
    @ PRow(), PCol() + 1 SAY AllTrim( partn->naz2 )
@@ -1071,8 +1068,7 @@ STATIC FUNCTION print_ios_txt( hParams )
 
    ?
 
-   SELECT PARTN
-   HSEEK cIdPartner
+   select_o_partner( cIdPartner )
 
    @ PRow(), 45 SAY cIdPartner
    ?? " -", AllTrim( partn->naz )

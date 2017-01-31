@@ -765,7 +765,7 @@ FUNCTION set_jprih_globalne_varijable()
    ELSEIF Len( _tmp_1 ) == 2
 
       // nivo kantona
-      _idops := IIF( Len( _tmp_2 ) == 3, _tmp_2, OpcRada() )
+      _idops := IIF( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
       aJPrih := set_pozicija_jprih_record( _idjprih, "", _tmp_1, "" )
       _KOME_ZR := aJPrih[ 1 ]
       _budzorg := aJPrih[ 3 ]
@@ -773,7 +773,7 @@ FUNCTION set_jprih_globalne_varijable()
    ELSEIF Len( _tmp_1 ) == 1
 
       // nivo entiteta
-      _idops := IIF( Len( _tmp_2 ) == 3, _tmp_2, OpcRada() )
+      _idops := IIF( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
       aJPrih := set_pozicija_jprih_record( _idjprih, "", "", _tmp_1 )
       _KOME_ZR := aJPrih[ 1 ]
       _budzorg := aJPrih[ 3 ]
@@ -827,18 +827,18 @@ FUNCTION popuni_javne_prihode()
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
-FUNCTION OpcRada()
+FUNCTION virm_opcina_rada()
 
    LOCAL cVrati := "   "
    LOCAL cOR := ""
    LOCAL nArr := Select()
 
    cOR := my_get_from_ini( "VIRM", "OpcRada", "XXXX", KUMPATH )
-
+altd()
    IF Empty( cOR )
       RETURN ""
    ENDIF

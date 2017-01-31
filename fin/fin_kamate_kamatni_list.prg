@@ -69,8 +69,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
       ?? PadC( "- Strana " + Str( ++nStr, 4 ) + "-", 80 )
       ?
 
-      SELECT partn
-      HSEEK cIdPartner
+      select_o_partner( cIdPartner )
 
       cPom := Trim( partn->adresa )
 
@@ -98,12 +97,11 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
 
       P_10CPI
       B_ON
-      SELECT partn
-      SEEK cIdPartner
+      select_o_partner( cIdPartner )
       hRec := dbf_get_rec()
       SELECT kam_pripr
 
-      ? PadC( "KAMATNI LIST KUPAC: " + Alltrim( hRec[ "id" ] + " - " + Alltrim( hRec[ "naz" ] )) + " " + DToC( fin_kam_datum_obracuna()), 80 )
+      ? PadC( "KAMATNI LIST KUPAC: " + AllTrim( hRec[ "id" ] + " - " + AllTrim( hRec[ "naz" ] ) ) + " " + DToC( fin_kam_datum_obracuna() ), 80 )
       B_OFF
 
       IF fin_kam_prikaz_kumulativ() == "N"
@@ -140,7 +138,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
       fStampajBr := .T.
       lPrvaStavkaZaBrDok := .T.
 
-      //nKamataZaBrDok := 0
+      // nKamataZaBrDok := 0
       nKamataUkupnoBrDok := 0
       cBrDok := field->brdok
       cM1 := field->m1
@@ -224,9 +222,9 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
                nIznKam := nKKam * nGlavn
             ELSE
                nKStopa := field->stkam / 100
-               //cPom777 := my_get_from_ini( "KAM", "FormulaZaProstuKamatu", "nGlavn*nKStopa*nPeriod/nExp", KUMPATH )
-               //nIznKam := &( cPom777 )
-               nIznKam := nGlavn*nKStopa*nPeriod/nExp
+               // cPom777 := my_get_from_ini( "KAM", "FormulaZaProstuKamatu", "nGlavn*nKStopa*nPeriod/nExp", KUMPATH )
+               // nIznKam := &( cPom777 )
+               nIznKam := nGlavn * nKStopa * nPeriod / nExp
 
             ENDIF
 
@@ -269,7 +267,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
                nGlavnicaZaBrDok += nIznKam
             ENDIF
 
-            //nKamataZaBrDok += nIznKam
+            // nKamataZaBrDok += nIznKam
             nKamataUkupnoBrDok += nIznKam
 
             IF ( cVarijantaKamatnogRacuna == "Z" )
@@ -350,8 +348,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
       FF
 
 
-      SELECT Partn
-      HSEEK PadR( self_organizacija_id(), 6 )
+      select_o_partner( PadR( self_organizacija_id(), 6 ) )
       hRec := dbf_get_rec( .T. )
       hParams[ "naziv" ] := hRec[ "naz" ]
       hParams[ "adresa" ] := hRec[ "adresa" ]
@@ -363,8 +360,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
       hParams[ "ziror" ] := hRec[ "ziror" ]
       hParams[ "datum" ] := fin_kam_datum_obracuna()
 
-      SELECT Partn
-      HSEEK cIdPartner
+      select_o_partner( cIdPartner )
       hRec := dbf_get_rec( .T. )
       hParams[ "kupac_1" ] := hRec[ "id" ] + " - " + hRec[ "naz" ]
       hParams[ "kupac_2" ] := hRec[ "ptt" ] + " " + hRec[ "mjesto" ]
@@ -430,12 +426,12 @@ STATIC FUNCTION NStrana( cTip, cVarijantaKamatnogRacuna )
       ? m
 
       IF cVarijantaKamatnogRacuna == "Z"
-         ? "   Broj          Period      dana     ostatak       kamatna   Tip kam  Konform.    Iznos    " + IIF( fin_kam_prikaz_kumulativ() == "D", "   kumulativ   ", "" )
-         ? "  racuna                              racuna       osnovica   i stopa   koef       kamate   " + IIF( fin_kam_prikaz_kumulativ() == "D", "    kamate     ", "" )
+         ? "   Broj          Period      dana     ostatak       kamatna   Tip kam  Konform.    Iznos    " + iif( fin_kam_prikaz_kumulativ() == "D", "   kumulativ   ", "" )
+         ? "  racuna                              racuna       osnovica   i stopa   koef       kamate   " + iif( fin_kam_prikaz_kumulativ() == "D", "    kamate     ", "" )
 
       ELSE
-         ? "   Broj          Period      dana     ostatak       kamatna    Stopa       Iznos    " + IIF( fin_kam_prikaz_kumulativ() == "D", "   kumulativ   ", "" )
-         ? "  racuna                              racuna       osnovica                kamate   " + IIF( fin_kam_prikaz_kumulativ() == "D", "    kamate     ", "" )
+         ? "   Broj          Period      dana     ostatak       kamatna    Stopa       Iznos    " + iif( fin_kam_prikaz_kumulativ() == "D", "   kumulativ   ", "" )
+         ? "  racuna                              racuna       osnovica                kamate   " + iif( fin_kam_prikaz_kumulativ() == "D", "    kamate     ", "" )
       ENDIF
 
       ? m

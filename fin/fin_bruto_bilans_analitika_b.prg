@@ -57,7 +57,7 @@ FUNCTION fin_bb_analitika_b( hParams )
    fin_bb_txt_header()
 
    o_konto()
-   o_partner()
+   //o_partner()
    O_BBKLAS
 
    IF gFinRj == "D" .AND. Len( cIdRJ ) <> 0
@@ -397,7 +397,7 @@ FUNCTION zagl_bb_anal( hParams, nStr )
       ? "Firma:"
       @ PRow(), PCol() + 2 SAY hParams[ "idfirma" ]
       SELECT PARTN
-      HSEEK hParams[ "idfirma" ]
+      -- HSEEK hParams[ "idfirma" ]
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF

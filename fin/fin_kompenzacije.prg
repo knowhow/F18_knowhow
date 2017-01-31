@@ -20,9 +20,9 @@ STATIC FUNCTION _o_tables()
    O_KOMP_POT
    O_KOMP_DUG
    o_konto()
-   o_partner()
+   //o_partner()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _get_vars( vars )

@@ -28,7 +28,7 @@ FUNCTION fin_sint_kartica()
 
    cPredh := "2"
 
-   o_partner()
+   //o_partner()
    O_PARAMS
 
    PRIVATE cSection := "1"; cHistory := " ";aHistory := {}
@@ -266,8 +266,7 @@ FUNCTION SinKZagl()
    IF gNW == "D"
       ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
-      SELECT PARTN
-      HSEEK cIdFirma
+      select_o_partner( cIdFirma )
       ? "Firma:", cidfirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
    ENDIF
 

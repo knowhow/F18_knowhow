@@ -203,7 +203,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
 /*
    IF gNW == "N"
       SELECT partn
-      HSEEK cIdfirma
+      -- HSEEK cIdfirma
       SELECT panal
       ? cidfirma, "-", partn->naz
    ENDIF
@@ -261,7 +261,7 @@ STATIC FUNCTION close_open_panal()
    SET ORDER TO TAG "2"
 
    o_konto()
-   o_partner()
+   //o_partner()
    o_tnal()
    o_nalog()
 

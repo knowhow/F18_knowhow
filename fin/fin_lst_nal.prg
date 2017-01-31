@@ -21,7 +21,7 @@ FUNCTION st_sv_nal()
 
    o_suban()
    o_konto()
-   o_partner()
+   //o_partner()
 
    SELECT suban
    SET ORDER TO TAG "4" // "4", "idFirma+IdVN+BrNal+Rbr"

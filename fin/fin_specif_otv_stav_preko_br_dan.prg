@@ -22,7 +22,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
    cIdFirma := self_organizacija_id(); nIznosBHD := 0; nDana := 30; cIdKonto := Space( 7 )
 
    o_konto()
-   o_partner()
+   //o_partner()
    dDatumOd := CToD( "" )
    dDatum := Date()
    cUkupnoPartner := "D"
@@ -298,12 +298,12 @@ FUNCTION ZaglSpBrDana()
 
    @ PRow(), 123 SAY "Str:" + Str( ++nStr, 3 )
 
-   IF gNW == "D"
+   //IF gNW == "D"
       ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
-   ELSE
-      SELECT PARTN; HSEEK cIdFirma
-      ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
-   ENDIF
+   //ELSE
+  //    SELECT PARTN; HSEEK cIdFirma
+  //    ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
+   //ENDIF
 
    ? "KONTO:", cIdkonto
 

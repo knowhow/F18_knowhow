@@ -21,7 +21,7 @@ FUNCTION SpecSubPro()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
    o_konto()
-   o_partner()
+   //o_partner()
 
    dDatOd := dDatDo := CToD( "" )
    qqkonto := Space( 7 )

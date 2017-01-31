@@ -80,7 +80,7 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
    o_sifk()
    o_sifv()
    o_konto()
-   o_partner()
+   //o_partner()
 
    Box( "#" + _box_name, _box_x, _box_y )
 

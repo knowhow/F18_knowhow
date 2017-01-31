@@ -80,7 +80,7 @@ FUNCTION fin_specifikacija_suban()
    SELECT params
    USE
 
-   o_partner()
+  // o_partner()
 
    cTip := "1"
    Box( "", 20, 65 )
@@ -180,7 +180,7 @@ FUNCTION fin_specifikacija_suban()
       o_rj()
    ENDIF
 
-   o_partner()
+   //o_partner()
    o_konto()
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    find_suban_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto,idpartner,brdok", cSqlWhere )
@@ -671,8 +671,7 @@ FUNCTION zagl_fin_specif( cSkVar )
       IF Empty( cIdFirma )
          ? "Firma:", self_organizacija_naziv(), "(SVE RJ)"
       ELSE
-         SELECT PARTN
-         HSEEK cIdFirma
+         select_o_partner( cIdFirma )
          ? "Firma:", cIdfirma, PadR( partn->naz, 25 ), partn->naz2
       ENDIF
    ENDIF

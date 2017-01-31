@@ -23,7 +23,7 @@ FUNCTION PartVanProm()
       cKrit := Space ( 60 ), aUsl
 
    o_konto()
-   o_partner()
+   //o_partner()
    o_suban()
 
    Box (, 11, 60 )
@@ -32,7 +32,7 @@ FUNCTION PartVanProm()
       cIdFirma := self_organizacija_id()
       @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    @ m_x + 4, m_y + 2 SAY " Konto (prazno-svi)" GET cIdKonto ;
       VALID Empty ( cIdKonto ) .OR. P_KontoFin ( @cIdKonto )

@@ -1292,7 +1292,7 @@ STATIC FUNCTION kartica_otvori_tabele()
    my_close_all_dbf()
 
    o_konto()
-   o_partner()
+  // o_partner()
    o_sifk()
    o_sifv()
    o_rj()

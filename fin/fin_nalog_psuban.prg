@@ -40,7 +40,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
    _vrste_placanja := .F.
 
-   o_partner()
+   //o_partner()
 
    PicBHD := "@Z " + FormPicL( gPicBHD, 15 )
    PicDEM := "@Z " + FormPicL( gPicDEM, 10 )
@@ -377,8 +377,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    nArr := Select()
 
    IF _fin_params[ "fin_tip_dokumenta" ]
-      SELECT partn
-      HSEEK cIdfirma
+      select_o_partner( cIdfirma )
       SELECT ( nArr )
       ? cidfirma, "-", AllTrim( partn->naz )
    ENDIF
@@ -471,7 +470,7 @@ FUNCTION fin_gen_psuban_stavke_auto_import()
 
    o_fin_pripr()
    o_konto()
-   o_partner()
+   //o_partner()
    o_tnal()
    o_tdok()
    O_PSUBAN

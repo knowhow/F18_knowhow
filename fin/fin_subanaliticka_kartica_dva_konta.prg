@@ -43,7 +43,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    RPar( "y3", @qqPartner )
 
    o_konto()
-   o_partner()
+   //o_partner()
 
    PRIVATE cSazeta := "N"
    PRIVATE cK14 := "1"
@@ -602,15 +602,15 @@ FUNCTION ZaglSif2( fStrana )
       @ PRow(), 120 SAY "Str." + Str( ++nStr, 5 )
    ENDIF
 
-   IF gNW == "D"
+   //IF gNW == "D"
       ? "Firma:", self_organizacija_id(), "-", self_organizacija_naziv()
-   ELSE
-      SELECT PARTN; HSEEK cIdFirma
-      ? "Firma:", cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
-   ENDIF
+   //ELSE
+    //  SELECT PARTN; HSEEK cIdFirma
+  //    ? "Firma:", cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
+   //ENDIF
 
 
-   SELECT PARTN; HSEEK cIdPartner
+   select_o_partner( cIdPartner )
    ? "PARTNER:", cIdPartner, AllTrim( partn->naz ), AllTrim( partn->naz2 )
 
    SELECT SUBAN

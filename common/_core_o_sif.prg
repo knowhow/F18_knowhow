@@ -77,11 +77,12 @@ FUNCTION find_partner_by_naz_or_id( cId )
 
    LOCAL cAlias := "PARTN"
    LOCAL cSqlQuery := "select * from fmk.partn"
+   LOCAL cIdSql
 
-   cId := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
-   cSqlQuery += " WHERE id ilike " + cId
-   cSqlQuery += " OR naz ilike " + cId
-   cSqlQuery += " OR mjesto ilike " + cId
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+   cSqlQuery += " OR naz ilike " + cIdSql
+   cSqlQuery += " OR mjesto ilike " + cIdSql
 
    IF !use_sql( "partn", cSqlQuery, cAlias )
       RETURN .F.
@@ -89,7 +90,11 @@ FUNCTION find_partner_by_naz_or_id( cId )
    INDEX ON ID TAG ID TO ( cAlias )
    INDEX ON NAZ TAG NAZ TO ( cAlias )
    SET ORDER TO TAG "ID"
-   GO TOP
+  
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
 
    RETURN .T.
 

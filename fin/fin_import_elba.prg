@@ -523,9 +523,7 @@ FUNCTION postoji_partner( cIdPartner )
 
    PushWA()
 
-   select_o_partner()
-   SET ORDER TO TAG ID
-   SEEK  cIdPartner
+   select_o_partner( cIdPartner)
 
    lRet := Found()
    PopWA()

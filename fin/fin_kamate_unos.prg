@@ -86,7 +86,7 @@ STATIC FUNCTION O_Edit()
 
 
    O_KS
-   o_partner()
+   //o_partner()
    o_konto()
    select_o_kam_pripr()
    select_o_kam_kamat()

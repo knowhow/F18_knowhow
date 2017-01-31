@@ -20,165 +20,165 @@
  *     Specifikacija troskova po radnim nalozima (tj.objektima)
  */
 
-function SpecTrosRN()
+FUNCTION SpecTrosRN()
 
+   picBHD := FormPicL( "9 " + gPicBHD, 17 )
 
-picBHD:=FormPicL("9 "+gPicBHD,17)
+   cIdFirma := self_organizacija_id()
+   qqRN := Space( 40 )
+   dOd := CToD( "" )
+   dDo := Date()
 
-cIdFirma:=self_organizacija_id()
-qqRN:=SPACE(40)
-dOd:=CTOD("")
-dDo:=DATE()
+   //o_partner()
 
-o_partner()
+   Box( "#SPECIFIKACIJA TROSKOVA PO RADNIM NALOZIMA", 10, 75 )
 
-Box("#SPECIFIKACIJA TROSKOVA PO RADNIM NALOZIMA",10,75)
+   IF gNW == "D"
+      @ m_x + 2, m_y + 2 SAY "Firma "
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
+   ELSE
+      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+   ENDIF
 
-if gNW=="D"
-	@ m_x+2,m_y+2 SAY "Firma "
-	?? self_organizacija_id(),"-",self_organizacija_naziv()
-else
-	@ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| p_partner(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-endif
+   @ m_x + 4, m_y + 2 SAY "Radni nalozi (uslov):" GET qqRN
+   @ m_x + 5, m_y + 2 SAY "Period: od datuma" GET dOd
+   @ m_x + 5, Col() + 2 SAY "do datuma" GET dDo
 
-@ m_x+4, m_y+2 SAY "Radni nalozi (uslov):" GET qqRN
-@ m_x+5, m_y+2 SAY "Period: od datuma" GET dOd
-@ m_x+5, col()+2 SAY "do datuma" GET dDo
+   DO WHILE .T.
+      READ
+      ESC_BCR
+      aUsl1 := Parsiraj( qqRN, "brDok", "C" )
+      aUsl2 := Parsiraj( "TD;", "konto->oznaka", "C" )
+      IF aUsl1 <> NIL .AND. aUsl2 <> NIL
+         EXIT
+      ENDIF
+   ENDDO
 
-do while .t.
-	read
-	ESC_BCR
-	aUsl1:=Parsiraj(qqRN,"brDok","C")
-	aUsl2:=Parsiraj("TD;","konto->oznaka","C")
-	if aUsl1<>NIL .and. aUsl2<>NIL
-		exit
-	endif
-enddo
+   BoxC()
 
-BoxC()
+   cIdFirma := Left( cIdFirma, 2 )
 
-cIdFirma:=left(cIdFirma,2)
-
-O_FAKT_OBJEKTI
-o_konto()
-o_suban()
+   O_FAKT_OBJEKTI
+   o_konto()
+   o_suban()
 
 // 1) utvrditi ukupne troskove (nUkTros)
-cPom:=my_get_from_ini("Troskovi","Uslov",'idKonto="3"',KUMPATH)
-set filter to &cPom
-go top
-nUkTros:=0
-do while !EOF()
-	nUkTros := nUkTros + IF(field->d_p="1",1,-1)*field->iznosBHD
-	skip 1
-enddo
-set filter to
+   cPom := my_get_from_ini( "Troskovi", "Uslov", 'idKonto="3"', KUMPATH )
+   SET FILTER TO &cPom
+   GO TOP
+   nUkTros := 0
+   DO WHILE !Eof()
+      nUkTros := nUkTros + IF( field->d_p = "1", 1, - 1 ) * field->iznosBHD
+      SKIP 1
+   ENDDO
+   SET FILTER TO
 // ------------------------------
 
-select SUBAN
-SET RELATION TO idKonto INTO konto
+   SELECT SUBAN
+   SET RELATION TO idKonto INTO konto
 
-private cFilt1:="IdFirma=='"+cIdFirma+"'.and."+aUsl1+".and."+aUsl2
-private cSort:="brDok+idKonto"
-index on &cSort to VEZSUB for &cFilt1
+   PRIVATE cFilt1 := "IdFirma=='" + cIdFirma + "'.and." + aUsl1 + ".and." + aUsl2
+   PRIVATE cSort := "brDok+idKonto"
+   INDEX ON &cSort TO VEZSUB FOR &cFilt1
 
 
-go top
-EOF CRET
+   GO TOP
+   EOF CRET
 
-private m
-m:=REPLICATE("-",83)
+   PRIVATE m
+   m := Replicate( "-", 83 )
 
-nUkDirTros:=0
-nUkTDP:=0
-aTDP:={}
-aTD:={}
+   nUkDirTros := 0
+   nUkTDP := 0
+   aTDP := {}
+   aTD := {}
 
-aIzvj:={}
+   aIzvj := {}
 
-do while (!eof())
-	cBrDok:=field->brDok
-	select fakt_objekti
-	HSEEK PADR(cBrDok,10)
-	AADD(aIzvj,{cBrDok})
-	nTekRN:=LEN(aIzvj)
-	AADD(aIzvj[nTekRN],"")
-	AADD(aIzvj[nTekRN],"Broj radnog naloga : "+cBrDok)
-	AADD(aIzvj[nTekRN],"Naziv radnog naloga: "+field->naz)
-	AADD(aIzvj[nTekRN],m)
-	select suban
-	nUkupno:=0
-	do while (!eof() .and. field->brDok==cBrDok)
-		cIdKonto:=field->idKonto
-		cNazKonta:=konto->naz
-		nIznos:=0
-		lTDP:=(konto->oznaka="TDP")
-		do while (!eof() .and. field->brDok==cBrDok .and. field->idKonto==cIdKonto)
-			if d_p=="1"
-				nIznos+=iznosbhd
-			else
-				nIznos-=iznosbhd
-			endif
-			skip 1
-		enddo
-		// 2) utvrditi ukupne direktne troskove (nUkDirTros)
-		nUkDirTros+=nIznos
-		// -------------------------------
-		if lTDP
-			// 4) utvrditi trosak plata proizvodnih radnika po radnom nalogu (aTDP[x])
-			nPom:=ASCAN(aTDP, {|x| x[1]==cBrDok})
-			if nPom>0
-				aTDP[nPom,2]:=aTDP[nPom,2]+nIznos
-			else
-				AADD(aTDP, {cBrDok, nIznos})
-			endif
-			// ----------------------------------------------
-			// 5) utvrditi ukupni trosak plata proizvodnih radnika (nUkTDP)
-			nUkTDP:=nUkTDP+nIznos
-			// ----------------------------------------------
-		endif
-		nUkupno+=nIznos
-		AADD(aIzvj[nTekRN],cIdKonto+"-"+cNazKonta+" "+TRANSFORM(nIznos,picBHD))
-	enddo
-	AADD(aIzvj[nTekRN],m)
-	AADD(aIzvj[nTekRN],PADR("UKUPNO DIREKTNI TROSKOVI",LEN(cIdKonto+cNazKonta)+1)+" "+TRANSFORM(nUkupno,picBHD))
-	AADD(aIzvj[nTekRN],m)
-	AADD(aTD,{cBrDok,nUkupno})
-enddo
+   DO WHILE ( !Eof() )
+      cBrDok := field->brDok
+      SELECT fakt_objekti
+      HSEEK PadR( cBrDok, 10 )
+      AAdd( aIzvj, { cBrDok } )
+      nTekRN := Len( aIzvj )
+      AAdd( aIzvj[ nTekRN ], "" )
+      AAdd( aIzvj[ nTekRN ], "Broj radnog naloga : " + cBrDok )
+      AAdd( aIzvj[ nTekRN ], "Naziv radnog naloga: " + field->naz )
+      AAdd( aIzvj[ nTekRN ], m )
+      SELECT suban
+      nUkupno := 0
+      DO WHILE ( !Eof() .AND. field->brDok == cBrDok )
+         cIdKonto := field->idKonto
+         cNazKonta := konto->naz
+         nIznos := 0
+         lTDP := ( konto->oznaka = "TDP" )
+         DO WHILE ( !Eof() .AND. field->brDok == cBrDok .AND. field->idKonto == cIdKonto )
+            IF d_p == "1"
+               nIznos += iznosbhd
+            ELSE
+               nIznos -= iznosbhd
+            ENDIF
+            SKIP 1
+         ENDDO
+// 2) utvrditi ukupne direktne troskove (nUkDirTros)
+         nUkDirTros += nIznos
+// -------------------------------
+         IF lTDP
+// 4) utvrditi trosak plata proizvodnih radnika po radnom nalogu (aTDP[x])
+            nPom := AScan( aTDP, {| x | x[ 1 ] == cBrDok } )
+            IF nPom > 0
+               aTDP[ nPom, 2 ] := aTDP[ nPom, 2 ] + nIznos
+            ELSE
+               AAdd( aTDP, { cBrDok, nIznos } )
+            ENDIF
+// ----------------------------------------------
+// 5) utvrditi ukupni trosak plata proizvodnih radnika (nUkTDP)
+            nUkTDP := nUkTDP + nIznos
+// ----------------------------------------------
+         ENDIF
+         nUkupno += nIznos
+         AAdd( aIzvj[ nTekRN ], cIdKonto + "-" + cNazKonta + " " + Transform( nIznos, picBHD ) )
+      ENDDO
+      AAdd( aIzvj[ nTekRN ], m )
+      AAdd( aIzvj[ nTekRN ], PadR( "UKUPNO DIREKTNI TROSKOVI", Len( cIdKonto + cNazKonta ) + 1 ) + " " + Transform( nUkupno, picBHD ) )
+      AAdd( aIzvj[ nTekRN ], m )
+      AAdd( aTD, { cBrDok, nUkupno } )
+   ENDDO
 
 // 3) ukupni rezijski troskovi (nUkRezTros = nUkTros - nUkDirTros)
-nUkRezTros:=nUkTros-nUkDirTros
+   nUkRezTros := nUkTros - nUkDirTros
 
-IF !start_print()
-	 RETURN .F.
-ENDIF
-?
-for i:=1 to LEN(aIzvj)
-	cBrDok:=aIzvj[i,1]
-	for j:=2 to LEN(aIzvj[i])
-		? aIzvj[i,j]
-	next
-	nPom:=ASCAN(aTDP,{|x| x[1]==cBrDok})
-	if nPom>0
-		// 6) rezijski troskovi po radnom nalogu = nUkRezTros * aTDP[x] / nUkTDP
-		nRezTrosRN:=nUkRezTros*aTDP[nPom,2]/nUkTDP
-		// ------------------------------------------------
-		nPom2:=ASCAN(aTD,{|x| x[1]==cBrDok})
-		if nPom2>0
-			nDirTrosRN:=aTD[nPom2,2]
-		else
-			nDirTrosRN:=0
-		endif
-		? PADR("RASPOREDJENI REZIJSKI TROSKOVI",LEN(cIdKonto+cNazKonta)+1)+" "+TRANSFORM(nRezTrosRN,picBHD)
-		? STRTRAN(m,"-","=")
-		? PADR("U K U P N I   T R O S K O V I",LEN(cIdKonto+cNazKonta)+1)+" "+TRANSFORM(nDirTrosRN+nRezTrosRN,picBHD)
-		? m
-	endif
-	?
-	FF
-next
+   IF !start_print()
+      RETURN .F.
+   ENDIF
+   ?
+   FOR i := 1 TO Len( aIzvj )
+      cBrDok := aIzvj[ i, 1 ]
+      FOR j := 2 TO Len( aIzvj[ i ] )
+         ? aIzvj[ i, j ]
+      NEXT
+      nPom := AScan( aTDP, {| x | x[ 1 ] == cBrDok } )
+      IF nPom > 0
+// 6) rezijski troskovi po radnom nalogu = nUkRezTros * aTDP[x] / nUkTDP
+         nRezTrosRN := nUkRezTros * aTDP[ nPom, 2 ] / nUkTDP
+// ------------------------------------------------
+         nPom2 := AScan( aTD, {| x | x[ 1 ] == cBrDok } )
+         IF nPom2 > 0
+            nDirTrosRN := aTD[ nPom2, 2 ]
+         ELSE
+            nDirTrosRN := 0
+         ENDIF
+         ? PadR( "RASPOREDJENI REZIJSKI TROSKOVI", Len( cIdKonto + cNazKonta ) + 1 ) + " " + Transform( nRezTrosRN, picBHD )
+         ? StrTran( m, "-", "=" )
+         ? PadR( "U K U P N I   T R O S K O V I", Len( cIdKonto + cNazKonta ) + 1 ) + " " + Transform( nDirTrosRN + nRezTrosRN, picBHD )
+         ? m
+      ENDIF
+      ?
+      FF
+   NEXT
 
-end_print()
+   end_print()
 
-closeret
-return
+   closeret
+
+   RETURN

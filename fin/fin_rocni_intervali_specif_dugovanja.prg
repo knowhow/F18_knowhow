@@ -36,7 +36,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
    cPrelomljeno := "N"
 
    o_suban()
-   o_partner()
+   //o_partner()
    o_konto()
 
 
@@ -252,8 +252,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
 
       // a sada provjeri opcine, nadji partnera
       IF !Empty( cOpcine )
-         SELECT partn
-         HSEEK cIdPartner
+         select_o_partner( cIdPartner )
          IF At( AllTrim( partn->idops ), cOpcine ) == 0
             SELECT pom
             SKIP
@@ -450,8 +449,7 @@ FUNCTION ZaglDuznici( fStrana, lSvi )
 
    ??U "FIN.P:  Specifikacija dugovanja po ročnim intervalima "; ?? dNaDan
 
-   SELECT PARTN
-   HSEEK cIdFirma
+   select_o_partner( cIdFirma )
 
    ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 

@@ -389,10 +389,7 @@ STATIC FUNCTION append_sif_partn( cIdPartner, oPartnerDataset )
    LOCAL lOk := .T.
    LOCAL hRecord
 
-   select_o_partner()
-   SELECT partn
-   GO TOP
-   SEEK PadR( cIdPartner, 6 )
+   select_o_partner( PadR( cIdPartner, 6 ) )
 
    IF Found()
       SELECT ( nTableArea )
@@ -559,10 +556,9 @@ STATIC FUNCTION open_tabele_za_pocetno_stanje()
       o_konto()
    ENDIF
 
-   SELECT ( F_PARTN )
-   IF !Used()
-      o_partner()
-   ENDIF
+
+  //    o_partner()
+
 
    SELECT ( F_FIN_PRIPR )
    IF !Used()

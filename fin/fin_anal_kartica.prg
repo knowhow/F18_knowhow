@@ -29,7 +29,7 @@ FUNCTION fin_anal_kartica()
       M := "------- -------- ---- -------- ---------------- ----------------- ------------------"
    ENDIF
 
-   o_partner()
+   //o_partner()
    o_konto()
 
    dDatOd := dDAtDo := CToD( "" )
@@ -238,7 +238,8 @@ FUNCTION fin_anal_kartica()
          ENDIF
          IF gNW == "N" .AND. cPTD == "D"
             lPom := .F.
-            SELECT SUBAN; GO TOP
+            SELECT SUBAN
+            GO TOP
             SEEK ANAL->( idfirma + idvn + brnal )
             DO WHILE !Eof() .AND. ANAL->( idfirma + idvn + brnal ) == idfirma + idvn + brnal
                IF ANAL->idkonto == idkonto; lPom := .T. ; EXIT; ENDIF
@@ -255,7 +256,7 @@ FUNCTION fin_anal_kartica()
             nCOpis := PCol() + 1
             @ PRow(), PCol() + 1 SAY IF( lPom, PadR( cOpis := AllTrim( SUBAN->opis ), 20 ), Space( 20 ) )
          ENDIF
-         @ PRow(), IF( gNW == "N" .AND. cPTD == "D", 30 + 49, 31 ) + IF( cBrza == "S", 8, 0 ) SAY DugBHD PICTURE PicBHD
+         @ PRow(), IIF( gNW == "N" .AND. cPTD == "D", 30 + 49, 31 ) + IF( cBrza == "S", 8, 0 ) SAY DugBHD PICTURE PicBHD
          @ PRow(), PCol() + 2 SAY PotBHD PICTURE picBHD
          nDugBHD += DugBHD; nPotBHD += PotBHD
          @ PRow(), PCol() + 2 SAY nDugBHD - nPotBHD PICTURE PicBHD

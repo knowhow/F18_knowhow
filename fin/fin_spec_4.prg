@@ -1,6 +1,6 @@
 #include "f18.ch"
 
-/* 
+/*
  *     Specifikacija otvorenih stavki po kontima za partnera
  */
 FUNCTION SpecOstPop()
@@ -15,7 +15,7 @@ FUNCTION SpecOstPop()
    picBHD := FormPicL( "9 " + gPicBHD, 13 )
    picDEM := FormPicL( "9 " + gPicDEM, 10 )
 
-   o_partner()
+   //o_partner()
 
 
    Box( "SSK", 6, 60, .F. )
@@ -43,7 +43,8 @@ FUNCTION SpecOstPop()
    o_konto()
    o_suban()
 
-   SELECT SUBAN; SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto
+   SELECT SUBAN
+   SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto
    cIdFirma := Left( cIdFirma, 2 )
 
    cFilt1 := aUsl + ".and." + aUsl2
@@ -116,7 +117,8 @@ FUNCTION SpecOstPop()
       ? M
       ? "Uk:"
       @ PRow(), PCol() + 1 SAY cIdPartner
-      SELECT PARTN; HSEEK cIdPartner
+      select_o_partner( cIdPartner )
+
       @ PRow(), PCol() + 1 SAY Left( naz, 28 )
       SELECT SUBAN
       @ PRow(), nCol1    SAY nUkDugBHD PICT picBHD
@@ -154,12 +156,12 @@ FUNCTION ZglSpOstP()
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
 
-   IF gNW == "D"
+   //IF gNW == "D"
       ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
-   ELSE
-      SELECT PARTN; HSEEK cIdFirma
-      ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
-   ENDIF
+   //ELSE
+    //  SELECT PARTN;HSEEK cIdFirma
+    //  ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
+   //ENDIF
 
    ? "----- ------- ----------------------------- ------------------------------------------------------------ -----------------------------"
    ? "*RED.* KONTO *       N A Z I V             *     K U M U L A T I V N I    P R O M E T                   *      S A L D O              "

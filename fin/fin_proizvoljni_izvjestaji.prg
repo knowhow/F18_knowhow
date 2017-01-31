@@ -66,7 +66,7 @@ FUNCTION PrPromRn()
    SELECT PARAMS; USE
 
    o_konto()
-   o_partner()
+   //o_partner()
    o_suban()
 
 

@@ -364,7 +364,7 @@ FUNCTION blag_azur()
    // lSumiraj := ( my_get_from_ini("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
    lSumiraj := .F.
 
-   o_partner()
+   //o_partner()
    o_konto()
    o_anal()
    o_suban()

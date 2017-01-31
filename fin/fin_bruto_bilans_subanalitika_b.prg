@@ -65,7 +65,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    ENDIF
 
    o_konto()
-   o_partner()
+   //o_partner()
    o_sql_suban_kto_partner( cIdFirma )
    o_konto()
    O_BBKLAS
@@ -220,8 +220,7 @@ FUNCTION fin_bb_subanalitika_b( params )
                   @ PRow() + 1, 0 SAY  ++B  PICTURE '999999'
                   @ PRow(), PCol() + 1 SAY cIdKonto
                   @ PRow(), PCol() + 1 SAY cIdPartner
-                  SELECT PARTN
-                  HSEEK cIdPartner
+                  select_o_partner( cIdPartner )
 
                   IF cFormat == "2"
                      @ PRow(), PCol() + 1 SAY PadR( naz, 48 - Len ( cIdPartner ) )

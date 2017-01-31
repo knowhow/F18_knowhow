@@ -955,7 +955,7 @@ STATIC FUNCTION _o_tables()
    o_sifk()
    o_sifv()
    o_konto()
-   o_partner()
+  // o_partner()
 
    RETURN .T.
 

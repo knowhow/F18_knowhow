@@ -27,7 +27,7 @@ FUNCTION fin_spec_partnera_na_kontu()
    cDP := "1"
    qqKonto := qqPartner := Space( 100 )
 
-   o_partner()
+   //o_partner()
 
    Box( "skpoi", 10, 70, .F. )
    @ m_x + 1, m_y + 2 SAY "SPECIFIKACIJA PARTNERA NA KONTU"
@@ -130,8 +130,7 @@ FUNCTION fin_spec_partnera_na_kontu()
             @ PRow() + 1, 0 SAY ++B PICTURE '9999'
             @ PRow(), 5 SAY cIdPartner
 
-            SELECT PARTN
-            HSEEK cIdPartner
+            select_o_partner( cIdPartner )
 
             @ PRow(), PCol() + 1 SAY PadR( naz, 25 )
 
@@ -285,7 +284,7 @@ FUNCTION ZaglDPK()
    ENDIF
    @ PRow() + 1, 0 SAY " FIRMA:"
    @ PRow(), PCol() + 2 SAY cIdFirma
-   SELECT PARTN; HSEEK cIdFirma
+   select_o_partner( cIdFirma )
    @ PRow(), PCol() + 1 SAY AllTrim( PadR( naz, 25 ) ); @ PRow(), PCol() + 1 SAY naz2
 
    @ PRow(), PCol() + 2 SAY "KONTO:"; @ PRow(), PCol() + 2 SAY cIdKonto

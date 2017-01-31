@@ -189,11 +189,10 @@ FUNCTION PregNDP()
 
          IF cPoRP == "1"
             SELECT rj
-            HSEEK cidpartner
+            HSEEK cIdpartner
             SELECT suban
          ELSE
-            SELECT partn
-            HSEEK cidpartner
+            select_o_partner( cIdpartner )
             SELECT suban
          ENDIF
 

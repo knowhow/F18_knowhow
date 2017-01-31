@@ -55,7 +55,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    cPrelomljeno := "N"
 
    o_suban()
-   o_partner()
+   //o_partner()
    o_konto()
 
 
@@ -159,7 +159,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
 
    o_trfp2()
    o_suban()
-   o_partner()
+   //o_partner()
    o_konto()
 
    IF cPoRN == "D"
@@ -328,10 +328,8 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
          LOOP
       ENDIF
 
-      // provjeri opcine
-      IF !Empty( cOpcine )
-         SELECT partn
-         SEEK cIdPartner
+      IF !Empty( cOpcine ) // provjeri opcine
+         select_o_partner( cIdPartner )
          IF At( partn->idops, cOpcine ) <> 0
             SELECT pom
             SKIP
@@ -963,8 +961,7 @@ FUNCTION Zfin_spec_otv_stavke_rocni_intervali( fStrana, lSvi, PICPIC )
          @ PRow(), 110 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF
 
-      SELECT PARTN
-      HSEEK cIdFirma
+      select_o_partner( cIdFirma )
 
       ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
@@ -996,8 +993,7 @@ FUNCTION Zfin_spec_otv_stavke_rocni_intervali( fStrana, lSvi, PICPIC )
 
    ELSE
       ??U "FIN.P:  SPECIFIKACIJA OTVORENIH STAVKI PO ROČNIM INTERVALIMA NA DAN "; ?? dNaDan
-      SELECT PARTN
-      HSEEK cIdFirma
+      select_o_partner( cIdFirma )
       ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
       SELECT KONTO
       HSEEK cIdKonto

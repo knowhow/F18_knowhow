@@ -41,7 +41,7 @@ FUNCTION prefin_unos_naloga()
    cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
-   o_partner()
+   // o_partner()
 
    dDatOd := CToD( "" )
    dDatDo := CToD( "" )

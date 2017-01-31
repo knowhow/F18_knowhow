@@ -29,7 +29,7 @@ FUNCTION prenos_fin_kam()
 
    select_o_kam_pripr()
    o_konto()
-   o_partner()
+   //o_partner()
 
    Box( "#PRENOS RACUNA ZA OBRACUN FIN->KAM", 8, 65 )
 

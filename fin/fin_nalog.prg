@@ -27,7 +27,7 @@ FUNCTION fin_nalog_azurirani()
    fin_read_params()
 
    o_konto()
-   o_partner()
+   //o_partner()
    o_tnal()
    o_tdok()
 

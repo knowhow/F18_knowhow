@@ -25,7 +25,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
       M := "------------- ---------------- ----------------- ------------------"
    ENDIF
 
-   o_partner()
+   //o_partner()
 
    O_PARAMS
    PRIVATE cSection := "2", cHistory := " ", aHistory := {}

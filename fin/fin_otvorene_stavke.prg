@@ -137,7 +137,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
    ELSEIF fsolo
 
       o_suban()
-      o_partner()
+      // o_partner()
       o_konto()
       cIdFirma := self_organizacija_id()
       cIdkonto := Space( 7 )
@@ -592,17 +592,15 @@ FUNCTION fin_zagl_ostav_grupisano_po_br_veze( fStrana, lEx )
       @ PRow(), 110 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF
 
-   SELECT PARTN
-   HSEEK cIdFirma
+   select_o_partner( cIdFirma )
    ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
    SELECT KONTO
    HSEEK cIdKonto
 
-   ? "KONTO  :", cIdKonto, naz
+   ? "KONTO  :", cIdKonto, field->naz
 
-   SELECT PARTN
-   HSEEK cIdPartner
+   select_o_partner( cIdPartner )
    ? "PARTNER:", cIdPartner, Trim( naz ), " ", Trim( naz2 ), " ", Trim( mjesto )
 
    SELECT suban
@@ -739,16 +737,14 @@ FUNCTION ZagBRVeze()
    ?? "FIN.P: KARTICA ZA ODREDJENI BROJ VEZE      NA DAN "; ?? Date()
    @ PRow(), 110 SAY "Str:" + Str( ++nStr, 3 )
 
-   SELECT PARTN
-   HSEEK cIdFirma
+   select_o_partner( cIdFirma )
    ? "FIRMA:", cIdFirma, naz, naz2
 
    SELECT KONTO
    HSEEK cIdKonto
    ? "KONTO  :", cIdKonto, naz
 
-   SELECT PARTN
-   HSEEK cIdPartner
+   select_o_partner( cIdPartner )
    ? "PARTNER:", cIdPartner, Trim( naz ), " ", Trim( naz2 ), " ", Trim( mjesto )
 
    SELECT suban

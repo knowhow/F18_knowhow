@@ -145,8 +145,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
          ENDIF
       ENDIF
 
-      SELECT partn
-      SEEK ugov->idpartner
+      select_o_partner( ugov->idpartner )
 
       IF !Found()
          Msgbeep( "Partner " + ugov->idpartner + " ne postoji, preskacem !!!" )

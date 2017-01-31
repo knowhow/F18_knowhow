@@ -23,9 +23,7 @@ FUNCTION s_partner( cIdPartn )
 
    o_partn_sifk()
 
-   SELECT PARTN
-   SET ORDER TO TAG "ID"
-   SEEK cIdPartn
+   select_o_partner( cIdPartn )
 
    cPom := ""
 
@@ -88,9 +86,7 @@ FUNCTION my_firma( lRetArray )
 
    o_partn_sifk()
 
-   SELECT partn
-   SET ORDER TO TAG "ID"
-   SEEK self_organizacija_id()
+   select_o_partner( self_organizacija_id() )
 
    IF !Found()
       APPEND BLANK

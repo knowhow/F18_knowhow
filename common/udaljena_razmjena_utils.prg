@@ -161,8 +161,7 @@ FUNCTION update_table_partn( lZamijenitiSifre )
 
       update_rec_partn_struct( @hRec )
 
-      SELECT partn
-      HSEEK hRec[ "id" ]
+      select_o_partner( hRec[ "id" ] )
 
       _sif_exist := .T.
       IF !Found()

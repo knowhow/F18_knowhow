@@ -196,7 +196,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
          TB:PageDown()
 
       OTHERWISE
-         standardne_browse_komande( Tb, Ch, @nRez, nPored, aPoredak )
+         my_db_edit_standardne_komande( Tb, Ch, @nRez, nPored, aPoredak )
 
       ENDCASE
 
@@ -317,7 +317,7 @@ STATIC FUNCTION ForceStable()
    RETURN .T.
 
 
-
+/*
 STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
 
    LOCAL _tr := hb_UTF8ToStr( "Traži:" ), _zam := "Zamijeni sa:"
@@ -505,7 +505,7 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
    ENDCASE
 
    RETURN .T.
-
+*/
 
 
 STATIC FUNCTION StandTBTipke()

@@ -72,6 +72,27 @@ FUNCTION select_o_roba()
    RETURN o_roba()
 
 
+FUNCTION find_partner_by_naz_or_id( cId )
+
+   LOCAL cAlias := "PARTN"
+   LOCAL cSqlQuery := "select * from fmk.partn"
+
+   cId := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cId
+   cSqlQuery += " OR naz ilike " + cId
+   cSqlQuery += " OR mjesto ilike " + cId
+
+   IF !use_sql( "partn", cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+   GO TOP
+
+   RETURN .T.
+
+
 FUNCTION o_partner( cId )
 
    LOCAL cTabela := "partn"
@@ -82,8 +103,12 @@ FUNCTION o_partner( cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
+
 
 
 FUNCTION select_o_partner( cId )

@@ -53,7 +53,8 @@ FUNCTION fin_specif_otvorene_stavke()
 
       UpitK1k4( 9, .F. )
 
-      READ; ESC_BCR
+      READ
+      ESC_BCR
       aBV := Parsiraj( qqBrDok, "UPPER(BRDOK)", "C" )
       IF aBV <> NIL
          EXIT

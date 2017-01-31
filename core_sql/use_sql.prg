@@ -104,7 +104,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
 
 
-FUNCTION use_sql( cTable, sql_query, cAlias )
+FUNCTION use_sql( cTable, cSqlQuery, cAlias )
 
    LOCAL pConn, oError
    LOCAL nI, cMsg, cLogMsg := ""
@@ -127,6 +127,12 @@ FUNCTION use_sql( cTable, sql_query, cAlias )
       USE
    ENDIF
 
+   nWa := Select( cAlias )
+   IF nWa > 0
+      SELECT ( nWa )
+      USE
+   ENDIF
+
    rddSetDefault( "SQLMIX" )
 
    IF rddInfo( 1001, { "POSTGRESQL", pConn } ) == 0  // #define RDDI_CONNECT          1001
@@ -137,10 +143,10 @@ FUNCTION use_sql( cTable, sql_query, cAlias )
    ENDIF
 
    BEGIN SEQUENCE WITH {| err | Break( err ) }
-      dbUseArea( .F., "SQLMIX", sql_query, iif( cAlias == NIL, cTable, cAlias ) )
+      dbUseArea( .F., "SQLMIX", cSqlQuery, iif( cAlias == NIL, cTable, cAlias ) )
    RECOVER USING oError
-      ?E "SQL ERR", oError:description, sql_query
-      error_bar( "SQL", "ERR: use_sql" + oError:description + " " + sql_query )
+      ?E "SQL ERR", oError:description, cSqlQuery
+      error_bar( "SQL", "ERR: use_sql" + oError:description + " " + cSqlQuery )
       RETURN .F.
    END SEQUENCE
 

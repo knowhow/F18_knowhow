@@ -75,7 +75,7 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
 
    // ovo se moze setovati u when/valid fjama
 
-   PRIVATE  TBSkipBlock := {| nSkip| SkipDB( nSkip, @nTBLine ) }
+   PRIVATE  TBSkipBlock := {| nSkip | SkipDB( nSkip, @nTBLine ) }
 
    IF ! HB_ISNUMERIC( xw )
       RaiseError( "xw not number" )
@@ -260,7 +260,7 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
       SWITCH nKeyHandlerRetEvent
       CASE DE_REFRESH
          TB:RefreshAll()
-         @ m_x + 1, m_y + yw -6 SAY Str( RecCount2(), 5 )
+         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
          EXIT
 
       CASE DE_ABORT
@@ -303,7 +303,7 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
       ENDIF
       Box( params[ "ime" ], _rows, _width, params[ "invert" ], params[ "msgs" ] )
    ELSE
-      @ m_x + params[ "xw" ] - _rows_prazno, m_y + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI), params[ "yw" ] )
+      @ m_x + params[ "xw" ] - _rows_prazno, m_y + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI ), params[ "yw" ] )
 
    ENDIF
 
@@ -312,11 +312,11 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
       Kol := azKol
    ENDIF
 
-   @ m_x, m_y + 2                         SAY params[ "msg_top" ] + iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox(BROWSE_PODVUCI_2),  42 ), "" )
+   @ m_x, m_y + 2                         SAY params[ "msg_top" ] + iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ),  42 ), "" )
    @ m_x + params[ "xw" ] + 1,  m_y + 2   SAY params[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
 
-   @ m_x + params[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox(BROWSE_PODVUCI_2), 42 ), "" )
-   @ m_x + 1, m_y + params[ "yw" ] -6    SAY Str( my_reccount(), 5 )
+   @ m_x + params[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), 42 ), "" )
+   @ m_x + 1, m_y + params[ "yw" ] - 6    SAY Str( my_reccount(), 5 )
 
 
    TB := TBrowseDB( m_x + 2 + iif( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1, ;
@@ -379,8 +379,25 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
    LOCAL bTekCol
    LOCAL cSmj
    LOCAL nRez
+   LOCAL cIdOrNaz := Space( 100 )
+   PRIVATE GetList := {}
 
+   AltD()
    DO CASE
+
+   CASE Upper( Chr( nKey ) ) == "F" .AND. Alias() == "PARTN"
+
+      Box( "#Unijeti dio šifre ili naziva ili mjesta", 1, 70 )
+      SET CURSOR ON
+      @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+      READ
+      BoxC()
+      IF LastKey() != K_ESC
+         find_partner_by_naz_or_id( cIdOrNaz )
+         TB:RefreshAll()
+         RETURN DE_REFRESH
+      ENDIF
+
 
    CASE nKey == K_CTRL_F
 
@@ -391,8 +408,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
       ENDIF
 
       Box( "bFind", 2, 50, .F. )
-      PRIVATE GetList := {}
-      SET CURSOR ON
+
       cLoc := PadR( cLoc, 40 )
       cSmj := "+"
       @ m_x + 1, m_y + 2 SAY _tr GET cLoc PICT "@!"
@@ -722,8 +738,8 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
          hRec := dbf_get_rec()
 
-         cDio1 := Left( trazi_val, Len( Trim( trazi_val ) ) -2 )
-         cDio2 := Left( zamijeni_val, Len( Trim( zamijeni_val ) ) -2 )
+         cDio1 := Left( trazi_val, Len( Trim( trazi_val ) ) - 2 )
+         cDio2 := Left( zamijeni_val, Len( Trim( zamijeni_val ) ) - 2 )
 
          IF Right( Trim( trazi_val ), 2 ) == "**" .AND. cDio1 $  hRec[ Lower( cKolona ) ]
 
@@ -812,10 +828,10 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid )
 
 
    aTBGets := {} // provjeriti kolika je sirina get-a!!
-   get := GetNew( nX, nY, MemVarBlock( cPom77U ), cPom77U, cPict, "W+/BG,W+/B" )
+   GET := GetNew( nX, nY, MemVarBlock( cPom77U ), cPom77U, cPict, "W+/BG,W+/B" )
    get:PreBlock := bWhen
    get:PostBlock := bValid
-   AAdd( aTBGets, Get )
+   AAdd( aTBGets, GET )
    nSirina := 8
    IF cPict <> NIL
       nSirina := Len( Transform( &cPom77U, cPict ) )
@@ -825,17 +841,17 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid )
       aPom := ImeKol[ TB:Colpos, 8 ]  // matrica
       FOR i := 1 TO Len( aPom )
          nY := nY + nSirina + 1
-         get := GetNew( nX, nY, MemVarBlock( aPom[ i, 1 ] ),  aPom[ i, 1 ], aPom[ i, 4 ], F18_COLOR_BROWSE_GET )
+         GET := GetNew( nX, nY, MemVarBlock( aPom[ i, 1 ] ),  aPom[ i, 1 ], aPom[ i, 4 ], F18_COLOR_BROWSE_GET )
          nSirina := Len( Transform( &( aPom[ i, 1 ] ), aPom[ i, 4 ] ) )
          get:PreBlock := aPom[ i, 2 ]
          get:PostBlock := aPom[ i, 3 ]
-         AAdd( aTBGets, Get )
+         AAdd( aTBGets, GET )
       NEXT
 
-      IF nY + nSirina > MAXCOLS() -2
+      IF nY + nSirina > MAXCOLS() - 2
 
          FOR i := 1 TO Len( aTBGets )
-            aTBGets[ i ]:Col := aTBGets[ i ]:Col   - ( nY + nSirina -78 )
+            aTBGets[ i ]:Col := aTBGets[ i ]:Col   - ( nY + nSirina - 78 )
             // smanji col koordinate
          NEXT
       ENDIF
@@ -966,7 +982,7 @@ FUNCTION SkipDB( nRequest, nTBLine )
 
          ENDIF
          IF Eof()
-            dbSkip( -1 )
+            dbSkip( - 1 )
             nTBLine := nTBLastLine
             EXIT
          ENDIF
@@ -981,7 +997,7 @@ FUNCTION SkipDB( nRequest, nTBLine )
             --nTBLine
 
          ELSE
-            dbSkip( -1 )
+            dbSkip( - 1 )
             IF !Bof()
                nTBLine := nTBLastLine
 

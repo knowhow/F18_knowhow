@@ -564,8 +564,7 @@ STATIC FUNCTION n_partner( cId )
    LOCAL nTArr
 
    nTArr := Select()
-   SELECT partn
-   SEEK cId
+   select_o_partner( cId )
    SELECT ( nTArr )
 
    RETURN .T.

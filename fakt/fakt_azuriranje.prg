@@ -345,9 +345,7 @@ STATIC FUNCTION naziv_partnera_za_tabelu_doks( cId_partner )
       o_partner()
    ENDIF
 
-   SELECT partn
-   GO TOP
-   HSEEK cId_partner
+   select_o_partner( cId_partner )
 
    cRet := AllTrim( partn->naz )
    cRet += " "

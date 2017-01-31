@@ -138,7 +138,7 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    sifk_fill_ImeKol( "PARTN", @ImeKol, @Kol )
 
 
-   xRet := PostojiSifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
+   xRet := p_sifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
 
    PopWa()
 

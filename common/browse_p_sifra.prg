@@ -1104,7 +1104,7 @@ FUNCTION sifarnik_brisi_stavku()
    hRec := hRecDbf
 
    lOk := delete_rec_server_and_dbf( cAlias, hRecDbf, 1, "CONT" )
-   altd()
+   AltD()
 
    IF lOk .AND. Alias() != "SIFK" .AND. hb_HHasKey( hRecDbf, "id" )
       o_sifk()
@@ -1509,14 +1509,18 @@ FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
       RETURN "naz"
    ENDIF
 
-   SEEK cId
+   IF Alias() == "PARTN"
+      find_partner_by_naz_or_id( cId )
+   ELSE
+      SEEK cId
+   ENDIF
 
-   IF Found()
+   IF field->id == cId
       cId := &( FieldName( 1 ) )
       RETURN "id"
    ENDIF
 
-   IF Len( cId ) > 10
+   IF Alias() == "ROBA" .AND. Len( cId ) > 10
 
 #ifdef F18_POS
       IF !tezinski_barkod( @cId, @_tezina, .F. )

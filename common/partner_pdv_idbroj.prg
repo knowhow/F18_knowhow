@@ -41,8 +41,6 @@ FUNCTION fill_all_partneri_idbr_pdvb()
    LOCAL nCnt := 0
 
    o_partner()
-   SELECT partn
-
 
 
    ?E  "Podešavam identifikacijski i PDV broj za sve partnere  /",  partn->( RecCount() )

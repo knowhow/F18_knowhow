@@ -52,8 +52,6 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
       lSvi := .F.
    ENDIF
 
-altd()
-
    ORekap()
 
    cIdRadn := Space( 6 )

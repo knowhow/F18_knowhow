@@ -87,8 +87,7 @@ FUNCTION unos_virmana()
       _ko_zr := _IdBanka
       _IdBanka2 := Left( _KOME_ZR, 3 )
 
-      SELECT partn
-      SEEK _firma
+      select_o_partner( _firma )
 
       SELECT virm_pripr
       _ko_txt := Trim( partn->naz ) + ", " + Trim( partn->mjesto ) + ", " + Trim( partn->adresa ) + ", " + Trim( partn->telefon )
@@ -330,8 +329,7 @@ FUNCTION SetPrimaoc()
 
    _KOME_ZR := _idbanka2
 
-   SELECT partn
-   SEEK _u_korist
+   select_o_partner( _u_korist )
 
    // --- Uslov za ispis adrese u polju primaoca (MUP ZE-DO)
    IF my_get_from_ini( "Primaoc", "UnosAdrese", "N", KUMPATH ) == "D"
@@ -363,15 +361,13 @@ FUNCTION UplDob()
 
 FUNCTION IniProm()        // autom.popunjavanje nekih podataka
 
-   // {
    SELECT VRPRIM
    IF dobav == "D"
       IF Empty( _nacpl ) .AND. Empty( _iznos ) .AND. Empty( _svrha_doz )
          _svrha_doz := PadR( pom_txt, Len( _svrha_doz ) )
          _nacpl := nacin_pl
       ENDIF
-      SELECT PARTN
-      HSEEK _u_korist
+      select_o_partner( _u_korist )
 
       _kome_txt := Trim( naz ) + mjesto
       // _KOME_ZR := virm_odredi_ziro_racun(_u_korist,_KOME_ZR)
@@ -620,8 +616,7 @@ FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
 
       // potrazi ga u partn->ziror
       cDefault := ""
-      SELECT partn
-      HSEEK cIdpartn
+      select_o_partner( cIdpartn )
 
       cDefault := partn->ziror
 
@@ -714,8 +709,7 @@ FUNCTION set_pozicija_jprih_record( cIdJPrih, cIdOps, cIdKan, cIdEnt )
 
             IF fOk
                IF Empty( aRez[ 2 ] )
-                  // nisam jos nasao naziv
-                  aRez[ 2 ] := racun
+                  aRez[ 2 ] := racun   // nisam jos nasao naziv
                ENDIF
                aRez[ 1 ] := racun
                aRez[ 3 ] := budzorg

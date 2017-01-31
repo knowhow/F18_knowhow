@@ -14,10 +14,11 @@
 
 FIELD ID, NAZ
 
-FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
+FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
    LOCAL pConn
    LOCAL nI, cMsg, cLogMsg := ""
+   LOCAL cQuery
 
    IF Used()
       USE
@@ -47,7 +48,15 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias )
       RETURN .F.
    ENDIF
 
-   dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable + " ORDER BY ID",  cAlias, NIL, NIL )
+   cQuery := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable
+
+   IF cId != NIL
+      cQuery += " WHERE id=" + sql_quote( cId ) // select from fmk.partn where id='BRING01'
+   ELSE
+      cQuery += " ORDER BY ID"
+   ENDIF
+
+   dbUseArea( .F., "SQLMIX", cQuery,  cAlias, NIL, NIL )
 
    IF lMakeIndex
 

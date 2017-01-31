@@ -825,8 +825,7 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
          ENDIF
       ENDIF
 
-      // napuni opsld sa ovim porezom
-      PopuniOpsLD()
+      PopuniOpsLD() // napuni opsld sa ovim porezom
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
          rekap_ld_dbf( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )

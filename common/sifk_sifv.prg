@@ -606,7 +606,6 @@ FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( aImeKolone, cVariablePre
 
    cAlias := Alias()
 
-altd()
    FOR nI := 1 TO Len( aImeKolone )
       IF Left( aImeKolone[ nI, 3 ], 6 ) == "SIFK->"
          _field_b :=  MemVarBlock( cVariablePrefix + "SIFK_" + SubStr( aImeKolone[ nI, 3 ], 7 ) )

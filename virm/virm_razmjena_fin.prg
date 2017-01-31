@@ -15,7 +15,7 @@
 
 FUNCTION virm_prenos_fin()
 
-   LOCAL _firma := PadR( fetch_metric( "virm_org_id", nil, "" ), 6 )
+   LOCAL _firma := PadR( fetch_metric( "virm_org_id", NIL, "" ), 6 )
 
    o_jprih()
    o_sifk()
@@ -43,14 +43,15 @@ FUNCTION virm_prenos_fin()
    @ m_x + 2, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka VALID  virm_odredi_ziro_racun( _firma, @cIdBanka )
    READ
    cKo_zr := cIdBanka
-   SELECT partn
-   SEEK gVirmFirma
+
+   select_o_partner( gVirmFirma )
    SELECT fin_pripr
    cKo_txt := Trim( partn->naz ) + ", " + Trim( partn->mjesto ) + ", " + Trim( partn->adresa ) + ", " + Trim( partn->telefon )
    @ m_x + 3, m_y + 2 SAY "Konta za koja se prave virmani ?"  GET qqKonto PICT "@!S30"
    @ m_x + 4, m_y + 2 SAY "Dodatak na opis:" GET cDOpis
    @ m_x + 5, m_y + 2 SAY "Datum" GET dDatVir
-   read; ESC_BCR
+   READ
+   ESC_BCR
    BoxC()
 
    UzmiIzIni( EXEPATH + "fmk.ini", "VIRM", "UslKonto", qqKonto, "WRITE" )
@@ -59,7 +60,7 @@ FUNCTION virm_prenos_fin()
 
    PRIVATE aUsl1 := Parsiraj( qqKonto, "IdKonto" )
    IF aUsl1 <> NIL
-      SET FILTER to &aUsl1
+      SET FILTER TO &aUsl1
    ENDIF
    GO TOP
 
@@ -85,8 +86,7 @@ FUNCTION virm_prenos_fin()
          HSEEK fin_pripr->( idkonto )
          IF Found() .AND. VRPRIM->dobav == "D"
             cSvrha_pl := id
-            SELECT partn
-            SEEK fin_pripr->idpartner
+            select_o_partner( fin_pripr->idpartner )
             cU_korist := id
             cKome_txt := naz
             cKome_zr := ziror
@@ -101,7 +101,7 @@ FUNCTION virm_prenos_fin()
             cIdBanka2 := Space( 3 )
             @ m_x + 1, m_y + 2 SAY ckome_txt + " " + fin_pripr->brdok + Str( fin_pripr->iznosbhd, 12, 2 )
             @ m_x + 2, m_y + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID p_partner( @_u_korist )  PICT "@!"
-            @ m_x + 2, Col() + 2 GET _IdBanka2 valid {|| virm_odredi_ziro_racun( cu_korist, @_IdBanka2 ), SetPrimaoc() }
+            @ m_x + 2, Col() + 2 GET _IdBanka2 VALID {|| virm_odredi_ziro_racun( cu_korist, @_IdBanka2 ), SetPrimaoc() }
             READ
             cKome_txt := _kome_txt
             cKome_zr := _KOME_ZR
@@ -124,20 +124,18 @@ FUNCTION virm_prenos_fin()
          cTmp_doz := "rn: " + cTmp_doz
       ENDIF
 
-      // firma nalogdbodavac
-      SELECT partn
-      HSEEK  gVirmFirma
-
+      select_o_partner( gVirmFirma )
+      
 
       SELECT virm_pripr
       APPEND BLANK
-      REPLACE rbr with ++nrbr, ;
+      REPLACE rbr WITH ++nrbr, ;
          mjesto WITH gmjesto, ;
          svrha_pl WITH csvrha_pl, ;
          iznos WITH fin_pripr->iznosbhd, ;
          na_teret  WITH gVirmFirma, ;
          Ko_Txt WITH cKo_txt, ;
-         Ko_ZR WITH  cKo_zr,;
+         Ko_ZR WITH  cKo_zr, ;
          kome_txt WITH VRPRIM->naz, ;
          kome_sj  WITH "", ;
          kome_zr WITH VRPRIM->racun, ;
@@ -163,8 +161,8 @@ FUNCTION virm_prenos_fin()
             Msg( "Nije pronadjen dobavljac !!" )
          ELSE
             REPLACE kome_txt WITH cKome_txt, ;
-               kome_zr WITH cKome_zr,;
-               kome_sj WITH cKome_sj,;
+               kome_zr WITH cKome_zr, ;
+               kome_sj WITH cKome_sj, ;
                u_korist WITH cU_korist
 
             // if cNacPl=="1"

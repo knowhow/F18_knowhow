@@ -72,12 +72,12 @@ FUNCTION select_o_roba()
    RETURN o_roba()
 
 
-FUNCTION o_partner()
+FUNCTION o_partner( cId )
 
    LOCAL cTabela := "partn"
 
    SELECT ( F_PARTN )
-   IF !use_sql_sif  ( cTabela )
+   IF !use_sql_sif  ( cTabela, .T., "PARTN", cId  )
       error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.
    ENDIF
@@ -86,14 +86,19 @@ FUNCTION o_partner()
    RETURN .T.
 
 
-FUNCTION select_o_partner()
+FUNCTION select_o_partner( cId )
 
    SELECT ( F_PARTN )
    IF Used()
-      RETURN .T.
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         AltD()
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
    ENDIF
 
-   RETURN o_partner()
+   RETURN o_partner( cId )
 
 
 FUNCTION o_konto()

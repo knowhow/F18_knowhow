@@ -271,7 +271,7 @@ FUNCTION o_tippr_ili_tippr2( cObracun )
 
    IF cObracun <> "1" .AND. !Empty( cObracun )
       SELECT ( F_TIPPR2 )
-      IF !use_sql_sif ( "tippr", .T., "TIPPR2" )
+      IF !use_sql_sif ( "tippr2", .T., "TIPPR" )
          RETURN .F.
       ENDIF
    ELSE

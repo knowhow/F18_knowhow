@@ -616,7 +616,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 FUNCTION ld_gen_virm()
 
    IF !f18_use_module( "virm" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_VIRM_PRIPR
@@ -630,7 +630,7 @@ FUNCTION ld_gen_virm()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

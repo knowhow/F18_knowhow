@@ -33,7 +33,6 @@ STATIC FUNCTION set_a_dbf_virm_jprih()
 
    LOCAL hItem, hAlg, cTable
 
-   AltD()
    cTable := "jprih"
    hItem := hb_Hash()
 

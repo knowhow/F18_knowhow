@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR _mjesec, _godina, broj_radnika
+MEMVAR _mjesec, _godina, nBrojRadnikaPrivateVar, gVirmFirma
 
 
 FUNCTION virm_prenos_ld( lPrenosLDVirm )
@@ -24,10 +24,10 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
    LOCAL _racun_upl
    LOCAL _per_od, _per_do
    LOCAL _id_banka, _dod_opis
-   LOCAL _r_br, _firma
+   LOCAL nRBr, _firma
 
 
-   PRIVATE _mjesec, _godina, broj_radnika
+   PRIVATE _mjesec, _godina, nBrojRadnikaPrivateVar
 
    IF lPrenosLDVirm == NIL
       lPrenosLDVirm := .F.
@@ -39,6 +39,7 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
    ENDIF
 
    virm_o_tables()
+   altd()
 
    SELECT virm_pripr
    IF reccount2() > 0 .AND. Pitanje(, "Izbrisati virmane u pripremi?", "N" ) == "D"
@@ -50,8 +51,8 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
    _mjesec := fetch_metric( "virm_mjesec", my_user(), Month( Date() ) )
    _poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PadR( "", 10 ) )
    _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), Space( 16 ) )
-   _firma := PadR( fetch_metric( "virm_org_id", nil, "" ), 6 )
-   // setuj globalnu
+   _firma := PadR( fetch_metric( "virm_org_id", NIL, "" ), 6 )
+
    gVirmFirma := _firma
 
    // period od-do
@@ -72,8 +73,8 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
    SELECT virm_pripr
 
    @ m_x + 3, m_y + 2 SAY "Poziv na broj " GET _poziv_na_broj
-   @ m_x + 4, m_y + 2 SAY "Godina" GET _godina PICT "9999"
-   @ m_x + 5, m_y + 2 SAY "Mjesec" GET _mjesec  PICT "99"
+   @ m_x + 4, m_y + 2 SAY "godina" GET _godina PICT "9999"
+   @ m_x + 5, m_y + 2 SAY "mjesec" GET _mjesec  PICT "99"
    @ m_x + 7, m_y + 2 SAY "Datum" GET _dat_virm
    @ m_x + 8, m_y + 2 SAY "Porezni period od" GET _per_od
    @ m_x + 8, Col() + 2 SAY "do" GET _per_do
@@ -94,18 +95,11 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
    set_metric( "virm_isplate_za_radnike_posebno", my_user(), _ispl_posebno )
 
    _dod_opis := ", za " + Str( _mjesec, 2 ) + "." + Str( _godina, 4 )
-   _r_br := 0
+   nRBr := 0
 
-   // obrada plate
-   virm_ld_obrada( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis, _per_od, _per_do )
-
-   // obradi kredite
-   obrada_kredita( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis )
-
-   // obrada tekucih racuna
-   obrada_tekuci_racun( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis )
-
-   // popuni polja javnih prihoda
+   virm_ld_obrada( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis, _per_od, _per_do )
+   obrada_kredita( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
+   obrada_tekuci_racun( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
    popuni_javne_prihode()
 
    my_close_all_dbf()
@@ -115,7 +109,7 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
 // ---------------------------------------------------------------------------------------------
 // obrada podataka za isplate na tekuci racun
 // ---------------------------------------------------------------------------------------------
-STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
+STATIC FUNCTION obrada_tekuci_racun( nGodina, nMjesec, dDatVirm, r_br, dod_opis )
 
    LOCAL _oznaka := "IS_"
    LOCAL _id_kred, hRec
@@ -126,25 +120,24 @@ STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
    LOCAL _ispl_posebno := fetch_metric( "virm_isplate_za_radnike_posebno", my_user(), "N" )
    LOCAL _isplata_opis := ""
 
-   SELECT rekld
-   SEEK Str( godina, 4 ) + Str( mjesec, 2 ) + _oznaka
 
-   DO WHILE !Eof() .AND. field->id = _oznaka
+   altd()
+   SELECT rekld
+   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + _oznaka
+
+   DO WHILE !Eof() .AND. field->id == _oznaka
 
       _id_kred := SubStr( field->id, 4 )   // sifra banke
 
-      // nastimaj se na kreditora i dodaj po potrebi
-      _ld_kreditor( _id_kred )
 
-      // pozicioniraj se na vrprim za isplatu
-      _ld_vrprim_isplata()
+      _ld_kreditor( _id_kred )       // nastimaj se na kreditora i dodaj po potrebi
+      _ld_vrprim_isplata()   // pozicioniraj se na vrprim za isplatu
 
       SELECT vrprim
 
       _svrha_placanja := field->id
 
-      SELECT partn
-      SEEK _id_kred
+      select_o_partner( _id_kred )
 
       _u_korist := field->id
       _kome_txt := field->naz
@@ -157,25 +150,23 @@ STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
       SELECT virm_pripr
       GO TOP
 
-      // uzmi podatke iz prve stavke
-      _ko_txt := field->ko_txt
+
+      _ko_txt := field->ko_txt   // uzmi podatke iz prve stavke
       _ko_zr := field->ko_zr
 
-      SELECT partn
-      HSEEK gVirmFirma
+      select_o_partner( gVirmFirma )
 
       _total := 0
       _kredit := 0
 
       SELECT rekld
-      _sk_sifra := field->idpartner
-      // SK=sifra kreditora/banke
+      _sk_sifra := field->idpartner // SK=sifra kreditora/banke
 
-      // isplate za jednu banku - sumirati
-      IF _ispl_posebno == "N"
+
+      IF _ispl_posebno == "N"     // isplate za jednu banku - sumirati
 
          DO WHILE !Eof() .AND. field->id = _oznaka .AND. field->idpartner = _sk_sifra
-            ++ _kredit
+            ++_kredit
             _total += rekld->iznos1
             _isplata_opis := "obuhvaceno " + AllTrim( Str( _kredit ) ) + " radnika"
             SKIP 1
@@ -197,7 +188,7 @@ STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
 
          APPEND BLANK
 
-         REPLACE field->rbr with ++r_br
+         REPLACE field->rbr WITH ++r_br
          REPLACE field->mjesto WITH gmjesto
          REPLACE field->svrha_pl WITH "IS"
          REPLACE field->iznos WITH _total
@@ -207,7 +198,7 @@ STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
          REPLACE field->ko_zr WITH _ko_zr
          REPLACE field->kome_sj WITH _kome_sjed
          REPLACE field->kome_zr WITH _KOME_ZR
-         REPLACE field->dat_upl WITH dat_virm
+         REPLACE field->dat_upl WITH dDatVirm
          REPLACE field->svrha_doz WITH AllTrim( vrprim->pom_txt ) + " " + AllTrim( dod_opis ) + " " + _isplata_opis
          REPLACE field->u_korist WITH _id_kred
 
@@ -229,7 +220,7 @@ STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
 // ----------------------------------------------------------------------------------------------------
 // obrada virmana za regularnu isplatu plata, doprinosi, porezi itd...
 // ----------------------------------------------------------------------------------------------------
-STATIC FUNCTION virm_ld_obrada( godina, mjesec, dat_virm, r_br, dod_opis, per_od, per_do )
+STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, per_od, per_do )
 
    LOCAL _broj_radnika
    LOCAL _formula, _izr_formula
@@ -243,13 +234,9 @@ STATIC FUNCTION virm_ld_obrada( godina, mjesec, dat_virm, r_br, dod_opis, per_od
    PRIVATE _budzorg := ""
    PRIVATE _idjprih := ""
 
-   SELECT partn
-   SEEK gVirmFirma
+   select_o_partner( gVirmFirma )
 
-   _ko_txt := Trim( partn->naz ) + ", " + ;
-      Trim( partn->mjesto ) + ", " + ;
-      Trim( partn->adresa ) + ", " + ;
-      Trim( partn->telefon )
+   _ko_txt := Trim( partn->naz ) + ", " +  Trim( partn->mjesto ) + ", " +  Trim( partn->adresa ) + ", " +  Trim( partn->telefon )
 
    _broj_radnika := ""
 
@@ -259,7 +246,6 @@ STATIC FUNCTION virm_ld_obrada( godina, mjesec, dat_virm, r_br, dod_opis, per_od
    DO WHILE !Eof()
 
       _formula := field->formula
-
       IF Empty( _formula )
          SKIP
          LOOP
@@ -270,13 +256,11 @@ STATIC FUNCTION virm_ld_obrada( godina, mjesec, dat_virm, r_br, dod_opis, per_od
       SELECT vrprim
       HSEEK ldvirm->id
 
-      SELECT partn
-      HSEEK gVirmFirma
+      select_o_partner( gVirmFirma )
 
       SELECT virm_pripr
 
-      _izr_formula := &_formula
-      // npr. RLD("DOPR1XZE01")
+      _izr_formula := &_formula // npr. RLD("DOPR1XZE01")
 
       SELECT virm_pripr
 
@@ -284,7 +268,7 @@ STATIC FUNCTION virm_ld_obrada( godina, mjesec, dat_virm, r_br, dod_opis, per_od
 
          APPEND BLANK
 
-         REPLACE field->rbr with ++r_br
+         REPLACE field->rbr WITH ++r_br
          REPLACE field->mjesto WITH gMjesto
          REPLACE field->svrha_pl WITH _svrha_placanja
          REPLACE field->iznos WITH _izr_formula
@@ -300,17 +284,16 @@ STATIC FUNCTION virm_ld_obrada( godina, mjesec, dat_virm, r_br, dod_opis, per_od
             REPLACE field->pnabr WITH _poziv_na_broj
          ENDIF
 
-         _tmp_opis := Trim( vrprim->pom_txt ) +  iif( !Empty( dod_opis ), " " + AllTrim( dod_opis ), "" ) +  iif( !Empty( broj_radnika ), " " + broj_radnika, "" )
+         _tmp_opis := Trim( vrprim->pom_txt ) +  iif( !Empty( dod_opis ), " " + AllTrim( dod_opis ), "" ) +  iif( !Empty( nBrojRadnikaPrivateVar ), " " + nBrojRadnikaPrivateVar, "" )
 
-         // resetuj varijable
-         _KOME_ZR := ""
+
+         _KOME_ZR := ""  // resetuj varijable
          _kome_txt := ""
          _budzorg := ""
 
          IF PadR( vrprim->idpartner, 2 ) == "JP"
 
-            // javni prihodi
-            // setuj varijable _KOME_ZR, _kome_txt , _budzorg
+            // javni prihodi, setuj varijable _KOME_ZR, _kome_txt , _budzorg
             set_jprih_globalne_varijable()
 
             _cKomeZiroRacun := _KOME_ZR
@@ -325,9 +308,7 @@ STATIC FUNCTION virm_ld_obrada( godina, mjesec, dat_virm, r_br, dod_opis, per_od
 
                _KOME_ZR := PadR( _KOME_ZR, 3 )
 
-               SELECT partn
-               SEEK vrprim->idpartner
-
+               select_o_partner( vrprim->idpartner )
                SELECT virm_pripr
 
                MsgBeep( "Odrediti racun za partnera :" + vrprim->idpartner )
@@ -347,7 +328,7 @@ STATIC FUNCTION virm_ld_obrada( godina, mjesec, dat_virm, r_br, dod_opis, per_od
          ENDIF
 
          REPLACE field->kome_zr WITH _cKomeZiroRacun
-         REPLACE field->dat_upl WITH dat_virm
+         REPLACE field->dat_upl WITH dDatVirm
          REPLACE field->svrha_doz WITH _tmp_opis
          REPLACE field->pod WITH per_od
          REPLACE field->pdo WITH per_do
@@ -412,7 +393,7 @@ STATIC FUNCTION _ld_vrprim_isplata()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _ld_kreditor( id_kred )
@@ -422,8 +403,7 @@ STATIC FUNCTION _ld_kreditor( id_kred )
    SELECT kred
    HSEEK PadR( id_kred, Len( kred->id ) )
 
-   SELECT partn
-   HSEEK PadR( id_kred, Len( partn->id ) )
+   select_o_partner( PadR( id_kred, Len( partn->id ) ) )
 
    IF !Found()
 
@@ -439,13 +419,13 @@ STATIC FUNCTION _ld_kreditor( id_kred )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------------------------------------------
 // obrada virmana za kredite
 // --------------------------------------------------------------------------------------
-STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nula )
+STATIC FUNCTION obrada_kredita( nGodina, nMjesec, dDatVirm, r_br, dod_opis, bez_nula )
 
    LOCAL _oznaka := "KRED"
    LOCAL _id_kred, hRec
@@ -458,24 +438,19 @@ STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nu
 
    // odraditi kredite
    SELECT rekld
-   SEEK Str( godina, 4 ) + Str( mjesec, 2 ) + _oznaka
+   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + _oznaka
 
    DO WHILE !Eof() .AND. field->id = _oznaka
 
-      // sifra kreditora
-      _id_kred := SubStr( field->id, 5 )
 
-      // nastimaj kreditora i dodaj po potrebi
-      _ld_kreditor( _id_kred )
-
-      // vrsta primanja - kredit
-      _ld_vrprim_kredit()
+      _id_kred := SubStr( field->id, 5 )       // sifra kreditora
+      _ld_kreditor( _id_kred )     // nastimaj kreditora i dodaj po potrebi
+      _ld_vrprim_kredit()     // vrsta primanja - kredit
 
       SELECT vrprim
       _svrha_placanja := field->id
 
-      SELECT partn
-      SEEK _id_kred
+      select_o_partner( _id_kred )
 
       _u_korist := field->id
       _kome_txt := field->naz
@@ -492,8 +467,7 @@ STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nu
       _ko_txt := field->ko_txt
       _ko_zr := field->ko_zr
 
-      SELECT partn
-      HSEEK gVirmFirma
+      select_o_partner( gVirmFirma )
 
       _total := 0
       _kredit := 0
@@ -503,7 +477,7 @@ STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nu
       // SK = sifra kreditora
 
       DO WHILE !Eof() .AND. field->id = "KRED" .AND. field->idpartner = _sk_sifra
-         ++ _kredit
+         ++_kredit
          _total += rekld->iznos1
          _kred_opis := AllTrim( field->opis ) + ", " + AllTrim( field->opis2 )
          SKIP 1
@@ -511,7 +485,7 @@ STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nu
 
       // ako je vise kredita... opis treba promjeniti
       IF _kredit > 1
-         _kredit_opis := "Krediti za " + PadL( Str( mjesec, 2 ), "0" ) + "/" + Str( godina, 4 ) + ", partija: " + AllTrim( kred->zirod )
+         _kredit_opis := "Krediti za " + PadL( Str( nMjesec, 2 ), "0" ) + "/" + Str( nGodina, 4 ) + ", partija: " + AllTrim( kred->zirod )
       ENDIF
 
       SKIP -1
@@ -522,7 +496,7 @@ STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nu
 
          APPEND BLANK
 
-         REPLACE field->rbr with ++r_br
+         REPLACE field->rbr WITH ++r_br
          REPLACE field->mjesto WITH gMjesto
          REPLACE field->svrha_pl WITH "KR"
          REPLACE field->iznos WITH _total
@@ -532,7 +506,7 @@ STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nu
          REPLACE field->ko_zr WITH _ko_zr
          REPLACE field->kome_sj WITH _kome_sjed
          REPLACE field->kome_zr WITH _KOME_ZR
-         REPLACE field->dat_upl WITH dat_virm
+         REPLACE field->dat_upl WITH dDatVirm
          REPLACE field->svrha_doz WITH AllTrim( vrprim->pom_txt ) + IF( !Empty( vrprim->pom_txt ), " ", "" ) + AllTrim( dod_opis ) + IF( !Empty( dod_opis ), " ", "" ) + AllTrim( _kred_opis )
          REPLACE field->u_korist WITH _id_kred
 
@@ -560,7 +534,7 @@ FUNCTION RLD( cId, nIz12, qqPartn, br_dok )
       nIz12 := 1
    ENDIF
 
-   virm_rekap_ld( cId, _godina, _mjesec, @nPom1, @nPom2, , @broj_radnika, qqPartn ) // prolazim kroz rekld i trazim npr DOPR1XSA01
+   virm_rekap_ld( cId, _godina, _mjesec, @nPom1, @nPom2, , @nBrojRadnikaPrivateVar, qqPartn ) // prolazim kroz rekld i trazim npr DOPR1XSA01
 
    IF ValType( nIz12 ) == "N" .AND. nIz12 == 1
       RETURN nPom1
@@ -613,8 +587,8 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
 
       IF lGroup == .T.
 
-         DO WHILE !Eof() .AND. Str( nGodina, 4 ) == field->godina ;
-               .AND. Str( nMjesec, 2 ) == field->mjesec ;
+         DO WHILE !Eof() .AND. Str( nGodina, 4 ) == field->nGodina ;
+               .AND. Str( nMjesec, 2 ) == field->nMjesec ;
                .AND. id = cId
 
             nIzn1 += field->iznos1
@@ -642,9 +616,9 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
 
       SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
 
-      DO WHILE !Eof() .AND. field->godina + field->mjesec + field->id = Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
+      DO WHILE !Eof() .AND. field->nGodina + field->nMjesec + field->id = Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
 
-         if &aUslP
+         IF &aUslP
 
             nIzn1 += field->iznos1
             nIzn2 += field->iznos2
@@ -681,7 +655,6 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
 
 STATIC FUNCTION virm_o_tables()
 
-
    SELECT ( F_BANKE )
    IF !Used()
       o_banke()
@@ -704,14 +677,8 @@ STATIC FUNCTION virm_o_tables()
       o_kred()
    ENDIF
 
-
    select_o_rekld()
-
-
-   SELECT ( F_PARTN )
-   IF !Used()
-      o_partner()
-   ENDIF
+   select_o_partner()
 
    SELECT ( F_VRPRIM )
    IF !Used()

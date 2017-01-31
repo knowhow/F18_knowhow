@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y, GetList
 
 STATIC picBHD
 STATIC picDEM
@@ -377,7 +378,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
       __br_dok := field->brdok
       __dat_dok := field->datdok
-      __opis := hb_UTF8ToStr( AllTrim( field->opis ) )
+      __opis := AllTrim( field->opis )
       __dat_val := fix_dat_var( field->datval )
       _dug_1 := 0
       _pot_1 := 0
@@ -402,7 +403,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
                xml_node( "rbr", AllTrim( Str( ++_rbr ) ) )
                xml_node( "brdok", to_xml_encoding( field->brdok ) )
-               xml_node( "opis", to_xml_encoding( hb_UTF8ToStr( field->opis ) ) )
+               xml_node( "opis", to_xml_encoding( field->opis ) )
                xml_node( "datdok", DToC( field->datdok ) )
                xml_node( "datval", DToC( fix_dat_var( field->datval ) ) )
 

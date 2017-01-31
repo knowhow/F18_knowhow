@@ -82,9 +82,9 @@ FUNCTION ld_rekapitulacija( lSvi )
    cObracun := Trim( cObracun )
 
    IF lSvi
-      SET ORDER TO tag ( TagVO( "2" ) )
+      SET ORDER TO TAG ( TagVO( "2" ) )
    ELSE
-      SET ORDER TO tag ( TagVO( "1" ) )
+      SET ORDER TO TAG ( TagVO( "1" ) )
    ENDIF
 
    IF lSvi
@@ -231,7 +231,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    cLinija := cTpLine
 
-   IspisTP( lSvi )
+   ld_ispis_po_tipovima_primanja( lSvi )
 
    ? cTpLine
 
@@ -487,11 +487,8 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
          Scatter()
       ENDIF
 
-      SELECT radn
-      hseek _idradn
-
-      SELECT vposla
-      hseek _idvposla
+      select_o_radn( _idradn )
+      select_o_vposla( _idvposla )
 
       ParObr( ld->mjesec, ld->godina, cObracun, ld->idrj )
 
@@ -543,12 +540,11 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
          cTprField := PadL( AllTrim( Str( i ) ), 2, "0" )
          cTpr := "_I" + cTprField
 
-         if &cTpr == 0
+         IF &cTpr == 0
             LOOP
          ENDIF
 
-         SELECT tippr
-         SEEK cTprField
+         select_o_tippr( cTprField )
          SELECT ld
 
          IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
@@ -747,7 +743,7 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
       nUPorNROsnova += nPorNROsnova
 
 
-      nPom := AScan( aNeta, {| x| x[ 1 ] == vposla->idkbenef } )
+      nPom := AScan( aNeta, {| x | x[ 1 ] == vposla->idkbenef } )
 
       IF nPom == 0
          AAdd( aNeta, { vposla->idkbenef, _oUNeto } )
@@ -758,8 +754,8 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
       FOR i := 1 TO cLDPolja
 
          cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-         SELECT tippr
-         SEEK cPom
+         select_o_tippr( cPom )
+
          SELECT ld
          aRekap[ i, 1 ] += _S&cPom  // sati
          nIznos := _I&cPom
@@ -777,7 +773,7 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
          ENDIF
       NEXT
 
-      ++ nLjudi
+      ++nLjudi
 
       nUSati += _USati
       // ukupno sati
@@ -797,7 +793,7 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
       cTR := IF( RADN->isplata $ "TR#SK", RADN->idbanka, ;
          Space( Len( RADN->idbanka ) ) )
 
-      IF Len( aUkTR ) > 0 .AND. ( nPomTR := AScan( aUkTr, {| x| x[ 1 ] == cTR } ) ) > 0
+      IF Len( aUkTR ) > 0 .AND. ( nPomTR := AScan( aUkTr, {| x | x[ 1 ] == cTR } ) ) > 0
          aUkTR[ nPomTR, 2 ] += _uiznos
       ELSE
          AAdd( aUkTR, { cTR, _uiznos } )
@@ -808,7 +804,7 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
 
       IF nMjesec <> nMjesecDo
 
-         nPom := AScan( aNetoMj, {| x| x[ 1 ] == mjesec } )
+         nPom := AScan( aNetoMj, {| x | x[ 1 ] == mjesec } )
 
          IF nPom > 0
             aNetoMj[ nPom, 2 ] += _uneto
@@ -920,7 +916,7 @@ STATIC FUNCTION ORekap()
    o_kred()
    select_o_ld()
 
-   o_tippr_ili_tippr2( cObracun )
+   set_tippr_ili_tippr2( cObracun )
 
    RETURN .T.
 
@@ -1137,8 +1133,7 @@ STATIC FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
       nBrOsnova := nMRadn_bo
    ENDIF
 
-   SELECT ops
-   SEEK radn->idopsst
+   select_o_ops( radn->idopsst )
    SELECT opsld
 
    // po opc.stanovanja
@@ -1671,10 +1666,8 @@ STATIC FUNCTION napr_obracun( lSvi, a_benef )
          Scatter()
       ENDIF
 
-      SELECT radn
-      hseek _idradn
-      SELECT vposla
-      hseek _idvposla
+      select_o_radn( _idradn )
+      select_o_vposla( _idvposla )
 
       IF ( ( !Empty( cOpsSt ) .AND. cOpsSt <> radn->idopsst ) ) ;
             .OR. ( ( !Empty( cOpsRad ) .AND. cOpsRad <> radn->idopsrad ) )
@@ -1705,12 +1698,11 @@ STATIC FUNCTION napr_obracun( lSvi, a_benef )
          cTprField := PadL( AllTrim( Str( i ) ), 2, "0" )
          cTpr := "_I" + cTprField
 
-         if &cTpr == 0
+         IF &cTpr == 0
             LOOP
          ENDIF
 
-         SELECT tippr
-         SEEK cTprField
+         select_o_tippr( cTprField )
          SELECT ld
 
          IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
@@ -1807,7 +1799,7 @@ STATIC FUNCTION napr_obracun( lSvi, a_benef )
       ENDIF
 
 
-      nPom := AScan( aNeta, {| x| x[ 1 ] == vposla->idkbenef } )
+      nPom := AScan( aNeta, {| x | x[ 1 ] == vposla->idkbenef } )
 
       IF nPom == 0
          AAdd( aNeta, { vposla->idkbenef, _oUNeto } )
@@ -1818,8 +1810,7 @@ STATIC FUNCTION napr_obracun( lSvi, a_benef )
       FOR i := 1 TO cLDPolja
 
          cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-         SELECT tippr
-         SEEK cPom
+         select_o_tippr( cPom )
          SELECT ld
          aRekap[ i, 1 ] += _S&cPom  // sati
          nIznos := _I&cPom
@@ -1837,7 +1828,7 @@ STATIC FUNCTION napr_obracun( lSvi, a_benef )
          ENDIF
       NEXT
 
-      ++ nLjudi
+      ++nLjudi
 
       nUSati += _USati   // ukupno sati
       nUNeto += _UNeto  // ukupno neto iznos
@@ -1866,7 +1857,7 @@ STATIC FUNCTION napr_obracun( lSvi, a_benef )
       cTR := IF( RADN->isplata $ "TR#SK", RADN->idbanka, ;
          Space( Len( RADN->idbanka ) ) )
 
-      IF Len( aUkTR ) > 0 .AND. ( nPomTR := AScan( aUkTr, {| x| x[ 1 ] == cTR } ) ) > 0
+      IF Len( aUkTR ) > 0 .AND. ( nPomTR := AScan( aUkTr, {| x | x[ 1 ] == cTR } ) ) > 0
          aUkTR[ nPomTR, 2 ] += _uiznos
       ELSE
          AAdd( aUkTR, { cTR, _uiznos } )
@@ -1877,7 +1868,7 @@ STATIC FUNCTION napr_obracun( lSvi, a_benef )
 
       IF nMjesec <> nMjesecDo
 
-         nPom := AScan( aNetoMj, {| x| x[ 1 ] == mjesec } )
+         nPom := AScan( aNetoMj, {| x | x[ 1 ] == mjesec } )
 
          IF nPom > 0
             aNetoMj[ nPom, 2 ] += _uneto
@@ -1947,13 +1938,11 @@ STATIC FUNCTION ZaglSvi()
    RETURN
 
 
-// ----------------------------
-// ----------------------------
+
 STATIC FUNCTION zagl_rekapitulacija_plata_rj()
 
-   o_ld_rj()
-   SELECT ld_rj
-   hseek cIdRj
+   select_o_ld_rj( cIdRj )
+
    SELECT por
    GO TOP
    SELECT ld
@@ -1976,7 +1965,7 @@ STATIC FUNCTION zagl_rekapitulacija_plata_rj()
    RETURN
 
 
-STATIC FUNCTION IspisTP( lSvi )
+STATIC FUNCTION ld_ispis_po_tipovima_primanja( lSvi )
 
    LOCAL cTipPrElem := ld_tip_primanja_el_nepogode()
 
@@ -2101,8 +2090,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
             cIdKred := IDKRED
 
-            SELECT KRED
-            HSEEK cIdKred
+            select_o_kred( cIdKred )
 
             SELECT RADKR
             nUkKred := 0
@@ -2112,8 +2100,7 @@ STATIC FUNCTION IspisKred( lSvi )
                cNaOsnovu := NAOSNOVU
                cIdRadnKR := IDRADN
 
-               SELECT RADN
-               HSEEK cIdRadnKR
+               select_o_radn( cIdRadnKR )
 
                SELECT RADKR
                cOpis2 := RADNIK
@@ -2128,7 +2115,7 @@ STATIC FUNCTION IspisKred( lSvi )
                   IF lSvi
                      // rekap za sve rj
                      SELECT ld
-                     SET ORDER TO tag ( TagVO( "2" ) )
+                     SET ORDER TO TAG ( TagVO( "2" ) )
                      hseek Str( nGodina, 4 ) + Str( mj, 2 ) + cObracun + radkr->idradn
 
                      _t_rec := RecNo()
@@ -2196,12 +2183,12 @@ STATIC FUNCTION IspisKred( lSvi )
 
          DO WHILE !Eof()
 
-            SELECT kred
-            hseek radkr->idkred
+            select_o_kred( radkr->idkred )
             SELECT radkr
             PRIVATE cidkred := idkred, cNaOsnovu := naosnovu
-            SELECT radn
-            hseek radkr->idradn
+
+            select_o_radn( radkr->idradn )
+
             SELECT radkr
             cOpis2 := RADNIK
             SEEK cidkred + cnaosnovu
@@ -2213,7 +2200,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
                IF lSvi
                   SELECT ld
-                  SET ORDER TO tag ( TagVO( "2" ) )
+                  SET ORDER TO TAG ( TagVO( "2" ) )
                   hseek  Str( nGodina, 4 ) + Str( nMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                ELSE
                   SELECT ld
@@ -2234,7 +2221,7 @@ STATIC FUNCTION IspisKred( lSvi )
                   FOR mj := nMjesec + 1 TO nMjesecDo
                      IF lSvi
                         SELECT ld
-                        SET ORDER TO tag ( TagVO( "2" ) )
+                        SET ORDER TO TAG ( TagVO( "2" ) )
                         hseek  Str( nGodina, 4 ) + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                         // "LDi2","str(godina)+str(mjesec)+idradn"
                      ELSE
@@ -2253,7 +2240,7 @@ STATIC FUNCTION IspisKred( lSvi )
                SKIP
             ENDDO
 
-            IF nukkred <> 0
+            IF nUkkred <> 0
 
                IF PRow() > 55 + dodatni_redovi_po_stranici()
                   FF
@@ -2291,7 +2278,7 @@ FUNCTION PoTekRacunima()
 
    nMArr := Select()
    SELECT KRED
-   ASort( aUkTr,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+   ASort( aUkTr,,, {| x, y | x[ 1 ] < y[ 1 ] } )
    FOR i := 1 TO Len( aUkTR )
       IF Empty( aUkTR[ i, 1 ] )
          ? PadR( Lokal( "B L A G A J N A" ), Len( aUkTR[ i, 1 ] + KRED->naz ) + 1 )
@@ -2303,7 +2290,7 @@ FUNCTION PoTekRacunima()
    NEXT
    SELECT ( nMArr )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------

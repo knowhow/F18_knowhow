@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+FIELD id, naz
 /*
 FUNCTION o_konto()
 
@@ -118,7 +119,6 @@ FUNCTION select_o_partner( cId )
       IF RecCount() > 1 .AND. cId == NIL
          RETURN .T.
       ELSE
-         AltD()
          USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
       ENDIF
    ENDIF
@@ -245,14 +245,44 @@ FUNCTION o_refer()
    RETURN .T.
 
 
-FUNCTION o_ops()
+FUNCTION o_ops( cId )
 
    SELECT ( F_OPS )
-   use_sql_opstine()
+   use_sql_opstine( cId )
    SET ORDER TO TAG "ID"
 
    RETURN .T.
 
+
+FUNCTION select_o_ops( cId )
+
+   SELECT ( F_OPS )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_ops( cId )
+
+
+/*
+      use_sql_opstine() => otvori šifarnik tarifa sa prilagođenim poljima
+*/
+
+FUNCTION use_sql_opstine( cId )
+
+   LOCAL cSql
+   LOCAL cTable := "ops"
+
+   SELECT ( F_OPS )
+   IF !use_sql_sif( cTable, .T., "OPS", cId )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
 
 
 FUNCTION o_trfp()

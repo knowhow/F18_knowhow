@@ -48,22 +48,21 @@ FUNCTION tr_list()
 FUNCTION get_ld_rj_tip_rada( cRadn, cRj )
 
    LOCAL cTipRada := " "
-   LOCAL nSelect := SELECT()
-   SELECT ld_rj
-   GO TOP
-   SEEK cRJ
+   LOCAL nSelect := Select()
+
+   select_o_ld_rj( cRJ )
 
    IF ld_rj->( FieldPos( "tiprada" ) ) <> 0
       cTipRada := ld_rj->tiprada
    ENDIF
 
    IF Empty( cTipRada )
-      SELECT radn
-      SEEK cRadn
+      select_o_radn( cRadn )
       cTipRada := radn->tiprada
    ENDIF
 
-   SELECT( nSelect )
+   Select( nSelect )
+
    RETURN cTipRada
 
 
@@ -73,18 +72,14 @@ FUNCTION g_oporeziv( cRadn, cRj )
    LOCAL cOpor := " "
    LOCAL nTArea := Select()
 
-   SELECT ld_rj
-   GO TOP
-   SEEK cRJ
+   select_o_ld_rj( cRJ )
 
    IF ld_rj->( FieldPos( "opor" ) ) <> 0
       cOpor := ld_rj->opor
    ENDIF
 
    IF Empty( cOpor )
-      SELECT radn
-      GO TOP
-      SEEK cRadn
+      select_o_radn( cRadn )
       cOpor := radn->opor
    ENDIF
 
@@ -482,8 +477,7 @@ FUNCTION g_licni_odb( cIdRadn )
    LOCAL nTArea := Select()
    LOCAL nIzn := 0
 
-   SELECT radn
-   SEEK cIdRadn
+   select_o_radn( cIdRadn )
 
    IF field->klo <> 0
       nIzn := round2( gOsnLOdb * field->klo, gZaok2 )
@@ -558,18 +552,17 @@ FUNCTION ld_obracun_napravljen_vise_puta()
       cIdRadn := idradn
       nProlaz := 0
 
-      ++ _count
+      ++_count
       @ m_x + 1, m_y + 2 SAY "Radnik: " + cIdRadn
 
       DO WHILE !Eof() .AND. Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun == Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->obr .AND. field->idradn == cIdradn
-         ++ nProlaz
+         ++nProlaz
          SKIP
       ENDDO
 
       IF nProlaz > 1
 
-         SELECT radn
-         HSEEK cIdRadn
+         select_o_radn( cIdRadn )
 
          SELECT ld
 
@@ -655,24 +648,20 @@ FUNCTION SortPrez( cId, lSql )
 
    hb_default( @lSql, .F. )
 
-   SELECT F_RADN
-   IF !Used()
-      o_ld_radn()
-   ENDIF
+   select_o_radn( cId )
 
-   HSEEK cId
    IF lSql
-      cVrati := STRTRAN( field->naz + field->ime + field->imerod + field->id, _u( "Č" ), "CH" )
-      cVrati := STRTRAN( cVrati, _u( "č" ), "ch" )
-      cVrati := STRTRAN( cVrati, _u( "Ć" ), "CC" )
-      cVrati := STRTRAN( cVrati, _u( "ć" ), "cc" )
-      cVrati := STRTRAN( cVrati, _u( "Š" ), "SH" )
-      cVrati := STRTRAN( cVrati, _u( "š" ), "sh" )
-      cVrati := STRTRAN( cVrati, _u( "Ž" ), "ZZ" )
-      cVrati := STRTRAN( cVrati, _u( "ž" ), "zz" )
-      cVrati := STRTRAN( cVrati, _u( "Đ" ), "DJ" )
-      cVrati := STRTRAN( cVrati, _u( "đ" ), "dj" )
-      cVrati := PADR( cVrati, 100)
+      cVrati := StrTran( field->naz + field->ime + field->imerod + field->id, _u( "Č" ), "CH" )
+      cVrati := StrTran( cVrati, _u( "č" ), "ch" )
+      cVrati := StrTran( cVrati, _u( "Ć" ), "CC" )
+      cVrati := StrTran( cVrati, _u( "ć" ), "cc" )
+      cVrati := StrTran( cVrati, _u( "Š" ), "SH" )
+      cVrati := StrTran( cVrati, _u( "š" ), "sh" )
+      cVrati := StrTran( cVrati, _u( "Ž" ), "ZZ" )
+      cVrati := StrTran( cVrati, _u( "ž" ), "zz" )
+      cVrati := StrTran( cVrati, _u( "Đ" ), "DJ" )
+      cVrati := StrTran( cVrati, _u( "đ" ), "dj" )
+      cVrati := PadR( cVrati, 100 )
 
    ELSE
       cVrati := field->naz + field->ime + field->imerod + field->id
@@ -695,7 +684,7 @@ FUNCTION SortIme( cId )
    ENDIF
    SET ORDER TO TAG "1"
 
-   HSEEK cId
+  -- HSEEK cId
    cVrati := ime + naz + imerod + id
 
    SELECT ( nArr )
@@ -714,9 +703,9 @@ FUNCTION ImaUOp( cPD, cSif )
 
    IF ops->( FieldPos( "DNE" ) ) <> 0
       IF Upper( cPD ) = "P"
-         lVrati := ! ( cSif $ OPS->pne )
+         lVrati := !( cSif $ OPS->pne )
       ELSE
-         lVrati := ! ( cSif $ OPS->dne )
+         lVrati := !( cSif $ OPS->dne )
       ENDIF
    ENDIF
 
@@ -739,13 +728,7 @@ FUNCTION PozicOps( cSR )
       cO := Chr( 255 )
    ENDIF
 
-   SELECT ( F_OPS )
-
-   IF !Used()
-      o_ops()
-   ENDIF
-
-   SEEK cO
+   select_o_ops( cO )
 
    SELECT ( nArr )
 

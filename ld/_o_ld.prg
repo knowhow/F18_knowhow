@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+STATIC s_cObracun := " "  // obracun 1 ili 2, ili " "
 
 FUNCTION o_ld()
 
@@ -21,115 +22,156 @@ FUNCTION o_ld()
    RETURN .T.
 
 
+
 FUNCTION select_o_ld()
    RETURN  select_o_dbf( "LD", F_LD, "ld_ld", "1" )
 
 
 
-
-FUNCTION o_banke()
+FUNCTION o_banke( cId )
 
    SELECT ( F_BANKE )
-   use_sql_sif  ( "banke" )
+   use_sql_sif  ( "banke", .T., "BANKE", cId )
    SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
 
 
-FUNCTION o_ld_radn()
+FUNCTION o_ld_radn( cId )
 
    SELECT ( F_RADN )
 
-   IF !use_sql_sif ( "ld_radn", .T., "RADN" )
+   IF !use_sql_sif ( "ld_radn", .T., "RADN", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "1"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
+FUNCTION o_radn( cId )
+   RETURN o_ld_radn( cId )
 
-FUNCTION select_o_radn()
+
+FUNCTION select_o_ld_radn( cId )
 
    SELECT ( F_RADN )
+
    IF Used()
-      RETURN .T.
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
    ENDIF
 
-   RETURN o_kred()
+   RETURN o_ld_radn( cId )
+
+
+FUNCTION select_o_radn( cID )
+   RETURN select_o_ld_radn( cId )
 
 
 
-FUNCTION o_tprsiht()
+
+FUNCTION o_tprsiht( cId )
 
    SELECT ( F_TPRSIHT )
 
-   IF !use_sql_sif( "ld_tprsiht", .T., "TPRSIHT" )
+   IF !use_sql_sif( "ld_tprsiht", .T., "TPRSIHT", cId )
       RETURN .F.
    ENDIF
 
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
 
 
-FUNCTION o_norsiht()
+FUNCTION o_norsiht( cId )
 
    SELECT ( F_NORSIHT )
 
-   IF !use_sql_sif( "ld_norsiht", .T., "NORSIHT" )
+   IF !use_sql_sif( "ld_norsiht", .T., "NORSIHT", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
 
 
-FUNCTION o_kred()
+FUNCTION o_kred( cId )
 
    SELECT ( F_KRED )
 
-   IF !use_sql_sif ( "kred" )
+   IF !use_sql_sif ( "kred", .T., "KRED", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
-FUNCTION select_o_kred()
+
+FUNCTION select_o_kred( cId )
 
    SELECT ( F_KRED )
    IF Used()
-      RETURN .T.
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
    ENDIF
 
-   RETURN o_kred()
+   RETURN o_kred( cId )
 
 
-FUNCTION o_ld_rj()
+
+FUNCTION o_ld_rj( cId )
 
    SELECT ( F_LD_RJ )
 
-   IF !use_sql_sif ( "ld_rj" )
+   IF !use_sql_sif ( "ld_rj", .T., "LD_RJ", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
 
-
-FUNCTION select_open_ld_rj()
+FUNCTION select_o_ld_rj( cId )
 
    SELECT ( F_LD_RJ )
+
    IF Used()
-      RETURN .T.
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
    ENDIF
 
-   RETURN o_ld_rj()
-
+   RETURN o_ld_rj( cId )
 
 
 FUNCTION o_por()
@@ -169,52 +211,102 @@ FUNCTION select_o_rekld()
 
 
 
-
-FUNCTION o_str_spr()
+FUNCTION o_str_spr( cId )
 
    SELECT ( F_STRSPR )
 
-   IF !use_sql_sif ( "strspr" )
+   IF !use_sql_sif ( "strspr", .T., "STRSPR", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
 
 
-FUNCTION select_o_str_spr()
+FUNCTION select_o_str_spr( cId )
 
    SELECT ( F_STRSPR )
    IF Used()
-      RETURN .T.
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
    ENDIF
 
-   RETURN o_str_spr()
+   RETURN o_str_spr( cId )
 
 
-
-FUNCTION o_ld_vrste_posla()
+FUNCTION o_ld_vrste_posla( cId )
 
    SELECT ( F_VPOSLA )
-   IF !use_sql_sif ( "vposla" )
+   IF !use_sql_sif ( "vposla", .T., "VPOSLA", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
 
-FUNCTION o_koef_beneficiranog_radnog_staza()
+FUNCTION o_vposla( cId )
+   RETURN o_ld_vrste_posla( cId )
+
+
+FUNCTION select_o_vposla( cId )
+
+   SELECT ( F_VPOSLA )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
+   ENDIF
+
+   RETURN o_vposla( cId )
+
+
+
+
+FUNCTION o_koef_beneficiranog_radnog_staza( cId )
 
    SELECT ( F_KBENEF )
 
-   IF !use_sql_sif ( "kbenef" )
+   IF !use_sql_sif ( "kbenef", .T., "KBENEF", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
+
+
+FUNCTION o_kbenef( cId )
+   RETURN o_koef_beneficiranog_radnog_staza( cId )
+
+
+FUNCTION select_o_kbenef( cId )
+
+   SELECT ( F_KBENEF )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
+   ENDIF
+
+   RETURN o_kbenef( cId )
+
 
 
 FUNCTION o_ld_parametri_obracuna()
@@ -232,33 +324,67 @@ FUNCTION o_ld_parametri_obracuna()
 
 
 
-FUNCTION o_tippr()
+FUNCTION o_tippr( cId )
 
    SELECT ( F_TIPPR )
 
-   IF !use_sql_sif ( "tippr" )
+   IF !use_sql_sif ( "tippr", .T., "TIPPR", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
 
+FUNCTION select_o_tippr( cId )
 
-FUNCTION o_tippr2()
+   SELECT ( F_TIPPR )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
+   ENDIF
 
-   SELECT ( F_TIPPR2 )
+   IF s_cObracun <> "1" .AND. !Empty( s_cObracun )
+      RETURN o_tippr2( cId, "TIPPR" )
+   ENDIF
 
-   IF !use_sql_sif ( "tippr2" )
+   RETURN o_tippr( cId )
+
+
+
+FUNCTION o_tippr2( cId, cAlias )
+
+   IF cAlias == NIL
+      cAlias := "TIPPR2"
+   ENDIF
+
+   IF cAlias == "TIPPR2"
+      SELECT ( F_TIPPR2 )
+   ELSE
+      SELECT ( F_TIPPR )
+   ENDIF
+
+   IF !use_sql_sif ( "tippr2", .T., cAlias, cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
 
-FUNCTION o_tippr_ili_tippr2( cObracun )
+FUNCTION set_tippr_ili_tippr2( cObracun )
 
+   s_cObracun := cObracun
+/*
    SELECT ( F_TIPPR )
    IF Used()
       USE
@@ -283,5 +409,6 @@ FUNCTION o_tippr_ili_tippr2( cObracun )
 
    SELECT TIPPR
    SET ORDER TO TAG "ID"
+*/
 
    RETURN .T.

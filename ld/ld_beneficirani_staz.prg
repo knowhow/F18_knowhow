@@ -47,9 +47,7 @@ FUNCTION BenefStepen()
       o_koef_beneficiranog_radnog_staza()
    ENDIF
 
-   SELECT kbenef
-   GO TOP
-   SEEK cTmp
+   select_o_kbenef( cTmp )
 
    IF Found()
       nRet := field->iznos

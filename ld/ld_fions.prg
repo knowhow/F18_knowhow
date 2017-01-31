@@ -49,8 +49,7 @@ FUNCTION izracunaj_uneto_usati_za_radnika()
 
       cTmp := PadL( AllTrim( Str( i ) ), 2, "0" )
 
-      SELECT tippr
-      SEEK cTmp
+      select_o_tippr( cTmp )
 
       IF tippr->( Found() ) .AND. tippr->aktivan == "D"
 
@@ -497,10 +496,8 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
          ENDIF
       ELSE
          MsgBeep( "Prosjek je uzet iz šifarnika radnika - OSN.BOL. !"  )
-         SELECT RADN
-         SET ORDER TO TAG "1"
-         GO TOP
-         HSEEK _IdRadn
+         select_o_radn( _IdRadn )
+
          nMj1 := osnbol
          SELECT LD
          EXIT
@@ -766,8 +763,7 @@ FUNCTION g_naziv( cRadn )
    LOCAL cStr := ""
    LOCAL nTArea := Select()
 
-   SELECT radn
-   SEEK cRadn
+   select_o_radn( cRadn )
    cStr := AllTrim( radn->ime ) + " " + AllTrim( radn->naz )
    SELECT ( nTArea )
 
@@ -881,7 +877,7 @@ FUNCTION Bruto( nbruto, ndopr )
    // ? m
 
    RETURN ( nBruto )
-// }
+
 
 
 
@@ -889,19 +885,26 @@ FUNCTION Bruto( nbruto, ndopr )
 // Provjerava ima li u formuli tipa
 // primanja cTP parametara obracuna ("PAROBR")
 // **********************************************
+
 FUNCTION TPImaPO( cTP )
 
    LOCAL lVrati := .F., nObl := Select()
 
-   SELECT TIPPR; PushWA()
-   SEEK cTP
+   SELECT TIPPR
+   PushWA()
+
+   select_o_tippr( cTP )
+
    IF ID == cTP .AND. "PAROBR" $ Upper( TIPPR->formula ); lVrati := .T. ; ENDIF
-   PopWA(); SELECT ( nObl )
+
+
+   PopWA()
+   SELECT ( nObl )
 
    RETURN lVrati
 
-// ---------------------------------------------------------------
-// ---------------------------------------------------------------
+
+
 FUNCTION BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, ndan, cDanDio )
 
    LOCAL _BrBod := 0
@@ -920,6 +923,7 @@ FUNCTION BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, ndan, cDanDio )
    GO nTRec
 
    RETURN _BrBod
+
 
 FUNCTION UbaciPrefix( cU, cP )
 
@@ -959,6 +963,7 @@ FUNCTION PrimLD( cOznaka, cTipPr )
    // CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+obr+idradn",KUMPATH+"LD")
 
    SEEK Str( _godina, 4 ) + _idrj + Str( _mjesec, 2 ) + cOznaka + _idradn
+
 
    IF cTippr == "NE"
       nRez := UNETO

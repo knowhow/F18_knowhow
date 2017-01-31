@@ -71,7 +71,7 @@ FUNCTION ld_platni_spisak()
    IF nProcenat <> 100
 
       @ m_x + 12, m_y + 2 SAY "zaokruzenje" GET nZkk PICT "99"
-      @ m_x + 13, m_y + 2 SAY "Prikazati i drugi spisak (za " + LTrim( Str( 100 -nProcenat, 6, 2 ) ) + "%-tni dio)" GET cDrugiDio VALID cDrugiDio $ "DN" PICT "@!"
+      @ m_x + 13, m_y + 2 SAY "Prikazati i drugi spisak (za " + LTrim( Str( 100 - nProcenat, 6, 2 ) ) + "%-tni dio)" GET cDrugiDio VALID cDrugiDio $ "DN" PICT "@!"
 
       READ
    ELSE
@@ -109,13 +109,13 @@ FUNCTION ld_platni_spisak()
    IF Empty( cIdRj )
       cIdRj := ""
       IF cVarSort == "1"
-         SET ORDER TO tag ( TagVO( "2" ) )
+         SET ORDER TO TAG ( TagVO( "2" ) )
          HSEEK Str( cGodina, 4, 0 ) + Str( cMjesec, 2, 0 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
-         cFilt := IIF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
+         cFilt := iif( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
             IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
          cFilt += ".and. obr==" + _filter_quote( cObracun )
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
@@ -125,7 +125,7 @@ FUNCTION ld_platni_spisak()
    ELSE
 
       IF cVarSort == "1"
-         SET ORDER TO tag ( TagVO( "1" ) )
+         SET ORDER TO TAG ( TagVO( "1" ) )
          HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
@@ -175,8 +175,8 @@ FUNCTION ld_platni_spisak()
             Scatter()
          ENDIF
 
-         SELECT radn
-         HSEEK _idradn
+         select_o_radn( _idradn )
+
          SELECT ld
 
          IF nIznosTO = 0
@@ -206,7 +206,7 @@ FUNCTION ld_platni_spisak()
                IF nDio == 1
                   @ PRow(), PCol() + 1 SAY Round( _uiznos * nprocenat / 100, nzkk ) PICT gpici
                ELSE
-                  @ PRow(), PCol() + 1 SAY Round( _uiznos, nzkk ) -Round( _uiznos * nprocenat / 100, nzkk ) PICT gpici
+                  @ PRow(), PCol() + 1 SAY Round( _uiznos, nzkk ) - Round( _uiznos * nprocenat / 100, nzkk ) PICT gpici
                ENDIF
             ELSE
                @ PRow(), PCol() + 1 SAY _uiznos PICT gpici
@@ -293,7 +293,7 @@ FUNCTION ZPlatSp()
       IF nDio == 1
          @ PRow(), PCol() + 1 SAY nprocenat PICT "999.99%"
       ELSE
-         @ PRow(), PCol() + 1 SAY 100 -nprocenat PICT "999.99%"
+         @ PRow(), PCol() + 1 SAY 100 - nprocenat PICT "999.99%"
       ENDIF
       ?
    ENDIF
@@ -365,7 +365,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
    IF nProcenat <> 100
       @ m_x + 9, m_y + 2 SAY "zaokruzenje" GET nZkk PICT "99"
-      @ m_x + 10, m_y + 2 SAY "Prikazati i drugi spisak (za " + LTrim( Str( 100 -nProcenat, 6, 2 ) ) + "%-tni dio)" GET cDrugiDio VALID cDrugiDio $ "DN" PICT "@!"
+      @ m_x + 10, m_y + 2 SAY "Prikazati i drugi spisak (za " + LTrim( Str( 100 - nProcenat, 6, 2 ) ) + "%-tni dio)" GET cDrugiDio VALID cDrugiDio $ "DN" PICT "@!"
       READ
    ELSE
       cDrugiDio := "N"
@@ -390,7 +390,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
       cIdRj := ""
 
       IF cVarSort == "1"
-         SET ORDER TO tag ( TagVO( "2" ) )
+         SET ORDER TO TAG ( TagVO( "2" ) )
          HSEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
@@ -408,7 +408,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    ELSE
 
       IF cVarSort == "1"
-         SET ORDER TO tag ( TagVO( "1" ) )
+         SET ORDER TO TAG ( TagVO( "1" ) )
          HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
@@ -444,8 +444,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
    bZagl := {|| ZPlatSpTR() }
 
-   SELECT ld_rj
-   HSEEK ld->idrj
+   select_o_ld_rj( ld->idrj )
    SELECT ld
 
    START PRINT CRET
@@ -474,8 +473,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
             Scatter()
          ENDIF
 
-         SELECT radn
-         HSEEK _idradn
+         select_o_radn( _idradn )
          SELECT ld
 
          IF radn->isplata <> cIsplata .OR. ;
@@ -499,7 +497,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
                IF nDio == 1
                   @ PRow(), PCol() + 1 SAY Round( _uiznos * nprocenat / 100, nzkk ) PICT gpici
                ELSE
-                  @ PRow(), PCol() + 1 SAY Round( _uiznos, nzkk ) -Round( _uiznos * nprocenat / 100, nzkk ) PICT gpici
+                  @ PRow(), PCol() + 1 SAY Round( _uiznos, nzkk ) - Round( _uiznos * nprocenat / 100, nzkk ) PICT gpici
                ENDIF
             ELSE
                @ PRow(), PCol() + 1 SAY _uiznos PICT gpici
@@ -596,10 +594,8 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 // ---------------------------------------------------
 FUNCTION ZPlatSpTR()
 
-   SELECT kred
-   // ovo izbacio jer ne daje dobar naziv banke!!!
-   // HSEEK radn->idbanka
-   HSEEK cIdBanka
+   select_o_kred( cIdBanka )
+
    SELECT ld
 
    ?
@@ -635,7 +631,7 @@ FUNCTION ZPlatSpTR()
       IF nDio == 1
          @ PRow(), PCol() + 1 SAY nprocenat PICT "999.99%"
       ELSE
-         @ PRow(), PCol() + 1 SAY 100 -nprocenat PICT "999.99%"
+         @ PRow(), PCol() + 1 SAY 100 - nprocenat PICT "999.99%"
       ENDIF
 
       ?
@@ -664,7 +660,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    cVarSort := "2"
    cIdTipPr := "  "
 
-   o_tippr()
+   //o_tippr()
    o_kred()
    o_ld_rj()
    o_ld_radn()
@@ -865,10 +861,7 @@ FUNCTION ZIsplataTR()
    ?
    P_12CPI
 
-   SELECT kred
-   // ovo izbacio jer ne daje dobar naziv banke!!!
-   // HSEEK radn->idbanka
-   HSEEK cIdTBanka
+   select_o_kred( cIdTBanka )
    SELECT ld
 
    ?

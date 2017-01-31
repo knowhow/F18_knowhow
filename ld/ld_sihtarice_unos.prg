@@ -58,7 +58,7 @@ FUNCTION UnosSiht()
          @ m_x + 1, m_Y + 2 SAY "Dan" GET _dan PICT "99"
          @ m_x + 1, Col() + 2 SAY "Dio dana" GET _dandio VALID _dandio $ " 12345678" PICT "@!"
          @ m_x + 1, Col() + 2 SAY "Broj bodova" GET _BrBod PICT "99999.999"  ;
-            when {|| _BrBod := BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, _dan, _dandio ), ;
+            WHEN {|| _BrBod := BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, _dan, _dandio ), ;
             _Brbod := iif( _BrBod = 0, radn->brbod, _BrBod ), .T. }
          READ
 
@@ -73,7 +73,9 @@ FUNCTION UnosSiht()
                VALID  Empty( _idtippr ) .OR. P_TPRSiht( @_idtippr, 2, 25 ) PICT "@!"
 
             READ
-            IF LastKey() = K_ESC; exit; ENDIF
+            IF LastKey() = K_ESC
+               EXIT
+            ENDIF
             SELECT RADSIHT
             SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _IdRadn + _IdRj + Str( _dan, 2 ) + _dandio + _idtippr
             IF Found() // uzmi tekuce vrijednosti
@@ -85,10 +87,11 @@ FUNCTION UnosSiht()
                _izvrseno := 0
                _idnorsiht := Space( 4 )
             ENDIF
-            SELECT TPRSiht; HSEEK _idtippr
+            SELECT TPRSiht
+            HSEEK _idtippr
+
             IF tprSiht->k1 = "F"
-               @ m_x + 3, m_y + 2 SAY "Sifra Norme" GET _IdNorSiht ;
-                  VALID  P_NorSiht( @_idNorSiht )
+               @ m_x + 3, m_y + 2 SAY "Sifra Norme" GET _IdNorSiht  VALID  P_NorSiht( @_idNorSiht )
 
             ELSE
                _IdNorSiht := Space( 4 )
@@ -100,7 +103,7 @@ FUNCTION UnosSiht()
                WHEN !Empty( _idtippr )
 
             @ m_x + 5, m_y + 40 SAY "Ukupno bodova" GET _Bodova PICT "99999999.99" ;
-               when   {|| _Bodova := _BrBod * _izvrseno / iif( TPRSiht->k1 = "F", NorSiht->Iznos, 1 ), .F. }
+               WHEN   {|| _Bodova := _BrBod * _izvrseno / iif( TPRSiht->k1 = "F", NorSiht->Iznos, 1 ), .F. }
 
             READ
 
@@ -120,7 +123,11 @@ FUNCTION UnosSiht()
                ENDIF
             ENDIF
 
-            SELECT TPRSiht;SEEK _idtippr; skip; _idtippr := id
+            SELECT TPRSiht
+            SEEK _idtippr
+            skip
+            _idtippr := id
+            
             IF Eof(); exit; ENDIF
          ENDDO
          ++_Dan ; IF _Dan > 31 .OR. _dan = 0; exit; ENDIF
@@ -212,7 +219,7 @@ FUNCTION UnosSiht()
 
             SELECT TPRSiht
             GO TOP
-            
+
             fPRvi := .T.
 
             nPozicija := 0
@@ -287,7 +294,7 @@ FUNCTION UnosSiht()
 
    SELECT ld
 
-   RETURN ( nil )
+   RETURN ( NIL )
 
 
 // --------------------------
@@ -378,7 +385,7 @@ STATIC FUNCTION Linija()
       SKIP
    ENDDO
 
-   RETURN ( nil )
+   RETURN ( NIL )
 
 
 // -------------------------------

@@ -59,14 +59,14 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
       SET FILTER TO obr = cObracun
    ENDIF
 
-   cIdRadn := Trim( cidradn )
-   IF Empty( cidrj )
-      SET ORDER TO tag ( TagVO( "4" ) )
+   cIdRadn := Trim( cIdradn )
+   IF Empty( cIdrj )
+      SET ORDER TO TAG ( TagVO( "4" ) )
       SEEK Str( cGodina, 4 ) + cIdRadn
       cIdrj := ""
    ELSE
-      SET ORDER TO tag ( TagVO( "3" ) )
-      SEEK Str( cGodina, 4 ) + cidrj + cIdRadn
+      SET ORDER TO TAG ( TagVO( "3" ) )
+      SEEK Str( cGodina, 4 ) + cIdrj + cIdRadn
    ENDIF
    EOF CRET
 
@@ -74,10 +74,9 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    bZagl := {|| zaglavlje_izvjestaja() }
 
-   SELECT vposla
-   HSEEK ld->idvposla
-   SELECT ld_rj
-   HSEEK ld->idrj
+   select_o_vposla( ld->idvposla )
+   select_o_ld_rj( ld->idrj )
+
    SELECT ld
 
    IF PCount() == 4
@@ -103,16 +102,18 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
       ENDIF
 
       IF cRazdvoji == "N"
-         SELECT radn; HSEEK xidradn
-         SELECT vposla; HSEEK ld->idvposla
-         SELECT ld_rj; HSEEK ld->idrj; SELECT ld
+         select_o_radn( xIdradn )
+         select_o_vposla( ld->idvposla )
+         select_o_ld_rj( ld->idrj )
+         SELECT ld
          Eval( bZagl )
       ENDIF
-      DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. idradn == xIdRadn
+      DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cIdrj .AND. idradn == xIdRadn
 
          m := "----------------------- --------  ----------------   ------------------"
 
-         SELECT radn; HSEEK xidradn; SELECT ld
+         select_o_radn( xIdradn )
+         SELECT ld
 
          IF ( mjesec < cMjesec .OR. mjesec > cMjesec2 )
             skip; LOOP
@@ -147,7 +148,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
          cUneto := "D"
          FOR i := 1 TO cLDPolja
             cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-            SELECT tippr; SEEK cPom
+            select_o_tippr( cPom )
             IF !lViseObr .OR. cSatiVO == "S" .OR. cSatiVO == _obr
                ws&cPom += _S&cPom
             ENDIF
@@ -169,7 +170,8 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
          cUneto := "D"
          FOR i := 1 TO cLDPolja
             cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-            SELECT tippr; SEEK cPom
+            select_o_tippr( cPom )
+
             IF tippr->uneto == "N" .AND. cUneto == "D"
                cUneto := "N"
                ? m
@@ -214,13 +216,15 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
       ELSE
          SELECT _LD
          GO TOP
-         SELECT radn; HSEEK _LD->idradn
-         SELECT vposla; HSEEK _LD->idvposla
+         select_o_radn( _LD->idradn )
+         select_o_vposla( _LD->idvposla )
+
          SELECT _LD
          Eval( bZagl )
          ?
          WHILE ! Eof()
-            SELECT ld_rj; HSEEK _ld->idrj; SELECT _ld
+            select_o_ld_rj( _ld->idrj )
+            SELECT _ld
             QOut( "RJ:", idrj, ld_rj->naz )
             ? m
             ? _l( " Vrsta                  Opis         sati/iznos             ukupno" )
@@ -230,7 +234,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
             cUneto := "D"
             FOR i := 1 TO cLDPolja
                cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-               SELECT tippr; SEEK cPom
+               select_o_tippr( cPom )
                IF tippr->uneto == "N" .AND. cUneto == "D"
                   cUneto := "N"
                   ? m
@@ -319,7 +323,7 @@ STATIC FUNCTION zaglavlje_izvjestaja()
 
 STATIC FUNCTION otvori_tabele()
 
-   o_tippr_ili_tippr2( cObracun )
+   set_tippr_ili_tippr2( cObracun )
 
    o_ld_parametri_obracuna()
    o_ld_rj()

@@ -18,10 +18,8 @@ FUNCTION ShowKreditor( cKreditor )
 
    nArr := Select()
 
-   o_kred()
-   SELECT kred
-   SEEK cKreditor
-   // ispis
+   select_o_kred( cKreditor )
+
    IF !Eof()
       ? AllTrim( field->id ) + "-" + ( field->naz )
       ? "-" + AllTrim( field->fil ) + "-"
@@ -319,8 +317,7 @@ STATIC FUNCTION _opis_param( cRet, cRadn )
       RETURN cVal
    ENDIF
 
-   SELECT radn
-   SEEK cRadn
+   select_o_radn( cRadn )
 
    SELECT ( nTArea )
 

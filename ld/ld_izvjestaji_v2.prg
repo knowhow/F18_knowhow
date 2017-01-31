@@ -67,10 +67,10 @@ FUNCTION ld_pregled_primanja_za_period()
    ENDIF
    BoxC()
 
-   o_tippr_ili_tippr2( cObracun )
+   set_tippr_ili_tippr2( cObracun )
 
-   SELECT tippr
-   HSEEK ctip
+
+   select_o_tippr( cTip )
    EOF CRET
 
    SELECT ld
@@ -94,7 +94,8 @@ FUNCTION ld_pregled_primanja_za_period()
    ENDIF
    bZagl := {|| ZPregPrimPer() }
 
-   SELECT ld_rj; HSEEK ld->idrj; SELECT ld
+   select_o_ld_rj( ld->idrj )
+   SELECT ld
 
    START PRINT CRET
    P_10CPI
@@ -110,7 +111,9 @@ FUNCTION ld_pregled_primanja_za_period()
 
 
       cIdRadn := idradn
-      SELECT radn; HSEEK cidradn; SELECT ld
+
+      select_o_radn( cIdRadn )
+      SELECT ld
 
       wi&cTip := 0
       ws&cTip := 0
@@ -230,8 +233,7 @@ FUNCTION SortOpSt( cId )
 
    LOCAL cVrati := "", nArr := Select()
 
-   SELECT RADN
-   HSEEK cId
+   select_o_radn( cId )
    cVrati := IdOpsSt
    SELECT ( nArr )
 

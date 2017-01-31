@@ -165,8 +165,7 @@ STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
       // samo pozicionira bazu PAROBR na odgovarajuci zapis
       ParObr( ld->mjesec, ld->godina, IF( lViseObr, ld->obr, ), ld->idrj )
 
-      SELECT radn
-      SEEK cT_radnik
+      select_o_radn( cT_radnik )
 
       cT_rnaziv := AllTrim( radn->ime ) + " " + AllTrim( radn->naz )
 
@@ -1123,8 +1122,7 @@ STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
    LOCAL nTArea := Select()
    LOCAL cKant
 
-   SELECT radn
-   HSEEK id_radn
+   select_o_radn( id_radn )
 
    IF !Empty( opcina ) .AND. !( radn->idopsst $ opcina )
       lOk := .F.
@@ -1132,8 +1130,7 @@ STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
 
    IF !Empty( kanton )
 
-      o_ops()
-      HSEEK radn->idopsst
+      select_o_ops( radn->idopsst )
 
       IF Found() .AND. !( ops->idkan $ kanton )
          lOk := .F.
@@ -1169,7 +1166,7 @@ STATIC FUNCTION sortiraj_tabelu_ld( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, c
    ENDIF
 
    IF !Empty( cFilter )
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
       GO TOP
    ENDIF
 
@@ -1178,7 +1175,7 @@ STATIC FUNCTION sortiraj_tabelu_ld( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, c
       GO TOP
       SEEK Str( cGodina, 4 )
    ELSE
-      SET ORDER TO tag ( TagVO( "2" ) )
+      SET ORDER TO TAG ( TagVO( "2" ) )
       GO TOP
       SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun + cRadnik
    ENDIF
@@ -1279,7 +1276,7 @@ STATIC FUNCTION otvori_tabele()
    o_ld_radn()
    o_koef_beneficiranog_radnog_staza()
    o_ld_vrste_posla()
-   o_tippr()
+   //o_tippr()
    o_kred()
    o_dopr()
    o_por()

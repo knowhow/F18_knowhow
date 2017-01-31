@@ -224,7 +224,7 @@ STATIC FUNCTION zapuj_pomocnu_tabelu()
 
 STATIC FUNCTION otvori_tabele()
 
-   o_tippr()
+   //o_tippr()
    o_kred()
    O_RADKR
    SET ORDER TO TAG "1"

@@ -46,12 +46,10 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
    set_metric( "ld_specifikacija_neto_po_opcini_sort", my_user(), cVarSort )
 
    IF !Empty( cKbenef )
-      SELECT kbenef
-      HSEEK  cKbenef
+      select_o_kbenef( cKbenef )
    ENDIF
    IF !Empty( cVPosla )
-      SELECT vposla
-      HSEEK  cVposla
+      select_o_vposla( cVposla )
    ENDIF
 
    napravi_filter_na_tabeli_ld( cIdRj, cGodina, cMjesec, cObracun, cVarSort )
@@ -64,8 +62,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
    bZagl := {|| zaglavlje_izvjestaja( cVPosla, cKBenef ) }
 
-   SELECT ld_rj
-   HSEEK ld->idrj
+   select_o_ld_rj( ld->idrj )
 
    SELECT ld
 
@@ -84,8 +81,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
       cTekOpSt := SortOpSt( IDRADN )
 
-      SELECT OPS
-      SEEK cTekOpSt
+      select_o_ops( cTekOpSt )
 
       ?
       ?U "OPŠTINA STANOVANJA: " + ID + " - " + NAZ
@@ -103,12 +99,10 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
          ScatterS( godina, mjesec, idrj, idradn )
 
-         SELECT radn
-         HSEEK _idradn
-         SELECT vposla
-         HSEEK _idvposla
-         SELECT kbenef
-         HSEEK vposla->idkbenef
+         select_o_radn( _idradn )
+         select_o_vposla( _idvposla )
+         select_o_kbenef( vposla->idkbenef )
+
          SELECT ld
          IF !Empty( cVPosla ) .AND. cVPosla <> Left( _idvposla, 2 )
             SKIP
@@ -125,9 +119,8 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
          FOR i := 1 TO cLDPolja
 
             cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-
-            SELECT tippr
-            SEEK cPom
+            select_o_tippr( cPom )
+            
             SELECT ld
 
             IF tippr->( Found() ) .AND. tippr->aktivan == "D"
@@ -302,7 +295,7 @@ STATIC FUNCTION zaglavlje_izvjestaja( cVPosla, cKBenef )
 
 STATIC FUNCTION otvori_tabele()
 
-   o_tippr_ili_tippr2( cObracun )
+   set_tippr_ili_tippr2( cObracun )
 
    o_ops()
    o_koef_beneficiranog_radnog_staza()

@@ -74,11 +74,9 @@ FUNCTION label_bkod()
 // --------------------------------
 FUNCTION seek_partner( cPartner )
 
-   SELECT partn
-   SET ORDER TO TAG "ID"
-   HSEEK cPartner
+   select_o_partner( cPartner )
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------------------

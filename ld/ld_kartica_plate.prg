@@ -94,7 +94,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       WPar( "NK", cNKNS )
       SELECT PARAMS
       USE
-      o_tippr_ili_tippr2( cObracun )
+      set_tippr_ili_tippr2( cObracun )
    ENDIF
 
    PoDoIzSez( cGodina, cMjesec )
@@ -143,10 +143,9 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
 
    nStrana := 0
 
-   SELECT vposla
-   HSEEK ld->idvposla
-   SELECT ld_rj
-   HSEEK ld->idrj
+   select_o_vposla( ld->idvposla )
+   select_o_ld_rj( ld->idrj )
+
    SELECT ld
 
    IF PCount() >= 4
@@ -188,12 +187,10 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
 
       cRTRada := get_ld_rj_tip_rada( _idradn, _idrj )
 
-      SELECT radn
-      HSEEK _idradn
-      SELECT vposla
-      HSEEK _idvposla
-      SELECT ld_rj
-      HSEEK _idrj
+      select_o_radn( _idradn )
+      select_o_vposla( _idvposla )
+      select_o_ld_rj( _idrj )
+
       SELECT ld
 
       AAdd( aNeta, { vposla->idkbenef, _UNeto } )
@@ -387,8 +384,8 @@ STATIC FUNCTION prikazi_primanja()
             ? cLMSK + "    Kreditor   /             na osnovu         Ukupno    Ostalo   Rata"
             ? m2
             DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
-               SELECT kred
-               HSEEK radkr->idkred
+               select_o_kred( radkr->idkred )
+
                SELECT radkr
                aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
                ? cLMSK, idkred, Left( kred->naz, 15 ), PadR( naosnovu, 20 )
@@ -447,8 +444,12 @@ FUNCTION ld_kumulativna_primanja( cIdRadn, cIdPrim )
    SELECT LD
    PushWA()
    SET ORDER TO TAG ( TagVO( "4" ) )
-   GO BOTTOM; nDoGod := godina
-   GO TOP; nOdGod := godina
+   GO BOTTOM
+
+   nDoGod := godina
+
+   GO TOP
+   nOdGod := godina
    FOR j := nOdGod TO nDoGod
       GO TOP
       SEEK Str( j, 4 ) + cIdRadn

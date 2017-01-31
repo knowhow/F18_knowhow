@@ -19,14 +19,17 @@ FUNCTION o_jprih()
 */
 
 
-FUNCTION o_vrprim()
+FUNCTION o_vrprim( cId )
 
    SELECT ( F_VRPRIM )
 
-   IF !use_sql_sif ( "vrprim" )
+   IF !use_sql_sif ( "vrprim", .T., "VRPRIM", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
@@ -52,7 +55,7 @@ FUNCTION select_o_jprih()
 
    RETURN o_jprih()
 
-   
+
 
 FUNCTION o_ldvirm()
 

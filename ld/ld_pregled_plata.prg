@@ -79,16 +79,14 @@ FUNCTION pregled_plata()
 
    ParObr( cMjesec, cGodina, iif( lViseObr, cObracun, ) )
 
-   o_tippr_ili_tippr2( cObracun )
+   set_tippr_ili_tippr2( cObracun )
 
    IF !Empty( cKbenef )
-      SELECT kbenef
-      HSEEK  cKbenef
+      select_o_kbenef( cKbenef )
    ENDIF
 
    IF !Empty( cVPosla )
-      SELECT vposla
-      HSEEK  cVposla
+      select_o_vposla( cVposla )
    ENDIF
 
    SELECT ld
@@ -100,7 +98,7 @@ FUNCTION pregled_plata()
    IF Empty( cIdrj )
       cidrj := ""
       IF cVarSort == "1"
-         SET ORDER TO tag ( TagVO( "2" ) )
+         SET ORDER TO TAG ( TagVO( "2" ) )
          HSEEK Str( cGodina, 4, 0 ) + Str( cMjesec, 2, 0 ) + iif( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
       ELSE
          Box(, 2, 30 )
@@ -117,7 +115,7 @@ FUNCTION pregled_plata()
       ENDIF
    ELSE
       IF cVarSort == "1"
-         SET ORDER TO tag ( TagVO( "1" ) )
+         SET ORDER TO TAG ( TagVO( "1" ) )
          HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
       ELSE
          Box(, 2, 30 )
@@ -159,8 +157,7 @@ FUNCTION pregled_plata()
 
    bZagl := {|| zagl_pregled_plata() }
 
-   SELECT ld_rj
-   HSEEK ld->idrj
+   select_o_ld_rj( ld->idrj )
    SELECT ld
 
    START PRINT CRET
@@ -184,7 +181,7 @@ FUNCTION pregled_plata()
 
    DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
-      ParObr( ld->mjesec, ld->godina, IIF( lViseObr, cObracun, ), ld->idrj )
+      ParObr( ld->mjesec, ld->godina, iif( lViseObr, cObracun, ), ld->idrj )
 
       IF lViseObr .AND. Empty( cObracun )
          ScatterS( godina, mjesec, idrj, idradn )
@@ -192,13 +189,10 @@ FUNCTION pregled_plata()
          Scatter()
       ENDIF
 
-      SELECT radn
-      HSEEK _idradn
 
-      SELECT vposla
-      HSEEK _idvposla
-      SELECT kbenef
-      HSEEK vposla->idkbenef
+      select_o_radn( _idradn )
+      select_o_vposla( _idvposla )
+      select_o_kbenef( vposla->idkbenef )
       SELECT ld
 
       IF !Empty( cVposla ) .AND. cVposla <> Left( _idvposla, 2 )
@@ -218,8 +212,7 @@ FUNCTION pregled_plata()
       FOR i := 1 TO cLDPolja
 
          cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-         SELECT tippr
-         SEEK cPom
+         select_o_tippr( cPom )
          SELECT ld
 
          IF tippr->( Found() ) .AND. tippr->aktivan == "D"
@@ -389,7 +382,7 @@ STATIC FUNCTION zagl_pregled_plata()
    ?? Space( 2 ) + "Mjesec:", Str( cMjesec, 2 ) + IspisObr()
    ?? Space( 4 ) + "Godina:", Str( cGodina, 5 )
 
-   ?? SPACE(10), " Str.", Str( ++nStrana, 3 )
+   ?? Space( 10 ), " Str.", Str( ++nStrana, 3 )
 
    IF nVrstaInvaliditeta > 0 .OR. nStepenInvaliditeta > 0
       ?

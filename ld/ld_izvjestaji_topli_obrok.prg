@@ -290,10 +290,7 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 
       nUSati := 0
 
-      SELECT radn
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK cIdRadn
+      select_o_radn( cIdRadn )
 
       IF !Empty( cKred ) .AND. cKred <> radn->idbanka
          SELECT ld

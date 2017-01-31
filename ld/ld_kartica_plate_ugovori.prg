@@ -49,8 +49,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
 
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
 
-      SELECT tippr
-      SEEK cPom
+      select_o_tippr( cPom )
 
       IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
          // uzmi osnovice

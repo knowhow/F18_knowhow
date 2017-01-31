@@ -72,10 +72,9 @@ FUNCTION ld_pregled_primanja()
    SELECT PARAMS
    USE
 
-   o_tippr_ili_tippr2( cObracun )
+   set_tippr_ili_tippr2( cObracun )
 
-   SELECT tippr
-   HSEEK cTip
+   select_o_tippr( cTip )
 
 
    EOF CRET
@@ -112,7 +111,7 @@ FUNCTION ld_pregled_primanja()
 
       cidrj := ""
       IF cVarSort == "1"
-         SET ORDER TO tag ( TagVO( "2" ) )
+         SET ORDER TO TAG ( TagVO( "2" ) )
          HSEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
@@ -129,7 +128,7 @@ FUNCTION ld_pregled_primanja()
       ENDIF
    ELSE
       IF cVarSort == "1"
-         SET ORDER TO tag ( TagVO( "1" ) )
+         SET ORDER TO TAG ( TagVO( "1" ) )
          HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
@@ -162,8 +161,7 @@ FUNCTION ld_pregled_primanja()
    ENDIF
    bZagl := {|| ZPregPrim() }
 
-   SELECT ld_rj
-   HSEEK ld->idrj
+   select_o_ld_rj( ld->idrj )
    SELECT ld
 
    START PRINT CRET
@@ -204,7 +202,9 @@ FUNCTION ld_pregled_primanja()
          ENDIF
       ENDIF
 
-      SELECT radn; HSEEK _idradn; SELECT ld
+      select_o_radn( _idradn )
+      SELECT ld
+
 
       DO WHILE .T.
 
@@ -225,7 +225,7 @@ FUNCTION ld_pregled_primanja()
             ENDIF
             IF lKredit .AND. !Empty( cSifKred )
                @ PRow(), PCol() + 1 SAY -RADKR->placeno  PICT gpici
-               nT2 += ( -RADKR->placeno )
+               nT2 += ( - RADKR->placeno )
             ELSE
                @ PRow(), PCol() + 1 SAY _I&cTip  PICT gpici
                nT1 += _S&cTip; nT2 += _I&cTip

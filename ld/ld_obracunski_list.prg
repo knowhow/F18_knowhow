@@ -31,7 +31,7 @@ FUNCTION ol_o_tbl()
    o_ld_radn()
    o_koef_beneficiranog_radnog_staza()
    o_ld_vrste_posla()
-   o_tippr()
+   //o_tippr()
    o_kred()
    o_dopr()
    o_por()
@@ -60,7 +60,7 @@ FUNCTION ol_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, ;
    ENDIF
 
    IF !Empty( cFilter )
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
       GO TOP
    ENDIF
 
@@ -74,7 +74,7 @@ FUNCTION ol_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, ;
          SEEK Str( cGod_od, 4 ) + Str( cMj_od, 2 ) + cRadnik
       ENDIF
    ELSE
-      SET ORDER TO tag ( TagVO( "2" ) )
+      SET ORDER TO TAG ( TagVO( "2" ) )
       GO TOP
       SEEK Str( cGod_od, 4 ) + Str( cMj_od, 2 ) + cObracun + cRadnik
    ENDIF
@@ -668,14 +668,11 @@ STATIC FUNCTION _fill_e_xml( file_name )
       // po radniku
       cT_radnik := field->idradn
 
-      // pronadji radnika u sifrarniku
-      SELECT radn
-      SEEK cT_radnik
+      select_o_radn( cT_radnik )
 
       SELECT r_export
 
       xml_subnode( "Obrazac1022", .F. )
-
       xml_subnode( "Dio1PodaciOPoslodavcuIPoreznomObvezniku", .F. )
 
       xml_node( "JIBJMBPoslodavca", AllTrim( cPredJmb ) )
@@ -718,7 +715,7 @@ STATIC FUNCTION _fill_e_xml( file_name )
          REPLACE field->dop_uk WITH field->dop_pio + ;
             field->dop_nez + field->dop_zdr
 
-         REPLACE field->osn_por with ( field->bruto - field->dop_uk ) - ;
+         REPLACE field->osn_por WITH ( field->bruto - field->dop_uk ) - ;
             field->l_odb
 
          // ako je neoporeziv radnik, nema poreza
@@ -733,11 +730,11 @@ STATIC FUNCTION _fill_e_xml( file_name )
             REPLACE field->izn_por WITH 0
          ENDIF
 
-         REPLACE field->neto with ( field->bruto - field->dop_uk ) - ;
+         REPLACE field->neto WITH ( field->bruto - field->dop_uk ) - ;
             field->izn_por
 
          IF field->tiprada $ " #I#N#"
-            REPLACE field->neto with ;
+            REPLACE field->neto WITH ;
                min_neto( field->neto, field->sati )
          ENDIF
 
@@ -898,9 +895,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
       // po radniku
       cT_radnik := field->idradn
 
-      // pronadji radnika u sifrarniku
-      SELECT radn
-      SEEK cT_radnik
+      select_o_radn( cT_radnik )
 
       SELECT r_export
 
@@ -942,10 +937,10 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
             field->dop_nez + field->dop_zdr
 
          IF cTip $ "3#4"
-            REPLACE field->osn_por with ;
+            REPLACE field->osn_por WITH ;
                ( field->mbruto - field->dop_zdr )
          ELSE
-            REPLACE field->osn_por with ;
+            REPLACE field->osn_por WITH ;
                ( field->bruto - field->dop_uk ) - ;
                field->l_odb
          ENDIF
@@ -963,18 +958,18 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
          ENDIF
 
          IF cTip $ "3#4"
-            REPLACE field->neto with ;
+            REPLACE field->neto WITH ;
                ( ( field->mbruto - field->dop_zdr ) - ;
                field->izn_por ) + field->trosk
          ELSE
-            REPLACE field->neto with ;
+            REPLACE field->neto WITH ;
                ( field->bruto - field->dop_uk ) - ;
                field->izn_por
          ENDIF
 
          IF ( cTip <> "3" .OR. cTip <> "4" ) .AND. ;
                field->tiprada $ " #I#N#"
-            REPLACE field->neto with ;
+            REPLACE field->neto WITH ;
                min_neto( field->neto, field->sati )
          ENDIF
 
@@ -1173,8 +1168,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
       // samo pozicionira bazu PAROBR na odgovarajuci zapis
       ParObr( ld->mjesec, ld->godina, IF( lViseObr, ld->obr, ), ld->idrj )
 
-      SELECT radn
-      SEEK cT_radnik
+      select_o_radn( cT_radnik )
 
       IF cRptTip $ "3#4"
          IF ( cTipRada $ " #I#N" )

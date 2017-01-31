@@ -146,7 +146,7 @@ FUNCTION delRadSati( id_radnik, iznos_sati )
 
    SELECT ( _t_arr )
 
-   RETURN
+   RETURN .T.
 
 // -------------------------------------------------
 // ispravka pregled radnih sati

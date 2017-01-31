@@ -44,8 +44,7 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
 
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
 
-      SELECT tippr
-      SEEK cPom
+      select_o_tippr( cPom )
 
       IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
          // uzmi osnovice
@@ -110,7 +109,7 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
    // troskovi su
    nTrosk := nBSaTr * ( gAHTrosk / 100 )
 
-   // bruto placa iz neta...
+   // bruto placa iz neta
 
    ? cMainLine
    ? cLMSK + "1. BRUTO SA TROSKOVIMA :  ", AllTrim( Str( nBo ) ) + " * 1.2500 ="
@@ -296,7 +295,6 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
    ENDIF
 
 
-   // potpis na kartici
    kart_potpis()
 
    // obrada sekvence za kraj papira
@@ -329,4 +327,4 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
       FF
    ENDIF
 
-   RETURN
+   RETURN .T.

@@ -592,8 +592,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
 
       cT_tiprada := get_ld_rj_tip_rada( field->idradn, field->idrj )
 
-      SELECT radn
-      SEEK cT_radnik
+      select_o_radn( cT_radnik )
 
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
 

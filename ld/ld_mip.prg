@@ -491,8 +491,7 @@ STATIC FUNCTION mipmip_glavna_fill_xml( cFile )
       cIdRadnikTekuci := field->idradn // po radniku
 
 
-      SELECT radn
-      SEEK cIdRadnikTekuci
+      select_o_radn( cIdRadnikTekuci )
 
       SELECT r_export
 
@@ -970,8 +969,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
       ParObr( ld->mjesec, ld->godina, ld->obr, ld->idrj ) // samo pozicionira bazu PAROBR na odgovarajuci zapis
 
-      SELECT radn
-      SEEK cIdRadnikTekuci
+      select_o_radn( cIdRadnikTekuci )
 
        //https://redmine.bring.out.ba/projects/klijenti/wiki/Modul_LD
       IF !( cTipRada $ " #I#N" ) // ako nije " " ili "I" ili "N" - neto-neto

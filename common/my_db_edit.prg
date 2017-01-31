@@ -382,7 +382,6 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
    LOCAL cIdOrNaz := Space( 100 )
    PRIVATE GetList := {}
 
-   AltD()
    DO CASE
 
    CASE Upper( Chr( nKey ) ) == "F" .AND. Alias() == "PARTN"

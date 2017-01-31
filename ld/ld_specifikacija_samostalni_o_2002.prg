@@ -271,8 +271,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
          LOOP
       ENDIF
 
-      SELECT RADN
-      HSEEK LD->idradn
+      select_o_radn( LD->idradn )
 
       cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
 

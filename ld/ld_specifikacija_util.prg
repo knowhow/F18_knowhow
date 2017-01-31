@@ -165,13 +165,13 @@ FUNCTION ld_specifikacija_po_mjesecima()
    SELECT ( F_TMP_1 )
    my_use_temp( "MTEMP", my_home() + "mtemp" )
 
-   o_tippr()
+   //o_tippr()
 
    SELECT LD
 
    PRIVATE cFilt1 := "GODINA==" + dbf_quote( cGodina ) + ;
-      IF( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) ) + ;
-      IF( Empty( cIdRadn ), "", ".and.IDRADN==" + dbf_quote( cIdRadn ) )
+      IIF( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) ) + ;
+      IIF( Empty( cIdRadn ), "", ".and.IDRADN==" + dbf_quote( cIdRadn ) )
 
    SET FILTER TO &cFilt1
    SET ORDER TO TAG "2"

@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-FIELD ID, NAZ
+FIELD ID, NAZ, IDJ, IDKAN, IDN0, IDPARTNER
 
 FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
@@ -66,6 +66,13 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
             INDEX ON NAZ TAG "2" TO ( cAlias )
          ENDIF
          SET ORDER TO TAG "1"
+
+      ELSEIF cTable == "ops"
+
+         INDEX ON IDJ TAG IDJ TO ( cAlias )
+         INDEX ON IDKAN TAG IDKAN TO ( cAlias )
+         INDEX ON IDN0 TAG IDN0 TO ( cAlias )
+         SET ORDER TO TAG "ID"
 
       ELSEIF cTable == "dest"
 
@@ -155,27 +162,6 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
    RETURN .T.
 
 
-/*
-   use_sql_opstine() => otvori šifarnik tarifa sa prilagođenim poljima
-*/
-
-FUNCTION use_sql_opstine()
-
-   LOCAL cSql
-   LOCAL cTable := "ops"
-
-   SELECT ( F_OPS )
-   IF !use_sql_sif( cTable )
-      RETURN .F.
-   ENDIF
-
-   INDEX ON IDJ TAG IDJ TO ( cTable )
-   INDEX ON IDKAN TAG IDKAN TO ( cTable )
-   INDEX ON IDN0 TAG IDN0 TO ( cTable )
-
-   SET ORDER TO TAG ID
-
-   RETURN .T.
 
 
 

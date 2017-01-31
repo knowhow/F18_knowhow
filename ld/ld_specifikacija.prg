@@ -442,8 +442,7 @@ FUNCTION ld_specifikacija_plate()
 
    DO WHILE Str( nGodina, 4 ) + Str( nMjesec, 2 ) == Str( godina, 4 ) + Str( mjesec, 2 )
 
-      SELECT RADN
-      HSEEK LD->idradn
+      select_o_radn( LD->idradn )
       cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
       nRSpr_koef := 0
       IF cRTR == "S"
@@ -971,4 +970,4 @@ FUNCTION _ispl_p( nIzn, cIspl )
       RETURN 0
    ENDIF
 
-   RETURN
+   RETURN .T.

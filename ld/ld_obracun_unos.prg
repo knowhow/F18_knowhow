@@ -183,7 +183,7 @@ FUNCTION OObracun()
       O_FAKT_OBJEKTI
    ENDIF
 
-   o_tippr_ili_tippr2( cObracun )
+   set_tippr_ili_tippr2( cObracun )
 
    RETURN
 
@@ -441,8 +441,7 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
 
       nTArea := Select()
 
-      SELECT tippr
-      SEEK cTp
+      select_o_tippr( cTp )
 
       SELECT ( nTArea )
 
@@ -606,8 +605,7 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
       nRedTP++
 
-      SELECT tippr
-      SEEK cIdTP
+      select_o_tippr( cIdTP )
       SELECT ld
 
       IF LD->( FieldPos( cPoljeIznos ) = 0 ) .AND. LD->( FieldPos( cPoljeSati ) = 0 )
@@ -650,7 +648,7 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
 FUNCTION WhUnos( cTP )
 
-   tippr->( dbSeek( cTP ) )
+   select_o_tippr( cTP )
 
    RETURN .T.
 

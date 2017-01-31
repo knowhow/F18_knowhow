@@ -238,10 +238,8 @@ FUNCTION ld_specifikacija_plate_ostali()
 
    DO WHILE Str( nGodina, 4 ) + Str( nMjesec, 2 ) == Str( godina, 4 ) + Str( mjesec, 2 )
 
-      SELECT RADN
-      HSEEK LD->idradn
-      SELECT OPS
-      HSEEK radn->idopsst
+      select_o_radn( LD->idradn )
+      select_o_ops( radn->idopsst )
       SELECT RADN
       cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
 

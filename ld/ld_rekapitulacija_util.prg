@@ -15,7 +15,6 @@ THREAD STATIC __var_obr
 
 FUNCTION rekap_ld( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2, lObavDodaj, cIzdanje )
 
-
    IF lObavDodaj == nil
       lObavDodaj := .F.
    ENDIF
@@ -48,7 +47,7 @@ FUNCTION rekap_ld( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis
       ENDIF
    ENDIF
 
-   RREPLACE godina WITH Str( nGodina, 4 , 0 ), mjesec WITH Str( nMjesec, 2, 0 ), ;
+   RREPLACE godina WITH Str( nGodina, 4, 0 ), mjesec WITH Str( nMjesec, 2, 0 ), ;
       id    WITH  cId, ;
       iznos1 WITH nIzn1, iznos2 WITH nIzn2, ;
       idpartner WITH cIdPartner, ;
@@ -62,7 +61,7 @@ FUNCTION rekap_ld( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis
 
 
 
-FUNCTION ORekap()
+FUNCTION o_ld_rekap()
 
    o_por()
    o_dopr()
@@ -77,7 +76,7 @@ FUNCTION ORekap()
    o_kred()
    o_ld()
 
-   o_tippr_ili_tippr2( cObracun )
+   set_tippr_ili_tippr2( cObracun )
 
    RETURN .T.
 
@@ -296,8 +295,7 @@ FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
       nBrOsnova := nMRadn_bo
    ENDIF
 
-   SELECT ops
-   SEEK radn->idopsst
+   select_o_ops( radn->idopsst )
    SELECT opsld
 
    // po opc.stanovanja
@@ -549,8 +547,8 @@ FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
 
    ENDIF
 
-   SELECT ops
-   SEEK radn->idopsrad
+   select_o_ops( radn->idopsrad )
+
    SELECT opsld
 
    // po opc.rada
@@ -853,9 +851,8 @@ FUNCTION zagl_rekapitulacija_plata_svi()
 
 FUNCTION zagl_rekapitulacija_plata_rj()
 
-   o_ld_rj()
-   SELECT ld_rj
-   HSEEK cIdRj
+   select_o_ld_rj( cIdRj )
+
    SELECT por
    GO TOP
    SELECT ld
@@ -879,28 +876,32 @@ FUNCTION zagl_rekapitulacija_plata_rj()
 
 
 
-FUNCTION IspisTP( lSvi )
+FUNCTION ld_ispis_po_tipovima_primanja( lSvi )
+
+   LOCAL i
 
    LOCAL cTipPrElem := ld_tip_primanja_el_nepogode()
 
    cUNeto := "D"
 
    FOR i := 1 TO cLDPolja
+
       IF PRow() > 55 + dodatni_redovi_po_stranici()
          FF
       ENDIF
+
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-      _S&cPom := aRekap[ i, 1 ]   // nafiluj ove varijable radi prora~una dodatnih stavki
+      _S&cPom := aRekap[ i, 1 ]   // nafiluj ove varijable radi proracuna dodatnih stavki
       _I&cPom := aRekap[ i, 2 ]
 
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-      SELECT tippr
-      SEEK cPom
+      select_o_tippr( cPom )
+
       IF tippr->uneto == "N" .AND. cUneto == "D"
          cUneto := "N"
          ? cLinija
 
-         ? _l( "Ukupno:" )
+         ?  "Ukupno:"
          @ PRow(), nC1 + 8  SAY Str( nUSati, 12, 2 )
          ?? Space( 1 ) + _l( "sati" )
          @ PRow(), 60 SAY nUNeto PICT gpici
@@ -971,8 +972,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
             cIdKred := IDKRED
 
-            SELECT KRED
-            HSEEK cIdKred
+            select_o_kred( cIdKred )
 
             SELECT RADKR
             nUkKred := 0
@@ -982,8 +982,7 @@ STATIC FUNCTION IspisKred( lSvi )
                cNaOsnovu := NAOSNOVU
                cIdRadnKR := IDRADN
 
-               SELECT RADN
-               HSEEK cIdRadnKR
+               select_o_radn( cIdRadnKR )
 
                SELECT RADKR
                cOpis2 := RADNIK_PREZ_IME
@@ -998,7 +997,7 @@ STATIC FUNCTION IspisKred( lSvi )
                   IF lSvi
 
                      SELECT ld  // rekap za sve rj
-                     SET ORDER TO tag ( TagVO( "2" ) )
+                     SET ORDER TO TAG ( TagVO( "2" ) )
                      HSEEK Str( nGodina, 4, 0 ) + Str( mj, 2, 0 ) + cObracun + radkr->idradn
 
                      _t_rec := RecNo()
@@ -1065,16 +1064,16 @@ STATIC FUNCTION IspisKred( lSvi )
 
          DO WHILE !Eof()
 
-            SELECT kred
-            HSEEK radkr->idkred
+            select_o_kred( radkr->idkred )
+
             SELECT radkr
             PRIVATE cidkred := idkred, cNaOsnovu := naosnovu
-            SELECT radn
-            HSEEK radkr->idradn
+
+            select_o_radn( radkr->idradn )
             SELECT radkr
 
             cOpis2 := RADNIK_PREZ_IME
-            SEEK cidkred + cnaosnovu
+            SEEK cIdkred + cNaOsnovu
             PRIVATE nUkKred := 0
 
             DO WHILE !Eof() .AND. idkred == cidkred .AND. ( cnaosnovu == naosnovu .OR. gReKrOs == "N" )
@@ -1083,7 +1082,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
                IF lSvi
                   SELECT ld
-                  SET ORDER TO tag ( TagVO( "2" ) )
+                  SET ORDER TO TAG ( TagVO( "2" ) )
                   HSEEK  Str( nGodina, 4 ) + Str( nMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                ELSE
                   SELECT ld
@@ -1104,7 +1103,7 @@ STATIC FUNCTION IspisKred( lSvi )
                   FOR mj := nMjesec + 1 TO nMjesecDo
                      IF lSvi
                         SELECT ld
-                        SET ORDER TO tag ( TagVO( "2" ) )
+                        SET ORDER TO TAG ( TagVO( "2" ) )
                         HSEEK  Str( nGodina, 4 ) + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                         // "LDi2","str(godina)+str(mjesec)+idradn"
                      ELSE
@@ -1162,7 +1161,7 @@ STATIC FUNCTION PoTekRacunima()
 
    nMArr := Select()
    SELECT KRED
-   ASort( aUkTr,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+   ASort( aUkTr,,, {| x, y | x[ 1 ] < y[ 1 ] } )
    FOR i := 1 TO Len( aUkTR )
       IF Empty( aUkTR[ i, 1 ] )
          ? PadR( _l( "B L A G A J N A" ), Len( aUkTR[ i, 1 ] + KRED->naz ) + 1 )

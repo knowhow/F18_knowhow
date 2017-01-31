@@ -52,8 +52,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
 
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
 
-      SELECT tippr
-      SEEK cPom
+      select_o_tippr( cPom )
 
       IF tippr->( Found() ) .AND. tippr->aktivan == "D"
 
@@ -92,8 +91,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
 
 
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
-                  SELECT kred
-                  HSEEK radkr->idkred
+                  select_o_kred( radkr->idkred )
                   SELECT radkr
                   aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
                   ukredita += iznos

@@ -117,8 +117,7 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
 
             cOpst := opsld->idops
 
-            SELECT ops
-            HSEEK cOpst
+            select_o_ops( cOpst )
 
             SELECT opsld
 

@@ -555,9 +555,8 @@ FUNCTION g_tp_naz( cId )
    LOCAL nTArea := Select()
    LOCAL xRet := ""
 
-   o_tippr()
-   SELECT tippr
-   SEEK cId
+   select_o_tippr( cId )
+
 
    IF Found()
       xRet := AllTrim( tippr->naz )
@@ -573,8 +572,8 @@ FUNCTION g_tp_naz( cId )
 FUNCTION P_TipPr( cId, nDeltaX, nDeltaY )
 
    LOCAL nI, lRet
-   PRIVATE imekol := {}
-   PRIVATE kol := {}
+   PRIVATE ImeKol := {}
+   PRIVATE Kol := {}
 
    AAdd( ImeKol, { PadR( "Id", 2 ), {|| field->id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 20 ), {||  field->naz }, "naz" } )
@@ -592,6 +591,7 @@ FUNCTION P_TipPr( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
+   select_o_tippr()
 
    lRet := p_sifra( F_TIPPR, 1, MAXROWS() - 15, MAXCOLS() - 25, "LD Tipovi primanja", @cId, nDeltaX, nDeltaY, {| Ch | TprBl( Ch ) },,,,, { "ID" } )
 
@@ -666,7 +666,7 @@ FUNCTION P_LD_RJ( cId, nDeltaX, nDeltaY )
 
    PushWA()
 
-   select_open_ld_rj()
+   select_o_ld_rj()
 
    AAdd( ImeKol, { PadR( "Id", 2 ),      {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ), {||  naz }, "naz" } )
@@ -793,25 +793,25 @@ FUNCTION ImaUObrac( cKljuc, cTag )
    LOCAL lUsed := .T.
    LOCAL nArr := Select()
 
-   //SELECT ( F_LD )
+   // SELECT ( F_LD )
 
-   //IF !Used()
-    //  lUsed := .F.
-    select_o_ld()
-   //ELSE
-  //  PushWA()
-   //ENDIF
+   // IF !Used()
+   // lUsed := .F.
+   select_o_ld()
+   // ELSE
+   // PushWA()
+   // ENDIF
 
    SET ORDER TO TAG ( cTag )
    SEEK cKljuc
 
    lVrati := Found()
 
-   //IF !lUsed
-    //  USE
-   //ELSE
-  //    PopWA()
-   //ENDIF
+   // IF !lUsed
+   // USE
+   // ELSE
+   // PopWA()
+   // ENDIF
 
    IF !lVrati  // ako nema u LD, provjerimo ima li u 1.dijelu obracuna (smece)
       SELECT ( F_LDSM )
@@ -1143,17 +1143,14 @@ FUNCTION TotBrisRadn()
 
 
       run_sql_query( "BEGIN" )
-      IF !f18_lock_tables( { "ld_ld", "ld_radn", "ld_radkr" }, .T. )
+      IF !f18_lock_tables( { "ld_ld", "ld_radkr" }, .T. )
          run_sql_query( "ROLLBACK" )
          RETURN .F.
       ENDIF
 
       // brisem ga iz sifarnika radnika
       // -------------------------------
-      SELECT radn
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK cIdRadn
+      select_o_radn( cIdRadn )
       DO WHILE !Eof() .AND. id == cIdRadn
          SKIP 1
          nRec := RecNo()
@@ -1181,6 +1178,7 @@ FUNCTION TotBrisRadn()
       // brisem ga iz baze obracuna
       // --------------------------
       SELECT ld
+
       SET ORDER TO TAG "RADN"
       GO TOP
       SEEK cIdRadn
@@ -1213,10 +1211,7 @@ FUNCTION PrTotBr( cIdRadn )
 
    LOCAL cBI := "W+/G"
 
-   SELECT ( F_RADN )
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK cIdRadn
+   select_o_radn( cIdRadn )
 
    SELECT ( F_RADKR )
    SET ORDER TO TAG "2"

@@ -88,7 +88,7 @@ FUNCTION ld_specificni_sifarnici()
    IF gSihtarica == "D"
       AAdd( aOpc, "7. tipovi primanja u šihtarici" )
       AAdd( aOpcExe, {|| P_TprSiht() } )
-      
+
       AAdd( aOpc, "8. norme radova u šihtarici   " )
       AAdd( aOpcExe, {|| P_NorSiht() } )
    ENDIF
@@ -113,7 +113,7 @@ STATIC FUNCTION o_ld_sif_tables()
    o_norsiht()
    o_ld_radn()
    o_ld_parametri_obracuna()
-   o_tippr()
+   //o_tippr()
    o_ld_rj()
    o_por()
    o_dopr()

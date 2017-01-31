@@ -320,9 +320,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
       // po radniku
       cT_radnik := field->idradn
 
-      // pronadji radnika u sifrarniku
-      SELECT radn
-      SEEK cT_radnik
+      select_o_radn( cT_radnik )
 
       SELECT r_export
 

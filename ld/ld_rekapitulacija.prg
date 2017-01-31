@@ -16,8 +16,9 @@ STATIC __var_obr
 FUNCTION ld_rekapitulacija_sql( lSvi )
 
    LOCAL _a_benef := {}
+   LOCAL i
+
    PRIVATE nC1 := 20
-   PRIVATE i
    PRIVATE cTPNaz
    PRIVATE cUmPD := "N"
    PRIVATE nKrug := 1
@@ -52,7 +53,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
       lSvi := .F.
    ENDIF
 
-   ORekap()
+   o_ld_rekap()
 
    cIdRadn := Space( 6 )
    cStrSpr := Space( 3 )
@@ -97,9 +98,9 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
 
    IF lSvi
-      SET ORDER TO tag ( TagVO( "2" ) )
+      SET ORDER TO TAG ( TagVO( "2" ) )
    ELSE
-      SET ORDER TO tag ( TagVO( "1" ) )
+      SET ORDER TO TAG ( TagVO( "1" ) )
    ENDIF
 
 
@@ -125,7 +126,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    ?
    P_12CPI
 
-   ParObr( nMjesec, nGodina, cObracun, iif( !lSvi, cIdRj, ) )  //  pozicionira bazu PAROBR na odgovarajuci zapis
+   ParObr( nMjesec, nGodina, cObracun, iif( !lSvi, cIdRj, ) )  // pozicionira bazu PAROBR na odgovarajuci zapis
 
    PRIVATE aRekap[ cLDPolja, 2 ]
 
@@ -213,7 +214,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    cLinija := cTpLine
 
-   IspisTP( lSvi )
+   ld_ispis_po_tipovima_primanja( lSvi )
 
    ? cTpLine
 
@@ -300,13 +301,12 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    nPorB := 0
    nPorR := 0
 
-   // obracunaj porez na bruto
-   nTOsnova := obr_porez( nGodina, nMjesec, @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "B" )
+
+   nTOsnova := obr_porez( nGodina, nMjesec, @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "B" )    // obracunaj porez na bruto
 
    nPorB := nPor
 
-   // ako je stvarna osnova veca od ove BRUTO - DOPRIZ - ODBICI
-   // rijec je o radnicima koji nemaju poreza
+   // ako je stvarna osnova veca od ove BRUTO - DOPRIZ - ODBICI, rijec je o radnicima koji nemaju poreza
    IF Round( nTOsnova, 2 ) > Round( nPorOsn, 2 )
       ?U _l( "! razlika osnovice poreza (radi radnika bez poreza):" )
       @ PRow(), 60 SAY nPorOsn - nTOsnova PICT gpici
@@ -469,11 +469,9 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
          Scatter()
       ENDIF
 
-      SELECT radn
-      HSEEK _idradn
+      select_o_radn( _idradn )
 
-      SELECT vposla
-      HSEEK _idvposla
+      select_o_vposla( _idvposla )
 
       ParObr( ld->mjesec, ld->godina, cObracun, ld->idrj )
 
@@ -490,8 +488,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
          LOOP
       ENDIF
 
-      IF ( ( !Empty( cOpsSt ) .AND. cOpsSt <> radn->idopsst ) ) ;
-            .OR. ( ( !Empty( cOpsRad ) .AND. cOpsRad <> radn->idopsrad ) )
+      IF ( ( !Empty( cOpsSt ) .AND. cOpsSt <> radn->idopsst ) ) .OR. ( ( !Empty( cOpsRad ) .AND. cOpsRad <> radn->idopsrad ) )
 
          SELECT ld
          SKIP 1
@@ -529,8 +526,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
             LOOP
          ENDIF
 
-         SELECT tippr
-         SEEK cTprField
+         select_o_tippr( cTprField )
          SELECT ld
 
          IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
@@ -729,7 +725,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       nUPorNROsnova += nPorNROsnova
 
 
-      nPom := AScan( aNeta, {| x| x[ 1 ] == vposla->idkbenef } )
+      nPom := AScan( aNeta, {| x | x[ 1 ] == vposla->idkbenef } )
 
       IF nPom == 0
          AAdd( aNeta, { vposla->idkbenef, _oUNeto } )
@@ -740,8 +736,8 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       FOR i := 1 TO cLDPolja
 
          cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-         SELECT tippr
-         SEEK cPom
+         select_o_tippr( cPom )
+
          SELECT ld
          aRekap[ i, 1 ] += _S&cPom  // sati
          nIznos := _I&cPom
@@ -759,7 +755,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
          ENDIF
       NEXT
 
-      ++ nLjudi
+      ++nLjudi
 
       nUSati += _USati
       // ukupno sati
@@ -779,7 +775,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       cTR := IF( RADN->isplata $ "TR#SK", RADN->idbanka, ;
          Space( Len( RADN->idbanka ) ) )
 
-      IF Len( aUkTR ) > 0 .AND. ( nPomTR := AScan( aUkTr, {| x| x[ 1 ] == cTR } ) ) > 0
+      IF Len( aUkTR ) > 0 .AND. ( nPomTR := AScan( aUkTr, {| x | x[ 1 ] == cTR } ) ) > 0
          aUkTR[ nPomTR, 2 ] += _uiznos
       ELSE
          AAdd( aUkTR, { cTR, _uiznos } )
@@ -790,7 +786,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
 
       IF nMjesec <> nMjesecDo
 
-         nPom := AScan( aNetoMj, {| x| x[ 1 ] == mjesec } )
+         nPom := AScan( aNetoMj, {| x | x[ 1 ] == mjesec } )
 
          IF nPom > 0
             aNetoMj[ nPom, 2 ] += _uneto
@@ -853,7 +849,6 @@ FUNCTION get_ld_rekap_filter( hParams )
    LOCAL nGodina := hParams[ 'godina' ]
    LOCAL nMjesec := hParams[ 'mjesec' ]
    LOCAL nMjesecDo := hParams[ 'mjesec_do' ]
-
 
    IF lSvi
 

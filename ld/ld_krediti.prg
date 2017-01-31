@@ -716,8 +716,7 @@ FUNCTION ld_lista_kredita()
 
       cIdKred := IdKred
 
-      SELECT kred
-      HSEEK cIdKred
+      select_o_kred( cIdKred )
 
       SELECT radkr
 
@@ -761,8 +760,7 @@ FUNCTION ld_lista_kredita()
             ? m
          ENDIF
 
-         SELECT radn
-         HSEEK cidradn
+         select_o_radn( cIdradn )
          SELECT radkr
 
          ?
@@ -935,7 +933,7 @@ FUNCTION P_Krediti
    SET ORDER TO TAG "2"
    SET scope to ( cIdRadn )
 
-   SEEK cIdRadn
+   select_o_radn( cIdRadn )
 
    PRIVATE Imekol := {}
    AAdd( ImeKol, { "Kreditor",      {|| IdKred   } } )

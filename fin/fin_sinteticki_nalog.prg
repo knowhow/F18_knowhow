@@ -202,7 +202,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
    ?? tip_organizacije() + ":", self_organizacija_naziv()
 /*
    IF gNW == "N"
-      SELECT partn
+      -- SELECT partn
       -- HSEEK cIdfirma
       SELECT panal
       ? cidfirma, "-", partn->naz

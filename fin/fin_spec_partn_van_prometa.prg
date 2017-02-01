@@ -74,7 +74,7 @@ FUNCTION PartVanProm()
    SELECT SUBAN
    SET ORDER TO TAG "2"
 
-   SELECT PARTN
+   select_o_partner()
    IF !Empty ( aUsl )
       SET FILTER to &aUsl
    ENDIF
@@ -95,7 +95,7 @@ FUNCTION PartVanProm()
          ? Space ( 5 ) + PARTN->Id, PadR( PARTN->Naz, 25 ), PARTN->Mjesto, PARTN->Adresa
          nBrPartn ++
       ENDIF
-      SELECT PARTN
+      SELECT PARTN // while
       SKIP
    END
    ? Space ( 5 ) + REPL( "-", FIELD_PARTNER_ID_LENGTH ), REPL ( "-", 25 ), ;

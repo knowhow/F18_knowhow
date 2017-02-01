@@ -25,7 +25,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
       M := "------------- ---------------- ----------------- ------------------"
    ENDIF
 
-   //o_partner()
+   // o_partner()
 
    O_PARAMS
    PRIVATE cSection := "2", cHistory := " ", aHistory := {}
@@ -42,7 +42,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
       IF gNW == "D"
          @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 3, m_y + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
       @ m_x + 4, m_y + 2 SAY "Datum od:" GET dDatOd
@@ -219,12 +219,8 @@ FUNCTION ZaglSink2()
    ENDIF
    @ PRow(), 125 SAY "Str." + Str( ++nStr, 3 )
 
-   IF gNW == "D"
-      ? "Firma:", self_organizacija_id(), "-", self_organizacija_naziv()
-   ELSE
-      SELECT PARTN; HSEEK cIdFirma
-      ? "Firma:", cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
-   ENDIF
+
+   ? "Firma:", self_organizacija_id(), "-", self_organizacija_naziv()
 
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       ? "Radna jedinica ='" + cIdRj + "'"

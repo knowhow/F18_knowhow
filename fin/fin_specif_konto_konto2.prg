@@ -204,7 +204,7 @@ FUNCTION SpecKK2( lOtvSt )
 
          @ PRow() + 1, 0 SAY cidpartner
 
-         SELECT partn
+      --   SELECT partn
       --   HSEEK cIdPartner
          SELECT suban
 

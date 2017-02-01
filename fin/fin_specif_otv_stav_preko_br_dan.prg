@@ -197,8 +197,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
 
                @ PRow() + 1, 1 SAY ++B PICTURE '9999'
                @ PRow(), PCol() + 1 SAY cIdPartner
-               SELECT PARTN
-               HSEEK cIdPartner
+               select_o_partner( cIdPartner )
                @ PRow(), PCol() + 1 SAY PadR( naz, 25 )
                @ PRow(), PCol() + 1 SAY naz2 PICTURE 'XXXXXXXXXX'
                @ PRow(), PCol() + 1 SAY PTT
@@ -235,8 +234,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
             @ PRow() + 1, 1 SAY Space( 4 )
          ENDIF
          @ PRow(), PCol() + 1 SAY cIdPartner
-         SELECT PARTN
-         HSEEK cIdPartner
+         select_o_partner( cIdPartner )
          @ PRow(), PCol() + 1 SAY PadR( naz, 25 )
          @ PRow(), PCol() + 1 SAY naz2 PICT 'XXXXXXXXXX'
          @ PRow(), PCol() + 1 SAY PTT

@@ -24,7 +24,7 @@ FUNCTION P_K1( cId, dx, dy )
 
    SELECT ( _area )
 
-   RETURN PostojiSifra( F_K1, I_ID, 10, 60, "Lista - K1", @cId, dx, dy )
+   RETURN p_sifra( F_K1, I_ID, 10, 60, "Lista - K1", @cId, dx, dy )
 
 
 

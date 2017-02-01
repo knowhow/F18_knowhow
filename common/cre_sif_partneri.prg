@@ -89,7 +89,7 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
 
    LOCAL cN2Fin
    LOCAL nI
-   LOCAL xRet
+   LOCAL lRet
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -138,11 +138,12 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    sifk_fill_ImeKol( "PARTN", @ImeKol, @Kol )
 
 
-   xRet := p_sifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
+   lRet := p_sifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
 
+altd()
    PopWa()
 
-   RETURN xRet
+   RETURN lRet
 
 
 

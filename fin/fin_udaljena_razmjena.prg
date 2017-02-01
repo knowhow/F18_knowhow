@@ -471,8 +471,7 @@ STATIC FUNCTION __export( vars, a_details )
          ENDIF
 
 
-         SELECT partn // uzmi sada partnera sa ove stavke pa je ubaci u e_partn
-         HSEEK _id_partner
+         select_o_partner( _id_partner )
          IF Found() .AND. _export_sif == "D"
             _app_rec := dbf_get_rec()
             SELECT e_partn

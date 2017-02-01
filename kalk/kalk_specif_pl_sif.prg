@@ -32,7 +32,7 @@ FUNCTION P_RVrsta( cid, dx, dy )
    ENDIF
    SELECT ( nSelect )
 
-   RETURN PostojiSifra( F_RVRSTA, 1, 10, 75, "Vrste artikala", @cid, dx, dy )
+   RETURN p_sifra( F_RVRSTA, 1, 10, 75, "Vrste artikala", @cid, dx, dy )
 
 
 

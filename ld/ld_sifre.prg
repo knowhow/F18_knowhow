@@ -156,7 +156,7 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := PostojiSifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, {| Ch | RadBl( Ch ) },,,,, { "ID" } )
+   lRet := p_sifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, {| Ch | RadBl( Ch ) },,,,, { "ID" } )
 
    PopWa( F_RADN )
 
@@ -547,7 +547,7 @@ FUNCTION P_ParObr( cId, nDeltaX, nDeltaY )
       AAdd( kol, nI )
    NEXT
 
-   RETURN PostojiSifra( F_PAROBR, 1, MAXROWS() - 15, MAXCOLS() - 20, _u( "Parametri obračuna" ), @cId, nDeltaX, nDeltaY )
+   RETURN p_sifra( F_PAROBR, 1, MAXROWS() - 15, MAXCOLS() - 20, _u( "Parametri obračuna" ), @cId, nDeltaX, nDeltaY )
 
 
 FUNCTION g_tp_naz( cId )
@@ -647,7 +647,7 @@ FUNCTION P_TipPr2( cId, nDeltaX, nDeltaY )
       }
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
-   RETURN PostojiSifra( F_TIPPR2, 1, MAXROWS() - 15, MAXCOLS() - 20, _l( "Tipovi primanja za obracun 2" ),  @cId, nDeltaX, nDeltaY, ;
+   RETURN p_sifra( F_TIPPR2, 1, MAXROWS() - 15, MAXCOLS() - 20, _l( "Tipovi primanja za obracun 2" ),  @cId, nDeltaX, nDeltaY, ;
       {| Ch | Tpr2Bl( Ch ) },,,,, { "ID" } )
 
 
@@ -682,7 +682,7 @@ FUNCTION P_LD_RJ( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := PostojiSifra( F_LD_RJ, 1, MAXROWS() - 15, 60, "Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
+   lRet := p_sifra( F_LD_RJ, 1, MAXROWS() - 15, 60, "Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
 
    PopWa( F_LD_RJ )
 
@@ -731,7 +731,7 @@ FUNCTION P_Kred( cId, nDeltaX, nDeltaY )
    // Dorade 2001
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
-   lRet := PostojiSifra( F_KRED, 1, MAXROWS() - 15, MAXCOLS() - 20, _u( "Lista kreditora" ), @cId, nDeltaX, nDeltaY )
+   lRet := p_sifra( F_KRED, 1, MAXROWS() - 15, MAXCOLS() - 20, _u( "Lista kreditora" ), @cId, nDeltaX, nDeltaY )
 
    PopWa()
 
@@ -1009,7 +1009,7 @@ FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
 
    SELECT dopr
 
-   lRet := PostojiSifra( F_DOPR, 1, MAXROWS() - 15, MAXCOLS() - 20, ;
+   lRet := p_sifra( F_DOPR, 1, MAXROWS() - 15, MAXCOLS() - 20, ;
       _u( "Lista doprinosa na platu" ), @cId, nDeltaX, nDeltaY, {| Ch | DoprBl( Ch ) } )
 
    PopWa()
@@ -1030,7 +1030,7 @@ FUNCTION P_KBenef( cId, nDeltaX, nDeltaY )
 
    Kol := { 1, 2, 3 }
 
-   xRet := PostojiSifra( F_KBENEF, 1, MAXROWS() - 15, MAXCOLS() - 20,  "Lista koef.beneficiranog radnog staza", @cId, nDeltaX, nDeltaY )
+   xRet := p_sifra( F_KBENEF, 1, MAXROWS() - 15, MAXCOLS() - 20,  "Lista koef.beneficiranog radnog staza", @cId, nDeltaX, nDeltaY )
 
    PopWa()
 
@@ -1052,7 +1052,7 @@ FUNCTION P_StrSpr( cId, nDeltaX, nDeltaY )
    PushWa()
 
    select_o_str_spr()
-   xRet := PostojiSifra( F_STRSPR, 1, MAXROWS() - 15, MAXCOLS() - 15,  _u( "Lista: stručne spreme" ), @cId, nDeltaX, nDeltaY )
+   xRet := p_sifra( F_STRSPR, 1, MAXROWS() - 15, MAXCOLS() - 15,  _u( "Lista: stručne spreme" ), @cId, nDeltaX, nDeltaY )
 
    PopWa()
 
@@ -1073,7 +1073,7 @@ FUNCTION P_VPosla( cId, nDeltaX, nDeltaY )
    Kol := { 1, 2, 3 }
 
    PushWA()
-   xRet := PostojiSifra( F_VPOSLA, 1, 10, 55, _l( "Lista: Vrste posla" ), @cId, nDeltaX, nDeltaY )
+   xRet := p_sifra( F_VPOSLA, 1, 10, 55, _l( "Lista: Vrste posla" ), @cId, nDeltaX, nDeltaY )
 
    PopWA()
 
@@ -1093,7 +1093,7 @@ FUNCTION P_NorSiht( cId, nDeltaX, nDeltaY )
    Kol := { 1, 2, 3, 4 }
 
    PushWa()
-   xRet := PostojiSifra( F_NORSIHT, 1, MAXROWS() - 15, MAXCOLS() - 20, "Lista: Norme u sihtarici", @cId, nDeltaX, nDeltaY )
+   xRet := p_sifra( F_NORSIHT, 1, MAXROWS() - 15, MAXCOLS() - 20, "Lista: Norme u sihtarici", @cId, nDeltaX, nDeltaY )
    PopWa()
 
    RETURN xRet

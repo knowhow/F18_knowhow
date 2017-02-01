@@ -32,7 +32,7 @@ FUNCTION P_VrPrim( cId, dx, dy )
 
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ) ; NEXT
 
-   vrati := PostojiSifra( F_VRPRIM, 1, 10, 77, "Lista: Vrste primalaca:", @cId, dx, dy )
+   vrati := p_sifra( F_VRPRIM, 1, 10, 77, "Lista: Vrste primalaca:", @cId, dx, dy )
 
    RETURN vrati
 
@@ -51,7 +51,7 @@ FUNCTION P_VrPrim2( cId, dx, dy )
       { "Unos dobavlj (D/N)", {|| PadC( DOBAV, 13 )   }, "DOBAV"    };
       }
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
-   vrati := PostojiSifra( F_VRPRIM2, 1, 10, 77, "LISTA VRSTA PRIMALACA ZA UPLATNICE:", @cId, dx, dy )
+   vrati := p_sifra( F_VRPRIM2, 1, 10, 77, "LISTA VRSTA PRIMALACA ZA UPLATNICE:", @cId, dx, dy )
 
    RETURN vrati
 
@@ -68,7 +68,7 @@ FUNCTION P_LDVIRM( cId, dx, dy )
       }
    Kol := { 1, 2, 3 }
 
-   vrati := PostojiSifra( F_LDVIRM, 1, maxrows()-10, maxcols()-20, "LISTA LD->VIRM:", @cId, dx, dy )
+   vrati := p_sifra( F_LDVIRM, 1, maxrows()-10, maxcols()-20, "LISTA LD->VIRM:", @cId, dx, dy )
 
    RETURN vrati
 
@@ -93,6 +93,6 @@ FUNCTION P_JPrih( cId, dx, dy )
    AAdd( Imekol, { "BudzOrg", {|| BudzOrg }, "BudzOrg" } )
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-   vrati := PostojiSifra( F_JPRIH, 1, MAXROWS() - 10, maxcols() - 20, "Lista Javnih prihoda", @cId, dx, dy )
+   vrati := p_sifra( F_JPRIH, 1, MAXROWS() - 10, maxcols() - 20, "Lista Javnih prihoda", @cId, dx, dy )
 
    RETURN vrati

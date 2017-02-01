@@ -74,7 +74,7 @@ FUNCTION P_Funk( cId, dx, dy )
       }
    Kol := { 1, 2 }
 
-   RETURN PostojiSifra( F_FUNK, 1, 10, 70, "Lista funkcionalne klasifikacije", @cId, dx, dy )
+   RETURN p_sifra( F_FUNK, 1, 10, 70, "Lista funkcionalne klasifikacije", @cId, dx, dy )
 
 
 // -------------------------------------------
@@ -122,7 +122,7 @@ FUNCTION P_Fond( cId, dx, dy )
       }
    Kol := { 1, 2 }
 
-   RETURN PostojiSifra( F_FOND, 1, 10, 70, "Lista: Fondovi", @cId, dx, dy )
+   RETURN p_sifra( F_FOND, 1, 10, 70, "Lista: Fondovi", @cId, dx, dy )
  */
 
 
@@ -142,7 +142,7 @@ FUNCTION P_BuIz( cId, dx, dy )
       }
    Kol := { 1, 2 }
 
-   RETURN PostojiSifra( F_BUIZ, 1, 10, 70, "Lista: konta-izuzeci u sortiranju", @cId, dx, dy )
+   RETURN p_sifra( F_BUIZ, 1, 10, 70, "Lista: konta-izuzeci u sortiranju", @cId, dx, dy )
 
  */
 
@@ -168,7 +168,7 @@ FUNCTION P_Budzet( cId, dx, dy )
       }
    Kol := { 1, 2, 3, 4, 5, 6 }
 
-   RETURN PostojiSifra( F_BUDZET, 1, 10, 55, "Plan budzeta za tekucu godinu", @cId, dx, dy )
+   RETURN p_sifra( F_BUDZET, 1, 10, 55, "Plan budzeta za tekucu godinu", @cId, dx, dy )
  */
 
 
@@ -188,7 +188,7 @@ FUNCTION P_ParEK( cId, dx, dy )
       }
    Kol := { 1, 2 }
 
-   RETURN PostojiSifra( F_PAREK, 1, 10, 55, "Partije->Konta", @cId, dx, dy )
+   RETURN p_sifra( F_PAREK, 1, 10, 55, "Partije->Konta", @cId, dx, dy )
 
 */
 
@@ -231,7 +231,7 @@ FUNCTION P_TRFP3( cId, dx, dy )
       SET FILTER TO
    ENDIF
 
-   RETURN PostojiSifra( F_TRFP3, 1, 15, 76, "Sheme kontiranja obracuna LD", @cId, dx, dy )
+   RETURN p_sifra( F_TRFP3, 1, 15, 76, "Sheme kontiranja obracuna LD", @cId, dx, dy )
 
  */
 
@@ -278,5 +278,5 @@ FUNCTION P_ULIMIT( cId, dx, dy )
       }
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-  -- RETURN PostojiSifra( F_ULIMIT, 1, 10, 55, "Sifrarnik limita po ugovorima", @cid, dx, dy )
+  -- RETURN p_sifra( F_ULIMIT, 1, 10, 55, "Sifrarnik limita po ugovorima", @cid, dx, dy )
  */

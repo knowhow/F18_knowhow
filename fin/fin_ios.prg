@@ -740,7 +740,7 @@ STATIC FUNCTION ios_specifikacija( hParams )
          @ PRow() + 1, 0 SAY + + _rbr PICT "9999"
          @ PRow(), 5 SAY cIdPartner
 
-         SELECT PARTN
+         -- SELECT PARTN
          -- HSEEK cIdPartner
 
          @ PRow(), 12 SAY PadR( AllTrim( partn->naz ), 20 )
@@ -839,7 +839,7 @@ STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
    ? "FIRMA:"
    @ PRow(), PCol() + 1 SAY id_firma
 
-   SELECT partn
+   -- SELECT partn
    -- HSEEK id_partner
 
    @ PRow(), PCol() + 1 SAY AllTrim( naz )

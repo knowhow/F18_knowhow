@@ -103,7 +103,7 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
    SELECT KONTO
    SET ORDER TO TAG "ID"
 
-   PostojiSifra( F_KONTO, 1, MAXROWS() -17, MAXCOLS() -10, "LKTF Lista: Konta ", @cId, dx, dy, {| Ch| KontoBlok( Ch ) },,,,, { "ID" } )
+   p_sifra( F_KONTO, 1, MAXROWS() -17, MAXCOLS() -10, "LKTF Lista: Konta ", @cId, dx, dy, {| Ch| KontoBlok( Ch ) },,,,, { "ID" } )
 
    SELECT ( nDbfArea )
 

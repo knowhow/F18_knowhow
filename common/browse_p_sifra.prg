@@ -35,6 +35,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    LOCAL cNazSrch
    LOCAL cOrderTag
    LOCAL cSeekRet, lTraziPoNazivu := .F.
+   LOCAL lRet := .T.
 
    PRIVATE fID_J := .F.
 
@@ -86,6 +87,8 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
 
    ENDIF
 
+   lRet := .T.
+
    IF ( lTraziPoNazivu .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( field->naz ) ) ) ;
          .OR. cId == NIL .OR. ( !Found() .AND. cNaslov <> NIL ) ;
          .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )
@@ -100,10 +103,11 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
          GO TOP // bez parametara
       ENDIF
 
-      my_db_edit_sql( NIL, nVisina, nSirina,  ;
+      lRet := my_db_edit_sql( NIL, nVisina, nSirina,  ;
          {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
          ToStrU( cNaslov ), "", lInvert, aOpcije, 1, bPodvuci, , , aPoredak )
 
+altd()
       IF Type( "id" ) $ "U#UE"
          cID := ( nDbf )->( FieldGet( 1 ) )
       ELSE
@@ -139,14 +143,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    PopSifV()
    PopWa( nDbf )
 
-   RETURN .T.
-
-
-
-
-FUNCTION PostojiSifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
-
-   RETURN p_sifra( @nDbf,  @xIndex, @nVisina, @nSirina, @cNaslov, @cID, @nDeltaX, @nDeltaY, bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
+   RETURN lRet
 
 
 

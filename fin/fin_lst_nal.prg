@@ -34,8 +34,7 @@ FUNCTION st_sv_nal()
 
    DO WHILE !Eof() .AND. self_organizacija_id() == idfirma
 
-      SELECT partn
-      SEEK suban->idpartner
+      select_o_partner( suban->idpartner )
 
       cPartNaz := partn->naz
 

@@ -141,8 +141,7 @@ FUNCTION fin_specif_otvorene_stavke()
          @ PRow() + 1, 0 SAY ++B PICTURE '9999'
          @ PRow(), 5 SAY cIdPartner
 
-         SELECT PARTN
-         HSEEK cIdPartner
+         select_o_partner( cIdPartner )
 
          @ PRow(), PCol() + 1 SAY PadR( naz, 37 )
          @ PRow(), PCol() + 1 SAY PadR( PTT, 5 )

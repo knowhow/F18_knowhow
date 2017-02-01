@@ -227,7 +227,7 @@ STATIC FUNCTION _g_pt_naz( cId )
    LOCAL nTArea := Select()
 
 --   o_partner()
-   SELECT partn
+--   SELECT partn
    SEEK cId
 
    IF Found()

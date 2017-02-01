@@ -830,9 +830,7 @@ STATIC FUNCTION _fill_partn( part_id, node_name )
       node_name := "pov"
    ENDIF
 
-   SELECT partn
-   GO TOP
-   HSEEK part_id
+   select_o_partner( part_id )
 
    IF !Found()
       MsgBeep( "Partner " + part_id + " ne postoji u sifrarniku !" )

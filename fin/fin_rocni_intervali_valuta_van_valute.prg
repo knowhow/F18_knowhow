@@ -973,8 +973,7 @@ FUNCTION Zfin_spec_otv_stavke_rocni_intervali( fStrana, lSvi, PICPIC )
       IF lSvi
          ? "PARTNER: SVI"
       ELSE
-         SELECT PARTN
-         HSEEK cIdPartner
+         select_o_partner( cIdPartner )
          ? "PARTNER:", cIdPartner, Trim( PadR( naz, 25 ) ), " ", Trim( naz2 ), " ", Trim( mjesto )
       ENDIF
 

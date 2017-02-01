@@ -57,7 +57,7 @@ FUNCTION p_epdv_sheme_generacije( cTabela, cId, dx, dy )
 
    set_a_kol( @Kol, @ImeKol )
 
-   RETURN PostojiSifra( nArea, 1, MAXROWS() - 10, MAXCOLS() - 10, cHeader,   @cId, dx, dy, ;
+   RETURN p_sifra( nArea, 1, MAXROWS() - 10, MAXCOLS() - 10, cHeader,   @cId, dx, dy, ;
       {| Ch| k_handler( Ch ) } )
 
 

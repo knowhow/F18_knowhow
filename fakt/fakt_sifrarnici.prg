@@ -35,7 +35,7 @@ FUNCTION p_fakt_objekti( cId, dx, dy )
 
    SELECT ( nDbfArea )
 
-   RETURN PostojiSifra( F_FAKT_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20,"Lista objekata", @cId, dx, dy )
+   RETURN p_sifra( F_FAKT_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20,"Lista objekata", @cId, dx, dy )
 
 
 
@@ -310,7 +310,7 @@ FUNCTION P_FTxt( cId, dx, dy )
 
    @ _p_bottom, 0 SAY ""
 
-   _vrati := PostojiSifra( F_FTXT, 1, _box_h, _box_w, "Faktura - tekst na kraju fakture", @cId, , , {|| PrikFTXT( _p_top, _p_left, 8, _p_right ) } )
+   _vrati := p_sifra( F_FTXT, 1, _box_h, _box_w, "Faktura - tekst na kraju fakture", @cId, , , {|| PrikFTXT( _p_top, _p_left, 8, _p_right ) } )
 
    Prozor0()
 

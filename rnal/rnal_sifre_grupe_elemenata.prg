@@ -42,7 +42,7 @@ FUNCTION s_e_groups( cId, lwo_ID, dx, dy )
 
    set_a_kol( @ImeKol, @Kol )
 
-   cRet := PostojiSifra( F_E_GROUPS, 1, MAXROWS() -10, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
+   cRet := p_sifra( F_E_GROUPS, 1, MAXROWS() -10, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
    SELECT ( nTArea )
 

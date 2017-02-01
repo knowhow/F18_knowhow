@@ -45,7 +45,7 @@ FUNCTION P_Destin( cId, cPartId, dx, dy )
       }
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-   PostojiSifra( F_DEST, "ID", 10, 70, "Destinacije za:" + cIdTek + "-" + Ocitaj( F_PARTN, cIdTek, "naz" ), , , , {| Ch| EdDestBlok( Ch ) },,,, .F. )
+   p_sifra( F_DEST, "ID", 10, 70, "Destinacije za:" + cIdTek + "-" + Ocitaj( F_PARTN, cIdTek, "naz" ), , , , {| Ch| EdDestBlok( Ch ) },,,, .F. )
 
    cId := cLastOznaka
    SET scope TO

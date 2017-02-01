@@ -181,7 +181,7 @@ STATIC FUNCTION Zagl5()
    IF gNW == "D"
       ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
-      SELECT PARTN; HSEEK cIdFirma
+    --  SELECT PARTN; HSEEK cIdFirma
       ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
    ENDIF
 

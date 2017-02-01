@@ -164,7 +164,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
       IF cBrza == "D"
          qqKonto := PadR( qqKonto, 7 )
-         qqPartner := PadR( qqPartner, Len( partn->id ) )
+         qqPartner := PadR( qqPartner, 6 )
          @ m_x + ( ++nX ), m_y + 2 SAY "Konto  " GET qqKonto  VALID P_KontoFin( @qqKonto )
          @ m_x + ( ++nX ), m_y + 2 SAY "Partner" GET qqPartner VALID Empty( qqPartner ) .OR. RTrim( qqPartner ) == ";" .OR. p_partner( @qqPartner ) PICT "@!"
       ELSE

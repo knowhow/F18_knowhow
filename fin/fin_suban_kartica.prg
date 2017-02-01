@@ -484,8 +484,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          nTarea := Select()
 
          IF !Empty( cOpcine )
-            SELECT partn
-            SEEK cIdPartner
+            select_o_partner( cIdPartner )
             IF ! ( Found() .AND. field->id == cIdPartner .AND. AllTrim( field->idops ) $ AllTrim( cOpcine ) )
                SELECT ( nTarea )
                SKIP
@@ -530,8 +529,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          ENDIF
 
          IF !( cBrza == "D" .AND. RTrim( qqPartner ) == ";" )
-            SELECT PARTN
-            HSEEK cIdPartner
+            select_o_partner( cIdPartner )
             __p_naz := field->naz
             @ PRow(), PCol() + 1 SAY AllTrim( field->naz )
             @ PRow(), PCol() + 1 SAY AllTrim( field->naz2 )
@@ -561,8 +559,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                ?U "Partner: "
                @ PRow(), PCol() + 1 SAY iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", ":  SVI", cIdPartner )
                IF !( cBrza == "D" .AND. RTrim( qqPartner ) == ";" )
-                  SELECT PARTN
-                  HSEEK cIdPartner
+                  select_o_partner( cIdPartner )
                   @ PRow(), PCol() + 1 SAY AllTrim( partn->naz )
                   @ PRow(), PCol() + 1 SAY AllTrim( partn->naz2 )
                   @ PRow(), PCol() + 1 SAY AllTrim( partn->ZiroR )
@@ -1103,8 +1100,7 @@ FUNCTION Telefon( cTel )
    LOCAL nSelect
 
    nSelect := Select()
-   SELECT partn
-   HSEEK  suban->idpartner
+   select_o_partner( suban->idpartner )
    SELECT ( nSelect )
 
    RETURN ( partn->telefon == cTel )

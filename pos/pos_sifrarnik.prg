@@ -100,7 +100,7 @@ FUNCTION P_Kase( cId, dx, dy )
    AAdd( ImeKol, { "Lokacija kumulativa", {|| pPath }, "pPath" } )
    Kol := { 1, 2, 3 }
 
-   RETURN PostojiSifra( F_KASE, 1, 10, 77, "Sifarnik kasa/prodajnih mjesta", @cId, dx, dy )
+   RETURN p_sifra( F_KASE, 1, 10, 77, "Sifarnik kasa/prodajnih mjesta", @cId, dx, dy )
 
 
 
@@ -132,7 +132,7 @@ FUNCTION P_Odj( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_ODJ, 1, 10, 40, "Sifarnik odjeljenja", @cId, dx, dy )
+   RETURN p_sifra( F_ODJ, 1, 10, 40, "Sifarnik odjeljenja", @cId, dx, dy )
 
 
 
@@ -147,7 +147,7 @@ FUNCTION P_Dio( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_DIO, 1, 10, 55, "Sifrarnik dijelova objekta", @cid, dx, dy )
+   RETURN p_sifra( F_DIO, 1, 10, 55, "Sifrarnik dijelova objekta", @cid, dx, dy )
 
 
 
@@ -165,7 +165,7 @@ FUNCTION P_StRad( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_STRAD, 1, 10, 55, "Sifrarnik statusa radnika", @cid, dx, dy )
+   RETURN p_sifra( F_STRAD, 1, 10, 55, "Sifrarnik statusa radnika", @cid, dx, dy )
 
 
 
@@ -184,7 +184,7 @@ FUNCTION P_Osob( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_OSOB, 2, 10, 55, "Sifrarnik osoblja", @cid, dx, dy, {|| EdOsob() } )
+   RETURN p_sifra( F_OSOB, 2, 10, 55, "Sifrarnik osoblja", @cid, dx, dy, {|| EdOsob() } )
 
    RETURN .T.
 
@@ -205,7 +205,7 @@ FUNCTION P_Uredj( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_UREDJ, 1, 10, 55, "Sifrarnik uredjaja", @cid, dx, dy )
+   RETURN p_sifra( F_UREDJ, 1, 10, 55, "Sifrarnik uredjaja", @cid, dx, dy )
 
 
 
@@ -224,7 +224,7 @@ FUNCTION P_MJTRUR( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_MJTRUR, 1, 10, 55, "Sifrarnik parova uredjaj-odjeljenje", @cid, dx, dy )
+   RETURN p_sifra( F_MJTRUR, 1, 10, 55, "Sifrarnik parova uredjaj-odjeljenje", @cid, dx, dy )
 
 
 

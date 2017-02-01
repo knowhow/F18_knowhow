@@ -55,7 +55,7 @@ FUNCTION s_e_gr_val( cId, nE_gr_at_id, cE_gr_vl_desc, lwo_ID, dx, dy )
 
    GO TOP
 
-   cRet := PostojiSifra( F_E_GR_VAL, 1, MAXROWS() -10, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
+   cRet := p_sifra( F_E_GR_VAL, 1, MAXROWS() -10, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
    IF ValType( cE_gr_vl_desc ) == "N"
       cE_gr_vl_desc := Str( cE_gr_vl_desc, 10 )

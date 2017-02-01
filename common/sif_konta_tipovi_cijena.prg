@@ -158,4 +158,4 @@ FUNCTION P_KonCij2( CId, dx, dy )
 
    SELECT ( nTArea )
 
-   RETURN PostojiSifra( F_KONCIJ, 1, 10, 60, "Lista: Konta / Atributi / 2 ", @cId, dx, dy )
+   RETURN p_sifra( F_KONCIJ, 1, 10, 60, "Lista: Konta / Atributi / 2 ", @cId, dx, dy )

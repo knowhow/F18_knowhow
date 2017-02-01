@@ -165,4 +165,4 @@ FUNCTION p_relation( cId, dx, dy )
 
    SELECT ( nTArea )
 
-   RETURN PostojiSifra( F_RELATION, 1, 10, 65, "Lista relacija konverzije", @cId, dx, dy )
+   RETURN p_sifra( F_RELATION, 1, 10, 65, "Lista relacija konverzije", @cId, dx, dy )

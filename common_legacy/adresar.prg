@@ -83,7 +83,7 @@ FUNCTION P_Adres( cId, dx, dy )
 
    PopWa()
 
-   RETURN PostojiSifra( F_ADRES, 1, MAXROWS() -15, MAXCOLS() -3, "Adresar:", @cId, dx, dy, {| Ch| AdresBlok( Ch ) } )
+   RETURN p_sifra( F_ADRES, 1, MAXROWS() -15, MAXCOLS() -3, "Adresar:", @cId, dx, dy, {| Ch| AdresBlok( Ch ) } )
 
 
 

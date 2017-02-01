@@ -52,7 +52,7 @@ FUNCTION p_ugov( cId, dx, dy )
    // setuj polje pri otvaranju za sortiranje
    set_fld_id( @cFieldId, cId )
 
-   xRet := PostojiSifra( F_UGOV, cFieldId, MAXROWS() - 10, MAXCOLS() - 3, cHeader, @cId, dx, dy, {| Ch| ug_key_handler( Ch ) } )
+   xRet := p_sifra( F_UGOV, cFieldId, MAXROWS() - 10, MAXCOLS() - 3, cHeader, @cId, dx, dy, {| Ch| ug_key_handler( Ch ) } )
 
    PopWa()
 

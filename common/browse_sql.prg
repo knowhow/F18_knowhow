@@ -54,6 +54,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
    LOCAL cSmj, nRez, i, K, aUF, cPomDB, nTTrec
    LOCAL cLoc := Space( 40 )
    LOCAL cStVr, cNovVr, nRec, nOrder, nPored, xcpos, ycpos
+   LOCAL lRet
 
    PRIVATE  bGoreRed := NIL
    PRIVATE  bDoleRed := NIL
@@ -73,7 +74,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
 
    // ovo se moze setovati u when/valid fjama
 
-   PRIVATE  TBSkipBlock := {| nSkip| SkipDB( nSkip, @nTBLine ) }
+   PRIVATE  TBSkipBlock := {| nSkip | SkipDB( nSkip, @nTBLine ) }
 
 
    IF skipblock <> NIL
@@ -125,6 +126,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
 
    browse_only( hParams, .T. )
 
+   lRet := .T.
    DO WHILE .T.
 
       Ch := Inkey()
@@ -161,7 +163,6 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
 
          DO WHILE !TB:stabilize()
          END
-
          nRez := Eval( bUserF )
 
       ELSE
@@ -206,12 +207,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
          TB:RefreshAll()
          @ m_x + 1, m_y + yw - 6 SAY Str( RecCount(), 5 )
 
-      CASE Ch == K_ESC
 
-         IF nPrazno == 0
-            BoxC()
-         ENDIF
-         EXIT
 
       CASE nRez == DE_ABORT .OR. Ch == K_CTRL_END .OR. Ch == K_ESC
 
@@ -219,6 +215,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
             BoxC()
          ENDIF
 
+         lRet := .F.
          EXIT
 
 
@@ -226,7 +223,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
 
    ENDDO
 
-   RETURN .T.
+   RETURN lRet
 
 
 STATIC FUNCTION browse_only( hParams, lIzOBJDB )
@@ -265,7 +262,7 @@ STATIC FUNCTION browse_only( hParams, lIzOBJDB )
 
 
    @ m_x + hParams[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), 42 ), "" )
-   @ m_x + 1, m_y + hParams[ "yw" ] -6    SAY Str( RecCount(), 5 )
+   @ m_x + 1, m_y + hParams[ "yw" ] - 6    SAY Str( RecCount(), 5 )
 
 
    TB := TBrowseDB( m_x + 2 + hParams[ "prazno" ], m_y + 1, m_x + _rows - _rows_poruke, m_y + _width )
@@ -553,11 +550,11 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
    // provjeriti kolika je sirina get-a!!
 
    aTBGets := {}
-   get := GetNew( nX, nY, MemVarBlock( cPom77U ), ;
+   GET := GetNew( nX, nY, MemVarBlock( cPom77U ), ;
       cPom77U, cPict, "W+/BG,W+/B" )
    get:PreBlock := bWhen
    get:PostBlock := bValid
-   AAdd( aTBGets, Get )
+   AAdd( aTBGets, GET )
    nSirina := 8
    IF cPict <> NIL
       nSirina := Len( Transform( &cPom77U, cPict ) )
@@ -567,15 +564,15 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
       aPom := ImeKol[ TB:Colpos, 8 ]  // matrica
       FOR i := 1 TO Len( aPom )
          nY := nY + nSirina + 1
-         get := GetNew( nX, nY, MemVarBlock( aPom[ i, 1 ] ), ;
+         GET := GetNew( nX, nY, MemVarBlock( aPom[ i, 1 ] ), ;
             aPom[ i, 1 ], aPom[ i, 4 ], "W+/BG,W+/B" )
          nSirina := Len( Transform( &( aPom[ i, 1 ] ), aPom[ i, 4 ] ) )
          get:PreBlock := aPom[ i, 2 ]
          get:PostBlock := aPom[ i, 3 ]
-         AAdd( aTBGets, Get )
+         AAdd( aTBGets, GET )
       NEXT
 
-      IF nY + nSirina > MAXCOLS() -2
+      IF nY + nSirina > MAXCOLS() - 2
 
          FOR i := 1 TO Len( aTBGets )
             aTBGets[ i ]:Col := aTBGets[ i ]:Col  - ( nY + nSirina - 78 ) // smanji col koordinate

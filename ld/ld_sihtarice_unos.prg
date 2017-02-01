@@ -410,4 +410,4 @@ FUNCTION P_TPRSiht( cId, dx, dy )
       }
    Kol := { 1, 2, 3 }
 
-   RETURN PostojiSifra( F_TPRSIHT, 1, 10, 55, "Lista: Tipovi primanja u sihtarici", @cId, dx, dy )
+   RETURN p_sifra( F_TPRSIHT, 1, 10, 55, "Lista: Tipovi primanja u sihtarici", @cId, dx, dy )

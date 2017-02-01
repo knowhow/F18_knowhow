@@ -65,7 +65,7 @@ FUNCTION s_aops_att( cId, nAop_id, cAop_desc, lwo_ID, dx, dy )
    aop_filter( nAop_id, cAop_desc )
 
 
-   cRet := PostojiSifra( F_AOPS_ATT, 1, 10, 70, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
+   cRet := p_sifra( F_AOPS_ATT, 1, 10, 70, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
 
    IF ValType( cAop_desc ) == "N"
       cAop_desc := Str( cAop_desc, 10 )

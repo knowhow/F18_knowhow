@@ -69,7 +69,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    SELECT ( _area )
 
-   lSveJeOk := PostojiSifra( F_ROBA, "ID", MAXROWS() - 20, MAXCOLS() - 3, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
+   lSveJeOk := p_sifra( F_ROBA, "ID", MAXROWS() - 20, MAXCOLS() - 3, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
 
    IF LastKey() == K_ESC
       cId := PrevID

@@ -21,7 +21,7 @@ FUNCTION sif_ral( cId, dx, dy )
 
    set_kolone( @ImeKol, @Kol )
 
-   PostojiSifra( F_RAL, 1, maxrows() - 15, maxcols() - 15, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
+   p_sifra( F_RAL, 1, maxrows() - 15, maxcols() - 15, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
    RETURN .T.
 

@@ -59,7 +59,7 @@ FUNCTION s_aops( cId, cDesc, lwo_ID, dx, dy )
    set_f_kol( cDesc )
 
 
-   cRet := PostojiSifra( F_AOPS, 1, 12, 70, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
+   cRet := p_sifra( F_AOPS, 1, 12, 70, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
 
    IF ValType( cDesc ) == "N"
       cDesc := Str( cDesc, 10 )

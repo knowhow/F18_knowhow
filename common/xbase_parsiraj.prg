@@ -70,7 +70,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
          PRIVATE ImeKol := { { "ID  ",  {|| id },    "id"    }, ;
             { "Naziv:", {|| naz },  "naz"     } }
          PRIVATE Kol := { 1, 2 }
-         PostojiSifra( nsifWA, 1, 10, 77, "Odredi šifru:", @cIddd )
+         p_sifra( nsifWA, 1, 10, 77, "Odredi šifru:", @cIddd )
          cFilterUpit := cFilterUpit + cIddd + ";"
 
          cFilterUpit := PadR( cFilterUpit, nSiflen )

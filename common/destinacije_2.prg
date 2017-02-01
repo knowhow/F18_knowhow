@@ -58,7 +58,7 @@ FUNCTION p_dest_2( cId, cPartId, dx, dy )
    // setuj kolone
    set_a_kol( @ImeKol, @Kol )
 
-   xRet := PostojiSifra( F_DEST, "IDDEST", _x_pos, _y_pos, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
+   xRet := p_sifra( F_DEST, "IDDEST", _x_pos, _y_pos, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
 
    SET FILTER TO
 

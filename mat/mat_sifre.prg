@@ -65,4 +65,4 @@ FUNCTION P_KarKon( cid, dx, dy )
       }
    Kol := { 1, 2, 3 }
 
-   RETURN PostojiSifra( F_KARKON, 1, 10, 55, "Osobine konta", @cid, dx, dy )
+   RETURN p_sifra( F_KARKON, 1, 10, 55, "Osobine konta", @cid, dx, dy )

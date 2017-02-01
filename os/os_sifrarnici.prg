@@ -100,7 +100,7 @@ FUNCTION P_OS( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( _n_area, 1, MAXROWS() -15, MAXCOLS() -15, "Lista stalnih sredstava", @cId, dx, dy, {| Ch| os_sif_key_handler( Ch, @lNovi ) } )
+   RETURN p_sifra( _n_area, 1, MAXROWS() -15, MAXCOLS() -15, "Lista stalnih sredstava", @cId, dx, dy, {| Ch| os_sif_key_handler( Ch, @lNovi ) } )
 
 
 
@@ -193,7 +193,7 @@ FUNCTION P_AMORT( cId, dx, dy )
       }
    Kol := { 1, 2, 3 }
 
-   RETURN PostojiSifra( F_AMORT, 1, MAXROWS() -15, MAXCOLS() -15, "Lista koeficijenata amortizacije", @cId, dx, dy )
+   RETURN p_sifra( F_AMORT, 1, MAXROWS() -15, MAXCOLS() -15, "Lista koeficijenata amortizacije", @cId, dx, dy )
 
 
 
@@ -218,7 +218,7 @@ FUNCTION P_REVAL( cId, dx, dy )
       }
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }
 
-   RETURN PostojiSifra( F_REVAL, 1, MAXROWS() -15, MAXCOLS() -15, "Lista koeficijenata revalorizacije", @cId, dx, dy )
+   RETURN p_sifra( F_REVAL, 1, MAXROWS() -15, MAXCOLS() -15, "Lista koeficijenata revalorizacije", @cId, dx, dy )
 
 
 

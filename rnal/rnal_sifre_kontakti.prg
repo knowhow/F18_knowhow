@@ -68,7 +68,7 @@ FUNCTION s_contacts( cId, nCust_id, cContDesc, dx, dy )
 
    cust_filter( nCust_id, cContDesc, @cId )
 
-   cRet := PostojiSifra( F_CONTACTS, cTag, MAXROWS() - 10, MAXCOLS() - 10, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
+   cRet := p_sifra( F_CONTACTS, cTag, MAXROWS() - 10, MAXCOLS() - 10, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
    IF LastKey() == K_ESC
       cId := 0

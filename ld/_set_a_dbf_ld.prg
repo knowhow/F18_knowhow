@@ -73,7 +73,7 @@ FUNCTION set_a_dbf_ld_ld()
    _item[ "wa" ]    := F_LD
    _item[ "temp" ]  := .F.
    _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
    _item[ "algoritam" ] := {}
 
    // algoritam 1 - default

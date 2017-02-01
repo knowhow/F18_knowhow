@@ -39,7 +39,6 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
    ENDIF
 
    virm_o_tables()
-   altd()
 
    SELECT virm_pripr
    IF reccount2() > 0 .AND. Pitanje(, "Izbrisati virmane u pripremi?", "N" ) == "D"
@@ -121,7 +120,6 @@ STATIC FUNCTION obrada_tekuci_racun( nGodina, nMjesec, dDatVirm, r_br, dod_opis 
    LOCAL _isplata_opis := ""
 
 
-   altd()
    SELECT rekld
    SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + _oznaka
 

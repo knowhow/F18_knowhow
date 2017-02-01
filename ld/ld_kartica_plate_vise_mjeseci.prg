@@ -52,8 +52,6 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    set_metric( "ld_izvj_radnik", my_user(), cIdRadn )
 
-   // SELECT LD
-   AltD()
 
    cIdRadn := Trim( cIdradn )
    IF Empty( cIdrj )
@@ -75,7 +73,6 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    EOF CRET
 
-altd()
 
    nStrana := 0
 
@@ -176,7 +173,6 @@ altd()
          wUNeto += _UNeto
 
          SELECT ld
-         altd()
          SKIP
 
       ENDDO

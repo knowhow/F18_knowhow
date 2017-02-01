@@ -67,6 +67,7 @@ FUNCTION seek_ld_2( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
 
    RETURN .T.
 
+
 FUNCTION ld_max_godina()
 
    LOCAL cSql
@@ -95,27 +96,62 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag )
 
    LOCAL cSql
    LOCAL cTable := "ld_radkr"
-   LOCAL hIndexes, cKey
+   LOCAL hIndexes, cKey, lWhere := .F.
 
-   AltD()
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
 
-   cSql += " WHERE godina=" + Str( nGodina, 4 )
+
+   IF nGodina != NIL
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "godina=" + Str( nGodina, 4 )
+   ENDIF
+
 
    IF nMjesec != NIL
-      cSql += " AND mjesec=" + Str( nMjesec, 2 )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "mjesec=" + Str( nMjesec, 2 )
    ENDIF
+
 
    IF cIdRadn != NIL .AND. !Empty( cIdRadn )
-      cSql += " AND idradn=" + sql_quote( cIdRadn )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "idradn=" + sql_quote( cIdRadn )
    ENDIF
+
 
    IF cIdKred != NIL
-      cSql += " AND idkred=" + sql_quote( cNaOsnovu )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "idkred=" + sql_quote( cIdKred )
    ENDIF
 
+
    IF cNaOsnovu != NIL
-      cSql += " AND naosnovu=" + sql_quote( cNaOsnovu )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+      ENDIF
+      cSql += "naosnovu=" + sql_quote( cNaOsnovu )
    ENDIF
 
    SELECT F_RADKR

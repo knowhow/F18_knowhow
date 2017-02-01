@@ -198,158 +198,6 @@ FUNCTION ld_novi_kredit()
    RETURN .T.
 
 
-FUNCTION ld_ispravka_kredita
-
-   PARAMETERS cIdRadn, cIdKred, cNaOsnovu
-
-   IF PCount() == 0
-      cIdRadn := Space( LEN_IDRADNIK )
-      cIdKRed := Space( _LK_ )
-      cNaOsnovu := Space( 20 )
-   ENDIF
-
-   ld_otvori_tabele_kredita()
-
-   // SELECT radkr
-   // SET ORDER TO TAG "2"
-   o_radkr_1rec()
-
-   Box(, 19, 77 )
-   ImeKol := {}
-   AAdd( ImeKol, { "Mjesec", {|| mjesec } } )
-   AAdd( ImeKol, { "Godina", {|| godina } } )
-   AAdd( ImeKol, { "Iznos", {|| iznos } } )
-   AAdd( ImeKol, { "Otplaceno", {|| placeno } } )
-   AAdd( ImeKol, { "NaOsnovu", {|| naosnovu } } )
-   Kol := {}
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
-   NEXT
-
-   SET CURSOR ON
-
-   @ m_x + 1, m_y + 2 SAY "KREDIT - pregled, ispravka"
-   @ m_x + 2, m_y + 2 SAY "Radnik:   " GET cIdRadn  VALID {|| P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), P_Krediti( cIdRadn, @cIdKred, @cNaOsnovu ), .T. }
-   @ m_x + 3, m_y + 2 SAY "Kreditor: " GET cIdKred  VALID P_Kred( @cIdKred, 3, 21 ) PICT "@!"
-   @ m_x + 4, m_y + 2 SAY "Na osnovu:" GET cNaOsnovu PICT "@!"
-
-   IF PCount() == 0
-      READ
-      ESC_BCR
-   ELSE
-      GetList := {}
-   ENDIF
-
-   cNaOsnovu := PadR( cNaOsnovu, Len( radkr->naosnovu ) )
-   seek_radkr_2( cIDRadn, cIdKred, cNaOsnovu )
-
-   BrowseKey( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, {| Ch | ld_krediti_key_handler( Ch ) }, "idradn+idkred+naosnovu=cidradn+cidkred+cnaosnovu", cIdRadn + cIdKred + cNaOsnovu, 2,, )
-
-   BoxC()
-
-   my_close_all_dbf()
-
-   RETURN .T.
-
-
-FUNCTION ld_krediti_key_handler( Ch )
-
-   LOCAL cDn := "N"
-   LOCAL nRet := DE_CONT
-   LOCAL nRec := RecNo()
-   LOCAL _placeno, _iznos, _rec
-   LOCAL hParams
-
-   SELECT radkr
-
-   DO CASE
-
-   CASE Ch == K_ENTER
-
-      hRec := dbf_get_rec()
-
-      _iznos := hRec[ "iznos" ]
-      _placeno := hRec[ "placeno" ]
-
-      Box(, 6, 70 )
-
-      @ m_x + 1, m_y + 2 SAY "Rucna prepravka rate !"
-      @ m_x + 3, m_y + 2 SAY "Iznos  " GET _iznos PICT gpici
-      @ m_x + 4, m_y + 2 SAY "Placeno" GET _placeno PICT gpici
-
-      cNaOsnovu2 := cNaOsnovu
-
-      @ m_x + 6, m_y + 2 SAY "Na osnovu" GET cNaOsnovu2
-
-      READ
-
-      IF ( cNaOsnovu2 <> field->naosnovu ) .AND. Pitanje( , "Zelite li promijeniti osnov kredita ? (D/N)", "N" ) == "D"
-
-         seek_radkr_2( cIdRadn, cIdKred, cNaOsnovu )
-
-
-         run_sql_query( "BEGIN" )
-         // IF !f18_lock_tables( { "ld_radkr" }, .T. )
-         // run_sql_query( "ROLLBACK" )
-         // RETURN .F.
-         // ENDIF
-
-
-         DO WHILE !Eof() .AND. ( field->idradn + field->idkred + field->naosnovu ) == ( cIdRadn + cIdKred + cNaOsnovu )
-
-            SKIP 1
-            nRecK := RecNo()
-            SKIP -1
-
-            hRec := dbf_get_rec()
-            hRec[ "naosnovu" ] := cNaOsnovu2
-
-            update_rec_server_and_dbf( "ld_radkr", hRec, 1, "CONT" )
-
-            GO ( nRecK )
-
-         ENDDO
-
-
-         hParams := hb_Hash()
-         // hParams[ "unlock" ] := { "ld_radkr" }
-         run_sql_query( "COMMIT", hParams )
-
-      ENDIF
-
-      READ
-
-      BoxC()
-
-      GO ( nRec )
-
-      hRec := dbf_get_rec()
-      hRec[ "naosnovu" ] := cNaOsnovu2
-      hRec[ "placeno" ] := _placeno
-      hRec[ "iznos" ] := _iznos
-
-      update_rec_server_and_dbf( "ld_radkr", hRec, 1, "FULL" )
-
-      log_write( "F18_DOK_OPER: ld korekcija kredita, rucna ispravka rate - radnik: " + cIdRadn + ", iznos: " + AllTrim( Str( radkr->placeno, 12, 2 ) ) + "/" + AllTrim( Str( radkr->iznos, 12, 2 ) ), 2 )
-
-      SELECT radkr
-
-      nRet := DE_REFRESH
-
-   CASE Ch == K_CTRL_N
-      nRet := DE_REFRESH
-   CASE Ch == K_CTRL_T
-      nRet := DE_REFRESH
-   CASE Ch == K_CTRL_P
-      PushWA()
-      // StRjes(radkr->idradn,radkr->idkred,radkr->naosnovu)
-      PopWA()
-      nRet := DE_REFRESH
-   CASE Ch == K_F10
-      nRet := DE_REFRESH
-   ENDCASE
-
-   RETURN nRet
 
 
 FUNCTION ld_krediti_redefinisanje_rata()
@@ -373,7 +221,7 @@ FUNCTION ld_krediti_redefinisanje_rata()
    // SET ORDER TO TAG "4"
    // SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
    seek_radkr( _godina, _mjesec, _idradn, NIL, cNaOsnovu, "4" ) // seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag )
-   //SET ORDER TO TAG "4"
+   // SET ORDER TO TAG "4"
    GO TOP
 
 
@@ -393,7 +241,7 @@ FUNCTION ld_krediti_redefinisanje_rata()
       // SET ORDER TO TAG "4"
       // SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
       seek_radkr( _godina, _mjesec, _idradn, NIL, cNaOsnovu, "4" )
-      //SET ORDER TO TAG "4"
+      // SET ORDER TO TAG "4"
       GO TOP
 
       cKreditor := idkred
@@ -871,7 +719,7 @@ FUNCTION ld_lista_kredita()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -934,22 +782,20 @@ FUNCTION P_Krediti
 
    PARAMETERS cIdRadn, cIdkred, cNaOsnovu
 
-   LOCAL i
+   LOCAL i, lRet
    PRIVATE ImeKol
 
    PushWA()
 
-   SELECT radkr
-   SET ORDER TO TAG "2"
-   SET SCOPE TO ( cIdRadn )
-
    select_o_radn( cIdRadn )
+   seek_radkr_2( cIdRadn )
+
 
    PRIVATE Imekol := {}
    AAdd( ImeKol, { "Kreditor",      {|| IdKred   } } )
    AAdd( ImeKol, { "Osnov",         {|| NaOsnovu } } )
-   AAdd( ImeKol, { "Mjesec",        {|| mjesec   } } )
-   AAdd( ImeKol, { "Godina",        {|| godina   } } )
+   AAdd( ImeKol, { "Mjesec",        {|| Str( mjesec, 2, 0 )   } } )
+   AAdd( ImeKol, { "Godina",        {|| Str( godina, 4, 0 )   } } )
    AAdd( ImeKol, { "Iznos",         {|| Iznos    } } )
 
    Kol := {}
@@ -959,14 +805,14 @@ FUNCTION P_Krediti
    NEXT
 
    Box(, 18, 60 )
-   my_db_edit( "PKred", 18, 60, {|| ld_lista_kredita_key_handler() }, "Postojece stavke za " + cidradn, "", , , , )
+   lRet := my_db_edit( "PKred", 18, 60, {|| ld_lista_kredita_key_handler() }, "Radnik-krediti za " + cIdradn, "", , , , )
    Boxc()
 
-   SET SCOPE TO
+   // SET SCOPE TO
 
    PopwA()
 
-   RETURN
+   RETURN lRet
 
 
 
@@ -1158,7 +1004,10 @@ FUNCTION ld_brisanje_kredita()
    SET ORDER TO TAG "2"
 
    Box( "#BRISANJE NEOTPLACENIH RATA KREDITA", 9, 77 )
-   @ m_x + 2, m_y + 2 SAY "Radnik:   " GET cIdRadn  VALID {|| P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), P_Krediti( cIdRadn, @cIdKred, @cNaOsnovu ), .T. }
+   @ m_x + 2, m_y + 2 SAY "Radnik:   " GET cIdRadn  VALID {|| P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 20 ), ;
+      QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), ;
+      P_Krediti( cIdRadn, @cIdKred, @cNaOsnovu ), .T. }
+
    @ m_x + 3, m_y + 2 SAY "Kreditor: " GET cIdKred  VALID P_Kred( @cIdKred, 3, 21 ) PICT "@!"
    @ m_x + 4, m_y + 2 SAY "Na osnovu:" GET cNaOsnovu PICT "@!"
    @ m_x + 6, m_y + 2, m_x + 8, m_y + 76 BOX "         " COLOR "GR+/R"

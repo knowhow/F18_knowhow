@@ -299,7 +299,6 @@ STATIC FUNCTION ld_obracun_set_datum_isplate( cRj, nGod, nMjesec, cObr, dDatIspl
 
    o_ld_obracuni( cRJ + AllTrim( Str( nGod, 4, 0 ) ) + Str( nMjesec, 2, 0 ) + "G" + cObr )
 
-   AltD()
    IF field->rj == cRj .AND. field->mjesec = nMjesec .AND. field->godina = nGod .AND. ;
          field->obr == cObr .AND. field->STATUS == "G"
 

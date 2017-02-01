@@ -140,7 +140,6 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
 
    lRet := p_sifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
 
-altd()
    PopWa()
 
    RETURN lRet

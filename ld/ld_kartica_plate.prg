@@ -103,8 +103,6 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       O_LDSM
    ENDIF
 
-   // SELECT LD
-   ALTD()
 
    cIdRadn := Trim( cIdradn )
 

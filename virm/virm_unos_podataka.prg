@@ -837,8 +837,9 @@ FUNCTION virm_opcina_rada()
    LOCAL cOR := ""
    LOCAL nArr := Select()
 
-   cOR := my_get_from_ini( "VIRM", "OpcRada", "XXXX", KUMPATH )
-altd()
+   //cOR := my_get_from_ini( "VIRM", "OpcRada", "XXXX", KUMPATH )
+   cOR := "XXXX"
+
    IF Empty( cOR )
       RETURN ""
    ENDIF

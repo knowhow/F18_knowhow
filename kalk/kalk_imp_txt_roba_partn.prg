@@ -287,6 +287,7 @@ STATIC FUNCTION CheckPartn()
 STATIC FUNCTION CheckRoba()
 
    LOCAL i, cLine, aPomRoba := provjera_roba_po_sifradob_postoji( .T. )
+   LOCAL nCijena
 
    IF ( Len( aPomRoba ) > 0 )
 

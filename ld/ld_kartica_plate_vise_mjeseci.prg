@@ -130,7 +130,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
             SELECT _LD
             HSEEK xIdRadn + LD->IdRj // _ld
-            IF ! Found()
+            IF !Found()
                APPEND BLANK
             ENDIF
             Scatter ( "w" )

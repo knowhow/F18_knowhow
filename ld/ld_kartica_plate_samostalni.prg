@@ -53,7 +53,6 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, 
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
 
       select_o_tippr( cPom )
-
       IF tippr->( Found() ) .AND. tippr->aktivan == "D"
 
          IF _I&cpom <> 0 .OR. _S&cPom <> 0
@@ -88,7 +87,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, 
                //SET ORDER TO 1
                //SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
                seek_radkr( _godina, _mjesec, _idradn )
-               
+
                ukredita := 0
 
 

@@ -20,7 +20,7 @@ FUNCTION ld_brisanje_obr()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. brisanje obračuna za jednog radnika       " )
-   AAdd( _opcexe, {|| BrisiRadnika() } )
+   AAdd( _opcexe, {|| ld_brisi_radnika() } )
    AAdd( _opc, "2. brisanje obračuna za jedan mjesec   " )
    AAdd( _opcexe, {|| BrisiMjesec() } )
    AAdd( _opc, "3. totalno brisanje radnika iz evidencije" )
@@ -31,7 +31,7 @@ FUNCTION ld_brisanje_obr()
    RETURN .T.
 
 
-FUNCTION BrisiRadnika()
+FUNCTION ld_brisi_radnika()
 
    LOCAL nTrec
    LOCAL cIdRadn
@@ -43,7 +43,7 @@ FUNCTION BrisiRadnika()
 
    nUser := 001
    o_ld_radn()
-   //select_o_ld()
+   // select_o_ld()
 
 
    lLogBrRadn := .F.
@@ -61,13 +61,13 @@ FUNCTION BrisiRadnika()
       @ m_x + 1, m_y + 2 SAY "Radna jedinica: "
       QQOUTC( cIdRJ, "N/W" )
       @ m_x + 2, m_y + 2 SAY "Mjesec: "
-      QQOUTC( Str( nMjesec, 2 ), "N/W" )
+      QQOUTC( Str( nMjesec, 2, 0 ), "N/W" )
       @ m_x + 2, Col() + 2 SAY "Obracun: "
       QQOUTC( cObracun, "N/W" )
       @ m_x + 3, m_y + 2 SAY "Godina: "
-      QQOUTC( Str( nGodina, 4 ), "N/W" )
+      QQOUTC( Str( nGodina, 4, 0 ), "N/W" )
 
-      @ m_x + 4, m_y + 2 SAY "Radnik" GET cIdRadn valid {|| cIdRadn $ "XXXXXX" .OR. P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), .T. }
+      @ m_x + 4, m_y + 2 SAY "Radnik" GET cIdRadn VALID {|| cIdRadn $ "XXXXXX" .OR. P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), .T. }
 
       READ
       ESC_BCR
@@ -77,7 +77,7 @@ FUNCTION BrisiRadnika()
 
          seek_ld( cIdRj, nGodina, nMjesec, ld_broj_obracuna(), cIdRadn )
 
-         IF Found()
+         IF !Eof()
 
             IF Pitanje(, "Sigurno želite izbrisati ovaj zapis D/N", "N" ) == "D"
 
@@ -132,7 +132,7 @@ FUNCTION BrisiRadnika()
 
             Postotak( 0 )
 
-            hParams := hb_hash()
+            hParams := hb_Hash()
             hParams[ "unlock" ] := { "ld_ld" }
             run_sql_query( "COMMIT", hParams )
 
@@ -167,7 +167,7 @@ FUNCTION BrisiMjesec()
 
    DO WHILE .T.
 
-      //select_o_ld()
+      // select_o_ld()
 
       cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gLDRadnaJedinica
@@ -192,9 +192,9 @@ FUNCTION BrisiMjesec()
 
       MsgO( "Sacekajte, brisem podatke...." )
 
-      seek_ld( cIdRj, nGodina, nMjesec, ld_broj_obracuna())
+      seek_ld( cIdRj, nGodina, nMjesec, ld_broj_obracuna() )
 
-      IF Found()
+      IF !Eof()
          _rec := dbf_get_rec()
          delete_rec_server_and_dbf( "ld_ld", _rec, 2, "FULL" )
       ENDIF

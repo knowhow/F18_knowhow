@@ -178,7 +178,8 @@ FUNCTION ld_specifikacija_po_rj()
    ENDDO
 
    START PRINT CRET
-   gOstr := "D"; gTabela := 1
+   gOstr := "D"
+   gTabela := 1
    cPrimanje := ""; nUkupno := 0
    nKol := 0
 

@@ -49,7 +49,7 @@ FUNCTION BenefStepen()
 
    select_o_kbenef( cTmp )
 
-   IF Found()
+   IF !Eof()
       nRet := field->iznos
    ENDIF
 
@@ -70,7 +70,7 @@ FUNCTION get_benef_osnovica( a_benef, benef_id )
       RETURN _iznos
    ENDIF
 
-   _scan := AScan( a_benef, {| var| VAR[ 1 ] == benef_id } )
+   _scan := AScan( a_benef, {| var | VAR[ 1 ] == benef_id } )
 
    IF _scan <> 0 .AND. a_benef[ _scan, 3 ] <> 0
       _iznos := a_benef[ _scan, 3 ]
@@ -90,7 +90,7 @@ FUNCTION add_to_a_benef( a_benef, benef_id, benef_st, osnovica )
    // a_benef[2] = benef_stepen
    // a_benef[3] = osnova
 
-   _scan := AScan( a_benef, {| var | VAR[ 1 ] == benef_id } )
+   _scan := AScan( a_benef, {| VAR | VAR[ 1 ] == benef_id } )
 
    IF _scan == 0
       AAdd( a_benef, { benef_id, benef_st, osnovica } )
@@ -118,7 +118,7 @@ FUNCTION PrikKBOBenef( a_benef )
 
    nBO := 0
 
-   ? _l( "Koef. Bruto osnove benef.(KBO):" ), Transform( parobr->k3,"999.99999%" )
+   ? _l( "Koef. Bruto osnove benef.(KBO):" ), Transform( parobr->k3, "999.99999%" )
    ? Space( 3 ), _l( "BRUTO OSNOVA = NETO OSNOVA.BENEF * KBO =" )
    @ PRow(), PCol() + 1 SAY nBo := ROUND2( parobr->k3 / 100 * _ben_osn, gZaok2 ) PICT gpici
    ?

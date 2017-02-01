@@ -110,7 +110,7 @@ FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
 
    select_o_parobr( cMj + cGod + cObr )
 
-   IF !Found() .OR. Eof()
+   IF Eof()
 
       // ponovo pretrazi ali bez godine, ima godina = prazan zapis !!!
 
@@ -225,7 +225,7 @@ FUNCTION Prosj3( cTip, cTip2 )
       cMj1 := Str( _mjesec - 1 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
 
-   IF Found()
+   IF !Eof()
       IF ld_vise_obracuna()
          ScatterS( godina, mjesec, idrj, idradn, "w" )
       ELSE
@@ -266,7 +266,7 @@ FUNCTION Prosj3( cTip, cTip2 )
       seek_ld( NIL, _Godina,  _Mjesec - 2 - nPomak, NIL, _idradn )
       cMj2 := Str( _mjesec - 2 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
-   IF Found()
+   IF !Eof()
       IF ld_vise_obracuna()
          ScatterS( godina, mjesec, idrj, idradn, "w" )
       ELSE
@@ -308,7 +308,7 @@ FUNCTION Prosj3( cTip, cTip2 )
       cMj3 := Str( _mjesec - 3 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
 
-   IF Found()
+   IF !Eof()
       IF ld_vise_obracuna()
          ScatterS( godina, mjesec, idrj, idradn, "w" )
       ELSE
@@ -456,23 +456,23 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
 
    // "1","str(godina)+idrj+str(mjesec)+idradn"
    // "2","str(godina)+str(mjesec)+idradn"
-   //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
+   // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
 
    i := 0
 
    DO WHILE .T.
       ++i
       IF _mjesec - i < 1
-         //SEEK Str( _godina - 1, 4 ) + Str( 12 + _mjesec - i, 2 ) + _idradn
-         seek_ld_2( NIL, _godina - 1,  12 + _mjesec - i, NIL, _idradn)
+         // SEEK Str( _godina - 1, 4 ) + Str( 12 + _mjesec - i, 2 ) + _idradn
+         seek_ld_2( NIL, _godina - 1,  12 + _mjesec - i, NIL, _idradn )
          cMj1 := Str( 12 + _mjesec - i, 2 ) + "." + Str( _godina - 1, 4 )
       ELSE
-         //SEEK Str( _godina, 4 ) + Str( _mjesec - i, 2 ) + _idradn
-         seek_ld_2( NIL, _godina,  _mjesec - i, NIL, _idradn)
+         // SEEK Str( _godina, 4 ) + Str( _mjesec - i, 2 ) + _idradn
+         seek_ld_2( NIL, _godina,  _mjesec - i, NIL, _idradn )
          cMj1 := Str( _mjesec - i, 2 ) + "." + Str( _godina, 4 )
       ENDIF
 
-      IF Found()
+      IF !Eof()
          IF ld_vise_obracuna()
             ScatterS( godina, mjesec, idrj, idradn, "w" )
          ELSE
@@ -573,14 +573,14 @@ FUNCTION Predhodni( i, cVar, cObr )
 
    // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
    // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
-   //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
+   // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
 
    IF _Mjesec - i < 1
-      //HSEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1, 2 ) + _idradn
-      seek_ld_2( NIL, _Godina - 1, 12 + _Mjesec - 1, NIL, _idradn)
+      // HSEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1, 2 ) + _idradn
+      seek_ld_2( NIL, _Godina - 1, 12 + _Mjesec - 1, NIL, _idradn )
    ELSE
-      //HSEEK Str( _Godina, 4 ) + Str( _Mjesec - i, 2 ) + _idradn
-      seek_ld_2( NIL, _Godina, _Mjesec - i, NIL, _idradn)
+      // HSEEK Str( _Godina, 4 ) + Str( _Mjesec - i, 2 ) + _idradn
+      seek_ld_2( NIL, _Godina, _Mjesec - i, NIL, _idradn )
    ENDIF
 
    cPom := cVar
@@ -923,7 +923,7 @@ FUNCTION BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, ndan, cDanDio )
    LOCAL _BrBod := 0
 
    SELECT RADSIHT
-   SEEK Str( ngodina, 4 ) + Str( nmjesec, 2 ) + cIdRadn + cIdRj + Str( nDan, 2 ) + cDanDio //radsiht
+   SEEK Str( ngodina, 4 ) + Str( nmjesec, 2 ) + cIdRadn + cIdRj + Str( nDan, 2 ) + cDanDio // radsiht
    // +"01"+str(ndan,2)
    // id na prvi slog
    ntRec := RecNo()   // ispisi broj bodova
@@ -968,14 +968,14 @@ FUNCTION PrimLD( cOznaka, cTipPr )
    PRIVATE cTipa := ""
    PRIVATE cpom := ""
 
-   //select_o_ld()
+   // select_o_ld()
 
    PushWA()
 
-   //SET ORDER TO TAG "1"
+   // SET ORDER TO TAG "1"
    // CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+obr+idradn",KUMPATH+"LD")
 
-   //SEEK Str( _godina, 4 ) + _idrj + Str( _mjesec, 2 ) + cOznaka + _idradn
+   // SEEK Str( _godina, 4 ) + _idrj + Str( _mjesec, 2 ) + cOznaka + _idradn
    seek_ld( _idrj, _godina, _mjesec, cOznaka, _idradn )
 
 

@@ -472,8 +472,7 @@ FUNCTION o_ld_obracuni( cSeek )
    LOCAL cAlias := "OBRACUNI"
 
    SELECT ( F_OBRACUNI )
-
-   IF !use_sql_sif ( "ld_obracuni", .T., cAlias, cId )
+   IF !use_sql_sif ( "ld_obracuni", .T., cAlias )
       RETURN .F.
    ENDIF
 

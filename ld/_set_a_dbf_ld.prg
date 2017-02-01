@@ -87,7 +87,7 @@ FUNCTION set_a_dbf_ld_ld()
 
    // algoritam 2 - brisanje
    _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| Str( field->godina, 4 ) + field->idrj + Str( field->mjesec, 2 ) + field->obr }
+   _alg[ "dbf_key_block" ]  := {|| Str( field->godina, 4, 0) + field->idrj + Str( field->mjesec, 2, 0 ) + field->obr }
    _alg[ "dbf_key_fields" ] := { { "godina", 4 }, "idrj", { "mjesec", 2 }, "obr" }
    _alg[ "sql_in" ]         := "lpad(godina::char(4), 4) || rpad(idrj, 2) || lpad(mjesec::char(2),2) || rpad(obr,1)"
    _alg[ "dbf_tag" ]        := "1"
@@ -212,7 +212,7 @@ FUNCTION set_a_dbf_ld_obracuni()
 
    // algoritam 1 - default
    _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->rj + Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->status + field->obr }
+   _alg[ "dbf_key_block" ]  := {|| field->rj + Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) + field->status + field->obr }
    _alg[ "dbf_key_fields" ] := { "rj", { "godina", 4 }, { "mjesec", 2 }, "status", "obr" }
    _alg[ "sql_in" ]         := "rpad(rj, 2) || lpad(godina::char(4),4) || lpad(mjesec::char(2),2) || rpad(status, 1) || rpad(obr, 1)"
    _alg[ "dbf_tag" ]        := "RJ"

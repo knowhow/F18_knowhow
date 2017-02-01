@@ -877,7 +877,7 @@ STATIC FUNCTION __get_ld( dD_from, cGroup )
 
    SELECT ( 101 )
    USE ( cPath + SLASH + "r_export" ) ALIAS "ld_exp"
-   INDEX ON group + idradn + Str( godina, 4 ) + Str( mjesec, 2 ) TAG "1"
+  -- INDEX ON group + idradn + Str( godina, 4 ) + Str( mjesec, 2 ) TAG "1"
    SELECT ld_exp
    SET ORDER TO TAG "1"
    GO TOP

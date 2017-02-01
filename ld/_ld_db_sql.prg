@@ -25,14 +25,14 @@ FUNCTION seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
 
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
 
-   cSql += " WHERE godina=" + Str( nGodina, 4 )
+   cSql += " WHERE godina=" + Str( nGodina, 4, 0 )
 
    IF cIdRj != NIL
       cSql += " AND idrj=" + sql_quote( cIdRj )
    ENDIF
 
    IF nMjesec != NIL
-      cSql += " AND mjesec=" + Str( nMjesec, 2 )
+      cSql += " AND mjesec=" + Str( nMjesec, 2, 0 )
    ENDIF
 
    IF cObracun != NIL
@@ -195,7 +195,7 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
    cSql += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + "ld_radn ON ld_ld.idradn = ld_radn.id"
 
    cSql += " WHERE godina =" + Str( nGodina, 4 ) + ;
-      " AND mjesec>=" + Str( nMjesec, 2 ) + " AND mjesec<=" + Str( nMjesecDo, 2 )
+      " AND mjesec>=" + Str( nMjesec, 2, 0 ) + " AND mjesec<=" + Str( nMjesecDo, 2, 0 )
 
    IF nVrInvalid > 0
       cSql += "AND vr_invalid = " + sql_quote( nVrInvalid )

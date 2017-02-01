@@ -54,9 +54,8 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
    IF cId != NIL
       cQuery += " WHERE id=" + sql_quote( cId ) // select from fmk.partn where id='BRING01'
-   ELSE
-      cQuery += " ORDER BY ID"
    ENDIF
+
 
    dbUseArea( .F., "SQLMIX", cQuery,  cAlias, NIL, NIL )
 
@@ -71,9 +70,8 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
       ELSEIF cTable == "ld_obracuni"
 
-         INDEX ON rj + Str( godina ) + Str( mjesec ) + status + obr TAG RJ  TO ( cAlias )
+         INDEX ON rj + Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + status + obr TAG RJ  TO ( cAlias )
          SET ORDER TO TAG "RJ"
-
 
       ELSEIF cTable == "ld_parobr"
 

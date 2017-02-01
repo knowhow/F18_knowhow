@@ -89,7 +89,7 @@ FUNCTION ld_novi_kredit()
       seek_radkr_2( cIdRadn, cIdkred, cOsnov, NIL, NIL )
       PRIVATE nRec := 0
 
-      IF Found()
+      IF !Eof()
 
          IF Pitanje( , "Stavke vec postoje. Zamijeniti novim podacima ?", "D" ) == "N"
             MsgBeep( "Rate nisu formirane! Unesite novu osnovu kredita za zadanog kreditora!" )
@@ -389,9 +389,9 @@ FUNCTION ld_krediti_redefinisanje_rata()
 
    IF nNRata <> nTRata
 
-      //SELECT radkr
-      //SET ORDER TO TAG "4"
-      //SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
+      // SELECT radkr
+      // SET ORDER TO TAG "4"
+      // SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
       seek_radkr( _godina, _mjesec, _idradn, NIL, cNaOsnovu )
       SET ORDER TO TAG "4"
       GO TOP
@@ -399,8 +399,8 @@ FUNCTION ld_krediti_redefinisanje_rata()
       cKreditor := idkred
       cIdRadn := idradn
 
-      //SET ORDER TO TAG "2"
-      //SEEK cIdRadn + cKreditor + cNaOsnovu + Str( _godina, 4 ) + Str( _mjesec, 2 )
+      // SET ORDER TO TAG "2"
+      // SEEK cIdRadn + cKreditor + cNaOsnovu + Str( _godina, 4 ) + Str( _mjesec, 2 )
       seek_radkr_2( cIdRadn, cKreditor, cNaOsnovu, _godina, _mjesec )
 
       nTotalKr := 0
@@ -700,7 +700,7 @@ FUNCTION ld_lista_kredita()
       m += REPL( "-", 16 )
    ENDIF
 
-   IF cidkred = '.'
+   IF cIdkred = '.'
       fSvi := .T.
       GO TOP
    ELSE

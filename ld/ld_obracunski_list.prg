@@ -1224,7 +1224,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
                cTmpRj := cRJDef
             ENDIF
 
-            dDatIspl := g_isp_date( cTmpRJ, ;
+            dDatIspl := ld_get_datum_isplate_plate( cTmpRJ, ;
                field->godina, ;
                field->mjesec, ;
                cObr, @nMjIspl, ;

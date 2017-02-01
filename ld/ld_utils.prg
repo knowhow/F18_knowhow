@@ -621,15 +621,7 @@ FUNCTION ld_gen_virm()
 
 
 
-FUNCTION ld_formatiraj_mjesec( nMjesec )
 
-   IF nMjesec < 10
-      cMj := " " + AllTrim( Str( nMjesec ) )
-   ELSE
-      cMj := AllTrim( Str( nMjesec ) )
-   ENDIF
-
-   RETURN cMj
 
 
 

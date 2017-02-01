@@ -426,9 +426,9 @@ FUNCTION ld_specifikacija_plate()
    GO TOP
 
 
-   IF !Found()
-      MsgBeep( "Obracun za ovaj mjesec ne postoji !" )
-      my_close_all_dbf()
+   IF Eof()
+      MsgBeep( "Obračun za ovaj mjesec ne postoji !" )
+      //my_close_all_dbf()
       RETURN .T.
    ENDIF
 

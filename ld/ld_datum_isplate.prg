@@ -75,8 +75,8 @@ FUNCTION unos_datuma_isplate_place()
 
    my_close_all_dbf()
 
-   o_ld_obracuni()
-   o_ld_rj()
+   // o_ld_obracuni()
+   // o_ld_rj()
 
 
    Box(, 20, 65 )
@@ -85,12 +85,12 @@ FUNCTION unos_datuma_isplate_place()
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Tekuca godina:" GET nGod PICT "9999"
+   @ m_x + nX, m_y + 2 SAY8 "Tekuća godina:" GET nGod PICT "9999"
 
    @ m_x + nX, Col() + 2 SAY "Radna jedinica:" GET cRJ PICT "99" ;
       VALID Empty( cRJ ) .OR. P_LD_RJ( @cRJ )
 
-   @ m_x + nX, Col() + 2 SAY "Obracun:" GET cObr VALID cObr $ " 123456789"
+   @ m_x + nX, Col() + 2 SAY8 "Obračun:" GET cObr VALID cObr $ " 123456789"
 
    ++nX
    @ m_x + nX, m_y + 2 SAY "----------------------------------------"
@@ -98,21 +98,21 @@ FUNCTION unos_datuma_isplate_place()
 
    READ
 
-   dDatPr := g_isp_date( cRj, nGod - 1, 12, cObr, @nMjPr, @cIsZaPr, ;
+   dDatPr := ld_get_datum_isplate_plate( cRj, nGod - 1, 12, cObr, @nMjPr, @cIsZaPr, ;
       @cVrIsPr )
 
-   dDat1 := g_isp_date( cRj, nGod, 1, cObr, @nMj1, @cIsZa1, @cVrIs1 )
-   dDat2 := g_isp_date( cRj, nGod, 2, cObr, @nMj2, @cIsZa2, @cVrIs2 )
-   dDat3 := g_isp_date( cRj, nGod, 3, cObr, @nMj3, @cIsZa3, @cVrIs3 )
-   dDat4 := g_isp_date( cRj, nGod, 4, cObr, @nMj4, @cIsZa4, @cVrIs4 )
-   dDat5 := g_isp_date( cRj, nGod, 5, cObr, @nMj5, @cIsZa5, @cVrIs5 )
-   dDat6 := g_isp_date( cRj, nGod, 6, cObr, @nMj6, @cIsZa6, @cVrIs6 )
-   dDat7 := g_isp_date( cRj, nGod, 7, cObr, @nMj7, @cIsZa7, @cVrIs7 )
-   dDat8 := g_isp_date( cRj, nGod, 8, cObr, @nMj8, @cIsZa8, @cVrIs8 )
-   dDat9 := g_isp_date( cRj, nGod, 9, cObr, @nMj9, @cIsZa9, @cVrIs9 )
-   dDat10 := g_isp_date( cRj, nGod, 10, cObr, @nMj10, @cIsZa10, @cVrIs10 )
-   dDat11 := g_isp_date( cRj, nGod, 11, cObr, @nMj11, @cIsZa11, @cVrIs11 )
-   dDat12 := g_isp_date( cRj, nGod, 12, cObr, @nMj12, @cIsZa12, @cVrIs12 )
+   dDat1 := ld_get_datum_isplate_plate( cRj, nGod, 1, cObr, @nMj1, @cIsZa1, @cVrIs1 )
+   dDat2 := ld_get_datum_isplate_plate( cRj, nGod, 2, cObr, @nMj2, @cIsZa2, @cVrIs2 )
+   dDat3 := ld_get_datum_isplate_plate( cRj, nGod, 3, cObr, @nMj3, @cIsZa3, @cVrIs3 )
+   dDat4 := ld_get_datum_isplate_plate( cRj, nGod, 4, cObr, @nMj4, @cIsZa4, @cVrIs4 )
+   dDat5 := ld_get_datum_isplate_plate( cRj, nGod, 5, cObr, @nMj5, @cIsZa5, @cVrIs5 )
+   dDat6 := ld_get_datum_isplate_plate( cRj, nGod, 6, cObr, @nMj6, @cIsZa6, @cVrIs6 )
+   dDat7 := ld_get_datum_isplate_plate( cRj, nGod, 7, cObr, @nMj7, @cIsZa7, @cVrIs7 )
+   dDat8 := ld_get_datum_isplate_plate( cRj, nGod, 8, cObr, @nMj8, @cIsZa8, @cVrIs8 )
+   dDat9 := ld_get_datum_isplate_plate( cRj, nGod, 9, cObr, @nMj9, @cIsZa9, @cVrIs9 )
+   dDat10 := ld_get_datum_isplate_plate( cRj, nGod, 10, cObr, @nMj10, @cIsZa10, @cVrIs10 )
+   dDat11 := ld_get_datum_isplate_plate( cRj, nGod, 11, cObr, @nMj11, @cIsZa11, @cVrIs11 )
+   dDat12 := ld_get_datum_isplate_plate( cRj, nGod, 12, cObr, @nMj12, @cIsZa12, @cVrIs12 )
 
    @ m_x + nX, m_y + 2 SAY PadL( "datum", 7 ) + ;
       PadL( "mj.ispl.", 18 ) + ;
@@ -255,7 +255,7 @@ FUNCTION unos_datuma_isplate_place()
    RETURN .T.
 
 
-FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
+FUNCTION ld_get_datum_isplate_plate( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
 
    LOCAL dDate := CToD( "" )
 
@@ -265,13 +265,13 @@ FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
    cIsplZa := Space( 50 )
    cVrsta := Space( 50 )
 
-   o_ld_obracuni( cRJ + AllTrim( Str( nGod ) ) + ld_formatiraj_mjesec( nMjesec ) + "G" + cObr )
+   o_ld_obracuni( cRJ + Str( nGod, 4, 0 ) + Str( nMjesec, 2, 0 ) + "G" + cObr )
 
    IF field->rj == cRj .AND. ;
          field->mjesec = nMjesec .AND. ;
          field->godina = nGod .AND. ;
          field->obr == cObr .AND. ;
-         field->status == "G"
+         field->STATUS == "G"
 
       dDate := field->dat_ispl
       IF dDate < SToD( "10010101" ) // 1000-01-01
@@ -292,38 +292,39 @@ FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
 
 STATIC FUNCTION ld_obracun_set_datum_isplate( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, cIsplZa, cVrsta )
 
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _field_ids, _where_cond
 
    PushWA()
 
-   o_ld_obracuni( cRJ + AllTrim( Str( nGod ) ) + ld_formatiraj_mjesec( nMjesec ) + "G" + cObr )
+   o_ld_obracuni( cRJ + AllTrim( Str( nGod, 4, 0 ) ) + Str( nMjesec, 2, 0 ) + "G" + cObr )
 
+   AltD()
    IF field->rj == cRj .AND. field->mjesec = nMjesec .AND. field->godina = nGod .AND. ;
-         field->obr == cObr .AND. field->status == "G"
+         field->obr == cObr .AND. field->STATUS == "G"
 
-      _rec := dbf_get_rec()
-      _rec[ "dat_ispl" ] := dDatIspl
-      _rec[ "mj_ispl" ] := nMjIspl
-      _rec[ "ispl_za" ] := cIsplZa
-      _rec[ "vr_ispl" ] := cVrsta
+      hRec := dbf_get_rec()
+      hRec[ "dat_ispl" ] := dDatIspl
+      hRec[ "mj_ispl" ] := nMjIspl
+      hRec[ "ispl_za" ] := cIsplZa
+      hRec[ "vr_ispl" ] := cVrsta
    ELSE
 
       APPEND BLANK
-      _rec := dbf_get_rec()
-      _rec[ "rj" ] := cRj
-      _rec[ "godina" ] := nGod
-      _rec[ "mjesec" ] := nMjesec
-      _rec[ "obr" ] := cObr
-      _rec[ "status" ] := "G"
-      _rec[ "dat_ispl" ] := dDatIspl
-      _rec[ "mj_ispl" ] := nMjIspl
-      _rec[ "ispl_za" ] := cIsplZa
-      _rec[ "vr_ispl" ] := cVrsta
+      hRec := dbf_get_rec()
+      hRec[ "rj" ] := cRj
+      hRec[ "godina" ] := nGod
+      hRec[ "mjesec" ] := nMjesec
+      hRec[ "obr" ] := cObr
+      hRec[ "status" ] := "G"
+      hRec[ "dat_ispl" ] := dDatIspl
+      hRec[ "mj_ispl" ] := nMjIspl
+      hRec[ "ispl_za" ] := cIsplZa
+      hRec[ "vr_ispl" ] := cVrsta
 
    ENDIF
 
-   update_rec_server_and_dbf( "ld_obracuni", _rec, 1, "FULL" )
+   update_rec_server_and_dbf( "ld_obracuni", hRec, 1, "FULL" )
 
    PopWa()
 

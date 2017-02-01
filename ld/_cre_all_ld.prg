@@ -729,8 +729,8 @@ FUNCTION h_ld_radkr_indexes()
    LOCAL hIndexes := hb_Hash()
 
    hIndexes[ "1" ] := "str(godina)+str(mjesec)+idradn+idkred+naosnovu"
-   hIndexes[ "2" ] := "idradn+idkred+naosnovu+str(godina)+str(mjesec)"
-   hIndexes[ "3" ] := "idkred+naosnovu+idradn+str(godina)+str(mjesec)"
-   hIndexes[ "4" ] := "str(godina)+str(mjesec)+idradn+naosnovu"
+   hIndexes[ "2" ] := "idradn+idkred+naosnovu+str(godina,4,0)+str(mjesec,2,0)"
+   hIndexes[ "3" ] := "idkred+naosnovu+idradn+str(godina,4,0)+str(mjesec,2,0)"
+   hIndexes[ "4" ] := "str(godina,4,0)+str(mjesec,2,0)+idradn+naosnovu"
 
    RETURN hIndexes

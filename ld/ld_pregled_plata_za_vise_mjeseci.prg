@@ -1132,7 +1132,7 @@ STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
 
       select_o_ops( radn->idopsst )
 
-      IF Found() .AND. !( ops->idkan $ kanton )
+      IF Eof() .AND. !( ops->idkan $ kanton )
          lOk := .F.
       ENDIF
 

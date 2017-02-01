@@ -36,13 +36,13 @@ STATIC FUNCTION ld_sort( cRj, nGodina, nMjesec, cObr )
    ENDIF
 
    IF !Empty( cFilter )
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
       GO TOP
    ENDIF
 
-   INDEX ON Str( godina ) + Str( mjesec ) + SortPrez( idradn ) + idrj TO "TMPLD"
+   INDEX ON Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + SortPrez( idradn ) + idrj TO "TMPLD"
    GO TOP
-   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) // tmpld index
+   SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) // tmpld index
 
    RETURN .T.
 
@@ -125,13 +125,13 @@ FUNCTION ld_asd_aug_obrazac()
    // otvori tabele
    o_tables()
 
-   cPredNaz := fetch_metric( "org_naziv", nil, cPredNaz )
+   cPredNaz := fetch_metric( "org_naziv", NIL, cPredNaz )
    cPredNaz := PadR( cPredNaz, 35 )
 
-   cPredAdr := fetch_metric( "ld_firma_adresa", nil, cPredAdr )
+   cPredAdr := fetch_metric( "ld_firma_adresa", NIL, cPredAdr )
    cPredAdr := PadR( cPredAdr, 35 )
 
-   cPredJMB := fetch_metric( "ld_specifikacija_maticni_broj", nil, cPredJMB )
+   cPredJMB := fetch_metric( "ld_specifikacija_maticni_broj", NIL, cPredJMB )
    cPredJMB := PadR( cPredJMB, 13 )
 
    Box( "#RPT: AKONTACIJA POREZA PO ODBITKU...", 13, 75 )
@@ -167,9 +167,9 @@ FUNCTION ld_asd_aug_obrazac()
       RETURN
    ENDIF
 
-   set_metric( "org_naziv", nil, AllTrim( cPredNaz ) )
-   set_metric( "ld_firma_adresa", nil, AllTrim( cPredAdr ) )
-   set_metric( "ld_specifikacija_maticni_broj", nil, AllTrim( cPredJMB ) )
+   set_metric( "org_naziv", NIL, AllTrim( cPredNaz ) )
+   set_metric( "ld_firma_adresa", NIL, AllTrim( cPredAdr ) )
+   set_metric( "ld_specifikacija_maticni_broj", NIL, AllTrim( cPredJMB ) )
 
    SELECT ld
 
@@ -183,10 +183,10 @@ FUNCTION ld_asd_aug_obrazac()
    dDatIspl := Date()
    IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
       cObr := " "
-      dDatIspl := g_isp_date( "  ", nGodina, nMjesec, cObr )
+      dDatIspl := ld_get_datum_isplate_plate( "  ", nGodina, nMjesec, cObr )
    ENDIF
 
-   cPeriod := AllTrim( Str( nMjesec ) ) + "/" + AllTrim( Str( nGodina ) )
+   cPeriod := AllTrim( Str( nMjesec, 2, 0 ) ) + "/" + AllTrim( Str( nGodina, 4, 0 ) )
 
    IF cVarPrn == "1"
 
@@ -683,7 +683,7 @@ STATIC FUNCTION fill_data( cRj, nGodina, nMjesec, ;
          ENDIF
 
          // prihod
-         nPrihod := bruto_osn( nNeto, cT_tiprada, nL_odb, nil, cTrosk )
+         nPrihod := bruto_osn( nNeto, cT_tiprada, nL_odb, NIL, cTrosk )
 
          // rashod
          nRashod := nPrihod * ( nTrosk / 100 )
@@ -754,6 +754,6 @@ STATIC FUNCTION o_tables()
    o_ld_radn()
    o_dopr()
    o_por()
-   //select_o_ld()
+   // select_o_ld()
 
    RETURN .T.

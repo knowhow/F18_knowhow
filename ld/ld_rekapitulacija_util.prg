@@ -300,7 +300,6 @@ FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
 
    // po opc.stanovanja
    SEEK cPorId + "1" + radn->idopsst // opsld tmp
-
    IF Found()
 
       REPLACE iznos WITH iznos + nOsnovica
@@ -384,7 +383,6 @@ FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
 
    // po kantonu
    SEEK cPorId + "3" + ops->idkan
-
    IF Found()
       REPLACE iznos WITH iznos + nOsnovica
       REPLACE iznos2 WITH iznos2 + nPorOl
@@ -1020,7 +1018,7 @@ STATIC FUNCTION IspisKred( lSvi )
                      // ako ima radnika i ako mu je podatak kredita unesen na obracunu
                      seek_ld( cIdRj, nGodina, nMjesecRadKr, iif( !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
 
-                     IF Found() .AND. ld->i30 <> 0
+                     IF !Eof() .AND. ld->i30 <> 0
                         _found := .T.
                      ENDIF
                   ENDIF
@@ -1111,13 +1109,13 @@ STATIC FUNCTION IspisKred( lSvi )
                      IF lSvi
                         SELECT ld
                         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-                        //HSEEK  Str( nGodina, 4 ) + Str( nMjesecFor, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        // HSEEK  Str( nGodina, 4 ) + Str( nMjesecFor, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                         // "LDi2","str(godina)+str(mjesec)+idradn"
-                        seek_ld_2( NIL, nGodina, nMjesecFor, IIF( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
+                        seek_ld_2( NIL, nGodina, nMjesecFor, iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
                      ELSE
-                        //SELECT ld
-                        //HSEEK  Str( nGodina, 4 ) + cIdrj + Str( nMjesecFor, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
-                        seek_ld( cIdRj, nGodina, nMjesecFor, IIF( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
+                        // SELECT ld
+                        // HSEEK  Str( nGodina, 4 ) + cIdrj + Str( nMjesecFor, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        seek_ld( cIdRj, nGodina, nMjesecFor, iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
                      ENDIF // lSvi
 
                      SELECT radkr

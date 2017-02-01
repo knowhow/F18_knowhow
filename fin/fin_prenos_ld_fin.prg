@@ -160,7 +160,7 @@ FUNCTION ah_rld( cId, cTag, cOpis )
    GO TOP
    SEEK Str( _godina, 4, 0 ) + Str( _mjesec, 2, 0 ) + cId
 
-   DO WHILE !Eof() .AND. godina == Str( _godina, 4 ) .AND. mjesec == Str( _mjesec, 2 ) .AND. AllTrim( id ) == cId
+   DO WHILE !Eof() .AND. godina == Str( _godina, 4, 0 ) .AND. mjesec == Str( _mjesec, 2, 0 ) .AND. AllTrim( id ) == cId
 
       cTmp := field->idpartner
       cIzdanje := field->izdanje
@@ -208,7 +208,7 @@ FUNCTION ah_rld( cId, cTag, cOpis )
          REPLACE idpartner WITH cTmp
          REPLACE brdok WITH cBrDok
 
-         cNalOpis := Trim( trfp3->naz ) + " za " + Str( _mjesec, 2 ) + "/" + Str( _godina, 4 )
+         cNalOpis := Trim( trfp3->naz ) + " za " + Str( _mjesec, 2, 0 ) + "/" + Str( _godina, 4, 0 )
 
          REPLACE opis WITH cNalOpis
 

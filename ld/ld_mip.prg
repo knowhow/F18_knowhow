@@ -1223,7 +1223,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
                cTmpRj := cRJDef
             ENDIF
 
-            dDatIspl := g_isp_date( cTmpRJ, field->godina, field->mjesec, cObr, @nMjIspl, @cIsplZa, @cVrstaIspl )
+            dDatIspl := ld_get_datum_isplate_plate( cTmpRJ, field->godina, field->mjesec, cObr, @nMjIspl, @cIsplZa, @cVrstaIspl )
          ENDIF
 
 

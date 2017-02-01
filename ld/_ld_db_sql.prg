@@ -62,7 +62,7 @@ FUNCTION seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
    SET ORDER TO 1
    SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
 */
-FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn )
+FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu )
 
    LOCAL cSql
    LOCAL cTable := "ld_radkr"
@@ -80,6 +80,14 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn )
       cSql += " AND idradn=" + sql_quote( cIdRadn )
    ENDIF
 
+   IF cIdKred != NIL
+      cSql += " AND idkred=" + sql_quote( cNaOsnovu )
+   ENDIF
+
+   IF cNaOsnovu != NIL
+      cSql += " AND naosnovu=" + sql_quote( cNaOsnovu )
+   ENDIF
+
    SELECT F_RADKR
    use_sql( cTable, cSql, "RADKR" )
 
@@ -88,10 +96,22 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn )
    FOR EACH cKey IN hIndexes:Keys
       INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( "RADKR" )
    NEXT
-   SET ORDER TO TAG "1"
+
+   IF cNaOsnovu != NIL
+      SET ORDER TO TAG "2"
+   ELSE
+      SET ORDER TO TAG "1"
+   ENDIF
+
    GO TOP
 
    RETURN .T.
+
+
+FUNCTION seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu, nGodina, nMjesec )
+
+   RETURN seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu )
+
 
 
 FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFilter )

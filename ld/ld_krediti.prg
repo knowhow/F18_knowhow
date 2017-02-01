@@ -39,7 +39,7 @@ FUNCTION ld_novi_kredit()
 
    LOCAL lBrojRata := .F.
    LOCAL i
-   LOCAL _vals
+   LOCAL hRec
    LOCAL nOstalo, nTekMj, nTekGodina
    LOCAL cIdRadn  := Space( LEN_IDRADNIK )
    LOCAL nMjesec  := gMjesec
@@ -82,11 +82,11 @@ FUNCTION ld_novi_kredit()
          ENDIF
       ENDIF
 
-      SELECT radkr
+      //SELECT radkr
       // "2", idradn + idkred + naosnovu + str(godina) + str(mjesec)
-      SET ORDER TO TAG "2"
+      //SET ORDER TO TAG "2"
 
-      SEEK cIdRadn + cIdkred + cOsnov
+      seek_radkr_2( cIdRadn, cIdkred, cOsnov, nil, nil )
       PRIVATE nRec := 0
 
       IF Found()
@@ -96,11 +96,11 @@ FUNCTION ld_novi_kredit()
             my_close_all_dbf()
             RETURN .F.
          ELSE
-            _vals := hb_Hash()
-            _vals[ "idradn" ]    := cIdRadn
-            _vals[ "idkred" ]    := cIdKred
-            _vals[ "naosnovu" ]  := cOsnov
-            delete_rec_server_and_dbf( "ld_radkr", _vals, 2, "FULL" )
+            hRec := hb_Hash()
+            hRec[ "idradn" ]    := cIdRadn
+            hRec[ "idkred" ]    := cIdKred
+            hRec[ "naosnovu" ]  := cOsnov
+            delete_rec_server_and_dbf( "ld_radkr", hRec, 2, "FULL" )
          ENDIF
 
       ENDIF
@@ -143,16 +143,16 @@ FUNCTION ld_novi_kredit()
          IF Round( nIRata, 2 ) <> 0
 
             APPEND BLANK
-            _vals := dbf_get_rec()
+            hRec := dbf_get_rec()
 
-            _vals[ "idradn" ]   := cIdRadn
-            _vals[ "idkred" ]   := cIdKred
-            _vals[ "naosnovu" ] := cOsnov
-            _vals[ "mjesec" ]   := nTekMj
-            _vals[ "godina" ]   := nTekGodina
-            _vals[ "iznos" ]    := nIRata
+            hRec[ "idradn" ]   := cIdRadn
+            hRec[ "idkred" ]   := cIdKred
+            hRec[ "naosnovu" ] := cOsnov
+            hRec[ "mjesec" ]   := nTekMj
+            hRec[ "godina" ]   := nTekGodina
+            hRec[ "iznos" ]    := nIRata
 
-            update_rec_server_and_dbf( "ld_radkr", _vals, 1, "CONT" )
+            update_rec_server_and_dbf( "ld_radkr", hRec, 1, "CONT" )
             ++i
 
          ENDIF
@@ -264,10 +264,10 @@ FUNCTION ld_krediti_key_handler( Ch )
 
    CASE Ch == K_ENTER
 
-      _vals := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _iznos := _vals[ "iznos" ]
-      _placeno := _vals[ "placeno" ]
+      _iznos := hRec[ "iznos" ]
+      _placeno := hRec[ "placeno" ]
 
       Box(, 6, 70 )
 
@@ -298,10 +298,10 @@ FUNCTION ld_krediti_key_handler( Ch )
             nRecK := RecNo()
             SKIP -1
 
-            _vals := dbf_get_rec()
-            _vals[ "naosnovu" ] := cNaOsnovu2
+            hRec := dbf_get_rec()
+            hRec[ "naosnovu" ] := cNaOsnovu2
 
-            update_rec_server_and_dbf( "ld_radkr", _vals, 1, "CONT" )
+            update_rec_server_and_dbf( "ld_radkr", hRec, 1, "CONT" )
 
             GO ( nRecK )
 
@@ -320,12 +320,12 @@ FUNCTION ld_krediti_key_handler( Ch )
 
       GO ( nRec )
 
-      _vals := dbf_get_rec()
-      _vals[ "naosnovu" ] := cNaOsnovu2
-      _vals[ "placeno" ] := _placeno
-      _vals[ "iznos" ] := _iznos
+      hRec := dbf_get_rec()
+      hRec[ "naosnovu" ] := cNaOsnovu2
+      hRec[ "placeno" ] := _placeno
+      hRec[ "iznos" ] := _iznos
 
-      update_rec_server_and_dbf( "ld_radkr", _vals, 1, "FULL" )
+      update_rec_server_and_dbf( "ld_radkr", hRec, 1, "FULL" )
 
       log_write( "F18_DOK_OPER: ld korekcija kredita, rucna ispravka rate - radnik: " + cIdRadn + ", iznos: " + AllTrim( Str( radkr->placeno, 12, 2 ) ) + "/" + AllTrim( Str( radkr->iznos, 12, 2 ) ), 2 )
 
@@ -517,10 +517,10 @@ FUNCTION SumKredita()
 
       nIznos += field->iznos
 
-      _vals := dbf_get_rec()
-      _vals[ "placeno" ] := iznos
+      hRec := dbf_get_rec()
+      hRec[ "placeno" ] := iznos
 
-      update_rec_server_and_dbf( "ld_radkr", _vals, 1, "CONT" )
+      update_rec_server_and_dbf( "ld_radkr", hRec, 1, "CONT" )
 
       SKIP
 

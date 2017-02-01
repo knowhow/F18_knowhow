@@ -476,9 +476,9 @@ FUNCTION ld_kumulativna_primanja( cIdRadn, cIdPrim )
    FOR j := nOdGod TO nDoGod
       //GO TOP
       //SEEK Str( j, 4 ) + cIdRadn
-      seek_ld( NIL, j, NIL, NIL, cIdRadn)
-      SET ORDER TO TAG "4"
-      GO TOP
+      seek_ld( NIL, j, NIL, NIL, cIdRadn, "4" )
+      //SET ORDER TO TAG "4"
+      //GO TOP
 
       DO WHILE godina == j .AND. cIdRadn == IdRadn
          nVrati += i&cPom77

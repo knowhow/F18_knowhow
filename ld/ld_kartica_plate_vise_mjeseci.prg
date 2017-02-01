@@ -59,15 +59,13 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    IF Empty( cIdrj )
       // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
       // SEEK Str( nGodina, 4 ) + cIdRadn
-      seek_ld( NIL, nGodina, NIL, NIL, cIdRadn )
-      SET ORDER TO TAG "4"
+      seek_ld( NIL, nGodina, NIL, NIL, cIdRadn, "4" )
       cIdrj := ""
 
    ELSE
       // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "3" ) )
       // SEEK Str( nGodina, 4 ) + cIdrj + cIdRadn
-      seek_ld( cIdRj, nGodina, NIL, NIL, cIdRadn )
-      SET ORDER TO TAG "3"
+      seek_ld( cIdRj, nGodina, NIL, NIL, cIdRadn, "3" )
 
    ENDIF
 
@@ -76,6 +74,8 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    ENDIF
 
    EOF CRET
+
+altd()
 
    nStrana := 0
 
@@ -176,8 +176,9 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
          wUNeto += _UNeto
 
          SELECT ld
-         SKIP
          altd()
+         SKIP
+
       ENDDO
 
       IF cRazdvoji == "N"

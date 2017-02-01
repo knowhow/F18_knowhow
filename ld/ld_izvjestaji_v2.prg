@@ -59,7 +59,7 @@ FUNCTION ld_pregled_primanja_za_period()
    select_o_tippr( cTip )
    EOF CRET
 
-   seek_ld( NIL, nGodina )
+   seek_ld( NIL, nGodina, NIL, NIL, NIL,  "4" )  // seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn, cTag )
 
    IF ld_vise_obracuna() .AND. !Empty( cObracun )
       SET FILTER TO obr == cObracun
@@ -68,7 +68,7 @@ FUNCTION ld_pregled_primanja_za_period()
 
    // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
    // HSEEK Str( nGodina, 4 )
-   SET ORDER TO TAG "4"
+   //SET ORDER TO TAG "4"
    GO TOP
 
    EOF CRET

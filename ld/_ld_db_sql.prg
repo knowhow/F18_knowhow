@@ -17,7 +17,7 @@ SEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + ld_broj_obracuna() + cIdRad
 seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
 */
 
-FUNCTION seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
+FUNCTION seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn, cTag )
 
    LOCAL cSql
    LOCAL cTable := "ld_ld"
@@ -51,7 +51,10 @@ FUNCTION seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
    FOR EACH cKey IN hIndexes:Keys
       INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( "LD" )
    NEXT
-   SET ORDER TO TAG "1"
+   IF cTag == NIL
+      cTag := "1"
+   ENDIF
+   SET ORDER TO TAG ( cTag )
    GO TOP
 
    RETURN .T.
@@ -88,7 +91,7 @@ FUNCTION ld_min_godina()
    SET ORDER TO 1
    SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
 */
-FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu )
+FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag )
 
    LOCAL cSql
    LOCAL cTable := "ld_radkr"
@@ -124,11 +127,15 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu )
       INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( "RADKR" )
    NEXT
 
-   IF cNaOsnovu != NIL
-      SET ORDER TO TAG "2"
-   ELSE
-      SET ORDER TO TAG "1"
+   IF cTag == NIL
+      IF cNaOsnovu != NIL
+         cTag := "2"
+      ELSE
+         cTag := "1"
+      ENDIF
    ENDIF
+
+   SET ORDER TO TAG ( cTag )
 
    GO TOP
 

@@ -372,8 +372,8 @@ FUNCTION ld_krediti_redefinisanje_rata()
    // SELECT radkr
    // SET ORDER TO TAG "4"
    // SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
-   seek_radkr( _godina, _mjesec, _idradn, NIL, cNaOsnovu )
-   SET ORDER TO TAG "4"
+   seek_radkr( _godina, _mjesec, _idradn, NIL, cNaOsnovu, "4" ) // seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag )
+   //SET ORDER TO TAG "4"
    GO TOP
 
 
@@ -392,8 +392,8 @@ FUNCTION ld_krediti_redefinisanje_rata()
       // SELECT radkr
       // SET ORDER TO TAG "4"
       // SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
-      seek_radkr( _godina, _mjesec, _idradn, NIL, cNaOsnovu )
-      SET ORDER TO TAG "4"
+      seek_radkr( _godina, _mjesec, _idradn, NIL, cNaOsnovu, "4" )
+      //SET ORDER TO TAG "4"
       GO TOP
 
       cKreditor := idkred

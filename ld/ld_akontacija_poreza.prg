@@ -42,7 +42,7 @@ STATIC FUNCTION ld_sort( cRj, nGodina, nMjesec, cObr )
 
    INDEX ON Str( godina ) + Str( mjesec ) + SortPrez( idradn ) + idrj TO "TMPLD"
    GO TOP
-   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 )
+   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) // tmpld index
 
    RETURN .T.
 

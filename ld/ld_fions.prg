@@ -108,18 +108,16 @@ FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
    cMj := Str( nMjesec, 2 )
    cGod := Str( nGodina, 4 )
 
-   SELECT parobr
-   SEEK cMj + cGod + cObr
+   select_o_parobr()
+   SEEK cMj + cGod + cObr // parobr
 
    IF !Found() .OR. Eof()
 
-      // ponovo pretrazi ali bez godine
-      // ima godina = prazan zapis !!!
+      // ponovo pretrazi ali bez godine, ima godina = prazan zapis !!!
 
       nRet := 2
 
-      SELECT parobr
-      GO TOP
+      select_o_parobr()
       SEEK cMj + Space( 4 ) + cObr
 
       IF field->id <> cMj

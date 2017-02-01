@@ -324,15 +324,17 @@ FUNCTION RadBl( Ch )
 
    ELSEIF ( Ch == K_CTRL_T )
 
-      IF ImaURadKr( radn->id, "2" )
+      seek_radkr_2( radn->id )
+      IF !Eof()
          Beep( 1 )
-         Msg( _l( "Stavka radnika se ne moze brisati jer se vec nalazi u obracunu!" ) )
+         Msg(  "Stavka radnika se ne moze brisati jer se vec nalazi u obracunu!"  )
          RETURN 7
       ENDIF
 
    ELSEIF ( Ch == K_F2 )
 
-      IF ImaURadKr( radn->id, "2" )
+      seek_radkr_2( radn->id )
+      IF !Eof()
          RETURN 99
       ENDIF
 
@@ -741,35 +743,37 @@ FUNCTION P_Kred( cId, nDeltaX, nDeltaY )
 FUNCTION KrBlok( Ch )
 
    IF ( Ch == K_CTRL_T )
-      IF ImaURadKr( KRED->id, "3" )
+      seek_radkr_2( NIL, kred->id )
+      IF !EOF()
          Beep( 1 )
          Msg( "Firma se ne moze brisati jer je vec korištena u obračunu!" )
          RETURN 7
       ENDIF
    ELSEIF ( Ch == K_F2 )
-      IF ImaURadKr( KRED->id, "3" )
+      seek_radkr_2( NIL, kred->id )
+      IF !EOF()
          RETURN 99
       ENDIF
    ENDIF
 
    RETURN DE_CONT
 
+/*
 
-
-FUNCTION ImaURadKr( cKljuc, cTag )
+-- FUNCTION ImaURadKr( cKljuc, cTag )
 
    LOCAL lVrati := .F.
    LOCAL lUsed := .T.
    LOCAL nArr := Select()
 
-   SELECT ( F_RADKR )
+   //SELECT ( F_RADKR )
 
-   IF !Used()
+   //IF !Used()
       lUsed := .F.
-      O_RADKR
-   ELSE
-      PushWA()
-   ENDIF
+    //  O_RADKR
+   //ELSE
+    //  PushWA()
+   //ENDIF
 
    SET ORDER TO TAG ( cTag )
    SEEK cKljuc
@@ -785,7 +789,7 @@ FUNCTION ImaURadKr( cKljuc, cTag )
    SELECT ( nArr )
 
    RETURN lVrati
-
+*/
 
 FUNCTION ImaUObrac( cKljuc, cTag )
 

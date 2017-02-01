@@ -61,13 +61,18 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    cIdRadn := Trim( cIdradn )
    IF Empty( cIdrj )
-      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
-      SEEK Str( nGodina, 4 ) + cIdRadn
-
+      //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
+      //SEEK Str( nGodina, 4 ) + cIdRadn
+      seek_ld( NIL, nGodina, NIL, NIL, cIdRadn )
+      SET ORDER TO TAG "4"
       cIdrj := ""
+
    ELSE
-      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "3" ) )
-      SEEK Str( nGodina, 4 ) + cIdrj + cIdRadn
+      //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "3" ) )
+      //SEEK Str( nGodina, 4 ) + cIdrj + cIdRadn
+      seek_ld( cIdRj, nGodina, NIL, NIL, cIdRadn )
+      SET ORDER TO TAG "3"
+
    ENDIF
    EOF CRET
 
@@ -89,7 +94,8 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    SELECT ld
    nT1 := nT2 := nT3 := nT4 := 0
-   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cidrj .AND. idradn = cIdRadn
+
+   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cIdrj .AND. idradn = cIdRadn
 
       xIdRadn := idradn
       IF cRazdvoji == "N"
@@ -121,6 +127,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
          ENDIF
          Scatter()
          IF cRazdvoji == "D"
+         
             SELECT _LD
             HSEEK xIdRadn + LD->IdRj
             IF ! Found()
@@ -330,10 +337,10 @@ STATIC FUNCTION otvori_tabele()
    o_ld_rj()
    o_ld_radn()
    o_ld_vrste_posla()
-   O_RADKR
+   //O_RADKR
    o_kred()
    O__LD
    SET ORDER TO TAG "1"
-   select_o_ld()
+   //select_o_ld()
 
    RETURN .T.

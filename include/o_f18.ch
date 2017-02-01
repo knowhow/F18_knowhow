@@ -234,7 +234,7 @@
 #xcommand O__KRED   => select (F__KRED)   ;  my_use ("_kred")    ; set order to tag "ID"
 
 
-#xcommand O_OBRACUNI => select (F_OBRACUNI) ; my_use("obracuni"); set order to tag "RJ"
+
 #xcommand O_RADSAT  => select (F_RADSAT)  ; my_use ("radsat")    ; set order to tag "IDRADN"
 
 //#xcommand O_PK_RADN => select (F_PK_RADN)  ; my_use ("pk_radn")   ; set order to tag "1"

@@ -54,7 +54,9 @@ FUNCTION ld_get_params( hParams )
    gGodina := fetch_metric( "ld_godina", my_user(), gGodina )
    gLDRadnaJedinica := fetch_metric( "ld_rj", my_user(), gLDRadnaJedinica )
    gMjesec := fetch_metric( "ld_mjesec", my_user(), gMjesec )
-   ld_vise_obracuna() := fetch_metric( "ld_vise_obracuna", NIL, ld_vise_obracuna() )
+
+
+
    gObracun := fetch_metric( "ld_obracun", my_user(), gObracun )
 
    // ---------
@@ -141,7 +143,7 @@ FUNCTION ld_set_firma()
    LOCAL _godina := fetch_metric( "ld_godina", my_user(), gGodina )
    LOCAL _rj := fetch_metric( "ld_rj", my_user(), gLDRadnaJedinica )
    LOCAL _mjesec := fetch_metric( "ld_mjesec", my_user(), gMjesec )
-   LOCAL _v_obr := fetch_metric( "ld_vise_obracuna", NIL, ld_vise_obracuna() )
+   //LOCAL _v_obr := fetch_metric( "ld_vise_obracuna", NIL, ld_vise_obracuna() )
    LOCAL _obracun := fetch_metric( "ld_obracun", my_user(), gObracun )
 
    PRIVATE GetList := {}

@@ -18,6 +18,7 @@ FUNCTION ld_unos_obracuna()
    LOCAL _vals
    LOCAL _fields
    LOCAL _pr_kart_pl := fetch_metric( "ld_obracun_prikaz_kartice_na_unosu", NIL, "N" )
+   LOCAL i
    PRIVATE lNovi
    PRIVATE GetList
    PRIVATE cIdRadn
@@ -29,17 +30,16 @@ FUNCTION ld_unos_obracuna()
    nGodina := gGodina
    nMjesec := gMjesec
 
-   select_o_ld()
+   // select_o_ld()
 
    DO WHILE .T.
 
       lSaveObracun := .F.
-
       ld_unos_obracuna_box( @lSaveObracun )
 
       IF ( lSaveObracun )
 
-         SELECT ld
+         select_o_ld()
 
          cIdRadn := field->idRadn
 
@@ -161,10 +161,10 @@ FUNCTION OObracun()
       o_ld_rj()
    ENDIF
 
-   SELECT F_RADKR
-   IF !Used()
-      O_RADKR
-   ENDIF
+   //SELECT F_RADKR
+   //IF !Used()
+  //    O_RADKR
+   //ENDIF
 
    SELECT F_KRED
    IF !Used()
@@ -208,18 +208,15 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    nGodina := gGodina
    cObracun := gObracun
 
-
    lLogUnos := .F.
 
    OObracun()
-
 
    lNovi := .F.
 
    Box( , MAXROWS() - 3, MAXCOLS() - 10 )
 
    @ m_x + 1, m_y + 2 SAY _l( "Radna jedinica: " )
-
    QQOutC( cIdRJ, "GR+/N" )
 
    IF gUNMjesec == "D"
@@ -242,8 +239,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    QQOutC( Str( nGodina, 4 ), "GR+/N" )
 
-   @ m_x + 2, m_y + 2 SAY _l( "Radnik:" ) GET cIdRadn ;
-      VALID {|| P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 17 ), ;
+   @ m_x + 2, m_y + 2 SAY _l( "Radnik:" ) GET cIdRadn VALID {|| P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 17 ), ;
       QQOut( PadR( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + Trim( radn->ime ), 28 ) ), .T. }
 
    READ
@@ -256,14 +252,13 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    IF nO_ret = 0
 
-      MsgBeep( "Ne postoje unešeni parametri obračuna za " + ;
-         Str( nMjesec, 2 ) + "/" + Str( nGodina, 4 ) + " !!" )
+      MsgBeep( "Ne postoje unešeni parametri obračuna za " + Str( nMjesec, 2 ) + "/" + Str( nGodina, 4 ) + " !" )
 
       BoxC()
 
       RETURN .F.
 
-   ELSEIF nO_ret = 2
+   ELSEIF nO_ret == 2
 
       MsgBeep( "Ne postoje unešeni parametri obračuna za " + ;
          Str( nMjesec, 2 ) + "/" + Str( nGodina, 4 ) + " !!" + ;
@@ -285,9 +280,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       nULicOdb := 0
    ENDIF
 
-   SELECT ld
-
-   SEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + iif( ld_vise_obracuna(), cObracun, "" ) + cIdRadn
+   seek_ld( cIdRj,  nGodina,  nMjesec,  iif( ld_vise_obracuna(), cObracun, "" ),  cIdRadn )
 
    IF Found()
       lNovi := .F.

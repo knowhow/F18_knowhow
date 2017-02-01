@@ -75,7 +75,7 @@ FUNCTION unos_datuma_isplate_place()
 
    my_close_all_dbf()
 
-   O_OBRACUNI
+   o_ld_obracuni()
    o_ld_rj()
 
 
@@ -265,16 +265,7 @@ FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
    cIsplZa := Space( 50 )
    cVrsta := Space( 50 )
 
-   SELECT F_OBRACUNI
-   IF !Used()
-      O_OBRACUNI
-   ENDIF
-
-   SELECT obracuni
-   SET ORDER TO TAG "RJ"
-   GO TOP
-
-   SEEK  cRJ + AllTrim( Str( nGod ) ) + ld_formatiraj_mjesec( nMjesec ) + "G" + cObr
+   o_ld_obracuni( cRJ + AllTrim( Str( nGod ) ) + ld_formatiraj_mjesec( nMjesec ) + "G" + cObr )
 
    IF field->rj == cRj .AND. ;
          field->mjesec = nMjesec .AND. ;
@@ -306,16 +297,7 @@ STATIC FUNCTION ld_obracun_set_datum_isplate( cRj, nGod, nMjesec, cObr, dDatIspl
 
    PushWA()
 
-   SELECT F_OBRACUNI
-   IF !Used()
-      O_OBRACUNI
-   ENDIF
-
-   SELECT obracuni
-   SET ORDER TO TAG "RJ"
-   GO TOP
-   SEEK  cRJ + AllTrim( Str( nGod ) ) + ld_formatiraj_mjesec( nMjesec ) + "G" + cObr
-
+   o_ld_obracuni( cRJ + AllTrim( Str( nGod ) ) + ld_formatiraj_mjesec( nMjesec ) + "G" + cObr )
 
    IF field->rj == cRj .AND. field->mjesec = nMjesec .AND. field->godina = nGod .AND. ;
          field->obr == cObr .AND. field->status == "G"

@@ -108,12 +108,11 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
          ENDIF
 
          SELECT opsld
-         SEEK cSeek + por->poopst
+         SEEK cSeek + por->poopst // opsld tmp
 
          ? StrTran( cLinija, "-", "=" )
 
-         DO WHILE !Eof() .AND. porid == cSeek ;
-               .AND. id == por->poopst
+         DO WHILE !Eof() .AND. porid == cSeek .AND. id == por->poopst
 
             cOpst := opsld->idops
 
@@ -134,9 +133,7 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
 
                nPom := 0
 
-               DO WHILE !Eof() .AND. porid == cSeek ;
-                     .AND. id == por->poopst ;
-                     .AND. idops == cOpst
+               DO WHILE !Eof() .AND. porid == cSeek .AND. id == por->poopst .AND. idops == cOpst
 
                   IF t_iz_1 <> 0
                      ? " -obracun za stopu "

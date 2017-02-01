@@ -24,7 +24,7 @@ STATIC __xml := 0
 // ---------------------------------------
 FUNCTION ol_o_tbl()
 
-   O_OBRACUNI
+   o_ld_obracuni()
    o_ld_parametri_obracuna()
    O_PARAMS
    o_ld_rj()

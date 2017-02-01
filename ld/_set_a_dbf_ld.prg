@@ -205,7 +205,7 @@ FUNCTION set_a_dbf_ld_obracuni()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_OBRACUNI
    _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
    _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}

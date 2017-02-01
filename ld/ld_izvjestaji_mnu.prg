@@ -151,17 +151,11 @@ STATIC FUNCTION izvjestaji_rekapitulacije()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   IF is_legacy_ld_rekap_dbf()
-      AAdd( _opc, "1. rekapitulacija plate za radnu jedinicu   " )
-      AAdd( _opcexe, {|| ld_rekapitulacija( .F. ) } )
-      AAdd( _opc, "2. rekapitulacija za sve radne jedinice" )
-      AAdd( _opcexe, {|| ld_rekapitulacija( .T. ) } )
-   ELSE
-      AAdd( _opc, "1. rekapitulacija plate za radnu jedinicu   " )
-      AAdd( _opcexe, {|| ld_rekapitulacija_sql( .F. ) } )
-      AAdd( _opc, "2. rekapitulacija za sve radne jedinice" )
-      AAdd( _opcexe, {|| ld_rekapitulacija_sql( .T. ) } )
-   ENDIF
+   AAdd( _opc, "1. rekapitulacija plate za radnu jedinicu   " )
+   AAdd( _opcexe, {|| ld_rekapitulacija_sql( .F. ) } )
+   AAdd( _opc, "2. rekapitulacija za sve radne jedinice" )
+   AAdd( _opcexe, {|| ld_rekapitulacija_sql( .T. ) } )
+
 
    f18_menu( "rekap", .F., _izbor, _opc, _opcexe )
 

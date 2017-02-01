@@ -72,7 +72,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
    _bug_report := fetch_metric( "bug_report_email", my_user(), "A" )
    _log_level := fetch_metric( "log_level", NIL, 3 )
 
-   cLdRekapDbf := fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" )
+   //cLdRekapDbf := fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" )
    cLegacyKalkPr := fetch_metric( "legacy_kalk_pr", NIL, "N" )
    cLegacyPTxt := fetch_metric( "legacy_ptxt", NIL, "D" )
 
@@ -163,7 +163,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       _x += 2
       @ _pos_x + _x, _pos_y SAY "Kompatibilnost ***" COLOR f18_color_i()
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
+      //@ _pos_x + _x, _pos_y SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
       @ _pos_x + _x, Col() + 2 SAY "KALK PR:" GET cLegacyKalkPr PICT "!@" VALID cLegacyKalkPr $ "DN"
       @ _pos_x + _x, Col() + 2 SAY "PTXT:" GET cLegacyPTxt PICT "!@" VALID cLegacyPTxt $ "DN"
 
@@ -207,7 +207,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )
 #endif
 
-      set_metric( "legacy_ld_rekap_dbf", NIL, cLdRekapDbf )
+      //set_metric( "legacy_ld_rekap_dbf", NIL, cLdRekapDbf )
       set_metric( "legacy_kalk_pr", NIL, cLegacyKalkPr )
       set_metric( "legacy_ptxt", NIL, cLegacyPTxt )
 
@@ -378,9 +378,9 @@ FUNCTION f18_set_active_modules()
 */
 
 
-FUNCTION is_legacy_ld_rekap_dbf()
-
-   RETURN fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" ) == "D"
+//FUNCTION is_legacy_ld_rekap_dbf()
+//
+//   RETURN fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" ) == "D"
 
 
 FUNCTION is_legacy_kalk_pr()

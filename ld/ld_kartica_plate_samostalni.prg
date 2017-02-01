@@ -84,9 +84,11 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, 
 
             IF "SUMKREDITA" $ tippr->formula
 
-               SELECT radkr
-               SET ORDER TO 1
-               SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
+               //SELECT radkr
+               //SET ORDER TO 1
+               //SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
+               seek_radkr( _godina, _mjesec, _idradn )
+               
                ukredita := 0
 
 

@@ -72,9 +72,9 @@ FUNCTION o_ld_rekap()
    o_koef_beneficiranog_radnog_staza()
    o_ld_vrste_posla()
    o_ops()
-   O_RADKR
+   //O_RADKR
    o_kred()
-   o_ld()
+   //o_ld()
 
    set_tippr_ili_tippr2( cObracun )
 
@@ -149,7 +149,7 @@ FUNCTION ld_rekap_get_rj()
    RETURN .T.
 
 
-FUNCTION CreRekLD()
+FUNCTION cre_rekld_temp()
 
    aDbf := { { "GODINA",  "C",  4, 0 }, ;
       { "MJESEC",  "C",  2, 0 }, ;
@@ -174,7 +174,7 @@ FUNCTION CreRekLD()
    RETURN .T.
 
 
-FUNCTION CreOpsLD()
+FUNCTION cre_ops_ld_temp()
 
    aDbf := { { "ID", "C", 1, 0 }, ;
       { "PORID", "C", 2, 0 }, ;

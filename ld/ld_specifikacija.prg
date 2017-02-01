@@ -74,7 +74,7 @@ FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
    oQry := run_sql_query( cSql )
 
    IF is_var_objekat_tpqquery( oQry )
-      IF oQry:FieldGet(1) == "2"
+      IF oQry:FieldGet( 1 ) == "2"
          lRet := .T.
       ENDIF
    ENDIF
@@ -93,7 +93,7 @@ FUNCTION ld_iz_koje_opcine_je_radnik( cIdRadn )
    oQry := run_sql_query( cSql )
 
    IF is_var_objekat_tpqquery( oQry )
-      cOpc := hb_utf8tostr( oQry:FieldGet(1) )
+      cOpc := hb_UTF8ToStr( oQry:FieldGet( 1 ) )
    ENDIF
 
    RETURN cOpc
@@ -221,47 +221,47 @@ FUNCTION ld_specifikacija_plate()
       lPDNE := .F.
    ENDIF
 
-   cFirmNaz := fetch_metric( "org_naziv", nil, cFirmNaz )
+   cFirmNaz := fetch_metric( "org_naziv", NIL, cFirmNaz )
    cFirmNaz := PadR( cFirmNaz, 35 )
 
-   cFirmAdresa := fetch_metric( "ld_firma_adresa", nil, cFirmAdresa )
+   cFirmAdresa := fetch_metric( "ld_firma_adresa", NIL, cFirmAdresa )
    cFirmAdresa := PadR( cFirmAdresa, 35 )
 
-   cFirmOpc := fetch_metric( "ld_firma_opcina", nil, cFirmOpc )
+   cFirmOpc := fetch_metric( "ld_firma_opcina", NIL, cFirmOpc )
    cFirmOpc := PadR( cFirmOpc, 35 )
 
-   cFirmVD := fetch_metric( "ld_firma_vrsta_djelatnosti", nil, cFirmVD )
+   cFirmVD := fetch_metric( "ld_firma_vrsta_djelatnosti", NIL, cFirmVD )
    cFirmVD := PadR( cFirmVD, 50 )
 
-   cMRad := fetch_metric( "ld_specifikacija_minuli_rad", nil, cMRad )
-   cPrimDobra := fetch_metric( "ld_specifikacija_primanja_dobra", nil, cPrimDobra )
-   cDopr1 := fetch_metric( "ld_specifikacija_doprinos_1", nil, cDopr1 )
-   cDopr2 := fetch_metric( "ld_specifikacija_doprinos_2", nil, cDopr2 )
-   cDopr3 := fetch_metric( "ld_specifikacija_doprinos_3", nil, cDopr3 )
-   cDopr5 := fetch_metric( "ld_specifikacija_doprinos_5", nil, cDopr5 )
-   cDopr6 := fetch_metric( "ld_specifikacija_doprinos_6", nil, cDopr6 )
-   cDopr7 := fetch_metric( "ld_specifikacija_doprinos_7", nil, cDopr7 )
-   cDDoprPio := fetch_metric( "ld_specifikacija_doprinos_pio", nil, cDDoprPio )
-   cDDoprZdr := fetch_metric( "ld_specifikacija_doprinos_zdr", nil, cDDoprZdr )
-   cc001 := fetch_metric( "ld_specifikacija_c1", nil, ccOO1 )
-   cc002 := fetch_metric( "ld_specifikacija_c2", nil, ccOO2 )
-   cc003 := fetch_metric( "ld_specifikacija_c3", nil, ccOO3 )
-   cc004 := fetch_metric( "ld_specifikacija_c4", nil, ccOO4 )
-   cn001 := fetch_metric( "ld_specifikacija_n1", nil, cnOO1 )
-   cn002 := fetch_metric( "ld_specifikacija_n2", nil, cnOO2 )
-   cn003 := fetch_metric( "ld_specifikacija_n3", nil, cnOO3 )
-   cn004 := fetch_metric( "ld_specifikacija_n4", nil, cnOO4 )
-   qqIdRj := fetch_metric( "ld_specifikacija_rj", nil, qqIdRJ )
-   qqOpSt := fetch_metric( "ld_specifikacija_opcine", nil, qqOpSt )
+   cMRad := fetch_metric( "ld_specifikacija_minuli_rad", NIL, cMRad )
+   cPrimDobra := fetch_metric( "ld_specifikacija_primanja_dobra", NIL, cPrimDobra )
+   cDopr1 := fetch_metric( "ld_specifikacija_doprinos_1", NIL, cDopr1 )
+   cDopr2 := fetch_metric( "ld_specifikacija_doprinos_2", NIL, cDopr2 )
+   cDopr3 := fetch_metric( "ld_specifikacija_doprinos_3", NIL, cDopr3 )
+   cDopr5 := fetch_metric( "ld_specifikacija_doprinos_5", NIL, cDopr5 )
+   cDopr6 := fetch_metric( "ld_specifikacija_doprinos_6", NIL, cDopr6 )
+   cDopr7 := fetch_metric( "ld_specifikacija_doprinos_7", NIL, cDopr7 )
+   cDDoprPio := fetch_metric( "ld_specifikacija_doprinos_pio", NIL, cDDoprPio )
+   cDDoprZdr := fetch_metric( "ld_specifikacija_doprinos_zdr", NIL, cDDoprZdr )
+   cc001 := fetch_metric( "ld_specifikacija_c1", NIL, ccOO1 )
+   cc002 := fetch_metric( "ld_specifikacija_c2", NIL, ccOO2 )
+   cc003 := fetch_metric( "ld_specifikacija_c3", NIL, ccOO3 )
+   cc004 := fetch_metric( "ld_specifikacija_c4", NIL, ccOO4 )
+   cn001 := fetch_metric( "ld_specifikacija_n1", NIL, cnOO1 )
+   cn002 := fetch_metric( "ld_specifikacija_n2", NIL, cnOO2 )
+   cn003 := fetch_metric( "ld_specifikacija_n3", NIL, cnOO3 )
+   cn004 := fetch_metric( "ld_specifikacija_n4", NIL, cnOO4 )
+   qqIdRj := fetch_metric( "ld_specifikacija_rj", NIL, qqIdRJ )
+   qqOpSt := fetch_metric( "ld_specifikacija_opcine", NIL, qqOpSt )
    qqIdRj := PadR( qqIdRj, 80 )
    qqOpSt := PadR( qqOpSt, 80 )
 
    _omjer_zdravstvo := fetch_metric( "ld_specifikacija_omjer_dopr_zdr", NIL, 10.2 )
    _omjer_nezap := fetch_metric( "ld_specifikacija_omjer_dopr_nezap", NIL, 30 )
 
-   cIsplata := fetch_metric( "ld_specifikacija_vrsta_isplate", nil, cIsplata )
+   cIsplata := fetch_metric( "ld_specifikacija_vrsta_isplate", NIL, cIsplata )
 
-   cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
+   cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
    cMatBR := PadR( cMatBr, 13 )
 
    dDatIspl := Date()
@@ -335,53 +335,53 @@ FUNCTION ld_specifikacija_plate()
 
       aUslRJ := Parsiraj( qqIdRj, "IDRJ" )
       aUslOpSt := Parsiraj( qqOpSt, "IDOPSST" )
-      IF ( aUslRJ <> NIL .AND. aUslOpSt <> nil )
+      IF ( aUslRJ <> NIL .AND. aUslOpSt <> NIL )
          EXIT
       ENDIF
    ENDDO
 
-   set_metric( "org_naziv", nil, cFirmNaz )
-   set_metric( "ld_firma_adresa", nil, cFirmAdresa )
-   set_metric( "ld_firma_opcina", nil, cFirmOpc )
-   set_metric( "ld_firma_vrsta_djelatnosti", nil, cFirmVD )
-   set_metric( "ld_specifikacija_minuli_rad", nil, cMRad )
-   set_metric( "ld_specifikacija_primanja_dobra", nil, cPrimDobra )
-   set_metric( "ld_specifikacija_doprinos_1", nil, cDopr1 )
-   set_metric( "ld_specifikacija_doprinos_2", nil, cDopr2 )
-   set_metric( "ld_specifikacija_doprinos_3", nil, cDopr3 )
-   set_metric( "ld_specifikacija_doprinos_5", nil, cDopr5 )
-   set_metric( "ld_specifikacija_doprinos_6", nil, cDopr6 )
-   set_metric( "ld_specifikacija_doprinos_7", nil, cDopr7 )
-   set_metric( "ld_specifikacija_doprinos_pio", nil, cDDoprPio )
-   set_metric( "ld_specifikacija_doprinos_zdr", nil, cDDoprZdr )
-   set_metric( "ld_specifikacija_c1", nil, ccOO1 )
-   set_metric( "ld_specifikacija_c2", nil, ccOO2 )
-   set_metric( "ld_specifikacija_c3", nil, ccOO3 )
-   set_metric( "ld_specifikacija_c4", nil, ccOO4 )
-   set_metric( "ld_specifikacija_n1", nil, cnOO1 )
-   set_metric( "ld_specifikacija_n2", nil, cnOO2 )
-   set_metric( "ld_specifikacija_n3", nil, cnOO3 )
-   set_metric( "ld_specifikacija_n4", nil, cnOO4 )
-   set_metric( "ld_specifikacija_vrsta_isplate", nil, cIsplata )
+   set_metric( "org_naziv", NIL, cFirmNaz )
+   set_metric( "ld_firma_adresa", NIL, cFirmAdresa )
+   set_metric( "ld_firma_opcina", NIL, cFirmOpc )
+   set_metric( "ld_firma_vrsta_djelatnosti", NIL, cFirmVD )
+   set_metric( "ld_specifikacija_minuli_rad", NIL, cMRad )
+   set_metric( "ld_specifikacija_primanja_dobra", NIL, cPrimDobra )
+   set_metric( "ld_specifikacija_doprinos_1", NIL, cDopr1 )
+   set_metric( "ld_specifikacija_doprinos_2", NIL, cDopr2 )
+   set_metric( "ld_specifikacija_doprinos_3", NIL, cDopr3 )
+   set_metric( "ld_specifikacija_doprinos_5", NIL, cDopr5 )
+   set_metric( "ld_specifikacija_doprinos_6", NIL, cDopr6 )
+   set_metric( "ld_specifikacija_doprinos_7", NIL, cDopr7 )
+   set_metric( "ld_specifikacija_doprinos_pio", NIL, cDDoprPio )
+   set_metric( "ld_specifikacija_doprinos_zdr", NIL, cDDoprZdr )
+   set_metric( "ld_specifikacija_c1", NIL, ccOO1 )
+   set_metric( "ld_specifikacija_c2", NIL, ccOO2 )
+   set_metric( "ld_specifikacija_c3", NIL, ccOO3 )
+   set_metric( "ld_specifikacija_c4", NIL, ccOO4 )
+   set_metric( "ld_specifikacija_n1", NIL, cnOO1 )
+   set_metric( "ld_specifikacija_n2", NIL, cnOO2 )
+   set_metric( "ld_specifikacija_n3", NIL, cnOO3 )
+   set_metric( "ld_specifikacija_n4", NIL, cnOO4 )
+   set_metric( "ld_specifikacija_vrsta_isplate", NIL, cIsplata )
    set_metric( "ld_specifikacija_omjer_dopr_zdr", NIL, _omjer_zdravstvo )
    set_metric( "ld_specifikacija_omjer_dopr_nezap", NIL, _omjer_nezap )
 
    qqIdRj := Trim( qqIdRj )
    qqOpSt := Trim( qqOpSt )
 
-   set_metric( "ld_specifikacija_rj", nil, qqIdRJ )
-   set_metric( "ld_specifikacija_opcine", nil, qqOpSt )
+   set_metric( "ld_specifikacija_rj", NIL, qqIdRJ )
+   set_metric( "ld_specifikacija_opcine", NIL, qqOpSt )
 
-   set_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
+   set_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
 
    PoDoIzSez( nGodina, nMjesec )
 
    cIniName := _proizv_ini
 
-   UzmiIzIni( cIniName, 'Varijable', "NAZ", cFirmNaz,'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "ADRESA", cFirmAdresa,'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "OPCINA", cFirmOpc,'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "VRDJ", cFirmVD,'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', "NAZ", cFirmNaz, 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', "ADRESA", cFirmAdresa, 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', "OPCINA", cFirmOpc, 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', "VRDJ", cFirmVD, 'WRITE' )
 
    UzmiIzIni( cIniName, 'Varijable', "GODOD", Razrijedi( Str( nGodinaOd, 4 ) ), 'WRITE' )
    UzmiIzIni( cIniName, 'Varijable', "GODDO", Razrijedi( Str( nGodinaDo, 4 ) ), 'WRITE' )
@@ -407,8 +407,10 @@ FUNCTION ld_specifikacija_plate()
 
    ParObr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
 
-   SELECT LD
-   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+   // SELECT LD
+   // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+   // HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 )
+   select_o_ld( NIL, nGodina, nMjesec )
 
    PRIVATE cFilt := ".t."
 
@@ -421,9 +423,8 @@ FUNCTION ld_specifikacija_plate()
    ENDIF
 
    SET FILTER TO &cFilt
-
    GO TOP
-   HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 )
+
 
    IF !Found()
       MsgBeep( "Obracun za ovaj mjesec ne postoji !" )
@@ -472,7 +473,7 @@ FUNCTION ld_specifikacija_plate()
 
       SELECT LD
 
-      IF ! ( RADN->( &aUslOpSt ) )
+      IF !( RADN->( &aUslOpSt ) )
          SKIP 1
          LOOP
       ENDIF
@@ -496,10 +497,10 @@ FUNCTION ld_specifikacija_plate()
       nP80 := nP81 := nP82 := nP83 := nP84 := nP85 := 0
 
       IF LD->uneto > 0  // zbog npr.bol.preko 42 dana koje ne ide u neto
-         IF Len( aPom ) < 1 .OR. ( nPom := AScan( aPom, {| x| x[ 1 ] == LD->brbod } ) ) == 0
+         IF Len( aPom ) < 1 .OR. ( nPom := AScan( aPom, {| x | x[ 1 ] == LD->brbod } ) ) == 0
             AAdd( aPom, { LD->brbod, 1, nP77, LD->uneto } )
          ELSE
-            IF ! ( ld_vise_obracuna() .AND. Empty( cObracun ) .AND. LD->obr $ "23456789" )
+            IF !( ld_vise_obracuna() .AND. Empty( cObracun ) .AND. LD->obr $ "23456789" )
                aPom[ nPom, 2 ] += 1  // broj radnika
             ENDIF
             aPom[ nPom, 3 ] += nP77  // minuli rad
@@ -577,7 +578,7 @@ FUNCTION ld_specifikacija_plate()
          IF DOPR->poopst == "1" .AND. lPDNE
             nBOO := 0
             FOR i := 1 TO Len( aOps )
-               IF ! ( DOPR->id $ aOps[ i, 2 ] )
+               IF !( DOPR->id $ aOps[ i, 2 ] )
                   nBOO += aOps[ i, 3 ]
                ENDIF
             NEXT
@@ -727,7 +728,7 @@ FUNCTION ld_specifikacija_plate()
       nOstOb4 += nP85
 
       IF lPDNE
-         nOps := AScan( aOps, {| x| x[ 1 ] == RADN->idopsst } )
+         nOps := AScan( aOps, {| x | x[ 1 ] == RADN->idopsst } )
          IF nOps > 0
             aOps[ nOps, 3 ] += Max( ld->uneto, PAROBR->prosld * gPDLimit / 100 )
          ELSE
@@ -735,7 +736,7 @@ FUNCTION ld_specifikacija_plate()
          ENDIF
       ENDIF
 
-      ++ nObrCount
+      ++nObrCount
 
       SKIP 1
 
@@ -749,11 +750,11 @@ FUNCTION ld_specifikacija_plate()
    nPorNaPlatu := round2( nPorNaPlatu, gZaok2 )
 
    // obustave iz place
-   UzmiIzIni( cIniName, 'Varijable', 'O18I', FormNum2( -nObustave, 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'O18I', FormNum2( - nObustave, 16, gPici2 ), 'WRITE' )
 
    // Ostale obaveze = OstaleObaveze.1
 
-   ASort( aPom, , , {| x, y| x[ 1 ] > y[ 1 ] } )
+   ASort( aPom, , , {| x, y | x[ 1 ] > y[ 1 ] } )
    FOR i := 1 TO Len( aPom )
       IF gVarSpec == "1"
          IF i <= nGrupaPoslova
@@ -787,7 +788,7 @@ FUNCTION ld_specifikacija_plate()
    NEXT
 
    // ukupno radnika
-   UzmiIzIni( cIniName, 'Varijable', 'U016', Str( nURadnika, 0 ),'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'U016', Str( nURadnika, 0 ), 'WRITE' )
    // ukupno neto
    UzmiIzIni( cIniName, 'Varijable', 'U018', FormNum2( nUNETO, 16, gPici2 ), 'WRITE' )
    UzmiIzIni( cIniName, 'Varijable', 'D13N', " ", 'WRITE' )

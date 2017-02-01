@@ -172,12 +172,12 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
             nDoprOps2 := 0
 
             SELECT opsld
-            SEEK Space( 2 ) + dopr->poOpst
+            SEEK Space( 2 ) + dopr->poOpst // opsld tmp
 
             DO WHILE !Eof() .AND. field->id == dopr->poopst .AND. field->porid == Space( 2 )
 
                select_o_ops( opsld->idops )
-               
+
                SELECT opsld
 
                IF !ImaUOp( "DOPR", DOPR->id )

@@ -57,6 +57,32 @@ FUNCTION seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
    RETURN .T.
 
 
+FUNCTION seek_ld_2( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
+
+   seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
+   SET ORDER TO TAG "2"
+
+   RETURN .T.
+
+FUNCTION ld_max_godina()
+
+   LOCAL cSql
+
+   cSql := "select max(godina) as godina from fmk.ld_ld"
+   use_sql( "ld_ld", cSql, "LD" )
+
+   RETURN .T.
+
+
+FUNCTION ld_min_godina()
+
+   LOCAL cSql
+
+   cSql := "select min(godina) as godina from fmk.ld_ld"
+   use_sql( "ld_ld", cSql, "LD" )
+
+   RETURN .T.
+
 /*
    SELECT radkr
    SET ORDER TO 1
@@ -111,6 +137,13 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu )
 FUNCTION seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu, nGodina, nMjesec )
 
    RETURN seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu )
+
+
+FUNCTION o_radkr_1rec()
+
+   LOCAL cSql := "select * from fmk.ld_radkr LIMIT 1"
+
+   RETURN use_sql( "ld_radkr", cSql, "RADKR" )
 
 
 

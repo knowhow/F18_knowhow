@@ -48,7 +48,8 @@ FUNCTION tr_list()
 FUNCTION get_ld_rj_tip_rada( cRadn, cRj )
 
    LOCAL cTipRada := " "
-   LOCAL nSelect := Select()
+
+   PushWa()
 
    select_o_ld_rj( cRJ )
 
@@ -61,7 +62,7 @@ FUNCTION get_ld_rj_tip_rada( cRadn, cRj )
       cTipRada := radn->tiprada
    ENDIF
 
-   Select( nSelect )
+   PopWa()
 
    RETURN cTipRada
 

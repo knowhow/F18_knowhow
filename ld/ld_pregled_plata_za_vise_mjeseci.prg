@@ -1180,7 +1180,7 @@ STATIC FUNCTION sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, c
       SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cRadnik
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION dodaj_u_pomocnu_tabelu( nGodina, nMjesec, cRadnik, cIdRj, cObrZa, cIme, ;
@@ -1269,7 +1269,7 @@ STATIC FUNCTION napravi_pomocnu_tabelu()
 
 STATIC FUNCTION otvori_tabele()
 
-   O_OBRACUNI
+   o_ld_obracuni()
    o_ld_parametri_obracuna()
    O_PARAMS
    o_ld_rj()

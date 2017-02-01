@@ -65,7 +65,7 @@ METHOD programski_modul_osnovni_meni
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, NIL )
    AAdd( opc, "A. rekapitulacija" )
-   AAdd( opcexe, {|| ld_rekapitulacija( .T. ) } )
+   AAdd( opcexe, {|| ld_rekapitulacija_sql( .T. ) } )
    AAdd( opc, "B. kartica plate" )
    AAdd( opcexe, {|| ld_kartica_plate() } )
    AAdd( opc, "V. generisanje virmana " )
@@ -145,4 +145,4 @@ METHOD set_module_gvars()
 
 FUNCTION  ld_vise_obracuna()
 
-   RETURN .T.
+   RETURN fetch_metric( "ld_vise_obracuna", NIL, .T. )

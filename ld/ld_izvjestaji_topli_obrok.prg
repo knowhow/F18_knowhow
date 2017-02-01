@@ -255,7 +255,7 @@ STATIC FUNCTION o_tables()
    o_ld_rj()
    o_kred()
    o_ld_radn()
-   select_o_ld()
+   //select_o_ld()
 
    RETURN .T.
 
@@ -276,9 +276,10 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 
    cre_tmp_dbf()
 
-   SELECT ld
-   SET ORDER TO TAG "2"  // godina + mjesec + idradn + idrj
-   HSEEK Str( cYear, 4, 0 ) + Str( cMonthFrom, 2, 0 )
+   //SELECT ld
+   //SET ORDER TO TAG "2"  // godina + mjesec + idradn + idrj
+   //HSEEK Str( cYear, 4, 0 ) + Str( cMonthFrom, 2, 0 )
+   seek_ld_2( NIL, cYear, cMonthFrom )
 
    Box(, 1, 60 )
 

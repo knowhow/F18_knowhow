@@ -24,7 +24,7 @@ FUNCTION ld_specifikacija_po_rj()
 
    cMjesecOd := Str( cMjesecOd, 2 )
    cMjesecDo := Str( cMjesecDo, 2 )
-   nGodina   := Str( nGodina,4 )
+   nGodina   := Str( nGodina, 4 )
 
    RPar( "p1", @cMjesecOd )
    RPar( "p2", @cMjesecDo )
@@ -61,7 +61,7 @@ FUNCTION ld_specifikacija_po_rj()
 
    cMjesecOd := Str( cMjesecOd, 2 )
    cMjesecDo := Str( cMjesecDo, 2 )
-   nGodina   := Str( nGodina,4 )
+   nGodina   := Str( nGodina, 4 )
    qqRj      := Trim( qqRj )
    qqPrimanja := Trim( qqPrimanja )
 
@@ -119,17 +119,21 @@ FUNCTION ld_specifikacija_po_rj()
    aRJ := {}
    DO WHILE !Eof()
       FOR i := 1 TO Len( aPrim )
-         SELECT LD; nPom := &( aPrim[ i ] )
-         SELECT LDT22; SEEK Right( aPrim[ i ], 2 ) + Space( 6 ) + LD->IDRJ
+         SELECT LD
+         nPom := &( aPrim[ i ] )
+
+         SELECT LDT22
+         SEEK Right( aPrim[ i ], 2 ) + Space( 6 ) + LD->IDRJ // ld
+
          IF Found()
             RREPLACE iznos WITH iznos + nPom
          ELSE
             APPEND BLANK
             REPLACE idprim  WITH Right( aPrim[ i ], 2 ), ;
-               idkred  WITH Space( 6 ),;
-               idrj    WITH LD->IDRJ,;
+               idkred  WITH Space( 6 ), ;
+               idrj    WITH LD->IDRJ, ;
                iznos   WITH iznos + nPom
-            IF AScan( aRJ, {| x| x[ 1 ] == idrj } ) <= 0
+            IF AScan( aRJ, {| x | x[ 1 ] == idrj } ) <= 0
                AAdd( aRJ, { idrj, 0 } )
             ENDIF
          ENDIF
@@ -137,10 +141,10 @@ FUNCTION ld_specifikacija_po_rj()
       NEXT
       FOR i := 1 TO Len( aPrimK )
          SELECT LD
-         cKljuc := Str( godina, 4 ) + Str( mjesec, 2 ) + idradn
-         SELECT RADKR
-         SEEK cKljuc
-         IF Found()
+
+         seek_radkr( ld->godina, ld->mjesec, ld->idradn )
+
+         IF !EOF()
             DO WHILE !Eof() .AND. Str( godina, 4 ) + Str( mjesec, 2 ) + idradn == cKljuc
                cIdKred := idkred
                nPom := 0
@@ -149,16 +153,19 @@ FUNCTION ld_specifikacija_po_rj()
                   SKIP 1
                ENDDO
                nPom := -nPom      // kredit je odbitak
-               SELECT LDT22; SEEK Right( aPrimK[ i ], 2 ) + cIdKred + LD->IDRJ
+
+               SELECT LDT22
+               SEEK Right( aPrimK[ i ], 2 ) + cIdKred + LD->IDRJ // ldt22
+
                IF Found()
                   RREPLACE iznos WITH iznos + nPom
                ELSE
                   APPEND BLANK
                   REPLACE idprim  WITH Right( aPrimK[ i ], 2 ), ;
-                     idkred  WITH cIdKred,;
-                     idrj    WITH LD->IDRJ,;
+                     idkred  WITH cIdKred, ;
+                     idrj    WITH LD->IDRJ, ;
                      iznos   WITH iznos + nPom
-                  IF AScan( aRJ, {| x| x[ 1 ] == idrj } ) <= 0
+                  IF AScan( aRJ, {| x | x[ 1 ] == idrj } ) <= 0
                      AAdd( aRJ, { idrj, 0 } )
                   ENDIF
                ENDIF
@@ -178,7 +185,7 @@ FUNCTION ld_specifikacija_po_rj()
    aKol := { { "PRIMANJE", {|| cPrimanje }, .F., "C", 40, 0, 1, ++nKol } }
 
    // radne jedinice
-   ASort( aRJ,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+   ASort( aRJ,,, {| x, y | x[ 1 ] < y[ 1 ] } )
    FOR i := 1 TO Len( aRJ )
       cPom := AllTrim( Str( i ) )
       AAdd( aKol, { "RJ " + aRJ[ i, 1 ], {|| aRJ[ &cPom., 2 ] }, .T., "N", 15, 2, 1, ++nKol  } )
@@ -201,7 +208,7 @@ FUNCTION ld_specifikacija_po_rj()
 
    print_lista_2( aKol,,, gTabela,, ;
       , "SPECIFIKACIJA PRIMANJA PO RADNIM JEDINICAMA", ;
-      {|| formula_izvjestaja() }, IF( gOstr == "D",, -1 ),,,,, )
+      {|| formula_izvjestaja() }, IF( gOstr == "D",, - 1 ),,,,, )
 
    FF
    ENDPRINT
@@ -224,7 +231,7 @@ STATIC FUNCTION zapuj_pomocnu_tabelu()
 
 STATIC FUNCTION otvori_tabele()
 
-   //o_tippr()
+   // o_tippr()
    o_kred()
    O_RADKR
    SET ORDER TO TAG "1"
@@ -247,9 +254,9 @@ STATIC FUNCTION napravi_pomocnu_tabelu()
    _alias := "LDT22"
    _table_name := "ldt22"
 
-   aDbf := {    { "IDPRIM",  "C",  2, 0 },;
-      { "IDKRED",  "C",  6, 0 },;
-      { "IDRJ",  "C",  2, 0 },;
+   aDbf := {    { "IDPRIM",  "C",  2, 0 }, ;
+      { "IDKRED",  "C",  6, 0 }, ;
+      { "IDRJ",  "C",  2, 0 }, ;
       { "IZNOS",  "N", 18, 4 } ;
       }
 
@@ -276,7 +283,7 @@ STATIC FUNCTION formula_izvjestaja()
    nUkupno := 0
    DO WHILE !Eof() .AND. cIdPrim + cIdKred == idprim + idkred
       cIdRJ := idrj
-      nPos := AScan( aRJ, {| x| x[ 1 ] == cIdRj } )
+      nPos := AScan( aRJ, {| x | x[ 1 ] == cIdRj } )
       DO WHILE !Eof() .AND. cIdPrim + cIdKred + cIdRj == idprim + idkred + idrj
          aRJ[ nPos, 2 ] += iznos
          nUkupno     += iznos

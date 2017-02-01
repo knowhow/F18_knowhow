@@ -394,7 +394,7 @@ FUNCTION cre_all_ld( ver )
    AFTER_CREATE_INDEX
 */
 
-   // ---------------------------------------
+/*
    // OBRACUNI.DBF
    // ---------------------------------------
 
@@ -418,7 +418,7 @@ FUNCTION cre_all_ld( ver )
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "RJ", "rj+STR(godina)+STR(mjesec)+status+obr", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    /*
    // PK_RADN

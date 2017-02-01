@@ -52,6 +52,7 @@ FUNCTION ld_naziv_mjeseca( nMjesec, nGodina, lShort, lGodina )
 
 
 STATIC FUNCTION TekRec2()
+
    nSlog++
    @ m_x + 1, m_y + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
    @ m_x + 2, m_y + 2 SAY "Obuhvaceno: " + Str( 0 )
@@ -165,13 +166,13 @@ FUNCTION ld_specifikacija_po_mjesecima()
    SELECT ( F_TMP_1 )
    my_use_temp( "MTEMP", my_home() + "mtemp" )
 
-   //o_tippr()
+   // o_tippr()
 
    SELECT LD
 
    PRIVATE cFilt1 := "GODINA==" + dbf_quote( nGodina ) + ;
-      IIF( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) ) + ;
-      IIF( Empty( cIdRadn ), "", ".and.IDRADN==" + dbf_quote( cIdRadn ) )
+      iif( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) ) + ;
+      iif( Empty( cIdRadn ), "", ".and.IDRADN==" + dbf_quote( cIdRadn ) )
 
    SET FILTER TO &cFilt1
    SET ORDER TO TAG "2"
@@ -188,7 +189,8 @@ FUNCTION ld_specifikacija_po_mjesecima()
          FOR i := 1 TO cLDPolja
             cSTP := PadL( AllTrim( Str( i ) ), 2, "0" )
             IF cSvaPrim != "S" .AND. !( cSTP $ qqOstPrim )
-               SELECT TIPPR; HSEEK cSTP; SELECT MTEMP
+               select_o_tippr( cSTP)
+               SELECT MTEMP
                IF cSvaPrim == "N" .AND. TIPPR->uneto == "N" .OR. ;
                      cSvaPrim == "V" .AND. TIPPR->uneto == "D" .OR. ;
                      cSvaPrim == "0"
@@ -201,7 +203,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
             nFPosS := FieldPos( cNPPS )
             IF nFPosI > 0
                FieldPut( nFPosI, FieldGet( nFPosI ) + LD->( FieldGet( nFPosI ) ) )
-               IF ! ( ld_vise_obracuna() .AND. LD->obr <> "1" ) // samo sati iz 1.obracuna
+               IF !( ld_vise_obracuna() .AND. LD->obr <> "1" ) // samo sati iz 1.obracuna
                   FieldPut( nFPosS, FieldGet( nFPosS ) + LD->( FieldGet( nFPosS ) ) )
                ENDIF
             ELSE
@@ -233,7 +235,8 @@ FUNCTION ld_specifikacija_po_mjesecima()
       cNPPI := "I" + cSTP
       cNPPS := "S" + cSTP
 
-      SELECT TIPPR; HSEEK cSTP; cAktivno := aktivan
+      select_o_tippr( cSTP )
+      cAktivno := aktivan
       SELECT LD
 
       IF FieldPos( cNPPI ) > 0
@@ -246,14 +249,14 @@ FUNCTION ld_specifikacija_po_mjesecima()
             cNPrim := "{|| '" + cSTP + "-" + ;
                TIPPR->naz + "'}"
 
-            AAdd( aKol, { IF( ( i - nKorekcija ) == 1, "TIP PRIMANJA", "" ), &cNPrim., .F., "C", 25, 0, 2 * ( i - nKorekcija ) -1, 1 } )
+            AAdd( aKol, { IF( ( i - nKorekcija ) == 1, "TIP PRIMANJA", "" ), &cNPrim., .F., "C", 25, 0, 2 * ( i - nKorekcija ) - 1, 1 } )
 
             FOR j := 1 TO NUK
 
                cPomMI := "nSum[" + AllTrim( Str( i - nKorekcija ) ) + "," + AllTrim( Str( j ) ) + ",1]"
                cPomMS := "nSum[" + AllTrim( Str( i - nKorekcija ) ) + "," + AllTrim( Str( j ) ) + ",2]"
 
-               AAdd( aKol, { IF( i - nKorekcija == 1, ld_naziv_mjeseca( j ), "" ), {|| &cPomMI. }, .F., "N", nPicISUk + IF( j > 12, 1, 0 ), nPicIDec, 2 * ( i - nKorekcija ) -1, j + 1 } )
+               AAdd( aKol, { IF( i - nKorekcija == 1, ld_naziv_mjeseca( j ), "" ), {|| &cPomMI. }, .F., "N", nPicISUk + IF( j > 12, 1, 0 ), nPicIDec, 2 * ( i - nKorekcija ) - 1, j + 1 } )
                AAdd( aKol, { IF( i - nKorekcija == 1, "IZNOS/SATI", "" ), {|| &cPomMS. }, .F., "N", nPicISUk + IF( j > 12, 1, 0 ), nPicSDec, 2 * ( i - nKorekcija ), j + 1 } )
 
             NEXT
@@ -270,7 +273,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
 
    NEXT
 
-   AAdd( aKol, { "", {|| REPL( "=", 25 ) }, .F., "C", 25, 0, 2 * ( i - nKorekcija ) -1, 1 } )
+   AAdd( aKol, { "", {|| REPL( "=", 25 ) }, .F., "C", 25, 0, 2 * ( i - nKorekcija ) - 1, 1 } )
    AAdd( aKol, { "", {|| "U K U P N O"    }, .F., "C", 25, 0, 2 * ( i - nKorekcija ), 1 } )
    FOR j := 1 TO NUK
       cPomMI := "nSum[" + AllTrim( Str( i - nKorekcija ) ) + "," + AllTrim( Str( j ) ) + ",1]"
@@ -280,7 +283,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
       AAdd( aKol, { "", {|| &cPomMS. }, .F., "N", nPicISUk + IF( j > 12, 1, 0 ), nPicSDec, 2 * ( i - nKorekcija ) + 1, j + 1 } )
    NEXT
 
-   nSumLen := i - 1 -nKorekcija + 1
+   nSumLen := i - 1 - nKorekcija + 1
    nSum := Array( nSumLen, NUK, 2 )
    FOR k := 1 TO nSumLen
       FOR j := 1 TO NUK
@@ -305,10 +308,12 @@ FUNCTION ld_specifikacija_po_mjesecima()
    IF Empty( cIdRadn )
       ?? "SVI"
    ELSE
-      SELECT ( F_RADN ); HSEEK cIdRadn
-      SELECT ( F_STRSPR ); HSEEK RADN->idstrspr
-      SELECT ( F_OPS ); HSEEK RADN->idopsst; cOStan := naz
-      HSEEK RADN->idopsrad
+      select_o_radn( cIdRadn )
+      select_o_str_spr( RADN->idstrspr )
+      select_o_ops( RADN->idopsst )
+      cOStan := naz
+      select_o_ops( RADN->idopsrad )
+
       SELECT ( F_RADN )
       B_ON; ?? cIdRadn + "-" + Trim( naz ) + ' (' + Trim( imerod ) + ') ' + ime; B_OFF
       ? _l( "Br.knjiz: " ); B_ON; ?? brknjiz; B_OFF
@@ -327,7 +332,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
 
    print_lista_2( aKol, {|| FSvaki3() },, gTabela,, ;
       , _l( "Specifikacija primanja po mjesecima" ), ;
-      {|| FFor3() }, IF( gOstr == "D",, -1 ),,,,,, .F. )
+      {|| FFor3() }, IF( gOstr == "D",, - 1 ),,,,,, .F. )
 
    SELECT ld
 
@@ -336,7 +341,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION FFor3()
@@ -349,7 +354,8 @@ STATIC FUNCTION FFor3()
          cSTP := PadL( AllTrim( Str( i ) ), 2, "0" )
          cNPPI := "I" + cSTP
          cNPPS := "S" + cSTP
-         SELECT TIPPR; HSEEK cSTP; cAktivno := aktivan
+         select_o_tippr( cSTP )
+         cAktivno := aktivan
          SELECT ( nArr )
          nFPosI := FieldPos( cNPPI )
          nFPosS := FieldPos( cNPPS )

@@ -13,6 +13,8 @@
 
 STATIC s_cObracun := " "  // obracun 1 ili 2, ili " "
 
+
+
 FUNCTION o_ld()
 
    SELECT ( F_LD )
@@ -174,11 +176,11 @@ FUNCTION select_o_ld_rj( cId )
    RETURN o_ld_rj( cId )
 
 
-FUNCTION o_por()
+FUNCTION o_por( cId )
 
    SELECT ( F_POR )
 
-   IF !use_sql_sif ( "por" )
+   IF !use_sql_sif ( "por", .T., "POR", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
@@ -186,17 +188,47 @@ FUNCTION o_por()
    RETURN .T.
 
 
-FUNCTION o_dopr()
+FUNCTION select_o_por( cId )
+
+   SELECT ( F_POR )
+
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
+   ENDIF
+
+   RETURN o_por( cId )
+
+
+
+FUNCTION o_dopr( cId )
 
    SELECT ( F_DOPR )
 
-   IF !use_sql_sif ( "dopr" )
+   IF !use_sql_sif ( "dopr", .T., "DOPR", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
 
    RETURN .T.
 
+
+FUNCTION select_o_dopr( cId )
+
+   SELECT ( F_DOPR )
+
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
+   ENDIF
+
+   RETURN o_dopr( cId )
 
 
 
@@ -309,7 +341,7 @@ FUNCTION select_o_kbenef( cId )
 
 
 
-FUNCTION o_ld_parametri_obracuna()
+FUNCTION o_ld_parametri_obracuna( cSeek )
 
    SELECT ( F_PAROBR )
 
@@ -317,13 +349,30 @@ FUNCTION o_ld_parametri_obracuna()
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
+   IF cSeek != NIL
+      SEEK cSeek
+   ENDIF
 
    RETURN .T.
 
 
-FUNCTION o_parobr()
+FUNCTION o_parobr( cSeek )
 
-   RETURN o_ld_parametri_obracuna()
+   RETURN o_ld_parametri_obracuna( cSeek )
+
+
+FUNCTION select_o_parobr( cSeek )
+
+   SELECT ( F_PAROBR )
+   IF Used()
+      IF RecCount() > 1 .AND. cSeek == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
+   ENDIF
+
+   RETURN o_ld_parametri_obracuna( cSeek )
 
 
 
@@ -413,5 +462,24 @@ FUNCTION set_tippr_ili_tippr2( cObracun )
    SELECT TIPPR
    SET ORDER TO TAG "ID"
 */
+
+   RETURN .T.
+
+
+
+FUNCTION o_ld_obracuni( cSeek )
+
+   LOCAL cAlias := "OBRACUNI"
+
+   SELECT ( F_OBRACUNI )
+
+   IF !use_sql_sif ( "ld_obracuni", .T., cAlias, cId )
+      RETURN .F.
+   ENDIF
+
+   SET ORDER TO TAG "RJ"
+   IF cSeek != NIL
+      SEEK cSeek
+   ENDIF
 
    RETURN .T.

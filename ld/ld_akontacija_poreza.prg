@@ -747,13 +747,13 @@ STATIC FUNCTION fill_data( cRj, nGodina, nMjesec, ;
 
 STATIC FUNCTION o_tables()
 
-   O_OBRACUNI
+   o_ld_obracuni()
    o_ld_parametri_obracuna()
    O_PARAMS
    o_ld_rj()
    o_ld_radn()
    o_dopr()
    o_por()
-   select_o_ld()
+   //select_o_ld()
 
    RETURN .T.

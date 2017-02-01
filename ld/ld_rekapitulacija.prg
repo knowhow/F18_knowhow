@@ -114,8 +114,8 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    PoDoIzSez( nGodina, nMjesecDo )
 
-   CreOpsLD()
-   CreRekLD()
+   cre_ops_ld_temp()
+   cre_rekld_temp()
 
    open_rekld()
    O_OPSLD

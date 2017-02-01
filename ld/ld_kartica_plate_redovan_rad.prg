@@ -200,7 +200,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac,
 
                ? cTprLine
                ?U cLMSK + "  ", "Od toga pojedinačni krediti:"
-          
+
                seek_radkr( _godina, _mjesec, _idradn )
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
                   select_o_kred( radkr->idkred )
@@ -218,9 +218,10 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac,
 
             ELSEIF "SUMKREDITA" $ tippr->formula
 
-               SELECT radkr
-               SET ORDER TO 1
-               SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
+               //SELECT radkr
+               //SET ORDER TO 1
+               //SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
+               seek_radkr( _godina, _mjesec, _idradn)
                ukredita := 0
 
                P_COND
@@ -255,15 +256,21 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac,
 
    IF cVarijanta == "5"
 
-      SELECT ld
+      //SELECT ld
       PushWA()
-      SET ORDER TO TAG "2"
-      HSEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + "1" + _idradn + _idrj
+      //SET ORDER TO TAG "2"
+      seek_ld_2( _idrj, _godina, _mjesec, "1", _idradn)
+      //HSEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + "1" + _idradn + _idrj
+
       ?
       ? cLMSK + "Od toga 1. dio:"
       @ PRow(), 60 + Len( cLMSK ) SAY UIznos PICT gpici
       ? cTprLine
-      HSEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + "2" + _idradn + _idrj
+
+
+      //HSEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + "2" + _idradn + _idrj
+      seek_ld_2( _idrj, _godina, _mjesec, "2", _idradn)
+
       ? cLMSK + "Od toga 2. dio:"
       @ PRow(), 60 + Len( cLMSK ) SAY UIznos PICT gpici
       ? cTprLine
@@ -287,17 +294,9 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac,
 
    IF gPrBruto $ "D#X"
 
-      SELECT ( F_POR )
 
-      IF !Used()
-         o_por()
-      ENDIF
-
-      SELECT ( F_DOPR )
-
-      IF !Used()
-         o_dopr()
-      ENDIF
+      select_o_por()
+      select_o_dopr()
 
       SELECT ( F_KBENEF )
       IF !Used()

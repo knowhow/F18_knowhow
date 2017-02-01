@@ -43,7 +43,7 @@ FUNCTION BrisiRadnika()
 
    nUser := 001
    o_ld_radn()
-   select_o_ld()
+   //select_o_ld()
 
 
    lLogBrRadn := .F.
@@ -167,7 +167,7 @@ FUNCTION BrisiMjesec()
 
    DO WHILE .T.
 
-      select_o_ld()
+      //select_o_ld()
 
       cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gLDRadnaJedinica
@@ -187,7 +187,7 @@ FUNCTION BrisiMjesec()
 
       IF Pitanje(, "Sigurno zelite izbrisati sve podatke za RJ za ovaj mjesec !?", "N" ) == "N"
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
 
       MsgO( "Sacekajte, brisem podatke...." )

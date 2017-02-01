@@ -64,28 +64,28 @@ FUNCTION ld_specifikacija_plate_ostali()
 
    OSpecif()
 
-   cFirmNaz := fetch_metric( "org_naziv", nil, cFirmNaz )
+   cFirmNaz := fetch_metric( "org_naziv", NIL, cFirmNaz )
    cFirmNaz := PadR( cFirmNaz, 35 )
 
-   cFirmAdresa := fetch_metric( "ld_firma_adresa", nil, cFirmAdresa )
+   cFirmAdresa := fetch_metric( "ld_firma_adresa", NIL, cFirmAdresa )
    cFirmAdresa := PadR( cFirmAdresa, 35 )
 
-   cFirmOpc := fetch_metric( "ld_firma_opcina", nil, cFirmOpc )
+   cFirmOpc := fetch_metric( "ld_firma_opcina", NIL, cFirmOpc )
    cFirmOpc := PadR( cFirmOpc, 35 )
 
-   cFirmVD := fetch_metric( "ld_firma_vrsta_djelatnosti", nil, cFirmVD )
+   cFirmVD := fetch_metric( "ld_firma_vrsta_djelatnosti", NIL, cFirmVD )
    cFirmVD := PadR( cFirmVD, 50 )
 
-   cDopr1 := fetch_metric( "ld_spec_ugovori_doprinos_1", nil, cDopr1 )
-   cDopr2 := fetch_metric( "ld_spec_ugovori_doprinos_2", nil, cDopr2 )
+   cDopr1 := fetch_metric( "ld_spec_ugovori_doprinos_1", NIL, cDopr1 )
+   cDopr2 := fetch_metric( "ld_spec_ugovori_doprinos_2", NIL, cDopr2 )
 
-   qqIdRj := fetch_metric( "ld_specifikacija_rj", nil, qqIdRJ )
-   qqOpSt := fetch_metric( "ld_specifikacija_opcine", nil, qqOpSt )
+   qqIdRj := fetch_metric( "ld_specifikacija_rj", NIL, qqIdRJ )
+   qqOpSt := fetch_metric( "ld_specifikacija_opcine", NIL, qqOpSt )
 
    qqIdRj := PadR( qqIdRj, 80 )
    qqOpSt := PadR( qqOpSt, 80 )
 
-   cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
+   cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
    cMatBR := PadR( cMatBr, 13 )
 
    dDatIspl := Date()
@@ -131,33 +131,33 @@ FUNCTION ld_specifikacija_plate_ostali()
 
       aUslRJ := Parsiraj( qqIdRj, "IDRJ" )
       aUslOpSt := Parsiraj( qqOpSt, "IDOPSST" )
-      IF ( aUslRJ <> NIL .AND. aUslOpSt <> nil )
+      IF ( aUslRJ <> NIL .AND. aUslOpSt <> NIL )
          EXIT
       ENDIF
    ENDDO
 
-   set_metric( "org_naziv", nil, cFirmNaz )
-   set_metric( "ld_firma_adresa", nil, cFirmAdresa )
-   set_metric( "ld_firma_opcina", nil, cFirmOpc )
-   set_metric( "ld_firma_vrsta_djelatnosti", nil, cFirmVD )
-   set_metric( "ld_spec_ugovori_doprinos_1", nil, cDopr1 )
-   set_metric( "ld_spec_ugovori_doprinos_2", nil, cDopr2 )
+   set_metric( "org_naziv", NIL, cFirmNaz )
+   set_metric( "ld_firma_adresa", NIL, cFirmAdresa )
+   set_metric( "ld_firma_opcina", NIL, cFirmOpc )
+   set_metric( "ld_firma_vrsta_djelatnosti", NIL, cFirmVD )
+   set_metric( "ld_spec_ugovori_doprinos_1", NIL, cDopr1 )
+   set_metric( "ld_spec_ugovori_doprinos_2", NIL, cDopr2 )
 
    qqIdRj := Trim( qqIdRj )
    qqOpSt := Trim( qqOpSt )
 
-   set_metric( "ld_specifikacija_rj", nil, qqIdRJ )
-   set_metric( "ld_specifikacija_opcine", nil, qqOpSt )
-   set_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
+   set_metric( "ld_specifikacija_rj", NIL, qqIdRJ )
+   set_metric( "ld_specifikacija_opcine", NIL, qqOpSt )
+   set_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
 
    PoDoIzSez( nGodina, nMjesec )
 
    cIniName := _proizvj_ini
 
-   UzmiIzIni( cIniName, 'Varijable', "NAZ", cFirmNaz,'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "ADRESA", cFirmAdresa,'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "OPCINA", cFirmOpc,'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "VRDJ", cFirmVD,'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', "NAZ", cFirmNaz, 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', "ADRESA", cFirmAdresa, 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', "OPCINA", cFirmOpc, 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', "VRDJ", cFirmVD, 'WRITE' )
 
    UzmiIzIni( cIniName, 'Varijable', "GODOD", Razrijedi( Str( nGodinaOd, 4 ) ), 'WRITE' )
    UzmiIzIni( cIniName, 'Varijable', "GODDO", Razrijedi( Str( nGodinaDo, 4 ) ), 'WRITE' )
@@ -175,8 +175,13 @@ FUNCTION ld_specifikacija_plate_ostali()
 
    ParObr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
 
-   SELECT LD
-   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+   // SELECT LD
+   // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+
+   // GO TOP
+   // HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 )
+   seek_ld_2( NIL, nGodina, nMjesec )
+
 
    PRIVATE cFilt := ".t."
 
@@ -189,9 +194,8 @@ FUNCTION ld_specifikacija_plate_ostali()
    ENDIF
 
    SET FILTER TO &cFilt
-
    GO TOP
-   HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 )
+
 
    nUNeto := 0
    nPorNaPlatu := 0
@@ -260,7 +264,7 @@ FUNCTION ld_specifikacija_plate_ostali()
 
       SELECT LD
 
-      IF ! ( RADN->( &aUslOpSt ) )
+      IF !( RADN->( &aUslOpSt ) )
          SKIP 1
          LOOP
       ENDIF
@@ -339,7 +343,7 @@ FUNCTION ld_specifikacija_plate_ostali()
             nBOO := 0
 
             FOR i := 1 TO Len( aOps )
-               IF ! ( DOPR->id $ aOps[ i, 2 ] )
+               IF !( DOPR->id $ aOps[ i, 2 ] )
                   nBOO += aOps[ i, 3 ]
                ENDIF
             NEXT
@@ -456,7 +460,7 @@ FUNCTION ld_specifikacija_plate_ostali()
    UzmiIzIni( cIniName, 'Varijable', 'POREZ', FormNum2( nPNaPlDr + nPNaPlPov, 16, gPici2 ), 'WRITE' )
 
    // ukupno radnika
-   UzmiIzIni( cIniName, 'Varijable', 'U016', Str( nURadnika, 0 ),'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'U016', Str( nURadnika, 0 ), 'WRITE' )
 
    nPom = nUkupno
    UzmiIzIni( cIniName, 'Varijable', 'UKOBAV', FormNum2( nPom, 16, gPici2 ), 'WRITE' )

@@ -21,7 +21,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
 
    LOCAL i
    LOCAL aNeta := {}
-   LOCAL _radni_sati := fetch_metric( "ld_radni_sati", nil, "N" )
+   LOCAL _radni_sati := fetch_metric( "ld_radni_sati", NIL, "N" )
 
    lSkrivena := .F.
    PRIVATE cLMSK := ""
@@ -46,9 +46,9 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       o_ld_rj()
       o_ld_radn()
       o_ld_vrste_posla()
-      O_RADKR
+      // O_RADKR
       o_kred()
-      select_o_ld()
+      // select_o_ld()
 
    ELSE
       cObracun := cObrac
@@ -103,39 +103,52 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       O_LDSM
    ENDIF
 
-   SELECT LD
+   // SELECT LD
 
-   cIdRadn := Trim( cidradn )
+   cIdRadn := Trim( cIdradn )
 
    IF Empty( cIdRadn ) .AND. cVarSort == "2"
       IF Empty( cIdRj )
          IF ld_vise_obracuna() .AND. !Empty( cObracun )
+            seek_ld( NIL, nGodina, nMjesec, cObracun, cIdRadn )
             INDEX ON Str( field->godina ) + Str( field->mjesec ) + field->obr + SortPrez( field->idradn ) + field->idrj TO "tmpld"
-            SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cIdRadn
+            // SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cIdRadn
+            GO TOP
+
          ELSE
+            seek_ld( NIL, nGodina, nMjesec, NIL, cIdRadn )
             INDEX ON Str( field->godina ) + Str( field->mjesec ) + SortPrez( field->idradn ) + idrj TO "tmpld"
-            SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cIdRadn
+            // SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cIdRadn
+            GO TOP
          ENDIF
          cIdrj := ""
       ELSE
+
          IF ld_vise_obracuna() .AND. !Empty( cObracun )
+            // SEEK Str( nGodina, 4 ) + cIdrj + Str( nMjesec, 2 ) + cObracun + cIdRadn
+            seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
             INDEX ON Str( field->godina ) + field->idrj + Str( field->mjesec ) + field->obr + SortPrez( field->idradn ) TO "tmpld"
-            SEEK Str( nGodina, 4 ) + cIdrj + Str( nMjesec, 2 ) + cObracun + cIdRadn
+            GO TOP
          ELSE
+            seek_ld( cIdRj, nGodina, nMjesec, NIL, cIdRadn )
             INDEX ON Str( field->godina ) + field->idrj + Str( field->mjesec ) + SortPrez( field->idradn ) TO "tmpld"
-            SEEK Str( nGodina, 4 ) + cIdrj + Str( nMjesec, 2 ) + cIdRadn
+            // SEEK Str( nGodina, 4 ) + cIdrj + Str( nMjesec, 2 ) + cIdRadn
+            GO TOP
          ENDIF
       ENDIF
+
    ELSE
-      IF Empty( cidrj )
-         SET ORDER TO tag ( ld_index_tag_vise_obracuna( "2" ) )
-         SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + IIF( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
+      IF Empty( cIdrj )
+         // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+         // SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
+         seek_ld_2( NIL, nGodina, nMjesec, iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ), cIdRadn )
          cIdrj := ""
       ELSE
+         seek_ld( cIdRj, nGodina, nMjesec, iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ), cIdRadn )
          IF PCount() < 4
             SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
          ENDIF
-         SEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + IIF( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
+         // SEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
       ENDIF
    ENDIF
 
@@ -157,7 +170,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
    ?
    P_12CPI
 
-   ParObr( nMjesec, nGodina, IIF( ld_vise_obracuna(), cObracun, ), cIdRj )
+   ParObr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ), cIdRj )
 
    PRIVATE lNKNS
    lNKNS := ( cNKNS == "D" )
@@ -234,11 +247,11 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       o_ld_rj()
       o_ld_radn()
       o_ld_vrste_posla()
-      O_RADKR
+      // O_RADKR
       o_kred()
-      select_o_ld()
 
-      SET ORDER TO tag ( ld_index_tag_vise_obracuna( "1" ) )
+      // select_o_ld()
+      // SET ORDER TO tag ( ld_index_tag_vise_obracuna( "1" ) )
 
    ENDIF
 
@@ -266,24 +279,24 @@ FUNCTION ZaglKar()
    ? _l( "Vrsta posla:" ), idvposla, vposla->naz, "         Radi od:", radn->datod
    ? IF( gBodK == "1", _l( "Broj bodova :" ), _l( "Koeficijent :" ) ), Transform( brbod, "99999.99" ), Space( 24 )
    IF gMinR == "B"
-         ?? _l( "Minuli rad:" ), Transform( kminrad, "9999.99" )
+      ?? _l( "Minuli rad:" ), Transform( kminrad, "9999.99" )
    ELSE
-         ?? _l( "K.Min.rada:" ), Transform( kminrad, "99.99%" )
+      ?? _l( "K.Min.rada:" ), Transform( kminrad, "99.99%" )
    ENDIF
    ? IF( gBodK == "1", _l( "Vrijednost boda:" ), _l( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
 
    IF radn->n1 <> 0 .OR. radn->n2 <> 0
-         ? _l( "N1:" ), Transform( radn->n1, "99999999.9999" )
-         ?? Space( 2 ) + ;
-            _l( "N2:" ), Transform( radn->n2, "99999999.9999" )
+      ? _l( "N1:" ), Transform( radn->n1, "99999999.9999" )
+      ?? Space( 2 ) + ;
+         _l( "N2:" ), Transform( radn->n2, "99999999.9999" )
    ENDIF
 
    IF __var_obr == "2"
-       ?? Space( 2 ) + _l( "Koef.licnog odbitka:" ), AllTrim( Str( g_klo( ld->ulicodb ) ) )
+      ?? Space( 2 ) + _l( "Koef.licnog odbitka:" ), AllTrim( Str( g_klo( ld->ulicodb ) ) )
    ENDIF
 
    IF __radni_sati == "D"
-       ?? Space( 2 ) + _l( "Radni sati:   " ) + AllTrim( Str( ld->radsat ) )
+      ?? Space( 2 ) + _l( "Radni sati:   " ) + AllTrim( Str( ld->radsat ) )
    ENDIF
 
    RETURN .T.
@@ -309,17 +322,19 @@ FUNCTION kart_redova()
    // ispitaj standardna ld polja _I(nn), _S(nn)
    FOR i := 1 TO cLDPolja
       cField := PadL( AllTrim( Str( i ) ), 2, "0" )
-      if &( cFIznos + cField ) <> 0 .OR. &( cFSati + cField ) <> 0
-         ++ nRows
+      IF &( cFIznos + cField ) <> 0 .OR. &( cFSati + cField ) <> 0
+         ++nRows
       ENDIF
    NEXT
 
    // ispitaj kredite
-   SELECT radkr
-   SET ORDER TO 1
-   SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
+   // SELECT radkr
+   // SET ORDER TO 1
+   // SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
+   seek_radkr( _godina, _mjesec, _idradn )
+
    DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
-      ++ nRows
+      ++nRows
       SKIP
    ENDDO
    SELECT ld
@@ -371,9 +386,11 @@ STATIC FUNCTION prikazi_primanja()
          ENDIF
 
          IF "SUMKREDITA" $ tippr->formula
-            SELECT radkr
-            SET ORDER TO 1
-            SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
+            // SELECT radkr
+            // SET ORDER TO 1
+            // SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
+            seek_radkr( _godina, _mjesec, _idradn )
+
             ukredita := 0
             IF l2kolone
                P_COND2
@@ -390,7 +407,7 @@ STATIC FUNCTION prikazi_primanja()
                aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
                ? cLMSK, idkred, Left( kred->naz, 15 ), PadR( naosnovu, 20 )
                @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] PICT "999999.99" // ukupno
-               @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] -aIznosi[ 2 ] PICT "999999.99"// ukupno-placeno
+               @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] - aIznosi[ 2 ] PICT "999999.99"// ukupno-placeno
                @ PRow(), PCol() + 1 SAY iznos PICT "9999.99"
                ukredita += iznos
                SKIP
@@ -441,22 +458,30 @@ FUNCTION ld_kumulativna_primanja( cIdRadn, cIdPrim )
 
    cPom77 := cIdPrim
    IF cIdRadn == NIL; cIdRadn := ""; ENDIF
-   SELECT LD
+
+   //SELECT LD
    PushWA()
-   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
-   GO BOTTOM
 
-   nDoGod := godina
+   //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
+   //GO BOTTOM
 
-   GO TOP
-   nOdGod := godina
+   nDoGod := ld_max_godina()
+
+   //GO TOP
+   nOdGod := ld_min_godina()
+
    FOR j := nOdGod TO nDoGod
+      //GO TOP
+      //SEEK Str( j, 4 ) + cIdRadn
+      seek_ld( NIL, j, NIL, NIL, cIdRadn)
+      SET ORDER TO TAG "4"
       GO TOP
-      SEEK Str( j, 4 ) + cIdRadn
+
       DO WHILE godina == j .AND. cIdRadn == IdRadn
          nVrati += i&cPom77
          SKIP 1
       ENDDO
+
    NEXT
    SELECT LD
    PopWA()

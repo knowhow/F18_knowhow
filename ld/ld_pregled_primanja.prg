@@ -94,10 +94,10 @@ FUNCTION ld_pregled_primanja()
       BoxC()
    ENDIF
 
-   IF !Empty( cSifKred )
-      O_RADKR
-      SET ORDER TO TAG "1"
-   ENDIF
+   //IF !Empty( cSifKred )
+      //O_RADKR
+      //SET ORDER TO TAG "1"
+   //ENDIF
 
    SELECT ld
 

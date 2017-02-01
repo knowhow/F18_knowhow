@@ -89,8 +89,8 @@ FUNCTION pregled_plata()
       select_o_vposla( cVposla )
    ENDIF
 
-   SELECT ld
-   USE
+   //SELECT ld
+   //USE
    use_sql_ld_ld( nGodina, nMjesec, nMjesec, nVrstaInvaliditeta, nStepenInvaliditeta )
 
    // 1 - "str(godina)+idrj+str(mjesec)+idradn"
@@ -98,8 +98,9 @@ FUNCTION pregled_plata()
    IF Empty( cIdrj )
       cidrj := ""
       IF cVarSort == "1"
-         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-         HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
+         //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+         //HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
+         seek_ld_2( NIL, nGodina, nMjesec, iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ) )
       ELSE
          Box(, 2, 30 )
          nSlog := 0

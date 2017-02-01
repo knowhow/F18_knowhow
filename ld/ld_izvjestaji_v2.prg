@@ -23,7 +23,7 @@ FUNCTION ld_pregled_primanja_za_period()
 
    o_ld_rj()
    o_ld_radn()
-   select_o_ld()
+   // select_o_ld()
 
    PRIVATE cTip := "  "
    cDod := "N"
@@ -59,14 +59,17 @@ FUNCTION ld_pregled_primanja_za_period()
    select_o_tippr( cTip )
    EOF CRET
 
-   SELECT ld
+   seek_ld( NIL, nGodina )
 
    IF ld_vise_obracuna() .AND. !Empty( cObracun )
       SET FILTER TO obr == cObracun
+
    ENDIF
 
-   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
-   HSEEK Str( nGodina, 4 )
+   // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
+   // HSEEK Str( nGodina, 4 )
+   SET ORDER TO TAG "4"
+   GO TOP
 
    EOF CRET
 
@@ -93,7 +96,10 @@ FUNCTION ld_pregled_primanja_za_period()
    nC1 := 10
 
    DO WHILE !Eof() .AND.  nGodina == godina
-      IF PRow() > RPT_PAGE_LEN; FF; Eval( bZagl ); ENDIF
+
+      IF PRow() > RPT_PAGE_LEN
+         FF; Eval( bZagl )
+      ENDIF
 
 
       cIdRadn := idradn
@@ -107,7 +113,7 @@ FUNCTION ld_pregled_primanja_za_period()
       IF fracunaj
          nKolona := 0
       ENDIF
-      DO WHILE  !Eof() .AND. nGodina == godina .AND. idradn == cidradn
+      DO WHILE  !Eof() .AND. nGodina == godina .AND. idradn == cIdradn
          Scatter()
          IF !Empty( cidrj ) .AND. _idrj <> cidrj
             skip; LOOP

@@ -237,8 +237,12 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
    ParObr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
 
-   SELECT LD
-   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+   //SELECT LD
+   //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+
+   seek_ld_2( NIL, nGodina, nMjesec )
+    //  GO TOP
+    //  HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 )
 
    PRIVATE cFilt := ".t."
 
@@ -251,9 +255,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    ENDIF
 
    SET FILTER TO &cFilt
-
    GO TOP
-   HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 )
 
 
    nUNeto := 0

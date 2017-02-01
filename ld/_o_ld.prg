@@ -321,6 +321,9 @@ FUNCTION o_ld_parametri_obracuna()
    RETURN .T.
 
 
+FUNCTION o_parobr()
+
+   RETURN o_ld_parametri_obracuna()
 
 
 

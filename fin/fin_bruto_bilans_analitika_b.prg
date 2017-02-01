@@ -396,7 +396,7 @@ FUNCTION zagl_bb_anal( hParams, nStr )
     ELSE
       ? "Firma:"
       @ PRow(), PCol() + 2 SAY hParams[ "idfirma" ]
-      SELECT PARTN
+      -- SELECT PARTN
       -- HSEEK hParams[ "idfirma" ]
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2

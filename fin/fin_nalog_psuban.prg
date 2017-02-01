@@ -128,8 +128,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
                   _kto_naz := konto->naz
                ENDIF
 
-               SELECT PARTN
-               HSEEK ( nArr )->idpartner
+               select_o_partner( ( nArr )->idpartner )
                IF Found()
                   _part_naz := partn->naz
                   _part_naz2 := partn->naz2
@@ -139,8 +138,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
             ELSE
 
-               SELECT PARTN
-               HSEEK ( nArr )->idpartner
+               select_o_partner( ( nArr )->idpartner )
                IF Found()
                   _part_naz := partn->naz
                   _part_naz2 := partn->naz2

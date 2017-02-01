@@ -326,8 +326,7 @@ FUNCTION fin_specifikacija_suban()
          cIdPartner := field->idPartner
 
          IF !Empty( cOpcine )
-            SELECT partn
-            SEEK cIdPartner
+            select_o_partner( cIdPartner )
             IF AllTrim( field->idops ) $ cOpcine
                // to je taj partner...
             ELSE
@@ -402,8 +401,7 @@ FUNCTION fin_specifikacija_suban()
             nCOpis := PCol()
             // ispis partnera
             IF !Empty( cIdPartner )
-               SELECT PARTN
-               HSEEK cIdPartner
+               select_o_partner( cIdPartner )
                SELECT SUBAN
                IF gVSubOp == "D"
                   SELECT KONTO
@@ -566,8 +564,7 @@ FUNCTION getmjesto( cMjesto )
    LOCAL fRet
    LOCAL nSel := Select()
 
-   SELECT partn
-   SEEK ( nSel )->idpartner
+   select_o_partner( ( nSel )->idpartner )
    fRet := .F.
    IF mjesto = cMjesto
       fRet := .T.

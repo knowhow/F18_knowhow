@@ -556,8 +556,7 @@ STATIC FUNCTION zagl_bb_suban( params, nStr )
    ELSE
       ? "Firma:"
       @ PRow(), PCol() + 2 SAY params[ "idfirma" ]
-      SELECT PARTN
-      HSEEK params[ "idfirma" ]
+      select_o_partner( params[ "idfirma" ] )
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF

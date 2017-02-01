@@ -12,7 +12,9 @@
 
 #include "f18.ch"
 
-FIELD ID, NAZ, IDJ, IDKAN, IDN0, IDPARTNER
+FIELD ID, NAZ, IDJ, IDKAN, IDN0, IDPARTNER, GODINA, OBR
+FIELD IDOPS, RACUN
+FIELD BARKOD, fisc_plu
 
 FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 

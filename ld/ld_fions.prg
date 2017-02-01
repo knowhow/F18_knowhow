@@ -198,10 +198,12 @@ FUNCTION Prosj3( cTip, cTip2 )
       DO WHILE .T.
          ++i
          IF _Mjesec - i < 1
-            SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - i, 2 ) + _idradn
+            // SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - i, 2 ) + _idradn
+            seek_ld( NIL, _Godina - 1, 12 + _Mjesec - i, NIL, _idradn )
             cMj1 := Str( 12 + _mjesec - i, 2 ) + "." + Str( _godina - 1, 4 )
          ELSE
-            SEEK Str( _Godina, 4 ) + Str( _mjesec - i, 2 ) + _idradn
+            // SEEK Str( _Godina, 4 ) + Str( _mjesec - i, 2 ) + _idradn
+            seek_ld( NIL, _Godina, _Mjesec - i, NIL, _idradn )
             cMj1 := Str( _mjesec - i, 2 ) + "." + Str( _godina, 4 )
          ENDIF
          IF &gFUGod <> 0  // formula za godisnji, default: I06
@@ -216,12 +218,15 @@ FUNCTION Prosj3( cTip, cTip2 )
    ENDIF
 
    IF _mjesec - 1 - nPomak < 1
-      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1 - nPomak, 2 ) + _idradn
+      // SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1 - nPomak, 2 ) + _idradn
+      seek_ld( NIL, _Godina - 1, 12 + _Mjesec - 1 - nPomak, NIL, _idradn )
       cMj1 := Str( 12 + _mjesec - 1 - nPomak, 2 ) + "." + Str( _godina - 1, 4 )
    ELSE
-      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 1 - nPomak, 2 ) + _idradn
+      // SEEK Str( _Godina, 4 ) + Str( _Mjesec - 1 - nPomak, 2 ) + _idradn
+      seek_ld( NIL, _Godina, _Mjesec - 1 - nPomak, NIL, _idradn )
       cMj1 := Str( _mjesec - 1 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
+
    IF Found()
       IF ld_vise_obracuna()
          ScatterS( godina, mjesec, idrj, idradn, "w" )
@@ -253,11 +258,14 @@ FUNCTION Prosj3( cTip, cTip2 )
          ++nDijeli
       ENDIF
    ENDIF
+
    IF _mjesec - 2 - nPomak < 1
-      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 2 - nPomak, 2 ) + _idradn
+      // SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 2 - nPomak, 2 ) + _idradn
+      seek_ld( NIL, _Godina - 1, 12 + _Mjesec - 2 - nPomak, NIL, _idradn )
       cMj2 := Str( 12 + _mjesec - 2 - nPomak, 2 ) + "." + Str( _godina - 1, 4 )
    ELSE
-      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 2 - nPomak, 2 ) + _idradn
+      // SEEK Str( _Godina, 4 ) + Str( _Mjesec - 2 - nPomak, 2 ) + _idradn
+      seek_ld( NIL, _Godina,  _Mjesec - 2 - nPomak, NIL, _idradn )
       cMj2 := Str( _mjesec - 2 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
    IF Found()
@@ -293,12 +301,15 @@ FUNCTION Prosj3( cTip, cTip2 )
    ENDIF
 
    IF _mjesec - 3 - nPomak < 1
-      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 3 - nPomak, 2 ) + _idradn
+      // SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 3 - nPomak, 2 ) + _idradn
+      seek_ld( NIL, _Godina - 1,  12 + _Mjesec - 3 - nPomak, NIL, _idradn )
       cMj3 := Str( 12 + _mjesec - 3 - nPomak, 2 ) + "." + Str( _godina - 1, 4 )
    ELSE
-      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 3 - nPomak, 2 ) + _idradn
+      // SEEK Str( _Godina, 4 ) + Str( _Mjesec - 3 - nPomak, 2 ) + _idradn
+      seek_ld( NIL, _Godina, _Mjesec - 3 - nPomak, NIL, _idradn )
       cMj3 := Str( _mjesec - 3 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
+
    IF Found()
       IF ld_vise_obracuna()
          ScatterS( godina, mjesec, idrj, idradn, "w" )
@@ -347,7 +358,9 @@ FUNCTION Prosj3( cTip, cTip2 )
    @ m_x + 4, m_y + 2 SAY cmj3; @ Row(), Col() + 2 SAY nMj3 PICT "999999.999"
    IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp3, "/", nSS3; ENDIF
    IF cTip $ "57"; ?? "  sati:"; ?? nSS3; ENDIF
-   @ m_x + 6, m_y + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY ( nMj3 + nMj2 + nMj1 ) / iif( cTip $ "57", nSumsat, nDijeli ) PICT "999999.999"
+   @ m_x + 6, m_y + 2 SAY "Prosjek"
+   @ Row(), Col() + 2 SAY ( nMj3 + nMj2 + nMj1 ) / iif( cTip $ "57", nSumsat, nDijeli ) PICT "999999.999"
+
    Inkey( 0 )
    BoxC()
 

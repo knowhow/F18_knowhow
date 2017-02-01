@@ -23,7 +23,7 @@ FUNCTION cre_sif_roba( ver )
    AAdd( aDBf, { 'SIFRADOB', 'C',  20,  0 } )
    add_f_mcode( @aDbf )
    AAdd( aDBf, { 'NAZ', 'C', 250,  0 } )
-   AAdd( aDBf, { 'STRINGS', 'N',  10,  0 } )  //izbaciti
+   AAdd( aDBf, { 'STRINGS', 'N',  10,  0 } )  // izbaciti
    AAdd( aDBf, { 'JMJ', 'C',   3,  0 } )
    AAdd( aDBf, { 'IDTARIFA', 'C',   6,  0 } )
    AAdd( aDBf, { 'NC', 'N',  18,  8 } )
@@ -168,8 +168,9 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "4", "OZNAKA+STR(VEZA_1,10,0)+NAZ", _alias )
    CREATE_INDEX( "5", "OZNAKA+STR(VEZA_1,10,0)+STR(VEZA_2,10,0)", _alias )
 
-   RETURN .T.
 */
+
+   RETURN .T.
 
 STATIC FUNCTION g_str_fields()
 

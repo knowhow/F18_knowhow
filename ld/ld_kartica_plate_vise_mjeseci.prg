@@ -26,9 +26,8 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    cObracun := gObracun
    cRazdvoji := "N"
 
-   brisi_pomocnu_tabelu()
+   brisi_tmp__ld()
    otvori_tabele()
-
 
    cSatiVO := "S"
 
@@ -53,27 +52,29 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    set_metric( "ld_izvj_radnik", my_user(), cIdRadn )
 
-   SELECT LD
-
-   IF !Empty( cObracun )
-      SET FILTER TO obr = cObracun
-   ENDIF
+   // SELECT LD
+   AltD()
 
    cIdRadn := Trim( cIdradn )
    IF Empty( cIdrj )
-      //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
-      //SEEK Str( nGodina, 4 ) + cIdRadn
+      // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
+      // SEEK Str( nGodina, 4 ) + cIdRadn
       seek_ld( NIL, nGodina, NIL, NIL, cIdRadn )
       SET ORDER TO TAG "4"
       cIdrj := ""
 
    ELSE
-      //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "3" ) )
-      //SEEK Str( nGodina, 4 ) + cIdrj + cIdRadn
+      // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "3" ) )
+      // SEEK Str( nGodina, 4 ) + cIdrj + cIdRadn
       seek_ld( cIdRj, nGodina, NIL, NIL, cIdRadn )
       SET ORDER TO TAG "3"
 
    ENDIF
+
+   IF !Empty( cObracun )
+      SET FILTER TO obr = cObracun
+   ENDIF
+
    EOF CRET
 
    nStrana := 0
@@ -112,9 +113,11 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
          select_o_radn( xIdradn )
          select_o_vposla( ld->idvposla )
          select_o_ld_rj( ld->idrj )
+
          SELECT ld
          Eval( bZagl )
       ENDIF
+
       DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cIdrj .AND. idradn == xIdRadn
 
          m := "----------------------- --------  ----------------   ------------------"
@@ -123,7 +126,8 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
          SELECT ld
 
          IF ( mjesec < nMjesec .OR. mjesec > cMjesec2 )
-            skip; LOOP
+            SKIP
+            LOOP
          ENDIF
          Scatter()
          IF cRazdvoji == "D"
@@ -150,7 +154,8 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
             wIdRadn := xIdRadn
             Gather( "w" )
             SELECT LD
-            SKIP; LOOP
+            SKIP
+            LOOP
          ENDIF
 
          cUneto := "D"
@@ -162,13 +167,17 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
             ENDIF
             wi&cPom += _I&cPom
          NEXT
-         SELECT ld
+
+
          wUIznos += _UIznos
          IF !ld_vise_obracuna() .OR. cSatiVO == "S" .OR. cSatiVO == _obr
             wUSati += _USati
          ENDIF
          wUNeto += _UNeto
+
+         SELECT ld
          SKIP
+         altd()
       ENDDO
 
       IF cRazdvoji == "N"
@@ -298,12 +307,24 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
 
 
-STATIC FUNCTION brisi_pomocnu_tabelu()
+STATIC FUNCTION brisi_tmp__ld()
 
-   O__LD
+   o__ld()
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.
+
+
+STATIC  FUNCTION o__ld()
+
+   SELECT ( F__LD )
+   IF Used()
+      USE
+   ENDIF
+   my_use ( "_ld" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
 
 
 STATIC FUNCTION zaglavlje_izvjestaja()
@@ -333,14 +354,14 @@ STATIC FUNCTION otvori_tabele()
 
    set_tippr_ili_tippr2( cObracun )
 
-   o_ld_parametri_obracuna()
-   o_ld_rj()
-   o_ld_radn()
-   o_ld_vrste_posla()
-   //O_RADKR
-   o_kred()
-   O__LD
-   SET ORDER TO TAG "1"
-   //select_o_ld()
+   // o_ld_parametri_obracuna()
+   // o_ld_rj()
+   // o_ld_radn()
+   // o_ld_vrste_posla()
+   // O_RADKR
+   // o_kred()
+   o__ld()
+
+   // select_o_ld()
 
    RETURN .T.

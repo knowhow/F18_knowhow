@@ -17,7 +17,7 @@ MEMVAR cLMSK
 
 STATIC DUZ_STRANA := 64
 
-FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
+FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta )
 
    LOCAL nKRedova
    LOCAL cDoprSpace := Space( 3 )

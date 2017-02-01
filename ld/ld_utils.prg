@@ -496,13 +496,13 @@ FUNCTION get_varobr()
 
 
 
-FUNCTION TagVO( cT, cI )
+FUNCTION ld_index_tag_vise_obracuna( cT, cI )
 
    IF cI == NIL
       cI := ""
    ENDIF
 
-   IF lViseObr .AND. cT $ "12"
+   IF ld_vise_obracuna() .AND. cT $ "12"
       IF cI == "I" .OR. Empty( cObracun )
          cT := cT + "U"
       ENDIF
@@ -514,11 +514,10 @@ FUNCTION TagVO( cT, cI )
 
 
 
-
 FUNCTION ld_obracun_napravljen_vise_puta()
 
-   LOCAL cMjesec := gMjesec
-   LOCAL cGodina := gGodina
+   LOCAL nMjesec := gMjesec
+   LOCAL nGodina := gGodina
    LOCAL cObracun := gObracun
    LOCAL _data := {}
    LOCAL cIdRadn, nProlaz, _count
@@ -526,8 +525,8 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    Box(, 3, 50 )
 
-   @ m_x + 1, m_y + 2 SAY " Mjesec: " GET cMjesec PICT "99"
-   @ m_x + 2, m_y + 2 SAY " Godina: " GET cGodina PICT "9999"
+   @ m_x + 1, m_y + 2 SAY " Mjesec: " GET nMjesec PICT "99"
+   @ m_x + 2, m_y + 2 SAY " Godina: " GET nGodina PICT "9999"
    @ m_x + 3, m_y + 2 SAY "Obracun: " GET cObracun
 
    READ
@@ -541,13 +540,13 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    SET ORDER TO TAG "2"
    GO TOP
-   SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
+   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
 
    Box(, 1, 60 )
 
    _count := 0
 
-   DO WHILE !Eof() .AND. Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun == Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + obr
+   DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun == Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + obr
 
       cIdRadn := idradn
       nProlaz := 0
@@ -555,7 +554,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
       ++_count
       @ m_x + 1, m_y + 2 SAY "Radnik: " + cIdRadn
 
-      DO WHILE !Eof() .AND. Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun == Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->obr .AND. field->idradn == cIdradn
+      DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun == Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->obr .AND. field->idradn == cIdradn
          ++nProlaz
          SKIP
       ENDDO
@@ -566,9 +565,9 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
          SELECT ld
 
-         SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun + cIdRadn
+         SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cIdRadn
 
-         DO WHILE !Eof() .AND. Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->obr == Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun .AND. field->idradn == cIdRadn
+         DO WHILE !Eof() .AND. Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->obr == Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun .AND. field->idradn == cIdRadn
             AAdd( _data, { field->obr, field->idradn, PadR( AllTrim( radn->naz ) + " " + AllTrim( radn->ime ), 20 ), field->idrj, field->uneto, field->usati } )
             SKIP
          ENDDO
@@ -586,7 +585,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    START PRINT CRET
 
-   ? _l( "Radnici obradjeni vise puta za isti mjesec -" ), cGodina, "/", cMjesec
+   ? _l( "Radnici obradjeni vise puta za isti mjesec -" ), nGodina, "/", nMjesec
    ?
    ? _l( "OBR RADNIK                      RJ     neto        sati" )
    ? "--- ------ -------------------- -- ------------- ----------"
@@ -774,7 +773,7 @@ FUNCTION IspisObr()
 
    LOCAL cVrati := ""
 
-   IF lViseObr .AND. !Empty( cObracun )
+   IF ld_vise_obracuna() .AND. !Empty( cObracun )
       cVrati := "/" + cObracun
    ENDIF
 
@@ -782,4 +781,4 @@ FUNCTION IspisObr()
 
 
 FUNCTION Obr2_9()
-   RETURN lViseObr .AND. !Empty( cObracun ) .AND. cObracun <> "1"
+   RETURN ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. cObracun <> "1"

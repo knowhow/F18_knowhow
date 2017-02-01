@@ -246,7 +246,7 @@ FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
       GO TOP
       SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cRadnik
    ELSE
-      SET ORDER TO TAG ( TagVO( "2" ) )
+      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
       GO TOP
       SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cObracun + cRadnik
    ENDIF

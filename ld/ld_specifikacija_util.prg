@@ -111,7 +111,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
    gTabela := 1
    gOstr := "N"
    cIdRj := gLDRadnaJedinica
-   cGodina := gGodina
+   nGodina := gGodina
    cIdRadn := Space( 6 )
    cSvaPrim := "S"
    qqOstPrim := ""
@@ -143,7 +143,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
    Box(, 7, 77 )
 
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ VALID Empty( cIdRj ) .OR. P_LD_RJ( @cIdRj )
-   @ m_x + 2, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 2, m_y + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
    @ m_x + 3, m_y + 2 SAY "Radnik (prazno-svi radnici): "  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
    @ m_x + 4, m_y + 2 SAY "Prikazati primanja (N-neto,V-van neta,S-sva primanja,0-nista)" GET cSvaPrim PICT "@!" VALID cSvaPrim $ "NVS0"
    @ m_x + 5, m_y + 2 SAY "Ostala primanja za prikaz (navesti sifre npr. 25;26;27;):" GET qqOstPrim PICT "@S15"
@@ -169,7 +169,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
 
    SELECT LD
 
-   PRIVATE cFilt1 := "GODINA==" + dbf_quote( cGodina ) + ;
+   PRIVATE cFilt1 := "GODINA==" + dbf_quote( nGodina ) + ;
       IIF( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) ) + ;
       IIF( Empty( cIdRadn ), "", ".and.IDRADN==" + dbf_quote( cIdRadn ) )
 
@@ -178,12 +178,12 @@ FUNCTION ld_specifikacija_po_mjesecima()
    GO TOP
 
    DO WHILE !Eof()
-      cMjesec := mjesec
-      DO WHILE !Eof() .AND. cMjesec == mjesec
+      nMjesec := mjesec
+      DO WHILE !Eof() .AND. nMjesec == mjesec
          SELECT MTEMP
-         IF MTEMP->mjesec != cMjesec
+         IF MTEMP->mjesec != nMjesec
             APPEND BLANK
-            REPLACE mjesec WITH cMjesec
+            REPLACE mjesec WITH nMjesec
          ENDIF
          FOR i := 1 TO cLDPolja
             cSTP := PadL( AllTrim( Str( i ) ), 2, "0" )
@@ -201,7 +201,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
             nFPosS := FieldPos( cNPPS )
             IF nFPosI > 0
                FieldPut( nFPosI, FieldGet( nFPosI ) + LD->( FieldGet( nFPosI ) ) )
-               IF ! ( lViseObr .AND. LD->obr <> "1" ) // samo sati iz 1.obracuna
+               IF ! ( ld_vise_obracuna() .AND. LD->obr <> "1" ) // samo sati iz 1.obracuna
                   FieldPut( nFPosS, FieldGet( nFPosS ) + LD->( FieldGet( nFPosS ) ) )
                ENDIF
             ELSE
@@ -300,7 +300,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
    ?? Space( gnLMarg ); ?? _l( "LD: Izvjestaj na dan" ), Date()
    ? Space( gnLMarg ); IspisFirme( "" )
    ? Space( gnLMarg ); ?? _l( "RJ:" ) + Space( 1 ); B_ON; ?? IF( Empty( cIdRJ ), "SVE", cIdRJ ); B_OFF
-   ?? Space( 2 ) + _l( "GODINA: " ); B_ON; ?? cGodina; B_OFF
+   ?? Space( 2 ) + _l( "GODINA: " ); B_ON; ?? nGodina; B_OFF
    ? _l( "RADNIK: " )
    IF Empty( cIdRadn )
       ?? "SVI"

@@ -622,7 +622,7 @@ FUNCTION ld_lista_kredita()
 
    cNaOsnovu := PadR( ".", 20 )
    cIdRadnaJedinica := Space( 2 )
-   cGodina := gGodina; cMjesec := gmjesec
+   nGodina := gGodina; nMjesec := gmjesec
    PRIVATE cRateDN := "D", cAktivni := "D"
 
    Box(, 13, 60 )
@@ -641,8 +641,8 @@ FUNCTION ld_lista_kredita()
    READ
    ESC_BCR
    IF cRateDN $ "JR"
-      @ m_x + 12, m_y + 2 SAY "Prikazati ratu od godina/mjesec:" GET cGodina PICT "9999"
-      @ m_x + 12, Col() + 1 SAY "/" GET cMjesec PICT "99"
+      @ m_x + 12, m_y + 2 SAY "Prikazati ratu od godina/mjesec:" GET nGodina PICT "9999"
+      @ m_x + 12, Col() + 1 SAY "/" GET nMjesec PICT "99"
       READ
       ESC_BCR
    ENDIF
@@ -746,7 +746,7 @@ FUNCTION ld_lista_kredita()
                RKmjes := RADKR->Mjesec
                SKIP 1
             ENDDO
-            IF nIzn > nIznP .OR. ( nIzn == nIznP .AND. RKgod == cGodina .AND. RKmjes >= cMjesec )
+            IF nIzn > nIznP .OR. ( nIzn == nIznP .AND. RKgod == nGodina .AND. RKmjes >= nMjesec )
                GO nTekRec
             ELSE
                LOOP
@@ -777,14 +777,14 @@ FUNCTION ld_lista_kredita()
          DO WHILE !Eof() .AND. idkred = cidkred .AND. cosn == naosnovu .AND. idradn == cidradn
             nKoef := 1
 
-            IF cRateDN <> "J" .OR. ( godina == cGodina .AND. mjesec == cMjesec )
+            IF cRateDN <> "J" .OR. ( godina == nGodina .AND. mjesec == nMjesec )
                ++nR
                nIzn += iznos * nKoef
                nIznP += placeno
                IF iznos * nKoef == 0 .AND. cRateDN == "R"
                   --nR
                ENDIF  // mozda i za sve var. ?!
-               IF cMjesec == mjesec .AND. cGodina == godina
+               IF nMjesec == mjesec .AND. nGodina == godina
                   nIRR := iznos * nKoef
                ENDIF
             ENDIF
@@ -794,7 +794,7 @@ FUNCTION ld_lista_kredita()
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY iznos * nKoef PICT gpici
             ELSEIF cRateDN == "J"
-               IF godina == cGodina .AND. mjesec == cMjesec
+               IF godina == nGodina .AND. mjesec == nMjesec
                   ?? "", Str( mjesec ) + "/" + Str( godina )
                   nCol1 := PCol() + 1
                   @ PRow(), PCol() + 1 SAY iznos * nKoef PICT gpici
@@ -879,7 +879,7 @@ FUNCTION ld_lista_kredita_zaglavlje()
       ENDIF
       ? "Ziro-r. :", kred->ziro
       ?
-      ? PadC( "DOJAVA KREDITA ZA MJESEC : " + Str( cMjesec ) + ". GODINE: " + Str( cGodina ) + ".", 78 )
+      ? PadC( "DOJAVA KREDITA ZA MJESEC : " + Str( nMjesec ) + ". GODINE: " + Str( nGodina ) + ".", 78 )
    ELSE
       ? "LD: SPISAK KREDITA, izvjestaj na dan:", Date()
       IF !fsvi

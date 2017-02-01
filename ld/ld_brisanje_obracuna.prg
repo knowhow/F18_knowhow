@@ -35,7 +35,7 @@ FUNCTION BrisiRadnika()
 
    LOCAL nTrec
    LOCAL cIdRadn
-   LOCAL cMjesec
+   LOCAL nMjesec
    LOCAL cIdRj
    LOCAL fnovi
    LOCAL _rec
@@ -53,19 +53,19 @@ FUNCTION BrisiRadnika()
 
       cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gLDRadnaJedinica
-      cMjesec := gMjesec
-      cGodina := gGodina
+      nMjesec := gMjesec
+      nGodina := gGodina
       cObracun := gObracun
 
       Box(, 4, 60 )
       @ m_x + 1, m_y + 2 SAY "Radna jedinica: "
       QQOUTC( cIdRJ, "N/W" )
       @ m_x + 2, m_y + 2 SAY "Mjesec: "
-      QQOUTC( Str( cMjesec, 2 ), "N/W" )
+      QQOUTC( Str( nMjesec, 2 ), "N/W" )
       @ m_x + 2, Col() + 2 SAY "Obracun: "
       QQOUTC( cObracun, "N/W" )
       @ m_x + 3, m_y + 2 SAY "Godina: "
-      QQOUTC( Str( cGodina, 4 ), "N/W" )
+      QQOUTC( Str( nGodina, 4 ), "N/W" )
 
       @ m_x + 4, m_y + 2 SAY "Radnik" GET cIdRadn valid {|| cIdRadn $ "XXXXXX" .OR. P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), .T. }
 
@@ -75,23 +75,21 @@ FUNCTION BrisiRadnika()
 
       IF cIdRadn <> "XXXXXX"
 
-         select_o_ld()
-         SELECT ld
-         SEEK Str( cGodina, 4 ) + cIdRj + Str( cMjesec, 2 ) + BrojObracuna() + cIdRadn
+         seek_ld( cIdRj, nGodina, nMjesec, ld_broj_obracuna(), cIdRadn )
 
          IF Found()
 
-            IF Pitanje(, "Sigurno zelite izbrisati ovaj zapis D/N", "N" ) == "D"
+            IF Pitanje(, "Sigurno želite izbrisati ovaj zapis D/N", "N" ) == "D"
 
                _rec := dbf_get_rec()
                delete_rec_server_and_dbf( "ld_ld", _rec, 1, "FULL" )
 
-               MsgBeep( "Izbrisan obračun za radnika: " + cIdRadn + "  !!!" )
+               MsgBeep( "Izbrisan obračun za radnika: " + cIdRadn + "  !" )
 
 
             ENDIF
          ELSE
-            Msg( "Podatak ne postoji...", 4 )
+            Msg( "Podatak ne postoji !", 4 )
          ENDIF
 
       ELSE
@@ -155,7 +153,7 @@ FUNCTION BrisiRadnika()
 
 FUNCTION BrisiMjesec()
 
-   LOCAL cMjesec
+   LOCAL nMjesec
    LOCAL cIdRj
    LOCAL fnovi
    LOCAL _rec
@@ -173,15 +171,15 @@ FUNCTION BrisiMjesec()
 
       cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gLDRadnaJedinica
-      cMjesec := gMjesec
-      cGodina := gGodina
+      nMjesec := gMjesec
+      nGodina := gGodina
       cObracun := gObracun
 
       Box(, 4, 60 )
       @ m_x + 1, m_y + 2 SAY "Radna jedinica: " GET cIdRJ
-      @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET cMjesec PICT "99"
+      @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET nMjesec PICT "99"
       @ m_x + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
-      @ m_x + 3, m_y + 2 SAY "Godina: "  GET cGodina PICT "9999"
+      @ m_x + 3, m_y + 2 SAY "Godina: "  GET nGodina PICT "9999"
       READ
       ClvBox()
       ESC_BCR
@@ -194,18 +192,14 @@ FUNCTION BrisiMjesec()
 
       MsgO( "Sacekajte, brisem podatke...." )
 
-      SELECT ld
-
-      SEEK Str( cGodina, 4 ) + cIdRj + Str( cMjesec, 2 ) + BrojObracuna()
+      seek_ld( cIdRj, nGodina, nMjesec, ld_broj_obracuna())
 
       IF Found()
-
          _rec := dbf_get_rec()
          delete_rec_server_and_dbf( "ld_ld", _rec, 2, "FULL" )
-
       ENDIF
 
-      MsgBeep( "Obracun za " + Str( cMjesec, 2 ) + " mjesec izbrisani !!!" )
+      MsgBeep( "Obracun za " + Str( nMjesec, 2 ) + " mjesec izbrisani !" )
 
       MsgC()
       EXIT

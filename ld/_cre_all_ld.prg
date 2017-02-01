@@ -19,7 +19,6 @@ FUNCTION cre_all_ld_sif( ver )
    LOCAL _table_name, _alias, _created
    LOCAL aDbf
 
-
    // KRED.DBF
    // ---------------------------------------------------------
    aDBf := {}
@@ -207,7 +206,6 @@ FUNCTION cre_all_ld( ver )
    LOCAL _created
    LOCAL _tmp
 
-
    // RADN
    // -----------------------
 
@@ -366,7 +364,7 @@ FUNCTION cre_all_ld( ver )
    kreiraj_tabelu_ld__ld( aDbf )
 
 
-   // --------------------------------------------
+/*
    // PAROBR.DBF
    // --------------------------------------------
    aDBf := {}
@@ -394,7 +392,7 @@ FUNCTION cre_all_ld( ver )
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "ID", "id + godina + obr", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    // ---------------------------------------
    // OBRACUNI.DBF
@@ -710,13 +708,27 @@ FUNCTION h_ld_ld_indexes()
 
    LOCAL hIndexes := hb_Hash()
 
-
    hIndexes[ "1" ] := "str(godina,4,0)+idrj+str(mjesec,2,0)+obr+idradn"
    hIndexes[ "2" ] := "str(godina,4,0)+str(mjesec,2,0)+obr+idradn+idrj"
    hIndexes[ "3" ] := "str(godina,4,0)+idrj+idradn"
    hIndexes[ "4" ] := "str(godina,4,0)+idradn+str(mjesec,2,0)+obr"
+
+   // U (ukupno) indeksi ne sadrze polje obr
    hIndexes[ "1U" ] := "str(godina,4,0)+idrj+str(mjesec,2,0)+idradn"
    hIndexes[ "2U" ] := "str(godina,4,0)+str(mjesec,2,0)+idradn+idrj"
+
    hIndexes[ "RADN" ] := "idradn"
+
+   RETURN hIndexes
+
+
+FUNCTION h_ld_radkr_indexes()
+
+   LOCAL hIndexes := hb_Hash()
+
+   hIndexes[ "1" ] := "str(godina)+str(mjesec)+idradn+idkred+naosnovu"
+   hIndexes[ "2" ] := "idradn+idkred+naosnovu+str(godina)+str(mjesec)"
+   hIndexes[ "3" ] := "idkred+naosnovu+idradn+str(godina)+str(mjesec)"
+   hIndexes[ "4" ] := "str(godina)+str(mjesec)+idradn+naosnovu"
 
    RETURN hIndexes

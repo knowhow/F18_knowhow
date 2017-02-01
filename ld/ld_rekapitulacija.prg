@@ -98,9 +98,9 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
 
    IF lSvi
-      SET ORDER TO TAG ( TagVO( "2" ) )
+      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
    ELSE
-      SET ORDER TO TAG ( TagVO( "1" ) )
+      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
    ENDIF
 
 
@@ -463,7 +463,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
 
    DO WHILE !Eof() .AND. Eval( bUSlov )
 
-      IF lViseObr .AND. Empty( cObracun )
+      IF ld_vise_obracuna() .AND. Empty( cObracun )
          ScatterS( godina, mjesec, idrj, idradn )
       ELSE
          Scatter()
@@ -794,7 +794,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
          ELSE
             nTObl := Select()
             nTRec := PAROBR->( RecNo() )
-            ParObr( mjesec, godina, IF( lViseObr, cObracun, ), IF( !lSvi, cIdRj, ) )
+            ParObr( mjesec, godina, IF( ld_vise_obracuna(), cObracun, ), IF( !lSvi, cIdRj, ) )
             // samo pozicionira bazu PAROBR na odgovarajui zapis
             AAdd( aNetoMj, { mjesec, _uneto, _usati, PAROBR->k3, PAROBR->k1 } )
             SELECT PAROBR

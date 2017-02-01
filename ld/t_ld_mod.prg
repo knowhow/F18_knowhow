@@ -22,7 +22,9 @@ CLASS TLdMod FROM TAppMod
 ENDCLASS
 
 METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+
    ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+
    RETURN self
 
 
@@ -57,19 +59,19 @@ METHOD programski_modul_osnovni_meni
    AAdd( opc, "4. export podataka za banke " )
    AAdd( opcexe, {|| ld_export_banke() } )
    AAdd( opc, "------------------------------------" )
-   AAdd( opcexe, nil )
+   AAdd( opcexe, NIL )
    AAdd( opc, "S. šifarnici plate" )
    AAdd( opcexe, {|| ld_sifarnici() } )
    AAdd( opc, "------------------------------------" )
-   AAdd( opcexe, nil )
+   AAdd( opcexe, NIL )
    AAdd( opc, "A. rekapitulacija" )
-   AAdd( opcexe, {|| ld_rekapitulacija(.T.) } )
+   AAdd( opcexe, {|| ld_rekapitulacija( .T. ) } )
    AAdd( opc, "B. kartica plate" )
    AAdd( opcexe, {|| ld_kartica_plate() } )
    AAdd( opc, "V. generisanje virmana " )
    AAdd( opcexe, {|| ld_gen_virm() } )
    AAdd( opc, "------------------------------------" )
-   AAdd( opcexe, nil )
+   AAdd( opcexe, NIL )
    AAdd( opc, "X. parametri plate " )
    AAdd( opcexe, {|| ld_parametri() } )
 
@@ -86,6 +88,7 @@ METHOD set_module_gvars()
    PUBLIC gnHelpObr := 0
    PUBLIC gMjesec := 1
    PUBLIC gObracun := "1"
+
    // varijanta obracuna u skladu sa zak.promjenama
    PUBLIC gVarObracun := "2"
    PUBLIC gOsnLOdb := 300
@@ -129,7 +132,7 @@ METHOD set_module_gvars()
    PUBLIC gPotp1 := PadR( "PADL('Potpis:',70)", 150 )
    PUBLIC gPotp2 := PadR( "PADL('_________________',70)", 150 )
    PUBLIC _LK_ := 6
-   PUBLIC lViseObr := .T.
+
    PUBLIC lVOBrisiCDX := .F.
    PUBLIC cLdPolja := 40
 
@@ -137,5 +140,9 @@ METHOD set_module_gvars()
 
    LDPoljaINI()
 
+   RETURN .T.
+
+
+FUNCTION  ld_vise_obracuna()
 
    RETURN .T.

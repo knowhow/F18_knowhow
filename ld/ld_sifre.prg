@@ -249,7 +249,7 @@ STATIC FUNCTION p_pkartica( cIdRadn )
 // --------------------------------------------
 FUNCTION RadBl( Ch )
 
-   LOCAL cMjesec := gMjesec
+   LOCAL nMjesec := gMjesec
    LOCAL _rec
    LOCAL hParams
 
@@ -267,7 +267,7 @@ FUNCTION RadBl( Ch )
       Box(, 4, 60 )
       @ m_x + 1, m_y + 2 SAY "Postavljenje koef. minulog rada:"
       @ m_x + 2, m_y + 2 SAY "Pazite da ovu opciju ne izvrsite vise puta za isti mjesec !"
-      @ m_x + 4, m_y + 2 SAY "Mjesec:" GET cMjesec PICT "99"
+      @ m_x + 4, m_y + 2 SAY "Mjesec:" GET nMjesec PICT "99"
       READ
       BoxC()
 
@@ -292,7 +292,7 @@ FUNCTION RadBl( Ch )
 
          _rec := dbf_get_rec()
 
-         IF Month( _rec[ "datod" ] ) == cMjesec
+         IF Month( _rec[ "datod" ] ) == nMjesec
 
             IF _rec[ "pol" ] == "M"
                _rec[ "kminrad" ] := _rec[ "kminrad" ] + gMRM

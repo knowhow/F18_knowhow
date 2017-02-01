@@ -20,9 +20,9 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    cIdRadn := fetch_metric( "ld_izvj_radnik", my_user(), Space( LEN_IDRADNIK ) )
    cIdRj := gLDRadnaJedinica
-   cMjesec := gMjesec
+   nMjesec := gMjesec
    cMjesec2 := gmjesec
-   cGodina := gGodina
+   nGodina := gGodina
    cObracun := gObracun
    cRazdvoji := "N"
 
@@ -34,10 +34,10 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    Box(, 6, 77 )
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
-   @ m_x + 2, m_y + 2 SAY "od mjeseca: "  GET  cMjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "od mjeseca: "  GET  nMjesec  PICT "99"
    @ m_x + 2, Col() + 2 SAY "do"  GET  cMjesec2  PICT "99"
    @ m_x + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici):" GET cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
    @ m_x + 5, m_y + 2 SAY "Razdvojiti za radnika po RJ:" GET cRazdvoji PICT "@!";
       WHEN Empty ( cIdRj ) VALID cRazdvoji $ "DN"
@@ -61,12 +61,13 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    cIdRadn := Trim( cIdradn )
    IF Empty( cIdrj )
-      SET ORDER TO TAG ( TagVO( "4" ) )
-      SEEK Str( cGodina, 4 ) + cIdRadn
+      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
+      SEEK Str( nGodina, 4 ) + cIdRadn
+
       cIdrj := ""
    ELSE
-      SET ORDER TO TAG ( TagVO( "3" ) )
-      SEEK Str( cGodina, 4 ) + cIdrj + cIdRadn
+      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "3" ) )
+      SEEK Str( nGodina, 4 ) + cIdrj + cIdRadn
    ENDIF
    EOF CRET
 
@@ -88,7 +89,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    SELECT ld
    nT1 := nT2 := nT3 := nT4 := 0
-   DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. idradn = cIdRadn
+   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cidrj .AND. idradn = cIdRadn
 
       xIdRadn := idradn
       IF cRazdvoji == "N"
@@ -108,14 +109,14 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
          SELECT ld
          Eval( bZagl )
       ENDIF
-      DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cIdrj .AND. idradn == xIdRadn
+      DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cIdrj .AND. idradn == xIdRadn
 
          m := "----------------------- --------  ----------------   ------------------"
 
          select_o_radn( xIdradn )
          SELECT ld
 
-         IF ( mjesec < cMjesec .OR. mjesec > cMjesec2 )
+         IF ( mjesec < nMjesec .OR. mjesec > cMjesec2 )
             skip; LOOP
          ENDIF
          Scatter()
@@ -128,13 +129,13 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
             Scatter ( "w" )
             FOR i := 1 TO cLDpolja
                cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-               IF !lViseObr .OR. cSatiVO == "S" .OR. cSatiVO == _obr
+               IF !ld_vise_obracuna() .OR. cSatiVO == "S" .OR. cSatiVO == _obr
                   ws&cPom += _S&cPom
                ENDIF
                wi&cPom += _I&cPom
             NEXT
             wUIznos += _UIznos
-            IF !lViseObr .OR. cSatiVO == "S" .OR. cSatiVO == _obr
+            IF !ld_vise_obracuna() .OR. cSatiVO == "S" .OR. cSatiVO == _obr
                wUSati += _USati
             ENDIF
             wUNeto += _UNeto
@@ -149,14 +150,14 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
          FOR i := 1 TO cLDPolja
             cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
             select_o_tippr( cPom )
-            IF !lViseObr .OR. cSatiVO == "S" .OR. cSatiVO == _obr
+            IF !ld_vise_obracuna() .OR. cSatiVO == "S" .OR. cSatiVO == _obr
                ws&cPom += _S&cPom
             ENDIF
             wi&cPom += _I&cPom
          NEXT
          SELECT ld
          wUIznos += _UIznos
-         IF !lViseObr .OR. cSatiVO == "S" .OR. cSatiVO == _obr
+         IF !ld_vise_obracuna() .OR. cSatiVO == "S" .OR. cSatiVO == _obr
             wUSati += _USati
          ENDIF
          wUNeto += _UNeto
@@ -308,7 +309,7 @@ STATIC FUNCTION zaglavlje_izvjestaja()
       ?? "'" + cObracun + "'"
    ENDIF
 
-   ?? " PLATE ZA PERIOD OD " + Str( cMjesec, 2 ) + " DO " + Str( cMjesec2, 2 )
+   ?? " PLATE ZA PERIOD OD " + Str( nMjesec, 2 ) + " DO " + Str( cMjesec2, 2 )
    ?? " / " + Str( godina, 4 )
    ?? " ZA " + Upper( Trim( tip_organizacije() ) )
    ?? " " + AllTrim( self_organizacija_naziv() )

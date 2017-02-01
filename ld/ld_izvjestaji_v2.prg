@@ -12,27 +12,13 @@
 #include "f18.ch"
 
 
-FUNCTION TekRec()
-
-   @ m_x + 1, m_y + 2 SAY RecNo()
-
-   RETURN NIL
-
-
-FUNCTION ObrM4()
-
-   CLOSERET
-
-   RETURN .T.
-
-
 FUNCTION ld_pregled_primanja_za_period()
 
    LOCAL nC1 := 20
 
    cIdRadn := Space( 6 )
    cIdRj := gLDRadnaJedinica
-   cGodina := gGodina
+   nGodina := gGodina
    cObracun := gObracun
 
    o_ld_rj()
@@ -47,10 +33,10 @@ FUNCTION ld_pregled_primanja_za_period()
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
    @ m_x + 2, m_y + 2 SAY "Mjesec od: "  GET  cMjesecOd  PICT "99"
    @ m_x + 2, Col() + 2 SAY "do" GET cMjesecDO  PICT "99"
-   IF lViseObr
+   IF ld_vise_obracuna()
       @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
-   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY "Tip primanja: "  GET  cTip
    @ m_x + 5, m_y + 2 SAY "Prikaz dodatnu kolonu: "  GET  cDod PICT "@!" VALID cdod $ "DN"
    read; clvbox(); ESC_BCR
@@ -75,12 +61,12 @@ FUNCTION ld_pregled_primanja_za_period()
 
    SELECT ld
 
-   IF lViseObr .AND. !Empty( cObracun )
+   IF ld_vise_obracuna() .AND. !Empty( cObracun )
       SET FILTER TO obr == cObracun
    ENDIF
 
-   SET ORDER TO tag ( TagVO( "4" ) )
-   HSEEK Str( cGodina, 4 )
+   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
+   HSEEK Str( nGodina, 4 )
 
    EOF CRET
 
@@ -106,7 +92,7 @@ FUNCTION ld_pregled_primanja_za_period()
    nT1 := nT2 := nT3 := nT4 := 0
    nC1 := 10
 
-   DO WHILE !Eof() .AND.  cGodina == godina
+   DO WHILE !Eof() .AND.  nGodina == godina
       IF PRow() > RPT_PAGE_LEN; FF; Eval( bZagl ); ENDIF
 
 
@@ -121,7 +107,7 @@ FUNCTION ld_pregled_primanja_za_period()
       IF fracunaj
          nKolona := 0
       ENDIF
-      DO WHILE  !Eof() .AND. cGodina == godina .AND. idradn == cidradn
+      DO WHILE  !Eof() .AND. nGodina == godina .AND. idradn == cidradn
          Scatter()
          IF !Empty( cidrj ) .AND. _idrj <> cidrj
             skip; LOOP
@@ -130,7 +116,7 @@ FUNCTION ld_pregled_primanja_za_period()
             skip; LOOP
          ENDIF
          wi&cTip += _I&cTip
-         IF ! ( lViseObr .AND. Empty( cObracun ) .AND. _obr <> "1" )
+         IF !( ld_vise_obracuna() .AND. Empty( cObracun ) .AND. _obr <> "1" )
             ws&cTip += _S&cTip
          ENDIF
          IF fRacunaj
@@ -175,8 +161,23 @@ FUNCTION ld_pregled_primanja_za_period()
    ENDPRINT
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
+
+
+
+FUNCTION TekRec()
+
+   @ m_x + 1, m_y + 2 SAY RecNo()
+
+   RETURN NIL
+
+
+FUNCTION ObrM4()
+
+   CLOSERET
+
+   RETURN .T.
 
 
 FUNCTION ZPregPrimPer()
@@ -185,7 +186,7 @@ FUNCTION ZPregPrimPer()
    ? Upper( Trim( tip_organizacije() ) ) + ":", self_organizacija_naziv()
    ?
    ? "Pregled primanja za period od", cMjesecOd, "do", cMjesecDo, "mjesec " + IspisObr()
-   ?? cGodina
+   ?? nGodina
    ?
    IF Empty( cIdRj )
       ? "Pregled za sve RJ ukupno:"
@@ -210,8 +211,8 @@ FUNCTION ZSRO()
    ELSE
       ? "RJ:", cidrj, ld_rj->naz
    ENDIF
-   ?? "  Mjesec:", Str( cMjesec, 2 ) + IspisObr()
-   ?? "    Godina:", Str( cGodina, 5 )
+   ?? "  Mjesec:", Str( nMjesec, 2 ) + IspisObr()
+   ?? "    Godina:", Str( nGodina, 5 )
    DevPos( PRow(), 74 )
    ?? "Str.", Str( ++nStrana, 3 )
    IF !Empty( cvposla )
@@ -258,7 +259,7 @@ FUNCTION IzracDopr( cDopr, nKLO, cTipRada, nSpr_koef )
       nSPr_koef := 0
    ENDIF
 
-   ParObr( mjesec, godina, IF( lViseObr, cObracun, ), cIdRj )
+   ParObr( mjesec, godina, IF( ld_vise_obracuna(), cObracun, ), cIdRj )
 
    IF gVarObracun == "2"
 

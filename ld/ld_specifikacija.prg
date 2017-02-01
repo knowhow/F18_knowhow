@@ -279,7 +279,7 @@ FUNCTION ld_specifikacija_plate()
       @ m_x + 2, m_y + 2 SAY "Opstina stanov.(prazno-sve): " ;
          GET qqOpSt PICT "@!S20"
 
-      IF lViseObr
+      IF ld_vise_obracuna()
          @ m_x + 2, Col() + 1 SAY "Obr.:" GET cObracun ;
             WHEN HelpObr( .T., cObracun ) ;
             VALID ValObr( .T., cObracun )
@@ -408,7 +408,7 @@ FUNCTION ld_specifikacija_plate()
    ParObr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
 
    SELECT LD
-   SET ORDER TO TAG ( TagVO( "2" ) )
+   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
 
    PRIVATE cFilt := ".t."
 
@@ -499,7 +499,7 @@ FUNCTION ld_specifikacija_plate()
          IF Len( aPom ) < 1 .OR. ( nPom := AScan( aPom, {| x| x[ 1 ] == LD->brbod } ) ) == 0
             AAdd( aPom, { LD->brbod, 1, nP77, LD->uneto } )
          ELSE
-            IF ! ( lViseObr .AND. Empty( cObracun ) .AND. LD->obr $ "23456789" )
+            IF ! ( ld_vise_obracuna() .AND. Empty( cObracun ) .AND. LD->obr $ "23456789" )
                aPom[ nPom, 2 ] += 1  // broj radnika
             ENDIF
             aPom[ nPom, 3 ] += nP77  // minuli rad

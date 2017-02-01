@@ -176,7 +176,7 @@ FUNCTION ld_specifikacija_plate_ostali()
    ParObr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
 
    SELECT LD
-   SET ORDER TO TAG ( TagVO( "2" ) )
+   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
 
    PRIVATE cFilt := ".t."
 

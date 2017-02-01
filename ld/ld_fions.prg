@@ -15,11 +15,11 @@
 // --------------------------------------------------------
 // Vraca oznaku obracuna ako se radi o vise obracuna
 // --------------------------------------------------------
-FUNCTION BrojObracuna()
+FUNCTION ld_broj_obracuna()
 
    PRIVATE cOznObracuna
 
-   IF lViseObr
+   IF ld_vise_obracuna()
       cOznObracuna := cObracun
    ELSE
       cOznObracuna := ""
@@ -193,7 +193,7 @@ FUNCTION Prosj3( cTip, cTip2 )
 
    // "1","str(godina)+idrj+str(mjesec)+idradn"
    // "2","str(godina)+str(mjesec)+idradn"
-   SET ORDER TO TAG ( TagVO( "2", "I" ) )
+   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
 
    i := 0
    IF cTip2 == "2" // "2"  -> vracam se mjesec unazad u kome nije bilo godisnjeg
@@ -225,7 +225,7 @@ FUNCTION Prosj3( cTip, cTip2 )
       cMj1 := Str( _mjesec - 1 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
    IF Found()
-      IF lViseObr
+      IF ld_vise_obracuna()
          ScatterS( godina, mjesec, idrj, idradn, "w" )
       ELSE
          wUneto := field->uneto
@@ -263,7 +263,7 @@ FUNCTION Prosj3( cTip, cTip2 )
       cMj2 := Str( _mjesec - 2 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
    IF Found()
-      IF lViseObr
+      IF ld_vise_obracuna()
          ScatterS( godina, mjesec, idrj, idradn, "w" )
       ELSE
          wuneto := uneto
@@ -302,7 +302,7 @@ FUNCTION Prosj3( cTip, cTip2 )
       cMj3 := Str( _mjesec - 3 - nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
    IF Found()
-      IF lViseObr
+      IF ld_vise_obracuna()
          ScatterS( godina, mjesec, idrj, idradn, "w" )
       ELSE
          wuneto := field->uneto
@@ -367,7 +367,7 @@ FUNCTION UPrim()
 
    LOCAL c719
 
-   IF lViseObr
+   IF ld_vise_obracuna()
       c719 := UbaciPrefix( gFUPrim, "w" )
    ELSE
       c719 := gFUPrim
@@ -447,7 +447,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
 
    // "1","str(godina)+idrj+str(mjesec)+idradn"
    // "2","str(godina)+str(mjesec)+idradn"
-   SET ORDER TO TAG ( TagVO( "2", "I" ) )
+   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
 
    i := 0
 
@@ -462,7 +462,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
       ENDIF
 
       IF Found()
-         IF lViseObr
+         IF ld_vise_obracuna()
             ScatterS( godina, mjesec, idrj, idradn, "w" )
          ELSE
             wUneto := field->uneto
@@ -562,7 +562,7 @@ FUNCTION Predhodni( i, cVar, cObr )
 
    // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
    // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
-   SET ORDER TO TAG ( TagVO( "2", "I" ) )
+   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
 
    IF _Mjesec - i < 1
       HSEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1, 2 ) + _idradn
@@ -573,7 +573,7 @@ FUNCTION Predhodni( i, cVar, cObr )
    cPom := cVar
    cField = SubStr( cPom, 2 )
 
-   IF lViseObr
+   IF ld_vise_obracuna()
       &cPom := 0
       cKljuc := Str( godina, 4 ) + Str( mjesec, 2 ) + idradn
       IF !Empty( cObr )

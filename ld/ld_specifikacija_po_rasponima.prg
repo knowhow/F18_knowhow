@@ -19,8 +19,8 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    gOstr := "D"
 
    cIdRj := gLDRadnaJedinica
-   cMjesec := gMjesec
-   cGodina := gGodina
+   nMjesec := gMjesec
+   nGodina := gGodina
    cObracun := gObracun
 
    o_ld_rj()
@@ -66,9 +66,9 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    Box(, 19, 77 )
 
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
    @ m_x + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
 
    @ m_x + 5, m_y + 2 SAY "Naziv raspona primanja: "  GET cNaziv
    @ m_x + 6, m_y + 2 SAY "Formula primanja      : "  GET cFormula PICT "@S20"
@@ -173,15 +173,15 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
 
    SELECT LD
 
-   SET ORDER TO TAG ( TagVO( "1" ) )
+   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
 
    PRIVATE cFilt1 := ""
 
-   cFilt1 := "GODINA==" + dbf_quote( cGodina ) + ".and.MJESEC==" + dbf_quote( cMjesec ) + ;
+   cFilt1 := "GODINA==" + dbf_quote( nGodina ) + ".and.MJESEC==" + dbf_quote( nMjesec ) + ;
       IF( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) )
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
-   IF lViseObr .AND. !Empty( cObracun )
+   IF ld_vise_obracuna() .AND. !Empty( cObracun )
       cFilt1 += ( ".and. OBR==" + dbf_quote( cObracun ) )
    ENDIF
 
@@ -207,8 +207,8 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    ELSE
       ?? "RJ:", cIdRj + " - " + Ocitaj( F_LD_RJ, cIdRj, "naz" )
    ENDIF
-   ?? "  Mjesec:", Str( cMjesec, 2 ) + IspisObr()
-   ?? "    Godina:", Str( cGodina, 5 )
+   ?? "  Mjesec:", Str( nMjesec, 2 ) + IspisObr()
+   ?? "    Godina:", Str( nGodina, 5 )
 
    print_lista_2( aKol, {|| NIL },, gTabela,, ;
       , "Specifikacija po rasponima primanja", ;

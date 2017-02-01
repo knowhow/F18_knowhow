@@ -19,8 +19,8 @@ FUNCTION pregled_plata()
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
-   cMjesec := gMjesec
-   cGodina := gGodina
+   nMjesec := gMjesec
+   nGodina := gGodina
    cObracun := gObracun
    cVarSort := "2"
 
@@ -51,11 +51,11 @@ FUNCTION pregled_plata()
 
    Box(, 14, 75 )
    @ m_x + 1, m_y + 2 SAY8 _l( "Radna jedinica (prazno-sve): " )  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY8 "Mjesec: "  GET  cMjesec  PICT "99"
-   IF lViseObr
+   @ m_x + 2, m_y + 2 SAY8 "Mjesec: "  GET  nMjesec  PICT "99"
+   IF ld_vise_obracuna()
       @ m_x + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
-   @ m_x + 3, m_y + 2 SAY8 "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 3, m_y + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
    @ m_x + 5, m_y + 2 SAY8 "Vrsta posla (prazno-svi): "  GET  cVPosla
    @ m_x + 7, m_y + 2 SAY8 "Šifra primanja minuli: "  GET  cIdMinuli PICT "@!"
@@ -77,7 +77,7 @@ FUNCTION pregled_plata()
    SELECT PARAMS
    USE
 
-   ParObr( cMjesec, cGodina, iif( lViseObr, cObracun, ) )
+   ParObr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ) )
 
    set_tippr_ili_tippr2( cObracun )
 
@@ -91,22 +91,22 @@ FUNCTION pregled_plata()
 
    SELECT ld
    USE
-   use_sql_ld_ld( cGodina, cMjesec, cMjesec, nVrstaInvaliditeta, nStepenInvaliditeta )
+   use_sql_ld_ld( nGodina, nMjesec, nMjesec, nVrstaInvaliditeta, nStepenInvaliditeta )
 
    // 1 - "str(godina)+idrj+str(mjesec)+idradn"
    // 2 - "str(godina)+str(mjesec)+idradn"
    IF Empty( cIdrj )
       cidrj := ""
       IF cVarSort == "1"
-         SET ORDER TO TAG ( TagVO( "2" ) )
-         HSEEK Str( cGodina, 4, 0 ) + Str( cMjesec, 2, 0 ) + iif( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
+         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+         HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN,.T.)"
-         cFilt := IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
-            IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
-         IF lViseObr .AND. !Empty( cObracun )
+         cFilt := IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
+            IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+         IF ld_vise_obracuna() .AND. !Empty( cObracun )
             cFilt += ".and.OBR=" + _filter_quote( cObracun )
          ENDIF
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
@@ -115,16 +115,16 @@ FUNCTION pregled_plata()
       ENDIF
    ELSE
       IF cVarSort == "1"
-         SET ORDER TO TAG ( TagVO( "1" ) )
-         HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
+         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
+         HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN,.T.)"
          cFilt := "IDRJ==" + _filter_quote( cIdRj ) + ".and." + ;
-            iif( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
-            iif( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
-         IF lViseObr .AND. !Empty( cObracun )
+            iif( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
+            iif( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+         IF ld_vise_obracuna() .AND. !Empty( cObracun )
             cFilt += ".and.OBR==" + _filter_quote( cObracun )
          ENDIF
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
@@ -179,11 +179,11 @@ FUNCTION pregled_plata()
    nUNetNr := 0
    nUNeto := 0
 
-   DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
-      ParObr( ld->mjesec, ld->godina, iif( lViseObr, cObracun, ), ld->idrj )
+      ParObr( ld->mjesec, ld->godina, iif( ld_vise_obracuna(), cObracun, ), ld->idrj )
 
-      IF lViseObr .AND. Empty( cObracun )
+      IF ld_vise_obracuna() .AND. Empty( cObracun )
          ScatterS( godina, mjesec, idrj, idradn )
       ELSE
          Scatter()
@@ -379,8 +379,8 @@ STATIC FUNCTION zagl_pregled_plata()
       ? "RJ:", cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + "Mjesec:", Str( cMjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + "Godina:", Str( cGodina, 5 )
+   ?? Space( 2 ) + "Mjesec:", Str( nMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + "Godina:", Str( nGodina, 5 )
 
    ?? Space( 10 ), " Str.", Str( ++nStrana, 3 )
 

@@ -997,7 +997,7 @@ STATIC FUNCTION IspisKred( lSvi )
                   IF lSvi
 
                      SELECT ld  // rekap za sve rj
-                     SET ORDER TO TAG ( TagVO( "2" ) )
+                     SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
                      HSEEK Str( nGodina, 4, 0 ) + Str( mj, 2, 0 ) + cObracun + radkr->idradn
 
                      _t_rec := RecNo()
@@ -1082,11 +1082,11 @@ STATIC FUNCTION IspisKred( lSvi )
 
                IF lSvi
                   SELECT ld
-                  SET ORDER TO TAG ( TagVO( "2" ) )
-                  HSEEK  Str( nGodina, 4 ) + Str( nMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                  SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+                  HSEEK  Str( nGodina, 4 ) + Str( nMjesec, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                ELSE
                   SELECT ld
-                  HSEEK  Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                  HSEEK  Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                ENDIF
 
                IF Found()
@@ -1103,12 +1103,12 @@ STATIC FUNCTION IspisKred( lSvi )
                   FOR mj := nMjesec + 1 TO nMjesecDo
                      IF lSvi
                         SELECT ld
-                        SET ORDER TO TAG ( TagVO( "2" ) )
-                        HSEEK  Str( nGodina, 4 ) + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+                        HSEEK  Str( nGodina, 4 ) + Str( mj, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                         // "LDi2","str(godina)+str(mjesec)+idradn"
                      ELSE
                         SELECT ld
-                        HSEEK  Str( nGodina, 4 ) + cidrj + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        HSEEK  Str( nGodina, 4 ) + cidrj + Str( mj, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                      ENDIF // lSvi
 
                      SELECT radkr

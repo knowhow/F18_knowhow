@@ -74,7 +74,7 @@ FUNCTION ol_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, ;
          SEEK Str( cGod_od, 4 ) + Str( cMj_od, 2 ) + cRadnik
       ENDIF
    ELSE
-      SET ORDER TO TAG ( TagVO( "2" ) )
+      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
       GO TOP
       SEEK Str( cGod_od, 4 ) + Str( cMj_od, 2 ) + cObracun + cRadnik
    ENDIF
@@ -262,7 +262,7 @@ FUNCTION ld_olp_gip_obrazac()
    @ m_x + 2, Col() + 1 SAY "do:" GET cMj_do PICT "99"
    @ m_x + 2, Col() + 1 SAY "/" GET cGod_do PICT "9999"
 
-   IF lViseObr
+   IF ld_vise_obracuna()
       @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
 
@@ -1166,7 +1166,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
       // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ParObr( ld->mjesec, ld->godina, IF( lViseObr, ld->obr, ), ld->idrj )
+      ParObr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
       select_o_radn( cT_radnik )
 
@@ -1237,7 +1237,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
             ENDIF
          ENDIF
 
-         ParObr( ld->mjesec, ld->godina, IF( lViseObr, ld->obr, ), ;
+         ParObr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ;
             ld->idrj )
 
          nPrDobra := 0
@@ -1396,7 +1396,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
          dDatIspl := Date()
          cObr := " "
 
-         IF lViseObr
+         IF ld_vise_obracuna()
             cObr := field->obr
          ENDIF
 

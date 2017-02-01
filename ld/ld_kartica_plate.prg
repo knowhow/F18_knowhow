@@ -17,7 +17,7 @@ STATIC __var_obr
 STATIC __radni_sati := "N"
 
 
-FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
+FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
 
    LOCAL i
    LOCAL aNeta := {}
@@ -38,8 +38,8 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    IF ( PCount() < 4 )
       cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gLDRadnaJedinica
-      cMjesec := gMjesec
-      cGodina := gGodina
+      nMjesec := gMjesec
+      nGodina := gGodina
       cObracun := gObracun
 
       o_ld_parametri_obracuna()
@@ -74,11 +74,11 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       cIdRadn := Space( LEN_IDRADNIK )
       Box(, 8, 75 )
       @ m_x + 1, m_y + 2 SAY _l( "Radna jedinica (prazno-sve rj): " )  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
-      @ m_x + 2, m_y + 2 SAY _l( "Mjesec: " ) GET cMjesec PICT "99"
-      IF lViseObr
+      @ m_x + 2, m_y + 2 SAY _l( "Mjesec: " ) GET nMjesec PICT "99"
+      IF ld_vise_obracuna()
          @ m_x + 2, Col() + 2 SAY _l( "Obracun: " ) GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
       ENDIF
-      @ m_x + 3, m_y + 2 SAY _l( "Godina: " ) GET cGodina PICT "9999"
+      @ m_x + 3, m_y + 2 SAY _l( "Godina: " ) GET nGodina PICT "9999"
       @ m_x + 4, m_y + 2 SAY _l( "Radnik (prazno-svi radnici): " )  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
       @ m_x + 5, m_y + 2 SAY _l( "Varijanta ( /5): " )  GET  cVarijanta VALID cVarijanta $ " 5"
       @ m_x + 6, m_y + 2 SAY _l( "Ako su svi radnici, sortirati po (1-sifri,2-prezime+ime)" )  GET cVarSort VALID cVarSort $ "12"  PICT "9"
@@ -97,7 +97,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       set_tippr_ili_tippr2( cObracun )
    ENDIF
 
-   PoDoIzSez( cGodina, cMjesec )
+   PoDoIzSez( nGodina, nMjesec )
 
    IF cVarijanta == "5"
       O_LDSM
@@ -109,33 +109,33 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
 
    IF Empty( cIdRadn ) .AND. cVarSort == "2"
       IF Empty( cIdRj )
-         IF lViseObr .AND. !Empty( cObracun )
+         IF ld_vise_obracuna() .AND. !Empty( cObracun )
             INDEX ON Str( field->godina ) + Str( field->mjesec ) + field->obr + SortPrez( field->idradn ) + field->idrj TO "tmpld"
-            SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun + cIdRadn
+            SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cIdRadn
          ELSE
             INDEX ON Str( field->godina ) + Str( field->mjesec ) + SortPrez( field->idradn ) + idrj TO "tmpld"
-            SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cIdRadn
+            SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cIdRadn
          ENDIF
          cIdrj := ""
       ELSE
-         IF lViseObr .AND. !Empty( cObracun )
+         IF ld_vise_obracuna() .AND. !Empty( cObracun )
             INDEX ON Str( field->godina ) + field->idrj + Str( field->mjesec ) + field->obr + SortPrez( field->idradn ) TO "tmpld"
-            SEEK Str( cGodina, 4 ) + cIdrj + Str( cMjesec, 2 ) + cObracun + cIdRadn
+            SEEK Str( nGodina, 4 ) + cIdrj + Str( nMjesec, 2 ) + cObracun + cIdRadn
          ELSE
             INDEX ON Str( field->godina ) + field->idrj + Str( field->mjesec ) + SortPrez( field->idradn ) TO "tmpld"
-            SEEK Str( cGodina, 4 ) + cIdrj + Str( cMjesec, 2 ) + cIdRadn
+            SEEK Str( nGodina, 4 ) + cIdrj + Str( nMjesec, 2 ) + cIdRadn
          ENDIF
       ENDIF
    ELSE
       IF Empty( cidrj )
-         SET ORDER TO tag ( TagVO( "2" ) )
-         SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + IIF( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
+         SET ORDER TO tag ( ld_index_tag_vise_obracuna( "2" ) )
+         SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + IIF( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
          cIdrj := ""
       ELSE
          IF PCount() < 4
-            SET ORDER TO TAG ( TagVO( "1" ) )
+            SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
          ENDIF
-         SEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + IIF( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
+         SEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + IIF( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
       ENDIF
    ENDIF
 
@@ -157,7 +157,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    ?
    P_12CPI
 
-   ParObr( cMjesec, cGodina, IIF( lViseObr, cObracun, ), cIdRj )
+   ParObr( nMjesec, nGodina, IIF( ld_vise_obracuna(), cObracun, ), cIdRj )
 
    PRIVATE lNKNS
    lNKNS := ( cNKNS == "D" )
@@ -175,11 +175,11 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    cPrikDopr := my_get_from_ini( "LD", "DoprNaKartPl", "D", KUMPATH )
    lPrikSveDopr := ( cPrikDopr == "D" )
 
-   DO WHILE !Eof() .AND. cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. idradn = cIdRadn .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+   DO WHILE !Eof() .AND. nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. idradn = cIdRadn .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
       aNeta := {}
 
-      IF lViseObr .AND. Empty( cObracun )
+      IF ld_vise_obracuna() .AND. Empty( cObracun )
          ScatterS( Godina, Mjesec, IdRJ, IdRadn )
       ELSE
          Scatter()
@@ -198,13 +198,13 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       __var_obr := get_varobr()
 
       IF cRTRada == "S"
-         ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, @aNeta )
+         ld_kartica_plate_samostalni( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, @aNeta )
       ELSEIF cRTRada $ "AU"
-         ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, @aNeta )
+         ld_kartica_plate_ugovori( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, @aNeta )
       ELSEIF cRTRada == "P"
-         ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, @aNeta )
+         ld_kartica_plate_upravni_odbor( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, @aNeta )
       ELSE
-         ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, @aNeta )
+         ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, @aNeta )
       ENDIF
 
       nT1 += _usati
@@ -238,7 +238,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       o_kred()
       select_o_ld()
 
-      SET ORDER TO tag ( TagVO( "1" ) )
+      SET ORDER TO tag ( ld_index_tag_vise_obracuna( "1" ) )
 
    ENDIF
 
@@ -443,7 +443,7 @@ FUNCTION ld_kumulativna_primanja( cIdRadn, cIdPrim )
    IF cIdRadn == NIL; cIdRadn := ""; ENDIF
    SELECT LD
    PushWA()
-   SET ORDER TO TAG ( TagVO( "4" ) )
+   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "4" ) )
    GO BOTTOM
 
    nDoGod := godina

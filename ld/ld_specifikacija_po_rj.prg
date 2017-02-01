@@ -13,7 +13,7 @@
 
 FUNCTION ld_specifikacija_po_rj()
 
-   cGodina  := gGodina
+   nGodina  := gGodina
    cMjesecOd := cMjesecDo := gMjesec
    cObracun := " "
    qqRj := ""
@@ -24,18 +24,18 @@ FUNCTION ld_specifikacija_po_rj()
 
    cMjesecOd := Str( cMjesecOd, 2 )
    cMjesecDo := Str( cMjesecDo, 2 )
-   cGodina   := Str( cGodina,4 )
+   nGodina   := Str( nGodina,4 )
 
    RPar( "p1", @cMjesecOd )
    RPar( "p2", @cMjesecDo )
-   RPar( "p3", @cGodina   )
+   RPar( "p3", @nGodina   )
    RPar( "p8", @qqRj      )
    RPar( "p9", @cObracun  )
    RPar( "pA", @qqPrimanja )
 
    cMjesecOd := Val( cMjesecOd )
    cMjesecDo := Val( cMjesecDo )
-   cGodina   := Val( cGodina  )
+   nGodina   := Val( nGodina  )
    qqRj      := PadR( qqRj, 40 )
    qqPrimanja := PadR( qqPrimanja, 100 )
 
@@ -44,8 +44,8 @@ FUNCTION ld_specifikacija_po_rj()
       @ m_x + 2, m_y + 2   SAY "Radne jedinice (prazno-sve): "   GET qqRj PICT "@S20"
       @ m_x + 3, m_y + 2   SAY "Mjesec od: "                     GET cMjesecOd PICT "99"
       @ m_x + 3, Col() + 2 SAY "do"                              GET cMjesecDo PICT "99"
-      @ m_x + 4, m_y + 2   SAY "Godina: "                        GET cGodina   PICT "9999"
-      IF lViseObr
+      @ m_x + 4, m_y + 2   SAY "Godina: "                        GET nGodina   PICT "9999"
+      IF ld_vise_obracuna()
          @ m_x + 4, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
       ENDIF
       @ m_x + 5, m_y + 2   SAY8 "Šifre primanja (prazno-sve):"   GET qqPrimanja PICT "@S30"
@@ -61,13 +61,13 @@ FUNCTION ld_specifikacija_po_rj()
 
    cMjesecOd := Str( cMjesecOd, 2 )
    cMjesecDo := Str( cMjesecDo, 2 )
-   cGodina   := Str( cGodina,4 )
+   nGodina   := Str( nGodina,4 )
    qqRj      := Trim( qqRj )
    qqPrimanja := Trim( qqPrimanja )
 
    WPar( "p1", cMjesecOd )
    WPar( "p2", cMjesecDo )
-   WPar( "p3", cGodina   )
+   WPar( "p3", nGodina   )
    WPar( "p8", qqRj      )
    RPar( "p9", cObracun  )
    WPar( "pA", qqPrimanja )
@@ -77,7 +77,7 @@ FUNCTION ld_specifikacija_po_rj()
 
    cMjesecOd := Val( cMjesecOd )
    cMjesecDo := Val( cMjesecDo )
-   cGodina   := Val( cGodina  )
+   nGodina   := Val( nGodina  )
 
    napravi_pomocnu_tabelu()
 
@@ -107,10 +107,10 @@ FUNCTION ld_specifikacija_po_rj()
    IF cMjesecOd != cMjesecDo
       cFilt := cFilt + ".and.mjesec>=" + dbf_quote( cMjesecOd ) + ;
          ".and.mjesec<=" + dbf_quote( cMjesecDo ) + ;
-         ".and.godina=" + dbf_quote( cGodina )
+         ".and.godina=" + dbf_quote( nGodina )
    ELSE
       cFilt := cFilt + ".and.mjesec=" + dbf_quote( cMjesecOd ) + ;
-         ".and.godina=" + dbf_quote( cGodina )
+         ".and.godina=" + dbf_quote( nGodina )
    ENDIF
 
    SELECT LD
@@ -191,7 +191,7 @@ FUNCTION ld_specifikacija_po_rj()
    ?? self_organizacija_naziv()
    ?
    ? "Mjesec: od", Str( cMjesecOd, 2 ) + ".", "do", Str( cMjesecDo, 2 ) + "."
-   ?? "    Godina:", Str( cGodina, 4 )
+   ?? "    Godina:", Str( nGodina, 4 )
    ?U "Obuhvaćene radne jedinice  :", IF( !Empty( qqRJ ), "'" + qqRj + "'", "SVE" )
    ?U "Obuhvaćena primanja (šifre):", "'" + qqPrimanja + "'"
    ?

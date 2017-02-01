@@ -16,7 +16,7 @@ THREAD STATIC DUZ_STRANA := 70
 THREAD STATIC __radni_sati := "N"
 
 
-FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
+FUNCTION ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta )
 
    LOCAL nKRedova
    LOCAL cDoprSpace := Space( 3 )
@@ -68,8 +68,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
 
-      SELECT tippr
-      SEEK cPom
+      select_o_tippr( cPom )
       lFoundTippr := FOUND()
 
       IF tippr->uneto == "N" .AND. cUneto == "D"
@@ -201,9 +200,8 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
                ? cTprLine
                ?U cLMSK + "  ", "Od toga pojedinačni krediti:"
-               SELECT radkr
-               SET ORDER TO 1
-               SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
+          
+               seek_radkr( _godina, _mjesec, _idradn )
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
                   select_o_kred( radkr->idkred )
                   SELECT radkr
@@ -281,7 +279,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    ENDIF
 
    IF gSihtGroup == "D"
-      nTmp := get_siht( .T., cGodina, cMjesec, ld->idradn, "" )
+      nTmp := get_siht( .T., nGodina, nMjesec, ld->idradn, "" )
       IF ld->usati < nTmp
          ?U "Greška: sati po šihtarici veći od uk.sati plaće !"
       ENDIF

@@ -16,7 +16,7 @@
 // ---------------------------------------------------------
 // sortiranje tabele LD
 // ---------------------------------------------------------
-STATIC FUNCTION ld_sort( cRj, cGodina, cMjesec, cObr )
+STATIC FUNCTION ld_sort( cRj, nGodina, nMjesec, cObr )
 
    LOCAL cFilter := ""
 
@@ -42,7 +42,7 @@ STATIC FUNCTION ld_sort( cRj, cGodina, cMjesec, cObr )
 
    INDEX ON Str( godina ) + Str( mjesec ) + SortPrez( idradn ) + idrj TO "TMPLD"
    GO TOP
-   SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 )
+   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 )
 
    RETURN .T.
 
@@ -102,8 +102,8 @@ FUNCTION ld_asd_aug_obrazac()
 
    LOCAL cRj := Space( 65 )
    LOCAL cIdRj
-   LOCAL cMjesec
-   LOCAL cGodina
+   LOCAL nMjesec
+   LOCAL nGodina
    LOCAL cDopr1X := "1X"
    LOCAL cDopr2X := "2X"
    LOCAL cTipRada := "1"
@@ -115,8 +115,8 @@ FUNCTION ld_asd_aug_obrazac()
    cre_tmp_tbl()
 
    cIdRj := gLDRadnaJedinica
-   cMjesec := gMjesec
-   cGodina := gGodina
+   nMjesec := gMjesec
+   nGodina := gGodina
 
    cPredNaz := Space( 50 )
    cPredAdr := Space( 50 )
@@ -137,8 +137,8 @@ FUNCTION ld_asd_aug_obrazac()
    Box( "#RPT: AKONTACIJA POREZA PO ODBITKU...", 13, 75 )
 
    @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@S25"
-   @ m_x + 2, m_y + 2 SAY "Za mjesec:" GET cMjesec PICT "99"
-   @ m_x + 3, m_y + 2 SAY "Godina: " GET cGodina PICT "9999"
+   @ m_x + 2, m_y + 2 SAY "Za mjesec:" GET nMjesec PICT "99"
+   @ m_x + 3, m_y + 2 SAY "Godina: " GET nGodina PICT "9999"
    @ m_x + 3, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ m_x + 4, m_y + 2 SAY "   Radnik (prazno-svi):" GET cIdRadn ;
       VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
@@ -174,24 +174,23 @@ FUNCTION ld_asd_aug_obrazac()
    SELECT ld
 
    // sortiraj tabelu i postavi filter
-   ld_sort( cRj, cGodina, cMjesec, cObracun )
+   ld_sort( cRj, nGodina, nMjesec, cObracun )
 
    // nafiluj podatke obracuna
-   fill_data( cRj, cGodina, cMjesec, ;
-      cDopr1X, cDopr2X, cTipRada, cObracun, cIdRadn )
+   fill_data( cRj, nGodina, nMjesec, cDopr1X, cDopr2X, cTipRada, cObracun, cIdRadn )
 
 
    dDatIspl := Date()
    IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
       cObr := " "
-      dDatIspl := g_isp_date( "  ", cGodina, cMjesec, cObr )
+      dDatIspl := g_isp_date( "  ", nGodina, nMjesec, cObr )
    ENDIF
 
-   cPeriod := AllTrim( Str( cMjesec ) ) + "/" + AllTrim( Str( cGodina ) )
+   cPeriod := AllTrim( Str( nMjesec ) ) + "/" + AllTrim( Str( nGodina ) )
 
    IF cVarPrn == "1"
-      // printaj obracunski list
-      ak_print( dDatIspl, cPeriod, cTipRada )
+
+      ak_print( dDatIspl, cPeriod, cTipRada )   // printaj obracunski list
    ENDIF
 
    IF cVarPrn == "2"
@@ -199,12 +198,12 @@ FUNCTION ld_asd_aug_obrazac()
       ak_d_print( dDatIspl, cPeriod, cTipRada )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
 // ----------------------------------------------
-// stampa akontacije ....
+// stampa akontacije
 // ----------------------------------------------
 STATIC FUNCTION ak_print( dDatIspl, cPeriod, cTipRada )
 
@@ -571,15 +570,15 @@ STATIC FUNCTION ak_zaglavlje( nPage, cTipRada, dDIspl, cPeriod )
 // ---------------------------------------------------------
 // napuni podatke u pomocnu tabelu za izvjestaj
 // ---------------------------------------------------------
-STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
+STATIC FUNCTION fill_data( cRj, nGodina, nMjesec, ;
       cDopr1X, cDopr2X, cVRada, cObr, cRadnik )
 
    LOCAL cPom
 
    SELECT ld
 
-   DO WHILE !Eof() .AND. field->godina = cGodina .AND. ;
-         field->mjesec = cMjesec
+   DO WHILE !Eof() .AND. field->godina = nGodina .AND. ;
+         field->mjesec = nMjesec
 
       cT_radnik := field->idradn
 
@@ -622,7 +621,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
 
 
       // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ParObr( cMjesec, cGodina, IF( lViseObr, ld->obr, ), ld->idrj )
+      ParObr( nMjesec, nGodina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
       SELECT ld
 
@@ -635,8 +634,8 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
       nPorIzn := 0
       nTrosk := 0
 
-      DO WHILE !Eof() .AND. field->godina = cGodina ;
-            .AND. field->mjesec = cMjesec ;
+      DO WHILE !Eof() .AND. field->godina = nGodina ;
+            .AND. field->mjesec = nMjesec ;
             .AND. field->idradn == cT_radnik
 
          // uvijek provjeri tip rada
@@ -645,7 +644,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
          lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
 
          // samo pozicionira bazu PAROBR na odgovarajuci zapis
-         ParObr( cMjesec, cGodina, IF( lViseObr, ld->obr, ), ld->idrj )
+         ParObr( nMjesec, nGodina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
          // uzmi samo odgovarajuce tipove rada
          IF ( cVRada == "1" .AND. !( cT_tiprada $ "A#U" ) )

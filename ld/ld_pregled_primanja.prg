@@ -19,8 +19,8 @@ FUNCTION ld_pregled_primanja()
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
-   cMjesec := gMjesec
-   cGodina := gGodina
+   nMjesec := gMjesec
+   nGodina := gGodina
    cObracun := gObracun
    cVarSort := "2"
    lKredit := .F.
@@ -46,11 +46,11 @@ FUNCTION ld_pregled_primanja()
 
    Box(, 7, 45 )
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
-   IF lViseObr
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
+   IF ld_vise_obracuna()
       @ m_x + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
-   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY "Tip primanja: "  GET  cTip
    @ m_x + 5, m_y + 2 SAY "Prikaz dodatnu kolonu: "  GET  cDod PICT "@!" VALID cdod $ "DN"
    @ m_x + 6, m_y + 2 SAY "Sortirati po (1-sifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
@@ -101,7 +101,7 @@ FUNCTION ld_pregled_primanja()
 
    SELECT ld
 
-   IF lViseObr
+   IF ld_vise_obracuna()
       cObracun := Trim( cObracun )
    ELSE
       cObracun := ""
@@ -111,15 +111,15 @@ FUNCTION ld_pregled_primanja()
 
       cidrj := ""
       IF cVarSort == "1"
-         SET ORDER TO TAG ( TagVO( "2" ) )
-         HSEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
+         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+         HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
-         cFilt := IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
-            IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
-         IF lViseObr
+         cFilt := IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
+            IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+         IF ld_vise_obracuna()
             cFilt += ".and. OBR=" + _filter_quote( cObracun )
          ENDIF
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
@@ -128,17 +128,17 @@ FUNCTION ld_pregled_primanja()
       ENDIF
    ELSE
       IF cVarSort == "1"
-         SET ORDER TO TAG ( TagVO( "1" ) )
-         HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + cObracun
+         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
+         HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
          cFilt := "IDRJ==" + _filter_quote( cIdRj ) + " .and. "
-         cFilt += iif( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and."
-         cFilt += iif( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
+         cFilt += iif( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and."
+         cFilt += iif( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
 
-         IF lViseObr
+         IF ld_vise_obracuna()
             cFilt += ".and. OBR ==" + _filter_quote( cObracun )
          ENDIF
 
@@ -173,10 +173,10 @@ FUNCTION ld_pregled_primanja()
    nT1 := nT2 := nT3 := nT4 := 0
    nC1 := 10
 
-   DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. ;
-         !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. ;
+         !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
-      IF lViseObr .AND. Empty( cObracun )
+      IF ld_vise_obracuna() .AND. Empty( cObracun )
          ScatterS( godina, mjesec, idrj, idradn )
       ELSE
          Scatter()
@@ -186,9 +186,9 @@ FUNCTION ld_pregled_primanja()
          // provjerimo da li otplacuje zadanom kreditoru
          // --------------------------------------------
          SELECT RADKR
-         SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + LD->idradn + cSifKred
+         SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred
          lImaJos := .F.
-         DO WHILE !Eof() .AND. Str( cGodina, 4 ) + Str( cMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
+         DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
             IF placeno > 0
                lImaJos := .T.
                EXIT
@@ -237,7 +237,7 @@ FUNCTION ld_pregled_primanja()
          IF lKredit .AND. !Empty( cSifKred )
             lImaJos := .F.
             SELECT RADKR; SKIP 1
-            DO WHILE !Eof() .AND. Str( cGodina, 4 ) + Str( cMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
+            DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
                IF placeno > 0
                   lImaJos := .T.
                   EXIT
@@ -291,8 +291,8 @@ FUNCTION ZPregPrim()
       ? _l( "RJ:" ), cidrj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + _l( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + _l( "Godina:" ), Str( cGodina, 5 )
+   ?? Space( 2 ) + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + _l( "Godina:" ), Str( nGodina, 5 )
    DevPos( PRow(), 74 )
    ?? _l( "Str." ), Str( ++nStrana, 3 )
    ?

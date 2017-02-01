@@ -19,9 +19,9 @@ FUNCTION ld_pregled_plata_za_period()
    LOCAL cRj := Space( 60 )
    LOCAL cRadnik := fetch_metric( "ld_izvj_radnik", my_user(), Space( LEN_IDRADNIK ) )
    LOCAL cIdRj
-   LOCAL cMjesec
+   LOCAL nMjesec
    LOCAL cMjesecDo
-   LOCAL cGodina
+   LOCAL nGodina
    LOCAL cOpcStan := Space( 200 )
    LOCAL cKanton := Space( 200 )
    LOCAL cDoprPio := "70"
@@ -37,20 +37,20 @@ FUNCTION ld_pregled_plata_za_period()
    napravi_pomocnu_tabelu()
 
    cIdRj := gLDRadnaJedinica
-   cMjesec := fetch_metric( "ld_izv_mjesec_od", my_user(), gMjesec )
-   cGodina := fetch_metric( "ld_izv_godina", my_user(), gGodina )
-   cMjesecDo := fetch_metric( "ld_izv_mjesec_do", my_user(), cMjesec )
+   nMjesec := fetch_metric( "ld_izv_mjesec_od", my_user(), gMjesec )
+   nGodina := fetch_metric( "ld_izv_godina", my_user(), gGodina )
+   cMjesecDo := fetch_metric( "ld_izv_mjesec_do", my_user(), nMjesec )
 
    otvori_tabele()
 
    Box( "#PREGLED PLATA ZA PERIOD", 20, 75 )
 
    @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-   @ m_x + 2, m_y + 2 SAY "Za mjesece od:" GET cMjesec PICT "99"
-   @ m_x + 2, Col() + 2 SAY "do:" GET cMjesecDo PICT "99" VALID cMjesecDo >= cMjesec
-   @ m_x + 3, m_y + 2 SAY "Godina: " GET cGodina PICT "9999"
+   @ m_x + 2, m_y + 2 SAY "Za mjesece od:" GET nMjesec PICT "99"
+   @ m_x + 2, Col() + 2 SAY "do:" GET cMjesecDo PICT "99" VALID cMjesecDo >= nMjesec
+   @ m_x + 3, m_y + 2 SAY "Godina: " GET nGodina PICT "9999"
 
-   IF lViseObr
+   IF ld_vise_obracuna()
       @ m_x + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
 
@@ -87,30 +87,30 @@ FUNCTION ld_pregled_plata_za_period()
 
    set_metric( "ld_izvj_radnik", my_user(), cRadnik )
    set_metric( "ld_m4_izdvojena_primanja", NIL, cM4TipoviIzdvojitiPrimanja )
-   set_metric( "ld_izv_mjesec_od", my_user(), cMjesec )
-   set_metric( "ld_izv_godina", my_user(), cGodina )
+   set_metric( "ld_izv_mjesec_od", my_user(), nMjesec )
+   set_metric( "ld_izv_godina", my_user(), nGodina )
    set_metric( "ld_izv_mjesec_do", my_user(), cMjesecDo )
 
    SELECT ld
 
-   sortiraj_tabelu_ld( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObracun )
+   sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, cObracun )
 
-   napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
+   napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
       cDoprPio, cDoprZdr, cDoprNez, cObracun, cDoprD4, cDoprD5, cDoprD6, ;
       cM4TipoviIzdvojitiPrimanja, cTotal, cOpcStan, cKanton )
 
    IF cTotal == "N"
-      prikazi_pregled( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
+      prikazi_pregled( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
          cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cOpcStan, cKanton )
    ELSE
-      prikazi_pregled_ukupno( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
+      prikazi_pregled_ukupno( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
          cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cOpcStan, cKanton )
    ENDIF
 
    RETURN .T.
 
 
-STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
+STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
       cRadnik, cDoprPio, cDoprZdr, cDoprNez, cObracun, cDop4, cDop5, cDop6, ;
       cM4TipoviIzdvojitiPrimanja, cTotal, cOpcStan, cKanton )
 
@@ -138,12 +138,12 @@ STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
          LOOP
       ENDIF
 
-      IF ld_date( ld->godina, ld->mjesec ) < ld_date( cGodina, cMjesec )
+      IF ld_date( ld->godina, ld->mjesec ) < ld_date( nGodina, nMjesec )
          SKIP
          LOOP
       ENDIF
 
-      IF ld_date( ld->godina, ld->mjesec ) > ld_date( cGodina, cMjesecdo )
+      IF ld_date( ld->godina, ld->mjesec ) > ld_date( nGodina, cMjesecdo )
          SKIP
          LOOP
       ENDIF
@@ -163,7 +163,7 @@ STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
       cOpor := g_oporeziv( ld->idradn, ld->idrj )
 
       // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ParObr( ld->mjesec, ld->godina, IF( lViseObr, ld->obr, ), ld->idrj )
+      ParObr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
       select_o_radn( cT_radnik )
 
@@ -209,13 +209,13 @@ STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
          ENDIF
 
          IF ld_date( field->godina, field->mjesec ) < ;
-               ld_date( cGodina, cMjesec )
+               ld_date( nGodina, nMjesec )
             SKIP
             LOOP
          ENDIF
 
          IF ld_date( field->godina, field->mjesec ) > ;
-               ld_date( cGodina, cMjesecdo )
+               ld_date( nGodina, cMjesecdo )
             SKIP
             LOOP
          ENDIF
@@ -231,7 +231,7 @@ STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
          cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj ) // uvijek provjeri tip rada, ako ima vise obracuna
          cTrosk := radn->trosk
 
-         ParObr( ld->mjesec, ld->godina, iif( lViseObr, ld->obr, ), ld->idrj )
+         ParObr( ld->mjesec, ld->godina, iif( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
          nPrKoef := 0
 
@@ -486,7 +486,7 @@ FUNCTION sum_primanja_za_tipove_primanja( cM4TipoviIzdvojitiPrimanja, nBolovanje
    RETURN .T.
 
 
-STATIC FUNCTION prikazi_pregled( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
+STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
       cDop1, cDop2, cDop3, cDop4, cDop5, cDop6, cOpcina, cKanton )
 
    LOCAL cT_radnik := ""
@@ -501,7 +501,7 @@ STATIC FUNCTION prikazi_pregled( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
    ? "#%LANDS#"
    P_COND2
 
-   pregled_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
+   pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
 
    cLine := pregled_header( cRadnik, cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
 
@@ -690,7 +690,7 @@ STATIC FUNCTION prikazi_pregled( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
 
 
 
-STATIC FUNCTION prikazi_pregled_ukupno( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
+STATIC FUNCTION prikazi_pregled_ukupno( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
       cDop1, cDop2, cDop3, cDop4, cDop5, cDop6, cOpcina, cKanton )
 
    LOCAL cT_radnik := ""
@@ -706,7 +706,7 @@ STATIC FUNCTION prikazi_pregled_ukupno( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
    ? "#%LANDS#"
    P_COND2
 
-   pregled_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
+   pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
 
    cLine := pregled_header( cRadnik, cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
 
@@ -1086,7 +1086,7 @@ STATIC FUNCTION procenat_doprinosa( cDop )
    RETURN cProc
 
 
-STATIC FUNCTION pregled_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
+STATIC FUNCTION pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
 
    ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
@@ -1106,7 +1106,7 @@ STATIC FUNCTION pregled_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina,
    ENDIF
 
    ?? Space( 2 ) + "Mjesec od:", Str( cMjOd, 2 ), "do:", Str( cMjDo, 2 )
-   ?? Space( 4 ) + "Godina:", Str( cGodina, 5 )
+   ?? Space( 4 ) + "Godina:", Str( nGodina, 5 )
 
    IF !Empty( cRadnik )
       ? "Radnik: " + cRadnik
@@ -1146,7 +1146,7 @@ STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
 
 
 
-STATIC FUNCTION sortiraj_tabelu_ld( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObr )
+STATIC FUNCTION sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, cObr )
 
    LOCAL cFilter := ""
    PRIVATE cObracun := cObr
@@ -1173,11 +1173,11 @@ STATIC FUNCTION sortiraj_tabelu_ld( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, c
    IF Empty( cRadnik )
       INDEX ON Str( godina ) + SortPrez( idradn ) + Str( mjesec ) + idrj TO "tmpld"
       GO TOP
-      SEEK Str( cGodina, 4 )
+      SEEK Str( nGodina, 4 )
    ELSE
-      SET ORDER TO TAG ( TagVO( "2" ) )
+      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
       GO TOP
-      SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun + cRadnik
+      SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cRadnik
    ENDIF
 
    RETURN

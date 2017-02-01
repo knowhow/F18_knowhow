@@ -15,7 +15,7 @@
 STATIC DUZ_STRANA := 64
 
 
-FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
+FUNCTION ld_kartica_plate_samostalni( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta )
 
    LOCAL nKRedova
    LOCAL cDoprSpace := Space( 3 )

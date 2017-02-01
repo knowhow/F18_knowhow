@@ -72,7 +72,7 @@ FUNCTION ld_unos_obracuna()
          ENDIF
 
          IF _pr_kart_pl == "D"
-            ld_kartica_plate( cRj, nMjesec, nGodina, cIdRadn, IF( lViseObr, gObracun, NIL ) )
+            ld_kartica_plate( cRj, nMjesec, nGodina, cIdRadn, IF( ld_vise_obracuna(), gObracun, NIL ) )
          ENDIF
 
       ELSE
@@ -198,14 +198,14 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    LOCAL cOpor
    LOCAL _radni_sati := fetch_metric( "ld_radni_sati", NIL, "N" )
    PRIVATE cIdRj
-   PRIVATE cGodina
+   PRIVATE nGodina
    PRIVATE cIdRadn
-   PRIVATE cMjesec
+   PRIVATE nMjesec
 
    cIdRadn := Space( 6 )
    cIdRj := gLDRadnaJedinica
-   cMjesec := gMjesec
-   cGodina := gGodina
+   nMjesec := gMjesec
+   nGodina := gGodina
    cObracun := gObracun
 
 
@@ -223,13 +223,13 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    QQOutC( cIdRJ, "GR+/N" )
 
    IF gUNMjesec == "D"
-      @ m_x + 1, Col() + 2 SAY _l( "Mjesec: " )  GET cMjesec PICT "99"
+      @ m_x + 1, Col() + 2 SAY _l( "Mjesec: " )  GET nMjesec PICT "99"
    ELSE
       @ m_x + 1, Col() + 2 SAY _l( "Mjesec: " )
-      QQOutC( Str( cMjesec, 2 ), "GR+/N" )
+      QQOutC( Str( nMjesec, 2 ), "GR+/N" )
    ENDIF
 
-   IF lViseObr
+   IF ld_vise_obracuna()
       IF gUNMjesec == "D"
          @ m_x + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
       ELSE
@@ -240,7 +240,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    @ m_x + 1, Col() + 2 SAY _l( "Godina: " )
 
-   QQOutC( Str( cGodina, 4 ), "GR+/N" )
+   QQOutC( Str( nGodina, 4 ), "GR+/N" )
 
    @ m_x + 2, m_y + 2 SAY _l( "Radnik:" ) GET cIdRadn ;
       VALID {|| P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 17 ), ;
@@ -252,12 +252,12 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    ESC_BCR
 
-   nO_Ret := ParObr( cMjesec, cGodina, IF( lViseObr, cObracun, NIL ), cIdRj )
+   nO_Ret := ParObr( nMjesec, nGodina, IF( ld_vise_obracuna(), cObracun, NIL ), cIdRj )
 
    IF nO_ret = 0
 
       MsgBeep( "Ne postoje unešeni parametri obračuna za " + ;
-         Str( cMjesec, 2 ) + "/" + Str( cGodina, 4 ) + " !!" )
+         Str( nMjesec, 2 ) + "/" + Str( nGodina, 4 ) + " !!" )
 
       BoxC()
 
@@ -266,7 +266,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    ELSEIF nO_ret = 2
 
       MsgBeep( "Ne postoje unešeni parametri obračuna za " + ;
-         Str( cMjesec, 2 ) + "/" + Str( cGodina, 4 ) + " !!" + ;
+         Str( nMjesec, 2 ) + "/" + Str( nGodina, 4 ) + " !!" + ;
          "#Koristit ću postojeće parametre." )
    ENDIF
 
@@ -281,13 +281,13 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       nULicOdb := 0
    ENDIF
 
-   IF lViseObr .AND. cObracun <> "1"
+   IF ld_vise_obracuna() .AND. cObracun <> "1"
       nULicOdb := 0
    ENDIF
 
    SELECT ld
 
-   SEEK Str( cGodina, 4 ) + cIdRj + Str( cMjesec, 2 ) + iif( lViseObr, cObracun, "" ) + cIdRadn
+   SEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + iif( ld_vise_obracuna(), cObracun, "" ) + cIdRadn
 
    IF Found()
       lNovi := .F.
@@ -298,17 +298,17 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
       set_global_vars_from_dbf()
 
-      _Godina := cGodina
+      _Godina := nGodina
       _idrj   := cIdRj
       _idradn := cIdRadn
-      _mjesec := cMjesec
+      _mjesec := nMjesec
       _ulicodb := nULicOdb
       IF LD->( FieldPos( "TROSK" ) ) <> 0
          _trosk := cTrosk
          _opor := cOpor
       ENDIF
 
-      IF lViseObr
+      IF ld_vise_obracuna()
          _obr := cObracun
       ENDIF
 
@@ -321,7 +321,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       _idstrspr := radn->idstrspr
    ENDIF
 
-   ParObr( cMjesec, cGodina, iif( lViseObr, cObracun, ), cIdRj )
+   ParObr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ), cIdRj )
 
    IF gTipObr == "1"
       @ m_x + 3, m_y + 2   SAY IF( gBodK == "1", _l( "Broj bodova" ), _l( "Koeficijent" ) ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )

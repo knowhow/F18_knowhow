@@ -22,8 +22,8 @@ FUNCTION ld_platni_spisak()
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
-   cMjesec := gMjesec
-   cGodina := gGodina
+   nMjesec := gMjesec
+   nGodina := gGodina
    cObracun := gObracun
 
    o_ld_rj()
@@ -53,9 +53,9 @@ FUNCTION ld_platni_spisak()
    Box(, 13, 60 )
 
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
    @ m_x + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
    @ m_x + 5, m_y + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
    @ m_x + 6, m_y + 2 SAY "Prikaz u procentu %:" GET nprocenat PICT "999.99"
@@ -97,7 +97,7 @@ FUNCTION ld_platni_spisak()
    ENDIF
 
    IF !Empty( cNaslov )
-      cNaslov += ( Space( 1 ) + _l( "za mjesec:" ) + Str( cMjesec, 2 ) + ". " + _l( "godine:" ) + Str( cGodina, 4 ) + "." )
+      cNaslov += ( Space( 1 ) + _l( "za mjesec:" ) + Str( nMjesec, 2 ) + ". " + _l( "godine:" ) + Str( nGodina, 4 ) + "." )
    ENDIF
 
    SELECT ld
@@ -109,14 +109,14 @@ FUNCTION ld_platni_spisak()
    IF Empty( cIdRj )
       cIdRj := ""
       IF cVarSort == "1"
-         SET ORDER TO TAG ( TagVO( "2" ) )
-         HSEEK Str( cGodina, 4, 0 ) + Str( cMjesec, 2, 0 ) + cObracun
+         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+         HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
-         cFilt := iif( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
-            IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
+         cFilt := iif( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
+            IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
          cFilt += ".and. obr==" + _filter_quote( cObracun )
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
          BoxC()
@@ -125,15 +125,15 @@ FUNCTION ld_platni_spisak()
    ELSE
 
       IF cVarSort == "1"
-         SET ORDER TO TAG ( TagVO( "1" ) )
-         HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + cObracun
+         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
+         HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
          cFilt := "IDRJ==cIdRj.and." + ;
-            IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
-            IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
+            IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
+            IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
          cFilt += ".and. obr=" + _filter_quote( cObracun )
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
          BoxC()
@@ -167,9 +167,9 @@ FUNCTION ld_platni_spisak()
       nT1 := nT2 := nT3 := nT4 := 0
       nRbr := 0
 
-      DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+      DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
-         IF lViseObr .AND. Empty( cObracun )
+         IF ld_vise_obracuna() .AND. Empty( cObracun )
             ScatterS( godina, mjesec, idrj, idradn )
          ELSE
             Scatter()
@@ -276,8 +276,8 @@ FUNCTION ZPlatSp()
       ? _l( "RJ:" ), cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + _l( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + _l( "Godina:" ), Str( cGodina, 5 )
+   ?? Space( 2 ) + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + _l( "Godina:" ), Str( nGodina, 5 )
    DevPos( PRow(), 74 )
    ?? _l( "Str." ), Str( ++nStrana, 3 )
    ?
@@ -313,8 +313,8 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
-   cMjesec := gMjesec
-   cGodina := gGodina
+   nMjesec := gMjesec
+   nGodina := gGodina
    cObracun := gObracun
    cVarSort := "2"
    cProred := "N"
@@ -347,9 +347,9 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    Box(, 11, 50 )
 
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
    @ m_x + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
    @ m_x + 5, m_y + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
    @ m_x + 6, m_y + 2 SAY "Prikaz u procentu %:" GET nprocenat PICT "999.99"
@@ -390,14 +390,14 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
       cIdRj := ""
 
       IF cVarSort == "1"
-         SET ORDER TO TAG ( TagVO( "2" ) )
-         HSEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
+         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+         HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
-         cFilt := IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
-         IF lViseObr
+         cFilt := IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+         IF ld_vise_obracuna()
             cFilt += ".and. obr=" + _filter_quote( cObracun )
          ENDIF
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
@@ -408,14 +408,14 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    ELSE
 
       IF cVarSort == "1"
-         SET ORDER TO TAG ( TagVO( "1" ) )
-         HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + cObracun
+         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
+         HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
-         cFilt := "IDRJ==" + _filter_quote( cIdRj ) + ".and." + IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
-         IF lViseObr
+         cFilt := "IDRJ==" + _filter_quote( cIdRj ) + ".and." + IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+         IF ld_vise_obracuna()
             cFilt += ".and. obr=" + _filter_quote( cObracun )
          ENDIF
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
@@ -465,9 +465,9 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
       nT4 := 0
       nRbr := 0
 
-      DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cIdRj .AND. cMjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+      DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cIdRj .AND. nMjesec = mjesec .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
-         IF lViseObr .AND. Empty( cObracun )
+         IF ld_vise_obracuna() .AND. Empty( cObracun )
             ScatterS( godina, mjesec, idrj, idradn )
          ELSE
             Scatter()
@@ -614,8 +614,8 @@ FUNCTION ZPlatSpTR()
       ? _l( "RJ:" ), cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + _l( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + _l( "Godina:" ), Str( cGodina, 5 )
+   ?? Space( 2 ) + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + _l( "Godina:" ), Str( nGodina, 5 )
 
    DevPos( PRow(), 74 )
 
@@ -654,8 +654,8 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
-   cMjesec := gMjesec
-   cGodina := gGodina
+   nMjesec := gMjesec
+   nGodina := gGodina
    cObracun := gObracun
    cVarSort := "2"
    cIdTipPr := "  "
@@ -687,9 +687,9 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
 
    Box(, 10, 50 )
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
    @ m_x + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
    @ m_x + 5, m_y + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
    @ m_x + 6, m_y + 2 SAY "Primanje (prazno-sve ukupno):" GET cIdTipPr VALID Empty( cIdTipPr ) .OR. P_TipPr( @cIdTipPr )
@@ -729,8 +729,8 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
       ELSE
          cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka ) + ".and."
       ENDIF
-      cFilt := cFilt + IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
-      IF lViseObr
+      cFilt := cFilt + IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+      IF ld_vise_obracuna()
          cFilt += ".and. obr=" + _filter_quote( cObracun )
       ENDIF
       INDEX ON &cSort1 TO "tmpld" FOR &cFilt
@@ -750,8 +750,8 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
       ELSE
          cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka ) + ".and."
       ENDIF
-      cFilt := cFilt + "IDRJ==" + _filter_quote( cIdRj ) + ".and." + IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
-      IF lViseObr
+      cFilt := cFilt + "IDRJ==" + _filter_quote( cIdRj ) + ".and." + IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+      IF ld_vise_obracuna()
          cFilt += ".and. obr=" + _filter_quote( cObracun )
       ENDIF
       INDEX ON &cSort1 TO "tmpld" FOR &cFilt
@@ -784,9 +784,9 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
       nT4 := 0
       nRbr := 0
 
-      DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cIdRj .AND. cMjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun ) .AND. radn->idBanka == cIdTBanka
+      DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cIdRj .AND. nMjesec = mjesec .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun ) .AND. radn->idBanka == cIdTBanka
 
-         IF lViseObr .AND. Empty( cObracun )
+         IF ld_vise_obracuna() .AND. Empty( cObracun )
             ScatterS( godina, mjesec, idrj, idradn )
          ELSE
             Scatter()
@@ -876,8 +876,8 @@ FUNCTION ZIsplataTR()
       ? _l( "RJ:" ), cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + _l( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + _l( "Godina:" ), Str( cGodina, 5 )
+   ?? Space( 2 ) + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + _l( "Godina:" ), Str( nGodina, 5 )
    DevPos( PRow(), 74 )
    ?? _l( "Str." ), Str( ++nStrana, 3 )
    ?

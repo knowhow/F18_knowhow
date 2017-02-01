@@ -67,6 +67,11 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
          ENDIF
          SET ORDER TO TAG "1"
 
+      ELSEIF cTable == "ld_parobr"
+
+         INDEX ON id + godina + obr TAG ID TO ( cAlias )
+         SET ORDER TO TAG "ID"
+
       ELSEIF cTable == "ops"
 
          INDEX ON ID TAG ID TO ( cAlias )

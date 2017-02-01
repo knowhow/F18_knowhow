@@ -127,9 +127,9 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
          ENDIF
          Scatter()
          IF cRazdvoji == "D"
-         
+
             SELECT _LD
-            HSEEK xIdRadn + LD->IdRj
+            HSEEK xIdRadn + LD->IdRj // _ld
             IF ! Found()
                APPEND BLANK
             ENDIF

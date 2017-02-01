@@ -104,6 +104,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
    ENDIF
 
    // SELECT LD
+   ALTD()
 
    cIdRadn := Trim( cIdradn )
 
@@ -185,8 +186,10 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
    // -- U fmk.ini /kumpath se definisu koji dopr. da se prikazuju
    // -- Po defaultu stoji prazno - svi doprinosi
 
-   cPrikDopr := my_get_from_ini( "LD", "DoprNaKartPl", "D", KUMPATH )
-   lPrikSveDopr := ( cPrikDopr == "D" )
+   //cPrikDopr := my_get_from_ini( "LD", "DoprNaKartPl", "D", KUMPATH )
+   //cPrikDopr := "D"
+   //lPrikSveDopr := ( cPrikDopr == "D" )
+   lPrikSveDopr := .T.
 
    DO WHILE !Eof() .AND. nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. idradn = cIdRadn .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 

@@ -306,7 +306,7 @@ FUNCTION cre_all_ld( ver )
    AFTER_CREATE_INDEX
    */
 
-   // -----------------------------------------------
+
    // RADKR.DBF
    // -----------------------------------------------
    aDbf := {}
@@ -318,6 +318,7 @@ FUNCTION cre_all_ld( ver )
    AAdd( aDBf, { 'Placeno', 'N',  12,  2 } )
    AAdd( aDBf, { 'NaOsnovu', 'C',  20,  0 } )
 
+/*
    _alias := "RADKR"
    _table_name := "ld_radkr"
    IF_NOT_FILE_DBF_CREATE
@@ -325,8 +326,9 @@ FUNCTION cre_all_ld( ver )
    CREATE_INDEX( "2", "idradn+idkred+naosnovu+str(godina)+str(mjesec)", _alias )
    CREATE_INDEX( "3", "idkred+naosnovu+idradn+str(godina)+str(mjesec)", _alias )
    CREATE_INDEX( "4", "str(godina)+str(mjesec)+idradn+naosnovu", _alias )
-   AFTER_CREATE_INDEX
 
+   AFTER_CREATE_INDEX
+*/
 
    // --------------------------------------------------
    // _RADKR.DBF

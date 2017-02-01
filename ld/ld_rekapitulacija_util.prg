@@ -41,7 +41,7 @@ FUNCTION rekap_ld( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis
    IF lObavDodaj
       APPEND BLANK
    ELSE
-      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cId + " "
+      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cId + " " // rekld tmp
       IF !Found()
          APPEND BLANK
       ENDIF
@@ -72,9 +72,9 @@ FUNCTION o_ld_rekap()
    o_koef_beneficiranog_radnog_staza()
    o_ld_vrste_posla()
    o_ops()
-   //O_RADKR
+   // O_RADKR
    o_kred()
-   //o_ld()
+   // o_ld()
 
    set_tippr_ili_tippr2( cObracun )
 
@@ -299,7 +299,7 @@ FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
    SELECT opsld
 
    // po opc.stanovanja
-   SEEK cPorId + "1" + radn->idopsst
+   SEEK cPorId + "1" + radn->idopsst // opsld tmp
 
    IF Found()
 
@@ -954,6 +954,9 @@ STATIC FUNCTION IspisKred( lSvi )
 
    LOCAL _kr_partija
    LOCAL _found := .F.
+   LOCAL nMjesecFor, nMjesecRadKr
+   LOCAL _t_rec
+   LOCAL cIdKred, cNaOsnovu, nUkKred, nUkKrRad, cOpis2
 
    IF "SUMKREDITA" $ tippr->formula
 
@@ -963,7 +966,7 @@ STATIC FUNCTION IspisKred( lSvi )
          ?U "  ", "Od toga pojedinačni krediti:"
 
          SELECT RADKR
-         SET ORDER TO TAG "3"
+         SET ORDER TO TAG "3" // idkred+naosnovu+idradn+str(godina)+str(mjesec)
          SET FILTER TO Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) <= Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) .AND. ;
             Str( nGodina, 4, 0 ) + Str( nMjesecDo, 2, 0 ) >= Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 )
          GO TOP
@@ -979,8 +982,8 @@ STATIC FUNCTION IspisKred( lSvi )
 
             DO WHILE !Eof() .AND. field->IDKRED == cIdKred
 
-               cNaOsnovu := NAOSNOVU
-               cIdRadnKR := IDRADN
+               cNaOsnovu := radkr->NAOSNOVU
+               cIdRadnKR := radkr->IDRADN
 
                select_o_radn( cIdRadnKR )
 
@@ -990,19 +993,18 @@ STATIC FUNCTION IspisKred( lSvi )
 
                DO WHILE !Eof() .AND. field->IDKRED == cIdKred .AND. cNaOsnovu == field->NAOSNOVU .AND. cIdRadnKR == field->IDRADN
 
-                  mj := mjesec
-
+                  nMjesecRadKr := radkr->mjesec
                   _found := .F.
 
                   IF lSvi
 
-                     SELECT ld  // rekap za sve rj
-                     SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-                     HSEEK Str( nGodina, 4, 0 ) + Str( mj, 2, 0 ) + cObracun + radkr->idradn
+                     // SELECT ld  // rekap za sve rj
+                     // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+                     // HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + radkr->idradn
+                     seek_ld_2( NIL, nGodina, nMjesecRadKr, cObracun, radkr->idradn )
 
                      _t_rec := RecNo()
-                     DO WHILE !Eof() .AND. godina == nGodina .AND. mjesec == nMjesec .AND. ;
-                           obr == cObracun .AND. idradn == radkr->idradn
+                     DO WHILE !Eof() .AND. godina == nGodina .AND. mjesec == nMjesec .AND. obr == cObracun .AND. idradn == radkr->idradn
                         IF ld->i30 <> 0
                            _found := .T.
                            EXIT
@@ -1013,9 +1015,11 @@ STATIC FUNCTION IspisKred( lSvi )
 
                   ELSE
                      // rekap za jednu rj
-                     SELECT ld
-                     HSEEK  Str( nGodina, 4 ) + cIdrj + Str( mj, 2 ) + IF( !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                     // SELECT ld
+                     // HSEEK  Str( nGodina, 4 ) + cIdrj + Str( mj, 2 ) + IF( !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                      // ako ima radnika i ako mu je podatak kredita unesen na obracunu
+                     seek_ld( cIdRj, nGodina, nMjesecRadKr, iif( !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
+
                      IF Found() .AND. ld->i30 <> 0
                         _found := .T.
                      ENDIF
@@ -1024,8 +1028,8 @@ STATIC FUNCTION IspisKred( lSvi )
                   SELECT radkr
 
                   IF _found
-                     nUkKred  += iznos
-                     nUkKrRad += iznos
+                     nUkKred  += radkr->iznos
+                     nUkKrRad += radkr->iznos
                   ENDIF
 
                   SKIP 1
@@ -1042,13 +1046,13 @@ STATIC FUNCTION IspisKred( lSvi )
 
             ENDDO
 
-            IF nUkKred <> 0
-               // ispisati kreditora
+            IF nUkKred <> 0   // ispisati kreditora
+
                IF PRow() > 55 + dodatni_redovi_po_stranici()
                   FF
                ENDIF
 
-               ? "  ", cidkred, Left( kred->naz, 22 )
+               ? "  ", cIdkred, Left( kred->naz, 22 )
                @ PRow(), 58 SAY nUkKred  PICT "(" + gpici + ")"
             ENDIF
          ENDDO
@@ -1058,35 +1062,38 @@ STATIC FUNCTION IspisKred( lSvi )
          ? cLinija
          ?U "  ", "Od toga pojedinačni krediti:"
          cOpis2 := ""
-         SELECT radkr
+
+         o_radkr_all_rec()
+         // SELECT radkr
          SET ORDER TO TAG "3"
          GO TOP
+
 
          DO WHILE !Eof()
 
             select_o_kred( radkr->idkred )
-
-            SELECT radkr
-            PRIVATE cidkred := idkred, cNaOsnovu := naosnovu
-
             select_o_radn( radkr->idradn )
-            SELECT radkr
-
             cOpis2 := RADNIK_PREZ_IME
-            SEEK cIdkred + cNaOsnovu
-            PRIVATE nUkKred := 0
 
-            DO WHILE !Eof() .AND. idkred == cidkred .AND. ( cnaosnovu == naosnovu .OR. gReKrOs == "N" )
+
+            SELECT radkr
+            cIdkred := radkr->idkred
+            cNaOsnovu := radkr->naosnovu
+            nUkKred := 0
+
+            DO WHILE !Eof() .AND. idkred == cIdkred .AND. ( cNaosnovu == naosnovu .OR. gReKrOs == "N" )
 
                _found := .F.
 
                IF lSvi
-                  SELECT ld
-                  SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-                  HSEEK  Str( nGodina, 4 ) + Str( nMjesec, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                  // SELECT ld
+                  // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+                  // HSEEK  Str( nGodina, 4 ) + Str( nMjesec, 2 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                  seek_ld_2( NIL, nGodina, nMjesec, cObracun, radkr->idradn )
                ELSE
-                  SELECT ld
-                  HSEEK  Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                  seek_ld( cIdRj, nGodina, nMjesec, iif( !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
+                  // SELECT ld
+                  // HSEEK  Str( nGodina, 4 ) + cIdrj + Str( nMjesec, 2 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                ENDIF
 
                IF Found()
@@ -1096,24 +1103,26 @@ STATIC FUNCTION IspisKred( lSvi )
                SELECT radkr
 
                IF _found .AND. godina == nGodina .AND. mjesec == nMjesec
-                  nUkKred += iznos
+                  nUkKred += radkr->iznos
                ENDIF
 
                IF nMjesecDo > nMjesec
-                  FOR mj := nMjesec + 1 TO nMjesecDo
+                  FOR nMjesecFor := nMjesec + 1 TO nMjesecDo
                      IF lSvi
                         SELECT ld
                         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-                        HSEEK  Str( nGodina, 4 ) + Str( mj, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        //HSEEK  Str( nGodina, 4 ) + Str( nMjesecFor, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                         // "LDi2","str(godina)+str(mjesec)+idradn"
+                        seek_ld_2( NIL, nGodina, nMjesecFor, IIF( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
                      ELSE
-                        SELECT ld
-                        HSEEK  Str( nGodina, 4 ) + cidrj + Str( mj, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        //SELECT ld
+                        //HSEEK  Str( nGodina, 4 ) + cIdrj + Str( nMjesecFor, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        seek_ld( cIdRj, nGodina, nMjesecFor, IIF( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
                      ENDIF // lSvi
 
                      SELECT radkr
 
-                     IF ld->( Found() ) .AND. godina == nGodina .AND. mjesec = mj
+                     IF ld->( Found() ) .AND. godina == nGodina .AND. mjesec == nMjesecFor
                         nUkKred += iznos
                      ENDIF
                   NEXT
@@ -1122,7 +1131,7 @@ STATIC FUNCTION IspisKred( lSvi )
                SKIP
             ENDDO
 
-            IF nukkred <> 0
+            IF nUkkred <> 0
 
                IF PRow() > 55 + dodatni_redovi_po_stranici()
                   FF

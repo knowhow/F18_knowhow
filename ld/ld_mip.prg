@@ -192,7 +192,7 @@ FUNCTION ld_mip_obrazac_1023()
       MsgBeep( "Za jednog radnika se ne vrši export, samo štampa!" )
    ENDIF
 
-   SELECT ld
+   seek_ld( NIL, cGod, cMj )
 
    mip_sort( cRj, cGod, cMj, cRadnik, cObracun )
 
@@ -244,11 +244,11 @@ FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
    IF Empty( cRadnik )
       INDEX ON Str( field->godina ) + Str( field->mjesec ) + SortPrez( field->idradn ) + idrj TAG "MIP1" TO ( my_home() + "ld_tmp" )
       GO TOP
-      SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cRadnik
+      SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cRadnik // mip index
    ELSE
       SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
       GO TOP
-      SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cObracun + cRadnik
+      SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cObracun + cRadnik // mip index
    ENDIF
 
    RETURN .T.

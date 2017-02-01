@@ -99,7 +99,7 @@ FUNCTION ld_pregled_primanja()
       //SET ORDER TO TAG "1"
    //ENDIF
 
-   SELECT ld
+   //SELECT ld
 
    IF ld_vise_obracuna()
       cObracun := Trim( cObracun )
@@ -109,11 +109,13 @@ FUNCTION ld_pregled_primanja()
 
    IF Empty( cIdRJ )
 
-      cidrj := ""
+      cIdrj := ""
       IF cVarSort == "1"
-         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-         HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
+         //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+         //HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
+         seek_ld_2( NIL, nGodina, nMjesec, cObracun )
       ELSE
+         seek_ld( NIL, nGodina, nMjesec, cObracun )
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
@@ -128,9 +130,11 @@ FUNCTION ld_pregled_primanja()
       ENDIF
    ELSE
       IF cVarSort == "1"
-         SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
-         HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + cObracun
+         //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
+         //HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + cObracun
+         seek_ld( cIdRj, nGodina, nMjesec, cObracun )
       ELSE
+         seek_ld( cIdRj, nGodina, nMjesec, cObracun )
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
@@ -185,8 +189,9 @@ FUNCTION ld_pregled_primanja()
       IF lKredit .AND. !Empty( cSifKred )
          // provjerimo da li otplacuje zadanom kreditoru
          // --------------------------------------------
-         SELECT RADKR
-         SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred
+         //SELECT RADKR
+         //SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred
+         seek_radkr( nGodina, nMjesec, ld->IdRadn, cSifKred )
          lImaJos := .F.
          DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
             IF placeno > 0

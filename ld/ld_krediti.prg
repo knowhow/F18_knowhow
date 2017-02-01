@@ -369,14 +369,18 @@ FUNCTION ld_krediti_redefinisanje_rata()
 
    READ
 
-   SELECT radkr
+   // SELECT radkr
+   // SET ORDER TO TAG "4"
+   // SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
+   seek_radkr( _godina, _mjesec, _idradn, NIL, cNaOsnovu )
    SET ORDER TO TAG "4"
-   SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
+   GO TOP
+
 
    nTRata := field->iznos
    nNRata := nTRata
 
-   @ m_x + 4, m_y + 2 SAY "tekuæa rata kredita = " + ;
+   @ m_x + 4, m_y + 2 SAY8 "tekuća rata kredita = " + ;
       AllTrim( Str( nTRata ) ) + " KM"
    @ m_x + 5, m_y + 2 SAY "rata kredita za obracun" GET nNRata VALID nNRata <> 0
    READ
@@ -385,15 +389,19 @@ FUNCTION ld_krediti_redefinisanje_rata()
 
    IF nNRata <> nTRata
 
-      SELECT radkr
+      //SELECT radkr
+      //SET ORDER TO TAG "4"
+      //SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
+      seek_radkr( _godina, _mjesec, _idradn, NIL, cNaOsnovu )
       SET ORDER TO TAG "4"
-      SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
+      GO TOP
 
       cKreditor := idkred
       cIdRadn := idradn
 
-      SET ORDER TO TAG "2"
-      SEEK cIdRadn + cKreditor + cNaOsnovu + Str( _godina, 4 ) + Str( _mjesec, 2 )
+      //SET ORDER TO TAG "2"
+      //SEEK cIdRadn + cKreditor + cNaOsnovu + Str( _godina, 4 ) + Str( _mjesec, 2 )
+      seek_radkr_2( cIdRadn, cKreditor, cNaOsnovu, _godina, _mjesec )
 
       nTotalKr := 0
 
@@ -404,9 +412,7 @@ FUNCTION ld_krediti_redefinisanje_rata()
       ENDIF
 
 
-      DO WHILE !Eof() .AND. cKreditor == idkred ;
-            .AND. idradn = _idradn ;
-            .AND. naosnovu == cNaOsnovu
+      DO WHILE !Eof() .AND. cKreditor == idkred  .AND. idradn = _idradn .AND. naosnovu == cNaOsnovu
 
          nTotalKr += iznos
 
@@ -632,7 +638,7 @@ FUNCTION ld_lista_kredita()
    IF lRjRadn
       @ m_x + 1, m_y + 2 SAY "RJ (prazno=sve): " GET cIdRj  VALID {|| Empty( cIdRj ) .OR. P_LD_Rj( @cIdRj ) } PICT "@!"
    ENDIF
-   @ m_x + 2, m_y + 2 SAY "Kreditor ('.' svi): " GET cIdKred  VALID {|| cidkred = '.' .OR. P_Kred( @cIdKred ) } PICT "@!"
+   @ m_x + 2, m_y + 2 SAY "Kreditor ('.' svi): " GET cIdKred  VALID {|| cIdkred = '.' .OR. P_Kred( @cIdKred ) } PICT "@!"
    @ m_x + 3, m_y + 2 SAY "Na osnovu ('.' po svim osnovama):" GET cNaOsnovu PICT "@!"
    @ m_x + 4, m_y + 2 SAY "Prikazati rate kredita D/N/J/R/T:"
    @ m_x + 5, m_y + 2 SAY "D - prikazati sve rate"
@@ -643,6 +649,7 @@ FUNCTION ld_lista_kredita()
    @ m_x + 10, m_y + 2 SAY "Prikazi samo aktivne-neotplacene kredite D/N" GET cAktivni PICT "@!" VALID cAktivni $ "DN"
    READ
    ESC_BCR
+
    IF cRateDN $ "JR"
       @ m_x + 12, m_y + 2 SAY "Prikazati ratu od godina/mjesec:" GET nGodina PICT "9999"
       @ m_x + 12, Col() + 1 SAY "/" GET nMjesec PICT "99"
@@ -660,7 +667,7 @@ FUNCTION ld_lista_kredita()
       cNaOsnovu := ""
    ENDIF
 
-   SELECT radkr
+   o_radkr_all_rec()
 
    IF lRazdvojiPoRj
 
@@ -684,7 +691,7 @@ FUNCTION ld_lista_kredita()
          SET FILTER TO radn->idRj == cIdRj
       ENDIF
       SET ORDER TO TAG "3"
-      SEEK cIdKred + cNaOsnovu
+      SEEK cIdKred + cNaOsnovu // radkr all records
    ENDIF
 
    nRbr := 0
@@ -723,7 +730,7 @@ FUNCTION ld_lista_kredita()
 
       SELECT radkr
 
-      IF fsvi
+      IF fSvi
          ?
          ? StrTran( m, "-", "*" )
          ? tip_organizacije() + ":", cIdKred, kred->naz
@@ -742,7 +749,7 @@ FUNCTION ld_lista_kredita()
             nTekRec := RecNo()
             RKgod := RADKR->Godina
             RKmjes := RADKR->Mjesec
-            DO WHILE !Eof() .AND. idkred = cidkred .AND. cosn == naosnovu .AND. idradn == cidradn
+            DO WHILE !Eof() .AND. idkred = cIdkred .AND. cOsn == naosnovu .AND. idradn == cIdradn
                nIzn += RADKR->Iznos
                nIznP += RADKR->Placeno
                RKgod := RADKR->Godina
@@ -1166,9 +1173,7 @@ FUNCTION ld_brisanje_kredita()
       RETURN .F.
    ENDIF
 
-   SELECT RADKR
-   SET ORDER TO TAG "2"
-   SEEK cIdRadn + cIdKred + cNaOsnovu
+   seek_radkr_2( cIdRadn, cIdKred, cNaOsnovu )
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "ld_radkr" }, .T. )

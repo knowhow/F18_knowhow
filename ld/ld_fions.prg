@@ -634,7 +634,7 @@ FUNCTION PrimSM( cOznaka, cTipPr )
       O_LDSM
    ENDIF
 
-   SEEK cOznaka + Str( _godina ) + Str( _mjesec ) + _idradn + _idrj
+   SEEK cOznaka + Str( _godina ) + Str( _mjesec ) + _idradn + _idrj // ldsm
    IF cTippr == "NE"
       nRez := UNETO
    ELSE
@@ -923,7 +923,7 @@ FUNCTION BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, ndan, cDanDio )
    LOCAL _BrBod := 0
 
    SELECT RADSIHT
-   SEEK Str( ngodina, 4 ) + Str( nmjesec, 2 ) + cIdRadn + cIdRj + Str( nDan, 2 ) + cDanDio
+   SEEK Str( ngodina, 4 ) + Str( nmjesec, 2 ) + cIdRadn + cIdRj + Str( nDan, 2 ) + cDanDio //radsiht
    // +"01"+str(ndan,2)
    // id na prvi slog
    ntRec := RecNo()   // ispisi broj bodova

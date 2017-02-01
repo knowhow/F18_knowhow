@@ -536,12 +536,8 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    BoxC()
 
-   o_ld_radn()
-   select_o_ld()
-
-   SET ORDER TO TAG "2"
-   GO TOP
-   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
+   //o_ld_radn()
+   seek_ld_2( NIL,  nGodina, nMjesec, cObracun )
 
    Box(, 1, 60 )
 
@@ -549,7 +545,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun == Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + obr
 
-      cIdRadn := idradn
+      cIdRadn := ld->idradn
       nProlaz := 0
 
       ++_count
@@ -563,10 +559,8 @@ FUNCTION ld_obracun_napravljen_vise_puta()
       IF nProlaz > 1
 
          select_o_radn( cIdRadn )
-
-         SELECT ld
-
-         SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cIdRadn
+         //SELECT ld
+        // SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cIdRadn
 
          DO WHILE !Eof() .AND. Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->obr == Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun .AND. field->idradn == cIdRadn
             AAdd( _data, { field->obr, field->idradn, PadR( AllTrim( radn->naz ) + " " + AllTrim( radn->ime ), 20 ), field->idrj, field->uneto, field->usati } )

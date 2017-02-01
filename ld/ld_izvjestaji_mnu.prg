@@ -61,10 +61,13 @@ STATIC FUNCTION izvjestaji_obrasci()
 
    AAdd( _opc, "1. mjesečni obrazac MIP-1023                  " )
    AAdd( _opcexe, {|| ld_mip_obrazac_1023() } )
+
    AAdd( _opc, "2. obračunski listovi (obrasci OLP i GIP)" )
    AAdd( _opcexe, {|| ld_olp_gip_obrazac() } )
+
    AAdd( _opc, "3. akontacije poreza (obrasci ASD i AUG)" )
    AAdd( _opcexe, {|| ld_asd_aug_obrazac() } )
+   
    AAdd( _opc, "4. prijave doprinosa (JS-3400)" )
    AAdd( _opcexe, {|| ld_js3400_obrazac() } )
 

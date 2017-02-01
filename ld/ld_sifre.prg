@@ -699,9 +699,8 @@ FUNCTION g_ops_code( cId )
 
    PushWa()
    o_ops()
-   SELECT ops
-   SEEK cId
-   IF Found()
+   select_o_ops( cId )
+   IF !EOF()
       cRet := field->idj
    ENDIF
 
@@ -776,7 +775,7 @@ FUNCTION KrBlok( Ch )
    //ENDIF
 
    SET ORDER TO TAG ( cTag )
-   SEEK cKljuc
+  -- SEEK cKljuc
 
    lVrati := Found()
 
@@ -887,7 +886,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
    o_sifv()
    SELECT sifk
    SET ORDER TO TAG "ID"
-   SEEK "POR"
+   SEEK "POR" // sifk
 
    DO WHILE !Eof() .AND. ID = "POR"
       AAdd ( ImeKol, {  get_sifk_naz( "POR", SIFK->Oznaka ) } )
@@ -983,7 +982,7 @@ FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
 
    SELECT sifk
    SET ORDER TO TAG "ID"
-   SEEK "DOPR"
+   SEEK "DOPR" // sifk
 
    DO WHILE !Eof() .AND. ID = "DOPR"
       AAdd( ImeKol, { get_sifk_naz( "DOPR", SIFK->Oznaka ) } )
@@ -1166,10 +1165,8 @@ FUNCTION TotBrisRadn()
 
       // brisem ga iz baze kredita
       // -------------------------
-      SELECT radkr
-      SET ORDER TO TAG "2"
-      GO TOP
-      SEEK cIdRadn
+
+      seek_radkr_2( cIdRadn )
       DO WHILE !Eof() .AND. idradn == cIdRadn
          SKIP 1
          nRec := RecNo()
@@ -1217,12 +1214,8 @@ FUNCTION PrTotBr( cIdRadn )
 
    select_o_radn( cIdRadn )
 
-   SELECT ( F_RADKR )
-   SET ORDER TO TAG "2"
-   GO TOP
-   SEEK cIdRadn
-
-   cKljuc := Str( godina, 4 ) + Str( mjesec, 2 )
+   seek_radkr_2( cIdRadn )
+   cKljuc := Str( radkr->godina, 4 ) + Str( radkr->mjesec, 2 )
 
    DO WHILE !Eof() .AND. idradn == cIdRadn
       IF ( cKljuc < Str( godina, 4 ) + Str( mjesec, 2 ) )
@@ -1232,10 +1225,8 @@ FUNCTION PrTotBr( cIdRadn )
    ENDDO
    SKIP -1
 
-   SELECT ( F_LD )
-   SET ORDER TO TAG "RADN"
-   GO TOP
-   SEEK cIdRadn
+
+   select_o_radn( cIdRadn )
 
    cKljuc := Str( godina, 4 ) + Str( mjesec, 2 )
 
@@ -1250,7 +1241,7 @@ FUNCTION PrTotBr( cIdRadn )
    SELECT ( F_LDSM )
    SET ORDER TO TAG "RADN"
    GO TOP
-   SEEK cIdRadn
+   SEEK cIdRadn // ldsm
    cKljuc := Str( godina, 4 ) + Str( mjesec, 2 )
    DO WHILE !Eof() .AND. idradn == cIdRadn
       IF cKljuc < Str( godina, 4 ) + Str( mjesec, 2 )

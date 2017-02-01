@@ -61,7 +61,7 @@ FUNCTION GetUplaceniRSati( cIdRadn )
    nArr := Select()
 
    SELECT radsat
-   HSEEK cIdRadn
+   HSEEK cIdRadn //radsat
 
    IF Found() .AND. field->idradn == cIdRadn
       nSati := field->up_sati

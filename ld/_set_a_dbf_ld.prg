@@ -370,7 +370,7 @@ FUNCTION set_a_dbf_ld_radkr()
    _item[ "wa" ]    := F_RADKR
    _item[ "temp" ]  := .F.
    _item[ "algoritam" ] := {}
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
    _item[ "sif" ] := .F.
 
    // algoritam 1

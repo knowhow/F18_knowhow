@@ -25,21 +25,21 @@ FUNCTION seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
 
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
 
-   cSql += " WHERE godina =" + sql_quote( nGodina )
+   cSql += " WHERE godina=" + Str( nGodina, 4 )
 
    IF cIdRj != NIL
       cSql += " AND idrj=" + sql_quote( cIdRj )
    ENDIF
 
    IF nMjesec != NIL
-      cSql += " AND mjesec=" + sql_quote( nMjesec )
+      cSql += " AND mjesec=" + Str( nMjesec, 2 )
    ENDIF
 
    IF cObracun != NIL
       cSql += " AND obr=" + sql_quote( cObracun )
    ENDIF
 
-   IF cIdRadn != NIL
+   IF cIdRadn != NIL .AND. !Empty( cIdRadn )
       cSql += " AND idradn=" + sql_quote( cIdRadn )
    ENDIF
 
@@ -94,15 +94,16 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu )
    LOCAL cTable := "ld_radkr"
    LOCAL hIndexes, cKey
 
+   AltD()
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
 
-   cSql += " WHERE godina =" + sql_quote( nGodina )
+   cSql += " WHERE godina=" + Str( nGodina, 4 )
 
    IF nMjesec != NIL
-      cSql += " AND mjesec=" + sql_quote( nMjesec )
+      cSql += " AND mjesec=" + Str( nMjesec, 2 )
    ENDIF
 
-   IF cIdRadn != NIL
+   IF cIdRadn != NIL .AND. !Empty( cIdRadn )
       cSql += " AND idradn=" + sql_quote( cIdRadn )
    ENDIF
 
@@ -140,11 +141,41 @@ FUNCTION seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu, nGodina, nMjesec )
 
 
 FUNCTION o_radkr_1rec()
+   RETURN o_radkr( .T. )
 
-   LOCAL cSql := "select * from fmk.ld_radkr LIMIT 1"
 
-   RETURN use_sql( "ld_radkr", cSql, "RADKR" )
+FUNCTION o_radkr_all_rec()
+   RETURN o_radkr( .F. )
 
+
+FUNCTION o_radkr( lRec1 )
+
+   LOCAL cSql, lRet, hIndexes, cKey
+
+   hb_default( @lRec1, .T. )
+
+   cSql := "select * from fmk.ld_radkr"
+
+   IF lRec1
+      cSql += " LIMIT 1"
+   ENDIF
+
+   IF !lRec1
+      MsgO( "Preuzimanje tabele RADKR sa servera ..." )
+   ENDIF
+   lRet := use_sql( "ld_radkr", cSql, "RADKR" )
+
+   hIndexes := h_ld_radkr_indexes()
+
+   FOR EACH cKey IN hIndexes:Keys
+      INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( "RADKR" )
+   NEXT
+
+   IF !lRec1
+      Msgc()
+   ENDIF
+
+   RETURN lRet
 
 
 FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFilter )
@@ -163,8 +194,8 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
    cSql += " FROM " + F18_PSQL_SCHEMA_DOT + cTable
    cSql += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + "ld_radn ON ld_ld.idradn = ld_radn.id"
 
-   cSql += " WHERE godina =" + sql_quote( nGodina ) + ;
-      " AND mjesec>=" + sql_quote( nMjesec ) + " AND mjesec<=" + sql_quote( nMjesecDo )
+   cSql += " WHERE godina =" + Str( nGodina, 4 ) + ;
+      " AND mjesec>=" + Str( nMjesec, 2 ) + " AND mjesec<=" + Str( nMjesecDo, 2 )
 
    IF nVrInvalid > 0
       cSql += "AND vr_invalid = " + sql_quote( nVrInvalid )

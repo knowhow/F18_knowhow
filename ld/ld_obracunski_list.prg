@@ -1,205 +1,21 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-
 
 STATIC __mj_od
 STATIC __mj_do
 STATIC __god_od
 STATIC __god_do
 STATIC __xml := 0
-
-// ---------------------------------------
-// otvara potrebne tabele
-// ---------------------------------------
-FUNCTION ol_o_tbl()
-
-   o_ld_obracuni()
-   o_ld_parametri_obracuna()
-   O_PARAMS
-   o_ld_rj()
-   o_ld_radn()
-   o_koef_beneficiranog_radnog_staza()
-   o_ld_vrste_posla()
-   //o_tippr()
-   o_kred()
-   o_dopr()
-   o_por()
-   select_o_ld()
-
-   RETURN .T.
-
-// ---------------------------------------------------------
-// sortiranje tabele LD
-// ---------------------------------------------------------
-FUNCTION ol_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, ;
-      cRadnik, cTipRpt, cObr )
-
-   LOCAL cFilter := ""
-   PRIVATE cObracun := cObr
-
-   IF !Empty( cObr )
-      cFilter += "obr == " + dbf_quote( cObr )
-   ENDIF
-
-   IF !Empty( cRj )
-      IF !Empty( cFilter )
-         cFilter += " .and. "
-      ENDIF
-      cFilter += Parsiraj( cRj, "IDRJ" )
-   ENDIF
-
-   IF !Empty( cFilter )
-      SET FILTER TO &cFilter
-      GO TOP
-   ENDIF
-
-   IF Empty( cRadnik )
-      IF cTipRpt $ "1#2"
-         INDEX ON SortPrez( idradn ) + Str( godina ) + Str( mjesec ) + idrj TO "tmpld"
-         GO TOP
-      ELSE
-         INDEX ON Str( godina ) + Str( mjesec ) + SortPrez( idradn ) + idrj TO "tmpld"
-         GO TOP
-         SEEK Str( cGod_od, 4 ) + Str( cMj_od, 2 ) + cRadnik
-      ENDIF
-   ELSE
-      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-      GO TOP
-      SEEK Str( cGod_od, 4 ) + Str( cMj_od, 2 ) + cObracun + cRadnik
-   ENDIF
-
-   RETURN
-
-
-// ---------------------------------------------
-// upisivanje podatka u pomocnu tabelu za rpt
-// ---------------------------------------------
-STATIC FUNCTION _ins_tbl( cRadnik, cIdRj, cTipRada, cNazIspl, dDatIsplate, ;
-      nMjesec, nMjisp, cIsplZa, cVrsta, ;
-      nGodina, nPrihod, ;
-      nPrihOst, nBruto, nMBruto, nTrosk, nDop_u_st, nDopPio, ;
-      nDopZdr, nDopNez, nDop_uk, nNeto, nKLO, ;
-      nLOdb, nOsn_por, nIzn_por, nUk, nUSati, nIzn1, nIzn2, ;
-      nIzn3, nIzn4, nIzn5 )
-
-   LOCAL nTArea := Select()
-
-   O_R_EXP
-   SELECT r_export
-   APPEND BLANK
-
-   REPLACE tiprada WITH cTipRada
-   REPLACE idrj WITH cIdRj
-   REPLACE idradn WITH cRadnik
-   REPLACE naziv WITH cNazIspl
-   REPLACE mjesec WITH nMjesec
-   REPLACE mj_opis WITH ld_naziv_mjeseca( nMjIspl, nGodina, .F., .T. )
-   REPLACE mj_naz WITH ld_naziv_mjeseca( nMjIspl, nGodina, .F., .F. )
-   REPLACE mj_ispl WITH nMjIspl
-   REPLACE ispl_za WITH cIsplZa
-   REPLACE vr_ispl WITH cVrsta
-   REPLACE godina WITH nGodina
-   REPLACE datispl WITH dDatIsplate
-   REPLACE prihod WITH nPrihod
-   REPLACE prihost WITH nPrihOst
-   REPLACE bruto WITH nBruto
-   REPLACE mbruto WITH nMBruto
-   REPLACE trosk WITH nTrosk
-   REPLACE dop_u_st WITH nDop_u_st
-   REPLACE dop_pio WITH nDopPio
-   REPLACE dop_zdr WITH nDopZdr
-   REPLACE dop_nez WITH nDopNez
-   REPLACE dop_uk WITH nDop_uk
-   REPLACE neto WITH nNeto
-   REPLACE klo WITH nKlo
-   REPLACE l_odb WITH nLOdb
-   REPLACE osn_por WITH nOsn_Por
-   REPLACE izn_por WITH nIzn_Por
-   REPLACE ukupno WITH nUk
-   REPLACE sati WITH nUSati
-
-   IF nIzn1 <> nil
-      REPLACE tp_1 WITH nIzn1
-   ENDIF
-   IF nIzn2 <> nil
-      REPLACE tp_2 WITH nIzn2
-   ENDIF
-   IF nIzn3 <> nil
-      REPLACE tp_3 WITH nIzn3
-   ENDIF
-   IF nIzn4 <> nil
-      REPLACE tp_4 WITH nIzn4
-   ENDIF
-   IF nIzn5 <> nil
-      REPLACE tp_5 WITH nIzn5
-   ENDIF
-
-
-   SELECT ( nTArea )
-
-   RETURN
-
-
-
-// ---------------------------------------------
-// kreiranje pomocne tabele
-// ---------------------------------------------
-FUNCTION ol_tmp_tbl()
-
-   LOCAL aDbf := {}
-
-   AAdd( aDbf, { "IDRADN", "C", 6, 0 } )
-   AAdd( aDbf, { "IDRJ", "C", 2, 0 } )
-   AAdd( aDbf, { "TIPRADA", "C", 1, 0 } )
-   AAdd( aDbf, { "NAZIV", "C", 15, 0 } )
-   AAdd( aDbf, { "DATISPL", "D", 8, 0 } )
-   AAdd( aDbf, { "MJESEC", "N", 2, 0 } )
-   AAdd( aDbf, { "MJ_NAZ", "C", 15, 0 } )
-   AAdd( aDbf, { "MJ_OPIS", "C", 15, 0 } )
-   AAdd( aDbf, { "MJ_ISPL", "N", 2, 0 } )
-   AAdd( aDbf, { "ISPL_ZA", "C", 50, 0 } )
-   AAdd( aDbf, { "VR_ISPL", "C", 50, 0 } )
-   AAdd( aDbf, { "GODINA", "N", 4, 0 } )
-   AAdd( aDbf, { "PRIHOD", "N", 12, 2 } )
-   AAdd( aDbf, { "PRIHOST", "N", 12, 2 } )
-   AAdd( aDbf, { "BRUTO", "N", 12, 2 } )
-   AAdd( aDbf, { "MBRUTO", "N", 12, 2 } )
-   AAdd( aDbf, { "TROSK", "N", 12, 2 } )
-   AAdd( aDbf, { "DOP_U_ST", "N", 12, 2 } )
-   AAdd( aDbf, { "DOP_PIO", "N", 12, 2 } )
-   AAdd( aDbf, { "DOP_ZDR", "N", 12, 2 } )
-   AAdd( aDbf, { "DOP_NEZ", "N", 12, 2 } )
-   AAdd( aDbf, { "DOP_UK", "N", 12, 4 } )
-   AAdd( aDbf, { "NETO", "N", 12, 2 } )
-   AAdd( aDbf, { "KLO", "N", 5, 2 } )
-   AAdd( aDbf, { "L_ODB", "N", 12, 2 } )
-   AAdd( aDbf, { "OSN_POR", "N", 12, 2 } )
-   AAdd( aDbf, { "IZN_POR", "N", 12, 2 } )
-   AAdd( aDbf, { "UKUPNO", "N", 12, 2 } )
-   AAdd( aDbf, { "SATI", "N", 12, 2 } )
-   AAdd( aDbf, { "TP_1", "N", 12, 2 } )
-   AAdd( aDbf, { "TP_2", "N", 12, 2 } )
-   AAdd( aDbf, { "TP_3", "N", 12, 2 } )
-   AAdd( aDbf, { "TP_4", "N", 12, 2 } )
-   AAdd( aDbf, { "TP_5", "N", 12, 2 } )
-
-   create_dbf_r_export( aDbf )
-
-   O_R_EXP
-   INDEX ON idradn + Str( godina, 4 ) + Str( mjesec, 2 ) TAG "1"
-
-   RETURN
 
 
 FUNCTION ld_olp_gip_obrazac()
@@ -246,10 +62,10 @@ FUNCTION ld_olp_gip_obrazac()
    dDatPodnosenja := Date()
    nBrZahtjeva := 1
 
-   // otvori tabele
+
    ol_o_tbl()
 
-   // upisi parametre...
+
    cPredNaz := PadR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz ), 100 )
    cPredAdr := PadR( fetch_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr ), 100 )
    cPredJMB := PadR( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB ), 13 )
@@ -259,6 +75,7 @@ FUNCTION ld_olp_gip_obrazac()
    @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
    @ m_x + 2, m_y + 2 SAY "Period od:" GET cMj_od PICT "99"
    @ m_x + 2, Col() + 1 SAY "/" GET cGod_od PICT "9999"
+
    @ m_x + 2, Col() + 1 SAY "do:" GET cMj_do PICT "99"
    @ m_x + 2, Col() + 1 SAY "/" GET cGod_do PICT "9999"
 
@@ -301,8 +118,7 @@ FUNCTION ld_olp_gip_obrazac()
 
       nPorGodina := cGod_do
 
-      @ m_x + 16, m_y + 2 SAY "P.godina" GET nPorGodina ;
-         PICT "9999"
+      @ m_x + 16, m_y + 2 SAY "P.godina" GET nPorGodina PICT "9999"
       @ m_x + 16, Col() + 2 SAY "Dat.podnos." GET dDatPodnosenja
       @ m_x + 16, Col() + 2 SAY "Dat.unosa" GET dDatUnosa
 
@@ -321,7 +137,7 @@ FUNCTION ld_olp_gip_obrazac()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    // staticke
@@ -341,10 +157,10 @@ FUNCTION ld_olp_gip_obrazac()
    set_metric( "obracun_plata_preduzece_adresa", NIL, AllTrim( cPredAdr ) )
    set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 
-   SELECT ld
+   //SELECT ld
 
    // sortiraj tabelu i postavi filter
-   ol_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, cTipRpt, cObracun )
+   ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, cTipRpt, cObracun )
 
    // nafiluj podatke obracuna
    ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, ;
@@ -1456,5 +1272,187 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
       ENDDO
 
    ENDDO
+
+   RETURN
+
+
+
+// ---------------------------------------
+// otvara potrebne tabele
+// ---------------------------------------
+FUNCTION ol_o_tbl()
+
+   o_ld_obracuni()
+   o_ld_parametri_obracuna()
+   O_PARAMS
+   o_ld_rj()
+   o_ld_radn()
+   o_koef_beneficiranog_radnog_staza()
+   o_ld_vrste_posla()
+   // o_tippr()
+   o_kred()
+   o_dopr()
+   o_por()
+   select_o_ld()
+
+   RETURN .T.
+
+
+FUNCTION ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, ;
+      cRadnik, cTipRpt, cObr )
+
+   LOCAL cFilter := ""
+   PRIVATE cObracun := cObr
+
+   IF !Empty( cObr )
+      cFilter += "obr == " + dbf_quote( cObr )
+   ENDIF
+
+   IF !Empty( cRj )
+      IF !Empty( cFilter )
+         cFilter += " .and. "
+      ENDIF
+      cFilter += Parsiraj( cRj, "IDRJ" )
+   ENDIF
+
+   IF !Empty( cFilter )
+      SET FILTER TO &cFilter
+      GO TOP
+   ENDIF
+
+   IF Empty( cRadnik )
+      IF cTipRpt $ "1#2"
+         INDEX ON SortPrez( idradn ) + Str( godina ) + Str( mjesec ) + idrj TO "tmpld"
+         GO TOP
+      ELSE
+         INDEX ON Str( godina ) + Str( mjesec ) + SortPrez( idradn ) + idrj TO "tmpld"
+         GO TOP
+         SEEK Str( cGod_od, 4 ) + Str( cMj_od, 2 ) + cRadnik
+      ENDIF
+   ELSE
+      SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+      GO TOP
+      SEEK Str( cGod_od, 4 ) + Str( cMj_od, 2 ) + cObracun + cRadnik
+   ENDIF
+
+   RETURN .T.
+
+
+// ---------------------------------------------
+// upisivanje podatka u pomocnu tabelu za rpt
+// ---------------------------------------------
+STATIC FUNCTION _ins_tbl( cRadnik, cIdRj, cTipRada, cNazIspl, dDatIsplate, ;
+      nMjesec, nMjisp, cIsplZa, cVrsta, ;
+      nGodina, nPrihod, ;
+      nPrihOst, nBruto, nMBruto, nTrosk, nDop_u_st, nDopPio, ;
+      nDopZdr, nDopNez, nDop_uk, nNeto, nKLO, ;
+      nLOdb, nOsn_por, nIzn_por, nUk, nUSati, nIzn1, nIzn2, ;
+      nIzn3, nIzn4, nIzn5 )
+
+   LOCAL nTArea := Select()
+
+   O_R_EXP
+   SELECT r_export
+   APPEND BLANK
+
+   REPLACE tiprada WITH cTipRada
+   REPLACE idrj WITH cIdRj
+   REPLACE idradn WITH cRadnik
+   REPLACE naziv WITH cNazIspl
+   REPLACE mjesec WITH nMjesec
+   REPLACE mj_opis WITH ld_naziv_mjeseca( nMjIspl, nGodina, .F., .T. )
+   REPLACE mj_naz WITH ld_naziv_mjeseca( nMjIspl, nGodina, .F., .F. )
+   REPLACE mj_ispl WITH nMjIspl
+   REPLACE ispl_za WITH cIsplZa
+   REPLACE vr_ispl WITH cVrsta
+   REPLACE godina WITH nGodina
+   REPLACE datispl WITH dDatIsplate
+   REPLACE prihod WITH nPrihod
+   REPLACE prihost WITH nPrihOst
+   REPLACE bruto WITH nBruto
+   REPLACE mbruto WITH nMBruto
+   REPLACE trosk WITH nTrosk
+   REPLACE dop_u_st WITH nDop_u_st
+   REPLACE dop_pio WITH nDopPio
+   REPLACE dop_zdr WITH nDopZdr
+   REPLACE dop_nez WITH nDopNez
+   REPLACE dop_uk WITH nDop_uk
+   REPLACE neto WITH nNeto
+   REPLACE klo WITH nKlo
+   REPLACE l_odb WITH nLOdb
+   REPLACE osn_por WITH nOsn_Por
+   REPLACE izn_por WITH nIzn_Por
+   REPLACE ukupno WITH nUk
+   REPLACE sati WITH nUSati
+
+   IF nIzn1 <> nil
+      REPLACE tp_1 WITH nIzn1
+   ENDIF
+   IF nIzn2 <> nil
+      REPLACE tp_2 WITH nIzn2
+   ENDIF
+   IF nIzn3 <> nil
+      REPLACE tp_3 WITH nIzn3
+   ENDIF
+   IF nIzn4 <> nil
+      REPLACE tp_4 WITH nIzn4
+   ENDIF
+   IF nIzn5 <> nil
+      REPLACE tp_5 WITH nIzn5
+   ENDIF
+
+
+   SELECT ( nTArea )
+
+   RETURN
+
+
+
+// ---------------------------------------------
+// kreiranje pomocne tabele
+// ---------------------------------------------
+FUNCTION ol_tmp_tbl()
+
+   LOCAL aDbf := {}
+
+   AAdd( aDbf, { "IDRADN", "C", 6, 0 } )
+   AAdd( aDbf, { "IDRJ", "C", 2, 0 } )
+   AAdd( aDbf, { "TIPRADA", "C", 1, 0 } )
+   AAdd( aDbf, { "NAZIV", "C", 15, 0 } )
+   AAdd( aDbf, { "DATISPL", "D", 8, 0 } )
+   AAdd( aDbf, { "MJESEC", "N", 2, 0 } )
+   AAdd( aDbf, { "MJ_NAZ", "C", 15, 0 } )
+   AAdd( aDbf, { "MJ_OPIS", "C", 15, 0 } )
+   AAdd( aDbf, { "MJ_ISPL", "N", 2, 0 } )
+   AAdd( aDbf, { "ISPL_ZA", "C", 50, 0 } )
+   AAdd( aDbf, { "VR_ISPL", "C", 50, 0 } )
+   AAdd( aDbf, { "GODINA", "N", 4, 0 } )
+   AAdd( aDbf, { "PRIHOD", "N", 12, 2 } )
+   AAdd( aDbf, { "PRIHOST", "N", 12, 2 } )
+   AAdd( aDbf, { "BRUTO", "N", 12, 2 } )
+   AAdd( aDbf, { "MBRUTO", "N", 12, 2 } )
+   AAdd( aDbf, { "TROSK", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_U_ST", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_PIO", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_ZDR", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_NEZ", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_UK", "N", 12, 4 } )
+   AAdd( aDbf, { "NETO", "N", 12, 2 } )
+   AAdd( aDbf, { "KLO", "N", 5, 2 } )
+   AAdd( aDbf, { "L_ODB", "N", 12, 2 } )
+   AAdd( aDbf, { "OSN_POR", "N", 12, 2 } )
+   AAdd( aDbf, { "IZN_POR", "N", 12, 2 } )
+   AAdd( aDbf, { "UKUPNO", "N", 12, 2 } )
+   AAdd( aDbf, { "SATI", "N", 12, 2 } )
+   AAdd( aDbf, { "TP_1", "N", 12, 2 } )
+   AAdd( aDbf, { "TP_2", "N", 12, 2 } )
+   AAdd( aDbf, { "TP_3", "N", 12, 2 } )
+   AAdd( aDbf, { "TP_4", "N", 12, 2 } )
+   AAdd( aDbf, { "TP_5", "N", 12, 2 } )
+
+   create_dbf_r_export( aDbf )
+
+   O_R_EXP
+   INDEX ON idradn + Str( godina, 4 ) + Str( mjesec, 2 ) TAG "1"
 
    RETURN

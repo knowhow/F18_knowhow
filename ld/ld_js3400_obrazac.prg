@@ -186,7 +186,7 @@ FUNCTION ld_js3400_obrazac()
    SELECT ld
 
    // sortiraj tabelu i postavi filter
-   ol_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, cTipRpt, cObracun )
+   ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, cTipRpt, cObracun )
 
    // nafiluj podatke obracuna
    ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, ;

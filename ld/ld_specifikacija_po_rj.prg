@@ -79,7 +79,7 @@ FUNCTION ld_specifikacija_po_rj()
    cMjesecDo := Val( cMjesecDo )
    nGodina   := Val( nGodina  )
 
-   napravi_pomocnu_tabelu()
+   cre_tmp_dbf_ldt22()
 
    otvori_tabele()
 
@@ -123,7 +123,7 @@ FUNCTION ld_specifikacija_po_rj()
          nPom := &( aPrim[ i ] )
 
          SELECT LDT22
-         SEEK Right( aPrim[ i ], 2 ) + Space( 6 ) + LD->IDRJ // ld
+         SEEK Right( aPrim[ i ], 2 ) + Space( 6 ) + LD->IDRJ // ldt22
 
          IF Found()
             RREPLACE iznos WITH iznos + nPom
@@ -247,7 +247,7 @@ STATIC FUNCTION otvori_tabele()
 
 
 
-STATIC FUNCTION napravi_pomocnu_tabelu()
+STATIC FUNCTION cre_tmp_dbf_ldt22()
 
    LOCAL _alias, _table_name, aDbf
 
@@ -264,7 +264,7 @@ STATIC FUNCTION napravi_pomocnu_tabelu()
 
    CREATE_INDEX( "1", "idprim+idkred+idrj", _alias )
 
-   RETURN
+   RETURN .T.
 
 
 

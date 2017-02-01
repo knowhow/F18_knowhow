@@ -208,7 +208,6 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
          @ m_x + 1, m_y + yw - 6 SAY Str( RecCount(), 5 )
 
 
-
       CASE nRez == DE_ABORT .OR. Ch == K_CTRL_END .OR. Ch == K_ESC
 
          IF nPrazno == 0

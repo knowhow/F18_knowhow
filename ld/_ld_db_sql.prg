@@ -196,14 +196,21 @@ FUNCTION o_radkr_1rec()
 FUNCTION o_radkr_all_rec()
    RETURN o_radkr( .F. )
 
+FUNCTION o_radkr_otvoreni_krediti()
+   RETURN o_radkr( .F., .T. )
 
-FUNCTION o_radkr( lRec1 )
+FUNCTION o_radkr( lRec1, lSamoOtvoreni )
 
    LOCAL cSql, lRet, hIndexes, cKey
 
    hb_default( @lRec1, .T. )
+   hb_default( @lSamoOtvoreni, .F. )
 
    cSql := "select * from fmk.ld_radkr"
+
+   IF lSamoOtvoreni
+      cSql += " WHERE round(iznos-placeno,2)<>0"
+   ENDIF
 
    IF lRec1
       cSql += " LIMIT 1"

@@ -521,7 +521,7 @@ FUNCTION cre_all_ld( ver )
    AFTER_CREATE_INDEX
 
 
-   // ---------------------------------------
+   /*
    // OBRACUNI.DBF
    // ---------------------------------------
 
@@ -547,8 +547,10 @@ FUNCTION cre_all_ld( ver )
    CREATE_INDEX( "RJ", "rj+STR(godina)+STR(mjesec)+status+obr", _alias )
    AFTER_CREATE_INDEX
 
+   */
 
-   // -----------------------------------------------------------
+
+   /*
    // PK_RADN
    // -----------------------------------------------------------
 
@@ -648,6 +650,8 @@ FUNCTION cre_all_ld( ver )
 
    CREATE_INDEX( "1", "idradn+ident+STR(rbr)", _alias )
    AFTER_CREATE_INDEX
+
+   */
 
 
 

@@ -45,143 +45,143 @@ FUNCTION unos_virmana()
       .F., { "<c-N>   Nova uplatnica", "<c-T>   Brisi ", ;
       "<Enter> Ispravi uplatnicu", "<c-F9>  Brisi sve", ;
       "<c-P>   Stampanje", ;
-      "<a-P>   Rekapitulacija" }, 2,,, )
+      "<a-P>   (R)ekapitulacija" }, 2,,, )
 
    my_close_all_dbf()
 
    RETURN .T.
 
 
-   STATIC FUNCTION virm_edit_pripr( fNovi )
+STATIC FUNCTION virm_edit_pripr( fNovi )
 
-      LOCAL _firma := PadR( fetch_metric( "virm_org_id", nil, "" ), 6 )
+   LOCAL _firma := PadR( fetch_metric( "virm_org_id", NIL, "" ), 6 )
 
-      SET CURSOR ON
+   SET CURSOR ON
 
-      @ m_x + 1, m_y + 2 SAY8 "Svrha plaćanja :" GET _svrha_pl PICT "@!" VALID P_Vrprim( @_svrha_pl )
+   @ m_x + 1, m_y + 2 SAY8 "Svrha plaćanja :" GET _svrha_pl PICT "@!" VALID P_Vrprim( @_svrha_pl )
 
-      READ
+   READ
 
-      ESC_RETURN 0
+   ESC_RETURN 0
 
-      IF fNovi
-         IF Empty( gDatum )
-            IF gIDU == "D"
-               _dat_upl := Date()  // gdatum
-            ELSE
-               _dat_upl := gdatum
-            ENDIF
+   IF fNovi
+      IF Empty( gDatum )
+         IF gIDU == "D"
+            _dat_upl := Date()  // gdatum
          ELSE
             _dat_upl := gdatum
          ENDIF
-         _mjesto := gmjesto
-         _svrha_doz := PadR( vrprim->pom_txt, Len( _svrha_doz ) )
-      ENDIF
-
-      @ m_x + 2, m_y + Col() + 2 SAY "R.br:" GET _Rbr PICT "999"
-
-      _IdBanka := Left( _ko_zr, 3 )
-      @ m_x + 3, m_y + 2 SAY8 "Pošiljaoc (sifra banke):       " GET _IdBanka VALID virm_odredi_ziro_racun( _firma, @_IdBanka )
-      READ
-      ESC_RETURN 0
-      _ko_zr := _IdBanka
-      _IdBanka2 := Left( _KOME_ZR, 3 )
-
-      select_o_partner( _firma )
-
-      SELECT virm_pripr
-      _ko_txt := Trim( partn->naz ) + ", " + Trim( partn->mjesto ) + ", " + Trim( partn->adresa ) + ", " + Trim( partn->telefon )
-
-      IF vrprim->IdPartner == PadR( "JP", Len( vrprim->idpartner ) )
-         _bpo := gOrgJed // ova varijabla je iskoristena za broj poreskog obv.
       ELSE
-         IF vrprim->dobav == "D"
-            // ako su javni prihodi ovo se zna !
-            @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID p_partner( @_u_korist )  PICT "@!"
-            @ m_x + 5, Col() + 2 GET _IdBanka2 valid {|| virm_odredi_ziro_racun( _u_korist, @_IdBanka2 ), SetPrimaoc() }
-         ELSE
-            _kome_txt := vrprim->naz
-            _KOME_ZR := vrprim->racun
-            @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" + Trim( _kome_txt )
-         ENDIF
-
+         _dat_upl := gdatum
       ENDIF
+      _mjesto := gmjesto
+      _svrha_doz := PadR( vrprim->pom_txt, Len( _svrha_doz ) )
+   ENDIF
 
+   @ m_x + 2, m_y + Col() + 2 SAY "R.br:" GET _Rbr PICT "999"
 
-      // na osnovu _IdBanka , _IdBanka2 odrediti racune !!
+   _IdBanka := Left( _ko_zr, 3 )
+   @ m_x + 3, m_y + 2 SAY8 "Pošiljaoc (sifra banke):       " GET _IdBanka VALID virm_odredi_ziro_racun( _firma, @_IdBanka )
+   READ
+   ESC_RETURN 0
+   _ko_zr := _IdBanka
+   _IdBanka2 := Left( _KOME_ZR, 3 )
 
-      @ m_x + 8, m_y + 2 SAY "Svrha doznake:" GET _svrha_doz  PICT "@S30"
+   select_o_partner( _firma )
 
-      @ m_x + 10, m_y + 2 SAY "Mjesto" GET _mjesto  PICT "@S20"
-      @ m_x + 10, Col() + 2 SAY "Datum uplate :" GET _dat_upl
+   SELECT virm_pripr
+   _ko_txt := Trim( partn->naz ) + ", " + Trim( partn->mjesto ) + ", " + Trim( partn->adresa ) + ", " + Trim( partn->telefon )
 
-
-      @ m_x + 8, m_y + 50 SAY "Iznos" GET _iznos PICT "99999999.99"
-      @ m_x + 8, m_y + Col() + 1 SAY "Hitno" GET _hitno PICT "@!" VALID _hitno $ " X"
-
-      READ
-
-      ESC_RETURN 0
-
-      _IznosSTR := ""
-      _IznosSTR := "=" + IF( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
-
-
-      IF vrprim->Idpartner = "JP"
-
-         // javni prihod
-
-         _vupl := "0"
-
-         // setovanje varijabli: _KOME_ZR , _kome_txt, _budzorg
-         // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
-         set_jprih_globalne_varijable()
-
+   IF vrprim->IdPartner == PadR( "JP", Len( vrprim->idpartner ) )
+      _bpo := gOrgJed // ova varijabla je iskoristena za broj poreskog obv.
+   ELSE
+      IF vrprim->dobav == "D"
+         // ako su javni prihodi ovo se zna !
+         @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID p_partner( @_u_korist )  PICT "@!"
+         @ m_x + 5, Col() + 2 GET _IdBanka2 VALID {|| virm_odredi_ziro_racun( _u_korist, @_IdBanka2 ), SetPrimaoc() }
+      ELSE
          _kome_txt := vrprim->naz
-
+         _KOME_ZR := vrprim->racun
          @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" + Trim( _kome_txt )
-
-         IF fnovi
-
-            IF Len( _IdJPrih ) < 6
-               MsgBeep( "Sifra prihoda mora biti 6 cifara ?" )
-               _IdJPrih := PadR( _IdJPrih, 6 )
-            ENDIF
-         ENDIF
-
-         @ m_x + 13, m_y + 20 SAY Replicate( "-", 56 )
-
-         @ m_x + 14, m_y + 20 SAY "Broj por.obveznika" GET _bpo
-         @ m_x + 14, Col() + 2 SAY "V.uplate " GET _VUpl
-
-         @ m_x + 15, m_y + 20 SAY "Vrsta prihoda     " GET _IdJPrih
-         @ m_x + 17, m_y + 20 SAY "      Opcina      " GET _IdOps
-         @ m_x + 15, m_y + 60 SAY "Od:" GET _POd
-         @ m_x + 16, m_y + 60 SAY "Do:" GET _PDo
-         @ m_x + 17, m_y + 55 SAY "Budz.org" GET _BudzOrg
-         @ m_x + 18, m_y + 20 SAY "Poziv na broj:    " GET _PNaBr
-
-         READ
-
-         ESC_RETURN 0
-
-      ELSE
-
-         @ m_x + 13,  m_y + 20 SAY Replicate( "", 56 )
-
-         _BPO := Space( Len( _BPO ) )
-         _IdOps := Space( Len( _IdOps ) )
-         _IdJPrih := Space( Len( _IdJPrih ) )
-         _BudzOrg := Space( Len( _BudzOrg ) )
-         _PNabr := Space( Len( _PNaBr ) )
-         _IdOps := Space( Len( _IdOps ) )
-         _POd := CToD( "" )
-         _PDo := CToD( "" )
-         _VUPL = ""
-
       ENDIF
 
-      RETURN 1
+   ENDIF
+
+
+   // na osnovu _IdBanka , _IdBanka2 odrediti racune !!
+
+   @ m_x + 8, m_y + 2 SAY "Svrha doznake:" GET _svrha_doz  PICT "@S30"
+
+   @ m_x + 10, m_y + 2 SAY "Mjesto" GET _mjesto  PICT "@S20"
+   @ m_x + 10, Col() + 2 SAY "Datum uplate :" GET _dat_upl
+
+
+   @ m_x + 8, m_y + 50 SAY "Iznos" GET _iznos PICT "99999999.99"
+   @ m_x + 8, m_y + Col() + 1 SAY "Hitno" GET _hitno PICT "@!" VALID _hitno $ " X"
+
+   READ
+
+   ESC_RETURN 0
+
+   _IznosSTR := ""
+   _IznosSTR := "=" + IF( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
+
+
+   IF vrprim->Idpartner = "JP"
+
+      // javni prihod
+
+      _vupl := "0"
+
+      // setovanje varijabli: _KOME_ZR , _kome_txt, _budzorg
+      // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
+      set_jprih_globalne_varijable()
+
+      _kome_txt := vrprim->naz
+
+      @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" + Trim( _kome_txt )
+
+      IF fnovi
+
+         IF Len( _IdJPrih ) < 6
+            MsgBeep( "Sifra prihoda mora biti 6 cifara ?" )
+            _IdJPrih := PadR( _IdJPrih, 6 )
+         ENDIF
+      ENDIF
+
+      @ m_x + 13, m_y + 20 SAY Replicate( "-", 56 )
+
+      @ m_x + 14, m_y + 20 SAY "Broj por.obveznika" GET _bpo
+      @ m_x + 14, Col() + 2 SAY "V.uplate " GET _VUpl
+
+      @ m_x + 15, m_y + 20 SAY "Vrsta prihoda     " GET _IdJPrih
+      @ m_x + 17, m_y + 20 SAY "      Opcina      " GET _IdOps
+      @ m_x + 15, m_y + 60 SAY "Od:" GET _POd
+      @ m_x + 16, m_y + 60 SAY "Do:" GET _PDo
+      @ m_x + 17, m_y + 55 SAY "Budz.org" GET _BudzOrg
+      @ m_x + 18, m_y + 20 SAY "Poziv na broj:    " GET _PNaBr
+
+      READ
+
+      ESC_RETURN 0
+
+   ELSE
+
+      @ m_x + 13,  m_y + 20 SAY Replicate( "", 56 )
+
+      _BPO := Space( Len( _BPO ) )
+      _IdOps := Space( Len( _IdOps ) )
+      _IdJPrih := Space( Len( _IdJPrih ) )
+      _BudzOrg := Space( Len( _BudzOrg ) )
+      _PNabr := Space( Len( _PNaBr ) )
+      _IdOps := Space( Len( _IdOps ) )
+      _POd := CToD( "" )
+      _PDo := CToD( "" )
+      _VUPL = ""
+
+   ENDIF
+
+   RETURN 1
 
 
 STATIC FUNCTION _k_handler()
@@ -196,7 +196,7 @@ STATIC FUNCTION _k_handler()
 
    DO CASE
 
-   CASE Ch == K_ALT_P
+   CASE Ch == K_ALT_P .OR. Upper( Chr( Ch ) ) == "R"
       // rekapitulacija uplata
       _rekapitulacija_uplata()
       GO ( nRec )
@@ -415,7 +415,7 @@ FUNCTION stampa_virmana_drb()
    LOCAL _br_virmana := 999
    LOCAL _marker := "N"
    LOCAL nI
-   LOCAL _konverzija := fetch_metric( "virm_konverzija_delphirb", nil, "5" )
+   LOCAL _konverzija := fetch_metric( "virm_konverzija_delphirb", NIL, "5" )
 
    BEGIN SEQUENCE
       O_IZLAZ
@@ -482,7 +482,7 @@ FUNCTION stampa_virmana_drb()
       IF nI >= _br_virmana
          EXIT
       ENDIF
-      nI ++
+      nI++
 
    ENDDO
 
@@ -530,7 +530,6 @@ STATIC FUNCTION _stampaj_virman()
 
 
 FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
-
 
    LOCAL nX, nY, i
    LOCAL Izbor, nTIzbor
@@ -748,9 +747,9 @@ FUNCTION set_jprih_globalne_varijable()
    LOCAL _tmp_2 := ""
    LOCAL aJPrih
 
-   _idjprih := TOKEN( vrprim->racun, "-", 1 )
-   _tmp_1 := TOKEN( vrprim->racun, "-", 2 ) // <- moze biti opcina, kanton ili entitet ili nista
-   _tmp_2 := TOKEN( vrprim->racun, "-", 3 ) // <- moze se iskoristiti za opcinu
+   _idjprih := Token( vrprim->racun, "-", 1 )
+   _tmp_1 := Token( vrprim->racun, "-", 2 ) // <- moze biti opcina, kanton ili entitet ili nista
+   _tmp_2 := Token( vrprim->racun, "-", 3 ) // <- moze se iskoristiti za opcinu
    _tmp_1 := AllTrim( _tmp_1 )
    _tmp_2 := AllTrim( _tmp_2 )
 
@@ -765,7 +764,7 @@ FUNCTION set_jprih_globalne_varijable()
    ELSEIF Len( _tmp_1 ) == 2
 
       // nivo kantona
-      _idops := IIF( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
+      _idops := iif( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
       aJPrih := set_pozicija_jprih_record( _idjprih, "", _tmp_1, "" )
       _KOME_ZR := aJPrih[ 1 ]
       _budzorg := aJPrih[ 3 ]
@@ -773,7 +772,7 @@ FUNCTION set_jprih_globalne_varijable()
    ELSEIF Len( _tmp_1 ) == 1
 
       // nivo entiteta
-      _idops := IIF( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
+      _idops := iif( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
       aJPrih := set_pozicija_jprih_record( _idjprih, "", "", _tmp_1 )
       _KOME_ZR := aJPrih[ 1 ]
       _budzorg := aJPrih[ 3 ]
@@ -837,7 +836,7 @@ FUNCTION virm_opcina_rada()
    LOCAL cOR := ""
    LOCAL nArr := Select()
 
-   //cOR := my_get_from_ini( "VIRM", "OpcRada", "XXXX", KUMPATH )
+   // cOR := my_get_from_ini( "VIRM", "OpcRada", "XXXX", KUMPATH )
    cOR := "XXXX"
 
    IF Empty( cOR )

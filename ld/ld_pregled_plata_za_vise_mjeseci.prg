@@ -138,12 +138,12 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
          LOOP
       ENDIF
 
-      IF ld_date( ld->godina, ld->mjesec ) < ld_date( nGodina, nMjesec )
+      IF ld_godina_mjesec_string( ld->godina, ld->mjesec ) < ld_godina_mjesec_string( nGodina, nMjesec )
          SKIP
          LOOP
       ENDIF
 
-      IF ld_date( ld->godina, ld->mjesec ) > ld_date( nGodina, cMjesecdo )
+      IF ld_godina_mjesec_string( ld->godina, ld->mjesec ) > ld_godina_mjesec_string( nGodina, cMjesecdo )
          SKIP
          LOOP
       ENDIF
@@ -208,14 +208,14 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
             LOOP
          ENDIF
 
-         IF ld_date( field->godina, field->mjesec ) < ;
-               ld_date( nGodina, nMjesec )
+         IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ;
+               ld_godina_mjesec_string( nGodina, nMjesec )
             SKIP
             LOOP
          ENDIF
 
-         IF ld_date( field->godina, field->mjesec ) > ;
-               ld_date( nGodina, cMjesecdo )
+         IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ;
+               ld_godina_mjesec_string( nGodina, cMjesecdo )
             SKIP
             LOOP
          ENDIF
@@ -1171,13 +1171,13 @@ STATIC FUNCTION sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, c
    ENDIF
 
    IF Empty( cRadnik )
-      INDEX ON Str( godina ) + SortPrez( idradn ) + Str( mjesec ) + idrj TO "tmpld"
+      INDEX ON Str( godina, 4, 0 ) + SortPrez( idradn ) + Str( mjesec, 2, 0 ) + idrj TO "tmpld"
       GO TOP
       SEEK Str( nGodina, 4 )
    ELSE
       SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
       GO TOP
-      SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cRadnik
+      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + cRadnik
    ENDIF
 
    RETURN .T.

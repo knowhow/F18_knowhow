@@ -42,7 +42,7 @@ FUNCTION parametri_organizacije( set_params )
    ENDIF
 
    PUBLIC gZaokr := fetch_metric( "zaokruzenje", nil, gZaokr )
-   IF fetch_metric_error()
+   IF fetch_metric_error() > 0
       RETURN .F.
    ENDIF
 

@@ -232,7 +232,7 @@ FUNCTION ZSRO()
    ? "     *      *                                  *       *           *           *           *"
    ? m
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -241,7 +241,7 @@ FUNCTION SortOpSt( cId )
    LOCAL cVrati := "", nArr := Select()
 
    select_o_radn( cId )
-   cVrati := IdOpsSt
+   cVrati := field->IdOpsSt
    SELECT ( nArr )
 
    RETURN cVrati

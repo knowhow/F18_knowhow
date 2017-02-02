@@ -302,7 +302,6 @@ altd()
 
    IF gPrBruto $ "D#X"
 
-
       select_o_por()
       select_o_dopr()
 

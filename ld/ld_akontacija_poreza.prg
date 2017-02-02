@@ -181,10 +181,10 @@ FUNCTION ld_asd_aug_obrazac()
 
 
    dDatIspl := Date()
-   IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
+  //IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
       cObr := " "
       dDatIspl := ld_get_datum_isplate_plate( "  ", nGodina, nMjesec, cObr )
-   ENDIF
+   //ENDIF
 
    cPeriod := AllTrim( Str( nMjesec, 2, 0 ) ) + "/" + AllTrim( Str( nGodina, 4, 0 ) )
 

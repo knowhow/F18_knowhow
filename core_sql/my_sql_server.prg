@@ -280,50 +280,7 @@ FUNCTION my_server_login( hSqlParams, nConnType )
 
 
 
-FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
 
-   LOCAL oLogin
-
-   IF lAutoConnect == NIL
-      lAutoConnect := .T.
-   ENDIF
-
-   oLogin := my_login()
-
-   DO WHILE .T.
-
-      oLogin:postgres_db_login( lAutoConnect )
-
-      IF !oLogin:lPostgresDbSpojena
-         QUIT_1
-      ELSE
-         lAutoConnect := .T.
-      ENDIF
-
-      IF !oLogin:odabir_organizacije()
-
-         IF LastKey() == K_ESC
-            RETURN .F.
-         ENDIF
-
-      ELSE
-         // IF oLogin:lOrganizacijaSpojena
-
-         // show_sacekaj()
-         //oLogin:disconnect_postgresql()
-
-         oLogin:disconnect_user_database()
-         oLogin:connect_user_database()
-         odaberi_programski_modul( hProgramParametri )
-
-
-
-         // ENDIF
-      ENDIF
-
-   ENDDO
-
-   RETURN .T.
 
 
 /*

@@ -143,7 +143,8 @@ FUNCTION ld_set_firma()
    LOCAL _godina := fetch_metric( "ld_godina", my_user(), gGodina )
    LOCAL _rj := fetch_metric( "ld_rj", my_user(), gLDRadnaJedinica )
    LOCAL _mjesec := fetch_metric( "ld_mjesec", my_user(), gMjesec )
-   //LOCAL _v_obr := fetch_metric( "ld_vise_obracuna", NIL, ld_vise_obracuna() )
+
+   // LOCAL _v_obr := fetch_metric( "ld_vise_obracuna", NIL, ld_vise_obracuna() )
    LOCAL _obracun := fetch_metric( "ld_obracun", my_user(), gObracun )
 
    PRIVATE GetList := {}
@@ -280,40 +281,44 @@ FUNCTION ld_set_obracun()
    Box(, 20, 77 )
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "  ' ' - (prazno) stara varijanta obracuna"
-
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "  '2' - nova varijanta obracuna, zak.pr.2009"
 
-   ++ nX
+   ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Odabir broja obracuna na unosu (D/N) ?" GET _v_obr_unos VALID _v_obr_unos $ "DN" PICT "@!"
 
-   ++ nX
+   nX += 2
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Tip obracuna (legacy)" GET gTipObr
    @ form_x_koord() + nX, Col() + 1 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  PICT "@!" VALID gUnMjesec $ "DN"
+
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm PICT "9"
+
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Minuli rad  %/B:" GET gMinR  VALID gMinR $ "%B"   PICT "@!"
+
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Pri obracunu napraviti poreske olaksice D/N:" GET gDaPorOl  VALID gDaPorOl $ "DN"   PICT "@!"
+
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Ako se prave por.ol.pri obracunu, koja varijanta se koristi:"
    ++nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 "
+   ++nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ->" GET cVarPorOl WHEN gDaPorOl == "D"   PICT "99"
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 �Ŀ  "
-   ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ����>" GET cVarPorOl WHEN gDaPorOl == "D"   PICT "99"
-   ++nX
+   nX += 2
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definise):" GET gVarSpec  VALID gVarSpec $ "12" PICT "9"
-   ++nX
+
+   nX  += 2
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Obrada sihtarice ?" GET gSihtarica VALID gSihtarica $ "DN" PICT "@!"
    @ form_x_koord() + nX, Col() + 1 SAY "Sihtarice po grupama ?" GET gSihtGroup VALID gSihtGroup $ "DN" PICT "@!"
-   ++ nX
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Filter 'aktivan' u sifraniku radnika ?" GET gRadnFilter VALID gRadnFilter $ "DN" PICT "@!"
-   ++ nX
+   nX += 2
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Filter 'aktivan' u sifaniku radnika ?" GET gRadnFilter VALID gRadnFilter $ "DN" PICT "@!"
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Unos i obrada radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
+   ++nX
+   @ form_x_koord() + nX++, form_y_koord() + 2 SAY "Unos i obrada radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Porezi - stepenaste stope ? (D/N)" GET _st_stopa VALID _st_stopa $ "DN" PICT "@!"
 
@@ -337,7 +342,9 @@ FUNCTION ld_set_obracun()
       set_metric( "ld_filter_radnici", NIL, gRadnFilter )
       set_metric( "ld_varijanta_obracuna", NIL, gVarObracun )
       set_metric( "ld_obrada_sihtarica", NIL, gSihtarica )
+
       set_metric( "ld_obrada_sihtarica_po_grupama", NIL, gSihtGroup )
+
       set_metric( "ld_radni_sati", NIL, _radni_sati )
       set_metric( "ld_porezi_stepenasta_stopa", NIL, _st_stopa )
       set_metric( "ld_vise_obracuna_na_unosu", my_user(), _v_obr_unos )
@@ -349,7 +356,7 @@ FUNCTION ld_set_obracun()
 
 FUNCTION ld_set_prikaz()
 
-   LOCAL _pr_kart_pl := fetch_metric( "ld_obracun_prikaz_kartice_na_unosu", nil, "N" )
+   LOCAL _pr_kart_pl := fetch_metric( "ld_obracun_prikaz_kartice_na_unosu", NIL, "N" )
    PRIVATE GetList := {}
 
    gPotp1 := PadR( gPotp1, 150 )

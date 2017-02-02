@@ -26,7 +26,7 @@ FUNCTION ld_mip_obrazac_1023()
    LOCAL nKrug := 1
    LOCAL cRj := Space( 60 )
    LOCAL cRJDef := Space( 2 )
-   LOCAL cRadnik := fetch_metric( "ld_izvj_radnik", my_user(), Space( LEN_IDRADNIK ) )
+   LOCAL cIdRadnik := fetch_metric( "ld_izvj_radnik", my_user(), Space( LEN_IDRADNIK ) )
    LOCAL cTipPrimIsplateUslugeIliDobra := Space( 100 )
    LOCAL cIdRj
    LOCAL cDopr10 := "10"
@@ -50,8 +50,8 @@ FUNCTION ld_mip_obrazac_1023()
    LOCAL _pojed := .F.
    LOCAL cErr := ""
    LOCAL nX
-   LOCAL cMj :=  fetch_metric( "ld_izv_mjesec_od", my_user(), gMjesec )
-   LOCAL cGod := fetch_metric( "ld_izv_godina", my_user(), gGodina )
+   LOCAL nMjesec :=  fetch_metric( "ld_izv_mjesec_od", my_user(), gMjesec )
+   LOCAL nGodina := fetch_metric( "ld_izv_godina", my_user(), gGodina )
 
    IF !mip_tmp_tbl()
       RETURN .F.
@@ -79,12 +79,12 @@ FUNCTION ld_mip_obrazac_1023()
    Box( "#MIP OBRAZAC ZA RADNIKE", 22, 75 )
 
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Za period:" GET cMj PICT "99"
-   @ form_x_koord() + 2, Col() + 1 SAY "/" GET cGod PICT "9999"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Za period:" GET nMjesec PICT "99"
+   @ form_x_koord() + 2, Col() + 1 SAY "/" GET nGodina PICT "9999"
 
-   @ form_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ form_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
 
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cIdRadnik VALID Empty( cIdRadnik ) .OR. P_RADN( @cIdRadnik )
 
    @ form_x_koord() + 6, form_y_koord() + 2 SAY " TIPOVI PRIMANJA:"
    @ form_x_koord() + 7, form_y_koord() + 2 SAY " .. isplate u usl. ili dobrima:" GET cTipPrimIsplateUslugeIliDobra PICT "@S30"
@@ -129,11 +129,11 @@ FUNCTION ld_mip_obrazac_1023()
    dD_start := Date()
    dD_end := Date()
 
-   mip_fix_datum_period( cMj, cGod, @dD_start, @dD_end )
+   mip_fix_datum_period( nMjesec, nGodina, @dD_start, @dD_end )
 
    dPer := Date()
 
-   mip_get_period( cMj, cGod, @dPer )
+   mip_get_period( nMjesec, nGodina, @dPer )
 
    clvbox()
 
@@ -145,7 +145,7 @@ FUNCTION ld_mip_obrazac_1023()
       RETURN .F.
    ENDIF
 
-   IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, iif( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
+   IF ld_provjeri_dat_isplate_za_mjesec( nGodina, nMjesec, iif( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
 
       IF !Empty( cRjDef )
          cErr := "Nije definisan datum isplate za radnu jedinicu '" + cRjDef +  "'."
@@ -164,8 +164,8 @@ FUNCTION ld_mip_obrazac_1023()
 
    ENDIF
 
-   __mj := cMj
-   __god := cGod
+   __mj := nMjesec
+   __god := nGodina
 
    IF cStampaExport == "S"
       s_lExportXml := .F.
@@ -186,17 +186,18 @@ FUNCTION ld_mip_obrazac_1023()
    set_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, AllTrim( cDoprDod ) )
    set_metric( "obracun_plata_mip_def_rj_isplata", NIL, cRjDef )
 
-   IF !Empty( cRadnik )
+   IF !Empty( cIdRadnik )
       _pojed := .T.
       s_lExportXml := .F.
       MsgBeep( "Za jednog radnika se ne vrši export, samo štampa!" )
    ENDIF
 
-   seek_ld( NIL, cGod, cMj )
+   seek_ld( NIL, nGodina, nMjesec )
 
-   mip_sort( cRj, cGod, cMj, cRadnik, cObracun )
+altD()
+   mip_sort( cRj, nGodina, nMjesec, cIdRadnik, cObracun )
 
-   mip_fill_data( cRj, cRjDef, cGod, cMj, cRadnik, ;
+   mip_fill_data( cRj, cRjDef, nGodina, nMjesec, cIdRadnik, ;
       cTipPrimIsplateUslugeIliDobra, cTipoviPrimanjaNeUlazeBeneficirani, cTipoviPrimanjaBolovanje, cTipoviPrimanjaBolovanjePreko, cDopr10, cDopr11, cDopr12, ;
       cDopr1X, cDopr20, cDopr21, cDopr22, cDoprDod, cDopr2D, cObracun, ;
       cNulePrikazatiDN )
@@ -206,8 +207,8 @@ FUNCTION ld_mip_obrazac_1023()
    ENDIF
 
    IF s_lExportXml
-      nBrZahtjeva := g_br_zaht()
-      mip_xml_export( cMj, cGod )
+      nBrZahtjeva := ld_mip_broj_obradjenih_radnika()
+      mip_xml_export( nMjesec, nGodina )
       MsgBeep( "Obrađeno " + AllTrim( Str( nBrZahtjeva ) ) + " radnika." )
    ELSE
       mip_print_odt( _pojed )
@@ -217,22 +218,21 @@ FUNCTION ld_mip_obrazac_1023()
 
 
 
-FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
+FUNCTION mip_sort( cRj, nGodina, nMjesec, cIdRadnik, cObr )
 
    LOCAL cFilter := ""
 
    PRIVATE cObracun := cObr
+
 
    IF !Empty( cObr )
       cFilter += "obr == " + dbf_quote( cObr )
    ENDIF
 
    IF !Empty( cRj )
-
       IF !Empty( cFilter )
          cFilter += " .and. "
       ENDIF
-
       cFilter += Parsiraj( cRj, "IDRJ" )
    ENDIF
 
@@ -241,15 +241,15 @@ FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
       GO TOP
    ENDIF
 
-   IF Empty( cRadnik )
-      INDEX ON Str( field->godina ) + Str( field->mjesec ) + SortPrez( field->idradn ) + idrj TAG "MIP1" TO ( my_home() + "ld_tmp" )
-      GO TOP
-      SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cRadnik // mip index
+   IF Empty( cIdRadnik )
+      INDEX ON Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) + SortPrez( field->idradn ) + idrj TAG "MIP1" TO ( "LD" )
+      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cIdRadnik // mip index
    ELSE
       SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-      GO TOP
-      SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cObracun + cRadnik // mip index
+      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + cIdRadnik // mip index
    ENDIF
+
+   GO TOP
 
    RETURN .T.
 
@@ -662,12 +662,12 @@ STATIC FUNCTION mipmip_glavna_fill_xml( cFile )
 
 
 
-STATIC FUNCTION mip_get_period( cMj, cGod, dPer )
+STATIC FUNCTION mip_get_period( nMjesec, nGodina, dPer )
 
    LOCAL cTmp := ""
 
-   cTmp += PadL( AllTrim( Str( cMj ) ), 2, "0" ) + "."
-   cTmp += AllTrim( Str( cGod ) )
+   cTmp += PadL( AllTrim( Str( nMjesec ) ), 2, "0" ) + "."
+   cTmp += AllTrim( Str( nGodina ) )
 
    dPer := CToD( cTmp )
 
@@ -906,8 +906,8 @@ STATIC FUNCTION g_por_per()
 
 
 
-FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
-      cRadnik, ;
+FUNCTION mip_fill_data( cRj, cRjDef, nGodina, nMjesec, ;
+      cIdRadnik, ;
       cTipPrimIsplateUslugeIliDobra,  cTipoviPrimanjaNeUlazeBeneficirani, cTipoviPrimanjaBolovanje, cTipoviPrimanjaBolovanjePreko, ;
       cDopr10, cDopr11, cDopr12, ;
       cDopr1X, cDopr20, cDopr21, cDopr22, cDoprDod, cDopr2D, cObracun, cNulePrikazatiDN )
@@ -930,35 +930,33 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
    LOCAL cIdRadnikTekuci
    LOCAL m
    LOCAL aBeneficiraniRadniStaz
-   LOCAL nGodina, nMjesec
+
+   // LOCAL nGodinaT, nMjesecT
    LOCAL nFondSati
 
 
    lDatIspl := .F.
-   IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
-      lDatIspl := .T.
-   ENDIF
+   // IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
+   // lDatIspl := .T.
+   // ENDIF
 
    SELECT ld
 
    DO WHILE !Eof()
 
-      IF ld_date( field->godina, field->mjesec ) < ld_date( cGod, cMj )
+      IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ld_godina_mjesec_string( nGodina, nMjesec ) .OR. ;
+            ld_godina_mjesec_string( field->godina, field->mjesec ) > ld_godina_mjesec_string( nGodina, nMjesec )
          SKIP
          LOOP
       ENDIF
 
-      IF ld_date( field->godina, field->mjesec ) > ld_date( cGod, cMj )
-         SKIP
-         LOOP
-      ENDIF
 
       cIdRadnikTekuci := field->idradn
-      nGodina := field->godina
-      nMjesec := field->mjesec
+      // nGodinaT := field->godina
+      // nMjesecT := field->mjesec
 
-      IF !Empty( cRadnik )
-         IF cIdRadnikTekuci <> cRadnik
+      IF !Empty( cIdRadnik )
+         IF cIdRadnikTekuci <> cIdRadnik
             SKIP
             LOOP
          ENDIF
@@ -971,9 +969,9 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
       select_o_radn( cIdRadnikTekuci )
 
-       //https://redmine.bring.out.ba/projects/klijenti/wiki/Modul_LD
+      // https://redmine.bring.out.ba/projects/klijenti/wiki/Modul_LD
       IF !( cTipRada $ " #I#N" ) // ako nije " " ili "I" ili "N" - neto-neto
-         MsgBeep( "preskace se radnik " + ld->idradn + " jer tip rada nije 'I/N/ ' !")
+         MsgBeep( "preskace se radnik " + ld->idradn + " jer tip rada nije 'I/N/ ' !" )
          SELECT ld
          SKIP
          LOOP
@@ -1019,12 +1017,8 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
       DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
-         IF ld_date( field->godina, field->mjesec ) <  ld_date( cGod, cMj )
-            SKIP
-            LOOP
-         ENDIF
-
-         IF ld_date( field->godina, field->mjesec ) > ld_date( cGod, cMj )
+         IF ld_godina_mjesec_string( field->godina, field->mjesec ) <  ld_godina_mjesec_string( nGodina, nMjesec ) .OR. ;
+               ld_godina_mjesec_string( field->godina, field->mjesec ) > ld_godina_mjesec_string( nGodina, nMjesec )
             SKIP
             LOOP
          ENDIF
@@ -1074,7 +1068,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             nBrojRadnihSati := nFondSati
             nSatiB := nFondSati
             // bolovanje preko42d nije unutar neto
-            //nNeto += 0.0000001
+            // nNeto += 0.0000001
          ENDIF
 
          nRadnihSatiUvecanoTrajanje := 0
@@ -1094,9 +1088,8 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             nMBruto := min_bruto( nBruto, field->usati ) // minimalni bruto
          ENDIF
 
-
          IF nMBruto <= 0 .AND. cNulePrikazatiDN == "N"
-             MsgBeep( "Preskacemo za 0 " + cIdRadnikTekuci )
+            MsgBeep( "Preskacemo za 0 " + cIdRadnikTekuci )
             SELECT ld
             SKIP
             LOOP
@@ -1279,7 +1272,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
 
 
-STATIC FUNCTION mip_insert_record_r_export( cRadnik, cIdRj, nGodina, nMjesec, ;
+STATIC FUNCTION mip_insert_record_r_export( cIdRadnik, cIdRj, nGodina, nMjesec, ;
       cTipRada, cVrIspl, cR_ime, cR_jmb, cR_opc, dDatIsplate, ;
       nBrojRadnihSati, nSatiB, nRadnihSatiUvecanoTrajanje, nStUv, nBruto, nO_prih, nU_opor, ;
       nU_d_pio, nU_d_zdr, nU_d_pms, nU_d_nez, nU_d_iz, ;
@@ -1293,7 +1286,7 @@ STATIC FUNCTION mip_insert_record_r_export( cRadnik, cIdRj, nGodina, nMjesec, ;
    SELECT r_export
 
    APPEND BLANK
-   REPLACE idradn WITH cRadnik
+   REPLACE idradn WITH cIdRadnik
    REPLACE idrj WITH cIdRj
    REPLACE godina WITH nGodina
    REPLACE mjesec WITH nMjesec

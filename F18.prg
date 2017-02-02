@@ -47,6 +47,58 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 #endif
 
 
+FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
+
+   LOCAL oLogin
+
+   IF lAutoConnect == NIL
+      lAutoConnect := .T.
+   ENDIF
+
+   oLogin := my_login()
+
+   DO WHILE .T.
+
+      oLogin:postgres_db_login( lAutoConnect )
+
+      IF !oLogin:lPostgresDbSpojena
+         QUIT_1
+      ELSE
+         lAutoConnect := .T.
+      ENDIF
+
+      IF !oLogin:odabir_organizacije()
+
+         //AltD()
+         IF fetch_metric_error() > 0
+            MsgBeep( "fetch metric error ?! : Cnt: "  + AllTrim( Str( fetch_metric_error() ) ) )
+            RETURN .F.
+         ENDIF
+
+         IF LastKey() == K_ESC
+            RETURN .F.
+         ENDIF
+
+      ELSE
+         // IF oLogin:lOrganizacijaSpojena
+
+         // show_sacekaj()
+         // oLogin:disconnect_postgresql()
+
+         oLogin:disconnect_user_database()
+         IF oLogin:connect_user_database()
+         odaberi_programski_modul( hProgramParametri )
+         ELSE
+            MsgBeep( "Spajanje na bazu traženog preduzeća/organizacije neuspješno !?")
+         ENDIF
+
+         // ENDIF
+      ENDIF
+
+   ENDDO
+
+   RETURN .T.
+
 
 PROCEDURE f18_http_server()
 
@@ -105,7 +157,7 @@ PROCEDURE f18_http_server()
    oLogError:Close()
    oLogAccess:Close()
 
-    close_thread( "f18_http_server" )
+   close_thread( "f18_http_server" )
 
    RETURN
 
@@ -304,19 +356,6 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    ENDIF
 #endif
 
-#ifdef F18_KADEV
-   IF f18_use_module( "kadev" )
-      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( aMeniOpcije, cMenuBrojac + ". KADEV  # kadrovska evidencija" )
-      AAdd( aMeniExec, {|| MainKadev( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-   ENDIF
-#endif
-
-   IF f18_use_module( "reports" )
-      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( aMeniOpcije, cMenuBrojac + ". REPORTS  # izvještajni modul" )
-      AAdd( aMeniExec, {|| MainReports( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-   ENDIF
 
 
    AAdd( aMeniOpcije, "---------------------------------------------" )

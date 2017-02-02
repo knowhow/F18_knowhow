@@ -53,14 +53,14 @@ FUNCTION cre_all_dbfs( ver )
    cre_fin_mat( ver )
 
    IF f18_use_module( "fin" )
-      IF fetch_metric_error()
+      IF fetch_metric_error() > 1
          error_bar( "sql", "fetch metric error" )
          RETURN .F.
       ENDIF
       cre_all_fin( ver )
    ENDIF
 
-   IF fetch_metric_error()
+   IF fetch_metric_error() > 1
       error_bar( "sql", "fetch metric error" )
       RETURN .F.
    ENDIF

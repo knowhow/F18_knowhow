@@ -13,13 +13,13 @@
 #include "f18_color.ch"
 
 
-FUNCTION set_parametre_f18_aplikacije( just_set )
+FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
 
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _pos_x
    LOCAL _pos_y
    LOCAL _left := 20
-   LOCAL _fin, _kalk, _fakt, _epdv, _virm, _ld, _os, _rnal, _mat, _reports, _kadev
+   LOCAL _fin, _kalk, _fakt, _epdv, _virm, _ld, _os, _rnal, _mat  //, _reports, _kadev
    LOCAL _pos
    LOCAL _email_server, _email_port, _email_username, _email_userpass, _email_from
    LOCAL _email_to, _email_cc
@@ -30,11 +30,21 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
    LOCAL _rpt_page_len, _bug_report
    LOCAL _log_level
    LOCAL cLdRekapDbf, cLegacyKalkPr
+   LOCAL cErrMsg
 
    info_bar( "init", "set_parametre_f18_aplikacije - start" )
 
    _fin := fetch_metric( "main_menu_fin", my_user(), "D" )
    _kalk := fetch_metric( "main_menu_kalk", my_user(), "D" )
+
+   IF fetch_metric_error() > 1
+      cErrMsg := "problem komunikacije sa serverom ?!#fetch_metric_error:" + AllTrim( Str( fetch_metric_error() ) )
+      ?E cErrMsg
+      IF is_in_main_thread()
+         MsgBeep( cErrMsg )
+      ENDIF
+      RETURN .F.
+   ENDIF
    _fakt := fetch_metric( "main_menu_fakt", my_user(), "D" )
    _ld := fetch_metric( "main_menu_ld", my_user(), "N" )
    _epdv := fetch_metric( "main_menu_epdv", my_user(), "N" )
@@ -43,8 +53,8 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
    _rnal := fetch_metric( "main_menu_rnal", my_user(), "N" )
    _mat := fetch_metric( "main_menu_mat", my_user(), "N" )
    _pos := fetch_metric( "main_menu_pos", my_user(), "N" )
-   _reports := fetch_metric( "main_menu_reports", my_user(), "N" )
-   _kadev := fetch_metric( "main_menu_kadev", my_user(), "N" )
+   //_reports := fetch_metric( "main_menu_reports", my_user(), "N" )
+   //_kadev := fetch_metric( "main_menu_kadev", my_user(), "N" )
 
    _email_server := PadR( fetch_metric( "email_server", my_user(), "" ), 100 )
    _email_port := fetch_metric( "email_port", my_user(), 25 )
@@ -53,6 +63,13 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
    _email_from := PadR( fetch_metric( "email_from", my_user(), "" ), 100 )
    _email_to := PadR( fetch_metric( "email_to_default", my_user(), "" ), 500 )
    _email_cc := PadR( fetch_metric( "email_cc_default", my_user(), "" ), 500 )
+
+   IF fetch_metric_error() > 1
+      IF is_in_main_thread()
+         MsgBeep( "problem komunikacije sa serverom ?!#fetch_metric_error:" + AllTrim( Str( fetch_metric_error() ) ) )
+      ENDIF
+      RETURN .F.
+   ENDIF
 
    _proper_name := PadR( fetch_metric( "my_proper_name", my_user(), "" ), 50 )
 
@@ -72,15 +89,15 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
    _bug_report := fetch_metric( "bug_report_email", my_user(), "A" )
    _log_level := fetch_metric( "log_level", NIL, 3 )
 
-   //cLdRekapDbf := fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" )
+   // cLdRekapDbf := fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" )
    cLegacyKalkPr := fetch_metric( "legacy_kalk_pr", NIL, "N" )
    cLegacyPTxt := fetch_metric( "legacy_ptxt", NIL, "D" )
 
-   IF just_set == nil
-      just_set := .F.
+   IF lUpravoSetovani == nil
+      lUpravoSetovani := .F.
    ENDIF
 
-   IF !just_set
+   IF !lUpravoSetovani
 
       CLEAR SCREEN
       ?
@@ -89,83 +106,83 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
 
       @ _pos_x, _pos_y SAY "Odabir modula za glavni meni ***" COLOR f18_color_i()
 
-      @ _pos_x + _x, _pos_y SAY Space( 2 ) + "FIN:" GET _fin PICT "@!"
-      @ _pos_x + _x, Col() + 1 SAY "KALK:" GET _kalk PICT "@!"
-      @ _pos_x + _x, Col() + 1 SAY "FAKT:" GET _fakt PICT "@!"
-      @ _pos_x + _x, Col() + 1 SAY "ePDV:" GET _epdv PICT "@!"
-      @ _pos_x + _x, Col() + 1 SAY "LD:" GET _ld PICT "@!"
-      @ _pos_x + _x, Col() + 1 SAY "VIRM:" GET _virm PICT "@!"
+      @ _pos_x + nX, _pos_y SAY Space( 2 ) + "FIN:" GET _fin PICT "@!"
+      @ _pos_x + nX, Col() + 1 SAY "KALK:" GET _kalk PICT "@!"
+      @ _pos_x + nX, Col() + 1 SAY "FAKT:" GET _fakt PICT "@!"
+      @ _pos_x + nX, Col() + 1 SAY "ePDV:" GET _epdv PICT "@!"
+      @ _pos_x + nX, Col() + 1 SAY "LD:" GET _ld PICT "@!"
+      @ _pos_x + nX, Col() + 1 SAY "VIRM:" GET _virm PICT "@!"
 
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY Space( 2 ) + "OS/SII:" GET _os PICT "@!"
-      @ _pos_x + _x, Col() + 1 SAY "POS:" GET _pos PICT "@!"
-      @ _pos_x + _x, Col() + 1 SAY "MAT:" GET _mat PICT "@!"
-      @ _pos_x + _x, Col() + 1 SAY "RNAL:" GET _rnal PICT "@!"
-      @ _pos_x + _x, Col() + 1 SAY "KADEV:" GET _kadev PICT "@!"
-      @ _pos_x + _x, Col() + 1 SAY "REPORTS:" GET _reports PICT "@!"
+      ++nX
+      @ _pos_x + nX, _pos_y SAY Space( 2 ) + "OS/SII:" GET _os PICT "@!"
+      @ _pos_x + nX, Col() + 1 SAY "POS:" GET _pos PICT "@!"
+      @ _pos_x + nX, Col() + 1 SAY "MAT:" GET _mat PICT "@!"
+      @ _pos_x + nX, Col() + 1 SAY "RNAL:" GET _rnal PICT "@!"
+      //@ _pos_x + nX, Col() + 1 SAY "KADEV:" GET _kadev PICT "@!"
+      //@ _pos_x + nX, Col() + 1 SAY "REPORTS:" GET _reports PICT "@!"
 
-      _x += 2
-      @ _pos_x + _x, _pos_y SAY "Maticni podaci korisnika ***" COLOR f18_color_i()
+      nX += 2
+      @ _pos_x + nX, _pos_y SAY "Maticni podaci korisnika ***" COLOR f18_color_i()
 
-      _x += 2
-      @ _pos_x + _x, _pos_y SAY PadL( "Puno ime i prezime:", _left ) GET _proper_name PICT "@S30"
+      nX += 2
+      @ _pos_x + nX, _pos_y SAY PadL( "Puno ime i prezime:", _left ) GET _proper_name PICT "@S30"
 
-      _x += 2
-      @ _pos_x + _x, _pos_y SAY "Email parametri ***" COLOR f18_color_i()
+      nX += 2
+      @ _pos_x + nX, _pos_y SAY "Email parametri ***" COLOR f18_color_i()
 
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY PadL( "email server:", _left ) GET _email_server PICT "@S30"
-      @ _pos_x + _x, Col() + 1 SAY "port:" GET _email_port PICT "9999"
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY PadL( "username:", _left ) GET _email_username PICT "@S30"
-      @ _pos_x + _x, Col() + 1 SAY "password:" GET _email_userpass PICT "@S30" COLOR F18_COLOR_PASSWORD
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY PadL( "moja email adresa:", _left ) GET _email_from PICT "@S40"
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY8 PadL( "slati poštu na adrese:", _left ) GET _email_to PICT "@S70"
+      ++nX
+      @ _pos_x + nX, _pos_y SAY PadL( "email server:", _left ) GET _email_server PICT "@S30"
+      @ _pos_x + nX, Col() + 1 SAY "port:" GET _email_port PICT "9999"
+      ++nX
+      @ _pos_x + nX, _pos_y SAY PadL( "username:", _left ) GET _email_username PICT "@S30"
+      @ _pos_x + nX, Col() + 1 SAY "password:" GET _email_userpass PICT "@S30" COLOR F18_COLOR_PASSWORD
+      ++nX
+      @ _pos_x + nX, _pos_y SAY PadL( "moja email adresa:", _left ) GET _email_from PICT "@S40"
+      ++nX
+      @ _pos_x + nX, _pos_y SAY8 PadL( "slati poštu na adrese:", _left ) GET _email_to PICT "@S70"
 
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY PadL( "cc adrese:", _left ) GET _email_cc PICT "@S70"
+      ++nX
+      @ _pos_x + nX, _pos_y SAY PadL( "cc adrese:", _left ) GET _email_cc PICT "@S70"
 
-      _x += 2
-      @ _pos_x + _x, _pos_y SAY "Parametri log-a ***" COLOR f18_color_i()
+      nX += 2
+      @ _pos_x + nX, _pos_y SAY "Parametri log-a ***" COLOR f18_color_i()
 
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY8 "Briši stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
+      ++nX
+      @ _pos_x + nX, _pos_y SAY8 "Briši stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
 
 
-      _x += 2
-      @ _pos_x + _x, _pos_y SAY "Backup parametri ***" COLOR f18_color_i()
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY8 "Automatski backup podataka organizacije (interval dana 0 - ne radi ništa):" GET _backup_company PICT "999"
+      nX += 2
+      @ _pos_x + nX, _pos_y SAY "Backup parametri ***" COLOR f18_color_i()
+      ++nX
+      @ _pos_x + nX, _pos_y SAY8 "Automatski backup podataka organizacije (interval dana 0 - ne radi ništa):" GET _backup_company PICT "999"
 
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY8 "Automatski backup podataka servera (interval 0 - ne radi ništa):" GET _backup_server PICT "999"
+      ++nX
+      @ _pos_x + nX, _pos_y SAY8 "Automatski backup podataka servera (interval 0 - ne radi ništa):" GET _backup_server PICT "999"
 
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY "Udaljena backup lokacija:" GET _backup_removable PICT "@S60"
+      ++nX
+      @ _pos_x + nX, _pos_y SAY "Udaljena backup lokacija:" GET _backup_removable PICT "@S60"
 
 #ifdef __PLATFORM__WINDOWS
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY "Ping time kod backup komande:" GET _backup_ping_time PICT "99"
+      ++nX
+      @ _pos_x + nX, _pos_y SAY "Ping time kod backup komande:" GET _backup_ping_time PICT "99"
 #endif
 
-      _x += 2
-      @ _pos_x + _x, _pos_y SAY "Ostali parametri ***" COLOR f18_color_i()
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY8 "Dužina stranice za izvještaje ( def: 60 ):" GET _rpt_page_len PICT "999"
+      nX += 2
+      @ _pos_x + nX, _pos_y SAY "Ostali parametri ***" COLOR f18_color_i()
+      ++nX
+      @ _pos_x + nX, _pos_y SAY8 "Dužina stranice za izvještaje ( def: 60 ):" GET _rpt_page_len PICT "999"
 
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY "BUG report na email (D/N/A/0):" GET _bug_report PICT "!@" VALID _bug_report $ "DNA0"
+      ++nX
+      @ _pos_x + nX, _pos_y SAY "BUG report na email (D/N/A/0):" GET _bug_report PICT "!@" VALID _bug_report $ "DNA0"
 
-      @ _pos_x + _x, Col() + 2 SAY "Nivo logiranja (0..9)" GET _log_level PICT "9" VALID _log_level >= 0 .AND. _log_level < 10
+      @ _pos_x + nX, Col() + 2 SAY "Nivo logiranja (0..9)" GET _log_level PICT "9" VALID _log_level >= 0 .AND. _log_level < 10
 
-      _x += 2
-      @ _pos_x + _x, _pos_y SAY "Kompatibilnost ***" COLOR f18_color_i()
-      ++ _x
-      //@ _pos_x + _x, _pos_y SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
-      @ _pos_x + _x, Col() + 2 SAY "KALK PR:" GET cLegacyKalkPr PICT "!@" VALID cLegacyKalkPr $ "DN"
-      @ _pos_x + _x, Col() + 2 SAY "PTXT:" GET cLegacyPTxt PICT "!@" VALID cLegacyPTxt $ "DN"
+      nX += 2
+      @ _pos_x + nX, _pos_y SAY "Kompatibilnost ***" COLOR f18_color_i()
+      ++nX
+      // @ _pos_x + nX, _pos_y SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
+      @ _pos_x + nX, Col() + 2 SAY "KALK PR:" GET cLegacyKalkPr PICT "!@" VALID cLegacyKalkPr $ "DN"
+      @ _pos_x + nX, Col() + 2 SAY "PTXT:" GET cLegacyPTxt PICT "!@" VALID cLegacyPTxt $ "DN"
 
       READ
 
@@ -183,8 +200,8 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       set_metric( "main_menu_rnal", my_user(), _rnal )
       set_metric( "main_menu_mat", my_user(), _mat )
       set_metric( "main_menu_pos", my_user(), _pos )
-      set_metric( "main_menu_kadev", my_user(), _kadev )
-      set_metric( "main_menu_reports", my_user(), _reports )
+      //set_metric( "main_menu_kadev", my_user(), _kadev )
+      //set_metric( "main_menu_reports", my_user(), _reports )
       set_metric( "email_server", my_user(), AllTrim( _email_server ) )
       set_metric( "email_port", my_user(), _email_port )
       set_metric( "email_user_name", my_user(), AllTrim( _email_username ) )
@@ -207,7 +224,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )
 #endif
 
-      //set_metric( "legacy_ld_rekap_dbf", NIL, cLdRekapDbf )
+      // set_metric( "legacy_ld_rekap_dbf", NIL, cLdRekapDbf )
       set_metric( "legacy_kalk_pr", NIL, cLegacyKalkPr )
       set_metric( "legacy_ptxt", NIL, cLegacyPTxt )
 
@@ -233,7 +250,7 @@ FUNCTION f18_use_module( module_name )
    LOCAL _ret := .F.
    LOCAL _default := "N"
 
-   IF module_name == "tops" .or. module_name == "pos"
+   IF module_name == "tops" .OR. module_name == "pos"
       module_name := "pos"
    ENDIF
 
@@ -288,7 +305,7 @@ FUNCTION f18_set_active_modules()
    LOCAL _ok := .F.
    LOCAL _fin, _kalk, _fakt, _ld, _epdv, _virm, _os, _rnal, _pos, _mat, _reports, _kadev
    LOCAL _pos_x, _pos_y
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _len := 8
    LOCAL _corr := "D"
    PRIVATE GetList := {}
@@ -310,46 +327,46 @@ FUNCTION f18_set_active_modules()
    Box(, 10, 70 )
 
    // 1
-   @ m_x + _x, m_y + 2 SAY "*** Odabir modula za glavni meni ***" COLOR f18_color_i()
+   @ m_x + nX, m_y + 2 SAY "*** Odabir modula za glavni meni ***" COLOR f18_color_i()
 
-   ++ _x
-   ++ _x
+   ++ nX
+   ++ nX
 
    // 3
-   @ m_x + _x, m_y + 2 SAY hb_UTF8ToStr( "Prvi put pokrećete aplikaciju, potrebno odabrati module" )
+   @ m_x + nX, m_y + 2 SAY hb_UTF8ToStr( "Prvi put pokrećete aplikaciju, potrebno odabrati module" )
 
-   ++ _x
+   ++ nX
 
    // 4
-   @ m_x + _x, m_y + 2 SAY hb_UTF8ToStr( "koji će se nakon sinhronizacije pojaviti na meniju" )
+   @ m_x + nX, m_y + 2 SAY hb_UTF8ToStr( "koji će se nakon sinhronizacije pojaviti na meniju" )
 
-   ++ _x
-   ++ _x
+   ++ nX
+   ++ nX
 
    // 6
-   @ m_x + _x, m_y + 2 SAY PadL( "FIN:", _len ) GET _fin PICT "@!"
-   @ m_x + _x, Col() + 1 SAY PadL( "KALK:", _len ) GET _kalk PICT "@!"
-   @ m_x + _x, Col() + 1 SAY PadL( "FAKT:", _len ) GET _fakt PICT "@!"
-   @ m_x + _x, Col() + 1 SAY PadL( "ePDV:", _len ) GET _epdv PICT "@!"
-   @ m_x + _x, Col() + 1 SAY PadL( "LD:", _len ) GET _ld PICT "@!"
-   @ m_x + _x, Col() + 1 SAY PadL( "VIRM:", _len ) GET _virm PICT "@!"
+   @ m_x + nX, m_y + 2 SAY PadL( "FIN:", _len ) GET _fin PICT "@!"
+   @ m_x + nX, Col() + 1 SAY PadL( "KALK:", _len ) GET _kalk PICT "@!"
+   @ m_x + nX, Col() + 1 SAY PadL( "FAKT:", _len ) GET _fakt PICT "@!"
+   @ m_x + nX, Col() + 1 SAY PadL( "ePDV:", _len ) GET _epdv PICT "@!"
+   @ m_x + nX, Col() + 1 SAY PadL( "LD:", _len ) GET _ld PICT "@!"
+   @ m_x + nX, Col() + 1 SAY PadL( "VIRM:", _len ) GET _virm PICT "@!"
 
-   ++ _x
-   ++ _x
+   ++ nX
+   ++ nX
 
    // 8
-   @ m_x + _x, m_y + 2 SAY PadL( "OS/SII:", _len ) GET _os PICT "@!"
-   @ m_x + _x, Col() + 1 SAY PadL( "POS:", _len ) GET _pos PICT "@!"
-   @ m_x + _x, Col() + 1 SAY PadL( "MAT:", _len ) GET _mat PICT "@!"
-   @ m_x + _x, Col() + 1 SAY PadL( "RNAL:", _len ) GET _rnal PICT "@!"
-   @ m_x + _x, Col() + 1 SAY PadL( "KADEV:", _len ) GET _kadev PICT "@!"
-   @ m_x + _x, Col() + 1 SAY PadL( "REPORTS:", _len ) GET _reports PICT "@!"
+   @ m_x + nX, m_y + 2 SAY PadL( "OS/SII:", _len ) GET _os PICT "@!"
+   @ m_x + nX, Col() + 1 SAY PadL( "POS:", _len ) GET _pos PICT "@!"
+   @ m_x + nX, Col() + 1 SAY PadL( "MAT:", _len ) GET _mat PICT "@!"
+   @ m_x + nX, Col() + 1 SAY PadL( "RNAL:", _len ) GET _rnal PICT "@!"
+   @ m_x + nX, Col() + 1 SAY PadL( "KADEV:", _len ) GET _kadev PICT "@!"
+   @ m_x + nX, Col() + 1 SAY PadL( "REPORTS:", _len ) GET _reports PICT "@!"
 
    // 10
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Odabir korektan (D/N) ?" GET _corr VALID _corr $ "DN" PICT "@!"
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Odabir korektan (D/N) ?" GET _corr VALID _corr $ "DN" PICT "@!"
 
    READ
 
@@ -378,9 +395,9 @@ FUNCTION f18_set_active_modules()
 */
 
 
-//FUNCTION is_legacy_ld_rekap_dbf()
+// FUNCTION is_legacy_ld_rekap_dbf()
 //
-//   RETURN fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" ) == "D"
+// RETURN fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" ) == "D"
 
 
 FUNCTION is_legacy_kalk_pr()

@@ -624,18 +624,17 @@ FUNCTION ld_gen_virm()
 
 
 
-
-
-FUNCTION SortPrez( cId, lSql )
+FUNCTION SortPrez( cId ) //, lSql )
 
    LOCAL cVrati := ""
    LOCAL lUtf := .F.
    LOCAL nArr := Select()
 
-   hb_default( @lSql, .F. )
+   //hb_default( @lSql, .F. )
 
    select_o_radn( cId )
 
+/*
    IF lSql
       cVrati := StrTran( field->naz + field->ime + field->imerod + field->id, _u( "Č" ), "CH" )
       cVrati := StrTran( cVrati, _u( "č" ), "ch" )
@@ -652,6 +651,9 @@ FUNCTION SortPrez( cId, lSql )
    ELSE
       cVrati := field->naz + field->ime + field->imerod + field->id
    ENDIF
+   */
+   cVrati := field->naz + field->ime + field->imerod + field->id
+
    SELECT ( nArr )
 
    RETURN cVrati

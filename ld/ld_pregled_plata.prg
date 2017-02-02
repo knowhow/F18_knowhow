@@ -104,9 +104,9 @@ FUNCTION pregled_plata()
       ELSE
          Box(, 2, 30 )
          nSlog := 0
-         cSort1 := "SortPrez(IDRADN,.T.)"
+         cSort1 := "SortPrez(IDRADN)"
          cFilt := IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
-            IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+            IIF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
          IF ld_vise_obracuna() .AND. !Empty( cObracun )
             cFilt += ".and.OBR=" + _filter_quote( cObracun )
          ENDIF
@@ -121,7 +121,7 @@ FUNCTION pregled_plata()
       ELSE
          Box(, 2, 30 )
          nSlog := 0
-         cSort1 := "SortPrez(IDRADN,.T.)"
+         cSort1 := "SortPrez(IDRADN)"
          cFilt := "IDRJ==" + _filter_quote( cIdRj ) + ".and." + ;
             iif( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
             iif( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )

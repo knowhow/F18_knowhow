@@ -157,7 +157,7 @@ FUNCTION ld_olp_gip_obrazac()
    set_metric( "obracun_plata_preduzece_adresa", NIL, AllTrim( cPredAdr ) )
    set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 
-   //SELECT ld
+   // SELECT ld
 
    // sortiraj tabelu i postavi filter
    ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, cTipRpt, cObracun )
@@ -172,7 +172,7 @@ FUNCTION ld_olp_gip_obrazac()
    IF __xml == 1
       _xml_print( cTipRpt )
    ELSE
-      nBrZahtjeva := g_br_zaht()
+      nBrZahtjeva := ld_mip_broj_obradjenih_radnika()
       _xml_export( cTipRpt, cMj_od, cGod_od )
       MsgBeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " zahtjeva." )
    ENDIF
@@ -278,7 +278,7 @@ STATIC FUNCTION g_operacija( nOper )
 // -----------------------------------------------
 // vraca broj zahtjeva
 // -----------------------------------------------
-FUNCTION g_br_zaht()
+FUNCTION ld_mip_broj_obradjenih_radnika()
 
    LOCAL nTArea := Select()
    LOCAL cT_radnik
@@ -897,12 +897,11 @@ STATIC FUNCTION g_por_per()
 // -------------------------------------------
 // vraca string sa datumom uslovskim
 // -------------------------------------------
-FUNCTION ld_date( nGod, nMj )
+FUNCTION ld_godina_mjesec_string( nGod, nMj )
 
    LOCAL cRet
 
-   cRet := PadR( AllTrim( Str( nGod ) ), 4 ) + ;
-      PadL( AllTrim( Str( nMj ) ), 2, "0" )
+   cRet := Str( nGod, 4, 0 ) + Str( nMj, 2, 0 )
 
    RETURN cRet
 
@@ -949,22 +948,22 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
    ENDIF
 
    lDatIspl := .F.
-   IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
-      lDatIspl := .T.
-   ENDIF
+   // IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
+   // lDatIspl := .T.
+   // ENDIF
 
    SELECT ld
 
    DO WHILE !Eof()
 
-      IF ld_date( field->godina, field->mjesec ) < ;
-            ld_date( cGod_od, cMj_od )
+      IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ;
+            ld_godina_mjesec_string( cGod_od, cMj_od )
          SKIP
          LOOP
       ENDIF
 
-      IF ld_date( field->godina, field->mjesec ) > ;
-            ld_date( cGod_do, cMj_do )
+      IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ;
+            ld_godina_mjesec_string( cGod_do, cMj_do )
          SKIP
          LOOP
       ENDIF
@@ -1021,14 +1020,14 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
 
       DO WHILE !Eof() .AND. field->idradn == cT_radnik
 
-         IF ld_date( field->godina, field->mjesec ) < ;
-               ld_date( cGod_od, cMj_od )
+         IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ;
+               ld_godina_mjesec_string( cGod_od, cMj_od )
             SKIP
             LOOP
          ENDIF
 
-         IF ld_date( field->godina, field->mjesec ) > ;
-               ld_date( cGod_do, cMj_do )
+         IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ;
+               ld_godina_mjesec_string( cGod_do, cMj_do )
             SKIP
             LOOP
          ENDIF
@@ -1282,18 +1281,18 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
 // ---------------------------------------
 FUNCTION ol_o_tbl()
 
-   //o_ld_obracuni()
-   //o_ld_parametri_obracuna()
+   // o_ld_obracuni()
+   // o_ld_parametri_obracuna()
    O_PARAMS
-  // o_ld_rj()
-   //o_ld_radn()
-  // o_koef_beneficiranog_radnog_staza()
-   //o_ld_vrste_posla()
+   // o_ld_rj()
+   // o_ld_radn()
+   // o_koef_beneficiranog_radnog_staza()
+   // o_ld_vrste_posla()
    // o_tippr()
-   //o_kred()
-   //o_dopr()
-   //o_por()
-   //select_o_ld()
+   // o_kred()
+   // o_dopr()
+   // o_por()
+   // select_o_ld()
 
    RETURN .T.
 

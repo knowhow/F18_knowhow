@@ -12,14 +12,14 @@
 #include "f18.ch"
 
 THREAD STATIC s_hParametri := NIL
-THREAD STATIC s_lError := .F.
+THREAD STATIC s_nErrorCount := 0
 
 
 FUNCTION fetch_metric( cSection, cUser, xDefaultValue )
 
    LOCAL cQuery
    LOCAL oQuery
-   LOCAL cRet := ""
+   LOCAL cField
    LOCAL xRet
 
    IF xDefaultValue == NIL
@@ -47,10 +47,10 @@ FUNCTION fetch_metric( cSection, cUser, xDefaultValue )
    oQuery := run_sql_query( cQuery )
 
    IF sql_error_in_query( oQuery, "SELECT" )
-      s_lError := .T.
+      s_nErrorCount ++
       RETURN xDefaultValue
    ELSE
-      s_lError := .F.
+      s_nErrorCount := 0
    ENDIF
 
 
@@ -58,13 +58,13 @@ FUNCTION fetch_metric( cSection, cUser, xDefaultValue )
       RETURN xDefaultValue
    ENDIF
 
-   cRet := oQuery:FieldGet( 1 )
+   cField := oQuery:FieldGet( 1 )
 
-   IF cRet == "!!notfound!!"
+   IF cField == "!!notfound!!"
       xRet := xDefaultValue
    ELSE
 
-      xRet := str_to_val( cRet, xDefaultValue )
+      xRet := str_to_val( cField, xDefaultValue )
       s_hParametri[ cSection ] :=  xRet
    ENDIF
 
@@ -72,7 +72,7 @@ FUNCTION fetch_metric( cSection, cUser, xDefaultValue )
 
 
 FUNCTION fetch_metric_error()
-   RETURN s_lError
+   RETURN s_nErrorCount
 
 
 

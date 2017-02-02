@@ -114,7 +114,7 @@ FUNCTION post_login()
    set_vars_za_specificne_slucajeve()
 
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
-   //thread_dbfs( hb_threadStart( @f18_http_server() ) )
+   // thread_dbfs( hb_threadStart( @f18_http_server() ) )
 
    IF !check_server_db_version()
       RETURN .F.
@@ -125,7 +125,9 @@ FUNCTION post_login()
 
    run_on_start()
 
-   set_parametre_f18_aplikacije( .T. )
+   IF !set_parametre_f18_aplikacije( .T. )
+      RETURN .F.
+   ENDIF
    set_hot_keys()
 
    get_log_level_from_params()
@@ -508,14 +510,14 @@ FUNCTION my_home_backup( cF18HomeBackup )
 
 
 
-FUNCTION set_f18_home_backup( database )
+FUNCTION set_f18_home_backup( DATABASE )
 
    LOCAL _home := hb_DirSepAdd( my_home_root() + "backup" )
 
    f18_create_dir( _home )
 
-   IF database <> NIL
-      _home := hb_DirSepAdd( _home + database )
+   IF DATABASE <> NIL
+      _home := hb_DirSepAdd( _home + DATABASE )
       f18_create_dir( _home )
    ENDIF
 
@@ -531,12 +533,12 @@ FUNCTION set_f18_home_backup( database )
 // ~/.F18/rg1
 // ~/.F18/test
 // ---------------------------
-FUNCTION set_f18_home( database )
+FUNCTION set_f18_home( DATABASE )
 
    LOCAL _home
 
-   IF database <> NIL
-      _home := hb_DirSepAdd( my_home_root() + database )
+   IF DATABASE <> NIL
+      _home := hb_DirSepAdd( my_home_root() + DATABASE )
       f18_create_dir( _home )
    ENDIF
 
@@ -547,7 +549,7 @@ FUNCTION set_f18_home( database )
 
 
 FUNCTION dummy_error_handler()
-   RETURN {| err| Break( err ) }
+   RETURN {| err | Break( err ) }
 
 
 FUNCTION test_mode( tm )
@@ -689,9 +691,9 @@ FUNCTION run_on_start()
 
    s_lAlreadyRunStartup := .T.
 
-   //_ini := hb_Hash()
-   //_ini[ "run" ] := ""
-   //_ini[ "modul" ] := "FIN"
+   // _ini := hb_Hash()
+   // _ini[ "run" ] := ""
+   // _ini[ "modul" ] := "FIN"
 
    IF run_on_start_param() == NIL
       RETURN .F.

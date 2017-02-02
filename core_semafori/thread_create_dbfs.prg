@@ -27,7 +27,10 @@ PROCEDURE thread_create_dbfs()
 
    _ver := read_dbf_version_from_config()
 
-   cre_all_dbfs( _ver )
+   IF !cre_all_dbfs( _ver )
+      ?E "ERROR cre_all_dbfs thread_create_dbfs !"
+      RETURN
+   ENDIF
 
    kreiraj_pa_napuni_partn_idbr_pdvb ()
    // idle_add_for_eval( "kreiraj_pa_napuni_partn_idbr_pdvb", {||  kreiraj_pa_napuni_partn_idbr_pdvb () } )

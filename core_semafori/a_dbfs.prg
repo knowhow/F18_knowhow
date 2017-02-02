@@ -37,17 +37,17 @@ FUNCTION set_a_dbfs()
    set_a_dbf_sifk_sifv()
    set_a_dbf_temporary()
 
-   //IF f18_use_module( "fin" )
-      set_a_dbf_fin()
-   //ENDIF
+   // IF f18_use_module( "fin" )
+   set_a_dbf_fin()
+   // ENDIF
 
-   //IF f18_use_module( "kalk" )
-      set_a_dbf_kalk()
-   //ENDIF
+   // IF f18_use_module( "kalk" )
+   set_a_dbf_kalk()
+   // ENDIF
 
-   //IF f18_use_module( "fakt" )
-      set_a_dbf_fakt()
-   //ENDIF
+   // IF f18_use_module( "fakt" )
+   set_a_dbf_fakt()
+   // ENDIF
 
    IF f18_use_module( "ld" )
       set_a_dbf_ld()
@@ -132,51 +132,51 @@ FUNCTION f18_dbfs()
 
 
 
-FUNCTION set_a_dbf_temp( table, alias, wa )
+FUNCTION set_a_dbf_temp( table, ALIAS, wa )
 
-   LOCAL _item
+   LOCAL hItem
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := alias
-   _item[ "table" ] := table
-   _item[ "wa" ]    := wa
-   _item[ "temp" ]  := .T.
-   _item[ "chk0" ]  := .T.
-   _item[ "sql" ] := .F.
-   _item[ "sif" ]  := .F.
+   hItem[ "alias" ] := alias
+   hItem[ "table" ] := table
+   hItem[ "wa" ]    := wa
+   hItem[ "temp" ]  := .T.
+   hItem[ "chk0" ]  := .T.
+   hItem[ "sql" ] := .F.
+   hItem[ "sif" ]  := .F.
 
-   f18_dbfs_add( table, @_item )
-
-   RETURN .T.
-
-
-FUNCTION set_a_sql_sifarnik( dbf_table, alias, wa, hRec )
-
-   set_a_dbf_sifarnik( dbf_table, alias, wa, hRec, .T. )
+   f18_dbfs_add( table, @hItem )
 
    RETURN .T.
 
 
-FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, hRec, lSql )
+FUNCTION set_a_sql_sifarnik( dbf_table, ALIAS, wa, hRec )
 
-   LOCAL _alg, _item
+   set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, .T. )
+
+   RETURN .T.
+
+
+FUNCTION set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, lSql )
+
+   LOCAL _alg, hItem
 
    IF lSql == NIL
       lSql := .F.
    ENDIF
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := alias
-   _item[ "table" ] := dbf_table
-   _item[ "wa" ]    := wa
+   hItem[ "alias" ] := alias
+   hItem[ "table" ] := dbf_table
+   hItem[ "wa" ]    := wa
 
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ]   :=  lSql
-   _item[ "chk0" ]   :=  .F.
-   _item[ "sif" ] := .T.
-   _item[ "algoritam" ] := {}
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ]   :=  lSql
+   hItem[ "chk0" ]   :=  .F.
+   hItem[ "sif" ] := .T.
+   hItem[ "algoritam" ] := {}
 
 
    _alg := hb_Hash()
@@ -194,9 +194,9 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, hRec, lSql )
       _alg[ "dbf_key_block" ] := hRec[ "dbf_key_block" ]
    ENDIF
 
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], _alg )
 
-   f18_dbfs_add( dbf_table, @_item )
+   f18_dbfs_add( dbf_table, @hItem )
 
    RETURN .T.
 
@@ -394,32 +394,32 @@ FUNCTION is_sifarnik( cTable )
    RETURN s_hF18Dbfs[ cDatabase ][ cTable ][ "sif" ]
 
 
-FUNCTION dbf_alias_has_semaphore( alias )
+FUNCTION dbf_alias_has_semaphore( ALIAS )
 
    LOCAL _ret := .F.
    LOCAL hDbfRecord, cDbfTable, _key
    LOCAL cDatabase := my_database()
 
    // ako nema parametra uzmi tekuci alias na kome se nalazimo
-   IF ( alias == NIL )
-      alias := Alias()
+   IF ( ALIAS == NIL )
+      ALIAS := Alias()
    ENDIF
 
    IF cDatabase == "?undefined?"
-      error_bar( "a_dbfs", "dbf_alias_has_semaphore: " + alias )
+      error_bar( "a_dbfs", "dbf_alias_has_semaphore: " + ALIAS )
       RETURN .F.
    ENDIF
 
    cDbfTable := "x"
 
    FOR EACH _key IN s_hF18Dbfs[ cDatabase ]:Keys
-      IF ValType( alias ) == "N"
+      IF ValType( ALIAS ) == "N"
          IF s_hF18Dbfs[ cDatabase ][ _key ][ "wa" ] == ALIAS // zadana je workarea
             cDbfTable := _key
             EXIT
          ENDIF
       ELSE
-         IF s_hF18Dbfs[ cDatabase ][ _key ][ "alias" ] == Upper( alias )
+         IF s_hF18Dbfs[ cDatabase ][ _key ][ "alias" ] == Upper( ALIAS )
             cDbfTable := _key
             EXIT
          ENDIF
@@ -493,7 +493,7 @@ FUNCTION print_a_dbfs()
 
    ?E Replicate( "A", 60 )
    FOR EACH cKey IN s_hF18Dbfs[ cDatabase ]:Keys
-      ?E ++nCount, s_hF18Dbfs[ cDatabase ][ cKey ][ "table" ]
+      ?E++nCount, s_hF18Dbfs[ cDatabase ][ cKey ][ "table" ]
       IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "chk0" )
          ??E " chk0", s_hF18Dbfs[ cDatabase ][ cKey ][ "chk0" ]
       ELSE
@@ -606,7 +606,7 @@ FUNCTION set_dbf_fields_from_struct( xRec )
          RETURN .F.
       ENDIF
 
-      BEGIN SEQUENCE WITH {| err| err:cargo :=  Break( err ) }
+      BEGIN SEQUENCE WITH {| err | err:cargo :=  Break( err ) }
 
          dbUseArea( .F., DBFENGINE, _dbf, hRec[ "alias" ], .T., .F. )
 
@@ -700,10 +700,14 @@ FUNCTION my_close_all_dbf()
       RETURN .F.
    ENDIF
 
+   IF s_hF18Dbfs == NIL .OR. !hb_HHasKey( s_hF18Dbfs, hServerParams[ "database" ] )
+      RETURN .F.
+   ENDIF
+
    DO WHILE nPos > 0
 
       // ako je neki dbf ostao otvoren nPos ce vratiti poziciju tog a_dbf_recorda
-      nPos := hb_HScan( s_hF18Dbfs[ hServerParams[ "database" ] ], {| key, hRec | zatvori_dbf( hRec ) == .F.  } )
+      nPos := hb_HScan( s_hF18Dbfs[ hServerParams[ "database" ] ], {| KEY, hRec | zatvori_dbf( hRec ) == .F.  } )
       IF nPos > 0
          hb_idleSleep( 0.1 )
       ELSE

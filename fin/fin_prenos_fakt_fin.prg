@@ -94,7 +94,7 @@ FUNCTION fakt_fin_prenos()
    o_tarifa()
 
    IF lNCPoSast
-      O_SAST
+      o_sastavnica()
 
       SET ORDER TO TAG "1"
    ENDIF

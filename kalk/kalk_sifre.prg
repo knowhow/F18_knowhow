@@ -121,7 +121,7 @@ FUNCTION OSifBaze()
    o_valute()
    o_tarifa()
    o_roba()
-   O_SAST
+   o_sastavnica()
 
    RETURN
 

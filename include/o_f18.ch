@@ -12,7 +12,7 @@
 
 
 #xcommand O_BARKOD   => select (F_BARKOD)  ;  my_use  ("barkod")    ; set order to tag "1"
-#xcommand O_SAST     => select (F_SAST)    ;  my_use  ("sast")      ; set order to tag "ID"
+
 
 
 //#xcommand O_TRFP3    => select (F_TRFP3)   ;  use_sql_sif  ("trfp3")     ; set order to tag "ID"

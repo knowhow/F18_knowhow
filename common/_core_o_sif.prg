@@ -48,6 +48,18 @@ FUNCTION select_o_roba()
 */
 
 
+FUNCTION o_sastavnica()
+
+   SELECT ( F_SAST )
+   my_use  ( "sast" )
+   SET ORDER TO TAG "ID"
+   return .t.
+
+FUNCTION select_o_sastavnica()
+   RETURN select_o_dbf( "SAST", F_SAST, "sast", "ID" )
+
+
+
 FUNCTION o_roba()
 
    LOCAL cTabela := "roba"
@@ -90,7 +102,7 @@ FUNCTION find_partner_by_naz_or_id( cId )
    INDEX ON ID TAG ID TO ( cAlias )
    INDEX ON NAZ TAG NAZ TO ( cAlias )
    SET ORDER TO TAG "ID"
-  
+
    SEEK cId
    IF !Found()
       GO TOP

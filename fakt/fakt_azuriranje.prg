@@ -568,7 +568,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
    O_VRSTEP
    o_ops()
    //select_o_konto()
-   O_SAST
+   o_sastavnica()
    //select_o_partner()
    //select_o_roba()
    o_fakt_txt()

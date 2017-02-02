@@ -69,9 +69,9 @@ FUNCTION fmk_provjera_za_migraciju_f18()
    ENDIF
 
    // provjeri ld
-   IF _c_ld == "D"
-      f18_ld_data( @_a_data, @_a_ctrl )
-   ENDIF
+   //IF _c_ld == "D"
+  //    f18_ld_data( @_a_data, @_a_ctrl )
+  // ENDIF
 
    // provjeri epdv
    IF _c_pdv == "D"
@@ -226,7 +226,7 @@ STATIC FUNCTION f18_pos_data( data, checksum )
 
 
 
-// -----------------------------------------
+/*
 // provjera ld
 // -----------------------------------------
 STATIC FUNCTION f18_ld_data( data, checksum )
@@ -234,7 +234,7 @@ STATIC FUNCTION f18_ld_data( data, checksum )
    LOCAL _n_c_iznos := 0
    LOCAL _n_c_stavke := 0
 
-   o_ld()
+   o_ld() ??
 
    Box(, 2, 60 )
 
@@ -268,6 +268,7 @@ STATIC FUNCTION f18_ld_data( data, checksum )
    ENDIF
 
    RETURN .T.
+*/
 
 
 // -----------------------------------------

@@ -214,8 +214,7 @@
 
 #xcommand O__RADN   => select (F__RADN)   ;  my_use ("_radn")
 
-#xcommand O_RADSIHT => select (F_RADSIHT) ;  my_use ("radsiht")  ; set order to tag "1"
-#xcommand O_RADKR   => select (F_RADKR)   ;  my_use ("radkr")    ; set order to tag "1"
+
 #xcommand O_RADKRX  => select (F_RADKR)   ;  my_use ("radkr")    ; set order to tag "0"
 #xcommand O__RADKR  => select (F__RADKR)  ;  my_use ("_radkr")
 
@@ -232,8 +231,6 @@
 #xcommand O__KRED   => select (F__KRED)   ;  my_use ("_kred")    ; set order to tag "ID"
 
 
-
-#xcommand O_RADSAT  => select (F_RADSAT)  ; my_use ("radsat")    ; set order to tag "IDRADN"
 
 //#xcommand O_PK_RADN => select (F_PK_RADN)  ; my_use ("pk_radn")   ; set order to tag "1"
 //#xcommand O_PK_DATA => select (F_PK_DATA)  ; my_use ("pk_data")   ; set order to tag "1"

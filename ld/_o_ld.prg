@@ -14,6 +14,7 @@
 STATIC s_cObracun := " "  // obracun 1 ili 2, ili " "
 
 
+/*
 
 FUNCTION o_ld()
 
@@ -22,11 +23,11 @@ FUNCTION o_ld()
    SET ORDER TO TAG "1"
 
    RETURN .T.
+*/
 
 
-
-//FUNCTION select_o_ld()
-//   RETURN  select_o_dbf( "LD", F_LD, "ld_ld", "1" )
+// FUNCTION select_o_ld()
+// RETURN  select_o_dbf( "LD", F_LD, "ld_ld", "1" )
 
 
 
@@ -81,38 +82,6 @@ FUNCTION select_o_radn( cID )
    RETURN select_o_ld_radn( cId )
 
 
-
-
-FUNCTION o_tprsiht( cId )
-
-   SELECT ( F_TPRSIHT )
-
-   IF !use_sql_sif( "ld_tprsiht", .T., "TPRSIHT", cId )
-      RETURN .F.
-   ENDIF
-
-   SET ORDER TO TAG "ID"
-   IF cId != NIL
-      SEEK cId
-   ENDIF
-
-   RETURN .T.
-
-
-
-FUNCTION o_norsiht( cId )
-
-   SELECT ( F_NORSIHT )
-
-   IF !use_sql_sif( "ld_norsiht", .T., "NORSIHT", cId )
-      RETURN .F.
-   ENDIF
-   SET ORDER TO TAG "ID"
-   IF cId != NIL
-      SEEK cId
-   ENDIF
-
-   RETURN .T.
 
 
 

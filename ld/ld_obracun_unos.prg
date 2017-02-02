@@ -172,15 +172,15 @@ FUNCTION OObracun()
    // o_kred()
    // ENDIF
 
-   SELECT F_RADSAT
-   IF !Used()
-      O_RADSAT
-   ENDIF
+//   SELECT F_RADSAT
+//   IF !Used()
+//      O_RADSAT
+//   ENDIF
 
    IF ( IsRamaGlas() )
       MsgBeep( "http://redmine.bring.out.ba/issues/25988" )
       QUIT_1
-      O_RADSIHT
+      o_radsiht()
       O_FAKT_OBJEKTI
    ENDIF
 

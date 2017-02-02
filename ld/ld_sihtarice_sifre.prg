@@ -20,14 +20,8 @@ FUNCTION gr_pos( cId )
    LOCAL nTArea := Select()
    LOCAL lRet := .F.
 
-   SELECT ( F_KONTO )
-   IF !Used()
-      o_konto()
-   ENDIF
-   SELECT konto
-   SEEK cId
-
-   IF Found()
+   select_o_konto( cId )
+   IF !Eof()
       lRet := .T.
    ENDIF
 

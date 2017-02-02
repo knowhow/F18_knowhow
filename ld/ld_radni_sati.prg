@@ -62,8 +62,7 @@ FUNCTION GetUplaceniRSati( cIdRadn )
 
    nArr := Select()
 
-   SELECT radsat
-   HSEEK cIdRadn //radsat
+   select_o_radsat( cIdRadn )// radsat
 
    IF Found() .AND. field->idradn == cIdRadn
       nSati := field->up_sati
@@ -85,8 +84,7 @@ FUNCTION GetStatusRSati( cIdRadn )
 
    nArr := Select()
 
-   SELECT radsat
-   HSEEK cIdRadn
+   select_o_radsat( cIdRadn )
 
    IF Found() .AND. field->idradn == cIdRadn
       nSati := field->sati
@@ -100,24 +98,21 @@ FUNCTION GetStatusRSati( cIdRadn )
 // ----------------------------------------------------
 // ubaci podatke u tabelu radnih sati
 // ----------------------------------------------------
-FUNCTION UbaciURadneSate( id_radnik, iznos_sati )
+FUNCTION UbaciURadneSate( cIdRadnik, nIznosSati )
 
    LOCAL nDbfArea := Select()
    LOCAL _rec
 
-   SELECT radsat
-   SET ORDER TO TAG "IDRADN"
-   GO TOP
-   SEEK id_radnik
+   select_o_radsat( cIdRadnik )
 
    IF Found()
       _rec := dbf_get_rec()
-      _rec[ "sati" ] := _rec[ "sati" ] + iznos_sati
+      _rec[ "sati" ] := _rec[ "sati" ] + nIznosSati
    ELSE
       APPEND BLANK
       _rec := dbf_get_rec()
-      _rec[ "idradn" ] := id_radnik
-      _rec[ "sati" ] := iznos_sati
+      _rec[ "idradn" ] := cIdRadnik
+      _rec[ "sati" ] := nIznosSati
    ENDIF
 
    update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
@@ -130,25 +125,27 @@ FUNCTION UbaciURadneSate( id_radnik, iznos_sati )
 // ---------------------------------
 // upisi u iznos radne sate
 // ---------------------------------
-FUNCTION delRadSati( id_radnik, iznos_sati )
+FUNCTION delRadSati( cIdRadnik, nIznosSati )
 
    LOCAL _t_arr := Select()
    LOCAL _rec
 
-   SELECT radsat
-   SET ORDER TO TAG "IDRADN"
-   GO TOP
-   SEEK id_radnik
+   // SELECT radsat
+   // SET ORDER TO TAG "IDRADN"
+   // GO TOP
+   // SEEK cIdRadnik
+   select_o_radsat( cIdRadnik )
 
    IF Found()
       _rec := dbf_get_rec()
-      _rec[ "sati" ] := iznos_sati
+      _rec[ "sati" ] := nIznosSati
       update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
    ENDIF
 
    SELECT ( _t_arr )
 
    RETURN .T.
+
 
 // -------------------------------------------------
 // ispravka pregled radnih sati
@@ -160,18 +157,20 @@ FUNCTION edRadniSati()
 
    PushWA()
 
-   o_ld_radn()
-   O_RADSAT
-   SELECT radsat
-   SET ORDER TO TAG "IDRADN"
-   GO TOP
+   // o_ld_radn()
+
+   select_o_radsat()
+   // O_RADSAT
+// SELECT radsat
+// SET ORDER TO TAG "IDRADN"
+   // GO TOP
 
    PRIVATE Imekol := {}
 
    AAdd( ImeKol, { "radn",         {|| IdRadn   } } )
    AAdd( ImeKol, { "ime i prezime", {|| g_naziv( IdRadn ) } } )
    AAdd( ImeKol, { "sati",          {|| sati   } } )
-   AAdd( ImeKol, { "status",        {|| status   } } )
+   AAdd( ImeKol, { "status",        {|| STATUS   } } )
 
    Kol := {}
 
@@ -185,7 +184,7 @@ FUNCTION edRadniSati()
 
    PopwA()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -239,9 +238,10 @@ STATIC FUNCTION stRadniSati()
    LOCAL cLine := ""
    LOCAL aSati
 
-   SELECT radsat
-   SET ORDER TO TAG "1"
-   GO TOP
+   select_o_radsat()
+   // SELECT radsat
+// SET ORDER TO TAG "1"
+// GO TOP
 
    START PRINT CRET
 
@@ -284,14 +284,14 @@ STATIC FUNCTION stRadniSati()
          LOOP
       ENDIF
 
-      AAdd( aSati, { idradn, PadR( g_naziv( idradn ), 25 ), sati, status } )
+      AAdd( aSati, { idradn, PadR( g_naziv( idradn ), 25 ), sati, STATUS } )
 
       SKIP
    ENDDO
 
    // sada istampaj
    // napravi sort po ime+prezime
-   ASort( aSati,,, {| x, y| x[ 2 ] < y[ 2 ] } )
+   ASort( aSati,,, {| x, y | x[ 2 ] < y[ 2 ] } )
 
    FOR i := 1 TO Len( aSati )
 
@@ -308,4 +308,4 @@ STATIC FUNCTION stRadniSati()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.

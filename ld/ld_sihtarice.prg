@@ -26,10 +26,8 @@ FUNCTION def_siht( lNew )
    LOCAL cGroup := Space( 7 )
    LOCAL cOpis := Space( 50 )
 
-   SELECT ( F_RADSIHT )
-   IF !Used()
-      O_RADSIHT
-   ENDIF
+   o_radsiht()
+
 
    SELECT radsiht
    SET ORDER TO TAG "2"
@@ -40,20 +38,20 @@ FUNCTION def_siht( lNew )
 
       @ form_x_koord() + nX, form_y_koord() + 2 SAY "*** Unos / obrada sihtarica po grupama"
 
-      ++ nX
-      ++ nX
+      ++nX
+      ++nX
       @ form_x_koord() + nX, form_y_koord() + 2 SAY "godina" GET nGodina PICT "9999"
       @ form_x_koord() + nX, Col() + 2 SAY "mjesec" GET nMjesec PICT "99"
 
-      ++ nX
+      ++nX
       @ form_x_koord() + nX, form_y_koord() + 2 SAY "grupa:" GET cGroup ;
          VALID {|| p_konto( @cGroup ), ;
          _show_get_item_value( g_gr_naz( cGroup ), 40 ) }
 
-      ++ nX
+      ++nX
       @ form_x_koord() + nX, form_y_koord() + 2 SAY "opis:" GET cOpis PICT "@S40"
 
-      ++ nX
+      ++nX
       @ form_x_koord() + nX, form_y_koord() + 2 SAY "radnik:" GET cIdRadn ;
          VALID {|| p_radn( @cIdRadn ), ;
          _show_get_item_value( _rad_ime( cIdRadn ), 30 ) }
@@ -89,14 +87,12 @@ FUNCTION def_siht( lNew )
 
       ENDIF
 
-      ++ nX
-      ++ nX
-      @ form_x_koord() + nX, form_y_koord() + 2 SAY "broj odradjenih sati:" GET _izvrseno ;
-         PICT "99999.99"
+      ++nX
+      ++nX
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "broj odradjenih sati:" GET _izvrseno PICT "99999.99"
 
-      ++ nX
-      @ form_x_koord() + nX, form_y_koord() + 2 SAY "od toga nocni rad:" GET _bodova ;
-         PICT "99999.99"
+      ++nX
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "od toga nocni rad:" GET _bodova PICT "99999.99"
 
       READ
 
@@ -158,11 +154,6 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
    LOCAL cFilter := ""
    LOCAL nLineLen := 100
    LOCAL nVar := 1
-
-   SELECT F_RADN
-   IF !Used()
-      o_ld_radn()
-   ENDIF
 
    IF PCount() <= 1
 
@@ -255,15 +246,10 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
       ENDPRINT
    ENDIF
 
-   SELECT F_RADN
-   IF !Used()
-      o_ld_radn()
-   ENDIF
 
-   SELECT F_RADSIHT
-   IF !Used()
-      O_RADSIHT
-   ENDIF
+
+   o_radsiht()
+
 
    GO TOP
    SET FILTER TO
@@ -363,7 +349,7 @@ FUNCTION get_siht2()
    IF Len( aSiht ) > 0
 
       // napravi sortiranje
-      ASort( aSiht,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+      ASort( aSiht,,, {| x, y | x[ 1 ] < y[ 1 ] } )
 
       // sada ispisi
       FOR i := 1 TO Len( aSiht )
@@ -389,22 +375,15 @@ FUNCTION get_siht2()
    FF
    ENDPRINT
 
-   SELECT F_RADN
-   IF !Used()
-      o_ld_radn()
-   ENDIF
+   o_radsiht()
 
-   SELECT F_RADSIHT
-   IF !Used()
-      O_RADSIHT
-   ENDIF
 
    GO TOP
    SET FILTER TO
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------------------
@@ -430,13 +409,10 @@ FUNCTION sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
       cFilter += " .and. idkonto == " + dbf_quote( cGroup )
    ENDIF
 
-   SELECT ( F_RADSIHT )
-   IF !Used()
-      O_RADSIHT
-   ENDIF
 
-   SELECT radsiht
-   SET FILTER to &cFilter
+   o_radsiht()
+
+   SET FILTER TO &cFilter
    SET ORDER TO TAG "2"
    GO TOP
 
@@ -468,7 +444,7 @@ FUNCTION del_siht()
    sort_siht( nGodina, nMjesec, cIdRadn, cGroup )
 
    IF Pitanje(, "Pobrisati zapise sa ovim kriterijem (D/N)", "N" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    SET ORDER TO TAG "2"
@@ -477,7 +453,7 @@ FUNCTION del_siht()
    nCnt := 0
    DO WHILE !Eof()
 
-      ++ nCnt
+      ++nCnt
 
       SKIP 1
       _t_rec := RecNo()
@@ -495,7 +471,7 @@ FUNCTION del_siht()
 
    MsgBeep( "pobrisao " + AllTrim( Str( nCnt ) ) + " zapisa..." )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -526,12 +502,7 @@ FUNCTION _rad_ime( cId, lImeOca )
       lImeOca := .F.
    ENDIF
 
-   SELECT ( F_RADN )
-   IF !Used()
-      o_ld_radn()
-   ENDIF
-
-   SEEK cId
+   select_o_radn( cId )
 
    xRet := AllTrim( field->ime )
    xRet += " "

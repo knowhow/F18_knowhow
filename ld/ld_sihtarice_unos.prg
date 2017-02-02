@@ -33,8 +33,7 @@ FUNCTION UnosSiht()
       o_tprsiht()   // tipovi primanja koji se unose u kroz sihtarice
 
 
-      SELECT ( F_RADSIHT )
-      IF !Used(); O_RADSIHT; ENDIF
+      o_radsiht()
 
       Scatter()
       _Godina := nGodina
@@ -115,7 +114,9 @@ FUNCTION UnosSiht()
             SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _IdRadn + _IdRj + Str( _dan, 2 ) + _dandio + _idtippr
 
             IF Round( _izvrseno, 4 ) <> 0 .OR. Round( _Bodova, 4 ) <> 0   // nije nulirano
-               IF !Found(); APPEND blank; ENDIF
+               IF !Found()
+               APPEND blank
+               ENDIF
                Gather()
             ELSE
                IF Found() // a sadr§aj je 0
@@ -125,9 +126,9 @@ FUNCTION UnosSiht()
 
             SELECT TPRSiht
             SEEK _idtippr
-            skip
+            SKIP
             _idtippr := id
-            
+
             IF Eof(); exit; ENDIF
          ENDDO
          ++_Dan ; IF _Dan > 31 .OR. _dan = 0; exit; ENDIF
@@ -288,9 +289,6 @@ FUNCTION UnosSiht()
 
    ENDDO // glavna petlja
 
-   SELECT TPRSiht; USE
-   // select RadSiht; use
-   SELECT NorSiht; USE
 
    SELECT ld
 
@@ -316,10 +314,9 @@ FUNCTION UzmiSiht()
 
    RPar( "zr", @cZadnjiRAdnik )
 
-   SELECT F_RADSIHT
-   IF !Used()
-      O_RADSIHT
-   ENDIF
+
+   o_radsiht()
+
 
    SELECT radsiht
    SEEK Str( _godina, 4 ) + Str( nMjesec, 2 ) + cZadnjiRadnik + cIdRj

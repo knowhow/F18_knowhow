@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION pregled_plata()
+FUNCTION ld_pregled_plata()
 
    LOCAL nC1 := 20
    LOCAL cPrBruto := "N"
@@ -133,7 +133,6 @@ FUNCTION pregled_plata()
          GO TOP
       ENDIF
    ENDIF
-
 
    EOF CRET
 

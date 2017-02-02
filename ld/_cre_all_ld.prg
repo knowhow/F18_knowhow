@@ -529,6 +529,7 @@ FUNCTION cre_all_ld( ver )
    // RADSAT.DBF
    // -------------------------------------
 
+/*
    _alias := "RADSAT"
    _table_name := "ld_radsat"
 
@@ -541,9 +542,9 @@ FUNCTION cre_all_ld( ver )
 
    CREATE_INDEX( "IDRADN", "idradn", _alias )
    AFTER_CREATE_INDEX
+*/
 
-
-   // ------------------------------------------
+   /*
    // RADSIHT
    // ------------------------------------------
    aDbf := {}
@@ -578,7 +579,7 @@ FUNCTION cre_all_ld( ver )
 
    // HACK: 2i indeks sortime pravi probleme
    // CREATE_INDEX( "2i", "idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", _alias )
-
+*/
 
    // ------------------------------------------------------------
    // NORSIHT - norme u sihtarici

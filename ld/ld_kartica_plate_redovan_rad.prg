@@ -232,7 +232,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac,
                ? cLMSK + "        Kreditor      /              na osnovu         Ukupno    Ostalo   Rata"
                ? m2
 
-altd()
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
 
                   select_o_kred( radkr->idkred )

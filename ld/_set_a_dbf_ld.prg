@@ -38,8 +38,10 @@ FUNCTION set_a_dbf_ld()
    set_a_dbf_ld_obracuni()
    //set_a_dbf_ld_pk_data()
    //set_a_dbf_ld_pk_radn()
+
    set_a_dbf_ld_radsat()
    set_a_dbf_ld_radsiht()
+
    set_a_dbf_ld_radn()
 
    set_a_dbf_temp( "_ld_radkr", "_RADKR", F__RADKR  )
@@ -305,7 +307,7 @@ FUNCTION set_a_dbf_ld_radsat()
    _item[ "alias" ] := "RADSAT"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_RADSAT
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
    _item[ "sif" ] := .F.
 
    _item[ "temp" ]  := .F.
@@ -338,7 +340,7 @@ FUNCTION set_a_dbf_ld_radsiht()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_RADSIHT
    _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
    _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}

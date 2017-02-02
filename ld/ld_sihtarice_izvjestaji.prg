@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 STATIC __mj_od
 STATIC __mj_do
@@ -153,7 +153,7 @@ FUNCTION ld_utrosak_po_sihtaricama()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------
@@ -189,7 +189,7 @@ STATIC FUNCTION _obr_2_arr( aArr )
       SKIP
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------
@@ -199,12 +199,12 @@ STATIC FUNCTION o_tables()
 
    //select_o_ld()
    //o_ld_radn()
-   o_konto()
-   O_RADSIHT
-   o_dopr()
-   o_por()
+   //o_konto()
+   //o_radsiht()
+   //o_dopr()
+   //o_por()
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------------------

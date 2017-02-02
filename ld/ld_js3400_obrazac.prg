@@ -30,7 +30,7 @@ FUNCTION ld_js3400_obrazac()
    LOCAL i
    LOCAL cRj := Space( 60 )
    LOCAL cRJDef := Space( 2 )
-   LOCAL cRadnik := Space( LEN_IDRADNIK )
+   LOCAL cIdRadnik := Space( LEN_IDRADNIK )
    LOCAL cPrimDobra := Space( 100 )
    LOCAL cIdRj
    LOCAL cMj_od
@@ -98,8 +98,8 @@ FUNCTION ld_js3400_obrazac()
 
    ++ _x
    ++ _x
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
-      VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cIdRadnik ;
+      VALID Empty( cIdRadnik ) .OR. P_RADN( @cIdRadnik )
 
    ++ _x
    ++ _x
@@ -183,13 +183,14 @@ FUNCTION ld_js3400_obrazac()
    set_metric( "obracun_plata_js_obrazac_op_jmb", NIL, cOpJmb )
    set_metric( "obracun_plata_js_obrazac_op_ime", NIL, cOpIme )
 
-   SELECT ld
+
+   seek_ld( NIL, NIL, NIL, NIL, cIdRadnik ) // seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn, cTag )
 
    // sortiraj tabelu i postavi filter
-   ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, cTipRpt, cObracun )
+   ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cIdRadnik, cTipRpt, cObracun )
 
    // nafiluj podatke obracuna
-   ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, ;
+   ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, cIdRadnik, ;
       cPrimDobra, cTP_off, cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, ;
       cObracun )
 

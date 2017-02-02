@@ -43,6 +43,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    READ
    clvbox()
    ESC_BCR
+   
    IF Empty( cObracun )
       @ form_x_koord() + 6, form_y_koord() + 2 SAY8 "Prikaz sati (S-sabrati sve obračune , 1-obračun 1 , 2-obračun 2, ... )" GET cSatiVO VALID cSatiVO $ "S123456789" PICT "@!"
       READ

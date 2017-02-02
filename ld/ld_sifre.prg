@@ -1092,9 +1092,11 @@ FUNCTION P_VPosla( cId, nDeltaX, nDeltaY )
 
 FUNCTION P_NorSiht( cId, nDeltaX, nDeltaY )
 
-   LOCAL xRet
+   LOCAL lRet
    PRIVATE imekol
    PRIVATE kol
+
+   select_o_norsiht()
 
    ImeKol := { { PadR( "Id", 4 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 20 ), {||  naz }, "naz" }, ;
@@ -1104,10 +1106,10 @@ FUNCTION P_NorSiht( cId, nDeltaX, nDeltaY )
    Kol := { 1, 2, 3, 4 }
 
    PushWa()
-   xRet := p_sifra( F_NORSIHT, 1, MAXROWS() - 15, MAXCOLS() - 20, "Lista: Norme u sihtarici", @cId, nDeltaX, nDeltaY )
+   lRet := p_sifra( F_NORSIHT, 1, MAXROWS() - 15, MAXCOLS() - 20, "Lista: Norme u sihtarici", @cId, nDeltaX, nDeltaY )
    PopWa()
 
-   RETURN xRet
+   RETURN lRet
 
 
 

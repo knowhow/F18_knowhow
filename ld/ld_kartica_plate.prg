@@ -54,9 +54,9 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       cObracun := cObrac
    ENDIF
 
-   IF __radni_sati == "D"
-      O_RADSAT
-   ENDIF
+//   IF __radni_sati == "D"
+  //    O_RADSAT
+  // ENDIF
 
    PRIVATE nC1 := 20 + Len( cLMSK )
 
@@ -240,9 +240,9 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       my_close_all_dbf()
    ELSE // pcount >= "4"
 
-      IF __radni_sati == "D"
-         O_RADSAT
-      ENDIF
+  //    IF __radni_sati == "D"
+    //     O_RADSAT
+  //    ENDIF
 
       o_ld_parametri_obracuna()
       o_ld_rj()

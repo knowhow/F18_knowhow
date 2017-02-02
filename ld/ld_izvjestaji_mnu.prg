@@ -112,7 +112,7 @@ STATIC FUNCTION izvjestaji_pregledi()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. pregled plata                                  " )
-   AAdd( _opcexe, {|| pregled_plata() } )
+   AAdd( _opcexe, {|| ld_pregled_plata() } )
    AAdd( _opc, "2. pregled plata za više mjeseci  " )
    AAdd( _opcexe, {|| ld_pregled_plata_za_period() } )
    AAdd( _opc, "3. pregled određenog primanja" )

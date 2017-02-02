@@ -202,7 +202,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    O_K2C
    O_MJTRUR
    O_KASE
-   O_SAST
+   o_sastavnica()
    o_roba()
    o_tarifa()
    o_sifk()

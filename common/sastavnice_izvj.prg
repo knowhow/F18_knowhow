@@ -52,10 +52,10 @@ FUNCTION ISast()
 
    SELECT ( F_SAST )
    IF !Used()
-      O_SAST
+      o_sastavnica()
    ELSE
       USE
-      O_SAST
+      o_sastavnica()
    ENDIF
 
    IF cBrisi == "D"

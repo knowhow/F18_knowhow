@@ -107,9 +107,10 @@ FUNCTION o_tarifa()
 
 FUNCTION select_o_tarifa()
 
-   SELECT F_TARIFA
-   IF !Used()
-      RETURN o_tarifa()
+   LOCAL lRet := .T.
+
+   IF Select( "TARIFA" ) == 0
+      lRet := o_tarifa()
    ENDIF
 
-   RETURN .T.
+   RETURN lRet

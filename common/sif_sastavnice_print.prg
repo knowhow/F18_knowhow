@@ -470,7 +470,7 @@ FUNCTION pr_dupl_sast()
    O_R_EXP
    INDEX ON sast TAG "1"
 
-   O_SAST
+   o_sastavnica()
    o_roba()
    SELECT roba
    SET ORDER TO TAG "ID"
@@ -680,7 +680,7 @@ FUNCTION _exp_sast_dbf()
    ENDIF
    
    O_R_EXP
-   O_SAST
+   o_sastavnica()
    o_roba()
 
    SELECT sast

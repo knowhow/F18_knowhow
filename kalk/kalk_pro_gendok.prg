@@ -44,7 +44,7 @@ FUNCTION Iz47u96Norm()
    o_konto()
    o_partner()
    o_tarifa()
-   O_SAST
+   o_sastavnica()
 
    XO_KALK
 

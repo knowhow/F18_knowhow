@@ -28,12 +28,12 @@ FUNCTION kalk_unos_dok_pr()
    LOCAL nNV
 
    IF is_legacy_kalk_pr()
-      RETURN leg_Get1_PR()
+      RETURN legacy_get_1_pr()
    ENDIF
 
    SELECT F_SAST
    IF !Used()
-      O_SAST
+      o_sastavnica()
    ENDIF
 
    SELECT kalk_pripr

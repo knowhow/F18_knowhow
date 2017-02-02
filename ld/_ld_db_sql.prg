@@ -172,7 +172,6 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag )
    ENDIF
 
    SET ORDER TO TAG ( cTag )
-
    GO TOP
 
    RETURN .T.

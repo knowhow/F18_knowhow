@@ -207,7 +207,9 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac,
                   SELECT radkr
                   ? cLMSK + "  ", idkred, Left( kred->naz, 22 ), naosnovu
                   @ PRow(), 58 + Len( cLMSK ) SAY iznos PICT "(" + gpici + ")"
-                  SKIP 1
+
+                  SELECT radkr
+                  SKIP
                ENDDO
 
                ? cTprLine
@@ -232,14 +234,18 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac,
 
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
                   select_o_kred( radkr->idkred )
+
                   SELECT radkr
                   aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
                   ? cLMSK + " ", idkred, Left( kred->naz, 22 ), PadR( naosnovu, 20 )
                   @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] PICT "999999.99" // ukupno
                   @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] -aIznosi[ 2 ] PICT "999999.99"// ukupno-placeno
                   @ PRow(), PCol() + 1 SAY iznos PICT "9999.99"
+
                   ukredita += iznos
-                  SKIP 1
+
+                  SELECT RADKR
+                  SKIP
                ENDDO
 
                P_12CPI

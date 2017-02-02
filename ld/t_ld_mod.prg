@@ -28,6 +28,60 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
    RETURN self
 
 
+METHOD programski_modul_osnovni_meni
+
+   LOCAL nIzbor := 1
+   LOCAL aOpcije := {}
+   LOCAL aOpcijeB := {}
+
+   AAdd( aOpcije, "1. obračun (unos, ispravka, administracija)          " )
+   AAdd( aOpcijeB, {|| ld_obracun() } )
+
+   AAdd( aOpcije, "D. unos datuma isplate plaća" )
+   AAdd( aOpcijeB, {|| unos_datuma_isplate_place() } )
+
+   AAdd( aOpcije, "P. postavke obračuna (rj/mjesec/godina)" )
+   AAdd( aOpcijeB, {|| ld_postavi_parametre_obracuna() } )
+
+   AAdd( aOpcije, "------------------------------------" )
+   AAdd( aOpcijeB, NIL )
+
+   AAdd( aOpcije, "I. izvještaji" )
+   AAdd( aOpcijeB, {|| ld_izvjestaji() } )
+
+   AAdd( aOpcije, "A. rekapitulacija obračuna" )
+   AAdd( aOpcijeB, {|| ld_rekapitulacija_sql( .T. ) } )
+   AAdd( aOpcije, "B. kartica plate" )
+   AAdd( aOpcijeB, {|| ld_kartica_plate() } )
+
+   AAdd( aOpcije, "M. mjesečni obrazac MIP-1023" )
+   AAdd( aOpcijeB, {|| ld_mip_obrazac_1023() } )
+
+   AAdd( aOpcije, "P. specifikacija uz isplatu plata" )
+   AAdd( aOpcijeB, {|| ld_specifikacija_plate() } )
+
+   AAdd( aOpcije, "------------------------------------" )
+   AAdd( aOpcijeB, NIL )
+   AAdd( aOpcije, "K. krediti" )
+   AAdd( aOpcijeB, {|| ld_krediti_menu() } )
+
+   AAdd( aOpcije, "X. export podataka za banke " )
+   AAdd( aOpcijeB, {|| ld_export_banke() } )
+   AAdd( aOpcije, "V. generisanje virmana " )
+   AAdd( aOpcijeB, {|| ld_gen_virm() } )
+
+   AAdd( aOpcije, "------------------------------------" )
+   AAdd( aOpcijeB, NIL )
+   AAdd( aOpcije, "S. šifarnici plate" )
+   AAdd( aOpcijeB, {|| ld_sifarnici() } )
+   AAdd( aOpcije, "X. parametri aplikacije" )
+   AAdd( aOpcijeB, {|| ld_parametri() } )
+
+   f18_menu( "gld", .T., nIzbor, aOpcije, aOpcijeB )
+
+   RETURN .T.
+
+
 
 METHOD mMenu()
 
@@ -42,47 +96,6 @@ METHOD mMenu()
    ::programski_modul_osnovni_meni()
 
    RETURN NIL
-
-
-METHOD programski_modul_osnovni_meni
-
-   LOCAL nIzbor := 1
-   LOCAL aOpcije := {}
-   LOCAL aOpcijeB := {}
-
-   AAdd( aOpcije, "1. obračun (unos, ispravka, administracija)    " )
-   AAdd( aOpcijeB, {|| ld_obracun() } )
-   AAdd( aOpcije, "2. izvještaji" )
-   AAdd( aOpcijeB, {|| ld_izvjestaji() } )
-   AAdd( aOpcije, "3. krediti" )
-   AAdd( aOpcijeB, {|| ld_krediti_menu() } )
-   AAdd( aOpcije, "4. export podataka za banke " )
-   AAdd( aOpcijeB, {|| ld_export_banke() } )
-   AAdd( aOpcije, "------------------------------------" )
-   AAdd( aOpcijeB, NIL )
-   AAdd( aOpcije, "S. šifarnici plate" )
-   AAdd( aOpcijeB, {|| ld_sifarnici() } )
-   AAdd( aOpcije, "------------------------------------" )
-   AAdd( aOpcijeB, NIL )
-   AAdd( aOpcije, "A. rekapitulacija" )
-   AAdd( aOpcijeB, {|| ld_rekapitulacija_sql( .T. ) } )
-   AAdd( aOpcije, "B. kartica plate" )
-   AAdd( aOpcijeB, {|| ld_kartica_plate() } )
-   AAdd( aOpcije, "M. mjesečni obrazac MIP-1023" )
-   AAdd( aOpcijeB, {|| ld_mip_obrazac_1023() } )
-
-   AAdd( aOpcije, "V. generisanje virmana " )
-   AAdd( aOpcijeB, {|| ld_gen_virm() } )
-
-   AAdd( aOpcije, "------------------------------------" )
-   AAdd( aOpcijeB, NIL )
-   AAdd( aOpcije, "X. parametri plate " )
-   AAdd( aOpcijeB, {|| ld_parametri() } )
-
-   f18_menu( "gld", .T., nIzbor, aOpcije, aOpcijeB )
-
-   RETURN .T.
-
 
 
 METHOD set_module_gvars()

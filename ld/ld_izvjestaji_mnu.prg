@@ -67,7 +67,7 @@ STATIC FUNCTION izvjestaji_obrasci()
 
    AAdd( _opc, "3. akontacije poreza (obrasci ASD i AUG)" )
    AAdd( _opcexe, {|| ld_asd_aug_obrazac() } )
-   
+
    AAdd( _opc, "4. prijave doprinosa (JS-3400)" )
    AAdd( _opcexe, {|| ld_js3400_obrazac() } )
 

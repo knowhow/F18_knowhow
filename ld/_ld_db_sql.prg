@@ -17,30 +17,70 @@ SEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + ld_broj_obracuna() + cIdRad
 seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
 */
 
-FUNCTION seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn, cTag )
+FUNCTION seek_ld( cIdRj, xGodina, nMjesec, cObracun, cIdRadn, cTag )
 
    LOCAL cSql
    LOCAL cTable := "ld_ld"
    LOCAL hIndexes, cKey
+   LOCAL lWhere := .F.
+   LOCAL nGodinaOd, nGodinaDo
 
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
 
-   cSql += " WHERE godina=" + Str( nGodina, 4, 0 )
+   IF xGodina != NIL
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      IF ValType( xGodina ) == "C"
+         cSql += "godina=" + Str( xGodina, 4, 0 )
+      ELSE // array
+         nGodinaOd := xGodina[ 1 ]
+         nGodinaDo := xGodina[ 2 ]
+         cSql += "(godina>=" + Str( nGodinaOd, 4, 0 ) + " AND godina<=" + Str( nGodinaDo, 4, 0 ) + ")"
+      ENDIF
+   ENDIF
 
    IF cIdRj != NIL
-      cSql += " AND idrj=" + sql_quote( cIdRj )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "idrj=" + sql_quote( cIdRj )
    ENDIF
 
    IF nMjesec != NIL
-      cSql += " AND mjesec=" + Str( nMjesec, 2, 0 )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "mjesec=" + Str( nMjesec, 2, 0 )
    ENDIF
 
    IF cObracun != NIL
-      cSql += " AND obr=" + sql_quote( cObracun )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "obr=" + sql_quote( cObracun )
    ENDIF
 
    IF cIdRadn != NIL .AND. !Empty( cIdRadn )
-      cSql += " AND idradn=" + sql_quote( cIdRadn )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "idradn=" + sql_quote( cIdRadn )
    ENDIF
 
    SELECT F_LD

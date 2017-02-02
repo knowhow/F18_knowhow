@@ -11,11 +11,11 @@
 
 #include "f18.ch"
 
-STATIC __mj_od
-STATIC __mj_do
-STATIC __god_od
-STATIC __god_do
-STATIC __xml := 0
+STATIC s_nMjesecOd
+STATIC s_nMjesecDo
+STATIC s_nGodinaOd
+STATIC s_nGodinaDo
+STATIC s_nXml0ili1 := 0
 
 
 FUNCTION ld_olp_gip_obrazac()
@@ -24,15 +24,15 @@ FUNCTION ld_olp_gip_obrazac()
    LOCAL i
    LOCAL cTPNaz
    LOCAL nKrug := 1
-   LOCAL cRj := Space( 60 )
+   LOCAL cRadneJedinice := Space( 60 )
    LOCAL cRJDef := Space( 2 )
    LOCAL cIdRadnik := Space( LEN_IDRADNIK )
    LOCAL cPrimDobra := Space( 100 )
    LOCAL cIdRj
-   LOCAL cMj_od
-   LOCAL cMj_do
-   LOCAL cGod_od
-   LOCAL cGod_do
+   LOCAL nMjesecOd
+   LOCAL nMjesecDo
+   LOCAL nGodinaOd
+   LOCAL nGodinaDo
    LOCAL cDopr10 := "10"
    LOCAL cDopr11 := "11"
    LOCAL cDopr12 := "12"
@@ -47,10 +47,10 @@ FUNCTION ld_olp_gip_obrazac()
    ol_tmp_tbl()
 
    cIdRj := gLDRadnaJedinica
-   cMj_od := gMjesec
-   cMj_do := gMjesec
-   cGod_od := gGodina
-   cGod_do := gGodina
+   nMjesecOd := gMjesec
+   nMjesecDo := gMjesec
+   nGodinaOd := gGodina
+   nGodinaDo := gGodina
 
    cPredNaz := Space( 50 )
    cPredAdr := Space( 50 )
@@ -70,14 +70,14 @@ FUNCTION ld_olp_gip_obrazac()
    cPredAdr := PadR( fetch_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr ), 100 )
    cPredJMB := PadR( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB ), 13 )
 
-   Box( "#OBRACUNSKI LISTOVI RADNIKA", 17, 75 )
+   Box( "#OBRAČUNSKI LISTOVI RADNIKA OLP, GIP", 17, 75 )
 
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Period od:" GET cMj_od PICT "99"
-   @ form_x_koord() + 2, Col() + 1 SAY "/" GET cGod_od PICT "9999"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRadneJedinice PICT "@!S25"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Period od:" GET nMjesecOd PICT "99"
+   @ form_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
 
-   @ form_x_koord() + 2, Col() + 1 SAY "do:" GET cMj_do PICT "99"
-   @ form_x_koord() + 2, Col() + 1 SAY "/" GET cGod_do PICT "9999"
+   @ form_x_koord() + 2, Col() + 1 SAY "do:" GET nMjesecDo PICT "99"
+   @ form_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
 
    IF ld_vise_obracuna()
       @ form_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
@@ -112,11 +112,11 @@ FUNCTION ld_olp_gip_obrazac()
    dPerDo := Date()
 
    // daj period od - do
-   g_per_oddo( cMj_od, cGod_od, cMj_do, cGod_do, @dPerOd, @dPerDo )
+   g_per_oddo( nMjesecOd, nGodinaOd, nMjesecDo, nGodinaDo, @dPerOd, @dPerDo )
 
    IF cWinPrint == "E"
 
-      nPorGodina := cGod_do
+      nPorGodina := nGodinaDo
 
       @ form_x_koord() + 16, form_y_koord() + 2 SAY "P.godina" GET nPorGodina PICT "9999"
       @ form_x_koord() + 16, Col() + 2 SAY "Dat.podnos." GET dDatPodnosenja
@@ -140,40 +140,40 @@ FUNCTION ld_olp_gip_obrazac()
       RETURN .F.
    ENDIF
 
-   // staticke
-   __mj_od := cMj_od
-   __mj_do := cMj_do
-   __god_od := cGod_od
-   __god_do := cGod_do
+   s_nMjesecOd := nMjesecOd
+   s_nMjesecDo := nMjesecDo
+   s_nGodinaOd := nGodinaOd
+   s_nGodinaDo := nGodinaDo
 
    IF cWinPrint == "S"
-      __xml := 1
+      s_nXml0ili1 := 1
    ELSE
-      __xml := 0
+      s_nXml0ili1 := 0
    ENDIF
 
-   // upisi parametre...
+
    set_metric( "obracun_plata_preduzece_naziv", NIL, AllTrim( cPredNaz ) )
    set_metric( "obracun_plata_preduzece_adresa", NIL, AllTrim( cPredAdr ) )
    set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 
-   seek_ld( NIL, NIL, NIL, NIL, cIdRadnik ) // seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn, cTag )
 
-   // sortiraj tabelu i postavi filter
-   ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cIdRadnik, cTipRpt, cObracun )
+   seek_ld( NIL, { nGodinaOd, nGodinaDo }, NIL, NIL, cIdRadnik ) // seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn, cTag )
+
+
+   ld_obracunski_list_sort( cRadneJedinice, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, cIdRadnik, cTipRpt, cObracun )
 
    // nafiluj podatke obracuna
-   ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, cIdRadnik, ;
+   ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, cIdRadnik, ;
       cPrimDobra, cTP_off, cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, ;
       cObracun )
 
    // stampa izvjestaja xml/oo3
 
-   IF __xml == 1
+   IF s_nXml0ili1 == 1
       _xml_print( cTipRpt )
    ELSE
       nBrZahtjeva := ld_mip_broj_obradjenih_radnika()
-      _xml_export( cTipRpt, cMj_od, cGod_od )
+      _xml_export( cTipRpt, nMjesecOd, nGodinaOd )
       MsgBeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " zahtjeva." )
    ENDIF
 
@@ -183,24 +183,24 @@ FUNCTION ld_olp_gip_obrazac()
 // --------------------------------------
 // vraca period od-do
 // --------------------------------------
-STATIC FUNCTION g_per_oddo( cMj_od, cGod_od, cMj_do, cGod_do, ;
+STATIC FUNCTION g_per_oddo( nMjesecOd, nGodinaOd, nMjesecDo, nGodinaDo, ;
       dPerOd, dPerDo )
 
    LOCAL cTmp := ""
 
    cTmp += "01" + "."
-   cTmp += PadL( AllTrim( Str( cMj_od ) ), 2, "0" ) + "."
-   cTmp += AllTrim( Str( cGod_od ) )
+   cTmp += PadL( AllTrim( Str( nMjesecOd ) ), 2, "0" ) + "."
+   cTmp += AllTrim( Str( nGodinaOd ) )
 
    dPerOd := CToD( cTmp )
 
-   cTmp := g_day( cMj_do ) + "."
-   cTmp += PadL( AllTrim( Str( cMj_do ) ), 2, "0" ) + "."
-   cTmp += AllTrim( Str( cGod_do ) )
+   cTmp := g_day( nMjesecDo ) + "."
+   cTmp += PadL( AllTrim( Str( nMjesecDo ) ), 2, "0" ) + "."
+   cTmp += AllTrim( Str( nGodinaDo ) )
 
    dPerDo := CToD( cTmp )
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------------
 // vraca koliko dana ima u mjesecu
@@ -319,12 +319,12 @@ STATIC FUNCTION _xml_export( cTip, mjesec, godina )
    LOCAL _lokacija, _cre, _error, _a_files
    LOCAL _output_file := ""
 
-   IF __xml == 1
-      RETURN
+   IF s_nXml0ili1 == 1
+      RETURN .F.
    ENDIF
 
    IF cTip == "1"
-      RETURN
+      RETURN .T.
    ENDIF
 
    _id_br  := fetch_metric( "org_id_broj", NIL, PadR( "<POPUNI>", 13 ) )
@@ -385,7 +385,7 @@ STATIC FUNCTION _xml_export( cTip, mjesec, godina )
    // kopiraj fajl na desktop
    f18_copy_to_desktop( _lokacija, _id_br + ".xml", _output_file )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------
@@ -396,8 +396,8 @@ STATIC FUNCTION _xml_print( tip )
    LOCAL _template
    LOCAL _xml_file := my_home() + "data.xml"
 
-   IF __xml == 0
-      RETURN
+   IF s_nXml0ili1 == 0
+      RETURN .F.
    ENDIF
 
    _fill_xml( tip, _xml_file )
@@ -417,7 +417,7 @@ STATIC FUNCTION _xml_print( tip )
       prikazi_odt()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------
@@ -429,7 +429,7 @@ STATIC FUNCTION _xml_head()
 
    xml_head( .T., cStr )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -661,7 +661,7 @@ STATIC FUNCTION _fill_e_xml( file_name )
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -875,7 +875,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
    // zatvori xml fajl za upis
    close_xml()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------------
@@ -885,9 +885,9 @@ STATIC FUNCTION g_por_per()
 
    LOCAL cRet := ""
 
-   cRet += AllTrim( Str( __mj_od ) ) + "/" + AllTrim( Str( __god_od ) )
+   cRet += AllTrim( Str( s_nMjesecOd ) ) + "/" + AllTrim( Str( s_nGodinaOd ) )
    cRet += " - "
-   cRet += AllTrim( Str( __mj_do ) ) + "/" + AllTrim( Str( __god_do ) )
+   cRet += AllTrim( Str( s_nMjesecDo ) ) + "/" + AllTrim( Str( s_nGodinaDo ) )
    cRet += " godine"
 
    RETURN cRet
@@ -910,7 +910,7 @@ FUNCTION ld_godina_mjesec_string( nGod, nMj )
 // ---------------------------------------------------------
 // napuni podatke u pomocnu tabelu za izvjestaj
 // ---------------------------------------------------------
-FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
+FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, ;
       cIdRadnik, cPrimDobra, cTP_off, cDopr10, cDopr11, cDopr12, cDopr1X, ;
       cRptTip, cObracun, cTp1, cTp2, cTp3, cTp4, cTp5 )
 
@@ -957,13 +957,13 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
    DO WHILE !Eof()
 
       IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ;
-            ld_godina_mjesec_string( cGod_od, cMj_od )
+            ld_godina_mjesec_string( nGodinaOd, nMjesecOd )
          SKIP
          LOOP
       ENDIF
 
       IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ;
-            ld_godina_mjesec_string( cGod_do, cMj_do )
+            ld_godina_mjesec_string( nGodinaDo, nMjesecDo )
          SKIP
          LOOP
       ENDIF
@@ -1021,13 +1021,13 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
       DO WHILE !Eof() .AND. field->idradn == cT_radnik
 
          IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ;
-               ld_godina_mjesec_string( cGod_od, cMj_od )
+               ld_godina_mjesec_string( nGodinaOd, nMjesecOd )
             SKIP
             LOOP
          ENDIF
 
          IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ;
-               ld_godina_mjesec_string( cGod_do, cMj_do )
+               ld_godina_mjesec_string( nGodinaDo, nMjesecDo )
             SKIP
             LOOP
          ENDIF
@@ -1297,7 +1297,7 @@ FUNCTION ol_o_tbl()
    RETURN .T.
 
 
-FUNCTION ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, ;
+FUNCTION ld_obracunski_list_sort( cRadneJedinice, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, ;
       cIdRadnik, cTipRpt, cObr )
 
    LOCAL cFilter := ""
@@ -1307,11 +1307,11 @@ FUNCTION ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, ;
       cFilter += "obr == " + dbf_quote( cObr )
    ENDIF
 
-   IF !Empty( cRj )
+   IF !Empty( cRadneJedinice )
       IF !Empty( cFilter )
          cFilter += " .and. "
       ENDIF
-      cFilter += Parsiraj( cRj, "IDRJ" )
+      cFilter += Parsiraj( cRadneJedinice, "IDRJ" )
    ENDIF
 
    IF !Empty( cFilter )
@@ -1326,12 +1326,12 @@ FUNCTION ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, ;
       ELSE
          INDEX ON Str( godina ) + Str( mjesec ) + SortPrez( idradn ) + idrj TO "tmpld"
          GO TOP
-         SEEK Str( cGod_od, 4 ) + Str( cMj_od, 2 ) + cIdRadnik
+         SEEK Str( nGodinaOd, 4 ) + Str( nMjesecOd, 2 ) + cIdRadnik
       ENDIF
    ELSE
       SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
       GO TOP
-      SEEK Str( cGod_od, 4 ) + Str( cMj_od, 2 ) + cObracun + cIdRadnik
+      SEEK Str( nGodinaOd, 4 ) + Str( nMjesecOd, 2 ) + cObracun + cIdRadnik
    ENDIF
 
    RETURN .T.

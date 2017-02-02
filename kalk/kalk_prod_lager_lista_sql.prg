@@ -247,7 +247,7 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( oDataset, hParams )
    LOCAL _p_konto := hParams[ "p_konto" ]
    LOCAL _roba_tip_tu := hParams[ "roba_tip_tu" ]
    LOCAL oRow, _sufix
-   LOCAL nUlaz, nIzlaz, nNVUlaz, nNVIzlaz, nMpvUlaz, nMpvIzlaz, _id_roba
+   LOCAL nUlaz, nIzlaz, nNVUlaz, nNVIzlaz, nMpvUlaz, nMpvIzlaz, cIdRoba
    LOCAL hRec
 
    PRIVATE aPorezi := {}
@@ -281,7 +281,7 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( oDataset, hParams )
 
       oRow := oDataset:GetRow()
 
-      _id_roba := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idroba" ) ) )
+      cIdRoba := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idroba" ) ) )
       nUlaz := oRow:FieldGet( oRow:FieldPos( "ulaz" ) )
       nIzlaz := oRow:FieldGet( oRow:FieldPos( "izlaz" ) )
       nNVUlaz := oRow:FieldGet( oRow:FieldPos( "nvu" ) )
@@ -291,7 +291,7 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( oDataset, hParams )
 
       SELECT roba
       GO TOP
-      SEEK _id_roba
+      SEEK cIdRoba
 
       IF _roba_tip_tu == "N" .AND. roba->tip $ "TU"
          oDataset:Skip()
@@ -314,11 +314,11 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( oDataset, hParams )
       hRec[ "rbr" ] := Str( ++_count, 3 )
 
       hRec[ "datdok" ] := _kalk_datum
-      hRec[ "idroba" ] := _id_roba
+      hRec[ "idroba" ] := cIdRoba
       hRec[ "idkonto" ] := _p_konto
       hRec[ "pkonto" ] := _p_konto
 
-      hRec[ "idtarifa" ] := get_tarifa_by_koncij_region_roba_idtarifa_2_3( _p_konto, _id_roba, @aPorezi )
+      hRec[ "idtarifa" ] := get_tarifa_by_koncij_region_roba_idtarifa_2_3( _p_konto, cIdRoba, @aPorezi )
 
       set_pdv_public_vars()
 

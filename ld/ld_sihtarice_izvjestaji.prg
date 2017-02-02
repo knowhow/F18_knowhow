@@ -197,8 +197,8 @@ STATIC FUNCTION _obr_2_arr( aArr )
 // -----------------------------
 STATIC FUNCTION o_tables()
 
-   select_o_ld()
-   o_ld_radn()
+   //select_o_ld()
+   //o_ld_radn()
    o_konto()
    O_RADSIHT
    o_dopr()

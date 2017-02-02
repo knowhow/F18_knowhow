@@ -414,20 +414,20 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
 STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
 
    LOCAL _a_iznos := {}
-   LOCAL _tar, _roba, _scan
+   LOCAL _tar, cIdRoba, _scan
 
    SELECT fakt
    GO TOP
    SEEK idfirma + idtipdok + brdok
    DO WHILE !Eof() .AND. field->idfirma == idfirma .AND. field->idtipdok == idtipdok .AND. field->brdok == brdok
 
-      _roba := field->idroba
+      cIdRoba := field->idroba
       nCijena := field->cijena
       _kol := field->kolicina
       _rab := field->rabat
 
       SELECT roba
-      HSEEK _roba
+      HSEEK cIdRoba
 
       SELECT tarifa
       HSEEK roba->idtarifa

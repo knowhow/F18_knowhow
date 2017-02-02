@@ -333,7 +333,7 @@ FUNCTION ld_specifikacija_plate_ostali()
          UzmiIzIni( cIniName, 'Varijable', 'DRDOH', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
       ENDIF
 
-      SELECT DOPR
+      select_o_dopr()
       GO TOP
 
       DO WHILE !Eof()
@@ -416,7 +416,7 @@ FUNCTION ld_specifikacija_plate_ostali()
 
 
       // porez na platu i ostali porez
-      SELECT POR
+      select_o_por()
       GO TOP
 
       DO WHILE !Eof()

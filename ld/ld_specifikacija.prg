@@ -410,7 +410,7 @@ FUNCTION ld_specifikacija_plate()
    // SELECT LD
    // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
    // HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 )
-   select_o_ld( NIL, nGodina, nMjesec )
+   seek_ld_2( NIL, nGodina, nMjesec )
 
    PRIVATE cFilt := ".t."
 
@@ -441,7 +441,7 @@ FUNCTION ld_specifikacija_plate()
    nDodDoprZ := 0
    nDodDoprP := 0
 
-   DO WHILE Str( nGodina, 4 ) + Str( nMjesec, 2 ) == Str( godina, 4 ) + Str( mjesec, 2 )
+   DO WHILE Str( nGodina, 4, 0) + Str( nMjesec, 2, 0 ) == Str( godina, 4, 0 ) + Str( mjesec, 2, 0 )
 
       select_o_radn( LD->idradn )
       cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
@@ -570,7 +570,7 @@ FUNCTION ld_specifikacija_plate()
 
       UzmiIzIni( cIniName, 'Varijable', 'U017', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
-      SELECT DOPR
+      select_o_dopr()
       GO TOP
 
       DO WHILE !Eof()
@@ -698,7 +698,7 @@ FUNCTION ld_specifikacija_plate()
       nPorezOstali := 0
 
       // porez na platu i ostali porez
-      SELECT POR
+      select_o_por()
       GO TOP
 
       DO WHILE !Eof()
@@ -793,7 +793,7 @@ FUNCTION ld_specifikacija_plate()
    UzmiIzIni( cIniName, 'Varijable', 'U018', FormNum2( nUNETO, 16, gPici2 ), 'WRITE' )
    UzmiIzIni( cIniName, 'Varijable', 'D13N', " ", 'WRITE' )
 
-   SELECT POR
+   select_o_por()
    SEEK "01"
 
    UzmiIzIni( cIniName, 'Varijable', 'D13_1N', FormNum2( POR->IZNOS, 16, gpici3 ) + "%", 'WRITE' )

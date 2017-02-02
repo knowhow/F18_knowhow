@@ -447,7 +447,7 @@ STATIC FUNCTION __export( vars, a_details )
    LOCAL _dat_od, _dat_do, _rj, _vrste_dok, _export_sif
    LOCAL _usl_rj, _usl_br_dok
    LOCAL _id_partn
-   LOCAL _id_roba
+   LOCAL cIdRoba
    LOCAL _prim_sif
    LOCAL _rj_src, _rj_dest, _brojevi_dok
    LOCAL _change_rj := .F.
@@ -558,9 +558,9 @@ STATIC FUNCTION __export( vars, a_details )
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
 
-         _id_roba := field->idroba
+         cIdRoba := field->idroba
          IF _prim_sif > 0
-            _id_roba := PadR( _id_roba, _prim_sif )
+            cIdRoba := PadR( cIdRoba, _prim_sif )
          ENDIF
          _app_rec := dbf_get_rec()
 
@@ -572,7 +572,7 @@ STATIC FUNCTION __export( vars, a_details )
 
          IF _prim_sif > 0
             _app_rec[ "rbr" ] := PadL( AllTrim( Str( ++_r_br ) ), 3 )
-            _app_rec[ "idroba" ] := _id_roba
+            _app_rec[ "idroba" ] := cIdRoba
          ENDIF
 
          SELECT e_fakt
@@ -581,7 +581,7 @@ STATIC FUNCTION __export( vars, a_details )
          IF _prim_sif > 0
 
             GO TOP
-            SEEK _id_firma + _id_vd + _br_dok + _id_roba
+            SEEK _id_firma + _id_vd + _br_dok + cIdRoba
 
             IF !Found()
                APPEND BLANK
@@ -598,17 +598,17 @@ STATIC FUNCTION __export( vars, a_details )
          ENDIF
 
          SELECT roba
-         HSEEK _id_roba
+         HSEEK cIdRoba
 
          IF Found() .AND. _export_sif == "D"
             _app_rec := dbf_get_rec()
             SELECT e_roba
             SET ORDER TO TAG "ID"
-            SEEK _id_roba
+            SEEK cIdRoba
             IF !Found()
                APPEND BLANK
                dbf_update_rec( _app_rec )
-               fill_sifk_sifv( "ROBA", _id_roba )
+               fill_sifk_sifv( "ROBA", cIdRoba )
             ENDIF
          ENDIF
 

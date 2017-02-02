@@ -794,6 +794,7 @@ FUNCTION KrBlok( Ch )
    RETURN lVrati
 */
 
+/*
 FUNCTION ImaUObrac( cKljuc, cTag )
 
    LOCAL lVrati := .F.
@@ -804,7 +805,7 @@ FUNCTION ImaUObrac( cKljuc, cTag )
 
    // IF !Used()
    // lUsed := .F.
-   select_o_ld()
+   //select_o_ld()
    // ELSE
    // PushWA()
    // ENDIF
@@ -840,7 +841,7 @@ FUNCTION ImaUObrac( cKljuc, cTag )
    SELECT ( nArr )
 
    RETURN lVrati
-
+*/
 
 
 FUNCTION P_POR( cId, nDeltaX, nDeltaY )
@@ -1014,7 +1015,7 @@ FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
       SKIP
    ENDDO
 
-   SELECT dopr
+   select_o_dopr()
 
    lRet := p_sifra( F_DOPR, 1, MAXROWS() - 15, MAXCOLS() - 20, ;
       _u( "Lista doprinosa na platu" ), @cId, nDeltaX, nDeltaY, {| Ch | DoprBl( Ch ) } )
@@ -1119,9 +1120,9 @@ FUNCTION TotBrisRadn()
       RETURN .F.
    ENDIF
 
-   o_ld_radn()         // id, "1"
-   O_RADKR        // idradn, "2"
-   select_o_ld()           // idradn, "RADN"
+   //o_ld_radn()         // id, "1"
+   //O_RADKR        // idradn, "2"
+   //select_o_ld()           // idradn, "RADN"
    O_LDSM         // idradn, "RADN"
 
    Box(, 7, 75 )

@@ -91,18 +91,19 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "PLU", "str(fisc_plu, 10)",  _alias )
    CREATE_INDEX( "IDP", { "id+tip", 'tip=="P"' },  _alias )
    AFTER_CREATE_INDEX
-*/
+
 
    // -------------------------------------------------
-   // _ROBA
+   // cIdRoba
    // -------------------------------------------------
 
-   _alias := "_ROBA"
+   _alias := "_roba"
    _table_name := "_fakt_roba"
 
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "ID", "ID", _alias )
+*/
 
    // -------------------------------------------------
    // SAST

@@ -24,7 +24,7 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
       cTipPor := ""
    ENDIF
 
-   SELECT por
+   select_o_por()
    GO TOP
 
    nPom := 0
@@ -240,7 +240,7 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
             ENDIF
 
          ENDDO
-         SELECT por
+         select_o_por()
 
          ? cLinija
 
@@ -330,7 +330,7 @@ FUNCTION izr_porez( nOsnovica, cTipPor )
 
    o_por()
 
-   SELECT por
+   select_o_por()
    GO TOP
 
    nPom := 0
@@ -370,7 +370,7 @@ FUNCTION izr_porez( nOsnovica, cTipPor )
 
    ENDDO
 
-   SELECT por
+   select_o_por()
    GO TOP
 
    RETURN nPor

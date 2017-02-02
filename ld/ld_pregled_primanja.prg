@@ -27,9 +27,9 @@ FUNCTION ld_pregled_primanja()
    cSifKred := ""
 
    nRbr := 0
-   o_ld_rj()
-   o_ld_radn()
-   select_o_ld()
+   //o_ld_rj()
+   //o_ld_radn()
+   //select_o_ld()
 
    PRIVATE cTip := "  "
 

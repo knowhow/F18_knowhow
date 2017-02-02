@@ -24,14 +24,14 @@ FUNCTION pregled_plata()
    cObracun := gObracun
    cVarSort := "2"
 
-   o_koef_beneficiranog_radnog_staza()
-   o_ld_vrste_posla()
-   o_ld_rj()
-   o_dopr()
-   o_por()
-   o_ld_radn()
-   select_o_ld()
-   o_ld_parametri_obracuna()
+   //o_koef_beneficiranog_radnog_staza()
+   //o_ld_vrste_posla()
+   //o_ld_rj()
+   //o_dopr()
+   //o_por()
+   //o_ld_radn()
+   //select_o_ld()
+   //o_ld_parametri_obracuna()
    O_PARAMS
 
    PRIVATE cSection := "4"

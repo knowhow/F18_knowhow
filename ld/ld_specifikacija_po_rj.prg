@@ -233,16 +233,16 @@ STATIC FUNCTION zapuj_pomocnu_tabelu()
 STATIC FUNCTION otvori_tabele()
 
    // o_tippr()
-   o_kred()
-   O_RADKR
-   SET ORDER TO TAG "1"
-   o_ld_rj()
-   o_ld_radn()
-   select_o_ld()
+   //o_kred()
+   //O_RADKR
+   //SET ORDER TO TAG "1"
+   //o_ld_rj()
+   //o_ld_radn()
+   //select_o_ld()
    O_LDT22
    SET ORDER TO TAG "1"
 
-   SELECT ld
+   //SELECT ld
 
    RETURN .T.
 

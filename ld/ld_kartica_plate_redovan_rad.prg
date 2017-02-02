@@ -364,7 +364,7 @@ altd()
          ? cLmSk + cDoprLine
       ENDIF
 
-      SELECT dopr
+      select_o_dopr()
       GO TOP
 
       nPom := 0
@@ -489,7 +489,7 @@ altd()
 
       ? cLMSK + "6. POREZ NA PLATU"
 
-      SELECT por
+      select_o_por()
       GO TOP
 
       nPom := 0

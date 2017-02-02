@@ -237,7 +237,7 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
    LOCAL _data := {}
    LOCAL nI, oRow
    LOCAL _cnt := 0
-   LOCAL _id_roba
+   LOCAL cIdRoba
 
    _p_konto := vars[ "p_konto" ]
    _dat_od := vars[ "datum_od" ]
@@ -296,12 +296,12 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
 
       oRow := _table:GetRow( nI )
 
-      _id_roba := oRow:FieldGet( oRow:FieldPos( "idroba" ) )
+      cIdRoba := oRow:FieldGet( oRow:FieldPos( "idroba" ) )
 
       SELECT r_export
       SET ORDER TO TAG "roba"
       GO TOP
-      SEEK PadR( _id_roba, 10 )
+      SEEK PadR( cIdRoba, 10 )
 
       IF Found()
 

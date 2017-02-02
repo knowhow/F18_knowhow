@@ -20,7 +20,7 @@ FUNCTION u_dopr_iz( nDopOsn, cRTipRada )
 
    LOCAL nU_dop_iz
 
-   SELECT dopr
+   select_o_dopr()
    GO TOP
 
    nU_dop_iz := 0
@@ -54,7 +54,7 @@ FUNCTION u_dopr_iz( nDopOsn, cRTipRada )
 // ------------------------------------------------
 FUNCTION u_dopr_na( nDopOsn, cRTipRada )
 
-   SELECT dopr
+   select_o_dopr()
    GO TOP
 
    nU_dop_na := 0
@@ -104,7 +104,7 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
       m += " ----------- -----------"
    ENDIF
 
-   SELECT dopr
+   select_o_dopr()
    GO TOP
 
    nPom := 0
@@ -250,7 +250,7 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
             ENDDO
 
-            SELECT dopr
+            select_o_dopr()
 
             ? cLinija
             ? "  " + "UKUPNO" + Space( 1 ), DOPR->ID

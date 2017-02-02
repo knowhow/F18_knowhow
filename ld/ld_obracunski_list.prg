@@ -1282,18 +1282,18 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
 // ---------------------------------------
 FUNCTION ol_o_tbl()
 
-   o_ld_obracuni()
-   o_ld_parametri_obracuna()
+   //o_ld_obracuni()
+   //o_ld_parametri_obracuna()
    O_PARAMS
-   o_ld_rj()
-   o_ld_radn()
-   o_koef_beneficiranog_radnog_staza()
-   o_ld_vrste_posla()
+  // o_ld_rj()
+   //o_ld_radn()
+  // o_koef_beneficiranog_radnog_staza()
+   //o_ld_vrste_posla()
    // o_tippr()
-   o_kred()
-   o_dopr()
-   o_por()
-   select_o_ld()
+   //o_kred()
+   //o_dopr()
+   //o_por()
+   //select_o_ld()
 
    RETURN .T.
 

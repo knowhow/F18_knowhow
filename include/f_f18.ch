@@ -33,7 +33,7 @@
 //#define F_STRINGS   30
 #define F_TRFP2     31
 //#define F_TRFP3     32
-#define F__ROBA     33
+//#define F__ROBA     33
 #define F_OBJEKTI   34
 #define F_PRODAJA   35
 

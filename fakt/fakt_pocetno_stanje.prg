@@ -56,13 +56,13 @@ FUNCTION fakt_pocetno_stanje()
 
       _row := _data:GetRow()
 
-      _id_roba := hb_UTF8ToStr( _row:FieldGet( _row:FieldPos( "idroba" ) ) )
+      cIdRoba := hb_UTF8ToStr( _row:FieldGet( _row:FieldPos( "idroba" ) ) )
       _ulaz := _row:FieldGet( _row:FieldPos( "ulaz" ) )
       _izlaz := _row:FieldGet( _row:FieldPos( "izlaz" ) )
       _stanje := ( _ulaz - _izlaz )
 
       SELECT roba
-      HSEEK _id_roba
+      HSEEK cIdRoba
 
       IF roba->tip == "U" .OR. Round( _stanje, 2 ) == 0
          _data:Skip()
@@ -89,7 +89,7 @@ FUNCTION fakt_pocetno_stanje()
       _memo[ 2 ] := AllTrim( partn->naz ) + ", " + AllTrim( partn->mjesto )
       _memo[ 3 ] := "Početno stanje"
       _rec[ "txt" ] := fakt_memo_field_to_txt( _memo )
-      _rec[ "idroba" ] := _id_roba
+      _rec[ "idroba" ] := cIdRoba
       _rec[ "kolicina" ] := _stanje
       _rec[ "cijena" ] := roba->vpc
 

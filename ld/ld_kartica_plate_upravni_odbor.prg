@@ -163,7 +163,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, nMjesec, nGodina, cIdRadn, cObra
    // razrada doprinosa ....
    ? cLmSK + cDoprSpace + _l( "Obracun doprinosa:" )
 
-   SELECT dopr
+   select_o_dopr()
    GO TOP
 
    nPom := 0
@@ -268,7 +268,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, nMjesec, nGodina, cIdRadn, cObra
 
    ? cLMSK + _l( "3. AKONTACIJA POREZA NA DOHODAK" )
 
-   SELECT por
+   select_o_por()
    GO TOP
 
    nPom := 0

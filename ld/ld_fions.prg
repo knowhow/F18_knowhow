@@ -812,7 +812,7 @@ FUNCTION Bruto( nbruto, ndopr )
    nBO := 0
    nBo := parobr->k3 / 100 * Max( _UNeto, PAROBR->prosld * gPDLimit / 100 )
 
-   SELECT por
+   select_o_por()
    GO TOP
 
    nPom := nPor := 0
@@ -844,7 +844,7 @@ FUNCTION Bruto( nbruto, ndopr )
       // ? m
    ENDIF
 
-   SELECT dopr
+   select_o_dopr()
    GO TOP
 
    nPom := nDopr := 0

@@ -14,7 +14,7 @@
 
 FUNCTION kreiraj_adrese_iz_ugovora()
 
-   LOCAL _id_roba, _partner, _ptt, _mjesto
+   LOCAL cIdRoba, _partner, _ptt, _mjesto
    LOCAL _n_sort, _dat_do, _g_dat
    LOCAL _filter := ""
    LOCAL _index_sort := ""
@@ -27,7 +27,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
    _open_tables()
 
-   _id_roba := PadR( fetch_metric( "ugovori_naljepnice_idroba", my_user(), Space( 10 ) ), 10 )
+   cIdRoba := PadR( fetch_metric( "ugovori_naljepnice_idroba", my_user(), Space( 10 ) ), 10 )
    _partner := PadR( fetch_metric( "ugovori_naljepnice_partner", my_user(), Space( 300 ) ), 300 )
    _ptt := PadR( fetch_metric( "ugovori_naljepnice_ptt", my_user(), Space( 300 ) ), 300 )
    _mjesto := PadR( fetch_metric( "ugovori_naljepnice_mjesto", my_user(), Space( 300 ) ), 300 )
@@ -41,7 +41,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
    DO WHILE .T.
 
       @ m_x + 0, m_y + 5 SAY "POSTAVLJENJE USLOVA ZA PRAVLJENJE LABELA"
-      @ m_x + 2, m_y + 2 SAY "Artikal  :" GET _id_roba VALID P_Roba( @_id_roba ) PICT "@!"
+      @ m_x + 2, m_y + 2 SAY "Artikal  :" GET cIdRoba VALID P_Roba( @cIdRoba ) PICT "@!"
       @ m_x + 3, m_y + 2 SAY "Partner  :" GET _partner PICT "@S50!"
       @ m_x + 4, m_y + 2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
       @ m_x + 5, m_y + 2 SAY "PTT      :" GET _ptt PICT "@S50!"
@@ -73,7 +73,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
    BoxC()
 
-   set_metric( "ugovori_naljepnice_idroba", my_user(), _id_roba )
+   set_metric( "ugovori_naljepnice_idroba", my_user(), cIdRoba )
    set_metric( "ugovori_naljepnice_partner", my_user(), AllTrim( _partner ) )
    set_metric( "ugovori_naljepnice_ptt", my_user(), AllTrim( _ptt ) )
    set_metric( "ugovori_naljepnice_mjesto", my_user(), AllTrim( _mjesto ) )
@@ -93,8 +93,8 @@ FUNCTION kreiraj_adrese_iz_ugovora()
    SELECT rugov
    SET FILTER TO
 
-   IF !Empty( _id_roba )
-      SET FILTER TO idroba == _id_roba
+   IF !Empty( cIdRoba )
+      SET FILTER TO idroba == cIdRoba
    ENDIF
 
    GO TOP

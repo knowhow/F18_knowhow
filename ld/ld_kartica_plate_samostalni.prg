@@ -160,7 +160,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, 
 
       ? cLmSK + cDoprSpace +  "Obracun doprinosa:"
 
-      SELECT dopr
+      select_o_dopr()
       GO TOP
 
       nPom := 0

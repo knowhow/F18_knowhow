@@ -39,7 +39,8 @@ FUNCTION ld_unos_obracuna()
 
       IF ( lSaveObracun )
 
-         select_o_ld()
+         //select_o_ld()
+         SELECT ld
 
          cIdRadn := field->idRadn
 
@@ -113,63 +114,63 @@ FUNCTION QQOUTC( cTekst, cBoja )
 
 FUNCTION OObracun()
 
-   select_o_ld()
+  // select_o_ld()
 
 
-   SELECT F_PAROBR
-   IF !Used()
-      o_ld_parametri_obracuna()
-   ENDIF
+//   SELECT F_PAROBR
+//   IF !Used()
+//      o_ld_parametri_obracuna()
+//   ENDIF
 
-   SELECT F_RADN
-   IF !Used()
-      o_ld_radn()
-   ENDIF
+//   SELECT F_RADN
+//   IF !Used()
+//      o_ld_radn()
+//   ENDIF
 
-   SELECT F_VPOSLA
-   IF !Used()
-      o_ld_vrste_posla()
-   ENDIF
+//   SELECT F_VPOSLA
+//   IF !Used()
+//      o_ld_vrste_posla()
+//   ENDIF
 
-   SELECT F_STRSPR
-   IF !Used()
-      o_str_spr()
-   ENDIF
+  // SELECT F_STRSPR
+//   IF !Used()
+//      o_str_spr()
+//   ENDIF
 
-   SELECT F_DOPR
-   IF !Used()
-      o_dopr()
-   ENDIF
+//   SELECT F_DOPR
+//   IF !Used()
+//      o_dopr()
+//   ENDIF
 
-   SELECT F_POR
-   IF !Used()
-      o_por()
-   ENDIF
+//   SELECT F_POR
+//   IF !Used()
+//      o_por()
+//   ENDIF
 
-   SELECT F_KBENEF
-   IF !Used()
-      o_koef_beneficiranog_radnog_staza()
-   ENDIF
+//   SELECT F_KBENEF
+//   IF !Used()
+//      o_koef_beneficiranog_radnog_staza()
+//   ENDIF
 
-   SELECT F_OPS
-   IF !Used()
-      o_ops()
-   ENDIF
+  // SELECT F_OPS
+  // IF !Used()
+  //    o_ops()
+//   ENDIF
 
-   SELECT F_LD_RJ
-   IF !Used()
-      o_ld_rj()
-   ENDIF
+   //SELECT F_LD_RJ
+  // IF !Used()
+  //    o_ld_rj()
+  // ENDIF
 
    //SELECT F_RADKR
    //IF !Used()
   //    O_RADKR
    //ENDIF
 
-   SELECT F_KRED
-   IF !Used()
-      o_kred()
-   ENDIF
+   //SELECT F_KRED
+   //IF !Used()
+  //    o_kred()
+  // ENDIF
 
    SELECT F_RADSAT
    IF !Used()

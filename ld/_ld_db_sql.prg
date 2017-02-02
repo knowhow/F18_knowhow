@@ -62,8 +62,7 @@ FUNCTION seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn, cTag )
 
 FUNCTION seek_ld_2( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
 
-   seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
-   SET ORDER TO TAG "2"
+   seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn, "2" )
 
    RETURN .T.
 

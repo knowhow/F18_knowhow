@@ -25,8 +25,8 @@ FUNCTION o_ld()
 
 
 
-FUNCTION select_o_ld()
-   RETURN  select_o_dbf( "LD", F_LD, "ld_ld", "1" )
+//FUNCTION select_o_ld()
+//   RETURN  select_o_dbf( "LD", F_LD, "ld_ld", "1" )
 
 
 

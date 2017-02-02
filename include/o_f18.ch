@@ -27,7 +27,7 @@
 #xcommand O_KS       => select (F_KS);     use_sql_ks() ; set order to tag "ID"
 
 
-#xcommand O__ROBA    => select (F__ROBA)   ;  my_usex("_roba")
+//#xcommand O__ROBA    => select (F__ROBA)   ;  my_usex("cIdRoba")
 //#xcommand O__PARTN   => select (F__PARTN)  ;  my_use  ("_partn")
 
 

@@ -661,7 +661,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
 
       // obradi poreze....
 
-      SELECT por
+      select_o_por()
       GO TOP
 
       nPor := 0
@@ -700,7 +700,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
             PopuniOpsLd( cAlgoritam, por->id, aPor )
          ENDIF
 
-         SELECT por
+         select_o_por()
 
          SKIP
 

@@ -37,17 +37,17 @@ FUNCTION set_a_dbfs()
    set_a_dbf_sifk_sifv()
    set_a_dbf_temporary()
 
-   IF f18_use_module( "fin" )
+   //IF f18_use_module( "fin" )
       set_a_dbf_fin()
-   ENDIF
+   //ENDIF
 
-   IF f18_use_module( "kalk" )
+   //IF f18_use_module( "kalk" )
       set_a_dbf_kalk()
-   ENDIF
+   //ENDIF
 
-   IF f18_use_module( "fakt" )
+   //IF f18_use_module( "fakt" )
       set_a_dbf_fakt()
-   ENDIF
+   //ENDIF
 
    IF f18_use_module( "ld" )
       set_a_dbf_ld()

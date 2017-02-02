@@ -668,11 +668,11 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    cIdTipPr := "  "
 
    //o_tippr()
-   o_kred()
-   o_ld_rj()
-   o_ld_radn()
-   select_o_ld()
-   SET RELATION TO idradn into radn
+   //o_kred()
+   //o_ld_rj()
+   //o_ld_radn()
+   //select_o_ld()
+   //SET RELATION TO idradn into radn
 
    cProred := "N"
    cPrikIzn := "D"

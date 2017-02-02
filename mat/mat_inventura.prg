@@ -80,7 +80,7 @@ FUNCTION mat_inv_gen()
    LOCAL _iznos
    LOCAL _iznos_2
    LOCAL _cijena
-   LOCAL _id_roba
+   LOCAL cIdRoba
    LOCAL _vars := hb_Hash()
    LOCAL _partner, _partn_usl, _id_partner
    LOCAL _filter
@@ -132,12 +132,12 @@ FUNCTION mat_inv_gen()
 
    DO WHILE !Eof() .AND. _id_firma == field->IdFirma .AND. _konto == field->Idkonto
 
-      _id_roba := field->idroba
+      cIdRoba := field->idroba
       _kolicina := 0
       _iznos := 0
       _iznos_2 := 0
 
-      DO WHILE !Eof() .AND. _id_firma == field->IdFirma .AND. _konto == field->IdKonto .AND. _id_roba == field->IdRoba
+      DO WHILE !Eof() .AND. _id_firma == field->IdFirma .AND. _konto == field->IdKonto .AND. cIdRoba == field->IdRoba
 
          IF field->d_p = "1"
             _kolicina += field->Kolicina
@@ -167,7 +167,7 @@ FUNCTION mat_inv_gen()
       APPEND BLANK
 
       _vars := dbf_get_rec()
-      _vars[ "idroba" ] := _id_roba
+      _vars[ "idroba" ] := cIdRoba
       _vars[ "rbr" ] := Str( ++_r_br, 4 )
       _vars[ "kolicina" ] := _kolicina
       _vars[ "cijena" ] := _cijena

@@ -180,7 +180,7 @@ STATIC FUNCTION _grupno_params( params )
    LOCAL _x := 1
    LOCAL _id_firma, _id_tip_dok, _brojevi
    LOCAL _datum_od, _datum_do
-   LOCAL _partneri, _roba, _na_lokaciju
+   LOCAL _partneri, cIdRoba, _na_lokaciju
    LOCAL _tip_gen := "1"
    LOCAL _gen_pdf := "N"
 
@@ -190,7 +190,7 @@ STATIC FUNCTION _grupno_params( params )
    _datum_do := fetch_metric( "export_odt_grupno_datum_do", my_user(), Date() )
    _brojevi := PadR( fetch_metric( "export_odt_grupno_brojevi", my_user(), "" ), 500 )
    _partneri := PadR( fetch_metric( "export_odt_grupno_partneri", my_user(), "" ), 500 )
-   _roba := PadR( fetch_metric( "export_odt_grupno_roba", my_user(), "" ), 500 )
+   cIdRoba := PadR( fetch_metric( "export_odt_grupno_roba", my_user(), "" ), 500 )
    _na_lokaciju := PadR( fetch_metric( "export_odt_grupno_exp_lokacija", my_user(), "" ), 500 )
 
    // uslov za stampanje
@@ -216,7 +216,7 @@ STATIC FUNCTION _grupno_params( params )
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Obuhvati artikle:" GET _roba PICT "@S45"
+   @ m_x + _x, m_y + 2 SAY "Obuhvati artikle:" GET cIdRoba PICT "@S45"
 
    ++ _x
 
@@ -251,7 +251,7 @@ STATIC FUNCTION _grupno_params( params )
    set_metric( "export_odt_grupno_datum_do", my_user(), _datum_do )
    set_metric( "export_odt_grupno_brojevi", my_user(), AllTrim( _brojevi ) )
    set_metric( "export_odt_grupno_partneri", my_user(), AllTrim( _partneri ) )
-   set_metric( "export_odt_grupno_roba", my_user(), AllTrim( _roba ) )
+   set_metric( "export_odt_grupno_roba", my_user(), AllTrim( cIdRoba ) )
    set_metric( "export_odt_grupno_exp_lokacija", my_user(), AllTrim( _na_lokaciju ) )
 
    // params
@@ -261,7 +261,7 @@ STATIC FUNCTION _grupno_params( params )
    params[ "id_firma" ] := _id_firma
    params[ "id_tip_dok" ] := _id_tip_dok
    params[ "brojevi" ] := _brojevi
-   params[ "roba" ] := _roba
+   params[ "roba" ] := cIdRoba
    params[ "partneri" ] := _partneri
    params[ "tip_gen" ] := _tip_gen
    params[ "gen_pdf" ] := _gen_pdf

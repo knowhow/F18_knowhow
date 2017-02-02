@@ -810,7 +810,7 @@ FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
 
 FUNCTION zagl_rekapitulacija_plata_svi()
 
-   SELECT por
+   select_o_por()
    GO TOP
    o_ld_rj()
    SELECT ld_rj
@@ -851,7 +851,7 @@ FUNCTION zagl_rekapitulacija_plata_rj()
 
    select_o_ld_rj( cIdRj )
 
-   SELECT por
+   select_o_por()
    GO TOP
    SELECT ld
 

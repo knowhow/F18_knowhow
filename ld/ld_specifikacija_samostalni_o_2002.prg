@@ -313,7 +313,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
       hRec[ "br_radnih_sati" ] := FormNum2( nPom, 16, gPici2 )
 
 
-      SELECT DOPR
+      select_o_dopr()
       GO TOP
 
       DO WHILE !Eof()

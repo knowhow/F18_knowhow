@@ -295,7 +295,7 @@ FUNCTION IzracDopr( cDopr, nKLO, cTipRada, nSpr_koef )
       nBo := round2( parobr->k3 / 100 * Max( _UNeto, PAROBR->prosld * gPDLimit / 100 ), gZaok2 )
    ENDIF
 
-   SELECT DOPR
+   select_o_dopr()
    GO TOP
 
    DO WHILE !Eof()

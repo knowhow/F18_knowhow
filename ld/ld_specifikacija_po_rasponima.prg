@@ -23,9 +23,9 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    nGodina := gGodina
    cObracun := gObracun
 
-   o_ld_rj()
-   o_ld_radn()
-   select_o_ld()
+   //o_ld_rj()
+   //o_ld_radn()
+   //select_o_ld()
 
    PRIVATE cFormula := PadR( "UNETO", 40 )
    PRIVATE cNaziv := PadR( "UKUPNO NETO", 20 )

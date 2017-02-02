@@ -47,7 +47,7 @@ FUNCTION ld_naziv_mjeseca( nMjesec, nGodina, lShort, lGodina )
       RETURN ""
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -85,6 +85,7 @@ STATIC FUNCTION _create_mtemp()
       FErase( my_home() + _table + ".dbf" )
    ENDIF
 
+   AltD()
    _struct := LD->( dbStruct() )
 
    // ovdje cemo sva numericka polja prosiriti za 4 mjesta
@@ -118,19 +119,14 @@ FUNCTION ld_specifikacija_po_mjesecima()
    qqOstPrim := ""
    cSamoAktivna := "D"
 
-   select_o_ld()
+   // select_o_ld()
 
-   IF !_create_mtemp()
-      RETURN .T.
-   ENDIF
 
-   my_close_all_dbf()
-
-   o_ld_rj()
-   o_str_spr()
-   o_ops()
-   o_ld_radn()
-   select_o_ld()
+   // o_ld_rj()
+   // o_str_spr()
+   // o_ops()
+   // o_ld_radn()
+   // select_o_ld()
 
    cIdRadn := fetch_metric( "ld_spec_po_rasponu_id_radnik", my_user(), cIdRadn )
    cSvaPrim := fetch_metric( "ld_spec_po_rasponu_sva_primanja", my_user(), cSvaPrim )
@@ -163,19 +159,26 @@ FUNCTION ld_specifikacija_po_mjesecima()
    set_metric( "ld_spec_po_rasponu_ostala_primanja", my_user(), qqOstPrim )
    set_metric( "ld_spec_po_rasponu_samo_aktivna", my_user(), cSamoAktivna )
 
+
+
+   // o_tippr()
+   AltD()
+   seek_ld_2( NIL, nGodina )
+
+   IF !_create_mtemp()
+      RETURN .F.
+   ENDIF
+
    SELECT ( F_TMP_1 )
    my_use_temp( "MTEMP", my_home() + "mtemp" )
 
-   // o_tippr()
-
    SELECT LD
-
    PRIVATE cFilt1 := "GODINA==" + dbf_quote( nGodina ) + ;
       iif( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) ) + ;
       iif( Empty( cIdRadn ), "", ".and.IDRADN==" + dbf_quote( cIdRadn ) )
 
    SET FILTER TO &cFilt1
-   SET ORDER TO TAG "2"
+   //SET ORDER TO TAG "2"
    GO TOP
 
    DO WHILE !Eof()
@@ -189,7 +192,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
          FOR i := 1 TO cLDPolja
             cSTP := PadL( AllTrim( Str( i ) ), 2, "0" )
             IF cSvaPrim != "S" .AND. !( cSTP $ qqOstPrim )
-               select_o_tippr( cSTP)
+               select_o_tippr( cSTP )
                SELECT MTEMP
                IF cSvaPrim == "N" .AND. TIPPR->uneto == "N" .OR. ;
                      cSvaPrim == "V" .AND. TIPPR->uneto == "D" .OR. ;
@@ -432,15 +435,15 @@ FUNCTION FormNum2( nIznos, nDuz, pici )
 
 FUNCTION OSpecif()
 
-   o_dopr()
-   o_por()
-   o_ld_parametri_obracuna()
-   o_koef_beneficiranog_radnog_staza()
-   o_ld_vrste_posla()
-   o_ld_rj()
-   o_ld_radn()
+   // o_dopr()
+   // o_por()
+   // o_ld_parametri_obracuna()
+   // o_koef_beneficiranog_radnog_staza()
+   // o_ld_vrste_posla()
+   // o_ld_rj()
+   // o_ld_radn()
    O_PARAMS
-   select_o_ld()
-   o_ops()
+   // select_o_ld()
+   // o_ops()
 
    RETURN .T.

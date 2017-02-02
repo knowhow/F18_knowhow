@@ -834,7 +834,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
 
    LOCAL _ret := .T.
    LOCAL _row
-   LOCAL _id_roba, _ulaz, _izlaz, _stanje
+   LOCAL cIdRoba, _ulaz, _izlaz, _stanje
    LOCAL _count := 0
    LOCAL _t_ulaz := 0
    LOCAL _t_izlaz := 0
@@ -863,7 +863,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
 
       _row := table:GetRow()
 
-      _id_roba := _row:FieldGet( _row:FieldPos( "idroba" ) )
+      cIdRoba := _row:FieldGet( _row:FieldPos( "idroba" ) )
       _ulaz := _row:FieldGet( _row:FieldPos( "ulaz" ) )
       _izlaz := _row:FieldGet( _row:FieldPos( "izlaz" ) )
 
@@ -880,7 +880,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
       _t_izlaz += _izlaz
 
       SELECT roba
-      HSEEK _id_roba
+      HSEEK cIdRoba
 
       _cijena := roba->vpc
 
@@ -896,7 +896,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
       xml_subnode( "item", .F. )
 
       xml_node( "rbr", AllTrim( Str( ++_count ) ) )
-      xml_node( "id", to_xml_encoding( _id_roba ) )
+      xml_node( "id", to_xml_encoding( cIdRoba ) )
       xml_node( "naz", to_xml_encoding( roba->naz ) )
       xml_node( "jmj", to_xml_encoding( roba->jmj ) )
       xml_node( "ulaz", Str( _ulaz, 12, 2 ) )

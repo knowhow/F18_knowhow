@@ -349,7 +349,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
    LOCAL _dat_od, _dat_do, _konta, _vrste_dok, cExportSif
    LOCAL cUslMagacinKonto, cUslProdKonto
    LOCAL _id_partn, _p_konto, _m_konto
-   LOCAL _id_roba
+   LOCAL cIdRoba
    LOCAL aDokDetail
    LOCAL hRec
 
@@ -430,7 +430,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
 
       DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvd == cIdVd .AND. field->brdok == cBrDok
 
-         _id_roba := field->idroba
+         cIdRoba := field->idroba
 
          // upisi zapis u tabelu e_kalk
          aDoksRec := dbf_get_rec()
@@ -440,16 +440,16 @@ STATIC FUNCTION kalk_export( hParams, a_details )
 
 
          SELECT roba
-         HSEEK _id_roba // uzmi sada robu sa ove stavke pa je ubaci u e_roba
+         HSEEK cIdRoba // uzmi sada robu sa ove stavke pa je ubaci u e_roba
          IF Found() .AND. cExportSif == "D"
             hRec := dbf_get_rec()
             SELECT e_roba
             SET ORDER TO TAG "ID"
-            SEEK _id_roba
+            SEEK cIdRoba
             IF !Found()
                APPEND BLANK
                dbf_update_rec( hRec )
-               fill_sifk_sifv( "ROBA", _id_roba ) // napuni i sifk, sifv parametre
+               fill_sifk_sifv( "ROBA", cIdRoba ) // napuni i sifk, sifv parametre
             ENDIF
          ENDIF
 

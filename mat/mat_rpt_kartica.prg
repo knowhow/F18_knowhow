@@ -504,7 +504,7 @@ FUNCTION ZagKKAnalK()
 // ---------------------------------------------
 FUNCTION KSuban()
 
-   LOCAL _roba := ""
+   LOCAL cIdRoba := ""
    LOCAL _partner := ""
    LOCAL _konto := ""
    LOCAL _filter := ".t."
@@ -531,7 +531,7 @@ FUNCTION KSuban()
    RPar( "c2", @_id_firma )
    RPar( "c3", @_konto )
    RPar( "c4", @_partner )
-   RPar( "c5", @_roba )
+   RPar( "c5", @cIdRoba )
    RPar( "c6", @_preth_p )
    RPar( "d1", @_dat_od )
    RPar( "d2", @_dat_do )
@@ -558,20 +558,20 @@ FUNCTION KSuban()
 
       IF _brza_k == "D"
          _konto := PadR( _konto, 7 )
-         _roba := PadR( _roba, 10 )
+         cIdRoba := PadR( cIdRoba, 10 )
          @ m_x + 4, m_y + 2 SAY KonSeks( "Konto  " ) + "        " GET _konto ;
             PICT "@!" VALID P_Konto( @_konto )
-         @ m_x + 5, m_y + 2 SAY "Sifra artikla  " GET _roba ;
-            PICT "@!" VALID P_Roba( @_roba )
+         @ m_x + 5, m_y + 2 SAY "Sifra artikla  " GET cIdRoba ;
+            PICT "@!" VALID P_Roba( @cIdRoba )
       ELSE
          _konto := PadR( _konto, 60 )
          _partner := PadR( _partner, 60 )
-         _roba := PadR( _roba, 80 )
+         cIdRoba := PadR( cIdRoba, 80 )
          @ m_x + 4, m_y + 2 SAY KonSeks( "Konto  " ) + "        " GET _konto ;
             PICT "@S50"
          @ m_x + 5, m_y + 2 SAY "Partner        " GET _partner ;
             PICT "@S50"
-         @ m_x + 6, m_y + 2 SAY "Sifra artikla  " GET _roba ;
+         @ m_x + 6, m_y + 2 SAY "Sifra artikla  " GET cIdRoba ;
             PICT "@S50"
       ENDIF
 
@@ -584,7 +584,7 @@ FUNCTION KSuban()
 
       IF _brza_k == "N"
          _usl_partner := Parsiraj( _partner, "IdPartner", "C" )
-         _usl_roba := Parsiraj( _roba, "IdRoba", "C" )
+         _usl_roba := Parsiraj( cIdRoba, "IdRoba", "C" )
          _usl_konto := Parsiraj( _konto, "IdKonto", "C" )
          IF _usl_partner <> NIL .AND. _usl_roba <> NIL .AND. _usl_konto <> NIL
             EXIT
@@ -602,7 +602,7 @@ FUNCTION KSuban()
       WPar( "c2", PadR( _id_firma, 2 ) )
       WPar( "c3", _konto )
       WPar( "c4", _partner )
-      WPar( "c5", _roba )
+      WPar( "c5", cIdRoba )
       WPar( "c6", _preth_p )
       WPar( "d1", _dat_od )
       WPar( "d2", _dat_do )
@@ -632,7 +632,7 @@ FUNCTION KSuban()
          ENDIF
       ENDIF
 
-      HSEEK _id_firma + _konto + _roba
+      HSEEK _id_firma + _konto + cIdRoba
 
    ELSE
 
@@ -661,7 +661,7 @@ FUNCTION KSuban()
          _filter += " .and. " + _usl_konto
       ENDIF
 
-      IF !Empty( _roba )
+      IF !Empty( cIdRoba )
          _filter += " .and. " + _usl_roba
       ENDIF
 
@@ -695,7 +695,7 @@ FUNCTION KSuban()
    DO WHILE !Eof() .AND. IdFirma == _id_firma
 
       IF _brza_k == "D"
-         IF _konto <> IdKonto .OR. _roba <> IdRoba
+         IF _konto <> IdKonto .OR. cIdRoba <> IdRoba
             EXIT
          ENDIF
       ENDIF

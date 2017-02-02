@@ -120,7 +120,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
             cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
             select_o_tippr( cPom )
-            
+
             SELECT ld
 
             IF tippr->( Found() ) .AND. tippr->aktivan == "D"
@@ -297,11 +297,11 @@ STATIC FUNCTION otvori_tabele()
 
    set_tippr_ili_tippr2( cObracun )
 
-   o_ops()
-   o_koef_beneficiranog_radnog_staza()
-   o_ld_vrste_posla()
-   o_ld_rj()
-   o_ld_radn()
-   select_o_ld()
+   //o_ops()
+   //o_koef_beneficiranog_radnog_staza()
+   //o_ld_vrste_posla()
+   //o_ld_rj()
+   //o_ld_radn()
+   //select_o_ld()
 
    RETURN .T.

@@ -21,7 +21,7 @@ FUNCTION get_algoritam()
    LOCAL xRet := ""
    LOCAL nTArea := Select()
 
-   SELECT por
+   select_o_por()
 
    IF por->( FieldPos( "ALGORITAM" ) ) <> 0
       xRet := field->algoritam
@@ -40,7 +40,7 @@ FUNCTION get_pr_obracuna()
    LOCAL xRet := " "
    LOCAL nTArea := Select()
 
-   SELECT por
+   select_o_por()
 
    IF por->( FieldPos( "POR_TIP" ) ) <> 0
       xRet := field->por_tip
@@ -88,7 +88,7 @@ FUNCTION obr_por( cId, nOsnNeto, nOsnOstalo )
 
    ENDIF
 
-   SELECT por
+   select_o_por()
 
    IF cAlg == "S"
       // stepenasti obracun

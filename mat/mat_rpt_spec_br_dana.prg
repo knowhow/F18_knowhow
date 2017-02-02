@@ -88,7 +88,7 @@ STATIC FUNCTION _fill_rpt_data( param )
    LOCAL _interv_1, _interv_2, _interv_3
    LOCAL _dug_1, _dug_2, _pot_1, _pot_2
    LOCAL _saldo_1, _saldo_2
-   LOCAL _id_roba, _roba_naz
+   LOCAL cIdRoba, _roba_naz
    LOCAL _ima_poc_stanje := .F.
 
    SELECT mat_suban
@@ -143,17 +143,17 @@ STATIC FUNCTION _fill_rpt_data( param )
          _ulaz := 0
          _izlaz := 0
 
-         _id_roba := field->idroba
+         cIdRoba := field->idroba
 
          // nadji mi robu
          SELECT roba
-         HSEEK _id_roba
+         HSEEK cIdRoba
          _roba_naz := roba->naz
 
          SELECT mat_suban
 
          // prodji sada kroz stavke artikla
-         DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idroba == _id_roba
+         DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idroba == cIdRoba
 
             // logika izvjestaja
 
@@ -289,7 +289,7 @@ STATIC FUNCTION _fill_rpt_data( param )
             // preskoci...
          ELSE
             // ubaci u pomocnu tabelu podatke
-            _fill_tmp_tbl( _id_konto, konto->naz, _id_roba, _roba_naz, ;
+            _fill_tmp_tbl( _id_konto, konto->naz, cIdRoba, _roba_naz, ;
                _int_k_1, _int_k_2, _int_k_3, ;
                _int_i_1, _int_i_2, _int_i_3, ;
                _saldo_k, _saldo_i )

@@ -322,13 +322,13 @@ STATIC FUNCTION _fill_rpt_data( param )
    LOCAL _dug_1, _pot_1, _dug_2, _pot_2
    LOCAL _ulaz_k_1, _izlaz_k_1, _ulaz_k_2, _izlaz_k_2
    LOCAL _saldo_k_1, _saldo_k_2, _saldo_i_1, _saldo_i_2
-   LOCAL _id_roba
+   LOCAL cIdRoba
 
    SELECT mat_suban
 
    DO WHILE !Eof()
 
-      _id_roba := field->idroba
+      cIdRoba := field->idroba
 
       // resetuj brojace...
       _dug_1 := 0
@@ -344,7 +344,7 @@ STATIC FUNCTION _fill_rpt_data( param )
       _saldo_i_1 := 0
       _saldo_i_2 := 0
 
-      DO WHILE !Eof() .AND. _id_roba = field->idroba
+      DO WHILE !Eof() .AND. cIdRoba = field->idroba
 
          // saberi ulaze/izlaze
          IF field->u_i = "1"
@@ -367,14 +367,14 @@ STATIC FUNCTION _fill_rpt_data( param )
       ENDDO
 
       SELECT roba
-      HSEEK _id_roba
+      HSEEK cIdRoba
 
       // da li se grupa odredjuje putem sifre ili iz sifk ?
       IF PARAM[ "grupa_na_osnovu_sifre" ] == "D"
-         _roba_gr := PadR( _id_roba, 2 )
+         _roba_gr := PadR( cIdRoba, 2 )
       ELSE
          // ovdje cemo smjestiti grupaciju...
-         _roba_gr := IzSifKRoba( "GR1", _id_roba, .F. )
+         _roba_gr := IzSifKRoba( "GR1", cIdRoba, .F. )
       ENDIF
 
       SELECT mat_suban
@@ -384,7 +384,7 @@ STATIC FUNCTION _fill_rpt_data( param )
       _saldo_k_2 := _ulaz_k_2 - _izlaz_k_2
       _saldo_i_2 := _dug_2 - _pot_2
 
-      _fill_tmp_tbl( _id_roba, _roba_gr, roba->naz, roba->jmj, ;
+      _fill_tmp_tbl( cIdRoba, _roba_gr, roba->naz, roba->jmj, ;
          roba->nc, roba->vpc, roba->mpc, ;
          "", "", "", "", ;
          _ulaz_k_1, _ulaz_k_2, _izlaz_k_1, _izlaz_k_2, ;
@@ -409,7 +409,7 @@ STATIC FUNCTION _show_report( params, line )
    LOCAL _mark_pos
    LOCAL _rbr
    LOCAL _uk_dug_1, _uk_dug_2, _uk_pot_1, _uk_pot_2
-   LOCAL _id_roba, _roba_naz, _roba_jmj
+   LOCAL cIdRoba, _roba_naz, _roba_jmj
    LOCAL _fmt := params[ "format" ]
 
    ?

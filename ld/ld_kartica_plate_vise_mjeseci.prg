@@ -32,19 +32,19 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    cSatiVO := "S"
 
    Box(, 6, 77 )
-   @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
-   @ m_x + 2, m_y + 2 SAY "od mjeseca: "  GET  nMjesec  PICT "99"
-   @ m_x + 2, Col() + 2 SAY "do"  GET  cMjesec2  PICT "99"
-   @ m_x + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
-   @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici):" GET cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
-   @ m_x + 5, m_y + 2 SAY "Razdvojiti za radnika po RJ:" GET cRazdvoji PICT "@!";
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "od mjeseca: "  GET  nMjesec  PICT "99"
+   @ form_x_koord() + 2, Col() + 2 SAY "do"  GET  cMjesec2  PICT "99"
+   @ form_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici):" GET cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Razdvojiti za radnika po RJ:" GET cRazdvoji PICT "@!";
       WHEN Empty ( cIdRj ) VALID cRazdvoji $ "DN"
    READ
    clvbox()
    ESC_BCR
    IF Empty( cObracun )
-      @ m_x + 6, m_y + 2 SAY8 "Prikaz sati (S-sabrati sve obračune , 1-obračun 1 , 2-obračun 2, ... )" GET cSatiVO VALID cSatiVO $ "S123456789" PICT "@!"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY8 "Prikaz sati (S-sabrati sve obračune , 1-obračun 1 , 2-obračun 2, ... )" GET cSatiVO VALID cSatiVO $ "S123456789" PICT "@!"
       READ
       ESC_BCR
    ENDIF

@@ -58,16 +58,16 @@ FUNCTION ld_brisi_radnika()
       cObracun := gObracun
 
       Box(, 4, 60 )
-      @ m_x + 1, m_y + 2 SAY "Radna jedinica: "
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: "
       QQOUTC( cIdRJ, "N/W" )
-      @ m_x + 2, m_y + 2 SAY "Mjesec: "
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Mjesec: "
       QQOUTC( Str( nMjesec, 2, 0 ), "N/W" )
-      @ m_x + 2, Col() + 2 SAY "Obracun: "
+      @ form_x_koord() + 2, Col() + 2 SAY "Obracun: "
       QQOUTC( cObracun, "N/W" )
-      @ m_x + 3, m_y + 2 SAY "Godina: "
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: "
       QQOUTC( Str( nGodina, 4, 0 ), "N/W" )
 
-      @ m_x + 4, m_y + 2 SAY "Radnik" GET cIdRadn VALID {|| cIdRadn $ "XXXXXX" .OR. P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), .T. }
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik" GET cIdRadn VALID {|| cIdRadn $ "XXXXXX" .OR. P_Radn( @cIdRadn ), SetPos( form_x_koord() + 2, form_y_koord() + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), .T. }
 
       READ
       ESC_BCR
@@ -176,10 +176,10 @@ FUNCTION BrisiMjesec()
       cObracun := gObracun
 
       Box(, 4, 60 )
-      @ m_x + 1, m_y + 2 SAY "Radna jedinica: " GET cIdRJ
-      @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET nMjesec PICT "99"
-      @ m_x + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
-      @ m_x + 3, m_y + 2 SAY "Godina: "  GET nGodina PICT "9999"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: " GET cIdRJ
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Mjesec: "  GET nMjesec PICT "99"
+      @ form_x_koord() + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: "  GET nGodina PICT "9999"
       READ
       ClvBox()
       ESC_BCR

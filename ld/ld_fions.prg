@@ -347,16 +347,16 @@ FUNCTION Prosj3( cTip, cTip2 )
    nSumsat := iif( nSS1 + nSS2 + nSS3 <> 0, nSS1 + nSS2 + nSS3, 99999999 )
 
    Box( "#" + IF( cTip $ "57", "UKUPNA PRIMANJA", "Prosjek" ) + " ZA MJESECE UNAZAD:", 6, 60 )
-   @ m_x + 2, m_y + 2 SAY cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
    IF cTip $ "126"; ?? "  primanja/sati:"; ?? nSP1, "/", nSS1; ENDIF
    IF cTip $ "57"; ?? "  sati:"; ?? nSS1; ENDIF
-   @ m_x + 3, m_y + 2 SAY cmj2; @ Row(), Col() + 2 SAY nMj2 PICT "999999.999"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY cmj2; @ Row(), Col() + 2 SAY nMj2 PICT "999999.999"
    IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp2, "/", nSS2; ENDIF
    IF cTip $ "57"; ?? "  sati:"; ?? nSS2; ENDIF
-   @ m_x + 4, m_y + 2 SAY cmj3; @ Row(), Col() + 2 SAY nMj3 PICT "999999.999"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY cmj3; @ Row(), Col() + 2 SAY nMj3 PICT "999999.999"
    IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp3, "/", nSS3; ENDIF
    IF cTip $ "57"; ?? "  sati:"; ?? nSS3; ENDIF
-   @ m_x + 6, m_y + 2 SAY "Prosjek"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Prosjek"
    @ Row(), Col() + 2 SAY ( nMj3 + nMj2 + nMj1 ) / iif( cTip $ "57", nSumsat, nDijeli ) PICT "999999.999"
 
    Inkey( 0 )
@@ -537,9 +537,9 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
    ENDDO
 
    Box(, 4, 50 )
-   @ m_x + 1, m_y + 2 SAY8 "PRIMANJE ZA PROŠLI MJESEC:"
-   @ m_x + 2, m_y + 2 SAY  cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
-   @ m_x + 4, m_y + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "PRIMANJE ZA PROŠLI MJESEC:"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY  cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
    Inkey( 0 )
    BoxC()
 
@@ -687,7 +687,7 @@ FUNCTION GETR( cPrompt, xValue )
    nRezult := &xValue
 
    Box(, 2, 60 )
-   @ m_x + 1, m_y + 2 SAY cPrompt GET nRezult
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY cPrompt GET nRezult
    READ
    BoxC()
 

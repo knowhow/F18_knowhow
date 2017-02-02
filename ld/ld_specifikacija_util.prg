@@ -54,8 +54,8 @@ FUNCTION ld_naziv_mjeseca( nMjesec, nGodina, lShort, lGodina )
 STATIC FUNCTION TekRec2()
 
    nSlog++
-   @ m_x + 1, m_y + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
-   @ m_x + 2, m_y + 2 SAY "Obuhvaceno: " + Str( 0 )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Obuhvaceno: " + Str( 0 )
 
    RETURN ( NIL )
 
@@ -143,13 +143,13 @@ FUNCTION ld_specifikacija_po_mjesecima()
 
    Box(, 7, 77 )
 
-   @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ VALID Empty( cIdRj ) .OR. P_LD_RJ( @cIdRj )
-   @ m_x + 2, m_y + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
-   @ m_x + 3, m_y + 2 SAY "Radnik (prazno-svi radnici): "  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
-   @ m_x + 4, m_y + 2 SAY "Prikazati primanja (N-neto,V-van neta,S-sva primanja,0-nista)" GET cSvaPrim PICT "@!" VALID cSvaPrim $ "NVS0"
-   @ m_x + 5, m_y + 2 SAY "Ostala primanja za prikaz (navesti sifre npr. 25;26;27;):" GET qqOstPrim PICT "@S15"
-   @ m_x + 6, m_y + 2 SAY "Prikazati samo aktivna primanja ? (D/N)" GET cSamoAktivna PICT "@!" VALID cSamoAktivna $ "DN"
-   @ m_x + 7, m_y + 2 SAY "Prikazati kolonu 'ukupno' ? (D/N)" GET cPrikKolUk PICT "@!" VALID cPrikKolUk $ "DN"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ VALID Empty( cIdRj ) .OR. P_LD_RJ( @cIdRj )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): "  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Prikazati primanja (N-neto,V-van neta,S-sva primanja,0-nista)" GET cSvaPrim PICT "@!" VALID cSvaPrim $ "NVS0"
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Ostala primanja za prikaz (navesti sifre npr. 25;26;27;):" GET qqOstPrim PICT "@S15"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Prikazati samo aktivna primanja ? (D/N)" GET cSamoAktivna PICT "@!" VALID cSamoAktivna $ "DN"
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY "Prikazati kolonu 'ukupno' ? (D/N)" GET cPrikKolUk PICT "@!" VALID cPrikKolUk $ "DN"
 
    READ
    ESC_BCR

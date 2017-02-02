@@ -43,16 +43,16 @@ FUNCTION MIP_View()
 
    Box(, 20, 77 )
 
-   @ m_x + 17, m_y + 2 SAY "<F2> Ispravi stavku                           "
-   @ m_x + 18, m_y + 2 SAY "<c-T> Brisi stavku     "
-   @ m_x + 19, m_y + 2 SAY "<SPACE> markiraj stavku za stampu"
-   @ m_x + 20, m_y + 2 SAY "               "
+   @ form_x_koord() + 17, form_y_koord() + 2 SAY "<F2> Ispravi stavku                           "
+   @ form_x_koord() + 18, form_y_koord() + 2 SAY "<c-T> Brisi stavku     "
+   @ form_x_koord() + 19, form_y_koord() + 2 SAY "<SPACE> markiraj stavku za stampu"
+   @ form_x_koord() + 20, form_y_koord() + 2 SAY "               "
 
    my_db_edit( "R_EXPORT", 20, 77, {|| EdMIP() }, "", "Pregled tabele za gen.mip obrasca", , , , {|| if( bol_preko == "1", .T., .F. ) }, 4 )
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------
@@ -103,42 +103,42 @@ STATIC FUNCTION edititem()
 
    Box(, 20, 70 )
 
-   @ m_x + nX, m_y + 2 SAY AllTrim( _idradn ) + " - " + PadR( _r_ime, 30 )
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY AllTrim( _idradn ) + " - " + PadR( _r_ime, 30 )
 
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "'kod' opcine" GET _r_opc PICT "@S3"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "'kod' opcine" GET _r_opc PICT "@S3"
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "vrsta isplate" GET _vr_ispl PICT "@S10"
-
-   ++ nX
-   ++ nX
-   @ m_x + nX, m_y + 2 SAY "sati" GET _r_sati
-   @ m_x + nX, Col() + 1 SAY "sati bolov." GET _r_satib
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "vrsta isplate" GET _vr_ispl PICT "@S10"
 
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "bruto" GET _bruto
-   @ m_x + nX, Col() + 1 SAY "opor.prih." GET _u_opor
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "sati" GET _r_sati
+   @ form_x_koord() + nX, Col() + 1 SAY "sati bolov." GET _r_satib
 
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "dopr.pio" GET _u_d_pio
-   @ m_x + nX, Col() + 1 SAY "dopr.zdr" GET _u_d_zdr
-   @ m_x + nX, Col() + 1 SAY "dopr.nez" GET _u_d_nez
-
-   ++ nX
-   @ m_x + nX, m_y + 2 SAY "uk.dopr.iz" GET _u_d_iz
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "bruto" GET _bruto
+   @ form_x_koord() + nX, Col() + 1 SAY "opor.prih." GET _u_opor
 
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "licni odbici" GET _l_odb
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "dopr.pio" GET _u_d_pio
+   @ form_x_koord() + nX, Col() + 1 SAY "dopr.zdr" GET _u_d_zdr
+   @ form_x_koord() + nX, Col() + 1 SAY "dopr.nez" GET _u_d_nez
+
+   ++ nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "uk.dopr.iz" GET _u_d_iz
 
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "osnovica poreza" GET _osn_por
-   @ m_x + nX, Col() + 1 SAY "porez" GET _izn_por
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "licni odbici" GET _l_odb
+
+   ++ nX
+   ++ nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "osnovica poreza" GET _osn_por
+   @ form_x_koord() + nX, Col() + 1 SAY "porez" GET _izn_por
 
    READ
    BoxC()

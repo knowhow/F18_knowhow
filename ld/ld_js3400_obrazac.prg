@@ -87,65 +87,65 @@ FUNCTION ld_js3400_obrazac()
 
    Box( "#JS-3400", 22, 75 )
 
-   @ m_x + _x, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Period od:" GET cMj_od PICT "99"
-   @ m_x + _x, Col() + 1 SAY "/" GET cGod_od PICT "9999"
-   @ m_x + _x, Col() + 1 SAY "do:" GET cMj_do PICT "99"
-   @ m_x + _x, Col() + 1 SAY "/" GET cGod_do PICT "9999"
-   @ m_x + _x, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Period od:" GET cMj_od PICT "99"
+   @ form_x_koord() + _x, Col() + 1 SAY "/" GET cGod_od PICT "9999"
+   @ form_x_koord() + _x, Col() + 1 SAY "do:" GET cMj_do PICT "99"
+   @ form_x_koord() + _x, Col() + 1 SAY "/" GET cGod_do PICT "9999"
+   @ form_x_koord() + _x, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
       VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "   Doprinos iz pio: " GET cDopr10
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "   Doprinos iz pio: " GET cDopr10
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "   Doprinos iz zdr: " GET cDopr11
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "   Doprinos iz zdr: " GET cDopr11
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "   Doprinos iz nez: " GET cDopr12
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "   Doprinos iz nez: " GET cDopr12
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
-
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
-   @ m_x + _x, Col() + 1 SAY "JID: " GET cPredJMB
-
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Adr.: " GET cPredAdr PICT "@S30"
-   @ m_x + _x, Col() + 1 SAY "Sifra opc: " GET cPredOpc PICT "@S10"
-
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Tel.: " GET cPredTel PICT "@S20"
-   @ m_x + _x, Col() + 1 SAY "Email: " GET cPredEml PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "(1) JS-3400 " GET cTipRpt VALID cTipRpt $ "1"
-   @ m_x + _x, Col() + 2 SAY "def.rj" GET cRJDef
-   @ m_x + _x, Col() + 2 SAY "st./exp.(S/E)?" GET cWinPrint VALID cWinPrint $ "SE" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
+   @ form_x_koord() + _x, Col() + 1 SAY "JID: " GET cPredJMB
+
+   ++ _x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Adr.: " GET cPredAdr PICT "@S30"
+   @ form_x_koord() + _x, Col() + 1 SAY "Sifra opc: " GET cPredOpc PICT "@S10"
+
+   ++ _x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Tel.: " GET cPredTel PICT "@S20"
+   @ form_x_koord() + _x, Col() + 1 SAY "Email: " GET cPredEml PICT "@S30"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "P.godina" GET nPorGodina PICT "9999"
-   @ m_x + _x, Col() + 2 SAY "Dat.podnos." GET dDatPodnosenja
-   @ m_x + _x, Col() + 2 SAY "Dat.unosa" GET dDatUnosa
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "(1) JS-3400 " GET cTipRpt VALID cTipRpt $ "1"
+   @ form_x_koord() + _x, Col() + 2 SAY "def.rj" GET cRJDef
+   @ form_x_koord() + _x, Col() + 2 SAY "st./exp.(S/E)?" GET cWinPrint VALID cWinPrint $ "SE" PICT "@!"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Dj.broj:" GET cDjlBroj PICT "@S10"
-   @ m_x + _x, Col() + 2 SAY "Podnosi:" GET cOpIme PICT "@S20"
-   @ m_x + _x, Col() + 2 SAY "JMB:" GET cOpJmb
+   ++ _x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "P.godina" GET nPorGodina PICT "9999"
+   @ form_x_koord() + _x, Col() + 2 SAY "Dat.podnos." GET dDatPodnosenja
+   @ form_x_koord() + _x, Col() + 2 SAY "Dat.unosa" GET dDatUnosa
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "operacija: (O)snovna (P)onovljena " GET _oper VALID _oper $ "OP" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Dj.broj:" GET cDjlBroj PICT "@S10"
+   @ form_x_koord() + _x, Col() + 2 SAY "Podnosi:" GET cOpIme PICT "@S20"
+   @ form_x_koord() + _x, Col() + 2 SAY "JMB:" GET cOpJmb
+
+   ++ _x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "operacija: (O)snovna (P)onovljena " GET _oper VALID _oper $ "OP" PICT "@!"
 
    READ
 

@@ -50,23 +50,23 @@ FUNCTION pregled_plata()
    cKontrola := "N"
 
    Box(, 14, 75 )
-   @ m_x + 1, m_y + 2 SAY8 _l( "Radna jedinica (prazno-sve): " )  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY8 "Mjesec: "  GET  nMjesec  PICT "99"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 _l( "Radna jedinica (prazno-sve): " )  GET cIdRJ
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY8 "Mjesec: "  GET  nMjesec  PICT "99"
    IF ld_vise_obracuna()
-      @ m_x + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ form_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
-   @ m_x + 3, m_y + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
-   @ m_x + 4, m_y + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
-   @ m_x + 5, m_y + 2 SAY8 "Vrsta posla (prazno-svi): "  GET  cVPosla
-   @ m_x + 7, m_y + 2 SAY8 "Šifra primanja minuli: "  GET  cIdMinuli PICT "@!"
-   @ m_x + 8, m_y + 2 SAY8 "Sortirati po (1-šifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
-   @ m_x + 9, m_y + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY8 "Vrsta posla (prazno-svi): "  GET  cVPosla
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "Šifra primanja minuli: "  GET  cIdMinuli PICT "@!"
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "Sortirati po (1-šifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
       VALID cPrBruto $ "DN" PICT "@!"
-   @ m_x + 11, m_y + 2 SAY8 "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
+   @ form_x_koord() + 11, form_y_koord() + 2 SAY8 "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
 
 
-   @ m_x + 13, m_y + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
-   @ m_x + 14, m_y + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
+   @ form_x_koord() + 13, form_y_koord() + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
+   @ form_x_koord() + 14, form_y_koord() + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
    READ
    clvbox()

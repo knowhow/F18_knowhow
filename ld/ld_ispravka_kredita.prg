@@ -41,14 +41,14 @@ FUNCTION ld_ispravka_kredita
 
    SET CURSOR ON
 
-   @ m_x + 1, m_y + 2 SAY "KREDIT - pregled, ispravka"
-   @ m_x + 2, m_y + 2 SAY "Radnik:   " GET cIdRadn  ;
-      VALID {|| P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 20 ), ;
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "KREDIT - pregled, ispravka"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Radnik:   " GET cIdRadn  ;
+      VALID {|| P_Radn( @cIdRadn ), SetPos( form_x_koord() + 2, form_y_koord() + 20 ), ;
       QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), ;
       P_Krediti( cIdRadn, @cIdKred, @cNaOsnovu ), .T. }
 
-   @ m_x + 3, m_y + 2 SAY "Kreditor: " GET cIdKred  VALID P_Kred( @cIdKred, 3, 21 ) PICT "@!"
-   @ m_x + 4, m_y + 2 SAY "Na osnovu:" GET cNaOsnovu PICT "@!"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Kreditor: " GET cIdKred  VALID P_Kred( @cIdKred, 3, 21 ) PICT "@!"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Na osnovu:" GET cNaOsnovu PICT "@!"
 
    IF PCount() == 0
       READ
@@ -60,7 +60,7 @@ FUNCTION ld_ispravka_kredita
    cNaOsnovu := PadR( cNaOsnovu, Len( radkr->naosnovu ) )
    seek_radkr_2( cIdRadn, cIdKred, cNaOsnovu )
 
-   BrowseKey( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, {| Ch | ld_krediti_key_handler( Ch ) }, "idradn+idkred+naosnovu=cidradn+cidkred+cnaosnovu", cIdRadn + cIdKred + cNaOsnovu, 2,, )
+   BrowseKey( form_x_koord() + 6, form_y_koord() + 1, form_x_koord() + 19, form_y_koord() + 77, ImeKol, {| Ch | ld_krediti_key_handler( Ch ) }, "idradn+idkred+naosnovu=cidradn+cidkred+cnaosnovu", cIdRadn + cIdKred + cNaOsnovu, 2,, )
 
    BoxC()
 
@@ -90,13 +90,13 @@ FUNCTION ld_krediti_key_handler( Ch )
 
       Box(, 6, 70 )
 
-      @ m_x + 1, m_y + 2 SAY8 "Ručna ispravka rate !"
-      @ m_x + 3, m_y + 2 SAY "Iznos  " GET _iznos PICT gpici
-      @ m_x + 4, m_y + 2 SAY "Placeno" GET _placeno PICT gpici
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Ručna ispravka rate !"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Iznos  " GET _iznos PICT gpici
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Placeno" GET _placeno PICT gpici
 
       cNaOsnovu2 := cNaOsnovu
 
-      @ m_x + 6, m_y + 2 SAY "Na osnovu" GET cNaOsnovu2
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Na osnovu" GET cNaOsnovu2
 
       READ
 

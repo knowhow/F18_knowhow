@@ -73,17 +73,17 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       RPar( "NK", @cNKNS )
       cIdRadn := Space( LEN_IDRADNIK )
       Box(, 8, 75 )
-      @ m_x + 1, m_y + 2 SAY _l( "Radna jedinica (prazno-sve rj): " )  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
-      @ m_x + 2, m_y + 2 SAY _l( "Mjesec: " ) GET nMjesec PICT "99"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY _l( "Radna jedinica (prazno-sve rj): " )  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY _l( "Mjesec: " ) GET nMjesec PICT "99"
       IF ld_vise_obracuna()
-         @ m_x + 2, Col() + 2 SAY _l( "Obracun: " ) GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+         @ form_x_koord() + 2, Col() + 2 SAY _l( "Obracun: " ) GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
       ENDIF
-      @ m_x + 3, m_y + 2 SAY _l( "Godina: " ) GET nGodina PICT "9999"
-      @ m_x + 4, m_y + 2 SAY _l( "Radnik (prazno-svi radnici): " )  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
-      @ m_x + 5, m_y + 2 SAY _l( "Varijanta ( /5): " )  GET  cVarijanta VALID cVarijanta $ " 5"
-      @ m_x + 6, m_y + 2 SAY _l( "Ako su svi radnici, sortirati po (1-sifri,2-prezime+ime)" )  GET cVarSort VALID cVarSort $ "12"  PICT "9"
-      @ m_x + 7, m_y + 2 SAY _l( "Dvije kartice na jedan list ? (D/N)" )  GET c2K1L VALID c2K1L $ "DN"  PICT "@!"
-      @ m_x + 8, m_y + 2 SAY _l( "Ispis svake kartice krece od pocetka stranice? (D/N)" )  GET cNKNS VALID cNKNS $ "DN"  PICT "@!"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY _l( "Godina: " ) GET nGodina PICT "9999"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY _l( "Radnik (prazno-svi radnici): " )  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY _l( "Varijanta ( /5): " )  GET  cVarijanta VALID cVarijanta $ " 5"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY _l( "Ako su svi radnici, sortirati po (1-sifri,2-prezime+ime)" )  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY _l( "Dvije kartice na jedan list ? (D/N)" )  GET c2K1L VALID c2K1L $ "DN"  PICT "@!"
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY _l( "Ispis svake kartice krece od pocetka stranice? (D/N)" )  GET cNKNS VALID cNKNS $ "DN"  PICT "@!"
       READ
       clvbox()
       ESC_BCR

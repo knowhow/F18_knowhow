@@ -41,14 +41,14 @@ FUNCTION ld_specifikacija_po_rj()
 
    DO WHILE .T.
       Box( "#Uslovi za specifikaciju primanja po radnim jedinicama", 8, 75 )
-      @ m_x + 2, m_y + 2   SAY "Radne jedinice (prazno-sve): "   GET qqRj PICT "@S20"
-      @ m_x + 3, m_y + 2   SAY "Mjesec od: "                     GET cMjesecOd PICT "99"
-      @ m_x + 3, Col() + 2 SAY "do"                              GET cMjesecDo PICT "99"
-      @ m_x + 4, m_y + 2   SAY "Godina: "                        GET nGodina   PICT "9999"
+      @ form_x_koord() + 2, form_y_koord() + 2   SAY "Radne jedinice (prazno-sve): "   GET qqRj PICT "@S20"
+      @ form_x_koord() + 3, form_y_koord() + 2   SAY "Mjesec od: "                     GET cMjesecOd PICT "99"
+      @ form_x_koord() + 3, Col() + 2 SAY "do"                              GET cMjesecDo PICT "99"
+      @ form_x_koord() + 4, form_y_koord() + 2   SAY "Godina: "                        GET nGodina   PICT "9999"
       IF ld_vise_obracuna()
-         @ m_x + 4, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+         @ form_x_koord() + 4, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
       ENDIF
-      @ m_x + 5, m_y + 2   SAY8 "Šifre primanja (prazno-sve):"   GET qqPrimanja PICT "@S30"
+      @ form_x_koord() + 5, form_y_koord() + 2   SAY8 "Šifre primanja (prazno-sve):"   GET qqPrimanja PICT "@S30"
       READ
       ESC_BCR
       BoxC()

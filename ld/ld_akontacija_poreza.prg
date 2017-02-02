@@ -136,24 +136,24 @@ FUNCTION ld_asd_aug_obrazac()
 
    Box( "#RPT: AKONTACIJA POREZA PO ODBITKU...", 13, 75 )
 
-   @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@S25"
-   @ m_x + 2, m_y + 2 SAY "Za mjesec:" GET nMjesec PICT "99"
-   @ m_x + 3, m_y + 2 SAY "Godina: " GET nGodina PICT "9999"
-   @ m_x + 3, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ m_x + 4, m_y + 2 SAY "   Radnik (prazno-svi):" GET cIdRadn ;
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@S25"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Za mjesec:" GET nMjesec PICT "99"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
+   @ form_x_koord() + 3, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "   Radnik (prazno-svi):" GET cIdRadn ;
       VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
 
-   @ m_x + 5, m_y + 2 SAY "   Doprinos zdr: " GET cDopr1X
-   @ m_x + 6, m_y + 2 SAY "   Doprinos pio: " GET cDopr2X
-   @ m_x + 8, m_y + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
-   @ m_x + 8, Col() + 1 SAY "JID: " GET cPredJMB
-   @ m_x + 9, m_y + 2 SAY "Adresa: " GET cPredAdr PICT "@S30"
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "   Doprinos zdr: " GET cDopr1X
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "   Doprinos pio: " GET cDopr2X
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
+   @ form_x_koord() + 8, Col() + 1 SAY "JID: " GET cPredJMB
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Adresa: " GET cPredAdr PICT "@S30"
 
-   @ m_x + 11, m_y + 2 SAY "(1) AUG-1031 (2) ASD-1032 (3) PDN-1033" ;
+   @ form_x_koord() + 11, form_y_koord() + 2 SAY "(1) AUG-1031 (2) ASD-1032 (3) PDN-1033" ;
       GET cTipRada ;
       VALID cTipRada $ "1#2#3"
 
-   @ m_x + 12, m_y + 2 SAY "Varijanta stampe (txt/drb):" GET cVarPrn PICT "@!" VALID cVarPrn $ "12"
+   @ form_x_koord() + 12, form_y_koord() + 2 SAY "Varijanta stampe (txt/drb):" GET cVarPrn PICT "@!" VALID cVarPrn $ "12"
 
    READ
 

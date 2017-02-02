@@ -72,38 +72,38 @@ FUNCTION ld_olp_gip_obrazac()
 
    Box( "#OBRACUNSKI LISTOVI RADNIKA", 17, 75 )
 
-   @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-   @ m_x + 2, m_y + 2 SAY "Period od:" GET cMj_od PICT "99"
-   @ m_x + 2, Col() + 1 SAY "/" GET cGod_od PICT "9999"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Period od:" GET cMj_od PICT "99"
+   @ form_x_koord() + 2, Col() + 1 SAY "/" GET cGod_od PICT "9999"
 
-   @ m_x + 2, Col() + 1 SAY "do:" GET cMj_do PICT "99"
-   @ m_x + 2, Col() + 1 SAY "/" GET cGod_do PICT "9999"
+   @ form_x_koord() + 2, Col() + 1 SAY "do:" GET cMj_do PICT "99"
+   @ form_x_koord() + 2, Col() + 1 SAY "/" GET cGod_do PICT "9999"
 
    IF ld_vise_obracuna()
-      @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ form_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
 
-   @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
       VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
-   @ m_x + 5, m_y + 2 SAY "    Isplate u usl. ili dobrima:" ;
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "    Isplate u usl. ili dobrima:" ;
       GET cPrimDobra PICT "@S30"
-   @ m_x + 6, m_y + 2 SAY "Tipovi koji ne ulaze u obrazac:" ;
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Tipovi koji ne ulaze u obrazac:" ;
       GET cTP_off PICT "@S30"
-   @ m_x + 7, m_y + 2 SAY "   Doprinos iz pio: " GET cDopr10
-   @ m_x + 8, m_y + 2 SAY "   Doprinos iz zdr: " GET cDopr11
-   @ m_x + 9, m_y + 2 SAY "   Doprinos iz nez: " GET cDopr12
-   @ m_x + 10, m_y + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY "   Doprinos iz pio: " GET cDopr10
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY "   Doprinos iz zdr: " GET cDopr11
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "   Doprinos iz nez: " GET cDopr12
+   @ form_x_koord() + 10, form_y_koord() + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
 
-   @ m_x + 12, m_y + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
-   @ m_x + 12, Col() + 1 SAY "JID: " GET cPredJMB
-   @ m_x + 13, m_y + 2 SAY "Adresa: " GET cPredAdr PICT "@S30"
+   @ form_x_koord() + 12, form_y_koord() + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
+   @ form_x_koord() + 12, Col() + 1 SAY "JID: " GET cPredJMB
+   @ form_x_koord() + 13, form_y_koord() + 2 SAY "Adresa: " GET cPredAdr PICT "@S30"
 
-   @ m_x + 15, m_y + 2 SAY "(1) OLP-1021 / (2) GIP-1022 / (3,4) AOP:" GET cTipRpt ;
+   @ form_x_koord() + 15, form_y_koord() + 2 SAY "(1) OLP-1021 / (2) GIP-1022 / (3,4) AOP:" GET cTipRpt ;
       VALID cTipRpt $ "1234"
 
-   @ m_x + 15, Col() + 2 SAY "def.rj" GET cRJDef
+   @ form_x_koord() + 15, Col() + 2 SAY "def.rj" GET cRJDef
 
-   @ m_x + 15, Col() + 2 SAY "st./exp.(S/E)?" GET cWinPrint ;
+   @ form_x_koord() + 15, Col() + 2 SAY "st./exp.(S/E)?" GET cWinPrint ;
       VALID cWinPrint $ "SE" PICT "@!"
 
    READ
@@ -118,11 +118,11 @@ FUNCTION ld_olp_gip_obrazac()
 
       nPorGodina := cGod_do
 
-      @ m_x + 16, m_y + 2 SAY "P.godina" GET nPorGodina PICT "9999"
-      @ m_x + 16, Col() + 2 SAY "Dat.podnos." GET dDatPodnosenja
-      @ m_x + 16, Col() + 2 SAY "Dat.unosa" GET dDatUnosa
+      @ form_x_koord() + 16, form_y_koord() + 2 SAY "P.godina" GET nPorGodina PICT "9999"
+      @ form_x_koord() + 16, Col() + 2 SAY "Dat.podnos." GET dDatPodnosenja
+      @ form_x_koord() + 16, Col() + 2 SAY "Dat.unosa" GET dDatUnosa
 
-      @ m_x + 17, m_y + 2 SAY "operacija: 1 (novi) 2 (izmjena) 3 (brisanje)" ;
+      @ form_x_koord() + 17, form_y_koord() + 2 SAY "operacija: 1 (novi) 2 (izmjena) 3 (brisanje)" ;
          GET nOper PICT "9"
 
       READ
@@ -333,11 +333,11 @@ STATIC FUNCTION _xml_export( cTip, mjesec, godina )
    _mjesto   := fetch_metric( "org_mjesto", NIL, PadR( "<POPUNI mjesto>", 100 ) )
 
    Box(, 6, 70 )
-   @ m_x + 1, m_y + 2 SAY " - Firma/Organizacija - "
-   @ m_x + 3, m_y + 2 SAY " Id broj: " GET _id_br
-   @ m_x + 4, m_y + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
-   @ m_x + 5, m_y + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
-   @ m_x + 6, m_y + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY " - Firma/Organizacija - "
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY " Id broj: " GET _id_br
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
    READ
    BoxC()
 

@@ -12,11 +12,29 @@
 #include "f18.ch"
 #include "f18_color.ch"
 
+MEMVAR m_x, m_y
+
 THREAD STATIC aBoxStack := {}
 THREAD STATIC aPrStek := {}
 THREAD STATIC aMsgStack := {}
 
 
+FUNCTION form_x_koord( nSet )
+
+   IF nSet != NIL
+      m_x := nSet
+   ENDIF
+
+   RETURN m_x
+   
+
+FUNCTION form_y_koord( nSet )
+
+   IF nSet != NIL
+      m_y := nSet
+   ENDIF
+
+   RETURN m_y
 
 FUNCTION Calc_xy( m_x, m_y, N, nSirina )
 
@@ -85,18 +103,18 @@ FUNCTION Msg( uText, sec, xPos )
    DO WHILE ( nHashPos := At ( "#", cText ) ) > 0
       AAdd ( aText, Left ( cText, nHashPos - 1 ) )
       cText := SubStr ( cText, nHashPos + 1 )
-      nBrRed ++
+      nBrRed++
    END
 
    IF ! Empty ( cText )
       AAdd ( aText, cText )
-      nBrRed ++
+      nBrRed++
    ENDIF
 
    l := 0
    FOR nCnt := 1 TO Len ( aText )
-      IF Len ( aText[nCnt ] ) > l
-         l := Len ( aText[nCnt ] )
+      IF Len ( aText[ nCnt ] ) > l
+         l := Len ( aText[ nCnt ] )
       ENDIF
    NEXT
 
@@ -119,12 +137,12 @@ FUNCTION Msg( uText, sec, xPos )
    @ msg_x1 + 1, msg_y1 + 2 TO msg_x2 - 1, msg_y2 - 2 DOUBLE
 
    FOR nCnt := 1 TO nBrRed
-      @ msg_x1 + 2 + nCnt, msg_y1 + 4 SAY PadC ( aText[nCnt ], l )
+      @ msg_x1 + 2 + nCnt, msg_y1 + 4 SAY PadC ( aText[ nCnt ], l )
    NEXT
    Inkey( Sec )
 
    MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
-   SET( _SET_DEVICE, cPom )
+   Set( _SET_DEVICE, cPom )
 
    RETURN .T.
 
@@ -169,7 +187,7 @@ FUNCTION MsgO( cText, sec, lUtf )
    @ msg_x1 + 3, msg_y1 + 4 SAY cText
 
    SET CURSOR OFF
-   SET( _SET_DEVICE, cPom )
+   Set( _SET_DEVICE, cPom )
 
    RETURN .T.
 
@@ -184,7 +202,7 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
 
       IF msg_x1 == NIL
          nLen := aMsgPar[ 3 ]
-         RestScreen( 8, ( MAXCOLS() -nLen - 7 ) / 2, 14, MAXCOLS() -( MAXCOLS() -nLen - 7 ) / 2, aMsgPar[ 4 ] )
+         RestScreen( 8, ( MAXCOLS() - nLen - 7 ) / 2, 14, MAXCOLS() - ( MAXCOLS() - nLen - 7 ) / 2, aMsgPar[ 4 ] )
       ELSE
          RestScreen ( msg_x1, msg_y1, msg_x2, msg_y2, aMsgPar[ 4 ] )
       ENDIF
@@ -210,7 +228,6 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, aOpcijeIliCPoruka, cHelpT )
    LOCAL nX1, nY1, nX2, nY2
    LOCAL cColor, cPom, cNaslovBoxa
    LOCAL _m_x, _m_y, _nA1
-
 
    cPom := Set( _SET_DEVICE )
    cNaslovBoxa := ""
@@ -271,7 +288,7 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, aOpcijeIliCPoruka, cHelpT )
       lInvert := .F.
    ENDIF
 
-   cColor := iif ( lInvert, f18_color_invert() , f18_color_normal() )
+   cColor := iif ( lInvert, f18_color_invert(), f18_color_normal() )
 
    SetColor( cColor )
 
@@ -282,7 +299,7 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, aOpcijeIliCPoruka, cHelpT )
       @ m_x, m_y + 2 SAY8 cNaslovBoxa COLOR "GR+/B"
    ENDIF
 
-   SET( _SET_DEVICE, cPom )
+   Set( _SET_DEVICE, cPom )
 
    RETURN .T.
 
@@ -321,7 +338,7 @@ FUNCTION BoxC()
       nSirina := aBoxPar[ 4 ]
    ENDIF
 
-   SET( _SET_DEVICE, cPom )
+   Set( _SET_DEVICE, cPom )
 
    RETURN .T.
 
@@ -340,7 +357,7 @@ FUNCTION prikaz_dostupnih_opcija( aNiz )
 
    IF ValType( aNiz ) == "A"
 
-      AEval( aNiz, {| x| iif( Len( x ) > nOmax, nOmax := Len( x ), ) } )
+      AEval( aNiz, {| x | iif( Len( x ) > nOmax, nOmax := Len( x ), ) } )
 
       nBrKol := Int( MAXCOLS() / ( nOmax + 1 ) )
       nBrRed := Int( Len( aNiz ) / nBrKol ) + iif( Mod( Len( aNiz ), nBrKol ) != 0, 1, 0 )
@@ -359,14 +376,14 @@ FUNCTION prikaz_dostupnih_opcija( aNiz )
          IF aNiz[ i ] == NIL
             aNiz[ i ] := ""
          ENDIF
-         @ MAXROWS() - 3 - nBrRed + j, k SAY PadR( aNiz[ i ], nOduz - 1 ) + iif( Mod( i - 1, nBrKol ) == nBrKol - 1, "", hb_UTF8ToStrBox(BROWSE_COL_SEP) )
+         @ MAXROWS() - 3 - nBrRed + j, k SAY PadR( aNiz[ i ], nOduz - 1 ) + iif( Mod( i - 1, nBrKol ) == nBrKol - 1, "", hb_UTF8ToStrBox( BROWSE_COL_SEP ) )
 
       NEXT
 
-      //FOR i := 1 TO nBrKol
-      //   @ MAXROWS() - 3 - nBrRed, ( i - 1 ) * nOduz SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ;
-      //      nOduz - iif( i == nBrKol, 0, 1 ) ) + iif( i == nBrKol, "", hb_UTF8ToStrBox(BROWSE_COL_SEP) )
-      //NEXT
+      // FOR i := 1 TO nBrKol
+      // @ MAXROWS() - 3 - nBrRed, ( i - 1 ) * nOduz SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ;
+      // nOduz - iif( i == nBrKol, 0, 1 ) ) + iif( i == nBrKol, "", hb_UTF8ToStrBox(BROWSE_COL_SEP) )
+      // NEXT
 
       xVrati := nBrRed + 1
    ENDIF
@@ -394,7 +411,6 @@ FUNCTION Beep( nPuta )
       f18_tone( 300, 1 )
    NEXT
 
-
    RETURN .T.
 
 
@@ -402,9 +418,12 @@ FUNCTION Beep( nPuta )
 FUNCTION f18_tone( nFreq, nTimes )
 
 #ifdef __PLATFORM__WINDOWS
-   //?E "tone je bugovita trace-print-dialog-1"
+
+   // ?E "tone je bugovita trace-print-dialog-1"
+
    RETURN Tone( nFreq, nTimes )
 #else
+
    RETURN NIL
 #endif
 
@@ -455,7 +474,7 @@ FUNCTION box_crno_na_zuto( v1, h1, v2, h2, cNaslov, cBojaN, cOkvir, cBojaO, cBoj
       @ v1, ( h2 + h1 + -1 - Len( cNaslov ) ) / 2 SAY " " + cNaslov + " " COLOR cBojaN
    ENDIF
 
-   SET( _SET_DEVICE, _device )
+   Set( _SET_DEVICE, _device )
 
    RETURN .T.
 
@@ -471,7 +490,7 @@ FUNCTION Prozor0()
    SetColor( _a_st[ 8 ] )
    SetCursor( _a_st[ 9 ] )
    @ _a_st[ 1 ], _a_st[ 2 ] SAY ""
-   SET( _SET_DEVICE, _device )
+   Set( _SET_DEVICE, _device )
 
    RETURN .T.
 
@@ -543,7 +562,7 @@ FUNCTION Postotak( nIndik, nUkupno, cTekst, cBNasl, cBOkv, lZvuk )
       Prozor0()
       nCilj := 0; cKraj := ""
    ENDCASE
-   SET( _SET_DEVICE, cPom )
+   Set( _SET_DEVICE, cPom )
 
    RETURN .T.
 
@@ -569,9 +588,9 @@ FUNCTION LomiGa( cTekst, nOrig, nLin, nDuz )
    FOR i := 1 TO nOrig
       AAdd( aPom, SubStr( cTekst, ( i - 1 ) * nDO + 1, nDO ) )
       cPom := AllTrim( aPom[ i ] )
-      IF Right( cPom, 1 ) == "-" .AND. !( SubStr( cPom, -2, 1 ) $ " 1234567890" )
-         aPom[ i ] := Left( cPom, Len( cPom ) -1 )
-      ELSEIF Right( cPom, 1 ) == "-" .AND. Empty( SubStr( cPom, -2, 1 ) )
+      IF Right( cPom, 1 ) == "-" .AND. !( SubStr( cPom, - 2, 1 ) $ " 1234567890" )
+         aPom[ i ] := Left( cPom, Len( cPom ) - 1 )
+      ELSEIF Right( cPom, 1 ) == "-" .AND. Empty( SubStr( cPom, - 2, 1 ) )
          aPom[ i ] := cPom + " "
       ELSEIF Right( cPom, 1 ) != "-"
          aPom[ i ] := cPom + " "
@@ -579,7 +598,7 @@ FUNCTION LomiGa( cTekst, nOrig, nLin, nDuz )
          aPom[ i ] := cPom
       ENDIF
    NEXT
-   cPom := ""; cTekst := ""; AEval( aPom, {| x| cPom += x } )
+   cPom := ""; cTekst := ""; AEval( aPom, {| x | cPom += x } )
    cPom2 := RTrim( cPom )
    IF nLin == 0; nLin := Int( Len( cPom ) / nDuz ) + iif( Mod( Len( cPom ), nDuz ) != 0, 1, 0 ); ENDIF
    cPom2 := PadR( cPom2, nLin * nDuz )
@@ -618,7 +637,7 @@ FUNCTION KudaDalje( cTekst, aOpc, cPom )
       AAdd( aTxt, { cPom1, cPom2 } )
    NEXT
    nRedova := Int( ( nOpc - 1 ) / 3 + 1 )
-   nXp := Int( ( MAXROWS() -nRedova * 4 -2 ) / 2 ) + 2
+   nXp := Int( ( MAXROWS() - nRedova * 4 - 2 ) / 2 ) + 2
    box_crno_na_zuto( nXp - 2, 4, nXp + 1 + 4 * nRedova, 75,, "N/W", "²ß²²²Ü²² ", "N/W", "W/W", 0 )
    @ nXp - 1, 5 SAY PadC( cTekst, 70 ) COLOR "N/W"
    DO WHILE .T.
@@ -715,7 +734,7 @@ FUNCTION AMFILL( aNiz, nElem )
    LOCAL i := 0, rNiz := {}, aPom := {}
 
    FOR i := 1 TO nElem
-      AEval( aNiz, {| x| AAdd( aPom, x ) } )
+      AEval( aNiz, {| x | AAdd( aPom, x ) } )
       AAdd( rNiz, aPom )
       aPom := {}
    NEXT
@@ -814,7 +833,7 @@ FUNCTION FormPicL( cPic, nDuz )
    LOCAL nDec, cVrati, i, lZarez := .F., lPrazno := .F.
 
    cPic := AllTrim( cPic )
-   nDec := RAt( "9", cPic ) -At( ".", cPic )
+   nDec := RAt( "9", cPic ) - At( ".", cPic )
    IF nDec >= Len( cPic ) .OR. nDec < 0; nDec := 0; ENDIF
    cVrati := Space( nDuz )
    IF At( ",", cPic ) != 0
@@ -860,15 +879,16 @@ FUNCTION VarEdit( aNiz, nX1, nY1, nX2, nY2, cNaslov, cBoje )
       ENDIF
 
       pom1 := aNiz[ i, 1 ]; pom4 := aNiz[ i, 4 ]; pom5 := aNiz[ i, 5 ]
-      @ nX1 + 1 + i, nY1 + 2 SAY8 PadR( pom1, nY2 - nY1 - 4 -iif( "S" $ pom4, DuzMaske( pom4 ), iif( Empty( pom4 ), LENx( &( cPom ) ), Len( Transform( &cPom, pom4 ) ) ) ), "." ) GET &cPom WHEN &pom5 VALID &pom3 PICT pom4
+      @ nX1 + 1 + i, nY1 + 2 SAY8 PadR( pom1, nY2 - nY1 - 4 - iif( "S" $ pom4, DuzMaske( pom4 ), iif( Empty( pom4 ), LENx( &( cPom ) ), Len( Transform( &cPom, pom4 ) ) ) ), "." ) GET &cPom WHEN &pom5 VALID &pom3 PICT pom4
    NEXT
    PRIVATE MGetList := GetList
    READ
    Prozor0()
    ShemaBoja( cBsstara )
-   SET( _SET_DEVICE, cPomUI )
+   Set( _SET_DEVICE, cPomUI )
 
    PopWa()
+
    RETURN iif( LastKey() != K_ESC, .T., .F. )
 
 
@@ -895,10 +915,10 @@ FUNCTION MsgBeep( cMsg, lClearTypeahead )
 
 
 #ifndef TEST
-IF lClearTypeahead
-Beep( 2 )
-   CLEAR TYPEAHEAD // MsgBeep
-   endif
+   IF lClearTypeahead
+      Beep( 2 )
+      CLEAR TYPEAHEAD // MsgBeep
+   ENDIF
 #endif
 
 /*
@@ -917,7 +937,7 @@ INKEY_MOVE          Mouse motion events are allowed
    _set := Set( _SET_EVENTMASK, INKEY_KEYBOARD )
    // poruke koje su duze od 70 znakova
    IF Len( cMsg ) > MAXCOLS() - 11 .AND.  ( At( cMsg, "#" ) == 0 )
-      cMsg := SubStr( cMsg, 1, MAXCOLS() -11 ) + "#" + SubStr( cMsg, MAXCOLS() - 10, MAXCOLS() -11 ) + "#..."
+      cMsg := SubStr( cMsg, 1, MAXCOLS() - 11 ) + "#" + SubStr( cMsg, MAXCOLS() - 10, MAXCOLS() - 11 ) + "#..."
    ENDIF
 
 #ifdef TEST
@@ -926,20 +946,20 @@ INKEY_MOVE          Mouse motion events are allowed
    Msg( cMsg, 20 )
 #endif
 
-   SET( _SET_EVENTMASK, _set )
+   Set( _SET_EVENTMASK, _set )
 
    RETURN .T.
 
 
-   FUNCTION show_it( cItem, nPadR )
+FUNCTION show_it( cItem, nPadR )
 
-      IF nPadR <> nil
-         cItem := PadR( cItem, nPadR )
-      ENDIF
+   IF nPadR <> nil
+      cItem := PadR( cItem, nPadR )
+   ENDIF
 
-      @ Row(), Col() + 3 SAY cItem
+   @ Row(), Col() + 3 SAY cItem
 
-      RETURN .T.
+   RETURN .T.
 
 FUNCTION UGlavnomMeniju()
 
@@ -1015,7 +1035,7 @@ FUNCTION TxtUNiz( cTxt, nKol )
          cPom := Left( cTxt, nPoz - 1 )
          IF nPoz - 1 > nKol
             cPom := Trim( LomiGa( cPom, 1, 5, nKol ) )
-            FOR  nI := 1  TO  Int( ( Len( cPom ) -1 ) / nKol ) + 1
+            FOR  nI := 1  TO  Int( ( Len( cPom ) - 1 ) / nKol ) + 1
                AAdd( aVrati, SubStr( cPom, ( nI - 1 ) * nKol + 1, nKol ) )
             NEXT
          ELSE
@@ -1045,7 +1065,7 @@ FUNCTION TxtUNiz( cTxt, nKol )
 
 FUNCTION MsgBeep2( cTXT )
 
-   @ MAXROWS() -1, 0 SAY PadL( cTXT, MAXCOLS() ) COLOR "R/W"
+   @ MAXROWS() - 1, 0 SAY PadL( cTXT, MAXCOLS() ) COLOR "R/W"
    f18_tone( 900, 0.3 )
 
    RETURN .T.
@@ -1065,7 +1085,6 @@ FUNCTION say_from_valid( x, y, cString, nP )
    @ m_x + x, m_y + y SAY cString
    SetPos( pX, pY )
 
-
    RETURN .T.
 
 
@@ -1073,7 +1092,6 @@ FUNCTION ShowKorner( nS, nStep, nDelta )
 
    STATIC i := 0
    LOCAL cPom
-
 
    IF nS == 0 // nS - tekuca vrijednost
       i := 0
@@ -1089,7 +1107,7 @@ FUNCTION ShowKorner( nS, nStep, nDelta )
       cPom := Set( _SET_DEVICE )
       SET DEVICE TO SCREEN
       @ MAXROWS() - 1, ( MAXCOLS() - 7 - nDelta ) SAY  i PICT "999999"
-      SET( _SET_DEVICE, cPom )
+      Set( _SET_DEVICE, cPom )
    ENDIF
 
    RETURN .T.
@@ -1130,13 +1148,13 @@ FUNCTION FormBrowse( nT, nL, nB, nR, aImeKol, aKol, aHFCS, nFreeze, bIstakni )
             oColumn:colorBlock := {|| iif ( Eval ( bIstakni ), { 5, 2 }, { 1, 2 } ) }
          ENDIF
          IF aHFCS[ 1 ] <> nil
-            oColumn:headSep := aHFCS[1 ]
+            oColumn:headSep := aHFCS[ 1 ]
          ENDIF
          IF aHFCS[ 2 ] <> nil
-            oColumn:footSep := aHFCS[2 ]
+            oColumn:footSep := aHFCS[ 2 ]
          ENDIF
          IF aHFCS[ 3 ] <> nil
-            oColumn:colSep := aHFCS[3 ]
+            oColumn:colSep := aHFCS[ 3 ]
          ENDIF
          oBrowse:addColumn ( oColumn )
       ENDIF
@@ -1187,8 +1205,8 @@ FUNCTION ShowBrowse( oBrowse, aConds, aProcs )
 
       lFlag := .T.
       FOR nCnt := 1 TO nArrLen
-         IF Eval ( aConds[nCnt ], cCH )
-            nRez := Eval ( aProcs[nCnt ] )
+         IF Eval ( aConds[ nCnt ], cCH )
+            nRez := Eval ( aProcs[ nCnt ] )
             lFlag := .F.
             EXIT
          ENDIF

@@ -28,16 +28,16 @@ FUNCTION FillRadSati( cIdRadnik, nRadniSati )
    cOdgovor := "D"
 
    Box(, 9, 48 )
-   @ m_x + 1, m_y + 2 SAY _l( "Radnik:   " ) + AllTrim( cIdRadnik )
-   @ m_x + 2, m_y + 2 SAY _l( "Ostalo iz predhodnih obracuna: " ) + AllTrim( cSatiPredhodni ) + " sati"
-   @ m_x + 3, m_y + 2 SAY "-----------------------------------------------"
-   @ m_x + 4, m_y + 2 SAY _l( "Uplaceno sati: " ) GET nPlacenoRSati PICT "99999999"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY _l( "Radnik:   " ) + AllTrim( cIdRadnik )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY _l( "Ostalo iz predhodnih obracuna: " ) + AllTrim( cSatiPredhodni ) + " sati"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "-----------------------------------------------"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY _l( "Uplaceno sati: " ) GET nPlacenoRSati PICT "99999999"
    READ
-   @ m_x + 5, m_y + 2 SAY "-----------------------------------------------"
-   @ m_x + 6, m_y + 2 SAY _l( "Radni sati ovaj mjesec  : " ) + AllTrim( Str( nRadniSati ) )
-   @ m_x + 7, m_y + 2 SAY _l( "Placeni sati ovaj mjesec: " ) + AllTrim( Str( nPlacenoRSati ) )
-   @ m_x + 8, m_y + 2 SAY _l( "Ostalo " ) + AllTrim( Str( nRadniSati - nPlacenoRSati + Val( cSatiPredhodni ) ) ) + _l( " sati za sljedeci mjesec !" )
-   @ m_x + 9, m_y + 2 SAY _l( "Sacuvati promjene (D/N)? " ) GET cOdgovor VALID cOdgovor $ "DN" PICT "@!"
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "-----------------------------------------------"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY _l( "Radni sati ovaj mjesec  : " ) + AllTrim( Str( nRadniSati ) )
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY _l( "Placeni sati ovaj mjesec: " ) + AllTrim( Str( nPlacenoRSati ) )
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY _l( "Ostalo " ) + AllTrim( Str( nRadniSati - nPlacenoRSati + Val( cSatiPredhodni ) ) ) + _l( " sati za sljedeci mjesec !" )
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY _l( "Sacuvati promjene (D/N)? " ) GET cOdgovor VALID cOdgovor $ "DN" PICT "@!"
    READ
 
    IF cOdgovor == "D"
@@ -199,7 +199,7 @@ STATIC FUNCTION key_handler()
 
       Box(, 1, 40 )
       nSati := field->sati
-      @ m_x + 1, m_y + 2 SAY "novi sati:" GET nSati
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "novi sati:" GET nSati
       READ
       BoxC()
 

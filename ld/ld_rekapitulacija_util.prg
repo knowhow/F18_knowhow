@@ -88,19 +88,19 @@ FUNCTION ld_rekap_get_svi()
    Box(, 11 + iif( IsRamaGlas(), 1, 0 ), 75 )
    DO WHILE .T.
 
-      @ m_x + 2, m_y + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
 
-      @ m_x + 3, m_y + 2 SAY8 "Radne jedinice: "  GET  qqRJ PICT "@!S25"
-      @ m_x + 4, m_y + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
-      @ m_x + 4, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
-      @ m_x + 4, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-      @ m_x + 5, m_y + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
-      @ m_x + 7, m_y + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
-      @ m_x + 8, m_y + 2 SAY8 "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
-      @ m_x + 9, m_y + 2 SAY8 "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "Radne jedinice: "  GET  qqRJ PICT "@!S25"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
+      @ form_x_koord() + 4, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
+      @ form_x_koord() + 4, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY8 "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
 
-      @ m_x + 10, m_y + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
-      @ m_x + 11, m_y + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
+      @ form_x_koord() + 11, form_y_koord() + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
       READ
       ClvBox()
@@ -125,18 +125,18 @@ FUNCTION ld_rekap_get_rj()
 
    Box(, 10 + iif( IsRamaGlas(), 1, 0 ), 75 )
 
-   @ m_x + 1, m_y + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
-   @ m_x + 2, m_y + 2 SAY8 "Radna jedinica: "  GET cIdRJ
-   @ m_x + 3, m_y + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
-   @ m_x + 3, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
-   @ m_x + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ m_x + 4, m_y + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
-   @ m_x + 6, m_y + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
-   @ m_x + 7, m_y + 2 SAY8 "Opština stanovanja:  "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
-   @ m_x + 8, m_y + 2 SAY8 "Opština rada:        "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY8 "Radna jedinica: "  GET cIdRJ
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
+   @ form_x_koord() + 3, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
+   @ form_x_koord() + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "Opština stanovanja:  "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "Opština rada:        "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
 
-   @ m_x + 9, m_y + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
-   @ m_x + 10, m_y + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
+   @ form_x_koord() + 10, form_y_koord() + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
    READ
 

@@ -117,8 +117,8 @@ METHOD LDExportTxt:create_export_dbf()
    USE
    my_use_temp( "EXP_BANK", my_home() + _table_name + ".dbf", .F., .F. )
 
-   INDEX on ( punoime ) TAG "1"
-   INDEX on ( jmbg ) TAG "2"
+   INDEX ON ( punoime ) TAG "1"
+   INDEX ON ( jmbg ) TAG "2"
 
    RETURN .T.
 
@@ -148,20 +148,20 @@ METHOD LDExportTxt:params()
 
    Box(, 16, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "Datumski period / mjesec:" GET _mjesec PICT "99"
-   @ m_x + _x, Col() + 1 SAY "godina:" GET _godina PICT "9999"
-   @ m_x + _x, Col() + 1 SAY "obracun:" GET _obr WHEN HelpObr( .T., _obr ) VALID ValObr( .T., _obr )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datumski period / mjesec:" GET _mjesec PICT "99"
+   @ form_x_koord() + _x, Col() + 1 SAY "godina:" GET _godina PICT "9999"
+   @ form_x_koord() + _x, Col() + 1 SAY "obracun:" GET _obr WHEN HelpObr( .T., _obr ) VALID ValObr( .T., _obr )
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Radna jedinica (prazno-sve):" GET _rj PICT "@S35"
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve):" GET _rj PICT "@S35"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Dodatna eksport polja (Sx, Ix):" GET _dod_polja PICT "@S32"
+   ++_x
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Dodatna eksport polja (Sx, Ix):" GET _dod_polja PICT "@S32"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
+   ++_x
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
 
    READ
 
@@ -174,22 +174,22 @@ METHOD LDExportTxt:params()
    _file_name := ::formula_params[ "file" ]
    _name := ::formula_params[ "name" ]
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY Replicate( "-", 60 )
+   ++_x
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY Replicate( "-", 60 )
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "  Odabrana varijanta: " + PadR( _name, 30 )
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "  Odabrana varijanta: " + PadR( _name, 30 )
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "         Sifra banke: " + ::formula_params[ "banka" ]
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "         Sifra banke: " + ::formula_params[ "banka" ]
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla: " + PadR( _file_name, 20 )
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Naziv izlaznog fajla: " + PadR( _file_name, 20 )
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
+   ++_x
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
 
    READ
 
@@ -334,7 +334,7 @@ METHOD LDExportTxt:fill_data_from_ld()
       cQuery += " AND " + _sql_cond_parse( "ld.idrj", AllTrim( ::export_params[ "rj" ] ) )
    ENDIF
 
-   if ::export_params[ "krediti_export" ] .AND. !Empty( ::export_params[ "kreditori" ] )
+   IF ::export_params[ "krediti_export" ] .AND. !Empty( ::export_params[ "kreditori" ] )
       cQuery += " AND kr.idkred IN ( "
       _a_kreditor := TokToNiz( AllTrim( ::export_params[ "kreditori" ] ), ";" )
       FOR nI := 1 TO Len( _a_kreditor )
@@ -363,7 +363,7 @@ METHOD LDExportTxt:fill_data_from_ld()
 
    DO WHILE !oDataset:Eof() // napuniti tabelu export
 
-      ++ _count
+      ++_count
       oRow := oDataset:GetRow()
 
       SELECT exp_bank
@@ -394,7 +394,7 @@ METHOD LDExportTxt:fill_data_from_ld()
       hRec[ "usati" ] := oRow:FieldGet( oRow:FieldPos( "usati" ) )
       hRec[ "uneto" ] := oRow:FieldGet( oRow:FieldPos( "uneto" ) )
 
-      if ::export_params[ "krediti_export" ]
+      IF ::export_params[ "krediti_export" ]
          // kredit
          hRec[ "kredit" ] := oRow:FieldGet( oRow:FieldPos( "kredit" ) )
          hRec[ "partija" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "partija" ) ) )
@@ -537,7 +537,7 @@ METHOD LDExportTxt:export()
 
    LOCAL _ok := .F.
 
-   if ::export_params == NIL
+   IF ::export_params == NIL
       MsgBeep( "Prekidam operaciju exporta !" )
       RETURN _ok
    ENDIF
@@ -574,9 +574,9 @@ METHOD LDExportTxt:export_setup_duplicate()
 
    Box(, 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "*** DUPLICIRANJE POSTAVKI EKSPORTA"
-   @ m_x + 2, m_y + 2 SAY "Koristiti postojece podesenje broj:" GET _existing PICT "999"
-   @ m_x + 3, m_y + 2 SAY "      Kreirati novo podesenje broj:" GET _new PICT "999"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "*** DUPLICIRANJE POSTAVKI EKSPORTA"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Koristiti postojece podesenje broj:" GET _existing PICT "999"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "      Kreirati novo podesenje broj:" GET _new PICT "999"
 
    READ
 
@@ -614,7 +614,7 @@ METHOD LDExportTxt:export_setup()
 
    Box(, 15, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
 
    READ
 
@@ -655,35 +655,35 @@ METHOD LDExportTxt:export_setup()
       _kred_exp := PadR( _kred_exp, 1 )
    ENDIF
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "(*)   Naziv:" GET _name PICT "@S50" VALID !Empty( _name )
+   ++_x
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "(*)   Naziv:" GET _name PICT "@S50" VALID !Empty( _name )
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "(*)   Banka:" GET _banka PICT "@S50" VALID !Empty( _banka ) .AND. P_Kred( @_banka )
+   ++_x
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "(*)   Banka:" GET _banka PICT "@S50" VALID !Empty( _banka ) .AND. P_Kred( @_banka )
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "(*) Formula:" GET _formula PICT "@S50" VALID {|| !Empty( _formula ) .AND. ::copy_existing_formula( @_formula ) }
+   ++_x
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "(*) Formula:" GET _formula PICT "@S50" VALID {|| !Empty( _formula ) .AND. ::copy_existing_formula( @_formula ) }
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S40"
+   ++_x
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S40"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Separator u izl.fajlu [ ; , . t ]:" GET cSeparator
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Separator u izl.fajlu [ ; , . t ]:" GET cSeparator
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "    Separator formule [ ; , . ]:" GET cSeparatorFormula
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "    Separator formule [ ; , . ]:" GET cSeparatorFormula
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksport kredita (D/N) ?" GET _kred_exp PICT "!@" VALID _kred_exp $ "DN"
+   ++_x
+   ++_x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Eksport kredita (D/N) ?" GET _kred_exp PICT "!@" VALID _kred_exp $ "DN"
 
-   ++ _x
+   ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Lista kreditora za kredite:" GET _kreditori PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Lista kreditora za kredite:" GET _kreditori PICT "@S30"
 
    READ
 
@@ -776,7 +776,7 @@ METHOD LDExportTxt:get_export_params( id )
 
    ::export_setup_read_params( id )
 
-   if ::formula_params[ "name" ] == NIL .OR. Empty( ::formula_params[ "name" ]  )
+   IF ::formula_params[ "name" ] == NIL .OR. Empty( ::formula_params[ "name" ]  )
       MsgBeep( "Za ovu varijantu ne postoji podesenje !!!#Ukucajte 0 da bi odabrali iz liste." )
    ELSE
       _ok := .T.
@@ -795,8 +795,8 @@ METHOD LDExportTxt:get_export_list()
    LOCAL nI
    LOCAL _param_name := "ld_export_"
    LOCAL _opc, _opcexe, _izbor := 1
-   LOCAL _m_x := m_x
-   LOCAL _m_y := m_y
+   LOCAL _m_x := form_x_koord()
+   LOCAL _m_y := form_y_koord()
 
    _opc := {}
    _opcexe := {}
@@ -805,7 +805,7 @@ METHOD LDExportTxt:get_export_list()
 
       ::export_setup_read_params( nI )
 
-      if ::formula_params[ "name" ] <> NIL .AND. !Empty( ::formula_params[ "name" ] )
+      IF ::formula_params[ "name" ] <> NIL .AND. !Empty( ::formula_params[ "name" ] )
 
          _tmp := ""
          _tmp += PadL( AllTrim( Str( nI ) ) + ".", 4 )
@@ -828,8 +828,8 @@ METHOD LDExportTxt:get_export_list()
       ENDIF
    ENDDO
 
-   m_x := _m_x
-   m_y := _m_y
+   form_x_koord( _m_x )
+   form_y_koord( _m_y )
 
    RETURN _id
 

@@ -78,50 +78,50 @@ FUNCTION ld_mip_obrazac_1023()
 
    Box( "#MIP OBRAZAC ZA RADNIKE", 22, 75 )
 
-   @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-   @ m_x + 2, m_y + 2 SAY "Za period:" GET cMj PICT "99"
-   @ m_x + 2, Col() + 1 SAY "/" GET cGod PICT "9999"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Za period:" GET cMj PICT "99"
+   @ form_x_koord() + 2, Col() + 1 SAY "/" GET cGod PICT "9999"
 
-   @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ form_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
 
-   @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
 
-   @ m_x + 6, m_y + 2 SAY " TIPOVI PRIMANJA:"
-   @ m_x + 7, m_y + 2 SAY " .. isplate u usl. ili dobrima:" GET cTipPrimIsplateUslugeIliDobra PICT "@S30"
-   @ m_x + 8, m_y + 2 SAY " .. ne ulaze u beneficirani:"  GET cTipoviPrimanjaNeUlazeBeneficirani PICT "@S30"
-   @ m_x + 9, m_y + 2 SAY " .. bolovanje:" GET cTipoviPrimanjaBolovanje PICT "@S30"
-   @ m_x + 10, m_y + 2 SAY8 " .. bolovanje preko 42 dana, trudničko:" GET cTipoviPrimanjaBolovanjePreko PICT "@S30"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY " TIPOVI PRIMANJA:"
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY " .. isplate u usl. ili dobrima:" GET cTipPrimIsplateUslugeIliDobra PICT "@S30"
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY " .. ne ulaze u beneficirani:"  GET cTipoviPrimanjaNeUlazeBeneficirani PICT "@S30"
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY " .. bolovanje:" GET cTipoviPrimanjaBolovanje PICT "@S30"
+   @ form_x_koord() + 10, form_y_koord() + 2 SAY8 " .. bolovanje preko 42 dana, trudničko:" GET cTipoviPrimanjaBolovanjePreko PICT "@S30"
 
 
    nX := 12
-   @ m_x + nX, m_y + 2 SAY "   Doprinos iz pio: " GET cDopr10
-   @ m_x + nX++, Col() + 2 SAY "na pio: " GET cDopr20
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "   Doprinos iz pio: " GET cDopr10
+   @ form_x_koord() + nX++, Col() + 2 SAY "na pio: " GET cDopr20
 
-   @ m_x + nX, m_y + 2 SAY "   Doprinos iz zdr: " GET cDopr11
-   @ m_x + nX, Col() + 2 SAY "na zdr: " GET cDopr21
-   @ m_x + nX++, Col() + 2 SAY "dod.dopr.na zdr: " GET cDopr2D PICT "@S10"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "   Doprinos iz zdr: " GET cDopr11
+   @ form_x_koord() + nX, Col() + 2 SAY "na zdr: " GET cDopr21
+   @ form_x_koord() + nX++, Col() + 2 SAY "dod.dopr.na zdr: " GET cDopr2D PICT "@S10"
 
-   @ m_x + nX, m_y + 2 SAY "   Doprinos iz nez: " GET cDopr12
-   @ m_x + nX++, Col() + 2 SAY "na nez: " GET cDopr22
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "   Doprinos iz nez: " GET cDopr12
+   @ form_x_koord() + nX++, Col() + 2 SAY "na nez: " GET cDopr22
 
-   @ m_x + nX++, m_y + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
-   @ m_x + nX++, m_y + 2 SAY " dod.dopr. benef.: " GET cDoprDod PICT "@S30"
+   @ form_x_koord() + nX++, form_y_koord() + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
+   @ form_x_koord() + nX++, form_y_koord() + 2 SAY " dod.dopr. benef.: " GET cDoprDod PICT "@S30"
 
-   @ m_x + nX, m_y + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
-   @ m_x + nX++, Col() + 1 SAY "JID: " GET cPredJMB
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
+   @ form_x_koord() + nX++, Col() + 1 SAY "JID: " GET cPredJMB
 
-   @ m_x + nX++, m_y + 2 SAY "Sifra djelatnosti: " GET cPredSDJ PICT "@S20"
-   @ m_x + nX, m_y + 2 SAY "Def.RJ" GET cRJDef
-   @ m_x + nX, Col() + 2 SAY "Sabrati isplate za isti mj ?" GET cIsplSaberi VALID cIsplSaberi $ "DN" PICT "@!"
-   @ m_x + ++nX, m_y + 2 SAY8 "Za bruto iznos 0 prikazati radnika ?" GET cNulePrikazatiDN VALID cNulePrikazatiDN $ "DN" PICT "@!"
-   @ m_x + nX, Col() + 2 SAY "pregled ?" GET cMipView VALID cMipView $ "DN" PICT "@!"
+   @ form_x_koord() + nX++, form_y_koord() + 2 SAY "Sifra djelatnosti: " GET cPredSDJ PICT "@S20"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Def.RJ" GET cRJDef
+   @ form_x_koord() + nX, Col() + 2 SAY "Sabrati isplate za isti mj ?" GET cIsplSaberi VALID cIsplSaberi $ "DN" PICT "@!"
+   @ form_x_koord() + ++nX, form_y_koord() + 2 SAY8 "Za bruto iznos 0 prikazati radnika ?" GET cNulePrikazatiDN VALID cNulePrikazatiDN $ "DN" PICT "@!"
+   @ form_x_koord() + nX, Col() + 2 SAY "pregled ?" GET cMipView VALID cMipView $ "DN" PICT "@!"
 
-   @ m_x + ++nX, m_y + 2 SAY8 "(S)tampa/(E)xport ?" GET cStampaExport PICT "@!"  VALID cStampaExport $ "ES"
+   @ form_x_koord() + ++nX, form_y_koord() + 2 SAY8 "(S)tampa/(E)xport ?" GET cStampaExport PICT "@!"  VALID cStampaExport $ "ES"
 
    READ
 
    IF cStampaExport == "E"
-      @ m_x + nX++, m_y + 2 SAY "Datum podnosenja:" GET dDatPodn
+      @ form_x_koord() + nX++, form_y_koord() + 2 SAY "Datum podnosenja:" GET dDatPodn
       READ
 
    ENDIF
@@ -352,11 +352,11 @@ STATIC FUNCTION mip_xml_export( nMjesec, nGodina )
    _mjesto   := fetch_metric( "org_mjesto", NIL, PadR( "<POPUNI mjesto>", 100 ) )
 
    Box(, 6, 70 )
-   @ m_x + 1, m_y + 2 SAY " - Firma/Organizacija - "
-   @ m_x + 3, m_y + 2 SAY " Id broj: " GET _id_br
-   @ m_x + 4, m_y + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
-   @ m_x + 5, m_y + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
-   @ m_x + 6, m_y + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY " - Firma/Organizacija - "
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY " Id broj: " GET _id_br
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
    READ
    BoxC()
 

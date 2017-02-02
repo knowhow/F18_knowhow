@@ -87,11 +87,11 @@ STATIC FUNCTION obracunaj_odbitak()
 
    Box(, 7, 67 )
 
-   @ m_x + nX, m_y + 2 SAY "*** ODBITAK ZA ELEMENTARNE NEPOGODE"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "*** ODBITAK ZA ELEMENTARNE NEPOGODE"
 
    nX := nX + 2
 
-   @ m_x + nX, m_y + 2 SAY8 "Tip obračuna (1) procentualni iznos (2) jedna neto dnevnica" GET nTipObracuna PICT "9"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Tip obračuna (1) procentualni iznos (2) jedna neto dnevnica" GET nTipObracuna PICT "9"
 
    READ
 
@@ -103,10 +103,10 @@ STATIC FUNCTION obracunaj_odbitak()
    nX := nX + 2
 
    IF nTipObracuna == 1
-      @ m_x + nX, m_y + 2 SAY "u procentualnom iznosu od:" GET nProcIznos PICT "999.99"
-      @ m_x + nX, col() + 1 SAY "%"
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "u procentualnom iznosu od:" GET nProcIznos PICT "999.99"
+      @ form_x_koord() + nX, col() + 1 SAY "%"
    ELSE
-      @ m_x + nX, m_y + 2 SAY "na osnovu jedne neto dnevnice."
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "na osnovu jedne neto dnevnice."
    ENDIF
 
    READ
@@ -127,7 +127,7 @@ STATIC FUNCTION obracunaj_odbitak()
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY8 "Iznos odbitka = " + AllTrim( Str( nIznos, 12, 2 ) ) + ", obračunati odbitak (D/N) ?" GET cObr ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Iznos odbitka = " + AllTrim( Str( nIznos, 12, 2 ) ) + ", obračunati odbitak (D/N) ?" GET cObr ;
              VALID cObr $ "DN" PICT "@!"
 
    READ
@@ -153,21 +153,21 @@ FUNCTION ld_elementarne_nepogode_parametri()
 
    Box(, 5, 66 )
 
-   @ m_x + nX, m_y + 2 SAY "Tip primanja posebnog odbitka za elementarne nepogode:" GET cTipPrimanja ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Tip primanja posebnog odbitka za elementarne nepogode:" GET cTipPrimanja ;
              VALID valid_tip_primanja_elementarne_nepogode( @cTipPrimanja )
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY8 "Način obračuna odbitka za elementarne nepogode:"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Način obračuna odbitka za elementarne nepogode:"
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY8 " (1) procenat od neto plate uposlenika"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 " (1) procenat od neto plate uposlenika"
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY8 " (2) iznos jedne neto dnevnice uposlenika"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 " (2) iznos jedne neto dnevnice uposlenika"
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY8 "     tekući odabir:" GET nTipObracuna PICT "9" VALID nTipObracuna > 0 .AND. nTipObracuna < 3
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "     tekući odabir:" GET nTipObracuna PICT "9" VALID nTipObracuna > 0 .AND. nTipObracuna < 3
 
    READ
 

@@ -46,36 +46,40 @@ METHOD mMenu()
 
 METHOD programski_modul_osnovni_meni
 
-   PRIVATE Izbor := 1
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
+   LOCAL nIzbor := 1
+   LOCAL aOpcije := {}
+   LOCAL aOpcijeB := {}
 
-   AAdd( opc, "1. obračun (unos, ispravka, brisanje...)         " )
-   AAdd( opcexe, {|| ld_obracun() } )
-   AAdd( opc, "2. izvještaji" )
-   AAdd( opcexe, {|| ld_izvjestaji() } )
-   AAdd( opc, "3. krediti" )
-   AAdd( opcexe, {|| ld_krediti_menu() } )
-   AAdd( opc, "4. export podataka za banke " )
-   AAdd( opcexe, {|| ld_export_banke() } )
-   AAdd( opc, "------------------------------------" )
-   AAdd( opcexe, NIL )
-   AAdd( opc, "S. šifarnici plate" )
-   AAdd( opcexe, {|| ld_sifarnici() } )
-   AAdd( opc, "------------------------------------" )
-   AAdd( opcexe, NIL )
-   AAdd( opc, "A. rekapitulacija" )
-   AAdd( opcexe, {|| ld_rekapitulacija_sql( .T. ) } )
-   AAdd( opc, "B. kartica plate" )
-   AAdd( opcexe, {|| ld_kartica_plate() } )
-   AAdd( opc, "V. generisanje virmana " )
-   AAdd( opcexe, {|| ld_gen_virm() } )
-   AAdd( opc, "------------------------------------" )
-   AAdd( opcexe, NIL )
-   AAdd( opc, "X. parametri plate " )
-   AAdd( opcexe, {|| ld_parametri() } )
+   AAdd( aOpcije, "1. obračun (unos, ispravka, administracija)    " )
+   AAdd( aOpcijeB, {|| ld_obracun() } )
+   AAdd( aOpcije, "2. izvještaji" )
+   AAdd( aOpcijeB, {|| ld_izvjestaji() } )
+   AAdd( aOpcije, "3. krediti" )
+   AAdd( aOpcijeB, {|| ld_krediti_menu() } )
+   AAdd( aOpcije, "4. export podataka za banke " )
+   AAdd( aOpcijeB, {|| ld_export_banke() } )
+   AAdd( aOpcije, "------------------------------------" )
+   AAdd( aOpcijeB, NIL )
+   AAdd( aOpcije, "S. šifarnici plate" )
+   AAdd( aOpcijeB, {|| ld_sifarnici() } )
+   AAdd( aOpcije, "------------------------------------" )
+   AAdd( aOpcijeB, NIL )
+   AAdd( aOpcije, "A. rekapitulacija" )
+   AAdd( aOpcijeB, {|| ld_rekapitulacija_sql( .T. ) } )
+   AAdd( aOpcije, "B. kartica plate" )
+   AAdd( aOpcijeB, {|| ld_kartica_plate() } )
+   AAdd( aOpcije, "M. mjesečni obrazac MIP-1023" )
+   AAdd( aOpcijeB, {|| ld_mip_obrazac_1023() } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "gld", .T. )
+   AAdd( aOpcije, "V. generisanje virmana " )
+   AAdd( aOpcijeB, {|| ld_gen_virm() } )
+
+   AAdd( aOpcije, "------------------------------------" )
+   AAdd( aOpcijeB, NIL )
+   AAdd( aOpcije, "X. parametri plate " )
+   AAdd( aOpcijeB, {|| ld_parametri() } )
+
+   f18_menu( "gld", .T., nIzbor, aOpcije, aOpcijeB )
 
    RETURN .T.
 

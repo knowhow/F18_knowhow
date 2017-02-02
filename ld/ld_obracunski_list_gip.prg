@@ -339,6 +339,7 @@ STATIC FUNCTION _xml_export( cTip, mjesec, godina )
    @ form_x_koord() + 5, form_y_koord() + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
    @ form_x_koord() + 6, form_y_koord() + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
    READ
+   
    BoxC()
 
    set_metric( "org_id_broj", NIL, _id_br )

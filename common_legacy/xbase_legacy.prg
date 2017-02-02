@@ -72,33 +72,42 @@ FUNCTION Scatter( cZn, lUtf )
 // --------------------------------------------------
 // TODO: ime set_global_vars_from_dbf je legacy
 // --------------------------------------------------
-FUNCTION set_global_vars_from_dbf( zn, lConvertToUtf )
+FUNCTION set_global_vars_from_dbf( cVarPrefix, lConvertToUtf )
 
-   LOCAL nI, _struct, _field, _var
+   LOCAL nI, aDbStruct, cFieldName, cFieldType, cFieldWidth, _var
    LOCAL lSql := ( rddName() ==  "SQLMIX" )
 
    PRIVATE cImeP, cVar
 
-   IF zn == NIL
-      zn := "_"
+   IF cVarPrefix == NIL
+      cVarPrefix := "_"
    ENDIF
 
    hb_default( @lConvertToUtf, .F. )
 
-   _struct := dbStruct()
+   aDbStruct := dbStruct()
 
-   FOR nI := 1 TO Len( _struct )
-      _field := _struct[ nI, 1 ]
+   FOR nI := 1 TO Len( aDbStruct )
+      cFieldName := aDbStruct[ nI, 1 ]
+      cFieldType := aDbStruct[ nI, 2 ]
+      cFieldWidth := aDbStruct[ nI, 3 ]
 
-      IF !( "#" + _field + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
-         _var := zn + _field
+      IF !( "#" + cFieldName + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
+         _var := cVarPrefix + cFieldName
          // kreiram public varijablu sa imenom vrijednosti _var varijable
          __mvPublic( _var ) // wNaz
-         Eval( MemVarBlock( _var ), Eval( FieldBlock( _field ) ) ) // wNaz <-- SADRŽAJ
-         IF ValType( &_var ) == "C"
+         Eval( MemVarBlock( _var ), Eval( FieldBlock( cFieldName ) ) ) // wNaz <-- SADRŽAJ
+
+         IF cFieldType == "C" .OR. cFieldType == "M"  // memo or char -- Valtype( &_var ) == "C"
+
+            IF cFieldType == "C" .AND. &_var == "" // sql empty field = ""
+               &_var := Space( cFieldWidth )
+            ENDIF
+
             IF lSql .AND. F18_SQL_ENCODING == "UTF8"// sql tabela utf->str
                &_var := hb_UTF8ToStr( &_var )
             ENDIF
+
             IF lConvertToUtf // str->utf
                &_var := hb_StrToUTF8( &_var )
             ENDIF
@@ -126,7 +135,7 @@ FUNCTION GatherR( cZn )
             // matrica relacija
             cVar := cZn + aRel[ j, 2 ]
             xField := &( aRel[ j, 2 ] )
-            if &cVar == xField // ako nije promjenjen broj
+            IF &cVar == xField // ako nije promjenjen broj
                LOOP
             ENDIF
             SELECT ( aRel[ j, 3 ] )
@@ -134,7 +143,7 @@ FUNCTION GatherR( cZn )
             DO WHILE .T.
                IF FLock()
                   SEEK xField
-                  DO while &( aRel[ j, 4 ] ) == xField .AND. !Eof()
+                  DO WHILE &( aRel[ j, 4 ] ) == xField .AND. !Eof()
                      SKIP
                      nRec := RecNo()
                      SKIP -1
@@ -169,21 +178,21 @@ FUNCTION GatherR( cZn )
 *   note Gather2 pretpostavlja zakljucan zapis !!
 */
 
-FUNCTION Gather2( zn )
+FUNCTION Gather2( cVarPrefix )
 
-   LOCAL nI, _struct
+   LOCAL nI, aDbStruct
    LOCAL _field_b, _var
 
-   IF zn == nil
-      zn := "_"
+   IF cVarPrefix == nil
+      cVarPrefix := "_"
    ENDIF
 
-   _struct := dbStruct()
+   aDbStruct := dbStruct()
 
-   FOR nI := 1 TO Len( _struct )
-      _ime_p := _struct[ nI, 1 ]
+   FOR nI := 1 TO Len( aDbStruct )
+      _ime_p := aDbStruct[ nI, 1 ]
       _field_b := FieldBlock( _ime_p )
-      _var :=  zn + _ime_p
+      _var :=  cVarPrefix + _ime_p
 
       IF  !( "#" + _ime_p + "#"  $ "#BRISANO#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#" )
          Eval( _field_b, Eval( MemVarBlock( _var ) ) )
@@ -342,7 +351,7 @@ FUNCTION seek2( cArg )
 // - pack - prepakuj zapise
 // -------------------------------------------------------------------
 
-FUNCTION zapp( pack )
+FUNCTION zapp( PACK )
 
    LOCAL bErr
 
@@ -350,8 +359,8 @@ FUNCTION zapp( pack )
       RETURN .F.
    ENDIF
 
-   IF pack == NIL
-      pack := .F.
+   IF PACK == NIL
+      PACK := .F.
    ENDIF
 
 
@@ -485,13 +494,13 @@ FUNCTION O_POMDB( nArea, cImeDBF )
 
 
 
-FUNCTION DbfArea( tbl, var )
+FUNCTION DbfArea( tbl, VAR )
 
    LOCAL _rec
    LOCAL _only_basic_params := .T.
 
-   IF ( var == NIL )
-      var := 0
+   IF ( VAR == NIL )
+      VAR := 0
    ENDIF
 
    _rec := get_a_dbf_rec( Lower( tbl ), _only_basic_params )

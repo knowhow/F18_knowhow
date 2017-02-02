@@ -17,10 +17,11 @@
 // ---------------------------------------------------------
 FUNCTION FillRadSati( cIdRadnik, nRadniSati )
 
-   // uzmi prethodne sate...
+   PushWa()
    cSatiPredhodni := GetStatusRSati( cIdRadnik )
 
    IF Pitanje(, _l( "Unos placenih sati (D/N)?" ), "D" ) == "N"
+      PopWa()
       RETURN Val( cSatiPredhodni )
    ENDIF
 
@@ -43,9 +44,10 @@ FUNCTION FillRadSati( cIdRadnik, nRadniSati )
    IF cOdgovor == "D"
       UbaciURadneSate( cIdRadnik, nRadniSati - nPlacenoRSati )
    ELSE
-      MsgBeep( _l( "Promjene nisu sacuvane !!!" ) )
+      MsgBeep( _l( "Promjene nisu sacuvane !" ) )
    ENDIF
-   BoxC()
+
+   PopWa()
 
    RETURN Val( cSatiPredhodni )
 

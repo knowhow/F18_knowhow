@@ -321,8 +321,7 @@ FUNCTION browse_edit_radnik( Ch )
 
    ELSEIF ( Ch == K_CTRL_T )
 
-      seek_radkr_2( radn->id )
-      IF !Eof()
+      IF postoje_krediti_za_radnika( radn->id )
          Beep( 1 )
          Msg(  "Stavka radnika se ne moze brisati jer se vec nalazi u obracunu!"  )
          RETURN 7

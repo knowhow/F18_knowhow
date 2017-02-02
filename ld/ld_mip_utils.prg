@@ -103,49 +103,40 @@ STATIC FUNCTION edititem()
 
    Box(, 20, 70 )
 
-   @ m_x + nX, m_y + 2 SAY AllTrim( _idradn ) + " - " + ;
-      PadR( _r_ime, 30 )
+   @ m_x + nX, m_y + 2 SAY AllTrim( _idradn ) + " - " + PadR( _r_ime, 30 )
 
    ++ nX
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY "'kod' opcine" GET _r_opc PICT "@S3"
 
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY "vrsta isplate" GET _vr_ispl PICT "@S10"
 
    ++ nX
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY "sati" GET _r_sati
    @ m_x + nX, Col() + 1 SAY "sati bolov." GET _r_satib
 
    ++ nX
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY "bruto" GET _bruto
    @ m_x + nX, Col() + 1 SAY "opor.prih." GET _u_opor
 
    ++ nX
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY "dopr.pio" GET _u_d_pio
    @ m_x + nX, Col() + 1 SAY "dopr.zdr" GET _u_d_zdr
    @ m_x + nX, Col() + 1 SAY "dopr.nez" GET _u_d_nez
 
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY "uk.dopr.iz" GET _u_d_iz
 
    ++ nX
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY "licni odbici" GET _l_odb
 
    ++ nX
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY "osnovica poreza" GET _osn_por
    @ m_x + nX, Col() + 1 SAY "porez" GET _izn_por
 

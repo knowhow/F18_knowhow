@@ -396,10 +396,11 @@ FUNCTION SumKredita()
 
 
 
-FUNCTION Okreditu( _idradn, cIdkred, cNaOsnovu, _mjesec, _godina )
+FUNCTION ld_iznosi_za_kredit( _idradn, cIdkred, cNaOsnovu, _mjesec, _godina )
 
    LOCAL nUkupno, nPlaceno, nNTXORd
-   LOCAL fused := .T.
+
+   // LOCAL fused := .T.
 
    PushWA()
 
@@ -417,11 +418,13 @@ FUNCTION Okreditu( _idradn, cIdkred, cNaOsnovu, _mjesec, _godina )
    ENDIF
 */
 
-   seek_radkr_2( _idradn, cIdkred, cNaOsnovu )
+altd()
+   seek_radkr_2( _idradn, cIdkred, cNaOsnovu, NIL, NIL, NIL, { F_RADKR + 1000, "RADKR_1000" } ) // seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu, nGodina, nMjesec, cTag, aWorkarea )
 
    nUkupno := 0
    nPlaceno := 0
 
+   SELECT radkr_1000
    DO WHILE !Eof() .AND. AllTrim( idradn ) == AllTrim( _idradn ) .AND. AllTrim( idkred ) == AllTrim( cIdKred ) .AND. naosnovu == cNaOsnovu
       nUkupno += iznos
 
@@ -434,17 +437,12 @@ FUNCTION Okreditu( _idradn, cIdkred, cNaOsnovu, _mjesec, _godina )
 
       SKIP
    ENDDO
+   USE
 
-   IF !fUsed
-      SELECT radkr
-      USE
-   ELSE
-#ifdef C52
-      ordSetFocus( nNTXOrd )
-#else
-      SET ORDER TO nNTXORd
-#endif
-   ENDIF
+   // IF !fUsed
+   // SELECT radkr
+   // USE
+   // ENDIF
 
    PopWa()
 

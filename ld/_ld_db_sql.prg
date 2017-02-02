@@ -92,14 +92,20 @@ FUNCTION ld_min_godina()
    SET ORDER TO 1
    SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
 */
-FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag )
+FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag, aWorkarea )
 
    LOCAL cSql
    LOCAL cTable := "ld_radkr"
    LOCAL hIndexes, cKey, lWhere := .F.
+   LOCAL nWa := F_RADKR, cAlias := "RADKR"
 
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
 
+
+   IF aWorkarea != NIL
+      nWa := aWorkarea[ 1 ]
+      cAlias := aWorkarea[ 2 ]
+   ENDIF
 
    IF nGodina != NIL
       IF lWhere
@@ -108,7 +114,7 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag )
          cSql += " WHERE "
          lWhere := .T.
       ENDIF
-      cSql += "godina=" + Str( nGodina, 4 )
+      cSql += "godina=" + Str( nGodina, 4, 0 )
    ENDIF
 
 
@@ -119,7 +125,7 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag )
          cSql += " WHERE "
          lWhere := .T.
       ENDIF
-      cSql += "mjesec=" + Str( nMjesec, 2 )
+      cSql += "mjesec=" + Str( nMjesec, 2, 0 )
    ENDIF
 
 
@@ -154,13 +160,13 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag )
       cSql += "naosnovu=" + sql_quote( cNaOsnovu )
    ENDIF
 
-   SELECT F_RADKR
-   use_sql( cTable, cSql, "RADKR" )
+   SELECT ( nWa )
+   use_sql( cTable, cSql, cAlias )
 
    hIndexes := h_ld_radkr_indexes()
 
    FOR EACH cKey IN hIndexes:Keys
-      INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( "RADKR" )
+      INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cAlias )
    NEXT
 
    IF cTag == NIL
@@ -177,9 +183,10 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag )
    RETURN .T.
 
 
-FUNCTION seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu, nGodina, nMjesec )
+FUNCTION seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu, nGodina, nMjesec, cTag, aWorkarea )
 
-   RETURN seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu )
+   RETURN seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag, aWorkarea )
+
 
 
 FUNCTION o_radkr_1rec()

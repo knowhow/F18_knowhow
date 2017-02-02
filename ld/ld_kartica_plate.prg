@@ -293,7 +293,7 @@ FUNCTION ZaglKar()
    ENDIF
 
    IF __var_obr == "2"
-      ?? Space( 2 ) + _l( "Koef.licnog odbitka:" ), AllTrim( Str( g_klo( ld->ulicodb ) ) )
+      ?? Space( 2 ) +  "Koef.licnog odbitka:", AllTrim( Str( g_klo( ld->ulicodb ) ) )
    ENDIF
 
    IF __radni_sati == "D"
@@ -405,7 +405,7 @@ STATIC FUNCTION prikazi_primanja()
                select_o_kred( radkr->idkred )
 
                SELECT radkr
-               aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
+               aIznosi := ld_iznosi_za_kredit( idradn, idkred, naosnovu, _mjesec, _godina )
                ? cLMSK, idkred, Left( kred->naz, 15 ), PadR( naosnovu, 20 )
                @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] PICT "999999.99" // ukupno
                @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] - aIznosi[ 2 ] PICT "999999.99"// ukupno-placeno

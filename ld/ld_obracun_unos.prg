@@ -107,7 +107,7 @@ FUNCTION QQOUTC( cTekst, cBoja )
 
    @ Row(), Col() SAY cTekst COLOR cBoja
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -185,7 +185,7 @@ FUNCTION OObracun()
 
    set_tippr_ili_tippr2( cObracun )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -248,7 +248,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    ESC_BCR
 
-   nO_Ret := ParObr( nMjesec, nGodina, IF( ld_vise_obracuna(), cObracun, NIL ), cIdRj )
+   nO_Ret := ParObr( nMjesec, nGodina, IIF( ld_vise_obracuna(), cObracun, NIL ), cIdRj )
 
    IF nO_ret = 0
 
@@ -282,7 +282,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    seek_ld( cIdRj,  nGodina,  nMjesec,  iif( ld_vise_obracuna(), cObracun, "" ),  cIdRadn )
 
-   IF Found()
+   IF !Eof() // vec postoji obracun
       lNovi := .F.
       set_global_vars_from_dbf()
    ELSE

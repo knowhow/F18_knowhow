@@ -18,7 +18,7 @@ FUNCTION ld_unos_obracuna()
    LOCAL _vals
    LOCAL _fields
    LOCAL _pr_kart_pl := fetch_metric( "ld_obracun_prikaz_kartice_na_unosu", NIL, "N" )
-   LOCAL i
+   LOCAL nI
    PRIVATE lNovi
    PRIVATE GetList
    PRIVATE cIdRadn
@@ -39,7 +39,7 @@ FUNCTION ld_unos_obracuna()
 
       IF ( lSaveObracun )
 
-         //select_o_ld()
+         // select_o_ld()
          SELECT ld
 
          cIdRadn := field->idRadn
@@ -50,8 +50,8 @@ FUNCTION ld_unos_obracuna()
 
          nPom := 0
 
-         FOR i := 1 TO cLDPolja
-            cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
+         FOR nI := 1 TO cLDPolja
+            cPom := PadL( AllTrim( Str( nI ) ), 2, "0" )
             nPom += Abs( _I&cPom ) + Abs( _S&cPom )
          NEXT
 
@@ -114,63 +114,63 @@ FUNCTION QQOUTC( cTekst, cBoja )
 
 FUNCTION OObracun()
 
-  // select_o_ld()
+   // select_o_ld()
 
 
-//   SELECT F_PAROBR
-//   IF !Used()
-//      o_ld_parametri_obracuna()
-//   ENDIF
+// SELECT F_PAROBR
+// IF !Used()
+// o_ld_parametri_obracuna()
+// ENDIF
 
-//   SELECT F_RADN
-//   IF !Used()
-//      o_ld_radn()
-//   ENDIF
+// SELECT F_RADN
+// IF !Used()
+// o_ld_radn()
+// ENDIF
 
-//   SELECT F_VPOSLA
-//   IF !Used()
-//      o_ld_vrste_posla()
-//   ENDIF
+// SELECT F_VPOSLA
+// IF !Used()
+// o_ld_vrste_posla()
+// ENDIF
 
-  // SELECT F_STRSPR
-//   IF !Used()
-//      o_str_spr()
-//   ENDIF
+   // SELECT F_STRSPR
+// IF !Used()
+// o_str_spr()
+// ENDIF
 
-//   SELECT F_DOPR
-//   IF !Used()
-//      o_dopr()
-//   ENDIF
+// SELECT F_DOPR
+// IF !Used()
+// o_dopr()
+// ENDIF
 
-//   SELECT F_POR
-//   IF !Used()
-//      o_por()
-//   ENDIF
+// SELECT F_POR
+// IF !Used()
+// o_por()
+// ENDIF
 
-//   SELECT F_KBENEF
-//   IF !Used()
-//      o_koef_beneficiranog_radnog_staza()
-//   ENDIF
+// SELECT F_KBENEF
+// IF !Used()
+// o_koef_beneficiranog_radnog_staza()
+// ENDIF
 
-  // SELECT F_OPS
-  // IF !Used()
-  //    o_ops()
-//   ENDIF
+   // SELECT F_OPS
+   // IF !Used()
+   // o_ops()
+// ENDIF
 
-   //SELECT F_LD_RJ
-  // IF !Used()
-  //    o_ld_rj()
-  // ENDIF
+   // SELECT F_LD_RJ
+   // IF !Used()
+   // o_ld_rj()
+   // ENDIF
 
-   //SELECT F_RADKR
-   //IF !Used()
-  //    O_RADKR
-   //ENDIF
+   // SELECT F_RADKR
+   // IF !Used()
+   // O_RADKR
+   // ENDIF
 
-   //SELECT F_KRED
-   //IF !Used()
-  //    o_kred()
-  // ENDIF
+   // SELECT F_KRED
+   // IF !Used()
+   // o_kred()
+   // ENDIF
 
    SELECT F_RADSAT
    IF !Used()
@@ -249,7 +249,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    ESC_BCR
 
-   nO_Ret := ParObr( nMjesec, nGodina, IIF( ld_vise_obracuna(), cObracun, NIL ), cIdRj )
+   nO_Ret := ParObr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, NIL ), cIdRj )
 
    IF nO_ret = 0
 
@@ -291,7 +291,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       APPEND BLANK
 
       set_global_vars_from_dbf()
-      altd()
+      AltD()
 
       _Godina := nGodina
       _idrj   := cIdRj
@@ -427,9 +427,9 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
    lInRS := .F.
    lInRs := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
-   FOR i := 1 TO 40
+   FOR nI := 1 TO 40
 
-      cTp := PadL( AllTrim( Str( i ) ), 2, "0" )
+      cTp := PadL( AllTrim( Str( nI ) ), 2, "0" )
       xVar := "_I" + cTp
 
       nTArea := Select()
@@ -486,7 +486,7 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
    ENDIF
 
    nMinBO := _UBruto
-   IF cTipRada $ " #I#N"
+   IF cTipRada $ " #nI#N"
       IF _I01 = 0
          // ne racunaj min.bruto osnovu
       ELSE
@@ -513,7 +513,7 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
 
    _uneto2 := Round( ( ( _ubruto - _udopr ) - _uporez ), gZaok2 )
 
-   IF cTipRada $ " #I#N#"
+   IF cTipRada $ " #nI#N#"
       nMinNeto := min_neto( _uneto2, _usati )
       _uneto2 := nMinNeto
    ENDIF
@@ -548,7 +548,7 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
    @ form_x_koord() + 20, Col() + 2 SAY "UKUPNO ZA ISPLATU:"
    @ Row(), Col() + 1 SAY _uiznos PICT gPici
 
-altd()
+   AltD()
    @ form_x_koord() + 21, form_y_koord() + 2 SAY "Vrsta isplate (1 - 13):" GET _v_ispl
 
    @ form_x_koord() + 22, form_y_koord() + 10 SAY "Pritisni <ENTER> za snimanje, <ESC> napustanje"
@@ -574,7 +574,7 @@ altd()
 
 STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
-   LOCAL i
+   LOCAL nI
    PRIVATE cIdTP := "  "
    PRIVATE nRedTP := 4
    PRIVATE cVarTP
@@ -582,19 +582,19 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
    cTipPrC := " "
 
-   FOR i := 1 TO cLDPolja
-      IF i < 10
-         cIdTP := "0" + AllTrim( Str( i ) )
-         cVarTP := "_S0" + AllTrim( Str( i ) )
-         cIznosTP := "_I0" + AllTrim( Str( i ) )
-         cPoljeIznos := "I0" + AllTrim( Str( i ) )
-         cPoljeSati := "S0" + AllTrim( Str( i ) )
+   FOR nI := 1 TO cLDPolja
+      IF nI < 10
+         cIdTP := "0" + AllTrim( Str( nI ) )
+         cVarTP := "_S0" + AllTrim( Str( nI ) )
+         cIznosTP := "_I0" + AllTrim( Str( nI ) )
+         cPoljeIznos := "I0" + AllTrim( Str( nI ) )
+         cPoljeSati := "S0" + AllTrim( Str( nI ) )
       ELSE
-         cIdTP := AllTrim( Str( i ) )
-         cVarTP := "_S" + AllTrim( Str( i ) )
-         cIznosTP := "_I" + AllTrim( Str( i ) )
-         cPoljeIznos := "I" + AllTrim( Str( i ) )
-         cPoljeSati := "S" + AllTrim( Str( i ) )
+         cIdTP := AllTrim( Str( nI ) )
+         cVarTP := "_S" + AllTrim( Str( nI ) )
+         cIznosTP := "_I" + AllTrim( Str( nI ) )
+         cPoljeIznos := "nI" + AllTrim( Str( nI ) )
+         cPoljeSati := "S" + AllTrim( Str( nI ) )
       ENDIF
 
       nRedTP++
@@ -602,45 +602,56 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
       select_o_tippr( cIdTP )
       SELECT ld
 
-      IF LD->( FieldPos( cPoljeIznos ) = 0 ) .AND. LD->( FieldPos( cPoljeSati ) = 0 )
-         MsgBeep( "Broj polja u LD -> 30, potrebna modifikacija struktura !!!" )
-         RETURN .F.
-      ENDIF
 
-      cW := "WhUnos(" + dbf_quote( cIdTp ) + ")"
-      cV := "Izracunaj(@" + cIznosTP + ")"
+      cWhenLDUnos := "ld_when_unos(" + dbf_quote( cIdTp ) + ")"
+      cValidLDUnos := "ld_eval_formula(@" + cIznosTP + ")"
 
       IF ( tippr->( Found() ) .AND. tippr->aktivan == "D" )
          IF ( tippr->fiksan $ "DN" )
-            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + " (SATI) " GET &cVarTP PICT gPics WHEN &cW VALID &cV
+            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + " (SATI) " ;
+               GET &cVarTP PICT gPics WHEN &cWhenLDUnos VALID &cValidLDUnos
          ELSEIF ( tippr->fiksan == "P" )
-            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + " (%)    " GET &cVarTP. PICT "999.99" WHEN &cW VALID &cV
+            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + " (%)    " ;
+               GET &cVarTP. PICT "999.99" WHEN &cWhenLDUnos VALID &cValidLDUnos
          ELSEIF tippr->fiksan == "B"
-            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + "(BODOVA)" GET &cVarTP. PICT gPici WHEN &cW VALID &cV
+            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + "(BODOVA)" ;
+               GET &cVarTP. PICT gPici WHEN &cWhenLDUnos VALID &cValidLDUnos
          ELSEIF tippr->fiksan == "C"
-            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + "        " GET cTipPrC WHEN &cW VALID &cV
+            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + "        " ;
+               GET cTipPrC WHEN &cWhenLDUnos VALID &cValidLDUnos
          ENDIF
 
          @ form_x_koord() + nRedTP, form_y_koord() + 50 SAY "IZNOS" GET &cIznosTP PICT gPici
       ENDIF
 
-      IF ( i % 17 == 0 )
+      IF ( nI % 17 == 0 )
          READ
          @ form_x_koord() + 5, form_y_koord() + 2 CLEAR TO form_x_koord() + 21, form_y_koord() + 69
          nRedTP := 4
       ENDIF
 
-      IF ( i == cLDPolja )
+      IF ( nI == cLDPolja )
          READ
       ENDIF
 
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
+/*
+   set_sati_tp( "18", "_S05")
+*/
+FUNCTION set_sati_tp( cSatiTipPrimanja, cFormula )
 
-FUNCTION WhUnos( cTP )
+   cSatiTipPrimanja := "_S" + cSatiTipPrimanja
+
+   &cSatiTipPrimanja := &cFormula
+
+   RETURN 0
+
+
+FUNCTION ld_when_unos( cTP )
 
    select_o_tippr( cTP )
 
@@ -649,11 +660,11 @@ FUNCTION WhUnos( cTP )
 
 
 
-FUNCTION ValRNal( cPom, i )
+FUNCTION ValRNal( cPom, nI )
 
    IF !Empty( cPom )
       P_fakt_objekti( @cPom )
-      cRNal[ i ] := cPom
+      cRNal[ nI ] := cPom
    ENDIF
 
    RETURN .T.

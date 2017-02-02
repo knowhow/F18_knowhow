@@ -130,29 +130,31 @@ FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
 
 
 
-/* Izracunaj(ixx, fPrikaz)
+/*
  *     Izracunavanje formula
- *   param: ixx -
+ *   param: nInputF -
  *   param: fPrikaz - prikazi .t.
  */
-FUNCTION Izracunaj( ixx, fPrikaz )
+
+FUNCTION ld_eval_formula( nInputF ) //, fPrikaz )
 
    PRIVATE cFormula
 
-   IF PCount() == 1
-      fPrikaz := .T.
-   ENDIF
+   //IF PCount() == 1
+  //    fPrikaz := .T.
+   //ENDIF
 
    cFormula := Trim( tippr->formula )
 
    IF ( tippr->fiksan <> "D" )
 
       IF Empty( cFormula ) // ako je fiksan iznos nista ne izracunavaj!
-         ixx := 0
+         nInputF := 0
       ELSE
-         ixx := &cFormula
+         ?E "ld_eval_formula:", cFormula
+         nInputF := &cFormula
       ENDIF
-      ixx := Round( ixx, gZaok )
+      nInputF := Round( nInputF, gZaok )
    ENDIF
 
    RETURN .T.

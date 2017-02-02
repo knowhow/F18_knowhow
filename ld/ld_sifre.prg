@@ -1080,7 +1080,10 @@ FUNCTION P_VPosla( cId, nDeltaX, nDeltaY )
       }
    Kol := { 1, 2, 3 }
 
+
    PushWA()
+
+   select_o_vposla()
    xRet := p_sifra( F_VPOSLA, 1, 10, 55, _l( "Lista: Vrste posla" ), @cId, nDeltaX, nDeltaY )
 
    PopWA()
@@ -1120,9 +1123,9 @@ FUNCTION TotBrisRadn()
       RETURN .F.
    ENDIF
 
-   //o_ld_radn()         // id, "1"
-   //O_RADKR        // idradn, "2"
-   //select_o_ld()           // idradn, "RADN"
+   // o_ld_radn()         // id, "1"
+   // O_RADKR        // idradn, "2"
+   // select_o_ld()           // idradn, "RADN"
    O_LDSM         // idradn, "RADN"
 
    Box(, 7, 75 )

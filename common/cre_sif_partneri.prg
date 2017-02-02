@@ -125,10 +125,10 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    AAdd ( ImeKol, { PadR( ToStrU( "Općina" ), 6 ), {|| idOps }, "idops", {|| .T. }, {|| p_ops( @wIdops ) } } )
 
    AAdd ( ImeKol, { PadR( "Referent", 10 ), {|| field->idrefer }, "idrefer", {|| .T. }, {|| EMPTY(wIdrefer) .OR. p_refer( @wIdrefer ) } } )
-   AAdd( ImeKol, { "kup?", {|| _kup }, "_kup", {|| .T. }, {|| _v_dn( w_kup ) } } )
-   AAdd( ImeKol, { "dob?", {|| " " + _dob + " " }, "_dob", {|| .T. }, {|| _v_dn( w_dob ) }, nil, nil, nil, nil, 20 } )
-   AAdd( ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", {|| .T. }, {|| _v_dn( w_banka ) }, nil, nil, nil, nil, 30 } )
-   AAdd( ImeKol, { "radnik?", {|| " " + _radnik + " " }, "_radnik", {|| .T. }, {|| _v_dn( w_radnik ) }, nil, nil, nil, nil, 40 } )
+   AAdd( ImeKol, { "kup?", {|| _kup }, "_kup", {|| .T. }, {|| valid_da_ili_n( w_kup ) } } )
+   AAdd( ImeKol, { "dob?", {|| " " + _dob + " " }, "_dob", {|| .T. }, {|| valid_da_ili_n( w_dob ) }, nil, nil, nil, nil, 20 } )
+   AAdd( ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", {|| .T. }, {|| valid_da_ili_n( w_banka ) }, nil, nil, nil, nil, 30 } )
+   AAdd( ImeKol, { "radnik?", {|| " " + _radnik + " " }, "_radnik", {|| .T. }, {|| valid_da_ili_n( w_radnik ) }, nil, nil, nil, nil, 40 } )
 
    FOR nI := 1 TO Len( ImeKol )
       AAdd( Kol, nI )
@@ -168,7 +168,7 @@ STATIC FUNCTION partn_k_handler( Ch )
 // -------------------------------------
 // validacija polja P_TIP
 // -------------------------------------
-STATIC FUNCTION _v_dn( cDn )
+STATIC FUNCTION valid_da_ili_n( cDn )
 
    LOCAL lRet := .F.
 
@@ -177,7 +177,7 @@ STATIC FUNCTION _v_dn( cDn )
    ENDIF
 
    IF lRet == .F.
-      MsgBeep( "Unjeti D ili N" )
+      MsgBeep( "Unijeti D ili N" )
    ENDIF
 
    RETURN lRet

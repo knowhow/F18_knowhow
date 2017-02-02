@@ -494,7 +494,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
 
 
-STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
+STATIC FUNCTION edit_sql_sif_item( nCh, cOrderTag, aZabIsp, lNovi )
 
    LOCAL nI
    LOCAL j
@@ -536,13 +536,13 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
       GO ( nPrevRecNo )
    ENDIF
 
-   IF Ch == K_CTRL_N
+   IF nCh == K_CTRL_N
       lNovi := .T.
       GO BOTTOM
       SKIP 1
    ENDIF
 
-   IF Ch == K_F4
+   IF nCh == K_F4
       lNovi := .T.
    ENDIF
 
@@ -550,7 +550,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
       set_sif_vars()
 
-      IF Ch == K_CTRL_N
+      IF nCh == K_CTRL_N
          sifarnik_set_roba_defaults()
       ENDIF
 
@@ -641,7 +641,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
       BoxC()
 
 
-      IF Ch != K_CTRL_A
+      IF nCh != K_CTRL_A
          EXIT
       ENDIF
 
@@ -667,7 +667,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
    ENDDO
 
-   IF Ch == K_CTRL_N .OR. Ch == K_F2
+   IF nCh == K_CTRL_N .OR. nCh == K_F2
       ordSetFocus( cOrderTag )
    ENDIF
 
@@ -680,7 +680,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
    snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
-   IF Ch == K_F4 .AND. Pitanje( , "Vratiti se na predhodni zapis (D/N) ?", "D" ) == "D"
+   IF nCh == K_F4 .AND. Pitanje( , "Vratiti se na predhodni zapis (D/N) ?", "D" ) == "D"
       GO ( nPrevRecNo )
    ENDIF
 
@@ -810,33 +810,34 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
 
 
 
-STATIC FUNCTION set_w_var( ImeKol, nI, show_grup )
+STATIC FUNCTION set_w_var( aImeKol, nI, lShowGrupa )
 
-   LOCAL _tmp, _var_name
+   LOCAL _tmp, cVariableName
 
-   IF Left( ImeKol[ nI, 3 ], 6 ) != "SIFK->"
+   IF Left( aImeKol[ nI, 3 ], 6 ) != "SIFK->"
 
-      _var_name := "w" + ImeKol[ nI, 3 ]
+      cVariableName := "w" + aImeKol[ nI, 3 ]
 
    ELSE
-      IF Alias() == "PARTN" .AND. Right( ImeKol[ nI, 3 ], 4 ) == "GRUP"
-         show_grup := .T.
+
+      IF Alias() == "PARTN" .AND. Right( aImeKol[ nI, 3 ], 4 ) == "GRUP"
+         lShowGrupa := .T.
       ENDIF
 
-      _var_name := "wSifk_" + SubStr( ImeKol[ nI, 3 ], 7 )
+      cVariableName := "wSifk_" + SubStr( aImeKol[ nI, 3 ], 7 )
 
-      _tmp := IzSifk( Alias(), SubStr( ImeKol[ nI, 3 ], 7 ) )
+      _tmp := IzSifk( Alias(), SubStr( aImeKol[ nI, 3 ], 7 ) )
 
       IF _tmp == NIL
-         _var_name := ""
+         cVariableName := ""
       ELSE
-         __mvPublic( _var_name )
-         Eval( MemVarBlock( _var_name ), _tmp )
+         __mvPublic( cVariableName )
+         Eval( MemVarBlock( cVariableName ), _tmp )
       ENDIF
 
    ENDIF
 
-   RETURN _var_name
+   RETURN cVariableName
 
 
 

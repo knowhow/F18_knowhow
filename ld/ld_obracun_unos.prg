@@ -640,7 +640,8 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
 
 /*
-   set_sati_tp( "18", "_S05")
+   Zadatak: zelimo sabrati sate iz 01, 02 tipova primanja i staviti u primanje "25"
+   Rjesenje: U formulu "24" (primanje ispred "24") dodajemo: .... + set_sati_tp( "25", "_S01+_S02")
 */
 FUNCTION set_sati_tp( cSatiTipPrimanja, cFormula )
 

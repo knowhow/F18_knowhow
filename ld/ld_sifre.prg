@@ -36,9 +36,9 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
    ENDIF
 
    PushWA()
-   O_RADN_NOT_USED
 
-
+   AltD()
+   select_o_radn()
    aktivni_radnici_filter( .T. ) // filterisanje tabele radnika
 
    ImeKol := {}
@@ -49,25 +49,25 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
    AAdd( ImeKol, { PadR( iif( gBodK == "1",  "Br.bodova",  "Koeficij." ), 10 ), {|| field->brbod }, "brbod" } )
    AAdd( ImeKol, { PadR( "MinR%", 5 ), {|| field->kminrad }, "kminrad" } )
 
-   IF RADN->( FieldPos( "KLO" ) ) <> 0
+   // IF RADN->( FieldPos( "KLO" ) ) <> 0
 
-      AAdd( ImeKol, { PadR( "Koef.l.odb.", 15 ), {|| field->klo }, "klo" } )
-      AAdd( ImeKol, { PadR( "Tip rada", 15 ), {|| field->tiprada }, "tiprada", ;
-         {|| .T. }, {|| wtiprada $ " #I#A#S#N#P#U#R" .OR. MsgTipRada() } } )
+   AAdd( ImeKol, { PadR( "Koef.l.odb.", 15 ), {|| field->klo }, "klo" } )
+   AAdd( ImeKol, { PadR( "Tip rada", 15 ), {|| field->tiprada }, "tiprada", ;
+      {|| .T. }, {|| wtiprada $ " #I#A#S#N#P#U#R" .OR. MsgTipRada() } } )
 
-      IF RADN->( FieldPos( "SP_KOEF" ) ) <> 0
-         AAdd( ImeKol, { PadR( "prop.koef", 15 ), {|| field->sp_koef }, "sp_koef" } )
-      ENDIF
-
-      IF RADN->( FieldPos( "OPOR" ) ) <> 0
-         AAdd( ImeKol, { PadR( "oporeziv", 15 ), {|| field->opor }, "opor" } )
-      ENDIF
-
-      IF RADN->( FieldPos( "TROSK" ) ) <> 0
-         AAdd( ImeKol, { _l( PadR( "koristi trosk.", 15 ) ), {|| field->trosk }, "trosk" } )
-      ENDIF
-
+   IF RADN->( FieldPos( "SP_KOEF" ) ) <> 0
+      AAdd( ImeKol, { PadR( "prop.koef", 15 ), {|| field->sp_koef }, "sp_koef" } )
    ENDIF
+
+   IF RADN->( FieldPos( "OPOR" ) ) <> 0
+      AAdd( ImeKol, { PadR( "oporeziv", 15 ), {|| field->opor }, "opor" } )
+   ENDIF
+
+   IF RADN->( FieldPos( "TROSK" ) ) <> 0
+      AAdd( ImeKol, { _l( PadR( "koristi trosk.", 15 ) ), {|| field->trosk }, "trosk" } )
+   ENDIF
+
+   // ENDIF
 
    AAdd( ImeKol, { _l( PadR( "StrSpr", 6 ) ), {|| PadC( field->Idstrspr, 6 ) }, "idstrspr", ;
       {|| .T. }, {|| P_StrSpr( @wIdStrSpr ) } } )
@@ -94,7 +94,7 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
    AAdd( ImeKol, { _l( PadR( "Br.Tekuceg rac.", 20 ) ), {|| PadC( field->brtekr, 20 ) }, "brtekr", {|| .T. }, {|| .T. } } )
 
    AAdd( ImeKol, { _l( PadR( "Isplata", 7 ) ), {|| PadC( field->isplata, 7 ) }, "isplata", {|| .T. }, {|| wIsplata $ "  #TR#SK#BL" .OR. MsgIspl() } } )
-   AAdd( ImeKol, { _l( PadR( "Banka", 6 ) ), {|| PadC( field->idbanka, 6 ) }, "idbanka", {|| .T. }, {|| Empty( WIDBANKA ) .OR. P_Kred( @widbanka ) } } )
+   AAdd( ImeKol, { _l( PadR( "Banka", 6 ) ), {|| PadC( field->idbanka, 6 ) }, "idbanka", {|| .T. }, {|| Empty( WIDBANKA ) .OR. P_Kred( @wIdbanka ) } } )
 
    AAdd( ImeKol, { _l( PadR( "OSN.Bol", 11 ) ), {|| field->osnbol }, "osnbol" } )
 
@@ -118,7 +118,6 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
       AAdd( ImeKol, { _l( PadC( "Zaposl.do", 12 ) ), {|| field->hiredto }, "hiredto" } )
    ENDIF
 
-
    IF radn->( FieldPos( "AKTIVAN" ) ) <> 0
       AAdd( ImeKol, { "Aktivan?", {|| field->aktivan }, "aktivan" } )
    ENDIF
@@ -137,7 +136,8 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
       cPom := "S" + AllTrim( Str( nI ) )
       nPom := Len( ImeKol )
       IF radn->( FieldPos( cPom ) <> 0 )
-         cPom2 := my_get_from_ini( "LD", "OpisRadn" + cPom, "KOEF_" + cPom, KUMPATH )
+         // cPom2 := my_get_from_ini( "LD", "OpisRadn" + cPom, "KOEF_" + cPom, KUMPATH )
+         cPom2 := "KOEF_" + cPom
          AAdd( ImeKol, { cPom + "(" + cPom2 + ")", {|| &cPom. }, cPom } )
       ENDIF
    NEXT
@@ -146,17 +146,15 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
       {|| .T. }, {|| Wvr_invalid == 0 .OR. valid_vrsta_invaliditeta( Wvr_invalid ) }, NIL,  "9" }
 
    AAdd( ImeKol,  aKol )
-
    aKol := { PadR( "st.invalid", 10 ), {|| Transform( field_num_nil( field->st_invalid ), "999" ) }, "st_invalid", ;
       {|| .T. }, {|| Wst_invalid >= 0 }, NIL, "999"  }
    AAdd( ImeKol,  aKol )
-
 
    FOR nI := 1 TO Len( ImeKol )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := p_sifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, {| Ch | RadBl( Ch ) },,,,, { "ID" } )
+   lRet := p_sifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, {| Ch | browse_edit_radnik( Ch ) },,,,, { "ID" } )
 
    PopWa( F_RADN )
 
@@ -247,7 +245,7 @@ STATIC FUNCTION p_pkartica( cIdRadn )
 // --------------------------------------------
 // radn. blok funkcije
 // --------------------------------------------
-FUNCTION RadBl( Ch )
+FUNCTION browse_edit_radnik( Ch )
 
    LOCAL nMjesec := gMjesec
    LOCAL _rec
@@ -279,7 +277,6 @@ FUNCTION RadBl( Ch )
 
       SELECT radn
       GO TOP
-
 
       run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "ld_radn" }, .T. )
@@ -333,8 +330,8 @@ FUNCTION RadBl( Ch )
 
    ELSEIF ( Ch == K_F2 )
 
-      seek_radkr_2( radn->id )
-      IF !Eof()
+
+      IF postoje_krediti_za_radnika( radn->id )
          RETURN 99
       ENDIF
 
@@ -404,6 +401,20 @@ FUNCTION RadBl( Ch )
    RETURN DE_CONT
 
 
+
+
+FUNCTION postoje_krediti_za_radnika( cIdRadn )
+
+   PushWa()
+   seek_radkr_2( radn->id )
+   IF !Eof()
+      PopWa()
+      RETURN .T.
+   ENDIF
+
+   PopWa()
+
+   RETURN .F.
 
 // ---------------------------------------------------------------
 // filter tabele radnika po pojedinim poljima
@@ -700,7 +711,7 @@ FUNCTION g_ops_code( cId )
    PushWa()
    o_ops()
    select_o_ops( cId )
-   IF !EOF()
+   IF !Eof()
       cRet := field->idj
    ENDIF
 
@@ -743,14 +754,14 @@ FUNCTION KrBlok( Ch )
 
    IF ( Ch == K_CTRL_T )
       seek_radkr_2( NIL, kred->id )
-      IF !EOF()
+      IF !Eof()
          Beep( 1 )
          Msg( "Firma se ne moze brisati jer je vec korištena u obračunu!" )
          RETURN 7
       ENDIF
    ELSEIF ( Ch == K_F2 )
       seek_radkr_2( NIL, kred->id )
-      IF !EOF()
+      IF !Eof()
          RETURN 99
       ENDIF
    ENDIF

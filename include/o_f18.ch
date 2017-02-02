@@ -210,8 +210,6 @@
 #xcommand O_R_KIF   => select(F_R_KIF);  my_usex  ("r_kif")
 #xcommand O_R_PDV   => select(F_R_PDV);  my_usex  ("r_pdv")
 
-// modul LD
-#xcommand O_RADN_NOT_USED  => select_o_radn()
 
 
 #xcommand O__RADN   => select (F__RADN)   ;  my_use ("_radn")

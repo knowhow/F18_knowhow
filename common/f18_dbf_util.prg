@@ -26,8 +26,8 @@ FUNCTION set_global_memvars_from_dbf( cPrefixVarijabla )
 
 FUNCTION get_hash_record_from_global_vars( cPrefixVarijabla, lReleaseVarFromMemory, lUtf )
 
-   LOCAL _ime_polja, nI, _struct
-   LOCAL _ret := hb_Hash()
+   LOCAL cImePolja, nI, aDbStruct
+   LOCAL hRet := hb_Hash(), bMemvarBlock
 
    IF cPrefixVarijabla == nil
       cPrefixVarijabla := "_"
@@ -42,31 +42,38 @@ FUNCTION get_hash_record_from_global_vars( cPrefixVarijabla, lReleaseVarFromMemo
       lUtf := .F.
    ENDIF
 
-   _struct := dbStruct()
+   aDbStruct := dbStruct()
 
-   FOR nI := 1 TO Len( _struct )
+   FOR nI := 1 TO Len( aDbStruct )
 
-      _ime_polja := _struct[ nI, 1 ]
+      cImePolja := aDbStruct[ nI, 1 ]
 
-      IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
+      IF !( "#" + cImePolja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
 
          // punimo hash matricu sa vrijednostima public varijabli
-         // _ret["idfirma"] := wIdFirma, za cPrefixVarijabla = "w"
-         _ret[ Lower( _ime_polja ) ] := Eval( MemVarBlock( cPrefixVarijabla + _ime_polja ) )
+         // hRet[ "idfirma" ] := wIdFirma, za cPrefixVarijabla = "w"
+         bMemvarBlock := MemVarBlock( cPrefixVarijabla + cImePolja )
 
-         IF ( ValType( _ret[ Lower( _ime_polja ) ] ) == "C" ) .AND.  lUtf
-            _ret[ Lower( _ime_polja ) ] := hb_StrToUTF8 ( _ret[ Lower( _ime_polja ) ]  )
+         IF ValType( bMemvarBlock ) != "B"
+            error_bar( "memvar", "memver to array error prefix/field " + cPrefixVarijabla + " / " + cImePolja )
+            LOOP
+         ENDIF
+
+         hRet[ Lower( cImePolja ) ] := Eval( bMemvarBlock )
+
+         IF ( ValType( hRet[ Lower( cImePolja ) ] ) == "C" ) .AND.  lUtf
+            hRet[ Lower( cImePolja ) ] := hb_StrToUTF8 ( hRet[ Lower( cImePolja ) ]  )
          ENDIF
 
          IF lReleaseVarFromMemory // oslobadja public ili private varijablu
-            __mvXRelease( cPrefixVarijabla + _ime_polja )
+            __mvXRelease( cPrefixVarijabla + cImePolja )
          ENDIF
 
       ENDIF
 
    NEXT
 
-   RETURN _ret
+   RETURN hRet
 
 
 

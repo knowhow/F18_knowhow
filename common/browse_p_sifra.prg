@@ -332,7 +332,7 @@ FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
 
 STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
-   LOCAL i
+   LOCAL nI
    LOCAL j
    LOCAL imin
    LOCAL imax
@@ -364,8 +364,8 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )
-   FOR i := 1 TO Len( aStruct )
-      cImeP := aStruct[ i, 1 ]
+   FOR nI := 1 TO Len( aStruct )
+      cImeP := aStruct[ nI, 1 ]
       cVar := "w" + cImeP
       PRIVATE &cVar := &cImeP
    NEXT
@@ -496,7 +496,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
 STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
-   LOCAL i
+   LOCAL nI
    LOCAL j
    LOCAL _alias
    LOCAL nForJg
@@ -524,7 +524,6 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
    PRIVATE aStruct
 
    nPrevRecNo := RecNo()
-
    cTekuciZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
 
 #ifdef F18_USE_MATCH_CODE
@@ -557,13 +556,14 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
       nTrebaredova := Len( ImeKol )
 
-      FOR i := 1 TO Len( ImeKol )
-         IF Len( ImeKol[ i ] ) >= 10 .AND. Imekol[ i, 10 ] <> NIL
+      FOR nI := 1 TO Len( ImeKol )
+         IF Len( ImeKol[ nI ] ) >= 10 .AND. Imekol[ nI, 10 ] <> NIL
             nTrebaRedova--
          ENDIF
       NEXT
 
-      i := 1
+
+      nI := 1
       FOR nForJg := 1 TO 3
 
          IF nForJg == 1
@@ -573,6 +573,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
          ENDIF
 
          SET CURSOR ON
+
          PRIVATE Getlist := {}
 
          nGet := 1
@@ -585,36 +586,36 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
             lShowPGroup := .F.
 
-            IF Empty( ImeKol[ i, 3 ] )
+            IF Empty( ImeKol[ nI, 3 ] )
                cPom := ""
             ELSE
-               cPom := set_w_var( ImeKol, i, @lShowPGroup )
+               cPom := set_w_var( ImeKol, nI, @lShowPGroup )
             ENDIF
 
             cPic := ""
 
             IF !Empty( cPom )
-               sif_sql_getlist( cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @i, @nTekRed )
+               sif_sql_getlist( cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @nI, @nTekRed )
                nGet++
             ELSE
                nRed := 1
                nKolona := 1
-               IF Len( ImeKol[ i ] ) >= 10 .AND. Imekol[ i, 10 ] <> NIL
-                  nKolona := ImeKol[ i, 10 ]
+               IF Len( ImeKol[ nI ] ) >= 10 .AND. Imekol[ nI, 10 ] <> NIL
+                  nKolona := ImeKol[ nI, 10 ]
                   nRed := 0
                ENDIF
 
                IF nKolona == 1
                   ++nTekRed
                ENDIF
-               @ m_x + nTekRed, m_y + nKolona SAY8 PadL( AllTrim( ImeKol[ i, 1 ] ), 15 )
-               @ m_x + nTekRed, Col() + 1 SAY Eval( ImeKol[ i, 2 ] )
+               @ m_x + nTekRed, m_y + nKolona SAY8 PadL( AllTrim( ImeKol[ nI, 1 ] ), 15 )
+               @ m_x + nTekRed, Col() + 1 SAY Eval( ImeKol[ nI, 2 ] )
 
             ENDIF
 
-            i++
+            nI++
 
-            IF ( Len( ImeKol ) < i ) .OR. ( nTekRed > Min( MAXROWS() - 7, nTrebaRedova ) .AND. !( Len( ImeKol[ i ] ) >= 10 .AND. ImeKol[ i, 10 ] <> NIL )  )
+            IF ( Len( ImeKol ) < nI ) .OR. ( nTekRed > Min( MAXROWS() - 7, nTrebaRedova ) .AND. !( Len( ImeKol[ nI ] ) >= 10 .AND. ImeKol[ nI, 10 ] <> NIL )  )
                EXIT
             ENDIF
 
@@ -626,11 +627,12 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
          READ
 
+
          SET KEY K_F8 TO
          SET KEY K_F9 TO
          SET KEY K_F5 TO
 
-         IF ( Len( imeKol ) < i )
+         IF ( Len( imeKol ) < nI )
             EXIT
          ENDIF
 
@@ -638,29 +640,29 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
       BoxC()
 
-      IF Ch <> K_CTRL_A
+
+      IF Ch != K_CTRL_A
          EXIT
+      ENDIF
+
+      // slijedi sekcija koja se odnosi na ispravku vise stavki
+      IF LastKey() == K_ESC
+         EXIT
+      ENDIF
+
+      IF !snimi_promjene_cirkularne_ispravke_sifarnika()
+         EXIT
+      ENDIF
+
+      IF LastKey() == K_PGUP
+         SKIP -1
       ELSE
+         SKIP
+      ENDIF
 
-         IF LastKey() == K_ESC
-            EXIT
-         ENDIF
-
-         IF !snimi_promjene_cirkularne_ispravke_sifarnika()
-            EXIT
-         ENDIF
-
-         IF LastKey() == K_PGUP
-            SKIP -1
-         ELSE
-            SKIP
-         ENDIF
-
-         IF Eof()
-            SKIP -1
-            EXIT
-         ENDIF
-
+      IF Eof()
+         SKIP -1
+         EXIT
       ENDIF
 
    ENDDO
@@ -669,7 +671,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
       ordSetFocus( cOrderTag )
    ENDIF
 
-   IF LastKey() == K_ESC
+   IF LastKey() == K_ESC // prekid operacije
       IF lNovi
          GO ( nPrevRecNo )
       ENDIF
@@ -678,7 +680,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
    snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
-   IF Ch == K_F4 .AND. Pitanje( , "Vrati se na predhodni zapis (D/N) ?", "D" ) == "D"
+   IF Ch == K_F4 .AND. Pitanje( , "Vratiti se na predhodni zapis (D/N) ?", "D" ) == "D"
       GO ( nPrevRecNo )
    ENDIF
 
@@ -838,7 +840,7 @@ STATIC FUNCTION set_w_var( ImeKol, nI, show_grup )
 
 
 
-FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, i, nTekRed )
+FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, nI, nTekRed )
 
    LOCAL bWhen, bValid, cPic
    LOCAL nRed, nKolona
@@ -848,18 +850,18 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
    LOCAL tmpRec
 
    // uzmi when, valid kodne blokove
-   IF ( Ch == K_F2 .AND. lZabIsp .AND. AScan( aZabIsp, Upper( ImeKol[ i, 3 ] ) ) > 0 )
+   IF ( Ch == K_F2 .AND. lZabIsp .AND. AScan( aZabIsp, Upper( ImeKol[ nI, 3 ] ) ) > 0 )
       bWhen := {|| .F. }
-   ELSEIF ( Len( ImeKol[ i ] ) < 4 .OR. ImeKol[ i, 4 ] == NIL )
+   ELSEIF ( Len( ImeKol[ nI ] ) < 4 .OR. ImeKol[ nI, 4 ] == NIL )
       bWhen := {|| .T. }
    ELSE
-      bWhen := Imekol[ i, 4 ]
+      bWhen := Imekol[ nI, 4 ]
    ENDIF
 
-   IF ( Len( ImeKol[ i ] ) < 5 .OR. ImeKol[ i, 5 ] == NIL )
+   IF ( Len( ImeKol[ nI ] ) < 5 .OR. ImeKol[ nI, 5 ] == NIL )
       bValid := {|| .T. }
    ELSE
-      bValid := Imekol[ i, 5 ]
+      bValid := Imekol[ nI, 5 ]
    ENDIF
 
    _m_block := MemVarBlock( cVariableName )
@@ -872,8 +874,8 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
       cPic := "@S50"
       @ m_x + nTekRed + 1, m_y + 67 SAY Chr( 16 )
 
-   ELSEIF Len( ImeKol[ i ] ) >= 7 .AND. ImeKol[ i, 7 ] <> NIL
-      cPic := ImeKol[ i, 7 ]
+   ELSEIF Len( ImeKol[ nI ] ) >= 7 .AND. ImeKol[ nI, 7 ] <> NIL
+      cPic := ImeKol[ nI, 7 ]
    ELSE
       cPic := ""
    ENDIF
@@ -881,8 +883,8 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
    nRed := 1
    nKolona := 1
 
-   IF Len( ImeKol[ i ] ) >= 10 .AND. Imekol[ i, 10 ] <> NIL
-      nKolona := ImeKol[ i, 10 ] + 1
+   IF Len( ImeKol[ nI ] ) >= 10 .AND. Imekol[ nI, 10 ] <> NIL
+      nKolona := ImeKol[ nI, 10 ] + 1
       nRed := 0
    ENDIF
 
@@ -920,13 +922,13 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
       _valid_block := bValid
    ENDIF
 
-   @ m_x + nTekRed, m_y + nKolona SAY  iif( nKolona > 1, "  " + AllTrim( ImeKol[ i, 1 ] ), PadL( AllTrim( ImeKol[ i, 1 ] ), 15 ) )  + " "
+   @ m_x + nTekRed, m_y + nKolona SAY  iif( nKolona > 1, "  " + AllTrim( ImeKol[ nI, 1 ] ), PadL( AllTrim( ImeKol[ nI, 1 ] ), 15 ) )  + " "
 
    IF &cVariableName == NIL
       tmpRec = RecNo()
       GO BOTTOM
       SKIP
-      &cVariableName := Eval( ImeKol[ i, 2 ] )
+      &cVariableName := Eval( ImeKol[ nI, 2 ] )
       GO tmpRec
    ENDIF
 
@@ -969,17 +971,17 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
 FUNCTION vrati_vrijednosti_polja_sifarnika_u_string( cMarker )
 
    LOCAL cRet := ""
-   LOCAL i
+   LOCAL nI
    LOCAL cFName
    LOCAL xFVal
    LOCAL cFVal
    LOCAL cType
 
-   FOR i := 1 TO FCount()
+   FOR nI := 1 TO FCount()
 
-      cFName := AllTrim( Field( i ) )
+      cFName := AllTrim( Field( nI ) )
 
-      xFVal := FieldGet( i )
+      xFVal := FieldGet( nI )
 
       cType := ValType( xFVal )
 
@@ -1223,7 +1225,7 @@ FUNCTION is_sifra_postoji_u_sifarniku( hTekuciRec )
 
 STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
 
-   LOCAL cSqlFields, aDbfFields, i, aTmp
+   LOCAL cSqlFields, aDbfFields, nI, aTmp
    LOCAL cWhere := ""
    LOCAL cTmp := ""
 
@@ -1238,12 +1240,12 @@ STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
       RETURN cWhere
    ENDIF
 
-   FOR i := 1 TO Len( aDbfFields )
-      IF ValType( aDbfFields[ i ] ) == "A"
-         aTmp := aDbfFields[ i ]
+   FOR nI := 1 TO Len( aDbfFields )
+      IF ValType( aDbfFields[ nI ] ) == "A"
+         aTmp := aDbfFields[ nI ]
          cTmp += Str( hRec[ aTmp[ 1 ] ], aTmp[ 2 ], 0 )
       ELSE
-         cTmp += hRec[ aDbfFields[ i ] ]
+         cTmp += hRec[ aDbfFields[ nI ] ]
       ENDIF
    NEXT
 
@@ -1411,8 +1413,8 @@ FUNCTION UslovSif()
    ENDIF
 
    IF aDefSpremBaz != NIL .AND. !Empty( aDefSpremBaz )
-      FOR i := 1 TO Len( aDefSpremBaz )
-         aDefSpremBaz[ i, 4 ] := ""
+      FOR nI := 1 TO Len( aDefSpremBaz )
+         aDefSpremBaz[ nI, 4 ] := ""
       NEXT
    ENDIF
 
@@ -1427,28 +1429,28 @@ FUNCTION UslovSif()
    ENDIF
 #endif
 
-   FOR i := 1 TO Len( aStruct )
+   FOR nI := 1 TO Len( aStruct )
 
-      IF i == 23
+      IF nI == 23
          @ m_x + 1, m_y + 1 CLEAR TO m_x + 22, m_y + 67
       ENDIF
       AAdd( aQQ, Space( 100 ) )
       AAdd( aUsl, NIL )
-      @ m_x + IF( i > 22, i - 22, i ), m_y + 67 SAY Chr( 16 )
-      @ m_x + IF( i > 22, i - 22, i ), m_y + 1 SAY PadL( AllTrim( aStruct[ i, 1 ] ), 15 ) GET aQQ[ i ] PICTURE "@S50" ;
-         VALID {|| aUsl[ i ] := Parsiraj( aQQ[ i ] := _fix_usl( aQQ[ i ] ), aStruct[ i, 1 ], iif( aStruct[ i, 2 ] == "M", "C", aStruct[ i, 2 ] ) ), aUsl[ i ] <> NIL  }
+      @ m_x + IF( nI > 22, nI - 22, nI ), m_y + 67 SAY Chr( 16 )
+      @ m_x + IF( nI > 22, nI - 22, nI ), m_y + 1 SAY PadL( AllTrim( aStruct[ nI, 1 ] ), 15 ) GET aQQ[ nI ] PICTURE "@S50" ;
+         VALID {|| aUsl[ nI ] := Parsiraj( aQQ[ nI ] := _fix_usl( aQQ[ nI ] ), aStruct[ nI, 1 ], iif( aStruct[ nI, 2 ] == "M", "C", aStruct[ nI, 2 ] ) ), aUsl[ nI ] <> NIL  }
       READ
       IF LastKey() == K_ESC
          EXIT
       ELSE
-         IF aDefSpremBaz != NIL .AND. !Empty( aDefSpremBaz ) .AND. aUsl[ i ] <> NIL .AND. ;
-               aUsl[ i ] <> ".t."
+         IF aDefSpremBaz != NIL .AND. !Empty( aDefSpremBaz ) .AND. aUsl[ nI ] <> NIL .AND. ;
+               aUsl[ nI ] <> ".t."
             FOR j := 1 TO Len( aDefSpremBaz )
-               IF Upper( aDefSpremBaz[ j, 2 ] ) == Upper( aStruct[ i, 1 ] )
+               IF Upper( aDefSpremBaz[ j, 2 ] ) == Upper( aStruct[ nI, 1 ] )
                   aDefSpremBaz[ j, 4 ] := aDefSpremBaz[ j, 4 ] + ;
                      IF( !Empty( aDefSpremBaz[ j, 4 ] ), ".and.", "" ) + ;
-                     IF( Upper( aDefSpremBaz[ j, 2 ] ) == Upper( aDefSpremBaz[ j, 3 ] ), aUsl[ i ], ;
-                     Parsiraj( aQQ[ i ] := _fix_usl( aQQ[ i ] ), aDefSpremBaz[ j, 3 ], iif( aStruct[ i, 2 ] == "M", "C", aStruct[ i, 2 ] ) ) )
+                     IF( Upper( aDefSpremBaz[ j, 2 ] ) == Upper( aDefSpremBaz[ j, 3 ] ), aUsl[ nI ], ;
+                     Parsiraj( aQQ[ nI ] := _fix_usl( aQQ[ nI ] ), aDefSpremBaz[ j, 3 ], iif( aStruct[ nI, 2 ] == "M", "C", aStruct[ nI, 2 ] ) ) )
                ENDIF
             NEXT
          ENDIF
@@ -1460,9 +1462,9 @@ FUNCTION UslovSif()
    aOKol := AClone( Kol )
 
    PRIVATE cFilter := ".t."
-   FOR i := 1 TO Len( aUsl )
-      IF ausl[ i ] <> NIL .AND. aUsl[ i ] <> ".t."
-         cFilter += ".and." + aUsl[ i ]
+   FOR nI := 1 TO Len( aUsl )
+      IF ausl[ nI ] <> NIL .AND. aUsl[ nI ] <> ".t."
+         cFilter += ".and." + aUsl[ nI ]
       ENDIF
    NEXT
    IF cFilter == ".t."
@@ -1610,7 +1612,7 @@ FUNCTION StIdROBA()
 FUNCTION n_num_sif()
 
    LOCAL cFilter := "val(id) <> 0"
-   LOCAL i
+   LOCAL nI
    LOCAL nLId
    LOCAL lCheck
    LOCAL lLoop
@@ -1646,12 +1648,12 @@ FUNCTION n_num_sif()
 
          lLoop := .F.
          // ispitaj prekid sifri
-         FOR i := 1 TO 10
+         FOR nI := 1 TO 10
 
             SKIP -1
 
             IF nLId = Val( field->id )
-               // ako je zadnja sifra ista kao i prethodna
+               // ako je zadnja sifra ista kao nI prethodna
                // idi na sljedecu
                // ili idi na zadnju sifru
                nTRec := nLast
@@ -1659,7 +1661,7 @@ FUNCTION n_num_sif()
                EXIT
             ENDIF
 
-            IF nLId - Val( field->id ) <> i
+            IF nLId - Val( field->id ) <> nI
                // ima prekid
                // idi, ponovo...
                nLID := Val( field->id )

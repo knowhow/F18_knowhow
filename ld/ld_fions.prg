@@ -905,7 +905,7 @@ FUNCTION TPImaPO( cTP )
 
    LOCAL lVrati := .F., nObl := Select()
 
-   SELECT TIPPR
+   //SELECT TIPPR
    PushWA()
 
    select_o_tippr( cTP )

@@ -34,7 +34,7 @@ FUNCTION seek_ld( cIdRj, xGodina, nMjesec, cObracun, cIdRadn, cTag )
          cSql += " WHERE "
          lWhere := .T.
       ENDIF
-      IF ValType( xGodina ) == "C"
+      IF ValType( xGodina ) == "N"
          cSql += "godina=" + Str( xGodina, 4, 0 )
       ELSE // array
          nGodinaOd := xGodina[ 1 ]

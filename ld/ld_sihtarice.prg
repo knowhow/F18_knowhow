@@ -181,7 +181,7 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
       nVar := 0
    ENDIF
 
-   sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
+   open_sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
 
    // HACK: 2i index ld_rasiht ne valja
    // IF nVar > 0
@@ -248,11 +248,9 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
 
 
 
-   o_radsiht()
-
-
-   GO TOP
-   SET FILTER TO
+   //o_radsiht()
+   //GO TOP
+   //SET FILTER TO
 
    SELECT ( nTArea )
 
@@ -292,7 +290,7 @@ FUNCTION get_siht2()
       RETURN .F.
    ENDIF
 
-   sort_siht( nGodina, nMjesec, cIdRadn, cGroup )
+   open_sort_siht( nGodina, nMjesec, cIdRadn, cGroup )
    SET ORDER TO TAG "4"
    // "4","idradn+str(godina)+str(mjesec)+idkonto"
    GO TOP
@@ -375,21 +373,17 @@ FUNCTION get_siht2()
    FF
    ENDPRINT
 
-   o_radsiht()
-
-
-   GO TOP
-   SET FILTER TO
+   //o_radsiht()
+   //GO TOP
+   //SET FILTER TO
 
    SELECT ( nTArea )
 
    RETURN .T.
 
 
-// ------------------------------------------------------------
-// sortiranje sihtarice
-// ------------------------------------------------------------
-FUNCTION sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
+
+FUNCTION open_sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
 
    LOCAL cFilter
 
@@ -397,9 +391,12 @@ FUNCTION sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
       nVar := 0
    ENDIF
 
-   cFilter := "godina =" + Str( nGodina )
-   cFilter += " .and. mjesec = " + Str( nMjesec )
-   cFilter += " .and. dandio == 'G' "
+
+   o_radsiht( nGodina, nMjesec, cIdRadn )
+
+   //cFilter := "godina =" + Str( nGodina )
+   //cFilter += " .and. mjesec = " + Str( nMjesec )
+   cFilter := "dandio == 'G' "
 
    IF !Empty( cIdRadn )
       cFilter += " .and. idradn == " + dbf_quote( cIdRadn )
@@ -409,8 +406,6 @@ FUNCTION sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
       cFilter += " .and. idkonto == " + dbf_quote( cGroup )
    ENDIF
 
-
-   o_radsiht()
 
    SET FILTER TO &cFilter
    SET ORDER TO TAG "2"
@@ -441,7 +436,7 @@ FUNCTION del_siht()
       RETURN .F.
    ENDIF
 
-   sort_siht( nGodina, nMjesec, cIdRadn, cGroup )
+   open_sort_siht( nGodina, nMjesec, cIdRadn, cGroup )
 
    IF Pitanje(, "Pobrisati zapise sa ovim kriterijem (D/N)", "N" ) == "N"
       RETURN .F.

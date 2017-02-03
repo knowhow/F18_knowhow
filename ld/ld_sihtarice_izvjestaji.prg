@@ -220,7 +220,7 @@ STATIC FUNCTION _gen_rpt( nGod_od, nMj_od, cRadnik, cGroup, aObr )
    SELECT radsiht
 
    // sortiraj sihtarice
-   sort_siht( nGod_od, nMj_od, cRadnik, cGroup )
+   open_sort_siht( nGod_od, nMj_od, cRadnik, cGroup )
    SET ORDER TO TAG "1"
    GO TOP
 

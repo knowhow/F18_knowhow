@@ -81,29 +81,64 @@ FUNCTION o_radsat( cId )
    RETURN .T.
 
 
-FUNCTION select_o_radsat( cId )
+FUNCTION select_o_radsat( nGodina, nMjesec, cIdRadn )
 
    SELECT ( F_RADSAT )
    IF Used()
-      IF RecCount() > 1 .AND. cId == NIL
+      IF RecCount() > 1 .AND. nGodina == NIL
          RETURN .T.
       ELSE
          USE
       ENDIF
    ENDIF
 
-   RETURN o_radsat( cId )
+   RETURN o_radsat( nGodina, nMjesec, cIdRadn )
 
 
 
-FUNCTION o_radsiht( cId )
+FUNCTION o_radsiht( nGodina, nMjesec, cIdRadn )
 
-   LOCAL cAlias := "RADSIHT"
-   LOCAL cSql
+   LOCAL cAlias := "RADSIHT", cTable := "ld_radsiht"
+   LOCAL cSql, lWhere := .F.
 
    SELECT ( F_RADSIHT )
 
-   cSql := "select * from fmk.radsiht"
+   cSql := "select * from fmk." + cTable
+
+
+   IF nGodina != NIL
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "godina=" + Str( nGodina, 4, 0 )
+   ENDIF
+
+
+   IF nMjesec != NIL
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "mjesec=" + Str( nMjesec, 2, 0 )
+   ENDIF
+
+
+   IF cIdRadn != NIL .AND. !Empty( cIdRadn )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "idradn=" + sql_quote( cIdRadn )
+   ENDIF
+
+   use_sql( cTable, cSql, cAlias )
 
    INDEX ON Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + idradn + idrj + Str( dan ) + dandio + idtippr TAG "1" TO ( cAlias )
    INDEX ON idkonto + Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + idradn TAG "2" TO ( cAlias )
@@ -111,12 +146,8 @@ FUNCTION o_radsiht( cId )
    INDEX ON idradn + Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + idkonto TAG "4" TO ( cAlias )
 
    SET ORDER TO TAG "1"
+   GO TOP
 
-   IF cId != NIL
-      SEEK cId
-   ELSE
-      GO TOP
-   ENDIF
 
    RETURN .T.
 

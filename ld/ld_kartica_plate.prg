@@ -218,7 +218,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       ELSEIF cRTRada == "P"
          ld_kartica_plate_upravni_odbor( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, @aNeta )
       ELSE
-         ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, @aNeta )
+         ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, @aNeta )
       ENDIF
 
       nT1 += _usati

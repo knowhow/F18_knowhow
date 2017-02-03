@@ -16,7 +16,7 @@ THREAD STATIC DUZ_STRANA := 70
 THREAD STATIC __radni_sati := "N"
 
 
-FUNCTION ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta )
+FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta )
 
    LOCAL nKRedova
    LOCAL cDoprSpace := Space( 3 )
@@ -292,7 +292,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac,
       ?
    ENDIF
 
-   IF gSihtGroup == "D"
+   IF gSihtarica == "D"
       nTmp := get_siht( .T., nGodina, nMjesec, ld->idradn, "" )
       IF ld->usati < nTmp
          ?U "Greška: sati po šihtarici veći od uk.sati plaće !"

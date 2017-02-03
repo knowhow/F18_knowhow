@@ -23,7 +23,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    LOCAL cTprLine
    LOCAL cDoprLine
    LOCAL cMainLine
-   LOCAL _radni_sati := fetch_metric( "ld_radni_sati", nil, "N" )
+   LOCAL _radni_sati := fetch_metric( "ld_radni_sati", NIL, "N" )
    LOCAL _a_benef := {}
    LOCAL lFoundTippr
 
@@ -68,9 +68,8 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
 
-      SELECT tippr
-      SEEK cPom
-      lFoundTippr := FOUND()
+      select_o_tippr( cPom )
+      lFoundTippr := Found()
 
       IF tippr->uneto == "N" .AND. cUneto == "D"
 
@@ -237,7 +236,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                   aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
                   ? cLMSK + " ", idkred, Left( kred->naz, 22 ), PadR( naosnovu, 20 )
                   @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] PICT "999999.99" // ukupno
-                  @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] -aIznosi[ 2 ] PICT "999999.99"// ukupno-placeno
+                  @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] - aIznosi[ 2 ] PICT "999999.99"// ukupno-placeno
                   @ PRow(), PCol() + 1 SAY iznos PICT "9999.99"
                   ukredita += iznos
                   SKIP 1
@@ -419,7 +418,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                nUkDoprIz += nPom
             ENDIF
          ELSE
-            nPom0 := AScan( _a_benef, {| x| x[ 1 ] == idkbenef } )
+            nPom0 := AScan( _a_benef, {| x | x[ 1 ] == idkbenef } )
             IF nPom0 <> 0
                nPom2 := _a_benef[ nPom0, 3 ]
             ELSE

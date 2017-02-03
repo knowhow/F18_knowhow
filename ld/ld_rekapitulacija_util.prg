@@ -1183,7 +1183,7 @@ FUNCTION ProizvTP()
 
    // proizvoljni redovi pocinju sa "9"
 
-   SELECT tippr
+   select_o_tippr()
    SEEK "9"
 
    DO WHILE !Eof() .AND. Left( id, 1 ) = "9"

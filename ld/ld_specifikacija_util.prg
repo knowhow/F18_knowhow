@@ -188,7 +188,8 @@ FUNCTION ld_specifikacija_po_mjesecima()
          FOR i := 1 TO cLDPolja
             cSTP := PadL( AllTrim( Str( i ) ), 2, "0" )
             IF cSvaPrim != "S" .AND. !( cSTP $ qqOstPrim )
-               SELECT TIPPR; HSEEK cSTP; SELECT MTEMP
+               select_o_tippr( cSTP )
+               SELECT MTEMP
                IF cSvaPrim == "N" .AND. TIPPR->uneto == "N" .OR. ;
                      cSvaPrim == "V" .AND. TIPPR->uneto == "D" .OR. ;
                      cSvaPrim == "0"
@@ -233,7 +234,8 @@ FUNCTION ld_specifikacija_po_mjesecima()
       cNPPI := "I" + cSTP
       cNPPS := "S" + cSTP
 
-      SELECT TIPPR; HSEEK cSTP; cAktivno := aktivan
+      select_o_tippr( cSTP )
+      cAktivno := aktivan
       SELECT LD
 
       IF FieldPos( cNPPI ) > 0
@@ -349,7 +351,8 @@ STATIC FUNCTION FFor3()
          cSTP := PadL( AllTrim( Str( i ) ), 2, "0" )
          cNPPI := "I" + cSTP
          cNPPS := "S" + cSTP
-         SELECT TIPPR; HSEEK cSTP; cAktivno := aktivan
+         select_o_tippr( cSTP )
+         cAktivno := aktivan
          SELECT ( nArr )
          nFPosI := FieldPos( cNPPI )
          nFPosS := FieldPos( cNPPS )

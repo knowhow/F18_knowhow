@@ -88,7 +88,7 @@ FUNCTION ld_specifikacija_po_rj()
    aPrim  := {}       // standardna primanja
    aPrimK := {}       // primanja kao npr. krediti
 
-   SELECT tippr
+   select_o_tippr()
 
    FOR i := 1 TO cLDPolja
       cIDPRIM := PadL( AllTrim( Str( i ) ), 2, "0" )

@@ -52,8 +52,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
 
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
 
-      SELECT tippr
-      SEEK cPom
+      select_o_tippr( cPom )
 
       IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
          // uzmi osnovice

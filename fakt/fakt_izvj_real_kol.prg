@@ -245,8 +245,9 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       DO WHILE !Eof() .AND. IdFirma = cIdFirma
 
          IF cDDokOtpr == "O"
-            SELECT fakt_doks
-            SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+
+            find_fakt_dokument( fakt->IdFirma, fakt->idtipdok, fakt->brdok )
+
             IF fakt_doks->dat_otpr < dDatOd .OR. fakt_doks->dat_otpr > dDatDo
                SELECT fakt
                SKIP
@@ -256,8 +257,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          ENDIF
 
          IF cDDokOtpr == "V"
-            SELECT fakt_doks
-            SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+
+            find_fakt_dokument( fakt->IdFirma, fakt->idtipdok, fakt->brdok )
             IF fakt_doks->dat_val < dDatOd .OR. fakt_doks->dat_val > dDatDo
                SELECT fakt
                SKIP
@@ -366,10 +367,9 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          cIdRoba := IdRoba
 
          IF cDDokOtpr == "O"
-            SELECT fakt_doks
-            SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+            find_fakt_dokument( fakt->IdFirma, fakt->idtipdok, fakt->brdok )
+            select fakt
             IF fakt_doks->dat_otpr < dDatOd .OR. fakt_doks->dat_otpr > dDatDo
-               SELECT fakt
                SKIP
                LOOP
             ENDIF
@@ -377,10 +377,9 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          ENDIF
 
          IF cDDokOtpr == "V"
-            SELECT fakt_doks
-            SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+            find_fakt_dokument( fakt->IdFirma, fakt->idtipdok, fakt->brdok )
+            select fakt
             IF fakt_doks->dat_val < dDatOd .OR. fakt_doks->dat_val > dDatDo
-               SELECT fakt
                SKIP
                LOOP
             ENDIF

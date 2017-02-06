@@ -123,7 +123,7 @@ STATIC FUNCTION _seek_pripr_dok( idfirma, idtipdok, brdok )
    SELECT fakt_pripr
    SET ORDER TO TAG "1"
    GO TOP
-   SEEK idfirma + idtipdok + brdok
+   SEEK idfirma + idtipdok + brdok // fakt_pripr
 
    IF Found()
       _ret := .T.

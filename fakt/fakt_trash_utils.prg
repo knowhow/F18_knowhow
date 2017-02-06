@@ -167,7 +167,7 @@ FUNCTION bris_smece( cIdF, cIdTipDok, cBrDok )
    ENDIF
 
    SELECT fakt_pripr9
-   SEEK cIdF + cIdTipDok + cBrDok
+   SEEK cIdF + cIdTipDok + cBrDok  // fakt_pripr9
    my_flock()
    DO WHILE !Eof() .AND. cIdF == IdFirma .AND. cIdTipDok == Idtipdok .AND. cBrDok == BrDok
       SKIP 1
@@ -234,7 +234,7 @@ FUNCTION azuriraj_smece( lSilent )
       ENDDO
 
       SELECT fakt_pripr9
-      SEEK cIdFirma + cIdtipdok + cBrDok
+      SEEK cIdFirma + cIdtipdok + cBrDok // fakt_pripr9
 
       IF Found()
          // ima vec u smecu !
@@ -346,7 +346,7 @@ FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
 
    SELECT fakt_pripr9
 
-   HSEEK cIdFirma + cIdtipdok + cBrDok
+   HSEEK cIdFirma + cIdtipdok + cBrDok // fakt_pripr9
 
    MsgO( "PRIPREMA" )
 
@@ -362,7 +362,7 @@ FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
    ENDDO
 
    SELECT fakt_pripr9
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   SEEK cIdFirma + cIdTipDok + cBrDok // fakt pripr9
    my_flock()
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdtipdok == Idtipdok .AND. cBrDok == BrDok
       SKIP 1

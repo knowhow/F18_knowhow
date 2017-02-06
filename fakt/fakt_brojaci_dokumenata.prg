@@ -186,13 +186,13 @@ FUNCTION fakt_brdok_numdio()
 // ------------------------------------------------------------
 // resetuje brojač dokumenta ako smo pobrisali dokument
 // ------------------------------------------------------------
-FUNCTION fakt_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta )
+FUNCTION fakt_reset_broj_dokumenta( cIdFirma, cIdTipDok, broj_dokumenta )
 
    LOCAL _param
    LOCAL _broj := 0
 
    // param: fakt/10/10
-   _param := "fakt" + "/" + firma + "/" + tip_dokumenta
+   _param := "fakt" + "/" + cIdFirma + "/" + cIdTipDok
    _broj := fetch_metric( _param, nil, _broj )
 
    IF Val( PadR( broj_dokumenta, fakt_brdok_numdio() ) ) == _broj
@@ -216,7 +216,7 @@ FUNCTION fakt_prazan_broj_dokumenta()
 // ------------------------------------------------------------------
 // fakt, uzimanje novog broja za fakt dokument
 // ------------------------------------------------------------------
-FUNCTION fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
+FUNCTION fakt_novi_broj_dokumenta( cIdFirma, cIdTipDok, sufiks )
 
    LOCAL _broj := 0
    LOCAL _broj_doks := 0
@@ -231,17 +231,19 @@ FUNCTION fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
    ENDIF
 
    // param: fakt/10/10
-   _param := "fakt" + "/" + firma + "/" + tip_dokumenta
+   _param := "fakt" + "/" + cIdFirma + "/" + cIdTipDok
    _broj := fetch_metric( _param, nil, _broj )
 
    // konsultuj i doks uporedo
-   o_fakt_doks()
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK firma + tip_dokumenta + "Ž"
-   SKIP -1
+   seek_fakt_doks( cIdFirma, cIdTipDok )
+   //o_fakt_doks()
+   //SET ORDER TO TAG "1"
+   //GO TOP
+   //SEEK cIdFirma + cIdTipDok + "Ž"
+   //SKIP -1
+   GO BOTTOM
 
-   IF field->idfirma == firma .AND. field->idtipdok == tip_dokumenta
+   IF field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok
       _broj_doks := Val( PadR( field->brdok, _num_dio ) )
    ELSE
       _broj_doks := 0

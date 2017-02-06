@@ -20,9 +20,10 @@ FUNCTION o_rj()
    SET ORDER TO TAG "ID"
 
    RETURN .T.
-   
 
 
+
+/*
 FUNCTION o_fakt()
    RETURN o_dbf_table( F_FAKT, "fakt", "1" )
 
@@ -45,6 +46,7 @@ FUNCTION select_fakt_doks()
 FUNCTION o_fakt_doks2()
 
    RETURN o_dbf_table( F_FAKT_DOKS2, "fakt_doks2", "1" )
+*/
 
 
 /*

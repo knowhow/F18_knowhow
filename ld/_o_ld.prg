@@ -201,16 +201,6 @@ FUNCTION select_o_dopr( cId )
 
 
 
-FUNCTION open_rekld()
-
-   RETURN o_dbf_table( F_REKLD, "rekld", "1" )
-
-
-FUNCTION select_o_rekld()
-
-   RETURN select_o_dbf( "REKLD", F_REKLD, "rekld", "1" )
-
-
 
 FUNCTION o_str_spr( cId )
 
@@ -451,3 +441,14 @@ FUNCTION o_ld_obracuni( cSeek )
    ENDIF
 
    RETURN .T.
+
+
+
+FUNCTION open_rekld()
+
+   RETURN o_dbf_table( F_REKLD, "rekld", "1" )
+
+
+FUNCTION select_o_rekld()
+
+   RETURN select_o_dbf( "REKLD", F_REKLD, "rekld", "1" )

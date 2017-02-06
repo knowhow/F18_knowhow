@@ -1555,9 +1555,7 @@ FUNCTION RabPor10()
 
    LOCAL nArr := Select()
 
-   SELECT FAKT
-   SET ORDER TO TAG "1"
-   SEEK _idfirma + "10" + Left( _brdok, gNumDio )
+   seek_fakt_fakt( _idfirma, "10", Left( _brdok, gNumDio ) )
 
    DO WHILE !Eof() .AND. ;
          _idfirma + "10" + Left( _brdok, gNumDio ) == idfirma + idtipdok + Left( brdok, gNumDio ) .AND. ;
@@ -1731,7 +1729,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    GO TOP
 
    // uzmi podatke sa izmjenjene stavke
-   SEEK _new_firma + _new_tipdok + _new_brdok
+   SEEK _new_firma + _new_tipdok + _new_brdok // fakt_pripr
 
    IF !Found()
       RETURN .F.
@@ -1741,7 +1739,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
 
    // zatim mi pronadji ostale stavke bivseg dokumenta
    GO TOP
-   SEEK _old_firma + _old_tipdok + _old_brdok
+   SEEK _old_firma + _old_tipdok + _old_brdok // fakt_pripr
 
    IF !Found()
       RETURN .F.

@@ -91,16 +91,16 @@ FUNCTION fakt_kartica()
       @ m_x + 1, m_y + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
       READ
       IF gNW $ "DR"
-         @ m_x + 2, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 2, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
 
       IF cBrza == "D"
          RPar( "c3", @qqRoba )
          qqRoba := PadR( qqRoba, 10 )
          IF fID_J
-            @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!" valid {|| P_Roba( @qqRoba ), qqRoba := roba->id_j, .T. }
+            @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!" VALID {|| P_Roba( @qqRoba ), qqRoba := roba->id_j, .T. }
          ELSE
             @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!" VALID P_Roba( @qqRoba )
          ENDIF
@@ -161,7 +161,7 @@ FUNCTION fakt_kartica()
          ENDIF
       ENDIF
 
-      IF IIF( cBrza == "N", aUsl1 <> NIL, .T. )
+      IF iif( cBrza == "N", aUsl1 <> NIL, .T. )
          EXIT
       ENDIF
 
@@ -216,7 +216,7 @@ FUNCTION fakt_kartica()
    IF cFilt1 == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilt1
+      SET FILTER TO &cFilt1
    ENDIF
 
    IF cBrza == "N"
@@ -302,13 +302,13 @@ FUNCTION fakt_kartica()
       IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
          _cijena := roba->vpc2
       ELSE
-         _cijena := if ( !Empty( cIdFirma ), fakt_mpc_iz_sifrarnika(), roba->vpc )
+         _cijena := IF ( !Empty( cIdFirma ), fakt_mpc_iz_sifrarnika(), roba->vpc )
       ENDIF
       IF gVarC == "4" // uporedo vidi i mpc
          _cijena2 := roba->mpc
       ENDIF
 
-      IF PRow() -dodatni_redovi_po_stranici() > 50; FF; ++nStrana; ENDIF
+      IF PRow() - dodatni_redovi_po_stranici() > 50; FF; ++nStrana; ENDIF
 
       ZaglKart( lPrviProlaz )
       lPrviProlaz := .F.
@@ -336,8 +336,14 @@ FUNCTION fakt_kartica()
             ENDIF
             IF !Empty( cidfirma ); IF idfirma <> cidfirma; skip; loop; end; END
             IF !Empty( qqPartn )
-               SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok )
-               SELECT fakt; IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
+
+
+               find_fakt_dokument( fakt->IdFirma, fakt->idtipdok, fakt->brdok  )
+               SELECT fakt
+               IF !( fakt_doks->partner = qqPartn )
+                  SKIP
+                  LOOP
+               ENDIF
             ENDIF
 
             IF !Empty( cIdRoba )
@@ -377,8 +383,9 @@ FUNCTION fakt_kartica()
          IF !Empty( cK2 ); IF ck2 <> K2; skip; loop; end; END // uslov ck2
 
          IF !Empty( qqPartn )
-            SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok )
-            SELECT fakt; IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
+            find_fakt_dokument( fakt->IdFirma, fakt->idtipdok , fakt->brdok )
+            SELECT fakt
+            IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
          ENDIF
 
          IF !Empty( cIdRoba )
@@ -402,13 +409,13 @@ FUNCTION fakt_kartica()
 
             IF cKolona != "N"
 
-               IF PRow() -dodatni_redovi_po_stranici() > 55; FF; ++nStrana; ZaglKart(); ENDIF
+               IF PRow() - dodatni_redovi_po_stranici() > 55; FF; ++nStrana; ZaglKart(); ENDIF
 
                ? Space( gnLMarg ); ?? Str( ++nRbr, 3 ) + ".   " + idfirma + "-" + idtipdok + "-" + brdok + Left( serbr, 1 ) + "  " + DToC( datdok )
 
                IF cPPartn == "D"
-                  SELECT fakt_doks
-                  HSEEK fakt->( IdFirma + idtipdok + brdok )
+
+                  find_fakt_dokument( fakt->IdFirma, fakt->idtipdok, fakt->brdok )
                   SELECT fakt
                   @ PRow(), PCol() + 1 SAY PadR( fakt_doks->Partner, 20 )
                ENDIF
@@ -419,7 +426,7 @@ FUNCTION fakt_kartica()
                IF cPPC == "D"
                   @ PRow(), PCol() + 1 SAY Cijena PICT picdem
                   @ PRow(), PCol() + 1 SAY Rabat  PICT "99.99"
-                  @ PRow(), PCol() + 1 SAY Cijena * ( 1 -Rabat / 100 ) PICT picdem
+                  @ PRow(), PCol() + 1 SAY Cijena * ( 1 - Rabat / 100 ) PICT picdem
                ENDIF
             ENDIF
 
@@ -445,7 +452,7 @@ FUNCTION fakt_kartica()
       ENDDO
       // GLAVNA DO-WHILE
 
-      IF PRow() -dodatni_redovi_po_stranici() > 55; FF; ++nStrana; ZaglKart(); ENDIF
+      IF PRow() - dodatni_redovi_po_stranici() > 55; FF; ++nStrana; ZaglKart(); ENDIF
 
       ? Space( gnLMarg ); ?? m
       ? Space( gnLMarg ) + "CIJENA:            " + Str( _cijena, 12, 3 )
@@ -456,7 +463,7 @@ FUNCTION fakt_kartica()
          ? Space( gnLMarg ) + "Rezervisano:       " + Str( nRezerv, 12, 3 )
          ? Space( gnLMarg ) + "Na reversu:        " + Str( nRevers, 12, 3 )
       ENDIF
-      ? Space( gnLMarg ) + PadR( "STANJE" + IF( cRR == "D", " (OSTALO):", ":" ), 19 ) + Str( nUl - ( nIzl + nRevers + nRezerv ),12, 3 )
+      ? Space( gnLMarg ) + PadR( "STANJE" + IF( cRR == "D", " (OSTALO):", ":" ), 19 ) + Str( nUl - ( nIzl + nRevers + nRezerv ), 12, 3 )
       ? Space( gnLMarg ) + "IZNOS:             " + Str( ( nUl - ( nIzl + nRevers + nRezerv ) ) * _cijena, 12, 3 )
       IF gVarC == "4"
          ? Space( gnLMarg ) + "IZNOS MPV:         " + Str( ( nUl - ( nIzl + nRevers + nRezerv ) ) * _cijena2, 12, 3 )

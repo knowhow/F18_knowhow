@@ -183,11 +183,7 @@ FUNCTION reklamni_rn_box( rekl_rn )
 
 STATIC FUNCTION idpartner_sa_fakt_dokumenta( idfirma, idtipdok, brdok )
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
-
-   SEEK idfirma + idtipdok + brdok
+   find_fakt_dokument( idfirma, idtipdok, brdok )
 
    cIdPartner := fakt_doks->idpartner
 
@@ -200,13 +196,6 @@ STATIC FUNCTION fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdo
    LOCAL nUkupno := 0
    LOCAL aIznosi, _data_total
    LOCAL cIdPartner := ""
-
-   select_o_roba()
-
-   SELECT ( F_TARIFA )
-   IF !Used()
-      o_tarifa()
-   ENDIF
 
    cIdPartner := idpartner_sa_fakt_dokumenta( idfirma, idtipdok, brdok )
    aIznosi := get_a_iznos( idfirma, idtipdok, brdok )
@@ -416,9 +405,7 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
    LOCAL _a_iznos := {}
    LOCAL _tar, cIdRoba, _scan
 
-   SELECT fakt
-   GO TOP
-   SEEK idfirma + idtipdok + brdok
+   seek_fakt_fakt( idfirma, idtipdok, brdok )
    DO WHILE !Eof() .AND. field->idfirma == idfirma .AND. field->idtipdok == idtipdok .AND. field->brdok == brdok
 
       cIdRoba := field->idroba
@@ -446,7 +433,7 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
          _tar := PadR( "PDV17", 6 )
       ENDIF
 
-      _scan := AScan( _a_iznos, {| var | VAR[ 1 ] == _tar } )
+      _scan := AScan( _a_iznos, {| VAR | VAR[ 1 ] == _tar } )
 
       IF _scan == 0
          AAdd( _a_iznos, { PadR( _tar, 6 ), _iznos } )
@@ -1286,12 +1273,9 @@ FUNCTION fisc_isjecak( cFirma, cTipDok, cBrDok )
    LOCAL nTArea   := Select()
    LOCAL nFisc_no := 0
 
-   SELECT fakt_doks
-   GO TOP
-   SEEK cFirma + cTipDok + cBrDok
+   find_fakt_dokument( cFirma, cTipDok, cBrDok )
 
-   IF  Found()
-      // ako postoji broj reklamnog racuna, onda uzmi taj
+   IF  !Eof() // ako postoji broj reklamiranog racuna, onda uzmi taj
       IF field->fisc_st <> 0
          nFisc_no := field->fisc_st
       ELSE

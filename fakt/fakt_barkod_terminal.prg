@@ -264,9 +264,7 @@ STATIC FUNCTION _gForm( aParam )
       // [8]
       AAdd( aParam, cPartner )
 
-      SELECT partn
-      GO TOP
-      SEEK cPartner
+      select_o_partner( cPartner )
 
       // [9]
       AAdd( aParam, AllTrim( field->naz ) )

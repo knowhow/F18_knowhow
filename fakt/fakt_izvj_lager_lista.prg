@@ -341,8 +341,8 @@ FUNCTION fakt_lager_lista()
          ENDIF
 
          IF !Empty( qqPartn )
-            SELECT fakt_doks
-            HSEEK fakt->( IdFirma + idtipdok + brdok )
+
+            find_fakt_dokument( fakt->IdFirma, fakt->idtipdok, fakt->brdok )
             SELECT fakt
 
             IF !( fakt_doks->partner = qqPartn )

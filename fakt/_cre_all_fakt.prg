@@ -51,6 +51,7 @@ FUNCTION cre_all_fakt( ver )
    AAdd( aDBf, { 'N2', 'N',  10,  3 } )
    AAdd( aDBf, { 'idrelac', 'C',   4,  0 } )
 
+/*
    _alias := "FAKT"
    _table_name := "fakt_fakt"
 
@@ -58,7 +59,7 @@ FUNCTION cre_all_fakt( ver )
       f18_delete_dbf( "fakt_fakt" )
       f18_delete_dbf( "fakt_pripr" )
    ENDIF
-   
+
    IF_NOT_FILE_DBF_CREATE
 
    // 0.8.3
@@ -90,6 +91,8 @@ FUNCTION cre_all_fakt( ver )
    CREATE_INDEX( "8", "datdok", _alias )
    CREATE_INDEX( "IDPARTN", "idpartner", _alias )
    AFTER_CREATE_INDEX
+
+*/
 
    // ----------------------------------------------------------------------------
    // FAKT_PRIPR
@@ -134,7 +137,7 @@ FUNCTION cre_all_fakt( ver )
    CREATE_INDEX( "1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias )
 
 
-   // ----------------------------------------------------------------------------
+
    // FAKT_DOKS
    // ----------------------------------------------------------------------------
 
@@ -162,6 +165,7 @@ FUNCTION cre_all_fakt( ver )
    AAdd( aDBf, { 'FISC_TIME', 'C',  10,  0 } )
    AAdd( aDBf, { 'FISC_DATE', 'D',   8,  0 } )
 
+/*
    _alias := "FAKT_DOKS"
    _table_name := "fakt_doks"
 
@@ -196,6 +200,7 @@ FUNCTION cre_all_fakt( ver )
    CREATE_INDEX( "5", "datdok", _alias )
    CREATE_INDEX( "6", "IdFirma+idpartner+idtipdok", _alias )
    AFTER_CREATE_INDEX
+*/
 
    // ---------------------------------
    // FAKT_DOKS2
@@ -213,6 +218,7 @@ FUNCTION cre_all_fakt( ver )
    AAdd( aDBf, { "N1", "N",  15,  2 } )
    AAdd( aDBf, { "N2", "N",  15,  2 } )
 
+/*
    _alias := "FAKT_DOKS2"
    _table_name := "fakt_doks2"
 
@@ -220,17 +226,17 @@ FUNCTION cre_all_fakt( ver )
 
    CREATE_INDEX( "1", "IdFirma+idtipdok+brdok", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    // ---------------------------------------------------
    // FAKT_UPL
    // ---------------------------------------------------
 
    aDBf := {}
-   AAdd( aDBf, { 'DATUPL','D', 8, 0 } )
-   AAdd( aDBf, { 'IDPARTNER','C', 6, 0 } )
-   AAdd( aDBf, { 'OPIS','C', 30, 0 } )
-   AAdd( aDBf, { 'IZNOS','N', 12, 2 } )
+   AAdd( aDBf, { 'DATUPL', 'D', 8, 0 } )
+   AAdd( aDBf, { 'IDPARTNER', 'C', 6, 0 } )
+   AAdd( aDBf, { 'OPIS', 'C', 30, 0 } )
+   AAdd( aDBf, { 'IZNOS', 'N', 12, 2 } )
 
    _alias := "UPL"
    _table_name := "fakt_upl"
@@ -247,8 +253,8 @@ FUNCTION cre_all_fakt( ver )
    // ---------------------------------------------------
 
    aDbf := {}
-   AAdd( aDBf, { 'ID','C',  2,0 } )
-   AAdd( aDBf, { 'NAZ','C', 340,0 } )
+   AAdd( aDBf, { 'ID', 'C',  2, 0 } )
+   AAdd( aDBf, { 'NAZ', 'C', 340, 0 } )
 
    _alias := "FTXT"
    _table_name := "fakt_ftxt"
@@ -270,3 +276,42 @@ FUNCTION cre_all_fakt( ver )
    create_porezna_faktura_temp_dbfs()
 
    RETURN .T.
+
+
+
+FUNCTION h_fakt_fakt_indexes()
+
+   LOCAL hIndexes := hb_Hash()
+
+   hIndexes[ "1" ] := "IdFirma+idtipdok+brdok+rbr+podbr"
+   hIndexes[ "2" ] := "IdFirma+dtos(datDok)+idtipdok+brdok+rbr"
+   hIndexes[ "3" ] := "idroba+dtos(datDok)"
+   hIndexes[ "6" ] := "idfirma+idpartner+idroba+idtipdok+dtos(datdok)"
+   hIndexes[ "7" ] := "idfirma+idpartner+idroba+dtos(datdok)"
+   hIndexes[ "8" ] := "datdok"
+
+   RETURN hIndexes
+
+
+FUNCTION h_fakt_doks_indexes()
+
+   LOCAL hIndexes := hb_Hash()
+
+   hIndexes[ "1" ] := "IdFirma+idtipdok+brdok"
+   hIndexes[ "2" ] := "IdFirma+idtipdok+partner"
+   hIndexes[ "3" ] := "partner"
+   hIndexes[ "4" ] := "idtipdok"
+   hIndexes[ "5" ] := "datdok"
+   hIndexes[ "6" ] := "IdFirma+idpartner+idtipdok"
+
+   RETURN hIndexes
+
+
+
+FUNCTION h_fakt_doks2_indexes()
+
+   LOCAL hIndexes := hb_Hash()
+
+   hIndexes[ "1" ] := "IdFirma+idtipdok+brdok"
+
+   RETURN hIndexes

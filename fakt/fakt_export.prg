@@ -156,9 +156,8 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
       cBrDok := field->brdok
       cIdRoba := field->idroba
 
-      // pozicioniraj se na doks
-      SELECT fakt_doks
-      SEEK cIdFirma + cIdTipdok + cBrDok
+
+      find_fakt_dokument( cIdFirma, cIdTipdok, cBrDok )
 
       SELECT r_export
       APPEND BLANK

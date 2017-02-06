@@ -150,9 +150,7 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   HSEEK cIdRj + "IM" + cBrDok
+   seek_fakt_fakt( cIdRj, "IM", cBrDok )
 
    DO WHILE ( !Eof() .AND. cIdRj + "IM" + cBrDok == fakt->( idFirma + idTipDok + brDok ) )
       nRazlikaKol := Val( fakt->serBr ) -fakt->kolicina
@@ -224,9 +222,7 @@ FUNCTION fakt_inventura_visak( cIdRj, cBrDok )
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   HSEEK cIdRj + "IM" + cBrDok
+   seek_fakt_fakt( cIdRj, "IM", cBrDok )
    DO WHILE ( !Eof() .AND. cIdRj + "IM" + cBrDok == fakt->( idFirma + idTipDok + brDok ) )
       nRazlikaKol := Val( fakt->serBr ) -fakt->kolicina
       IF ( Round( nRazlikaKol, 5 ) < 0 )

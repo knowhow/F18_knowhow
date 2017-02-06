@@ -328,7 +328,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
       DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
-         IF ld_date( field->godina, field->mjesec ) <  ld_date( cGod, cMj ) .OR. ld_date( field->godina, field->mjesec ) > ld_date( cGod, cMj )
+         IF (ld_date( field->godina, field->mjesec ) <  ld_date( cGod, cMj )) .OR. (ld_date( field->godina, field->mjesec ) > ld_date( cGod, cMj ))
             SKIP
             LOOP
          ENDIF

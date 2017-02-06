@@ -72,16 +72,15 @@ FUNCTION fakt_stanje_robe()
 
    DO WHILE .T.
       IF gNW $ "DR"
-         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdfirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
 
       @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
       @ m_x + 3, m_y + 2 SAY "Od datuma "  GET dDatOd
       @ m_x + 3, Col() + 1 SAY "do"  GET dDatDo
-      @ m_x + 4, m_y + 2 SAY "gledati datum (D)dok. (O)otpr. (V)value:" GET cDDokOtpr ;
-         VALID cDDokOtpr $ "DOV" PICT "@!"
+      @ m_x + 4, m_y + 2 SAY "gledati datum (D)dok. (O)otpr. (V)value:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
 
       cRR := "N"
       xPos := 5
@@ -190,7 +189,7 @@ FUNCTION fakt_stanje_robe()
    nIzn := 0
    nRezerv := nRevers := 0
    qqPartn := Trim( qqPartn )
-   cidfirma := Trim( cidfirma )
+   cIdFirma := Trim( cIdFirma )
 
    nH := 0
 
@@ -253,8 +252,8 @@ FUNCTION fakt_stanje_robe()
             ENDIF
          ENDIF
 
-         IF !Empty( cidfirma )
-            IF idfirma <> cidfirma; skip; loop; ENDIF
+         IF !Empty( cIdFirma )
+            IF idfirma <> cIdFirma; skip; loop; ENDIF
          ENDIF
 
          IF !Empty( qqPartn )
@@ -444,7 +443,7 @@ FUNCTION ZaglSRobe()
       P_COND
    ENDIF
 
-   ? Space( gnLMarg ); IspisFirme( cidfirma )
+   ? Space( gnLMarg ); IspisFirme( cIdFirma )
    IF !Empty( qqRoba )
       ? Space( gnLMarg )
       ?? "Roba:", qqRoba

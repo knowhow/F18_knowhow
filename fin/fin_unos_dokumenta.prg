@@ -138,7 +138,7 @@ FUNCTION fin_knjizenje_naloga()
 FUNCTION edit_fin_priprema()
 
    LOCAL _fakt_params := fakt_params()
-   LOCAL _fin_params := fin_params()
+   LOCAL hFinParams := fin_params()
    LOCAL lOstavDUMMY := .F.
    LOCAL lDugmeOtvoreneStavke
    LOCAL nFinRbr := fin_pripr_redni_broj()
@@ -163,16 +163,11 @@ FUNCTION edit_fin_priprema()
    lConfirmEnter := Set( _SET_CONFIRM )
    lDugmeOtvoreneStavke := .T.
 
-   IF gNW == "D"
-      @  m_x + 1, m_y + 2 SAY8 "Firma: "
-      ?? self_organizacija_id(), "-", self_organizacija_naziv()
-      @  m_x + 3, m_y + 2 SAY "NALOG: "
-      @  m_x + 3, m_y + 14 SAY "Vrsta:" GET _idvn VALID browse_tnal( @_IdVN, 3, 26 ) PICT "@!"
-   ELSE
-      @  m_x + 1, m_y + 2 SAY "Firma:" GET _idfirma VALID {|| p_partner( @_IdFirma, 1, 20 ), _idfirma := Left( _idfirma, 2 ), .T. }
-      @  m_x + 3, m_y + 2 SAY "NALOG: "
-      @  m_x + 3, m_y + 14 SAY "Vrsta:" GET _idvn VALID browse_tnal( @_IdVN, 3, 26 )
-   ENDIF
+
+   @  m_x + 1, m_y + 2 SAY8 "Firma: "
+   ?? self_organizacija_id(), "-", self_organizacija_naziv()
+    @  m_x + 3, m_y + 2 SAY "NALOG: "
+    @  m_x + 3, m_y + 14 SAY "Vrsta:" GET _idvn VALID browse_tnal( @_IdVN, 3, 26 ) PICT "@!"
 
    READ
 
@@ -197,7 +192,7 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
 
-   IF _fin_params[ "fin_tip_dokumenta" ]
+   IF hFinParams[ "fin_tip_dokumenta" ]
       @ m_x + 7, m_y + 14  SAY "Tip:" GET _IdTipDok VALID browse_tdok( @_IdTipDok, 7, 26 )
    ENDIF
 
@@ -215,16 +210,16 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 11, m_y + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| .T. } PICT "@S" + AllTrim( Str( maxcols() - 8 ) )
 
-   IF _fin_params[ "fin_k1" ]
+   IF hFinParams[ "fin_k1" ]
       @ m_x + 11, Col() + 2 SAY "K1" GET _k1 PICT "@!"
    ENDIF
 
-   IF _fin_params[ "fin_k2" ]
+   IF hFinParams[ "fin_k2" ]
       @ m_x + 11, Col() + 2 SAY "K2" GET _k2 PICT "@!"
    ENDIF
 
 
-   IF _fin_params[ "fin_k3" ]
+   IF hFinParams[ "fin_k3" ]
 /*
       IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
          _k3 := K3Iz256( _k3 )
@@ -237,7 +232,7 @@ FUNCTION edit_fin_priprema()
    ENDIF
 
 
-   IF _fin_params[ "fin_k4" ]
+   IF hFinParams[ "fin_k4" ]
       IF _fakt_params[ "fakt_vrste_placanja" ]
          @ m_x + 11, Col() + 2 SAY "K4" GET _k4 VALID Empty( _k4 ) .OR. P_VRSTEP( @_k4 ) PICT "@!"
       ELSE
@@ -482,10 +477,10 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
       DO WHILE .T.
 
          set_global_vars_from_dbf()
+         _idPartner := Space( Len( _idPartner ) )
 
          IF ( IsRamaGlas() )
             _idKonto := Space( Len( _idKonto ) )
-            _idPartner := Space( Len( _idPartner ) )
             _brDok := Space( Len( _brDok ) )
          ENDIF
 

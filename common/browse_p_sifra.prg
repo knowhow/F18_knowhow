@@ -380,10 +380,13 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       IF nRet > 4
          IF nRet == 5
             RETURN DE_ABORT
+
          ELSEIF nRet == 6
             RETURN DE_CONT
+
          ELSEIF nRet == 7
             RETURN DE_REFRESH
+
          ELSEIF nRet == 99 .AND. Len( aZabIsp ) > 0
             lZabIsp := .T.
             nRet := -1
@@ -397,7 +400,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    CASE Ch == K_ENTER
 
-      IF gMeniSif
+      IF gPregledSifriIzMenija
          RETURN DE_CONT
       ELSE
          lPrviPoziv := .F.

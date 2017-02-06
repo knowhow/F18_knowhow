@@ -34,7 +34,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC gPrinter := "R"
    PUBLIC gPtxtSw := nil
    PUBLIC gPDFSw := nil
-   PUBLIC gMeniSif := .F.
+   PUBLIC gPregledSifriIzMenija := .F.
    PUBLIC gValIz := "280 "
    PUBLIC gValU := "000 "
    PUBLIC gKurs := "1"

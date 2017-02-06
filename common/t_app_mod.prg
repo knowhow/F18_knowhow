@@ -154,8 +154,8 @@ METHOD gProc( nKey, nKeyHandlerRetEvent )
       show_errors()
       //RETURN DE_CONT
 
-   CASE ( nKey == K_SH_F1 )
-      f18_kalkulator()
+   //CASE ( nKey == K_SH_F1 )
+    //  f18_kalkulator()
 
    CASE ( nKey == K_SH_F6 )
       f18_promjena_sezone()

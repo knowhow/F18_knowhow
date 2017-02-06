@@ -242,9 +242,13 @@ MsgO( "MIP sort LD ...")
       ENDIF
 
       IF Empty( cRadnik )
-         INDEX ON Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) + SortPrez( field->idradn ) + idrj TAG "MIP1" TO ( my_home() + "ld_tmp" )
+         //INDEX ON Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) + SortPrez( field->idradn ) + idrj TAG "MIP1" TO ( my_home() + "ld_tmp" )
+         //GO TOP
+         //SEEK Str( cGod, 4, 0 ) + Str( cMj, 2, 0 ) + cRadnik
+         SET ORDER TO TAG ( TagVO( "2" ) )
          GO TOP
-         SEEK Str( cGod, 4, 0 ) + Str( cMj, 2, 0 ) + cRadnik
+         SEEK Str( cGod, 4, 0 ) + Str( cMj, 2, 0 )
+         
       ELSE
          SET ORDER TO TAG ( TagVO( "2" ) )
          GO TOP

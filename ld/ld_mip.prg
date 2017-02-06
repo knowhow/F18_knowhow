@@ -231,7 +231,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
    LOCAL cPom
    LOCAL nPrimanjaUslugeIliDobraIznos, nPrimanjaUslugeIliDobraSati
    LOCAL nPrimanjaNeUlazeUBeneficiraniIznos, nPrimanjaNeUlazeUBeneficiraniSati
-   LOCAL nBolovanjaSati, nBolovanjaIznos
+   LOCAL nSatiBolovanje, nBolovanjaIznos
    LOCAL nTrosk := 0
    LOCAL lInRS := .F.
    LOCAL nRadnihSatiUvecanoTrajanje // polje 21) set
@@ -292,7 +292,6 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       SELECT ld
 
       nBrojRadnihSati := 0
-      nSatiB := 0
       nRadnihSatiUvecanoTrajanje := 0
       nStUv := 0
       nBruto := 0
@@ -318,7 +317,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       nPrimanjaUslugeIliDobraSati := 0
       nPrimanjaNeUlazeUBeneficiraniIznos := 0
       nPrimanjaNeUlazeUBeneficiraniSati := 0
-      nBolovanjaSati := 0
+
       nBolovanjaIznos := 0
 
       cR_ime := ""
@@ -357,11 +356,13 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
          nPrimanjaUslugeIliDobraIznos := 0
          // nPrimanjaNeUlazeUBeneficiraniIznos := 0
-         nBolovanjaSati := 0
+
 
          sum_primanja_za_tipove_primanja( cTipPrimIsplateUslugeIliDobra, @nPrimanjaUslugeIliDobraIznos, @nPrimanjaUslugeIliDobraSati )
          sum_primanja_za_tipove_primanja( cTipoviPrimanjaNeUlazeBeneficirani, @nPrimanjaNeUlazeUBeneficiraniIznos, @nPrimanjaNeUlazeUBeneficiraniSati )
-         sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanje, @nBolovanjaIznos, @nBolovanjaSati )
+
+         nSatiBolovanje := 0
+         sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanje, @nBolovanjaIznos, @nSatiBolovanje )
 
          lImaBovanjaPreko42 := .F. // provjeri da li ima bolovanja preko 42 dana ili trudnickog bolovanja
          sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanjePreko, @nBolovanjaPreko42Iznos, @nBolovanjaPreko42Sati )
@@ -373,26 +374,27 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          nKLO := g_klo( ld->ulicodb )
          nL_odb := ld->ulicodb
          nBrojRadnihSati := ld->usati
-         nSatiB := nBolovanjaSati
+
+
+
+         IF ( nBolovanjaIznos != 0 ) .OR. ( nSatiBolovanje != 0 )
+
+            // old 2/ nNeto := ( nNeto - nPrimanjaNeUlazeUBeneficiraniIznos )  - ovo ne postoji
+            // old 2/ nBrojRadnihSati := ( nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati ) // tipovi primanja koji ne ulaze u sate
+
+            // old 06.02.2017 // nBrojRadnihSati := nBrojRadnihSati - nBolovanjaSati
+            nBrojRadnihSati := nFondSati // ako je bilo bolovanja redovan rad je puni fond sati https://redmine.bring.out.ba/issues/36482#note-16
+         ENDIF
 
          IF lImaBovanjaPreko42  // uzmi puni fond sati
             nBrojRadnihSati := nFondSati
-            nSatiB := nFondSati
+            nSatiBolovanje := nFondSati
             // bolovanje preko42d nije unutar neto
             // nNeto += 0.0000001
          ENDIF
 
          nRadnihSatiUvecanoTrajanje := 0
 
-         IF ( nBolovanjaIznos != 0 ) .OR. ( nBolovanjaSati != 0 )
-
-            // old 2/ nNeto := ( nNeto - nPrimanjaNeUlazeUBeneficiraniIznos )  - ovo ne postoji
-            // old 2/ nBrojRadnihSati := ( nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati ) // tipovi primanja koji ne ulaze u sate
-
-
-            // old 06.02.2017 // nBrojRadnihSati := nBrojRadnihSati - nBolovanjaSati
-            nBrojRadnihSati := nFondSati // ako je bilo bolovanja redovan rad je puni fond sati https://redmine.bring.out.ba/issues/36482#note-16
-         ENDIF
 
          nBruto := bruto_osn( nNeto, cTipRada, nL_odb )
          nMBruto := nBruto
@@ -552,7 +554,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             cR_opc, ;
             dDatIspl, ;
             nBrojRadnihSati, ;
-            nSatiB, ;
+            nSatiBolovanje, ;
             nRadnihSatiUvecanoTrajanje, ;
             nStUv, ;
             nBruto, ;
@@ -588,7 +590,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
 STATIC FUNCTION mip_insert_record_r_export( cRadnik, cIdRj, nGodina, nMjesec, ;
       cTipRada, cVrIspl, cR_ime, cR_jmb, cR_opc, dDatIsplate, ;
-      nBrojRadnihSati, nSatiB, nRadnihSatiUvecanoTrajanje, nStUv, nBruto, nO_prih, nU_opor, ;
+      nBrojRadnihSati, nSatiBolovanje, nRadnihSatiUvecanoTrajanje, nStUv, nBruto, nO_prih, nU_opor, ;
       nU_d_pio, nU_d_zdr, nU_d_pms, nU_d_nez, nU_d_iz, ;
       nU_dn_pio, nU_dn_zdr, nU_dn_nez, nU_dn_dz, ;
       nUm_prih, nKLO, nLODB, nOsn_por, nIzn_por, ;
@@ -611,7 +613,7 @@ STATIC FUNCTION mip_insert_record_r_export( cRadnik, cIdRj, nGodina, nMjesec, ;
    REPLACE r_opc WITH cR_opc
    REPLACE d_isp WITH dDatIsplate
    REPLACE r_sati WITH nBrojRadnihSati // 6)  broj radnih sati ${rad.r_sati}
-   REPLACE r_satib WITH nSatiB
+   REPLACE r_satib WITH nSatiBolovanje
    REPLACE r_satit WITH nRadnihSatiUvecanoTrajanje
    REPLACE r_stuv WITH nSTUv
    REPLACE bruto WITH nBruto

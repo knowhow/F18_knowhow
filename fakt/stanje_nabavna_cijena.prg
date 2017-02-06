@@ -68,6 +68,7 @@ FUNCTION get_nabavna_cijena( cIdKonto, cIdArtikal, dDatum )
    RETURN nRet
 
 
+
 FUNCTION get_realizovana_marza( cIdKonto, cIdArtikal, dDatum, nCijena )
 
    LOCAL nNC

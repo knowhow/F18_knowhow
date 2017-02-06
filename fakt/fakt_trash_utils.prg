@@ -16,7 +16,7 @@
 // opcija pregleda smeca
 // -------------------------------------
 
-FUNCTION Pripr9View()
+FUNCTION fakt_pripr9_view()
 
    PRIVATE aUslFirma := self_organizacija_id()
    PRIVATE aUslDok := Space( 50 )

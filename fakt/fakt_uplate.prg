@@ -230,7 +230,6 @@ FUNCTION UkUplata( lPushWA )
 
 STATIC FUNCTION SkipDBBK( nRequest )
 
-   // {
    LOCAL nCount
    nCount := 0
    IF LastRec() != 0
@@ -275,7 +274,7 @@ STATIC FUNCTION SkipDBBK( nRequest )
 
 STATIC FUNCTION StKartKup()
 
-   // {
+
    LOCAL nRec := 0
 
    START PRINT CRET

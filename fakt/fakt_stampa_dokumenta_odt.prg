@@ -57,7 +57,6 @@ FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
       SELECT fakt_pripr
       SET ORDER TO TAG "1"
       GO TOP
-
       __tip_dok := field->idtipdok
 
    ENDIF

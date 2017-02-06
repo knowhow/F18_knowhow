@@ -60,7 +60,7 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
       cBrDok := field->BrDok
    ENDIF
 
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   SEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr
    NFOUND CRET
 
    IF PCount() <= 1 .OR. ( cIdTipDok == NIL .AND. lJFill == .T. )

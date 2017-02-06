@@ -104,7 +104,8 @@ FUNCTION fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok, lJFill )
       fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
    ENDIF
 
-   RETURN
+   RETURN .T.
+
 
 // ------------------------------------------
 // fakt_zagl_firma()

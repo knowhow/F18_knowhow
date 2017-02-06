@@ -17,8 +17,8 @@ FUNCTION fakt_stanje_artikla( cIdRj, cIdroba, nUl, nIzl, nRezerv, nRevers, lSile
       lSilent := .F.
    ENDIF
 
-   SELECT fakt
-   SET ORDER TO TAG "3"
+   //SELECT fakt
+   //SET ORDER TO TAG "3"
 
    IF ( !lSilent )
       lBezMinusa := .F.
@@ -32,7 +32,7 @@ FUNCTION fakt_stanje_artikla( cIdRj, cIdroba, nUl, nIzl, nRezerv, nRevers, lSile
       MsgO( "Izračunavam trenutno stanje artikla ..." )
    ENDIF
 
-   SEEK cIdRoba
+   seek_fakt_3( cIdRoba )
 
    nUl := 0
    nIzl := 0

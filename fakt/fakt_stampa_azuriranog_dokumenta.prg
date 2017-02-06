@@ -32,13 +32,9 @@ FUNCTION fakt_stampa_azuriranog()
       RETURN .F.
    ENDIF
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
 
-   SELECT F_FAKT_PRIPR
-   IF Used()
-      USE
-   ENDIF
 
    RETURN .T.

@@ -37,7 +37,7 @@ FUNCTION fakt_pocetno_stanje()
 
    IF _data == NIL
       MsgBeep( "Ne postoje traženi podaci !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    MsgC()

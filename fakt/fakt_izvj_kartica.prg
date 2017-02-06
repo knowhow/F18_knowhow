@@ -27,10 +27,6 @@ FUNCTION fakt_kartica()
 
    o_sifk()
    o_sifv()
-   select_o_partner()
-   select_o_roba()
-   o_tarifa()
-   o_rj()
 
    IF _params[ "fakt_objekti" ]
       O_FAKT_OBJEKTI

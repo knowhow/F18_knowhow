@@ -393,7 +393,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
    CASE Ch == K_F11
 
-      Pripr9View()
+      fakt_pripr9_view()
       select_fakt_pripr()
       GO TOP
 

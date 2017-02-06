@@ -124,7 +124,7 @@ FUNCTION TopsFakt()
 
    CLOSERET
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION SljedBrFakt( cIdRj, cIdVd, dDo, cIdPartner )

@@ -27,10 +27,6 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
       valute := Space( 3 )
    ENDIF
 
-   SELECT F_FAKT_DOKS
-   IF !Used()
-      o_fakt_doks()
-   ENDIF
 
    START PRINT CRET
    ?
@@ -136,8 +132,7 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
       ENDIF
 
       IF lOpcine
-         SELECT PARTN
-         HSEEK fakt_doks->idpartner
+         select_o_partner( fakt_doks->idpartner )
          SELECT fakt_doks
          IF !( PARTN->( &aUslOpc ) )
             SKIP

@@ -142,6 +142,7 @@ FUNCTION edit_fin_priprema()
    LOCAL lOstavDUMMY := .F.
    LOCAL lDugmeOtvoreneStavke
    LOCAL nFinRbr := fin_pripr_redni_broj()
+   LOCAL lConfirmEnter
 
    PARAMETERS fNovi
 
@@ -158,6 +159,8 @@ FUNCTION edit_fin_priprema()
    ENDIF
 
    SET CURSOR ON
+   //lConfirmEnter := Set( _SET_CONFIRM, .F. )
+   lConfirmEnter := Set( _SET_CONFIRM )
    lDugmeOtvoreneStavke := .T.
 
    IF gNW == "D"
@@ -281,6 +284,8 @@ FUNCTION edit_fin_priprema()
 
    READ
 
+
+   Set( _SET_CONFIRM, lConfirmEnter )
    IF ( gFinRj == "D" .AND. cTekucaRJ <> _idrj )
       cTekucaRJ := _idrj
       SetTekucaRJ( cTekucaRJ )

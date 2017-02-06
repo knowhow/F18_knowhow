@@ -783,6 +783,7 @@ METHOD F18Admin:razdvajanje_sezona()
    LOCAL _count := 0
    LOCAL aRezultati := {}
    LOCAL oRow
+   LOCAL lConfirmEnter
 
 #ifndef F18_DEBUG
 
@@ -798,7 +799,8 @@ METHOD F18Admin:razdvajanje_sezona()
    nToSezona := Year( Date() )
 
    SET CURSOR ON
-   SET CONFIRM ON
+   lConfirmEnter := Set( _SET_CONFIRM, .T. )
+
 
    Box(, 7, 60 )
    @ m_x + 1, m_y + 2 SAY8 "Otvaranje baze za novu sezonu ***" COLOR f18_color_i()
@@ -809,7 +811,7 @@ METHOD F18Admin:razdvajanje_sezona()
    READ
    BoxC()
 
-   SET CONFIRM OFF
+   Set( _SET_CONFIRM, lConfirmEnter )
 
    IF LastKey() == K_ESC
       start_refresh_operations()

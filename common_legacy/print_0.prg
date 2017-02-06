@@ -24,6 +24,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
    LOCAL cLpt
    LOCAL cDDir
    LOCAL cOutfTXT
+   LOCAL lConfirmEnter := Set( _SET_CONFIRM )
 
    IF lUFajl == nil
       lUFajl := .F.
@@ -166,6 +167,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
 
    Set( _SET_DEFAULT, cDDir )
    GpIni( cDocumentName )
+   Set( _SET_CONFIRM, lConfirmEnter )
 
    RETURN .T.
 

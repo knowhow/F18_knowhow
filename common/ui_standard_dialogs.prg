@@ -27,6 +27,7 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg, cHeader )
 
    LOCAL cPom
    LOCAL cOdgovor
+   LOCAL lConfirmEnter := Set( _SET_CONFIRM )
 
    IF cMogOdg == NIL
       cMogOdg := "YDNL"
@@ -48,7 +49,7 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg, cHeader )
 #ifdef TEST
    push_test_tag( cId )
 #else
-   SET CONFIRM OFF
+   Set( _SET_CONFIRM, .F. )
 #endif
 
    Box( , 3, Len( cPitanje ) + 6, .F. )
@@ -68,7 +69,7 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg, cHeader )
 #ifdef TEST
    pop_test_tag()
 #else
-   SET CONFIRM ON
+   Set( _SET_CONFIRM, lConfirmEnter )
 #endif
 
    Set( _SET_DEVICE, cPom )

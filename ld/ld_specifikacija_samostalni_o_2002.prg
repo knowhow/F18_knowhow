@@ -56,17 +56,17 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    uNaRuke := 0
 
    // prvi dan mjeseca
-   nDanOd := prvi_dan_mjeseca( gMjesec )
-   nMjesecOd := gMjesec
-   nGodinaOd := gGodina
+   nDanOd := prvi_dan_mjeseca( ld_tekuci_mjesec() )
+   nMjesecOd := ld_tekuci_mjesec()
+   nGodinaOd := ld_tekuca_godina()
    // posljednji dan mjeseca
-   nDanDo := zadnji_dan_mjeseca( gMjesec )
-   nMjesecDo := gMjesec
-   nGodinaDo := gGodina
+   nDanDo := zadnji_dan_mjeseca( ld_tekuci_mjesec() )
+   nMjesecDo := ld_tekuci_mjesec()
+   nGodinaDo := ld_tekuca_godina()
 
    // varijable izvjestaja
-   nMjesec := gMjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
    cObracun := gObracun
 
    cDopr1 := "1X"

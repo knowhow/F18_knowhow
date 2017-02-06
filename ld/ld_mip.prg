@@ -50,8 +50,8 @@ FUNCTION ld_mip_obrazac_1023()
    LOCAL _pojed := .F.
    LOCAL cErr := ""
    LOCAL nX
-   LOCAL nMjesec :=  fetch_metric( "ld_izv_mjesec_od", my_user(), gMjesec )
-   LOCAL nGodina := fetch_metric( "ld_izv_godina", my_user(), gGodina )
+   LOCAL nMjesec :=  fetch_metric( "ld_izv_mjesec_od", my_user(), ld_tekuci_mjesec() )
+   LOCAL nGodina := fetch_metric( "ld_izv_godina", my_user(), ld_tekuca_godina() )
    LOCAL cFilter
 
    IF !mip_tmp_tbl()

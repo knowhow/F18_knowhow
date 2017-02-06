@@ -27,8 +27,8 @@ FUNCTION ld_unos_obracuna()
    cIdRadn := Space( LEN_IDRADNIK )
    GetList := {}
    cRj     := gLDRadnaJedinica
-   nGodina := gGodina
-   nMjesec := gMjesec
+   nGodina := ld_tekuca_godina()
+   nMjesec := ld_tekuci_mjesec()
 
    // select_o_ld()
 
@@ -205,8 +205,8 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    cIdRadn := Space( 6 )
    cIdRj := gLDRadnaJedinica
-   nMjesec := gMjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
    cObracun := gObracun
 
    lLogUnos := .F.

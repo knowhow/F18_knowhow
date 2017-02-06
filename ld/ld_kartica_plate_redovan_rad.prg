@@ -64,9 +64,9 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
 
    ? cTprLine
 
-   FOR i := 1 TO cLDPolja
+   FOR nI := 1 TO cLDPolja
 
-      cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
+      cPom := PadL( AllTrim( Str( nI ) ), 2, "0" )
 
       select_o_tippr( cPom )
       lFoundTippr := Found()
@@ -295,7 +295,7 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
    IF gSihtarica == "D"
       nTmp := get_siht( .T., nGodina, nMjesec, ld->idradn, "" )
       IF ld->usati < nTmp
-         ?U "Greška: sati po šihtarici veći od uk.sati plaće !"
+         ?U "Greška: sati po šihtarici većnI od uk.sati plaće !"
       ENDIF
    ENDIF
 
@@ -328,7 +328,7 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
 
       nBoMin := nBo
 
-      IF cRTipRada $ " #I#N"
+      IF cRTipRada $ " #nI#N"
          IF calc_mbruto()
             nBoMin := min_bruto( nBo, ld->usati )
          ENDIF
@@ -342,7 +342,7 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
          ? cLMSK + "1. BRUTO PLATA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
       ENDIF
 
-      IF cRTipRada == "I"
+      IF cRTipRada == "nI"
          ?
       ENDIF
 
@@ -523,7 +523,7 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
 
       nMUkIspl := nUkIspl
 
-      IF cRTipRada $ " #I#N"
+      IF cRTipRada $ " #nI#N"
          nMUkIspl := min_neto( nUkIspl, ld->usati )
       ENDIF
 
@@ -538,7 +538,7 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
       @ PRow(), 60 + Len( cLMSK ) SAY nMUkIspl PICT gpici
 
       ? cMainLine
-      ? cLMSK + "8. NEOPOREZIVE NAKNADE I ODBICI (preb.stanje)"
+      ? cLMSK + "8. NEOPOREZIVE NAKNADE nI ODBICI (preb.stanje)"
 
       @ PRow(), 60 + Len( cLMSK ) SAY nOsnOstalo PICT gpici
 
@@ -551,7 +551,7 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
       nZaIsplatu := ROUND2( nMUkIspl + nOsnOstalo, gZaok2 )
 
       ? cMainLine
-      ?  cLMSK + "UKUPNO ZA ISPLATU SA NAKNADAMA I ODBICIMA (7+8)"
+      ?  cLMSK + "UKUPNO ZA ISPLATU SA NAKNADAMA nI ODBICIMA (7+8)"
       @ PRow(), 60 + Len( cLMSK ) SAY nZaIsplatu PICT gpici
 
       ? cMainLine
@@ -575,7 +575,7 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
    IF lSkrivena
       IF PRow() < nKRSK + 5
          nPom := nKRSK - PRow()
-         FOR i := 1 TO nPom
+         FOR nI := 1 TO nPom
             ?
          NEXT
       ELSE

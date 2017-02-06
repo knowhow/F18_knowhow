@@ -113,7 +113,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
    gTabela := 1
    gOstr := "N"
    cIdRj := gLDRadnaJedinica
-   nGodina := gGodina
+   nGodina := ld_tekuca_godina()
    cIdRadn := Space( 6 )
    cSvaPrim := "S"
    qqOstPrim := ""

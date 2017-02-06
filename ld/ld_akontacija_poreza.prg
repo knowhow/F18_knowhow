@@ -115,8 +115,8 @@ FUNCTION ld_asd_aug_obrazac()
    cre_tmp_tbl()
 
    cIdRj := gLDRadnaJedinica
-   nMjesec := gMjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
 
    cPredNaz := Space( 50 )
    cPredAdr := Space( 50 )

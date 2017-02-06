@@ -41,16 +41,16 @@ FUNCTION ld_specifikacija_plate_ostali()
    nPorOsnovica := 0
    uNaRuke := 0
 
-   nDanOd := prvi_dan_mjeseca( gMjesec )
-   nMjesecOd := gMjesec
-   nGodinaOd := gGodina
-   nDanDo := zadnji_dan_mjeseca( gMjesec )
-   nMjesecDo := gMjesec
-   nGodinaDo := gGodina
+   nDanOd := prvi_dan_mjeseca( ld_tekuci_mjesec() )
+   nMjesecOd := ld_tekuci_mjesec()
+   nGodinaOd := ld_tekuca_godina()
+   nDanDo := zadnji_dan_mjeseca( ld_tekuci_mjesec() )
+   nMjesecDo := ld_tekuci_mjesec()
+   nGodinaDo := ld_tekuca_godina()
 
    // varijable izvjestaja
-   nMjesec := gMjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
 
    cObracun := gObracun
 

@@ -242,7 +242,7 @@ STATIC FUNCTION p_pkartica( cIdRadn )
 // --------------------------------------------
 FUNCTION browse_edit_radnik( Ch )
 
-   LOCAL nMjesec := gMjesec
+   LOCAL nMjesec := ld_tekuci_mjesec()
    LOCAL _rec
    LOCAL hParams
 

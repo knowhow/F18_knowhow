@@ -22,8 +22,8 @@ FUNCTION ld_platni_spisak()
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
-   nMjesec := gMjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
    cObracun := gObracun
 
    o_ld_rj()
@@ -316,8 +316,8 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
-   nMjesec := gMjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
    cObracun := gObracun
    cVarSort := "2"
    cProred := "N"
@@ -661,8 +661,8 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
-   nMjesec := gMjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
    cObracun := gObracun
    cVarSort := "2"
    cIdTipPr := "  "

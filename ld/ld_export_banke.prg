@@ -132,8 +132,8 @@ METHOD LDExportTxt:create_export_dbf()
 METHOD LDExportTxt:params()
 
    LOCAL _ok := .F.
-   LOCAL _mjesec := gMjesec
-   LOCAL _godina := gGodina
+   LOCAL _mjesec := ld_tekuci_mjesec()
+   LOCAL _godina := ld_tekuca_godina()
    LOCAL _rj := Space( 200 )
    LOCAL _name
    LOCAL _export := "D"

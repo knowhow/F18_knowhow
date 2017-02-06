@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR gLDRadnaJedinica, gMjesec, gGodina
+MEMVAR gLDRadnaJedinica
 FIELD r_bank, r_ime, r_prezime
 
 THREAD STATIC __PAGE_LEN
@@ -20,9 +20,9 @@ THREAD STATIC __PAGE_LEN
 FUNCTION ld_lista_isplate_toplog_obroka()
 
    LOCAL cRj := gLDRadnaJedinica
-   LOCAL cMonthFrom := gMjesec
-   LOCAL cMonthTo := gMjesec
-   LOCAL cYear := gGodina
+   LOCAL cMonthFrom := ld_tekuci_mjesec()
+   LOCAL cMonthTo := ld_tekuci_mjesec()
+   LOCAL cYear := ld_tekuca_godina()
    LOCAL cHours := PadR( "S01;S10;", 200 )
    LOCAL nHourLimit := 0
    LOCAL nMinHrLimit := 0

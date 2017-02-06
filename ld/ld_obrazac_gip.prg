@@ -47,10 +47,10 @@ FUNCTION ld_olp_gip_obrazac()
    ol_tmp_tbl()
 
    cIdRj := gLDRadnaJedinica
-   nMjesecOd := gMjesec
-   nMjesecDo := gMjesec
-   nGodinaOd := gGodina
-   nGodinaDo := gGodina
+   nMjesecOd := ld_tekuci_mjesec()
+   nMjesecDo := ld_tekuci_mjesec()
+   nGodinaOd := ld_tekuca_godina()
+   nGodinaDo := ld_tekuca_godina()
 
    cPredNaz := Space( 50 )
    cPredAdr := Space( 50 )

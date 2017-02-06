@@ -42,8 +42,8 @@ FUNCTION ld_novi_kredit()
    LOCAL hRec
    LOCAL nOstalo, nTekMj, nTekGodina
    LOCAL cIdRadn  := Space( LEN_IDRADNIK )
-   LOCAL nMjesec  := gMjesec
-   LOCAL nGodina  := gGodina
+   LOCAL nMjesec  := ld_tekuci_mjesec()
+   LOCAL nGodina  := ld_tekuca_godina()
    LOCAL cIdKred  := Space( _LK_ )
    LOCAL nIznKred := 0
    LOCAL nRata    := 0
@@ -477,7 +477,7 @@ FUNCTION ld_lista_kredita()
 
    cNaOsnovu := PadR( ".", 20 )
    cIdRadnaJedinica := Space( 2 )
-   nGodina := gGodina; nMjesec := gmjesec
+   nGodina := ld_tekuca_godina(); nMjesec := ld_tekuci_mjesec()
    PRIVATE cRateDN := "D", cAktivni := "D"
 
    Box(, 13, 60 )

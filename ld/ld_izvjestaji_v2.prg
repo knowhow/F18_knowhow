@@ -18,7 +18,7 @@ FUNCTION ld_pregled_primanja_za_period()
 
    cIdRadn := Space( 6 )
    cIdRj := gLDRadnaJedinica
-   nGodina := gGodina
+   nGodina := ld_tekuca_godina()
    cObracun := gObracun
 
    o_ld_rj()
@@ -29,7 +29,7 @@ FUNCTION ld_pregled_primanja_za_period()
    cDod := "N"
    cKolona := Space( 20 )
    Box(, 6, 75 )
-   cMjesecOd := cMjesecDo := gMjesec
+   cMjesecOd := cMjesecDo := ld_tekuci_mjesec()
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
    @ form_x_koord() + 2, form_y_koord() + 2 SAY "Mjesec od: "  GET  cMjesecOd  PICT "99"
    @ form_x_koord() + 2, Col() + 2 SAY "do" GET cMjesecDO  PICT "99"

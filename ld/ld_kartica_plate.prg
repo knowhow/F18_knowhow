@@ -38,8 +38,8 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
    IF ( PCount() < 4 )
       cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gLDRadnaJedinica
-      nMjesec := gMjesec
-      nGodina := gGodina
+      nMjesec := ld_tekuci_mjesec()
+      nGodina := ld_tekuca_godina()
       cObracun := gObracun
 
       o_ld_parametri_obracuna()

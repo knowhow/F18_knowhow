@@ -21,8 +21,8 @@ FUNCTION def_siht( lNew )
    LOCAL nBoxY := 65
    LOCAL nX := 1
    LOCAL cIdRadn := Space( 6 )
-   LOCAL nGodina := gGodina
-   LOCAL nMjesec := gMjesec
+   LOCAL nGodina := ld_tekuca_godina()
+   LOCAL nMjesec := ld_tekuci_mjesec()
    LOCAL cGroup := Space( 7 )
    LOCAL cOpis := Space( 50 )
 
@@ -158,8 +158,8 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
    IF PCount() <= 1
 
       // nema parametara unesenih
-      nMjesec := gMjesec
-      nGodina := gGodina
+      nMjesec := ld_tekuci_mjesec()
+      nGodina := ld_tekuca_godina()
       cGroup := Space( 7 )
       cIdRadn := Space( 6 )
 
@@ -276,8 +276,8 @@ FUNCTION get_siht2()
    LOCAL i
 
    // nema parametara unesenih
-   nMjesec := gMjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
    cGroup := Space( 7 )
    cIdRadn := Space( 6 )
 
@@ -424,8 +424,8 @@ FUNCTION open_sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
 // ------------------------------------------
 FUNCTION del_siht()
 
-   LOCAL nMjesec := gMjesec
-   LOCAL nGodina := gGodina
+   LOCAL nMjesec := ld_tekuci_mjesec()
+   LOCAL nGodina := ld_tekuca_godina()
    LOCAL cGroup := Space( 7 )
    LOCAL cIdRadn := Space( 6 )
    LOCAL nTArea := Select()

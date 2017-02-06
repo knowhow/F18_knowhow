@@ -53,8 +53,8 @@ FUNCTION ld_brisi_radnika()
 
       cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gLDRadnaJedinica
-      nMjesec := gMjesec
-      nGodina := gGodina
+      nMjesec := ld_tekuci_mjesec()
+      nGodina := ld_tekuca_godina()
       cObracun := gObracun
 
       Box(, 4, 60 )
@@ -171,8 +171,8 @@ FUNCTION BrisiMjesec()
 
       cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gLDRadnaJedinica
-      nMjesec := gMjesec
-      nGodina := gGodina
+      nMjesec := ld_tekuci_mjesec()
+      nGodina := ld_tekuca_godina()
       cObracun := gObracun
 
       Box(, 4, 60 )

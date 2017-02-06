@@ -13,8 +13,8 @@
 
 FUNCTION ld_specifikacija_po_rj()
 
-   nGodina  := gGodina
-   cMjesecOd := cMjesecDo := gMjesec
+   nGodina  := ld_tekuca_godina()
+   cMjesecOd := cMjesecDo := ld_tekuci_mjesec()
    cObracun := " "
    qqRj := ""
    qqPrimanja := ""

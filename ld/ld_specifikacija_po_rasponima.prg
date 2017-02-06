@@ -19,8 +19,8 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    gOstr := "D"
 
    cIdRj := gLDRadnaJedinica
-   nMjesec := gMjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
    cObracun := gObracun
 
    //o_ld_rj()

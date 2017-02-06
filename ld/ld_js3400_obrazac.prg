@@ -52,10 +52,10 @@ FUNCTION ld_js3400_obrazac()
    ol_tmp_tbl()
 
    cIdRj := gLDRadnaJedinica
-   cMj_od := gMjesec
-   cMj_do := gMjesec
-   cGod_od := gGodina
-   cGod_do := gGodina
+   cMj_od := ld_tekuci_mjesec()
+   cMj_do := ld_tekuci_mjesec()
+   cGod_od := ld_tekuca_godina()
+   cGod_do := ld_tekuca_godina()
 
    cPredNaz := Space( 50 )
    cPredAdr := Space( 50 )

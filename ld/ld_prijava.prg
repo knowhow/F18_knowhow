@@ -16,31 +16,32 @@
 
 FUNCTION ld_postavi_parametre_obracuna()
 
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _pad_l := 20
    LOCAL _v_obr_unos := fetch_metric( "ld_vise_obracuna_na_unosu", my_user(), "N" ) == "D"
+   LOCAL nMjesec := ld_tekuci_mjesec(), nGodina := ld_tekuca_godina()
 
    o_ld_rj()
 
-   Box(, 6 + IIF( _v_obr_unos, 1, 0 ), 50 )
+   Box(, 6 + iif( _v_obr_unos, 1, 0 ), 50 )
 
    SET CURSOR ON
 
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 PadC( "*** PRISTUPNI PODACI ZA OBRAČUN ***", 50 )
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 PadC( "*** PRISTUPNI PODACI ZA OBRAČUN ***", 50 )
 
-   _x += 2
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 PadL( "Radna jedinica", _pad_l ) GET gLDRadnaJedinica VALID P_LD_Rj( @gLDRadnaJedinica ) PICT "@!"
+   nX += 2
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 PadL( "Radna jedinica", _pad_l ) GET gLDRadnaJedinica VALID P_LD_Rj( @gLDRadnaJedinica ) PICT "@!"
 
-   ++ _x
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 PadL( "Mjesec", _pad_l ) GET gMjesec PICT "99"
+   ++nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 PadL( "Mjesec", _pad_l ) GET nMjesec PICT "99"
 
-   ++ _x
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY PadL( "Godina", _pad_l ) GET gGodina PICT "9999"
+   ++nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( "Godina", _pad_l ) GET nGodina PICT "9999"
 
    IF _v_obr_unos
 
-      ++ _x
-      @ form_x_koord() + _x, form_y_koord() + 2 SAY8 PadL( "Obračun broj", _pad_l ) GET gObracun WHEN HelpObr( .F., gObracun ) VALID ValObr( .F., gObracun )
+      ++nX
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY8 PadL( "Obračun broj", _pad_l ) GET gObracun WHEN HelpObr( .F., gObracun ) VALID ValObr( .F., gObracun )
 
    ENDIF
 
@@ -50,10 +51,11 @@ FUNCTION ld_postavi_parametre_obracuna()
 
    BoxC()
 
+
    IF LastKey() <> K_ESC
 
-      set_metric( "ld_godina", my_user(), gGodina )
-      set_metric( "ld_mjesec", my_user(), gMjesec )
+      set_metric( "ld_godina", my_user(), ld_tekuca_godina( nGodina ) )
+      set_metric( "ld_mjesec", my_user(), ld_tekuci_mjesec( nMjesec ) )
       set_metric( "ld_rj", my_user(), gLDRadnaJedinica )
       set_metric( "ld_obracun", my_user(), gObracun )
       set_metric( "ld_varijanta_obracuna", NIL, gVarObracun )

@@ -20,9 +20,9 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    cIdRadn := fetch_metric( "ld_izvj_radnik", my_user(), Space( LEN_IDRADNIK ) )
    cIdRj := gLDRadnaJedinica
-   nMjesec := gMjesec
-   cMjesec2 := gmjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   cMjesec2 := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
    cObracun := gObracun
    cRazdvoji := "N"
 

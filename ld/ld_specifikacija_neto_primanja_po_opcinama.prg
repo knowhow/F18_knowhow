@@ -23,8 +23,8 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
-   nMjesec := gMjesec
-   nGodina := gGodina
+   nMjesec := ld_tekuci_mjesec()
+   nGodina := ld_tekuca_godina()
    cObracun := gObracun
    cVarSort := fetch_metric( "ld_specifikacija_neto_po_opcini_sort", my_user(), "2" )
 

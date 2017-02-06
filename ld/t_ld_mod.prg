@@ -103,7 +103,7 @@ METHOD set_module_gvars()
    PUBLIC cFormula := ""
    PUBLIC gLDRadnaJedinica := "01"
    PUBLIC gnHelpObr := 0
-   PUBLIC gMjesec := 1
+
    PUBLIC gObracun := "1"
 
    // varijanta obracuna u skladu sa zak.promjenama
@@ -114,6 +114,8 @@ METHOD set_module_gvars()
    PUBLIC gAhTrosk := 30
    PUBLIC gIzdanje := Space( 10 )
    PUBLIC gGodina := Year( Date() )
+   PUBLIC gMjesec := 1
+
    PUBLIC gZaok := 2
    PUBLIC gZaok2 := 2
    PUBLIC gValuta := "KM "
@@ -163,3 +165,21 @@ METHOD set_module_gvars()
 FUNCTION  ld_vise_obracuna()
 
    RETURN fetch_metric( "ld_vise_obracuna", NIL, .T. )
+
+
+FUNCTION ld_tekuca_godina( nSet )
+
+   IF nSet != NIL
+      gGodina := nSet
+   ENDIF
+
+   RETURN gGodina
+
+
+FUNCTION ld_tekuci_mjesec( nSet )
+
+   IF nSet != NIL
+      gMjesec := nSet
+   ENDIF
+
+   RETURN gMjesec

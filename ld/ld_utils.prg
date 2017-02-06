@@ -519,8 +519,8 @@ FUNCTION ld_index_tag_vise_obracuna( cT, cI )
 
 FUNCTION ld_obracun_napravljen_vise_puta()
 
-   LOCAL nMjesec := gMjesec
-   LOCAL nGodina := gGodina
+   LOCAL nMjesec := ld_tekuci_mjesec()
+   LOCAL nGodina := ld_tekuca_godina()
    LOCAL cObracun := gObracun
    LOCAL _data := {}
    LOCAL cIdRadn, nProlaz, _count

@@ -367,6 +367,9 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    ld_unos_obracuna_tipovi_primanja()
 
+
+   SELECT ld
+
    kalkulacija_obracuna_plate_za_radnika( lNovi )
 
    ld_unos_obracuna_footer( @lSaveObracun )
@@ -649,6 +652,7 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 FUNCTION WhUnos( cTP )
 
    select_o_tippr( cTP )
+   SELECT LD
 
    RETURN .T.
 

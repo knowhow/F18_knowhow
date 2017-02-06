@@ -697,12 +697,12 @@ FUNCTION P_LD_RJ( cId, nDeltaX, nDeltaY )
 
 
 // vraca PU code opstine
-FUNCTION g_ops_code( cId )
+FUNCTION get_ops_idj( cId )
 
    LOCAL cRet := ""
 
    PushWa()
-   o_ops()
+
    select_o_ops( cId )
    IF !Eof()
       cRet := field->idj

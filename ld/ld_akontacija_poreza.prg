@@ -621,7 +621,7 @@ STATIC FUNCTION fill_data( cRj, nGodina, nMjesec, ;
 
 
       // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ParObr( nMjesec, nGodina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
+      ld_pozicija_parobr( nMjesec, nGodina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
       SELECT ld
 
@@ -644,7 +644,7 @@ STATIC FUNCTION fill_data( cRj, nGodina, nMjesec, ;
          lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
 
          // samo pozicionira bazu PAROBR na odgovarajuci zapis
-         ParObr( nMjesec, nGodina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
+         ld_pozicija_parobr( nMjesec, nGodina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
          // uzmi samo odgovarajuce tipove rada
          IF ( cVRada == "1" .AND. !( cT_tiprada $ "A#U" ) )
@@ -683,7 +683,7 @@ STATIC FUNCTION fill_data( cRj, nGodina, nMjesec, ;
          ENDIF
 
          // prihod
-         nPrihod := bruto_osn( nNeto, cT_tiprada, nL_odb, NIL, cTrosk )
+         nPrihod := ld_get_bruto_osnova( nNeto, cT_tiprada, nL_odb, NIL, cTrosk )
 
          // rashod
          nRashod := nPrihod * ( nTrosk / 100 )

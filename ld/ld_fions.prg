@@ -87,7 +87,7 @@ FUNCTION izracunaj_uneto_usati_za_radnika()
  *   param: cObr - broj obracuna
  *   param: cIdRj - id radna jedinica
  */
-FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
+FUNCTION ld_pozicija_parobr( nMjesec, nGodina, cObr, cIdRj )
 
    LOCAL nNaz
    LOCAL nRec1 := 0
@@ -103,7 +103,7 @@ FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
       cIDRJ := ""
    ENDIF
 
-   nArr := Select()
+   PushWa()
 
    cMj := Str( nMjesec, 2, 0 )
    cGod := Str( nGodina, 4, 0 )
@@ -113,9 +113,7 @@ FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
    IF Eof()
 
       // ponovo pretrazi ali bez godine, ima godina = prazan zapis !!!
-
       nRet := 2
-
       select_o_parobr( cMj + Space( 4 ) + cObr )
 
       IF field->id <> cMj
@@ -124,7 +122,7 @@ FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
       ENDIF
    ENDIF
 
-   SELECT ( nArr )
+   PopWa()
 
    RETURN nRet
 

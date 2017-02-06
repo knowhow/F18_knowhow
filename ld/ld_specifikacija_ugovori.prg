@@ -173,7 +173,7 @@ FUNCTION ld_specifikacija_plate_ostali()
 
    cObracun := Trim( cObracun )
 
-   ParObr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
+   ld_pozicija_parobr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
 
    // SELECT LD
    // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
@@ -274,7 +274,7 @@ FUNCTION ld_specifikacija_plate_ostali()
 
       nUNeto += ld->uneto
 
-      nBrSaTr := bruto_osn( ld->uneto, cRTR, nKoefLO, nRSpr_koef, cKTrosk )
+      nBrSaTr := ld_get_bruto_osnova( ld->uneto, cRTR, nKoefLO, nRSpr_koef, cKTrosk )
 
       // samo za povremene
       IF cRTR $ "A#U"
@@ -347,7 +347,7 @@ FUNCTION ld_specifikacija_plate_ostali()
                   nBOO += aOps[ i, 3 ]
                ENDIF
             NEXT
-            nBOO := bruto_osn( nBOO, cRTR, nKoefLO )
+            nBOO := ld_get_bruto_osnova( nBOO, cRTR, nKoefLO )
          ELSE
             IF cRTR $ "A#U"
                nBOO := nBrOsnPov

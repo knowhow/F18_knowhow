@@ -405,7 +405,7 @@ FUNCTION ld_specifikacija_plate()
    cDodDoprP := Izrezi( "D->", 2, @cDDoprPio )
    cDodDoprZ := Izrezi( "D->", 2, @cDDoprZdr )
 
-   ParObr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
+   ld_pozicija_parobr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
 
    // SELECT LD
    // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
@@ -524,12 +524,12 @@ FUNCTION ld_specifikacija_plate()
       nUNetoOsnova += nNetoOsn
 
       // prvo doprinosi i bruto osnova ....
-      nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
+      nPojBrOsn := ld_get_bruto_osnova( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
 
       // pojedinacni bruto - dobra ili usluge
       nPojBrDobra := 0
       IF nPrDobra > 0
-         nPojBrDobra := bruto_osn( nPrDobra, cRTR, nKoefLO, nRSpr_koef )
+         nPojBrDobra := ld_get_bruto_osnova( nPrDobra, cRTR, nKoefLO, nRSpr_koef )
       ENDIF
 
       nMPojBrOsn := nPojBrOsn
@@ -552,7 +552,7 @@ FUNCTION ld_specifikacija_plate()
          cFFTmp := gBFForm
          gBFForm := StrTran( gBFForm, "_", "" )
 
-         nPojBrBenef := bruto_osn( nNetoOsn - IF( !Empty( gBFForm ), &gBFForm, 0 ), cRTR, nKoefLO, nRSpr_koef )
+         nPojBrBenef := ld_get_bruto_osnova( nNetoOsn - IF( !Empty( gBFForm ), &gBFForm, 0 ), cRTR, nKoefLO, nRSpr_koef )
 
          nBrutoOsBenef += nPojBrBenef
 
@@ -582,7 +582,7 @@ FUNCTION ld_specifikacija_plate()
                   nBOO += aOps[ i, 3 ]
                ENDIF
             NEXT
-            nBOO := bruto_osn( nBOO, cRTR, nKoefLO )
+            nBOO := ld_get_bruto_osnova( nBOO, cRTR, nKoefLO )
          ELSE
             nBOO := nMBrutoOsnova
          ENDIF

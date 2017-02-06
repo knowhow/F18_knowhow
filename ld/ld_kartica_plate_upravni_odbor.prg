@@ -147,7 +147,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, nMjesec, nGodina, cIdRadn, cObra
 
    nOsnZaBr := nOsnNeto
 
-   nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
+   nBo := ld_get_bruto_osnova( nOsnZaBr, cRTipRada, nLicOdbitak )
 
    // bruto placa iz neta...
 

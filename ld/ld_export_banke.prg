@@ -836,8 +836,7 @@ METHOD LDExportTxt:get_export_list()
 
 
 
-
-FUNCTION ld_export_banke()
+FUNCTION ld_export()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
@@ -852,7 +851,7 @@ FUNCTION ld_export_banke()
 
    f18_menu( "el", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 

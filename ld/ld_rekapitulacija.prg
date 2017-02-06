@@ -126,7 +126,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    ?
    P_12CPI
 
-   ParObr( nMjesec, nGodina, cObracun, iif( !lSvi, cIdRj, ) )  // pozicionira bazu PAROBR na odgovarajuci zapis
+   ld_pozicija_parobr( nMjesec, nGodina, cObracun, iif( !lSvi, cIdRj, ) )  // pozicionira bazu PAROBR na odgovarajuci zapis
 
    PRIVATE aRekap[ cLDPolja, 2 ]
 
@@ -473,7 +473,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
 
       select_o_vposla( _idvposla )
 
-      ParObr( ld->mjesec, ld->godina, cObracun, ld->idrj )
+      ld_pozicija_parobr( ld->mjesec, ld->godina, cObracun, ld->idrj )
 
       SELECT ld
 
@@ -571,7 +571,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       ENDIF
 
       // br.osn za radnika
-      nRadn_bo := bruto_osn( _oosnneto, cTipRada, nKoefLO, nRSpr_koef, cTrosk )
+      nRadn_bo := ld_get_bruto_osnova( _oosnneto, cTipRada, nKoefLO, nRSpr_koef, cTrosk )
       nTrosk := 0
 
       IF cTipRada $ "A#U"
@@ -621,7 +621,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       IF is_radn_k4_bf_ide_u_benef_osnovu()
 
          // beneficirani staz za radnika
-         nRadn_bbo := bruto_osn( _oosnneto - if( !Empty( gBFForm ), &gBFForm, 0 ), cTipRada, nKoefLO, nRSpr_koef )
+         nRadn_bbo := ld_get_bruto_osnova( _oosnneto - if( !Empty( gBFForm ), &gBFForm, 0 ), cTipRada, nKoefLO, nRSpr_koef )
          nURadn_bbo += nRadn_bbo
 
          // uzmi stepen za radnika koji je ?
@@ -794,7 +794,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
          ELSE
             nTObl := Select()
             nTRec := PAROBR->( RecNo() )
-            ParObr( mjesec, godina, IF( ld_vise_obracuna(), cObracun, ), IF( !lSvi, cIdRj, ) )
+            ld_pozicija_parobr( mjesec, godina, IF( ld_vise_obracuna(), cObracun, ), IF( !lSvi, cIdRj, ) )
             // samo pozicionira bazu PAROBR na odgovarajui zapis
             AAdd( aNetoMj, { mjesec, _uneto, _usati, PAROBR->k3, PAROBR->k1 } )
             SELECT PAROBR

@@ -77,7 +77,7 @@ FUNCTION ld_pregled_plata()
    SELECT PARAMS
    USE
 
-   ParObr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ) )
+   ld_pozicija_parobr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ) )
 
    set_tippr_ili_tippr2( cObracun )
 
@@ -181,7 +181,7 @@ FUNCTION ld_pregled_plata()
 
    DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
-      ParObr( ld->mjesec, ld->godina, iif( ld_vise_obracuna(), cObracun, ), ld->idrj )
+      ld_pozicija_parobr( ld->mjesec, ld->godina, iif( ld_vise_obracuna(), cObracun, ), ld->idrj )
 
       IF ld_vise_obracuna() .AND. Empty( cObracun )
          ScatterS( godina, mjesec, idrj, idradn )
@@ -254,7 +254,7 @@ FUNCTION ld_pregled_plata()
       cTrosk := radn->trosk
       nLicOdb := _ulicodb
 
-      nBO := bruto_osn( _uneto, cRTipRada, nLicOdb, nPrKoef, cTrosk )
+      nBO := ld_get_bruto_osnova( _uneto, cRTipRada, nLicOdb, nPrKoef, cTrosk )
       nMBO := nBO
 
       IF calc_mbruto()

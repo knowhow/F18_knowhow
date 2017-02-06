@@ -43,7 +43,7 @@ FUNCTION seek_ld( cIdRj, xGodina, nMjesec, cObracun, cIdRadn, cTag )
       ENDIF
    ENDIF
 
-   IF cIdRj != NIL
+   IF cIdRj != NIL .AND. !Empty( cIdRj )
       IF lWhere
          cSql += " AND "
       ELSE

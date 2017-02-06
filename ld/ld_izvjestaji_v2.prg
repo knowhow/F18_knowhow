@@ -265,11 +265,11 @@ FUNCTION IzracDopr( cDopr, nKLO, cTipRada, nSpr_koef )
       nSPr_koef := 0
    ENDIF
 
-   ParObr( mjesec, godina, IF( ld_vise_obracuna(), cObracun, ), cIdRj )
+   ld_pozicija_parobr( mjesec, godina, IF( ld_vise_obracuna(), cObracun, ), cIdRj )
 
    IF gVarObracun == "2"
 
-      nBo := bruto_osn( Max( _UNeto, PAROBR->prosld * gPDLimit / 100 ), cTipRada, nKlo, nSPr_koef )
+      nBo := ld_get_bruto_osnova( Max( _UNeto, PAROBR->prosld * gPDLimit / 100 ), cTipRada, nKlo, nSPr_koef )
 
       IF is_radn_k4_bf_ide_u_benef_osnovu()
 
@@ -277,7 +277,7 @@ FUNCTION IzracDopr( cDopr, nKLO, cTipRada, nSpr_koef )
             gBFForm := StrTran( gBFForm, "_", "" )
          ENDIF
 
-         nBFOsn := bruto_osn( _UNeto - IF( !Empty( gBFForm ), &gBFForm, 0 ), cTipRada, nKlo, nSPr_koef )
+         nBFOsn := ld_get_bruto_osnova( _UNeto - IF( !Empty( gBFForm ), &gBFForm, 0 ), cTipRada, nKlo, nSPr_koef )
 
          _benef_st := BenefStepen()
          add_to_a_benef( @_a_benef, AllTrim( radn->k3 ), _benef_st, nBFOsn )

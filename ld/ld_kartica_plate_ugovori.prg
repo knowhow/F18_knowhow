@@ -105,7 +105,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNe
    lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
    // bruto sa troskovima
-   nBSaTr := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
+   nBSaTr := ld_get_bruto_osnova( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
 
    // troskovi su
    IF cRTipRada == "U"

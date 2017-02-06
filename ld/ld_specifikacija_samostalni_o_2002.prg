@@ -235,7 +235,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
    cObracun := Trim( cObracun )
 
-   ParObr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
+   ld_pozicija_parobr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
 
    //SELECT LD
    //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
@@ -302,7 +302,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
 
       // prvo doprinosi i bruto osnova
-      nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
+      nPojBrOsn := ld_get_bruto_osnova( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
       nBrutoOsnova += nPojBrOsn
 
       nPom := nBrutoOsnova // ukupno bruto
@@ -327,7 +327,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
                   nBOO += aOps[ i, 3 ]
                ENDIF
             NEXT
-            nBOO := bruto_osn( nBOO, cRTR, nKoefLO )
+            nBOO := ld_get_bruto_osnova( nBOO, cRTR, nKoefLO )
          ELSE
             nBOO := nBrutoOsnova
          ENDIF

@@ -131,10 +131,10 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, 
 
       nOsnZaBr := nOsnNeto
 
-      nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
+      nBo := ld_get_bruto_osnova( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
 
       IF is_radn_k4_bf_ide_u_benef_osnovu()
-         _bn_osnova := bruto_osn( nOsnZaBr - if( !Empty( gBFForm ), &gBFForm, 0 ), cRTipRada, nLicOdbitak, nRPrKoef )
+         _bn_osnova := ld_get_bruto_osnova( nOsnZaBr - if( !Empty( gBFForm ), &gBFForm, 0 ), cRTipRada, nLicOdbitak, nRPrKoef )
          _bn_stepen := BenefStepen()
          add_to_a_benef( @_a_benef, AllTrim( radn->k3 ), _bn_stepen, _bn_osnova )
       ENDIF

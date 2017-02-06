@@ -249,7 +249,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    ESC_BCR
 
-   nO_Ret := ParObr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, NIL ), cIdRj )
+   nO_Ret := ld_pozicija_parobr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, NIL ), cIdRj )
 
    IF nO_ret = 0
 
@@ -316,7 +316,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       _idstrspr := radn->idstrspr
    ENDIF
 
-   ParObr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ), cIdRj )
+   ld_pozicija_parobr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ), cIdRj )
 
    IF gTipObr == "1"
       @ form_x_koord() + 3, form_y_koord() + 2   SAY IF( gBodK == "1", _l( "Broj bodova" ), _l( "Koeficijent" ) ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
@@ -469,7 +469,7 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
       _ULicOdb := 0
    ENDIF
 
-   _UBruto := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk )
+   _UBruto := ld_get_bruto_osnova( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk )
 
    IF cTipRada == "U" .AND. cTrosk <> "N"
       nTrosk := ROUND2( _UBruto * ( gUgTrosk / 100 ), gZaok2 )

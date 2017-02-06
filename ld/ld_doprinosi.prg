@@ -205,7 +205,7 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
                      nBOOps := 0
                   ENDIF
                ELSE
-                  nBOOps := bruto_osn( nIznos, cRTipRada, nKoefLO )
+                  nBOOps := ld_get_bruto_osnova( nIznos, cRTipRada, nKoefLO )
                ENDIF
 
                @ PRow(), nC1 SAY nBOOps PICTURE gpici
@@ -300,7 +300,7 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
                nBo := nUMRadn_bo
 
             ELSE
-               nBO := bruto_osn( nTmpOsn, cRTipRada, nKoefLO )
+               nBO := ld_get_bruto_osnova( nTmpOsn, cRTipRada, nKoefLO )
             ENDIF
 
             @ PRow(), nC1 SAY nBO PICT gpici

@@ -36,10 +36,8 @@ METHOD programski_modul_osnovni_meni
 
    AAdd( aOpcije, "1. obračun (unos, ispravka, administracija)          " )
    AAdd( aOpcijeB, {|| ld_obracun() } )
-
    AAdd( aOpcije, "D. unos datuma isplate plaća" )
    AAdd( aOpcijeB, {|| unos_datuma_isplate_place() } )
-
    AAdd( aOpcije, "P. postavke obračuna (rj/mjesec/godina)" )
    AAdd( aOpcijeB, {|| ld_postavi_parametre_obracuna() } )
 
@@ -65,8 +63,9 @@ METHOD programski_modul_osnovni_meni
    AAdd( aOpcije, "K. krediti" )
    AAdd( aOpcijeB, {|| ld_krediti_menu() } )
 
-   AAdd( aOpcije, "X. export podataka za banke " )
-   AAdd( aOpcijeB, {|| ld_export_banke() } )
+   AAdd( aOpcije, "T. export podataka" )
+   AAdd( aOpcijeB, {|| ld_export() } )
+
    AAdd( aOpcije, "V. generisanje virmana " )
    AAdd( aOpcijeB, {|| ld_gen_virm() } )
 
@@ -74,6 +73,7 @@ METHOD programski_modul_osnovni_meni
    AAdd( aOpcijeB, NIL )
    AAdd( aOpcije, "S. šifarnici plate" )
    AAdd( aOpcijeB, {|| ld_sifarnici() } )
+
    AAdd( aOpcije, "X. parametri aplikacije" )
    AAdd( aOpcijeB, {|| ld_parametri() } )
 

@@ -52,7 +52,7 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
    nOstNeg := 0
    // nLicOdbitak := g_licni_odb( radn->id )
    nLicOdbitak := ld->ulicodb
-   nKoefOdbitka := g_klo( nLicOdbitak )
+   nKoefOdbitka := get_koeficijent_licnog_odbitka( nLicOdbitak )
    cRTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
 
    ? cTprLine
@@ -314,12 +314,12 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
 
       nOsnZaBr := nOsnNeto
 
-      nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
+      nBo := ld_get_bruto_osnova( nOsnZaBr, cRTipRada, nLicOdbitak )
 
       IF is_radn_k4_bf_ide_u_benef_osnovu()
 
          nTmp2 := nOsnZaBr - IF( !Empty( gBFForm ),  &( gBFForm ), 0 )
-         nBFo := bruto_osn( nTmp2, cRTipRada, nLicOdbitak )
+         nBFo := ld_get_bruto_osnova( nTmp2, cRTipRada, nLicOdbitak )
 
          _benef_st := BenefStepen()
          add_to_a_benef( @_a_benef, AllTrim( radn->k3 ), _benef_st, nBFO )

@@ -169,7 +169,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
    ?
    P_12CPI
 
-   ParObr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ), cIdRj )
+   ld_pozicija_parobr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ), cIdRj )
 
    PRIVATE lNKNS
    lNKNS := ( cNKNS == "D" )
@@ -293,7 +293,7 @@ FUNCTION ZaglKar()
    ENDIF
 
    IF __var_obr == "2"
-      ?? Space( 2 ) +  "Koef.licnog odbitka:", AllTrim( Str( g_klo( ld->ulicodb ) ) )
+      ?? Space( 2 ) +  "Koef.licnog odbitka:", AllTrim( Str( get_koeficijent_licnog_odbitka( ld->ulicodb ) ) )
    ENDIF
 
    IF __radni_sati == "D"

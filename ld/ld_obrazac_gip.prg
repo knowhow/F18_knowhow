@@ -982,7 +982,7 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
       // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ParObr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
+      ld_pozicija_parobr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
       select_o_radn( cT_radnik )
 
@@ -1053,7 +1053,7 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
             ENDIF
          ENDIF
 
-         ParObr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ;
+         ld_pozicija_parobr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ;
             ld->idrj )
 
          nPrDobra := 0
@@ -1098,7 +1098,7 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
 
 
          nNeto := field->uneto
-         nKLO := g_klo( field->ulicodb )
+         nKLO := get_koeficijent_licnog_odbitka( field->ulicodb )
          nL_odb := field->ulicodb
 
          // tipovi primanja koji ne ulaze u bruto osnovicu
@@ -1106,7 +1106,7 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
             nNeto := ( nNeto - nTP_off )
          ENDIF
 
-         nBruto := bruto_osn( nNeto, cTipRada, nL_odb )
+         nBruto := ld_get_bruto_osnova( nNeto, cTipRada, nL_odb )
 
          nMBruto := nBruto
 
@@ -1153,7 +1153,7 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
          // bruto primanja u uslugama ili dobrima
          // za njih posebno izracunaj bruto osnovicu
          IF nPrDobra > 0
-            nBrDobra := bruto_osn( nPrDobra, cTipRada, nL_odb )
+            nBrDobra := ld_get_bruto_osnova( nPrDobra, cTipRada, nL_odb )
          ENDIF
 
          // ocitaj doprinose, njihove iznose

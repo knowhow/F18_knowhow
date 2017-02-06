@@ -35,7 +35,7 @@ FUNCTION _calc_tpr( nIzn, lCalculate )
    cTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
 
    IF gPrBruto == "X" .AND. ( tippr->uneto == "D" .OR. lCalculate == .T. )
-      nRet := bruto_osn( nIzn, cTR, ld->ulicodb )
+      nRet := ld_get_bruto_osnova( nIzn, cTR, ld->ulicodb )
    ENDIF
 
    RETURN nRet
@@ -181,11 +181,13 @@ FUNCTION radn_oporeziv( cRadn, cRj )
 // nSKoef - koeficijent kod samostalnih poslodavaca
 // cTrosk - ugovori o djelu i ahon, korsiti troskove ?
 // ---------------------------------------------------------
-FUNCTION bruto_osn( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
+FUNCTION ld_get_bruto_osnova( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
 
    LOCAL nBrt := 0
 
+   PushWa()
    IF nIzn <= 0
+      PopWa()
       RETURN nBrt
    ENDIF
 
@@ -216,8 +218,7 @@ FUNCTION bruto_osn( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
       IF ( nIzn < nLOdb )
          nBrt := ROUND2( nIzn * parobr->k6, gZaok2 )
       ELSE
-         nBrt := ROUND2( ( ( nIzn - nLOdb ) / 0.9 + nLOdb ) ;
-            / 0.69, gZaok2 )
+         nBrt := ROUND2( ( ( nIzn - nLOdb ) / 0.9 + nLOdb ) / 0.69, gZaok2 )
       ENDIF
 
       // samostalni poslodavci
@@ -248,13 +249,14 @@ FUNCTION bruto_osn( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
 
       nBrt := ROUND2( nIzn / ( ( ( 100 - nTr ) * 0.96 * 0.90 + nTr ) / 100 ), gZaok2 )
 
-      // ako je u RS-u, nema troskova, i drugi koeficijent
-      IF radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
+      IF radnik_iz_rs( radn->idopsst, radn->idopsrad ) // ako je u RS-u, nema troskova, i drugi koeficijent
          nBrt := ROUND2( nIzn * 1.111112, gZaok2 )
       ENDIF
 
    ENDCASE
+
+   PopWa()
 
    RETURN nBrt
 
@@ -458,7 +460,7 @@ FUNCTION p_potpis()
 // -----------------------------------------------------
 // vraca koeficijent licnog odbitka
 // -----------------------------------------------------
-FUNCTION g_klo( nUOdbitak )
+FUNCTION get_koeficijent_licnog_odbitka( nUOdbitak )
 
    LOCAL nKLO := 0
 
@@ -504,7 +506,7 @@ FUNCTION ld_index_tag_vise_obracuna( cT, cI )
    ENDIF
 
    IF ld_vise_obracuna() .AND. cT $ "12"
-      IF cI == "I" .OR. Empty( cObracun )
+      IF cI == "I" .OR. Empty( gObracun )
          cT := cT + "U"
       ENDIF
    ENDIF
@@ -536,7 +538,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    BoxC()
 
-   //o_ld_radn()
+   // o_ld_radn()
    seek_ld_2( NIL,  nGodina, nMjesec, cObracun )
 
    Box(, 1, 60 )
@@ -559,8 +561,8 @@ FUNCTION ld_obracun_napravljen_vise_puta()
       IF nProlaz > 1
 
          select_o_radn( cIdRadn )
-         //SELECT ld
-        // SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cIdRadn
+         // SELECT ld
+         // SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cIdRadn
 
          DO WHILE !Eof() .AND. Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->obr == Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun .AND. field->idradn == cIdRadn
             AAdd( _data, { field->obr, field->idradn, PadR( AllTrim( radn->naz ) + " " + AllTrim( radn->ime ), 20 ), field->idrj, field->uneto, field->usati } )
@@ -624,13 +626,13 @@ FUNCTION ld_gen_virm()
 
 
 
-FUNCTION SortPrez( cId ) //, lSql )
+FUNCTION SortPrez( cId ) // , lSql )
 
    LOCAL cVrati := ""
    LOCAL lUtf := .F.
    LOCAL nArr := Select()
 
-   //hb_default( @lSql, .F. )
+   // hb_default( @lSql, .F. )
 
    select_o_radn( cId )
 

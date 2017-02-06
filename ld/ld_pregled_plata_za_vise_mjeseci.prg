@@ -163,7 +163,7 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
       cOpor := g_oporeziv( ld->idradn, ld->idrj )
 
       // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ParObr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
+      ld_pozicija_parobr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
       select_o_radn( cT_radnik )
 
@@ -231,7 +231,7 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
          cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj ) // uvijek provjeri tip rada, ako ima vise obracuna
          cTrosk := radn->trosk
 
-         ParObr( ld->mjesec, ld->godina, iif( ld_vise_obracuna(), ld->obr, ), ld->idrj )
+         ld_pozicija_parobr( ld->mjesec, ld->godina, iif( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
          nPrKoef := 0
 
@@ -271,9 +271,9 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
          nUkBolovanjeSati += nBolovanjeSatiM4
 
 
-         nBrutoST := bruto_osn( ld->uneto, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto sa troskovima
-         nBr_bol := bruto_osn( nBolovanjeIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto bolovanja
-         nBr_rad := bruto_osn( nRadIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk )  // bruto rada
+         nBrutoST := ld_get_bruto_osnova( ld->uneto, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto sa troskovima
+         nBr_bol := ld_get_bruto_osnova( nBolovanjeIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto bolovanja
+         nBr_rad := ld_get_bruto_osnova( nRadIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk )  // bruto rada
 
          nTrosk := 0
 

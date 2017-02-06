@@ -248,7 +248,7 @@ MsgO( "MIP sort LD ...")
          SET ORDER TO TAG ( TagVO( "2" ) )
          GO TOP
          SEEK Str( cGod, 4, 0 ) + Str( cMj, 2, 0 )
-         
+
       ELSE
          SET ORDER TO TAG ( TagVO( "2" ) )
          GO TOP
@@ -409,7 +409,9 @@ Box( "#MIP generacija", 3, 60 )
          nSatiBolovanje := 0
          sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanje, @nBolovanjaIznos, @nSatiBolovanje )
 
-         lImaBovanjaPreko42 := .F. // provjeri da li ima bolovanja preko 42 dana ili trudnickog bolovanja
+         lImaBovanjaPreko42 := .F. // provjeriti da li ima bolovanja preko 42 dana ili trudnickog bolovanja
+         nBolovanjaPreko42Iznos := 0
+         nBolovanjaPreko42Sati := 0
          sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanjePreko, @nBolovanjaPreko42Iznos, @nBolovanjaPreko42Sati )
          IF Round( nBolovanjaPreko42Iznos, 2 ) != 0 .OR. Round( nBolovanjaPreko42Sati, 2 ) != 0
             lImaBovanjaPreko42 := .T.

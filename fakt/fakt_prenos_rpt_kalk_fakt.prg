@@ -384,7 +384,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    // pocetak ispisa
    ?
    P_COND
-   ?? Space( gnLMarg ); IspisFirme( cidfirma )
+   ?? Space( gnLMarg ); IspisFirme( cIdFirma )
    ? Space( gnLMarg ); ?? "FAKT: Usporedna lager lista u FAKT i KALK na dan", Date(), "   za period od", dDatOd, "-", dDatDo
    IF !Empty( qqRoba )
       ?

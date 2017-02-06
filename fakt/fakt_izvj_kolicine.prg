@@ -86,11 +86,11 @@ STATIC FUNCTION _g_ini_roba()
 
    LOCAL _arr := {}
    LOCAL nI
-   LOCAL _param_count := 40
+   LOCAL nParamCount := 40
    LOCAL _item
    LOCAL _count := 0
 
-   FOR nI := 1 TO _param_count
+   FOR nI := 1 TO nParamCount
 
       // item uzimam iz sql/db
       _item := fetch_metric( "fakt_pregled_prodaje_rpt_artikal_" + PadL( AllTrim( Str( nI ) ), 2, "0" ), NIL, "" )

@@ -131,9 +131,9 @@ FUNCTION fakt_lager_lista()
 
    DO WHILE .T.
       IF gNW $ "DR"
-         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
       @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
       @ m_x + 3, m_y + 2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   PICT "@!"
@@ -284,7 +284,7 @@ FUNCTION fakt_lager_lista()
    nIznR := 0 // iznos rabata
    nRezerv := nRevers := 0
    qqPartn := Trim( qqPartn )
-   cidfirma := Trim( cidfirma )
+   cIdFirma := Trim( cIdFirma )
 
    IF cSintetika == "D"
       bWhile1 := {|| !Eof() .AND. Left( cIdroba, gnDS ) == Left( IdRoba, gnDS )  }
@@ -333,8 +333,8 @@ FUNCTION fakt_lager_lista()
             ENDIF
          ENDIF
 
-         IF !Empty( cidfirma )
-            IF idfirma <> cidfirma
+         IF !Empty( cIdFirma )
+            IF idfirma <> cIdFirma
                SKIP
                LOOP
             ENDIF
@@ -477,7 +477,7 @@ FUNCTION fakt_lager_lista()
                ENDIF
                IF Round( nPrenesi, 4 ) <> 0
                   APPEND BLANK
-                  REPLACE idfirma WITH cidfirma, idroba WITH Left( cIdRoba, 10 ), ;
+                  REPLACE idfirma WITH cIdFirma, idroba WITH Left( cIdRoba, 10 ), ;
                      datdok WITH dDatDo + 1, ;
                      idtipdok WITH "00", brdok WITH cBRPST, ;
                      cijena WITH _cijena, ;
@@ -680,7 +680,7 @@ FUNCTION fakt_zagl_lager_lista()
    ENDIF
 
    ? Space( gnLMarg )
-   IspisFirme( cidfirma )
+   IspisFirme( cIdFirma )
 
    IF !Empty( qqRoba )
       ? Space( gnLMarg )

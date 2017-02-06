@@ -87,7 +87,7 @@ FUNCTION fakt_kartica()
       @ m_x + 1, m_y + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
       READ
       IF gNW $ "DR"
-         @ m_x + 2, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 2, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
          @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
@@ -226,7 +226,7 @@ FUNCTION fakt_kartica()
    ?
    P_12CPI
    ?? Space( gnLMarg ); ?? "FAKT: Kartice artikala na dan", Date(), "      za period od", dDatOd, "-", dDatDo
-   ? Space( gnLMarg ); IspisFirme( cidfirma )
+   ? Space( gnLMarg ); IspisFirme( cIdFirma )
    IF !Empty( qqRoba )
       ? Space( gnLMarg )
       IF !Empty( qqRoba ) .AND. cBrza = "N"
@@ -330,7 +330,7 @@ FUNCTION fakt_kartica()
             IF !Empty( cK2 )
                IF ck2 <> K2; skip; loop; ENDIF
             ENDIF
-            IF !Empty( cidfirma ); IF idfirma <> cidfirma; skip; loop; end; END
+            IF !Empty( cIdFirma ); IF idfirma <> cIdFirma; skip; loop; end; END
             IF !Empty( qqPartn )
 
 
@@ -374,7 +374,7 @@ FUNCTION fakt_kartica()
             cIdRoba == iif( fID_J, IdRoba_J + IdRoba, IdRoba ) )
          cKolona := "N"
 
-         IF !Empty( cidfirma ); IF idfirma <> cidfirma; skip; loop; end; END
+         IF !Empty( cIdFirma ); IF idfirma <> cIdFirma; skip; loop; end; END
          IF !Empty( cK1 ); IF ck1 <> K1 ; skip; loop; end; END // uslov ck1
          IF !Empty( cK2 ); IF ck2 <> K2; skip; loop; end; END // uslov ck2
 

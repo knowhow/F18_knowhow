@@ -77,17 +77,14 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       @ m_x + nX, m_y + 2 SAY "RJ            " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY "Od datuma "  GET dDatOd
 
       @ m_x + nX, Col() + 1 SAY "do"  GET dDatDo
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY "gledati dat. (D)dok. (O)otpr. (V)valute:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
 
       nX := nX + 3
@@ -489,7 +486,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          ENDIF
 
          select_o_roba( cIdRoba )
-         
+
          SELECT fakt
 
          IF Round( nKolicina, 4 ) <> 0

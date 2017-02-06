@@ -73,14 +73,14 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
    __DRV_CURRENT := _dev_drv
 
-   SELECT fakt_doks
-   SET FILTER TO
+   //SELECT fakt_doks
+   //SET FILTER TO
 
-   SELECT fakt
-   SET FILTER TO
+   //SELECT fakt
+   //SET FILTER TO
 
-   SELECT partn
-   SET FILTER TO
+   //SELECT partn
+  // SET FILTER TO
 
    SELECT fakt_doks
 

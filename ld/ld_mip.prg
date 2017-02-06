@@ -216,6 +216,45 @@ FUNCTION ld_mip_obrazac_1023()
    RETURN .T.
 
 
+   FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
+
+      LOCAL cFilter := ""
+
+      PRIVATE cObracun := cObr
+
+MsgO( "MIP sort LD ...")
+      IF !Empty( cObr )
+         cFilter += "obr == " + dbf_quote( cObr )
+      ENDIF
+
+      IF !Empty( cRj )
+
+         IF !Empty( cFilter )
+            cFilter += " .and. "
+         ENDIF
+
+         cFilter += Parsiraj( cRj, "IDRJ" )
+      ENDIF
+
+      IF !Empty( cFilter )
+         SET FILTER TO &cFilter
+         GO TOP
+      ENDIF
+
+      IF Empty( cRadnik )
+         INDEX ON Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) + SortPrez( field->idradn ) + idrj TAG "MIP1" TO ( my_home() + "ld_tmp" )
+         GO TOP
+         SEEK Str( cGod, 4, 0 ) + Str( cMj, 2, 0 ) + cRadnik
+      ELSE
+         SET ORDER TO TAG ( TagVO( "2" ) )
+         GO TOP
+         SEEK Str( cGod, 4, 0 ) + Str( cMj, 2, 0 ) + cObracun + cRadnik
+      ENDIF
+
+MsgC()
+
+      RETURN .T.
+
 
 FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       cRadnik, ;
@@ -896,42 +935,6 @@ STATIC FUNCTION mipmip_glavna_fill_xml( cFile )
    RETURN .T.
 
 
-
-FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
-
-   LOCAL cFilter := ""
-
-   PRIVATE cObracun := cObr
-
-   IF !Empty( cObr )
-      cFilter += "obr == " + dbf_quote( cObr )
-   ENDIF
-
-   IF !Empty( cRj )
-
-      IF !Empty( cFilter )
-         cFilter += " .and. "
-      ENDIF
-
-      cFilter += Parsiraj( cRj, "IDRJ" )
-   ENDIF
-
-   IF !Empty( cFilter )
-      SET FILTER TO &cFilter
-      GO TOP
-   ENDIF
-
-   IF Empty( cRadnik )
-      INDEX ON Str( field->godina ) + Str( field->mjesec ) + SortPrez( field->idradn ) + idrj TAG "MIP1" TO ( my_home() + "ld_tmp" )
-      GO TOP
-      SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cRadnik
-   ELSE
-      SET ORDER TO TAG ( TagVO( "2" ) )
-      GO TOP
-      SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cObracun + cRadnik
-   ENDIF
-
-   RETURN .T.
 
 
 

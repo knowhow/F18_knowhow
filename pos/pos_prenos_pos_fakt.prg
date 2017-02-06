@@ -86,7 +86,7 @@ FUNCTION Stanje2Fakt()
    cIdPos := gIdPos
    dDatOd := CToD( "" )
    dDatDo := Date()
-   cIdPartnG := Space( Len( partn->id ) )
+   cIdPartnG := Space( LEN_PARTNER_ID )
 
    SET CURSOR ON
 
@@ -110,7 +110,7 @@ FUNCTION Stanje2Fakt()
       HSEEK cIdPartnG
       cIdPartnG := partn->idfmk
    ELSE
-      cIdPartnG := Space( Len( partn->idfmk ) )
+      cIdPartnG := Space( LEN_PARTNER_ID )
    ENDIF
 
    PripTOPSFAKT( cIdPartnG )

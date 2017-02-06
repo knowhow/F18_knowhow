@@ -108,7 +108,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
    IF _brza = "D"
 
       _konto := PadR( _konto, 7 )
-      _partner := PadR( _partner, Len( partn->id ) )
+      _partner := PadR( _partner, LEN_PARTNER_ID )
 
       @ m_x + _x, m_y + 2 SAY "Konto   " GET _konto VALID !Empty( _konto ) .AND. P_KontoFin( @_konto )
       ++ _x

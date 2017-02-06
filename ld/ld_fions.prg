@@ -105,8 +105,8 @@ FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
 
    nArr := Select()
 
-   cMj := Str( nMjesec, 2 )
-   cGod := Str( nGodina, 4 )
+   cMj := Str( nMjesec, 2, 0 )
+   cGod := Str( nGodina, 4, 0 )
 
    SELECT parobr
    SEEK cMj + cGod + cObr
@@ -191,6 +191,7 @@ FUNCTION Prosj3( cTip, cTip2 )
 
    PushWA()
 
+   SELECT LD
    // "1","str(godina)+idrj+str(mjesec)+idradn"
    // "2","str(godina)+str(mjesec)+idradn"
    SET ORDER TO TAG ( TagVO( "2", "I" ) )
@@ -445,6 +446,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
       cFormula := cF0
    ENDIF
 
+   SELECT LD
    // "1","str(godina)+idrj+str(mjesec)+idradn"
    // "2","str(godina)+str(mjesec)+idradn"
    SET ORDER TO TAG ( TagVO( "2", "I" ) )
@@ -890,7 +892,7 @@ FUNCTION TPImaPO( cTP )
 
    LOCAL lVrati := .F., nObl := Select()
 
-   //SELECT TIPPR
+   // SELECT TIPPR
    PushWA()
 
    select_o_tippr( cTP )

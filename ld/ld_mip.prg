@@ -40,7 +40,7 @@ FUNCTION ld_mip_obrazac_1023()
    LOCAL cDoprDod := Space( 100 )
    LOCAL cTipoviPrimanjaNeUlazeBeneficirani := Space( 100 )
    LOCAL cTipoviPrimanjaBolovanje := PadR( "18;", 100 )
-   LOCAL cTipoviPrimanjaBolovanjePreko := PadR( "18;24;", 100 )
+   LOCAL cTipoviPrimanjaBolovanjePreko := PadR( "24;25;", 100 )
    LOCAL cObracun := gObracun
    LOCAL cStampaExport := "E"
    LOCAL nOper := 1
@@ -89,7 +89,7 @@ FUNCTION ld_mip_obrazac_1023()
    @ m_x + 6, m_y + 2 SAY " TIPOVI PRIMANJA:"
    @ m_x + 7, m_y + 2 SAY " .. isplate u usl. ili dobrima:" GET cTipPrimIsplateUslugeIliDobra PICT "@S30"
    @ m_x + 8, m_y + 2 SAY " .. ne ulaze u beneficirani:"  GET cTipoviPrimanjaNeUlazeBeneficirani PICT "@S30"
-   @ m_x + 9, m_y + 2 SAY " .. bolovanje:" GET cTipoviPrimanjaBolovanje PICT "@S30"
+   @ m_x + 9, m_y + 2 SAY " .. bolovanje do 42 d:" GET cTipoviPrimanjaBolovanje PICT "@S30"
    @ m_x + 10, m_y + 2 SAY8 " .. bolovanje preko 42 dana, trudničko:" GET cTipoviPrimanjaBolovanjePreko PICT "@S30"
 
 
@@ -373,17 +373,15 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          nNeto := ld->uneto
          nKLO := g_klo( ld->ulicodb )
          nL_odb := ld->ulicodb
-         nBrojRadnihSati := ld->usati
+         nBrojRadnihSati := ld->usati // ukupno u neto sati
 
 
-
-         IF ( nBolovanjaIznos != 0 ) .OR. ( nSatiBolovanje != 0 )
+         IF ( nBolovanjaIznos != 0 ) .OR. ( nSatiBolovanje != 0 ) // ako je bilo bolovanja do 42d umanji broj sati
 
             // old 2/ nNeto := ( nNeto - nPrimanjaNeUlazeUBeneficiraniIznos )  - ovo ne postoji
             // old 2/ nBrojRadnihSati := ( nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati ) // tipovi primanja koji ne ulaze u sate
 
-            // old 06.02.2017 // nBrojRadnihSati := nBrojRadnihSati - nBolovanjaSati
-            nBrojRadnihSati := nFondSati // ako je bilo bolovanja redovan rad je puni fond sati https://redmine.bring.out.ba/issues/36482#note-16
+            nBrojRadnihSati := nBrojRadnihSati - nBolovanjaSati // ako je bilo bolovanja  sati https://redmine.bring.out.ba/issues/36482#note-16
          ENDIF
 
          IF lImaBovanjaPreko42  // uzmi puni fond sati

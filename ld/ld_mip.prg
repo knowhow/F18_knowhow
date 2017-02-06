@@ -381,7 +381,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             // old 2/ nNeto := ( nNeto - nPrimanjaNeUlazeUBeneficiraniIznos )  - ovo ne postoji
             // old 2/ nBrojRadnihSati := ( nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati ) // tipovi primanja koji ne ulaze u sate
 
-            nBrojRadnihSati := nBrojRadnihSati - nBolovanjaSati // ako je bilo bolovanja  sati https://redmine.bring.out.ba/issues/36482#note-16
+            nBrojRadnihSati := nBrojRadnihSati - nSatiBolovanje // ako je bilo bolovanja  sati https://redmine.bring.out.ba/issues/36482#note-16
          ENDIF
 
          IF lImaBovanjaPreko42  // uzmi puni fond sati

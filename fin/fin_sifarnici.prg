@@ -160,11 +160,11 @@ FUNCTION P_Budzet( cId, dx, dy )
    PRIVATE imekol, kol
 
    ImeKol := { { "Glava",   {|| idrj }, "idrj",, {|| Empty( wIdRj ) .OR. P_RJ ( @wIdRj ) } }, ;
-      { "Konto",   {|| Idkonto }, "Idkonto",, {|| gMeniSif := .F., P_KontoFin ( @wIdkonto ), gMeniSif := .T., .T. } }, ;
+      { "Konto",   {|| Idkonto }, "Idkonto",, {|| gPregledSifriIzMenija := .F., P_KontoFin ( @wIdkonto ), gPregledSifriIzMenija := .T., .T. } }, ;
       { "Iznos",   {|| Iznos }, "iznos" }, ;
       { "Rebalans", {|| rebiznos }, "rebiznos" }, ;
-      { "Fond",   {|| Fond }, "fond", {|| gMeniSif := .F., wfond $ "N1 #N2 #N3 " .OR. Empty( wFond ) .OR. P_FOND( @wFond ), gMeniSif := .T., .T. }  }, ;
-      { "Funk",   {|| Funk }, "funk", {|| gMeniSif := .F., Empty( wFunk ) .OR. P_funk( @wFunk ), gMeniSif := .T., .T. } };
+      { "Fond",   {|| Fond }, "fond", {|| gPregledSifriIzMenija := .F., wfond $ "N1 #N2 #N3 " .OR. Empty( wFond ) .OR. P_FOND( @wFond ), gPregledSifriIzMenija := .T., .T. }  }, ;
+      { "Funk",   {|| Funk }, "funk", {|| gPregledSifriIzMenija := .F., Empty( wFunk ) .OR. P_funk( @wFunk ), gPregledSifriIzMenija := .T., .T. } };
       }
    Kol := { 1, 2, 3, 4, 5, 6 }
 
@@ -184,7 +184,7 @@ FUNCTION P_ParEK( cId, dx, dy )
    PRIVATE imekol, kol
 
    ImeKol := { { "Partija", {|| IdPartija }, "idpartija",, {|| validacija_postoji_sifra ( wIdPartija ) } }, ;
-      { "Konto", {|| IdKonto }, "Idkonto",, {|| gMeniSif := .F., P_KontoFin ( @wIdKonto ), gMeniSif := .T., .T. } };
+      { "Konto", {|| IdKonto }, "Idkonto",, {|| gPregledSifriIzMenija := .F., P_KontoFin ( @wIdKonto ), gPregledSifriIzMenija := .T., .T. } };
       }
    Kol := { 1, 2 }
 

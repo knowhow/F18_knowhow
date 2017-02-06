@@ -12,16 +12,16 @@
 
 #include "f18.ch"
 
-MEMVAR gMeniSif
+MEMVAR gPregledSifriIzMenija
 
 FUNCTION sif_roba_tarife_koncij_sast()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
-   LOCAL lPrev := gMeniSif
+   LOCAL lPrev := gPregledSifriIzMenija
 
-   gMeniSif := .T.
+   gPregledSifriIzMenija := .T.
 
    AAdd( _opc, "1. roba                               " )
    AAdd( _opcexe, {|| P_Roba() } )
@@ -54,6 +54,6 @@ FUNCTION sif_roba_tarife_koncij_sast()
 
    my_close_all_dbf()
 
-   gMeniSif := lPrev
+   gPregledSifriIzMenija := lPrev
 
    RETURN .T.

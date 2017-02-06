@@ -73,9 +73,9 @@ FUNCTION opci_sifarnici()
    open_sif_tables_1()
 
    PRIVATE Izbor := 1
-   gMeniSif := .T.
+   gPregledSifriIzMenija := .T.
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "ssvi" )
-   gMeniSif := .F.
+   gPregledSifriIzMenija := .F.
 
    my_close_all_dbf()
 

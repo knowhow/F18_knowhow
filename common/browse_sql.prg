@@ -214,7 +214,11 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
             BoxC()
          ENDIF
 
-         lRet := .F.
+         IF Ch == K_ENTER // DE_ABORT, K_ENTER
+            lRet := .T.
+         ELSE
+            lRet := .F.
+         ENDIF
          EXIT
 
 

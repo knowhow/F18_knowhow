@@ -75,7 +75,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
       ELSEIF cTable == "ld_parobr"
 
-         INDEX ON id + godina + obr TAG ID TO ( cAlias )
+         INDEX ON id + godina + obr TAG ID TO ( cAlias ) // id sadrzi informaciju o mjesecu
          SET ORDER TO TAG "ID"
 
       ELSEIF cTable == "ops"

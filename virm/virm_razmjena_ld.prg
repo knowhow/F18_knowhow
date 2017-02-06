@@ -401,7 +401,7 @@ STATIC FUNCTION _ld_kreditor( id_kred )
    SELECT kred
    HSEEK PadR( id_kred, Len( kred->id ) )
 
-   select_o_partner( PadR( id_kred, Len( partn->id ) ) )
+   select_o_partner( PadR( id_kred, LEN_PARTNER_ID ))
 
    IF !Found()
 

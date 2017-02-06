@@ -23,7 +23,7 @@ FUNCTION SifUgovori()
    LOCAL lPrev
 
    AAdd( _opc, "1. ugovori                                    " )
-   AAdd( _opcexe, {|| lPrev := gMeniSif, gMeniSif := .T., P_Ugov(), gMeniSif := lPrev } )
+   AAdd( _opcexe, {|| lPrev := gPregledSifriIzMenija, gPregledSifriIzMenija := .T., P_Ugov(), gPregledSifriIzMenija := lPrev } )
    AAdd( _opc, "2. stampa naljepnica iz ugovora " )
    AAdd( _opcexe, {|| kreiraj_adrese_iz_ugovora() } )
    AAdd( _opc, "3. parametri ugovora" )

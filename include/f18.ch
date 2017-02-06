@@ -614,4 +614,6 @@
 
 // -----------------------------
 
+#define LEN_PARTNER_ID 6
+
 #DEFINE DRVPATH ":\"

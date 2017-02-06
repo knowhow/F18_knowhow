@@ -17,7 +17,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    open_otv_stavke_tabele()
 
    cIdFirma := self_organizacija_id()
-   cIdPartner := Space( Len( partn->id ) )
+   cIdPartner := Space( LEN_PARTNER_ID )
 
    picD := FormPicL( "9 " + gPicBHD, 14 )
    picDEM := FormPicL( "9 " + gPicDEM, 9 )

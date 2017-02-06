@@ -26,7 +26,7 @@ FUNCTION PRobDob()
    SET RELATION TO idroba INTO ROBA
 
    cIdRoba    := Space( Len( ROBA->id ) )
-   cIdPartner := Space( Len( PARTN->id ) )
+  -- cIdPartner := Space( Len( PARTN->id ) )
    dOd := CToD( "" )
    dDo := Date()
    nPrSez := 0

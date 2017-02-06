@@ -36,9 +36,9 @@ METHOD programski_modul_osnovni_meni
 
    AAdd( aOpcije, "1. obračun (unos, ispravka, administracija)          " )
    AAdd( aOpcijeB, {|| ld_obracun() } )
-   AAdd( aOpcije, "D. unos datuma isplate plaća" )
+   AAdd( aOpcije, "2. unos datuma isplate plaća" )
    AAdd( aOpcijeB, {|| unos_datuma_isplate_place() } )
-   AAdd( aOpcije, "P. postavke obračuna (rj/mjesec/godina)" )
+   AAdd( aOpcije, "3ß. postavke obračuna (rj/mjesec/godina)" )
    AAdd( aOpcijeB, {|| ld_postavi_parametre_obracuna() } )
 
    AAdd( aOpcije, "------------------------------------" )

@@ -20,7 +20,7 @@ STATIC s_lNoRefreshOperation := .F.
 FUNCTION add_global_idle_handlers()
 
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() -8, Time(), F18_COLOR_INFO_PANEL ) } ) )
-   AAdd( aIdleHandlers, hb_idleAdd( {||  calc_on_idle_handler() } ) )
+   //AAdd( aIdleHandlers, hb_idleAdd( {||  calc_on_idle_handler() } ) )
 
    // hb_idleAdd( aIdleHandlers, hb_idleAdd( {|| hb_DispOutAt( maxrows(), 1, "< PAUSE >", F18_COLOR_INFO_PANEL ), kalk_asistent_pause() } ) )
 

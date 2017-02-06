@@ -30,13 +30,13 @@ PROCEDURE calc_on_idle_handler()
       in_calc( .T. )
       SET CURSOR OFF
       SET CONSOLE OFF
-      hb_threadStart( @Calc(), NIL )
+      hb_threadStart( @f18_kalkulator(), NIL )
    ENDIF
 
    RETURN
 
 
-FUNCTION Calc()
+FUNCTION f18_kalkulator()
 
    LOCAL GetList := {}
    LOCAL cIzraz
@@ -85,7 +85,7 @@ FUNCTION Calc()
 
          IF Upper( Left( cIzraz, 1 ) ) <> "K"
             @ m_x + 3, m_y + 2 SAY "ERR:" + Trim( cIzraz )
-            ?E "calc error:", Trim( cIzraz ), Len( Trim( cIzraz ) )
+            ?E "f18 kalkulator error:", Trim( cIzraz ), Len( Trim( cIzraz ) )
          ELSE
             @ m_x + 3, m_y + 2 SAY kbroj( SubStr( cizraz, 2 ) )
          ENDIF

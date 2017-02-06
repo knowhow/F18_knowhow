@@ -663,7 +663,7 @@ FUNCTION log_handle( handle )
 FUNCTION set_hot_keys()
 
    info_bar( "init", "setting up hot keys" )
-   SetKey( K_SH_F1, {|| Calc() } )
+   SetKey( K_SH_F1, {|| f18_kalkulator() } )
    SetKey( K_SH_F6, {|| f18_promjena_sezone() } )
    info_bar( "init", "setting up hot keys - end" )
 

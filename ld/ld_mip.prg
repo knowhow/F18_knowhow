@@ -249,6 +249,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       lDatIspl := .T.
    ENDIF
 
+Box( "#MIP generacija", 3, 60 )
    SELECT ld
 
    DO WHILE !Eof()
@@ -325,6 +326,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       cR_opc := ""
       cSifraRadnogMjestaUvecanoTrajanje := ""
 
+      @ m_x + 1, m_y + 2 SAY cIdRadnikTekuci
 
       DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
@@ -581,6 +583,8 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       ENDDO
 
    ENDDO
+
+   BoxC()
 
    RETURN .T.
 

@@ -184,9 +184,7 @@ FUNCTION kalk_2_fakt()
 
       DO WHILE !Eof() .AND. cIdFirma + cIdTipDok + cBrDok == IdFirma + IdVD + BrDok
 
-         // nastimaj robu....
-         SELECT roba
-         HSEEK kalk->idroba
+         select_o_roba( kalk->idroba )
 
          SELECT kalk
 
@@ -609,8 +607,8 @@ FUNCTION kalkp_2_fakt()
             ELSE
 
                SELECT fakt_pripr
-
-               HSEEK cIdFirma + KALK->idroba
+               HSEEK cIdFirma + KALK->idroba // fakt_pripr
+               
                IF Found() .AND. Round( nKalkCijena - cijena, 5 ) == 0 .AND. ( cTipFakt = "0" .OR. Round( nKalkRabat - rabat, 5 ) == 0 )
                   Scatter()
                   _kolicina += nKolicina

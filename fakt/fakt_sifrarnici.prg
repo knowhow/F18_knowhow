@@ -118,9 +118,10 @@ FUNCTION FaktStanje( cIdRoba )
       nIOrd := IndexOrd()
       nFRec := RecNo()
    ENDIF
+
    // "3","Idroba+dtos(datDok)","FAKT")  // za karticu, specifikaciju
-   SET ORDER TO TAG "3"
-   SEEK cIdRoba
+   //SET ORDER TO TAG "3"
+   seek_fakt_fakt_3( cIdRoba )
 
    aStanje := {}
    // {idfirma, nUl,nIzl,nRevers,nRezerv }
@@ -188,10 +189,8 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    NEXT
    nLenDP := IF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
-   SELECT roba
-   // PushWA()
-   SET ORDER TO TAG "ID"
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
+
    Box(, 6 + nLen + Int( ( nLenDP ) / 2 ), 75 )
    Beep( 1 )
    @ m_x + 1, m_y + 2 SAY "ARTIKAL: "
@@ -247,10 +246,8 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
          cPom777 := aDodPar[ i, 2 ]
 
          IF "TARIFA->" $ Upper( cPom777 )
-            SELECT ( F_TARIFA )
-            IF !Used(); o_tarifa(); ENDIF
-            SET ORDER TO TAG "ID"
-            HSEEK ROBA->idtarifa
+         
+            select_o_tarifa( ROBA->idtarifa )
             SELECT ROBA
          ENDIF
 

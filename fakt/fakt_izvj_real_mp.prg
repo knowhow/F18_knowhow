@@ -294,14 +294,9 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
          ENDIF
 
-         SELECT roba
-         SEEK cRoba_id
-
-         SELECT tarifa
-         SEEK roba->idtarifa
-
-         SELECT partn
-         SEEK cPart_id
+         select_o_roba( cRoba_id )
+         select_o_tarifa( roba->idtarifa )
+         select_o_partner( cPart_id )
 
          SELECT fakt
 
@@ -447,7 +442,7 @@ STATIC FUNCTION fakt_realiz_pdv_cre_open_r_export_table()
    IF !create_dbf_r_export( aDbf )
       RETURN .F.
    ENDIF
-   
+
    SELECT ( F_R_EXP )
    my_usex ( "r_export" )
 

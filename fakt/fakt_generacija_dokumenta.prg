@@ -118,13 +118,12 @@ STATIC FUNCTION dodaj_stavku_inventure( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr 
    REPLACE brDok WITH cBrDok
    REPLACE dinDem WITH ValDomaca()
 
-   SELECT roba
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
 
    SELECT fakt_pripr
    REPLACE cijena WITH roba->vpc
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION AddTxt( cTxt, cStr )
@@ -155,8 +154,7 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
    DO WHILE ( !Eof() .AND. cIdRj + "IM" + cBrDok == fakt->( idFirma + idTipDok + brDok ) )
       nRazlikaKol := Val( fakt->serBr ) -fakt->kolicina
       IF ( Round( nRazlikaKol, 5 ) > 0 )
-         SELECT roba
-         HSEEK fakt->idRoba
+         select_o_roba( fakt->idRoba )
          SELECT fakt_pripr
          nRBr++
          cRBr := RedniBroj( nRBr )
@@ -226,8 +224,7 @@ FUNCTION fakt_inventura_visak( cIdRj, cBrDok )
    DO WHILE ( !Eof() .AND. cIdRj + "IM" + cBrDok == fakt->( idFirma + idTipDok + brDok ) )
       nRazlikaKol := Val( fakt->serBr ) -fakt->kolicina
       IF ( Round( nRazlikaKol, 5 ) < 0 )
-         SELECT roba
-         HSEEK fakt->idRoba
+         select_o_roba( fakt->idRoba )
          SELECT fakt_pripr
          nRBr++
          cRBr := RedniBroj( nRBr )

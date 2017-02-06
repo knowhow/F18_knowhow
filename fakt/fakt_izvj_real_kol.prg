@@ -488,8 +488,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             zagl_sp_prod()
          ENDIF
 
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
+         
          SELECT fakt
 
          IF Round( nKolicina, 4 ) <> 0

@@ -103,7 +103,7 @@ FUNCTION V_Podbr()
          SELECT sast
          cPRoba := _idroba
          cptxt1 := _txt1
-         SEEK cPRoba
+         SEEK cPRoba // sast
          nPbr := 0
          DO WHILE !Eof() .AND. cPRoba == id
             SELECT roba
@@ -902,6 +902,7 @@ FUNCTION Prepak( cIdRoba, cPako, nPak, nKom, nKol, lKolUPak )
    SELECT SIFV
    SET ORDER TO TAG "ID"
    HSEEK "ROBA    " + cKar + PadR( cIdRoba, 15 )
+
    DO WHILE !Eof() .AND. id + oznaka + idsif == "ROBA    " + cKar + PadR( cIdRoba, 15 )
 
       IF !Empty( naz )
@@ -960,8 +961,10 @@ FUNCTION UGenNar()
       // izracunajmo ukupnu narucenu kolicinu i utvrdimo datum najstarije
       // / narudzbe
       DO WHILE !Eof() .AND. aktivan + vrsta + idpartner == "D" + "G" + _idpartner
+
          SELECT RUGOV
          HSEEK UGOV->id + _idroba
+
          IF Found()
             IF Empty( dNajstariji )
                dNajstariji := UGOV->datod
@@ -979,6 +982,7 @@ FUNCTION UGenNar()
       SET ORDER TO TAG "6"
       // sabiram sve isporuke od datuma vazenja najstarijeg ugovora do danas
       SEEK _idfirma + _idpartner + _idroba + "10" + DToS( dNajstariji )
+
       DO WHILE !Eof() .AND. idfirma + idpartner + idroba + idtipdok == ;
             _idfirma + _idpartner + _idroba + "10"
          nIsporuceno += kolicina
@@ -1024,11 +1028,9 @@ FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
    LOCAL lFill := .F.
    LOCAL _vars
 
-   SELECT roba
-   GO TOP
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
 
-   IF Found()
+   IF !Eof()
 
       // provjeri da li je cijena ista ?
       _vars := dbf_get_rec()
@@ -1178,12 +1180,15 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
    DO WHILE !Eof()
       IF cSetPor == "D"
          NSRNPIdRoba()
+
          // select roba; HSEEK fakt_pripr->idroba
-         SELECT tarifa; HSEEK roba->idtarifa
-         IF Found()
+
+         select_o_tarifa( roba->idtarifa )
+         IF !Eof()
             SELECT fakt_pripr
             REPLACE porez WITH tarifa->opp
          ENDIF
+
       ENDIF
       IF datDok <> dDatdok
          REPLACE DatDok WITH dDatDok
@@ -1226,18 +1231,11 @@ FUNCTION TarifaR( cRegion, cIdRoba, aPorezi )
       ENDIF
    ENDIF
 
-   SELECT ( F_ROBA )
+   select_o_roba( cIdRoba )
 
-   select_o_roba()
-
-   SEEK cIdRoba
    cTarifa := &cPolje
 
-   SELECT ( F_TARIFA )
-   IF !Used()
-      o_tarifa()
-   ENDIF
-   SEEK cTarifa
+   select_o_tarifa( cTarifa )
 
    set_pdv_array( @aPorezi )
 

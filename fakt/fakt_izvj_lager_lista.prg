@@ -879,8 +879,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
       _t_ulaz += _ulaz
       _t_izlaz += _izlaz
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       _cijena := roba->vpc
 

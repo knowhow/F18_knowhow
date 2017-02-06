@@ -413,11 +413,8 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
       _kol := field->kolicina
       _rab := field->rabat
 
-      SELECT roba
-      HSEEK cIdRoba
-
-      SELECT tarifa
-      HSEEK roba->idtarifa
+      select_o_roba( cIdRoba )
+      select_o_tarifa( roba->idtarifa )
 
       _tar := tarifa->id
 
@@ -527,8 +524,7 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
 
    DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idtipdok == tip_dok .AND. field->brdok == br_dok
 
-      SELECT roba
-      SEEK fakt->idroba
+      select_o_roba( fakt->idroba )
 
       SELECT fakt
 

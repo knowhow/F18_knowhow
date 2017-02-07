@@ -384,18 +384,38 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
 
    DO CASE
 
-   CASE Upper( Chr( nKey ) ) == "F" .AND. Alias() == "PARTN"
+   CASE Upper( Chr( nKey ) ) == "F"
 
-      Box( "#Unijeti dio šifre ili naziva ili mjesta", 1, 70 )
       SET CURSOR ON
-      @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
-      READ
-      BoxC()
-      IF LastKey() != K_ESC
-         find_partner_by_naz_or_id( cIdOrNaz )
-         TB:RefreshAll()
-         RETURN DE_REFRESH
-      ENDIF
+      DO CASE
+      CASE Alias() == "PARTN"
+         Box( "#Unijeti dio šifre ili naziva ili mjesta", 1, 70 )
+         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         READ
+         BoxC()
+         IF LastKey() != K_ESC
+            find_partner_by_naz_or_id( cIdOrNaz )
+            TB:RefreshAll()
+            RETURN DE_REFRESH
+         ENDIF
+
+      CASE Alias() == "ROBA"
+
+         Box( "#Unijeti dio šifre ili šifre dobavljača ili naziva ili barkoda ", 1, 70 )
+         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         READ
+         BoxC()
+         IF LastKey() != K_ESC
+            find_roba_by_naz_or_id_sifradob( cIdOrNaz )
+            TB:RefreshAll()
+            RETURN DE_REFRESH
+         ENDIF
+
+      OTHERWISE
+         // Box( "#Unijeti dio šifre ili naziva", 1, 70 )
+      ENDCASE
+
+      RETURN DE_CONT
 
 
    CASE nKey == K_CTRL_F

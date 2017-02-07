@@ -65,6 +65,36 @@ FUNCTION select_o_roba()
    RETURN o_roba()
 
 
+
+FUNCTION find_roba_by_naz_or_id( cId )
+
+   LOCAL cAlias := "ROBA"
+   LOCAL cSqlQuery := "select * from fmk.roba"
+   LOCAL cIdSql
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+   cSqlQuery += " OR naz ilike " + cIdSql
+   cSqlQuery += " OR sifradob ilike " + cIdSql
+   cSqlQuery += " OR barkod ilike " + cIdSql
+
+   IF !use_sql( "roba", cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN .T.
+   
+
+
 FUNCTION find_partner_by_naz_or_id( cId )
 
    LOCAL cAlias := "PARTN"

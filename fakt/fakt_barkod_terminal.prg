@@ -59,12 +59,12 @@ STATIC FUNCTION bterm_to_pripr()
 
    PRIVATE cTipVPC := "1"
 
-   o_fakt_doks()
+   //o_fakt_doks()
    o_fakt_pripr()
-   o_fakt()
-   o_roba()
-   o_rj()
-   o_partner()
+   //o_fakt()
+   //o_roba()
+   //o_rj()
+   //o_partner()
 
    SELECT ( F_TMP_1 )
    USE

@@ -110,14 +110,15 @@ FUNCTION FaktStanje( cIdRoba )
 
    LOCAL nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
 
-   SELECT roba
-   SELECT ( F_FAKT )
-   IF !Used()
-      o_fakt(); fOtv := .T.
-   ELSE
-      nIOrd := IndexOrd()
-      nFRec := RecNo()
-   ENDIF
+   //SELECT roba
+   //SELECT ( F_FAKT )
+   //IF !Used()
+    //  o_fakt()
+    //  fOtv := .T.
+  // ELSE
+    //  nIOrd := IndexOrd()
+    //  nFRec := RecNo()
+  // ENDIF
 
    // "3","Idroba+dtos(datDok)","FAKT")  // za karticu, specifikaciju
    //SET ORDER TO TAG "3"
@@ -149,7 +150,8 @@ FUNCTION FaktStanje( cIdRoba )
    ENDDO
 
    IF fotv
-      SELEC fakt; USE
+      SELEC fakt
+      USE
    ELSE
       // set order to (nIOrd)
       dbSetOrder( nIOrd )
@@ -158,7 +160,7 @@ FUNCTION FaktStanje( cIdRoba )
    SELECT roba
    fakt_box_stanje( aStanje, cIdRoba )      // nUl,nIzl,nRevers,nRezerv)
 
-   RETURN
+   RETURN .T.
 
 
 

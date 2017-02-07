@@ -111,11 +111,6 @@ FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
       br_dok = fakt->brdok
    ENDIF
 
-   SELECT ( F_FAKT )
-
-   IF !Used()
-      o_fakt()
-   ENDIF
 
    // SELECT fakt
    // SET FILTER TO

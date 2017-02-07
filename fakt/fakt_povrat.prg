@@ -38,15 +38,15 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
       _vars[ "brdok" ]    := br_dok
    ENDIF
 
-   o_fakt()
+   //o_fakt()
    o_fakt_pripr()
-   o_fakt_doks2()
-   o_fakt_doks()
+   //o_fakt_doks2()
+   //o_fakt_doks()
 
-   SELECT fakt
-   SET FILTER TO
+   //SELECT fakt
+   //SET FILTER TO
 
-   SET ORDER TO TAG "1"
+   //SET ORDER TO TAG "1"
 
    IF PCount() == 0
       IF !uslovi_za_povrat_dokumenta( @_vars )

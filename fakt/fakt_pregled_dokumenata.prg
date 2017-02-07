@@ -30,14 +30,14 @@ FUNCTION fakt_pregled_liste_dokumenata()
    PRIVATE cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
    PRIVATE cFilter := ".t."
 
-   O_VRSTEP
-   o_ops()
-   o_valute()
-   o_rj()
-   O_FAKT_OBJEKTI
-   o_fakt()
-   o_partner()
-   o_fakt_doks()
+   // O_VRSTEP
+   // o_ops()
+   // o_valute()
+   // o_rj()
+   // O_FAKT_OBJEKTI
+   // o_fakt()
+   // o_partner()
+   // o_fakt_doks()
 
    qqVrsteP := Space( 20 )
    dDatVal0 := dDatVal1 := CToD( "" )
@@ -75,10 +75,10 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
       IF gNW $ "DR"
          cIdFirma := PadR( cIdfirma, 2 )
-         @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
          READ
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
 
       @ m_x + 2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok PICT "@!"
@@ -140,13 +140,13 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    BoxC()
 
-   //SELECT partn
+   // SELECT partn
    // radi filtera aUslOpc partneri trebaju biti na ID-u indeksirani
-   //SET ORDER TO TAG "ID"
+   // SET ORDER TO TAG "ID"
 
-   //SELECT fakt_doks
-   //SET ORDER TO TAG "1"
-   //GO TOP
+   // SELECT fakt_doks
+   // SET ORDER TO TAG "1"
+   // GO TOP
 
    qqTipDok := Trim( qqTipDok )
 
@@ -203,7 +203,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
 
    @ MaxRow() - 4, MaxCol() - 3 SAY Str( rloptlevel(), 2 )
@@ -248,7 +248,7 @@ FUNCTION print_porezna_faktura( lOpcine )
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
    GO nTrec
 
@@ -277,7 +277,7 @@ FUNCTION fakt_print_odt( lOpcine )
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
    GO nTrec
 
@@ -305,7 +305,7 @@ FUNCTION generisi_fakturu( is_opcine )
    ENDIF
 
    o_fakt_pripr()
-   o_fakt()
+   // o_fakt()
 
    IF fakt_pripr->( RecCount() ) <> 0
       MsgBeep( "Priprema mora biti prazna !!!" )
@@ -313,7 +313,7 @@ FUNCTION generisi_fakturu( is_opcine )
       RETURN DE_CONT
    ENDIF
 
-   SELECT fakt_doks
+   // SELECT fakt_doks
 
    nTrec := RecNo()
 
@@ -338,11 +338,11 @@ FUNCTION generisi_fakturu( is_opcine )
 
    BoxC()
 
-   seek_fakt( cFirma, cTipDok, cBrFakt)
+   seek_fakt( cFirma, cTipDok, cBrFakt )
 
    DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + field->brdok == cFirma + cTipDok + cBrFakt
 
-      ++ nCnt
+      ++nCnt
 
       _rec := dbf_get_rec()
       aMemo := ParsMemo( _rec[ "txt" ] )
@@ -416,7 +416,7 @@ FUNCTION generisi_fakturu( is_opcine )
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
 
    GO nTrec
@@ -547,7 +547,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
    CASE Upper( Chr( Ch ) ) == "T"
 
-      IF ! ( field->idtipdok $ "10#11" )
+      IF !( field->idtipdok $ "10#11" )
          MsgBeep( "Opcija moguća samo za račune !" )
          RETURN DE_CONT
       ENDIF
@@ -701,21 +701,22 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
 FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
 
-   my_close_all_dbf()
+   // my_close_all_dbf()
 
-   O_VRSTEP
-   o_ops()
-   o_fakt_doks2()
-   o_valute()
-   o_rj()
-   O_FAKT_OBJEKTI
-   o_fakt()
-   o_partner()
-   o_fakt_doks()
+   // O_VRSTEP
+   // o_ops()
+   // o_fakt_doks2()
+   // o_valute()
+   // o_rj()
+   // O_FAKT_OBJEKTI
+   // o_fakt()
+   // o_partner()
+   // o_fakt_doks()
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
+   // SELECT fakt_doks
+   // SET ORDER TO TAG "1"
+   // GO TOP
+   seek_fakt_doks()
 
    SET FILTER TO &( tbl_filter )
 
@@ -726,10 +727,10 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
 
 FUNCTION fakt_real_partnera()
 
-   o_fakt_doks()
-   o_partner()
-   o_valute()
-   o_rj()
+   // o_fakt_doks()
+   // o_partner()
+   // o_valute()
+   // o_rj()
 
    cIdfirma := self_organizacija_id()
    dDatOd := CToD( "" )
@@ -760,7 +761,7 @@ FUNCTION fakt_real_partnera()
 
    DO WHILE .T.
       cIdFirma := PadR( cIdFirma, 2 )
-      @ m_x + 1, m_y + 2 SAY "RJ            " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      @ m_x + 1, m_y + 2 SAY "RJ            " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       @ m_x + 2, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
       @ m_x + 3, m_y + 2 SAY "Od datuma "  GET dDatOd
       @ m_x + 3, Col() + 1 SAY "do"  GET dDatDo
@@ -770,7 +771,7 @@ FUNCTION fakt_real_partnera()
       READ
       ESC_BCR
       aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
-      aUslovSifraKupca:=Parsiraj( qqPartn,"IDPARTNER")
+      aUslovSifraKupca := Parsiraj( qqPartn, "IDPARTNER" )
       aUslTD := Parsiraj( qqTipdok, "IdTipdok", "C" )
       IF aUslBFD <> NIL .AND. aUslTD <> NIL
          EXIT
@@ -790,7 +791,7 @@ FUNCTION fakt_real_partnera()
 
    BoxC()
 
-   SELECT fakt_doks
+   // SELECT fakt_doks
 
    PRIVATE cFilter := ".t."
 
@@ -806,9 +807,9 @@ FUNCTION fakt_real_partnera()
       cFilter += ".and." + aUslBFD
    ENDIF
 
-   if !empty(qqPartn)
-    cFilter+=".and."+aUslovSifraKupca
-   endif
+   IF !Empty( qqPartn )
+      cFilter += ".and." + aUslovSifraKupca
+   ENDIF
 
    IF !Empty( qqTipDok )
       cFilter += ".and." + aUslTD
@@ -818,10 +819,11 @@ FUNCTION fakt_real_partnera()
       cFilter := SubStr( cFilter, 9 )
    ENDIF
 
+   seek_fakt_doks()
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
 
    EOF CRET

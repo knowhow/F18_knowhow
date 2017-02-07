@@ -184,14 +184,14 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
    LOCAL cRoba_id, cPart_id
 
-   o_fakt_doks()
-   o_fakt()
-   o_roba()
+   // o_fakt_doks()
+   // o_fakt()
+   // o_roba()
    o_sifk()
    o_sifv()
-   O_VRSTEP
-   o_tarifa()
-   o_partner()
+   // O_VRSTEP
+   // o_tarifa()
+   // o_partner()
 
    // parametri
    _d_od := params[ "datum_od" ]
@@ -256,9 +256,10 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
    MsgO( "Generacija podataka ..." )
 
-   SELECT fakt_doks
-   SET FILTER TO &_filter
-   GO TOP
+   seek_fakt_doks()
+   // SELECT fakt_doks
+   // SET FILTER TO &_filter
+   // GO TOP
 
    DO WHILE !Eof()
 

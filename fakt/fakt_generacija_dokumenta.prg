@@ -47,13 +47,13 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
    LOCAL nRbr
    LOCAL lFoundUPripremi
 
-   o_fakt_doks()
-   o_roba()
-   o_tarifa()
+   //o_fakt_doks()
+   //o_roba()
+   //o_tarifa()
    o_fakt_pripr()
    SET ORDER TO TAG "3"
 
-   o_fakt()
+   seek_fakt( cIdRj )
    MsgO( "scaniram tabelu fakt" )
    nRbr := 0
 
@@ -143,9 +143,9 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
 
    nRBr := 0
 
-   o_fakt()
+   //o_fakt()
    o_fakt_pripr()
-   o_roba()
+   //o_roba()
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
 
@@ -170,9 +170,9 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
       MsgBeep( "Inventurom nije evidentiran manjak pa nije generisan nikakav dokument!" )
    ENDIF
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -214,9 +214,9 @@ FUNCTION fakt_inventura_visak( cIdRj, cBrDok )
 
    nRBr := 0
 
-   o_fakt()
+   //o_fakt()
    o_fakt_pripr()
-   o_roba()
+   //o_roba()
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
 

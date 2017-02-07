@@ -582,7 +582,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
 
    ELSE
       o_fakt_pripr()
-      o_fakt()
+      //o_fakt()
    ENDIF
 
    SELECT fakt_pripr
@@ -692,10 +692,10 @@ FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
       RETURN .F.
    ENDIF
 
-   o_fakt()
-   o_fakt_doks()
-   o_roba()
-   o_partner()
+   //o_fakt()
+   //o_fakt_doks()
+   //o_roba()
+   //o_partner()
 
    _novi_br_dok := AllTrim( br_dok ) + "/S"
 

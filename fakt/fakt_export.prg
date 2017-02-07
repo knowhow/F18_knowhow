@@ -25,7 +25,7 @@ FUNCTION fakt_export_tbl_fakt()
 
    // daj uslove
    IF get_vars( @dD_f, @dD_t, @cId_f, @cId_td ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    // kreiraj export tabelu
@@ -105,9 +105,7 @@ STATIC FUNCTION get_vars( dD_f, dD_t, cId_f, cId_td )
    RETURN nRet
 
 
-// ----------------------------------
-// napuni export tabelu
-// ----------------------------------
+
 STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
 
    LOCAL cFilt := ""
@@ -118,9 +116,9 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
    LOCAL nCount := 0
 
    O_R_EXP
-   o_roba()
-   o_fakt_doks()
-   o_fakt()
+   //o_roba()
+   //o_fakt_doks()
+  // o_fakt()
 
    IF !Empty( cId_f )
       cFilt += Parsiraj( AllTrim( cId_f ), "idfirma", "C" )
@@ -133,10 +131,7 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
       cFilt += Parsiraj( AllTrim( cId_td ), "idtipdok", "C" )
    ENDIF
 
-
-
-   SELECT fakt
-   SET ORDER TO TAG "1"
+   seek_fakt()
 
    IF !Empty( cFilt )
       SET FILTER TO &cFilt

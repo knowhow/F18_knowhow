@@ -32,15 +32,15 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    PRIVATE cSvediJmj := "N"
 
    // da li se koriste relacije
-   o_fakt()
-   SELECT fakt
+   //o_fakt()
+   //SELECT fakt
 
-   IF fakt->( FieldPos( "idrelac" ) ) <> 0
+   //IF fakt->( FieldPos( "idrelac" ) ) <> 0
       lRelations := .T.
-   ENDIF
+   //ENDIF
 
    _o_tables()
-   o_ops()
+   //o_ops()
 
    // partneri po grupama
    lGroup := p_group()
@@ -610,19 +610,17 @@ STATIC FUNCTION zagl_sp_prod()
    RETURN .T.
 
 
-// ---------------------------------
-// otvara potrebne tabele
-// ---------------------------------
+
 STATIC FUNCTION _o_tables()
 
-   o_fakt()
-   o_fakt_doks()
-   o_partner()
-   o_valute()
-   o_rj()
+   //o_fakt()
+   //o_fakt_doks()
+   //o_partner()
+   //o_valute()
+   //o_rj()
    o_sifk()
    o_sifv()
-   o_roba()
+   //o_roba()
 
    RETURN .T.
 

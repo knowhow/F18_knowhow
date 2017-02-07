@@ -982,49 +982,45 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    // provjeri da li postoji direktorij, pa ako ne - kreiraj
    direktorij_kreiraj_ako_ne_postoji( use_path )
 
-   // tabela fakt
-   o_fakt()
+
+   seek_fakt( "XX" )
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_fakt" ) from ( my_home() + "struct" )
 
-   // tabela doks
-   o_fakt_doks()
+
+   seek_fakt_doks( "XX" )
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_doks" ) from ( my_home() + "struct" )
 
-   // tabela doks
-   o_fakt_doks2()
+   seek_fakt_doks2( "XX" )
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_doks2" ) from ( my_home() + "struct" )
 
-   // tabela roba
-   o_roba()
+   select_o_roba( "XX" )
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_roba" ) from ( my_home() + "struct" )
 
-   // tabela partn
-   o_partner()
+   select_o_partner( "XX" )
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_partn" ) from ( my_home() + "struct" )
 
-   // tabela sifk
+
    o_sifk()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_sifk" ) from ( my_home() + "struct" )
 
-   // tabela sifv
    o_sifv()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_sifv" ) from ( my_home() + "struct" )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------
@@ -1032,13 +1028,13 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
 // ----------------------------------------------------
 STATIC FUNCTION _o_tables()
 
-   o_fakt()
-   o_fakt_doks()
-   o_fakt_doks2()
+   //o_fakt()
+   //o_fakt_doks()
+   //o_fakt_doks2()
    o_sifk()
    o_sifv()
-   o_partner()
-   o_roba()
+   //o_partner()
+   //o_roba()
 
    RETURN
 

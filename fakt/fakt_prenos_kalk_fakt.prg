@@ -293,15 +293,15 @@ FUNCTION kalk_2_fakt()
 // --------------------------------
 STATIC FUNCTION _o_tables()
 
-   o_fakt_doks()
-   o_roba()
-   o_rj()
+   //o_fakt_doks()
+   //o_roba()
+   //o_rj()
    // o_kalk()
-   o_fakt()
+   //o_fakt()
    o_fakt_pripr()
    o_sifk()
    o_sifv()
-   o_partner()
+   //o_partner()
 
    RETURN .T.
 

@@ -131,7 +131,8 @@ FUNCTION fakt_stanje_robe()
    WPar( "d1", dDatOd )
    WPar( "d2", dDatDo )
    WPar( "d3", cDDokOtpr )
-   SELECT params; USE
+   SELECT params
+   USE
 
    BoxC()
 
@@ -147,7 +148,7 @@ FUNCTION fakt_stanje_robe()
       cDDokOtpr := "D"
    ENDIF
 
-   SELECT FAKT
+   seek_fakt_3()
 
    PRIVATE cFilt := ".t."
 
@@ -487,14 +488,14 @@ FUNCTION ZaglSRobe()
 
 STATIC FUNCTION _o_tables()
 
-   o_fakt_doks()
-   o_tarifa()
-   o_partner()
+   //o_fakt_doks()
+   //o_tarifa()
+   //o_partner()
    o_sifk()
    o_sifv()
-   o_roba()
-   o_rj()
-   o_fakt()
-   SET ORDER TO TAG "3"
+   //o_roba()
+   //o_rj()
+   //o_fakt()
+   //SET ORDER TO TAG "3"
 
    RETURN .T.

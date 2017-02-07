@@ -30,13 +30,13 @@ FUNCTION GetPrVPParams( cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema )
    cShema := " "
 
    Box( "#Kontiranje evidencije vrsta placanja", 7, 60 )
-   @ m_x + 2, m_y + 2 SAY "TOPS - prodajno mjesto:" GET cProdId VALID !Empty( cProdId )
-   @ m_x + 3, m_y + 2 SAY "Datum od" GET dDatOd VALID !Empty( dDatOd )
-   @ m_x + 3, m_y + 20 SAY "do" GET dDatDo VALID !Empty( dDatDo )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "TOPS - prodajno mjesto:" GET cProdId VALID !Empty( cProdId )
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Datum od" GET dDatOd VALID !Empty( dDatOd )
+   @ form_x_koord() + 3, form_y_koord() + 20 SAY "do" GET dDatDo VALID !Empty( dDatDo )
 
-   @ m_x + 5, m_y + 2 SAY "Vrsta naloga:" GET cTipNal VALID !Empty( cTipNal )
-   @ m_x + 6, m_y + 2 SAY "Datum knjizenja:" GET dDatDok VALID !Empty( dDatDok )
-   @ m_x + 7, m_y + 2 SAY "Shema:" GET cShema
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Vrsta naloga:" GET cTipNal VALID !Empty( cTipNal )
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Datum knjizenja:" GET dDatDok VALID !Empty( dDatDok )
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY "Shema:" GET cShema
    READ
    BoxC()
 

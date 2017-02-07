@@ -76,7 +76,7 @@ FUNCTION fakt_kalk_prenos_10_14()
 
    IF glBrojacPoKontima
       Box( "#FAKT->KALK", 3, 70 )
-      @ m_x + 2, m_y + 2 SAY "Konto razduzuje" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto razduzuje" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
       READ
       BoxC()
    ENDIF
@@ -88,18 +88,18 @@ FUNCTION fakt_kalk_prenos_10_14()
    DO WHILE .T.
 
       nRBr := 0
-      @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 14 -" GET cBrKalk PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
-      @ m_x + 4, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" WHEN !glBrojacPoKontima VALID P_Konto( @cIdKonto2 )
+      @ form_x_koord() + 1, form_y_koord() + 2   SAY "Broj kalkulacije 14 -" GET cBrKalk PICT "@!"
+      @ form_x_koord() + 1, Col() + 2 SAY "Datum:" GET dDatKalk
+      @ form_x_koord() + 4, form_y_koord() + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" WHEN !glBrojacPoKontima VALID P_Konto( @cIdKonto2 )
 
       // IF gNW <> "X"
-      // @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
+      // @ form_x_koord() + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
       // ENDIF
 
       cFaktFirma := iif( cIdKonto2 == gKomKonto, gKomFakt, cIdFirma )
-      @ m_x + 6, m_y + 2 SAY "Broj fakture: " GET cFaktFirma
-      @ m_x + 6, Col() + 2 SAY "- " + cidtipdok
-      @ m_x + 6, Col() + 2 SAY "-" GET cBrDok
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Broj fakture: " GET cFaktFirma
+      @ form_x_koord() + 6, Col() + 2 SAY "- " + cidtipdok
+      @ form_x_koord() + 6, Col() + 2 SAY "-" GET cBrDok
 
       READ
 
@@ -112,9 +112,9 @@ FUNCTION fakt_kalk_prenos_10_14()
 
       IF !Found()
          Beep( 4 )
-         @ m_x + 14, m_y + 2 SAY "Ne postoji ovaj dokument !"
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY "Ne postoji ovaj dokument !"
          Inkey( 4 )
-         @ m_x + 14, m_y + 2 SAY Space( 30 )
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY Space( 30 )
          LOOP
       ELSE
 
@@ -125,9 +125,9 @@ FUNCTION fakt_kalk_prenos_10_14()
          aMemo := ParsMemo( fakt->txt )
 
          IF Len( aMemo ) >= 5
-            @ m_x + 10, m_y + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
-            @ m_x + 11, m_y + 2 SAY PadR( Trim( aMemo[ 4 ] ), 30 )
-            @ m_x + 12, m_y + 2 SAY PadR( Trim( aMemo[ 5 ] ), 30 )
+            @ form_x_koord() + 10, form_y_koord() + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
+            @ form_x_koord() + 11, form_y_koord() + 2 SAY PadR( Trim( aMemo[ 4 ] ), 30 )
+            @ form_x_koord() + 12, form_y_koord() + 2 SAY PadR( Trim( aMemo[ 5 ] ), 30 )
          ELSE
             cTxt := ""
          ENDIF
@@ -145,8 +145,8 @@ FUNCTION fakt_kalk_prenos_10_14()
 
          PRIVATE cBeze := " "
 
-         @ m_x + 14, m_y + 2 SAY8 "Šifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
-         @ m_x + 15, m_y + 2 SAY8 "<ENTER> - prenos" GET cBeze
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY8 "Šifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
+         @ form_x_koord() + 15, form_y_koord() + 2 SAY8 "<ENTER> - prenos" GET cBeze
 
          READ
          ESC_BCR
@@ -157,9 +157,9 @@ FUNCTION fakt_kalk_prenos_10_14()
 
          IF Found() // faktura je vec prenesena
             Beep( 4 )
-            @ m_x + 8, m_y + 2 SAY "Dokument je vec prenesen !"
+            @ form_x_koord() + 8, form_y_koord() + 2 SAY "Dokument je vec prenesen !"
             Inkey( 4 )
-            @ m_x + 8, m_y + 2 SAY Space( 30 )
+            @ form_x_koord() + 8, form_y_koord() + 2 SAY Space( 30 )
             LOOP
          ENDIF
 
@@ -246,7 +246,7 @@ FUNCTION fakt_kalk_prenos_10_14()
             SKIP
          ENDDO
 
-         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
+         @ form_x_koord() + 8, form_y_koord() + 2 SAY "Dokument je prenesen !"
 
          set_metric( "kalk_fakt_prenos_10_14_datum", my_user(), dDatKalk )
          set_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), cIdKonto )
@@ -256,7 +256,7 @@ FUNCTION fakt_kalk_prenos_10_14()
 
          Inkey( 4 )
 
-         @ m_x + 8, m_y + 2 SAY Space( 30 )
+         @ form_x_koord() + 8, form_y_koord() + 2 SAY Space( 30 )
 
       ENDIF
 
@@ -320,7 +320,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
    IF glBrojacPoKontima
 
       Box( "#FAKT->KALK", 3, 70 )
-      @ m_x + 2, m_y + 2 SAY "Konto zaduzuje" GET cIdKonto PICT "@!" VALID P_Konto( @cIdKonto )
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto zaduzuje" GET cIdKonto PICT "@!" VALID P_Konto( @cIdKonto )
       READ
       BoxC()
 
@@ -334,26 +334,26 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
       nRBr := 0
 
-      @ m_x + 1, m_y + 2 SAY "Broj kalkulacije " + cTipKalk + " -" GET cBrKalk PICT "@!"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Broj kalkulacije " + cTipKalk + " -" GET cBrKalk PICT "@!"
 
-      @ m_x + 3, m_y + 2 SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" WHEN !glBrojacPoKontima VALID P_Konto( @cIdKonto )
-      @ m_x + 4, m_y + 2 SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID Empty( cidkonto2 ) .OR. P_Konto( @cIdKonto2 )
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" WHEN !glBrojacPoKontima VALID P_Konto( @cIdKonto )
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID Empty( cidkonto2 ) .OR. P_Konto( @cIdKonto2 )
       // IF gNW <> "X"
-      // @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
+      // @ form_x_koord() + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
       // ENDIF
 
       cFaktFirma := cIdFirma
 
 
-      @ m_x + 6, m_y + 2 SAY Space( 60 )
-      @ m_x + 6, m_y + 2 SAY "Broj dokumenta u FAKT: " GET cFaktFirma
-      @ m_x + 6, Col() + 1 SAY "-" GET cIdTipDok VALID cIdTipDok $ "00#01#10#12#19#16"
-      @ m_x + 6, Col() + 1 SAY "-" GET cBrDok
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY Space( 60 )
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Broj dokumenta u FAKT: " GET cFaktFirma
+      @ form_x_koord() + 6, Col() + 1 SAY "-" GET cIdTipDok VALID cIdTipDok $ "00#01#10#12#19#16"
+      @ form_x_koord() + 6, Col() + 1 SAY "-" GET cBrDok
 
       READ
 
       IF cIDTipDok == "10" .AND. cTipKalk == "10"
-         @ m_x + 7, m_y + 2 SAY8 "Faktura dobavljača: " GET cFaktDob
+         @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "Faktura dobavljača: " GET cFaktDob
       ELSE
          cFaktDob := cBrDok
       ENDIF
@@ -369,9 +369,9 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
       IF !Found()
          Beep( 4 )
-         @ m_x + 14, m_y + 2 SAY "Ne postoji ovaj dokument !"
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY "Ne postoji ovaj dokument !"
          Inkey( 4 )
-         @ m_x + 14, m_y + 2 SAY Space( 30 )
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY Space( 30 )
          LOOP
       ELSE
 
@@ -379,9 +379,9 @@ FUNCTION fakt_kalk_prenos( cIndik )
          aMemo := ParsMemo( fakt->txt )  // iscupaj podatke iz memo polja
 
          IF Len( aMemo ) >= 5
-            @ m_x + 10, m_y + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
-            @ m_x + 11, m_y + 2 SAY PadR( Trim( aMemo[ 4 ] ), 30 )
-            @ m_x + 12, m_y + 2 SAY PadR( Trim( aMemo[ 5 ] ), 30 )
+            @ form_x_koord() + 10, form_y_koord() + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
+            @ form_x_koord() + 11, form_y_koord() + 2 SAY PadR( Trim( aMemo[ 4 ] ), 30 )
+            @ form_x_koord() + 12, form_y_koord() + 2 SAY PadR( Trim( aMemo[ 5 ] ), 30 )
          ELSE
             cTxt := ""
          ENDIF
@@ -390,13 +390,13 @@ FUNCTION fakt_kalk_prenos( cIndik )
          cBeze := " "
 
          dDatKalk := fakt->datdok
-         @ m_x + 13, m_y + 2 SAY "Datum kalk:" GET dDatKalk
+         @ form_x_koord() + 13, form_y_koord() + 2 SAY "Datum kalk:" GET dDatKalk
 
 
          IF cTipKalk $ "10"
 
-            @ m_x + 14, m_y + 2 SAY8 "Šifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
-            @ m_x + 15, m_y + 2 SAY8 "<ENTER> - prenos" GET cBeze
+            @ form_x_koord() + 14, form_y_koord() + 2 SAY8 "Šifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
+            @ form_x_koord() + 15, form_y_koord() + 2 SAY8 "<ENTER> - prenos" GET cBeze
 
             READ
 
@@ -407,9 +407,9 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
          IF Found() // da li je faktura je vec prenesena ?
             Beep( 4 )
-            @ m_x + 8, m_y + 2 SAY "Dokument je vec prenesen !"
+            @ form_x_koord() + 8, form_y_koord() + 2 SAY "Dokument je vec prenesen !"
             Inkey( 4 )
-            @ m_x + 8, m_y + 2 SAY Space( 30 )
+            @ form_x_koord() + 8, form_y_koord() + 2 SAY Space( 30 )
             LOOP
          ENDIF
 
@@ -488,7 +488,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
          ENDDO
 
-         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
+         @ form_x_koord() + 8, form_y_koord() + 2 SAY "Dokument je prenesen !"
 
          set_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
          set_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), cIdKonto2 )
@@ -497,7 +497,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
          Inkey( 4 )
 
-         @ m_x + 8, m_y + 2 SAY Space( 30 )
+         @ form_x_koord() + 8, form_y_koord() + 2 SAY Space( 30 )
 
       ENDIF
 
@@ -550,25 +550,25 @@ FUNCTION kalk_fakt_prenos_period()
 
       _r_br := 0
 
-      @ m_x + 1, m_y + 2 SAY "Broj kalkulacije " + _tip_kalk + " -" GET _br_kalk_dok PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "Datum:" GET _dat_kalk
-      @ m_x + 3, m_y + 2 SAY "Konto zaduzuje :" GET _id_konto PICT "@!" VALID Empty( _id_konto ) .OR. P_Konto( @_id_konto )
-      @ m_x + 4, m_y + 2 SAY "Konto razduzuje:" GET _id_konto_2 PICT "@!" VALID Empty( _id_konto_2 ) .OR. P_Konto( @_id_konto_2 )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Broj kalkulacije " + _tip_kalk + " -" GET _br_kalk_dok PICT "@!"
+      @ form_x_koord() + 1, Col() + 2 SAY "Datum:" GET _dat_kalk
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto zaduzuje :" GET _id_konto PICT "@!" VALID Empty( _id_konto ) .OR. P_Konto( @_id_konto )
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto razduzuje:" GET _id_konto_2 PICT "@!" VALID Empty( _id_konto_2 ) .OR. P_Konto( @_id_konto_2 )
 
       // IF gNW <> "X"
-      // @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET _razduzuje PICT "@!" VALID Empty( _razduzuje ) .OR. p_partner( @_razduzuje )
+      // @ form_x_koord() + 4, Col() + 2 SAY "Razduzuje:" GET _razduzuje PICT "@!" VALID Empty( _razduzuje ) .OR. p_partner( @_razduzuje )
       // ENDIF
 
       _fakt_id_firma := _id_firma
 
       // postavi uslove za period
-      @ m_x + 6, m_y + 2 SAY "FAKT: id firma:" GET _fakt_id_firma
-      @ m_x + 7, m_y + 2 SAY "Vrste dokumenata:" GET _tip_dok_fakt PICT "@S30"
-      @ m_x + 8, m_y + 2 SAY "Dokumenti u periodu od" GET _dat_fakt_od
-      @ m_x + 8, Col() + 1 SAY "do" GET _dat_fakt_do
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "FAKT: id firma:" GET _fakt_id_firma
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Vrste dokumenata:" GET _tip_dok_fakt PICT "@S30"
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Dokumenti u periodu od" GET _dat_fakt_od
+      @ form_x_koord() + 8, Col() + 1 SAY "do" GET _dat_fakt_do
 
       // uslov za sifre artikla
-      @ m_x + 10, m_y + 2 SAY "Uslov po artiklima:" GET _artikli PICT "@S30"
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Uslov po artiklima:" GET _artikli PICT "@S30"
 
       READ
 
@@ -678,14 +678,14 @@ FUNCTION kalk_fakt_prenos_period()
 
       ENDDO
 
-      @ m_x + 14, m_y + 2 SAY "Dokument je generisan !"
+      @ form_x_koord() + 14, form_y_koord() + 2 SAY "Dokument je generisan !"
 
       set_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), _id_konto )
       set_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), _id_konto_2 )
 
       Inkey( 4 )
 
-      @ m_x + 14, m_y + 2 SAY Space( 30 )
+      @ form_x_koord() + 14, form_y_koord() + 2 SAY Space( 30 )
 
    ENDDO
 

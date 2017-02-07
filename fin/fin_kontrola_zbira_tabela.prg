@@ -44,8 +44,8 @@ FUNCTION fin_kontrola_zbira( bDat, lSilent )
       dDOd := CToD( "" )
       dDDo := Date()
       Box(, 1, 40 )
-      @ 1 + m_x, 2 + m_y SAY "Datum od" GET dDOd
-      @ 1 + m_x, 25 + m_y SAY "do" GET dDDo
+      @ 1 + form_x_koord(), 2 + form_y_koord() SAY "Datum od" GET dDOd
+      @ 1 + form_x_koord(), 25 + form_y_koord() SAY "do" GET dDDo
       READ
       BoxC()
    ENDIF
@@ -66,27 +66,27 @@ FUNCTION fin_kontrola_zbira( bDat, lSilent )
       _line := Replicate( "=", 10 ) + " " + Replicate( "=", 16 ) + " " + ;
          Replicate( "=", 16 ) + " " + Replicate( "=", 16 ) + " " + Replicate( "=", 16 )
 
-      @ m_x + 1, m_y + 11 SAY "|" + PadC( "NALOZI", 16 ) + ;
+      @ form_x_koord() + 1, form_y_koord() + 11 SAY "|" + PadC( "NALOZI", 16 ) + ;
          "|" + PadC( "SINTETIKA", 16 ) + ;
          "|" + PadC( "ANALITIKA", 16 ) + ;
          "|" + PadC( "SUBANALITIKA", 16 )
 
-      @ m_x + 2, m_y + 1 SAY _line
+      @ form_x_koord() + 2, form_y_koord() + 1 SAY _line
 
-      @ m_x + 3, m_y + 1 SAY "duguje " + ValDomaca()
-      @ m_x + 4, m_y + 1 SAY "potraz." + ValDomaca()
-      @ m_x + 5, m_y + 1 SAY "saldo  " + ValDomaca()
-      @ m_x + 7, m_y + 1 SAY "duguje " + ValPomocna()
-      @ m_x + 8, m_y + 1 SAY "potraz." + ValPomocna()
-      @ m_x + 9, m_y + 1 SAY "saldo  " + ValPomocna()
+      @ form_x_koord() + 3, form_y_koord() + 1 SAY "duguje " + ValDomaca()
+      @ form_x_koord() + 4, form_y_koord() + 1 SAY "potraz." + ValDomaca()
+      @ form_x_koord() + 5, form_y_koord() + 1 SAY "saldo  " + ValDomaca()
+      @ form_x_koord() + 7, form_y_koord() + 1 SAY "duguje " + ValPomocna()
+      @ form_x_koord() + 8, form_y_koord() + 1 SAY "potraz." + ValPomocna()
+      @ form_x_koord() + 9, form_y_koord() + 1 SAY "saldo  " + ValPomocna()
 
-      @ m_x + 10, m_y + 1 SAY _line
+      @ form_x_koord() + 10, form_y_koord() + 1 SAY _line
 
-      @ m_x + 11, m_y + 1 SAY "ESC - izlaz"
+      @ form_x_koord() + 11, form_y_koord() + 1 SAY "ESC - izlaz"
 
       FOR i := 11 TO 65 STEP 17
          FOR j := 3 TO 9
-            @ m_x + j, m_y + i SAY "|"
+            @ form_x_koord() + j, form_y_koord() + i SAY "|"
          NEXT
       NEXT
 
@@ -102,23 +102,23 @@ FUNCTION fin_kontrola_zbira( bDat, lSilent )
          BoxC()
          CLOSERET
       ENDIF
-      @ m_x + 3, m_y + 12 SAY duguje PICTURE picBHD
-      @ m_x + 4, m_y + 12 SAY potrazuje PICTURE picBHD
-      @ m_x + 5, m_y + 12 SAY duguje - potrazuje PICTURE picBHD
-      @ m_x + 7, m_y + 12 SAY duguje2 PICTURE picDEM
-      @ m_x + 8, m_y + 12 SAY potrazuje2 PICTURE picDEM
-      @ m_x + 9, m_y + 12 SAY duguje2 - potrazuje2 PICTURE picDEM
+      @ form_x_koord() + 3, form_y_koord() + 12 SAY duguje PICTURE picBHD
+      @ form_x_koord() + 4, form_y_koord() + 12 SAY potrazuje PICTURE picBHD
+      @ form_x_koord() + 5, form_y_koord() + 12 SAY duguje - potrazuje PICTURE picBHD
+      @ form_x_koord() + 7, form_y_koord() + 12 SAY duguje2 PICTURE picDEM
+      @ form_x_koord() + 8, form_y_koord() + 12 SAY potrazuje2 PICTURE picDEM
+      @ form_x_koord() + 9, form_y_koord() + 12 SAY duguje2 - potrazuje2 PICTURE picDEM
    ENDIF
 
    fin_kzb_sint()
    IF !lSilent
       ESC_BCR
-      @ m_x + 3, m_y + 29 SAY duguje PICTURE picBHD
-      @ m_x + 4, m_y + 29 SAY potrazuje PICTURE picBHD
-      @ m_x + 5, m_y + 29 SAY duguje - potrazuje PICTURE picBHD
-      @ m_x + 7, m_y + 29 SAY duguje2 PICTURE picDEM
-      @ m_x + 8, m_y + 29 SAY potrazuje2 PICTURE picDEM
-      @ m_x + 9, m_y + 29 SAY duguje2 - potrazuje2 PICTURE picDEM
+      @ form_x_koord() + 3, form_y_koord() + 29 SAY duguje PICTURE picBHD
+      @ form_x_koord() + 4, form_y_koord() + 29 SAY potrazuje PICTURE picBHD
+      @ form_x_koord() + 5, form_y_koord() + 29 SAY duguje - potrazuje PICTURE picBHD
+      @ form_x_koord() + 7, form_y_koord() + 29 SAY duguje2 PICTURE picDEM
+      @ form_x_koord() + 8, form_y_koord() + 29 SAY potrazuje2 PICTURE picDEM
+      @ form_x_koord() + 9, form_y_koord() + 29 SAY duguje2 - potrazuje2 PICTURE picDEM
    ENDIF
 
    fin_kzb_anal()
@@ -126,12 +126,12 @@ FUNCTION fin_kontrola_zbira( bDat, lSilent )
       ESC_BCR
 
 
-      @ m_x + 3, m_y + 46 SAY duguje PICTURE picBHD
-      @ m_x + 4, m_y + 46 SAY potrazuje PICTURE picBHD
-      @ m_x + 5, m_y + 46 SAY duguje - potrazuje PICTURE picBHD
-      @ m_x + 7, m_y + 46 SAY duguje2 PICTURE picDEM
-      @ m_x + 8, m_y + 46 SAY potrazuje2 PICTURE picDEM
-      @ m_x + 9, m_y + 46 SAY duguje2 - potrazuje2 PICTURE picDEM
+      @ form_x_koord() + 3, form_y_koord() + 46 SAY duguje PICTURE picBHD
+      @ form_x_koord() + 4, form_y_koord() + 46 SAY potrazuje PICTURE picBHD
+      @ form_x_koord() + 5, form_y_koord() + 46 SAY duguje - potrazuje PICTURE picBHD
+      @ form_x_koord() + 7, form_y_koord() + 46 SAY duguje2 PICTURE picDEM
+      @ form_x_koord() + 8, form_y_koord() + 46 SAY potrazuje2 PICTURE picDEM
+      @ form_x_koord() + 9, form_y_koord() + 46 SAY duguje2 - potrazuje2 PICTURE picDEM
    ENDIF
 
 
@@ -139,12 +139,12 @@ FUNCTION fin_kontrola_zbira( bDat, lSilent )
    IF !lSilent
       ESC_BCR
 
-      @ m_x + 3, m_y + 63 SAY duguje PICTURE picBHD
-      @ m_x + 4, m_y + 63 SAY potrazuje PICTURE picBHD
-      @ m_x + 5, m_y + 63 SAY duguje - potrazuje PICTURE picBHD
-      @ m_x + 7, m_y + 63 SAY duguje2 PICTURE picDEM
-      @ m_x + 8, m_y + 63 SAY potrazuje2 PICTURE picDEM
-      @ m_x + 9, m_y + 63 SAY duguje2 - potrazuje2 PICTURE picDEM
+      @ form_x_koord() + 3, form_y_koord() + 63 SAY duguje PICTURE picBHD
+      @ form_x_koord() + 4, form_y_koord() + 63 SAY potrazuje PICTURE picBHD
+      @ form_x_koord() + 5, form_y_koord() + 63 SAY duguje - potrazuje PICTURE picBHD
+      @ form_x_koord() + 7, form_y_koord() + 63 SAY duguje2 PICTURE picDEM
+      @ form_x_koord() + 8, form_y_koord() + 63 SAY potrazuje2 PICTURE picDEM
+      @ form_x_koord() + 9, form_y_koord() + 63 SAY duguje2 - potrazuje2 PICTURE picDEM
 
       WHILE Inkey( 0.1 ) != K_ESC
       END

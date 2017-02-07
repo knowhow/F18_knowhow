@@ -75,16 +75,16 @@ FUNCTION Iz47u96Norm()
    DO WHILE .T.
 
       nRBr := 0
-      @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
-      @ m_x + 3, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
+      @ form_x_koord() + 1, form_y_koord() + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
+      @ form_x_koord() + 1, Col() + 2 SAY "Datum:" GET dDatKalk
+      @ form_x_koord() + 3, form_y_koord() + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
       --IF gNW <> "X"
-         @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
+         @ form_x_koord() + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
       ENDIF
-      @ m_x + 4, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID Empty( cIdKonto ) .OR. P_Konto( @cIdKonto )
+      @ form_x_koord() + 4, form_y_koord() + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID Empty( cIdKonto ) .OR. P_Konto( @cIdKonto )
 
       cBrDok47 := Space( 8 )
-      @ m_x + 7, m_Y + 2 SAY "Broj dokumenta 47:" GET cBrDok47
+      @ form_x_koord() + 7, m_Y + 2 SAY "Broj dokumenta 47:" GET cBrDok47
       READ
       IF LastKey() == K_ESC; exit; ENDIF
 
@@ -133,12 +133,12 @@ FUNCTION Iz47u96Norm()
          SKIP
       ENDDO
 
-      @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Dokument je prenesen !!"
       IF gBrojacKalkulacija == "D"
       --   cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
       Inkey( 4 )
-      @ m_x + 8, m_y + 2 SAY Space( 30 )
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY Space( 30 )
 
    ENDDO
    Boxc()

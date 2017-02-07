@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
+MEMVAR form_x_koord(), form_y_koord()
 
 FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
 
@@ -121,10 +121,10 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
       IF kalk_pripr2->( reccount2() ) <> 0
          Beep( 1 )
          Box(, 4, 70 )
-         @ m_x + 1, m_y + 2 SAY "1. Cijene robe su promijenjene."
-         @ m_x + 2, m_y + 2 SAY "2. Formiran je dokument nivelacije:" + kalk_pripr2->( idfirma + "-" + idvd + "-" + brdok )
-         @ m_x + 3, m_y + 2 SAY8 "3. Nove cijene su stavljene u šifarnik."
-         @ m_x + 4, m_y + 2 SAY "4. Obradite ovaj dokument."
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "1. Cijene robe su promijenjene."
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "2. Formiran je dokument nivelacije:" + kalk_pripr2->( idfirma + "-" + idvd + "-" + brdok )
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "3. Nove cijene su stavljene u šifarnik."
+         @ form_x_koord() + 4, form_y_koord() + 2 SAY "4. Obradite ovaj dokument."
          Inkey( 0 )
          BoxC()
          lPrebaci := .T.
@@ -134,8 +134,8 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
       IF kalk_pripr2->( reccount2() ) <> 0
          Beep( 1 )
          Box(, 4, 70 )
-         @ m_x + 1, m_y + 2 SAY "1. Formiran je dokument 95 na osnovu inventure."
-         @ m_x + 4, m_y + 2 SAY "3. Obradite ovaj dokument."
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "1. Formiran je dokument 95 na osnovu inventure."
+         @ form_x_koord() + 4, form_y_koord() + 2 SAY "3. Obradite ovaj dokument."
          Inkey( 0 )
          BoxC()
          lPrebaci := .T.
@@ -146,9 +146,9 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
       IF kalk_pripr2->( reccount2() ) <> 0 // nakon otpreme doprema
          Beep( 1 )
          Box(, 4, 70 )
-         @ m_x + 1, m_y + 2 SAY "1. Roba je otpremljena u magacin " + kalk_pripr2->idkonto
-         @ m_x + 2, m_y + 2 SAY "2. Formiran je dokument dopreme:" + kalk_pripr2->( idfirma + "-" + idvd + "-" + brdok )
-         @ m_x + 3, m_y + 2 SAY "3. Obradite ovaj dokument."
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "1. Roba je otpremljena u magacin " + kalk_pripr2->idkonto
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "2. Formiran je dokument dopreme:" + kalk_pripr2->( idfirma + "-" + idvd + "-" + brdok )
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "3. Obradite ovaj dokument."
          Inkey( 0 )
          BoxC()
          lPrebaci := .T.
@@ -159,9 +159,9 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
       IF kalk_pripr2->( reccount2() ) <> 0
          Beep( 1 )
          Box(, 4, 70 )
-         @ m_x + 1, m_y + 2 SAY "1. Roba je prenesena u prodavnicu " + kalk_pripr2->idkonto
-         @ m_x + 2, m_y + 2 SAY8 "2. Formiran je dokument zaduženja:" + kalk_pripr2->( idfirma + "-" + idvd + "-" + brdok )
-         @ m_x + 3, m_y + 2 SAY "3. Obradite ovaj dokument."
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "1. Roba je prenesena u prodavnicu " + kalk_pripr2->idkonto
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY8 "2. Formiran je dokument zaduženja:" + kalk_pripr2->( idfirma + "-" + idvd + "-" + brdok )
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "3. Obradite ovaj dokument."
          Inkey( 0 )
          BoxC()
          lPrebaci := .T.
@@ -596,7 +596,7 @@ STATIC FUNCTION kalk_azur_sql()
    GO TOP
 
 
-   @ m_x + 1, m_y + 2 SAY "kalk_kalk -> server: " + _tmp_id
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "kalk_kalk -> server: " + _tmp_id
 
    DO WHILE !Eof()
 
@@ -658,7 +658,7 @@ STATIC FUNCTION kalk_azur_sql()
          _tmp_id := hRecKalkDok[ "idfirma" ] + hRecKalkDok[ "idvd" ] + hRecKalkDok[ "brdok" ]
          AAdd( _ids_doks, _tmp_id )
 
-         @ m_x + 2, m_y + 2 SAY "kalk_doks -> server: " + _tmp_id
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "kalk_doks -> server: " + _tmp_id
          IF !sql_table_update( "kalk_doks", "ins", hRecKalkDok )
             _ok := .F.
          ENDIF
@@ -667,7 +667,7 @@ STATIC FUNCTION kalk_azur_sql()
 
       IF _ok == .T.
 
-         @ m_x + 3, m_y + 2 SAY "kalk_atributi -> server "
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "kalk_atributi -> server "
          oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
          oAttr:hAttrId[ "idfirma" ] := hRecKalkDok[ "idfirma" ]
          oAttr:hAttrId[ "idtipdok" ] := hRecKalkDok[ "idvd" ]
@@ -690,11 +690,11 @@ STATIC FUNCTION kalk_azur_sql()
 
    ELSE
 
-      @ m_x + 4, m_y + 2 SAY "push ids to semaphore"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "push ids to semaphore"
       push_ids_to_semaphore( _tbl_kalk, _ids_kalk )
       push_ids_to_semaphore( _tbl_doks, _ids_doks  )
 
-      @ m_x + 5, m_y + 2 SAY "update semaphore version"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "update semaphore version"
 
 
       hParams := hb_Hash()

@@ -19,18 +19,18 @@ FUNCTION kalk_get_1_im()
 
    _DatFaktP := _datdok
 
-   @ m_x + 8, m_y + 2  SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
+   @ form_x_koord() + 8, form_y_koord() + 2  SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
    // IF gNW <> "X"
-   // @ m_x + 8, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
+   // @ form_x_koord() + 8, form_y_koord() + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
    // ENDIF
    READ
    ESC_RETURN K_ESC
 
-   @ m_x + 10, m_y + 66 SAY "Tarif.br->"
+   @ form_x_koord() + 10, form_y_koord() + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 10, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), form_x_koord() + 10, form_y_koord() + 2, @aPorezi )
 
-   @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ form_x_koord() + 11, form_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -43,9 +43,9 @@ FUNCTION kalk_get_1_im()
    SELECT kalk_pripr
 
    // DuplRoba()
-   @ m_x + 13, m_y + 2   SAY "Knjizna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
-   @ m_x + 13, Col() + 2 SAY "Popisana Kolicina" GET _Kolicina PICTURE PicKol
-   @ m_x + 15, m_y + 2    SAY "CIJENA" GET _vpc PICT picdem
+   @ form_x_koord() + 13, form_y_koord() + 2   SAY "Knjizna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
+   @ form_x_koord() + 13, Col() + 2 SAY "Popisana Kolicina" GET _Kolicina PICTURE PicKol
+   @ form_x_koord() + 15, form_y_koord() + 2    SAY "CIJENA" GET _vpc PICT picdem
 
    READ
    ESC_RETURN K_ESC

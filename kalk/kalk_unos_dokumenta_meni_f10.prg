@@ -174,10 +174,10 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
    PRIVATE getList := {}
 
    Box(, 7, 65 )
-   @ m_x + 1, m_y + 2 SAY8 "Prenos cijena dokument/šifarnik ****"
-   @ m_x + 3, m_y + 2 SAY8 "1) prenos MPCSAPP (dok) => šifarnik"
-   @ m_x + 4, m_y + 2 SAY8 "2) prenos šifarnik => MPCSAPP (dok)"
-   @ m_x + 6, m_y + 2 SAY "    odabir > " GET _opt PICT "9"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Prenos cijena dokument/šifarnik ****"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "1) prenos MPCSAPP (dok) => šifarnik"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY8 "2) prenos šifarnik => MPCSAPP (dok)"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "    odabir > " GET _opt PICT "9"
    READ
    BoxC()
 
@@ -202,7 +202,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
       o_konto()
 
       Box(, 1, 50 )
-      @ m_x + 1, m_y + 2 SAY8 "Prodavnički konto:" GET _konto VALID p_konto( @_konto )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Prodavnički konto:" GET _konto VALID p_konto( @_konto )
       READ
       BoxC()
 

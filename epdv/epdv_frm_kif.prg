@@ -19,9 +19,9 @@ STATIC FUNCTION epdv_kif_tbl_priprema()
    LOCAL _col := maxcols() - 3
 
    Box(, _row, _col )
-   @ m_x + _row - 2, m_y + 2 SAY8 "<c-N>  Nove stavke    | <ENT> Ispravi stavku   | <c-T> Briši stavku         "
-   @ m_x + _row - 1, m_y + 2 SAY8 "<c-A>  Ispravka naloga| <c-P> Štampa dokumenta | <a-A> Ažuriranje           "
-   @ m_x + _row, m_y + 2 SAY8 "<a-P>  Povrat dok.    | <a-X> Renumeracija"
+   @ form_x_koord() + _row - 2, form_y_koord() + 2 SAY8 "<c-N>  Nove stavke    | <ENT> Ispravi stavku   | <c-T> Briši stavku         "
+   @ form_x_koord() + _row - 1, form_y_koord() + 2 SAY8 "<c-A>  Ispravka naloga| <c-P> Štampa dokumenta | <a-A> Ažuriranje           "
+   @ form_x_koord() + _row, form_y_koord() + 2 SAY8 "<a-P>  Povrat dok.    | <a-X> Renumeracija"
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -80,51 +80,51 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
       _src_br_2 := Space( Len( src_br_2 ) )
    ENDIF
 
-   @ m_x + nX, m_y + 2 SAY "R.br: " GET _r_br ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "R.br: " GET _r_br ;
       PICT "999999"
 
-   @ m_x + nX, Col() + 2 SAY "datum: " GET _datum
+   @ form_x_koord() + nX, Col() + 2 SAY "datum: " GET _datum
    nX += 2
 
    nXPart := nX
-   @ m_x + nX, m_y + 2 SAY "Kupac: " GET _id_part ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Kupac: " GET _id_part ;
       VALID v_part( @_id_part, @_id_tar, "KIF", .T. ) ;
       PICT "@!"
 
    nX += 2
 
 
-   @ m_x + nX, m_y + 2 SAY8 "Broj računa (externi broj) " GET _src_br_2
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Broj računa (externi broj) " GET _src_br_2
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "Opis stavke: " GET _opis ;
-      WHEN {|| SetPos( m_x + nXPart, m_y + nYPart ), QQOut( s_partner( _id_part ) ), .T. } ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Opis stavke: " GET _opis ;
+      WHEN {|| SetPos( form_x_koord() + nXPart, form_y_koord() + nYPart ), QQOut( s_partner( _id_part ) ), .T. } ;
       PICT "@S50"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Iznos bez PDV (osnovica): " GET _i_b_pdv ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Iznos bez PDV (osnovica): " GET _i_b_pdv ;
       PICT PIC_IZN()
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "tarifa: " GET _id_tar ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "tarifa: " GET _id_tar ;
       VALID v_id_tar( @_id_tar, @_i_b_pdv, @_i_pdv,  Col(), lNova )  ;
       PICT "@!"
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "   Iznos PDV: " GET _i_pdv ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "   Iznos PDV: " GET _i_pdv ;
       WHEN {||  .T. } ;
       VALID {|| nI_s_pdv := _i_b_pdv + _i_pdv, .T. } ;
       PICT PIC_IZN()
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "Iznos sa PDV: " GET nI_s_pdv ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Iznos sa PDV: " GET nI_s_pdv ;
       when {|| .F. } ;
       PICT PIC_IZN()
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Ispravno (D/N) ?" GET cIspravno ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Ispravno (D/N) ?" GET cIspravno ;
       valid {|| cIspravno == "D" } ;
       PICT "@!"
    ++nX
@@ -220,7 +220,7 @@ STATIC FUNCTION epdv_kif_key_handler()
 
       nBrDokP := 0
       Box( , 2, 60 )
-      @ m_x + 1, m_y + 2 SAY8 "Dokument (0-štampaj pripremu) " GET nBrDokP PICT "999999"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Dokument (0-štampaj pripremu) " GET nBrDokP PICT "999999"
       READ
       BoxC()
       IF LastKey() <> K_ESC
@@ -248,7 +248,7 @@ STATIC FUNCTION epdv_kif_key_handler()
       IF Pitanje( , "Povrat KIF dokumenta u pripremu (D/N) ?", "N" ) == "D"
          nBrDokP := 0
          Box(, 1, 40 )
-         @ m_x + 1, m_y + 2 SAY "KIF dokument br:" GET nBrDokP  PICT "999999"
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "KIF dokument br:" GET nBrDokP  PICT "999999"
 
          READ
          BoxC()

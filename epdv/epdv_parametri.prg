@@ -77,50 +77,50 @@ FUNCTION ed_g_params()
 
    SET CURSOR ON
 
-   @ m_x + nX, m_y + 2 SAY "1. Zaokruzenje ***"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "1. Zaokruzenje ***"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "iznos ", 30 )   GET gZAO_IZN PICT "9"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( "iznos ", 30 )   GET gZAO_IZN PICT "9"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "cijena ", 30 )   GET gZAO_CIJ PICT "9"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( "cijena ", 30 )   GET gZAO_CIJ PICT "9"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " podaci na pdv prijavi ", 30 )   GET gZAO_PDV PICT "9"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( " podaci na pdv prijavi ", 30 )   GET gZAO_PDV PICT "9"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "2. Prikaz ***"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "2. Prikaz ***"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " iznos ", 30 )   GET gPIC_IZN
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( " iznos ", 30 )   GET gPIC_IZN
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " cijena ", 30 )   GET gPIC_CIJ
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( " cijena ", 30 )   GET gPIC_CIJ
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "3. Obracun ***"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "3. Obracun ***"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " ul. pdv kr.potr-stat fed-1, rs-2, bd-3", 55 )   GET gUlPdvKp ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( " ul. pdv kr.potr-stat fed-1, rs-2, bd-3", 55 )   GET gUlPdvKp ;
       VALID gUlPdvKp $ " 123"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "4. Ostalo ***"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "4. Ostalo ***"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " konta dobavljaci:", 30 ) GET gL_kto_dob ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( " konta dobavljaci:", 30 ) GET gL_kto_dob ;
       PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "      konta kupci:", 30 ) GET gL_kto_kup ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( "      konta kupci:", 30 ) GET gL_kto_kup ;
       PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "ulazni pdv:", 30 ) GET gKt_updv ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( "ulazni pdv:", 30 ) GET gKt_updv ;
       PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "izlazni pdv:", 30 ) GET gKt_ipdv ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( "izlazni pdv:", 30 ) GET gKt_ipdv ;
       PICT "@S30"
 
    READ

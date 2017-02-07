@@ -76,7 +76,7 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "SG_KUF : " + Str( nCount )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "SG_KUF : " + Str( nCount )
 
       IF g_src_modul( src ) == "FIN"
 
@@ -315,10 +315,10 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          nCount ++
 
          cPom := "SUBAN : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-         @ m_x + 3, m_y + 2 SAY cPom
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY cPom
 
          cPom := "SUBAN cnt : " + Str( nCount, 6 )
-         @ m_x + 4, m_y + 2 SAY cPom
+         @ form_x_koord() + 4, form_y_koord() + 2 SAY cPom
 
          cDokTar := ""
 

@@ -50,14 +50,14 @@ FUNCTION kalk_generacija_inventura_magacin_im()
       cIdKonto := PadR( "1320", gDuzKonto )
       dDatDok := Date()
       cArtikli := Space( 30 )
-      @ m_x + 1, m_Y + 2 SAY "Magacin:" GET  cIdKonto VALID P_Konto( @cIdKonto )
-      @ m_x + 2, m_Y + 2 SAY "Datum:  " GET  dDatDok
-      @ m_x + 3, m_Y + 2 SAY "Uslov po grupaciji robe"
-      @ m_x + 4, m_Y + 2 SAY "(prazno-sve):" GET cArtikli
-      @ m_x + 5, m_Y + 2 SAY "(Grupacija broj mjesta) :" GET cPosition
-      @ m_x + 6, m_Y + 2 SAY "Cijene (1-VPC, 2-NC) :" GET cCijenaTIP VALID cCijenaTIP $ "12"
-      @ m_x + 7, m_y + 2 SAY8 "sortirati po šifri dobavljača :" GET cSRSort VALID cSRSort $ "DN" PICT "@!"
-      @ m_x + 8, m_y + 2 SAY "generisati stavke sa stanjem 0 (D/N)" GET cNule PICT "@!" VALID cNule $ "DN"
+      @ form_x_koord() + 1, m_Y + 2 SAY "Magacin:" GET  cIdKonto VALID P_Konto( @cIdKonto )
+      @ form_x_koord() + 2, m_Y + 2 SAY "Datum:  " GET  dDatDok
+      @ form_x_koord() + 3, m_Y + 2 SAY "Uslov po grupaciji robe"
+      @ form_x_koord() + 4, m_Y + 2 SAY "(prazno-sve):" GET cArtikli
+      @ form_x_koord() + 5, m_Y + 2 SAY "(Grupacija broj mjesta) :" GET cPosition
+      @ form_x_koord() + 6, m_Y + 2 SAY "Cijene (1-VPC, 2-NC) :" GET cCijenaTIP VALID cCijenaTIP $ "12"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "sortirati po šifri dobavljača :" GET cSRSort VALID cSRSort $ "DN" PICT "@!"
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "generisati stavke sa stanjem 0 (D/N)" GET cNule PICT "@!" VALID cNule $ "DN"
       READ
       ESC_BCR
       BoxC()
@@ -202,13 +202,13 @@ FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
    cPosition := "2"
    cCijenaTIP := "1"
    cOldBrDok := Space( 8 )
-   @ m_x + 1, m_Y + 2 SAY "Magacin:" GET  cIdKonto VALID P_Konto( @cIdKonto )
-   @ m_x + 2, m_Y + 2 SAY "Datum:  " GET  dDatDok
-   @ m_x + 3, m_Y + 2 SAY "Uslov po grupaciji robe"
-   @ m_x + 4, m_Y + 2 SAY "(prazno-sve):" GET cArtikli
-   @ m_x + 5, m_Y + 2 SAY "(Grupacija broj mjesta) :" GET cPosition
-   @ m_x + 6, m_Y + 2 SAY "Cijene (1-VPC, 2-NC) :" GET cCijenaTIP VALID cCijenaTIP $ "12"
-   @ m_x + 8, m_Y + 2 SAY "Na osnovu dokumenta " + cIdFirma + "-IM" GET cOldBrDok ;
+   @ form_x_koord() + 1, m_Y + 2 SAY "Magacin:" GET  cIdKonto VALID P_Konto( @cIdKonto )
+   @ form_x_koord() + 2, m_Y + 2 SAY "Datum:  " GET  dDatDok
+   @ form_x_koord() + 3, m_Y + 2 SAY "Uslov po grupaciji robe"
+   @ form_x_koord() + 4, m_Y + 2 SAY "(prazno-sve):" GET cArtikli
+   @ form_x_koord() + 5, m_Y + 2 SAY "(Grupacija broj mjesta) :" GET cPosition
+   @ form_x_koord() + 6, m_Y + 2 SAY "Cijene (1-VPC, 2-NC) :" GET cCijenaTIP VALID cCijenaTIP $ "12"
+   @ form_x_koord() + 8, m_Y + 2 SAY "Na osnovu dokumenta " + cIdFirma + "-IM" GET cOldBrDok ;
       VALID {|| cOldBrDok := kalk_fix_brdok( cOldBrDok ), .T. }
 
    READ

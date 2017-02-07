@@ -89,29 +89,29 @@ FUNCTION usporedna_lista_fakt_kalk()
 
       cIdFirma := Left( cIdFirma, 2 )
 
-      @ m_x + 1, m_y + 2 SAY "RJ" GET cIdFirma VALID {|| cIdfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "RJ" GET cIdFirma VALID {|| cIdfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
       IF lViseKonta
-         @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto ;
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto u KALK"  GET qqKonto ;
             WHEN  {|| qqKonto := iif ( !Empty( cIdKonto ), cIdKonto + " ;", qqKonto ), .T. } PICT "@!S20"
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto ;
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto u KALK"  GET qqKonto ;
             WHEN  {|| qqKonto := iif ( !Empty( cIdKonto ), cIdKonto, qqKonto ), .T. } ;
             VALID P_Konto ( @qqKonto )
       ENDIF
-      @ m_x + 3, m_y + 2 SAY "Oznaka firme u KALK"  GET cKalkFirma PICT "@!S40"
-      @ m_x + 4, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
-      @ m_x + 5, m_y + 2 SAY "Od datuma"  GET dDatOd
-      @ m_x + 5, Col() + 1 SAY "do datuma"  GET dDatDo
-      @ m_x + 6, m_y + 2 SAY "Prikazi ako se razlikuju kolicine (D/N)" GET cRazlKol PICT "@!" VALID cRazlKol $ "DN"
-      @ m_x + 7, m_y + 2 SAY "Prikazi ako se razlikuju vrijednosti (D/N)" GET cRazlVr PICT "@!" VALID cRazlVr $ "DN"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Oznaka firme u KALK"  GET cKalkFirma PICT "@!S40"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Od datuma"  GET dDatOd
+      @ form_x_koord() + 5, Col() + 1 SAY "do datuma"  GET dDatDo
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Prikazi ako se razlikuju kolicine (D/N)" GET cRazlKol PICT "@!" VALID cRazlKol $ "DN"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Prikazi ako se razlikuju vrijednosti (D/N)" GET cRazlVr PICT "@!" VALID cRazlVr $ "DN"
 
       IF gVarC $ "12"
-         @ m_x + 9, m_y + 2 SAY "Stanje u FAKT prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
+         @ form_x_koord() + 9, form_y_koord() + 2 SAY "Stanje u FAKT prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
       ENDIF
 
-      @ m_x + 10, m_y + 2 SAY "K1" GET  cK1 PICT "@!"
-      @ m_x + 10, Col() + 1 SAY "K2" GET  cK2 PICT "@!"
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "K1" GET  cK1 PICT "@!"
+      @ form_x_koord() + 10, Col() + 1 SAY "K2" GET  cK2 PICT "@!"
 
       READ
 

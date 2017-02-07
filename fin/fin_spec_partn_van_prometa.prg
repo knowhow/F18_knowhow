@@ -27,21 +27,21 @@ FUNCTION PartVanProm()
    o_suban()
 
    Box (, 11, 60 )
-   @ m_x, m_y + 15 SAY "PREGLED PARTNERA BEZ PROMETA"
+   @ form_x_koord(), form_y_koord() + 15 SAY "PREGLED PARTNERA BEZ PROMETA"
    IF gNW == "D"
       cIdFirma := self_organizacija_id()
-      @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdfirma := Left( cidfirma, 2 ), .T. }
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
-   @ m_x + 4, m_y + 2 SAY " Konto (prazno-svi)" GET cIdKonto ;
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY " Konto (prazno-svi)" GET cIdKonto ;
       VALID Empty ( cIdKonto ) .OR. P_KontoFin ( @cIdKonto )
-   @ m_x + 6, m_y + 2 SAY "Kriterij za telefon" GET cKrit PICT "@S30@!";
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Kriterij za telefon" GET cKrit PICT "@S30@!";
       VALID {|| aUsl := Parsiraj ( cKrit, "Telefon" ), ;
       iif ( aUsl == NIL, .F., .T. ) }
-   @ m_x + 8, m_y + 2 SAY "         Pocevsi od" GET dDatOd ;
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY "         Pocevsi od" GET dDatOd ;
       VALID dDatOd <= dDatDo
-   @ m_x + 10, m_y + 2 SAY "       Zakljucno sa" GET dDatDo ;
+   @ form_x_koord() + 10, form_y_koord() + 2 SAY "       Zakljucno sa" GET dDatDo ;
       VALID dDatOd <= dDatDo
    READ
    ESC_BCR

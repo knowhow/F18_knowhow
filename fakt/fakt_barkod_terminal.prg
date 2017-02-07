@@ -176,16 +176,16 @@ STATIC FUNCTION _gForm( aParam )
 
    Box(, 15, 67 )
 
-   @ m_x + nX, m_y + 2 SAY "Generisanje podataka iz barkod terminala:"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Generisanje podataka iz barkod terminala:"
 
    ++nX
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "(1) Veleprodaja"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "(1) Veleprodaja"
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "(2) Maloprodaja" GET cVpMp ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "(2) Maloprodaja" GET cVpMp ;
       VALID cVpMp $ "12"
 
    READ
@@ -195,9 +195,9 @@ STATIC FUNCTION _gForm( aParam )
 
    // datum dokumenta
 
-   @ m_x + nX, m_y + 2 SAY "Datum dok.:" GET dDatDok
-   @ m_x + nX, Col() + 1 SAY "Datum otpr.:" GET dDatOtpr
-   @ m_x + nX, Col() + 1 SAY "Datum isp.:" GET dDatIsp
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Datum dok.:" GET dDatDok
+   @ form_x_koord() + nX, Col() + 1 SAY "Datum otpr.:" GET dDatOtpr
+   @ form_x_koord() + nX, Col() + 1 SAY "Datum isp.:" GET dDatIsp
 
    ++ nX
    ++ nX
@@ -207,16 +207,16 @@ STATIC FUNCTION _gForm( aParam )
    // koji je tip dokumenta
    cTipDok := _gtdok( cVpMp )
 
-   @ m_x + nX, m_y + 2 SAY "Dokument broj:" GET cFirma
-   @ m_x + nX, Col() + 1 SAY "-" GET cTipDok ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Dokument broj:" GET cFirma
+   @ form_x_koord() + nX, Col() + 1 SAY "-" GET cTipDok ;
       VALID _nBrDok( cFirma, cTipDok, @cBrDok )
-   @ m_x + nX, Col() + 1 SAY "-" GET cBrDok
+   @ form_x_koord() + nX, Col() + 1 SAY "-" GET cBrDok
 
    ++nX
    ++nX
 
    // partner
-   @ m_x + nX, m_y + 2 SAY "Partner:" GET cPartner ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Partner:" GET cPartner ;
       VALID Empty( cPartner ) .OR. p_partner( @cPartner )
 
    ++ nX
@@ -225,7 +225,7 @@ STATIC FUNCTION _gForm( aParam )
    IF cVpMp == "2"
 
       // tip cijena
-      @ m_x + nX, m_y + 2 SAY "Koristiti MPC ( /1/2/3...)" ;
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Koristiti MPC ( /1/2/3...)" ;
          GET cMPCSet ;
          VALID cMPCSet $ " 123456"
 
@@ -234,7 +234,7 @@ STATIC FUNCTION _gForm( aParam )
 
    ENDIF
 
-   @ m_x + nX, m_y + 2 SAY "Izvrsiti transfer (D/N)?" GET cGen ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Izvrsiti transfer (D/N)?" GET cGen ;
       VALID cGen $ "DN" PICT "@!"
 
    READ

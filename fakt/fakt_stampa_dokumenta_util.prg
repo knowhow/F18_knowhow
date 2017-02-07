@@ -56,9 +56,9 @@ FUNCTION GetRtmFile( cDefRtm )
    PRIVATE GetList := {}
 
    Box(, 6, 30 )
-   @ 1 + m_x, 2 + m_y GET aRtm[ 1, 1 ]
-   @ 2 + m_x, 2 + m_y GET aRtm[ 1, 2 ]
-   @ 3 + m_x, 2 + m_y GET aRtm[ 1, 3 ]
+   @ 1 + form_x_koord(), 2 + form_y_koord() GET aRtm[ 1, 1 ]
+   @ 2 + form_x_koord(), 2 + form_y_koord() GET aRtm[ 1, 2 ]
+   @ 3 + form_x_koord(), 2 + form_y_koord() GET aRtm[ 1, 3 ]
    READ
    BoxC()
 

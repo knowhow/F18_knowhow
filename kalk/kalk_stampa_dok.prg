@@ -80,16 +80,16 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
          IF ( cSeek == "" )
             Box( "", 6, 65 )
             SET CURSOR ON
-            @ m_x + 1, m_y + 2 SAY "KALK Dok broj:"
+            @ form_x_koord() + 1, form_y_koord() + 2 SAY "KALK Dok broj:"
 
-            @ m_x + 1, Col() + 2  SAY cIdFirma
-            @ m_x + 1, Col() + 1 SAY "-" GET cIdVD  PICT "@!"
-            @ m_x + 1, Col() + 1 SAY "-" GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
+            @ form_x_koord() + 1, Col() + 2  SAY cIdFirma
+            @ form_x_koord() + 1, Col() + 1 SAY "-" GET cIdVD  PICT "@!"
+            @ form_x_koord() + 1, Col() + 1 SAY "-" GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
 
-            @ m_x + 3, m_y + 2 SAY8 "(Brdok: '00000022', '22' -> '00000022', '00005/TZ'"
-            @ m_x + 4, m_y + 2 SAY8 "        '22#  ' -> '22   ', '0022' -> '00000022' ) "
+            @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "(Brdok: '00000022', '22' -> '00000022', '00005/TZ'"
+            @ form_x_koord() + 4, form_y_koord() + 2 SAY8 "        '22#  ' -> '22   ', '0022' -> '00000022' ) "
 
-            @ m_x + 6, m_y + 2 SAY8 "Štampa naljepnica D/N ?" GET cNaljepniceDN  PICT "@!" VALID cNaljepniceDN $ "DN"
+            @ form_x_koord() + 6, form_y_koord() + 2 SAY8 "Štampa naljepnica D/N ?" GET cNaljepniceDN  PICT "@!" VALID cNaljepniceDN $ "DN"
             READ
 
             ESC_BCR

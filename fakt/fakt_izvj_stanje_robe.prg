@@ -72,30 +72,30 @@ FUNCTION fakt_stanje_robe()
 
    DO WHILE .T.
       IF gNW $ "DR"
-         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "RJ (prazno svi) " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdfirma := Left( cIdFirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdfirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
 
-      @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
-      @ m_x + 3, m_y + 2 SAY "Od datuma "  GET dDatOd
-      @ m_x + 3, Col() + 1 SAY "do"  GET dDatDo
-      @ m_x + 4, m_y + 2 SAY "gledati datum (D)dok. (O)otpr. (V)value:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Od datuma "  GET dDatOd
+      @ form_x_koord() + 3, Col() + 1 SAY "do"  GET dDatDo
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "gledati datum (D)dok. (O)otpr. (V)value:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
 
       cRR := "N"
       xPos := 5
-      @ m_x + xPos, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    "  GET cSaldo0 PICT "@!" VALID cSaldo0 $ "DN"
+      @ form_x_koord() + xPos, form_y_koord() + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    "  GET cSaldo0 PICT "@!" VALID cSaldo0 $ "DN"
       IF gVarC $ "12"
-         @ m_x + xPos + 1, m_y + 2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
+         @ form_x_koord() + xPos + 1, form_y_koord() + 2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
       ENDIF
 
       IF fakt->( FieldPos( "K1" ) ) <> 0 .AND. gDK1 == "D"
-         @ m_x + xPos + 3, m_y + 2 SAY "K1" GET  cK1 PICT "@!"
-         @ m_x + xPos + 4, m_y + 2 SAY "K2" GET  cK2 PICT "@!"
+         @ form_x_koord() + xPos + 3, form_y_koord() + 2 SAY "K1" GET  cK1 PICT "@!"
+         @ form_x_koord() + xPos + 4, form_y_koord() + 2 SAY "K2" GET  cK2 PICT "@!"
       ENDIF
 
-      @ m_x + xPos + 5, m_y + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
-      @ m_x + xPos + 7, m_y + 2 SAY "Napraviti prored (D/N)    "  GET cProred PICT "@!" VALID cProred $ "DN"
+      @ form_x_koord() + xPos + 5, form_y_koord() + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
+      @ form_x_koord() + xPos + 7, form_y_koord() + 2 SAY "Napraviti prored (D/N)    "  GET cProred PICT "@!" VALID cProred $ "DN"
 
       READ
 

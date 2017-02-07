@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y, GetList
+MEMVAR form_x_koord(), form_y_koord(), GetList
 
 CLASS FaktDokumenti
 
@@ -133,21 +133,21 @@ METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
 
    Box(, MAXROWS() - 7, MAXCOLS() - 10 )
 
-   @ m_x + 1, m_y + 2 SAY "PREGLED OTPREMNICA:"
-   @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET  _idfirma PICT "@!"
-   @ m_x + 3, Col() + 1 SAY " - " + _idtipdok + " / " PICT "@!"
-   @ m_x + 3, Col() + 1 SAY "Partner ID:" GET _idpartner PICT "@!" ;
-      VALID {|| p_partner( @_idpartner ),  ispisi_partn( _idpartner, m_x + MAXROWS() -12, m_y + 18 ) }
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "PREGLED OTPREMNICA:"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Radna jedinica" GET  _idfirma PICT "@!"
+   @ form_x_koord() + 3, Col() + 1 SAY " - " + _idtipdok + " / " PICT "@!"
+   @ form_x_koord() + 3, Col() + 1 SAY "Partner ID:" GET _idpartner PICT "@!" ;
+      VALID {|| p_partner( @_idpartner ),  ispisi_partn( _idpartner, form_x_koord() + MAXROWS() -12, form_y_koord() + 18 ) }
 
    READ
 
-   @ m_x + MAXROWS() -12, m_y + 2 SAY "Partner:"
-   @ m_x + MAXROWS() -10, m_y + 2 SAY "Komande: <SPACE> markiraj otpremnicu"
+   @ form_x_koord() + MAXROWS() -12, form_y_koord() + 2 SAY "Partner:"
+   @ form_x_koord() + MAXROWS() -10, form_y_koord() + 2 SAY "Komande: <SPACE> markiraj otpremnicu"
 
 
    ::za_partnera( _idfirma, _idtipdok, _idpartner )
 
-   _fakt_browse := BrowseFaktDokumenti():New( m_x + 5, m_y + 1, m_x + MAXROWS() - 13, MAXCOLS() -11, self )
+   _fakt_browse := BrowseFaktDokumenti():New( form_x_koord() + 5, form_y_koord() + 1, form_x_koord() + MAXROWS() - 13, MAXCOLS() -11, self )
    _fakt_browse:set_kolone_markiraj_otpremnice()
    _fakt_browse:Browse()
 
@@ -176,14 +176,14 @@ METHOD FaktDokumenti:generisi_fakt_pripr_vars( params )
 
    Box(, 6, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "Sumirati stavke otpremnica (D/N) ?" GET _sumiraj ;
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Sumirati stavke otpremnica (D/N) ?" GET _sumiraj ;
       VALID _sumiraj $ "DN" PICT "@!"
 
-   @ m_x + 3, m_y + 2 SAY "Formirati tip racuna: 1 (veleprodaja)"
-   @ m_x + 4, m_y + 2 SAY "                      2 (maloprodaja)" GET _tip_rn ;
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Formirati tip racuna: 1 (veleprodaja)"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "                      2 (maloprodaja)" GET _tip_rn ;
       VALID ( _tip_rn > 0 .AND. _tip_rn < 3 ) PICT "9"
 
-   @ m_x + 6, m_y + 2 SAY "Valuta (KM/EUR):" GET _valuta VALID !Empty( _valuta ) PICT "@!"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Valuta (KM/EUR):" GET _valuta VALID !Empty( _valuta ) PICT "@!"
 
    READ
 
@@ -488,26 +488,26 @@ FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
    Box( "#PARAMETRI DOKUMENTA:", 10, 75 )
 
    IF gDodPar == "1"
-      @  m_x + 1, m_y + 2 SAY "Otpremnica broj:" GET _brotp
-      @  m_x + 2, m_y + 2 SAY "          datum:" GET _Datotp
-      @  m_x + 3, m_y + 2 SAY8 "Ugovor/narudžba:" GET _brNar
-      @  m_x + 4, m_y + 2 SAY "    Destinacija:" GET _dest PICT "@S45"
-      @  m_x + 5, m_y + 2 SAY "Vezni dokumenti:" GET _m_dveza PICT "@S45"
+      @  form_x_koord() + 1, form_y_koord() + 2 SAY "Otpremnica broj:" GET _brotp
+      @  form_x_koord() + 2, form_y_koord() + 2 SAY "          datum:" GET _Datotp
+      @  form_x_koord() + 3, form_y_koord() + 2 SAY8 "Ugovor/narudžba:" GET _brNar
+      @  form_x_koord() + 4, form_y_koord() + 2 SAY "    Destinacija:" GET _dest PICT "@S45"
+      @  form_x_koord() + 5, form_y_koord() + 2 SAY "Vezni dokumenti:" GET _m_dveza PICT "@S45"
    ENDIF
 
    IF gDodPar == "1" .OR. gDatVal == "D"
 
       nRokPl := gRokPl
 
-      @  m_x + 6, m_y + 2 SAY "Datum fakture  :" GET _DatDok
+      @  form_x_koord() + 6, form_y_koord() + 2 SAY "Datum fakture  :" GET _DatDok
 
       IF datum_max <> NIL
-         @  m_x + 6, m_y + 35 SAY "Datum posljednje otpremnice:" GET datum_max WHEN .F. COLOR "GR+/B"
+         @  form_x_koord() + 6, form_y_koord() + 35 SAY "Datum posljednje otpremnice:" GET datum_max WHEN .F. COLOR "GR+/B"
       ENDIF
 
-      @ m_x + 7, m_y + 2 SAY8 "Rok plać.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, "0", .T. ) ;
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "Rok plać.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, "0", .T. ) ;
          VALID valid_rok_placanja( nRokPl, "1", .T. )
-      @ m_x + 8, m_y + 2 SAY8 "Datum plaćanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, "2", .T. )
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "Datum plaćanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, "2", .T. )
 
       READ
    ENDIF

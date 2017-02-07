@@ -74,47 +74,47 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
       cIdFirma := PadR( cIdFirma, 2 )
 
-      @ m_x + nX, m_y + 2 SAY "RJ            " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "RJ            " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Od datuma "  GET dDatOd
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Od datuma "  GET dDatOd
 
-      @ m_x + nX, Col() + 1 SAY "do"  GET dDatDo
+      @ form_x_koord() + nX, Col() + 1 SAY "do"  GET dDatDo
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "gledati dat. (D)dok. (O)otpr. (V)valute:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "gledati dat. (D)dok. (O)otpr. (V)valute:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
 
       nX := nX + 3
-      @ m_x + nX, m_y + 2 SAY "Uslov po sifri partnera (prazno svi) "  GET qqPartn PICT "@!" VALID {|| Empty( qqPartn ) .OR. p_partner( @qqPartn ) }
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Uslov po sifri partnera (prazno svi) "  GET qqPartn PICT "@!" VALID {|| Empty( qqPartn ) .OR. p_partner( @qqPartn ) }
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Uslov po artiklu (prazno svi) "  GET qqIdRoba PICT "@S30"
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Uslov po artiklu (prazno svi) "  GET qqIdRoba PICT "@S30"
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Uslov po opcini (prazno sve) "  GET cOpcina PICT "@S30"
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Uslov po opcini (prazno sve) "  GET cOpcina PICT "@S30"
 
 
       IF lRelations == .T.
          ++nX
-         @ m_x + nX, m_y + 2 SAY "Relacija (prazno sve):" GET cRelation
+         @ form_x_koord() + nX, form_y_koord() + 2 SAY "Relacija (prazno sve):" GET cRelation
       ENDIF
 
       IF lGroup
 
          PRIVATE cPGroup := Space( 3 )
          ++nX
-         @ m_x + nX, m_y + 2 SAY "Grupa partnera (prazno sve):" GET cPGroup VALID Empty( cPGroup ) .OR. cPGroup $ "VP #AMB#SIS#OST"
+         @ form_x_koord() + nX, form_y_koord() + 2 SAY "Grupa partnera (prazno sve):" GET cPGroup VALID Empty( cPGroup ) .OR. cPGroup $ "VP #AMB#SIS#OST"
 
       ENDIF
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Svedi na jedinicu mjere ?" GET cSvediJmj VALID cSvediJmj $ "DN" PICT "@!"
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Svedi na jedinicu mjere ?" GET cSvediJmj VALID cSvediJmj $ "DN" PICT "@!"
 
       nX := nX + 2
-      @ m_x + nX, m_y + 2 SAY "Export izvjestaja u DBF?" GET cExport VALID cExport $ "DN" PICT "@!"
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Export izvjestaja u DBF?" GET cExport VALID cExport $ "DN" PICT "@!"
 
 
       READ
@@ -336,9 +336,9 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       Box(, 3, 60 )
 
       SET DEVICE TO SCREEN
-      @ 1 + m_x, 2 + m_y SAY "formiranje izvjestaja u toku..."
-      nMX := 3 + m_x
-      nMY := 2 + m_y
+      @ 1 + form_x_koord(), 2 + form_y_koord() SAY "formiranje izvjestaja u toku..."
+      nMX := 3 + form_x_koord()
+      nMY := 2 + form_y_koord()
       SET DEVICE TO PRINTER
 
       DO WHILE !Eof()

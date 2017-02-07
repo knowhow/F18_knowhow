@@ -47,15 +47,15 @@ FUNCTION finansijsko_stanje_prodavnica()
 
    DO WHILE .T.
 
-      @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
-      @ m_x + 2, m_y + 2 SAY "Konto   " GET cIdKonto VALID P_Konto( @cIdKonto )
-      @ m_x + 4, m_y + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
-      @ m_x + 6, m_y + 2 SAY "Roba  " GET qqRoba PICT "@!S30"
-      @ m_x + 7, m_y + 2 SAY "Datum od " GET dDatOd
-      @ m_x + 7, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 8, m_y + 2  SAY "Prikaz: roba tipa T / dokumenati IP (1/2)" GET cTU  VALID cTU $ "12"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto   " GET cIdKonto VALID P_Konto( @cIdKonto )
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Roba  " GET qqRoba PICT "@!S30"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Datum od " GET dDatOd
+      @ form_x_koord() + 7, Col() + 2 SAY "do" GET dDatDo
+      @ form_x_koord() + 8, form_y_koord() + 2  SAY "Prikaz: roba tipa T / dokumenati IP (1/2)" GET cTU  VALID cTU $ "12"
 
       READ
 

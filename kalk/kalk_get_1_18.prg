@@ -18,17 +18,17 @@ FUNCTION kalk_get_1_18()
    _DatFaktP := _datdok
 
 
-   @ m_x + 8, m_y + 2   SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
+   @ form_x_koord() + 8, form_y_koord() + 2   SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
    // IF gNW <> "X"
-   // @ m_x + 8, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
+   // @ form_x_koord() + 8, form_y_koord() + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
    // ENDIF
    read; ESC_RETURN K_ESC
 
-   @ m_x + 10, m_y + 66 SAY "Tarif.br->"
+   @ form_x_koord() + 10, form_y_koord() + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), form_x_koord() + 11, form_y_koord() + 2, @aPorezi )
 
-   @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ form_x_koord() + 11, form_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
    READ
    ESC_RETURN K_ESC
    IF roba_barkod_pri_unosu()
@@ -61,7 +61,7 @@ FUNCTION kalk_get_1_18()
    ENDIF
    IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
 
-   @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _kolicina > 0
+   @ form_x_koord() + 12, form_y_koord() + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _kolicina > 0
 
    IF kalk_is_novi_dokument() .AND. gMagacin == "2" .AND. _TBankTr <> "X"
       nStCj := KoncijVPC()
@@ -87,12 +87,12 @@ FUNCTION kalk_get_1_18()
    IF gmagacin == "1"
       cNaziv := "NC"
    ENDIF
-   @ m_x + 17, m_y + 2    SAY "STARA CIJENA  (" + cnaziv + ") :"  GET nStCj  PICTURE PicDEM
-   @ m_x + 18, m_y + 2    SAY "NOVA CIJENA   (" + cnaziv + ") :"  GET nNCj   PICTURE PicDEM
+   @ form_x_koord() + 17, form_y_koord() + 2    SAY "STARA CIJENA  (" + cnaziv + ") :"  GET nStCj  PICTURE PicDEM
+   @ form_x_koord() + 18, form_y_koord() + 2    SAY "NOVA CIJENA   (" + cnaziv + ") :"  GET nNCj   PICTURE PicDEM
 
    IF gMPCPomoc == "D"
       PRIVATE _MPCPom := 0
-      @ m_x + 18, m_y + 42    SAY "NOVA CIJENA  MPC :"  GET _mpcpom   PICTURE PicDEM ;
+      @ form_x_koord() + 18, form_y_koord() + 42    SAY "NOVA CIJENA  MPC :"  GET _mpcpom   PICTURE PicDEM ;
          valid {|| nNcj := iif( nNcj = 0, Round( _mpcpom / ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), 2 ), nNcj ), .T. }
    ENDIF
 

@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
+MEMVAR form_x_koord(), form_y_koord()
 
 STATIC s_cDelimiter
 STATIC s_nRbr
@@ -113,22 +113,22 @@ STATIC FUNCTION import_elba_parametri( cFile, cImpView )
 
    Box(, 12, 77 )
 
-   @ m_x + nX, m_y + 2 SAY "Parametri importa" COLOR "BG+/B"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Parametri importa" COLOR "BG+/B"
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Lokacija i naziv fajla za import:"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Lokacija i naziv fajla za import:"
    nX += 1
-   @ m_x + nX, m_y + 2 GET cFile PICT "@S70" VALID valid_file( cFile )
+   @ form_x_koord() + nX, form_y_koord() + 2 GET cFile PICT "@S70" VALID valid_file( cFile )
    nX += 1
-   @ m_x + nX, m_y + 2 SAY "Pregled importa (D/N)?" GET cImpView VALID cImpView $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Pregled importa (D/N)?" GET cImpView VALID cImpView $ "DN" PICT "@!"
    nX++
-   @ m_x + nX, m_y + 2 SAY "Vrsta Naloga ?" GET s_cIdVN
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Vrsta Naloga ?" GET s_cIdVN
 
    nX++
-   @ m_x + nX, m_y + 2 SAY "Konto Banka ?" GET s_cKtoBanka
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Konto Banka ?" GET s_cKtoBanka
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Importovati podatke (D/N)?" GET cImpOk VALID cImpOk $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Importovati podatke (D/N)?" GET cImpOk VALID cImpOk $ "DN" PICT "@!"
 
    READ
 
@@ -192,7 +192,7 @@ STATIC FUNCTION process_elba_items( cTxt, cImpView )
 
    Box( , 22, 90 )
 
-   @ m_x + 1, m_y + 2 SAY8 "Vršim import podataka u pripremu ..." COLOR "BG+/B"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Vršim import podataka u pripremu ..." COLOR "BG+/B"
 
    DO WHILE oFile:MoreToRead()
 
@@ -206,7 +206,7 @@ STATIC FUNCTION process_elba_items( cTxt, cImpView )
       IF Len( aItem ) == 3
 
          aHeader := aItem
-         @ m_x + 4, m_y + 2 SAY "Izvod broj: " + PadL( aHeader[ 1 ], 8, "0" )
+         @ form_x_koord() + 4, form_y_koord() + 2 SAY "Izvod broj: " + PadL( aHeader[ 1 ], 8, "0" )
          LOOP
       ENDIF
 
@@ -223,8 +223,8 @@ STATIC FUNCTION process_elba_items( cTxt, cImpView )
       ENDIF
 
       ++ nItems
-      @ m_x + 3, m_y + 2 SAY PadR( "", 60 ) COLOR "BG+/B"
-      @ m_x + 3, m_y + 2 SAY "stavka " + AllTrim( Str( nItems ) ) COLOR "BG+/B"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY PadR( "", 60 ) COLOR "BG+/B"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "stavka " + AllTrim( Str( nItems ) ) COLOR "BG+/B"
 
    ENDDO
 
@@ -425,23 +425,23 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
 
    IF cImpView == "D"
 
-      @ m_x + 4, m_y + 30 SAY "Banka: "
-      @ m_x + 4, Col() + 2 SAY hFinItem[ "banka" ]
+      @ form_x_koord() + 4, form_y_koord() + 30 SAY "Banka: "
+      @ form_x_koord() + 4, Col() + 2 SAY hFinItem[ "banka" ]
 
-      @ m_x + 6, m_y + 2 SAY Space( 70 )
-      @ m_x + 6, m_y + 2 SAY PadR( hFinItem[ "partner_opis" ], 45 ) + " -> partner: " ;
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY Space( 70 )
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY PadR( hFinItem[ "partner_opis" ], 45 ) + " -> partner: " ;
          GET hFinItem[ "partner" ] VALID postoji_partner( hFinItem[ "partner" ] ) .AND. p_partner( @hFinItem[ "partner" ] )
 
-      @ m_x + 7, m_y + 2 SAY8 "datum knjiženja:" GET hFinItem[ "datdok" ]
-      @ m_x + 7, Col() + 2 SAY8 "broj veze:" GET hFinItem[ "brdok" ]
-      @ m_x + 8, m_y + 2 SAY8 "opis knjiženja:" GET hFinItem[ "opis" ] PICT "@S60"
-      @ m_x + 9, m_y + 2 SAY Replicate( "=", 60 )
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "datum knjiženja:" GET hFinItem[ "datdok" ]
+      @ form_x_koord() + 7, Col() + 2 SAY8 "broj veze:" GET hFinItem[ "brdok" ]
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "opis knjiženja:" GET hFinItem[ "opis" ] PICT "@S60"
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY Replicate( "=", 60 )
 
 
-      @ m_x + 11, m_y + 2 SAY PadR( "Rbr.stavke:", 20 ) GET cRbr
-      @ m_x + 12, m_y + 2 SAY "dug/pot:" GET hFinItem[ "d_p" ]
-      @ m_x + 12, Col() + 2 SAY "konto:" GET hFinItem[ "konto" ]
-      @ m_x + 12, Col() + 2 SAY PadR( "IZNOS STAVKE:", 20, 20 ) GET hFinItem[ "iznos" ] PICT "9999999.99"
+      @ form_x_koord() + 11, form_y_koord() + 2 SAY PadR( "Rbr.stavke:", 20 ) GET cRbr
+      @ form_x_koord() + 12, form_y_koord() + 2 SAY "dug/pot:" GET hFinItem[ "d_p" ]
+      @ form_x_koord() + 12, Col() + 2 SAY "konto:" GET hFinItem[ "konto" ]
+      @ form_x_koord() + 12, Col() + 2 SAY PadR( "IZNOS STAVKE:", 20, 20 ) GET hFinItem[ "iznos" ] PICT "9999999.99"
 
       IF LastKey() <> K_ESC
          READ
@@ -475,10 +475,10 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
 /*
    IF cImpView == "D"
 
-      @ m_x + 13, m_y + 2 SAY Replicate( "-", 60 )
-      @ m_x + 14, m_y + 2 SAY PadR( "Rbr.protustavke:", 20 ) GET cRbr
-      @ m_x + 15, Col() + 2 SAY "konto:" GET hFinItem[ "konto" ]
-      @ m_x + 15, Col() + 2 SAY PadR( "IZNOS PROTUSTAVKE:", 20 ) GET hFinItem[ "iznos" ] PICT "9999999.99"
+      @ form_x_koord() + 13, form_y_koord() + 2 SAY Replicate( "-", 60 )
+      @ form_x_koord() + 14, form_y_koord() + 2 SAY PadR( "Rbr.protustavke:", 20 ) GET cRbr
+      @ form_x_koord() + 15, Col() + 2 SAY "konto:" GET hFinItem[ "konto" ]
+      @ form_x_koord() + 15, Col() + 2 SAY PadR( "IZNOS PROTUSTAVKE:", 20 ) GET hFinItem[ "iznos" ] PICT "9999999.99"
 
       IF LastKey() <> K_ESC
          READ

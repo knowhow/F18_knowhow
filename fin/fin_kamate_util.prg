@@ -28,13 +28,13 @@ FUNCTION fin_kamate_generisi_mj_uplate()
 
    Box(, 3, 70 )
 
-   @ m_x + 1, m_y + 2 SAY "Iznos mjesecne rate ?" GET nRataIznos ;
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Iznos mjesecne rate ?" GET nRataIznos ;
       PICT "99999.99"
 
-   @ m_x + 2, m_y + 2 SAY "Uplata na dan u mjesecu ?"  GET nDanUplate ;
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Uplata na dan u mjesecu ?"  GET nDanUplate ;
       PICT "99"
 
-   @ m_x + 3, m_y + 2 SAY "Uplata pocinje od tekuceg od ovog (T) ili narednog (N) mjeseca ?"  GET cNaredni  ;
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Uplata pocinje od tekuceg od ovog (T) ili narednog (N) mjeseca ?"  GET cNaredni  ;
       PICT "@!" ;
       VALID cNaredni $ "TN"
    READ

@@ -35,14 +35,14 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
       cBrNal := Space( 8 )
 
       Box( "", 1, 35 )
-      @ m_x + 1, m_y + 2 SAY "Nalog:"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Nalog:"
       IF gNW == "D"
-         @ m_x + 1, Col() + 1 SAY cIdFirma
+         @ form_x_koord() + 1, Col() + 1 SAY cIdFirma
       ELSE
-         @ m_x + 1, Col() + 1 GET cIdFirma
+         @ form_x_koord() + 1, Col() + 1 GET cIdFirma
       ENDIF
-      @ m_x + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
-      @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID fin_fix_broj_naloga( @cBrNal )
+      @ form_x_koord() + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
+      @ form_x_koord() + 1, Col() + 1 SAY "-" GET cBrNal VALID fin_fix_broj_naloga( @cBrNal )
       READ
       ESC_BCR
       BoxC()

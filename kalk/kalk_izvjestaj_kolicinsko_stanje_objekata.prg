@@ -396,11 +396,11 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
    SET CURSOR ON
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Konta objekata:" GET qqKonto PICT "@!S50"
-      @ m_x + 3, m_y + 2 SAY8 "tekući promet je period:" GET dDatOd
-      @ m_x + 3, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 4, m_y + 2 SAY "Kriterij za robu :" GET qqRoba PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Prikaz prodaje (D/N)" GET cPrikProd PICT "@!" VALID cPrikProd $ "DN"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Konta objekata:" GET qqKonto PICT "@!S50"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "tekući promet je period:" GET dDatOd
+      @ form_x_koord() + 3, Col() + 2 SAY "do" GET dDatDo
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Kriterij za robu :" GET qqRoba PICT "@!S50"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Prikaz prodaje (D/N)" GET cPrikProd PICT "@!" VALID cPrikProd $ "DN"
       READ
 
       IF ( LastKey() == K_ESC )

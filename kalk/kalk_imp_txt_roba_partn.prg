@@ -161,8 +161,8 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
       IF find_roba_by_sifradob( cTmpSif )
 
 
-         @ m_x + 1, m_y + 2 SAY "      ID: " + roba->id
-         @ m_x + 2, m_y + 2 SAY "SIFRADOB: " + kalk_imp_temp->sifradob
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "      ID: " + roba->id
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "SIFRADOB: " + kalk_imp_temp->sifradob
 
          lPromjena := .F. // desila se promjena cijene
 

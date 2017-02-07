@@ -21,10 +21,10 @@ FUNCTION fakt_stampa_azuriranog()
    cBrdok := Space( 8 )
 
    Box( "", 2, 35 )
-   @ m_x + 1, m_y + 2 SAY "Dokument:"
-   @ m_x + 2, m_y + 2 SAY " RJ-tip-broj:" GET cIdFirma
-   @ m_x + 2, Col() + 1 SAY "-" GET cIdTipDok
-   @ m_x + 2, Col() + 1 SAY "-" GET cBrDok
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Dokument:"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY " RJ-tip-broj:" GET cIdFirma
+   @ form_x_koord() + 2, Col() + 1 SAY "-" GET cIdTipDok
+   @ form_x_koord() + 2, Col() + 1 SAY "-" GET cBrDok
    READ
    BoxC()
 

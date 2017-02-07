@@ -64,15 +64,15 @@ dDatDo := DATE()
 
 nX:=1
 Box(, 8, 60)
-  @ m_x+nX, m_y+2 SAY "Period"
+  @ form_x_koord()+nX, form_y_koord()+2 SAY "Period"
   nX++
   
-  @ m_x+nX, m_y+2 SAY "od " GET dDatOd
-  @ m_x+nX, col()+2 SAY "do " GET dDatDo
+  @ form_x_koord()+nX, form_y_koord()+2 SAY "od " GET dDatOd
+  @ form_x_koord()+nX, col()+2 SAY "do " GET dDatDo
   
   nX += 2
   
-  @ m_x+nX, m_y+2 SAY REPLICATE("-", 30) 
+  @ form_x_koord()+nX, form_y_koord()+2 SAY REPLICATE("-", 30) 
   nX++
   
   READ
@@ -187,7 +187,7 @@ do while !eof()
 ++nCount
 
 
-@ m_x+2, m_y+2 SAY STR(nCount, 6, 0)
+@ form_x_koord()+2, form_y_koord()+2 SAY STR(nCount, 6, 0)
 
 cBrDok := br_dok
 nBPdv := 0

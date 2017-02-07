@@ -75,25 +75,25 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
 
       IF lTest == .F.
 
-         @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
-         @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
-         @ m_x + 3, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
+         @ form_x_koord() + 1, form_y_koord() + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
+         @ form_x_koord() + 1, Col() + 2 SAY "Datum:" GET dDatKalk
+         @ form_x_koord() + 3, form_y_koord() + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
 
          //IF gNW <> "X"
-          //  @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
+          //  @ form_x_koord() + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
          //ENDIF
-         @ m_x + 4, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
+         @ form_x_koord() + 4, form_y_koord() + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
          cFaktFirma := cIdFirma
          dDatFOd := CToD( "" )
          dDatFDo := Date()
-         @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
-         @ m_x + 7, m_Y + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
-         @ m_x + 8, m_y + 2 SAY "period od" GET dDAtFOd
-         @ m_x + 8, Col() + 2 SAY "do" GET dDAtFDo
+         @ form_x_koord() + 6, form_y_koord() + 2 SAY "RJ u FAKT: " GET  cFaktFirma
+         @ form_x_koord() + 7, m_Y + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
+         @ form_x_koord() + 8, form_y_koord() + 2 SAY "period od" GET dDAtFOd
+         @ form_x_koord() + 8, Col() + 2 SAY "do" GET dDAtFDo
 
-         @ m_x + 10, m_y + 2 SAY "Uslov za robu:" GET cRobaUsl PICT "@S40"
-         @ m_x + 11, m_y + 2 SAY "Navedeni uslov [U]kljuciti / [I]skljuciti" GET cRobaIncl VALID cRobaIncl $ "UI" PICT "@!"
+         @ form_x_koord() + 10, form_y_koord() + 2 SAY "Uslov za robu:" GET cRobaUsl PICT "@S40"
+         @ form_x_koord() + 11, form_y_koord() + 2 SAY "Navedeni uslov [U]kljuciti / [I]skljuciti" GET cRobaIncl VALID cRobaIncl $ "UI" PICT "@!"
 
          READ
 
@@ -272,12 +272,12 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
             rpt_not_incl( aNotIncl )
          ENDIF
 
-         @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !"
+         @ form_x_koord() + 10, form_y_koord() + 2 SAY "Dokumenti su preneseni !"
 
          kalk_fix_brdok_add_1( @cBrKalk )
 
          Inkey( 4 )
-         @ m_x + 8, m_y + 2 SAY Space( 30 )
+         @ form_x_koord() + 8, form_y_koord() + 2 SAY Space( 30 )
 
       ELSE
          EXIT
@@ -413,22 +413,22 @@ FUNCTION PrenosNoFakt()
 
       nRBr := 0
 
-      @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
-      @ m_x + 3, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
+      @ form_x_koord() + 1, form_y_koord() + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
+      @ form_x_koord() + 1, Col() + 2 SAY "Datum:" GET dDatKalk
+      @ form_x_koord() + 3, form_y_koord() + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
 
       //IF gNW <> "X"
-      //   @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
+      //   @ form_x_koord() + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
       //ENDIF
 
-      @ m_x + 4, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
+      @ form_x_koord() + 4, form_y_koord() + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
       cFaktFirma := cIdFirma
 
-      @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
-      @ m_x + 7, m_Y + 2 SAY "Dokument tipa u fakt:" GET cIdTipDok
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "RJ u FAKT: " GET  cFaktFirma
+      @ form_x_koord() + 7, m_Y + 2 SAY "Dokument tipa u fakt:" GET cIdTipDok
 
-      @ m_x + 8, m_Y + 2 SAY "Broj dokumenta u fakt:" GET cFaBrDok
+      @ form_x_koord() + 8, m_Y + 2 SAY "Broj dokumenta u fakt:" GET cFaBrDok
 
 
       READ
@@ -498,7 +498,7 @@ FUNCTION PrenosNoFakt()
          SKIP
       ENDDO
 
-      @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !!"
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Dokumenti su preneseni !!"
 
       kalk_fix_brdok_add_1( @cBrKalk )
 
@@ -506,7 +506,7 @@ FUNCTION PrenosNoFakt()
 
       Inkey( 4 )
 
-      @ m_x + 8, m_y + 2 SAY Space( 30 )
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY Space( 30 )
 
    ENDDO
 
@@ -550,17 +550,17 @@ FUNCTION PrenosNo2()
 
       nRBr := 0
       nRbr2 := 900
-      @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 10 -" GET cBrKalk PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
-      @ m_x + 4, m_y + 2   SAY "Konto got. proizvoda zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
+      @ form_x_koord() + 1, form_y_koord() + 2   SAY "Broj kalkulacije 10 -" GET cBrKalk PICT "@!"
+      @ form_x_koord() + 1, Col() + 2 SAY "Datum:" GET dDatKalk
+      @ form_x_koord() + 4, form_y_koord() + 2   SAY "Konto got. proizvoda zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
       cFaktFirma := cIdFirma
       dDatFOd := CToD( "" )
       dDatFDo := Date()
-      @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
-      @ m_x + 7, m_Y + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
-      @ m_x + 8, m_y + 2 SAY "period od" GET dDAtFOd
-      @ m_x + 8, Col() + 2 SAY "do" GET dDAtFDo
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "RJ u FAKT: " GET  cFaktFirma
+      @ form_x_koord() + 7, m_Y + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "period od" GET dDAtFOd
+      @ form_x_koord() + 8, Col() + 2 SAY "do" GET dDAtFDo
       READ
 
       IF LastKey() == K_ESC
@@ -652,12 +652,12 @@ FUNCTION PrenosNo2()
 
       ENDDO
 
-      @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !"
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Dokumenti su preneseni !"
 
       kalk_fix_brdok_add_1( @cBrKalk )
 
       Inkey( 4 )
-      @ m_x + 8, m_y + 2 SAY Space( 30 )
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY Space( 30 )
 
    ENDDO
 

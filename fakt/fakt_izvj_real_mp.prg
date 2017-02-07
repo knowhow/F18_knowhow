@@ -113,27 +113,27 @@ STATIC FUNCTION fakt_mp_uzmi_parametre_izvjestaja( params )
 
    Box( , 14, 66 )
 
-   @ m_x + _x, m_y + 2 SAY "**** REALIZACIJA PRODAJE ****"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "**** REALIZACIJA PRODAJE ****"
    _x += 2
-   @ m_x + _x, m_y + 2 SAY "Firma (prazno-sve):" GET _id_firma PICT "@S20"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Firma (prazno-sve):" GET _id_firma PICT "@S20"
    ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Obuhvatiti period od:" GET _d_from
-   @ m_x + _x, Col() + 1 SAY "do:" GET _d_to
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Obuhvatiti period od:" GET _d_from
+   @ form_x_koord() + _x, Col() + 1 SAY "do:" GET _d_to
    ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Vrste dokumenata:" GET _dok_tip PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Vrste dokumenata:" GET _dok_tip PICT "@S30"
    ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Partner (prazno-svi):" GET _partner PICT "@S40"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Partner (prazno-svi):" GET _partner PICT "@S40"
    ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Vrsta plaćanja (prazno-svi):" GET _vrsta_p VALID Empty( _vrsta_p ) .OR. P_VRSTEP( @_vrsta_p )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Vrsta plaćanja (prazno-svi):" GET _vrsta_p VALID Empty( _vrsta_p ) .OR. P_VRSTEP( @_vrsta_p )
    ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Operater (0-svi):" GET _operater PICT "9999999999" ;
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Operater (0-svi):" GET _operater PICT "9999999999" ;
       VALID {|| _operater == 0, iif( _operater == -99, choose_f18_user_from_list( @_operater ), .T. ) }
    _x += 2
-   @ m_x + _x, m_y + 2 SAY8 "Razvrstati po tipu partnera (D/N)?" GET _tip_partnera VALID _tip_partnera $ "DN" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Razvrstati po tipu partnera (D/N)?" GET _tip_partnera VALID _tip_partnera $ "DN" PICT "@!"
    _x += 2
-   @ m_x + _x, m_y + 2 SAY8 "Varijanta prikaza 1-po robi 2-po dokumentima"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Varijanta prikaza 1-po robi 2-po dokumentima"
    ++_x
-   @ m_x + _x, m_y + 2 SAY8 "                  3-samo total" GET _varijanta PICT "9"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "                  3-samo total" GET _varijanta PICT "9"
 
    READ
    BoxC()

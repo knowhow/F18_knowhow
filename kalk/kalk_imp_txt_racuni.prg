@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR cSection, cHistory, aHistory, izbor, opc, opcexe, gAImpPrint
-MEMVAR GetList, m_x, m_y
+MEMVAR GetList, form_x_koord(), form_y_koord()
 MEMVAR cExpPath, cImpFile
 
 STATIC s_cKalkAutoImportPodatakaKonto := nil
@@ -142,11 +142,11 @@ STATIC FUNCTION kalk_get_vp_ili_mp()
 
    // pozovi box za izbor
    Box(, 5, 60 )
-   @ 1 + m_x, 2 + m_y SAY "Importovati:"
-   @ 2 + m_x, 2 + m_y SAY "----------------------------------"
-   @ 3 + m_x, 2 + m_y SAY "Veleprodaja (V)"
-   @ 4 + m_x, 2 + m_y SAY "Maloprodaja (M)"
-   @ 5 + m_x, 17 + m_y SAY "izbor =>" GET cVPMP VALID cVPMP $ "MV" .AND. !Empty( cVPMP ) PICT "@!"
+   @ 1 + form_x_koord(), 2 + form_y_koord() SAY "Importovati:"
+   @ 2 + form_x_koord(), 2 + form_y_koord() SAY "----------------------------------"
+   @ 3 + form_x_koord(), 2 + form_y_koord() SAY "Veleprodaja (V)"
+   @ 4 + form_x_koord(), 2 + form_y_koord() SAY "Maloprodaja (M)"
+   @ 5 + form_x_koord(), 17 + form_y_koord() SAY "izbor =>" GET cVPMP VALID cVPMP $ "MV" .AND. !Empty( cVPMP ) PICT "@!"
    READ
    BoxC()
 
@@ -562,8 +562,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
    cBBTipDok := Space( 30 ) // uzmi parametre koje ces dokumente prenositi
    Box(, 3, 70 )
-   @ 1 + m_x, 2 + m_y SAY "Prenos sljedecih tipova dokumenata ( kalk pript -> pripr) :"
-   @ 3 + m_x, 2 + m_y SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
+   @ 1 + form_x_koord(), 2 + form_y_koord() SAY "Prenos sljedecih tipova dokumenata ( kalk pript -> pripr) :"
+   @ 3 + form_x_koord(), 2 + form_y_koord() SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
    READ
    BoxC()
 
@@ -574,8 +574,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
    // SetKey(K_F3,{|| kalk_imp_set_check_point(nPTRec)})
 
    Box(, 10, 79 )
-   @ 1 + m_x, 2 + m_y SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR f18_color_i()
-   @ 2 + m_x, 2 + m_y SAY8 "======================================="
+   @ 1 + form_x_koord(), 2 + form_y_koord() SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR f18_color_i()
+   @ 2 + form_x_koord(), 2 + form_y_koord() SAY8 "======================================="
 
    DO WHILE !Eof()
 
@@ -606,7 +606,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
       SELECT ( nTekucaWA )
 
-      @ 3 + m_x, 2 + m_y SAY "KALK IMP Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok + " /"  + cNoviKalkBrDok
+      @ 3 + form_x_koord(), 2 + form_y_koord() SAY "KALK IMP Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok + " /"  + cNoviKalkBrDok
 
       nStCnt := 0
       DO WHILE !Eof() .AND. field->brdok == cBrDok .AND. field->idfirma == cFirma .AND. field->idvd == cIdVd
@@ -636,8 +636,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
          nPTRec := RecNo()
 
-         @ 5 + m_x, 13 + m_y SAY Space( 5 )
-         @ 5 + m_x, 2 + m_y SAY "Broj stavki:" + AllTrim( Str( nStCnt ) )
+         @ 5 + form_x_koord(), 13 + form_y_koord() SAY Space( 5 )
+         @ 5 + form_x_koord(), 2 + form_y_koord() SAY "Broj stavki:" + AllTrim( Str( nStCnt ) )
       ENDDO
 
 
@@ -877,7 +877,7 @@ FUNCTION kalk_imp_partn_exist()
       GO TOP
       SEEK kalk_imp_temp->idpartner
       ++nCount
-      @ m_x + 1, m_y + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
       IF !Found()
          AAdd( aRet, { kalk_imp_temp->idpartner } )
       ENDIF
@@ -913,7 +913,7 @@ FUNCTION kalk_imp_roba_exist_sifradob()
       // IF lSifraDob == .T.
       cIdRobaSifraDobavljaca := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
 
-      @ m_x + 1, m_y + 2 SAY Str( nCount, 5 ) + " : " + cIdRobaSifraDobavljaca
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY Str( nCount, 5 ) + " : " + cIdRobaSifraDobavljaca
 
       // ELSE
       // cIdRobaSifraDobavljaca := AllTrim( kalk_imp_temp->idroba )
@@ -1138,22 +1138,22 @@ STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica
    IF cPoslovnica == NIL
       cPoslovnica := Space( 3 )
       cIdProdajnoMjesto := Space( 3 )
-      @ m_x + 1, m_y + 2 SAY "Poslovnica:" GET cPoslovnica
-      @ m_x + 2, m_y + 2 SAY "Prodajno mjesto:" GET cIdProdajnoMjesto
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Poslovnica:" GET cPoslovnica
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Prodajno mjesto:" GET cIdProdajnoMjesto
       READ
       IF LastKey() == K_ESC
          BoxC()
          RETURN .F.
       ENDIF
    ELSE
-      @ m_x + 1, m_y + 2 SAY "Poslovnica: " + cPoslovnica
-      @ m_x + 2, m_y + 2 SAY "Prodajno mjesto: " + cIdProdajnoMjesto
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Poslovnica: " + cPoslovnica
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Prodajno mjesto: " + cIdProdajnoMjesto
    ENDIF
 
 
    cKonto := PadR( fetch_metric(  "kalk_imp_prod_zad_" + cPoslovnica + "_" + cIdProdajnoMjesto, NIL,  Space( 7 ) ), 7 )
 
-   @ m_x + 3, m_y + 2 SAY8 "KALK 11 prod konto zaduzuje: " GET cKonto
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "KALK 11 prod konto zaduzuje: " GET cKonto
 
    READ
    BoxC()
@@ -1207,14 +1207,14 @@ STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
    Box(, 11, 75 )
    IF cPoslovnica == NIL
       cPoslovnica := Space( 3 )
-      @ m_x + 1, m_y + 2 SAY "Poslovnica:" GET cPoslovnica
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Poslovnica:" GET cPoslovnica
       READ
       IF LastKey() == K_ESC
          BoxC()
          RETURN .F.
       ENDIF
    ELSE
-      @ m_x + 1, m_y + 2 SAY "Poslovnica: " + cPoslovnica
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Poslovnica: " + cPoslovnica
    ENDIF
 
 
@@ -1255,23 +1255,23 @@ STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
    hKonta[ "KOR" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
 
 
-   @ m_x + 3, m_y + 2 SAY "KALK 14 KTO ZAD: " GET hKonta[ "14Z" ]
-   @ m_x + 3, Col() + 2 SAY "KALK 14 KTO RAZD: " GET hKonta[ "14R" ]
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "KALK 14 KTO ZAD: " GET hKonta[ "14Z" ]
+   @ form_x_koord() + 3, Col() + 2 SAY "KALK 14 KTO RAZD: " GET hKonta[ "14R" ]
 
-   @ m_x + 4, m_y + 2 SAY "KALK 11 KTO ZAD: " GET hKonta[ "11Z" ]
-   @ m_x + 4, Col() + 2 SAY "KALK 11 KTO RAZD: " GET hKonta[ "11R" ]
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "KALK 11 KTO ZAD: " GET hKonta[ "11Z" ]
+   @ form_x_koord() + 4, Col() + 2 SAY "KALK 11 KTO RAZD: " GET hKonta[ "11R" ]
 
-   @ m_x + 5, m_y + 2 SAY "KALK 41 KTO ZAD: " GET hKonta[ "41Z" ]
-   @ m_x + 5, Col() + 2 SAY "KALK 41 KTO RAZD: " GET hKonta[ "41R" ]
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "KALK 41 KTO ZAD: " GET hKonta[ "41Z" ]
+   @ form_x_koord() + 5, Col() + 2 SAY "KALK 41 KTO RAZD: " GET hKonta[ "41R" ]
 
-   @ m_x + 6, m_y + 2 SAY "KALK 95 KTO ZAD: " GET hKonta[ "95Z" ]
-   @ m_x + 6, Col() + 2 SAY "KALK 95 KTO RAZD: " GET hKonta[ "95R" ]
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "KALK 95 KTO ZAD: " GET hKonta[ "95Z" ]
+   @ form_x_koord() + 6, Col() + 2 SAY "KALK 95 KTO RAZD: " GET hKonta[ "95R" ]
 
-   @ m_x + 7, m_y + 2 SAY "KALK 96 KTO ZAD: " GET hKonta[ "96Z" ]
-   @ m_x + 7, Col() + 2 SAY "KALK 96 KTO RAZD: " GET hKonta[ "96R" ]
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY "KALK 96 KTO ZAD: " GET hKonta[ "96Z" ]
+   @ form_x_koord() + 7, Col() + 2 SAY "KALK 96 KTO RAZD: " GET hKonta[ "96R" ]
 
-   @ m_x + 8, m_y + 2 SAY "KALK KO KTO ZAD: " GET hKonta[ "KOZ" ]
-   @ m_x + 8, Col() + 2 SAY "KALK KO KTO RAZD: " GET hKonta[ "KOR" ]
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY "KALK KO KTO ZAD: " GET hKonta[ "KOZ" ]
+   @ form_x_koord() + 8, Col() + 2 SAY "KALK KO KTO RAZD: " GET hKonta[ "KOR" ]
 
    READ
    BoxC()
@@ -1455,15 +1455,15 @@ STATIC FUNCTION kalk_auto_import_setup()
    nX := 1
    Box(, 10, 70 )
 
-   @ m_x + nX, m_y + 2 SAY8 "Podešenja importa ********"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Podešenja importa ********"
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 "Štampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Štampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
    nX += 1
-   @ m_x + nX, m_y + 2 SAY8 "Automatska ravnoteža naloga na konto: " GET cAImpRKonto
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Automatska ravnoteža naloga na konto: " GET cAImpRKonto
 
    // nX += 1
-   // @ m_x + nX, m_y + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
+   // @ form_x_koord() + nX, form_y_koord() + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
 
 
    READ
@@ -1685,8 +1685,8 @@ STATIC FUNCTION FillDobSifra()
    aSDob := {}
 
    Box(, 5, 60 )
-   @ 1 + m_x, 2 + m_y SAY "Vrsim upis sifre dobavaljaca robe:"
-   @ 2 + m_x, 2 + m_y SAY "==================================="
+   @ 1 + form_x_koord(), 2 + form_y_koord() SAY "Vrsim upis sifre dobavaljaca robe:"
+   @ 2 + form_x_koord(), 2 + form_y_koord() SAY "==================================="
 
    DO WHILE !Eof()
       // ako je prazan zapis preskoci
@@ -1727,8 +1727,8 @@ STATIC FUNCTION FillDobSifra()
 
       ++ nCnt
 
-      @ 3 + m_x, 2 + m_y SAY "FMK sifra " + AllTrim( field->id ) + " => sifra dob. " + cSifra
-      @ 5 + m_x, 2 + m_y SAY " => ukupno " + AllTrim( Str( nCnt ) )
+      @ 3 + form_x_koord(), 2 + form_y_koord() SAY "FMK sifra " + AllTrim( field->id ) + " => sifra dob. " + cSifra
+      @ 5 + form_x_koord(), 2 + form_y_koord() SAY " => ukupno " + AllTrim( Str( nCnt ) )
 
       SKIP
 

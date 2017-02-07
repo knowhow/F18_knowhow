@@ -78,12 +78,12 @@ FUNCTION V_Podbr()
       nPKolicina := _kolicina
       _idroba := Space( Len( _idroba ) )
       Box(, 5, 50 )
-      @ m_x + 1, m_y + 2 SAY "Proizvod:" GET _idroba VALID {|| Empty( _idroba ) .OR. P_roba( @_idroba ) } PICT "@!"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Proizvod:" GET _idroba VALID {|| Empty( _idroba ) .OR. P_roba( @_idroba ) } PICT "@!"
       READ
       IF !Empty( _idroba )
-         @ m_x + 3, m_y + 2 SAY8 "količina        :" GET nPkolicina PICT pickol
-         @ m_x + 4, m_y + 2 SAY "rabat %         :" GET nPRabat    PICT "999.999"
-         @ m_x + 5, m_y + 2 SAY "Varijanta cijene:" GET cTipVPC
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "količina        :" GET nPkolicina PICT pickol
+         @ form_x_koord() + 4, form_y_koord() + 2 SAY "rabat %         :" GET nPRabat    PICT "999.999"
+         @ form_x_koord() + 5, form_y_koord() + 2 SAY "Varijanta cijene:" GET cTipVPC
          READ
       ENDIF
       BoxC()
@@ -399,7 +399,7 @@ FUNCTION W_Roba()
    PRIVATE Getlist := {}
 
    IF _podbr == " ."
-      @ m_x + 15, m_y + 2  SAY "Roba     " GET _txt1 PICT "@!"
+      @ form_x_koord() + 15, form_y_koord() + 2  SAY "Roba     " GET _txt1 PICT "@!"
       READ
       RETURN .F.
    ELSE
@@ -440,11 +440,11 @@ FUNCTION V_Roba( lPrikTar )
    select_o_tarifa( roba->idtarifa )
 
    IF lPrikTar
-      @ m_x + 16, m_y + 28 SAY "TBr: "
+      @ form_x_koord() + 16, form_y_koord() + 28 SAY "TBr: "
       ?? roba->idtarifa, "PDV", Str( tarifa->opp, 7, 2 ) + "%"
       IF _IdTipdok == "13"
 
-         @ m_X + 18, m_y + 47 SAY "MPC.s.PDV sif:"
+         @ m_X + 18, form_y_koord() + 47 SAY "MPC.s.PDV sif:"
 
          ?? Str( roba->mpc, 8, 2 )
       ENDIF
@@ -573,7 +573,7 @@ FUNCTION UzorTxt()
 
       Box(, 9, 75 )
 
-      @ m_x + 1, m_Y + 1  SAY "Uzorak teksta (<c-W> za kraj unosa teksta):"  GET cId PICT "@!"
+      @ form_x_koord() + 1, m_Y + 1  SAY "Uzorak teksta (<c-W> za kraj unosa teksta):"  GET cId PICT "@!"
       READ
 
       IF LastKey() <> K_ESC .AND. !Empty( cId )
@@ -608,7 +608,7 @@ FUNCTION UzorTxt()
 
       PRIVATE fUMemu := .T.
 
-      _txt2 := MemoEdit( _txt2, m_x + 3, m_y + 1, m_x + 9, m_y + 76 )
+      _txt2 := MemoEdit( _txt2, form_x_koord() + 3, form_y_koord() + 1, form_x_koord() + 9, form_y_koord() + 76 )
 
       fUMemu := NIL
 
@@ -674,10 +674,10 @@ FUNCTION UzorTxt2( cList, redni_broj )
 
       DO WHILE .T.
 
-         @ m_x + 1, m_y + 1 SAY8 "Odaberi uzorak teksta iz šifarnika:" ;
+         @ form_x_koord() + 1, form_y_koord() + 1 SAY8 "Odaberi uzorak teksta iz šifarnika:" ;
             GET cId PICT "@!"
 
-         @ m_x + 11, m_y + 1 SAY8 "<c+W> dodaj novi ili snimi i izađi <ESC> poništi"
+         @ form_x_koord() + 11, form_y_koord() + 1 SAY8 "<c+W> dodaj novi ili snimi i izađi <ESC> poništi"
 
          READ
 
@@ -697,7 +697,7 @@ FUNCTION UzorTxt2( cList, redni_broj )
          SetColor( f18_color_invert()  )
          PRIVATE fUMemu := .T.
 
-         _txt2 := MemoEdit( _txt2, m_x + 3, m_y + 1, m_x + 9, m_y + 76 )
+         _txt2 := MemoEdit( _txt2, form_x_koord() + 3, form_y_koord() + 1, form_x_koord() + 9, form_y_koord() + 76 )
 
          fUMemu := NIL
          SetColor( f18_color_normal() )
@@ -806,9 +806,9 @@ FUNCTION artikal_kao_usluga( fNovi )
    PRIVATE GetList := {}
 
    IF !( roba->tip = "U" )
-      DevPos( m_x + 15, m_y + 25 )
+      DevPos( form_x_koord() + 15, form_y_koord() + 25 )
       ?? Space( 40 )
-      DevPos( m_x + 15, m_y + 25 )
+      DevPos( form_x_koord() + 15, form_y_koord() + 25 )
 
       ?? Trim( Left( roba->naz, 40 ) ), "(" + roba->jmj + ")"
    ENDIF
@@ -827,7 +827,7 @@ FUNCTION artikal_kao_usluga( fNovi )
 
       _porez := 0
 
-      @ Row() - 1, m_y + 25 SAY "opis usl.:" GET _txt1 PICT "@S50"
+      @ Row() - 1, form_y_koord() + 25 SAY "opis usl.:" GET _txt1 PICT "@S50"
 
       READ
 
@@ -1471,14 +1471,14 @@ FUNCTION edit_fakt_doks2()
    nd2n2 := Val( d2n2 )
 
    Box(, 9, 75 )
-   @ m_x + 0, m_y + 2 SAY "Unos/ispravka " + cPom COLOR "GR+/B"
-   @ m_x + 2, m_y + 2 SAY PadL( aDodPar[ 1 ], 30 ) GET d2k1
-   @ m_x + 3, m_y + 2 SAY PadL( aDodPar[ 2 ], 30 ) GET d2k2
-   @ m_x + 4, m_y + 2 SAY PadL( aDodPar[ 3 ], 30 ) GET d2k3
-   @ m_x + 5, m_y + 2 SAY PadL( aDodPar[ 4 ], 30 ) GET d2k4
-   @ m_x + 6, m_y + 2 SAY PadL( aDodPar[ 5 ], 30 ) GET d2k5
-   @ m_x + 7, m_y + 2 SAY PadL( aDodPar[ 6 ], 30 ) GET nd2n1 PICT "999999999.99"
-   @ m_x + 8, m_y + 2 SAY PadL( aDodPar[ 7 ], 30 ) GET nd2n2 PICT "999999999.99"
+   @ form_x_koord() + 0, form_y_koord() + 2 SAY "Unos/ispravka " + cPom COLOR "GR+/B"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY PadL( aDodPar[ 1 ], 30 ) GET d2k1
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY PadL( aDodPar[ 2 ], 30 ) GET d2k2
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY PadL( aDodPar[ 3 ], 30 ) GET d2k3
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY PadL( aDodPar[ 4 ], 30 ) GET d2k4
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY PadL( aDodPar[ 5 ], 30 ) GET d2k5
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY PadL( aDodPar[ 6 ], 30 ) GET nd2n1 PICT "999999999.99"
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY PadL( aDodPar[ 7 ], 30 ) GET nd2n2 PICT "999999999.99"
    READ
    BoxC()
 
@@ -1549,7 +1549,7 @@ FUNCTION GetKarC3N2( mx )
    LOCAL y := 0
 
    IF ( fakt_pripr->( FieldPos( "C1" ) ) <> 0 .AND. gKarC1 == "D" )
-      @ mx + ( ++nKor ), m_y + 2 SAY "C1" GET _C1 PICT "@!"
+      @ mx + ( ++nKor ), form_y_koord() + 2 SAY "C1" GET _C1 PICT "@!"
       nDod++
    ENDIF
 
@@ -1595,14 +1595,14 @@ FUNCTION SljPozGet( x, y, nKor, mx, nDod )
    IF nDod > 0
       IF nDod % 3 == 0
          x := mx + ( ++nKor )
-         y := m_y + 2
+         y := form_y_koord() + 2
       ELSE
          x := mx + nKor
          y := Col() + 2
       ENDIF
    ELSE
       x := mx + ( ++nKor )
-      y := m_y + 2
+      y := form_y_koord() + 2
    ENDIF
 
    RETURN
@@ -1633,7 +1633,7 @@ FUNCTION TekDokument()
       GO nRec
    ENDIF
 
-   @ m_x + 0, m_y + 2 SAY cTxt
+   @ form_x_koord() + 0, form_y_koord() + 2 SAY cTxt
 
    RETURN
 

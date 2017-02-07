@@ -306,9 +306,9 @@ STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
 
       Box(, 5 + ul_count, 60 )
 
-      @ m_x + 1, m_y + 2 SAY PadR( "*** Pregled rabata", 59 ) COLOR f18_color_i()
-      @ m_x + 2, m_y + 2 SAY _head
-      @ m_x + 3, m_y + 2 SAY Replicate( "-", 59 )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY PadR( "*** Pregled rabata", 59 ) COLOR f18_color_i()
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY _head
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY Replicate( "-", 59 )
 
       FOR nI := _len to ( _len - ul_count ) STEP -1
 
@@ -324,16 +324,16 @@ STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
             cLine += " "
             cLine += Str( ulazi[ nI, 5 ], 12, 3 ) + "%"
 
-            @ m_x + nX, m_y + 2 SAY cLine
+            @ form_x_koord() + nX, form_y_koord() + 2 SAY cLine
             ++ nX
 
          ENDIF
 
       NEXT
 
-      @ m_x + nX, m_y + 2 SAY Replicate( "-", 59 )
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY Replicate( "-", 59 )
       ++ nX
-      @ m_x + nX, m_y + 2 SAY "Pritisni 'ENTER' za nastavak ..." GET _ok
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Pritisni 'ENTER' za nastavak ..." GET _ok
 
       READ
 

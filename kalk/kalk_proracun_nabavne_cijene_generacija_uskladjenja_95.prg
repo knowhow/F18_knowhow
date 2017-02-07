@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
+MEMVAR form_x_koord(), form_y_koord()
 
 FUNCTION kalk_gen_uskladjenje_nc_95( hParams )
 
@@ -155,9 +155,9 @@ FUNCTION kalk_gen_uskladjenje_nc_95( hParams )
 STATIC FUNCTION get_vars( hParams )
 
    Box( "bv", 5, 75 )
-   @ m_x + 1, m_y + 2 SAY "  Magacinski konto: " GET  hParams[ "idkonto" ]
-   @ m_x + 2, m_y + 2 SAY "   Datum dokumenta: " GET hParams[ "datdok" ]
-   @ m_x + 3, m_y + 2 SAY "prag odstupanja NC: " GET hParams[ "prag" ]
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "  Magacinski konto: " GET  hParams[ "idkonto" ]
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "   Datum dokumenta: " GET hParams[ "datdok" ]
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "prag odstupanja NC: " GET hParams[ "prag" ]
 
    READ
    BoxC()

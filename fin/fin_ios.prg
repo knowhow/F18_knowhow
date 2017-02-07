@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y, GetList
+MEMVAR form_x_koord(), form_y_koord(), GetList
 
 STATIC picBHD
 STATIC picDEM
@@ -79,50 +79,50 @@ STATIC FUNCTION mnu_ios_print()
 
    Box(, 16, 65, .F. )
 
-   @ m_x + nX, m_y + 2 SAY8 " Štampa IOS-a **** "
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 " Štampa IOS-a **** "
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "       Datum IOS-a:" GET dDatumIOS
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "       Datum IOS-a:" GET dDatumIOS
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY " Gledati period do:" GET dDatumDo
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY " Gledati period do:" GET dDatumDo
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Firma "
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Konto       :" GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Konto       :" GET cIdKonto VALID P_Konto( @cIdKonto )
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Partner     :" GET cIdPartner VALID Empty( cIdPartner ) .OR.  p_partner( @cIdPartner ) PICT "@!"
-   @ m_x + nX, Col() + 2 SAY "nastavak od ovog partnera D/N " GET cNastavak PICT "@!" VALID cNastavak $ "DN"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Partner     :" GET cIdPartner VALID Empty( cIdPartner ) .OR.  p_partner( @cIdPartner ) PICT "@!"
+   @ form_x_koord() + nX, Col() + 2 SAY "nastavak od ovog partnera D/N " GET cNastavak PICT "@!" VALID cNastavak $ "DN"
 
    IF fin_dvovalutno()
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Prikaz " +   AllTrim( ValDomaca() ) + "/" +  AllTrim( ValPomocna() ) + " (1/2)" ;
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Prikaz " +   AllTrim( ValDomaca() ) + "/" +  AllTrim( ValPomocna() ) + " (1/2)" ;
          GET _din_dem VALID _din_dem $ "12"
    ENDIF
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Prikaz prebijenog stanja " GET _prelomljeno  VALID _prelomljeno $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Prikaz prebijenog stanja " GET _prelomljeno  VALID _prelomljeno $ "DN" PICT "@!"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Prikaz identično kartici " GET _kao_kartica  VALID _kao_kartica $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Prikaz identično kartici " GET _kao_kartica  VALID _kao_kartica $ "DN" PICT "@!"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Eksport podataka u dbf (D/N) ?" GET _export_dbf   VALID _export_dbf $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Eksport podataka u dbf (D/N) ?" GET _export_dbf   VALID _export_dbf $ "DN" PICT "@!"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
 
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Limit za broj izgenerisanih stavki ?" GET nCountLimit
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Limit za broj izgenerisanih stavki ?" GET nCountLimit
 
    // ++nX
-   // @ m_x + nX, m_y + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen  VALID _auto_gen $ "DN" PICT "@!"
+   // @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen  VALID _auto_gen $ "DN" PICT "@!"
 
 
 
@@ -233,7 +233,7 @@ STATIC FUNCTION mnu_ios_print()
 
       SKIP
 
-      @ m_x + 1, m_y + 2 SAY "Cnt: " + Str( nCount, 5 ) + " / limit: " + Str( nCountLimit, 5 )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Cnt: " + Str( nCount, 5 ) + " / limit: " + Str( nCountLimit, 5 )
 
       IF nCount > nCountLimit
          MsgBeep( "Posljednja obuhvaćena šifra parnera: " + cIdPartnerTekuci )
@@ -580,8 +580,8 @@ STATIC FUNCTION ios_clan_setup( setup_box )
 
    IF setup_box
       Box(, 2, 70 )
-      @ m_x + 1, m_y + 2 SAY "Definisanje clan-a na IOS-u:"
-      @ m_x + 2, m_y + 2 SAY ":" GET _clan PICT "@S65"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Definisanje clan-a na IOS-u:"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY ":" GET _clan PICT "@S65"
       READ
       BoxC()
 
@@ -613,12 +613,12 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    o_konto()
 
    Box( "", 6, 60 )
-   @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA IOS-a"
-   @ m_x + 3, m_y + 2 SAY "Firma "
+   @ form_x_koord() + 1, form_y_koord() + 6 SAY "SPECIFIKACIJA IOS-a"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
-   @ m_x + 4, m_y + 2 SAY "Konto: " GET cIdKonto VALID P_Konto( @cIdKonto )
-   @ m_x + 5, m_y + 2 SAY "Datum do kojeg se generise  :" GET dDatumDo
-   @ m_x + 6, m_y + 2 SAY "Prikaz partnera sa saldom 0 :" GET cPrikazSaSaldoNulaDN VALID cPrikazSaSaldoNulaDN $ "DN" PICT "@!"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto: " GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Datum do kojeg se generise  :" GET dDatumDo
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Prikaz partnera sa saldom 0 :" GET cPrikazSaSaldoNulaDN VALID cPrikazSaSaldoNulaDN $ "DN" PICT "@!"
    READ
    BoxC()
 
@@ -907,7 +907,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    nCount := 0
    Box(, 3, 65 )
 
-   @ m_x + 1, m_y + 2 SAY8 "sačekajte ... generacija ios tabele"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "sačekajte ... generacija ios tabele"
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
@@ -966,7 +966,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
          dbf_update_rec( hRec )
 
-         @ m_x + 3, m_y + 2 SAY PadR( "Partner: " + cIdPartnerTekuci + ", saldo: " + AllTrim( Str( nSaldo1, 12, 2 ) ), 60 )
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY PadR( "Partner: " + cIdPartnerTekuci + ", saldo: " + AllTrim( Str( nSaldo1, 12, 2 ) ), 60 )
 
          ++nCount
 

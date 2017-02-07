@@ -149,7 +149,7 @@ METHOD VirmExportTxt:params()
 
    Box(, 15, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
 
    READ
 
@@ -164,17 +164,17 @@ METHOD VirmExportTxt:params()
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY Replicate( "-", 60 )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY Replicate( "-", 60 )
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "  Odabrana varijanta: " + PadR( _name, 30 )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "  Odabrana varijanta: " + PadR( _name, 30 )
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla: " + PadR( _file_name, 20 )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Naziv izlaznog fajla: " + PadR( _file_name, 20 )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
 
    READ
 
@@ -212,9 +212,9 @@ METHOD VirmExportTxt:export_setup_duplicate()
 
    Box(, 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "*** DUPLICIRANJE POSTAVKI EKSPORTA"
-   @ m_x + 2, m_y + 2 SAY "Koristiti postojece podesenje broj:" GET _existing PICT "999"
-   @ m_x + 3, m_y + 2 SAY "      Kreirati novo podesenje broj:" GET _new PICT "999"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "*** DUPLICIRANJE POSTAVKI EKSPORTA"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Koristiti postojece podesenje broj:" GET _existing PICT "999"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "      Kreirati novo podesenje broj:" GET _new PICT "999"
 
    READ
 
@@ -663,7 +663,7 @@ METHOD VirmExportTxt:export_setup()
    ReadInsert( .T. )
 #endif
 
-   @ m_x + _x, m_y + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
 
    READ
 
@@ -712,41 +712,41 @@ METHOD VirmExportTxt:export_setup()
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "(*)   Naziv:" GET _name PICT "@S50" VALID !Empty( _name )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "(*)   Naziv:" GET _name PICT "@S50" VALID !Empty( _name )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "(*)  Zagl.1:" GET _head_1 PICT "@S50" ;
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "(*)  Zagl.1:" GET _head_1 PICT "@S50" ;
       VALID {|| Empty( _head_1 ) .OR. ::copy_existing_formula( @_head_1, "h1" ) }
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "(*)  Zagl.2:" GET _head_2 PICT "@S50" ;
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "(*)  Zagl.2:" GET _head_2 PICT "@S50" ;
       VALID {|| Empty( _head_2 ) .OR. ::copy_existing_formula( @_head_2, "h2" ) }
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "(*) Formula:" GET _formula PICT "@S50" ;
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "(*) Formula:" GET _formula PICT "@S50" ;
       VALID {|| !Empty( _formula ) .AND. ::copy_existing_formula( @_formula, "i" ) }
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "(*)  Podn.1:" GET _footer_1 PICT "@S50" ;
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "(*)  Podn.1:" GET _footer_1 PICT "@S50" ;
       VALID {|| Empty( _footer_1 ) .OR. ::copy_existing_formula( @_footer_1, "f1" ) }
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "(*)  Podn.2:" GET _footer_2 PICT "@S50" ;
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "(*)  Podn.2:" GET _footer_2 PICT "@S50" ;
       VALID {|| Empty( _footer_2 ) .OR. ::copy_existing_formula( @_footer_2, "f2" ) }
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S40"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S40"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Separator u izl.fajlu [ ; , . t ]:" GET cSeparator
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Separator u izl.fajlu [ ; , . t ]:" GET cSeparator
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "    Separator formule [ ; , . ]:" GET cSeparatorFormula
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "    Separator formule [ ; , . ]:" GET cSeparatorFormula
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "     Forsiraj kraj linije (D/N):" GET _force_eol VALID _force_eol $ "DN" PICT "!@"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "     Forsiraj kraj linije (D/N):" GET _force_eol VALID _force_eol $ "DN" PICT "!@"
 
    READ
 
@@ -864,8 +864,8 @@ METHOD VirmExportTxt:get_export_list()
    LOCAL nI
    LOCAL _param_name := "virm_export_"
    LOCAL _opc, _opcexe, _izbor := 1
-   LOCAL _m_x := m_x
-   LOCAL _m_y := m_y
+   LOCAL _m_x := form_x_koord()
+   LOCAL _m_y := form_y_koord()
 
    _opc := {}
    _opcexe := {}
@@ -897,8 +897,8 @@ METHOD VirmExportTxt:get_export_list()
       ENDIF
    ENDDO
 
-   m_x := _m_x
-   m_y := _m_y
+   form_x_koord() := _m_x
+   form_y_koord() := _m_y
 
    RETURN _id
 

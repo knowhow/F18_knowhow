@@ -13,7 +13,7 @@
 
 
 MEMVAR Ch
-MEMVAR m_x, m_y
+MEMVAR form_x_koord(), form_y_koord()
 MEMVAR _idfirma, _opis, _d_p, _iznosbhd, _idrj, _idpartner, _idkonto
 
 
@@ -92,7 +92,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
    Box(, 20, 77 )  // main box ostav
 
-   @ m_x, m_y + 10 SAY8 "KONSULTOVANJE OTVORENIH STAVKI PRI KNJŽENJU"
+   @ form_x_koord(), form_y_koord() + 10 SAY8 "KONSULTOVANJE OTVORENIH STAVKI PRI KNJŽENJU"
 
 #ifdef F18_DEBUG_FIN_AZUR
    AltD() // F18_DEBUG_FIN_AZUR
@@ -166,8 +166,8 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
       ++nCnt
       IF nCnt % 500 == 0
-         @ m_x + 1, m_y + 2 SAY "suban: "
-         @ m_x + 1, Col() + 2 SAY nCnt PICT "99999"
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "suban: "
+         @ form_x_koord() + 1, Col() + 2 SAY nCnt PICT "99999"
       ENDIF
       aFaktura := { CToD( "" ), CToD( "" ), CToD( "" ) }
 
@@ -244,9 +244,9 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    Box(, _row, _col, .T. ) // rucni asistent
 
    SET CURSOR ON
-   @ m_x + _row - 2, m_y + 1 SAY "<Enter> Izaberi/ostavi stavku"
-   @ m_x + _row - 1, m_y + 1 SAY "<F10>   Asistent"
-   @ m_x + _row,    m_y + 1 SAY ""
+   @ form_x_koord() + _row - 2, form_y_koord() + 1 SAY "<Enter> Izaberi/ostavi stavku"
+   @ form_x_koord() + _row - 1, form_y_koord() + 1 SAY "<F10>   Asistent"
+   @ form_x_koord() + _row,    form_y_koord() + 1 SAY ""
 
    ?? "  IZNOS Koji zatvaramo: " + iif( cDugPot == "1", "duguje", "potrazuje" ) + " " + AllTrim( Str( nIznos ) )
 
@@ -474,7 +474,7 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
          cBrDok := field->BRDOK
 
          Box(, 2, 60 )
-         @ m_x + 1, m_Y + 2 SAY "Novi broj veze:" GET cBRDok
+         @ form_x_koord() + 1, m_Y + 2 SAY "Novi broj veze:" GET cBRDok
          READ
          BoxC()
 
@@ -535,7 +535,7 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
       ENDIF
 
       Box(, 2, 60 )
-      @ m_x + 1, m_y + 2 SAY "Uplaceno po ovom dokumentu:" GET nUplaceno PICT "999999999.99"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Uplaceno po ovom dokumentu:" GET nUplaceno PICT "999999999.99"
       READ
       Boxc()
 
@@ -593,7 +593,7 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
             wm2 := "3"
 
             Box(, 2, 60 )
-            @ m_x + 1, m_y + 2 SAY  "Ostatak sredstava knjiziti na dokument:" GET wbrdok
+            @ form_x_koord() + 1, form_y_koord() + 2 SAY  "Ostatak sredstava knjiziti na dokument:" GET wbrdok
             READ
             Boxc()
 

@@ -95,12 +95,12 @@ STATIC FUNCTION _get_vars( rpt_vars )
    SET CURSOR ON
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Brza kartica (D/N)" GET _brza PICT "@!" VALID _brza $ "DN"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Brza kartica (D/N)" GET _brza PICT "@!" VALID _brza $ "DN"
    READ
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Firma "
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++ _x
@@ -110,9 +110,9 @@ STATIC FUNCTION _get_vars( rpt_vars )
       _konto := PadR( _konto, 7 )
       _partner := PadR( _partner, LEN_PARTNER_ID )
 
-      @ m_x + _x, m_y + 2 SAY "Konto   " GET _konto VALID !Empty( _konto ) .AND. P_KontoFin( @_konto )
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY "Konto   " GET _konto VALID !Empty( _konto ) .AND. P_KontoFin( @_konto )
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "Partner " GET _partner VALID Empty( _partner ) .OR. ;
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY "Partner " GET _partner VALID Empty( _partner ) .OR. ;
          RTrim( _partner ) == ";" .OR. p_partner( @_partner ) PICT "@!"
 
    ELSE
@@ -120,38 +120,38 @@ STATIC FUNCTION _get_vars( rpt_vars )
       _konto := PadR( _konto, 200 )
       _partner := PadR( _partner, 200 )
 
-      @ m_x + _x, m_y + 2 SAY "Konto   " GET _konto PICT "@!S50"
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY "Konto   " GET _konto PICT "@!S50"
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "Partner " GET _partner PICT "@!S50"
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY "Partner " GET _partner PICT "@!S50"
 
    ENDIF
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Kartica za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Kartica za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datum dokumenta od:" GET _datum_od
-   @ m_x + _x, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datum dokumenta od:" GET _datum_od
+   @ form_x_koord() + _x, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
-
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Prikaz kartica sa saldom nula (D/N)?" GET _nula VALID _nula $ "DN" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksport kartice u DBF (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Prikaz kartica sa saldom nula (D/N)?" GET _nula VALID _nula $ "DN" PICT "@!"
+
+   ++ _x
+   ++ _x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Eksport kartice u DBF (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
 
    READ
 

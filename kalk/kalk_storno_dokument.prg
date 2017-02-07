@@ -22,11 +22,11 @@ FUNCTION storno_kalk_dokument()
    dDatDok    := CToD( "" )
 
    Box(, 6, 75 )
-   @ m_x + 0, m_y + 5 SAY "STORNO DOKUMENTA PROMJENOM PREDZNAKA NA KOLICINI"
-   @ m_x + 2, m_y + 2 SAY "Dokument: " + cIdFirma + "-"
+   @ form_x_koord() + 0, form_y_koord() + 5 SAY "STORNO DOKUMENTA PROMJENOM PREDZNAKA NA KOLICINI"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Dokument: " + cIdFirma + "-"
    @ Row(), Col() GET cIdVdU
    @ Row(), Col() SAY "-" GET cBrDokU VALID is_kalk_postoji_dokument( cIdFirma, cIdVdU, cBrDokU )
-   @ m_x + 4, m_y + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
    READ; ESC_BCR
    BoxC()
 

@@ -142,16 +142,16 @@ FUNCTION BoxStanje( aStanje, cIdroba )
    SEEK cIdRoba
    Box( , Min( 6 + nLen + Int( ( nLenDP ) / 2 ), 23 ), 75 )
    Beep( 1 )
-   @ m_x + 1, m_y + 2 SAY "ARTIKAL: "
-   @ m_x + 1, Col() SAY PadR( AllTrim ( cidroba ) + " - " + roba->naz, 51 ) COLOR "GR+/B"
-   @ m_x + 3, m_y + 2 SAY cDiv + PadC( "KONTO", nLenKonta ) + cDiv + PadC ( "Ulaz", npd ) + cDiv + ;
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "ARTIKAL: "
+   @ form_x_koord() + 1, Col() SAY PadR( AllTrim ( cidroba ) + " - " + roba->naz, 51 ) COLOR "GR+/B"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY cDiv + PadC( "KONTO", nLenKonta ) + cDiv + PadC ( "Ulaz", npd ) + cDiv + ;
       PadC ( "Izlaz", npd ) + cDiv + ;
       PadC ( "Stanje", npd ) + cDiv
-   nR := m_x + 4
+   nR := form_x_koord() + 4
    nRPoc := nR
    FOR nC := 1 TO nLen
       // {idfirma, nUl,nIzl,nRevers,nRezerv }
-      @ nR, m_y + 2 SAY cDiv
+      @ nR, form_y_koord() + 2 SAY cDiv
       @ nR, Col() SAY aStanje[ nC ][ 1 ]
       @ nR, Col() SAY cDiv
       @ nR, Col() SAY aStanje[ nC ][ 2 ] PICT picdem
@@ -168,16 +168,16 @@ FUNCTION BoxStanje( aStanje, cIdroba )
 
       IF nC % 15 = 0 .AND. nC < nLen
          Inkey( 0 )
-         @ m_x + nRPoc, m_y + 2 CLEAR TO m_x + nR - 1, m_y + 70
+         @ form_x_koord() + nRPoc, form_y_koord() + 2 CLEAR TO form_x_koord() + nR - 1, form_y_koord() + 70
          nR := nRPoc
       ENDIF
 
    NEXT
-   @ nR, m_y + 2 SAY cDiv + REPL( "-", nLenKonta ) + cDiv + REPL ( "-", npd ) + cDiv + ;
+   @ nR, form_y_koord() + 2 SAY cDiv + REPL( "-", nLenKonta ) + cDiv + REPL ( "-", npd ) + cDiv + ;
       REPL ( "-", npd ) + cDiv + ;
       REPL ( "-", npd ) + cDiv
    nR ++
-   @ nR, m_y + 2 SAY cDiv + PadC( "UKUPNO:", nLenKonta ) + cDiv
+   @ nR, form_y_koord() + 2 SAY cDiv + PadC( "UKUPNO:", nLenKonta ) + cDiv
    @ nR, Col() SAY nTUl PICT picdem
    @ nR, Col() SAY cDiv
    @ nR, Col() SAY nTIzl PICT picdem
@@ -189,7 +189,7 @@ FUNCTION BoxStanje( aStanje, cIdroba )
    // --------------------------------
    IF nLenDP > 0
       ++nR
-      @ nR, m_y + 2 SAY REPL( "-", 74 )
+      @ nR, form_y_koord() + 2 SAY REPL( "-", 74 )
       FOR i := 1 TO nLenDP - 1
 
          cPom777 := aDodPar[ i, 2 ]
@@ -204,10 +204,10 @@ FUNCTION BoxStanje( aStanje, cIdroba )
 
          IF i % 2 != 0
             ++nR
-            @ nR, m_y + 2 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
+            @ nR, form_y_koord() + 2 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
             @ nR, Col() + 2 SAY &cPom777 COLOR "R/W"
          ELSE
-            @ nR, m_y + 37 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
+            @ nR, form_y_koord() + 37 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
             @ nR, Col() + 2 SAY &cPom777 COLOR "R/W"
          ENDIF
 

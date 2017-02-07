@@ -48,18 +48,18 @@ FUNCTION kalk_real_partnera()
    DO WHILE .T.
       SET CURSOR ON
       IF gNW $ "DX"
-         @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 2, m_y + 2 SAY "Magacinski konto:" GET cidKonto PICT "@!" VALID P_Konto( @cIdKonto )
-      @ m_x + 4, m_y + 2 SAY "Period:" GET dDat1
-      @ m_x + 4, Col() + 1 SAY "do" GET dDat2
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Magacinski konto:" GET cidKonto PICT "@!" VALID P_Konto( @cIdKonto )
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Period:" GET dDat1
+      @ form_x_koord() + 4, Col() + 1 SAY "do" GET dDat2
 
-      @ m_x + 6, m_y + 2 SAY "Partneri:" GET qqPartn PICT "@!S40"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Partneri:" GET qqPartn PICT "@!S40"
 
       IF IsVindija()
-         @ m_x + 8, m_y + 2 SAY "Opcine:" GET cOpcine PICT "@!S40"
+         @ form_x_koord() + 8, form_y_koord() + 2 SAY "Opcine:" GET cOpcine PICT "@!S40"
       ENDIF
 
       READ

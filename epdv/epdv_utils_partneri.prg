@@ -145,13 +145,13 @@ FUNCTION get_my_firma( cNaziv, cIdBroj, cMjesto, cAdresa, cPtt )
 
    Box (, 7, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Podaci o maticnooj firmi: "
-   @ m_x + 2, m_y + 2 SAY Replicate( "-", 40 )
-   @ m_x + 3, m_y + 2 SAY "Naziv   " GET cNaziv PICT "@S40"
-   @ m_x + 4, m_y + 2 SAY "Id.broj " GET cIdBroj
-   @ m_x + 5, m_y + 2 SAY "Mjesto  " GET cMjesto
-   @ m_x + 6, m_y + 2 SAY "Adresa  " GET cAdresa
-   @ m_x + 7, m_y + 2 SAY "PTT     " GET cPtt
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Podaci o maticnooj firmi: "
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY Replicate( "-", 40 )
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Naziv   " GET cNaziv PICT "@S40"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Id.broj " GET cIdBroj
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Mjesto  " GET cMjesto
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Adresa  " GET cAdresa
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY "PTT     " GET cPtt
 
    READ
 

@@ -23,12 +23,12 @@ FUNCTION gen_kuf()
    dDatDo := Date()
 
    Box(, 6, 40 )
-   @ m_x + 1, m_y + 2 SAY "Generacija KUF"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Generacija KUF"
 
-   @ m_x + 3, m_y + 2 SAY "Datum do " GET dDatOd
-   @ m_x + 4, m_y + 2 SAY "      do " GET dDatDo
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Datum do " GET dDatOd
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "      do " GET dDatDo
 
-   @ m_x + 6, m_y + 2 SAY "sezona" GET cSezona
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "sezona" GET cSezona
    READ
    BoxC()
 
@@ -75,9 +75,9 @@ FUNCTION gen_kif()
    cSezona := Space( 4 )
 
    Box(, 3, 40 )
-   @ m_x + 1, m_y + 2 SAY "Datum do " GET dDatOd
-   @ m_x + 2, m_y + 2 SAY "      do " GET dDatDo
-   @ m_x + 3, m_y + 2 SAY "sezona" GET cSezona
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Datum do " GET dDatOd
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "      do " GET dDatDo
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "sezona" GET cSezona
 
    READ
    BoxC()

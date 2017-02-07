@@ -118,20 +118,20 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 
    SET CURSOR ON
 
-   @ m_x + 1, m_y + 2 SAY "Nalog broj:"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Nalog broj:"
 
    IF gNW == "D"
       cIdFirma := self_organizacija_id()
-      @ m_x + 1, Col() + 1 SAY cIdFirma
+      @ form_x_koord() + 1, Col() + 1 SAY cIdFirma
    ELSE
-      @ m_x + 1, Col() + 1 GET cIdFirma
+      @ form_x_koord() + 1, Col() + 1 GET cIdFirma
    ENDIF
 
-   @ m_x + 1, Col() + 1 SAY "-" GET cIdVn
-   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal
+   @ form_x_koord() + 1, Col() + 1 SAY "-" GET cIdVn
+   @ form_x_koord() + 1, Col() + 1 SAY "-" GET cBrNal
 
    IF gDatNal == "D"
-      @ m_x + 2, m_y + 2 SAY "Datum naloga:" GET dDatNal
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Datum naloga:" GET dDatNal
    ENDIF
 
    READ

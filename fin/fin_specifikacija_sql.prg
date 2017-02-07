@@ -86,7 +86,7 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
 
    SET CURSOR ON
 
-   @ m_x + _x, m_y + 2 SAY "Firma "
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++ _x
@@ -95,46 +95,46 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
    _konto := PadR( _konto, 200 )
    _partner := PadR( _partner, 200 )
 
-   @ m_x + _x, m_y + 2 SAY "Konto   " GET _konto PICT "@!S50"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Konto   " GET _konto PICT "@!S50"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Partner " GET _partner PICT "@!S50"
-
-   ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY8 "Izvještaj za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Partner " GET _partner PICT "@!S50"
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Datum dokumenta od:" GET _datum_od
-   @ m_x + _x, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
-
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
-
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
-
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Izvještaj za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)?" GET _nule PICT "@!" VALID _nule $ "DN"
-
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Prikaz sintetike (D/N)?" GET _sintetika PICT "@!" VALID _sintetika $ "DN"
-   @ m_x + _x, Col() + 1 SAY8 "Raščlaniti po RJ/FOND/FUNK (D/N)?" GET _rasclan PICT "@!" VALID _rasclan $ "DN"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datum dokumenta od:" GET _datum_od
+   @ form_x_koord() + _x, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
 
    ++ _x
    ++ _x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
 
-   @ m_x + _x, m_y + 2 SAY "Eksport izvjestaja u dbf (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
+   ++ _x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
+
+   ++ _x
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
+
+   ++ _x
+   ++ _x
+
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)?" GET _nule PICT "@!" VALID _nule $ "DN"
+
+   ++ _x
+
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Prikaz sintetike (D/N)?" GET _sintetika PICT "@!" VALID _sintetika $ "DN"
+   @ form_x_koord() + _x, Col() + 1 SAY8 "Raščlaniti po RJ/FOND/FUNK (D/N)?" GET _rasclan PICT "@!" VALID _rasclan $ "DN"
+
+   ++ _x
+   ++ _x
+
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Eksport izvjestaja u dbf (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
 
    READ
 

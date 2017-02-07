@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y, GetList
+MEMVAR form_x_koord(), form_y_koord(), GetList
 
 FUNCTION kontiranje_vise_dokumenata_period_auto()
 
@@ -25,18 +25,18 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
 
    Box( , 6, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "Datum od:" GET dDatOd
-   @ m_x + 1, Col() + 1 SAY "do:" GET dDatDo
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Datum od:" GET dDatOd
+   @ form_x_koord() + 1, Col() + 1 SAY "do:" GET dDatDo
 
-   @ m_x + 2, m_y + 2 SAY "tipovi dokumenata (prazno siv):" GET cIdVD  PICT "@S20"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "tipovi dokumenata (prazno siv):" GET cIdVD  PICT "@S20"
 
-   @ m_x + 3, m_y + 2 SAY "mag.konta (prazno-sva):" GET cId_mkto PICT "@S20"
-   @ m_x + 4, m_y + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto PICT "@S20"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "mag.konta (prazno-sva):" GET cId_mkto PICT "@S20"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto PICT "@S20"
 
    IF is_kalk_fin_isti_broj() // ako je parametar fin-kalk broj identican, onda uvijek
       cAutomatskiSetBrojNaloga := "D"
    ELSE
-      @ m_x + 6, m_y + 2 SAY "Automatska generacija brojeva FIN naloga ?" GET cAutomatskiSetBrojNaloga PICT "@!"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Automatska generacija brojeva FIN naloga ?" GET cAutomatskiSetBrojNaloga PICT "@!"
    ENDIF
 
    READ
@@ -159,15 +159,15 @@ FUNCTION kalk_kontiranje_dokumenata_period()
 
    SET CURSOR ON
    Box(, 6, 60 )
-   @ m_x + 1, m_y + 2 SAY  "Vrsta kalkulacije " GET cVrsta PICT "@!" VALID !Empty( cVrsta )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY  "Vrsta kalkulacije " GET cVrsta PICT "@!" VALID !Empty( cVrsta )
 
-   @ m_x + 3, m_y + 2 SAY  "Magacinski konto (prazno svi) " GET cMKonto  PICT "@!"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY  "Magacinski konto (prazno svi) " GET cMKonto  PICT "@!"
 
-   @ m_x + 4, m_y + 2 SAY "Prodavnicki kto (prazno svi)  " GET cPKonto PICT "@!"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Prodavnicki kto (prazno svi)  " GET cPKonto PICT "@!"
 
 
-   @ m_x + 6, m_y + 2 SAY  "Kontirati za period od " GET dDatOd
-   @ m_x + 6, Col() + 2  SAY  " do " GET dDatDo
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY  "Kontirati za period od " GET dDatOd
+   @ form_x_koord() + 6, Col() + 2  SAY  " do " GET dDatDo
 
    READ
 

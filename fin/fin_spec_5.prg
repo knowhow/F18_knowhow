@@ -18,12 +18,12 @@ FUNCTION PregNDP()
 
    IF gNW == "D"
       cIdFirma := self_organizacija_id()
-      @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       cidfirma := "10"
-      @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
-   @ m_x + 2, m_y + 2 SAY "Dugovanja/Potrazivanja (1/2):" GET cDP VALID cDP $ "12"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Dugovanja/Potrazivanja (1/2):" GET cDP VALID cDP $ "12"
    READ
    ESC_BCR
 
@@ -41,24 +41,24 @@ FUNCTION PregNDP()
    PRIVATE cPG := "D"
    PRIVATE cPoRP := "2"
 
-   @ m_x + 3, m_y + 2 SAY "Konto:" GET cIdkonto VALID p_kontoFin( @cidkonto )
-   @ m_x + 5, m_y + 2 SAY "Period:" GET dDatOd
-   @ m_x + 5, Col() + 2 SAY "do" GET dDatDo VALID dDatDo >= dDatOd
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto:" GET cIdkonto VALID p_kontoFin( @cidkonto )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Period:" GET dDatOd
+   @ form_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo VALID dDatDo >= dDatOd
    IF fin_dvovalutno()
-      @ m_x + 6, m_y + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)"  GET cDinDEM VALID cdindem $ "12"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)"  GET cDinDEM VALID cdindem $ "12"
    ENDIF
-   @ m_x + 8, m_y + 2 SAY "Prikaz: (1) stavki kod kojih nije bilo promjena u toku tekuce godine"
-   @ m_x + 9, m_y + 2 SAY "        (2) stavki kod kojih nije bilo promjena u zadanom periodu"
-   @ m_x + 10, m_y + 2 SAY "        (3) samo stavki kod kojih je bilo promjena u zadanom periodu" GET cPrik VALID cprik $ "123"
-   @ m_x + 12, m_y + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG VALID cPG $ "DN"
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY "Prikaz: (1) stavki kod kojih nije bilo promjena u toku tekuce godine"
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "        (2) stavki kod kojih nije bilo promjena u zadanom periodu"
+   @ form_x_koord() + 10, form_y_koord() + 2 SAY "        (3) samo stavki kod kojih je bilo promjena u zadanom periodu" GET cPrik VALID cprik $ "123"
+   @ form_x_koord() + 12, form_y_koord() + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG VALID cPG $ "DN"
 
    IF gFinRj == "D"
-      @ m_x + 13, m_y + 2 SAY "1-po RJ  ili  2-po partnerima (1/2)" GET cPoRP VALID cPoRP $ "12"
+      @ form_x_koord() + 13, form_y_koord() + 2 SAY "1-po RJ  ili  2-po partnerima (1/2)" GET cPoRP VALID cPoRP $ "12"
    ENDIF
 
    IF ( cPoRP == "2" ) // po partnerima
-      @ m_x + 14, m_y + 2 SAY "Sortiranje partnera (S-po sifri,N-po nazivu)" GET cSortPar VALID cSortPar $ "SN" PICT "@!"
-      @ m_x + 15, m_y + 2 SAY "Uslov za mjesto partnera (prazno-sva)" GET cMjestoPar PICT "@S25"
+      @ form_x_koord() + 14, form_y_koord() + 2 SAY "Sortiranje partnera (S-po sifri,N-po nazivu)" GET cSortPar VALID cSortPar $ "SN" PICT "@!"
+      @ form_x_koord() + 15, form_y_koord() + 2 SAY "Uslov za mjesto partnera (prazno-sva)" GET cMjestoPar PICT "@S25"
    ENDIF
 
    DO WHILE .T.

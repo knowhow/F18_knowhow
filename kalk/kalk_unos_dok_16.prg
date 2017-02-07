@@ -32,40 +32,40 @@ FUNCTION kalk_get_1_16()
    IF nRbr == 1 .OR. !kalk_is_novi_dokument()
 
       IF _idvd $ "94#97"
-         @  m_x + 6, m_y + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 6, 18 )
+         @  form_x_koord() + 6, form_y_koord() + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 6, 18 )
       ENDIF
-      @  m_x + 7, m_y + 2   SAY "Faktura/Otpremnica Broj:" GET _BrFaktP
-      @  m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP  valid {|| .T. }
+      @  form_x_koord() + 7, form_y_koord() + 2   SAY "Faktura/Otpremnica Broj:" GET _BrFaktP
+      @  form_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP  valid {|| .T. }
 
 
-      @ m_x + 9, m_y + 2 SAY8 "Magacinski konto zadužuje"  GET _IdKonto VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY8 "Magacinski konto zadužuje"  GET _IdKonto VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
 
       IF !Empty( cRNT1 )
-         @ m_x + 9, m_y + 40 SAY "Rad.nalog:"   GET _IdZaduz2  PICT "@!"
+         @ form_x_koord() + 9, form_y_koord() + 40 SAY "Rad.nalog:"   GET _IdZaduz2  PICT "@!"
       ENDIF
 
       IF _idvd == "16" .AND. _idkonto2 != "XXX"
-         @ m_x + 10, m_y + 2   SAY "Prenos na konto          " GET _IdKonto2   VALID Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) PICT "@!"
+         @ form_x_koord() + 10, form_y_koord() + 2   SAY "Prenos na konto          " GET _IdKonto2   VALID Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) PICT "@!"
 
       ENDIF
 
    ELSE
-      @  m_x + 6, m_y + 2   SAY "KUPAC: "; ?? _IdPartner
-      @  m_x + 7, m_y + 2   SAY "Faktura Broj: "; ?? _BrFaktP
-      @  m_x + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
-      @ m_x + 9, m_y + 2 SAY "Magacinski konto zaduzuje "; ?? _IdKonto
+      @  form_x_koord() + 6, form_y_koord() + 2   SAY "KUPAC: "; ?? _IdPartner
+      @  form_x_koord() + 7, form_y_koord() + 2   SAY "Faktura Broj: "; ?? _BrFaktP
+      @  form_x_koord() + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Magacinski konto zaduzuje "; ?? _IdKonto
 
 
    ENDIF
 
-   @ m_x + 10, m_y + 66 SAY "Tarif.br "
+   @ form_x_koord() + 10, form_y_koord() + 66 SAY "Tarif.br "
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), form_x_koord() + 11, form_y_koord() + 2, @aPorezi )
 
 
-   @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ form_x_koord() + 11, form_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   @ m_x + 12, m_y + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ form_x_koord() + 12, form_y_koord() + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    READ
    ESC_RETURN K_ESC
@@ -101,7 +101,7 @@ FUNCTION kalk_get_1_16()
    set_pdv_public_vars()
    SELECT kalk_pripr
 
-   @ m_x + 14, m_y + 2   SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  WHEN V_kol10()
+   @ form_x_koord() + 14, form_y_koord() + 2   SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  WHEN V_kol10()
    READ
 
    PRIVATE _vpcsappp := 0
@@ -136,15 +136,15 @@ kalk_is_novi_dokument( .T. )
 
    Beep( 1 )
 
-   @ m_x + 2, m_Y + 2 SAY "PROTUSTAVKA   (svedi na staru vrijednost - kucaj S):"
-   @ m_x + 2, Col() + 2 GET cSvedi VALID csvedi $ " S" PICT "@!"
+   @ form_x_koord() + 2, m_Y + 2 SAY "PROTUSTAVKA   (svedi na staru vrijednost - kucaj S):"
+   @ form_x_koord() + 2, Col() + 2 GET cSvedi VALID csvedi $ " S" PICT "@!"
 
    READ
 
-   @ m_x + 11, m_y + 66 SAY "Tarif.brĿ"
-   @ m_x + 12, m_y + 2  SAY "Artikal  " GET _IdRoba PICT "@!" ;
+   @ form_x_koord() + 11, form_y_koord() + 66 SAY "Tarif.brĿ"
+   @ form_x_koord() + 12, form_y_koord() + 2  SAY "Artikal  " GET _IdRoba PICT "@!" ;
       valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := ROBA->idtarifa, .T. }
-   @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ form_x_koord() + 12, form_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -162,7 +162,7 @@ kalk_is_novi_dokument( .T. )
 
    PRIVATE fMarza := " "
 
-   @ m_x + 13, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ form_x_koord() + 13, form_y_koord() + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    SELECT koncij
    SEEK Trim( _idkonto )
@@ -181,7 +181,7 @@ kalk_is_novi_dokument( .T. )
 
 
 
-   @ m_x + 14, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE  gPicNC  WHEN V_kol10()
+   @ form_x_koord() + 14, form_y_koord() + 2    SAY "NAB.CJ   "  GET _NC  PICTURE  gPicNC  WHEN V_kol10()
 
    PRIVATE _vpcsappp := 0
 
@@ -192,7 +192,7 @@ kalk_is_novi_dokument( .T. )
 
 
    cBeze := " "
-   @ m_x + 17, m_y + 2 GET cBeze VALID SvediM( cSvedi )
+   @ form_x_koord() + 17, form_y_koord() + 2 GET cBeze VALID SvediM( cSvedi )
 
 
 

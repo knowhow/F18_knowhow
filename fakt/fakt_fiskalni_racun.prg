@@ -167,7 +167,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 FUNCTION reklamni_rn_box( rekl_rn )
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY8 "Reklamiramo fiskalni račun broj:" ;
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Reklamiramo fiskalni račun broj:" ;
       GET rekl_rn PICT "999999999" VALID ( rekl_rn > 0 )
    READ
    BoxC()

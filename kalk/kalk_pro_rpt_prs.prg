@@ -76,17 +76,17 @@ STATIC FUNCTION _get_vars( cBrFakt, cValuta, dDOd, dDdo, cRekap, cExpDbf )
 
    Box(, 8, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Broj fakture dokumenta 'PR':" GET cBrFakt VALID !Empty( cBrFakt )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Broj fakture dokumenta 'PR':" GET cBrFakt VALID !Empty( cBrFakt )
 
-   @ m_x + 2, m_y + 2 SAY "Izvjestaj pravi u valuti (KM/EUR):" GET cValuta VALID !Empty( cValuta )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Izvjestaj pravi u valuti (KM/EUR):" GET cValuta VALID !Empty( cValuta )
 
-   @ m_x + 3, m_y + 2 SAY "Datum od:" GET dDOd
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Datum od:" GET dDOd
 
-   @ m_x + 4, m_y + 2 SAY "Datum do:" GET dDDo
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Datum do:" GET dDDo
 
-   @ m_x + 6, m_y + 2 SAY "Napravi samo rekapitulaciju po tarifama:" GET cRekap VALID cRekap $ "DN" PICT "@!"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Napravi samo rekapitulaciju po tarifama:" GET cRekap VALID cRekap $ "DN" PICT "@!"
 
-   @ m_x + 8, m_y + 2 SAY "Exportovati tabelu u dbf ?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY "Exportovati tabelu u dbf ?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
 
    READ
    BoxC()

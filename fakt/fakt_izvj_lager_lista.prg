@@ -52,7 +52,7 @@ FUNCTION fakt_lager_lista()
       nRbrPst := 0
       cBrPSt := "00001   "
       Box(, 2, 60 )
-      @ m_x + 1, m_y + 2 SAY "Generacija poc. stanja  - broj dokumenta 00 -" GET cBrPSt
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Generacija poc. stanja  - broj dokumenta 00 -" GET cBrPSt
       READ
       BoxC()
    ENDIF
@@ -131,61 +131,61 @@ FUNCTION fakt_lager_lista()
 
    DO WHILE .T.
       IF gNW $ "DR"
-         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "RJ (prazno svi) " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
-      @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
-      @ m_x + 3, m_y + 2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   PICT "@!"
-      @ m_x + 4, m_y + 2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
-      @ m_x + 5, m_y + 2 SAY "Od datuma "  GET dDatOd
-      @ m_x + 5, Col() + 1 SAY "do"  GET dDatDo
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   PICT "@!"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Od datuma "  GET dDatOd
+      @ form_x_koord() + 5, Col() + 1 SAY "do"  GET dDatDo
 
       IF lBezUlaza
          cRR := "N"
       ELSE
-         @ m_x + 6, m_y + 2 SAY "Prikaz rezervacija, reversa (D)"
-         @ m_x + 7, m_y + 2 SAY "Prikaz bez rezervacija, reversa (N)"
-         @ m_x + 8, m_y + 2 SAY "Prikaz fakturisanog na osnovu otpremnica (F) "  GET cRR   PICT "@!" VALID cRR $ "DNF"
+         @ form_x_koord() + 6, form_y_koord() + 2 SAY "Prikaz rezervacija, reversa (D)"
+         @ form_x_koord() + 7, form_y_koord() + 2 SAY "Prikaz bez rezervacija, reversa (N)"
+         @ form_x_koord() + 8, form_y_koord() + 2 SAY "Prikaz fakturisanog na osnovu otpremnica (F) "  GET cRR   PICT "@!" VALID cRR $ "DNF"
       ENDIF
 
-      @ m_x + 10, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    "  GET cSaldo0 PICT "@!" VALID cSaldo0 $ "DN"
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    "  GET cSaldo0 PICT "@!" VALID cSaldo0 $ "DN"
       IF gVarC $ "12"
-         @ m_x + 11, m_y + 2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
+         @ form_x_koord() + 11, form_y_koord() + 2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
       ENDIF
-      @ m_x + 12, m_y + 2 SAY "Napraviti prored (D/N)    "  GET cProred PICT "@!" VALID cProred $ "DN"
+      @ form_x_koord() + 12, form_y_koord() + 2 SAY "Napraviti prored (D/N)    "  GET cProred PICT "@!" VALID cProred $ "DN"
       IF !lPocStanje
-         @ m_x + 13, m_y + 2 SAY "Prikaz grupacija, grupa ima (99-ne prikazivati)" GET nGrZn PICT "99"
-         @ m_x + 13, m_y + 53 SAY "znakova"
+         @ form_x_koord() + 13, form_y_koord() + 2 SAY "Prikaz grupacija, grupa ima (99-ne prikazivati)" GET nGrZn PICT "99"
+         @ form_x_koord() + 13, form_y_koord() + 53 SAY "znakova"
       ENDIF
       IF fakt->( FieldPos( "K1" ) ) <> 0 .AND. gDK1 == "D"
-         @ m_x + 14, m_y + 2 SAY "K1" GET  cK1 PICT "@!"
-         @ m_x + 14, m_y + 15 SAY "K2" GET  cK2 PICT "@!"
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY "K1" GET  cK1 PICT "@!"
+         @ form_x_koord() + 14, form_y_koord() + 15 SAY "K2" GET  cK2 PICT "@!"
       ENDIF
 
       cPopis := "N"
-      @ m_x + 15, m_y + 2 SAY "Prikazati obrazac za popis D/N" GET  cPopis PICT "@!" VALID cPopis $ "DN"
+      @ form_x_koord() + 15, form_y_koord() + 2 SAY "Prikazati obrazac za popis D/N" GET  cPopis PICT "@!" VALID cPopis $ "DN"
 
       cRealizacija := "N"
       IF !lBezUlaza
-         @ Row() + 1, m_y + 2 SAY "Prikazati realizaciju " GET  cRealizacija PICT "@!" VALID cRealizacija $ "DN"
+         @ Row() + 1, form_y_koord() + 2 SAY "Prikazati realizaciju " GET  cRealizacija PICT "@!" VALID cRealizacija $ "DN"
       ENDIF
 
       cSintetika := "N"
 
       IF !lPocStanje .AND. cSintetika == "D"
-         @ Row() + 1, m_y + 2 SAY "Sinteticki prikaz? (D/N) " GET  cSintetika PICT "@!" VALID cSintetika $ "DN"
+         @ Row() + 1, form_y_koord() + 2 SAY "Sinteticki prikaz? (D/N) " GET  cSintetika PICT "@!" VALID cSintetika $ "DN"
       ELSE
          cSintetika := "N"
       ENDIF
 
       IF !lBezUlaza
-         @ Row() + 1, m_y + 2 SAY "Prikaz kolicina (U-samo ulaz, I-samo izlaz, S-sve)" GET cUI VALID cUI $ "UIS" PICT "@!"
+         @ Row() + 1, form_y_koord() + 2 SAY "Prikaz kolicina (U-samo ulaz, I-samo izlaz, S-sve)" GET cUI VALID cUI $ "UIS" PICT "@!"
       ELSE
          cUI := "S"
       ENDIF
 
-      @ Row() + 1, m_y + 2 SAY "Prikaz stanja po tarifama? (D/N)" GET cPoTar VALID cPoTar $ "DN" PICT "@!"
+      @ Row() + 1, form_y_koord() + 2 SAY "Prikaz stanja po tarifama? (D/N)" GET cPoTar VALID cPoTar $ "DN" PICT "@!"
 
       READ
 
@@ -767,31 +767,31 @@ FUNCTION fakt_lager_lista_vars( param, lPocetnoStanje )
 
    Box(, 10, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "RJ (prazno-sve): " GET _id_firma VALID {|| Empty( _id_firma ), P_RJ( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "RJ (prazno-sve): " GET _id_firma VALID {|| Empty( _id_firma ), P_RJ( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Datum od:" GET _date_from
-   @ m_x + _x, Col() + 1 SAY "do:" GET _date_to
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datum od:" GET _date_from
+   @ form_x_koord() + _x, Col() + 1 SAY "do:" GET _date_to
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Roba   " GET _usl_roba PICT "@S40"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Roba   " GET _usl_roba PICT "@S40"
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Naziv partnera (prazno - svi)" GET _usl_partn PICT "@S40"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Naziv partnera (prazno - svi)" GET _usl_partn PICT "@S40"
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Tip dokumenta (prazno - svi)" GET _usl_tip_dok PICT "@S40"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Tip dokumenta (prazno - svi)" GET _usl_tip_dok PICT "@S40"
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    " GET _stavke_nula PICT "@!" VALID _stavke_nula $ "DN"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    " GET _stavke_nula PICT "@!" VALID _stavke_nula $ "DN"
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Prikaz količina ( U-samo ulaz, I-samo izlaz, S-sve )" GET _tip_prikaza VALID _tip_prikaza $ "UIS" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Prikaz količina ( U-samo ulaz, I-samo izlaz, S-sve )" GET _tip_prikaza VALID _tip_prikaza $ "UIS" PICT "@!"
 
    IF lPocetnoStanje
       ++_x
       ++_x
-      @ m_x + _x, m_y + 2 SAY8 "Datum početnog stanja:" GET _date_ps
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Datum početnog stanja:" GET _date_ps
    ENDIF
 
    READ

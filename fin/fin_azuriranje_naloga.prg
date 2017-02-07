@@ -196,7 +196,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
          AAdd( _ids_nalog, _tmp_id )
 
-         @ m_x + 1, m_y + 2 SAY "fin_suban -> server: " + _tmp_id
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "fin_suban -> server: " + _tmp_id
 
       ENDIF
 
@@ -212,7 +212,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
    IF lOkAzuriranje
 
-      @ m_x + 2, m_y + 2 SAY "fin_anal -> server"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "fin_anal -> server"
 
       SELECT panal
       SET ORDER TO TAG "1"
@@ -237,7 +237,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
    IF lOkAzuriranje
 
-      @ m_x + 3, m_y + 2 SAY "fin_sint -> server"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "fin_sint -> server"
 
       SELECT psint
       SET ORDER TO TAG "1"
@@ -261,7 +261,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
    IF lOkAzuriranje
 
-      @ m_x + 4, m_y + 2 SAY "fin_nalog -> server"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "fin_nalog -> server"
 
       SELECT pnalog
       SET ORDER TO TAG "1"
@@ -654,7 +654,7 @@ FUNCTION panal_anal( cNalogId )
 
    LOCAL hRec
 
-   @ m_x + 3, m_y + 2 SAY "ANALITIKA       "
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "ANALITIKA       "
 
    SELECT panal
    SEEK cNalogId
@@ -682,7 +682,7 @@ FUNCTION psint_sint( cNalogId )
 
    LOCAL hRec
 
-   @ m_x + 3, m_y + 2 SAY "SINTETIKA       "
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "SINTETIKA       "
    SELECT PSINT
    SEEK cNalogId
 
@@ -738,7 +738,7 @@ FUNCTION psuban_suban( cNalogId )
    LOCAL nC := 0
    LOCAL hRec, hRec2
 
-   @ m_x + 3, m_y + 2 SAY "SUBANALITIKA   "
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "SUBANALITIKA   "
 
 
    SELECT PSUBAN
@@ -752,7 +752,7 @@ FUNCTION psuban_suban( cNalogId )
 
    DO WHILE !Eof() .AND. cNalogId == IdFirma + IdVn + BrNal
 
-      @ m_x + 3, m_y + 25 SAY ++nC  PICT "99999999999"
+      @ form_x_koord() + 3, form_y_koord() + 25 SAY ++nC  PICT "99999999999"
 
       hRec := dbf_get_rec()
 
@@ -811,7 +811,7 @@ FUNCTION fin_pripr_delete( cNalogId )
    SELECT fin_pripr
    SEEK cNalogId
 
-   // @ m_x + 3, m_y + 2 SAY8 "BRIŠEM PRIPREMU "
+   // @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "BRIŠEM PRIPREMU "
    MsgO( "Brisanje fin_pripr" )
    my_flock()
 

@@ -1085,30 +1085,30 @@ STATIC FUNCTION g_vars( dD_from, dD_to, cGroup, cKtoListZ, cKtoList, ;
 
    Box(, nBoxX, nBoxY )
 
-   @ m_x + nX, m_y + 2 SAY "Za period od:" GET dD_From
-   @ m_x + nX, Col() + 1 SAY "do:" GET dD_to
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Za period od:" GET dD_From
+   @ form_x_koord() + nX, Col() + 1 SAY "do:" GET dD_to
 
    ++ nX
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Grupa:" GET cGroup ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Grupa:" GET cGroup ;
       VALID p_rj( @cGroup )
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Specifikacija LD (D/N)?" GET cSpecLd ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Specifikacija LD (D/N)?" GET cSpecLd ;
       VALID cSpecLd $ "DN" PICT "@!"
 
    ++ nX
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "FIN konta   - lista    (uticu na zbir):" ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "FIN konta   - lista    (uticu na zbir):" ;
       GET cKtoListZ ;
       PICT "@S20"
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "FIN konta   - lista (ne uticu na zbir):" ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "FIN konta   - lista (ne uticu na zbir):" ;
       GET cKtoList ;
       PICT "@S20"
 

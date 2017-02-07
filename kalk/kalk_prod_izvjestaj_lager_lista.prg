@@ -60,7 +60,7 @@ FUNCTION lager_lista_prodavnica()
       o_kalk_pripr()
       cBrPSt := "00001   "
       Box(, 2, 60 )
-      @ m_x + 1, m_y + 2 SAY "Generacija poc. stanja  - broj dokumenta 80 -" GET cBrPSt
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Generacija poc. stanja  - broj dokumenta 80 -" GET cBrPSt
       READ
       BoxC()
    ENDIF
@@ -98,41 +98,41 @@ FUNCTION lager_lista_prodavnica()
 
    DO WHILE .T.
       IF gNW $ "DX"
-         @ m_x + 1, m_y + 2 SAY "Firma "
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 2, m_y + 2 SAY "Konto   " GET cIdKonto VALID P_Konto( @cIdKonto )
-      @ m_x + 3, m_y + 2 SAY "Artikli " GET qqRoba PICT "@!S50"
-      @ m_x + 4, m_y + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Partneri" GET qqIdPartn PICT "@!S50"
-      @ m_x + 6, m_y + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
-      @ m_x + 7, m_y + 2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  VALID cpnab $ "DN" PICT "@!"
-      @ m_x + 7, Col() + 1 SAY "MPC iz sifrarnika D/N" GET cMpcIzSif VALID cMpcIzSif $ "DN" PICT "@!"
-      @ m_x + 8, m_y + 2 SAY "Prikaz stavki kojima je MPV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
-      @ m_x + 9, m_y + 2 SAY "Datum od " GET dDatOd
-      @ m_x + 9, Col() + 2 SAY "do" GET dDatDo
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto   " GET cIdKonto VALID P_Konto( @cIdKonto )
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Artikli " GET qqRoba PICT "@!S50"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Partneri" GET qqIdPartn PICT "@!S50"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  VALID cpnab $ "DN" PICT "@!"
+      @ form_x_koord() + 7, Col() + 1 SAY "MPC iz sifrarnika D/N" GET cMpcIzSif VALID cMpcIzSif $ "DN" PICT "@!"
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Prikaz stavki kojima je MPV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Datum od " GET dDatOd
+      @ form_x_koord() + 9, Col() + 2 SAY "do" GET dDatDo
 
 
-      @ m_x + 10, m_y + 2 SAY "Varijanta stampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Varijanta stampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
 
       IF lPocStanje
-         @ m_x + 11, m_y + 2 SAY "sredi kol=0, nv<>0 (0/1/2)" GET cSrKolNula ;
+         @ form_x_koord() + 11, form_y_koord() + 2 SAY "sredi kol=0, nv<>0 (0/1/2)" GET cSrKolNula ;
             VALID cSrKolNula $ "012" PICT "@!"
       ENDIF
 
-      @ m_x + 12, m_y + 2 SAY "Prikaz robe tipa T/U  (D/N)" GET cTU VALID cTU $ "DN" PICT "@!"
-      @ m_x + 12, Col() + 2 SAY " generisati kontrolnu tabelu ? " GET cKontrolnaTabela VALID cKontrolnaTabela $ "DN" PICT "@!"
-      @ m_x + 13, m_y + 2 SAY "Odabir grupacije (prazno-svi) GET" GET cGrupacija PICT "@!"
-      @ m_x + 14, m_y + 2 SAY "Prikaz prethodnog stanja" GET cPredhStanje PICT "@!" VALID cPredhStanje $ "DN"
-      @ m_x + 14, Col() + 2 SAY "Prik. samo kriticnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
+      @ form_x_koord() + 12, form_y_koord() + 2 SAY "Prikaz robe tipa T/U  (D/N)" GET cTU VALID cTU $ "DN" PICT "@!"
+      @ form_x_koord() + 12, Col() + 2 SAY " generisati kontrolnu tabelu ? " GET cKontrolnaTabela VALID cKontrolnaTabela $ "DN" PICT "@!"
+      @ form_x_koord() + 13, form_y_koord() + 2 SAY "Odabir grupacije (prazno-svi) GET" GET cGrupacija PICT "@!"
+      @ form_x_koord() + 14, form_y_koord() + 2 SAY "Prikaz prethodnog stanja" GET cPredhStanje PICT "@!" VALID cPredhStanje $ "DN"
+      @ form_x_koord() + 14, Col() + 2 SAY "Prik. samo kriticnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
 
       IF IsVindija()
          cGr := Space( 10 )
          cPSPDN := "N"
-         @ m_x + 16, m_y + 2 SAY "Grupa " GET cGr
-         @ m_x + 17, m_y + 2 SAY "Pregled samo prodaje (D/N) " GET cPSPDN VALID !Empty( cPSPDN ) .AND. cPSPDN $ "DN"  PICT "@!"
+         @ form_x_koord() + 16, form_y_koord() + 2 SAY "Grupa " GET cGr
+         @ form_x_koord() + 17, form_y_koord() + 2 SAY "Pregled samo prodaje (D/N) " GET cPSPDN VALID !Empty( cPSPDN ) .AND. cPSPDN $ "DN"  PICT "@!"
       ENDIF
 
       READ

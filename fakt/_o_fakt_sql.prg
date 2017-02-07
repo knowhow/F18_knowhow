@@ -52,9 +52,65 @@ FUNCTION select_o_sast( cId )
 
 
 
-FUNCTION select_O_FAKT_TXT( cId )
+
+
+FUNCTION o_banke( cId )
+
+   SELECT ( F_BANKE )
+   IF !use_sql_sif  ( "banke", .T., "BANKE", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
    RETURN .T.
 
+
+FUNCTION select_o_banke( cId )
+
+   SELECT ( F_BANKE )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_banke( cId )
+
+
+FUNCTION o_fakt_txt( cId )
+
+   SELECT ( F_BANKE )
+   IF !use_sql_sif  ( "fakt_ftxt", .T., "FTXT", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION select_o_fakt_txt( cId )
+
+   SELECT ( F_TXT )
+   IF !use_sql_sif  ( "fakt_ftxt", .T., "FTXT", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN o_fakt_txt()
    /*
       ftxt uzorci teksta fakture
 
@@ -62,6 +118,8 @@ FUNCTION select_O_FAKT_TXT( cId )
 
       RETURN o_dbf_table( F_FTXT, "ftxt", "ID" )
 */
+
+
 
 
 FUNCTION SEEK_FAKT_3()
@@ -105,35 +163,6 @@ FUNCTION SEEK_UGOV()
 FUNCTION SELECT_FAKT_DOKS()
    RETURN .T.
 
-
-
-FUNCTION o_banke( cId )
-
-   SELECT ( F_BANKE )
-   IF !use_sql_sif  ( "banke", .T., "BANKE", cId )
-      RETURN .F.
-   ENDIF
-   SET ORDER TO TAG "ID"
-
-   IF cId != NIL
-      SEEK cId
-   ENDIF
-
-   RETURN .T.
-
-
-FUNCTION select_o_banke( cId )
-
-   SELECT ( F_BANKE )
-   IF Used()
-      IF RecCount() > 1 .AND. cId == NIL
-         RETURN .T.
-      ELSE
-         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
-      ENDIF
-   ENDIF
-
-   RETURN o_banke( cId )
 
 
 

@@ -142,44 +142,44 @@ FUNCTION kalk_mag_lager_lista_vars( hParams, lPocetnoStanje )
 
    Box( "# LAGER LISTA MAGACINA" + iif( lPocetnoStanje, " / POČETNO STANJE", "" ), 15, MAXCOLS() -5 )
 
-   @ m_x + nX, m_y + 2 SAY "Firma "
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Firma "
 
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Magacinski konto:" GET cIdKontoMagacin VALID P_Konto( @cIdKontoMagacin )
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Magacinski konto:" GET cIdKontoMagacin VALID P_Konto( @cIdKontoMagacin )
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Datum od:" GET dDatOd
-   @ m_x + nX, Col() + 1 SAY "do:" GET dDatDo
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Datum od:" GET dDatOd
+   @ form_x_koord() + nX, Col() + 1 SAY "do:" GET dDatDo
 
    IF lPocetnoStanje
-      @ m_x + nX, Col() + 1 SAY8 "Datum poč.stanja:" GET dDatPocStanje
+      @ form_x_koord() + nX, Col() + 1 SAY8 "Datum poč.stanja:" GET dDatPocStanje
    ENDIF
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Filter po artiklima:" GET _art_filter PICT "@S50"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Filter po artiklima:" GET _art_filter PICT "@S50"
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Filter po tarifama:" GET _tar_filter PICT "@S50"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Filter po tarifama:" GET _tar_filter PICT "@S50"
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Filter po partnerima:" GET _part_filter PICT "@S50"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Filter po partnerima:" GET _part_filter PICT "@S50"
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Filter po v.dokument:" GET _dok_filter PICT "@S50"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Filter po v.dokument:" GET _dok_filter PICT "@S50"
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Filter po broju.fakt:" GET _brfakt_filter PICT "@S50"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Filter po broju.fakt:" GET _brfakt_filter PICT "@S50"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Prikaz nabavne vrijednosti (D/N)" GET _pr_nab VALID _pr_nab $ "DN" PICT "@!"
-   @ m_x + nX, Col() + 1 SAY "Prikaz stavki kojima je NV = 0 (D/N)" GET _nule VALID _nule $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Prikaz nabavne vrijednosti (D/N)" GET _pr_nab VALID _pr_nab $ "DN" PICT "@!"
+   @ form_x_koord() + nX, Col() + 1 SAY "Prikaz stavki kojima je NV = 0 (D/N)" GET _nule VALID _nule $ "DN" PICT "@!"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N)" GET cMinimalneKolicineDN VALID cMinimalneKolicineDN $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N)" GET cMinimalneKolicineDN VALID cMinimalneKolicineDN $ "DN" PICT "@!"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Prikaz robe tipa T/U (D/N)" GET _roba_tip_tu VALID _roba_tip_tu $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Prikaz robe tipa T/U (D/N)" GET _roba_tip_tu VALID _roba_tip_tu $ "DN" PICT "@!"
 
    READ
 

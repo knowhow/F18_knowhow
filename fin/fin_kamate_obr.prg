@@ -33,10 +33,10 @@ FUNCTION kamate_obracun_pojedinacni( fVise )
    IF !fVise
 
       Box( "#OBRACUN KAMATE ZA JEDNU GLAVNICU", 3, 77 )
-      @ m_x + 1, m_y + 2 SAY "Glavnica:" GET nGlavn PICT "9999999999999.99"
-      @ m_x + 2, m_y + 2 SAY "Od datuma:" GET dDatOd
-      @ m_x + 2, Col() + 2 SAY "do:" GET dDatDo
-      @ m_x + 3, m_y + 2 SAY "Varijanta obracuna kamate (Z-zatezna kamata,P-prosti kamatni racun)" GET cVarObracuna VALID cVarObracuna $ "ZP" PICT "@!"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Glavnica:" GET nGlavn PICT "9999999999999.99"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Od datuma:" GET dDatOd
+      @ form_x_koord() + 2, Col() + 2 SAY "do:" GET dDatDo
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Varijanta obracuna kamate (Z-zatezna kamata,P-prosti kamatni racun)" GET cVarObracuna VALID cVarObracuna $ "ZP" PICT "@!"
       READ
       ESC_BCR
       BoxC()

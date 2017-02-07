@@ -14,7 +14,7 @@
 STATIC s_cKalkDestinacijaTopska := NIL
 STATIC s_cTxtPrint
 
-MEMVAR m_x, m_y, GetList
+MEMVAR form_x_koord(), form_y_koord(), GetList
 
 FUNCTION kalk_tops_meni()
 
@@ -25,11 +25,11 @@ FUNCTION kalk_tops_meni()
    DO WHILE .T.
       Box(, 5, 40 )
       SET CURSOR ON
-      @ m_x + 1, m_y + 2 SAY "Generacija KALK -> TOPS: "
-      @ m_x + 2, m_y + 2 SAY "-------------------------------"
-      @ m_x + 4, m_y + 2 SAY "Dokument: " GET cIDFirma
-      @ m_x + 4, m_y + 16 SAY " - " GET cIdVd VALID !Empty( cIdVd )
-      @ m_x + 4, m_y + 23 SAY " - " GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Generacija KALK -> TOPS: "
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "-------------------------------"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Dokument: " GET cIDFirma
+      @ form_x_koord() + 4, form_y_koord() + 16 SAY " - " GET cIdVd VALID !Empty( cIdVd )
+      @ form_x_koord() + 4, form_y_koord() + 23 SAY " - " GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
       READ
       ESC_BCR
       BoxC()

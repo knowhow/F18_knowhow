@@ -42,17 +42,17 @@ FUNCTION kalk_mag_promet_grupe_partnera()
    DO WHILE .T.
 
       IF gNW $ "DX"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY "Konto " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
-      @ m_x + 4, m_y + 2 SAY "Artikal (prazno-svi)" GET qqRoba PICT "@!S40"
-      @ m_x + 6, m_y + 2 SAY "Partner (prazno-svi)" GET qqIdPartner PICT "@!S40"
-      @ m_x + 7, m_y + 2 SAY "Grupa partnera (prazno-sve)" GET cGP PICT "@!"
-      @ m_x + 9, m_y + 2 SAY "Datum od " GET dDatOd
-      @ m_x + 9, Col() + 2 SAY "do" GET dDatDo
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Artikal (prazno-svi)" GET qqRoba PICT "@!S40"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Partner (prazno-svi)" GET qqIdPartner PICT "@!S40"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Grupa partnera (prazno-sve)" GET cGP PICT "@!"
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Datum od " GET dDatOd
+      @ form_x_koord() + 9, Col() + 2 SAY "do" GET dDatDo
 
       READ
 

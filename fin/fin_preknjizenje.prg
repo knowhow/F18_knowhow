@@ -72,42 +72,42 @@ FUNCTION prefin_unos_naloga()
 
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 6 SAY "PREKNJIZENJE SUBANALITICKIH KONTA"
+      @ form_x_koord() + 1, form_y_koord() + 6 SAY "PREKNJIZENJE SUBANALITICKIH KONTA"
       IF gNW == "D"
-         @ m_x + 2, m_y + 2 SAY "Firma "
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
-      @ m_x + 3, m_y + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
-      @ m_x + 4, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Partner " GET qqPartner PICT "@!S50"
       IF gFinRj == "D"
-         @ m_x + 5, m_y + 2 SAY "Rad.jed." GET qqIdRj PICT "@!S50"
-         @ m_x + 6, m_y + 2 SAY "Rasclaniti po RJ" GET cRascl PICT "@!" VALID cRascl $ "DN"
+         @ form_x_koord() + 5, form_y_koord() + 2 SAY "Rad.jed." GET qqIdRj PICT "@!S50"
+         @ form_x_koord() + 6, form_y_koord() + 2 SAY "Rasclaniti po RJ" GET cRascl PICT "@!" VALID cRascl $ "DN"
       ENDIF
-      @ m_x + 7, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
-      @ m_x + 7, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 8, m_y + 2 SAY "Protustav/Storno/Saldo (P/S/T) " GET cPreknjizi VALID cPreknjizi $ "PST" PICT "@!"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Datum dokumenta od" GET dDatOd
+      @ form_x_koord() + 7, Col() + 2 SAY "do" GET dDatDo
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Protustav/Storno/Saldo (P/S/T) " GET cPreknjizi VALID cPreknjizi $ "PST" PICT "@!"
       READ
 
       IF cPreknjizi == "T"
-         @ m_x + 9, m_y + 38 SAY "Duguje/Potrazuje (D/P)" GET cStrana VALID cStrana $ "DP" PICT "@!"
+         @ form_x_koord() + 9, form_y_koord() + 38 SAY "Duguje/Potrazuje (D/P)" GET cStrana VALID cStrana $ "DP" PICT "@!"
       ENDIF
 
-      @ m_x + 10, m_y + 2 SAY "Sifra naloga koji se generise" GET cIDVN
-      @ m_x + 10, Col() + 2 SAY "Broj" GET cBrNal
-      @ m_x + 10, Col() + 2 SAY "datum" GET dDatDok
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Sifra naloga koji se generise" GET cIDVN
+      @ form_x_koord() + 10, Col() + 2 SAY "Broj" GET cBrNal
+      @ form_x_koord() + 10, Col() + 2 SAY "datum" GET dDatDok
       IF fk1 == "D"
-         @ m_x + 11, m_y + 2 SAY "K1 (9 svi) :" GET cK1
+         @ form_x_koord() + 11, form_y_koord() + 2 SAY "K1 (9 svi) :" GET cK1
       ENDIF
       IF fk2 == "D"
-         @ m_x + 12, m_y + 2 SAY "K2 (9 svi) :" GET cK2
+         @ form_x_koord() + 12, form_y_koord() + 2 SAY "K2 (9 svi) :" GET cK2
       ENDIF
       IF fk3 == "D"
-         @ m_x + 13, m_y + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
+         @ form_x_koord() + 13, form_y_koord() + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
       ENDIF
       IF fk4 == "D"
-         @ m_x + 14, m_y + 2 SAY "K4 (99 svi):" GET cK4
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY "K4 (99 svi):" GET cK4
       ENDIF
 
       READ

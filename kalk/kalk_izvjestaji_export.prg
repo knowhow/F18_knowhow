@@ -44,22 +44,22 @@ FUNCTION krpt_export()
 
    Box(, 14, 70 )
 
-   @ m_x + 1, m_y + 2 SAY "Dokument "
-   @ m_x + 2, m_y + 2 SAY self_organizacija_id() + " - " GET  cIdVd
-   @ m_x + 2, Col() + 2 SAY " - " GET cBrDok
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Dokument "
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY self_organizacija_id() + " - " GET  cIdVd
+   @ form_x_koord() + 2, Col() + 2 SAY " - " GET cBrDok
 
 
-   @ m_x + 4, m_y + 2 SAY PadR( "-", 30, "-" )
-   @ m_x + 5, m_y + 2 SAY "Izvrsiti zaokruzenja ? " GET cZaokruziti PICT "@!" VALID cZaokruziti $ "DN"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY PadR( "-", 30, "-" )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Izvrsiti zaokruzenja ? " GET cZaokruziti PICT "@!" VALID cZaokruziti $ "DN"
    READ
 
    lZaokruziti := ( cZaokruziti == "D" )
 
    IF lZaokruziti
-      @ m_x + 5, m_y + 2 SAY PadR( " ", 57 )
-      @ m_x + 5, m_y + 2 SAY "Broj decimala cijena " GET cij_decimala PICT "9"
-      @ m_x + 6, m_y + 2 SAY "               iznos " GET izn_decimala PICT "9"
-      @ m_x + 7, m_y + 2 SAY "            kolicina " GET kol_decimala PICT "9"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY PadR( " ", 57 )
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Broj decimala cijena " GET cij_decimala PICT "9"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "               iznos " GET izn_decimala PICT "9"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "            kolicina " GET kol_decimala PICT "9"
       READ
    ENDIF
 
@@ -71,13 +71,13 @@ FUNCTION krpt_export()
       cVpcCij := "D"
    ENDIF
 
-   @ m_x + 8, m_y + 2 SAY PadR( "-", 30, "-" )
-   @ m_x + 9, m_y + 2 SAY "Trebate mpc cijene ? " GET cMpcCij PICT "@!" VALID cMpcCij $ "DN"
-   @ m_x + 10, m_y + 2 SAY "Trebate vpc cijene ? " GET cVpcCij PICT "@!" VALID cVpcCij $ "DN"
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY PadR( "-", 30, "-" )
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Trebate mpc cijene ? " GET cMpcCij PICT "@!" VALID cMpcCij $ "DN"
+   @ form_x_koord() + 10, form_y_koord() + 2 SAY "Trebate vpc cijene ? " GET cVpcCij PICT "@!" VALID cVpcCij $ "DN"
 
-   @ m_x + 11, m_y + 2 SAY PadR( "-", 30, "-" )
-   @ m_x + 12, m_y + 2 SAY "Konverzija slova (0-8) " GET cKonverzija PICT "9"
-   @ m_x + 13, m_y + 2 SAY "Pokreni oo/office97/officexp/office2003 ?" GET cLauncher PICT "@S26" VALID set_launcher( @cLauncher )
+   @ form_x_koord() + 11, form_y_koord() + 2 SAY PadR( "-", 30, "-" )
+   @ form_x_koord() + 12, form_y_koord() + 2 SAY "Konverzija slova (0-8) " GET cKonverzija PICT "9"
+   @ form_x_koord() + 13, form_y_koord() + 2 SAY "Pokreni oo/office97/officexp/office2003 ?" GET cLauncher PICT "@S26" VALID set_launcher( @cLauncher )
 
    READ
    BoxC()
@@ -268,8 +268,8 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
          cIdTarifa := idTarifa
          cIdRoba := IdRoba
 
-         @ m_x + 1, m_y + 2 SAY "Krug " + Str( nKrug, 1 ) + " " + Str( nCount, 6 )
-         @ m_x + 2, m_y + 2 SAY cIdRoba + "/" + cIdTarifa
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Krug " + Str( nKrug, 1 ) + " " + Str( nCount, 6 )
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY cIdRoba + "/" + cIdTarifa
          SELECT r_export
 
          // SEEK cIdRoba

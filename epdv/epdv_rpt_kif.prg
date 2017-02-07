@@ -86,30 +86,30 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
       nX := 1
       Box(, 11, 60 )
 
-      @ m_x + nX, m_y + 2 SAY "Period"
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Period"
       nX++
 
-      @ m_x + nX, m_y + 2 SAY "od " GET dDatOd
-      @ m_x + nX, Col() + 2 SAY "do " GET dDatDo
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "od " GET dDatOd
+      @ form_x_koord() + nX, Col() + 2 SAY "do " GET dDatDo
 
       nX += 2
 
-      @ m_x + nX, m_y + 2 SAY "Tarifa (prazno svi)  ? " GET cTar ;
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Tarifa (prazno svi)  ? " GET cTar ;
          VALID {|| Empty( cTar ) .OR. P_Tarifa( @cTar ) }  PICT "@!"
       nX += 1
 
-      @ m_x + nX, m_y + 2 SAY "Partner (prazno svi) ? " GET cPart ;
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Partner (prazno svi) ? " GET cPart ;
          VALID {|| Empty( cPart ) .OR. p_partner( @cPart ) } PICT "@!"
 
       nX += 2
 
-      @ m_x + nX, m_y + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET _export ;
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET _export ;
          VALID _export $ "DN" PICT "@!"
 
 
       nX += 2
 
-      @ m_x + nX, m_y + 2 SAY Replicate( "-", 30 )
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY Replicate( "-", 30 )
       nX++
 
       READ
@@ -303,7 +303,7 @@ STATIC FUNCTION fill_rpt( nBrDok )
       ++nCount
 
 
-      @ m_x + 2, m_y + 2 SAY Str( nCount, 6, 0 )
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY Str( nCount, 6, 0 )
 
       nBrDok := br_dok
       nBPdv := i_b_pdv

@@ -42,11 +42,11 @@ FUNCTION kalk_povrat_dokumenta()
    _br_dok := Space( 8 )
 
    Box( "", 1, 35 )
-   @ m_x + 1, m_y + 2 SAY "Dokument:"
-   @ m_x + 1, Col() + 1 SAY _id_firma
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Dokument:"
+   @ form_x_koord() + 1, Col() + 1 SAY _id_firma
 
-   @ m_x + 1, Col() + 1 SAY "-" GET _id_vd PICT "@!"
-   @ m_x + 1, Col() + 1 SAY "-" GET _br_dok VALID {|| _br_dok := kalk_fix_brdok( _br_dok ), .T. }
+   @ form_x_koord() + 1, Col() + 1 SAY "-" GET _id_vd PICT "@!"
+   @ form_x_koord() + 1, Col() + 1 SAY "-" GET _br_dok VALID {|| _br_dok := kalk_fix_brdok( _br_dok ), .T. }
    READ
    ESC_BCR
    BoxC()
@@ -252,9 +252,9 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
    Box(, 3, 60 )
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Vrste kalk.    " GET _id_vd PICT "@S40"
-      @ m_x + 2, m_y + 2 SAY "Broj dokumenata" GET _br_dok PICT "@S40"
-      @ m_x + 3, m_y + 2 SAY "Datumi         " GET _dat_dok PICT "@S40"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Vrste kalk.    " GET _id_vd PICT "@S40"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Broj dokumenata" GET _br_dok PICT "@S40"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Datumi         " GET _dat_dok PICT "@S40"
       READ
       _usl_br_dok := Parsiraj( _br_dok, "BrDok", "C" )
       _usl_dat_dok := Parsiraj( _dat_dok, "DatDok", "D" )

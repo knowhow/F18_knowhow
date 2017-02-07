@@ -94,7 +94,7 @@ STATIC FUNCTION _fakt_import()
    LOCAL _a_data := {}
 
    Box(, 1, 70 )
-   @ m_x + 1, m_y + 2 SAY "import path:" GET _imp_path PICT "@S50"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "import path:" GET _imp_path PICT "@S50"
    READ
    BoxC()
 
@@ -268,45 +268,45 @@ STATIC FUNCTION _vars_export( vars )
 
    Box(, 13, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** Uslovi exporta dokumenata"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "*** Uslovi exporta dokumenata"
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata:" GET _br_dok PICT "@S40"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Brojevi dokumenata:" GET _br_dok PICT "@S40"
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
-
-   ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY8 "Uzeti u obzir sljedeće rj:" GET _rj PICT "@S30"
-
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY8 "Svoditi na primarnu šifru (dužina primarne šifre):" GET _prim_sif PICT "9"
-
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Promjena radne jedinice" GET _prom_rj_src
-   @ m_x + _x, Col() + 1 SAY "u" GET _prom_rj_dest
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datumski period od" GET _dat_od
+   @ form_x_koord() + _x, Col() + 1 SAY "do" GET _dat_do
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY8 "Eksportovati šifarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Uzeti u obzir sljedeće rj:" GET _rj PICT "@S30"
+
+   ++ _x
+
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Svoditi na primarnu šifru (dužina primarne šifre):" GET _prim_sif PICT "9"
+
+   ++ _x
+
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Promjena radne jedinice" GET _prom_rj_src
+   @ form_x_koord() + _x, Col() + 1 SAY "u" GET _prom_rj_dest
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Eksportovati šifarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
+
+   ++ _x
+   ++ _x
+
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
 
    READ
 
@@ -363,45 +363,45 @@ STATIC FUNCTION _vars_import( vars )
 
    Box(, 15, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** Uslovi importa dokumenata"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "*** Uslovi importa dokumenata"
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata (prazno-sve):" GET _br_dok PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Brojevi dokumenata (prazno-sve):" GET _br_dok PICT "@S30"
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
-
-   ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY8 "Uzeti u obzir sljedeće radne jedinice:" GET _rj PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datumski period od" GET _dat_od
+   @ form_x_koord() + _x, Col() + 1 SAY "do" GET _dat_do
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY8 "Zamjeniti postojeće dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
-
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY8 "Zamjeniti postojeće šifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Uzeti u obzir sljedeće radne jedinice:" GET _rj PICT "@S30"
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Zamjeniti postojeće dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+
+   ++ _x
+
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Zamjeniti postojeće šifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
+
+   ++ _x
+   ++ _x
+
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
 
    READ
 
@@ -473,7 +473,7 @@ STATIC FUNCTION __export( vars, a_details )
 
    Box(, 2, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "... export fakt dokumenata u toku"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "... export fakt dokumenata u toku"
 
    seek_fakt_doks()
 
@@ -545,7 +545,7 @@ STATIC FUNCTION __export( vars, a_details )
       dbf_update_rec( _app_rec )
 
       ++ _cnt
-      @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
 
       seek_fakt( _id_firma, _id_vd, _br_dok )
 
@@ -722,8 +722,8 @@ STATIC FUNCTION __import( vars, a_details )
 
    Box(, 3, 70 )
 
-   @ m_x + 1, m_y + 2 SAY PadR( "... import fakt dokumenata u toku ", 69 ) COLOR f18_color_i()
-   @ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + AllTrim( Str( _total_doks ) ) + ", fakt/" + AllTrim( Str( _total_fakt ) )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY PadR( "... import fakt dokumenata u toku ", 69 ) COLOR f18_color_i()
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "broj zapisa doks/" + AllTrim( Str( _total_doks ) ) + ", fakt/" + AllTrim( Str( _total_fakt ) )
 
 
    DO WHILE !Eof()
@@ -820,7 +820,7 @@ STATIC FUNCTION __import( vars, a_details )
       ENDIF
 
       ++ _cnt
-      @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
 
       SELECT e_fakt
       SET ORDER TO TAG "1"
@@ -837,7 +837,7 @@ STATIC FUNCTION __import( vars, a_details )
          _app_rec[ "podbr" ] := ""
          _gl_brojac += _redni_broj
 
-         @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
+         @ form_x_koord() + 3, form_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
 
          SELECT fakt
          APPEND BLANK
@@ -898,7 +898,7 @@ STATIC FUNCTION __import( vars, a_details )
 
    IF _cnt > 0 .AND. lOk
 
-      @ m_x + 3, m_y + 2 SAY PadR( "", 69 )
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY PadR( "", 69 )
 
       update_table_roba( _zamjeniti_sif )
       update_table_partn( _zamjeniti_sif )

@@ -74,7 +74,7 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "SG_KUF : " + Str( nCount )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "SG_KUF : " + Str( nCount )
 
       IF g_src_modul( src ) == "KALK"
 
@@ -305,10 +305,10 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
          nCount ++
 
          cPom := "KALK : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-         @ m_x + 3, m_y + 2 SAY cPom
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY cPom
 
          cPom := "KALK cnt : " + Str( nCount, 6 )
-         @ m_x + 4, m_y + 2 SAY cPom
+         @ form_x_koord() + 4, form_y_koord() + 2 SAY cPom
 
 
 

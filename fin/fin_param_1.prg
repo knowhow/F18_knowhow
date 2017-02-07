@@ -48,78 +48,78 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
 
    SET CURSOR ON
 
-   @ m_x + nX, m_y + 2 SAY "*********************** Unos naloga:"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "*********************** Unos naloga:"
 
    nX := nX + 2
 
-   @ m_x + nX, m_y + 2 SAY "Unos datuma naloga? (D/N):" GET gDatNal VALID gDatNal $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Unos datuma naloga? (D/N):" GET gDatNal VALID gDatNal $ "DN" PICT "@!"
 
-   @ m_x + nX, Col() + 2 SAY "Unos datuma valute? (D/N):" GET gDatVal VALID gDatVal $ "DN" PICT "@!"
+   @ form_x_koord() + nX, Col() + 2 SAY "Unos datuma valute? (D/N):" GET gDatVal VALID gDatVal $ "DN" PICT "@!"
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Unos radnih jedinica ? (D/N)" GET gFinRj VALID gFinRj $ "DN" PICT "@!"
-   @ m_x + nX, Col() + 1 SAY "Unos tipa dokumenta ? (D/N)" GET _tip_dok VALID _tip_dok $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Unos radnih jedinica ? (D/N)" GET gFinRj VALID gFinRj $ "DN" PICT "@!"
+   @ form_x_koord() + nX, Col() + 1 SAY "Unos tipa dokumenta ? (D/N)" GET _tip_dok VALID _tip_dok $ "DN" PICT "@!"
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Unos ekonomskih kategorija? (D/N)" GET gTroskovi VALID gTroskovi $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Unos ekonomskih kategorija? (D/N)" GET gTroskovi VALID gTroskovi $ "DN" PICT "@!"
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Unos polja K1 - K4 ? (D/N)"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Unos polja K1 - K4 ? (D/N)"
    ++ nX
 
-   read_dn_parametar( "K1", m_x + nX, m_y + 2, @_k1 )
-   read_dn_parametar( "K2", m_x + nX, Col() + 2, @_k2 )
-   read_dn_parametar( "K3", m_x + nX, Col() + 2, @_k3 )
-   read_dn_parametar( "K4", m_x + nX, Col() + 2, @_k4 )
+   read_dn_parametar( "K1", form_x_koord() + nX, form_y_koord() + 2, @_k1 )
+   read_dn_parametar( "K2", form_x_koord() + nX, Col() + 2, @_k2 )
+   read_dn_parametar( "K3", form_x_koord() + nX, Col() + 2, @_k3 )
+   read_dn_parametar( "K4", form_x_koord() + nX, Col() + 2, @_k4 )
 
    nX := nX + 2
 
-   @ m_x + nX, m_y + 2 SAY "Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)" GET gBrojacFinNaloga VALID gBrojacFinNaloga $ "12"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)" GET gBrojacFinNaloga VALID gBrojacFinNaloga $ "12"
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Limit za unos konta? (D/N):" GET gKtoLimit PICT "@!" VALID gKtoLimit $ "DN"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Limit za unos konta? (D/N):" GET gKtoLimit PICT "@!" VALID gKtoLimit $ "DN"
 
-   @ m_x + nX, Col() + 2 SAY "-> vrijednost limita:" GET gnKtoLimit PICT "9" WHEN gKtoLimit == "D"
+   @ form_x_koord() + nX, Col() + 2 SAY "-> vrijednost limita:" GET gnKtoLimit PICT "9" WHEN gKtoLimit == "D"
 
 
    nX := nX + 2
 
-   @ m_x + nX, m_y + 2 SAY "********************** Obrada naloga:"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "********************** Obrada naloga:"
 
    nX := nX + 2
 
-   @ m_x + nX, m_y + 2 SAY "Neophodna ravoteza naloga? (D/N):" GET gRavnot VALID gRavnot $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Neophodna ravoteza naloga? (D/N):" GET gRavnot VALID gRavnot $ "DN" PICT "@!"
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Onemoguciti povrat azuriranog naloga u pripremu? (D/N)" GET gBezVracanja VALID gBezVracanja $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Onemoguciti povrat azuriranog naloga u pripremu? (D/N)" GET gBezVracanja VALID gBezVracanja $ "DN" PICT "@!"
 
    ++ nX
 
-   @ m_x + nX, m_y + 2  SAY "Limit za otvorene stavke (" + ValDomaca() + ")" GET gnLOst PICT "99999.99"
+   @ form_x_koord() + nX, form_y_koord() + 2  SAY "Limit za otvorene stavke (" + ValDomaca() + ")" GET gnLOst PICT "99999.99"
 
    //++ nX
-   //@ m_x + nX, m_y + 2 SAY "Koristiti konta-izuzetke u FIN-BUDZET-u? (D/N)" GET gBuIz VALID gBuIz $ "DN" PICT "@!"
+   //@ form_x_koord() + nX, form_y_koord() + 2 SAY "Koristiti konta-izuzetke u FIN-BUDZET-u? (D/N)" GET gBuIz VALID gBuIz $ "DN" PICT "@!"
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Timeout kod azuriranja naloga (sec.):" ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Timeout kod azuriranja naloga (sec.):" ;
       GET gAzurTimeout PICT "99999"
 
    nX := nX + 2
 
-   @ m_x + nX, m_y + 2 SAY "********************** Ostalo:"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "********************** Ostalo:"
 
    nX := nX + 2
 
-   @ m_x + nX, m_y + 2 SAY "Automatski pozovi kontrolu zbira datoteke svakih" GET gnKZBDana PICT "999" valid ( gnKZBDana <= 999 .AND. gnKZBDana >= 0 )
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Automatski pozovi kontrolu zbira datoteke svakih" GET gnKZBDana PICT "999" valid ( gnKZBDana <= 999 .AND. gnKZBDana >= 0 )
 
-   @ m_x + nX, Col() + 1 SAY "dana"
+   @ form_x_koord() + nX, Col() + 1 SAY "dana"
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Prikaz stanja konta kod knjizenja naloga" GET g_knjiz_help PICT "@!" ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Prikaz stanja konta kod knjizenja naloga" GET g_knjiz_help PICT "@!" ;
       VALID g_knjiz_help $ "DN"
 
    READ
@@ -151,29 +151,29 @@ STATIC FUNCTION fin_parametri_izgleda()
 
    SET CURSOR ON
 
-   @ m_x + nX, m_y + 2 SAY "*************** Varijante izgleda i prikaza:"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "*************** Varijante izgleda i prikaza:"
 
    nX := nX + 2
-   @ m_x + nX, m_y + 2 SAY "Potpis na kraju naloga? (D/N):" GET gPotpis VALID gPotpis $ "DN"  PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Potpis na kraju naloga? (D/N):" GET gPotpis VALID gPotpis $ "DN"  PICT "@!"
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY8 "Varijanta izvještaja 0-dvovalutno 1-jednovalutno " GET cJednoValutno VALID cJednoValutno $ "01"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Varijanta izvještaja 0-dvovalutno 1-jednovalutno " GET cJednoValutno VALID cJednoValutno $ "01"
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY8 "Prikaz iznosa u " + ValPomocna() GET gPicDEM
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Prikaz iznosa u " + ValPomocna() GET gPicDEM
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY8 "Prikaz iznosa u " + ValDomaca() GET gPicBHD
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Prikaz iznosa u " + ValDomaca() GET gPicBHD
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY8 "Sintetika i analitika se kreiraju u izvještajima? (D/N)" GET gSAKrIz VALID gSAKrIz $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Sintetika i analitika se kreiraju u izvještajima? (D/N)" GET gSAKrIz VALID gSAKrIz $ "DN" PICT "@!"
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY8 "U subanalitici prikazati nazive i konta i partnera? (D/N)" GET gVSubOp VALID gVSubOp $ "DN" PICTURE "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "U subanalitici prikazati nazive i konta i partnera? (D/N)" GET gVSubOp VALID gVSubOp $ "DN" PICTURE "@!"
 
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ VALID gDUFRJ $ "DN" PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ VALID gDUFRJ $ "DN" PICT "@!"
 
    READ
    BoxC()

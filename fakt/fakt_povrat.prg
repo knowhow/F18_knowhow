@@ -115,26 +115,26 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 
       Box(, 5, 70 )
 
-      @ m_x + 4, m_y + 2 SAY "brisanje : fakt_fakt_atributi"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "brisanje : fakt_fakt_atributi"
       _ok := oFaktAttr:delete_attr_from_server()
 
       IF _ok
          _tbl := "fakt_fakt"
-         @ m_x + 1, m_y + 2 SAY "brisanje : " + _tbl
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "brisanje : " + _tbl
          SELECT fakt
          _ok := delete_rec_server_and_dbf( _tbl, _vars, 2, "CONT" )
       ENDIF
 
       IF _ok
          _tbl := "fakt_doks"
-         @ m_x + 2, m_y + 2 SAY "brisanje : " + _tbl
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "brisanje : " + _tbl
          SELECT fakt_doks
          _ok := delete_rec_server_and_dbf( _tbl, _vars, 1, "CONT" )
       ENDIF
 
       IF _ok
          _tbl := "fakt_doks2"
-         @ m_x + 3, m_y + 2 SAY "brisanje : " + _tbl
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "brisanje : " + _tbl
          SELECT fakt_doks2
          _ok := delete_rec_server_and_dbf( _tbl, _vars, 1, "CONT" )
       ENDIF
@@ -227,10 +227,10 @@ STATIC FUNCTION uslovi_za_povrat_prema_kriteriju( vars )
    LOCAL _ret := .T.
 
    Box(, 4, 60 )
-   @ m_x + 1, m_y + 2 SAY "Rj               "  GET _rj PICT "@!"
-   @ m_x + 2, m_y + 2 SAY "Vrste dokumenata "  GET _tip_dok PICT "@S40"
-   @ m_x + 3, m_y + 2 SAY "Broj dokumenata  "  GET _br_dok PICT "@S40"
-   @ m_x + 4, m_y + 2 SAY "Datumi           "  GET _datumi PICT "@S40"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Rj               "  GET _rj PICT "@!"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Vrste dokumenata "  GET _tip_dok PICT "@S40"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Broj dokumenata  "  GET _br_dok PICT "@S40"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Datumi           "  GET _datumi PICT "@S40"
    READ
    Boxc()
 
@@ -451,13 +451,13 @@ STATIC FUNCTION uslovi_za_povrat_dokumenta( vars )
 
    Box( "", 1, 35 )
 
-   @ m_x + 1, m_y + 2 SAY "Dokument:"
-   @ m_x + 1, Col() + 1 GET _firma
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Dokument:"
+   @ form_x_koord() + 1, Col() + 1 GET _firma
 
-   @ m_x + 1, Col() + 1 SAY "-"
-   @ m_x + 1, Col() + 1 GET _tip_dok
+   @ form_x_koord() + 1, Col() + 1 SAY "-"
+   @ form_x_koord() + 1, Col() + 1 GET _tip_dok
 
-   @ m_x + 1, Col() + 1 SAY "-" GET _br_dok
+   @ form_x_koord() + 1, Col() + 1 SAY "-" GET _br_dok
 
    READ
 

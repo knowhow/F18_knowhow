@@ -49,7 +49,7 @@ STATIC FUNCTION _params()
    PRIVATE aHistory := {}
 
    Box(, 3, 70 )
-   @ m_x + 1, m_y + 2 SAY "Radni direktorij KALK (KALK.DBF):" GET gDirKalk PICT "@S30"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radni direktorij KALK (KALK.DBF):" GET gDirKalk PICT "@S30"
    READ
    BoxC()
 
@@ -91,16 +91,16 @@ FUNCTION kalk_2_fakt()
       cIdTipDok := "10"
       cBrDok := Space( 8 )
 
-      @ m_x + 2, m_y + 2 SAY "Broj KALK dokumenta:"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Broj KALK dokumenta:"
 
       IF gNW == "N"
-         @ m_x + 2, Col() + 1 GET cIdFirma PICT "@!"
+         @ form_x_koord() + 2, Col() + 1 GET cIdFirma PICT "@!"
       ELSE
-         @ m_x + 2, Col() + 1 SAY cIdFirma PICT "@!"
+         @ form_x_koord() + 2, Col() + 1 SAY cIdFirma PICT "@!"
       ENDIF
 
-      @ m_x + 2, Col() + 1 SAY "- " GET cIdTipDok
-      @ m_x + 2, Col() + 1 SAY "-" GET cBrDok
+      @ form_x_koord() + 2, Col() + 1 SAY "- " GET cIdTipDok
+      @ form_x_koord() + 2, Col() + 1 SAY "-" GET cBrDok
 
       READ
 
@@ -114,10 +114,10 @@ FUNCTION kalk_2_fakt()
       cBrFakt := cBrDok
       cIdRj := cIdFirma
 
-      @ m_x + 3, m_y + 2 SAY "Broj dokumenta u modulu FAKT: "
-      @ m_x + 3, Col() + 1 GET cIdRJ PICT "@!"
-      @ m_x + 3, Col() + 2 SAY "-" GET cTipFakt
-      @ m_x + 3, Col() + 2 SAY "-" GET cBrFakt ;
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Broj dokumenta u modulu FAKT: "
+      @ form_x_koord() + 3, Col() + 1 GET cIdRJ PICT "@!"
+      @ form_x_koord() + 3, Col() + 2 SAY "-" GET cTipFakt
+      @ form_x_koord() + 3, Col() + 2 SAY "-" GET cBrFakt ;
          WHEN _set_brdok( cIdRj, cTipFakt, @cBrFakt )
 
       READ
@@ -133,7 +133,7 @@ FUNCTION kalk_2_fakt()
 
       // partner kojem se fakturise.....
       IF lToRacun == .T.
-         @ m_x + 4, m_y + 2 SAY "Partner kojem se fakturise:" GET cFaktPartn VALID p_partner( @cFaktPartn )
+         @ form_x_koord() + 4, form_y_koord() + 2 SAY "Partner kojem se fakturise:" GET cFaktPartn VALID p_partner( @cFaktPartn )
 
          READ
 
@@ -144,18 +144,18 @@ FUNCTION kalk_2_fakt()
 
       IF find_fakt_dokument( cIdRj, cTipFakt, cBrFakt )
          Beep( 4 )
-         @ m_x + 14, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !!"
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY "U FAKT vec postoji ovaj dokument !!"
          Inkey( 4 )
-         @ m_x + 14, m_y + 2 SAY Space( 37 )
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY Space( 37 )
          LOOP
       ENDIF
       seek_fakt( cIdRj, cTipFakt, cBrFakt )
 
       IF !find_kalk_doks_by_broj_dokumenta( cIdFirma , cIdTipDok, cBrDok )
          Beep( 4 )
-         @ m_x + 14, m_y + 2 SAY "Ne postoji ovaj dokument !"
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY "Ne postoji ovaj dokument !"
          Inkey( 4 )
-         @ m_x + 14, m_y + 2 SAY Space( 30 )
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY Space( 30 )
          LOOP
 
       ENDIF
@@ -197,12 +197,12 @@ FUNCTION kalk_2_fakt()
             cTxtb := PadR( partn->naz2, 30 )
             cTxtc := PadR( partn->mjesto, 30 )
 
-            @ m_x + 10, m_Y + 2 SAY "Partner " GET cTxta
-            @ m_x + 11, m_Y + 2 SAY "        " GET cTxtb
-            @ m_x + 12, m_Y + 2 SAY "Mjesto  " GET cTxtc
+            @ form_x_koord() + 10, m_Y + 2 SAY "Partner " GET cTxta
+            @ form_x_koord() + 11, m_Y + 2 SAY "        " GET cTxtb
+            @ form_x_koord() + 12, m_Y + 2 SAY "Mjesto  " GET cTxtc
 
             IF nRokPl > 0
-               @ m_x + 14, m_y + 2 SAY "Rok placanja: " + AllTrim( Str( nRokPl ) ) + " dana"
+               @ form_x_koord() + 14, form_y_koord() + 2 SAY "Rok placanja: " + AllTrim( Str( nRokPl ) ) + " dana"
             ENDIF
 
             READ
@@ -266,11 +266,11 @@ FUNCTION kalk_2_fakt()
          SKIP
       ENDDO
 
-      @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Dokument je prenesen !"
 
       Inkey( 4 )
 
-      @ m_x + 8, m_y + 2 SAY Space( 30 )
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY Space( 30 )
 
    ENDDO
 
@@ -388,27 +388,27 @@ FUNCTION kalkp_2_fakt()
 
    DO WHILE .T.
 
-      @ m_x + 1, m_y + 2 SAY "Firma/RJ:"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma/RJ:"
 
       IF gNW == "N"
-         @ m_x + 1, Col() + 1 GET cIdFirma PICT "@!"
+         @ form_x_koord() + 1, Col() + 1 GET cIdFirma PICT "@!"
       ELSE
-         @ m_x + 1, Col() + 1 SAY cIdFirma PICT "@!"
+         @ form_x_koord() + 1, Col() + 1 SAY cIdFirma PICT "@!"
       ENDIF
 
-      @ m_x + 2, m_y + 2 SAY "Kalk partner" GET cIdPartner  VALID p_partner( @cIdPartner )
-      @ m_x + 3, m_y + 2 SAY "Vrste KALK dokumenata" GET qqIdVd PICT "@!S30"
-      @ m_x + 4, m_y + 2 SAY "Za period od" GET dOd
-      @ m_x + 4, Col() + 1 SAY "do" GET dDo
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Kalk partner" GET cIdPartner  VALID p_partner( @cIdPartner )
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Vrste KALK dokumenata" GET qqIdVd PICT "@!S30"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Za period od" GET dOd
+      @ form_x_koord() + 4, Col() + 1 SAY "do" GET dDo
 
       cTipFakt := cIdTipDok
       cBrFakt  := Space( 8 )
       cIdRj    := cIdFirma
 
-      @ m_x + 6, m_y + 2 SAY "Broj dokumenta u modulu FAKT: "
-      @ m_x + 6, Col() + 1 GET cIdRJ PICT "@!"
-      @ m_x + 6, Col() + 2 SAY "-" GET cTipFakt
-      @ m_x + 6, Col() + 2 SAY "-" GET cBrFakt WHEN SljedBrFakt()
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Broj dokumenta u modulu FAKT: "
+      @ form_x_koord() + 6, Col() + 1 GET cIdRJ PICT "@!"
+      @ form_x_koord() + 6, Col() + 2 SAY "-" GET cTipFakt
+      @ form_x_koord() + 6, Col() + 2 SAY "-" GET cBrFakt WHEN SljedBrFakt()
 
       READ
 
@@ -423,7 +423,7 @@ FUNCTION kalkp_2_fakt()
       ENDIF
 
       IF lToRacun == .T.
-         @ m_x + 8, m_y + 2 SAY "Fakturisati partneru" GET cFaktPartn VALID p_partner( @cFaktPartn )
+         @ form_x_koord() + 8, form_y_koord() + 2 SAY "Fakturisati partneru" GET cFaktPartn VALID p_partner( @cFaktPartn )
          READ
          IF LastKey() == K_ESC
             EXIT
@@ -436,9 +436,9 @@ FUNCTION kalkp_2_fakt()
 
       IF find_fakt_dokument( cIdRj, cTipFakt, cBrFakt )
          Beep( 4 )
-         @ m_x + 14, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !"
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY "U FAKT vec postoji ovaj dokument !"
          Inkey( 4 )
-         @ m_x + 14, m_y + 2 SAY Space( 37 )
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY Space( 37 )
          LOOP
       ENDIF
       seek_fakt( cIdRj, cTipFakt, cBrFakt )
@@ -472,9 +472,9 @@ FUNCTION kalkp_2_fakt()
 
       IF Eof()
          Beep( 4 )
-         @ m_x + 14, m_y + 2 SAY "Trazeno ne postoji u KALK-u !"
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY "Trazeno ne postoji u KALK-u !"
          Inkey( 4 )
-         @ m_x + 14, m_y + 2 SAY Space( 30 )
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY Space( 30 )
          LOOP
       ELSE
 
@@ -555,12 +555,12 @@ FUNCTION kalkp_2_fakt()
                cTxtb := _txt3b
                cTxtc := _txt3c
 
-               @ m_x + 10, m_Y + 2 SAY "Partner " GET cTxta
-               @ m_x + 11, m_Y + 2 SAY "        " GET cTxtb
-               @ m_x + 12, m_Y + 2 SAY "Mjesto  " GET cTxtc
+               @ form_x_koord() + 10, m_Y + 2 SAY "Partner " GET cTxta
+               @ form_x_koord() + 11, m_Y + 2 SAY "        " GET cTxtb
+               @ form_x_koord() + 12, m_Y + 2 SAY "Mjesto  " GET cTxtc
 
                IF nRokPl > 0
-                  @ m_x + 13, m_Y + 2 SAY "Rok placanja " + AllTrim( Str( nRokPl ) ) + " dana"
+                  @ form_x_koord() + 13, m_Y + 2 SAY "Rok placanja " + AllTrim( Str( nRokPl ) ) + " dana"
                ENDIF
 
                READ
@@ -624,9 +624,9 @@ FUNCTION kalkp_2_fakt()
 
          ENDDO
 
-         @ m_x + 15, m_y + 2 SAY "Dokument je prenesen !"
+         @ form_x_koord() + 15, form_y_koord() + 2 SAY "Dokument je prenesen !"
          Inkey( 4 )
-         @ m_x + 15, m_y + 2 SAY Space( 30 )
+         @ form_x_koord() + 15, form_y_koord() + 2 SAY Space( 30 )
 
          O_PARAMS
          PRIVATE cSection := "K"

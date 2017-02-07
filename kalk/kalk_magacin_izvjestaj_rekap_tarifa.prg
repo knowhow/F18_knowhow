@@ -32,11 +32,11 @@ FUNCTION RekMagTar()
    Box(, 5, 70 )
    SET CURSOR ON
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Magacinski konto   " GET qqKonto PICT "@!S50"
-      @ m_x + 2, m_y + 2 SAY "Artikli            " GET qqRoba  PICT "@!S50"
-      @ m_x + 3, m_y + 2 SAY "Partneri           " GET qqPartn PICT "@!S50"
-      @ m_x + 4, m_y + 2 SAY "Izvjestaj za period" GET dDat1
-      @ m_x + 4, Col() + 1 SAY "do" GET dDat2
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Magacinski konto   " GET qqKonto PICT "@!S50"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Artikli            " GET qqRoba  PICT "@!S50"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Partneri           " GET qqPartn PICT "@!S50"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Izvjestaj za period" GET dDat1
+      @ form_x_koord() + 4, Col() + 1 SAY "do" GET dDat2
       read;ESC_BCR
       aUsl1 := Parsiraj( qqKonto, "mkonto" )
       aUsl2 := Parsiraj( qqRoba, "IdRoba" )

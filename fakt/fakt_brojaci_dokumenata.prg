@@ -455,8 +455,8 @@ FUNCTION fakt_set_param_broj_dokumenta()
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Dokument:" GET _firma
-   @ m_x + 1, Col() + 1 SAY "-" GET _tip_dok
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Dokument:" GET _firma
+   @ form_x_koord() + 1, Col() + 1 SAY "-" GET _tip_dok
 
    READ
 
@@ -470,7 +470,7 @@ FUNCTION fakt_set_param_broj_dokumenta()
    _broj := fetch_metric( _param, nil, _broj )
    _broj_old := _broj
 
-   @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "999999"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "999999"
 
    READ
 
@@ -542,26 +542,26 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
 
    Box(, 12, 65 )
 
-   @ m_x + _x, m_y + 2 SAY "*** korekcija podataka dokumenta"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "*** korekcija podataka dokumenta"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Partner:" GET __idpartn VALID p_partner( @__idpartn )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Partner:" GET __idpartn VALID p_partner( @__idpartn )
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datum otpremnice:" GET __dat_otpr
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datum otpremnice:" GET __dat_otpr
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY " Broj otpremnice:" GET __br_otpr PICT "@S40"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY " Broj otpremnice:" GET __br_otpr PICT "@S40"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "  Datum plaćanja:" GET __dat_pl
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "  Datum plaćanja:" GET __dat_pl
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "        Narudžba:" GET __br_nar PICT "@S40"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "        Narudžba:" GET __br_nar PICT "@S40"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "  Vrsta plaćanja:" GET __id_vrsta_p VALID Empty( __id_vrsta_p ) .OR. P_VRSTEP( @__id_vrsta_p )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "  Vrsta plaćanja:" GET __id_vrsta_p VALID Empty( __id_vrsta_p ) .OR. P_VRSTEP( @__id_vrsta_p )
 
 
    READ

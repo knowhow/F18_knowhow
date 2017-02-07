@@ -37,7 +37,7 @@ STATIC FUNCTION set_articles()
 
    Box(, ( _count / 2 ) + 3, 65 )
 
-   @ m_x + _x, m_y + 2 SAY "Izvjestaj se pravi za sljedece artikle:"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Izvjestaj se pravi za sljedece artikle:"
 
    ++_x
    ++_x
@@ -51,10 +51,10 @@ STATIC FUNCTION set_articles()
       _valid_block := "EMPTY(_art_" + AllTrim( Str( nI ) ) + ") .or. P_Roba(@_art_" + AllTrim( Str( nI ) ) + ")"
 
       IF nI % 2 == 0
-         @ m_x + _x, Col() + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
+         @ form_x_koord() + _x, Col() + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
          ++_x
       ELSE
-         @ m_x + _x, m_y + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
+         @ form_x_koord() + _x, form_y_koord() + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
       ENDIF
 
    NEXT
@@ -199,23 +199,23 @@ FUNCTION spec_kol_partn()
 
    cIdFirma := PadR( cIdFirma, 2 )
 
-   @ m_x + _x, m_y + 2 SAY "RJ            " GET cIdFirma ;
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "RJ            " GET cIdFirma ;
       VALID {|| Empty( cIdFirma ) .OR. ;
       cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Od datuma " GET dDatOd
-   @ m_x + _x, Col() + 1 SAY "do" GET dDatDo
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Od datuma " GET dDatOd
+   @ form_x_koord() + _x, Col() + 1 SAY "do" GET dDatDo
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Distributer   " GET cDistrib VALID p_partner( @cDistrib )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Distributer   " GET cDistrib VALID p_partner( @cDistrib )
 
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Definisi artikle za izvjestaj (D/N) ?" GET _define VALID _define $ "DN" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Definisi artikle za izvjestaj (D/N) ?" GET _define VALID _define $ "DN" PICT "@!"
 
    READ
 
@@ -271,7 +271,7 @@ FUNCTION spec_kol_partn()
 
    Box( , 2, 50 )
 
-   @ m_x + 1, m_y + 2 SAY "generisem podatke za xls...."
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "generisem podatke za xls...."
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma
 
@@ -298,7 +298,7 @@ FUNCTION spec_kol_partn()
 
             aRoba[ nScan, 3 ] := aRoba[ nScan, 3 ] + nKol
 
-            @ m_x + 2, m_y + 2 SAY "  scan: " + cRoba
+            @ form_x_koord() + 2, form_y_koord() + 2 SAY "  scan: " + cRoba
 
          ENDIF
 

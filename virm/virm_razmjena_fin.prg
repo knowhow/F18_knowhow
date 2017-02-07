@@ -38,18 +38,18 @@ FUNCTION virm_prenos_fin()
 
    Box(, 5, 70 )
 
-   @ m_x + 1, m_y + 2 SAY "PRENOS FIN NALOGA (koji je trenutno u pripremi) u VIRM"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "PRENOS FIN NALOGA (koji je trenutno u pripremi) u VIRM"
    cIdBanka := PadR( cko_zr, 3 )
-   @ m_x + 2, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka VALID  virm_odredi_ziro_racun( _firma, @cIdBanka )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Posiljaoc (sifra banke):       " GET cIdBanka VALID  virm_odredi_ziro_racun( _firma, @cIdBanka )
    READ
    cKo_zr := cIdBanka
 
    select_o_partner( gVirmFirma )
    SELECT fin_pripr
    cKo_txt := Trim( partn->naz ) + ", " + Trim( partn->mjesto ) + ", " + Trim( partn->adresa ) + ", " + Trim( partn->telefon )
-   @ m_x + 3, m_y + 2 SAY "Konta za koja se prave virmani ?"  GET qqKonto PICT "@!S30"
-   @ m_x + 4, m_y + 2 SAY "Dodatak na opis:" GET cDOpis
-   @ m_x + 5, m_y + 2 SAY "Datum" GET dDatVir
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konta za koja se prave virmani ?"  GET qqKonto PICT "@!S30"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Dodatak na opis:" GET cDOpis
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Datum" GET dDatVir
    READ
    ESC_BCR
    BoxC()
@@ -99,9 +99,9 @@ FUNCTION virm_prenos_fin()
             _KOME_ZR := cKome_zr
             Beep( 1 )
             cIdBanka2 := Space( 3 )
-            @ m_x + 1, m_y + 2 SAY ckome_txt + " " + fin_pripr->brdok + Str( fin_pripr->iznosbhd, 12, 2 )
-            @ m_x + 2, m_y + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID p_partner( @_u_korist )  PICT "@!"
-            @ m_x + 2, Col() + 2 GET _IdBanka2 VALID {|| virm_odredi_ziro_racun( cu_korist, @_IdBanka2 ), SetPrimaoc() }
+            @ form_x_koord() + 1, form_y_koord() + 2 SAY ckome_txt + " " + fin_pripr->brdok + Str( fin_pripr->iznosbhd, 12, 2 )
+            @ form_x_koord() + 2, form_y_koord() + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID p_partner( @_u_korist )  PICT "@!"
+            @ form_x_koord() + 2, Col() + 2 GET _IdBanka2 VALID {|| virm_odredi_ziro_racun( cu_korist, @_IdBanka2 ), SetPrimaoc() }
             READ
             cKome_txt := _kome_txt
             cKome_zr := _KOME_ZR

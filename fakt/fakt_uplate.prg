@@ -49,11 +49,11 @@ FUNCTION fakt_uplate()
    Box(, MAXROWS() -5, MAXCOLS() -10 )
    DO WHILE .T.
 
-      @ m_x + 0, m_y + 20 SAY PadC( " EVIDENCIJA UPLATA - KUPCI ", 35, Chr( 205 ) )
-      @ m_x + 1, m_y + 2 SAY8 "Šifra partnera:" GET cIdPartner VALID p_partner( @cIdPartner, 1, 26 )
-      @ m_x + 2, m_y + 2 SAY8 "Tip dokumenta zaduženja:" GET qqTipDok PICT "@!S20"
-      @ m_x + 3, m_y + 2 SAY8 "Zaduženja od datuma    :"  GET dDatOd
-      @ m_x + 3, Col() + 1 SAY "do:"  GET dDatDo
+      @ form_x_koord() + 0, form_y_koord() + 20 SAY PadC( " EVIDENCIJA UPLATA - KUPCI ", 35, Chr( 205 ) )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Šifra partnera:" GET cIdPartner VALID p_partner( @cIdPartner, 1, 26 )
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY8 "Tip dokumenta zaduženja:" GET qqTipDok PICT "@!S20"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "Zaduženja od datuma    :"  GET dDatOd
+      @ form_x_koord() + 3, Col() + 1 SAY "do:"  GET dDatDo
       READ
       ESC_BCR
 
@@ -75,15 +75,15 @@ FUNCTION fakt_uplate()
       //GO TOP
       seek_fakt_uplate( cIdPartner )
 
-      @ m_x + X_POS_STANJE - 2, m_y + 1        SAY REPL( "=", 70 )
-      @ m_x + X_POS_STANJE - 1, m_y + Y_POS_STANJE SAY8 " (+)     ZADUŽENJE:"
-      @ m_x + X_POS_STANJE - 0, m_y + Y_POS_STANJE SAY " (-)       UPLATIO:"
-      @ m_x + X_POS_STANJE + 1, m_y + Y_POS_STANJE SAY " ------------------"
-      @ m_x + X_POS_STANJE + 2, m_y + Y_POS_STANJE SAY " (=) PREOSTALI DUG:"
+      @ form_x_koord() + X_POS_STANJE - 2, form_y_koord() + 1        SAY REPL( "=", 70 )
+      @ form_x_koord() + X_POS_STANJE - 1, form_y_koord() + Y_POS_STANJE SAY8 " (+)     ZADUŽENJE:"
+      @ form_x_koord() + X_POS_STANJE - 0, form_y_koord() + Y_POS_STANJE SAY " (-)       UPLATIO:"
+      @ form_x_koord() + X_POS_STANJE + 1, form_y_koord() + Y_POS_STANJE SAY " ------------------"
+      @ form_x_koord() + X_POS_STANJE + 2, form_y_koord() + Y_POS_STANJE SAY " (=) PREOSTALI DUG:"
 
       DajStanjeKupca()
 
-      @ m_x + 4, m_y + 1 SAY REPL( "=", 70 )
+      @ form_x_koord() + 4, form_y_koord() + 1 SAY REPL( "=", 70 )
 
       //SEEK cIdPartner
       my_db_edit( "EvUpl", MAXROWS() -5, MAXCOLS() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
@@ -111,10 +111,10 @@ FUNCTION EdUplata()
       nIznos  := IF( Ch == K_F2, IZNOS, 0                )
 
       Box( , 3, 60, .F. )
-      @ m_x + 0, m_y + 10 SAY PadC( IF( Ch == K_F2, "ISPRAVKA EVIDENTIRANE", "EVIDENTIRANJE NOVE" ) + " STAVKE", 40, Chr( 205 ) )
-      @ m_x + 1, m_y + 2 SAY "Datum uplate" GET dDatUpl
-      @ m_x + 2, m_y + 2 SAY "Opis        " GET cOpis
-      @ m_x + 3, m_y + 2 SAY "Iznos       " GET nIznos PICT picdem
+      @ form_x_koord() + 0, form_y_koord() + 10 SAY PadC( IF( Ch == K_F2, "ISPRAVKA EVIDENTIRANE", "EVIDENTIRANJE NOVE" ) + " STAVKE", 40, Chr( 205 ) )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Datum uplate" GET dDatUpl
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Opis        " GET cOpis
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Iznos       " GET nIznos PICT picdem
       READ
       BoxC()
 
@@ -157,9 +157,9 @@ FUNCTION EdUplata()
 // ------------------------------------
 FUNCTION DajStanjeKupca()
 
-   @ m_x + X_POS_STANJE - 1, m_y + Y_POS_STANJE + 20 SAY Str( nUkZaduz, 15, 2 ) COLOR "N/W"
-   @ m_x + X_POS_STANJE, m_y + Y_POS_STANJE + 20 SAY Str( nUkUplata, 15, 2 ) COLOR "N/W"
-   @ m_x + X_POS_STANJE + 2, m_y + Y_POS_STANJE + 20 SAY Str( nUkZaduz - nUkUplata, 15, 2 ) COLOR "N/W"
+   @ form_x_koord() + X_POS_STANJE - 1, form_y_koord() + Y_POS_STANJE + 20 SAY Str( nUkZaduz, 15, 2 ) COLOR "N/W"
+   @ form_x_koord() + X_POS_STANJE, form_y_koord() + Y_POS_STANJE + 20 SAY Str( nUkUplata, 15, 2 ) COLOR "N/W"
+   @ form_x_koord() + X_POS_STANJE + 2, form_y_koord() + Y_POS_STANJE + 20 SAY Str( nUkZaduz - nUkUplata, 15, 2 ) COLOR "N/W"
 
    RETURN NIL
 
@@ -364,13 +364,13 @@ FUNCTION SaldaKupaca( lPocStanje )
    Box(, 6, 70 )
    DO WHILE .T.
       IF lPocStanje
-         @ m_x + 0, m_y + 10 SAY PadC( " GENERISANJE POCETNOG STANJA ZA EVIDENCIJU UPLATA KUPACA ", 55, Chr( 205 ) )
+         @ form_x_koord() + 0, form_y_koord() + 10 SAY PadC( " GENERISANJE POCETNOG STANJA ZA EVIDENCIJU UPLATA KUPACA ", 55, Chr( 205 ) )
       ELSE
-         @ m_x + 0, m_y + 20 SAY PadC( " LISTA SALDA KUPACA ", 35, Chr( 205 ) )
+         @ form_x_koord() + 0, form_y_koord() + 20 SAY PadC( " LISTA SALDA KUPACA ", 35, Chr( 205 ) )
       ENDIF
-      @ m_x + 2, m_y + 2 SAY "Tip dokumenta zaduzenja:" GET qqTipDok PICT "@!S20"
-      @ m_x + 3, m_y + 2 SAY "Zaduzenja od datuma    :"  GET dDatOd
-      @ m_x + 3, Col() + 1 SAY "do:"  GET dDatDo
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Tip dokumenta zaduzenja:" GET qqTipDok PICT "@!S20"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Zaduzenja od datuma    :"  GET dDatOd
+      @ form_x_koord() + 3, Col() + 1 SAY "do:"  GET dDatDo
       READ
       ESC_BCR
 

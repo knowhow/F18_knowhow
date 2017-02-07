@@ -36,24 +36,24 @@ FUNCTION SpecPoK()
    cNula := "N"
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA ANALITICKIH KONTA"
+      @ form_x_koord() + 1, form_y_koord() + 6 SAY "SPECIFIKACIJA ANALITICKIH KONTA"
       IF gNW == "D"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 4, m_y + 2 SAY "Konto " GET qqKonto  PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Datum od" GET dDatOd
-      @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto " GET qqKonto  PICT "@!S50"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Datum od" GET dDatOd
+      @ form_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo
       IF fin_dvovalutno()
-         @ m_x + 6, m_y + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cTip VALID ctip $ "12"
+         @ form_x_koord() + 6, form_y_koord() + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cTip VALID ctip $ "12"
       ENDIF
-      @ m_x + 7, m_y + 2 SAY "Prikaz sintetickih konta (D/N):" GET cSK PICT "@!" VALID cSK $ "DN"
-      @ m_x + 9, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Prikaz sintetickih konta (D/N):" GET cSK PICT "@!" VALID cSK $ "DN"
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
       cIdRJ := ""
       IF gFinRj == "D" .AND. gSAKrIz == "D"
          cIdRJ := "999999"
-         @ m_x + 10, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
+         @ form_x_koord() + 10, form_y_koord() + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       READ; ESC_BCR
       aUsl1 := Parsiraj( qqKonto, "IdKonto" )

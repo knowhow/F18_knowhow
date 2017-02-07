@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR GetList, m_x, m_y
+MEMVAR GetList, form_x_koord(), form_y_koord()
 MEMVAR nRbr, fMarza, nStrana
 MEMVAR _IdFirma, _IdVd, _BrDok, _TBankTr, _TPrevoz, _TSpedTr, _TZavTr, _TCarDaz, _SpedTr, _ZavTr, _BankTr, _CarDaz, _MArza, _Prevoz
 MEMVAR _TMarza, _IdKonto, _IdKonto2, _IdTarifa, _IDRoba, _Kolicina, _DatFaktP, _datDok, _brFaktP, _VPC, _NC, _FCJ, _FCJ2, _Rabat
@@ -43,41 +43,41 @@ FUNCTION kalk_unos_dok_pr()
    ENDIF
 
 
-   @ m_x + 6, m_y + 2 SAY8 "Broj fakture" GET _brFaktP
-   @ m_x + 7, m_y + 2 SAY8 "Magacin gotovih proizvoda zadužuje " GET _IdKonto ;
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY8 "Broj fakture" GET _brFaktP
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "Magacin gotovih proizvoda zadužuje " GET _IdKonto ;
       VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!" ;
       WHEN {|| nRbr == 1 }
 
-   @ m_x + 8, m_y + 2 SAY8 "Magacin sirovina razdužuje         " GET _IdKonto2 ;
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "Magacin sirovina razdužuje         " GET _IdKonto2 ;
       PICT "@!" VALID P_Konto( @_IdKonto2 ) ;
       WHEN {|| nRbr == 1 }
 
 
    IF nRbr < 10
-      @ m_x + 12, m_y + 2 SAY8 "Proizvod  " GET _IdRoba PICT "@!" ;
+      @ form_x_koord() + 12, form_y_koord() + 2 SAY8 "Proizvod  " GET _IdRoba PICT "@!" ;
          VALID  {|| P_Roba( @_IdRoba, NIL, NIL, "IDP" ), ;
          say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ),;
           _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
 
-      @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
+      @ form_x_koord() + 13, form_y_koord() + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
          VALID {|| _Kolicina <> 0 .AND. iif( InRange( nRbr, 10, 99 ), error_bar( _idFirma + "-" + _idvd + "-" + _brdok, "PR dokument max 9 artikala" ), .T. ) }
 
    ELSE
 
-      @ m_x + 12, m_y + 2  SAY8 "Sirovina  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ),;
+      @ form_x_koord() + 12, form_y_koord() + 2  SAY8 "Sirovina  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ),;
        _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
-      @ m_x + 13, m_y + 2   SAY8 "Količina  " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+      @ form_x_koord() + 13, form_y_koord() + 2   SAY8 "Količina  " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
-      @ m_x + 15, m_y + 2   SAY "N.CJ Sirovina:"
-      @ m_x + 15, m_y + 50  GET _NC PICTURE PicDEM VALID _nc >= 0
+      @ form_x_koord() + 15, form_y_koord() + 2   SAY "N.CJ Sirovina:"
+      @ form_x_koord() + 15, form_y_koord() + 50  GET _NC PICTURE PicDEM VALID _nc >= 0
 
       _Mkonto := _idkonto2
       _mu_i := "5"
 
    ENDIF
 
-   @ m_x + 11, m_y + 66 SAY "Tarif.br v"
-   @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ form_x_koord() + 11, form_y_koord() + 66 SAY "Tarif.br v"
+   @ form_x_koord() + 12, form_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -145,8 +145,8 @@ FUNCTION kalk_unos_dok_pr()
    ENDIF
 
    _fcj := nNV / _kolicina
-   @ m_x + 15, m_y + 2   SAY "Nabc.CJ Proizvod :"
-   @ m_x + 15, m_y + 50  GET _FCJ PICTURE PicDEM VALID _fcj > 0 WHEN V_kol10()
+   @ form_x_koord() + 15, form_y_koord() + 2   SAY "Nabc.CJ Proizvod :"
+   @ form_x_koord() + 15, form_y_koord() + 50  GET _FCJ PICTURE PicDEM VALID _fcj > 0 WHEN V_kol10()
    READ
    ESC_RETURN K_ESC
 
@@ -180,32 +180,32 @@ FUNCTION Get2_PR()
    IF Empty( _TMarza );  _TMarza := "%" ; ENDIF
 
 
-   @ m_x + 2, m_y + 2 SAY cRNT1 + cSPom GET _TPrevoz VALID _TPrevoz $ "%AUR" PICTURE "@!"
-   @ m_x + 2, m_y + 40 GET _Prevoz PICTURE PicDEM
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY cRNT1 + cSPom GET _TPrevoz VALID _TPrevoz $ "%AUR" PICTURE "@!"
+   @ form_x_koord() + 2, form_y_koord() + 40 GET _Prevoz PICTURE PicDEM
 
-   @ m_x + 3, m_y + 2 SAY cRNT2 + cSPom  GET _TBankTr VALID _TBankTr $ "%AUR" PICT "@!"
-   @ m_x + 3, m_y + 40 GET _BankTr PICTURE PicDEM
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY cRNT2 + cSPom  GET _TBankTr VALID _TBankTr $ "%AUR" PICT "@!"
+   @ form_x_koord() + 3, form_y_koord() + 40 GET _BankTr PICTURE PicDEM
 
-   @ m_x + 4, m_y + 2 SAY cRNT3 + cSPom GET _TSpedTr VALID _TSpedTr $ "%AUR" PICT "@!"
-   @ m_x + 4, m_y + 40 GET _SpedTr PICTURE PicDEM
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY cRNT3 + cSPom GET _TSpedTr VALID _TSpedTr $ "%AUR" PICT "@!"
+   @ form_x_koord() + 4, form_y_koord() + 40 GET _SpedTr PICTURE PicDEM
 
-   @ m_x + 5, m_y + 2 SAY cRNT4 + cSPom GET _TCarDaz VALID _TCarDaz $ "%AUR" PICTURE "@!"
-   @ m_x + 5, m_y + 40 GET _CarDaz PICTURE PicDEM
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY cRNT4 + cSPom GET _TCarDaz VALID _TCarDaz $ "%AUR" PICTURE "@!"
+   @ form_x_koord() + 5, form_y_koord() + 40 GET _CarDaz PICTURE PicDEM
 
-   @ m_x + 6, m_y + 2 SAY cRNT5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
-   @ m_x + 6, m_y + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_nabcj(), .T. }
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY cRNT5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
+   @ form_x_koord() + 6, form_y_koord() + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_nabcj(), .T. }
 
-   @ m_x + 8, m_y + 2 SAY8 "CIJENA KOŠTANJA  "
-   @ m_x + 8, m_y + 50 GET _NC PICTURE PicDEM
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "CIJENA KOŠTANJA  "
+   @ form_x_koord() + 8, form_y_koord() + 50 GET _NC PICTURE PicDEM
 
    IF koncij->naz <> "N1"
 
       PRIVATE fMarza := " "
-      @ m_x + 10, m_y + 2 SAY8 "Magacin. Marza            :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
-      @ m_x + 10, m_y + 40 GET _Marza PICTURE PicDEM
-      @ m_x + 10, Col() + 1 GET fMarza PICT "@!"
-      @ m_x + 12, m_y + 2 SAY8 "VELEPRODAJNA CJENA  (VPC)   :"
-      @ m_x + 12, m_y + 50 GET _VPC PICT PicDEM VALID {|| Marza( fMarza ), .T. }
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY8 "Magacin. Marza            :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
+      @ form_x_koord() + 10, form_y_koord() + 40 GET _Marza PICTURE PicDEM
+      @ form_x_koord() + 10, Col() + 1 GET fMarza PICT "@!"
+      @ form_x_koord() + 12, form_y_koord() + 2 SAY8 "VELEPRODAJNA CJENA  (VPC)   :"
+      @ form_x_koord() + 12, form_y_koord() + 50 GET _VPC PICT PicDEM VALID {|| Marza( fMarza ), .T. }
 
       READ
       SetujVPC( _vpc )

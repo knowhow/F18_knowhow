@@ -47,24 +47,24 @@ FUNCTION fakt_fin_prenos()
    cSetIdRj := "N"
 
    Box(, 10, 60 )
-   @ m_x + 1, m_y + 2 SAY "RJ u fakt:" GET cIdRjFakt
-   @ m_x + 1, Col() + 2 SAY "postaviti IdRj u FIN ?" GET cSetIdRj ;
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "RJ u fakt:" GET cIdRjFakt
+   @ form_x_koord() + 1, Col() + 2 SAY "postaviti IdRj u FIN ?" GET cSetIdRj ;
       PICT "@!" ;
       VALID ( cSetIdRj $ "DN" )
 
-   @ m_x + 2, m_y + 2 SAY "Vrsta dokumenta u fakt:" GET cIdFakt
-   @ m_x + 3, m_y + 2 SAY "Dokumenti u periodu:" GET dDAtOd
-   @ m_x + 3, Col() + 2 SAY "do" GET dDatDo
-   @ m_x + 5, m_y + 2 SAY "Broj dokumenta" GET qqDok
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Vrsta dokumenta u fakt:" GET cIdFakt
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Dokumenti u periodu:" GET dDAtOd
+   @ form_x_koord() + 3, Col() + 2 SAY "do" GET dDatDo
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Broj dokumenta" GET qqDok
 
-   @ m_x + 6, m_y + 2 SAY "Podesiti parametre prenosa" GET cSetPAr VALID csetpar $ "DN" PICT "@!"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Podesiti parametre prenosa" GET cSetPAr VALID csetpar $ "DN" PICT "@!"
    READ
    IF cSetPar == "D"
       gFaktKum := PadR( gFaktKum, 35 )
 
       gDzokerF1 := PadR( gDzokerF1, 80 )
-      @ m_x + 8, m_y + 2 SAY "FAKT Kumulativ" GET gFaktKum  PICT "@S25"
-      @ m_x + 9, m_y + 2 SAY "Dzoker F1(formula)" GET gDzokerF1  PICT "@S25"
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "FAKT Kumulativ" GET gFaktKum  PICT "@S25"
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Dzoker F1(formula)" GET gDzokerF1  PICT "@S25"
 
       READ
       gFaktKum := Trim( gFaktKum )
@@ -86,7 +86,7 @@ FUNCTION fakt_fin_prenos()
    ENDIF
 
 
-   O_FINMAT
+   o_finmat()
    //o_konto()
    //o_partner()
    o_tdok()
@@ -137,14 +137,14 @@ FUNCTION fakt_fin_prenos()
          Box(, 6, 66 )
          aMemo := parsmemo( txt )
          IF Len( aMemo ) >= 5
-            @ m_x + 1, m_y + 2 SAY "FAKT broj:" + BrDOK
-            @ m_x + 2, m_y + 2 SAY PadR( Trim( amemo[ 3 ] ), 30 )
-            @ m_x + 3, m_y + 2 SAY PadR( Trim( amemo[ 4 ] ), 30 )
-            @ m_x + 4, m_y + 2 SAY PadR( Trim( amemo[ 5 ] ), 30 )
+            @ form_x_koord() + 1, form_y_koord() + 2 SAY "FAKT broj:" + BrDOK
+            @ form_x_koord() + 2, form_y_koord() + 2 SAY PadR( Trim( amemo[ 3 ] ), 30 )
+            @ form_x_koord() + 3, form_y_koord() + 2 SAY PadR( Trim( amemo[ 4 ] ), 30 )
+            @ form_x_koord() + 4, form_y_koord() + 2 SAY PadR( Trim( amemo[ 5 ] ), 30 )
          ELSE
             cTxt := ""
          ENDIF
-         @ m_x + 6, m_y + 2 SAY "Sifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
+         @ form_x_koord() + 6, form_y_koord() + 2 SAY "Sifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
          READ
          BoxC()
       ENDIF
@@ -300,7 +300,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    LOCAL cidfirma, cidvd, cbrdok, lafin, lafin2
 
    o_roba()
-   O_FINMAT
+   o_finmat()
    o_trfp2()
    o_koncij()
    o_valute()
@@ -335,8 +335,8 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    Box( "brn?", 5, 55 )
    // dDatNal:=datdok
    SET CURSOR ON
-   @ m_x + 1, m_y + 2  SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cidvn + " -" GET cBrNalF
-   @ m_x + 5, m_y + 2 SAY "(ako je broj naloga prazan - ne vrsi se kontiranje)"
+   @ form_x_koord() + 1, form_y_koord() + 2  SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cidvn + " -" GET cBrNalF
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "(ako je broj naloga prazan - ne vrsi se kontiranje)"
    READ
    ESC_BCR
    BoxC()

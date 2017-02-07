@@ -103,12 +103,12 @@ METHOD open()
       ::loadFromTbl()
    endif
 
-   @ m_x + 1, Col() + 2   SAY " RJ:" GET ::cIdRj  PICT "@!" VALID ::vldRj()
+   @ form_x_koord() + 1, Col() + 2   SAY " RJ:" GET ::cIdRj  PICT "@!" VALID ::vldRj()
    READ
 
    DO WHILE .T.
-      @  m_x + 3, m_y + 40  SAY "Datum:"   GET ::dDatDok
-      @  m_x + 3, m_y + Col() + 2  SAY "Broj:" GET ::cBrDok WHEN ::wheBrDok() VALID ::vldBrDok()
+      @  form_x_koord() + 3, form_y_koord() + 40  SAY "Datum:"   GET ::dDatDok
+      @  form_x_koord() + 3, form_y_koord() + Col() + 2  SAY "Broj:" GET ::cBrDok WHEN ::wheBrDok() VALID ::vldBrDok()
 
       if ::nRbr > 1
          ::sayPartner( 5 )
@@ -116,7 +116,7 @@ METHOD open()
          ::getPartner( 5 )
       ENDIF
 
-      @ m_x + 9, m_y + 2  SAY Valdomaca() + "/" + VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ ValDomaca() + "#" + ValPomocna()
+      @ form_x_koord() + 9, form_y_koord() + 2  SAY Valdomaca() + "/" + VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ ValDomaca() + "#" + ValPomocna()
 
       READ
       ESC_RETURN 0
@@ -128,10 +128,10 @@ METHOD open()
 
    ENDDO
 
-   @  m_x + 11, m_y + 2  SAY "R.br:" get ::nRbr PICTURE "9999"
-   @  m_x + 11, Col() + 2  SAY "Artikal  " get ::cIdRoba PICT "@!S10" WHEN ::wheIdRoba() VALID ::vldIdRoba()
-   @  m_x + 13, m_y + 2 SAY "Knjizna kolicina " GET ::nKKolicina PICT pickol WHEN ::wheKKolicina() VALID ::vldKKolicina()
-   @  m_x + 13, Col() + 2 SAY "popisana kolicina " GET ::nPKolicina PICT pickol VALID ::vldPKolicina()
+   @  form_x_koord() + 11, form_y_koord() + 2  SAY "R.br:" get ::nRbr PICTURE "9999"
+   @  form_x_koord() + 11, Col() + 2  SAY "Artikal  " get ::cIdRoba PICT "@!S10" WHEN ::wheIdRoba() VALID ::vldIdRoba()
+   @  form_x_koord() + 13, form_y_koord() + 2 SAY "Knjizna kolicina " GET ::nKKolicina PICT pickol WHEN ::wheKKolicina() VALID ::vldKKolicina()
+   @  form_x_koord() + 13, Col() + 2 SAY "popisana kolicina " GET ::nPKolicina PICT pickol VALID ::vldPKolicina()
 
    READ
 
@@ -328,7 +328,7 @@ METHOD vldIdRoba()
    ::cIdRoba := cPom
 
    if ::lSilent
-      @ m_x + 14, m_y + 28 SAY "TBr: "
+      @ form_x_koord() + 14, form_y_koord() + 28 SAY "TBr: "
       ?? roba->idtarifa, "PPP", Str( tarifa->opp, 7, 2 ) + "%", "PPU", Str( tarifa->ppp, 7, 2 )
    ENDIF
 
@@ -355,9 +355,9 @@ METHOD wheIdRoba()
  */
 METHOD getPartner( nRow )
 
-   @  m_x + nRow, m_y + 2  SAY "Partner " get ::cPartner  PICTURE "@S30" WHEN ::whePartner() VALID ::vldPartner()
-   @  m_x + nRow + 1, m_y + 2  SAY "        " get ::cAdresa  PICTURE "@"
-   @  m_x + nRow + 2, m_y + 2  SAY "Mjesto  " get ::cMjesto  PICTURE "@"
+   @  form_x_koord() + nRow, form_y_koord() + 2  SAY "Partner " get ::cPartner  PICTURE "@S30" WHEN ::whePartner() VALID ::vldPartner()
+   @  form_x_koord() + nRow + 1, form_y_koord() + 2  SAY "        " get ::cAdresa  PICTURE "@"
+   @  form_x_koord() + nRow + 2, form_y_koord() + 2  SAY "Mjesto  " get ::cMjesto  PICTURE "@"
 
    RETURN
 
@@ -369,11 +369,11 @@ METHOD getPartner( nRow )
 // {
 METHOD sayPartner( nRow )
 
-   @  m_x + nRow, m_y + 2  SAY "Partner "
+   @  form_x_koord() + nRow, form_y_koord() + 2  SAY "Partner "
    ??::cPartner
-   @  m_x + nRow + 1, m_y + 2  SAY "        "
+   @  form_x_koord() + nRow + 1, form_y_koord() + 2  SAY "        "
    ?? ::cAdresa
-   @  m_x + nRow + 2, m_y + 2  SAY "Mjesto  "
+   @  form_x_koord() + nRow + 2, form_y_koord() + 2  SAY "Mjesto  "
    ?? ::cMjesto
 
    RETURN
@@ -469,14 +469,14 @@ METHOD wheKKolicina()
 
 METHOD showArtikal()
 
-   @ m_x + 17, m_y + 1   SAY "Artikal: "
+   @ form_x_koord() + 17, form_y_koord() + 1   SAY "Artikal: "
    ?? ::cIdRoba
    ?? "(" + roba->jmj + ")"
 
-   @ m_x + 18, m_y + 1   SAY "Stanje :"
-   @ m_x + 18, Col() + 1 SAY ::nNaStanju PICTURE pickol
+   @ form_x_koord() + 18, form_y_koord() + 1   SAY "Stanje :"
+   @ form_x_koord() + 18, Col() + 1 SAY ::nNaStanju PICTURE pickol
 
-   @ m_x + 19, m_y + 1   SAY "Tarifa : "
+   @ form_x_koord() + 19, form_y_koord() + 1   SAY "Tarifa : "
    ?? roba->idtarifa
 
    RETURN

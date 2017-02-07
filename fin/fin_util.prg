@@ -206,7 +206,7 @@ STATIC FUNCTION _g_gr_date()
    LOCAL dDate := Date()
 
    Box(, 1, 45 )
-   @ m_x + 1, m_y + 2 SAY "Unesi granicni datum" GET dDate
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Unesi granicni datum" GET dDate
    READ
    BoxC()
 
@@ -444,8 +444,8 @@ FUNCTION BBMnoziSaK( cTip )
 
    IF cTip == ValDomaca() .AND. my_get_from_ini( "FIN", "BrutoBilansUDrugojValuti", "N", KUMPATH ) == "D"
       Box(, 5, 70 )
-      @ m_x + 2, m_y + 2 SAY "Pomocna valuta      " GET cBBV PICT "@!" VALID ImaUSifVal( cBBV )
-      @ m_x + 3, m_y + 2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK := OmjerVal2( cBBV, cTip ), .T. } PICT "999999999.999999999"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Pomocna valuta      " GET cBBV PICT "@!" VALID ImaUSifVal( cBBV )
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK := OmjerVal2( cBBV, cTip ), .T. } PICT "999999999.999999999"
       READ
       BoxC()
    ELSE

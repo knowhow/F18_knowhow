@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-MEMVAR m, m_x, m_y, GetList, __print_opt
+MEMVAR m, form_x_koord(), form_y_koord(), GetList, __print_opt
 MEMVAR picDem, picBHD
 MEMVAR gPicBHD, gPicDEM
 
@@ -41,14 +41,14 @@ FUNCTION fin_stampa_liste_naloga()
 
    cIdVN := "  "
    Box(, 9, 60 )
-   @ m_x + 1, m_Y + 2 SAY "Provjeriti integritet podataka"
-   @ m_x + 2, m_Y + 2 SAY "u odnosu na datoteku naloga D/N/Q ?"  GET cInteg  PICT "@!" VALID cInteg $ "DN"
-   @ m_x + 4, m_Y + 2 SAY "Sortiranje dokumenata po:  1-(firma,vn,brnal) "
-   @ m_x + 5, m_Y + 2 SAY "2-(firma,brnal,vn),    3-(datnal,firma,vn,brnal) " GET nSort PICT "9"
-   @ m_x + 7, m_Y + 2 SAY "Vrsta naloga (prazno-svi) " GET cIDVN PICT "@!"
+   @ form_x_koord() + 1, m_Y + 2 SAY "Provjeriti integritet podataka"
+   @ form_x_koord() + 2, m_Y + 2 SAY "u odnosu na datoteku naloga D/N/Q ?"  GET cInteg  PICT "@!" VALID cInteg $ "DN"
+   @ form_x_koord() + 4, m_Y + 2 SAY "Sortiranje dokumenata po:  1-(firma,vn,brnal) "
+   @ form_x_koord() + 5, m_Y + 2 SAY "2-(firma,brnal,vn),    3-(datnal,firma,vn,brnal) " GET nSort PICT "9"
+   @ form_x_koord() + 7, m_Y + 2 SAY "Vrsta naloga (prazno-svi) " GET cIDVN PICT "@!"
 
-   @ m_x + 9, m_y + 2 SAY "Datum od:" GET dDatOd
-   @ m_x + 9, Col() + 2 SAY "do:" GET dDatDo
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Datum od:" GET dDatOd
+   @ form_x_koord() + 9, Col() + 2 SAY "do:" GET dDatDo
 
    READ
    ESC_BCR

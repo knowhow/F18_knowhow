@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
+MEMVAR form_x_koord(), form_y_koord()
 
 STATIC __fiscal_marker := .F.
 STATIC __id_firma
@@ -89,27 +89,27 @@ FUNCTION fakt_unos_dokumenta()
    _opt_row += _upadr( "<ENT> Ispravka" , _opt_d ) + _sep
    _opt_row += _upadr( "<c+T> Briši stavku" , _opt_d ) + _sep
 
-   @ m_x + _x - 4, m_y + 2 SAY8 _opt_row
+   @ form_x_koord() + _x - 4, form_y_koord() + 2 SAY8 _opt_row
 
    _opt_row := _upadr( "<c+A> Ispravka dok.", _opt_d ) + _sep
    _opt_row += _upadr( "<c+P> Štampa (txt)" , _opt_d ) + _sep
    _opt_row += _upadr( "<A> Asistent", _opt_d ) + _sep
 
-   @ m_x + _x - 3, m_y + 2 SAY8 _opt_row
+   @ form_x_koord() + _x - 3, form_y_koord() + 2 SAY8 _opt_row
 
    _opt_row := _upadr( "<a+A> Ažuriranje" , _opt_d ) + _sep
    _opt_row += _upadr( "<c+F9> Briši sve" , _opt_d ) + _sep
    _opt_row += _upadr( "<F5> Kontrola zbira", _opt_d ) + _sep
    _opt_row += "<T> total dokumenta"
 
-   @ m_x + _x - 2, m_y + 2 SAY8 _opt_row
+   @ form_x_koord() + _x - 2, form_y_koord() + 2 SAY8 _opt_row
 
    _opt_row := _upadr( "", _opt_d ) + _sep
    _opt_row += _upadr( "", _opt_d ) + _sep
    _opt_row += _upadr( "<F10> Ostale opcije", _opt_d ) + _sep
    _opt_row += "<O> Konverzije"
 
-   @ m_x + _x - 1, m_y + 2 SAY8 _opt_row
+   @ form_x_koord() + _x - 1, form_y_koord() + 2 SAY8 _opt_row
 
    my_db_edit( "PNal", _x, _y, {|| fakt_pripr_keyhandler() }, "", "FAKT Priprema...", , , , , 4 )
 
@@ -480,8 +480,8 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
       _dug += Round( _cijena * _kolicina * PrerCij() * ;
          ( 1 - _rabat / 100 ) * ( 1 + _porez / 100 ), ZAOKRUZENJE )
 
-      @ m_x + 23, m_y + 2 SAY "ZBIR DOKUMENTA:"
-      @ m_x + 23, Col() + 1 SAY _dug PICT "9 999 999 999.99"
+      @ form_x_koord() + 23, form_y_koord() + 2 SAY "ZBIR DOKUMENTA:"
+      @ form_x_koord() + 23, Col() + 1 SAY _dug PICT "9 999 999 999.99"
 
       InkeySc( 10 )
 
@@ -650,8 +650,8 @@ STATIC FUNCTION fakt_unos_nove_stavke()
 
       _total += Round( _cijena * _kolicina * PrerCij() * ( 1 - _rabat / 100 ) * ( 1 + _porez / 100 ), ZAOKRUZENJE )
 
-      @ m_x + MAXROWS() - 11, m_y + 2 SAY "ZBIR DOKUMENTA:"
-      @ m_x + MAXROWS() - 11, Col() + 2 SAY _total PICT "9 999 999 999.99"
+      @ form_x_koord() + MAXROWS() - 11, form_y_koord() + 2 SAY "ZBIR DOKUMENTA:"
+      @ form_x_koord() + MAXROWS() - 11, Col() + 2 SAY _total PICT "9 999 999 999.99"
 
       InkeySc( 10 )
 
@@ -967,22 +967,22 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          _idfirma := _params[ "def_rj" ]
       ENDIF
 
-      @ m_x + _x, m_y + 2 SAY PadR( self_organizacija_naziv(), 20 )
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY PadR( self_organizacija_naziv(), 20 )
 
-      @ m_x + _x, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == self_organizacija_id() ;
+      @ form_x_koord() + _x, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == self_organizacija_id() ;
          .OR. P_RJ( @_idfirma ) .AND. V_Rj(), _idfirma := Left( _idfirma, 2 ), .T. }
 
       READ
 
-      __mx := m_x
-      __my := m_y
+      __mx := form_x_koord()
+      __my := form_y_koord()
 
       _old_tip_dok := field->idtipdok
 
       _n_menu := meni_fiksna_lokacija( 5, 30, _a_tipdok, _n_menu )
 
-      m_x := __mx
-      m_y := __my
+      form_x_koord() := __mx
+      form_y_koord() := __my
 
       ESC_RETURN 0
 
@@ -999,7 +999,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       _idtipdok := Left( _a_tipdok[ _n_menu ], 2 )
 
       ++ _x
-      @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @_a_tipdok, _idtipdok ), 40 )
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY PadR( fakt_naziv_dokumenta( @_a_tipdok, _idtipdok ), 40 )
 
       IF !fNovi .AND. __redni_broj == 1
          IF _idtipdok <> _old_tip_dok .AND. !Empty( field->brdok ) .AND. AllTrim( field->brdok ) <> "00000"
@@ -1014,11 +1014,11 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
          _x := 2
 
-         @  m_x + _x, m_y + 45 SAY "Datum:" GET _datdok
-         @  m_x + _x, Col() + 1 SAY "Broj:" GET _brdok VALID !Empty( _brdok )
+         @  form_x_koord() + _x, form_y_koord() + 45 SAY "Datum:" GET _datdok
+         @  form_x_koord() + _x, Col() + 1 SAY "Broj:" GET _brdok VALID !Empty( _brdok )
 
          _x += 2
-         @ _part_x := m_x + _x, _part_y := m_y + 2 SAY "Partner:" GET _idpartner ;
+         @ _part_x := form_x_koord() + _x, _part_y := form_y_koord() + 2 SAY "Partner:" GET _idpartner ;
             PICT "@!" ;
             VALID {|| p_partner( @_idpartner ), ;
             IzSifre(), !Empty( _idpartner) .AND. ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
@@ -1026,18 +1026,18 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          _x += 2
 
          IF _params[ "fakt_dok_veze" ]
-            @ m_x + _x, m_y + 2 SAY "Vezni dok.:" GET _dokument_veza ;
+            @ form_x_koord() + _x, form_y_koord() + 2 SAY "Vezni dok.:" GET _dokument_veza ;
                PICT "@S20"
          ENDIF
 
          ++ _x
          IF _params[ "destinacije" ]
-            @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija ;
+            @ form_x_koord() + _x, form_y_koord() + 2 SAY "Dest:" GET _destinacija ;
                PICT "@S20"
          ENDIF
 
          IF ( _params[ "fakt_objekti" ] .AND. _idtipdok $ "10#11#12#13" )
-            @ m_x + _x, Col() + 1 SAY "Objekat:" GET _objekti ;
+            @ form_x_koord() + _x, Col() + 1 SAY "Objekat:" GET _objekti ;
                VALID p_fakt_objekti( @_objekti ) ;
                PICT "@!"
          ENDIF
@@ -1046,29 +1046,29 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
          IF _idtipdok $ "10#11"
 
-            @ m_x + _x2, m_y + 51 SAY8 "Otpremnica broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
+            @ form_x_koord() + _x2, form_y_koord() + 51 SAY8 "Otpremnica broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
 
             ++ _x2
-            @ m_x + _x2, m_y + 51 SAY8 "          datum:" GET _datotp
+            @ form_x_koord() + _x2, form_y_koord() + 51 SAY8 "          datum:" GET _datotp
 
             ++ _x2
-            @ m_x + _x2, m_y + 51 SAY8 "Ugovor/narudžba:" GET _brnar PICT "@S20"
+            @ form_x_koord() + _x2, form_y_koord() + 51 SAY8 "Ugovor/narudžba:" GET _brnar PICT "@S20"
 
             IF fNovi .AND. gRokPl > 0
                _rok_placanja := gRokPl
             ENDIF
 
             ++ _x2
-            @ m_x + _x2, m_y + 51 SAY8 "Rok plać.(dana):" GET _rok_placanja PICT "999" ;
+            @ form_x_koord() + _x2, form_y_koord() + 51 SAY8 "Rok plać.(dana):" GET _rok_placanja PICT "999" ;
                WHEN valid_rok_placanja( @_rok_placanja, "0", fNovi ) VALID valid_rok_placanja( _rok_placanja, "1", fNovi )
 
             ++ _x2
-            @ m_x + _x2, m_y + 51 SAY8 "Datum plaćanja :" GET _datpl VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
+            @ form_x_koord() + _x2, form_y_koord() + 51 SAY8 "Datum plaćanja :" GET _datpl VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
 
             IF _params[ "fakt_vrste_placanja" ]
 
                ++ _x
-               @ m_x + _x, m_y + 2 SAY8 "Način plaćanja" GET _idvrstep PICT "@!" VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
+               @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Način plaćanja" GET _idvrstep PICT "@!" VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
 
             ENDIF
 
@@ -1076,31 +1076,31 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          ELSEIF ( _idtipdok == "06" )
 
             ++ _x2
-            @ m_x + _x2, m_y + 51 SAY "Po ul.fakt.broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
+            @ form_x_koord() + _x2, form_y_koord() + 51 SAY "Po ul.fakt.broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
 
             ++ _x2
 
-            @ m_x + _x2, m_y + 51 SAY "       i UCD-u :" GET _brnar PICT "@S20"
+            @ form_x_koord() + _x2, form_y_koord() + 51 SAY "       i UCD-u :" GET _brnar PICT "@S20"
 
          ELSE
 
             _datotp := _datdok
             ++ _x2
-            @ m_x + _x2, m_y + 51 SAY " datum isporuke:" GET _datotp
+            @ form_x_koord() + _x2, form_y_koord() + 51 SAY " datum isporuke:" GET _datotp
 
          ENDIF
 
          IF ( fakt_pripr->( FieldPos( "idrelac" ) ) <> 0 .AND. _idtipdok $ "#11#" )
             ++ _x2
-            @ m_x + _x2, m_y + 51  SAY "       Relacija:" GET _idrelac PICT "@S10"
+            @ form_x_koord() + _x2, form_y_koord() + 51  SAY "       Relacija:" GET _idrelac PICT "@S10"
          ENDIF
 
          _x += 3
 
          IF _idTipDok $ "10#11#12#19#20#25#26#27"
-            @ m_x + _x, m_y + 2 SAY "Valuta ?" GET _dindem PICT "@!"
+            @ form_x_koord() + _x, form_y_koord() + 2 SAY "Valuta ?" GET _dindem PICT "@!"
          ELSE
-            @ m_x + _x, m_y + 2 SAY " "
+            @ form_x_koord() + _x, form_y_koord() + 2 SAY " "
          ENDIF
 
          IF _idtipdok $ "10"
@@ -1111,7 +1111,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
                _avansni_racun := "D"
             ENDIF
 
-            @ m_x + _x, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET _avansni_racun PICT "@!" ;
+            @ form_x_koord() + _x, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET _avansni_racun PICT "@!" ;
                VALID _avansni_racun $ "DN"
 
          ENDIF
@@ -1130,17 +1130,17 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    ELSE
 
-      @ m_x + _x, m_y + 2 SAY PadR( self_organizacija_naziv(), 20 )
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY PadR( self_organizacija_naziv(), 20 )
 
       ?? "  RJ:", _idfirma
 
       _x += 2
-      @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @_a_tipdok, _idtipdok ), 35 )
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY PadR( fakt_naziv_dokumenta( @_a_tipdok, _idtipdok ), 35 )
 
-      @ m_x + _x, m_y + 45 SAY "Datum: "
+      @ form_x_koord() + _x, form_y_koord() + 45 SAY "Datum: "
       ?? _datdok
 
-      @ m_x + _x, Col() + 1 SAY "Broj: "
+      @ form_x_koord() + _x, Col() + 1 SAY "Broj: "
       ?? _brdok
 
       _txt2 := ""
@@ -1150,10 +1150,10 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    _x := 13
 
-   @ m_x + _x, m_y + 2 SAY "R.br: " GET __redni_broj PICT "9999"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "R.br: " GET __redni_broj PICT "9999"
 
    _x += 2
-   @ m_x + _x, m_y + 2  SAY "Artikal: " GET _IdRoba PICT "@!S10" ;
+   @ form_x_koord() + _x, form_y_koord() + 2  SAY "Artikal: " GET _IdRoba PICT "@!S10" ;
       WHEN {|| _idroba := PadR( _idroba, Val( gDuzSifIni ) ), W_Roba() } ;
       VALID {|| _idroba := iif( Len( Trim( _idroba ) ) < Val( gDuzSifIni ), ;
       Left( _idroba, Val( gDuzSifIni ) ), _idroba ), ;
@@ -1167,34 +1167,34 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    ++ _x
    IF ( gSamokol != "D" .AND. !glDistrib )
-      @ m_x + _x, m_y + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
    ENDIF
 
    _tip_cijene := "1"
 
    IF ( gVarC $ "123" .AND. _idtipdok $ "10#12#20#21#25" )
-      @ m_x + _x, m_y + 59 SAY "Cijena (1/2/3):" GET _tip_cijene
+      @ form_x_koord() + _x, form_y_koord() + 59 SAY "Cijena (1/2/3):" GET _tip_cijene
    ENDIF
 
    IF _params[ "fakt_opis_stavke" ]
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "Opis:" GET _opis PICT "@S50"
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY "Opis:" GET _opis PICT "@S50"
    ENDIF
 
 
    IF _params[ "ref_lot" ]
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "REF:" GET _ref_broj PICT "@S10"
-      @ m_x + _x, m_y + 2 SAY "/ LOT:" GET _lot_broj PICT "@S10"
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY "REF:" GET _ref_broj PICT "@S10"
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY "/ LOT:" GET _lot_broj PICT "@S10"
    ENDIF
 
    _x += 3
-   @ m_x + _x, m_y + 2 SAY8 "Količina: "  GET _kolicina PICT pickol VALID V_Kolicina( _tip_cijene )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Količina: "  GET _kolicina PICT pickol VALID V_Kolicina( _tip_cijene )
 
 
    IF gSamokol != "D"
 
-      @ m_x + _x, Col() + 2 SAY IF( _idtipdok $ "13#23" .AND. ( gVar13 == "2" .OR. glCij13Mpc ), ;
+      @ form_x_koord() + _x, Col() + 2 SAY IF( _idtipdok $ "13#23" .AND. ( gVar13 == "2" .OR. glCij13Mpc ), ;
          "MPC.s.PDV", "Cijena (" + AllTrim( ValDomaca() ) + ")" ) GET _cijena ;
          PICT piccdem ;
          WHEN  _podbr <> " ." ;
@@ -1202,17 +1202,17 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
 
       IF ( PadR( _dindem, 3 ) <> PadR( ValDomaca(), 3 ) )
-         @ m_x + _x, Col() + 2 SAY "Pr"  GET _convert ;
+         @ form_x_koord() + _x, Col() + 2 SAY "Pr"  GET _convert ;
             PICT "@!" ;
             VALID v_pretvori( @_convert, _dindem, _datdok, @_cijena )
       ENDIF
 
       IF !( _idtipdok $ "12#13" ) .OR. ( _idtipdok == "12" .AND. gV12Por == "D" )
 
-         @ m_x + _x, Col() + 2 SAY "Rabat:" GET _rabat PICT piccdem ;
+         @ form_x_koord() + _x, Col() + 2 SAY "Rabat:" GET _rabat PICT piccdem ;
             WHEN _podbr <> " ." .AND. ! _idtipdok $ "15"
 
-         @ m_x + _x, Col() + 1 GET _tip_rabat PICT "@!" ;
+         @ form_x_koord() + _x, Col() + 1 GET _tip_rabat PICT "@!" ;
             WHEN {|| _tip_rabat := "%", ! _idtipdok $ "11#27#15" .AND. _podbr <> " ." } ;
             VALID _tip_rabat $ "% AUCI" .AND. V_Rabat( _tip_rabat )
 
@@ -1280,11 +1280,11 @@ STATIC FUNCTION show_last_racun( cIdPartner, cDestinacija, cIdRoba )
 
    Box( , 6, 100 )
    DO WHILE !Eof()
-      @ m_x + 1, m_y + 2 SAY "Partner: " + cIdPartner
-      @ m_x + 2, m_y + 2 SAY "Destinacija: " + cDestinacija
-      @ m_x + 3, m_y + 2 SAY "Rbr: " + field->rbr
-      @ m_x + 4, m_y + 2 SAY "Roba: " + field->idroba + " kol: " + AllTrim( Str( field->kolicina, 6, 2 ) )
-      @ m_x + 5, m_y + 2 SAY "Raniji racun: " + fakt_za_destinaciju( cIDPartner, cDestinacija, field->idroba )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Partner: " + cIdPartner
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Destinacija: " + cDestinacija
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Rbr: " + field->rbr
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Roba: " + field->idroba + " kol: " + AllTrim( Str( field->kolicina, 6, 2 ) )
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Raniji racun: " + fakt_za_destinaciju( cIDPartner, cDestinacija, field->idroba )
 
       Inkey( 0 )
       SKIP
@@ -1349,10 +1349,10 @@ STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
          _color := "W/R+"
       ENDIF
 
-      @ m_x + 17, m_y + 28 SAY PadR( "", 60 )
-      @ m_x + 17, m_y + 28 SAY "Na stanju konta " + ;
+      @ form_x_koord() + 17, form_y_koord() + 28 SAY PadR( "", 60 )
+      @ form_x_koord() + 17, form_y_koord() + 28 SAY "Na stanju konta " + ;
          AllTrim( _id_konto ) + " : "
-      @ m_x + 17, Col() + 1 SAY AllTrim( Str( _stanje, 12, 3 ) ) + " " + PadR( roba->jmj, 3 ) COLOR _color
+      @ form_x_koord() + 17, Col() + 1 SAY AllTrim( Str( _stanje, 12, 3 ) ) + " " + PadR( roba->jmj, 3 ) COLOR _color
    ENDIF
 
    RETURN .T.
@@ -1590,7 +1590,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
    h[ 1 ] := h[ 2 ] := ""
 
    my_close_all_dbf()
-   PRIVATE am_x := m_x, am_y := m_y
+   PRIVATE am_x := form_x_koord(), am_y := form_y_koord()
    PRIVATE Izbor := 1
 
    DO WHILE .T.
@@ -1639,8 +1639,8 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
          cDN := "D"
          Box(, 4, 60 )
-         @ m_x + 1, m_y + 2 SAY "Artikal koji se stvara:" GET _idroba  PICT "@!" VALID P_Roba( @_idroba )
-         @ m_x + 2, m_y + 2 SAY "Kolicina" GET _kolicina valid {|| _kolicina <> 0 } PICT pickol
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Artikal koji se stvara:" GET _idroba  PICT "@!" VALID P_Roba( @_idroba )
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Kolicina" GET _kolicina valid {|| _kolicina <> 0 } PICT pickol
          READ
          IF LastKey() == K_ESC
             BoxC()
@@ -1653,9 +1653,9 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          ELSE
             _kolicina := -_kolicina
          ENDIF
-         @ m_x + 3, m_y + 2 SAY "Cijena" GET _cijena  PICT piccdem
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Cijena" GET _cijena  PICT piccdem
          cDN := "D"
-         @ m_x + 4, m_y + 2 SAY8 "Staviti cijenu u šifarnik ?" GET cDN VALID cDN $ "DN" PICT "@!"
+         @ form_x_koord() + 4, form_y_koord() + 2 SAY8 "Staviti cijenu u šifarnik ?" GET cDN VALID cDN $ "DN" PICT "@!"
          READ
          IF cDN == "D"
             SELECT roba
@@ -1684,8 +1684,8 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
    ENDDO
 
-   m_x := am_x
-   m_y := am_y
+   form_x_koord() := am_x
+   form_y_koord() := am_y
 
    close_open_fakt_tabele()
    select_fakt_pripr()
@@ -1821,31 +1821,31 @@ STATIC FUNCTION _total_dokumenta()
    // prikazi box
    Box(, _x, _y )
 
-   @ m_x + __x, m_y + 2 SAY PadR( "TOTAL DOKUMENTA:", _y - 2 ) COLOR f18_color_i()
+   @ form_x_koord() + __x, form_y_koord() + 2 SAY PadR( "TOTAL DOKUMENTA:", _y - 2 ) COLOR f18_color_i()
 
    ++ __x
    ++ __x
 
-   @ m_x + __x, m_y + 2 SAY PadL( "Osnovica: ", _left ) + Str( _doc_total[ "osn" ], 12, 2 )
+   @ form_x_koord() + __x, form_y_koord() + 2 SAY PadL( "Osnovica: ", _left ) + Str( _doc_total[ "osn" ], 12, 2 )
 
    ++ __x
-   @ m_x + __x, m_y + 2 SAY PadL( "Popust: ", _left ) + Str( _doc_total[ "pop" ], 12, 2 )
+   @ form_x_koord() + __x, form_y_koord() + 2 SAY PadL( "Popust: ", _left ) + Str( _doc_total[ "pop" ], 12, 2 )
 
    ++ __x
-   @ m_x + __x, m_y + 2 SAY PadL( "Osnovica - popust: ", _left ) + Str( _doc_total[ "osn_pop" ], 12, 2 )
+   @ form_x_koord() + __x, form_y_koord() + 2 SAY PadL( "Osnovica - popust: ", _left ) + Str( _doc_total[ "osn_pop" ], 12, 2 )
 
    ++ __x
-   @ m_x + __x, m_y + 2 SAY PadL( "PDV: ", _left ) + Str( _doc_total[ "pdv" ], 12, 2 )
+   @ form_x_koord() + __x, form_y_koord() + 2 SAY PadL( "PDV: ", _left ) + Str( _doc_total[ "pdv" ], 12, 2 )
 
    ++ __x
-   @ m_x + __x, m_y + 2 SAY Replicate( "=", _left )
+   @ form_x_koord() + __x, form_y_koord() + 2 SAY Replicate( "=", _left )
 
    ++ __x
-   @ m_x + __x, m_y + 2 SAY PadL( "Ukupno sa PDV (" + AllTrim( _din_dem ) + "): ", _left ) + Str( _doc_total[ "total" ], 12, 2 )
+   @ form_x_koord() + __x, form_y_koord() + 2 SAY PadL( "Ukupno sa PDV (" + AllTrim( _din_dem ) + "): ", _left ) + Str( _doc_total[ "total" ], 12, 2 )
 
    IF Left( _din_dem, 3 ) <> Left( ValBazna(), 3 )
       ++ __x
-      @ m_x + __x, m_y + 2 SAY PadL( "Ukupno sa PDV (" + AllTrim( ValBazna() ) + "): ", _left ) + Str( _doc_total[ "total2" ], 12, 2 )
+      @ form_x_koord() + __x, form_y_koord() + 2 SAY PadL( "Ukupno sa PDV (" + AllTrim( ValBazna() ) + "): ", _left ) + Str( _doc_total[ "total2" ], 12, 2 )
    ENDIF
 
    WHILE Inkey( 0.1 ) != K_ESC
@@ -1918,29 +1918,29 @@ STATIC FUNCTION fakt_kzb( id_firma, tip_dok, br_dok )
       WHILE Inkey( 0.1 ) != K_ESC
       END
 
-      @ m_x + 1, m_y + 2 CLEAR TO m_x + 12, MAXCOLS() - 5
+      @ form_x_koord() + 1, form_y_koord() + 2 CLEAR TO form_x_koord() + 12, MAXCOLS() - 5
 
       _tmp := 1
 
-      @ m_x, m_y + 2 SAY ""
+      @ form_x_koord(), form_y_koord() + 2 SAY ""
 
    ENDIF
 
-   @ m_x + _tmp, m_y + 2 SAY Replicate( "-", MAXCOLS() - 10 )
+   @ form_x_koord() + _tmp, form_y_koord() + 2 SAY Replicate( "-", MAXCOLS() - 10 )
 
-   @ m_x + _tmp + 1, m_y + 2 SAY PadR( "Ukupno   ", 30 )
+   @ form_x_koord() + _tmp + 1, form_y_koord() + 2 SAY PadR( "Ukupno   ", 30 )
 
-   @ m_x + _tmp + 1, Col() + 1 SAY _dug PICT "9999999.99"
+   @ form_x_koord() + _tmp + 1, Col() + 1 SAY _dug PICT "9999999.99"
 
-   @ m_x + _tmp + 1, Col() + 1 SAY _rab PICT "9999999.99"
+   @ form_x_koord() + _tmp + 1, Col() + 1 SAY _rab PICT "9999999.99"
 
-   @ m_x + _tmp + 1, Col() + 1 SAY _dug - _rab PICT "9999999.99"
+   @ form_x_koord() + _tmp + 1, Col() + 1 SAY _dug - _rab PICT "9999999.99"
 
-   @ m_x + _tmp + 1, Col() + 1 SAY _por PICT "9999999.99"
+   @ form_x_koord() + _tmp + 1, Col() + 1 SAY _por PICT "9999999.99"
 
-   @ m_x + _tmp + 1, Col() + 1 SAY ( _dug - _rab ) + _por PICT "9999999.99"
+   @ form_x_koord() + _tmp + 1, Col() + 1 SAY ( _dug - _rab ) + _por PICT "9999999.99"
 
-   @ m_x + _tmp + 1, Col() + 1 SAY "(" + _din_dem + ")"
+   @ form_x_koord() + _tmp + 1, Col() + 1 SAY "(" + _din_dem + ")"
 
    WHILE Inkey( 0.1 ) != K_ESC
    END

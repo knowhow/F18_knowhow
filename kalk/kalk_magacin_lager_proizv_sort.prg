@@ -330,8 +330,8 @@ METHOD getVars
 
    Box( nil, 20, 70 )
 
-   @ m_x + 1, m_y + 2 SAY "Datum " GET ::dDatOd
-   @ m_x + 1, Col() + 2 SAY "-" GET ::dDatDo
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Datum " GET ::dDatOd
+   @ form_x_koord() + 1, Col() + 2 SAY "-" GET ::dDatDo
 
    o_konto()
 
@@ -340,24 +340,24 @@ METHOD getVars
    ::cPrikKolNula := "D"
 
    cKto := ::cIdKonto
-   @ m_x + 3, m_y + 2 SAY "Magacinski konto  " GET cKto VALID P_Konto( @cKto )
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Magacinski konto  " GET cKto VALID P_Konto( @cKto )
 
-   @ m_x + 5, m_y + 2 SAY "Uslovi:"
-   @ m_x + 6, m_y + 2 SAY "- za robu     :" GET ::cUslRoba    PICT "@!S40"
-   @ m_x + 7, m_y + 2 SAY "- za partnera :" GET ::cUslPartner PICT "@!S40"
-   @ m_x + 8, m_y + 2 SAY "- za tarife   :" GET ::cUslTarifa  PICT "@!S40"
-   @ m_x + 9, m_y + 2 SAY "- vrste dok.  :" GET ::cUslIdVd    PICT "@!S40"
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Uslovi:"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "- za robu     :" GET ::cUslRoba    PICT "@!S40"
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY "- za partnera :" GET ::cUslPartner PICT "@!S40"
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY "- za tarife   :" GET ::cUslTarifa  PICT "@!S40"
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "- vrste dok.  :" GET ::cUslIdVd    PICT "@!S40"
 
-   @ m_x + 11, m_y + 2 SAY "Sortirati:"
-   @ m_x + 12, m_y + 2 SAY "- po partneru (P)"
-   @ m_x + 13, m_y + 2 SAY "- po tarifi   (T)"
-   @ m_x + 14, m_y + 2 SAY "- po id roba  (R)"
-   @ m_x + 15, m_y + 2 SAY "- po jed.mj.  (J)"
-   @ m_x + 16, m_y + 2 SAY "- po naz roba (N)" GET ::cSort VALID ::cSort $ "KPTMRNJ" PICT "@!"
+   @ form_x_koord() + 11, form_y_koord() + 2 SAY "Sortirati:"
+   @ form_x_koord() + 12, form_y_koord() + 2 SAY "- po partneru (P)"
+   @ form_x_koord() + 13, form_y_koord() + 2 SAY "- po tarifi   (T)"
+   @ form_x_koord() + 14, form_y_koord() + 2 SAY "- po id roba  (R)"
+   @ form_x_koord() + 15, form_y_koord() + 2 SAY "- po jed.mj.  (J)"
+   @ form_x_koord() + 16, form_y_koord() + 2 SAY "- po naz roba (N)" GET ::cSort VALID ::cSort $ "KPTMRNJ" PICT "@!"
 
-   @ m_x + 18, m_y + 2 SAY "(N)abavna / (P)rodajna vrijednost " GET ::cNabIliProd PICT "@!" VALID ::cNabIliProd $ "NP"
-   @ m_x + 19, m_y + 2 SAY "Prikazati sve (i kolicina 0) " GET ::cPrikKolNula PICT "@!" VALID ::cPrikKolNula $ "DN"
-   @ m_x + 20, m_y + 2 SAY "Export izvjestaja (D/N)?" GET ::cExportDBF PICT "@!" VALID ::cExportDBF $ "DN"
+   @ form_x_koord() + 18, form_y_koord() + 2 SAY "(N)abavna / (P)rodajna vrijednost " GET ::cNabIliProd PICT "@!" VALID ::cNabIliProd $ "NP"
+   @ form_x_koord() + 19, form_y_koord() + 2 SAY "Prikazati sve (i kolicina 0) " GET ::cPrikKolNula PICT "@!" VALID ::cPrikKolNula $ "DN"
+   @ form_x_koord() + 20, form_y_koord() + 2 SAY "Export izvjestaja (D/N)?" GET ::cExportDBF PICT "@!" VALID ::cExportDBF $ "DN"
 
    READ
 

@@ -42,18 +42,18 @@ FUNCTION fin_pocetno_stanje_sql()
 
    Box(, 9, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Za datumski period od:" GET dDatumOdStaraGodina
-   @ m_x + 1, Col() + 1 SAY "do:" GET dDatumDoStaraGodina
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Za datumski period od:" GET dDatumOdStaraGodina
+   @ form_x_koord() + 1, Col() + 1 SAY "do:" GET dDatumDoStaraGodina
 
-   @ m_x + 3, m_y + 2 SAY8 "Datum dokumenta početnog stanja:" GET dDatumPocetnoStanje
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "Datum dokumenta početnog stanja:" GET dDatumPocetnoStanje
 
-   @ m_x + 5, m_y + 2 SAY8 "Klasa duguje (kupci)         :" GET cFinKlasaDuguje
-   @ m_x + 6, m_y + 2 SAY8 "Klasa potražuje (dobavljači) :" GET cFinKlasaPotrazuje
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY8 "Klasa duguje (kupci)         :" GET cFinKlasaDuguje
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY8 "Klasa potražuje (dobavljači) :" GET cFinKlasaPotrazuje
 
-   @ m_x + 7, m_y + 2 SAY8 "Uslov za konta :" GET cKontaUslov PICT "@S30"
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "Uslov za konta :" GET cKontaUslov PICT "@S30"
 
-   @ m_x + 8, m_y + 2 SAY8 "Grupišem konta na broj mjesta ?" GET nSintetikaDuzina PICT "9"
-   // @ m_x + 9, m_y + 2 SAY8 "Kopiraj nepostojeće sifre (konto/partn) (D/N)?" GET cFinPrenosPocetnoStanjeDN VALID cFinPrenosPocetnoStanjeDN $ "DN" PICT "@!"
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "Grupišem konta na broj mjesta ?" GET nSintetikaDuzina PICT "9"
+   // @ form_x_koord() + 9, form_y_koord() + 2 SAY8 "Kopiraj nepostojeće sifre (konto/partn) (D/N)?" GET cFinPrenosPocetnoStanjeDN VALID cFinPrenosPocetnoStanjeDN $ "DN" PICT "@!"
 
    READ
 
@@ -163,7 +163,7 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
 
    DO WHILE !oDataset:Eof()
 
-      @ m_x + 1, m_y + 2 SAY Str( nCnt++, 7 )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY Str( nCnt++, 7 )
       oRow := oDataSet:GetRow()
       cIdKonto := PadR( oRow:FieldGet( oRow:FieldPos( "idkonto" ) ), 7 )
       cIdPartner := PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idpartner" ) ) ), 6 )

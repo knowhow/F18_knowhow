@@ -137,10 +137,10 @@ FUNCTION VMpcSaPP( fRealizacija, fMarza )
 
 FUNCTION SayPorezi( nRow )
 
-   @ m_x + nRow, m_y + 2  SAY "PDV (%):"
+   @ form_x_koord() + nRow, form_y_koord() + 2  SAY "PDV (%):"
    @ Row(), Col() + 2 SAY aPorezi[ POR_PPP ] PICTURE "99.99"
    IF glUgost
-      @ m_x + nRow, Col() + 8  SAY "PP (%):"
+      @ form_x_koord() + nRow, Col() + 8  SAY "PP (%):"
       @ Row(), Col() + 2  SAY aPorezi[ POR_PP ] PICTURE "99.99"
    ENDIF
 
@@ -419,7 +419,7 @@ FUNCTION V_MpcSaPP_( cIdVd, lNaprijed, aPorezi, lShowGets )
 FUNCTION SayPorezi_lv( nRow, aPorezi )
 
 
-      @ m_x + nRow, m_y + 2  SAY "PDV (%):"
+      @ form_x_koord() + nRow, form_y_koord() + 2  SAY "PDV (%):"
       @ Row(), Col() + 2 SAY  aPorezi[ POR_PPP ] PICTURE "99.99"
 
 

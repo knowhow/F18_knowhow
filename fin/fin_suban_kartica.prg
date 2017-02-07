@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m, GetList, m_x, m_y
+MEMVAR m, GetList, form_x_koord(), form_y_koord()
 MEMVAR gDUFRJ, gTroskovi
 MEMVAR cIdFirma, cIdKonto, fk1, fk2, fk3, fk4, cK1, cK2, cK3, cK4
 MEMVAR qqKonto, qqPartner
@@ -134,7 +134,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    Box( "#" + cBoxName, 25, 65 )
 
    SET CURSOR ON
-   @ m_x + nX, m_y + 2 SAY "LibreOffice kartica (D/N) ?" GET cLibreOffice PICT "@!"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "LibreOffice kartica (D/N) ?" GET cLibreOffice PICT "@!"
    READ
 
    IF cLibreOffice == "D"
@@ -145,66 +145,66 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    kartica_otvori_tabele()
 
    ++nX
-   @ m_x + ( ++nX ), m_y + 2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
-   @ m_x + ( ++nX ), m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredhodniPromet
-   @ m_x + ( ++nX ), m_y + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
-   // @ m_x + nX, Col() + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
+   @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
+   @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredhodniPromet
+   @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
+   // @ form_x_koord() + nX, Col() + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
    READ
 
    DO WHILE .T.
 
       IF gDUFRJ == "D"
          cIdFirma := PadR( self_organizacija_id() + ";", 30 )
-         @ m_x + ( ++nX ), m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
+         @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
       ELSE
 
-         @ m_x + ( ++nX ), m_y + 2 SAY "Firma "
+         @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ENDIF
 
       IF cBrza == "D"
          qqKonto := PadR( qqKonto, 7 )
          qqPartner := PadR( qqPartner, 6 )
-         @ m_x + ( ++nX ), m_y + 2 SAY "Konto  " GET qqKonto  VALID P_KontoFin( @qqKonto )
-         @ m_x + ( ++nX ), m_y + 2 SAY "Partner" GET qqPartner VALID Empty( qqPartner ) .OR. RTrim( qqPartner ) == ";" .OR. p_partner( @qqPartner ) PICT "@!"
+         @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Konto  " GET qqKonto  VALID P_KontoFin( @qqKonto )
+         @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Partner" GET qqPartner VALID Empty( qqPartner ) .OR. RTrim( qqPartner ) == ";" .OR. p_partner( @qqPartner ) PICT "@!"
       ELSE
          qqKonto := PadR( qqkonto, 100 )
          qqPartner := PadR( qqPartner, 100 )
-         @ m_x + ( ++nX ), m_y + 2 SAY "Konto  " GET qqKonto  PICTURE "@!S50"
-         @ m_x + ( ++nX ), m_y + 2 SAY "Partner" GET qqPartner PICTURE "@!S50"
+         @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Konto  " GET qqKonto  PICTURE "@!S50"
+         @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Partner" GET qqPartner PICTURE "@!S50"
       ENDIF
 
-      @ m_x + ( ++nX ), m_y + 2 SAY "Datum dokumenta od:" GET dDatod
-      @ m_x + nX, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
-      @ m_x + ( ++nX ), m_y + 2 SAY "Uslov za vrstu naloga (prazno-sve)" GET cIdVN PICT "@!S20"
+      @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Datum dokumenta od:" GET dDatod
+      @ form_x_koord() + nX, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
+      @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-sve)" GET cIdVN PICT "@!S20"
 
       IF fin_dvovalutno()
-         @ m_x + ( ++nX ), m_y + 2 SAY "Kartica za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3)"  GET cDinDem VALID cDinDem $ "123"
+         @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Kartica za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3)"  GET cDinDem VALID cDinDem $ "123"
       ELSE
          cDinDem := "1"
       ENDIF
 
-      @ m_x + ( ++nX ), m_y + 2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)" + iif( _fin_params[ "fin_tip_dokumenta" ], "; nista (4)", "" )  GET cK14 VALID cK14 $ "123" + iif( _fin_params[ "fin_tip_dokumenta" ], "4", "" )
+      @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)" + iif( _fin_params[ "fin_tip_dokumenta" ], "; nista (4)", "" )  GET cK14 VALID cK14 $ "123" + iif( _fin_params[ "fin_tip_dokumenta" ], "4", "" )
 
       cRasclaniti := "N"
 
       IF gFinRJ == "D"
-         @ m_x + ( ++nX ), m_y + 2 SAY8 "Raščlaniti po RJ/FUNK/FOND; "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
+         @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY8 "Raščlaniti po RJ/FUNK/FOND; "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
       ENDIF
 
       UpitK1K4( 14 )
 
-      @ Row() + 1, m_y + 2 SAY8 "Uslov za broj veze: " GET qqBrDok PICT "@!S30"
-      @ Row() + 1, m_y + 2 SAY8 "(prazno-svi; 61_SP_2-spoji uplate za naloge tipa 61;"
-      @ Row() + 1, m_y + 2 SAY8 " **_SP_2 - kupci spojiti uplate za sve vrste naloga; "
-      @ Row() + 1, m_y + 2 SAY8 " **_SP_1 - dobavljači spojiti plaćanja za sve vrste naloga)"
+      @ Row() + 1, form_y_koord() + 2 SAY8 "Uslov za broj veze: " GET qqBrDok PICT "@!S30"
+      @ Row() + 1, form_y_koord() + 2 SAY8 "(prazno-svi; 61_SP_2-spoji uplate za naloge tipa 61;"
+      @ Row() + 1, form_y_koord() + 2 SAY8 " **_SP_2 - kupci spojiti uplate za sve vrste naloga; "
+      @ Row() + 1, form_y_koord() + 2 SAY8 " **_SP_1 - dobavljači spojiti plaćanja za sve vrste naloga)"
       IF cBrza <> "D"
-         @ Row() + 1, m_y + 2 SAY8 "Uslov za naziv konta (prazno-svi) " GET qqNazKonta PICT "@!S20"
+         @ Row() + 1, form_y_koord() + 2 SAY8 "Uslov za naziv konta (prazno-svi) " GET qqNazKonta PICT "@!S20"
       ENDIF
 
-      @ Row() + 1, m_y + 2 SAY8 "Općina (prazno-sve):" GET cOpcine
-      @ Row() + 1, m_y + 2 SAY "Svaka kartica treba da ima zaglavlje kolona ? (D/N)"  GET c1k1z PICT "@!" VALID c1k1z $ "DN"
-      @ Row() + 1, m_y + 2 SAY "Export kartice u dbf ? (D/N)"  GET cExpDbf PICT "@!" VALID cExpDbf $ "DN"
+      @ Row() + 1, form_y_koord() + 2 SAY8 "Općina (prazno-sve):" GET cOpcine
+      @ Row() + 1, form_y_koord() + 2 SAY "Svaka kartica treba da ima zaglavlje kolona ? (D/N)"  GET c1k1z PICT "@!" VALID c1k1z $ "DN"
+      @ Row() + 1, form_y_koord() + 2 SAY "Export kartice u dbf ? (D/N)"  GET cExpDbf PICT "@!" VALID cExpDbf $ "DN"
 
       READ
       ESC_BCR

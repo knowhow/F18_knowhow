@@ -162,7 +162,7 @@ FUNCTION sredi_rbr_fin_nalog( lSilent )
       _rec[ "rbr" ] := i
       dbf_update_rec( _rec )
 
-      @ m_x + 1, m_y + 2 SAY "redni broj: " + STR( field->rbr, 5)
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "redni broj: " + STR( field->rbr, 5)
 
       ++ i
 

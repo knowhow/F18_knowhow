@@ -27,15 +27,15 @@ FUNCTION virm_parametri()
 
    Box(, 10, 70 )
 
-   @ m_x + 1, m_y + 2 SAY "Firma (nalogodavac) id:" GET _firma
-   @ m_x + 2, m_y + 2 SAY "   Naziv:" GET _firma_naziv PICT "@S45"
-   @ m_x + 3, m_y + 2 SAY "Inicijalni datum uplate:" GET _datum
-   @ m_x + 4, m_y + 2 SAY "Mjesto uplate:" GET _mjesto PICT "@S45"
-   @ m_x + 5, m_y + 2 SAY "Broj poreznog obveznika:" GET _org_jed PICT "@S17"
-   @ m_x + 6, m_y + 2 SAY "Format iznosa:" GET _pict
-   @ m_x + 7, m_y + 2 SAY "Ako je iznos = 0, treba ga stampati (D/N)?" GET _nule
-   @ m_x + 8, m_y + 2 SAY "Datum uplate = sistemski datum (D/N)?" GET _sys_datum
-   @ m_x + 9, m_y + 2 SAY "Konverzija za stampu delphirb (1 - 5)" GET _konverzija
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma (nalogodavac) id:" GET _firma
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "   Naziv:" GET _firma_naziv PICT "@S45"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Inicijalni datum uplate:" GET _datum
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Mjesto uplate:" GET _mjesto PICT "@S45"
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Broj poreznog obveznika:" GET _org_jed PICT "@S17"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Format iznosa:" GET _pict
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY "Ako je iznos = 0, treba ga stampati (D/N)?" GET _nule
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY "Datum uplate = sistemski datum (D/N)?" GET _sys_datum
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Konverzija za stampu delphirb (1 - 5)" GET _konverzija
 
    READ
 

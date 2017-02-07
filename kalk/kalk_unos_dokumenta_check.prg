@@ -56,8 +56,8 @@ FUNCTION Gen9999()
 
    nG0 := nG1 := Year( Date() )
    Box( "#Generacija zbirne baze dokumenata", 5, 75 )
-   @ m_x + 2, m_y + 2 SAY "Od sezone:" GET nG0 VALID nG0 > 0 .AND. nG1 >= nG0 PICT "9999"
-   @ m_x + 3, m_y + 2 SAY "do sezone:" GET nG1 VALID nG1 > 0 .AND. nG1 >= nG0 PICT "9999"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Od sezone:" GET nG0 VALID nG0 > 0 .AND. nG1 >= nG0 PICT "9999"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "do sezone:" GET nG1 VALID nG1 > 0 .AND. nG1 >= nG0 PICT "9999"
    READ; ESC_BCR
    BoxC()
 
@@ -132,13 +132,13 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj, lSilent )
 
 FUNCTION VVT()
 
-   @ m_x + 13, m_y + 2 SAY "PPP:"
-   @ m_x + 13, Col() + 2 SAY tarifa->opp PICT "99.99%"
+   @ form_x_koord() + 13, form_y_koord() + 2 SAY "PPP:"
+   @ form_x_koord() + 13, Col() + 2 SAY tarifa->opp PICT "99.99%"
    IF roba->tip = "X"
-      @ m_x + 13, Col() + 2 SAY roba->mpc / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 PICT picdem
+      @ form_x_koord() + 13, Col() + 2 SAY roba->mpc / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 PICT picdem
       _marza := roba->mpc / ( 1 + tarifa->opp / 100 ) -_nc
    ELSE
-      @ m_x + 13, Col() + 2 SAY _vpc / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 PICT picdem
+      @ form_x_koord() + 13, Col() + 2 SAY _vpc / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 PICT picdem
       _marza := _vpc / ( 1 + tarifa->opp / 100 ) -_nc
    ENDIF
    _tmarza := "A"
@@ -396,8 +396,8 @@ FUNCTION kalk_pripr_brisi_od_do()
    _od := PadR( field->rbr, 4 )
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY8 "Briši stavke od" GET _od PICT "@S4"
-   @ m_x + 1, Col() + 1 SAY "do" GET _do PICT "@S4"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Briši stavke od" GET _od PICT "@S4"
+   @ form_x_koord() + 1, Col() + 1 SAY "do" GET _do PICT "@S4"
    READ
    BoxC()
 
@@ -540,11 +540,11 @@ FUNCTION KalkTrUvoz()
    // {
    LOCAL nT1 := 0, nT2 := 0, nT3 := 0, nT4 := 0, nT5 := 0, CP := "999999999.999999999"
    Box( "#Unos troskova", 7, 75 )
-   @ m_x + 2, m_y + 2 SAY c10T1 GET nT1 PICT CP
-   @ m_x + 3, m_y + 2 SAY c10T2 GET nT2 PICT CP
-   @ m_x + 4, m_y + 2 SAY c10T3 GET nT3 PICT CP
-   @ m_x + 5, m_y + 2 SAY c10T4 GET nT4 PICT CP
-   @ m_x + 6, m_y + 2 SAY c10T5 GET nT5 PICT CP
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY c10T1 GET nT1 PICT CP
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY c10T2 GET nT2 PICT CP
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY c10T3 GET nT3 PICT CP
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY c10T4 GET nT4 PICT CP
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY c10T5 GET nT5 PICT CP
    READ
    BoxC()
    MsgBeep( "Opcija jos nije u funkciji jer je dorada u toku!" )
@@ -574,9 +574,9 @@ FUNCTION ObracunPorezaUvoz()
 
    Box( "#Obracun poreza pri uvozu", 7, 75 )
    DO WHILE .T.
-      @ m_x + 2, m_y + 2 SAY "Porez je u trosku br.(1-5)" GET nTP PICT "9" VALID nTP > 0 .AND. nTP < 6
-      @ m_x + 3, m_y + 2 SAY "Uslov za sifre tarifa grupe 1 (20%)" GET qqT1 PICT "@!S30"
-      @ m_x + 4, m_y + 2 SAY "Uslov za sifre tarifa grupe 2 (10%)" GET qqT2 PICT "@!S30"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Porez je u trosku br.(1-5)" GET nTP PICT "9" VALID nTP > 0 .AND. nTP < 6
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Uslov za sifre tarifa grupe 1 (20%)" GET qqT1 PICT "@!S30"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Uslov za sifre tarifa grupe 2 (10%)" GET qqT2 PICT "@!S30"
       READ
       aUT1 := Parsiraj( qqT1, "idTarifa" )
       aUT2 := Parsiraj( qqT2, "idTarifa" )
@@ -859,8 +859,8 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
    cIdKonto := "1320   "
    nBrojac := 0
    Box(, 2, 50 )
-   @ 1 + m_x, 2 + m_y SAY "Prod.konto zaduzuje: " GET cIdKonto VALID !Empty( cIdKonto )
-   @ 2 + m_x, 2 + m_y SAY "Po otpremnici: " GET cOtpremnica
+   @ 1 + form_x_koord(), 2 + form_y_koord() SAY "Prod.konto zaduzuje: " GET cIdKonto VALID !Empty( cIdKonto )
+   @ 2 + form_x_koord(), 2 + form_y_koord() SAY "Po otpremnici: " GET cOtpremnica
    READ
    BoxC()
 
@@ -977,10 +977,10 @@ FUNCTION kopiraj_set_cijena()
    SET CURSOR ON
 
    Box(, 5, 60 )
-   @ 1 + m_x, 2 + m_y SAY "Kopiranje seta cijena iz - u..."
-   @ 3 + m_x, 3 + m_y SAY "Tip cijene: [V] VPC [M] MPC" GET _tip VALID _tip $ "VM" PICT "@!"
-   @ 4 + m_x, 3 + m_y SAY "Kopiraj iz:" GET _set_from VALID _set_from $ " 123456789"
-   @ 4 + m_x, Col() + 1 SAY "u:" GET _set_to VALID _set_to $ " 123456789"
+   @ 1 + form_x_koord(), 2 + form_y_koord() SAY "Kopiranje seta cijena iz - u..."
+   @ 3 + form_x_koord(), 3 + form_y_koord() SAY "Tip cijene: [V] VPC [M] MPC" GET _tip VALID _tip $ "VM" PICT "@!"
+   @ 4 + form_x_koord(), 3 + form_y_koord() SAY "Kopiraj iz:" GET _set_from VALID _set_from $ " 123456789"
+   @ 4 + form_x_koord(), Col() + 1 SAY "u:" GET _set_to VALID _set_to $ " 123456789"
    READ
    BoxC()
 
@@ -1025,7 +1025,7 @@ FUNCTION kopiraj_set_cijena()
 
       _tmp := AllTrim( Str( nI, 12 ) ) + "/" + AllTrim( Str( _count, 12 ) )
 
-      @ m_x + 1, m_y + 2 SAY PadR( "odradio: " + _tmp, 60 )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY PadR( "odradio: " + _tmp, 60 )
 
       update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
 

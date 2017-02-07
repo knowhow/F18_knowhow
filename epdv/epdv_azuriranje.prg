@@ -79,8 +79,8 @@ FUNCTION azur_ku_ki( cTbl )
          __br_dok := _br_dok
 
          ++nCount
-         @ m_x + 1, m_y + 2 SAY PadR( "Dodajem P_KIF -> KUF " + Transform( nCount, "9999" ), 40 )
-         @ m_x + 2, m_y + 2 SAY PadR( "   " + cTbl + " G.R.BR: " + Transform( nNextGRbr, "99999" ), 40 )
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY PadR( "Dodajem P_KIF -> KUF " + Transform( nCount, "9999" ), 40 )
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY PadR( "   " + cTbl + " G.R.BR: " + Transform( nNextGRbr, "99999" ), 40 )
 
          nNextGRbr ++
 
@@ -104,7 +104,7 @@ FUNCTION azur_ku_ki( cTbl )
    SELECT ( nKArea )
    USE
 
-   @ m_x + 1, m_y + 2 SAY8 PadR( "Brišem pripremu ...", 40 )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 PadR( "Brišem pripremu ...", 40 )
 
    SELECT ( nPArea )
    my_dbf_zap()
@@ -244,7 +244,7 @@ FUNCTION pov_ku_ki( cTbl, nBrDok )
    DO WHILE !Eof() .AND. ( br_dok == nBrDok )
 
       ++ _cnt
-      @ m_x + 1, m_y + 2 SAY PadR( "P_" + cTbl +  " -> " + cTbl + " :" + Transform( _cnt, "9999" ), 40 )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY PadR( "P_" + cTbl +  " -> " + cTbl + " :" + Transform( _cnt, "9999" ), 40 )
 
       SELECT ( _k_area )
       _rec := dbf_get_rec()
@@ -385,7 +385,7 @@ FUNCTION renm_g_rbr( cTbl, lShow )
    DO WHILE !Eof()
 
       ++nRbr
-      @ m_x + 1, m_y + 2 SAY cTbl + ":" + Str( nRbr, 8, 0 )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY cTbl + ":" + Str( nRbr, 8, 0 )
       _rec := dbf_get_rec()
       _rec[ "g_r_br" ] := nRbr
       dbf_update_rec( _rec )

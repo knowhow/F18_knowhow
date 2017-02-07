@@ -79,7 +79,7 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "SG_KIF : " + Str( nCount )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "SG_KIF : " + Str( nCount )
 
       IF g_src_modul( src ) == "FAKT"
 
@@ -295,10 +295,10 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
          nCount ++
 
          cPom := "FAKT : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-         @ m_x + 3, m_y + 2 SAY cPom
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY cPom
 
          cPom := "FAKT cnt : " + Str( nCount, 6 )
-         @ m_x + 4, m_y + 2 SAY cPom
+         @ form_x_koord() + 4, form_y_koord() + 2 SAY cPom
 
          cDokTar := ""
 

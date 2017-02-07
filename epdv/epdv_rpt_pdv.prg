@@ -47,20 +47,20 @@ FUNCTION rpt_p_pdv()
    nX := 1
    Box(, 12, 60 )
 
-   @ m_x + nX, m_y + 2 SAY "Period"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Period"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY "od " GET dDatOd
-   @ m_x + nX, Col() + 2 SAY "do " GET dDatDo
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "od " GET dDatOd
+   @ form_x_koord() + nX, Col() + 2 SAY "do " GET dDatDo
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "obrazac se pravi na osnovu :"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "obrazac se pravi na osnovu :"
    nX++
-   @ m_x + nX, m_y + 2 SAY " 1 - kuf/kif"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY " 1 - kuf/kif"
    nX++
-   @ m_x + nX, m_y + 2 SAY " 2 - pdv baze"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY " 2 - pdv baze"
    nX++
-   @ m_x + nX, m_y + 2 SAY " izbor ?" GET cSource ;
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY " izbor ?" GET cSource ;
       PICT "@!" ;
       VALID cSource $ "12"
 
@@ -68,7 +68,7 @@ FUNCTION rpt_p_pdv()
    nX ++
 
    IF cSource == "1"
-      @ m_x + nX, m_y + 2 SAY8 " Ažurirati podatke u PDV bazu (D/N) ?" GET cAzurirati ;
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY8 " Ažurirati podatke u PDV bazu (D/N) ?" GET cAzurirati ;
          PICT "@!" ;
          VALID cAzurirati $ "DN"
       READ
@@ -159,7 +159,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
       ++nCount
 
-      @ m_x + 2, m_y + 2 SAY "KUF" + Str( nCount, 6, 0 )
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "KUF" + Str( nCount, 6, 0 )
 
       cIdTar := id_tar
       nBPdv := i_b_pdv
@@ -233,7 +233,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
       ++nCount
 
-      @ m_x + 2, m_y + 2 SAY "KIF" + Str( nCount, 6, 0 )
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "KIF" + Str( nCount, 6, 0 )
 
 
       cIdTar := id_tar
@@ -295,20 +295,20 @@ STATIC FUNCTION f_iz_kuf_kif()
    _pot_datum := Date()
 
    Box(, 8, 65 )
-   @ m_x + 1, m_y + 2 SAY "Prenos PDV-a iz predhodnog perioda (KM) ?" GET _u_pdv_pp ;
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Prenos PDV-a iz predhodnog perioda (KM) ?" GET _u_pdv_pp ;
       PICT PIC_IZN()
 
-   @ m_x + 3, m_y + 2 SAY "- Potpis -----------------"
-   @ m_x + 4, m_y + 2 SAY "Datum :" GET _pot_datum ;
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "- Potpis -----------------"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Datum :" GET _pot_datum ;
       VALID {|| _pot_mjesto := PadR( _po_mjesto, Len( _pot_mjesto ) ), .T. }
-   @ m_x + 5, m_y + 2 SAY "Mjesto :" GET _pot_mjesto  ;
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Mjesto :" GET _pot_mjesto  ;
       VALID {|| _pot_datum := Date(), .T. }
 
-   @ m_x + 6, m_y + 2 SAY "Ime i prezime ? " GET _pot_ob ;
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Ime i prezime ? " GET _pot_ob ;
       PICT "@S30" ;
 
 
-      @ m_x + 8, m_y + 2 SAY "Zahtjev za povrat ako je preplata (D/N) ? " GET _pdv_povrat ;
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Zahtjev za povrat ako je preplata (D/N) ? " GET _pdv_povrat ;
       VALID _pdv_povrat $ "DN" ;
       PICT "@!"
 

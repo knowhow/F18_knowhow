@@ -46,9 +46,9 @@ FUNCTION fin_asistent_otv_st()
    cDugPot := "1"
 
    Box(, 3, 60 )
-   @ m_x + 1, m_y + 2 SAY "Konto   " GET cIdKonto   VALID p_kontoFin( @cIdKonto )  PICT "@!"
-   @ m_x + 2, m_y + 2 SAY "Partner " GET cIdPartner VALID p_partner( @cIdPartner ) PICT "@!"
-   @ m_x + 3, m_y + 2 SAY "Konto duguje / potrazuje" GET cDugPot when {|| cDugPot := iif( cidkonto = '54', '2', '1' ), .T. } VALID  cdugpot $ "12"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Konto   " GET cIdKonto   VALID p_kontoFin( @cIdKonto )  PICT "@!"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Partner " GET cIdPartner VALID p_partner( @cIdPartner ) PICT "@!"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto duguje / potrazuje" GET cDugPot when {|| cDugPot := iif( cidkonto = '54', '2', '1' ), .T. } VALID  cdugpot $ "12"
    READ
    BoxC()
 
@@ -82,7 +82,7 @@ FUNCTION fin_asistent_otv_st()
       nSaldo := 0
       nRecBrDokStart := RecNo()
 
-      @ m_x + 1, m_y + 2 SAY field->idfirma + "-" + field->idkonto + "-" +  field->idpartner + " / " +  field->brdok
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY field->idfirma + "-" + field->idkonto + "-" +  field->idpartner + " / " +  field->brdok
 
       // proracunaj saldo za partner+dokument
       DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdpartner + cBrdok == field->idfirma + field->idkonto + field->idpartner + field->brdok
@@ -194,7 +194,7 @@ FUNCTION fin_asistent_otv_st()
                      LOOP
                   ENDIF
 
-                  @ m_x + 1, m_y + 2 SAY "      racun: " + field->brdok
+                  @ form_x_koord() + 1, form_y_koord() + 2 SAY "      racun: " + field->brdok
                   cZatvori := field->brdok // racun
                   nZatvori := field->iznosbhd
                   dDatDok := field->datdok
@@ -202,7 +202,7 @@ FUNCTION fin_asistent_otv_st()
 
                ELSE
 
-                  @ m_x + 1, m_y + 2 SAY "storno racun: " + field->brdok
+                  @ form_x_koord() + 1, form_y_koord() + 2 SAY "storno racun: " + field->brdok
 
                   cZatvoriStorno := field->brdok // storno racun
                   nZatvoriStorno := field->iznosbhd
@@ -294,7 +294,7 @@ FUNCTION fin_asistent_otv_st()
                   _rec := dbf_get_rec()
 
                   // zatvaram storno racun
-                  @ m_x + 1, m_y + 2 SAY "2. krug zatvori storno " + cZatvoriStorno
+                  @ form_x_koord() + 1, form_y_koord() + 2 SAY "2. krug zatvori storno " + cZatvoriStorno
                   _rec[ "brdok" ] := cZatvoriStorno
                   _rec[ "_ppk1" ] := "1"
                   _rec[ "iznosbhd" ] := nZatvoriStorno
@@ -336,7 +336,7 @@ FUNCTION fin_asistent_otv_st()
                   IF nZatvori >= nUplaceno // pozitivni iznosi
 
                      _rec := dbf_get_rec()
-                     @ m_x + 1, m_y + 2 SAY "2. krug zatvori " + cZatvori
+                     @ form_x_koord() + 1, form_y_koord() + 2 SAY "2. krug zatvori " + cZatvori
                      _rec[ "brdok" ] := cZatvori
                      _rec[ "_ppk1" ] := "1"
                      dbf_update_rec( _rec )
@@ -513,11 +513,11 @@ FUNCTION fin_asistent_otv_st()
 
    SET CURSOR ON
 
-   @ m_x + ( _max_rows - 5 ), m_y + 1 SAY "****************  REZULTATI ASISTENTA ************"
-   @ m_x + ( _max_rows - 4 ), m_y + 1 SAY REPL( "=", MAXCOLS() - 2 )
-   @ m_x + ( _max_rows - 3 ), m_y + 1 SAY " <F2> Ispravka broja dok.       <c-P> Print      <a-P> Print Br.Dok           "
-   @ m_x + ( _max_rows - 2 ), m_y + 1 SAY8 " <K> Uključi/isključi račun za kamate "
-   @ m_x + ( _max_rows - 1 ), m_y + 1 SAY8 ' < F6 > Štampanje izvršenih promjena  '
+   @ form_x_koord() + ( _max_rows - 5 ), form_y_koord() + 1 SAY "****************  REZULTATI ASISTENTA ************"
+   @ form_x_koord() + ( _max_rows - 4 ), form_y_koord() + 1 SAY REPL( "=", MAXCOLS() - 2 )
+   @ form_x_koord() + ( _max_rows - 3 ), form_y_koord() + 1 SAY " <F2> Ispravka broja dok.       <c-P> Print      <a-P> Print Br.Dok           "
+   @ form_x_koord() + ( _max_rows - 2 ), form_y_koord() + 1 SAY8 " <K> Uključi/isključi račun za kamate "
+   @ form_x_koord() + ( _max_rows - 1 ), form_y_koord() + 1 SAY8 ' < F6 > Štampanje izvršenih promjena  '
 
    PRIVATE cPomBrDok := Space( 10 )
 
@@ -783,8 +783,8 @@ FUNCTION opcije_browse_pregleda()
 
    LOCAL _x, _y
 
-   _x := m_x + MAXROWS() - 15
-   _y := m_y + 1
+   _x := form_x_koord() + MAXROWS() - 15
+   _y := form_y_koord() + 1
 
    @ _x,     _y SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
    @ _x + 1, _y SAY8 " <K>    Uključi/isključi račun za kamate         <F5> uzmi broj dok.        "

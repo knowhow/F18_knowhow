@@ -24,11 +24,11 @@ FUNCTION fakt_pripr9_view()
    PRIVATE dDat2 := Date()
 
    Box(, 10, 60 )
-   @ 1 + m_x, 2 + m_y SAY "Uslovi pregleda smeca:" COLOR f18_color_i()
-   @ 3 + m_x, 2 + m_y SAY "Firma (prazno-sve)" GET aUslFirma PICT "@S40"
-   @ 4 + m_x, 2 + m_y SAY "Vrste dokumenta (prazno-sve)" GET aUslDok PICT "@S20"
-   @ 5 + m_x, 2 + m_y SAY "Datum od" GET dDat1
-   @ 5 + m_x, 20 + m_y SAY "do" GET dDat2
+   @ 1 + form_x_koord(), 2 + form_y_koord() SAY "Uslovi pregleda smeca:" COLOR f18_color_i()
+   @ 3 + form_x_koord(), 2 + form_y_koord() SAY "Firma (prazno-sve)" GET aUslFirma PICT "@S40"
+   @ 4 + form_x_koord(), 2 + form_y_koord() SAY "Vrste dokumenta (prazno-sve)" GET aUslDok PICT "@S20"
+   @ 5 + form_x_koord(), 2 + form_y_koord() SAY "Datum od" GET dDat1
+   @ 5 + form_x_koord(), 20 + form_y_koord() SAY "do" GET dDat2
    READ
    BoxC()
 
@@ -56,10 +56,10 @@ FUNCTION fakt_pripr9_view()
    NEXT
 
    Box(, 20, 77 )
-   @ m_x + 17, m_y + 2 SAY "<c-T>  Brisi stavku                              "
-   @ m_x + 18, m_y + 2 SAY "<c-F9> Brisi sve     "
-   @ m_x + 19, m_y + 2 SAY "<P> Povrat dokumenta u pripremu "
-   @ m_x + 20, m_y + 2 SAY "               "
+   @ form_x_koord() + 17, form_y_koord() + 2 SAY "<c-T>  Brisi stavku                              "
+   @ form_x_koord() + 18, form_y_koord() + 2 SAY "<c-F9> Brisi sve     "
+   @ form_x_koord() + 19, form_y_koord() + 2 SAY "<P> Povrat dokumenta u pripremu "
+   @ form_x_koord() + 20, form_y_koord() + 2 SAY "               "
 
    my_db_edit( "PRIPR9", 20, 77, {|| fa_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
    BoxC()
@@ -322,10 +322,10 @@ FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
 
    IF !lSilent
       Box( "", 1, 40 )
-      @ m_x + 1, m_y + 2 SAY "Dokument:"
-      @ m_x + 1, Col() + 1 GET cIdFirma
-      @ m_x + 1, Col() + 1 SAY "-" GET cIdtipdok
-      @ m_x + 1, Col() + 1 SAY "-" GET cBrdok
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Dokument:"
+      @ form_x_koord() + 1, Col() + 1 GET cIdFirma
+      @ form_x_koord() + 1, Col() + 1 SAY "-" GET cIdtipdok
+      @ form_x_koord() + 1, Col() + 1 SAY "-" GET cBrdok
       READ
       ESC_BCR
       BoxC()

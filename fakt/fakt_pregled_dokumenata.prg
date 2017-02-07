@@ -75,41 +75,41 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
       IF gNW $ "DR"
          cIdFirma := PadR( cIdfirma, 2 )
-         @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "RJ prazno svi" GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
          READ
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
 
-      @ m_x + 2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok PICT "@!"
-      @ m_x + 3, m_y + 2 SAY "Od datuma " GET dDatOd
-      @ m_x + 3, Col() + 1 SAY "do" GET dDatDo
-      @ m_x + 5, m_y + 2 SAY8 "Ime kupca počinje sa (prazno svi)" GET cImeKup PICT "@!"
-      @ m_x + 6, m_y + 2 SAY8 "Uslov po šifri kupca (prazno svi)" GET qqPartn PICT "@!" ;
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok PICT "@!"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Od datuma " GET dDatOd
+      @ form_x_koord() + 3, Col() + 1 SAY "do" GET dDatDo
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY8 "Ime kupca počinje sa (prazno svi)" GET cImeKup PICT "@!"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY8 "Uslov po šifri kupca (prazno svi)" GET qqPartn PICT "@!" ;
          VALID {|| aUslovSifraKupca := Parsiraj( qqPartn, "IDPARTNER", "C", NIL, F_PARTN ), .T. }
-      @ m_x + 7, m_y + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok PICT "@!"
-      @ m_x + 9, m_y + 2 SAY "Tabelarni pregled" GET cTabela VALID cTabela $ "DN" PICT "@!"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok PICT "@!"
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Tabelarni pregled" GET cTabela VALID cTabela $ "DN" PICT "@!"
 
       cRTarifa := "N"
 
-      @ m_x + 11, m_y + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa VALID cRtarifa $ "DN" PICT "@!"
+      @ form_x_koord() + 11, form_y_koord() + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa VALID cRtarifa $ "DN" PICT "@!"
 
       IF _vrste_pl
-         @ m_x + 12, m_y + 2 SAY "----------------------------------------"
-         @ m_x + 13, m_y + 2 SAY "Za fakture (Tip dok.10):"
-         @ m_x + 14, m_y + 2 SAY8 "Način placanja:" GET qqVrsteP
-         @ m_x + 15, m_y + 2 SAY8 "Datum valutiranja od" GET dDatVal0
-         @ m_x + 15, Col() + 2 SAY "do" GET dDatVal1
-         @ m_x + 16, m_y + 2 SAY "----------------------------------------"
+         @ form_x_koord() + 12, form_y_koord() + 2 SAY "----------------------------------------"
+         @ form_x_koord() + 13, form_y_koord() + 2 SAY "Za fakture (Tip dok.10):"
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY8 "Način placanja:" GET qqVrsteP
+         @ form_x_koord() + 15, form_y_koord() + 2 SAY8 "Datum valutiranja od" GET dDatVal0
+         @ form_x_koord() + 15, Col() + 2 SAY "do" GET dDatVal1
+         @ form_x_koord() + 16, form_y_koord() + 2 SAY "----------------------------------------"
       ENDIF
 
-      @ m_x + 17, m_y + 2 SAY8 "Općina (prazno-sve): "  GET cOpcina
+      @ form_x_koord() + 17, form_y_koord() + 2 SAY8 "Općina (prazno-sve): "  GET cOpcina
 
       IF _objekti
-         @ m_x + 18, m_y + 2 SAY "Objekat (prazno-svi): "  GET _objekat_id VALID Empty( _objekat_id ) .OR. P_fakt_objekti( @_objekat_id )
+         @ form_x_koord() + 18, form_y_koord() + 2 SAY "Objekat (prazno-svi): "  GET _objekat_id VALID Empty( _objekat_id ) .OR. P_fakt_objekti( @_objekat_id )
       ENDIF
 
-      @ m_x + 19, m_y + 2 SAY "Valute ( /KM/EUR)"  GET valute
+      @ form_x_koord() + 19, form_y_koord() + 2 SAY "Valute ( /KM/EUR)"  GET valute
 
       READ
 
@@ -329,11 +329,11 @@ FUNCTION generisi_fakturu( is_opcine )
 
    Box(, 5, 55 )
 
-   @ m_x + 1, m_y + 2 SAY "*** Parametri fakture "
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "*** Parametri fakture "
 
-   @ m_x + 3, m_y + 2 SAY "  Datum fakture: " GET dDatFakt VALID !Empty( dDatFakt )
-   @ m_x + 4, m_y + 2 SAY "   Datum valute: " GET dDatVal VALID !Empty( dDatVal )
-   @ m_x + 5, m_y + 2 SAY " Datum isporuke: " GET dDatIsp VALID !Empty( dDatIsp )
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "  Datum fakture: " GET dDatFakt VALID !Empty( dDatFakt )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "   Datum valute: " GET dDatVal VALID !Empty( dDatVal )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY " Datum isporuke: " GET dDatIsp VALID !Empty( dDatIsp )
 
    READ
 
@@ -436,7 +436,7 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( model )
    IF fakt_doks->idtipdok $ "10#11"
       IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
          _txt := "nema fiskalnog računa !"
-         @ m_x + 1, m_y + 2 SAY8 PadR( _txt, 60 ) COLOR "W/R+"
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY8 PadR( _txt, 60 ) COLOR "W/R+"
       ELSE
          _fisc_rn := AllTrim( Str( fakt_doks->fisc_rn ) )
          _rekl_rn := AllTrim( Str( fakt_doks->fisc_st ) )
@@ -445,10 +445,10 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( model )
             _txt += "reklamirani račun: " + _rekl_rn + ", "
          ENDIF
          _txt += "fiskalni račun: " + _fisc_rn
-         @ m_x + 1, m_y + 2 SAY8 PadR( _txt, 60 ) COLOR "GR+/B"
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY8 PadR( _txt, 60 ) COLOR "GR+/B"
       ENDIF
    ELSE
-      @ m_x + 1, m_y + 2 SAY PadR( "", 60 )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY PadR( "", 60 )
    ENDIF
 
    RETURN .T.
@@ -517,10 +517,10 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
       cFiscal_time := PadR( field->fisc_time, 10 )
 
       Box(, 4, 40 )
-      @ m_x + 1, m_y + 2 SAY "fiskalni racun:" GET nFiscal PICT "9999999999"
-      @ m_x + 2, m_y + 2 SAY "reklamni racun:" GET nRekl PICT "9999999999"
-      @ m_x + 3, m_y + 2 SAY "         datum:" GET dFiscal_date
-      @ m_x + 4, m_y + 2 SAY "       vrijeme:" GET cFiscal_time PICT "@S10"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "fiskalni racun:" GET nFiscal PICT "9999999999"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "reklamni racun:" GET nRekl PICT "9999999999"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "         datum:" GET dFiscal_date
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "       vrijeme:" GET cFiscal_time PICT "@S10"
       READ
       BoxC()
 
@@ -762,13 +762,13 @@ FUNCTION fakt_real_partnera()
 
    DO WHILE .T.
       cIdFirma := PadR( cIdFirma, 2 )
-      @ m_x + 1, m_y + 2 SAY "RJ            " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
-      @ m_x + 2, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
-      @ m_x + 3, m_y + 2 SAY "Od datuma "  GET dDatOd
-      @ m_x + 3, Col() + 1 SAY "do"  GET dDatDo
-      @ m_x + 6, m_y + 2 SAY "Uslov po nazivu kupca (prazno svi)"  GET qqPartn PICT "@!"
-      @ m_x + 7, m_y + 2 SAY "Broj dokumenta (prazno svi)"  GET cBrFakDok PICT "@!"
-      @ m_x + 9, m_y + 2 SAY "Opcina (prazno sve)" GET qqOpc PICT "@!"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "RJ            " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Od datuma "  GET dDatOd
+      @ form_x_koord() + 3, Col() + 1 SAY "do"  GET dDatDo
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Uslov po nazivu kupca (prazno svi)"  GET qqPartn PICT "@!"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Broj dokumenta (prazno svi)"  GET cBrFakDok PICT "@!"
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Opcina (prazno sve)" GET qqOpc PICT "@!"
       READ
       ESC_BCR
       aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )

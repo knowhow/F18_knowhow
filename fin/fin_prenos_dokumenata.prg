@@ -52,19 +52,19 @@ FUNCTION PrenosFin()
    nMjesta := 3
    ddatDo := Date()
 
-   @ m_x + 1, m_y + 2 SAY "Navedite koje grupacije konta se isto ponasaju:"
-   @ m_x + 3, m_y + 2 SAY "Grupisem konte na (broj mjesta)" GET nMjesta PICT "9"
-   @ m_x + 5, m_y + 2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Navedite koje grupacije konta se isto ponasaju:"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Grupisem konte na (broj mjesta)" GET nMjesta PICT "9"
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
 
-   IF fk1 == "D"; @ m_x + 7, m_y + 2   SAY "K1 (9 svi) :" GET cK1; ENDIF
-   IF fk2 == "D"; @ m_x + 7, Col() + 2 SAY "K2 (9 svi) :" GET cK2; ENDIF
-   IF fk3 == "D"; @ m_x + 8, m_y + 2   SAY "K3 (" + ck3 + " svi):" GET cK3; ENDIF
-   IF fk4 == "D"; @ m_x + 8, Col() + 1 SAY "K4 (99 svi):" GET cK4; ENDIF
+   IF fk1 == "D"; @ form_x_koord() + 7, form_y_koord() + 2   SAY "K1 (9 svi) :" GET cK1; ENDIF
+   IF fk2 == "D"; @ form_x_koord() + 7, Col() + 2 SAY "K2 (9 svi) :" GET cK2; ENDIF
+   IF fk3 == "D"; @ form_x_koord() + 8, form_y_koord() + 2   SAY "K3 (" + ck3 + " svi):" GET cK3; ENDIF
+   IF fk4 == "D"; @ form_x_koord() + 8, Col() + 1 SAY "K4 (99 svi):" GET cK4; ENDIF
 
-   @ m_x + 9, m_y + 2 SAY "Klasa konta duguje " GET cKlDuguje PICT "9"
-   @ m_x + 10, m_y + 2 SAY "Klasa konta potraz " GET cKlPotraz PICT "9"
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Klasa konta duguje " GET cKlDuguje PICT "9"
+   @ form_x_koord() + 10, form_y_koord() + 2 SAY "Klasa konta potraz " GET cKlPotraz PICT "9"
 
-   @ m_x + 12, m_y + 2 SAY "Saldo strane valute je bitan ?" GET cStranaBitna ;
+   @ form_x_koord() + 12, form_y_koord() + 2 SAY "Saldo strane valute je bitan ?" GET cStranaBitna ;
       PICT "@!" ;
       VALID cStranaBitna $ "DN"
 
@@ -777,8 +777,8 @@ FUNCTION fin_prekart()
    DO WHILE .T.
 
       Box(, 20, 77 )
-      @ m_x + 19, m_y + 2 SAY "                         �                        �                   "
-      @ m_x + 20, m_y + 2 SAY " <c-T>  Brisi stavku     � <ENTER>  Ispravi konto � <a-A> Azuriraj    "
+      @ form_x_koord() + 19, form_y_koord() + 2 SAY "                         �                        �                   "
+      @ form_x_koord() + 20, form_y_koord() + 2 SAY " <c-T>  Brisi stavku     � <ENTER>  Ispravi konto � <a-A> Azuriraj    "
       my_db_edit( "PPK", 20, 77, {|| EPPK() }, "", "Priprema za prebacivanje stavki", , , , , 2 )
       BoxC()
 

@@ -14,7 +14,7 @@
 STATIC s_nFinPriprRedniBroj
 
 
-MEMVAR m_x, m_y, Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
+MEMVAR form_x_koord(), form_y_koord(), Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
 MEMVAR Kol, ImeKol
 
 STATIC cTekucaRj := ""
@@ -100,21 +100,21 @@ FUNCTION fin_knjizenje_naloga()
    _opt_row += _upadr( " <c+T> Briši stavku", _opt_d ) + _sep
    _opt_row += _upadr( " <P> Povrat naloga", _opt_d )
 
-   @ m_x + _x_row - 3, m_y + 2 SAY8 _opt_row
+   @ form_x_koord() + _x_row - 3, form_y_koord() + 2 SAY8 _opt_row
 
    _opt_row := _upadr( " <c+A> Ispravka stavki", _opt_d ) + _sep
    _opt_row += _upadr( " <c+P> Štampa naloga", _opt_d ) + _sep
    _opt_row += _upadr( " <a+A> Ažuriranje", _opt_d ) + _sep
    _opt_row += _upadr( " <X> Ažur.bez štampe", _opt_d )
 
-   @ m_x + _x_row - 2, m_y + 2 SAY8 _opt_row
+   @ form_x_koord() + _x_row - 2, form_y_koord() + 2 SAY8 _opt_row
 
    _opt_row := _upadr( " <c+F9> Briši sve", _opt_d ) + _sep
    _opt_row += _upadr( " <F5> Kontrola zbira", _opt_d ) + _sep
    _opt_row += _upadr( " <a+F5> Pr.dat", _opt_d ) + _sep
    _opt_row += _upadr( " <a+B> Blagajna", _opt_d )
 
-   @ m_x + _x_row - 1, m_y + 2 SAY8 _opt_row
+   @ form_x_koord() + _x_row - 1, form_y_koord() + 2 SAY8 _opt_row
 
    _opt_row := _upadr( " <a+T> Briši po uslovu", _opt_d ) + _sep
    _opt_row += _upadr( " <B> odredi broj dokumenta", _opt_d ) + _sep
@@ -122,7 +122,7 @@ FUNCTION fin_knjizenje_naloga()
    _opt_row += _upadr( " <F10> Ostale opcije", _opt_d ) + _sep
 
 
-   @ m_x + _x_row, m_y + 2 SAY8 _opt_row
+   @ form_x_koord() + _x_row, form_y_koord() + 2 SAY8 _opt_row
 
    my_db_edit( "PN2", _x_row, _y_row, {| nCh | edit_fin_pripr_key_handler( nCh ) }, "", "FIN Priprema", , , , , _help_columns )
 
@@ -164,10 +164,10 @@ FUNCTION edit_fin_priprema()
    lDugmeOtvoreneStavke := .T.
 
 
-   @  m_x + 1, m_y + 2 SAY8 "Firma: "
+   @  form_x_koord() + 1, form_y_koord() + 2 SAY8 "Firma: "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
-    @  m_x + 3, m_y + 2 SAY "NALOG: "
-    @  m_x + 3, m_y + 14 SAY "Vrsta:" GET _idvn VALID browse_tnal( @_IdVN, 3, 26 ) PICT "@!"
+    @  form_x_koord() + 3, form_y_koord() + 2 SAY "NALOG: "
+    @  form_x_koord() + 3, form_y_koord() + 14 SAY "Vrsta:" GET _idvn VALID browse_tnal( @_IdVN, 3, 26 ) PICT "@!"
 
    READ
 
@@ -185,37 +185,37 @@ FUNCTION edit_fin_priprema()
    SET KEY K_ALT_K TO konverzija_valute()
    SET KEY K_ALT_O TO knjizenje_gen_otvorene_stavke()
 
-   @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
-   @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nFinRbr PICTURE "99999" ;
+   @ form_x_koord() + 3, form_y_koord() + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Redni broj stavke naloga:" GET nFinRbr PICTURE "99999" ;
       WHEN {|| fin_pripr_redni_broj( nFinRbr ), .T. } ;
       VALID {|| lDugmeOtvoreneStavke := .T., .T. }
 
-   @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY "DOKUMENT: "
 
    IF hFinParams[ "fin_tip_dokumenta" ]
-      @ m_x + 7, m_y + 14  SAY "Tip:" GET _IdTipDok VALID browse_tdok( @_IdTipDok, 7, 26 )
+      @ form_x_koord() + 7, form_y_koord() + 14  SAY "Tip:" GET _IdTipDok VALID browse_tdok( @_IdTipDok, 7, 26 )
    ENDIF
 
    IF ( IsRamaGlas() )
-      @ m_x + 8, m_y + 2 SAY8 "Vezni broj (račun/r.nalog):"  GET _BrDok VALID BrDokOK()
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "Vezni broj (račun/r.nalog):"  GET _BrDok VALID BrDokOK()
    ELSE
-      @ m_x + 8, m_y + 2 SAY "Vezni broj:" GET _brdok
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Vezni broj:" GET _brdok
    ENDIF
 
-   @ m_x + 8, m_y + Col() + 2  SAY "Datum:" GET _DatDok
+   @ form_x_koord() + 8, form_y_koord() + Col() + 2  SAY "Datum:" GET _DatDok
 
    IF gDatVal == "D"
-      @ m_x + 8, Col() + 2 SAY "Valuta: " GET _DatVal
+      @ form_x_koord() + 8, Col() + 2 SAY "Valuta: " GET _DatVal
    ENDIF
 
-   @ m_x + 11, m_y + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| .T. } PICT "@S" + AllTrim( Str( maxcols() - 8 ) )
+   @ form_x_koord() + 11, form_y_koord() + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| .T. } PICT "@S" + AllTrim( Str( maxcols() - 8 ) )
 
    IF hFinParams[ "fin_k1" ]
-      @ m_x + 11, Col() + 2 SAY "K1" GET _k1 PICT "@!"
+      @ form_x_koord() + 11, Col() + 2 SAY "K1" GET _k1 PICT "@!"
    ENDIF
 
    IF hFinParams[ "fin_k2" ]
-      @ m_x + 11, Col() + 2 SAY "K2" GET _k2 PICT "@!"
+      @ form_x_koord() + 11, Col() + 2 SAY "K2" GET _k2 PICT "@!"
    ENDIF
 
 
@@ -223,38 +223,38 @@ FUNCTION edit_fin_priprema()
 /*
       IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
          _k3 := K3Iz256( _k3 )
-         @ m_x + 11, Col() + 2 SAY "K3" GET _k3 VALID Empty( _k3 ) .OR. P_ULIMIT( @_k3 ) PICT "999"
+         @ form_x_koord() + 11, Col() + 2 SAY "K3" GET _k3 VALID Empty( _k3 ) .OR. P_ULIMIT( @_k3 ) PICT "999"
       ELSE
 */
 
-         @ m_x + 11, Col() + 2 SAY "K3" GET _k3 PICT "@!"
+         @ form_x_koord() + 11, Col() + 2 SAY "K3" GET _k3 PICT "@!"
 //      ENDIF
    ENDIF
 
 
    IF hFinParams[ "fin_k4" ]
       IF _fakt_params[ "fakt_vrste_placanja" ]
-         @ m_x + 11, Col() + 2 SAY "K4" GET _k4 VALID Empty( _k4 ) .OR. P_VRSTEP( @_k4 ) PICT "@!"
+         @ form_x_koord() + 11, Col() + 2 SAY "K4" GET _k4 VALID Empty( _k4 ) .OR. P_VRSTEP( @_k4 ) PICT "@!"
       ELSE
-         @ m_x + 11, Col() + 2 SAY "K4" GET _k4 PICT "@!"
+         @ form_x_koord() + 11, Col() + 2 SAY "K4" GET _k4 PICT "@!"
       ENDIF
    ENDIF
 
    IF gFinRj == "D"
-      @ m_x + 11, Col() + 2 SAY "RJ" GET _idrj VALID Empty( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
+      @ form_x_koord() + 11, Col() + 2 SAY "RJ" GET _idrj VALID Empty( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
    ENDIF
 
    //IF gTroskovi == "D"
-    //  @ m_x + 12, m_y + 22 SAY "      Funk." GET _Funk VALID Empty( _Funk ) .OR. P_Funk( @_Funk ) PICT "@!"
-    //  @ m_x + 12, m_y + 44 SAY "      Fond." GET _Fond VALID Empty( _Fond ) .OR. P_Fond( @_Fond ) PICT "@!"
+    //  @ form_x_koord() + 12, form_y_koord() + 22 SAY "      Funk." GET _Funk VALID Empty( _Funk ) .OR. P_Funk( @_Funk ) PICT "@!"
+    //  @ form_x_koord() + 12, form_y_koord() + 44 SAY "      Fond." GET _Fond VALID Empty( _Fond ) .OR. P_Fond( @_Fond ) PICT "@!"
    //ENDIF
 
-   @ m_x + 13, m_y + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
+   @ form_x_koord() + 13, form_y_koord() + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
       VALID P_Konto( @_IdKonto, 13, 20 ) ;
       .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
 
 
-   @ m_x + 14, m_y + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
+   @ form_x_koord() + 14, form_y_koord() + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
       VALID ;
       {|| iif( Empty( _idpartner ), say_from_valid( 14, 20, Space( 25 ) ), ), ;
       ( p_partner( @_IdPartner, 14, 20 ) ) .AND. fin_pravilo_partner() .AND. ;
@@ -262,16 +262,16 @@ FUNCTION edit_fin_priprema()
       WHEN {|| iif( ChkKtoMark( _idkonto ), .T., .F. ) }
 
 
-   @ m_x + 16, m_y + 2  SAY8 "Duguje/Potražuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
+   @ form_x_koord() + 16, form_y_koord() + 2  SAY8 "Duguje/Potražuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
 
-   @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| .T. } ;
+   @ form_x_koord() + 16, form_y_koord() + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| .T. } ;
       VALID {|| lDugmeOtvoreneStavke := .T., .T. }
 
-   @ m_x + 17, m_y + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| konverzija_valute( , , "_IZNOSBHD" ),  .T. } ;
+   @ form_x_koord() + 17, form_y_koord() + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| konverzija_valute( , , "_IZNOSBHD" ),  .T. } ;
       VALID {|| lDugmeOtvoreneStavke := .F., .T. }
 
 
-   @ m_x + 16, m_y + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "(Alt-O) Otvorene stavke"   ;
+   @ form_x_koord() + 16, form_y_koord() + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "(Alt-O) Otvorene stavke"   ;
       WHEN {|| lDugmeOtvoreneStavke } ;
       SIZE X 20 Y 2 FOCUS {|| lDugmeOtvoreneStavke := .T., knjizenje_gen_otvorene_stavke(), lDugmeOtvoreneStavke := .F. }
 
@@ -427,7 +427,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
          set_global_vars_from_dbf()
          fin_pripr_redni_broj( _Rbr )
 
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + MAXROWS() - 8, m_y + MAXCOLS() - 10
+         @ form_x_koord() + 1, form_y_koord() + 1 CLEAR TO form_x_koord() + MAXROWS() - 8, form_y_koord() + MAXCOLS() - 10
          IF edit_fin_priprema( .F. ) == 0
             EXIT
          ELSE
@@ -439,10 +439,10 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
             nPot += _IznosBHD
          ENDIF
 
-         @ m_x + 19, m_y + 1 SAY "ZBIR NALOGA:"
-         @ m_x + 19, m_y + 14 SAY nDug PICTURE '9 999 999 999.99'
-         @ m_x + 19, m_y + 35 SAY nPot PICTURE '9 999 999 999.99'
-         @ m_x + 19, m_y + 56 SAY nDug - nPot PICTURE '9 999 999 999.99'
+         @ form_x_koord() + 19, form_y_koord() + 1 SAY "ZBIR NALOGA:"
+         @ form_x_koord() + 19, form_y_koord() + 14 SAY nDug PICTURE '9 999 999 999.99'
+         @ form_x_koord() + 19, form_y_koord() + 35 SAY nPot PICTURE '9 999 999 999.99'
+         @ form_x_koord() + 19, form_y_koord() + 56 SAY nDug - nPot PICTURE '9 999 999 999.99'
          Inkey( 10 )
 
          SELECT fin_pripr
@@ -486,7 +486,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 
          fin_pripr_redni_broj( _Rbr + 1 )
 
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + MAXROWS() - 5, m_y + MAXCOLS() - 8
+         @ form_x_koord() + 1, form_y_koord() + 1 CLEAR TO form_x_koord() + MAXROWS() - 5, form_y_koord() + MAXCOLS() - 8
 
          IF edit_fin_priprema( .T. ) == 0
             EXIT
@@ -499,10 +499,10 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
          ELSE
             nPot += _IznosBHD
          ENDIF
-         @ m_x + MAXROWS() - 6, m_y + 1 SAY "ZBIR NALOGA:"
-         @ m_x + MAXROWS() - 6, m_y + 14 SAY nDug PICTURE '9 999 999 999.99'
-         @ m_x + MAXROWS() - 6, m_y + 35 SAY nPot PICTURE '9 999 999 999.99'
-         @ m_x + MAXROWS() - 6, m_y + 56 SAY nDug - nPot PICTURE '9 999 999 999.99'
+         @ form_x_koord() + MAXROWS() - 6, form_y_koord() + 1 SAY "ZBIR NALOGA:"
+         @ form_x_koord() + MAXROWS() - 6, form_y_koord() + 14 SAY nDug PICTURE '9 999 999 999.99'
+         @ form_x_koord() + MAXROWS() - 6, form_y_koord() + 35 SAY nPot PICTURE '9 999 999 999.99'
+         @ form_x_koord() + MAXROWS() - 6, form_y_koord() + 56 SAY nDug - nPot PICTURE '9 999 999 999.99'
 
          Inkey( 10 )
 
@@ -626,8 +626,8 @@ FUNCTION WRbr()
    _rec := dbf_get_rec()
 
    IF _rec[ "rbr" ]  < 2
-      @ m_x + 1, m_y + 2 SAY8 "Dokument:" GET _rec[ "idvn" ]
-      @ m_x + 1, Col() + 2  GET _rec[ "brnal" ]
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Dokument:" GET _rec[ "idvn" ]
+      @ form_x_koord() + 1, Col() + 2  GET _rec[ "brnal" ]
       READ
    ENDIF
 
@@ -749,7 +749,7 @@ FUNCTION Partija( cIdKonto )
 // -----------------------------------------------------
 FUNCTION V_DP()
 
-   SetPos( m_x + 16, m_y + 30 )
+   SetPos( form_x_koord() + 16, form_y_koord() + 30 )
 
    IF _d_p == "1"
       ?? "   DUGUJE"
@@ -759,7 +759,7 @@ FUNCTION V_DP()
 
    ?? " " + ValDomaca()
 
-   SetPos( m_x + 17, m_y + 30 )
+   SetPos( form_x_koord() + 17, form_y_koord() + 30 )
 
    IF _d_p == "1"
       ?? "   DUGUJE"
@@ -863,9 +863,9 @@ STATIC FUNCTION set_datval_datdok()
 
    Box(, 5, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Promjena za konto  " GET _id_konto
-   @ m_x + 3, m_y + 2 SAY "Novi datum dok " GET _dat_dok
-   @ m_x + 5, m_y + 2 SAY "uvecati stari datdok za (dana) " GET _dana PICT "99"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Promjena za konto  " GET _id_konto
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Novi datum dok " GET _dat_dok
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "uvecati stari datdok za (dana) " GET _dana PICT "99"
 
    READ
 
@@ -913,8 +913,8 @@ STATIC FUNCTION fin_pripr_brisi_stavke_od_do()
    LOCAL nRbr
 
    Box(, 1, 31 )
-   @ m_x + 1, m_y + 2 SAY "Brisi stavke od:" GET nOd VALID _rbr_fix( @nOd )
-   @ m_x + 1, Col() + 1 SAY "do:" GET nDo VALID _rbr_fix( @nDo )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Brisi stavke od:" GET nOd VALID _rbr_fix( @nOd )
+   @ form_x_koord() + 1, Col() + 1 SAY "do:" GET nDo VALID _rbr_fix( @nDo )
    READ
    BoxC()
 
@@ -1003,8 +1003,8 @@ FUNCTION BrisiPBaze()
 FUNCTION fin_tek_rec_2()
 
    nSlog ++
-   @ m_x + 1, m_y + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
-   @ m_x + 2, m_y + 2 SAY "Obuhvaceno: " + Str( 0 )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Obuhvaceno: " + Str( 0 )
 
    RETURN ( NIL )
 
@@ -1023,7 +1023,7 @@ FUNCTION OstaleOpcije()
 
    h[ 1 ] := h[ 2 ] := h[ 3 ] := h[ 4 ] := ""
    PRIVATE Izbor := 1
-   PRIVATE am_x := m_x, am_y := m_y
+   PRIVATE am_x := form_x_koord(), am_y := form_y_koord()
    my_close_all_dbf()
    DO WHILE .T.
       Izbor := meni_0( "prip", opc, Izbor, .F. )
@@ -1036,8 +1036,8 @@ FUNCTION OstaleOpcije()
          // PodijeliN()
       ENDCASE
    ENDDO
-   m_x := am_x
-   m_y := am_y
+   form_x_koord() := am_x
+   form_y_koord() := am_y
    o_fin_edit()
 
    RETURN .T.
@@ -1224,32 +1224,32 @@ STATIC FUNCTION _brisi_pripr_uslovi( param )
 
    Box(, 13, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "Brisanje pripreme po zadatom uslovu ***"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Brisanje pripreme po zadatom uslovu ***"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "brisi od rednog broja:" GET _od_broja PICT "9999999"
-   @ m_x + _x, Col() + 1 SAY "do:" GET _do_broja PICT "9999999"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "brisi od rednog broja:" GET _od_broja PICT "9999999"
+   @ form_x_koord() + _x, Col() + 1 SAY "do:" GET _do_broja PICT "9999999"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "               vrste naloga:" GET _vn PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "               vrste naloga:" GET _vn PICT "@S30"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "             brojeve naloga:" GET _br_nal PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "             brojeve naloga:" GET _br_nal PICT "@S30"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "stavke koje sadrze partnere:" GET _partn PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "stavke koje sadrze partnere:" GET _partn PICT "@S30"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "   stavke koje sadrze konta:" GET _konto PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "   stavke koje sadrze konta:" GET _konto PICT "@S30"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "    stavke koje sadrze opis:" GET _opis PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "    stavke koje sadrze opis:" GET _opis PICT "@S30"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY " stavke koje sadrze br.veze:" GET _br_veze PICT "@S30"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY " stavke koje sadrze br.veze:" GET _br_veze PICT "@S30"
 
    READ
 

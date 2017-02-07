@@ -66,16 +66,16 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    Box( , _x, _y )
 
-   @ m_x + _x - 4, m_y + 2 SAY8 _upadr( " <ENTER> Štampa TXT", _w1 ) + ;
+   @ form_x_koord() + _x - 4, form_y_koord() + 2 SAY8 _upadr( " <ENTER> Štampa TXT", _w1 ) + ;
       BROWSE_COL_SEP + _upadr( " < P > Povrat dokumenta", _w1 ) + ;
       BROWSE_COL_SEP + _upadr( " < I > Informacije", _w1 )
-   @ m_x + _x - 3, m_y + 2 SAY8 _upadr( " < a+P > Štampa ODT", _w1 ) + ;
+   @ form_x_koord() + _x - 3, form_y_koord() + 2 SAY8 _upadr( " < a+P > Štampa ODT", _w1 ) + ;
       BROWSE_COL_SEP + _upadr( " < S > Storno dokument", _w1 ) + ;
       BROWSE_COL_SEP + _upadr( " < c+V > Setuj vezu fisk.", _w1 )
-   @ m_x + _x - 2, m_y + 2 SAY8 _upadr( " < R > Štampa fisk.računa", _w1 ) + ;
+   @ form_x_koord() + _x - 2, form_y_koord() + 2 SAY8 _upadr( " < R > Štampa fisk.računa", _w1 ) + ;
       BROWSE_COL_SEP + _upadr( " < F > ponuda->račun", _w1 ) + ;
       BROWSE_COL_SEP + _upadr( " < F5 > osvježi ", _w1 )
-   @ m_x + _x - 1, m_y + 2 SAY _upadr( " < W > Dupliciraj", _w1 ) + ;
+   @ form_x_koord() + _x - 1, form_y_koord() + 2 SAY _upadr( " < W > Dupliciraj", _w1 ) + ;
       BROWSE_COL_SEP + _upadr( " < K > Ispravka podataka", _w1 ) + ;
       BROWSE_COL_SEP + _upadr( " < T > Duplikat fiskalnog rn.", _w1 )
 

@@ -67,9 +67,9 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
    IF field->idvd $ "16#80"
       Box(, 1, 55 )
       IF idvd == "16"
-         @ m_x + 1, m_y + 2 SAY8 "Stopa marže (vpc - stopa*vpc)=nc:" GET nStUc PICT "999.999"
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Stopa marže (vpc - stopa*vpc)=nc:" GET nStUc PICT "999.999"
       ELSE
-         @ m_x + 1, m_y + 2 SAY8 "Stopa marže (mpc-stopa*mpcsapp)=nc:" GET nStUc PICT "999.999"
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Stopa marže (mpc-stopa*mpcsapp)=nc:" GET nStUc PICT "999.999"
       ENDIF
       READ
       BoxC()
@@ -191,7 +191,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
 
             ENDIF
 
-            @ m_x + 1, m_y + 2 SAY "Step set " + cSet + " step: " + AllTrim( say_iznos( nSet ) )
+            @ form_x_koord() + 1, form_y_koord() + 2 SAY "Step set " + cSet + " step: " + AllTrim( say_iznos( nSet ) )
 
             IF !Empty( cSet )
                ??  " / " +  AllTrim( say_iznos( hTrosakSet[ cSet + "_step" ] ) )
@@ -422,7 +422,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
             ENDDO
 
 
-            @ m_x + 3, m_y + 2 SAY "Step set " + cSet + " iznos: "
+            @ form_x_koord() + 3, form_y_koord() + 2 SAY "Step set " + cSet + " iznos: "
             SWITCH cSet
             CASE "prevoz"
                ?? say_iznos( nUPrevoz )
@@ -577,32 +577,32 @@ FUNCTION raspored_procent_tr( cTipPrevoz, nIznosPrevoz, cTipCarDaz, nIznosCarDaz
    IF cTipPrevoz == "%"  .AND. Round(  nIznosPrevoz, 3 ) >  0
       hRet[ "prevoz_0" ] := nIznosPrevoz
       hRet[ "prevoz" ] := nIznosPrevoz
-      @ m_x + 1, m_y + 2 SAY  " [T1] : " + say_iznos( nIznosPrevoz ) GET hRet[ "prevoz" ]
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY  " [T1] : " + say_iznos( nIznosPrevoz ) GET hRet[ "prevoz" ]
 
    ENDIF
 
    IF cTipBankTr == "%" .AND. Round(  nIznosBankTr, 3 ) >  0
       hRet[ "banktr_0" ] := nIznosBankTr
       hRet[ "banktr" ] := nIznosBankTr
-      @ m_x + 2, m_y + 2 SAY  " [T2]  " + say_iznos( nIznosBankTr ) GET hRet[ "banktr" ]
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY  " [T2]  " + say_iznos( nIznosBankTr ) GET hRet[ "banktr" ]
    ENDIF
 
    IF cTipSpedTr == "%" .AND. Round(  nIznosSpedTr, 3 ) >  0
       hRet[ "spedtr_0" ] := nIznosSpedTr
       hRet[ "spedtr" ] := nIznosSpedTr
-      @ m_x + 3, m_y + 2 SAY  " [T3]  " + say_iznos( nIznosSpedTr ) GET hRet[ "spedtr" ]
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY  " [T3]  " + say_iznos( nIznosSpedTr ) GET hRet[ "spedtr" ]
    ENDIF
 
    IF cTipCarDaz == "%" .AND. Round(  nIznosCarDaz, 3 ) >  0
       hRet[ "cardaz_0" ] := nIznosCarDaz
       hRet[ "cardaz" ] := nIznosCarDaz
-      @ m_x + 4, m_y + 2 SAY  " [T4]  " + say_iznos( nIznosCarDaz ) GET hRet[ "cardaz" ]
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY  " [T4]  " + say_iznos( nIznosCarDaz ) GET hRet[ "cardaz" ]
    ENDIF
 
    IF cTipZavTr == "%" .AND. Round(  nIznosZavTr, 3 ) >  0
       hRet[ "zavtr_0" ] := nIznosCarDaz
       hRet[ "zavtr" ] := nIznosZavTr
-      @ m_x + 5, m_y + 2 SAY  " [T5]  " + say_iznos( nIznosZavTr ) GET hRet[ "zavtr" ]
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY  " [T5]  " + say_iznos( nIznosZavTr ) GET hRet[ "zavtr" ]
    ENDIF
 
    READ

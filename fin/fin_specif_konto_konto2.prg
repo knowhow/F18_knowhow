@@ -36,33 +36,33 @@ FUNCTION SpecKK2( lOtvSt )
    qqPartner := PadR( qqPartner, 60 )
    Box( "", 17, 65 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "SPECIFIKACIJA SUBANALITIKE KONTO/KONTO2"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "SPECIFIKACIJA SUBANALITIKE KONTO/KONTO2"
    READ
    DO WHILE .T.
 
       IF gNW == "D"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
 
       qqKonto := PadR( qqKonto, 7 )
       qqKonto2 := PadR( qqKonto2, 7 )
-      @ m_x + 5, m_y + 2 SAY "Konto   " GET qqKonto  VALID P_KontoFin( @qqKonto )
-      @ m_x + 6, m_y + 2 SAY "Konto 2 " GET qqKonto2  VALID P_KontoFin( @qqKonto2 ) .AND. qqKonto2 > qqkonto
-      @ m_x + 7, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
-      @ m_x + 8, m_y + 2 SAY "Datum dokumenta od:" GET dDatod
-      @ m_x + 8, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
-      @ m_x + 9, m_y + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG PICT "@!" VALID cPG $ "DN"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Konto   " GET qqKonto  VALID P_KontoFin( @qqKonto )
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Konto 2 " GET qqKonto2  VALID P_KontoFin( @qqKonto2 ) .AND. qqKonto2 > qqkonto
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Partner " GET qqPartner PICT "@!S50"
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Datum dokumenta od:" GET dDatod
+      @ form_x_koord() + 8, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG PICT "@!" VALID cPG $ "DN"
       IF fin_dvovalutno()
-         @ m_x + 10, m_y + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)" GET cDinDem PICT "@!" VALID cDinDem $ "12"
+         @ form_x_koord() + 10, form_y_koord() + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)" GET cDinDem PICT "@!" VALID cDinDem $ "12"
       ENDIF
-      @ m_x + 11, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N/2/4" GET cNula PICT "@!" VALID cNula  $ "DN24"
+      @ form_x_koord() + 11, form_y_koord() + 2 SAY "Prikaz stavki sa saldom 0 D/N/2/4" GET cNula PICT "@!" VALID cNula  $ "DN24"
 
-      IF fk1 == "D"; @ m_x + 14, m_y + 2 SAY "K1 (9 svi) :" GET cK1; ENDIF
-      IF fk2 == "D"; @ m_x + 15, m_y + 2 SAY "K2 (9 svi) :" GET cK2; ENDIF
-      IF fk3 == "D"; @ m_x + 16, m_y + 2 SAY "K3 (" + ck3 + " svi):" GET cK3; ENDIF
-      IF fk4 == "D"; @ m_x + 17, m_y + 2 SAY "K4 (99 svi):" GET cK4; ENDIF
+      IF fk1 == "D"; @ form_x_koord() + 14, form_y_koord() + 2 SAY "K1 (9 svi) :" GET cK1; ENDIF
+      IF fk2 == "D"; @ form_x_koord() + 15, form_y_koord() + 2 SAY "K2 (9 svi) :" GET cK2; ENDIF
+      IF fk3 == "D"; @ form_x_koord() + 16, form_y_koord() + 2 SAY "K3 (" + ck3 + " svi):" GET cK3; ENDIF
+      IF fk4 == "D"; @ form_x_koord() + 17, form_y_koord() + 2 SAY "K4 (99 svi):" GET cK4; ENDIF
 
       read; ESC_BCR
 

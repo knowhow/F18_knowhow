@@ -45,28 +45,28 @@ FUNCTION fin_sint_kartica()
    Box( "", 9, 75 )
    DO WHILE .T.
       SET CURSOR ON
-      @ m_x + 1, m_y + 2 SAY "KARTICA (SINTETICKI KONTO)"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "KARTICA (SINTETICKI KONTO)"
       IF gNW == "D"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 3, m_y + 2 SAY "Brza kartica (D/N)               " GET cBrza PICT "@!" VALID cBrza $ "DN"
-      @ m_x + 4, m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Brza kartica (D/N)               " GET cBrza PICT "@!" VALID cBrza $ "DN"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
       read; ESC_BCR
       IF cBrza == "D"
          qqKonto := PadR( qqKonto, 3 )
-         @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto
+         @ form_x_koord() + 6, form_y_koord() + 2 SAY "Konto: " GET qqKonto
       ELSE
          qqKonto := PadR( qqKonto, 60 )
-         @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
+         @ form_x_koord() + 6, form_y_koord() + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
       ENDIF
-      @ m_x + 8, m_y + 2 SAY "Datum od:" GET dDatOd
-      @ m_x + 8, Col() + 2 SAY "do:" GET dDatDo
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Datum od:" GET dDatOd
+      @ form_x_koord() + 8, Col() + 2 SAY "do:" GET dDatDo
       cIdRJ := ""
       IF gFinRj == "D" .AND. gSAKrIz == "D"
          cIdRJ := "999999"
-         @ m_x + 9, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
+         @ form_x_koord() + 9, form_y_koord() + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       read; ESC_BCR
 

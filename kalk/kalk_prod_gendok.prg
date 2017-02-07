@@ -130,11 +130,11 @@ FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
    cIdkonto := PadR( "1330", 7 )
    dDatDok := Date()
 
-   @ m_x + 1, m_Y + 2 SAY "Prodavnica:" GET  cidkonto VALID P_Konto( @cidkonto )
-   @ m_x + 2, m_Y + 2 SAY "Datum     :  " GET  dDatDok
-   @ m_x + 4, m_y + 2 SAY "Dokument na osnovu koga se vrsi inventura:" GET cIdFirma
-   @ m_x + 4, Col() + 2 SAY "-" GET cIdVD
-   @ m_x + 4, Col() + 2 SAY "-" GET cOldDok
+   @ form_x_koord() + 1, m_Y + 2 SAY "Prodavnica:" GET  cidkonto VALID P_Konto( @cidkonto )
+   @ form_x_koord() + 2, m_Y + 2 SAY "Datum     :  " GET  dDatDok
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Dokument na osnovu koga se vrsi inventura:" GET cIdFirma
+   @ form_x_koord() + 4, Col() + 2 SAY "-" GET cIdVD
+   @ form_x_koord() + 4, Col() + 2 SAY "-" GET cOldDok
 
    READ
    ESC_BCR
@@ -267,18 +267,18 @@ FUNCTION NivPoProc()
    cIdFirma := self_organizacija_id()
    cIdkonto := PadR( "1320", 7 )
    dDatDok := Date()
-   @ m_x + 1, m_Y + 2 SAY "Prodavnica :" GET  cidkonto VALID P_Konto( @cidkonto )
-   @ m_x + 2, m_Y + 2 SAY "Datum      :" GET  dDatDok
-   @ m_x + 3, m_Y + 2 SAY "Cijenu zaokruziti na (br.decimalnih mjesta) :" GET nZaokr PICT "9"
-   @ m_x + 4, m_Y + 2 SAY "(1) Popust prema stopama iz polja ROBA->N1"
-   @ m_x + 5, m_Y + 2 SAY "(2) popust prema stopama iz polja ROBA->N2"
-   @ m_x + 6, m_Y + 2 SAY "(3) popust prema jedinstvenoj stopi      ?"  GET cVarijanta VALID cVarijanta $ "123"
+   @ form_x_koord() + 1, m_Y + 2 SAY "Prodavnica :" GET  cidkonto VALID P_Konto( @cidkonto )
+   @ form_x_koord() + 2, m_Y + 2 SAY "Datum      :" GET  dDatDok
+   @ form_x_koord() + 3, m_Y + 2 SAY "Cijenu zaokruziti na (br.decimalnih mjesta) :" GET nZaokr PICT "9"
+   @ form_x_koord() + 4, m_Y + 2 SAY "(1) Popust prema stopama iz polja ROBA->N1"
+   @ form_x_koord() + 5, m_Y + 2 SAY "(2) popust prema stopama iz polja ROBA->N2"
+   @ form_x_koord() + 6, m_Y + 2 SAY "(3) popust prema jedinstvenoj stopi      ?"  GET cVarijanta VALID cVarijanta $ "123"
 
    READ
    ESC_BCR
 
    IF cVarijanta == "3"
-      @ m_x + 7, m_Y + 2 SAY "Stopa promjene cijena (- za smanjenje)      :" GET nStopa PICT "999.99%"
+      @ form_x_koord() + 7, m_Y + 2 SAY "Stopa promjene cijena (- za smanjenje)      :" GET nStopa PICT "999.99%"
       READ
       ESC_BCR
    ENDIF
@@ -431,8 +431,8 @@ FUNCTION VratiZadNiv()
    cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "1320", 7 )
    dDatDok := Date()
-   @ m_x + 1, m_Y + 2 SAY "Prodavnica :" GET  cIdKonto VALID P_Konto( @cIdKonto )
-   @ m_x + 2, m_Y + 2 SAY "Datum      :" GET  dDatDok
+   @ form_x_koord() + 1, m_Y + 2 SAY "Prodavnica :" GET  cIdKonto VALID P_Konto( @cIdKonto )
+   @ form_x_koord() + 2, m_Y + 2 SAY "Datum      :" GET  dDatDok
    READ
    ESC_BCR
 
@@ -457,7 +457,7 @@ FUNCTION VratiZadNiv()
    ELSE
       cStBrDok := kalk_doks->brdok
       Box(, 4, 60 )
-      @ m_x + 1, m_y + 2 SAY "Nivel. broj " + cIdFirma + " - 19 -" GET cStBrDok
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Nivel. broj " + cIdFirma + " - 19 -" GET cStBrDok
       READ
       ESC_BCR
       BoxC()
@@ -521,12 +521,12 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
    PRIVATE cUvijekSif := "D"
 
    Box(, 6, 50 )
-   @ m_x + 1, m_y + 2 SAY "Konto prodavnice: " GET cIdKontoProdavnica PICT "@!" VALID P_konto( @cIdKontoProdavnica )
-   @ m_x + 2, m_y + 2 SAY "Sravniti do odredjenog datuma:" GET cSravnitiD VALID cSravnitiD $ "DN" PICT "@!"
-   @ m_x + 4, m_y + 2 SAY "Uvijek nivelisati na MPC iz sifrarnika:" GET cUvijekSif VALID cUvijekSif $ "DN" PICT "@!"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Konto prodavnice: " GET cIdKontoProdavnica PICT "@!" VALID P_konto( @cIdKontoProdavnica )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Sravniti do odredjenog datuma:" GET cSravnitiD VALID cSravnitiD $ "DN" PICT "@!"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Uvijek nivelisati na MPC iz sifrarnika:" GET cUvijekSif VALID cUvijekSif $ "DN" PICT "@!"
    READ
    ESC_BCR
-   @ m_x + 6, m_y + 2 SAY "Datum do kojeg se sravnjava" GET dDok
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Datum do kojeg se sravnjava" GET dDok
    READ
    ESC_BCR
    BoxC()
@@ -551,7 +551,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
 
    Box(, 6, 65 )
 
-   @ 1 + m_x, 2 + m_y SAY "Generisem nivelaciju... 19-" + cBrNiv
+   @ 1 + form_x_koord(), 2 + form_y_koord() SAY "Generisem nivelaciju... 19-" + cBrNiv
 
    DO WHILE !Eof() .AND. field->idfirma + field->pkonto == self_organizacija_id() + cIdKontoProdavnica
 
@@ -577,8 +577,8 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
 
       nPosljVPC := nUlazVPC
 
-      @ 2 + m_x, 2 + m_y SAY "ID roba: " + cIdRoba
-      @ 3 + m_x, 2 + m_y SAY "Cijena u sifrarniku " + AllTrim( Str( nUlazVpc ) )
+      @ 2 + form_x_koord(), 2 + form_y_koord() SAY "ID roba: " + cIdRoba
+      @ 3 + form_x_koord(), 2 + form_y_koord() SAY "Cijena u sifrarniku " + AllTrim( Str( nUlazVpc ) )
 
       DO WHILE !Eof() .AND. self_organizacija_id() + cidkonto + cidroba == idFirma + pkonto + idroba
 
@@ -664,7 +664,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
 
             lGenerisao := .T.
 
-            @ 4 + m_x, 2 + m_y SAY "Generisao stavki: " + AllTrim( Str( ++nRbr ) )
+            @ 4 + form_x_koord(), 2 + form_y_koord() SAY "Generisao stavki: " + AllTrim( Str( ++nRbr ) )
 
             APPEND BLANK
 
@@ -727,7 +727,7 @@ FUNCTION kalk_13_to_11()
 
    PRIVATE cProdavn := Space( 7 )
    Box(, 3, 35 )
-   @ m_x + 2, m_y + 2 SAY "Prenos u prodavnicu:" GET cProdavn VALID P_Konto( @cProdavn )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Prenos u prodavnicu:" GET cProdavn VALID P_Konto( @cProdavn )
    READ
    BoxC()
    PRIVATE cBrUlaz := "0"
@@ -918,24 +918,24 @@ FUNCTION kalk_iz_11_u_41_42()
    cPoMetodiNC := "N"
 
    Box(, 6, 75 )
-   @ m_x + 0, m_y + 5 SAY "FORMIRANJE DOKUMENTA 41/42 NA OSNOVU DOKUMENTA 11"
-   @ m_x + 2, m_y + 2 SAY "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
+   @ form_x_koord() + 0, form_y_koord() + 5 SAY "FORMIRANJE DOKUMENTA 41/42 NA OSNOVU DOKUMENTA 11"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
    @ Row(), Col() GET cBrDokU VALID is_kalk_postoji_dokument( cIdFirma, cIdVdU, cBrDokU )
-   @ m_x + 3, m_y + 2 SAY "Formirati dokument (41 ili 42)  4"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Formirati dokument (41 ili 42)  4"
    cPom := "2"
    @ Row(), Col() GET cPom VALID cPom $ "12" PICT "9"
-   @ m_x + 4, m_y + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
-   @ m_x + 5, m_y + 2 SAY "Utvrditi NC po metodi iz parametara ? (D/N)" GET cPoMetodiNC VALID cPoMetodiNC $ "DN" PICT "@!"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Utvrditi NC po metodi iz parametara ? (D/N)" GET cPoMetodiNC VALID cPoMetodiNC $ "DN" PICT "@!"
    READ; ESC_BCR
    cIdVdI += cPom
    BoxC()
 
    IF cIdVdI == "41"
       Box(, 5, 75 )
-      @ m_x + 0, m_y + 5 SAY "FORMIRANJE DOKUMENTA 41 NA OSNOVU DOKUMENTA 11"
-      @ m_x + 2, m_y + 2 SAY "Broj maloprodajne fakture" GET cBrFaktP
-      @ m_x + 3, m_y + 2 SAY "Datum fakture            " GET dDatFaktP
-      @ m_x + 4, m_y + 2 SAY "Sifra kupca              " GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner )
+      @ form_x_koord() + 0, form_y_koord() + 5 SAY "FORMIRANJE DOKUMENTA 41 NA OSNOVU DOKUMENTA 11"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Broj maloprodajne fakture" GET cBrFaktP
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Datum fakture            " GET dDatFaktP
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Sifra kupca              " GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner )
       READ
       BoxC()
    ENDIF
@@ -1017,12 +1017,12 @@ FUNCTION kalk_iz_10_u_11()
    cPoMetodiNC := "N"
 
    Box(, 6, 75 )
-   @ m_x + 0, m_y + 5 SAY "FORMIRANJE DOKUMENTA 11 NA OSNOVU DOKUMENTA 10"
-   @ m_x + 2, m_y + 2 SAY "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
+   @ form_x_koord() + 0, form_y_koord() + 5 SAY "FORMIRANJE DOKUMENTA 11 NA OSNOVU DOKUMENTA 10"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
    @ Row(), Col() GET cBrDokU VALID is_kalk_postoji_dokument( cIdFirma, cIdVdU, cBrDokU )
-   @ m_x + 3, m_y + 2 SAY "Prodavn.konto zaduzuje   " GET cIdKonto VALID P_Konto( @cIdKonto )
-   @ m_x + 4, m_y + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
-   @ m_x + 5, m_y + 2 SAY "Utvrditi NC po metodi iz parametara ? (D/N)" GET cPoMetodiNC VALID cPoMetodiNC $ "DN" PICT "@!"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Prodavn.konto zaduzuje   " GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Utvrditi NC po metodi iz parametara ? (D/N)" GET cPoMetodiNC VALID cPoMetodiNC $ "DN" PICT "@!"
    READ; ESC_BCR
    BoxC()
 
@@ -1104,8 +1104,8 @@ FUNCTION gen_ip_80()
    LOCAL cNxt80 := Space( 8 )
 
    Box(, 5, 65 )
-   @ 1 + m_x, 2 + m_y SAY "Postojeci dokument IP -> " + cIdFirma + "-" + cTipDok + "-" GET cIpBrDok VALID !Empty( cIpBrDok )
-   @ 2 + m_x, 2 + m_y SAY "Datum dokumenta" GET dDat80 VALID !Empty( dDat80 )
+   @ 1 + form_x_koord(), 2 + form_y_koord() SAY "Postojeci dokument IP -> " + cIdFirma + "-" + cTipDok + "-" GET cIpBrDok VALID !Empty( cIpBrDok )
+   @ 2 + form_x_koord(), 2 + form_y_koord() SAY "Datum dokumenta" GET dDat80 VALID !Empty( dDat80 )
    READ
    BoxC()
 
@@ -1155,7 +1155,7 @@ FUNCTION gen_ip_80()
       Gather()
 
       ++ nCnt
-      @ 1 + m_x, 2 + m_y SAY AllTrim( Str( nCnt ) )
+      @ 1 + form_x_koord(), 2 + form_y_koord() SAY AllTrim( Str( nCnt ) )
 
       SELECT pript
       SKIP

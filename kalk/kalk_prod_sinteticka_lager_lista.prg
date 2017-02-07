@@ -40,22 +40,22 @@ FUNCTION sint_lager_lista_prodavnice()
    cGrupacija := Space( 4 )
    DO WHILE .T.
       IF gNW $ "DX"
-         @ m_x + 1, m_y + 2 SAY "Firma "
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 2, m_y + 2 SAY "Prodavnice" GET qqKonto  PICT "@!S50"
-      @ m_x + 3, m_y + 2 SAY "Artikli   " GET qqRoba PICT "@!S50"
-      @ m_x + 4, m_y + 2 SAY "Tarife    " GET qqTarifa PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
-      @ m_x + 6, m_y + 2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  VALID cpnab $ "DN" PICT "@!"
-      @ m_x + 7, m_y + 2 SAY "Prikaz stavki kojima je MPV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
-      @ m_x + 8, m_y + 2 SAY "Prikaz ERR D/N" GET cERR  VALID cERR $ "DN" PICT "@!"
-      @ m_x + 9, m_y + 2 SAY "Datum od " GET dDatOd
-      @ m_x + 9, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 10, m_y + 2 SAY "Prikaz robe tipa T/U  (D/N)" GET cTU VALID cTU $ "DN" PICT "@!"
-      @ m_x + 12, m_y + 2 SAY "Odabir grupacije (prazno-svi) GET" GET cGrupacija PICT "@!"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Prodavnice" GET qqKonto  PICT "@!S50"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Artikli   " GET qqRoba PICT "@!S50"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Tarife    " GET qqTarifa PICT "@!S50"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  VALID cpnab $ "DN" PICT "@!"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Prikaz stavki kojima je MPV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Prikaz ERR D/N" GET cERR  VALID cERR $ "DN" PICT "@!"
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Datum od " GET dDatOd
+      @ form_x_koord() + 9, Col() + 2 SAY "do" GET dDatDo
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Prikaz robe tipa T/U  (D/N)" GET cTU VALID cTU $ "DN" PICT "@!"
+      @ form_x_koord() + 12, form_y_koord() + 2 SAY "Odabir grupacije (prazno-svi) GET" GET cGrupacija PICT "@!"
       READ
       ESC_BCR
 

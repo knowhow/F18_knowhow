@@ -78,29 +78,29 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    Box(, 18, 60 )
 
 
-   @ m_x + 1, m_y + 2 SAY "Firma: " + cIdFirma
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " + cIdFirma
 
 
-   @ m_x + 2, m_y + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_kontoFin( @cIdkonto )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_kontoFin( @cIdkonto )
    IF cPoRN == "D"
-      @ m_x + 3, m_y + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
    ENDIF
 
-   // @ m_x+ 5,m_y+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
-   @ m_x + 6, m_y + 2 SAY "Izvjestaj se pravi na dan:" GET dNaDan
-   @ m_x + 7, m_y + 2 SAY "Prikazati rocne intervale (D/N) ?" GET cSaRokom VALID cSaRokom $ "DN" PICT "@!"
-   @ m_x + 8, m_y + 2 SAY "Interval 1: do (dana)" GET nDoDana1 WHEN cSaRokom == "D" PICT "999"
-   @ m_x + 9, m_y + 2 SAY "Interval 2: do (dana)" GET nDoDana2 WHEN cSaRokom == "D" PICT "999"
-   @ m_x + 10, m_y + 2 SAY "Interval 3: do (dana)" GET nDoDana3 WHEN cSaRokom == "D" PICT "999"
-   @ m_x + 11, m_y + 2 SAY "Interval 4: do (dana)" GET nDoDana4 WHEN cSaRokom == "D" PICT "999"
-   @ m_x + 13, m_y + 2 SAY "Prikaz iznosa (format)" GET PICPIC PICT "@!"
-   @ m_x + 14, m_y + 2 SAY "Uslov po opcini (prazno - nista)" GET cOpcine
-   @ m_x + 15, m_y + 2 SAY "Prikaz stavki kojima je saldo 0 (D/N)?" GET cPrikNule VALID cPrikNule $ "DN" PICT "@!"
+   // @ form_x_koord()+ 5,form_y_koord()+2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno valid cPrelomljeno $ "DN" pict "@!"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Izvjestaj se pravi na dan:" GET dNaDan
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY "Prikazati rocne intervale (D/N) ?" GET cSaRokom VALID cSaRokom $ "DN" PICT "@!"
+   @ form_x_koord() + 8, form_y_koord() + 2 SAY "Interval 1: do (dana)" GET nDoDana1 WHEN cSaRokom == "D" PICT "999"
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Interval 2: do (dana)" GET nDoDana2 WHEN cSaRokom == "D" PICT "999"
+   @ form_x_koord() + 10, form_y_koord() + 2 SAY "Interval 3: do (dana)" GET nDoDana3 WHEN cSaRokom == "D" PICT "999"
+   @ form_x_koord() + 11, form_y_koord() + 2 SAY "Interval 4: do (dana)" GET nDoDana4 WHEN cSaRokom == "D" PICT "999"
+   @ form_x_koord() + 13, form_y_koord() + 2 SAY "Prikaz iznosa (format)" GET PICPIC PICT "@!"
+   @ form_x_koord() + 14, form_y_koord() + 2 SAY "Uslov po opcini (prazno - nista)" GET cOpcine
+   @ form_x_koord() + 15, form_y_koord() + 2 SAY "Prikaz stavki kojima je saldo 0 (D/N)?" GET cPrikNule VALID cPrikNule $ "DN" PICT "@!"
 
    IF cPoRN == "N"
-      @ m_x + 16, m_y + 2 SAY "Prikaz izvjestaja u (1)KM (2)EURO" GET cValuta VALID cValuta $ "12"
+      @ form_x_koord() + 16, form_y_koord() + 2 SAY "Prikaz izvjestaja u (1)KM (2)EURO" GET cValuta VALID cValuta $ "12"
    ENDIF
-   @ m_x + 18, m_y + 2 SAY "Export izvjestaja u DBF ?" GET cExpRpt VALID cExpRpt $ "DN" PICT "@!"
+   @ form_x_koord() + 18, form_y_koord() + 2 SAY "Export izvjestaja u DBF ?" GET cExpRpt VALID cExpRpt $ "DN" PICT "@!"
    READ
    ESC_BCR
    Boxc()
@@ -149,7 +149,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    ELSE
       cDugPot := "1"
       Box(, 3, 60 )
-      @ m_x + 2, m_y + 2 SAY "Konto " + cIdKonto + " duguje / potrazuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto " + cIdKonto + " duguje / potrazuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
       READ
       Boxc()
    ENDIF

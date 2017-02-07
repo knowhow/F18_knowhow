@@ -46,25 +46,25 @@ STATIC FUNCTION get_vars( vars )
 
    Box(, 11, 72 )
 
-   @ m_x + _x, m_y + 2 SAY "*** maloprodaja - izvjestaj TKM"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "*** maloprodaja - izvjestaj TKM"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datum od" GET _d_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _d_do
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datum od" GET _d_od
+   @ form_x_koord() + _x, Col() + 1 SAY "do" GET _d_do
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Konto (jedan, sint, vise):" GET _konta PICT "@S35"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Konto (jedan, sint, vise):" GET _konta PICT "@S35"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "jedan: 13300 sint: 133 vise: 13300;13301;"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "jedan: 13300 sint: 133 vise: 13300;13301;"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
 
    READ
 

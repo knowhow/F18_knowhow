@@ -195,16 +195,16 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
    Box(, 6 + nLen + Int( ( nLenDP ) / 2 ), 75 )
    Beep( 1 )
-   @ m_x + 1, m_y + 2 SAY "ARTIKAL: "
-   @ m_x + 1, Col() SAY PadR( AllTrim( cIdRoba ) + " - " + Left( roba->naz, 40 ), 51 ) COLOR "GR+/B"
-   @ m_x + 3, m_y + 2 SAY cDiv + "RJ" + cDiv + PadC ( "Stanje", npd ) + cDiv + ;
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "ARTIKAL: "
+   @ form_x_koord() + 1, Col() SAY PadR( AllTrim( cIdRoba ) + " - " + Left( roba->naz, 40 ), 51 ) COLOR "GR+/B"
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY cDiv + "RJ" + cDiv + PadC ( "Stanje", npd ) + cDiv + ;
       PadC ( "Na reversu", npd ) + cDiv + ;
       PadC ( "Rezervisano", npd ) + cDiv + PadC ( "Ostalo", npd ) ;
       + cDiv
-   nR := m_x + 4
+   nR := form_x_koord() + 4
    FOR nC := 1 TO nLen
       // {idfirma, nUl,nIzl,nRevers,nRezerv }
-      @ nR, m_y + 2 SAY cDiv
+      @ nR, form_y_koord() + 2 SAY cDiv
       @ nR, Col() SAY aStanje[nC ][ 1 ]
       @ nR, Col() SAY cDiv
       nPom := aStanje[nC ][ 2 ] -aStanje[nC ][ 3 ]
@@ -224,11 +224,11 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
       nTOst += nPom
       nR ++
    NEXT
-   @ nR, m_y + 2 SAY cDiv + "--" + cDiv + REPL ( "-", npd ) + cDiv + ;
+   @ nR, form_y_koord() + 2 SAY cDiv + "--" + cDiv + REPL ( "-", npd ) + cDiv + ;
       REPL ( "-", npd ) + cDiv + ;
       REPL ( "-", npd ) + cDiv + REPL ( "-", npd ) + cDiv
    nR ++
-   @ nR, m_y + 2 SAY " ³ UK.³ "
+   @ nR, form_y_koord() + 2 SAY " ³ UK.³ "
    @ nR, Col() SAY nTSta PICT picdem
    @ nR, Col() SAY cDiv
    @ nR, Col() SAY nTRev PICT picdem
@@ -242,7 +242,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
    IF nLenDP > 0
       ++nR
-      @ nR, m_y + 2 SAY REPL( "-", 74 )
+      @ nR, form_y_koord() + 2 SAY REPL( "-", 74 )
       FOR i := 1 TO nLenDP - 1
 
          cPom777 := aDodPar[ i, 2 ]
@@ -255,10 +255,10 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
          IF i % 2 != 0
             ++nR
-            @ nR, m_y + 2 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
+            @ nR, form_y_koord() + 2 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
             @ nR, Col() + 2 SAY &cPom777 COLOR "R/W"
          ELSE
-            @ nR, m_y + 37 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
+            @ nR, form_y_koord() + 37 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
             @ nR, Col() + 2 SAY &cPom777 COLOR "R/W"
          ENDIF
 

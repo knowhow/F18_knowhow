@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-MEMVAR m_x, m_y
+MEMVAR form_x_koord(), form_y_koord()
 
 FUNCTION fin_povrat_naloga( lStorno )
 
@@ -41,29 +41,29 @@ FUNCTION fin_povrat_naloga( lStorno )
 
    Box( "", iif( lStorno, 3, 1 ), iif( lStorno, 65, 35 ) )
 
-   @ m_x + 1, m_y + 2 SAY "Nalog:"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Nalog:"
 
    IF gNW == "D"
-      @ m_x + 1, Col() + 1 SAY cIdFirma PICT "@!"
+      @ form_x_koord() + 1, Col() + 1 SAY cIdFirma PICT "@!"
    ELSE
-      @ m_x + 1, Col() + 1 GET cIdFirma PICT "@!"
+      @ form_x_koord() + 1, Col() + 1 GET cIdFirma PICT "@!"
    ENDIF
 
-   @ m_x + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
-   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID fin_fix_broj_naloga( @cBrNal )
+   @ form_x_koord() + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
+   @ form_x_koord() + 1, Col() + 1 SAY "-" GET cBrNal VALID fin_fix_broj_naloga( @cBrNal )
 
    IF lStorno
 
-      @ m_x + 3, m_y + 2 SAY "Broj novog naloga (naloga storna):"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Broj novog naloga (naloga storna):"
 
       IF gNW == "D"
-         @ m_x + 3, Col() + 1 SAY cIdFirma2
+         @ form_x_koord() + 3, Col() + 1 SAY cIdFirma2
       ELSE
-         @ m_x + 3, Col() + 1 GET cIdFirma2
+         @ form_x_koord() + 3, Col() + 1 GET cIdFirma2
       ENDIF
 
-      @ m_x + 3, Col() + 1 SAY "-" GET cIdVN2 PICT "@!"
-      @ m_x + 3, Col() + 1 SAY "-" GET cBrNal2
+      @ form_x_koord() + 3, Col() + 1 SAY "-" GET cIdVN2 PICT "@!"
+      @ form_x_koord() + 3, Col() + 1 SAY "-" GET cBrNal2
 
    ENDIF
 
@@ -132,27 +132,27 @@ FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    Box(, 5, 70 )
 
    cTbl := "fin_suban"
-   @ m_x + 1, m_y + 2 SAY "delete " + cTbl
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "delete " + cTbl
    SELECT suban
    lOk := delete_rec_server_and_dbf( cTbl, _rec, 2, "CONT" )
 
    IF lOk
       cTbl := "fin_anal"
-      @ m_x + 2, m_y + 2 SAY "delete " + cTbl
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "delete " + cTbl
       SELECT anal
       lOk := delete_rec_server_and_dbf( cTbl, _rec, 2, "CONT" )
    ENDIF
 
    IF lOk
       cTbl := "fin_sint"
-      @ m_x + 3, m_y + 2 SAY "delete " + cTbl
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "delete " + cTbl
       SELECT sint
       lOk := delete_rec_server_and_dbf( cTbl, _rec, 2, "CONT" )
    ENDIF
 
    IF lOk
       cTbl := "fin_nalog"
-      @ m_x + 4, m_y + 2 SAY "delete " + cTbl
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "delete " + cTbl
       SELECT nalog
       lOk := delete_rec_server_and_dbf( cTbl, _rec, 1, "CONT" )
    ENDIF

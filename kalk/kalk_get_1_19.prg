@@ -18,26 +18,26 @@ FUNCTION kalk_get_1_19()
    _DatFaktP := _datdok
    PRIVATE aPorezi := {}
 
-   @ m_x + 8, m_y + 2   SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
+   @ form_x_koord() + 8, form_y_koord() + 2   SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
 
    // IF gNW <> "X"
-   // @ m_x + 8, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
+   // @ form_x_koord() + 8, form_y_koord() + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
    // ENDIF
 
    READ
    ESC_RETURN K_ESC
 
-   @ m_x + 10, m_y + 66 SAY "Tarif.br->"
+   @ form_x_koord() + 10, form_y_koord() + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _idVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _idVd, kalk_is_novi_dokument(), form_x_koord() + 11, form_y_koord() + 2, @aPorezi )
 /*
    IF roba_barkod_pri_unosu()
-    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } VALID VRoba()
+    --  @ form_x_koord() + 11, form_y_koord() + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } VALID VRoba()
    ELSE
-    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
+    --  @ form_x_koord() + 11, form_y_koord() + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
    ENDIF
 */
-   @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ form_x_koord() + 11, form_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -68,7 +68,7 @@ FUNCTION kalk_get_1_19()
       MsgC()
    ENDIF
 
-   @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _kolicina >= 0
+   @ form_x_koord() + 12, form_y_koord() + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _kolicina >= 0
 
    _idpartner := ""
 
@@ -96,10 +96,10 @@ FUNCTION kalk_get_1_19()
 
    nNCJ := nStCj + _MPCSaPP
 
-   @ m_x + 16, m_y + 2  SAY "STARA CIJENA " + "(MPCSAPDV):"
-   @ m_x + 16, m_y + 50 GET nStCj    PICT "999999.9999"
-   @ m_x + 17, m_y + 2  SAY "NOVA CIJENA  " +  "(MPCSAPDV):"
-   @ m_x + 17, m_y + 50 GET nNCj     PICT "999999.9999"
+   @ form_x_koord() + 16, form_y_koord() + 2  SAY "STARA CIJENA " + "(MPCSAPDV):"
+   @ form_x_koord() + 16, form_y_koord() + 50 GET nStCj    PICT "999999.9999"
+   @ form_x_koord() + 17, form_y_koord() + 2  SAY "NOVA CIJENA  " +  "(MPCSAPDV):"
+   @ form_x_koord() + 17, form_y_koord() + 50 GET nNCj     PICT "999999.9999"
 
    SayPorezi( 19 )
 

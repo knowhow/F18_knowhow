@@ -98,44 +98,44 @@ FUNCTION fin_specifikacija_suban()
    cFond := "9999"
    cNula := "N"
    DO WHILE .T.
-      @ m_x + 1, m_y + 6 SAY8 "SPECIFIKACIJA SUBANALITIČKIH KONTA"
+      @ form_x_koord() + 1, form_y_koord() + 6 SAY8 "SPECIFIKACIJA SUBANALITIČKIH KONTA"
       IF gDUFRJ == "D"
          cIdFirma := PadR( self_organizacija_id() + ";", 30 )
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
       ELSE
 
-         @ m_x + 3, m_y + 2 SAY "Firma "
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
       ENDIF
-      @ m_x + 4, m_y + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
-      @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
-      @ m_x + 6, Col() + 2 SAY "do" GET dDatDo
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Partner " GET qqPartner PICT "@!S50"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Datum dokumenta od" GET dDatOd
+      @ form_x_koord() + 6, Col() + 2 SAY "do" GET dDatDo
       IF fin_dvovalutno()
-         @ m_x + 7, m_y + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTip VALID ctip $ "123"
+         @ form_x_koord() + 7, form_y_koord() + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTip VALID ctip $ "123"
       ELSE
          cTip := "1"
       ENDIF
 
-      @ m_x + 8, m_y + 2 SAY8 "Prikaz sintetičkih konta (D/N) ?" GET cSK  PICT "@!" VALID csk $ "DN"
-      @ m_x + 9, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
-      @ m_x + 10, m_y + 2 SAY "Skracena varijanta (D/N) ?" GET cSkVar PICT "@!" VALID cSkVar $ "DN"
-      @ m_x + 11, m_y + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
-      @ m_x + 12, m_y + 2 SAY "Uslov za vrstu naloga (prazno-svi) " GET cVN PICT "@!S20"
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "Prikaz sintetičkih konta (D/N) ?" GET cSK  PICT "@!" VALID csk $ "DN"
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Skracena varijanta (D/N) ?" GET cSkVar PICT "@!" VALID cSkVar $ "DN"
+      @ form_x_koord() + 11, form_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
+      @ form_x_koord() + 12, form_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-svi) " GET cVN PICT "@!S20"
 
       cRasclaniti := "N"
 
       IF gFinRj == "D"
-         @ m_x + 13, m_y + 2 SAY "Rasclaniti po RJ (D/N) "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
-         @ m_x + 14, m_y + 2 SAY "Rasclaniti po RJ/FUNK/FOND? (D/N) "  GET cRascFunkFond PICT "@!" VALID cRascFunkFond $ "DN"
+         @ form_x_koord() + 13, form_y_koord() + 2 SAY "Rasclaniti po RJ (D/N) "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
+         @ form_x_koord() + 14, form_y_koord() + 2 SAY "Rasclaniti po RJ/FUNK/FOND? (D/N) "  GET cRascFunkFond PICT "@!" VALID cRascFunkFond $ "DN"
       ENDIF
 
-      @ m_x + 15, m_y + 2 SAY8 "Općina (prazno-sve):" GET cOpcine
+      @ form_x_koord() + 15, form_y_koord() + 2 SAY8 "Općina (prazno-sve):" GET cOpcine
 
       UpitK1k4( 16 )
 
-      @ m_x + 19, m_y + 2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN PICT "@!" VALID cExpRptDN $ "DN"
+      @ form_x_koord() + 19, form_y_koord() + 2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN PICT "@!" VALID cExpRptDN $ "DN"
 
       READ
       ESC_BCR

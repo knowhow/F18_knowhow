@@ -190,7 +190,7 @@ FUNCTION rn_g_r_br( cTblName )
 
    DO WHILE !Eof()
 
-      @ m_x + 1, m_y + 2 SAY "Renumeracija: G_R_BR " + Str( nRbr, 4, 0 )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Renumeracija: G_R_BR " + Str( nRbr, 4, 0 )
 
       _rec := dbf_get_rec()
       _rec[ "g_r_br" ] := nRbr

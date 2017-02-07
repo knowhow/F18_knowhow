@@ -27,16 +27,16 @@ FUNCTION roba_pregled_prodaje_po_grupama()
 
    Box( "#PREGLED PRODAJE - IZVJESTAJNI USLOVI", 10, 75 )
    DO WHILE .T.
-      @ m_x + 2, m_y + 2 SAY "Grupe   " GET qGrupe    PICT "@S40!"
-      @ m_x + 3, m_y + 2 SAY "Podgrupe" GET qPodgrupe PICT "@S40!"
-      @ m_x + 4, m_y + 2 SAY "Za period od" GET dOd
-      @ m_x + 4, Col() + 1 SAY "do" GET dDo
-      @ m_x + 5, m_y + 2 SAY "Usporedni prikaz prethodne sedmice i 4 sedmice prije? (D/N)" GET cSaPSiPM PICT "@!" VALID cSaPSiPM $ "DN"
-      @ m_x + 6, m_y + 2 SAY "Kupci (prazno-svi)" GET qKupac PICT "@S40!"
-      @ m_x + 7, m_y + 2 SAY "Opstine prodaje (prazno-sve)" GET qOpstina PICT "@S40!"
-      @ m_x + 8, m_y + 2 SAY "Prikaz pojedinacnih artikala (D/N)" GET cPA VALID cPA $ "DN" PICT "@!"
-      @ m_x + 9, m_y + 2 SAY "Izdvojiti ( M-maloprodaju / V-veleprodaju / S-sve )" GET cMPVP VALID cMPVP $ "MVS" PICT "@!"
-      @ m_x + 10, m_y + 2 SAY "Konta " GET qKonta PICT "@S40!"
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Grupe   " GET qGrupe    PICT "@S40!"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Podgrupe" GET qPodgrupe PICT "@S40!"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Za period od" GET dOd
+      @ form_x_koord() + 4, Col() + 1 SAY "do" GET dDo
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Usporedni prikaz prethodne sedmice i 4 sedmice prije? (D/N)" GET cSaPSiPM PICT "@!" VALID cSaPSiPM $ "DN"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Kupci (prazno-svi)" GET qKupac PICT "@S40!"
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Opstine prodaje (prazno-sve)" GET qOpstina PICT "@S40!"
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Prikaz pojedinacnih artikala (D/N)" GET cPA VALID cPA $ "DN" PICT "@!"
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Izdvojiti ( M-maloprodaju / V-veleprodaju / S-sve )" GET cMPVP VALID cMPVP $ "MVS" PICT "@!"
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Konta " GET qKonta PICT "@S40!"
       READ
       ESC_BCR
       aUslG := Parsiraj( qGrupe, "cG" )

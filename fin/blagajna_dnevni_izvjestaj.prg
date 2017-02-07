@@ -90,7 +90,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
 
    Box(, 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY ValDomaca() + "/" + ValPomocna() + " blagajnicki izvjestaj (1/2):" GET cDinDem
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY ValDomaca() + "/" + ValPomocna() + " blagajnicki izvjestaj (1/2):" GET cDinDem
 
    READ
 
@@ -107,8 +107,8 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
 
    dDatdok := datdok
 
-   @ m_x + 2, m_Y + 2 SAY "Datum:" GET dDatDok
-   @ m_x + 3, m_Y + 2 SAY "Konto blagajne:" GET cIdKonto PICT "@S7" VALID P_Konto( @cIdKonto )
+   @ form_x_koord() + 2, m_Y + 2 SAY "Datum:" GET dDatDok
+   @ form_x_koord() + 3, m_Y + 2 SAY "Konto blagajne:" GET cIdKonto PICT "@S7" VALID P_Konto( @cIdKonto )
 
    READ
 
@@ -372,7 +372,7 @@ FUNCTION blag_azur()
    cDinDem := "1"
 
    Box(, 4, 60 )
-   @ m_x + 1, m_y + 2 SAY ValDomaca() + "/" + ValPomocna() + " blagajnicki izvjestaj (1/2):" GET cDinDem
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY ValDomaca() + "/" + ValPomocna() + " blagajnicki izvjestaj (1/2):" GET cDinDem
    READ
    IF cDinDem == "1"
       cIdKonto := PadR( "2020", 7 )
@@ -386,17 +386,17 @@ FUNCTION blag_azur()
    cTipDok := Space( 2 )
    cBrDok := Space( 8 )
 
-   @ m_x + 2, m_Y + 2 SAY "Dokument:" GET cIdFirma VALID !Empty( cIdFirma )
-   @ m_x + 2, m_Y + 15 SAY "-" GET cTipDok VALID !Empty( cTipDok )
-   @ m_x + 2, m_Y + 20 SAY "-" GET cBrDok VALID !Empty( cBrDok )
+   @ form_x_koord() + 2, m_Y + 2 SAY "Dokument:" GET cIdFirma VALID !Empty( cIdFirma )
+   @ form_x_koord() + 2, m_Y + 15 SAY "-" GET cTipDok VALID !Empty( cTipDok )
+   @ form_x_koord() + 2, m_Y + 20 SAY "-" GET cBrDok VALID !Empty( cBrDok )
 
    READ
 
    // precesljaj dokument radi konta i datuma, pa ponudi
    dat_kto_blag( @dDatDok, @cIdKonto, cIdFirma, cTipDok, cBrDok )
 
-   @ m_x + 3, m_Y + 2 SAY "Datum:" GET dDatDok
-   @ m_x + 4, m_Y + 2 SAY "Konto blagajne:" GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ form_x_koord() + 3, m_Y + 2 SAY "Datum:" GET dDatDok
+   @ form_x_koord() + 4, m_Y + 2 SAY "Konto blagajne:" GET cIdKonto VALID P_Konto( @cIdKonto )
    READ
    BoxC()
 

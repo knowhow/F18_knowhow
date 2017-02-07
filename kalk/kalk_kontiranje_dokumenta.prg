@@ -212,16 +212,16 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
          IF !lAFin
             cBrNalF := ""
          ELSE
-            @ m_x + 1, m_y + 2  SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cIdvn + " - " + cBrNalF
+            @ form_x_koord() + 1, form_y_koord() + 2  SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cIdvn + " - " + cBrNalF
          ENDIF
 
          IF !lAMat
             cBrBalM := ""
          ELSE
-            @ m_x + 2, m_y + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cIdvn + " - " + cBrNalM
+            @ form_x_koord() + 2, form_y_koord() + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cIdvn + " - " + cBrNalM
          ENDIF
 
-         @ m_x + 4, m_y + 2 SAY "Datum naloga: "
+         @ form_x_koord() + 4, form_y_koord() + 2 SAY "Datum naloga: "
 
          ?? dDatNal
 
@@ -231,14 +231,14 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
       ELSE
          IF lAFin2
-            @ m_x + 1, m_y + 2 SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cIdvn + " -" GET cBrNalF
+            @ form_x_koord() + 1, form_y_koord() + 2 SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cIdvn + " -" GET cBrNalF
          ENDIF
 
          IF lAMat2
-            @ m_x + 2, m_y + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cIdvn + " -" GET cBrNalM
+            @ form_x_koord() + 2, form_y_koord() + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cIdvn + " -" GET cBrNalM
          ENDIF
 
-         @ m_x + 5, m_y + 2 SAY "(ako je broj naloga prazan - ne vrsi se kontiranje)"
+         @ form_x_koord() + 5, form_y_koord() + 2 SAY "(ako je broj naloga prazan - ne vrsi se kontiranje)"
          READ
          ESC_BCR
       ENDIF
@@ -693,7 +693,7 @@ FUNCTION Konto( nBroj, cDef, cTekst )
 
    Box(, 2, 60 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY cTekst
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY cTekst
    IF nBroj == 1
       cKonto1 := cDef
       @ Row(), Col() + 1 GET cKonto1
@@ -759,7 +759,7 @@ FUNCTION RJ( nBroj, cDef, cTekst )
 
    Box(, 2, 60 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY cTekst
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY cTekst
    IF nBroj == 1
       cRJ1 := cdef
       @ Row(), Col() + 1 GET cRj1
@@ -830,13 +830,13 @@ FUNCTION DatVal()
          Box(, 3, 60 )
 
          SET CURSOR ON
-         @ m_x + 1, m_y + 2 SAY "Datum dokumenta: "
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Datum dokumenta: "
          ??  finmat->datfaktp
-         @ m_x + 2, m_y + 2 SAY "Uvecaj dana    :" GET _uvecaj PICT "999"
-         @ m_x + 3, m_y + 2 SAY "Valuta         :" GET dDatVal WHEN {|| dDatVal := finmat->datfaktp + _uvecaj, .T. }
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Uvecaj dana    :" GET _uvecaj PICT "999"
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Valuta         :" GET dDatVal WHEN {|| dDatVal := finmat->datfaktp + _uvecaj, .T. }
 
          // IF lVrsteP .AND. Empty( cIdVrsteP )
-         // @ m_x + 4, m_y + 2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
+         // @ form_x_koord() + 4, form_y_koord() + 2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
          // ENDIF
 
          READ
@@ -903,41 +903,41 @@ FUNCTION Partner( nBroj, cDef, cTekst, lFaktura, dp )
 
    Box(, 2 + IF( lFaktura, 2, 0 ), 60 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY cTekst
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY cTekst
    IF nBroj == 1
       cPartner1 := PadR( cdef, dp )
       @ Row(), Col() + 1 GET cPartner1
       IF lFaktura
-         @ m_x + 2, m_y + 2 SAY "Broj fakture " GET cBrFakt1
-         @ m_x + 3, m_y + 2 SAY "Datum fakture" GET dDatFakt1
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Broj fakture " GET cBrFakt1
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Datum fakture" GET dDatFakt1
       ENDIF
    ELSEIF nBroj == 2
       cPartner2 := PadR( cdef, dp )
       @ Row(), Col() + 1 GET cPartner2
       IF lFaktura
-         @ m_x + 2, m_y + 2 SAY "Broj fakture " GET cBrFakt2
-         @ m_x + 3, m_y + 2 SAY "Datum fakture" GET dDatFakt2
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Broj fakture " GET cBrFakt2
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Datum fakture" GET dDatFakt2
       ENDIF
    ELSEIF nBroj == 3
       cPartner3 := PadR( cdef, dp )
       @ Row(), Col() + 1 GET cPartner3
       IF lFaktura
-         @ m_x + 2, m_y + 2 SAY "Broj fakture " GET cBrFakt3
-         @ m_x + 3, m_y + 2 SAY "Datum fakture" GET dDatFakt3
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Broj fakture " GET cBrFakt3
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Datum fakture" GET dDatFakt3
       ENDIF
    ELSEIF nBroj == 4
       cPartner4 := PadR( cdef, dp )
       @ Row(), Col() + 1 GET cPartner4
       IF lFaktura
-         @ m_x + 2, m_y + 2 SAY "Broj fakture " GET cBrFakt4
-         @ m_x + 3, m_y + 2 SAY "Datum fakture" GET dDatFakt4
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Broj fakture " GET cBrFakt4
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Datum fakture" GET dDatFakt4
       ENDIF
    ELSE
       cPartner5 := PadR( cdef, dp )
       @ Row(), Col() + 1 GET cPartner5
       IF lFaktura
-         @ m_x + 2, m_y + 2 SAY "Broj fakture " GET cBrFakt5
-         @ m_x + 3, m_y + 2 SAY "Datum fakture" GET dDatFakt5
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Broj fakture " GET cBrFakt5
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Datum fakture" GET dDatFakt5
       ENDIF
    ENDIF
    READ
@@ -1008,7 +1008,7 @@ FUNCTION IspitajRezim()
 
 FUNCTION kalk_open_tabele_za_kontiranje()
 
-   O_FINMAT
+   o_finmat()
    o_konto()
    o_partner()
    o_tdok()

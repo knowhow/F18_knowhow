@@ -141,7 +141,7 @@ FUNCTION RasclanRJ()
 
 STATIC FUNCTION TekRec()
 
-   @ m_x + 1, m_y + 2 SAY RecNo()
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY RecNo()
 
    RETURN NIL
 
@@ -169,30 +169,30 @@ FUNCTION UpitK1K4( mxplus, lK )
 
    IF lK
       IF _k1
-         @ m_x + mxplus, m_y + 2 SAY "K1 (9 svi) :" GET cK1
+         @ form_x_koord() + mxplus, form_y_koord() + 2 SAY "K1 (9 svi) :" GET cK1
       ENDIF
       IF _k2
-         @ m_x + mxplus, Col() + 2 SAY "K2 (9 svi) :" GET cK2
+         @ form_x_koord() + mxplus, Col() + 2 SAY "K2 (9 svi) :" GET cK2
       ENDIF
       IF _k3
-         @ m_x + mxplus + 1, m_y + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
+         @ form_x_koord() + mxplus + 1, form_y_koord() + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
       ENDIF
       IF _k4
-         @ m_x + mxplus + 1, Col() + 1 SAY "K4 (99 svi):" GET cK4
+         @ form_x_koord() + mxplus + 1, Col() + 1 SAY "K4 (99 svi):" GET cK4
       ENDIF
    ENDIF
 
    IF gFinRj == "D"
       IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER("fin_suban_kartica") )
-         @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
+         @ form_x_koord() + mxplus + 2, form_y_koord() + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
       ELSE
-         @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj
+         @ form_x_koord() + mxplus + 2, form_y_koord() + 2 SAY "RJ:" GET cIdRj
       ENDIF
    ENDIF
 
    IF gTroskovi == "D"
-      @ m_x + mxplus + 3, m_y + 2 SAY "Funk    :" GET cFunk
-      @ m_x + mxplus + 4, m_y + 2 SAY "Fond    :" GET cFond
+      @ form_x_koord() + mxplus + 3, form_y_koord() + 2 SAY "Funk    :" GET cFunk
+      @ form_x_koord() + mxplus + 4, form_y_koord() + 2 SAY "Fond    :" GET cFond
    ENDIF
 
    RETURN .T.

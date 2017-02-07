@@ -140,42 +140,42 @@ FUNCTION kalk_prod_lager_lista_vars( hParams, ps )
 
    Box( "# LAGER LISTA PRODAVNICE" + if( ps, " / POČETNO STANJE", "" ), 15, MAXCOLS() -5 )
 
-   @ m_x + _x, m_y + 2 SAY "Firma "
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Firma "
 
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++_x
    ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Prodavnički konto:" GET _p_konto VALID P_Konto( @_p_konto )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Prodavnički konto:" GET _p_konto VALID P_Konto( @_p_konto )
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Datum od:" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datum od:" GET _dat_od
+   @ form_x_koord() + _x, Col() + 1 SAY "do:" GET _dat_do
 
    IF ps
-      @ m_x + _x, Col() + 1 SAY8 "Datum poč.stanja:" GET _dat_ps
+      @ form_x_koord() + _x, Col() + 1 SAY8 "Datum poč.stanja:" GET _dat_ps
    ENDIF
 
    ++_x
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Filter po artiklima:" GET _art_filter PICT "@S50"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Filter po artiklima:" GET _art_filter PICT "@S50"
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Filter po tarifama:" GET _tar_filter PICT "@S50"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Filter po tarifama:" GET _tar_filter PICT "@S50"
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Filter po partnerima:" GET _part_filter PICT "@S50"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Filter po partnerima:" GET _part_filter PICT "@S50"
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Filter po v.dokument:" GET _dok_filter PICT "@S50"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Filter po v.dokument:" GET _dok_filter PICT "@S50"
 
    ++_x
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Prikaz nabavne vrijednosti (D/N)" GET _pr_nab VALID _pr_nab $ "DN" PICT "@!"
-   @ m_x + _x, Col() + 1 SAY "Prikaz stavki kojima je MPV=0 (D/N)" GET _nule VALID _nule $ "DN" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Prikaz nabavne vrijednosti (D/N)" GET _pr_nab VALID _pr_nab $ "DN" PICT "@!"
+   @ form_x_koord() + _x, Col() + 1 SAY "Prikaz stavki kojima je MPV=0 (D/N)" GET _nule VALID _nule $ "DN" PICT "@!"
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Prikaz robe tipa T/U (D/N)" GET _roba_tip_tu VALID _roba_tip_tu $ "DN" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Prikaz robe tipa T/U (D/N)" GET _roba_tip_tu VALID _roba_tip_tu $ "DN" PICT "@!"
 
    IF ps
-      @ m_x + _x, Col() + 1 SAY8 "MPC uzmi iz šifarnika (D/N) ?" GET _set_roba VALID _set_roba $ "DN" PICT "@!"
+      @ form_x_koord() + _x, Col() + 1 SAY8 "MPC uzmi iz šifarnika (D/N) ?" GET _set_roba VALID _set_roba $ "DN" PICT "@!"
    ENDIF
 
    READ

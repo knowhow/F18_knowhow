@@ -29,49 +29,49 @@ FUNCTION kalk_get_1_11()
       _GKolicina := _GKolicin2 := 0
       IF _IdVD $ "11#12#13#22"
          _IdPartner := ""
-         @  m_x + 6, m_y + 2   SAY "Otpremnica - Broj:" GET _BrFaktP
-         @  m_x + 6, Col() + 2 SAY "Datum:" GET _DatFaktP
+         @  form_x_koord() + 6, form_y_koord() + 2   SAY "Otpremnica - Broj:" GET _BrFaktP
+         @  form_x_koord() + 6, Col() + 2 SAY "Datum:" GET _DatFaktP
       ENDIF
 
-      @ m_x + 8, m_y + 2   SAY8 "Prodavnički Konto zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
+      @ form_x_koord() + 8, form_y_koord() + 2   SAY8 "Prodavnički Konto zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
       // IF gNW <> "X"
-      // @ m_x + 8, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 24 )
+      // @ form_x_koord() + 8, form_y_koord() + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 24 )
       // ENDIF
 
-      @ m_x + 9, m_y + 2   SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
+      @ form_x_koord() + 9, form_y_koord() + 2   SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
       // IF gNW <> "X"
-      // @ m_x + 9, m_y + 42 SAY "Razduzuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. p_partner( @_IdZaduz2, 24 )
+      // @ form_x_koord() + 9, form_y_koord() + 42 SAY "Razduzuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. p_partner( @_IdZaduz2, 24 )
       // ENDIF
       read; ESC_RETURN K_ESC
    ELSE
       IF _IdVD $ "11#12#13#22"
-         @  m_x + 6, m_y + 2   SAY "Otpremnica - Broj: "; ?? _BrFaktP
-         @  m_x + 6, Col() + 2 SAY "Datum: "; ?? _DatFaktP
+         @  form_x_koord() + 6, form_y_koord() + 2   SAY "Otpremnica - Broj: "; ?? _BrFaktP
+         @  form_x_koord() + 6, Col() + 2 SAY "Datum: "; ?? _DatFaktP
       ENDIF
-      @ m_x + 8, m_y + 2   SAY8 "Prodavnicki Konto zadužuje "; ?? _IdKonto
+      @ form_x_koord() + 8, form_y_koord() + 2   SAY8 "Prodavnicki Konto zadužuje "; ?? _IdKonto
       // IF gNW <> "X"
-      // @ m_x + 8, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
+      // @ form_x_koord() + 8, form_y_koord() + 42  SAY "Zaduzuje: "; ?? _IdZaduz
       // ENDIF
-      @ m_x + 9, m_y + 2   SAY8 "Magacinski konto razdužuje "; ?? _IdKonto2
+      @ form_x_koord() + 9, form_y_koord() + 2   SAY8 "Magacinski konto razdužuje "; ?? _IdKonto2
       // IF gNW <> "X"
-      // @ m_x + 9, m_y + 42  SAY "Razduzuje: "; ?? _IdZaduz2
+      // @ form_x_koord() + 9, form_y_koord() + 42  SAY "Razduzuje: "; ?? _IdZaduz2
       // ENDIF
    ENDIF
 
-   @ m_x + 10, m_y + 66 SAY "Tarifa ->"
+   @ form_x_koord() + 10, form_y_koord() + 66 SAY "Tarifa ->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), form_x_koord() + 11, form_y_koord() + 2, @aPorezi )
    /*
    IF roba_barkod_pri_unosu()
-    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val(-- gDuzSifIni ) ), .T. } VALID VRoba()
+    --  @ form_x_koord() + 11, form_y_koord() + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val(-- gDuzSifIni ) ), .T. } VALID VRoba()
    ELSE
-    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
+    --  @ form_x_koord() + 11, form_y_koord() + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
    ENDIF
 */
-   @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ form_x_koord() + 11, form_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   @ m_x + 12, m_y + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ form_x_koord() + 12, form_y_koord() + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    READ
    ESC_RETURN K_ESC
@@ -141,9 +141,9 @@ FUNCTION kalk_get_1_11()
    ENDIF
 
    IF _kolicina > 0
-      @ m_x + 12, m_y + 30   SAY "Na stanju magacin "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
+      @ form_x_koord() + 12, form_y_koord() + 30   SAY "Na stanju magacin "; @ form_x_koord() + 12, Col() + 2 SAY nkols PICT pickol
    ELSE
-      @ m_x + 12, m_y + 30   SAY "Na stanju prodavn "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
+      @ form_x_koord() + 12, form_y_koord() + 30   SAY "Na stanju prodavn "; @ form_x_koord() + 12, Col() + 2 SAY nkols PICT pickol
    ENDIF
 
    SELECT koncij
@@ -152,12 +152,12 @@ FUNCTION kalk_get_1_11()
 
 
    _vpc := _fcj
-   @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)       :"
+   @ form_x_koord() + 14, form_y_koord() + 2    SAY "NABAVNA CIJENA (NC)       :"
    IF _kolicina > 0
-      @ m_x + 14, m_y + 50   GET _FCj   PICTURE gPicNC ;
+      @ form_x_koord() + 14, form_y_koord() + 50   GET _FCj   PICTURE gPicNC ;
          VALID {|| lRet := kalk_valid_kolicina_mag(), _vpc := _fcj, lRet }
    ELSE
-      @ m_x + 14, m_y + 50   GET _FCJ   PICTURE PicDEM;
+      @ form_x_koord() + 14, form_y_koord() + 50   GET _FCJ   PICTURE PicDEM;
          VALID {|| lRet := kalk_valid_kolicina_prod(), _vpc := _fcj, lRet }
    ENDIF
 
@@ -172,32 +172,32 @@ FUNCTION kalk_get_1_11()
    ENDIF
 
    IF nRBr == 1 .OR. !kalk_is_novi_dokument() // prva stavka
-      @ m_x + 15, m_y + 2 SAY "MP trosak (A,R):" GET _TPrevoz VALID _tPrevoz $ "AR"
-      @ m_x + 15, Col() + 2 GET _prevoz PICT PICDEM
+      @ form_x_koord() + 15, form_y_koord() + 2 SAY "MP trosak (A,R):" GET _TPrevoz VALID _tPrevoz $ "AR"
+      @ form_x_koord() + 15, Col() + 2 GET _prevoz PICT PICDEM
    ELSE
-      @ m_x + 15, m_y + 2 SAY "MP trosak:"; ?? "(" + _tPrevoz + ") "; ?? _prevoz
+      @ form_x_koord() + 15, form_y_koord() + 2 SAY "MP trosak:"; ?? "(" + _tPrevoz + ") "; ?? _prevoz
    ENDIF
 
    PRIVATE fMarza := " "
-   @ m_x + 16, m_y + 2 SAY "MP marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
-   @ m_x + 16, Col() + 1  GET _Marza2 PICTURE  PicDEM ;
+   @ form_x_koord() + 16, form_y_koord() + 2 SAY "MP marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
+   @ form_x_koord() + 16, Col() + 1  GET _Marza2 PICTURE  PicDEM ;
       valid {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), ;
       _Tmarza := "A", ;
       _marza := _vpc / ( 1 + _PORVT ) -_fcj, .T. }
-   @ m_x + 16, Col() + 1 GET fMarza PICT "@!"   VALID {|| Marza2( fMarza ), fMarza := " ", .T. }
+   @ form_x_koord() + 16, Col() + 1 GET fMarza PICT "@!"   VALID {|| Marza2( fMarza ), fMarza := " ", .T. }
 
 
-   @ m_x + 18, m_y + 2  SAY "PRODAJNA CJENA       :"
+   @ form_x_koord() + 18, form_y_koord() + 2  SAY "PRODAJNA CJENA       :"
 
 
-   @ m_x + 18, m_y + 50 GET _MPC PICTURE PicDEM VALID VMpc( .F., fMarza ) WHEN WMpc( .F., fMarza )
+   @ form_x_koord() + 18, form_y_koord() + 50 GET _MPC PICTURE PicDEM VALID VMpc( .F., fMarza ) WHEN WMpc( .F., fMarza )
 
    SayPorezi( 19 )
 
 
-   @ m_x + 20, m_y + 2 SAY "PROD.C. SA PDV:"
+   @ form_x_koord() + 20, form_y_koord() + 2 SAY "PROD.C. SA PDV:"
 
-   @ m_x + 20, m_y + 50 GET _MPCSaPP  PICTURE PicDEM VALID VMPCSaPP( .F., fMarza )
+   @ form_x_koord() + 20, form_y_koord() + 50 GET _MPCSaPP  PICTURE PicDEM VALID VMPCSaPP( .F., fMarza )
 
    READ
    ESC_RETURN K_ESC

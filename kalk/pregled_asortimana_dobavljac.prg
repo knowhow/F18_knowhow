@@ -74,19 +74,19 @@ STATIC FUNCTION frm_vars( vars )
 
    Box(, 10, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "Datum od:" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datum od:" GET _dat_od
+   @ form_x_koord() + _x, Col() + 1 SAY "do:" GET _dat_do
 
    _x += 2
-   @ m_x + _x, m_y + 2 SAY8 "Prodavnički konto:" GET _p_konto VALID P_Konto( @_p_konto )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Prodavnički konto:" GET _p_konto VALID P_Konto( @_p_konto )
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Dobavljač:" GET _dob VALID p_partner( @_dob )
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Dobavljač:" GET _dob VALID p_partner( @_dob )
    _x += 2
-   @ m_x + _x, m_y + 2 SAY8 "Artikli (prazno-svi):" GET _artikli PICT "@S35"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Artikli (prazno-svi):" GET _artikli PICT "@S35"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Prikaz stavki kojima je ulaz = 0 (D/N) ?" GET _prik_nule VALID _prik_nule $ "DN" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Prikaz stavki kojima je ulaz = 0 (D/N) ?" GET _prik_nule VALID _prik_nule $ "DN" PICT "@!"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Štampati formu narudžbe (D/N) ?" GET _narudzba VALID _narudzba $ "DN" PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Štampati formu narudžbe (D/N) ?" GET _narudzba VALID _narudzba $ "DN" PICT "@!"
 
    READ
 

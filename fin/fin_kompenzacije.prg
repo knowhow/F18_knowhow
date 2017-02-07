@@ -52,38 +52,38 @@ STATIC FUNCTION _get_vars( vars )
 
    SET CURSOR ON
 
-   @ m_x + _x, m_y + 2 SAY 'KREIRANJE OBRASCA "IZJAVA O KOMPENZACIJI"'
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY 'KREIRANJE OBRASCA "IZJAVA O KOMPENZACIJI"'
 
    _x := _x + 4
 
    DO WHILE .T.
 
       IF gNW == "D"
-         @ m_x + _x, m_y + 2 SAY "Firma "
+         @ form_x_koord() + _x, form_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", PadR( self_organizacija_naziv(), 30 )
       ELSE
-         @ m_x + _x, m_y + 2 SAY "Firma: " GET _id_firma valid {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
+         @ form_x_koord() + _x, form_y_koord() + 2 SAY "Firma: " GET _id_firma valid {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
       ENDIF
 
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "Konto duguje   " GET cIdKonto  VALID P_KontoFin( @cIdKonto )
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY "Konto duguje   " GET cIdKonto  VALID P_KontoFin( @cIdKonto )
       ++ _x
-      @ m_x + _x, m_y + 2 SAY8 "Konto potražuje" GET cIdKonto2  VALID P_KontoFin( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Konto potražuje" GET cIdKonto2  VALID P_KontoFin( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
       ++ _x
-      @ m_x + _x, m_y + 2 SAY8 "Partner-dužnik " GET cIdPartner VALID p_partner( @cIdPartner )  PICT "@!"
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Partner-dužnik " GET cIdPartner VALID p_partner( @cIdPartner )  PICT "@!"
       ++ _x
-      @ m_x + _x, m_y + 2 SAY8 "Datum dokumenta od:" GET _dat_od
-      @ m_x + _x, Col() + 2 SAY "do" GET _dat_do   VALID _dat_od <= _dat_do
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Datum dokumenta od:" GET _dat_od
+      @ form_x_koord() + _x, Col() + 2 SAY "do" GET _dat_do   VALID _dat_od <= _dat_do
 
       ++ _x
       ++ _x
 
-      @ m_x + _x, m_y + 2 SAY "Sabrati po brojevima veze D/N ?"  GET cSabratiPoBrojevimaVeze VALID cSabratiPoBrojevimaVeze $ "DN" PICT "@!"
-      @ m_x + _x, Col() + 2 SAY "Prikaz prebijenog stanja " GET _prelom VALID _prelom $ "DN" PICT "@!"
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY "Sabrati po brojevima veze D/N ?"  GET cSabratiPoBrojevimaVeze VALID cSabratiPoBrojevimaVeze $ "DN" PICT "@!"
+      @ form_x_koord() + _x, Col() + 2 SAY "Prikaz prebijenog stanja " GET _prelom VALID _prelom $ "DN" PICT "@!"
 
       ++ _x
 
-      @ m_x + _x, m_y + 2 SAY8 "Prikaz datuma sa brojem računa (D/N) ?"  GET _sa_datumom VALID _sa_datumom $ "DN" PICT "@!"
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Prikaz datuma sa brojem računa (D/N) ?"  GET _sa_datumom VALID _sa_datumom $ "DN" PICT "@!"
 
       READ
       ESC_BCR
@@ -179,15 +179,15 @@ FUNCTION kompenzacija()
 
    Box(, _row, _col )
 
-   @ m_x, m_y + 30 SAY ' KREIRANJE OBRASCA "IZJAVA O KOMPENZACIJI" '
+   @ form_x_koord(), form_y_koord() + 30 SAY ' KREIRANJE OBRASCA "IZJAVA O KOMPENZACIJI" '
 
-   @ m_x + _row - 4, m_y + 1 SAY Replicate( "=", _col )
-   @ m_x + _row - 3, m_y + 1 SAY8 "  <K> izaberi/ukini račun za kompenzaciju"
-   @ m_x + _row - 2, m_y + 1 SAY8 "<c+P> štampanje kompenzacije                  <T> promijeni tabelu"
-   @ m_x + _row - 1, m_y + 1 SAY8 "<c+N> nova stavka                           <c+T> brisanje                 <ENTER> ispravka stavke "
+   @ form_x_koord() + _row - 4, form_y_koord() + 1 SAY Replicate( "=", _col )
+   @ form_x_koord() + _row - 3, form_y_koord() + 1 SAY8 "  <K> izaberi/ukini račun za kompenzaciju"
+   @ form_x_koord() + _row - 2, form_y_koord() + 1 SAY8 "<c+P> štampanje kompenzacije                  <T> promijeni tabelu"
+   @ form_x_koord() + _row - 1, form_y_koord() + 1 SAY8 "<c+N> nova stavka                           <c+T> brisanje                 <ENTER> ispravka stavke "
 
    FOR _n := 1 to ( _row - 4 )
-      @ m_x + _n, m_y + ( _col / 2 ) SAY "|"
+      @ form_x_koord() + _n, form_y_koord() + ( _col / 2 ) SAY "|"
    NEXT
 
    SELECT komp_pot
@@ -196,14 +196,14 @@ FUNCTION kompenzacija()
    SELECT komp_dug
    GO TOP
 
-   m_y += ( _col / 2 ) + 1
+   form_y_koord() += ( _col / 2 ) + 1
 
    DO WHILE .T.
 
       IF Alias() == "KOMP_DUG"
-         m_y -= ( _col / 2 ) + 1
+         form_y_koord() -= ( _col / 2 ) + 1
       ELSEIF Alias() == "KOMP_POT"
-         m_y += ( _col / 2 ) + 1
+         form_y_koord() += ( _col / 2 ) + 1
       ENDIF
 
       my_db_edit( "komp1", _row - 7, ( _col / 2 ) - 1, {|| key_handler( _vars ) }, "", if( Alias() == "KOMP_DUG", "DUGUJE " + cIdKonto, "POTRAZUJE " + cIdKonto2 ), , , , , 1 )
@@ -387,7 +387,7 @@ STATIC FUNCTION _gen_kompen( vars )
 
          ENDIF
 
-         @ m_x + 1, m_y + 2 SAY "konto: " + PadR( _id_konto, 7 ) + " partner: " + _id_partner
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "konto: " + PadR( _id_konto, 7 ) + " partner: " + _id_partner
 
          _d_bhd := 0
          _p_bhd := 0
@@ -429,7 +429,7 @@ STATIC FUNCTION _gen_kompen( vars )
 
          ENDIF
 
-         @ m_x + 2, m_y + 2 SAY "cnt:" + AllTrim( Str( ++_cnt ) ) + " suban cnt: " + AllTrim( Str( RecNo() ) )
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "cnt:" + AllTrim( Str( ++_cnt ) ) + " suban cnt: " + AllTrim( Str( RecNo() ) )
 
          IF _otv_st == "9"
             _dug_bhd += _d_bhd
@@ -534,8 +534,8 @@ STATIC FUNCTION key_handler( vars )
    LOCAL nTr2
    LOCAL GetList := {}
    LOCAL nRec := RecNo()
-   LOCAL nX := m_x
-   LOCAL nY := m_y
+   LOCAL nX := form_x_koord()
+   LOCAL nY := form_y_koord()
    LOCAL nVrati := DE_CONT
    LOCAL _area
 
@@ -563,8 +563,8 @@ STATIC FUNCTION key_handler( vars )
          SKIP 1
          Scatter()
          Box(, 5, 70 )
-         @ m_x + 2, m_y + 2 SAY8 "Br.računa " GET _brdok
-         @ m_x + 3, m_y + 2 SAY8 "Iznos     " GET _iznosbhd
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY8 "Br.računa " GET _brdok
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "Iznos     " GET _iznosbhd
          READ
          BoxC()
          IF LastKey() == K_ESC
@@ -584,8 +584,8 @@ STATIC FUNCTION key_handler( vars )
          Scatter()
 
          Box(, 5, 70 )
-         @ m_x + 2, m_y + 2 SAY8 "Br.računa " GET _brdok
-         @ m_x + 3, m_y + 2 SAY8 "Iznos     " GET _iznosbhd
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY8 "Br.računa " GET _brdok
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "Iznos     " GET _iznosbhd
          READ
          BoxC()
 
@@ -614,8 +614,8 @@ STATIC FUNCTION key_handler( vars )
 
    ENDIF
 
-   m_x := nX
-   m_y := nY
+   form_x_koord() := nX
+   form_y_koord() := nY
 
    RETURN nVrati
 
@@ -647,22 +647,22 @@ STATIC FUNCTION print_kompen( vars )
 
    Box(, 10, 50 )
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datum kompenzacije: " GET _dat_komp
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datum kompenzacije: " GET _dat_komp
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Rok plaćanja (dana): " GET _rok_pl VALID _rok_pl >= 0 PICT "999"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Rok plaćanja (dana): " GET _rok_pl VALID _rok_pl >= 0 PICT "999"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Valuta kompenzacije (D/P): " GET _valuta  VALID _valuta $ "DP"  PICT "!@"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Valuta kompenzacije (D/P): " GET _valuta  VALID _valuta $ "DP"  PICT "!@"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Broj kompenzacije: " GET _br_komp
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Broj kompenzacije: " GET _br_komp
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Šifra (ID) povjerioca: " GET _id_pov VALID p_partner( @_id_pov ) PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Šifra (ID) povjerioca: " GET _id_pov VALID p_partner( @_id_pov ) PICT "@!"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "   Šifra (ID) dužnika: " GET _id_partn VALID p_partner( @_id_partn ) PICT "@!"
+   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "   Šifra (ID) dužnika: " GET _id_partn VALID p_partner( @_id_partn ) PICT "@!"
    READ
    BoxC()
 

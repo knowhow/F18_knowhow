@@ -49,35 +49,35 @@ FUNCTION fin_anal_kartica()
    Box( "", 9, 65, .F. )
    DO WHILE .T.
       SET CURSOR ON
-      @ m_x + 1, m_y + 2 SAY8 "ANALITIČKA KARTICA"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "ANALITIČKA KARTICA"
       //IF gNW == "D"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       //ELSE
-      //   @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      //   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       //ENDIF
-      @ m_x + 3, m_y + 2 SAY "Brza kartica (D/N/S)" GET cBrza PICT "@!" VALID cBrza $ "DNS"
-      @ m_x + 4, m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Brza kartica (D/N/S)" GET cBrza PICT "@!" VALID cBrza $ "DNS"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
       READ
       ESC_BCR
 
       IF cBrza == "D"
          qqKonto := PadR( qqKonto, 7 )
-         @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto VALID P_Konto( @qqKonto )
+         @ form_x_koord() + 6, form_y_koord() + 2 SAY "Konto: " GET qqKonto VALID P_Konto( @qqKonto )
       ELSE
          qqKonto := PadR( qqKonto, 60 )
-         @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
+         @ form_x_koord() + 6, form_y_koord() + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
       ENDIF
 
       IF gNW == "N"
-         @ m_x + 7, m_y + 2 SAY "Prikaz tipa dokumenta (D/N)" GET cPTD PICT "@!" VALID cPTD $ "DN"
+         @ form_x_koord() + 7, form_y_koord() + 2 SAY "Prikaz tipa dokumenta (D/N)" GET cPTD PICT "@!" VALID cPTD $ "DN"
       ENDIF
 
-      @ m_x + 8, m_y + 2 SAY "Datum od:" GET dDatOd
-      @ m_x + 8, Col() + 2 SAY "do:" GET dDatDo
+      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Datum od:" GET dDatOd
+      @ form_x_koord() + 8, Col() + 2 SAY "do:" GET dDatDo
       cIdRJ := ""
       IF gFinRj == "D" .AND. gSAKrIz == "D"
          cIdRJ := "999999"
-         @ m_x + 9, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
+         @ form_x_koord() + 9, form_y_koord() + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       READ
       ESC_BCR

@@ -21,14 +21,14 @@ FUNCTION SpecOstPop()
    Box( "SSK", 6, 60, .F. )
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA KONTA ZA ODREDJENE PARTNERE"
+      @ form_x_koord() + 1, form_y_koord() + 6 SAY "SPECIFIKACIJA KONTA ZA ODREDJENE PARTNERE"
       IF gNW == "D"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 5, m_y + 2 SAY "Partner:" GET qqPartner PICT "@!S50"
-      @ m_x + 6, m_y + 2 SAY "Konta  :" GET  qqKonto PICT "@!S50"
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Partner:" GET qqPartner PICT "@!S50"
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Konta  :" GET  qqKonto PICT "@!S50"
       READ; ESC_BCR
       aUsl := parsiraj( qqPartner, "idpartner" )
       aUsl2 := parsiraj( qqKonto, "idkonto" )

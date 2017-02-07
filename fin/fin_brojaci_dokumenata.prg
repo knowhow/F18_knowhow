@@ -129,10 +129,10 @@ FUNCTION fin_set_param_broj_dokumenta()
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Nalog:" GET _firma
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Nalog:" GET _firma
 
    IF gBrojacFinNaloga == "1"
-      @ m_x + 1, Col() + 1 SAY "-" GET _tip_dok
+      @ form_x_koord() + 1, Col() + 1 SAY "-" GET _tip_dok
    ENDIF
 
    READ
@@ -152,7 +152,7 @@ FUNCTION fin_set_param_broj_dokumenta()
    nBroj := fetch_metric( _param, nil, nBroj )
    _broj_old := nBroj
 
-   @ m_x + 2, m_y + 2 SAY "Zadnji broj naloga:" GET nBroj PICT "99999999"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Zadnji broj naloga:" GET nBroj PICT "99999999"
 
    READ
 

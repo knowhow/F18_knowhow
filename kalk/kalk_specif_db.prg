@@ -332,7 +332,7 @@ FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,
       ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
 
       IF ( ( ++nStavki % 100 ) == 0 )
-         @ m_x + 1, m_y + 2 SAY nStavki PICT "99999999999999"
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY nStavki PICT "99999999999999"
       ENDIF
 
       SELECT kalk
@@ -364,8 +364,8 @@ FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,
             SKIP
          ENDDO
       ENDIF
-      @ m_x + 1, m_y + 2 SAY "***********************"
-      @ m_x + 1, Col() + 2 SAY ++nStavki PICT "99999999999999"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "***********************"
+      @ form_x_koord() + 1, Col() + 2 SAY ++nStavki PICT "99999999999999"
       SELECT roba
       SKIP
    ENDDO
@@ -727,7 +727,7 @@ FUNCTION GenRekap2( lK2X, cC, lPrDatOd, lVpRab, lMarkiranaRoba )
       Sca2MKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, @lMagacin, lVpRab, lPrDatOd )
       Sca2PKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, @lProdavnica, lPrDatOd )
 
-      @ m_x + 1, m_y + 2 SAY ++nStavki PICT "999999999999"
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY ++nStavki PICT "999999999999"
 
       SELECT kalk
       SKIP
@@ -1171,21 +1171,21 @@ FUNCTION kalk_prod_generacija_dokumenataNc()
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "Prodavnica: " + cPKonto
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Prodavnica: " + cPKonto
       SELECT roba
       GO TOP
       DO WHILE !Eof()
 
          cIdRoba := roba->id
          IF IsRobaInProdavnica( cPKonto, cIdRoba )
-            @ m_x + 2, m_y + 2 SAY "Roba " + cIdRoba
+            @ form_x_koord() + 2, form_y_koord() + 2 SAY "Roba " + cIdRoba
             nNc := GetNcForProdavnica( cPKonto, cIdRoba )
             cBrDok := "00000000"
             cIdVd := "00"
             dDatDok := Date()
             SetProdNc( cPKonto, cIdRoba, cIdVd, cBrDok, dDatDok, nNc )
          ELSE
-            @ m_x + 2, m_y + 2 SAY "!Roba " + cIdRoba
+            @ form_x_koord() + 2, form_y_koord() + 2 SAY "!Roba " + cIdRoba
          ENDIF
 
          SELECT roba
@@ -1311,12 +1311,12 @@ FUNCTION SetIdPartnerRoba()
       SET ORDER TO TAG "1"
 
 
-      @ m_x + 1, m_y + 2 SAY iif( cGodina == "", "2003", cGodina )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY iif( cGodina == "", "2003", cGodina )
 
       SEEK self_organizacija_id() + "10"
       DO WHILE !Eof() .AND. ( IdVd == "10" )
 
-         @ m_x + 2, m_y + 2 SAY kalk->IdRoba
+         @ form_x_koord() + 2, form_y_koord() + 2 SAY kalk->IdRoba
 
          SELECT ROBA
          cIdPartner = kalk->IdPartner

@@ -36,6 +36,7 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
 
    PushWA()
 
+altd()
    IF cId != NIL .AND. !Empty( cId )
       select_o_roba( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
    ELSE

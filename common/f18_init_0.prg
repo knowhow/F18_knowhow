@@ -44,7 +44,7 @@ FUNCTION self_organizacija_naziv( cNaz )
 
    IF cNaz != NIL
       s_cFirmaNaz := cNaz
-      PadR( fetch_metric( "org_naziv", cNaz, "" ), 50 )
+      set_metric( "org_naziv", NIL, cNaz )
    ENDIF
 
    IF s_cFirmaNaz == NIL

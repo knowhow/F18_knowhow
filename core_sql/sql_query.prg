@@ -181,7 +181,6 @@ FUNCTION run_sql_query( cQry, hParams )
 
    FOR nI := 1 TO nRetry
 
-
       IF nI > 1
          error_bar( "sql",  cQry + " pokušaj: " + AllTrim( Str( nI ) ) )
       ENDIF

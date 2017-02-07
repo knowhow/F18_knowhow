@@ -122,7 +122,7 @@ METHOD F18Admin:update_app()
 
 
 
-METHOD F18Admin:update_app_run_templates_update( params )
+METHOD F18Admin:update_app_run_templates_update( hParams )
 
    LOCAL _upd_file := "F18_template_#VER#.tar.bz2"
    LOCAL _dest := SLASH + "opt" + SLASH + "knowhowERP" + SLASH
@@ -133,12 +133,12 @@ METHOD F18Admin:update_app_run_templates_update( params )
 #endif
 
    if ::update_app_templates_version == "#LAST#"
-      ::update_app_templates_version := params[ "templates" ]
+      ::update_app_templates_version := hParams[ "templates" ]
    ENDIF
 
    _upd_file := StrTran( _upd_file, "#VER#", ::update_app_templates_version )
 
-   IF !::wget_download( params[ "url" ], _upd_file, _dest + _upd_file, .T., .T. )
+   IF !::wget_download( hParams[ "url" ], _upd_file, _dest + _upd_file, .T., .T. )
       RETURN SELF
    ENDIF
 
@@ -178,12 +178,12 @@ METHOD F18Admin:update_app_unzip_templates( destination_path, location_path, fil
 
 
 
-METHOD F18Admin:update_app_run_app_update( params )
+METHOD F18Admin:update_app_run_app_update( hParams )
 
    LOCAL _upd_file := "F18_#OS#_#VER#.gz"
 
    if ::update_app_f18_version == "#LAST#"
-      ::update_app_f18_version := params[ "f18" ]
+      ::update_app_f18_version := hParams[ "f18" ]
    ENDIF
 
 #ifdef __PLATFORM__LINUX
@@ -199,7 +199,7 @@ METHOD F18Admin:update_app_run_app_update( params )
       RETURN SELF
    ENDIF
 
-   IF !::wget_download( params[ "url" ], _upd_file, my_home_root() + _upd_file, .T., .T. )
+   IF !::wget_download( hParams[ "url" ], _upd_file, my_home_root() + _upd_file, .T., .T. )
       RETURN SELF
    ENDIF
 
@@ -771,7 +771,7 @@ METHOD F18Admin:update_db_company( cOrganizacija )
 
 METHOD F18Admin:razdvajanje_sezona()
 
-   LOCAL _params
+   LOCAL hParams
    LOCAL _dbs := {}
    LOCAL nI
    LOCAL hDbServerParams, cTekuciUser, cTekucaPassword, cTekucaDb
@@ -866,14 +866,14 @@ METHOD F18Admin:razdvajanje_sezona()
       @ m_x + 1, m_y + 2 SAY "Kreiranje baze: " +  cDatabaseFrom + " > " + cDatabaseTo
 
 
-      _params := hb_Hash()
-      _params[ "db_type" ] := 1 // init parametri za razdvajanje, pocetno stanje je 1
-      _params[ "db_name" ] := cDatabaseTo
-      _params[ "db_template" ] := cDatabaseFrom
-      _params[ "db_drop" ] := cDeletePostojecaDbDN
-      _params[ "db_comment" ] := ""
+      hParams := hb_Hash()
+      hParams[ "db_type" ] := 1 // init parametri za razdvajanje, pocetno stanje je 1
+      hParams[ "db_name" ] := cDatabaseTo
+      hParams[ "db_template" ] := cDatabaseFrom
+      hParams[ "db_drop" ] := cDeletePostojecaDbDN
+      hParams[ "db_comment" ] := ""
 
-      IF ! ::create_new_pg_db( _params )
+      IF ! ::create_new_pg_db( hParams )
          AAdd( aRezultati, { cDatabaseTo, cDatabaseFrom, "ERR" } )
          error_bar( "nova_sezona", cDatabaseFrom + " -> " + cDatabaseTo )
       ELSE
@@ -903,36 +903,36 @@ METHOD F18Admin:razdvajanje_sezona()
 
 
 
-METHOD F18Admin:create_new_pg_db( params )
+METHOD F18Admin:create_new_pg_db( hParams )
 
    LOCAL cDatabaseName, _db_template, _db_drop, _db_type, _db_comment
    LOCAL _qry
    LOCAL oQuery, aRezultati
    LOCAL _db_params, cTekuciUser, cTekucaPassword, cTekucaDb
 
-   // 1) params read
+   // 1) hParams read
    // ===============================================================
-   IF params == NIL
+   IF hParams == NIL
 
       IF !spec_funkcije_sifra( "ADMIN" )
          MsgBeep( "Opcija zasticena !" )
          RETURN .F.
       ENDIF
 
-      params := hb_Hash()
+      hParams := hb_Hash()
 
-      IF !::create_new_pg_db_params( @params ) // CREATE DATABASE name OWNER admin TEMPLATE templ;
+      IF !::create_new_pg_db_params( @hParams ) // CREATE DATABASE name OWNER admin TEMPLATE templ;
          RETURN .F.
       ENDIF
 
    ENDIF
 
    // uzmi parametre koje ces koristiti dalje...
-   cDatabaseName := params[ "db_name" ]
-   _db_template := params[ "db_template" ]
-   _db_drop := params[ "db_drop" ] == "D"
-   _db_type := params[ "db_type" ]
-   _db_comment := params[ "db_comment" ]
+   cDatabaseName := hParams[ "db_name" ]
+   _db_template := hParams[ "db_template" ]
+   _db_drop := hParams[ "db_drop" ] == "D"
+   _db_type := hParams[ "db_type" ]
+   _db_comment := hParams[ "db_comment" ]
 
    IF Empty( _db_template ) .OR. Left( _db_template, 5 ) == "empty"
       _db_type := 0 // ovo ce biti prazna baza uvijek
@@ -1040,12 +1040,12 @@ METHOD F18Admin:relogin_as( cUser, cPwd, cDatabase )
    RETURN my_server_login( hSqlParams, nConnType )
 
 
-METHOD F18Admin:drop_pg_db( db_name )
+METHOD F18Admin:drop_pg_db( cDatabaseName )
 
    LOCAL cQry, oQry
    LOCAL hDbServerParams
 
-   IF db_name == NIL
+   IF cDatabaseName == NIL
 
       IF !spec_funkcije_sifra( "ADMIN" )
          MsgBeep( "Opcija zasticena !" )
@@ -1053,10 +1053,10 @@ METHOD F18Admin:drop_pg_db( db_name )
       ENDIF
 
       // treba mi db name ?
-      db_name := Space( 30 )
+      cDatabaseName := Space( 30 )
 
       Box(, 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Naziv baze:" GET db_name VALID !Empty( db_name )
+      @ m_x + 1, m_y + 2 SAY "Naziv baze:" GET cDatabaseName VALID !Empty( cDatabaseName )
       READ
       BoxC()
 
@@ -1064,9 +1064,9 @@ METHOD F18Admin:drop_pg_db( db_name )
          RETURN .F.
       ENDIF
 
-      db_name := AllTrim( db_name )
+      cDatabaseName := AllTrim( cDatabaseName )
 
-      IF Pitanje(, "100% sigurni da zelite izbrisati bazu '" + db_name + "' ?", "N" ) == "N"
+      IF Pitanje(, "100% sigurni da zelite izbrisati bazu '" + cDatabaseName + "' ?", "N" ) == "N"
          RETURN .F.
       ENDIF
 
@@ -1076,25 +1076,25 @@ METHOD F18Admin:drop_pg_db( db_name )
       RETURN .F.
    ENDIF
 
-   cQry := "DROP DATABASE IF EXISTS " + db_name + ";"
+   cQry := "DROP DATABASE IF EXISTS " + cDatabaseName + ";"
 
    oQry := postgres_sql_query( cQry )
 
    IF sql_error_in_query( oQry, "DROP", sql_postgres_conn() )
-      error_bar( "drop_db", "drop db: " + db_name )
+      error_bar( "drop_db", "drop db: " + cDatabaseName )
       RETURN .F.
    ENDIF
 
    RETURN .T.
 
 
-METHOD F18Admin:delete_db_data_all( db_name, data_type )
+METHOD F18Admin:delete_db_data_all( cDatabaseName, data_type )
 
    LOCAL _ret
    LOCAL _qry
    LOCAL _pg_srv
 
-   IF db_name == NIL
+   IF cDatabaseName == NIL
       ?E "Opcija delete_db_data_all zahtjeva naziv baze ..."
       RETURN .F.
    ENDIF
@@ -1107,7 +1107,7 @@ METHOD F18Admin:delete_db_data_all( db_name, data_type )
    ENDIF
 
 
-   IF !::relogin_as_admin( AllTrim( db_name ) )
+   IF !::relogin_as_admin( AllTrim( cDatabaseName ) )
       RETURN .F.
    ENDIF
 
@@ -1179,7 +1179,7 @@ METHOD F18Admin:delete_db_data_all( db_name, data_type )
 
    ENDIF
 
-   info_bar( "nova_sezona", "brisanje podataka " + db_name )
+   info_bar( "nova_sezona", "brisanje podataka " + cDatabaseName )
    _ret := run_sql_query( _qry )
    IF sql_error_in_query( _ret, "DELETE" )
       RETURN .F.
@@ -1192,7 +1192,7 @@ METHOD F18Admin:delete_db_data_all( db_name, data_type )
 // -------------------------------------------------------------------
 // kreiranje baze, parametri
 // -------------------------------------------------------------------
-METHOD F18Admin:create_new_pg_db_params( params )
+METHOD F18Admin:create_new_pg_db_params( hParams )
 
    LOCAL lOk := .F.
    LOCAL nX := 1
@@ -1256,11 +1256,11 @@ METHOD F18Admin:create_new_pg_db_params( params )
       _db_template := ""
    ENDIF
 
-   params[ "db_name" ] := AllTrim( _db_str )
-   params[ "db_template" ] := AllTrim( _db_template )
-   params[ "db_drop" ] := _db_drop
-   params[ "db_type" ] := _db_type
-   params[ "db_comment" ] := AllTrim( _db_comment )
+   hParams[ "db_name" ] := AllTrim( _db_str )
+   hParams[ "db_template" ] := AllTrim( _db_template )
+   hParams[ "db_drop" ] := _db_drop
+   hParams[ "db_type" ] := _db_type
+   hParams[ "db_comment" ] := AllTrim( _db_comment )
 
    lOk := .T.
 
@@ -1272,20 +1272,20 @@ METHOD F18Admin:create_new_pg_db_params( params )
 // ----------------------------------------------------------
 // dodavanje nove baze - validator
 // ----------------------------------------------------------
-STATIC FUNCTION _new_db_valid( db_name )
+STATIC FUNCTION _new_db_valid( cDatabaseName )
 
    LOCAL lOk := .F.
 
-   IF Empty( db_name )
+   IF Empty( cDatabaseName )
       MsgBeep( "Naziv baze ne može biti prazno !" )
       RETURN lOk
    ENDIF
 
-   IF ( "-" $ db_name .OR. ;
-         "?" $ db_name .OR. ;
-         ":" $ db_name .OR. ;
-         "," $ db_name .OR. ;
-         "." $ db_name )
+   IF ( "-" $ cDatabaseName .OR. ;
+         "?" $ cDatabaseName .OR. ;
+         ":" $ cDatabaseName .OR. ;
+         "," $ cDatabaseName .OR. ;
+         "." $ cDatabaseName )
 
       MsgBeep( "Naziv baze ne moze sadržavati znakove .:- itd... !" )
       RETURN lOk

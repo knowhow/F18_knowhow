@@ -96,14 +96,14 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn
    LOCAL cSql
 
    cSql := "UPDATE fmk.fin_suban set otvst=' ' FROM "
-   cSql += "( select idfirma,idkonto,idpartner,brdok from fmk.fin_suban where "
+   cSql += "( select idfirma,idkonto,idpartner,brdok from fmk.fin_suban WHERE "
    cSql += "idfirma=" + sql_quote( cIdFirma )
    cSql += "AND idvn=" + sql_quote( cIdVn )
    cSql += "AND brnal=" + sql_quote( cBrNal )
    cSql += ") AS SUBQ "
    cSql += "WHERE fmk.fin_suban.idfirma=SUBQ.idfirma and fmk.fin_suban.idpartner=SUBQ.idpartner and fmk.fin_suban.brdok=SUBQ.brdok"
 
-   use_sql( "del_mark", cSql )
+   run_sql_query( cSql )
 
    RETURN .T.
 

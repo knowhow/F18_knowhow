@@ -125,8 +125,8 @@ FUNCTION g_kat_p_2( cKat, lShow )
 
 FUNCTION close_open_kuf_kif_sif()
 
-   o_partner()
-   o_roba()
+   //o_partner()
+   //o_roba()
    o_tarifa()
    o_sifk()
    o_sifv()

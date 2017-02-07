@@ -334,7 +334,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
                dDMax := datdok
             ENDIF
 
-            // pozicioniraj se na artikal u sifranriku robe
+            // pozicioniraj se na artikal u sifarniku robe
             SELECT ROBA
             SEEK fakt->idroba
 

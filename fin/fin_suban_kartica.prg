@@ -65,6 +65,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    LOCAL hRec
    LOCAL cBrDokFilter
    LOCAL cFilter
+   LOCAL cUslovIdVn := Space( 40 )
 
    PRIVATE fK1 := _fin_params[ "fin_k1" ]
    PRIVATE fK2 := _fin_params[ "fin_k2" ]
@@ -119,7 +120,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    cFond := "9999"
 
    PRIVATE cRasclaniti := "N"
-   PRIVATE cIdVnUslov := Space( 40 )
+
 
    cBoxName := "SUBANALITIČKA KARTICA"
 
@@ -168,7 +169,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Datum dokumenta od:" GET dDatod
       @ form_x_koord() + nX, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
 
-      @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-sve)" GET cIdVnUslov PICT "@!S20"
+      @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-sve)" GET cUslovIdVn PICT "@!S20"
 
       IF fin_dvovalutno()
          @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Kartica za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3)"  GET cDinDem VALID cDinDem $ "123"
@@ -230,7 +231,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          cKumul := "1"
       ENDIF
 
-      cFilterVrstaNalog := parsiraj( cIdVnUslov, "IDVN", "C" )
+      cFilterVrstaNalog := parsiraj( cUslovIdVn, "IDVN", "C" )
 
 
       aNK := Parsiraj( qqNazKonta, "UPPER(naz)", "C" )
@@ -347,7 +348,7 @@ altd()
 
    cFilter := ".t."
 
-   IF  !Empty( cIdVnUslov )
+   IF !Empty( cUslovIdVn )
       cFilter += ".and." + cFilterVrstaNalog
    ENDIF
 

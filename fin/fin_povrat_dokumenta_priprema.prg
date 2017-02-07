@@ -191,7 +191,7 @@ STATIC FUNCTION fin_kopiraj_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lS
    GO TOP
    DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cIdVN == field->IdVN .AND. cBrNal == field->BrNal // suban.brnal char(8) na serveru
 
-      hRec := dbf_gethRec()
+      hRec := dbf_get_rec()
 
       SELECT fin_pripr
 
@@ -205,7 +205,7 @@ STATIC FUNCTION fin_kopiraj_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lS
 
       APPEND BLANK
 
-      dbf_updatehRec( hRec )
+      dbf_update_rec( hRec )
 
       SELECT suban
       SKIP

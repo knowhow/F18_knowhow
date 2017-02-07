@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR form_x_koord(), form_y_koord()
-
 FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
 
    LOCAL lViseDok := .F.

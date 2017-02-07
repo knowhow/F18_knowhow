@@ -13,7 +13,6 @@
 
 
 MEMVAR Ch
-MEMVAR form_x_koord(), form_y_koord()
 MEMVAR _idfirma, _opis, _d_p, _iznosbhd, _idrj, _idpartner, _idkonto
 
 

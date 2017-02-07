@@ -125,7 +125,6 @@ METHOD VirmExportTxt:create_export_dbf()
    USE
    my_use_temp( "EXP_BANK", my_home() + _table_name + ".dbf", .F., .F. )
 
-   // indeksi...
    INDEX on ( Str( rbr, 3 ) ) TAG "1"
 
    RETURN .T.
@@ -897,8 +896,8 @@ METHOD VirmExportTxt:get_export_list()
       ENDIF
    ENDDO
 
-   form_x_koord() := _m_x
-   form_y_koord() := _m_y
+   form_x_koord( _m_x )
+   form_y_koord( _m_y )
 
    RETURN _id
 

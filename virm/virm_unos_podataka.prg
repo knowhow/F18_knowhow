@@ -602,8 +602,8 @@ FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
 
       izbor := nTIzbor
 
-      form_x_koord() := nX
-      form_y_koord() := nY
+      form_x_koord( nX )
+      form_y_koord( nY )
 
    ELSEIF Len( aBanke ) == 1
 

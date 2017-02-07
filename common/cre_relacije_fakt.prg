@@ -15,7 +15,7 @@
 /*
  kreiranje tabele relacija, koristi vindija
 
-*/
+
 FUNCTION cre_relacije_fakt( ver )
 
    LOCAL aDbf
@@ -27,8 +27,6 @@ FUNCTION cre_relacije_fakt( ver )
    _alias := "RELATION"
 
    IF_NOT_FILE_DBF_CREATE
-
-
    CREATE_INDEX( "1", "TFROM+TTO+TFROMID", _alias )
    CREATE_INDEX( "2", "TTO+TFROM+TTOID", _alias )
    AFTER_CREATE_INDEX
@@ -79,7 +77,8 @@ FUNCTION g_rel_val( cType, cFrom, cTo, cId )
       cType := "1"
    ENDIF
 
-   O_RELATION
+   //O_RELATION
+   select_o_relation()
    SET ORDER TO tag &cType
    GO TOP
 
@@ -111,10 +110,11 @@ FUNCTION add_to_relation( f_from, f_to, f_from_id, f_to_id )
    LOCAL nDbfArea := Select()
    LOCAL hRec
 
-   SELECT ( F_RELATION )
-   IF !Used()
-      O_RELATION
-   ENDIF
+   //SELECT ( F_RELATION )
+   //F !Used()
+    //  O_RELATION
+   //ENDIF
+   select_o_relation()
 
    SELECT RELATION
 
@@ -133,10 +133,6 @@ FUNCTION add_to_relation( f_from, f_to, f_from_id, f_to_id )
    RETURN .T.
 
 
-
-// ---------------------------------------------
-// otvara tabelu relacija
-// ---------------------------------------------
 FUNCTION p_relation( cId, dx, dy )
 
    LOCAL nTArea := Select()
@@ -146,10 +142,7 @@ FUNCTION p_relation( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol
 
-   SELECT ( F_RELATION )
-   IF !Used()
-      O_RELATION
-   ENDIF
+   select_o_relation()
 
    ImeKol := {}
    Kol := {}
@@ -166,3 +159,5 @@ FUNCTION p_relation( cId, dx, dy )
    SELECT ( nTArea )
 
    RETURN p_sifra( F_RELATION, 1, 10, 65, "Lista relacija konverzije", @cId, dx, dy )
+
+*/

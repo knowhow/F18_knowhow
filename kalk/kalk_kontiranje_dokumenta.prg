@@ -61,6 +61,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
       lAutoBrojac := .T.
    ENDIF
 
+/*
    SELECT F_SIFK
    IF !Used()
       o_sifk()
@@ -75,12 +76,11 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
    IF !Used()
       o_roba()
    ENDIF
+*/
 
-   SELECT F_FINMAT
-   IF !Used()
-      O_finmat
-   ENDIF
+   select_o_finmat()
 
+/*
    SELECT F_TRFP
    USE
    o_trfp()
@@ -89,6 +89,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
    IF !Used()
       o_koncij()
    ENDIF
+*/
 
    IF FieldPos( "IDRJ" ) <> 0
       lPoRj := .T.
@@ -96,10 +97,10 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
       lPoRj := .F.
    ENDIF
 
-   SELECT F_VALUTE
-   IF !Used()
-      o_valute()
-   ENDIF
+ //  SELECT F_VALUTE
+ //  IF !Used()
+//      o_valute()
+ //  ENDIF
 
    IF lAutomatskiSetBrojNaloga == NIL
       lAutomatskiSetBrojNaloga := .F.
@@ -1008,12 +1009,12 @@ FUNCTION IspitajRezim()
 
 FUNCTION kalk_open_tabele_za_kontiranje()
 
-   o_finmat()
-   o_konto()
-   o_partner()
-   o_tdok()
-   o_roba()
-   o_tarifa()
+   select_o_finmat()
+   //o_konto()
+   //o_partner()
+   //o_tdok()
+   //o_roba()
+   //o_tarifa()
 
    RETURN .T.
 

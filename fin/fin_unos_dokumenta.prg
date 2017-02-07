@@ -14,7 +14,7 @@
 STATIC s_nFinPriprRedniBroj
 
 
-MEMVAR form_x_koord(), form_y_koord(), Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
+MEMVAR Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
 MEMVAR Kol, ImeKol
 
 STATIC cTekucaRj := ""
@@ -1036,8 +1036,8 @@ FUNCTION OstaleOpcije()
          // PodijeliN()
       ENDCASE
    ENDDO
-   form_x_koord() := am_x
-   form_y_koord() := am_y
+   form_x_koord( am_x )
+   form_y_koord( am_y )
    o_fin_edit()
 
    RETURN .T.

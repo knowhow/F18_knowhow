@@ -42,7 +42,7 @@ FUNCTION p_ugov( cId, dx, dy )
    cHeader += "<R> set.poslj.fakt, "
    cHeader += "<P> pregl.destin."
 
-   O_UGOV
+   select_o_ugov()
 
    DFTParUg( .T. )
 
@@ -206,9 +206,9 @@ STATIC FUNCTION ug_key_handler( Ch )
       nRec := RecNo()
 
       kreiraj_adrese_iz_ugovora()
-      O_RUGOV
-      o_dest()
-      O_UGOV
+      //O_RUGOV
+      //o_dest()
+      //O_UGOV
 
       GO ( nRec )
 
@@ -1129,31 +1129,7 @@ FUNCTION IzfUgovor()
    IF my_get_from_ini( 'FIN', 'VidiUgovor', 'N' ) == "D"
       PushWA()
 
-      SELECT ( F_UGOV )
-      IF !Used()
-         O_UGOV
-      ENDIF
-
-      SELECT ( F_RUGOV )
-      IF !Used()
-         O_RUGOV
-      ENDIF
-
-      SELECT ( F_DEST )
-      IF !Used()
-         o_dest()
-      ENDIF
-
-      SELECT ( F_ROBA )
-      IF !Used()
-         o_roba()
-      ENDIF
-
-      SELECT ( F_TARIFA )
-      IF !Used()
-         o_tarifa()
-      ENDIF
-
+    
       PRIVATE DFTkolicina := 1
       PRIVATE DFTidroba := PadR( "ZIPS", 10 )
       PRIVATE DFTvrsta  := "1"

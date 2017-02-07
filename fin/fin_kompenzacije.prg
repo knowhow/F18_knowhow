@@ -196,14 +196,14 @@ FUNCTION kompenzacija()
    SELECT komp_dug
    GO TOP
 
-   form_y_koord() += ( _col / 2 ) + 1
+   form_y_koord( form_y_koord() + ( _col / 2 ) + 1 )
 
    DO WHILE .T.
 
       IF Alias() == "KOMP_DUG"
-         form_y_koord() -= ( _col / 2 ) + 1
+         form_y_koord( form_y_koord() - ( _col / 2 ) + 1 )
       ELSEIF Alias() == "KOMP_POT"
-         form_y_koord() += ( _col / 2 ) + 1
+         form_y_koord( form_x_koord() + ( _col / 2 ) + 1 )
       ENDIF
 
       my_db_edit( "komp1", _row - 7, ( _col / 2 ) - 1, {|| key_handler( _vars ) }, "", if( Alias() == "KOMP_DUG", "DUGUJE " + cIdKonto, "POTRAZUJE " + cIdKonto2 ), , , , , 1 )
@@ -614,8 +614,8 @@ STATIC FUNCTION key_handler( vars )
 
    ENDIF
 
-   form_x_koord() := nX
-   form_y_koord() := nY
+   form_x_koord( nX )
+   form_y_koord( nY )
 
    RETURN nVrati
 

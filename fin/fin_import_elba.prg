@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR form_x_koord(), form_y_koord()
 
 STATIC s_cDelimiter
 STATIC s_nRbr

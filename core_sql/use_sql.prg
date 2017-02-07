@@ -116,6 +116,23 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
          SET ORDER TO TAG "ID"
 
 
+      ELSEIF cTable == "fakt_ugov"
+
+         INDEX ON Id + idpartner TAG "ID" TO ( cAlias )
+         INDEX ON idpartner + Id TAG "NAZ" TO ( cAlias )
+         INDEX ON naz TAG "NAZ2" TO ( cAlias )
+         INDEX ON IDPARTNER TAG "PARTNER" TO ( cAlias )
+         INDEX ON AKTIVAN TAG "AKTIVAN" TO ( cAlias )
+         SET ORDER TO TAG "ID"
+
+
+      ELSEIF cTable == "fakt_rugov"
+
+         INDEX ON id + idroba + dest TAG "ID" TO ( cAlias )
+         INDEX ON IdRoba TAG "IDROBA" TO ( cAlias )
+         SET ORDER TO TAG "ID"
+
+
       ELSE
          INDEX ON ID TAG ID TO ( cAlias )
          IF FieldPos( "NAZ" ) > 0

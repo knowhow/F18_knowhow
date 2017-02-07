@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR form_x_koord(), form_y_koord(), gcF9usmece
+MEMVAR gcF9usmece
 
 FUNCTION azur_fakt( lSilent )
 

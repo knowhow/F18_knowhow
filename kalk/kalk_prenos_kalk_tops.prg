@@ -14,7 +14,7 @@
 STATIC s_cKalkDestinacijaTopska := NIL
 STATIC s_cTxtPrint
 
-MEMVAR form_x_koord(), form_y_koord(), GetList
+MEMVAR GetList
 
 FUNCTION kalk_tops_meni()
 

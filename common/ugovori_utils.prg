@@ -12,9 +12,7 @@
 #include "f18.ch"
 
 
-// --------------------------------------
-// meni sifrarnik ugovora
-// --------------------------------------
+
 FUNCTION SifUgovori()
 
    LOCAL _opc := {}
@@ -56,9 +54,6 @@ FUNCTION NazPartn()
    RETURN PadR( cVrati, 40 )
 
 
-// -----------------------------------
-// ??????
-// -----------------------------------
 FUNCTION MSAY2( x, y, c )
 
    @ x, y SAY c
@@ -175,14 +170,13 @@ FUNCTION ug_st_od_do( cBrOd, cBrDo )
    @ m_x + 2, m_y + 2 SAY "DATUM GENERACIJE" GET dDatGen
    READ
 
-   O_GEN_UG
-   SELECT gen_ug
-   SET ORDER TO TAG "dat_gen"
-   SEEK DToS( dDatGen )
 
-   IF !Found()
+   seek_gen_ug_dat_ob( DToS( dDatGen ) )
+
+
+   //IF ()
       GO BOTTOM
-   ENDIF
+   //ENDIF
 
    cBrOd := field->brdok_od
    cBrDo := field->brdok_do
@@ -221,10 +215,8 @@ FUNCTION ug_ch_price()
       RETURN
    ENDIF
 
-   // ako je sve ok
-   O_RUGOV
-   SELECT rugov
-   GO TOP
+
+   select_o_rugov_idroba( cArtikal )
 
    nCnt := 0
 

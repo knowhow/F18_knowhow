@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m, GetList, form_x_koord(), form_y_koord()
+MEMVAR m, GetList
 MEMVAR gDUFRJ, gTroskovi
 MEMVAR cIdFirma, cIdKonto, fk1, fk2, fk3, fk4, cK1, cK2, cK3, cK4
 MEMVAR qqKonto, qqPartner

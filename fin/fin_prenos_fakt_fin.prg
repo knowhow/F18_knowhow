@@ -86,7 +86,7 @@ FUNCTION fakt_fin_prenos()
    ENDIF
 
 
-   o_finmat()
+   select_o_finmat()
    //o_konto()
    //o_partner()
    o_tdok()

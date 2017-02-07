@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR form_x_koord(), form_y_koord()
-
 STATIC __fiscal_marker := .F.
 STATIC __id_firma
 STATIC __tip_dok
@@ -981,8 +979,8 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       _n_menu := meni_fiksna_lokacija( 5, 30, _a_tipdok, _n_menu )
 
-      form_x_koord() := __mx
-      form_y_koord() := __my
+      form_x_koord( __mx )
+      form_y_koord( __my )
 
       ESC_RETURN 0
 
@@ -1607,7 +1605,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
       CASE izbor == 3
 
-         O_FAKT_S_PRIPR
+         //O_FAKT_S_PRIPR
          //o_fakt_txt()
          select_fakt_pripr()
          GO TOP
@@ -1623,7 +1621,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
          //select_o_roba()
          //o_tarifa()
-         O_FAKT_S_PRIPR
+         select_o_fakt_pripr()
          GO TOP
          nDug := 0
          DO WHILE !Eof()
@@ -1684,8 +1682,8 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
    ENDDO
 
-   form_x_koord() := am_x
-   form_y_koord() := am_y
+   form_x_koord( am_x )
+   form_y_koord( am_y )
 
    close_open_fakt_tabele()
    select_fakt_pripr()

@@ -42,8 +42,8 @@ FUNCTION m_sif()
    AAdd( opc, "-------------------------" )
    AAdd( opcexe, {|| nil } )
 
-   AAdd( opc, "A. export, relacije" )
-   AAdd( opcexe, {|| p_relation() } )
+  // AAdd( opc, "A. export, relacije" )
+  // AAdd( opcexe, {|| p_relation() } )
 
    AAdd( opc, "B. RAL definicije" )
    AAdd( opcexe, {|| sif_ral() } )

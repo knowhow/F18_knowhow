@@ -47,11 +47,11 @@ FUNCTION OSifFtxt()
 
 FUNCTION OSifUgov()
 
-   O_UGOV
-   O_RUGOV
-   o_dest()
-   o_partner()
-   o_roba()
+   //O_UGOV
+   //O_RUGOV
+   //o_dest()
+   //o_partner()
+   //o_roba()
    o_sifk()
    o_sifv()
 

@@ -228,7 +228,7 @@ FUNCTION cre_all_fakt( ver )
    AFTER_CREATE_INDEX
 */
 
-   // ---------------------------------------------------
+   /*
    // FAKT_UPL
    // ---------------------------------------------------
 
@@ -246,9 +246,10 @@ FUNCTION cre_all_fakt( ver )
    CREATE_INDEX( "1", "IDPARTNER+DTOS(DATUPL)", _alias )
    CREATE_INDEX( "2", "IDPARTNER", _alias )
    AFTER_CREATE_INDEX
+   */
 
 
-   // ---------------------------------------------------
+   /*
    // FAKT_FTXT
    // ---------------------------------------------------
 
@@ -263,7 +264,7 @@ FUNCTION cre_all_fakt( ver )
 
    CREATE_INDEX( "ID", "ID", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    // ------------------------------------------------
    // FAKT_PRIPR_ATRIB
@@ -271,7 +272,7 @@ FUNCTION cre_all_fakt( ver )
    DokAttr():new( "fakt", F_FAKT_ATTR ):create_dbf()
 
    // kreiraj relacije : RELATION
-   cre_relacije_fakt( ver )
+   //cre_relacije_fakt( ver )
 
    create_porezna_faktura_temp_dbfs()
 

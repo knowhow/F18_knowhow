@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-MEMVAR _mkonto, _idroba, _Kolicina, form_x_koord(), form_y_koord(), GetList
+MEMVAR _mkonto, _idroba, _Kolicina, GetList
 
 STATIC s_nPragOdstupanjaNCSumnjiv := NIL
 STATIC s_nStandarnaStopaMarze := NIL

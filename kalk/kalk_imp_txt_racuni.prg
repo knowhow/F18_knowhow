@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR cSection, cHistory, aHistory, izbor, opc, opcexe, gAImpPrint
-MEMVAR GetList, form_x_koord(), form_y_koord()
+MEMVAR GetList
 MEMVAR cExpPath, cImpFile
 
 STATIC s_cKalkAutoImportPodatakaKonto := nil

@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR form_x_koord(), form_y_koord(), GetList, glBrojacPoKontima, gBrojacKalkulacija
+MEMVAR GetList, glBrojacPoKontima, gBrojacKalkulacija
 
 STATIC s_nLenKalkBrojac
 

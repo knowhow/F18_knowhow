@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-MEMVAR m, form_x_koord(), form_y_koord(), GetList, __print_opt
+MEMVAR m, GetList, __print_opt
 MEMVAR picDem, picBHD
 MEMVAR gPicBHD, gPicDEM
 
@@ -102,7 +102,7 @@ FUNCTION fin_stampa_liste_naloga()
    IF f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DToC( Date() ) ) == "X"
       RETURN .F.
    ENDIF
-   
+
    m := Space( PRINT_LEFT_SPACE ) + "------- --- --- " + Replicate( "-", nBrNalLen + 1 ) + " -------- ---------------- ----------------"
 
    IF fin_dvovalutno()

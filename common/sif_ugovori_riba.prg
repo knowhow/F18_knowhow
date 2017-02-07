@@ -298,14 +298,7 @@ FUNCTION vrati_opis_ugovora( cIdUgov )
 
    PushWA()
 
-   SELECT (F_RUGOV)
-   IF !USED()
-      O_RUGOV
-   ENDIF
-
-   SELECT rugov
-   SET FILTER TO
-   SEEK cIdUgov
+   select_o_rugov( cIdUgov )
 
    IF Found()
       cOpis += Trim( idroba ) + " " + AllTrim( Transform( kolicina, pickol ) ) + " x " + AllTrim( Transform( cijena, picdem ) )

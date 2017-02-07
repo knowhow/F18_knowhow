@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-MEMVAR form_x_koord(), form_y_koord()
 
 FUNCTION fin_povrat_naloga( lStorno )
 

@@ -111,14 +111,6 @@ FUNCTION select_o_fakt_txt( cId )
    ENDIF
 
    RETURN o_fakt_txt()
-   /*
-      ftxt uzorci teksta fakture
-
-   FUNCTION o_fakt_txt()
-
-      RETURN o_dbf_table( F_FTXT, "ftxt", "ID" )
-*/
-
 
 
 
@@ -148,8 +140,6 @@ FUNCTION SEEK_FAKT_UPL()
 FUNCTION SEEK_FAKT_UPLATE()
    RETURN seek_fakt_upl()
 
-FUNCTION SEEK_GEN_UG_DAT_OBR()
-   RETURN .T.
 
 FUNCTION SEEK_ROBA_PARTIAL()
    RETURN .T.
@@ -164,8 +154,21 @@ FUNCTION SELECT_FAKT_DOKS()
    RETURN .T.
 
 
+FUNCTION SEEK_GEN_UG_DAT_OB()
+   RETURN .T.
 
+FUNCTION SEEK_GEN_UG_DAT_OBR()
+   RETURN .T.
 
+FUNCTION SELECT_O_RUGOV()
+   RETURN .T.
+
+FUNCTION SELECT_O_RUGOV_IDROBA()
+   RETURN .T.
+
+FUNCTION SELECT_O_UGOV()
+
+   RETURN .T.
 
 
 FUNCTION SELECT_O_FAKT_OBJEKTI()

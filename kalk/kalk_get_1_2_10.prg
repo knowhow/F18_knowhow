@@ -16,7 +16,6 @@ STATIC s_cKonverzijaValuteDN // konverzija valute
 STATIC aPorezi := {}
 STATIC s_lIsNoviDokument := .F.
 
-MEMVAR form_x_koord(), form_y_koord()
 
 FUNCTION kalk_is_novi_dokument( lSet )
 

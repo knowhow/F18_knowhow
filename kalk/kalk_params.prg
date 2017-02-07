@@ -16,7 +16,6 @@ STATIC s_cKalkFinIstiBroj := NIL
 STATIC s_cKalkPreuzimanjeTroskovaIzSifRoba := NIL
 STATIC s_cKalkMetodaNc := NIL
 
-MEMVAR form_x_koord(), form_y_koord()
 
 FUNCTION kalk_params()
 

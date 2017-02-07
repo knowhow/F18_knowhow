@@ -308,7 +308,7 @@ FUNCTION cre_all_rnal( ver )
    AFTER_CREATE_INDEX
 */
 
-   cre_relacije_fakt( ver )
+  // cre_relacije_fakt( ver )
 
    RETURN .T.
 

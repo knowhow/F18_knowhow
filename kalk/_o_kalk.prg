@@ -42,6 +42,20 @@ FUNCTION select_o_kalk_doks2()
 
 
 
+FUNCTION o_finmat()
+
+   SELECT ( F_FINMAT )
+   my_use( "finmat" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+FUNCTION select_o_finmat()
+
+   RETURN select_o_dbf( "FINMAT", F_FINMAT, "finamt", NIL )
+
+
 FUNCTION o_kalk_imp_temp()
 
    RETURN o_dbf_table( F_KALK_IMP_TEMP, "kalk_imp_temp", NIL )

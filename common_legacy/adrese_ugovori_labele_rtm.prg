@@ -103,10 +103,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
    DO WHILE !Eof()
 
-      SELECT ugov
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK rugov->id
+      seek_ugov( rugov->id )
 
       @ m_x + 1, m_y + 2 SAY "Ugovor ID: " + PadR( rugov->id, 10 )
       @ m_x + 2, m_y + 2 SAY PadR( "", 60 )
@@ -321,20 +318,20 @@ STATIC FUNCTION stampa_pregleda_naljepnica( index_sort )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _open_tables()
 
-   O_UGOV
-   O_RUGOV
-   o_dest()
-   o_partner()
-   o_roba()
+   //O_UGOV
+   //O_RUGOV
+   //o_dest()
+   //o_partner()
+   //o_roba()
    o_sifk()
    o_sifv()
 
-   SELECT ugov
+   //SELECT ugov
 
    RETURN
 

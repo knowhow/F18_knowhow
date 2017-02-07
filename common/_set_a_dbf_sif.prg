@@ -53,7 +53,7 @@ FUNCTION set_a_dbf_sif()
    set_a_sql_sifarnik( "fakt_objekti", "FAKT_OBJEKTI", F_FAKT_OBJEKTI   )
 
 
-   set_a_dbf_temp     ( "relation",  "RELATION", F_RELATION   )
+   //set_a_dbf_temp     ( "relation",  "RELATION", F_RELATION   )
 
    // kolizija sa fakt_roba
    // set_a_dbf_temp     ( "cIdRoba"      ,  "cIdRoba"       , F__ROBA      )

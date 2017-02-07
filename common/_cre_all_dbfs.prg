@@ -43,7 +43,7 @@ FUNCTION cre_all_dbfs( ver )
    cre_sif_konto( ver )
 
    fill_tbl_valute() // upisi default valute ako ne postoje
-   db_cre_ugov( ver ) // kreiranje tabela ugovora
+   //db_cre_ugov( ver ) // kreiranje tabela ugovora
 
    cre_sif_roba( ver )
    cre_sif_partn( ver )

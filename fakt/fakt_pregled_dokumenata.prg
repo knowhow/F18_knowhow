@@ -392,6 +392,8 @@ FUNCTION generisi_fakturu( is_opcine )
       MsgBeep( "Dokument formiran i nalazi se u pripremi. Obradite ga !" )
    ENDIF
 
+
+/*
    IF isugovori()
 
       IF pitanje(, "Setovati datum uplate za partnera ?", "N" ) == "D"
@@ -399,7 +401,7 @@ FUNCTION generisi_fakturu( is_opcine )
          O_UGOV
          SELECT ugov
          SET ORDER TO TAG "PARTNER"
-         select_o_partner( cPart )
+         select_o_ug( cPart )
 
          IF field->idpartner == cPart
             _rec := dbf_get_rec()
@@ -410,7 +412,7 @@ FUNCTION generisi_fakturu( is_opcine )
       ENDIF
 
    ENDIF
-
+*/
 
    SELECT fakt_doks
 

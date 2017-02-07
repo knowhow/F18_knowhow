@@ -25,7 +25,6 @@ THREAD STATIC s_nKalkEditLastKey := 0
 MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPicCDEM, gPicDEM, gPICPROC, gPICKol
 MEMVAR ImeKol, Kol
 MEMVAR picv
-MEMVAR form_x_koord(), form_y_koord()
 // MEMVAR lKalkAsistentUToku, lAutoObr, lAsist, lAAzur, lAAsist
 MEMVAR Ch
 MEMVAR opc, Izbor, h

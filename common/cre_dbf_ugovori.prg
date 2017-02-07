@@ -13,7 +13,7 @@
 
 
 
-// -------------------------------
+/*
 // kreiranje tabela ugovora
 // -------------------------------
 FUNCTION db_cre_ugov( ver )
@@ -25,7 +25,7 @@ FUNCTION db_cre_ugov( ver )
    //cre_tbl( "DEST", ver )
 
    RETURN .T.
-
+*/
 
 
 // ------------------------------------------
@@ -166,6 +166,7 @@ STATIC FUNCTION a_rugov()
    AAdd( aDBf, { 'DEST', 'C',   6,  0 } )
 
    RETURN aDbf
+
 
 
 // ----------------------------------------

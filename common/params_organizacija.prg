@@ -30,7 +30,7 @@ FUNCTION tip_organizacije( cTip )
 
 FUNCTION parametri_organizacije( set_params )
 
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _left := 20
    LOCAL cTipOrganizacije := tip_organizacije()
    LOCAL cOrganizacijaId := self_organizacija_id()
@@ -61,25 +61,25 @@ FUNCTION parametri_organizacije( set_params )
 
       Box(, 10, 70 )
 
-      @ m_x + _x, m_y + 2 SAY8 "Inicijalna podešenja organizacije ***" COLOR f18_color_i()
-      ++_x
-      ++_x
-      @ m_x + _x, m_y + 2 SAY PadL( "Oznaka firme:", _left ) GET cOrganizacijaId
-      @ m_x + _x, Col() + 2 SAY "naziv:" GET cOrganizacijaNaz PICT "@S35"
+      @ m_x + nX, m_y + 2 SAY8 "Inicijalna podešenja organizacije ***" COLOR f18_color_i()
+      ++nX
+      ++nX
+      @ m_x + nX, m_y + 2 SAY PadL( "Oznaka firme:", _left ) GET cOrganizacijaId
+      @ m_x + nX, Col() + 2 SAY "naziv:" GET cOrganizacijaNaz PICT "@S35"
 
-      ++_x
-      @ m_x + _x, m_y + 2 SAY PadL( "Grad:", _left ) GET gMjStr PICT "@S20"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY PadL( "Grad:", _left ) GET gMjStr PICT "@S20"
 
-      ++_x
-      @ m_x + _x, m_y + 2 SAY PadL( "Tip subjekta/organizacije:", _left ) GET cTipOrganizacije PICT "@S10"
-      @ m_x + _x, Col() + 1 SAY "U sistemu pdv-a (D/N) ?" GET gPDV VALID gPDV $ "DN" PICT "@!"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY PadL( "Tip subjekta/organizacije:", _left ) GET cTipOrganizacije PICT "@S10"
+      @ m_x + nX, Col() + 1 SAY "U sistemu pdv-a (D/N) ?" GET gPDV VALID gPDV $ "DN" PICT "@!"
 
-      ++_x
-      ++_x
-      @ m_x + _x, m_y + 2 SAY PadL( "Bazna valuta (D/P):", _left ) GET gBaznaV PICT "@!" VALID gBaznaV $ "DPO"
+      ++nX
+      ++nX
+      @ m_x + nX, m_y + 2 SAY PadL( "Bazna valuta (D/P):", _left ) GET gBaznaV PICT "@!" VALID gBaznaV $ "DPO"
 
-      ++_x
-      @ m_x + _x, m_y + 2 SAY PadL( "Zaokruzenje:", _left ) GET gZaokr
+      ++nX
+      @ m_x + nX, m_y + 2 SAY PadL( "Zaokruzenje:", _left ) GET gZaokr
 
       READ
 

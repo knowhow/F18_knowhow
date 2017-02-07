@@ -30,10 +30,11 @@ FUNCTION self_organizacija_id( cId )
 
    IF cId != NIL
       s_cFirma := cId
+      set_metric( "org_id", cId, "10" )
    ENDIF
 
    IF s_cFirma == NIL
-      s_cFirma := fetch_metric( "org_id", nil, "10" )
+      s_cFirma := fetch_metric( "org_id", NIL, "10" )
    ENDIF
 
    RETURN s_cFirma
@@ -43,10 +44,11 @@ FUNCTION self_organizacija_naziv( cNaz )
 
    IF cNaz != NIL
       s_cFirmaNaz := cNaz
+      set_metric( "org_naziv", NIL, cNaz )
    ENDIF
 
    IF s_cFirmaNaz == NIL
-      s_cFirmaNaz :=  PadR( fetch_metric( "org_naziv", nil, "" ), 50 )
+      s_cFirmaNaz :=  PadR( fetch_metric( "org_naziv", NIL, "" ), 50 )
    ENDIF
 
    RETURN s_cFirmaNaz

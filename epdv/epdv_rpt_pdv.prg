@@ -394,7 +394,7 @@ STATIC FUNCTION f_iz_pdv()
       Beep( 2 )
       MsgBeep( "Ne postoji pohranjen PDV obračun #za period " + DToC( dDatOd ) + "-" + DToC( dDatDo ) )
       USE
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_R_PDV

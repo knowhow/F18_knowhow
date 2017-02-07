@@ -24,7 +24,6 @@ FUNCTION s_tarifa( cIdTar )
       o_tarifa()
    ENDIF
    SET ORDER TO TAG "ID"
-
    SEEK cIdTar
 
    IF !Found()
@@ -53,7 +52,6 @@ FUNCTION g_pdv_stopa( cIdTar )
       o_tarifa()
    ENDIF
    SET ORDER TO TAG "ID"
-
    SEEK PadR( cIdTar, 6 )
 
    IF !Found()

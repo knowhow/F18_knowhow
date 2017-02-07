@@ -60,11 +60,6 @@ FUNCTION tops_kif( dD1, dD2, cSezona )
       O_SG_KIF
    ENDIF
 
-   SELECT F_ROBA
-   IF !Used()
-      o_roba()
-   ENDIF
-
    SELECT sg_kif
    GO TOP
    nCount := 0
@@ -180,10 +175,6 @@ STATIC FUNCTION  gen_sg_item( cSezona )
 
    cSifPath := cPomSPath
 
-   SELECT F_ROBA
-   IF !Used()
-      o_roba()
-   ENDIF
 
    SELECT F_TARIFA
    IF !Used()
@@ -346,8 +337,7 @@ STATIC FUNCTION  gen_sg_item( cSezona )
 
 
             // pozicioniraj se na artikal u sifranriku robe
-            SELECT ROBA
-            SEEK pos->idroba
+            select_o_roba( pos->idroba )
             SELECT POS
 
             cDokTar := pos->idTarifa

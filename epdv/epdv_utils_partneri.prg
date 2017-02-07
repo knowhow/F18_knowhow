@@ -193,16 +193,16 @@ FUNCTION part_rejon( cIdPart )
 // -------------------------------------
 FUNCTION o_partn_sifk()
 
-   SELECT F_PARTN
-   USE
-   SELECT F_SIFK
-   USE
-   SELECT F_SIFV
-   USE
+   //SELECT F_PARTN
+   //USE
+   //SELECT F_SIFK
+   //USE
+   //SELECT F_SIFV
+   //USE
 
    o_sifk()
    o_sifv()
-   o_partner()
+   //o_partner()
 
    RETURN .T.
 

@@ -57,10 +57,6 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
       O_SG_KIF
    ENDIF
 
-   SELECT F_ROBA
-   IF !Used()
-      o_roba()
-   ENDIF
 
    SELECT sg_kif
    GO TOP

@@ -12,22 +12,6 @@
 #include "f18.ch"
 
 FIELD id, naz
-/*
-FUNCTION o_konto()
-
-   RETURN o_dbf_table( F_KONTO, "konto", "ID" )
-
-
-FUNCTION select_o_konto()
-
-   RETURN select_o_dbf( "KONTO", F_KONTO, "konto", "ID" )
-
-
-
-
-*/
-
-
 
 
 
@@ -152,29 +136,41 @@ FUNCTION select_o_partner( cId )
    RETURN o_partner( cId )
 
 
-FUNCTION o_konto()
+
+
+
+FUNCTION o_konto( cId )
 
    LOCAL cTabela := "konto"
 
    SELECT ( F_KONTO )
-   IF !use_sql_sif  ( cTabela )
+   IF !use_sql_sif  ( cTabela, .T., "KONTO", cId  )
       error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.
    ENDIF
-
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
 
-FUNCTION select_o_konto()
+
+FUNCTION select_o_konto( cId )
 
    SELECT ( F_KONTO )
    IF Used()
-      RETURN .T.
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
    ENDIF
 
-   RETURN o_konto()
+   RETURN o_konto( cId )
+
+
 
 
 FUNCTION o_vrste_placanja()
@@ -300,7 +296,6 @@ FUNCTION select_o_ops( cId )
 
 FUNCTION use_sql_opstine( cId )
 
-   LOCAL cSql
    LOCAL cTable := "ops"
 
    SELECT ( F_OPS )

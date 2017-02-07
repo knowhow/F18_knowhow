@@ -46,10 +46,6 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
       O_SG_KIF
    ENDIF
 
-   SELECT F_ROBA
-   IF !Used()
-      o_roba()
-   ENDIF
 
    SELECT sg_kif
    GO TOP
@@ -333,10 +329,7 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
                dDMax := datdok
             ENDIF
 
-
-            // pozicioniraj se na artikal u sifranriku robe
-            SELECT ROBA
-            SEEK kalk->idroba
+            select_o_roba( kalk->idroba )
             SELECT KALK
             cDokTar := roba->idTarifa
 

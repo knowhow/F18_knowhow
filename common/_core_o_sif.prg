@@ -48,6 +48,39 @@ FUNCTION select_o_roba()
 */
 
 
+
+FUNCTION o_roba( cId )
+
+   LOCAL cTabela := "roba"
+
+   SELECT ( F_ROBA )
+   IF !use_sql_sif  ( cTabela, .T., "ROBA", cId  )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN .T.
+
+
+
+FUNCTION select_o_roba( cId )
+
+   SELECT ( F_ROBA )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_roba( cId )
+
+   
 FUNCTION o_sastavnica()
 
    SELECT ( F_SAST )

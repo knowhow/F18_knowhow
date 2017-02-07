@@ -58,11 +58,6 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
       O_SG_KUF
    ENDIF
 
-   SELECT F_ROBA
-   IF !Used()
-      o_roba()
-   ENDIF
-
 
    SELECT sg_kuf
    GO TOP

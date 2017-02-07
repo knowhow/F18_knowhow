@@ -25,10 +25,6 @@ FUNCTION epdv_otvori_kuf_tabele( lPriprema )
       o_tarifa()
    ENDIF
 
-   SELECT F_PARTN
-   IF !Used()
-      o_partner()
-   ENDIF
 
    SELECT F_KUF
    IF !Used()
@@ -57,10 +53,6 @@ FUNCTION epdv_otvori_kif_tabele( lPriprema )
       o_tarifa()
    ENDIF
 
-   SELECT F_PARTN
-   IF !Used()
-      o_partner()
-   ENDIF
 
    SELECT F_KIF
    IF !Used()
@@ -75,7 +67,7 @@ FUNCTION epdv_otvori_kif_tabele( lPriprema )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -34,12 +34,6 @@ FUNCTION p_epdv_sheme_generacije( cTabela, cId, dx, dy )
       nArea := F_SG_KUF
    ENDIF
 
-   SELECT ( F_PARTN )
-   IF !Used()
-      o_partner()
-   ENDIF
-
-
    o_sifk()
    o_sifv()
 

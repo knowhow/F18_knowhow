@@ -80,7 +80,7 @@ FUNCTION select_o_roba( cId )
 
    RETURN o_roba( cId )
 
-   
+
 FUNCTION o_sastavnica()
 
    SELECT ( F_SAST )
@@ -92,30 +92,6 @@ FUNCTION select_o_sastavnica()
    RETURN select_o_dbf( "SAST", F_SAST, "sast", "ID" )
 
 
-
-FUNCTION o_roba()
-
-   LOCAL cTabela := "roba"
-
-   SELECT ( F_ROBA )
-   IF !use_sql_sif  ( cTabela )
-      error_bar( "o_sql", "open sql " + cTabela )
-      RETURN .F.
-   ENDIF
-
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
-
-
-FUNCTION select_o_roba()
-
-   SELECT ( F_ROBA )
-   IF Used()
-      RETURN .T.
-   ENDIF
-
-   RETURN o_roba()
 
 
 FUNCTION find_partner_by_naz_or_id( cId )

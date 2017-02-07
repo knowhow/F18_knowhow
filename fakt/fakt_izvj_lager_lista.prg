@@ -836,8 +836,8 @@ STATIC FUNCTION lager_lista_xml( table, params )
    LOCAL _t_izlaz := 0
    LOCAL _t_stanje := 0
 
-   o_roba()
-   o_partner()
+   //o_roba()
+   //o_partner()
 
    // ima li zapisa...
    IF table:LastRec() == 0

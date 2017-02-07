@@ -245,7 +245,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    fill_firm_data()
 
 
-   select_o_roba()
+   //select_o_roba()
 
    SELECT fakt_pripr
 

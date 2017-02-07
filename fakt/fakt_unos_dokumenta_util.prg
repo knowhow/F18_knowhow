@@ -1141,12 +1141,7 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
       select_o_fakt_pripr()
    ENDIF
 
-   select_o_roba()
 
-   SELECT ( F_TARIFA )
-   IF !Used()
-      o_tarifa()
-   ENDIF
 
    SELECT fakt_pripr
    GO TOP

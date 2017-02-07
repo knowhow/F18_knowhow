@@ -29,14 +29,11 @@ FUNCTION GetRegion()
    LOCAL nArr
 
    nArr := Select()
-   SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
 
-   IF ROBA->( FieldPos( "IDTARIFA2" ) <> 0 )
+
+   //IF ROBA->( FieldPos( "IDTARIFA2" ) <> 0 )
       cRegion := Pitanje( , "Porezi za region (1/2/3) ?", "1", " 123" )
-   ENDIF
+   //ENDIF
    SELECT ( nArr )
 
    RETURN cRegion

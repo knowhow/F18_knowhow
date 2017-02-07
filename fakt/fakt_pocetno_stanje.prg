@@ -42,8 +42,8 @@ FUNCTION fakt_pocetno_stanje()
 
    MsgC()
 
-   o_roba()
-   o_partner()
+   //o_roba()
+   //o_partner()
    o_sifk()
    o_sifv()
    select_o_fakt_pripr()

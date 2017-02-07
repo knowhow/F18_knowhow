@@ -32,7 +32,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+ --  o_roba()
    o_rj()
  --  o_fakt()
 

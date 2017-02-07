@@ -103,7 +103,12 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    ENDIF
 
    PushWA()
-   select_o_partner()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_partner( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_partner()
+   ENDIF
 
    ImeKol := {}
 
@@ -114,7 +119,7 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    AAdd( ImeKol, { PadR( "Mjesto", 16 ),  {|| MJESTO },  "mjesto"   } )
    AAdd( ImeKol, { PadR( "Adresa", 24 ),  {|| ADRESA },  "adresa"   } )
 
-   AAdd( ImeKol, { _u( "Žiro Račun"), {|| ZIROR },   "ziror", {|| .T. }, {|| .T. }  } )
+   AAdd( ImeKol, { _u( "Žiro Račun" ), {|| ZIROR },   "ziror", {|| .T. }, {|| .T. }  } )
 
    Kol := {}
 
@@ -124,11 +129,11 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    AAdd ( ImeKol, { PadR( "MobTel", 20 ), {|| mobtel }, "mobtel" } )
    AAdd ( ImeKol, { PadR( ToStrU( "Općina" ), 6 ), {|| idOps }, "idops", {|| .T. }, {|| p_ops( @wIdops ) } } )
 
-   AAdd ( ImeKol, { PadR( "Referent", 10 ), {|| field->idrefer }, "idrefer", {|| .T. }, {|| EMPTY(wIdrefer) .OR. p_refer( @wIdrefer ) } } )
+   AAdd ( ImeKol, { PadR( "Referent", 10 ), {|| field->idrefer }, "idrefer", {|| .T. }, {|| Empty( wIdrefer ) .OR. p_refer( @wIdrefer ) } } )
    AAdd( ImeKol, { "kup?", {|| _kup }, "_kup", {|| .T. }, {|| valid_da_ili_n( w_kup ) } } )
-   AAdd( ImeKol, { "dob?", {|| " " + _dob + " " }, "_dob", {|| .T. }, {|| valid_da_ili_n( w_dob ) }, nil, nil, nil, nil, 20 } )
-   AAdd( ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", {|| .T. }, {|| valid_da_ili_n( w_banka ) }, nil, nil, nil, nil, 30 } )
-   AAdd( ImeKol, { "radnik?", {|| " " + _radnik + " " }, "_radnik", {|| .T. }, {|| valid_da_ili_n( w_radnik ) }, nil, nil, nil, nil, 40 } )
+   AAdd( ImeKol, { "dob?", {|| " " + _dob + " " }, "_dob", {|| .T. }, {|| valid_da_ili_n( w_dob ) }, NIL, NIL, NIL, NIL, 20 } )
+   AAdd( ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", {|| .T. }, {|| valid_da_ili_n( w_banka ) }, NIL, NIL, NIL, NIL, 30 } )
+   AAdd( ImeKol, { "radnik?", {|| " " + _radnik + " " }, "_radnik", {|| .T. }, {|| valid_da_ili_n( w_radnik ) }, NIL, NIL, NIL, NIL, 40 } )
 
    FOR nI := 1 TO Len( ImeKol )
       AAdd( Kol, nI )
@@ -138,7 +143,7 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    sifk_fill_ImeKol( "PARTN", @ImeKol, @Kol )
 
 
-   lRet := p_sifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
+   lRet := p_sifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch | partn_k_handler( Ch ) },,,,, { "ID" } )
 
    PopWa()
 
@@ -391,7 +396,7 @@ STATIC FUNCTION _ck_status( cId, cFld )
    SEEK cId
 
    IF partn->( FieldPos( cFld ) ) <> 0
-      if &cFld $ "Dd"
+      IF &cFld $ "Dd"
          lRet := .T.
       ENDIF
    ELSE

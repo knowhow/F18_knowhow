@@ -1505,11 +1505,15 @@ FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
       RETURN "naz"
    ENDIF
 
-   IF Alias() == "PARTN"
+   DO CASE
+   CASE Alias() == "PARTN"
       find_partner_by_naz_or_id( cId )
-   ELSE
+   CASE Alias() == "ROBA"
+      find_roba_by_naz_or_id( cId )
+   OTHERWISE
       SEEK cId
-   ENDIF
+   ENDCASE
+
 
    IF field->id == cId
       cId := &( FieldName( 1 ) )
@@ -1527,7 +1531,6 @@ FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
 #endif
 
       ordSetFocus( _order )
-
       RETURN "barkod"
 
    ENDIF

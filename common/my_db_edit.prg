@@ -406,7 +406,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
          READ
          BoxC()
          IF LastKey() != K_ESC
-            find_roba_by_naz_or_id_sifradob( cIdOrNaz )
+            find_roba_by_naz_or_id( cIdOrNaz )
             TB:RefreshAll()
             RETURN DE_REFRESH
          ENDIF

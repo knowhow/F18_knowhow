@@ -61,16 +61,14 @@ FUNCTION fakt_pocetno_stanje()
       _izlaz := _row:FieldGet( _row:FieldPos( "izlaz" ) )
       _stanje := ( _ulaz - _izlaz )
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       IF roba->tip == "U" .OR. Round( _stanje, 2 ) == 0
          _data:Skip()
          LOOP
       ENDIF
 
-      SELECT partn
-      HSEEK _partn_id
+      select_o_partner( _partn_id )
 
       SELECT fakt_pripr
       APPEND BLANK
@@ -102,7 +100,7 @@ FUNCTION fakt_pocetno_stanje()
    MsgC()
 
    IF _count > 0
-      MsgBeep( "Formiran dokument početnog stanja i nalazi se u pripremi !!!" )
+      MsgBeep( "Formiran dokument početnog stanja i nalazi se u pripremi !" )
    ENDIF
 
-   RETURN
+   RETURN .T.

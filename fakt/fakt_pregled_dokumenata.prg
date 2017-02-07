@@ -140,13 +140,17 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    BoxC()
 
-   SELECT partn
+   //SELECT partn
    // radi filtera aUslOpc partneri trebaju biti na ID-u indeksirani
-   SET ORDER TO TAG "ID"
+   //SET ORDER TO TAG "ID"
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
+   //SELECT fakt_doks
+   //SET ORDER TO TAG "1"
+   //GO TOP
+
+   qqTipDok := Trim( qqTipDok )
+
+   seek_fakt_doks( cIdFirma, qqTipDok )
 
    IF !Empty( dDatVal0 ) .OR. !Empty( dDatVal1 )
       cFilter += ".and. ( !idtipdok='10' .or. datpl>=" + _filter_quote( dDatVal0 ) + ".and. datpl<=" + _filter_quote( dDatVal1 ) + ")"
@@ -204,9 +208,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    @ MaxRow() - 4, MaxCol() - 3 SAY Str( rloptlevel(), 2 )
 
-   qqTipDok := Trim( qqTipDok )
 
-   SEEK cIdFirma + qqTipDok
 
    EOF CRET
 
@@ -219,7 +221,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION print_porezna_faktura( lOpcine )
@@ -336,10 +338,7 @@ FUNCTION generisi_fakturu( is_opcine )
 
    BoxC()
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK cFirma + cTipDok + cBrFakt
+   seek_fakt( cFirma, cTipDok, cBrFakt)
 
    DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + field->brdok == cFirma + cTipDok + cBrFakt
 
@@ -399,10 +398,9 @@ FUNCTION generisi_fakturu( is_opcine )
          O_UGOV
          SELECT ugov
          SET ORDER TO TAG "PARTNER"
-         GO TOP
-         SEEK cPart
+         select_o_partner( cPart )
 
-         IF Found() .AND. field->idpartner == cPart
+         IF field->idpartner == cPart
             _rec := dbf_get_rec()
             _rec[ "dat_l_fakt" ] := Date()
             update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "FULL" )
@@ -412,9 +410,7 @@ FUNCTION generisi_fakturu( is_opcine )
 
    ENDIF
 
-   SELECT fakt_doks
 
-   o_partner()
    SELECT fakt_doks
 
    IF cFilter == ".t."
@@ -857,8 +853,7 @@ FUNCTION fakt_real_partnera()
       nIznos := 0
       nRabat := 0
       cIdPartner := idpartner
-      SELECT partn
-      HSEEK cIdPartner
+      select_o_partner( cIdPartner )
       SELECT fakt_doks
 
 
@@ -959,8 +954,7 @@ FUNCTION flt_fakt_part_opc()
 
    LOCAL cRet
 
-   SELECT partn
-   SEEK fakt_doks->idpartner
+   select_o_partner( fakt_doks->idpartner )
    cRet := partn->idops
    SELECT fakt_doks
 

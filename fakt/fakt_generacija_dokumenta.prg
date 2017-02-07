@@ -67,8 +67,8 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
       ENDIF
       SELECT fakt_pripr
       cIdRoba := fakt->idRoba
-      // vidi imali ovo u pripremi; ako ima stavka je obradjena
-      SEEK cIdRj + cIdRoba
+      SEEK cIdRj + cIdRoba // fakt_pripr, ako ima stavka je obradjena
+
       lFoundUPripremi := Found()
       SELECT fakt
       PushWA()

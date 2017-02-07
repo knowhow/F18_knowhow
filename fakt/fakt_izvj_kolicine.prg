@@ -243,8 +243,7 @@ FUNCTION spec_kol_partn()
 
    _o_tables()
 
-   SELECT partn
-   SEEK cDistrib
+   select_o_partner( cDistrib )
    cDistNaz := field->naz
 
    SELECT fakt
@@ -309,8 +308,7 @@ FUNCTION spec_kol_partn()
 
       IF lUbaci == .T.
 
-         SELECT partn
-         SEEK cPartner
+         select_o_partner( cPartner )
          SELECT fakt
 
          fill_exp_tbl( ;

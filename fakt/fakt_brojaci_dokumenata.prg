@@ -135,7 +135,7 @@ FUNCTION fill_part()
    cNaz := PadR( "PDV oslob. ZPDV", Len( naz ) )
    cRbr := "08"
    cOznaka := "PDVO"
-   add_n_found( cId, cNaz, cRbr, cOznaka, 3 )
+   sifk_add_not_found( cId, cNaz, cRbr, cOznaka, 3 )
 
    SELECT ( F_SIFK )
    o_sifk()
@@ -144,19 +144,18 @@ FUNCTION fill_part()
    cNaz := PadR( "Profil partn.", Len( naz ) )
    cRbr := "09"
    cOznaka := "PROF"
-   add_n_found( cId, cNaz, cRbr, cOznaka, 25 )
+   sifk_add_not_found( cId, cNaz, cRbr, cOznaka, 25 )
 
-   RETURN
+   RETURN .T.
 
 
-// -------------------------------------------
-// -------------------------------------------
-STATIC FUNCTION add_n_found( cId, cNaz, cRbr, cOznaka, nDuzina )
+
+STATIC FUNCTION sifk_add_not_found( cId, cNaz, cRbr, cOznaka, nDuzina )
 
    LOCAL cSeek, _rec
 
    cSeek :=  cId + cRbr + cNaz
-   SEEK cSeek
+   SEEK cSeek // sifk
 
    IF !Found()
       APPEND BLANK
@@ -526,22 +525,10 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    __idpartn := field->idpartner
    __id_vrsta_p := field->idvrstep
 
-   SELECT ( F_FAKT )
-   IF !Used()
-      o_fakt()
-   ENDIF
 
-   SELECT ( F_PARTN )
-   IF !Used()
-      o_partner()
-   ENDIF
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + tip_dok + br_dok
-
-   IF !Found()
+   seek_fakt( id_firma, tip_dok,  br_dok )
+   IF Eof()
       SELECT ( nDbfArea )
       RETURN lRet
    ENDIF
@@ -600,17 +587,13 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
       RETURN lRet
    ENDIF
 
-   SELECT partn
-   SEEK __idpartn
+   select_o_partner( __idpartn )
 
    __p_tmp := AllTrim( field->naz ) + ;
       "," + AllTrim( field->ptt ) + ;
       " " + AllTrim( field->mjesto )
 
-   SELECT fakt_doks
-   SEEK id_firma + tip_dok + br_dok
-
-   IF !Found()
+   IF !find_fakt_dokument( id_firma, tip_dok, br_dok )
 
       hParams := hb_Hash()
       hParams[ "unlock" ] := { "fakt_fakt", "fakt_doks" }
@@ -633,9 +616,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
       RETURN lRet
    ENDIF
 
-   SELECT fakt
-   GO TOP
-   SEEK id_firma + tip_dok + br_dok
+   seek_fakt( id_firma, tip_dok, br_dok )
 
    _cnt := 1
 

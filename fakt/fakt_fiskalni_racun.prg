@@ -73,14 +73,14 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
    __DRV_CURRENT := _dev_drv
 
-   //SELECT fakt_doks
-   //SET FILTER TO
+   // SELECT fakt_doks
+   // SET FILTER TO
 
-   //SELECT fakt
-   //SET FILTER TO
+   // SELECT fakt
+   // SET FILTER TO
 
-   //SELECT partn
-  // SET FILTER TO
+   // SELECT partn
+   // SET FILTER TO
 
    SELECT fakt_doks
 
@@ -301,21 +301,15 @@ STATIC FUNCTION fakt_dok_is_storno( id_firma, tip_dok, br_dok )
    LOCAL _storno := .T.
    LOCAL _t_rec
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK ( id_firma + tip_dok + br_dok )
-
-   IF !Found()
+   IF !find_fakt_dokument( id_firma, tip_dok, br_dok )
       MsgBeep( "Ne mogu locirati dokument - is storno !" )
       RETURN -1
    ENDIF
 
+   seek_fakt( id_firma, tip_dok, br_dok )
    _t_rec := RecNo()
 
-   DO WHILE !Eof() .AND. field->idfirma == id_firma ;
-         .AND. field->idtipdok == tip_dok ;
-         .AND. field->brdok == br_dok
+   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idtipdok == tip_dok .AND. field->brdok == br_dok
 
       IF field->kolicina > 0
          _storno := .F.
@@ -334,14 +328,14 @@ STATIC FUNCTION fakt_dok_is_storno( id_firma, tip_dok, br_dok )
 
 STATIC FUNCTION fakt_fiscal_o_tables()
 
-   o_tarifa()
-   o_fakt_doks()
-   o_fakt()
-   o_roba()
+ //  o_tarifa()
+ //  o_fakt_doks()
+ //  o_fakt()
+ //  o_roba()
    o_sifk()
    o_sifv()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -363,8 +357,7 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
       _tar := PadR( arr[ nI, 1 ], 6 )
       _iznos := arr[ nI, 2 ]
 
-      SELECT tarifa
-      HSEEK _tar
+     select_o_tarifa( _tar )
 
       IF tip_dok $ "11#13#23"
          IF !IsIno( partner ) .AND. !is_part_pdv_oslob_po_clanu( partner ) .AND. tarifa->opp > 0
@@ -480,9 +473,7 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
 
    fakt_fiscal_o_tables()
 
-   SELECT fakt_doks
-   GO TOP
-   SEEK ( id_firma + tip_dok + br_dok )
+   find_fakt_dokument( id_firma, tip_dok, br_dok )
 
    _n_rn_broj := Val( AllTrim( field->brdok ) )
    _rekl_rn_broj := field->fisc_rn
@@ -495,9 +486,7 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
    _a_iznosi := get_a_iznos( id_firma, tip_dok, br_dok )
    _data_total := fakt_izracunaj_total( _a_iznosi, _partn_id, tip_dok )
 
-   SELECT fakt
-   GO TOP
-   SEEK ( id_firma + tip_dok + br_dok )
+   seek_fakt( id_firma, tip_dok, br_dok )
 
    IF !Found()
       MsgBeep( "Račun ne posjeduje niti jednu stavku#Štampanje onemogućeno !" )
@@ -732,11 +721,9 @@ STATIC FUNCTION is_podaci_partnera_kompletirani( sifra, id_broj )
 
    LOCAL lRet := .T.
 
-   SELECT partn
-   GO TOP
-   SEEK sifra
+   select_o_partner( sifra )
 
-   IF !Found()
+   IF Eof()
       lRet := .F.
       RETURN lRet
    ENDIF
@@ -823,13 +810,10 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
    __partn_ino := .F.
    __partn_pdv := .T.
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK ( id_firma + tip_dok + br_dok )
+   find_fakt_dokument( id_firma + tip_dok + br_dok )
 
-   _partn_id := field->idpartner
-   _vrsta_p := field->idvrstep
+   _partn_id := fakt_doks->idpartner
+   _vrsta_p := fakt_doks->idvrstep
 
    IF Empty( _partn_id )
       MsgBeep( "Šifra partnera ne postoji, izdavanje računa nije moguće !" )
@@ -1002,9 +986,6 @@ STATIC FUNCTION obrada_greske_na_liniji_55_reklamirani_racun( idfirma, idtipdok,
 
 
 
-// -----------------------------------------------------------------------
-// vrati partnera za email
-// -----------------------------------------------------------------------
 STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
 
    LOCAL _ret := ""
@@ -1012,17 +993,13 @@ STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
    LOCAL _partn
    LOCAL _id_vrste_p
 
-   SELECT fakt_doks
-   GO TOP
-   SEEK id_firma + tip_dok + br_dok
+   find_fakt_dokument( id_firma, tip_dok, br_dok )
 
    _partn := field->idpartner
    _id_vrste_p := field->idvrstep
 
-   SELECT partn
-   HSEEK _partn
-
-   IF Found()
+   select_o_partner( _partn )
+   IF !Eof()
       _ret := AllTrim( field->naz )
    ENDIF
 
@@ -1189,9 +1166,7 @@ STATIC FUNCTION set_fiscal_no_to_fakt_doks( cFirma, cTD, cBroj, nFiscal, lStorno
       lStorno := .F.
    ENDIF
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   SEEK cFirma + cTD + cBroj
+   find_fakt_dokument( cFirma, cTD, cBroj )
 
    _rec := dbf_get_rec()
 

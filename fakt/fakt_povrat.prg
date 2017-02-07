@@ -69,10 +69,8 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
       RETURN nRet
    ENDIF
 
-   SELECT fakt
-   HSEEK id_firma + id_tip_dok + br_dok
-
-   IF !Found()
+   seek_fakt_doks( id_firma, id_tip_dok, br_dok )
+   IF !Eof()
       MsgBeep( "Traženi dokument ne postoji ažuriran u bazi !" )
    ENDIF
 
@@ -178,7 +176,7 @@ STATIC FUNCTION resetuj_markere_generisanog_dokumenta( cIdFirma, cIdTipDok, cBrD
 
    SELECT fakt_pripr
    SET ORDER TO TAG "1"
-   HSEEK cIdFirma + cIdTipDok + cBrDok
+   HSEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr
 
    DO WHILE !Eof() .AND. fakt_pripr->( field->idfirma + field->idtipdok + field->brdok ) ==  cIdFirma + cIdTipDok + cBrDok
       IF fakt_pripr->m1 == "X"
@@ -189,7 +187,7 @@ STATIC FUNCTION resetuj_markere_generisanog_dokumenta( cIdFirma, cIdTipDok, cBrD
       SKIP
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -253,7 +251,7 @@ STATIC FUNCTION uslovi_za_povrat_prema_kriteriju( vars )
 
 
 
-
+/*
 FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    LOCAL nRec
@@ -293,10 +291,10 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    ENDIF
 
-   o_fakt()
+   //o_fakt()
    o_fakt_pripr()
-   o_fakt_doks()
-   o_fakt_doks2()
+   //o_fakt_doks()
+   //o_fakt_doks2()
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
@@ -310,7 +308,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    IF Pitanje( "", "Da li ste sigurni da želite vratiti sve dokumente prema kriteriju (D/N) ?", "N" ) == "N"
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    _filter := _vars[ "uslov_dokumenti" ]
@@ -353,10 +351,9 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
       _id_tip_dok := field->idtipdok
       _br_dok := field->brdok
 
-      SELECT fakt
-      SEEK _id_firma + _id_tip_dok + _br_dok
+      seek_fakt( _id_firma, _id_tip_dok, _br_dok )
 
-      IF !Found()
+      IF Eof()
          SELECT fakt_doks
          SKIP
          LOOP
@@ -428,7 +425,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    RETURN _ok
 
-
+*/
 
 STATIC FUNCTION dokument_se_moze_vratiti_u_pripremu( vars )
 

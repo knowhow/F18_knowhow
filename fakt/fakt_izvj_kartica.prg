@@ -23,26 +23,26 @@ FUNCTION fakt_kartica()
 
    PRIVATE m := ""
 
-   my_close_all_dbf()
+   // my_close_all_dbf()
 
    o_sifk()
    o_sifv()
 
    IF _params[ "fakt_objekti" ]
-      O_FAKT_OBJEKTI
+      // O_FAKT_OBJEKTI
    ENDIF
 
-   o_fakt_doks()
-   o_fakt()
+   // o_fakt_doks()
+   // o_fakt()
 
-   SELECT fakt
-   IF fId_J
-      SET ORDER TO TAG "3J"
-      // idroba_J+Idroba+dtos(datDok)
-   ELSE
-      SET ORDER TO TAG "3"
-      // idroba+dtos(datDok)
-   ENDIF
+   // SELECT fakt
+   // IF fId_J
+   // SET ORDER TO TAG "3J"
+   // idroba_J+Idroba+dtos(datDok)
+   // ELSE
+   // SET ORDER TO TAG "3"
+   // idroba+dtos(datDok)
+   // ENDIF
 
    cIdfirma := self_organizacija_id()
    PRIVATE qqRoba := ""
@@ -147,7 +147,8 @@ FUNCTION fakt_kartica()
       ELSE
          cSintetika := "N"
       ENDIF
-      read;ESC_BCR
+      READ
+      ESC_BCR
 
       IF cBrza == "N"
          IF fID_J
@@ -190,11 +191,11 @@ FUNCTION fakt_kartica()
 
    BoxC()
 
-   IF cPPArtn == "D"
-      o_fakt_doks()
-   ENDIF
+   // IF cPPArtn == "D"
+   // o_fakt_doks()
+   // ENDIF
 
-   SELECT FAKT
+   // SELECT FAKT
 
    PRIVATE cFilt1 := ""
 
@@ -219,7 +220,7 @@ FUNCTION fakt_kartica()
       GO TOP
       EOF CRET
    ELSE
-      SEEK qqRoba
+      seek_fakt_idroba( qqRoba )
    ENDIF
 
    START PRINT CRET
@@ -313,16 +314,20 @@ FUNCTION fakt_kartica()
          PushWA()
          SELECT fakt
          SET FILTER TO
-         IF fID_J
-            // TODO : pogledati
-            SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
-         ELSE
-            SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
-         ENDIF
+         // IF fID_J
+         // TODO : pogledati
+         // SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
+         // ELSE
+
+         // SEEK cIdFirma + IIF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
+         // ENDIF
+
+         seek_fakt_idroba_sintetika( cIdFirma, iif( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
+
          // DO-WHILE za cPredh=2
-         DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", ;
-               Left( cIdRoba, gnDS ) == Left( IdROba, gnDS ), ;
-               cIdRoba == iif( fID_J, IdRoba_J + Idroba, IdRoba ) ) .AND. dDatOd > datdok
+         DO WHILE !Eof() .AND. ;
+               iif( cSintetika == "D" .AND. ROBA->tip == "S", Left( cIdRoba, gnDS ) == Left( IdROba, gnDS ),  cIdRoba ==  IdRoba ) ;
+               .AND. dDatOd > datdok
 
             IF !Empty( cK1 )
                IF ck1 <> K2 ; skip; loop; ENDIF
@@ -331,9 +336,8 @@ FUNCTION fakt_kartica()
                IF ck2 <> K2; skip; loop; ENDIF
             ENDIF
             IF !Empty( cIdFirma ); IF idfirma <> cIdFirma; skip; loop; end; END
+
             IF !Empty( qqPartn )
-
-
                find_fakt_dokument( fakt->IdFirma, fakt->idtipdok, fakt->brdok  )
                SELECT fakt
                IF !( fakt_doks->partner = qqPartn )
@@ -379,7 +383,7 @@ FUNCTION fakt_kartica()
          IF !Empty( cK2 ); IF ck2 <> K2; skip; loop; end; END // uslov ck2
 
          IF !Empty( qqPartn )
-            find_fakt_dokument( fakt->IdFirma, fakt->idtipdok , fakt->brdok )
+            find_fakt_dokument( fakt->IdFirma, fakt->idtipdok, fakt->brdok )
             SELECT fakt
             IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
          ENDIF

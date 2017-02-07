@@ -245,7 +245,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
 STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 
    LOCAL _a_memo
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _fakt_totals
    LOCAL _fakt_doks_data
    LOCAL _fakt_doks2_data
@@ -261,11 +261,11 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
    DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idtipdok == id_tip_dok .AND. field->brdok == br_dok
 
       SELECT fakt_pripr
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       SELECT fakt
       APPEND BLANK
-      dbf_update_rec( _rec, .T. )
+      dbf_update_rec( hRec, .T. )
 
       SELECT fakt_pripr
       SKIP
@@ -274,21 +274,17 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 
    @ m_x + 2, m_y + 2 SAY "fakt_doks " + id_firma + id_tip_dok + br_dok
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   SEEK id_firma + id_tip_dok + br_dok
+   IF !find_fakt_dokument(id_firma, id_tip_dok, br_dok)
 
-   IF !Found()
+      hRec := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
-      _rec := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
-
-      hb_HDel( _rec, "brisano" )
-      hb_HDel( _rec, "sifra" )
+      hb_HDel( hRec, "brisano" )
+      hb_HDel( hRec, "sifra" )
 
       SELECT fakt_doks
       APPEND BLANK
 
-      dbf_update_rec( _rec, .T. )
+      dbf_update_rec( hRec, .T. )
 
    ELSE
 
@@ -301,18 +297,15 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 
    @ m_x + 3, m_y + 2 SAY "fakt_doks2 " + id_firma + id_tip_dok + br_dok
 
-   SELECT fakt_doks2
-   SET ORDER TO TAG "1"
-   SEEK id_firma + id_tip_dok + br_dok
+   seek_fakt_doks2( id_firma, id_tip_dok, br_dok )
+   IF Eof()
 
-   IF !Found()
-
-      _rec := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
+      hRec := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 
       SELECT fakt_doks2
       APPEND BLANK
 
-      dbf_update_rec( _rec, .T. )
+      dbf_update_rec( hRec, .T. )
 
    ELSE
       _msg := "ERR: " + RECI_GDJE_SAM0 + " postoji zapis u fakt_doks2 : " + id_firma + id_tip_dok + br_dok
@@ -374,7 +367,7 @@ FUNCTION get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
    o_fakt_pripr()
    SELECT fakt_pripr
    GO TOP
-   SEEK id_firma + id_tip_dok + br_dok
+   SEEK id_firma + id_tip_dok + br_dok // fakt_pripr
 
    _fakt_data[ "idfirma" ]  := field->idfirma
    _fakt_data[ "brdok" ]    := field->brdok
@@ -410,7 +403,7 @@ FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
    o_fakt_pripr()
    SELECT fakt_pripr
-   HSEEK id_firma + id_tip_dok + br_dok
+   HSEEK id_firma + id_tip_dok + br_dok // fakt_pripr
 
    _memo := ParsMemo( field->txt )
 
@@ -466,7 +459,7 @@ FUNCTION izracunaj_ukupni_iznos_dokumenta_iz_pripreme( id_firma, id_tipdok, br_d
 
    SELECT fakt_pripr
    GO TOP
-   SEEK id_firma + id_tipdok + br_dok
+   SEEK id_firma + id_tipdok + br_dok // fakt_pripr
 
    _din_dem := field->dindem
 
@@ -603,7 +596,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
 
 FUNCTION fakt_sredi_redni_broj_u_pripremi()
 
-   LOCAL _t_rec, _rec
+   LOCAL _t_rec, hRec
    LOCAL _firma, _broj, _tdok
    LOCAL _cnt
 
@@ -626,9 +619,9 @@ FUNCTION fakt_sredi_redni_broj_u_pripremi()
 
          SKIP -1
 
-         _rec := dbf_get_rec()
-         _rec[ "rbr" ] := PadL( AllTrim( Str( ++_cnt ) ), 3, 0 )
-         dbf_update_rec( _rec )
+         hRec := dbf_get_rec()
+         hRec[ "rbr" ] := PadL( AllTrim( Str( ++_cnt ) ), 3, 0 )
+         dbf_update_rec( hRec )
 
          GO ( _t_rec )
 
@@ -682,7 +675,7 @@ FUNCTION fakt_brisanje_pripreme()
 FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
 
    LOCAL _novi_br_dok
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _count
    LOCAL _fiscal_no
    LOCAL _fiscal_use := fiscal_opt_active()
@@ -712,9 +705,7 @@ FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
 
    _count := 0
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   SEEK id_firma + id_tip_dok + br_dok
+   find_fakt_dokument( id_firma, id_tip_dok, br_dok )
 
    _fiscal_no := 0
 
@@ -722,28 +713,25 @@ FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
       _fiscal_no := field->fisc_rn
    ENDIF
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + id_tip_dok + br_dok
+   seek_fakt( id_firma, id_tip_dok, br_dok )
 
    DO WHILE !Eof() .AND. field->idfirma == id_firma  .AND. field->idtipdok == id_tip_dok .AND. field->brdok == br_dok
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       SELECT fakt_pripr
       APPEND BLANK
 
-      _rec[ "kolicina" ] := ( _rec[ "kolicina" ] * -1 )
-      _rec[ "brdok" ] := _novi_br_dok
-      _rec[ "datdok" ] := Date()
-      _rec[ "idvrstep" ] := ""
+      hRec[ "kolicina" ] := ( hRec[ "kolicina" ] * -1 )
+      hRec[ "brdok" ] := _novi_br_dok
+      hRec[ "datdok" ] := Date()
+      hRec[ "idvrstep" ] := ""
 
       IF _fiscal_use
-         _rec[ "fisc_rn" ] := _fiscal_no
+         hRec[ "fisc_rn" ] := _fiscal_no
       ENDIF
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       SELECT fakt
       SKIP

@@ -697,7 +697,7 @@ STATIC FUNCTION _op_gr( cId, cSifK )
    SELECT sifk
    SET ORDER TO TAG "ID2"
    GO TOP
-   SEEK PadR( "ROBA", 8 ) + PadR( cSifK, 4 )
+   SEEK PadR( "ROBA", 8 ) + PadR( cSifK, 4 ) // sifk
 
    IF Found()
       cRet := AllTrim( field->naz )
@@ -1121,10 +1121,7 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
       aMemo := ParsMemo( txt )
       lFromMemo := .T.
    ELSE
-      o_partner()
-      SELECT partn
-      SET ORDER TO TAG "ID"
-      HSEEK cId
+      select_o_partner( cId )
    ENDIF
 
    IF !lFromMemo .AND. partn->id == cId

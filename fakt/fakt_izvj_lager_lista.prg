@@ -64,23 +64,23 @@ FUNCTION fakt_lager_lista()
       ENDIF
    ENDIF
 
-   o_fakt_doks()
-   o_tarifa()
-   select_o_partner()
+   // o_fakt_doks()
+   // o_tarifa()
+   // select_o_partner()
    o_sifk()
    o_sifv()
-   select_o_roba()
-   o_rj()
+   // select_o_roba()
+   // o_rj()
 
-   IF fId_J
-      o_fakt()
-      // idroba+dtos(datDok)
-      SET ORDER TO TAG "3J"
-   ELSE
-      o_fakt()
-      // idroba+dtos(datDok)
-      SET ORDER TO TAG "3"
-   ENDIF
+   // IF fId_J
+   // o_fakt()
+   // idroba+dtos(datDok)
+   // SET ORDER TO TAG "3J"
+   // ELSE
+// o_fakt()
+   // idroba+dtos(datDok)
+   // SET ORDER TO TAG "3"
+   // ENDIF
 
    lSaberikol := .F.
    nKU := nKI := 0
@@ -112,7 +112,7 @@ FUNCTION fakt_lager_lista()
    RPar( "d1", @dDatOd )
    RPar( "d2", @dDatDo )
 
-   SELECT fakt
+   // SELECT fakt
 
 
    IF gNW $ "DR"
@@ -131,9 +131,9 @@ FUNCTION fakt_lager_lista()
 
    DO WHILE .T.
       IF gNW $ "DR"
-         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
       @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
       @ m_x + 3, m_y + 2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   PICT "@!"
@@ -190,11 +190,11 @@ FUNCTION fakt_lager_lista()
       READ
 
       ESC_BCR
-      IF fID_J
-         aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
-      ELSE
-         aUsl1 := Parsiraj( qqRoba, "IdRoba" )
-      ENDIF
+      // IF fID_J
+      // aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
+      // ELSE
+      aUsl1 := Parsiraj( qqRoba, "IdRoba" )
+      // ENDIF
 
       IF aUsl1 <> NIL
          EXIT
@@ -244,8 +244,8 @@ FUNCTION fakt_lager_lista()
       fSMark := .T.
    ENDIF
 
-   SELECT FAKT
-
+   // SELECT FAKT
+   seek_fakt_3( cIdFirma )
    PRIVATE cFilt := ".t."
 
    IF aUsl1 <> ".t."
@@ -259,8 +259,9 @@ FUNCTION fakt_lager_lista()
    IF cFilt == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
    ENDIF
+
 
    GO TOP
    EOF CRET
@@ -289,19 +290,13 @@ FUNCTION fakt_lager_lista()
    IF cSintetika == "D"
       bWhile1 := {|| !Eof() .AND. Left( cIdroba, gnDS ) == Left( IdRoba, gnDS )  }
    ELSE
-      IF fId_J
-         bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba_J + IdRoba }
-      ELSE
-         bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba }
-      ENDIF
+      bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba }
    ENDIF
 
    DO WHILE !Eof()
-      IF fID_J
-         cIdRoba := IdRoba_J + IdRoba
-      ELSE
-         cIdRoba := IdRoba
-      ENDIF
+
+      cIdRoba := IdRoba
+
 
       IF cSintetika == "D"
          NSRNPIdRoba( cIdRoba, .T. ); SELECT FAKT
@@ -412,10 +407,12 @@ FUNCTION fakt_lager_lista()
             ENDIF
 
             IF nGrZn <> 99 .AND. ( Empty( cLastIdRoba ) .OR. Left( cLastIdRoba, nGrZn ) <> Left( cIdRoba, nGrZn ) )
-               SELECT ROBA
+               // SELECT ROBA
                PushWA()
-               SEEK Left( cIdRoba, nGrZn )
-               IF Found() .AND. Right( Trim( id ), 1 ) == "."
+               // SEEK Left( cIdRoba, nGrZn )
+               seek_roba_partial( Left( cIdRoba, nGrZn ) )
+
+               IF !Eof() .AND. Right( Trim( id ), 1 ) == "."
                   cNazivGrupacije := Left( cIdRoba, nGrZn ) + " " + naz
                ELSE
                   cNazivGrupacije := Left( cIdRoba, nGrZn )
@@ -462,7 +459,7 @@ FUNCTION fakt_lager_lista()
             IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
                _cijena := roba->vpc2
             ELSE
-               _cijena := if ( !Empty( cIdFirma ), fakt_mpc_iz_sifrarnika(), roba->vpc )
+               _cijena := IF ( !Empty( cIdFirma ), fakt_mpc_iz_sifrarnika(), roba->vpc )
             ENDIF
             IF gVarC == "4"
                _cijena2 := roba->mpc
@@ -499,7 +496,7 @@ FUNCTION fakt_lager_lista()
 
             IF cPoTar == "D"
                nMpv := ( nUl - nIzl ) * roba->mpc
-               nPom := AScan( aPorezi, {| x| x[ 1 ] == roba->idTarifa } )
+               nPom := AScan( aPorezi, {| x | x[ 1 ] == roba->idTarifa } )
                IF nPom > 0
                   aPorezi[ nPom, 2 ] := aPorezi[ nPom, 2 ] + nMpv
                ELSE
@@ -574,11 +571,11 @@ FUNCTION fakt_lager_lista()
          @ PRow(), nCol1 SAY nKU - nKI PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
       ELSE
          IF cUI $ "US"
-            @ PRow(), nCol1 - ( Len( picdem ) + 1 ) * 4 -2  SAY nKU  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+            @ PRow(), nCol1 - ( Len( picdem ) + 1 ) * 4 - 2  SAY nKU  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
          ENDIF
          IF cUI $ "IS"
             IF cUI == "I"
-               @ PRow(), nCol1 - ( Len( picdem ) + 1 ) * 4 -2 SAY nKI  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+               @ PRow(), nCol1 - ( Len( picdem ) + 1 ) * 4 - 2 SAY nKI  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
             ELSE
                @ PRow(), PCol() + 1 SAY nKI  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
             ENDIF
@@ -603,7 +600,7 @@ FUNCTION fakt_lager_lista()
       z1 := "Tarifa" + PadC( "PPP%", Len( gPicProc ) + 1 ) + PadC( "PPU%", Len( gPicProc ) + 1 ) + PadC( "PP%", Len( gPicProc ) + 1 ) + PadC( "MPV", Len( PicDem ) + 1 ) + PadC( "PPP", Len( PicDem ) + 1 ) + PadC( "PPU", Len( PicDem ) + 1 ) + PadC( "PP", Len( PicDem ) + 1 ) + PadC( "MPV+por", Len( PicDem ) + 1 )
       ? z1
       ? m
-      ASort( aPorezi, {| x, y| x[ 1 ] < y[ 1 ] } )
+      ASort( aPorezi, {| x, y | x[ 1 ] < y[ 1 ] } )
       nUMPV := nUMPV0 := nUPor1 := nUPor2 := nUPor3 := 0
       FOR i := 1 TO Len( aPorezi )
          IF check_nova_strana( bZagl, oPDF )
@@ -613,8 +610,7 @@ FUNCTION fakt_lager_lista()
             ? z1
             ? m
          ENDIF
-         SELECT tarifa
-         HSEEK aPorezi[ i, 1 ]
+         select_o_tarifa( aPorezi[ i, 1 ] )
          fakt_vt_porezi()
          nMPV := aPorezi[ i, 2 ]
          nMPV0 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ), ZAOKRUZENJE )
@@ -758,8 +754,8 @@ FUNCTION fakt_lager_lista_vars( param, lPocetnoStanje )
    ELSE
       // pocetno stanje je u pitanju
       _date_ps := CToD( "01.01." + AllTrim( Str( Year( Date() ) ) ) )
-      _date_from := CToD( "01.01." + AllTrim( Str( Year( Date() ) -1 ) ) )
-      _date_to := CToD( "31.12." + AllTrim( Str( Year( Date() ) -1 ) ) )
+      _date_from := CToD( "01.01." + AllTrim( Str( Year( Date() ) - 1 ) ) )
+      _date_to := CToD( "31.12." + AllTrim( Str( Year( Date() ) - 1 ) ) )
    ENDIF
 
    _stavke_nula := "N"
@@ -927,8 +923,8 @@ FUNCTION fakt_lager_lista_sql( param, lPocetnoStanje )
    LOCAL _tek_database := my_server_params()[ "database" ]
    LOCAL _db_params := my_server_params()
 
-   IF param == NIL
-      IF fakt_lager_lista_vars( @param ) == 0
+   IF PARAM == NIL
+      IF fakt_lager_lista_vars( @PARAM ) == 0
          RETURN .F.
       ENDIF
    ENDIF
@@ -965,7 +961,7 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, lPocetnoStanje )
 
    IF lPocetnoStanje
       my_server_logout()
-      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) -4 ) + AllTrim( Str( Year( _date_from ) ) )
+      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_from ) ) )
       my_server_params( _db_params )
       my_server_login( _db_params )
       set_sql_search_path()
@@ -1012,7 +1008,7 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, lPocetnoStanje )
 
    IF lPocetnoStanje
       my_server_logout()
-      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) -4 ) + AllTrim( Str( Year( _date_ps ) ) )
+      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )
       my_server_params( _db_params )
       my_server_login( _db_params )
       set_sql_search_path()

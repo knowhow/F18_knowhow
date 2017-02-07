@@ -23,8 +23,8 @@ FUNCTION fakt_uplate()
    // "6","IdFirma+idpartner+idtipdok", "DOKS"
    SET ORDER TO TAG "6"
 
-   o_partner()
-   O_UPL
+   //o_partner()
+   //O_UPL
 
    cIdPartner := Space( 6 )
    dDatOd := CToD( "" )
@@ -71,8 +71,9 @@ FUNCTION fakt_uplate()
       // utvrdimo ukupan iznos uplata
       nUkUplata := UkUplata()
 
-      SELECT ( F_UPL )
-      GO TOP
+      //SELECT ( F_UPL )
+      //GO TOP
+      seek_fakt_uplate( cIdPartner )
 
       @ m_x + X_POS_STANJE - 2, m_y + 1        SAY REPL( "=", 70 )
       @ m_x + X_POS_STANJE - 1, m_y + Y_POS_STANJE SAY8 " (+)     ZADUŽENJE:"
@@ -84,14 +85,14 @@ FUNCTION fakt_uplate()
 
       @ m_x + 4, m_y + 1 SAY REPL( "=", 70 )
 
-      SEEK cIdPartner
+      //SEEK cIdPartner
       my_db_edit( "EvUpl", MAXROWS() -5, MAXCOLS() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
          .F., NIL, 1, NIL, 4, 3, NIL, {| nSkip| SkipDBBK( nSkip ) } )
 
    ENDDO
    BoxC()
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN NIL
 
@@ -170,8 +171,8 @@ FUNCTION UkZaduz()
 
    LOCAL nArr := Select(), nVrati := 0
 
-   SELECT ( F_FAKT_DOKS )
-   SEEK self_organizacija_id() + cIdPartner
+   //SELECT ( F_FAKT_DOKS )
+   seek_fakt_doks_idpartner( self_organizacija_id(), cIdPartner )
 
    DO WHILE !Eof() .AND. idpartner == cIdPartner
       IF datdok >= dDatOd .AND. datdok <= dDatDo .AND. &aUslTD
@@ -198,14 +199,14 @@ FUNCTION UkUplata( lPushWA )
       lPushWA := .T.
    ENDIF
 
-   SELECT ( F_UPL )
+   //SELECT ( F_UPL )
+   seek_fakt_upl( cIdPartner )
 
    IF lPushWA
       PushWA()
       SET ORDER TO TAG "2"
    ENDIF
 
-   SEEK cIdPartner
 
    DO WHILE !Eof() .AND. idpartner == cIdPartner
       IF datupl >= dDatOd .AND. datupl <= dDatDo
@@ -268,7 +269,7 @@ STATIC FUNCTION SkipDBBK( nRequest )
    RETURN ( nCount )
 
 
-/* StKartKup()
+/*
  *     Stanje na kartici kupca
  */
 

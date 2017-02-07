@@ -58,7 +58,7 @@ FUNCTION find_kalk_doks_za_tip_sufix_zadnji_broj( cIdFirma, cIdVd, cBrDokSfx )
 
    hParams[ "brdok_sfx" ] := cBrDokSfx  // 000010/T => /T
    // hParams[ "order_by" ] := "SUBSTR(brdok,6),LEFT(brdok,5)" // ako ima brojeva dokumenata sortiraj po sufixu
-   hParams[ "order_by" ] := "SUBSTR(brdok," + AllTrim( Str( 8 -nLenSufiks + 1 ) ) + "),LEFT(brdok," + AllTrim( Str( 8 -nLenSufiks ) ) + ")" // ako ima brojeva dokumenata sortiraj po sufixu
+   hParams[ "order_by" ] := "SUBSTR(brdok," + AllTrim( Str( 8 - nLenSufiks + 1 ) ) + "),LEFT(brdok," + AllTrim( Str( 8 - nLenSufiks ) ) + ")" // ako ima brojeva dokumenata sortiraj po sufixu
    hParams[ "indeks" ] := .F.
    hParams[ "desc" ] := .T.
    hParams[ "limit" ] := 1
@@ -878,7 +878,7 @@ STATIC FUNCTION sql_kalk_doks_where( hParams )
       order by substr(brdok,6),left(brdok,5) DESC
 */
       // cWhere += "substr(brdok,6) = " + sql_quote( Trim(hParams[ "brdok_sfx" ]) )
-      cWhere += "substr(brdok," + AllTrim( Str( 8 -Len( hParams[ "brdok_sfx" ] ) + 1 ) ) + ")=" + sql_quote( Trim( hParams[ "brdok_sfx" ] ) )
+      cWhere += "substr(brdok," + AllTrim( Str( 8 - Len( hParams[ "brdok_sfx" ] ) + 1 ) ) + ")=" + sql_quote( Trim( hParams[ "brdok_sfx" ] ) )
    ENDIF
 
    IF hb_HHasKey( hParams, "dat_do" )
@@ -944,7 +944,9 @@ FUNCTION use_sql_kalk_doks2( hParams )
    ENDIF
 
    SELECT ( F_KALK_DOKS2 )
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    IF is_sql_rdd_treba_indeks( hParams )
       INDEX ON ( idfirma + idvd + brdok ) TAG "1" TO cTable

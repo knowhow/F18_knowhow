@@ -141,9 +141,7 @@ STATIC FUNCTION _get_partner( cIdPartner )
    LOCAL cPartner
 
    nTArea := Select()
-   SELECT partn
-   GO TOP
-   SEEK cIdPartner
+   select_o_partner( cIdPartner )
 
    IF Found()
       cPartner := field->naz

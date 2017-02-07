@@ -32,8 +32,7 @@ FUNCTION RptInvObrPopisa()
 
    GO TOP
    DO WHILE !Eof()
-      SELECT roba
-      HSEEK fakt_pripr->idRoba
+      select_o_roba( fakt_pripr->idRoba )
       SELECT fakt_pripr
 
       print_nova_strana( 125, @nStr, 1 )

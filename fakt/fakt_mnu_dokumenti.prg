@@ -43,8 +43,8 @@ FUNCTION fakt_ostale_operacije_doks()
    AAdd( _opc, "1. povrat dokumenta u pripremu       " )
    AAdd( _opcexe, {|| Povrat_fakt_dokumenta() } )
 
-   AAdd( _opc, "2. povrat dokumenata prema kriteriju " )
-   AAdd( _opcexe, {|| if( spec_funkcije_sifra(), Povrat_fakt_po_kriteriju(), nil ) } )
+   //AAdd( _opc, "2. povrat dokumenata prema kriteriju " )
+   //AAdd( _opcexe, {|| if( spec_funkcije_sifra(), Povrat_fakt_po_kriteriju(), nil ) } )
 
    AAdd( _opc, "3. prekid rezervacije" )
    AAdd( _opcexe, {|| Povrat_fakt_dokumenta( .T. ) } )

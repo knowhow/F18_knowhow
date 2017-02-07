@@ -475,9 +475,7 @@ STATIC FUNCTION __export( vars, a_details )
 
    @ m_x + 1, m_y + 2 SAY "... export fakt dokumenata u toku"
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
+   seek_fakt_doks()
 
    DO WHILE !Eof()
 
@@ -549,10 +547,7 @@ STATIC FUNCTION __export( vars, a_details )
       ++ _cnt
       @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
 
-      SELECT fakt
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      seek_fakt( _id_firma, _id_vd, _br_dok )
 
       _r_br := 0
 
@@ -581,7 +576,7 @@ STATIC FUNCTION __export( vars, a_details )
          IF _prim_sif > 0
 
             GO TOP
-            SEEK _id_firma + _id_vd + _br_dok + cIdRoba
+            SEEK _id_firma + _id_vd + _br_dok + cIdRoba // e_fakt
 
             IF !Found()
                APPEND BLANK
@@ -597,14 +592,13 @@ STATIC FUNCTION __export( vars, a_details )
 
          ENDIF
 
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
 
          IF Found() .AND. _export_sif == "D"
             _app_rec := dbf_get_rec()
             SELECT e_roba
             SET ORDER TO TAG "ID"
-            SEEK cIdRoba
+            SEEK cIdRoba // e_roba
             IF !Found()
                APPEND BLANK
                dbf_update_rec( _app_rec )
@@ -617,10 +611,7 @@ STATIC FUNCTION __export( vars, a_details )
 
       ENDDO
 
-      SELECT fakt_doks2
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      seek_fakt_doks2( _id_firma, _id_vd, _br_dok )
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
 
@@ -635,13 +626,12 @@ STATIC FUNCTION __export( vars, a_details )
 
       ENDDO
 
-      SELECT partn
-      HSEEK _id_partn
+      select_o_partner( _id_partn )
       IF Found() .AND. _export_sif == "D"
          _app_rec := dbf_get_rec()
          SELECT e_partn
          SET ORDER TO TAG "ID"
-         SEEK _id_partn
+         SEEK _id_partn // e_partn
          IF !Found()
             APPEND BLANK
             dbf_update_rec( _app_rec )
@@ -835,7 +825,7 @@ STATIC FUNCTION __import( vars, a_details )
       SELECT e_fakt
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      SEEK _id_firma + _id_vd + _br_dok // e_fakt
 
       _redni_broj := 0
 
@@ -869,7 +859,7 @@ STATIC FUNCTION __import( vars, a_details )
       SELECT e_doks2
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      SEEK _id_firma + _id_vd + _br_dok // e_doks2
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
 
@@ -933,12 +923,7 @@ STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
    LOCAL _ret := .T.
 
 
-
-   SELECT fakt_doks
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-
-   IF !Found()
+  IF !find_fakt_dokument( id_firma, id_vd, br_dok )
       _ret := .F.
    ENDIF
 
@@ -958,34 +943,21 @@ STATIC FUNCTION del_fakt_doc( id_firma, id_vd, br_dok )
    LOCAL _del_rec, _t_rec
    LOCAL _ret := .F.
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-
-   IF Found()
+   seek_fakt( id_firma, id_vd, br_dok )
+   IF !Eof() // brisi fakt_fakt
       _ret := .T.
-      // brisi fakt_fakt
       _del_rec := dbf_get_rec()
       delete_rec_server_and_dbf( "fakt_fakt", _del_rec, 2, "CONT" )
    ENDIF
 
-   // brisi fakt_doks
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-   IF Found()
+   seek_fakt_doks( id_firma, id_vd, br_dok )
+   IF !Eof()
       _del_rec := dbf_get_rec()
       delete_rec_server_and_dbf( "fakt_doks", _del_rec, 1, "CONT" )
    ENDIF
 
-   // doks2
-   SELECT fakt_doks2
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-   IF Found()
+    seek_fakt_doks2( id_firma, id_vd, br_dok )
+   IF !Eof()
       _del_rec := dbf_get_rec()
       delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
    ENDIF

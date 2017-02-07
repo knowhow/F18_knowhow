@@ -1330,10 +1330,7 @@ STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
    LOCAL nDbfArea := Select()
    LOCAL _color := "W/N+"
 
-   SELECT rj
-   SET ORDER TO TAG "ID"
-   GO TOP
-   SEEK id_rj
+   select_o_rj( id_rj )
 
    select_fakt_pripr()
 
@@ -1508,12 +1505,11 @@ FUNCTION StUgRabKup()
    // StDok2()
    lUgRab := .F.
 
-   RETURN
+   RETURN .T.
 
 
 
-// ----------------------------------
-// ----------------------------------
+
 FUNCTION IspisBankeNar( cBanke )
 
    LOCAL aOpc
@@ -1522,16 +1518,17 @@ FUNCTION IspisBankeNar( cBanke )
    aOpc := TokToNiz( cBanke, "," )
    cVrati := ""
 
-   SELECT banke
-   SET ORDER TO TAG "ID"
+   //SELECT banke
+   //SET ORDER TO TAG "ID"
    FOR i := 1 TO Len( aOpc )
-      HSEEK SubStr( aOpc[ i ], 1, 3 )
+      select_o_banka( SubStr( aOpc[ i ], 1, 3 ) )
       IF Found()
          cVrati += AllTrim( banke->naz ) + ", " + AllTrim( banke->adresa ) + ", " + AllTrim( banke->mjesto ) + ", " + AllTrim( aOpc[ i ] ) + "; "
       ELSE
          cVrati += ""
       ENDIF
    NEXT
+
    SELECT partn
 
    RETURN cVrati
@@ -1728,8 +1725,8 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    select_fakt_pripr()
    GO TOP
 
-   // uzmi podatke sa izmjenjene stavke
-   SEEK _new_firma + _new_tipdok + _new_brdok // fakt_pripr
+
+   SEEK _new_firma + _new_tipdok + _new_brdok // fakt_pripr, uzmi podatke sa izmjenjene stavke
 
    IF !Found()
       RETURN .F.

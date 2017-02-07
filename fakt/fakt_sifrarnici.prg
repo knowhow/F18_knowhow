@@ -246,7 +246,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
          cPom777 := aDodPar[ i, 2 ]
 
          IF "TARIFA->" $ Upper( cPom777 )
-         
+
             select_o_tarifa( ROBA->idtarifa )
             SELECT ROBA
          ENDIF
@@ -388,30 +388,30 @@ STATIC FUNCTION ObSif()
  *   param: cTag
  */
 
-FUNCTION ima_u_fakt_kumulativ( cKljuc, cTag )
+FUNCTION ima_u_fakt_kumulativ( cKljuc ) //, cTag )
 
-   LOCAL lVrati := .F., lUsed := .T., nArr := Select()
+   LOCAL lVrati  // := .F.  //, lUsed := .T., nArr := Select()
 
-   SELECT ( F_FAKT )
+   //SELECT ( F_FAKT )
 
-   IF !Used()
-      lUsed := .F.
-      o_fakt()
-   ELSE
+   //IF !Used()
+    //  lUsed := .F.
+    //  o_fakt()
+   //ELSE
       PushWA()
-   ENDIF
+   //ENDIF
 
-   IF !Empty( IndexKey( Val( cTag ) + 1 ) )
-      SET ORDER TO TAG ( cTag )
-      SEEK cKljuc
-      lVrati := Found()
-   ENDIF
+   //IF !Empty( IndexKey( Val( cTag ) + 1 ) )
+      //SET ORDER TO TAG ( cTag )
+      seek_fakt_idroba(  cKljuc)
+      lVrati := Eof()
+   //ENDIF
 
-   IF !lUsed
-      USE
-   ELSE
+  // IF !lUsed
+//      USE
+ //  ELSE
       PopWA()
-   ENDIF
-   SELECT ( nArr )
+ //  ENDIF
+  // SELECT ( nArr )
 
    RETURN lVrati

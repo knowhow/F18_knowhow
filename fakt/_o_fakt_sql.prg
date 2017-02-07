@@ -81,7 +81,15 @@ FUNCTION seek_fakt( cIdFirma, cIdTipDok, cBrDok, cIdRoba, cTag )
 
 
 FUNCTION find_fakt_dokument( cIdFirma, cIdTipDok, cBrDok )
-   RETURN seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok, "1" )
+
+   LOCAL lRet
+
+   seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok, "1" )
+
+   lRet := cIdFirma == fakt_doks->idfirma .AND. cIdTipDok == fakt_doks->idtipdok .AND. cBrDok == fakt_doks->brdok
+
+   RETURN lRet
+
 
 FUNCTION seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok, cTag )
 

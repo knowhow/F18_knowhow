@@ -102,12 +102,12 @@ FUNCTION V_Podbr()
          ENDDO
          SELECT sast
          cPRoba := _idroba
-         cptxt1 := _txt1
-         SEEK cPRoba // sast
+         cPtxt1 := _txt1
+         select_o_sast( cPRoba )
          nPbr := 0
          DO WHILE !Eof() .AND. cPRoba == id
-            SELECT roba
-            HSEEK sast->id2  // pozicioniraj se na materijal
+
+            select_o_roba( sast->id2 )  // pozicioniraj se na materijal
             SELECT fakt_pripr
             APPEND ncnl
             my_flock()
@@ -163,11 +163,7 @@ FUNCTION fakt_setuj_cijenu( tip_cijene )
    LOCAL _rj := .F.
    LOCAL _tmp
 
-   SELECT ( F_RJ )
-   IF Used()
-      _rj := .T.
-      HSEEK _idfirma
-   ENDIF
+   select_o_rj( _idfirma )
 
    SELECT roba
 
@@ -225,7 +221,7 @@ FUNCTION fakt_setuj_cijenu( tip_cijene )
 
    SELECT fakt_pripr
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -247,9 +243,7 @@ FUNCTION V_Kolicina( tip_vpc )
 
    IF _podbr <> " ."
 
-      SELECT rj
-      HSEEK _idfirma
-
+      select_o_rj( _idfirma )
       cRjTip := rj->tip
 
       NSRNPIdRoba( _IDROBA )
@@ -335,8 +329,8 @@ FUNCTION V_Kolicina( tip_vpc )
       ENDIF
    ENDIF
 
-   SELECT fakt
-   SET ORDER TO TAG "3"
+   //SELECT fakt
+   //SET ORDER TO TAG "3"
 
    lBezMinusa := .F.
 
@@ -344,7 +338,7 @@ FUNCTION V_Kolicina( tip_vpc )
 
       MsgO( "Izračunavam trenutno stanje ..." )
 
-      SEEK _idroba
+      seek_fakt_idroba( _idroba )
 
       nUl := 0
       nIzl := 0
@@ -430,9 +424,8 @@ FUNCTION V_Roba( lPrikTar )
 
    IF Right( Trim ( &cVarIdRoba ), 2 ) = "--"
       cPom := PadR( Left( &cVarIdRoba, Len( Trim( &cVarIdRoba ) ) - 2 ), Len( &cVarIdRoba ) )
-      SELECT roba
-      SEEK cPom
-      IF Found()
+      select_o_roba( cPom )
+      IF !Eof()
          FaktStanje( roba->id )    // prelistaj kalkulacije
          &cVarIdRoba := cPom
       ENDIF
@@ -443,8 +436,7 @@ FUNCTION V_Roba( lPrikTar )
    SELECT roba
    SELECT fakt_pripr
 
-   SELECT tarifa
-   SEEK roba->idtarifa
+   select_o_tarifa( roba->idtarifa )
 
    IF lPrikTar
       @ m_x + 16, m_y + 28 SAY "TBr: "
@@ -587,8 +579,7 @@ FUNCTION UzorTxt()
 
          P_Ftxt( @cId )
 
-         SELECT ftxt
-         SEEK cId
+         select_o_ftxt( cId )
 
          SELECT fakt_pripr
 
@@ -748,8 +739,7 @@ FUNCTION _add_to_txt( cId_txt, nCount, lAppend )
       RETURN
    ENDIF
 
-   SELECT ftxt
-   SEEK cId_txt
+   select_o_ftxt( cId_txt )
    SELECT fakt_pripr
 
    IF lAppend == .F.
@@ -785,8 +775,7 @@ FUNCTION InoKlauzula()
 
    PushWA()
 
-   SELECT FTXT
-   SEEK "IN"
+   select_o_ftxt( "IN" )
 
    IF !Found()
 
@@ -901,7 +890,7 @@ FUNCTION Prepak( cIdRoba, cPako, nPak, nKom, nKol, lKolUPak )
    IF lKOLuPAK == NIL; lKOLuPAK := .T. ; ENDIF
    SELECT SIFV
    SET ORDER TO TAG "ID"
-   HSEEK "ROBA    " + cKar + PadR( cIdRoba, 15 )
+   HSEEK "ROBA    " + cKar + PadR( cIdRoba, 15 ) // sifv
 
    DO WHILE !Eof() .AND. id + oznaka + idsif == "ROBA    " + cKar + PadR( cIdRoba, 15 )
 
@@ -944,28 +933,19 @@ FUNCTION UGenNar()
 
    LOCAL lVrati := .T., nArr := Select(), nIsporuceno, nNaruceno, dNajstariji := CToD( "" )
 
-   SELECT ( F_UGOV )
-   IF !Used()
-      O_UGOV
-   ENDIF
-   SET ORDER TO TAG "1"
-   HSEEK "D" + "G" + _idpartner
-   IF Found()
-      SELECT ( F_RUGOV )
-      IF !Used()
-         O_RUGOV
-      ENDIF
-      SET ORDER TO TAG "ID"
-      SELECT UGOV
+   //SET ORDER TO TAG "1"
+   //HSEEK "D" + "G" + _idpartner
+   seek_ugov( "D", "G", _idpartner)
+
+   IF !Eof()
+
       nNaruceno := 0
       // izracunajmo ukupnu narucenu kolicinu i utvrdimo datum najstarije
       // / narudzbe
       DO WHILE !Eof() .AND. aktivan + vrsta + idpartner == "D" + "G" + _idpartner
 
-         SELECT RUGOV
-         HSEEK UGOV->id + _idroba
-
-         IF Found()
+         seek_rugov( UGOV->id, _idroba )
+         IF !Eof()
             IF Empty( dNajstariji )
                dNajstariji := UGOV->datod
             ELSE
@@ -978,13 +958,13 @@ FUNCTION UGenNar()
       ENDDO
       // izracunati dosadasnju isporuku (nIsporuceno)
       nIsporuceno := 0
-      SELECT FAKT
-      SET ORDER TO TAG "6"
-      // sabiram sve isporuke od datuma vazenja najstarijeg ugovora do danas
-      SEEK _idfirma + _idpartner + _idroba + "10" + DToS( dNajstariji )
 
-      DO WHILE !Eof() .AND. idfirma + idpartner + idroba + idtipdok == ;
-            _idfirma + _idpartner + _idroba + "10"
+      //SELECT FAKT
+      //SET ORDER TO TAG "6"
+      // sabiram sve isporuke od datuma vazenja najstarijeg ugovora do danas
+      seek_fakt_6( _idfirma, _idpartne, _idroba, "10", DToS( dNajstariji ) )
+
+      DO WHILE !Eof() .AND. idfirma + idpartner + idroba + idtipdok == _idfirma + _idpartner + _idroba + "10"
          nIsporuceno += kolicina
          SKIP 1
       ENDDO
@@ -1273,22 +1253,22 @@ FUNCTION NSRNPIdRoba( cSR, fSint )
       cSR := fakt_pripr->IdRoba
    ENDIF
 
-   SELECT ROBA
+   //SELECT ROBA
 
    IF ( fSint )
-      HSEEK PadR( Left( cSR, gnDS ), Len( cSR ) )
-      IF !Found() .OR. ROBA->tip != "S"
-         HSEEK cSR
+      seek_roba_partial( PadR( Left( cSR, gnDS ), Len( cSR ) ) )
+      IF Eof() .OR. ROBA->tip != "S"
+         select_o_roba( cSR )
       ENDIF
    ELSE
-      HSEEK cSR
+      select_o_roba( cSR )
    ENDIF
 
    IF cSr == NIL
       SELECT fakt_pripr
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1744,14 +1724,7 @@ FUNCTION Roba()
       cRet += aMemo[ 1 ]
    OTHERWISE
 
-      SELECT F_ROBA
-
-      IF !Used()
-         o_roba()
-      ENDIF
-
-      SELECT roba
-      SEEK fakt_pripr->IdRoba
+      select_o_roba( fakt_pripr->IdRoba )
       SELECT fakt_pripr
       cRet += Left( ROBA->naz, 40 )
    ENDCASE
@@ -1775,8 +1748,7 @@ FUNCTION JedinaStavka()
    GO TOP
 
    HSEEK cIdFirma + cIdTipDok + cBrDok
-   DO WHILE ! Eof () .AND. ( IdFirma == cIdFirma ) .AND. ( IdTipDok == cIdTipDok ) ;
-         .AND. ( BrDok == cBrDok )
+   DO WHILE ! Eof () .AND. ( IdFirma == cIdFirma ) .AND. ( IdTipDok == cIdTipDok ) .AND. ( BrDok == cBrDok )
       nBrStavki++
       SKIP
    ENDDO

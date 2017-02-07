@@ -415,12 +415,7 @@ STATIC FUNCTION nar_header()
 
 
    PushWA()
-   SELECT F_PARTN
-   IF !Used()
-      o_partner()
-   ENDIF
-
-   SEEK self_organizacija_id()
+   select_o_partner( self_organizacija_id() )
 
    cNaziv2  := AllTrim( partn->naz )
    cMjesto2 := AllTrim( partn->ptt ) + " " + AllTrim( partn->mjesto )

@@ -66,8 +66,7 @@ FUNCTION TopsFakt()
       DO WHILE !Eof() .AND. idVd == cIdVd .AND. idPartner == cIdPartner
 
          IF cCijeneIzSif == "D"
-            SELECT roba
-            HSEEK topsfakt->idRoba
+            select_o_roba( topsfakt->idRoba )
          ENDIF
 
          SELECT fakt_pripr
@@ -77,8 +76,7 @@ FUNCTION TopsFakt()
             IF cIdVd == "10"
                ++nRacuna
             ENDIF
-            SELECT partn
-            HSEEK cIdPartner
+            select_o_partner( cIdPartner )
             _Txt3a := PadR( cIdPartner + ".", 30 )
             _txt3b := _txt3c := ""
             IzSifre( .T. )

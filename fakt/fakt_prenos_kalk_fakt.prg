@@ -143,8 +143,7 @@ FUNCTION kalk_2_fakt()
          ENDIF
       ENDIF
 
-      SELECT FAKT
-      SEEK cIdRj + cTipFakt + cBrFakt
+      IF find_fakt_dokument( cIdRj, cTipFakt, cBrFakt )
 
       IF Found()
          Beep( 4 )
@@ -153,12 +152,9 @@ FUNCTION kalk_2_fakt()
          @ m_x + 14, m_y + 2 SAY Space( 37 )
          LOOP
       ENDIF
+      seek_fakt( cIdRj, cTipFakt, cBrFakt )
 
-      SELECT KALK
-      SEEK cIdFirma + cIdTipDok + cBrDok
-
-      IF !Found()
-
+      IF !find_kalk_doks_by_broj_dokumenta( cIdFirma , cIdTipDok, cBrDok )
          Beep( 4 )
          @ m_x + 14, m_y + 2 SAY "Ne postoji ovaj dokument !"
          Inkey( 4 )
@@ -166,12 +162,9 @@ FUNCTION kalk_2_fakt()
          LOOP
 
       ENDIF
+      find_kalk_by_broj_dokumenta( cIdFirma , cIdTipDok, cBrDok )
 
-      // pozicioniraj se na rj
-      SELECT RJ
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdRj
+      select_o_rj( cIdRj )
 
       SELECT KALK
       lFirst := .T.
@@ -190,11 +183,10 @@ FUNCTION kalk_2_fakt()
 
          IF lFirst == .T.
 
-            SELECT PARTN
 
             IF lToRacun == .T.
 
-               HSEEK cFaktPartn
+               select_o_partner( cFaktPartn )
 
                nRokPl := IzSifKPartn( "ROKP", cFaktPartn, .F. )
                IF ValType( nRokPl ) == "N" .AND. nRokPl > 0
@@ -204,7 +196,7 @@ FUNCTION kalk_2_fakt()
                ENDIF
 
             ELSE
-               HSEEK KALK->idpartner
+               select_o_partner( KALK->idpartner )
             ENDIF
 
             cTxta := PadR( partn->naz, 30 )
@@ -216,8 +208,7 @@ FUNCTION kalk_2_fakt()
             @ m_x + 12, m_Y + 2 SAY "Mjesto  " GET cTxtc
 
             IF nRokPl > 0
-               @ m_x + 14, m_y + 2 SAY "Rok placanja: " + ;
-                  AllTrim( Str( nRokPl ) ) + " dana"
+               @ m_x + 14, m_y + 2 SAY "Rok placanja: " + AllTrim( Str( nRokPl ) ) + " dana"
             ENDIF
 
             READ
@@ -291,7 +282,7 @@ FUNCTION kalk_2_fakt()
 
    BoxC()
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN .T.
 
@@ -449,16 +440,14 @@ FUNCTION kalkp_2_fakt()
          LOOP
       ENDIF
 
-      SELECT FAKT
-      SEEK cIdRj + cTipFakt + cBrFakt
-
-      IF Found()
+      IF find_fakt_dokument( cIdRj, cTipFakt, cBrFakt )
          Beep( 4 )
          @ m_x + 14, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !"
          Inkey( 4 )
          @ m_x + 14, m_y + 2 SAY Space( 37 )
          LOOP
       ENDIF
+      seek_fakt( cIdRj, cTipFakt, cBrFakt )
 
 /*
       SELECT KALK
@@ -495,13 +484,10 @@ FUNCTION kalkp_2_fakt()
          LOOP
       ELSE
 
-         // nasteli partnera
-         SELECT partn
-
          IF lToRacun == .T.
-            HSEEK cFaktPartn
+            select_o_partner( cFaktPartn )
          ELSE
-            HSEEK cIdPartner
+            select_o_partner( cIdPartner )
          ENDIF
 
          nRokPl := 0
@@ -559,12 +545,12 @@ FUNCTION kalkp_2_fakt()
             IF lFirst
 
                nRBr := 1
-               SELECT PARTN
+
 
                IF lToRacun == .T.
-                  HSEEK cFaktPartn
+                  select_o_partner( cFaktPartn )
                ELSE
-                  HSEEK cIdPartner
+                  select_o_partner( cIdPartner )
                ENDIF
 
                _Txt3a := PadR( cIdPartner + ".", 30 )
@@ -580,8 +566,7 @@ FUNCTION kalkp_2_fakt()
                @ m_x + 12, m_Y + 2 SAY "Mjesto  " GET cTxtc
 
                IF nRokPl > 0
-                  @ m_x + 13, m_Y + 2 SAY "Rok placanja " + ;
-                     AllTrim( Str( nRokPl ) ) + " dana"
+                  @ m_x + 13, m_Y + 2 SAY "Rok placanja " + AllTrim( Str( nRokPl ) ) + " dana"
                ENDIF
 
                READ
@@ -608,7 +593,7 @@ FUNCTION kalkp_2_fakt()
 
                SELECT fakt_pripr
                HSEEK cIdFirma + KALK->idroba // fakt_pripr
-               
+
                IF Found() .AND. Round( nKalkCijena - cijena, 5 ) == 0 .AND. ( cTipFakt = "0" .OR. Round( nKalkRabat - rabat, 5 ) == 0 )
                   Scatter()
                   _kolicina += nKolicina
@@ -649,7 +634,6 @@ FUNCTION kalkp_2_fakt()
          Inkey( 4 )
          @ m_x + 15, m_y + 2 SAY Space( 30 )
 
-         // snimi parametre !!!
          O_PARAMS
          PRIVATE cSection := "K"
          PRIVATE cHistory := " "
@@ -671,7 +655,7 @@ FUNCTION kalkp_2_fakt()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

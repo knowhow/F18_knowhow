@@ -13,9 +13,7 @@
 #include "f18.ch"
 
 
-// -----------------------------------------------------
-// poredjenje fakt -> kalk
-// -----------------------------------------------------
+/*
 FUNCTION usporedna_lista_fakt_kalk()
 
    LOCAL cIdFirma, qqRoba, nRezerv, nRevers
@@ -194,8 +192,7 @@ FUNCTION usporedna_lista_fakt_kalk()
       SET FILTER TO
    ENDIF
 
-   SELECT RJ
-   HSEEK cIdFirma
+   select_o_rj( cIdFirma )
 
    SELECT KALK
 
@@ -325,6 +322,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    IF !lViseKonta
       SEEK ( cKalkFirma + qqKonto )
    ENDIF
+
    DO WHILE !Eof() .AND. IF( lViseKonta, .T., KALK->( IdFirma + iif ( cTipC == "V", MKonto, PKonto ) ) == cKalkFirma + qqKonto )
       cIdRoba := KALK->IdRoba
       nSt := 0
@@ -353,7 +351,7 @@ FUNCTION usporedna_lista_fakt_kalk()
             ELSEIF pu_i == "5"  .AND. !( idvd $ "12#13#22" )
                nSt -= kolicina
                nVr -= Round( mpcsapp * kolicina, ZAOKRUZENJE )
-               
+
             ELSEIF pu_i == "I"
                nSt += gkolicin2
                nVr -= mpcsapp * gkolicin2
@@ -439,3 +437,4 @@ FUNCTION usporedna_lista_fakt_kalk()
    ENDPRINT
 
    RETURN
+*/

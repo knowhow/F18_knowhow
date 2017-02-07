@@ -79,11 +79,10 @@ FUNCTION fakt_objekat_naz( id_obj )
 
    PushWA()
 
-   O_FAKT_OBJEKTI
+   // O_FAKT_OBJEKTI
 
-   SELECT fakt_objekti
-   SET ORDER TO TAG "ID"
-   SEEK id_obj
+   // SELECT fakt_objekti
+   select_o_fakt_objekti( id_obj )
 
    IF Found()
       _ret := AllTrim( field->naz )
@@ -118,10 +117,11 @@ FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
       o_fakt()
    ENDIF
 
-   SELECT fakt
-   SET FILTER TO
-   SET ORDER TO TAG "1"
-   SEEK id_firma + id_tipdok + br_dok + "  1"
+   // SELECT fakt
+   // SET FILTER TO
+   // SET ORDER TO TAG "1"
+   // SEEK id_firma + id_tipdok + br_dok + "  1"
+   seek_fakt( id_firma, id_tipdo, br_dok )
 
    IF !Found()
       _ret := Space( 10 )
@@ -170,17 +170,8 @@ FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
    LOCAL _ret := ""
    LOCAL _memo
 
-   SELECT ( F_FAKT )
-   IF !Used()
-      o_fakt()
-   ENDIF
-
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + tip_dok + br_dok
-
-   IF !Found()
+   seek_fakt( id_firma, tip_dok, br_dok )
+   IF Eof()
       RETURN _ret
    ENDIF
 
@@ -201,10 +192,7 @@ FUNCTION fakt_priprema_prazna()
    LOCAL _ret := .T.
    LOCAL nDbfArea := Select()
 
-   SELECT ( F_FAKT_PRIPR )
-   IF !Used()
-      o_fakt_pripr()
-   ENDIF
+   select_o_fakt_pripr()
 
    IF RECCOUNT2() == 0
       SELECT ( nDbfArea )

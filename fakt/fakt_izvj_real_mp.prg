@@ -268,20 +268,15 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
       nUkupno := field->iznos
       _oper_id := field->oper_id
 
-      SELECT fakt
-      GO TOP
-      SEEK cF_firma + cF_tipdok + cF_brdok
+      seek_fakt( cF_firma, cF_tipdok, cF_brdok )
 
-      DO WHILE !Eof() .AND. field->idfirma == cF_firma ;
-            .AND. field->idtipdok == cF_tipdok ;
-            .AND. field->brdok == cF_brdok
+      DO WHILE !Eof() .AND. field->idfirma == cF_firma .AND. field->idtipdok == cF_tipdok .AND. field->brdok == cF_brdok
 
          cRoba_id := field->idroba
          cPart_id := field->idpartner
 
          _tip_partnera := "1" // fizicka lica
          lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id ) .OR. IsIno( cPart_id )
-
 
 
          IF lPoTipovimaPartnera

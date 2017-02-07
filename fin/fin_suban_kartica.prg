@@ -64,6 +64,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    LOCAL cPredhodniPromet // 1 - bez, 2 - sa
    LOCAL hRec
    LOCAL cBrDokFilter
+   LOCAL cFilter
 
    PRIVATE fK1 := _fin_params[ "fin_k1" ]
    PRIVATE fK2 := _fin_params[ "fin_k2" ]
@@ -335,15 +336,22 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    IF _fakt_params[ "fakt_vrste_placanja" ]
       lVrsteP := .T.
-      O_VRSTEP
+      //O_VRSTEP
    ENDIF
 
    SELECT SUBAN
 
    CistiK1k4()
 
-   cFilter := ".t." + iif( !Empty( cIdVnUslov ), ".and." + cFilterVrstaNalog, "" ) + ;
-      iif( cBrza == "N", ".and." + aUsl1 + ".and." + aUsl2, "" ) + ;
+altd()
+
+   cFilter := ".t."
+
+   IF  !Empty( cIdVnUslov )
+      cFilter += ".and." + cFilterVrstaNalog
+   ENDIF
+
+   cFilter += iif( cBrza == "N", ".and." + aUsl1 + ".and." + aUsl2, "" ) + ;
       iif( Empty( dDatOd ) .OR. cPredhodniPromet == "2", "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + ;
       iif( Empty( dDatDo ), "", ".and.DATDOK<=" + dbf_quote( dDatDo ) ) + ;
       iif( fk1 .AND. Len( ck1 ) <> 0, ".and.k1=" + dbf_quote( cK1 ), "" ) + ;
@@ -352,7 +360,6 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       iif( fk4 .AND. Len( ck4 ) <> 0, ".and.k4=" + dbf_quote( cK4 ), "" ) + ;
       iif( gTroskovi == "D" .AND. Len( cFunk ) <> 0, ".and.funk=" + dbf_quote( cFunk ), "" ) + ;
       iif( gTroskovi == "D" .AND. Len( cFond ) <> 0, ".and.fond=" + dbf_quote( cFond ), "" ) // + ;
-
 
    IF !lSpojiUplate .AND. !Empty( qqBrDok )
       cFilter += ( ".and." + cBrDokFilter )
@@ -364,16 +371,14 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       SET INDEX TO
       INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond TO SUBSUB FOR &cFilter
    ELSE
-      IF cfilter == ".t."
+      IF cFilter == ".t."
          SET FILTER TO
       ELSE
          SET FILTER TO &cFilter
       ENDIF
    ENDIF
 
-
    GO TOP
-
    EOF RET
 
    nStr := 0

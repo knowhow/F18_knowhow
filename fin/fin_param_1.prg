@@ -176,6 +176,7 @@ STATIC FUNCTION fin_parametri_izgleda()
    //@ form_x_koord() + nX, form_y_koord() + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ VALID gDUFRJ $ "DN" PICT "@!"
 
    READ
+   
    BoxC()
 
    IF LastKey() <> K_ESC

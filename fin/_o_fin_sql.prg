@@ -70,6 +70,43 @@ FUNCTION find_suban_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy, cWhere )
    RETURN ! Eof()
 
 
+FUNCTION select_o_suban()
+
+   LOCAL cTable := "fin_suban", cAlias := "SUBAN"
+   LOCAL cSql := "select * from fmk." + cTable + " LIMIT 1"
+
+   USE( cTable, cSql, cAlias )
+
+   RETURN .T.
+
+
+FUNCTION select_o_anal()
+
+   LOCAL cTable := "fin_anal", cAlias := "ANAL"
+   LOCAL cSql := "select * from fmk." + cTable + " LIMIT 1"
+
+   use_sql( cTable, cSql, cAlias )
+
+   RETURN .T.
+
+FUNCTION select_o_sint()
+
+   LOCAL cTable := "fin_sint", cAlias := "SINT"
+   LOCAL cSql := "select * from fmk." + cTable + " LIMIT 1"
+
+   use_sql( cTable, cSql, cAlias )
+
+   RETURN .T.
+
+FUNCTION select_o_nalog()
+
+   LOCAL cTable := "fin_nalog", cAlias := "NALOG"
+   LOCAL cSql := "select * from fmk." + cTable + " LIMIT 1"
+
+   use_sql( cTable, cSql, cAlias )
+
+   RETURN .T.
+   
 
 FUNCTION find_sint_by_konto_za_period( cIdFirma, cIdKonto, dDatOd, dDatDo, cOrderBy )
 

@@ -127,31 +127,32 @@ FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
    Box(, 5, 70 )
 
+altd()
    fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn, cBrNal )
 
    cTbl := "fin_suban"
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "delete " + cTbl
-   SELECT suban
+   select_o_suban()
    lOk := delete_rec_server_and_dbf( cTbl, hRec, 2, "CONT" )
 
    IF lOk
       cTbl := "fin_anal"
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "delete " + cTbl
-      SELECT anal
+      select_o_anal()
       lOk := delete_rec_server_and_dbf( cTbl, hRec, 2, "CONT" )
    ENDIF
 
    IF lOk
       cTbl := "fin_sint"
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "delete " + cTbl
-      SELECT sint
+      select_o_sint()
       lOk := delete_rec_server_and_dbf( cTbl, hRec, 2, "CONT" )
    ENDIF
 
    IF lOk
       cTbl := "fin_nalog"
       @ form_x_koord() + 4, form_y_koord() + 2 SAY "delete " + cTbl
-      SELECT nalog
+      select_o_nalog()
       lOk := delete_rec_server_and_dbf( cTbl, hRec, 1, "CONT" )
    ENDIF
 

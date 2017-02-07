@@ -36,7 +36,7 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
 
    PushWA()
 
-altd()
+   AltD()
    IF cId != NIL .AND. !Empty( cId )
       select_o_roba( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
    ELSE
@@ -47,22 +47,24 @@ altd()
    AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( field->naz, _naz_len ) }, "naz", {|| .T. }, {|| .T. } } )
    AAdd( ImeKol, { PadC( "JMJ", 3 ), {|| field->jmj },       "jmj"    } )
 
-   AAdd( ImeKol, { PadC( "PLU kod", 8 ),  {|| PadR( fisc_plu, 10 ) }, "fisc_plu", {|| gen_plu( @wfisc_plu ), .F. }, {|| .T. } } )
+
    AAdd( ImeKol, { PadC( "S.dobav.", 13 ), {|| PadR( sifraDob, 13 ) }, "sifradob"   } )
+   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| field->BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), sifra_postoji( wbarkod, "BARKOD" ) }  } )
 
    // DEBLJINA i TIP
-   IF roba->( FieldPos( "DEBLJINA" ) ) <> 0
-      AAdd( ImeKol, { PadC( "Debljina", 10 ), {|| Transform( field->debljina, "999999.99" ) }, "debljina", NIL, NIL, "999999.99" } )
+   // IF roba->( FieldPos( "DEBLJINA" ) ) <> 0
+   // AAdd( ImeKol, { PadC( "Debljina", 10 ), {|| Transform( field->debljina, "999999.99" ) }, "debljina", NIL, NIL, "999999.99" } )
 
-      AAdd( ImeKol, { PadC( "Roba tip", 10 ), {|| field->roba_tip }, "roba_tip", {|| .T. }, {|| .T. } } )
-   ENDIF
+   // AAdd( ImeKol, { PadC( "Roba tip", 10 ), {|| field->roba_tip }, "roba_tip", {|| .T. }, {|| .T. } } )
+   // ENDIF
 
    AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc", NIL, NIL, NIL, gPicCDEM  } )
    AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( field->VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, gPicCDEM   } )
-   AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( field->PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, gPicCDEM    } )
+   // AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( field->PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, gPicCDEM    } )
+
    AAdd( ImeKol, { PadC( "MPC1", 10 ), {|| Transform( field->MPC, "999999.999" ) }, "mpc", NIL, NIL, NIL, gPicCDEM  } )
 
-   FOR nI := 2 TO 4
+   FOR nI := 2 TO 2
 
       cPom := "mpc" + AllTrim( Str( nI ) )
       cPom2 := '{|| transform(' + cPom + ',"999999.999")}'
@@ -81,7 +83,8 @@ altd()
    AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( field->NC, gPicCDEM ) }, "NC", NIL, NIL, NIL, gPicCDEM  } )
    AAdd( ImeKol, { "Tarifa", {|| field->IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit()  }   } )
    AAdd( ImeKol, { "Tip", {|| " " + field->Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" }, NIL, NIL, NIL, NIL, 27 } )
-   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| field->BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), sifra_postoji( wbarkod, "BARKOD" ) }  } )
+
+   AAdd( ImeKol, { PadC( "PLU kod", 8 ),  {|| PadR( fisc_plu, 10 ) }, "fisc_plu", {|| gen_plu( @wfisc_plu ), .F. }, {|| .T. } } )
 
    AAdd ( ImeKol, { PadC( "MINK", 10 ), {|| Transform( field->MINK, "999999.99" ) }, "MINK"   } )
 

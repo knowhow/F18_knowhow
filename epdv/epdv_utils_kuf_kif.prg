@@ -71,8 +71,6 @@ FUNCTION epdv_otvori_kif_tabele( lPriprema )
 
 
 
-// ------------------------
-// ------------------------
 FUNCTION next_r_br( cTblName )
 
    PushWA()

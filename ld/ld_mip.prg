@@ -363,7 +363,6 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
 
       @ m_x + 1, m_y + 2 SAY cIdRadnikTekuci
 
-altd()
       DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
          IF ( ld_godina_mjesec_string( field->godina, field->mjesec ) <  ld_godina_mjesec_string( nGodina, nMjesec ) ) .OR. ( ld_godina_mjesec_string( field->godina, field->mjesec ) > ld_godina_mjesec_string( nGodina, nMjesec ) )

@@ -418,7 +418,6 @@ FUNCTION ld_iznosi_za_kredit( _idradn, cIdkred, cNaOsnovu, _mjesec, _godina )
    ENDIF
 */
 
-altd()
    seek_radkr_2( _idradn, cIdkred, cNaOsnovu, NIL, NIL, NIL, { F_RADKR + 1000, "RADKR_1000" } ) // seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu, nGodina, nMjesec, cTag, aWorkarea )
 
    nUkupno := 0

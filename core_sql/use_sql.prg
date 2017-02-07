@@ -70,8 +70,15 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
       ELSEIF cTable == "ld_obracuni"
 
-         INDEX ON rj + Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + status + obr TAG RJ  TO ( cAlias )
+         INDEX ON rj + Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + STATUS + obr TAG RJ  TO ( cAlias )
          SET ORDER TO TAG "RJ"
+
+      ELSEIF cTable == "sast"
+
+         INDEX ON ID + ID2 TAG "ID" TO ( cAlias )
+         INDEX ON ID + Str( R_BR, 4, 0 ) + ID2  TAG "IDRBR"  TO ( cAlias )
+         INDEX ON ID2 + ID TAG "NAZ" TO ( cAlias )
+         SET ORDER TO TAG "ID"
 
       ELSEIF cTable == "ld_parobr"
 

@@ -105,9 +105,7 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "ID", "ID", _alias )
 */
 
-   // -------------------------------------------------
-   // SAST
-   // -------------------------------------------------
+   /*
 
    _alias := "SAST"
    _table_name := "sast"
@@ -127,6 +125,7 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "IDRBR", "ID+STR(R_BR,4,0)+ID2", _alias )
    CREATE_INDEX( "NAZ", "ID2+ID", _alias )
    AFTER_CREATE_INDEX
+*/
 
    // -------------------------------------------------
    // BARKOD

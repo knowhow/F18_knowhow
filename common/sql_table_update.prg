@@ -18,7 +18,7 @@
 
 FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
-   LOCAL nI, _tmp, _tmp_2, _msg, lSqlTable
+   LOCAL nI, cTmp, _tmp_2, _msg, lSqlTable
    LOCAL oQueryRet := NIL
    LOCAL _result
    LOCAL cQuery
@@ -28,7 +28,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
    LOCAL _pos
    LOCAL _dec
    LOCAL _len
-   LOCAL _a_dbf_rec, _alg
+   LOCAL hDbfRec, _alg
    LOCAL _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, _sql_tbl
 
    // LOCAL lSqlDbf := .F. hRecord je uvijek 852 enkodiran!
@@ -47,20 +47,20 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
       // lSqlDbf := .T.  // u sql tabeli su utf enkodirani stringovi
       // ENDIF
 
-      _a_dbf_rec := get_a_dbf_rec( cTable )
+      hDbfRec := get_a_dbf_rec( cTable )
 
-      _dbf_fields := _a_dbf_rec[ "dbf_fields" ]
+      _dbf_fields := hDbfRec[ "dbf_fields" ]
       _sql_fields := sql_fields( _dbf_fields )
 
-      _sql_order  := _a_dbf_rec[ "sql_order" ]
+      _sql_order  := hDbfRec[ "sql_order" ]
 
-      _dbf_wa    := _a_dbf_rec[ "wa" ]
-      _dbf_alias := _a_dbf_rec[ "alias" ]
-      lSqlTable := _a_dbf_rec[ "sql" ]
+      _dbf_wa    := hDbfRec[ "wa" ]
+      _dbf_alias := hDbfRec[ "alias" ]
+      lSqlTable := hDbfRec[ "sql" ]
       _sql_tbl   := F18_PSQL_SCHEMA_DOT + cTable
 
       // uvijek je algoritam 1 nivo recorda
-      _alg := _a_dbf_rec[ "algoritam" ][ 1 ]
+      _alg := hDbfRec[ "algoritam" ][ 1 ]
 
       IF cWhereStr == NIL
          IF hRecord <> NIL
@@ -97,15 +97,15 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
       cQuery := "INSERT INTO " + _sql_tbl +  "("
 
-      FOR nI := 1 TO Len( _a_dbf_rec[ "dbf_fields" ] )
+      FOR nI := 1 TO Len( hDbfRec[ "dbf_fields" ] )
 
-         IF field_in_blacklist( _a_dbf_rec[ "dbf_fields" ][ nI ], _a_dbf_rec[ "blacklisted" ] )
+         IF field_in_blacklist( hDbfRec[ "dbf_fields" ][ nI ], hDbfRec[ "blacklisted" ] )
             LOOP
          ENDIF
 
-         cQuery += _a_dbf_rec[ "dbf_fields" ][ nI ]
+         cQuery += hDbfRec[ "dbf_fields" ][ nI ]
 
-         IF nI < Len( _a_dbf_rec[ "dbf_fields" ] )
+         IF nI < Len( hDbfRec[ "dbf_fields" ] )
             cQuery += ","
          ENDIF
 
@@ -113,31 +113,31 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
       cQuery += ")  VALUES ("
 
-      FOR nI := 1 TO Len( _a_dbf_rec[ "dbf_fields" ] )
+      FOR nI := 1 TO Len( hDbfRec[ "dbf_fields" ] )
 
-         _tmp := _a_dbf_rec[ "dbf_fields" ][ nI ]
+         cTmp := hDbfRec[ "dbf_fields" ][ nI ]
 
-         IF field_in_blacklist( _tmp, _a_dbf_rec[ "blacklisted" ] )
+         IF cTmp == "obradjeno" .OR. field_in_blacklist( cTmp, hDbfRec[ "blacklisted" ] ) // polje obradjeno je automatski timestamp
             LOOP
          ENDIF
 
-         IF !hb_HHasKey( hRecord, _tmp )
-            _msg := "record " + cSqlOperator + " ne sadrzi " + _tmp + " field !?## pogledaj log !"
+         IF !hb_HHasKey( hRecord, cTmp )
+            _msg := "record " + cSqlOperator + " ne sadrzi " + cTmp + " field !?## pogledaj log !"
             log_write( _msg + " " + pp( hRecord ), 2 )
             MsgBeep( _msg )
             RaiseError( _msg + " " + pp( hRecord ) )
             RETURN .F.
          ENDIF
 
-         IF ValType( hRecord[ _tmp ] ) == "N"
-            IF  _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 1 ] == "I"
-               _tmp_2 := Str( hRecord[ _tmp ], 5, 0 )
+         IF ValType( hRecord[ cTmp ] ) == "N"
+            IF  hDbfRec[ "dbf_fields_len" ][ cTmp ][ 1 ] == "I"
+               _tmp_2 := Str( hRecord[ cTmp ], 5, 0 )
             ELSE
-               _tmp_2 := Str( hRecord[ _tmp ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 2 ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 3 ] )
+               _tmp_2 := Str( hRecord[ cTmp ], hDbfRec[ "dbf_fields_len" ][ cTmp ][ 2 ], hDbfRec[ "dbf_fields_len" ][ cTmp ][ 3 ] )
             ENDIF
 
             IF Left( _tmp_2, 1 ) == "*"
-               _msg := "err_num_width - field: " + _tmp + "  value:" + AllTrim( Str( hRecord[ _tmp ] ) ) + " / width: " +  AllTrim( Str( _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 2 ] ) ) + " : " +  AllTrim( Str( _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 3 ] ) )
+               _msg := "err_num_width - field: " + cTmp + "  value:" + AllTrim( Str( hRecord[ cTmp ] ) ) + " / width: " +  AllTrim( Str( hDbfRec[ "dbf_fields_len" ][ cTmp ][ 2 ] ) ) + " : " +  AllTrim( Str( hDbfRec[ "dbf_fields_len" ][ cTmp ][ 3 ] ) )
                log_write( _msg, 2 )
                RaiseError( _msg )
             ELSE
@@ -145,13 +145,13 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
             ENDIF
          ELSE
             // IF lSqlDbf
-            // cQuery += sql_quote_u( hRecord[ _tmp ] ) // sql tabela sadrzi utf-8 enkodirane podatke
+            // cQuery += sql_quote_u( hRecord[ cTmp ] ) // sql tabela sadrzi utf-8 enkodirane podatke
             // ELSE
-            cQuery += sql_quote( hRecord[ _tmp ] )
+            cQuery += sql_quote( hRecord[ cTmp ] )
             // ENDIF
          ENDIF
 
-         IF nI < Len( _a_dbf_rec[ "dbf_fields" ] )
+         IF nI < Len( hDbfRec[ "dbf_fields" ] )
             cQuery += ","
          ENDIF
 

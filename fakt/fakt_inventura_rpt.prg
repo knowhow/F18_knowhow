@@ -119,7 +119,7 @@ FUNCTION RptInv()
 
    ENDPRINT
 
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    SELECT fakt_pripr
    GO nRecNo
 

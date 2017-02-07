@@ -48,7 +48,7 @@ FUNCTION fakt_lager_lista()
       lPocStanje := .F.
    ELSE
       lPocStanje := .T.
-      o_fakt_pripr()
+      select_o_fakt_pripr()
       nRbrPst := 0
       cBrPSt := "00001   "
       Box(, 2, 60 )

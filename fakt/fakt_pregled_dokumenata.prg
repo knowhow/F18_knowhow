@@ -229,28 +229,28 @@ FUNCTION print_porezna_faktura( lOpcine )
    LOCAL nTrec
 
    SELECT fakt_doks
-   nTrec := RecNo()
+   //nTrec := RecNo()
 
    _cIdFirma := idfirma
    _cIdTipDok := idtipdok
    _cBrDok := brdok
 
-   close_open_fakt_tabele()
+   //close_open_fakt_tabele()
 
    fakt_stamp_txt_dokumenta( _cidfirma, _cIdTipdok, _cbrdok )
 
-   SELECT ( F_FAKT_DOKS )
-   USE
+   //SELECT ( F_FAKT_DOKS )
+   //USE
 
-   o_fakt_doks()
-   o_partner()
-   SELECT fakt_doks
-   IF cFilter == ".t."
-      SET FILTER TO
-   ELSE
-      SET FILTER TO &cFilter
-   ENDIF
-   GO nTrec
+   //o_fakt_doks()
+   //o_partner()
+   //seek_fakt_doks()
+   //IF cFilter == ".t."
+    //  SET FILTER TO
+   //ELSE
+    //  SET FILTER TO &cFilter
+   //ENDIF
+   //GO nTrec
 
    RETURN DE_CONT
 
@@ -259,27 +259,28 @@ FUNCTION fakt_print_odt( lOpcine )
 
    SELECT fakt_doks
 
-   nTrec := RecNo()
+   //nTrec := RecNo()
    _cIdFirma := idfirma
    _cIdTipDok := idtipdok
    _cBrDok := brdok
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    fakt_stampa_dok_odt( _cidfirma, _cIdTipdok, _cbrdok )
 
 
-   close_open_fakt_tabele()
-   SELECT ( F_FAKT_DOKS )
-   USE
-   o_fakt_doks()
-   o_partner()
-   SELECT fakt_doks
-   IF cFilter == ".t."
-      SET FILTER TO
-   ELSE
-      SET FILTER TO &cFilter
-   ENDIF
-   GO nTrec
+   //close_open_fakt_tabele()
+   //SELECT ( F_FAKT_DOKS )
+   //USE
+   //o_fakt_doks()
+   //o_partner()
+   //SELECT fakt_doks
+   //IF cFilter == ".t."
+    //  SET FILTER TO
+   //ELSE
+    //  SET FILTER TO &cFilter
+   //ENDIF
+
+   //GO nTrec
 
    RETURN DE_CONT
 
@@ -304,7 +305,7 @@ FUNCTION generisi_fakturu( is_opcine )
       RETURN DE_CONT
    ENDIF
 
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    // o_fakt()
 
    IF fakt_pripr->( RecCount() ) <> 0
@@ -484,9 +485,9 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
    CASE Ch == K_F5
 
-      SELECT fakt_doks
-      USE
-      o_fakt_doks()
+      //SELECT fakt_doks
+      //USE
+      //o_fakt_doks()
 
       nRet := DE_REFRESH
       _refresh := .T.
@@ -670,7 +671,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
       _tmp := povrat_fakt_dokumenta( .F., field->idfirma, field->idtipdok, field->brdok )
 
-      o_fakt_doks()
+      //o_fakt_doks()
 
       IF _tmp <> 0 .AND. Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.

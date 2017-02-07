@@ -336,11 +336,11 @@ STATIC FUNCTION o_tables()
 
    o_kalk_pripr()
    // o_kalk()
-   o_kalk_doks()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_fakt()
+   //o_kalk_doks()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
+   //o_fakt()
 
    RETURN .T.
 
@@ -529,19 +529,18 @@ FUNCTION PrenosNo2()
 
    o_kalk_pripr()
    // o_kalk()
-   o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_sastavnica()
-   o_fakt()
+   //o_roba()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
+   //o_sastavnica()
+   //o_fakt()
 
    dDatKalk := Date()
    cIdKonto := PadR( "5100", 7 )
    cIdZaduz2 := Space( 6 )
 
    kalk_set_brkalk_za_idvd( "10", @cBrKalk )
-
 
    Box(, 15, 60 )
 

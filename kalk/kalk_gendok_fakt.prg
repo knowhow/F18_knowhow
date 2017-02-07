@@ -27,12 +27,12 @@ FUNCTION kalk_prenos_fakt()
    cOldVar10 := my_get_from_ini( "PrenosKALK10_FAKT", "NazivPoljaCijeneKojaSePrenosiIzKALK", "-", KUMPATH )   // nekad bilo FCJ
    cOldVar16 := my_get_from_ini( "PrenosKALK16_FAKT", "NazivPoljaCijeneKojaSePrenosiIzKALK", "-", KUMPATH )   // nekad bilo NC
 
-   o_fakt()
-   o_fakt_pripr()
-   o_partner()
-   o_konto()
+   //o_fakt()
+   select_o_fakt_pripr()
+   //o_partner()
+   //o_konto()
    o_kalk_pripr()
-   o_rj()
+   //o_rj()
 
    SET ORDER TO TAG "ID"
    SELECT kalk_pripr

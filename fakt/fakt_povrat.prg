@@ -39,7 +39,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
    ENDIF
 
    //o_fakt()
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    //o_fakt_doks2()
    //o_fakt_doks()
 
@@ -252,7 +252,7 @@ STATIC FUNCTION uslovi_za_povrat_prema_kriteriju( vars )
 
 
 /*
-FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
+-- FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    LOCAL nRec
    LOCAL _t_rec
@@ -292,7 +292,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    ENDIF
 
    //o_fakt()
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    //o_fakt_doks()
    //o_fakt_doks2()
 
@@ -489,7 +489,7 @@ FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
 
    SELECT ( F_FAKT_PRIPR )
    IF !Used()
-      o_fakt_pripr()
+      select_o_fakt_pripr()
    ENDIF
 
    _qry := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt " + ;

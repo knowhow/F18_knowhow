@@ -182,12 +182,12 @@ FUNCTION gen_ug()
          cUPartner := ugov->( naz )
       ENDIF
 
-      o_fakt()
-      o_fakt_pripr()
+      //o_fakt()
+      select_o_fakt_pripr()
       IF reccount2() <> 0 .AND. nTekug = 1
          Msg( "Neki dokument vec postoji u pripremi" )
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
 
       O_PARAMS

@@ -49,14 +49,6 @@ FUNCTION o_fakt_doks2()
 */
 
 
-/*
-   ftxt uzorci teksta fakture
-*/
-
-FUNCTION o_fakt_txt()
-
-   RETURN o_dbf_table( F_FTXT, "ftxt", "ID" )
-
 
 
 FUNCTION o_dest()
@@ -74,14 +66,6 @@ FUNCTION o_dest()
    RETURN .T.
 
 
-FUNCTION o_fakt_pripr()
+FUNCTION select_o_fakt_pripr()
 
-   SELECT ( F_FAKT_PRIPR )
-   IF Used()
-      RETURN .T.
-   ENDIF
-
-   my_use ( "fakt_pripr", NIL, .F. )
-   SET ORDER TO TAG "1"
-
-   RETURN .T.
+   RETURN select_o_dbf( "FAKT_PRIPR", F_FAKT_PRIPR, "fakt_pripr", "1" )

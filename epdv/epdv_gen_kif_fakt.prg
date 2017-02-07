@@ -134,7 +134,7 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
 
 FUNCTION close_open_fakt_epdv_tables()
 
-   o_fakt()
+   //o_fakt()
    close_open_kuf_kif_sif()
 
    RETURN .T.

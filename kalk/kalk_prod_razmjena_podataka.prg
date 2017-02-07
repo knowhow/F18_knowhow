@@ -32,7 +32,7 @@ FUNCTION prenos_fakt_kalk_prodavnica()
 
    AAdd( Opc, "5. fakt 01 -> kalk 81 doprema u prod" )
    AAdd( opcexe, {||  fakt_01_kalk_81() } )
-   
+
    AAdd( Opc, "6. fakt 13 -> kalk 80 prenos iz cmag. u prodavnicu" )
    AAdd( opcexe, {||  fakt_13_kalk_80()  } )
    //AAdd( Opc, "7. fakt 15 -> kalk 15 izlaz iz MP putem VP" )
@@ -62,16 +62,16 @@ FUNCTION fakt_11_kalk_prenos_11()
    LOCAL aGetList := {}
 
    o_kalk_pripr()
-   o_koncij()
+  // o_koncij()
    // o_kalk()
-   o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
+  // o_roba()
+  // o_konto()
+ //  o_partner()
+ //  o_tarifa()
 
-   o_fakt()
-
-   SET ORDER TO TAG "7" // idfirma + DTOS(datdok)
+   //o_fakt()
+   //SET ORDER TO TAG "7" // idfirma + DTOS(datdok)
+   //seek_fakt_7()
 
    dDatKalk := Date()
 
@@ -83,7 +83,6 @@ FUNCTION fakt_11_kalk_prenos_11()
 
    cSabirati := gAutoCjen
    cCjenSif := "N"
-
 
    kalk_set_brkalk_za_idvd( "11", @cBrKalk )
 
@@ -286,14 +285,14 @@ FUNCTION fakt_13_kalk_11()
    LOCAL cBrKalk := Space( 8 )
 
    o_kalk_pripr()
-   o_koncij()
+   //o_koncij()
    // o_kalk()
-   o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
+   //o_roba()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
 
-   o_fakt()
+   //o_fakt()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320", 7 )
@@ -446,13 +445,13 @@ FUNCTION fakt_11_kalk_41()
    PRIVATE cFaktFirma
 
    o_kalk_pripr()
-   o_kalk()
-   o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
+   //o_kalk()
+   //o_roba()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
 
-   o_fakt()
+   //o_fakt()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1330", 7 )
@@ -464,7 +463,6 @@ FUNCTION fakt_11_kalk_41()
    kalk_set_brkalk_za_idvd( "41", @cBrKalk )
 
    Box(, 15, 60 )
-
 
    DO WHILE .T.
       nRBr := 0
@@ -698,13 +696,13 @@ FUNCTION fakt_01_kalk_81()
    LOCAL cIdFirma := self_organizacija_id(), cIdTipDok := "01", cBrDok := cBrKalk := Space( 8 )
 
    o_kalk_pripr()
-   o_kalk()
-   o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
+   //o_kalk()
+   //o_roba()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
 
-   o_fakt()
+   //o_fakt()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320", 7 )
@@ -830,14 +828,14 @@ FUNCTION fakt_13_kalk_80()
    LOCAL cIdFirma := self_organizacija_id(), cIdTipDok := "13", cBrDok := cBrKalk := Space( 8 )
 
    o_kalk_pripr()
-   o_koncij()
-   o_kalk()
-   o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
+  // o_koncij()
+  // o_kalk()
+  // o_roba()
+  // o_konto()
+  // o_partner()
+  // o_tarifa()
 
-   o_fakt()
+  // o_fakt()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320999", 7 )
@@ -1493,11 +1491,11 @@ FUNCTION fakt_11_kalk_42()
 STATIC FUNCTION _o_prenos_tbls()
 
    o_kalk_pripr()
-   o_kalk()
-   o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_fakt()
+   //o_kalk()
+   //o_roba()
+   //o_konto()
+  // o_partner()
+  // o_tarifa()
+  // o_fakt()
 
    RETURN .T.

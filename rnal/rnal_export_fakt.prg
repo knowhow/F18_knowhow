@@ -130,7 +130,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
 
    SELECT ( F_FAKT_PRIPR )
    IF !Used()
-      o_fakt_pripr()
+      select_o_fakt_pripr()
    ENDIF
 
    IF lTemp == .T.

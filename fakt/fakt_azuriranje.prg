@@ -36,7 +36,7 @@ FUNCTION azur_fakt( lSilent )
    SELECT fakt_pripr
    USE
 
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    GO TOP
 
    _a_fakt_doks := fakt_dokumenti_pripreme_u_matricu()
@@ -118,7 +118,7 @@ STATIC FUNCTION _seek_pripr_dok( idfirma, idtipdok, brdok )
 
    LOCAL _ret := .F.
 
-   o_fakt_pripr()
+   select_o_fakt_pripr()
 
    SELECT fakt_pripr
    SET ORDER TO TAG "1"
@@ -155,7 +155,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
 
    _ok := .T.
 
-   o_fakt_pripr()
+   select_o_fakt_pripr()
 
    IF !_seek_pripr_dok( id_firma, id_tip_dok, br_dok )
       Alert( "U tabeli pripreme ne postoji dokument: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
@@ -364,7 +364,7 @@ FUNCTION get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
    LOCAL _fakt_data := hb_Hash()
    LOCAL _memo
 
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    SELECT fakt_pripr
    GO TOP
    SEEK id_firma + id_tip_dok + br_dok // fakt_pripr
@@ -401,7 +401,7 @@ FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
    _fakt_data[ "idtipdok" ] := id_tip_dok
    _fakt_data[ "brdok" ]    := br_dok
 
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    SELECT fakt_pripr
    HSEEK id_firma + id_tip_dok + br_dok // fakt_pripr
 
@@ -558,18 +558,18 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
       ENDIF
    ENDIF
 
-   O_VRSTEP
-   o_ops()
+   //O_VRSTEP
+   //o_ops()
    //select_o_konto()
-   o_sastavnica()
+   //o_sastavnica()
    //select_o_partner()
    //select_o_roba()
-   o_fakt_txt()
-   o_tarifa()
-   o_valute()
-   o_fakt_doks2()
-   o_fakt_doks()
-   o_rj()
+   //o_fakt_txt()
+   //o_tarifa()
+   //o_valute()
+   //o_fakt_doks2()
+   //o_fakt_doks()
+   //o_rj()
    o_sifk()
    o_sifv()
 
@@ -581,7 +581,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
       ENDIF
 
    ELSE
-      o_fakt_pripr()
+      select_o_fakt_pripr()
       //o_fakt()
    ENDIF
 
@@ -600,7 +600,7 @@ FUNCTION fakt_sredi_redni_broj_u_pripremi()
    LOCAL _firma, _broj, _tdok
    LOCAL _cnt
 
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    SET ORDER TO TAG "1"
    GO TOP
 
@@ -684,7 +684,7 @@ FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
       RETURN .F.
    ENDIF
 
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    SELECT fakt_pripr
 
    IF fakt_pripr->( RECCOUNT2() ) <> 0

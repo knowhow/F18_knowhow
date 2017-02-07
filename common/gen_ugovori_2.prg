@@ -168,36 +168,36 @@ FUNCTION gen_ug_2()
    LOCAL _doks_generated := {}
 
    // otvori tabele
-   o_ugov()
+   //o_ugov()
 
    // otvori parametre generacije
    lSetParams := .T.
 
    IF lSetParams .AND. g_ug_params( @dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis, @cIdArt, @nGenCh, @cDestin, @cDatLFakt, @dLFakt, @_auto_azur ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
-   // otvori i fakt
-   o_fakt()
-   o_fakt_pripr()
+
+   //o_fakt()
+   select_o_fakt_pripr()
 
    IF RecCount2() <> 0
       MsgBeep( "U pripremi postoje dokumenti#Prekidam generaciju!" )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    // ako postoji vec generisano za datum sta izadji ili nastavi
    IF lSetParams .AND. postoji_generacija( dDatObr, cIdArt ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    // dodaj u gen_ug novu generaciju
    IF lSetParams
 
-      SELECT gen_ug
-      SET ORDER TO TAG "dat_obr"
-      SEEK DToS( dDatObr )
+      //SELECT gen_ug
+      //SET ORDER TO TAG "dat_obr"
+      seek_gen_ug_dat_obr( DToS( dDatObr ) )
 
       IF !Found()
          APPEND BLANK
@@ -1039,14 +1039,15 @@ STATIC FUNCTION postoji_generacija( dDatObr, cIdArt )
    IF Pitanje(, "Obracun " + fakt_do( dDatObr ) + " postoji, ponoviti (D/N)?", "D" ) == "D"
       vrati_nazad( dDatObr, cIdArt )
 
-      my_close_all_dbf()
-      o_ugov()
+      //my_close_all_dbf()
+      //o_ugov()
       // otvori i fakt
-      o_fakt()
-      o_fakt_pripr()
-      SELECT gen_ug
-      SET ORDER TO TAG "dat_obr"
-      SEEK DToS( dDatObr )
+      //o_fakt()
+      select_o_fakt_pripr()
+      //SELECT gen_ug
+      //SET ORDER TO TAG "dat_obr"
+      //SEEK DToS( dDatObr )
+      seek_gen_ug_dat_obr( DToS( dDatObr ) )
       RETURN 1
    ENDIF
 
@@ -1068,27 +1069,26 @@ STATIC FUNCTION vrati_nazad( dDatObr, cIdArt )
 
    IF !Found()
       MsgBeep( "Obracun " + fakt_do( dDatObr ) + " ne postoji" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !Empty( cIdArt )
       cFirma := g_idfirma( cIdArt )
    ENDIF
 
-   IF fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_od ) .AND. ;
-         fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do )
+  // IF fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_od ) .AND. fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do )
 
-      cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
-      Povrat_fakt_po_kriteriju( cBrDokOdDo, nil, nil, cFirma )
+    //  cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
+    //  Povrat_fakt_po_kriteriju( cBrDokOdDo, nil, nil, cFirma )
 
-   ENDIF
+   //ENDIF
 
    // izbrisi pripremu
-   o_fakt_pripr()
+   select_o_fakt_pripr()
 
    fakt_brisanje_pripreme()
 
-   RETURN
+   RETURN .T.
 
 
 

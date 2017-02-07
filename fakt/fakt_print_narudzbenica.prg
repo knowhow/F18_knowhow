@@ -16,17 +16,17 @@ FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )
 
    PushWA()
 
-   close_open_fakt_tabele()
+   //close_open_fakt_tabele()
 
    // izgenerisi rn.dbf i drn.dbf, ali nemoj stampati poreznu fakturu
    fakt_stamp_txt_dokumenta( cIdfirma, cIdTipdok, cBrDok, .T. )
 
    print_narudzbenica()
 
-   o_partner()
-   SELECT ( F_FAKT_DOKS )
-   USE
-   o_fakt_doks()
+  // o_partner()
+  // SELECT ( F_FAKT_DOKS )
+  // USE
+  // o_fakt_doks()
    PopWa()
 
    RETURN NIL
@@ -42,5 +42,3 @@ FUNCTION fakt_print_narudzbenica_priprema()
       select_fakt_pripr()
 
     RETURN NIL
-
-

@@ -12,6 +12,97 @@
 #include "f18.ch"
 
 
+
+FUNCTION o_sastavnica()
+
+   SELECT ( F_SAST )
+   my_use  ( "sast" )
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+FUNCTION select_o_sastavnica()
+   RETURN select_o_dbf( "SAST", F_SAST, "sast", "ID" )
+
+
+FUNCTION o_sast( cId )
+   RETURN o_sastavnica( cId )
+
+FUNCTION select_o_sast( cId )
+   RETURN select_o_sastavnica( cId )
+
+
+
+FUNCTION select_O_FAKT_TXT()
+   RETURN .T.
+
+   /*
+      ftxt uzorci teksta fakture
+
+   FUNCTION o_fakt_txt()
+
+      RETURN o_dbf_table( F_FTXT, "ftxt", "ID" )
+*/
+
+
+FUNCTION SEEK_FAKT_3()
+   RETURN .T.
+
+FUNCTION SEEK_FAKT_6()
+   RETURN .T.
+
+FUNCTION SEEK_FAKT_DOKS_IDPARTNER()
+   RETURN .T.
+
+
+FUNCTION   SEEK_FAKT_FAKT_3()
+   RETURN .T.
+
+FUNCTION SEEK_FAKT_IDROBA()
+   RETURN .T.
+
+FUNCTION SEEK_FAKT_IDROBA_SINTETIKA()
+   RETURN .T.
+
+
+
+FUNCTION SEEK_FAKT_UPL()
+   RETURN .T.
+
+FUNCTION SEEK_FAKT_UPLATE()
+   RETURN seek_fakt_upl()
+
+FUNCTION SEEK_GEN_UG_DAT_OBR()
+   RETURN .T.
+
+FUNCTION SEEK_ROBA_PARTIAL()
+   RETURN .T.
+
+FUNCTION SEEK_RUGOV()
+   RETURN .T.
+
+FUNCTION SEEK_UGOV()
+   RETURN .T.
+
+FUNCTION SELECT_FAKT_DOKS()
+   RETURN .T.
+
+FUNCTION SELECT_O_BANKA()
+   RETURN .T.
+
+FUNCTION SELECT_O_FAKT_OBJEKTI()
+   RETURN .T.
+
+FUNCTION SELECT_O_FTXT()
+   RETURN .T.
+
+
+FUNCTION SELECT_O_RJ()
+   RETURN .T.
+
+
+
+
 FUNCTION seek_fakt( cIdFirma, cIdTipDok, cBrDok, cIdRoba, cTag )
 
    LOCAL cSql

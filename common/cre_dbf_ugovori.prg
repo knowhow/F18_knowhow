@@ -246,20 +246,20 @@ STATIC FUNCTION a_gug_p()
 // --------------------------------
 FUNCTION o_ugov()
 
-   o_fakt_txt()
+   //o_fakt_txt()
    o_sifk()
    o_sifv()
-   o_fakt()
-   o_fakt_doks()
-   o_roba()
+   //o_fakt()
+   //o_fakt_doks()
+   //o_roba()
    o_tarifa()
    o_partner()
    o_dest()
-   O_UGOV
-   O_RUGOV
-   O_GEN_UG
-   O_G_UG_P
-   o_konto()
+   //O_UGOV
+   //O_RUGOV
+   //O_GEN_UG
+   //O_G_UG_P
+   //o_konto()
 
    RETURN .T.
 

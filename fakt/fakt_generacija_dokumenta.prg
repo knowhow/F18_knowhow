@@ -50,7 +50,7 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
    //o_fakt_doks()
    //o_roba()
    //o_tarifa()
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    SET ORDER TO TAG "3"
 
    seek_fakt( cIdRj )
@@ -144,12 +144,12 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
    nRBr := 0
 
    //o_fakt()
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    //o_roba()
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
 
-   seek_fakt_fakt( cIdRj, "IM", cBrDok )
+   seek_fakt( cIdRj, "IM", cBrDok )
 
    DO WHILE ( !Eof() .AND. cIdRj + "IM" + cBrDok == fakt->( idFirma + idTipDok + brDok ) )
       nRazlikaKol := Val( fakt->serBr ) -fakt->kolicina
@@ -215,12 +215,12 @@ FUNCTION fakt_inventura_visak( cIdRj, cBrDok )
    nRBr := 0
 
    //o_fakt()
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    //o_roba()
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
 
-   seek_fakt_fakt( cIdRj, "IM", cBrDok )
+   seek_fakt( cIdRj, "IM", cBrDok )
    DO WHILE ( !Eof() .AND. cIdRj + "IM" + cBrDok == fakt->( idFirma + idTipDok + brDok ) )
       nRazlikaKol := Val( fakt->serBr ) -fakt->kolicina
       IF ( Round( nRazlikaKol, 5 ) < 0 )

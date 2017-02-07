@@ -26,7 +26,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    PRIVATE cOpis1 := PadR( "F A K T", 12 )
    PRIVATE cOpis2 := "FAKT 2.FIRMA"
 
-   o_fakt_doks()
+ --  o_fakt_doks()
    o_kalk() // usporedna lista fakt kalk
    o_konto()
    o_tarifa()
@@ -34,7 +34,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    o_sifv()
    o_roba()
    o_rj()
-   o_fakt()
+ --  o_fakt()
 
    SELECT fakt
    SET ORDER TO TAG "3"

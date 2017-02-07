@@ -1552,7 +1552,7 @@ FUNCTION RabPor10()
 
    LOCAL nArr := Select()
 
-   seek_fakt_fakt( _idfirma, "10", Left( _brdok, gNumDio ) )
+   seek_fakt( _idfirma, "10", Left( _brdok, gNumDio ) )
 
    DO WHILE !Eof() .AND. ;
          _idfirma + "10" + Left( _brdok, gNumDio ) == idfirma + idtipdok + Left( brdok, gNumDio ) .AND. ;
@@ -1613,9 +1613,11 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          m_gen_ug()
       CASE izbor == 2
          fakt_sredi_redni_broj_u_pripremi()
+
       CASE izbor == 3
+
          O_FAKT_S_PRIPR
-         o_fakt_txt()
+         //o_fakt_txt()
          select_fakt_pripr()
          GO TOP
          lDoks2 := ( my_get_from_ini( "FAKT", "Doks2", "N", KUMPATH ) == "D" )
@@ -1625,10 +1627,11 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
             IsprUzorTxt()
          ENDIF
          my_close_all_dbf()
+
       CASE izbor == 4
 
-         select_o_roba()
-         o_tarifa()
+         //select_o_roba()
+         //o_tarifa()
          O_FAKT_S_PRIPR
          GO TOP
          nDug := 0

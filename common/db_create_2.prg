@@ -40,7 +40,7 @@ FUNCTION OSifVindija()
 
 FUNCTION OSifFtxt()
 
-   o_fakt_txt()
+   //o_fakt_txt()
 
    RETURN .T.
 

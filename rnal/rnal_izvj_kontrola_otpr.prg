@@ -180,13 +180,13 @@ FUNCTION chk_dok_11()
    ENDIF
 
    // otvori fakt doks
-   o_fakt_doks()
+   //o_fakt_doks()
 
    // otvori potrebne tabele
    rnal_o_tables( .F. )
 
-   SELECT fakt_doks
-   GO TOP
+   seek_fakt_doks()
+   //GO TOP
 
    MsgO( "Popunjavam veze ..." )
 
@@ -292,7 +292,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
    INDEX ON Str( doc_no, 10 ) TAG "1"
 
    // fakt mi otvori
-   o_fakt()
+   //o_fakt()
 
    // otvori potrebne tabele
    rnal_o_tables( .F. )

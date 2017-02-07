@@ -312,8 +312,9 @@ FUNCTION fakt_kartica()
 
       IF cPredh == "2"     // dakle sa prethodnim stanjem
          PushWA()
-         SELECT fakt
-         SET FILTER TO
+         
+         //SELECT fakt
+         //SET FILTER TO
          // IF fID_J
          // TODO : pogledati
          // SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
@@ -322,7 +323,7 @@ FUNCTION fakt_kartica()
          // SEEK cIdFirma + IIF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
          // ENDIF
 
-         seek_fakt_idroba_sintetika( cIdFirma, iif( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
+         seek_fakt_idroba_sintetika( cIdFirma, iif( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba ) )
 
          // DO-WHILE za cPredh=2
          DO WHILE !Eof() .AND. ;

@@ -18,10 +18,10 @@
 
 FUNCTION fakt_uplate()
 
-   o_fakt_doks()
+   //o_fakt_doks()
 
    // "6","IdFirma+idpartner+idtipdok", "DOKS"
-   SET ORDER TO TAG "6"
+   //SET ORDER TO TAG "6"
 
    //o_partner()
    //O_UPL
@@ -343,7 +343,7 @@ FUNCTION SaldaKupaca( lPocStanje )
 
    nStrana := 1
 
-   o_fakt_doks()
+ --  o_fakt_doks()
 
    // "6","IdFirma+idpartner+idtipdok", "DOKS"
    SET ORDER TO TAG "6"

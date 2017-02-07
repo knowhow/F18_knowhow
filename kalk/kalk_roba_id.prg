@@ -19,12 +19,12 @@ FUNCTION RobaIdSredi()
    cSifNew := Space( 10 )
 
    IF !spec_funkcije_sifra( "spec_funkcije_sifra" )
-      RETURN
+      RETURN .T.
    ENDIF
 
-   o_roba()
-   o_kalk()
-   o_fakt()
+   //o_roba()
+  // o_kalk()
+  // o_fakt()
    fSrediF := .T.
 
    Box(, 10, 60 )

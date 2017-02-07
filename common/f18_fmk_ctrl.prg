@@ -143,13 +143,11 @@ STATIC FUNCTION f18_fakt_data( data, checksum )
    LOCAL _n_c_iznos := 0
    LOCAL _n_c_stavke := 0
 
-   o_fakt()
+   //o_fakt()
 
    Box(, 2, 60 )
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
+   seek_fakt()
 
    DO WHILE !Eof()
 

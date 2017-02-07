@@ -48,17 +48,6 @@ FUNCTION select_o_roba()
 */
 
 
-FUNCTION o_sastavnica()
-
-   SELECT ( F_SAST )
-   my_use  ( "sast" )
-   SET ORDER TO TAG "ID"
-   return .t.
-
-FUNCTION select_o_sastavnica()
-   RETURN select_o_dbf( "SAST", F_SAST, "sast", "ID" )
-
-
 
 FUNCTION o_roba()
 

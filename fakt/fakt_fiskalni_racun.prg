@@ -398,7 +398,7 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
    LOCAL _a_iznos := {}
    LOCAL _tar, cIdRoba, _scan
 
-   seek_fakt_fakt( idfirma, idtipdok, brdok )
+   seek_fakt( idfirma, idtipdok, brdok )
    DO WHILE !Eof() .AND. field->idfirma == idfirma .AND. field->idtipdok == idtipdok .AND. field->brdok == brdok
 
       cIdRoba := field->idroba

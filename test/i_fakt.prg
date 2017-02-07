@@ -149,7 +149,7 @@ FUNCTION i_povrat_fakture()
    test_procedure_with_keystrokes( {|| povrat_fakt_dokumenta() },  gen_test_keystrokes( _stavke ) )
 
    CLOSE ALL
-   o_fakt()
+   //o_fakt()
    // rec_99 treba da sadrzi broj zapisa
    COUNT FOR ( IdFirma == "99" .AND. IdTipDok == "10" .AND. brdok == PadR( "77777", 8 ) ) TO _tmp
    // setuj test var rec_99 sa _tmp
@@ -315,8 +315,8 @@ AADD(_stavke['get'], '_IDVRSTEP')
 
    test_procedure_with_keystrokes( {|| fakt_unos_dokumenta() },  gen_test_keystrokes( _stavke ) )
 
-   CLOSE ALL
-   o_fakt()
+   //CLOSE ALL
+   //o_fakt()
    // rec_99 treba da sadrzi broj zapisa
    COUNT FOR ( IdFirma == "99" .AND. IdTipDok == "10" .AND. brdok == PadR( "77777", 8 ) ) TO _tmp
    // setuj test var rec_99 sa _tmp

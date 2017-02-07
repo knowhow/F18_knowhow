@@ -286,7 +286,7 @@ FUNCTION P_FTxt( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol
 
-   o_fakt_txt()
+   select_o_fakt_txt()
 
    ImeKol := {}
    Kol := {}
@@ -357,30 +357,30 @@ STATIC FUNCTION ObSif()
 
    o_sifk()
    o_sifv()
-   select_o_konto()
-   select_o_partner()
-   select_o_roba()
-   o_fakt_txt()
-   o_tarifa()
-   o_valute()
-   o_rj()
-   o_sastavnica()
-   O_UGOV
-   O_RUGOV
+   //select_o_konto()
+   //select_o_partner()
+   //select_o_roba()
+   //o_fakt_txt()
+   //o_tarifa()
+   //o_valute()
+   //o_rj()
+   //o_sastavnica()
+   //O_UGOV
+   //O_RUGOV
 
-   IF RUGOV->( FieldPos( "DEST" ) ) <> 0
-      o_dest()
-   ENDIF
+   //IF RUGOV->( FieldPos( "DEST" ) ) <> 0
+    //  o_dest()
+   //ENDIF
 
-   IF gNW == "T"
-      O_FADO
-      O_FADE
-   ENDIF
+   //IF gNW == "T"
+    //  O_FADO
+    //  O_FADE
+   //ENDIF
 
-   O_VRSTEP
-   o_ops()
+   //O_VRSTEP
+   //o_ops()
 
-   RETURN
+   RETURN .T.
 
 
 

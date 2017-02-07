@@ -87,25 +87,24 @@ FUNCTION fakt_fin_prenos()
 
 
    O_FINMAT
-   o_konto()
+   //o_konto()
    //o_partner()
    o_tdok()
-   o_roba()
-   o_tarifa()
+   //o_roba()
+   //o_tarifa()
 
    IF lNCPoSast
-      o_sastavnica()
-
-      SET ORDER TO TAG "1"
+      //o_sastavnica()
+      //SET ORDER TO TAG "1"
    ENDIF
 
-   SELECT ( F_FAKT )
-   IF !Used()
-      o_fakt()
-   ENDIF
+   //SELECT ( F_FAKT )
+   //IF !Used()
+    //  o_fakt()
+   //ENDIF
 
 
-   SET ORDER TO TAG "1"  // "1","IdFirma+idtipdok+brdok+rbr+podbr""FAKT"
+   //SET ORDER TO TAG "1"  // "1","IdFirma+idtipdok+brdok+rbr+podbr""FAKT"
 
    SELECT FINMAT
    my_dbf_zap()

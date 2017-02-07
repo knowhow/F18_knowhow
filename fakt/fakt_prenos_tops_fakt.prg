@@ -41,10 +41,10 @@ FUNCTION TopsFakt()
    ENDIF
    BoxC()
 
-   o_roba()
-   o_partner()
-   o_fakt_doks()
-   o_fakt_pripr()
+  // o_roba()
+  // o_partner()
+  // o_fakt_doks()
+   select_o_fakt_pripr()
 
    USE ( Trim( cLokacija ) + "TOPSFAKT.DBF" ) new
    SET ORDER TO TAG "1"

@@ -115,7 +115,7 @@ METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
    LOCAL _lock_user := ""
    LOCAL _fakt_browse
 
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    GO TOP
 
    // ako je priprema prazna

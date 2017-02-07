@@ -57,16 +57,16 @@ FUNCTION fakt_kalk_prenos_10_14()
 
    // PRIVATE lVrsteP := _params[ "fakt_vrste_placanja" ]
 
-   o_koncij()
+   //o_koncij()
    o_kalk_pripr()
    // o_kalk()
    // o_kalk_doks()
    // o_kalk_doks2()
-   o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_fakt()
+   //o_roba()
+  // o_konto()
+  // o_partner()
+  // o_tarifa()
+  // o_fakt()
 
    dDatKalk := fetch_metric( "kalk_fakt_prenos_10_14_datum", my_user(), Date() )
    cIdKonto := fetch_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), PadR( "1200", 7 ) )
@@ -699,13 +699,13 @@ FUNCTION kalk_fakt_prenos_period()
 
 STATIC FUNCTION _o_prenos_tbls()
 
-   o_koncij()
+   //o_koncij()
    o_kalk_pripr()
-   o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_fakt()
+   //o_roba()
+  // o_konto()
+  // o_partner()
+  // o_tarifa()
+ //  o_fakt()
 
    RETURN .T.
 

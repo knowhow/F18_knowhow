@@ -43,8 +43,8 @@ FUNCTION fin_otvorene_stavke_meni()
    AAdd( opc, "8. kompenzacija" )
    AAdd( opcexe, {|| Kompenzacija() } )
 
-   //AAdd( opc, "9. asistent otvorenih stavki" )
-   //AAdd( opcexe, {|| fin_asistent_otv_st() } )
+   // AAdd( opc, "9. asistent otvorenih stavki" )
+   // AAdd( opcexe, {|| fin_asistent_otv_st() } )
 
    AAdd( opc, "B. brisanje svih markera otvorenih stavki" )
    AAdd( opcexe, {|| fin_brisanje_markera_otvorenih_stavki() } )
@@ -76,15 +76,36 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
    lRet := use_sql( "del_ostav", cSql )
    MsgC()
 
-   MsgBeep( "ostav cnt=" + STR(del_ostav->count,5) )
+   MsgBeep( "ostav cnt=" + Str( del_ostav->COUNT, 5 ) )
 
    RETURN lRet
 
+/*
 
+brisanje markera za stavke nalog koji se vraca u pripremu
 
+UPDATE fmk.fin_suban set otvst=' '
+ FROM
+( select idfirma,idkonto,idpartner,brdok from fmk.fin_suban where idfirma='10' and idvn='61' and brnal='00000001' and otvst='9' ) as SUBQ
+ WHERE fmk.fin_suban.idfirma=SUBQ.idfirma and fmk.fin_suban.idpartner=SUBQ.idpartner and fmk.fin_suban.brdok=SUBQ.brdok
 
+*/
 
+FUNCTION fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn, cBrNal )
 
+   LOCAL cSql
+
+   cSql := "UPDATE fmk.fin_suban set otvst=' ' FROM "
+   cSql += "( select idfirma,idkonto,idpartner,brdok from fmk.fin_suban where "
+   cSql += "idfirma=" + sql_quote( cIdFirma )
+   cSql += "AND idvn=" + sql_quote( cIdVn )
+   cSql += "AND brnal=" + sql_quote( cBrNal )
+   cSql += ") AS SUBQ "
+   cSql += "WHERE fmk.fin_suban.idfirma=SUBQ.idfirma and fmk.fin_suban.idpartner=SUBQ.idpartner and fmk.fin_suban.brdok=SUBQ.brdok"
+
+   use_sql( "del_mark", cSql )
+
+   RETURN .T.
 
 
 /* fin_kartica_otvorene_stavke_po_broju_veze(fSolo,fTiho,bFilter)
@@ -147,7 +168,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       IF gNW == "D"
          @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_kontoFin( @cIdkonto )
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
@@ -542,8 +563,8 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
       FOR i := 1 TO Len( aGod )
          AAdd( aDBf, { 'GOD' + aGod[ i, 1 ], 'N', 15,  2 } )
       NEXT
-      AAdd( aDBf, { 'GOD' + Str( Val( aGod[ i - 1, 1 ] ) -1, 4 ), 'N', 15,  2 } )
-      AAdd( aDBf, { 'GOD' + Str( Val( aGod[ i - 1, 1 ] ) -2, 4 ), 'N', 15,  2 } )
+      AAdd( aDBf, { 'GOD' + Str( Val( aGod[ i - 1, 1 ] ) - 1, 4 ), 'N', 15,  2 } )
+      AAdd( aDBf, { 'GOD' + Str( Val( aGod[ i - 1, 1 ] ) - 2, 4 ), 'N', 15,  2 } )
    ENDIF
 
    dbCreate( _ime_dbf + ".dbf", aDbf )
@@ -552,7 +573,7 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
    SELECT ( F_POM )
    my_use_temp( _alias, _ime_dbf, .F., .T. )
 
-   INDEX on ( IDPARTNER + DToS( DATDOK ) + DToS( iif( Empty( DATVAL ), DATDOK, DATVAL ) ) + BRDOK ) TAG "1"
+   INDEX ON ( IDPARTNER + DToS( DATDOK ) + DToS( iif( Empty( DATVAL ), DATDOK, DATVAL ) ) + BRDOK ) TAG "1"
 
    SET ORDER TO TAG "1"
    GO TOP

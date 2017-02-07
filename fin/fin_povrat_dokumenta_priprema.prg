@@ -15,11 +15,11 @@
 
 FUNCTION fin_povrat_naloga( lStorno )
 
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nRec
-   LOCAL _del_rec, _ok := .T.
+   LOCAL _delhRec, _ok := .T.
    LOCAL _field_ids, _where_block
-   LOCAL _t_rec
+   LOCAL _thRec
    LOCAL _tbl
    LOCAL lBrisiKumulativ := .T.
    LOCAL lOk := .T.
@@ -30,8 +30,6 @@ FUNCTION fin_povrat_naloga( lStorno )
 
 
    o_fin_pripr()
-
-
 
    cIdFirma         := self_organizacija_id()
    cIdFirma2        := self_organizacija_id()
@@ -71,8 +69,7 @@ FUNCTION fin_povrat_naloga( lStorno )
 
    BoxC()
 
-   IF Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + ;
-         iif( lStorno, " stornirati", " povući u pripremu" ) + " (D/N) ?", "D" ) == "N"
+   IF Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + iif( lStorno, " stornirati", " povući u pripremu" ) + " (D/N) ?", "D" ) == "N"
       my_close_all_dbf()
       RETURN .F.
    ENDIF
@@ -108,15 +105,15 @@ FUNCTION fin_povrat_naloga( lStorno )
 
 FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
-   LOCAL _rec, cTbl
+   LOCAL hRec, cTbl
    LOCAL lOk := .T.
    LOCAL lRet := .F.
    LOCAL hParams := hb_Hash()
 
-   _rec := hb_Hash()
-   _rec[ "idfirma" ] := cIdFirma
-   _rec[ "idvn" ] := cIdVn
-   _rec[ "brnal" ] := cBrNal
+   hRec := hb_Hash()
+   hRec[ "idfirma" ] := cIdFirma
+   hRec[ "idvn" ] := cIdVn
+   hRec[ "brnal" ] := cBrNal
 
    run_sql_query( "BEGIN" )
 
@@ -130,30 +127,32 @@ FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
    Box(, 5, 70 )
 
+   fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn, cBrNal )
+
    cTbl := "fin_suban"
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "delete " + cTbl
    SELECT suban
-   lOk := delete_rec_server_and_dbf( cTbl, _rec, 2, "CONT" )
+   lOk := delete_rec_server_and_dbf( cTbl, hRec, 2, "CONT" )
 
    IF lOk
       cTbl := "fin_anal"
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "delete " + cTbl
       SELECT anal
-      lOk := delete_rec_server_and_dbf( cTbl, _rec, 2, "CONT" )
+      lOk := delete_rec_server_and_dbf( cTbl, hRec, 2, "CONT" )
    ENDIF
 
    IF lOk
       cTbl := "fin_sint"
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "delete " + cTbl
       SELECT sint
-      lOk := delete_rec_server_and_dbf( cTbl, _rec, 2, "CONT" )
+      lOk := delete_rec_server_and_dbf( cTbl, hRec, 2, "CONT" )
    ENDIF
 
    IF lOk
       cTbl := "fin_nalog"
       @ form_x_koord() + 4, form_y_koord() + 2 SAY "delete " + cTbl
       SELECT nalog
-      lOk := delete_rec_server_and_dbf( cTbl, _rec, 1, "CONT" )
+      lOk := delete_rec_server_and_dbf( cTbl, hRec, 1, "CONT" )
    ENDIF
 
    BoxC()
@@ -176,7 +175,7 @@ FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
 STATIC FUNCTION fin_kopiraj_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lStorno )
 
-   LOCAL _rec
+   LOCAL hRec
 
 /*
    SELECT suban
@@ -192,21 +191,21 @@ STATIC FUNCTION fin_kopiraj_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lS
    GO TOP
    DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cIdVN == field->IdVN .AND. cBrNal == field->BrNal // suban.brnal char(8) na serveru
 
-      _rec := dbf_get_rec()
+      hRec := dbf_gethRec()
 
       SELECT fin_pripr
 
       IF lStorno
-         _rec[ "idfirma" ]  := cIdFirma2
-         _rec[ "idvn" ]     := cIdVn2
-         _rec[ "brnal" ]    := cBrNal2
-         _rec[ "iznosbhd" ] := -_rec[ "iznosbhd" ]
-         _rec[ "iznosdem" ] := -_rec[ "iznosdem" ]
+         hRec[ "idfirma" ]  := cIdFirma2
+         hRec[ "idvn" ]     := cIdVn2
+         hRec[ "brnal" ]    := cBrNal2
+         hRec[ "iznosbhd" ] := -hRec[ "iznosbhd" ]
+         hRec[ "iznosdem" ] := -hRec[ "iznosdem" ]
       ENDIF
 
       APPEND BLANK
 
-      dbf_update_rec( _rec )
+      dbf_updatehRec( hRec )
 
       SELECT suban
       SKIP

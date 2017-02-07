@@ -103,6 +103,7 @@ FUNCTION V_Podbr()
          SELECT sast
          cPRoba := _idroba
          cPtxt1 := _txt1
+         
          select_o_sast( cPRoba )
          nPbr := 0
          DO WHILE !Eof() .AND. cPRoba == id

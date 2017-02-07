@@ -141,7 +141,7 @@ STATIC FUNCTION fakt_unos_prikaz_nab_cj()
 
 STATIC FUNCTION fakt_pripr_keyhandler()
 
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _ret
    LOCAL cPom
    LOCAL _fakt_doks := {}
@@ -431,7 +431,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
 
    LOCAL _dug
-   LOCAL _rec_no, _rec
+   LOCAL _rec_no, hRec
    LOCAL _items_atrib
    LOCAL _item_before
 
@@ -509,7 +509,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
 // -------------------------------------------------------------------------------------------------------
 STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
 
-   LOCAL oAttr, _rec, _item_after_hash
+   LOCAL oAttr, hRec, _item_after_hash
    LOCAL new_hash := hb_Hash()
 
    IF novi == .T.
@@ -517,8 +517,8 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
    ENDIF
 
    // dodaj zapis u tabelu FAKT_PRIPR
-   _rec := get_hash_record_from_global_vars( "_" )
-   dbf_update_rec( _rec, .F. )
+   hRec := get_hash_record_from_global_vars( "_" )
+   dbf_update_rec( hRec, .F. )
 
    // hash matrica koja sadrži update-ovan zapis
    new_hash[ "idfirma" ] := fakt_pripr->idfirma
@@ -600,7 +600,7 @@ STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
 STATIC FUNCTION fakt_unos_nove_stavke()
 
    LOCAL _items_atrib
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _total := 0
    LOCAL oAttr, _hAttrId
 
@@ -875,7 +875,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       ENDIF
 
       IF _params[ "ref_lot" ]
-
          IF fNovi
             _ref_broj := PadR( "", 50 )
             _lot_broj := PadR( "", 50 )
@@ -1237,11 +1236,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    ENDIF
 
    IF _idtipdok == "12"
-      IF IsKomision( _idpartner )
-         _odabir_txt := .T.
-      ELSE
          _odabir_txt := .F.
-      ENDIF
    ENDIF
 
    IF _odabir_txt
@@ -1361,8 +1356,6 @@ STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
    ENDIF
 
    RETURN .T.
-
-
 
 
 
@@ -1495,8 +1488,6 @@ FUNCTION PrerCij()
 
 
 
-
-
 // Stampa dokumenta ugovor o rabatu
 FUNCTION StUgRabKup()
 
@@ -1570,7 +1561,7 @@ FUNCTION RabPor10()
    ENDIF
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1689,7 +1680,6 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
          povrat_smece()
 
-
       ENDCASE
 
    ENDDO
@@ -1715,7 +1705,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    LOCAL _old_firma := old_dok[ "idfirma" ]
    LOCAL _old_brdok := old_dok[ "brdok" ]
    LOCAL _old_tipdok := old_dok[ "idtipdok" ]
-   LOCAL _rec, _tek_dok, _t_rec
+   LOCAL hRec, _tek_dok, _t_rec
    LOCAL _new_firma := new_dok[ "idfirma" ]
    LOCAL _new_brdok := new_dok[ "brdok" ]
    LOCAL _new_tipdok := new_dok[ "idtipdok" ]
@@ -1753,16 +1743,15 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       SKIP -1
 
       // napravi zamjenu podataka
-      _rec := dbf_get_rec()
-      _rec[ "idfirma" ] := _tek_dok[ "idfirma" ]
-      _rec[ "idtipdok" ] := _tek_dok[ "idtipdok" ]
-      _rec[ "brdok" ] := _tek_dok[ "brdok" ]
-      _rec[ "datdok" ] := _tek_dok[ "datdok" ]
-      _rec[ "idpartner" ] := _tek_dok[ "idpartner" ]
-      _rec[ "dindem" ] := _tek_dok[ "dindem" ]
+      hRec := dbf_get_rec()
+      hRec[ "idfirma" ] := _tek_dok[ "idfirma" ]
+      hRec[ "idtipdok" ] := _tek_dok[ "idtipdok" ]
+      hRec[ "brdok" ] := _tek_dok[ "brdok" ]
+      hRec[ "datdok" ] := _tek_dok[ "datdok" ]
+      hRec[ "idpartner" ] := _tek_dok[ "idpartner" ]
+      hRec[ "dindem" ] := _tek_dok[ "dindem" ]
 
-      dbf_update_rec( _rec )
-
+      dbf_update_rec( hRec )
       GO ( _t_rec )
 
    ENDDO
@@ -1779,13 +1768,13 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       _t_rec := RecNo()
       SKIP -1
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "idfirma" ] := _tek_dok[ "idfirma" ]
-      _rec[ "idtipdok" ] := _tek_dok[ "idtipdok" ]
-      _rec[ "brdok" ] := _tek_dok[ "brdok" ]
+      hRec[ "idfirma" ] := _tek_dok[ "idfirma" ]
+      hRec[ "idtipdok" ] := _tek_dok[ "idtipdok" ]
+      hRec[ "brdok" ] := _tek_dok[ "brdok" ]
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       GO ( _t_rec )
 
@@ -1902,7 +1891,7 @@ STATIC FUNCTION _calc_totals( hash, din_dem )
 
    SELECT ( nDbfArea )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1958,7 +1947,7 @@ STATIC FUNCTION fakt_kzb( id_firma, tip_dok, br_dok )
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1972,4 +1961,4 @@ FUNCTION select_fakt_pripr()
       SELECT F_FAKT_PRIPR
    ENDIF
 
-   RETURN
+   RETURN .T.

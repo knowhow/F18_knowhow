@@ -24,45 +24,44 @@ FUNCTION select_o_konto()
 
 
 
-FUNCTION o_roba()
 
-   SELECT ( F_ROBA )
-   my_use ( "roba" )
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
-
-
-FUNCTION select_o_roba()
-
-   RETURN select_o_dbf( "ROBA", F_ROBA, "roba", "ID" )
 */
 
 
 
-FUNCTION o_roba()
+
+
+FUNCTION o_roba( cId )
 
    LOCAL cTabela := "roba"
 
    SELECT ( F_ROBA )
-   IF !use_sql_sif  ( cTabela )
+   IF !use_sql_sif  ( cTabela, .T., "ROBA", cId  )
       error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.
    ENDIF
-
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
 
 
-FUNCTION select_o_roba()
+
+FUNCTION select_o_roba( cId )
 
    SELECT ( F_ROBA )
    IF Used()
-      RETURN .T.
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
    ENDIF
 
-   RETURN o_roba()
+   RETURN o_roba( cId )
+
 
 
 
@@ -92,7 +91,7 @@ FUNCTION find_roba_by_naz_or_id( cId )
    ENDIF
 
    RETURN .T.
-   
+
 
 
 FUNCTION find_partner_by_naz_or_id( cId )

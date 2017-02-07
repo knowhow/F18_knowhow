@@ -183,11 +183,7 @@ FUNCTION UpitK1K4( mxplus, lK )
    ENDIF
 
    IF gFinRj == "D"
-      IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER("fin_suban_kartica") )
-         @ form_x_koord() + mxplus + 2, form_y_koord() + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
-      ELSE
-         @ form_x_koord() + mxplus + 2, form_y_koord() + 2 SAY "RJ:" GET cIdRj
-      ENDIF
+      @ form_x_koord() + mxplus + 2, form_y_koord() + 2 SAY "RJ:" GET cIdRj
    ENDIF
 
    IF gTroskovi == "D"
@@ -216,14 +212,12 @@ FUNCTION CistiK1K4( lK )
       ENDIF
       IF ck4 == "99"; ck4 := ""; ENDIF
    ENDIF
-   IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER( "fin_suban_kartica" ) )
-      cIdRj := Trim( cIdRj )
-   ELSE
-      IF cIdRj == "999999"; cidrj := ""; ENDIF
-      IF "." $ cidrj
-         cidrj := Trim( StrTran( cidrj, ".", "" ) )  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
-      ENDIF
+
+   IF cIdRj == "999999"; cidrj := ""; ENDIF
+   IF "." $ cIdrj
+      cidrj := Trim( StrTran( cidrj, ".", "" ) )  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
    ENDIF
+
    IF cFunk == "99999"; cFunk := ""; ENDIF
    IF "." $ cfunk
       cfunk := Trim( StrTran( cfunk, ".", "" ) )

@@ -63,19 +63,19 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
    LOCAL _konto := fetch_metric( "fin_spec_rpt_konto", my_user(), "" )
    LOCAL _partner := fetch_metric( "fin_spec_rpt_partner", my_user(), "" )
    LOCAL _brdok := fetch_metric( "fin_spec_rpt_broj_dokumenta", my_user(), PadR( "", 200 ) )
-   LOCAL _idvn := fetch_metric( "fin_spec_rpt_broj_dokumenta", my_user(), PadR( "", 200 ) )
+   LOCAL cIdVnUslov := fetch_metric( "fin_spec_rpt_broj_dokumenta", my_user(), PadR( "", 200 ) )
    LOCAL _datum_od := fetch_metric( "fin_spec_rpt_datum_od", my_user(), CToD( "" ) )
    LOCAL _datum_do := fetch_metric( "fin_spec_rpt_datum_do", my_user(), CToD( "" ) )
    LOCAL _opcina := fetch_metric( "fin_spec_rpt_opcina", my_user(), PadR( "", 200 ) )
    LOCAL _tip_val := fetch_metric( "fin_spec_rpt_tip_valute", my_user(), 1 )
    LOCAL _export_dbf := fetch_metric( "fin_spec_rpt_export_dbf", my_user(), "N" )
    LOCAL _sintetika := fetch_metric( "fin_spec_rpt_sintetika", my_user(), "N" )
-   LOCAL _nule := fetch_metric( "fin_spec_rpt_nule", my_user(), "N" )
+   LOCAL cNuleDN := fetch_metric( "fin_spec_rpt_nule", my_user(), "N" )
    LOCAL _rasclan := fetch_metric( "fin_spec_rpt_rasclaniti_rj", my_user(), "N" )
    LOCAL _box_name := "SUBANALITICKA SPECIFIKACIJA"
    LOCAL _box_x := 21
    LOCAL _box_y := 65
-   LOCAL _x := 1
+   LOCAL nX := 1
 
    o_sifk()
    o_sifv()
@@ -86,55 +86,52 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
 
    SET CURSOR ON
 
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Firma "
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
-   ++ _x
-   ++ _x
+   ++ nX
+   ++ nX
 
    _konto := PadR( _konto, 200 )
    _partner := PadR( _partner, 200 )
 
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Konto   " GET _konto PICT "@!S50"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Konto   " GET _konto PICT "@!S50"
 
-   ++ _x
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Partner " GET _partner PICT "@!S50"
+   ++ nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Partner " GET _partner PICT "@!S50"
 
-   ++ _x
-   ++ _x
+   ++ nX
+   ++ nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Izvještaj za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
 
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Izvještaj za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
+   ++ nX
+   ++ nX
 
-   ++ _x
-   ++ _x
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Datum dokumenta od:" GET _datum_od
+   @ form_x_koord() + nX, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
 
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Datum dokumenta od:" GET _datum_od
-   @ form_x_koord() + _x, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
+   ++ nX
+   ++ nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET cIdVnUslov PICT "@!S20"
 
-   ++ _x
-   ++ _x
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
+   ++ nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
 
-   ++ _x
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
+   ++ nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
 
-   ++ _x
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
+   ++ nX
+   ++ nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)?" GET cNuleDN PICT "@!" VALID cNuleDN $ "DN"
 
-   ++ _x
-   ++ _x
+   ++ nX
 
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)?" GET _nule PICT "@!" VALID _nule $ "DN"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Prikaz sintetike (D/N)?" GET _sintetika PICT "@!" VALID _sintetika $ "DN"
+   @ form_x_koord() + nX, Col() + 1 SAY8 "Raščlaniti po RJ/FOND/FUNK (D/N)?" GET _rasclan PICT "@!" VALID _rasclan $ "DN"
 
-   ++ _x
-
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Prikaz sintetike (D/N)?" GET _sintetika PICT "@!" VALID _sintetika $ "DN"
-   @ form_x_koord() + _x, Col() + 1 SAY8 "Raščlaniti po RJ/FOND/FUNK (D/N)?" GET _rasclan PICT "@!" VALID _rasclan $ "DN"
-
-   ++ _x
-   ++ _x
-
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY "Eksport izvjestaja u dbf (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
+   ++ nX
+   ++ nX
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Eksport izvjestaja u dbf (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
 
    READ
 
@@ -147,25 +144,25 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
    set_metric( "fin_spec_rpt_konto", my_user(), _konto )
    set_metric( "fin_spec_rpt_partner", my_user(), _partner )
    set_metric( "fin_spec_rpt_broj_dokumenta", my_user(), _brdok )
-   set_metric( "fin_spec_rpt_broj_dokumenta", my_user(), _idvn )
+   set_metric( "fin_spec_rpt_broj_dokumenta", my_user(), cIdVnUslov )
    set_metric( "fin_spec_rpt_datum_od", my_user(), _datum_od )
    set_metric( "fin_spec_rpt_datum_do", my_user(), _datum_do )
    set_metric( "fin_spec_rpt_tip_valute", my_user(), _tip_val )
    set_metric( "fin_spec_rpt_export_dbf", my_user(), _export_dbf )
    set_metric( "fin_spec_rpt_sintetika", my_user(), _sintetika )
-   set_metric( "fin_spec_rpt_nule", my_user(), _nule )
+   set_metric( "fin_spec_rpt_nule", my_user(), cNuleDN )
    set_metric( "fin_spec_rpt_rasclaniti_rj", my_user(), _rasclan )
 
    rpt_vars[ "konto" ] := _konto
    rpt_vars[ "partner" ] := _partner
    rpt_vars[ "brdok" ] := _brdok
-   rpt_vars[ "idvn" ] := _idvn
+   rpt_vars[ "idvn" ] := cIdVnUslov
    rpt_vars[ "datum_od" ] := _datum_od
    rpt_vars[ "datum_do" ] := _datum_do
    rpt_vars[ "opcina" ] := _opcina
    rpt_vars[ "valuta" ] := _tip_val
    rpt_vars[ "export_dbf" ] := _export_dbf
-   rpt_vars[ "nule" ] := _nule
+   rpt_vars[ "nule" ] := cNuleDN
    rpt_vars[ "sintetika" ] := _sintetika
    rpt_vars[ "rasclaniti_rj" ] := _rasclan
 
@@ -174,7 +171,7 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
 
 STATIC FUNCTION _cre_rpt( rpt_vars )
 
-   LOCAL _rasclan, _nule, _sintetika, _konto, _partner, _brdok, _idvn
+   LOCAL _rasclan, cNuleDN, _sintetika, _konto, _partner, _brdok, cIdVnUslov
    LOCAL _datum_od, _datum_do, _tip_valute
    LOCAL _qry, _table
    LOCAL _where, _opcina
@@ -187,12 +184,12 @@ STATIC FUNCTION _cre_rpt( rpt_vars )
    _konto := rpt_vars[ "konto" ]
    _partner := rpt_vars[ "partner" ]
    _brdok := rpt_vars[ "brdok" ]
-   _idvn := rpt_vars[ "idvn" ]
+   cIdVnUslov := rpt_vars[ "idvn" ]
    _datum_od := rpt_vars[ "datum_od" ]
    _datum_do := rpt_vars[ "datum_do" ]
    _opcina := rpt_vars[ "opcina" ]
    _tip_valute := rpt_vars[ "valuta" ]
-   _nule := rpt_vars[ "nule" ] == "D"
+   cNuleDN := rpt_vars[ "nule" ] == "D"
    _sintetika := rpt_vars[ "sintetika" ] == "D"
    _rasclan := rpt_vars[ "rasclaniti_rj" ] == "D"
    _fld_iznos := "sub.iznosbhd"
@@ -216,8 +213,8 @@ STATIC FUNCTION _cre_rpt( rpt_vars )
    IF !Empty( _brdok )
       _where_cond += " AND " + _sql_cond_parse( "sub.brdok", _brdok )
    ENDIF
-   IF !Empty( _idvn )
-      _where_cond += " AND " + _sql_cond_parse( "sub.idvn", _idvn )
+   IF !Empty( cIdVnUslov )
+      _where_cond += " AND " + _sql_cond_parse( "sub.idvn", cIdVnUslov )
    ENDIF
    IF !Empty( _opcina )
       _where_cond += " AND " + _sql_cond_parse( "part.idops", _opcina )
@@ -266,7 +263,7 @@ STATIC FUNCTION export_podataka_u_dbf( table, rpt_vars )
 
    LOCAL oRow, _struct
    LOCAL _rasclan := rpt_vars[ "rasclaniti_rj" ] == "D"
-   LOCAL _nule := rpt_vars[ "nule" ] == "D"
+   LOCAL cNuleDN := rpt_vars[ "nule" ] == "D"
    LOCAL _rec, cKontoId, cPartnerId
 
    IF table:LastRec() == 0
@@ -308,7 +305,7 @@ STATIC FUNCTION export_podataka_u_dbf( table, rpt_vars )
       _rec[ "potrazuje" ] := query_row( oRow, "potrazuje" )
       _rec[ "saldo" ] := _rec[ "duguje" ] - _rec[ "potrazuje" ]
 
-      IF Round( _rec[ "saldo" ], 2 ) == 0 .AND. !_nule
+      IF Round( _rec[ "saldo" ], 2 ) == 0 .AND. !cNuleDN
          LOOP
       ENDIF
 
@@ -359,7 +356,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
    LOCAL _val, _sint_kto
    LOCAL _id_konto, _id_partner
    LOCAL _sintetika := rpt_vars[ "sintetika" ] == "D"
-   LOCAL _nule := rpt_vars[ "nule" ] == "D"
+   LOCAL cNuleDN := rpt_vars[ "nule" ] == "D"
    LOCAL _rasclan := rpt_vars[ "rasclaniti_rj" ] == "D"
 
    IF table:LastRec() == 0
@@ -416,7 +413,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
       _pot := oItem:FieldGet( oItem:FieldPos( "potrazuje" ) )
       _saldo := oItem:FieldGet( oItem:FieldPos( "duguje" ) ) - oItem:FieldGet( oItem:FieldPos( "potrazuje" ) )
 
-      IF Round( _saldo, 2 ) == 0 .AND. !_nule
+      IF Round( _saldo, 2 ) == 0 .AND. !cNuleDN
          table:Skip()
          LOOP
       ENDIF

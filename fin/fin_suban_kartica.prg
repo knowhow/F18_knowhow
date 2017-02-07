@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR m, GetList
-MEMVAR gDUFRJ, gTroskovi
+MEMVAR gTroskovi
 MEMVAR cIdFirma, cIdKonto, fk1, fk2, fk3, fk4, cK1, cK2, cK3, cK4
 MEMVAR qqKonto, qqPartner
 MEMVAR nStr
@@ -113,17 +113,12 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    cK3 := "99"
    cK4 := "99"
 
-   IF gDUFRJ == "D"
-      cIdRj := Space( 60 )
-   ELSE
-      cIdRj := "999999"
-   ENDIF
-
+   cIdRj := "999999"
    cFunk := "99999"
    cFond := "9999"
 
    PRIVATE cRasclaniti := "N"
-   PRIVATE cIdVN := Space( 40 )
+   PRIVATE cIdVnUslov := Space( 40 )
 
    cBoxName := "SUBANALITIČKA KARTICA"
 
@@ -153,14 +148,9 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    DO WHILE .T.
 
-      IF gDUFRJ == "D"
-         cIdFirma := PadR( self_organizacija_id() + ";", 30 )
-         @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
-      ELSE
 
-         @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Firma "
-         ?? self_organizacija_id(), "-", self_organizacija_naziv()
-      ENDIF
+      @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Firma "
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
       IF cBrza == "D"
          qqKonto := PadR( qqKonto, 7 )
@@ -176,7 +166,8 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
       @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Datum dokumenta od:" GET dDatod
       @ form_x_koord() + nX, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
-      @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-sve)" GET cIdVN PICT "@!S20"
+
+      @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-sve)" GET cIdVnUslov PICT "@!S20"
 
       IF fin_dvovalutno()
          @ form_x_koord() + ( ++nX ), form_y_koord() + 2 SAY "Kartica za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3)"  GET cDinDem VALID cDinDem $ "123"
@@ -238,17 +229,13 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          cKumul := "1"
       ENDIF
 
-      aUsl3 := parsiraj( cIdVN, "IDVN", "C" )
+      cFilterVrstaNalog := parsiraj( cIdVnUslov, "IDVN", "C" )
 
-      IF gDUFRJ == "D"
-         aUsl4 := Parsiraj( cIdFirma, "IdFirma" )
-         aUsl5 := Parsiraj( cIdRJ, "IdRj" )
-      ENDIF
 
       aNK := Parsiraj( qqNazKonta, "UPPER(naz)", "C" )
 
       IF cBrza == "D"
-         IF aUsl3 <> NIL .AND. iif( gDUFRJ == "D", aUsl4 <> NIL .AND. aUsl5 <> NIL, .T. )
+         IF cFilterVrstaNalog <> NIL
             EXIT
          ENDIF
       ELSE
@@ -257,7 +244,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          aUsl1 := parsiraj( qqKonto, "IdKonto", "C" )
          aUsl2 := parsiraj( qqPartner, "IdPartner", "C" )
 
-         IF  aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. aUsl3 <> NIL .AND. iif( gDUFRJ == "D", aUsl4 <> NIL .AND. aUsl5 <> NIL, .T. )
+         IF  aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. cFilterVrstaNalog <> NIL
             EXIT
          ENDIF
       ENDIF
@@ -355,15 +342,14 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    CistiK1k4()
 
-   cFilter := ".t." + iif( !Empty( cIdVN ), ".and." + aUsl3, "" ) + ;
+   cFilter := ".t." + iif( !Empty( cIdVnUslov ), ".and." + cFilterVrstaNalog, "" ) + ;
       iif( cBrza == "N", ".and." + aUsl1 + ".and." + aUsl2, "" ) + ;
       iif( Empty( dDatOd ) .OR. cPredhodniPromet == "2", "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + ;
       iif( Empty( dDatDo ), "", ".and.DATDOK<=" + dbf_quote( dDatDo ) ) + ;
-      iif( fk1 .AND. Len( ck1 ) <> 0, ".and.k1=" + dbf_quote( ck1 ), "" ) + ;
-      iif( fk2 .AND. Len( ck2 ) <> 0, ".and.k2=" + dbf_quote( ck2 ), "" ) + ;
+      iif( fk1 .AND. Len( ck1 ) <> 0, ".and.k1=" + dbf_quote( cK1 ), "" ) + ;
+      iif( fk2 .AND. Len( ck2 ) <> 0, ".and.k2=" + dbf_quote( cK2 ), "" ) + ;
       iif( fk3 .AND. Len( ck3 ) <> 0, ".and.k3=ck3", "" ) + ;
-      iif( fk4 .AND. Len( ck4 ) <> 0, ".and.k4=" + dbf_quote( ck4 ), "" ) + ;
-      iif( gFinRj == "D" .AND. Len( cIdrj ) <> 0, iif( gDUFRJ == "D", ".and." + aUsl5, ".and.idrj=" + dbf_quote( cIdRJ ) ), "" ) + ;
+      iif( fk4 .AND. Len( ck4 ) <> 0, ".and.k4=" + dbf_quote( cK4 ), "" ) + ;
       iif( gTroskovi == "D" .AND. Len( cFunk ) <> 0, ".and.funk=" + dbf_quote( cFunk ), "" ) + ;
       iif( gTroskovi == "D" .AND. Len( cFond ) <> 0, ".and.fond=" + dbf_quote( cFond ), "" ) // + ;
 
@@ -374,27 +360,17 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    cFilter := StrTran( cFilter, ".t..and.", "" )
 
-   IF Len( cIdFirma ) < 2 .OR. gDUFRJ == "D"
+   IF cRasclaniti == "D"
       SET INDEX TO
-      IF cRasclaniti == "D"
-         INDEX ON idkonto + idpartner + idrj + funk + fond TO SUBSUB for &cFilter
-      ELSEIF cBrza == "D" .AND. RTrim( qqPartner ) == ";"
-         INDEX ON IdKonto + DToS( DatDok ) + idpartner TO SUBSUB for &cFilter
-      ELSE
-         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + Str( RBr, 5, 0 ) TO SUBSUB for &cFilter
-      ENDIF
+      INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond TO SUBSUB FOR &cFilter
    ELSE
-      IF cRasclaniti == "D"
-         SET INDEX TO
-         INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond TO SUBSUB for &cFilter
+      IF cfilter == ".t."
+         SET FILTER TO
       ELSE
-         IF cfilter == ".t."
-            SET FILTER TO
-         ELSE
-            SET FILTER to &cFilter
-         ENDIF
+         SET FILTER TO &cFilter
       ENDIF
    ENDIF
+
 
    GO TOP
 
@@ -426,11 +402,10 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    cIdKonto := field->IdKonto
 
-   bEvalSubanKartFirma := {|| !Eof() .AND. iif( gDUFRJ != "D", field->IdFirma == cIdFirma, .T. ) }
-   bEvalSubanKartKonto := {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. iif( gDUFRJ != "D", field->IdFirma == cIdFirma, .T. ) }
+   bEvalSubanKartFirma := {|| !Eof() }
+   bEvalSubanKartKonto := {|| !Eof() .AND. cIdKonto == field->IdKonto }
    bEvalSubanKartPartner :=  {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. ( cIdPartner == field->IdPartner ;
-      .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ;
-      .AND. Rasclan() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. ) }
+      .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) .AND. Rasclan() }
 
 
    Eval( bZagl )
@@ -485,7 +460,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
          IF !Empty( cOpcine )
             select_o_partner( cIdPartner )
-            IF ! ( Found() .AND. field->id == cIdPartner .AND. AllTrim( field->idops ) $ AllTrim( cOpcine ) )
+            IF !( Found() .AND. field->id == cIdPartner .AND. AllTrim( field->idops ) $ AllTrim( cOpcine ) )
                SELECT ( nTarea )
                SKIP
                LOOP
@@ -677,7 +652,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   hRec[ "opis" ] := iif( cSpojiDP == "2", "uplate", "placanja" ) + " na dan " + DToC( field->datdok )
                   hRec[ "brdok" ] := iif( hRec[ "otvst" ] == "9", "Z", "O" ) + "-" + DToC( field->datdok )
                ENDIF
-               nSpojeno ++
+               nSpojeno++
                SKIP
             ENDDO
 
@@ -1070,16 +1045,16 @@ STATIC FUNCTION fin_suban_add_item_to_r_export( cKonto, cK_naz, cPartn, cP_naz, 
 
    APPEND BLANK
    REPLACE field->id_konto WITH cKonto
-   REPLACE field->naz_konto with ( cK_naz )
+   REPLACE field->naz_konto WITH ( cK_naz )
    REPLACE field->id_partn WITH cPartn
-   REPLACE field->naz_partn with ( cP_naz )
+   REPLACE field->naz_partn WITH ( cP_naz )
    REPLACE field->vrsta_nal WITH cVn
    REPLACE field->broj_nal WITH cBr
    REPLACE field->nal_rbr WITH nRbr
-   REPLACE field->broj_veze with ( cBrVeze )
+   REPLACE field->broj_veze WITH ( cBrVeze )
    REPLACE field->dat_nal WITH dDatum
    REPLACE field->dat_val WITH fix_dat_var( dDatVal, .T. )
-   REPLACE field->opis_nal with ( cOpis )
+   REPLACE field->opis_nal WITH ( cOpis )
    REPLACE field->duguje WITH nDug
    REPLACE field->potrazuje WITH nPot
    REPLACE field->saldo WITH nSaldo
@@ -1288,7 +1263,7 @@ STATIC FUNCTION kartica_otvori_tabele()
    my_close_all_dbf()
 
    o_konto()
-  // o_partner()
+   // o_partner()
    o_sifk()
    o_sifv()
    o_rj()

@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR gPicBHD, picBHD, qqKonto, qqPartner, qqBrDok
-MEMVAR gDUFRJ
+// MEMVAR gDUFRJ
 MEMVAR cIdFirma, cIdRj, dDatOd, dDatDo, cFunk, cFond, cNula
 MEMVAR cSkVar, cRasclaniti, cRascFunkFond, cN2Fin
 MEMVAR cFilter
@@ -80,7 +80,7 @@ FUNCTION fin_specifikacija_suban()
    SELECT params
    USE
 
-  // o_partner()
+   // o_partner()
 
    cTip := "1"
    Box( "", 20, 65 )
@@ -89,25 +89,18 @@ FUNCTION fin_specifikacija_suban()
    PRIVATE cK3 := cK4 := "99"
 
 
-   IF gDUFRJ == "D"
-      cIdRj := Space( 60 )
-   ELSE
-      cIdRj := "999999"
-   ENDIF
+
+   cIdRj := "999999"
+
    cFunk := "99999"
    cFond := "9999"
    cNula := "N"
    DO WHILE .T.
       @ form_x_koord() + 1, form_y_koord() + 6 SAY8 "SPECIFIKACIJA SUBANALITIČKIH KONTA"
-      IF gDUFRJ == "D"
-         cIdFirma := PadR( self_organizacija_id() + ";", 30 )
-         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
-      ELSE
 
-         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "
-         ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
-      ENDIF
       @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
       @ form_x_koord() + 5, form_y_koord() + 2 SAY "Partner " GET qqPartner PICT "@!S50"
       @ form_x_koord() + 6, form_y_koord() + 2 SAY "Datum dokumenta od" GET dDatOd
@@ -151,15 +144,11 @@ FUNCTION fin_specifikacija_suban()
       USE
 
       cSqlWhere := parsiraj_sql( "idkonto", qqKonto )
-      cSqlWhere += " AND " + parsiraj_sql( "idpartner", Trim( qqPartner) )
+      cSqlWhere += " AND " + parsiraj_sql( "idpartner", Trim( qqPartner ) )
 
-      IF gDUFRJ == "D"
-         aUsl3 := Parsiraj( cIdFirma, "IdFirma" )
-         aUsl4 := Parsiraj( cIdRJ, "IdRj" )
-      ENDIF
       aBV := Parsiraj( qqBrDok, "UPPER(BRDOK)", "C" )
       aVN := Parsiraj( cVN, "IDVN", "C" )
-      IF aBV <> NIL .AND. aVN <> NIL .AND. iif( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
+      IF aBV <> NIL .AND. aVN <> NIL
          EXIT
       ENDIF
    ENDDO
@@ -172,15 +161,15 @@ FUNCTION fin_specifikacija_suban()
       create_dbf_r_export( aSSFields )
    ENDIF
 
-   IF gDUFRJ != "D"
-      cIdFirma := Left( cIdFirma, 2 )
-   ENDIF
 
-   IF cRasclaniti == "D"
-      o_rj()
-   ENDIF
+   cIdFirma := Left( cIdFirma, 2 )
 
-   //o_partner()
+
+   // IF cRasclaniti == "D"
+   // o_rj()
+   // ENDIF
+
+   // o_partner()
    o_konto()
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    find_suban_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto,idpartner,brdok", cSqlWhere )
@@ -189,36 +178,21 @@ FUNCTION fin_specifikacija_suban()
    CistiK1k4()
 
    SELECT SUBAN
-   IF !Empty( cIdFirma ) .AND. gDUFRJ != "D"
-      IF cRasclaniti == "D"
-         INDEX ON idfirma + idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
-         SET ORDER TO TAG "SUBSUB"
-      ELSEIF cRascFunkFond == "D"
-         INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond + DToS( datdok ) TO SUBSUB
-         SET ORDER TO TAG "SUBSUB"
 
-      ELSE
-         SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
-      ENDIF
+   IF cRasclaniti == "D"
+      INDEX ON idfirma + idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
+      SET ORDER TO TAG "SUBSUB"
+   ELSEIF cRascFunkFond == "D"
+      INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond + DToS( datdok ) TO SUBSUB
+      SET ORDER TO TAG "SUBSUB"
+
    ELSE
-      IF cRasclaniti == "D"
-         INDEX ON idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
-         SET ORDER TO TAG "SUBSUB"
-      ELSEIF cRascFunkFond == "D"
-         INDEX ON idkonto + idpartner + idrj + funk + fond + DToS( datdok ) TO SUBSUB
-         SET ORDER TO TAG "SUBSUB"
-      ELSE
-         cIdFirma := ""
-         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + RBr TO SVESUB
-         SET ORDER TO TAG "SVESUB"
-      ENDIF
+      SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
    ENDIF
 
-   IF gDUFRJ == "D"
-      cFilter := aUsl3
-   ELSE
-      cFilter := "IdFirma=" + dbf_quote( cidfirma )
-   ENDIF
+
+   cFilter := "IdFirma=" + dbf_quote( cidfirma )
+
 
    IF !Empty( cVN )
       cFilter += ( ".and. " + aVN )
@@ -250,11 +224,9 @@ FUNCTION fin_specifikacija_suban()
    ENDIF
 
    IF gFinRj == "D" .AND. Len( cIdrj ) <> 0
-      IF gDUFRJ == "D"
-         cFilter += ( ".and." + aUsl4 )
-      ELSE
-         cFilter += ( ".and. idrj='" + cidrj + "'" )
-      ENDIF
+
+      cFilter += ( ".and. idrj='" + cidrj + "'" )
+
    ENDIF
 
    IF gTroskovi == "D" .AND. Len( cFunk ) <> 0
@@ -265,7 +237,7 @@ FUNCTION fin_specifikacija_suban()
       cFilter += ( ".and. Fond='" + cFond + "'" )
    ENDIF
 
-   SET FILTER to &cFilter
+   SET FILTER TO &cFilter
 
    GO TOP
    EOF CRET
@@ -463,7 +435,7 @@ FUNCTION fin_specifikacija_suban()
                   cRj_naz := nil
                ENDIF
 
-               fill_ss_tbl( cIdKonto, cIdPartner, IIF( Empty( cIdPartner ), konto->naz, AllTrim( partn->naz ) ), nD, nP, nD - nP, cRj_id, cRj_naz )
+               fill_ss_tbl( cIdKonto, cIdPartner, iif( Empty( cIdPartner ), konto->naz, AllTrim( partn->naz ) ), nD, nP, nD - nP, cRj_id, cRj_naz )
             ENDIF
 
             nKd += nD
@@ -587,9 +559,9 @@ STATIC FUNCTION FFor1()
       cPom7777 := "ukGOD" + aGod[ i, 1 ]
       &cPom7777 := 0
    NEXT
-   cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) -1, 4 )
+   cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) - 1, 4 )
    &cPom7777 := 0
-   cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) -2, 4 )
+   cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) - 2, 4 )
    &cPom7777 := 0
 
    DO WHILE !Eof() .AND. IDPARTNER == cIdP
@@ -599,11 +571,11 @@ STATIC FUNCTION FFor1()
          &cPom7777 += &cPom7778
          ukPartner += &cPom7778
       NEXT
-      cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) -1, 4 )
+      cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) - 1, 4 )
       cPom7778 := SubStr( cPom7777, 3 )
       &cPom7777 += &cPom7778
       ukPartner += &cPom7778
-      cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) -2, 4 )
+      cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) - 2, 4 )
       cPom7778 := SubStr( cPom7777, 3 )
       &cPom7777 += &cPom7778
       ukPartner += &cPom7778

@@ -23,15 +23,6 @@ FUNCTION select_o_konto()
    RETURN select_o_dbf( "KONTO", F_KONTO, "konto", "ID" )
 
 
-FUNCTION o_partner()
-
-   RETURN o_dbf_table( F_PARTN, "partn", "ID" )
-
-
-FUNCTION select_o_partner()
-
-   RETURN select_o_dbf( "PARTN", F_PARTN, "partn", "ID" )
-
 
 FUNCTION o_roba()
 

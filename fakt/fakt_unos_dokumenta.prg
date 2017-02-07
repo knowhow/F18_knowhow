@@ -1514,15 +1514,15 @@ FUNCTION IspisBankeNar( cBanke )
 
    LOCAL aOpc
 
-   o_banke()
+   //o_banke()
    aOpc := TokToNiz( cBanke, "," )
    cVrati := ""
 
    //SELECT banke
    //SET ORDER TO TAG "ID"
    FOR i := 1 TO Len( aOpc )
-      select_o_banka( SubStr( aOpc[ i ], 1, 3 ) )
-      IF Found()
+      select_o_banke( SubStr( aOpc[ i ], 1, 3 ) )
+      IF !Eof()
          cVrati += AllTrim( banke->naz ) + ", " + AllTrim( banke->adresa ) + ", " + AllTrim( banke->mjesto ) + ", " + AllTrim( aOpc[ i ] ) + "; "
       ELSE
          cVrati += ""

@@ -180,34 +180,7 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
 
 
 
-/*
-   otvori šifarnik radnih jedinica sa prilagođenim poljima
-*/
 
-FUNCTION use_sql_rj()
-
-   LOCAL cSql
-   LOCAL cTable := "rj"
-
-   cSql := "SELECT "
-   cSql += " id, "
-   cSql += " match_code::char(10), "
-   cSql += " naz::char(100), "
-   cSql += " tip::char(2), "
-   cSql += " konto::char(7) "
-   cSql += "FROM " + F18_PSQL_SCHEMA_DOT  + "rj ORDER BY id"
-
-   SELECT F_RJ
-   IF !use_sql( cTable, cSql )
-      RETURN .F.
-   ENDIF
-
-   INDEX ON ID TAG ID TO ( cTable )
-   INDEX ON NAZ TAG NAZ TO ( cTable )
-
-   SET ORDER TO TAG ID
-
-   RETURN .T.
 
 
 /*

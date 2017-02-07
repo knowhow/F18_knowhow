@@ -31,19 +31,6 @@ FUNCTION o_ld()
 
 
 
-FUNCTION o_banke( cId )
-
-   SELECT ( F_BANKE )
-   use_sql_sif  ( "banke", .T., "BANKE", cId )
-   SET ORDER TO TAG "ID"
-
-   IF cId != NIL
-      SEEK cId
-   ENDIF
-
-   RETURN .T.
-
-
 
 FUNCTION o_ld_radn( cId )
 

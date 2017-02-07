@@ -919,7 +919,7 @@ STATIC FUNCTION _o_virm_edit()
    o_sifk()
    o_sifv()
    o_jprih()
-   o_banke()
+   select_o_banke()
    o_vrprim()
    o_partner()
    O_VIRM_PRIPR

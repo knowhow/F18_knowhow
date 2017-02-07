@@ -13,14 +13,6 @@
 
 
 
-FUNCTION o_rj()
-
-   SELECT ( F_RJ )
-   use_sql_rj()
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
-
 
 
 /*

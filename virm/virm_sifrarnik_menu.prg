@@ -84,7 +84,7 @@ FUNCTION OSifVirm()
    o_valute()
    o_ldvirm()
    o_jprih()
-   o_banke()
+   //o_banke()
    o_ops()
 
    RETURN .T.

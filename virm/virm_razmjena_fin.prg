@@ -20,7 +20,7 @@ FUNCTION virm_prenos_fin()
    o_jprih()
    o_sifk()
    o_sifv()
-   o_banke()
+   //o_banke()
    o_partner()
    o_vrprim()
    O_VIRM_PRIPR
@@ -125,7 +125,7 @@ FUNCTION virm_prenos_fin()
       ENDIF
 
       select_o_partner( gVirmFirma )
-      
+
 
       SELECT virm_pripr
       APPEND BLANK

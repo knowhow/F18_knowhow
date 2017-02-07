@@ -653,10 +653,10 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
 
 STATIC FUNCTION virm_o_tables()
 
-   SELECT ( F_BANKE )
-   IF !Used()
-      o_banke()
-   ENDIF
+   //SELECT ( F_BANKE )
+   //IF !Used()
+    //  o_banke()
+   //ENDIF
 
    select_o_jprih()
 

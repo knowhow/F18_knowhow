@@ -12,28 +12,47 @@
 #include "f18.ch"
 
 
+FUNCTION o_sastavnica( cId )
 
-FUNCTION o_sastavnica()
+   LOCAL cTabela := "sast"
 
    SELECT ( F_SAST )
-   my_use  ( "sast" )
+   IF !use_sql_sif  ( cTabela, .T., "SAST", cId  )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN .T.
-
-FUNCTION select_o_sastavnica()
-   RETURN select_o_dbf( "SAST", F_SAST, "sast", "ID" )
 
 
 FUNCTION o_sast( cId )
    RETURN o_sastavnica( cId )
+
+
+FUNCTION select_o_sastavnica( cId )
+
+   SELECT ( F_SAST )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_sastavnica( cId )
+
 
 FUNCTION select_o_sast( cId )
    RETURN select_o_sastavnica( cId )
 
 
 
-FUNCTION select_O_FAKT_TXT()
+FUNCTION select_O_FAKT_TXT( cId )
    RETURN .T.
 
    /*
@@ -55,7 +74,7 @@ FUNCTION SEEK_FAKT_DOKS_IDPARTNER()
    RETURN .T.
 
 
-FUNCTION   SEEK_FAKT_FAKT_3()
+FUNCTION  SEEK_FAKT_FAKT_3()
    RETURN .T.
 
 FUNCTION SEEK_FAKT_IDROBA()
@@ -63,7 +82,6 @@ FUNCTION SEEK_FAKT_IDROBA()
 
 FUNCTION SEEK_FAKT_IDROBA_SINTETIKA()
    RETURN .T.
-
 
 
 FUNCTION SEEK_FAKT_UPL()
@@ -87,20 +105,77 @@ FUNCTION SEEK_UGOV()
 FUNCTION SELECT_FAKT_DOKS()
    RETURN .T.
 
-FUNCTION SELECT_O_BANKA()
+
+
+FUNCTION o_banke( cId )
+
+   SELECT ( F_BANKE )
+   IF !use_sql_sif  ( "banke", .T., "BANKE", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
    RETURN .T.
+
+
+FUNCTION select_o_banke( cId )
+
+   SELECT ( F_BANKE )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_banke( cId )
+
+
+
+
 
 FUNCTION SELECT_O_FAKT_OBJEKTI()
    RETURN .T.
+
 
 FUNCTION SELECT_O_FTXT()
    RETURN .T.
 
 
-FUNCTION SELECT_O_RJ()
+
+
+FUNCTION o_rj( cId )
+
+   SELECT ( F_RJ )
+   IF !use_sql_sif  ( "rj", .T., "RJ", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
    RETURN .T.
 
 
+FUNCTION select_o_rj( cId )
+
+   SELECT ( F_RJ )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_rj( cId )
 
 
 FUNCTION seek_fakt( cIdFirma, cIdTipDok, cBrDok, cIdRoba, cTag )

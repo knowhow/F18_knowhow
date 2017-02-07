@@ -27,7 +27,7 @@ FUNCTION set_a_dbf_sif()
    hRec[ "dbf_tag" ]        := "ID"
    hRec[ "sql_in" ]        := "rpad( id, 10 ) || rpad(id2, 10)"
    hRec[ "dbf_key_block" ] := {|| field->id + field->id2 }
-   set_a_sqlsifarnik( "sast", "SAST", F_SAST, hRec  )
+   set_a_sql_sifarnik( "sast", "SAST", F_SAST, hRec  )
 
 
    hRec := hb_Hash()

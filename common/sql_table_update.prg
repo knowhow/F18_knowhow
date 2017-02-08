@@ -54,7 +54,6 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
       lSqlTable := hDbfRec[ "sql" ]
       cSqlTableFullName   := F18_PSQL_SCHEMA_DOT + cTable
 
-      Select( cDbfAlias )
       IF cTable == "fin_suban"
          AltD()
       ENDIF

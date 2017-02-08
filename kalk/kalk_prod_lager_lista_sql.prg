@@ -289,9 +289,7 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( oDataset, hParams )
       nMpvUlaz := oRow:FieldGet( oRow:FieldPos( "mpvu" ) )
       nMpvIzlaz := oRow:FieldGet( oRow:FieldPos( "mpvi" ) )
 
-      SELECT roba
-      GO TOP
-      SEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       IF _roba_tip_tu == "N" .AND. roba->tip $ "TU"
          oDataset:Skip()

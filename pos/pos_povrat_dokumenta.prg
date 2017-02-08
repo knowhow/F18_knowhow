@@ -131,8 +131,7 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
          .AND. field->idvd == "42"
 
       cT_roba := field->idroba
-      SELECT roba
-      SEEK cT_roba
+      select_o_roba( cT_roba )
 
       SELECT pos
 
@@ -229,8 +228,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
 
       hb_HDel( hRec, "rbr" )
 
-      SELECT roba
-      HSEEK hRec[ "idroba" ]
+      select_o_roba( hRec[ "idroba" ] )
 
       hRec[ "robanaz" ] := roba->naz
       hRec[ "jmj" ] := roba->jmj
@@ -251,7 +249,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
       IF _oper == "2"
 
          SET ORDER TO TAG "1"
-         HSEEK hRec[ "idroba" ]
+         HSEEK hRec[ "idroba" ] // priprz
 
          IF !Found()
             APPEND BLANK

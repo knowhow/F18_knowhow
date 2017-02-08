@@ -167,15 +167,13 @@ FUNCTION Get1_RN()
    _MU_I := "1"
    // check_datum_posljednje_kalkulacije()
 
-   SELECT TARIFA
-   HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
+   select_o_tarifa( _IdTarifa )
    SELECT kalk_pripr  // napuni tarifu
 
    @ form_x_koord() + 13, form_y_koord() + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
    READ
    IF kalk_is_novi_dokument()
-      SELECT ROBA
-      HSEEK _IdRoba
+      select_o_roba( _IdRoba )
       IF koncij->naz == "P2"
          _VPC := PlC
       ELSE

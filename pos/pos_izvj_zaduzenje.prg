@@ -224,9 +224,8 @@ FUNCTION PrepisZad( cNazDok )
          ?? PadR( IdRoba, 8 ), ""
       ENDIF
 
-      SELECT ROBA
-
-      HSEEK POS->IdRoba
+      select_o_roba( POS->IdRoba )
+      
       ?? PadR ( _field->Naz, nRobaSir ), _field->Jmj, ""
       SELECT POS
       IF gVrstaRS == "S"

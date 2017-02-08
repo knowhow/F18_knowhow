@@ -130,11 +130,8 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
             LOOP
          ENDIF
 
-         SELECT roba
-         hseek kalk_pripr->idroba
-
-         SELECT tarifa
-         hseek kalk_pripr->idtarifa
+         select_o_roba( kalk_pripr->idroba )
+         select_o_tarifa( kalk_pripr->idtarifa )
 
          SELECT kalk_pripr
 
@@ -219,7 +216,7 @@ STATIC FUNCTION _get_naslov_dokumenta( id_vd )
    ENDIF
 
    RETURN _ret
-   
+
 
 
 STATIC FUNCTION _get_line()

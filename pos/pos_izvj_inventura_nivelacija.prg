@@ -152,8 +152,8 @@ FUNCTION StampaInv( fLista, lAzurirana )
          nCij2 := priprz->ncijena
 
          IF lAzurirana
-            SELECT ( cRSdbf )
-            HSEEK cIdRoba
+            //SELECT ( cRSdbf )
+            select_o_roba( cIdRoba )
             cRobaNaz := naz
             cJmj := jmj
             SELECT priprz

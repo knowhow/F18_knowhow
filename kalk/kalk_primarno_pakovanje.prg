@@ -101,7 +101,7 @@ FUNCTION NaPrimPak()
          ENDDO
          SELECT sifv   // "ID","id+oznaka+IdSif+Naz"
          SET ORDER TO TAG "ID"
-         SEEK PadR( "ROBA", 8 ) + "PAKO" + PadR( cIdRoba, 15 )
+--         SEEK PadR( "ROBA", 8 ) + "PAKO" + PadR( cIdRoba, 15 )
          aSastav := {}
          // napuni matricu aSastav parovima ("SIFRA",KOLICINA)
          // --------------------------------------------------
@@ -153,7 +153,7 @@ FUNCTION NaPrimPak()
          // -----------------------------------------------
          IF Len( aSastav ) != 0
             SELECT ROBA
-            HSEEK cIdRoba
+        --    HSEEK cIdRoba
             SELECT kalk_pripr        // kalk_priprema dokumenta
             IF ( ( nulaz - nizlaz )  <> 0 )
                nRBr++
@@ -321,7 +321,7 @@ FUNCTION NaPrPak2()
          // generisi stavku zaduzenja sekundarnog pakovanja
          // -----------------------------------------------
          IF Len( aSastav ) != 0
-            SELECT ROBA; HSEEK cIdRoba
+    --        SELECT ROBA; HSEEK cIdRoba
             SELECT kalk_pripr        // kalk_priprema dokumenta
             IF ( ( nulaz - nizlaz )  <> 0 )
                nRBr++

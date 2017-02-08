@@ -186,8 +186,8 @@ FUNCTION pos_kartica_artikla()
          ENDIF
 
          IF cPocSt == "N"
-            SELECT ( cRSdbf )
-            HSEEK cIdRoba
+            //SELECT ( cRSdbf )
+            select_o_roba( cIdRoba )
             nCijena1 := pos_get_mpc()
             SELECT POS
             nStanje := 0
@@ -227,8 +227,9 @@ FUNCTION pos_kartica_artikla()
                SKIP
             ENDDO
 
-            SELECT ( cRSdbf )
-            HSEEK cIdRoba
+            //SELECT ( cRSdbf )
+            select_o_roba( cIdRoba )
+            
             nCijena1 := pos_get_mpc()
 
             IF fSt
@@ -277,8 +278,8 @@ FUNCTION pos_kartica_artikla()
             ENDIF
 
             IF fSt
-               SELECT ( cRSdbf )
-               HSEEK cIdRoba
+               //SELECT ( cRSdbf )
+               select_o_roba( cIdRoba )
                IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 3
                   FF
                ENDIF

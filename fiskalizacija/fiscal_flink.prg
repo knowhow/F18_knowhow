@@ -756,8 +756,7 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
    DO WHILE !Eof() .AND. field->idfirma == cFirma .AND. field->idtipdok == cTipDok .AND. field->brdok == cBrDok
 
 
-      SELECT roba
-      SEEK fakt->idroba
+      select_o_roba( fakt->idroba )
 
       SELECT fakt
 
@@ -891,13 +890,12 @@ FUNCTION flink_type()
 // ------------------------------------------------
 // vraca sifru dobavljaca
 // ------------------------------------------------
-STATIC FUNCTION _g_sdob( id_roba )
+STATIC FUNCTION _g_sdob( cIdRoba )
 
    LOCAL _ret := 0
    LOCAL nDbfArea := Select()
 
-   SELECT roba
-   SEEK id_roba
+   select_o_roba( cIdRoba )
 
    IF Found()
       _ret := Val( AllTrim( field->sifradob ) )

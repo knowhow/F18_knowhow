@@ -92,10 +92,9 @@ FUNCTION kalk_get_1_41()
 
    IF kalk_is_novi_dokument()
 
-      SELECT koncij
-      SEEK Trim( _idkonto )
-      SELECT ROBA
-      HSEEK _IdRoba
+      select_o_koncij( _idkonto )
+      select_o_roba( _IdRoba )
+      
       _MPCSaPP := kalk_get_mpc_by_koncij_pravilo()
 
       IF gMagacin == "2"

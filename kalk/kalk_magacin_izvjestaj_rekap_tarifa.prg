@@ -133,7 +133,7 @@ FUNCTION RekMagTar()
             SELECT KALK
 
             SELECT roba
-            HSEEK kalk->idroba
+    --        HSEEK kalk->idroba
             SELECT kalk
             set_pdv_public_vars()
             IF _PORVT <> 0

@@ -199,8 +199,7 @@ STATIC FUNCTION pocetno_stanje_sql( hParams )
       nVrijednost := oRow:FieldGet( oRow:FieldPos( "vrijednost" ) )
       __vrijednost += nVrijednost
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       IF Round( nKolicina, 2 ) <> 0
 

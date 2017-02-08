@@ -305,13 +305,11 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dat_dok, cBrDok )
 
    MsgO( "Eksport dokumenta u toku ..." )
 
-   DO WHILE !Eof() .AND. field->idpos == cIdPos .AND. field->idvd == cIdTipDk .AND. ;
-         field->datum == dat_dok .AND. field->brdok == cBrDok
+   DO WHILE !Eof() .AND. field->idpos == cIdPos .AND. field->idvd == cIdTipDk .AND. field->datum == dat_dok .AND. field->brdok == cBrDok
 
       cIdRoba := field->idroba
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       SELECT pom
       APPEND BLANK
@@ -464,9 +462,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
             ENDIF
          ENDIF
 
-         SELECT roba
-         SET ORDER TO TAG "ID"
-         HSEEK pos->idroba
+         select_o_roba( pos->idroba )
 
          SELECT pom
          SET ORDER TO TAG "1"

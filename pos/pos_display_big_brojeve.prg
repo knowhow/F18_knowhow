@@ -478,8 +478,7 @@ FUNCTION NazivRobe( cIdRoba )
 
    LOCAL nCurr := Select()
 
-   SELECT roba
-   HSEEK cIdRoba
+   select_o_roba( cIdRoba )
    SELECT nCurr
 
    RETURN ( roba->Naz )

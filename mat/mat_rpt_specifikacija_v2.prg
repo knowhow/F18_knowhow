@@ -496,7 +496,7 @@ STATIC FUNCTION FFor2s()
 
    ++nRBr
    cIdRoba := idroba
-   SELECT ROBA; SEEK cIdRoba
+   select_o_roba( cIdRoba )
    cArtikal := Trim( naz )
    cJMJ     := Trim( jmj )
    SELECT ( nArr )

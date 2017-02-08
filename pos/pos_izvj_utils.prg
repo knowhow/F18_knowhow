@@ -94,8 +94,7 @@ FUNCTION KasaIzvuci( cIdVd, cDobId )
             LOOP
          ENDIF
 
-         SELECT roba
-         HSEEK pos->IdRoba
+         select_o_roba( pos->IdRoba )
 
          IF roba->( FieldPos( "sifdob" ) ) <> 0
             IF !Empty( cDobId )

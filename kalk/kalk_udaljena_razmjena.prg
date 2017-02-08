@@ -445,7 +445,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
             hRec := dbf_get_rec()
             SELECT e_roba
             SET ORDER TO TAG "ID"
-            SEEK cIdRoba
+            SEEK cIdRoba // e_roba
             IF !Found()
                APPEND BLANK
                dbf_update_rec( hRec )

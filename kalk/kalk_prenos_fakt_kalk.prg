@@ -86,9 +86,7 @@ FUNCTION ProvjeriSif( clDok, cImePoljaID, nOblSif, clFor, lTest )
 
                nTArea := Select()
 
-               SELECT roba
-               GO TOP
-               SEEK fakt->idroba
+               select_o_roba( fakt->idroba )
 
                IF !Found()
                   APPEND BLANK

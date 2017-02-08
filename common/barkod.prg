@@ -12,14 +12,13 @@
 #include "f18.ch"
 
 
-FUNCTION roba_ocitaj_barkod( id_roba )
+FUNCTION roba_ocitaj_barkod( cIdRoba )
 
    LOCAL nDbfArea := Select()
    LOCAL _bk := ""
 
-   IF !Empty( id_roba )
-      SELECT roba
-      SEEK id_roba
+   IF !Empty( cIdRoba )
+      select_o_roba( cIdRoba )
       _bk := field->barkod
       SELECT ( nDbfArea )
    ENDIF

@@ -279,17 +279,14 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
          lDatFakt := .F.
 
-         SELECT koncij
-         GO TOP
 
          IF finmat->idvd $ "14#94#96#95"
-            SEEK finmat->idkonto2
+            select_o_koncij( finmat->idkonto2 )
          ELSE
-            SEEK finmat->idkonto
+            select_o_koncij( finmat->idkonto )
          ENDIF
 
-         SELECT roba
-         HSEEK finmat->idroba
+         select_o_roba( finmat->idroba )
 
          SELECT trfp
          GO TOP

@@ -721,7 +721,8 @@ FUNCTION mat_st_anal_nalog( fnovi )
             nCP := PCol() + 1
             @ PRow(), PCol() + 1 SAY IdRoba
             nCR := PCol() + 1
-            SELECT ROBA; HSEEK mat_pripr->idroba
+            
+            select_o_roba( mat_pripr->idroba )
             IF gkonto == "D" .OR. g2Valute == "N"
                aRez := SjeciStr( naz, 40 )
             ELSE

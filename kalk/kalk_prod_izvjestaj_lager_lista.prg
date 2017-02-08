@@ -282,8 +282,7 @@ FUNCTION lager_lista_prodavnica()
          LOOP
       ENDIF
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       nMink := roba->mink
 
@@ -436,8 +435,7 @@ FUNCTION lager_lista_prodavnica()
             Eval( bZagl )
          ENDIF
 
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
 
          SELECT kalk
          aNaz := Sjecistr( roba->naz, 20 )
@@ -545,11 +543,8 @@ FUNCTION lager_lista_prodavnica()
          @ PRow(), PCol() + 1 SAY nMPVI PICT gPicDem
          @ PRow(), PCol() + 1 SAY nMPVU - nMPVI + nPMPV PICT gPicDem
 
-         SELECT koncij
-         SEEK Trim( cIdKonto )
-
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_koncij( cIdKonto )
+         select_o_roba( cIdRoba )
 
          _mpc := kalk_get_mpc_by_koncij_pravilo()
 
@@ -971,9 +966,7 @@ STATIC FUNCTION _gen_xml( params )
    DO WHILE !Eof() .AND. _idfirma + _idkonto == field->idfirma + field->pkonto .AND. IspitajPrekid()
 
       _idroba := field->Idroba
-
-      SELECT roba
-      HSEEK _idroba
+      select_o_roba( _idroba )
 
       SELECT kalk
 
@@ -1032,11 +1025,8 @@ STATIC FUNCTION _gen_xml( params )
       // ne prikazuj stavke 0
       IF params[ "nule" ] .OR. Round( _mpv_u - _mpv_i, 2 ) <> 0
 
-         SELECT koncij
-         SEEK _idkonto
-
-         SELECT roba
-         HSEEK _idroba
+         select_o_koncij( _idkonto )
+         select_o_roba( _idroba )
 
          _mpcs := kalk_get_mpc_by_koncij_pravilo()
 

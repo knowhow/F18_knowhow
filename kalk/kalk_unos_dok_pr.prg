@@ -56,16 +56,16 @@ FUNCTION kalk_unos_dok_pr()
    IF nRbr < 10
       @ form_x_koord() + 12, form_y_koord() + 2 SAY8 "Proizvod  " GET _IdRoba PICT "@!" ;
          VALID  {|| P_Roba( @_IdRoba, NIL, NIL, "IDP" ), ;
-         say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ),;
-          _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
+         say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), ;
+         _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
 
       @ form_x_koord() + 13, form_y_koord() + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
          VALID {|| _Kolicina <> 0 .AND. iif( InRange( nRbr, 10, 99 ), error_bar( _idFirma + "-" + _idvd + "-" + _brdok, "PR dokument max 9 artikala" ), .T. ) }
 
    ELSE
 
-      @ form_x_koord() + 12, form_y_koord() + 2  SAY8 "Sirovina  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ),;
-       _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
+      @ form_x_koord() + 12, form_y_koord() + 2  SAY8 "Sirovina  " GET _IdRoba PICT "@!" VALID  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), ;
+         _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
       @ form_x_koord() + 13, form_y_koord() + 2   SAY8 "Količina  " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
       @ form_x_koord() + 15, form_y_koord() + 2   SAY "N.CJ Sirovina:"
@@ -108,21 +108,17 @@ FUNCTION kalk_unos_dok_pr()
 
    PopWa()
 
-   SELECT tarifa
-   HSEEK _IdTarifa
-
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_tarifa( _IdTarifa )
+   select_o_koncij( _idkonto )
    SELECT kalk_pripr
 
    _MKonto := _Idkonto
    _MU_I := "1"
 
-   //check_datum_posljednje_kalkulacije()
+   // check_datum_posljednje_kalkulacije()
 
    IF kalk_is_novi_dokument()
-      SELECT ROBA
-      HSEEK _IdRoba
+      select_o_roba( _IdRoba )
       _VPC := KoncijVPC()
       _TCarDaz := "%"
       _CarDaz := 0
@@ -243,7 +239,7 @@ FUNCTION kalk_pripr_pobrisi_sirovine( cIdFirma, cIdVd, cBrDok, nRbr, bDokument )
       IF Val( field->rbr ) > 99 .AND. ;
             Eval( bDokument, cIdFirma, cIdVd, cBrDok ) .AND. ;
             ( InRange( Val( field->rBr ), nRbr * 100 + 1, nRbr * 100 + 99 ) .OR. ; // nRbr = 2, delete 201-299
-         Val( field->rBr ) > 900 )
+            Val( field->rBr ) > 900 )
          my_delete()
       ENDIF
       GO nTrec
@@ -262,8 +258,7 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
    LOCAL nKolS, nKolZN, nC1, nC2, dDatNab
    LOCAL hRec
 
-   SELECT ROBA
-   HSEEK _idroba
+   select_o_roba( _idroba )
 
    SELECT kalk_pripr
 
@@ -274,8 +269,7 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
    PushWa()
    nRbr100 := nRbr * 100
 
-   SELECT SAST  // prolazak kroz sastavnicu proizvoda
-   HSEEK _idroba
+   select_o_sast( _idroba )
    DO WHILE !Eof() .AND. sast->id == _idroba
 
       SELECT roba
@@ -351,7 +345,7 @@ FUNCTION kalk_pripr_pr_nv_proizvod( cIdFirma, cIdVd, cBrDok, nRbr, bDokument, bP
    DO WHILE !Eof()
 
       IF Eval( bDokument, cIdFirma, cIdVd, cBrDok ) .AND. ;   // gledaj samo stavke jednog dokumenta ako ih ima vise u pripremi
-         Eval( bProizvodPripadajuceSirovine ) == nRbr // when field->rbr == 301, 302, 303 ...  EVAL( bProizvod ) = 3
+            Eval( bProizvodPripadajuceSirovine ) == nRbr // when field->rbr == 301, 302, 303 ...  EVAL( bProizvod ) = 3
          nNV += field->NC * field->kolicina
          IF field->gkolicina < field->kolicina
             error_bar(  "KA_" + cIdFirma + "-" + cIdVD + "-" + cBrDok, ;
@@ -385,7 +379,7 @@ FUNCTION proizvod_proracunaj_nc_za( nRbr, cIdFirma, cIdVd, cBrDok, bDokument, bP
    DO WHILE !Eof()
 
       IF Eval( bDokument, cIdFirma, cIdVd, cBrDok ) .AND. ;   // gledaj samo stavke jednog dokumenta ako ih ima vise u pripremi
-         Eval( bProizvod ) == nRbr // when field->rbr == 301, 302, 303 ...  EVAL( bProizvod ) = 3
+            Eval( bProizvod ) == nRbr // when field->rbr == 301, 302, 303 ...  EVAL( bProizvod ) = 3
          nNV += field->NC * field->kolicina
          IF field->gKolicina < field->kolicina
             error_bar( "KA_" + cIdfirma + "-" + cIdvd + "-" + cBrDok, ;

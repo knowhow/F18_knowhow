@@ -203,8 +203,7 @@ FUNCTION kalk_generisi_95_za_manjak_16_za_visak()
    PRIVATE nRBr := 0, nRBr2 := 0
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cbrdok == brdok
       scatter()
-      SELECT roba
-      HSEEK _idroba
+      select_o_roba( _idroba )
 
       IF koncij->naz <> "N1"
          kalk_vpc_po_kartici( @nFaktVPC, _idfirma, _idkonto, _idroba )
@@ -330,7 +329,7 @@ FUNCTION MNivPoProc()
       nUlaz := nIzlaz := 0
       nVPVU := nVPVI := nNVU := nNVI := 0
       nRabat := 0
-      SELECT roba; HSEEK cIdRoba; SELECT kalk
+--      SELECT roba; HSEEK cIdRoba; SELECT kalk
       DO WHILE !Eof() .AND. cidfirma + cidkonto + cIdRoba == idFirma + mkonto + idroba
 
          IF ddatdok < datdok  // preskoci
@@ -373,7 +372,7 @@ FUNCTION MNivPoProc()
          SKIP
       ENDDO
 
-      SELECT roba; HSEEK cIdRoba; SELECT kalk
+--      SELECT roba; HSEEK cIdRoba; SELECT kalk
       IF  ( cVarijanta = "1" .AND. roba->n1 = 0 )
          skip; LOOP
       ENDIF
@@ -454,8 +453,7 @@ FUNCTION KorekPC()
    DO WHILE !Eof() .AND. idfirma + mkonto = self_organizacija_id() + cMagac
 
       cIdRoba := Idroba; nUlaz := nIzlaz := 0; nVPVU := nVPVI := nNVU := nNVI := 0; nRabat := 0
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       SELECT kalk
       IF roba->tip $ "TU"; skip; loop; ENDIF
@@ -626,8 +624,7 @@ FUNCTION kalk_generisi_prijem16_iz_otpreme96()
    PRIVATE nRBr := 0
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cbrdok == brdok
       scatter()
-      SELECT roba
-      HSEEK _idroba
+      select_o_roba( _idroba )
 
       SELECT kalk_pripr2
       APPEND BLANK

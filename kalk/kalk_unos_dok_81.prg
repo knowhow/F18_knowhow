@@ -117,11 +117,9 @@ FUNCTION kalk_unos_dok_81( hParams )
       _idroba := Left( _idroba, 10 )
    ENDIF
 
-   SELECT tarifa
-   SEEK roba->idtarifa
+   select_o_tarifa( roba->idtarifa )
+   select_o_koncij( _idkonto )
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
    SELECT kalk_pripr
 
    _pkonto := _idkonto
@@ -140,10 +138,9 @@ FUNCTION kalk_unos_dok_81( hParams )
    @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Količina " GET _kolicina PICT PicKol VALID _kolicina <> 0
 
    IF kalk_is_novi_dokument()
-      SELECT koncij
-      SEEK Trim( _idkonto )
-      SELECT roba
-      HSEEK _idroba
+      select_o_koncij( _idkonto )
+      select_o_roba( _idroba )
+      
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
       _TMarza2 := "%"
       _TCarDaz := "%"

@@ -140,9 +140,9 @@ FUNCTION pos_rpt_stanje_partnera()
          DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
             // pretraga po sifri dobavljaca
-            SELECT roba
+            //SELECT roba
             IF roba->( FieldPos( "sifdob" ) ) <> 0
-               HSEEK pos->idroba
+               select_o_roba( pos->idroba )
                IF roba->id == pos->idroba
                   IF !Empty( cSifraDob )
                      IF ( roba->sifdob <> cSifraDob )

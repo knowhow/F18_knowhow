@@ -21,7 +21,7 @@ FUNCTION KalkStanje( cIdRoba )
 
    PushWA()
 
-   //SELECT roba
+   // SELECT roba
 
 /*
    SELECT ( F_KALK )
@@ -35,7 +35,7 @@ FUNCTION KalkStanje( cIdRoba )
 
 
    SET ORDER TO TAG "7" // "7","Idroba"
-   SEEK cIdRoba
+ --  SEEK cIdRoba
 */
 
    find_kalk_za_period( self_organizacija_id(), NIL, NIL, cIdRoba )
@@ -50,7 +50,7 @@ FUNCTION KalkStanje( cIdRoba )
    DO WHILE !Eof()  .AND. cIdRoba == IdRoba
       nUlaz := nIzlaz := 0
       IF !Empty( mkonto )
-         nPos := AScan ( aStanje, {| x| x[ 1 ] == KALK->mkonto } )
+         nPos := AScan ( aStanje, {| x | x[ 1 ] == KALK->mkonto } )
          IF nPos == 0
             AAdd ( aStanje, { mkonto, 0, 0 } )
             nPos := Len ( aStanje )
@@ -66,7 +66,7 @@ FUNCTION KalkStanje( cIdRoba )
             nUlaz  := -kolicina
          ENDIF
       ELSE
-         nPos := AScan ( aStanje, {| x| x[ 1 ] == KALK->pkonto } )
+         nPos := AScan ( aStanje, {| x | x[ 1 ] == KALK->pkonto } )
          IF nPos == 0
             AAdd ( aStanje, { pkonto, 0, 0 } )
             nPos := Len ( aStanje )
@@ -97,7 +97,7 @@ FUNCTION KalkStanje( cIdRoba )
    PRIVATE ZN_Rabat  := aZN[ 3 ]           // rabat po zadnjoj nabavci
    PRIVATE ZN_NabCij := aZN[ 4 ]           // nabavna cijena po zadnjoj nabavci
 
-   //SELECT roba
+   // SELECT roba
 
    BoxStanje( aStanje, cIdRoba )      // nUl,nIzl
 
@@ -121,7 +121,7 @@ FUNCTION BoxStanje( aStanje, cIdroba )
    nLen := Len ( aStanje )
    nLenKonta := IF( nLen > 0, Len( aStanje[ 1, 1 ] ), 7 )
 
-   ASort( aStanje,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+   ASort( aStanje,,, {| x, y | x[ 1 ] < y[ 1 ] } )
 
    // ucitajmo dodatne parametre stanja iz FMK.INI u aDodPar
    // ------------------------------------------------------
@@ -136,10 +136,7 @@ FUNCTION BoxStanje( aStanje, cIdroba )
    NEXT
    nLenDP := IF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
-   SELECT roba
-   // PushWA()
-   SET ORDER TO TAG "ID"
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
    Box( , Min( 6 + nLen + Int( ( nLenDP ) / 2 ), 23 ), 75 )
    Beep( 1 )
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "ARTIKAL: "
@@ -158,13 +155,13 @@ FUNCTION BoxStanje( aStanje, cIdroba )
       @ nR, Col() SAY cDiv
       @ nR, Col() SAY aStanje[ nC ][ 3 ] PICT picdem
       @ nR, Col() SAY cDiv
-      nPom := aStanje[ nC ][ 2 ] -aStanje[ nC ][ 3 ]
+      nPom := aStanje[ nC ][ 2 ] - aStanje[ nC ][ 3 ]
       @ nR, Col() SAY nPom PICT picdem
       @ nR, Col() SAY cDiv
       nTUl  += aStanje[ nC ][ 2 ]
       nTIzl += aStanje[ nC ][ 3 ]
       nTSta += nPom
-      nR ++
+      nR++
 
       IF nC % 15 = 0 .AND. nC < nLen
          Inkey( 0 )
@@ -176,7 +173,7 @@ FUNCTION BoxStanje( aStanje, cIdroba )
    @ nR, form_y_koord() + 2 SAY cDiv + REPL( "-", nLenKonta ) + cDiv + REPL ( "-", npd ) + cDiv + ;
       REPL ( "-", npd ) + cDiv + ;
       REPL ( "-", npd ) + cDiv
-   nR ++
+   nR++
    @ nR, form_y_koord() + 2 SAY cDiv + PadC( "UKUPNO:", nLenKonta ) + cDiv
    @ nR, Col() SAY nTUl PICT picdem
    @ nR, Col() SAY cDiv

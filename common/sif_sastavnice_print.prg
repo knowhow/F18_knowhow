@@ -64,10 +64,7 @@ FUNCTION pr_pr_sast() // lista sastavnica sa pretpostavljenim sirovinama
       cIdRoba := field->id
       cRobaNaz := ( field->naz )
 
-      SELECT sast
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdRoba
+      select_o_sast( cIdRoba )
 
       IF !Found()
 
@@ -223,10 +220,7 @@ FUNCTION pr_br_sast()
 
       cIdRoba := field->id
 
-      SELECT sast
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdRoba
+      select_o_sast( cIdRoba )
 
       IF !Found()
          SELECT roba
@@ -351,10 +345,7 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
 
       cIdRoba := field->id
 
-      SELECT sast
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdRoba
+      select_o_sast( cIdRoba )
 
       IF !Found()
 
@@ -504,10 +495,7 @@ FUNCTION pr_dupl_sast()
 
       @ m_x + 1, m_y + 2 SAY "generisem uzorak: " + cIdRoba
 
-      SELECT sast
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdRoba
+      select_o_sast( cIdRoba )
 
       IF !Found()
          SELECT roba
@@ -561,10 +549,7 @@ FUNCTION pr_dupl_sast()
 
       @ m_x + 1, m_y + 2 SAY "provjeravam uzorke: " + cTmpRoba
 
-      SELECT sast
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cTmpRoba
+      select_o_sast( cTmpRoba )
 
       IF !Found()
          SELECT roba
@@ -678,7 +663,7 @@ FUNCTION _exp_sast_dbf()
    IF !create_dbf_r_export( aDbf )
       RETURN .F.
    ENDIF
-   
+
    O_R_EXP
    o_sastavnica()
    o_roba()
@@ -697,9 +682,7 @@ FUNCTION _exp_sast_dbf()
          LOOP
       ENDIF
 
-      SELECT roba
-      GO TOP
-      SEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       cR_naz := field->naz
       cR_jmj := field->jmj

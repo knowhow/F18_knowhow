@@ -69,8 +69,7 @@ FUNCTION roba_pregled_prodaje_po_grupama()
       cIdRoba := idroba
       cG := cPodgrupa := ""
 
-      SELECT ROBA
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
       info_bar( "gen", "prodaja po grupama:" + cIdRoba )
 
       cG := IzSifKRoba( "GR1", cIdRoba, .F. )

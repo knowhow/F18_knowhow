@@ -1382,10 +1382,8 @@ FUNCTION kalk_set_diskont_mpc()
    my_flock()
 
    DO WHILE !Eof()
-      SELECT ROBA
-      HSEEK kalk_pripr->idroba
-      SELECT TARIFA
-      HSEEK ROBA->idtarifa
+      select_o_roba( kalk_pripr->idroba )
+      select_o_tarifa( ROBA->idtarifa )
       get_tarifa_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pKonto, kalk_pripr->idRoba, @aPorezi )
       SELECT kalk_pripr
       Scatter()
@@ -1426,8 +1424,7 @@ FUNCTION MPCSAPPuSif()
       HSEEK cIdKonto
       SELECT kalk_pripr
       DO WHILE !Eof() .AND. pkonto == cIdKonto
-         SELECT ROBA
-         HSEEK kalk_pripr->idroba
+         select_o_roba( kalk_pripr->idroba )
          IF Found()
             StaviMPCSif( kalk_pripr->mpcsapp, .F. )
          ENDIF
@@ -1464,12 +1461,11 @@ FUNCTION MPCSAPPiz80uSif()
    SELECT KALK
    SEEK cIdFirma + cIdVDU + cBrDokU
    cIdKonto := KALK->pkonto
-   SELECT KONCIJ
-   HSEEK cIdKonto
+   select_o_koncij( cIdKonto )
 
    SELECT KALK
    DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
-      SELECT ROBA; HSEEK KALK->idroba
+      select_o_roba( KALK->idroba )
       IF Found()
          StaviMPCSif( KALK->mpcsapp, .F. )
       ENDIF
@@ -1495,10 +1491,9 @@ FUNCTION VPCSifUDok()
    GO TOP
    my_flock()
    DO WHILE !Eof()
-      SELECT ROBA
-      HSEEK kalk_pripr->idroba
-      SELECT KONCIJ
-      SEEK Trim( kalk_pripr->mkonto )
+      select_o_roba( kalk_pripr->idroba )
+      select_o_koncij( kalk_pripr->mkonto )
+
       // SELECT TARIFA; HSEEK ROBA->idtarifa
       SELECT kalk_pripr
       Scatter()

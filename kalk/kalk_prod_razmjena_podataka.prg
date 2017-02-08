@@ -1096,7 +1096,7 @@ FUNCTION fakt_15_kalk_15()
          ENDIF
 
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-            SELECT ROBA; HSEEK fakt->idroba
+        --    SELECT ROBA; HSEEK fakt->idroba
 
         --    SELECT tarifa; HSEEK roba->idtarifa
             SELECT koncij; SEEK Trim( cidkonto )

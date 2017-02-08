@@ -414,7 +414,7 @@ STATIC FUNCTION ScanPos( dDatumOd, dDatumDo, cTKumP )
       ENDIF
 
       SELECT roba
-      SEEK pos->idroba
+     -- SEEK pos->idroba
       SELECT pos
 
       get_tarifa_by_koncij_region_roba_idtarifa_2_3( koncij->id, pos->idRoba, @aPorezi )

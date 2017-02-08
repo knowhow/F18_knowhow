@@ -456,7 +456,7 @@ STATIC FUNCTION pregled_kartice()
    IF !Empty( cMkonto )
 
       SELECT kalk
-      SEEK cidfirma + cmkonto + cIdRoba
+    --  SEEK cidfirma + cmkonto + cIdRoba
 
       nStanje := nNV := nVPV := 0
 
@@ -484,7 +484,7 @@ STATIC FUNCTION pregled_kartice()
       ENDDO
    ELSE
       SELECT kalk
-      SEEK cidfirma + cpkonto + cIdRoba
+    --  SEEK cidfirma + cpkonto + cIdRoba
       nStanje := nNV := nMPV := 0
       DO WHILE !Eof() .AND. idfirma + pkonto + idroba == cidfirma + cpkonto + cIdRoba
          cId := idfirma + idvd + brdok + rbr
@@ -543,7 +543,7 @@ STATIC FUNCTION pregled_kartice()
 
    SET CURSOR ON
 
-   SELECT roba; HSEEK cIdRoba; SELECT kalk
+ --  SELECT roba; HSEEK cIdRoba; SELECT kalk
    IF Empty( cPkonto )
       SELECT koncij; SEEK Trim( cmkonto ); SELECT kalk
       @ form_x_koord() + 2, form_y_koord() + 1 SAY "Pregled kartice magacin: "; ?? cMkonto, "-", cIdRoba,"-", Left( roba->naz, 40 )

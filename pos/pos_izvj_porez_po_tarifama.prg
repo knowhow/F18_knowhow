@@ -307,8 +307,7 @@ FUNCTION Porezi( cIdVd, cDat0, aTarife, cNaplaceno )
 
          ELSE  // cnaplaceno="3"
 
-            SELECT roba
-            HSEEK pos->idroba
+            select_o_roba( pos->idroba )
 
             IF roba->( FieldPos( "idodj" ) ) <> 0
                SELECT odj

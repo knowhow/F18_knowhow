@@ -283,13 +283,13 @@ FUNCTION pos_stanje_artikala
 
          IF Round( nStanje, 4 ) <> 0 .OR. cNule == "D"
 
-            SELECT ( cRSdbf )
-            HSEEK cIdRoba
+            //SELECT ( cRSdbf )
+            select_o_roba( cIdRoba )
 
             ? cLM + PadL( AllTrim( Str( ++_n_rbr, 5 ) ), 5 ) + ")"
             ?? cIdRoba, PadR( roba->naz, nRob ) + " "
 
-            //
+
             SELECT POS
 
             IF cVrstaRs <> "S"

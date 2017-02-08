@@ -132,22 +132,18 @@ FUNCTION PlFill_Vrsta()
    ENDIF
 
    RETURN
-// }
+
 
 FUNCTION PlFillIdPartner( cIdPartner, cIdRoba )
 
-   // {
    LOCAL nArr
    IF Empty( cIdPartner ) .OR. Empty( cIdRoba )
       RETURN
    ENDIF
    nArr := Select()
-   o_roba()
-   SELECT roba
-   HSEEK cIdRoba
+   select_o_roba( cIdRoba )
    REPLACE field->idpartner WITH cIdPartner
 
    SELECT ( nArr )
 
    RETURN
-// }

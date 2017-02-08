@@ -176,8 +176,8 @@ FUNCTION Stanje2Fakt()
       ENDDO
 
 
-      SELECT roba
-      SEEK cIdRoba
+      select_o_roba( cIdRoba )
+      
       SELECT topsfakt
       nKolicina := nUlaz - nIzlaz
       cIdRoba := PadR( cIdRoba, Len( topsfakt->idRoba ) )

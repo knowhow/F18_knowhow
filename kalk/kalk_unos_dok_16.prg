@@ -88,8 +88,9 @@ FUNCTION kalk_get_1_16()
    //DuplRoba()
    _GKolicina := 0
    IF kalk_is_novi_dokument()
-      SELECT ROBA
-      HSEEK _IdRoba
+
+      select_o_roba( _IdRoba )
+
       IF koncij->naz == "P2"
          _nc := plc
          _vpc := plc
@@ -164,10 +165,8 @@ kalk_is_novi_dokument( .T. )
 
    @ form_x_koord() + 13, form_y_koord() + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
-   SELECT ROBA
-   HSEEK _IdRoba
+   select_o_koncij( _idkonto )
+   select_o_roba( _IdRoba )
 
    _VPC := KoncijVPC()
    _TMarza2 := "%"

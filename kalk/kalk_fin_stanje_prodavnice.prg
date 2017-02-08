@@ -205,8 +205,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 
       DO WHILE CMNEOF  .AND. cidfirma + DToS( ddatdok ) + cbroj == idFirma + DToS( datdok ) + idvd + "-" + brdok .AND.  IspitajPrekid()
 
-         SELECT roba
-         HSEEK KALK->idroba
+         select_o_roba( KALK->idroba )
          SELECT KALK
 
          showkorner( 1, 100 )

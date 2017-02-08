@@ -235,8 +235,7 @@ FUNCTION realizacija_radnik
                nTotVP3 += pom->iznos3
 
                IF fPrikPrem == "D"
-                  SELECT roba
-                  HSEEK pom->idroba
+                  select_o_roba( pom->idroba )
                   SELECT pom
                   IF !( roba->k2 = 'X' )
                      IF roba->k7 = '*'
@@ -314,8 +313,9 @@ FUNCTION realizacija_radnik
       nTotal2 := 0
       nTotal3 := 0
       DO WHILE !Eof()
-         SELECT roba
-         HSEEK POM->IdRoba
+      
+         select_o_roba( POM->IdRoba )
+
          SELECT POM
          ? POM->IdRoba + " "
          IF roba->( FieldPos( "K7" ) ) <> 0
@@ -427,8 +427,7 @@ FUNCTION RadnIzvuci( cIdVd )
             LOOP
          ENDIF
 
-         SELECT roba
-         HSEEK pos->idroba
+         select_o_roba( pos->idroba )
 
          IF roba->( FieldPos( "idodj" ) ) <> 0
             SELECT odj

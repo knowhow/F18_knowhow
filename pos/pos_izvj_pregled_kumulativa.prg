@@ -91,8 +91,8 @@ FUNCTION PrepisKumPr()
       ENDIF
       ? cLM
       ?? IdRoba, ""
-      SELECT ROBA
-      HSEEK POS->IdRoba
+      select_o_roba( POS->IdRoba )
+      
       ?? PadR( ROBA->Naz, nRobaSir ), ROBA->Jmj, ""
       SELECT POS
       IF gVrstaRS == "S"

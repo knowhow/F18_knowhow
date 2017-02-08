@@ -160,8 +160,7 @@ FUNCTION fakt_fin_prenos()
 
          nNV := 0
          IF lNCPoSast .AND. ROBA->tip == "P"
-            SELECT SAST
-            HSEEK FAKT->idroba
+            select_o_sast( FAKT->idroba )
             DO WHILE !Eof() .AND. id == FAKT->idroba
                nNV += FAKT->kolicina * SAST->kolicina * get_nabavna_cijena_iz_kalk( SAST->id2, cKonSir )
                SKIP 1
@@ -356,8 +355,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
       ENDIF
       DO WHILE cIdVD == IdVD .AND. cBrDok == BrDok .AND. !Eof()
 
-         SELECT roba
-         HSEEK finmat->idroba
+         select_o_roba( finmat->idroba )
          SELECT trfp2
          SEEK cIdVD + " "
 

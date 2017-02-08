@@ -244,8 +244,7 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
             ENDIF
          ENDIF
 
-         SELECT roba
-         HSEEK kalk->idroba
+         select_o_roba( kalk->idroba )
 
          // treba li gledati usluge ??
          IF _gledati_usluge == "N" .AND. roba->tip $ "U"

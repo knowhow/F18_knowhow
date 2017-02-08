@@ -83,7 +83,6 @@ FUNCTION KalkNaF( cIdRoba, nKols )
    //SET ORDER TO TAG "3" // fakt idroba
    nKols := 0
    seek_fakt_idroba( cIdRoba )
-   SEEK cIdRoba
    DO WHILE !Eof() .AND. cIdRoba == idroba
       IF idtipdok = "0"  // ulaz
          nKols += kolicina
@@ -316,7 +315,7 @@ FUNCTION knjizno_stanje_prodavnica()
 
    SET ORDER TO TAG "4"
 
-   HSEEK cIdfirma + cIdKonto + cIdroba
+ --  HSEEK cIdfirma + cIdKonto + cIdroba
 
    DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba
 
@@ -683,7 +682,7 @@ FUNCTION ima_u_kalk_kumulativ( cKljuc, cTag )
 
 FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
 
-   // {
+
    LOCAL cIdRoba
    LOCAL lUsedRoba
 
@@ -692,14 +691,7 @@ FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
    nSelect := Select()
 
    lUsedRoba := .T.
-   Select( F_ROBA )
-   IF !Used()
-      lUsedRoba := .F.
-      o_roba()
-   ELSE
-      Select( F_ROBA )
-   ENDIF
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
 
    SELECT ( nSelect )
 
@@ -876,7 +868,7 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
 
       select_o_roba( cRoba )
       select_o_tarifa( cTarifa )
-      
+
       set_pdv_array( @aPorezi )
       set_pdv_public_vars()
       SELECT kalk_pripr

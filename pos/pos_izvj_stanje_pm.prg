@@ -204,8 +204,9 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
 
       DO WHILE !Eof() .AND. POS->IdRoba == cIdRoba .AND. ( POS->Datum < cDat .OR. ( !Empty( cSmjena ) .AND. POS->Datum == cDat .AND. POS->Smjena < cSmjena ) )
 
-         SELECT ( cRSdbf )
-         HSEEK cIdRoba
+         //SELECT ( cRSdbf )
+         select_o_roba( cIdRoba )
+         
          IF ( FieldPos( "K9" ) ) <> 0 .AND. !Empty( cK9 )
             IF ( field->k9 <> cK9 )
                SELECT pos
@@ -257,8 +258,9 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       //
       DO WHILE !Eof() .AND. POS->IdRoba == cIdRoba .AND. ( POS->Datum == cDat .OR. ( !Empty( cSmjena ) .AND. POS->Datum == cDat .AND. POS->Smjena < cSmjena ) )
 
-         SELECT ( cRSdbf )
-         HSEEK cIdRoba
+         //SELECT ( cRSdbf )
+         select_o_roba( cIdRoba )
+
          IF ( FieldPos( "K9" ) ) <> 0 .AND. !Empty( cK9 )
             IF ( field->k9 <> cK9 )
                SELECT pos
@@ -311,8 +313,8 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       nStanje := nPstanje + ( nUlaz - nIzlaz )
 
       IF Round( nStanje, 4 ) <> 0 .OR. cNule == "D" .AND. !( nPstanje == 0 .AND. nUlaz == 0 .AND. nIzlaz == 0 )
-         SELECT ( cRSdbf )
-         HSEEK cIdRoba
+        // SELECT ( cRSdbf )
+         select_o_roba( cIdRoba )
          IF ( FieldPos( "K9" ) ) <> 0 .AND. !Empty( cK9 )
             IF ( field->k9 <> cK9 )
                SELECT pos
@@ -456,8 +458,6 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
    RETURN
 
 
-// -------------------------------------------------------------------
-// -------------------------------------------------------------------
 STATIC FUNCTION AnalizirajKontrolnuTabelu( cIdRoba, nStanje, nMpv )
 
    LOCAL nArea

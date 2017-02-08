@@ -81,8 +81,7 @@ Sifra    Naziv              JMJ Kolicina
       ENDIF
       ? cLM
       ?? IdRoba, ""
-      SELECT ROBA
-      HSEEK POS->IdRoba
+      select_o_roba( POS->IdRoba )
       ?? PadR ( _field->Naz, nRobaSir ), _field->Jmj, ""
       SELECT POS
       IF gVrstaRS == "S"

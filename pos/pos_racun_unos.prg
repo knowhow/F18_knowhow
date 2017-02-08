@@ -465,7 +465,7 @@ STATIC FUNCTION NarProvDuple()
       RETURN .F.
    ELSE
       SET ORDER TO TAG "1"
-      HSEEK _IdRoba
+      HSEEK _IdRoba // _pos_pripr
    ENDIF
 
    IF Found()

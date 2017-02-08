@@ -85,12 +85,7 @@ FUNCTION get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPore
    ENDIF
 
    IF cIdTar == nil
-      Select( F_ROBA )
-      IF ( !Used() )
-         lUsedRoba := .F.
-         o_roba()
-      ENDIF
-      SEEK cIdRoba
+      select_o_roba( cIdRoba )
       cTarifa := &cPolje
 
       select_o_tarifa( cTarifa )

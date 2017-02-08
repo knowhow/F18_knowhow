@@ -301,7 +301,7 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
       SELECT r_export
       SET ORDER TO TAG "roba"
       GO TOP
-      SEEK PadR( cIdRoba, 10 )
+      SEEK PadR( cIdRoba, 10 ) // r_export
 
       IF Found()
 

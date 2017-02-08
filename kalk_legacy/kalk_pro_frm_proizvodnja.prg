@@ -72,14 +72,13 @@ FUNCTION legacy_get_1_pr()
 
          my_unlock()
 
-         SELECT ROBA
-         hseek _idroba
+         select_o_roba( _idroba )
 
          IF roba->tip = "P" .AND. nRbr == 1
             // radi se o proizvodu, prva stavka
             nRbr2 := 900
-            SELECT sast
-            hseek  _idroba
+            select_o_sast( _idroba )
+
             DO WHILE !Eof() .AND. id == _idroba
                // setaj kroz sast
                SELECT roba
@@ -213,8 +212,7 @@ FUNCTION legacy_get_1_pr()
    // check_datum_posljednje_kalkulacije()
 
    IF kalk_is_novi_dokument()
-      SELECT ROBA
-      HSEEK _IdRoba
+      select_o_roba( _IdRoba )
       _VPC := KoncijVPC()
       _TCarDaz := "%"
       _CarDaz := 0

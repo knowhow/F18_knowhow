@@ -223,8 +223,8 @@ FUNCTION realizacija_odjeljenja()
             nTotDio3 := 0
             DO WHILE !Eof() .AND. POM->( IdOdj + IdDio ) == ( _IdOdj + _IdDio )
                _IdRoba := POM->IdRoba
-               SELECT roba
-               HSEEK _IdRoba
+
+               select_o_roba( _IdRoba )
                ? Space ( 5 ) + _IdRoba, Left ( roba->Naz, 26 )
                SELECT POM
                DO WHILE !Eof() .AND. ;
@@ -301,7 +301,8 @@ FUNCTION DioIzvuci( cIdVd )
             ( pos_doks->IdPos = "X" .AND. AllTrim ( cIdPos ) <> "X" ) .OR. ;
             ( ! Empty ( cIdPos ) .AND. pos_doks->IdPos <> cIdPos ) .OR. ;
             !Empty( cGotZir ) .AND. ( cGotZir == "Z" .AND. pos_doks->placen <> "Z" .OR. cGotZir <> "Z" .AND. pos_doks->placen == "Z" )
-         Skip; LOOP
+         Skip
+         LOOP
       ENDIF
       Scatter()
 
@@ -314,8 +315,11 @@ FUNCTION DioIzvuci( cIdVd )
             Skip; LOOP
          ENDIF
 
-         SELECT roba; HSEEK pos->idroba
-         SELECT odj; HSEEK roba->idodj
+         select_o_roba( pos->idroba )
+
+         SELECT odj
+         HSEEK roba->idodj
+
          nNeplaca := 0
          IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
             nNeplaca := pos->( Kolicina * Cijena )
@@ -755,8 +759,8 @@ FUNCTION realizacija_dio_objekta
          nTotDio3 := 0
          DO WHILE !Eof() .AND. POM->IdDio == _IdDio
             _IdRoba := POM->IdRoba
-            SELECT roba
-            HSEEK _IdRoba
+            
+            select_o_roba( _IdRoba )
             ? Space ( 5 ) + _IdRoba, Left ( roba->Naz, 28 ), "(" + roba->Jmj + ")"
             SELECT POM
             nRobaKol := 0
@@ -844,8 +848,7 @@ FUNCTION OdjIzvuci( cIdVd )
             LOOP
          ENDIF
 
-         SELECT roba
-         HSEEK pos->idroba
+         select_o_roba( pos->idroba )
 
          IF roba->( FieldPos( "idodj" ) ) <> 0
             SELECT odj

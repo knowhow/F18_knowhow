@@ -103,11 +103,9 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
       cStavke += AllTrim( idroba ) + " x " + AllTrim( Str( kolicina, 8, 2 ) ) + "; "
 
-      SELECT roba
-      HSEEK kalk_pripr->idroba
+      select_o_roba( kalk_pripr->idroba )
+      select_o_koncij( kalk_pripr->pkonto )
 
-      SELECT koncij
-      SEEK kalk_pripr->pkonto
       cPKonto := kalk_pripr->pkonto
 
       IF Empty( koncij->idprodmjes ) // provjeri postoji li koncij zapis

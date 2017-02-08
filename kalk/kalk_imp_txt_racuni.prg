@@ -365,7 +365,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
       --SET ORDER TO TAG "ID_VSD"
 
       GO TOP
-      SEEK cIdRobaSifraDob
+--      SEEK cIdRobaSifraDob
 */
       cIdRobaSifraDob := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
       find_roba_by_sifradob( cIdRobaSifraDob )
@@ -933,7 +933,7 @@ FUNCTION kalk_imp_roba_exist_sifradob()
       -- SET ORDER TO TAG "ID_VSD"  // sifra dobavljaca
       // ENDIF
       GO TOP
-      SEEK cIdRobaSifraDobavljaca
+--      SEEK cIdRobaSifraDobavljaca
 */
 
 

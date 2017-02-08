@@ -34,7 +34,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    ELSE
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto  " GET cIdKonto  VALID  P_KontoFin( @cIdKonto )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto  " GET cIdKonto  VALID  P_Konto( @cIdKonto )
    @ form_x_koord() + 5, form_y_koord() + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner ) PICT "@!"
    IF gFinRj == "D"
       cIdRj := Space( Len( RJ->id ) )

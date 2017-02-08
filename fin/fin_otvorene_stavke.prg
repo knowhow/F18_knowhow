@@ -170,7 +170,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       ELSE
          @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_kontoFin( @cIdkonto )
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_Konto( @cIdkonto )
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
       @ form_x_koord() + 5, form_y_koord() + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
       READ

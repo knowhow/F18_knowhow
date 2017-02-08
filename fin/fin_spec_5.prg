@@ -41,7 +41,7 @@ FUNCTION PregNDP()
    PRIVATE cPG := "D"
    PRIVATE cPoRP := "2"
 
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto:" GET cIdkonto VALID p_kontoFin( @cidkonto )
+   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto:" GET cIdkonto VALID P_Konto( @cidkonto )
    @ form_x_koord() + 5, form_y_koord() + 2 SAY "Period:" GET dDatOd
    @ form_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo VALID dDatDo >= dDatOd
    IF fin_dvovalutno()

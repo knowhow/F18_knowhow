@@ -16,9 +16,10 @@ MEMVAR ImeKol, Kol
 FIELD id, naz
 MEMVAR wId
 
+
 FUNCTION P_Konto( cId, dx, dy )
 
-   LOCAL lRet, i
+   LOCAL lRet, nI
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -27,13 +28,19 @@ FUNCTION P_Konto( cId, dx, dy )
    Kol := {}
 
    PushWA()
-   select_o_konto()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_konto( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_konto()
+   ENDIF
+
 
    AAdd( ImeKol, { PadC( "ID", 7 ), {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| naz }, "naz" } )
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    lRet := p_sifra( F_KONTO, 1, MAXROWS() -15, MAXCOLS() -20, "LKT: Lista: Konta", @cId, dx, dy )
@@ -51,11 +58,11 @@ FUNCTION P_Konto( cId, dx, dy )
     *   param: dx
     *   param: dy
     *   param: lBlag
-*/
 
-FUNCTION P_KontoFin( cId, dx, dy, lBlag )
 
-   LOCAL i
+FUNCTION P_Konto( cId, dx, dy, lBlag )
+
+   LOCAL nI
    LOCAL nDbfArea := Select()
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
@@ -76,8 +83,8 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
       AAdd ( ImeKol, { PadR( "Oznaka", 20 ), {|| oznaka }, "oznaka" } )
    ENDIF
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    IF lBlag == NIL
@@ -87,37 +94,26 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
    SELECT konto
    sifk_fill_ImeKol( "KONTO", @ImeKol, @Kol )
 
-   /*
-      IF lBlag .AND. !Left( cId, 1 ) $ "0123456789"
-         SELECT KONTO
-         // ukini zaostali filter
-         SET FILTER TO
-         // postavi filter za zadanu vrijednost karakteristike BLOP
-         cFilter := "DaUSifV('KONTO','BLOP',ID," + dbf_quote( Trim( cId ) ) + ")"
-         SET FILTER TO &cFilter
-         GO TOP
-         cId := Space( Len( cId ) )
-      ENDIF
-   */
+
 
    SELECT KONTO
    SET ORDER TO TAG "ID"
 
-   p_sifra( F_KONTO, 1, MAXROWS() -17, MAXCOLS() -10, "LKTF Lista: Konta ", @cId, dx, dy, {| Ch| KontoBlok( Ch ) },,,,, { "ID" } )
+  -- p_sifra( F_KONTO, 1, MAXROWS() -17, MAXCOLS() -10, "LKTF Lista: Konta ", @cId, dx, dy, {| Ch| KontoBlok( Ch ) },,,,, { "ID" } )
 
    SELECT ( nDbfArea )
 
    RETURN .T.
 
-
+*/
 
 
 /*
     *     Obradjuje funkcije nad sifrarnikom konta
     *   param: Ch  - pritisnuti taster
-*/
 
-FUNCTION KontoBlok( Ch )
+
+-- FUNCTION KontoBlok( Ch )
 
    LOCAL nRec := RecNo(), cId := ""
    LOCAL cSif := KONTO->id, cSif2 := ""
@@ -181,7 +177,7 @@ FUNCTION KontoBlok( Ch )
 
    ?
    B_ON
-   ? "K O N T N I    P L A N"
+   ? "K O N T N nI    P L A N"
    ? "----------------------"
    B_OFF
    ?
@@ -220,11 +216,10 @@ FUNCTION KontoBlok( Ch )
 
    RETURN DE_CONT
 
-
+*/
 
 /*
       Funkcija vraca vrijednost polja naziv po zadatom idkonto
-*/
 
 FUNCTION GetNameFromKonto( cIdKonto )
 
@@ -236,3 +231,4 @@ FUNCTION GetNameFromKonto( cIdKonto )
    SELECT ( nArr )
 
    RETURN cRet
+ */

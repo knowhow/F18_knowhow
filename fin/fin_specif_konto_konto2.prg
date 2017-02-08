@@ -48,8 +48,8 @@ FUNCTION SpecKK2( lOtvSt )
 
       qqKonto := PadR( qqKonto, 7 )
       qqKonto2 := PadR( qqKonto2, 7 )
-      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Konto   " GET qqKonto  VALID P_KontoFin( @qqKonto )
-      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Konto 2 " GET qqKonto2  VALID P_KontoFin( @qqKonto2 ) .AND. qqKonto2 > qqkonto
+      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Konto   " GET qqKonto  VALID P_Konto( @qqKonto )
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Konto 2 " GET qqKonto2  VALID P_Konto( @qqKonto2 ) .AND. qqKonto2 > qqkonto
       @ form_x_koord() + 7, form_y_koord() + 2 SAY "Partner " GET qqPartner PICT "@!S50"
       @ form_x_koord() + 8, form_y_koord() + 2 SAY "Datum dokumenta od:" GET dDatod
       @ form_x_koord() + 8, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo

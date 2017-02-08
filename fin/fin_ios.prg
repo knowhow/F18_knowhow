@@ -20,7 +20,6 @@ STATIC R2
 STATIC __ios_clan := ""
 
 
-
 FUNCTION fin_ios_meni()
 
    LOCAL _izbor := 1
@@ -75,7 +74,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL cNastavak := "N"
 
    o_konto()
-   //o_partner()
+   // o_partner()
 
    Box(, 16, 65, .F. )
 
@@ -117,14 +116,11 @@ STATIC FUNCTION mnu_ios_print()
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
 
-
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Limit za broj izgenerisanih stavki ?" GET nCountLimit
 
    // ++nX
    // @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen  VALID _auto_gen $ "DN" PICT "@!"
-
-
 
    READ
 
@@ -167,14 +163,12 @@ STATIC FUNCTION mnu_ios_print()
    ENDIF
 
 
-   o_konto()
-   //o_partner()
-   o_suban()
-   o_tnal()
-   o_suban()
-   O_IOS
-
-   SELECT ios
+   // o_konto()
+   // o_partner()
+   // o_suban()
+   // o_tnal()
+   // o_suban()
+   o_fin_ios()
    GO TOP
 
    SEEK cIdFirma + cIdKonto
@@ -314,9 +308,15 @@ STATIC FUNCTION print_ios_xml( hParams )
 
    xml_subnode( "ios_item", .F. )
 
-   ios_xml_partner( "firma", cIdFirma )
+   IF !ios_xml_partner( "firma", cIdFirma )
+      MsgBeep( "Šifra partnera: " + cIdFirma + " nedostaje !#Prekid" )
+      RETURN -1
+   ENDIF
+   IF !ios_xml_partner( "partner", cIdPartner )
+      MsgBeep( "Šifra partnera: " + cIdPartner + " nedostaje !#Prekid" )
+      RETURN -1
+   ENDIF
 
-   ios_xml_partner( "partner", cIdPartner )
 
    xml_node( "ios_datum", DToC( dDatumIOS ) )
    xml_node( "id_konto", to_xml_encoding( cIdKonto ) )
@@ -599,10 +599,6 @@ STATIC FUNCTION ios_clan_setup( setup_box )
 
 
 
-
-// ----------------------------------------------------------
-// uslovi izvjestaja IOS specifikacija
-// ----------------------------------------------------------
 STATIC FUNCTION _ios_spec_vars( hParams )
 
    LOCAL cIdFirma := self_organizacija_id()
@@ -610,7 +606,6 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    LOCAL cPrikazSaSaldoNulaDN := "D"
    LOCAL dDatumDo := Date()
 
-   o_konto()
 
    Box( "", 6, 60 )
    @ form_x_koord() + 1, form_y_koord() + 6 SAY "SPECIFIKACIJA IOS-a"
@@ -622,8 +617,6 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    READ
    BoxC()
 
-   SELECT konto
-   USE
 
    IF LastKey() == K_ESC
       RETURN .F.
@@ -888,10 +881,10 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    dDatumDo := hParams[ "datum_do" ]
    cPrikazSaSaldoNulaDN := hParams[ "saldo_nula" ]
 
-   //o_partner()
+   // o_partner()
    o_konto()
    o_suban()
-   O_IOS
+   o_fin_ios()
 
 
    SELECT ios  // reset tabele IOS
@@ -1446,8 +1439,8 @@ STATIC FUNCTION print_ios_txt( hParams )
    ?
    ?
 
-   @ PRow(), 0 SAY "NAPOMENA: OSPORAVAMO ISKAZANO STANJE U CJELINI _______________ DJELIMI�NO"
-   @ PRow() + 1, 0 SAY "ZA IZNOS OD  " + ValDomaca() + "= _______________ IZ SLIJEDE�IH RAZLOGA:"
+   @ PRow(), 0 SAY "NAPOMENA: OSPORAVAMO ISKAZANO STANJE U CJELINI _______________ DJELIMICNO"
+   @ PRow() + 1, 0 SAY "ZA IZNOS OD  " + ValDomaca() + "= _______________ IZ SLIJEDECIH RAZLOGA:"
    @ PRow() + 1, 0 SAY "_________________________________________________________________________"
 
    ?
@@ -1492,9 +1485,7 @@ STATIC FUNCTION fill_exp_tbl( cIdPart, cNazPart, cBrRn, cOpis, dDatum, dValuta, 
    RETURN .T.
 
 
-// ------------------------------------------
-// vraca strukturu tabele za export
-// ------------------------------------------
+
 STATIC FUNCTION g_exp_fields()
 
    LOCAL _dbf := {}
@@ -1513,9 +1504,7 @@ STATIC FUNCTION g_exp_fields()
 
 
 
-// ---------------------------------------------------------
-// linija za specifikaciju iosa
-// ---------------------------------------------------------
+
 STATIC FUNCTION _ios_spec_get_line()
 
    LOCAL _line

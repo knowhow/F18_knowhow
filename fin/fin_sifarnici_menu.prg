@@ -48,7 +48,7 @@ STATIC FUNCTION _menu_specif()
    //O_ULIMIT
 
    AAdd( _opc, "1. kontni plan                          " )
-   AAdd( _opcexe, {|| P_KontoFin() } )
+   AAdd( _opcexe, {|| P_Konto() } )
    AAdd( _opc, "2. sheme kontiranja                     " )
    AAdd( _opcexe, {|| P_Trfp2() } )
    AAdd( _opc, "3. prenos konta u ng" )

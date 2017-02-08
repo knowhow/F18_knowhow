@@ -58,7 +58,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    PRIVATE cViseManje := ">"
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "KONTO  " GET cIdKonto VALID P_KontoFin( @cIdKonto )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "KONTO  " GET cIdKonto VALID P_Konto( @cIdKonto )
    @ form_x_koord() + 5, form_y_koord() + 2 SAY "Broj dana ?" GET cViseManje VALID cViseManje $ "><"
    @ form_x_koord() + 5, Col() + 2 GET nDana PICTURE "9999"
 

@@ -63,7 +63,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "
       ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
-      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto: " GET cIdKonto VALID P_KontoFin( @cIdKonto )
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto: " GET cIdKonto VALID P_Konto( @cIdKonto )
       @ form_x_koord() + 5, form_y_koord() + 2 SAY "Partner (prazno-svi): " GET cIdPartner ;
          VALID {|| Empty( cIdPartner ) .OR. p_partner( @cIdPartner ) }
       @ form_x_koord() + 6, form_y_koord() + 2 SAY "Pobrisati stare markere zatv.stavki: " GET cPobSt PICT "@!" VALID cPobSt $ "DN"

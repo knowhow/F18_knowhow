@@ -81,7 +81,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " + cIdFirma
 
 
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_kontoFin( @cIdkonto )
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_Konto( @cIdkonto )
    IF cPoRN == "D"
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
    ENDIF

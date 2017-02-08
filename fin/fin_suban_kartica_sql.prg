@@ -110,7 +110,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
       _konto := PadR( _konto, 7 )
       _partner := PadR( _partner, LEN_PARTNER_ID )
 
-      @ form_x_koord() + _x, form_y_koord() + 2 SAY "Konto   " GET _konto VALID !Empty( _konto ) .AND. P_KontoFin( @_konto )
+      @ form_x_koord() + _x, form_y_koord() + 2 SAY "Konto   " GET _konto VALID !Empty( _konto ) .AND. P_Konto( @_konto )
       ++ _x
       @ form_x_koord() + _x, form_y_koord() + 2 SAY "Partner " GET _partner VALID Empty( _partner ) .OR. ;
          RTrim( _partner ) == ";" .OR. p_partner( @_partner ) PICT "@!"

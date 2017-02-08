@@ -46,7 +46,7 @@ FUNCTION fin_asistent_otv_st()
    cDugPot := "1"
 
    Box(, 3, 60 )
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Konto   " GET cIdKonto   VALID p_kontoFin( @cIdKonto )  PICT "@!"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Konto   " GET cIdKonto   VALID P_Konto( @cIdKonto )  PICT "@!"
    @ form_x_koord() + 2, form_y_koord() + 2 SAY "Partner " GET cIdPartner VALID p_partner( @cIdPartner ) PICT "@!"
    @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto duguje / potrazuje" GET cDugPot when {|| cDugPot := iif( cidkonto = '54', '2', '1' ), .T. } VALID  cdugpot $ "12"
    READ

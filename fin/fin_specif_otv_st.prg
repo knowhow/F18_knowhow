@@ -45,7 +45,7 @@ FUNCTION fin_specif_otvorene_stavke()
       ELSE
          @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto    " GET cIdKonto VALID P_KontoFin( @cIDKonto ) PICT "@!"
+      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto    " GET cIdKonto VALID P_Konto( @cIDKonto ) PICT "@!"
       @ form_x_koord() + 5, form_y_koord() + 2 SAY "Od datuma" GET dDatOd
       @ form_x_koord() + 5, Col() + 2 SAY "do" GET dDatdo
       @ form_x_koord() + 7, form_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"

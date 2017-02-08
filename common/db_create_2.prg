@@ -14,16 +14,16 @@
 
 FUNCTION open_sif_tables_1()
 
-   o_konto()
-   o_partner()
-   o_tnal()
-   o_tdok()
-   o_valute()
-   o_rj()
+   //o_konto()
+   //o_partner()
+   //o_tnal()
+   //o_tdok()
+   //o_valute()
+   //o_rj()
    //o_banke()
-   o_ops()
-   o_sifk()
-   o_sifv()
+   //o_ops()
+   //o_sifk()
+   //o_sifv()
    //o_fakt_objekti()
 
    RETURN .T.

@@ -161,7 +161,7 @@ FUNCTION os_pregled_po_rj()
 
    DO WHILE !Eof() .AND. ( field->idrj = cIdrj .OR. lPoKontima )
 
-      IF lPoKontima .AND. !( field->idrj = cidrj )
+      IF lPoKontima .AND. !( field->idrj = cIdRj )
          SKIP
          LOOP
       ENDIF
@@ -347,7 +347,7 @@ FUNCTION ZglPrj()
    ENDIF
 
    SELECT rj
-   SEEK cidrj
+   SEEK cIdRj
 
    SELECT ( nArr )
 

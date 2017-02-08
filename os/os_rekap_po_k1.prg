@@ -27,7 +27,7 @@ FUNCTION os_rekapitulacija_po_k1()
    cDNOS := "D"
 
    Box(, 4, 77 )
-   @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno svi):" GET cidrj VALID Empty( cIdRj ) .OR. p_rj( @cIdrj )
+   @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno svi):" GET cIdRj VALID Empty( cIdRj ) .OR. p_rj( @cIdrj )
    @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
    @ m_x + 2, m_y + 2 SAY "Prikaz svih neotpisanih/otpisanih/samo novonabavljenih (N/O/B) sredstava:" GET cON PICT "@!" VALID con $ "ONB"
    @ m_x + 4, m_y + 2 SAY "Prikaz sredstava D/N:" GET cDNOs PICT "@!" VALID cDNOs $ "DN"
@@ -45,7 +45,7 @@ FUNCTION os_rekapitulacija_po_k1()
    SET ORDER TO TAG "2"
    // idrj+id+dtos(datum)
 
-   cFilt1 := "idrj=cidrj"
+   cFilt1 := "idrj=cIdRj"
    cSort1 := "k1+idrj"
 
    Box(, 1, 30 )
@@ -172,8 +172,7 @@ STATIC FUNCTION ZglK1()
 
    ?? "     Datum:", os_datum_obracuna()
 
-   SELECT rj
-   SEEK cIdRj
+   select_o_rj( cIdRj )
    select_os_sii()
 
    ? "Radna jedinica:", cIdrj, rj->naz

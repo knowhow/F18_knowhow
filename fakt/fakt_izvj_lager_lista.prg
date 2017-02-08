@@ -245,7 +245,7 @@ FUNCTION fakt_lager_lista()
    ENDIF
 
    // SELECT FAKT
-   seek_fakt_3( cIdFirma )
+   seek_fakt_3( cIdFirma, NIL )
    PRIVATE cFilt := ".t."
 
    IF aUsl1 <> ".t."

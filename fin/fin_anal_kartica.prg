@@ -94,8 +94,8 @@ FUNCTION fin_anal_kartica()
 
    IF cIdRj == "999999"; cIdrj := ""; ENDIF
 
-   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
-      cidrj := Trim( StrTran( cidrj, ".", "" ) )
+   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cIdRj
+      cIdRj := Trim( StrTran( cIdRj, ".", "" ) )
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
    ENDIF
 

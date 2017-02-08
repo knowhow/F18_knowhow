@@ -48,7 +48,7 @@ FUNCTION os_pregled_amortizacije()
 
    Box(, 13, 77 )
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
+      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cIdRj ;
          VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
 
       @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
@@ -80,9 +80,9 @@ FUNCTION os_pregled_amortizacije()
       qIdKonto := Trim( qIdKonto )
    ENDIF
 
-   IF Empty( cIdrj ); cidrj := ""; ENDIF
+   IF Empty( cIdrj ); cIdRj := ""; ENDIF
    IF cpocinju == "D"
-      cIdRj := Trim( cidrj )
+      cIdRj := Trim( cIdRj )
    ENDIF
 
    os_rpt_default_valute()
@@ -92,8 +92,7 @@ FUNCTION os_pregled_amortizacije()
    PRIVATE nStr := 0
    // strana
 
-   SELECT rj
-   HSEEK cIdrj
+   select_o_rj( cIdrj )
    select_os_sii()
 
    P_10CPI
@@ -134,7 +133,7 @@ FUNCTION os_pregled_amortizacije()
       SET FILTER TO &cFilter
    ENDIF
 
-   IF Empty( cidrj ) .OR. cPocinju == "D"
+   IF Empty( cIdRj ) .OR. cPocinju == "D"
       select_os_sii()
       SET ORDER TO TAG "4"
       // "OSi4","idkonto+idrj+id"
@@ -143,7 +142,7 @@ FUNCTION os_pregled_amortizacije()
       select_os_sii()
       SET ORDER TO TAG "3"
       // "OSi3","idrj+idkonto+id"
-      SEEK cidrj + qidkonto
+      SEEK cIdRj + qidkonto
    ENDIF
 
    PRIVATE nRbr := 0
@@ -155,20 +154,20 @@ FUNCTION os_pregled_amortizacije()
    nA1 := 0
    nA2 := 0
 
-   DO WHILE !Eof() .AND. ( field->idrj = cIdrj .OR. Empty( cidrj ) )
+   DO WHILE !Eof() .AND. ( field->idrj = cIdrj .OR. Empty( cIdRj ) )
 
       cIdSK := Left( idkonto, 3 )
       nDug2 := nPot21 := nPot22 := 0
       _t_nab := _t_otp := _t_amp := 0
       _sanacija := .F.
 
-      DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. Left( idkonto, 3 ) == cidsk
+      DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )  .AND. Left( idkonto, 3 ) == cidsk
 
          cIdKonto := idkonto
          nDug3 := nPot31 := nPot32 := 0
          _t_nab := _t_otp := _t_amp := 0
 
-         DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. idkonto == cidkonto
+         DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )  .AND. idkonto == cidkonto
 
             IF PRow() > RPT_PAGE_LEN
                FF

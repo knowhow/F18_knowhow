@@ -32,7 +32,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    cSatiVO := "S"
 
    Box(, 6, 77 )
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ VALID Empty( cIdRj ) .OR. P_LD_RJ( @cIdRj )
    @ form_x_koord() + 2, form_y_koord() + 2 SAY "od mjeseca: "  GET  nMjesec  PICT "99"
    @ form_x_koord() + 2, Col() + 2 SAY "do"  GET  cMjesec2  PICT "99"
    @ form_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )

@@ -131,7 +131,7 @@ FUNCTION ld_pregled_primanja()
    ELSE
       IF cVarSort == "1"
          //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
-         //HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + cObracun
+         //HSEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + cObracun
          seek_ld( cIdRj, nGodina, nMjesec, cObracun )
       ELSE
          seek_ld( cIdRj, nGodina, nMjesec, cObracun )
@@ -177,7 +177,7 @@ FUNCTION ld_pregled_primanja()
    nT1 := nT2 := nT3 := nT4 := 0
    nC1 := 10
 
-   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. ;
+   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cIdRj .AND. nMjesec = mjesec .AND. ;
          !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
       IF ld_vise_obracuna() .AND. Empty( cObracun )
@@ -290,10 +290,10 @@ FUNCTION ZPregPrim()
    P_12CPI
    ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
-   IF Empty( cidrj )
+   IF Empty( cIdRj )
       ? _l( "Pregled za sve RJ ukupno:" )
    ELSE
-      ? _l( "RJ:" ), cidrj, ld_rj->naz
+      ? _l( "RJ:" ), cIdRj, ld_rj->naz
    ENDIF
 
    ?? Space( 2 ) + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()

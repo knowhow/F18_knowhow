@@ -220,13 +220,14 @@ FUNCTION fakt_kartica()
       GO TOP
       EOF CRET
    ELSE
-      seek_fakt_idroba( qqRoba )
+      seek_fakt_3( NIL, qqRoba )
    ENDIF
 
    START PRINT CRET
    ?
    P_12CPI
-   ?? Space( gnLMarg ); ?? "FAKT: Kartice artikala na dan", Date(), "      za period od", dDatOd, "-", dDatDo
+   ?? Space( gnLMarg )
+   ?? "FAKT: Kartice artikala na dan", Date(), "      za period od", dDatOd, "-", dDatDo
    ? Space( gnLMarg ); IspisFirme( cIdFirma )
    IF !Empty( qqRoba )
       ? Space( gnLMarg )
@@ -312,9 +313,9 @@ FUNCTION fakt_kartica()
 
       IF cPredh == "2"     // dakle sa prethodnim stanjem
          PushWA()
-         
-         //SELECT fakt
-         //SET FILTER TO
+
+         // SELECT fakt
+         // SET FILTER TO
          // IF fID_J
          // TODO : pogledati
          // SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
@@ -323,7 +324,11 @@ FUNCTION fakt_kartica()
          // SEEK cIdFirma + IIF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
          // ENDIF
 
-         seek_fakt_idroba_sintetika( cIdFirma, iif( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba ) )
+         IF cSintetika == "D" .AND. roba->tip == "S"
+            seek_fakt_3_sintetika( cIdFirma,  RTrim( ROBA->id ) )
+         ELSE
+            seek_fakt_3( cIdFirma, cIdRoba )
+         ENDIF
 
          // DO-WHILE za cPredh=2
          DO WHILE !Eof() .AND. ;

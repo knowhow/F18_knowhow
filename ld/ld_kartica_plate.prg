@@ -73,7 +73,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       RPar( "NK", @cNKNS )
       cIdRadn := Space( LEN_IDRADNIK )
       Box(, 8, 75 )
-      @ form_x_koord() + 1, form_y_koord() + 2 SAY _l( "Radna jedinica (prazno-sve rj): " )  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
+      @ form_x_koord() + 1, form_y_koord() + 2 SAY _l( "Radna jedinica (prazno-sve rj): " )  GET cIdRJ VALID Empty( cIdRj ) .OR. P_LD_RJ( @cIdRj )
       @ form_x_koord() + 2, form_y_koord() + 2 SAY _l( "Mjesec: " ) GET nMjesec PICT "99"
       IF ld_vise_obracuna()
          @ form_x_koord() + 2, Col() + 2 SAY _l( "Obracun: " ) GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
@@ -147,7 +147,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
          IF PCount() < 4
             SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
          ENDIF
-         // SEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
+         // SEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
       ENDIF
    ENDIF
 
@@ -189,7 +189,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
    //lPrikSveDopr := ( cPrikDopr == "D" )
    lPrikSveDopr := .T.
 
-   DO WHILE !Eof() .AND. nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. idradn = cIdRadn .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+   DO WHILE !Eof() .AND. nGodina == godina .AND. idrj = cIdRj .AND. nMjesec = mjesec .AND. idradn = cIdRadn .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
       aNeta := {}
 

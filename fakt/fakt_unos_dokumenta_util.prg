@@ -103,7 +103,7 @@ FUNCTION V_Podbr()
          SELECT sast
          cPRoba := _idroba
          cPtxt1 := _txt1
-         
+
          select_o_sast( cPRoba )
          nPbr := 0
          DO WHILE !Eof() .AND. cPRoba == id
@@ -339,7 +339,7 @@ FUNCTION V_Kolicina( tip_vpc )
 
       MsgO( "Izračunavam trenutno stanje ..." )
 
-      seek_fakt_idroba( _idroba )
+      seek_fakt_3( NIL, _idroba )
 
       nUl := 0
       nIzl := 0
@@ -963,7 +963,7 @@ FUNCTION UGenNar()
       //SELECT FAKT
       //SET ORDER TO TAG "6"
       // sabiram sve isporuke od datuma vazenja najstarijeg ugovora do danas
-      seek_fakt_6( _idfirma, _idpartne, _idroba, "10", DToS( dNajstariji ) )
+      seek_fakt_6( _idfirma, _idpartne, _idroba, "10", dNajstariji )
 
       DO WHILE !Eof() .AND. idfirma + idpartner + idroba + idtipdok == _idfirma + _idpartner + _idroba + "10"
          nIsporuceno += kolicina

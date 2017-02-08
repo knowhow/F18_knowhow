@@ -94,7 +94,7 @@ FUNCTION fin_specif_otvorene_stavke()
    GO TOP
 
    IF gFinRj == "D" .AND. Len( cIdrj ) <> 0
-      cFilt1 += ( ".and. idrj='" + cidrj + "'" )
+      cFilt1 += ( ".and. idrj='" + cIdRj + "'" )
    ENDIF
 
    IF gTroskovi == "D" .AND. Len( cFunk ) <> 0

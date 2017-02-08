@@ -213,9 +213,9 @@ FUNCTION CistiK1K4( lK )
       IF ck4 == "99"; ck4 := ""; ENDIF
    ENDIF
 
-   IF cIdRj == "999999"; cidrj := ""; ENDIF
+   IF cIdRj == "999999"; cIdRj := ""; ENDIF
    IF "." $ cIdrj
-      cidrj := Trim( StrTran( cidrj, ".", "" ) )  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
+      cIdRj := Trim( StrTran( cIdRj, ".", "" ) )  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
    ENDIF
 
    IF cFunk == "99999"; cFunk := ""; ENDIF
@@ -264,9 +264,7 @@ FUNCTION prikaz_k1_k4_rj( lK )
    IF gFinRJ == "D" .AND. Len( cIdRJ ) <> 0
       cRjNaz := ""
       nArr := Select()
-      o_rj()
-      SELECT rj
-      HSEEK cIdRj
+      select_o_rj( cIdRj )
 
       IF PadR( rj->id, 6 ) == PadR( cIdRj, 6 )
          cRjNaz := rj->naz

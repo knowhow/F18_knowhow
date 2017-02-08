@@ -225,7 +225,7 @@ FUNCTION fin_specifikacija_suban()
 
    IF gFinRj == "D" .AND. Len( cIdrj ) <> 0
 
-      cFilter += ( ".and. idrj='" + cidrj + "'" )
+      cFilter += ( ".and. idrj='" + cIdRj + "'" )
 
    ENDIF
 

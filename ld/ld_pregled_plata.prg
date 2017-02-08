@@ -96,7 +96,7 @@ FUNCTION ld_pregled_plata()
    // 1 - "str(godina)+idrj+str(mjesec)+idradn"
    // 2 - "str(godina)+str(mjesec)+idradn"
    IF Empty( cIdrj )
-      cidrj := ""
+      cIdRj := ""
       IF cVarSort == "1"
          //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
          //HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
@@ -117,7 +117,7 @@ FUNCTION ld_pregled_plata()
    ELSE
       IF cVarSort == "1"
          SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
-         HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
+         HSEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -179,7 +179,7 @@ FUNCTION ld_pregled_plata()
    nUNetNr := 0
    nUNeto := 0
 
-   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cIdRj .AND. nMjesec = mjesec .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
       ld_pozicija_parobr( ld->mjesec, ld->godina, iif( ld_vise_obracuna(), cObracun, ), ld->idrj )
 

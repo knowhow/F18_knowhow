@@ -92,9 +92,8 @@ FUNCTION IspisFirme( cIdRj )
    B_ON
    ?? self_organizacija_naziv()
    B_OFF
-   IF !Empty( cidrj )
-      SELECT rj
-      HSEEK cidrj
+   IF !Empty( cIdRj )
+      select_o_rj( cIdRj )
       Select( nOArr )
       ?? "  RJ", rj->naz
    ENDIF

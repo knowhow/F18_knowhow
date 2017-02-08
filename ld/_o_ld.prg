@@ -14,24 +14,6 @@
 STATIC s_cObracun := " "  // obracun 1 ili 2, ili " "
 
 
-/*
-
-FUNCTION o_ld()
-
-   SELECT ( F_LD )
-   my_use ( "ld" )
-   SET ORDER TO TAG "1"
-
-   RETURN .T.
-*/
-
-
-// FUNCTION select_o_ld()
-// RETURN  select_o_dbf( "LD", F_LD, "ld_ld", "1" )
-
-
-
-
 FUNCTION o_ld_radn( cId )
 
    SELECT ( F_RADN )

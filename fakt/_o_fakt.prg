@@ -26,7 +26,7 @@ FUNCTION o_fakt_doks()
 
 FUNCTION select_fakt_doks()
 
-   select_o_dbf( "FAKT_DOKS", F_FAKT_DOKS, "fakt_doks", "1" )
+  -- select_o_dbf( "FAKT_DOKS", F_FAKT_DOKS, "fakt_doks", "1" )
    IF Alias() != "FAKT_DOKS"
       Alert( "Nije FAKT DOKS ?!" )
       RETURN .F.
@@ -42,20 +42,6 @@ FUNCTION o_fakt_doks2()
 
 
 
-
-FUNCTION o_dest()
-
-   LOCAL cTabela := "dest"
-
-   SELECT ( F_DEST )
-   IF !use_sql_sif  ( cTabela )
-      error_bar( "o_sql", "open sql " + cTabela )
-      RETURN .F.
-   ENDIF
-
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
 
 
 FUNCTION select_o_fakt_pripr()

@@ -863,7 +863,7 @@ FUNCTION zagl_rekapitulacija_plata_rj()
       B_OFF
       ? if( gBodK == "1", _l( "Vrijednost boda:" ), _l( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
    ELSE
-      ? _l( "RJ:" ), cidrj, ld_rj->naz, "  " + _l( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
+      ? _l( "RJ:" ), cIdRj, ld_rj->naz, "  " + _l( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
       ?? Space( 4 ) + _l( "Godina:" ), Str( nGodina, 4 )
       B_OFF
    ENDIF

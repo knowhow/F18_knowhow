@@ -57,7 +57,7 @@ FUNCTION UnosSiht()
          @ form_x_koord() + 1, form_y_koord() + 2 SAY "Dan" GET _dan PICT "99"
          @ form_x_koord() + 1, Col() + 2 SAY "Dio dana" GET _dandio VALID _dandio $ " 12345678" PICT "@!"
          @ form_x_koord() + 1, Col() + 2 SAY "Broj bodova" GET _BrBod PICT "99999.999"  ;
-            WHEN {|| _BrBod := BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, _dan, _dandio ), ;
+            WHEN {|| _BrBod := BodovaNaDan( ngodina, nmjesec, cidradn, cIdRj, _dan, _dandio ), ;
             _Brbod := iif( _BrBod = 0, radn->brbod, _BrBod ), .T. }
          READ
 
@@ -203,7 +203,7 @@ FUNCTION UnosSiht()
             cDanDio := IF( nDanDio == 0, " ", Str( nDanDio, 1 ) )
 
 
-            _BrBod := BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, ndan, cDanDio )
+            _BrBod := BodovaNaDan( ngodina, nmjesec, cidradn, cIdRj, ndan, cDanDio )
 
             IF _brbod == 0 .AND. !Empty( cDanDio )
                LOOP

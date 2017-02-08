@@ -115,7 +115,7 @@ FUNCTION ld_pregled_primanja_za_period()
       ENDIF
       DO WHILE  !Eof() .AND. nGodina == godina .AND. idradn == cIdradn
          Scatter()
-         IF !Empty( cidrj ) .AND. _idrj <> cidrj
+         IF !Empty( cIdRj ) .AND. _idrj <> cIdRj
             skip; LOOP
          ENDIF
          IF cMjesecod > _mjesec .OR. cMjesecdo < _mjesec
@@ -212,10 +212,10 @@ FUNCTION ZSRO()
    P_COND
    ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
-   IF Empty( cidrj )
+   IF Empty( cIdRj )
       ? "Pregled za sve RJ ukupno:"
    ELSE
-      ? "RJ:", cidrj, ld_rj->naz
+      ? "RJ:", cIdRj, ld_rj->naz
    ENDIF
    ?? "  Mjesec:", Str( nMjesec, 2 ) + IspisObr()
    ?? "    Godina:", Str( nGodina, 5 )

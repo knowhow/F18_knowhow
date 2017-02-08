@@ -42,7 +42,7 @@ FUNCTION os_amortizacija_po_kontima()
 
    Box(, 12, 77 )
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
+      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cIdRj ;
          VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
 
       @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
@@ -67,9 +67,9 @@ FUNCTION os_amortizacija_po_kontima()
 
    IF Empty( qidAm ); qidAm := ""; ENDIF
    IF Empty( qidkonto ); qidkonto := ""; ENDIF
-   IF Empty( cIdrj ); cidrj := ""; ENDIF
+   IF Empty( cIdrj ); cIdRj := ""; ENDIF
    IF cpocinju == "D"
-      cIdRj := Trim( cidrj )
+      cIdRj := Trim( cIdRj )
    ENDIF
 
 
@@ -121,9 +121,8 @@ FUNCTION os_amortizacija_po_kontima()
 
    ? tip_organizacije() + ":", self_organizacija_naziv()
 
-   IF !Empty( cidrj )
-      SELECT rj
-      HSEEK cIdrj
+   IF !Empty( cIdRj )
+      select_o_rj( cIdrj )
       select_os_sii()
       ? "Radna jedinica:", cIdrj, rj->naz
    ENDIF

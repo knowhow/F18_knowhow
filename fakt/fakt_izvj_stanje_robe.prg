@@ -148,7 +148,7 @@ FUNCTION fakt_stanje_robe()
       cDDokOtpr := "D"
    ENDIF
 
-   seek_fakt_3()
+   seek_fakt_3( cIdFirma, NIL )
 
    PRIVATE cFilt := ".t."
 

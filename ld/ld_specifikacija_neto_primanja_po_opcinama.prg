@@ -262,10 +262,10 @@ STATIC FUNCTION zaglavlje_izvjestaja( cVPosla, cKBenef )
    ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
 
-   IF Empty( cidrj )
+   IF Empty( cIdRj )
       ? "Pregled za sve RJ ukupno:"
    ELSE
-      ? "RJ:", cidrj, ld_rj->naz
+      ? "RJ:", cIdRj, ld_rj->naz
    ENDIF
 
    ?? "  Mjesec:", Str( nMjesec, 2 ) + IspisObr()

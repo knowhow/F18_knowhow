@@ -38,7 +38,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    @ form_x_koord() + 5, form_y_koord() + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner ) PICT "@!"
    IF gFinRj == "D"
       cIdRj := Space( Len( RJ->id ) )
-      @ form_x_koord() + 6, form_y_koord() + 2 SAY "RJ" GET cidrj PICT "@!" VALID Empty( cidrj ) .OR. P_Rj( @cidrj )
+      @ form_x_koord() + 6, form_y_koord() + 2 SAY "RJ" GET cIdRj PICT "@!" VALID Empty( cIdRj ) .OR. P_Rj( @cIdRj )
    ENDIF
    READ
    ESC_BCR

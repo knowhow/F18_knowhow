@@ -25,7 +25,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    LOCAL _model_uredjaja := fiskalni_uredjaj_model()
 
    ImeKol := {}
-   AAdd( ImeKol, { " ",            {|| select_fakt_doks(), g_fiscal_info( _model_uredjaja ) } } )
+   AAdd( ImeKol, { " ",            {|| g_fiscal_info( _model_uredjaja ) } } )
    AAdd( ImeKol, { "RJ",           {|| fakt_doks->idfirma }  } )
    AAdd( ImeKol, { "VD",           {|| fakt_doks->idtipdok } } )
    AAdd( ImeKol, { "Brdok",        {|| fakt_doks->brdok + fakt_doks->rezerv } } )

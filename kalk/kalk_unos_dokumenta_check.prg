@@ -82,7 +82,8 @@ FUNCTION KalkNaF( cIdRoba, nKols )
    //SELECT fakt
    //SET ORDER TO TAG "3" // fakt idroba
    nKols := 0
-   seek_fakt_idroba( cIdRoba )
+   
+   seek_fakt_3( NIL, cIdRoba )
    DO WHILE !Eof() .AND. cIdRoba == idroba
       IF idtipdok = "0"  // ulaz
          nKols += kolicina

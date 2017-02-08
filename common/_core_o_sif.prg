@@ -48,6 +48,29 @@ FUNCTION select_o_roba( cId )
 
 
 
+FUNCTION seek_roba_partial( cIdRobaDio )
+
+   LOCAL cAlias := "ROBA"
+   LOCAL cSqlQuery := "select * from fmk.roba"
+
+   cSqlQuery += " WHERE id like" + cIdRobaDio + "%"
+
+   IF !use_sql( "roba", cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cIdRobaDio
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN .T.
+
+
 
 FUNCTION find_roba_by_naz_or_id( cId )
 
@@ -76,6 +99,75 @@ FUNCTION find_roba_by_naz_or_id( cId )
 
    RETURN .T.
 
+
+
+FUNCTION o_sastavnica( cId )
+
+   LOCAL cTabela := "sast"
+
+   SELECT ( F_SAST )
+   IF !use_sql_sif  ( cTabela, .T., "SAST", cId  )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION o_sast( cId )
+   RETURN o_sastavnica( cId )
+
+
+FUNCTION select_o_sastavnica( cId )
+
+   SELECT ( F_SAST )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_sastavnica( cId )
+
+
+FUNCTION select_o_sast( cId )
+   RETURN select_o_sastavnica( cId )
+
+
+
+FUNCTION o_banke( cId )
+
+   SELECT ( F_BANKE )
+   IF !use_sql_sif  ( "banke", .T., "BANKE", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION select_o_banke( cId )
+
+   SELECT ( F_BANKE )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_banke( cId )
 
 
 FUNCTION find_partner_by_naz_or_id( cId )
@@ -128,7 +220,7 @@ FUNCTION find_konto_by_naz_or_id( cId )
 
    RETURN .T.
 
-   
+
 
 FUNCTION o_partner( cId )
 
@@ -246,6 +338,34 @@ FUNCTION o_vrnal()
 
 
 
+FUNCTION o_rj( cId )
+
+   SELECT ( F_RJ )
+   IF !use_sql_sif  ( "rj", .T., "RJ", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION select_o_rj( cId )
+
+   SELECT ( F_RJ )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_rj( cId )
+
 
 FUNCTION o_valute()
 
@@ -300,6 +420,24 @@ FUNCTION use_sql_opstine( cId )
    IF !use_sql_sif( cTable, .T., "OPS", cId )
       RETURN .F.
    ENDIF
+
+   RETURN .T.
+
+
+
+
+
+FUNCTION o_dest()
+
+   LOCAL cTabela := "dest"
+
+   SELECT ( F_DEST )
+   IF !use_sql_sif  ( cTabela )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+
+   SET ORDER TO TAG "ID"
 
    RETURN .T.
 

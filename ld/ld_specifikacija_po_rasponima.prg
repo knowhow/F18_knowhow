@@ -202,7 +202,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    ? Space( gnLMarg )
    IspisFirme( "" )
    ? Space( gnLMarg )
-   IF Empty( cidrj )
+   IF Empty( cIdRj )
       ?? "Pregled za sve RJ ukupno:"
    ELSE
       ?? "RJ:", cIdRj + " - " + Ocitaj( F_LD_RJ, cIdRj, "naz" )

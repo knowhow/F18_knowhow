@@ -62,10 +62,10 @@ FUNCTION SpecPoK()
 
     BoxC()
 
-   IF cIdRj == "999999"; cidrj := ""; ENDIF
+   IF cIdRj == "999999"; cIdRj := ""; ENDIF
 
-   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
-      cidrj := Trim( StrTran( cidrj, ".", "" ) )
+   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cIdRj
+      cIdRj := Trim( StrTran( cIdRj, ".", "" ) )
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
    ENDIF
 

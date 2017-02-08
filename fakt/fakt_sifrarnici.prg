@@ -122,7 +122,7 @@ FUNCTION FaktStanje( cIdRoba )
 
    // "3","Idroba+dtos(datDok)","FAKT")  // za karticu, specifikaciju
    //SET ORDER TO TAG "3"
-   seek_fakt_3( cIdRoba )
+   seek_fakt_3( NIL, cIdRoba )
 
    aStanje := {}
    // {idfirma, nUl,nIzl,nRevers,nRezerv }
@@ -149,7 +149,7 @@ FUNCTION FaktStanje( cIdRoba )
       SKIP
    ENDDO
 
-   IF fotv
+   IF fOtv
       SELEC fakt
       USE
    ELSE
@@ -405,7 +405,7 @@ FUNCTION ima_u_fakt_kumulativ( cKljuc ) //, cTag )
 
    //IF !Empty( IndexKey( Val( cTag ) + 1 ) )
       //SET ORDER TO TAG ( cTag )
-      seek_fakt_idroba(  cKljuc)
+      seek_fakt_3(  cKljuc)
       lVrati := Eof()
    //ENDIF
 

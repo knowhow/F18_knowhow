@@ -33,7 +33,7 @@ FUNCTION os_pregled_revalorizacije()
 
    Box(, 10, 77 )
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj VALID Empty( cIdRj ) .OR. p_rj( @cIdrj )
+      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cIdRj VALID Empty( cIdRj ) .OR. p_rj( @cIdrj )
       @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
       @ m_x + 2, m_y + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
       @ m_x + 4, m_y + 2 SAY "Za sredstvo prikazati vrijednost:"
@@ -50,17 +50,16 @@ FUNCTION os_pregled_revalorizacije()
    BoxC()
 
    IF Empty( qidkonto ); qidkonto := ""; ENDIF
-   IF Empty( cIdrj ); cidrj := ""; ENDIF
+   IF Empty( cIdrj ); cIdRj := ""; ENDIF
    IF cpocinju == "D"
-      cIdRj := Trim( cidrj )
+      cIdRj := Trim( cIdRj )
    ENDIF
 
    os_rpt_default_valute()
 
-   start PRINT cret
+   start PRINT cRet
    PRIVATE nStr := 0  // strana
-   SELECT rj
-   HSEEK cIdrj
+   select_o_rj( cIdrj )
    select_os_sii()
 
    IF !Empty( cFiltK1 )
@@ -69,8 +68,8 @@ FUNCTION os_pregled_revalorizacije()
 
    P_10CPI
    ? tip_organizacije() + ":", self_organizacija_naziv()
-   IF !Empty( cidrj )
-      ? "Radna jedinica:", cidrj, rj->naz
+   IF !Empty( cIdRj )
+      ? "Radna jedinica:", cIdRj, rj->naz
    ENDIF
    ? "OS: Pregled obracuna revalorizacije po kontima "
    ?? "", PrikazVal(), "    Datum:", os_datum_obracuna()
@@ -80,14 +79,14 @@ FUNCTION os_pregled_revalorizacije()
 
    select_os_sii()
 
-   IF Empty( cidrj )
+   IF Empty( cIdRj )
       SET ORDER TO TAG "4"
       // "OSi4","idkonto+idrj+id"
       SEEK qidkonto
    ELSE
       SET ORDER TO TAG "3"
       // "OSi3","idrj+idkonto+id"
-      SEEK cidrj + qidkonto
+      SEEK cIdRj + qidkonto
    ENDIF
 
    PRIVATE nrbr := 0
@@ -99,7 +98,7 @@ FUNCTION os_pregled_revalorizacije()
    nA1 := 0
    nA2 := 0
 
-   DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )
+   DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )
 
       cIdSK := Left( idkonto, 3 )
       nDug21 := 0

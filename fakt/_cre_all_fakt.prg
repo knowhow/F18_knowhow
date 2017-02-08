@@ -280,32 +280,7 @@ FUNCTION cre_all_fakt( ver )
 
 
 
-FUNCTION h_fakt_fakt_indexes()
 
-   LOCAL hIndexes := hb_Hash()
-
-   hIndexes[ "1" ] := "IdFirma+idtipdok+brdok+rbr+podbr"
-   hIndexes[ "2" ] := "IdFirma+dtos(datDok)+idtipdok+brdok+rbr"
-   hIndexes[ "3" ] := "idroba+dtos(datDok)"
-   hIndexes[ "6" ] := "idfirma+idpartner+idroba+idtipdok+dtos(datdok)"
-   hIndexes[ "7" ] := "idfirma+idpartner+idroba+dtos(datdok)"
-   hIndexes[ "8" ] := "datdok"
-
-   RETURN hIndexes
-
-
-FUNCTION h_fakt_doks_indexes()
-
-   LOCAL hIndexes := hb_Hash()
-
-   hIndexes[ "1" ] := "IdFirma+idtipdok+brdok"
-   hIndexes[ "2" ] := "IdFirma+idtipdok+partner"
-   hIndexes[ "3" ] := "partner"
-   hIndexes[ "4" ] := "idtipdok"
-   hIndexes[ "5" ] := "datdok"
-   hIndexes[ "6" ] := "IdFirma+idpartner+idtipdok"
-
-   RETURN hIndexes
 
 
 

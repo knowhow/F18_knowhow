@@ -920,7 +920,7 @@ FUNCTION TPImaPO( cTP )
 
 
 
-FUNCTION BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, ndan, cDanDio )
+FUNCTION BodovaNaDan( ngodina, nmjesec, cidradn, cIdRj, ndan, cDanDio )
 
    LOCAL _BrBod := 0
 

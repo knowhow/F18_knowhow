@@ -14,7 +14,6 @@
 FIELD id, naz
 
 
-
 FUNCTION o_roba( cId )
 
    LOCAL cTabela := "roba"

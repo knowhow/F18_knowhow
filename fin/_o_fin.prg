@@ -51,7 +51,7 @@ FUNCTION o_fin_psuban()
 
 FUNCTION select_o_fin_psuban()
 
-   RETURN select_o_dbf( "PSUBAN", F_PSUBAN, "fin_suban", "1" )
+   RETURN select_o_dbf( "PSUBAN", F_PSUBAN, "fin_psuban", "1" )
 
 
 

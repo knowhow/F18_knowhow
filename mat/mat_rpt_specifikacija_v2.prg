@@ -60,7 +60,7 @@ FUNCTION mat_specifikacija()
 
    @ m_x + 5, m_y + 2 SAY KonSeks( "Konta  " ) + " : " GET qqKonto  PICTURE "@S50"
    @ m_x + 6, m_y + 2 SAY "Partner : " GET qqPartn  PICTURE "@S50"
-   @ m_x + 7, m_y + 2 SAY "Tarifa (prazno-sve) : " GET cidTarifa  VALID Empty( cidtarifa ) .OR. P_Tarifa( @cIdTarifa )
+   @ m_x + 7, m_y + 2 SAY "Tarifa (prazno-sve) : " GET cidTarifa  VALID Empty( cIdTarifa ) .OR. P_Tarifa( @cIdTarifa )
    @ m_x + 8, m_y + 2 SAY "Datum dokumenta - od datuma:"    GET dDatOd
    @ m_x + 8, Col() + 1 SAY "do:"    GET dDatDo VALID dDatDo >= dDatOd
 
@@ -142,8 +142,8 @@ FUNCTION mat_specifikacija()
          IF !Empty( qqPartn )
             @ PRow() + 1, 0 SAY "Kriterij za partnera:"; ?? Trim( qqPartn )
          ENDIF
-         IF !Empty( cidtarifa )
-            @ PRow() + 1, 0 SAY "Tarifa: "; ?? cidtarifa
+         IF !Empty( cIdTarifa )
+            @ PRow() + 1, 0 SAY "Tarifa: "; ?? cIdTarifa
          ENDIF
          @ PRow() + 1, 0 SAY "FIRMA:"
          @ PRow(), PCol() + 1 SAY cIdFirma
@@ -191,7 +191,7 @@ FUNCTION mat_specifikacija()
          SELECT mat_suban
          cIdRoba := IdRoba
          SELECT roba
-         HSEEK cidroba
+         HSEEK cIdRoba
          SELECT mat_suban
          IF !Empty( cIdTarifa )
             IF roba->idtarifa <> cIdtarifa

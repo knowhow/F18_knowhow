@@ -726,9 +726,8 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
       // nastimaj roba na rugov-idroba
       n_roba( rugov->idroba )
 
-      // uzmi porez na osnovu robe
-      SELECT tarifa
-      SEEK roba->idtarifa
+
+      select_o_tarifa( roba->idtarifa )
       nPorez := tarifa->opp
 
       SELECT fakt_pripr

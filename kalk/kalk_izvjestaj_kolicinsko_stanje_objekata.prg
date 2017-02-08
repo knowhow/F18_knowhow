@@ -150,8 +150,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
          ShowKorner( nRecno, 100 )
          cIdroba := rekap1->idRoba
 
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
          cIdTarifa := roba->idTarifa
 
          SELECT rekap1
@@ -161,7 +160,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
          IF ( ( Round( nK2, 3 ) == 0 .AND. Round( nK1, 2 ) == 0 ) )
             SELECT rekap1
-            SEEK cG1 + cIdTarifa + cIdroba + Chr( 254 )
+            SEEK cG1 + cIdTarifa + cIdroba + Chr( 254 ) // rekap1 kalk
             LOOP
          ENDIF
 

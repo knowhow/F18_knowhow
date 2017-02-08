@@ -58,7 +58,7 @@ FUNCTION SpecTrosRN()
 
    cIdFirma := Left( cIdFirma, 2 )
 
-   O_FAKT_OBJEKTI
+   o_fakt_objekti()
    o_konto()
    o_suban()
 

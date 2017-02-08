@@ -143,7 +143,7 @@ FUNCTION BoxStanje( aStanje, cIdroba )
    Box( , Min( 6 + nLen + Int( ( nLenDP ) / 2 ), 23 ), 75 )
    Beep( 1 )
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "ARTIKAL: "
-   @ form_x_koord() + 1, Col() SAY PadR( AllTrim ( cidroba ) + " - " + roba->naz, 51 ) COLOR "GR+/B"
+   @ form_x_koord() + 1, Col() SAY PadR( AllTrim ( cIdRoba ) + " - " + roba->naz, 51 ) COLOR "GR+/B"
    @ form_x_koord() + 3, form_y_koord() + 2 SAY cDiv + PadC( "KONTO", nLenKonta ) + cDiv + PadC ( "Ulaz", npd ) + cDiv + ;
       PadC ( "Izlaz", npd ) + cDiv + ;
       PadC ( "Stanje", npd ) + cDiv
@@ -195,10 +195,7 @@ FUNCTION BoxStanje( aStanje, cIdroba )
          cPom777 := aDodPar[ i, 2 ]
 
          IF "TARIFA->" $ Upper( cPom777 )
-            SELECT ( F_TARIFA )
-            IF !Used(); o_tarifa(); ENDIF
-            SET ORDER TO TAG "ID"
-            HSEEK ROBA->idtarifa
+            select_o_tarifa( ROBA->idtarifa )
             SELECT ROBA
          ENDIF
 

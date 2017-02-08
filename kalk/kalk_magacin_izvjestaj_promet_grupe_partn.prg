@@ -155,7 +155,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
       nRabat := 0
 
       SELECT ROBA
-      HSEEK cidroba
+      HSEEK cIdRoba
       SELECT KALK
 
       IF ROBA->tip $ "TUY"; SKIP 1; LOOP; ENDIF
@@ -163,8 +163,8 @@ FUNCTION kalk_mag_promet_grupe_partnera()
       cIdkonto := mkonto
 
       DO WHILE !Eof() .AND. iif( fSint .AND. lSabKon, ;
-            cidfirma + cidroba == idFirma + idroba, ;
-            cidfirma + cidkonto + cidroba == idFirma + mkonto + idroba ) .AND.  IspitajPrekid()
+            cidfirma + cIdRoba == idFirma + idroba, ;
+            cidfirma + cidkonto + cIdRoba == idFirma + mkonto + idroba ) .AND.  IspitajPrekid()
 
          IF ROBA->tip $ "TU"; SKIP 1; LOOP; ENDIF
 
@@ -235,7 +235,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
          aNaz := Sjecistr( roba->naz, 20 )
          IF PRow() > 61 + dodatni_redovi_po_stranici(); FF; Eval( bZagl ); ENDIF
 
-         ? Str( ++nrbr, 4 ) + ".", cidroba
+         ? Str( ++nrbr, 4 ) + ".", cIdRoba
          nCr := PCol() + 1
 
          @ PRow(), PCol() + 1 SAY aNaz[ 1 ]

@@ -57,12 +57,8 @@ FUNCTION kalk_get_1_ip()
    ENDIF
 */
 
-   SELECT tarifa
-   HSEEK _idtarifa
-
-   SELECT ROBA
-   SET ORDER TO TAG "ID"
-   SEEK _idroba
+   select_o_tarifa( _idtarifa )
+   select_o_roba( _idroba )
 
    _mpcsapp := kalk_get_mpc_by_koncij_pravilo( _IdKonto )
 

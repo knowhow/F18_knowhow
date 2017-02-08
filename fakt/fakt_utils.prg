@@ -79,10 +79,10 @@ FUNCTION fakt_objekat_naz( id_obj )
 
    PushWA()
 
-   // O_FAKT_OBJEKTI
+   // o_fakt_objekti()
 
    // SELECT fakt_objekti
-   select_o_fakt_objekti( id_obj )
+   select_o_fakt_objekti()( id_obj )
 
    IF Found()
       _ret := AllTrim( field->naz )

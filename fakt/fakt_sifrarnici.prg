@@ -24,7 +24,7 @@ FUNCTION p_fakt_objekti( cId, dx, dy )
    ImeKol := {}
    Kol := {}
 
-   O_FAKT_OBJEKTI
+   o_fakt_objekti()
 
    AAdd( ImeKol, { PadC( "Id", 10 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) } } )
    AAdd( ImeKol, { PadC( "Naziv", 60 ), {|| naz }, "naz" } )
@@ -122,7 +122,7 @@ FUNCTION FaktStanje( cIdRoba )
 
    // "3","Idroba+dtos(datDok)","FAKT")  // za karticu, specifikaciju
    //SET ORDER TO TAG "3"
-   seek_fakt_fakt_3( cIdRoba )
+   seek_fakt_3( cIdRoba )
 
    aStanje := {}
    // {idfirma, nUl,nIzl,nRevers,nRezerv }

@@ -456,11 +456,11 @@ STATIC FUNCTION pregled_kartice()
    IF !Empty( cMkonto )
 
       SELECT kalk
-      SEEK cidfirma + cmkonto + cidroba
+      SEEK cidfirma + cmkonto + cIdRoba
 
       nStanje := nNV := nVPV := 0
 
-      DO WHILE !Eof() .AND. idfirma + mkonto + idroba == cidfirma + cmkonto + cidroba
+      DO WHILE !Eof() .AND. idfirma + mkonto + idroba == cidfirma + cmkonto + cIdRoba
          cId := idfirma + idvd + brdok + rbr
          IF mu_i == "1"
             nStanje += ( kolicina - gkolicina - gkolicin2 )
@@ -484,9 +484,9 @@ STATIC FUNCTION pregled_kartice()
       ENDDO
    ELSE
       SELECT kalk
-      SEEK cidfirma + cpkonto + cidroba
+      SEEK cidfirma + cpkonto + cIdRoba
       nStanje := nNV := nMPV := 0
-      DO WHILE !Eof() .AND. idfirma + pkonto + idroba == cidfirma + cpkonto + cidroba
+      DO WHILE !Eof() .AND. idfirma + pkonto + idroba == cidfirma + cpkonto + cIdRoba
          cId := idfirma + idvd + brdok + rbr
          IF pu_i == "1"
             nStanje += ( kolicina - gkolicina - gkolicin2 )
@@ -543,19 +543,19 @@ STATIC FUNCTION pregled_kartice()
 
    SET CURSOR ON
 
-   SELECT roba; HSEEK cidroba; SELECT kalk
+   SELECT roba; HSEEK cIdRoba; SELECT kalk
    IF Empty( cPkonto )
       SELECT koncij; SEEK Trim( cmkonto ); SELECT kalk
-      @ form_x_koord() + 2, form_y_koord() + 1 SAY "Pregled kartice magacin: "; ?? cMkonto, "-", cidroba,"-", Left( roba->naz, 40 )
+      @ form_x_koord() + 2, form_y_koord() + 1 SAY "Pregled kartice magacin: "; ?? cMkonto, "-", cIdRoba,"-", Left( roba->naz, 40 )
       BrowseKey( form_x_koord() + 4, form_y_koord() + 1, form_x_koord() + 15, form_y_koord() + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
-         "idFirma+mkonto+idroba=cidFirma+cmkonto+cidroba", ;
-         cidFirma + cmkonto + cidroba, 2,,, {|| OznaciMag( .T. ) } )
+         "idFirma+mkonto+idroba=cidFirma+cmkonto+cIdRoba", ;
+         cidFirma + cmkonto + cIdRoba, 2,,, {|| OznaciMag( .T. ) } )
    ELSE
       SELECT koncij; SEEK Trim( cpkonto ) ; SELECT kalk
-      @ form_x_koord() + 2, form_y_koord() + 1 SAY "Pregled kartice prodavnica: "; ?? cPkonto, "-", cidroba, "-", Left( roba->naz, 40 )
+      @ form_x_koord() + 2, form_y_koord() + 1 SAY "Pregled kartice prodavnica: "; ?? cPkonto, "-", cIdRoba, "-", Left( roba->naz, 40 )
       BrowseKey( form_x_koord() + 4, form_y_koord() + 1, form_x_koord() + 15, form_y_koord() + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
-         "idFirma+pkonto+idroba=cidFirma+cpkonto+cidroba", ;
-         cidFirma + cpkonto + cidroba, 2,,, {|| OznaciPro( .T. ) } )
+         "idFirma+pkonto+idroba=cidFirma+cpkonto+cIdRoba", ;
+         cidFirma + cpkonto + cIdRoba, 2,,, {|| OznaciPro( .T. ) } )
    ENDIF
 
    SELECT kalk_kartica

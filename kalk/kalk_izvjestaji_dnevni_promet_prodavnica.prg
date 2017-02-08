@@ -242,10 +242,9 @@ STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
             ENDIF
          ENDIF
 
-         SELECT roba
-         SEEK pos->idroba
-         SELECT tarifa
-         SEEK roba->idtarifa
+         select_o_roba( pos->idroba )
+         select_o_tarifa( roba->idtarifa )
+         
          SELECT POS
 
          nMpcBP := Round( cijena / ( 1 + tarifa->zpp / 100 + tarifa->ppp / 100 ) / ( 1 + tarifa->opp / 100 ), 2 )

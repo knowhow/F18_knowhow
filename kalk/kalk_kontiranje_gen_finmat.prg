@@ -212,11 +212,8 @@ FUNCTION kalk_kontiranje_gen_finmat()
             nKolicina := kalk_pripr->Kolicina
          ENDIF
 
-         SELECT ROBA
-         HSEEK KALK_PRIPR->IdRoba
-
-         SELECT TARIFA
-         HSEEK KALK_PRIPR->idtarifa
+         select_o_roba( KALK_PRIPR->IdRoba )
+         select_o_tarifa( KALK_PRIPR->idtarifa )
 
          SELECT KALK_PRIPR
 

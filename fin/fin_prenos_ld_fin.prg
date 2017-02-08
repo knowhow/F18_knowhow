@@ -44,7 +44,7 @@ FUNCTION LdFin()
    set_metric( "fin_prenos_ld_godina", my_user(), _godina )
    set_metric( "fin_prenos_ld_mjesec", my_user(), _mjesec )
 
-   O_FAKT_OBJEKTI
+ --  o_fakt_objekti()
    o_nalog()
    o_fin_pripr()
    O_TRFP3

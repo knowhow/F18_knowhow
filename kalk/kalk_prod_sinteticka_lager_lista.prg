@@ -225,7 +225,7 @@ FUNCTION sint_lager_lista_prodavnice()
 
       NovaStrana( bZagl )
       SELECT roba
-      HSEEK cidroba
+      HSEEK cIdRoba
       SELECT kalk
       aNaz := Sjecistr( roba->naz, 20 )
 

@@ -24,7 +24,7 @@ FUNCTION open_sif_tables_1()
    o_ops()
    o_sifk()
    o_sifv()
-   O_FAKT_OBJEKTI
+   //o_fakt_objekti()
 
    RETURN .T.
 

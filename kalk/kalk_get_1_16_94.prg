@@ -34,7 +34,7 @@ FUNCTION kalk_get_1_94()
          @  form_x_koord() + 6, form_y_koord() + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 6, 18 )
       ENDIF
       @  form_x_koord() + 7, form_y_koord() + 2   SAY "Faktura/Otpremnica Broj:" GET _BrFaktP
-      @  form_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   valid {|| .T. }
+      @  form_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   VALID {|| .T. }
 
       @ form_x_koord() + 9, form_y_koord() + 2 SAY "Magacinski konto zaduzuje"  GET _IdKonto VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
       // IF gNW <> "X"
@@ -76,18 +76,16 @@ FUNCTION kalk_get_1_94()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-   SELECT koncij
-   SEEK Trim( _idkonto )  // postavi TARIFA na pravu poziciju
-   SELECT TARIFA
-   HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
+   select_o_koncij( _idkonto )
+   select_o_tarifa( _IdTarifa  )
    SELECT kalk_pripr  // napuni tarifu
    _MKonto := _Idkonto
    _MU_I := "1"
 
 
 
-   //check_datum_posljednje_kalkulacije()
-   //DuplRoba()
+   // check_datum_posljednje_kalkulacije()
+   // DuplRoba()
 
    _GKolicina := 0
    IF kalk_is_novi_dokument()

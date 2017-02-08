@@ -330,8 +330,8 @@ FUNCTION MNivPoProc()
       nUlaz := nIzlaz := 0
       nVPVU := nVPVI := nNVU := nNVI := 0
       nRabat := 0
-      SELECT roba; HSEEK cidroba; SELECT kalk
-      DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + mkonto + idroba
+      SELECT roba; HSEEK cIdRoba; SELECT kalk
+      DO WHILE !Eof() .AND. cidfirma + cidkonto + cIdRoba == idFirma + mkonto + idroba
 
          IF ddatdok < datdok  // preskoci
             skip; LOOP
@@ -373,7 +373,7 @@ FUNCTION MNivPoProc()
          SKIP
       ENDDO
 
-      SELECT roba; HSEEK cidroba; SELECT kalk
+      SELECT roba; HSEEK cIdRoba; SELECT kalk
       IF  ( cVarijanta = "1" .AND. roba->n1 = 0 )
          skip; LOOP
       ENDIF
@@ -386,7 +386,7 @@ FUNCTION MNivPoProc()
          scatter()
          APPEND ncnl
          _idfirma := cidfirma; _idkonto := cidkonto; _mkonto := cidkonto; _pu_i := _mu_i := ""
-         _idroba := cidroba; _idtarifa := roba->idtarifa
+         _idroba := cIdRoba; _idtarifa := roba->idtarifa
          _idvd := "18"; _brdok := cbrdok
          _rbr := RedniBroj( ++nrbr )
          _kolicina := nUlaz - nIzlaz
@@ -455,7 +455,7 @@ FUNCTION KorekPC()
 
       cIdRoba := Idroba; nUlaz := nIzlaz := 0; nVPVU := nVPVI := nNVU := nNVI := 0; nRabat := 0
       SELECT roba
-      HSEEK cidroba
+      HSEEK cIdRoba
 
       SELECT kalk
       IF roba->tip $ "TU"; skip; loop; ENDIF
@@ -464,7 +464,7 @@ FUNCTION KorekPC()
       nUlazVPC  := UzmiVPCSif( cIdKonto, .T. )
       nPosljVPC := nUlazVPC
       nRobaVPC  := nUlazVPC
-      DO WHILE !Eof() .AND. self_organizacija_id() + cidkonto + cidroba == idFirma + mkonto + idroba
+      DO WHILE !Eof() .AND. self_organizacija_id() + cidkonto + cIdRoba == idFirma + mkonto + idroba
 
          IF roba->tip $ "TU"; skip; loop; ENDIF
          IF cSravnitiD == "D"

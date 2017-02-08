@@ -873,10 +873,10 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
       cKonto := kalk_pripr->idKonto
       cRoba := kalk_pripr->idRoba
       cTarifa := kalk_pripr->idtarifa
-      SELECT roba
-      SEEK cRoba
-      SELECT tarifa
-      SEEK cTarifa
+
+      select_o_roba( cRoba )
+      select_o_tarifa( cTarifa )
+      
       set_pdv_array( @aPorezi )
       set_pdv_public_vars()
       SELECT kalk_pripr

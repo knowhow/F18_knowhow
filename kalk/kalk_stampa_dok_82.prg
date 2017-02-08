@@ -58,8 +58,9 @@ FUNCTION kalk_stampa_dok_82()
       Marza2R()   // izracunaj nMarza2
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-      SELECT ROBA; HSEEK kalk_pripr->IdRoba
-      SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
+      select_o_roba( kalk_pripr->IdRoba )
+      select_o_tarifa( kalk_pripr->IdTarifa )
+
       SELECT kalk_pripr
       set_pdv_public_vars()
 
@@ -136,11 +137,13 @@ FUNCTION kalk_stampa_dok_82()
    nTot1 := nTot2 := nTot3 := nTot4 := 0
    nTot5 := nTot6 := nTot7 := 0
    DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok
-      cidtarifa := idtarifa
+      cIdTarifa := idtarifa
       nU1 := nU2 := nU3 := nU4 := 0
-      SELECT tarifa; HSEEK cidtarifa
+
+      select_o_tarifa( cIdTarifa )
+      
       SELECT kalk_pripr
-      DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok .AND. idtarifa == cidtarifa
+      DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok .AND. idtarifa == cIdTarifa
          SELECT roba; HSEEK kalk_pripr->idroba; SELECT kalk_pripr
          set_pdv_public_vars()
          nU1 += mpc * kolicina
@@ -152,7 +155,7 @@ FUNCTION kalk_stampa_dok_82()
       ENDDO
       nTot1 += nu1; nTot2 += nU2; nTot3 += nU3
       nTot4 += nU4
-      ? cidtarifa
+      ? cIdTarifa
       @ PRow(), PCol() + 1   SAY _OPP * 100 PICT picproc
       @ PRow(), PCol() + 1   SAY _PPP * 100 PICT picproc
       nCol1 := PCol() + 1

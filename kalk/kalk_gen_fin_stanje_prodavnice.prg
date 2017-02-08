@@ -252,8 +252,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
             ENDIF
          ENDIF
 
-         SELECT roba
-         HSEEK kalk->idroba
+         select_o_roba( kalk->idroba )
 
          IF ( _gledati_usluge == "N" .AND. roba->tip $ "U" )
             SELECT kalk
@@ -261,8 +260,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
             LOOP
          ENDIF
 
-         SELECT tarifa
-         HSEEK kalk->idtarifa
+         select_o_tarifa( kalk->idtarifa )
 
          SELECT kalk
 

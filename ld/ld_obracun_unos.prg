@@ -181,7 +181,7 @@ FUNCTION OObracun()
       MsgBeep( "http://redmine.bring.out.ba/issues/25988" )
       QUIT_1
       o_radsiht()
-      O_FAKT_OBJEKTI
+      o_fakt_objekti()
    ENDIF
 
    set_tippr_ili_tippr2( cObracun )

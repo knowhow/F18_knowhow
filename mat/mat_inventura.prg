@@ -795,7 +795,7 @@ FUNCTION mat_nal_inventure()
          REPLACE idfirma WITH cidf, idvn WITH cidvn, brnal WITH cbrnal, ;
             idkonto WITH cidk, rbr WITH Str( ++nRbr, 4 ), ;
             idzaduz WITH cidzaduz, ;
-            idroba WITH cidroba, u_i WITH "2", d_p WITH "2", ;
+            idroba WITH cIdRoba, u_i WITH "2", d_p WITH "2", ;
             kolicina WITH rk, cijena WITH nCj, iznos WITH rv, ;
             iznos2 WITH iznos * Kurs( cIdD ), ;
             datdok WITH cidD, datkurs WITH cidd, ;
@@ -857,7 +857,9 @@ FUNCTION mat_inv_obr_poreza()
 
    DO WHILE !Eof()
 
-      SELECT roba; HSEEK mat_invent->idroba; SELECT tarifa; HSEEK roba->idtarifa
+      select_o_roba( mat_invent->idroba)
+      select_o_tarifa( roba->idtarifa )
+
       SELECT mat_invent
       nMPVSAPP := kolicina * cijena
       IF nMPVSAPP == 0; skip; loop; ENDIF

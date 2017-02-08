@@ -357,7 +357,7 @@ FUNCTION fakt_stanje_robe()
                B_ON
             ENDIF
 
-            ? Space( gnLMarg ); ?? Str( ++nRbr, 4 ), cidroba, PadR( ROBA->naz, 40 )
+            ? Space( gnLMarg ); ?? Str( ++nRbr, 4 ), cIdRoba, PadR( ROBA->naz, 40 )
 
             nCol0 := PCol() - 11
 

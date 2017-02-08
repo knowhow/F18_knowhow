@@ -163,15 +163,15 @@ FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
       nMPVU := nMPVI := nNVU := nNVI := 0
       nRabat := 0
       SELECT roba
-      HSEEK cidroba
+      HSEEK cIdRoba
 
       // SELECT kalk
 
       // SET ORDER TO TAG "4"
       // "KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
-      // ?? drugi alias trebamo ?? SEEK cidfirma + cidkonto + cidroba
-      find_kalk_by_pkonto_idroba(  cidfirma, cidkonto, cidroba )
-      DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + pkonto + idroba
+      // ?? drugi alias trebamo ?? SEEK cidfirma + cidkonto + cIdRoba
+      find_kalk_by_pkonto_idroba(  cidfirma, cidkonto, cIdRoba )
+      DO WHILE !Eof() .AND. cidfirma + cidkonto + cIdRoba == idFirma + pkonto + idroba
 
          IF ddatdok < datdok  // preskoci
             skip; LOOP
@@ -217,7 +217,7 @@ FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
       scatter()
       APPEND ncnl
       _idfirma := cidfirma; _idkonto := cidkonto; _pkonto := cidkonto; _pu_i := "3"
-      _idroba := cidroba; _idtarifa := kalk->idtarifa
+      _idroba := cIdRoba; _idtarifa := kalk->idtarifa
       _idvd := "19"; _brdok := cbrdok
       _rbr := RedniBroj( ++nrbr )
       _kolicina := nUlaz - nIzlaz
@@ -580,7 +580,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
       @ 2 + form_x_koord(), 2 + form_y_koord() SAY "ID roba: " + cIdRoba
       @ 3 + form_x_koord(), 2 + form_y_koord() SAY "Cijena u sifrarniku " + AllTrim( Str( nUlazVpc ) )
 
-      DO WHILE !Eof() .AND. self_organizacija_id() + cidkonto + cidroba == idFirma + pkonto + idroba
+      DO WHILE !Eof() .AND. self_organizacija_id() + cidkonto + cIdRoba == idFirma + pkonto + idroba
 
          IF roba->tip $ "TU"
             SKIP
@@ -804,7 +804,7 @@ FUNCTION Gen41S()
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. Pkonto == cPKonto
       cIdTarifa := IdTarifa
       SELECT roba; HSEEK kalk->idroba
-      SELECT tarifa; HSEEK cIdTarifa; SELECT kalk
+--      SELECT tarifa; HSEEK cIdTarifa; SELECT kalk
       set_pdv_public_vars()
       nOPP := TARIFA->OPP; nPPP := TARIFA->PPP
       nZPP := tarifa->zpp
@@ -812,7 +812,7 @@ FUNCTION Gen41S()
       nPopust := 0
 
       lUPripr := .T.
-      SELECT kalk_pripr; LOCATE FOR idtarifa == cidtarifa
+      SELECT kalk_pripr; LOCATE FOR idtarifa == cIdTarifa
       IF !Found(); GO top; lUPripr := .F. ; ENDIF
       dGledamDo := datdok
       SELECT kalk
@@ -856,7 +856,7 @@ FUNCTION Gen41S()
             cRIdRoba     := kalk_pripr->idroba
             SKIP 1
             DO WHILE !Eof()
-               IF idtarifa == cidtarifa
+               IF idtarifa == cIdTarifa
                   IF kolicina > 0
                      nMPVSappREal += kalk_pripr->mpcsapp * kolicina
                      nMPVReal     += kalk_pripr->mpc * kolicina

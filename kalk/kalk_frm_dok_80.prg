@@ -104,14 +104,10 @@ FUNCTION Get1_80( atrib )
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-   SELECT roba
-   HSEEK _idroba
+   select_o_roba( _idroba )
 
-   SELECT tarifa
-   SEEK roba->idtarifa
-
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_tarifa( roba->idtarifa )
+   select_o_koncij( _idkonto )
 
    SELECT kalk_pripr
 
@@ -122,11 +118,8 @@ FUNCTION Get1_80( atrib )
 
    IF kalk_is_novi_dokument()
 
-      SELECT koncij
-      SEEK Trim( _idkonto )
-
-      SELECT roba
-      HSEEK _idroba
+      select_o_koncij( _idkonto )
+      select_o_roba( _idroba )
 
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
 

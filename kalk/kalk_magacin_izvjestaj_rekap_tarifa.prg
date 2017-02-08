@@ -122,7 +122,7 @@ FUNCTION RekMagTar()
          cIdKonto := IdKonto
          cIdTarifa := IdTarifa
          SELECT tarifa
-         HSEEK cIdTarifa
+    --     HSEEK cIdTarifa
          SELECT kalk
          nVPP := TARIFA->VPP
          nNVD := nNVP := 0

@@ -405,8 +405,7 @@ STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, nRbr )
       RETURN .F.
    ENDIF
 
-   SELECT tarifa
-   HSEEK topska->idtarifa
+   select_o_tarifa( topska->idtarifa )
    cTarifaPDVD := tarifa->opp
 
    SELECT kalk_pripr

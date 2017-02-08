@@ -218,11 +218,9 @@ FUNCTION kalk_kartica_magacin()
       ENDIF
 
       cIdRoba := field->idroba
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
-      SELECT tarifa
-      HSEEK roba->idtarifa
+      select_o_tarifa( roba->idtarifa )
       ? __line
       ? "Artikal:", cIdRoba, "-", Trim( Left( roba->naz, 40 ) ) + iif( roba_barkod_pri_unosu(), " BK:" + roba->barkod, "" ) + " (" + roba->jmj + ")"
 

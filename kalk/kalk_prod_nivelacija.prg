@@ -56,14 +56,9 @@ FUNCTION kalk_nivelacija_11()
 
       scatter()
 
-      SELECT koncij
-      SEEK Trim( hRec[ "idkonto" ] )
-
-      SELECT roba
-      HSEEK hRec[ "idroba" ]
-
-      SELECT tarifa
-      HSEEK roba->idtarifa
+      select_o_koncij( hRec[ "idkonto" ] )
+      select_o_roba( hRec[ "idroba" ] )
+      select_o_tarifa( roba->idtarifa )
 
       SELECT roba
 

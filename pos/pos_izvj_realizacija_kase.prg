@@ -968,23 +968,18 @@ STATIC FUNCTION TotalKasa( cIdPos, nTotPos, nTotPos2, nTotPos3, nTotPosk, cK1, c
    ?
 
    RETURN
-// }
+
 
 
 
 STATIC FUNCTION PrikaziPorez( nIznosSt, cIdTarifa )
 
-   // {
+
    LOCAL nArr
    LOCAL nMpVBP, nPPPIznos, nPPIznos, nPPUIznos, nPPP, nPPU
    nArr := Select()
 
-   // obracun poreza
-   SELECT ( F_TARIFA )
-   IF !Used()
-      o_tarifa()
-   ENDIF
-   Seek2( cIdTarifa )
+   select_o_tarifa( cIdTarifa )
 
    nPPP := tarifa->opp
    nPPU := tarifa->ppp

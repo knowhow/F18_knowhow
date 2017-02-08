@@ -29,7 +29,7 @@ FUNCTION fakt_kartica()
    o_sifv()
 
    IF _params[ "fakt_objekti" ]
-      // O_FAKT_OBJEKTI
+      // o_fakt_objekti()
    ENDIF
 
    // o_fakt_doks()
@@ -502,9 +502,9 @@ STATIC FUNCTION ZaglKart( lIniStrana )
    ? Space( gnLMarg )
    ?? "ŠIFRA:"
    IF fID_J
-      ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->ID_J, Left( cidroba, 10 ) ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
+      ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->ID_J, Left( cIdRoba, 10 ) ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
    ELSE
-      ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->id, cidroba ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
+      ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->id, cIdRoba ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
    ENDIF
    ? Space( gnLMarg ); ?? m
    B_OFF

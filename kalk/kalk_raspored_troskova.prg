@@ -48,7 +48,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
       cSet := ""
    ELSE
       IF cSet != "cardaz"
-        MsgBeep( "Implementiran ALG-2 samo za cardaz!")
+         MsgBeep( "Implementiran ALG-2 samo za cardaz!" )
       ENDIF
 
       hTrosakSet[ cSet + "_last"   ] := hTrosakSet[ cSet + "_0" ]
@@ -89,7 +89,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
       IF !Empty( qqTar )
          aUslTar := Parsiraj( qqTar, "idTarifa" )
          IF aUslTar <> NIL .AND. !aUslTar == ".t."
-            SET FILTER to &aUslTar
+            SET FILTER TO &aUslTar
          ENDIF
       ENDIF
    ENDIF
@@ -215,13 +215,13 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                         cJmj := "KG "
                         _Prevoz := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosPrevoz, gZaokr )
                      ELSE
-                        _Prevoz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosPrevoz, gZaokr )
+                        _Prevoz := Round( _fcj * ( 1 - _Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosPrevoz, gZaokr )
                      ENDIF
 
                      nUPrevoz += _Prevoz
                      IF Abs( nIznosPrevoz - nUPrevoz ) < 0.1 // sitnish, baci ga na zadnju st.
                         SKIP
-                        IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
+                        IF !( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
                            _Prevoz += ( nIznosPrevoz - nUPrevoz )
                         ENDIF
                         SKIP -1
@@ -247,13 +247,13 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                         cJmj := "KG "
                         _CarDaz := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosCarDaz, gZaokr )
                      ELSE
-                        _CarDaz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosCarDaz, gZaokr )
+                        _CarDaz := Round( _fcj * ( 1 - _Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosCarDaz, gZaokr )
                      ENDIF
 
                      nUCarDaz += _Cardaz
                      IF Abs( nIznosCarDaz - nUCarDaz ) < 0.1 // sitniç, baci ga na zadnju st.
                         SKIP
-                        IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
+                        IF !( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
                            _Cardaz += ( nIznosCarDaz - nUCarDaz )
                         ENDIF
                         SKIP -1
@@ -295,13 +295,13 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                         cJmj := "KG "
                         _BankTr := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosBankTr, gZaokr )
                      ELSE
-                        _BankTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosBankTr, gZaokr )
+                        _BankTr := Round( _fcj * ( 1 - _Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosBankTr, gZaokr )
                      ENDIF
 
                      nUBankTr += _BankTr
                      IF Abs( nIznosBankTr - nUBankTr ) < 0.1 // sitniç, baci ga na zadnju st.
                         SKIP
-                        IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
+                        IF !( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
                            _BankTr += ( nIznosBankTr - nUBankTr )
                         ENDIF
                         SKIP -1
@@ -327,13 +327,13 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                         _SpedTr := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosSpedTr, gZaokr )
                      ELSE
 
-                        _SpedTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosSpedTr, gZaokr )
+                        _SpedTr := Round( _fcj * ( 1 - _Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosSpedTr, gZaokr )
                      ENDIF
 
                      nUSpedTr += _SpedTr
                      IF Abs( nIznosSpedTr - nUSpedTr ) < 0.1 // sitnish baci ga na zadnju st.
                         SKIP
-                        IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
+                        IF !( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
                            _SpedTr += ( nIznosSpedTr - nUSpedTr )
                         ENDIF
                         SKIP -1
@@ -358,13 +358,13 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                         cJmj := "KG "
                         _ZavTr := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosZavTr, gZaokr )
                      ELSE
-                        _ZavTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosZavTr, gZaokr )
+                        _ZavTr := Round( _fcj * ( 1 - _Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosZavTr, gZaokr )
                      ENDIF
 
                      nUZavTr += _ZavTR
                      IF Abs( nIznosZavTr - nUZavTr ) < 0.1 // sitnish, baci ga na zadnju st.
                         SKIP
-                        IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
+                        IF !( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
                            _ZavTR += ( nIznosZavTr - nUZavTr )
                         ENDIF
                         SKIP -1
@@ -379,9 +379,8 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                   nUZavTr += _fcj * ( 1 - _Rabat / 100 ) * _kolicina * _ZavTr / 100
                ENDIF
 
-               SELECT roba
-               SELECT tarifa
-               HSEEK _idtarifa
+
+               select_o_tarifa( _idtarifa )
 
                SELECT kalk_pripr
                IF _idvd == "RN"
@@ -514,10 +513,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
             IF koncij->naz == "N1"; _VPC := _NC; ENDIF
             _marza := _VPC - _FCJ
             _TMarza := "A"
-            SELECT roba
-            HSEEK _idroba
-            SELECT tarifa
-            HSEEK _idtarifa
+
+            select_o_roba( _idroba )
+            select_o_tarifa( _idtarifa )
+
             SELECT kalk_pripr
             Marza2()
             _TMarza2 := "A"
@@ -705,7 +704,7 @@ FUNCTION kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
    ENDIF
 
    IF field->IdVD $ "14#94#15"   // izlaz po vp
-      nMarza := field->VPC * ( 1 -field->Rabatv / 100 ) -field->NC
+      nMarza := field->VPC * ( 1 - field->Rabatv / 100 ) - field->NC
 
    ELSEIF field->idvd $ "11#12#13"
       nMarza := field->VPC - field->FCJ

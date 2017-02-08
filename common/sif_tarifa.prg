@@ -66,11 +66,7 @@ FUNCTION get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPore
       cPolje := "IdTarifa"
 
    ELSE
-      SELECT ( F_KONCIJ )
-      IF ( !Used() )
-         o_koncij()
-      ENDIF
-      SEEK cIdKonto
+      select_o_koncij( cIdKonto )
       IF !Found()
          cPolje := "IdTarifa"
       ELSE
@@ -97,21 +93,11 @@ FUNCTION get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPore
       SEEK cIdRoba
       cTarifa := &cPolje
 
-      Select( F_TARIFA )
-      IF ( !Used() )
-         lUsedTarifa := .F.
-         o_tarifa()
-      ENDIF
-      SEEK cTarifa
+      select_o_tarifa( cTarifa )
       cIdTarifa := tarifa->id
    ELSE
       cTarifa := cIdTar
-      Select( F_TARIFA )
-      IF ( !Used() )
-         lUsedTarifa := .F.
-         o_tarifa()
-      ENDIF
-      SEEK cTarifa
+      select_o_tarifa( cTarifa )
       cIdTarifa := cIdTar
    ENDIF
 

@@ -432,7 +432,7 @@ FUNCTION fakt_lager_lista()
             ? Space( gnLMarg )
             ?? Str( ++nRbr, 4 ), ;
                IF( cSintetika == "D" .AND. ROBA->tip == "S", ;
-               ROBA->id, Left( cidroba, 10 ) ), PadR( ROBA->naz, 40 )
+               ROBA->id, Left( cIdRoba, 10 ) ), PadR( ROBA->naz, 40 )
 
             IF cRR $ "NF" .AND. !lBezUlaza
                IF cUI $ "US"

@@ -169,9 +169,8 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
          ENDIF
       ENDIF
 
-      // obracun poreza
-      SELECT TARIFA
-      Seek2( _IdTarifa )
+
+      select_o_tarifa( _IdTarifa )
 
       IF glPorezNaSvakuStavku
          nPPP := tarifa->opp
@@ -456,7 +455,7 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
       SELECT pos
       SEEK ( aVezani[ nCnt ][ 1 ] + VD_RN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
       DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( aVezani[ nCnt ][ 1 ] + VD_RN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
-        
+
 
          // select pom
          // seek POS->IdRoba+POS->IdCijena+STR (POS->Cijena, 10, 3)
@@ -549,9 +548,7 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
          ?? PadR ( AllTrim ( Str ( POM->Cijena, 8, gCijDec ) ), 8 ) + Str ( nIznosSt, 8, N_ROUNDTO )
       ENDIF
 
-      // obracun poreza
-      SELECT TARIFA
-      Seek2 ( _IdTarifa )
+      select_o_tarifa( _IdTarifa )
 
       IF glPorezNaSvakuStavku
          nPPP := tarifa->opp
@@ -1014,9 +1011,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          cJmj := roba->jmj
          cRobaNaz := AllTrim( roba->naz )
 
-         // seek-uj tarifu
-         SELECT tarifa
-         HSEEK cIdTarifa
+         select_o_tarifa( cIdTarifa )
          nPPDV := tarifa->opp
 
          nStPP := 0

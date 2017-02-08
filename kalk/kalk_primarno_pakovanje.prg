@@ -153,7 +153,7 @@ FUNCTION NaPrimPak()
          // -----------------------------------------------
          IF Len( aSastav ) != 0
             SELECT ROBA
-            HSEEK cidroba
+            HSEEK cIdRoba
             SELECT kalk_pripr        // kalk_priprema dokumenta
             IF ( ( nulaz - nizlaz )  <> 0 )
                nRBr++
@@ -176,7 +176,7 @@ FUNCTION NaPrimPak()
                   tmarza2    WITH "A",;
                   tprevoz    WITH "A",;
                   mpcsapp    WITH kalk_get_mpc_by_koncij_pravilo(),;
-                  idroba     WITH cidroba,;
+                  idroba     WITH cIdRoba,;
                   KOLICINA   WITH -( nUlaz - nIzlaz )
             ENDIF
          ENDIF
@@ -321,7 +321,7 @@ FUNCTION NaPrPak2()
          // generisi stavku zaduzenja sekundarnog pakovanja
          // -----------------------------------------------
          IF Len( aSastav ) != 0
-            SELECT ROBA; HSEEK cidroba
+            SELECT ROBA; HSEEK cIdRoba
             SELECT kalk_pripr        // kalk_priprema dokumenta
             IF ( ( nulaz - nizlaz )  <> 0 )
                nRBr++
@@ -344,7 +344,7 @@ FUNCTION NaPrPak2()
                   tmarza2    WITH "A",;
                   tprevoz    WITH "A",;
                   mpcsapp    WITH kalk_get_mpc_by_koncij_pravilo(),;
-                  idroba     WITH cidroba,;
+                  idroba     WITH cIdRoba,;
                   KOLICINA   WITH -( nUlaz - nIzlaz )
             ENDIF
          ENDIF

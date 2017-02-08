@@ -158,8 +158,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
       dDatDok := datdok
       cBroj := pkonto
       DO WHILE !Eof() .AND. cIdFirma + cBroj == idFirma + pkonto .AND. IspitajPrekid()
-         SELECT roba
-         HSEEK kalk->idroba
+         select_o_roba( kalk->idroba )
 
          SELECT kalk
          IF cTU == "2" .AND.  roba->tip $ "UT"
@@ -172,10 +171,8 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
             LOOP
          ENDIF
 
-         SELECT roba
-         HSEEK kalk->idroba
-         SELECT tarifa
-         HSEEK kalk->idtarifa
+         select_o_tarifa( kalk->idtarifa )
+
          SELECT kalk
 
          get_tarifa_by_koncij_region_roba_idtarifa_2_3( pkonto, idroba, @aPorezi, idtarifa )

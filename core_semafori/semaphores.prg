@@ -476,17 +476,13 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
 FUNCTION field_in_blacklist( cTable, cFieldName, hFieldsBlacklist )
 
-   // mozda nije definisana blacklista
-   IF hFieldsBlacklist == NIL
-      RETURN .F.
-   ENDIF
 
    IF  cFieldName == "obradjeno" .OR. ; // polje obradjeno je automatski timestamp
          ( cFieldName == "korisnik" .AND. cTable $ "fin_nalog#fakt_doks#kalk_doks" )  // automatski se puni sa current_user
          RETURN .T.
    ENDIF
 
-   IF AScan( hFieldsBlacklist, {| cVal | cVal == cFieldName } ) > 0
+   IF hFieldsBlacklist != NIL .AND. AScan( hFieldsBlacklist, {| cVal | cVal == cFieldName } ) > 0
       RETURN .T.
    ENDIF
 

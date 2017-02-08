@@ -18,7 +18,7 @@
 
 FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
-   LOCAL nI, cTmp, _tmp_2, _msg, lSqlTable
+   LOCAL nI, cFieldName, cNumericSqlValue, cMsg, lSqlTable
    LOCAL oQueryRet := NIL
    LOCAL _result
    LOCAL cQuery
@@ -30,6 +30,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
    LOCAL _len
    LOCAL hDbfRec, hAlgoritam1
    LOCAL aDbfFields, aSqlFields, _sql_order, nDbfWA, cDbfAlias, cSqlTableFullName
+   LOCAL lPrvoPolje
 
    // LOCAL lSqlDbf := .F. hRecord je uvijek 852 enkodiran!
 
@@ -87,9 +88,9 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
    CASE cSqlOperator == "del"
 
       IF ( cWhereStr == NIL ) .AND. ( hRecord == NIL .OR. ( hRecord[ "id" ] == NIL ) )
-         _msg := RECI_GDJE_SAM + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!"
-         Alert( _msg )
-         log_write( _msg, 2, lSilent )
+         cMsg := RECI_GDJE_SAM + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!"
+         Alert( cMsg )
+         log_write( cMsg, 2, lSilent )
          QUIT_1
       ENDIF
       cQuery := "DELETE FROM " + cSqlTableFullName + " WHERE " + cWhereStr
@@ -98,65 +99,63 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
       cQuery := "INSERT INTO " + cSqlTableFullName +  "("
 
+      lPrvoPolje := .T.
       FOR nI := 1 TO Len( hDbfRec[ "dbf_fields" ] )
 
          IF field_in_blacklist( cTable, hDbfRec[ "dbf_fields" ][ nI ], hDbfRec[ "blacklisted" ] )
             LOOP
          ENDIF
 
-         cQuery += hDbfRec[ "dbf_fields" ][ nI ]
-         IF nI < Len( hDbfRec[ "dbf_fields" ] )
+         IF !lPrvoPolje
             cQuery += ","
+         ELSE
+            lPrvoPolje := .F.
          ENDIF
+         cQuery += hDbfRec[ "dbf_fields" ][ nI ]
 
       NEXT
 
       cQuery += ")  VALUES ("
 
+      lPrvoPolje := .T.
       FOR nI := 1 TO Len( hDbfRec[ "dbf_fields" ] )
 
-         cTmp := hDbfRec[ "dbf_fields" ][ nI ]
-
-if cTmp == "obradjeno"
-altd()
-endif
-         IF field_in_blacklist( cTable, cTmp, hDbfRec[ "blacklisted" ] )
+         cFieldName := hDbfRec[ "dbf_fields" ][ nI ]
+         IF field_in_blacklist( cTable, cFieldName, hDbfRec[ "blacklisted" ] )
             LOOP
          ENDIF
 
-         IF !hb_HHasKey( hRecord, cTmp )
-            _msg := "record " + cSqlOperator + " ne sadrzi " + cTmp + " field !?## pogledaj log !"
-            log_write( _msg + " " + pp( hRecord ), 2 )
-            MsgBeep( _msg )
-            RaiseError( _msg + " " + pp( hRecord ) )
+         IF !hb_HHasKey( hRecord, cFieldName )
+            cMsg := "record " + cSqlOperator + " ne sadrzi " + cFieldName + " field !?## pogledaj log !"
+            log_write( cMsg + " " + pp( hRecord ), 2 )
+            MsgBeep( cMsg )
+            RaiseError( cMsg + " " + pp( hRecord ) )
             RETURN .F.
          ENDIF
 
-         IF ValType( hRecord[ cTmp ] ) == "N"
-            IF  hDbfRec[ "dbf_fields_len" ][ cTmp ][ 1 ] == "I"
-               _tmp_2 := Str( hRecord[ cTmp ], 5, 0 )
-            ELSE
-               _tmp_2 := Str( hRecord[ cTmp ], hDbfRec[ "dbf_fields_len" ][ cTmp ][ 2 ], hDbfRec[ "dbf_fields_len" ][ cTmp ][ 3 ] )
-            ENDIF
+         IF !lPrvoPolje
+            cQuery += ","
+         ELSE
+            lPrvoPolje := .F.
+         ENDIF
 
-            IF Left( _tmp_2, 1 ) == "*"
-               _msg := "err_num_width - field: " + cTmp + "  value:" + AllTrim( Str( hRecord[ cTmp ] ) ) + " / width: " +  AllTrim( Str( hDbfRec[ "dbf_fields_len" ][ cTmp ][ 2 ] ) ) + " : " +  AllTrim( Str( hDbfRec[ "dbf_fields_len" ][ cTmp ][ 3 ] ) )
-               log_write( _msg, 2 )
-               RaiseError( _msg )
+         IF ValType( hRecord[ cFieldName ] ) == "N"
+            IF  hDbfRec[ "dbf_fields_len" ][ cFieldName ][ 1 ] == "I"
+               cNumericSqlValue := Str( hRecord[ cFieldName ], 5, 0 )
             ELSE
-               cQuery += _tmp_2
+               cNumericSqlValue := Str( hRecord[ cFieldName ], hDbfRec[ "dbf_fields_len" ][ cFieldName ][ 2 ], hDbfRec[ "dbf_fields_len" ][ cFieldName ][ 3 ] )
+            ENDIF
+            IF Left( cNumericSqlValue, 1 ) == "*"
+               cMsg := "err_num_width - field: " + cFieldName + "  value:" + AllTrim( Str( hRecord[ cFieldName ] ) ) + " / width: " +  AllTrim( Str( hDbfRec[ "dbf_fields_len" ][ cFieldName ][ 2 ] ) ) + " : " +  AllTrim( Str( hDbfRec[ "dbf_fields_len" ][ cFieldName ][ 3 ] ) )
+               log_write( cMsg, 2 )
+               RaiseError( cMsg )
+            ELSE
+               cQuery += cNumericSqlValue
             ENDIF
          ELSE
-            // IF lSqlDbf
-            // cQuery += sql_quote_u( hRecord[ cTmp ] ) // sql tabela sadrzi utf-8 enkodirane podatke
-            // ELSE
-            cQuery += sql_quote( hRecord[ cTmp ] )
-            // ENDIF
+            cQuery += sql_quote( hRecord[ cFieldName ] )
          ENDIF
 
-         IF nI < Len( hDbfRec[ "dbf_fields" ] )
-            cQuery += ","
-         ENDIF
 
       NEXT
 

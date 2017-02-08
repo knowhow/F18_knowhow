@@ -100,7 +100,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
       FOR nI := 1 TO Len( hDbfRec[ "dbf_fields" ] )
 
-         IF field_in_blacklist( hDbfRec[ "dbf_fields" ][ nI ], hDbfRec[ "blacklisted" ] )
+         IF field_in_blacklist( cTable, hDbfRec[ "dbf_fields" ][ nI ], hDbfRec[ "blacklisted" ] )
             LOOP
          ENDIF
 
@@ -118,9 +118,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
          cTmp := hDbfRec[ "dbf_fields" ][ nI ]
 
-         IF cTmp == "obradjeno" .OR. ; // polje obradjeno je automatski timestamp
-               ( cTmp == "korisnik" .AND. cTable $ "fin_nalog#fakt_doks#kalk_doks" ) .OR. ; // automatski se puni sa current_user
-               field_in_blacklist( cTmp, hDbfRec[ "blacklisted" ] )
+         IF field_in_blacklist( cTable, cTmp, hDbfRec[ "blacklisted" ] )
             LOOP
          ENDIF
 

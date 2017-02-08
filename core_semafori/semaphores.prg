@@ -379,7 +379,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    cSyncAlias := Upper( 'SYNC__' + aDbfRec[ 'table' ] )
    IF Select( cSyncAlias ) == 0
       SELECT ( aDbfRec[ 'wa' ] + 1000 )
-      USE ( cFullDbf ) Alias ( cSyncAlias )  SHARED
+      USE ( cFullDbf ) ALIAS ( cSyncAlias )  SHARED
       IF File( cFullIdx )
          dbSetIndex( cFullIdx )
       ENDIF
@@ -388,7 +388,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       ?E "syncalias ", cSyncAlias, "vec otvoren ?!"
    ENDIF
 
-   BEGIN SEQUENCE WITH {| err| Break( err ) }
+   BEGIN SEQUENCE WITH {| err | Break( err ) }
       DO WHILE !oDataSet:Eof()
 
          ++nCounterDataset
@@ -478,20 +478,23 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 // --------------------------------------------------------------------
 // da li je polje u blacklisti
 // --------------------------------------------------------------------
-FUNCTION field_in_blacklist( field_name, blacklist )
-
-   LOCAL _ok := .F.
+FUNCTION field_in_blacklist( cTable, cFieldName, hFieldsBlacklist )
 
    // mozda nije definisana blacklista
-   IF blacklist == NIL
-      RETURN _ok
+   IF hFieldsBlacklist == NIL
+      RETURN .F.
    ENDIF
 
-   IF AScan( blacklist, {| val| val == field_name } ) > 0
-      _ok := .T.
+   IF  cFieldName == "obradjeno" .OR. ; // polje obradjeno je automatski timestamp
+         ( cFieldName == "korisnik" .AND. cTable $ "fin_nalog#fakt_doks#kalk_doks" )  // automatski se puni sa current_user
+         RETURN .T.
+   ENDIF
+   
+   IF AScan( hFieldsBlacklist, {| cVal | cVal == cFieldName } ) > 0
+      RETURN .T.
    ENDIF
 
-   RETURN _ok
+   RETURN .F.
 
 
 /*

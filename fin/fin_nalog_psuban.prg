@@ -471,7 +471,7 @@ FUNCTION fin_gen_psuban_stavke_auto_import()
    //o_partner()
    o_tnal()
    o_tdok()
-   O_PSUBAN
+   o_fin_psuban()
 
    SELECT PSUBAN
    my_dbf_zap()

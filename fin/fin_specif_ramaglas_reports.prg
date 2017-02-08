@@ -11,10 +11,6 @@
 
 #include "f18.ch"
 
-/* \file fmk/fin/specif/ramaglas/rpt/1g/rpt_strn.prg
- *     Specifikacije troskova radnih naloga - "pogonsko knjigovodstvo"
- */
-
 
 /* SpecTrosRN()
  *     Specifikacija troskova po radnim nalozima (tj.objektima)
@@ -59,7 +55,7 @@ FUNCTION SpecTrosRN()
    cIdFirma := Left( cIdFirma, 2 )
 
    o_fakt_objekti()
-   o_konto()
+  // o_konto()
    o_suban()
 
 // 1) utvrditi ukupne troskove (nUkTros)

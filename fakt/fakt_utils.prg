@@ -82,7 +82,7 @@ FUNCTION fakt_objekat_naz( id_obj )
    // o_fakt_objekti()
 
    // SELECT fakt_objekti
-   select_o_fakt_objekti()( id_obj )
+   select_o_fakt_objekti( id_obj )
 
    IF Found()
       _ret := AllTrim( field->naz )

@@ -110,8 +110,37 @@ FUNCTION select_o_fakt_txt( cId )
       SEEK cId
    ENDIF
 
-   RETURN o_fakt_txt()
+   RETURN o_fakt_txt( cId )
 
+
+FUNCTION o_fakt_objekti( cId )
+
+   SELECT ( F_FAKT_OBJEKTI )
+   IF !use_sql_sif  ( "fakt_objekti", .T., "FAKT_OBJEKTI", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION select_o_fakt_objekti( cId )
+
+   SELECT ( F_FAKT_OBJEKTI )
+   IF !use_sql_sif  ( "fakt_objekti", .T., "FAKT_OBJEKTI", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN o_fakt_objekti( cId )
 
 FUNCTION select_o_ftxt( cId )
    RETURN select_o_fakt_txt( cId )
@@ -158,9 +187,6 @@ FUNCTION SEEK_UGOV()
    RETURN .T.
 
 
-
-   FUNCTION SELECT_o_fakt_objekti()
-      RETURN .T.
 
 
 FUNCTION SEEK_GEN_UG_DAT_OB()

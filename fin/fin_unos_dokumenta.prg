@@ -653,24 +653,24 @@ FUNCTION o_fin_edit()
 
    my_close_all_dbf()
 
-   O_VRSTEP
+ //  O_VRSTEP
   // O_ULIMIT
 
    IF ( IsRamaGlas() )
       o_fakt_objekti()
    ENDIF
 
-   o_rj()
+  // o_rj()
 
    //IF gTroskovi == "D"
     //  o_fond()
     //  o_funk()
   // ENDIF
 
-   O_PSUBAN
-   O_PANAL
-   O_PSINT
-   O_PNALOG
+   o_fin_psuban()
+   o_anal()
+   o_fin_psint()
+   o_fin_pnalog()
    //O_PAREK
    o_konto()
   // o_partner()

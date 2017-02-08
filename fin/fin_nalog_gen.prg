@@ -165,10 +165,10 @@ FUNCTION fin_open_psuban_and_ostalo()
 */
 FUNCTION fin_open_lock_panal( lZap )
 
-   O_PSUBAN
-   O_PANAL
-   O_PSINT
-   O_PNALOG
+   o_fin_psuban()
+   o_anal()
+   o_fin_psint()
+   o_fin_pnalog()
 
    //o_partner()
    o_konto()
@@ -257,10 +257,10 @@ STATIC FUNCTION lock_fin_priprema( lZap )
 
 FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
 
-   O_PANAL
-   O_PSINT
-   O_PNALOG
-   O_PSUBAN
+   o_anal()
+   o_fin_psint()
+   o_fin_pnalog()
+   o_fin_psuban()
    o_konto()
    o_tnal()
 

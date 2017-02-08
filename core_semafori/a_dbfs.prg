@@ -597,10 +597,7 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
    IF !Used()
       IF lSql
-
-         open_sql_mix_tabelu( hRec[ "table" ] )
-
-
+         otvori_sqlmix_tabelu( hRec[ "table" ] )
       ELSE
          _dbf := my_home() + my_dbf_prefix( @hRec ) + hRec[ "table" ]
          IF !File( f18_ime_dbf( hRec ) )
@@ -694,7 +691,7 @@ FUNCTION otvori_sqlmix_tabelu( cTable )
 
    RETURN .T.
 
-   
+
 FUNCTION set_rec_from_dbstruct( hRec )
 
    LOCAL aDbfStruct, nI

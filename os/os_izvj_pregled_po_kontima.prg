@@ -63,7 +63,7 @@ FUNCTION os_pregled_po_kontima()
          VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
       @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
       @ m_x + 2, m_y + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
-      @ m_x + 2, Col() + 2 SAY "grupisati konto na broj mjesta" GET nKontoLen PICT "9" valid ( nKontoLen > 0 .AND. nKontoLen < 8 )
+      @ m_x + 2, Col() + 2 SAY "grupisati konto na broj mjesta" GET nKontoLen PICT "9" VALID ( nKontoLen > 0 .AND. nKontoLen < 8 )
       @ m_x + 3, m_y + 2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
       @ m_x + 4, m_y + 2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" GET cON VALID con $ "ONBG " PICT "@!"
       @ m_x + 5, m_y + 2 SAY "Za sredstvo prikazati vrijednost:"
@@ -109,18 +109,18 @@ FUNCTION os_pregled_po_kontima()
    IF cDatPer == "D"
       select_promj()
       PRIVATE cFilt1 := "DATUM>=" + dbf_quote( dDatOd ) + ".and.DATUM<=" + dbf_quote( dDatDo )
-      SET FILTER to &cFilt1
+      SET FILTER TO &cFilt1
       select_os_sii()
    ENDIF
 
    IF !Empty( cFiltK1 )
       select_os_sii()
-      SET FILTER to &aUsl1
+      SET FILTER TO &aUsl1
    ENDIF
 
    IF !Empty( cFiltK3 )
       select_os_sii()
-      SET FILTER to &aUsl2
+      SET FILTER TO &aUsl2
    ENDIF
 
    IF Empty( qIdKonto )
@@ -211,8 +211,8 @@ FUNCTION os_pregled_po_kontima()
       cIdSK := Left( idkonto, nKontoLen )
       cNazSKonto := ""
 
-      SELECT konto
-      HSEEK cIdSK
+
+      select_o_konto( cIdSk )
 
       IF Found()
          cNazSKonto := AllTrim( konto->naz )
@@ -228,8 +228,8 @@ FUNCTION os_pregled_po_kontima()
          cIdKonto := idkonto
          cNazKonto := ""
 
-         SELECT konto
-         HSEEK cIdKonto
+
+         select_o_konto( cIdKonto )
 
          IF Found()
             cNazKonto := AllTrim( konto->naz )

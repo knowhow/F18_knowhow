@@ -501,9 +501,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          ? "Partner: "
          @ PRow(), PCol() + 1 SAY iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", ":  SVI", cIdPartner )
          IF cRasclaniti == "D"
-            SELECT rj
-            SET ORDER TO TAG "ID"
-            SEEK cRasclan
+            select_o_rj( cRasclan )
             ? "        "
             @ PRow(), PCol() + 1 SAY Left( cRasclan, 6 ) + "/" + SubStr( cRasclan, 7, 5 ) + "/" + SubStr( cRasclan, 12 ) + " / " + Ocitaj( F_RJ, Left( cRasclan, 6 ), "NAZ" )
             SELECT konto

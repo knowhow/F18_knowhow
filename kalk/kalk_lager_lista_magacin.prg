@@ -1078,8 +1078,7 @@ FUNCTION Zagllager_lista_magacin()
 
    P_COND2
 
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    SET CENTURY ON
 
@@ -1186,8 +1185,7 @@ STATIC FUNCTION _gen_xml( hParams )
    _t_ulaz := _t_izlaz := _t_nv_u := _t_nv_i := _t_vpv_u := _t_vpv_i := 0
    _t_rabat := _t_vpv_ru := _t_vpv_ri := _t_nv := 0
 
-   SELECT konto
-   HSEEK hParams[ "idkonto" ]
+   select_o_konto( hParams[ "idkonto" ] )
 
    SELECT kalk
 

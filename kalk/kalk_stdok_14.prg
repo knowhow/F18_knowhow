@@ -88,15 +88,15 @@ FUNCTION kalk_stampa_dok_14()
       nVPCIzbij := 0
 
 
-      nTot4 +=  ( nU4 := Round( NC * Kolicina * iif( idvd = "15", -1, 1 ), gZaokr )     )  // nv
+      nTot4 +=  ( nU4 := Round( NC * Kolicina * iif( idvd = "15", - 1, 1 ), gZaokr )     )  // nv
 
       IF gVarVP == "1"
          IF ( roba->tip $ "UTY" )
             nU5 := 0
          ELSE
-            nTot5 +=  ( Round( nU5 := nMarza * Kolicina * iif( idvd = "15", -1, 1 ), gZaokr )  ) // ruc
+            nTot5 +=  ( Round( nU5 := nMarza * Kolicina * iif( idvd = "15", - 1, 1 ), gZaokr )  ) // ruc
          ENDIF
-         nTot6 +=  ( nU6 := Round( TARIFA->VPP / 100 * iif( nMarza < 0, 0, nMarza ) * Kolicina * iif( idvd = "15", -1, 1 ), gZaokr ) )  // pruc
+         nTot6 +=  ( nU6 := Round( TARIFA->VPP / 100 * iif( nMarza < 0, 0, nMarza ) * Kolicina * iif( idvd = "15", - 1, 1 ), gZaokr ) )  // pruc
          nTot7 +=  ( nU7 := nU5 - nU6  )    // ruc-pruc
       ELSE
          // obracun poreza unazad - preracunata stopa
@@ -104,18 +104,18 @@ FUNCTION kalk_stampa_dok_14()
             nU5 := 0
          ELSE
             IF nMarza > 0
-               ( nU5 := Round( nMarza * Kolicina * iif( idvd = "15", -1, 1 ) / ( 1 + tarifa->vpp / 100 ), gZaokr ) ) // ruc
+               ( nU5 := Round( nMarza * Kolicina * iif( idvd = "15", - 1, 1 ) / ( 1 + tarifa->vpp / 100 ), gZaokr ) ) // ruc
             ELSE
-               ( nU5 := Round( nMarza * Kolicina * iif( idvd = "15", -1, 1 ), gZaokr ) ) // ruc
+               ( nU5 := Round( nMarza * Kolicina * iif( idvd = "15", - 1, 1 ), gZaokr ) ) // ruc
             ENDIF
          ENDIF
 
-         nU6 := Round( TARIFA->VPP / 100 / ( 1 + tarifa->vpp / 100 ) * iif( nMarza < 0, 0, nMarza ) * Kolicina * iif( idvd = "15", -1, 1 ), gZaokr )
+         nU6 := Round( TARIFA->VPP / 100 / ( 1 + tarifa->vpp / 100 ) * iif( nMarza < 0, 0, nMarza ) * Kolicina * iif( idvd = "15", - 1, 1 ), gZaokr )
          // nU6 = pruc
 
          // franex 20.11.200 nasteliti ruc + pruc = bruto marza !!
-         IF Round( nMarza * Kolicina * iif( idvd = "15", -1, 1 ), gZaokr ) > 0 // pozitivna marza
-            nU5 :=  Round( nMarza * Kolicina * iif( idvd = "15", -1, 1 ), gZaokr )  - nU6
+         IF Round( nMarza * Kolicina * iif( idvd = "15", - 1, 1 ), gZaokr ) > 0 // pozitivna marza
+            nU5 :=  Round( nMarza * Kolicina * iif( idvd = "15", - 1, 1 ), gZaokr )  - nU6
             // bruto marza               - porez na ruc
          ENDIF
          nU7 := nU5 + nU6      // ruc+pruc
@@ -126,8 +126,8 @@ FUNCTION kalk_stampa_dok_14()
 
       ENDIF
 
-      nTot8 +=  ( nU8 := Round( ( VPC - nVPCIzbij ) * Kolicina * iif( idvd = "15", -1, 1 ), gZaokr ) )
-      nTot9 +=  ( nU9 := Round( RABATV / 100 * VPC * Kolicina * iif( idvd = "15", -1, 1 ), gZaokr ) )
+      nTot8 +=  ( nU8 := Round( ( VPC - nVPCIzbij ) * Kolicina * iif( idvd = "15", - 1, 1 ), gZaokr ) )
+      nTot9 +=  ( nU9 := Round( RABATV / 100 * VPC * Kolicina * iif( idvd = "15", - 1, 1 ), gZaokr ) )
 
       nTota +=  ( nUa := Round( nU8 - nU9, gZaokr ) )     // vpv sa ukalk rabatom
 
@@ -141,7 +141,7 @@ FUNCTION kalk_stampa_dok_14()
 
 
       IF koncij->naz = "P"
-         nTotd +=  ( nUd := Round( fcj * kolicina * iif( idvd = "15", -1, 1 ), gZaokr ) )  // trpa se planska cijena
+         nTotd +=  ( nUd := Round( fcj * kolicina * iif( idvd = "15", - 1, 1 ), gZaokr ) )  // trpa se planska cijena
       ELSE
          nTotd +=  ( nUd := nua + nub + nu6 )   // vpc+pornapr+pornaruc
       ENDIF
@@ -155,7 +155,7 @@ FUNCTION kalk_stampa_dok_14()
       ENDIF
 
       @ PRow() + 1, 4 SAY IdRoba
-      @ PRow(), PCol() + 1 SAY Kolicina * iif( idvd = "15", -1, 1 )  PICTURE PicKol
+      @ PRow(), PCol() + 1 SAY Kolicina * iif( idvd = "15", - 1, 1 )  PICTURE PicKol
       nC1 := PCol() + 1
       @ PRow(), PCol() + 1 SAY NC                          PICTURE PicCDEM
       PRIVATE nNc := 0
@@ -169,7 +169,7 @@ FUNCTION kalk_stampa_dok_14()
 
       @ PRow(), PCol() + 1 SAY VPC - nVPCIzbij       PICTURE PiccDEM
       @ PRow(), PCol() + 1 SAY RABATV              PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY VPC * ( 1 -RABATV / 100 ) -nVPCIzbij  PICTURE PiccDEM
+      @ PRow(), PCol() + 1 SAY VPC * ( 1 - RABATV / 100 ) - nVPCIzbij  PICTURE PiccDEM
 
 
       IF idvd = "15"
@@ -179,7 +179,7 @@ FUNCTION kalk_stampa_dok_14()
       ENDIF
 
 
-      @ PRow(), PCol() + 1 SAY VPC * ( 1 -RabatV / 100 ) * ( 1 + mpc / 100 ) PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY VPC * ( 1 - RabatV / 100 ) * ( 1 + mpc / 100 ) PICTURE PicCDEM
 
 
       // 2. DRUGI RED
@@ -239,12 +239,11 @@ STATIC FUNCTION zagl()
 
 
    IF cIdvd == "94"
-      SELECT konto
-      HSEEK cidkonto2
+
+      select_o_konto( cIdKonto2 )
       ?  "Storno razduzenja KONTA:", cIdKonto, "-", AllTrim( naz )
    ELSE
-      SELECT konto
-      HSEEK cidkonto2
+      select_o_konto( cIdKonto2 )
       ?  "KONTO razduzuje:", kalk_pripr->mkonto, "-", AllTrim( naz )
       IF !Empty( kalk_pripr->Idzaduz2 )
          ?? " Rad.nalog:", kalk_pripr->Idzaduz2

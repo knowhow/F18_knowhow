@@ -63,16 +63,14 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
    ? "OTPREMNICA Broj:", cBrFaktP, "Datum:", dDatFaktP
 
    IF cIdvd == "11"
-      SELECT KONTO
-      HSEEK cIdKonto
+      select_o_konto( cIdKonto )
       ?  "Prodavnica zaduzuje :", cIdKonto, "-", AllTrim( naz )
-      HSEEK cIdKonto2
+      select_o_konto( cIdKonto2 )
       ?  "Magacin razduzuje   :", cIdKonto2, "-", AllTrim( naz )
    ELSE
-      SELECT KONTO
-      HSEEK cIdKonto
+      select_o_konto( cIdKonto )
       ?  "Storno Prodavnica zaduzuje :", cIdKonto, "-", AllTrim( naz )
-      HSEEK cIdKonto2
+      select_o_konto( cIdKonto2 )
       ?  "Storno Magacin razduzuje   :", cIdKonto2, "-", AllTrim( naz )
    ENDIF
 
@@ -183,7 +181,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
       // red 2
       @ PRow() + 1, 4 SAY IdTarifa + roba->tip
       IF g11bezNC == "D"
-         @ PRow(), nCol0 -1    SAY  ""
+         @ PRow(), nCol0 - 1    SAY  ""
       ELSE
          @ PRow(), nCol0    SAY  fcj * kolicina      PICTURE picdem
       ENDIF
@@ -226,7 +224,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
    ? m
    @ PRow() + 1, 0        SAY "Ukupno:"
    IF g11bezNC == "D"
-      @ PRow(), nCol0 -1      SAY  ""
+      @ PRow(), nCol0 - 1      SAY  ""
    ELSE
       @ PRow(), nCol0      SAY  nTot1        PICTURE       PicDEM
    ENDIF

@@ -33,7 +33,7 @@ FUNCTION rekap_finansijsko_stanje_magacin()
       IF gNW $ "DX"
          @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto   " GET cIdKonto VALID "." $ cIdkonto .OR. P_Konto( @cIdKonto )
       @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konta   " GET qqKonto  PICT "@!S50"
@@ -189,8 +189,8 @@ FUNCTION rekap_finansijsko_stanje_magacin()
 
       NovaStrana( bZagl )
 
-      SELECT konto
-      SEEK cBroj
+
+      select_o_konto( cBroj )
       cNaz := KONTO->naz
       SELECT kalk
 
@@ -239,8 +239,7 @@ FUNCTION Zaglrekap_finansijsko_stanje_magacin()
 
    Preduzece()
    P_12CPI
-   SELECT konto
-   HSEEK cidkonto
+   select_o_konto( cIdKonto )
    ?? Space( 60 ), " DATUM "
    ?? Date(), Space( 5 ), "Str:", Str( ++nTStrana, 3 )
    ?

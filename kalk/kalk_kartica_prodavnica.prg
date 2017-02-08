@@ -521,8 +521,7 @@ FUNCTION Test( cIdRoba )
 
 STATIC FUNCTION Zagl()
 
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    Preduzece()
    P_12CPI

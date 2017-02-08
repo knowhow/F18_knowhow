@@ -1055,8 +1055,8 @@ FUNCTION BrDokOK()
    nArr := Select()
    lOK := .T.
    nLenBrDok := Len( _brDok )
-   SELECT konto
-   SEEK _idkonto
+   select_o_konto( _idkonto )
+   
    IF field->oznaka = "TD"
       SELECT rnal
       HSEEK PadR( _brDok, 10 )

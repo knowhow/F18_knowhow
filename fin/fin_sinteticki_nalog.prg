@@ -136,8 +136,7 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
       @ PRow(), 1 SAY ++nRBr2 PICTURE '999'
       @ PRow(), PCol() + 1 SAY PadR( cIdSinKon, 6 )
 
-      SELECT KONTO
-      HSEEK cIdSinKon
+      select_o_konto( cIdSinKon )
 
       @ PRow(), PCol() + 1 SAY Left( Naz, 45 )
 

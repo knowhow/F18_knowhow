@@ -125,7 +125,7 @@ FUNCTION SpecPoK()
          ENDDO
          IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl5(); ENDIF
 
-         SELECT KONTO; HSEEK cidkonto; SELECT ANAL
+    --     SELECT KONTO; HSEEK cidkonto; SELECT ANAL
 
          IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0
             ? cidkonto, KONTO->naz

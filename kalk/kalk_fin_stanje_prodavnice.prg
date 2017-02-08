@@ -345,8 +345,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 
 FUNCTION Zaglfinansijsko_stanje_prodavnica( dDatOd, dDatDo )
 
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    Preduzece()
 
    // IF Val( gFPicDem ) > 0

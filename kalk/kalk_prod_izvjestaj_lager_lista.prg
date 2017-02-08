@@ -247,8 +247,7 @@ FUNCTION lager_lista_prodavnica()
 
    start PRINT cret
    ?
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    SELECT KALK
 
    PRIVATE nTStrana := 0
@@ -722,8 +721,7 @@ FUNCTION ZaglLLP( lSint )
    IF lSint
       ? "Kriterij za prodavnice:", qqKonto
    ELSE
-      SELECT konto
-      HSEEK cidkonto
+      select_o_konto( cIdkonto )
       ? "Prodavnica:", cIdKonto, "-", konto->naz
    ENDIF
 
@@ -923,7 +921,7 @@ STATIC FUNCTION kalk_prodavnica_llp_odt( params )
       prikazi_odt()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -941,8 +939,7 @@ STATIC FUNCTION _gen_xml( params )
 
    PRIVATE aPorezi
 
-   SELECT konto
-   HSEEK params[ "idkonto" ]
+   select_o_konto(  params[ "idkonto" ] )
 
    _t_ulaz := _t_izlaz := _t_nv_u := _t_nv_i := 0
    _t_mpv_u := _t_mpv_i := _t_rabat := 0

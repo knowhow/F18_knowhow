@@ -289,7 +289,7 @@ FUNCTION ZaglPGP()
 
    P_12CPI
 
-   SELECT KONTO; HSEEK cidkonto
+  -- SELECT KONTO; HSEEK cidkonto
 
    SET CENTURY ON
    ?? "KALK: PROMET GRUPE PARTNERA ZA PERIOD", dDatOd, "-", dDatdo, "  na dan", Date(), Space( 4 ), "Str:", Str( ++nTStrana, 3 )

@@ -122,8 +122,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
             IF gVSubOp == "D"
 
-               SELECT KONTO
-               HSEEK ( nArr )->idkonto
+               select_open_konto( ( nArr )->idkonto )
                IF Found()
                   _kto_naz := konto->naz
                ENDIF
@@ -149,8 +148,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
             ENDIF
          ELSE
 
-            SELECT KONTO
-            HSEEK ( nArr )->idkonto
+            select_open_konto( ( nArr )->idkonto )
 
             IF Found()
                _kto_naz := konto->naz

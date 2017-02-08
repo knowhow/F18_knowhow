@@ -600,7 +600,7 @@ STATIC FUNCTION tops_kalk_get_magacinski_konto()
    LOCAL nDbfArea := Select()
 
    o_konto()
-   SELECT konto
+--   SELECT konto
 
    Box(, 3, 60 )
    @ form_x_koord() + 2, form_y_koord() + 2 SAY "Magacinski konto:" GET _konto VALID P_Konto( @_konto )

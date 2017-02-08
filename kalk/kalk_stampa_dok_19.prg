@@ -37,10 +37,8 @@ FUNCTION kalk_stampa_dok_19()
    P_COND
    ? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, ", Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-   SELECT PARTN
-   HSEEK cIdPartner             // izbaciti?  19.5.00
-   SELECT KONTO
-   HSEEK cidkonto               // dodano     19.5.00
+   select_o_partner( cIdPartner )
+   select_o_konto( cIdKonto )
 
    ?  "KONTO zaduzuje :", cIdKonto, "-", naz
 
@@ -79,8 +77,8 @@ FUNCTION kalk_stampa_dok_19()
 
       nTot3 +=  ( nU3 := MPC * Kolicina )
 
-      nPor1 := aIPor1[ 1 ] -aIPor2[ 1 ]
-      nPor2 := aIPor1[ 2 ] -aIPor2[ 2 ]
+      nPor1 := aIPor1[ 1 ] - aIPor2[ 1 ]
+      nPor2 := aIPor1[ 2 ] - aIPor2[ 2 ]
 
       nTot4 +=  ( nU4 := ( nPor1 + nPor2 ) * Kolicina )
       nTot5 +=  ( nU5 := MPcSaPP * Kolicina )
@@ -212,7 +210,7 @@ FUNCTION Obraz19()
 
       select_o_roba( kalk_pripr->IdRoba )
       select_o_tarifa( kalk_pripr->IdTarifa )
-      
+
       SELECT kalk_pripr
 
 

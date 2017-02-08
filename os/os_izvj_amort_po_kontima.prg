@@ -203,13 +203,13 @@ FUNCTION os_amortizacija_po_kontima()
 
       print_lista_2( aKol,,, gTabela,, ;
          ,, ;
-         {|| FFor1s() }, IIF( gOstr == "D",, -1 ),,,,, )
+         {|| FFor1s() }, iif( gOstr == "D",, - 1 ),,,,, )
 
    ELSE
 
       print_lista_2( aKol,,, gTabela,, ;
          ,, ;
-         {|| FFor1() }, IIF( gOstr == "D",, -1 ),,,,, )
+         {|| FFor1() }, iif( gOstr == "D",, - 1 ),,,,, )
 
    ENDIF
 
@@ -258,7 +258,7 @@ STATIC FUNCTION FFor1()
       IF cPromj == "2" .AND. !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna() .OR. cPromj == "3"
          IF cPromj == "3"
             AAdd( gaDodStavke, ;
-               { Str( nRBr, 4 ) + ".", _sr_id, _sr_id_rj, _sr_datum,;
+               { Str( nRBr, 4 ) + ".", _sr_id, _sr_id_rj, _sr_datum, ;
                _sr_naz, _sr_jmj, _sr_kol, , , , , } )
             lVrati := .F.
          ENDIF
@@ -282,9 +282,7 @@ STATIC FUNCTION FFor1()
 
    nTArea := Select()
 
-   SELECT konto
-
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    cST2 := "UK.ANALIT.KONTO '" + cIdKonto + "'" + PadR( konto->naz, 30 ) + "..."
 
    HSEEK cIdSK
@@ -376,7 +374,7 @@ STATIC FUNCTION FFor1s()
 
          IF cPromj == "3"
             AAdd( gaDodStavke, ;
-               { Str( nRBr, 4 ) + ".", _sr_id, _sr_id_rj, _sr_datum,;
+               { Str( nRBr, 4 ) + ".", _sr_id, _sr_id_rj, _sr_datum, ;
                _sr_naz, _sr_jmj, _sr_kol, , , , , } )
             lVrati := .F.
          ENDIF
@@ -399,11 +397,11 @@ STATIC FUNCTION FFor1s()
    cIdAm    := IDAM
 
    nTArea := Select()
-   SELECT konto
+
+   select_o_konto( cIdKonto )
 
    cST1 := "                    UK.GRUPA AMORTIZACIJE '" + cIdAM + "'"
 
-   HSEEK cIdKonto
 
    cST2 := "          UK.ANALITICKI KONTO '" + cIdKonto + "'" + PadR( konto->naz, 30 ) + "..."
 

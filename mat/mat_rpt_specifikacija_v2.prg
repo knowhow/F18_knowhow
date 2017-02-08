@@ -55,7 +55,7 @@ FUNCTION mat_specifikacija()
    IF gNW $ "DR"
       @ m_x + 4, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 4, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ m_x + 4, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
 
    @ m_x + 5, m_y + 2 SAY KonSeks( "Konta  " ) + " : " GET qqKonto  PICTURE "@S50"
@@ -147,14 +147,13 @@ FUNCTION mat_specifikacija()
          ENDIF
          @ PRow() + 1, 0 SAY "FIRMA:"
          @ PRow(), PCol() + 1 SAY cIdFirma
-         SELECT PARTN
-         HSEEK cIdFirma
+         select_o_partner( cIdFirma )
          @ PRow(), PCol() + 1 SAY AllTrim( naz )
          @ PRow(), PCol() + 1 SAY AllTrim( naz2 )
          @ PRow() + 1, 0 SAY KonSeks( "KONTO" ) + ":"
          @ PRow(), PCol() + 1 SAY cIdKonto
-         SELECT konto
-         HSEEK cidkonto
+
+         select_o_konto( cIdKonto )
          @ PRow(), PCol() + 1 SAY AllTrim( naz )
          SELECT mat_suban
          ?  m
@@ -374,7 +373,7 @@ FUNCTION IArtPoPogonima()
          cFilt += ( ".and." + aUsl1 )
       ENDIF
 
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
       GO TOP
 
       IF Eof()
@@ -409,7 +408,7 @@ FUNCTION IArtPoPogonima()
 
       print_lista_2( aKol, {|| FSvaki2s() },, gTabela,, ;
          , "Specifikacija svih artikala - pregled za period od " + DToC( dod ) + " do " + DToC( ddo ), ;
-         {|| FFor2s() }, IF( gOstr == "D",, -1 ),,,,, )
+         {|| FFor2s() }, IF( gOstr == "D",, - 1 ),,,,, )
       FF
       ENDPRINT
 
@@ -422,7 +421,7 @@ FUNCTION IArtPoPogonima()
       IF !Empty( qqPartner )
          cFilt += ( ".and." + aUsl1 )
       ENDIF
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
       GO TOP
 
       IF Eof()
@@ -457,7 +456,7 @@ FUNCTION IArtPoPogonima()
 
       print_lista_2( aKol, {|| FSvaki1s() },, gTabela,, ;
          , "Specifikacija artikla - pregled po pogonima za period od " + DToC( dod ) + " do " + DToC( ddo ), ;
-         {|| FFor1s() }, IF( gOstr == "D",, -1 ),,,,, )
+         {|| FFor1s() }, IF( gOstr == "D",, - 1 ),,,,, )
       FF
       ENDPRINT
    ENDIF

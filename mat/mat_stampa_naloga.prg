@@ -104,13 +104,13 @@ FUNCTION mat_st_sint_nalog( fnovi )
       nRbr := 0
       DO WHILE  Eval( b1 ) .AND. Eval( b2 ) .AND. Eval( b3 )  // mat_sinteticki konto
          cIdKonto := IdKonto
-         SELECT KONTO; HSEEK cIdKonto
+         select_o_konto( cIdKonto )
          SELECT mat_anal
 
          IF A == 0; Zagl12(); ENDIF
          IF A > 63; EJECTA0; Zagl12(); ENDIF
 
-         @ ++A, 0 SAY ++nRBr PICTURE '999'
+         @++A, 0 SAY ++nRBr PICTURE '999'
          @ A, PCol() + 1 SAY datnal
          @ A, PCol() + 1 SAY cIdKonto
          @ A, PCol() + 1 SAY konto->naz
@@ -127,10 +127,12 @@ FUNCTION mat_st_sint_nalog( fnovi )
 
       ENDDO  // mat_sinteticki konto
       IF A > 61; EJECTA0; Zagl12(); ENDIF
-      @ ++A, 0 SAY M
-      @ ++A, 2 SAY ++nRBr2 PICTURE '999'
+      @++A, 0 SAY M
+      @++A, 2 SAY ++nRBr2 PICTURE '999'
       @ A, 13 SAY cSinKon
-      SELECT KONTO; HSEEK cSinKon
+
+      select_o_konto( cSinKon )
+      
       @ A, PCol() + 5 SAY naz
       SELECT mat_anal
 
@@ -141,15 +143,15 @@ FUNCTION mat_st_sint_nalog( fnovi )
          @ A, PCol() + 1 SAY nDug2 PICTURE gPicdin
          @ A, PCol() + 1 SAY nPot2 PICTURE gPicdin
       ENDIF
-      @ ++A, 0 SAY M
+      @++A, 0 SAY M
 
       nDug11 += nDug1; nPot11 += nPot1
       nDug22 += nDug2; nPot22 += nPot2
    ENDDO  // nalog
 
    IF A > 61; EJECTA0; Zagl12(); ENDIF
-   @ ++A, 0 SAY M
-   @ ++A, 0 SAY "ZBIR NALOGA:"
+   @++A, 0 SAY M
+   @++A, 0 SAY "ZBIR NALOGA:"
    @ a, ncI - 1 SAY ""
    @ A, PCol() + 1  SAY nDug11  PICTURE  gPicDEM()
    @ A, PCol() + 1  SAY nPot11  PICTURE  gPicDEM()
@@ -157,7 +159,7 @@ FUNCTION mat_st_sint_nalog( fnovi )
       @ A, PCol() + 1  SAY nDug22 PICTURE  gPicdin
       @ A, PCol() + 1  SAY nPot22 PICTURE  gpicdin
    ENDIF
-   @ ++A, 0 SAY M
+   @++A, 0 SAY M
 
 
    // FF
@@ -182,17 +184,17 @@ STATIC FUNCTION Zagl12()
    nArr := Select()
    SELECT TNAL; HSEEK cIDVN; @ A, 90 SAY naz; Select( nArr )
    @ a, PCol() + 3 SAY "Str " + Str( ++nStr, 3 )
-   @ ++A, 0 SAY M
+   @++A, 0 SAY M
    IF gkonto == "N" .AND. g2Valute == "D"
-      @ ++A, 0 SAY "*R.*  Datum  *         K O N T O                                              *  I Z N O S   " + ValDomaca() + "   *   I Z N O S   " + ValPomocna() + "     *"
-      @ ++A, 0 SAY "*Br*                                                                           --------------------- -------------------------"
-      @ ++A, 0 SAY "*  *         *                                                                *   DUG    *    POT   *    DUG     *    POT    *"
+      @++A, 0 SAY "*R.*  Datum  *         K O N T O                                              *  I Z N O S   " + ValDomaca() + "   *   I Z N O S   " + ValPomocna() + "     *"
+      @++A, 0 SAY "*Br*                                                                           --------------------- -------------------------"
+      @++A, 0 SAY "*  *         *                                                                *   DUG    *    POT   *    DUG     *    POT    *"
    ELSE
-      @ ++A, 0 SAY "*R.*  Datum  *         K O N T O                                              *   I Z N O S   " + ValDomaca() + "     *"
-      @ ++A, 0 SAY "*Br*                                                                           -------------------------"
-      @ ++A, 0 SAY "*  *         *                                                                *    DUG     *    POT    *"
+      @++A, 0 SAY "*R.*  Datum  *         K O N T O                                              *   I Z N O S   " + ValDomaca() + "     *"
+      @++A, 0 SAY "*Br*                                                                           -------------------------"
+      @++A, 0 SAY "*  *         *                                                                *    DUG     *    POT    *"
    ENDIF
-   @ ++A, 0 SAY M
+   @++A, 0 SAY M
 
    RETURN
 

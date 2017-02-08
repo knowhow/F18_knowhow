@@ -54,12 +54,10 @@ FUNCTION kalk_stampa_dok_14_txt_legacy()
    ?? "  DatVal:", kalk_doks2->datval
 
    IF cIdvd == "94"
-      SELECT konto
-      HSEEK cidkonto2
+      selecT_o_konto( cIdkonto2 )
       ?  "Storno razduzenja KONTA:", cIdKonto, "-", AllTrim( naz )
    ELSE
-      SELECT konto
-      HSEEK cidkonto2
+      select_o_konto( cIdkonto2 )
       ?  "KONTO razduzuje:", kalk_pripr->mkonto, "-", AllTrim( naz )
       IF !Empty( kalk_pripr->Idzaduz2 )
          ?? " Rad.nalog:", kalk_pripr->Idzaduz2

@@ -477,9 +477,8 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          ENDIF
       ENDIF
 
-      // i konta, naravno, prvo M_KONTO
-      SELECT konto
-      HSEEK _m_konto
+
+      select_o_konto( _m_konto )
       IF Found() .AND. cExportSif == "D"
          aDoksRec := dbf_get_rec()
          SELECT e_konto
@@ -491,9 +490,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          ENDIF
       ENDIF
 
-      // zatim P_KONTO
-      SELECT konto
-      HSEEK _p_konto
+      select_o_konto( _p_konto )
       IF Found() .AND. cExportSif == "D"
          aDoksRec := dbf_get_rec()
          SELECT e_konto

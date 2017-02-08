@@ -216,14 +216,12 @@ STATIC FUNCTION zagl()
 
    zagl_organizacija( PRINT_LEFT_SPACE )
 
-   SELECT PARTN
-   HSEEK cIdPartner
+   select_o_konto( cIdPartner )
    ?U  Space( PRINT_LEFT_SPACE ) + "DOBAVLJAČ:", cIdPartner, "-", Trim( field->naz ), Space( 5 ), "Faktura Br:", cBrFaktP, "Datum:", dDatFaktP
 
    SELECT kalk_pripr
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    ?U  Space( PRINT_LEFT_SPACE )  + "MAGACINSKI KONTO zadužuje :", cIdKonto, "-", field->naz
 
    M := Space( PRINT_LEFT_SPACE )  + "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"

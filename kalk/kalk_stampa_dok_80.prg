@@ -34,16 +34,13 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
    ? "PRIJEM U PRODAVNICU (INTERNI DOKUMENT)"
    ?
    P_COND
-   ? "KALK. DOKUMENT BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
+   ? "KALK. DOKUMENT BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-   SELECT PARTN
-   HSEEK cIdPartner
+   select_o_partner( cIdPartner )
 
    ?  "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
 
-   SELECT KONTO
-   HSEEK cIdKonto
-
+   select_o_konto( cIdKonto )
    ?  "KONTO zaduzuje :", cIdKonto, "-", AllTrim( naz )
 
 
@@ -211,6 +208,6 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
    RekTarife()
 
    // potpis na dokumentu
-   dok_potpis( 90, "L", nil, nil )
+   dok_potpis( 90, "L", NIL, NIL )
 
    RETURN

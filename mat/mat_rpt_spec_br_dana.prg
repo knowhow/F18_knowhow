@@ -79,7 +79,7 @@ FUNCTION mat_spec_br_dan()
 // -----------------------------------------------
 // puni podatke pomocne tabele za izvjestaj
 // -----------------------------------------------
-STATIC FUNCTION _fill_rpt_data( param )
+STATIC FUNCTION _fill_rpt_data( PARAM )
 
    LOCAL _firma := PARAM[ "firma" ]
    LOCAL _datum := PARAM[ "datum" ]
@@ -113,7 +113,7 @@ STATIC FUNCTION _fill_rpt_data( param )
       _filter += " .and. DTOS(datdok) <= " + dbf_quote( DToS( _datum ) )
    ENDIF
 
-   SET FILTER to &_filter
+   SET FILTER TO &_filter
    GO TOP
 
 
@@ -121,8 +121,8 @@ STATIC FUNCTION _fill_rpt_data( param )
 
       cIdKonto := field->idkonto
 
-      SELECT konto
-      HSEEK cIdKonto
+
+      select_o_konto( cIdKonto )
 
       SELECT mat_suban
 
@@ -186,7 +186,7 @@ STATIC FUNCTION _fill_rpt_data( param )
             // prvi interval, gledamo samo pozitivne ulaze
             IF _interval <= PARAM[ "interval_1" ]
                // ovo je interval do 6 mjeseci npr..
-               IF ( ! ( field->idvn $ _skip_docs ) .AND. field->kolicina > 0 ) .OR. field->idvn == "03"
+               IF ( !( field->idvn $ _skip_docs ) .AND. field->kolicina > 0 ) .OR. field->idvn == "03"
                   _int_i_1 += _dug
                   _int_k_1 += _ulaz
                ENDIF
@@ -195,7 +195,7 @@ STATIC FUNCTION _fill_rpt_data( param )
             // drugi interval, gledamo samo pozitivne ulaze opet
             IF _interval > PARAM[ "interval_1" ] .AND. _interval <= PARAM[ "interval_2" ]
                // ovo je interval od 6 do 12 mj, npr..
-               IF ( ! ( field->idvn $ _skip_docs ) .AND. field->kolicina > 0 ) .OR. field->idvn == "03"
+               IF ( !( field->idvn $ _skip_docs ) .AND. field->kolicina > 0 ) .OR. field->idvn == "03"
                   _int_i_2 += _dug
                   _int_k_2 += _ulaz
                ENDIF
@@ -586,25 +586,25 @@ STATIC FUNCTION _get_vars( params )
          VALID {|| p_partner( @_firma ), _firma := Left( _firma, 2 ), .T. }
    ENDIF
 
-   ++ _cnt
-   ++ _cnt
+   ++_cnt
+   ++_cnt
 
    @ m_x + _cnt, m_y + 2 SAY "  Konto (prazno-sva):" GET _konta PICT "@S45"
 
-   ++ _cnt
+   ++_cnt
    @ m_x + _cnt, m_y + 2 SAY "Artikli (prazno-sva):" GET _artikli PICT "@S45"
 
-   ++ _cnt
+   ++_cnt
    @ m_x + _cnt, m_y + 2 SAY "Izvjestaj se pravi na dan:" GET _date
 
-   ++ _cnt
-   ++ _cnt
+   ++_cnt
+   ++_cnt
    @ m_x + _cnt, m_y + 2 SAY "Interval 1 (mj):" GET _int_1 PICT "999"
 
-   ++ _cnt
+   ++_cnt
    @ m_x + _cnt, m_y + 2 SAY "Interval 2 (mj):" GET _int_2 PICT "999"
 
-   ++ _cnt
+   ++_cnt
    @ m_x + _cnt, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)?" GET _nule ;
       VALID _nule $ "DN" PICT "!@"
 

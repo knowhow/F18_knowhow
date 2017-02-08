@@ -84,8 +84,7 @@ FUNCTION update_table_konto( lZamijenitiSifre )
       hRec := dbf_get_rec()
       update_rec_konto_struct( @hRec )
 
-      SELECT konto
-      HSEEK hRec[ "id" ]
+      select_open_konto( hRec[ "id" ] )
 
       _sif_exist := .T.
       IF !Found()
@@ -97,7 +96,6 @@ FUNCTION update_table_konto( lZamijenitiSifre )
          @ m_x + 3, m_y + 2 SAY "import konto id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
          SELECT konto
-
          IF !_sif_exist
             APPEND BLANK
          ENDIF

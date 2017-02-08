@@ -44,8 +44,8 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
    ENDIF
 
    P_10CPI
-   SELECT konto
-   HSEEK cidkonto
+
+   select_o_konto( cIdKonto )
    SELECT kalk_pripr
 
    ?? "INVENTURA PRODAVNICA ", cIdkonto, "-", AllTrim( konto->naz )
@@ -174,7 +174,7 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
    ENDDO
 
 
-   IF PRow() -dodatni_redovi_po_stranici() > 58
+   IF PRow() - dodatni_redovi_po_stranici() > 58
       FF
       @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF
@@ -251,7 +251,9 @@ FUNCTION stampa_obrasca_inventure_sank_lista()
 
 
    P_10CPI
-   SELECT konto; HSEEK cidkonto; SELECT kalk_pripr
+   
+   select_o_konto( cIdKonto )
+   SELECT kalk_pripr
    ?? "INVENTURA PRODAVNICA ", cidkonto, "-", konto->naz
    P_COND
    ?
@@ -281,10 +283,10 @@ FUNCTION stampa_obrasca_inventure_sank_lista()
 
       select_o_roba( kalk_pripr->IdRoba )
       select_o_tarifa( kalk_pripr->IdTarifa )
-      
+
       SELECT kalk_pripr
 
-      IF PRow() -dodatni_redovi_po_stranici() > 59
+      IF PRow() - dodatni_redovi_po_stranici() > 59
          FF
          @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF
@@ -296,11 +298,11 @@ FUNCTION stampa_obrasca_inventure_sank_lista()
       ?? idroba, Left( ROBA->naz, 40 - 13 ), "(" + ROBA->jmj + ")"
       nPosKol := 1
       @ PRow(), PCol() + 1 SAY IdTarifa
-      //IF gcSLObrazac == "2"
-         @ PRow(), PCol() + nPosKol SAY Kolicina  PICTURE PicKol
-      //ELSE
-      //   @ PRow(), PCol() + nPosKol SAY GKolicina  PICTURE PicKol
-      //ENDIF
+      // IF gcSLObrazac == "2"
+      @ PRow(), PCol() + nPosKol SAY Kolicina  PICTURE PicKol
+      // ELSE
+      // @ PRow(), PCol() + nPosKol SAY GKolicina  PICTURE PicKol
+      // ENDIF
       @ PRow(), PCol() + 1 SAY 0  PICTURE Replicate( "_", Len( PicKol ) )
       @ PRow(), PCol() + 1 SAY 0  PICTURE Replicate( "_", Len( PicKol ) )
       @ PRow(), PCol() + 1 SAY 0  PICTURE Replicate( "_", Len( PicKol ) )

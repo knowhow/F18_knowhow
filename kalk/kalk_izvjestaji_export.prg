@@ -89,13 +89,12 @@ FUNCTION krpt_export()
    find_kalk_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
 
 
-   o_roba()
-   o_konto()
-   o_koncij()
-   o_tarifa()
+   //o_roba()
+   //o_konto()
+   //o_koncij()
+   //o_tarifa()
 
-   SELECT KONTO
-   SEEK kalk->PKonto
+   select_o_konto( kalk->PKonto )
 
    fill_exp( cIdFirma, cIdVd, cBrDok, ( cVpcCij == "D" ), ( cMpcCij == "D" ) )
 

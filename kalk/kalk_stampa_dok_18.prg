@@ -37,7 +37,7 @@ FUNCTION kalk_stampa_dok_18()
    ? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), ", Datum:", DatDok
    @ PRow(), 122 SAY "Str:" + Str( nStr, 3 )
 
-   SELECT KONTO; HSEEK cidkonto
+   select_o_konto( cIdKonto )
    ?  "KONTO zaduzuje :", cIdKonto, "-", naz
    SELECT kalk_pripr
 
@@ -67,7 +67,7 @@ FUNCTION kalk_stampa_dok_18()
 
       select_o_roba( kalk_pripr->IdRoba )
       select_o_tarifa( kalk_pripr->IdTarifa )
-      
+
       SELECT kalk_pripr
 
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()

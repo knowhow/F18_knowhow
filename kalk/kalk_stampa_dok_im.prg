@@ -47,8 +47,7 @@ FUNCTION kalk_stampa_dok_im()
    cCijenaTip := Pitanje(, "Na obrascu prikazati VPC (D) ili NC (N)?", "N" )
 
    P_10CPI
-   SELECT konto
-   HSEEK cIdkonto
+   select_o_konto( cIdkonto )
    SELECT kalk_pripr
    ?? "INVENTURA MAGACIN ", cidkonto, "-", konto->naz
    P_COND2
@@ -139,7 +138,7 @@ FUNCTION kalk_stampa_dok_im()
          @ PRow(), PCol() + 1 SAY nU4  PICT Replicate( " ", Len( PicDEM ) )
       ELSE
          @ PRow(), PCol() + 1 SAY nU4 PICT IF( nU4 > 0, picdem, Replicate( " ", Len( PicDEM ) ) )
-         @ PRow(), PCol() + 1 SAY IF( nU4 < 0, -nU4, nU4 ) PICT IF( nU4 < 0, picdem, Replicate( " ", Len( PicDEM ) ) )
+         @ PRow(), PCol() + 1 SAY IF( nU4 < 0, - nU4, nU4 ) PICT IF( nU4 < 0, picdem, Replicate( " ", Len( PicDEM ) ) )
       ENDIF
 
       SKIP
@@ -162,7 +161,7 @@ FUNCTION kalk_stampa_dok_im()
    @ PRow(), PCol() + 1 SAY 0 PICT gPicDem
    @ PRow(), PCol() + 1 SAY 0 PICT gPicDem
    @ PRow(), PCol() + 1 SAY nTot4 PICT IF( nTot4 > 0, gPicDem, Replicate( " ", Len( PicDEM ) ) )
-   @ PRow(), PCol() + 1 SAY IIF( nTot4 < 0, -nTot4, nTot4 )  PICT IF( nTot4 < 0, gPicDem, Replicate( " ", Len( gPicDem ) ) )
+   @ PRow(), PCol() + 1 SAY iif( nTot4 < 0, - nTot4, nTot4 )  PICT IF( nTot4 < 0, gPicDem, Replicate( " ", Len( gPicDem ) ) )
 
    ? m
 

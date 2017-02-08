@@ -136,13 +136,12 @@ FUNCTION kalk_kontiranje_gen_finmat()
       cDalje := "D"
       cAutoRav := gAutoRavn
 
-      SELECT PARTN
-      HSEEK KALK_PRIPR->IDPARTNER
-      SELECT KONTO
-      HSEEK KALK_PRIPR->MKONTO
-      cPom := naz
-      SELECT KONTO
-      HSEEK KALK_PRIPR->PKONTO
+      select_o_partner( kalk_pripr->idpartner )
+      select_o_konto( kalk_pripr->mkonto )
+      cPom := konto->naz
+      select_o_konto( kalk_pripr->pkonto )
+      select_o_tdok( kalk_pripr->idvd )
+
       SELECT kalk_pripr
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "DATUM------------>"             COLOR "W+/B"
       @ form_x_koord() + 2, Col() + 1 SAY DToC( DATDOK )                   COLOR "N/W"
@@ -181,10 +180,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
       cIdKonto2 := IdKonto2
 
 
-      SELECT KONTO
-      HSEEK cIdKonto
-
-      HSEEK cIdKonto2
+      select_o_konto( cIdKonto2 ) 
       SELECT KALK_PRIPR
 
 
@@ -237,15 +233,15 @@ FUNCTION kalk_kontiranje_gen_finmat()
             BrDok     WITH kalk_pripr->BrDok, ;
             DatDok    WITH kalk_pripr->DatDok, ;
             GKV       WITH Round( kalk_PRIPR->( GKolicina * FCJ2 ), nZaokruzenje ), ;   // vrijednost transp.kala
-         GKV2      WITH Round( kalk_PRIPR->( GKolicin2 * FCJ2 ), nZaokruzenje ), ;   // vrijednost ostalog kala
-         Prevoz    WITH Round( kalk_PRIPR->( nPrevoz * nKolicina ), nZaokruzenje ), ;
+            GKV2      WITH Round( kalk_PRIPR->( GKolicin2 * FCJ2 ), nZaokruzenje ), ;   // vrijednost ostalog kala
+            Prevoz    WITH Round( kalk_PRIPR->( nPrevoz * nKolicina ), nZaokruzenje ), ;
             CarDaz    WITH Round( kalk_PRIPR->( nCarDaz * nKolicina ), nZaokruzenje ), ;
             BankTr    WITH Round( kalk_PRIPR->( nBankTr * nKolicina ), nZaokruzenje ), ;
             SpedTr    WITH Round( kalk_PRIPR->( nSpedTr * nKolicina ), nZaokruzenje ), ;
             ZavTr     WITH Round( kalk_PRIPR->( nZavTr * nKolicina ), nZaokruzenje ), ;
             NV        WITH Round( kalk_PRIPR->( NC * ( Kolicina - GKolicina - GKolicin2 ) ), nZaokruzenje ), ;
             Marza     WITH Round( kalk_PRIPR->( nMarza * ( Kolicina - GKolicina - GKolicin2 ) ), nZaokruzenje ), ;           // marza se ostvaruje nad stvarnom kolicinom
-         VPV       WITH Round( kalk_PRIPR->( VPC * ( Kolicina - GKolicina - GKolicin2 ) ), nZaokruzenje )        // vpv se formira nad stvarnom kolicinom
+            VPV       WITH Round( kalk_PRIPR->( VPC * ( Kolicina - GKolicina - GKolicin2 ) ), nZaokruzenje )        // vpv se formira nad stvarnom kolicinom
 
 
          nPom := kalk_pripr->( RabatV / 100 * VPC * Kolicina )
@@ -258,7 +254,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
          REPLACE Marza2 WITH nPom
 
          IF kalk_pripr->idvd $ "14#94"
-            nPom := kalk_pripr->( VPC * ( 1 -RabatV / 100 ) * MPC / 100 * Kolicina )
+            nPom := kalk_pripr->( VPC * ( 1 - RabatV / 100 ) * MPC / 100 * Kolicina )
          ELSE
             nPom := kalk_pripr->( MPC * ( Kolicina - GKolicina - GKolicin2 ) )
          ENDIF
@@ -300,14 +296,14 @@ FUNCTION kalk_kontiranje_gen_finmat()
          ENDIF
 
          IF field->idvd $ "14#94"
-            REPLACE  MPVSaPP   WITH  kalk_pripr->( VPC * ( 1 -RabatV / 100 ) * ( Kolicina - GKolicina - GKolicin2 ) )
+            REPLACE  MPVSaPP   WITH  kalk_pripr->( VPC * ( 1 - RabatV / 100 ) * ( Kolicina - GKolicina - GKolicin2 ) )
          ENDIF
 
 
          IF gKalo == "2" .AND.  kalk_pripr->idvd $ "10#81"  // kalo ima vrijednost po NC
             REPLACE GKV   WITH Round( kalk_pripr->( GKolicina * NC ), nZaokruzenje ), ;   // vrijednost transp.kala
-            GKV2  WITH Round( kalk_pripr->( GKolicin2 * NC ), nZaokruzenje ), ;   // vrijednost ostalog kala
-            GKol  WITH Round( kalk_pripr->GKolicina, nZaokruzenje ), ;
+               GKV2  WITH Round( kalk_pripr->( GKolicin2 * NC ), nZaokruzenje ), ;   // vrijednost ostalog kala
+               GKol  WITH Round( kalk_pripr->GKolicina, nZaokruzenje ), ;
                GKol2 WITH Round( kalk_pripr->GKolicin2, nZaokruzenje ), ;
                POREZV WITH Round( nMarza * kalk_pripr->( GKolicina + Gkolicin2 ), nZaokruzenje ) // negativna marza za kalo
          ENDIF

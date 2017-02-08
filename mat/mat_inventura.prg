@@ -124,7 +124,7 @@ FUNCTION mat_inv_gen()
       _filter += ".and. idpartner == " + dbf_quote( _partner )
    ENDIF
 
-   SET FILTER to &( _filter )
+   SET FILTER TO &( _filter )
 
    SEEK _id_firma + _konto
 
@@ -542,20 +542,17 @@ STATIC FUNCTION ZPrUnKol( vars, line )
    @ PRow() + 1, 0 SAY "Firma:"
    @ PRow(), PCol() + 1 SAY vars[ "id_firma" ]
 
-   SELECT PARTN
-   HSEEK vars[ "id_firma" ]
+   select_o_partner( vars[ "id_firma" ] )
 
    @ PRow(), PCol() + 1 SAY AllTrim( field->naz )
    @ PRow(), PCol() + 1 SAY AllTrim( field->naz2 )
 
-   SELECT PARTN
-   HSEEK vars[ "partner" ]
+   select_o_partner( vars[ "partner" ] )
    @ PRow() + 1, 0 SAY "Partner:"
    @ PRow(), PCol() + 1 SAY AllTrim( field->naz )
    @ PRow(), PCol() + 1 SAY AllTrim( field->naz2 )
 
-   SELECT KONTO
-   HSEEK vars[ "konto" ]
+   select_o_konto( vars[ "konto" ] )
 
    ? "Konto: ", vars[ "konto" ], AllTrim( field->naz )
 
@@ -585,7 +582,7 @@ FUNCTION mat_obracun_inv()
    IF gNW $ "DR"
       @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdF valid {|| p_partner( @cIdF ), cidf := Left( cidf, 2 ), .T. }
+      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdF VALID {|| p_partner( @cIdF ), cidf := Left( cidf, 2 ), .T. }
    ENDIF
    @ m_x + 3, m_y + 2 SAY "Konto  " GET cIdK VALID P_Konto( @cIdK )
    @ m_x + 4, m_y + 2 SAY "Datum  " GET cIdD
@@ -624,22 +621,23 @@ FUNCTION mat_obracun_inv()
       IF A == 0
          P_COND
          @ A, 0 SAY "MAT.P:INVENTURNA LISTA NA DAN:"; @ A, PCol() + 1 SAY cIdD
-         @ ++A, 0 SAY "Firma:"
+         @++A, 0 SAY "Firma:"
          @ A, PCol() + 1 SAY cIdF
          SELECT PARTN; HSEEK cIdF
          @ A, PCol() + 1 SAY naz; @ A, PCol() + 1 SAY naz2
 
-         @ ++A, 0 SAY "KONTO:"
+         @++A, 0 SAY "KONTO:"
          @ A, PCol() + 1 SAY cIdK
-         SELECT KONTO; HSEEK cIdK
+         select_o_konto( cIdK )
+
          @ A, PCol() + 1 SAY naz
          SELECT MAT_INVENT
          A += 2
-         @ ++A, 0 SAY "---- ---------- -------------------- --- ---------- -------------------- -------------------- -------------------- ---------------------"
-         @ ++A, 0 SAY "*R. *  SIFRA   *  NAZIV ARTIKLA     *J. *  CIJENA  *   STVARNO STANJE   *   KNJIZNO STANJE   *   RAZLIKA VISAK    *   RAZLIKA MANJAK   *"
-         @ ++A, 0 SAY "                                                    -------------------- -------------------- -------------------- ---------------------"
-         @ ++A, 0 SAY "*B. * ARTIKLA  *                    *MJ.*          *KOLICINA*   IZNOS   *KOLICINA*   IZNOS   *KOLICINA*   IZNOS   *KOLICINA*   IZNOS   *"
-         @ ++A, 0 SAY "---- ---------- -------------------- --- ---------- -------- ----------- -------- ----------- -------- ----------- -------- ------------"
+         @++A, 0 SAY "---- ---------- -------------------- --- ---------- -------------------- -------------------- -------------------- ---------------------"
+         @++A, 0 SAY "*R. *  SIFRA   *  NAZIV ARTIKLA     *J. *  CIJENA  *   STVARNO STANJE   *   KNJIZNO STANJE   *   RAZLIKA VISAK    *   RAZLIKA MANJAK   *"
+         @++A, 0 SAY "                                                    -------------------- -------------------- -------------------- ---------------------"
+         @++A, 0 SAY "*B. * ARTIKLA  *                    *MJ.*          *KOLICINA*   IZNOS   *KOLICINA*   IZNOS   *KOLICINA*   IZNOS   *KOLICINA*   IZNOS   *"
+         @++A, 0 SAY "---- ---------- -------------------- --- ---------- -------- ----------- -------- ----------- -------- ----------- -------- ------------"
       ENDIF
 
       IF A > 63; EJECTA0;  ENDIF
@@ -667,7 +665,7 @@ FUNCTION mat_obracun_inv()
       IF RV >= 0; VV := RV; ELSE; MV := -RV; ENDIF
 
 
-      @ ++A, 0 SAY ++nRBr PICTURE "9999"
+      @++A, 0 SAY ++nRBr PICTURE "9999"
       @ A, 5 SAY cIdRoba
       SELECT ROBA; HSEEK cIdRoba
       @ A, 16 SAY Naz PICTURE Replicate ( "X", 20 )
@@ -689,8 +687,8 @@ FUNCTION mat_obracun_inv()
 
    ENDDO
 
-   @ ++A, 0 SAY "---- ---------- -------------------- --- ---------- -------- ----------- -------- ----------- -------- ----------- -------- ------------"
-   @ ++A, 0 SAY "UKUPNO:"
+   @++A, 0 SAY "---- ---------- -------------------- --- ---------- -------- ----------- -------- ----------- -------- ----------- -------- ------------"
+   @++A, 0 SAY "UKUPNO:"
    @ a, 40       SAY 0 PICTURE PicD1
    @ A, PCol() + 1 SAY 0 PICTURE picK
    @ A, PCol() + 1 SAY Round( SV1, 2 ) PICTURE picD1
@@ -700,7 +698,7 @@ FUNCTION mat_obracun_inv()
    @ A, PCol() + 1 SAY Round( VV1, 2 ) PICTURE picD1
    @ A, PCol() + 1 SAY 0 PICTURE PicK
    @ A, PCol() + 1 SAY Round( MV1, 2 ) PICTURE picD1
-   @ ++A, 0 SAY "---- ---------- -------------------- --- ---------- -------- ----------- -------- ----------- -------- ----------- -------- ------------"
+   @++A, 0 SAY "---- ---------- -------------------- --- ---------- -------- ----------- -------- ----------- -------- ----------- -------- ------------"
 
    EJECTNA0
    ENDPRINT
@@ -715,7 +713,7 @@ FUNCTION mat_nal_inventure()
    cIdK := Space( 7 )
    cIdD := Date()
    IF File( PRIVPATH + "invent.mem" )
-      RESTORE from ( PRIVPATH + "invent.mem" ) additive
+      RESTORE FROM ( PRIVPATH + "invent.mem" ) additive
    ENDIF
    cIdF := Left( cIdF, 2 )
    cIdZaduz := Space( 6 )
@@ -735,7 +733,7 @@ FUNCTION mat_nal_inventure()
    READ; ESC_BCR
 
    BoxC()
-   SAVE to  ( PRIVPATH + "invent.mem" ) ALL LIKE cId?
+   SAVE TO  ( PRIVPATH + "invent.mem" ) ALL LIKE cId?
 
    picD := '@Z 99999999999.99'
    picD1 := '@Z 99999999.99'
@@ -824,7 +822,7 @@ FUNCTION mat_inv_obr_poreza()
    cIdD := Date()
    cIdX := Space( 35 )
    IF File( PRIVPATH + "invent.mem" )
-      RESTORE from ( PRIVPATH + "invent.mem" ) additive
+      RESTORE FROM ( PRIVPATH + "invent.mem" ) additive
    ENDIF
    cIdF := Left( cIdF, 2 )
    cIdX := PadR( cIdX, 35 )
@@ -844,11 +842,11 @@ FUNCTION mat_inv_obr_poreza()
    READ; ESC_BCR
    BoxC()
 
-   SAVE to  ( PRIVPATH + "invent.mem" ) ALL LIKE cId?
+   SAVE TO  ( PRIVPATH + "invent.mem" ) ALL LIKE cId?
 
    cIdDir := gDirPor
 
-   USE ( ciddir + "pormp" ) NEW index ( ciddir + "pormpi1" ), ( ciddir + "pormpi2" ), ( ciddir + "pormpi3" )
+   USE ( ciddir + "pormp" ) NEW INDEX ( ciddir + "pormpi1" ), ( ciddir + "pormpi2" ), ( ciddir + "pormpi3" )
    SET ORDER TO TAG "3"
    // str(mjesec,2)+idkonto+idtarifa+id
 
@@ -857,7 +855,7 @@ FUNCTION mat_inv_obr_poreza()
 
    DO WHILE !Eof()
 
-      select_o_roba( mat_invent->idroba)
+      select_o_roba( mat_invent->idroba )
       select_o_tarifa( roba->idtarifa )
 
       SELECT mat_invent
@@ -964,8 +962,8 @@ FUNCTION mat_popisna_lista()
 
          IF !Empty( _konto )
 
-            SELECT konto
-            HSEEK _konto
+
+            select_o_konto( _Konto )
 
             xml_node( "kid", to_xml_encoding( _konto ) )
             xml_node( "knaz", to_xml_encoding( AllTrim( field->naz ) ) )
@@ -994,7 +992,7 @@ FUNCTION mat_popisna_lista()
 
       ENDIF
 
-      ++ A
+      ++A
 
       SELECT mat_suban
       cIdRoba := IdRoba

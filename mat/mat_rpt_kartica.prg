@@ -59,7 +59,7 @@ FUNCTION KSintKont()
       IF gNW $ "DR"
          @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 4, m_y + 2 SAY KonSeks( "KONTO" ) + ":  " GET qqKonto PICTURE "@S50"
       READ;  ESC_BCR
@@ -187,8 +187,8 @@ STATIC FUNCTION ZaglKSintK()
 
    ? "FIRMA:", cIdFirma, PadR( partn->naz, 25 ), PadR( partn->naz2, 25 )
 
-   SELECT KONTO
-   HSEEK cIdKonto
+
+   select_o_konto( cIdKonto )
 
    ? KonSeks( "KONTO" ) + ":", cIdkonto, AllTrim( konto->naz )
 
@@ -240,7 +240,7 @@ FUNCTION KAnKPoj()
          @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
          cIdFirma := self_organizacija_id()
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 3, m_y + 2 SAY KonSeks( "KONTO  " ) + "  : " GET qqKonto  PICTURE "@S50"
       READ;  ESC_BCR
@@ -275,7 +275,7 @@ FUNCTION KAnKPoj()
       DO WHILE !Eof() .AND. cIdKonto == IdKonto // konto
          IF A == 0; ZaglKAnalK(); ENDIF
          IF A > 64; EJECTA0; ZaglKAnalK(); ENDIF
-         @ ++A, 0      SAY IdVN
+         @++A, 0      SAY IdVN
          @ A, PCol() + 1 SAY BrNal
          @ A, PCol() + 1 SAY RBr
          @ A, PCol() + 1 SAY DatNal
@@ -287,14 +287,14 @@ FUNCTION KAnKPoj()
          SKIP
       ENDDO
 
-      @ ++A, 0 SAY m
-      @ ++A, 0 SAY "UKUPNO:"
+      @++A, 0 SAY m
+      @++A, 0 SAY "UKUPNO:"
       @ A, 21       SAY nUkDug  PICTURE picDEM
       @ A, PCol() + 1 SAY nUkPot  PICTURE picDEM
       @ A, PCol() + 1 SAY nUkDug2 PICTURE picBHD
       @ A, PCol() + 1 SAY nUkPot2  PICTURE picBHD
-      @ ++A, 0 SAY m
-      @ ++A, 0 SAY "SALDO:"
+      @++A, 0 SAY m
+      @++A, 0 SAY "SALDO:"
       nSaldo := nUkDug - nUkPot
       nSaldo2 := nUkDug2 - nUkPot2
       IF nSaldo >= 0
@@ -308,7 +308,7 @@ FUNCTION KAnKPoj()
          @ A, PCol() + 1 SAY 0 PICTURE picBHD
          @ A, PCol() + 1 SAY nSaldo2 PICTURE picBHD
       ENDIF
-      @ ++A, 0 SAY m
+      @++A, 0 SAY m
       nUkDug := nUkPot := nUkDug2 := nUkPot2 := 0
 
    ENDDO // eof
@@ -344,19 +344,19 @@ STATIC FUNCTION ZaglKAnalK()
 
    P_COND
    @ a, 0  SAY "MAT.P: KARTICA - ANALITICKI " + KonSeks( "KONTO" ) + " - ZA POJEDINACNI " + KonSeks( "KONTO" )
-   @ ++A, 0 SAY "FIRMA:"; @ A, PCol() + 1 SAY cIdFirma
+   @++A, 0 SAY "FIRMA:"; @ A, PCol() + 1 SAY cIdFirma
    SELECT PARTN; HSEEK cIdFirma
    @ A, PCol() + 1 SAY naz; @ A, PCol() + 1 SAY naz2
 
-   @ ++A, 0 SAY KonSeks( "KONTO" ) + ":"; @ A, PCol() + 1 SAY cIdKonto
-   SELECT KONTO; HSEEK cIdKonto
+   @++A, 0 SAY KonSeks( "KONTO" ) + ":"; @ A, PCol() + 1 SAY cIdKonto
+   select_o_konto( cIdKonto )
    @ A, PCol() + 1 SAY naz
 
-   @ ++A, 0 SAY m
-   @ ++A, 0 SAY _line1
-   @ ++A, 0 SAY _line2
-   @ ++A, 0 SAY _line3
-   @ ++A, 0 SAY m
+   @++A, 0 SAY m
+   @++A, 0 SAY _line1
+   @++A, 0 SAY _line2
+   @++A, 0 SAY _line3
+   @++A, 0 SAY m
 
    SELECT mat_anal
 
@@ -377,7 +377,7 @@ FUNCTION KAnKKonto()
       @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       cIdFirma := self_organizacija_id()
    ELSE
-      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    READ;  ESC_BCR
    BoxC()
@@ -420,8 +420,8 @@ FUNCTION KAnKKonto()
       nSaldo := nUkDug - nUkPot
       nSaldo2 := nUkDug2 - nUkPot2
 
-      @ ++A, 1 SAY cIdKonto
-      SELECT KONTO; HSEEK cIdKonto
+      @++A, 1 SAY cIdKonto
+      select_o_konto( cIdKonto )
       @ A, 8 SAY Naz PICTURE Replicate( "X", 32 )
 
       @ A, 42       SAY nUkDug  PICTURE PicDEM
@@ -439,15 +439,15 @@ FUNCTION KAnKKonto()
    IF A > 62; EJECTA0; ZagKKAnalK();ENDIF
    nUkSaldo := nUkUkDug - nUkUkPot
    nUk2Saldo := nUkUk2Dug - nUkUk2Pot
-   @ ++A, 0 SAY M
-   @ ++A, 0 SAY "UKUPNO ZA FIRMU:"
+   @++A, 0 SAY M
+   @++A, 0 SAY "UKUPNO ZA FIRMU:"
    @ A, 42       SAY nUkUkDug  PICTURE PicDEM
    @ A, PCol() + 1 SAY nUkUkPot  PICTURE PicDEM
    @ A, PCol() + 1 SAY nUkSaldo  PICTURE PicDEM
    @ A, PCol() + 1 SAY nUkUk2Dug PICTURE PicBHD
    @ A, PCol() + 1 SAY nUkUk2Pot PICTURE PicBHD
    @ A, PCol() + 1 SAY nUk2Saldo PICTURE PicBHD
-   @ ++A, 0 SAY M
+   @++A, 0 SAY M
    nUkUkDug := nUkUkPot := nUkUk2Dug := nUkUk2Pot := 0
 
    EJECTNA0
@@ -487,11 +487,11 @@ FUNCTION ZagKKAnalK()
    SELECT PARTN; HSEEK cIdFirma
    @ A, PCol() + 2 SAY naz; @ A, PCol() + 1 SAY naz2
 
-   @ ++A, 0 SAY m
-   @ ++A, 0 SAY _line1
-   @ ++A, 0 SAY _line2
-   @ ++A, 0 SAY _line3
-   @ ++A, 0 SAY m
+   @++A, 0 SAY m
+   @++A, 0 SAY _line1
+   @++A, 0 SAY _line2
+   @++A, 0 SAY _line3
+   @++A, 0 SAY m
 
    SELECT mat_anal
 
@@ -665,7 +665,7 @@ FUNCTION KSuban()
          _filter += " .and. " + _usl_roba
       ENDIF
 
-      SET FILTER to &( _filter )
+      SET FILTER TO &( _filter )
       HSEEK _id_firma
 
    ENDIF
@@ -887,8 +887,7 @@ STATIC FUNCTION ZaglKSif( id_firma, id_roba, id_konto, line )
    ? "ARTIKAL:"
    @ PRow(), PCol() + 1 SAY id_roba
 
-   SELECT ROBA
-   HSEEK id_roba
+   select_o_roba( id_roba )
 
    @ PRow(), PCol() + 1 SAY naz
    @ PRow(), PCol() + 2 SAY jmj
@@ -896,8 +895,8 @@ STATIC FUNCTION ZaglKSif( id_firma, id_roba, id_konto, line )
    ? KonSeks( "KONTO" ) + ":"
    @ PRow(), PCol() + 1 SAY id_konto
 
-   SELECT KONTO
-   HSEEK id_konto
+
+      select_o_konto( Id_Konto )
 
    @ PRow(), PCol() + 1 SAY konto->naz
 

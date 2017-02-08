@@ -616,8 +616,7 @@ FUNCTION fin_zagl_ostav_grupisano_po_br_veze( fStrana, lEx )
    select_o_partner( cIdFirma )
    ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    ? "KONTO  :", cIdKonto, field->naz
 
@@ -761,8 +760,7 @@ FUNCTION ZagBRVeze()
    select_o_partner( cIdFirma )
    ? "FIRMA:", cIdFirma, naz, naz2
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    ? "KONTO  :", cIdKonto, naz
 
    select_o_partner( cIdPartner )

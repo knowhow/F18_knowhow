@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-FUNCTION MnuSifrarnik()
+FUNCTION fin_maticni_podaci()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
@@ -24,10 +24,10 @@ FUNCTION MnuSifrarnik()
    AAdd( _opcexe, {|| _menu_specif() } )
 
 
-   IF ( gFinRj == "D" .OR. gTroskovi == "D" )
-      AAdd( _opc, "3. budžet" )
-      AAdd( _opcexe, {|| _menu_budzet() } )
-   ENDIF
+ //  IF ( gFinRj == "D" .OR. gTroskovi == "D" )
+//      AAdd( _opc, "3. budžet" )
+//      AAdd( _opcexe, {|| _menu_budzet() } )
+//   ENDIF
 
    f18_menu( "sif", .F., _izbor, _opc, _opcexe )
 

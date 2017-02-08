@@ -84,7 +84,7 @@ FUNCTION update_table_konto( lZamijenitiSifre )
       hRec := dbf_get_rec()
       update_rec_konto_struct( @hRec )
 
-      select_open_konto( hRec[ "id" ] )
+      select_o_konto( hRec[ "id" ] )
 
       _sif_exist := .T.
       IF !Found()

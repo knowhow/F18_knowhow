@@ -54,16 +54,11 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
       lSqlTable := hDbfRec[ "sql" ]
       cSqlTableFullName   := F18_PSQL_SCHEMA_DOT + cTable
 
-      IF cTable == "fin_nalog"
-         AltD()
-      ENDIF
 
       aDbfFields := hDbfRec[ "dbf_fields" ]
-
       aSqlFields := sql_fields( aDbfFields )
 
       _sql_order  := hDbfRec[ "sql_order" ]
-
 
       // uvijek je algoritam 1 nivo recorda
       hAlgoritam1 := hDbfRec[ "algoritam" ][ 1 ]
@@ -123,7 +118,9 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
          cTmp := hDbfRec[ "dbf_fields" ][ nI ]
 
-         IF cTmp == "obradjeno" .OR. field_in_blacklist( cTmp, hDbfRec[ "blacklisted" ] ) // polje obradjeno je automatski timestamp
+         IF cTmp == "obradjeno" .OR. ; // polje obradjeno je automatski timestamp
+               ( cTmp == "korisnik" .AND. cTable $ "fin_nalog#fakt_doks#kalk_doks" ) .OR. ; // automatski se puni sa current_user
+               field_in_blacklist( cTmp, hDbfRec[ "blacklisted" ] )
             LOOP
          ENDIF
 

@@ -39,7 +39,7 @@ FUNCTION set_a_dbf_sif()
    set_a_sql_sifarnik( "f18_rules", "FMKRULES", F_RULES, hRec  )
 
    set_a_sql_sifarnik( "rj", "RJ", F_RJ         )
-   set_a_sql_sifarnik( "lokal", "LOKAL", F_LOKAL  )
+   //set_a_sql_sifarnik( "lokal", "LOKAL", F_LOKAL  )
    set_a_sql_sifarnik( "ops", "OPS", F_OPS        )
    set_a_sql_sifarnik( "banke", "BANKE", F_BANKE      )
    set_a_sql_sifarnik( "refer", "REFER", F_REFER      )

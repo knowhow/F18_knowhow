@@ -597,7 +597,7 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
    IF !Used()
       IF lSql
-         otvori_sqlmix_tabelu( hRec[ "table" ] )
+         otvori_sqlmix_tabelu( hRec[ "table" ], hRec[ "alias" ] )
       ELSE
          _dbf := my_home() + my_dbf_prefix( @hRec ) + hRec[ "table" ]
          IF !File( f18_ime_dbf( hRec ) )
@@ -648,47 +648,11 @@ FUNCTION set_dbf_fields_from_struct( xRec )
    RETURN .T.
 
 
-STATIC FUNCTION otvori_sqlmix_tabelu( cTable )
+STATIC FUNCTION otvori_sqlmix_tabelu( cTable, cAlias )
 
-   LOCAL cLogMsg
+   LOCAL cSql := "select * FROM fmk." + cTable + " LIMIT 1"
 
-   SWITCH cTable
-   CASE "fin_suban"
-      select_o_suban()
-      EXIT
-   CASE "fin_anal"
-      select_o_anal()
-      EXIT
-   CASE "fin_sint"
-      select_o_sint()
-      EXIT
-
-   CASE "fin_nalog"
-      select_o_nalog()
-      EXIT
-
-   CASE "roba"
-      select_o_roba( "xxxxxxxx" )
-      EXIT
-
-   CASE "konto"
-      select_o_konto( "XXXXX" )
-      EXIT
-
-   CASE "partn"
-      select_o_partner( "XXXXXX" )
-      EXIT
-   OTHERWISE
-
-      cLogMsg := "SQLMIX: tabela " + cTable + " nije otvorena!? "
-      ?E cLogMsg
-
-#ifdef F18_DEBUG
-      MsgBeep( cLogMsg )
-#endif
-   ENDSWITCH
-
-   RETURN .T.
+   RETURN use_sql( cTable, cSql, cAlias )
 
 
 FUNCTION set_rec_from_dbstruct( hRec )

@@ -565,7 +565,7 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
    LOCAL lTabelaOtvorenaOvdje := .F.
    LOCAL _dbf
-   LOCAL _err
+   LOCAL oError
    LOCAL cLogMsg
 
    LOCAL lSql
@@ -597,7 +597,7 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
    IF !Used()
       IF lSql
-         otvori_sqlmix_tabelu( hRec[ "table" ], hRec[ "alias" ] )
+         otvori_sqlmix_tabelu( hRec[ "wa" ], hRec[ "table" ], hRec[ "alias" ] )
       ELSE
          _dbf := my_home() + my_dbf_prefix( @hRec ) + hRec[ "table" ]
          IF !File( f18_ime_dbf( hRec ) )
@@ -612,13 +612,13 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
             dbUseArea( .F., DBFENGINE, _dbf, hRec[ "alias" ], .T., .F. )
 
-         RECOVER using _err
+         RECOVER using oError
 
             // tabele ocigledno nema, tako da se struktura ne moze utvrditi
             hRec[ "dbf_fields" ]     := NIL
             hRec[ "dbf_fields_len" ] := NIL
 
-            cLogMsg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " se ne moze otvoriti ?!"
+            cLogMsg := "ERR-DBF: " + oError:description + ": tbl:" + my_home() + hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " se ne moze otvoriti ?!"
             LOG_CALL_STACK cLogMsg
 
             log_write( cLogMsg, 5 )
@@ -648,10 +648,11 @@ FUNCTION set_dbf_fields_from_struct( xRec )
    RETURN .T.
 
 
-STATIC FUNCTION otvori_sqlmix_tabelu( cTable, cAlias )
+STATIC FUNCTION otvori_sqlmix_tabelu( nWa, cTable, cAlias )
 
    LOCAL cSql := "select * FROM fmk." + cTable + " LIMIT 1"
 
+   SELECT ( nWa )
    RETURN use_sql( cTable, cSql, cAlias )
 
 

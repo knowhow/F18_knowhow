@@ -56,88 +56,88 @@ FUNCTION set_a_dbf_fin()
 
 FUNCTION set_a_dbf_fin_suban()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, cTable, hItem
 
-   _tbl := "fin_suban"
+   cTable := "fin_suban"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "SUBAN"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_SUBAN
-   _item[ "temp" ]  := .F.
-   _item[ "algoritam" ] := {}
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .T.
+   hItem[ "alias" ] := "SUBAN"
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := F_SUBAN
+   hItem[ "temp" ]  := .F.
+   hItem[ "algoritam" ] := {}
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .T.
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idfirma + field->idvn + field->brnal + STR(field->rbr,5,0) }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal", {"rbr",5} }
-   _alg[ "sql_in" ]         := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr::char(5),5)"
-   _alg[ "dbf_tag" ]        := "4"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idfirma + field->idvn + field->brnal + STR(field->rbr,5,0) }
+   hAlgoritam[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal", {"rbr",5} }
+   hAlgoritam[ "sql_in" ]         := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr::char(5),5)"
+   hAlgoritam[ "dbf_tag" ]        := "4"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
 
    // algoritam 2 - dokument
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idfirma + field->idvn + field->brnal }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal" }
-   _alg[ "sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
-   _alg[ "dbf_tag" ]    := "4"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idfirma + field->idvn + field->brnal }
+   hAlgoritam[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal" }
+   hAlgoritam[ "sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
+   hAlgoritam[ "dbf_tag" ]    := "4"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    // za full sinhronizaciju trebamo jedinstveni poredak
-   _item[ "sql_order" ] := "idfirma, idvn, brnal, rbr"
+   hItem[ "sql_order" ] := "idfirma, idvn, brnal, rbr"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
 
 FUNCTION set_a_dbf_fin_anal()
 
-   LOCAL _item
-   LOCAL _alg, _tbl
+   LOCAL hItem
+   LOCAL hAlgoritam, cTable
 
-   _tbl := "fin_anal"
+   cTable := "fin_anal"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "ANAL"
-   _item[ "wa" ]    := F_ANAL
-   _item[ "table" ] := _tbl
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .T.
+   hItem[ "alias" ] := "ANAL"
+   hItem[ "wa" ]    := F_ANAL
+   hItem[ "table" ] := cTable
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ] := {|| field->idfirma + field->idvn + field->brnal + field->rbr }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal", "rbr" }
-   _alg[ "sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 3)"
-   _alg[ "dbf_tag" ]   := "2"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ] := {|| field->idfirma + field->idvn + field->brnal + field->rbr }
+   hAlgoritam[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal", "rbr" }
+   hAlgoritam[ "sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 3)"
+   hAlgoritam[ "dbf_tag" ]   := "2"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
 
    // algoritam 2 - dokument
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idfirma + field->idvn + field->brnal }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal" }
-   _alg[ "sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
-   _alg[ "dbf_tag" ]    := "2"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idfirma + field->idvn + field->brnal }
+   hAlgoritam[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal" }
+   hAlgoritam[ "sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
+   hAlgoritam[ "dbf_tag" ]    := "2"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    // za full sinhronizaciju trebamo jedinstveni poredak
-   _item[ "sql_order" ] := "idfirma, idvn, brnal, rbr"
+   hItem[ "sql_order" ] := "idfirma, idvn, brnal, rbr"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
@@ -145,44 +145,44 @@ FUNCTION set_a_dbf_fin_anal()
 
 FUNCTION set_a_dbf_fin_sint()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, cTable, hItem
 
-   _tbl := "fin_sint"
+   cTable := "fin_sint"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "SINT"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_SINT
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .T.
+   hItem[ "alias" ] := "SINT"
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := F_SINT
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ] := {|| field->idfirma + field->idvn + field->brnal + field->rbr }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal", "rbr" }
-   _alg[ "sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 3)"
-   _alg[ "dbf_tag" ]   := "2"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ] := {|| field->idfirma + field->idvn + field->brnal + field->rbr }
+   hAlgoritam[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal", "rbr" }
+   hAlgoritam[ "sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 3)"
+   hAlgoritam[ "dbf_tag" ]   := "2"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
 
    // algoritam 2 - dokument
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idfirma + field->idvn + field->brnal }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal" }
-   _alg[ "sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
-   _alg[ "dbf_tag" ]    := "2"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idfirma + field->idvn + field->brnal }
+   hAlgoritam[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal" }
+   hAlgoritam[ "sql_in" ]    := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
+   hAlgoritam[ "dbf_tag" ]    := "2"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    // za full sinhronizaciju trebamo jedinstveni poredak
-   _item[ "sql_order" ] := "idfirma, idvn, brnal, rbr"
+   hItem[ "sql_order" ] := "idfirma, idvn, brnal, rbr"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
@@ -191,34 +191,34 @@ FUNCTION set_a_dbf_fin_sint()
 
 FUNCTION set_a_dbf_fin_nalog()
 
-   LOCAL _alg, _tbl, _item
-   LOCAL _itm
+   LOCAL hAlgoritam, cTable, hItem
 
-   _tbl := "fin_nalog"
 
-   _item := hb_Hash()
+   cTable := "fin_nalog"
 
-   _item[ "alias" ] := "NALOG"
-   _item[ "wa" ]    := F_NALOG
-   _item[ "table" ] := _tbl
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .T.
+   hItem := hb_Hash()
 
-   _item[ "algoritam" ] := {}
+   hItem[ "alias" ] := "NALOG"
+   hItem[ "wa" ]    := F_NALOG
+   hItem[ "table" ] := cTable
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .T.
+
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ] := {|| field->idfirma + field->idvn + field->brnal }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal" }
-   _alg[ "sql_in" ]         := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ] := {|| field->idfirma + field->idvn + field->brnal }
+   hAlgoritam[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal" }
+   hAlgoritam[ "sql_in" ]         := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "idfirma, idvn, brnal"
+   hItem[ "sql_order" ] := "idfirma, idvn, brnal"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
@@ -226,68 +226,68 @@ FUNCTION set_a_dbf_fin_nalog()
 /*
 FUNCTION set_a_dbf_fin_parek()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, cTable, hItem
    LOCAL _itm
 
-   _tbl := "fin_parek"
+   cTable := "fin_parek"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "PAREK"
-   _item[ "wa" ]    := F_PAREK
-   _item[ "table" ] := _tbl
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   hItem[ "alias" ] := "PAREK"
+   hItem[ "wa" ]    := F_PAREK
+   hItem[ "table" ] := cTable
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ] := {|| field->idpartija }
-   _alg[ "dbf_key_fields" ] := { "idpartija" }
-   _alg[ "sql_in" ]         := "rpad(idpartija,6)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ] := {|| field->idpartija }
+   hAlgoritam[ "dbf_key_fields" ] := { "idpartija" }
+   hAlgoritam[ "sql_in" ]         := "rpad(idpartija,6)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "idpartija"
+   hItem[ "sql_order" ] := "idpartija"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
 
 FUNCTION set_a_dbf_fin_koliz()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, cTable, hItem
    LOCAL _itm
 
-   _tbl := "fin_koliz"
+   cTable := "fin_koliz"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "KOLIZ"
-   _item[ "wa" ]    := F_KOLIZ
-   _item[ "table" ] := _tbl
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   hItem[ "alias" ] := "KOLIZ"
+   hItem[ "wa" ]    := F_KOLIZ
+   hItem[ "table" ] := cTable
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ] := {|| field->id }
-   _alg[ "dbf_key_fields" ] := { "id" }
-   _alg[ "sql_in" ]         := "rpad(id,2)"
-   _alg[ "dbf_tag" ]        := "ID"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ] := {|| field->id }
+   hAlgoritam[ "dbf_key_fields" ] := { "id" }
+   hAlgoritam[ "sql_in" ]         := "rpad(id,2)"
+   hAlgoritam[ "dbf_tag" ]        := "ID"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "id"
+   hItem[ "sql_order" ] := "id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
@@ -296,34 +296,34 @@ FUNCTION set_a_dbf_fin_koliz()
 
 FUNCTION set_a_dbf_fin_koniz()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, cTable, hItem
    LOCAL _itm
 
-   _tbl := "fin_koniz"
+   cTable := "fin_koniz"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "KONIZ"
-   _item[ "wa" ]    := F_KONIZ
-   _item[ "table" ] := _tbl
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   hItem[ "alias" ] := "KONIZ"
+   hItem[ "wa" ]    := F_KONIZ
+   hItem[ "table" ] := cTable
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ] := {|| field->id }
-   _alg[ "dbf_key_fields" ] := { "id" }
-   _alg[ "sql_in" ]         := "rpad(id,20)"
-   _alg[ "dbf_tag" ]        := "ID"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ] := {|| field->id }
+   hAlgoritam[ "dbf_key_fields" ] := { "id" }
+   hAlgoritam[ "sql_in" ]         := "rpad(id,20)"
+   hAlgoritam[ "dbf_tag" ]        := "ID"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "id"
+   hItem[ "sql_order" ] := "id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
@@ -332,101 +332,101 @@ FUNCTION set_a_dbf_fin_koniz()
 
 FUNCTION set_a_dbf_fin_zagli()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, cTable, hItem
    LOCAL _itm
 
-   _tbl := "fin_zagli"
+   cTable := "fin_zagli"
 
-   _item := hb_Hash()
-   _item[ "alias" ] := "ZAGLI"
-   _item[ "wa" ]    := F_ZAGLI
-   _item[ "table" ] := _tbl
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   hItem := hb_Hash()
+   hItem[ "alias" ] := "ZAGLI"
+   hItem[ "wa" ]    := F_ZAGLI
+   hItem[ "table" ] := cTable
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ] := {|| field->id }
-   _alg[ "dbf_key_fields" ] := { "id" }
-   _alg[ "sql_in" ]         := "rpad(id,2)"
-   _alg[ "dbf_tag" ]        := "ID"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ] := {|| field->id }
+   hAlgoritam[ "dbf_key_fields" ] := { "id" }
+   hAlgoritam[ "sql_in" ]         := "rpad(id,2)"
+   hAlgoritam[ "dbf_tag" ]        := "ID"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "id"
+   hItem[ "sql_order" ] := "id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
 
 FUNCTION set_a_dbf_fin_izvje()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, cTable, hItem
    LOCAL _itm
 
-   _tbl := "fin_izvje"
+   cTable := "fin_izvje"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "IZVJE"
-   _item[ "wa" ]    := F_IZVJE
-   _item[ "table" ] := _tbl
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   hItem[ "alias" ] := "IZVJE"
+   hItem[ "wa" ]    := F_IZVJE
+   hItem[ "table" ] := cTable
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ] := {|| field->id }
-   _alg[ "dbf_key_fields" ] := { "id" }
-   _alg[ "sql_in" ]         := "rpad(id,2)"
-   _alg[ "dbf_tag" ]        := "ID"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ] := {|| field->id }
+   hAlgoritam[ "dbf_key_fields" ] := { "id" }
+   hAlgoritam[ "sql_in" ]         := "rpad(id,2)"
+   hAlgoritam[ "dbf_tag" ]        := "ID"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "id"
+   hItem[ "sql_order" ] := "id"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
 
 FUNCTION set_a_dbf_fin_budzet()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, cTable, hItem
    LOCAL _itm
 
-   _tbl := "fin_budzet"
+   cTable := "fin_budzet"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "BUDZET"
-   _item[ "wa" ]    := F_BUDZET
-   _item[ "table" ] := _tbl
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   hItem[ "alias" ] := "BUDZET"
+   hItem[ "wa" ]    := F_BUDZET
+   hItem[ "table" ] := cTable
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ] := {|| field->idrj + field->idkonto }
-   _alg[ "dbf_key_fields" ] := { "idrj", "idkonto" }
-   _alg[ "sql_in" ]         := "rpad( idrj, 6 ) || rpad( idkonto, 7 )"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ] := {|| field->idrj + field->idkonto }
+   hAlgoritam[ "dbf_key_fields" ] := { "idrj", "idkonto" }
+   hAlgoritam[ "sql_in" ]         := "rpad( idrj, 6 ) || rpad( idkonto, 7 )"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "idrj, idkonto"
+   hItem[ "sql_order" ] := "idrj, idkonto"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 */

@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR GetList
+
 STATIC __mj
 STATIC __god
 STATIC s_lExportXml := .T.
@@ -363,7 +365,7 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
 
       @ m_x + 1, m_y + 2 SAY cIdRadnikTekuci
 
-altd()
+
       DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
          IF ( ld_godina_mjesec_string( field->godina, field->mjesec ) <  ld_godina_mjesec_string( nGodina, nMjesec ) ) .OR. ( ld_godina_mjesec_string( field->godina, field->mjesec ) > ld_godina_mjesec_string( nGodina, nMjesec ) )
@@ -416,7 +418,9 @@ altd()
          IF ( nBolovanjaIznos != 0 ) .OR. ( nSatiBolovanje != 0 ) // ako je bilo bolovanja do 42d umanji broj sati
             // old 2/ nNeto := ( nNeto - nPrimanjaNeUlazeUBeneficiraniIznos )  - ovo ne postoji
             // old 2/ nBrojRadnihSati := ( nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati ) // tipovi primanja koji ne ulaze u sate
-            nBrojRadnihSati := nBrojRadnihSati - nSatiBolovanje // ako je bilo bolovanja  sati https://redmine.bring.out.ba/issues/36482#note-16
+
+            // old 08.02.17 nBrojRadnihSati := nBrojRadnihSati - nSatiBolovanje // ako je bilo bolovanja  sati https://redmine.bring.out.ba/issues/36482#note-16
+            // ipak ne treba odbijati bolovanje
          ENDIF
 
          IF lImaBovanjaPreko42  // uzmi puni fond sati

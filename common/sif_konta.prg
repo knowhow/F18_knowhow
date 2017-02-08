@@ -43,7 +43,7 @@ FUNCTION P_Konto( cId, dx, dy )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := p_sifra( F_KONTO, 1, MAXROWS() -15, MAXCOLS() -20, "LKT: Lista: Konta", @cId, dx, dy )
+   lRet := p_sifra( F_KONTO, 1, MAXROWS() -15, MAXCOLS() - 20, "LKT: Lista: Konta", @cId, dx, dy )
 
    PopWa()
 
@@ -60,7 +60,7 @@ FUNCTION P_Konto( cId, dx, dy )
     *   param: lBlag
 
 
-FUNCTION P_Konto( cId, dx, dy, lBlag )
+--FUNCTION P_Konto( cId, dx, dy, lBlag )
 
    LOCAL nI
    LOCAL nDbfArea := Select()

@@ -411,6 +411,18 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
             RETURN DE_REFRESH
          ENDIF
 
+      CASE Alias() == "KONTO"
+
+         Box( "#Unijeti dio šifre ili šifre dobavljača ili naziva", 1, 70 )
+         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         READ
+         BoxC()
+         IF LastKey() != K_ESC
+            find_konto_by_naz_or_id( cIdOrNaz )
+            TB:RefreshAll()
+            RETURN DE_REFRESH
+         ENDIF
+         
       OTHERWISE
          // Box( "#Unijeti dio šifre ili naziva", 1, 70 )
       ENDCASE

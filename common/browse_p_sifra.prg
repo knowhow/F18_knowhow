@@ -63,7 +63,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    cOrderTag := ordName( 1 )
 
    sif_set_order( xIndex, cOrderTag, @fID_j )
-   cSeekRet := sif_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
+   cSeekRet := p_sifra_trazi_sifru( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
 
    IF cSeekRet == "naz"
       lTraziPoNazivu := .T.
@@ -1480,7 +1480,7 @@ FUNCTION UslovSif()
 
 
 
-FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
+FUNCTION p_sifra_trazi_sifru( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
 
    LOCAL _bk := ""
    LOCAL _order := IndexOrd()
@@ -1510,6 +1510,9 @@ FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
       find_partner_by_naz_or_id( cId )
    CASE Alias() == "ROBA"
       find_roba_by_naz_or_id( cId )
+   CASE Alias() == "KONTO"
+      find_konto_by_naz_or_id( cId )
+   OTHERWISE
    OTHERWISE
       SEEK cId
    ENDCASE

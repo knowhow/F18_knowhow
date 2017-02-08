@@ -597,26 +597,9 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
    IF !Used()
       IF lSql
-         SWITCH hRec[ "table" ]
-         CASE "fin_suban"
-            select_o_suban()
-            EXIT
-         CASE "fin_anal"
-            select_o_anal()
-            EXIT
-         CASE "fin_sint"
-            select_o_sint()
-            EXIT
 
-         CASE "fin_nalog"
-            select_o_nalog()
-            EXIT
-         OTHERWISE
+         open_sql_mix_tabelu( hRec[ "table" ] )
 
-            cLogMsg := "SQLMIX: tabela " + hRec[ "table" ] + " nije otvorena!? "
-            ?E cLogMsg
-            MsgBeep( cLogMsg )
-         ENDSWITCH
 
       ELSE
          _dbf := my_home() + my_dbf_prefix( @hRec ) + hRec[ "table" ]
@@ -669,6 +652,49 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
 
 
+FUNCTION otvori_sqlmix_tabelu( cTable )
+
+   LOCAL cLogMsg
+
+   SWITCH cTable
+   CASE "fin_suban"
+      select_o_suban()
+      EXIT
+   CASE "fin_anal"
+      select_o_anal()
+      EXIT
+   CASE "fin_sint"
+      select_o_sint()
+      EXIT
+
+   CASE "fin_nalog"
+      select_o_nalog()
+      EXIT
+
+   CASE "roba"
+      select_o_roba( "xxxxxxxx" )
+      EXIT
+
+   CASE "konto"
+      select_o_konto( "XXXXX" )
+      EXIT
+
+   CASE "partn"
+      select_o_partner( "XXXXXX" )
+      EXIT
+   OTHERWISE
+
+      cLogMsg := "SQLMIX: tabela " + cTable + " nije otvorena!? "
+      ?E cLogMsg
+
+#ifdef F18_DEBUG
+      MsgBeep( cLogMsg )
+#endif
+   ENDSWITCH
+
+   RETURN .T.
+
+   
 FUNCTION set_rec_from_dbstruct( hRec )
 
    LOCAL aDbfStruct, nI

@@ -595,35 +595,59 @@ FUNCTION set_dbf_fields_from_struct( xRec )
    PushWA()
    SELECT ( hRec[ "wa" ] )
 
-   IF !Used() .AND. !lSql
+   IF !Used()
+      IF lSql
+         SWITCH hRec[ "table" ]
+         CASE "fin_suban"
+            select_o_suban()
+            EXIT
+         CASE "fin_anal"
+            select_o_anal()
+            EXIT
+         CASE "fin_sint"
+            select_o_sint()
+            EXIT
 
-      _dbf := my_home() + my_dbf_prefix( @hRec ) + hRec[ "table" ]
-      IF !File( f18_ime_dbf( hRec ) )
+         CASE "fin_nalog"
+            select_o_nalog()
+            EXIT
+         OTHERWISE
+
+            cLogMsg := "SQLMIX: tabela " + hRec[ "table" ] + " nije otvorena!? "
+            ?E cLogMsg
+            MsgBeep( cLogMsg )
+         ENDSWITCH
+
+      ELSE
+         _dbf := my_home() + my_dbf_prefix( @hRec ) + hRec[ "table" ]
+         IF !File( f18_ime_dbf( hRec ) )
 #ifdef F18_DEBUG
-         cLogMsg := "NO-DBF : tbl:" + my_home() + my_dbf_prefix( @hRec ) +  hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " ne postoji"
-         LOG_CALL_STACK cLogMsg
+            cLogMsg := "NO-DBF : tbl:" + my_home() + my_dbf_prefix( @hRec ) +  hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " ne postoji"
+            LOG_CALL_STACK cLogMsg
 #endif
-         RETURN .F.
+            RETURN .F.
+         ENDIF
+
+         BEGIN SEQUENCE WITH {| err | err:cargo :=  Break( err ) }
+
+            dbUseArea( .F., DBFENGINE, _dbf, hRec[ "alias" ], .T., .F. )
+
+         RECOVER using _err
+
+            // tabele ocigledno nema, tako da se struktura ne moze utvrditi
+            hRec[ "dbf_fields" ]     := NIL
+            hRec[ "dbf_fields_len" ] := NIL
+
+            cLogMsg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " se ne moze otvoriti ?!"
+            LOG_CALL_STACK cLogMsg
+
+            log_write( cLogMsg, 5 )
+            RETURN .F.
+
+         END SEQUENCE
+         lTabelaOtvorenaOvdje := .T.
+
       ENDIF
-
-      BEGIN SEQUENCE WITH {| err | err:cargo :=  Break( err ) }
-
-         dbUseArea( .F., DBFENGINE, _dbf, hRec[ "alias" ], .T., .F. )
-
-      RECOVER using _err
-
-         // tabele ocigledno nema, tako da se struktura ne moze utvrditi
-         hRec[ "dbf_fields" ]     := NIL
-         hRec[ "dbf_fields_len" ] := NIL
-
-         cLogMsg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " se ne moze otvoriti ?!"
-         LOG_CALL_STACK cLogMsg
-
-         log_write( cLogMsg, 5 )
-         RETURN .F.
-
-      END SEQUENCE
-      lTabelaOtvorenaOvdje := .T.
    ENDIF
 
 

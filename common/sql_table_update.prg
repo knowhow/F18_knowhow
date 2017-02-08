@@ -49,19 +49,22 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
       hDbfRec := get_a_dbf_rec( cTable )
 
-      if cTable == "fin_suban"
-      altd()
-      endif
-
-      aDbfFields := hDbfRec[ "dbf_fields" ]
-      aSqlFields := sql_fields( aDbfFields )
-
-      _sql_order  := hDbfRec[ "sql_order" ]
-
       nDbfWA    := hDbfRec[ "wa" ]
       cDbfAlias := hDbfRec[ "alias" ]
       lSqlTable := hDbfRec[ "sql" ]
       cSqlTableFullName   := F18_PSQL_SCHEMA_DOT + cTable
+
+      Select( cDbfAlias )
+      IF cTable == "fin_suban"
+         AltD()
+      ENDIF
+
+      aDbfFields := hDbfRec[ "dbf_fields" ]
+
+      aSqlFields := sql_fields( aDbfFields )
+
+      _sql_order  := hDbfRec[ "sql_order" ]
+
 
       // uvijek je algoritam 1 nivo recorda
       hAlgoritam1 := hDbfRec[ "algoritam" ][ 1 ]

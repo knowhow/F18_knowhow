@@ -416,9 +416,7 @@ FUNCTION _sql_table_struct( cTable )
 
 
 
-// --------------------------------------------------------------------
-// sql update
-// --------------------------------------------------------------------
+
 FUNCTION sql_update_table_from_hash( cTable, op, hash, where_fields )
 
    LOCAL cQuery

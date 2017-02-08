@@ -166,7 +166,7 @@ FUNCTION fin_open_psuban_and_ostalo()
 FUNCTION fin_open_lock_panal( lZap )
 
    select_o_fin_psuban()
-   //o_anal()
+   select_o_fin_panal()
    select_o_fin_psint()
    select_o_fin_pnalog()
 

@@ -21,20 +21,38 @@ FUNCTION o_fin_pnalog()
 
    RETURN o_dbf_table( F_PNALOG, { "PNALOG", "fin_pnalog" }, "1" )
 
+FUNCTION select_o_fin_pnalog()
+
+   RETURN select_o_dbf( "PNALOG", F_PNALOG, "fin_pnalog", "1" )
+
+
 
 FUNCTION o_fin_psint()
 
    RETURN o_dbf_table( F_PSINT, { "PSINT", "fin_psint" }, "1" )
+
+FUNCTION select_o_fin_psint()
+
+   RETURN select_o_dbf( "PSINT", F_PSINT, "fin_psint", "1" )
 
 
 FUNCTION o_fin_panal()
 
    RETURN o_dbf_table( F_PANAL, { "PANAL", "fin_panal" }, "1" )
 
+FUNCTION select_o_fin_panal()
+
+   RETURN select_o_dbf( "PANAL", F_PANAL, "fin_panal", "1" )
+
 
 FUNCTION o_fin_psuban()
 
    RETURN o_dbf_table( F_PSUBAN, { "PSUBAN", "fin_psuban" }, "1" )
+
+FUNCTION select_o_fin_psuban()
+
+   RETURN select_o_dbf( "PSUBAN", F_PSUBAN, "fin_suban", "1" )
+
 
 
 FUNCTION o_fin_pripr()

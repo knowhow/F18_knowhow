@@ -864,7 +864,8 @@ FUNCTION o_fin_za_azuriranje()
    select_o_fin_psuban()
    //o_anal()
    select_o_fin_psint()
-   soelect_o_fin_pnalog()
+   select_o_fin_pnalog()
+   
    select_o_fin_pripr()
 
    RETURN .T.

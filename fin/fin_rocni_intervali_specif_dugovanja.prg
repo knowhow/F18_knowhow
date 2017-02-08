@@ -453,8 +453,8 @@ FUNCTION ZaglDuznici( fStrana, lSvi )
 
    ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
+
 
    ? "KONTO  :", cIdKonto, naz
    ? "+" + REPL( "+", FIELD_PARTNER_ID_LENGTH ) + "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Ŀ"

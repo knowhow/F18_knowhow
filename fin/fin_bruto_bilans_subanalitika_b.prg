@@ -273,8 +273,7 @@ FUNCTION fin_bb_subanalitika_b( params )
             @ PRow() + 1, 2 SAY ++B1 PICTURE '999999'
             @ PRow(), PCol() + 1 SAY cIdKonto
 
-            SELECT KONTO
-            HSEEK cIdKonto
+            select_o_konto( cIdKonto )
 
             IF cFormat == "1"
                @ PRow(), PCol() + 1 SAY naz
@@ -334,8 +333,7 @@ FUNCTION fin_bb_subanalitika_b( params )
          @ PRow() + 1, 4 SAY ++B2 PICTURE '999999'; ?? "."
          @ PRow(), PCol() + 1 SAY cSinKonto
 
-         SELECT KONTO
-         HSEEK cSinKonto
+         select_o_konto( cSinKonto )
 
          IF cFormat == "1"
             @ PRow(), PCol() + 1 SAY Left( naz, 50 )

@@ -1319,7 +1319,7 @@ FUNCTION fakt_za_destinaciju( cIdPartner, cDestinacija, cIdRoba )
 STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
 
    LOCAL _stanje := NIL
-   LOCAL _id_konto := ""
+   LOCAL cIdKonto := ""
    LOCAL nDbfArea := Select()
    LOCAL _color := "W/N+"
 
@@ -1331,14 +1331,14 @@ STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
       RETURN .T.
    ENDIF
 
-   _id_konto := rj->konto
+   cIdKonto := rj->konto
 
    SELECT ( nDbfArea )
 
    IF tip_dok $ "10#12"
-      _stanje := kalk_kol_stanje_artikla_magacin( _id_konto, id_roba, Date() )
+      _stanje := kalk_kol_stanje_artikla_magacin( cIdKonto, id_roba, Date() )
    ELSEIF tip_dok $ "11#13"
-      _stanje := kalk_kol_stanje_artikla_prodavnica( _id_konto, id_roba, Date() )
+      _stanje := kalk_kol_stanje_artikla_prodavnica( cIdKonto, id_roba, Date() )
    ENDIF
 
    IF _stanje <> NIL
@@ -1349,7 +1349,7 @@ STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
 
       @ form_x_koord() + 17, form_y_koord() + 28 SAY PadR( "", 60 )
       @ form_x_koord() + 17, form_y_koord() + 28 SAY "Na stanju konta " + ;
-         AllTrim( _id_konto ) + " : "
+         AllTrim( cIdKonto ) + " : "
       @ form_x_koord() + 17, Col() + 1 SAY AllTrim( Str( _stanje, 12, 3 ) ) + " " + PadR( roba->jmj, 3 ) COLOR _color
    ENDIF
 

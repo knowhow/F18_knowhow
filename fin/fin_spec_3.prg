@@ -89,7 +89,7 @@ FUNCTION SpecPop()
          ? m
          @ PRow() + 1, 1 SAY ++B PICTURE '9999'
          @ PRow(), 6 SAY cIdKonto
-         SELECT KONTO; HSEEK cIdKonto
+         select_o_konto( cIdKonto )
          aRez := SjeciStr( naz, 30 )
          nCol2 := PCol() + 1
          @ PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 30 )

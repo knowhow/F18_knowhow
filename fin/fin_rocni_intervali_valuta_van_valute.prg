@@ -965,8 +965,8 @@ FUNCTION Zfin_spec_otv_stavke_rocni_intervali( fStrana, lSvi, PICPIC )
 
       ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
-      SELECT KONTO
-      HSEEK cIdKonto
+      select_o_konto( cIdKonto )
+
 
       ? "KONTO  :", cIdKonto, naz
 
@@ -994,8 +994,8 @@ FUNCTION Zfin_spec_otv_stavke_rocni_intervali( fStrana, lSvi, PICPIC )
       ??U "FIN.P:  SPECIFIKACIJA OTVORENIH STAVKI PO ROČNIM INTERVALIMA NA DAN "; ?? dNaDan
       select_o_partner( cIdFirma )
       ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
-      SELECT KONTO
-      HSEEK cIdKonto
+      select_o_konto( cIdKonto )
+
 
       ? "KONTO  :", cIdKonto, naz
 

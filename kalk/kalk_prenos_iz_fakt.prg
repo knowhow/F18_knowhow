@@ -518,7 +518,7 @@ FUNCTION kalk_fakt_prenos_period()
    LOCAL _br_kalk_dok := Space( 8 )
    LOCAL _tip_kalk := "96"
    LOCAL _dat_kalk
-   LOCAL _id_konto
+   LOCAL cIdKonto
    LOCAL _id_konto_2
    LOCAL _sufix, _r_br, _razduzuje
    LOCAL _fakt_dobavljac := Space( 10 )
@@ -528,14 +528,14 @@ FUNCTION kalk_fakt_prenos_period()
    _o_prenos_tbls()
 
    _dat_kalk := Date()
-   _id_konto := PadR( "", 7 )
+   cIdKonto := PadR( "", 7 )
    _id_konto_2 := PadR( "1010", 7 )
    _razduzuje := Space( 6 )
    _dat_fakt_od := Date()
    _dat_fakt_do := Date()
    _br_kalk_dok := kalk_get_next_kalk_doc_uvecaj( _id_firma, _tip_kalk )
 
-   _id_konto := fetch_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), _id_konto )
+   cIdKonto := fetch_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
    _id_konto_2 := fetch_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), _id_konto_2 )
 
    Box(, 15, 70 )
@@ -546,7 +546,7 @@ FUNCTION kalk_fakt_prenos_period()
 
       @ form_x_koord() + 1, form_y_koord() + 2 SAY "Broj kalkulacije " + _tip_kalk + " -" GET _br_kalk_dok PICT "@!"
       @ form_x_koord() + 1, Col() + 2 SAY "Datum:" GET _dat_kalk
-      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto zaduzuje :" GET _id_konto PICT "@!" VALID Empty( _id_konto ) .OR. P_Konto( @_id_konto )
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto zaduzuje :" GET cIdKonto PICT "@!" VALID Empty( cIdKonto ) .OR. P_Konto( @cIdKonto )
       @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto razduzuje:" GET _id_konto_2 PICT "@!" VALID Empty( _id_konto_2 ) .OR. P_Konto( @_id_konto_2 )
 
       // IF gNW <> "X"
@@ -601,7 +601,7 @@ FUNCTION kalk_fakt_prenos_period()
          ENDIF
 
          SELECT KONCIJ
-         SEEK Trim( _id_konto )
+         SEEK Trim( cIdKonto )
 
          SELECT fakt
 
@@ -644,7 +644,7 @@ FUNCTION kalk_fakt_prenos_period()
                idtarifa WITH ROBA->idtarifa, ;
                brfaktp WITH _fakt_dobavljac, ;
                datfaktp WITH fakt->datdok, ;
-               idkonto   WITH _id_konto, ;
+               idkonto   WITH cIdKonto, ;
                idkonto2  WITH _id_konto_2, ;
                idzaduz2  WITH _razduzuje, ;
                kolicina WITH fakt->kolicina, ;
@@ -671,7 +671,7 @@ FUNCTION kalk_fakt_prenos_period()
 
       @ form_x_koord() + 14, form_y_koord() + 2 SAY "Dokument je generisan !"
 
-      set_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), _id_konto )
+      set_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
       set_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), _id_konto_2 )
 
       Inkey( 4 )

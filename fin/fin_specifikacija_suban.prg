@@ -376,8 +376,7 @@ FUNCTION fin_specifikacija_suban()
                select_o_partner( cIdPartner )
                SELECT SUBAN
                IF gVSubOp == "D"
-                  SELECT KONTO
-                  HSEEK cIdKonto
+                  select_o_konto( cIdKonto )
                   SELECT SUBAN
                   cPom := AllTrim( KONTO->naz ) + " (" + AllTrim( AllTrim( PARTN->naz ) + PN2() ) + ")"
                   ?? PadR( cPom, nDOpis - DifIdP( cIdpartner ) )
@@ -399,8 +398,7 @@ FUNCTION fin_specifikacija_suban()
                   ?? PadR( cPom, nDOpis )
                ENDIF
             ELSE
-               SELECT KONTO
-               HSEEK cIdKonto
+               select_o_konto( cIdKonto )
                SELECT SUBAN
                ?? PadR( KONTO->naz, nDOpis )
             ENDIF

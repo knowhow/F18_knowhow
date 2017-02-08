@@ -664,7 +664,7 @@ FUNCTION fin_prekart()
 
    LOCAL _arr := {}
    LOCAL _usl_kto, _usl_part, _tmp_dbf
-   PRIVATE _id_konto := fetch_metric( "fin_preb_kart_id_konto", my_user(), Space( 60 ) )
+   PRIVATE cIdKonto := fetch_metric( "fin_preb_kart_id_konto", my_user(), Space( 60 ) )
    PRIVATE _id_partner := fetch_metric( "fin_preb_kart_id_partner", my_user(), Space( 60 ) )
    PRIVATE _dat_od := fetch_metric( "fin_preb_kart_dat_od", my_user(), CToD( "" ) )
    PRIVATE _dat_do := fetch_metric( "fin_preb_kart_dat_do", my_user(), CToD( "" ) )
@@ -677,7 +677,7 @@ FUNCTION fin_prekart()
       "OD ODSTAMPANIH, PA SE PREPORUCUJE PONOVNA STAMPA TIH NALOGA." )
 
    AAdd ( _arr, { "Firma (prazno-sve)", "_id_firma",,, } )
-   AAdd ( _arr, { "Konto (prazno-sva)", "_id_konto",, "@!S30", } )
+   AAdd ( _arr, { "Konto (prazno-sva)", "cIdKonto",, "@!S30", } )
    AAdd ( _arr, { "Partner (prazno-svi)", "_id_partner",, "@!S30", } )
    AAdd ( _arr, { "Za period od datuma", "_dat_od",,, } )
    AAdd ( _arr, { "          do datuma", "_dat_do",,, } )
@@ -691,7 +691,7 @@ FUNCTION fin_prekart()
          RETURN
       ENDIF
 
-      _usl_kto := Parsiraj( _id_konto, "idkonto" )
+      _usl_kto := Parsiraj( cIdKonto, "idkonto" )
       _usl_part := Parsiraj( _id_partner, "idpartner" )
 
       IF _usl_kto <> NIL .AND. _usl_part <> NIL

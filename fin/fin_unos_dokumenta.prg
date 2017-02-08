@@ -851,19 +851,19 @@ STATIC FUNCTION refresh_numeric_get( oGet )
 STATIC FUNCTION set_datval_datdok()
 
    LOCAL _ret := .F.
-   LOCAL _dana, _dat_dok, _id_konto
+   LOCAL _dana, _dat_dok, cIdKonto
 
    IF Pitanje(, "Za konto u nalogu postaviti datum val. DATDOK->DATVAL", "N" ) == "N"
       RETURN _ret
    ENDIF
 
-   _id_konto := Space( 7 )
+   cIdKonto := Space( 7 )
    _dat_dok := Date()
    _dana := 15
 
    Box(, 5, 60 )
 
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Promjena za konto  " GET _id_konto
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Promjena za konto  " GET cIdKonto
    @ form_x_koord() + 3, form_y_koord() + 2 SAY "Novi datum dok " GET _dat_dok
    @ form_x_koord() + 5, form_y_koord() + 2 SAY "uvecati stari datdok za (dana) " GET _dana PICT "99"
 
@@ -880,7 +880,7 @@ STATIC FUNCTION set_datval_datdok()
 
    DO WHILE !Eof()
 
-      IF field->idkonto == _id_konto .AND. datval_prazan()
+      IF field->idkonto == cIdKonto .AND. datval_prazan()
 
          _ret := .T. // bilo je promjena
 

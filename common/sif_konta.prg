@@ -231,8 +231,7 @@ FUNCTION GetNameFromKonto( cIdKonto )
    LOCAL nArr, cRet
 
    nArr := Select()
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    cRet := AllTrim( field->naz )
    SELECT ( nArr )
 

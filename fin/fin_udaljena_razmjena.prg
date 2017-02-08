@@ -360,10 +360,10 @@ STATIC FUNCTION __export( vars, a_details )
 
    LOCAL _ret := 0
    LOCAL _id_firma, _id_vd, _br_dok
-   LOCAL _app_rec
+   LOCAL hRec
    LOCAL _cnt := 0
    LOCAL _dat_od, _dat_do, _konta, _vrste_dok, _export_sif
-   LOCAL _usl_konto, _id_konto
+   LOCAL _usl_konto, cIdKonto
    LOCAL _id_partn
    LOCAL _detail_rec
 
@@ -418,15 +418,15 @@ STATIC FUNCTION __export( vars, a_details )
 
       // ako je sve zadovoljeno !
       // dodaj zapis u tabelu e_nalog
-      _app_rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       _detail_rec := hb_Hash()
-      _detail_rec[ "dokument" ] := _app_rec[ "idfirma" ] + "-" + _app_rec[ "idvn" ] + "-" + _app_rec[ "brnal" ]
+      _detail_rec[ "dokument" ] := hRec[ "idfirma" ] + "-" + hRec[ "idvn" ] + "-" + hRec[ "brnal" ]
       _detail_rec[ "idpartner" ] := ""
       _detail_rec[ "idkonto" ] := ""
       _detail_rec[ "partner" ] := ""
       _detail_rec[ "iznos" ] := 0
-      _detail_rec[ "datum" ] := _app_rec[ "datnal" ]
+      _detail_rec[ "datum" ] := hRec[ "datnal" ]
       _detail_rec[ "tip" ] := "export"
 
       // dodaj u detalje
@@ -434,7 +434,7 @@ STATIC FUNCTION __export( vars, a_details )
 
       SELECT e_nalog
       APPEND BLANK
-      dbf_update_rec( _app_rec )
+      dbf_update_rec( hRec )
 
       ++ _cnt
       @ form_x_koord() + 2, form_y_koord() + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
@@ -445,41 +445,41 @@ STATIC FUNCTION __export( vars, a_details )
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
 
-         _id_konto := field->idkonto
+         cIdKonto := field->idkonto
          _id_partner := field->idpartner
 
 
-         _app_rec := dbf_get_rec()
+         hRec := dbf_get_rec()
          SELECT e_suban
          APPEND BLANK
-         dbf_update_rec( _app_rec )
+         dbf_update_rec( hRec )
 
 
-         SELECT konto // uzmi sada konto sa ove stavke pa je ubaci u e_konto
-         HSEEK _id_konto
+         select_o_konto( cIdKonto )
+
          IF Found() .AND. _export_sif == "D"
-            _app_rec := dbf_get_rec()
+            hRec := dbf_get_rec()
             SELECT e_konto
             SET ORDER TO TAG "ID"
-            SEEK _id_konto
+            SEEK cIdKonto
             IF !Found()
                APPEND BLANK
-               dbf_update_rec( _app_rec )
+               dbf_update_rec( hRec )
                // napuni i sifk, sifv parametre
-               fill_sifk_sifv( "KONTO", _id_konto )
+               fill_sifk_sifv( "KONTO", cIdKonto )
             ENDIF
          ENDIF
 
 
          select_o_partner( _id_partner )
          IF Found() .AND. _export_sif == "D"
-            _app_rec := dbf_get_rec()
+            hRec := dbf_get_rec()
             SELECT e_partn
             SET ORDER TO TAG "ID"
             SEEK _id_partner
             IF !Found()
                APPEND BLANK
-               dbf_update_rec( _app_rec )
+               dbf_update_rec( hRec )
                // napuni i sifk, sifv parametre
                fill_sifk_sifv( "PARTN", _id_partner )
             ENDIF
@@ -496,10 +496,10 @@ STATIC FUNCTION __export( vars, a_details )
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
          // ubaci u e_sint
-         _app_rec := dbf_get_rec()
+         hRec := dbf_get_rec()
          SELECT e_sint
          APPEND BLANK
-         dbf_update_rec( _app_rec )
+         dbf_update_rec( hRec )
 
          SELECT sint
          SKIP
@@ -511,11 +511,11 @@ STATIC FUNCTION __export( vars, a_details )
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
          // ubaci u e_anal
-         _app_rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
          SELECT e_anal
          APPEND BLANK
-         dbf_update_rec( _app_rec )
+         dbf_update_rec( hRec )
 
          SELECT anal
          SKIP
@@ -545,7 +545,7 @@ STATIC FUNCTION __import( vars, a_details )
 
    LOCAL _ret := 0
    LOCAL _id_firma, _id_vd, _br_dok
-   LOCAL _app_rec
+   LOCAL hRec
    LOCAL _cnt := 0
    LOCAL _dat_od, _dat_do, _konta, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif, _iz_fmk
    LOCAL _roba_id, _partn_id, _konto_id
@@ -663,11 +663,11 @@ STATIC FUNCTION __import( vars, a_details )
       ENDIF
 
       SELECT e_nalog
-      _app_rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       _detail_rec := hb_Hash()
-      _detail_rec[ "dokument" ] := _app_rec[ "idfirma" ] + "-" + _app_rec[ "idvn" ] + "-" + _app_rec[ "brnal" ]
-      _detail_rec[ "datum" ] := _app_rec[ "datnal" ]
+      _detail_rec[ "dokument" ] := hRec[ "idfirma" ] + "-" + hRec[ "idvn" ] + "-" + hRec[ "brnal" ]
+      _detail_rec[ "datum" ] := hRec[ "datnal" ]
       _detail_rec[ "idpartner" ] := ""
       _detail_rec[ "partner" ] := ""
       _detail_rec[ "idkonto" ] := ""
@@ -678,7 +678,7 @@ STATIC FUNCTION __import( vars, a_details )
 
       SELECT nalog
       APPEND BLANK
-      lOk := update_rec_server_and_dbf( "fin_nalog", _app_rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "fin_nalog", hRec, 1, "CONT" )
 
       IF !lOk
          EXIT
@@ -696,17 +696,17 @@ STATIC FUNCTION __import( vars, a_details )
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
-         _app_rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         _app_rec[ "rbr" ] :=  ++_redni_broj
+         hRec[ "rbr" ] :=  ++_redni_broj
 
          _gl_brojac += _redni_broj
 
-         @ form_x_koord() + 3, form_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + STR( _app_rec[ "rbr" ], 5)
+         @ form_x_koord() + 3, form_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + STR( hRec[ "rbr" ], 5)
 
          SELECT suban
          APPEND BLANK
-         lOk := update_rec_server_and_dbf( "fin_suban", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "fin_suban", hRec, 1, "CONT" )
 
          IF !lOk
             EXIT
@@ -730,17 +730,17 @@ STATIC FUNCTION __import( vars, a_details )
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
-         _app_rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         _app_rec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 3 )
+         hRec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 3 )
 
          _gl_brojac += _redni_broj
 
-         @ form_x_koord() + 3, form_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
+         @ form_x_koord() + 3, form_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + hRec[ "rbr" ]
 
          SELECT anal
          APPEND BLANK
-         lOk := update_rec_server_and_dbf( "fin_anal", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "fin_anal", hRec, 1, "CONT" )
 
          IF !lOk
            EXIT
@@ -764,17 +764,17 @@ STATIC FUNCTION __import( vars, a_details )
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
-         _app_rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         _app_rec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 3 )
+         hRec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 3 )
 
          _gl_brojac += _redni_broj
 
-         @ form_x_koord() + 3, form_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
+         @ form_x_koord() + 3, form_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + hRec[ "rbr" ]
 
          SELECT sint
          APPEND BLANK
-         lOk := update_rec_server_and_dbf( "fin_sint", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "fin_sint", hRec, 1, "CONT" )
 
          IF !lOk
             EXIT

@@ -331,7 +331,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
    LOCAL _u_saldo1 := 0
    LOCAL _u_saldo2 := 0
    LOCAL _val
-   LOCAL _id_konto, _id_partner
+   LOCAL cIdKonto, _id_partner
    LOCAL _t_rec
    LOCAL _saldo_nula := rpt_vars[ "saldo_nula" ]
 
@@ -366,11 +366,11 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
       oItem := table:GetRow()
       _t_rec := table:RecNo()
 
-      _id_konto := oItem:FieldGet( oItem:FieldPos( "idkonto" ) )
+      cIdKonto := oItem:FieldGet( oItem:FieldPos( "idkonto" ) )
       _id_partner := oItem:FieldGet( oItem:FieldPos( "idpartner" ) )
 
       IF _saldo_nula == "N"
-         IF _fin_kartica_saldo_nula( table, _id_konto, _id_partner )
+         IF _fin_kartica_saldo_nula( table, cIdKonto, _id_partner )
             LOOP
          ELSE
             table:GoTo( _t_rec )
@@ -379,10 +379,10 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
 
       xml_subnode( "kartica_item", .F. )
 
-      xml_node( "konto", to_xml_encoding( hb_UTF8ToStr( _id_konto ) ) )
+      xml_node( "konto", to_xml_encoding( hb_UTF8ToStr( cIdKonto ) ) )
 
-      IF !Empty( _id_konto )
-         _naz_konto := sql_get_field_za_uslov( "konto", "naz", { { "id", AllTrim( _id_konto ) } } )
+      IF !Empty( cIdKonto )
+         _naz_konto := sql_get_field_za_uslov( "konto", "naz", { { "id", AllTrim( cIdKonto ) } } )
       ELSE
          _naz_konto := ""
       ENDIF
@@ -401,7 +401,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
       _u_dug1 := 0
       _u_saldo1 := 0
 
-      DO WHILE !table:Eof() .AND. table:FieldGet( table:FieldPos( "idkonto" ) ) == _id_konto ;
+      DO WHILE !table:Eof() .AND. table:FieldGet( table:FieldPos( "idkonto" ) ) == cIdKonto ;
             .AND. table:FieldGet( table:FieldPos( "idpartner" ) ) == _id_partner
 
          oRow := table:GetRow()

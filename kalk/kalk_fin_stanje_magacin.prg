@@ -145,10 +145,7 @@ FUNCTION finansijsko_stanje_magacin()
    find_kalk_za_period( hParams )
    MsgC()
 
-
-
-   SELECT koncij
-   SEEK Trim( cidkonto )
+   select_o_koncij( cIdkonto )
 
    SELECT kalk
    EOF CRET

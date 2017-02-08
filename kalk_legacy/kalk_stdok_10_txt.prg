@@ -43,8 +43,8 @@ FUNCTION kalk_stampa_dok_10_txt()
 
    SELECT kalk_pripr
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
+
 
    ?U  "MAGACINSKI KONTO zadužuje :", cIdKonto, "-", field->naz
 

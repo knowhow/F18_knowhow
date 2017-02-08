@@ -278,9 +278,7 @@ FUNCTION Zagl9()
    ?? "PREGLED ", iif( cDP == "1", "DUGOVANJA", "POTRA�IVANJA" )
    ?? ", ZA PERIOD ", dDatOd, "-", dDatDo
 
-   // uzmi konto
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    SELECT ( nTArea )
 
    ? Space( 2 )

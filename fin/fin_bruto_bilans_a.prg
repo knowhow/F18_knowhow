@@ -821,7 +821,7 @@ METHOD FinBrutoBilans:print_txt()
 
    LOCAL _line, _i_col
    LOCAL _a_klase := {}
-   LOCAL _klasa, nI, _count, _sint, _id_konto, _id_partner, __partn, __klasa, __sint, __konto
+   LOCAL _klasa, nI, _count, _sint, cIdKonto, _id_partner, __partn, __klasa, __sint, __konto
    LOCAL _u_ps_dug := _u_ps_pot := _u_kum_dug := _u_kum_pot := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
    LOCAL _t_ps_dug := _t_ps_pot := _t_kum_dug := _t_kum_pot := _t_tek_dug := _t_tek_pot := _t_sld_dug := _t_sld_pot := 0
    LOCAL _tt_ps_dug := _tt_ps_pot := _tt_kum_dug := _tt_kum_pot := _tt_tek_dug := _tt_tek_pot := _tt_sld_dug := _tt_sld_pot := 0
@@ -1178,7 +1178,7 @@ METHOD FinBrutoBilans:fill_r_export()
    LOCAL _count := 0
    LOCAL oRow, _rec
    LOCAL __konto, __partn
-   LOCAL _id_konto, _id_partn
+   LOCAL cIdKonto, _id_partn
 
    O_R_EXP
    SET ORDER TO TAG "1"
@@ -1191,8 +1191,8 @@ METHOD FinBrutoBilans:fill_r_export()
 
       oRow := ::data:GetRow()
 
-      _id_konto := query_row( oRow, "idkonto" )
-      __konto := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", _id_konto )
+      cIdKonto := query_row( oRow, "idkonto" )
+      __konto := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", cIdKonto )
 
       IF ::tip == 1
          _id_partn := query_row( oRow, "idpartner" )
@@ -1209,7 +1209,7 @@ METHOD FinBrutoBilans:fill_r_export()
          _rec[ "konto" ] := "?????????????"
       ENDIF
 
-      _rec[ "idkonto" ] := _id_konto
+      _rec[ "idkonto" ] := cIdKonto
 
       IF ::tip == 1
          _rec[ "idpartner" ] := _id_partn

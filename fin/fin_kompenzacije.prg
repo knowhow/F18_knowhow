@@ -245,7 +245,7 @@ STATIC FUNCTION _gen_kompen( vars )
    LOCAL _prelom := vars[ "prelom" ]
    LOCAL _id_firma := vars[ "firma" ]
    LOCAL cFilter, __opis_br_dok
-   LOCAL _id_konto, _id_partner, _prolaz, _prosao
+   LOCAL cIdKonto, _id_partner, _prolaz, _prosao
    LOCAL _otv_st, _t_id_konto
    LOCAL _br_dok
    LOCAL _d_bhd, _p_bhd, _d_dem, _p_dem
@@ -306,7 +306,7 @@ STATIC FUNCTION _gen_kompen( vars )
    _kon_d2 := 0
    _kon_p2 := 0
 
-   _id_konto := field->idkonto
+   cIdKonto := field->idkonto
 
    _prolaz := 0
    IF Empty( cIdPartner )
@@ -350,7 +350,7 @@ STATIC FUNCTION _gen_kompen( vars )
 
       DO WHILE !Eof() .AND. field->IdFirma == _id_firma .AND. field->idpartner == _id_partner .AND. ( field->idkonto == cIdKonto .OR. field->idkonto == cIdKonto2 )
 
-         _id_konto := field->idkonto
+         cIdKonto := field->idkonto
          _otv_st := field->otvst
 
          IF !( _otv_st == "9" )
@@ -358,7 +358,7 @@ STATIC FUNCTION _gen_kompen( vars )
             _prosao := .T.
 
             SELECT suban
-            IF _id_konto == cIdKonto
+            IF cIdKonto == cIdKonto
                SELECT komp_dug
             ELSE
                SELECT komp_pot
@@ -382,12 +382,12 @@ STATIC FUNCTION _gen_kompen( vars )
 
             my_unlock()
 
-            _t_id_konto := _id_konto
+            _t_id_konto := cIdKonto
             SELECT suban
 
          ENDIF
 
-         @ form_x_koord() + 1, form_y_koord() + 2 SAY "konto: " + PadR( _id_konto, 7 ) + " partner: " + _id_partner
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "konto: " + PadR( cIdKonto, 7 ) + " partner: " + _id_partner
 
          _d_bhd := 0
          _p_bhd := 0
@@ -478,7 +478,7 @@ STATIC FUNCTION _gen_kompen( vars )
          ENDIF
 
          IF _prolaz == 0 .OR. _prolaz == 1
-            IF ( field->idkonto <> _id_konto .OR. field->idpartner <> _id_partner ) .AND. _id_konto == cIdKonto
+            IF ( field->idkonto <> cIdKonto .OR. field->idpartner <> _id_partner ) .AND. cIdKonto == cIdKonto
                HSEEK _id_firma + cIdKonto2 + _id_partner
             ENDIF
          ENDIF

@@ -188,7 +188,8 @@ FUNCTION fin_anal_kartica()
       check_nova_strana( bZagl, oPdf, .F., 5 )
 
       ? m
-      SELECT KONTO; HSEEK cIdKonto; SELECT anal
+      select_o_konto( cIdKonto )
+      SELECT anal
       IF cBrza == "S"
          ? "KONTA: ", qqKonto
       ELSE

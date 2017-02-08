@@ -146,7 +146,7 @@ FUNCTION fin_sint_kartica()
       IF PRow() > 55 + dodatni_redovi_po_stranici(); FF; SinKZagl(); ENDIF
 
       ? m
-      SELECT KONTO; HSEEK cIdKonto
+      select_o_konto( cIdKonto )
       ? "KONTO   ", cIdKonto, AllTrim( konto->naz )
 
       SELECT SINT

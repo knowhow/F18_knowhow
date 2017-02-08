@@ -21,7 +21,7 @@ FUNCTION SpecSubPro()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
    o_konto()
-   //o_partner()
+   // o_partner()
 
    dDatOd := dDatDo := CToD( "" )
    qqkonto := Space( 7 )
@@ -49,7 +49,7 @@ FUNCTION SpecSubPro()
       IF gNW == "D"
          @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto   " GET qqkonto  PICT "@!" VALID P_KontoFin( @qqkonto )
       @ form_x_koord() + 5, form_y_koord() + 2 SAY "Partner " GET qqPartner PICT "@!S50"
@@ -194,9 +194,11 @@ FUNCTION SpecSubPro()
          IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSkVar ); ENDIF
          ? cidkonto, cIdPartner, ""
          IF !Empty( cIdPartner )
-            ?? PadR( cNazPARTN, 50 -DifIdp( cIdPartner ) )
+            ?? PadR( cNazPARTN, 50 - DifIdp( cIdPartner ) )
          ELSE
-            SELECT KONTO; HSEEK cidkonto; SELECT SUBAN
+            select_o_konto( cIdKonto )
+
+            SELECT SUBAN
             ?? PadR( KONTO->naz, 50 )
          ENDIF
 
@@ -215,48 +217,48 @@ FUNCTION SpecSubPro()
          ENDIF
          nkd += nd; nkp += np  // ukupno  za klasu
          nkd2 += nd2; nkp2 += np2  // ukupno  za klasu
-            ENDDO  // csort
+      ENDDO  // csort
 
-         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSkVar ); ENDIF
-         ? m
-         IF cSort == "1"
-            ?  "Ukupno za:", cNaslov, ":"
-         ENDIF
-         IF cTip == "1"
-            @ PRow(), nC       SAY nKd PICT pic
-            @ PRow(), PCol() + 1 SAY nKp PICT pic
-            @ PRow(), PCol() + 1 SAY nKd - nKp PICT pic
-         ELSEIF cTip == "2"
-            @ PRow(), nC       SAY nKd2 PICT pic
-            @ PRow(), PCol() + 1 SAY nKp2 PICT pic
-            @ PRow(), PCol() + 1 SAY nKd2 - nKp2 PICT pic
-         ELSE
-            @ PRow(), nC       SAY nKd - nKP PICT pic
-            @ PRow(), PCol() + 1 SAY nKd2 - nKP2 PICT pic
-         ENDIF
-         ? m
-         nUd += nKd; nUp += nKp   // ukupno za sve
-            nUd2 += nKd2; nUp2 += nKp2   // ukupno za sve
-            enddo
-         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSkVar ); ENDIF
-         ? m
-         ? " UKUPNO:"
-         IF cTip == "1"
-            @ PRow(), nC       SAY nUd PICT pic
-            @ PRow(), PCol() + 1 SAY nUp PICT pic
-            @ PRow(), PCol() + 1 SAY nUd - nUp PICT pic
-         ELSEIF cTip == "2"
-            @ PRow(), nC       SAY nUd2 PICT pic
-            @ PRow(), PCol() + 1 SAY nUp2 PICT pic
-            @ PRow(), PCol() + 1 SAY nUd2 - nUp2 PICT pic
-         ELSE
-            @ PRow(), nC       SAY nUd - nUP PICT pic
-            @ PRow(), PCol() + 1 SAY nUd2 - nUP2 PICT pic
-         ENDIF
-         ? m
-         FF
-         end_print()
+      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSkVar ); ENDIF
+      ? m
+      IF cSort == "1"
+         ?  "Ukupno za:", cNaslov, ":"
+      ENDIF
+      IF cTip == "1"
+         @ PRow(), nC       SAY nKd PICT pic
+         @ PRow(), PCol() + 1 SAY nKp PICT pic
+         @ PRow(), PCol() + 1 SAY nKd - nKp PICT pic
+      ELSEIF cTip == "2"
+         @ PRow(), nC       SAY nKd2 PICT pic
+         @ PRow(), PCol() + 1 SAY nKp2 PICT pic
+         @ PRow(), PCol() + 1 SAY nKd2 - nKp2 PICT pic
+      ELSE
+         @ PRow(), nC       SAY nKd - nKP PICT pic
+         @ PRow(), PCol() + 1 SAY nKd2 - nKP2 PICT pic
+      ENDIF
+      ? m
+      nUd += nKd; nUp += nKp   // ukupno za sve
+      nUd2 += nKd2; nUp2 += nKp2   // ukupno za sve
+   ENDDO
+   IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSkVar ); ENDIF
+   ? m
+   ? " UKUPNO:"
+   IF cTip == "1"
+      @ PRow(), nC       SAY nUd PICT pic
+      @ PRow(), PCol() + 1 SAY nUp PICT pic
+      @ PRow(), PCol() + 1 SAY nUd - nUp PICT pic
+   ELSEIF cTip == "2"
+      @ PRow(), nC       SAY nUd2 PICT pic
+      @ PRow(), PCol() + 1 SAY nUp2 PICT pic
+      @ PRow(), PCol() + 1 SAY nUd2 - nUp2 PICT pic
+   ELSE
+      @ PRow(), nC       SAY nUd - nUP PICT pic
+      @ PRow(), PCol() + 1 SAY nUd2 - nUP2 PICT pic
+   ENDIF
+   ? m
+   FF
+   end_print()
 
-         closeret
+   closeret
 
-         RETURN
+   RETURN

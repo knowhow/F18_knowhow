@@ -354,7 +354,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
    LOCAL _u_sint_pot := 0
    LOCAL _u_sint_saldo := 0
    LOCAL _val, _sint_kto
-   LOCAL _id_konto, _id_partner
+   LOCAL cIdKonto, _id_partner
    LOCAL _sintetika := rpt_vars[ "sintetika" ] == "D"
    LOCAL cNuleDN := rpt_vars[ "nule" ] == "D"
    LOCAL _rasclan := rpt_vars[ "rasclaniti_rj" ] == "D"
@@ -395,13 +395,13 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
 
       oItem := table:GetRow()
 
-      _id_konto := oItem:FieldGet( oItem:FieldPos( "konto_id" ) )
+      cIdKonto := oItem:FieldGet( oItem:FieldPos( "konto_id" ) )
       _naz_konto := oItem:FieldGet( oItem:FieldPos( "konto_naz" ) )
 
       _id_partner := oItem:FieldGet( oItem:FieldPos( "partner_id" ) )
       _naz_partner := oItem:FieldGet( oItem:FieldPos( "partner_naz" ) )
 
-      _sint_kto := PadR( _id_konto, 3 )
+      _sint_kto := PadR( cIdKonto, 3 )
 
       IF _rasclan
          _rj := oItem:FieldGet( oItem:FieldPos( "idrj" ) )
@@ -420,7 +420,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
 
       xml_subnode( "specif_item", .F. )
 
-      xml_node( "konto", to_xml_encoding( hb_UTF8ToStr( _id_konto ) ) )
+      xml_node( "konto", to_xml_encoding( hb_UTF8ToStr( cIdKonto ) ) )
       xml_node( "partner", to_xml_encoding( hb_UTF8ToStr( _id_partner ) ) )
 
       IF !Empty( _id_partner )

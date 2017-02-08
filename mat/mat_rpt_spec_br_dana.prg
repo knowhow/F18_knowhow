@@ -119,15 +119,15 @@ STATIC FUNCTION _fill_rpt_data( param )
 
    DO WHILE !Eof()
 
-      _id_konto := field->idkonto
+      cIdKonto := field->idkonto
 
       SELECT konto
-      HSEEK _id_konto
+      HSEEK cIdKonto
 
       SELECT mat_suban
 
       // prodji kroz odredjeni konto
-      DO WHILE !Eof() .AND. field->idkonto == _id_konto
+      DO WHILE !Eof() .AND. field->idkonto == cIdKonto
 
          // resetuj brojace
          _int_k_1 := 0
@@ -153,7 +153,7 @@ STATIC FUNCTION _fill_rpt_data( param )
          SELECT mat_suban
 
          // prodji sada kroz stavke artikla
-         DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idroba == cIdRoba
+         DO WHILE !Eof() .AND. field->idkonto == cIdKonto .AND. field->idroba == cIdRoba
 
             // logika izvjestaja
 
@@ -289,7 +289,7 @@ STATIC FUNCTION _fill_rpt_data( param )
             // preskoci...
          ELSE
             // ubaci u pomocnu tabelu podatke
-            _fill_tmp_tbl( _id_konto, konto->naz, cIdRoba, _roba_naz, ;
+            _fill_tmp_tbl( cIdKonto, konto->naz, cIdRoba, _roba_naz, ;
                _int_k_1, _int_k_2, _int_k_3, ;
                _int_i_1, _int_i_2, _int_i_3, ;
                _saldo_k, _saldo_i )
@@ -328,7 +328,7 @@ STATIC FUNCTION _show_report( param, line )
    LOCAL _u_int_k_1, _u_int_k_2, _u_int_k_3, _u_saldo_k, _u_saldo_i
    LOCAL _t_int_k_1, _t_int_k_2, _t_int_k_3, _t_saldo_k, _t_saldo_i
    LOCAL _mark_pos := 0
-   LOCAL _id_konto, _konto_naz
+   LOCAL cIdKonto, _konto_naz
 
    // ispis zaglavlje...
    _zaglavlje( param, line )
@@ -348,7 +348,7 @@ STATIC FUNCTION _show_report( param, line )
 
    DO WHILE !Eof()
 
-      _id_konto := field->id_konto
+      cIdKonto := field->id_konto
       _konto_naz := field->konto_naz
 
       _u_int_k_1 := 0
@@ -360,7 +360,7 @@ STATIC FUNCTION _show_report( param, line )
       _u_saldo_k := 0
       _u_saldo_i := 0
 
-      DO WHILE !Eof() .AND. field->id_konto == _id_konto
+      DO WHILE !Eof() .AND. field->id_konto == cIdKonto
 
          _n_str( 63 )
 
@@ -410,7 +410,7 @@ STATIC FUNCTION _show_report( param, line )
       ? line
 
       @ PRow() + 1, 0 SAY PadR( " kt:", 4 )
-      @ PRow(), PCol() + 1 SAY PadR( _id_konto, 10 )
+      @ PRow(), PCol() + 1 SAY PadR( cIdKonto, 10 )
       @ PRow(), PCol() + 1 SAY PadR( _konto_naz, 40 )
       @ PRow(), PCol() + 1 SAY _u_saldo_k PICT _pic
       @ PRow(), PCol() + 1 SAY _u_saldo_i PICT _pic

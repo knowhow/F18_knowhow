@@ -98,8 +98,8 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
          nova_strana( dDatNal )
 
          DO WHILE  Eval( b1 ) .AND. Eval( b2 ) .AND. Eval( b4 )
-            SELECT KONTO
-            HSEEK cIdkonto
+
+            select_o_konto( cIdKonto )
             SELECT PANAL
             P_NRED
             @ PRow(), 0 SAY  ++nRBr PICTURE '9999'

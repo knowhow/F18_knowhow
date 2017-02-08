@@ -337,14 +337,14 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    IF _fakt_params[ "fakt_vrste_placanja" ]
       lVrsteP := .T.
-      //O_VRSTEP
+      // O_VRSTEP
    ENDIF
 
    SELECT SUBAN
 
    CistiK1k4()
 
-altd()
+   AltD()
 
    cFilter := ".t."
 
@@ -431,8 +431,8 @@ altd()
       ENDIF
 */
       IF !Empty( qqNazKonta )
-         SELECT konto
-         HSEEK cIdKonto
+         select_o_konto( cIdKonto )
+
          IF !( &( aNK ) )
             SELECT suban
             SKIP 1
@@ -493,8 +493,8 @@ altd()
          ? "KONTO:  "
          @ PRow(), PCol() + 1 SAY cIdKonto
 
-         SELECT KONTO
-         HSEEK cIdKonto
+         select_o_konto( cIdKonto )
+
          cKontoNaziv := field->naz
 
          @ PRow(), PCol() + 2 SAY cKontoNaziv
@@ -534,8 +534,8 @@ altd()
                ? m
                ?U "KONTO: "
                @ PRow(), PCol() + 1 SAY cIdKonto
-               SELECT KONTO
-               HSEEK cIdKonto
+               select_o_konto( cIdKonto )
+
                @ PRow(), PCol() + 2 SAY naz
                ?U "Partner: "
                @ PRow(), PCol() + 1 SAY iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", ":  SVI", cIdPartner )

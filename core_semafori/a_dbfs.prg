@@ -648,8 +648,7 @@ FUNCTION set_dbf_fields_from_struct( xRec )
    RETURN .T.
 
 
-
-FUNCTION otvori_sqlmix_tabelu( cTable )
+STATIC FUNCTION otvori_sqlmix_tabelu( cTable )
 
    LOCAL cLogMsg
 

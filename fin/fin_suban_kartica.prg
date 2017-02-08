@@ -684,8 +684,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                @ PRow(), PCol() + 1 SAY hRec[ "rbr" ] PICT "99999"
                IF _fin_params[ "fin_tip_dokumenta" ]
                   @ PRow(), PCol() + 1 SAY hRec[ "idtipdok" ]
-                  SELECT TDOK
-                  HSEEK SUBAN->IdTipDok
+                  select_o_tdok( SUBAN->IdTipDok )
                   @ PRow(), PCol() + 1 SAY PadR( tdok->naz, 13 )
                ENDIF
                // ENDIF

@@ -12,6 +12,7 @@
 #include "f18.ch"
 
 
+
 FUNCTION o_sastavnica( cId )
 
    LOCAL cTabela := "sast"

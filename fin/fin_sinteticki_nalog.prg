@@ -218,8 +218,8 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
       ?? dDatNal
    ENDIF
 
-   SELECT TNAL
-   HSEEK cIdVN
+   select_o_tnal( cIdVN )
+
    SELECT PANAL
 
    @ PRow(), PCol() + 4 SAY tnal->naz

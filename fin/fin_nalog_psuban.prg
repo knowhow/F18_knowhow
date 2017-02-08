@@ -396,7 +396,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    ENDIF
 
    IF !lDnevnik
-      SELECT TNAL; HSEEK cidvn
+      select_o_tnal( cIdvn )
       @ PRow(), PCol() + 4 SAY naz
    ENDIF
 

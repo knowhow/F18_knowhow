@@ -949,6 +949,65 @@ STATIC FUNCTION use_sql_suban_where( hParams )
 
 
 
+FUNCTION o_tdok( cId )
+
+   SELECT ( F_TDOK )
+   IF !use_sql_sif  ( "tdok", .T., "TDOK", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION select_o_tdok( cId )
+
+   SELECT ( F_TDOK )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_tdok( cId )
+
+
+
+FUNCTION o_tnal( cId )
+
+   SELECT ( F_TNAL )
+   IF !use_sql_sif  ( "tnal", .T., "TNAL", cId )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN .T.
+
+FUNCTION select_o_tnal( cId )
+
+   SELECT ( F_TNAL )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_tnal( cId )
+
+
+
 
 FUNCTION datval_prazan()
 

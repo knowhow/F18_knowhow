@@ -326,8 +326,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
                @ PRow(), PCol() + 1 SAY RBr PICT '9999'
                IF gNW == "N"
                   @ PRow(), PCol() + 1 SAY IdTipDok
-                  SELECT TDOK
-                  HSEEK SUBAN->IdTipDok
+                  select_o_tdok( SUBAN->IdTipDok )
                   @ PRow(), PCol() + 1 SAY naz
                ENDIF
             ENDIF

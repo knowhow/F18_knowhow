@@ -301,16 +301,16 @@ FUNCTION RobaZastCijena( cIdTarifa )
 
 FUNCTION OFmkRoba()
 
-   o_sifk()
-   o_sifv()
-   o_konto()
-   o_koncij()
-   o_trfp()
-   o_tarifa()
-   o_roba()
-   o_sastavnica()
+ //  o_sifk()
+ //  o_sifv()
+ //  o_konto()
+ //  o_koncij()
+ //  o_trfp()
+ //  o_tarifa()
+ //  o_roba()
+  // o_sastavnica()
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -27,7 +27,7 @@ FUNCTION fin_asistent_otv_st()
    PRIVATE cIdPartner
    PRIVATE cBrDok
 
-   o_konto()
+ --  o_konto()
    -- o_partner()
    o_suban()
 
@@ -806,8 +806,8 @@ FUNCTION open_otv_stavke_tabele( lOsuban )
    ENDIF
 
    // o_partner()
-   o_konto()
-   o_rj()
+//  o_konto()
+   //o_rj()
 
    IF lOSuban
 
@@ -816,8 +816,7 @@ FUNCTION open_otv_stavke_tabele( lOsuban )
       SELECT ( F_OSUBAN )
       USE
 
-      // otvaram osuban kao suban alijas
-      // radi stampe kartice itd...
+      // otvaram osuban kao suban alijas radi stampe kartice
       SELECT ( F_SUBAN )
       my_use_temp( "SUBAN", my_home() + + my_dbf_prefix() + "osuban", .F., .F. )
 

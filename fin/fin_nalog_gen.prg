@@ -150,13 +150,13 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 */
 FUNCTION fin_open_psuban_and_ostalo()
 
-   O_VRSTEP
-   o_konto()
+   //O_VRSTEP
+  // o_konto()
    //o_partner()
-   o_tnal()
-   o_tdok()
-   o_fin_psuban()
-   o_fin_pripr()
+ //  o_tnal()
+  // o_tdok()
+   select_o_fin_psuban()
+   select_o_fin_pripr()
 
    RETURN .T.
 
@@ -165,14 +165,14 @@ FUNCTION fin_open_psuban_and_ostalo()
 */
 FUNCTION fin_open_lock_panal( lZap )
 
-   o_fin_psuban()
-   o_anal()
-   o_fin_psint()
-   o_fin_pnalog()
+   select_o_fin_psuban()
+   //o_anal()
+   select_o_fin_psint()
+   select_o_fin_pnalog()
 
    //o_partner()
-   o_konto()
-   o_tnal()
+   //o_konto()
+   //o_tnal()
 
    IF !lock_fin_priprema( lZap )
       Alert( "lock fin priprema error ?" )
@@ -257,12 +257,12 @@ STATIC FUNCTION lock_fin_priprema( lZap )
 
 FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
 
-   o_anal()
-   o_fin_psint()
-   o_fin_pnalog()
-   o_fin_psuban()
-   o_konto()
-   o_tnal()
+   //o_anal()
+   select_o_fin_psint()
+   select_o_fin_pnalog()
+   select_o_fin_psuban()
+   //o_konto()
+   //o_tnal()
 
    IF lAuto == NIL
       lAuto := .F.
@@ -304,9 +304,7 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
       cIDVn := IdVN
       cBrNal := BrNal
 
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma ;
-            .AND. cIdVN == IdVN ;
-            .AND. cBrNal == BrNal
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
 
          cIdkonto := idkonto
 
@@ -324,7 +322,6 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
          ENDIF
 
          SELECT PANAL
-         // analitika
          SEEK cIdFirma + cIdVn + cBrNal + cIdKonto
 
          fNasao := .F.
@@ -456,4 +453,4 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

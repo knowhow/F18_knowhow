@@ -73,7 +73,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL nCount, nCountLimit := 12000 // broj izgenerisanih stavki
    LOCAL cNastavak := "N"
 
-   o_konto()
+  // o_konto()
    // o_partner()
 
    Box(, 16, 65, .F. )
@@ -664,7 +664,7 @@ STATIC FUNCTION ios_specifikacija( hParams )
    _line := _ios_spec_get_line()
 
    -- o_partner()
-   o_konto()
+ --  o_konto()
 
    find_suban_by_broj_dokumenta(  cIdFirma, cIdKonto )
 
@@ -882,8 +882,8 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    cPrikazSaSaldoNulaDN := hParams[ "saldo_nula" ]
 
    // o_partner()
-   o_konto()
-   o_suban()
+ //  o_konto()
+ //  o_suban()
    o_fin_ios()
 
 

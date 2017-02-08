@@ -25,8 +25,8 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
 
    lSumiraj := .F.
 
-   o_konto()
-   o_anal()
+ //  o_konto()
+//   o_anal()
    o_fin_pripr()
 
    GO TOP
@@ -365,9 +365,9 @@ FUNCTION blag_azur()
    lSumiraj := .F.
 
    //o_partner()
-   o_konto()
-   o_anal()
-   o_suban()
+  // o_konto()
+  // o_anal()
+  // o_suban()
 
    cDinDem := "1"
 

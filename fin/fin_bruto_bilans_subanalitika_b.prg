@@ -64,10 +64,10 @@ FUNCTION fin_bb_subanalitika_b( params )
       ENDIF
    ENDIF
 
-   o_konto()
+  // o_konto()
    //o_partner()
    o_sql_suban_kto_partner( cIdFirma )
-   o_konto()
+ //  o_konto()
    O_BBKLAS
 
    SELECT BBKLAS

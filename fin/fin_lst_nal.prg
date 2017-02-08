@@ -20,7 +20,7 @@ FUNCTION st_sv_nal()
    create_dbf_r_export( aFields )
 
    o_suban()
-   o_konto()
+  // o_konto()
    //o_partner()
 
    SELECT suban

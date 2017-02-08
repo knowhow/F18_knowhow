@@ -56,7 +56,7 @@ FUNCTION fin_bb_analitika_b( hParams )
 
    fin_bb_txt_header()
 
-   o_konto()
+   //o_konto()
    //o_partner()
    O_BBKLAS
 

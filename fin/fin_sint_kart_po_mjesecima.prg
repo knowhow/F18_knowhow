@@ -80,7 +80,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
    ELSE
       o_sint()
    ENDIF
-   o_konto()
+   //o_konto()
 
    SELECT SINT
 
@@ -112,6 +112,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
 
       ? m
       select_o_konto( cIdKonto )
+      
       ? "KONTO   "; @ PRow(), PCol() + 1 SAY cIdKonto
       @ PRow(), PCol() + 2 SAY konto->naz
       SELECT SINT

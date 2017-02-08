@@ -847,27 +847,24 @@ FUNCTION fin_dokument_postoji( cIdFirma, cIdVn, cBrNal )
 
 
 
-
-
 FUNCTION o_fin_za_azuriranje()
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
-   o_konto()
+   //o_konto()
    //o_partner()
-   o_sifk()
-   o_sifv()
+  // o_sifk()
+ // o_sifv()
 
-   o_suban()
-   o_anal()
-   o_sint()
-   o_nalog()
+   //o_suban()
+  // o_anal()
+  // o_sint()
+  // o_nalog()
 
-   o_fin_psuban()
-   o_anal()
-   o_fin_psint()
-   o_fin_pnalog()
-
-   o_fin_pripr()
+   select_o_fin_psuban()
+   //o_anal()
+   select_o_fin_psint()
+   soelect_o_fin_pnalog()
+   select_o_fin_pripr()
 
    RETURN .T.

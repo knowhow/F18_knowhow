@@ -22,9 +22,9 @@ FUNCTION PartVanProm()
    PRIVATE cIdKonto := Space ( 7 ), cIdFirma := Space ( Len ( self_organizacija_id() ) ), ;
       cKrit := Space ( 60 ), aUsl
 
-   o_konto()
+  // o_konto()
    //o_partner()
-   o_suban()
+  // o_suban()
 
    Box (, 11, 60 )
    @ form_x_koord(), form_y_koord() + 15 SAY "PREGLED PARTNERA BEZ PROMETA"

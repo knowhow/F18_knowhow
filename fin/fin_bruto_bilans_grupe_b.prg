@@ -50,7 +50,7 @@ FUNCTION fin_bb_grupe_b( params )
    fin_bb_txt_header()
 
    //o_partner()
-   o_konto()
+   //o_konto()
    O_BBKLAS
 
    SELECT BBKLAS

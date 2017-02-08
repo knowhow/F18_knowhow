@@ -67,7 +67,7 @@ FUNCTION P_Konto( cId, dx, dy, lBlag )
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
-   o_konto()
+  -- o_konto()
 
    ImeKol := { { PadR( "ID", 7 ),  {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { "Naziv",       {|| naz },     "naz"      };

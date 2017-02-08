@@ -341,11 +341,7 @@ STATIC FUNCTION append_sif_konto( cIdKonto, oKontoDataset )
    LOCAL lOk := .T.
    LOCAL hRecord
 
-   select_o_konto()
-   SELECT konto
-   GO TOP
-   SEEK PadR( cIdKonto, 7 )
-
+   select_o_konto( cIdKonto )
    IF Found()
       SELECT ( nTableArea )
       RETURN lAppend
@@ -551,18 +547,7 @@ STATIC FUNCTION open_tabele_za_pocetno_stanje()
       O_PKONTO
    ENDIF
 
-   SELECT ( F_KONTO )
-   IF !Used()
-      o_konto()
-   ENDIF
+   select_o_fin_pripr()
 
-
-  //    o_partner()
-
-
-   SELECT ( F_FIN_PRIPR )
-   IF !Used()
-      o_fin_pripr()
-   ENDIF
 
    RETURN .T.

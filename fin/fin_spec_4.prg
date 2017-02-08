@@ -40,7 +40,7 @@ FUNCTION SpecOstPop()
    nDugBHD := nPotBHD := nUkDugBHD := nUkPotBHD := 0
    nDugDEM := nPotDEM := nUKDugDEM := nUkPotDEM := 0
 
-   o_konto()
+   //o_konto()
    o_suban()
 
    SELECT SUBAN
@@ -89,6 +89,7 @@ FUNCTION SpecOstPop()
          ? m
          @ PRow() + 1, 1 SAY ++B PICTURE '9999'
          @ PRow(), 6 SAY cIdKonto
+         
          select_o_konto( cIdKonto )
          aRez := SjeciStr( naz, 30 )
          nCol2 := PCol() + 1

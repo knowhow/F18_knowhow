@@ -48,7 +48,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
    picDEM := "@Z " + FormPicL( "9 " + gPicDEM, 9 )
 
    // o_partner()
-   o_konto()
+   //o_konto()
 
    IF !lAuto
 

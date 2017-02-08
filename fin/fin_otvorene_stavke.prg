@@ -157,9 +157,9 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
 
    ELSEIF fsolo
 
-      o_suban()
+      //o_suban()
       // o_partner()
-      o_konto()
+      //o_konto()
       cIdFirma := self_organizacija_id()
       cIdkonto := Space( 7 )
       cIdPartner := Space( 6 )

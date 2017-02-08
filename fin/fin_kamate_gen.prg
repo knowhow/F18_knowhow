@@ -27,7 +27,7 @@ FUNCTION prenos_fin_kam()
    LOCAL nTekuciRec
 
    select_o_kam_pripr()
-   o_konto()
+  // o_konto()
    //o_partner()
 
    Box( "#PRENOS RACUNA ZA OBRACUN FIN->KAM", 8, 65 )

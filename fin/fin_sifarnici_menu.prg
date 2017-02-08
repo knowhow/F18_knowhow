@@ -40,9 +40,9 @@ STATIC FUNCTION _menu_specif()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   o_konto()
+  // o_konto()
    O_KS
-   o_trfp2()
+ //  o_trfp2()
    //O_TRFP3
    O_PKONTO
    //O_ULIMIT
@@ -97,13 +97,13 @@ STATIC FUNCTION _menu_budzet()
 
 FUNCTION OSifBudzet()
 
-   o_rj()
+  // o_rj()
    //o_funk()
    //o_fond()
    //O_BUDZET
    //O_PAREK
    //o_buiz()
-   o_konto()
-   o_trfp2()
+ //  o_konto()
+ //  o_trfp2()
 
    RETURN .T.

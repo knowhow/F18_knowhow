@@ -251,12 +251,12 @@ STATIC FUNCTION O_PrVP_DB()
 
    //o_koncij()
    //o_partner()
-   o_suban()
-   o_konto()
+   //o_suban()
+   //o_konto()
    //o_fakt_objekti()
-   o_nalog()
-   o_fin_pripr()
-   o_trfp2()
+   //o_nalog()
+   select_o_fin_pripr()
+   //o_trfp2()
 
    RETURN .T.
 

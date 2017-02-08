@@ -441,22 +441,22 @@ FUNCTION f18_sif_data( data, checksum )
 
    o_roba()
    o_ld_radn()
-   o_partner()
-   o_konto()
-   o_trfp()
-   o_ops()
-   o_valute()
-   o_koncij()
+   //o_partner()
+   //o_konto()
+   //o_trfp()
+   //o_ops()
+   //o_valute()
+   //o_koncij()
 
-   SELECT roba
-   SET ORDER TO TAG "ID"
-   GO TOP
+  // SELECT roba
+   //SET ORDER TO TAG "ID"
+  // GO TOP
 
    f18_sif_check( @data, @checksum )
 
-   SELECT partn
-   SET ORDER TO TAG "ID"
-   GO TOP
+  // SELECT partn
+  // SET ORDER TO TAG "ID"
+ //  GO TOP
 
    f18_sif_check( @data, @checksum )
 

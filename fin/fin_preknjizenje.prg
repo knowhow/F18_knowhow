@@ -140,7 +140,7 @@ FUNCTION prefin_unos_naloga()
    cIdFirma := Left( cIdFirma, 2 )
 
    o_fin_pripr()
-   o_konto()
+   //o_konto()
    //o_suban()
    find_suban_za_period( cIdFirma, dDatOd, dDatDo )
 

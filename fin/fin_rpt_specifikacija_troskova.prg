@@ -36,7 +36,7 @@ FUNCTION r_spec_tr()
    PRIVATE nKALK_pri := 0
    PRIVATE nKALK_ras := 0
 
-   o_konto()
+  -- o_konto()
    o_rj()
 
    // uslovi izvjestaja
@@ -205,7 +205,7 @@ STATIC FUNCTION _g_kt_naz( cId )
    LOCAL xRet := ""
    LOCAL nTArea := Select()
 
-   o_konto()
+ --  o_konto()
    SELECT konto
    SEEK cId
 

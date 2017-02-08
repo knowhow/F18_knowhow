@@ -37,7 +37,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
 
    o_suban()
    //o_partner()
-   o_konto()
+   //o_konto()
 
 
    cIdFirma := self_organizacija_id()

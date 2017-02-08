@@ -55,7 +55,7 @@ FUNCTION fin_bb_sintetika_b( params )
 
    fin_bb_txt_header()
 
-   o_konto()
+   //o_konto()
    O_BBKLAS
 
 

@@ -46,13 +46,13 @@ FUNCTION DnevnikNaloga()
 
    SET KEY K_F5 TO
 
-   O_VRSTEP
-   o_tnal()
-   o_tdok()
+  // O_VRSTEP
+  // o_tnal()
+ //  o_tdok()
    //o_partner()
-   o_konto()
-   o_nalog()
-   o_suban()
+  // o_konto()
+  // o_nalog()
+  // o_suban()
 
 
    SELECT SUBAN

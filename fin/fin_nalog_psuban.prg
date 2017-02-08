@@ -466,12 +466,12 @@ FUNCTION fin_gen_psuban_stavke_auto_import()
 
    my_close_all_dbf()
 
-   o_fin_pripr()
-   o_konto()
+   select_o_fin_pripr()
+   //o_konto()
    //o_partner()
-   o_tnal()
-   o_tdok()
-   o_fin_psuban()
+   //o_tnal()
+   //o_tdok()
+   select_o_fin_psuban()
 
    SELECT PSUBAN
    my_dbf_zap()

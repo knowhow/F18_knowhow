@@ -106,7 +106,7 @@ FUNCTION fin_sint_kartica()
          find_sint_by_konto_za_period( cIdFirma, NIL, dDatOd, dDatDo )
       ENDIF
    ENDIF
-   o_konto()
+   //o_konto()
 
    SELECT SINT
 

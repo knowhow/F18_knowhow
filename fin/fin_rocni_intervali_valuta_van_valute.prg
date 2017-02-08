@@ -56,7 +56,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
 
    o_suban()
    //o_partner()
-   o_konto()
+   //o_konto()
 
 
    cIdFirma := self_organizacija_id()
@@ -157,10 +157,10 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    fin_create_pom_table( nil, FIELD_PARTNER_ID_LENGTH )
    // kreiraj pomocnu bazu
 
-   o_trfp2()
-   o_suban()
+   //o_trfp2()
+   //o_suban()
    //o_partner()
-   o_konto()
+   //o_konto()
 
    IF cPoRN == "D"
       gaZagFix := { 5, 3 }
@@ -966,8 +966,6 @@ FUNCTION Zfin_spec_otv_stavke_rocni_intervali( fStrana, lSvi, PICPIC )
       ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
       select_o_konto( cIdKonto )
-
-
       ? "KONTO  :", cIdKonto, naz
 
       IF lSvi

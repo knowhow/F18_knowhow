@@ -71,7 +71,7 @@ FUNCTION SpecPoK()
 
    cIdFirma := Left( cIdFirma, 2 )
 
-   o_konto()
+--   o_konto()
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
    ELSE

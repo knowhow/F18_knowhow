@@ -10,9 +10,9 @@ FUNCTION PregNDP()
    PRIVATE cSortPar := "S"
    PRIVATE cMjestoPar := Space( 80 )
 
-   o_partner()
+   //o_partner()
 
-   o_konto()
+   //o_konto()
 
    Box( "#PREGLED NOVIH DUGOVANJA/POTRAZIVANJA", 15, 72 )
 

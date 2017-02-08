@@ -20,7 +20,7 @@ FUNCTION SpecSubPro()
    cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
-   o_konto()
+   //o_konto()
    // o_partner()
 
    dDatOd := dDatDo := CToD( "" )

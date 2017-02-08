@@ -105,7 +105,6 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
          ENDIF
 
          cQuery += hDbfRec[ "dbf_fields" ][ nI ]
-
          IF nI < Len( hDbfRec[ "dbf_fields" ] )
             cQuery += ","
          ENDIF
@@ -118,6 +117,9 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
          cTmp := hDbfRec[ "dbf_fields" ][ nI ]
 
+if cTmp == "obradjeno"
+altd()
+endif
          IF field_in_blacklist( cTable, cTmp, hDbfRec[ "blacklisted" ] )
             LOOP
          ENDIF

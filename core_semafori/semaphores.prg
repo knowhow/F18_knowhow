@@ -474,10 +474,6 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    RETURN lRet
 
 
-
-// --------------------------------------------------------------------
-// da li je polje u blacklisti
-// --------------------------------------------------------------------
 FUNCTION field_in_blacklist( cTable, cFieldName, hFieldsBlacklist )
 
    // mozda nije definisana blacklista
@@ -489,7 +485,7 @@ FUNCTION field_in_blacklist( cTable, cFieldName, hFieldsBlacklist )
          ( cFieldName == "korisnik" .AND. cTable $ "fin_nalog#fakt_doks#kalk_doks" )  // automatski se puni sa current_user
          RETURN .T.
    ENDIF
-   
+
    IF AScan( hFieldsBlacklist, {| cVal | cVal == cFieldName } ) > 0
       RETURN .T.
    ENDIF

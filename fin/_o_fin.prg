@@ -12,7 +12,9 @@
 #include "f18.ch"
 
 
+FUNCTION o_fin_ios()
 
+   RETURN o_dbf_table( F_IOS, { "IOS", "ios" }, "1" )
 
 
 FUNCTION o_fin_pnalog()

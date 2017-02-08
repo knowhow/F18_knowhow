@@ -92,7 +92,6 @@
 //#xcommand O_BUDZET    => select (F_BUDZET);   my_use("budzet")    ; set order to tag "1"
 //#xcommand O_PAREK     => select (F_PAREK);    my_use("parek")     ; set order to tag "1"
 #xcommand O_BBKLAS    => select (F_BBKLAS);   my_use("bbklas")    ; set order to tag "1"
-#xcommand O_IOS       => select (F_IOS);      my_use("ios")      ; set order to tag "1"
 
 
 #xcommand OX_KONTO    => select (F_KONTO);  my_usex ("konto")  ;  set order to tag "ID"

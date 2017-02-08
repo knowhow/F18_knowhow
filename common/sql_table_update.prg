@@ -28,8 +28,8 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
    LOCAL _pos
    LOCAL _dec
    LOCAL _len
-   LOCAL hDbfRec, _alg
-   LOCAL _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, _sql_tbl
+   LOCAL hDbfRec, hAlgoritam1
+   LOCAL aDbfFields, aSqlFields, _sql_order, nDbfWA, cDbfAlias, cSqlTableFullName
 
    // LOCAL lSqlDbf := .F. hRecord je uvijek 852 enkodiran!
 
@@ -49,22 +49,26 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
       hDbfRec := get_a_dbf_rec( cTable )
 
-      _dbf_fields := hDbfRec[ "dbf_fields" ]
-      _sql_fields := sql_fields( _dbf_fields )
+      if cTable == "fin_suban"
+      altd()
+      endif
+
+      aDbfFields := hDbfRec[ "dbf_fields" ]
+      aSqlFields := sql_fields( aDbfFields )
 
       _sql_order  := hDbfRec[ "sql_order" ]
 
-      _dbf_wa    := hDbfRec[ "wa" ]
-      _dbf_alias := hDbfRec[ "alias" ]
+      nDbfWA    := hDbfRec[ "wa" ]
+      cDbfAlias := hDbfRec[ "alias" ]
       lSqlTable := hDbfRec[ "sql" ]
-      _sql_tbl   := F18_PSQL_SCHEMA_DOT + cTable
+      cSqlTableFullName   := F18_PSQL_SCHEMA_DOT + cTable
 
       // uvijek je algoritam 1 nivo recorda
-      _alg := hDbfRec[ "algoritam" ][ 1 ]
+      hAlgoritam1 := hDbfRec[ "algoritam" ][ 1 ]
 
       IF cWhereStr == NIL
          IF hRecord <> NIL
-            cWhereStr := sql_where_from_dbf_key_fields( _alg[ "dbf_key_fields" ], hRecord, lSqlTable )
+            cWhereStr := sql_where_from_dbf_key_fields( hAlgoritam1[ "dbf_key_fields" ], hRecord, lSqlTable )
          ENDIF
       ENDIF
 
@@ -91,11 +95,11 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
          log_write( _msg, 2, lSilent )
          QUIT_1
       ENDIF
-      cQuery := "DELETE FROM " + _sql_tbl + " WHERE " + cWhereStr
+      cQuery := "DELETE FROM " + cSqlTableFullName + " WHERE " + cWhereStr
 
    CASE cSqlOperator == "ins"
 
-      cQuery := "INSERT INTO " + _sql_tbl +  "("
+      cQuery := "INSERT INTO " + cSqlTableFullName +  "("
 
       FOR nI := 1 TO Len( hDbfRec[ "dbf_fields" ] )
 

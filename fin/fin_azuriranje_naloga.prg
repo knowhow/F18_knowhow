@@ -160,7 +160,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
    LOCAL lOkAzuriranje := .T.
    LOCAL _ids := {}
-   LOCAL _tmp_id, _count, _tmp_doc, hRec, _msg, nI
+   LOCAL _tmp_id, nCount, _tmp_doc, hRec, _msg, nI
    LOCAL _ids_doc := {}
    LOCAL _ids_tmp := {}
    LOCAL _ids_suban := {}
@@ -178,15 +178,14 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
    GO TOP
    SEEK cIdFirma + cIdVn + cBrNal
 
-   _count := 0
+   nCount := 0
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
 
-      hRec := dbf_get_rec()
+      hRec := dbf_get_rec()  // psuban
+      ++ nCount
 
-      ++ _count
-
-      IF _count == 1
+      IF nCount == 1
 
          _tmp_id := hRec[ "idfirma" ] + hRec[ "idvn" ] + hRec[ "brnal" ]
 
@@ -865,7 +864,7 @@ FUNCTION o_fin_za_azuriranje()
    select_o_fin_panal()
    select_o_fin_psint()
    select_o_fin_pnalog()
-   
+
    select_o_fin_pripr()
 
    RETURN .T.

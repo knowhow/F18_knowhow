@@ -183,6 +183,37 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
 
       hRec := dbf_get_rec()  // psuban
+      hRec[ "otvst" ] := " " // STORED PROCEDURE se brine o zatvaranju stavki FUNCTION zatvori_otvst( cIdKonto text, cIdPartner text, cBrDok text )
+
+      /*
+
+      CREATE OR REPLACE FUNCTION on_suban_insert_update_delete()
+      RETURNS TRIGGER AS $$
+
+      BEGIN
+              IF (TG_OP = 'DELETE') THEN
+                  -- INSERT INTO emp_audit SELECT 'D', now(), user, OLD.*;
+                  RETURN OLD;
+              ELSIF (TG_OP = 'UPDATE') THEN
+                  -- INSERT INTO emp_audit SELECT 'U', now(), user, NEW.*;
+                  RETURN NEW;
+              ELSIF (TG_OP = 'INSERT') THEN
+                  --IF NEW.otvst <> '9' THEN
+                  PERFORM zatvori_otvst( NEW.IdKonto, NEW.IdPartner, NEW.BrDok );
+                  --END IF;
+                  RETURN NEW;
+              END IF;
+              RETURN NULL; -- result is ignored since this is an AFTER trigger
+          END;
+      $$
+      LANGUAGE plpgsql;
+
+      CREATE TRIGGER suban_insert_upate_delete
+      AFTER INSERT OR UPDATE OR DELETE ON fmk.fin_suban
+          FOR EACH ROW EXECUTE PROCEDURE on_suban_insert_update_delete();
+
+      */
+
       ++ nCount
 
       IF nCount == 1
@@ -647,7 +678,7 @@ FUNCTION psuban_konto_check( arr, silent )
    RETURN lOkAzuriranje
 
 
-
+/*
 FUNCTION panal_anal( cNalogId )
 
    LOCAL hRec
@@ -672,10 +703,10 @@ FUNCTION panal_anal( cNalogId )
    ENDDO
 
    RETURN .T.
+*/
 
 
-
-
+/*
 FUNCTION psint_sint( cNalogId )
 
    LOCAL hRec
@@ -699,10 +730,10 @@ FUNCTION psint_sint( cNalogId )
    ENDDO
 
    RETURN .T.
+*/
 
 
-
-
+/*
 FUNCTION pnalog_nalog( cNalogId )
 
    LOCAL hRec
@@ -727,14 +758,15 @@ FUNCTION pnalog_nalog( cNalogId )
    ENDIF
 
    RETURN .T.
+*/
 
-
-
+/*
 FUNCTION psuban_suban( cNalogId )
 
    LOCAL nSaldo := 0
    LOCAL nC := 0
    LOCAL hRec, hRec2
+   LOCAL nRec
 
    @ form_x_koord() + 3, form_y_koord() + 2 SAY "SUBANALITIKA   "
 
@@ -799,7 +831,7 @@ FUNCTION psuban_suban( cNalogId )
    ENDDO
 
    RETURN .T.
-
+*/
 
 
 FUNCTION fin_pripr_delete( cNalogId )

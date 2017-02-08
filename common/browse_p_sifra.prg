@@ -1513,7 +1513,6 @@ FUNCTION p_sifra_trazi_sifru( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
    CASE Alias() == "KONTO"
       find_konto_by_naz_or_id( cId )
    OTHERWISE
-   OTHERWISE
       SEEK cId
    ENDCASE
 

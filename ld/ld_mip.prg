@@ -301,7 +301,7 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
          LOOP
       ENDIF
 
-      cIdRadnikTekuci := field->idradn
+      cIdRadnikTekuci := ld->idradn
       // nGodina := field->godina
       // nMjesec := field->mjesec
 
@@ -312,12 +312,13 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
          ENDIF
       ENDIF
 
-      cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
+      select_o_radn( cIdRadnikTekuci )
+      cTipRada := get_ld_rj_tip_rada( cIdRadnikTekuci, ld->idrj )
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
       ld_pozicija_parobr( ld->mjesec, ld->godina, ld->obr, ld->idrj ) // samo pozicionira bazu PAROBR na odgovarajuci zapis
 
-      select_o_radn( cIdRadnikTekuci )
+
 
       // https://redmine.bring.out.ba/projects/klijenti/wiki/Modul_LD
       IF !( cTipRada $ " #I#N" ) // ako nije " " ili "I" ili "N" - neto-neto

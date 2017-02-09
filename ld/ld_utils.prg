@@ -45,7 +45,7 @@ FUNCTION tr_list()
    RETURN "I#N"
 
 
-FUNCTION get_ld_rj_tip_rada( cRadn, cRj )
+FUNCTION get_ld_rj_tip_rada( cIdRadn, cRj )
 
    LOCAL cTipRada := " "
 
@@ -58,7 +58,7 @@ FUNCTION get_ld_rj_tip_rada( cRadn, cRj )
    ENDIF
 
    IF Empty( cTipRada )
-      select_o_radn( cRadn )
+      select_o_radn( cIdRadn )
       cTipRada := radn->tiprada
    ENDIF
 
@@ -68,7 +68,7 @@ FUNCTION get_ld_rj_tip_rada( cRadn, cRj )
 
 
 
-FUNCTION g_oporeziv( cRadn, cRj )
+FUNCTION g_oporeziv( cIdRadn, cRj )
 
    LOCAL cOpor := " "
    LOCAL nTArea := Select()
@@ -80,7 +80,7 @@ FUNCTION g_oporeziv( cRadn, cRj )
    ENDIF
 
    IF Empty( cOpor )
-      select_o_radn( cRadn )
+      select_o_radn( cIdRadn )
       cOpor := radn->opor
    ENDIF
 
@@ -155,13 +155,13 @@ FUNCTION get_dopr( cDopr, cTipRada )
 
 
 
-FUNCTION radn_oporeziv( cRadn, cRj )
+FUNCTION radn_oporeziv( cIdRadn, cRj )
 
    LOCAL lRet := .T.
    LOCAL nTArea := Select()
    LOCAL cOpor
 
-   cOpor := g_oporeziv( cRadn, cRj )
+   cOpor := g_oporeziv( cIdRadn, cRj )
 
    IF cOpor == "N"
       lRet := .F.

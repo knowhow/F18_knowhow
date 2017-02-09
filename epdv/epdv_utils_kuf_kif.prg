@@ -12,8 +12,6 @@
 #include "f18.ch"
 
 
-
-
 FUNCTION epdv_otvori_kuf_tabele( lPriprema )
 
    IF lPriprema == nil

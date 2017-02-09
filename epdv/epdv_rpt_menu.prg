@@ -45,4 +45,4 @@ FUNCTION epdv_izvjestaji()
 
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "rpt" )
 
-   RETURN
+   RETURN .T.

@@ -42,10 +42,6 @@ FUNCTION fin_unos_naloga()
    RETURN .T.
 
 
-/*
- Priprema za knjizenje naloga
- */
-
 FUNCTION fin_knjizenje_naloga()
 
    LOCAL _sep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
@@ -1056,7 +1052,7 @@ FUNCTION BrDokOK()
    lOK := .T.
    nLenBrDok := Len( _brDok )
    select_o_konto( _idkonto )
-   
+
    IF field->oznaka = "TD"
       SELECT rnal
       HSEEK PadR( _brDok, 10 )

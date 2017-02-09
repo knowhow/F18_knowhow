@@ -1,59 +1,188 @@
+# msys2
 
-export CC=i586-mingw32msvc-gcc
-export CXX=i586-mingw32msvc-g++
-export CPP=i586-mingw32msvc-cpp
-export AR=i586-mingw32msvc-ar
-export RANLIB=i586-mingw32msvc-ranlib
-export ADD2LINE=i586-mingw32msvc-addr2line
-export AS=i586-mingw32msvc-as
-export LD=i586-mingw32msvc-ld
-export NM=i586-mingw32msvc-nm
-export STRIP=i586-mingw32msvc-strip
-export MINGW32_LIBS=/usr/i586-mingw32msvc/lib/
-export MINGW32_INCLUDES=/usr/i586-mingw32msvc/include/
- 
-export PATH="/usr/i586-mingw32msvc/bin:$PATH"
-#export PKG_CONFIG_PATH="$HOME/win32-x264/lib/pkgconfig/"
+Install:
 
-export HB_PLATFORM=win
-export HB_INSTALL_PREFIX=/opt/knowhowERP/hbwin
-export HB_CCPREFIX=i586-mingw32msvc-
-#/opt/knowhowERP/hbout/bin/hbmk2 -plat=win -comp=mingw -gtwvt test.prg
+   pacman -Sy  git mingw-w64-i686-toolchain mingw-w64-i686-make mingw-w64-i686-postgresql
+
+Komande:
+
+   # mingw32-make --version
+   # gcc --version
 
 
-#apt-get install autoconf automake bash bison bzip2 cmake flex gettext git g++ intltool libffi-dev libtool libltdl-dev libssl-dev libxml-parser-perl make openssl patch perl pkg-config scons sed unzip wget xz-utils
+## Instalirani paketi
 
-#apt-get install g++-multilib libc6-dev-i386
+<pre>
+$ pacman -Q
 
-# postgresql 9.3 mingw
-#./configure --host=i686-w64-mingw32  --without-zlib --prefix=/usr/i586-mingw32msvc/
-# ~/dev/harbour/harbour/postgresql-9.3-9.3.4
-# ln -s /usr/sbin/zic src/timezone/zic
-
-# ls -l /usr/i586-mingw32msvc/lib/libpq*
-# -rw-r--r-- 1 bringout bringout 119524 Apr 12 11:58 /usr/i586-mingw32msvc/lib/libpq.a
-# -rwxr-xr-x 1 bringout bringout 187168 Apr 12 11:58 /usr/i586-mingw32msvc/lib/libpq.dll
-
-#hbpgsql $ /opt/knowhowERP/hbout/bin/hbmk2 -plat=win -comp=mingw hbpgsql
-
-#cat hbpgsql.hbc
-#{darwin}libpaths=/opt/local/lib/postgresql83
-# dodati:
-#{win}libs=/usr/i586-mingw32msvc/lib
-
-#cp libhbpgsql.a /usr/i586-mingw32msvc/lib/
-
-
-
-# /opt/knowhowERP/hbout/bin/hbmk2 -plat=win -comp=mingw sddpg
-#cp hbrddsql.h /usr/i586-mingw32msvc/include
-
-#bringout@bringout-Inspiron-5537 ~/dev/harbour/harbour/contrib/sddpg $ cat sddpg.hbp
-#dodati:
-#{win}-depincpath=pgsql:/usr/i586-mingw32msvc/include
-
-
-#F18.exe
-
-# sudo apt-get install p11-kit:i386
-
+bash 4.3.046-1
+bash-completion 2.3-1
+bsdcpio 3.2.1-1
+bsdtar 3.2.1-1
+bzip2 1.0.6-2
+ca-certificates 20150426-1
+catgets 1.1-2
+coreutils 8.25-1
+crypt 1.3-1
+curl 7.50.3-1
+dash 0.5.9.1-1
+db 5.3.28-2
+expat 2.2.0-2
+file 5.28-2
+filesystem 2016.07-2
+findutils 4.6.0-1
+flex 2.6.1-1
+gawk 4.1.4-1
+gcc-libs 5.3.0-3
+gdbm 1.11-3
+gettext 0.19.7-3
+git 2.11.0-1
+gmp 6.1.0-2
+gnupg 1.4.20-1
+grep 2.26-1
+gzip 1.8-1
+heimdal 1.5.3-9
+heimdal-libs 1.5.3-9
+icu 56.1-1
+inetutils 1.9.2-1
+info 6.1-1
+less 481-1
+libarchive 3.2.1-1
+libasprintf 0.19.7-3
+libassuan 2.4.2-1
+libbz2 1.0.6-2
+libcatgets 1.1-2
+libcrypt 1.3-1
+libcurl 7.50.3-1
+libdb 5.3.28-2
+libedit 3.1-20150325
+libexpat 2.2.0-1
+libffi 3.2.1-1
+libgdbm 1.11-3
+libgettextpo 0.19.7-3
+libgpg-error 1.23-1
+libgpgme 1.6.0-1
+libiconv 1.14-2
+libidn 1.33-1
+libintl 0.19.7-3
+liblzma 5.2.2-1
+liblzo2 2.09-1
+libmetalink 0.1.2-2
+libnettle 3.3-1
+libopenssl 1.0.2.j-1
+libp11-kit 0.23.2-1
+libpcre 8.38-1
+libpcre16 8.38-1
+libpcre32 8.38-1
+libpcrecpp 8.38-1
+libpcreposix 8.38-1
+libreadline 6.3.008-7
+libsqlite 3.10.0.0-1
+libssh2 1.7.0-1
+libtasn1 4.9-1
+libutil-linux 2.26.2-1
+libxml2 2.9.2-2
+lndir 1.0.3-1
+m4 1.4.17-4
+mingw-w64-i686-binutils 2.27-3
+mingw-w64-i686-bzip2 1.0.6-6
+mingw-w64-i686-ca-certificates 20150426-2
+mingw-w64-i686-crt-git 5.0.0.4772.0a1b0885-1
+mingw-w64-i686-expat 2.2.0-2
+mingw-w64-i686-gcc 6.3.0-1
+mingw-w64-i686-gcc-ada 6.3.0-1
+mingw-w64-i686-gcc-fortran 6.3.0-1
+mingw-w64-i686-gcc-libgfortran 6.3.0-1
+mingw-w64-i686-gcc-libs 6.3.0-1
+mingw-w64-i686-gcc-objc 6.3.0-1
+mingw-w64-i686-gdb 7.12.1-1
+mingw-w64-i686-gdbm 1.12-1
+mingw-w64-i686-gettext 0.19.8.1-1
+mingw-w64-i686-gmp 6.1.2-1
+mingw-w64-i686-headers-git 5.0.0.4774.3b51067b-1
+mingw-w64-i686-isl 0.17.1-1
+mingw-w64-i686-libffi 3.2.1-4
+mingw-w64-i686-libgcrypt 1.7.6-1
+mingw-w64-i686-libgpg-error 1.25-1
+mingw-w64-i686-libiconv 1.14-6
+mingw-w64-i686-libmangle-git 5.0.0.4760.d3089b5-1
+mingw-w64-i686-libsystre 1.0.1-2
+mingw-w64-i686-libtasn1 4.9-1
+mingw-w64-i686-libtre-git r122.c2f5d13-4
+mingw-w64-i686-libwinpthread-git 5.0.0.4761.02bea78-1
+mingw-w64-i686-libxml2 2.9.4-4
+mingw-w64-i686-libxslt 1.1.29-3
+mingw-w64-i686-make 4.1.2351.a80a8b8-1
+mingw-w64-i686-mpc 1.0.3-2
+mingw-w64-i686-mpfr 3.1.5.p1-1
+mingw-w64-i686-ncurses 6.0.20170114-1
+mingw-w64-i686-openssl 1.0.2.k-1
+mingw-w64-i686-p11-kit 0.23.2-2
+mingw-w64-i686-pkg-config 0.29.1-2
+mingw-w64-i686-postgresql 9.5.2-1
+mingw-w64-i686-python2 2.7.13-1
+mingw-w64-i686-readline 7.0.003-1
+mingw-w64-i686-tcl 8.6.6-1
+mingw-w64-i686-termcap 1.3.1-2
+mingw-w64-i686-tk 8.6.6-1
+mingw-w64-i686-tools-git 5.0.0.4760.d3089b5-1
+mingw-w64-i686-windows-default-manifest 6.4-3
+mingw-w64-i686-winpthreads-git 5.0.0.4761.02bea78-1
+mingw-w64-i686-winstorecompat-git 5.0.0.4760.d3089b5-1
+mingw-w64-i686-xz 5.2.3-1
+mingw-w64-i686-zlib 1.2.11-1
+mintty 1~2.6.2-1
+mpfr 3.1.4-1
+msys2-keyring r9.397a52e-1
+msys2-launcher-git 0.3.32.56c2ba7-2
+msys2-runtime 2.6.0-1
+ncurses 6.0.20161001-1
+openssh 7.3p1-2
+openssl 1.0.2.j-1
+p11-kit 0.23.2-1
+pacman 5.0.1-1
+pacman-mirrors 20160112-1
+pactoys-git r2.07ca37f-1
+pax-git 20140703.2.1.g469552a-1
+pcre 8.38-1
+perl 5.22.1-1
+perl-Authen-SASL 2.16-2
+perl-Convert-BinHex 1.123-2
+perl-Encode-Locale 1.04-1
+perl-Error 0.17024-1
+perl-File-Listing 6.04-2
+perl-HTML-Parser 3.71-3
+perl-HTML-Tagset 3.20-2
+perl-HTTP-Cookies 6.01-2
+perl-HTTP-Daemon 6.01-2
+perl-HTTP-Date 6.02-2
+perl-HTTP-Message 6.06-2
+perl-HTTP-Negotiate 6.01-2
+perl-IO-Socket-SSL 2.016-1
+perl-IO-stringy 2.111-1
+perl-LWP-MediaTypes 6.02-2
+perl-MIME-tools 5.506-1
+perl-MailTools 2.14-1
+perl-Net-HTTP 6.09-1
+perl-Net-SMTP-SSL 1.02-1
+perl-Net-SSLeay 1.72-1
+perl-TermReadKey 2.33-1
+perl-TimeDate 2.30-2
+perl-URI 1.68-1
+perl-WWW-RobotRules 6.02-2
+perl-libwww 6.13-1
+pkgfile 15-1
+rebase 4.4.2-1
+sed 4.2.2-2
+tftp-hpa 5.2-1
+time 1.7-1
+ttyrec 1.0.8-1
+tzcode 2015.e-1
+util-linux 2.26.2-1
+vim 8.0.0237-1
+wget 1.18-1
+which 2.21-2
+winpty 0.4.2-1
+xz 5.2.2-1
+zlib 1.2.8-3
+</pre>

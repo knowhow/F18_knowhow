@@ -15,9 +15,9 @@ export HB_INSTALL_PREFIX=$HB_ROOT
 #export HB_WITH_MYSQL=c:\\mysql\\include
 #export HB_WITH_QT=c:\\Qt\\$QT_VER\\mingw$MINGW_VER\\include
 
-export MSYS2=c:\\msys32\\mingw32
+export MSYS2=c:\\msys64\\mingw32
 
-export PATH=/c/msys32/mingw32/bin:$HB_ROOT\\bin:$PATH
+export PATH=/c/msys64/mingw32/bin:$HB_ROOT\\bin:$PATH
 
 #export PATH=$MSYS2\\bin:$PATH
 export HB_WITH_PGSQL=$MSYS2\\include

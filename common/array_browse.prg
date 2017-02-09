@@ -10,11 +10,11 @@
  */
 
 
-#include "inkey.ch"
+#include "f18.ch"
 
 
-// This static maintains the "current row" for ABrowse()
-STATIC nRow
+
+STATIC s_nRow // This static maintains the "current row" for ABrowse()
 
 
 FUNCTION ABrowse( aArray, xw, yw, bUserF )
@@ -30,8 +30,8 @@ FUNCTION ABrowse( aArray, xw, yw, bUserF )
    nOldCursor := SetCursor( 0 )
 
    // Preserve static var (just in case), set it to 1
-   nOldNRow := nRow
-   nRow := 1
+   nOldNRow := s_nRow
+   s_nRow := 1
 
    nT := m_x + 1
    nL := m_y + 1
@@ -42,19 +42,19 @@ FUNCTION ABrowse( aArray, xw, yw, bUserF )
    // Create the TBrowse object
    TB := TBrowseNew( nT, nL, nB, nR )
 
-   // The "skip" block just adds to (or subtracts from) nRow
+   // The "skip" block just adds to (or subtracts from) s_nRow
    // (see ASkipTest() below)
    TB:SkipBlock := {| nSkip|                                             ;
-      nSkip := ASkipTest( aArray, nRow, nSkip ),   ;
-      nRow += nSkip,                             ;
+      nSkip := ASkipTest( aArray, s_nRow, nSkip ),   ;
+      s_nRow += nSkip,                             ;
       nSkip                                      ;
       }
 
-   // The "go top" block sets nRow to 1
-   TB:GoTopBlock := {|| nRow := 1 }
+   // The "go top" block sets s_nRow to 1
+   TB:GoTopBlock := {|| s_nRow := 1 }
 
-   // The "go bottom" block sets nRow to the length of the array
-   TB:GoBottomBlock := {|| nRow := Len( aArray ) }
+   // The "go bottom" block sets s_nRow to the length of the array
+   TB:GoBottomBlock := {|| s_nRow := Len( aArray ) }
 
    // Create column blocks and add TBColumn objects to the TBrowse
    // (see ABrowseBlock() below)
@@ -130,20 +130,18 @@ FUNCTION ABrowse( aArray, xw, yw, bUserF )
          ENDCASE
 
 
-
-
       ENDIF
 
    ENDDO
 
 
-   xRet := aArray[ nRow ]
+   xRet := aArray[ s_nRow ]
 
    // Restore cursor setting
    SetCursor( nOldCursor )
 
    // Restore static var
-   nRow := nOldNRow
+   s_nRow := nOldNRow
 
    RETURN ( xRet )
 
@@ -156,7 +154,7 @@ FUNCTION ABrowse( aArray, xw, yw, bUserF )
 *  ABrowseBlock( <a>, <x> ) -> bColumnBlock
 *  Service funkcija for ABrowse().
 *
-*  Return a set/get block for  <a>[nRow, <x>]
+*  Return a set/get block for  <a>[s_nRow, <x>]
 *
 *  This function works by returning a block that refers
 *  to local variables <a> and <x> (the parameters). In
@@ -165,13 +163,13 @@ FUNCTION ABrowse( aArray, xw, yw, bUserF )
 *  The result is that each call to ABrowseBlock() returns
 *  a block which has the passed values of <a> and <x> "bound"
 *  to it for later use. The block defined here also refers to
-*  the static variable nRow, used by ABrowse() to track the
+*  the static variable s_nRow, used by ABrowse() to track the
 *  array's "current row" while browsing.
 *
 */
 
 STATIC FUNCTION ABrowseBlock( a, x )
-   RETURN ( {| p| IF( PCount() == 0, a[ nRow, x ], a[ nRow, x ] := p ) } )
+   RETURN ( {| p| IF( PCount() == 0, a[ s_nRow, x ], a[ s_nRow, x ] := p ) } )
 
 
 //
@@ -238,7 +236,7 @@ FUNCTION ABlock( cName, nSubx )
 
 
 FUNCTION ABrowRow()
-   RETURN nRow
+   RETURN s_nRow
 
 
 
@@ -380,8 +378,8 @@ FUNCTION MABrowse( aArray, nT, nL, nB, nR )
    nOldCursor := SetCursor( 0 )
 
    // Preserve static var (just in case), set it to 1
-   nOldNRow := nRow
-   nRow := 1
+   nOldNRow := s_nRow
+   s_nRow := 1
 
    // Handle omitted parameters
    nT := IF( nT == NIL, 0, nT )
@@ -392,19 +390,19 @@ FUNCTION MABrowse( aArray, nT, nL, nB, nR )
    // Create the TBrowse object
    o := TBrowseNew( nT + 1, nL + 1, nB -1, nR -1 )
 
-   // The "skip" block just adds to (or subtracts from) nRow
+   // The "skip" block just adds to (or subtracts from) s_nRow
    // (see ASkipTest() below)
    o:SkipBlock := {| nSkip|                                             ;
-      nSkip := ASkipTest( aArray, nRow, nSkip ),   ;
-      nRow += nSkip,                             ;
+      nSkip := ASkipTest( aArray, s_nRow, nSkip ),   ;
+      s_nRow += nSkip,                             ;
       nSkip                                      ;
       }
 
-   // The "go top" block sets nRow to 1
-   o:GoTopBlock := {|| nRow := 1 }
+   // The "go top" block sets s_nRow to 1
+   o:GoTopBlock := {|| s_nRow := 1 }
 
-   // The "go bottom" block sets nRow to the length of the array
-   o:GoBottomBlock := {|| nRow := Len( aArray ) }
+   // The "go bottom" block sets s_nRow to the length of the array
+   o:GoBottomBlock := {|| s_nRow := Len( aArray ) }
 
    // Create column blocks and add TBColumn objects to the TBrowse
    // (see ABrowseBlock() below)
@@ -471,7 +469,7 @@ FUNCTION MABrowse( aArray, nT, nL, nB, nR )
    SetCursor( nOldCursor )
 
    // Restore static var
-   nRow := nOldNRow
+   s_nRow := nOldNRow
 
    RETURN ( nTekuciRed )
 

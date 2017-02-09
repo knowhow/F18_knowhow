@@ -55,18 +55,18 @@ METHOD CsvReader:read()
 
    LOCAL _ok := .F.
 
-   if ::struct == NIL
+   IF ::STRUCT == NIL
       MsgBeep( "Struktura zaboravljena !" )
       RETURN _ok
    ENDIF
 
-   if ::csvname == NIL
+   IF ::csvname == NIL
       MsgBeep( "A koji fajl da importujem ???" )
       RETURN _ok
    ENDIF
 
-   if ::delimiter == NIL
-      ::delimiter := ";"
+   IF ::DELIMITER == NIL
+      ::DELIMITER := ";"
    ENDIF
 
 

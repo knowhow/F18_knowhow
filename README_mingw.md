@@ -2,12 +2,12 @@
 
 Install:
 
-   pacman -Sy  git mingw-w64-i686-toolchain mingw-w64-i686-make mingw-w64-i686-postgresql
+     pacman -Sy  git mingw-w64-i686-toolchain mingw-w64-i686-make mingw-w64-i686-postgresql
 
 Komande:
 
-   # mingw32-make --version
-   # gcc --version
+      # mingw32-make --version
+      # gcc --version
 
 
 ## Instalirani paketi

@@ -203,7 +203,7 @@ FUNCTION get_file_list_array( cPath, cFilter, cFile, lSilent )
 
 
 
-FUNCTION preduzece()
+FUNCTION self_organizacija_print()
 
    LOCAL _t_arr := Select()
 

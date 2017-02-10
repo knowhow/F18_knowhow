@@ -23,7 +23,7 @@ STATIC nZaok
 STATIC nZaok2
 STATIC cIdTar
 STATIC cIdPart
-STATIC cOpis
+STATIC s_cOpis
 
 // kategorija partnera
 // 1-pdv obv
@@ -89,7 +89,7 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
          cKatP := kat_p
          cKatP2 := kat_p_2
 
-         cOpis := naz
+         s_cOpis := sg_kif->naz
          cRazbDan := razb_dan
          cSBrDok := s_br_dok
 
@@ -119,8 +119,8 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
          nZaok := zaok
          nZaok2 := zaok2
 
-         // za jednu shema gen stavku formiraj kif
-         gen_fakt_kif_item( cSezona )
+
+         gen_fakt_kif_item( cSezona )  // za jednu shema gen stavku formiraj kif
 
       ENDIF
 
@@ -208,7 +208,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
          // datum kif-a
          _datum := fakt->datdok
          _id_part := fakt->idpartner
-         _opis := cOpis
+         _opis := s_cOpis
 
          // ispitati partnera koji stoji na fakt dokumentu
          lOslPoClanu := is_part_pdv_oslob_po_clanu( _id_part )

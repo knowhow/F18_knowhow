@@ -237,7 +237,7 @@ FUNCTION rekap_finansijsko_stanje_magacin()
 // zaglavlje izvjestaja rekap.fin.stanja
 FUNCTION Zaglrekap_finansijsko_stanje_magacin()
 
-   Preduzece()
+   self_organizacija_print()
    P_12CPI
    select_o_konto( cIdKonto )
    ?? Space( 60 ), " DATUM "

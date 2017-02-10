@@ -523,7 +523,7 @@ STATIC FUNCTION Zagl()
 
    select_o_konto( cIdKonto )
 
-   Preduzece()
+   self_organizacija_print()
    P_12CPI
    ?? "KARTICA PRODAVNICA za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
    IspisNaDan( 10 )
@@ -656,7 +656,7 @@ FUNCTION naprometniji_artikli_prodavnica()
 
    START PRINT CRET
    ?
-   Preduzece()
+   self_organizacija_print()
    ?? "Najprometniji artikli za period", ddat0, "-", ddat1
    ?U "Obuhvaćene prodavnice:", iif( Empty( qqKonto ), "SVE", "'" + Trim( qqKonto ) + "'" )
    ?U "Obuhvaćeni artikli   :", iif( Empty( qqRoba ), "SVI", "'" + Trim( qqRoba ) + "'" )

@@ -1074,7 +1074,7 @@ FUNCTION Zagllager_lista_magacin()
 
    LOCAL nTArea := Select()
 
-   Preduzece()
+   self_organizacija_print()
 
    P_COND2
 

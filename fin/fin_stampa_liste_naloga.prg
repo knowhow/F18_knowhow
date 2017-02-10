@@ -129,7 +129,6 @@ FUNCTION fin_stampa_liste_naloga()
 
    DO WHILE !Eof()
 
-
       IF !Empty( cIdVN ) .AND. idvn <> cIDVN
          SKIP
          LOOP
@@ -239,10 +238,10 @@ FUNCTION fin_stampa_liste_naloga()
 
 STATIC FUNCTION zagl( nBrNalLen, cInteg )
 
-   zagl_organizacija( PRINT_LEFT_SPACE )
-
+   zagl_organizacija_print( PRINT_LEFT_SPACE )
    ? m
-   ?U Space( PRINT_LEFT_SPACE ) + "* R.br *FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAŽUJE   *" + iif( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
+   ?UPDF Space( PRINT_LEFT_SPACE ) + "* R.br *FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAŽUJE   *" + iif( fin_dvovalutno(), "   DUGUJE   * POTRAŽUJE *", "" )
+
 
    IF FieldPos( "SIFRA" ) <> 0
       ?? "  OP. *"

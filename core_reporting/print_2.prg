@@ -64,7 +64,6 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
 
    MsgO( "Priprema " + iif( cOpt == "PDF", "PDF", "tekst" ) + " izvještaja ..." )
 
-
    LOG_CALL_STACK cLogMsg
    SetPRC( 0, 0 )
    SET CONSOLE OFF
@@ -78,7 +77,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
    IF cOpt != "PDF"
       GpIni( cDocumentName )
    ELSE
-      hb_cdpSelect( "SLWIN" )
+      //hb_cdpSelect( "SLWIN" )
       oPDF := xPrintOpt[ "opdf" ]
       oPDF:cFileName := txt_print_file_name()
       oPDF:cHeader := cDocumentName
@@ -210,8 +209,7 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
       oPDF:End()
 
       oPDF:View()
-      hb_cdpSelect( "SL852" )
-      hb_SetTermCP( "SLISO" )
+      //hb_cdpSelect( "SL852" )
 
 
 
@@ -406,7 +404,7 @@ FUNCTION gpPicH( nRows )
 
    IF nRows > 0
       cPom := PadL( AllTrim( Str( nRows ) ), 2, "0" )
-  
+
       QQOut( "#%PH0" + cPom + "#" )
    ENDIF
 

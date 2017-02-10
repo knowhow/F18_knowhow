@@ -22,7 +22,7 @@ STATIC nZaok2
 STATIC cIdTar
 STATIC cIdPart
 STATIC cSBRdok
-STATIC cOpis
+STATIC s_cOpis
 
 // kategorija partnera
 // 1-pdv obv
@@ -84,7 +84,7 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
          cKatP := kat_p
          cKatP2 := kat_p_2
 
-         cOpis := naz
+         s_cOpis := sg_kif->naz
 
          cRazbDan := razb_dan
 
@@ -249,12 +249,12 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
          // datum kif-a
          _datum := suban->datdok
          _id_part := suban->idpartner
-         _opis := cOpis
+         //_opis := s_cOpis
 
          // ##opis## je djoker - zamjenjuje se sa opisom koji se nalazi u
          // stavci
          cOpisSuban := AllTrim( suban->opis )
-         _opis := StrTran( _opis, "##opis##", cOpisSuban )
+         _opis := StrTran( s_cOpis, "##opis##", cOpisSuban )
 
          IF !Empty( cIdPart )
             IF ( AllTrim( Upper( cIdPart ) ) == "#TD#" )

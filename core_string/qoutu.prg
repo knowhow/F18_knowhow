@@ -53,3 +53,63 @@ FUNCTION QQOutU( ... )
    NEXT
 
    RETURN NIL
+
+
+
+
+/*
+     cVarijanta 1 - SL852 -> SLWIN
+                2 - UTF8 -> SLWIN
+*/
+
+FUNCTION QOutPdF( cVarijanta, ... )
+
+   LOCAL nI, cTmp
+   LOCAL cCodePageIn := CODE_PAGE_TERMINAL, cCodePageOut := CODE_PAGE_PDF
+
+   IF PCount() == 0
+      QOut()
+      RETURN NIL
+   ENDIF
+
+   IF cVarijanta == "2"
+      cCodePageIn := "UTF8"
+   ENDIF
+
+   QOut( hb_Translate( hb_PValue( 2 ), cCodePageIn, cCodePageOut ) )
+   FOR  nI := 3 TO PCount()
+
+      QQOut( " " )
+      cTmp := hb_PValue( nI )
+      IF ValType( cTmp ) != "C"
+         QQOut( cTmp )
+      ELSE
+         QQOut( hb_Translate( cTmp,  cCodePageIn, cCodePageOut ) )
+      ENDIF
+   NEXT
+
+   RETURN NIL
+
+
+FUNCTION QQOutPDF( cVarijanta, ... )
+
+   LOCAL nI, cTmp
+   LOCAL cCodePageIn := CODE_PAGE_TERMINAL, cCodePageOut := CODE_PAGE_PDF
+
+   IF cVarijanta == "2"
+      cCodePageIn := "UTF8"
+   ENDIF
+
+   FOR  nI := 2 TO PCount()
+      cTmp := hb_PValue( nI )
+      IF ValType( cTmp ) != "C"
+         QQOut( cTmp )
+      ELSE
+         QQOut( hb_Translate( cTmp, cCodePageIn, cCodePageOut ) )
+      ENDIF
+      IF nI > 2 .AND. nI < PCount()
+         QQOut( " " )
+      ENDIF
+   NEXT
+
+   RETURN NIL

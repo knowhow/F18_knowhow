@@ -396,7 +396,7 @@ FUNCTION finansijsko_stanje_magacin()
 
 STATIC FUNCTION Zaglfinansijsko_stanje_magacin()
 
-   Preduzece()
+   self_organizacija_print()
 
    IF cPapir == "2"
       P_COND2

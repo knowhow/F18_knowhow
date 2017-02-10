@@ -362,7 +362,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
 // zaglavlje izvjestaja
 FUNCTION ZaglRfinansijsko_stanje_prodavnica()
 
-   Preduzece()
+   self_organizacija_print()
    P_12CPI
    select_o_konto( cIdKonto )
 

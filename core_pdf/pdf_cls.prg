@@ -3,7 +3,7 @@
 // http://www.harbourdoc.com.br/show.asp?seek=description&key=PDFClass
 
 STATIC s_font := "Courier"
-STATIC s_codePage := "CP1250"
+STATIC s_codePage := HARUPDF_CODE_PAGE
 
 CREATE CLASS PDFClass
 
@@ -59,10 +59,13 @@ METHOD BEGIN() CLASS PDFClass
          ::cFileName := MyTempFile( "PDF" )
       ENDIF
       ::oPdf := HPDF_New()
-      HPDF_SetCompressionMode( ::oPdf, HPDF_COMP_ALL )
-      IF ::cCodePage != NIL
-         HPDF_SetCurrentEncoder( ::oPDF, ::cCodePage )
-      ENDIF
+
+   ENDIF
+
+   HPDF_SetCompressionMode( ::oPdf, HPDF_COMP_ALL )
+   //HPDF_UseUTFEncodings( ::oPdf )
+   IF ::cCodePage != NIL
+      HPDF_SetCurrentEncoder( ::oPDF, ::cCodePage )
    ENDIF
 
    RETURN NIL
@@ -79,7 +82,9 @@ METHOD END() CLASS PDFClass
       IF File( ::cFileName )
          FErase( ::cFileName )
       ENDIF
-      HPDF_SaveToFile( ::oPdf, ::cFileName )
+      IF HPDF_SaveToFile( ::oPdf, ::cFileName )  != HPDF_OK
+         MsgBeep( "Error HBPDF_SaveFile: " + ::cFileName )
+      ENDIF
       HPDF_Free( ::oPdf )
 
    ENDIF
@@ -141,10 +146,12 @@ METHOD SetLeftSpace( nLeft ) CLASS PDFClass
 
 METHOD AddPage() CLASS PDFClass
 
+   LOCAL cCp := ::cCodePage
+
    IF ! ( ::nType == PDF_TXT_PORTRAIT .OR. ::nType == PDF_TXT_LANDSCAPE )
       ::oPage := HPDF_AddPage( ::oPdf )
       HPDF_Page_SetSize( ::oPage, HPDF_PAGE_SIZE_A4, iif( ::nType == PDF_PORTRAIT, HPDF_PAGE_PORTRAIT, HPDF_PAGE_LANDSCAPE ) )
-      HPDF_Page_SetFontAndSize( ::oPage, HPDF_GetFont( ::oPdf, ::cFontName, ::cCodePage ), ::nFontSize )
+      HPDF_Page_SetFontAndSize( ::oPage, HPDF_GetFont( ::oPdf, ::cFontName, cCP ), ::nFontSize )
    ENDIF
    ::nRow := 0
 
@@ -163,6 +170,7 @@ METHOD Cancel() CLASS PDFClass
 METHOD DrawText( nRow, nCol, xValue, cPicture, nFontSize, cFontName, nAngle, anRGB ) CLASS PDFClass
 
    LOCAL nRadian, cTexto
+   LOCAL cCp := ::cCodePage
 
    nFontSize := iif( nFontSize == NIL, ::nFontSize, nFontSize )
    cFontName := iif( cFontName == NIL, ::cFontName, cFontName )
@@ -180,7 +188,7 @@ METHOD DrawText( nRow, nCol, xValue, cPicture, nFontSize, cFontName, nAngle, anR
    ELSE
       nRow := ::RowToPDFRow( nRow )
       nCol := ::ColToPDFCol( nCol )
-      HPDF_Page_SetFontAndSize( ::oPage, HPDF_GetFont( ::oPdf, cFontName, ::cCodePage ), nFontSize )
+      HPDF_Page_SetFontAndSize( ::oPage, HPDF_GetFont( ::oPdf, cFontName, cCp ), nFontSize )
       IF anRGB != NIL
          HPDF_Page_SetRGBFill( ::Page, anRGB[ 1 ], anRGB[ 2 ], anRGB[ 3 ] )
          HPDF_Page_SetRGBStroke( ::Page, anRGB[ 1 ], anRGB[ 2 ], anRGB[ 3 ] )

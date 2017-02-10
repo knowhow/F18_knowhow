@@ -12,11 +12,13 @@
 #include "f18.ch"
 
 
-FUNCTION zagl_organizacija( nLeft )
+FUNCTION zagl_organizacija_print( nLeft )
 
+   //LOCAL cCdp := hb_cdpSelect()
    ? " "
-   ? Space( nLeft ) + AllTrim( tip_organizacije() ) + " :", AllTrim( self_organizacija_naziv() ) + ", baza (" + my_server_params()[ "database" ] + ")"
+   ?PDF Space( nLeft ) + AllTrim( tip_organizacije() ) + " :", AllTrim( self_organizacija_naziv() ) + ", baza (" + my_server_params()[ "database" ] + ")"
    ? " "
+   //hb_cdpSelect( cCdP )
 
    RETURN .T.
 

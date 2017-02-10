@@ -23,7 +23,7 @@ STATIC cIdTar
 STATIC cIdPart
 // setuj broj dokumenta
 STATIC cSBRdok
-STATIC cOpis
+STATIC s_cOpis
 
 // kategorija partnera
 // 1-pdv obv
@@ -75,20 +75,17 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
 
       IF g_src_modul( src ) == "FIN"
 
-         cTdSrc := td_src
+         cTdSrc := sg_kuf->td_src
 
+         cIdTar := sg_kuf->s_id_tar // set id tarifu u kuf dokumentu
+         cIdPart := sg_kuf->s_id_part
 
-         cIdTar := s_id_tar // set id tarifu u kuf dokumentu
-         cIdPart := s_id_part
+         cKatP := sg_kuf->kat_p
+         cKatP2 := sg_kuf->kat_p_2
 
-         cKatP := kat_p
-         cKatP2 := kat_p_2
-
-         cOpis := naz
+         s_cOpis := sg_kuf->naz
 
          cRazbDan := razb_dan
-
-
          cSBRdok := s_br_dok // setuj broj dokumenta
 
          PRIVATE cFormBPdv := form_b_pdv
@@ -131,8 +128,8 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
          nZaok := zaok
          nZaok2 := zaok2
 
-         // za jednu shema gen stavku formiraj kuf
-         gen_fin_kuf_item( cSezona )
+
+         gen_fin_kuf_item( cSezona ) // za jednu shema gen stavku formiraj kuf
 
       ENDIF
 
@@ -237,8 +234,9 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          _id_part := suban->idpartner
          // ##opis## je djoker - zamjenjuje se sa opisom koji se nalazi u
          // stavci
+         altd()
          cOpisSuban := AllTrim( suban->opis )
-         _opis := StrTran( _opis, "##opis##", cOpisSuban )
+         _opis := StrTran( s_cOpis, "##opis##", cOpisSuban )
 
          IF !Empty( cIdPart )
             IF ( AllTrim( Upper( cIdPart ) ) == "#TD#" )

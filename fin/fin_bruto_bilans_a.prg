@@ -487,7 +487,7 @@ METHOD FinBrutoBilans:set_txt_lines()
 
 METHOD FinBrutoBilans:zaglavlje_txt()
 
-   Preduzece()
+   self_organizacija_print()
 
    P_COND2
 

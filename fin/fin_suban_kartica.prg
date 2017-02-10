@@ -344,8 +344,6 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    CistiK1k4()
 
-   AltD()
-
    cFilter := ".t."
 
    IF !Empty( cUslovIdVn )
@@ -1098,7 +1096,7 @@ FUNCTION zagl_suban_kartica( cBrza )
       c1K1z := "N"
    ENDIF
 
-   Preduzece()
+   self_organizacija_print()
    IF cDinDem == "3"  .OR. cKumul == "2"
       P_COND2
    ELSE

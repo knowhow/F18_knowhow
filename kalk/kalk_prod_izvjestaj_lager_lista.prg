@@ -709,7 +709,7 @@ FUNCTION ZaglLLP( lSint )
       lSint := .F.
    ENDIF
 
-   Preduzece()
+   self_organizacija_print()
    P_COND
    ?? "KALK: LAGER LISTA  PRODAVNICA ZA PERIOD", dDatOd, "-", dDatDo, " NA DAN "
    ?? Date(), Space( 12 ), "Str:", Str( ++nTStrana, 3 )

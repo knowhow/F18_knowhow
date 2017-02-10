@@ -1158,7 +1158,7 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, data_type )
 
    _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "log;"
 
-   // ako je potrebno brisati sve onda dodaj i sljedece...
+   // ako je potrebno brisati sve onda dodaj i sljedece
    IF data_type > 1
 
       _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_os;"

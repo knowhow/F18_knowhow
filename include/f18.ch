@@ -63,6 +63,10 @@
 #define F18_DBF_ENCODING   "CP852"
 #define F18_SQL_ENCODING   "CP852"
 
+#define CODE_PAGE_TERMINAL "SL852"
+#define CODE_PAGE_PDF "SLWIN"
+#define HARUPDF_CODE_PAGE "CP1250"
+
 #define MAX_THREAD_COUNT 7
 #define MIN_LAST_REFRESH_SEC 10
 
@@ -193,6 +197,13 @@
 
 #command ?U  [<explist,...>]         => QOutU( <explist> )
 #command ??U [<explist,...>]         => QQOutU( <explist> )
+
+#command ?PDF  [<explist,...>]         => QOutPDF( "1", <explist> )
+#command ??PDF [<explist,...>]         => QQOutPDF( "1", <explist> )
+
+#command ?UPDF  [<explist,...>]         => QOutPDF( "2", <explist> )
+#command ??UPDF [<explist,...>]         => QQOutPDF( "2", <explist> )
+
 #translate _ue( <arg> )              => hb_UTF8ToStr( <arg> )
 
 #command RREPLACE <f1> WITH <v1> [, <fN> WITH <vN> ]    ;

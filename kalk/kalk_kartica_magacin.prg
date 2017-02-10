@@ -774,7 +774,7 @@ STATIC FUNCTION zagl_mag_kart()
 
    ?
 
-   Preduzece()
+   self_organizacija_print()
    P_12CPI
 
    ?? "KARTICA MAGACIN za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )

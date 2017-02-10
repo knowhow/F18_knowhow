@@ -24,15 +24,13 @@ FUNCTION harbour_init()
 
    f18_init_threads()
 
-//altd()
+   Set( _SET_OSCODEPAGE, hb_cdpOS() )
 
-SET( _SET_OSCODEPAGE, hb_cdpOS() )
-
-//? SET( _SET_OSCODEPAGE )
+// ? SET( _SET_OSCODEPAGE )
 
 
-   hb_cdpSelect( "SL852" )
-   //hb_SetTermCP( "SLISO" )
+   hb_cdpSelect( CODE_PAGE_TERMINAL )
+   // hb_SetTermCP( "SLISO" )
 
 
 

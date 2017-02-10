@@ -177,7 +177,7 @@ FUNCTION Obraz19()
 
    START PRINT CRET
    ?
-   Preduzece()
+   self_organizacija_print()
 
    P_10CPI
    B_ON

@@ -214,7 +214,7 @@ FUNCTION kalk_stampa_dok_10()
 
 STATIC FUNCTION zagl()
 
-   zagl_organizacija( PRINT_LEFT_SPACE )
+   zagl_organizacija_print( PRINT_LEFT_SPACE )
 
    select_o_konto( cIdPartner )
    ?U  Space( PRINT_LEFT_SPACE ) + "DOBAVLJAČ:", cIdPartner, "-", Trim( field->naz ), Space( 5 ), "Faktura Br:", cBrFaktP, "Datum:", dDatFaktP

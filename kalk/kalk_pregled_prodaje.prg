@@ -192,7 +192,7 @@ FUNCTION roba_pregled_prodaje_po_grupama()
    START PRINT CRET
    ?
 
-   Preduzece( 0 )
+   self_organizacija_print()
    ?
    ? "Izvjestaj o prodaji" + IF( cMPVP == "M", " (samo u maloprodaji)", IF( cMPVP == "V", " (samo u veleprodaji)", "" ) ) + " za period od", dOd, "do", dDo
    ?

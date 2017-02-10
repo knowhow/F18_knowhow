@@ -98,7 +98,7 @@ FUNCTION RekMagTar()
    DO WHILE !Eof() .AND. IspitajPrekid()
       B := 0
       cIdFirma := KALK->IdFirma
-      Preduzece()
+      self_organizacija_print()
       P_COND
       ? "KALK: REKAPITULACIJA PROMETA PO TARIFAMA ZA PERIOD OD", dDat1, "DO", dDAt2, "      NA DAN:", Date()
 

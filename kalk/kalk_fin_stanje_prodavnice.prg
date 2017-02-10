@@ -346,7 +346,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 FUNCTION Zaglfinansijsko_stanje_prodavnica( dDatOd, dDatDo )
 
    select_o_konto( cIdKonto )
-   Preduzece()
+   self_organizacija_print()
 
    // IF Val( gFPicDem ) > 0
    // P_COND2

@@ -1040,7 +1040,7 @@ FUNCTION st_pr_cijena( cFirma, cIdTip, cBrDok, cPodvuceno, cProred )
 
    ?
 
-   Preduzece()
+   self_organizacija_print()
 
    P_10CPI
    B_ON

@@ -285,7 +285,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
 
 FUNCTION ZaglPGP()
 
-   Preduzece()
+   self_organizacija_print()
 
    P_12CPI
 

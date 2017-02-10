@@ -321,7 +321,7 @@ FUNCTION Zaglsint_lager_lista_prodavnice( lSint )
       lSint := .F.
    ENDIF
 
-   Preduzece()
+   self_organizacija_print()
 
    P_COND
 

@@ -147,7 +147,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
          ENDIF
 
          IF !pdf_kalk_dokument( cIdVd )
-            Preduzece()
+            self_organizacija_print()
          ENDIF
 
          IF cIdVD == "10"

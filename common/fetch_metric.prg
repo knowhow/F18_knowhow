@@ -64,7 +64,7 @@ FUNCTION fetch_metric( cSection, cUser, xDefaultValue )
       xRet := xDefaultValue
    ELSE
 
-      xRet := str_to_val( cField, xDefaultValue )
+      xRet := str_to_val( cField, xDefaultValue ) // uvijek cp852 kodirano
       s_hParametri[ cSection ] :=  xRet
    ENDIF
 
@@ -104,7 +104,7 @@ FUNCTION set_metric( cSection, cUser, xValue )
 
    LOCAL oQry
    LOCAL cQuery
-   LOCAL _val
+   LOCAL cValue
 
    IF cUser != NIL
       IF cUser == "<>"
@@ -115,10 +115,10 @@ FUNCTION set_metric( cSection, cUser, xValue )
    ENDIF
 
    SET CENTURY ON
-   _val := hb_ValToStr( xValue )
+   cValue := hb_ValToStr( xValue )
    SET CENTURY OFF
 
-   cQuery := "SELECT " + F18_PSQL_SCHEMA + ".setmetric(" + sql_quote( cSection ) + "," + sql_quote( _val ) +  ")"
+   cQuery := "SELECT " + F18_PSQL_SCHEMA + ".setmetric(" + sql_quote( cSection ) + "," + sql_quote( cValue ) +  ")"
    oQry := run_sql_query( cQuery )
    IF sql_error_in_query( oQry, "SELECT" )
       RETURN .F.

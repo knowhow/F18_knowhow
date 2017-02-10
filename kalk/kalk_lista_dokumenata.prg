@@ -167,7 +167,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
    START PRINT CRET
    ?
 
-   Preduzece()
+   self_organizacija_print()
 
    IF gDuzKonto > 7
       P_COND2

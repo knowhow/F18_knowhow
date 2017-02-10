@@ -55,7 +55,7 @@ FUNCTION sql_quote( xVar )
 
    IF ValType( xVar ) == "C"
       cOut := StrTran( xVar, "'", "''" )
-      cOut := "'" + hb_StrToUTF8( cOut ) + "'"
+      cOut := "'" + hb_StrToUTF8( cOut ) + "'" // uvijek se na server salje UTF-8
    ELSEIF ValType( xVar ) == "D"
       IF xVar == CToD( "" )
          //cOut := "'1000-01-01'"

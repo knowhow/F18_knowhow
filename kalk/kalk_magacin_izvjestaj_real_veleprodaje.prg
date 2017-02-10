@@ -378,7 +378,7 @@ FUNCTION kalk_zagl_real_partnera( fTabela )
       ftabela := .T.
    ENDIF
 
-   Preduzece()
+   self_organizacija_print()
    P_12CPI
 
    SET CENTURY ON

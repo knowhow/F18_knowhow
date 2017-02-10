@@ -251,8 +251,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, per_
 
       _svrha_placanja := AllTrim( field->id )
 
-      SELECT vrprim
-      HSEEK ldvirm->id
+      o_vrprim( ldvirm->id )
 
       select_o_partner( gVirmFirma )
 
@@ -653,11 +652,7 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
 
 STATIC FUNCTION virm_o_tables()
 
-   SELECT ( F_BANKE )
-   IF !Used()
-      o_banke()
-   ENDIF
-
+   o_banke()
    select_o_jprih()
 
    SELECT ( F_SIFK )
@@ -678,15 +673,8 @@ STATIC FUNCTION virm_o_tables()
    select_o_rekld()
    select_o_partner()
 
-   SELECT ( F_VRPRIM )
-   IF !Used()
-      o_vrprim()
-   ENDIF
+   o_ldvirm()
 
-   SELECT ( F_LDVIRM )
-   IF !Used()
-      o_ldvirm()
-   ENDIF
 
    SELECT ( F_VIPRIPR )
    IF !Used()

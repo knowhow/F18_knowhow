@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION cre_all_virm_sif( ver )
 
    LOCAL aDbf

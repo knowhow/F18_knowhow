@@ -37,17 +37,17 @@ FUNCTION set_a_dbfs()
    set_a_dbf_sifk_sifv()
    set_a_dbf_temporary()
 
-   // IF f18_use_module( "fin" )
-   set_a_dbf_fin()
-   // ENDIF
+   IF f18_use_module( "fin" )
+      set_a_dbf_fin()
+   ENDIF
 
-   // IF f18_use_module( "kalk" )
-   set_a_dbf_kalk()
-   // ENDIF
+   IF f18_use_module( "kalk" )
+      set_a_dbf_kalk()
+   ENDIF
 
-   // IF f18_use_module( "fakt" )
-   set_a_dbf_fakt()
-   // ENDIF
+   IF f18_use_module( "fakt" )
+      set_a_dbf_fakt()
+   ENDIF
 
    IF f18_use_module( "ld" )
       set_a_dbf_ld()
@@ -438,7 +438,7 @@ FUNCTION dbf_alias_has_semaphore( ALIAS )
    RETURN _ret
 
 
-FUNCTION imaju_unchecked_sifarnici()
+FUNCTION imaju_nesinhronizovani_sifarnici()
 
    LOCAL cKey, lSql, lSif, lChk0
    LOCAL cDatabase := my_database()
@@ -470,9 +470,10 @@ FUNCTION imaju_unchecked_sifarnici()
       ENDIF
 
       IF !lSQl .AND. !lChk0 .AND. lSif
-#ifdef F18_DEBUG_SYNC
+// #ifdef F18_DEBUG_SYNC
          ?E "UUUUUUUUUUU unchecked sif", cDatabase, cKey, "chk0", lChk0, "sif", lSif, "sql", lSql
-#endif
+// #endif
+         info_bar( "sync", "nesinhroniziran sifarnik:" + cDatabase + " / " + cKey )
          RETURN .T.
       ENDIF
    NEXT

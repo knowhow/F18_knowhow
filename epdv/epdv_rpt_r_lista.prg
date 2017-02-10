@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -19,7 +19,7 @@ static aZagl:={}
 static lSvakaHeader := .f.
 
 // datumski opseg
-static dDatOd 
+static dDatOd
 static dDatDo
 
 // report area
@@ -66,15 +66,15 @@ nX:=1
 Box(, 8, 60)
   @ m_x+nX, m_y+2 SAY "Period"
   nX++
-  
+
   @ m_x+nX, m_y+2 SAY "od " GET dDatOd
   @ m_x+nX, col()+2 SAY "do " GET dDatDo
-  
+
   nX += 2
-  
-  @ m_x+nX, m_y+2 SAY REPLICATE("-", 30) 
+
+  @ m_x+nX, m_y+2 SAY REPLICATE("-", 30)
   nX++
-  
+
   READ
 BoxC()
 
@@ -148,11 +148,9 @@ cre_r_tbl()
 
 if (nRArea == F_R_KUF)
 	O_R_KUF
-	
-	SELECT (F_KUF)
-	if !used()
-		O_KUF
-	endif
+
+
+	select_o_epdv_kuf()
 	SET ORDER TO TAG "br_dok"
 
 else
@@ -171,7 +169,7 @@ endif
 SELECT (nKArea)
 // datum azuriranja
 
-PRIVATE cFilter := dbf_quote(dDatOd) + " <= datum_2 .and. " + dbf_quote(dDatDo) + ">= datum_2" 
+PRIVATE cFilter := dbf_quote(dDatOd) + " <= datum_2 .and. " + dbf_quote(dDatDo) + ">= datum_2"
 
 SET FILTER TO &cFilter
 
@@ -207,11 +205,11 @@ do while !eof() .and. br_dok == cBrDok
 	if dDMax < datum
 		dDMax := datum
 	endif
-	
+
 	nBPdv += i_b_pdv
 	nPdv += i_pdv
 	dDatAz := datum_2
-	
+
 	skip
 enddo
 
@@ -263,34 +261,34 @@ nRbr := 0
 nBPdv := 0
 nPdv :=  0
 do while !eof()
-  
+
    ++ nCurrLine
 
    ?
    // broj dokumenta
-   ?? PADL( br_dok, aZaglLen[1]) 
+   ?? PADL( br_dok, aZaglLen[1])
    ?? " "
-   
+
    // datum azuriranja
    ?? PADL( dat_az, aZaglLen[2])
    ?? " "
-   
+
    // datum dokumenta min
    ?? PADL( d_d_min, aZaglLen[3])
    ?? " "
-   
+
    // datum dokumenta max
    ?? PADL( d_d_max, aZaglLen[3])
    ?? " "
-  
+
    // bez pdv
    ?? TRANSFORM( i_b_pdv,  PIC_IZN() )
    ?? " "
-   
+
    // pdv
    ?? TRANSFORM( i_pdv,  PIC_IZN() )
    ?? " "
-   
+
    // sa pdv
    ?? TRANSFORM( i_b_pdv + i_pdv,  PIC_IZN() )
    ?? " "
@@ -298,21 +296,21 @@ do while !eof()
 
    nBPdv += i_b_pdv
    nPdv += i_pdv
-   
+
    if nCurrLine > nPageLimit
    	FF
 	nCurrLine:=0
 	if lSvakaHeader
 		r_zagl()
 	endif
-		
+
    endif
-   
+
    SKIP
-   
+
 enddo
 
-if (nCurrLine+3) > nPageLimit 
+if (nCurrLine+3) > nPageLimit
   FF
   nCurrLine:=0
   if lSvakaHeader
@@ -334,9 +332,9 @@ cPom := "U K U P N O :"
 ?? " "
 
 ?? TRANSFORM( nBPdv + nPdv  , PIC_IZN() )
-  
+
 r_linija()
-  
+
 
 FF
 ENDPRINT
@@ -366,13 +364,13 @@ for i:=1 to LEN(aZagl)
  for nCol:=1 to LEN(aZaglLen)
   	// mergirana kolona ovako izgleda
 	// "#3 Zauzimam tri kolone"
- 	if LEFT(aZagl[i, nCol],1) = "#" 
-	  
+ 	if LEFT(aZagl[i, nCol],1) = "#"
+
 	  nMergirano := VAL( SUBSTR(aZagl[i, nCol], 2, 1 ) )
 	  cPom := SUBSTR(aZagl[i,nCol], 3, LEN(aZagl[i,nCol])-2)
 	  nMrgWidth := 0
-	  for nMrg:=1 to nMergirano 
-	  	nMrgWidth += aZaglLen[nCol+nMrg-1] 
+	  for nMrg:=1 to nMergirano
+	  	nMrgWidth += aZaglLen[nCol+nMrg-1]
 		nMrgWidth ++
 	  next
 	  ?? PADC(cPom, nMrgWidth)
@@ -402,4 +400,3 @@ next
 
 return
 *}
-

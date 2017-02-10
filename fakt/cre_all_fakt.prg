@@ -254,7 +254,6 @@ FUNCTION cre_all_fakt( ver )
    _table_name := "fakt_ftxt"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "ID", "ID", _alias )
    AFTER_CREATE_INDEX
 

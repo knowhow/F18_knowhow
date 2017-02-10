@@ -200,7 +200,7 @@
 // modul EPDV
 #xcommand O_P_KUF     => select (F_P_KUF);   my_usex ("p_kuf") ; set order to tag "r_br"
 #xcommand O_P_KIF     => select (F_P_KIF);   my_usex ("p_kif") ; set order to tag "r_br"
-#xcommand O_KUF     => select (F_KUF);   my_use ("kuf") ; set order to tag "datum"
+
 #xcommand O_KIF     => select (F_KIF);   my_use ("kif") ; set order to tag "datum"
 #xcommand O_PDV     => select (F_PDV);   my_use ("pdv") ; set order to tag "datum"
 #xcommand O_SG_KIF   => select(F_SG_KIF);  my_usex  ("sg_kif")  ; set order to tag "ID"

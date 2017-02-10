@@ -262,10 +262,7 @@ STATIC FUNCTION fill_rpt( nBrDok )
 
       nIzArea := F_KUF
 
-      SELECT ( F_KUF )
-      IF !Used()
-         O_KUF
-      ENDIF
+      select_o_epdv_kuf()
       SET ORDER TO TAG "g_r_br"
 
    ENDIF

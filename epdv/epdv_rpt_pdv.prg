@@ -147,7 +147,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
 
-   O_KUF
+   select_o_epdv_kuf()
    SET FILTER TO &cFilter
    GO TOP
 

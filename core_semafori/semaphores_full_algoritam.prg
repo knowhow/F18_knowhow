@@ -36,6 +36,10 @@ FUNCTION full_synchro( cDbfTable, nStepSize, cInfo )
       nStepSize := 20000
    ENDIF
 
+#ifdef F18_DEBUG
+  ?E "full_sync start", cDbfTable
+#endif
+
    IF !nuliraj_ids_and_update_my_semaphore_ver( cDbfTable )
       RETURN .F.
    ENDIF

@@ -26,7 +26,7 @@ STATIC s_nBug1 := 1
         free
 */
 
-FUNCTION lock_semaphore( table )
+FUNCTION lock_semaphore( cTable )
 
    LOCAL _qry
    LOCAL _ret
@@ -36,7 +36,7 @@ FUNCTION lock_semaphore( table )
    LOCAL cSemaphoreStatus
    LOCAL nLockSeconds
 
-   IF skip_semaphore_sync( table )
+   IF skip_semaphore_sync( cTable )
       RETURN .T.
    ENDIF
 
@@ -49,7 +49,7 @@ FUNCTION lock_semaphore( table )
    DO WHILE .T.
 
 
-      cSemaphoreStatus := get_semaphore_status( table )
+      cSemaphoreStatus := get_semaphore_status( cTable )
       IF cSemaphoreStatus == "unknown"
          RETURN .F.
       ENDIF
@@ -67,8 +67,8 @@ FUNCTION lock_semaphore( table )
       ENDIF
 
       // IF cSemaphoreStatus == "lock"
-      _user_locked := get_semaphore_locked_by_me_status_user( table )
-      _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked
+      _user_locked := get_semaphore_locked_by_me_status_user( cTable )
+      _err_msg := ToStr( Time() ) + " : table locked : " + cTable + " user: " + _user_locked
       ?E _err_msg
       info_bar( "sem", _err_msg )
       error_bar( "bug", log_stack( 1 ) )
@@ -80,8 +80,8 @@ FUNCTION lock_semaphore( table )
    ENDDO
 
    // free, lockovati
-   _qry := "UPDATE sem." + table + " SET algorithm='lock', last_trans_user_code=" + sql_quote( _user ) + "; "
-   _qry += "UPDATE sem." + table + " SET algorithm='locked_by_me' WHERE user_code=" + sql_quote( _user ) + ";"
+   _qry := "UPDATE sem." + cTable + " SET algorithm='lock', last_trans_user_code=" + sql_quote( _user ) + "; "
+   _qry += "UPDATE sem." + cTable + " SET algorithm='locked_by_me' WHERE user_code=" + sql_quote( _user ) + ";"
    _ret := run_sql_query( _qry )
 
    IF sql_error_in_query( _ret, "UPDATE" )
@@ -120,12 +120,12 @@ FUNCTION unlock_semaphore( cTable  )
    RETURN .T.
 
 
-FUNCTION get_semaphore_locked_by_me_status_user( table )
+FUNCTION get_semaphore_locked_by_me_status_user( cTable )
 
    LOCAL _qry
    LOCAL _ret
 
-   _qry := "SELECT user_code FROM sem." + table + " WHERE algorithm = 'locked_by_me'"
+   _qry := "SELECT user_code FROM sem." + cTable + " WHERE algorithm = 'locked_by_me'"
    _ret := run_sql_query( _qry )
 
    RETURN AllTrim( _ret:FieldGet( 1 ) )
@@ -166,12 +166,12 @@ FUNCTION is_table_locked( cTable )
    RETURN get_semaphore_status( cTable ) $ "locked#locked_by_me"
 
 
-FUNCTION last_semaphore_version( table )
+FUNCTION last_semaphore_version( cTable )
 
    LOCAL _qry
    LOCAL _ret
 
-   _qry := "SELECT last_trans_version FROM  sem." + table + " WHERE user_code=" + sql_quote( f18_user() )
+   _qry := "SELECT last_trans_version FROM  sem." + cTable + " WHERE user_code=" + sql_quote( f18_user() )
    _ret := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( _ret )
@@ -186,7 +186,7 @@ FUNCTION last_semaphore_version( table )
 // -----------------------------------------------------------------------
 // get_semaphore_version( "konto", last = .t. => last_version)
 // -----------------------------------------------------------------------
-FUNCTION get_semaphore_version( table, last )
+FUNCTION get_semaphore_version( cTable, last )
 
    LOCAL _tbl_obj
    LOCAL _result
@@ -195,14 +195,14 @@ FUNCTION get_semaphore_version( table, last )
    LOCAL _user := f18_user()
    LOCAL _msg
 
-   insert_semaphore_if_not_exists( table )
+   //insert_semaphore_if_not_exists( cTable )
 
    // last_version ili tekuca
    IF last == NIL
       last := .F.
    ENDIF
 
-   _tbl := "sem." + Lower( table )
+   _tbl := "sem." + Lower( cTable )
 
    _qry := "SELECT "
    IF last
@@ -232,7 +232,7 @@ FUNCTION get_semaphore_version( table, last )
     get_semaphore_version_h( "konto")
 */
 
-FUNCTION get_semaphore_version_h( table )
+FUNCTION get_semaphore_version_h( cTable )
 
    LOCAL _tbl_obj
    LOCAL _qry
@@ -241,15 +241,15 @@ FUNCTION get_semaphore_version_h( table )
    LOCAL _ret := hb_Hash()
    LOCAL _msg
 
-   IF skip_semaphore_sync( table )
+   IF skip_semaphore_sync( cTable )
       _ret[ "version" ] := 1
       _ret[ "last_version" ] := 1
       RETURN _ret
    ENDIF
 
-   insert_semaphore_if_not_exists( table )
+   //insert_semaphore_if_not_exists( cTable )
 
-   _tbl := "sem." + Lower( table )
+   _tbl := "sem." + Lower( cTable )
 
    _qry := "SELECT version, last_trans_version AS last_version"
    _qry += " FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
@@ -277,20 +277,20 @@ FUNCTION get_semaphore_version_h( table )
  set version to -1
 */
 
-FUNCTION reset_semaphore_version( table )
+FUNCTION reset_semaphore_version( cTable )
 
    LOCAL _ret
    LOCAL _qry
    LOCAL _tbl
    LOCAL _user := f18_user()
 
-   IF skip_semaphore_sync( table )
+   IF skip_semaphore_sync( cTable )
       RETURN .T.
    ENDIF
 
-   _tbl := "sem." + Lower( table )
+   _tbl := "sem." + Lower( cTable )
 
-   insert_semaphore_if_not_exists( table )
+   //insert_semaphore_if_not_exists( cTable )
 
    // log_write( "reset semaphore " + _tbl + " update ", 1 )
    _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + sql_quote( _user )
@@ -497,7 +497,7 @@ FUNCTION field_in_blacklist( field_name, blacklist )
 /*
    update_semaphore_version_after_push( "konto" )
 */
-FUNCTION update_semaphore_version_after_push( table, to_myself )
+FUNCTION update_semaphore_version_after_push( cTable, to_myself )
 
    LOCAL _qry
    LOCAL _tbl
@@ -511,14 +511,14 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
       to_myself := .F.
    ENDIF
 
-   IF skip_semaphore_sync( table )
+   IF skip_semaphore_sync( cTable )
       RETURN .T.
    ENDIF
 
    // log_write( "START: update semaphore version after push", 7 )
 
-   _tbl := "sem." + Lower( table )
-   _versions := get_semaphore_version_h( table )
+   _tbl := "sem." + Lower( cTable )
+   _versions := get_semaphore_version_h( cTable )
 
    _last_ver := _versions[ "last_version" ]
 
@@ -530,9 +530,9 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    ++_ver_user
    cVerUser := AllTrim( Str( _ver_user ) )
 
-   IF !insert_semaphore_if_not_exists( table )
-      RETURN .F.
-   ENDIF
+   //IF !insert_semaphore_if_not_exists( cTable )
+  //    RETURN .F.
+   //ENDIF
    _qry := ""
 
    IF !to_myself
@@ -546,7 +546,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    _qry += "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE version > " + cVerUser + ";"
    oQry := run_sql_query( _qry )
    IF sql_error_in_query( oQry, "UPDATE" )
-      error_bar( "syn_ids", "update sem after push " + table )
+      error_bar( "syn_ids", "update sem after push " + cTable )
       RETURN .F.
    ENDIF
 
@@ -559,7 +559,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
 // ----------------------------------------------------------------------
 // nuliraj ids-ove, postavi da je verzija semafora = posljednja verzija
 // ------------------------------------------------------------------------
-FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
+FUNCTION nuliraj_ids_and_update_my_semaphore_ver( cTable )
 
    LOCAL _tbl
    LOCAL _ret
@@ -567,13 +567,13 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    LOCAL _qry
    LOCAL hParams := hb_Hash()
 
-   IF !insert_semaphore_if_not_exists( table )
-      RETURN .F.
-   ENDIF
+   //IF !insert_semaphore_if_not_exists( cTable )
+  //    RETURN .F.
+  // ENDIF
 
    // log_write( "START: nuliraj ids-ove - user: " + _user, 7 )
 
-   _tbl := "sem." + Lower( table )
+   _tbl := "sem." + Lower( cTable )
    _qry := "UPDATE " + _tbl + " SET " + ;
       " ids=NULL , dat=NULL," + ;
       " version=last_trans_version" + ;
@@ -584,7 +584,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
 
    // log_write( "END: nuliraj ids-ove - user: " + _user, 7 )
    IF sql_error_in_query( _ret, "UPDATE" )
-      error_bar( "syn_ids", "ERR IDS sync nuliranje " + table )
+      error_bar( "syn_ids", "ERR IDS sync nuliranje " + cTable )
       RETURN .F.
    ENDIF
 
@@ -629,7 +629,12 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
       RETURN .T.
    ENDIF
 
+
    nCnt := table_count( cSqlTbl, "user_code=" + sql_quote( _user ) )
+
+   #ifdef F18_DEBUG
+      ?E "dbf_init", cTable, "user_code", _user, "cnt semaphore za usera", nCnt
+   #endif
 
    IF ( nCnt == 0 )
       _qry := "INSERT INTO " + cSqlTbl + "(user_code, last_trans_version, version, algorithm) " + ;
@@ -778,7 +783,7 @@ FUNCTION we_need_dbf_refresh( cTable )
    ENDIF
 
 
-   IF !is_sifarnik( cTable ) .AND. imaju_unchecked_sifarnici() // tabela nije sifarnik, a postoje prazni sifarnici
+   IF !is_sifarnik( cTable ) .AND. imaju_nesinhronizovani_sifarnici() // tabela nije sifarnik, a postoje prazni sifarnici
       add_to_dbf_refresh_queue( cTable ) // neka saceka
       RETURN .F.
    ENDIF
@@ -864,7 +869,7 @@ STATIC FUNCTION dbf_refresh_0( cTable )
 
       cMsg1 := aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
       cMsg2 := "cnt_sql: " + AllTrim( Str( nCntSql, 0 ) ) + " cnt_dbf: " + AllTrim( Str( nCntDbf, 0 ) ) + " del_dbf: " + AllTrim( Str( nDeleted, 0 ) )
-#ifdef F18_DEBUG_SYNC
+#ifdef F18_DEBUG
       ?E cMsg1
       ?E cMsg2
 #endif
@@ -895,7 +900,7 @@ FUNCTION skip_semaphore_sync( xArg )
       cTable := Lower( xArg )
 
       IF Left( cTable, 6 ) == "SYNC__"
-#ifdef F18_DEBUG_SYNC
+#ifdef F18_DEBUG
          ?E "skip_semaphore_sync SYNC__ ", cTable
 #endif
          RETURN .T.
@@ -905,7 +910,7 @@ FUNCTION skip_semaphore_sync( xArg )
    ENDIF
 
    IF hRec[ "sql" ] .OR. hRec[ "temp" ]
-#ifdef F18_DEBUG_SYNC
+#ifdef F18_DEBUG
       ?E "skip_semaphore_sync sql or temp tabela:", cTable
 #endif
       RETURN .T.

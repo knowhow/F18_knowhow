@@ -15,7 +15,7 @@
  synchro dbf tabele na osnovu id-ova koje su poslali drugi
 */
 
-FUNCTION ids_synchro( dbf_table )
+FUNCTION ids_synchro( cTable )
 
    LOCAL nI, hIdsQueries
    LOCAL _zap, aDbfRec
@@ -23,17 +23,16 @@ FUNCTION ids_synchro( dbf_table )
    LOCAL cMsg
    LOCAL nIdsCnt := 0
 
-#ifdef F18_DEBUG_SYNC
-
-   ?E "START IDS synchro", dbf_table
+#ifdef F18_DEBUG
+   ?E "START IDS synchro", cTable
 #endif
 
-   aDbfRec := get_a_dbf_rec( dbf_table, .T. )
+   aDbfRec := get_a_dbf_rec( cTable, .T. )
    hIdsQueries := create_queries_from_ids( aDbfRec[ "table" ] )
 
    IF hIdsQueries == NIL
-#ifdef F18_DEBUG_SYNC
-      ?E "ERR IDS synchro", dbf_table, " hIdsQueries NIL?! "
+#ifdef F18_DEBUG
+      ?E "ERR IDS synchro", cTable, " hIdsQueries NIL?! "
 #endif
       RETURN .F.
    ENDIF
@@ -51,7 +50,7 @@ FUNCTION ids_synchro( dbf_table )
 
       IF _zap <> 0
 
-         full_synchro( dbf_table, 50000, " IDS: UZMI_STANJE_SA_SERVERA " )
+         full_synchro( cTable, 50000, " IDS: UZMI_STANJE_SA_SERVERA " )
          ADel( _zap, hIdsQueries[ "qry" ] )
          // ponovo kreiraj hIdsQueries u slucaju da je bilo jos azuriranja
          hIdsQueries := create_queries_from_ids( aDbfRec[ 'table' ] )
@@ -467,7 +466,7 @@ FUNCTION create_queries_from_ids( table )
 // ids       := {"#20011", "#2012"}
 // algoritam := 2
 // ------------------------------------------------------
-FUNCTION delete_ids_in_dbf( dbf_table, ids, nAlgoritam )
+FUNCTION delete_ids_in_dbf( cTable, ids, nAlgoritam )
 
    LOCAL aDbfRec, _alg
    LOCAL _counter
@@ -478,7 +477,7 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, nAlgoritam )
 
    // log_write( "delete_ids_in_dbf START", 9 )
 
-   aDbfRec := get_a_dbf_rec( dbf_table )
+   aDbfRec := get_a_dbf_rec( cTable )
 
    IF skip_semaphore_sync( aDbfRec[ "table" ] )
       RETURN .T.
@@ -548,7 +547,7 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, nAlgoritam )
 
    PopWa()
 
-   // log_write( "delete_ids_in_dbf table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + AllTrim( Str( _counter ) ), 5 )
+   // log_write( "delete_ids_in_dbf table: " + cTable + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + AllTrim( Str( _counter ) ), 5 )
    // log_write( "delete_ids_in_dbf END", 9 )
 
    RETURN .T.

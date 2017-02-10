@@ -25,11 +25,7 @@ FUNCTION epdv_otvori_kuf_tabele( lPriprema )
       o_tarifa()
    ENDIF
 
-
-   SELECT F_KUF
-   IF !Used()
-      O_KUF
-   ENDIF
+   select_o_epdv_kuf()
 
    IF lPriprema == .T.
       SELECT ( F_P_KUF )
@@ -149,7 +145,7 @@ FUNCTION rn_g_r_br( cTblName )
 
    DO CASE
    CASE cTblName == "KUF"
-      O_KUF
+      select_o_epdv_kuf()
       _table := "epdv_kuf"
    CASE cTblName == "KIF"
       O_KIF

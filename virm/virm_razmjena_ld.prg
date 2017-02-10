@@ -98,7 +98,7 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
 
    virm_ld_obrada( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis, _per_od, _per_do )
    obrada_kredita( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
-   obrada_tekuci_racun( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
+   virm_ld_isplata_radniku_na_tekuci_racun( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
    popuni_javne_prihode()
 
    my_close_all_dbf()
@@ -108,9 +108,9 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
 // ---------------------------------------------------------------------------------------------
 // obrada podataka za isplate na tekuci racun
 // ---------------------------------------------------------------------------------------------
-STATIC FUNCTION obrada_tekuci_racun( nGodina, nMjesec, dDatVirm, r_br, dod_opis )
+STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatVirm, r_br, dod_opis )
 
-   LOCAL _oznaka := "IS_"
+   LOCAL cOznakaIsplatePrefix := "IS_"
    LOCAL _id_kred, hRec
    LOCAL _formula, _izr_formula
    LOCAL _svrha_placanja
@@ -121,9 +121,10 @@ STATIC FUNCTION obrada_tekuci_racun( nGodina, nMjesec, dDatVirm, r_br, dod_opis 
 
 
    SELECT rekld
-   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + _oznaka
+   GO TOP
+   SEEK Str( nGodina, 4, 0) + Str( nMjesec, 2, 0 ) + cOznakaIsplatePrefix
 
-   DO WHILE !Eof() .AND. field->id == _oznaka
+   DO WHILE !Eof() .AND. LEFT( field->id,  LEN( cOznakaIsplatePrefix) ) == cOznakaIsplatePrefix
 
       _id_kred := SubStr( field->id, 4 )   // sifra banke
 
@@ -163,7 +164,7 @@ STATIC FUNCTION obrada_tekuci_racun( nGodina, nMjesec, dDatVirm, r_br, dod_opis 
 
       IF _ispl_posebno == "N"     // isplate za jednu banku - sumirati
 
-         DO WHILE !Eof() .AND. field->id = _oznaka .AND. field->idpartner = _sk_sifra
+         DO WHILE !Eof() .AND. LEFT(field->id,  LEN( cOznakaIsplatePrefix) ) == cOznakaIsplatePrefix .AND. field->idpartner = _sk_sifra
             ++_kredit
             _total += rekld->iznos1
             _isplata_opis := "obuhvaceno " + AllTrim( Str( _kredit ) ) + " radnika"
@@ -373,8 +374,7 @@ STATIC FUNCTION _ld_vrprim_isplata()
 
    LOCAL hRec
 
-   SELECT vrprim
-   HSEEK PadR( "IS", Len( field->id ) )
+   o_vrprim( PadR( "IS", 4 ) ) // vrprim.id c(4)
 
    IF !Found()
 
@@ -424,7 +424,7 @@ STATIC FUNCTION _ld_kreditor( id_kred )
 // --------------------------------------------------------------------------------------
 STATIC FUNCTION obrada_kredita( nGodina, nMjesec, dDatVirm, r_br, dod_opis, bez_nula )
 
-   LOCAL _oznaka := "KRED"
+   LOCAL cOznakaIsplatePrefix := "KRED"
    LOCAL _id_kred, hRec
    LOCAL _svrha_placanja, _u_korist
    LOCAL _kome_txt, _KOME_ZR, _kome_sjed, _nacin_pl
@@ -435,9 +435,9 @@ STATIC FUNCTION obrada_kredita( nGodina, nMjesec, dDatVirm, r_br, dod_opis, bez_
 
    // odraditi kredite
    SELECT rekld
-   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + _oznaka
+   SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cOznakaIsplatePrefix
 
-   DO WHILE !Eof() .AND. field->id = _oznaka
+   DO WHILE !Eof() .AND. LEFT( field->id, LEN( cOznakaIsplatePrefix) ) == cOznakaIsplatePrefix
 
 
       _id_kred := SubStr( field->id, 5 )       // sifra kreditora
@@ -611,9 +611,9 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
       nRadnika := 0
       aUslP := Parsiraj( qqPartn, "IDPARTNER" )
 
-      SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
+      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cId
 
-      DO WHILE !Eof() .AND. field->nGodina + field->nMjesec + field->id = Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
+      DO WHILE !Eof() .AND. field->nGodina + field->nMjesec + field->id = Str( nGodina, 4, 0 ) + Str( nMjesec, 2 ) + cId
 
          IF &aUslP
 

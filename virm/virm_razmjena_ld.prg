@@ -97,7 +97,7 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
    nRBr := 0
 
    virm_ld_obrada( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis, _per_od, _per_do )
-   obrada_kredita( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
+   ld_virm_generacija_krediti( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
    virm_ld_isplata_radniku_na_tekuci_racun( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
    popuni_javne_prihode()
 
@@ -119,12 +119,11 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
    LOCAL _ispl_posebno := fetch_metric( "virm_isplate_za_radnike_posebno", my_user(), "N" )
    LOCAL _isplata_opis := ""
 
-
    SELECT rekld
    GO TOP
-   SEEK Str( nGodina, 4, 0) + Str( nMjesec, 2, 0 ) + cOznakaIsplatePrefix
+   SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cOznakaIsplatePrefix
 
-   DO WHILE !Eof() .AND. LEFT( field->id,  LEN( cOznakaIsplatePrefix) ) == cOznakaIsplatePrefix
+   DO WHILE !Eof() .AND. Left( field->id,  Len( cOznakaIsplatePrefix ) ) == cOznakaIsplatePrefix
 
       _id_kred := SubStr( field->id, 4 )   // sifra banke
 
@@ -164,7 +163,7 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
 
       IF _ispl_posebno == "N"     // isplate za jednu banku - sumirati
 
-         DO WHILE !Eof() .AND. LEFT(field->id,  LEN( cOznakaIsplatePrefix) ) == cOznakaIsplatePrefix .AND. field->idpartner = _sk_sifra
+         DO WHILE !Eof() .AND. Left( field->id,  Len( cOznakaIsplatePrefix ) ) == cOznakaIsplatePrefix .AND. field->idpartner = _sk_sifra
             ++_kredit
             _total += rekld->iznos1
             _isplata_opis := "obuhvaceno " + AllTrim( Str( _kredit ) ) + " radnika"
@@ -349,8 +348,7 @@ STATIC FUNCTION _ld_vrprim_kredit()
 
    LOCAL hRec
 
-   SELECT vrprim
-   HSEEK PadR( "KR", Len( field->id ) )
+   o_vrprim( PadR( "KR", 4 ) )
 
    IF !Found()
 
@@ -397,15 +395,14 @@ STATIC FUNCTION _ld_kreditor( id_kred )
 
    LOCAL hRec
 
-   SELECT kred
-   HSEEK PadR( id_kred, Len( kred->id ) )
+   o_kred( PadR( id_kred, 6 ) ) // kred.id char(6)
 
-   select_o_partner( PadR( id_kred, LEN_PARTNER_ID ))
+   select_o_partner( PadR( id_kred, LEN_PARTNER_ID ) )
 
    IF !Found()
 
-      // dodaj kreditora u listu partnera
-      APPEND BLANK
+
+      APPEND BLANK     // dodaj kreditora u listu partnera
 
       hRec := dbf_get_rec()
       hRec[ "id" ] := kred->id
@@ -422,7 +419,7 @@ STATIC FUNCTION _ld_kreditor( id_kred )
 // --------------------------------------------------------------------------------------
 // obrada virmana za kredite
 // --------------------------------------------------------------------------------------
-STATIC FUNCTION obrada_kredita( nGodina, nMjesec, dDatVirm, r_br, dod_opis, bez_nula )
+STATIC FUNCTION ld_virm_generacija_krediti( nGodina, nMjesec, dDatVirm, r_br, dod_opis, bez_nula )
 
    LOCAL cOznakaIsplatePrefix := "KRED"
    LOCAL _id_kred, hRec
@@ -433,11 +430,11 @@ STATIC FUNCTION obrada_kredita( nGodina, nMjesec, dDatVirm, r_br, dod_opis, bez_
    LOCAL _total, _kredit, _sk_sifra
    LOCAL _kred_opis := ""
 
-   // odraditi kredite
    SELECT rekld
-   SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cOznakaIsplatePrefix
+   GO TOP
+   SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cOznakaIsplatePrefix // u rekld pronaci kredite
 
-   DO WHILE !Eof() .AND. LEFT( field->id, LEN( cOznakaIsplatePrefix) ) == cOznakaIsplatePrefix
+   DO WHILE !Eof() .AND. Left( field->id, Len( cOznakaIsplatePrefix ) ) == cOznakaIsplatePrefix
 
 
       _id_kred := SubStr( field->id, 5 )       // sifra kreditora
@@ -580,13 +577,11 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
 
    IF qqPartn == NIL
 
-      HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
+      HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cId
 
       IF lGroup == .T.
 
-         DO WHILE !Eof() .AND. Str( nGodina, 4 ) == field->nGodina ;
-               .AND. Str( nMjesec, 2 ) == field->nMjesec ;
-               .AND. id = cId
+         DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) == field->nGodina .AND. Str( nMjesec, 2, 0 ) == field->nMjesec  .AND. id = cId
 
             nIzn1 += field->iznos1
             nIzn2 += field->iznos2
@@ -665,10 +660,9 @@ STATIC FUNCTION virm_o_tables()
       o_sifv()
    ENDIF
 
-   SELECT ( F_KRED )
-   IF !Used()
-      o_kred()
-   ENDIF
+
+   o_kred()
+
 
    select_o_rekld()
    select_o_partner()

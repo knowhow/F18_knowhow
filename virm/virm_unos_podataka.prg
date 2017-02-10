@@ -622,7 +622,7 @@ FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
       IF !Empty( cDefault )
          RETURN .T.
       ELSE
-         MsgBeep( "Nema unesena niti jedna banka za partnera " + cIdPartn )
+         MsgBeep( "Nema unesena niti jedna banka za partnera: '" + cIdPartn + "'" )
          cDefault := ""
          RETURN .T.
       ENDIF

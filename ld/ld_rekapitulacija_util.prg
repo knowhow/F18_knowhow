@@ -962,7 +962,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
          ? cLinija
          ?U "  ", "Od toga pojedinačni krediti:"
-         o_radkr_otvoreni_krediti()
+         o_radkr_all_rec()
          SET ORDER TO TAG "3" // idkred+naosnovu+idradn+str(godina)+str(mjesec)
          SET FILTER TO Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) <= Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) .AND. ;
             Str( nGodina, 4, 0 ) + Str( nMjesecDo, 2, 0 ) >= Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 )
@@ -1034,7 +1034,6 @@ STATIC FUNCTION IspisKred( lSvi )
                ENDDO
 
                IF nUkKrRad <> 0
-
                   _kr_partija := AllTrim( kred->zirod )
                   rekap_ld( "KRED" + cIdKred + cNaOsnovu, nGodina, nMjesecDo, nUkKrRad, 0, ;
                      cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )

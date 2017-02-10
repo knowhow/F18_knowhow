@@ -185,4 +185,4 @@ FUNCTION virm_prenos_fin()
    popuni_javne_prihode()
    // popuni polja javnih prihoda
 
-   RETURN
+   RETURN .T.

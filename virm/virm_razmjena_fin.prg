@@ -23,7 +23,7 @@ FUNCTION virm_prenos_fin()
    //o_banke()
    o_partner()
    o_vrprim()
-   O_VIRM_PRIPR
+   select_o_virm_pripr()
    o_fin_pripr()
 
    cKome_Txt := ""

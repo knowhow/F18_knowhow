@@ -951,7 +951,7 @@ FUNCTION ld_ispis_po_tipovima_primanja( lSvi )
 STATIC FUNCTION IspisKred( lSvi )
 
    LOCAL _kr_partija
-   LOCAL _found := .F.
+   LOCAL lFoundKreditI30 := .F.
    LOCAL nMjesecFor, nMjesecRadKr
    LOCAL _t_rec
    LOCAL cIdKred, cNaOsnovu, nUkKred, nUkKrRad, cOpis2
@@ -962,7 +962,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
          ? cLinija
          ?U "  ", "Od toga pojedinačni krediti:"
-         o_radkr_otvoreni_krediti()
+         o_radkr_all_rec()
          SET ORDER TO TAG "3" // idkred+naosnovu+idradn+str(godina)+str(mjesec)
          SET FILTER TO Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) <= Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) .AND. ;
             Str( nGodina, 4, 0 ) + Str( nMjesecDo, 2, 0 ) >= Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 )
@@ -991,7 +991,7 @@ STATIC FUNCTION IspisKred( lSvi )
                DO WHILE !Eof() .AND. field->IDKRED == cIdKred .AND. cNaOsnovu == field->NAOSNOVU .AND. cIdRadnKR == field->IDRADN
 
                   nMjesecRadKr := radkr->mjesec
-                  _found := .F.
+                  lFoundKreditI30 := .F.
 
                   IF lSvi
 
@@ -1003,7 +1003,7 @@ STATIC FUNCTION IspisKred( lSvi )
                      _t_rec := RecNo()
                      DO WHILE !Eof() .AND. godina == nGodina .AND. mjesec == nMjesec .AND. obr == cObracun .AND. idradn == radkr->idradn
                         IF ld->i30 <> 0
-                           _found := .T.
+                           lFoundKreditI30 := .T.
                            EXIT
                         ENDIF
                         SKIP
@@ -1018,13 +1018,13 @@ STATIC FUNCTION IspisKred( lSvi )
                      seek_ld( cIdRj, nGodina, nMjesecRadKr, iif( !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
 
                      IF !Eof() .AND. ld->i30 <> 0
-                        _found := .T.
+                        lFoundKreditI30 := .T.
                      ENDIF
                   ENDIF
 
                   SELECT radkr
 
-                  IF _found
+                  IF lFoundKreditI30
                      nUkKred  += radkr->iznos
                      nUkKrRad += radkr->iznos
                   ENDIF
@@ -1034,7 +1034,6 @@ STATIC FUNCTION IspisKred( lSvi )
                ENDDO
 
                IF nUkKrRad <> 0
-
                   _kr_partija := AllTrim( kred->zirod )
                   rekap_ld( "KRED" + cIdKred + cNaOsnovu, nGodina, nMjesecDo, nUkKrRad, 0, ;
                      cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )
@@ -1080,7 +1079,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
             DO WHILE !Eof() .AND. idkred == cIdkred .AND. ( cNaosnovu == naosnovu .OR. gReKrOs == "N" )
 
-               _found := .F.
+               lFoundKreditI30 := .F.
 
                IF lSvi
                   // SELECT ld
@@ -1094,12 +1093,12 @@ STATIC FUNCTION IspisKred( lSvi )
                ENDIF
 
                IF Found()
-                  _found := .T.
+                  lFoundKreditI30 := .T.
                ENDIF
 
                SELECT radkr
 
-               IF _found .AND. godina == nGodina .AND. mjesec == nMjesec
+               IF lFoundKreditI30 .AND. godina == nGodina .AND. mjesec == nMjesec
                   nUkKred += radkr->iznos
                ENDIF
 

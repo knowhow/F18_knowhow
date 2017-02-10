@@ -64,9 +64,6 @@
 
 
 // modul FIN
-
-
-
 #xcommand O_KOMP_DUG    => select (F_FIN_KOMP_DUG);  my_use ("komp_dug")
 #xcommand O_KOMP_POT    => select (F_FIN_KOMP_POT);  my_use ("komp_pot")
 
@@ -167,7 +164,7 @@
 // modul EPDV
 #xcommand O_P_KUF     => select (F_P_KUF);   my_usex ("p_kuf") ; set order to tag "r_br"
 #xcommand O_P_KIF     => select (F_P_KIF);   my_usex ("p_kif") ; set order to tag "r_br"
-#xcommand O_KUF     => select (F_KUF);   my_use ("kuf") ; set order to tag "datum"
+
 #xcommand O_KIF     => select (F_KIF);   my_use ("kif") ; set order to tag "datum"
 #xcommand O_PDV     => select (F_PDV);   my_use ("pdv") ; set order to tag "datum"
 #xcommand O_SG_KIF   => select(F_SG_KIF);  my_usex  ("sg_kif")  ; set order to tag "ID"
@@ -251,9 +248,6 @@
 #xcommand O_MAT_PSINT    =>  select(F_MAT_PSINT) ; my_use( "mat_psint" ) ; set order to tag "1"
 #xcommand O_MAT_INVENT   =>  select(F_MAT_INVENT); my_use( "mat_invent" ); set order to tag "1"
 #xcommand O_KARKON       =>  select(F_KARKON); my_use ( "karkon" ); set order to tag "ID"
-
-// modul VIRM
-#xcommand O_VIRM_PRIPR   => select (F_VIPRIPR); my_use("virm_pripr") ; set order to tag "1"
 
 
 //#xcommand O_KALVIR   => select (F_KALVIR) ; my_use ("kalvir") ; set order to tag "ID"

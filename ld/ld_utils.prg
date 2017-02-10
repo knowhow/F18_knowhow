@@ -608,7 +608,7 @@ FUNCTION ld_gen_virm()
       RETURN .F.
    ENDIF
 
-   O_VIRM_PRIPR
+   select_o_virm_pripr()
    my_dbf_zap()
 
    MsgBeep( "Opcija podrazumjeva da ste prozvali rekapitulaciju plate" )

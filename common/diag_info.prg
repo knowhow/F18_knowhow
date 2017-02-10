@@ -17,7 +17,7 @@ FUNCTION diag_info()
    print_threads( "diag_info" )
    print_dbf_refresh_queue()
 
-   ?E "unchecked_sifarnici: ", imaju_unchecked_sifarnici()
+   ?E "unchecked_sifarnici: ", imaju_nesinhronizovani_sifarnici()
 
    print_a_dbfs()
    print_transactions()

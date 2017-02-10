@@ -351,10 +351,9 @@ FUNCTION renm_g_rbr( cTbl, lShow )
    ENDIF
 
    IF cTbl == "KUF"
-      SELECT F_KUF
-      IF !Used()
-         O_KUF
-      ENDIF
+
+         select_o_epdv_kuf()
+
 
    ELSEIF cTbl == "P_KIF"
       SELECT F_KIF

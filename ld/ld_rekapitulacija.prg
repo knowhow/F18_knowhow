@@ -470,9 +470,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       ENDIF
 
       select_o_radn( _idradn )
-
       select_o_vposla( _idvposla )
-
       ld_pozicija_parobr( ld->mjesec, ld->godina, cObracun, ld->idrj )
 
       SELECT ld
@@ -659,9 +657,9 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       // ovo je total poreske osnove
       nUPorOsnova += nPorOsnova
 
-      // obradi poreze....
 
-      select_o_por()
+
+      select_o_por()   // obradi poreze
       GO TOP
 
       nPor := 0
@@ -757,23 +755,17 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
 
       ++nLjudi
 
-      nUSati += _USati
-      // ukupno sati
-
-      nUNeto += _UNeto
-      // ukupno neto iznos
+      nUSati += _USati  // ukupno sati
+      nUNeto += _UNeto  // ukupno neto iznos
 
       nULOdbitak += nRadn_lod
-
-      nUNetoOsnova += _oUNeto
-      // ukupno neto osnova
+      nUNetoOsnova += _oUNeto // ukupno neto osnova
 
       IF is_radn_k4_bf_ide_u_benef_osnovu()
          nUBNOsnova += _oUNeto - if( !Empty( gBFForm ), &gBFForm, 0 )
       ENDIF
 
-      cTR := IF( RADN->isplata $ "TR#SK", RADN->idbanka, ;
-         Space( Len( RADN->idbanka ) ) )
+      cTR := IIF( RADN->isplata $ "TR#SK", RADN->idbanka, Space( Len( RADN->idbanka ) ) )
 
       IF Len( aUkTR ) > 0 .AND. ( nPomTR := AScan( aUkTr, {| x | x[ 1 ] == cTR } ) ) > 0
          aUkTR[ nPomTR, 2 ] += _uiznos
@@ -806,7 +798,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       // napuni opsld sa ovim porezom
       PopuniOpsLD()
 
-      IF RADN->isplata == "TR"  // isplata na tekuci racun
+      IF RADN->isplata == "TR"  // radnik isplata na tekuci racun
          cOpis2 := RADNIK_PREZ_IME
          rekap_ld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
       ENDIF

@@ -280,7 +280,7 @@ METHOD VirmExportTxt:fill_data_from_virm()
 
    SELECT ( F_VIPRIPR )
    IF !Used()
-      O_VIRM_PRIPR
+      select_o_virm_pripr()
    ENDIF
 
    SELECT virm_pripr

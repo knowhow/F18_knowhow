@@ -17,7 +17,7 @@ STATIC s_mtxMutex
 FUNCTION set_a_dbfs()
 
    LOCAL _dbf_fields, _sql_order
-   LOCAL _alg
+   LOCAL hAlgoritam
    LOCAL cDatabase := my_database()
 
    IF s_hF18Dbfs == NIL
@@ -37,17 +37,17 @@ FUNCTION set_a_dbfs()
    set_a_dbf_sifk_sifv()
    set_a_dbf_temporary()
 
-   // IF f18_use_module( "fin" )
-   set_a_dbf_fin()
-   // ENDIF
+   IF f18_use_module( "fin" )
+      set_a_dbf_fin()
+   ENDIF
 
-   // IF f18_use_module( "kalk" )
-   set_a_dbf_kalk()
-   // ENDIF
+   IF f18_use_module( "kalk" )
+      set_a_dbf_kalk()
+   ENDIF
 
-   // IF f18_use_module( "fakt" )
-   set_a_dbf_fakt()
-   // ENDIF
+   IF f18_use_module( "fakt" )
+      set_a_dbf_fakt()
+   ENDIF
 
    IF f18_use_module( "ld" )
       set_a_dbf_ld()
@@ -84,11 +84,6 @@ FUNCTION set_a_dbfs()
    ENDIF
 #endif
 
-#ifdef F18_KADEV
-   IF f18_use_module( "kadev" )
-      set_a_dbf_kadev()
-   ENDIF
-#endif
 
    RETURN .T.
 
@@ -160,7 +155,7 @@ FUNCTION set_a_sql_sifarnik( dbf_table, ALIAS, wa, hRec )
 
 FUNCTION set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, lSql )
 
-   LOCAL _alg, hItem
+   LOCAL hAlgoritam, hItem
 
    IF lSql == NIL
       lSql := .F.
@@ -179,22 +174,22 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, lSql )
    hItem[ "algoritam" ] := {}
 
 
-   _alg := hb_Hash()
+   hAlgoritam := hb_Hash()
 
    IF hRec == NIL
-      _alg[ "dbf_key_fields" ] := { "id" }
-      _alg[ "dbf_tag" ]        := "ID"
-      _alg[ "sql_in" ]        := "id"
-      _alg[ "dbf_key_block" ] := {|| field->id }
+      hAlgoritam[ "hDbfKeyFields" ] := { "id" }
+      hAlgoritam[ "dbf_tag" ]        := "ID"
+      hAlgoritam[ "sql_in" ]        := "id"
+      hAlgoritam[ "dbf_key_block" ] := {|| field->id }
 
    ELSE
-      _alg[ "dbf_key_fields" ] := hRec[ "dbf_key_fields" ]
-      _alg[ "dbf_tag" ]        := hRec[ "dbf_tag" ]
-      _alg[ "sql_in" ]        := hRec[ "sql_in" ]
-      _alg[ "dbf_key_block" ] := hRec[ "dbf_key_block" ]
+      hAlgoritam[ "hDbfKeyFields" ] := hRec[ "hDbfKeyFields" ]
+      hAlgoritam[ "dbf_tag" ]        := hRec[ "dbf_tag" ]
+      hAlgoritam[ "sql_in" ]        := hRec[ "sql_in" ]
+      hAlgoritam[ "dbf_key_block" ] := hRec[ "dbf_key_block" ]
    ENDIF
 
-   AAdd( hItem[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    f18_dbfs_add( dbf_table, @hItem )
 
@@ -321,9 +316,9 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
    IF !hb_HHasKey( hDbfRecord, "sql_order" )
       IF hb_HHasKey( hDbfRecord, "algoritam" )
-         // dbf_key_fields stavke su "C" za datumska i char polja, "A" za numericka polja
+         // hDbfKeyFields stavke su "C" za datumska i char polja, "A" za numericka polja
          // npr: { {"godina", 4, 0}, "datum", "id" }
-         hDbfRecord[ "sql_order" ] := sql_order_from_key_fields( hDbfRecord[ "algoritam" ][ 1 ][ "dbf_key_fields" ] )
+         hDbfRecord[ "sql_order" ] := sql_order_from_key_fields( hDbfRecord[ "algoritam" ][ 1 ][ "hDbfKeyFields" ] )
       ENDIF
    ENDIF
 
@@ -438,7 +433,7 @@ FUNCTION dbf_alias_has_semaphore( ALIAS )
    RETURN _ret
 
 
-FUNCTION imaju_unchecked_sifarnici()
+FUNCTION imaju_nesinhronizovani_sifarnici()
 
    LOCAL cKey, lSql, lSif, lChk0
    LOCAL cDatabase := my_database()
@@ -470,9 +465,10 @@ FUNCTION imaju_unchecked_sifarnici()
       ENDIF
 
       IF !lSQl .AND. !lChk0 .AND. lSif
-#ifdef F18_DEBUG_SYNC
+// #ifdef F18_DEBUG_SYNC
          ?E "UUUUUUUUUUU unchecked sif", cDatabase, cKey, "chk0", lChk0, "sif", lSif, "sql", lSql
-#endif
+// #endif
+         info_bar( "sync", "nesinhroniziran sifarnik:" + cDatabase + " / " + cKey )
          RETURN .T.
       ENDIF
    NEXT
@@ -530,22 +526,22 @@ FUNCTION print_a_dbfs()
 
 
 
-FUNCTION sql_order_from_key_fields( dbf_key_fields ) // "sql_order" hash na osnovu hRec["dbf_fields"]
+FUNCTION sql_order_from_key_fields( hDbfKeyFields ) // "sql_order" hash na osnovu hRec["dbf_fields"]
 
    LOCAL nI, _len
    LOCAL _sql_order
 
-   // primjer: dbf_key_fields = {{"godina", 4}, "idrj", {"mjesec", 2}
+   // primjer: hDbfKeyFields = {{"godina", 4}, "idrj", {"mjesec", 2}
 
-   _len := Len( dbf_key_fields )
+   _len := Len( hDbfKeyFields )
 
    _sql_order := ""
    FOR nI := 1 TO _len
 
-      IF ValType( dbf_key_fields[ nI ] ) == "A"
-         _sql_order += dbf_key_fields[ nI, 1 ]
+      IF ValType( hDbfKeyFields[ nI ] ) == "A"
+         _sql_order += hDbfKeyFields[ nI, 1 ]
       ELSE
-         _sql_order += dbf_key_fields[ nI ]
+         _sql_order += hDbfKeyFields[ nI ]
       ENDIF
 
       IF nI < _len
@@ -565,7 +561,7 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
    LOCAL lTabelaOtvorenaOvdje := .F.
    LOCAL _dbf
-   LOCAL oError
+   LOCAL _err
    LOCAL cLogMsg
 
    LOCAL lSql
@@ -595,39 +591,35 @@ FUNCTION set_dbf_fields_from_struct( xRec )
    PushWA()
    SELECT ( hRec[ "wa" ] )
 
-   IF !Used()
-      IF lSql
-         otvori_sqlmix_tabelu( hRec[ "wa" ], hRec[ "table" ], hRec[ "alias" ] )
-      ELSE
-         _dbf := my_home() + my_dbf_prefix( @hRec ) + hRec[ "table" ]
-         IF !File( f18_ime_dbf( hRec ) )
+   IF !Used() .AND. !lSql
+
+      _dbf := my_home() + my_dbf_prefix( @hRec ) + hRec[ "table" ]
+      IF !File( f18_ime_dbf( hRec ) )
 #ifdef F18_DEBUG
-            cLogMsg := "NO-DBF : tbl:" + my_home() + my_dbf_prefix( @hRec ) +  hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " ne postoji"
-            LOG_CALL_STACK cLogMsg
+         cLogMsg := "NO-DBF : tbl:" + my_home() + my_dbf_prefix( @hRec ) +  hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " ne postoji"
+         LOG_CALL_STACK cLogMsg
 #endif
-            RETURN .F.
-         ENDIF
-
-         BEGIN SEQUENCE WITH {| err | err:cargo :=  Break( err ) }
-
-            dbUseArea( .F., DBFENGINE, _dbf, hRec[ "alias" ], .T., .F. )
-
-         RECOVER using oError
-
-            // tabele ocigledno nema, tako da se struktura ne moze utvrditi
-            hRec[ "dbf_fields" ]     := NIL
-            hRec[ "dbf_fields_len" ] := NIL
-
-            cLogMsg := "ERR-DBF: " + oError:description + ": tbl:" + my_home() + hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " se ne moze otvoriti ?!"
-            LOG_CALL_STACK cLogMsg
-
-            log_write( cLogMsg, 5 )
-            RETURN .F.
-
-         END SEQUENCE
-         lTabelaOtvorenaOvdje := .T.
-
+         RETURN .F.
       ENDIF
+
+      BEGIN SEQUENCE WITH {| err | err:cargo :=  Break( err ) }
+
+         dbUseArea( .F., DBFENGINE, _dbf, hRec[ "alias" ], .T., .F. )
+
+      RECOVER using _err
+
+         // tabele ocigledno nema, tako da se struktura ne moze utvrditi
+         hRec[ "dbf_fields" ]     := NIL
+         hRec[ "dbf_fields_len" ] := NIL
+
+         cLogMsg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " se ne moze otvoriti ?!"
+         LOG_CALL_STACK cLogMsg
+
+         log_write( cLogMsg, 5 )
+         RETURN .F.
+
+      END SEQUENCE
+      lTabelaOtvorenaOvdje := .T.
    ENDIF
 
 
@@ -647,13 +639,6 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
    RETURN .T.
 
-
-STATIC FUNCTION otvori_sqlmix_tabelu( nWa, cTable, cAlias )
-
-   LOCAL cSql := "select * FROM fmk." + cTable + " LIMIT 1"
-
-   SELECT ( nWa )
-   RETURN use_sql( cTable, cSql, cAlias )
 
 
 FUNCTION set_rec_from_dbstruct( hRec )

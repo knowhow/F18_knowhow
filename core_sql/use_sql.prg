@@ -438,6 +438,16 @@ FUNCTION o_sifk()
 
    RETURN use_sql_sifk()
 
+
+FUNCTION select_o_sifk()
+
+   SELECT ( F_SIFK )
+   IF Used()
+         RETURN .T.
+   ENDIF
+
+   RETURN o_sifk()
+
 /*
    use_sql_sifk() => otvori citavu tabelu
    use_sql_sifk( "ROBA", "GR1  " ) =>  filter na ROBA/GR1

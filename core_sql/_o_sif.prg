@@ -20,6 +20,14 @@ FUNCTION o_sifv()
    RETURN use_sql_sifv()
 
 
+FUNCTION select_o_sifv()
+
+   SELECT ( F_SIFV )
+   IF Used()
+      RETURN .T.
+   ENDIF
+
+   RETURN o_sifv()
 
 /*
    CREATE TABLE fmk.koncij

@@ -111,7 +111,7 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
 STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatVirm, r_br, dod_opis )
 
    LOCAL cOznakaIsplatePrefix := "IS_"
-   LOCAL _id_kred, hRec
+   LOCAL cIdKreditor, hRec
    LOCAL _formula, _izr_formula
    LOCAL _svrha_placanja
    LOCAL _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), Space( 16 ) )
@@ -125,17 +125,15 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
 
    DO WHILE !Eof() .AND. Left( field->id,  Len( cOznakaIsplatePrefix ) ) == cOznakaIsplatePrefix
 
-      _id_kred := SubStr( field->id, 4 )   // sifra banke
-
-
-      _ld_kreditor( _id_kred )       // nastimaj se na kreditora i dodaj po potrebi
-      _ld_vrprim_isplata()   // pozicioniraj se na vrprim za isplatu
+      cIdKreditor := SubStr( field->id, 4 )   // sifra banke
+      pozicioniraj_rec_kreditor_partner( cIdKreditor )
+      pozicioniraj_rec_vrprim_sifra_is()   // pozicioniraj se na vrprim za isplatu
 
       SELECT vrprim
 
       _svrha_placanja := field->id
 
-      select_o_partner( _id_kred )
+      select_o_partner( cIdKreditor )
 
       _u_korist := field->id
       _kome_txt := field->naz
@@ -198,7 +196,7 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
          REPLACE field->kome_zr WITH _KOME_ZR
          REPLACE field->dat_upl WITH dDatVirm
          REPLACE field->svrha_doz WITH AllTrim( vrprim->pom_txt ) + " " + AllTrim( dod_opis ) + " " + _isplata_opis
-         REPLACE field->u_korist WITH _id_kred
+         REPLACE field->u_korist WITH cIdKreditor
 
          IF _ispl_posebno == "D"  // jedan radnik
             REPLACE field->svrha_doz WITH Trim( svrha_doz ) + ", tekuci rn:" + Trim( rekld->opis )
@@ -290,8 +288,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, per_
 
          IF PadR( vrprim->idpartner, 2 ) == "JP"
 
-            // javni prihodi, setuj varijable _KOME_ZR, _kome_txt , _budzorg
-            set_jprih_globalne_varijable()
+            set_jprih_globalne_varijable()   // javni prihodi, setuj varijable _KOME_ZR, _kome_txt , _budzorg
 
             _cKomeZiroRacun := _KOME_ZR
             __kome_txt := _kome_txt
@@ -344,7 +341,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, per_
 
 
 
-STATIC FUNCTION _ld_vrprim_kredit()
+STATIC FUNCTION pozicioniraj_rec_vrprim_sifra_kr()
 
    LOCAL hRec
 
@@ -368,7 +365,7 @@ STATIC FUNCTION _ld_vrprim_kredit()
 
 
 
-STATIC FUNCTION _ld_vrprim_isplata()
+STATIC FUNCTION pozicioniraj_rec_vrprim_sifra_is()
 
    LOCAL hRec
 
@@ -391,24 +388,20 @@ STATIC FUNCTION _ld_vrprim_isplata()
    RETURN .T.
 
 
-STATIC FUNCTION _ld_kreditor( id_kred )
+STATIC FUNCTION pozicioniraj_rec_kreditor_partner( cIdKreditor )
 
    LOCAL hRec
 
-   o_kred( PadR( id_kred, 6 ) ) // kred.id char(6)
+   o_kred( PadR( cIdKreditor, 6 ) ) // kred.id char(6)
 
-   select_o_partner( PadR( id_kred, LEN_PARTNER_ID ) )
-
-   IF !Found()
-
+   select_o_partner( PadR( cIdKreditor, LEN_PARTNER_ID ) )
+   IF Eof()
 
       APPEND BLANK     // dodaj kreditora u listu partnera
-
       hRec := dbf_get_rec()
       hRec[ "id" ] := kred->id
       hRec[ "naz" ] := kred->naz
       hRec[ "ziror" ] := kred->ziro
-
       update_rec_server_and_dbf( "partn", hRec, 1, "FULL" )
 
    ENDIF
@@ -422,7 +415,7 @@ STATIC FUNCTION _ld_kreditor( id_kred )
 STATIC FUNCTION ld_virm_generacija_krediti( nGodina, nMjesec, dDatVirm, r_br, dod_opis, bez_nula )
 
    LOCAL cOznakaIsplatePrefix := "KRED"
-   LOCAL _id_kred, hRec
+   LOCAL cIdKreditor, hRec
    LOCAL _svrha_placanja, _u_korist
    LOCAL _kome_txt, _KOME_ZR, _kome_sjed, _nacin_pl
    LOCAL _ko_zr, _ko_txt
@@ -437,15 +430,14 @@ STATIC FUNCTION ld_virm_generacija_krediti( nGodina, nMjesec, dDatVirm, r_br, do
    DO WHILE !Eof() .AND. Left( field->id, Len( cOznakaIsplatePrefix ) ) == cOznakaIsplatePrefix
 
 
-      _id_kred := SubStr( field->id, 5 )       // sifra kreditora
-      _ld_kreditor( _id_kred )     // nastimaj kreditora i dodaj po potrebi
-      _ld_vrprim_kredit()     // vrsta primanja - kredit
+      cIdKreditor := PAdr( SubStr( field->id, 5 ), LEN_PARTNER_ID )      // sifra kreditora KREDBBI001 -> BBI001
+      pozicioniraj_rec_kreditor_partner( cIdKreditor )     // nastimaj kreditora i dodaj po potrebi
+      pozicioniraj_rec_vrprim_sifra_kr()     // vrsta primanja - kredit
 
       SELECT vrprim
       _svrha_placanja := field->id
 
-      select_o_partner( _id_kred )
-
+      select_o_partner( cIdKreditor )
       _u_korist := field->id
       _kome_txt := field->naz
       _kome_sjed := field->mjesto
@@ -502,7 +494,7 @@ STATIC FUNCTION ld_virm_generacija_krediti( nGodina, nMjesec, dDatVirm, r_br, do
          REPLACE field->kome_zr WITH _KOME_ZR
          REPLACE field->dat_upl WITH dDatVirm
          REPLACE field->svrha_doz WITH AllTrim( vrprim->pom_txt ) + IF( !Empty( vrprim->pom_txt ), " ", "" ) + AllTrim( dod_opis ) + IF( !Empty( dod_opis ), " ", "" ) + AllTrim( _kred_opis )
-         REPLACE field->u_korist WITH _id_kred
+         REPLACE field->u_korist WITH cIdKreditor
 
       ENDIF
 

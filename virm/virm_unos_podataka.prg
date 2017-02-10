@@ -346,7 +346,7 @@ FUNCTION SetPrimaoc()
 
 FUNCTION UplDob()
 
-   // {
+
    LOCAL lVrati := .F.
    SELECT VRPRIM
    GO TOP
@@ -355,7 +355,7 @@ FUNCTION UplDob()
    SELECT virm_pripr
 
    RETURN lVrati
-// }
+
 
 
 
@@ -386,7 +386,7 @@ FUNCTION IniProm()        // autom.popunjavanje nekih podataka
    SELECT virm_pripr
 
    RETURN .T.
-// }
+
 
 
 FUNCTION ValPl()
@@ -607,8 +607,8 @@ FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
 
    ELSEIF Len( aBanke ) == 1
 
-      // ako je jedna banka
-      cDefault := Left( aBanke[ izbor ], 16 )
+
+      cDefault := Left( aBanke[ izbor ], 16 )       // ako je jedna banka
       RETURN .T.
 
    ELSE

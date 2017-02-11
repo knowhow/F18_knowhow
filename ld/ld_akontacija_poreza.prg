@@ -14,8 +14,8 @@
 
 FUNCTION ld_asd_aug_obrazac()
 
-   //LOCAL cRj := Space( 65 )
-   //LOCAL cIdRj
+   // LOCAL cRj := Space( 65 )
+   // LOCAL cIdRj
    LOCAL cIdRj := gLDRadnaJedinica
    LOCAL nMjesec
    LOCAL nGodina
@@ -26,9 +26,9 @@ FUNCTION ld_asd_aug_obrazac()
    LOCAL cObracun := gObracun
    LOCAL cIdRadn := Space( 6 )
 
-   cre_tmp_tbl()
+   ld_aug_cre_dbf_r_export()
 
-   //cIdRj := gLDRadnaJedinica
+   // cIdRj := gLDRadnaJedinica
    nMjesec := ld_tekuci_mjesec()
    nGodina := ld_tekuca_godina()
 
@@ -49,7 +49,7 @@ FUNCTION ld_asd_aug_obrazac()
 
    Box( "#RPT: AKONTACIJA POREZA PO ODBITKU", 13, 75 )
 
-   //@ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@S25"
+   // @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@S25"
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
    @ form_x_koord() + 2, form_y_koord() + 2 SAY "Za mjesec:" GET nMjesec PICT "99"
    @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
@@ -155,7 +155,7 @@ STATIC FUNCTION fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cVRada, cObr, cRa
       cR_jmb := radn->matbr
       cR_naziv := AllTrim( radn->naz ) + " " + AllTrim( radn->ime )
 
-      ld_pozicija_parobr( nMjesec, nGodina, IIF( ld_vise_obracuna(), ld->obr, NIL ), ld->idrj )
+      ld_pozicija_parobr( nMjesec, nGodina, iif( ld_vise_obracuna(), ld->obr, NIL ), ld->idrj )
 
       SELECT ld
 
@@ -256,8 +256,7 @@ STATIC FUNCTION fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cVRada, cObr, cRa
 
          SELECT ld
 
-         // ubaci u tabelu podatke
-         _ins_tbl( cR_jmb, ;
+         insert_rec_r_export( cR_jmb, ;
             cR_naziv, ;
             nPrihod, ;
             nRashod, ;
@@ -641,6 +640,51 @@ STATIC FUNCTION ak_zaglavlje( nPage, cTipRada, dDIspl, cPeriod )
    RETURN .T.
 
 
+STATIC FUNCTION insert_rec_r_export( cJMB, cRadnNaz, nPrihod, ;
+      nRashod, nDohodak, nDopZdr, ;
+      nOsn_por, nIzn_por, nDopPio )
+
+   LOCAL nTArea := Select()
+
+   O_R_EXP
+   SELECT r_export
+   APPEND BLANK
+
+   REPLACE jmb WITH cJMB
+   REPLACE naziv WITH cRadnNaz
+   REPLACE prihod WITH nPrihod
+   REPLACE rashod WITH nRashod
+   REPLACE dohodak WITH nDohodak
+   REPLACE dop_zdr WITH nDopZdr
+   REPLACE osn_por WITH nOsn_Por
+   REPLACE izn_por WITH nIzn_Por
+   REPLACE dop_pio WITH nDopPio
+
+   SELECT ( nTArea )
+
+   RETURN .T.
+
+
+// ---------------------------------------------
+// kreiranje pomocne tabele
+// ---------------------------------------------
+STATIC FUNCTION ld_aug_cre_dbf_r_export()
+
+   LOCAL aDbf := {}
+
+   AAdd( aDbf, { "JMB", "C", 13, 0 } )
+   AAdd( aDbf, { "NAZIV", "C", 30, 0 } )
+   AAdd( aDbf, { "PRIHOD", "N", 12, 2 } )
+   AAdd( aDbf, { "RASHOD", "N", 12, 2 } )
+   AAdd( aDbf, { "DOHODAK", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_ZDR", "N", 12, 2 } )
+   AAdd( aDbf, { "OSN_POR", "N", 12, 2 } )
+   AAdd( aDbf, { "IZN_POR", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_PIO", "N", 12, 2 } )
+
+   create_dbf_r_export( aDbf )
+
+   RETURN .T.
 
 STATIC FUNCTION o_tables()
 

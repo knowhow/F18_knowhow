@@ -12,96 +12,10 @@
 #include "f18.ch"
 
 
-
-// ---------------------------------------------------------
-// sortiranje tabele LD
-// ---------------------------------------------------------
-STATIC FUNCTION ld_sort( cRj, nGodina, nMjesec, cObr )
-
-   LOCAL cFilter := ""
-
-   PRIVATE cObracun := cObr
-
-   IF !Empty( cObr )
-      cFilter += "ld->obr == " + dbf_quote( cObr )
-   ENDIF
-
-   IF !Empty( cRj )
-
-      IF !Empty( cFilter )
-         cFilter += " .and. "
-      ENDIF
-
-      cFilter += Parsiraj( cRj, "IDRJ" )
-   ENDIF
-
-   IF !Empty( cFilter )
-      SET FILTER TO &cFilter
-      GO TOP
-   ENDIF
-
-   INDEX ON Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + SortPrez( idradn ) + idrj TO "TMPLD"
-   GO TOP
-   SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) // tmpld index
-
-   RETURN .T.
-
-
-// ---------------------------------------------
-// upisivanje podatka u pomocnu tabelu za rpt
-// ---------------------------------------------
-STATIC FUNCTION _ins_tbl( cJMB, cRadnNaz, nPrihod, ;
-      nRashod, nDohodak, nDopZdr, ;
-      nOsn_por, nIzn_por, nDopPio )
-
-   LOCAL nTArea := Select()
-
-   O_R_EXP
-   SELECT r_export
-   APPEND BLANK
-
-   REPLACE jmb WITH cJMB
-   REPLACE naziv WITH cRadnNaz
-   REPLACE prihod WITH nPrihod
-   REPLACE rashod WITH nRashod
-   REPLACE dohodak WITH nDohodak
-   REPLACE dop_zdr WITH nDopZdr
-   REPLACE osn_por WITH nOsn_Por
-   REPLACE izn_por WITH nIzn_Por
-   REPLACE dop_pio WITH nDopPio
-
-   SELECT ( nTArea )
-
-   RETURN
-
-
-
-// ---------------------------------------------
-// kreiranje pomocne tabele
-// ---------------------------------------------
-STATIC FUNCTION cre_tmp_tbl()
-
-   LOCAL aDbf := {}
-
-   AAdd( aDbf, { "JMB", "C", 13, 0 } )
-   AAdd( aDbf, { "NAZIV", "C", 30, 0 } )
-   AAdd( aDbf, { "PRIHOD", "N", 12, 2 } )
-   AAdd( aDbf, { "RASHOD", "N", 12, 2 } )
-   AAdd( aDbf, { "DOHODAK", "N", 12, 2 } )
-   AAdd( aDbf, { "DOP_ZDR", "N", 12, 2 } )
-   AAdd( aDbf, { "OSN_POR", "N", 12, 2 } )
-   AAdd( aDbf, { "IZN_POR", "N", 12, 2 } )
-   AAdd( aDbf, { "DOP_PIO", "N", 12, 2 } )
-
-   create_dbf_r_export( aDbf )
-
-   RETURN
-
-
 FUNCTION ld_asd_aug_obrazac()
 
    LOCAL cRj := Space( 65 )
-   LOCAL cIdRj
+   //LOCAL cIdRj
    LOCAL nMjesec
    LOCAL nGodina
    LOCAL cDopr1X := "1X"
@@ -111,10 +25,9 @@ FUNCTION ld_asd_aug_obrazac()
    LOCAL cObracun := gObracun
    LOCAL cIdRadn := Space( 6 )
 
-   // kreiraj pomocnu tabelu
    cre_tmp_tbl()
 
-   cIdRj := gLDRadnaJedinica
+   //cIdRj := gLDRadnaJedinica
    nMjesec := ld_tekuci_mjesec()
    nGodina := ld_tekuca_godina()
 
@@ -122,7 +35,6 @@ FUNCTION ld_asd_aug_obrazac()
    cPredAdr := Space( 50 )
    cPredJMB := Space( 13 )
 
-   // otvori tabele
    o_tables()
 
    cPredNaz := fetch_metric( "org_naziv", NIL, cPredNaz )
@@ -134,14 +46,13 @@ FUNCTION ld_asd_aug_obrazac()
    cPredJMB := fetch_metric( "ld_specifikacija_maticni_broj", NIL, cPredJMB )
    cPredJMB := PadR( cPredJMB, 13 )
 
-   Box( "#RPT: AKONTACIJA POREZA PO ODBITKU...", 13, 75 )
+   Box( "#RPT: AKONTACIJA POREZA PO ODBITKU", 13, 75 )
 
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@S25"
    @ form_x_koord() + 2, form_y_koord() + 2 SAY "Za mjesec:" GET nMjesec PICT "99"
    @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
    @ form_x_koord() + 3, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "   Radnik (prazno-svi):" GET cIdRadn ;
-      VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "   Radnik (prazno-svi):" GET cIdRadn VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
 
    @ form_x_koord() + 5, form_y_koord() + 2 SAY "   Doprinos zdr: " GET cDopr1X
    @ form_x_koord() + 6, form_y_koord() + 2 SAY "   Doprinos pio: " GET cDopr2X
@@ -164,42 +75,211 @@ FUNCTION ld_asd_aug_obrazac()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    set_metric( "org_naziv", NIL, AllTrim( cPredNaz ) )
    set_metric( "ld_firma_adresa", NIL, AllTrim( cPredAdr ) )
    set_metric( "ld_specifikacija_maticni_broj", NIL, AllTrim( cPredJMB ) )
 
-   SELECT ld
-
    // sortiraj tabelu i postavi filter
-   ld_sort( cRj, nGodina, nMjesec, cObracun )
+   // ld_sort( cRj, nGodina, nMjesec, cObracun )
 
-   // nafiluj podatke obracuna
-   fill_data( cRj, nGodina, nMjesec, cDopr1X, cDopr2X, cTipRada, cObracun, cIdRadn )
+   seek_ld( cRj, nGodina, nMjesec, ld_broj_obracuna() )
+
+
+   fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cTipRada, cObracun, cIdRadn )
 
 
    dDatIspl := Date()
-  //IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
-      cObr := " "
-      dDatIspl := ld_get_datum_isplate_plate( "  ", nGodina, nMjesec, cObr )
-   //ENDIF
+   // IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
+   cObr := " "
+   dDatIspl := ld_get_datum_isplate_plate( "  ", nGodina, nMjesec, cObr )
+   // ENDIF
 
    cPeriod := AllTrim( Str( nMjesec, 2, 0 ) ) + "/" + AllTrim( Str( nGodina, 4, 0 ) )
 
    IF cVarPrn == "1"
-
       ak_print( dDatIspl, cPeriod, cTipRada )   // printaj obracunski list
    ENDIF
 
    IF cVarPrn == "2"
-      // printaj u delphi
-      ak_d_print( dDatIspl, cPeriod, cTipRada )
+      ld_akontacija_delphirb_print( dDatIspl, cPeriod, cTipRada )
    ENDIF
 
    RETURN .T.
 
+
+
+STATIC FUNCTION fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cVRada, cObr, cRadnik )
+
+   LOCAL cPom, cIdRadnikTekuci
+
+   SELECT ld
+
+   DO WHILE !Eof() .AND. field->godina == nGodina .AND. field->mjesec == nMjesec
+
+      cIdRadnikTekuci := field->idradn
+
+      IF !Empty( cRadnik )
+         IF cIdRadnikTekuci <> cRadnik
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      cT_tiprada := get_ld_rj_tip_rada( field->idradn, field->idrj )
+
+      select_o_radn( cIdRadnikTekuci )
+
+      lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
+
+      // uzmi samo odgovarajuce tipove rada
+      IF ( cVRada $ "1#3" .AND. !( cT_tiprada $ "A#U" ) )
+         SELECT ld
+         SKIP
+         LOOP
+      ENDIF
+
+      IF ( cVRada == "2" .AND. !( cT_tiprada $ "P" ) )
+         SELECT ld
+         SKIP
+         LOOP
+      ENDIF
+
+      // da li je u rs-u, koji obrazac ?
+      IF ( lInRS == .T. .AND. cVRada <> "3" ) .OR. ( lInRS == .F. .AND. cVRada == "3" )
+         SELECT ld
+         SKIP
+         LOOP
+      ENDIF
+
+      cR_jmb := radn->matbr
+      cR_naziv := AllTrim( radn->naz ) + " " + AllTrim( radn->ime )
+
+
+      ld_pozicija_parobr( nMjesec, nGodina, IIF( ld_vise_obracuna(), ld->obr, NIL ), ld->idrj )
+
+      SELECT ld
+
+      nRashod := 0
+      nPrihod := 0
+      nDohodak := 0
+      nDopPio := 0
+      nDopZdr := 0
+      nPorOsn := 0
+      nPorIzn := 0
+      nTrosk := 0
+
+      DO WHILE !Eof() .AND. field->godina = nGodina ;
+            .AND. field->mjesec = nMjesec ;
+            .AND. field->idradn == cIdRadnikTekuci
+
+         // uvijek provjeri tip rada
+         cT_tiprada := get_ld_rj_tip_rada( field->idradn, field->idrj )
+
+         lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
+
+         // samo pozicionira bazu PAROBR na odgovarajuci zapis
+         ld_pozicija_parobr( nMjesec, nGodina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
+
+         // uzmi samo odgovarajuce tipove rada
+         IF ( cVRada == "1" .AND. !( cT_tiprada $ "A#U" ) )
+            SKIP
+            LOOP
+         ENDIF
+
+         IF ( cVRada == "2" .AND. !( cT_tiprada $ "P" ) )
+            SKIP
+            LOOP
+         ENDIF
+
+         nNeto := field->uneto
+
+         cTrosk := radn->trosk
+
+         nKLO := radn->klo
+
+         nL_odb := field->ulicodb
+
+         nTrosk := 0
+
+         IF cT_tiprada == "A"
+            nTrosk := gAhTrosk
+         ELSEIF cT_tiprada == "U"
+            nTrosk := gUgTrosk
+         ENDIF
+
+         IF lInRS == .T.
+            nTrosk := 0
+         ENDIF
+
+         // ako se ne koriste troskovi onda ih i nema !
+         IF cTrosk == "N"
+            nTrosk := 0
+         ENDIF
+
+         // prihod
+         nPrihod := ld_get_bruto_osnova( nNeto, cT_tiprada, nL_odb, NIL, cTrosk )
+
+         // rashod
+         nRashod := nPrihod * ( nTrosk / 100 )
+
+         // dohodak
+         nDohodak := nPrihod - nRashod
+
+         // ukupno dopr iz
+         nDoprIz := u_dopr_iz( nDohodak, cT_tiprada )
+
+
+         // osnovica za porez
+         nPorOsn := ( nDohodak - nDoprIz ) - nL_odb
+
+         // porez je ?
+         nPorez := izr_porez( nPorOsn, "B" )
+
+         IF lInRS == .T.
+            nDoprIz := 0
+            nPorOsn := 0
+            nPorez := 0
+         ENDIF
+
+         SELECT ld
+
+         // ocitaj doprinose, njihove iznose
+         nDopr1X := get_dopr( cDopr1X, cT_tipRada )
+         nDopr2X := get_dopr( cDopr2X, cT_tipRada )
+
+         // izracunaj doprinose
+         nIDopr1X := round2( nDohodak * nDopr1X / 100, gZaok2 )
+         nIDopr2X := round2( nDohodak * nDopr2X / 100, gZaok2 )
+
+         IF lInRS == .T.
+            // nema doprinosa za zdravstvo !
+            nIDopr1X := 0
+         ENDIF
+
+         SELECT ld
+
+         // ubaci u tabelu podatke
+         _ins_tbl( cR_jmb, ;
+            cR_naziv, ;
+            nPrihod, ;
+            nRashod, ;
+            nDohodak, ;
+            nIDopr1X, ;
+            nPorOsn, ;
+            nPorez, ;
+            nIDopr2X )
+
+         SELECT ld
+         SKIP
+
+      ENDDO
+
+   ENDDO
+
+   RETURN .T.
 
 
 // ----------------------------------------------
@@ -343,10 +423,10 @@ STATIC FUNCTION ak_print( dDatIspl, cPeriod, cTipRada )
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
-STATIC FUNCTION ak_d_print( dDatIspl, cPeriod, cTipRada )
+STATIC FUNCTION ld_akontacija_delphirb_print( dDatIspl, cPeriod, cTipRada )
 
    LOCAL cLine := ""
    LOCAL nPageNo := 0
@@ -413,7 +493,7 @@ STATIC FUNCTION ak_d_print( dDatIspl, cPeriod, cTipRada )
    // stampaj akontaciju poreza delphi
    f18_rtm_print( AllTrim( cRtm ), "r_export", "1" )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -428,7 +508,7 @@ STATIC FUNCTION ak_potpis()
    ? "Upoznat sam sa sankicajama propisanim Zakonom o Poreznoj upravi FBIH i izjavljujem"
    ? "da su svi podaci navedeni u ovoj prijavi tacni, potpuni i jasni", Space( 10 ) + "Potpis poreznog obveznika", Space( 5 ) + "Datum:"
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------
@@ -563,186 +643,8 @@ STATIC FUNCTION ak_zaglavlje( nPage, cTipRada, dDIspl, cPeriod )
    P_COND
    ? Space( 1 ) + "Dio 2 - podaci o prihodima, porezu i doprinosima"
 
-   RETURN
-
-
-
-// ---------------------------------------------------------
-// napuni podatke u pomocnu tabelu za izvjestaj
-// ---------------------------------------------------------
-STATIC FUNCTION fill_data( cRj, nGodina, nMjesec, ;
-      cDopr1X, cDopr2X, cVRada, cObr, cRadnik )
-
-   LOCAL cPom
-
-   SELECT ld
-
-   DO WHILE !Eof() .AND. field->godina = nGodina .AND. ;
-         field->mjesec = nMjesec
-
-      cT_radnik := field->idradn
-
-      IF !Empty( cRadnik )
-         IF cT_radnik <> cRadnik
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
-
-      cT_tiprada := get_ld_rj_tip_rada( field->idradn, field->idrj )
-
-      select_o_radn( cT_radnik )
-
-      lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
-
-      // uzmi samo odgovarajuce tipove rada
-      IF ( cVRada $ "1#3" .AND. !( cT_tiprada $ "A#U" ) )
-         SELECT ld
-         SKIP
-         LOOP
-      ENDIF
-
-      IF ( cVRada == "2" .AND. !( cT_tiprada $ "P" ) )
-         SELECT ld
-         SKIP
-         LOOP
-      ENDIF
-
-      // da li je u rs-u, koji obrazac ?
-      IF ( lInRS == .T. .AND. cVRada <> "3" ) .OR. ;
-            ( lInRS == .F. .AND. cVRada == "3" )
-         SELECT ld
-         SKIP
-         LOOP
-      ENDIF
-
-      cR_jmb := radn->matbr
-      cR_naziv := AllTrim( radn->naz ) + " " + AllTrim( radn->ime )
-
-
-      // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ld_pozicija_parobr( nMjesec, nGodina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
-
-      SELECT ld
-
-      nRashod := 0
-      nPrihod := 0
-      nDohodak := 0
-      nDopPio := 0
-      nDopZdr := 0
-      nPorOsn := 0
-      nPorIzn := 0
-      nTrosk := 0
-
-      DO WHILE !Eof() .AND. field->godina = nGodina ;
-            .AND. field->mjesec = nMjesec ;
-            .AND. field->idradn == cT_radnik
-
-         // uvijek provjeri tip rada
-         cT_tiprada := get_ld_rj_tip_rada( field->idradn, field->idrj )
-
-         lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
-
-         // samo pozicionira bazu PAROBR na odgovarajuci zapis
-         ld_pozicija_parobr( nMjesec, nGodina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
-
-         // uzmi samo odgovarajuce tipove rada
-         IF ( cVRada == "1" .AND. !( cT_tiprada $ "A#U" ) )
-            SKIP
-            LOOP
-         ENDIF
-
-         IF ( cVRada == "2" .AND. !( cT_tiprada $ "P" ) )
-            SKIP
-            LOOP
-         ENDIF
-
-         nNeto := field->uneto
-
-         cTrosk := radn->trosk
-
-         nKLO := radn->klo
-
-         nL_odb := field->ulicodb
-
-         nTrosk := 0
-
-         IF cT_tiprada == "A"
-            nTrosk := gAhTrosk
-         ELSEIF cT_tiprada == "U"
-            nTrosk := gUgTrosk
-         ENDIF
-
-         IF lInRS == .T.
-            nTrosk := 0
-         ENDIF
-
-         // ako se ne koriste troskovi onda ih i nema !
-         IF cTrosk == "N"
-            nTrosk := 0
-         ENDIF
-
-         // prihod
-         nPrihod := ld_get_bruto_osnova( nNeto, cT_tiprada, nL_odb, NIL, cTrosk )
-
-         // rashod
-         nRashod := nPrihod * ( nTrosk / 100 )
-
-         // dohodak
-         nDohodak := nPrihod - nRashod
-
-         // ukupno dopr iz
-         nDoprIz := u_dopr_iz( nDohodak, cT_tiprada )
-
-
-         // osnovica za porez
-         nPorOsn := ( nDohodak - nDoprIz ) - nL_odb
-
-         // porez je ?
-         nPorez := izr_porez( nPorOsn, "B" )
-
-         IF lInRS == .T.
-            nDoprIz := 0
-            nPorOsn := 0
-            nPorez := 0
-         ENDIF
-
-         SELECT ld
-
-         // ocitaj doprinose, njihove iznose
-         nDopr1X := get_dopr( cDopr1X, cT_tipRada )
-         nDopr2X := get_dopr( cDopr2X, cT_tipRada )
-
-         // izracunaj doprinose
-         nIDopr1X := round2( nDohodak * nDopr1X / 100, gZaok2 )
-         nIDopr2X := round2( nDohodak * nDopr2X / 100, gZaok2 )
-
-         IF lInRS == .T.
-            // nema doprinosa za zdravstvo !
-            nIDopr1X := 0
-         ENDIF
-
-         SELECT ld
-
-         // ubaci u tabelu podatke
-         _ins_tbl( cR_jmb, ;
-            cR_naziv, ;
-            nPrihod, ;
-            nRashod, ;
-            nDohodak, ;
-            nIDopr1X, ;
-            nPorOsn, ;
-            nPorez, ;
-            nIDopr2X )
-
-         SELECT ld
-         SKIP
-
-      ENDDO
-
-   ENDDO
-
    RETURN .T.
+
 
 
 STATIC FUNCTION o_tables()

@@ -101,7 +101,7 @@ METHOD mMenu()
 METHOD set_module_gvars()
 
    PUBLIC cFormula := ""
-   PUBLIC gLDRadnaJedinica := "01"
+   PUBLIC gLDRadnaJedinica := "10"
    PUBLIC gnHelpObr := 0
 
    PUBLIC gObracun := "1"

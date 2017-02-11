@@ -14,8 +14,9 @@
 
 FUNCTION ld_asd_aug_obrazac()
 
-   LOCAL cRj := Space( 65 )
+   //LOCAL cRj := Space( 65 )
    //LOCAL cIdRj
+   LOCAL cIdRj := gLDRadnaJedinica
    LOCAL nMjesec
    LOCAL nGodina
    LOCAL cDopr1X := "1X"
@@ -48,7 +49,8 @@ FUNCTION ld_asd_aug_obrazac()
 
    Box( "#RPT: AKONTACIJA POREZA PO ODBITKU", 13, 75 )
 
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@S25"
+   //@ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@S25"
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
    @ form_x_koord() + 2, form_y_koord() + 2 SAY "Za mjesec:" GET nMjesec PICT "99"
    @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
    @ form_x_koord() + 3, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
@@ -85,9 +87,7 @@ FUNCTION ld_asd_aug_obrazac()
    // sortiraj tabelu i postavi filter
    // ld_sort( cRj, nGodina, nMjesec, cObracun )
 
-   seek_ld( cRj, nGodina, nMjesec, ld_broj_obracuna() )
-
-
+   seek_ld( cIdRj, nGodina, nMjesec, ld_broj_obracuna() )
    fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cTipRada, cObracun, cIdRadn )
 
 
@@ -134,8 +134,7 @@ STATIC FUNCTION fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cVRada, cObr, cRa
 
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
 
-      // uzmi samo odgovarajuce tipove rada
-      IF ( cVRada $ "1#3" .AND. !( cT_tiprada $ "A#U" ) )
+      IF ( cVRada $ "1#3" .AND. !( cT_tiprada $ "A#U" ) )  // uzmi samo odgovarajuce tipove rada
          SELECT ld
          SKIP
          LOOP
@@ -147,8 +146,7 @@ STATIC FUNCTION fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cVRada, cObr, cRa
          LOOP
       ENDIF
 
-      // da li je u rs-u, koji obrazac ?
-      IF ( lInRS == .T. .AND. cVRada <> "3" ) .OR. ( lInRS == .F. .AND. cVRada == "3" )
+      IF ( lInRS == .T. .AND. cVRada <> "3" ) .OR. ( lInRS == .F. .AND. cVRada == "3" )  // da li je u rs-u, koji obrazac ?
          SELECT ld
          SKIP
          LOOP
@@ -156,7 +154,6 @@ STATIC FUNCTION fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cVRada, cObr, cRa
 
       cR_jmb := radn->matbr
       cR_naziv := AllTrim( radn->naz ) + " " + AllTrim( radn->ime )
-
 
       ld_pozicija_parobr( nMjesec, nGodina, IIF( ld_vise_obracuna(), ld->obr, NIL ), ld->idrj )
 
@@ -171,9 +168,7 @@ STATIC FUNCTION fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cVRada, cObr, cRa
       nPorIzn := 0
       nTrosk := 0
 
-      DO WHILE !Eof() .AND. field->godina = nGodina ;
-            .AND. field->mjesec = nMjesec ;
-            .AND. field->idradn == cIdRadnikTekuci
+      DO WHILE !Eof() .AND. field->godina == nGodina .AND. field->mjesec == nMjesec .AND. field->idradn == cIdRadnikTekuci
 
          // uvijek provjeri tip rada
          cT_tiprada := get_ld_rj_tip_rada( field->idradn, field->idrj )

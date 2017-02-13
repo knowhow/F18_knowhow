@@ -37,14 +37,13 @@ FUNCTION ld_olp_gip_obrazac()
    LOCAL cDopr11 := "11"
    LOCAL cDopr12 := "12"
    LOCAL cDopr1X := "1X"
-   LOCAL cTipRpt := "1"
+   LOCAL cTipRpt := "2"
    LOCAL cTP_off := Space( 100 )
    LOCAL cObracun := gObracun
    LOCAL cWinPrint := "E"
    LOCAL nOper := 1
 
-   // kreiraj pomocnu tabelu
-   ol_tmp_tbl()
+   ol_tmp_tbl()    // kreiraj pomocnu tabelu
 
    cIdRj := gLDRadnaJedinica
    nMjesecOd := ld_tekuci_mjesec()
@@ -83,12 +82,9 @@ FUNCTION ld_olp_gip_obrazac()
       @ form_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
 
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cIdRadnik ;
-      VALID Empty( cIdRadnik ) .OR. P_RADN( @cIdRadnik )
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "    Isplate u usl. ili dobrima:" ;
-      GET cPrimDobra PICT "@S30"
-   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Tipovi koji ne ulaze u obrazac:" ;
-      GET cTP_off PICT "@S30"
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cIdRadnik  VALID Empty( cIdRadnik ) .OR. P_RADN( @cIdRadnik )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "    Isplate u usl. ili dobrima:"  GET cPrimDobra PICT "@S30"
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Tipovi koji ne ulaze u obrazac:"  GET cTP_off PICT "@S30"
    @ form_x_koord() + 7, form_y_koord() + 2 SAY "   Doprinos iz pio: " GET cDopr10
    @ form_x_koord() + 8, form_y_koord() + 2 SAY "   Doprinos iz zdr: " GET cDopr11
    @ form_x_koord() + 9, form_y_koord() + 2 SAY "   Doprinos iz nez: " GET cDopr12
@@ -103,16 +99,15 @@ FUNCTION ld_olp_gip_obrazac()
 
    @ form_x_koord() + 15, Col() + 2 SAY "def.rj" GET cRJDef
 
-   @ form_x_koord() + 15, Col() + 2 SAY "st./exp.(S/E)?" GET cWinPrint ;
-      VALID cWinPrint $ "SE" PICT "@!"
+   @ form_x_koord() + 15, Col() + 2 SAY "st./exp.(S/E)?" GET cWinPrint  VALID cWinPrint $ "SE" PICT "@!"
 
    READ
 
    dPerOd := Date()
    dPerDo := Date()
 
-   // daj period od - do
-   g_per_oddo( nMjesecOd, nGodinaOd, nMjesecDo, nGodinaDo, @dPerOd, @dPerDo )
+
+   g_per_oddo( nMjesecOd, nGodinaOd, nMjesecDo, nGodinaDo, @dPerOd, @dPerDo )    // daj period od - do
 
    IF cWinPrint == "E"
 
@@ -162,14 +157,12 @@ FUNCTION ld_olp_gip_obrazac()
 
    ld_obracunski_list_sort( cRadneJedinice, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, cIdRadnik, cTipRpt, cObracun )
 
-   // nafiluj podatke obracuna
+
    ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, cIdRadnik, ;
-      cPrimDobra, cTP_off, cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, ;
-      cObracun )
+      cPrimDobra, cTP_off, cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, cObracun )
 
-   // stampa izvjestaja xml/oo3
 
-   IF s_nXml0ili1 == 1
+   IF s_nXml0ili1 == 1    // stampa izvjestaja xml/oo3
       _xml_print( cTipRpt )
    ELSE
       nBrZahtjeva := ld_mip_broj_obradjenih_radnika()
@@ -180,134 +173,356 @@ FUNCTION ld_olp_gip_obrazac()
    RETURN .T.
 
 
-// --------------------------------------
-// vraca period od-do
-// --------------------------------------
-STATIC FUNCTION g_per_oddo( nMjesecOd, nGodinaOd, nMjesecDo, nGodinaDo, ;
-      dPerOd, dPerDo )
 
-   LOCAL cTmp := ""
+// ---------------------------------------------------------
+// napuni podatke u pomocnu tabelu za izvjestaj
+// ---------------------------------------------------------
+FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, ;
+      cIdRadnik, cPrimDobra, cTP_off, cDopr10, cDopr11, cDopr12, cDopr1X, ;
+      cRptTip, cObracun, cTp1, cTp2, cTp3, cTp4, cTp5 )
 
-   cTmp += "01" + "."
-   cTmp += PadL( AllTrim( Str( nMjesecOd ) ), 2, "0" ) + "."
-   cTmp += AllTrim( Str( nGodinaOd ) )
+   LOCAL i
+   LOCAL cPom
+   LOCAL nPrDobra
+   LOCAL nTP_off
+   LOCAL nTp1 := 0
+   LOCAL nTp2 := 0
+   LOCAL nTp3 := 0
+   LOCAL nTp4 := 0
+   LOCAL nTp5 := 0
+   LOCAL nTrosk := 0
+   LOCAL nIDopr10 := 0000.00000
+   LOCAL nIDopr11 := 0000.00000
+   LOCAL nIDopr12 := 0000.00000
+   LOCAL nIDopr1X := 0000.00000
+   LOCAL lInRS := .F.
 
-   dPerOd := CToD( cTmp )
-
-   cTmp := g_day( nMjesecDo ) + "."
-   cTmp += PadL( AllTrim( Str( nMjesecDo ) ), 2, "0" ) + "."
-   cTmp += AllTrim( Str( nGodinaDo ) )
-
-   dPerDo := CToD( cTmp )
-
-   RETURN .T.
-
-// ------------------------------------------
-// vraca koliko dana ima u mjesecu
-// ------------------------------------------
-FUNCTION g_day( nMonth )
-
-   LOCAL cDay := "31"
-
-   DO CASE
-   CASE nMonth = 1
-      cDay := "31"
-   CASE nMonth = 2
-      cDay := "28"
-   CASE nMonth = 3
-      cDay := "31"
-   CASE nMonth = 4
-      cDay := "30"
-   CASE nMonth = 5
-      cDay := "31"
-   CASE nMonth = 6
-      cDay := "30"
-   CASE nMonth = 7
-      cDay := "31"
-   CASE nMonth = 8
-      cDay := "31"
-   CASE nMonth = 9
-      cDay := "30"
-   CASE nMonth = 10
-      cDay := "31"
-   CASE nMonth = 11
-      cDay := "30"
-   CASE nMonth = 12
-      cDay := "31"
-
-   ENDCASE
-
-   RETURN cDay
-
-
-
-// -------------------------------------
-// vraca vrstu isplate
-// -------------------------------------
-FUNCTION g_v_ispl( cId )
-
-   LOCAL cIspl := "Plata"
-
-   IF cId == "1"
-      cIspl := "Plata"
-   ELSEIF cId == "2"
-      cIspl := "Plata + ostalo"
+   // dodatni tipovi primanja
+   IF cTp1 == nil
+      cTp1 := ""
+   ENDIF
+   IF cTp2 == nil
+      cTp2 := ""
+   ENDIF
+   IF cTp3 == nil
+      cTp3 := ""
+   ENDIF
+   IF cTp4 == nil
+      cTp4 := ""
+   ENDIF
+   IF cTp5 == nil
+      cTp5 := ""
    ENDIF
 
-   RETURN cIspl
 
-
-
-STATIC FUNCTION g_operacija( nOper )
-
-   LOCAL cOperacija := ""
-
-   IF nOper = 1
-      cOperacija := "Novi"
-   ELSEIF nOper = 2
-      cOperacija := "Izmjena"
-   ELSEIF nOper = 3
-      cOperacija := "Brisanje"
-   ELSE
-      cOperacija := "Novi"
-   ENDIF
-
-   RETURN cOperacija
-
-
-// -----------------------------------------------
-// vraca broj zahtjeva
-// -----------------------------------------------
-FUNCTION ld_mip_broj_obradjenih_radnika()
-
-   LOCAL nTArea := Select()
-   LOCAL cT_radnik
-   LOCAL nCnt
-   LOCAL nRet := 0
-
-   SELECT r_export
-   SET ORDER TO TAG "1"
-   GO TOP
+   SELECT ld
 
    DO WHILE !Eof()
 
+      IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ;
+            ld_godina_mjesec_string( nGodinaOd, nMjesecOd )
+         SKIP
+         LOOP
+      ENDIF
+
+      IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ;
+            ld_godina_mjesec_string( nGodinaDo, nMjesecDo )
+         SKIP
+         LOOP
+      ENDIF
+
       cT_radnik := field->idradn
-      nCnt := 0
+
+      IF !Empty( cIdRadnik )
+         IF cT_radnik <> cIdRadnik
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
+      lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
+
+      // samo pozicionira bazu PAROBR na odgovarajuci zapis
+      ld_pozicija_parobr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
+
+      select_o_radn( cT_radnik )
+
+      IF cRptTip $ "3#4"
+         IF ( cTipRada $ " #I#N" )
+            SELECT ld
+            SKIP
+            LOOP
+         ENDIF
+      ELSE
+         IF !( cTipRada $ " #I#N" )
+            SELECT ld
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      SELECT ld
+
+      nBruto := 0
+      nTrosk := 0
+      nBrDobra := 0
+      nDoprStU := 0
+      nDopPio := 0
+      nDopZdr := 0
+      nDopNez := 0
+      nDopUk := 0
+      nNeto := 0
+      nPrDobra := 0
+      nTP_off := 0
+      nTp1 := 0
+      nTp2 := 0
+      nTp3 := 0
+      nTp4 := 0
+      nTp5 := 0
 
       DO WHILE !Eof() .AND. field->idradn == cT_radnik
-         nCnt := 1
-         SKIP
-      ENDDO
 
-      nRet += nCnt
+         IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ld_godina_mjesec_string( nGodinaOd, nMjesecOd )
+            SKIP
+            LOOP
+         ENDIF
+
+         IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ld_godina_mjesec_string( nGodinaDo, nMjesecDo )
+            SKIP
+            LOOP
+         ENDIF
+
+         cRadJed := ld->idrj   // radna jedinica
+
+         cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )    // uvijek provjeri tip rada, ako ima vise obracuna
+         cTrosk := radn->trosk
+         lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
+
+         IF cRptTip $ "3#4"
+            IF ( cTipRada $ " #I#N" )
+               SKIP
+               LOOP
+            ENDIF
+         ELSE
+            IF !( cTipRada $ " #I#N" )
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
+
+         ld_pozicija_parobr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ),  ld->idrj )
+
+         nPrDobra := 0
+         nTP_off := 0
+
+         IF !Empty( cPrimDobra )
+            FOR t := 1 TO 60
+               cPom := IF( t > 9, Str( t, 2 ), "0" + Str( t, 1 ) )
+               IF ld->( FieldPos( "I" + cPom ) ) <= 0
+                  EXIT
+               ENDIF
+               nPrDobra += IF( cPom $ cPrimDobra, LD->&( "I" + cPom ), 0 )
+            NEXT
+         ENDIF
+
+         IF !Empty( cTP_off )
+            FOR o := 1 TO 60
+               cPom := IF( o > 9, Str( o, 2 ), "0" + Str( o, 1 ) )
+               IF ld->( FieldPos( "I" + cPom ) ) <= 0
+                  EXIT
+               ENDIF
+               nTP_off += IF( cPom $ cTP_off, LD->&( "I" + cPom ), 0 )
+            NEXT
+         ENDIF
+
+         // ostali tipovi primanja
+         IF !Empty( cTp1 )
+            nTp1 := LD->&( "I" + cTp1 )
+         ENDIF
+         IF !Empty( cTp2 )
+            nTp2 := LD->&( "I" + cTp2 )
+         ENDIF
+         IF !Empty( cTp3 )
+            nTp3 := LD->&( "I" + cTp3 )
+         ENDIF
+         IF !Empty( cTp4 )
+            nTp4 := LD->&( "I" + cTp4 )
+         ENDIF
+         IF !Empty( cTp5 )
+            nTp5 := LD->&( "I" + cTp5 )
+         ENDIF
+
+
+         nNeto := field->uneto
+         nKLO := get_koeficijent_licnog_odbitka( field->ulicodb )
+         nL_odb := field->ulicodb
+
+         // tipovi primanja koji ne ulaze u bruto osnovicu
+         IF ( nTP_off > 0 )
+            nNeto := ( nNeto - nTP_off )
+         ENDIF
+
+         nBruto := ld_get_bruto_osnova( nNeto, cTipRada, nL_odb )
+
+         nMBruto := nBruto
+
+         // prvo provjeri hoces li racunati mbruto
+         IF calc_mbruto()
+            // minimalni bruto
+            nMBruto := min_bruto( nBruto, field->usati )
+         ENDIF
+
+         // ugovori o djelu
+         IF cTipRada == "U" .AND. cTrosk <> "N"
+
+            nTrosk := ROUND2( nMBruto * ( gUgTrosk / 100 ), gZaok2 )
+
+            IF lInRs == .T.
+               nTrosk := 0
+            ENDIF
+
+         ENDIF
+
+
+         IF cTipRada == "A" .AND. cTrosk <> "N"  // autorski honorar
+
+            nTrosk := ROUND2( nMBruto * ( gAhTrosk / 100 ), gZaok2 )
+
+            IF lInRs == .T.
+               nTrosk := 0
+            ENDIF
+
+         ENDIF
+
+         IF cRptTip $ "3#4"
+            // ovo je bruto iznos
+            nMBruto := ( nBruto - nTrosk )
+         ENDIF
+
+         // ovo preskoci, nema ovdje GIP-a
+         IF nMBruto <= 0
+            SELECT ld
+            SKIP
+            LOOP
+         ENDIF
+
+         // bruto primanja u uslugama ili dobrima
+         // za njih posebno izracunaj bruto osnovicu
+         IF nPrDobra > 0
+            nBrDobra := ld_get_bruto_osnova( nPrDobra, cTipRada, nL_odb )
+         ENDIF
+
+         // ocitaj doprinose, njihove iznose
+         nDopr10 := get_dopr( cDopr10, cTipRada )
+         nDopr11 := get_dopr( cDopr11, cTipRada )
+         nDopr12 := get_dopr( cDopr12, cTipRada )
+         nDopr1X := get_dopr( cDopr1X, cTipRada )
+
+         // izracunaj doprinose
+         nIDopr10 := Round( nMBruto * nDopr10 / 100, 4 )
+         nIDopr11 := Round( nMBruto * nDopr11 / 100, 4 )
+         nIDopr12 := Round( nMBruto * nDopr12 / 100, 4 )
+
+         // zbirni je zbir ova tri doprinosa
+         nIDopr1X := Round( nIDopr10 + nIDopr11 + nIDopr12, 4 )
+
+         // ukupno dopr iz 31%
+         // nDoprIz := u_dopr_iz( nMBruto, cTipRada )
+
+         // osnovica za porez
+         IF cRptTip $ "3#4"
+            nPorOsn := ( nMBruto - nIDopr1X ) - nL_odb
+         ELSE
+            nPorOsn := ( nBruto - nIDopr1X ) - nL_odb
+         ENDIF
+
+         // ako je neoporeziv radnik, nema poreza
+         IF !radn_oporeziv( radn->id, ld->idrj ) .OR. ( nBruto - nIDopr1X ) < nL_odb
+            nPorOsn := 0
+         ENDIF
+
+         // porez je ?
+         nPorez := izr_porez( nPorOsn, "B" )
+
+         SELECT ld
+
+         // na ruke je
+         IF cRptTip $ "3#4"
+            nNaRuke := Round( ( nMBruto - nIDopr1X - nPorez ) ;
+               + nTrosk, 2 )
+         ELSE
+            nNaRuke := Round( nBruto - nIDopr1X - nPorez, 2 )
+         ENDIF
+
+         nIsplata := nNaRuke
+
+         // da li se radi o minimalcu ?
+         IF cTipRada $ " #I#N#"
+            nIsplata := min_neto( nIsplata, field->usati )
+         ENDIF
+
+         nMjIspl := 0
+         cIsplZa := ""
+         cVrstaIspl := ""
+         dDatIspl := Date()
+         cObr := " "
+
+         IF ld_vise_obracuna()
+            cObr := field->obr
+         ENDIF
+
+         cTmpRj := field->idrj // radna jedinica
+         IF !Empty( cRJDef )
+            cTmpRj := cRJDef
+         ENDIF
+
+         dDatIspl := ld_get_datum_isplate_plate( cTmpRJ, field->godina,  field->mjesec, cObr, @nMjIspl, @cIsplZa, @cVrstaIspl )
+
+
+
+         // ubaci u tabelu podatke
+         _ins_tbl( cT_radnik, ;
+            cRadJed, ;
+            cTipRada, ;
+            "placa", ;
+            dDatIspl, ;
+            ld->mjesec, ;
+            nMjIspl, ;
+            cIsplZa, ;
+            cVrstaIspl, ;
+            ld->godina, ;
+            nBruto - nBrDobra, ;
+            nBrDobra, ;
+            nBruto, ;
+            nMBruto, ;
+            nTrosk, ;
+            nDopr1X, ;
+            nIDopr10, ;
+            nIDopr11, ;
+            nIDopr12, ;
+            nIDopr1X, ;
+            nNaRuke, ;
+            nKLO, ;
+            nL_Odb, ;
+            nPorOsn, ;
+            nPorez, ;
+            nIsplata, ;
+            ld->usati, ;
+            nTp1, ;
+            nTp2, ;
+            nTp3, ;
+            nTp4, ;
+            nTp5 )
+
+         SELECT ld
+         SKIP
+
+      ENDDO
 
    ENDDO
 
-   SELECT ( nTArea )
-
-   RETURN nRet
-
-
+   RETURN .T.
 
 // ----------------------------------------
 // export xml-a
@@ -339,7 +554,7 @@ STATIC FUNCTION _xml_export( cTip, mjesec, godina )
    @ form_x_koord() + 5, form_y_koord() + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
    @ form_x_koord() + 6, form_y_koord() + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
    READ
-   
+
    BoxC()
 
    set_metric( "org_id_broj", NIL, _id_br )
@@ -906,374 +1121,133 @@ FUNCTION ld_godina_mjesec_string( nGod, nMj )
 
    RETURN cRet
 
+// --------------------------------------
+// vraca period od-do
+// --------------------------------------
+STATIC FUNCTION g_per_oddo( nMjesecOd, nGodinaOd, nMjesecDo, nGodinaDo, ;
+      dPerOd, dPerDo )
+
+   LOCAL cTmp := ""
+
+   cTmp += "01" + "."
+   cTmp += PadL( AllTrim( Str( nMjesecOd ) ), 2, "0" ) + "."
+   cTmp += AllTrim( Str( nGodinaOd ) )
+
+   dPerOd := CToD( cTmp )
+
+   cTmp := g_day( nMjesecDo ) + "."
+   cTmp += PadL( AllTrim( Str( nMjesecDo ) ), 2, "0" ) + "."
+   cTmp += AllTrim( Str( nGodinaDo ) )
+
+   dPerDo := CToD( cTmp )
+
+   RETURN .T.
+
+// ------------------------------------------
+// vraca koliko dana ima u mjesecu
+// ------------------------------------------
+FUNCTION g_day( nMonth )
+
+   LOCAL cDay := "31"
+
+   DO CASE
+   CASE nMonth = 1
+      cDay := "31"
+   CASE nMonth = 2
+      cDay := "28"
+   CASE nMonth = 3
+      cDay := "31"
+   CASE nMonth = 4
+      cDay := "30"
+   CASE nMonth = 5
+      cDay := "31"
+   CASE nMonth = 6
+      cDay := "30"
+   CASE nMonth = 7
+      cDay := "31"
+   CASE nMonth = 8
+      cDay := "31"
+   CASE nMonth = 9
+      cDay := "30"
+   CASE nMonth = 10
+      cDay := "31"
+   CASE nMonth = 11
+      cDay := "30"
+   CASE nMonth = 12
+      cDay := "31"
+
+   ENDCASE
+
+   RETURN cDay
 
 
-// ---------------------------------------------------------
-// napuni podatke u pomocnu tabelu za izvjestaj
-// ---------------------------------------------------------
-FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, ;
-      cIdRadnik, cPrimDobra, cTP_off, cDopr10, cDopr11, cDopr12, cDopr1X, ;
-      cRptTip, cObracun, cTp1, cTp2, cTp3, cTp4, cTp5 )
 
-   LOCAL i
-   LOCAL cPom
-   LOCAL nPrDobra
-   LOCAL nTP_off
-   LOCAL nTp1 := 0
-   LOCAL nTp2 := 0
-   LOCAL nTp3 := 0
-   LOCAL nTp4 := 0
-   LOCAL nTp5 := 0
-   LOCAL nTrosk := 0
-   LOCAL nIDopr10 := 0000.00000
-   LOCAL nIDopr11 := 0000.00000
-   LOCAL nIDopr12 := 0000.00000
-   LOCAL nIDopr1X := 0000.00000
-   LOCAL lInRS := .F.
+// -------------------------------------
+// vraca vrstu isplate
+// -------------------------------------
+FUNCTION g_v_ispl( cId )
 
-   // dodatni tipovi primanja
-   IF cTp1 == nil
-      cTp1 := ""
+   LOCAL cIspl := "Plata"
+
+   IF cId == "1"
+      cIspl := "Plata"
+   ELSEIF cId == "2"
+      cIspl := "Plata + ostalo"
    ENDIF
-   IF cTp2 == nil
-      cTp2 := ""
-   ENDIF
-   IF cTp3 == nil
-      cTp3 := ""
-   ENDIF
-   IF cTp4 == nil
-      cTp4 := ""
-   ENDIF
-   IF cTp5 == nil
-      cTp5 := ""
+
+   RETURN cIspl
+
+
+
+STATIC FUNCTION g_operacija( nOper )
+
+   LOCAL cOperacija := ""
+
+   IF nOper = 1
+      cOperacija := "Novi"
+   ELSEIF nOper = 2
+      cOperacija := "Izmjena"
+   ELSEIF nOper = 3
+      cOperacija := "Brisanje"
+   ELSE
+      cOperacija := "Novi"
    ENDIF
 
-   lDatIspl := .F.
-   // IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
-   // lDatIspl := .T.
-   // ENDIF
+   RETURN cOperacija
 
-   SELECT ld
+
+// -----------------------------------------------
+// vraca broj zahtjeva
+// -----------------------------------------------
+FUNCTION ld_mip_broj_obradjenih_radnika()
+
+   LOCAL nTArea := Select()
+   LOCAL cT_radnik
+   LOCAL nCnt
+   LOCAL nRet := 0
+
+   SELECT r_export
+   SET ORDER TO TAG "1"
+   GO TOP
 
    DO WHILE !Eof()
 
-      IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ;
-            ld_godina_mjesec_string( nGodinaOd, nMjesecOd )
-         SKIP
-         LOOP
-      ENDIF
-
-      IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ;
-            ld_godina_mjesec_string( nGodinaDo, nMjesecDo )
-         SKIP
-         LOOP
-      ENDIF
-
       cT_radnik := field->idradn
-
-      IF !Empty( cIdRadnik )
-         IF cT_radnik <> cIdRadnik
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
-
-      cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
-      lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
-
-      // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ld_pozicija_parobr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
-
-      select_o_radn( cT_radnik )
-
-      IF cRptTip $ "3#4"
-         IF ( cTipRada $ " #I#N" )
-            SELECT ld
-            SKIP
-            LOOP
-         ENDIF
-      ELSE
-         IF !( cTipRada $ " #I#N" )
-            SELECT ld
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
-
-      SELECT ld
-
-      nBruto := 0
-      nTrosk := 0
-      nBrDobra := 0
-      nDoprStU := 0
-      nDopPio := 0
-      nDopZdr := 0
-      nDopNez := 0
-      nDopUk := 0
-      nNeto := 0
-      nPrDobra := 0
-      nTP_off := 0
-      nTp1 := 0
-      nTp2 := 0
-      nTp3 := 0
-      nTp4 := 0
-      nTp5 := 0
+      nCnt := 0
 
       DO WHILE !Eof() .AND. field->idradn == cT_radnik
-
-         IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ;
-               ld_godina_mjesec_string( nGodinaOd, nMjesecOd )
-            SKIP
-            LOOP
-         ENDIF
-
-         IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ;
-               ld_godina_mjesec_string( nGodinaDo, nMjesecDo )
-            SKIP
-            LOOP
-         ENDIF
-
-         // radna jedinica
-         cRadJed := ld->idrj
-
-         // uvijek provjeri tip rada, ako ima vise obracuna
-         cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
-         cTrosk := radn->trosk
-         lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
-
-         IF cRptTip $ "3#4"
-            IF ( cTipRada $ " #I#N" )
-               SKIP
-               LOOP
-            ENDIF
-         ELSE
-            IF !( cTipRada $ " #I#N" )
-               SKIP
-               LOOP
-            ENDIF
-         ENDIF
-
-         ld_pozicija_parobr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ;
-            ld->idrj )
-
-         nPrDobra := 0
-         nTP_off := 0
-
-         IF !Empty( cPrimDobra )
-            FOR t := 1 TO 60
-               cPom := IF( t > 9, Str( t, 2 ), "0" + Str( t, 1 ) )
-               IF ld->( FieldPos( "I" + cPom ) ) <= 0
-                  EXIT
-               ENDIF
-               nPrDobra += IF( cPom $ cPrimDobra, LD->&( "I" + cPom ), 0 )
-            NEXT
-         ENDIF
-
-         IF !Empty( cTP_off )
-            FOR o := 1 TO 60
-               cPom := IF( o > 9, Str( o, 2 ), "0" + Str( o, 1 ) )
-               IF ld->( FieldPos( "I" + cPom ) ) <= 0
-                  EXIT
-               ENDIF
-               nTP_off += IF( cPom $ cTP_off, LD->&( "I" + cPom ), 0 )
-            NEXT
-         ENDIF
-
-         // ostali tipovi primanja
-         IF !Empty( cTp1 )
-            nTp1 := LD->&( "I" + cTp1 )
-         ENDIF
-         IF !Empty( cTp2 )
-            nTp2 := LD->&( "I" + cTp2 )
-         ENDIF
-         IF !Empty( cTp3 )
-            nTp3 := LD->&( "I" + cTp3 )
-         ENDIF
-         IF !Empty( cTp4 )
-            nTp4 := LD->&( "I" + cTp4 )
-         ENDIF
-         IF !Empty( cTp5 )
-            nTp5 := LD->&( "I" + cTp5 )
-         ENDIF
-
-
-         nNeto := field->uneto
-         nKLO := get_koeficijent_licnog_odbitka( field->ulicodb )
-         nL_odb := field->ulicodb
-
-         // tipovi primanja koji ne ulaze u bruto osnovicu
-         IF ( nTP_off > 0 )
-            nNeto := ( nNeto - nTP_off )
-         ENDIF
-
-         nBruto := ld_get_bruto_osnova( nNeto, cTipRada, nL_odb )
-
-         nMBruto := nBruto
-
-         // prvo provjeri hoces li racunati mbruto
-         IF calc_mbruto()
-            // minimalni bruto
-            nMBruto := min_bruto( nBruto, field->usati )
-         ENDIF
-
-         // ugovori o djelu
-         IF cTipRada == "U" .AND. cTrosk <> "N"
-
-            nTrosk := ROUND2( nMBruto * ( gUgTrosk / 100 ), gZaok2 )
-
-            IF lInRs == .T.
-               nTrosk := 0
-            ENDIF
-
-         ENDIF
-
-         // autorski honorar
-         IF cTipRada == "A" .AND. cTrosk <> "N"
-
-            nTrosk := ROUND2( nMBruto * ( gAhTrosk / 100 ), gZaok2 )
-
-            IF lInRs == .T.
-               nTrosk := 0
-            ENDIF
-
-         ENDIF
-
-         IF cRptTip $ "3#4"
-            // ovo je bruto iznos
-            nMBruto := ( nBruto - nTrosk )
-         ENDIF
-
-         // ovo preskoci, nema ovdje GIP-a
-         IF nMBruto <= 0
-            SELECT ld
-            SKIP
-            LOOP
-         ENDIF
-
-         // bruto primanja u uslugama ili dobrima
-         // za njih posebno izracunaj bruto osnovicu
-         IF nPrDobra > 0
-            nBrDobra := ld_get_bruto_osnova( nPrDobra, cTipRada, nL_odb )
-         ENDIF
-
-         // ocitaj doprinose, njihove iznose
-         nDopr10 := get_dopr( cDopr10, cTipRada )
-         nDopr11 := get_dopr( cDopr11, cTipRada )
-         nDopr12 := get_dopr( cDopr12, cTipRada )
-         nDopr1X := get_dopr( cDopr1X, cTipRada )
-
-         // izracunaj doprinose
-         nIDopr10 := Round( nMBruto * nDopr10 / 100, 4 )
-         nIDopr11 := Round( nMBruto * nDopr11 / 100, 4 )
-         nIDopr12 := Round( nMBruto * nDopr12 / 100, 4 )
-
-         // zbirni je zbir ova tri doprinosa
-         nIDopr1X := Round( nIDopr10 + nIDopr11 + nIDopr12, 4 )
-
-         // ukupno dopr iz 31%
-         // nDoprIz := u_dopr_iz( nMBruto, cTipRada )
-
-         // osnovica za porez
-         IF cRptTip $ "3#4"
-            nPorOsn := ( nMBruto - nIDopr1X ) - nL_odb
-         ELSE
-            nPorOsn := ( nBruto - nIDopr1X ) - nL_odb
-         ENDIF
-
-         // ako je neoporeziv radnik, nema poreza
-         IF !radn_oporeziv( radn->id, ld->idrj ) .OR. ;
-               ( nBruto - nIDopr1X ) < nL_odb
-            nPorOsn := 0
-         ENDIF
-
-         // porez je ?
-         nPorez := izr_porez( nPorOsn, "B" )
-
-         SELECT ld
-
-         // na ruke je
-         IF cRptTip $ "3#4"
-            nNaRuke := Round( ( nMBruto - nIDopr1X - nPorez ) ;
-               + nTrosk, 2 )
-         ELSE
-            nNaRuke := Round( nBruto - nIDopr1X - nPorez, 2 )
-         ENDIF
-
-         nIsplata := nNaRuke
-
-         // da li se radi o minimalcu ?
-         IF cTipRada $ " #I#N#"
-            nIsplata := min_neto( nIsplata, field->usati )
-         ENDIF
-
-         nMjIspl := 0
-         cIsplZa := ""
-         cVrstaIspl := ""
-         dDatIspl := Date()
-         cObr := " "
-
-         IF ld_vise_obracuna()
-            cObr := field->obr
-         ENDIF
-
-         IF lDatIspl
-
-            // radna jedinica
-            cTmpRj := field->idrj
-            IF !Empty( cRJDef )
-               cTmpRj := cRJDef
-            ENDIF
-
-            dDatIspl := ld_get_datum_isplate_plate( cTmpRJ, ;
-               field->godina, ;
-               field->mjesec, ;
-               cObr, @nMjIspl, ;
-               @cIsplZa, @cVrstaIspl )
-         ENDIF
-
-
-         // ubaci u tabelu podatke
-         _ins_tbl( cT_radnik, ;
-            cRadJed, ;
-            cTipRada, ;
-            "placa", ;
-            dDatIspl, ;
-            ld->mjesec, ;
-            nMjIspl, ;
-            cIsplZa, ;
-            cVrstaIspl, ;
-            ld->godina, ;
-            nBruto - nBrDobra, ;
-            nBrDobra, ;
-            nBruto, ;
-            nMBruto, ;
-            nTrosk, ;
-            nDopr1X, ;
-            nIDopr10, ;
-            nIDopr11, ;
-            nIDopr12, ;
-            nIDopr1X, ;
-            nNaRuke, ;
-            nKLO, ;
-            nL_Odb, ;
-            nPorOsn, ;
-            nPorez, ;
-            nIsplata, ;
-            ld->usati, ;
-            nTp1, ;
-            nTp2, ;
-            nTp3, ;
-            nTp4, ;
-            nTp5 )
-
-         SELECT ld
+         nCnt := 1
          SKIP
-
       ENDDO
+
+      nRet += nCnt
 
    ENDDO
 
-   RETURN
+   SELECT ( nTArea )
+
+   RETURN nRet
+
 
 
 

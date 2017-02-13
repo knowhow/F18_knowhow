@@ -265,6 +265,7 @@ FUNCTION ld_get_datum_isplate_plate( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, 
    cIsplZa := Space( 50 )
    cVrsta := Space( 50 )
 
+altd()
    o_ld_obracuni( cRJ + Str( nGod, 4, 0 ) + Str( nMjesec, 2, 0 ) + "G" + cObr )
 
    IF field->rj == cRj .AND. ;

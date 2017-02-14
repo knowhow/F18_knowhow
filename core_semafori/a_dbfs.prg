@@ -661,15 +661,13 @@ FUNCTION set_rec_from_dbstruct( hRec )
 
    hDbfFieldsLen := hb_Hash()
    FOR nI := 1 TO Len( aDbfStruct )
-      AAdd( hDbfFields, Lower( aDbfStruct[ nI, 1 ] ) )
-      // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
+      AAdd( hDbfFields, Lower( aDbfStruct[ nI, 1 ] ) ) // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
 
-      IF aDbfStruct[ nI, 2 ] == "B"
+//      IF aDbfStruct[ nI, 2 ] == "B"
 
-         // double
-         hDbfFieldsLen[ Lower( aDbfStruct[ nI, 1 ] ) ] := { aDbfStruct[ nI, 2 ], 18, 8 }
+//         hDbfFieldsLen[ Lower( aDbfStruct[ nI, 1 ] ) ] := { aDbfStruct[ nI, 2 ], 18, 8 }   // double
 
-      ELSEIF aDbfStruct[ nI, 2 ] == "Y" .OR. ( aDbfStruct[ nI, 2 ] == "I" .AND. aDbfStruct[ nI, 4 ] > 0 )
+      IF aDbfStruct[ nI, 2 ] == "Y" .OR. ( aDbfStruct[ nI, 2 ] == "I" .AND. aDbfStruct[ nI, 4 ] > 0 )
 
          // za currency polje stoji I 8 4 - sto znaci currency sa cetiri decimale
          // mislim da se ovdje radi o tome da se u 4 bajta stavlja integer dio, a u ostala 4 decimalni dio
@@ -687,6 +685,27 @@ FUNCTION set_rec_from_dbstruct( hRec )
    hb_mutexUnlock( s_mtxMutex )
 
    RETURN NIL
+
+
+FUNCTION get_field_len( cAlias, cField )
+
+   LOCAL hDbfRec := get_a_dbf_rec( cAlias )
+
+   RETURN hDbfRec[ "dbf_fields_len" ][ Lower( cField ) ] // { "B", 18, 8} ili NIL
+
+
+FUNCTION get_field_get_picture_code( cAlias, cField )
+
+   LOCAL aFieldLen := get_field_len( cAlias, cField )
+
+   IF aFieldLen == NIL
+      RETURN ""
+   ENDIF
+
+   IF !( aFieldLen[ 1 ] $ "NBY" )
+      RETURN "" // nije numeric
+   ENDIF
+   RETURN Replicate( "9", aFieldLen[ 2 ] - aFieldLen[ 3 ] - 1 ) + "." + REPLICATE( "9", aFieldLen[ 3 ] ) // 999999999.99999999
 
 
 

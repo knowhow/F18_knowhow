@@ -177,13 +177,13 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, lSql )
    hAlgoritam := hb_Hash()
 
    IF hRec == NIL
-      hAlgoritam[ "hDbfKeyFields" ] := { "id" }
+      hAlgoritam[ "dbf_key_fields" ] := { "id" }
       hAlgoritam[ "dbf_tag" ]        := "ID"
       hAlgoritam[ "sql_in" ]        := "id"
       hAlgoritam[ "dbf_key_block" ] := {|| field->id }
 
    ELSE
-      hAlgoritam[ "hDbfKeyFields" ] := hRec[ "hDbfKeyFields" ]
+      hAlgoritam[ "dbf_key_fields" ] := hRec[ "dbf_key_fields" ]
       hAlgoritam[ "dbf_tag" ]        := hRec[ "dbf_tag" ]
       hAlgoritam[ "sql_in" ]        := hRec[ "sql_in" ]
       hAlgoritam[ "dbf_key_block" ] := hRec[ "dbf_key_block" ]
@@ -318,7 +318,7 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
       IF hb_HHasKey( hDbfRecord, "algoritam" )
          // hDbfKeyFields stavke su "C" za datumska i char polja, "A" za numericka polja
          // npr: { {"godina", 4, 0}, "datum", "id" }
-         hDbfRecord[ "sql_order" ] := sql_order_from_key_fields( hDbfRecord[ "algoritam" ][ 1 ][ "hDbfKeyFields" ] )
+         hDbfRecord[ "sql_order" ] := sql_order_from_key_fields( hDbfRecord[ "algoritam" ][ 1 ][ "dbf_key_fields" ] )
       ENDIF
    ENDIF
 

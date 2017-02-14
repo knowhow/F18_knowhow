@@ -129,13 +129,9 @@ FUNCTION ld_platni_spisak()
    ELSE
 
       IF cVarSort == "1"
-<<<<<<< HEAD
-         //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
-         //HSEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + cObracun
-=======
+
          // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
          // HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + cObracun
->>>>>>> 23100-ld
          seek_ld( cIdRj, nGodina, nMjesec, cObracun )
       ELSE
          seek_ld( cIdRj, nGodina, nMjesec, cObracun )
@@ -267,55 +263,7 @@ FUNCTION ld_platni_spisak()
 
    my_close_all_dbf()
 
-<<<<<<< HEAD
-   RETURN
-
-
-FUNCTION ZPlatSp()
-
-   ?
-   P_12CPI
-
-   ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
-   ?
-
-   IF Empty( cIdRj )
-      ? _l( "Pregled za sve RJ ukupno:" )
-   ELSE
-      ? _l( "RJ:" ), cIdRj, ld_rj->naz
-   ENDIF
-
-   ?? Space( 2 ) + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + _l( "Godina:" ), Str( nGodina, 5 )
-   DevPos( PRow(), 74 )
-   ?? _l( "Str." ), Str( ++nStrana, 3 )
-   ?
-
-   IF !Empty( cNaslov )
-      ? PadC( AllTrim( cNaslov ), 90 )
-      ? PadC( REPL( "-", Len( AllTrim( cNaslov ) ) ), 90 )
-   ENDIF
-
-   IF nProcenat <> 100
-      ?
-      ? _l( "Procenat za isplatu:" )
-      IF nDio == 1
-         @ PRow(), PCol() + 1 SAY nprocenat PICT "999.99%"
-      ELSE
-         @ PRow(), PCol() + 1 SAY 100 - nprocenat PICT "999.99%"
-      ENDIF
-      ?
-   ENDIF
-
-   ? m
-   ? _l( "Rbr   Sifra           Naziv radnika               " ) + iif( cPrikIzn == "D", _l( "ZA ISPLATU" ), "          " ) + "         " + _l( "Potpis" )
-   ? m
-
-   RETURN
-=======
    RETURN .T.
->>>>>>> 23100-ld
-
 
 
 FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )

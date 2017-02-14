@@ -663,9 +663,9 @@ FUNCTION set_rec_from_dbstruct( hRec )
    FOR nI := 1 TO Len( aDbfStruct )
       AAdd( hDbfFields, Lower( aDbfStruct[ nI, 1 ] ) ) // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
 
-//      IF aDbfStruct[ nI, 2 ] == "B"
+// IF aDbfStruct[ nI, 2 ] == "B"
 
-//         hDbfFieldsLen[ Lower( aDbfStruct[ nI, 1 ] ) ] := { aDbfStruct[ nI, 2 ], 18, 8 }   // double
+// hDbfFieldsLen[ Lower( aDbfStruct[ nI, 1 ] ) ] := { aDbfStruct[ nI, 2 ], 18, 8 }   // double
 
       IF aDbfStruct[ nI, 2 ] == "Y" .OR. ( aDbfStruct[ nI, 2 ] == "I" .AND. aDbfStruct[ nI, 4 ] > 0 )
 
@@ -691,6 +691,10 @@ FUNCTION get_field_len( cAlias, cField )
 
    LOCAL hDbfRec := get_a_dbf_rec( cAlias )
 
+   IF !hb_HHasKey( hDbfRec,[ "dbf_fields_len" ] ) .OR. hDbfRec[ "dbf_fields_len" ] == NIL
+      RETURN NIL
+   ENDIF
+
    RETURN hDbfRec[ "dbf_fields_len" ][ Lower( cField ) ] // { "B", 18, 8} ili NIL
 
 
@@ -705,7 +709,8 @@ FUNCTION get_field_get_picture_code( cAlias, cField )
    IF !( aFieldLen[ 1 ] $ "NBY" )
       RETURN "" // nije numeric
    ENDIF
-   RETURN Replicate( "9", aFieldLen[ 2 ] - aFieldLen[ 3 ] - 1 ) + "." + REPLICATE( "9", aFieldLen[ 3 ] ) // 999999999.99999999
+
+   RETURN Replicate( "9", aFieldLen[ 2 ] - aFieldLen[ 3 ] - 1 ) + "." + Replicate( "9", aFieldLen[ 3 ] ) // 999999999.99999999
 
 
 

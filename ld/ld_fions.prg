@@ -12,22 +12,6 @@
 
 #include "f18.ch"
 
-// --------------------------------------------------------
-// Vraca oznaku obracuna ako se radi o vise obracuna
-// --------------------------------------------------------
-FUNCTION ld_broj_obracuna()
-
-   PRIVATE cOznObracuna
-
-   IF ld_vise_obracuna()
-      cOznObracuna := cObracun
-   ELSE
-      cOznObracuna := ""
-   ENDIF
-
-   RETURN cOznObracuna
-
-
 
 // -------------------------------------------
 // ukupno radnik

@@ -28,7 +28,7 @@ FUNCTION ld_platni_spisak()
 
    o_ld_rj()
    o_ld_radn()
-   //select_o_ld()
+   // select_o_ld()
 
    cProred := "N"
    cPrikIzn := "D"
@@ -101,7 +101,7 @@ FUNCTION ld_platni_spisak()
       cNaslov += ( Space( 1 ) + _l( "za mjesec:" ) + Str( nMjesec, 2 ) + ". " + _l( "godine:" ) + Str( nGodina, 4 ) + "." )
    ENDIF
 
-   //SELECT ld
+   // SELECT ld
    // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
    // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
 
@@ -110,8 +110,8 @@ FUNCTION ld_platni_spisak()
    IF Empty( cIdRj )
       cIdRj := ""
       IF cVarSort == "1"
-         //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-         //HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun
+         // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+         // HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun
          seek_ld_2( NIL, nGodina, nMjesec, cObracun )
 
       ELSE
@@ -120,7 +120,7 @@ FUNCTION ld_platni_spisak()
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
          cFilt := iif( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
-            IIF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+            iif( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
          cFilt += ".and. obr==" + _filter_quote( cObracun )
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
          BoxC()
@@ -129,8 +129,13 @@ FUNCTION ld_platni_spisak()
    ELSE
 
       IF cVarSort == "1"
+<<<<<<< HEAD
          //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
          //HSEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + cObracun
+=======
+         // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
+         // HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + cObracun
+>>>>>>> 23100-ld
          seek_ld( cIdRj, nGodina, nMjesec, cObracun )
       ELSE
          seek_ld( cIdRj, nGodina, nMjesec, cObracun )
@@ -262,6 +267,7 @@ FUNCTION ld_platni_spisak()
 
    my_close_all_dbf()
 
+<<<<<<< HEAD
    RETURN
 
 
@@ -306,6 +312,9 @@ FUNCTION ZPlatSp()
    ? m
 
    RETURN
+=======
+   RETURN .T.
+>>>>>>> 23100-ld
 
 
 
@@ -325,10 +334,10 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    nProcenat := 100
    nZkk := gZaok
 
-   //o_kred()
+   // o_kred()
    o_ld_rj()
    o_ld_radn()
-   //select_o_ld()
+   // select_o_ld()
 
    PRIVATE cIsplata := ""
    PRIVATE cLokacija
@@ -382,7 +391,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
       CreateFileBanka()
    ENDIF
 
-   SELECT ld
+   //SELECT ld
    // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
    // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
 
@@ -393,15 +402,15 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
       cIdRj := ""
 
       IF cVarSort == "1"
-         //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-         //HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
+         // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+         // HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
          seek_ld_2( NIL, nGodina, nMjesec, cObracun )
       ELSE
          seek_ld( NIL, nGodina, nMjesec, cObracun )
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
-         cFilt := IIF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+         cFilt := iif( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
          IF ld_vise_obracuna()
             cFilt += ".and. obr=" + _filter_quote( cObracun )
          ENDIF
@@ -413,8 +422,9 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    ELSE
 
       IF cVarSort == "1"
-         //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
-         //HSEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + cObracun
+
+         // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
+         // HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + cObracun
          seek_ld( cIdRj, nGodina, nMjesec, cObracun )
       ELSE
          seek_ld( cIdRj, nGodina, nMjesec, cObracun )
@@ -593,7 +603,52 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
+
+
+
+FUNCTION ZPlatSp()
+
+   ?
+   P_12CPI
+
+   ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
+   ?
+
+   IF Empty( cidrj )
+      ? _l( "Pregled za sve RJ ukupno:" )
+   ELSE
+      ? _l( "RJ:" ), cIdRj, ld_rj->naz
+   ENDIF
+
+   ?? Space( 2 ) + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + _l( "Godina:" ), Str( nGodina, 5 )
+   DevPos( PRow(), 74 )
+   ?? _l( "Str." ), Str( ++nStrana, 3 )
+   ?
+
+   IF !Empty( cNaslov )
+      ? PadC( AllTrim( cNaslov ), 90 )
+      ? PadC( REPL( "-", Len( AllTrim( cNaslov ) ) ), 90 )
+   ENDIF
+
+   IF nProcenat <> 100
+      ?
+      ? _l( "Procenat za isplatu:" )
+      IF nDio == 1
+         @ PRow(), PCol() + 1 SAY nprocenat PICT "999.99%"
+      ELSE
+         @ PRow(), PCol() + 1 SAY 100 - nprocenat PICT "999.99%"
+      ENDIF
+      ?
+   ENDIF
+
+   ? m
+   ? _l( "Rbr   Sifra           Naziv radnika               " ) + iif( cPrikIzn == "D", _l( "ZA ISPLATU" ), "          " ) + "         " + _l( "Potpis" )
+   ? m
+
+   RETURN .T.
+
 
 
 // ---------------------------------------------------
@@ -667,12 +722,12 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    cVarSort := "2"
    cIdTipPr := "  "
 
-   //o_tippr()
-   //o_kred()
-   //o_ld_rj()
-   //o_ld_radn()
-   //select_o_ld()
-   //SET RELATION TO idradn into radn
+   // o_tippr()
+   // o_kred()
+   // o_ld_rj()
+   // o_ld_radn()
+   // select_o_ld()
+   // SET RELATION TO idradn into radn
 
    cProred := "N"
    cPrikIzn := "D"

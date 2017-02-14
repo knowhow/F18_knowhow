@@ -53,7 +53,7 @@ FUNCTION ld_asd_aug_obrazac()
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
    @ form_x_koord() + 2, form_y_koord() + 2 SAY "Za mjesec:" GET nMjesec PICT "99"
    @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
-   @ form_x_koord() + 3, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ form_x_koord() + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ form_x_koord() + 4, form_y_koord() + 2 SAY "   Radnik (prazno-svi):" GET cIdRadn VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
 
    @ form_x_koord() + 5, form_y_koord() + 2 SAY "   Doprinos zdr: " GET cDopr1X
@@ -62,9 +62,7 @@ FUNCTION ld_asd_aug_obrazac()
    @ form_x_koord() + 8, Col() + 1 SAY "JID: " GET cPredJMB
    @ form_x_koord() + 9, form_y_koord() + 2 SAY "Adresa: " GET cPredAdr PICT "@S30"
 
-   @ form_x_koord() + 11, form_y_koord() + 2 SAY "(1) AUG-1031 (2) ASD-1032 (3) PDN-1033" ;
-      GET cTipRada ;
-      VALID cTipRada $ "1#2#3"
+   @ form_x_koord() + 11, form_y_koord() + 2 SAY "(1) AUG-1031 (2) ASD-1032 (3) PDN-1033" GET cTipRada VALID cTipRada $ "1#2#3"
 
    @ form_x_koord() + 12, form_y_koord() + 2 SAY "Varijanta stampe (txt/drb):" GET cVarPrn PICT "@!" VALID cVarPrn $ "12"
 
@@ -87,7 +85,7 @@ FUNCTION ld_asd_aug_obrazac()
    // sortiraj tabelu i postavi filter
    // ld_sort( cRj, nGodina, nMjesec, cObracun )
 
-   seek_ld( cIdRj, nGodina, nMjesec, ld_broj_obracuna() )
+   seek_ld( cIdRj, nGodina, nMjesec, cObracun )
    fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cTipRada, cObracun, cIdRadn )
 
 
@@ -640,7 +638,9 @@ STATIC FUNCTION ak_zaglavlje( nPage, cTipRada, dDIspl, cPeriod )
    RETURN .T.
 
 
-STATIC FUNCTION insert_rec_r_export( cJMB, cRadnNaz, nPrihod, nRashod, nDohodak, nDopZdr, nOsn_por, nIzn_por, nDopPio )
+STATIC FUNCTION insert_rec_r_export( cJMB, cRadnNaz, nPrihod, ;
+      nRashod, nDohodak, nDopZdr, ;
+      nOsn_por, nIzn_por, nDopPio )
 
    LOCAL nTArea := Select()
 

@@ -183,3 +183,16 @@ FUNCTION ld_tekuci_mjesec( nSet )
    ENDIF
 
    RETURN gMjesec
+
+
+FUNCTION ld_broj_obracuna()
+
+   PRIVATE cOznObracuna
+
+   IF ld_vise_obracuna()
+      cOznObracuna := gObracun
+   ELSE
+      cOznObracuna := ""
+   ENDIF
+
+   RETURN cOznObracuna

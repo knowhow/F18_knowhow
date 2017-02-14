@@ -905,7 +905,7 @@ FUNCTION skip_semaphore_sync( xArg )
    ENDIF
 
    IF hRec[ "sql" ] .OR. hRec[ "temp" ]
-#ifdef F18_DEBUG
+#ifdef F18_DEBUG_SYNC
       ?E "skip_semaphore_sync sql or temp tabela:", cTable
 #endif
       RETURN .T.

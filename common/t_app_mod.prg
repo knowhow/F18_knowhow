@@ -248,9 +248,9 @@ METHOD gParams()
    USE
    /*
    IF cPosebno == "D"
-      SELECT ( F_GPARAMSP )
+  --    SELECT ( F_GPARAMSP )
       USE
-      O_GPARAMSP
+  --    O_GPARAMSP
    ELSE
       SELECT ( F_GPARAMS )
       USE

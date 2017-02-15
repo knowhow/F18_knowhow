@@ -41,7 +41,7 @@ STATIC s_nFontWidth := 10
 #else
 
 #ifdef  __PLATFORM__LINUX
-STATIC s_cFontName := "Monospace"
+STATIC s_cFontName := "terminus"
 
 STATIC s_nFontSize  := 20
 STATIC s_nFontWidth := 10
@@ -251,8 +251,6 @@ FUNCTION set_screen_dimensions()
 
    CASE  nPixelWidth >= 1024 .AND. nPixelHeight >= 768
 
-altd()
-font_name( "Monospace Regular")
       font_size( 20 )
       font_width( 10 )
       maxrows( 35 - INFO_BAR_ROWS )

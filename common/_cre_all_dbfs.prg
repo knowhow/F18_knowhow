@@ -161,19 +161,6 @@ FUNCTION cre_params_dbf()
 
    CREATE_INDEX( "ID", "fsec+fh+fvar+rbr", _alias, .T. )
 
-   _alias := "GPARAMS"
-   _table_name := "gparams"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX( "ID", "fsec+fh+fvar+rbr", _alias, .T. )
-
-   _alias := "KPARAMS"
-   _table_name := "kparams"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX( "ID", "fsec+fh+fvar+rbr", _alias, .T. )
 
    RETURN .T.
 
@@ -212,7 +199,7 @@ FUNCTION cre_sif_adrese( ver )
 
 
 
-
+/*
 FUNCTION create_gparams()
 
    LOCAL aDbf, cImeDbf
@@ -238,7 +225,7 @@ FUNCTION create_gparams()
    info_bar( "dbf", "" )
 
    RETURN .T.
-
+*/
 
 
 

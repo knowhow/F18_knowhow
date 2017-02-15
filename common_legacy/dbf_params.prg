@@ -11,14 +11,7 @@
 
 #include "f18.ch"
 
-FUNCTION o_params()
-
-   RETURN o_dbf_table( F_PARAMS, "params", "ID" )
-
-FUNCTION select_o_params()
-
-   RETURN select_o_dbf( "PARAMS", F_PARAMS, "params", "ID" )
-
+MEMVAR cSection, cHistory, cImeVar
 
 FUNCTION RPar( cImeVar, xArg )
 
@@ -29,10 +22,10 @@ FUNCTION RPar( cImeVar, xArg )
 
    IF Found()
       cPom := ""
-      clTip := tip
+      clTip := field->tip
 
-      DO WHILE !Eof() .AND. ( cSection + cHistory + cImeVar == Fsec + cHistory + Fvar )
-         cPom += Fv
+      DO WHILE !Eof() .AND. ( cSection + cHistory + cImeVar == field->Fsec + cHistory + field->Fvar )
+         cPom += field->Fv
          SKIP
       ENDDO
 
@@ -58,24 +51,6 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
 
    LOCAL cPom, nRec
 
-   IF Type( "gSql" ) <> "C"
-      gSql := "N"
-   ENDIF
-   IF ( goModul:lSqlDirektno == NIL )
-      goModul:lSqlDirektno := .T.
-   ENDIF
-
-   IF gReadonly
-      RETURN .T.
-   ENDIF
-
-   // ako gSQL nije D onda u svakom slucaju ne radi SQL azuriranja
-   IF ( gSQL == "N" )
-      fSQL := .F.
-   ENDIF
-   IF ( fSQL == NIL )
-      fSQL := .F.
-   ENDIF
    IF ( cAkcija == NIL )
       cAkcija := "A"
    ENDIF
@@ -129,6 +104,7 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
    RETURN NIL
 
 
+
 STATIC FUNCTION NextAkcija( cAkcija )
 
    IF goModul:lSqlDirektno
@@ -143,7 +119,7 @@ STATIC FUNCTION NextAkcija( cAkcija )
       cAkcija := "Z"
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION Params1()
@@ -212,3 +188,14 @@ FUNCTION HistUser( Ch )
    ENDCASE
 
    RETURN NIL
+
+
+
+FUNCTION o_params()
+
+   RETURN o_dbf_table( F_PARAMS, "params", "ID" )
+
+
+FUNCTION select_o_params()
+altd()
+   RETURN select_o_dbf( "PARAMS", F_PARAMS, "params", "ID" )

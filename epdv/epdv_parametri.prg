@@ -134,7 +134,7 @@ FUNCTION ed_g_params()
       epdv_write_gparams()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------

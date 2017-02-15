@@ -179,7 +179,7 @@ FUNCTION epl2_start()
    par_4 := gKodnaS
 
    // uzmi parametre iz printera "L"
-   SELECT F_GPARAMS
+   //SELECT F_GPARAMS
    //IF !Used()
   //    O_GPARAMS
    //ENDIF

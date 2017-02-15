@@ -87,6 +87,7 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    AFTER_CREATE_INDEX
 */
 
+/*
    // objekti
    _alias := "OBJEKTI"
    _table_name := "objekti"
@@ -138,6 +139,7 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
 
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "ID", "id", _alias )
+*/
 
    DokAttr():new( "kalk", F_KALK_ATTR ):create_dbf()
 

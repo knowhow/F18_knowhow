@@ -1,13 +1,13 @@
 
 // parametri (wa 1-9)
-#define F_GPARAMS   1
-#define F_GPARAMSP  2
+//#define F_GPARAMS   1
+//#define F_GPARAMSP  2
 #define F_PARAMS    3
-#define F_KORISN    4
-#define F_MPARAMS   5
-#define F_KPARAMS   6
-#define F_SECUR     7
-#define F_SQLPAR    8
+//#define F_KORISN    4
+//#define F_MPARAMS   5
+//#define F_KPARAMS   6
+//#define F_SECUR     7
+//#define F_SQLPAR    8
 
 
 // sifarnici (wa 10-40)
@@ -86,7 +86,7 @@
 #define F_REKA22    95
 #define F_PPPROD    96
 #define F_K1        97
-#define F_POBJEKTI  98
+//#define F_POBJEKTI  98
 #define F_RLABELE   99
 #define F_DOKSTXT   100
 #define F_KONTROLA  101

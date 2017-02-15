@@ -169,9 +169,8 @@ FUNCTION set_global_vars_1()
 
    LOCAL cImeDbf
 
-   info_bar( "vars", "set_global_vars_1" )
-
-   create_gparams()
+   //info_bar( "vars", "set_global_vars_1" )
+   //create_gparams()
 
    PUBLIC gSezonDir := ""
    PUBLIC gRadnoPodr := "RADP"
@@ -183,6 +182,7 @@ FUNCTION set_global_vars_1()
    PUBLIC g50f := " "
    // PUBLIC gFKolor := "D"
 
+/*
    //O_GPARAMS
    PRIVATE cSection := "1", cHistory := " "; aHistory := {}
 
@@ -199,9 +199,9 @@ FUNCTION set_global_vars_1()
    Rpar( "pA", @gPDFPAuto )
    Rpar( "dP", @gDefPrinter )
    // Rpar( "FK", @gFKolor )
-
-   SELECT ( F_GPARAMS )
-   USE
+*/
+   //SELECT ( F_GPARAMS )
+   //USE
 
    RETURN NIL
 

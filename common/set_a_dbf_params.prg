@@ -14,8 +14,8 @@
 FUNCTION set_a_dbf_params()
 
    set_a_dbf_temp( "params",   "PARAMS", F_PARAMS    )
-   set_a_dbf_temp( "gparams",   "GPARAMS", F_GPARAMS   )
-   set_a_dbf_temp( "kparams",   "KPARAMS", F_KPARAMS   )
-   set_a_dbf_temp( "secur",   "SECUR", F_SECUR     )
+   //set_a_dbf_temp( "gparams",   "GPARAMS", F_GPARAMS   )
+   //set_a_dbf_temp( "kparams",   "KPARAMS", F_KPARAMS   )
+   //set_a_dbf_temp( "secur",   "SECUR", F_SECUR     )
 
    RETURN .T.

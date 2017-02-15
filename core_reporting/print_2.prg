@@ -711,7 +711,7 @@ FUNCTION SetGParams( cs, ch, cid, cvar, cval )
       USE
       O_GPARAMSP
    ELSE
-      SELECT ( F_GPARAMS )
+  --    SELECT ( F_GPARAMS )
       USE
       O_GPARAMS
    ENDIF

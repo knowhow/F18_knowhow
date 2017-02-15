@@ -441,7 +441,7 @@ FUNCTION OSpecif()
    // o_ld_vrste_posla()
    // o_ld_rj()
    // o_ld_radn()
-   O_PARAMS
+   o_params()
    // select_o_ld()
    // o_ops()
 

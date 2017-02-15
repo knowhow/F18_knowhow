@@ -13,7 +13,7 @@
 
 FUNCTION fakt_fin_prenos()
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "(", cHistory := " "; aHistory := {}
 
    lNCPoSast := ( my_get_from_ini( "FAKTFIN", "NCPoSastavnici", "N", KUMPATH ) == "D" )

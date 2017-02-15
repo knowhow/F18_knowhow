@@ -1429,7 +1429,7 @@ STATIC FUNCTION kalk_imp_set_check_point( nPRec )
 
    nArr := Select()
 
-   O_PARAMS
+   o_params()
    SELECT params
 
    PRIVATE cSection := "K"
@@ -1473,7 +1473,7 @@ STATIC FUNCTION kalk_auto_import_setup()
 
       kalk_imp_txt_param_auto_import_podataka_konto( cAImpRKonto )
 
-      O_PARAMS
+      o_params()
 
       PRIVATE cSection := "7"
       PRIVATE cHistory := " "
@@ -1495,7 +1495,7 @@ STATIC FUNCTION kalk_auto_import_setup()
  */
 STATIC FUNCTION kalk_imp_continue_from_check_point()
 
-   O_PARAMS
+   o_params()
    SELECT params
    PRIVATE cSection := "K"
    PRIVATE cHistory := " "

@@ -32,7 +32,7 @@ FUNCTION ld_pregled_plata()
    //o_ld_radn()
    //select_o_ld()
    //o_ld_parametri_obracuna()
-   O_PARAMS
+   o_params()
 
    PRIVATE cSection := "4"
    PRIVATE cHistory := " "

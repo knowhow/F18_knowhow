@@ -299,13 +299,15 @@ STATIC FUNCTION DefKonv()
    LOCAL GetList := {}, bKeyOld := SetKey( K_ALT_V, NIL )
 
    PushWA()
+   /*
    SELECT 99
    IF Used()
       fUsed := .T.
    ELSE
       fUsed := .F.
-      O_PARAMS
+      o_params()
    ENDIF
+*/
 
    PRIVATE cSection := "1", cHistory := " "; aHistory := {}
    RPAR( "vi", @gValIz )

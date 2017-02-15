@@ -51,7 +51,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    qqTipDok := Space( 20 )
 
    Box( "#SPECIFIKACIJA PRODAJE PO ARTIKLIMA", 16, 77 )
-   O_PARAMS
+   o_params()
    RPar( "c1", @cIdFirma )
    RPar( "d1", @dDatOd )
    RPar( "d2", @dDatDo )

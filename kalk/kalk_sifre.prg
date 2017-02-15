@@ -27,8 +27,8 @@ FUNCTION kalk_sifrarnik()
    AAdd( _opcexe, {|| opci_sifarnici() } )
    AAdd( _opc, "2. robno-materijalno poslovanje" )
    AAdd( _opcexe, {|| sif_roba_tarife_koncij_sast() } )
-   AAdd( _opc, "3. magacinski i prodajni objekti" )
-   AAdd( _opcexe, {|| P_Objekti() } )
+   //AAdd( _opc, "3. magacinski i prodajni objekti" )
+   //AAdd( _opcexe, {|| P_Objekti() } )
 
    f18_menu( "msif", .F., _izbor, _opc, _opcexe )
 
@@ -123,9 +123,9 @@ FUNCTION OSifBaze()
    o_roba()
    o_sastavnica()
 
-   RETURN
+   RETURN .T.
 
-
+/*
 FUNCTION P_Objekti()
 
    LOCAL nTArea
@@ -136,7 +136,7 @@ FUNCTION P_Objekti()
    Kol := {}
 
    nTArea := Select()
-   O_OBJEKTI
+   //O_OBJEKTI
 
    AAdd( ImeKol, { "ID", {|| id }, "id" } )
    add_mcode( @ImeKol )
@@ -151,3 +151,4 @@ FUNCTION P_Objekti()
    p_sifra( F_OBJEKTI, 1, MAXROWS() -15, MAXCOLS() -20, "Objekti" )
 
    RETURN .T.
+*/

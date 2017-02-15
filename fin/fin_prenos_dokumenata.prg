@@ -21,7 +21,7 @@ FUNCTION PrenosFin()
    LOCAL lStranaBitna
    PRIVATE fK1 := fk2 := fk3 := fk4 := "N"
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}

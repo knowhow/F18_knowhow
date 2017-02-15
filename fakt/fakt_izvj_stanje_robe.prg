@@ -48,7 +48,7 @@ FUNCTION fakt_stanje_robe()
 
    Box(, 13, 66 )
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "5", cHistory := " "; aHistory := {}
    Params1()
    RPar( "c1", @cIdFirma )

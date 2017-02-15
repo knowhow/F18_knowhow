@@ -99,7 +99,6 @@
 #xcommand O_RVRSTA         => select(F_RVRSTA);  my_use  ("rvrsta")  ; set order to tag "ID"
 
 #xcommand O_K1             => select(F_ROBASEZ)  ;  my_use  ("k1")       ; set order to tag "1"
-#xcommand O_OBJEKTI        => select(F_OBJEKTI)  ;  my_use  ("objekti")  ; set order to tag "1"
 #xcommand O_REKAP1         => select(F_REKAP1)   ;  my_use  ("rekap1")   ; set order to tag "1"
 #xcommand O_REKAP2         => select(F_REKAP2)   ;  my_use  ("rekap2")   ; set order to tag "1"
 #xcommand O_REKA22         => select(F_REKA22)   ;  my_use  ("reka22")   ; set order to tag "1"
@@ -260,26 +259,25 @@
 #xcommand O_ADRES     => select (F_ADRES)     ; my_use ( "adres" )  ; set order to tag "ID"
 
 // proizvoljni izvjestaji
-#xcommand O_KONIZ  => select (F_KONIZ) ; my_use("koniz") ; set order to tag "ID"
-#xcommand O_IZVJE  => select (F_IZVJE) ; my_use("izvje") ; set order to tag "ID"
-#xcommand O_ZAGLI  => select (F_ZAGLI) ; my_use("zagli") ; set order to tag "ID"
-#xcommand O_KOLIZ  => select (F_KOLIZ) ; my_use("koliz") ; set order to tag "ID"
+//#xcommand O_KONIZ  => select (F_KONIZ) ; my_use("koniz") ; set order to tag "ID"
+//#xcommand O_IZVJE  => select (F_IZVJE) ; my_use("izvje") ; set order to tag "ID"
+//#xcommand O_ZAGLI  => select (F_ZAGLI) ; my_use("zagli") ; set order to tag "ID"
+//#xcommand O_KOLIZ  => select (F_KOLIZ) ; my_use("koliz") ; set order to tag "ID"
 
 // parametri
-#xcommand O_PARAMS    => select (F_PARAMS)    ; my_use ( "params")   ; set order to tag  "ID"
-#xcommand O_GPARAMS   => select (F_GPARAMS)   ; my_use ( "gparams" )  ;   set order to tag  "ID"
-#xcommand O_GPARAMSP  => select (F_GPARAMSP)  ; my_use ( "gparams" )  ; set order to tag  "ID"
-#xcommand O_MPARAMS   => select (F_MPARAMS)   ;  my_use ( "mparams" ) ; set order  to tag  "ID"
-#xcommand O_KPARAMS   => select (F_KPARAMS)   ; my_use ( "kparams" )  ; set order to tag  "ID"
-#xcommand O_SECUR     => select (F_SECUR)     ; my_use ( "secur" )    ; set order to tag "ID"
+//#xcommand O_GPARAMS   => select (F_GPARAMS)   ; my_use ( "gparams" )  ;   set order to tag  "ID"
+//#xcommand O_GPARAMSP  => select (F_GPARAMSP)  ; my_use ( "gparams" )  ; set order to tag  "ID"
+//#xcommand O_MPARAMS   => select (F_MPARAMS)   ;  my_use ( "mparams" ) ; set order  to tag  "ID"
+//#xcommand O_KPARAMS   => select (F_KPARAMS)   ; my_use ( "kparams" )  ; set order to tag  "ID"
+//#xcommand O_SECUR     => select (F_SECUR)     ; my_use ( "secur" )    ; set order to tag "ID"
 
 // security system tabele
-#xcommand O_EVENTS  => select (F_EVENTS); my_use ("events") ; set order to tag "ID"
-#xcommand O_USERS  => select (F_USERS); my_use ("users") ; set order to tag "ID"
-#xcommand O_GROUPS  => select (F_GROUPS); my_use ("groups") ; set order to tag "ID"
+//#xcommand O_EVENTS  => select (F_EVENTS); my_use ("events") ; set order to tag "ID"
+//#xcommand O_USERS  => select (F_USERS); my_use ("users") ; set order to tag "ID"
+//#xcommand O_GROUPS  => select (F_GROUPS); my_use ("groups") ; set order to tag "ID"
 
 
 #xcommand O_FIN_PRIPRRP   => select (F_FIN_PRIPR); my_usex("fin_priprrp", "fin_pripr"); set order to tag "1"
 
 
-#xcommand O_POBJEKTI       => select(F_POBJEKTI);  my_use  ("pobjekti") ; set order to tag "1"
+//#xcommand O_POBJEKTI       => select(F_POBJEKTI);  my_use  ("pobjekti") ; set order to tag "1"

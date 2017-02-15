@@ -35,7 +35,7 @@ FUNCTION fin_anal_kartica()
    dDatOd := dDAtDo := CToD( "" )
    cPredh := "2"
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "3", cHistory := " ", aHistory := {}
    Params1()
    RPar( "c1", @cIdFirma ); RPar( "c2", @qqKonto ); RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )

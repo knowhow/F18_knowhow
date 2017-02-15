@@ -108,7 +108,7 @@ FUNCTION PrikTipSredstva( cKalkTip )
 
    RETURN
 
-
+/*
 FUNCTION g_obj_naz( cKto )
 
    LOCAL cVal := ""
@@ -129,3 +129,4 @@ FUNCTION g_obj_naz( cKto )
    SELECT ( nTArr )
 
    RETURN cVal
+*/

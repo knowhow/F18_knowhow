@@ -307,7 +307,7 @@ FUNCTION UzmiSiht()
       RETURN .F.
    ENDIF
 
-   O_PARAMS
+   o_params()
 
    PRIVATE cZadnjiRadnik := cIdRadn
    PRIVATE cSection := "S"

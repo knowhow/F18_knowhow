@@ -41,19 +41,18 @@ FUNCTION kalk_meni_mag_izvjestaji()
 
 
 
-
 FUNCTION kalk_izvjestaji_mag_i_pro()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "F. finansijski obrt za period magacina+prodavnica" )
-   AAdd( _opcexe, {|| kalk_finansijski_obrt() } )
+  // AAdd( _opc, "F. finansijski obrt za period magacina+prodavnica" )
+  // AAdd( _opcexe, {|| kalk_finansijski_obrt() } )
 
 
-   AAdd( _opc, "O. stanje artikala po objektima " )
-   AAdd( _opcexe, {|| kalk_izvj_stanje_po_objektima() } )
+  // AAdd( _opc, "O. stanje artikala po objektima " )
+  // AAdd( _opcexe, {|| kalk_izvj_stanje_po_objektima() } )
 
    AAdd( _opc, "V. roba pregled prodaje po grupama/podgrupama" )
    AAdd( _opcexe, {|| roba_pregled_prodaje_po_grupama() } )

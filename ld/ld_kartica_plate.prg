@@ -64,7 +64,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
    c2K1L := "D"
 
    IF ( PCount() < 4 )
-      O_PARAMS
+      o_params()
       PRIVATE cSection := "4"
       PRIVATE cHistory := " "
       PRIVATE aHistory := {}

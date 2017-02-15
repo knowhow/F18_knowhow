@@ -224,7 +224,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
    SELECT F_PARAMS
    IF !Used()
-      O_PARAMS
+      o_params()
    ENDIF
    RPar( "x1", @nDx1 )
    RPar( "x2", @nDx2 )

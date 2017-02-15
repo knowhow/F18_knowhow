@@ -41,7 +41,7 @@ STATIC s_nFontWidth := 10
 #else
 
 #ifdef  __PLATFORM__LINUX
-STATIC s_cFontName := "terminus"
+STATIC s_cFontName := "Monospace"
 
 STATIC s_nFontSize  := 20
 STATIC s_nFontWidth := 10
@@ -73,19 +73,19 @@ FUNCTION f18_error_block()
 
 FUNCTION f18_init_app_opts()
 
-   LOCAL _opt := {}
-   LOCAL _optexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, hb_UTF8ToStr( "1. vpn konekcija                         " ) )
-   AAdd( _opcexe, {|| NIL } )
-   AAdd( _opc, hb_UTF8ToStr( "2. rekonfiguriši server  " ) )
-   AAdd( _opcexe, {|| NIL } )
-   AAdd( _opc, hb_UTF8ToStr( "3. otvaranje nove firme  " ) )
-   AAdd( _opcexe, {|| NIL } )
+   AAdd( aOpc, hb_UTF8ToStr( "1. vpn konekcija                         " ) )
+   AAdd( aOpcExe, {|| NIL } )
+   AAdd( aOpc, hb_UTF8ToStr( "2. rekonfiguriši server  " ) )
+   AAdd( aOpcExe, {|| NIL } )
+   AAdd( aOpc, hb_UTF8ToStr( "3. otvaranje nove firme  " ) )
+   AAdd( aOpcExe, {|| NIL } )
 
 
-   f18_menu( "mn", .F., _izbor, _opc, _opcexe  )
+   f18_menu( "mn", .F., nIzbor, aOpc, aOpcExe  )
 
    RETURN .T.
 
@@ -185,12 +185,12 @@ FUNCTION set_screen_dimensions()
 
    LOCAL _msg
 
-   LOCAL _pix_width  := hb_gtInfo( HB_GTI_DESKTOPWIDTH )
-   LOCAL _pix_height := hb_gtInfo( HB_GTI_DESKTOPHEIGHT )
+   LOCAL nPixelWidth  := hb_gtInfo( HB_GTI_DESKTOPWIDTH )
+   LOCAL nPixelHeight := hb_gtInfo( HB_GTI_DESKTOPHEIGHT )
 
-   _msg := "screen res: " + AllTrim( to_str( _pix_width ) ) + " " + AllTrim( to_str( _pix_height ) ) + " varijanta: "
+   _msg := "screen res: " + AllTrim( to_str( nPixelWidth ) ) + " " + AllTrim( to_str( nPixelHeight ) ) + " varijanta: "
 
-   IF _pix_width == NIL
+   IF nPixelWidth == NIL
 
       maxrows( 40 - INFO_BAR_ROWS )
       maxcols( 150 )
@@ -207,7 +207,7 @@ FUNCTION set_screen_dimensions()
 
    DO CASE
 
-   CASE _pix_width >= 1440 .AND. _pix_height >= 900
+   CASE nPixelWidth >= 1440 .AND. nPixelHeight >= 900
 
 #ifdef  __PLATFORM__DARWIN
       font_name( "Courier" )
@@ -223,7 +223,7 @@ FUNCTION set_screen_dimensions()
 #endif
       ?E _msg + "1"
 
-   CASE _pix_width >= 1280 .AND. _pix_height >= 820
+   CASE nPixelWidth >= 1280 .AND. nPixelHeight >= 820
 
 #ifdef  __PLATFORM__DARWIN
 
@@ -241,7 +241,7 @@ FUNCTION set_screen_dimensions()
       ?E _msg + "2long"
 #endif
 
-   CASE _pix_width >= 1280 .AND. _pix_height >= 800
+   CASE nPixelWidth >= 1280 .AND. nPixelHeight >= 800
 
       font_size( 22 )
       font_width( 11 )
@@ -249,8 +249,10 @@ FUNCTION set_screen_dimensions()
       maxcols( 115 )
       ?E _msg + "2"
 
-   CASE  _pix_width >= 1024 .AND. _pix_height >= 768
+   CASE  nPixelWidth >= 1024 .AND. nPixelHeight >= 768
 
+altd()
+font_name( "Monospace Regular")
       font_size( 20 )
       font_width( 10 )
       maxrows( 35 - INFO_BAR_ROWS )

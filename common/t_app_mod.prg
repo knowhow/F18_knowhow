@@ -230,9 +230,9 @@ METHOD gParams()
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
 
-   SELECT ( F_PARAMS )
-   USE
-   O_PARAMS
+  // SELECT ( F_PARAMS )
+  // USE
+  // o_params()
 
    RPar( "p?", @cPosebno )
 
@@ -246,6 +246,7 @@ METHOD gParams()
    WPAr( "p?", cPosebno )
    SELECT params
    USE
+   /*
    IF cPosebno == "D"
       SELECT ( F_GPARAMSP )
       USE
@@ -255,7 +256,7 @@ METHOD gParams()
       USE
       O_GPARAMS
    ENDIF
-
+*/
    gPtkonv := PadR( gPtkonv, 2 )
 
    @ m_x + 7, m_y + 2 SAY "Stroga kontrola ispravki/brisanja sifara     (D/N)"  GET gSKSif VALID gSKSif $ "DN" PICT "@!"

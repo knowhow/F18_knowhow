@@ -45,7 +45,7 @@ FUNCTION fin_specifikacija_suban()
 
    nC := 50
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
@@ -62,7 +62,7 @@ FUNCTION fin_specifikacija_suban()
 
    qqKonto := qqPartner := Space( 100 )
    dDatOd := dDatDo := CToD( "" )
-   O_PARAMS
+   o_params()
 
    PRIVATE cSection := "S"
    PRIVATE cHistory := " "
@@ -132,7 +132,7 @@ FUNCTION fin_specifikacija_suban()
 
       READ
       ESC_BCR
-      O_PARAMS
+      o_params()
       PRIVATE cSection := "S"
       PRIVATE cHistory := " "
       PRIVATE aHistory := {}

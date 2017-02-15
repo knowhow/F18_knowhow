@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+/*
 
 // Pregled finansijskog obrta magacin/prodavnica
 FUNCTION kalk_finansijski_obrt()
@@ -20,7 +20,6 @@ FUNCTION kalk_finansijski_obrt()
    LOCAL nKorekcija := 1
    LOCAL cLegenda
 
-   // aMersed
    LOCAL nRekaRecCount
 
    PRIVATE  nCol1 := 0
@@ -53,7 +52,7 @@ FUNCTION kalk_finansijski_obrt()
 
    cLegenda := "D"
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "F"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
@@ -630,17 +629,11 @@ FUNCTION ZagOPoMF()
    ? cZText1
    ? cZText2
 
-/*
-if (cCijena=="P")
- ? "    GRUPACIJA               POCETNA      NABAVKA        ZADUZ.          MALOPROD.          KUMULAT.       OSTVARENI          ZALIHA           ZALIHA         +POVECANJE       PROSJECNA      GOD. KOEF."
- ? "                            ZALIHA       MAGACIN      PRODAVNICE           RUC             PRODAJA          RUC              REKL.R           NA DAN         -SNIZENJE          ZALIHA         OBRTA  "
-else
- ? "    GRUPACIJA               POCETNA      NABAVKA        ZADUZ.          KUMULAT.          ZALIHA          ZALIHA          PROSJECNA      GOD. KOEF."
- ? "                            ZALIHA       MAGACIN      PRODAVNICA        PRODAJA           REKL.R          NA DAN            ZALIHA         OBRTA  "
-endif
-*/
 
    ? m
 
    RETURN
 // }
+
+
+*/

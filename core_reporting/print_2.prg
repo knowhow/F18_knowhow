@@ -699,13 +699,13 @@ FUNCTION SetGParams( cs, ch, cid, cvar, cval )
    PRIVATE cHistory := ch
    PRIVATE aHistory := {}
 
-   SELECT ( F_PARAMS )
-   USE
-   O_PARAMS
+  // SELECT ( F_PARAMS )
+  // USE
+  // o_params()
    RPar( "p?", @cPosebno )
-   SELECT params
-   USE
-
+  // SELECT params
+  // USE
+/*
    IF cPosebno == "D"
       SELECT ( F_GPARAMSP )
       USE
@@ -720,6 +720,7 @@ FUNCTION SetGParams( cs, ch, cid, cvar, cval )
    Wpar( cId, &cVar )
    SELECT gparams
    USE
+*/
    PopWa()
 
    RETURN .T.

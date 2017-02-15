@@ -11,11 +11,20 @@
 
 #include "f18.ch"
 
+FUNCTION o_params()
+
+   RETURN o_dbf_table( F_PARAMS, "params", "ID" )
+
+FUNCTION select_o_params()
+
+   RETURN select_o_dbf( "PARAMS", F_PARAMS, "params", "ID" )
+
 
 FUNCTION RPar( cImeVar, xArg )
 
    LOCAL cPom, clTip
 
+   select_o_params()
    SEEK cSection + cHistory + cImeVar + "1"
 
    IF Found()
@@ -27,7 +36,7 @@ FUNCTION RPar( cImeVar, xArg )
          SKIP
       ENDDO
 
-      cPom := Left( cPom, At( Chr( CHR254 ), cPom ) -1 )
+      cPom := Left( cPom, At( Chr( CHR254 ), cPom ) - 1 )
       IF clTip = "C"
          xArg := cPom
       ELSEIF clTip == "N"
@@ -39,7 +48,6 @@ FUNCTION RPar( cImeVar, xArg )
       ENDIF
 
    ENDIF
-
 
    RETURN NIL
 
@@ -53,7 +61,7 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
    IF Type( "gSql" ) <> "C"
       gSql := "N"
    ENDIF
-   IF ( goModul:lSqlDirektno == nil )
+   IF ( goModul:lSqlDirektno == NIL )
       goModul:lSqlDirektno := .T.
    ENDIF
 
@@ -65,10 +73,10 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
    IF ( gSQL == "N" )
       fSQL := .F.
    ENDIF
-   IF ( fSQL == nil )
+   IF ( fSQL == NIL )
       fSQL := .F.
    ENDIF
-   IF ( cAkcija == nil )
+   IF ( cAkcija == NIL )
       cAkcija := "A"
    ENDIF
 
@@ -154,8 +162,8 @@ FUNCTION Params1()
       ENDDO
 
       IF Len( aHistory ) > 0
-         @ -1, 70 SAY ""
-         cHistory := ( ABrowse( aHistory, 10, 1, {| ch|  HistUser( ch ) } ) )[ 1 ]
+         @ - 1, 70 SAY ""
+         cHistory := ( ABrowse( aHistory, 10, 1, {| ch |  HistUser( ch ) } ) )[ 1 ]
       ELSE
          cHistory := " "
       ENDIF
@@ -185,7 +193,7 @@ FUNCTION HistUser( Ch )
       IF Len( aHistory ) > 1
          cHi := aHistory[ aBrowRow(), 1 ]
          ADel( aHistory, aBrowRow() )
-         ASize( aHistory, Len( aHistory ) -1 )
+         ASize( aHistory, Len( aHistory ) - 1 )
          SEEK cSection + cHi
          DO WHILE !Eof() .AND. cSection + cHi == Fsec + Fh
             SKIP

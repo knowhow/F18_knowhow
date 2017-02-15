@@ -688,7 +688,7 @@ STATIC FUNCTION o_tables()
 
    o_ld_obracuni()
    o_ld_parametri_obracuna()
-   O_PARAMS
+   o_params()
    o_ld_rj()
    o_ld_radn()
    o_dopr()

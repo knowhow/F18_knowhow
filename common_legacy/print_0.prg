@@ -318,7 +318,7 @@ FUNCTION EndPrint()
    IF gPrinter <> cTekPrinter
       gPrinter := cTekPrinter
       PushWA()
-      O_GPARAMS
+      //O_GPARAMS
       PRIVATE cSection := "P"
       PRIVATE cHistory := gPrinter
       PRIVATE aHistory := {}
@@ -494,13 +494,13 @@ FUNCTION PPrint()
    SetKey( K_ALT_R, {|| UzmiPPr(), AEval( GetList, {| o| o:display() } ) } )
    PRIVATE GetList := {}
 
-   O_GPARAMS
-   SELECT 99
-   IF Used()
-      fUsed := .T.
-   ELSE
-      O_PARAMS
-   ENDIF
+  // O_GPARAMS
+  // SELECT 99
+  // IF Used()
+  //    fUsed := .T.
+  // ELSE
+      o_params()
+  // ENDIF
 
    PRIVATE cSection := "1", cHistory := " "; aHistory := {}
    RPAR( "px", @gPrinter )

@@ -27,7 +27,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
 
    // o_partner()
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "2", cHistory := " ", aHistory := {}
    Params1()
    RPar( "c1", @cIdFirma ); RPar( "c2", @qqKonto ); RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )

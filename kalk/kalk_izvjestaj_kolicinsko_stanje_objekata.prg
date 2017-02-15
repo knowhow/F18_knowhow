@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+/*
 STATIC nCol1 := 0
 STATIC cPicCDem
 STATIC cPicProc
@@ -376,7 +376,7 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
    dDatOd := Date()
    dDatDo := Date()
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "F", cHistory := " ", aHistory := {}
 
    Params1()
@@ -648,3 +648,4 @@ FUNCTION resetuj_vrijednosti_tabele_pobjekti()
    ENDDO
 
    RETURN
+*/

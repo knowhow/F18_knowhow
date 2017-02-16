@@ -83,7 +83,6 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
          cKatP := sg_kuf->kat_p
          cKatP2 := sg_kuf->kat_p_2
 
-altd()
          s_cOpis := sg_kuf->naz
 
          cRazbDan := razb_dan
@@ -237,7 +236,6 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          _id_part := suban->idpartner
          // ##opis## je djoker - zamjenjuje se sa opisom koji se nalazi u
          // stavci
-         altd()
          cOpisSuban := AllTrim( suban->opis )
          _opis := StrTran( s_cOpis, "##opis##", cOpisSuban )
 

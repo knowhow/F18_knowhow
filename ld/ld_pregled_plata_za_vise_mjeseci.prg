@@ -371,75 +371,17 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
             nIDoprD6 += round2( nMBrutoST * nDoprD6 / 100, gZaok2 )
          ENDIF
 
-         IF cTotal == "N"
-            dodaj_u_pomocnu_tabelu( nF_god, ;
-               nF_mj, ;
-               cT_radnik, ;
-               cId_rj, ;
-               cObr_za, ;
-               cT_rnaziv, ;
-               nSati, ;
-               nUkRadnihSati, ;
-               nUkBolovanjeSati, ;
-               nPrim, ;
-               nBruto, ;
-               nUDopIZ, ;
-               nIDoprPIO, ;
-               nIDoprZDR, ;
-               nIDoprNEZ, ;
-               0, ;
-               nL_Odb, ;
-               nPorez, ;
-               nUNetobp, ;
-               nUNeto, ;
-               nURad_izn, ;
-               nUBol_izn, ;
-               nOdbici, ;
-               nIsplata, ;
-               nIDoprD4, ;
-               nIDoprD5, ;
-               nIDoprD6 )
-
-            // resetuj varijable
-            nSati := 0
-            nR_sati := 0
-            nB_sati := 0
-            nNeto := 0
-            nR_neto := 0
-            nB_neto := 0
-            nUNeto := 0
-            nPrim := 0
-            nBruto := 0
-            nUDopIz := 0
-            nIDoprPio := 0
-            nIDoprZdr := 0
-            nIDoprNez := 0
-            nIDoprD4 := 0
-            nIDoprD5 := 0
-            nIDoprD6 := 0
-            nOdbici := 0
-            nL_odb := 0
-            nPorez := 0
-            nIsplata := 0
-            nUNetobp := 0
-            nRadSatiM4 := 0
-            nRadIznosM4 := 0
-            nBolovanjeSatiM4 := 0
-            nBolovanjeIznosM4 := 0
-            nURad_izn := 0
-            nUBol_izn := 0
-            nUkRadnihSati := 0
-            nUkBolovanjeSati := 0
-
-         ENDIF
 
          SELECT ld
          SKIP
 
-      ENDDO
+      ENDDO // radnik
 
-      IF cTotal == "D"
-         dodaj_u_pomocnu_tabelu( 0, 0, cT_radnik, ;
+
+      IF cTotal == "N"
+         dodaj_u_pomocnu_tabelu( nF_god, ;
+            nF_mj, ;
+            cT_radnik, ;
             cId_rj, ;
             cObr_za, ;
             cT_rnaziv, ;
@@ -464,9 +406,71 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
             nIDoprD4, ;
             nIDoprD5, ;
             nIDoprD6 )
+
+         // resetuj varijable
+         nSati := 0
+         nR_sati := 0
+         nB_sati := 0
+         nNeto := 0
+         nR_neto := 0
+         nB_neto := 0
+         nUNeto := 0
+         nPrim := 0
+         nBruto := 0
+         nUDopIz := 0
+         nIDoprPio := 0
+         nIDoprZdr := 0
+         nIDoprNez := 0
+         nIDoprD4 := 0
+         nIDoprD5 := 0
+         nIDoprD6 := 0
+         nOdbici := 0
+         nL_odb := 0
+         nPorez := 0
+         nIsplata := 0
+         nUNetobp := 0
+         nRadSatiM4 := 0
+         nRadIznosM4 := 0
+         nBolovanjeSatiM4 := 0
+         nBolovanjeIznosM4 := 0
+         nURad_izn := 0
+         nUBol_izn := 0
+         nUkRadnihSati := 0
+         nUkBolovanjeSati := 0
+
       ENDIF
 
-   ENDDO
+
+
+   ENDDO // eof
+
+   IF cTotal == "D"
+      dodaj_u_pomocnu_tabelu( 0, 0, cT_radnik, ;
+         cId_rj, ;
+         cObr_za, ;
+         cT_rnaziv, ;
+         nSati, ;
+         nUkRadnihSati, ;
+         nUkBolovanjeSati, ;
+         nPrim, ;
+         nBruto, ;
+         nUDopIZ, ;
+         nIDoprPIO, ;
+         nIDoprZDR, ;
+         nIDoprNEZ, ;
+         0, ;
+         nL_Odb, ;
+         nPorez, ;
+         nUNetobp, ;
+         nUNeto, ;
+         nURad_izn, ;
+         nUBol_izn, ;
+         nOdbici, ;
+         nIsplata, ;
+         nIDoprD4, ;
+         nIDoprD5, ;
+         nIDoprD6 )
+   ENDIF
 
    RETURN .T.
 

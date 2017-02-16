@@ -877,7 +877,6 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
    ELSEIF Len( ImeKol[ nI ] ) >= 7 .AND. ImeKol[ nI, 7 ] <> NIL
       cPic := ImeKol[ nI, 7 ]
    ELSE
-   altd()
       cFieldName := SUBSTR( cVariableName, 2 ) // wID -> ID
       cPic := get_field_get_picture_code( Alias(), cFieldName )
    ENDIF

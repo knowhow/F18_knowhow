@@ -234,7 +234,6 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          _id_part := suban->idpartner
          // ##opis## je djoker - zamjenjuje se sa opisom koji se nalazi u
          // stavci
-         altd()
          cOpisSuban := AllTrim( suban->opis )
          _opis := StrTran( s_cOpis, "##opis##", cOpisSuban )
 

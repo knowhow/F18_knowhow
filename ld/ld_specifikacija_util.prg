@@ -85,7 +85,6 @@ STATIC FUNCTION _create_mtemp()
       FErase( my_home() + _table + ".dbf" )
    ENDIF
 
-
    _struct := LD->( dbStruct() )
 
    // ovdje cemo sva numericka polja prosiriti za 4 mjesta

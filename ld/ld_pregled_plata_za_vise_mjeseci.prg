@@ -24,18 +24,17 @@ FUNCTION ld_pregled_plata_za_period()
    LOCAL nMjesec
    LOCAL cMjesecDo
    LOCAL nGodina
-   LOCAL cOpcStan := Space( 200 )
-   LOCAL cKanton := Space( 200 )
+   LOCAL cIdOpcinaStanUslov := Space( 100 )
+   LOCAL cKanton := Space( 100 )
    LOCAL cDoprPio := "70"
    LOCAL cDoprZdr := "80"
    LOCAL cDoprNez := "90"
-   LOCAL cDoprD4 := Space( 2)
-   LOCAL cDoprD5 := Space( 2)
+   LOCAL cDoprD4 := Space( 2 )
+   LOCAL cDoprD5 := Space( 2 )
    LOCAL cDoprD6 := Space( 2 )
    LOCAL cObracun := gObracun
    LOCAL cM4TipoviIzdvojitiPrimanja := fetch_metric( "ld_m4_izdvojena_primanja", NIL, Space( 100 ) )
    LOCAL nCount
-
    LOCAL cTotal := "N"
 
    napravi_pomocnu_tabelu()
@@ -61,8 +60,8 @@ FUNCTION ld_pregled_plata_za_period()
    @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
       VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
 
-   @ form_x_koord() + 6, form_y_koord() + 2 SAY8 "    Općina (prazno-sve):" GET cOpcStan PICT "@S30" WHEN Empty( cRadnik )
-   @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "    Kanton (prazno-sve):" GET cKanton PICT "@S30" WHEN Empty( cRadnik )
+   @ form_x_koord() + 6, form_y_koord() + 2 SAY8 "Općina stanovanja (prazno-sve):" GET cIdOpcinaStanUslov PICT "@S30" WHEN Empty( cRadnik )
+   @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "           Kanton (prazno-sve):" GET cKanton PICT "@S30" WHEN Empty( cRadnik )
 
    @ form_x_koord() + 9, form_y_koord() + 2 SAY8 "Dodatni doprinosi za prikaz na izvještaju: "
    @ form_x_koord() + 10, form_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 1 : " GET cDoprPio
@@ -74,7 +73,7 @@ FUNCTION ld_pregled_plata_za_period()
 
    @ form_x_koord() + 17, form_y_koord() + 2 SAY8 "Izdvojena primanja (bolovanje, neplaceno) za M4:" GET cM4TipoviIzdvojitiPrimanja PICT "@S20"
 
-   @ form_x_koord() + 19, form_y_koord() + 2 SAY8 "Prikazati ukupno za sve mjesece (D/N)" GET cTotal PICT "@!" VALID cTotal $ "DN"
+   // @ form_x_koord() + 19, form_y_koord() + 2 SAY8 "Prikazati ukupno za sve mjesece (D/N)" GET cTotal PICT "@!" VALID cTotal $ "DN"
 
    READ
 
@@ -95,26 +94,26 @@ FUNCTION ld_pregled_plata_za_period()
    set_metric( "ld_izv_godina", my_user(), nGodina )
    set_metric( "ld_izv_mjesec_do", my_user(), cMjesecDo )
 
-   sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, cObracun )
+   seek_pa_sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, cObracun )
 
    napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
       cDoprPio, cDoprZdr, cDoprNez, cObracun, cDoprD4, cDoprD5, cDoprD6, ;
-      cM4TipoviIzdvojitiPrimanja, cTotal, cOpcStan, cKanton )
+      cM4TipoviIzdvojitiPrimanja, cTotal, cIdOpcinaStanUslov, cKanton )
 
-   IF cTotal == "N"
-      prikazi_pregled( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
-         cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cOpcStan, cKanton )
-   ELSE
-      prikazi_pregled_ukupno( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
-         cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cOpcStan, cKanton )
-   ENDIF
+   // IF cTotal == "N"
+   prikazi_pregled( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
+      cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cIdOpcinaStanUslov, cKanton )
+   // ELSE
+   // prikazi_pregled_ukupno( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
+   // cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cIdOpcinaStanUslov, cKanton )
+   // ENDIF
 
    RETURN .T.
 
 
 STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
       cRadnik, cDoprPio, cDoprZdr, cDoprNez, cObracun, cDop4, cDop5, cDop6, ;
-      cM4TipoviIzdvojitiPrimanja, cTotal, cOpcStan, cKanton )
+      cM4TipoviIzdvojitiPrimanja, cTotal, cIdOpcinaStanUslov, cKanton )
 
    LOCAL i
    LOCAL cPom
@@ -135,17 +134,18 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
 
    DO WHILE !Eof()
 
-      IF !filter_opcina_kanton( ld->idradn, cOpcStan, cKanton )
+
+      IF !pripada_opcina_kanton( ld->idradn, cIdOpcinaStanUslov, cKanton )
          SKIP
          LOOP
       ENDIF
 
-      IF ld_godina_mjesec_string( ld->godina, ld->mjesec ) < ld_godina_mjesec_string( nGodina, nMjesec )
+      IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ld_godina_mjesec_string( nGodina, nMjesec )
          SKIP
          LOOP
       ENDIF
 
-      IF ld_godina_mjesec_string( ld->godina, ld->mjesec ) > ld_godina_mjesec_string( nGodina, cMjesecdo )
+      IF ld_godina_mjesec_string( field->godina, field->mjesec ) >  ld_godina_mjesec_string( nGodina, cMjesecdo )
          SKIP
          LOOP
       ENDIF
@@ -205,19 +205,17 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
 
       DO WHILE !Eof() .AND. field->idradn == cT_radnik
 
-         IF !filter_opcina_kanton( ld->idradn, cOpcStan, cKanton )
+         IF !pripada_opcina_kanton( ld->idradn, cIdOpcinaStanUslov, cKanton )
             SKIP
             LOOP
          ENDIF
 
-         IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ;
-               ld_godina_mjesec_string( nGodina, nMjesec )
+         IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ld_godina_mjesec_string( nGodina, nMjesec )
             SKIP
             LOOP
          ENDIF
 
-         IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ;
-               ld_godina_mjesec_string( nGodina, cMjesecdo )
+         IF ld_godina_mjesec_string( field->godina, field->mjesec ) >  ld_godina_mjesec_string( nGodina, cMjesecdo )
             SKIP
             LOOP
          ENDIF
@@ -371,75 +369,17 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
             nIDoprD6 += round2( nMBrutoST * nDoprD6 / 100, gZaok2 )
          ENDIF
 
-         IF cTotal == "N"
-            dodaj_u_pomocnu_tabelu( nF_god, ;
-               nF_mj, ;
-               cT_radnik, ;
-               cId_rj, ;
-               cObr_za, ;
-               cT_rnaziv, ;
-               nSati, ;
-               nUkRadnihSati, ;
-               nUkBolovanjeSati, ;
-               nPrim, ;
-               nBruto, ;
-               nUDopIZ, ;
-               nIDoprPIO, ;
-               nIDoprZDR, ;
-               nIDoprNEZ, ;
-               0, ;
-               nL_Odb, ;
-               nPorez, ;
-               nUNetobp, ;
-               nUNeto, ;
-               nURad_izn, ;
-               nUBol_izn, ;
-               nOdbici, ;
-               nIsplata, ;
-               nIDoprD4, ;
-               nIDoprD5, ;
-               nIDoprD6 )
-
-            // resetuj varijable
-            nSati := 0
-            nR_sati := 0
-            nB_sati := 0
-            nNeto := 0
-            nR_neto := 0
-            nB_neto := 0
-            nUNeto := 0
-            nPrim := 0
-            nBruto := 0
-            nUDopIz := 0
-            nIDoprPio := 0
-            nIDoprZdr := 0
-            nIDoprNez := 0
-            nIDoprD4 := 0
-            nIDoprD5 := 0
-            nIDoprD6 := 0
-            nOdbici := 0
-            nL_odb := 0
-            nPorez := 0
-            nIsplata := 0
-            nUNetobp := 0
-            nRadSatiM4 := 0
-            nRadIznosM4 := 0
-            nBolovanjeSatiM4 := 0
-            nBolovanjeIznosM4 := 0
-            nURad_izn := 0
-            nUBol_izn := 0
-            nUkRadnihSati := 0
-            nUkBolovanjeSati := 0
-
-         ENDIF
 
          SELECT ld
          SKIP
 
-      ENDDO
+      ENDDO // radnik
 
-      IF cTotal == "D"
-         dodaj_u_pomocnu_tabelu( 0, 0, cT_radnik, ;
+
+      IF cTotal == "N"
+         dodaj_u_pomocnu_tabelu( nF_god, ;
+            nF_mj, ;
+            cT_radnik, ;
             cId_rj, ;
             cObr_za, ;
             cT_rnaziv, ;
@@ -464,9 +404,73 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
             nIDoprD4, ;
             nIDoprD5, ;
             nIDoprD6 )
+
+         // resetuj varijable
+         nSati := 0
+         nR_sati := 0
+         nB_sati := 0
+         nNeto := 0
+         nR_neto := 0
+         nB_neto := 0
+         nUNeto := 0
+         nPrim := 0
+         nBruto := 0
+         nUDopIz := 0
+         nIDoprPio := 0
+         nIDoprZdr := 0
+         nIDoprNez := 0
+         nIDoprD4 := 0
+         nIDoprD5 := 0
+         nIDoprD6 := 0
+         nOdbici := 0
+         nL_odb := 0
+         nPorez := 0
+         nIsplata := 0
+         nUNetobp := 0
+         nRadSatiM4 := 0
+         nRadIznosM4 := 0
+         nBolovanjeSatiM4 := 0
+         nBolovanjeIznosM4 := 0
+         nURad_izn := 0
+         nUBol_izn := 0
+         nUkRadnihSati := 0
+         nUkBolovanjeSati := 0
+
       ENDIF
 
-   ENDDO
+
+
+   ENDDO // eof
+
+/*
+   IF cTotal == "D"
+      dodaj_u_pomocnu_tabelu( 0, 0, cT_radnik, ;
+         cId_rj, ;
+         cObr_za, ;
+         cT_rnaziv, ;
+         nSati, ;
+         nUkRadnihSati, ;
+         nUkBolovanjeSati, ;
+         nPrim, ;
+         nBruto, ;
+         nUDopIZ, ;
+         nIDoprPIO, ;
+         nIDoprZDR, ;
+         nIDoprNEZ, ;
+         0, ;
+         nL_Odb, ;
+         nPorez, ;
+         nUNetobp, ;
+         nUNeto, ;
+         nURad_izn, ;
+         nUBol_izn, ;
+         nOdbici, ;
+         nIsplata, ;
+         nIDoprD4, ;
+         nIDoprD5, ;
+         nIDoprD6 )
+   ENDIF
+*/
 
    RETURN .T.
 
@@ -489,7 +493,7 @@ FUNCTION sum_primanja_za_tipove_primanja( cM4TipoviIzdvojitiPrimanja, nBolovanje
 
 
 STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
-      cDop1, cDop2, cDop3, cDop4, cDop5, cDop6, cOpcina, cKanton )
+      cDop1, cDop2, cDop3, cDop4, cDop5, cDop6, cIdOpcinaStanUslov, cKanton )
 
    LOCAL cT_radnik := ""
    LOCAL cLine := ""
@@ -503,7 +507,7 @@ STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
    ? "#%LANDS#"
    P_COND2
 
-   pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
+   pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cIdOpcinaStanUslov, cKanton )
 
    cLine := pregled_header( cRadnik, cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
 
@@ -691,9 +695,9 @@ STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
    RETURN .T.
 
 
-
+/*
 STATIC FUNCTION prikazi_pregled_ukupno( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
-      cDop1, cDop2, cDop3, cDop4, cDop5, cDop6, cOpcina, cKanton )
+      cDop1, cDop2, cDop3, cDop4, cDop5, cDop6, cIdOpcinaStanUslov, cKanton )
 
    LOCAL cT_radnik := ""
    LOCAL cLine := ""
@@ -708,7 +712,7 @@ STATIC FUNCTION prikazi_pregled_ukupno( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
    ? "#%LANDS#"
    P_COND2
 
-   pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
+   pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cIdOpcinaStanUslov, cKanton )
 
    cLine := pregled_header( cRadnik, cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
 
@@ -962,7 +966,7 @@ STATIC FUNCTION prikazi_pregled_ukupno( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
    ENDPRINT
 
    RETURN .T.
-
+*/
 
 
 
@@ -1088,7 +1092,7 @@ STATIC FUNCTION procenat_doprinosa( cDop )
    RETURN cProc
 
 
-STATIC FUNCTION pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
+STATIC FUNCTION pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cIdOpcinaStanUslov, cKanton )
 
    ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
@@ -1099,8 +1103,8 @@ STATIC FUNCTION pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cOpcina,
       ?  "RJ:", cRj
    ENDIF
 
-   IF !Empty( cOpcina )
-      ?U "Općina:", AllTrim( cOpcina )
+   IF !Empty( cIdOpcinaStanUslov )
+      ?U "Općina stanovanja:", AllTrim( cIdOpcinaStanUslov )
    ENDIF
 
    IF !Empty( cKanton )
@@ -1118,23 +1122,22 @@ STATIC FUNCTION pregled_zaglavlje( cRj, nGodina, cMjOd, cMjDo, cRadnik, cOpcina,
 
 
 
-STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
+STATIC FUNCTION pripada_opcina_kanton( cIdRadnik, cIdOpcinaStanUslov, cIdKanton )
 
-   LOCAL lOk := .T.
    LOCAL nTArea := Select()
-   LOCAL cKant
+   LOCAL lOk := .T.
 
-   select_o_radn( id_radn )
+   select_o_radn( cIdRadnik )
 
-   IF !Empty( opcina ) .AND. !( radn->idopsst $ opcina )
+altd()
+   IF !Empty( cIdOpcinaStanUslov ) .AND. !( radn->idopsst $ cIdOpcinaStanUslov )
       lOk := .F.
    ENDIF
 
-   IF !Empty( kanton )
+   IF !Empty( cIdKanton )
 
       select_o_ops( radn->idopsst )
-
-      IF Eof() .AND. !( ops->idkan $ kanton )
+      IF !( ops->idkan $ cIdKanton )
          lOk := .F.
       ENDIF
 
@@ -1148,7 +1151,7 @@ STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
 
 
 
-STATIC FUNCTION sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, cObr )
+STATIC FUNCTION seek_pa_sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, cObr )
 
    LOCAL cFilter := ""
    PRIVATE cObracun := cObr
@@ -1176,12 +1179,12 @@ STATIC FUNCTION sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, c
 
    IF Empty( cRadnik )
       INDEX ON Str( godina, 4, 0 ) + SortPrez( idradn ) + Str( mjesec, 2, 0 ) + idrj TO "tmpld"
-      //GO TOP
-      //SEEK Str( nGodina, 4 )
+      // GO TOP
+      // SEEK Str( nGodina, 4 )
    ELSE
       SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-      //GO TOP
-      //SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + cRadnik
+      // GO TOP
+      // SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + cRadnik
    ENDIF
    GO TOP
 
@@ -1273,6 +1276,7 @@ STATIC FUNCTION napravi_pomocnu_tabelu()
 
 
 STATIC FUNCTION otvori_tabele()
+
 
    //o_ld_obracuni()
    //o_ld_parametri_obracuna()

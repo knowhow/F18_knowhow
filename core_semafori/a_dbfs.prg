@@ -17,7 +17,7 @@ STATIC s_mtxMutex
 FUNCTION set_a_dbfs()
 
    LOCAL _dbf_fields, _sql_order
-   LOCAL hAlgoritam
+   LOCAL _alg
    LOCAL cDatabase := my_database()
 
    IF s_hF18Dbfs == NIL
@@ -84,6 +84,11 @@ FUNCTION set_a_dbfs()
    ENDIF
 #endif
 
+#ifdef F18_KADEV
+   IF f18_use_module( "kadev" )
+      set_a_dbf_kadev()
+   ENDIF
+#endif
 
    RETURN .T.
 
@@ -155,7 +160,7 @@ FUNCTION set_a_sql_sifarnik( dbf_table, ALIAS, wa, hRec )
 
 FUNCTION set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, lSql )
 
-   LOCAL hAlgoritam, hItem
+   LOCAL _alg, hItem
 
    IF lSql == NIL
       lSql := .F.
@@ -174,22 +179,22 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, lSql )
    hItem[ "algoritam" ] := {}
 
 
-   hAlgoritam := hb_Hash()
+   _alg := hb_Hash()
 
    IF hRec == NIL
-      hAlgoritam[ "dbf_key_fields" ] := { "id" }
-      hAlgoritam[ "dbf_tag" ]        := "ID"
-      hAlgoritam[ "sql_in" ]        := "id"
-      hAlgoritam[ "dbf_key_block" ] := {|| field->id }
+      _alg[ "dbf_key_fields" ] := { "id" }
+      _alg[ "dbf_tag" ]        := "ID"
+      _alg[ "sql_in" ]        := "id"
+      _alg[ "dbf_key_block" ] := {|| field->id }
 
    ELSE
-      hAlgoritam[ "dbf_key_fields" ] := hRec[ "dbf_key_fields" ]
-      hAlgoritam[ "dbf_tag" ]        := hRec[ "dbf_tag" ]
-      hAlgoritam[ "sql_in" ]        := hRec[ "sql_in" ]
-      hAlgoritam[ "dbf_key_block" ] := hRec[ "dbf_key_block" ]
+      _alg[ "dbf_key_fields" ] := hRec[ "dbf_key_fields" ]
+      _alg[ "dbf_tag" ]        := hRec[ "dbf_tag" ]
+      _alg[ "sql_in" ]        := hRec[ "sql_in" ]
+      _alg[ "dbf_key_block" ] := hRec[ "dbf_key_block" ]
    ENDIF
 
-   AAdd( hItem[ "algoritam" ], hAlgoritam )
+   AAdd( hItem[ "algoritam" ], _alg )
 
    f18_dbfs_add( dbf_table, @hItem )
 
@@ -316,7 +321,7 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
    IF !hb_HHasKey( hDbfRecord, "sql_order" )
       IF hb_HHasKey( hDbfRecord, "algoritam" )
-         // hDbfKeyFields stavke su "C" za datumska i char polja, "A" za numericka polja
+         // dbf_key_fields stavke su "C" za datumska i char polja, "A" za numericka polja
          // npr: { {"godina", 4, 0}, "datum", "id" }
          hDbfRecord[ "sql_order" ] := sql_order_from_key_fields( hDbfRecord[ "algoritam" ][ 1 ][ "dbf_key_fields" ] )
       ENDIF
@@ -526,22 +531,22 @@ FUNCTION print_a_dbfs()
 
 
 
-FUNCTION sql_order_from_key_fields( hDbfKeyFields ) // "sql_order" hash na osnovu hRec["dbf_fields"]
+FUNCTION sql_order_from_key_fields( dbf_key_fields ) // "sql_order" hash na osnovu hRec["dbf_fields"]
 
    LOCAL nI, _len
    LOCAL _sql_order
 
-   // primjer: hDbfKeyFields = {{"godina", 4}, "idrj", {"mjesec", 2}
+   // primjer: dbf_key_fields = {{"godina", 4}, "idrj", {"mjesec", 2}
 
-   _len := Len( hDbfKeyFields )
+   _len := Len( dbf_key_fields )
 
    _sql_order := ""
    FOR nI := 1 TO _len
 
-      IF ValType( hDbfKeyFields[ nI ] ) == "A"
-         _sql_order += hDbfKeyFields[ nI, 1 ]
+      IF ValType( dbf_key_fields[ nI ] ) == "A"
+         _sql_order += dbf_key_fields[ nI, 1 ]
       ELSE
-         _sql_order += hDbfKeyFields[ nI ]
+         _sql_order += dbf_key_fields[ nI ]
       ENDIF
 
       IF nI < _len
@@ -656,15 +661,13 @@ FUNCTION set_rec_from_dbstruct( hRec )
 
    hDbfFieldsLen := hb_Hash()
    FOR nI := 1 TO Len( aDbfStruct )
-      AAdd( hDbfFields, Lower( aDbfStruct[ nI, 1 ] ) )
-      // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
+      AAdd( hDbfFields, Lower( aDbfStruct[ nI, 1 ] ) ) // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
 
-      IF aDbfStruct[ nI, 2 ] == "B"
+// IF aDbfStruct[ nI, 2 ] == "B"
 
-         // double
-         hDbfFieldsLen[ Lower( aDbfStruct[ nI, 1 ] ) ] := { aDbfStruct[ nI, 2 ], 18, 8 }
+// hDbfFieldsLen[ Lower( aDbfStruct[ nI, 1 ] ) ] := { aDbfStruct[ nI, 2 ], 18, 8 }   // double
 
-      ELSEIF aDbfStruct[ nI, 2 ] == "Y" .OR. ( aDbfStruct[ nI, 2 ] == "I" .AND. aDbfStruct[ nI, 4 ] > 0 )
+      IF aDbfStruct[ nI, 2 ] == "Y" .OR. ( aDbfStruct[ nI, 2 ] == "I" .AND. aDbfStruct[ nI, 4 ] > 0 )
 
          // za currency polje stoji I 8 4 - sto znaci currency sa cetiri decimale
          // mislim da se ovdje radi o tome da se u 4 bajta stavlja integer dio, a u ostala 4 decimalni dio
@@ -682,6 +685,32 @@ FUNCTION set_rec_from_dbstruct( hRec )
    hb_mutexUnlock( s_mtxMutex )
 
    RETURN NIL
+
+
+FUNCTION get_field_len( cAlias, cField )
+
+   LOCAL hDbfRec := get_a_dbf_rec( cAlias )
+
+   IF !hb_HHasKey( hDbfRec,[ "dbf_fields_len" ] ) .OR. hDbfRec[ "dbf_fields_len" ] == NIL
+      RETURN NIL
+   ENDIF
+
+   RETURN hDbfRec[ "dbf_fields_len" ][ Lower( cField ) ] // { "B", 18, 8} ili NIL
+
+
+FUNCTION get_field_get_picture_code( cAlias, cField )
+
+   LOCAL aFieldLen := get_field_len( cAlias, cField )
+
+   IF aFieldLen == NIL
+      RETURN ""
+   ENDIF
+
+   IF !( aFieldLen[ 1 ] $ "NBY" )
+      RETURN "" // nije numeric
+   ENDIF
+
+   RETURN Replicate( "9", aFieldLen[ 2 ] - aFieldLen[ 3 ] - 1 ) + "." + Replicate( "9", aFieldLen[ 3 ] ) // 999999999.99999999
 
 
 
@@ -740,8 +769,7 @@ STATIC FUNCTION zatvori_dbf( value )
 
    Select( value[ 'wa' ] )
 
-   IF Used()
-      // ostalo je još otvorenih DBF-ova
+   IF Used() // ostalo je još otvorenih DBF-ova
       USE
       RETURN .F.
    ENDIF

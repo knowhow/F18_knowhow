@@ -538,8 +538,7 @@ FUNCTION P_ParObr( cId, nDeltaX, nDeltaY )
    ENDIF
 
    AAdd( ImeKol, { PadR( "opis", 10 ), {|| naz }, "naz" } )
-   AAdd( ImeKol, { PadR( iif( gBodK == "1", "vrijednost boda", "vr.koeficijenta" ), 15 ), ;
-      {|| vrbod }, "vrbod" } )
+   AAdd( ImeKol, { PadR( iif( gBodK == "1", "vrijednost boda", "vr.koeficijenta" ), 15 ),  {|| vrbod }, "vrbod" } )
    AAdd( ImeKol, { PadR( "n.koef.1", 8 ), {|| k5 }, "k5"  } )
    AAdd( ImeKol, { PadR( "n.koef.2", 8 ), {|| k6 }, "k6"  } )
    AAdd( ImeKol, { PadR( "n.koef.3", 8 ), {|| k7 }, "k7"  } )

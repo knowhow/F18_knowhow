@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR GetList
+
 FUNCTION ld_pregled_plata_za_period()
 
    LOCAL nC1 := 20
@@ -27,7 +29,9 @@ FUNCTION ld_pregled_plata_za_period()
    LOCAL cDoprPio := "70"
    LOCAL cDoprZdr := "80"
    LOCAL cDoprNez := "90"
-   LOCAL cDoprD4 := cDoprD5 := cDoprD6 := Space( 2 )
+   LOCAL cDoprD4 := Space( 2)
+   LOCAL cDoprD5 := Space( 2)
+   LOCAL cDoprD6 := Space( 2 )
    LOCAL cObracun := gObracun
    LOCAL cM4TipoviIzdvojitiPrimanja := fetch_metric( "ld_m4_izdvojena_primanja", NIL, Space( 100 ) )
    LOCAL nCount
@@ -90,8 +94,6 @@ FUNCTION ld_pregled_plata_za_period()
    set_metric( "ld_izv_mjesec_od", my_user(), nMjesec )
    set_metric( "ld_izv_godina", my_user(), nGodina )
    set_metric( "ld_izv_mjesec_do", my_user(), cMjesecDo )
-
-   SELECT ld
 
    sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, cObracun )
 
@@ -1151,6 +1153,8 @@ STATIC FUNCTION sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, c
    LOCAL cFilter := ""
    PRIVATE cObracun := cObr
 
+   seek_ld( NIL, nGodina, NIL, NIL, cRadnik )
+
    IF !Empty( cObracun )
       cFilter += "obr == " + _filter_quote( cObracun )
    ENDIF
@@ -1172,13 +1176,14 @@ STATIC FUNCTION sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, c
 
    IF Empty( cRadnik )
       INDEX ON Str( godina, 4, 0 ) + SortPrez( idradn ) + Str( mjesec, 2, 0 ) + idrj TO "tmpld"
-      GO TOP
-      SEEK Str( nGodina, 4 )
+      //GO TOP
+      //SEEK Str( nGodina, 4 )
    ELSE
       SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-      GO TOP
-      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + cRadnik
+      //GO TOP
+      //SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + cRadnik
    ENDIF
+   GO TOP
 
    RETURN .T.
 

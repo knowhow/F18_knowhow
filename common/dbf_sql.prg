@@ -41,14 +41,15 @@ FUNCTION dbf_update_rec( hRec, lNoLock )
 
       FOR EACH cKey in hRec:Keys
 
-         // blacklistovano polje
-         IF field_in_blacklist( aDbfRec[ "table" ], cKey, aDbfRec[ "blacklisted" ] )
+         IF field_in_blacklist( aDbfRec[ "table" ], cKey, aDbfRec[ "blacklisted" ] )      // blacklistovano polje
+
             LOOP
          ENDIF
 
 
+
          IF FieldPos( cKey ) == 0 // replace polja
-            cMsg := RECI_GDJE_SAM + "dbf field " + cKey + " ne postoji u " + Alias()
+            cMsg := RECI_GDJE_SAM + " dbf field " + cKey + " ne postoji u " + Alias()
             // Alert(cMsg)
             log_write( cMsg, 1 )
          ELSE

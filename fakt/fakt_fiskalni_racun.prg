@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+MEMVAR GetList
 
 STATIC __device_id := 0
 STATIC __device_params
@@ -40,7 +41,7 @@ FUNCTION param_racun_na_email( read_par )
 
 
 
-FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
+FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDeviceParams )
 
    LOCAL _err_level := 0
    LOCAL _dev_drv
@@ -53,23 +54,23 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
       RETURN _err_level
    ENDIF
 
-   IF ( auto_print == NIL )
-      auto_print := .F.
+   IF ( lAutoPrint == NIL )
+      lAutoPrint := .F.
    ENDIF
 
-   IF auto_print
+   IF lAutoPrint
       __auto := .T.
    ENDIF
 
-   IF dev_param == NIL
+   IF hDeviceParams == NIL
       RETURN _err_level
    ENDIF
 
-   __device_params := dev_param
+   __device_params := hDeviceParams
 
-   _dev_drv := AllTrim( dev_param[ "drv" ] )
+   _dev_drv := AllTrim( hDeviceParams[ "drv" ] )
 
-   lRacunBezgBezPartnera := ( dev_param[ "vp_no_customer" ] == "D" )
+   lRacunBezgBezPartnera := ( hDeviceParams[ "vp_no_customer" ] == "D" )
 
    __DRV_CURRENT := _dev_drv
 
@@ -79,35 +80,33 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
    // SELECT fakt
    // SET FILTER TO
 
-   // SELECT partn
-   // SET FILTER TO
 
    SELECT fakt_doks
 
-   IF postoji_fiskalni_racun( id_firma, tip_dok, br_dok, _dev_drv )
-      MsgBeep( "Za dokument " + tip_dok + "-" + AllTrim( br_dok ) + " već postoji izdat fiskalni račun !" )
+   IF postoji_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, _dev_drv )
+      MsgBeep( "Za dokument " + cIdTipDok + "-" + AllTrim( cBrDok ) + " već postoji izdat fiskalni račun !" )
       RETURN _err_level
    ENDIF
 
-   _storno := fakt_dok_is_storno( id_firma, tip_dok, br_dok )
+   _storno := fakt_dok_is_storno( cIdFirma, cIdTipDok, cBrDok )
 
    IF ValType( _storno ) == "N" .AND. _storno == -1
       RETURN _err_level
    ENDIF
 
    IF _storno
-      IF !fakt_reklamirani_racun_preduslovi( id_firma, tip_dok, br_dok, dev_param )
+      IF !fakt_reklamirani_racun_preduslovi( cIdFirma, cIdTipDok, cBrDok, hDeviceParams )
          RETURN _err_level
       ENDIF
    ENDIF
 
-   _partn_data := fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, _storno, lRacunBezgBezPartnera )
+   _partn_data := fakt_fiscal_podaci_partnera( cIdFirma, cIdTipDok, cBrDok, _storno, lRacunBezgBezPartnera )
 
    IF ValType( _partn_data ) == "L"
       RETURN 1
    ENDIF
 
-   aRacunStavkeData := fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, _storno, _partn_data )
+   aRacunStavkeData := fakt_fiscal_stavke_racuna( cIdFirma, cIdTipDok, cBrDok, _storno, _partn_data )
 
    IF ValType( aRacunStavkeData ) == "L"  .OR. aRacunStavkeData == NIL
       RETURN 1
@@ -119,28 +118,28 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
       _err_level := 0
 
    CASE _dev_drv == __DRV_FPRINT
-      _err_level := fakt_to_fprint( id_firma, tip_dok, br_dok, aRacunStavkeData, _partn_data, _storno )
+      _err_level := fakt_to_fprint( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno )
 
    CASE _dev_drv == __DRV_TREMOL
       _cont := "1"
-      _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, aRacunStavkeData, _partn_data, _storno, _cont )
+      _err_level := fakt_to_tremol( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno, _cont )
 
    CASE _dev_drv == __DRV_HCP
-      _err_level := fakt_to_hcp( id_firma, tip_dok, br_dok, aRacunStavkeData, _partn_data, _storno )
+      _err_level := fakt_to_hcp( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno )
 
    CASE _dev_drv == __DRV_FLINK
-      _err_level := fakt_to_flink( __device_params, id_firma, tip_dok, br_dok, aRacunStavkeData, _partn_data, _storno )
+      _err_level := fakt_to_flink( __device_params, cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno )
 
 
    CASE _dev_drv == __DRV_TRING
-      _err_level := fakt_to_tring( id_firma, tip_dok, br_dok, aRacunStavkeData, _partn_data, _storno )
+      _err_level := fakt_to_tring( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno )
 
    ENDCASE
 
    DirChange( my_home() )
 
    log_write( "fiskalni racun " + _dev_drv + " za dokument: " + ;
-      AllTrim( id_firma ) + "-" + AllTrim( tip_dok ) + "-" + AllTrim( br_dok ) + ;
+      AllTrim( cIdFirma ) + "-" + AllTrim( cIdTipDok ) + "-" + AllTrim( cBrDok ) + ;
       " err level: " + AllTrim( Str( _err_level ) ) + ;
       " partner: " + iif( _partn_data <> NIL, AllTrim( _partn_data[ 1, 1 ] ) + ;
       " - " + AllTrim( _partn_data[ 1, 2 ] ), "NIL" ), 3 )
@@ -150,7 +149,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
       IF _dev_drv == __DRV_TREMOL
 
          _cont := "2"
-         _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, aRacunStavkeData, _partn_data, _storno, _cont )
+         _err_level := fakt_to_tremol( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno, _cont )
 
          IF _err_level > 0
             MsgBeep( "Problem sa štampanjem na fiskalni uređaj !" )
@@ -164,19 +163,19 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
 
 
-FUNCTION reklamni_rn_box( rekl_rn )
+FUNCTION reklamni_rn_box( nBrReklamiraniRacun )
 
    Box(, 1, 60 )
    @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Reklamiramo fiskalni račun broj:" ;
-      GET rekl_rn PICT "999999999" VALID ( rekl_rn > 0 )
+      GET nBrReklamiraniRacun PICT "999999999" VALID ( nBrReklamiraniRacun > 0 )
    READ
    BoxC()
 
-   IF LastKey() == K_ESC .AND. rekl_rn == 0
-      rekl_rn := -1
+   IF LastKey() == K_ESC .AND. nBrReklamiraniRacun == 0
+      nBrReklamiraniRacun := -1
    ENDIF
 
-   RETURN rekl_rn
+   RETURN nBrReklamiraniRacun
 
 
 
@@ -269,7 +268,7 @@ STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, dev
 
 */
 
-FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok, model )
+FUNCTION postoji_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, model )
 
    LOCAL lRet := .F.
    LOCAL cWhere
@@ -278,9 +277,9 @@ FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok, model )
       model := fiskalni_uredjaj_model()
    ENDIF
 
-   cWhere := " idfirma = " + sql_quote( id_firma )
-   cWhere += " AND idtipdok = " + sql_quote( tip_dok )
-   cWhere += " AND brdok = " + sql_quote( br_dok )
+   cWhere := " idfirma = " + sql_quote( cIdFirma )
+   cWhere += " AND idtipdok = " + sql_quote( cIdTipDok )
+   cWhere += " AND brdok = " + sql_quote( cBrDok )
 
    IF AllTrim( model ) $ "FPRINT#HCP"
       cWhere += " AND ( ( iznos > 0 AND fisc_rn > 0 ) "
@@ -296,20 +295,21 @@ FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok, model )
    RETURN lRet
 
 
-STATIC FUNCTION fakt_dok_is_storno( id_firma, tip_dok, br_dok )
+STATIC FUNCTION fakt_dok_is_storno( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL _storno := .T.
    LOCAL _t_rec
 
-   IF !find_fakt_dokument( id_firma, tip_dok, br_dok )
+
+   IF !find_fakt_dokument( cIdFirma, cIdTipDok, cBrDok )
       MsgBeep( "Ne mogu locirati dokument - is storno !" )
       RETURN -1
    ENDIF
 
-   seek_fakt( id_firma, tip_dok, br_dok )
+   seek_fakt( cIdFirma, cIdTipDok, cBrDok )
    _t_rec := RecNo()
 
-   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idtipdok == tip_dok .AND. field->brdok == br_dok
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
 
       IF field->kolicina > 0
          _storno := .F.
@@ -342,7 +342,7 @@ STATIC FUNCTION fakt_fiscal_o_tables()
 // ----------------------------------------------------------
 // kalkulise iznose na osnovu datih parametara
 // ----------------------------------------------------------
-STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
+STATIC FUNCTION fakt_izracunaj_total( arr, partner, cIdTipDok )
 
    LOCAL _calc := hb_Hash()
    LOCAL _tar, nI, _iznos
@@ -359,7 +359,7 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
 
      select_o_tarifa( _tar )
 
-      IF tip_dok $ "11#13#23"
+      IF cIdTipDok $ "11#13#23"
          IF !IsIno( partner ) .AND. !is_part_pdv_oslob_po_clanu( partner ) .AND. tarifa->opp > 0
             _calc[ "ukupno" ] := _calc[ "ukupno" ] + _iznos
             _calc[ "osnovica" ] := _calc[ "osnovica" ] + ( _iznos / ( 1 + tarifa->opp / 100 ) )
@@ -439,7 +439,7 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
 
 
 
-STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aPartner )
+STATIC FUNCTION fakt_fiscal_stavke_racuna( cIdFirma, cIdTipDok, cBrDok, storno, aPartner )
 
    LOCAL aRacunData := {}
    LOCAL _n_rn_broj, _rn_iznos, _rn_rabat, _rn_datum, _rekl_rn_broj
@@ -473,8 +473,8 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
 
    fakt_fiscal_o_tables()
 
-   find_fakt_dokument( id_firma, tip_dok, br_dok )
 
+   find_fakt_dokument( cIdFirma, cIdTipDok, cBrDok )
    _n_rn_broj := Val( AllTrim( field->brdok ) )
    _rekl_rn_broj := field->fisc_rn
 
@@ -483,12 +483,12 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
    _rn_datum := field->datdok
    _partn_id := field->idpartner
 
-   _a_iznosi := get_a_iznos( id_firma, tip_dok, br_dok )
-   _data_total := fakt_izracunaj_total( _a_iznosi, _partn_id, tip_dok )
+   _a_iznosi := get_a_iznos( cIdFirma, cIdTipDok, cBrDok )
+   _data_total := fakt_izracunaj_total( _a_iznosi, _partn_id, cIdTipDok )
 
-   seek_fakt( id_firma, tip_dok, br_dok )
+   seek_fakt( cIdFirma, cIdTipDok, cBrDok )
 
-   IF !Found()
+   IF Eof()
       MsgBeep( "Račun ne posjeduje niti jednu stavku#Štampanje onemogućeno !" )
       RETURN NIL
    ENDIF
@@ -506,12 +506,12 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
    // upisat cemo ga u svaku stavku matrice
    // to je total koji je bitan kod regularnih racuna
    // pdv, ne pdv obveznici itd...
-   // _rn_total := _uk_sa_pdv( tip_dok, _partn_id, _rn_iznos )
+   // _rn_total := _uk_sa_pdv( cIdTipDok, _partn_id, _rn_iznos )
 
    _rn_total := _data_total[ "ukupno" ]
    _rn_f_total := 0
 
-   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idtipdok == tip_dok .AND. field->brdok == br_dok
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
 
       select_o_roba( fakt->idroba )
 
@@ -548,7 +548,7 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
       _art_plu := roba->fisc_plu
 
       IF __device_params[ "plu_type" ] == "D" .AND.  ;
-            ( __device_params[ "vp_sum" ] <> 1 .OR. tip_dok $ "11" .OR. Len( _a_iznosi ) > 1 )
+            ( __device_params[ "vp_sum" ] <> 1 .OR. cIdTipDok $ "11" .OR. Len( _a_iznosi ) > 1 )
 
          _art_plu := auto_plu( NIL, NIL,  __device_params )
 
@@ -565,11 +565,11 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
 
       _arr := {}
       AAdd( _arr, { cIdTarifa, field->cijena } )
-      _data_item := fakt_izracunaj_total( _arr, _partn_id, tip_dok )
+      _data_item := fakt_izracunaj_total( _arr, _partn_id, cIdTipDok )
 
       nCijena := _data_item[ "ukupno" ]
 
-      IF tip_dok == "10"
+      IF cIdTipDok == "10"
          _vr_plac := "3"
       ENDIF
 
@@ -642,7 +642,7 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
       NEXT
    ENDIF
 
-   IF tip_dok $ "10" .AND. Len( _a_iznosi ) < 2
+   IF cIdTipDok $ "10" .AND. Len( _a_iznosi ) < 2
       set_fiscal_rn_zbirni( @aRacunData )
    ENDIF
 
@@ -659,13 +659,13 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, aP
 /*
    Opis: da li je račun bezgotovinski u zavisnosti od tipa dokumenta i vrste plaćanja
 */
-STATIC FUNCTION racun_bezgotovinski( tip_dok, vrsta_placanja )
+STATIC FUNCTION racun_bezgotovinski( cIdTipDok, vrsta_placanja )
 
-   IF tip_dok == "10" .AND. vrsta_placanja <> "G "
+   IF cIdTipDok == "10" .AND. vrsta_placanja <> "G "
       RETURN .T.
    ENDIF
 
-   IF tip_dok == "11" .AND. vrsta_placanja == "VR"
+   IF cIdTipDok == "11" .AND. vrsta_placanja == "VR"
       RETURN .T.
    ENDIF
 
@@ -683,17 +683,17 @@ STATIC FUNCTION racun_bezgotovinski( tip_dok, vrsta_placanja )
      - "1" - kartica
      - "3" - virman
 */
-STATIC FUNCTION vrsta_placanja_za_fiskalni_uredjaj( tip_dok, vrsta_placanja )
+STATIC FUNCTION vrsta_placanja_za_fiskalni_uredjaj( cIdTipDok, vrsta_placanja )
 
    LOCAL cVrPlac := "0"
 
-   IF ( tip_dok $ "#10#" .AND. !vrsta_placanja == "G " ) .OR. ( tip_dok == "11" .AND. vrsta_placanja == "VR" )
+   IF ( cIdTipDok $ "#10#" .AND. !vrsta_placanja == "G " ) .OR. ( cIdTipDok == "11" .AND. vrsta_placanja == "VR" )
       cVrPlac := "3"
-   ELSEIF ( tip_dok == "10" .AND. vrsta_placanja == "G " )
+   ELSEIF ( cIdTipDok == "10" .AND. vrsta_placanja == "G " )
       cVrPlac := "0"
    ENDIF
 
-   IF tip_dok $ "#11#" .AND. vrsta_placanja == "KT"
+   IF cIdTipDok $ "#11#" .AND. vrsta_placanja == "KT"
       cVrPlac := "1"
    ENDIF
 
@@ -703,9 +703,9 @@ STATIC FUNCTION vrsta_placanja_za_fiskalni_uredjaj( tip_dok, vrsta_placanja )
 /*
    Opis: da li se vrsta dokumenta može poslati na fiskalni uređaj
 */
-STATIC FUNCTION dokument_se_moze_fiskalizovati( tip_dok )
+STATIC FUNCTION dokument_se_moze_fiskalizovati( cIdTipDok )
 
-   IF tip_dok $ "10#11"
+   IF cIdTipDok $ "10#11"
       RETURN .T.
    ENDIF
 
@@ -767,12 +767,12 @@ STATIC FUNCTION racun_bezgotovinski_bez_partnera_pitanje()
    Opis: vraća matricu napunjenu sa podacima partnera kao i informacije o vrsti plaćanja, da li partner pdv obveznik
          na osnovu ažuriranog fakt dokumenta
 
-   Usage: fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, lRacunBezPartnera )
+   Usage: fakt_fiscal_podaci_partnera( cIdFirma, cIdTipDok, cBrDok, storno, lRacunBezPartnera )
 
    Parametri:
-      - id_firma - fakt_doks->idfirma
-      - tip_dok - fakt_doks->idtipdok
-      - br_dok - fakt_doks->brdok
+      - cIdFirma - fakt_doks->idfirma
+      - cIdTipDok - fakt_doks->idtipdok
+      - cBrDok - fakt_doks->brdok
       - storno - .T. račun je storno
       - lRacunBezPartnera - .T. bezgotovinski račun je moguć bez partnera
 
@@ -792,7 +792,7 @@ STATIC FUNCTION racun_bezgotovinski_bez_partnera_pitanje()
 
 */
 
-STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, lBezgRacunBezPartnera )
+STATIC FUNCTION fakt_fiscal_podaci_partnera( cIdFirma, cIdTipDok, cBrDok, storno, lBezgRacunBezPartnera )
 
    LOCAL _podaci := {}
    LOCAL _partn_id
@@ -810,7 +810,8 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
    __partn_ino := .F.
    __partn_pdv := .T.
 
-   find_fakt_dokument( id_firma + tip_dok + br_dok )
+   find_fakt_dokument( cIdFirma, cIdTipDok, cBrDok )
+
 
    _partn_id := fakt_doks->idpartner
    _vrsta_p := fakt_doks->idvrstep
@@ -821,7 +822,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
    ENDIF
 
    _partn_id_broj := AllTrim( firma_id_broj( _partn_id ) )
-   __vrsta_pl := vrsta_placanja_za_fiskalni_uredjaj( tip_dok, _vrsta_p )
+   __vrsta_pl := vrsta_placanja_za_fiskalni_uredjaj( cIdTipDok, _vrsta_p )
    lPartnClan := is_part_pdv_oslob_po_clanu( _partn_id )
 
    IF IsIno( _partn_id )
@@ -836,7 +837,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
 
    _podaci_kompletirani := is_podaci_partnera_kompletirani( _partn_id, _partn_id_broj )
 
-   IF racun_bezgotovinski( tip_dok, _vrsta_p ) .AND. ( !__prikazi_partnera .OR. !_podaci_kompletirani )
+   IF racun_bezgotovinski( cIdTipDok, _vrsta_p ) .AND. ( !__prikazi_partnera .OR. !_podaci_kompletirani )
       IF lBezgRacunBezPartnera .AND. racun_bezgotovinski_bez_partnera_pitanje()
          __prikazi_partnera := .F.
       ELSE
@@ -874,7 +875,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
 // -------------------------------------------------------------
 // obradi izlaz fiskalnog racuna na FPRINT uredjaj
 // -------------------------------------------------------------
-STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, aRacunData, head, storno )
+STATIC FUNCTION fakt_to_fprint( cIdFirma, cIdTipDok, cBrDok, aRacunData, head, storno )
 
    LOCAL _path := __device_params[ "out_dir" ]
    LOCAL _filename := __device_params[ "out_file" ]
@@ -899,7 +900,7 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, aRacunData, head, sto
 
    IF _err_level == 2 .AND. storno
       error_bar( "fisc", "FPRINT ERR reklamirani fiskalni račun" )
-      IF obrada_greske_na_liniji_55_reklamirani_racun( id_firma, tip_dok, br_dok, __device_params )
+      IF obrada_greske_na_liniji_55_reklamirani_racun( cIdFirma, cIdTipDok, cBrDok, __device_params )
          MsgBeep( "Ponoviti izdavanje reklamiranog računa na fiskalni uređaj." )
          RETURN 0
       ENDIF
@@ -915,12 +916,12 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, aRacunData, head, sto
       RETURN _err_level
    ENDIF
 
-   IF !Empty( param_racun_na_email() ) .AND. tip_dok $ "#11#"
-      _partn_naz := _get_partner_for_email( id_firma, tip_dok, br_dok )
-      _snd_eml( _fiscal_no, tip_dok + "-" + AllTrim( br_dok ), _partn_naz, NIL, _total )
+   IF !Empty( param_racun_na_email() ) .AND. cIdTipDok $ "#11#"
+      _partn_naz := _get_partner_for_email( cIdFirma, cIdTipDok, cBrDok )
+      _snd_eml( _fiscal_no, cIdTipDok + "-" + AllTrim( cBrDok ), _partn_naz, NIL, _total )
    ENDIF
 
-   set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no, storno )
+   set_fiscal_no_to_fakt_doks( cIdFirma, cIdTipDok, cBrDok, _fiscal_no, storno )
 
    IF __auto = .F.
       MsgBeep( "Kreiran fiskalni račun broj: " + AllTrim( Str( _fiscal_no ) ) )
@@ -986,14 +987,17 @@ STATIC FUNCTION obrada_greske_na_liniji_55_reklamirani_racun( idfirma, idtipdok,
 
 
 
-STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
+STATIC FUNCTION _get_partner_for_email( cIdFirma, cIdTipDok, cBrDok )
+
 
    LOCAL _ret := ""
    LOCAL nDbfArea := Select()
    LOCAL _partn
    LOCAL _id_vrste_p
 
-   find_fakt_dokument( id_firma, tip_dok, br_dok )
+
+   find_fakt_dokument( cIdFirma, cIdTipDok, cBrDok )
+
 
    _partn := field->idpartner
    _id_vrste_p := field->idvrstep
@@ -1017,7 +1021,7 @@ STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
    izdavanje fiskalnog isjecka na TREMOL uredjaj
 */
 
-STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, aRacunData, head, storno, CONT )
+STATIC FUNCTION fakt_to_tremol( cIdFirma, cIdTipDok, cBrDok, aRacunData, head, storno, CONT )
 
    LOCAL _err_level := 0
    LOCAL _f_name
@@ -1033,7 +1037,7 @@ STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, aRacunData, head, sto
 
    _err_level := tremol_rn( __device_params, aRacunData, head, storno, CONT ) // stampaj racun
 
-   _f_name := AllTrim( fiscal_out_filename( __device_params[ "out_file" ], br_dok ) )
+   _f_name := AllTrim( fiscal_out_filename( __device_params[ "out_file" ], cBrDok ) )
 
 
    IF tremol_read_out( __device_params, _f_name, __device_params[ "timeout" ] ) // da li postoji ista na izlazu ?
@@ -1053,7 +1057,7 @@ STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, aRacunData, head, sto
          ENDIF
 
 
-         set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no ) // ubaci broj fiskalnog racuna u fakturu
+         set_fiscal_no_to_fakt_doks( cIdFirma, cIdTipDok, cBrDok, _fiscal_no ) // ubaci broj fiskalnog racuna u fakturu
 
       ENDIF
 
@@ -1069,7 +1073,7 @@ STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, aRacunData, head, sto
 // -------------------------------------------------------------
 // izdavanje fiskalnog isjecka na HCP uredjaj
 // -------------------------------------------------------------
-STATIC FUNCTION fakt_to_hcp( id_firma, tip_dok, br_dok, aRacunData, head, storno )
+STATIC FUNCTION fakt_to_hcp( cIdFirma, cIdTipDok, cBrDok, aRacunData, head, storno )
 
    LOCAL _err_level := 0
    LOCAL _fiscal_no := 0
@@ -1083,7 +1087,7 @@ STATIC FUNCTION fakt_to_hcp( id_firma, tip_dok, br_dok, aRacunData, head, storno
       IF _fiscal_no > 0
 
          // ubaci broj fiskalnog racuna u fakturu
-         set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no, storno )
+         set_fiscal_no_to_fakt_doks( cIdFirma, cIdTipDok, cBrDok, _fiscal_no, storno )
 
       ENDIF
 
@@ -1194,7 +1198,7 @@ STATIC FUNCTION set_fiscal_no_to_fakt_doks( cFirma, cTD, cBroj, nFiscal, lStorno
 // -------------------------------------------------------------
 // izdavanje fiskalnog isjecka na TFP uredjaj - tring
 // -------------------------------------------------------------
-STATIC FUNCTION fakt_to_tring( id_firma, tip_dok, br_dok, aRacunData, head, storno )
+STATIC FUNCTION fakt_to_tring( cIdFirma, cIdTipDok, cBrDok, aRacunData, head, storno )
 
    LOCAL _err_level := 0
    LOCAL _trig := 1
@@ -1227,7 +1231,7 @@ STATIC FUNCTION fakt_to_tring( id_firma, tip_dok, br_dok, aRacunData, head, stor
    ELSE
       tring_delete_answer( __device_params, _trig )
       // ubaci broj fiskalnog racuna u fakturu
-      set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
+      set_fiscal_no_to_fakt_doks( cIdFirma, cIdTipDok, cBrDok, _fiscal_no )
       MsgBeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
    ENDIF
 

@@ -25,7 +25,7 @@ FUNCTION ld_olp_gip_obrazac()
    LOCAL cTPNaz
    LOCAL nKrug := 1
    LOCAL cRadneJedinice := Space( 60 )
-   LOCAL cRJDef := Space( 2 )
+   LOCAL cIdRjTekuca := Space( 2 )
    LOCAL cIdRadnik := Space( LEN_IDRADNIK )
    LOCAL cPrimDobra := Space( 100 )
    LOCAL cIdRj
@@ -37,7 +37,7 @@ FUNCTION ld_olp_gip_obrazac()
    LOCAL cDopr11 := "11"
    LOCAL cDopr12 := "12"
    LOCAL cDopr1X := "1X"
-   LOCAL cTipRpt := "2"
+   LOCAL cVarijantaIzvjestaja := "2"
    LOCAL cTP_off := Space( 100 )
    LOCAL cObracun := gObracun
    LOCAL cWinPrint := "E"
@@ -63,7 +63,6 @@ FUNCTION ld_olp_gip_obrazac()
 
 
    ol_o_tbl()
-
 
    cPredNaz := PadR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz ), 100 )
    cPredAdr := PadR( fetch_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr ), 100 )
@@ -94,11 +93,8 @@ FUNCTION ld_olp_gip_obrazac()
    @ form_x_koord() + 12, Col() + 1 SAY "JID: " GET cPredJMB
    @ form_x_koord() + 13, form_y_koord() + 2 SAY "Adresa: " GET cPredAdr PICT "@S30"
 
-   @ form_x_koord() + 15, form_y_koord() + 2 SAY "(1) OLP-1021 / (2) GIP-1022 / (3,4) AOP:" GET cTipRpt ;
-      VALID cTipRpt $ "1234"
-
-   @ form_x_koord() + 15, Col() + 2 SAY "def.rj" GET cRJDef
-
+   @ form_x_koord() + 15, form_y_koord() + 2 SAY "(1) OLP-1021 / (2) GIP-1022 / (3,4) AOP:" GET cVarijantaIzvjestaja VALID cVarijantaIzvjestaja $ "1234"
+   @ form_x_koord() + 15, Col() + 2 SAY "def.rj" GET cIdRjTekuca
    @ form_x_koord() + 15, Col() + 2 SAY "st./exp.(S/E)?" GET cWinPrint  VALID cWinPrint $ "SE" PICT "@!"
 
    READ
@@ -112,13 +108,11 @@ FUNCTION ld_olp_gip_obrazac()
    IF cWinPrint == "E"
 
       nPorGodina := nGodinaDo
-
       @ form_x_koord() + 16, form_y_koord() + 2 SAY "P.godina" GET nPorGodina PICT "9999"
       @ form_x_koord() + 16, Col() + 2 SAY "Dat.podnos." GET dDatPodnosenja
       @ form_x_koord() + 16, Col() + 2 SAY "Dat.unosa" GET dDatUnosa
 
-      @ form_x_koord() + 17, form_y_koord() + 2 SAY "operacija: 1 (novi) 2 (izmjena) 3 (brisanje)" ;
-         GET nOper PICT "9"
+      @ form_x_koord() + 17, form_y_koord() + 2 SAY "operacija: 1 (novi) 2 (izmjena) 3 (brisanje)" GET nOper PICT "9"
 
       READ
    ENDIF
@@ -151,22 +145,19 @@ FUNCTION ld_olp_gip_obrazac()
    set_metric( "obracun_plata_preduzece_adresa", NIL, AllTrim( cPredAdr ) )
    set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 
-
    seek_ld( NIL, { nGodinaOd, nGodinaDo }, NIL, NIL, cIdRadnik ) // seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn, cTag )
 
+   ld_obracunski_list_sort( cRadneJedinice, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, cIdRadnik, cVarijantaIzvjestaja, cObracun )
 
-   ld_obracunski_list_sort( cRadneJedinice, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, cIdRadnik, cTipRpt, cObracun )
-
-
-   ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, cIdRadnik, ;
-      cPrimDobra, cTP_off, cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, cObracun )
+   ol_fill_data( cRadneJedinice, cIdRjTekuca, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, cIdRadnik, ;
+      cPrimDobra, cTP_off, cDopr10, cDopr11, cDopr12, cDopr1X, cVarijantaIzvjestaja, cObracun )
 
 
    IF s_nXml0ili1 == 1    // stampa izvjestaja xml/oo3
-      _xml_print( cTipRpt )
+      _xml_print( cVarijantaIzvjestaja )
    ELSE
       nBrZahtjeva := ld_mip_broj_obradjenih_radnika()
-      _xml_export( cTipRpt, nMjesecOd, nGodinaOd )
+      _xml_export( cVarijantaIzvjestaja, nMjesecOd, nGodinaOd )
       MsgBeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " zahtjeva." )
    ENDIF
 
@@ -174,10 +165,7 @@ FUNCTION ld_olp_gip_obrazac()
 
 
 
-// ---------------------------------------------------------
-// napuni podatke u pomocnu tabelu za izvjestaj
-// ---------------------------------------------------------
-FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, ;
+FUNCTION ol_fill_data( cRadneJedinice, cIdRjTekuca, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, ;
       cIdRadnik, cPrimDobra, cTP_off, cDopr10, cDopr11, cDopr12, cDopr1X, ;
       cRptTip, cObracun, cTp1, cTp2, cTp3, cTp4, cTp5 )
 
@@ -196,6 +184,7 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
    LOCAL nIDopr12 := 0000.00000
    LOCAL nIDopr1X := 0000.00000
    LOCAL lInRS := .F.
+   LOCAL cIdRadnikTekuci, cTipRada
 
    // dodatni tipovi primanja
    IF cTp1 == nil
@@ -219,22 +208,20 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
 
    DO WHILE !Eof()
 
-      IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ;
-            ld_godina_mjesec_string( nGodinaOd, nMjesecOd )
+      IF ld_godina_mjesec_string( field->godina, field->mjesec ) <  ld_godina_mjesec_string( nGodinaOd, nMjesecOd )
          SKIP
          LOOP
       ENDIF
 
-      IF ld_godina_mjesec_string( field->godina, field->mjesec ) > ;
-            ld_godina_mjesec_string( nGodinaDo, nMjesecDo )
+      IF ld_godina_mjesec_string( field->godina, field->mjesec ) >  ld_godina_mjesec_string( nGodinaDo, nMjesecDo )
          SKIP
          LOOP
       ENDIF
 
-      cT_radnik := field->idradn
+      cIdRadnikTekuci := field->idradn
 
       IF !Empty( cIdRadnik )
-         IF cT_radnik <> cIdRadnik
+         IF cIdRadnikTekuci <> cIdRadnik
             SKIP
             LOOP
          ENDIF
@@ -243,10 +230,9 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
       cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
-      // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ld_pozicija_parobr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
+      ld_pozicija_parobr( ld->mjesec, ld->godina, IIF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
-      select_o_radn( cT_radnik )
+      select_o_radn( cIdRadnikTekuci )
 
       IF cRptTip $ "3#4"
          IF ( cTipRada $ " #I#N" )
@@ -281,7 +267,7 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
       nTp4 := 0
       nTp5 := 0
 
-      DO WHILE !Eof() .AND. field->idradn == cT_radnik
+      DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
          IF ld_godina_mjesec_string( field->godina, field->mjesec ) < ld_godina_mjesec_string( nGodinaOd, nMjesecOd )
             SKIP
@@ -400,8 +386,8 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
             nMBruto := ( nBruto - nTrosk )
          ENDIF
 
-         // ovo preskoci, nema ovdje GIP-a
-         IF nMBruto <= 0
+
+         IF nMBruto <= 0    // ovo preskoci, nema ovdje GIP-a
             SELECT ld
             SKIP
             LOOP
@@ -473,8 +459,8 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
          ENDIF
 
          cTmpRj := field->idrj // radna jedinica
-         IF !Empty( cRJDef )
-            cTmpRj := cRJDef
+         IF !Empty( cIdRjTekuca )
+            cTmpRj := cIdRjTekuca
          ENDIF
 
          dDatIspl := ld_get_datum_isplate_plate( cTmpRJ, field->godina,  field->mjesec, cObr, @nMjIspl, @cIsplZa, @cVrstaIspl )
@@ -482,7 +468,7 @@ FUNCTION ol_fill_data( cRadneJedinice, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, 
 
 
          // ubaci u tabelu podatke
-         _ins_tbl( cT_radnik, ;
+         _ins_tbl( cIdRadnikTekuci, ;
             cRadJed, ;
             cTipRada, ;
             "placa", ;
@@ -698,9 +684,9 @@ STATIC FUNCTION _fill_e_xml( file_name )
    DO WHILE !Eof()
 
       // po radniku
-      cT_radnik := field->idradn
+      cIdRadnikTekuci := field->idradn
 
-      select_o_radn( cT_radnik )
+      select_o_radn( cIdRadnikTekuci )
 
       SELECT r_export
 
@@ -741,7 +727,7 @@ STATIC FUNCTION _fill_e_xml( file_name )
 
       nCnt := 0
 
-      DO WHILE !Eof() .AND. field->idradn == cT_radnik
+      DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
          // ukupni doprinosi
          REPLACE field->dop_uk WITH field->dop_pio + ;
@@ -925,9 +911,9 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
    DO WHILE !Eof()
 
       // po radniku
-      cT_radnik := field->idradn
+      cIdRadnikTekuci := field->idradn
 
-      select_o_radn( cT_radnik )
+      select_o_radn( cIdRadnikTekuci )
 
       SELECT r_export
 
@@ -962,7 +948,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
 
       nCnt := 0
 
-      DO WHILE !Eof() .AND. field->idradn == cT_radnik
+      DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
 
          // ukupni doprinosi
          REPLACE field->dop_uk WITH field->dop_pio + ;
@@ -1222,7 +1208,7 @@ STATIC FUNCTION g_operacija( nOper )
 FUNCTION ld_mip_broj_obradjenih_radnika()
 
    LOCAL nTArea := Select()
-   LOCAL cT_radnik
+   LOCAL cIdRadnikTekuci
    LOCAL nCnt
    LOCAL nRet := 0
 
@@ -1232,10 +1218,10 @@ FUNCTION ld_mip_broj_obradjenih_radnika()
 
    DO WHILE !Eof()
 
-      cT_radnik := field->idradn
+      cIdRadnikTekuci := field->idradn
       nCnt := 0
 
-      DO WHILE !Eof() .AND. field->idradn == cT_radnik
+      DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci
          nCnt := 1
          SKIP
       ENDDO
@@ -1273,7 +1259,7 @@ FUNCTION ol_o_tbl()
 
 
 FUNCTION ld_obracunski_list_sort( cRadneJedinice, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, ;
-      cIdRadnik, cTipRpt, cObr )
+      cIdRadnik, cVarijantaIzvjestaja, cObr )
 
    LOCAL cFilter := ""
    PRIVATE cObracun := cObr
@@ -1295,18 +1281,17 @@ FUNCTION ld_obracunski_list_sort( cRadneJedinice, nGodinaOd, nGodinaDo, nMjesecO
    ENDIF
 
    IF Empty( cIdRadnik )
-      IF cTipRpt $ "1#2"
-         INDEX ON SortPrez( idradn ) + Str( godina ) + Str( mjesec ) + idrj TO "tmpld"
+      IF cVarijantaIzvjestaja $ "1#2"
+         INDEX ON SortPrez( idradn ) + Str( godina, 4, 0 ) + Str( mjesec, 4, 0 ) + idrj TO "tmpld"
          GO TOP
       ELSE
-         INDEX ON Str( godina ) + Str( mjesec ) + SortPrez( idradn ) + idrj TO "tmpld"
-         GO TOP
-         SEEK Str( nGodinaOd, 4 ) + Str( nMjesecOd, 2 ) + cIdRadnik
+       INDEX ON Str( godina, 4, 0 ) + Str( mjesec, 4, 0 ) + SortPrez( idradn ) + idrj TO "tmpld"
+       GO TOP
       ENDIF
    ELSE
       SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
       GO TOP
-      SEEK Str( nGodinaOd, 4 ) + Str( nMjesecOd, 2 ) + cObracun + cIdRadnik
+      SEEK Str( nGodinaOd, 4, 0 ) + Str( nMjesecOd, 2, 0 ) + cObracun + cIdRadnik
    ENDIF
 
    RETURN .T.

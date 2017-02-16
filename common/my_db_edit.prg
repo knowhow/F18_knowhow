@@ -976,24 +976,26 @@ FUNCTION tb_editabilna_kolona( oTb, aImeKol )
       RETURN .F.
    ENDIF
 
-   IF TB:colPos < 1
+   IF oTB:colPos < 1
       RETURN .F.
    ENDIF
 
    // aImeKol[ 3] izraz koji se edituje (string), obradjuje sa & operatorom
    // aImeKol[ 4] kodni blok When
    // aImeKol[ 5] kodni blok Valid
+   IF Len( aImeKol ) < oTb:colPos
+      RETURN .F.
+   ENDIF
 
-   RETURN Len( aImekol[ TB:colPos ] ) > 2
+   RETURN Len( aImeKol[ TB:colPos ] ) > 2
 
 
 
 
 
 
-FUNCTION SkipDB( nRequest, nTBLine )
+FUNCTION SkipDB( nRequest, nTBLine )   // nTBLine is a reference
 
-   // nTBLine is a reference
    LOCAL nActually := 0
 
    IF nRequest == 0
@@ -1002,13 +1004,10 @@ FUNCTION SkipDB( nRequest, nTBLine )
    ELSEIF nRequest > 0 .AND. !Eof()
       WHILE nActually < nRequest
          IF nTBLine < nTBLastLine
-            // This will print up to nTBLastLine of text
-            // Some of them (or even all) might be empty
-            ++nTBLine
+            ++nTBLine // This will print up to nTBLastLine of text; Some of them (or even all) might be empty
 
          ELSE
-            // Go to the next record
-            dbSkip( + 1 )
+            dbSkip( + 1 )  // Go to the next record
             nTBLine := 1
 
          ENDIF

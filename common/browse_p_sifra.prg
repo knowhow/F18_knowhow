@@ -846,6 +846,7 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
    LOCAL cWhenSifk, cValidSifk
    LOCAL _when_block, _valid_block
    LOCAL _m_block := MemVarBlock( cVariableName )
+   LOCAL cFieldName
    LOCAL tmpRec
 
    // uzmi when, valid kodne blokove
@@ -866,7 +867,7 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
    _m_block := MemVarBlock( cVariableName )
 
    IF _m_block == NIL
-      MsgBeep( "cVariableName nedefinisana :" + cVariableName )
+      MsgBeep( "Varijabla nedefinisana :" + cVariableName )
    ENDIF
 
    IF Len( ToStr( Eval( _m_block ) ) ) > 50
@@ -876,7 +877,9 @@ FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, C
    ELSEIF Len( ImeKol[ nI ] ) >= 7 .AND. ImeKol[ nI, 7 ] <> NIL
       cPic := ImeKol[ nI, 7 ]
    ELSE
-      cPic := ""
+   altd()
+      cFieldName := SUBSTR( cVariableName, 2 ) // wID -> ID
+      cPic := get_field_get_picture_code( Alias(), cFieldName )
    ENDIF
 
    nRed := 1

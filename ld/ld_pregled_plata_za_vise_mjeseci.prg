@@ -1153,6 +1153,8 @@ STATIC FUNCTION sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, c
    LOCAL cFilter := ""
    PRIVATE cObracun := cObr
 
+   seek_ld( NIL, nGodina, NIL, NIL, cRadnik )
+
    IF !Empty( cObracun )
       cFilter += "obr == " + _filter_quote( cObracun )
    ENDIF
@@ -1174,13 +1176,14 @@ STATIC FUNCTION sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, c
 
    IF Empty( cRadnik )
       INDEX ON Str( godina, 4, 0 ) + SortPrez( idradn ) + Str( mjesec, 2, 0 ) + idrj TO "tmpld"
-      GO TOP
-      SEEK Str( nGodina, 4 )
+      //GO TOP
+      //SEEK Str( nGodina, 4 )
    ELSE
       SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-      GO TOP
-      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + cRadnik
+      //GO TOP
+      //SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + cRadnik
    ENDIF
+   GO TOP
 
    RETURN .T.
 

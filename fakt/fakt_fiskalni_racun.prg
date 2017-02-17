@@ -80,8 +80,8 @@ FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDevicePa
    SELECT fakt
    SET FILTER TO
 
-   //SELECT partn
-   //SET FILTER TO
+   // SELECT partn
+   // SET FILTER TO
 
    SELECT fakt_doks
 
@@ -447,7 +447,7 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
          _tar := PadR( "PDV17", 6 )
       ENDIF
 
-      _scan := AScan( _a_iznos, {| var | VAR[ 1 ] == _tar } )
+      _scan := AScan( _a_iznos, {| VAR | VAR[ 1 ] == _tar } )
 
       IF _scan == 0
          AAdd( _a_iznos, { PadR( _tar, 6 ), _iznos } )
@@ -750,9 +750,7 @@ STATIC FUNCTION is_podaci_partnera_kompletirani( sifra, id_broj )
 
    LOCAL lRet := .T.
 
-   SELECT partn
-   GO TOP
-   SEEK sifra
+   select_o_partner( sifra )
 
    IF !Found()
       lRet := .F.

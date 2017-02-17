@@ -16,8 +16,6 @@
 #define F18_VER_DATE  "17.02.2017"
 
 
-
-
 #define F18_DEV_PERIOD  "1994-2017"
 
 #define F18_LIB_VER   "41.0.0"

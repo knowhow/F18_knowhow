@@ -30,7 +30,7 @@ FUNCTION ld_mip_obrazac_1023()
    LOCAL cIdRjTekuca := Space( 2 )
    LOCAL cIdRadnik := fetch_metric( "ld_izvj_radnik", my_user(), Space( LEN_IDRADNIK ) )
    LOCAL cTipPrimIsplateUslugeIliDobra := Space( 100 )
-   LOCAL cIdRj := NIL
+   //LOCAL cIdRj := NIL
    LOCAL cDopr10 := "10"
    LOCAL cDopr11 := "11"
    LOCAL cDopr12 := "12"
@@ -197,7 +197,7 @@ FUNCTION ld_mip_obrazac_1023()
 
    seek_ld( NIL, nGodina, nMjesec )
    IF !Empty( cIdRjUslov )
-      cFilter := Parsiraj( cIdRj, "IDRJ" )
+      cFilter := Parsiraj( cIdRjUslov, "IDRJ" )
       SET FILTER TO &cFilter
       GO TOP
    ENDIF

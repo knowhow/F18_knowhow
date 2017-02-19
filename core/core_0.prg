@@ -18,13 +18,11 @@ FUNCTION harbour_init()
    Set( _SET_AUTOPEN, .F.  )
 
    SET CENTURY OFF
-   // epoha je u stvari 1999, 2000 itd
-   SET EPOCH TO 1960
+   SET EPOCH TO 1980  // 81 - 1981,  79-2079
    SET DATE TO GERMAN
 
    f18_init_threads()
 
-//altd()
 
 SET( _SET_OSCODEPAGE, hb_cdpOS() )
 

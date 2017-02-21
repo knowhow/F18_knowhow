@@ -42,11 +42,10 @@ PROCEDURE on_idle_dbf_refresh()
    SELECT F_NALOG_REFRESH
    IF use_sql( "nalog_refresh", cSql, "NALOG_REFRESH" )
       s_nFinNalogCount := field->count
-      PopWA()
       USE
       hb_DispOutAt( maxrows(),  maxcols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
    ENDIF
-   PopWa()
+   PopWA()
 
 
    IF s_nIdleRefresh > 0

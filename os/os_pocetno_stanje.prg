@@ -42,19 +42,17 @@ FUNCTION os_generacija_pocetnog_stanja()
    ENDIF
 
    IF Pitanje(, "Generisati pocetno stanje (D/N) ?", "N" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    // sifra za koristenje...
    IF !spec_funkcije_sifra( "OSGEN" )
-      MsgBeep( "Opcija onemogucena !!!" )
-      RETURN
+      MsgBeep( "Opcija onemogucena !" )
+      RETURN .F.
    ENDIF
 
-   // setuj staticke varijable na koje se tabele odnosi...
-   // nakon ovoga su nam dostupne
-   // __table_os, __table_promj
-   _set_os_promj_tables()
+   // setuj staticke varijable na koje se tabele odnosi, nakon ovoga su nam dostupne,__table_os, __table_promj
+   open_sii_tabele_init_static_vars()
 
    Box(, 10, 60 )
 
@@ -99,7 +97,7 @@ FUNCTION os_generacija_pocetnog_stanja()
       _rpt_info( _info )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -111,18 +109,16 @@ STATIC FUNCTION ps_info()
 
 
 
-// ---------------------------------------------------------------
-// setuju se staticke varijable na koji modul se odnosi...
-// ---------------------------------------------------------------
-STATIC FUNCTION _set_os_promj_tables()
+STATIC FUNCTION open_sii_tabele_init_static_vars()
 
    my_close_all_dbf()
 
    o_os_sii()
    o_os_sii_promj()
 
-   // tabela OS_OS/SII_SII
-   select_os_sii()
+
+   select_os_sii()  // tabela OS_OS/SII_SII
+
    __table_os := get_os_table_name( Alias() )
    __table_os_alias := Alias()
 
@@ -133,7 +129,7 @@ STATIC FUNCTION _set_os_promj_tables()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------------

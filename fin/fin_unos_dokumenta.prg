@@ -389,7 +389,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 
    CASE nCh == K_F5
 
-      kontrola_zbira_naloga()
+      kontrola_zbira_naloga_u_pripremi()
       RETURN DE_REFRESH
 
    CASE nCh == K_ENTER

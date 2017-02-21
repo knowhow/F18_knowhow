@@ -16,11 +16,12 @@ STATIC aIdleHandlers := {}
 STATIC s_nIdleRefresh := 0 // start idle refresh in seconds()
 STATIC s_nIdleDisplayCounter := 0 // counter
 STATIC s_lNoRefreshOperation := .F.
+STATIC s_nFinNalogCount := 0
 
 FUNCTION add_global_idle_handlers()
 
-   AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() -8, Time(), F18_COLOR_INFO_PANEL ) } ) )
-   //AAdd( aIdleHandlers, hb_idleAdd( {||  calc_on_idle_handler() } ) )
+   AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
+   // AAdd( aIdleHandlers, hb_idleAdd( {||  calc_on_idle_handler() } ) )
 
    // hb_idleAdd( aIdleHandlers, hb_idleAdd( {|| hb_DispOutAt( maxrows(), 1, "< PAUSE >", F18_COLOR_INFO_PANEL ), kalk_asistent_pause() } ) )
 
@@ -34,7 +35,16 @@ FUNCTION add_global_idle_handlers()
 
 PROCEDURE on_idle_dbf_refresh()
 
-   LOCAL cAlias, aDBfRec
+   LOCAL cAlias, aDBfRec, cSql
+
+   cSql := "SELECT count(*) from fin_nalog"
+   SELECT F_NALOG_REFRESH
+   IF use_sql( "nalog_refresh", cSql, "NALOG_REFRESH" )
+      s_nFinNalogCount := field->count
+      USE
+      hb_DispOutAt( maxrows(),  maxcols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
+   ENDIF
+
 
    IF s_nIdleRefresh > 0
 
@@ -109,6 +119,10 @@ PROCEDURE on_idle_dbf_refresh()
 
 
 
+FUNCTION fin_nalog_count()
+   RETURN s_nFinNalogCount
+
+
 PROCEDURE stop_refresh_operations()
 
    s_lNoRefreshOperation := .T.
@@ -119,7 +133,6 @@ PROCEDURE stop_refresh_operations()
 PROCEDURE start_refresh_operations()
 
    s_lNoRefreshOperation := .F.
-
 
 FUNCTION in_no_refresh_operations()
 

@@ -70,7 +70,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
       ELSEIF cTable == "ld_obracuni"
 
-         INDEX ON rj + Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + status + obr TAG RJ  TO ( cAlias )
+         INDEX ON rj + Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + STATUS + obr TAG RJ  TO ( cAlias )
          SET ORDER TO TAG "RJ"
 
       ELSEIF cTable == "ld_parobr"
@@ -135,7 +135,10 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
    // IF Used()
    // USE
    // ENDIF
-
+   IF ValType( sql_data_conn() ) != "O"
+      RETURN .F.
+   ENDIF
+   
    pConn := sql_data_conn():pDB
 
    IF HB_ISNIL( pConn )

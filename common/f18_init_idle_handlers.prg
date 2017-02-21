@@ -37,13 +37,16 @@ PROCEDURE on_idle_dbf_refresh()
 
    LOCAL cAlias, aDBfRec, cSql
 
+   PushWa()
    cSql := "SELECT count(*) from fin_nalog"
    SELECT F_NALOG_REFRESH
    IF use_sql( "nalog_refresh", cSql, "NALOG_REFRESH" )
       s_nFinNalogCount := field->count
+      PopWA()
       USE
       hb_DispOutAt( maxrows(),  maxcols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
    ENDIF
+   PopWa()
 
 
    IF s_nIdleRefresh > 0

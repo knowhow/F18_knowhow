@@ -407,8 +407,7 @@ FUNCTION blag_azur()
 
    find_suban_by_broj_dokumenta( cIdFirma, cTipDok, cBrDok )
 
-
-   IF EOF() // nisam pronasao dokument
+   IF Eof()
       MsgBeep( "Dokument " + cIdFirma + "-" + cTipDok + "-" + cBrDok + " ne postoji!" )
       RETURN .F.
    ENDIF

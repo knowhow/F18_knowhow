@@ -11,23 +11,24 @@
 
 #include "f18.ch"
 
-FUNCTION MnuPregledDokumenata()
+FUNCTION fin_pregled_dokumenata_meni()
 
    LOCAL aOpc := {}
    LOCAL aOpcexe := {}
    LOCAL nIzbor := 1
 
-   AAdd( aOpc, "1. kontrola zbira datoteka                     " )
-   AAdd( aOpcexe, {|| fin_kontrola_zbira() } )
 
-   AAdd( aOpc, "2. štampanje ažuriranog dokumenta" )
+   AAdd( aOpc, "1. štampanje ažuriranog dokumenta                  " )
    AAdd( aOpcexe, {|| fin_stampa_azur_naloga_menu() } )
 
-   AAdd( aOpc, "3. štampa liste dokumenata" )
+   AAdd( aOpc, "2. štampa liste dokumenata" )
    AAdd( aOpcexe, {|| fin_stampa_liste_naloga() } )
 
-   AAdd( aOpc, "4. kontrola zbira datoteka za period" )
-   AAdd( aOpcexe, {|| fin_kontrola_zbira( .T. ) } )
+   AAdd( aOpc, "3. kontrola zbira tabela prometa   " )
+   AAdd( aOpcexe, {|| fin_kontrola_zbira_tabele_prometa( .T. ) } )
+
+   //AAdd( aOpc, "4. kontrola zbira tabela prometa za period" )
+   //AAdd( aOpcexe, {|| fin_kontrola_zbira_tabele_prometa( .T. ) } )
 
    f18_menu( "pgl", .F., @nIzbor, aOpc, aOpcExe )
 

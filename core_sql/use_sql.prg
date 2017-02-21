@@ -73,7 +73,6 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
          INDEX ON rj + Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + STATUS + obr TAG RJ  TO ( cAlias )
          SET ORDER TO TAG "RJ"
 
-
       ELSEIF cTable == "ld_parobr"
 
          INDEX ON id + godina + obr TAG ID TO ( cAlias ) // id sadrzi informaciju o mjesecu
@@ -109,29 +108,6 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
          INDEX ON id + tip TAG "IDP" TO ( cAlias ) FOR tip = "P"
          SET ORDER TO TAG "ID"
 
-      ELSEIF cTable == "sast"
-
-         INDEX ON ID + ID2 TAG "ID" TO ( cAlias )
-         INDEX ON ID + Str( R_BR, 4, 0 ) + ID2  TAG "IDRBR"  TO ( cAlias )
-         INDEX ON ID2 + ID TAG "NAZ" TO ( cAlias )
-         SET ORDER TO TAG "ID"
-
-      ELSEIF cTable == "fakt_ugov"
-
-         INDEX ON Id + idpartner TAG "ID" TO ( cAlias )
-         INDEX ON idpartner + Id TAG "NAZ" TO ( cAlias )
-         INDEX ON naz TAG "NAZ2" TO ( cAlias )
-         INDEX ON IDPARTNER TAG "PARTNER" TO ( cAlias )
-         INDEX ON AKTIVAN TAG "AKTIVAN" TO ( cAlias )
-         SET ORDER TO TAG "ID"
-
-
-      ELSEIF cTable == "fakt_rugov"
-
-         INDEX ON id + idroba + dest TAG "ID" TO ( cAlias )
-         INDEX ON IdRoba TAG "IDROBA" TO ( cAlias )
-         SET ORDER TO TAG "ID"
-
 
       ELSE
          INDEX ON ID TAG ID TO ( cAlias )
@@ -159,6 +135,9 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
    // IF Used()
    // USE
    // ENDIF
+   IF ValType( sql_data_conn() ) != "O"
+      RETURN .F.
+   ENDIF
 
    pConn := sql_data_conn():pDB
 
@@ -204,7 +183,34 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
 
 
 
+/*
+   otvori šifarnik radnih jedinica sa prilagođenim poljima
+*/
 
+FUNCTION use_sql_rj()
+
+   LOCAL cSql
+   LOCAL cTable := "rj"
+
+   cSql := "SELECT "
+   cSql += " id, "
+   cSql += " match_code::char(10), "
+   cSql += " naz::char(100), "
+   cSql += " tip::char(2), "
+   cSql += " konto::char(7) "
+   cSql += "FROM " + F18_PSQL_SCHEMA_DOT  + "rj ORDER BY id"
+
+   SELECT F_RJ
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
+
+   INDEX ON ID TAG ID TO ( cTable )
+   INDEX ON NAZ TAG NAZ TO ( cTable )
+
+   SET ORDER TO TAG ID
+
+   RETURN .T.
 
 
 /*
@@ -429,29 +435,39 @@ STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
 
 
 
+FUNCTION o_sifk( cDbf, cOznaka )
+
+   LOCAL cTabela := "sifk"
+
+   SELECT ( F_SIFK )
+   IF !use_sql_sifk( cDbf, cOznaka )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
 
 
-FUNCTION o_sifk()
 
-   Select( F_SIFK )
-   USE
-
-   RETURN use_sql_sifk()
-
-
-FUNCTION select_o_sifk()
+FUNCTION select_o_sifk( cDbf, cOznaka )
 
    SELECT ( F_SIFK )
    IF Used()
+      IF RecCount() > 1 .AND. cDbf == NIL .AND. cOznaka == NIL
          RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
    ENDIF
 
-   RETURN o_sifk()
+   RETURN o_sifk( cDbf, cOznaka )
 
-/*
-   use_sql_sifk() => otvori citavu tabelu
-   use_sql_sifk( "ROBA", "GR1  " ) =>  filter na ROBA/GR1
-*/
+
+
+      /*
+         use_sql_sifk() => otvori citavu tabelu
+         use_sql_sifk( "ROBA", "GR1  " ) =>  filter na ROBA/GR1
+      */
 
 FUNCTION use_sql_sifk( cDbf, cOznaka )
 

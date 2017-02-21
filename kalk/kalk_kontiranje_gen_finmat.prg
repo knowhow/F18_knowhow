@@ -346,7 +346,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
       kalk_kontiranje_fin_naloga( .F., NIL, lViseKalk, NIL, cFinAutoBrojDN == "D" )  // kontiranje dokumenta
 
       IF cAutoRav == "D" // automatska ravnoteza naloga
-         kontrola_zbira_naloga( .T. )
+         kontrola_zbira_naloga_u_pripremi( .T. )
       ENDIF
 
    ENDIF

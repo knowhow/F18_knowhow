@@ -379,3 +379,5 @@
 #define POR_I_MPC3  4
 #define POR_I_PPP   5
 #define POR_I_MPC4  6
+
+#define F_NALOG_REFRESH 501

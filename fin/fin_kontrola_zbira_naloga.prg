@@ -11,16 +11,14 @@
 
 #include "f18.ch"
 
-FUNCTION kontrola_zbira_naloga()
+FUNCTION kontrola_zbira_naloga_u_pripremi()
 
    LOCAL nDug, nDug2, nPot, nPot2
 
    PushWA()
 
-   SELECT ( F_FIN_PRIPR )
-   IF !Used()
-      o_fin_pripr()
-   ENDIF
+   select_o_fin_pripr()
+
 
    Box( "kzb", 12, 70, .F., "Kontrola zbira naloga" )
 

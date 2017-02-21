@@ -30,7 +30,6 @@ FUNCTION DnevnikNaloga()
    PRIVATE gnLOst := fetch_metric( "dnevnik_naloga_otv_stavke", my_user(), 0 )
    PRIVATE gPotpis := fetch_metric( "dnevnik_naloga_potpis", my_user(), "N" )
 
-
    dOd := CToD( "01.01." + Str( Year( Date() ), 4 ) )
    dDo := Date()
 
@@ -46,30 +45,22 @@ FUNCTION DnevnikNaloga()
 
    SET KEY K_F5 TO
 
-  // O_VRSTEP
-  // o_tnal()
- //  o_tdok()
-   //o_partner()
-  // o_konto()
-  // o_nalog()
-  // o_suban()
 
+   //SELECT SUBAN
+   //SET ORDER TO TAG "4"
 
-   SELECT SUBAN
-   SET ORDER TO TAG "4"
+   //SET ORDER TO TAG "3" // nalog
+   find_nalog_za_period( gFirma, NIL, dOd, dDo )
 
-   SELECT NALOG
-   SET ORDER TO TAG "3" //nalog
+//   IF !Empty( dOd ) .OR. !Empty( dDo )
 
-   IF !Empty( dOd ) .OR. !Empty( dDo )
+//      _filter := "datnal >= " + _filter_quote( dOd )
+//      _filter += " .and. "
+//      _filter += "datnal <= " + _filter_quote( dDo )
 
-      _filter := "datnal >= " + _filter_quote( dOd )
-      _filter += " .and. "
-      _filter += "datnal <= " + _filter_quote( dDo )
+  //    SET FILTER TO &_filter
 
-      SET FILTER TO &_filter
-
-   ENDIF
+//   ENDIF
 
    GO TOP
 
@@ -103,7 +94,7 @@ FUNCTION DnevnikNaloga()
    DO WHILE !Eof()
 
       IF PRow() < 6  // nije odstampano zaglavlje
-            fin_nalog_zaglavlje( dDatNal )
+         fin_nalog_zaglavlje( dDatNal )
       ENDIF
 
       cIdFirma := IDFIRMA
@@ -111,18 +102,15 @@ FUNCTION DnevnikNaloga()
       cBrNal   := BRNAL
       dDatNal  := DATNAL
 
-      IF cMjGod != Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
+      IF cMjGod != Str( Month( dDatNal ), 2, 0 ) + Str( Year( dDatNal ), 4, 0)
 
          PrenosDNal() // završi stranu
-
          fin_nalog_zaglavlje( dDatNal ) // stampaj zaglavlje (nova stranica)
       ENDIF
 
       cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
 
-      SELECT SUBAN
-      HSEEK cIdFirma + cIdVN + cBrNal
-
+      find_suban_by_broj_dokumenta( cIdFirma, cIdVn, cBrDok )
       fin_nalog_stampa_fill_psuban( "3", NIL, dDatNal )
 
       SELECT NALOG
@@ -152,7 +140,7 @@ FUNCTION NazMjeseca( nMjesec )
    LOCAL aVrati := { "Januar", "Februar", "Mart", "April", "Maj", "Juni", "Juli", ;
       "Avgust", "Septembar", "Oktobar", "Novembar", "Decembar" }
 
-   RETURN IIF( nMjesec > 0 .AND. nMjesec < 13, aVrati[ nMjesec ], "" )
+   RETURN iif( nMjesec > 0 .AND. nMjesec < 13, aVrati[ nMjesec ], "" )
 
 
 
@@ -165,13 +153,13 @@ FUNCTION VidiNaloge()
    LOCAL i
 
    o_nalog()
-   SET ORDER TO TAG "3" //nalog
+   SET ORDER TO TAG "3" // nalog
    GO TOP
 
    ImeKol := { ;
-      { "Firma",         {|| IDFIRMA }, "IDFIRMA" },;
-      { "Vrsta naloga",  {|| IDVN    }, "IDVN"    },;
-      { "Broj naloga",   {|| BRNAL   }, "BRNAL"   },;
+      { "Firma",         {|| IDFIRMA }, "IDFIRMA" }, ;
+      { "Vrsta naloga",  {|| IDVN    }, "IDVN"    }, ;
+      { "Broj naloga",   {|| BRNAL   }, "BRNAL"   }, ;
       { "Datum naloga",  {|| DATNAL  }, "DATNAL"  } ;
       }
 
@@ -182,7 +170,7 @@ FUNCTION VidiNaloge()
    NEXT
 
    Box(, 20, 45 )
-   my_db_edit( "Nal", MAXROWS() -10, 50, {|| EdNal() }, "<Enter> - ispravka", "Nalozi...", , , , , )
+   my_db_edit( "Nal", MAXROWS() - 10, 50, {|| EdNal() }, "<Enter> - ispravka", "Nalozi...", , , , , )
    BoxC()
 
    CLOSERET

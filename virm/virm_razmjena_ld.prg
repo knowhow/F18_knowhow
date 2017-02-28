@@ -117,6 +117,7 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
    LOCAL _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "N" )
    LOCAL _ispl_posebno := fetch_metric( "virm_isplate_za_radnike_posebno", my_user(), "N" )
    LOCAL _isplata_opis := ""
+   LOCAL cIdPartnerRekLd
 
    SELECT rekld
    GO TOP
@@ -129,7 +130,7 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
       pozicioniraj_rec_vrprim_sifra_is()   // pozicioniraj se na vrprim za isplatu
 
       SELECT vrprim
-      _svrha_placanja := field->id
+      _svrha_placanja := vrprim->id
 
       select_o_partner( cIdBanka )
 
@@ -154,12 +155,11 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
       _kredit := 0
 
       SELECT rekld
-      _sk_sifra := field->idpartner // SK=sifra kreditora/banke
-
+      cIdPartnerRekLd := field->idpartner // SK=sifra kreditora/banke ( ovo je dupla informacija - sadrzi isti podataka kao i cIdBanka )
 
       IF _ispl_posebno == "N"     // isplate za jednu banku - sumirati
 
-         DO WHILE !Eof() .AND. Left( field->id,  Len( cOznakaIsplatePrefix ) ) == cOznakaIsplatePrefix .AND. field->idpartner = _sk_sifra
+         DO WHILE !Eof() .AND. Left( field->id,  Len( cOznakaIsplatePrefix ) ) == cOznakaIsplatePrefix .AND. rekld->idpartner == cIdPartnerRekLd
             ++_kredit
             _total += rekld->iznos1
             _isplata_opis := "obuhvaceno " + AllTrim( Str( _kredit ) ) + " radnika"
@@ -605,7 +605,7 @@ STATIC FUNCTION pozicioniraj_rec_kreditor_partner( cIdKreditor )
 
    LOCAL hRec
 
-   select_o_kred( PadR( cIdKreditor, 6 ) ) // kred.id char(6)
+   select_o_kred( PadR( cIdKreditor, LEN_PARTNER_ID ) ) // kred.id char(6)
 
    select_o_partner( PadR( cIdKreditor, LEN_PARTNER_ID ) )
    IF Eof()

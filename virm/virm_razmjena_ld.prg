@@ -97,22 +97,20 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
    nRBr := 0
 
    virm_ld_obrada( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis, _per_od, _per_do )
-   
+
    ld_virm_generacija_krediti( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
    virm_ld_isplata_radniku_na_tekuci_racun( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
-   //virm_popuna_javnih_prihoda()
+   // virm_popuna_javnih_prihoda()
 
    my_close_all_dbf()
 
    RETURN .T.
 
-// ---------------------------------------------------------------------------------------------
-// obrada podataka za isplate na tekuci racun
-// ---------------------------------------------------------------------------------------------
+
 STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatVirm, r_br, dod_opis )
 
    LOCAL cOznakaIsplatePrefix := "IS_"
-   LOCAL cIdKreditor, hRec
+   LOCAL cIdBanka, hRec
    LOCAL _formula, _izr_formula
    LOCAL _svrha_placanja
    LOCAL _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), Space( 16 ) )
@@ -126,15 +124,14 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
 
    DO WHILE !Eof() .AND. Left( field->id,  Len( cOznakaIsplatePrefix ) ) == cOznakaIsplatePrefix
 
-      cIdKreditor := SubStr( field->id, 4 )   // sifra banke
-      pozicioniraj_rec_kreditor_partner( cIdKreditor )
+      cIdBanka := SubStr( field->id, 4 )   // sifra banke
+      pozicioniraj_rec_kreditor_partner( cIdBanka )
       pozicioniraj_rec_vrprim_sifra_is()   // pozicioniraj se na vrprim za isplatu
 
       SELECT vrprim
-
       _svrha_placanja := field->id
 
-      select_o_partner( cIdKreditor )
+      select_o_partner( cIdBanka )
 
       _u_korist := field->id
       _kome_txt := field->naz
@@ -170,9 +167,8 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
          ENDDO
          SKIP -1
 
-      ELSE
+      ELSE  // svaka isplata ce se tretirati posebno
 
-         // svaka isplata ce se tretirati posebno
          _kredit := 1
          _total := rekld->iznos1
          _isplata_opis := AllTrim( field->opis2 )
@@ -185,19 +181,19 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
 
          APPEND BLANK
 
-         REPLACE field->rbr WITH ++r_br
-         REPLACE field->mjesto WITH gmjesto
-         REPLACE field->svrha_pl WITH "IS"
-         REPLACE field->iznos WITH _total
-         REPLACE field->na_teret WITH gVirmFirma
-         REPLACE field->kome_txt WITH _kome_txt
-         REPLACE field->ko_txt WITH _ko_txt
-         REPLACE field->ko_zr WITH _ko_zr
-         REPLACE field->kome_sj WITH _kome_sjed
-         REPLACE field->kome_zr WITH _KOME_ZR
-         REPLACE field->dat_upl WITH dDatVirm
-         REPLACE field->svrha_doz WITH AllTrim( vrprim->pom_txt ) + " " + AllTrim( dod_opis ) + " " + _isplata_opis
-         REPLACE field->u_korist WITH cIdKreditor
+         REPLACE field->rbr WITH ++r_br, ;
+            field->mjesto WITH gmjesto, ;
+            field->svrha_pl WITH "IS", ;
+            field->iznos WITH _total, ;
+            field->na_teret WITH gVirmFirma, ;
+            field->kome_txt WITH _kome_txt, ;
+            field->ko_txt WITH _ko_txt, ;
+            field->ko_zr WITH _ko_zr, ;
+            field->kome_sj WITH _kome_sjed, ;
+            field->kome_zr WITH _KOME_ZR, ;
+            field->dat_upl WITH dDatVirm, ;
+            field->svrha_doz WITH AllTrim( vrprim->pom_txt ) + " " + AllTrim( dod_opis ) + " " + _isplata_opis, ;
+            field->u_korist WITH cIdBanka
 
          IF _ispl_posebno == "D"  // jedan radnik
             REPLACE field->svrha_doz WITH Trim( svrha_doz ) + ", tekuci rn:" + Trim( rekld->opis )
@@ -317,7 +313,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
 
 
          SELECT virm_pripr
-altd()
+         AltD()
          REPLACE field->kome_zr WITH _KOME_ZR, ;
             field->dat_upl WITH dDatVirm, ;
             field->svrha_doz WITH _tmp_opis, ;
@@ -391,6 +387,7 @@ FUNCTION set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
    LOCAL _tmp_1 := ""
    LOCAL _tmp_2 := ""
    LOCAL aJPrih
+   LOCAL _idjprih, cIdOps, cIdKan, cIdEntitet
 
    _idjprih := Token( vrprim->racun, "-", 1 ) // 723111-077 => 723111
    _tmp_1 := Token( vrprim->racun, "-", 2 ) // <- moze biti opcina, kanton ili entitet ili nista
@@ -401,21 +398,29 @@ FUNCTION set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
    AltD()
 
    IF Len( _tmp_1 ) == 3 // opcina
-      _idops := _tmp_1
+      cIdOps := _tmp_1
+      cIdKan := ""
+      cIdEntitet :=""
 
    ELSEIF Len( _tmp_1 ) == 2  // nivo kantona
-      _idops := iif( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
+      cIdKan := _tmp_1
+      cIdOps := iif( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
+      cIdEntitet := ""
 
    ELSEIF Len( _tmp_1 ) == 1  // nivo entiteta
-      _idops := iif( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
+      cIdEntitet := _tmp_1
+      cIdKan := ""
+      cIdOps := iif( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
 
 
    ELSEIF Len( _tmp_1 ) == 0 // jedinstveni uplatni racun - ne gleda se opcina, kanton, entitet
-      _idops := Space( 3 )
+      cIdOps := Space( 3 )
+      cIdKan := ""
+      cIdEntitet := ""
       _idjprih := PadR( _idjprih, 6 ) // duzina sifre javnog prihoda
    ENDIF
 
-   aJPrih := set_pozicija_jprih_record( _idjprih, "", "", _tmp_1 )
+   aJPrih := set_pozicija_jprih_record( _idjprih, cIdOps, cIdKan, cIdEntitet )
    _KOME_ZR := aJPrih[ 1 ]
    _budzorg :=  aJPrih[ 3 ]
 
@@ -514,7 +519,7 @@ STATIC FUNCTION pozicioniraj_rec_kreditor_partner( cIdKreditor )
 
    LOCAL hRec
 
-   o_kred( PadR( cIdKreditor, 6 ) ) // kred.id char(6)
+   select_o_kred( PadR( cIdKreditor, 6 ) ) // kred.id char(6)
 
    select_o_partner( PadR( cIdKreditor, LEN_PARTNER_ID ) )
    IF Eof()

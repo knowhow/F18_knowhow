@@ -62,6 +62,7 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
 
    READ
 
+altd()
    ESC_RETURN 0
 
    IF fNovi
@@ -132,6 +133,8 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
       // javni prihod
 
       _vupl := "0"
+
+      altd()
 
       // setovanje varijabli: _KOME_ZR , _kome_txt, _budzorg
       // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
@@ -554,7 +557,6 @@ FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
    PushWA()
 
    SELECT banke
-
    nTIzbor := 1
 
    FOR i := 1 TO Len( aBanke )
@@ -608,7 +610,6 @@ FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
       m_y := nY
 
    ELSEIF Len( aBanke ) == 1
-
 
       cDefault := Left( aBanke[ izbor ], 16 )       // ako je jedna banka
       RETURN .T.

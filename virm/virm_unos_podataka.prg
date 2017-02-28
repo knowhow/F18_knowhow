@@ -20,9 +20,9 @@ FUNCTION unos_virmana()
    Kol := {}
 
    AAdd( ImeKol, { "R.br.", {|| _st_ + Str( rbr, 3 ) } } )
-   AAdd( ImeKol, { _u( "Pošaljioc" ), {|| ko_zr },   "ko_zr" } )
-   AAdd( ImeKol, { "Primalac", {|| kome_zr }, "kome_zr" } )
-   AAdd( ImeKol, { "Primalac", {|| Left( kome_txt, 30 ) } } )
+   AAdd( ImeKol, { _u( "Pošaljioc ŽR" ), {|| ko_zr },   "ko_zr" } )
+   AAdd( ImeKol, { _u( "Primalac br ŽR" ), {|| kome_zr }, "kome_zr" } )
+   AAdd( ImeKol, { "ŽR Opis", {|| Left( kome_txt, 30 ) } } )
    AAdd( ImeKol, { "Iznos", {|| Iznos }, "Iznos" } )
    AAdd( ImeKol, { "Dat.Upl", {|| dat_upl }, "dat_upl" } )
    AAdd( ImeKol, { "POd", {|| POd }, "POd" } )
@@ -124,7 +124,7 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
    ESC_RETURN 0
 
    _IznosSTR := ""
-   _IznosSTR := "=" + IF( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
+   _IznosSTR := "=" + iif( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
 
 
    IF vrprim->Idpartner = "JP"
@@ -135,7 +135,7 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
 
       // setovanje varijabli: _KOME_ZR , _kome_txt, _budzorg
       // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
-      set_jprih_globalne_varijable()
+      set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
 
       _kome_txt := vrprim->naz
 
@@ -153,9 +153,11 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
 
       @ m_x + 14, m_y + 20 SAY "Broj por.obveznika" GET _bpo
       @ m_x + 14, Col() + 2 SAY "V.uplate " GET _VUpl
+      @ m_x + 14, Col() + 2 SAY8 "ŽR: " GET _kome_zr
 
       @ m_x + 15, m_y + 20 SAY "Vrsta prihoda     " GET _IdJPrih
-      @ m_x + 17, m_y + 20 SAY "      Opcina      " GET _IdOps
+
+      @ m_x + 17, m_y + 20 SAY8 "      Općina      " GET _IdOps
       @ m_x + 15, m_y + 60 SAY "Od:" GET _POd
       @ m_x + 16, m_y + 60 SAY "Do:" GET _PDo
       @ m_x + 17, m_y + 55 SAY "Budz.org" GET _BudzOrg
@@ -346,8 +348,8 @@ FUNCTION SetPrimaoc()
 
 FUNCTION UplDob()
 
-
    LOCAL lVrati := .F.
+
    SELECT VRPRIM
    GO TOP
    HSEEK _svrha_pl
@@ -643,7 +645,8 @@ FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
 // ----------------------------------------------------
 FUNCTION set_pozicija_jprih_record( cIdJPrih, cIdOps, cIdKan, cIdEnt )
 
-   LOCAL fOk := .F.
+   LOCAL lOk := .F.
+   LOCAL cPom, i, aRez, lSofSeek
 
    IF cIdOps == NIL
       cIdOps := ""
@@ -658,60 +661,58 @@ FUNCTION set_pozicija_jprih_record( cIdJPrih, cIdOps, cIdKan, cIdEnt )
    ENDIF
 
    PushWA()
+   lSofSeek := Set( _SET_SOFTSEEK, .T. )
 
-   // 1 - racun 2 - naziv 3 - budzorg
-   aRez := { "", "", "" }
+
+   aRez := { "", "", "" }    // 1 - racun 2 - naziv 3 - budzorg
 
    SELECT jprih
    cPom := cIdJPrih
 
-   FOR i := Len( cIdJPrih ) TO 1 STEP -1
+
+   FOR i := Len( cIdJPrih ) TO 1 STEP -1  // 72311 - traziti 72311, pa 7231, pa 723, pa 723, pa 72, pa 7
 
       cPom := Left( cIdJPrih, i )
       SEEK cPom
 
-      IF Found() .AND. Len( cPom ) == Len( cIdJPrih )
-         // analiticki prihod
-         aRez[ 2 ] := naz
-      ENDIF
+      IF Trim( jprih->id ) == cPom // npr "723" == LEFT( "72311", 3)
 
-      IF Found()
+         aRez[ 2 ] := jprih->naz
 
-         DO WHILE !Eof() .AND. Id == PadR( cPom, Len( cIdJPrih ) )
+         DO WHILE !Eof() .AND. Trim( jprih->Id ) == cPom
 
-            fOk := .T.
+            lOk := .T.
 
-            IF Empty( racun )
-               // nema racuna trazi dalje
-               fOk := .F.
+            IF Empty( jprih->racun ) // nema racuna trazi dalje
+               lOk := .F.
                SKIP
                LOOP
             ENDIF
 
             IF !Empty( cIdOps ) .AND. cIdOps != idops
                IF !Empty( idops )
-                  fOk := .F.
+                  lOk := .F.
                ENDIF
             ENDIF
 
             IF !Empty( cIdKan ) .AND. cIdKan != idkan
                IF !Empty( idkan )
-                  fOk := .F.
+                  lOk := .F.
                ENDIF
             ENDIF
 
             IF !Empty( cIdEnt ) .AND. cIdEnt != idn0
                IF !Empty( idn0 )
-                  fOk := .F.
+                  lOk := .F.
                ENDIF
             ENDIF
 
-            IF fOk
+            IF lOk
                IF Empty( aRez[ 2 ] )
-                  aRez[ 2 ] := racun   // nisam jos nasao naziv
+                  aRez[ 2 ] := jprih->racun   // nisam jos nasao naziv
                ENDIF
-               aRez[ 1 ] := racun
-               aRez[ 3 ] := budzorg
+               aRez[ 1 ] := jprih->racun
+               aRez[ 3 ] := jprih->budzorg
                EXIT
             ENDIF
 
@@ -719,7 +720,7 @@ FUNCTION set_pozicija_jprih_record( cIdJPrih, cIdOps, cIdKan, cIdEnt )
 
          ENDDO
 
-         IF fOk
+         IF lOk
             EXIT
          ENDIF
 
@@ -727,144 +728,13 @@ FUNCTION set_pozicija_jprih_record( cIdJPrih, cIdOps, cIdKan, cIdEnt )
 
    NEXT
 
+   Set( _SET_SOFTSEEK, lSofSeek )
    PopWa()
 
    RETURN aRez
 
 
 
-// setovanje varijabli: _KOME_ZR , _kome_txt, _budzorg
-// pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
-//
-// formula moze biti:
-// ------------------------------
-// 712221-103
-// 712221-1-103
-
-FUNCTION set_jprih_globalne_varijable()
-
-   LOCAL _tmp_1 := ""
-   LOCAL _tmp_2 := ""
-   LOCAL aJPrih
-
-   _idjprih := Token( vrprim->racun, "-", 1 )
-   _tmp_1 := Token( vrprim->racun, "-", 2 ) // <- moze biti opcina, kanton ili entitet ili nista
-   _tmp_2 := Token( vrprim->racun, "-", 3 ) // <- moze se iskoristiti za opcinu
-   _tmp_1 := AllTrim( _tmp_1 )
-   _tmp_2 := AllTrim( _tmp_2 )
-
-   IF Len( _tmp_1 ) == 3
-
-      _idops := _tmp_1
-      aJPrih := set_pozicija_jprih_record( _idjprih, _idops, "", "" )
-
-      _KOME_ZR := aJPrih[ 1 ]
-      _budzorg :=  aJPrih[ 3 ]
-
-   ELSEIF Len( _tmp_1 ) == 2
-
-      // nivo kantona
-      _idops := iif( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
-      aJPrih := set_pozicija_jprih_record( _idjprih, "", _tmp_1, "" )
-      _KOME_ZR := aJPrih[ 1 ]
-      _budzorg := aJPrih[ 3 ]
-
-   ELSEIF Len( _tmp_1 ) == 1
-
-      // nivo entiteta
-      _idops := iif( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
-      aJPrih := set_pozicija_jprih_record( _idjprih, "", "", _tmp_1 )
-      _KOME_ZR := aJPrih[ 1 ]
-      _budzorg := aJPrih[ 3 ]
-
-   ELSEIF Len( _tmp_1 ) == 0
-
-      // jedinstveni uplatni racun
-      _idops := Space( 3 )
-      _idjprih := PadR( _idjprih, 6 )
-      // duzina sifre javnog prihoda
-      aJPrih := set_pozicija_jprih_record( _idjprih, "", "", _tmp_1 )
-      _KOME_ZR := aJPrih[ 1 ]
-      _budzorg :=  aJPrih[ 3 ]
-
-   ENDIF
-
-   RETURN .T.
-
-
-
-FUNCTION popuni_javne_prihode()
-
-   // drugi krug; popuni polja vezana za javne prihode ....
-   SELECT vrprim
-   SET ORDER TO TAG "ID"
-
-   SELECT virm_pripr
-   GO TOP
-
-   DO WHILE !Eof()
-
-      SELECT vrprim
-      SEEK virm_pripr->svrha_pl
-
-      SELECT virm_pripr
-      Scatter()
-
-      IF vrprim->idpartner = "JP"
-         // javni prihod
-         set_jprih_globalne_varijable()
-      ENDIF
-
-      _iznosstr := ""
-      _iznosstr := "=" + IF( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
-
-      my_rlock()
-      Gather()
-      my_unlock()
-
-      SKIP
-
-   ENDDO
-
-   RETURN .T.
-
-
-
-FUNCTION virm_opcina_rada()
-
-   LOCAL cVrati := "   "
-   LOCAL cOR := ""
-   LOCAL nArr := Select()
-
-   // cOR := my_get_from_ini( "VIRM", "OpcRada", "XXXX", KUMPATH )
-   cOR := "XXXX"
-
-   IF Empty( cOR )
-      RETURN ""
-   ENDIF
-
-   SELECT ( F_OPS )
-
-   IF !Used()
-      o_ops()
-      SEEK cOR
-      IF Found()
-         cVrati := IDJ
-      ENDIF
-      USE
-   ELSE
-      PushWA()
-      SET ORDER TO TAG "ID"
-      SEEK cOR
-      IF Found()
-         cVrati := IDJ
-      ENDIF
-      PopWA()
-   ENDIF
-
-   SELECT ( nArr )
-
-   RETURN cVrati
 
 
 

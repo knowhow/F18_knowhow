@@ -22,8 +22,8 @@ FUNCTION virm_razmjena_podataka()
 
    AAdd( _opc, "1. ld   ->   virman             " )
    AAdd( _opcexe, {|| virm_prenos_ld() } )
-   AAdd( _opc, "2. fin  ->   virman   " )
-   AAdd( _opcexe, {|| virm_prenos_fin() } )
+   //AAdd( _opc, "2. fin  ->   virman   " )
+  // AAdd( _opcexe, {|| virm_prenos_fin() } )
 
 
    f18_menu( "mraz", .F., _izbor, _opc, _opcexe )

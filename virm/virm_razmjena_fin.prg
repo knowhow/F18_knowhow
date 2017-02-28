@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-
+/*
 FUNCTION virm_prenos_fin()
 
    LOCAL _firma := PadR( fetch_metric( "virm_org_id", NIL, "" ), 6 )
@@ -125,7 +125,7 @@ FUNCTION virm_prenos_fin()
       ENDIF
 
       select_o_partner( gVirmFirma )
-      
+
 
       SELECT virm_pripr
       APPEND BLANK
@@ -182,7 +182,8 @@ FUNCTION virm_prenos_fin()
 
    SELECT virm_pripr
 
-   popuni_javne_prihode()
+  ---- virm_popuna_javnih_prihoda()
    // popuni polja javnih prihoda
 
    RETURN
+*/

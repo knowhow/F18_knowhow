@@ -97,9 +97,10 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
    nRBr := 0
 
    virm_ld_obrada( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis, _per_od, _per_do )
+   
    ld_virm_generacija_krediti( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
    virm_ld_isplata_radniku_na_tekuci_racun( _godina, _mjesec, _dat_virm, @nRBr, _dod_opis )
-   popuni_javne_prihode()
+   //virm_popuna_javnih_prihoda()
 
    my_close_all_dbf()
 
@@ -216,7 +217,7 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
 // ----------------------------------------------------------------------------------------------------
 // obrada virmana za regularnu isplatu plata, doprinosi, porezi itd...
 // ----------------------------------------------------------------------------------------------------
-STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, per_od, per_do )
+STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDatumOd, dDatumDo )
 
    LOCAL _broj_radnika
    LOCAL _formula, _izr_formula
@@ -233,7 +234,6 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, per_
    select_o_partner( gVirmFirma )
 
    _ko_txt := Trim( partn->naz ) + ", " +  Trim( partn->mjesto ) + ", " +  Trim( partn->adresa ) + ", " +  Trim( partn->telefon )
-
    _broj_radnika := ""
 
    SELECT ldvirm
@@ -250,7 +250,6 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, per_
       _svrha_placanja := AllTrim( field->id )
 
       o_vrprim( ldvirm->id )
-
       select_o_partner( gVirmFirma )
 
       SELECT virm_pripr
@@ -282,53 +281,51 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, per_
          _tmp_opis := Trim( vrprim->pom_txt ) +  iif( !Empty( dod_opis ), " " + AllTrim( dod_opis ), "" ) +  iif( !Empty( nBrojRadnikaPrivateVar ), " " + nBrojRadnikaPrivateVar, "" )
 
 
-         _KOME_ZR := ""  // resetuj varijable
+         _KOME_ZR := ""  // resetuj public varijable
          _kome_txt := ""
          _budzorg := ""
 
+
          IF PadR( vrprim->idpartner, 2 ) == "JP"
 
-            set_jprih_globalne_varijable()   // javni prihodi, setuj varijable _KOME_ZR, _kome_txt , _budzorg
-
-            _cKomeZiroRacun := _KOME_ZR
-            __kome_txt := _kome_txt
-            __budz_org := _budzorg
-            __org_jed := gOrgJed
-            __id_jprih := _idjprih
-
+            set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
+            // _cKomeZiroRacun := _KOME_ZR
+            // __kome_txt := _kome_txt
+            // __budz_org := _budzorg
+            // __org_jed := gOrgJed
+            // __id_jprih := _idjprih
          ELSE
 
             IF vrprim->dobav == "D"
-
                _KOME_ZR := PadR( _KOME_ZR, 3 )
-
                select_o_partner( vrprim->idpartner )
                SELECT virm_pripr
-
                MsgBeep( "Odrediti racun za partnera :" + vrprim->idpartner )
                virm_odredi_ziro_racun( vrprim->idpartner, @_KOME_ZR )
-
             ELSE
                _KOME_ZR := vrprim->racun
             ENDIF
 
-            _cKomeZiroRacun := _KOME_ZR
-            __budz_org := ""
-            __org_jed := ""
-            __id_jprih := ""
-            _per_od := CToD( "" )
-            _per_do := CToD( "" )
+            // _cKomeZiroRacun := _KOME_ZR
+            // __budz_org := ""
+            // __org_jed := ""
+            // __id_jprih := ""
+            // _per_od := CToD( "" )
+            // _per_do := CToD( "" )
 
          ENDIF
 
-         REPLACE field->kome_zr WITH _cKomeZiroRacun
-         REPLACE field->dat_upl WITH dDatVirm
-         REPLACE field->svrha_doz WITH _tmp_opis
-         REPLACE field->pod WITH per_od
-         REPLACE field->pdo WITH per_do
-         REPLACE field->budzorg WITH __budz_org
-         REPLACE field->bpo WITH __org_jed
-         REPLACE field->idjprih WITH __id_jprih
+
+         SELECT virm_pripr
+altd()
+         REPLACE field->kome_zr WITH _KOME_ZR, ;
+            field->dat_upl WITH dDatVirm, ;
+            field->svrha_doz WITH _tmp_opis, ;
+            field->pod WITH dDatumOd, ;
+            field->pdo WITH dDatumDo, ;
+            field->budzorg WITH _budzorg, ;
+            field->bpo WITH gOrgJed, ;
+            field->idjprih WITH _idjprih
 
       ENDIF
 
@@ -338,6 +335,131 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, per_
    ENDDO
 
    RETURN .T.
+
+
+
+/*
+
+
+-- FUNCTION virm_popuna_javnih_prihoda()
+
+   // drugi krug; popuni polja vezana za javne prihode ....
+   SELECT vrprim
+   SET ORDER TO TAG "ID"
+
+   SELECT virm_pripr
+   GO TOP
+
+   DO WHILE !Eof()
+
+      SELECT vrprim
+      SEEK virm_pripr->svrha_pl
+
+      SELECT virm_pripr
+      Scatter()
+
+      IF vrprim->idpartner = "JP" // javni prihod
+         set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
+      ENDIF
+
+      _iznosstr := ""
+      _iznosstr := "=" + iif( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
+
+      my_rlock()
+      Gather()
+      my_unlock()
+
+      SKIP
+
+   ENDDO
+
+   RETURN .T.
+
+*/
+
+
+// setovanje varijabli: _KOME_ZR , _kome_txt, _budzorg
+// pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
+//
+// formula moze biti:
+// ------------------------------
+// 712221-103
+// 712221-1-103
+
+FUNCTION set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
+
+   LOCAL _tmp_1 := ""
+   LOCAL _tmp_2 := ""
+   LOCAL aJPrih
+
+   _idjprih := Token( vrprim->racun, "-", 1 ) // 723111-077 => 723111
+   _tmp_1 := Token( vrprim->racun, "-", 2 ) // <- moze biti opcina, kanton ili entitet ili nista
+   _tmp_2 := Token( vrprim->racun, "-", 3 ) // <- moze se iskoristiti za opcinu
+   _tmp_1 := AllTrim( _tmp_1 )
+   _tmp_2 := AllTrim( _tmp_2 )
+
+   AltD()
+
+   IF Len( _tmp_1 ) == 3 // opcina
+      _idops := _tmp_1
+
+   ELSEIF Len( _tmp_1 ) == 2  // nivo kantona
+      _idops := iif( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
+
+   ELSEIF Len( _tmp_1 ) == 1  // nivo entiteta
+      _idops := iif( Len( _tmp_2 ) == 3, _tmp_2, virm_opcina_rada() )
+
+
+   ELSEIF Len( _tmp_1 ) == 0 // jedinstveni uplatni racun - ne gleda se opcina, kanton, entitet
+      _idops := Space( 3 )
+      _idjprih := PadR( _idjprih, 6 ) // duzina sifre javnog prihoda
+   ENDIF
+
+   aJPrih := set_pozicija_jprih_record( _idjprih, "", "", _tmp_1 )
+   _KOME_ZR := aJPrih[ 1 ]
+   _budzorg :=  aJPrih[ 3 ]
+
+   RETURN .T.
+
+
+
+
+
+FUNCTION virm_opcina_rada()
+
+   LOCAL cVrati := "   "
+   LOCAL cOR := ""
+   LOCAL nArr := Select()
+
+   // cOR := my_get_from_ini( "VIRM", "OpcRada", "XXXX", KUMPATH )
+   cOR := "XXXX"
+
+   IF Empty( cOR )
+      RETURN ""
+   ENDIF
+
+   SELECT ( F_OPS )
+
+   IF !Used()
+      o_ops()
+      SEEK cOR
+      IF Found()
+         cVrati := IDJ
+      ENDIF
+      USE
+   ELSE
+      PushWA()
+      SET ORDER TO TAG "ID"
+      SEEK cOR
+      IF Found()
+         cVrati := IDJ
+      ENDIF
+      PopWA()
+   ENDIF
+
+   SELECT ( nArr )
+
+   RETURN cVrati
 
 
 
@@ -430,7 +552,7 @@ STATIC FUNCTION ld_virm_generacija_krediti( nGodina, nMjesec, dDatVirm, r_br, do
    DO WHILE !Eof() .AND. Left( field->id, Len( cOznakaIsplatePrefix ) ) == cOznakaIsplatePrefix
 
 
-      cIdKreditor := PAdr( SubStr( field->id, 5 ), LEN_PARTNER_ID )      // sifra kreditora KREDBBI001 -> BBI001
+      cIdKreditor := PadR( SubStr( field->id, 5 ), LEN_PARTNER_ID )      // sifra kreditora KREDBBI001 -> BBI001
       pozicioniraj_rec_kreditor_partner( cIdKreditor )     // nastimaj kreditora i dodaj po potrebi
       pozicioniraj_rec_vrprim_sifra_kr()     // vrsta primanja - kredit
 

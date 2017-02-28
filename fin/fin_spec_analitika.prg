@@ -59,7 +59,7 @@ FUNCTION specifikacija_po_analitickim_kontima()
 
    BoxC()
 
-   IF cIdRj == "999999"; cidrj := ""; ENDIF
+   IF cIdRj == "999999"; cIdrj := ""; ENDIF
 
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
       cidrj := Trim( StrTran( cidrj, ".", "" ) )
@@ -68,16 +68,16 @@ FUNCTION specifikacija_po_analitickim_kontima()
 
    cIdFirma := Left( cIdFirma, 2 )
 
-   o_konto()
-   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
-      otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
-   ELSE
-      o_anal()
-   ENDIF
+   // o_konto()
+   // IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+// otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
+// ELSE
+   // o_anal()
+   // ENDIF
 
-   SELECT ANAL
-   SET ORDER TO TAG "1"
-
+// SELECT ANAL
+// SET ORDER TO TAG "1"
+   find_anal_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto,datnal" )
 
    cFilt1 := "IdFirma==" + dbf_quote( cIdFirma )
    IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
@@ -122,7 +122,9 @@ FUNCTION specifikacija_po_analitickim_kontima()
          ENDDO
          IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_spec_anal(); ENDIF
 
-         SELECT KONTO; HSEEK cidkonto; SELECT ANAL
+         select_o_konto( cIdKonto )
+
+         SELECT ANAL
 
          IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0
             ? cidkonto, KONTO->naz

@@ -71,6 +71,9 @@ FUNCTION find_suban_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy, cWhere )
 
 
 
+
+
+
 FUNCTION find_sint_by_konto_za_period( cIdFirma, cIdKonto, dDatOd, dDatDo, cOrderBy )
 
    LOCAL hParams := hb_Hash()

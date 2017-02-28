@@ -128,17 +128,13 @@ altd()
    _IznosSTR := "=" + iif( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
 
 
-   IF vrprim->Idpartner = "JP"
-
-      // javni prihod
+   IF vrprim->Idpartner = "JP" // javni prihod
 
       _vupl := "0"
 
-      altd()
-
       // setovanje varijabli: _KOME_ZR , _kome_txt, _budzorg
       // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
-      set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
+      set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg_idjprih_idops()
 
       _kome_txt := vrprim->naz
 
@@ -635,105 +631,6 @@ FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
    cDefault := Left( aBanke[ izbor ], 16 )
 
    RETURN .T.
-
-
-
-
-// ----------------------------------------------------
-// po izlasku iz ove funkcije kursor
-// jprih.dbf-a treba biti pozicioniran
-// na trazeni javni prihod
-// ----------------------------------------------------
-FUNCTION set_pozicija_jprih_record( cIdJPrih, cIdOps, cIdKan, cIdEnt )
-
-   LOCAL lOk := .F.
-   LOCAL cPom, i, aRez, lSofSeek
-
-   IF cIdOps == NIL
-      cIdOps := ""
-   ENDIF
-
-   IF cIdKan == NIL
-      cIdkan := ""
-   ENDIF
-
-   IF cIdEnt == NIL
-      cIdEnt := ""
-   ENDIF
-
-   PushWA()
-   lSofSeek := Set( _SET_SOFTSEEK, .T. )
-
-
-   aRez := { "", "", "" }    // 1 - racun 2 - naziv 3 - budzorg
-
-   SELECT jprih
-   cPom := cIdJPrih
-
-
-   FOR i := Len( cIdJPrih ) TO 1 STEP -1  // 72311 - traziti 72311, pa 7231, pa 723, pa 723, pa 72, pa 7
-
-      cPom := Left( cIdJPrih, i )
-      SEEK cPom
-
-      IF Trim( jprih->id ) == cPom // npr "723" == LEFT( "72311", 3)
-
-         aRez[ 2 ] := jprih->naz
-
-         DO WHILE !Eof() .AND. Trim( jprih->Id ) == cPom
-
-            lOk := .T.
-
-            IF Empty( jprih->racun ) // nema racuna trazi dalje
-               lOk := .F.
-               SKIP
-               LOOP
-            ENDIF
-
-            IF !Empty( cIdOps ) .AND. cIdOps != idops
-               IF !Empty( idops )
-                  lOk := .F.
-               ENDIF
-            ENDIF
-
-            IF !Empty( cIdKan ) .AND. cIdKan != idkan
-               IF !Empty( idkan )
-                  lOk := .F.
-               ENDIF
-            ENDIF
-
-            IF !Empty( cIdEnt ) .AND. cIdEnt != idn0
-               IF !Empty( idn0 )
-                  lOk := .F.
-               ENDIF
-            ENDIF
-
-            IF lOk
-               IF Empty( aRez[ 2 ] )
-                  aRez[ 2 ] := jprih->racun   // nisam jos nasao naziv
-               ENDIF
-               aRez[ 1 ] := jprih->racun
-               aRez[ 3 ] := jprih->budzorg
-               EXIT
-            ENDIF
-
-            SKIP
-
-         ENDDO
-
-         IF lOk
-            EXIT
-         ENDIF
-
-      ENDIF
-
-   NEXT
-
-   Set( _SET_SOFTSEEK, lSofSeek )
-   PopWa()
-
-   RETURN aRez
-
 
 
 

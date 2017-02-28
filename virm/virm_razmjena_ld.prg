@@ -284,7 +284,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
 
          IF PadR( vrprim->idpartner, 2 ) == "JP"
 
-            set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
+            set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg_idjprih_idops()
             // _cKomeZiroRacun := _KOME_ZR
             // __kome_txt := _kome_txt
             // __budz_org := _budzorg
@@ -382,14 +382,14 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
 // 712221-103
 // 712221-1-103
 
-FUNCTION set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
+FUNCTION set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg_idjprih_idops()
 
    LOCAL _tmp_1 := ""
    LOCAL _tmp_2 := ""
    LOCAL aJPrih
-   LOCAL _idjprih, cIdOps, cIdKan, cIdEntitet
+   LOCAL cIdjprih, cIdOps, cIdKan, cIdEntitet
 
-   _idjprih := Token( vrprim->racun, "-", 1 ) // 723111-077 => 723111
+   cIdjprih := Token( vrprim->racun, "-", 1 ) // 723111-077 => 723111
    _tmp_1 := Token( vrprim->racun, "-", 2 ) // <- moze biti opcina, kanton ili entitet ili nista
    _tmp_2 := Token( vrprim->racun, "-", 3 ) // <- moze se iskoristiti za opcinu
    _tmp_1 := AllTrim( _tmp_1 )
@@ -400,7 +400,7 @@ FUNCTION set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
    IF Len( _tmp_1 ) == 3 // opcina
       cIdOps := _tmp_1
       cIdKan := ""
-      cIdEntitet :=""
+      cIdEntitet := ""
 
    ELSEIF Len( _tmp_1 ) == 2  // nivo kantona
       cIdKan := _tmp_1
@@ -421,11 +421,108 @@ FUNCTION set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
    ENDIF
 
    aJPrih := set_pozicija_jprih_record( _idjprih, cIdOps, cIdKan, cIdEntitet )
+
+   // varijable koje se setuju
+   _IDJPRIH := cIdjprih
+   _IDOPS := cIdOps
    _KOME_ZR := aJPrih[ 1 ]
    _budzorg :=  aJPrih[ 3 ]
 
    RETURN .T.
 
+
+
+
+
+FUNCTION set_pozicija_jprih_record( cIdJPrih, cIdOps, cIdKan, cIdEnt )
+
+   LOCAL lOk := .F.
+   LOCAL cPom, i, aRez, lSofSeek
+
+   IF cIdOps == NIL
+      cIdOps := ""
+   ENDIF
+
+   IF cIdKan == NIL
+      cIdkan := ""
+   ENDIF
+
+   IF cIdEnt == NIL
+      cIdEnt := ""
+   ENDIF
+
+   PushWA()
+   lSofSeek := Set( _SET_SOFTSEEK, .T. )
+
+
+   aRez := { "", "", "" }    // 1 - racun 2 - naziv 3 - budzorg
+
+   SELECT jprih
+   cPom := cIdJPrih
+
+
+   FOR i := Len( cIdJPrih ) TO 1 STEP -1  // 72311 - traziti 72311, pa 7231, pa 723, pa 723, pa 72, pa 7
+
+      cPom := Left( cIdJPrih, i )
+      SEEK cPom
+
+      IF Trim( jprih->id ) == cPom // npr "723" == LEFT( "72311", 3)
+
+         aRez[ 2 ] := jprih->naz
+
+         DO WHILE !Eof() .AND. Trim( jprih->Id ) == cPom
+
+            lOk := .T.
+
+            IF Empty( jprih->racun ) // nema racuna trazi dalje
+               lOk := .F.
+               SKIP
+               LOOP
+            ENDIF
+
+            IF !Empty( cIdOps ) .AND. cIdOps != idops
+               IF !Empty( idops )
+                  lOk := .F.
+               ENDIF
+            ENDIF
+
+            IF !Empty( cIdKan ) .AND. cIdKan != idkan
+               IF !Empty( idkan )
+                  lOk := .F.
+               ENDIF
+            ENDIF
+
+            IF !Empty( cIdEnt ) .AND. cIdEnt != idn0
+               IF !Empty( idn0 )
+                  lOk := .F.
+               ENDIF
+            ENDIF
+
+            IF lOk
+               IF Empty( aRez[ 2 ] )
+                  aRez[ 2 ] := jprih->racun   // nisam jos nasao naziv
+               ENDIF
+               aRez[ 1 ] := jprih->racun
+               aRez[ 3 ] := jprih->budzorg
+               EXIT
+            ENDIF
+
+            SKIP
+
+         ENDDO
+
+         IF lOk
+            EXIT
+         ENDIF
+
+      ENDIF
+
+   NEXT
+
+   Set( _SET_SOFTSEEK, lSofSeek )
+   PopWa()
+
+   RETURN aRez
 
 
 

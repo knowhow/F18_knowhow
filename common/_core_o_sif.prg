@@ -86,7 +86,8 @@ FUNCTION o_sastavnica()
    SELECT ( F_SAST )
    my_use  ( "sast" )
    SET ORDER TO TAG "ID"
-   return .t.
+
+   RETURN .T.
 
 FUNCTION select_o_sastavnica()
    RETURN select_o_dbf( "SAST", F_SAST, "sast", "ID" )
@@ -306,6 +307,11 @@ FUNCTION use_sql_opstine( cId )
    SELECT ( F_OPS )
    IF !use_sql_sif( cTable, .T., "OPS", cId )
       RETURN .F.
+   ENDIF
+
+   IF cId != NIL
+   altd()
+      SEEK cId
    ENDIF
 
    RETURN .T.

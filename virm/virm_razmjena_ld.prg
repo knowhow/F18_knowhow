@@ -221,6 +221,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
    LOCAL _poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PadR( "", 10 ) )
    LOCAL _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), Space( 16 ) )
    LOCAL _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "N" )
+   LOCAL cVrPrimIdPartner
 
    PRIVATE _KOME_ZR := ""
    PRIVATE _kome_txt := ""
@@ -246,7 +247,10 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
       _svrha_placanja := AllTrim( field->id )
 
       o_vrprim( ldvirm->id )
+      cVrPrimIdPartner := vrprim->idpartner
+
       select_o_partner( gVirmFirma )
+
 
       SELECT virm_pripr
 
@@ -257,7 +261,6 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
       IF _bez_nula == "N" .OR. _izr_formula > 0
 
          APPEND BLANK
-
          REPLACE field->rbr WITH ++r_br
          REPLACE field->mjesto WITH gMjesto
          REPLACE field->svrha_pl WITH _svrha_placanja
@@ -274,24 +277,24 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
             REPLACE field->pnabr WITH _poziv_na_broj
          ENDIF
 
+
          _tmp_opis := Trim( vrprim->pom_txt ) +  iif( !Empty( dod_opis ), " " + AllTrim( dod_opis ), "" ) +  iif( !Empty( nBrojRadnikaPrivateVar ), " " + nBrojRadnikaPrivateVar, "" )
 
-
          _KOME_ZR := ""  // resetuj public varijable
-         _kome_txt := ""
+         // _kome_txt := ""
          _budzorg := ""
+         _idops := ""
 
 
-         IF PadR( vrprim->idpartner, 2 ) == "JP"
+         IF PadR( cVrPrimIdPartner, 2 ) == "JP"
 
-            set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg_idjprih_idops()
+            set_jprih_globalne_varijable_kome_zr_budzorg_idjprih_idops()
             // _cKomeZiroRacun := _KOME_ZR
             // __kome_txt := _kome_txt
             // __budz_org := _budzorg
             // __org_jed := gOrgJed
             // __id_jprih := _idjprih
          ELSE
-
             IF vrprim->dobav == "D"
                _KOME_ZR := PadR( _KOME_ZR, 3 )
                select_o_partner( vrprim->idpartner )
@@ -302,15 +305,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
                _KOME_ZR := vrprim->racun
             ENDIF
 
-            // _cKomeZiroRacun := _KOME_ZR
-            // __budz_org := ""
-            // __org_jed := ""
-            // __id_jprih := ""
-            // _per_od := CToD( "" )
-            // _per_do := CToD( "" )
-
          ENDIF
-
 
          SELECT virm_pripr
          AltD()
@@ -319,9 +314,11 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
             field->svrha_doz WITH _tmp_opis, ;
             field->pod WITH dDatumOd, ;
             field->pdo WITH dDatumDo, ;
-            field->budzorg WITH _budzorg, ;
             field->bpo WITH gOrgJed, ;
-            field->idjprih WITH _idjprih
+            field->idjprih WITH _idjprih, ;
+            field->idops WITH _idops, ;
+            field->budzorg WITH _budzorg
+
 
       ENDIF
 
@@ -355,7 +352,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
       Scatter()
 
       IF vrprim->idpartner = "JP" // javni prihod
-         set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
+    [[[------]]]     set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg()
       ENDIF
 
       _iznosstr := ""
@@ -382,7 +379,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
 // 712221-103
 // 712221-1-103
 
-FUNCTION set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg_idjprih_idops()
+FUNCTION set_jprih_globalne_varijable_kome_zr_budzorg_idjprih_idops()
 
    LOCAL _tmp_1 := ""
    LOCAL _tmp_2 := ""
@@ -417,10 +414,10 @@ FUNCTION set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg_idjprih_idops()
       cIdOps := Space( 3 )
       cIdKan := ""
       cIdEntitet := ""
-      _idjprih := PadR( _idjprih, 6 ) // duzina sifre javnog prihoda
+      cIdjprih := PadR( cIdjprih, 6 ) // duzina sifre javnog prihoda
    ENDIF
 
-   aJPrih := set_pozicija_jprih_record( _idjprih, cIdOps, cIdKan, cIdEntitet )
+   aJPrih := set_pozicija_jprih_record( cIdjprih, cIdOps, cIdKan, cIdEntitet )
 
    // varijable koje se setuju
    _IDJPRIH := cIdjprih
@@ -531,10 +528,10 @@ FUNCTION virm_opcina_rada()
 
    LOCAL cVrati := "   "
    LOCAL cOR := ""
-   LOCAL nArr := Select()
 
    // cOR := my_get_from_ini( "VIRM", "OpcRada", "XXXX", KUMPATH )
-   cOR := "XXXX"
+   cOR := " 10 "
+
 
    IF Empty( cOR )
       RETURN ""
@@ -542,24 +539,16 @@ FUNCTION virm_opcina_rada()
 
    SELECT ( F_OPS )
 
-   IF !Used()
-      o_ops()
-      SEEK cOR
-      IF Found()
-         cVrati := IDJ
-      ENDIF
-      USE
+   PushWA()
+   altd()
+   select_o_ops( cOr )
+   IF !Found()
+      MsgBeep( "U šifarnik općina unijeti općinu rada pod šifrom ' 10 '# (prazno + 10 + prazno)" )
    ELSE
-      PushWA()
-      SET ORDER TO TAG "ID"
-      SEEK cOR
-      IF Found()
-         cVrati := IDJ
-      ENDIF
-      PopWA()
+      cVrati := IDJ
    ENDIF
 
-   SELECT ( nArr )
+   PopWA()
 
    RETURN cVrati
 

@@ -14,6 +14,8 @@
 
 FUNCTION unos_virmana()
 
+   LOCAL i
+
    _o_virm_edit()
 
    ImeKol := {}
@@ -62,7 +64,6 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
 
    READ
 
-altd()
    ESC_RETURN 0
 
    IF fNovi
@@ -96,8 +97,7 @@ altd()
    IF vrprim->IdPartner == PadR( "JP", Len( vrprim->idpartner ) )
       _bpo := gOrgJed // ova varijabla je iskoristena za broj poreskog obv.
    ELSE
-      IF vrprim->dobav == "D"
-         // ako su javni prihodi ovo se zna !
+      IF vrprim->dobav == "D" // ako su javni prihodi ovo se zna !
          @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID p_partner( @_u_korist )  PICT "@!"
          @ m_x + 5, Col() + 2 GET _IdBanka2 VALID {|| virm_odredi_ziro_racun( _u_korist, @_IdBanka2 ), SetPrimaoc() }
       ELSE
@@ -134,7 +134,7 @@ altd()
 
       // setovanje varijabli: _KOME_ZR , _kome_txt, _budzorg
       // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
-      set_jprih_globalne_varijable_kome_zr_kome_txt_budzorg_idjprih_idops()
+      set_jprih_globalne_varijable_kome_zr_budzorg_idjprih_idops()
 
       _kome_txt := vrprim->naz
 

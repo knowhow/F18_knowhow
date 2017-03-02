@@ -79,31 +79,31 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    cRadn := Space( LEN_IDRADNIK )
 
 
-   OSpecif()
+   ld_specifikacije_otvori_tabele()
 
-   cFirmNaz := fetch_metric( "org_naziv", nil, cFirmNaz )
+   cFirmNaz := fetch_metric( "org_naziv", NIL, cFirmNaz )
    cFirmNaz := PadR( cFirmNaz, 35 )
 
-   cFirmAdresa := fetch_metric( "ld_firma_adresa", nil, cFirmAdresa )
+   cFirmAdresa := fetch_metric( "ld_firma_adresa", NIL, cFirmAdresa )
    cFirmAdresa := PadR( cFirmAdresa, 35 )
 
-   cFirmOpc := fetch_metric( "ld_firma_opcina", nil, cFirmOpc )
+   cFirmOpc := fetch_metric( "ld_firma_opcina", NIL, cFirmOpc )
    cFirmOpc := PadR( cFirmOpc, 35 )
 
-   cFirmVD := fetch_metric( "ld_firma_vrsta_djelatnosti", nil, cFirmVD )
+   cFirmVD := fetch_metric( "ld_firma_vrsta_djelatnosti", NIL, cFirmVD )
    cFirmVD := PadR( cFirmVD, 50 )
 
-   cDopr1 := fetch_metric( "ld_spec_samostalni_doprinos_1", nil, cDopr1 )
-   cDopr2 := fetch_metric( "ld_spec_samostalni_doprinos_2", nil, cDopr2 )
-   cDopr3 := fetch_metric( "ld_spec_samostalni_doprinos_3", nil, cDopr3 )
+   cDopr1 := fetch_metric( "ld_spec_samostalni_doprinos_1", NIL, cDopr1 )
+   cDopr2 := fetch_metric( "ld_spec_samostalni_doprinos_2", NIL, cDopr2 )
+   cDopr3 := fetch_metric( "ld_spec_samostalni_doprinos_3", NIL, cDopr3 )
 
-   qqIdRj := fetch_metric( "ld_specifikacija_rj", nil, qqIdRJ )
-   qqOpSt := fetch_metric( "ld_specifikacija_opcine", nil, qqOpSt )
+   qqIdRj := fetch_metric( "ld_specifikacija_rj", NIL, qqIdRJ )
+   qqOpSt := fetch_metric( "ld_specifikacija_opcine", NIL, qqOpSt )
 
    qqIdRj := PadR( qqIdRj, 80 )
    qqOpSt := PadR( qqOpSt, 80 )
 
-   cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
+   cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
    cMatBR := PadR( cMatBr, 13 )
 
    dDatIspl := Date()
@@ -116,8 +116,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "Opstina stanov.(prazno-sve): "  GET qqOpSt PICT "@!S20"
 
-      @ form_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun   WHEN HelpObr( .T., cObracun ) ;
-         VALID ValObr( .T., cObracun )
+      @ form_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun   WHEN HelpObr( .T., cObracun )  VALID ValObr( .T., cObracun )
 
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
       @ form_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecOd PICT "99"
@@ -150,25 +149,25 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
       aUslRJ := Parsiraj( qqIdRj, "IDRJ" )
       aUslOpSt := Parsiraj( qqOpSt, "IDOPSST" )
 
-      IF ( aUslRJ <> NIL .AND. aUslOpSt <> nil )
+      IF ( aUslRJ <> NIL .AND. aUslOpSt <> NIL )
          EXIT
       ENDIF
    ENDDO
 
-   set_metric( "org_naziv", nil, cFirmNaz )
-   set_metric( "ld_firma_adresa", nil, cFirmAdresa )
-   set_metric( "ld_firma_opcina", nil, cFirmOpc )
-   set_metric( "ld_firma_vrsta_djelatnosti", nil, cFirmVD )
-   set_metric( "ld_spec_samostalni_doprinos_1", nil, cDopr1 )
-   set_metric( "ld_spec_samostalni_doprinos_2", nil, cDopr2 )
-   set_metric( "ld_spec_samostalni_doprinos_3", nil, cDopr3 )
+   set_metric( "org_naziv", NIL, cFirmNaz )
+   set_metric( "ld_firma_adresa", NIL, cFirmAdresa )
+   set_metric( "ld_firma_opcina", NIL, cFirmOpc )
+   set_metric( "ld_firma_vrsta_djelatnosti", NIL, cFirmVD )
+   set_metric( "ld_spec_samostalni_doprinos_1", NIL, cDopr1 )
+   set_metric( "ld_spec_samostalni_doprinos_2", NIL, cDopr2 )
+   set_metric( "ld_spec_samostalni_doprinos_3", NIL, cDopr3 )
 
    qqIdRj := Trim( qqIdRj )
    qqOpSt := Trim( qqOpSt )
 
-   set_metric( "ld_specifikacija_rj", nil, qqIdRJ )
-   set_metric( "ld_specifikacija_opcine", nil, qqOpSt )
-   set_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
+   set_metric( "ld_specifikacija_rj", NIL, qqIdRJ )
+   set_metric( "ld_specifikacija_opcine", NIL, qqOpSt )
+   set_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
 
    PoDoIzSez( nGodina, nMjesec )
 
@@ -237,12 +236,12 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
    ld_pozicija_parobr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
 
-   //SELECT LD
-   //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+   // SELECT LD
+   // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
 
    seek_ld_2( NIL, nGodina, nMjesec )
-    //  GO TOP
-    //  HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 )
+   // GO TOP
+   // HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 )
 
    PRIVATE cFilt := ".t."
 
@@ -288,7 +287,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
       SELECT LD
 
-      IF ! ( RADN->( &aUslOpSt ) )
+      IF !( RADN->( &aUslOpSt ) )
          SKIP 1
          LOOP
       ENDIF
@@ -301,8 +300,8 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
       nUNetoOsnova += nNetoOsn
 
 
-      // prvo doprinosi i bruto osnova
-      nPojBrOsn := ld_get_bruto_osnova( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
+
+      nPojBrOsn := ld_get_bruto_osnova( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )  // prvo doprinosi i bruto osnova
       nBrutoOsnova += nPojBrOsn
 
       nPom := nBrutoOsnova // ukupno bruto
@@ -323,7 +322,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
             nBOO := 0
 
             FOR i := 1 TO Len( aOps )
-               IF ! ( DOPR->id $ aOps[ i, 2 ] )
+               IF !( DOPR->id $ aOps[ i, 2 ] )
                   nBOO += aOps[ i, 3 ]
                ENDIF
             NEXT
@@ -400,7 +399,8 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    hRec[ "j212" ] := SubStr( radn->matBr, 12, 1 )
    hRec[ "j213" ] := SubStr( radn->matBr, 13, 1 )
 
-   hRec[ "opcina_2" ] := Ocitaj( F_OPS, radn->idopsrad, "naz", .T. )
+   select_o_ops( radn->idopsrad )
+   hRec[ "opcina_2" ] := ops->naz
 
    hRec[ "br_zaposlenih" ] := AllTrim( Str( nURadnika, 6, 0 ) )
 

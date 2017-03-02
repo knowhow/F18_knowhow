@@ -52,11 +52,9 @@ FUNCTION p_dest_2( cId, cPartId, dx, dy )
    __ugov := ugov->id
    __dest_len := 6
 
-   // postavi filter
-   set_f_tbl( cPartId )
 
-   // setuj kolone
-   set_a_kol( @ImeKol, @Kol )
+   set_f_tbl( cPartId )    // postavi filter
+   set_a_kol( @ImeKol, @Kol )    // setuj kolone
 
    xRet := p_sifra( F_DEST, "IDDEST", _x_pos, _y_pos, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
 

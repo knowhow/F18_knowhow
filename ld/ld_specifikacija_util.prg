@@ -431,7 +431,7 @@ FUNCTION FormNum2( nIznos, nDuz, pici )
 
 
 
-FUNCTION OSpecif()
+FUNCTION ld_specifikacije_otvori_tabele()
 
    // o_dopr()
    // o_por()

@@ -310,7 +310,6 @@ FUNCTION use_sql_opstine( cId )
    ENDIF
 
    IF cId != NIL
-   altd()
       SEEK cId
    ENDIF
 

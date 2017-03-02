@@ -308,7 +308,6 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
          ENDIF
 
          SELECT virm_pripr
-         AltD()
          REPLACE field->kome_zr WITH _KOME_ZR, ;
             field->dat_upl WITH dDatVirm, ;
             field->svrha_doz WITH _tmp_opis, ;
@@ -392,7 +391,6 @@ FUNCTION set_jprih_globalne_varijable_kome_zr_budzorg_idjprih_idops()
    _tmp_1 := AllTrim( _tmp_1 )
    _tmp_2 := AllTrim( _tmp_2 )
 
-   AltD()
 
    IF Len( _tmp_1 ) == 3 // opcina
       cIdOps := _tmp_1
@@ -540,7 +538,7 @@ FUNCTION virm_opcina_rada()
    SELECT ( F_OPS )
 
    PushWA()
-   altd()
+
    select_o_ops( cOr )
    IF !Found()
       MsgBeep( "U šifarnik općina unijeti općinu rada pod šifrom ' 10 '# (prazno + 10 + prazno)" )

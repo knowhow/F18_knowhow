@@ -43,7 +43,7 @@ FUNCTION unos_virmana()
 
    @ 12, 0 SAY ""
 
-   my_db_edit( "PripVir", MAXROWS() - 10, MAXCOLS() - 12, {|| _k_handler() }, "", "Priprema virmana", ;
+   my_db_edit( "PripVir", MAXROWS() - 10, MAXCOLS() - 12, {|| virm_browse_key_handler() }, "", "Priprema virmana", ;
       .F., { "<c-N>   Nova uplatnica", "<c-T>   Brisi ", ;
       "<Enter> Ispravi uplatnicu", "<c-F9>  Brisi sve", ;
       "<c-P>   Stampanje", ;
@@ -185,7 +185,7 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
    RETURN 1
 
 
-STATIC FUNCTION _k_handler()
+STATIC FUNCTION virm_browse_key_handler()
 
    LOCAL nRec := RecNo()
 
@@ -303,19 +303,22 @@ STATIC FUNCTION _k_handler()
    CASE Ch == K_ENTER
 
       Box( "ent", MAXROWS() - 11, MAXCOLS() - 5, .F. )
+
       Scatter()
       IF virm_edit_pripr( .F. ) == 0
          BoxC()
          RETURN DE_CONT
       ELSE
-         my_rlock()
+         SELECT virm_pripr
+         my_rlock()  // snimiti unos
          Gather()
          my_unlock()
+
          BoxC()
          RETURN DE_REFRESH
       ENDIF
 
-   CASE Ch = k_ctrl_f9()
+   CASE Ch == k_ctrl_f9()
       RETURN browse_brisi_pripremu()
 
    ENDCASE

@@ -32,7 +32,7 @@ FUNCTION Gather( cZn )
    ENDIF
    aStruct := dbStruct()
 
-   //BEGIN SEQUENCE WITH {| err | Break( err ) }
+   BEGIN SEQUENCE WITH {| err | Break( err ) }
 
       FOR i := 1 TO Len( aStruct )
          bFieldBlock := FieldBlock( cImePolja := fix_dat_var( aStruct[ i, 1 ] ) )
@@ -40,15 +40,15 @@ FUNCTION Gather( cZn )
          Eval( bFieldBlock, Eval( MemVarBlock( cVar ) ) )
       NEXT
 
-   //RECOVER USING oErr
+   RECOVER USING oErr
 
-    //  cMsg := RECI_GDJE_SAM + " ne postoji MEMVAR " + cVar + " trenutna tabela: " + Alias()
-    //  ?E cMsg
-    //  log_write( cMsg, 1 )
-    //  Alert( cMsg )
-    //  RaiseError( cMsg )
+      cMsg := RECI_GDJE_SAM + " ne postoji MEMVAR " + cVar + " trenutna tabela: " + Alias()
+      ?E cMsg
+      log_write( cMsg, 1 )
+      Alert( cMsg )
+      RaiseError( cMsg )
 
-   //END SEQUENCE
+   END SEQUENCE
 
    RETURN NIL
 

@@ -37,16 +37,20 @@ PROCEDURE on_idle_dbf_refresh()
 
    LOCAL cAlias, aDBfRec, cSql
 
-   PushWa()
-   cSql := "SELECT count(*) from fin_nalog"
-   SELECT F_NALOG_REFRESH
-   IF use_sql( "nalog_refresh", cSql, "NALOG_REFRESH" )
-      s_nFinNalogCount := field->count
-      USE
-      hb_DispOutAt( maxrows(),  maxcols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
+   IF my_database() != "?undefined?" .AND. my_login():lOrganizacijaSpojena
+      PushWa()
+      cSql := "SELECT count(*) from fin_nalog"
+      SELECT F_NALOG_REFRESH
+      IF use_sql( "nalog_refresh", cSql, "NALOG_REFRESH" )
+         s_nFinNalogCount := field->count
+         USE
+         hb_DispOutAt( maxrows(),  maxcols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
+      ELSE
+         MsgBeep( "ERR fin_nalog ne postoji?! " + my_database() )
+         QUIT
+      ENDIF
+      PopWA()
    ENDIF
-   PopWA()
-
 
    IF s_nIdleRefresh > 0
 
@@ -131,10 +135,26 @@ PROCEDURE stop_refresh_operations()
 
    RETURN
 
+PROCEDURE dbf_refresh_stop()
+
+   stop_refresh_operations()
+
+   RETURN
+
 
 PROCEDURE start_refresh_operations()
 
    s_lNoRefreshOperation := .F.
+
+   RETURN
+
+
+PROCEDURE dbf_refresh_start()
+
+   start_refresh_operations()
+
+   RETURN
+
 
 FUNCTION in_no_refresh_operations()
 

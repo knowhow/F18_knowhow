@@ -582,7 +582,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 #else
    CASE nCh == K_F10
 #endif
-      OstaleOpcije()
+      fin_knjizenje_ostale_opcije()
       RETURN DE_REFRESH
 
    CASE Upper( Chr( nCh ) ) == "P"
@@ -1010,18 +1010,18 @@ FUNCTION fin_tek_rec_2()
 
 
 
-/* OstaleOpcije()
+/* fin_knjizenje_ostale_opcije()
  *     Ostale opcije koje se pozivaju sa <F10>
  */
 
-FUNCTION OstaleOpcije()
+FUNCTION fin_knjizenje_ostale_opcije()
 
-   PRIVATE opc[ 4 ]
+   PRIVATE opc[ 1 ]
 
    opc[ 1 ] := "1. novi datum->datum, stari datum->dat.valute "
    // opc[ 2 ] := "2. podijeli nalog na vise dijelova"
 
-   h[ 1 ] := h[ 2 ] := h[ 3 ] := h[ 4 ] := ""
+   h[ 1 ] := h[ 2 ] := ""
    PRIVATE Izbor := 1
    PRIVATE am_x := m_x, am_y := m_y
    my_close_all_dbf()
@@ -1032,8 +1032,8 @@ FUNCTION OstaleOpcije()
          EXIT
       CASE izbor == 1
          SetDatUPripr()
-         // CASE izbor == 2
-         // PodijeliN()
+     // CASE izbor == 2
+    // PodijeliN()
       ENDCASE
    ENDDO
    m_x := am_x

@@ -202,15 +202,10 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
                cOtvSt := oRow:FieldGet( oRow:FieldPos( "otvst" ) )
                dDatDok := oRow:FieldGet( oRow:FieldPos( "datdok" ) )
 
-               dDatVal := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
-               IF dDatVal == CToD( "" )
-                  dDatVal := oRow:FieldGet( oRow:FieldPos( "datdok" ) )
-               ENDIF
 
                IF cTipPrenosaPS == "1" // po otvorenim stavkama
 
                   IF cOtvSt == "9" // stavka zatvorena sabrati za partnera, pa ako ne budu 0 dodati stavku
-
                      nSaldoPartnerZatvorene += oRow:FieldGet( oRow:FieldPos( "saldo" ) )
                      nSaldoPartnerZatvoreneEUR += oRow:FieldGet( oRow:FieldPos( "saldo_eur" ) )
                      oDataSet:Skip()
@@ -218,24 +213,32 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
                      LOOP
                   ENDIF
 
-                  IF Empty( cOpis )
-                     // otvorena stavka - opis nije postavljen, postavi ga svakako
+
+                  IF Empty( cOpis ) // otvorena stavka - opis nije postavljen, postavi ga svakako
                      cOpis := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
                   ENDIF
 
-                  IF Left( cIdKonto, 1 ) == cKontoKlasaPotrazuje .AND. nSaldoKM < 0
-                     // dobavljac potrazuje, ova otvorena stavka vjerovatno sadrzi zeljeni opis
+                  IF dDatVal == CToD( "" ) // valuta nije popunjavana do sada
+                     dDatVal := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
+                  ENDIF
+
+                  IF Left( cIdKonto, 1 ) == cKontoKlasaPotrazuje .AND. oRow:FieldGet( oRow:FieldPos( "saldo" ) ) < 0
+                     // dobavljac potrazuje, ova otvorena stavka vjerovatno sadrzi zeljeni opis - potrazivanje je ovdje nastalo
+                     dDatVal := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
                      cOpis := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
                   ENDIF
 
-                  IF Left( cIdKonto, 1 ) == cKontoKlasaDuguje .AND. nSaldoKM > 0
-                     // kupac duguje, ova otvorena stavka vjerovatno sadrzi zeljeni opis
+                  IF Left( cIdKonto, 1 ) == cKontoKlasaDuguje .AND. oRow:FieldGet( oRow:FieldPos( "saldo" ) ) > 0
+                     // kupac duguje, ova otvorena stavka vjerovatno sadrzi zeljeni opis, dugovanje je ovdje nastalo
+                     dDatVal := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
                      cOpis := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
                   ENDIF
-
 
                ENDIF
 
+               IF dDatVal == CToD( "" )
+                  dDatVal := oRow:FieldGet( oRow:FieldPos( "datdok" ) )
+               ENDIF
                nSaldoKM += oRow:FieldGet( oRow:FieldPos( "saldo" ) )
                nSaldoEUR += oRow:FieldGet( oRow:FieldPos( "saldo_eur" ) )
                oDataset:Skip()
@@ -338,6 +341,10 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
 
    BoxC()
    // MsgC()
+
+
+/* ovo dole je necitljivo - treba dodaje konta i partnere koji nedostaju, ali ovdje se zlostavlja varijabla lOk
+   tako da se ne moze racumjeti sta se desava
 
    IF cFinPrenosPocetnoStanjeDN == "D"
 
@@ -503,6 +510,7 @@ STATIC FUNCTION append_sif_partn( cIdPartner, oPartnerDataset )
    RETURN lOk
 
 
+*/
 
 STATIC FUNCTION prazni_fin_priprema()
 

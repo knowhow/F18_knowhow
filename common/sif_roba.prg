@@ -35,7 +35,13 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
    ImeKol := {}
 
    PushWA()
-   select_o_roba()
+
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_roba( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_roba()
+   ENDIF
 
    AAdd( ImeKol, { PadC( "ID", 10 ),  {|| field->id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( field->naz, _naz_len ) }, "naz", {|| .T. }, {|| .T. } } )

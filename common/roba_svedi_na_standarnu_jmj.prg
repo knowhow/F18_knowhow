@@ -113,8 +113,7 @@ FUNCTION find_roba_jmj( cIdroba )
    LOCAL cRet
 
    PushWa()
-   select_o_roba()
-   SEEK cIDRoba
+   select_o_roba( cIDRoba )
    cRet := roba->jmj
    PopWa()
 

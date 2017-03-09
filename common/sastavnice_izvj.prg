@@ -44,11 +44,11 @@ FUNCTION ISast()
    SELECT ( nArr )
    PushWA()
 
-   SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
-   SET ORDER TO TAG "ID"
+//   SELECT ( F_ROBA )
+//   IF !Used()
+//      o_roba()
+//   ENDIF
+//   SET ORDER TO TAG "ID"
 
    SELECT ( F_SAST )
    IF !Used()
@@ -66,8 +66,7 @@ FUNCTION ISast()
          SKIP
          nTrec := RecNo()
          SKIP -1
-         SELECT roba
-         HSEEK sast->id  // nema "svog proizvoda"
+         select_o_roba( sast->id )  // nema "svog proizvoda"
          IF !Found()
             SELECT sast
             DELETE

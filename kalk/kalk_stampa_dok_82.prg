@@ -141,7 +141,8 @@ FUNCTION kalk_stampa_dok_82()
       SELECT tarifa; HSEEK cidtarifa
       SELECT kalk_pripr
       DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok .AND. idtarifa == cidtarifa
-         Sselect_o_roba( kalk_pripr->idroba ); SELECT kalk_pripr
+         select_o_roba( kalk_pripr->idroba )
+         SELECT kalk_pripr
          set_pdv_public_vars()
          nU1 += mpc * kolicina
          nU2 += mpc * _OPP * kolicina

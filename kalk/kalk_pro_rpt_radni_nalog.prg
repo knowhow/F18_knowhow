@@ -66,7 +66,7 @@ FUNCTION kalk_stampa_dok_rn()
 */
          kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-    select_o_roba( HSEEK kalk_pripr->IdRoba )
+    select_o_roba( kalk_pripr->IdRoba )
          SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
          SELECT kalk_pripr
 

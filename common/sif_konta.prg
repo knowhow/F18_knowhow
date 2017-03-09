@@ -27,7 +27,12 @@ FUNCTION P_Konto( cId, dx, dy )
    Kol := {}
 
    PushWA()
-   select_o_konto()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_konto( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_konto()
+   ENDIF
 
    AAdd( ImeKol, { PadC( "ID", 7 ), {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| naz }, "naz" } )

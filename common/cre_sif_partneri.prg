@@ -103,7 +103,12 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    ENDIF
 
    PushWA()
-   select_o_partner()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_partner( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_partner()
+   ENDIF
 
    ImeKol := {}
 

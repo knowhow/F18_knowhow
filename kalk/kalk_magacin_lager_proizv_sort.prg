@@ -210,7 +210,7 @@ FUNCTION KaLagM()
 METHOD openDb
 
    o_tarifa()
-   o_roba()
+//   o_roba()
    o_tarifa()
    o_konto()
    o_kalk_doks()
@@ -236,7 +236,7 @@ METHOD closeDb
 METHOD addTmpRec( cIdRoba, cIdTarifa )
 
    SELECT rpt_tmp
-   SEEK cIdRoba
+--   SEEK cIdRoba
 
    my_flock()
 
@@ -475,7 +475,7 @@ METHOD skipRec
    cWFilter := Parsiraj( ::cUslRobaNaz, "naz" )
 
    SELECT roba
-   HSEEK kalk->idRoba
+  -- HSEEK kalk->idRoba
 
    lPreskoci := .F.
    IF !( &cWFilter )

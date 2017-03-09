@@ -32,7 +32,7 @@ FUNCTION prenos_fakt_kalk_prodavnica()
 
    AAdd( Opc, "5. fakt 01 -> kalk 81 doprema u prod" )
    AAdd( opcexe, {||  fakt_01_kalk_81() } )
-   
+
    AAdd( Opc, "6. fakt 13 -> kalk 80 prenos iz cmag. u prodavnicu" )
    AAdd( opcexe, {||  fakt_13_kalk_80()  } )
    //AAdd( Opc, "7. fakt 15 -> kalk 15 izlaz iz MP putem VP" )
@@ -64,7 +64,7 @@ FUNCTION fakt_11_kalk_prenos_11()
    o_kalk_pripr()
    o_koncij()
    // o_kalk()
-   o_roba()
+  // o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -175,8 +175,7 @@ FUNCTION fakt_11_kalk_prenos_11()
          ENDIF
 
          cIdRoba := fakt->idroba
-         SELECT ROBA
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
 
          cIdTar := roba->idtarifa
 
@@ -288,7 +287,7 @@ FUNCTION fakt_13_kalk_11()
    o_kalk_pripr()
    o_koncij()
    // o_kalk()
-   o_roba()
+//   o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -366,8 +365,7 @@ FUNCTION fakt_13_kalk_11()
             LOOP
          ENDIF
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-            SELECT ROBA
-            HSEEK fakt->idroba
+            select_o_roba( fakt->idroba )
 
             SELECT tarifa
             HSEEK roba->idtarifa
@@ -447,7 +445,7 @@ FUNCTION fakt_11_kalk_41()
 
    o_kalk_pripr()
    o_kalk()
-   o_roba()
+//   o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -542,8 +540,7 @@ FUNCTION fakt_11_kalk_41()
                LOOP
             ENDIF
             DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-               SELECT ROBA
-               HSEEK fakt->idroba
+               select_o_roba( fakt->idroba )
                SELECT tarifa
                HSEEK roba->idtarifa
                SELECT fakt
@@ -699,7 +696,7 @@ FUNCTION fakt_01_kalk_81()
 
    o_kalk_pripr()
    o_kalk()
-   o_roba()
+//   o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -832,7 +829,7 @@ FUNCTION fakt_13_kalk_80()
    o_kalk_pripr()
    o_koncij()
    o_kalk()
-   o_roba()
+  // o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -905,7 +902,7 @@ FUNCTION fakt_13_kalk_80()
             LOOP
          ENDIF
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-            SELECT ROBA; HSEEK fakt->idroba
+            select_o_roba( fakt->idroba )
 
             SELECT tarifa; HSEEK roba->idtarifa
             SELECT koncij; SEEK Trim( cidkonto )
@@ -997,7 +994,7 @@ FUNCTION fakt_15_kalk_15()
    o_koncij()
    o_kalk()
    IF File( KUMPATH + "DOKS2.DBF" ); fDoks2 := .T. ; o_kalk_doks2(); ENDIF
-   o_roba()
+//   o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -1101,7 +1098,7 @@ FUNCTION fakt_15_kalk_15()
          ENDIF
 
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-            SELECT ROBA; HSEEK fakt->idroba
+        --    SELECT ROBA; HSEEK fakt->idroba
 
             SELECT tarifa; HSEEK roba->idtarifa
             SELECT koncij; SEEK Trim( cidkonto )
@@ -1313,8 +1310,7 @@ FUNCTION fakt_11_kalk_42()
 
             DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
 
-               SELECT ROBA
-               HSEEK fakt->idroba
+               select_o_roba( fakt->idroba )
 
                SELECT tarifa
                HSEEK roba->idtarifa
@@ -1494,7 +1490,7 @@ STATIC FUNCTION _o_prenos_tbls()
 
    o_kalk_pripr()
    o_kalk()
-   o_roba()
+  // o_roba()
    o_konto()
    o_partner()
    o_tarifa()

@@ -273,7 +273,7 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
 
          SELECT roba
          SET ORDER TO TAG "ID"
-         SEEK topska->idroba
+      --   SEEK topska->idroba
 
          IF Found()
             _bk_tmp := roba->barkod
@@ -667,7 +667,7 @@ STATIC FUNCTION tops_kalk_import_roba( cTipMpc )
    // ENDIF
 
    SELECT roba
-   HSEEK topska->idroba
+--   HSEEK topska->idroba
 
 
    IF !Found()
@@ -791,10 +791,10 @@ STATIC FUNCTION get_sva_prodajna_mjesta_iz_koncij()
 
 STATIC FUNCTION tops_kalk_o_import_tabele()
 
-   SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
+  // SELECT ( F_ROBA )
+   //IF !Used()
+  //    o_roba()
+  // ENDIF
 
    SELECT ( F_TARIFA )
    IF !Used()

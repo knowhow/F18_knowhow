@@ -514,8 +514,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
             IF koncij->naz == "N1"; _VPC := _NC; ENDIF
             _marza := _VPC - _FCJ
             _TMarza := "A"
-            SELECT roba
-            HSEEK _idroba
+            select_o_roba( _idroba )
             SELECT tarifa
             HSEEK _idtarifa
             SELECT kalk_pripr

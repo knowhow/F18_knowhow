@@ -49,7 +49,7 @@ FUNCTION kalk_finansijski_obrt()
 
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
 
    cLegenda := "D"
 
@@ -125,7 +125,7 @@ FUNCTION kalk_finansijski_obrt()
    O_REKAP2
    O_REKA22
    o_koncij()
-   o_roba()
+  // o_roba()
    o_konto()
    o_tarifa()
    //o_kalk()

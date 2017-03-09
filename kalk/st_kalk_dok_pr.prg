@@ -22,7 +22,7 @@ FUNCTION kalk_stampa_dok_pr()
    IF is_legacy_kalk_pr()
       RETURN leg_StKalkPR()
    ENDIF
-   
+
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
    nStr := 0
@@ -68,8 +68,7 @@ FUNCTION kalk_stampa_dok_pr()
 
          kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-         SELECT ROBA
-         HSEEK kalk_pripr->IdRoba
+         select_o_roba( kalk_pripr->IdRoba )
          SELECT TARIFA
          HSEEK kalk_pripr->IdTarifa
          SELECT kalk_pripr

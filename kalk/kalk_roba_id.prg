@@ -22,7 +22,7 @@ FUNCTION RobaIdSredi()
       RETURN
    ENDIF
 
-   o_roba()
+//   o_roba()
    o_kalk()
    o_fakt()
    fSrediF := .T.

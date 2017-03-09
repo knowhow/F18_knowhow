@@ -21,7 +21,7 @@ FUNCTION sint_lager_lista_prodavnice()
    qqKonto := PadR( "132;", 60 )
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
    o_konto()
    o_partner()
 
@@ -136,8 +136,7 @@ FUNCTION sint_lager_lista_prodavnice()
 
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND.  IspitajPrekid()
       cIdRoba := Idroba
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
       SELECT kalk
       nUlaz := nIzlaz := 0
       nMPVU := nMPVI := nNVU := nNVI := 0
@@ -224,8 +223,7 @@ FUNCTION sint_lager_lista_prodavnice()
       ENDDO
 
       NovaStrana( bZagl )
-      SELECT roba
-      HSEEK cidroba
+      select_o_roba( cidroba )
       SELECT kalk
       aNaz := Sjecistr( roba->naz, 20 )
 
@@ -243,8 +241,7 @@ FUNCTION sint_lager_lista_prodavnice()
       @ PRow(), PCol() + 1 SAY nMPVI PICT picdem
       @ PRow(), PCol() + 1 SAY nMPVU - NMPVI PICT picdem
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
       _mpc := kalk_get_mpc_by_koncij_pravilo()
       SELECT kalk
 

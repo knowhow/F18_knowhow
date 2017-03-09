@@ -417,10 +417,10 @@ STATIC FUNCTION kalk_tops_o_gen_tables( lFromKumulativ )
       lFromKumulativ := .F.
    ENDIF
 
-   SELECT F_ROBA
-   IF !Used()
-      o_roba()
-   ENDIF
+  // SELECT F_ROBA
+//   IF !Used()
+  //    o_roba()
+//   ENDIF
 
    SELECT F_KONCIJ
    IF !Used()

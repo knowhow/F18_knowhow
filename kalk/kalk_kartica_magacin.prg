@@ -218,8 +218,7 @@ FUNCTION kalk_kartica_magacin()
       ENDIF
 
       cIdRoba := field->idroba
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       SELECT tarifa
       HSEEK roba->idtarifa
@@ -700,7 +699,7 @@ STATIC FUNCTION kartica_magacin_open_tabele()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+   //o_roba()
    o_konto()
    o_koncij()
    o_kalk() // kalk_kartica

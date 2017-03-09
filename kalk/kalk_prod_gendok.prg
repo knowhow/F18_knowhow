@@ -120,7 +120,7 @@ FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+   //o_roba()
 
    Box(, 4, 70 )
 
@@ -162,8 +162,7 @@ FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
       nUlaz := nIzlaz := 0
       nMPVU := nMPVI := nNVU := nNVI := 0
       nRabat := 0
-      SELECT roba
-      HSEEK cidroba
+      select_o_roba( cidroba )
 
       // SELECT kalk
 
@@ -210,8 +209,7 @@ FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
 
       SELECT KALK_1
 
-      SELECT roba
-      HSEEK cIdroba
+      select_o_roba( cIdroba )
 
       SELECT kalk_pripr
       scatter()
@@ -740,7 +738,7 @@ FUNCTION kalk_13_to_11()
    PRIVATE nRBr := 0
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cbrdok == brdok
       scatter()
-      SELECT roba; HSEEK _idroba
+      select_o_roba( _idroba )
       SELECT kalk_pripr2
       APPEND BLANK
 

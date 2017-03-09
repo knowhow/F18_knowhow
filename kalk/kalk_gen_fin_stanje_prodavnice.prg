@@ -252,8 +252,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
             ENDIF
          ENDIF
 
-         SELECT roba
-         HSEEK kalk->idroba
+         select_o_roba( kalk->idroba )
 
          IF ( _gledati_usluge == "N" .AND. roba->tip $ "U" )
             SELECT kalk
@@ -453,7 +452,7 @@ STATIC FUNCTION _o_tbl()
    o_sifk()
    o_sifv()
    o_tdok()
-   o_roba()
+  // o_roba()
    o_tarifa()
    o_koncij()
    o_konto()

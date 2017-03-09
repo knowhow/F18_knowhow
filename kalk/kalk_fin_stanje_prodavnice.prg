@@ -31,7 +31,7 @@ FUNCTION finansijsko_stanje_prodavnica()
    cIdKonto := PadR( "133", gDuzKonto )
 
    o_koncij()
-   o_roba()
+  // o_roba()
    o_tarifa()
    o_konto()
 
@@ -205,8 +205,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 
       DO WHILE CMNEOF  .AND. cidfirma + DToS( ddatdok ) + cbroj == idFirma + DToS( datdok ) + idvd + "-" + brdok .AND.  IspitajPrekid()
 
-         SELECT roba
-         HSEEK KALK->idroba
+         select_o_roba( KALK->idroba )
          SELECT KALK
 
          showkorner( 1, 100 )
@@ -221,8 +220,7 @@ FUNCTION finansijsko_stanje_prodavnica()
             LOOP
          ENDIF
 
-         SELECT roba
-         HSEEK KALK->idroba
+         select_o_roba( KALK->idroba )
          SELECT tarifa
          HSEEK KALK->idtarifa
          SELECT KALK

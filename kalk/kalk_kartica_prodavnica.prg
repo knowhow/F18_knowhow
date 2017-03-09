@@ -44,7 +44,7 @@ FUNCTION kalk_kartica_prodavnica()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+  // o_roba()
    o_konto()
    o_partner()
 
@@ -165,8 +165,7 @@ FUNCTION kalk_kartica_prodavnica()
 
       cIdRoba := field->idroba
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       SELECT tarifa
       HSEEK roba->idtarifa
@@ -598,7 +597,7 @@ FUNCTION naprometniji_artikli_prodavnica()
    SELECT params
    USE
 
-   o_roba()
+  // o_roba()
 
    find_kalk_za_period( self_organizacija_id(), NIL, NIL, NIL, dDat0, dDat1, "idroba,idvd" )
 
@@ -674,8 +673,7 @@ FUNCTION naprometniji_artikli_prodavnica()
       ? REPL( "-", Len( roba->id ) ) + " " + REPL( "-", 50 ) + " " + REPL( "-", 20 )
       FOR i := 1 TO Len( aTopI )
          cIdRoba := aTopI[ i, 1 ]
-         SELECT ROBA
-         SEEK cIdRoba
+         select_o_roba( cIdRoba )
          ? cIdRoba, Left( ROBA->naz, 50 ), PadC( Transform( aTopI[ i, 2 ], picdem ), 20 )
       NEXT
       ? REPL( "-", Len( id ) ) + " " + REPL( "-", 50 ) + " " + REPL( "-", 20 )
@@ -698,8 +696,7 @@ FUNCTION naprometniji_artikli_prodavnica()
 
       FOR i := 1 TO Len( aTopK )
          cIdRoba := aTopK[ i, 1 ]
-         SELECT ROBA
-         SEEK cIdRoba
+         select_o_roba( cIdRoba )
          ? cIdRoba, Left( ROBA->naz, 50 ), PadC( Transform( aTopK[ i, 2 ], pickol ), 20 )
       NEXT
       ? REPL( "-", Len( id ) ) + " " + REPL( "-", 50 ) + " " + REPL( "-", 20 )

@@ -62,7 +62,7 @@ FUNCTION fakt_kalk_prenos_10_14()
    // o_kalk()
    // o_kalk_doks()
    // o_kalk_doks2()
-   o_roba()
+  // o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -431,8 +431,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == field->IdFirma + field->IdTipDok + field->BrDok
 
-            SELECT roba
-            HSEEK fakt->idroba
+            select_o_roba( fakt->idroba )
 
             SELECT tarifa
             HSEEK roba->idtarifa
@@ -617,8 +616,7 @@ FUNCTION kalk_fakt_prenos_period()
             LOOP
          ENDIF
 
-         SELECT ROBA
-         HSEEK fakt->idroba
+         select_o_roba( fakt->idroba )
 
          SELECT tarifa
          HSEEK roba->idtarifa
@@ -701,7 +699,7 @@ STATIC FUNCTION _o_prenos_tbls()
 
    o_koncij()
    o_kalk_pripr()
-   o_roba()
+  // o_roba()
    o_konto()
    o_partner()
    o_tarifa()

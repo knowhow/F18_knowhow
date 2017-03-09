@@ -36,7 +36,7 @@ FUNCTION o_kalk_tabele_izvj()
    o_sifk()
    o_sifv()
    o_tarifa()
-   select_o_roba()
+   //select_o_roba()
    o_koncij()
    select_o_konto()
    select_o_partner()
@@ -305,7 +305,7 @@ FUNCTION knjizno_stanje_prodavnica()
    LOCAL nRabat := 0
 
    SELECT roba
-   HSEEK cIdRoba
+--   HSEEK cIdRoba
    SELECT koncij
    HSEEK cIdKonto
 
@@ -690,15 +690,8 @@ FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
 
    nSelect := Select()
 
-   lUsedRoba := .T.
-   Select( F_ROBA )
-   IF !Used()
-      lUsedRoba := .F.
-      o_roba()
-   ELSE
-      Select( F_ROBA )
-   ENDIF
-   SEEK cIdRoba
+
+   select_o_roba( cIdRoba )
 
    SELECT ( nSelect )
 
@@ -733,15 +726,7 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
 
    nSelect := Select()
 
-   lUsedRoba := .T.
-   Select( F_ROBA )
-   IF !Used()
-      lUsedRoba := .F.
-      o_roba()
-   ELSE
-      Select( F_ROBA )
-   ENDIF
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
 
    SELECT ( nSelect )
    IF field->mu_i == "1"
@@ -852,7 +837,7 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
    nArr := Select()
    o_tarifa()
    o_koncij()
-   o_roba()
+  // o_roba()
    o_kalk_pripr9()
    cOtpremnica := Space( 10 )
    cIdKonto := "1320   "
@@ -872,8 +857,7 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
       cKonto := kalk_pripr->idKonto
       cRoba := kalk_pripr->idRoba
       cTarifa := kalk_pripr->idtarifa
-      SELECT roba
-      SEEK cRoba
+      select_o_roba( cRoba )
       SELECT tarifa
       SEEK cTarifa
       set_pdv_array( @aPorezi )
@@ -1004,7 +988,7 @@ FUNCTION kopiraj_set_cijena()
 
    ENDCASE
 
-   o_roba()
+  // o_roba()
    _count := RecCount()
 
    SELECT roba

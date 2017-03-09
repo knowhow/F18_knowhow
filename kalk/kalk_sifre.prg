@@ -120,7 +120,7 @@ FUNCTION OSifBaze()
    O_TRMP
    o_valute()
    o_tarifa()
-   o_roba()
+   //o_roba()
    o_sastavnica()
 
    RETURN

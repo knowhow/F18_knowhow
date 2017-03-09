@@ -121,8 +121,7 @@ FUNCTION kalk_unos_dok_pr()
    //check_datum_posljednje_kalkulacije()
 
    IF kalk_is_novi_dokument()
-      SELECT ROBA
-      HSEEK _IdRoba
+      select_o_roba(_IdRoba )
       _VPC := KoncijVPC()
       _TCarDaz := "%"
       _CarDaz := 0
@@ -262,8 +261,7 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
    LOCAL nKolS, nKolZN, nC1, nC2, dDatNab
    LOCAL hRec
 
-   SELECT ROBA
-   HSEEK _idroba
+   select_o_roba( _idroba )
 
    SELECT kalk_pripr
 
@@ -278,8 +276,7 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
    HSEEK _idroba
    DO WHILE !Eof() .AND. sast->id == _idroba
 
-      SELECT roba
-      HSEEK sast->id2
+      select_o_roba( sast->id2 )
 
       SELECT kalk_pripr
       APPEND BLANK

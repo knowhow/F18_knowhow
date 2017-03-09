@@ -91,7 +91,7 @@ FUNCTION kalk_get_1_94()
 
    _GKolicina := 0
    IF kalk_is_novi_dokument()
-      SELECT ROBA; HSEEK _IdRoba
+      select_o_roba(  _IdRoba )
       IF koncij->naz == "P2"
          _nc := plc
          _vpc := plc

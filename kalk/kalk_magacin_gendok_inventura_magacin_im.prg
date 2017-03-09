@@ -37,7 +37,7 @@ FUNCTION kalk_generacija_inventura_magacin_im()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+  // o_roba()
 
    IF lOsvjezi
       cIdFirma := self_organizacija_id()
@@ -121,8 +121,7 @@ FUNCTION kalk_generacija_inventura_magacin_im()
 
       IF cNule == "D" .OR. ( ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nVpvU - nVpvI, 4 ) <> 0 ) )
 
-         SELECT roba
-         HSEEK cIdroba
+         select_o_roba( cIdroba )
 
          SELECT kalk_pripr
 
@@ -228,7 +227,7 @@ FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+  // o_roba()
    o_kalk_pripr()
    o_kalk_pript()
    o_koncij()
@@ -294,8 +293,7 @@ FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
 
       IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nVpvU - nVpvI, 4 ) <> 0 )
 
-         SELECT roba
-         HSEEK cIdroba
+         select_o_roba( cIdroba )
 
          SELECT kalk_pripr
          kalk_dodaj_im_stavku( cIdFirma, cIdKonto, cBrDok, dDatDok, @nRbr, cIdRoba, nUlaz, nIzlaz, nVpvU, nVpvI, nNvU, nNvI, .T. )

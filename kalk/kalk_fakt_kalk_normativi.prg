@@ -161,8 +161,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
 
             ENDIF
 
-            SELECT ROBA
-            HSEEK fakt->idroba
+            select_o_roba( fakt->idroba )
 
 
             IF !Empty( cRobaUsl ) // provjeri prije svega uslov za robu
@@ -375,7 +374,7 @@ STATIC FUNCTION o_tbl_roba( lTest, cSezSif )
       SET ORDER TO TAG "ID"
 
    ELSE
-      o_roba()
+    //  o_roba()
       o_sastavnica()
    ENDIF
 
@@ -450,8 +449,7 @@ FUNCTION PrenosNoFakt()
 
          IF idtipdok = cIdTipdok .AND. cFaBrDok = brdok
 
-            SELECT ROBA
-            HSEEK fakt->idroba
+            select_o_roba( fakt->idroba )
             IF roba->tip = "P"
                // radi se o proizvodu
                SELECT sast
@@ -529,7 +527,7 @@ FUNCTION PrenosNo2()
 
    o_kalk_pripr()
    // o_kalk()
-   o_roba()
+  // o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -579,13 +577,11 @@ FUNCTION PrenosNo2()
 
          IF idtipdok $ cIdTipdok .AND. dDatFOd <= datdok .AND. dDatFDo >= datdok // pripada odabranom intervalu
 
-            SELECT roba
-            HSEEK fakt->idroba
+            select_o_roba( fakt->idroba )
             IF roba->tip = "P"
                // radi se o proizvodu
 
-               SELECT roba
-               HSEEK fakt->idroba
+               select_o_roba( fakt->idroba )
 
                SELECT kalk_pripr
                LOCATE FOR idroba == fakt->idroba
@@ -626,8 +622,7 @@ FUNCTION PrenosNo2()
          DO WHILE !Eof() .AND. id == kalk_pripr->idroba
             // setaj kroz sast
             // utvr|ivanje nabavnih cijena po sastavnici !!!!!
-            SELECT roba
-            HSEEK sast->id2
+            select_o_roba( sast->id2 )
 
             SELECT kalk_pripr
             // roba->nc - nabavna cijena sirovine

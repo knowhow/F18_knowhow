@@ -24,7 +24,7 @@ FUNCTION NaPrimPak()
    ENDIF
 
    o_koncij()
-   o_roba()
+  // o_roba()
    o_kalk_pripr()
    -- o_kalk_doks()
    -- o_kalk()
@@ -119,7 +119,7 @@ FUNCTION NaPrimPak()
          nUkNV := 0
          FOR i := 1 TO Len( aSastav )
             cIdPrim := aSastav[ i, 1 ]
-            SELECT ROBA; SEEK cIdPrim
+      --      SELECT ROBA; SEEK cIdPrim
             nKolicina := aSastav[ i, 2 ]
             nNC := NCuMP( cIdFirma, cIdPrim, cIdKonto, ;
                ( nUlaz - nIzlaz ) * nKolicina, dDatKalk )
@@ -153,7 +153,7 @@ FUNCTION NaPrimPak()
          // -----------------------------------------------
          IF Len( aSastav ) != 0
             SELECT ROBA
-            HSEEK cidroba
+      --      HSEEK cidroba
             SELECT kalk_pripr        // kalk_priprema dokumenta
             IF ( ( nulaz - nizlaz )  <> 0 )
                nRBr++
@@ -206,7 +206,7 @@ FUNCTION NaPrPak2()
 
    O__KALK
    o_koncij()
-   o_roba()
+  // o_roba()
    o_kalk_pripr()
    -- o_kalk_doks()
    -- o_kalk()
@@ -321,7 +321,7 @@ FUNCTION NaPrPak2()
          // generisi stavku zaduzenja sekundarnog pakovanja
          // -----------------------------------------------
          IF Len( aSastav ) != 0
-            SELECT ROBA; HSEEK cidroba
+        --    SELECT ROBA; HSEEK cidroba
             SELECT kalk_pripr        // kalk_priprema dokumenta
             IF ( ( nulaz - nizlaz )  <> 0 )
                nRBr++

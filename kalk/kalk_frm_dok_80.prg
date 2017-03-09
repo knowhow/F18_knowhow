@@ -104,8 +104,7 @@ FUNCTION Get1_80( atrib )
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-   SELECT roba
-   HSEEK _idroba
+   select_o_roba( _idroba )
 
    SELECT tarifa
    SEEK roba->idtarifa
@@ -250,8 +249,7 @@ FUNCTION kalk_get_1_80_protustavka()
    SELECT koncij
    SEEK Trim( _idkonto )
 
-   SELECT ROBA
-   HSEEK _idroba
+   select_o_roba( _idroba )
 
    // ako nije popunjeno
    _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
@@ -326,8 +324,7 @@ FUNCTION Svedi( cSvedi )
 
       SELECT koncij
       SEEK Trim( _idkonto )
-      SELECT roba
-      HSEEK _idroba
+      select_o_roba( _idroba )
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
 
    ELSEIF cSvedi == "S"

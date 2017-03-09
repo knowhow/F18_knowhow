@@ -917,7 +917,7 @@ STATIC FUNCTION kalk_o_tabele()
    o_sifv()
    o_konto()
    o_partner()
-   o_roba()
+  // o_roba()
 
    RETURN .T.
 

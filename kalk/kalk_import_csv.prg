@@ -781,7 +781,7 @@ STATIC FUNCTION TTbl2Kalk()
    o_kalk_pripr()
    // o_kalk()
    // o_kalk_doks()
-   o_roba()
+//   o_roba()
 
    SELECT temp
    SET ORDER TO TAG "1"

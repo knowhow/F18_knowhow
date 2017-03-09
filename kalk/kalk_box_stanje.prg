@@ -35,7 +35,7 @@ FUNCTION KalkStanje( cIdRoba )
 
 
    SET ORDER TO TAG "7" // "7","Idroba"
-   SEEK cIdRoba
+--   SEEK cIdRoba
 */
 
    find_kalk_za_period( self_organizacija_id(), NIL, NIL, cIdRoba )
@@ -136,10 +136,7 @@ FUNCTION BoxStanje( aStanje, cIdroba )
    NEXT
    nLenDP := IF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
-   SELECT roba
-   // PushWA()
-   SET ORDER TO TAG "ID"
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
    Box( , Min( 6 + nLen + Int( ( nLenDP ) / 2 ), 23 ), 75 )
    Beep( 1 )
    @ m_x + 1, m_y + 2 SAY "ARTIKAL: "
@@ -197,8 +194,7 @@ FUNCTION BoxStanje( aStanje, cIdroba )
          IF "TARIFA->" $ Upper( cPom777 )
             SELECT ( F_TARIFA )
             IF !Used(); o_tarifa(); ENDIF
-            SET ORDER TO TAG "ID"
-            HSEEK ROBA->idtarifa
+            select_o_roba( ROBA->idtarifa )
             SELECT ROBA
          ENDIF
 

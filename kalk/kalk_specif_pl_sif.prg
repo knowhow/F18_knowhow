@@ -68,7 +68,7 @@ FUNCTION PlFill_Sezona()
 
    IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
       nI := 0
-      o_roba()
+    //  o_roba()
       o_sifk()
       o_sifv()
       SELECT roba
@@ -112,7 +112,7 @@ FUNCTION PlFill_Vrsta()
    nI := 0
    IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
 
-      o_roba()
+  //    o_roba()
       o_sifk()
       o_sifv()
       SELECT roba
@@ -142,9 +142,7 @@ FUNCTION PlFillIdPartner( cIdPartner, cIdRoba )
       RETURN
    ENDIF
    nArr := Select()
-   o_roba()
-   SELECT roba
-   HSEEK cIdRoba
+   select_o_roba(  cIdRoba )
    REPLACE field->idpartner WITH cIdPartner
 
    SELECT ( nArr )

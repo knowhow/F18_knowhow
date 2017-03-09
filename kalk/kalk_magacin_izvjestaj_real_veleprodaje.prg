@@ -28,7 +28,7 @@ FUNCTION kalk_real_partnera()
 
    o_sifk()
    o_sifv()
-   o_roba()
+   //o_roba()
    o_konto()
    o_tarifa()
    o_partner()
@@ -138,8 +138,7 @@ FUNCTION kalk_real_partnera()
 
       DO WHILE !Eof() .AND. idfirma == cidfirma .AND. idpartner == cidpartner  .AND. cidkonto = mkonto .AND. IspitajPrekid()
 
-         SELECT roba
-         HSEEK kalk->idroba
+         select_o_roba( kalk->idroba )
          SELECT tarifa
          HSEEK kalk->idtarifa
          SELECT kalk

@@ -40,7 +40,7 @@ FUNCTION Iz47u96Norm()
 
    o_kalk_pripr()
    -- o_kalk()
-   o_roba()
+   //o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -97,7 +97,7 @@ FUNCTION Iz47u96Norm()
       ENDIF
       DO WHILE !Eof() .AND. cIDFirma + '47' + cBrDok47 == idfirma + idvd + brdok
 
-         SELECT ROBA; HSEEK kalk2->idroba
+      --   SELECT ROBA; HSEEK kalk2->idroba
 
          SELECT sast
          HSEEK  kalk2->idroba

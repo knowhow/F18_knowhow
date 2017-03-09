@@ -389,8 +389,7 @@ FUNCTION kalk_stampa_dok_81()
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
       get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
 
-      SELECT ROBA
-      HSEEK kalk_pripr->IdRoba
+      select_o_roba( kalk_pripr->IdRoba )
       SELECT TARIFA
       HSEEK kalk_pripr->IdTarifa
       SELECT kalk_pripr

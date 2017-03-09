@@ -113,7 +113,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
 
    o_kalk_pript()
    -- o_kalk()
-   o_roba()
+==   o_roba()
    o_konto()
    o_koncij()
    o_tarifa()
@@ -237,7 +237,7 @@ FUNCTION zaniv2_zaniv()
    ENDIF
 
    IF !Used( F_ROBA )
-      o_roba()
+==      o_roba()
    ENDIF
 
    SELECT roba
@@ -303,7 +303,7 @@ FUNCTION set_mpc_2()
    ENDIF
 
    IF !Used( F_ROBA )
-      o_roba()
+  ==    o_roba()
    ENDIF
 
    IF cUzCj == "1"
@@ -491,7 +491,7 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
       // nadji robu
       SELECT roba
       SET ORDER TO TAG "ID"
-      HSEEK cIdRoba
+  --    HSEEK cIdRoba
       cIdTarifa := roba->idtarifa
 
       // nadji tarifu
@@ -724,7 +724,7 @@ FUNCTION st_res_niv_p( cVar, cKolNula )
 
          SELECT roba
          SET ORDER TO TAG "ID"
-         HSEEK cIdRoba
+      --   HSEEK cIdRoba
 
          SELECT tarifa
          SEEK cIdTar

@@ -26,7 +26,7 @@ FUNCTION kalk_nivelacija_11()
 
    o_sifk()
    o_sifv()
-   o_roba()
+  // o_roba()
 
    SELECT kalk_pripr
    GO TOP
@@ -59,8 +59,7 @@ FUNCTION kalk_nivelacija_11()
       SELECT koncij
       SEEK Trim( hRec[ "idkonto" ] )
 
-      SELECT roba
-      HSEEK hRec[ "idroba" ]
+      select_o_roba( hRec[ "idroba" ] )
 
       SELECT tarifa
       HSEEK roba->idtarifa

@@ -48,7 +48,7 @@ FUNCTION RekMagTar()
    SET SOFTSEEK OFF
    o_sifk()
    o_sifv()
-   o_roba()
+  // o_roba()
    o_tarifa()
    -- o_kalk()
    SET ORDER TO TAG "6"
@@ -133,7 +133,7 @@ FUNCTION RekMagTar()
             SELECT KALK
 
             SELECT roba
-            HSEEK kalk->idroba
+      --      HSEEK kalk->idroba
             SELECT kalk
             set_pdv_public_vars()
             IF _PORVT <> 0

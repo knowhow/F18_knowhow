@@ -144,10 +144,10 @@ STATIC FUNCTION o_tables( azurirana )
       o_koncij()
    ENDIF
 
-   SELECT F_ROBA
-   IF !Used()
-      o_roba()
-   ENDIF
+  // SELECT F_ROBA
+//   IF !Used()
+//      o_roba()
+//   ENDIF
 
    SELECT F_TARIFA
    IF !Used()

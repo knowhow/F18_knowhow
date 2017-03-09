@@ -174,8 +174,7 @@ FUNCTION Get1_RN()
    @ m_x + 13, m_y + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
    READ
    IF kalk_is_novi_dokument()
-      SELECT ROBA
-      HSEEK _IdRoba
+      select_o_roba( _IdRoba )
       IF koncij->naz == "P2"
          _VPC := PlC
       ELSE

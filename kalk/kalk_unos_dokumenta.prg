@@ -676,7 +676,7 @@ FUNCTION kalk_edit_sve_stavke( lAsistentObrada, lStartPocetak )
    PushWA()
 
    select_o_tarifa()
-   select_o_roba()
+  // select_o_roba()
    select_o_koncij()
 
    select_o_kalk_pripr()
@@ -1470,7 +1470,7 @@ FUNCTION MPCSAPPiz80uSif()
 
    SELECT KALK
    DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
-      SELECT ROBA; HSEEK KALK->idroba
+      select_o_roba( KALK->idroba )
       IF Found()
          StaviMPCSif( KALK->mpcsapp, .F. )
       ENDIF
@@ -1524,7 +1524,7 @@ FUNCTION VPCSifUDok()
 FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
 
    o_koncij()
-   select_o_roba()
+//   select_o_roba()
    o_tarifa()
    select_o_partner()
    select_o_konto()

@@ -34,7 +34,7 @@ FUNCTION browse_kalk_dokumenti()
       RETURN .F.
    ENDIF
 
-   o_roba()
+  // o_roba()
    o_koncij()
 
    o_konto()
@@ -237,7 +237,7 @@ STATIC FUNCTION usl_browse_kalk_dokumenti( cFirma, cIdVd, dDatOd, dDatDo, ;
 
 FUNCTION kalk_pregled_dokumenata_hronoloski()
 
-   o_roba()
+  // o_roba()
    o_koncij()
    -- o_kalk()
    o_konto()
@@ -456,7 +456,7 @@ STATIC FUNCTION pregled_kartice()
    IF !Empty( cMkonto )
 
       SELECT kalk
-      SEEK cidfirma + cmkonto + cidroba
+    --  SEEK cidfirma + cmkonto + cidroba
 
       nStanje := nNV := nVPV := 0
 
@@ -484,7 +484,7 @@ STATIC FUNCTION pregled_kartice()
       ENDDO
    ELSE
       SELECT kalk
-      SEEK cidfirma + cpkonto + cidroba
+    --  SEEK cidfirma + cpkonto + cidroba
       nStanje := nNV := nMPV := 0
       DO WHILE !Eof() .AND. idfirma + pkonto + idroba == cidfirma + cpkonto + cidroba
          cId := idfirma + idvd + brdok + rbr
@@ -543,15 +543,15 @@ STATIC FUNCTION pregled_kartice()
 
    SET CURSOR ON
 
-   SELECT roba; HSEEK cidroba; SELECT kalk
+  -- SELECT roba; HSEEK cidroba; SELECT kalk
    IF Empty( cPkonto )
-      SELECT koncij; SEEK Trim( cmkonto ); SELECT kalk
+--      SELECT koncij; SEEK Trim( cmkonto ); SELECT kalk
       @ m_x + 2, m_y + 1 SAY "Pregled kartice magacin: "; ?? cMkonto, "-", cidroba,"-", Left( roba->naz, 40 )
       BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
          "idFirma+mkonto+idroba=cidFirma+cmkonto+cidroba", ;
          cidFirma + cmkonto + cidroba, 2,,, {|| OznaciMag( .T. ) } )
    ELSE
-      SELECT koncij; SEEK Trim( cpkonto ) ; SELECT kalk
+--      SELECT koncij; SEEK Trim( cpkonto ) ; SELECT kalk
       @ m_x + 2, m_y + 1 SAY "Pregled kartice prodavnica: "; ?? cPkonto, "-", cidroba, "-", Left( roba->naz, 40 )
       BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
          "idFirma+pkonto+idroba=cidFirma+cpkonto+cidroba", ;

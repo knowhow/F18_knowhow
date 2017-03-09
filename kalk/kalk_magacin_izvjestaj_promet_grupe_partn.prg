@@ -312,7 +312,7 @@ FUNCTION ZaglPGP()
 
       o_sifk()
       o_sifv()
-      o_roba()
+    --  o_roba()
       o_koncij()
       o_konto()
       o_partner()

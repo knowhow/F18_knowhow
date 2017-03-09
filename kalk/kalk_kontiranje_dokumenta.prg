@@ -71,10 +71,10 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
       o_sifv()
    ENDIF
 
-   SELECT F_ROBA
-   IF !Used()
-      o_roba()
-   ENDIF
+  // SELECT F_ROBA
+  // IF !Used()
+  ///    o_roba()
+  // ENDIF
 
    SELECT F_FINMAT
    IF !Used()
@@ -1012,7 +1012,7 @@ FUNCTION kalk_open_tabele_za_kontiranje()
    o_konto()
    o_partner()
    o_tdok()
-   o_roba()
+  // o_roba()
    o_tarifa()
 
    RETURN .T.

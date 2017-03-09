@@ -89,7 +89,7 @@ FUNCTION krpt_export()
    find_kalk_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
 
 
-   o_roba()
+  // o_roba()
    o_konto()
    o_koncij()
    o_tarifa()
@@ -232,11 +232,11 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
    SELECT ( F_KALK )
 
-
-   SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
+///
+//   SELECT ( F_ROBA )
+//   IF !Used()
+//      o_roba()
+  // ENDIF
 
    SELECT ( F_TARIFA )
    IF !Used()

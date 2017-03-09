@@ -60,9 +60,7 @@ FUNCTION kalk_get_1_ip()
    SELECT tarifa
    HSEEK _idtarifa
 
-   SELECT ROBA
-   SET ORDER TO TAG "ID"
-   SEEK _idroba
+   select_o_roba( _idroba )
 
    _mpcsapp := kalk_get_mpc_by_koncij_pravilo( _IdKonto )
 
@@ -119,7 +117,7 @@ FUNCTION kalk_generisi_ip()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
 
    Box(, 4, 50 )
 
@@ -308,7 +306,7 @@ FUNCTION gen_ip_razlika()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
    o_koncij()
    o_kalk_pripr()
    o_kalk_pript()
@@ -357,8 +355,7 @@ FUNCTION gen_ip_razlika()
       nNVI := 0
       nRabat := 0
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       SELECT koncij
       HSEEK cIdKonto

@@ -1449,7 +1449,7 @@ STATIC FUNCTION kalk_open_tables()
 
    o_sifk()
    o_sifv()
-   o_roba()
+   //o_roba()
    IF o_koncij()
       ?E "open koncij ok"
    ELSE

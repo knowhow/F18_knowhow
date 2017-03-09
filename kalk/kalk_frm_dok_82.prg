@@ -78,8 +78,7 @@ FUNCTION Get1_82()
    _GKolicina := 0
 
    IF kalk_is_novi_dokument()
-      SELECT ROBA
-      HSEEK _IdRoba
+      select_o_roba(_IdRoba )
       _VPC := KoncijVPC()
       _NC := NC
    ENDIF

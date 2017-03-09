@@ -160,7 +160,7 @@ FUNCTION kalk_generisi_95_za_manjak_16_za_visak()
    // o_kalk()
    o_sifk()
    o_sifv()
-   o_roba()
+  // o_roba()
 
    SELECT kalk_pripr
    GO TOP
@@ -290,7 +290,7 @@ FUNCTION MNivPoProc()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
    cVarijanta := "3"
    Box(, 7, 60 )
    cIdFirma := self_organizacija_id()
@@ -330,7 +330,7 @@ FUNCTION MNivPoProc()
       nUlaz := nIzlaz := 0
       nVPVU := nVPVI := nNVU := nNVI := 0
       nRabat := 0
-      SELECT roba; HSEEK cidroba; SELECT kalk
+    --  SELECT roba; HSEEK cidroba; SELECT kalk
       DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + mkonto + idroba
 
          IF ddatdok < datdok  // preskoci
@@ -373,7 +373,7 @@ FUNCTION MNivPoProc()
          SKIP
       ENDDO
 
-      SELECT roba; HSEEK cidroba; SELECT kalk
+    --  SELECT roba; HSEEK cidroba; SELECT kalk
       IF  ( cVarijanta = "1" .AND. roba->n1 = 0 )
          skip; LOOP
       ENDIF
@@ -437,7 +437,7 @@ FUNCTION KorekPC()
    @ m_x + 6, m_y + 2 SAY "Datum do kojeg se sravnjava" GET dDok
    read;ESC_BCR
    BoxC()
-   o_roba()
+//   o_roba()
    o_kalk_pripr()
 
 
@@ -454,8 +454,7 @@ FUNCTION KorekPC()
    DO WHILE !Eof() .AND. idfirma + mkonto = self_organizacija_id() + cMagac
 
       cIdRoba := Idroba; nUlaz := nIzlaz := 0; nVPVU := nVPVI := nNVU := nNVI := 0; nRabat := 0
-      SELECT roba
-      HSEEK cidroba
+      select_o_roba( cidroba )
 
       SELECT kalk
       IF roba->tip $ "TU"; skip; loop; ENDIF
@@ -586,7 +585,7 @@ FUNCTION kalk_generisi_prijem16_iz_otpreme96()
    // o_kalk()
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
 
    SELECT kalk_pripr
    GO TOP
@@ -626,8 +625,7 @@ FUNCTION kalk_generisi_prijem16_iz_otpreme96()
    PRIVATE nRBr := 0
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cbrdok == brdok
       scatter()
-      SELECT roba
-      HSEEK _idroba
+      select_o_roba( _idroba )
 
       SELECT kalk_pripr2
       APPEND BLANK

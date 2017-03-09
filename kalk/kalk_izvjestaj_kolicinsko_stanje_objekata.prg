@@ -67,7 +67,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
    O_K1
    O_OBJEKTI
 
@@ -238,7 +238,7 @@ STATIC FUNCTION otvori_tabele()
 
    O_POBJEKTI
    o_koncij()
-   o_roba()
+  // o_roba()
    o_konto()
    o_tarifa()
    O_K1

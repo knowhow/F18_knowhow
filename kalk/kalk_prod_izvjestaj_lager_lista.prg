@@ -47,7 +47,7 @@ FUNCTION lager_lista_prodavnica()
 
    o_sifk()
    o_sifv()
-   o_roba()
+  // o_roba()
    o_konto()
    o_partner()
 
@@ -282,8 +282,7 @@ FUNCTION lager_lista_prodavnica()
          LOOP
       ENDIF
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       nMink := roba->mink
 
@@ -548,8 +547,7 @@ FUNCTION lager_lista_prodavnica()
          SELECT koncij
          SEEK Trim( cIdKonto )
 
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
 
          _mpc := kalk_get_mpc_by_koncij_pravilo()
 

@@ -242,8 +242,7 @@ STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
             ENDIF
          ENDIF
 
-         SELECT roba
-         SEEK pos->idroba
+         select_o_roba( pos->idroba )
          SELECT tarifa
          SEEK roba->idtarifa
          SELECT POS
@@ -280,7 +279,7 @@ STATIC FUNCTION ScanKalk( dDan, aR, dDatDo, cPKto )
 
 
 
-   o_roba()
+//   o_roba()
    -- o_kalk() // idFirma+dtos(datdok)+podbr+idvd+brdok
    SET ORDER TO TAG "5"
 

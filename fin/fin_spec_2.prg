@@ -51,7 +51,7 @@ FUNCTION SpecSubPro()
       ELSE
          @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 4, m_y + 2 SAY "Konto   " GET qqkonto  PICT "@!" VALID P_KontoFin( @qqkonto )
+      @ m_x + 4, m_y + 2 SAY "Konto   " GET qqkonto  PICT "@!" VALID p_konto( @qqkonto )
       @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
       @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
       @ m_x + 6, Col() + 2 SAY "do" GET dDatDo

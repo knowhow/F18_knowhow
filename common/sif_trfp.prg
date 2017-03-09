@@ -86,7 +86,7 @@ FUNCTION P_TRFP2( cId, dx, dy )
       { PadC( "Shema", 5 ),    {|| PadC( shema, 5 ) },      "shema"                    }, ;
       { PadC( "ID", 10 ),    {|| id },      "id"                    }, ;
       { PadC( "Naziv", 20 ), {|| naz },     "naz"                   }, ;
-      { "Konto  ", {|| idkonto },        "Idkonto", {|| .T. }, {|| ( "?" $ widkonto ) .OR. ( "A" $ widkonto ) .OR. ( "B" $ widkonto ) .OR. ( "IDKONT" $ widkonto ) .OR.  P_kontoFin( @wIdkonto ) }   }, ;
+      { "Konto  ", {|| idkonto },        "Idkonto", {|| .T. }, {|| ( "?" $ widkonto ) .OR. ( "A" $ widkonto ) .OR. ( "B" $ widkonto ) .OR. ( "IDKONT" $ widkonto ) .OR.  p_konto( @wIdkonto ) }   }, ;
       { "Tarifa", {|| idtarifa },        "IdTarifa"              }, ;
       { "D/P",   {|| PadC( D_P, 3 ) },      "D_P"                   }, ;
       { "Znak",    {|| PadC( Znak, 4 ) },        "ZNAK"                  }, ;

@@ -160,7 +160,7 @@ FUNCTION P_Budzet( cId, dx, dy )
    PRIVATE imekol, kol
 
    ImeKol := { { "Glava",   {|| idrj }, "idrj",, {|| Empty( wIdRj ) .OR. P_RJ ( @wIdRj ) } }, ;
-      { "Konto",   {|| Idkonto }, "Idkonto",, {|| gPregledSifriIzMenija := .F., P_KontoFin ( @wIdkonto ), gPregledSifriIzMenija := .T., .T. } }, ;
+      { "Konto",   {|| Idkonto }, "Idkonto",, {|| gPregledSifriIzMenija := .F., p_konto ( @wIdkonto ), gPregledSifriIzMenija := .T., .T. } }, ;
       { "Iznos",   {|| Iznos }, "iznos" }, ;
       { "Rebalans", {|| rebiznos }, "rebiznos" }, ;
       { "Fond",   {|| Fond }, "fond", {|| gPregledSifriIzMenija := .F., wfond $ "N1 #N2 #N3 " .OR. Empty( wFond ) .OR. P_FOND( @wFond ), gPregledSifriIzMenija := .T., .T. }  }, ;
@@ -184,7 +184,7 @@ FUNCTION P_ParEK( cId, dx, dy )
    PRIVATE imekol, kol
 
    ImeKol := { { "Partija", {|| IdPartija }, "idpartija",, {|| validacija_postoji_sifra ( wIdPartija ) } }, ;
-      { "Konto", {|| IdKonto }, "Idkonto",, {|| gPregledSifriIzMenija := .F., P_KontoFin ( @wIdKonto ), gPregledSifriIzMenija := .T., .T. } };
+      { "Konto", {|| IdKonto }, "Idkonto",, {|| gPregledSifriIzMenija := .F., p_konto ( @wIdKonto ), gPregledSifriIzMenija := .T., .T. } };
       }
    Kol := { 1, 2 }
 
@@ -208,7 +208,7 @@ FUNCTION P_TRFP3( cId, dx, dy )
    ImeKol := {  { PadC( "Shema", 5 ),    {|| PadC( shema, 5 ) },      "shema"     }, ;
       { PadC( "Formula/ID", 10 ),    {|| id },      "id"            }, ;
       { PadC( "Naziv", 20 ), {|| naz },     "naz"                   }, ;
-      { "Konto  ", {|| idkonto },        "Idkonto", {|| .T. }, {|| ( "?" $ widkonto ) .OR. ( "A" $ widkonto ) .OR. ( "B" $ widkonto ) .OR. ( "IDKONT" $ widkonto ) .OR.  P_kontoFin( @wIdkonto ) }   }, ;
+      { "Konto  ", {|| idkonto },        "Idkonto", {|| .T. }, {|| ( "?" $ widkonto ) .OR. ( "A" $ widkonto ) .OR. ( "B" $ widkonto ) .OR. ( "IDKONT" $ widkonto ) .OR.  p_konto( @wIdkonto ) }   }, ;
       { "D/P",   {|| PadC( D_P, 3 ) },      "D_P"                   }, ;
       { "Znak",    {|| PadC( Znak, 4 ) },        "ZNAK"                  }, ;
       { "IDVN",    {|| PadC( idvn, 4 ) },        "idvn"                  };

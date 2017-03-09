@@ -66,9 +66,9 @@ STATIC FUNCTION _get_vars( vars )
       ENDIF
 
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "Konto duguje   " GET cIdKonto  VALID P_KontoFin( @cIdKonto )
+      @ m_x + _x, m_y + 2 SAY "Konto duguje   " GET cIdKonto  VALID p_konto( @cIdKonto )
       ++ _x
-      @ m_x + _x, m_y + 2 SAY8 "Konto potražuje" GET cIdKonto2  VALID P_KontoFin( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
+      @ m_x + _x, m_y + 2 SAY8 "Konto potražuje" GET cIdKonto2  VALID p_konto( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
       ++ _x
       @ m_x + _x, m_y + 2 SAY8 "Partner-dužnik " GET cIdPartner VALID p_partner( @cIdPartner )  PICT "@!"
       ++ _x

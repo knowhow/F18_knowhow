@@ -18,18 +18,19 @@ MEMVAR ImeKol, Kol
    P_Roba( @cId, NIL, NIL, "IDP") - tag IDP - proizvodi
 */
 
-FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
+FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
 
    LOCAL xRet
    LOCAL bRoba
    LOCAL lArtGroup := .F.
    LOCAL _naz_len := 40
    LOCAL nI
+   LOCAL cPomTag
    PRIVATE ImeKol
    PRIVATE Kol
 
-   IF cTraziPoSifraDob == NIL
-      cTraziPoSifraDob := ""
+   IF cTagTraziPoSifraDob == NIL
+      cTagTraziPoSifraDob := ""
    ENDIF
 
    ImeKol := {}
@@ -133,8 +134,10 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
 
    bRoba := gRobaBlock
 
-   IF is_modul_fakt()  .AND. is_roba_trazi_po_sifradob() .AND. !Empty( cTraziPoSifraDob )
-      cPomTag := Trim( cTraziPoSifraDob )
+   IF is_roba_trazi_po_sifradob() .AND. !Empty( cTagTraziPoSifraDob )
+
+   /*
+      cPomTag := Trim( cTagTraziPoSifraDob )
       SELECT ( F_ROBA )
       IF index_tag_num( "SIFRADOB" ) == 0
          INDEX ON SIFRADOB TAG "SIFRADOB" TO ( "ROBA" )
@@ -142,7 +145,12 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
       IF cPomTag == "SIFRADOB" .AND. Len( Trim( cId ) ) < 5 // https://redmine.bring.out.ba/issues/36373
          cId := PadL( Trim( cId ), 5, "0" ) // 7148 => 07148, 22 => 00022
       ENDIF
-
+*/
+      cPomTag := Trim( cTagTraziPoSifraDob )
+      IF Len( Trim( cId ) ) < 5 // https://redmine.bring.out.ba/issues/36373
+         cId := PadL( Trim( cId ), 5, "0" ) // 7148 => 07148, 22 => 00022
+      ENDIF
+      find_roba_by_sifradob( cId )
    ELSE
       cPomTag := "ID"
    ENDIF

@@ -56,9 +56,8 @@ FUNCTION P_Konto( cId, dx, dy )
     *   param: dx
     *   param: dy
     *   param: lBlag
-*/
 
-FUNCTION P_KontoFin( cId, dx, dy, lBlag )
+FUNCTION p_konto( cId, dx, dy, lBlag )
 
    LOCAL i
    LOCAL nDbfArea := Select()
@@ -92,18 +91,6 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
    SELECT konto
    sifk_fill_ImeKol( "KONTO", @ImeKol, @Kol )
 
-   /*
-      IF lBlag .AND. !Left( cId, 1 ) $ "0123456789"
-         SELECT KONTO
-         // ukini zaostali filter
-         SET FILTER TO
-         // postavi filter za zadanu vrijednost karakteristike BLOP
-         cFilter := "DaUSifV('KONTO','BLOP',ID," + dbf_quote( Trim( cId ) ) + ")"
-         SET FILTER TO &cFilter
-         GO TOP
-         cId := Space( Len( cId ) )
-      ENDIF
-   */
 
    SELECT KONTO
    SET ORDER TO TAG "ID"
@@ -114,6 +101,7 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
 
    RETURN .T.
 
+   */
 
 
 

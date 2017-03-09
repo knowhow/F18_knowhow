@@ -384,19 +384,53 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
 
    DO CASE
 
-   CASE Upper( Chr( nKey ) ) == "F" .AND. Alias() == "PARTN"
+   CASE Upper( Chr( nKey ) ) == "F"
 
-      Box( "#Unijeti dio šifre ili naziva ili mjesta", 1, 70 )
-      SET CURSOR ON
-      @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
-      READ
-      BoxC()
-      IF LastKey() != K_ESC
-         find_partner_by_naz_or_id( cIdOrNaz )
-         TB:RefreshAll()
-         RETURN DE_REFRESH
+
+      IF Alias() == "PARTN"
+
+         Box( "#Unijeti dio šifre ili naziva ili mjesta", 1, 70 )
+         SET CURSOR ON
+         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         READ
+         BoxC()
+         IF LastKey() != K_ESC
+            find_partner_by_naz_or_id( cIdOrNaz )
+            TB:RefreshAll()
+            RETURN DE_REFRESH
+         ENDIF
+
       ENDIF
 
+      IF Alias() == "ROBA"
+
+         Box( "#Unijeti dio šifre ili sifredob ili naziva", 1, 70 )
+         SET CURSOR ON
+         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         READ
+         BoxC()
+         IF LastKey() != K_ESC
+            find_roba_by_naz_or_id( cIdOrNaz )
+            TB:RefreshAll()
+            RETURN DE_REFRESH
+         ENDIF
+
+      ENDIF
+
+      IF Alias() == "KONTO"
+
+         Box( "#Unijeti dio šifre ili naziva", 1, 70 )
+         SET CURSOR ON
+         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         READ
+         BoxC()
+         IF LastKey() != K_ESC
+            find_konto_by_naz_or_id( cIdOrNaz )
+            TB:RefreshAll()
+            RETURN DE_REFRESH
+         ENDIF
+
+      ENDIF
 
    CASE nKey == K_CTRL_F
 

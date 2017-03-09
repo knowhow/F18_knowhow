@@ -35,7 +35,7 @@ FUNCTION PartVanProm()
       @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    @ m_x + 4, m_y + 2 SAY " Konto (prazno-svi)" GET cIdKonto ;
-      VALID Empty ( cIdKonto ) .OR. P_KontoFin ( @cIdKonto )
+      VALID Empty ( cIdKonto ) .OR. p_konto ( @cIdKonto )
    @ m_x + 6, m_y + 2 SAY "Kriterij za telefon" GET cKrit PICT "@S30@!";
       VALID {|| aUsl := Parsiraj ( cKrit, "Telefon" ), ;
       iif ( aUsl == NIL, .F., .T. ) }

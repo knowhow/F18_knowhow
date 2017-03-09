@@ -67,6 +67,34 @@ FUNCTION o_roba( cId )
 
 
 
+
+FUNCTION find_roba_by_naz_or_id( cId )
+
+   LOCAL cAlias := "ROBA"
+   LOCAL cSqlQuery := "select * from fmk.roba"
+   LOCAL cIdSql
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+   cSqlQuery += " OR naz ilike " + cIdSql
+   cSqlQuery += " OR sifradob ilike " + cIdSql
+
+   IF !use_sql( "roba", cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   INDEX ON SIFRADOB TAG SIFRADOB TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN .T.
+
+
 FUNCTION select_o_roba( cId )
 
    SELECT ( F_ROBA )
@@ -151,6 +179,34 @@ FUNCTION select_o_partner( cId )
    ENDIF
 
    RETURN o_partner( cId )
+
+
+
+
+   FUNCTION find_konto_by_naz_or_id( cId )
+
+      LOCAL cAlias := "KONTO"
+      LOCAL cSqlQuery := "select * from fmk.konto"
+      LOCAL cIdSql
+
+      cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+      cSqlQuery += " WHERE id ilike " + cIdSql
+      cSqlQuery += " OR naz ilike " + cIdSql
+
+      IF !use_sql( "konto", cSqlQuery, cAlias )
+         RETURN .F.
+      ENDIF
+      INDEX ON ID TAG ID TO ( cAlias )
+      INDEX ON NAZ TAG NAZ TO ( cAlias )
+      SET ORDER TO TAG "ID"
+
+      SEEK cId
+      IF !Found()
+         GO TOP
+      ENDIF
+
+      RETURN .T.
+
 
 
 FUNCTION o_konto()

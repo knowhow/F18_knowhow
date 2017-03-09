@@ -1509,6 +1509,10 @@ FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
 
    IF Alias() == "PARTN"
       find_partner_by_naz_or_id( cId )
+   ELSEIF Alias() == "ROBA"
+      find_roba_by_naz_or_id( cId )
+   ELSEIF Alias() == "KONTO"
+      find_konto_by_naz_or_id( cId )
    ELSE
       SEEK cId
    ENDIF

@@ -81,7 +81,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    @ m_x + 1, m_y + 2 SAY "Firma: " + cIdFirma
 
 
-   @ m_x + 2, m_y + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_kontoFin( @cIdkonto )
+   @ m_x + 2, m_y + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID p_konto( @cIdkonto )
    IF cPoRN == "D"
       @ m_x + 3, m_y + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
    ENDIF

@@ -304,7 +304,7 @@ FUNCTION knjizno_stanje_prodavnica()
    LOCAL cIdkonto := _idkonto
    LOCAL nRabat := 0
 
-   SELECT roba
+  -- SELECT roba
 --   HSEEK cIdRoba
    SELECT koncij
    HSEEK cIdKonto

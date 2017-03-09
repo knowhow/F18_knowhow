@@ -1383,8 +1383,7 @@ FUNCTION kalk_set_diskont_mpc()
    my_flock()
 
    DO WHILE !Eof()
-      SELECT ROBA
-      HSEEK kalk_pripr->idroba
+      select_o_roba(  kalk_pripr->idroba )
       SELECT TARIFA
       HSEEK ROBA->idtarifa
       get_tarifa_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pKonto, kalk_pripr->idRoba, @aPorezi )
@@ -1427,8 +1426,7 @@ FUNCTION MPCSAPPuSif()
       HSEEK cIdKonto
       SELECT kalk_pripr
       DO WHILE !Eof() .AND. pkonto == cIdKonto
-         SELECT ROBA
-         HSEEK kalk_pripr->idroba
+         select_o_roba(  kalk_pripr->idroba )
          IF Found()
             StaviMPCSif( kalk_pripr->mpcsapp, .F. )
          ENDIF
@@ -1496,8 +1494,7 @@ FUNCTION VPCSifUDok()
    GO TOP
    my_flock()
    DO WHILE !Eof()
-      SELECT ROBA
-      HSEEK kalk_pripr->idroba
+      select_o_roba(  kalk_pripr->idroba )
       SELECT KONCIJ
       SEEK Trim( kalk_pripr->mkonto )
       // SELECT TARIFA; HSEEK ROBA->idtarifa

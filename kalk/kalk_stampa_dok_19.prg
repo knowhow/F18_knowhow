@@ -210,8 +210,7 @@ FUNCTION Obraz19()
 
       vise_kalk_dok_u_pripremi( cIdd )
 
-      SELECT ROBA
-      HSEEK kalk_pripr->IdRoba
+    select_o_roba(  kalk_pripr->IdRoba )
       SELECT TARIFA
       HSEEK kalk_pripr->IdTarifa
       SELECT kalk_pripr

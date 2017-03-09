@@ -195,7 +195,7 @@ FUNCTION BoxStanje( aStanje, cIdroba )
             SELECT ( F_TARIFA )
             IF !Used(); o_tarifa(); ENDIF
             select_o_roba( ROBA->idtarifa )
-            SELECT ROBA
+
          ENDIF
 
          IF i % 2 != 0

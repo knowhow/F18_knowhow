@@ -96,9 +96,10 @@ FUNCTION kalk_get_1_11()
 
    _GKolicina := _GKolicin2 := 0
    IF kalk_is_novi_dokument()
-      SELECT roba
+      //SELECT roba
       _MPCSaPP := kalk_get_mpc_by_koncij_pravilo( _pkonto )
 
+select roba
       _FCJ := NC
       _VPC := NC
 

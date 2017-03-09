@@ -122,8 +122,7 @@ FUNCTION kalk_get_1_10()
    @ m_x + nX, m_y + 2 SAY8 "Količina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
    IF kalk_is_novi_dokument()
-      SELECT ROBA
-      HSEEK _IdRoba
+      select_o_roba(_IdRoba )
       _VPC := KoncijVPC()
       _TCarDaz := "%"
       _CarDaz := 0

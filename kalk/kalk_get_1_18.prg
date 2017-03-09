@@ -101,7 +101,7 @@ FUNCTION kalk_get_1_18()
 
    IF _TBankTr <> "X"
 
-      SELECT roba
+      //SELECT roba
       SetujVPC( nNCJ )
 
       SELECT kalk_pripr

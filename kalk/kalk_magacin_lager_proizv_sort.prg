@@ -474,7 +474,7 @@ METHOD skipRec
 
    cWFilter := Parsiraj( ::cUslRobaNaz, "naz" )
 
-   SELECT roba
+  == SELECT roba
   -- HSEEK kalk->idRoba
 
    lPreskoci := .F.

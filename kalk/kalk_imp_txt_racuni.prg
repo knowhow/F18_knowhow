@@ -312,7 +312,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
             cIdKontoTmp := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 
-            SELECT roba
+    ---        SELECT roba
             -- SET ORDER TO TAG "ID_VSD"
             cSifraDobavljaca := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
 
@@ -366,7 +366,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
 /*
 
-      SELECT roba   // pronadji robu sifra dobavljaca
+--      SELECT roba   // pronadji robu sifra dobavljaca
       --SET ORDER TO TAG "ID_VSD"
 
       GO TOP
@@ -930,7 +930,7 @@ FUNCTION kalk_imp_roba_exist_sifradob()
       ENDIF
 
 /*
-      SELECT roba
+  --    SELECT roba
 
       // IF lSifraDob == .T.
       -- SET ORDER TO TAG "ID_VSD"  // sifra dobavljaca
@@ -1678,7 +1678,7 @@ STATIC FUNCTION FillDobSifra()
 
    o_roba()
 
-   SELECT roba
+--   SELECT roba
    SET ORDER TO TAG "ID"
    GO TOP
 

@@ -258,8 +258,8 @@ STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
          SKIP 1
       ENDDO
 
-      SELECT roba
-      USE
+      //SELECT roba
+      //USE
       SELECT pos
       USE
       SELECT koncij
@@ -316,7 +316,7 @@ STATIC FUNCTION ScanKalk( dDan, aR, dDatDo, cPKto )
    ENDDO
 
    ASort( aR,,, {| x, y| x[ 1 ] < y[ 1 ] } )
-   SELECT ROBA
+  -- SELECT ROBA
    FOR i := 1 TO Len( aR )
       HSEEK aR[ i, 1 ]
       aR[ i, 2 ] := Left( field->naz, 40 )

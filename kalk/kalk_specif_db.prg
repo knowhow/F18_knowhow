@@ -304,8 +304,7 @@ FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,
          LOOP
       ENDIF
 
-      SELECT roba
-      HSEEK kalk->( idroba )
+      select_o_roba(  kalk->( idroba ) )
       IF cK7 == "D" .AND. Empty( roba->k7 )
          SELECT kalk
          SKIP

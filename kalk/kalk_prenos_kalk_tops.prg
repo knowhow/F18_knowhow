@@ -103,8 +103,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
       cStavke += AllTrim( idroba ) + " x " + AllTrim( Str( kolicina, 8, 2 ) ) + "; "
 
-      SELECT roba
-      HSEEK kalk_pripr->idroba
+      select_o_roba(  kalk_pripr->idroba )
 
       SELECT koncij
       SEEK kalk_pripr->pkonto

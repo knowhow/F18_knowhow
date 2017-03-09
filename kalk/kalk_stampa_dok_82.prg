@@ -58,7 +58,7 @@ FUNCTION kalk_stampa_dok_82()
       Marza2R()   // izracunaj nMarza2
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-      SELECT ROBA; HSEEK kalk_pripr->IdRoba
+      select_o_roba( kalk_pripr->IdRoba )
       SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
       SELECT kalk_pripr
       set_pdv_public_vars()
@@ -141,7 +141,7 @@ FUNCTION kalk_stampa_dok_82()
       SELECT tarifa; HSEEK cidtarifa
       SELECT kalk_pripr
       DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok .AND. idtarifa == cidtarifa
-         SELECT roba; HSEEK kalk_pripr->idroba; SELECT kalk_pripr
+         Sselect_o_roba( kalk_pripr->idroba ); SELECT kalk_pripr
          set_pdv_public_vars()
          nU1 += mpc * kolicina
          nU2 += mpc * _OPP * kolicina

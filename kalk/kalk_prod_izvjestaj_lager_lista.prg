@@ -435,8 +435,7 @@ FUNCTION lager_lista_prodavnica()
             Eval( bZagl )
          ENDIF
 
-         SELECT roba
-         HSEEK cIdRoba
+        select_o_roba(  cIdRoba )
 
          SELECT kalk
          aNaz := Sjecistr( roba->naz, 20 )

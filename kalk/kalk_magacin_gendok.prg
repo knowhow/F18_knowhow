@@ -512,7 +512,7 @@ FUNCTION KorekPC()
          IF Pitanje(, "Nivelisati na stanje iz sifrarnika ?", " " ) == "D"
             nUlazVPC := nRobaVPC
          ELSEIF Pitanje(, "Ako to ne zelite, zelite li staviti u sifrarnik cijenu sa ulaza ?", " " ) == "D"
-            SELECT roba
+            //SELECT roba
             ObSetVPC( nUlazVPC )
             SELECT kalk_pripr
          ENDIF

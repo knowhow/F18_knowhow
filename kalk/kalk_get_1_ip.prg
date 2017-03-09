@@ -159,8 +159,7 @@ FUNCTION kalk_generisi_ip()
       nMPVU := nMPVI := nNVU := nNVI := 0
       nRabat := 0
 
-      SELECT roba
-      HSEEK cIdroba
+      select_o_roba( cIdroba )
 
       SELECT kalk
 
@@ -205,8 +204,7 @@ FUNCTION kalk_generisi_ip()
 
       IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
 
-         SELECT roba
-         HSEEK cIdroba
+         select_o_roba(  cIdroba )
 
          SELECT kalk_pripr
          scatter()
@@ -403,8 +401,7 @@ FUNCTION gen_ip_razlika()
 
       IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
 
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_roba(  cIdRoba )
 
          SELECT kalk_pripr
          APPEND BLANK

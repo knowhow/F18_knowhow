@@ -115,8 +115,7 @@ FUNCTION RekTarPDV()
                LOOP
             ENDIF
 
-            SELECT roba
-            HSEEK kalk_pripr->idroba
+          select_o_roba(  kalk_pripr->idroba )
 
             get_tarifa_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, cIdTarifa )
             SELECT kalk_pripr

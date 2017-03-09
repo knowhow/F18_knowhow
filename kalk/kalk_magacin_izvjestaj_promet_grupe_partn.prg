@@ -154,7 +154,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
       nVPVU := nVPVI := nNVU := nNVI := 0
       nRabat := 0
 
-      SELECT ROBA
+    ==  SELECT ROBA
       HSEEK cidroba
       SELECT KALK
 

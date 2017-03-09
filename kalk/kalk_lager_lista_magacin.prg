@@ -401,8 +401,7 @@ FUNCTION lager_lista_magacin()
       dL_ulaz := CToD( "" )
       dL_izlaz := CToD( "" )
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba(  cIdRoba )
 
       // pretrazi artikle po nazivu
       IF ( !Empty( cArtikalNaz ) .AND. At( AllTrim( cArtikalNaz ), AllTrim( roba->naz ) ) == 0 )
@@ -1224,8 +1223,7 @@ STATIC FUNCTION _gen_xml( hParams )
 
       _rabat := 0
 
-      SELECT roba
-      HSEEK _idroba
+      select_o_roba( _idroba )
 
       IF ( !Empty( _art_naz ) .AND. At( AllTrim( _art_naz ), AllTrim( roba->naz ) ) == 0 )
          SELECT kalk

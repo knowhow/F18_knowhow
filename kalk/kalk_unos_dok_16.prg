@@ -165,8 +165,7 @@ kalk_is_novi_dokument( .T. )
 
    SELECT koncij
    SEEK Trim( _idkonto )
-   SELECT ROBA
-   HSEEK _IdRoba
+  select_o_roba(  _IdRoba )
 
    _VPC := KoncijVPC()
    _TMarza2 := "%"

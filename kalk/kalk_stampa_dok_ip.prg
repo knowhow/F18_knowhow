@@ -97,8 +97,7 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
 */
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-      SELECT ROBA
-      HSEEK kalk_pripr->IdRoba
+      select_o_roba(  kalk_pripr->IdRoba )
 
       SELECT TARIFA
       HSEEK kalk_pripr->IdTarifa
@@ -282,7 +281,7 @@ FUNCTION stampa_obrasca_inventure_sank_lista()
 */
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-      SELECT ROBA; HSEEK kalk_pripr->IdRoba
+      select_o_roba( kalk_pripr->IdRoba )
       SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
       SELECT kalk_pripr
 

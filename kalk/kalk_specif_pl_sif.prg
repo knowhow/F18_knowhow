@@ -68,7 +68,7 @@ FUNCTION PlFill_Sezona()
 
    IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
       nI := 0
-    //  o_roba()
+      o_roba()
       o_sifk()
       o_sifv()
       SELECT roba

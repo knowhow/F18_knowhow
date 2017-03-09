@@ -142,8 +142,7 @@ FUNCTION kalk_unos_dok_81( hParams )
    IF kalk_is_novi_dokument()
       SELECT koncij
       SEEK Trim( _idkonto )
-      SELECT roba
-      HSEEK _idroba
+    select_o_roba(  _idroba )
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
       _TMarza2 := "%"
       _TCarDaz := "%"

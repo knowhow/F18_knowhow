@@ -124,8 +124,7 @@ FUNCTION Get1_80( atrib )
       SELECT koncij
       SEEK Trim( _idkonto )
 
-      SELECT roba
-      HSEEK _idroba
+      select_o_roba( _idroba )
 
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
 

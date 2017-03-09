@@ -72,8 +72,7 @@ FUNCTION kalk_get_1_14()
    SELECT TARIFA
    HSEEK _IdTarifa
 
-   SELECT ROBA
-   HSEEK _IdRoba
+   select_o_roba(_IdRoba )
 
    SELECT koncij
    SEEK Trim( _idkonto2 )
@@ -87,8 +86,9 @@ FUNCTION kalk_get_1_14()
    //DuplRoba()
 
    IF kalk_is_novi_dokument()
-      SELECT roba
+    //  SELECT roba
       _VPC := KoncijVPC()
+      select roba
       _NC := NC
       SELECT kalk_pripr
    ENDIF

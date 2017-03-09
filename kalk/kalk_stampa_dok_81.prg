@@ -108,8 +108,7 @@ FUNCTION StKalk81( fzatops )
 
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-      SELECT ROBA
-      HSEEK kalk_pripr->IdRoba
+    select_o_roba(  kalk_pripr->IdRoba )
       SELECT TARIFA
       HSEEK kalk_pripr->IdTarifa
 

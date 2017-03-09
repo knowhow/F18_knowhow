@@ -279,8 +279,8 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
          APPEND BLANK
          REPLACE rbr WITH nRbr, id_tarifa WITH cIdTarifa, id_roba WITH cIdRoba
 
-         SELECT roba
-         SEEK cIdRoba
+
+         select_o_roba(  cIdRoba )
 
          SELECT tarifa
          SEEK cIdTarifa

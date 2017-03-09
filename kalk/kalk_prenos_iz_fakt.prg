@@ -201,8 +201,7 @@ FUNCTION fakt_kalk_prenos_10_14()
          SELECT fakt
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
 
-            SELECT ROBA
-            HSEEK fakt->idroba
+            select_o_roba(  fakt->idroba )
 
             SELECT tarifa
             HSEEK roba->idtarifa

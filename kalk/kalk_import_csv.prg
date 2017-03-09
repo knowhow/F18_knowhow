@@ -799,10 +799,9 @@ STATIC FUNCTION TTbl2Kalk()
 
    DO WHILE !Eof()
 
-      SELECT roba
+    
       cTmpArt := AllTrim( temp->idroba )
-      GO TOP
-      SEEK cTmpArt
+    select_o_roba( cTmpArt )
 
       // dodaj zapis u kalk_pripr
       SELECT kalk_pripr

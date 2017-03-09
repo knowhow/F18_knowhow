@@ -287,8 +287,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
             SEEK finmat->idkonto
          ENDIF
 
-         SELECT roba
-         HSEEK finmat->idroba
+         select_o_roba( finmat->idroba )
 
          SELECT trfp
          GO TOP

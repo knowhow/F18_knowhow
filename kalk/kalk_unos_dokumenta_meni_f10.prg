@@ -221,8 +221,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
          _update := .T.
          hRec := dbf_get_rec()
 
-         SELECT roba
-         HSEEK hRec[ "idroba" ]
+         select_o_roba(  hRec[ "idroba" ] )
 
          IF !Found()
             MsgBeep( "Nepostojeća šifra artikla " + hRec[ "idroba" ] )

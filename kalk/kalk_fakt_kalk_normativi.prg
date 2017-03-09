@@ -200,8 +200,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
                      ENDIF
                   ENDIF
 
-                  SELECT roba
-                  HSEEK sast->id2
+                select_o_roba( sast->id2 )
 
                   SELECT kalk_pripr
                   LOCATE FOR idroba == sast->id2
@@ -456,8 +455,7 @@ FUNCTION PrenosNoFakt()
                HSEEK  fakt->idroba
                DO WHILE !Eof() .AND. id == fakt->idroba
                   // setaj kroz sast
-                  SELECT roba
-                  HSEEK sast->id2
+                select_o_roba(sast->id2 )
                   SELECT kalk_pripr
                   LOCATE FOR idroba == sast->id2
                   IF Found()
@@ -633,9 +631,8 @@ FUNCTION PrenosNo2()
             SKIP
          ENDDO
 
-         SELECT roba
          // nafiluj nabavne cijene proizvoda u sifrarnik robe!!!
-         HSEEK kalk_pripr->idroba
+         select_o_roba( kalk_pripr->idroba )
 
          IF Found()
             hRec := dbf_get_rec()

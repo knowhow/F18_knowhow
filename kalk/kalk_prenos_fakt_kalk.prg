@@ -34,7 +34,7 @@ FUNCTION fakt_kalk()
 
 
 
-/* ProvjeriSif(clDok,cImePoljaID,nOblSif,clFor)
+/* provjerisif_izbaciti_ovu_funkciju(clDok,cImePoljaID,nOblSif,clFor)
  *     Provjera postojanja sifara
  *   param: clDok - "while" uslov za obuhvatanje slogova tekuce baze
  *   param: cImePoljaID - ime polja tekuce baze u kojem su sifre za ispitivanje
@@ -42,7 +42,7 @@ FUNCTION fakt_kalk()
  *   param: clFor - "for" uslov za obuhvatanje slogova tekuce baze
  */
 
-FUNCTION ProvjeriSif( clDok, cImePoljaID, nOblSif, clFor, lTest )
+FUNCTION provjerisif_izbaciti_ovu_funkciju( clDok, cImePoljaID, nOblSif, clFor, lTest )
 
    LOCAL lVrati := .T.
    LOCAL nArr := Select()
@@ -58,6 +58,12 @@ FUNCTION ProvjeriSif( clDok, cImePoljaID, nOblSif, clFor, lTest )
    IF clFor == NIL
       clFor := ".t."
    ENDIF
+
+// TODO izbaciti ovu funkciju
+
+IF .T.
+       RETURN .T.
+ENDIF
 
    PRIVATE cPom := clDok
    PRIVATE cPom2 := cImePoljaID

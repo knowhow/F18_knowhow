@@ -168,11 +168,11 @@ FUNCTION fakt_kalk_prenos_10_14()
             nRbr := Val( Rbr )
          ENDIF
 
-         SELECT fakt
-         IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-            MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u šifarniku!#Prenos nije izvršen!" )
-            LOOP
-         ENDIF
+         //SELECT fakt
+         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+        //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u šifarniku!#Prenos nije izvršen!" )
+          //  LOOP
+         //ENDIF
 
          find_kalk_doks2_by_broj_dokumenta( cIdFirma, "14", cBrKalk )
 
@@ -423,7 +423,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
          SELECT fakt
 
-         IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+         IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
             MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
             LOOP
          ENDIF
@@ -610,7 +610,7 @@ FUNCTION kalk_fakt_prenos_period()
          SELECT fakt
 
          // provjeri sifru u sifarniku
-         IF !ProvjeriSif( "!eof() .and. '" + fakt->idfirma + fakt->idtipdok + fakt->brdok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+         IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + fakt->idfirma + fakt->idtipdok + fakt->brdok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
             MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
             LOOP
          ENDIF

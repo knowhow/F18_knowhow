@@ -747,8 +747,8 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
       kalk_sumiraj_kolicinu( -field->kolicina, -field->kolicina, @nTotUlaz, @nTotalIzlaz )
    ENDIF
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 FUNCTION kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
@@ -757,8 +757,7 @@ FUNCTION kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
    nArea := Select()
 
-   SELECT ROBA
-   HSEEK ( nArea )->IdRoba
+   select_o_roba( ( nArea )->IdRoba )
 
    SELECT tarifa
    HSEEK ( nArea )->IdTarifa

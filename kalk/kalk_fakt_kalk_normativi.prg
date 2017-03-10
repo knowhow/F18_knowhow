@@ -112,7 +112,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
       SELECT fakt
       SEEK cFaktFirma
 
-      IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok", lTest )
+      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok", lTest )
 
          MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
          LOOP
@@ -438,7 +438,7 @@ FUNCTION PrenosNoFakt()
       SELECT fakt
       SEEK cFaktFirma
 
-      IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok = '" + cIdTipdok + "' .and. brdok = '" + cFaBrDok + "'" )
+      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok = '" + cIdTipdok + "' .and. brdok = '" + cFaBrDok + "'" )
 
          MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
          LOOP
@@ -566,7 +566,7 @@ FUNCTION PrenosNo2()
 
       SELECT fakt
       SEEK cFaktFirma
-      IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok" )
+      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok" )
          MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
          LOOP
       ENDIF

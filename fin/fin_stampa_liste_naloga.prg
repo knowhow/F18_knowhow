@@ -73,8 +73,10 @@ FUNCTION fin_stampa_liste_naloga()
       cIdVN := NIL
    ENDIF
 
-   find_nalog_za_period( self_organizacija_id(), cIdVn, dDatOd, dDatDo, cOrderBy  )
-
+   IF !find_nalog_za_period( self_organizacija_id(), cIdVn, dDatOd, dDatDo, cOrderBy  )
+      MsgBeep( "Nema naloga za prikaz !?" )
+      RETURN .F.
+   ENDIF
 
    IF cInteg == "D"
       o_suban()
@@ -102,7 +104,7 @@ FUNCTION fin_stampa_liste_naloga()
    IF f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DToC( Date() ) ) == "X"
       RETURN .F.
    ENDIF
-   
+
    m := Space( PRINT_LEFT_SPACE ) + "------- --- --- " + Replicate( "-", nBrNalLen + 1 ) + " -------- ---------------- ----------------"
 
    IF fin_dvovalutno()

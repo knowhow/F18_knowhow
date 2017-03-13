@@ -1392,11 +1392,11 @@ FUNCTION fakt_11_kalk_42()
                // LOOP
                // ENDIF
 
-
+               select_o_roba( fakt->idroba )
                SELECT kalk_pripr
 
                LOCATE FOR idroba == fakt->idroba // ako fakt ima vise istih artikala - .T.
-               select_o_roba( fakt->idroba )
+
 
                IF Found() .AND. ;
                      ( Round( fakt->rabat, 2 ) == 0 .AND. Round( field->rabatv, 2 ) == 0 ) .AND. ;

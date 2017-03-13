@@ -1294,6 +1294,7 @@ FUNCTION pic_proc2( xPom )
 
    RETURN PIC_PROC2
 
+
 FUNCTION pic_kolicina( xPom )
 
    IF xPom <> NIL

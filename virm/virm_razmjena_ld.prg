@@ -38,7 +38,7 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
       RETURN .F.
    ENDIF
 
-   virm_o_tables()
+   virm_o_tables_razmjena()
 
    SELECT virm_pripr
    IF reccount2() > 0 .AND. Pitanje(, "Izbrisati virmane u pripremi?", "N" ) == "D"
@@ -185,6 +185,7 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
             field->mjesto WITH gmjesto, ;
             field->svrha_pl WITH "IS", ;
             field->iznos WITH _total, ;
+            field->IznosSTR WITH "=" + iif( _total == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _total ), ".", "," ) ) ), ;
             field->na_teret WITH gVirmFirma, ;
             field->kome_txt WITH _kome_txt, ;
             field->ko_txt WITH _ko_txt, ;
@@ -261,17 +262,16 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
       IF _bez_nula == "N" .OR. _izr_formula > 0
 
          APPEND BLANK
-         REPLACE field->rbr WITH ++r_br
-         REPLACE field->mjesto WITH gMjesto
-         REPLACE field->svrha_pl WITH _svrha_placanja
-         REPLACE field->iznos WITH _izr_formula
-         REPLACE field->vupl WITH "0"
-
-         // posaljioc
-         REPLACE field->na_teret WITH gVirmFirma
-         REPLACE field->ko_txt WITH _ko_txt
-         REPLACE field->ko_zr WITH _racun_upl
-         REPLACE field->kome_txt WITH vrprim->naz
+         REPLACE field->rbr WITH ++r_br, ;
+            field->mjesto WITH gMjesto, ;
+            field->svrha_pl WITH _svrha_placanja, ;
+            field->iznos WITH _izr_formula, ;
+            field->IznosSTR WITH "=" + iif( _izr_formula == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _izr_formula ), ".", "," ) ) ), ;
+            field->vupl WITH "0", ;
+            field->na_teret WITH gVirmFirma, ;
+            field->ko_txt WITH _ko_txt, ;
+            field->ko_zr WITH _racun_upl, ;
+            field->kome_txt WITH vrprim->naz
 
          IF PadR( vrprim->idpartner, 2 ) == "JP"
             REPLACE field->pnabr WITH _poziv_na_broj
@@ -317,7 +317,6 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
             field->idjprih WITH _idjprih, ;
             field->idops WITH _idops, ;
             field->budzorg WITH _budzorg
-
 
       ENDIF
 
@@ -421,7 +420,7 @@ FUNCTION set_jprih_globalne_varijable_kome_zr_budzorg_idjprih_idops()
    _IDJPRIH := cIdjprih
    _IDOPS := cIdOps
    _KOME_ZR := aJPrih[ 1 ]
-   _budzorg :=  aJPrih[ 3 ]
+   _budzorg :=  aJPrih[ 2 ]
 
    RETURN .T.
 
@@ -449,21 +448,18 @@ FUNCTION set_pozicija_jprih_record( cIdJPrih, cIdOps, cIdKan, cIdEnt )
    PushWA()
    lSofSeek := Set( _SET_SOFTSEEK, .T. )
 
-
-   aRez := { "", "", "" }    // 1 - racun 2 - naziv 3 - budzorg
+   aRez := { "", "" }    // 1 - racun, 2 - budzorg
 
    SELECT jprih
    cPom := cIdJPrih
 
-
+   AltD()
    FOR i := Len( cIdJPrih ) TO 1 STEP -1  // 72311 - traziti 72311, pa 7231, pa 723, pa 723, pa 72, pa 7
 
       cPom := Left( cIdJPrih, i )
       SEEK cPom
 
       IF Trim( jprih->id ) == cPom // npr "723" == LEFT( "72311", 3)
-
-         aRez[ 2 ] := jprih->naz
 
          DO WHILE !Eof() .AND. Trim( jprih->Id ) == cPom
 
@@ -475,30 +471,27 @@ FUNCTION set_pozicija_jprih_record( cIdJPrih, cIdOps, cIdKan, cIdEnt )
                LOOP
             ENDIF
 
-            IF !Empty( cIdOps ) .AND. cIdOps != idops
-               IF !Empty( idops )
+            IF !Empty( cIdOps ) .AND. cIdOps != jprih->idops
+               IF !Empty( jprih->idops )
                   lOk := .F.
                ENDIF
             ENDIF
 
-            IF !Empty( cIdKan ) .AND. cIdKan != idkan
+            IF !Empty( cIdKan ) .AND. cIdKan != jprih->idkan
                IF !Empty( idkan )
                   lOk := .F.
                ENDIF
             ENDIF
 
-            IF !Empty( cIdEnt ) .AND. cIdEnt != idn0
-               IF !Empty( idn0 )
+            IF !Empty( cIdEnt ) .AND. cIdEnt != jprih->idn0
+               IF !Empty( jprih->idn0 )
                   lOk := .F.
                ENDIF
             ENDIF
 
             IF lOk
-               IF Empty( aRez[ 2 ] )
-                  aRez[ 2 ] := jprih->racun   // nisam jos nasao naziv
-               ENDIF
                aRez[ 1 ] := jprih->racun
-               aRez[ 3 ] := jprih->budzorg
+               aRez[ 2 ] := jprih->budzorg
                EXIT
             ENDIF
 
@@ -693,19 +686,20 @@ STATIC FUNCTION ld_virm_generacija_krediti( nGodina, nMjesec, dDatVirm, r_br, do
 
          APPEND BLANK
 
-         REPLACE field->rbr WITH ++r_br
-         REPLACE field->mjesto WITH gMjesto
-         REPLACE field->svrha_pl WITH "KR"
-         REPLACE field->iznos WITH _total
-         REPLACE field->na_teret WITH gVirmFirma
-         REPLACE field->kome_txt WITH _kome_txt
-         REPLACE field->ko_txt WITH _ko_txt
-         REPLACE field->ko_zr WITH _ko_zr
-         REPLACE field->kome_sj WITH _kome_sjed
-         REPLACE field->kome_zr WITH _KOME_ZR
-         REPLACE field->dat_upl WITH dDatVirm
-         REPLACE field->svrha_doz WITH AllTrim( vrprim->pom_txt ) + IF( !Empty( vrprim->pom_txt ), " ", "" ) + AllTrim( dod_opis ) + IF( !Empty( dod_opis ), " ", "" ) + AllTrim( _kred_opis )
-         REPLACE field->u_korist WITH cIdKreditor
+         REPLACE field->rbr WITH ++r_br, ;
+            field->mjesto WITH gMjesto, ;
+            field->svrha_pl WITH "KR", ;
+            field->iznos WITH _total, ;
+            field->IznosSTR WITH "=" + iif( _total == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _total ), ".", "," ) ) ), ;
+            field->na_teret WITH gVirmFirma, ;
+            field->kome_txt WITH _kome_txt, ;
+            field->ko_txt WITH _ko_txt, ;
+            field->ko_zr WITH _ko_zr, ;
+            field->kome_sj WITH _kome_sjed, ;
+            field->kome_zr WITH _KOME_ZR, ;
+            field->dat_upl WITH dDatVirm, ;
+            field->svrha_doz WITH AllTrim( vrprim->pom_txt ) + iif( !Empty( vrprim->pom_txt ), " ", "" ) + AllTrim( dod_opis ) + iif( !Empty( dod_opis ), " ", "" ) + AllTrim( _kred_opis ), ;
+            field->u_korist WITH cIdKreditor
 
       ENDIF
 
@@ -844,38 +838,5 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
    ENDIF
 
    PopWA()
-
-   RETURN .T.
-
-
-STATIC FUNCTION virm_o_tables()
-
-   o_banke()
-   select_o_jprih()
-
-   SELECT ( F_SIFK )
-   IF !Used()
-      o_sifk()
-   ENDIF
-
-   SELECT ( F_SIFV )
-   IF !Used()
-      o_sifv()
-   ENDIF
-
-
-   o_kred()
-
-
-   select_o_rekld()
-   select_o_partner()
-
-   o_ldvirm()
-
-
-   SELECT ( F_VIPRIPR )
-   IF !Used()
-      O_VIRM_PRIPR
-   ENDIF
 
    RETURN .T.

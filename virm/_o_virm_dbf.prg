@@ -67,3 +67,15 @@ FUNCTION o_ldvirm()
    SET ORDER TO TAG "ID"
 
    RETURN .T.
+
+
+
+
+FUNCTION o_virm_pripr()
+
+   RETURN o_dbf_table( F_VIPRIPR, "virm_pripr", "1" )
+
+
+FUNCTION select_o_virm_pripr()
+
+   RETURN select_o_dbf( "VIRM_PRIPR", F_VIPRIPR, "virm_pripr", "1" )

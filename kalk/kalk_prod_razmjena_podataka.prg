@@ -35,8 +35,8 @@ FUNCTION prenos_fakt_kalk_prodavnica()
 
    AAdd( Opc, "6. fakt 13 -> kalk 80 prenos iz cmag. u prodavnicu" )
    AAdd( opcexe, {||  fakt_13_kalk_80()  } )
-   //AAdd( Opc, "7. fakt 15 -> kalk 15 izlaz iz MP putem VP" )
-   //AAdd( opcexe, {||  fakt_15_kalk_15() } )
+   // AAdd( Opc, "7. fakt 15 -> kalk 15 izlaz iz MP putem VP" )
+   // AAdd( opcexe, {||  fakt_15_kalk_15() } )
    PRIVATE Izbor := 1
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "fkpr" )
    my_close_all_dbf()
@@ -64,7 +64,7 @@ FUNCTION fakt_11_kalk_prenos_11()
    o_kalk_pripr()
    o_koncij()
    // o_kalk()
-  // o_roba()
+   // o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -287,7 +287,7 @@ FUNCTION fakt_13_kalk_11()
    o_kalk_pripr()
    o_koncij()
    // o_kalk()
-//   o_roba()
+// o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -385,7 +385,7 @@ FUNCTION fakt_13_kalk_11()
             REPLACE idfirma WITH cIdFirma, ;
                rbr     WITH Str( ++nRbr, 3 ), ;
                idvd WITH "11", ;   // izlazna faktura
-            brdok WITH cBrKalk, ;
+               brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
                idtarifa WITH get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi ), ;
                brfaktp WITH fakt->brdok, ;
@@ -445,7 +445,7 @@ FUNCTION fakt_11_kalk_41()
 
    o_kalk_pripr()
    o_kalk()
-//   o_roba()
+// o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -574,7 +574,7 @@ FUNCTION fakt_11_kalk_41()
                   mpcsapp WITH fakt->cijena, ;
                   tmarza2 WITH "%"
 
-               REPLACE rabatv with ;
+               REPLACE rabatv WITH ;
                   ( nMPVBP * fakt->rabat / ( fakt->kolicina * 100 ) ) // * 1.17
 
                SELECT fakt
@@ -655,7 +655,7 @@ FUNCTION fakt_11_kalk_41()
                REPLACE idroba WITH fakt->idroba
                REPLACE mpcsapp WITH fakt->cijena
                REPLACE tmarza2 WITH "%"
-               REPLACE rabatv with ;
+               REPLACE rabatv WITH ;
                   ( nMPVBP * fakt->rabat / ( fakt->kolicina * 100 ) ) // * 1.17
 
                SELECT fakt
@@ -696,7 +696,7 @@ FUNCTION fakt_01_kalk_81()
 
    o_kalk_pripr()
    o_kalk()
-//   o_roba()
+// o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -783,7 +783,7 @@ FUNCTION fakt_01_kalk_81()
             REPLACE idfirma WITH cIdFirma, ;
                rbr     WITH Str( ++nRbr, 3 ), ;
                idvd WITH "81", ;   // izlazna faktura
-            brdok WITH cBrKalk, ;
+               brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
                idpartner WITH cIdPartner, ;
                idtarifa WITH ROBA->idtarifa, ;
@@ -829,7 +829,7 @@ FUNCTION fakt_13_kalk_80()
    o_kalk_pripr()
    o_koncij()
    o_kalk()
-  // o_roba()
+   // o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -919,7 +919,7 @@ FUNCTION fakt_13_kalk_80()
             REPLACE idfirma WITH cIdFirma, ;
                rbr     WITH Str( ++nRbr, 3 ), ;
                idvd WITH "80", ;   // izlazna faktura
-            brdok WITH cBrKalk, ;
+               brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
                idtarifa WITH cIdTarifa, ;
                brfaktp WITH fakt->brdok, ;
@@ -940,7 +940,7 @@ FUNCTION fakt_13_kalk_80()
             REPLACE idfirma WITH cIdFirma, ;
                rbr     WITH Str( nRbr, 3 ), ;
                idvd WITH "80", ;   // izlazna faktura
-            brdok WITH cBrKalk, ;
+               brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
                idtarifa WITH cIdTarifa, ;
                brfaktp WITH fakt->brdok, ;
@@ -1207,15 +1207,13 @@ FUNCTION fakt_11_kalk_42()
 
       kalk_set_brkalk_za_idvd( _kalk_tip_dok, @cBrKalk )
 
-      ++ nX
-      ++ nX
-
+      ++nX
+      ++nX
       @ m_x + nX, m_y + 2 SAY "Broj kalkulacije " + _kalk_tip_dok + " -" GET cBrKalk PICT "@!"
       @ m_x + nX, Col() + 2 SAY "Datum:" GET _dat_kalk
 
-      ++ nX
-      @ m_x + nX, m_y + 2 SAY "Konto razduzuje:" GET cIdKonto ;
-         PICT "@!"  VALID P_Konto( @cIdKonto )
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Konto razduzuje:" GET cIdKonto  PICT "@!"  VALID P_Konto( @cIdKonto )
 
       IF _auto_razd == 1
          @ m_x + nX, Col() + 1 SAY "zaduzuje:" GET cIdKtoZad  PICT "@!" VALID P_Konto( @cIdKtoZad )
@@ -1227,20 +1225,16 @@ FUNCTION fakt_11_kalk_42()
       // VALID Empty( cIdZaduz ) .OR. p_partner( @cIdZaduz )
       // ENDIF
 
-      ++ nX
-      ++ nX
+      ++nX
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " GET _zbirni_prenos  VALID _zbirni_prenos $ "DN"  PICT "@!"
 
-      @ m_x + nX, m_y + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " ;
-         GET _zbirni_prenos  VALID _zbirni_prenos $ "DN"  PICT "@!"
-
-      ++ nX
-
-      @ m_x + nX, m_y + 2 SAY "Razdvoji artikle razlicitih cijena (D/N): " ;
-         GET _razl_cijene VALID _razl_cijene $ "DN"  PICT "@!"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Razdvoji artikle razlicitih cijena (D/N): " GET _razl_cijene VALID _razl_cijene $ "DN"  PICT "@!"
 
       READ
 
-      ++ nX
+      ++nX
 
       IF _zbirni_prenos == "N"
 
@@ -1363,8 +1357,7 @@ FUNCTION fakt_11_kalk_42()
 
          @ m_x + nX, m_y + 2 SAY "ID firma FAKT: " GET cFaktFirma
 
-         ++ nX
-
+         ++nX
          @ m_x + nX, m_y + 2 SAY "Datum fakture: "
          @ m_x + nX, Col() + 2 SAY "od " GET dOdDatFakt
          @ m_x + nX, Col() + 2 SAY "do " GET dDoDatFakt
@@ -1380,10 +1373,8 @@ FUNCTION fakt_11_kalk_42()
 
          DO WHILE !Eof()
 
-            IF ( field->idfirma == cFaktFirma .AND. ;
-                  field->idtipdok == cIdTipDok .AND. ;
-                  field->datdok >= dOdDatFakt .AND. ;
-                  field->datdok <= dDoDatFakt )
+            IF ( field->idfirma == cFaktFirma .AND. field->idtipdok == cIdTipDok .AND. ;
+                  field->datdok >= dOdDatFakt .AND. field->datdok <= dDoDatFakt )
 
                cIdPartner := ""
 
@@ -1396,13 +1387,16 @@ FUNCTION fakt_11_kalk_42()
 
                SELECT fakt
 
-               IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + "'==IdFirma+IdTipDok", "IDROBA", F_ROBA )
-                  MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-                  LOOP
-               ENDIF
+               // IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + "'==IdFirma+IdTipDok", "IDROBA", F_ROBA )
+               // MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+               // LOOP
+               // ENDIF
+
 
                SELECT kalk_pripr
-               LOCATE FOR idroba == fakt->idroba
+
+               LOCATE FOR idroba == fakt->idroba // ako fakt ima vise istih artikala - .T.
+               select_o_roba( fakt->idroba )
 
                IF Found() .AND. ;
                      ( Round( fakt->rabat, 2 ) == 0 .AND. Round( field->rabatv, 2 ) == 0 ) .AND. ;
@@ -1415,20 +1409,19 @@ FUNCTION fakt_11_kalk_42()
                   PRIVATE aPorezi := {}
 
                   get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
-
                   nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
 
                   APPEND BLANK
 
-                  REPLACE idfirma WITH cIdFirma
-                  REPLACE rbr WITH Str( ++nRbr, 3 )
-                  REPLACE idvd WITH _kalk_tip_dok
-                  REPLACE brdok WITH cBrKalk
-                  REPLACE datdok WITH _dat_kalk
-                  REPLACE idpartner WITH cIdPartner
-                  REPLACE idtarifa WITH ROBA->idtarifa
-                  REPLACE brfaktp WITH fakt->brdok
-                  REPLACE datfaktp WITH fakt->datdok
+                  REPLACE idfirma WITH cIdFirma, ;
+                     rbr WITH Str( ++nRbr, 3 ), ;
+                     idvd WITH _kalk_tip_dok, ;
+                     brdok WITH cBrKalk, ;
+                     datdok WITH _dat_kalk, ;
+                     idpartner WITH cIdPartner, ;
+                     idtarifa WITH ROBA->idtarifa, ;
+                     brfaktp WITH fakt->brdok, ;
+                     datfaktp WITH fakt->datdok
 
                   IF _auto_razd == 1
                      REPLACE idkonto WITH cIdKtoZad
@@ -1448,7 +1441,6 @@ FUNCTION fakt_11_kalk_42()
                   ELSE
                      REPLACE tmarza2 WITH "%"
                   ENDIF
-
                   REPLACE rabatv WITH nMPVBP * fakt->rabat / ( fakt->kolicina * 100 )
 
                ENDIF
@@ -1490,7 +1482,7 @@ STATIC FUNCTION _o_prenos_tbls()
 
    o_kalk_pripr()
    o_kalk()
-  // o_roba()
+   // o_roba()
    o_konto()
    o_partner()
    o_tarifa()

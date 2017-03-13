@@ -12,11 +12,14 @@
 #include "f18.ch"
 
 
+MEMVAR _kome_zr, _ko_zr, _dat_upl, _svrha_doz, _mjesto // ove vars moraju biti public
+
+
 FUNCTION unos_virmana()
 
    LOCAL i
 
-   _o_virm_edit()
+   o_virm_tabele_unos_print()
 
    ImeKol := {}
    Kol := {}
@@ -36,6 +39,7 @@ FUNCTION unos_virmana()
    AAdd( ImeKol, { "IdOps", {|| IdOps }, "IdOps" } )
    AAdd( ImeKol, { PadR( "Pos.opis", 30 ), {|| ko_txt }, "ko_txt" } )
    AAdd( ImeKol, { PadR( "Prim.opis", 30 ), {|| kome_txt }, "kome_txt" } )
+   AAdd( ImeKol, { "IznosSTR", {|| IznosSTR }, "Iznos S" } )
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
@@ -55,6 +59,7 @@ FUNCTION unos_virmana()
 
 
 STATIC FUNCTION virm_edit_pripr( fNovi )
+
 
    LOCAL _firma := PadR( fetch_metric( "virm_org_id", NIL, "" ), 6 )
 
@@ -198,7 +203,7 @@ STATIC FUNCTION virm_browse_key_handler()
    DO CASE
 
    CASE Ch == K_ALT_P .OR. Upper( Chr( Ch ) ) == "R"
-      // rekapitulacija uplata
+
       _rekapitulacija_uplata()
       GO ( nRec )
       RETURN DE_CONT
@@ -241,7 +246,7 @@ STATIC FUNCTION virm_browse_key_handler()
       RETURN browse_brisi_stavku()
 
    CASE Ch == K_CTRL_P
-      stampa_virmana_drb()
+      stampa_virmana()
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_A
@@ -263,6 +268,7 @@ STATIC FUNCTION virm_browse_key_handler()
          my_rlock()
          Gather()
          my_unlock()
+
          GO nTR2
       ENDDO
       PopWA()
@@ -395,7 +401,7 @@ FUNCTION IniProm()        // autom.popunjavanje nekih podataka
 
 FUNCTION ValPl()
 
-   // {
+
    LOCAL lVrati := .F.
 
    IF _nacpl $ "12"
@@ -403,133 +409,13 @@ FUNCTION ValPl()
       IF Empty( _u_korist )
          _KOME_ZR := VRPRIM->racun
       ELSE
-         _KOME_ZR := IF( _nacpl == "1", PARTN->ziror, PARTN->dziror )
+         _KOME_ZR := IIF( _nacpl == "1", PARTN->ziror, PARTN->dziror )
       ENDIF
    ENDIF
 
    RETURN lVrati
 
 
-
-// ------------------------------------------
-// stampa virmana delphirb
-// ------------------------------------------
-FUNCTION stampa_virmana_drb()
-
-   LOCAL _br_virmana := 999
-   LOCAL _marker := "N"
-   LOCAL nI
-   LOCAL _konverzija := fetch_metric( "virm_konverzija_delphirb", NIL, "5" )
-
-   BEGIN SEQUENCE
-      O_IZLAZ
-      my_dbf_zap()
-
-   RECOVER
-      MsgBeep( "Vec je aktiviran delphirb ?" )
-      RETURN
-   END SEQUENCE
-
-
-   Box(, 2, 70 )
-   @ m_x + 1, m_y + 2 SAY "Broj virmana od sljedece pozicije:" GET _br_virmana PICT "999"
-   @ m_x + 2, m_y + 2 SAY "Uzeti u obzir markere            :" GET _marker PICT "@!" VALID _marker $ "DN"
-   READ
-   BoxC()
-
-   nI := 1
-
-   SELECT virm_pripr
-   SET ORDER TO TAG "1"
-
-   IF _marker = "D"
-      GO TOP
-   ENDIF
-
-   my_flock()
-
-   DO WHILE !Eof()
-
-      Scatter()
-
-      IF _marker = "D" .AND. _st_ = "*"
-         SKIP
-         LOOP
-      ELSE
-         REPLACE _st_ WITH "*"
-      ENDIF
-
-      SELECT izlaz
-      APPEND BLANK
-
-      KonvZnWin( @_ko_txt, _konverzija )
-      KonvZnWin( @_kome_txt, _konverzija )
-      KonvZnWin( @_svrha_doz, _konverzija )
-      KonvZnWin( @_mjesto, _konverzija )
-
-      _ko_zr    = Razrijedi( _ko_zr )       // z.racun posiljaoca
-      _KOME_ZR  = Razrijedi( _KOME_ZR )     // z.racun primaoca
-      _bpo      = Razrijedi( _bpo )         // broj poreznog obveznika
-      _idjprih  = Razrijedi( _idjprih )     // javni prihod
-      _idops    = Razrijedi( _idops )       // opstina
-      _pnabr    = Razrijedi( _pnabr )       // poziv na broj
-      _budzorg  = Razrijedi( _budzorg )     // budzetska organizacija
-      _pod      = Razrijedi( DToC( _pod ) )         // porezni period od
-      _pdo      = Razrijedi( DToC( _pdo ) )         // porezni period do
-      _dat_upl  = Razrijedi( DToC( _dat_upl ) )     // datum uplate
-
-      Gather()
-
-      SELECT virm_pripr
-      SKIP
-
-      IF nI >= _br_virmana
-         EXIT
-      ENDIF
-      nI++
-
-   ENDDO
-
-   IF Eof()
-      SKIP -1
-   ENDIF
-
-   my_unlock()
-
-   // pokreni stampu delphi rb-a
-   _stampaj_virman()
-
-   RETURN .T.
-
-
-// ----------------------------------------------------
-// stampaj virman
-// ----------------------------------------------------
-STATIC FUNCTION _stampaj_virman()
-
-   LOCAL _t_rec
-   LOCAL _rtm_file := "nalplac"
-
-   SELECT virm_pripr
-   _t_rec := RecNo()
-
-   USE
-
-   SELECT izlaz
-   USE
-
-   my_close_all_dbf()
-
-   // ovdje treba kod za filovanje datoteke IZLAZ.DBF
-   IF LastKey() != K_ESC
-      f18_rtm_print( _rtm_file, "izlaz", "1" )
-   ENDIF
-
-   _o_virm_edit()
-   SELECT virm_pripr
-   GO ( _t_rec )
-
-   RETURN
 
 
 
@@ -685,14 +571,45 @@ STATIC FUNCTION FormNum1( nIznos )
 
 
 
-STATIC FUNCTION _o_virm_edit()
+FUNCTION o_virm_tabele_unos_print()
 
    o_sifk()
    o_sifv()
    o_jprih()
    o_banke()
    o_vrprim()
-   o_partner()
-   O_VIRM_PRIPR
+   select_o_partner()
+   select_o_virm_pripr()
 
    RETURN .T.
+
+
+
+FUNCTION virm_o_tables_razmjena()
+
+      o_banke()
+      select_o_jprih()
+
+      SELECT ( F_SIFK )
+      IF !Used()
+         o_sifk()
+      ENDIF
+
+      SELECT ( F_SIFV )
+      IF !Used()
+         o_sifv()
+      ENDIF
+
+
+      o_kred()
+
+
+      select_o_rekld()
+      select_o_partner()
+
+      o_ldvirm()
+
+
+      select_o_virm_pripr()
+
+      RETURN .T.

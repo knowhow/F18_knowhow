@@ -60,7 +60,6 @@ FUNCTION unos_virmana()
 
 STATIC FUNCTION virm_edit_pripr( fNovi )
 
-
    LOCAL _firma := PadR( fetch_metric( "virm_org_id", NIL, "" ), 6 )
 
    SET CURSOR ON
@@ -129,8 +128,7 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
 
    ESC_RETURN 0
 
-   _IznosSTR := ""
-   _IznosSTR := "=" + iif( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
+   _IznosSTR := iznos_virman( _iznos )
 
 
    IF vrprim->Idpartner = "JP" // javni prihod
@@ -401,7 +399,6 @@ FUNCTION IniProm()        // autom.popunjavanje nekih podataka
 
 FUNCTION ValPl()
 
-
    LOCAL lVrati := .F.
 
    IF _nacpl $ "12"
@@ -409,7 +406,7 @@ FUNCTION ValPl()
       IF Empty( _u_korist )
          _KOME_ZR := VRPRIM->racun
       ELSE
-         _KOME_ZR := IIF( _nacpl == "1", PARTN->ziror, PARTN->dziror )
+         _KOME_ZR := iif( _nacpl == "1", PARTN->ziror, PARTN->dziror )
       ENDIF
    ENDIF
 
@@ -587,29 +584,29 @@ FUNCTION o_virm_tabele_unos_print()
 
 FUNCTION virm_o_tables_razmjena()
 
-      o_banke()
-      select_o_jprih()
+   o_banke()
+   select_o_jprih()
 
-      SELECT ( F_SIFK )
-      IF !Used()
-         o_sifk()
-      ENDIF
+   SELECT ( F_SIFK )
+   IF !Used()
+      o_sifk()
+   ENDIF
 
-      SELECT ( F_SIFV )
-      IF !Used()
-         o_sifv()
-      ENDIF
-
-
-      o_kred()
+   SELECT ( F_SIFV )
+   IF !Used()
+      o_sifv()
+   ENDIF
 
 
-      select_o_rekld()
-      select_o_partner()
-
-      o_ldvirm()
+   o_kred()
 
 
-      select_o_virm_pripr()
+   select_o_rekld()
+   select_o_partner()
 
-      RETURN .T.
+   o_ldvirm()
+
+
+   select_o_virm_pripr()
+
+   RETURN .T.

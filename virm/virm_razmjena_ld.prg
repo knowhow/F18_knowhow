@@ -185,7 +185,7 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
             field->mjesto WITH gmjesto, ;
             field->svrha_pl WITH "IS", ;
             field->iznos WITH _total, ;
-            field->IznosSTR WITH "=" + iif( _total == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _total ), ".", "," ) ) ), ;
+            field->IznosSTR WITH iznos_virman( _total ), ;
             field->na_teret WITH gVirmFirma, ;
             field->kome_txt WITH _kome_txt, ;
             field->ko_txt WITH _ko_txt, ;
@@ -209,6 +209,12 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
 
    RETURN .T.
 
+
+FUNCTION iznos_virman( nIznos )
+
+   nIznos := Round( nIznos, 2 )
+
+   RETURN "=" + iif( nIznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _total, 18, 2 ), ".", "," ) ) )
 
 
 // ----------------------------------------------------------------------------------------------------
@@ -266,7 +272,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
             field->mjesto WITH gMjesto, ;
             field->svrha_pl WITH _svrha_placanja, ;
             field->iznos WITH _izr_formula, ;
-            field->IznosSTR WITH "=" + iif( _izr_formula == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _izr_formula ), ".", "," ) ) ), ;
+            field->IznosSTR WITH iznos_virman( _izr_formula ), ;
             field->vupl WITH "0", ;
             field->na_teret WITH gVirmFirma, ;
             field->ko_txt WITH _ko_txt, ;
@@ -354,7 +360,7 @@ STATIC FUNCTION virm_ld_obrada( nGodina, nMjesec, dDatVirm, r_br, dod_opis, dDat
       ENDIF
 
       _iznosstr := ""
-      _iznosstr := "=" + iif( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
+--      _iznosstr := "=" + iif( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
 
       my_rlock()
       Gather()
@@ -690,7 +696,7 @@ STATIC FUNCTION ld_virm_generacija_krediti( nGodina, nMjesec, dDatVirm, r_br, do
             field->mjesto WITH gMjesto, ;
             field->svrha_pl WITH "KR", ;
             field->iznos WITH _total, ;
-            field->IznosSTR WITH "=" + iif( _total == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _total ), ".", "," ) ) ), ;
+            field->IznosSTR WITH iznos_virman( _total ), ;
             field->na_teret WITH gVirmFirma, ;
             field->kome_txt WITH _kome_txt, ;
             field->ko_txt WITH _ko_txt, ;

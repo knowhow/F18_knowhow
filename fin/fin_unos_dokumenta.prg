@@ -187,8 +187,7 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
    @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nFinRbr PICTURE "99999" ;
-      WHEN {|| fin_pripr_redni_broj( nFinRbr ), .T. } ;
-      VALID {|| lDugmeOtvoreneStavke := .T., .T. }
+      WHEN {|| fin_pripr_redni_broj( nFinRbr ), .T. } VALID {|| lDugmeOtvoreneStavke := .T., fin_pripr_redni_broj( nFinRbr ), .T. }
 
    @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
 
@@ -250,8 +249,7 @@ FUNCTION edit_fin_priprema()
    //ENDIF
 
    @ m_x + 13, m_y + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
-      VALID P_Konto( @_IdKonto, 13, 20 ) ;
-      .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
+      VALID P_Konto( @_IdKonto, 13, 20 ) .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
 
 
    @ m_x + 14, m_y + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
@@ -295,6 +293,7 @@ FUNCTION edit_fin_priprema()
 
    _k3 := K3U256( _k3 )
    _Rbr := fin_pripr_redni_broj()
+   altd()
 
    SELECT fin_pripr
 
@@ -304,6 +303,7 @@ FUNCTION edit_fin_priprema()
 
 FUNCTION fin_pripr_redni_broj( nSet )
 
+altd()
    IF nSet != NIL
       s_nFinPriprRedniBroj := nSet
    ENDIF
@@ -324,7 +324,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
       SELECT FIN_PRIPR
    ENDIF
 
-   IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. RecCount2() == 0
+   IF ( nCh == K_CTRL_T .OR. nCh == K_ENTER ) .AND. RecCount2() == 0
       RETURN DE_CONT
    ENDIF
 
@@ -1169,8 +1169,8 @@ STATIC FUNCTION brisi_fin_pripr_po_uslovu()
          ENDIF
       ENDIF
 
-      // redni brojevi...
-      IF ( _od_broj + _do_broj ) > 0
+
+      IF ( _od_broj + _do_broj ) > 0 // redni brojevi
          IF field->rbr >= _od_broj .AND.  field->rbr <= _do_broj
             _delete_rec := .T.
          ENDIF

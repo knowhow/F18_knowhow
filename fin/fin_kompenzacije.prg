@@ -15,14 +15,7 @@
 STATIC picBHD
 STATIC picDEM
 
-STATIC FUNCTION _o_tables()
 
-   O_KOMP_POT
-   O_KOMP_DUG
-   o_konto()
-   //o_partner()
-
-   RETURN .T.
 
 
 STATIC FUNCTION _get_vars( vars )
@@ -62,26 +55,26 @@ STATIC FUNCTION _get_vars( vars )
          @ m_x + _x, m_y + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", PadR( self_organizacija_naziv(), 30 )
       ELSE
-         @ m_x + _x, m_y + 2 SAY "Firma: " GET _id_firma valid {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
+         @ m_x + _x, m_y + 2 SAY "Firma: " GET _id_firma VALID {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
       ENDIF
 
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY "Konto duguje   " GET cIdKonto  VALID p_konto( @cIdKonto )
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY8 "Konto potražuje" GET cIdKonto2  VALID p_konto( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY8 "Partner-dužnik " GET cIdPartner VALID p_partner( @cIdPartner )  PICT "@!"
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY8 "Datum dokumenta od:" GET _dat_od
       @ m_x + _x, Col() + 2 SAY "do" GET _dat_do   VALID _dat_od <= _dat_do
 
-      ++ _x
-      ++ _x
+      ++_x
+      ++_x
 
       @ m_x + _x, m_y + 2 SAY "Sabrati po brojevima veze D/N ?"  GET cSabratiPoBrojevimaVeze VALID cSabratiPoBrojevimaVeze $ "DN" PICT "@!"
       @ m_x + _x, Col() + 2 SAY "Prikaz prebijenog stanja " GET _prelom VALID _prelom $ "DN" PICT "@!"
 
-      ++ _x
+      ++_x
 
       @ m_x + _x, m_y + 2 SAY8 "Prikaz datuma sa brojem računa (D/N) ?"  GET _sa_datumom VALID _sa_datumom $ "DN" PICT "@!"
 
@@ -186,7 +179,7 @@ FUNCTION kompenzacija()
    @ m_x + _row - 2, m_y + 1 SAY8 "<c+P> štampanje kompenzacije                  <T> promijeni tabelu"
    @ m_x + _row - 1, m_y + 1 SAY8 "<c+N> nova stavka                           <c+T> brisanje                 <ENTER> ispravka stavke "
 
-   FOR _n := 1 to ( _row - 4 )
+   FOR _n := 1 TO ( _row - 4 )
       @ m_x + _n, m_y + ( _col / 2 ) SAY "|"
    NEXT
 
@@ -290,7 +283,7 @@ STATIC FUNCTION _gen_kompen( vars )
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &( cFilter )
+      SET FILTER TO &( cFilter )
    ENDIF
    MsgC()
 
@@ -539,7 +532,7 @@ STATIC FUNCTION key_handler( vars )
    LOCAL nVrati := DE_CONT
    LOCAL _area
 
-   IF ! ( ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0 )
+   IF !( ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0 )
 
       DO CASE
 
@@ -646,22 +639,22 @@ STATIC FUNCTION print_kompen( vars )
    _valuta := fetch_metric( "fin_kompen_valuta", my_home(), _valuta )
 
    Box(, 10, 50 )
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Datum kompenzacije: " GET _dat_komp
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Rok plaćanja (dana): " GET _rok_pl VALID _rok_pl >= 0 PICT "999"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Valuta kompenzacije (D/P): " GET _valuta  VALID _valuta $ "DP"  PICT "!@"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Broj kompenzacije: " GET _br_komp
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Šifra (ID) povjerioca: " GET _id_pov VALID p_partner( @_id_pov ) PICT "@!"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "   Šifra (ID) dužnika: " GET _id_partn VALID p_partner( @_id_partn ) PICT "@!"
    READ
    BoxC()
@@ -692,7 +685,7 @@ STATIC FUNCTION print_kompen( vars )
    ENDIF
 
    IF get_file_list_array( _templates_path, cFilter, @_template, .T. ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF generisi_odt_iz_xml( _template, _xml_file )
@@ -754,7 +747,7 @@ STATIC FUNCTION _gen_xml( vars, xml_file )
 
    DO WHILE _temp_duz .OR. _temp_pov
 
-      ++ _br_st
+      ++_br_st
 
       xml_subnode( "item", .F. )
 
@@ -888,3 +881,14 @@ STATIC FUNCTION _skip_t_marker( _mark_12, _mark_60 )
    SELECT ( _t_arr )
 
    RETURN NIL
+
+
+
+STATIC FUNCTION _o_tables()
+
+   O_KOMP_POT
+   O_KOMP_DUG
+   o_konto()
+   // o_partner()
+
+   RETURN .T.

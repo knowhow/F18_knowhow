@@ -52,7 +52,8 @@ FUNCTION specifikacija_po_analitickim_kontima()
          cIdRJ := "999999"
          @ m_x + 10, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
-      READ; ESC_BCR
+      READ
+      ESC_BCR
       aUsl1 := Parsiraj( qqKonto, "IdKonto" )
       IF ausl1 <> NIL; exit; ENDIF
    ENDDO
@@ -106,17 +107,21 @@ FUNCTION specifikacija_po_analitickim_kontima()
 
    nud := nup := 0
    DO WHILE !Eof()
+
       cSin := Left( idkonto, 3 )
       nkd := nkp := 0
       DO WHILE !Eof() .AND.  cSin == Left( idkonto, 3 )
+
          cIdKonto := IdKonto
          nd := np := 0
+         
          IF PRow() == 0; zagl_spec_anal(); ENDIF
+
          DO WHILE !Eof() .AND. cIdKonto == IdKonto
             IF cTip == "1"
-               nd += dugbhd; np += potbhd
+               nD += dugbhd; nP += potbhd
             ELSE
-               nd += dugdem; np += potdem
+               nD += dugdem; nP += potdem
             ENDIF
             SKIP
          ENDDO
@@ -127,12 +132,12 @@ FUNCTION specifikacija_po_analitickim_kontima()
          SELECT ANAL
 
          IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0
-            ? cidkonto, KONTO->naz
+            ? cIdkonto, KONTO->naz
             nC := PCol() + 1
             @ PRow(), PCol() + 1 SAY nd PICT pic
             @ PRow(), PCol() + 1 SAY np PICT pic
             @ PRow(), PCol() + 1 SAY nd - np PICT pic
-            nkd += nd; nkp += np  // ukupno  za klasu
+            nKd += nD; nKp += nP  // ukupno  za klasu
          ENDIF  // cnula
 
       ENDDO  // sintetika
@@ -148,6 +153,7 @@ FUNCTION specifikacija_po_analitickim_kontima()
       ENDIF
       nUd += nKd; nUp += nKp   // ukupno za sve
    ENDDO
+
    IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_spec_anal(); ENDIF
    ? m
    ? " UKUPNO:"
@@ -159,7 +165,7 @@ FUNCTION specifikacija_po_analitickim_kontima()
    end_print()
    closeret
 
-   RETURN
+   RETURN .T.
 
 
 

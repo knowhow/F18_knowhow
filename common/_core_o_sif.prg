@@ -183,55 +183,63 @@ FUNCTION select_o_partner( cId )
 
 
 
-   FUNCTION find_konto_by_naz_or_id( cId )
+FUNCTION find_konto_by_naz_or_id( cId )
 
-      LOCAL cAlias := "KONTO"
-      LOCAL cSqlQuery := "select * from fmk.konto"
-      LOCAL cIdSql
+   LOCAL cAlias := "KONTO"
+   LOCAL cSqlQuery := "select * from fmk.konto"
+   LOCAL cIdSql
 
-      cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
-      cSqlQuery += " WHERE id ilike " + cIdSql
-      cSqlQuery += " OR naz ilike " + cIdSql
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+   cSqlQuery += " OR naz ilike " + cIdSql
 
-      IF !use_sql( "konto", cSqlQuery, cAlias )
-         RETURN .F.
-      ENDIF
-      INDEX ON ID TAG ID TO ( cAlias )
-      INDEX ON NAZ TAG NAZ TO ( cAlias )
-      SET ORDER TO TAG "ID"
-
-      SEEK cId
-      IF !Found()
-         GO TOP
-      ENDIF
-
-      RETURN .T.
-
-
-
-FUNCTION o_konto()
-
-   LOCAL cTabela := "konto"
-
-   SELECT ( F_KONTO )
-   IF !use_sql_sif  ( cTabela )
-      error_bar( "o_sql", "open sql " + cTabela )
+   IF !use_sql( "konto", cSqlQuery, cAlias )
       RETURN .F.
    ENDIF
-
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
    SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
 
    RETURN .T.
 
 
-FUNCTION select_o_konto()
+
+FUNCTION o_konto( cId )
+
+   LOCAL cTabela := "konto"
+
+   SELECT ( F_KONTO )
+   IF !use_sql_sif  ( cTabela, .T., "KONTO", cId  )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION select_o_konto( cId )
 
    SELECT ( F_KONTO )
    IF Used()
-      RETURN .T.
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
    ENDIF
 
-   RETURN o_konto()
+   RETURN o_konto( cId )
+
+
 
 
 FUNCTION o_vrste_placanja()

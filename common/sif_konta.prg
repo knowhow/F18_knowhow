@@ -57,7 +57,7 @@ FUNCTION P_Konto( cId, dx, dy )
     *   param: dy
     *   param: lBlag
 
-FUNCTION p_konto( cId, dx, dy, lBlag )
+-- FUNCTION p_konto( cId, dx, dy, lBlag )
 
    LOCAL i
    LOCAL nDbfArea := Select()

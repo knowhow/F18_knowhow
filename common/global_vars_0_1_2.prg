@@ -248,7 +248,7 @@ FUNCTION set_global_vars_roba()
 
    PUBLIC gUVarPP
    PUBLIC gRobaBlock
-   PUBLIC PicDem
+   PUBLIC fakt_pic_iznos()
    PUBLIC gPicProc
    PUBLIC gPicDem
    PUBLIC gPicKol

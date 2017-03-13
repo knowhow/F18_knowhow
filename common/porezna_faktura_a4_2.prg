@@ -87,20 +87,20 @@ FUNCTION st_pf_a4_2( lStartPrint )
 
       ?? PadR( rn->idroba, 10 ) + Space( 1 )
       ?? PadR( aArtNaz[ 1 ], 40 ) + Space( 1 )
-      ?? Transform( rn->kolicina, PicKol ) + Space( 1 )
+      ?? Transform( rn->kolicina, fakt_pic_kolicina() ) + Space( 1 )
       ?? rn->jmj + Space( 1 )
 
       IF !lSamoKol
-         ?? Transform( rn->cjenbpdv, PicCDem ) + Space( 1 )
-         ?? Transform( rn->cjen2bpdv, PicCDem ) + Space( 1 )
+         ?? Transform( rn->cjenbpdv, fakt_pic_cijena() ) + Space( 1 )
+         ?? Transform( rn->cjen2bpdv, fakt_pic_cijena() ) + Space( 1 )
 
          IF cPDVSvStavka == "D"
-            ?? Transform( rn->vpdv, PicCDem ) + Space( 1 )
+            ?? Transform( rn->vpdv, fakt_pic_cijena() ) + Space( 1 )
          ELSE
-            ?? Transform( rn->cjen2pdv, PicCDem ) + Space( 1 )
+            ?? Transform( rn->cjen2pdv, fakt_pic_cijena() ) + Space( 1 )
          ENDIF
 
-         ?? Transform( rn->cjen2bpdv * rn->kolicina,  PicDem )
+         ?? Transform( rn->cjen2bpdv * rn->kolicina,  fakt_pic_iznos() )
       ENDIF
 
       cArtNaz2Red := Space( 40 )
@@ -123,14 +123,14 @@ FUNCTION st_pf_a4_2( lStartPrint )
          ?? Space( 22 ) + Transform( nPopust, "99.99%" ) + Space( 1 )
 
          IF cPDVSvStavka == "D"
-            ?? Transform( rn->cjen2pdv, PicCDem ) + Space( 1 )
+            ?? Transform( rn->cjen2pdv, fakt_pic_cijena() ) + Space( 1 )
          ENDIF
 
          ?? PadL( Transform( rn->ppdv, "999.99%" ), 11 )
 
-         ?? Space( Len( PicDem ) + 2 )
+         ?? Space( Len( fakt_pic_iznos() ) + 2 )
 
-         ?? Transform( rn->ukupno, PicDem )
+         ?? Transform( rn->ukupno, fakt_pic_iznos() )
 
       ENDIF
 
@@ -140,24 +140,24 @@ FUNCTION st_pf_a4_2( lStartPrint )
    ? cLine
 
    IF !lSamoKol
-      ? cRazmak + PadL( "Ukupno bez PDV (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukbezpdv, PicDem ), 26 )
+      ? cRazmak + PadL( "Ukupno bez PDV (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukbezpdv, fakt_pic_iznos() ), 26 )
       IF Round( drn->ukpopust, 2 ) <> 0
-         ? cRazmak + PadL( "Popust (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukpopust, PicDem ), 26 )
-         ? cRazmak + PadL( "Uk.bez.PDV-popust (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukbpdvpop, PicDem ), 26 )
+         ? cRazmak + PadL( "Popust (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukpopust, fakt_pic_iznos() ), 26 )
+         ? cRazmak + PadL( "Uk.bez.PDV-popust (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukbpdvpop, fakt_pic_iznos() ), 26 )
       ENDIF
-      ? cRazmak + PadL( "PDV 17% :", 95 ), PadL( Transform( drn->ukpdv, PicDem ), 26 )
+      ? cRazmak + PadL( "PDV 17% :", 95 ), PadL( Transform( drn->ukpdv, fakt_pic_iznos() ), 26 )
       IF Round( drn->zaokr, 2 ) <> 0
-         ? cRazmak + PadL( "Zaokruzenje (+/-):", 95 ), PadL( Transform( Abs( drn->zaokr ), PicDem ), 26 )
+         ? cRazmak + PadL( "Zaokruzenje (+/-):", 95 ), PadL( Transform( Abs( drn->zaokr ), fakt_pic_iznos() ), 26 )
       ENDIF
 
       ? cLine
-      ? cRazmak + PadL( "S V E U K U P N O   S A   P D V (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukupno, PicDem ), 26 )
+      ? cRazmak + PadL( "S V E U K U P N O   S A   P D V (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukupno, fakt_pic_iznos() ), 26 )
 
       IF drn->( FieldPos( "ukpoptp" ) ) <> 0
          IF Round( drn->ukpoptp, 2 ) <> 0
             // popust na teret prodavca
-            ? cRazmak + PadL( "Popust na teret prodavca (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukpoptp, PicDem ), 26 )
-            ? cRazmak + PadL( "S V E U K U P N O   S A   P D V -  P O P U S T  N A   T. P. (" + cValuta + ") : ZA PLATITI :", 95 ), PadL( Transform( drn->ukupno - drn->ukpoptp, PicDem ), 26 )
+            ? cRazmak + PadL( "Popust na teret prodavca (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukpoptp, fakt_pic_iznos() ), 26 )
+            ? cRazmak + PadL( "S V E U K U P N O   S A   P D V -  P O P U S T  N A   T. P. (" + cValuta + ") : ZA PLATITI :", 95 ), PadL( Transform( drn->ukupno - drn->ukpoptp, fakt_pic_iznos() ), 26 )
          ENDIF
       ENDIF
 

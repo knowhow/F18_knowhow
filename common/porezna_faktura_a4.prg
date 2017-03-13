@@ -72,14 +72,14 @@ STATIC nPicFRow
 // -----------------------------------------------------
 FUNCTION pf_a4_print( lStartPrint, cDocumentName )
 
-   // ako je nil onda je uvijek .t.
-   IF lStartPrint == nil
+
+   IF lStartPrint == nil   // ako je nil onda je uvijek .t.
       lStartPrint := .T.
    ENDIF
 
-   PIC_KOLICINA :=  PadL( AllTrim( Right( PicKol, LEN_KOLICINA ) ), LEN_KOLICINA, "9" )
-   PIC_VRIJEDNOST := PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
-   PIC_CIJENA := PadL( AllTrim( Right( PicCDem, LEN_CIJENA ) ), LEN_CIJENA, "9" )
+   PIC_KOLICINA :=  PadL( AllTrim( Right( fakt_pic_kolicina(), LEN_KOLICINA ) ), LEN_KOLICINA, "9" )
+   PIC_VRIJEDNOST := PadL( AllTrim( Right( fakt_pic_iznos(), LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
+   PIC_CIJENA := PadL( AllTrim( Right( fakt_pic_cijena(), LEN_CIJENA ) ), LEN_CIJENA, "9" )
 
    close_open_racun_tbl()
 
@@ -102,7 +102,7 @@ FUNCTION pf_a4_print( lStartPrint, cDocumentName )
       st_pf_a4_2( lStartPrint, cDocumentName )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // stampa fakture a4
@@ -1308,7 +1308,7 @@ FUNCTION pic_cijena( xPom )
    IF xPom <> NIL
       PIC_CIJENA := xPom
    ELSEIF Empty( PIC_CIJENA )
-      PIC_CIJENA := PadL( AllTrim( Right( PicCDem, LEN_CIJENA ) ), LEN_CIJENA, "9" )
+      PIC_CIJENA := PadL( AllTrim( Right( fakt_pic_cijena(), LEN_CIJENA ) ), LEN_CIJENA, "9" )
    ENDIF
 
    RETURN PIC_CIJENA

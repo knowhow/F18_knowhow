@@ -82,10 +82,10 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aKol := {}
 
    AAdd( aImeKol, { "ID roba",   {|| IdRoba } } )
-   AAdd( aImeKol, { PadC( "Kol.", Len( pickol ) ), {|| Transform( Kolicina, pickol ) } } )
+   AAdd( aImeKol, { PadC( "Kol.", Len( fakt_pic_kolicina() ) ), {|| Transform( Kolicina, fakt_pic_kolicina() ) } } )
 
    IF rugov->( FieldPos( "cijena" ) ) <> 0
-      AAdd( aImeKol, { "Cijena", {|| Transform( cijena, picdem ) },  "cijena"    } )
+      AAdd( aImeKol, { "Cijena", {|| Transform( cijena, fakt_pic_iznos() ) },  "cijena"    } )
    ENDIF
 
    AAdd( aImeKol, { "Rabat",   {|| Rabat }  } )
@@ -308,7 +308,7 @@ FUNCTION vrati_opis_ugovora( cIdUgov )
    SEEK cIdUgov
 
    IF Found()
-      cOpis += Trim( idroba ) + " " + AllTrim( Transform( kolicina, pickol ) ) + " x " + AllTrim( Transform( cijena, picdem ) )
+      cOpis += Trim( idroba ) + " " + AllTrim( Transform( kolicina, fakt_pic_kolicina() ) ) + " x " + AllTrim( Transform( cijena, fakt_pic_iznos() ) )
    ENDIF
 
    PopWa()

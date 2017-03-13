@@ -210,11 +210,15 @@ STATIC FUNCTION virm_ld_isplata_radniku_na_tekuci_racun( nGodina, nMjesec, dDatV
    RETURN .T.
 
 
+/*
+    12.20 => '=12,20'
+*/
+
 FUNCTION iznos_virman( nIznos )
 
    nIznos := Round( nIznos, 2 )
 
-   RETURN "=" + iif( nIznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _total, 18, 2 ), ".", "," ) ) )
+   RETURN "=" + iif( nIznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( nIznos, 18, 2 ), ".", "," ) ) )
 
 
 // ----------------------------------------------------------------------------------------------------

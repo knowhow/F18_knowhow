@@ -20,7 +20,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    cIdPartner := Space( LEN_PARTNER_ID )
 
    picD := FormPicL( "9 " + gPicBHD, 14 )
-   picDEM := FormPicL( "9 " + gPicDEM, 9 )
+   picDEM := FormPicL( "9 " + pic_iznos_eur(), 9 )
 
    cIdKonto := Space( Len( konto->id ) )
 

@@ -91,8 +91,8 @@ FUNCTION zavrsi_stampu()
 
 FUNCTION fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
-   PRIVATE InPicDEM := PicDEM
-   PRIVATE InPicCDEM := PicCDEM
+   PRIVATE InPicDEM := fakt_pic_iznos()
+   PRIVATE InPicCDEM := fakt_pic_cijena()
 
    IF lJFill == nil
       lJFill := .F.

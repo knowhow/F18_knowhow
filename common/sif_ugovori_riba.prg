@@ -213,7 +213,7 @@ FUNCTION edit_rugov( lNovi )
 
    IF lCijena
       ++ nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Cijena", nBoxLen ) GET nCijena PICT gPICCDEM VALID _val_num( nCijena )
+      @ m_x + nX, m_y + 2 SAY PadL( "Cijena", nBoxLen ) GET nCijena PICT pic_cijena_bilo_gpiccdem() VALID _val_num( nCijena )
    ENDIF
 
    ++ nX

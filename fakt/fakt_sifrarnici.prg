@@ -157,7 +157,7 @@ FUNCTION FaktStanje( cIdRoba )
    SELECT roba
    fakt_box_stanje( aStanje, cIdRoba )      // nUl,nIzl,nRevers,nRezerv)
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -169,10 +169,10 @@ FUNCTION FaktStanje( cIdRoba )
 
 FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
-   LOCAL picdem := "9999999.999", nR, nC, nTSta := 0, nTRev := 0, nTRez := 0, ;
+   LOCAL nR, nC, nTSta := 0, nTRev := 0, nTRez := 0, ;
       nTOst := 0, npd, cDiv := " ³ ", nLen
 
-   npd := Len ( picdem )
+   nPd := Len ( fakt_pic_iznos() )
    nLen := Len ( aStanje )
 
    // ucitajmo dodatne parametre stanja iz FMK.INI u aDodPar
@@ -207,18 +207,18 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
       @ nR, Col() SAY aStanje[nC ][ 1 ]
       @ nR, Col() SAY cDiv
       nPom := aStanje[nC ][ 2 ] -aStanje[nC ][ 3 ]
-      @ nR, Col() SAY nPom PICT picdem
+      @ nR, Col() SAY nPom PICT fakt_pic_iznos()
       @ nR, Col() SAY cDiv
       nTSta += nPom
-      @ nR, Col() SAY aStanje[nC ][ 4 ] PICT picdem
+      @ nR, Col() SAY aStanje[nC ][ 4 ] PICT fakt_pic_iznos()
       @ nR, Col() SAY cDiv
       nTRev += aStanje[nC ][ 4 ]
       nPom -= aStanje[nC ][ 4 ]
-      @ nR, Col() SAY aStanje[nC ][ 5 ] PICT picdem
+      @ nR, Col() SAY aStanje[nC ][ 5 ] PICT fakt_pic_iznos()
       @ nR, Col() SAY cDiv
       nTRez += aStanje[nC ][ 5 ]
       nPom -= aStanje[nC ][ 5 ]
-      @ nR, Col() SAY nPom PICT picdem
+      @ nR, Col() SAY nPom PICT fakt_pic_iznos()
       @ nR, Col() SAY cDiv
       nTOst += nPom
       nR ++
@@ -228,13 +228,13 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
       REPL ( "-", npd ) + cDiv + REPL ( "-", npd ) + cDiv
    nR ++
    @ nR, m_y + 2 SAY " ³ UK.³ "
-   @ nR, Col() SAY nTSta PICT picdem
+   @ nR, Col() SAY nTSta PICT fakt_pic_iznos()
    @ nR, Col() SAY cDiv
-   @ nR, Col() SAY nTRev PICT picdem
+   @ nR, Col() SAY nTRev PICT fakt_pic_iznos()
    @ nR, Col() SAY cDiv
-   @ nR, Col() SAY nTRez PICT picdem
+   @ nR, Col() SAY nTRez PICT fakt_pic_iznos()
    @ nR, Col() SAY cDiv
-   @ nR, Col() SAY nTOst PICT picdem
+   @ nR, Col() SAY nTOst PICT fakt_pic_iznos()
    @ nR, Col() SAY cDiv
 
    // ispis dodatnih parametara stanja

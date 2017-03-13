@@ -24,7 +24,6 @@ STATIC nDuzStrKorekcija := 0
 STATIC nSw6
 
 /* public F18 varijable koje lib koristi */
-MEMVAR PicKol, PicDem, PicCDEM
 MEMVAR __print_opt
 
 
@@ -42,9 +41,9 @@ MEMVAR __print_opt
 
 FUNCTION print_narudzbenica()
 
-   PIC_KOLICINA( PadL( AllTrim( Right( PicKol, LEN_KOLICINA() ) ), LEN_KOLICINA(), "9" ) )
-   PIC_VRIJEDNOST( PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST() ) ), LEN_VRIJEDNOST(), "9" ) )
-   PIC_CIJENA( PadL( AllTrim( Right( PicCDem, LEN_CIJENA() ) ), LEN_CIJENA(), "9" ) )
+   PIC_KOLICINA( PadL( AllTrim( Right( fakt_pic_kolicina(), LEN_KOLICINA() ) ), LEN_KOLICINA(), "9" ) )
+   PIC_VRIJEDNOST( PadL( AllTrim( Right( fakt_pic_iznos(), LEN_VRIJEDNOST() ) ), LEN_VRIJEDNOST(), "9" ) )
+   PIC_CIJENA( PadL( AllTrim( Right( fakt_pic_cijena(), LEN_CIJENA() ) ), LEN_CIJENA(), "9" ) )
 
    close_open_racun_tbl()
 

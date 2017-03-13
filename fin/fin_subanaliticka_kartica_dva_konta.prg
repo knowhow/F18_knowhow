@@ -30,7 +30,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    cIdFirma := self_organizacija_id()
 
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
-   PRIVATE picDEM := FormPicL( gPicDEM, 12 )
+   PRIVATE picDEM := FormPicL( pic_iznos_eur(), 12 )
    PRIVATE qqKonto := qqKonto2 := qqPartner := ""
 
    O_PARAMS

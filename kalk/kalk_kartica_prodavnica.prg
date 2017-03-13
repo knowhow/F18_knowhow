@@ -33,10 +33,10 @@ FUNCTION kalk_kartica_prodavnica()
    LOCAL cIdvd := Space( 100 )
    LOCAL hParams := hb_Hash(), cExportDN := "N", lExport := .F.
 
-   PRIVATE PicCDEM := global_pic_cijena()
+   PRIVATE PicCDEM := prosiri_pic_cjena_za_2()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := global_pic_iznos()
-   PRIVATE PicKol := global_pic_kolicina()
+   PRIVATE PicDEM := prosiri_pic_iznos_za_2()
+   PRIVATE PicKol := prosiri_pic_kolicina_za_2()
    PRIVATE nMarza, nMarza2, nPRUC, aPorezi
 
    _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
@@ -490,12 +490,12 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1 )
    nPom := 6
    AAdd( aKProd, { nPom, PadC( "Partn", nPom ) } )
 
-   nPom := Len( global_pic_kolicina() )
+   nPom := Len( prosiri_pic_kolicina_za_2() )
    AAdd( aKProd, { nPom, PadC( "Ulaz", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "Izlaz", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "Stanje", nPom ) } )
 
-   nPom := Len( global_pic_iznos() )
+   nPom := Len( prosiri_pic_iznos_za_2() )
    AAdd( aKProd, { nPom, PadC( "NC", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "PC", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "PC sa PDV", nPom ) } )
@@ -543,8 +543,8 @@ STATIC FUNCTION Zagl()
 
 FUNCTION naprometniji_artikli_prodavnica()
 
-   LOCAL PicDEM := gPicDem
-   LOCAL Pickol := "@Z " + gPicKol
+   LOCAL PicDEM := pic_iznos_bilo_gpicdem()
+   LOCAL Pickol := "@Z " + pic_kolicina_bilo_gpickol()
 
    qqKonto := "133;"
    qqRoba  := ""

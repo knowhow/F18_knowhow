@@ -12,7 +12,7 @@ FUNCTION SpecPop()
    cIdFirma := self_organizacija_id()
    qqPartner := qqKonto := Space( 70 )
    picBHD := FormPicL( "9 " + gPicBHD, 16 )
-   picDEM := FormPicL( "9 " + gPicDEM, 12 )
+   picDEM := FormPicL( "9 " + pic_iznos_eur(), 12 )
 
    //o_partner()
 

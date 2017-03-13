@@ -113,7 +113,7 @@ FUNCTION EdUplata()
       @ m_x + 0, m_y + 10 SAY PadC( IF( Ch == K_F2, "ISPRAVKA EVIDENTIRANE", "EVIDENTIRANJE NOVE" ) + " STAVKE", 40, Chr( 205 ) )
       @ m_x + 1, m_y + 2 SAY "Datum uplate" GET dDatUpl
       @ m_x + 2, m_y + 2 SAY "Opis        " GET cOpis
-      @ m_x + 3, m_y + 2 SAY "Iznos       " GET nIznos PICT picdem
+      @ m_x + 3, m_y + 2 SAY "Iznos       " GET nIznos PICT fakt_pic_iznos()
       READ
       BoxC()
 

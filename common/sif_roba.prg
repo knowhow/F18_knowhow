@@ -58,10 +58,10 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
       AAdd( ImeKol, { PadC( "Roba tip", 10 ), {|| field->roba_tip }, "roba_tip", {|| .T. }, {|| .T. } } )
    ENDIF
 
-   AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc", NIL, NIL, NIL, gPicCDEM  } )
-   AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( field->VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, gPicCDEM   } )
-   AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( field->PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, gPicCDEM    } )
-   AAdd( ImeKol, { PadC( "MPC1", 10 ), {|| Transform( field->MPC, "999999.999" ) }, "mpc", NIL, NIL, NIL, gPicCDEM  } )
+   AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
+   AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( field->VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()   } )
+   AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( field->PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()    } )
+   AAdd( ImeKol, { PadC( "MPC1", 10 ), {|| Transform( field->MPC, "999999.999" ) }, "mpc", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
 
    FOR nI := 2 TO 4
 
@@ -73,13 +73,13 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
          cPrikazi := fetch_metric( "roba_prikaz_" + cPom, NIL, "D" )
 
          IF cPrikazi == "D"
-            AAdd( ImeKol, { PadC( Upper( cPom ), 10 ), &( cPom2 ), cPom, NIL, NIL, NIL, gPicCDEM } )
+            AAdd( ImeKol, { PadC( Upper( cPom ), 10 ), &( cPom2 ), cPom, NIL, NIL, NIL, pic_cijena_bilo_gpiccdem() } )
          ENDIF
 
       ENDIF
    NEXT
 
-   AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( field->NC, gPicCDEM ) }, "NC", NIL, NIL, NIL, gPicCDEM  } )
+   AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( field->NC, pic_cijena_bilo_gpiccdem() ) }, "NC", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
    AAdd( ImeKol, { "Tarifa", {|| field->IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit()  }   } )
    AAdd( ImeKol, { "Tip", {|| " " + field->Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" }, NIL, NIL, NIL, NIL, 27 } )
    AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| field->BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), sifra_postoji( wbarkod, "BARKOD" ) }  } )
@@ -107,10 +107,10 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
 
    IF programski_modul() == "KALK"
       IF roba->( FieldPos( "ZANIVEL" ) ) <> 0
-         AAdd ( ImeKol, { PadC( "Nova cijena", 20 ), {|| Transform( zanivel, "999999.999" ) }, "zanivel", NIL, NIL, NIL, gPicCDEM  } )
+         AAdd ( ImeKol, { PadC( "Nova cijena", 20 ), {|| Transform( zanivel, "999999.999" ) }, "zanivel", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
       ENDIF
       IF roba->( FieldPos( "ZANIV2" ) ) <> 0
-         AAdd ( ImeKol, { PadC( "Nova cijena/2", 20 ), {|| Transform( zaniv2, "999999.999" ) }, "zaniv2", NIL, NIL, NIL, gPicCDEM  } )
+         AAdd ( ImeKol, { PadC( "Nova cijena/2", 20 ), {|| Transform( zaniv2, "999999.999" ) }, "zaniv2", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
       ENDIF
    ENDIF
 
@@ -235,11 +235,11 @@ FUNCTION MpcIzVpc()
    @ m_X + 2, m_y + 2 SAY "TARIFA"
    @ m_X + 2, Col() + 2 SAY _idtarifa
    @ m_X + 3, m_y + 2 SAY "VPC" + cVPC
-   @ m_X + 3, Col() + 1 SAY _VPC&cVPC PICT gPicDem
+   @ m_X + 3, Col() + 1 SAY _VPC&cVPC PICT pic_iznos_bilo_gpicdem()
    @ m_X + 4, m_y + 2 SAY "Postojeca MPC" + cMPC
-   @ m_X + 4, Col() + 1 SAY roba->MPC&cMPC PICT gPicDem
+   @ m_X + 4, Col() + 1 SAY roba->MPC&cMPC PICT pic_iznos_bilo_gpicdem()
    @ m_X + 5, m_y + 2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT "9"
-   @ m_X + 6, m_y + 2 SAY "MPC" + cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT gPicDem
+   @ m_X + 6, m_y + 2 SAY "MPC" + cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT pic_iznos_bilo_gpicdem()
    READ
    BoxC()
    IF LastKey() <> K_ESC

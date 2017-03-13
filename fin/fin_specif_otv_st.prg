@@ -21,7 +21,7 @@ FUNCTION fin_specif_otvorene_stavke()
    nRok := 0
    cIdKonto := Space( 7 )
    picBHD := FormPicL( "9 " + gPicBHD, 21 )
-   picDEM := FormPicL( "9 " + gPicDEM, 21 )
+   picDEM := FormPicL( "9 " + pic_iznos_eur(), 21 )
 
    cIdRj := "999999"
    cFunk := "99999"

@@ -96,7 +96,7 @@ FUNCTION os_rekapitulacija_po_k1()
             IF cDNOS == "D"
                ? Str( ++nrbr, 4 ) + ".", field->id, field->naz
                nCol1 := PCol() + 1
-               @ PRow(), PCol() + 1 SAY field->kolicina PICT gpickol
+               @ PRow(), PCol() + 1 SAY field->kolicina PICT os_pic_kolicina()
             ENDIF
 
             SKIP
@@ -111,7 +111,7 @@ FUNCTION os_rekapitulacija_po_k1()
 
          ? m
          ? "UKUPNO ZA RJ", cTRJ, "-", cK1
-         @ PRow(), nCol1 SAY nKolRJ   PICT gpickol
+         @ PRow(), nCol1 SAY nKolRJ   PICT os_pic_kolicina()
          ? m
          nKol += nKolRJ
       ENDDO
@@ -128,7 +128,7 @@ FUNCTION os_rekapitulacija_po_k1()
       select_os_sii()
 
       ? "UKUPNO ZA GRUPU", cK1, k1->naz
-      @ PRow(), nCol1 SAY nKol PICT gpickol
+      @ PRow(), nCol1 SAY nKol PICT os_pic_kolicina()
       ? StrTran( m, "-", "=" )
 
    ENDDO

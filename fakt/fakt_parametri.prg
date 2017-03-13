@@ -14,9 +14,7 @@
 STATIC __fakt_params := NIL
 
 
-// -----------------------------------------
-// Fakt parametri
-// -----------------------------------------
+
 FUNCTION mnu_fakt_params()
 
    PRIVATE cSection := "1"
@@ -73,10 +71,10 @@ FUNCTION mnu_fakt_params()
 // -------------------------------------------------------------
 // postavi parametre unosa fakt_dokumenta
 // -------------------------------------------------------------
-PROCEDURE fakt_params( read )
+PROCEDURE fakt_params( READ )
 
-   IF read == NIL
-      read = .F.
+   IF READ == NIL
+      READ = .F.
    ENDIF
 
    IF READ .OR. __fakt_params == NIL
@@ -121,7 +119,7 @@ FUNCTION fakt_set_params()
 
    fill_part()
 
-   RETURN
+   RETURN .T.
 
 
 /* fakt_par_razno()
@@ -158,7 +156,7 @@ FUNCTION fakt_par_razno()
 
    gKomLin := PadR( gKomLin, 70 )
 
-   Box(, MAXROWS() -5, MAXCOLS() -15, .F., "OSTALI PARAMETRI (RAZNO)" )
+   Box(, MAXROWS() - 5, MAXCOLS() - 15, .F., "OSTALI PARAMETRI (RAZNO)" )
 
    _x := 2
    @ m_x + _x, m_y + 2 SAY8 "Fakt tekući dokument (1-9)" GET gIMenu VALID gIMenu $ "123456789" PICT "@!"
@@ -247,7 +245,7 @@ FUNCTION fakt_par_razno()
 
    IF LastKey() <> K_ESC
 
-      set_metric( "fakt_voditi_samo_kolicine", nil, gSamoKol )
+      set_metric( "fakt_voditi_samo_kolicine", NIL, gSamoKol )
       set_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), gRokPl )
       set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
       set_metric( "fakt_meni_tekuci", my_user(), gIMenu )
@@ -292,8 +290,7 @@ FUNCTION fakt_par_razno()
    RETURN
 
 
-// ---------------------------------------------
-// ---------------------------------------------
+
 FUNCTION fakt_zagl_params()
 
    LOCAL nSay := 17
@@ -364,74 +361,73 @@ FUNCTION fakt_zagl_params()
    @ m_x + nX, m_y + 2 SAY "Proizvoljan sadrzaj na kraju"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Red 1:", nSay ) GET gFText1 ;
-      PICT sPict
+   @ m_x + nX, m_y + 2 SAY PadL( "Red 1:", nSay ) GET gFText1 PICT sPict
    nX++
 
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Red 2:", nSay ) GET gFText2 ;
-      PICT sPict
+   @ m_x + nX, m_y + 2 SAY PadL( "Red 2:", nSay ) GET gFText2 PICT sPict
    nX++
 
    @ m_x + nX, m_y + 2 SAY PadL( "Red 3:", nSay ) GET gFText3 ;
       PICT sPict
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Koristiti tekstualno zaglavlje (D/N)?" GET gStZagl ;
-      VALID gStZagl $ "DN" PICT "@!"
-
+   @ m_x + nX, m_y + 2 SAY "Koristiti tekstualno zaglavlje (D/N)?" GET gStZagl  VALID gStZagl $ "DN" PICT "@!"
    nX += 2
 
    @ m_x + nX, m_y + 2 SAY PadL( "Slika na vrhu fakture (redova):", nSay + 15 ) GET gFPicHRow PICT "99"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY PadL( "Slika na dnu fakture (redova):", nSay + 15 ) GET gFPicFRow PICT "99"
    READ
 
    BoxC()
 
    IF ( LastKey() <> K_ESC )
-      set_metric( "org_naziv", nil, gFNaziv )
-      set_metric( "org_naziv_dodatno", nil, gFPNaziv )
-      set_metric( "org_adresa", nil, gFAdresa )
-      set_metric( "org_pdv_broj", nil, gFIdBroj )
-      set_metric( "fakt_zagl_banka_1", nil, gFBanka1 )
-      set_metric( "fakt_zagl_banka_2", nil, gFBanka2 )
-      set_metric( "fakt_zagl_banka_3", nil, gFBanka3 )
-      set_metric( "fakt_zagl_banka_4", nil, gFBanka4 )
-      set_metric( "fakt_zagl_banka_5", nil, gFBanka5 )
-      set_metric( "fakt_zagl_telefon", nil, gFTelefon )
-      set_metric( "fakt_zagl_email", nil, gFEmailWeb )
-      set_metric( "fakt_zagl_dtxt_1", nil, gFText1 )
-      set_metric( "fakt_zagl_dtxt_2", nil, gFText2 )
-      set_metric( "fakt_zagl_dtxt_3", nil, gFText3 )
-      set_metric( "fakt_zagl_koristiti_txt", nil, gStZagl )
-      set_metric( "fakt_zagl_pic_header", nil, gFPicHRow )
-      set_metric( "fakt_zagl_pic_footer", nil, gFPicFRow )
+      set_metric( "org_naziv", NIL, gFNaziv )
+      set_metric( "org_naziv_dodatno", NIL, gFPNaziv )
+      set_metric( "org_adresa", NIL, gFAdresa )
+      set_metric( "org_pdv_broj", NIL, gFIdBroj )
+      set_metric( "fakt_zagl_banka_1", NIL, gFBanka1 )
+      set_metric( "fakt_zagl_banka_2", NIL, gFBanka2 )
+      set_metric( "fakt_zagl_banka_3", NIL, gFBanka3 )
+      set_metric( "fakt_zagl_banka_4", NIL, gFBanka4 )
+      set_metric( "fakt_zagl_banka_5", NIL, gFBanka5 )
+      set_metric( "fakt_zagl_telefon", NIL, gFTelefon )
+      set_metric( "fakt_zagl_email", NIL, gFEmailWeb )
+      set_metric( "fakt_zagl_dtxt_1", NIL, gFText1 )
+      set_metric( "fakt_zagl_dtxt_2", NIL, gFText2 )
+      set_metric( "fakt_zagl_dtxt_3", NIL, gFText3 )
+      set_metric( "fakt_zagl_koristiti_txt", NIL, gStZagl )
+      set_metric( "fakt_zagl_pic_header", NIL, gFPicHRow )
+      set_metric( "fakt_zagl_pic_footer", NIL, gFPicFRow )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION fakt_par_cijene()
 
    LOCAL nX
+   LOCAL cCijena := fakt_pic_cijena()
+   LOCAL cIznos := fakt_pic_iznos()
+   LOCAL cKolicina := fakt_pic_kolicina()
+
    PRIVATE  GetList := {}
 
-   PicKol := StrTran( PicKol, "@Z ", "" )
+   fakt_pic_kolicina( StrTran( fakt_pic_kolicina(), "@Z ", "" ) )
 
    nX := 1
    Box(, 6, 60, .F., "PARAMETRI PRIKAZA" )
 
-   @ m_x + nX, m_y + 2 SAY "Prikaz cijene   " GET PicCDem
+   @ m_x + nX, m_y + 2 SAY "Prikaz cijene   " GET cCijena
    nX++
 
-   @ m_x + nX, m_y + 2 SAY "Prikaz iznosa   " GET PicDem
+   @ m_x + nX, m_y + 2 SAY "Prikaz iznosa   " GET cIznos
    nX++
 
-   @ m_x + nX, m_y + 2 SAY "Prikaz kolicine " GET PicKol
+   @ m_x + nX, m_y + 2 SAY "Prikaz kolicine " GET cKolicina
    nX++
 
    @ m_x + nX, m_y + 2 SAY "Na kraju fakture izvrsiti zaokruzenje" GET gFZaok PICT "99"
@@ -446,9 +442,10 @@ FUNCTION fakt_par_cijene()
 
    IF ( LastKey() <> K_ESC )
 
-      set_metric( "fakt_prikaz_cijene", NIL, PicCDem )
-      set_metric( "fakt_prikaz_iznosa", NIL, PicDem )
-      set_metric( "fakt_prikaz_kolicine", NIL, PicKol )
+      fakt_pic_cijena( cCijena )
+      fakt_pic_iznos( cIznos )
+      fakt_pic_kolicina( cKolicina )
+
       set_metric( "fakt_zaokruzenje", NIL, gFZaok )
       set_metric( "fakt_zaokruzenje_5_pf", NIL, gZ_5pf )
 
@@ -497,12 +494,12 @@ FUNCTION fakt_par_varijante_prikaza()
 
    IF ( LastKey() <> K_ESC )
 
-      set_metric( "fakt_datum_placanja_otpremnica", nil, gDoDPar )
-      set_metric( "fakt_datum_placanja_svi_dokumenti", nil, gDatVal )
-      set_metric( "fakt_numericki_dio_dokumenta", nil, gNumDio )
-      set_metric( "fakt_prikaz_samo_kolicine", nil, gPSamoKol )
-      set_metric( "fakt_povrat_u_smece", nil, gcF9usmece )
-      set_metric( "fakt_varijanta_dokumenta_13", nil, gVar13 )
+      set_metric( "fakt_datum_placanja_otpremnica", NIL, gDoDPar )
+      set_metric( "fakt_datum_placanja_svi_dokumenti", NIL, gDatVal )
+      set_metric( "fakt_numericki_dio_dokumenta", NIL, gNumDio )
+      set_metric( "fakt_prikaz_samo_kolicine", NIL, gPSamoKol )
+      set_metric( "fakt_povrat_u_smece", NIL, gcF9usmece )
+      set_metric( "fakt_varijanta_dokumenta_13", NIL, gVar13 )
 
       WPar( "pd", gProtu13 )
       WPar( "dc", g13dcij )
@@ -694,17 +691,17 @@ FUNCTION par_fakt_izgled_dokumenta()
 
       set_metric( "fakt_odt_template_auto", NIL, _auto_odt )
 
-      set_metric( "fakt_ispis_grupacije_na_dokumentu", nil, glRGrPrn )
-      set_metric( "fakt_ispis_salda_kupca_dobavljaca", nil, gShSld )
-      set_metric( "fakt_ispis_salda_kupca_dobavljaca_varijanta", nil, gShSldVar )
-      set_metric( "konto_duguje", nil, gFinKtoDug )
-      set_metric( "konto_potrazuje", nil, gFinKtoPot )
+      set_metric( "fakt_ispis_grupacije_na_dokumentu", NIL, glRGrPrn )
+      set_metric( "fakt_ispis_salda_kupca_dobavljaca", NIL, gShSld )
+      set_metric( "fakt_ispis_salda_kupca_dobavljaca_varijanta", NIL, gShSldVar )
+      set_metric( "konto_duguje", NIL, gFinKtoDug )
+      set_metric( "konto_potrazuje", NIL, gFinKtoPot )
 
-      set_metric( "fakt_dokument_dodati_redovi_po_listu", nil, gERedova )
-      set_metric( "fakt_dokument_lijeva_margina", nil, gnLMarg )
-      set_metric( "fakt_dokument_top_margina", nil, gnTMarg )
-      set_metric( "fakt_dokument_delphirb_prikaz", nil, gPDVDrb )
-      set_metric( "fakt_dokument_txt_prikaz_varijanta", nil, gPDVDokVar )
+      set_metric( "fakt_dokument_dodati_redovi_po_listu", NIL, gERedova )
+      set_metric( "fakt_dokument_lijeva_margina", NIL, gnLMarg )
+      set_metric( "fakt_dokument_top_margina", NIL, gnTMarg )
+      set_metric( "fakt_dokument_delphirb_prikaz", NIL, gPDVDrb )
+      set_metric( "fakt_dokument_txt_prikaz_varijanta", NIL, gPDVDokVar )
 
    ENDIF
 
@@ -819,27 +816,27 @@ FUNCTION fakt_par_nazivi_dokumenata()
 
    IF ( LastKey() <> K_ESC )
 
-      set_metric( "fakt_dokument_dok_10_naziv", nil, g10Str )
-      set_metric( "fakt_dokument_dok_10_potpis", nil, g10Str2T )
-      set_metric( "fakt_dokument_dok_10_txt_lista", nil, g10ftxt )
-      set_metric( "fakt_dokument_dok_11_naziv", nil, g11Str )
-      set_metric( "fakt_dokument_dok_11_potpis", nil, g11Str2T )
-      set_metric( "fakt_dokument_dok_11_txt_lista", nil, g11ftxt )
-      set_metric( "fakt_dokument_dok_12_naziv", nil, g12Str )
-      set_metric( "fakt_dokument_dok_12_potpis", nil, g12Str2T )
-      set_metric( "fakt_dokument_dok_12_txt_lista", nil, g12ftxt )
-      set_metric( "fakt_dokument_dok_13_naziv", nil, g13Str )
-      set_metric( "fakt_dokument_dok_13_potpis", nil, g13Str2T )
-      set_metric( "fakt_dokument_dok_13_txt_lista", nil, g13ftxt )
-      set_metric( "fakt_dokument_dok_16_naziv", nil, g16Str )
-      set_metric( "fakt_dokument_dok_16_potpis", nil, g16Str2T )
-      set_metric( "fakt_dokument_dok_16_txt_lista", nil, g16ftxt )
-      set_metric( "fakt_dokument_dok_20_naziv", nil, g20Str )
-      set_metric( "fakt_dokument_dok_20_potpis", nil, g20Str2T )
-      set_metric( "fakt_dokument_dok_20_txt_lista", nil, g20ftxt )
-      set_metric( "fakt_dokument_dok_22_naziv", nil, g22Str )
-      set_metric( "fakt_dokument_dok_22_potpis", nil, g22Str2T )
-      set_metric( "fakt_dokument_dok_22_txt_lista", nil, g22ftxt )
+      set_metric( "fakt_dokument_dok_10_naziv", NIL, g10Str )
+      set_metric( "fakt_dokument_dok_10_potpis", NIL, g10Str2T )
+      set_metric( "fakt_dokument_dok_10_txt_lista", NIL, g10ftxt )
+      set_metric( "fakt_dokument_dok_11_naziv", NIL, g11Str )
+      set_metric( "fakt_dokument_dok_11_potpis", NIL, g11Str2T )
+      set_metric( "fakt_dokument_dok_11_txt_lista", NIL, g11ftxt )
+      set_metric( "fakt_dokument_dok_12_naziv", NIL, g12Str )
+      set_metric( "fakt_dokument_dok_12_potpis", NIL, g12Str2T )
+      set_metric( "fakt_dokument_dok_12_txt_lista", NIL, g12ftxt )
+      set_metric( "fakt_dokument_dok_13_naziv", NIL, g13Str )
+      set_metric( "fakt_dokument_dok_13_potpis", NIL, g13Str2T )
+      set_metric( "fakt_dokument_dok_13_txt_lista", NIL, g13ftxt )
+      set_metric( "fakt_dokument_dok_16_naziv", NIL, g16Str )
+      set_metric( "fakt_dokument_dok_16_potpis", NIL, g16Str2T )
+      set_metric( "fakt_dokument_dok_16_txt_lista", NIL, g16ftxt )
+      set_metric( "fakt_dokument_dok_20_naziv", NIL, g20Str )
+      set_metric( "fakt_dokument_dok_20_potpis", NIL, g20Str2T )
+      set_metric( "fakt_dokument_dok_20_txt_lista", NIL, g20ftxt )
+      set_metric( "fakt_dokument_dok_22_naziv", NIL, g22Str )
+      set_metric( "fakt_dokument_dok_22_potpis", NIL, g22Str2T )
+      set_metric( "fakt_dokument_dok_22_txt_lista", NIL, g22ftxt )
 
 
       WPar( "r3", g06Str )

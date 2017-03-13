@@ -40,7 +40,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    cDokument := Space( 8 )
 
    picBHD := FormPicL( gPicBHD, 14 )
-   picDEM := FormPicL( gPicDEM, 10 )
+   picDEM := FormPicL( pic_iznos_eur(), 10 )
 
    IF fin_dvovalutno()
       m := "----------- ------------- -------------- -------------- ---------- ---------- ---------- -------------------------"

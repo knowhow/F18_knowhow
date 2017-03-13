@@ -13,9 +13,7 @@
 
 
 
-// -----------------------------------------------
-// finansijska lager lista magacina
-// -----------------------------------------------
+
 FUNCTION finansijsko_stanje_magacin()
 
    LOCAL cTipDok, cDokNaz
@@ -28,8 +26,8 @@ FUNCTION finansijsko_stanje_magacin()
 
    _o_tbl()
 
-   PicDEM := global_pic_iznos()
-   PicCDEM := global_pic_cijena()
+   PicDEM := prosiri_pic_iznos_za_2()
+   PicCDEM := prosiri_pic_cjena_za_2()
 
    cIdKonto := PadR( "1320", gDuzKonto )
    dDatOd := CToD( "" )

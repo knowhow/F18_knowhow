@@ -12,7 +12,7 @@ FUNCTION SpecKK2( lOtvSt )
    cIdFirma := self_organizacija_id()
 
    PRIVATE picBHD := FormPicL( "9 " + gPicBHD, 16 )
-   PRIVATE picDEM := FormPicL( "9 " + gPicDEM, 14 ), cPG := "D"
+   PRIVATE picDEM := FormPicL( "9 " + pic_iznos_eur(), 14 ), cPG := "D"
    PRIVATE lOtvoreneStavke := lOtvSt
 
    o_konto()

@@ -22,7 +22,7 @@ THREAD STATIC s_lAsistentPause := .F. // asistent u stanju pauze
 THREAD STATIC s_nAsistentPauseSeconds := 0
 THREAD STATIC s_nKalkEditLastKey := 0
 
-MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPicCDEM, gPicDEM, gPICPROC, gPICKol
+MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPICPROC
 MEMVAR ImeKol, Kol
 MEMVAR picv
 MEMVAR m_x, m_y
@@ -56,10 +56,10 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    o_kalk_edit()
    kalk_is_novi_dokument( .F. )
 
-   PRIVATE PicCDEM := gPicCDEM
+   PRIVATE PicCDEM := pic_cijena_bilo_gpiccdem()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := gPicDEM
-   PRIVATE Pickol := gPicKol
+   PRIVATE PicDEM := pic_iznos_bilo_gpicdem()
+   PRIVATE Pickol := pic_kolicina_bilo_gpickol()
    PRIVATE gVarijanta := "2"
    PRIVATE PicV := "99999999.9"
 
@@ -928,7 +928,7 @@ FUNCTION kalk_edit_stavka( lNoviDokument, hParams )
    PRIVATE nMarza2 := 0
 
    PRIVATE PicDEM := "9999999.99999999"
-   PRIVATE PicKol := gPicKol
+   PRIVATE PicKol := pic_kolicina_bilo_gpickol()
 
    nStrana := 1
 

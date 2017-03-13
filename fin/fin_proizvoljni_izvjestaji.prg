@@ -23,7 +23,7 @@ FUNCTION PrPromRn()
    cNazivFirme := self_organizacija_naziv()
 
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
-   PRIVATE picDEM := FormPicL( gPicDEM, 12 )
+   PRIVATE picDEM := FormPicL( pic_iznos_eur(), 12 )
 
    O_PARAMS
    PRIVATE cSection := "o", cHistory := " ", aHistory := {}

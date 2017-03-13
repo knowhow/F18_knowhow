@@ -70,11 +70,11 @@ FUNCTION kalk_params()
 FUNCTION kalk_preuzimanje_troskova_iz_sif_roba( cSet )
 
    IF s_cKalkPreuzimanjeTroskovaIzSifRoba == NIL
-      s_cKalkPreuzimanjeTroskovaIzSifRoba := fetch_metric( "kalk_preuzimanje_troskova_iz_sif_roba", nil, "N" )
+      s_cKalkPreuzimanjeTroskovaIzSifRoba := fetch_metric( "kalk_preuzimanje_troskova_iz_sif_roba", NIL, "N" )
    ENDIF
 
    IF cSet != NIL
-      set_metric( "kalk_preuzimanje_troskova_iz_sif_roba", nil, cSet )
+      set_metric( "kalk_preuzimanje_troskova_iz_sif_roba", NIL, cSet )
       s_cKalkPreuzimanjeTroskovaIzSifRoba := cSet
    ENDIF
 
@@ -121,8 +121,8 @@ FUNCTION kalk_par_varijante_prikaza()
 
    @ m_x + nX, Col() + 1 SAY c10T5 GET gRobaTr5Tip VALID gRobaTr5Tip $ " %URA" PICT "@!"
 
-   //nX += 1
-   //@ m_x + nX, m_y + 2 SAY "10 - pomoc sa koverzijom valute pri unosu dokumenta (D/N)" GET gDokKVal VALID gDokKVal $ "DN" PICT "@!"
+   // nX += 1
+   // @ m_x + nX, m_y + 2 SAY "10 - pomoc sa koverzijom valute pri unosu dokumenta (D/N)" GET gDokKVal VALID gDokKVal $ "DN" PICT "@!"
 
    nX += 2
 
@@ -166,29 +166,29 @@ FUNCTION kalk_par_varijante_prikaza()
 
    IF LastKey() <> K_ESC
 
-      set_metric( "kalk_magacin_po_nc", nil, gMagacin )
+      set_metric( "kalk_magacin_po_nc", NIL, gMagacin )
 
-      set_metric( "kalk_kolicina_kalo", nil, gKalo )
-      set_metric( "kalk_voditi_kalo", nil, gVodiKalo )
-      set_metric( "kalk_dokument_10_prikaz_ukalk_poreza", nil, g10Porez )
-      set_metric( "kalk_dokument_14_varijanta_poreza", nil, gVarVP )
-      set_metric( "kalk_dokument_11_bez_nc", nil, g11bezNC )
-      set_metric( "kalk_dokument_80_rekap_po_tar", nil, g80VRT )
-      set_metric( "kalk_tip_nivelacije_14", nil, gNiv14 )
-      set_metric( "kalk_varijanta_fakt_13_kalk_11_cijena", nil, gVar13u11 )
-      set_metric( "kalk_pomoc_sa_mpc", nil, gMPCPomoc )
-      set_metric( "kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt )
+      set_metric( "kalk_kolicina_kalo", NIL, gKalo )
+      set_metric( "kalk_voditi_kalo", NIL, gVodiKalo )
+      set_metric( "kalk_dokument_10_prikaz_ukalk_poreza", NIL, g10Porez )
+      set_metric( "kalk_dokument_14_varijanta_poreza", NIL, gVarVP )
+      set_metric( "kalk_dokument_11_bez_nc", NIL, g11bezNC )
+      set_metric( "kalk_dokument_80_rekap_po_tar", NIL, g80VRT )
+      set_metric( "kalk_tip_nivelacije_14", NIL, gNiv14 )
+      set_metric( "kalk_varijanta_fakt_13_kalk_11_cijena", NIL, gVar13u11 )
+      set_metric( "kalk_pomoc_sa_mpc", NIL, gMPCPomoc )
+      set_metric( "kalk_kolicina_kod_nivelacije_fakt", NIL, gKolicFakt )
 
       kalk_preuzimanje_troskova_iz_sif_roba( cRobaTrosk )
-      set_metric( "kalk_varijanta_popusta_na_dokumentima", nil, gRCRP )
-      set_metric( "kalk_kontiranje_automatska_ravnoteza_naloga", nil, gAutoRavn )
-      set_metric( "kalk_automatsko_azuriranje_cijena", nil, gAutoCjen )
-      set_metric( "kalk_trosak_1_tip", nil, gRobaTr1Tip )
-      set_metric( "kalk_trosak_2_tip", nil, gRobaTr2Tip )
-      set_metric( "kalk_trosak_3_tip", nil, gRobaTr3Tip )
-      set_metric( "kalk_trosak_4_tip", nil, gRobaTr4Tip )
-      set_metric( "kalk_trosak_5_tip", nil, gRobaTr5Tip )
-      //set_metric( "kalk_konverzija_valute_na_unosu", nil, gDokKVal )
+      set_metric( "kalk_varijanta_popusta_na_dokumentima", NIL, gRCRP )
+      set_metric( "kalk_kontiranje_automatska_ravnoteza_naloga", NIL, gAutoRavn )
+      set_metric( "kalk_automatsko_azuriranje_cijena", NIL, gAutoCjen )
+      set_metric( "kalk_trosak_1_tip", NIL, gRobaTr1Tip )
+      set_metric( "kalk_trosak_2_tip", NIL, gRobaTr2Tip )
+      set_metric( "kalk_trosak_3_tip", NIL, gRobaTr3Tip )
+      set_metric( "kalk_trosak_4_tip", NIL, gRobaTr4Tip )
+      set_metric( "kalk_trosak_5_tip", NIL, gRobaTr5Tip )
+      // set_metric( "kalk_konverzija_valute_na_unosu", nil, gDokKVal )
 
    ENDIF
 
@@ -226,16 +226,16 @@ FUNCTION kalk_par_razno()
    @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija D/N     " GET gBrojacKalkulacija PICT "@!" VALID gBrojacKalkulacija $ "DN"
 
    @ m_x + _x, Col() + 2 SAY8 "dužina brojača:" GET nLenBrKalk PICT "9" VALID ( nLenBrKalk > 0 .AND. nLenBrKalk < 10 )
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija po kontima (D/N)" GET _brojac VALID _brojac $ "DN" PICT "@!"
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Koristiti BARCOD pri unosu kalkulacija (D/N)" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Potpis na kraju naloga D/N     " GET gPotpis VALID gPotpis $ "DN"
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY8 "Novi korisnički interfejs D/N/X" GET gNW VALID gNW $ "DNX" PICT "@!"
 
@@ -243,36 +243,36 @@ FUNCTION kalk_par_razno()
    @ m_x + _x, m_y + 2 SAY "Tip tabele (0/1/2)             " GET gTabela VALID gTabela < 3 PICT "9"
 
    @ m_x + _x, Col() + 2 SAY "Vise konta na dokumentu (D/N) ?" GET _vise_konta VALID _vise_konta $ "DN" PICT "@!"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "F-ja za odredjivanje dzokera F1 u kontiranju" GET gFunKon1 PICT "@S28"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "F-ja za odredjivanje dzokera F2 u kontiranju" GET gFunKon2 PICT "@S28"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Limit za otvorene stavke" GET gnLOst PICT "99999"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Timeout kod azuriranja dokumenta (sec.)" GET gAzurTimeout PICT "99999"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Timeout kod azuriranja fin.naloga (sec.)" GET gAzurFinTO PICT "99999"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Auto obrada dokumenata iz cache tabele (D/N)" GET gCache VALID gCache $ "DN" PICT "@!"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Prag odstupanja NC od posljednjeg ulaza sumnjiv :" GET nPragOdstupanjaNc PICT "999.99"
    @ m_x + _x, Col() SAY "%"
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Standardna stopa marze [NC x ( 1 + ST_STOPA ) = Roba.VPC] :" GET nStandardnaStopaMarza PICT "999.99"
    @ m_x + _x, Col() SAY "%"
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY8 "Traži robu prema (prazno/SIFRADOB/)" GET cRobaTrazi PICT "@15"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Reset artikla prilikom unosa dokumenta (D/N)" GET _reset_roba PICT "@!" VALID _reset_roba $ "DN"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Pregled rabata za dobavljaca kod unosa ulaza (D/N)" GET _rabat PICT "@!" VALID _rabat $ "DN"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Def.opisa kod unosa (D/N)" GET _opis VALID _opis $ "DN" PICT "@!"
    @ m_x + _x, Col() + 1 SAY "Def.datuma isteka roka (D/N)" GET _rok VALID _rok $ "DN" PICT "@!"
 
@@ -290,15 +290,15 @@ FUNCTION kalk_par_razno()
 
 
       roba_barkod_pri_unosu( _unos_barkod == "D" )
-      set_metric( "kalk_brojac_kalkulacija", nil, gBrojacKalkulacija )
-      set_metric( "kalk_brojac_dokumenta_po_kontima", nil, glBrojacPoKontima )
-      set_metric( "kalk_potpis_na_kraju_naloga", nil, gPotpis )
-      set_metric( "kalk_tip_tabele", nil, gTabela )
-      set_metric( "kalk_novi_korisnicki_interfejs", nil, gNW )
-      set_metric( "kalk_zabrana_promjene_tarifa", nil, gPromTar )
-      set_metric( "kalk_djoker_f1_kod_kontiranja", nil, gFunKon1 )
-      set_metric( "kalk_djoker_f2_kod_kontiranja", nil, gFunKon2 )
-      set_metric( "kalk_timeout_kod_azuriranja", nil, gAzurTimeout )
+      set_metric( "kalk_brojac_kalkulacija", NIL, gBrojacKalkulacija )
+      set_metric( "kalk_brojac_dokumenta_po_kontima", NIL, glBrojacPoKontima )
+      set_metric( "kalk_potpis_na_kraju_naloga", NIL, gPotpis )
+      set_metric( "kalk_tip_tabele", NIL, gTabela )
+      set_metric( "kalk_novi_korisnicki_interfejs", NIL, gNW )
+      set_metric( "kalk_zabrana_promjene_tarifa", NIL, gPromTar )
+      set_metric( "kalk_djoker_f1_kod_kontiranja", NIL, gFunKon1 )
+      set_metric( "kalk_djoker_f2_kod_kontiranja", NIL, gFunKon2 )
+      set_metric( "kalk_timeout_kod_azuriranja", NIL, gAzurTimeout )
       set_metric( "kalk_cache_tabela", f18_user(), gCache )
       prag_odstupanja_nc_sumnjiv( nPragOdstupanjaNc )
       set_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
@@ -343,9 +343,9 @@ FUNCTION kalk_par_metoda_nc()
    IF LastKey() <> K_ESC
 
       kalk_metoda_nc ( cMetodaNC )
-      set_metric( "kalk_promjena_cijena_odgovor", nil, gDefNiv )
-      set_metric( "kalk_azuriranje_sumnjivih_dokumenata", nil, gCijene )
-      set_metric( "kalk_broj_decimala_za_kolicinu", nil, gDecKol )
+      set_metric( "kalk_promjena_cijena_odgovor", NIL, gDefNiv )
+      set_metric( "kalk_azuriranje_sumnjivih_dokumenata", NIL, gCijene )
+      set_metric( "kalk_broj_decimala_za_kolicinu", NIL, gDecKol )
 
    ENDIF
 
@@ -399,15 +399,18 @@ FUNCTION metodanc_info()
 
 FUNCTION kalk_par_cijene()
 
-   PRIVATE  GetList := {}
+   LOCAL cCijena := pic_cijena_bilo_gpiccdem()
+   LOCAL cIznos := pic_iznos_bilo_gpicdem()
+   LOCAL cKolicina :=  pic_kolicina_bilo_gpickol()
+   LOCAL GetList := {}
 
    Box(, 10, 60, .F., "PARAMETRI PRIKAZA - PICTURE KODOVI" )
 
 
-   @ m_x + 1, m_y + 2 SAY "Prikaz Cijene  " GET gPicCDem
+   @ m_x + 1, m_y + 2 SAY "Prikaz Cijene  " GET cCijena
    @ m_x + 2, m_y + 2 SAY "Prikaz procenta" GET gPicProc
-   @ m_x + 3, m_y + 2 SAY "Prikaz iznosa  " GET gPicDem
-   @ m_x + 4, m_y + 2 SAY "Prikaz kolicine" GET gPicKol
+   @ m_x + 3, m_y + 2 SAY "Prikaz iznosa  " GET cIznos
+   @ m_x + 4, m_y + 2 SAY "Prikaz kolicine" GET cKolicina
 
 
    @ m_x + 5, m_y + 2 SAY "Ispravka NC    " GET gPicNC
@@ -421,15 +424,15 @@ FUNCTION kalk_par_cijene()
    BoxC()
 
    IF LastKey() <> K_ESC
-      set_metric( "kalk_format_prikaza_cijene", nil, gPicCDEM )
-      set_metric( "kalk_format_prikaza_procenta", nil, gPicProc )
-      set_metric( "kalk_format_prikaza_iznosa", nil, gPicDEM )
-      set_metric( "kalk_format_prikaza_kolicine", nil, gPicKol )
-      set_metric( "kalk_format_prikaza_nabavne_cijene", nil, gPicNC )
+      pic_cijena_bilo_gpiccdem( cCijena )
+      set_metric( "kalk_format_prikaza_procenta", NIL, gPicProc )
+      pic_iznos_bilo_gpicdem( cIznos )
+      pic_kolicina_bilo_gpickol( cKolicina )
+      set_metric( "kalk_format_prikaza_nabavne_cijene", NIL, gPicNC )
       // set_metric( "kalk_format_prikaza_cijene_prosirenje", nil, gFPicCDem )
       // set_metric( "kalk_format_prikaza_iznosa_prosirenje", nil, gFPicDem )
       // set_metric( "kalk_format_prikaza_kolicine_prosirenje", nil, gFPicKol )
-      set_metric( "kalk_broj_decimala_za_kolicinu", nil, gDecKol )
+      set_metric( "kalk_broj_decimala_za_kolicinu", NIL, gDecKol )
    ENDIF
 
    RETURN .T.
@@ -522,11 +525,11 @@ FUNCTION kalk_troskovi_10ka()
 
    IF LastKey() <> K_ESC
 
-      set_metric( "kalk_dokument_10_trosak_1", nil, c10T1 )
-      set_metric( "kalk_dokument_10_trosak_2", nil, c10T2 )
-      set_metric( "kalk_dokument_10_trosak_3", nil, c10T3 )
-      set_metric( "kalk_dokument_10_trosak_4", nil, c10T4 )
-      set_metric( "kalk_dokument_10_trosak_5", nil, c10T5 )
+      set_metric( "kalk_dokument_10_trosak_1", NIL, c10T1 )
+      set_metric( "kalk_dokument_10_trosak_2", NIL, c10T2 )
+      set_metric( "kalk_dokument_10_trosak_3", NIL, c10T3 )
+      set_metric( "kalk_dokument_10_trosak_4", NIL, c10T4 )
+      set_metric( "kalk_dokument_10_trosak_5", NIL, c10T5 )
 
    ENDIF
 
@@ -547,11 +550,11 @@ FUNCTION kalk_par_troskovi_rn()
    BoxC()
 
    IF LastKey() <> K_ESC
-      set_metric( "kalk_dokument_rn_trosak_1", nil, cRNT1 )
-      set_metric( "kalk_dokument_rn_trosak_2", nil, cRNT2 )
-      set_metric( "kalk_dokument_rn_trosak_3", nil, cRNT3 )
-      set_metric( "kalk_dokument_rn_trosak_4", nil, cRNT4 )
-      set_metric( "kalk_dokument_rn_trosak_5", nil, cRNT5 )
+      set_metric( "kalk_dokument_rn_trosak_1", NIL, cRNT1 )
+      set_metric( "kalk_dokument_rn_trosak_2", NIL, cRNT2 )
+      set_metric( "kalk_dokument_rn_trosak_3", NIL, cRNT3 )
+      set_metric( "kalk_dokument_rn_trosak_4", NIL, cRNT4 )
+      set_metric( "kalk_dokument_rn_trosak_5", NIL, cRNT5 )
    ENDIF
 
    cIspravka := "N"
@@ -577,14 +580,14 @@ FUNCTION kalk_par_troskovi_24()
    BoxC()
 
    IF LastKey() <> K_ESC
-      set_metric( "kalk_dokument_24_trosak_1", nil, c24T1 )
-      set_metric( "kalk_dokument_24_trosak_2", nil, c24T2 )
-      set_metric( "kalk_dokument_24_trosak_3", nil, c24T3 )
-      set_metric( "kalk_dokument_24_trosak_4", nil, c24T4 )
-      set_metric( "kalk_dokument_24_trosak_5", nil, c24T5 )
-      set_metric( "kalk_dokument_24_trosak_6", nil, c24T6 )
-      set_metric( "kalk_dokument_24_trosak_7", nil, c24T7 )
-      set_metric( "kalk_dokument_24_trosak_8", nil, c24T8 )
+      set_metric( "kalk_dokument_24_trosak_1", NIL, c24T1 )
+      set_metric( "kalk_dokument_24_trosak_2", NIL, c24T2 )
+      set_metric( "kalk_dokument_24_trosak_3", NIL, c24T3 )
+      set_metric( "kalk_dokument_24_trosak_4", NIL, c24T4 )
+      set_metric( "kalk_dokument_24_trosak_5", NIL, c24T5 )
+      set_metric( "kalk_dokument_24_trosak_6", NIL, c24T6 )
+      set_metric( "kalk_dokument_24_trosak_7", NIL, c24T7 )
+      set_metric( "kalk_dokument_24_trosak_8", NIL, c24T8 )
    ENDIF
 
    RETURN NIL
@@ -593,11 +596,11 @@ FUNCTION kalk_par_troskovi_24()
 FUNCTION kalk_metoda_nc( cSet )
 
    IF s_cKalkMetodaNc == NIL
-      s_cKalkMetodaNc := fetch_metric( "kalk_metoda_nc", nil, "2" )
+      s_cKalkMetodaNc := fetch_metric( "kalk_metoda_nc", NIL, "2" )
    ENDIF
    IF cSet != NIL
       s_cKalkMetodaNc := cSet
-      set_metric( "kalk_metod_nc", nil, cSet )
+      set_metric( "kalk_metod_nc", NIL, cSet )
    ENDIF
 
    RETURN s_cKalkMetodaNc

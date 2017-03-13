@@ -130,8 +130,8 @@ METHOD open()
 
    @  m_x + 11, m_y + 2  SAY "R.br:" get ::nRbr PICTURE "9999"
    @  m_x + 11, Col() + 2  SAY "Artikal  " get ::cIdRoba PICT "@!S10" WHEN ::wheIdRoba() VALID ::vldIdRoba()
-   @  m_x + 13, m_y + 2 SAY "Knjizna kolicina " GET ::nKKolicina PICT pickol WHEN ::wheKKolicina() VALID ::vldKKolicina()
-   @  m_x + 13, Col() + 2 SAY "popisana kolicina " GET ::nPKolicina PICT pickol VALID ::vldPKolicina()
+   @  m_x + 13, m_y + 2 SAY "Knjizna kolicina " GET ::nKKolicina PICT fakt_pic_kolicina() WHEN ::wheKKolicina() VALID ::vldKKolicina()
+   @  m_x + 13, Col() + 2 SAY "popisana kolicina " GET ::nPKolicina PICT fakt_pic_kolicina() VALID ::vldPKolicina()
 
    READ
 
@@ -474,7 +474,7 @@ METHOD showArtikal()
    ?? "(" + roba->jmj + ")"
 
    @ m_x + 18, m_y + 1   SAY "Stanje :"
-   @ m_x + 18, Col() + 1 SAY ::nNaStanju PICTURE pickol
+   @ m_x + 18, Col() + 1 SAY ::nNaStanju PICTURE fakt_pic_kolicina()
 
    @ m_x + 19, m_y + 1   SAY "Tarifa : "
    ?? roba->idtarifa

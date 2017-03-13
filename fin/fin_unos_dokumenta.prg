@@ -71,7 +71,7 @@ FUNCTION fin_knjizenje_naloga()
       { "Datum",         {|| field->DatDok  }, "DatDok" }, ;
       { "D/P",           {|| field->D_P     }, "D_P" }, ;
       { "Iznos " + AllTrim( ValDomaca() ), {|| Transform( field->IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznosbhd" }, ;
-      { "Iznos " + AllTrim( ValPomocna() ), {|| Transform( field->IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznosdem" }, ;
+      { "Iznos " + AllTrim( ValPomocna() ), {|| Transform( field->IznosDEM, FormPicL( pic_iznos_eur(), 10 ) ) }, "iznosdem" }, ;
       { "Opis",          {|| PadR( Left( field->Opis, 37 ) + iif( Len( AllTrim( field->Opis ) ) > 37, "...", "" ), 40 )  }, "OPIS" }, ;
       { "K1",            {|| field->k1      }, "k1" }, ;
       { "K2",            {|| field->k2      }, "k2" }, ;

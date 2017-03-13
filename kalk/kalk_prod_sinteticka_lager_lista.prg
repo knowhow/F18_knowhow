@@ -14,8 +14,8 @@
 
 FUNCTION sint_lager_lista_prodavnice()
 
-   PicCDEM := global_pic_cijena()
-   PicDEM := global_pic_iznos()
+   PicCDEM := prosiri_pic_cjena_za_2()
+   PicDEM := prosiri_pic_iznos_za_2()
 
    cIdFirma := self_organizacija_id()
    qqKonto := PadR( "132;", 60 )
@@ -101,9 +101,9 @@ FUNCTION sint_lager_lista_prodavnice()
    IF cPredhStanje == "D"
       AAdd( aRptText, { 10, " Predh.st", " kol/MPV " } )
    ENDIF
-   AAdd( aRptText, { Len( gPicKol ), " ulaz", " 4 " } )
-   AAdd( aRptText, { Len( gPicKol ), " izlaz", " 5 " } )
-   AAdd( aRptText, { Len( gPicKol ), " STANJE", " 4-5 " } )
+   AAdd( aRptText, { Len( pic_kolicina_bilo_gpickol() ), " ulaz", " 4 " } )
+   AAdd( aRptText, { Len( pic_kolicina_bilo_gpickol() ), " izlaz", " 5 " } )
+   AAdd( aRptText, { Len( pic_kolicina_bilo_gpickol() ), " STANJE", " 4-5 " } )
    AAdd( aRptText, { Len( PicDem ), " MPV.Dug", " 6 " } )
    AAdd( aRptText, { Len( PicDem ), " MPV.Pot", " 7 " } )
    AAdd( aRptText, { Len( PicDem ), " MPV", " 6-7 " } )
@@ -232,9 +232,9 @@ FUNCTION sint_lager_lista_prodavnice()
       @ PRow(), PCol() + 1 SAY aNaz[ 1 ]
       @ PRow(), PCol() + 1 SAY roba->jmj
       nCol0 := PCol() + 1
-      @ PRow(), PCol() + 1 SAY nUlaz PICT gpickol
-      @ PRow(), PCol() + 1 SAY nIzlaz PICT gpickol
-      @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT gpickol
+      @ PRow(), PCol() + 1 SAY nUlaz PICT pic_kolicina_bilo_gpickol()
+      @ PRow(), PCol() + 1 SAY nIzlaz PICT pic_kolicina_bilo_gpickol()
+      @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pic_kolicina_bilo_gpickol()
 
       nCol1 := PCol() + 1
       @ PRow(), PCol() + 1 SAY nMPVU PICT picdem
@@ -264,8 +264,8 @@ FUNCTION sint_lager_lista_prodavnice()
          @ PRow(), nCR  SAY aNaz[ 2 ]
       ENDIF
       IF cPnab == "D"
-         @ PRow(), nCol0 SAY Space( Len( gpickol ) )
-         @ PRow(), PCol() + 1 SAY Space( Len( gpickol ) )
+         @ PRow(), nCol0 SAY Space( Len( pic_kolicina_bilo_gpickol() ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( pic_kolicina_bilo_gpickol() ) )
          IF Round( nulaz - nizlaz, 4 ) <> 0
             @ PRow(), PCol() + 1 SAY ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) PICT picdem
          ENDIF
@@ -287,9 +287,9 @@ FUNCTION sint_lager_lista_prodavnice()
 
    ? cLine
    ? "UKUPNO:"
-   @ PRow(), nCol0 SAY ntUlaz PICT gpickol
-   @ PRow(), PCol() + 1 SAY ntIzlaz PICT gpickol
-   @ PRow(), PCol() + 1 SAY ntUlaz - ntIzlaz PICT gpickol
+   @ PRow(), nCol0 SAY ntUlaz PICT pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY ntIzlaz PICT pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY ntUlaz - ntIzlaz PICT pic_kolicina_bilo_gpickol()
    nCol1 := PCol() + 1
    @ PRow(), PCol() + 1 SAY ntMPVU PICT picdem
    @ PRow(), PCol() + 1 SAY ntMPVI PICT picdem

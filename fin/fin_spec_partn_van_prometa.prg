@@ -18,7 +18,7 @@ FUNCTION PartVanProm()
 
    LOCAL   dDatOd := CToD ( "" ), dDatDo := Date ()
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
-   PRIVATE picDEM := FormPicL( gPicDEM, 12 )
+   PRIVATE picDEM := FormPicL( pic_iznos_eur(), 12 )
    PRIVATE cIdKonto := Space ( 7 ), cIdFirma := Space ( Len ( self_organizacija_id() ) ), ;
       cKrit := Space ( 60 ), aUsl
 

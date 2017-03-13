@@ -387,7 +387,7 @@ FUNCTION fakt_stanje_robe()
 
             IF cMink <> "N" .AND. nMink > 0
                ?
-               @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( pickol ) )
+               @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( fakt_pic_kolicina() ) )
                @ PRow(), PCol() + 1 SAY nMink  PICT __PIC_KOL
             ENDIF
 
@@ -405,14 +405,14 @@ FUNCTION fakt_stanje_robe()
    IF !lBezUlaza
       ? Space( gnLMarg ); ?? m
       ? Space( gnLMarg ); ?? " Ukupno:"
-      @ PRow(), nCol1 SAY nIzn  PICT picdem
+      @ PRow(), nCol1 SAY nIzn  PICT fakt_pic_iznos()
    ENDIF
 
    ? Space( gnLMarg ); ?? m
 
    IF fSaberikol
       ? Space( gnLMarg ); ?? " Ukupno (kolicine):"
-      @ PRow(), nCol1    SAY nKU - nKI   PICTURE pickol
+      @ PRow(), nCol1    SAY nKU - nKI   PICTURE fakt_pic_kolicina()
    ENDIF
    ? Space( gnLMarg ); ?? m
    FF

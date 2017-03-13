@@ -16,9 +16,10 @@ MEMVAR gDUFRJ, gTroskovi
 MEMVAR cIdFirma, cIdKonto, fk1, fk2, fk3, fk4, cK1, cK2, cK3, cK4
 MEMVAR qqKonto, qqPartner
 MEMVAR nStr
-MEMVAR gPicBHD, gPicDEM, picDEM, picBHD, lOtvoreneStavke
+MEMVAR gPicBHD, picDEM, picBHD, lOtvoreneStavke
 MEMVAR dDatOd, dDatDo
 FIELD iznosbhd, iznosdem, d_p, otvst, idpartner, idfirma, idkonto, datdok, datval, brdok, brnal
+
 
 FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
@@ -74,7 +75,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    PRIVATE lOtvoreneStavke := lOtvSt
    PRIVATE c1K1Z := "N"
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
-   PRIVATE picDEM := FormPicL( gPicDEM, 12 )
+   PRIVATE picDEM := FormPicL( pic_iznos_eur(), 12 )
 
    // PRIVATE cSazeta := "N"
    PRIVATE cK14 := "2" // default prikazati datval

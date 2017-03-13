@@ -44,10 +44,10 @@ FUNCTION RptInvObrPopisa()
       ?? PadR( field->idRoba + "" + Trim( Left( roba->naz, 40 ) ) + " (" + roba->jmj + ")", 37 )
 
       // popisana kolicina
-      ?? Space( 10 ) + Replicate( "_", Len( PicKol ) -1 ) + Space( 2 )
+      ?? Space( 10 ) + Replicate( "_", Len( fakt_pic_kolicina() ) -1 ) + Space( 2 )
 
       // VP cijena
-      ?? Transform( field->cijena, PicCDem )
+      ?? Transform( field->cijena, fakt_pic_cijena() )
       SKIP
    ENDDO
 

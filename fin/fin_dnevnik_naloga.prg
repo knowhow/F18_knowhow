@@ -83,7 +83,7 @@ FUNCTION DnevnikNaloga()
    cIdFirma := IDFIRMA; cIdVN := IDVN; cBrNal := BRNAL; dDatNal := DATNAL
 
    PicBHD := "@Z " + FormPicL( gPicBHD, 15 )
-   PicDEM := "@Z " + FormPicL( gPicDEM, 10 )
+   PicDEM := "@Z " + FormPicL( pic_iznos_eur(), 10 )
 
    lJerry := .F.
 

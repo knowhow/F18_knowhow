@@ -106,7 +106,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
 
    cDokument := Space( 8 )
    picBHD := FormPicL( gPicBHD, 14 )
-   picDEM := FormPicL( gPicDEM, 10 )
+   picDEM := FormPicL( pic_iznos_eur(), 10 )
 
    IF fTiho .OR. Pitanje(, "Želite li prikaz sa datumima dokumenta i valutiranja ? (D/N)", "D" ) == "D"
       lEx := .T.
@@ -636,7 +636,7 @@ FUNCTION StBrVeze()
 
    cDokument := Space( 8 )
    picBHD := FormPicL( gPicBHD, 13 )
-   picDEM := FormPicL( gPicDEM, 10 )
+   picDEM := FormPicL( pic_iznos_eur(), 10 )
    IF fin_dvovalutno()
       M := "-------- -------- " + "------- ---- -- ------------- ------------- ------------- ---------- ---------- ---------- --"
    ELSE

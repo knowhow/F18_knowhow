@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR PicDEM, picBHD, gPicDEM, gPicBHD
+MEMVAR PicDEM, picBHD, gPicBHD
 
 FUNCTION fin_kartice_menu()
 
@@ -19,7 +19,7 @@ FUNCTION fin_kartice_menu()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   PRIVATE picDEM := FormPicL( gPicDEM, 12 )
+   PRIVATE picDEM := FormPicL( pic_iznos_eur(), 12 )
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
 
    AAdd( _opc, "1. subanalitička kartica                         " )

@@ -43,7 +43,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
    //o_partner()
 
    PicBHD := "@Z " + FormPicL( gPicBHD, 15 )
-   PicDEM := "@Z " + FormPicL( gPicDEM, 10 )
+   PicDEM := "@Z " + FormPicL( pic_iznos_eur(), 10 )
 
    M := iif( cInd == "3", "------ -------------- --- ", "" )
    IF _fin_params[ "fin_tip_dokumenta" ]

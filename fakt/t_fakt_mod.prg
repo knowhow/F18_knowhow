@@ -49,7 +49,6 @@ METHOD mMenu()
    fakt_set_params()
    set_sifk_partn_bank()
 
-
    ::programski_modul_osnovni_meni()
 
    RETURN NIL
@@ -120,9 +119,9 @@ METHOD set_module_gvars()
    PUBLIC gZnPrec := "="
    PUBLIC gnDS := 5             // duzina sifre artikla - sinteticki
    PUBLIC Kurslis := "1"
-   PUBLIC PicCdem := "99999999.99"
-   PUBLIC Picdem := "99999999.99"
-   PUBLIC Pickol := "9999999.999"
+
+
+
    PUBLIC gnLMarg := 6  // lijeva margina teksta
    PUBLIC gnLMargA5 := 6  // lijeva margina teksta
    PUBLIC gnTMarg := 11 // gornja margina
@@ -388,10 +387,7 @@ METHOD set_module_gvars()
    g22Str2T := fetch_metric( "fakt_dokument_dok_22_potpis", nil, g22Str2T )
    g22ftxt := fetch_metric( "fakt_dokument_dok_22_txt_lista", nil, g22ftxt )
 
-   // parametri cijena
-   PicCDem := fetch_metric( "fakt_prikaz_cijene", NIL, PicCDem )
-   PicDem := fetch_metric( "fakt_prikaz_iznosa", NIL, PicDem )
-   PicKol := fetch_metric( "fakt_prikaz_kolicine", NIL, PicKol )
+
    gFZaok := fetch_metric( "fakt_zaokruzenje", NIL, gFZaok )
    gZ_5pf := fetch_metric( "fakt_zaokruzenje_5_pf", NIL, gZ_5pf )
 

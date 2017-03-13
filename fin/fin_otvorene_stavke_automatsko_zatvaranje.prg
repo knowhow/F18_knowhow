@@ -45,7 +45,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
 
    qqPartner := Space( 60 )
    picD := "@Z " + FormPicL( "9 " + gPicBHD, 18 )
-   picDEM := "@Z " + FormPicL( "9 " + gPicDEM, 9 )
+   picDEM := "@Z " + FormPicL( "9 " + pic_iznos_eur(), 9 )
 
    // o_partner()
    o_konto()

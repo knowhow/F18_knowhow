@@ -124,7 +124,7 @@ FUNCTION kompenzacija()
    LOCAL cIdKonto, cIdKonto2
 
    picBHD := FormPicL( gPicBHD, 16 )
-   picDEM := FormPicL( gPicDEM, 12 )
+   picDEM := FormPicL( pic_iznos_eur(), 12 )
 
    _o_tables()
 
@@ -888,7 +888,7 @@ STATIC FUNCTION _o_tables()
 
    O_KOMP_POT
    O_KOMP_DUG
-   o_konto()
+   //o_konto()
    // o_partner()
 
    RETURN .T.

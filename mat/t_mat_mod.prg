@@ -92,9 +92,9 @@ METHOD set_module_gvars()
    PUBLIC gCijena := "2"
    PUBLIC gKonto := "D"
    PUBLIC KursLis := "1"
-   PUBLIC gpicdem := "9999999.99"
+   PUBLIC gPicDem := "9999999.99"
    PUBLIC gpicdin := "999999999.99"
-   PUBLIC gPicKol := "999999.999"
+   PUBLIC pic_kolicina_bilo_gpickol() := "999999.999"
    PUBLIC g2Valute := "N"
    PUBLIC gPotpis := "N"
    PUBLIC gDatNal := "D"
@@ -106,9 +106,9 @@ METHOD set_module_gvars()
    g2Valute := fetch_metric( "mat_dvovalutni_rpt", NIL, g2Valute )
    gNalPr := fetch_metric( "mat_real_prod", NIL, gNalPr )
    gCijena := fetch_metric( "mat_tip_cijene", NIL, gCijena )
-   gPicDem := AllTrim( fetch_metric( "mat_pict_dem", NIL, gPicDem ) )
+   pic_iznos_bilo_gpicdem() := AllTrim( fetch_metric( "mat_pict_dem", NIL, pic_iznos_bilo_gpicdem() ) )
    gPicDin := AllTrim( fetch_metric( "mat_pict_din", NIL, gPicDin ) )
-   gPicKol := AllTrim( fetch_metric( "mat_pict_kol", NIL, gPicKol ) )
+   pic_kolicina_bilo_gpickol() := AllTrim( fetch_metric( "mat_pict_kol", NIL, pic_kolicina_bilo_gpickol() ) )
    gDatNal := fetch_metric( "mat_datum_naloga", NIL, gDatNal )
    gSekS := fetch_metric( "mat_sekretarski_sistem", NIL, gSekS )
    gKupZad := fetch_metric( "mat_polje_partner", NIL, gKupZad )

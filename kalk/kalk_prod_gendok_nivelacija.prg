@@ -779,17 +779,17 @@ FUNCTION st_res_niv_p( cVar, cKolNula )
             ?? PadR( roba->naz, 15 )
 
             // cijene
-            @ PRow(), PCol() + 2 SAY Round( nSCijspdv, 3 ) PICT gPicCDem
-            @ PRow(), PCol() + 2 SAY Round( nNCijspdv, 3 ) PICT gPicCDem
-            @ PRow(), PCol() + 2 SAY Round( nRazlCij, 3 ) PICT gPicCDem
+            @ PRow(), PCol() + 2 SAY Round( nSCijspdv, 3 ) PICT pic_cijena_bilo_gpiccdem()
+            @ PRow(), PCol() + 2 SAY Round( nNCijspdv, 3 ) PICT pic_cijena_bilo_gpiccdem()
+            @ PRow(), PCol() + 2 SAY Round( nRazlCij, 3 ) PICT pic_cijena_bilo_gpiccdem()
             // sa pdv
-            @ PRow(), PCol() + 2 SAY Round( nStVrspdv, 3 ) PICT gPicDem
-            @ PRow(), PCol() + 2 SAY Round( nNVrspdv, 3 ) PICT gPicDem
-            @ PRow(), PCol() + 2 SAY Round( nRazlspdv, 3 ) PICT gPicDem
+            @ PRow(), PCol() + 2 SAY Round( nStVrspdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+            @ PRow(), PCol() + 2 SAY Round( nNVrspdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+            @ PRow(), PCol() + 2 SAY Round( nRazlspdv, 3 ) PICT pic_iznos_bilo_gpicdem()
             // bez pdv
-            @ PRow(), PCol() + 2 SAY Round( nStVrbpdv, 3 ) PICT gPicDem
-            @ PRow(), PCol() + 2 SAY Round( nNVrbpdv, 3 ) PICT gPicDem
-            @ PRow(), PCol() + 2 SAY Round( nRazlbpdv, 3 ) PICT gPicDem
+            @ PRow(), PCol() + 2 SAY Round( nStVrbpdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+            @ PRow(), PCol() + 2 SAY Round( nNVrbpdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+            @ PRow(), PCol() + 2 SAY Round( nRazlbpdv, 3 ) PICT pic_iznos_bilo_gpicdem()
          ENDIF
 
          // dodaj ukupno prodavnica
@@ -822,17 +822,17 @@ FUNCTION st_res_niv_p( cVar, cKolNula )
       cObjNaz := g_obj_naz( cProd )
 
       ? PadR( "UKUPNO " + AllTrim( cProd ) + "-" + AllTrim( cObjNaz ), 26 )
-      @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
-      @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
-      @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
+      @ PRow(), PCol() + 2 SAY Space( Len( pic_cijena_bilo_gpiccdem() ) )
+      @ PRow(), PCol() + 2 SAY Space( Len( pic_cijena_bilo_gpiccdem() ) )
+      @ PRow(), PCol() + 2 SAY Space( Len( pic_cijena_bilo_gpiccdem() ) )
       // sa pdv
-      @ PRow(), PCol() + 2 SAY Round( nUStVrspdv, 3 ) PICT gPicDem
-      @ PRow(), PCol() + 2 SAY Round( nUNVrspdv, 3 ) PICT gPicDem
-      @ PRow(), PCol() + 2 SAY Round( nURazlspdv, 3 ) PICT gPicDem
+      @ PRow(), PCol() + 2 SAY Round( nUStVrspdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 2 SAY Round( nUNVrspdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 2 SAY Round( nURazlspdv, 3 ) PICT pic_iznos_bilo_gpicdem()
       // bez pdv
-      @ PRow(), PCol() + 2 SAY Round( nUStVrbpdv, 3 ) PICT gPicDem
-      @ PRow(), PCol() + 2 SAY Round( nUNVrbpdv, 3 ) PICT gPicDem
-      @ PRow(), PCol() + 2 SAY Round( nURazlbpdv, 3 ) PICT gPicDem
+      @ PRow(), PCol() + 2 SAY Round( nUStVrbpdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 2 SAY Round( nUNVrbpdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 2 SAY Round( nURazlbpdv, 3 ) PICT pic_iznos_bilo_gpicdem()
 
       IF cVar == "1"
          ? cLine
@@ -846,17 +846,17 @@ FUNCTION st_res_niv_p( cVar, cKolNula )
 
    // total - sve prodavnice
    ? PadR( "SVE PRODAVNICE UKUPNO:", 26 )
-   @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
-   @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
-   @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
+   @ PRow(), PCol() + 2 SAY Space( Len( pic_cijena_bilo_gpiccdem() ) )
+   @ PRow(), PCol() + 2 SAY Space( Len( pic_cijena_bilo_gpiccdem() ) )
+   @ PRow(), PCol() + 2 SAY Space( Len( pic_cijena_bilo_gpiccdem() ) )
    // sa pdv
-   @ PRow(), PCol() + 2 SAY Round( nTStVrspdv, 3 ) PICT gPicDem
-   @ PRow(), PCol() + 2 SAY Round( nTNVrspdv, 3 ) PICT gPicDem
-   @ PRow(), PCol() + 2 SAY Round( nTRazlspdv, 3 ) PICT gPicDem
+   @ PRow(), PCol() + 2 SAY Round( nTStVrspdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 2 SAY Round( nTNVrspdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 2 SAY Round( nTRazlspdv, 3 ) PICT pic_iznos_bilo_gpicdem()
    // bez pdv
-   @ PRow(), PCol() + 2 SAY Round( nTStVrbpdv, 3 ) PICT gPicDem
-   @ PRow(), PCol() + 2 SAY Round( nTNVrbpdv, 3 ) PICT gPicDem
-   @ PRow(), PCol() + 2 SAY Round( nTRazlbpdv, 3 ) PICT gPicDem
+   @ PRow(), PCol() + 2 SAY Round( nTStVrbpdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 2 SAY Round( nTNVrbpdv, 3 ) PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 2 SAY Round( nTRazlbpdv, 3 ) PICT pic_iznos_bilo_gpicdem()
 
    ? cLine
 
@@ -1086,9 +1086,9 @@ FUNCTION st_pr_cijena( cFirma, cIdTip, cBrDok, cPodvuceno, cProred )
 
       ?? field->rbr + " " + field->idroba + " " + PadR( Trim( Left( ROBA->naz, 35 ) ) + " (" + ROBA->jmj + ")", 40 )
 
-      @ PRow(), PCol() + 1 SAY field->FCJ PICT gPicCDEM
-      @ PRow(), PCol() + 1 SAY field->MPCSAPP + FCJ PICT gPicCDEM
-      @ PRow(), PCol() + 1 SAY field->MPCSAPP PICT gPicCDEM
+      @ PRow(), PCol() + 1 SAY field->FCJ PICT pic_cijena_bilo_gpiccdem()
+      @ PRow(), PCol() + 1 SAY field->MPCSAPP + FCJ PICT pic_cijena_bilo_gpiccdem()
+      @ PRow(), PCol() + 1 SAY field->MPCSAPP PICT pic_cijena_bilo_gpiccdem()
 
       IF cPodvuceno == "D"
          U_OFF

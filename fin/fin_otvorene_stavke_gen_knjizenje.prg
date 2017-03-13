@@ -76,7 +76,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    ENDIF
 
    picD := FormPicL( "9 " + gPicBHD, 14 )
-   picDEM := FormPicL( "9 " + gPicDEM, 9 )
+   picDEM := FormPicL( "9 " + pic_iznos_eur(), 9 )
 
    cIdKonto := _idkonto
    cIdFirma := Left( cIdFirma, 2 )

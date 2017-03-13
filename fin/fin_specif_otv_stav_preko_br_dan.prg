@@ -17,7 +17,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
    LOCAL nCol1 := 0
 
    picBHD := FormPicL( "9 " + gPicBHD, 16 )
-   picDEM := FormPicL( "9 " + gPicDEM, 16 )
+   picDEM := FormPicL( "9 " + pic_iznos_eur(), 16 )
 
    cIdFirma := self_organizacija_id(); nIznosBHD := 0; nDana := 30; cIdKonto := Space( 7 )
 

@@ -104,7 +104,7 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    IF cIdTipDok $ "13#23"
       // stampa 13-ke
-      omp_print()
+      fakt_otpremnica_mp_13_print()
    ELSE
 
 #ifdef F18_POS
@@ -1259,9 +1259,9 @@ FUNCTION ZAO_VRIJEDNOST()
    LOCAL nLen
 
    // 999.99
-   nPos := At( ".", PicDem )
+   nPos := At( ".", fakt_pic_iznos() )
    // = 4
-   nLen := Len( PicDEM )
+   nLen := Len( fakt_pic_iznos() )
    // = 6
 
    IF nPos == 0
@@ -1279,9 +1279,9 @@ FUNCTION ZAO_CIJENA()
    LOCAL nLen
 
    // 999.99
-   nPos := At( ".", PicCDem )
+   nPos := At( ".", fakt_pic_cijena() )
    // = 4
-   nLen := Len( PicDEM )
+   nLen := Len( fakt_pic_iznos() )
    // = 6
 
    IF nPos == 0

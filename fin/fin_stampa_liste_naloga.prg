@@ -14,7 +14,7 @@
 
 MEMVAR m, m_x, m_y, GetList, __print_opt
 MEMVAR picDem, picBHD
-MEMVAR gPicBHD, gPicDEM
+MEMVAR gPicBHD
 
 #define PRINT_LEFT_SPACE 6
 
@@ -124,7 +124,7 @@ FUNCTION fin_stampa_liste_naloga()
    nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
 
    picBHD := "@Z " + FormPicL( gPicBHD, 16 )
-   picDEM := "@Z " + FormPicL( gPicDEM, 12 )
+   picDEM := "@Z " + FormPicL( pic_iznos_eur(), 12 )
    bZagl := {||  zagl( nBrNalLen, cInteg ) }
 
    Eval( bZagl )

@@ -81,7 +81,7 @@ FUNCTION V_Podbr()
       @ m_x + 1, m_y + 2 SAY "Proizvod:" GET _idroba VALID {|| Empty( _idroba ) .OR. P_roba( @_idroba ) } PICT "@!"
       READ
       IF !Empty( _idroba )
-         @ m_x + 3, m_y + 2 SAY8 "količina        :" GET nPkolicina PICT pickol
+         @ m_x + 3, m_y + 2 SAY8 "količina        :" GET nPkolicina PICT fakt_pic_kolicina()
          @ m_x + 4, m_y + 2 SAY "rabat %         :" GET nPRabat    PICT "999.999"
          @ m_x + 5, m_y + 2 SAY "Varijanta cijene:" GET cTipVPC
          READ
@@ -986,7 +986,7 @@ FUNCTION UGenNar()
       ENDDO
       IF _kolicina + nIsporuceno > nNaruceno
          lVrati := .F.
-         MsgBeep( "Količina: " + AllTrim( TRANS( _kolicina, PicKol ) ) + ". Naručeno: " + AllTrim( TRANS( nNaruceno, PicKol ) ) + ". Dosad isporuceno: " + AllTrim( TRANS( nIsporuceno, PicKol ) ) + ". #" + ;
+         MsgBeep( "Količina: " + AllTrim( TRANS( _kolicina, fakt_pic_kolicina() ) ) + ". Naručeno: " + AllTrim( TRANS( nNaruceno, fakt_pic_kolicina() ) ) + ". Dosad isporuceno: " + AllTrim( TRANS( nIsporuceno, fakt_pic_kolicina() ) ) + ". #" + ;
             "Za ovoliku isporuku artikla morate imati novu generalnu narudžbenicu!" )
       ENDIF
    ENDIF

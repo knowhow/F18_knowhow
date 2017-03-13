@@ -21,7 +21,7 @@ STATIC nDuzStrKorekcija := 0
 
 // glavna funkcija za poziv stampe fakture a4
 // lStartPrint - pozovi funkcije stampe START PRINT
-FUNCTION omp_print( lStartPrint )
+FUNCTION fakt_otpremnica_mp_13_print( lStartPrint )
 
 
    // ako je nil onda je uvijek .t.

@@ -68,6 +68,36 @@ FUNCTION find_roba_by_id( cId, lCheckOnly, cWhere )
 
 
 
+FUNCTION find_roba_by_id_sintetika( cId, lCheckOnly, cWhere )
+
+   LOCAL hParams := hb_Hash()
+
+   hb_default( @lCheckOnly, .F. )
+
+   IF lCheckOnly
+      hParams[ "check_only" ] := .T.
+   ENDIF
+
+   IF cId <> NIL
+      hParams[ "id" ] := cId
+   ENDIF
+
+   hParams[ "sintetika" ] := .T.  // pretraga sa LIKE  idç%
+   hParams[ "indeks" ] := .F.
+
+   IF cWhere != NIL
+      hParams[ "where" ] := cWhere
+   ENDIF
+
+   IF !use_sql_roba( hParams )
+      RETURN .F.
+   ENDIF
+
+   GO TOP
+
+   RETURN ! Eof()
+
+
 /*
 
 
@@ -221,7 +251,11 @@ STATIC FUNCTION use_sql_roba_where( hParams )
    LOCAL dDatOd
 
    IF hb_HHasKey( hParams, "id" )
-      cWhere := parsiraj_sql( "id", hParams[ "id" ] )
+      IF hb_HHasKey( hParams, "sintetika" ) .AND. hParams[ "sintetika" ]  //   npr: id like '100%'
+         cWhere := "id LIKE " + sql_quote( Trim( hParams[ "id" ] ) + "%" )
+      ELSE
+         cWhere := parsiraj_sql( "id", hParams[ "id" ] )
+      ENDIF
    ENDIF
 
    IF hb_HHasKey( hParams, "sifradob" )

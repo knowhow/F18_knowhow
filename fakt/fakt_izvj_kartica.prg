@@ -293,9 +293,9 @@ FUNCTION fakt_kartica()
       nIzn := 0
 
       IF fId_j
-         NSRNPIdRoba( SubStr( cIdRoba, 11 ), cSintetika == "D" )
+         fakt_set_pozicija_sif_roba( SubStr( cIdRoba, 11 ), cSintetika == "D" )
       ELSE
-         NSRNPIdRoba( cIdRoba, cSintetika == "D" )
+         fakt_set_pozicija_sif_roba( cIdRoba, cSintetika == "D" )
       ENDIF
       SELECT FAKT
 

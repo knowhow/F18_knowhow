@@ -304,7 +304,7 @@ FUNCTION fakt_lager_lista()
       ENDIF
 
       IF cSintetika == "D"
-         NSRNPIdRoba( cIdRoba, .T. ); SELECT FAKT
+         fakt_set_pozicija_sif_roba( cIdRoba, .T. ); SELECT FAKT
       ENDIF
 
       nUl := nIzl := 0
@@ -405,10 +405,10 @@ FUNCTION fakt_lager_lista()
       IF !Empty( cIdRoba )
          IF !( cSaldo0 == "N" .AND. ( nUl - nIzl ) == 0 )
             IF fID_J
-               NSRNPIdRoba( SubStr( cIdRoba, 11 ), ( cSintetika == "D" ) )
+               fakt_set_pozicija_sif_roba( SubStr( cIdRoba, 11 ), ( cSintetika == "D" ) )
                // desni dio sifre je interna sifra
             ELSE
-               NSRNPIdRoba( cIdRoba, ( cSintetika == "D" ) )
+               fakt_set_pozicija_sif_roba( cIdRoba, ( cSintetika == "D" ) )
             ENDIF
 
             IF nGrZn <> 99 .AND. ( Empty( cLastIdRoba ) .OR. Left( cLastIdRoba, nGrZn ) <> Left( cIdRoba, nGrZn ) )

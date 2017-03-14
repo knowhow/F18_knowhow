@@ -284,7 +284,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
          field->brdok == dok[ "brdok" ]
 
       // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
-      // NSRNPIdRoba()
+      // fakt_set_pozicija_sif_roba()
       SELECT roba
       SET ORDER TO TAG "ID"
       GO TOP

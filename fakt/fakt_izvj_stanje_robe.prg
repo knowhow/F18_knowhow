@@ -328,7 +328,7 @@ FUNCTION fakt_stanje_robe()
 
       IF !Empty( cIdRoba )
 
-         NSRNPIdRoba( cIdRoba, cSintetika == "D" )
+         fakt_set_pozicija_sif_roba( cIdRoba, cSintetika == "D" )
 
          SELECT ROBA
 

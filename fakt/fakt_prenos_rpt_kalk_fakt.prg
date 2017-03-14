@@ -291,7 +291,7 @@ FUNCTION usporedna_lista_fakt_kalk()
       ENDDO
 
       IF !Empty( cIdRoba )
-         NSRNPIdRoba( cIdRoba, cSintetika == "D" )
+         fakt_set_pozicija_sif_roba( cIdRoba, cSintetika == "D" )
          SELECT ROBA
          IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
             _cijena := roba->vpc2

@@ -35,7 +35,8 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    LOCAL cUslovSrch :=  ""
    LOCAL cNazSrch
    LOCAL cOrderTag
-   LOCAL cSeekRet
+
+   // LOCAL cSeekRet
    LOCAL lOtvoriBrowse := .F.
    LOCAL lRet := .T.
 
@@ -62,17 +63,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
       RETURN .F.
    ENDIF
 
-altd()
-
-   cOrderTag := ordName( 1 )
-   sif_set_order( xIndex, cOrderTag, @fID_j )
-   cSeekRet := p_sifra_da_li_vec_postoji_sifra( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
-
-   IF cSeekRet == "naz" .or. cSeekRet == "sint_konto"
-      lOtvoriBrowse := .T.
-   ENDIF
-
-
    IF ValType( nDeltaX ) == "N" .AND. nDeltaX < 0 // ako se zada -5 zeli se samo ispis neke kolone, ne browse
 
       IF !Found()
@@ -91,12 +81,24 @@ altd()
 
    ENDIF
 
+   AltD()
+
+   cOrderTag := ordName( 1 )
+   sif_set_order( xIndex, cOrderTag, @fID_j )
+   IF p_sifra_da_li_vec_postoji_sifra( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
+// IF cSeekRet == "naz" .or. cSeekRet == "sint_konto"
+      lOtvoriBrowse := .F.
+   ELSE
+      lOtvoriBrowse := .T.
+   ENDIF
+
+
    lRet := .T.
 
-   //IF ( lOtvoriBrowse .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( field->naz ) ) ) ;
+   // IF ( lOtvoriBrowse .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( field->naz ) ) ) ;
    IF lOtvoriBrowse
-  //       .OR. cId == NIL .OR. ( !Found() .AND. cNaslov <> NIL ) ;
-  //       .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )
+      // .OR. cId == NIL .OR. ( !Found() .AND. cNaslov <> NIL ) ;
+      // .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )
 
       s_lPrviPoziv := .T.
 
@@ -265,6 +267,7 @@ FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
       SEEK Trim( cNazSrch )
       cId := field->id
 
+
    ELSEIF Right( Trim( cId ), 1 ) == "$"
 
       _filter := _filter_quote( Left( Upper( cId ), Len( Trim( cId ) ) - 1 ) ) + " $ UPPER(naz)"
@@ -274,7 +277,7 @@ FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
 
    ELSE
 
-      SEEK Left( cId, Len( Trim( cId ) ) - 1 )
+      SEEK Left( cId, Len( Trim( cId ) ) - 1 ) // "BRING."" =>  SEEK "BRING" po nazivu
 
    ENDIF
 
@@ -1489,26 +1492,33 @@ FUNCTION UslovSif()
 FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
 
    LOCAL _bk := ""
-   LOCAL _order := IndexOrd()
+
+   // LOCAL _order := IndexOrd()
    LOCAL _tezina := 0
 
    IF cId == NIL
-      RETURN "nil"
+      // RETURN "nil"
+      RETURN .F.
    ENDIF
 
+/*
    IF ValType( cId ) == "N"
       SEEK Str( cId )
-      RETURN "num"
+      //RETURN "num"
+      RETURN Found()
    ENDIF
+*/
 
    IF Right( Trim( cId ), 1 ) == "*"
       sif_katbr_zvjezdica( @cId, @cIdBK, fId_j )
-      RETURN "katbr"
+      // RETURN "katbr"
+      RETURN .F.
    ENDIF
 
    IF Right( Trim( cId ), 1 ) $ ".$"
       sifra_na_kraju_ima_tacka_ili_dolar( @cId, @cUslovSrch, @cNazSrch )
-      RETURN "naz"
+      // RETURN "naz"
+      RETURN .F.
    ENDIF
 
    IF Alias() == "PARTN"
@@ -1524,10 +1534,10 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_
    IF field->id == cId
       // cId := &( FieldName( 1 ) )
       IF Alias() == "KONTO" .AND. Len( Trim( cId ) ) < 4 // sinteticki konto
-         RETURN "sint_konto"
+         RETURN .F.
       ENDIF
 
-      RETURN "id"
+      RETURN .T.
    ENDIF
 
 
@@ -1541,12 +1551,16 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_
 #else
       barkod( @cId )
 #endif
-      ordSetFocus( _order )
-      RETURN "barkod"
+      // ordSetFocus( _order )
+      // RETURN "barkod"
+
+      IF cId == field->id
+         RETURN .T.
+      ENDIF
 
    ENDIF
 
-   RETURN "id"
+   RETURN .F.
 
 
 
@@ -1621,6 +1635,7 @@ FUNCTION StIdROBA()
    ELSE
       RETURN IDROBA
    ENDIF
+
 
 FUNCTION n_num_sif()
 

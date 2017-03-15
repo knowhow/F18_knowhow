@@ -46,7 +46,6 @@ FUNCTION stampa_virmana()
 
    my_flock()
 
-altd()
    DO WHILE !Eof()
 
       Scatter()

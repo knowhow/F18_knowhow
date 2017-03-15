@@ -463,7 +463,6 @@ FUNCTION set_pozicija_jprih_record( cIdJPrih, cIdOps, cIdKan, cIdEnt )
    SELECT jprih
    cPom := cIdJPrih
 
-   AltD()
    FOR i := Len( cIdJPrih ) TO 1 STEP -1  // 72311 - traziti 72311, pa 7231, pa 723, pa 723, pa 72, pa 7
 
       cPom := Left( cIdJPrih, i )

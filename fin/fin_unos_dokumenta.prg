@@ -293,7 +293,6 @@ FUNCTION edit_fin_priprema()
 
    _k3 := K3U256( _k3 )
    _Rbr := fin_pripr_redni_broj()
-   altd()
 
    SELECT fin_pripr
 
@@ -303,7 +302,6 @@ FUNCTION edit_fin_priprema()
 
 FUNCTION fin_pripr_redni_broj( nSet )
 
-altd()
    IF nSet != NIL
       s_nFinPriprRedniBroj := nSet
    ENDIF

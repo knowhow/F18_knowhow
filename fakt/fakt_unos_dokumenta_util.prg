@@ -548,7 +548,7 @@ FUNCTION V_Rabat( tip_rabata )
       ENDIF
    ENDIF
 
-   set_cijena( _idtipdok, _idroba, _cijena, _rabat )
+   fakt_set_cijena_sif_roba( _idtipdok, _idroba, _cijena, _rabat )
 
    ShowGets()
 
@@ -1015,18 +1015,14 @@ FUNCTION v_pretvori( cPretvori, cDinDem, dDatDok, nCijena )
 
 
 
-// ------------------------------------------------
-// setuje cijenu i rabat u sifrarniku robe
-// ------------------------------------------------
-FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
+
+FUNCTION fakt_set_cijena_sif_roba( cIdTipDok, cIdRoba, nCijena, nRabat )
 
    LOCAL nTArea := Select()
    LOCAL lFill := .F.
    LOCAL _vars
 
-   SELECT roba
-   GO TOP
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
 
    IF Found()
 
@@ -1039,6 +1035,7 @@ FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
             _vars[ "vpc" ] := nCijena
             lFill := .T.
          ENDIF
+
       ELSEIF cIdTipDok $ "11#13#" .AND. nCijena <> 0
          IF field->mpc <> nCijena .AND. ;
                Pitanje(, "Postaviti novu MPC u šifarnik ?", "N" ) == "D"

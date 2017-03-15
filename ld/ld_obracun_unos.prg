@@ -291,7 +291,6 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       APPEND BLANK
 
       set_global_vars_from_dbf()
-      AltD()
 
       _Godina := nGodina
       _idrj   := cIdRj
@@ -551,7 +550,6 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
    @ form_x_koord() + 20, Col() + 2 SAY "UKUPNO ZA ISPLATU:"
    @ Row(), Col() + 1 SAY _uiznos PICT gPici
 
-   AltD()
    @ form_x_koord() + 21, form_y_koord() + 2 SAY "Vrsta isplate (1 - 13):" GET _v_ispl
 
    @ form_x_koord() + 22, form_y_koord() + 10 SAY "Pritisni <ENTER> za snimanje, <ESC> napustanje"

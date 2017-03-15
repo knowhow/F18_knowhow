@@ -12,40 +12,6 @@
 #include "f18.ch"
 
 FIELD id, naz
-/*
-FUNCTION o_konto()
-
-   RETURN o_dbf_table( F_KONTO, "konto", "ID" )
-
-
-FUNCTION select_o_konto()
-
-   RETURN select_o_dbf( "KONTO", F_KONTO, "konto", "ID" )
-
-
-FUNCTION o_partner()
-
-   RETURN o_dbf_table( F_PARTN, "partn", "ID" )
-
-
-FUNCTION select_o_partner()
-
-   RETURN select_o_dbf( "PARTN", F_PARTN, "partn", "ID" )
-
-
-FUNCTION o_roba()
-
-   SELECT ( F_ROBA )
-   my_use ( "roba" )
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
-
-
-FUNCTION select_o_roba()
-
-   RETURN select_o_dbf( "ROBA", F_ROBA, "roba", "ID" )
-*/
 
 
 

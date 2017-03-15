@@ -45,7 +45,7 @@ FUNCTION fakt_unos_dokumenta()
 
    PRIVATE ImeKol := { ;
       { "Red.br",  {|| dbSelectArea( F_FAKT_PRIPR ), Rbr()                   } }, ;
-      { "Partner/Roba",  {|| Part1Stavka() + Roba()  } }, ;
+      { "Partner/Roba",  {|| Part1Stavka() + fakt_prikazi_Roba()  } }, ;
       { _ue( "Količina" ),  {|| kolicina  } }, ;
       { "Cijena",    {|| Cijena    }, "cijena"    }, ;
       { "Rabat",    {|| Transform( Rabat, "999.99" ) }, "Rabat"  }, ;

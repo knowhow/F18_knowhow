@@ -1731,7 +1731,7 @@ FUNCTION Part1Stavka()
 
 
 
-FUNCTION Roba()
+FUNCTION fakt_prikazi_Roba()
 
    LOCAL cRet := ""
 
@@ -1744,14 +1744,7 @@ FUNCTION Roba()
       cRet += aMemo[ 1 ]
    OTHERWISE
 
-      SELECT F_ROBA
-
-      IF !Used()
-         o_roba()
-      ENDIF
-
-      SELECT roba
-      SEEK fakt_pripr->IdRoba
+      select_o_roba( fakt_pripr->IdRoba )
       SELECT fakt_pripr
       cRet += Left( ROBA->naz, 40 )
    ENDCASE

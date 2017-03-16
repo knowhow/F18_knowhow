@@ -89,7 +89,9 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
             @ m_x + 3, m_y + 2 SAY8 "(Brdok: '00000022', '22' -> '00000022', '00005/TZ'"
             @ m_x + 4, m_y + 2 SAY8 "        '22#  ' -> '22   ', '0022' -> '00000022' ) "
 
-            @ m_x + 6, m_y + 2 SAY8 "Štampa naljepnica D/N ?" GET cNaljepniceDN  PICT "@!" VALID cNaljepniceDN $ "DN"
+            IF lAzuriraniDokument
+               @ m_x + 6, m_y + 2 SAY8 "Štampa naljepnica D/N ?" GET cNaljepniceDN  PICT "@!" VALID cNaljepniceDN $ "DN"
+            ENDIF
             READ
 
             ESC_BCR
@@ -264,10 +266,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
          cBrDok := kalk_fix_brdok_add_1( cBrDok )
          open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
 
-      ELSE
-         IF cNaljepniceDN == "D" // stampa naljepnica priprema
-            kalk_roba_naljepnice_stampa()
-         ENDIF
+
       ENDIF
 
    ENDDO  // vrti kroz kalkulacije

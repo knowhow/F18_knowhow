@@ -211,9 +211,9 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
    CASE Upper( Chr( Ch ) ) == "Q"
 
       IF Pitanje(, "Štampa naljepnica za robu (D/N) ?", "D" ) == "D"
-         my_close_all_dbf()
-         roba_naljepnice()
-         o_kalk_edit()
+
+         kalk_roba_naljepnice_stampa()
+
          RETURN DE_REFRESH
 
       ENDIF

@@ -258,7 +258,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
       IF lAzuriraniDokument // stampa azuriranog KALK dokumenta
          IF cNaljepniceDN == "D"
-            roba_naljepnice( cIdFirma, cIdVd, cBrDok  )
+            kalk_roba_naljepnice_stampa( cIdFirma, cIdVd, cBrDok  )
          ENDIF
 
          cBrDok := kalk_fix_brdok_add_1( cBrDok )

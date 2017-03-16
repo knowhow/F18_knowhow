@@ -36,10 +36,6 @@ FUNCTION kalk_roba_naljepnice_stampa( cIdFirma, cIdVd, cBrDok )
    cVarijanta := "1"
    cKolicina := "N"
 
-   IF GetVars( @cVarijanta, @cKolicina, @_tkm_no, @_len_naz ) == 0
-      RETURN .F.
-   ENDIF
-
 
    IF cVarijanta == "2"
       _template := "rlab2.odt"
@@ -54,6 +50,9 @@ FUNCTION kalk_roba_naljepnice_stampa( cIdFirma, cIdVd, cBrDok )
       lPriprema := .T.
    ENDIF
 
+   IF !GetVars( @cVarijanta, @cKolicina, @_tkm_no, @_len_naz )
+      RETURN .F.
+   ENDIF
 
    cre_open_roba_naljepnice()
    roba_naljepnice_napuni_iz_kalk_pripr( cKolicina )
@@ -87,7 +86,7 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
    // LOCAL lOpened
    LOCAL cIdVd
 
-   cIdVd := "XX"
+   //cIdVd := "XX"
    cVarijanta := "1"
    cKolicina := "N"
    lOpened := .T.
@@ -97,17 +96,7 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 
    IF ( gModul == "KALK" )
 
-      select_o_kalk_pripr()
-
-      PushWA()
-      SELECT kalk_pripr
-      GO TOP
-
-      cIdVd := kalk_pripr->idVd
-
-      PopWa()
-
-      IF ( cIdVd == "19" )
+      IF kalk_pripr->idVd == "19"
          cVarijanta := "2"
       ENDIF
    ENDIF
@@ -136,13 +125,13 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
    // ENDIF
 
    IF ( LastKey() == K_ESC )
-      RETURN 0
+      RETURN .F.
    ENDIF
 
    set_metric( "rlabel_tkm_no", my_user(), AllTrim( tkm_no ) )
    set_metric( "rlabel_naz_len", NIL, len_naz )
 
-   RETURN 1
+   RETURN .T.
 
 
 

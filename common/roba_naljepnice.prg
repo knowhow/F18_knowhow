@@ -16,9 +16,14 @@
 /* Omogucava izradu naljepnica u dvije varijante:
  1 - prikaz naljepnica sa tekucom cijenom
  2 - prikaz naljepnica sa novom cijenom, kao i prekrizenom starom cijenom
+
+
+ roba_naljepnice( cIdFirma, cIdVd, cBrDok ) - stampa za azurirani dokument
+ roba_naljepnice() - stampa pripreme
+
 */
 
-FUNCTION roba_naljepnice()
+FUNCTION roba_naljepnice( cIdFirma, cIdVd, cBrDok )
 
    LOCAL cVarijanta
    LOCAL cKolicina
@@ -26,8 +31,6 @@ FUNCTION roba_naljepnice()
    LOCAL _xml_file := my_home() + "data.xml"
    LOCAL _template := "rlab1.odt"
    LOCAL _len_naz := 25
-
-
 
    cVarijanta := "1"
    cKolicina := "N"
@@ -42,19 +45,25 @@ FUNCTION roba_naljepnice()
       _template := "rlab2.odt"
    ENDIF
 
-   roba_naljepnice_napuni_iz_kalk( cKolicina )
+   IF cIdFirma != NIL .AND. cIdVd != NIL .AND. cBrDok != NIL
+      open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
+   ELSE
+      select_o_kalk_pripr()
+   ENDIF
+
+   roba_naljepnice_napuni_iz_kalk_pripr( cKolicina )
 
    SELECT rlabele
    IF RecCount() == 0
       MsgBeep( "Nije generisano ništa#Greška - STOP!" )
       USE
-      //my_close_all_dbf()
+      // my_close_all_dbf()
       RETURN .F.
    ENDIF
 
    _gen_xml( _xml_file, _tkm_no, _len_naz )
 
-   //my_close_all_dbf()
+   // my_close_all_dbf()
 
    IF generisi_odt_iz_xml( _template, _xml_file )
       prikazi_odt()
@@ -178,7 +187,7 @@ STATIC FUNCTION cre_roba_naljepnice()
    SELECT ( F_RLABELE )
    my_use_temp( "RLABELE", AllTrim( _dbf ), .F., .T. )
 
-   INDEX on ( "idroba" ) TAG "1"
+   INDEX ON ( "idroba" ) TAG "1"
    SET ORDER TO TAG "1"
 
    RETURN NIL
@@ -191,14 +200,11 @@ STATIC FUNCTION cre_roba_naljepnice()
  cKolicina - D ili N, broj labela zavisi od kolicine robe
 */
 
-STATIC FUNCTION roba_naljepnice_napuni_iz_kalk( cKolicina )
+STATIC FUNCTION roba_naljepnice_napuni_iz_kalk_pripr( cKolicina )
 
    LOCAL cDok
    LOCAL nBr_labela := 0
    LOCAL _predisp := .F.
-
-   select_o_roba()
-   select_o_kalk_pripr()
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
@@ -307,8 +313,6 @@ STATIC FUNCTION Printroba_naljepnice( cVarijanta )
 // ----------------------------------------------------------
 STATIC FUNCTION _gen_xml( xml_file, tkm_no, len_naz )
 
-
-
    create_xml( xml_file )
    xml_head()
 
@@ -344,6 +348,5 @@ STATIC FUNCTION _gen_xml( xml_file, tkm_no, len_naz )
    xml_subnode( "lab", .T. )
 
    close_xml()
-
 
    RETURN .T.

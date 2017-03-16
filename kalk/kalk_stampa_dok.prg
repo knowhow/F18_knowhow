@@ -36,15 +36,15 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
       lAzuriraniDokument := .F.
    ENDIF
 
-   IF ( lAzuriraniDokument == nil )
+   IF ( lAzuriraniDokument == NIL )
       lAzuriraniDokument := .F.
    ENDIF
 
-   IF ( lAuto == nil )
+   IF ( lAuto == NIL )
       lAuto := .F.
    ENDIF
 
-   IF ( cSeek == nil )
+   IF ( cSeek == NIL )
       cSeek := ""
    ENDIF
 
@@ -84,7 +84,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
             @ m_x + 1, Col() + 2  SAY cIdFirma
             @ m_x + 1, Col() + 1 SAY "-" GET cIdVD  PICT "@!"
-            @ m_x + 1, Col() + 1 SAY "-" GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
+            @ m_x + 1, Col() + 1 SAY "-" GET cBrDok VALID {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
 
             @ m_x + 3, m_y + 2 SAY8 "(Brdok: '00000022', '22' -> '00000022', '00005/TZ'"
             @ m_x + 4, m_y + 2 SAY8 "        '22#  ' -> '22   ', '0022' -> '00000022' ) "
@@ -263,6 +263,11 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
          cBrDok := kalk_fix_brdok_add_1( cBrDok )
          open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
+
+      ELSE
+         IF cNaljepniceDN == "D" // stampa naljepnica priprema
+            kalk_roba_naljepnice_stampa()
+         ENDIF
       ENDIF
 
    ENDDO  // vrti kroz kalkulacije

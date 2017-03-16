@@ -237,8 +237,7 @@ STATIC FUNCTION roba_naljepnice_napuni_iz_kalk_pripr( cKolicina )
          nBr_labela := 1
       ENDIF
 
-      SELECT roba
-      SEEK kalk_pripr->idRoba
+      select_o_roba( kalk_pripr->idRoba )
 
       SELECT rlabele
       SEEK kalk_pripr->idroba

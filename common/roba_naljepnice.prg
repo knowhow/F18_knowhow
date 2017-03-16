@@ -40,7 +40,6 @@ FUNCTION kalk_roba_naljepnice_stampa( cIdFirma, cIdVd, cBrDok )
       RETURN .F.
    ENDIF
 
-   cre_roba_naljepnice()
 
    IF cVarijanta == "2"
       _template := "rlab2.odt"
@@ -55,6 +54,8 @@ FUNCTION kalk_roba_naljepnice_stampa( cIdFirma, cIdVd, cBrDok )
       lPriprema := .T.
    ENDIF
 
+
+   cre_open_roba_naljepnice()
    roba_naljepnice_napuni_iz_kalk_pripr( cKolicina )
 
    SELECT rlabele
@@ -308,7 +309,7 @@ STATIC FUNCTION _gen_xml( xml_file, tkm_no, len_naz )
     Kreira tabelu rLabele u privatnom direktoriju
    */
 
-STATIC FUNCTION cre_roba_naljepnice()
+STATIC FUNCTION cre_open_roba_naljepnice()
 
    LOCAL aDbf
    LOCAL _tbl

@@ -45,7 +45,7 @@ FUNCTION kalk_roba_naljepnice_stampa( cIdFirma, cIdVd, cBrDok )
       open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
       lPriprema := .F.
    ELSE
-      my_close_all_dbf()
+      // my_close_all_dbf()
       select_o_kalk_pripr()
       lPriprema := .T.
    ENDIF
@@ -67,16 +67,13 @@ FUNCTION kalk_roba_naljepnice_stampa( cIdFirma, cIdVd, cBrDok )
 
    _gen_xml( _xml_file, _tkm_no, _len_naz )
 
-   // my_close_all_dbf()
+   my_close_all_dbf()
 
    IF generisi_odt_iz_xml( _template, _xml_file )
       prikazi_odt()
    ENDIF
 
 
-   IF  lPriprema
-      o_kalk_edit()
-   ENDIF
 
    RETURN .T.
 
@@ -86,7 +83,7 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
    // LOCAL lOpened
    LOCAL cIdVd
 
-   //cIdVd := "XX"
+   // cIdVd := "XX"
    cVarijanta := "1"
    cKolicina := "N"
    lOpened := .T.

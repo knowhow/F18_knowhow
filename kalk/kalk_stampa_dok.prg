@@ -133,7 +133,6 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
 
          IF ( cSeek == 'IZDOKS' )
-
             IF ( PRow() > 42 ) // stampati sve odjednom
                ++nStr
                FF
@@ -239,8 +238,10 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
          ENDPRINT
       ENDIF
 
+     // ------------------- kraj stampe jedne kalkulacije
+altd()
 
-      kalk_open_tables_unos( lAzuriraniDokument ) // kraj stampe jedne kalkulacije
+      kalk_open_tables_unos( lAzuriraniDokument )
       PopWa()
 
       IF ( cIdvd $ "80#11#81#12#13#IP#19" )
@@ -266,6 +267,8 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
       ELSE // priprema
          IF cNaljepniceDN == "D"
             kalk_roba_naljepnice_stampa()
+            o_kalk_edit()
+            EXIT // podrazumjevamo da je u pripremi jedan dokument
          ENDIF
       ENDIF
 
@@ -299,6 +302,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    ENDIF
 
    IF ( fFaktD .AND. !lAzuriraniDokument .AND. gFakt != "0 " )
+
       start PRINT cret
       o_kalk_edit()
       SELECT kalk_pripr

@@ -213,7 +213,8 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
       IF Pitanje(, "Štampa naljepnica za robu (D/N) ?", "D" ) == "D"
 
          kalk_roba_naljepnice_stampa()
-
+         o_kalk_edit()
+         GO TOP
          RETURN DE_REFRESH
 
       ENDIF

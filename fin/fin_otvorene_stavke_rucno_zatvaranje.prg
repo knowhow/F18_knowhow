@@ -24,7 +24,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    picD := FormPicL( "9 " + gPicBHD, 14 )
    picDEM := FormPicL( "9 " + pic_iznos_eur(), 9 )
 
-   cIdKonto := Space( Len( konto->id ) )
+   cIdKonto := Space( 7 )
 
    Box(, 7, 66, )
 
@@ -34,7 +34,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    IF gNW == "D"
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma  " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma  " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cIdfirma := Left( cIdfirma, 2 ), .T. }
    ENDIF
 
    @ m_x + 4, m_y + 2 SAY "Konto  " GET cIdKonto  VALID  p_konto( @cIdKonto )

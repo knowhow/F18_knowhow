@@ -27,8 +27,8 @@ FUNCTION kalk_sifrarnik()
    AAdd( _opcexe, {|| opci_sifarnici() } )
    AAdd( _opc, "2. robno-materijalno poslovanje" )
    AAdd( _opcexe, {|| sif_roba_tarife_koncij_sast() } )
-   //AAdd( _opc, "3. magacinski i prodajni objekti" )
-   //AAdd( _opcexe, {|| P_Objekti() } )
+   AAdd( _opc, "3. magacinski i prodajni objekti" )
+   AAdd( _opcexe, {|| P_Objekti() } )
 
    f18_menu( "msif", .F., _izbor, _opc, _opcexe )
 
@@ -127,22 +127,21 @@ FUNCTION OSifBaze()
    RETURN .T.
 
 
-/*
+
 FUNCTION P_Objekti()
 
-   LOCAL nTArea
-   PRIVATE ImeKol
-   PRIVATE Kol
+   LOCAL nTArea, i
+
+//   PRIVATE ImeKol
+//   PRIVATE Kol
 
    ImeKol := {}
    Kol := {}
 
    nTArea := Select()
-<<<<<<< HEAD
-   //O_OBJEKTI
-=======
+
    kalk_o_objekti()
->>>>>>> origin/23100-ld
+
 
    AAdd( ImeKol, { "ID", {|| id }, "id" } )
    add_mcode( @ImeKol )
@@ -160,7 +159,6 @@ FUNCTION P_Objekti()
 
 
 
-
 FUNCTION kalk_o_objekti()
 
    Select( F_OBJEKTI )
@@ -168,14 +166,3 @@ FUNCTION kalk_o_objekti()
    SET ORDER TO TAG "1"
 
    RETURN .T.
-
-
-
-FUNCTION o_fakt_objekti()
-
-   SELECT ( F_FAKT_OBJEKTI )
-   use_sql_sif ( "fakt_objekti" )
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
-*/

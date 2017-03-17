@@ -124,9 +124,11 @@ FUNCTION kalk_stampa_dok_10_txt()
 
       ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
 
+/*
       IF roba->( FieldPos( "KATBR" ) ) <> 0
-         ?? " KATBR:", roba->katbr
+  --       ?? " KATBR:", roba->katbr
       ENDIF
+*/
 
       IF roba_barkod_pri_unosu() .AND. !Empty( roba->barkod )
          ?? ", BK: " + roba->barkod

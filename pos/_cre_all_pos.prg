@@ -404,7 +404,7 @@ FUNCTION g_pos_pripr_fields()
    AAdd( aDBf, { 'N2', 'N',  12,  2 } )
 
    AAdd( aDBf, { 'BARKOD', 'C',  13,  0 } )
-   AAdd( aDBf, { 'KATBR', 'C',  14,  0 } )
+//   AAdd( aDBf, { 'KATBR', 'C',  14,  0 } )
 
    AAdd( aDBf, { 'C_1', 'C',   6,  0 } )
    AAdd( aDBf, { 'C_2', 'C',  10,  0 } )

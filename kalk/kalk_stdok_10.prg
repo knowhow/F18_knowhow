@@ -112,9 +112,12 @@ FUNCTION kalk_stampa_dok_10()
       @ PRow() + 1, 0 SAY Space( PRINT_LEFT_SPACE ) // PRVI RED podaci o artiklu
       @ PRow(), PCol() SAY field->rBr PICTURE "999"
       ?? " " + Trim( Left( ROBA->naz, 60 ) ), "(", ROBA->jmj, ")"
+/*
       IF roba->( FieldPos( "KATBR" ) ) <> 0
-         ?? " KATBR:", roba->katbr
+  --       ?? " KATBR:", roba->katbr
       ENDIF
+*/
+
       IF roba_barkod_pri_unosu() .AND. !Empty( roba->barkod )
          ?? ", BK: " + roba->barkod
       ENDIF

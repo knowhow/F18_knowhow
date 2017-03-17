@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+/*
 FUNCTION KatBr()
 
    IF roba->( FieldPos( "KATBR" ) ) <> 0
@@ -21,7 +22,7 @@ FUNCTION KatBr()
    ENDIF
 
    RETURN ""
-
+*/
 
 FUNCTION GetRegion()
 

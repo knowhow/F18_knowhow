@@ -269,7 +269,7 @@ STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
 
 
 
-
+/*
 STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
    cId := PadR( cId, 10 )
@@ -306,9 +306,9 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
    ENDIF
 
    RETURN .T.
+*/
 
-
-
+/*
 FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
 
    LOCAL _filter
@@ -357,7 +357,7 @@ FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
    ENDIF
 
    RETURN .T.
-
+*/
 
    /*
    FUNCTION sif_dbf_point_or_slash( cId, nOrdId, cUslovSrch, cNazSrch )

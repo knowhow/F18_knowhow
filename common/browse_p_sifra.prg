@@ -174,17 +174,17 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_
       ENDIF
    */
 
-   IF Right( Trim( cId ), 1 ) == "*"
-      sif_katbr_zvjezdica( @cId, @cIdBK, fId_j )
-      // RETURN "katbr"
-      RETURN .F.
-   ENDIF
+//   IF Right( Trim( cId ), 1 ) == "*"
+//      sif_katbr_zvjezdica( @cId, @cIdBK, fId_j )
+//      // RETURN "katbr"
+//      RETURN .F.
+//   ENDIF
 
-   IF Right( Trim( cId ), 1 ) $ ".$"
-      sifra_na_kraju_ima_tacka_ili_dolar( @cId, @cUslovSrch, @cNazSrch )
-      // RETURN "naz"
-      RETURN .F.
-   ENDIF
+  // IF Right( Trim( cId ), 1 ) $ ".$"
+  //    sifra_na_kraju_ima_tacka_ili_dolar( @cId, @cUslovSrch, @cNazSrch )
+  //    // RETURN "naz"
+  //    RETURN .F.
+  // ENDIF
 
    IF Alias() == "PARTN"
       find_partner_by_naz_or_id( cId )
@@ -204,7 +204,6 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_
 
       RETURN .T.
    ENDIF
-
 
 
    IF Alias() == "ROBA" .AND. Len( cId ) > 10

@@ -18,23 +18,25 @@ MEMVAR ImeKol, Kol
    P_Roba( @cId, NIL, NIL, "IDP") - tag IDP - proizvodi
 */
 
-FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
+FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
 
    LOCAL xRet
    LOCAL bRoba
    LOCAL lArtGroup := .F.
    LOCAL _naz_len := 40
    LOCAL nI
+   LOCAL cPomTag
    PRIVATE ImeKol
    PRIVATE Kol
 
-   IF cTraziPoSifraDob == NIL
-      cTraziPoSifraDob := ""
+   IF cTagTraziPoSifraDob == NIL
+      cTagTraziPoSifraDob := ""
    ENDIF
 
    ImeKol := {}
 
    PushWA()
+
 
    IF cId != NIL .AND. !Empty( cId )
       select_o_roba( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
@@ -46,24 +48,22 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
    AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( field->naz, _naz_len ) }, "naz", {|| .T. }, {|| .T. } } )
    AAdd( ImeKol, { PadC( "JMJ", 3 ), {|| field->jmj },       "jmj"    } )
 
-
+   AAdd( ImeKol, { PadC( "PLU kod", 8 ),  {|| PadR( fisc_plu, 10 ) }, "fisc_plu", {|| gen_plu( @wfisc_plu ), .F. }, {|| .T. } } )
    AAdd( ImeKol, { PadC( "S.dobav.", 13 ), {|| PadR( sifraDob, 13 ) }, "sifradob"   } )
-   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| field->BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), sifra_postoji( wbarkod, "BARKOD" ) }  } )
 
    // DEBLJINA i TIP
-   // IF roba->( FieldPos( "DEBLJINA" ) ) <> 0
-   // AAdd( ImeKol, { PadC( "Debljina", 10 ), {|| Transform( field->debljina, "999999.99" ) }, "debljina", NIL, NIL, "999999.99" } )
+   IF roba->( FieldPos( "DEBLJINA" ) ) <> 0
+      AAdd( ImeKol, { PadC( "Debljina", 10 ), {|| Transform( field->debljina, "999999.99" ) }, "debljina", NIL, NIL, "999999.99" } )
 
-   // AAdd( ImeKol, { PadC( "Roba tip", 10 ), {|| field->roba_tip }, "roba_tip", {|| .T. }, {|| .T. } } )
-   // ENDIF
+      AAdd( ImeKol, { PadC( "Roba tip", 10 ), {|| field->roba_tip }, "roba_tip", {|| .T. }, {|| .T. } } )
+   ENDIF
 
-   AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc", NIL, NIL, NIL, gPicCDEM  } )
-   AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( field->VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, gPicCDEM   } )
-   // AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( field->PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, gPicCDEM    } )
+   AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
+   AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( field->VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()   } )
+   AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( field->PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()    } )
+   AAdd( ImeKol, { PadC( "MPC1", 10 ), {|| Transform( field->MPC, "999999.999" ) }, "mpc", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
 
-   AAdd( ImeKol, { PadC( "MPC1", 10 ), {|| Transform( field->MPC, "999999.999" ) }, "mpc", NIL, NIL, NIL, gPicCDEM  } )
-
-   FOR nI := 2 TO 2
+   FOR nI := 2 TO 4
 
       cPom := "mpc" + AllTrim( Str( nI ) )
       cPom2 := '{|| transform(' + cPom + ',"999999.999")}'
@@ -73,17 +73,16 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
          cPrikazi := fetch_metric( "roba_prikaz_" + cPom, NIL, "D" )
 
          IF cPrikazi == "D"
-            AAdd( ImeKol, { PadC( Upper( cPom ), 10 ), &( cPom2 ), cPom, NIL, NIL, NIL, gPicCDEM } )
+            AAdd( ImeKol, { PadC( Upper( cPom ), 10 ), &( cPom2 ), cPom, NIL, NIL, NIL, pic_cijena_bilo_gpiccdem() } )
          ENDIF
 
       ENDIF
    NEXT
 
-   AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( field->NC, gPicCDEM ) }, "NC", NIL, NIL, NIL, gPicCDEM  } )
+   AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( field->NC, pic_cijena_bilo_gpiccdem() ) }, "NC", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
    AAdd( ImeKol, { "Tarifa", {|| field->IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit()  }   } )
    AAdd( ImeKol, { "Tip", {|| " " + field->Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" }, NIL, NIL, NIL, NIL, 27 } )
-
-   AAdd( ImeKol, { PadC( "PLU kod", 8 ),  {|| PadR( fisc_plu, 10 ) }, "fisc_plu", {|| gen_plu( @wfisc_plu ), .F. }, {|| .T. } } )
+   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| field->BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), sifra_postoji( wbarkod, "BARKOD" ) }  } )
 
    AAdd ( ImeKol, { PadC( "MINK", 10 ), {|| Transform( field->MINK, "999999.99" ) }, "MINK"   } )
 
@@ -108,10 +107,10 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
 
    IF programski_modul() == "KALK"
       IF roba->( FieldPos( "ZANIVEL" ) ) <> 0
-         AAdd ( ImeKol, { PadC( "Nova cijena", 20 ), {|| Transform( zanivel, "999999.999" ) }, "zanivel", NIL, NIL, NIL, gPicCDEM  } )
+         AAdd ( ImeKol, { PadC( "Nova cijena", 20 ), {|| Transform( zanivel, "999999.999" ) }, "zanivel", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
       ENDIF
       IF roba->( FieldPos( "ZANIV2" ) ) <> 0
-         AAdd ( ImeKol, { PadC( "Nova cijena/2", 20 ), {|| Transform( zaniv2, "999999.999" ) }, "zaniv2", NIL, NIL, NIL, gPicCDEM  } )
+         AAdd ( ImeKol, { PadC( "Nova cijena/2", 20 ), {|| Transform( zaniv2, "999999.999" ) }, "zaniv2", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
       ENDIF
    ENDIF
 
@@ -135,8 +134,10 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
 
    bRoba := gRobaBlock
 
-   IF is_modul_fakt()  .AND. is_roba_trazi_po_sifradob() .AND. !Empty( cTraziPoSifraDob )
-      cPomTag := Trim( cTraziPoSifraDob )
+   IF is_roba_trazi_po_sifradob() .AND. !Empty( cTagTraziPoSifraDob )
+
+   /*
+      cPomTag := Trim( cTagTraziPoSifraDob )
       SELECT ( F_ROBA )
       IF index_tag_num( "SIFRADOB" ) == 0
          INDEX ON SIFRADOB TAG "SIFRADOB" TO ( "ROBA" )
@@ -144,7 +145,12 @@ FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
       IF cPomTag == "SIFRADOB" .AND. Len( Trim( cId ) ) < 5 // https://redmine.bring.out.ba/issues/36373
          cId := PadL( Trim( cId ), 5, "0" ) // 7148 => 07148, 22 => 00022
       ENDIF
-
+*/
+      cPomTag := Trim( cTagTraziPoSifraDob )
+      IF Len( Trim( cId ) ) < 5 // https://redmine.bring.out.ba/issues/36373
+         cId := PadL( Trim( cId ), 5, "0" ) // 7148 => 07148, 22 => 00022
+      ENDIF
+      find_roba_by_sifradob( cId )
    ELSE
       cPomTag := "ID"
    ENDIF
@@ -208,7 +214,8 @@ FUNCTION MpcIzVpc()
    PRIVATE cVPC := " "
 
    Scatter()
-   select_o_tarifa( _idtarifa )
+   SELECT tarifa
+   HSEEK _idtarifa
    SELECT roba
 
    Box(, 4, 70 )
@@ -228,11 +235,11 @@ FUNCTION MpcIzVpc()
    @ m_X + 2, m_y + 2 SAY "TARIFA"
    @ m_X + 2, Col() + 2 SAY _idtarifa
    @ m_X + 3, m_y + 2 SAY "VPC" + cVPC
-   @ m_X + 3, Col() + 1 SAY _VPC&cVPC PICT gPicDem
+   @ m_X + 3, Col() + 1 SAY _VPC&cVPC PICT pic_iznos_bilo_gpicdem()
    @ m_X + 4, m_y + 2 SAY "Postojeca MPC" + cMPC
-   @ m_X + 4, Col() + 1 SAY roba->MPC&cMPC PICT gPicDem
+   @ m_X + 4, Col() + 1 SAY roba->MPC&cMPC PICT pic_iznos_bilo_gpicdem()
    @ m_X + 5, m_y + 2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT "9"
-   @ m_X + 6, m_y + 2 SAY "MPC" + cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT gPicDem
+   @ m_X + 6, m_y + 2 SAY "MPC" + cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT pic_iznos_bilo_gpicdem()
    READ
    BoxC()
    IF LastKey() <> K_ESC
@@ -245,7 +252,8 @@ FUNCTION MpcIzVpc()
          DO WHILE !Eof()
             IF ROBA->MPC&cMPC == 0
                Scatter()
-               select_o_tarifa( _idtarifa )
+               SELECT tarifa
+               HSEEK _idtarifa
                SELECT roba
                _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa )
                Gather()
@@ -300,16 +308,16 @@ FUNCTION RobaZastCijena( cIdTarifa )
 
 FUNCTION OFmkRoba()
 
- //  o_sifk()
- //  o_sifv()
- //  o_konto()
- //  o_koncij()
- //  o_trfp()
- //  o_tarifa()
- //  o_roba()
-  // o_sastavnica()
+   o_sifk()
+   o_sifv()
+   o_konto()
+   o_koncij()
+   o_trfp()
+   o_tarifa()
+   o_roba()
+   o_sastavnica()
 
-   RETURN .T.
+   RETURN
 
 
 
@@ -630,7 +638,8 @@ FUNCTION roba_setuj_mpc_iz_vpc()
          LOOP
       ENDIF
 
-      select_o_tarifa( _tarifa )
+      SELECT tarifa
+      HSEEK _tarifa
 
       IF !Found()
          SELECT roba
@@ -684,7 +693,7 @@ FUNCTION roba_setuj_mpc_iz_vpc()
 
 STATIC FUNCTION _get_params( params )
 
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
    LOCAL _x := 1
    LOCAL _mpc_no := 1
    LOCAL _zaok_5pf := "D"
@@ -709,7 +718,7 @@ STATIC FUNCTION _get_params( params )
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
    params := hb_Hash()
@@ -718,6 +727,6 @@ STATIC FUNCTION _get_params( params )
    params[ "mpc_nula" ] := _mpc_nula
    params[ "filter_id" ] := AllTrim( _filter_id )
 
-   _ok := .T.
+   lOk := .T.
 
-   RETURN _ok
+   RETURN lOk

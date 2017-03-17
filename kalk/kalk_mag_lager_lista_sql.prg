@@ -262,7 +262,7 @@ STATIC FUNCTION kalk_mag_insert_ps_into_pripr( oDataSet, hParams )
    o_kalk_pripr()
    o_kalk_doks()
    o_koncij()
-   o_roba()
+  // o_roba()
    o_tarifa()
 
    cBrKalk := kalk_get_next_broj_v5( self_organizacija_id(), cIdVd, cIdKontoMagacin )

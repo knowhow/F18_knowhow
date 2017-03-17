@@ -22,15 +22,15 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
 
    aPorezi := {}
 
-   PicDEM := global_pic_iznos()
-   PicCDEM := global_pic_cijena()
+   PicDEM := prosiri_pic_iznos_za_2()
+   PicCDEM := prosiri_pic_cjena_za_2()
 
    cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "132.", gDuzKonto )
 
    o_sifk()
    o_sifv()
-   o_roba()
+   // o_roba()
    o_tarifa()
    o_koncij()
    o_konto()
@@ -50,7 +50,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
          @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto   " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
       @ form_x_koord() + 4, form_y_koord() + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
@@ -106,7 +106,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    ENDIF
 
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
-   SET FILTER to &cFilt1
+   SET FILTER TO &cFilt1
 
    HSEEK cIdFirma
 
@@ -171,6 +171,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
             LOOP
          ENDIF
 
+         select_o_roba( kalk->idroba )
          select_o_tarifa( kalk->idtarifa )
 
          SELECT kalk
@@ -217,7 +218,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
             nNV -= nc * gkolicin2
          ENDIF
 
-         nElem := AScan( aRTar, {| x| x[ 1 ] == TARIFA->ID } )
+         nElem := AScan( aRTar, {| x | x[ 1 ] == TARIFA->ID } )
 
          nP1 := kalk_porezi_maloprodaja( nBezP, aPorezi, nSaP )
          nP2 := 0
@@ -292,11 +293,11 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    cRTTxt1 := SetRptLineAndText( aRptRTar, 1, "*" )
    cRTTxt2 := SetRptLineAndText( aRptRTar, 2, "*" )
 
-   //IF Val( gFPicDem ) > 0
-      P_COND2
-   //ELSE
-    //  P_COND
-   //ENDIF
+   // IF Val( gFPicDem ) > 0
+   P_COND2
+   // ELSE
+   // P_COND
+   // ENDIF
 
    ?
    ?
@@ -308,7 +309,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    ? cRTTxt2
    ? cRTLine
 
-   ASort( aRTar,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+   ASort( aRTar,,, {| x, y | x[ 1 ] < y[ 1 ] } )
 
    nT1 := nT4 := nT5 := nT6 := nT7 := nT5a := 0
 
@@ -356,7 +357,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // zaglavlje izvjestaja
@@ -382,11 +383,11 @@ FUNCTION ZaglRfinansijsko_stanje_prodavnica()
 
    SELECT kalk
 
-   //IF Val( gFPicDem ) > 0
-      P_COND2
-   //ELSE
-    //  P_COND
-   //ENDIF
+   // IF Val( gFPicDem ) > 0
+   P_COND2
+   // ELSE
+   // P_COND
+   // ENDIF
 
    ?
    ? cLine
@@ -394,4 +395,4 @@ FUNCTION ZaglRfinansijsko_stanje_prodavnica()
    ? cText2
    ? cLine
 
-   RETURN
+   RETURN .T.

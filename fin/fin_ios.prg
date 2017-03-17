@@ -27,7 +27,7 @@ FUNCTION fin_ios_meni()
    LOCAL _opcexe := {}
 
    picBHD := "@Z " + ( R1 := FormPicL( "9 " + gPicBHD, 16 ) )
-   picDEM := "@Z " + ( R2 := FormPicL( "9 " + gPicDEM, 12 ) )
+   picDEM := "@Z " + ( R2 := FormPicL( "9 " + pic_iznos_eur(), 12 ) )
    R1 := R1 + " " + ValDomaca()
    R2 := R2 + " " + ValPomocna()
 

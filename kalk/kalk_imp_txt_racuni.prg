@@ -49,8 +49,11 @@ FUNCTION meni_import_vindija()
    AAdd( opc, "R. parametri kontiranja prodavnica" )
    AAdd( opcexe, {|| kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto() } )
 
+   dbf_refresh_stop()
 
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "itx" )
+
+   dbf_refresh_start()
 
    RETURN .T.
 
@@ -82,6 +85,8 @@ FUNCTION kalk_auto_import_racuni()
       MsgBeep( "Odabrani fajl je prazan!#Prekidam operaciju !" )
       RETURN .F.
    ENDIF
+
+
 
    PRIVATE aDbf := {}
    PRIVATE aRules := {}
@@ -121,7 +126,7 @@ FUNCTION kalk_auto_import_racuni()
    ENDIF
 
    IF Pitanje(, "Obraditi dokumente iz kalk pript (D/N)?", "D" ) == "D"
-      IF kalk_imp_obradi_sve_dokumente_iz_pript( nil, __stampaj )
+      IF kalk_imp_obradi_sve_dokumente_iz_pript( NIL, __stampaj )
          kalk_imp_brisi_txt( cImpFile )
       ENDIF
    ELSE
@@ -206,9 +211,9 @@ FUNCTION kalk_imp_txt_to_temp( aDbf, aRules, cTxtFile )
       APPEND BLANK
 
       FOR nCt := 1 TO Len( aRules )
-         fname := FIELD( nCt )
+         fname := Field( nCt )
          xVal := aRules[ nCt, 1 ]
-         RREPLACE &fname with &xVal
+         RREPLACE &fname WITH &xVal
       NEXT
 
    ENDDO
@@ -307,7 +312,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
             cIdKontoTmp := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 
-            SELECT roba
+    ---        SELECT roba
             -- SET ORDER TO TAG "ID_VSD"
             cSifraDobavljaca := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
 
@@ -338,7 +343,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
       IF lFSkip // ako je ukljucena opcija preskakanja postojecih faktura
          IF Len( aFExist ) > 0
-            nFExist := AScan( aFExist, {| aVal| AllTrim( aVal[ 1 ] ) == cFakt } )
+            nFExist := AScan( aFExist, {| aVal | AllTrim( aVal[ 1 ] ) == cFakt } )
             IF nFExist > 0
                SELECT kalk_imp_temp  // prekoci onda ovaj zapis i idi dalje
                SKIP
@@ -359,14 +364,6 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
          AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
       ENDIF
 
-/*
-
-      SELECT roba   // pronadji robu sifra dobavljaca
-      --SET ORDER TO TAG "ID_VSD"
-
-      GO TOP
---      SEEK cIdRobaSifraDob
-*/
       cIdRobaSifraDob := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
       find_roba_by_sifradob( cIdRobaSifraDob )
 
@@ -433,7 +430,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
    IF nCnt > 0 // izvjestaj o prebacenim dokumentima
 
-      ASort( aPom,,, {| x, y| x[ 1 ] + "-" + x[ 2 ] < y[ 1 ] + "-" + y[ 2 ] } )
+      ASort( aPom,,, {| x, y | x[ 1 ] + "-" + x[ 2 ] < y[ 1 ] + "-" + y[ 2 ] } )
 
       START PRINT EDITOR
       ? "========================================"
@@ -752,7 +749,7 @@ FUNCTION kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
    ENDIF
 
    IF lStampaj == .T.
-      kalk_stampa_dokumenta( nil, nil, .T. )
+      kalk_stampa_dokumenta( NIL, NIL, .T. )
    ENDIF
    kalk_azuriranje_dokumenta( .T., lStampaj )
    o_kalk_edit()
@@ -924,19 +921,9 @@ FUNCTION kalk_imp_roba_exist_sifradob()
          cNazRoba := AllTrim( kalk_imp_temp->nazroba )
       ENDIF
 
-/*
-      SELECT roba
-
-      // IF lSifraDob == .T.
-      -- SET ORDER TO TAG "ID_VSD"  // sifra dobavljaca
-      // ENDIF
-      GO TOP
---      SEEK cIdRobaSifraDobavljaca
-*/
-
 
       IF !find_roba_by_sifradob( cIdRobaSifraDobavljaca, .T. )
-         nRes := AScan( aRet, {| aVal| aVal[ 1 ] == cIdRobaSifraDobavljaca } )
+         nRes := AScan( aRet, {| aVal | aVal[ 1 ] == cIdRobaSifraDobavljaca } )
          IF nRes == 0
             AAdd( aRet, { cIdRobaSifraDobavljaca, cNazRoba } )
          ENDIF
@@ -987,25 +974,7 @@ STATIC FUNCTION kalk_postoji_faktura_a()
          LOOP
       ENDIF
 
-/*
-      SELECT kalk_doks
 
-      IF nRight > 0
-         SET ORDER TO TAG "V_BRF2"
-      ELSE
-         SET ORDER TO TAG "V_BRF"
-      ENDIF
-
-      GO TOP
-
-      IF nRight > 0
-         SEEK cTDok + cBrFakt
-      ELSE
-         SEEK PadR( cBrFakt, 10 ) + cTDok
-      ENDIF
-*/
-
-      // IF Found()
       IF find_kalk_doks_by_broj_fakture( cTDok,  PadR( cBrFakt, 10 ) )
          AAdd( aRet, { cBrOriginal, kalk_doks->idfirma + "-" + kalk_doks->idvd + "-" + AllTrim( kalk_doks->brdok ) } )
       ENDIF
@@ -1049,7 +1018,7 @@ STATIC FUNCTION get_kalk_tip_by_vind_fakt_tip( cFaktTD, cIdProdajnoMjesto )
 
    LOCAL cRet := ""
 
-   IF ( cFaktTD == "" .OR. cFaktTD == nil )
+   IF ( cFaktTD == "" .OR. cFaktTD == NIL )
       RETURN "XX"
    ENDIF
 
@@ -1673,7 +1642,7 @@ STATIC FUNCTION FillDobSifra()
 
    o_roba()
 
-   SELECT roba
+--   SELECT roba
    SET ORDER TO TAG "ID"
    GO TOP
 
@@ -1889,30 +1858,8 @@ STATIC FUNCTION cre_kalk_imp_temp( aDbf )
 
 FUNCTION cre_kalk_priprt()
 
-   // LOCAL cKalkPript := "kalk_pript"
-
    my_close_all_dbf()
 
-   /*
-      FErase( my_home() + cKalkPript + ".dbf" )
-      FErase( my_home() + cKalkPript + ".cdx" )
-
-      o_kalk_pripr()
-
-      // napravi pript sa strukturom tabele kalk_pripr
-      COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
-      CREATE ( my_home() + cKalkPript ) from ( my_home() + "struct" )
-
-      USE
-
-      SELECT ( F_PRIPT )
-      my_use_temp( "PRIPT", my_home() + cKalkPript, .F., .T. )
-
-      INDEX on ( idfirma + idvd + brdok ) TAG "1"
-      INDEX on ( idfirma + idvd + brdok + idroba ) TAG "2"
-
-      USE
-   */
    o_kalk_pript()
    my_dbf_zap()
 

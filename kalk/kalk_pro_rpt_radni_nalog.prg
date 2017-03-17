@@ -27,7 +27,7 @@ FUNCTION kalk_stampa_dok_rn()
    cIdKonto := IdKonto; cIdKonto2 := IdKonto2
 
    P_COND
-   ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
+   ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    SELECT PARTN; HSEEK cIdPartner
 
@@ -68,7 +68,7 @@ FUNCTION kalk_stampa_dok_rn()
 
          select_o_roba( kalk_pripr->IdRoba )
          select_o_tarifa( kalk_pripr->IdTarifa )
-         
+
          SELECT kalk_pripr
 
          IF PRow() > page_length()
@@ -191,5 +191,4 @@ FUNCTION kalk_stampa_dok_rn()
 
    ? m
 
-   RETURN ( nil )
-// }
+   RETURN ( NIL )

@@ -15,7 +15,7 @@ FUNCTION RekTarife( lVisak )
 
    RekTarPDV()
 
-   RETURN
+   RETURN .T.
 
 
 // PDV obracun
@@ -114,6 +114,7 @@ FUNCTION RekTarPDV()
                LOOP
             ENDIF
 
+
             select_o_roba( kalk_pripr->idroba )
 
             get_tarifa_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, cIdTarifa )
@@ -133,7 +134,7 @@ FUNCTION RekTarPDV()
                nMpc2 := MpcBezPor( nMpcsaPdv2, aPorezi,, field->nc )
                aIPor2 := RacPorezeMP( aPorezi, nMpc2, nMpcsaPdv2, field->nc )
                aIPor := { 0, 0, 0 }
-               aIPor[ 1 ] := aIPor1[ 1 ] -aIPor2[ 1 ]
+               aIPor[ 1 ] := aIPor1[ 1 ] - aIPor2[ 1 ]
 
             ELSE
 
@@ -212,7 +213,7 @@ FUNCTION RekTarPDV()
    SET ORDER TO TAG "1"
    GO nRec
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -223,7 +224,7 @@ FUNCTION RekTarPDV()
 
 FUNCTION PKontoCnt( cSeek )
 
-   // {
+
    LOCAL nPos, aPKonta
    aPKonta := {}
    // baza: kalk_pripr, order: 2

@@ -549,7 +549,8 @@
 
 1.7.20  2014-03-31, vsasa
 
-  - FIN, otvaranje tabele KONTO i korekcija funkcije P_Konto()
+
+  - FIN, otvaranje tabele KONTO i korekcija funkcije p_konto()
   - KALK, povrat dokumenta u pripremu - bugfix
 
 1.7.14  2014-03-31, vsasa

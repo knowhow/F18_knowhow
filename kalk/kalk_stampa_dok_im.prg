@@ -149,19 +149,20 @@ FUNCTION kalk_stampa_dok_im()
 
    IF cSamoObrazac == "D"
       PrnClanoviKomisije()
-      RETURN
+      RETURN .F.
    ENDIF
 
    ? m
    @ PRow() + 1, 0 SAY "Ukupno:"
-   @ PRow(), ( PCol() * 6 ) + 2 SAY nTotKol PICT gPicKol
-   @ PRow(), PCol() + 1 SAY nTotGKol PICT gPicKol
-   @ PRow(), PCol() + 1 SAY nTotb PICT gPicDem
-   @ PRow(), PCol() + 1 SAY nTotc PICT gPicDem
-   @ PRow(), PCol() + 1 SAY 0 PICT gPicDem
-   @ PRow(), PCol() + 1 SAY 0 PICT gPicDem
-   @ PRow(), PCol() + 1 SAY nTot4 PICT IF( nTot4 > 0, gPicDem, Replicate( " ", Len( PicDEM ) ) )
-   @ PRow(), PCol() + 1 SAY iif( nTot4 < 0, - nTot4, nTot4 )  PICT IF( nTot4 < 0, gPicDem, Replicate( " ", Len( gPicDem ) ) )
+
+   @ PRow(), ( PCol() * 6 ) + 2 SAY nTotKol PICT pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY nTotGKol PICT pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY nTotb PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nTotc PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY 0 PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY 0 PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nTot4 PICT IF( nTot4 > 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( PicDEM ) ) )
+   @ PRow(), PCol() + 1 SAY IIF( nTot4 < 0, -nTot4, nTot4 )  PICT IF( nTot4 < 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) ) )
 
    ? m
 

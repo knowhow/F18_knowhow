@@ -208,7 +208,7 @@ FUNCTION ld_specifikacija_plate()
    cFirmVD := Space( 50 )
    cIsplata := "A"
 
-   OSpecif()
+   ld_specifikacije_otvori_tabele()
 
    IF ( FieldPos( "DNE" ) <> 0 )
       GO TOP

@@ -439,7 +439,7 @@ STATIC FUNCTION f18_pr_rezultat( a_ctrl, a_data, a_sif )
 // -----------------------------------------
 FUNCTION f18_sif_data( data, checksum )
 
-   o_roba()
+   //o_roba()
    o_ld_radn()
    //o_partner()
    //o_konto()

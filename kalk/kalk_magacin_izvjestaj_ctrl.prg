@@ -42,7 +42,7 @@ FUNCTION r_ct_sast()
    PRIVATE nRslt := 0
    --PRIVATE lKalkAsistentUToku := .T.
 
-   o_roba()
+  // o_roba()
    o_sifk()
    o_sifv()
 
@@ -64,7 +64,7 @@ FUNCTION r_ct_sast()
    o_kalk_pripr()
    -- o_kalk()
    o_kalk_doks()
-   o_roba()
+--   o_roba()
    o_konto()
 
    IF nVar == 1
@@ -91,7 +91,7 @@ FUNCTION r_ct_sast()
    ENDIF
 
    my_close_all_dbf()
-   o_roba()
+--   o_roba()
 
    o_rxp( nVar )
 
@@ -463,7 +463,7 @@ STATIC FUNCTION _pr_2_exp( nVar )
 
       SELECT r_export
       GO TOP
-      SEEK cIdRoba
+    --  SEEK cIdRoba
 
       my_flock()
 
@@ -790,7 +790,7 @@ STATIC FUNCTION p_naz( id )
 
    SELECT partn
    GO TOP
-   SEEK id
+--   SEEK id
 
    IF Found()
       cRet := AllTrim( field->naz )

@@ -44,11 +44,11 @@ FUNCTION ISast()
    SELECT ( nArr )
    PushWA()
 
-   SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
-   SET ORDER TO TAG "ID"
+//   SELECT ( F_ROBA )
+//   IF !Used()
+//      o_roba()
+//   ENDIF
+//   SET ORDER TO TAG "ID"
 
    SELECT ( F_SAST )
    IF !Used()
@@ -66,8 +66,7 @@ FUNCTION ISast()
          SKIP
          nTrec := RecNo()
          SKIP -1
-         SELECT roba
-         HSEEK sast->id  // nema "svog proizvoda"
+         select_o_roba( sast->id )  // nema "svog proizvoda"
          IF !Found()
             SELECT sast
             DELETE
@@ -187,8 +186,8 @@ FUNCTION ISast()
                roba->id + " " + ;
                PadR( AllTrim( roba->naz ), 40 ) + " " + ;
                Transform( sast->kolicina, "999999.9999" ) + " " + ;
-               IF( cNCVPC == "D", Transform( roba->nc * sast->kolicina,picdem ) + " " + ;
-               Transform( roba->vpc * sast->kolicina, picdem ), "" );
+               IF( cNCVPC == "D", Transform( roba->nc * sast->kolicina,fakt_pic_iznos() ) + " " + ;
+               Transform( roba->vpc * sast->kolicina, fakt_pic_iznos() ), "" );
                )
 
             nNC += roba->nc * sast->kolicina
@@ -199,8 +198,8 @@ FUNCTION ISast()
          IF cNCVPC == "D"
             AAdd( aPom, m )
             AAdd( aPom, PadR( " Ukupno:", nCol1 ) + " " + ;
-               Transform( nNC, picdem ) + " " + ;
-               Transform( nVPC, picdem );
+               Transform( nNC, fakt_pic_iznos() ) + " " + ;
+               Transform( nVPC, fakt_pic_iznos() );
                )
          ENDIF
          AAdd( aPom, m )

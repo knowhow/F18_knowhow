@@ -61,22 +61,6 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
       lAutoBrojac := .T.
    ENDIF
 
-/*
-   SELECT F_SIFK
-   IF !Used()
-      o_sifk()
-   ENDIF
-
-   SELECT F_SIFV
-   IF !Used()
-      o_sifv()
-   ENDIF
-
-   SELECT F_ROBA
-   IF !Used()
-      o_roba()
-   ENDIF
-*/
 
    select_o_finmat()
 

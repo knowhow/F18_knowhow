@@ -420,11 +420,11 @@ FUNCTION mat_pripr_key_handler()
 
       @ m_x + 5, m_y + 2 SAY "Zbir naloga:"
       @ m_x + 6, m_y + 2 SAY "     Duguje:"
-      @ m_x + 6, Col() + 2 SAY Dug PICTURE gPicDEM()
+      @ m_x + 6, Col() + 2 SAY Dug PICTURE g_picdem_mat()
       @ m_x + 7, m_y + 2 SAY "  Potrazuje:"
-      @ m_x + 7, Col() + 2 SAY Pot  PICTURE gPicDEM()
+      @ m_x + 7, Col() + 2 SAY Pot  PICTURE g_picdem_mat()
       @ m_x + 8, m_y + 2 SAY "      Saldo:"
-      @ m_x + 8, Col() + 2 SAY Dug - Pot  PICTURE gPicDEM()
+      @ m_x + 8, Col() + 2 SAY Dug - Pot  PICTURE g_picdem_mat()
 
       Inkey( 0 )
       BoxC()
@@ -738,29 +738,29 @@ FUNCTION mat_st_anal_nalog( fnovi )
             @ PRow(), PCol() + 1 SAY DatDok
             IF ( gkonto == "D" .OR. g2Valute == "N" ) .AND. gNW != "R"
                IF Round( kolicina, 4 ) <> 0
-                  @ PRow(), PCol() + 1 SAY iznos / kolicina PICTURE Right( gpicdem + "9", Len( gPicDem ) )
+                  @ PRow(), PCol() + 1 SAY iznos / kolicina PICTURE Right( pic_iznos_bilo_gpicdem() + "9", Len( pic_iznos_bilo_gpicdem() ) )
                ELSE
-                  @ PRow(), PCol() + 1  SAY 0 PICTURE Right( gpicdem + "9", Len( gPicDem ) )
+                  @ PRow(), PCol() + 1  SAY 0 PICTURE Right( pic_iznos_bilo_gpicdem() + "9", Len( pic_iznos_bilo_gpicdem() ) )
                ENDIF
             ENDIF
             nCK := PCol() + 1
             IF U_I == "1"
-               @ PRow(), PCol() + 1 SAY Kolicina PICTURE "@Z " + gPicKol
-               @ PRow(), PCol() + 1 SAY 0        PICTURE "@Z " + gPicKol
+               @ PRow(), PCol() + 1 SAY Kolicina PICTURE "@Z " + pic_kolicina_bilo_gpickol()
+               @ PRow(), PCol() + 1 SAY 0        PICTURE "@Z " + pic_kolicina_bilo_gpickol()
             ELSE
-               @ PRow(), PCol() + 1 SAY 0        PICTURE "@Z " + gPicKol
-               @ PRow(), PCol() + 1 SAY Kolicina PICTURE "@Z " + gPicKol
+               @ PRow(), PCol() + 1 SAY 0        PICTURE "@Z " + pic_kolicina_bilo_gpickol()
+               @ PRow(), PCol() + 1 SAY Kolicina PICTURE "@Z " + pic_kolicina_bilo_gpickol()
             ENDIF
 
             nCI := PCol() + 1
             IF gNW != "R"
                IF D_P = "1"
-                  @ PRow(), PCol() + 1 SAY Iznos PICTURE "@Z " + gPicDEM()
-                  @ PRow(), PCol() + 1 SAY 0 PICTURE "@Z " + gPicDEM()
+                  @ PRow(), PCol() + 1 SAY Iznos PICTURE "@Z " + g_picdem_mat()
+                  @ PRow(), PCol() + 1 SAY 0 PICTURE "@Z " + g_picdem_mat()
                   nDug += Iznos
                ELSE
-                  @ PRow(), PCol() + 1 SAY 0 PICTURE "@Z " + gPicDEM()
-                  @ PRow(), PCol() + 1 SAY Iznos PICTURE "@Z " + gPicDEM()
+                  @ PRow(), PCol() + 1 SAY 0 PICTURE "@Z " + g_picdem_mat()
+                  @ PRow(), PCol() + 1 SAY Iznos PICTURE "@Z " + g_picdem_mat()
                   nPot += Iznos
                ENDIF
             ENDIF
@@ -809,8 +809,8 @@ FUNCTION mat_st_anal_nalog( fnovi )
             ? "UKUPNO ZA DOKUMENT:"
             @ PRow(), PCol() + 1 SAY cBrDok
             @ PRow(), nCI - 1 SAY ""
-            @ PRow(), PCol() + 1 SAY nDug PICTURE "@Z " + gPicDEM()
-            @ PRow(), PCol() + 1 SAY nPot PICTURE "@Z " + gPicDEM()
+            @ PRow(), PCol() + 1 SAY nDug PICTURE "@Z " + g_picdem_mat()
+            @ PRow(), PCol() + 1 SAY nPot PICTURE "@Z " + g_picdem_mat()
 
             IF gkonto == "N" .AND. g2Valute == "D"
                @ PRow(), PCol() + 1 SAY nDug2 PICTURE "@Z " + gPicDIN
@@ -829,8 +829,8 @@ FUNCTION mat_st_anal_nalog( fnovi )
          ? M
          ? "ZBIR NALOGA:"
          @ PRow(), nCI - 1 SAY ""
-         @ PRow(), PCol() + 1 SAY nUkDug PICTURE "@Z " + gPicDEM()
-         @ PRow(), PCol() + 1 SAY nUkPot PICTURE "@Z " + gPicDEM()
+         @ PRow(), PCol() + 1 SAY nUkDug PICTURE "@Z " + g_picdem_mat()
+         @ PRow(), PCol() + 1 SAY nUkPot PICTURE "@Z " + g_picdem_mat()
          IF gkonto == "N" .AND. g2Valute == "D"
             @ PRow(), PCol() + 1 SAY nUkDug2 PICTURE "@Z " + gPicDIN
             @ PRow(), PCol() + 1 SAY nUkPot2 PICTURE "@Z " + gPicDIN

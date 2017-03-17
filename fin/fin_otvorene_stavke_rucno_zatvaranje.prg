@@ -14,13 +14,15 @@
 
 FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
+   LOCAL i
+
    open_otv_stavke_tabele()
 
    cIdFirma := self_organizacija_id()
    cIdPartner := Space( LEN_PARTNER_ID )
 
    picD := FormPicL( "9 " + gPicBHD, 14 )
-   picDEM := FormPicL( "9 " + gPicDEM, 9 )
+   picDEM := FormPicL( "9 " + pic_iznos_eur(), 9 )
 
    cIdKonto := Space( Len( konto->id ) )
 
@@ -32,14 +34,17 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    IF gNW == "D"
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma  " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto  " GET cIdKonto  VALID  P_Konto( @cIdKonto )
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner ) PICT "@!"
+
+   @ m_x + 4, m_y + 2 SAY "Konto  " GET cIdKonto  VALID  p_konto( @cIdKonto )
+   @ m_x + 5, m_y + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner ) PICT "@!"
+
    IF gFinRj == "D"
       cIdRj := Space( Len( RJ->id ) )
       @ form_x_koord() + 6, form_y_koord() + 2 SAY "RJ" GET cIdRj PICT "@!" VALID Empty( cIdRj ) .OR. P_Rj( @cIdRj )
    ENDIF
+
    READ
    ESC_BCR
 
@@ -245,7 +250,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
 
          open_otv_stavke_tabele( l_osuban )
          SELECT ( nDbfArea )
-         SET FILTER to &( _tb_filter )
+         SET FILTER TO &( _tb_filter )
          GO ( _t_rec )
 
 
@@ -268,7 +273,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
 
       open_otv_stavke_tabele( l_osuban )
       SELECT ( nDbfArea )
-      SET FILTER to &( _tb_filter )
+      SET FILTER TO &( _tb_filter )
       GO ( _t_rec )
 
 
@@ -280,7 +285,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
 
       open_otv_stavke_tabele( l_osuban )
       SELECT ( nDbfArea )
-      SET FILTER to &( _tb_filter )
+      SET FILTER TO &( _tb_filter )
       GO ( _t_rec )
 
       nRet := DE_REFRESH

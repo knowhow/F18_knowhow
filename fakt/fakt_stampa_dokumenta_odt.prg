@@ -12,13 +12,14 @@
 #include "f18.ch"
 
 
-
 STATIC LEN_KOLICINA := 12
 STATIC LEN_CIJENA := 10
 STATIC LEN_VRIJEDNOST := 12
+
 STATIC PIC_KOLICINA := ""
 STATIC PIC_VRIJEDNOST := ""
 STATIC PIC_CIJENA := ""
+
 STATIC __default_odt_vp_template := ""
 STATIC __default_odt_mp_template := ""
 STATIC __default_odt_kol_template := ""
@@ -506,7 +507,7 @@ STATIC FUNCTION __upisi_zaglavlje()
    cTmp := AllTrim( get_dtxt_opis( "I14" ) )
    xml_node( "fdt3", to_xml_encoding( cTmp ) )
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------------------
@@ -526,9 +527,9 @@ STATIC FUNCTION _fakt_dok_gen_xml( xml_file, a_racuni, ctrl_data )
       AAdd( ctrl_data, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } )
    ENDIF
 
-   PIC_KOLICINA := PadL( AllTrim( Right( PicKol, LEN_KOLICINA ) ), LEN_KOLICINA, "9" )
-   PIC_VRIJEDNOST := PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
-   PIC_CIJENA := PadL( AllTrim( Right( PicCDem, LEN_CIJENA ) ), LEN_CIJENA, "9" )
+   PIC_KOLICINA := PadL( AllTrim( Right( fakt_pic_kolicina(), LEN_KOLICINA ) ), LEN_KOLICINA, "9" )
+   PIC_VRIJEDNOST := PadL( AllTrim( Right( fakt_pic_iznos(), LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
+   PIC_CIJENA := PadL( AllTrim( Right( fakt_pic_cijena(), LEN_CIJENA ) ), LEN_CIJENA, "9" )
 
    // DRN tabela
    // brdok, datdok, datval, datisp, vrijeme, zaokr, ukbezpdv, ukpopust

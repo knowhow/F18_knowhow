@@ -82,10 +82,10 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aKol := {}
 
    AAdd( aImeKol, { "ID roba",   {|| IdRoba } } )
-   AAdd( aImeKol, { PadC( "Kol.", Len( pickol ) ), {|| Transform( Kolicina, pickol ) } } )
+   AAdd( aImeKol, { PadC( "Kol.", Len( fakt_pic_kolicina() ) ), {|| Transform( Kolicina, fakt_pic_kolicina() ) } } )
 
    IF rugov->( FieldPos( "cijena" ) ) <> 0
-      AAdd( aImeKol, { "Cijena", {|| Transform( cijena, picdem ) },  "cijena"    } )
+      AAdd( aImeKol, { "Cijena", {|| Transform( cijena, fakt_pic_iznos() ) },  "cijena"    } )
    ENDIF
 
    AAdd( aImeKol, { "Rabat",   {|| Rabat }  } )
@@ -213,7 +213,7 @@ FUNCTION edit_rugov( lNovi )
 
    IF lCijena
       ++ nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Cijena", nBoxLen ) GET nCijena PICT gPICCDEM VALID _val_num( nCijena )
+      @ m_x + nX, m_y + 2 SAY PadL( "Cijena", nBoxLen ) GET nCijena PICT pic_cijena_bilo_gpiccdem() VALID _val_num( nCijena )
    ENDIF
 
    ++ nX
@@ -301,7 +301,7 @@ FUNCTION vrati_opis_ugovora( cIdUgov )
    select_o_rugov( cIdUgov )
 
    IF Found()
-      cOpis += Trim( idroba ) + " " + AllTrim( Transform( kolicina, pickol ) ) + " x " + AllTrim( Transform( cijena, picdem ) )
+      cOpis += Trim( idroba ) + " " + AllTrim( Transform( kolicina, fakt_pic_kolicina() ) ) + " x " + AllTrim( Transform( cijena, fakt_pic_iznos() ) )
    ENDIF
 
    PopWa()

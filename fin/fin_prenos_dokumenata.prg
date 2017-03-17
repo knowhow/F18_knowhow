@@ -761,7 +761,7 @@ FUNCTION fin_prekart()
       { "Datum",         {|| DatDok  }, "DatDok" }, ;
       { "D/P",           {|| D_P     }, "D_P" }, ;
       { ValDomaca(),     {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznos " + AllTrim( ValDomaca() ) }, ;
-      { ValPomocna(),    {|| Transform( IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznos " + AllTrim( ValPomocna() ) }, ;
+      { ValPomocna(),    {|| Transform( IznosDEM, FormPicL( pic_iznos_eur(), 10 ) ) }, "iznos " + AllTrim( ValPomocna() ) }, ;
       { "Opis",          {|| Opis      }, "OPIS" }, ;
       { "K1",            {|| k1      }, "k1" }, ;
       { "K2",            {|| k2      }, "k2" }, ;

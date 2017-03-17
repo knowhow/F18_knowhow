@@ -14,21 +14,21 @@
 
 FUNCTION say_kolicina( nVar, cPic )
 
-   hb_default( @cPic, global_pic_kolicina() )
+   hb_default( @cPic, prosiri_pic_kolicina_za_2() )
 
    RETURN say_pict( nVar, cPic, .T. )
 
 
 FUNCTION say_iznos( nVar, cPic )
 
-   hb_default( @cPic, global_pic_iznos() )
+   hb_default( @cPic, prosiri_pic_iznos_za_2() )
 
    RETURN say_pict( nVar, cPic )
 
 
 FUNCTION say_cijena( nVar, cPic )
 
-   hb_default( @cPic, global_pic_cijena() )
+   hb_default( @cPic, prosiri_pic_cjena_za_2() )
 
    RETURN say_pict( nVar, cPic )
 
@@ -77,14 +77,3 @@ FUNCTION pic_format( cPicture, nNum )
    ENDIF
 
    RETURN cPictureOut
-
-
-FUNCTION global_pic_iznos()
-   RETURN "99" + gPicDEM
-
-
-FUNCTION global_pic_kolicina()
-   RETURN "99" + gPicKol
-
-FUNCTION global_pic_cijena()
-   RETURN "99" + gPicCDem

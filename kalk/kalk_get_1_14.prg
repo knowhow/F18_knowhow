@@ -28,14 +28,14 @@ FUNCTION kalk_get_1_14()
    IF nRbr == 1 .OR. !kalk_is_novi_dokument()
       @ form_x_koord() + 6, form_y_koord() + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 6, 18 )
       @ form_x_koord() + 7, form_y_koord() + 2   SAY "Faktura Broj:" GET _BrFaktP
-      @ form_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   valid {|| .T. }
+      @ form_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   VALID {|| .T. }
       @ form_x_koord() + 7, Col() + 2 SAY "DatVal:" GET dDatVal ;
          WHEN  {|| dDatVal := get_kalk_14_datval( _brdok ), .T. } ;
          VALID {|| update_kalk_14_datval( _BrDok, dDatVal ), .T. }
       _IdZaduz := ""
       _Idkonto := "2110"
       PRIVATE cNBrDok := _brdok
-      @ form_x_koord() + 9, form_y_koord() + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2  valid ( Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) )
+      @ form_x_koord() + 9, form_y_koord() + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2  VALID ( Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) )
 
 
    ELSE
@@ -69,22 +69,24 @@ FUNCTION kalk_get_1_14()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
+
    select_o_tarifa( _IdTarifa )
    select_o_roba( _IdRoba )
    select_o_koncij( _idkonto2 )
-   
+
    SELECT kalk_pripr
 
    IF koncij->naz = "P"
       _FCJ := roba->PlC
    ENDIF
 
-   //check_datum_posljednje_kalkulacije()
-   //DuplRoba()
+   // check_datum_posljednje_kalkulacije()
+   // DuplRoba()
 
    IF kalk_is_novi_dokument()
-      SELECT roba
+      // SELECT roba
       _VPC := KoncijVPC()
+      SELECT roba
       _NC := NC
       SELECT kalk_pripr
    ENDIF
@@ -134,11 +136,11 @@ FUNCTION kalk_get_1_14()
 
    PRIVATE _vpcsappp := 0
 
-   @ form_x_koord() + 14, form_y_koord() + 2   SAY8 "PC BEZ PDV" GET _VPC  valid {|| iif( gVarVP == "2" .AND. ( _vpc - _nc ) > 0, cisMarza := ( _vpc - _nc ) / ( 1 + tarifa->vpp ), _vpc - _nc ), .T. }  PICTURE PicDEM
+   @ form_x_koord() + 14, form_y_koord() + 2   SAY8 "PC BEZ PDV" GET _VPC  VALID {|| iif( gVarVP == "2" .AND. ( _vpc - _nc ) > 0, cisMarza := ( _vpc - _nc ) / ( 1 + tarifa->vpp ), _vpc - _nc ), .T. }  PICTURE PicDEM
 
    PRIVATE cTRabat := "%"
    @ form_x_koord() + 15, form_y_koord() + 2    SAY8 "RABAT    " GET  _RABATV PICT picdem
-   @ form_x_koord() + 15, Col() + 2  GET cTRabat  PICT "@!"  valid {|| PrerRab(), V_RabatV(), ctrabat $ "%AU" }
+   @ form_x_koord() + 15, Col() + 2  GET cTRabat  PICT "@!"  VALID {|| PrerRab(), V_RabatV(), ctrabat $ "%AU" }
 
    _PNAP := 0
 
@@ -150,15 +152,15 @@ FUNCTION kalk_get_1_14()
       _VPCsaPP := 0
       @ form_x_koord() + 17, form_y_koord() + 2  SAY8 "PC SA PDV "
       @ form_x_koord() + 17, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
-         when {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 -_RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
-         valid {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
+         WHEN {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 - _RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
+         VALID {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
 
    ELSE
       _VPCsaPP := 0
       @ form_x_koord() + 17, form_y_koord() + 2  SAY8 "PC SA PDV "
       @ form_x_koord() + 17, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
-         when {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 -_RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
-         valid {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
+         WHEN {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 - _RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
+         VALID {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
    ENDIF
 
    READ
@@ -169,7 +171,7 @@ FUNCTION kalk_get_1_14()
       _marza := _vpc - _mpcsapp / ( 1 + _PORVT ) * _PORVT - _nc
    ELSE
       _mpcsapp := 0
-      _marza := _vpc / ( 1 + _PORVT ) -_nc
+      _marza := _vpc / ( 1 + _PORVT ) - _nc
    ENDIF
 
 
@@ -197,14 +199,14 @@ FUNCTION kalk_get_1_14()
          ENDIF
          IF brdok == _brdok .AND. idvd == _idvd .AND. Val( Rbr ) == nRbr
 
-            nMarza := _VPC / ( 1 + _PORVT ) * ( 1 -_RabatV / 100 ) -_NC
+            nMarza := _VPC / ( 1 + _PORVT ) * ( 1 - _RabatV / 100 ) - _NC
             REPLACE vpc WITH _vpc, ;
                rabatv WITH _rabatv, ;
                mkonto WITH _mkonto, ;
                tmarza  WITH _tmarza, ;
                mpc     WITH  _MPC, ;
-               marza  WITH _vpc / ( 1 + _PORVT ) -kalk_pripr->nc, ;   // mora se uzeti nc iz ove stavke
-            vpcsap WITH _VPC / ( 1 + _PORVT ) * ( 1 -_RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, ;
+               marza  WITH _vpc / ( 1 + _PORVT ) - kalk_pripr->nc, ;   // mora se uzeti nc iz ove stavke
+               vpcsap WITH _VPC / ( 1 + _PORVT ) * ( 1 - _RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, ;
                mu_i WITH  _mu_i, ;
                pkonto WITH "", ;
                pu_i WITH  "", ;
@@ -224,7 +226,6 @@ FUNCTION kalk_get_1_14()
 
 
 /*
-   pPDV14(fret)
    Prikaz PDV pri unosu 14-ke
  */
 
@@ -234,9 +235,9 @@ FUNCTION pPDV14( lRet )
    IF roba->tip $ "VKX"
       // nista ppp
    ELSE
-      QQOut( "   PDV:", Transform( _PNAP := _VPC * ( 1 -_RabatV / 100 ) * _MPC / 100, picdem ) )
+      QQOut( "   PDV:", Transform( _PNAP := _VPC * ( 1 - _RabatV / 100 ) * _MPC / 100, picdem ) )
    ENDIF
 
-   _VPCSaP := iif( _VPC <> 0, _VPC * ( 1 -_RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, 0 )
+   _VPCSaP := iif( _VPC <> 0, _VPC * ( 1 - _RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, 0 )
 
    RETURN lRet

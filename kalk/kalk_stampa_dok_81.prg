@@ -384,6 +384,7 @@ FUNCTION kalk_stampa_dok_81()
 
       select_o_roba( kalk_pripr->IdRoba )
       select_o_tarifa( kalk_pripr->IdTarifa )
+
       SELECT kalk_pripr
 
       aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
@@ -554,4 +555,4 @@ FUNCTION kalk_stampa_dok_81()
    ? "RUC:";  @ PRow(), PCol() + 1 SAY nTot6 PICT picdem
    ? m
 
-   RETURN
+   RETURN .T.

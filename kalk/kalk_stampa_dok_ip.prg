@@ -251,7 +251,7 @@ FUNCTION stampa_obrasca_inventure_sank_lista()
 
 
    P_10CPI
-   
+
    select_o_konto( cIdKonto )
    SELECT kalk_pripr
    ?? "INVENTURA PRODAVNICA ", cidkonto, "-", konto->naz
@@ -308,14 +308,13 @@ FUNCTION stampa_obrasca_inventure_sank_lista()
       @ PRow(), PCol() + 1 SAY 0  PICTURE Replicate( "_", Len( PicKol ) )
       @ PRow(), PCol() + 1 SAY MPCSAPP             PICTURE PicCDEM
       nTotb += fcj
-      ntotc += kolicina * mpcsapp
+      nToTc += kolicina * mpcsapp
       nTot4 +=  ( nU4 := MPCSAPP * Kolicina - fcj )
 
       @ PRow(), PCol() + 1 SAY nU4  PICT Replicate( "_", Len( PicDEM ) )
       SKIP
 
    ENDDO
-
 
    IF PRow() - dodatni_redovi_po_stranici() > 58
       FF
@@ -324,4 +323,4 @@ FUNCTION stampa_obrasca_inventure_sank_lista()
 
    ? m
 
-   RETURN
+   RETURN .T.

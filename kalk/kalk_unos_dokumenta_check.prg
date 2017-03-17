@@ -36,7 +36,7 @@ FUNCTION o_kalk_tabele_izvj()
    o_sifk()
    o_sifv()
    o_tarifa()
-   select_o_roba()
+   //select_o_roba()
    o_koncij()
    select_o_konto()
    select_o_partner()
@@ -70,7 +70,7 @@ FUNCTION Gen9999()
    RETURN .T.
 
 
-/* KalkNaF(cIdRoba,nKols)
+/*
  *     Stanje zadanog artikla u FAKT
  */
 
@@ -82,7 +82,7 @@ FUNCTION KalkNaF( cIdRoba, nKols )
    //SELECT fakt
    //SET ORDER TO TAG "3" // fakt idroba
    nKols := 0
-   
+
    seek_fakt_3( NIL, cIdRoba )
    DO WHILE !Eof() .AND. cIdRoba == idroba
       IF idtipdok = "0"  // ulaz
@@ -272,7 +272,7 @@ FUNCTION DuplRoba()
 
 
 
-/* MMarza2()
+/*
  *     Daje iznos maloprodajne marze
  */
 
@@ -305,8 +305,8 @@ FUNCTION knjizno_stanje_prodavnica()
    LOCAL cIdkonto := _idkonto
    LOCAL nRabat := 0
 
-   SELECT roba
-   HSEEK cIdRoba
+  -- SELECT roba
+--   HSEEK cIdRoba
    SELECT koncij
    HSEEK cIdKonto
 
@@ -530,27 +530,6 @@ FUNCTION NCuMP( _idfirma, _idroba, _idkonto, nKolicina, dDatDok )
 
 
 
-/* KalkTrUvoz()
- *     Proracun carine i ostalih troskova koji se javljaju pri uvozu
- *  \todo samo otvorena f-ja
- */
-
-FUNCTION KalkTrUvoz()
-
-   // {
-   LOCAL nT1 := 0, nT2 := 0, nT3 := 0, nT4 := 0, nT5 := 0, CP := "999999999.999999999"
-   Box( "#Unos troskova", 7, 75 )
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY c10T1 GET nT1 PICT CP
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY c10T2 GET nT2 PICT CP
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY c10T3 GET nT3 PICT CP
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY c10T4 GET nT4 PICT CP
-   @ form_x_koord() + 6, form_y_koord() + 2 SAY c10T5 GET nT5 PICT CP
-   READ
-   BoxC()
-   MsgBeep( "Opcija jos nije u funkciji jer je dorada u toku!" )
-   CLOSERET
-   // }
-
 
 /* ObracunPorezaUvoz()
  *     Proracun poreza pri uvozu
@@ -558,7 +537,7 @@ FUNCTION KalkTrUvoz()
 
 FUNCTION ObracunPorezaUvoz()
 
-   // {
+
    LOCAL nTP, qqT1, qqT2, aUT1, aUT2
 
    o_kalk_pripr()
@@ -691,7 +670,7 @@ FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
 
    nSelect := Select()
 
-   lUsedRoba := .T.
+
    select_o_roba( cIdRoba )
 
    SELECT ( nSelect )
@@ -711,7 +690,7 @@ FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
    ENDIF
 
    RETURN
-// }
+
 
 /* UkupnoKolM(nTotalUlaz, nTotalIzlaz)
  *  \sa UkupnoKolP
@@ -719,7 +698,7 @@ FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
 
 FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
 
-   // {
+
    LOCAL cIdRoba
    LOCAL lUsedRoba
 
@@ -727,15 +706,7 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
 
    nSelect := Select()
 
-   lUsedRoba := .T.
-   Select( F_ROBA )
-   IF !Used()
-      lUsedRoba := .F.
-      o_roba()
-   ELSE
-      Select( F_ROBA )
-   ENDIF
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
 
    SELECT ( nSelect )
    IF field->mu_i == "1"
@@ -756,8 +727,8 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
       kalk_sumiraj_kolicinu( -field->kolicina, -field->kolicina, @nTotUlaz, @nTotalIzlaz )
    ENDIF
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 FUNCTION kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
@@ -766,8 +737,7 @@ FUNCTION kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
    nArea := Select()
 
-   SELECT ROBA
-   HSEEK ( nArea )->IdRoba
+   select_o_roba( ( nArea )->IdRoba )
 
    SELECT tarifa
    HSEEK ( nArea )->IdTarifa
@@ -846,7 +816,7 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
    nArr := Select()
    o_tarifa()
    o_koncij()
-   o_roba()
+  // o_roba()
    o_kalk_pripr9()
    cOtpremnica := Space( 10 )
    cIdKonto := "1320   "
@@ -937,7 +907,7 @@ FUNCTION kalk_get_11_from_pripr9_smece( cBrDok )
 
 FUNCTION Generisati11_ku()
 
-   // {
+
    // daj mi vrstu dokumenta kalk_pripreme
    nTRecNo := RecNo()
    GO TOP
@@ -998,7 +968,7 @@ FUNCTION kopiraj_set_cijena()
 
    ENDCASE
 
-   o_roba()
+  // o_roba()
    _count := RecCount()
 
    SELECT roba

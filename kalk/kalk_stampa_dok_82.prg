@@ -129,7 +129,8 @@ FUNCTION kalk_stampa_dok_82()
 
    SELECT kalk_pripr
    SET ORDER TO TAG "2"
-   SEEK cidfirma + cidvd + cbrdok
+   SEEK cidfirma + cidvd + cBrdok
+
    m := "------ ---------- ---------- ---------- ---------- ---------- ----------"
    ? m
    ? "* Tar *  PPP%    *   PPU%   *    MPV   *    PPP   *   PPU    * MPVSAPP *"
@@ -143,8 +144,11 @@ FUNCTION kalk_stampa_dok_82()
       select_o_tarifa( cIdTarifa )
 
       SELECT kalk_pripr
-      DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok .AND. idtarifa == cIdTarifa
-         SELECT roba; HSEEK kalk_pripr->idroba; SELECT kalk_pripr
+
+      DO WHILE !Eof() .AND. cIdfirma + cIdvd + cBrdok == idfirma + idvd + brdok .AND. idtarifa == cIdtarifa
+         select_o_roba( kalk_pripr->idroba )
+         SELECT kalk_pripr
+
          set_pdv_public_vars()
          nU1 += mpc * kolicina
          nU2 += mpc * _OPP * kolicina
@@ -181,4 +185,4 @@ FUNCTION kalk_stampa_dok_82()
    SET ORDER TO TAG "1"
    GO nRec
 
-   RETURN
+   RETURN .T.

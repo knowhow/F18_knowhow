@@ -13,9 +13,7 @@
 
 
 
-// --------------------------------------------
-// browse dokumenata - tabelarni pregled
-// --------------------------------------------
+
 FUNCTION browse_kalk_dokumenti()
 
    LOCAL cFirma := self_organizacija_id()
@@ -34,7 +32,7 @@ FUNCTION browse_kalk_dokumenti()
       RETURN .F.
    ENDIF
 
-   o_roba()
+  // o_roba()
    o_koncij()
 
    o_konto()
@@ -119,9 +117,9 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    AAdd( aImeKol, { "M.Konto",  {|| mkonto } } )
    AAdd( aImeKol, { "P.Konto",  {|| pkonto } } )
    AAdd( aImeKol, { "Partner",  {|| idpartner } } )
-   AAdd( aImeKol, { "NV",       {|| Transform( field->nv, gPicDem ) } } )
-   AAdd( aImeKol, { "VPV",      {|| Transform( vpv, gPicDem ) } } )
-   AAdd( aImeKol, { "MPV",      {|| Transform( mpv, gPicDem ) } } )
+   AAdd( aImeKol, { "NV",       {|| Transform( field->nv, pic_iznos_bilo_gpicdem() ) } } )
+   AAdd( aImeKol, { "VPV",      {|| Transform( vpv, pic_iznos_bilo_gpicdem() ) } } )
+   AAdd( aImeKol, { "MPV",      {|| Transform( mpv, pic_iznos_bilo_gpicdem() ) } } )
    AAdd( aImeKol, { "Dokument",   {|| Brfaktp }                           } )
 
    FOR i := 1 TO Len( aImeKol )
@@ -237,7 +235,7 @@ STATIC FUNCTION usl_browse_kalk_dokumenti( cFirma, cIdVd, dDatOd, dDatDo, ;
 
 FUNCTION kalk_pregled_dokumenata_hronoloski()
 
-   o_roba()
+  // o_roba()
    o_koncij()
    -- o_kalk()
    o_konto()
@@ -259,9 +257,9 @@ FUNCTION kalk_pregled_dokumenata_hronoloski()
    AAdd( ImeKol, { "Broj  ",     {|| BrDok }                           } )
    AAdd( ImeKol, { "M.Konto",    {|| mkonto }                    } )
    AAdd( ImeKol, { "P.Konto",    {|| pkonto }                    } )
-   AAdd( ImeKol, { "Nab.Vr",     {|| Transform( nv, gpicdem ) }                          } )
-   AAdd( ImeKol, { "VPV",        {|| Transform( vpv, gpicdem ) }                          } )
-   AAdd( ImeKol, { "MPV",        {|| Transform( mpv, gpicdem ) }                          } )
+   AAdd( ImeKol, { "Nab.Vr",     {|| Transform( nv, pic_iznos_bilo_gpicdem() ) }                          } )
+   AAdd( ImeKol, { "VPV",        {|| Transform( vpv, pic_iznos_bilo_gpicdem() ) }                          } )
+   AAdd( ImeKol, { "MPV",        {|| Transform( mpv, pic_iznos_bilo_gpicdem() ) }                          } )
    AAdd( ImeKol, { "Dokument",   {|| Brfaktp }                           } )
    Kol := {}
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
@@ -386,10 +384,10 @@ STATIC FUNCTION kalk_pregled_dokumenta()
    AAdd( ImeKol, { "M.Konto",    {|| mkonto }                     } )
    AAdd( ImeKol, { "P.Konto",    {|| pkonto }                     } )
    AAdd( ImeKol, { "Roba",       {|| IdRoba }                     } )
-   AAdd( ImeKol, { "Kolicina",   {|| Transform( Kolicina, gpickol ) } } )
-   AAdd( ImeKol, { "Nc",         {|| Transform( nc, gpicdem ) }  } )
-   AAdd( ImeKol, { "VPC",        {|| Transform( vpc, gpicdem ) }  } )
-   AAdd( ImeKol, { "MPCSAPP",    {|| Transform( mpcsapp, gpicdem ) } } )
+   AAdd( ImeKol, { "Kolicina",   {|| Transform( Kolicina, pic_kolicina_bilo_gpickol() ) } } )
+   AAdd( ImeKol, { "Nc",         {|| Transform( nc, pic_iznos_bilo_gpicdem() ) }  } )
+   AAdd( ImeKol, { "VPC",        {|| Transform( vpc, pic_iznos_bilo_gpicdem() ) }  } )
+   AAdd( ImeKol, { "MPCSAPP",    {|| Transform( mpcsapp, pic_iznos_bilo_gpicdem() ) } } )
 
    Kol := {}
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
@@ -456,7 +454,11 @@ STATIC FUNCTION pregled_kartice()
    IF !Empty( cMkonto )
 
       SELECT kalk
+<<<<<<< HEAD
     --  SEEK cidfirma + cmkonto + cIdRoba
+=======
+    --  SEEK cidfirma + cmkonto + cidroba
+>>>>>>> 23100-ld
 
       nStanje := nNV := nVPV := 0
 
@@ -484,7 +486,11 @@ STATIC FUNCTION pregled_kartice()
       ENDDO
    ELSE
       SELECT kalk
+<<<<<<< HEAD
     --  SEEK cidfirma + cpkonto + cIdRoba
+=======
+    --  SEEK cidfirma + cpkonto + cidroba
+>>>>>>> 23100-ld
       nStanje := nNV := nMPV := 0
       DO WHILE !Eof() .AND. idfirma + pkonto + idroba == cidfirma + cpkonto + cIdRoba
          cId := idfirma + idvd + brdok + rbr
@@ -521,17 +527,17 @@ STATIC FUNCTION pregled_kartice()
    AAdd( ImeKol, { "VD",       {|| idvd }                         } )
    AAdd( ImeKol, { "Brdok",    {|| brdok }                         } )
    AAdd( ImeKol, { "Rbr",      {|| Rbr }                         } )
-   AAdd( ImeKol, { "Kolicina", {|| Transform( Kolicina, gpickol ) } } )
-   AAdd( ImeKol, { "Nc",       {|| Transform( nc, gpicdem ) }  } )
-   AAdd( ImeKol, { "VPC",      {|| Transform( vpc, gpicdem ) }  } )
+   AAdd( ImeKol, { "Kolicina", {|| Transform( Kolicina, pic_kolicina_bilo_gpickol() ) } } )
+   AAdd( ImeKol, { "Nc",       {|| Transform( nc, pic_iznos_bilo_gpicdem() ) }  } )
+   AAdd( ImeKol, { "VPC",      {|| Transform( vpc, pic_iznos_bilo_gpicdem() ) }  } )
    IF !Empty( cPKonto )
-      AAdd( ImeKol, { "MPV",    {|| Transform( mpcsapp * kolicina, gpicdem ) } } )
+      AAdd( ImeKol, { "MPV",    {|| Transform( mpcsapp * kolicina, pic_iznos_bilo_gpicdem() ) } } )
       AAdd( ImeKol, { "NV po kartici", {|| kalk_kartica->nv } } )
       AAdd( ImeKol, { "Stanje", {|| kalk_kartica->stanje } } )
       AAdd( ImeKol, { "MPC po Kartici", {|| kalk_kartica->mpc } } )
       AAdd( ImeKol, { "MPV po kartici", {|| kalk_kartica->mpv } } )
    ELSE
-      AAdd( ImeKol, { "VPV",    {|| Transform( vpc * kolicina, gpicdem ) } } )
+      AAdd( ImeKol, { "VPV",    {|| Transform( vpc * kolicina, pic_iznos_bilo_gpicdem() ) } } )
       AAdd( ImeKol, { "NV po kartici", {|| kalk_kartica->nv } } )
       AAdd( ImeKol, { "Stanje", {|| kalk_kartica->stanje } } )
       AAdd( ImeKol, { "VPC po Kartici", {|| kalk_kartica->vpc } } )
@@ -543,6 +549,7 @@ STATIC FUNCTION pregled_kartice()
 
    SET CURSOR ON
 
+<<<<<<< HEAD
  --  SELECT roba; HSEEK cIdRoba; SELECT kalk
    IF Empty( cPkonto )
       SELECT koncij; SEEK Trim( cmkonto ); SELECT kalk
@@ -556,6 +563,21 @@ STATIC FUNCTION pregled_kartice()
       BrowseKey( form_x_koord() + 4, form_y_koord() + 1, form_x_koord() + 15, form_y_koord() + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
          "idFirma+pkonto+idroba=cidFirma+cpkonto+cIdRoba", ;
          cidFirma + cpkonto + cIdRoba, 2,,, {|| OznaciPro( .T. ) } )
+=======
+  -- SELECT roba; HSEEK cidroba; SELECT kalk
+   IF Empty( cPkonto )
+--      SELECT koncij; SEEK Trim( cmkonto ); SELECT kalk
+      @ m_x + 2, m_y + 1 SAY "Pregled kartice magacin: "; ?? cMkonto, "-", cidroba,"-", Left( roba->naz, 40 )
+      BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
+         "idFirma+mkonto+idroba=cidFirma+cmkonto+cidroba", ;
+         cidFirma + cmkonto + cidroba, 2,,, {|| OznaciMag( .T. ) } )
+   ELSE
+--      SELECT koncij; SEEK Trim( cpkonto ) ; SELECT kalk
+      @ m_x + 2, m_y + 1 SAY "Pregled kartice prodavnica: "; ?? cPkonto, "-", cidroba, "-", Left( roba->naz, 40 )
+      BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
+         "idFirma+pkonto+idroba=cidFirma+cpkonto+cidroba", ;
+         cidFirma + cpkonto + cidroba, 2,,, {|| OznaciPro( .T. ) } )
+>>>>>>> 23100-ld
    ENDIF
 
    SELECT kalk_kartica

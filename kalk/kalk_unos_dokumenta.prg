@@ -22,7 +22,7 @@ THREAD STATIC s_lAsistentPause := .F. // asistent u stanju pauze
 THREAD STATIC s_nAsistentPauseSeconds := 0
 THREAD STATIC s_nKalkEditLastKey := 0
 
-MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPicCDEM, gPicDEM, gPICPROC, gPICKol
+MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPICPROC
 MEMVAR ImeKol, Kol
 MEMVAR picv
 // MEMVAR lKalkAsistentUToku, lAutoObr, lAsist, lAAzur, lAAsist
@@ -55,10 +55,10 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    o_kalk_edit()
    kalk_is_novi_dokument( .F. )
 
-   PRIVATE PicCDEM := gPicCDEM
+   PRIVATE PicCDEM := pic_cijena_bilo_gpiccdem()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := gPicDEM
-   PRIVATE Pickol := gPicKol
+   PRIVATE PicDEM := pic_iznos_bilo_gpicdem()
+   PRIVATE Pickol := pic_kolicina_bilo_gpickol()
    PRIVATE gVarijanta := "2"
    PRIVATE PicV := "99999999.9"
 
@@ -210,9 +210,10 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
    CASE Upper( Chr( Ch ) ) == "Q"
 
       IF Pitanje(, "Štampa naljepnica za robu (D/N) ?", "D" ) == "D"
-         my_close_all_dbf()
-         roba_naljepnice()
+
+         kalk_roba_naljepnice_stampa()
          o_kalk_edit()
+         GO TOP
          RETURN DE_REFRESH
 
       ENDIF
@@ -328,6 +329,7 @@ FUNCTION kalk_edit_last_key( nSet )
    ENDIF
 
    RETURN s_nKalkEditLastKey
+
 
 
 FUNCTION kalk_ispravka_postojeca_stavka()
@@ -675,7 +677,7 @@ FUNCTION kalk_edit_sve_stavke( lAsistentObrada, lStartPocetak )
    PushWA()
 
    select_o_tarifa()
-   select_o_roba()
+  // select_o_roba()
    select_o_koncij()
 
    select_o_kalk_pripr()
@@ -927,7 +929,7 @@ FUNCTION kalk_edit_stavka( lNoviDokument, hParams )
    PRIVATE nMarza2 := 0
 
    PRIVATE PicDEM := "9999999.99999999"
-   PRIVATE PicKol := gPicKol
+   PRIVATE PicKol := pic_kolicina_bilo_gpickol()
 
    nStrana := 1
 
@@ -1381,6 +1383,7 @@ FUNCTION kalk_set_diskont_mpc()
    my_flock()
 
    DO WHILE !Eof()
+
       select_o_roba( kalk_pripr->idroba )
       select_o_tarifa( ROBA->idtarifa )
       get_tarifa_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pKonto, kalk_pripr->idRoba, @aPorezi )
@@ -1423,6 +1426,7 @@ FUNCTION MPCSAPPuSif()
       HSEEK cIdKonto
       SELECT kalk_pripr
       DO WHILE !Eof() .AND. pkonto == cIdKonto
+
          select_o_roba( kalk_pripr->idroba )
          IF Found()
             StaviMPCSif( kalk_pripr->mpcsapp, .F. )
@@ -1517,7 +1521,7 @@ FUNCTION VPCSifUDok()
 FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
 
    o_koncij()
-   select_o_roba()
+//   select_o_roba()
    o_tarifa()
    select_o_partner()
    select_o_konto()

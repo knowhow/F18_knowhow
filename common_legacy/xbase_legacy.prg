@@ -22,30 +22,33 @@ STATIC nPreuseLevel := 0
 FUNCTION Gather( cZn )
 
    LOCAL i, aStruct
-   LOCAL _field_b
-   LOCAL _ime_p
+   LOCAL bFieldBlock
+   LOCAL cImePolja
    LOCAL cVar
+   LOCAL cMsg, oErr
 
    IF cZn == nil
       cZn := "_"
    ENDIF
    aStruct := dbStruct()
 
-   FOR i := 1 TO Len( aStruct )
-      _field_b := FieldBlock( _ime_p := fix_dat_var( aStruct[ i, 1 ] ) )
+   BEGIN SEQUENCE WITH {| err | Break( err ) }
 
-      // cImeP - privatna var
-      cVar := cZn + _ime_p
+      FOR i := 1 TO Len( aStruct )
+         bFieldBlock := FieldBlock( cImePolja := fix_dat_var( aStruct[ i, 1 ] ) )
+         cVar := cZn + cImePolja
+         Eval( bFieldBlock, Eval( MemVarBlock( cVar ) ) )
+      NEXT
 
-      // rlock()
-      // IF "U" $ TYPE(cVar)
-      // MsgBeep2("Neuskladj.strukt.baza! F-ja: GATHER(), Alias: " + ALIAS() + ", Polje: " + _ime_p)
-      // ELSE
-      Eval( _field_b, Eval( MemVarBlock( cVar ) ) )
-      // ENDIF
+   RECOVER USING oErr
 
-      // dbunlock()
-   NEXT
+      cMsg := RECI_GDJE_SAM + " ne postoji MEMVAR " + cVar + " trenutna tabela: " + Alias()
+      ?E cMsg
+      log_write( cMsg, 1 )
+      Alert( cMsg )
+      RaiseError( cMsg )
+
+   END SEQUENCE
 
    RETURN NIL
 
@@ -181,7 +184,7 @@ FUNCTION GatherR( cZn )
 FUNCTION Gather2( cVarPrefix )
 
    LOCAL nI, aDbStruct
-   LOCAL _field_b, _var
+   LOCAL bFieldBlock, _var, cImePolja
 
    IF cVarPrefix == nil
       cVarPrefix := "_"
@@ -190,12 +193,12 @@ FUNCTION Gather2( cVarPrefix )
    aDbStruct := dbStruct()
 
    FOR nI := 1 TO Len( aDbStruct )
-      _ime_p := aDbStruct[ nI, 1 ]
-      _field_b := FieldBlock( _ime_p )
-      _var :=  cVarPrefix + _ime_p
+      cImePolja := aDbStruct[ nI, 1 ]
+      bFieldBlock := FieldBlock( cImePolja )
+      _var :=  cVarPrefix + cImePolja
 
-      IF  !( "#" + _ime_p + "#"  $ "#BRISANO#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#" )
-         Eval( _field_b, Eval( MemVarBlock( _var ) ) )
+      IF  !( "#" + cImePolja + "#"  $ "#BRISANO#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#" )
+         Eval( bFieldBlock, Eval( MemVarBlock( _var ) ) )
       ENDIF
    NEXT
 

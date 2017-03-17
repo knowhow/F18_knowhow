@@ -85,7 +85,7 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
    NEXT
 
    picBHD := FormPicL( "9 " + gPicBHD, 16 )
-   picDEM := FormPicL( "9 " + gPicDEM, 16 )
+   picDEM := FormPicL( "9 " + pic_iznos_eur(), 16 )
 
 
    fin_kontrola_zbira_nalozi()

@@ -19,7 +19,7 @@ FUNCTION PRobDob()
 
    o_sifk()
    o_sifv()
-   o_roba()
+  -- o_roba()
    o_partner()
    -- o_kalk()
 

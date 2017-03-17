@@ -1129,7 +1129,6 @@ STATIC FUNCTION pripada_opcina_kanton( cIdRadnik, cIdOpcinaStanUslov, cIdKanton 
 
    select_o_radn( cIdRadnik )
 
-altd()
    IF !Empty( cIdOpcinaStanUslov ) .AND. !( radn->idopsst $ cIdOpcinaStanUslov )
       lOk := .F.
    ENDIF

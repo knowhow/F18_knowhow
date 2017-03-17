@@ -13,9 +13,7 @@
 
 STATIC __fin_params := NIL
 
-// -----------------------------------
-// meni parametara
-// -----------------------------------
+
 FUNCTION mnu_fin_params()
 
    LOCAL _opc := {}
@@ -54,18 +52,20 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Unos datuma naloga? (D/N):" GET gDatNal VALID gDatNal $ "DN" PICT "@!"
 
+
    @ form_x_koord() + nX, Col() + 2 SAY "Unos datuma valute? (D/N):" GET gDatVal VALID gDatVal $ "DN" PICT "@!"
-   ++ nX
+   ++nX
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Unos radnih jedinica ? (D/N)" GET gFinRj VALID gFinRj $ "DN" PICT "@!"
    @ form_x_koord() + nX, Col() + 1 SAY "Unos tipa dokumenta ? (D/N)" GET _tip_dok VALID _tip_dok $ "DN" PICT "@!"
-   ++ nX
+   ++nX
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Unos ekonomskih kategorija? (D/N)" GET gTroskovi VALID gTroskovi $ "DN" PICT "@!"
-   ++ nX
+   ++nX
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Unos polja K1 - K4 ? (D/N)"
-   ++ nX
+   ++nX
+
 
    read_dn_parametar( "K1", form_x_koord() + nX, form_y_koord() + 2, @_k1 )
    read_dn_parametar( "K2", form_x_koord() + nX, Col() + 2, @_k2 )
@@ -76,7 +76,7 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)" GET gBrojacFinNaloga VALID gBrojacFinNaloga $ "12"
 
-   ++ nX
+   ++nX
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Limit za unos konta? (D/N):" GET gKtoLimit PICT "@!" VALID gKtoLimit $ "DN"
 
@@ -91,33 +91,28 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Neophodna ravoteza naloga? (D/N):" GET gRavnot VALID gRavnot $ "DN" PICT "@!"
 
-   ++ nX
+   ++nX
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Onemoguciti povrat azuriranog naloga u pripremu? (D/N)" GET gBezVracanja VALID gBezVracanja $ "DN" PICT "@!"
 
-   ++ nX
-
+   ++nX
    @ form_x_koord() + nX, form_y_koord() + 2  SAY "Limit za otvorene stavke (" + ValDomaca() + ")" GET gnLOst PICT "99999.99"
 
-   //++ nX
-   //@ form_x_koord() + nX, form_y_koord() + 2 SAY "Koristiti konta-izuzetke u FIN-BUDZET-u? (D/N)" GET gBuIz VALID gBuIz $ "DN" PICT "@!"
 
-   ++ nX
-
+   ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Timeout kod azuriranja naloga (sec.):" ;
       GET gAzurTimeout PICT "99999"
 
    nX := nX + 2
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "********************** Ostalo:"
-
    nX := nX + 2
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Automatski pozovi kontrolu zbira datoteke svakih" GET gnKZBDana PICT "999" valid ( gnKZBDana <= 999 .AND. gnKZBDana >= 0 )
 
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Automatski pozovi kontrolu zbira datoteke svakih" GET gnKZBDana PICT "999" VALID ( gnKZBDana <= 999 .AND. gnKZBDana >= 0 )
    @ form_x_koord() + nX, Col() + 1 SAY "dana"
 
-   ++ nX
+   ++nX
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Prikaz stanja konta kod knjizenja naloga" GET g_knjiz_help PICT "@!" ;
       VALID g_knjiz_help $ "DN"
@@ -141,11 +136,11 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
 
 
 
-
 STATIC FUNCTION fin_parametri_izgleda()
 
    LOCAL nX := 1
-   LOCAL cJednoValutno := fetch_metric( "fin_izvjestaji_jednovalutno", nil, "1" )
+   LOCAL cJednoValutno := fetch_metric( "fin_izvjestaji_jednovalutno", NIL, "1" )
+   LOCAL cPicEuro := pic_iznos_eur()
 
    Box(, 15, 70 )
 
@@ -156,31 +151,34 @@ STATIC FUNCTION fin_parametri_izgleda()
    nX := nX + 2
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Potpis na kraju naloga? (D/N):" GET gPotpis VALID gPotpis $ "DN"  PICT "@!"
 
-   ++ nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Varijanta izvještaja 0-dvovalutno 1-jednovalutno " GET cJednoValutno VALID cJednoValutno $ "01"
 
-   ++ nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Prikaz iznosa u " + ValPomocna() GET gPicDEM
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Varijanta izvještaja 0-dvovalutno 1-jednovalutno " GET cJednoValutno VALID cJednoValutno $ "01"
 
-   ++ nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Prikaz iznosa u " + ValDomaca() GET gPicBHD
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Prikaz iznosa u " + ValPomocna() GET cPicEuro
 
-   ++ nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Sintetika i analitika se kreiraju u izvještajima? (D/N)" GET gSAKrIz VALID gSAKrIz $ "DN" PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Prikaz iznosa u " + ValDomaca() GET gPicBHD
 
-   ++ nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "U subanalitici prikazati nazive i konta i partnera? (D/N)" GET gVSubOp VALID gVSubOp $ "DN" PICTURE "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Sintetika i analitika se kreiraju u izvještajima? (D/N)" GET gSAKrIz VALID gSAKrIz $ "DN" PICT "@!"
+
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "U subanalitici prikazati nazive i konta i partnera? (D/N)" GET gVSubOp VALID gVSubOp $ "DN" PICTURE "@!"
 
 
-   //++ nX
-   //@ form_x_koord() + nX, form_y_koord() + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ VALID gDUFRJ $ "DN" PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ VALID gDUFRJ $ "DN" PICT "@!"
+
 
    READ
-   
+
    BoxC()
 
    IF LastKey() <> K_ESC
-      set_metric( "fin_izvjestaji_jednovalutno", nil, cJednoValutno )
+      set_metric( "fin_izvjestaji_jednovalutno", NIL, cJednoValutno )
+      pic_iznos_eur( cPicEuro )
       fin_write_params()
    ENDIF
 
@@ -190,22 +188,23 @@ STATIC FUNCTION fin_parametri_izgleda()
 
 FUNCTION fin_read_params()
 
-   gDatval := fetch_metric( "fin_evidencija_datum_valute", nil, gDatVal )
-   gDatnal := fetch_metric( "fin_evidencija_datum_naloga", nil, gDatNal )
-   gFinRj := fetch_metric( "fin_evidencija_radne_jedinice", nil, gFinRj )
-   gTroskovi := fetch_metric( "fin_evidencija_ekonomske_kategorije", nil, gTroskovi )
-   gRavnot := fetch_metric( "fin_unos_ravnoteza_naloga", nil, gRavnot )
-   gBrojacFinNaloga := fetch_metric( "fin_vrsta_brojaca_naloga", nil, gBrojacFinNaloga )
-   gnLOst := fetch_metric( "fin_limit_otvorene_stavke", nil, gnLOst )
-   //gDUFRJ := fetch_metric( "fin_dugi_uslov_za_rj", nil, gDUFRJ )
-   gBezVracanja := fetch_metric( "fin_zabrana_povrata_naloga", nil, gBezVracanja )
-   //gBuIz := fetch_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
-   gPicDem := fetch_metric( "fin_picdem", nil, gPicDEM )
-   gPicBHD := fetch_metric( "fin_picbhd", nil, gPicBHD )
+   gDatval := fetch_metric( "fin_evidencija_datum_valute", NIL, gDatVal )
+   gDatnal := fetch_metric( "fin_evidencija_datum_naloga", NIL, gDatNal )
+   gFinRj := fetch_metric( "fin_evidencija_radne_jedinice", NIL, gFinRj )
+   gTroskovi := fetch_metric( "fin_evidencija_ekonomske_kategorije", NIL, gTroskovi )
+   gRavnot := fetch_metric( "fin_unos_ravnoteza_naloga", NIL, gRavnot )
+   gBrojacFinNaloga := fetch_metric( "fin_vrsta_brojaca_naloga", NIL, gBrojacFinNaloga )
+   gnLOst := fetch_metric( "fin_limit_otvorene_stavke", NIL, gnLOst )
+   gDUFRJ := fetch_metric( "fin_dugi_uslov_za_rj", NIL, gDUFRJ )
+   gBezVracanja := fetch_metric( "fin_zabrana_povrata_naloga", NIL, gBezVracanja )
+   // gBuIz := fetch_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
 
-   gSaKrIz := fetch_metric( "fin_kreiranje_sintetike", nil, gSaKrIz )
-   gVSubOp := fetch_metric( "fin_subanalitika_prikaz_naziv_konto_partner", nil, gVSubOp )
-   gAzurTimeOut := fetch_metric( "fin_azuriranje_timeout", nil, gAzurTimeOut )
+
+   gPicBHD := fetch_metric( "fin_picbhd", NIL, gPicBHD )
+
+   gSaKrIz := fetch_metric( "fin_kreiranje_sintetike", NIL, gSaKrIz )
+   gVSubOp := fetch_metric( "fin_subanalitika_prikaz_naziv_konto_partner", NIL, gVSubOp )
+   gAzurTimeOut := fetch_metric( "fin_azuriranje_timeout", NIL, gAzurTimeOut )
 
    // po user-u parametri
    gPotpis := fetch_metric( "fin_potpis_na_kraju_naloga", my_user(), gPotpis )
@@ -220,7 +219,7 @@ FUNCTION fin_read_params()
    RETURN .T.
 
 FUNCTION fin_jednovalutno()
-   RETURN fetch_metric( "fin_izvjestaji_jednovalutno", nil, "1" ) == "1"
+   RETURN fetch_metric( "fin_izvjestaji_jednovalutno", NIL, "1" ) == "1"
 
 FUNCTION fin_dvovalutno()
    RETURN !fin_jednovalutno()
@@ -229,22 +228,21 @@ FUNCTION fin_dvovalutno()
 
 FUNCTION fin_write_params()
 
+   set_metric( "fin_evidencija_datum_valute", NIL, gDatVal )
+   set_metric( "fin_evidencija_datum_naloga", NIL, gDatNal )
+   set_metric( "fin_evidencija_radne_jedinice", NIL, gFinRj )
+   set_metric( "fin_evidencija_ekonomske_kategorije", NIL, gTroskovi )
+   set_metric( "fin_unos_ravnoteza_naloga", NIL, gRavnot )
+   set_metric( "fin_vrsta_brojaca_naloga", NIL, gBrojacFinNaloga )
+   set_metric( "fin_limit_otvorene_stavke", NIL, gnLOst )
+   set_metric( "fin_dugi_uslov_za_rj", NIL, gDUFRJ )
+   set_metric( "fin_zabrana_povrata_naloga", NIL, gBezVracanja )
+   // set_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
 
-   set_metric( "fin_evidencija_datum_valute", nil, gDatVal )
-   set_metric( "fin_evidencija_datum_naloga", nil, gDatNal )
-   set_metric( "fin_evidencija_radne_jedinice", nil, gFinRj )
-   set_metric( "fin_evidencija_ekonomske_kategorije", nil, gTroskovi )
-   set_metric( "fin_unos_ravnoteza_naloga", nil, gRavnot )
-   set_metric( "fin_vrsta_brojaca_naloga", nil, gBrojacFinNaloga )
-   set_metric( "fin_limit_otvorene_stavke", nil, gnLOst )
-   //set_metric( "fin_dugi_uslov_za_rj", nil, gDUFRJ )
-   set_metric( "fin_zabrana_povrata_naloga", nil, gBezVracanja )
-   //set_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
-   set_metric( "fin_picdem", nil, gPicDEM )
-   set_metric( "fin_picbhd", nil, gPicBHD )
-   set_metric( "fin_kreiranje_sintetike", nil, gSaKrIz )
-   set_metric( "fin_subanalitika_prikaz_naziv_konto_partner", nil, gVSubOp )
-   set_metric( "fin_azuriranje_timeout", nil, gAzurTimeOut )
+   set_metric( "fin_picbhd", NIL, gPicBHD )
+   set_metric( "fin_kreiranje_sintetike", NIL, gSaKrIz )
+   set_metric( "fin_subanalitika_prikaz_naziv_konto_partner", NIL, gVSubOp )
+   set_metric( "fin_azuriranje_timeout", NIL, gAzurTimeOut )
 
    // po user-u
    set_metric( "fin_unos_limit_konto", my_user(), gKtoLimit )
@@ -258,10 +256,10 @@ FUNCTION fin_write_params()
 
 
 
-FUNCTION fin_params( read )
+FUNCTION fin_params( READ )
 
-   IF read == NIL
-      read := .F.
+   IF READ == NIL
+      READ := .F.
    ENDIF
 
 
@@ -280,25 +278,32 @@ FUNCTION fin_params( read )
 
 
 
-// ----------------------------------------------
-// k1, k2, k3, k4
-// ----------------------------------------------
 FUNCTION fin_k1( value )
 
    get_set_global_param( "fin_unos_k1", value, "N" )
+
+   RETURN .T.
 
 FUNCTION fin_k2( value )
 
    get_set_global_param( "fin_unos_k2", value, "N" )
 
+   RETURN .T.
+
 FUNCTION fin_k3( value )
 
    get_set_global_param( "fin_unos_k3", value, "N" )
+
+   RETURN .T.
 
 FUNCTION fin_k4( value )
 
    get_set_global_param( "fin_unos_k4", value, "N" )
 
+   RETURN .T.
+
 FUNCTION fin_tip_dokumenta( value )
 
    get_set_global_param( "fin_unos_naloga_tip_dokumenta", value, "N" )
+
+   RETURN .T.

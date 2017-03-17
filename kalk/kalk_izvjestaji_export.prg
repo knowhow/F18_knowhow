@@ -18,7 +18,7 @@ STATIC kol_decimala := 3
 STATIC lZaokruziti := .T.
 STATIC PDV_STOPA := 17
 
-STATIC cLauncher1 := 'start "C:\Program Files\OpenOffice.org 2.0\program\scalc.exe"'
+STATIC cLauncher1 := "xx"
 // zamjeniti tarabu sa brojem
 STATIC cLauncher2 := ""
 
@@ -87,12 +87,12 @@ FUNCTION krpt_export()
    ENDIF
 
    find_kalk_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
-
-
+   
    //o_roba()
    //o_konto()
    //o_koncij()
    //o_tarifa()
+
 
    select_o_konto( kalk->PKonto )
 
@@ -231,11 +231,11 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
    SELECT ( F_KALK )
 
-
-   SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
+///
+//   SELECT ( F_ROBA )
+//   IF !Used()
+//      o_roba()
+  // ENDIF
 
    SELECT ( F_TARIFA )
    IF !Used()
@@ -278,8 +278,10 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
          APPEND BLANK
          REPLACE rbr WITH nRbr, id_tarifa WITH cIdTarifa, id_roba WITH cIdRoba
 
+
          select_o_roba( cIdRoba )
          select_o_tarifa( cIdTarifa )
+
 
          cPom1 := KonvznWin( Left( roba->naz, 40 ), cKonverzija )
          cPom2 := KonvznWin( roba->jmj, cKonverzija )
@@ -344,13 +346,13 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
       f18_run( cKom )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
 STATIC FUNCTION msoff_start( cVersion )
 
-   LOCAL cPom :=  'start "C:\Program Files\Microsoft Office\Office#\excel.exe"'
+   LOCAL cPom :=  "xx"
 
    IF ( cVersion == "XP" )
       // office XP

@@ -76,7 +76,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC gPDFViewer := Space( 150 )
    PUBLIC gDefPrinter := Space( 150 )
 
-   PUBLIC gPicDEM := "9999999.99"
+   PUBLIC gPicDem := "9999999.99"
    PUBLIC gPicBHD := "999999999999.99"
 
    PUBLIC gRavnot := "D"
@@ -247,11 +247,7 @@ FUNCTION set_global_vars_roba()
 
    PUBLIC gUVarPP
    PUBLIC gRobaBlock
-   PUBLIC gPicCDem
-   PUBLIC PicDem
    PUBLIC gPicProc
-   PUBLIC gPicDEM
-   PUBLIC gPickol
 
    // PUBLIC gFPicCDem
    // PUBLIC gFPicDem
@@ -275,10 +271,11 @@ FUNCTION set_global_vars_roba()
    gUgostVarijanta := "Rmarza_DLimit"
    gUVarPP := "N"
    gRobaBlock := NIL
-   gPicCDEM := "999999.999"
+
+
    gPicProc := "999999.99%"
-   gPicDEM := "9999999.99"
-   gPicKol := "999999.999"
+
+
 
    // gFPicCDem := "3"
    // gFPicDem := "3"

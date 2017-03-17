@@ -68,7 +68,7 @@ FUNCTION kalk_gen_uskladjenje_nc_95( hParams )
       RETURN .F.
    ENDIF
 
-   select_o_roba()
+//   select_o_roba()
    select_o_koncij()
    select_o_tarifa()
    cBrDok := kalk_get_next_broj_v5( cIdFirma, "95", NIL )

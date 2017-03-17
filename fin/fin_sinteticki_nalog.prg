@@ -22,7 +22,7 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
    ENDIF
 
    PicBHD := "@Z " + FormPicL( gPicBHD, 17 )
-   PicDEM := "@Z " + FormPicL( gPicDEM, 12 )
+   PicDEM := "@Z " + FormPicL( pic_iznos_eur(), 12 )
 
    M := "---- -------- ------- --------------------------------------------- ----------------- -----------------" + IF( fin_jednovalutno(), "-", " ------------ ------------" )
 

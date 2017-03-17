@@ -51,25 +51,25 @@ FUNCTION RptInv()
       ?? PadR( field->idRoba + " " + Trim( Left( roba->naz, 40 ) ) + " (" + roba->jmj + ")", 36 )
 
       // popisana kolicina
-      @ PRow(), PCol() + 1 SAY field->kolicina PICTURE PicKol
+      @ PRow(), PCol() + 1 SAY field->kolicina PICTURE fakt_pic_kolicina()
 
       // knjizena kolicina
-      @ PRow(), PCol() + 1 SAY Val( field->serbr ) PICTURE PicKol
+      @ PRow(), PCol() + 1 SAY Val( field->serbr ) PICTURE fakt_pic_kolicina()
 
       nC1 := PCol() + 1
 
       // knjizna vrijednost
-      @ PRow(), PCol() + 1 SAY ( Val( field->serbr ) ) * ( field->cijena ) PICTURE PicDem
+      @ PRow(), PCol() + 1 SAY ( Val( field->serbr ) ) * ( field->cijena ) PICTURE fakt_pic_iznos()
 
       // popisana vrijednost
-      @ PRow(), PCol() + 1 SAY ( field->kolicina ) * ( field->cijena ) PICTURE PicDem
+      @ PRow(), PCol() + 1 SAY ( field->kolicina ) * ( field->cijena ) PICTURE fakt_pic_iznos()
 
       // razlika
       nRazlika := ( Val( field->serbr ) ) -( field->kolicina )
-      @ PRow(), PCol() + 1 SAY nRazlika PICTURE PicKol
+      @ PRow(), PCol() + 1 SAY nRazlika PICTURE fakt_pic_kolicina()
 
       // VP cijena
-      @ PRow(), PCol() + 1 SAY field->cijena PICTURE PicCDem
+      @ PRow(), PCol() + 1 SAY field->cijena PICTURE fakt_pic_cijena()
 
       IF ( nRazlika > 0 )
          nVisak := nRazlika * ( field->cijena )
@@ -83,11 +83,11 @@ FUNCTION RptInv()
       ENDIF
 
       // VPV visak
-      @ PRow(), PCol() + 1 SAY nVisak PICTURE PicDem
+      @ PRow(), PCol() + 1 SAY nVisak PICTURE fakt_pic_iznos()
       nTotc += nVisak
 
       // VPV manjak
-      @ PRow(), PCol() + 1 SAY -nManjak PICTURE PicDem
+      @ PRow(), PCol() + 1 SAY -nManjak PICTURE fakt_pic_iznos()
       nTotd += -nManjak
 
       // sumiraj knjizne vrijednosti
@@ -109,12 +109,12 @@ FUNCTION RptInv()
 
    ? cLin
    @ PRow() + 1, 0 SAY "Ukupno:"
-   @ PRow(), nC1 SAY nTota PICTURE PicDem
-   @ PRow(), PCol() + 1 SAY nTotb PICTURE PicDem
-   @ PRow(), PCol() + 1 SAY Replicate( " ", Len( PicDem ) )
-   @ PRow(), PCol() + 1 SAY Replicate( " ", Len( PicDem ) )
-   @ PRow(), PCol() + 1 SAY nTotc PICTURE PicDem
-   @ PRow(), PCol() + 1 SAY nTotd PICTURE PicDem
+   @ PRow(), nC1 SAY nTota PICTURE fakt_pic_iznos()
+   @ PRow(), PCol() + 1 SAY nTotb PICTURE fakt_pic_iznos()
+   @ PRow(), PCol() + 1 SAY Replicate( " ", Len( fakt_pic_iznos() ) )
+   @ PRow(), PCol() + 1 SAY Replicate( " ", Len( fakt_pic_iznos() ) )
+   @ PRow(), PCol() + 1 SAY nTotc PICTURE fakt_pic_iznos()
+   @ PRow(), PCol() + 1 SAY nTotd PICTURE fakt_pic_iznos()
    ? cLin
 
    ENDPRINT

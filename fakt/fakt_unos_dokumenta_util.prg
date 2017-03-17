@@ -81,9 +81,9 @@ FUNCTION V_Podbr()
       @ form_x_koord() + 1, form_y_koord() + 2 SAY "Proizvod:" GET _idroba VALID {|| Empty( _idroba ) .OR. P_roba( @_idroba ) } PICT "@!"
       READ
       IF !Empty( _idroba )
-         @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "količina        :" GET nPkolicina PICT pickol
-         @ form_x_koord() + 4, form_y_koord() + 2 SAY "rabat %         :" GET nPRabat    PICT "999.999"
-         @ form_x_koord() + 5, form_y_koord() + 2 SAY "Varijanta cijene:" GET cTipVPC
+         @ m_x + 3, m_y + 2 SAY8 "količina        :" GET nPkolicina PICT fakt_pic_kolicina()
+         @ m_x + 4, m_y + 2 SAY "rabat %         :" GET nPRabat    PICT "999.999"
+         @ m_x + 5, m_y + 2 SAY "Varijanta cijene:" GET cTipVPC
          READ
       ENDIF
       BoxC()
@@ -247,7 +247,7 @@ FUNCTION V_Kolicina( tip_vpc )
       select_o_rj( _idfirma )
       cRjTip := rj->tip
 
-      NSRNPIdRoba( _IDROBA )
+      fakt_set_pozicija_sif_roba( _IDROBA )
 
       SELECT ROBA
 
@@ -541,7 +541,7 @@ FUNCTION V_Rabat( tip_rabata )
       ENDIF
    ENDIF
 
-   set_cijena( _idtipdok, _idroba, _cijena, _rabat )
+   fakt_set_cijena_sif_roba( _idtipdok, _idroba, _cijena, _rabat )
 
    ShowGets()
 
@@ -971,7 +971,7 @@ FUNCTION UGenNar()
       ENDDO
       IF _kolicina + nIsporuceno > nNaruceno
          lVrati := .F.
-         MsgBeep( "Količina: " + AllTrim( TRANS( _kolicina, PicKol ) ) + ". Naručeno: " + AllTrim( TRANS( nNaruceno, PicKol ) ) + ". Dosad isporuceno: " + AllTrim( TRANS( nIsporuceno, PicKol ) ) + ". #" + ;
+         MsgBeep( "Količina: " + AllTrim( TRANS( _kolicina, fakt_pic_kolicina() ) ) + ". Naručeno: " + AllTrim( TRANS( nNaruceno, fakt_pic_kolicina() ) ) + ". Dosad isporuceno: " + AllTrim( TRANS( nIsporuceno, fakt_pic_kolicina() ) ) + ". #" + ;
             "Za ovoliku isporuku artikla morate imati novu generalnu narudžbenicu!" )
       ENDIF
    ENDIF
@@ -1000,10 +1000,8 @@ FUNCTION v_pretvori( cPretvori, cDinDem, dDatDok, nCijena )
 
 
 
-// ------------------------------------------------
-// setuje cijenu i rabat u sifrarniku robe
-// ------------------------------------------------
-FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
+
+FUNCTION fakt_set_cijena_sif_roba( cIdTipDok, cIdRoba, nCijena, nRabat )
 
    LOCAL nTArea := Select()
    LOCAL lFill := .F.
@@ -1022,6 +1020,7 @@ FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
             _vars[ "vpc" ] := nCijena
             lFill := .T.
          ENDIF
+
       ELSEIF cIdTipDok $ "11#13#" .AND. nCijena <> 0
          IF field->mpc <> nCijena .AND. ;
                Pitanje(, "Postaviti novu MPC u šifarnik ?", "N" ) == "D"
@@ -1129,7 +1128,7 @@ FUNCTION Tb_W_IdRoba()
 
 FUNCTION TbRobaNaz()
 
-   NSRNPIdRoba()
+   fakt_set_pozicija_sif_roba()
 
    RETURN Left( Roba->naz, 25 )
 
@@ -1155,10 +1154,8 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
 
    DO WHILE !Eof()
       IF cSetPor == "D"
-         NSRNPIdRoba()
 
-         // select roba; HSEEK fakt_pripr->idroba
-
+         fakt_set_pozicija_sif_roba()
          select_o_tarifa( roba->idtarifa )
          IF !Eof()
             SELECT fakt_pripr
@@ -1175,7 +1172,7 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
 
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
 /* TarifaR(cRegion, cIdRoba, aPorezi)
@@ -1227,40 +1224,42 @@ FUNCTION TarifaR( cRegion, cIdRoba, aPorezi )
 
 FUNCTION fakt_promjena_cijene_u_sif()
 
-   NSRNPIdRoba()
+   fakt_set_pozicija_sif_roba()
    SELECT fakt_pripr
 
    RETURN .T.
 
 // ---------------------------------------------
-// NSRNPIIdRoba(cSR,fSint)
+// NSRNPIIdRoba(cIdRoba,lRobaIdSintetika)
 // Nasteli sif->roba na fakt_pripr->idroba
-// cSR
-// fSint  - ako je fSint:=.t. sinteticki prikaz
+// cIdRoba
+// lRobaIdSintetika  - ako je lRobaIdSintetika:=.t. sinteticki prikaz
 // -----------------------------------------------
 
-FUNCTION NSRNPIdRoba( cSR, fSint )
+FUNCTION fakt_set_pozicija_sif_roba( cIdRoba, lRobaIdSintetika )
 
-   IF fSint == NIL
-      fSint := .F.
+   IF lRobaIdSintetika == NIL
+      lRobaIdSintetika := .F.
    ENDIF
 
-   IF cSR == NIL
-      cSR := fakt_pripr->IdRoba
+   IF cIdRoba == NIL
+      cIdRoba := fakt_pripr->IdRoba
    ENDIF
 
    //SELECT ROBA
 
-   IF ( fSint )
-      seek_roba_partial( PadR( Left( cSR, gnDS ), Len( cSR ) ) )
-      IF Eof() .OR. ROBA->tip != "S"
-         select_o_roba( cSR )
-      ENDIF
+
+   IF ( lRobaIdSintetika )
+      find_roba_by_id_sintetika( cIdRoba )
+      //IF !Found() .OR. ROBA->tip != "S"
+        // HSEEK cIdRoba
+      //ENDIF
    ELSE
-      select_o_roba( cSR )
+      find_roba_by_id( cIdRoba )
+      //HSEEK cIdRoba
    ENDIF
 
-   IF cSr == NIL
+   IF cIdRoba == NIL
       SELECT fakt_pripr
    ENDIF
 
@@ -1489,7 +1488,7 @@ FUNCTION edit_fakt_doks2()
 
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1635,7 +1634,7 @@ FUNCTION TekDokument()
 
    @ form_x_koord() + 0, form_y_koord() + 2 SAY cTxt
 
-   RETURN
+   RETURN .T.
 
 
 // Rbr()
@@ -1707,7 +1706,7 @@ FUNCTION Part1Stavka()
 
 
 
-FUNCTION Roba()
+FUNCTION fakt_prikazi_Roba()
 
    LOCAL cRet := ""
 
@@ -1832,21 +1831,21 @@ FUNCTION fakt_brisi_stavku_pripreme()
 // -------------------------------------------------------
 FUNCTION fakt_tip_dok_arr()
 
-   LOCAL _arr := {}
+   LOCAL aTipoviDokumenata := {}
 
-   AAdd( _arr, "00 - Pocetno stanje                " )
-   AAdd( _arr, "01 - Ulaz / Radni nalog " )
-   AAdd( _arr, "10 - Porezna faktura" )
-   AAdd( _arr, "11 - Porezna faktura gotovina" )
-   AAdd( _arr, "12 - Otpremnica" )
-   AAdd( _arr, "13 - Otpremnica u maloprodaju" )
-   AAdd( _arr, "19 - Izlaz po ostalim osnovama" )
-   AAdd( _arr, "20 - Ponuda/Avansna faktura" )
-   AAdd( _arr, "21 - Revers" )
-   AAdd( _arr, "22 - Realizovane otpremnice   " )
-   AAdd( _arr, "23 - Realizovane otpremnice MP" )
-   AAdd( _arr, "25 - Knjizna obavijest " )
-   AAdd( _arr, "26 - Narudzbenica " )
-   AAdd( _arr, "27 - Ponuda/Avansna faktura gotovina" )
+   AAdd( aTipoviDokumenata, "00 - Pocetno stanje                " )
+   AAdd( aTipoviDokumenata, "01 - Ulaz / Radni nalog " )
+   AAdd( aTipoviDokumenata, "10 - Porezna faktura" )
+   AAdd( aTipoviDokumenata, "11 - Porezna faktura gotovina" )
+   AAdd( aTipoviDokumenata, "12 - Otpremnica" )
+   AAdd( aTipoviDokumenata, "13 - Otpremnica u maloprodaju" )
+   AAdd( aTipoviDokumenata, "19 - Izlaz po ostalim osnovama" )
+   AAdd( aTipoviDokumenata, "20 - Ponuda/Avansna faktura" )
+   AAdd( aTipoviDokumenata, "21 - Revers" )
+   AAdd( aTipoviDokumenata, "22 - Realizovane otpremnice   " )
+   AAdd( aTipoviDokumenata, "23 - Realizovane otpremnice MP" )
+   AAdd( aTipoviDokumenata, "25 - Knjizna obavijest " )
+   AAdd( aTipoviDokumenata, "26 - Narudzbenica " )
+   AAdd( aTipoviDokumenata, "27 - Ponuda/Avansna faktura gotovina" )
 
-   RETURN _arr
+   RETURN aTipoviDokumenata

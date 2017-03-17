@@ -98,7 +98,7 @@ METHOD set_module_gvars()
    PUBLIC gOSRj := "00"
    PUBLIC gValuta := "KM "
    PUBLIC gPicI := "99999999.99"
-   PUBLIC gPickol := "99999.99"
+
    PUBLIC gVObracun := "2"
    PUBLIC gIBJ := "D"
    PUBLIC gDrugaVal := "N"

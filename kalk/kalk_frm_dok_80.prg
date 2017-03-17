@@ -35,7 +35,7 @@ FUNCTION Get1_80( atrib )
       @ form_x_koord() + nX, Col() + 1 SAY "Datum:" GET _DatFaktP
 
       ++nX
-      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x -1, 40, 20 ) } PICT "@!"
+      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x - 1, 40, 20 ) } PICT "@!"
 
       // IF gNW <> "X"
       // @ form_x_koord() + nX, form_y_koord() + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
@@ -90,7 +90,7 @@ FUNCTION Get1_80( atrib )
 
    kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), form_x_koord() + nX, form_y_koord() + 2, @aPorezi )
 
-   @ form_x_koord() + nX, form_y_koord() + ( MAXCOLS() -20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ form_x_koord() + nX, form_y_koord() + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    set_pdv_public_vars()
 
@@ -138,7 +138,7 @@ FUNCTION Get1_80( atrib )
    _kord_x := form_x_koord() + nX
 
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "NABAVNA CJENA:"
-   @ form_x_koord() + nX, form_y_koord() + _unos_left GET _nc WHEN VKol( _kord_x -2 ) PICT PicDEM
+   @ form_x_koord() + nX, form_y_koord() + _unos_left GET _nc WHEN VKol( _kord_x - 2 ) PICT PicDEM
 
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "MARZA:" GET _TMarza2 VALID _Tmarza2 $ "%AU" PICT "@!"
@@ -219,15 +219,14 @@ FUNCTION kalk_get_1_80_protustavka()
 
 
 
-   @ form_x_koord() + nX, form_y_koord() + ( MAXCOLS() -20 ) SAY "Tarifa:" ;
+   @ form_x_koord() + nX, form_y_koord() + ( MAXCOLS() - 20 ) SAY "Tarifa:" ;
       GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
 
    ESC_RETURN K_ESC
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_koncij( _idkonto )
 
    SELECT kalk_pripr
 
@@ -243,8 +242,7 @@ FUNCTION kalk_get_1_80_protustavka()
    SELECT koncij
    SEEK Trim( _idkonto )
 
-   SELECT ROBA
-   HSEEK _idroba
+   select_o_roba( _idroba )
 
    // ako nije popunjeno
    _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
@@ -265,7 +263,7 @@ FUNCTION kalk_get_1_80_protustavka()
    // MARZA
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "MARZA:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICT "@!"
-   @ form_x_koord() + nX, form_y_koord() + _unos_left  GET _Marza2 PICT PicDEM valid {|| _vpc := _nc, .T. }
+   @ form_x_koord() + nX, form_y_koord() + _unos_left  GET _Marza2 PICT PicDEM VALID {|| _vpc := _nc, .T. }
    @ form_x_koord() + nX, Col() + 1 GET fMarza PICT "@!"
 
    ++nX
@@ -274,8 +272,8 @@ FUNCTION kalk_get_1_80_protustavka()
 
 
    @ form_x_koord() + nX, form_y_koord() + _unos_left GET _mpc PICT PicDEM ;
-      WHEN WMpc_lv( nil, nil, aPorezi ) ;
-      VALID VMpc_lv( nil, nil, aPorezi )
+      WHEN WMpc_lv( NIL, NIL, aPorezi ) ;
+      VALID VMpc_lv( NIL, NIL, aPorezi )
 
    ++nX
 
@@ -287,7 +285,7 @@ FUNCTION kalk_get_1_80_protustavka()
 
 
    @ form_x_koord() + nX, form_y_koord() + _unos_left GET _mpcsapp PICT PicDEM ;
-      valid {|| Svedi( cSvedi ), VMpcSapp_lv( nil, nil, aPorezi ) }
+      VALID {|| Svedi( cSvedi ), VMpcSapp_lv( NIL, NIL, aPorezi ) }
 
    READ
 
@@ -319,8 +317,7 @@ FUNCTION Svedi( cSvedi )
 
       SELECT koncij
       SEEK Trim( _idkonto )
-      SELECT roba
-      HSEEK _idroba
+      select_o_roba( _idroba )
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
 
    ELSEIF cSvedi == "S"

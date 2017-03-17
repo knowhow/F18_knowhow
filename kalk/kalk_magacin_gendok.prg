@@ -160,7 +160,7 @@ FUNCTION kalk_generisi_95_za_manjak_16_za_visak()
    // o_kalk()
    o_sifk()
    o_sifv()
-   o_roba()
+  // o_roba()
 
    SELECT kalk_pripr
    GO TOP
@@ -289,7 +289,7 @@ FUNCTION MNivPoProc()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
    cVarijanta := "3"
    Box(, 7, 60 )
    cIdFirma := self_organizacija_id()
@@ -329,8 +329,13 @@ FUNCTION MNivPoProc()
       nUlaz := nIzlaz := 0
       nVPVU := nVPVI := nNVU := nNVI := 0
       nRabat := 0
+<<<<<<< HEAD
 --      SELECT roba; HSEEK cIdRoba; SELECT kalk
       DO WHILE !Eof() .AND. cidfirma + cidkonto + cIdRoba == idFirma + mkonto + idroba
+=======
+    --  SELECT roba; HSEEK cidroba; SELECT kalk
+      DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + mkonto + idroba
+>>>>>>> 23100-ld
 
          IF ddatdok < datdok  // preskoci
             skip; LOOP
@@ -372,7 +377,11 @@ FUNCTION MNivPoProc()
          SKIP
       ENDDO
 
+<<<<<<< HEAD
 --      SELECT roba; HSEEK cIdRoba; SELECT kalk
+=======
+    --  SELECT roba; HSEEK cidroba; SELECT kalk
+>>>>>>> 23100-ld
       IF  ( cVarijanta = "1" .AND. roba->n1 = 0 )
          skip; LOOP
       ENDIF
@@ -436,7 +445,7 @@ FUNCTION KorekPC()
    @ form_x_koord() + 6, form_y_koord() + 2 SAY "Datum do kojeg se sravnjava" GET dDok
    read;ESC_BCR
    BoxC()
-   o_roba()
+//   o_roba()
    o_kalk_pripr()
 
 
@@ -453,6 +462,7 @@ FUNCTION KorekPC()
    DO WHILE !Eof() .AND. idfirma + mkonto = self_organizacija_id() + cMagac
 
       cIdRoba := Idroba; nUlaz := nIzlaz := 0; nVPVU := nVPVI := nNVU := nNVI := 0; nRabat := 0
+
       select_o_roba( cIdRoba )
 
       SELECT kalk
@@ -511,7 +521,7 @@ FUNCTION KorekPC()
          IF Pitanje(, "Nivelisati na stanje iz sifrarnika ?", " " ) == "D"
             nUlazVPC := nRobaVPC
          ELSEIF Pitanje(, "Ako to ne zelite, zelite li staviti u sifrarnik cijenu sa ulaza ?", " " ) == "D"
-            SELECT roba
+            //SELECT roba
             ObSetVPC( nUlazVPC )
             SELECT kalk_pripr
          ENDIF
@@ -584,7 +594,7 @@ FUNCTION kalk_generisi_prijem16_iz_otpreme96()
    // o_kalk()
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
 
    SELECT kalk_pripr
    GO TOP

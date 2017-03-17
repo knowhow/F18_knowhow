@@ -112,7 +112,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
       SELECT fakt
       SEEK cFaktFirma
 
-      IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok", lTest )
+      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok", lTest )
 
          MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
          LOOP
@@ -161,8 +161,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
 
             ENDIF
 
-            SELECT ROBA
-            HSEEK fakt->idroba
+            select_o_roba( fakt->idroba )
 
 
             IF !Empty( cRobaUsl ) // provjeri prije svega uslov za robu
@@ -201,8 +200,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
                      ENDIF
                   ENDIF
 
-                  SELECT roba
-                  HSEEK sast->id2
+                select_o_roba( sast->id2 )
 
                   SELECT kalk_pripr
                   LOCATE FOR idroba == sast->id2
@@ -375,11 +373,11 @@ STATIC FUNCTION o_tbl_roba( lTest, cSezSif )
       SET ORDER TO TAG "ID"
 
    ELSE
-      o_roba()
+    //  o_roba()
       o_sastavnica()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -440,7 +438,7 @@ FUNCTION PrenosNoFakt()
       SELECT fakt
       SEEK cFaktFirma
 
-      IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok = '" + cIdTipdok + "' .and. brdok = '" + cFaBrDok + "'" )
+      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok = '" + cIdTipdok + "' .and. brdok = '" + cFaBrDok + "'" )
 
          MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
          LOOP
@@ -450,16 +448,14 @@ FUNCTION PrenosNoFakt()
 
          IF idtipdok = cIdTipdok .AND. cFaBrDok = brdok
 
-            SELECT ROBA
-            HSEEK fakt->idroba
+            select_o_roba( fakt->idroba )
             IF roba->tip = "P"
                // radi se o proizvodu
                SELECT sast
                HSEEK  fakt->idroba
                DO WHILE !Eof() .AND. id == fakt->idroba
                   // setaj kroz sast
-                  SELECT roba
-                  HSEEK sast->id2
+                select_o_roba(sast->id2 )
                   SELECT kalk_pripr
                   LOCATE FOR idroba == sast->id2
                   IF Found()
@@ -529,12 +525,14 @@ FUNCTION PrenosNo2()
 
    o_kalk_pripr()
    // o_kalk()
+
    //o_roba()
    //o_konto()
    //o_partner()
    //o_tarifa()
    //o_sastavnica()
    //o_fakt()
+
 
    dDatKalk := Date()
    cIdKonto := PadR( "5100", 7 )
@@ -569,7 +567,7 @@ FUNCTION PrenosNo2()
 
       SELECT fakt
       SEEK cFaktFirma
-      IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok" )
+      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok" )
          MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
          LOOP
       ENDIF
@@ -578,13 +576,11 @@ FUNCTION PrenosNo2()
 
          IF idtipdok $ cIdTipdok .AND. dDatFOd <= datdok .AND. dDatFDo >= datdok // pripada odabranom intervalu
 
-            SELECT roba
-            HSEEK fakt->idroba
+            select_o_roba( fakt->idroba )
             IF roba->tip = "P"
                // radi se o proizvodu
 
-               SELECT roba
-               HSEEK fakt->idroba
+               select_o_roba( fakt->idroba )
 
                SELECT kalk_pripr
                LOCATE FOR idroba == fakt->idroba
@@ -625,8 +621,7 @@ FUNCTION PrenosNo2()
          DO WHILE !Eof() .AND. id == kalk_pripr->idroba
             // setaj kroz sast
             // utvr|ivanje nabavnih cijena po sastavnici !!!!!
-            SELECT roba
-            HSEEK sast->id2
+            select_o_roba( sast->id2 )
 
             SELECT kalk_pripr
             // roba->nc - nabavna cijena sirovine
@@ -637,9 +632,8 @@ FUNCTION PrenosNo2()
             SKIP
          ENDDO
 
-         SELECT roba
          // nafiluj nabavne cijene proizvoda u sifrarnik robe!!!
-         HSEEK kalk_pripr->idroba
+         select_o_roba( kalk_pripr->idroba )
 
          IF Found()
             hRec := dbf_get_rec()

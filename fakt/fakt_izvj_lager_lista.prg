@@ -299,7 +299,7 @@ FUNCTION fakt_lager_lista()
 
 
       IF cSintetika == "D"
-         NSRNPIdRoba( cIdRoba, .T. ); SELECT FAKT
+         fakt_set_pozicija_sif_roba( cIdRoba, .T. ); SELECT FAKT
       ENDIF
 
       nUl := nIzl := 0
@@ -400,10 +400,10 @@ FUNCTION fakt_lager_lista()
       IF !Empty( cIdRoba )
          IF !( cSaldo0 == "N" .AND. ( nUl - nIzl ) == 0 )
             IF fID_J
-               NSRNPIdRoba( SubStr( cIdRoba, 11 ), ( cSintetika == "D" ) )
+               fakt_set_pozicija_sif_roba( SubStr( cIdRoba, 11 ), ( cSintetika == "D" ) )
                // desni dio sifre je interna sifra
             ELSE
-               NSRNPIdRoba( cIdRoba, ( cSintetika == "D" ) )
+               fakt_set_pozicija_sif_roba( cIdRoba, ( cSintetika == "D" ) )
             ENDIF
 
             IF nGrZn <> 99 .AND. ( Empty( cLastIdRoba ) .OR. Left( cLastIdRoba, nGrZn ) <> Left( cIdRoba, nGrZn ) )
@@ -436,10 +436,10 @@ FUNCTION fakt_lager_lista()
 
             IF cRR $ "NF" .AND. !lBezUlaza
                IF cUI $ "US"
-                  @ PRow(), PCol() + 1 SAY nUl  PICT iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+                  @ PRow(), PCol() + 1 SAY nUl  PICT iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
                ENDIF
                IF cUI $ "IS"
-                  @ PRow(), PCol() + 1 SAY nIzl PICT iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+                  @ PRow(), PCol() + 1 SAY nIzl PICT iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
                ENDIF
             ENDIF
 
@@ -447,13 +447,13 @@ FUNCTION fakt_lager_lista()
                nCol1 := PCol() + 1
             ENDIF
             IF cUI == "S"
-               @ PRow(), PCol() + 1 SAY nUl - nIzl PICT iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+               @ PRow(), PCol() + 1 SAY nUl - nIzl PICT iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
             ENDIF
 
             IF cRR == "D"
-               @ PRow(), PCol() + 1 SAY nRevers PICT iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
-               @ PRow(), PCol() + 1 SAY nRezerv PICT iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
-               @ PRow(), PCol() + 1 SAY nUl - nIzl - nRevers - nRezerv PICT iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+               @ PRow(), PCol() + 1 SAY nRevers PICT iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
+               @ PRow(), PCol() + 1 SAY nRezerv PICT iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
+               @ PRow(), PCol() + 1 SAY nUl - nIzl - nRevers - nRezerv PICT iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
             ENDIF
             @ PRow(), PCol() + 1 SAY roba->jmj
             IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
@@ -511,9 +511,9 @@ FUNCTION fakt_lager_lista()
                   @ PRow(), PCol() + 1 SAY 0  PICT "99999.999"
                ENDIF
                nCol1 := PCol() + 1
-               @ PRow(), nCol1 SAY nReal1  PICT picdem
-               @ PRow(), PCol() + 1 SAY nReal2  PICT picdem
-               @ PRow(), PCol() + 1 SAY nReal1 - nReal2  PICT picdem
+               @ PRow(), nCol1 SAY nReal1  PICT fakt_pic_iznos()
+               @ PRow(), PCol() + 1 SAY nReal2  PICT fakt_pic_iznos()
+               @ PRow(), PCol() + 1 SAY nReal1 - nReal2  PICT fakt_pic_iznos()
                nIzn += nReal1
                nIznR += nReal2
             ELSE
@@ -521,12 +521,12 @@ FUNCTION fakt_lager_lista()
                IF !lBezUlaza
                   @ PRow(), PCol() + 1 SAY _cijena  PICT "99999.999"
                   nCol1 := PCol() + 1
-                  @ PRow(), nCol1 SAY nPomSt * _cijena   PICT iif( cPopis == "N", picdem, Replicate( "_", Len( Picdem ) ) )
+                  @ PRow(), nCol1 SAY nPomSt * _cijena   PICT iif( cPopis == "N", fakt_pic_iznos(), Replicate( "_", Len( fakt_pic_iznos() ) ) )
                ENDIF
                nIzn += nPomSt * _cijena
                IF gVarC == "4" // uporedo
                   IF !lBezUlaza
-                     @ PRow(), PCol() + 1 SAY _cijena2   PICT picdem
+                     @ PRow(), PCol() + 1 SAY _cijena2   PICT fakt_pic_iznos()
                   ENDIF
                   nIzn2 += nPomSt * _cijena2
                ENDIF
@@ -546,10 +546,10 @@ FUNCTION fakt_lager_lista()
       ? Space( gnLMarg )
       ?? " Ukupno:"
       IF cPopis == "N"
-         @ PRow(), nCol1 SAY nIzn  PICT picdem
+         @ PRow(), nCol1 SAY nIzn  PICT fakt_pic_iznos()
          IF cRealizacija == "D"
-            @ PRow(), PCol() + 1 SAY nIznR  PICT picdem
-            @ PRow(), PCol() + 1 SAY nIzn - nIznR  PICT picdem
+            @ PRow(), PCol() + 1 SAY nIznR  PICT fakt_pic_iznos()
+            @ PRow(), PCol() + 1 SAY nIzn - nIznR  PICT fakt_pic_iznos()
          ENDIF
          IF gVarC == "4"
             ? Space( gnLMarg )
@@ -557,7 +557,7 @@ FUNCTION fakt_lager_lista()
             ?? " Ukupno  PV:"
 
 
-            @ PRow(), nCol1 SAY nIzn2  PICT picdem
+            @ PRow(), nCol1 SAY nIzn2  PICT fakt_pic_iznos()
          ENDIF
       ENDIF
    ENDIF
@@ -568,20 +568,22 @@ FUNCTION fakt_lager_lista()
    IF lSaberikol
       ? Space( gnLMarg ); ?? " Ukupno (kolicine):"
       IF lBezUlaza
-         @ PRow(), nCol1 SAY nKU - nKI PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+         @ PRow(), nCol1 SAY nKU - nKI PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
       ELSE
          IF cUI $ "US"
-            @ PRow(), nCol1 - ( Len( picdem ) + 1 ) * 4 - 2  SAY nKU  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+
+            @ PRow(), nCol1 - ( Len( fakt_pic_iznos() ) + 1 ) * 4 -2  SAY nKU  PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
          ENDIF
          IF cUI $ "IS"
             IF cUI == "I"
-               @ PRow(), nCol1 - ( Len( picdem ) + 1 ) * 4 - 2 SAY nKI  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+               @ PRow(), nCol1 - ( Len( fakt_pic_iznos() ) + 1 ) * 4 -2 SAY nKI  PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
+
             ELSE
-               @ PRow(), PCol() + 1 SAY nKI  PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+               @ PRow(), PCol() + 1 SAY nKI  PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
             ENDIF
          ENDIF
          IF cUI == "S"
-            @ PRow(), PCol() + 1 SAY nKU - nKI PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )
+            @ PRow(), PCol() + 1 SAY nKU - nKI PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
          ENDIF
       ENDIF
       ? Space( gnLMarg )
@@ -595,9 +597,9 @@ FUNCTION fakt_lager_lista()
       ?
       z0 := "Rekapitulacija stanja po tarifama:"
       ? z0
-      m := "------" + REPL( " " + REPL( "-", Len( gPicProc ) ), 3 ) + REPL( " " + REPL( "-", Len( PicDem ) ), 5 )
+      m := "------" + REPL( " " + REPL( "-", Len( gPicProc ) ), 3 ) + REPL( " " + REPL( "-", Len( fakt_pic_iznos() ) ), 5 )
       ? m
-      z1 := "Tarifa" + PadC( "PPP%", Len( gPicProc ) + 1 ) + PadC( "PPU%", Len( gPicProc ) + 1 ) + PadC( "PP%", Len( gPicProc ) + 1 ) + PadC( "MPV", Len( PicDem ) + 1 ) + PadC( "PPP", Len( PicDem ) + 1 ) + PadC( "PPU", Len( PicDem ) + 1 ) + PadC( "PP", Len( PicDem ) + 1 ) + PadC( "MPV+por", Len( PicDem ) + 1 )
+      z1 := "Tarifa" + PadC( "PPP%", Len( gPicProc ) + 1 ) + PadC( "PPU%", Len( gPicProc ) + 1 ) + PadC( "PP%", Len( gPicProc ) + 1 ) + PadC( "MPV", Len( fakt_pic_iznos() ) + 1 ) + PadC( "PPP", Len( fakt_pic_iznos() ) + 1 ) + PadC( "PPU", Len( fakt_pic_iznos() ) + 1 ) + PadC( "PP", Len( fakt_pic_iznos() ) + 1 ) + PadC( "MPV+por", Len( fakt_pic_iznos() ) + 1 )
       ? z1
       ? m
       ASort( aPorezi, {| x, y | x[ 1 ] < y[ 1 ] } )
@@ -617,7 +619,7 @@ FUNCTION fakt_lager_lista()
          nPor1 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ) * _OPP, ZAOKRUZENJE )
          nPor2 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) * ( 1 + _OPP ) ) * _PPP, ZAOKRUZENJE )
          nPor3 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ) * _ZPP, ZAOKRUZENJE )
-         ? aPorezi[ i, 1 ], TRANS( 100 * _OPP, gPicProc ), TRANS( 100 * _PPP, gPicProc ), TRANS( 100 * _ZPP, gPicProc ), TRANS( nMPV0, PicDem ), TRANS( nPor1, PicDem ), TRANS( nPor2, PicDem ), TRANS( nPor3, PicDem ), TRANS( nMPV, PicDem )
+         ? aPorezi[ i, 1 ], TRANS( 100 * _OPP, gPicProc ), TRANS( 100 * _PPP, gPicProc ), TRANS( 100 * _ZPP, gPicProc ), TRANS( nMPV0, fakt_pic_iznos() ), TRANS( nPor1, fakt_pic_iznos() ), TRANS( nPor2, fakt_pic_iznos() ), TRANS( nPor3, fakt_pic_iznos() ), TRANS( nMPV, fakt_pic_iznos() )
          nUMPV += nMPV
          nUMPV0 += nMPV0
          nUPor1 += nPor1
@@ -625,7 +627,7 @@ FUNCTION fakt_lager_lista()
          nUPor3 += nPor3
       NEXT
       ? m
-      ? PadR( "UKUPNO:", 3 * ( Len( gPicProc ) + 1 ) + 6 ), TRANS( nUMPV0, PicDem ), TRANS( nUPor1, PicDem ), TRANS( nUPor2, PicDem ), TRANS( nUPor3, PicDem ), TRANS( nUMPV, PicDem )
+      ? PadR( "UKUPNO:", 3 * ( Len( gPicProc ) + 1 ) + 6 ), TRANS( nUMPV0, fakt_pic_iznos() ), TRANS( nUPor1, fakt_pic_iznos() ), TRANS( nUPor2, fakt_pic_iznos() ), TRANS( nUPor3, fakt_pic_iznos() ), TRANS( nUMPV, fakt_pic_iznos() )
       ?
    ENDIF
 

@@ -40,7 +40,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    cDokument := Space( 8 )
 
    picBHD := FormPicL( gPicBHD, 14 )
-   picDEM := FormPicL( gPicDEM, 10 )
+   picDEM := FormPicL( pic_iznos_eur(), 10 )
 
    IF fin_dvovalutno()
       m := "----------- ------------- -------------- -------------- ---------- ---------- ---------- -------------------------"
@@ -82,6 +82,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
 
 
    @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_Konto( @cIdkonto )
+
    IF cPoRN == "D"
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
    ENDIF
@@ -816,7 +817,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
 
    CLOSERET
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------------------

@@ -115,7 +115,7 @@ FUNCTION kalk_get_1_19()
    IF Pitanje(, "Staviti u šifrarnik novu cijenu", gDefNiv ) == "D"
       SELECT koncij
       SEEK Trim( _idkonto )
-      SELECT roba
+    //  SELECT roba
       StaviMPCSif( _fcj + _mpcsapp )
       SELECT kalk_pripr
    ENDIF

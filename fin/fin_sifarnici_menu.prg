@@ -48,7 +48,8 @@ STATIC FUNCTION _menu_specif()
    //O_ULIMIT
 
    AAdd( _opc, "1. kontni plan                          " )
-   AAdd( _opcexe, {|| P_Konto() } )
+
+   AAdd( _opcexe, {|| p_konto() } )
    AAdd( _opc, "2. sheme kontiranja                     " )
    AAdd( _opcexe, {|| P_Trfp2() } )
    AAdd( _opc, "3. prenos konta u ng" )
@@ -74,7 +75,6 @@ STATIC FUNCTION _menu_budzet()
    LOCAL _opcexe := {}
    LOCAL _Izbor := 1
 
-   OSifBudzet()
 
    AAdd( _opc, "1. radne jedinice              " )
    AAdd( _opcexe, {|| P_Rj() } )
@@ -91,19 +91,5 @@ STATIC FUNCTION _menu_budzet()
   // AAdd( _opcexe, {|| P_BuIZ() } )
 
    f18_menu( "sbdz", .F., _izbor, _opc, _opcexe )
-
-   RETURN .T.
-
-
-FUNCTION OSifBudzet()
-
-  // o_rj()
-   //o_funk()
-   //o_fond()
-   //O_BUDZET
-   //O_PAREK
-   //o_buiz()
- //  o_konto()
- //  o_trfp2()
 
    RETURN .T.

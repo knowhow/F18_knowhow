@@ -57,6 +57,7 @@ FUNCTION kalk_get_1_ip()
    ENDIF
 */
 
+
    select_o_tarifa( _idtarifa )
    select_o_roba( _idroba )
 
@@ -115,7 +116,7 @@ FUNCTION kalk_generisi_ip()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
 
    Box(, 4, 50 )
 
@@ -157,8 +158,7 @@ FUNCTION kalk_generisi_ip()
       nMPVU := nMPVI := nNVU := nNVI := 0
       nRabat := 0
 
-      SELECT roba
-      HSEEK cIdroba
+      select_o_roba( cIdroba )
 
       SELECT kalk
 
@@ -203,8 +203,7 @@ FUNCTION kalk_generisi_ip()
 
       IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
 
-         SELECT roba
-         HSEEK cIdroba
+         select_o_roba(  cIdroba )
 
          SELECT kalk_pripr
          scatter()
@@ -304,7 +303,7 @@ FUNCTION gen_ip_razlika()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
    o_koncij()
    o_kalk_pripr()
    o_kalk_pript()
@@ -353,8 +352,7 @@ FUNCTION gen_ip_razlika()
       nNVI := 0
       nRabat := 0
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       SELECT koncij
       HSEEK cIdKonto
@@ -402,8 +400,7 @@ FUNCTION gen_ip_razlika()
 
       IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
 
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_roba(  cIdRoba )
 
          SELECT kalk_pripr
          APPEND BLANK

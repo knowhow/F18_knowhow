@@ -21,7 +21,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
 
    cDokument := Space( 8 )
    picBHD := FormPicL( gPicBHD, 14 )
-   picDEM := FormPicL( gPicDEM, 10 )
+   picDEM := FormPicL( pic_iznos_eur(), 10 )
 
    IF fin_dvovalutno()
       m := "----------- ------------- -------------- -------------- ---------- ---------- ---------- -------------------------"

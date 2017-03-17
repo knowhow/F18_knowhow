@@ -40,7 +40,7 @@ FUNCTION Iz47u96Norm()
 
    o_kalk_pripr()
    -- o_kalk()
-   o_roba()
+   //o_roba()
    o_konto()
    o_partner()
    o_tarifa()
@@ -91,13 +91,13 @@ FUNCTION Iz47u96Norm()
       SELECT kalk2
       SEEK cIDFirma + '47' + cBrDok47
       dDatKalk := datdok
-      IF !ProvjeriSif( "!eof() .and. '" + cIDFirma + "47" + cBrDok47 + "'==IdFirma+IdVD+BrDok", "IDROBA", F_ROBA )
+      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cIDFirma + "47" + cBrDok47 + "'==IdFirma+IdVD+BrDok", "IDROBA", F_ROBA )
          MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
          LOOP
       ENDIF
       DO WHILE !Eof() .AND. cIDFirma + '47' + cBrDok47 == idfirma + idvd + brdok
 
-         SELECT ROBA; HSEEK kalk2->idroba
+      --   SELECT ROBA; HSEEK kalk2->idroba
 
          SELECT sast
          HSEEK  kalk2->idroba

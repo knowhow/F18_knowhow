@@ -51,7 +51,7 @@ FUNCTION DFTParUg( lIni )
       Box(, 11, 75 )
       @ m_x + 0, m_y + 23 SAY8 "TEKUĆI PODACI ZA NOVE UGOVORE"
       @ m_x + 2, m_y + 2 SAY PadL( "Artikal", 20 ) GET DFTidroba VALID Empty( DFTidroba ) .OR. P_Roba( @DFTidroba, 2, 28 ) PICT "@!"
-      @ m_x + 3, m_y + 2 SAY PadL( "Kolicina", 20 ) GET DFTkolicina PICT pickol
+      @ m_x + 3, m_y + 2 SAY PadL( "Kolicina", 20 ) GET DFTkolicina PICT fakt_pic_kolicina()
       @ m_x + 4, m_y + 2 SAY PadL( "Tip ug.(1/2/G)", 20 ) GET DFTvrsta VALID DFTvrsta $ "12G"
       @ m_x + 5, m_y + 2 SAY PadL( "Tip dokumenta", 20 ) GET DFTidtipdok
       @ m_x + 6, m_y + 2 SAY PadL( "Valuta", 20 ) GET DFTdindem PICT "@!"

@@ -62,7 +62,7 @@ FUNCTION ld_specifikacija_plate_ostali()
    cFirmOpc := Space( 35 )
    cFirmVD := Space( 50 )
 
-   OSpecif()
+   ld_specifikacije_otvori_tabele()
 
    cFirmNaz := fetch_metric( "org_naziv", NIL, cFirmNaz )
    cFirmNaz := PadR( cFirmNaz, 35 )

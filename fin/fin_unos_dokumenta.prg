@@ -67,7 +67,7 @@ FUNCTION fin_knjizenje_naloga()
       { "Datum",         {|| field->DatDok  }, "DatDok" }, ;
       { "D/P",           {|| field->D_P     }, "D_P" }, ;
       { "Iznos " + AllTrim( ValDomaca() ), {|| Transform( field->IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznosbhd" }, ;
-      { "Iznos " + AllTrim( ValPomocna() ), {|| Transform( field->IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznosdem" }, ;
+      { "Iznos " + AllTrim( ValPomocna() ), {|| Transform( field->IznosDEM, FormPicL( pic_iznos_eur(), 10 ) ) }, "iznosdem" }, ;
       { "Opis",          {|| PadR( Left( field->Opis, 37 ) + iif( Len( AllTrim( field->Opis ) ) > 37, "...", "" ), 40 )  }, "OPIS" }, ;
       { "K1",            {|| field->k1      }, "k1" }, ;
       { "K2",            {|| field->k2      }, "k2" }, ;
@@ -181,10 +181,10 @@ FUNCTION edit_fin_priprema()
    SET KEY K_ALT_K TO konverzija_valute()
    SET KEY K_ALT_O TO knjizenje_gen_otvorene_stavke()
 
-   @ form_x_koord() + 3, form_y_koord() + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Redni broj stavke naloga:" GET nFinRbr PICTURE "99999" ;
-      WHEN {|| fin_pripr_redni_broj( nFinRbr ), .T. } ;
-      VALID {|| lDugmeOtvoreneStavke := .T., .T. }
+
+   @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
+   @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nFinRbr PICTURE "99999" ;
+      WHEN {|| fin_pripr_redni_broj( nFinRbr ), .T. } VALID {|| lDugmeOtvoreneStavke := .T., fin_pripr_redni_broj( nFinRbr ), .T. }
 
    @ form_x_koord() + 7, form_y_koord() + 2 SAY "DOKUMENT: "
 
@@ -245,9 +245,9 @@ FUNCTION edit_fin_priprema()
     //  @ form_x_koord() + 12, form_y_koord() + 44 SAY "      Fond." GET _Fond VALID Empty( _Fond ) .OR. P_Fond( @_Fond ) PICT "@!"
    //ENDIF
 
-   @ form_x_koord() + 13, form_y_koord() + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
-      VALID P_Konto( @_IdKonto, 13, 20 ) ;
-      .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
+
+   @ m_x + 13, m_y + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
+      VALID P_Konto( @_IdKonto, 13, 20 ) .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
 
 
    @ form_x_koord() + 14, form_y_koord() + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
@@ -320,7 +320,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
       SELECT FIN_PRIPR
    ENDIF
 
-   IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. RecCount2() == 0
+   IF ( nCh == K_CTRL_T .OR. nCh == K_ENTER ) .AND. RecCount2() == 0
       RETURN DE_CONT
    ENDIF
 
@@ -578,7 +578,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 #else
    CASE nCh == K_F10
 #endif
-      OstaleOpcije()
+      fin_knjizenje_ostale_opcije()
       RETURN DE_REFRESH
 
    CASE Upper( Chr( nCh ) ) == "P"
@@ -896,10 +896,6 @@ STATIC FUNCTION set_datval_datdok()
 
 
 
-
-
-
-
 STATIC FUNCTION fin_pripr_brisi_stavke_od_do()
 
    LOCAL nRet := 1
@@ -1006,18 +1002,18 @@ FUNCTION fin_tek_rec_2()
 
 
 
-/* OstaleOpcije()
+/* fin_knjizenje_ostale_opcije()
  *     Ostale opcije koje se pozivaju sa <F10>
  */
 
-FUNCTION OstaleOpcije()
+FUNCTION fin_knjizenje_ostale_opcije()
 
-   PRIVATE opc[ 4 ]
+   PRIVATE opc[ 1 ]
 
    opc[ 1 ] := "1. novi datum->datum, stari datum->dat.valute "
    // opc[ 2 ] := "2. podijeli nalog na vise dijelova"
 
-   h[ 1 ] := h[ 2 ] := h[ 3 ] := h[ 4 ] := ""
+   h[ 1 ] := h[ 2 ] := ""
    PRIVATE Izbor := 1
    PRIVATE am_x := form_x_koord(), am_y := form_y_koord()
    my_close_all_dbf()
@@ -1028,8 +1024,8 @@ FUNCTION OstaleOpcije()
          EXIT
       CASE izbor == 1
          SetDatUPripr()
-         // CASE izbor == 2
-         // PodijeliN()
+     // CASE izbor == 2
+    // PodijeliN()
       ENDCASE
    ENDDO
    form_x_koord( am_x )
@@ -1165,8 +1161,8 @@ STATIC FUNCTION brisi_fin_pripr_po_uslovu()
          ENDIF
       ENDIF
 
-      // redni brojevi...
-      IF ( _od_broj + _do_broj ) > 0
+
+      IF ( _od_broj + _do_broj ) > 0 // redni brojevi
          IF field->rbr >= _od_broj .AND.  field->rbr <= _do_broj
             _delete_rec := .T.
          ENDIF

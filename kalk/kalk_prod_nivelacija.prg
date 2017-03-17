@@ -26,7 +26,7 @@ FUNCTION kalk_nivelacija_11()
 
    o_sifk()
    o_sifv()
-   o_roba()
+  // o_roba()
 
    SELECT kalk_pripr
    GO TOP
@@ -56,9 +56,11 @@ FUNCTION kalk_nivelacija_11()
 
       scatter()
 
+
       select_o_koncij( hRec[ "idkonto" ] )
       select_o_roba( hRec[ "idroba" ] )
       select_o_tarifa( roba->idtarifa )
+
 
       SELECT roba
 

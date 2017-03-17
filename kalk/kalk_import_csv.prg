@@ -781,7 +781,7 @@ STATIC FUNCTION TTbl2Kalk()
    o_kalk_pripr()
    // o_kalk()
    // o_kalk_doks()
-   o_roba()
+//   o_roba()
 
    SELECT temp
    SET ORDER TO TAG "1"
@@ -799,10 +799,9 @@ STATIC FUNCTION TTbl2Kalk()
 
    DO WHILE !Eof()
 
-      SELECT roba
+    
       cTmpArt := AllTrim( temp->idroba )
-      GO TOP
-      SEEK cTmpArt
+    select_o_roba( cTmpArt )
 
       // dodaj zapis u kalk_pripr
       SELECT kalk_pripr

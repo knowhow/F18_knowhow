@@ -111,11 +111,13 @@ FUNCTION EdUplata()
       nIznos  := IF( Ch == K_F2, IZNOS, 0                )
 
       Box( , 3, 60, .F. )
+
       @ form_x_koord() + 0, form_y_koord() + 10 SAY PadC( IF( Ch == K_F2, "ISPRAVKA EVIDENTIRANE", "EVIDENTIRANJE NOVE" ) + " STAVKE", 40, Chr( 205 ) )
       @ form_x_koord() + 1, form_y_koord() + 2 SAY "Datum uplate" GET dDatUpl
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "Opis        " GET cOpis
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Iznos       " GET nIznos PICT picdem
       READ
+
       BoxC()
 
       IF Ch == K_CTRL_N .AND. LastKey() <> K_ESC

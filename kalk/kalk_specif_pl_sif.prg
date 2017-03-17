@@ -91,7 +91,7 @@ FUNCTION PlFill_Sezona()
       MsgBeep( "Promjena:" + Str( nI ) )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -112,7 +112,7 @@ FUNCTION PlFill_Vrsta()
    nI := 0
    IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
 
-      o_roba()
+      // o_roba()
       o_sifk()
       o_sifv()
       SELECT roba
@@ -131,19 +131,21 @@ FUNCTION PlFill_Vrsta()
       MsgBeep( "Promjena:" + Str( nI ) )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION PlFillIdPartner( cIdPartner, cIdRoba )
 
    LOCAL nArr
+
    IF Empty( cIdPartner ) .OR. Empty( cIdRoba )
-      RETURN
+      RETURN .F.
    ENDIF
    nArr := Select()
    select_o_roba( cIdRoba )
+
    REPLACE field->idpartner WITH cIdPartner
 
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.

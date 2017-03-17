@@ -16,9 +16,14 @@
 /* Omogucava izradu naljepnica u dvije varijante:
  1 - prikaz naljepnica sa tekucom cijenom
  2 - prikaz naljepnica sa novom cijenom, kao i prekrizenom starom cijenom
+
+
+ - kalk_roba_naljepnice_stampa( cIdFirma, cIdVd, cBrDok ) - stampa za azurirani dokument
+ - kalk_roba_naljepnice_stampa() - stampa pripreme
+
 */
 
-FUNCTION roba_naljepnice()
+FUNCTION kalk_roba_naljepnice_stampa( cIdFirma, cIdVd, cBrDok )
 
    LOCAL cVarijanta
    LOCAL cKolicina
@@ -26,39 +31,49 @@ FUNCTION roba_naljepnice()
    LOCAL _xml_file := my_home() + "data.xml"
    LOCAL _template := "rlab1.odt"
    LOCAL _len_naz := 25
-
-
+   LOCAL lPriprema := .F.
 
    cVarijanta := "1"
    cKolicina := "N"
 
-   IF GetVars( @cVarijanta, @cKolicina, @_tkm_no, @_len_naz ) == 0
-      RETURN .F.
-   ENDIF
-
-   cre_roba_naljepnice()
 
    IF cVarijanta == "2"
       _template := "rlab2.odt"
    ENDIF
 
-   roba_naljepnice_napuni_iz_kalk( cKolicina )
+   IF cIdFirma != NIL .AND. cIdVd != NIL .AND. cBrDok != NIL
+      open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
+      lPriprema := .F.
+   ELSE
+      // my_close_all_dbf()
+      select_o_kalk_pripr()
+      lPriprema := .T.
+   ENDIF
+
+   IF !GetVars( @cVarijanta, @cKolicina, @_tkm_no, @_len_naz )
+      RETURN .F.
+   ENDIF
+
+   cre_open_roba_naljepnice()
+   roba_naljepnice_napuni_iz_kalk_pripr( cKolicina )
 
    SELECT rlabele
    IF RecCount() == 0
       MsgBeep( "Nije generisano ništa#Greška - STOP!" )
       USE
-      //my_close_all_dbf()
+      // my_close_all_dbf()
       RETURN .F.
    ENDIF
 
    _gen_xml( _xml_file, _tkm_no, _len_naz )
 
-   //my_close_all_dbf()
+   my_close_all_dbf()
 
    IF generisi_odt_iz_xml( _template, _xml_file )
       prikazi_odt()
    ENDIF
+
+
 
    RETURN .T.
 
@@ -68,7 +83,7 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
    // LOCAL lOpened
    LOCAL cIdVd
 
-   cIdVd := "XX"
+   // cIdVd := "XX"
    cVarijanta := "1"
    cKolicina := "N"
    lOpened := .T.
@@ -78,17 +93,7 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 
    IF ( gModul == "KALK" )
 
-      select_o_kalk_pripr()
-
-      PushWA()
-      SELECT kalk_pripr
-      GO TOP
-
-      cIdVd := kalk_pripr->idVd
-
-      PopWa()
-
-      IF ( cIdVd == "19" )
+      IF kalk_pripr->idVd == "19"
          cVarijanta := "2"
       ENDIF
    ENDIF
@@ -117,71 +122,14 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
    // ENDIF
 
    IF ( LastKey() == K_ESC )
-      RETURN 0
+      RETURN .F.
    ENDIF
 
    set_metric( "rlabel_tkm_no", my_user(), AllTrim( tkm_no ) )
    set_metric( "rlabel_naz_len", NIL, len_naz )
 
-   RETURN 1
+   RETURN .T.
 
-
-
-
-/*
- Kreira tabelu rLabele u privatnom direktoriju
-*/
-
-STATIC FUNCTION cre_roba_naljepnice()
-
-   LOCAL aDbf
-   LOCAL _tbl
-   LOCAL _dbf
-   LOCAL _cdx
-
-   SELECT ( F_RLABELE )
-   IF Used()
-      USE
-   ENDIF
-
-   _tbl := "rlabele"
-   _dbf := my_home() + my_dbf_prefix() + _tbl + ".dbf"
-   _cdx := my_home() + my_dbf_prefix() + _tbl + ".cdx"
-
-   FErase( _dbf )
-   FErase( _cdx )
-
-   aDBf := {}
-   AAdd( aDBf, { 'idRoba', 'C', 10, 0 } )
-   AAdd( aDBf, { 'naz', 'C', 100, 0 } )
-   AAdd( aDBf, { 'idTarifa', 'C',  6, 0 } )
-   AAdd( aDBf, { 'barkod', 'C', 20, 0 } )
-   AAdd( aDBf, { 'evBr', 'C', 10, 0 } )
-   AAdd( aDBf, { 'cijena', 'N', 10, 2 } )
-   AAdd( aDBf, { 'sCijena', 'N', 10, 2 } )
-   AAdd( aDBf, { 'skrNaziv', 'C', 20, 0 } )
-   AAdd( aDBf, { 'brojLabela', 'N',  6, 0 } )
-   AAdd( aDBf, { 'jmj', 'C',  3, 0 } )
-   AAdd( aDBf, { 'katBr', 'C', 20, 0 } )
-   AAdd( aDBf, { 'catribut', 'C', 30, 0 } )
-   AAdd( aDBf, { 'catribut2', 'C', 30, 0 } )
-   AAdd( aDBf, { 'natribut', 'N', 10, 2 } )
-   AAdd( aDBf, { 'natribut2', 'N', 10, 2 } )
-   AAdd( aDBf, { 'vpc', 'N',  8, 2 } )
-   AAdd( aDBf, { 'mpc', 'N',  8, 2 } )
-   AAdd( aDBf, { 'porez', 'N',  8, 2 } )
-   AAdd( aDBf, { 'porez2', 'N',  8, 2 } )
-   AAdd( aDBf, { 'porez3', 'N',  8, 2 } )
-
-   dbCreate( _dbf, aDbf )
-
-   SELECT ( F_RLABELE )
-   my_use_temp( "RLABELE", AllTrim( _dbf ), .F., .T. )
-
-   INDEX on ( "idroba" ) TAG "1"
-   SET ORDER TO TAG "1"
-
-   RETURN NIL
 
 
 
@@ -191,14 +139,11 @@ STATIC FUNCTION cre_roba_naljepnice()
  cKolicina - D ili N, broj labela zavisi od kolicine robe
 */
 
-STATIC FUNCTION roba_naljepnice_napuni_iz_kalk( cKolicina )
+STATIC FUNCTION roba_naljepnice_napuni_iz_kalk_pripr( cKolicina )
 
-   LOCAL cDok
+   LOCAL cDok, i
    LOCAL nBr_labela := 0
    LOCAL _predisp := .F.
-
-   select_o_roba()
-   select_o_kalk_pripr()
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
@@ -306,8 +251,6 @@ STATIC FUNCTION Printroba_naljepnice( cVarijanta )
 // ----------------------------------------------------------
 STATIC FUNCTION _gen_xml( xml_file, tkm_no, len_naz )
 
-
-
    create_xml( xml_file )
    xml_head()
 
@@ -344,5 +287,61 @@ STATIC FUNCTION _gen_xml( xml_file, tkm_no, len_naz )
 
    close_xml()
 
-
    RETURN .T.
+
+
+
+   /*
+    Kreira tabelu rLabele u privatnom direktoriju
+   */
+
+STATIC FUNCTION cre_open_roba_naljepnice()
+
+   LOCAL aDbf
+   LOCAL _tbl
+   LOCAL _dbf
+   LOCAL _cdx
+
+   SELECT ( F_RLABELE )
+   IF Used()
+      USE
+   ENDIF
+
+   _tbl := "rlabele"
+   _dbf := my_home() + my_dbf_prefix() + _tbl + ".dbf"
+   _cdx := my_home() + my_dbf_prefix() + _tbl + ".cdx"
+
+   FErase( _dbf )
+   FErase( _cdx )
+
+   aDBf := {}
+   AAdd( aDBf, { 'idRoba', 'C', 10, 0 } )
+   AAdd( aDBf, { 'naz', 'C', 100, 0 } )
+   AAdd( aDBf, { 'idTarifa', 'C',  6, 0 } )
+   AAdd( aDBf, { 'barkod', 'C', 20, 0 } )
+   AAdd( aDBf, { 'evBr', 'C', 10, 0 } )
+   AAdd( aDBf, { 'cijena', 'N', 10, 2 } )
+   AAdd( aDBf, { 'sCijena', 'N', 10, 2 } )
+   AAdd( aDBf, { 'skrNaziv', 'C', 20, 0 } )
+   AAdd( aDBf, { 'brojLabela', 'N',  6, 0 } )
+   AAdd( aDBf, { 'jmj', 'C',  3, 0 } )
+   AAdd( aDBf, { 'katBr', 'C', 20, 0 } )
+   AAdd( aDBf, { 'catribut', 'C', 30, 0 } )
+   AAdd( aDBf, { 'catribut2', 'C', 30, 0 } )
+   AAdd( aDBf, { 'natribut', 'N', 10, 2 } )
+   AAdd( aDBf, { 'natribut2', 'N', 10, 2 } )
+   AAdd( aDBf, { 'vpc', 'N',  8, 2 } )
+   AAdd( aDBf, { 'mpc', 'N',  8, 2 } )
+   AAdd( aDBf, { 'porez', 'N',  8, 2 } )
+   AAdd( aDBf, { 'porez2', 'N',  8, 2 } )
+   AAdd( aDBf, { 'porez3', 'N',  8, 2 } )
+
+   dbCreate( _dbf, aDbf )
+
+   SELECT ( F_RLABELE )
+   my_use_temp( "RLABELE", AllTrim( _dbf ), .F., .T. )
+
+   INDEX ON ( "idroba" ) TAG "1"
+   SET ORDER TO TAG "1"
+
+   RETURN NIL

@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR GetList
+
 STATIC aPorezi := {}
 
 FUNCTION kalk_get_1_16()
@@ -35,7 +37,7 @@ FUNCTION kalk_get_1_16()
          @  form_x_koord() + 6, form_y_koord() + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 6, 18 )
       ENDIF
       @  form_x_koord() + 7, form_y_koord() + 2   SAY "Faktura/Otpremnica Broj:" GET _BrFaktP
-      @  form_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP  valid {|| .T. }
+      @  form_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP  VALID {|| .T. }
 
 
       @ form_x_koord() + 9, form_y_koord() + 2 SAY8 "Magacinski konto zadužuje"  GET _IdKonto VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
@@ -84,13 +86,12 @@ FUNCTION kalk_get_1_16()
    _MKonto := _Idkonto
    _MU_I := "1"
 
-   //check_datum_posljednje_kalkulacije()
-   //DuplRoba()
+   // check_datum_posljednje_kalkulacije()
+   // DuplRoba()
    _GKolicina := 0
    IF kalk_is_novi_dokument()
 
       select_o_roba( _IdRoba )
-
       IF koncij->naz == "P2"
          _nc := plc
          _vpc := plc
@@ -99,6 +100,7 @@ FUNCTION kalk_get_1_16()
          _NC := NC
       ENDIF
    ENDIF
+
    set_pdv_public_vars()
    SELECT kalk_pripr
 
@@ -131,7 +133,7 @@ FUNCTION kalk_get_16_1()
 
    LOCAL cSvedi := " "
 
-kalk_is_novi_dokument( .T. )
+   kalk_is_novi_dokument( .T. )
 
    PRIVATE PicDEM := "9999999.99999999", PicKol := "999999.999"
 
@@ -144,7 +146,7 @@ kalk_is_novi_dokument( .T. )
 
    @ form_x_koord() + 11, form_y_koord() + 66 SAY "Tarif.brĿ"
    @ form_x_koord() + 12, form_y_koord() + 2  SAY "Artikal  " GET _IdRoba PICT "@!" ;
-      valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := ROBA->idtarifa, .T. }
+      VALID  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := ROBA->idtarifa, .T. }
    @ form_x_koord() + 12, form_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
@@ -158,12 +160,13 @@ kalk_is_novi_dokument( .T. )
 
    _PKonto := _Idkonto
 
-   //kalk_dat_poslj_promjene_prod()
-   //DuplRoba()
+   // kalk_dat_poslj_promjene_prod()
+   // DuplRoba()
 
    PRIVATE fMarza := " "
 
    @ form_x_koord() + 13, form_y_koord() + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+
 
    select_o_koncij( _idkonto )
    select_o_roba( _IdRoba )
@@ -192,7 +195,6 @@ kalk_is_novi_dokument( .T. )
 
    cBeze := " "
    @ form_x_koord() + 17, form_y_koord() + 2 GET cBeze VALID SvediM( cSvedi )
-
 
 
    READ

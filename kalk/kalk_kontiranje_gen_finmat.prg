@@ -180,7 +180,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
       cIdKonto2 := IdKonto2
 
 
-      select_o_konto( cIdKonto2 ) 
+      select_o_konto( cIdKonto2 )
       SELECT KALK_PRIPR
 
 
@@ -210,6 +210,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
          select_o_roba( KALK_PRIPR->IdRoba )
          select_o_tarifa( KALK_PRIPR->idtarifa )
+
 
          SELECT KALK_PRIPR
 

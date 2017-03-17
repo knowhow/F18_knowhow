@@ -13,7 +13,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION KalkStanje( cIdRoba )
 
    LOCAL nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
@@ -21,22 +20,6 @@ FUNCTION KalkStanje( cIdRoba )
 
    PushWA()
 
-   // SELECT roba
-
-/*
-   SELECT ( F_KALK )
-   IF !Used()
-    --  o_kalk()
-      fOtv := .T.
-   ELSE
-      nIOrd := IndexOrd()
-      nFRec := RecNo()
-   ENDIF
-
-
-   SET ORDER TO TAG "7" // "7","Idroba"
- --  SEEK cIdRoba
-*/
 
    find_kalk_za_period( self_organizacija_id(), NIL, NIL, cIdRoba )
 
@@ -192,8 +175,10 @@ FUNCTION BoxStanje( aStanje, cIdroba )
          cPom777 := aDodPar[ i, 2 ]
 
          IF "TARIFA->" $ Upper( cPom777 )
+
             select_o_tarifa( ROBA->idtarifa )
-            SELECT ROBA
+            select_o_roba( ROBA->idtarifa )
+
          ENDIF
 
          IF i % 2 != 0
@@ -213,4 +198,3 @@ FUNCTION BoxStanje( aStanje, cIdroba )
    // PopWa()
 
    RETURN
-// }

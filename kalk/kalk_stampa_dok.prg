@@ -26,25 +26,25 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    nCol2 := 0
    nPom := 0
 
-   PRIVATE PicCDEM := gPICCDEM
+   PRIVATE PicCDEM := pic_cijena_bilo_gpiccdem()
    PRIVATE PicProc := gPICPROC
-   PRIVATE PicDEM  := gPICDEM
-   PRIVATE Pickol  := gPICKOL
+   PRIVATE PicDEM  := pic_iznos_bilo_gpicdem()
+   PRIVATE Pickol  := pic_kolicina_bilo_gpickol()
    PRIVATE nStr := 0
 
    IF ( PCount() == 0 )
       lAzuriraniDokument := .F.
    ENDIF
 
-   IF ( lAzuriraniDokument == nil )
+   IF ( lAzuriraniDokument == NIL )
       lAzuriraniDokument := .F.
    ENDIF
 
-   IF ( lAuto == nil )
+   IF ( lAuto == NIL )
       lAuto := .F.
    ENDIF
 
-   IF ( cSeek == nil )
+   IF ( cSeek == NIL )
       cSeek := ""
    ENDIF
 
@@ -84,7 +84,8 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
             @ form_x_koord() + 1, Col() + 2  SAY cIdFirma
             @ form_x_koord() + 1, Col() + 1 SAY "-" GET cIdVD  PICT "@!"
-            @ form_x_koord() + 1, Col() + 1 SAY "-" GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
+            @ form_x_koord() + 1, Col() + 1 SAY "-" GET cBrDok VALID {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
+
 
             @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "(Brdok: '00000022', '22' -> '00000022', '00005/TZ'"
             @ form_x_koord() + 4, form_y_koord() + 2 SAY8 "        '22#  ' -> '22   ', '0022' -> '00000022' ) "
@@ -94,7 +95,6 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
             ESC_BCR
             BoxC()
-
 
             IF lAzuriraniDokument // stampa azuriranog KALK dokumenta
                open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
@@ -134,7 +134,6 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
 
          IF ( cSeek == 'IZDOKS' )
-
             IF ( PRow() > 42 ) // stampati sve odjednom
                ++nStr
                FF
@@ -240,8 +239,10 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
          ENDPRINT
       ENDIF
 
+      // ------------------- kraj stampe jedne kalkulacije
+      AltD()
 
-      kalk_open_tables_unos( lAzuriraniDokument ) // kraj stampe jedne kalkulacije
+      kalk_open_tables_unos( lAzuriraniDokument )
       PopWa()
 
       IF ( cIdvd $ "80#11#81#12#13#IP#19" )
@@ -258,12 +259,18 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
       IF lAzuriraniDokument // stampa azuriranog KALK dokumenta
          IF cNaljepniceDN == "D"
-            open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
-            roba_naljepnice()
+            kalk_roba_naljepnice_stampa( cIdFirma, cIdVd, cBrDok  )
          ENDIF
 
          cBrDok := kalk_fix_brdok_add_1( cBrDok )
          open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
+
+      ELSE // priprema
+         IF cNaljepniceDN == "D"
+            kalk_roba_naljepnice_stampa()
+            o_kalk_edit()
+            EXIT // podrazumjevamo da je u pripremi jedan dokument
+         ENDIF
       ENDIF
 
    ENDDO  // vrti kroz kalkulacije
@@ -296,6 +303,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    ENDIF
 
    IF ( fFaktD .AND. !lAzuriraniDokument .AND. gFakt != "0 " )
+
       start PRINT cret
       o_kalk_edit()
       SELECT kalk_pripr

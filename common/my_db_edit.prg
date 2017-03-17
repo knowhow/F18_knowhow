@@ -386,10 +386,11 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
 
    CASE Upper( Chr( nKey ) ) == "F"
 
-      SET CURSOR ON
-      DO CASE
-      CASE Alias() == "PARTN"
+
+      IF Alias() == "PARTN"
+
          Box( "#Unijeti dio šifre ili naziva ili mjesta", 1, 70 )
+         SET CURSOR ON
          @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
          READ
          BoxC()
@@ -399,9 +400,12 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
             RETURN DE_REFRESH
          ENDIF
 
-      CASE Alias() == "ROBA"
+      ENDIF
 
-         Box( "#Unijeti dio šifre ili šifre dobavljača ili naziva ili barkoda ", 1, 70 )
+      IF Alias() == "ROBA"
+
+         Box( "#Unijeti dio šifre ili sifredob ili naziva", 1, 70 )
+         SET CURSOR ON
          @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
          READ
          BoxC()
@@ -411,9 +415,12 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
             RETURN DE_REFRESH
          ENDIF
 
-      CASE Alias() == "KONTO"
+      ENDIF
 
-         Box( "#Unijeti dio šifre ili šifre dobavljača ili naziva", 1, 70 )
+      IF Alias() == "KONTO"
+
+         Box( "#Unijeti dio šifre ili naziva", 1, 70 )
+         SET CURSOR ON
          @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
          READ
          BoxC()
@@ -422,13 +429,8 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
             TB:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
-         
-      OTHERWISE
-         // Box( "#Unijeti dio šifre ili naziva", 1, 70 )
-      ENDCASE
 
-      RETURN DE_CONT
-
+      ENDIF
 
    CASE nKey == K_CTRL_F
 

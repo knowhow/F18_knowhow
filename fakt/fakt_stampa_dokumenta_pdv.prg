@@ -104,7 +104,7 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    IF cIdTipDok $ "13#23"
       // stampa 13-ke
-      omp_print()
+      fakt_otpremnica_mp_13_print()
    ELSE
 
 #ifdef F18_POS
@@ -282,6 +282,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    DO WHILE !Eof() .AND. field->idfirma == dok[ "idfirma" ] .AND. ;
          field->idtipdok == dok[ "idtipdok" ] .AND. ;
          field->brdok == dok[ "brdok" ]
+
 
       select_o_roba( fakt_pripr->idroba )
       IF Eof()
@@ -878,7 +879,7 @@ STATIC FUNCTION fill_dod_text( cTxt, cPartn )
    // dodaj i parametar koliko ima linija texta
    add_drntext( "P02", AllTrim( Str( nCnt ) ) )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1246,9 +1247,9 @@ FUNCTION ZAO_VRIJEDNOST()
    LOCAL nLen
 
    // 999.99
-   nPos := At( ".", PicDem )
+   nPos := At( ".", fakt_pic_iznos() )
    // = 4
-   nLen := Len( PicDEM )
+   nLen := Len( fakt_pic_iznos() )
    // = 6
 
    IF nPos == 0
@@ -1258,17 +1259,15 @@ FUNCTION ZAO_VRIJEDNOST()
    RETURN nLen - nPos
 
 
-// ------------------------------------
-// ------------------------------------
 FUNCTION ZAO_CIJENA()
 
    LOCAL nPos
    LOCAL nLen
 
    // 999.99
-   nPos := At( ".", PicCDem )
+   nPos := At( ".", fakt_pic_cijena() )
    // = 4
-   nLen := Len( PicDEM )
+   nLen := Len( fakt_pic_iznos() )
    // = 6
 
    IF nPos == 0

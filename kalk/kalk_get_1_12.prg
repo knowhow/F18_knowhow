@@ -37,7 +37,9 @@ FUNCTION kalk_get_1_12()
       // IF gNW <> "X"
       // @ form_x_koord() + 9, form_y_koord() + 40  SAY "Zaduzuje  " GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. p_partner( @_IdZaduz2, 21, 5 )
       // ENDIF
-      read; ESC_RETURN K_ESC
+      READ
+      ESC_RETURN K_ESC
+
    ELSE
       @ form_x_koord() + 6, form_y_koord() + 2   SAY "Otpremnica - Broj: "; ?? _BrFaktP
       @ form_x_koord() + 6, Col() + 2 SAY "Datum: "; ??  _DatFaktP
@@ -46,6 +48,7 @@ FUNCTION kalk_get_1_12()
 
       @ form_x_koord() + 9, form_y_koord() + 2   SAY "Magacinski konto zaduzuje   "; ?? _IdKonto2
    ENDIF
+
    @ form_x_koord() + 10, form_y_koord() + 66 SAY "Tarif.br->"
 
    kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), form_x_koord() + 11, form_y_koord() + 2, @aPorezi )
@@ -81,6 +84,7 @@ FUNCTION kalk_get_1_12()
    _GKolicina := 0
 
    IF kalk_is_novi_dokument()
+
       select_o_koncij( _idkonto )
       select_o_roba( _IdRoba )
 
@@ -125,8 +129,8 @@ FUNCTION kalk_get_1_12()
 
    @ form_x_koord() + 16, form_y_koord() + 2  SAY8 "MP marža:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
    @ form_x_koord() + 16, Col() + 1  GET _Marza2 PICTURE  PicDEM ;
-      valid {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), _Tmarza := "A", ;                // VP marza
-      _marza := _vpc / ( 1 + _PORVT ) -_fcj, .T. }       // VP marza
+      VALID {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), _Tmarza := "A", ;                // VP marza
+      _marza := _vpc / ( 1 + _PORVT ) - _fcj, .T. }       // VP marza
 
    @ form_x_koord() + 17, form_y_koord() + 2  SAY "MALOPROD. CJENA (MPC):"
    @ form_x_koord() + 17, form_y_koord() + 50 GET _MPC PICT PicDEM WHEN WMpc() VALID VMpc()

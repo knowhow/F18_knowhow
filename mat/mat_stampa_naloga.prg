@@ -115,8 +115,8 @@ FUNCTION mat_st_sint_nalog( fnovi )
          @ A, PCol() + 1 SAY cIdKonto
          @ A, PCol() + 1 SAY konto->naz
          nCI := PCol() + 1
-         @ A, PCol() + 1 SAY Dug PICTURE gPicDEM()
-         @ A, PCol() + 1 SAY Pot PICTURE gPicDEM()
+         @ A, PCol() + 1 SAY Dug PICTURE g_picdem_mat()
+         @ A, PCol() + 1 SAY Pot PICTURE g_picdem_mat()
          IF gkonto == "N" .AND. g2Valute == "D"
             @ A, PCol() + 1 SAY Dug2 PICTURE gPicdin
             @ A, PCol() + 1 SAY Pot2 PICTURE gPicdin
@@ -137,8 +137,8 @@ FUNCTION mat_st_sint_nalog( fnovi )
       SELECT mat_anal
 
       @ a, ncI - 1 SAY ""
-      @ A, PCol() + 1 SAY nDug1 PICTURE gPicDEM()
-      @ A, PCol() + 1 SAY nPot1 PICTURE gPicDEM()
+      @ A, PCol() + 1 SAY nDug1 PICTURE g_picdem_mat()
+      @ A, PCol() + 1 SAY nPot1 PICTURE g_picdem_mat()
       IF gkonto == "N" .AND. g2Valute == "D"
          @ A, PCol() + 1 SAY nDug2 PICTURE gPicdin
          @ A, PCol() + 1 SAY nPot2 PICTURE gPicdin
@@ -153,8 +153,8 @@ FUNCTION mat_st_sint_nalog( fnovi )
    @++A, 0 SAY M
    @++A, 0 SAY "ZBIR NALOGA:"
    @ a, ncI - 1 SAY ""
-   @ A, PCol() + 1  SAY nDug11  PICTURE  gPicDEM()
-   @ A, PCol() + 1  SAY nPot11  PICTURE  gPicDEM()
+   @ A, PCol() + 1  SAY nDug11  PICTURE  g_picdem_mat()
+   @ A, PCol() + 1  SAY nPot11  PICTURE  g_picdem_mat()
    IF gkonto == "N" .AND. g2Valute == "D"
       @ A, PCol() + 1  SAY nDug22 PICTURE  gPicdin
       @ A, PCol() + 1  SAY nPot22 PICTURE  gpicdin
@@ -198,5 +198,5 @@ STATIC FUNCTION Zagl12()
 
    RETURN
 
-FUNCTION gPicDEM()
-   RETURN iif( g2Valute == "N", gPicDin, gPicDEM )
+FUNCTION g_picdem_mat()
+   RETURN iif( g2Valute == "N", gPicDin, pic_iznos_bilo_gpicdem() )

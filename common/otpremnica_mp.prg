@@ -21,7 +21,7 @@ STATIC nDuzStrKorekcija := 0
 
 // glavna funkcija za poziv stampe fakture a4
 // lStartPrint - pozovi funkcije stampe START PRINT
-FUNCTION omp_print( lStartPrint )
+FUNCTION fakt_otpremnica_mp_13_print( lStartPrint )
 
 
    // ako je nil onda je uvijek .t.
@@ -29,9 +29,9 @@ FUNCTION omp_print( lStartPrint )
       lStartPrint := .T.
    ENDIF
 
-   PIC_KOLICINA( PadL( AllTrim( Right( PicKol, LEN_KOLICINA() ) ), LEN_KOLICINA(), "9" ) )
-   PIC_VRIJEDNOST( PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST() ) ), LEN_VRIJEDNOST(), "9" ) )
-   PIC_CIJENA( PadL( AllTrim( Right( PicCDem, LEN_CIJENA() ) ), LEN_CIJENA(), "9" ) )
+   PIC_KOLICINA( PadL( AllTrim( Right( fakt_pic_kolicina(), LEN_KOLICINA() ) ), LEN_KOLICINA(), "9" ) )
+   PIC_VRIJEDNOST( PadL( AllTrim( Right( fakt_pic_iznos(), LEN_VRIJEDNOST() ) ), LEN_VRIJEDNOST(), "9" ) )
+   PIC_CIJENA( PadL( AllTrim( Right( fakt_pic_cijena(), LEN_CIJENA() ) ), LEN_CIJENA(), "9" ) )
 
    nDuzStrKorekcija := 0
 

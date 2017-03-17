@@ -57,8 +57,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
 
    @ PRow(), 123 SAY "Str:" + Str( ++nStr, 3 )
 
-   select_o_partner()
-   HSEEK cIdPartner
+   select_o_partner( cIdPartner )
 
    ? "OTPREMNICA Broj:", cBrFaktP, "Datum:", dDatFaktP
 

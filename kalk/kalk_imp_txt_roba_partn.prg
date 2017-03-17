@@ -135,7 +135,7 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
    LOCAL cTmpSif, hRec, lOk := .T., hParams, lPromjena
 
-   o_roba()
+//   o_roba()
    o_sifk()
    o_sifv()
 
@@ -347,7 +347,7 @@ STATIC FUNCTION provjera_roba_po_sifradob_postoji()
 
    LOCAL aRet, cInd
 
-   o_roba()
+  // o_roba()
    SELECT kalk_imp_temp
    GO TOP
 

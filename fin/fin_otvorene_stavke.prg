@@ -127,7 +127,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
 
    cDokument := Space( 8 )
    picBHD := FormPicL( gPicBHD, 14 )
-   picDEM := FormPicL( gPicDEM, 10 )
+   picDEM := FormPicL( pic_iznos_eur(), 10 )
 
    IF fTiho .OR. Pitanje(, "Želite li prikaz sa datumima dokumenta i valutiranja ? (D/N)", "D" ) == "D"
       lEx := .T.
@@ -157,9 +157,9 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
 
    ELSEIF fsolo
 
-      //o_suban()
+      // o_suban()
       // o_partner()
-      //o_konto()
+      // o_konto()
       cIdFirma := self_organizacija_id()
       cIdkonto := Space( 7 )
       cIdPartner := Space( 6 )
@@ -170,9 +170,10 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       ELSE
          @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_Konto( @cIdkonto )
-      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
-      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
+
+      @ m_x + 2, m_y + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID p_konto( @cIdkonto )
+      @ m_x + 3, m_y + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
+      @ m_x + 5, m_y + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
       READ
       ESC_BCR
       Boxc()
@@ -656,7 +657,7 @@ FUNCTION StBrVeze()
 
    cDokument := Space( 8 )
    picBHD := FormPicL( gPicBHD, 13 )
-   picDEM := FormPicL( gPicDEM, 10 )
+   picDEM := FormPicL( pic_iznos_eur(), 10 )
    IF fin_dvovalutno()
       M := "-------- -------- " + "------- ---- -- ------------- ------------- ------------- ---------- ---------- ---------- --"
    ELSE
@@ -781,12 +782,7 @@ FUNCTION ZagBRVeze()
    RETURN .T.
 
 
-
-
-
-
-
-/* fin_ostav_stampa_azuriranih_promjena()
+/*
  *     Stampa promjena
  */
 

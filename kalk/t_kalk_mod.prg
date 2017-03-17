@@ -261,10 +261,12 @@ METHOD TKalkMod:set_module_gvars()
    gDecKol := fetch_metric( "kalk_broj_decimala_za_kolicinu", nil, gDeckol )
    gDefNiv := fetch_metric( "kalk_promjena_cijena_odgovor", nil, gDefNiv )
    gVarEv := fetch_metric( "kalk_varijanta_evidencije", nil, gVarEv )
-   gPicCDem := fetch_metric( "kalk_format_prikaza_cijene", nil, gPicCDEM )
+
+      
    gPicProc := fetch_metric( "kalk_format_prikaza_procenta", nil, gPicProc )
-   gPicDem := fetch_metric( "kalk_format_prikaza_iznosa", nil, gPicDEM )
-   gPicKol := fetch_metric( "kalk_format_prikaza_kolicine", nil, gPicKol )
+
+
+
    gPicNc := fetch_metric( "kalk_format_prikaza_nabavne_cijene", nil, gPicNC )
 
    //gFPicCDem := fetch_metric( "kalk_format_prikaza_cijene_prosirenje", nil, gFPicCDem )

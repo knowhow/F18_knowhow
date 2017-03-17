@@ -34,10 +34,10 @@ FUNCTION kalk_kartica_magacin()
    PRIVATE fKNabC := .F.
    PRIVATE fVeci := .F.
 
-   PRIVATE PicCDEM := global_pic_cijena()
+   PRIVATE PicCDEM := prosiri_pic_cjena_za_2()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := global_pic_iznos()
-   PRIVATE PicKol := global_pic_kolicina()
+   PRIVATE PicDEM := prosiri_pic_iznos_za_2()
+   PRIVATE PicKol := prosiri_pic_kolicina_za_2()
 
    kartica_magacin_open_tabele()
 
@@ -698,7 +698,7 @@ STATIC FUNCTION kartica_magacin_open_tabele()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+   //o_roba()
    o_konto()
    o_koncij()
    o_kalk() // kalk_kartica

@@ -17,7 +17,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
    LOCAL nCol1 := 0
 
    picBHD := FormPicL( "9 " + gPicBHD, 16 )
-   picDEM := FormPicL( "9 " + gPicDEM, 16 )
+   picDEM := FormPicL( "9 " + pic_iznos_eur(), 16 )
 
    cIdFirma := self_organizacija_id(); nIznosBHD := 0; nDana := 30; cIdKonto := Space( 7 )
 
@@ -58,19 +58,21 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    PRIVATE cViseManje := ">"
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "KONTO  " GET cIdKonto VALID P_Konto( @cIdKonto )
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Broj dana ?" GET cViseManje VALID cViseManje $ "><"
-   @ form_x_koord() + 5, Col() + 2 GET nDana PICTURE "9999"
 
-   @ form_x_koord() + 6, form_y_koord() + 2 SAY "obracun od " GET dDatumOd
-   @ form_x_koord() + 6, Col() + 2 SAY  "do datuma:" GET dDatum
-   @ form_x_koord() + 8, form_y_koord() + 2 SAY "duguje/potrazuje (1/2):" GET cD_P
-   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Uzeti u obzir datum valutiranja :" GET cObzirDatVal PICT "@!" VALID cObzirDatVal $ "DN" when {|| cObzirDatVal := iif( cViseManje = ">", "D", "N" ), .T. }
-   @ form_x_koord() + 10, form_y_koord() + 2 SAY "Uzeti u obzir markere           :" GET cMarkeri     PICT "@!" VALID cObzirDatVal $ "DN"
+   @ m_x + 4, m_y + 2 SAY "KONTO  " GET cIdKonto VALID p_konto( @cIdKonto )
+   @ m_x + 5, m_y + 2 SAY "Broj dana ?" GET cViseManje VALID cViseManje $ "><"
+   @ m_x + 5, Col() + 2 GET nDana PICTURE "9999"
 
-   @ form_x_koord() + 12, form_y_koord() + 2 SAY "prikaz pojedinacnog racuna:" GET cPojed VALID cPojed $ "DN" PICT "@!"
-   @ form_x_koord() + 13, form_y_koord() + 2 SAY "prikaz ukupno za partnera :" GET cUkupnoPartner VALID cUkupnoPartner $ "DN" PICT "@!"
-   @ form_x_koord() + 14, form_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi)" GET qqBrDok PICT "@S20"
+   @ m_x + 6, m_y + 2 SAY "obracun od " GET dDatumOd
+   @ m_x + 6, Col() + 2 SAY  "do datuma:" GET dDatum
+   @ m_x + 8, m_y + 2 SAY "duguje/potrazuje (1/2):" GET cD_P
+   @ m_x + 9, m_y + 2 SAY "Uzeti u obzir datum valutiranja :" GET cObzirDatVal PICT "@!" VALID cObzirDatVal $ "DN" when {|| cObzirDatVal := iif( cViseManje = ">", "D", "N" ), .T. }
+   @ m_x + 10, m_y + 2 SAY "Uzeti u obzir markere           :" GET cMarkeri     PICT "@!" VALID cObzirDatVal $ "DN"
+
+   @ m_x + 12, m_y + 2 SAY "prikaz pojedinacnog racuna:" GET cPojed VALID cPojed $ "DN" PICT "@!"
+   @ m_x + 13, m_y + 2 SAY "prikaz ukupno za partnera :" GET cUkupnoPartner VALID cUkupnoPartner $ "DN" PICT "@!"
+   @ m_x + 14, m_y + 2 SAY "Uslov za broj veze (prazno-svi)" GET qqBrDok PICT "@S20"
+
    READ
    ESC_BCR
 
@@ -271,7 +273,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
 
    closeret
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -285,9 +287,9 @@ FUNCTION ZaglSpBrDana()
 
    ?
    P_COND
-   ?? "FIN: SPECIFIKACIJA PARTNERA SA NEPLA�ENIM RA�UNIMA " + iif( cViseManje = ">", "PREKO ", "DO " ) + Str( nDana, 3 ) + " DANA  NA DAN "; ?? dDatum
+   ?? "FIN: SPECIFIKACIJA PARTNERA SA NEPLACENIM RACUNIMA " + iif( cViseManje = ">", "PREKO ", "DO " ) + Str( nDana, 3 ) + " DANA  NA DAN "; ?? dDatum
    IF !Empty( dDatumOd )
-      ? "     obuhva�en je period:", dDatumOd, "-", dDatum
+      ? "     obuhvacen je period:", dDatumOd, "-", dDatum
    ENDIF
 
    IF !Empty( qqBrDok )
@@ -314,9 +316,9 @@ FUNCTION ZaglSpBrDana()
    ENDIF
    ? "*RED *" + PadC( "PART-", FIELD_PARTNER_ID_LENGTH ) + "*      NAZIV POSLOVNOG PARTNERA      PTT     MJESTO         *  BROJ  * DATUM  * K1-K4  *"
    IF fin_dvovalutno()
-      ?? PadC( "NEPLA�ENO", 35 )
+      ?? PadC( "NEPLACENO", 35 )
    ELSE
-      ?? PadC( "NEPLA�ENO", 17 )
+      ?? PadC( "NEPLACENO", 17 )
    ENDIF
 
    ? " BR. " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + "                                                                                         "
@@ -332,7 +334,7 @@ FUNCTION ZaglSpBrDana()
    IF cD_P = "1"
       cPom += "    DUGUJE "
    ELSE
-      cPom += "   POTRA�. "
+      cPom += "   POTRAZ. "
    ENDIF
    cPom += ValDomaca() + "  * "
 
@@ -340,7 +342,7 @@ FUNCTION ZaglSpBrDana()
       IF cD_P = "1"
          cPom += "  DUGUJE "
       ELSE
-         cPom += " POTRA�. "
+         cPom += " POTRAZ. "
       ENDIF
       cPom += ValPomocna() + "  *"
    ENDIF

@@ -30,7 +30,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    cIdFirma := self_organizacija_id()
 
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
-   PRIVATE picDEM := FormPicL( gPicDEM, 12 )
+   PRIVATE picDEM := FormPicL( pic_iznos_eur(), 12 )
    PRIVATE qqKonto := qqKonto2 := qqPartner := ""
 
    o_params()
@@ -87,9 +87,11 @@ FUNCTION fin_suban_kartica2( lOtvSt )
          qqKonto := PadR( qqKonto, 7 )
          qqKonto2 := PadR( qqKonto2, 7 )
          qqPartner := PadR( qqPartner, 6 )
-         @ form_x_koord() + 6, form_y_koord() + 2 SAY "Konto   " GET qqKonto  VALID P_Konto( @qqKonto )
-         @ form_x_koord() + 7, form_y_koord() + 2 SAY "Konto 2 " GET qqKonto2  VALID P_Konto( @qqKonto2 ) .AND. qqKonto2 > qqkonto
-         @ form_x_koord() + 8, form_y_koord() + 2 SAY "Partner (prazno svi)" GET qqPartner valid ( ";" $ qqpartner ) .OR. Empty( qqPartner ) .OR. p_partner( @qqPartner )  PICT "@!"
+
+         @ m_x + 6, m_y + 2 SAY "Konto   " GET qqKonto  VALID p_konto( @qqKonto )
+         @ m_x + 7, m_y + 2 SAY "Konto 2 " GET qqKonto2  VALID p_konto( @qqKonto2 ) .AND. qqKonto2 > qqkonto
+         @ m_x + 8, m_y + 2 SAY "Partner (prazno svi)" GET qqPartner valid ( ";" $ qqpartner ) .OR. Empty( qqPartner ) .OR. p_partner( @qqPartner )  PICT "@!"
+
       ENDIF
 
       @ form_x_koord() + 9, form_y_koord() + 2 SAY "Datum dokumenta od:" GET dDatod
@@ -529,7 +531,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
 
       IF nProlaz = 0
          EXIT
-      ELSEIF nprolaz == 1
+      ELSEIF nProlaz == 1
          SEEK cidfirma + qqkonto + cidpartner + Chr( 255 )
          IF qqkonto <> idkonto
             nProlaz := 2

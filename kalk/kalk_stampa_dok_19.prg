@@ -133,8 +133,7 @@ FUNCTION kalk_stampa_dok_19()
 
    PrnClanoviKomisije()
 
-   RETURN
-// }
+   RETURN .T.
 
 
 FUNCTION head_19()
@@ -143,7 +142,7 @@ FUNCTION head_19()
    ? "*BR*          *          *MPC SA PDV*   MPC    *          *          *          *MPC SA PDV*MPC SA PDV*"
    ? "*  *          *          *   sum    *   sum    *          *   sum    *   sum    *   sum    *   sum   *"
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -207,7 +206,6 @@ FUNCTION Obraz19()
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
       vise_kalk_dok_u_pripremi( cIdd )
-
       select_o_roba( kalk_pripr->IdRoba )
       select_o_tarifa( kalk_pripr->IdTarifa )
 
@@ -252,7 +250,7 @@ FUNCTION Obraz19()
 
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 /*

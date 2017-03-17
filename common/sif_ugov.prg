@@ -627,7 +627,7 @@ FUNCTION P_Ugov2( cIdPartner )
 
    AAdd( ImeKol, { "IDRoba",   {|| IdRoba }, "IDROBA", {|| .T. }, {|| glDistrib .AND. Right( Trim( widroba ), 1 ) == ";" .OR. P_Roba( @widroba ) }, ">" } )
 
-   AAdd( ImeKol, { PadC( "Kol.", Len( pickol ) ), {|| Transform( kolicina, pickol ) }, "KOLICINA", {|| .T. }, {|| .T. }, ">" } )
+   AAdd( ImeKol, { PadC( "Kol.", Len( fakt_pic_kolicina() ) ), {|| Transform( kolicina, fakt_pic_kolicina() ) }, "KOLICINA", {|| .T. }, {|| .T. }, ">" } )
 
    IF rugov->( FieldPos( "K1" ) ) <> 0
       IF my_get_from_ini( 'Fakt_Ugovori', "K2", 'D' ) == "D"

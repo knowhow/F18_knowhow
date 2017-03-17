@@ -81,8 +81,6 @@ FUNCTION kalk_meni_f10()
    AAdd( aOpc, "K. veleprodaja na osnovu dopreme u magacin (16->14)" )
    AAdd( aOpcExe, {|| Iz16u14() } )
 
-   AAdd( aOpc, "L. ubacivanje troškova-uvozna kalkulacija" )
-   AAdd( aOpcexe, {|| KalkTrUvoz() } )
 
    /*
    AAdd( opc, "2. pretvori maloprodajni popust u smanjenje MPC" )
@@ -197,7 +195,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
    IF _opt == 2
 
       o_kalk_pripr()
-      o_roba()
+    //  o_roba()
       o_koncij()
       o_konto()
 
@@ -221,8 +219,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
          _update := .T.
          hRec := dbf_get_rec()
 
-         SELECT roba
-         HSEEK hRec[ "idroba" ]
+         select_o_roba(  hRec[ "idroba" ] )
 
          IF !Found()
             MsgBeep( "Nepostojeća šifra artikla " + hRec[ "idroba" ] )
@@ -314,7 +311,7 @@ STATIC FUNCTION kalk_printaj_duple_stavke_iz_pripreme()
    LOCAL aRobaDupli := {}
    LOCAL nScan, nI
 
-   o_roba()
+//   o_roba()
    o_kalk_pripr()
 
    SELECT kalk_pripr

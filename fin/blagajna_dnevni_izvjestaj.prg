@@ -358,7 +358,7 @@ FUNCTION blag_azur()
    LOCAL nCOpis := 0
    LOCAL cOpis := ""
    LOCAL lSumiraj
-   PRIVATE pici := FormPicL( "9," + gPicDEM, 12 )
+   PRIVATE pici := FormPicL( "9," + pic_iznos_eur(), 12 )
    PRIVATE cLine := ""
 
    // lSumiraj := ( my_get_from_ini("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )

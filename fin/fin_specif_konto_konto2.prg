@@ -12,7 +12,7 @@ FUNCTION SpecKK2( lOtvSt )
    cIdFirma := self_organizacija_id()
 
    PRIVATE picBHD := FormPicL( "9 " + gPicBHD, 16 )
-   PRIVATE picDEM := FormPicL( "9 " + gPicDEM, 14 ), cPG := "D"
+   PRIVATE picDEM := FormPicL( "9 " + pic_iznos_eur(), 14 ), cPG := "D"
    PRIVATE lOtvoreneStavke := lOtvSt
 
    o_konto()
@@ -48,12 +48,21 @@ FUNCTION SpecKK2( lOtvSt )
 
       qqKonto := PadR( qqKonto, 7 )
       qqKonto2 := PadR( qqKonto2, 7 )
+<<<<<<< HEAD
       @ form_x_koord() + 5, form_y_koord() + 2 SAY "Konto   " GET qqKonto  VALID P_Konto( @qqKonto )
       @ form_x_koord() + 6, form_y_koord() + 2 SAY "Konto 2 " GET qqKonto2  VALID P_Konto( @qqKonto2 ) .AND. qqKonto2 > qqkonto
       @ form_x_koord() + 7, form_y_koord() + 2 SAY "Partner " GET qqPartner PICT "@!S50"
       @ form_x_koord() + 8, form_y_koord() + 2 SAY "Datum dokumenta od:" GET dDatod
       @ form_x_koord() + 8, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
       @ form_x_koord() + 9, form_y_koord() + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG PICT "@!" VALID cPG $ "DN"
+=======
+      @ m_x + 5, m_y + 2 SAY "Konto   " GET qqKonto  VALID p_konto( @qqKonto )
+      @ m_x + 6, m_y + 2 SAY "Konto 2 " GET qqKonto2  VALID p_konto( @qqKonto2 ) .AND. qqKonto2 > qqkonto
+      @ m_x + 7, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
+      @ m_x + 8, m_y + 2 SAY "Datum dokumenta od:" GET dDatod
+      @ m_x + 8, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
+      @ m_x + 9, m_y + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG PICT "@!" VALID cPG $ "DN"
+>>>>>>> 23100-ld
       IF fin_dvovalutno()
          @ form_x_koord() + 10, form_y_koord() + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)" GET cDinDem PICT "@!" VALID cDinDem $ "12"
       ENDIF

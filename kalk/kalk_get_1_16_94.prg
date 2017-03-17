@@ -84,11 +84,9 @@ FUNCTION kalk_get_1_94()
 
 
 
-   // check_datum_posljednje_kalkulacije()
-   // DuplRoba()
-
    _GKolicina := 0
    IF kalk_is_novi_dokument()
+
       select_o_roba( _IdRoba )
       IF koncij->naz == "P2"
          _nc := plc
@@ -132,6 +130,7 @@ FUNCTION kalk_get_1_94()
 
 // koristi se stkalk14   za stampu kalkulacije
 // stkalk 95 za stampu 16-ke
+
 FUNCTION KM94()
 
    LOCAL nR1, nR2, nR3

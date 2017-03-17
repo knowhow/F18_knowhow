@@ -50,9 +50,9 @@ FUNCTION lager_lista_magacin()
    LOCAL dL_izlaz := CToD( "" )
    LOCAL hParams
 
-   // pPicDem := global_pic_iznos()
-   // pPicCDem := global_pic_cijena()
-   // pPicKol := global_pic_kolicina()
+   // pPicDem := prosiri_pic_iznos_za_2()
+   // pPicCDem := prosiri_pic_cjena_za_2()
+   // pPicKol := prosiri_pic_kolicina_za_2()
 
    cIdFirma := self_organizacija_id()
    cPrikazDob := "N"
@@ -401,8 +401,7 @@ FUNCTION lager_lista_magacin()
       dL_ulaz := CToD( "" )
       dL_izlaz := CToD( "" )
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba(  cIdRoba )
 
       // pretrazi artikle po nazivu
       IF ( !Empty( cArtikalNaz ) .AND. At( AllTrim( cArtikalNaz ), AllTrim( roba->naz ) ) == 0 )
@@ -736,21 +735,21 @@ FUNCTION lager_lista_magacin()
 
 
          IF cMink <> "N" .AND. nMink > 0
-            @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( global_pic_kolicina() ) )
+            @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( prosiri_pic_kolicina_za_2() ) )
             @ PRow(), PCol() + 1 SAY say_kolicina( nKJMJ * nMink  )
          ENDIF
 
 
          // ulaz - prazno
-         @ PRow(), nCol0 SAY Space( Len( global_pic_kolicina() ) )
+         @ PRow(), nCol0 SAY Space( Len( prosiri_pic_kolicina_za_2() ) )
          // izlaz - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( global_pic_kolicina() ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_kolicina_za_2() ) )
          // stanje - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( global_pic_kolicina() ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_kolicina_za_2() ) )
          // nv.dug - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( global_pic_iznos() ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_iznos_za_2() ) )
          // nv.pot - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( global_pic_iznos() ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_iznos_za_2() ) )
          // prikazi NC
          IF Round( nUlaz - nIzlaz, 4 ) <> 0
 
@@ -759,11 +758,11 @@ FUNCTION lager_lista_magacin()
          ENDIF
          IF cDoNab == "N"
             // pv.dug - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( global_pic_iznos() ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_iznos_za_2() ) )
             // rabat - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( global_pic_iznos() ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_iznos_za_2() ) )
             // pv.pot - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( global_pic_iznos() ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_iznos_za_2() ) )
             // prikazi PC
             IF Round( nUlaz - nIzlaz, 4 ) <> 0
                @ PRow(), PCol() + 1 SAY say_cijena( nVPCIzSif )
@@ -1016,7 +1015,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
    nPom := 3
    AAdd( aLLM, { nPom, PadC( "jmj", nPom ), PadC( "", nPom ), PadC( "3", nPom ) } )
 
-   nPom := Len( global_pic_kolicina() )
+   nPom := Len( prosiri_pic_kolicina_za_2() )
    // ulaz
    AAdd( aLLM, { nPom, PadC( "ulaz", nPom ), PadC( "", nPom ), PadC( "4", nPom ) } )
    // izlaz
@@ -1028,7 +1027,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    // NV podaci
    // -------------------------------
-   nPom := Len( global_pic_cijena() )
+   nPom := Len( prosiri_pic_cjena_za_2() )
    // nv dug.
    AAdd( aLLM, { nPom, PadC( "NV.Dug.", nPom ), PadC( "", nPom ), PadC( "6", nPom ) } )
    // nv pot.
@@ -1038,7 +1037,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    IF cDoNab == "N"
 
-      nPom := Len( global_pic_cijena() )
+      nPom := Len( prosiri_pic_cjena_za_2() )
       // pv.dug
       AAdd( aLLM, { nPom, PadC( "PV.Dug.", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
       // rabat
@@ -1054,7 +1053,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    IF cSredCij == "D"
 
-      nPom := Len( global_pic_cijena() )
+      nPom := Len( prosiri_pic_cjena_za_2() )
       // sredi cijene
       AAdd( aLLM, { nPom, PadC( "Sred.cij", nPom ), PadC( "", nPom ), PadC( "", nPom ) } )
 
@@ -1222,8 +1221,7 @@ STATIC FUNCTION _gen_xml( hParams )
 
       _rabat := 0
 
-      SELECT roba
-      HSEEK _idroba
+      select_o_roba( _idroba )
 
       IF ( !Empty( _art_naz ) .AND. At( AllTrim( _art_naz ), AllTrim( roba->naz ) ) == 0 )
          SELECT kalk
@@ -1447,7 +1445,7 @@ STATIC FUNCTION kalk_open_tables()
 
    o_sifk()
    o_sifv()
-   o_roba()
+   //o_roba()
    IF o_koncij()
       ?E "open koncij ok"
    ELSE

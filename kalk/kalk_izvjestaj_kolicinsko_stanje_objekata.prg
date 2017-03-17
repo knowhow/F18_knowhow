@@ -67,7 +67,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    o_sifk()
    o_sifv()
-   o_roba()
+//   o_roba()
    O_K1
    O_OBJEKTI
 
@@ -75,7 +75,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    cPicCDem := "999999.999"
    cPicProc := "999999.99%"
    cPicDem := "9999999.99"
-   cPicKol := gPicKol
+   cPicKol := pic_kolicina_bilo_gpickol()
    qqKonto := PadR( "13;", 60 )
    qqRoba := Space( 60 )
 
@@ -237,7 +237,7 @@ STATIC FUNCTION otvori_tabele()
 
    O_POBJEKTI
    o_koncij()
-   o_roba()
+  // o_roba()
    o_konto()
    o_tarifa()
    O_K1

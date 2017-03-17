@@ -11,7 +11,6 @@ FUNCTION PregNDP()
    PRIVATE cMjestoPar := Space( 80 )
 
    //o_partner()
-
    //o_konto()
 
    Box( "#PREGLED NOVIH DUGOVANJA/POTRAZIVANJA", 15, 72 )
@@ -41,9 +40,11 @@ FUNCTION PregNDP()
    PRIVATE cPG := "D"
    PRIVATE cPoRP := "2"
 
+
    @ form_x_koord() + 3, form_y_koord() + 2 SAY "Konto:" GET cIdkonto VALID P_Konto( @cidkonto )
    @ form_x_koord() + 5, form_y_koord() + 2 SAY "Period:" GET dDatOd
    @ form_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo VALID dDatDo >= dDatOd
+
    IF fin_dvovalutno()
       @ form_x_koord() + 6, form_y_koord() + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)"  GET cDinDEM VALID cdindem $ "12"
    ENDIF
@@ -332,4 +333,4 @@ FUNCTION Zagl9()
       ? m
    ENDIF
 
-   RETURN
+   RETURN .T.

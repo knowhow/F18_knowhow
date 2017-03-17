@@ -255,7 +255,7 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( oDataset, hParams )
    o_kalk_pripr()
    o_kalk_doks()
    o_koncij()
-   o_roba()
+//   o_roba()
    o_tarifa()
 
    IF glBrojacPoKontima

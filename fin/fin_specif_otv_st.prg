@@ -21,7 +21,7 @@ FUNCTION fin_specif_otvorene_stavke()
    nRok := 0
    cIdKonto := Space( 7 )
    picBHD := FormPicL( "9 " + gPicBHD, 21 )
-   picDEM := FormPicL( "9 " + gPicDEM, 21 )
+   picDEM := FormPicL( "9 " + pic_iznos_eur(), 21 )
 
    cIdRj := "999999"
    cFunk := "99999"
@@ -43,13 +43,14 @@ FUNCTION fin_specif_otvorene_stavke()
       IF gNW == "D"
          @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto    " GET cIdKonto VALID P_Konto( @cIDKonto ) PICT "@!"
-      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Od datuma" GET dDatOd
-      @ form_x_koord() + 5, Col() + 2 SAY "do" GET dDatdo
-      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
-      @ form_x_koord() + 8, form_y_koord() + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
+
+      @ m_x + 4, m_y + 2 SAY "Konto    " GET cIdKonto VALID p_konto( @cIDKonto ) PICT "@!"
+      @ m_x + 5, m_y + 2 SAY "Od datuma" GET dDatOd
+      @ m_x + 5, Col() + 2 SAY "do" GET dDatdo
+      @ m_x + 7, m_y + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
+      @ m_x + 8, m_y + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
 
       UpitK1k4( 9, .F. )
 
@@ -207,11 +208,11 @@ FUNCTION fin_specif_otvorene_stavke()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
-/* ZaglSpK()
+/*
  *     Zaglavlje specifikacije
  */
 
@@ -232,12 +233,12 @@ FUNCTION ZaglSpK()
 
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
-   //IF gNW == "D"
-      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
-   //ELSE
-  //    SELECT PARTN; HSEEK cIdFirma
-  //    ? "Firma:", cidfirma, partn->naz, partn->naz2
-   //ENDIF
+   // IF gNW == "D"
+   ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
+   // ELSE
+   // SELECT PARTN; HSEEK cIdFirma
+   // ? "Firma:", cidfirma, partn->naz, partn->naz2
+   // ENDIF
 
    IF cPrelomljeno == "N"
       P_COND2

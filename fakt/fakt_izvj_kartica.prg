@@ -18,7 +18,7 @@ FUNCTION fakt_kartica()
    LOCAL cIdfirma, nRezerv, nRevers
    LOCAL nul, nizl, nRbr, cRR, nCol1 := 0, cKolona, cBrza := "D"
    LOCAL cPredh := "2"
-   LOCAL lpickol := "@Z " + pickol
+   LOCAL lpickol := "@Z " + fakt_pic_kolicina()
    LOCAL _params := fakt_params()
 
    PRIVATE m := ""
@@ -291,9 +291,9 @@ FUNCTION fakt_kartica()
       nIzn := 0
 
       IF fId_j
-         NSRNPIdRoba( SubStr( cIdRoba, 11 ), cSintetika == "D" )
+         fakt_set_pozicija_sif_roba( SubStr( cIdRoba, 11 ), cSintetika == "D" )
       ELSE
-         NSRNPIdRoba( cIdRoba, cSintetika == "D" )
+         fakt_set_pozicija_sif_roba( cIdRoba, cSintetika == "D" )
       ENDIF
       SELECT FAKT
 
@@ -430,9 +430,9 @@ FUNCTION fakt_kartica()
                @ PRow(), PCol() + 1 SAY IF( cKolona != "U", kolicina, 0 ) PICT lpickol
                @ PRow(), PCol() + 1 SAY nUl - ( nIzl + nRevers + nRezerv ) PICT lpickol
                IF cPPC == "D"
-                  @ PRow(), PCol() + 1 SAY Cijena PICT picdem
+                  @ PRow(), PCol() + 1 SAY Cijena PICT fakt_pic_iznos()
                   @ PRow(), PCol() + 1 SAY Rabat  PICT "99.99"
-                  @ PRow(), PCol() + 1 SAY Cijena * ( 1 - Rabat / 100 ) PICT picdem
+                  @ PRow(), PCol() + 1 SAY Cijena * ( 1 -Rabat / 100 ) PICT fakt_pic_iznos()
                ENDIF
             ENDIF
 
@@ -488,7 +488,8 @@ FUNCTION fakt_kartica()
    ENDPRINT
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
+
 
 
 STATIC FUNCTION ZaglKart( lIniStrana )
@@ -526,4 +527,4 @@ STATIC FUNCTION ZaglKart( lIniStrana )
    ? Space( gnLMarg ); ?? m
    nZStrana = nStrana
 
-   RETURN
+   RETURN .T.

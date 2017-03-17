@@ -86,7 +86,7 @@ FUNCTION P_TRFP2( cId, dx, dy )
       { PadC( "Shema", 5 ),    {|| PadC( shema, 5 ) },      "shema"                    }, ;
       { PadC( "ID", 10 ),    {|| id },      "id"                    }, ;
       { PadC( "Naziv", 20 ), {|| naz },     "naz"                   }, ;
-      { "Konto  ", {|| idkonto },        "Idkonto", {|| .T. }, {|| ( "?" $ widkonto ) .OR. ( "A" $ widkonto ) .OR. ( "B" $ widkonto ) .OR. ( "IDKONT" $ widkonto ) .OR.  P_Konto( @wIdkonto ) }   }, ;
+      { "Konto  ", {|| idkonto },        "Idkonto", {|| .T. }, {|| ( "?" $ widkonto ) .OR. ( "A" $ widkonto ) .OR. ( "B" $ widkonto ) .OR. ( "IDKONT" $ widkonto ) .OR.  p_konto( @wIdkonto ) }   }, ;
       { "Tarifa", {|| idtarifa },        "IdTarifa"              }, ;
       { "D/P",   {|| PadC( D_P, 3 ) },      "D_P"                   }, ;
       { "Znak",    {|| PadC( Znak, 4 ) },        "ZNAK"                  }, ;
@@ -250,12 +250,10 @@ FUNCTION UndoSheme( lKopi )
       ENDIF
    ENDIF
 
-   RETURN
-// }
+   RETURN .T.
 
 FUNCTION PostTRFP( cDirSa )
 
-   // {
    LOCAL lVrati := .F.
    IF File( Trim( cDirSa ) + "TRFP.DBF" )
       IF File( Trim( cDirSa ) + "TRFP.CDX" )
@@ -273,7 +271,7 @@ FUNCTION PostTRFP( cDirSa )
 
 FUNCTION v_setform()
 
-   LOCAL cscsr
+   LOCAL cScsr
 
    IF File( SIFPATH + gSetForm + "TRXX.ZIP" ) .AND. pitanje(, "Sifranik parametara kontiranja iz arhive br. " + gSetForm + " ?", "N" ) == "D"
       PRIVATE ckomlin := "unzip  -o -d " + SIFPATH + gSetForm + "TRXX.ZIP " + SIFPATH

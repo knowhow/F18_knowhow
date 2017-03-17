@@ -33,10 +33,10 @@ FUNCTION kalk_kartica_prodavnica()
    LOCAL cIdvd := Space( 100 )
    LOCAL hParams := hb_Hash(), cExportDN := "N", lExport := .F.
 
-   PRIVATE PicCDEM := global_pic_cijena()
+   PRIVATE PicCDEM := prosiri_pic_cjena_za_2()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := global_pic_iznos()
-   PRIVATE PicKol := global_pic_kolicina()
+   PRIVATE PicDEM := prosiri_pic_iznos_za_2()
+   PRIVATE PicKol := prosiri_pic_kolicina_za_2()
    PRIVATE nMarza, nMarza2, nPRUC, aPorezi
 
    _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
@@ -44,7 +44,7 @@ FUNCTION kalk_kartica_prodavnica()
    o_tarifa()
    o_sifk()
    o_sifv()
-   o_roba()
+  // o_roba()
    o_konto()
    o_partner()
 
@@ -489,12 +489,12 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1 )
    nPom := 6
    AAdd( aKProd, { nPom, PadC( "Partn", nPom ) } )
 
-   nPom := Len( global_pic_kolicina() )
+   nPom := Len( prosiri_pic_kolicina_za_2() )
    AAdd( aKProd, { nPom, PadC( "Ulaz", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "Izlaz", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "Stanje", nPom ) } )
 
-   nPom := Len( global_pic_iznos() )
+   nPom := Len( prosiri_pic_iznos_za_2() )
    AAdd( aKProd, { nPom, PadC( "NC", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "PC", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "PC sa PDV", nPom ) } )
@@ -541,8 +541,8 @@ STATIC FUNCTION Zagl()
 
 FUNCTION naprometniji_artikli_prodavnica()
 
-   LOCAL PicDEM := gPicDem
-   LOCAL Pickol := "@Z " + gPicKol
+   LOCAL PicDEM := pic_iznos_bilo_gpicdem()
+   LOCAL Pickol := "@Z " + pic_kolicina_bilo_gpickol()
 
    qqKonto := "133;"
    qqRoba  := ""
@@ -595,7 +595,7 @@ FUNCTION naprometniji_artikli_prodavnica()
    SELECT params
    USE
 
-   o_roba()
+  // o_roba()
 
    find_kalk_za_period( self_organizacija_id(), NIL, NIL, NIL, dDat0, dDat1, "idroba,idvd" )
 
@@ -671,8 +671,7 @@ FUNCTION naprometniji_artikli_prodavnica()
       ? REPL( "-", Len( roba->id ) ) + " " + REPL( "-", 50 ) + " " + REPL( "-", 20 )
       FOR i := 1 TO Len( aTopI )
          cIdRoba := aTopI[ i, 1 ]
-         SELECT ROBA
-         SEEK cIdRoba
+         select_o_roba( cIdRoba )
          ? cIdRoba, Left( ROBA->naz, 50 ), PadC( Transform( aTopI[ i, 2 ], picdem ), 20 )
       NEXT
       ? REPL( "-", Len( id ) ) + " " + REPL( "-", 50 ) + " " + REPL( "-", 20 )
@@ -695,8 +694,7 @@ FUNCTION naprometniji_artikli_prodavnica()
 
       FOR i := 1 TO Len( aTopK )
          cIdRoba := aTopK[ i, 1 ]
-         SELECT ROBA
-         SEEK cIdRoba
+         select_o_roba( cIdRoba )
          ? cIdRoba, Left( ROBA->naz, 50 ), PadC( Transform( aTopK[ i, 2 ], pickol ), 20 )
       NEXT
       ? REPL( "-", Len( id ) ) + " " + REPL( "-", 50 ) + " " + REPL( "-", 20 )

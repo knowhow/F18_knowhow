@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION TFrmInvItNew( oOwner )
 
    LOCAL oObj
@@ -97,11 +96,11 @@ METHOD open()
    Box(, 20, 77 )
    SET CURSOR ON
 
-   if ::lNovaStavka
+   IF ::lNovaStavka
       ::newItem()
    ELSE
       ::loadFromTbl()
-   endif
+   ENDIF
 
    @ form_x_koord() + 1, Col() + 2   SAY " RJ:" GET ::cIdRj  PICT "@!" VALID ::vldRj()
    READ
@@ -110,7 +109,7 @@ METHOD open()
       @  form_x_koord() + 3, form_y_koord() + 40  SAY "Datum:"   GET ::dDatDok
       @  form_x_koord() + 3, form_y_koord() + Col() + 2  SAY "Broj:" GET ::cBrDok WHEN ::wheBrDok() VALID ::vldBrDok()
 
-      if ::nRbr > 1
+      IF ::nRbr > 1
          ::sayPartner( 5 )
       ELSE
          ::getPartner( 5 )
@@ -128,10 +127,10 @@ METHOD open()
 
    ENDDO
 
-   @  form_x_koord() + 11, form_y_koord() + 2  SAY "R.br:" get ::nRbr PICTURE "9999"
-   @  form_x_koord() + 11, Col() + 2  SAY "Artikal  " get ::cIdRoba PICT "@!S10" WHEN ::wheIdRoba() VALID ::vldIdRoba()
-   @  form_x_koord() + 13, form_y_koord() + 2 SAY "Knjizna kolicina " GET ::nKKolicina PICT pickol WHEN ::wheKKolicina() VALID ::vldKKolicina()
-   @  form_x_koord() + 13, Col() + 2 SAY "popisana kolicina " GET ::nPKolicina PICT pickol VALID ::vldPKolicina()
+   @  m_x + 11, m_y + 2  SAY "R.br:" GET ::nRbr PICTURE "9999"
+   @  m_x + 11, Col() + 2  SAY "Artikal  " GET ::cIdRoba PICT "@!S10" WHEN ::wheIdRoba() VALID ::vldIdRoba()
+   @  m_x + 13, m_y + 2 SAY "Knjizna kolicina " GET ::nKKolicina PICT fakt_pic_kolicina() WHEN ::wheKKolicina() VALID ::vldKKolicina()
+   @  m_x + 13, Col() + 2 SAY "popisana kolicina " GET ::nPKolicina PICT fakt_pic_kolicina() VALID ::vldPKolicina()
 
    READ
 
@@ -169,10 +168,10 @@ METHOD newItem()
    ::cIdVd := "IM"
    ::cIdRj := self_organizacija_id()
 
-   if ::nRbr == nil
+   IF ::nRbr == nil
       ::nRbr := 1
    ENDIF
-   if ::nRbr < 2
+   IF ::nRbr < 2
       ::dDatDok := Date()
    ENDIF
 
@@ -219,7 +218,7 @@ METHOD loadFromTbl()
 
    // partner nije ucitan
    IF !::oOwner:lPartnerLoaded
-      if ::nRbr > 1
+      IF ::nRbr > 1
          // memo polje sa podacima partnera je popunjeno samo u prvoj stavci
          PushWA()
          GO TOP
@@ -234,7 +233,7 @@ METHOD loadFromTbl()
          ::cMjesto := aMemo[ 5 ]
       ENDIF
       ::oOwner:lPartnerLoaded := .T.
-      if ::nRbr > 1
+      IF ::nRbr > 1
          PopWa()
       ENDIF
    ENDIF
@@ -284,7 +283,7 @@ METHOD vldRj()
    IF Empty( ::cIdRj )
       RETURN .F.
    ENDIF
-   if ::cIdRj == self_organizacija_id()
+   IF ::cIdRj == self_organizacija_id()
       RETURN .T.
    ENDIF
 
@@ -327,7 +326,7 @@ METHOD vldIdRoba()
    P_Roba( @cPom )
    ::cIdRoba := cPom
 
-   if ::lSilent
+   IF ::lSilent
       @ form_x_koord() + 14, form_y_koord() + 28 SAY "TBr: "
       ?? roba->idtarifa, "PPP", Str( tarifa->opp, 7, 2 ) + "%", "PPU", Str( tarifa->ppp, 7, 2 )
    ENDIF
@@ -355,9 +354,9 @@ METHOD wheIdRoba()
  */
 METHOD getPartner( nRow )
 
-   @  form_x_koord() + nRow, form_y_koord() + 2  SAY "Partner " get ::cPartner  PICTURE "@S30" WHEN ::whePartner() VALID ::vldPartner()
-   @  form_x_koord() + nRow + 1, form_y_koord() + 2  SAY "        " get ::cAdresa  PICTURE "@"
-   @  form_x_koord() + nRow + 2, form_y_koord() + 2  SAY "Mjesto  " get ::cMjesto  PICTURE "@"
+   @  form_x_koord() + nRow, form_y_koord() + 2  SAY "Partner " GET ::cPartner  PICTURE "@S30" WHEN ::whePartner() VALID ::vldPartner()
+   @  form_x_koord() + nRow + 1, form_y_koord() + 2  SAY "        " GET ::cAdresa  PICTURE "@"
+   @  form_x_koord() + nRow + 2, form_y_koord() + 2  SAY "Mjesto  " GET ::cMjesto  PICTURE "@"
 
    RETURN
 
@@ -391,7 +390,7 @@ METHOD whePartner()
    ::cMjesto := PadR( ::cMjesto, 30 )
 
    RETURN .T.
-// }
+
 
 /* TFrmInvIt::vldPartner()
  *     Validacija nakon unosa Partner polja - vidi je li sifra
@@ -444,7 +443,7 @@ METHOD vldPKolicina()
  */
 METHOD vldKKolicina()
 
-   if ::nKKolPrijeEdita <> ::nKKolicina
+   IF ::nKKolPrijeEdita <> ::nKKolicina
       MsgBeep( "Zasto mjenjate knjiznu kolicinu ??" )
       IF Pitanje(, "Ipak to zelite uciniti ?", "N" ) == "N"
          ::nKKolicina := ::nKKolPrijeEdita
@@ -473,10 +472,10 @@ METHOD showArtikal()
    ?? ::cIdRoba
    ?? "(" + roba->jmj + ")"
 
-   @ form_x_koord() + 18, form_y_koord() + 1   SAY "Stanje :"
-   @ form_x_koord() + 18, Col() + 1 SAY ::nNaStanju PICTURE pickol
+   @ m_x + 18, m_y + 1   SAY "Stanje :"
+   @ m_x + 18, Col() + 1 SAY ::nNaStanju PICTURE fakt_pic_kolicina()
 
    @ form_x_koord() + 19, form_y_koord() + 1   SAY "Tarifa : "
    ?? roba->idtarifa
 
-   RETURN
+   RETURN .T.

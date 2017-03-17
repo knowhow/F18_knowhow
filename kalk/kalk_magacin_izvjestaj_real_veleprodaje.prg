@@ -1,34 +1,30 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 
-// -------------------------------------------
-// realizacija vp po partnerima
-// -------------------------------------------
 FUNCTION kalk_real_partnera()
 
    LOCAL nT0 := nT1 := nT2 := nT3 := nT4 := 0
    LOCAL nCol1 := 0
    LOCAL nPom
-   LOCAL PicCDEM := gPicCDEM       // "999999.999"
+   LOCAL PicCDEM := pic_cijena_bilo_gpiccdem()       // "999999.999"
    LOCAL PicProc := gPicProc       // "999999.99%"
-   LOCAL PicDEM := gPicDEM         // "9999999.99"
-   LOCAL Pickol := gPicKol         // "999999.999"
+   LOCAL PicDEM := pic_iznos_bilo_gpicdem()         // "9999999.99"
+   LOCAL Pickol := pic_kolicina_bilo_gpickol()         // "999999.999"
 
    o_sifk()
    o_sifv()
-   o_roba()
+   // o_roba()
    o_konto()
    o_tarifa()
    o_partner()
@@ -50,7 +46,7 @@ FUNCTION kalk_real_partnera()
       IF gNW $ "DX"
          @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "Magacinski konto:" GET cidKonto PICT "@!" VALID P_Konto( @cIdKonto )
       @ form_x_koord() + 4, form_y_koord() + 2 SAY "Period:" GET dDat1
@@ -154,10 +150,10 @@ FUNCTION kalk_real_partnera()
             nVPVBP := nVPV / ( 1 + _PORVT )
             nPaNV += Round( NC * kolicina, gZaokr )
             nPaVPV += Round( VPC * ( Kolicina ), gZaokr )
-            nPaPP += Round( MPC / 100 * VPC * ( 1 -RabatV / 100 ) * Kolicina, gZaokr )
+            nPaPP += Round( MPC / 100 * VPC * ( 1 - RabatV / 100 ) * Kolicina, gZaokr )
 
             nPaRabat += Round( RabatV / 100 * VPC * Kolicina, gZaokr )
-            nPom := VPC * ( 1 -RabatV / 100 ) - NC
+            nPom := VPC * ( 1 - RabatV / 100 ) - NC
             nPaRuc += Round( nPom * Kolicina, gZaokr )
 
             IF nPom > 0
@@ -219,24 +215,24 @@ FUNCTION kalk_real_partnera()
          FF
          kalk_zagl_real_partnera()
       ENDIF
-      SELECT partn
-      HSEEK cIdPartner
+      
+      select_o_partner( cIdPartner )
       SELECT kalk
 
       ? Space( 2 ), cIdPartner, PadR( partn->naz, 25 )
 
       nCol1 := PCol() + 1
 
-      @ PRow(), nCol1    SAY nPaNV   PICT gpicdem
-      @ PRow(), PCol() + 1 SAY nPaRUC  PICT gpicdem
+      @ PRow(), nCol1    SAY nPaNV   PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nPaRUC  PICT pic_iznos_bilo_gpicdem()
 
 
 
-      @ PRow(), PCol() + 1 SAY nPaZarada PICT gpicdem
-      @ PRow(), PCol() + 1 SAY nPaVPV  PICT gpicdem
-      @ PRow(), PCol() + 1 SAY nPaRabat PICT gpicdem
-      @ PRow(), PCol() + 1 SAY nPaPP  PICT gpicdem
-      @ PRow(), PCol() + 1 SAY nPaVPV - nPaRabat + nPaPP  PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nPaZarada PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nPaVPV  PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nPaRabat PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nPaPP  PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nPaVPV - nPaRabat + nPaPP  PICT pic_iznos_bilo_gpicdem()
 
       nNV += nPaNV
       nVPV += nPaVPV
@@ -255,14 +251,14 @@ FUNCTION kalk_real_partnera()
 
    ? m
    ? "   Ukupno:"
-   @ PRow(), nCol1    SAY nNV   PICT gpicdem
-   @ PRow(), PCol() + 1 SAY nRUC  PICT gpicdem
+   @ PRow(), nCol1    SAY nNV   PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nRUC  PICT pic_iznos_bilo_gpicdem()
 
-   @ PRow(), PCol() + 1 SAY nZarada PICT gpicdem
-   @ PRow(), PCol() + 1 SAY nVPV  PICT gpicdem
-   @ PRow(), PCol() + 1 SAY nRabat PICT gpicdem
-   @ PRow(), PCol() + 1  SAY nPP  PICT gpicdem
-   @ PRow(), PCol() + 1 SAY nVPV - nRabat + nPP  PICT gpicdem
+   @ PRow(), PCol() + 1 SAY nZarada PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nVPV  PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nRabat PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1  SAY nPP  PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nVPV - nRabat + nPP  PICT pic_iznos_bilo_gpicdem()
 
    ? m
 
@@ -287,8 +283,8 @@ FUNCTION kalk_real_partnera()
    ? "**** ULAZI: ********"
    IF nulazPS <> 0
       ? "-    pocetno stanje:  "
-      @ PRow(), PCol() + 1 SAY nUlazNPS PICT gpicdem
-      @ PRow(), PCol() + 1 SAY nUlazPS PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nUlazNPS PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nUlazPS PICT pic_iznos_bilo_gpicdem()
       IF nulazPS <> 0
          @ PRow(), PCol() + 1 SAY ( nUlazPS - nUlazNPS ) / nUlazPS * 100 PICT "999.99%"
       ENDIF
@@ -296,8 +292,8 @@ FUNCTION kalk_real_partnera()
    ENDIF
    IF nulazd <> 0
       ? "-       Dobavljaci :  "
-      @ PRow(), PCol() + 1 SAY nUlazND PICT gpicdem
-      @ PRow(), PCol() + 1 SAY nUlazD PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nUlazND PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nUlazD PICT pic_iznos_bilo_gpicdem()
       IF nulazD <> 0
          @ PRow(), PCol() + 1 SAY ( nUlazD - nUlazND ) / nUlazD * 100 PICT "999.99%"
       ENDIF
@@ -305,8 +301,8 @@ FUNCTION kalk_real_partnera()
 
    IF nulazo <> 0
       ? "-           ostalo :  "
-      @ PRow(), PCol() + 1 SAY nUlazNO PICT gpicdem
-      @ PRow(), PCol() + 1 SAY nUlazO PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nUlazNO PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nUlazO PICT pic_iznos_bilo_gpicdem()
       IF nulazO <> 0
          @ PRow(), PCol() + 1 SAY ( nUlazO - nUlazNO ) / nUlazO * 100 PICT "999.99%"
       ENDIF
@@ -317,13 +313,13 @@ FUNCTION kalk_real_partnera()
       ? "**** Nivelacije ****"
       IF nNivP <> 0
          ? "-        povecanje :  "
-         @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
-         @ PRow(), PCol() + 1 SAY nNivP PICT gpicdem
+         @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+         @ PRow(), PCol() + 1 SAY nNivP PICT pic_iznos_bilo_gpicdem()
       ENDIF
       IF nNivS <> 0
          ? "-        snizenje  :  "
-         @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
-         @ PRow(), PCol() + 1 SAY nNivS PICT gpicdem
+         @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+         @ PRow(), PCol() + 1 SAY nNivS PICT pic_iznos_bilo_gpicdem()
       ENDIF
    ENDIF
 
@@ -332,16 +328,16 @@ FUNCTION kalk_real_partnera()
    ? "**** IZLAZI (Prod.vr.-Rabat) **"
 
    ? "-      realizacija :  "
-   @ PRow(), PCol() + 1 SAY nNV PICT gpicdem
-   @ PRow(), PCol() + 1 SAY nVPV - nRabat PICT gpicdem
+   @ PRow(), PCol() + 1 SAY nNV PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nVPV - nRabat PICT pic_iznos_bilo_gpicdem()
    IF ( nVPV - nRabat ) <> 0
       @ PRow(), PCol() + 1 SAY nZarada / ( nVPV - nRabat ) * 100 PICT "999.99%"
    ENDIF
 
    IF nIzlazP <> 0
       ? "-       prodavnice :  "
-      @ PRow(), PCol() + 1 SAY nIzlazNP PICT gpicdem
-      @ PRow(), PCol() + 1 SAY nIzlazP PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nIzlazNP PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nIzlazP PICT pic_iznos_bilo_gpicdem()
       IF nIzlazP <> 0
          @ PRow(), PCol() + 1 SAY ( nIzlazP - nIzlazNP ) / nIzlazP * 100 PICT "999.99%"
       ENDIF
@@ -349,8 +345,8 @@ FUNCTION kalk_real_partnera()
 
    IF nIzlazO <> 0
       ? "-           ostalo :  "
-      @ PRow(), PCol() + 1 SAY nIzlazNo PICT gpicdem
-      @ PRow(), PCol() + 1 SAY nIzlazo PICT gpicdem
+      @ PRow(), PCol() + 1 SAY nIzlazNo PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nIzlazo PICT pic_iznos_bilo_gpicdem()
       IF nIzlazO <> 0
          @ PRow(), PCol() + 1 SAY ( nIzlazO - nIzlazNO ) / nIzlazO * 100 PICT "999.99%"
       ENDIF
@@ -361,8 +357,8 @@ FUNCTION kalk_real_partnera()
    ENDPRINT
    closeret
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 
@@ -372,7 +368,6 @@ FUNCTION kalk_real_partnera()
  */
 
 FUNCTION kalk_zagl_real_partnera( fTabela )
-
 
    IF ftabela = NIL
       ftabela := .T.

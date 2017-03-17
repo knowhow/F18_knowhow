@@ -94,7 +94,7 @@ FUNCTION kalk_get_1_41()
 
       select_o_koncij( _idkonto )
       select_o_roba( _IdRoba )
-      
+
       _MPCSaPP := kalk_get_mpc_by_koncij_pravilo()
 
       IF gMagacin == "2"
@@ -173,7 +173,7 @@ FUNCTION kalk_get_1_41()
    PRIVATE cRCRP := gRCRP
 
    @ form_x_koord() + 18, form_y_koord() + 2 SAY "POPUST (C-CIJENA,P-%)" GET cRCRP VALID cRCRP $ "CP" PICT "@!"
-   @ form_x_koord() + 18, form_y_koord() + 50 GET _Rabatv PICT picdem VALID RabProcToC()
+   @ form_x_koord() + 18, form_y_koord() + 50 GET _Rabatv PICT picdem VALID proracun_rabat_za_stavku()
 
    SayPorezi( 19 )
 
@@ -195,11 +195,7 @@ FUNCTION kalk_get_1_41()
    RETURN LastKey()
 
 
-
-// ------------------------------------------
-// racuna rabat za stavku...
-// ------------------------------------------
-STATIC FUNCTION RabProcToC()
+STATIC FUNCTION proracun_rabat_za_stavku()
 
    IF cRCRP == "P"
       _rabatv := _mpc * ( _rabatv / 100 )

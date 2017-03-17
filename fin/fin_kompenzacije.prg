@@ -15,14 +15,8 @@
 STATIC picBHD
 STATIC picDEM
 
-STATIC FUNCTION _o_tables()
 
-   O_KOMP_POT
-   O_KOMP_DUG
-   //o_konto()
-   //o_partner()
 
-   RETURN .T.
 
 
 STATIC FUNCTION _get_vars( hParametri )
@@ -62,27 +56,29 @@ STATIC FUNCTION _get_vars( hParametri )
          @ form_x_koord() + nX, form_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", PadR( self_organizacija_naziv(), 30 )
       ELSE
-         @ form_x_koord() + nX, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+
+         @ m_x + nX, m_y + 2 SAY "Firma: " GET _id_firma VALID {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
       ENDIF
 
-      ++ nX
-      @ form_x_koord() + nX, form_y_koord() + 2 SAY "Konto duguje   " GET cIdKonto  VALID P_Konto( @cIdKonto )
-      ++ nX
-      @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Konto potražuje" GET cIdKonto2  VALID P_Konto( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
-      ++ nX
-      @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Partner-dužnik " GET cIdPartner VALID p_partner( @cIdPartner )  PICT "@!"
-      ++ nX
-      @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Datum dokumenta od:" GET _dat_od
-      @ form_x_koord() + nX, Col() + 2 SAY "do" GET _dat_do   VALID _dat_od <= _dat_do
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Konto duguje   " GET cIdKonto  VALID p_konto( @cIdKonto )
+      ++nX
+      @ m_x + nX, m_y + 2 SAY8 "Konto potražuje" GET cIdKonto2  VALID p_konto( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
+      ++nX
+      @ m_x + nX, m_y + 2 SAY8 "Partner-dužnik " GET cIdPartner VALID p_partner( @cIdPartner )  PICT "@!"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY8 "Datum dokumenta od:" GET _dat_od
+      @ m_x + nX, Col() + 2 SAY "do" GET _dat_do   VALID _dat_od <= _dat_do
 
-      ++ nX
-      ++ nX
+      ++nX
+      ++nX
+
 
       @ form_x_koord() + nX, form_y_koord() + 2 SAY "Sabrati po brojevima veze D/N ?"  GET cSabratiPoBrojevimaVeze VALID cSabratiPoBrojevimaVeze $ "DN" PICT "@!"
       @ form_x_koord() + nX, Col() + 2 SAY "Prikaz prebijenog stanja " GET _prelom VALID _prelom $ "DN" PICT "@!"
 
-      ++ nX
 
+      ++nX
       @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Prikaz datuma sa brojem računa (D/N) ?"  GET _sa_datumom VALID _sa_datumom $ "DN" PICT "@!"
 
       READ
@@ -131,7 +127,7 @@ FUNCTION kompenzacija()
    LOCAL cIdKonto, cIdKonto2
 
    picBHD := FormPicL( gPicBHD, 16 )
-   picDEM := FormPicL( gPicDEM, 12 )
+   picDEM := FormPicL( pic_iznos_eur(), 12 )
 
    _o_tables()
 
@@ -185,6 +181,7 @@ FUNCTION kompenzacija()
    @ form_x_koord() + _row - 3, form_y_koord() + 1 SAY8 "  <K> izaberi/ukini račun za kompenzaciju"
    @ form_x_koord() + _row - 2, form_y_koord() + 1 SAY8 "<c+P> štampanje kompenzacije                  <T> promijeni tabelu"
    @ form_x_koord() + _row - 1, form_y_koord() + 1 SAY8 "<c+N> nova stavka                           <c+T> brisanje                 <ENTER> ispravka stavke "
+
 
    FOR _n := 1 to ( _row - 4 )
       @ form_x_koord() + _n, form_y_koord() + ( _col / 2 ) SAY "|"
@@ -290,7 +287,7 @@ STATIC FUNCTION _gen_kompen( hParametri )
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &( cFilter )
+      SET FILTER TO &( cFilter )
    ENDIF
    MsgC()
 
@@ -539,7 +536,7 @@ STATIC FUNCTION key_handler( hParametri )
    LOCAL nVrati := DE_CONT
    LOCAL _area
 
-   IF ! ( ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0 )
+   IF !( ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0 )
 
       DO CASE
 
@@ -645,6 +642,7 @@ STATIC FUNCTION print_kompen( hParametri )
    _valuta := fetch_metric( "fin_kompen_valuta", my_home(), _valuta )
 
    Box(, 10, 50 )
+
    ++ nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Datum kompenzacije: " GET _dat_komp
 
@@ -662,6 +660,7 @@ STATIC FUNCTION print_kompen( hParametri )
 
    ++ nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "   Šifra (ID) dužnika: " GET _id_partn VALID p_partner( @_id_partn ) PICT "@!"
+
    READ
    BoxC()
 
@@ -691,7 +690,7 @@ STATIC FUNCTION print_kompen( hParametri )
    ENDIF
 
    IF get_file_list_array( _templates_path, cFilter, @_template, .T. ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF generisi_odt_iz_xml( _template, _xml_file )
@@ -753,7 +752,7 @@ STATIC FUNCTION _gen_xml( hParametri, xml_file )
 
    DO WHILE _temp_duz .OR. _temp_pov
 
-      ++ _br_st
+      ++_br_st
 
       xml_subnode( "item", .F. )
 
@@ -887,3 +886,14 @@ STATIC FUNCTION _skip_t_marker( _mark_12, _mark_60 )
    SELECT ( _t_arr )
 
    RETURN NIL
+
+
+
+STATIC FUNCTION _o_tables()
+
+   O_KOMP_POT
+   O_KOMP_DUG
+   //o_konto()
+   // o_partner()
+
+   RETURN .T.

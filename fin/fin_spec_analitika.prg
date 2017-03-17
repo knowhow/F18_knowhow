@@ -11,11 +11,8 @@
 
 #include "f18.ch"
 
-/*
- * Specifikacija po analitickim kontima
 
-
-FUNCTION SpecPoK()
+FUNCTION specifikacija_po_analitickim_kontima()
 
    LOCAL cSK := "N"
    PRIVATE nC := 66
@@ -23,7 +20,7 @@ FUNCTION SpecPoK()
    cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
-   -- o_partner()
+   // o_partner()
 
    dDatOd := dDatDo := CToD( "" )
 
@@ -37,11 +34,8 @@ FUNCTION SpecPoK()
 
    DO WHILE .T.
       @ form_x_koord() + 1, form_y_koord() + 6 SAY "SPECIFIKACIJA ANALITICKIH KONTA"
-      IF gNW == "D"
-         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
-      ELSE
-         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      ENDIF
+      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+
       @ form_x_koord() + 4, form_y_koord() + 2 SAY "Konto " GET qqKonto  PICT "@!S50"
       @ form_x_koord() + 5, form_y_koord() + 2 SAY "Datum od" GET dDatOd
       @ form_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo
@@ -55,14 +49,17 @@ FUNCTION SpecPoK()
          cIdRJ := "999999"
          @ form_x_koord() + 10, form_y_koord() + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
-      READ; ESC_BCR
+      READ
+      ESC_BCR
       aUsl1 := Parsiraj( qqKonto, "IdKonto" )
       IF ausl1 <> NIL; exit; ENDIF
    ENDDO
 
-    BoxC()
+   BoxC()
+
 
    IF cIdRj == "999999"; cIdRj := ""; ENDIF
+
 
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cIdRj
       cIdRj := Trim( StrTran( cIdRj, ".", "" ) )
@@ -71,16 +68,12 @@ FUNCTION SpecPoK()
 
    cIdFirma := Left( cIdFirma, 2 )
 
---   o_konto()
-   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
-      otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
-   ELSE
-      o_anal()
-   ENDIF
 
-   SELECT ANAL
-   SET ORDER TO TAG "1"
 
+
+// SELECT ANAL
+// SET ORDER TO TAG "1"
+   find_anal_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto,datnal" )
 
    cFilt1 := "IdFirma==" + dbf_quote( cIdFirma )
    IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
@@ -91,7 +84,7 @@ FUNCTION SpecPoK()
    ENDIF
 
 
-   SET FILTER to &cFilt1
+   SET FILTER TO &cFilt1
 
    GO TOP
 
@@ -109,36 +102,43 @@ FUNCTION SpecPoK()
 
    nud := nup := 0
    DO WHILE !Eof()
+
       cSin := Left( idkonto, 3 )
       nkd := nkp := 0
       DO WHILE !Eof() .AND.  cSin == Left( idkonto, 3 )
+
          cIdKonto := IdKonto
          nd := np := 0
-         IF PRow() == 0; zagl5(); ENDIF
+
+         IF PRow() == 0; zagl_spec_anal(); ENDIF
+
          DO WHILE !Eof() .AND. cIdKonto == IdKonto
             IF cTip == "1"
-               nd += dugbhd; np += potbhd
+               nD += dugbhd; nP += potbhd
             ELSE
-               nd += dugdem; np += potdem
+               nD += dugdem; nP += potdem
             ENDIF
             SKIP
          ENDDO
-         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl5(); ENDIF
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_spec_anal(); ENDIF
 
-    --     SELECT KONTO; HSEEK cidkonto; SELECT ANAL
+         select_o_konto( cIdKonto )
+
+         SELECT ANAL
+
 
          IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0
-            ? cidkonto, KONTO->naz
+            ? cIdkonto, KONTO->naz
             nC := PCol() + 1
             @ PRow(), PCol() + 1 SAY nd PICT pic
             @ PRow(), PCol() + 1 SAY np PICT pic
             @ PRow(), PCol() + 1 SAY nd - np PICT pic
-            nkd += nd; nkp += np  // ukupno  za klasu
+            nKd += nD; nKp += nP  // ukupno  za klasu
          ENDIF  // cnula
 
       ENDDO  // sintetika
 
-      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl5(); ENDIF
+      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_spec_anal(); ENDIF
       IF cSK == "D" .AND. ( nkd != 0 .OR. nkp != 0 )
          ? m
          ?  "SINT.K.", cSin, ":"
@@ -149,7 +149,8 @@ FUNCTION SpecPoK()
       ENDIF
       nUd += nKd; nUp += nKp   // ukupno za sve
    ENDDO
-   IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl5(); ENDIF
+
+   IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_spec_anal(); ENDIF
    ? m
    ? " UKUPNO:"
    @ PRow(), nC       SAY nUd PICT pic
@@ -160,17 +161,17 @@ FUNCTION SpecPoK()
    end_print()
    closeret
 
-   RETURN
+   RETURN .T.
 
 
 
 
 
-STATIC FUNCTION Zagl5()
+STATIC FUNCTION zagl_spec_anal()
 
    ?
    P_COND
-   ?? "FIN.P:SPECIFIKACIJA ANALITICKIH KONTA  ZA", AllTrim( iif( cTip == "1", ValDomaca(), ValPomocna() ) )
+   ?? "FIN.P: SPECIFIKACIJA ANALITICKIH KONTA  ZA", AllTrim( iif( cTip == "1", ValDomaca(), ValPomocna() ) )
    IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
       ?? "  ZA NALOGE U PERIODU ", dDatOd, "-", dDatDo
    ENDIF
@@ -178,12 +179,9 @@ STATIC FUNCTION Zagl5()
 
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
-   IF gNW == "D"
-      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
-   ELSE
-    --  SELECT PARTN; HSEEK cIdFirma
-      ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
-   ENDIF
+
+   ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
+
 
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       ? "Radna jedinica ='" + cIdRj + "'"
@@ -195,5 +193,3 @@ STATIC FUNCTION Zagl5()
    ? m
 
    RETURN .T.
-
- */

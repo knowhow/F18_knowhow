@@ -57,16 +57,18 @@ FUNCTION fakt_kalk_prenos_10_14()
 
    // PRIVATE lVrsteP := _params[ "fakt_vrste_placanja" ]
 
-   //o_koncij()
+   // o_koncij()
    o_kalk_pripr()
    // o_kalk()
    // o_kalk_doks()
    // o_kalk_doks2()
-   //o_roba()
-  // o_konto()
-  // o_partner()
-  // o_tarifa()
-  // o_fakt()
+
+   // o_roba()
+   // o_konto()
+   // o_partner()
+   // o_tarifa()
+   // o_fakt()
+
 
    dDatKalk := fetch_metric( "kalk_fakt_prenos_10_14_datum", my_user(), Date() )
    cIdKonto := fetch_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), PadR( "1200", 7 ) )
@@ -168,11 +170,11 @@ FUNCTION fakt_kalk_prenos_10_14()
             nRbr := Val( Rbr )
          ENDIF
 
-         SELECT fakt
-         IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-            MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u šifarniku!#Prenos nije izvršen!" )
-            LOOP
-         ENDIF
+         // SELECT fakt
+         // IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+         // MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u šifarniku!#Prenos nije izvršen!" )
+         // LOOP
+         // ENDIF
 
          find_kalk_doks2_by_broj_dokumenta( cIdFirma, "14", cBrKalk )
 
@@ -223,7 +225,7 @@ FUNCTION fakt_kalk_prenos_10_14()
             REPLACE idfirma WITH cIdFirma, ;
                rbr     WITH Str( ++nRbr, 3 ), ;
                idvd WITH "14", ;   // izlazna faktura
-            brdok WITH cBrKalk, ;
+               brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
                idpartner WITH cIdPartner, ;
                idtarifa WITH ROBA->idtarifa, ;
@@ -421,7 +423,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
          SELECT fakt
 
-         IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+         IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
             MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
             LOOP
          ENDIF
@@ -430,7 +432,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
             select_o_roba( fakt->idroba )
             select_o_tarifa( roba->idtarifa )
-
+        
             SELECT fakt
             IF AllTrim( podbr ) == "."  .OR. roba->tip $ "UY"
                SKIP
@@ -606,7 +608,7 @@ FUNCTION kalk_fakt_prenos_period()
          SELECT fakt
 
          // provjeri sifru u sifarniku
-         IF !ProvjeriSif( "!eof() .and. '" + fakt->idfirma + fakt->idtipdok + fakt->brdok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+         IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + fakt->idfirma + fakt->idtipdok + fakt->brdok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
             MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
             LOOP
          ENDIF
@@ -690,13 +692,14 @@ FUNCTION kalk_fakt_prenos_period()
 
 STATIC FUNCTION _o_prenos_tbls()
 
-   //o_koncij()
+   // o_koncij()
    o_kalk_pripr()
-   //o_roba()
-  // o_konto()
-  // o_partner()
-  // o_tarifa()
- //  o_fakt()
+
+   // o_konto()
+   // o_partner()
+   // o_tarifa()
+   // o_fakt()
+
 
    RETURN .T.
 

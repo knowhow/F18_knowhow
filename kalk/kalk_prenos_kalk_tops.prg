@@ -29,7 +29,7 @@ FUNCTION kalk_tops_meni()
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "-------------------------------"
       @ form_x_koord() + 4, form_y_koord() + 2 SAY "Dokument: " GET cIDFirma
       @ form_x_koord() + 4, form_y_koord() + 16 SAY " - " GET cIdVd VALID !Empty( cIdVd )
-      @ form_x_koord() + 4, form_y_koord() + 23 SAY " - " GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
+      @ form_x_koord() + 4, form_y_koord() + 23 SAY " - " GET cBrDok VALID {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
       READ
       ESC_BCR
       BoxC()
@@ -118,41 +118,40 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
       APPEND BLANK
 
       cPm := koncij->idprodmjes
-      IF AScan( aPosLokacije, {| x| x == koncij->idprodmjes } ) == 0
+      IF AScan( aPosLokacije, {| x | x == koncij->idprodmjes } ) == 0
          AAdd( aPosLokacije, koncij->idprodmjes )
       ENDIF
 
       dDatDok := kalk_pripr->datdok
 
-      REPLACE field->idfirma WITH self_organizacija_id()
-      REPLACE field->idvd WITH kalk_pripr->idvd
-      REPLACE field->idpos WITH koncij->idprodmjes
-      REPLACE field->datdok WITH kalk_pripr->datdok
-      REPLACE field->idkonto WITH kalk_pripr->idkonto
-      REPLACE field->idkonto2 WITH kalk_pripr->idkonto2
-      REPLACE field->idpartner WITH kalk_pripr->idpartner
-      REPLACE field->idroba WITH kalk_pripr->idroba
-
-      REPLACE field->kolicina WITH kalk_pripr->kolicina
+      REPLACE field->idfirma WITH self_organizacija_id(), ;
+         field->idvd WITH kalk_pripr->idvd, ;
+         field->idpos WITH koncij->idprodmjes, ;
+         field->datdok WITH kalk_pripr->datdok, ;
+         field->idkonto WITH kalk_pripr->idkonto, ;
+         field->idkonto2 WITH kalk_pripr->idkonto2, ;
+         field->idpartner WITH kalk_pripr->idpartner, ;
+         field->idroba WITH kalk_pripr->idroba, ;
+         field->kolicina WITH kalk_pripr->kolicina
 
 
       IF field->idvd == "IP"   // kod inventure
          REPLACE field->kol2 WITH kalk_pripr->gkolicina
       ENDIF
 
-      REPLACE field->mpc WITH kalk_pripr->mpcsapp
-      REPLACE field->naziv WITH roba->naz
-      REPLACE field->idtarifa WITH kalk_pripr->idtarifa
-      REPLACE field->jmj WITH roba->jmj
-      REPLACE field->brdok WITH kalk_pripr->brdok
-      REPLACE field->k1 WITH roba->k1
-      REPLACE field->k2 WITH roba->k2
-      REPLACE field->k7 WITH roba->k7
-      REPLACE field->k8 WITH roba->k8
-      REPLACE field->k9 WITH roba->k9
-      REPLACE field->n1 WITH roba->n1
-      REPLACE field->n2 WITH roba->n2
-      REPLACE field->barkod WITH roba->barkod
+      REPLACE field->mpc WITH kalk_pripr->mpcsapp, ;
+         field->naziv WITH roba->naz, ;
+         field->idtarifa WITH kalk_pripr->idtarifa, ;
+         field->jmj WITH roba->jmj, ;
+         field->brdok WITH kalk_pripr->brdok, ;
+         field->k1 WITH roba->k1, ;
+         field->k2 WITH roba->k2, ;
+         field->k7 WITH roba->k7, ;
+         field->k8 WITH roba->k8, ;
+         field->k9 WITH roba->k9, ;
+         field->n1 WITH roba->n1, ;
+         field->n2 WITH roba->n2, ;
+         field->barkod WITH roba->barkod
 
 
       IF kalk_pripr->pu_i == "3" // radi se o nivelaciji,  mpc - stara cijena
@@ -169,7 +168,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
       ENDIF
 
       _total += ( field->kolicina * field->mpc ) // saberi total
-      ++ nRbr
+      ++nRbr
 
       SELECT kalk_pripr
       SKIP
@@ -258,7 +257,6 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
    LOCAL cRet := ""
    LOCAL cTopsDest
 
-
    cTopsDest := kalk_destinacija_topska( cTopsDest )
 
    direktorij_kreiraj_ako_ne_postoji( cTopsDest ) // napravi direktorij prenosa ako ga nema
@@ -291,9 +289,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
    RETURN cRet
 
 
-// ---------------------------------------------------------------
-// vraca naziv fajla za export
-// ---------------------------------------------------------------
+
 FUNCTION get_tops_kalk_export_file( topskalk, export_path, datum, prefix )
 
    LOCAL _file := ""
@@ -415,10 +411,10 @@ STATIC FUNCTION kalk_tops_o_gen_tables( lFromKumulativ )
       lFromKumulativ := .F.
    ENDIF
 
-   SELECT F_ROBA
-   IF !Used()
-      o_roba()
-   ENDIF
+   // SELECT F_ROBA
+// IF !Used()
+   // o_roba()
+// ENDIF
 
    SELECT F_KONCIJ
    IF !Used()

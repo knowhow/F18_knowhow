@@ -439,8 +439,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          dbf_update_rec( aDoksRec )
 
 
-         SELECT roba
-         HSEEK cIdRoba // uzmi sada robu sa ove stavke pa je ubaci u e_roba
+         select_o_roba(  cIdRoba ) // uzmi sada robu sa ove stavke pa je ubaci u e_roba
          IF Found() .AND. cExportSif == "D"
             hRec := dbf_get_rec()
             SELECT e_roba
@@ -914,7 +913,7 @@ STATIC FUNCTION kalk_o_tabele()
    o_sifv()
    o_konto()
    o_partner()
-   o_roba()
+  // o_roba()
 
    RETURN .T.
 

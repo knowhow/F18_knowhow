@@ -43,7 +43,7 @@ FUNCTION fakt_unos_dokumenta()
 
    PRIVATE ImeKol := { ;
       { "Red.br",  {|| dbSelectArea( F_FAKT_PRIPR ), Rbr()                   } }, ;
-      { "Partner/Roba",  {|| Part1Stavka() + Roba()  } }, ;
+      { "Partner/Roba",  {|| Part1Stavka() + fakt_prikazi_Roba()  } }, ;
       { _ue( "Količina" ),  {|| kolicina  } }, ;
       { "Cijena",    {|| Cijena    }, "cijena"    }, ;
       { "Rabat",    {|| Transform( Rabat, "999.99" ) }, "Rabat"  }, ;
@@ -1187,14 +1187,15 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    ENDIF
 
    _x += 3
-   @ form_x_koord() + _x, form_y_koord() + 2 SAY8 "Količina: "  GET _kolicina PICT pickol VALID V_Kolicina( _tip_cijene )
+
+   @ m_x + _x, m_y + 2 SAY8 "Količina: "  GET _kolicina PICT fakt_pic_kolicina() VALID V_Kolicina( _tip_cijene )
 
 
    IF gSamokol != "D"
 
       @ form_x_koord() + _x, Col() + 2 SAY IF( _idtipdok $ "13#23" .AND. ( gVar13 == "2" .OR. glCij13Mpc ), ;
          "MPC.s.PDV", "Cijena (" + AllTrim( ValDomaca() ) + ")" ) GET _cijena ;
-         PICT piccdem ;
+         PICT fakt_pic_cijena() ;
          WHEN  _podbr <> " ." ;
          VALID c_cijena( _cijena, _idtipdok, fNovi )
 
@@ -1207,7 +1208,8 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       IF !( _idtipdok $ "12#13" ) .OR. ( _idtipdok == "12" .AND. gV12Por == "D" )
 
-         @ form_x_koord() + _x, Col() + 2 SAY "Rabat:" GET _rabat PICT piccdem ;
+
+         @ m_x + _x, Col() + 2 SAY "Rabat:" GET _rabat PICT fakt_pic_cijena() ;
             WHEN _podbr <> " ." .AND. ! _idtipdok $ "15"
 
          @ form_x_koord() + _x, Col() + 1 GET _tip_rabat PICT "@!" ;
@@ -1637,8 +1639,9 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
          cDN := "D"
          Box(, 4, 60 )
-         @ form_x_koord() + 1, form_y_koord() + 2 SAY "Artikal koji se stvara:" GET _idroba  PICT "@!" VALID P_Roba( @_idroba )
-         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Kolicina" GET _kolicina valid {|| _kolicina <> 0 } PICT pickol
+
+         @ m_x + 1, m_y + 2 SAY "Artikal koji se stvara:" GET _idroba  PICT "@!" VALID P_Roba( @_idroba )
+         @ m_x + 2, m_y + 2 SAY "Kolicina" GET _kolicina valid {|| _kolicina <> 0 } PICT fakt_pic_kolicina()
          READ
          IF LastKey() == K_ESC
             BoxC()
@@ -1651,7 +1654,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          ELSE
             _kolicina := -_kolicina
          ENDIF
-         @ form_x_koord() + 3, form_y_koord() + 2 SAY "Cijena" GET _cijena  PICT piccdem
+         @ m_x + 3, m_y + 2 SAY "Cijena" GET _cijena  PICT fakt_pic_cijena()
          cDN := "D"
          @ form_x_koord() + 4, form_y_koord() + 2 SAY8 "Staviti cijenu u šifarnik ?" GET cDN VALID cDN $ "DN" PICT "@!"
          READ
@@ -1946,7 +1949,6 @@ STATIC FUNCTION fakt_kzb( id_firma, tip_dok, br_dok )
    BoxC()
 
    RETURN .T.
-
 
 
 

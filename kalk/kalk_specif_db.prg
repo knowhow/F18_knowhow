@@ -304,13 +304,12 @@ FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,
          LOOP
       ENDIF
 
-      select_o_roba( kalk->( idroba ) )
+      select_o_roba(  kalk->( idroba ) )
       IF cK7 == "D" .AND. Empty( roba->k7 )
          SELECT kalk
          SKIP
          LOOP
       ENDIF
-
 
       IF ( cK1 <> "9999" .AND. !Empty( cK1 ) .AND. roba->k1 <> cK1 )
          SELECT kalk
@@ -735,7 +734,7 @@ FUNCTION GenRekap2( lK2X, cC, lPrDatOd, lVpRab, lMarkiranaRoba )
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION Sca2MKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagacin, lVpRabat, lPrDatOd )
@@ -1151,7 +1150,7 @@ FUNCTION kalk_prod_generacija_dokumenataNc()
    LOCAL dDatDok
 
    O_PRODNC
-   o_roba()
+  // o_roba()
    o_kalk()
    o_kalk_pripr()
    o_koncij()
@@ -1196,7 +1195,9 @@ FUNCTION kalk_prod_generacija_dokumenataNc()
 
    BoxC()
 
-   RETURN
+   RETURN .T.
+
+
 
 FUNCTION IsRobaInProdavnica( cPKonto, cIdRoba )
 
@@ -1263,7 +1264,7 @@ FUNCTION SetProdNc( cPKonto, cIdRoba, cIdVd, cBrDok, dDatDok, nNc )
 
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1278,7 +1279,7 @@ FUNCTION SetIdPartnerRoba()
    LOCAL dDatDok
 
 
-   o_roba()
+//   o_roba()
    o_partner()
    GO TOP
 
@@ -1336,4 +1337,4 @@ FUNCTION SetIdPartnerRoba()
 
    BoxC()
 
-   RETURN
+   RETURN .T.

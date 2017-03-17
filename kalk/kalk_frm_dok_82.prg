@@ -26,7 +26,7 @@ FUNCTION Get1_82()
    IF nRbr == 1 .OR. !kalk_is_novi_dokument()
       @  form_x_koord() + 7, form_y_koord() + 2   SAY "Faktura Broj:" GET _BrFaktP
       @  form_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   ;
-         valid {|| .T. }
+         VALID {|| .T. }
       _IdZaduz := ""
 
       _Idkonto2 := ""
@@ -77,6 +77,7 @@ FUNCTION Get1_82()
    _GKolicina := 0
 
    IF kalk_is_novi_dokument()
+
       select_o_roba( _IdRoba )
       _VPC := KoncijVPC()
       _NC := NC
@@ -109,8 +110,8 @@ FUNCTION Get1_82()
    PRIVATE _vpcsappp := 0
 
    @ form_x_koord() + 14, form_y_koord() + 2   SAY "VPC      " GET _VPC    PICTURE PicDEM ;
-      valid {|| iif( gVarVP == "2" .AND. ( _vpc - _nc ) > 0, cisMarza := ( _vpc - _nc ) / ( 1 + tarifa->vpp ), _vpc - _nc ), ;
-      _mpcsapp := _MPCSaPP := ( 1 + _OPP ) * _VPC * ( 1 -_Rabatv / 100 ) * ( 1 + _PPP ), ;
+      VALID {|| iif( gVarVP == "2" .AND. ( _vpc - _nc ) > 0, cisMarza := ( _vpc - _nc ) / ( 1 + tarifa->vpp ), _vpc - _nc ), ;
+      _mpcsapp := _MPCSaPP := ( 1 + _OPP ) * _VPC * ( 1 - _Rabatv / 100 ) * ( 1 + _PPP ), ;
       _mpcsapp := Round( _mpcsapp, 2 ), .T. }
 
    _RabatV := 0
@@ -120,7 +121,7 @@ FUNCTION Get1_82()
 
    @ form_x_koord() + 20, form_y_koord() + 2 SAY "MPC SA POREZOM:"
    @ form_x_koord() + 20, form_y_koord() + 50 GET _MPCSaPP  PICTURE PicDEM ;
-      valid {|| _mpc := iif( _mpcsapp <> 0, _mpcsapp / ( 1 + _opp ) / ( 1 + _PPP ), _mpc ), ;
+      VALID {|| _mpc := iif( _mpcsapp <> 0, _mpcsapp / ( 1 + _opp ) / ( 1 + _PPP ), _mpc ), ;
       _marza2 := 0, ;
       Marza2R(), ShowGets(), .T. }
    read; ESC_RETURN K_ESC
@@ -146,14 +147,14 @@ FUNCTION Get1_82()
             LOOP
          ENDIF
          IF brdok == _brdok .AND. idvd == _idvd .AND. Val( Rbr ) == nRbr
-            nMarza := _VPC * ( 1 -_RabatV / 100 ) -_NC
+            nMarza := _VPC * ( 1 - _RabatV / 100 ) - _NC
             REPLACE vpc WITH _vpc, ;
                rabatv WITH _rabatv, ;
                mkonto WITH _mkonto, ;
                tmarza  WITH _tmarza, ;
                mpc     WITH  _MPC, ;
                marza  WITH _vpc - kalk_pripr->nc, ;   // mora se uzeti nc iz ove stavke
-            mu_i WITH  _mu_i, ;
+               mu_i WITH  _mu_i, ;
                pkonto WITH _pkonto, ;
                pu_i WITH  _pu_i, ;
                error WITH "0"

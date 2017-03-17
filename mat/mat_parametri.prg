@@ -40,9 +40,9 @@ STATIC FUNCTION _mat_obr_params()
    gNalPr := PadR( gNalPr, 30 )
    gDirPor := PadR( gDirPor, 50 )
 
-   gPicDem := PadR( gPicDem, 15 )
+   pic_iznos_bilo_gpicdem() := PadR( pic_iznos_bilo_gpicdem(), 15 )
    gPicDin := PadR( gPicDin, 15 )
-   gPicKol := PadR( gPicKol, 15 )
+   pic_kolicina_bilo_gpickol() := PadR( pic_kolicina_bilo_gpickol(), 15 )
 
    Box(, 21, 74 )
    SET CURSOR ON
@@ -57,9 +57,9 @@ STATIC FUNCTION _mat_obr_params()
    @ m_x + 13, m_y + 2 SAY "Zadati datum naloga D/N:" GET gDatNal VALID gDatNal $ "DN" PICT "@!"
    @ m_x + 14, m_y + 2 SAY "Koristiti polja partnera, lice zaduzuje D/N" GET gKupZad VALID gKupZad $ "DN" PICT "@!"
    @ m_x + 16, m_y + 2 SAY "Prikaz dvovalutno D/N" GET g2Valute VALID g2Valute $ "DN" PICT "@!"
-   @ m_x + 17, m_y + 2 SAY "Pict " + ValPomocna() + ":" GET gpicdem PICT "@S15"
+   @ m_x + 17, m_y + 2 SAY "Pict " + ValPomocna() + ":" GET pic_iznos_bilo_gpicdem() PICT "@S15"
    @ m_x + 18, m_y + 2 SAY "Pict " + ValDomaca() + ":"  GET gpicdin PICT "@S15"
-   @ m_x + 19, m_y + 2 SAY "Pict KOL :"  GET gpickol PICT "@S15"
+   @ m_x + 19, m_y + 2 SAY "Pict KOL :"  GET pic_kolicina_bilo_gpickol() PICT "@S15"
    @ m_x + 20, m_y + 2 SAY "Sa sifrom je vezan konto D/N" GET gKonto VALID gKonto $ "DN" PICT "@!"
    @ m_x + 21, m_y + 2 SAY "Sekretarski sistem (D/N) ?"  GET gSekS VALID gSekS $ "DN" PICT "@!"
    READ
@@ -74,9 +74,9 @@ STATIC FUNCTION _mat_obr_params()
       set_metric( "mat_dvovalutni_rpt", NIL, g2Valute )
       set_metric( "mat_real_prod", NIL, gNalPr )
       set_metric( "mat_tip_cijene", NIL, gCijena )
-      set_metric( "mat_pict_dem", NIL, gPicDem )
+      set_metric( "mat_pict_dem", NIL, pic_iznos_bilo_gpicdem() )
       set_metric( "mat_pict_din", NIL, gPicDin )
-      set_metric( "mat_pict_kol", NIL, gPicKol )
+      set_metric( "mat_pict_kol", NIL, pic_kolicina_bilo_gpickol() )
       set_metric( "mat_datum_naloga", NIL, gDatNal )
       set_metric( "mat_sekretarski_sistem", NIL, gSekS )
       set_metric( "mat_polje_partner", NIL, gKupZad )

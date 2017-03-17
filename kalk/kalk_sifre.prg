@@ -20,7 +20,7 @@ FUNCTION kalk_sifrarnik()
 
    PRIVATE PicDem
 
-   PicDem := gPICDem
+   PicDem := pic_iznos_bilo_gpicdem()
    my_close_all_dbf()
 
    AAdd( _opc, "1. opći šifarnici                  " )
@@ -120,7 +120,7 @@ FUNCTION OSifBaze()
    O_TRMP
    o_valute()
    o_tarifa()
-   o_roba()
+   //o_roba()
    o_sastavnica()
 
    RETURN .T.

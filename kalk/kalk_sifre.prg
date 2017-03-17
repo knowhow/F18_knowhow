@@ -42,6 +42,7 @@ FUNCTION kalk_sifrarnik()
 FUNCTION KalkRobaBlock( Ch )
 
    LOCAL cSif := ROBA->id, cSif2 := ""
+   LOCAL nRet
 
    IF Ch == K_CTRL_T .AND. gSKSif == "D"
 
@@ -120,10 +121,11 @@ FUNCTION OSifBaze()
    O_TRMP
    o_valute()
    o_tarifa()
-   //o_roba()
+   // o_roba()
    o_sastavnica()
 
-   RETURN
+   RETURN .T.
+
 
 
 FUNCTION P_Objekti()
@@ -136,7 +138,7 @@ FUNCTION P_Objekti()
    Kol := {}
 
    nTArea := Select()
-   O_OBJEKTI
+   kalk_o_objekti()
 
    AAdd( ImeKol, { "ID", {|| id }, "id" } )
    add_mcode( @ImeKol )
@@ -148,6 +150,27 @@ FUNCTION P_Objekti()
    NEXT
 
    SELECT ( nTArea )
-   p_sifra( F_OBJEKTI, 1, MAXROWS() -15, MAXCOLS() -20, "Objekti" )
+   p_sifra( F_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20, "Objekti" )
+
+   RETURN .T.
+
+
+
+
+FUNCTION kalk_o_objekti()
+
+   Select( F_OBJEKTI )
+   use_sql_sif ( "objekti" )  // koristi se u KALK
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+
+FUNCTION o_fakt_objekti()
+
+   SELECT ( F_FAKT_OBJEKTI )
+   use_sql_sif ( "fakt_objekti" )
+   SET ORDER TO TAG "ID"
 
    RETURN .T.

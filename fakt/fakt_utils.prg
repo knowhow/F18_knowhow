@@ -79,7 +79,7 @@ FUNCTION fakt_objekat_naz( id_obj )
 
    PushWA()
 
-   O_FAKT_OBJEKTI
+   o_fakt_objekti()
 
    SELECT fakt_objekti
    SET ORDER TO TAG "ID"

@@ -33,7 +33,7 @@ FUNCTION fakt_kartica()
    o_rj()
 
    IF _params[ "fakt_objekti" ]
-      O_FAKT_OBJEKTI
+      o_fakt_objekti()
    ENDIF
 
    o_fakt_doks()

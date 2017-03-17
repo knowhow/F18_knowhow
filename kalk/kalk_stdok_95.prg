@@ -78,7 +78,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
       SELECT ( F_FAKT_OBJEKTI )
       IF !Used()
-         O_FAKT_OBJEKTI
+         o_fakt_objekti()
       ENDIF
 
       GO TOP

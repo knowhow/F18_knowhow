@@ -655,7 +655,7 @@ FUNCTION o_fin_edit()
   // O_ULIMIT
 
    IF ( IsRamaGlas() )
-      O_FAKT_OBJEKTI
+      o_fakt_objekti()
    ENDIF
 
    o_rj()

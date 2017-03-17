@@ -116,7 +116,7 @@ FUNCTION g_obj_naz( cKto )
 
    nTArr := Select()
 
-   O_OBJEKTI
+   kalk_o_objekti()
    SELECT objekti
    SET ORDER TO TAG "idobj"
    GO TOP

@@ -553,7 +553,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
 
    SELECT ( F_FAKT_OBJEKTI )
    IF !Used()
-      O_FAKT_OBJEKTI
+      o_fakt_objekti()
    ENDIF
 
    IF glDistrib = .T.

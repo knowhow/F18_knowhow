@@ -130,7 +130,7 @@ FUNCTION kalk_finansijski_obrt()
    o_tarifa()
    //o_kalk()
    O_K1
-   O_OBJEKTI
+   kalk_o_objekti()
 
    lVpRabat := .F.
    IF cVpRab == "D"

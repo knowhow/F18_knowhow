@@ -253,7 +253,7 @@ STATIC FUNCTION O_PrVP_DB()
    //o_partner()
    o_suban()
    o_konto()
-   O_FAKT_OBJEKTI
+   o_fakt_objekti()
    o_nalog()
    o_fin_pripr()
    o_trfp2()

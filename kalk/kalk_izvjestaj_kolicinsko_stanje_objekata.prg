@@ -69,7 +69,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    o_sifv()
 //   o_roba()
    O_K1
-   O_OBJEKTI
+   kalk_o_objekti()
 
    lMarkiranaRoba := .F.
    cPicCDem := "999999.999"
@@ -241,7 +241,7 @@ STATIC FUNCTION otvori_tabele()
    o_konto()
    o_tarifa()
    O_K1
-   O_OBJEKTI
+   kalk_o_objekti()
    //o_kalk()
    O_REKAP1
 
@@ -603,7 +603,7 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
    LOCAL hRec
 
    O_POBJEKTI
-   O_OBJEKTI
+   kalk_o_objekti()
 
    MsgO("objekti -> pobjekti")
 

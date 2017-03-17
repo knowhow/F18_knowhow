@@ -37,7 +37,7 @@ FUNCTION get_prod_naz( cIdKonto )
    LOCAL nTArea := Select()
    LOCAL cNaz := "???"
 
-   O_OBJEKTI
+   kalk_o_objekti()
    SELECT objekti
    SET ORDER TO TAG "idobj"
    GO TOP

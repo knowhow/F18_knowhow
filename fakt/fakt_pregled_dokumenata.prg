@@ -30,6 +30,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    PRIVATE cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
    PRIVATE cFilter := ".t."
 
+
    // O_VRSTEP
    // o_ops()
    // o_valute()
@@ -38,6 +39,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    // o_fakt()
    // o_partner()
    // o_fakt_doks()
+
 
    qqVrsteP := Space( 20 )
    dDatVal0 := dDatVal1 := CToD( "" )
@@ -715,6 +717,7 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
    // o_fakt()
    // o_partner()
    // o_fakt_doks()
+
 
    // SELECT fakt_doks
    // SET ORDER TO TAG "1"

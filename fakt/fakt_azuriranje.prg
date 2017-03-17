@@ -549,6 +549,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
 //      o_fakt_objekti()
  //  ENDIF
 
+
    IF glDistrib = .T.
       //SELECT F_RELAC
      // IF !Used()

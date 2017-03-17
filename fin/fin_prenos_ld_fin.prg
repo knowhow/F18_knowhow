@@ -44,7 +44,11 @@ FUNCTION LdFin()
    set_metric( "fin_prenos_ld_godina", my_user(), _godina )
    set_metric( "fin_prenos_ld_mjesec", my_user(), _mjesec )
 
+<<<<<<< HEAD
  --  o_fakt_objekti()
+=======
+   o_fakt_objekti()
+>>>>>>> origin/23100-ld
    o_nalog()
    o_fin_pripr()
    O_TRFP3
@@ -135,6 +139,7 @@ FUNCTION LdFin()
    RETURN
 
 */
+
 
 // ------------------------------------------------------------
 // autorski honorari prenos REKLD

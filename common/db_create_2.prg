@@ -14,6 +14,7 @@
 
 FUNCTION open_sif_tables_1()
 
+
    //o_konto()
    //o_partner()
    //o_tnal()
@@ -25,6 +26,7 @@ FUNCTION open_sif_tables_1()
    //o_sifk()
    //o_sifv()
    //o_fakt_objekti()
+
 
    RETURN .T.
 

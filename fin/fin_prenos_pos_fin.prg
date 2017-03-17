@@ -13,13 +13,14 @@
 
 #define F_T_PROMVP  245
 
-/* GetPrVPParams(cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema)
+/*
  *     Setuj parametre prenosa
  *   param: cProdId - id prodavnice
  *   param: dDatOd - datum prenosa od
  *   param: dDatDo - datum prenosa do
  *   param: dDatDok - datum dokumenta
  */
+
 FUNCTION GetPrVPParams( cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema )
 
    dDatOd := Date() -30
@@ -251,12 +252,14 @@ STATIC FUNCTION O_PrVP_DB()
 
    //o_koncij()
    //o_partner()
+
    //o_suban()
    //o_konto()
    //o_fakt_objekti()
    //o_nalog()
    select_o_fin_pripr()
    //o_trfp2()
+
 
    RETURN .T.
 

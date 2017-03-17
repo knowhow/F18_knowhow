@@ -22,7 +22,7 @@ FUNCTION set_a_dbf_kalk()
    set_a_dbf_trfp( "trfp2", "TRFP2", F_TRFP2 )
 
   // set_a_sql_sifarnik( "trfp3", "TRFP3", F_TRFP3      )
-   //set_a_dbf_sifarnik( "objekti", "OBJEKTI", F_OBJEKTI    )
+   set_a_sql_sifarnik( "objekti", "OBJEKTI", F_OBJEKTI    )
 
    set_a_dbf_temp( "kalk_imp_temp", "KALK_IMP_TEMP", F_KALK_IMP_TEMP )
    set_a_dbf_temp( "_kalk_kalk", "_KALK", F__KALK        )

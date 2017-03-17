@@ -12,9 +12,6 @@
 #include "f18.ch"
 
 
-// -----------------------------------------------
-// otvaranje tabele fakt_objekti
-// -----------------------------------------------
 FUNCTION p_fakt_objekti( cId, dx, dy )
 
    LOCAL nDbfArea := Select()
@@ -24,7 +21,9 @@ FUNCTION p_fakt_objekti( cId, dx, dy )
    ImeKol := {}
    Kol := {}
 
+
    select_o_fakt_objekti()
+
 
    AAdd( ImeKol, { PadC( "Id", 10 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) } } )
    AAdd( ImeKol, { PadC( "Naziv", 60 ), {|| naz }, "naz" } )

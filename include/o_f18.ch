@@ -14,7 +14,6 @@
 //#xcommand O_TRFP3    => select (F_TRFP3)   ;  use_sql_sif  ("trfp3")     ; set order to tag "ID"
 #xcommand O_TRMP     => select (F_TRMP)    ;  use_sql_sif  ("trmp")      ; set order to tag "ID"
 
-//#xcommand o_fakt_objekti()  => select (F_FAKT_OBJEKTI) ;  use_sql_sif ( "fakt_objekti" ) ; set order to tag "ID"
 
 //#xcommand O_LOKAL    => select (F_LOKAL)   ;  use_sql_lokalizacija()
 
@@ -99,6 +98,7 @@
 #xcommand O_RVRSTA         => select(F_RVRSTA);  my_use  ("rvrsta")  ; set order to tag "ID"
 
 #xcommand O_K1             => select(F_ROBASEZ)  ;  my_use  ("k1")       ; set order to tag "1"
+
 #xcommand O_REKAP1         => select(F_REKAP1)   ;  my_use  ("rekap1")   ; set order to tag "1"
 #xcommand O_REKAP2         => select(F_REKAP2)   ;  my_use  ("rekap2")   ; set order to tag "1"
 #xcommand O_REKA22         => select(F_REKA22)   ;  my_use  ("reka22")   ; set order to tag "1"

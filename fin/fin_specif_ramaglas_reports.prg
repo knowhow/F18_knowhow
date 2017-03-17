@@ -56,6 +56,7 @@ FUNCTION SpecTrosRN()
 
    o_fakt_objekti()
   // o_konto()
+
    o_suban()
 
 // 1) utvrditi ukupne troskove (nUkTros)
@@ -177,4 +178,4 @@ FUNCTION SpecTrosRN()
 
    closeret
 
-   RETURN
+   RETURN .T.

@@ -29,6 +29,7 @@ FUNCTION fakt_kartica()
    o_sifv()
 
    IF _params[ "fakt_objekti" ]
+
       // o_fakt_objekti()
    ENDIF
 

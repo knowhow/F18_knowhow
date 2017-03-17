@@ -27,8 +27,9 @@ FUNCTION kalk_sifrarnik()
    AAdd( _opcexe, {|| opci_sifarnici() } )
    AAdd( _opc, "2. robno-materijalno poslovanje" )
    AAdd( _opcexe, {|| sif_roba_tarife_koncij_sast() } )
-   AAdd( _opc, "3. magacinski i prodajni objekti" )
-   AAdd( _opcexe, {|| P_Objekti() } )
+   
+   //AAdd( _opc, "3. magacinski i prodajni objekti" )
+   //AAdd( _opcexe, {|| P_Objekti() } )
 
    f18_menu( "msif", .F., _izbor, _opc, _opcexe )
 
@@ -127,6 +128,7 @@ FUNCTION OSifBaze()
    RETURN .T.
 
 
+/*
 
 FUNCTION P_Objekti()
 
@@ -166,3 +168,4 @@ FUNCTION kalk_o_objekti()
    SET ORDER TO TAG "1"
 
    RETURN .T.
+*/

@@ -85,6 +85,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
 
    cOrderTag := ordName( 1 )
    sif_set_order( xIndex, cOrderTag, @fID_j )
+
    IF p_sifra_da_li_vec_postoji_sifra( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
 // IF cSeekRet == "naz" .or. cSeekRet == "sint_konto"
       lOtvoriBrowse := .F.
@@ -151,6 +152,80 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
 
    RETURN lRet
 
+
+
+FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
+
+   LOCAL _bk := ""
+
+   // LOCAL _order := IndexOrd()
+   LOCAL _tezina := 0
+
+   IF cId == NIL
+      // RETURN "nil"
+      RETURN .F.
+   ENDIF
+
+   /*
+      IF ValType( cId ) == "N"
+         SEEK Str( cId )
+         //RETURN "num"
+         RETURN Found()
+      ENDIF
+   */
+
+   IF Right( Trim( cId ), 1 ) == "*"
+      sif_katbr_zvjezdica( @cId, @cIdBK, fId_j )
+      // RETURN "katbr"
+      RETURN .F.
+   ENDIF
+
+   IF Right( Trim( cId ), 1 ) $ ".$"
+      sifra_na_kraju_ima_tacka_ili_dolar( @cId, @cUslovSrch, @cNazSrch )
+      // RETURN "naz"
+      RETURN .F.
+   ENDIF
+
+   IF Alias() == "PARTN"
+      find_partner_by_naz_or_id( cId )
+   ELSEIF Alias() == "ROBA"
+      find_roba_by_naz_or_id( cId )
+   ELSEIF Alias() == "KONTO"
+      find_konto_by_naz_or_id( cId )
+   ELSE
+      SEEK cId
+   ENDIF
+
+   IF field->id == cId
+      // cId := &( FieldName( 1 ) )
+      IF Alias() == "KONTO" .AND. Len( Trim( cId ) ) < 4 // sinteticki konto
+         RETURN .F.
+      ENDIF
+
+      RETURN .T.
+   ENDIF
+
+
+
+   IF Alias() == "ROBA" .AND. Len( cId ) > 10
+
+#ifdef F18_POS
+      IF !tezinski_barkod( @cId, @_tezina, .F. )
+         barkod( @cId )
+      ENDIF
+#else
+      barkod( @cId )
+#endif
+      // ordSetFocus( _order )
+      // RETURN "barkod"
+
+      IF cId == field->id
+         RETURN .T.
+      ENDIF
+
+   ENDIF
+
+   RETURN .F.
 
 
 STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
@@ -601,7 +676,7 @@ STATIC FUNCTION edit_sql_sif_item( nCh, cOrderTag, aZabIsp, lNovi )
             cPic := ""
 
             IF !Empty( cPom )
-               sif_sql_getlist( cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @nI, @nTekRed )
+               browse_stavka_formiraj_getlist( cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @nI, @nTekRed )
                nGet++
             ELSE
                nRed := 1
@@ -844,111 +919,6 @@ STATIC FUNCTION set_w_var( aImeKol, nI, lShowGrupa )
 
    RETURN cVariableName
 
-
-
-FUNCTION sif_sql_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, nI, nTekRed )
-
-   LOCAL bWhen, bValid, cPic
-   LOCAL nRed, nKolona
-   LOCAL cWhenSifk, cValidSifk
-   LOCAL _when_block, _valid_block
-   LOCAL _m_block := MemVarBlock( cVariableName )
-   LOCAL cFieldName
-   LOCAL tmpRec
-
-   // uzmi when, valid kodne blokove
-   IF ( Ch == K_F2 .AND. lZabIsp .AND. AScan( aZabIsp, Upper( ImeKol[ nI, 3 ] ) ) > 0 )
-      bWhen := {|| .F. }
-   ELSEIF ( Len( ImeKol[ nI ] ) < 4 .OR. ImeKol[ nI, 4 ] == NIL )
-      bWhen := {|| .T. }
-   ELSE
-      bWhen := Imekol[ nI, 4 ]
-   ENDIF
-
-   IF ( Len( ImeKol[ nI ] ) < 5 .OR. ImeKol[ nI, 5 ] == NIL )
-      bValid := {|| .T. }
-   ELSE
-      bValid := Imekol[ nI, 5 ]
-   ENDIF
-
-   _m_block := MemVarBlock( cVariableName )
-
-   IF _m_block == NIL
-      MsgBeep( "Varijabla nedefinisana :" + cVariableName )
-   ENDIF
-
-   IF Len( ToStr( Eval( _m_block ) ) ) > 50
-      cPic := "@S50"
-      @ m_x + nTekRed + 1, m_y + 67 SAY Chr( 16 )
-
-   ELSEIF Len( ImeKol[ nI ] ) >= 7 .AND. ImeKol[ nI, 7 ] <> NIL
-      cPic := ImeKol[ nI, 7 ]
-   ELSE
-      cFieldName := SubStr( cVariableName, 2 ) // wID -> ID
-      cPic := get_field_get_picture_code( Alias(), cFieldName )
-   ENDIF
-
-   nRed := 1
-   nKolona := 1
-
-   IF Len( ImeKol[ nI ] ) >= 10 .AND. Imekol[ nI, 10 ] <> NIL
-      nKolona := ImeKol[ nI, 10 ] + 1
-      nRed := 0
-   ENDIF
-
-   IF nKolona == 1
-      nTekRed++
-   ENDIF
-
-   IF lShowPGroup
-      nXP := nTekRed
-      nYP := nKolona
-   ENDIF
-
-   // stampaj grupu za stavku "GRUP"
-   IF lShowPGroup
-      p_gr( &cVariableName, m_x + nXP, m_y + nYP + 1 )
-   ENDIF
-
-   IF "wSifk_" $ cVariableName
-
-      IzSifKWV( Alias(), SubStr( cVariableName, 7 ), @cWhenSifk, @cValidSifk )
-
-      IF !Empty( cWhenSifk )
-         _when_block := & ( "{|| " + cWhenSifk + "}" )
-      ELSE
-         _when_block := bWhen
-      ENDIF
-
-      IF !Empty( cValidSifk )
-         _valid_block := & ( "{|| " + cValidSifk + "}" )
-      ELSE
-         _valid_block := bValid
-      ENDIF
-   ELSE
-      _when_block := bWhen
-      _valid_block := bValid
-   ENDIF
-
-   @ m_x + nTekRed, m_y + nKolona SAY  iif( nKolona > 1, "  " + AllTrim( ImeKol[ nI, 1 ] ), PadL( AllTrim( ImeKol[ nI, 1 ] ), 15 ) )  + " "
-
-   IF &cVariableName == NIL
-      tmpRec = RecNo()
-      GO BOTTOM
-      SKIP
-      &cVariableName := Eval( ImeKol[ nI, 2 ] )
-      GO tmpRec
-   ENDIF
-
-
-   IF ValType( &cVariableName ) == "C" .AND. F18_SQL_ENCODING == "UTF8" // samo ako sql vraca UTF8 stringove izvrsitiŽŽŽ ovu konverziju
-      &cVariableName = hb_UTF8ToStr( &cVariableName ) // F18 SQL ENCODING UTF8
-   ENDIF
-
-   AAdd( GetList, _GET_( &cVariableName, cVariableName,  cPic, _valid_block, _when_block ) ) ;;
-      ATail( GetList ):display()
-
-   RETURN .T.
 
 
 
@@ -1489,79 +1459,6 @@ FUNCTION UslovSif()
 
 
 
-FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
-
-   LOCAL _bk := ""
-
-   // LOCAL _order := IndexOrd()
-   LOCAL _tezina := 0
-
-   IF cId == NIL
-      // RETURN "nil"
-      RETURN .F.
-   ENDIF
-
-/*
-   IF ValType( cId ) == "N"
-      SEEK Str( cId )
-      //RETURN "num"
-      RETURN Found()
-   ENDIF
-*/
-
-   IF Right( Trim( cId ), 1 ) == "*"
-      sif_katbr_zvjezdica( @cId, @cIdBK, fId_j )
-      // RETURN "katbr"
-      RETURN .F.
-   ENDIF
-
-   IF Right( Trim( cId ), 1 ) $ ".$"
-      sifra_na_kraju_ima_tacka_ili_dolar( @cId, @cUslovSrch, @cNazSrch )
-      // RETURN "naz"
-      RETURN .F.
-   ENDIF
-
-   IF Alias() == "PARTN"
-      find_partner_by_naz_or_id( cId )
-   ELSEIF Alias() == "ROBA"
-      find_roba_by_naz_or_id( cId )
-   ELSEIF Alias() == "KONTO"
-      find_konto_by_naz_or_id( cId )
-   ELSE
-      SEEK cId
-   ENDIF
-
-   IF field->id == cId
-      // cId := &( FieldName( 1 ) )
-      IF Alias() == "KONTO" .AND. Len( Trim( cId ) ) < 4 // sinteticki konto
-         RETURN .F.
-      ENDIF
-
-      RETURN .T.
-   ENDIF
-
-
-
-   IF Alias() == "ROBA" .AND. Len( cId ) > 10
-
-#ifdef F18_POS
-      IF !tezinski_barkod( @cId, @_tezina, .F. )
-         barkod( @cId )
-      ENDIF
-#else
-      barkod( @cId )
-#endif
-      // ordSetFocus( _order )
-      // RETURN "barkod"
-
-      IF cId == field->id
-         RETURN .T.
-      ENDIF
-
-   ENDIF
-
-   RETURN .F.
-
 
 
 FUNCTION validacija_postoji_sifra( wId, cTag )
@@ -1635,7 +1532,6 @@ FUNCTION StIdROBA()
    ELSE
       RETURN IDROBA
    ENDIF
-
 
 FUNCTION n_num_sif()
 

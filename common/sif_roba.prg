@@ -23,7 +23,7 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
    LOCAL xRet
    LOCAL bRoba
    LOCAL lArtGroup := .F.
-   LOCAL _naz_len := 40
+   LOCAL nBrowseRobaNazivLen := 40
    LOCAL nI
    LOCAL cPomTag
    PRIVATE ImeKol
@@ -37,7 +37,6 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
 
    PushWA()
 
-
    IF cId != NIL .AND. !Empty( cId )
       select_o_roba( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
    ELSE
@@ -45,18 +44,12 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
    ENDIF
 
    AAdd( ImeKol, { PadC( "ID", 10 ),  {|| field->id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
-   AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( field->naz, _naz_len ) }, "naz", {|| .T. }, {|| .T. } } )
-   AAdd( ImeKol, { PadC( "JMJ", 3 ), {|| field->jmj },       "jmj"    } )
+   AAdd( ImeKol, { PadC( "Naziv", nBrowseRobaNazivLen ), {|| PadR( field->naz, nBrowseRobaNazivLen ) }, "naz", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { PadC( "JMJ", 3 ), {|| field->jmj },   "jmj"    } )
 
    AAdd( ImeKol, { PadC( "PLU kod", 8 ),  {|| PadR( fisc_plu, 10 ) }, "fisc_plu", {|| gen_plu( @wfisc_plu ), .F. }, {|| .T. } } )
    AAdd( ImeKol, { PadC( "S.dobav.", 13 ), {|| PadR( sifraDob, 13 ) }, "sifradob"   } )
 
-   // DEBLJINA i TIP
-   IF roba->( FieldPos( "DEBLJINA" ) ) <> 0
-      AAdd( ImeKol, { PadC( "Debljina", 10 ), {|| Transform( field->debljina, "999999.99" ) }, "debljina", NIL, NIL, "999999.99" } )
-
-      AAdd( ImeKol, { PadC( "Roba tip", 10 ), {|| field->roba_tip }, "roba_tip", {|| .T. }, {|| .T. } } )
-   ENDIF
 
    AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()  } )
    AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( field->VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, pic_cijena_bilo_gpiccdem()   } )
@@ -162,9 +155,7 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
    RETURN xRet
 
 
-// ---------------------------------------------------
-// definisanje opisa artikla u sifrarniku
-// ---------------------------------------------------
+
 FUNCTION roba_opis_edit( view )
 
    LOCAL _op := "N"
@@ -177,7 +168,6 @@ FUNCTION roba_opis_edit( view )
    IF !view
 
       @ m_x + 7, m_y + 43 SAY "Definisati opis artikla (D/N) ?" GET _op PICT "@!" VALID _op $ "DN"
-
       READ
 
       IF _op == "N"

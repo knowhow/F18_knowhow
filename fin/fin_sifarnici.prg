@@ -254,11 +254,6 @@ FUNCTION is_konto_ima_u_prometu( cKonto )
    RETURN  lRet
 
 
-FUNCTION P_Roba_fin( CId, dx, dy )
-
-   LOCAL cPrikazi
-
-   RETURN .T.
 
 
 /* P_ULimit(cId,dx,dy)

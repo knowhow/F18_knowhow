@@ -687,30 +687,6 @@ FUNCTION set_rec_from_dbstruct( hRec )
    RETURN NIL
 
 
-FUNCTION get_field_len( cAlias, cField )
-
-   LOCAL hDbfRec := get_a_dbf_rec( cAlias )
-
-   IF !hb_HHasKey( hDbfRec,[ "dbf_fields_len" ] ) .OR. hDbfRec[ "dbf_fields_len" ] == NIL
-      RETURN NIL
-   ENDIF
-
-   RETURN hDbfRec[ "dbf_fields_len" ][ Lower( cField ) ] // { "B", 18, 8} ili NIL
-
-
-FUNCTION get_field_get_picture_code( cAlias, cField )
-
-   LOCAL aFieldLen := get_field_len( cAlias, cField )
-
-   IF aFieldLen == NIL
-      RETURN ""
-   ENDIF
-
-   IF !( aFieldLen[ 1 ] $ "NBY" )
-      RETURN "" // nije numeric
-   ENDIF
-
-   RETURN Replicate( "9", aFieldLen[ 2 ] - aFieldLen[ 3 ] - 1 ) + "." + Replicate( "9", aFieldLen[ 3 ] ) // 999999999.99999999
 
 
 

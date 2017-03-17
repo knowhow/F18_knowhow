@@ -330,6 +330,7 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
    RETURN hDbfRecord
 
 
+
 FUNCTION set_a_dbf_rec_chk0( cTable )
 
    LOCAL lSet := .F.
@@ -557,11 +558,7 @@ FUNCTION sql_order_from_key_fields( dbf_key_fields ) // "sql_order" hash na osno
    RETURN _sql_order
 
 
-// ----------------------------------------------
-// setujem "dbf_fields" hash na osnovu stukture
-// dbf-a
-// hRec["dbf_fields"]
-// ----------------------------------------------
+
 FUNCTION set_dbf_fields_from_struct( xRec )
 
    LOCAL lTabelaOtvorenaOvdje := .F.
@@ -627,14 +624,15 @@ FUNCTION set_dbf_fields_from_struct( xRec )
       lTabelaOtvorenaOvdje := .T.
    ENDIF
 
-
-   IF !Used() .AND. lSql
-      hRec[ "dbf_fields" ]     := NIL
-      hRec[ "dbf_fields_len" ] := NIL
-   ELSE
-      hRec[ "dbf_fields" ] := NIL
-      set_rec_from_dbstruct( @hRec )
+   IF !Used() .AND. lSql // otvori 1 rec sql tabele
+      SELECT ( hRec[ "wa"] )
+      use_sql_1rec( hRec[ "table" ], hRec[ "alias" ] )
+      lTabelaOtvorenaOvdje := .T.
    ENDIF
+
+
+   hRec[ "dbf_fields" ] := NIL
+   set_rec_from_dbstruct( @hRec )
 
    IF lTabelaOtvorenaOvdje
       USE
@@ -663,10 +661,6 @@ FUNCTION set_rec_from_dbstruct( hRec )
    FOR nI := 1 TO Len( aDbfStruct )
       AAdd( hDbfFields, Lower( aDbfStruct[ nI, 1 ] ) ) // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
 
-// IF aDbfStruct[ nI, 2 ] == "B"
-
-// hDbfFieldsLen[ Lower( aDbfStruct[ nI, 1 ] ) ] := { aDbfStruct[ nI, 2 ], 18, 8 }   // double
-
       IF aDbfStruct[ nI, 2 ] == "Y" .OR. ( aDbfStruct[ nI, 2 ] == "I" .AND. aDbfStruct[ nI, 4 ] > 0 )
 
          // za currency polje stoji I 8 4 - sto znaci currency sa cetiri decimale
@@ -687,11 +681,12 @@ FUNCTION set_rec_from_dbstruct( hRec )
    RETURN NIL
 
 
+
 FUNCTION get_field_len( cAlias, cField )
 
    LOCAL hDbfRec := get_a_dbf_rec( cAlias )
 
-   IF !hb_HHasKey( hDbfRec,[ "dbf_fields_len" ] ) .OR. hDbfRec[ "dbf_fields_len" ] == NIL
+   IF !hb_HHasKey( hDbfRec, [ "dbf_fields_len" ] ) .OR. hDbfRec[ "dbf_fields_len" ] == NIL
       RETURN NIL
    ENDIF
 

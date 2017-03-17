@@ -180,6 +180,12 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
    RETURN .T.
 
 
+FUNCTION use_sql_1rec( cTable, cAlias )
+
+   LOCAL cSql := "select * from fmk." + cTable + " LIMIT 1"
+
+   RETURN use_sql( cTable, cSql, cAlias )
+
 
 
 

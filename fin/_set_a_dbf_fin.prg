@@ -36,7 +36,10 @@ FUNCTION set_a_dbf_fin()
    set_a_dbf_temp( "fin_konto", "_KONTO",       F__KONTO   )
    set_a_dbf_temp( "fin_partn", "_PARTN",       F__PARTN   )
    set_a_dbf_temp( "fin_pripr", "FIN_PRIPR", F_FIN_PRIPR  )
-   set_a_dbf_temp( "fin_psuban", "PSUBAN",       F_PSUBAN     )
+
+   altd()
+   set_a_dbf_temp( "fin_psuban", "PSUBAN",       F_PSUBAN  )
+   
    set_a_dbf_temp( "fin_panal", "PANAL",       F_PANAL      )
    set_a_dbf_temp( "fin_psint", "PSINT",       F_PSINT      )
    set_a_dbf_temp( "fin_pnalog", "PNALOG",       F_PNALOG     )

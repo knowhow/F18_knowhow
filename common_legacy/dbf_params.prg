@@ -197,5 +197,5 @@ FUNCTION o_params()
 
 
 FUNCTION select_o_params()
-altd()
+
    RETURN select_o_dbf( "PARAMS", F_PARAMS, "params", "ID" )

@@ -33,3 +33,11 @@ export PATH=$HB_QTPATH:$PATH
 export DYLD_LIBRARY_PATH=.:$HB_LIB_INSTALL
 
 export GT_DEFAULT_TRM=1
+
+
+export F18_DEBUG=1
+export F18_GT_CONSOLE=1
+export F18_POS=1
+
+set | grep F18_
+

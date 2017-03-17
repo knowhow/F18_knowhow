@@ -462,7 +462,6 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
 
          IF is_radn_k4_bf_ide_u_benef_osnovu()
 
-            // altd()
             // IF is_beneficirani_staz_redovan_rad()
             nRadnihSatiUvecanoTrajanje := nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati
             // ELSE

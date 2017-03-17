@@ -38,6 +38,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
       lSilent := .F.
    ENDIF
 
+altd()
    IF cSqlOperator $ "ins#del"
 
       IF cTable == NIL

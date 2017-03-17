@@ -240,7 +240,6 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
       ENDIF
 
       // ------------------- kraj stampe jedne kalkulacije
-      AltD()
 
       kalk_open_tables_unos( lAzuriraniDokument )
       PopWa()

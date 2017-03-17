@@ -13,7 +13,6 @@
 #include "f18.ch"
 
 
-
 STATIC s_nRow // This static maintains the "current row" for ABrowse()
 
 
@@ -192,8 +191,6 @@ STATIC FUNCTION ASkipTest( a, nCurrent, nSkip )
       RETURN ( Len( a ) - nCurrent )
 
    END
-
-   // No problem
 
    RETURN ( nSkip )
 

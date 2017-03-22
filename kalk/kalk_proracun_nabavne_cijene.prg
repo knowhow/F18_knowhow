@@ -138,16 +138,16 @@ FUNCTION korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )
 
 FUNCTION MarzaVP( cIdVd, lNaprijed )
 
-   LOCAL SKol := 0
+   LOCAL nStvarnaKolicina := 0
 
    IF ( _nc == 0 )
       _nc := 9999
    ENDIF
 
    IF gKalo == "1" .AND. cIdvd == "10"
-      Skol := _Kolicina - _GKolicina - _GKolicin2
+      nStvarnaKolicina := _Kolicina - _GKolicina - _GKolicin2
    ELSE
-      Skol := _Kolicina
+      nStvarnaKolicina := _Kolicina
    ENDIF
 
    IF  _Marza == 0 .OR. _VPC <> 0 .AND. !lNaprijed
@@ -158,7 +158,7 @@ FUNCTION MarzaVP( cIdVd, lNaprijed )
       ELSEIF _TMarza == "A"
          _Marza := nMarza
       ELSEIF _TMarza == "U"
-         _Marza := nMarza * SKol
+         _Marza := nMarza * nStvarnaKolicina
       ENDIF
 
    ELSEIF Round( _VPC, 4 ) == 0  .OR. lNaprijed
@@ -168,7 +168,7 @@ FUNCTION MarzaVP( cIdVd, lNaprijed )
       ELSEIF _TMarza == "A"
          nMarza := _Marza
       ELSEIF _TMarza == "U"
-         nMarza := _Marza / SKol
+         nMarza := _Marza / nStvarnaKolicina
       ENDIF
       _VPC := Round( ( nMarza + _NC ), 2 )
 
@@ -189,11 +189,11 @@ FUNCTION MarzaVP( cIdVd, lNaprijed )
  *     Proracun veleprodajne marze
  */
 
-FUNCTION Marza( fmarza )
+FUNCTION kalk_Marza( fMarza )
 
-   LOCAL SKol := 0, nPPP
+   LOCAL nStvarnaKolicina := 0, nPPP
 
-   IF fmarza == NIL
+   IF fMarza == NIL
       fMarza := " "
    ENDIF
 
@@ -209,9 +209,9 @@ FUNCTION Marza( fmarza )
 
 
    IF gKalo == "1" .AND. _idvd == "10"
-      Skol := _Kolicina - _GKolicina - _GKolicin2
+      nStvarnaKolicina := _Kolicina - _GKolicina - _GKolicin2
    ELSE
-      Skol := _Kolicina
+      nStvarnaKolicina := _Kolicina
    ENDIF
 
    IF  _Marza == 0 .OR. _VPC <> 0 .AND. Empty( fMarza )
@@ -227,7 +227,7 @@ FUNCTION Marza( fmarza )
       ELSEIF _TMarza == "A"
          _Marza := nMarza
       ELSEIF _TMarza == "U"
-         _Marza := nMarza * SKol
+         _Marza := nMarza * nStvarnaKolicina
       ENDIF
 
    ELSEIF Round( _VPC, 4 ) == 0  .OR. !Empty( fMarza )
@@ -236,7 +236,7 @@ FUNCTION Marza( fmarza )
       ELSEIF _TMarza == "A"
          nMarza := _Marza
       ELSEIF _TMarza == "U"
-         nMarza := _Marza / SKol
+         nMarza := _Marza / nStvarnaKolicina
       ENDIF
       _VPC := Round( ( nMarza + _NC ) / nPPP, 2 )
    ELSE
@@ -327,8 +327,7 @@ FUNCTION PratiKMag( cIdFirma, cIdKonto, cIdRoba )
    DO WHILE !Eof() .AND.  cIdFirma + cIdKonto + cIdRoba == idfirma + idkonto + idroba
 
       dDatDok := datdok
-      DO WHILE !Eof() .AND.  cIdFirma + cIdKonto + cIdRoba == idfirma + idkonto + idroba ;
-            .AND. datdok == dDatDok
+      DO WHILE !Eof() .AND.  cIdFirma + cIdKonto + cIdRoba == idfirma + idkonto + idroba .AND. datdok == dDatDok
 
 
          nVPC := vpc   // veleprodajna cijena
@@ -422,12 +421,12 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
 FUNCTION kalk_nabcj()
 
 
-   LOCAL Skol
+   LOCAL nStvarnaKolicina
 
    IF gKalo == "1"
-      Skol := _Kolicina - _GKolicina - _GKolicin2
+      nStvarnaKolicina := _Kolicina - _GKolicina - _GKolicin2
    ELSE
-      Skol := _Kolicina
+      nStvarnaKolicina := _Kolicina
    ENDIF
 
 
@@ -436,7 +435,7 @@ FUNCTION kalk_nabcj()
    ELSEIF _TPrevoz == "A"
       nPrevoz := _Prevoz
    ELSEIF _TPrevoz == "U"
-      nPrevoz := _Prevoz / SKol
+      nPrevoz := _Prevoz / nStvarnaKolicina
    ELSEIF _TPrevoz == "R"
       nPrevoz := 0
    ELSE
@@ -447,7 +446,7 @@ FUNCTION kalk_nabcj()
    ELSEIF _TCarDaZ == "A"
       nCarDaz := _CarDaz
    ELSEIF _TCArDaz == "U"
-      nCarDaz := _CarDaz / SKol
+      nCarDaz := _CarDaz / nStvarnaKolicina
    ELSEIF _TCArDaz == "R"
       nCarDaz := 0
    ELSE
@@ -458,7 +457,7 @@ FUNCTION kalk_nabcj()
    ELSEIF _TZavTr == "A"
       nZavTr := _ZavTr
    ELSEIF _TZavTr == "U"
-      nZavTr := _ZavTr / SKol
+      nZavTr := _ZavTr / nStvarnaKolicina
    ELSEIF _TZavTr == "R"
       nZavTr := 0
    ELSE
@@ -469,7 +468,7 @@ FUNCTION kalk_nabcj()
    ELSEIF _TBankTr == "A"
       nBankTr := _BankTr
    ELSEIF _TBankTr == "U"
-      nBankTr := _BankTr / SKol
+      nBankTr := _BankTr / nStvarnaKolicina
    ELSE
       nBankTr := 0
    ENDIF
@@ -478,7 +477,7 @@ FUNCTION kalk_nabcj()
    ELSEIF _TSpedTr == "A"
       nSpedTr := _SpedTr
    ELSEIF _TSpedTr == "U"
-      nSpedTr := _SpedTr / SKol
+      nSpedTr := _SpedTr / nStvarnaKolicina
    ELSE
       nSpedTr := 0
    ENDIF
@@ -590,13 +589,13 @@ FUNCTION KoncijVPC()
 
 FUNCTION MMarza()
 
-   LOCAL SKol := 0
+   LOCAL nStvarnaKolicina := 0
 
-   Skol := Kolicina - GKolicina - GKolicin2
+   nStvarnaKolicina := Kolicina - GKolicina - GKolicin2
    IF TMarza == "%" .OR. Empty( tmarza )
-      nMarza := Skol * Marza / 100 * NC
+      nMarza := nStvarnaKolicina * Marza / 100 * NC
    ELSEIF TMarza == "A"
-      nMarza := Marza * Skol
+      nMarza := Marza * nStvarnaKolicina
    ELSEIF TMarza == "U"
       nMarza := Marza
    ENDIF

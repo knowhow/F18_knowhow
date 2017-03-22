@@ -379,7 +379,6 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                   nUZavTr += _fcj * ( 1 - _Rabat / 100 ) * _kolicina * _ZavTr / 100
                ENDIF
 
-               SELECT roba
                SELECT tarifa
                HSEEK _idtarifa
 
@@ -407,10 +406,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                ENDIF
                IF _idvd == "RN"
                   IF Val( _rbr ) < 900
-                     Marza()
+                     kalk_marza()
                   ENDIF
                ELSE
-                  Marza()
+                  kalk_marza()
                ENDIF
 
                IF nSetEnd == 1

@@ -195,18 +195,18 @@ FUNCTION kalk_stampa_dok_im()
       @ PRow(), nCol1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
    ENDIF
    IF nTotalManjak > 0
-      @ PRow(), nCol1 SAY nTotalManjak PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nTotalManjak PICT pic_iznos_bilo_gpicdem()
    ELSE
-      @ PRow(), nCol1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
    ENDIF
 
    ?
    IF nTotalVisak - nTotalManjak > 0
       @ PRow(), nCol1 SAY nTotalVisak - nTotalManjak PICT pic_iznos_bilo_gpicdem()
-      @ PRow(), nCol1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
    ELSE
       @ PRow(), nCol1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
-      @ PRow(), nCol1 SAY - nTotalVisak + nTotalManjak PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY - nTotalVisak + nTotalManjak PICT pic_iznos_bilo_gpicdem()
    ENDIF
 
 

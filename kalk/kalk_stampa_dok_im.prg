@@ -37,7 +37,7 @@ FUNCTION kalk_stampa_dok_im()
    LOCAL dDatFaktP
    LOCAL cIdKonto
    LOCAL cIdKonto2
-   LOCAL cSamoObrazac, cPrikazCijene, cCijenaTip, nCijena, nColIznosi
+   LOCAL cSamoObrazac, cPrikazCijene, cCijenaTip, nCijena, nC1, nColTotal
 
    PRIVATE nPrevoz
    PRIVATE nCarDaz
@@ -165,7 +165,7 @@ FUNCTION kalk_stampa_dok_im()
          @ PRow(), PCol() + 1 SAY nU4  PICT Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) )
       ELSE
          @ PRow(), PCol() + 1 SAY nU4 PICT iif( nU4 > 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) ) )
-         @ PRow(), PCol() + 1 SAY IF( nU4 < 0, - nU4, nU4 ) PICT iif( nU4 < 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) ) )
+         @ PRow(), PCol() + 1 SAY iif( nU4 < 0, - nU4, nU4 ) PICT iif( nU4 < 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) ) )
       ENDIF
 
       SKIP
@@ -185,14 +185,14 @@ FUNCTION kalk_stampa_dok_im()
    @ PRow(), PCol() + 1 SAY nTotGKol PICT pic_kolicina_bilo_gpickol()
    @ PRow(), PCol() + 1 SAY nTotb PICT pic_iznos_bilo_gpicdem()
    @ PRow(), PCol() + 1 SAY nTotc PICT pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY 0 PICT pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY 0 PICT pic_iznos_bilo_gpicdem()
-   nColIznosi := PCol() + 1
+   @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+   nColTotal := PCol() + 1
 
    IF nTotalVisak > 0
-      @ PRow(), nCol1 SAY nTotalVisak PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), nColTotal SAY nTotalVisak PICT pic_iznos_bilo_gpicdem()
    ELSE
-      @ PRow(), nCol1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), nColTotal SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
    ENDIF
    IF nTotalManjak > 0
       @ PRow(), PCol() + 1 SAY nTotalManjak PICT pic_iznos_bilo_gpicdem()
@@ -202,10 +202,10 @@ FUNCTION kalk_stampa_dok_im()
 
    ?
    IF nTotalVisak - nTotalManjak > 0
-      @ PRow(), nCol1 SAY nTotalVisak - nTotalManjak PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), nColTotal SAY nTotalVisak - nTotalManjak PICT pic_iznos_bilo_gpicdem()
       @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
    ELSE
-      @ PRow(), nCol1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), nColTotal SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
       @ PRow(), PCol() + 1 SAY - nTotalVisak + nTotalManjak PICT pic_iznos_bilo_gpicdem()
    ENDIF
 

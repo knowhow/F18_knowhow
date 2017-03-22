@@ -11,13 +11,33 @@
 
 #include "f18.ch"
 
-
+MEMVAR m
 
 FUNCTION kalk_stampa_dok_im()
 
    LOCAL nCol1 := 0
    LOCAL nCol2 := 0
    LOCAL nPom := 0
+
+   LOCAL nTotalVisak, nTotalManjak, nU4
+   LOCAL nTot5 := 0
+   LOCAL nTot6 := 0
+   LOCAL nTot7 := 0
+   LOCAL nTot8 := 0
+   LOCAL nTot9 := 0
+   LOCAL nTota := 0
+   LOCAL nTotb := 0
+   LOCAL nTotc := 0
+   LOCAL nTotd := 0
+   LOCAL nTotKol := 0
+   LOCAL nTotGKol := 0
+   LOCAL nStr
+   LOCAL cIdPartner
+   LOCAL cBrFaktP
+   LOCAL dDatFaktP
+   LOCAL cIdKonto
+   LOCAL cIdKonto2
+   LOCAL cSamoObrazac, cPrikazCijene, cCijenaTip, nCijena, nColIznosi
 
    PRIVATE nPrevoz
    PRIVATE nCarDaz
@@ -30,11 +50,11 @@ FUNCTION kalk_stampa_dok_im()
    // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    nStr := 0
-   cIdPartner := IdPartner
-   cBrFaktP := BrFaktP
-   dDatFaktP := DatFaktP
-   cIdKonto := IdKonto
-   cIdKonto2 := IdKonto2
+   cIdPartner := kalk_pripr->IdPartner
+   cBrFaktP   := kalk_pripr->BrFaktP
+   dDatFaktP  := kalk_pripr->DatFaktP
+   cIdKonto   := kalk_pripr->IdKonto
+   cIdKonto2  := kalk_pripr->IdKonto2
 
    cSamoObrazac := Pitanje(, "Prikaz samo obrasca inventure? (D/N)" )
 
@@ -47,25 +67,26 @@ FUNCTION kalk_stampa_dok_im()
    cCijenaTip := Pitanje(, "Na obrascu prikazati VPC (D) ili NC (N)?", "N" )
 
    P_10CPI
-   SELECT konto
-   HSEEK cIdkonto
+   select_o_konto( cIdkonto )
    SELECT kalk_pripr
-   ?? "INVENTURA MAGACIN ", cidkonto, "-", konto->naz
+   ?? "INVENTURA MAGACIN ", cIdkonto, "-", konto->naz
    P_COND2
    ?
-   ? "DOKUMENT BR. :", cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), "Datum:", DatDok
+   ? "DOKUMENT BR. :", cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), "Datum:", kalk_pripr->DatDok
    ?
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
 
    SELECT kalk_pripr
    m := "--- --------------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------"
-   ? m
-   ?  "*R * ROBA                                  *  Popisana*  Knjizna *  Knjizna * Popisana *  Razlika *  Cijena  *   VISAK  *  MANJAK  *"
-   ?  "*BR* TARIFA                                *  Kolicina*  Kolicina*vrijednost*vrijednost*  (kol)   *          *          *          *"
-   ? m
+   ?U m
+   ?U  "*R * ROBA                                  *  Popisana*  Knjižna *  Knjižna * Popisana *  Razlika *  Cijena  *   VIŠAK  *  MANJAK  *"
+   ?U  "*BR* TARIFA                                *  Kolicina*  Količina*vrijednost*vrijednost*  (kol)   *          *          *          *"
+   ?U m
 
-   nTot4 := 0
+   nTotalVisak := 0
+   nTotalManjak := 0
+
    nTot5 := 0
    nTot6 := 0
    nTot7 := 0
@@ -103,43 +124,48 @@ FUNCTION kalk_stampa_dok_im()
 
       @ PRow() + 1, 4 SAY IdTarifa + Space( 4 )
       IF cSamoObrazac == "D"
-         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE Replicate( "_", Len( PicKol ) )
-         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE Replicate( " ", Len( PicKol ) )
+         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE Replicate( "_", Len( pic_iznos_bilo_gpickol() ) )
+         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE Replicate( " ", Len( pic_iznos_bilo_gpickol() ) )
       ELSE
-         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE PicKol
-         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE PicKol
+         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE pic_iznos_bilo_gpickol()
+         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE pic_iznos_bilo_gpickol()
       ENDIF
       nC1 := PCol() + 1
 
       IF cSamoObrazac == "D"
-         @ PRow(), PCol() + 1 SAY gkolicina * nCijena  PICTURE Replicate( " ", Len( PicDEM ) )
-         @ PRow(), PCol() + 1 SAY kolicina * nCijena   PICTURE Replicate( "_", Len( PicDEM ) )
-         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE Replicate( " ", Len( PicKol ) )
+         @ PRow(), PCol() + 1 SAY gkolicina * nCijena  PICTURE Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) )
+         @ PRow(), PCol() + 1 SAY kolicina * nCijena   PICTURE Replicate( "_", Len( pic_iznos_bilo_gpicdem() ) )
+         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE Replicate( " ", Len( pic_iznos_bilo_gpickol() ) )
       ELSE
-         @ PRow(), PCol() + 1 SAY gkolicina * nCijena PICTURE Picdem // knjizna vrijednost
-         @ PRow(), PCol() + 1 SAY kolicina * nCijena  PICTURE Picdem // popisana vrijednost
-         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE PicKol // visak-manjak
+         @ PRow(), PCol() + 1 SAY gkolicina * nCijena PICTURE pic_iznos_bilo_gpicdem() // knjizna vrijednost
+         @ PRow(), PCol() + 1 SAY kolicina * nCijena  PICTURE pic_iznos_bilo_gpicdem() // popisana vrijednost
+         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE pic_iznos_bilo_gpickol() // visak-manjak
       ENDIF
       IF ( cPrikazCijene == "D" )
          @ PRow(), PCol() + 1 SAY nCijena  PICTURE PicCDEM // veleprodajna cij
       ELSE
-         @ PRow(), PCol() + 1 SAY nCijena  PICTURE Replicate( " ", Len( PicDEM ) )
+         @ PRow(), PCol() + 1 SAY nCijena  PICTURE Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) )
       ENDIF
 
-      nTotb += gkolicina * nCijena
-      nTotc += kolicina * nCijena
+      nTotb += kalk_pripr->gkolicina * nCijena
+      nTotc += kalk_pripr->kolicina * nCijena
 
-      nU4 := nCijena * ( Kolicina - gKolicina )
-      nTot4 += nU4
+      nU4 := nCijena * ( kalk_pripr->Kolicina - kalk_pripr->gKolicina )
 
-      nTotKol += kolicina
-      nTotGKol += gkolicina
+      IF nU4 > 0 // popisana - knjizna > 0 - visak
+         nTotalVisak += nU4
+      ELSE
+         nTotalManjak += nU4
+      ENDIF
+
+      nTotKol += kalk_pripr->kolicina
+      nTotGKol += kalk_pripr->gkolicina
 
       IF cSamoObrazac == "D"
-         @ PRow(), PCol() + 1 SAY nU4  PICT Replicate( " ", Len( PicDEM ) )
+         @ PRow(), PCol() + 1 SAY nU4  PICT Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) )
       ELSE
-         @ PRow(), PCol() + 1 SAY nU4 PICT IF( nU4 > 0, picdem, Replicate( " ", Len( PicDEM ) ) )
-         @ PRow(), PCol() + 1 SAY IF( nU4 < 0, -nU4, nU4 ) PICT IF( nU4 < 0, picdem, Replicate( " ", Len( PicDEM ) ) )
+         @ PRow(), PCol() + 1 SAY nU4 PICT iif( nU4 > 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) ) )
+         @ PRow(), PCol() + 1 SAY IF( nU4 < 0, - nU4, nU4 ) PICT iif( nU4 < 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) ) )
       ENDIF
 
       SKIP
@@ -150,7 +176,7 @@ FUNCTION kalk_stampa_dok_im()
 
    IF cSamoObrazac == "D"
       PrnClanoviKomisije()
-      RETURN
+      RETURN .F.
    ENDIF
 
    ? m
@@ -161,8 +187,28 @@ FUNCTION kalk_stampa_dok_im()
    @ PRow(), PCol() + 1 SAY nTotc PICT pic_iznos_bilo_gpicdem()
    @ PRow(), PCol() + 1 SAY 0 PICT pic_iznos_bilo_gpicdem()
    @ PRow(), PCol() + 1 SAY 0 PICT pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY nTot4 PICT IF( nTot4 > 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( PicDEM ) ) )
-   @ PRow(), PCol() + 1 SAY IIF( nTot4 < 0, -nTot4, nTot4 )  PICT IF( nTot4 < 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) ) )
+   nColIznosi := PCol() + 1
+
+   IF nTotalVisak > 0
+      @ PRow(), nCol1 SAY nTotalVisak PICT pic_iznos_bilo_gpicdem()
+   ELSE
+      @ PRow(), nCol1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+   ENDIF
+   IF nTotalManjak > 0
+      @ PRow(), nCol1 SAY nTotalManjak PICT pic_iznos_bilo_gpicdem()
+   ELSE
+      @ PRow(), nCol1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+   ENDIF
+
+   ?
+   IF nTotalVisak - nTotalManjak > 0
+      @ PRow(), nCol1 SAY nTotalVisak - nTotalManjak PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), nCol1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+   ELSE
+      @ PRow(), nCol1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), nCol1 SAY - nTotalVisak + nTotalManjak PICT pic_iznos_bilo_gpicdem()
+   ENDIF
+
 
    ? m
 

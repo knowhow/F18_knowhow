@@ -174,15 +174,14 @@ FUNCTION MarzaVP( cIdVd, lNaprijed )
 
    ELSE
       IF cIdvd $ "14#94"
-         nMarza := _VPC * ( 1 -_Rabatv / 100 ) - _NC
+         nMarza := _VPC * ( 1 - _Rabatv / 100 ) - _NC
       ELSE
          nMarza := _VPC - _NC
       ENDIF
    ENDIF
-   AEval( GetList, {| o| o:display() } )
+   AEval( GetList, {| o | o:display() } )
 
-   RETURN
-
+   RETURN .T.
 
 
 /*
@@ -201,12 +200,7 @@ FUNCTION kalk_Marza( fMarza )
       _nc := 9999
    ENDIF
 
-   IF roba->tip $ "VKX"
-      nPPP := 1 / ( 1 + tarifa->opp / 100 )
-   ELSE
-      nPPP := 1
-   ENDIF
-
+   nPPP := 1
 
    IF gKalo == "1" .AND. _idvd == "10"
       nStvarnaKolicina := _Kolicina - _GKolicina - _GKolicin2
@@ -216,12 +210,6 @@ FUNCTION kalk_Marza( fMarza )
 
    IF  _Marza == 0 .OR. _VPC <> 0 .AND. Empty( fMarza )
       nMarza := _VPC * nPPP - _NC
-      IF roba->tip = "X"
-         nMarza -= roba->mpc - _VPC
-         // nmarza:= _vpc*npp-_nc - (roba->mpc-_vpc)
-         // nmarza/_nc := (_vpc*nppp/nc-1 - (roba->mpc-_Vpc)/nc)
-         // nmarza/_nc := ( (_vpc*nppp - roba->mpc -_vpc)/_nc-1)
-      ENDIF
       IF _TMarza == "%"
          _Marza := 100 * ( _VPC * nPPP / _NC - 1 )
       ELSEIF _TMarza == "A"
@@ -241,16 +229,12 @@ FUNCTION kalk_Marza( fMarza )
       _VPC := Round( ( nMarza + _NC ) / nPPP, 2 )
    ELSE
       IF _idvd $ "14#94"
-         IF roba->tip == "V"
-            nMarza := _VPC * nPPP - _VPC * _Rabatv / 100 -_NC
-         ELSE
-            nMarza := _VPC * nPPP * ( 1 -_Rabatv / 100 ) -_NC
-         ENDIF
+         nMarza := _VPC * nPPP * ( 1 - _Rabatv / 100 ) - _NC
       ELSE
          nMarza := _VPC * nPPP - _NC
       ENDIF
    ENDIF
-   AEval( GetList, {| o| o:display() } )
+   AEval( GetList, {| o | o:display() } )
 
    RETURN .T.
 
@@ -420,7 +404,6 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
 
 FUNCTION kalk_nabcj()
 
-
    LOCAL nStvarnaKolicina
 
    IF gKalo == "1"
@@ -506,7 +489,7 @@ FUNCTION NabCj2( n1, n2 )
    IF Abs( n1 - n2 ) > 0.00001
       // tj. ako je ukucana drugacija NC
 
-      _rabat := 100 -100 * _NC / _FCJ
+      _rabat := 100 - 100 * _NC / _FCJ
       _FCJ2 := _NC
       ShowGets()
    ENDIF
@@ -578,7 +561,7 @@ FUNCTION KoncijVPC()
       RETURN roba->VPC
    ENDIF
 
-   RETURN ( nil )
+   RETURN ( NIL )
 
 
 
@@ -726,11 +709,11 @@ FUNCTION V_RabatV()
    ENDIF
 
    IF roba->tip == "V"  // roba tarife
-      nMarza := _VPC / ( 1 + _PORVT ) -_VPC * _RabatV / 100 -_NC
+      nMarza := _VPC / ( 1 + _PORVT ) - _VPC * _RabatV / 100 - _NC
    ELSEIF roba->tip = "X"
-      nMarza := _VPC * ( 1 -_RabatV / 100 ) -_NC - _MPCSAPP / ( 1 + _PORVT ) * _porvt
+      nMarza := _VPC * ( 1 - _RabatV / 100 ) - _NC - _MPCSAPP / ( 1 + _PORVT ) * _porvt
    ELSE
-      nMarza := _VPC / ( 1 + _PORVT ) * ( 1 -_RabatV / 100 ) -_NC
+      nMarza := _VPC / ( 1 + _PORVT ) * ( 1 - _RabatV / 100 ) - _NC
    ENDIF
 
 
@@ -738,11 +721,11 @@ FUNCTION V_RabatV()
 
 
    IF roba->tip == "V"
-      @ m_x + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) -_VPC * _RabatV / 100 PICT picdem
+      @ m_x + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) - _VPC * _RabatV / 100 PICT picdem
    ELSEIF roba->tip == "X"
-      @ m_x + 15, Col() + 1 SAY _Vpc * ( 1 -_RabatV / 100 ) - _MPCSAPP / ( 1 + _PORVT ) * _PORVT PICT picdem
+      @ m_x + 15, Col() + 1 SAY _Vpc * ( 1 - _RabatV / 100 ) - _MPCSAPP / ( 1 + _PORVT ) * _PORVT PICT picdem
    ELSE
-      @ m_x + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) * ( 1 -_RabatV / 100 ) PICT picdem
+      @ m_x + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) * ( 1 - _RabatV / 100 ) PICT picdem
    ENDIF
 
    ShowGets()
@@ -790,14 +773,14 @@ FUNCTION p_nc_popup( cIdRoba )
 
    LOCAL nScan
 
-   //nScan := AScan( aNC_ctrl, {| xVal| xVal[ 1 ] == cIdRoba } )
+   // nScan := AScan( aNC_ctrl, {| xVal| xVal[ 1 ] == cIdRoba } )
 
-   //IF nScan <> 0
+   // IF nScan <> 0
 
-  //    nOdstupanje := Round( aNC_ctrl[ nScan, 5 ], 2 ) // prikazi odstupanje NC !
-  //    MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + AllTrim( Str( nOdstupanje ) ) + " %" )
+   // nOdstupanje := Round( aNC_ctrl[ nScan, 5 ], 2 ) // prikazi odstupanje NC !
+   // MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + AllTrim( Str( nOdstupanje ) ) + " %" )
 
-   //ENDIF
+   // ENDIF
 
    RETURN .T.
 

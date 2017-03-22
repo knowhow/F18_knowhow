@@ -124,22 +124,22 @@ FUNCTION kalk_stampa_dok_im()
 
       @ PRow() + 1, 4 SAY IdTarifa + Space( 4 )
       IF cSamoObrazac == "D"
-         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE Replicate( "_", Len( pic_iznos_bilo_gpickol() ) )
-         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE Replicate( " ", Len( pic_iznos_bilo_gpickol() ) )
+         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE Replicate( "_", Len( pic_kolicina_bilo_gpickol() ) )
+         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE Replicate( " ", Len( pic_kolicina_bilo_gpickol() ) )
       ELSE
-         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE pic_iznos_bilo_gpickol()
-         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE pic_iznos_bilo_gpickol()
+         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE pic_kolicina_bilo_gpickol()
+         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE pic_kolicina_bilo_gpickol()
       ENDIF
       nC1 := PCol() + 1
 
       IF cSamoObrazac == "D"
          @ PRow(), PCol() + 1 SAY gkolicina * nCijena  PICTURE Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) )
          @ PRow(), PCol() + 1 SAY kolicina * nCijena   PICTURE Replicate( "_", Len( pic_iznos_bilo_gpicdem() ) )
-         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE Replicate( " ", Len( pic_iznos_bilo_gpickol() ) )
+         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE Replicate( " ", Len( pic_kolicina_bilo_gpickol() ) )
       ELSE
          @ PRow(), PCol() + 1 SAY gkolicina * nCijena PICTURE pic_iznos_bilo_gpicdem() // knjizna vrijednost
          @ PRow(), PCol() + 1 SAY kolicina * nCijena  PICTURE pic_iznos_bilo_gpicdem() // popisana vrijednost
-         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE pic_iznos_bilo_gpickol() // visak-manjak
+         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE pic_kolicina_bilo_gpickol() // visak-manjak
       ENDIF
       IF ( cPrikazCijene == "D" )
          @ PRow(), PCol() + 1 SAY nCijena  PICTURE PicCDEM // veleprodajna cij

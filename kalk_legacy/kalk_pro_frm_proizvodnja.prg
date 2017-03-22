@@ -330,7 +330,7 @@ FUNCTION leg_Get2_PR()
       @ m_x + 10, m_y + 40 GET _Marza PICTURE PicDEM
       @ m_x + 10, Col() + 1 GET fMarza PICT "@!"
       @ m_x + 12, m_y + 2 SAY "VELEPRODAJNA CJENA  (VPC)   :"
-      @ m_x + 12, m_y + 50 GET _VPC PICT PicDEM VALID {|| Marza( fMarza ), .T. }
+      @ m_x + 12, m_y + 50 GET _VPC PICT PicDEM VALID {|| kalk_marza( fMarza ), .T. }
 
       READ
       SetujVPC( _vpc )

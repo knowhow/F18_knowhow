@@ -263,7 +263,7 @@ FUNCTION Get2_RN()
          @ m_x + 12, m_y + 2    SAY "VELEPRODAJNA CJENA  (VPC)   :"
       ENDIF
       @ m_x + 12, m_y + 50 GET _VPC    PICTURE PicDEM;
-         VALID {|| Marza( fMarza ), .T. }
+         VALID {|| kalk_marza( fMarza ), .T. }
 
       READ
       IF koncij->naz == "P2"

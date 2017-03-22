@@ -293,7 +293,7 @@ STATIC FUNCTION kalk_get_2_10( x_kord, cIdPartner )
    ++ nX
    @ m_x + nX, m_y + 2    SAY8 "Magacin. Marža           :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
    @ m_x + nX, Col() + 2 GET _Marza PICT PicDEM
-   @ m_x + nX, Col() + 1 GET fMarza PICT "@!" VALID {|| Marza( fMarza ), fMarza := " ", .T. }
+   @ m_x + nX, Col() + 1 GET fMarza PICT "@!" VALID {|| kalk_marza( fMarza ), fMarza := " ", .T. }
 
    // PRODAJNA CIJENA / PLANSKA CIJENA
    ++ nX

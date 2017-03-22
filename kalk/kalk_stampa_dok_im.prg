@@ -155,7 +155,7 @@ FUNCTION kalk_stampa_dok_im()
       IF nU4 > 0 // popisana - knjizna > 0 - visak
          nTotalVisak += nU4
       ELSE
-         nTotalManjak += nU4
+         nTotalManjak += -nU4
       ENDIF
 
       nTotKol += kalk_pripr->kolicina

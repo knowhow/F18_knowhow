@@ -23,7 +23,7 @@ STATIC s_cKtoProvizija
 STATIC s_cIdVN := "IB"
 
 
-FUNCTION import_elba( cTxt )
+FUNCTION import_elektronsko_bankarstvo_bbi( cTxt )
 
    LOCAL nItems
    LOCAL cImpView
@@ -51,7 +51,7 @@ FUNCTION import_elba( cTxt )
    ENDIF
 
    o_fin_pripr()
-   o_nalog()
+   //o_nalog()
 
 
    s_cDelimiter := Chr( 9 ) // delimiter je TAB
@@ -222,7 +222,7 @@ STATIC FUNCTION process_elba_items( cTxt, cImpView )
          EXIT
       ENDIF
 
-      ++ nItems
+      ++nItems
       @ m_x + 3, m_y + 2 SAY PadR( "", 60 ) COLOR "BG+/B"
       @ m_x + 3, m_y + 2 SAY "stavka " + AllTrim( Str( nItems ) ) COLOR "BG+/B"
 
@@ -274,13 +274,6 @@ STATIC FUNCTION get_elba_stavka_from_txt( aItem )
         9) BAM
        10) 126.36
        */
-
-
-
-
-
-
-
 
 
 
@@ -374,7 +367,7 @@ STATIC FUNCTION get_elba_stavka_from_txt( aItem )
 
 
    IF hRet[ "partner" ] != "PROVIZIJA"
-      nSeek := AScan( s_aPartArr, {| xVal| xVal[ 2 ] == hRet[ "partner" ] } )
+      nSeek := AScan( s_aPartArr, {| xVal | xVal[ 2 ] == hRet[ "partner" ] } )
 
       IF nSeek == 0
          AAdd( s_aPartArr, { hRet[ "partner_opis" ], hRet[ "partner" ] } )
@@ -405,7 +398,6 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
    LOCAL cFirma
    LOCAL cBrNal
    LOCAL cDP
-   LOCAL cRbr
 
    LOCAL nCurr := 1
 
@@ -417,7 +409,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
 */
 
    ++s_nRbr
-   cRbr := Str( s_nRbr, 5 )
+
 
 
    hFinItem[ "opis" ] := PadR( hFinItem[ "opis" ], 100 )
@@ -430,7 +422,9 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
 
       @ m_x + 6, m_y + 2 SAY Space( 70 )
       @ m_x + 6, m_y + 2 SAY PadR( hFinItem[ "partner_opis" ], 45 ) + " -> partner: " ;
-         GET hFinItem[ "partner" ] VALID postoji_partner( hFinItem[ "partner" ] ) .AND. p_partner( @hFinItem[ "partner" ] )
+         GET hFinItem[ "partner" ] ;
+         WHEN hFinItem[ "konto" ] != s_cKtoProvizija ; // ako je konto provizije onda se nema sta gledati partner
+         VALID postoji_partner( hFinItem[ "partner" ], hFinItem[ "partner_opis" ] ) .AND. p_partner( @hFinItem[ "partner" ] )
 
       @ m_x + 7, m_y + 2 SAY8 "datum knjiženja:" GET hFinItem[ "datdok" ]
       @ m_x + 7, Col() + 2 SAY8 "broj veze:" GET hFinItem[ "brdok" ]
@@ -438,7 +432,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
       @ m_x + 9, m_y + 2 SAY Replicate( "=", 60 )
 
 
-      @ m_x + 11, m_y + 2 SAY PadR( "Rbr.stavke:", 20 ) GET cRbr
+      @ m_x + 11, m_y + 2 SAY PadR( "Rbr.stavke:", 20 ) GET s_nRbr PICT "999"
       @ m_x + 12, m_y + 2 SAY "dug/pot:" GET hFinItem[ "d_p" ]
       @ m_x + 12, Col() + 2 SAY "konto:" GET hFinItem[ "konto" ]
       @ m_x + 12, Col() + 2 SAY PadR( "IZNOS STAVKE:", 20, 20 ) GET hFinItem[ "iznos" ] PICT "9999999.99"
@@ -472,22 +466,6 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
 
    hFinItem[ "konto" ] := s_cKtoBanka
 
-/*
-   IF cImpView == "D"
-
-      @ m_x + 13, m_y + 2 SAY Replicate( "-", 60 )
-      @ m_x + 14, m_y + 2 SAY PadR( "Rbr.protustavke:", 20 ) GET cRbr
-      @ m_x + 15, Col() + 2 SAY "konto:" GET hFinItem[ "konto" ]
-      @ m_x + 15, Col() + 2 SAY PadR( "IZNOS PROTUSTAVKE:", 20 ) GET hFinItem[ "iznos" ] PICT "9999999.99"
-
-      IF LastKey() <> K_ESC
-         READ
-      ELSE
-         RETURN .F.
-      ENDIF
-
-   ENDIF
-*/
 
    SELECT fin_pripr
    APPEND BLANK
@@ -517,40 +495,24 @@ STATIC FUNCTION elba_fix_dat_var( cDate )
    RETURN dDate
 
 
-FUNCTION postoji_partner( cIdPartner )
+FUNCTION postoji_partner( cIdPartner, cPartnerOpis )
 
    LOCAL lRet
 
    PushWA()
-
-   select_o_partner( cIdPartner)
+   select_o_partner( cIdPartner )
 
    lRet := Found()
    PopWA()
 
-   IF !lRet .AND. Pitanje( , "Nepostojeći partner " + cIdPartner + " ! Ručno podesiti? ", "N" ) == "D"
+
+   IF !lRet .AND. Pitanje( "#" + cPartnerOpis, "Nepostojeći partner " + cIdPartner + " ! Ručno podesiti? ", "N" ) == "D"
       RETURN .T.
    ENDIF
 
    RETURN  lRet
 
 
-// ---------------------------------------------
-// vraca D/P za tip transakcije
-// ---------------------------------------------
-STATIC FUNCTION _g_elba_dp( cTransType )
-
-   LOCAL cRet := "1"
-
-   cTransType := AllTrim( cTransType )
-   DO CASE
-   CASE cTransType == "-"
-      cRet := "1"
-   CASE cTransType == "+"
-      cRet := "2"
-   ENDCASE
-
-   RETURN cRet
 
 
 
@@ -575,7 +537,6 @@ STATIC FUNCTION get_konto_prema_opisu( cTrans, cOpis )
       RETURN cKonto
    ENDIF
 
-   cOpis := KonvZnWin( cOpis )
 
    IF AllTrim( cTrans ) == "-"
 
@@ -609,14 +570,13 @@ STATIC FUNCTION get_partnera( cTrType, cTxt, cTrRN )
    ENDIF
 
 
-   nSeek := AScan( s_aPartArr, {| xVal| xVal[ 1 ] == cTxt } ) // pokusaj pronaci po matrici
+   nSeek := AScan( s_aPartArr, {| xVal | xVal[ 1 ] == cTxt } ) // pokusaj pronaci po matrici
 
    IF nSeek <> 0
       RETURN s_aPartArr[ nSeek, 2 ]  // nasao sam ga u matrici
    ENDIF
 
    IF AllTrim( cTrType ) == "+"
-
       get_partnera_za_uplate( cTxt ) // trazi partnera za uplate na zr
 
    ELSEIF AllTrim( cTrType ) == "-"
@@ -638,14 +598,12 @@ STATIC FUNCTION get_partnera_za_uplate( cTxt )
    LOCAL cPartnId := "?????"
    LOCAL nSeek
 
-   // uzmi banku i opis ako postoji "/"
-   IF Left( cTxt, 1 ) == "/"
+   IF Left( cTxt, 1 ) == "/"  // uzmi banku i opis ako postoji "/"
 
       cDesc := AllTrim( SubStr( cTxt, 18, Len( cTxt ) ) )
       cBank := AllTrim( SubStr( cTxt, 2, 16 ) )
 
    ELSE
-
       cDesc := AllTrim( cTxt )
 
    ENDIF
@@ -663,14 +621,11 @@ STATIC FUNCTION get_partner_za_isplate_sa_zr( cTxt, cTrRN )
    LOCAL cPartnId := "?????"
    LOCAL nSeek
 
-   // uzmi banku i opis ako postoji "/"
-   IF Left( cTxt, 1 ) == "/"
+   IF Left( cTxt, 1 ) == "/" // uzmi banku i opis ako postoji "/"
       cDesc := AllTrim( SubStr( cTxt, 18, Len( cTxt ) ) )
    ELSE
       cDesc := AllTrim( cTxt )
    ENDIF
-
-   cDesc := KonvZnWin( cDesc )
 
    cPartnId := get_partner_by_banka( cTrRN )
 
@@ -678,10 +633,9 @@ STATIC FUNCTION get_partner_za_isplate_sa_zr( cTxt, cTrRN )
 
       cPartnId := get_partner_by_elba_partner_opis( cDesc )
 
-      Msgbeep( "Nepostojeci partner !!!#Opis: " + PadR( cTxt, 50 ) + ;
-         "#" + "trans.rn: " + cTrRN )
+      Msgbeep( "Nepostojeći partner !#Opis: " + PadR( cTxt, 50 ) + "#" + "trans.rn: " + cTrRN )
 
-      cPartnId := PadR( cDesc, 3 ) + ".."
+      cPartnId := PadR( cDesc, 4 )
 
       p_partner( @cPartnId )
 
@@ -690,7 +644,7 @@ STATIC FUNCTION get_partner_za_isplate_sa_zr( cTxt, cTrRN )
    ENDIF
 
 
-   nSeek := AScan( s_aPartArr, {| xVal| xVal[ 2 ] == cPartnId } )
+   nSeek := AScan( s_aPartArr, {| xVal | xVal[ 2 ] == cPartnId } )
 
    IF nSeek == 0
       AAdd( s_aPartArr, { cTxt, cPartnId } )
@@ -749,9 +703,7 @@ STATIC FUNCTION get_partner_by_banka( cBanka )
    RETURN Space( 6 )
 
 
-// ------------------------------------------------------
-// pretraga partnera po nazivu ili dijelu naziva
-// ------------------------------------------------------
+
 STATIC FUNCTION get_partner_by_elba_partner_opis( cDesc )
 
    LOCAL aTemp
@@ -776,12 +728,10 @@ STATIC FUNCTION get_partner_by_elba_partner_opis( cDesc )
 
    ENDIF
 
-   o_partner()
-   SET ORDER TO TAG "naz"
-   GO TOP
-   SEEK cTemp
+altd()
+   find_partner_by_naz_or_id( cTemp )
 
-   IF Found()
+   IF RecCount() == "1"
       cPartner := partn->id
    ENDIF
 
@@ -835,7 +785,7 @@ FUNCTION get_konto_rule_elba_c3( cCond, cPartner )
    RETURN cKonto
 
 
-
+/*
 FUNCTION rule_get_partner_na_osnovu_konta( cKonto )
 
    LOCAL cObj := "ELBA_IMPORT"
@@ -866,3 +816,4 @@ FUNCTION rule_get_partner_na_osnovu_konta( cKonto )
    PopWA()
 
    RETURN cPartn
+*/

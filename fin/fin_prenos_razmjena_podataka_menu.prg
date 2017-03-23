@@ -19,12 +19,12 @@ FUNCTION fin_razmjena_podataka_meni()
    PRIVATE opcexe := {}
    PRIVATE Izbor := 1
 
-   AAdd( opc, "1. fakt->fin                   " )
+   AAdd( opc, "1. fakt->fin                              " )
    AAdd( opcexe, {|| fakt_fin_prenos() } )
    //AAdd( opc, "2. ld->fin " )
    //AAdd( opcexe, {|| LdFin() } )
-   AAdd( opc, "3. import elba " )
-   AAdd( opcexe, {|| import_elba() } )
+   AAdd( opc, "3. import txt elektronsko bankarstvo bbi" )
+   AAdd( opcexe, {|| import_elektronsko_bankarstvo_bbi() } )
    AAdd( opc, "4. export dbf (svi nalozi) " )
    AAdd( opcexe, {|| st_sv_nal() } )
    AAdd( opc, "6. pos->fin " )

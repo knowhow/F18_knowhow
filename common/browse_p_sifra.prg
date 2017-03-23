@@ -81,8 +81,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
 
    ENDIF
 
-   AltD()
-
    cOrderTag := ordName( 1 )
    sif_set_order( xIndex, cOrderTag, @fID_j )
 

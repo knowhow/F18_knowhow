@@ -286,7 +286,8 @@ STATIC FUNCTION fin_kamate_key_handler()
          ? "-------------------------------- ------------ ------------ ------------"
 
          DO WHILE !Eof()
-            ? field->idpartner, PadR( Ocitaj( F_PARTN, field->idpartner, "naz" ), 25 ), ;
+            select_o_partner( field->idpartner )
+            ? field->idpartner, PadR( partn->naz, 25 ), ;
                Str( field->osndug, 12, 2 ), Str( field->kamate, 12, 2 ), Str( field->osndug + field->kamate, 12, 2 )
             nUd1 += field->osndug
             nUd2 += field->kamate

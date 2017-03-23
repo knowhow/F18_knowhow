@@ -56,7 +56,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
 
    o_suban()
    //o_partner()
-   o_konto()
+   //o_konto()
 
 
    cIdFirma := self_organizacija_id()
@@ -378,9 +378,11 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
                ?? " " + Transform( dug2, picdem ), Transform( pot2, picdem ), Transform( dug2 - pot2, picdem )
             ENDIF
          ELSEIF cLastIdPartner != cIdPartner .OR. Len( cLastIdPartner ) < 1
-            Pljuc( cIdPartner )
-            cP_naz := PadR( Ocitaj( F_PARTN, cIdPartner, "naz" ), 25 )
-            PPljuc( cP_naz )
+            qqout_sa_x_x( cIdPartner )
+            select_o_partner( cIdPartner )
+            cP_naz := PadR( partn->naz, 25 )
+            select pom
+            qqout_sa_x( cP_naz )
             cLastIdPartner := cIdPartner
          ENDIF
 
@@ -580,31 +582,31 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
             IF cSaRokom == "D"
                FOR i := 1 TO Len( anInterUV )
                   IF ( cValuta == "1" )
-                     PPljuc( Transform( anInterUV[ i, 1, 1 ] -anInterUV[ i, 2, 1 ], PICPIC ) )
+                     qqout_sa_x( Transform( anInterUV[ i, 1, 1 ] -anInterUV[ i, 2, 1 ], PICPIC ) )
                   ELSE
-                     PPljuc( Transform( anInterUV[ i, 3, 1 ] -anInterUV[ i, 4, 1 ], PICPIC ) )
+                     qqout_sa_x( Transform( anInterUV[ i, 3, 1 ] -anInterUV[ i, 4, 1 ], PICPIC ) )
                   ENDIF
                NEXT
 
                IF ( cValuta == "1" )
-                  PPljuc( Transform( nUkUVD - nUkUVP, PICPIC ) )
+                  qqout_sa_x( Transform( nUkUVD - nUkUVP, PICPIC ) )
                ELSE
-                  PPljuc( Transform( nUkUVD2 - nUkUVP2, PICPIC ) )
+                  qqout_sa_x( Transform( nUkUVD2 - nUkUVP2, PICPIC ) )
                ENDIF
 
                FOR i := 1 TO Len( anInterVV )
                   IF ( cValuta == "1" )
-                     PPljuc( Transform( anInterVV[ i, 1, 1 ] -anInterVV[ i, 2, 1 ], PICPIC ) )
+                     qqout_sa_x( Transform( anInterVV[ i, 1, 1 ] -anInterVV[ i, 2, 1 ], PICPIC ) )
                   ELSE
-                     PPljuc( Transform( anInterVV[ i, 3, 1 ] -anInterVV[ i, 4, 1 ], PICPIC ) )
+                     qqout_sa_x( Transform( anInterVV[ i, 3, 1 ] -anInterVV[ i, 4, 1 ], PICPIC ) )
                   ENDIF
                NEXT
                IF ( cValuta == "1" )
-                  PPljuc( Transform( nUkVVD - nUkVVP, PICPIC ) )
-                  PPljuc( Transform( nUDug - nUPot, PICPIC ) )
+                  qqout_sa_x( Transform( nUkVVD - nUkVVP, PICPIC ) )
+                  qqout_sa_x( Transform( nUDug - nUPot, PICPIC ) )
                ELSE
-                  PPljuc( Transform( nUkVVD2 - nUkVVP2, PICPIC ) )
-                  PPljuc( Transform( nUDug2 - nUPot2, PICPIC ) )
+                  qqout_sa_x( Transform( nUkVVD2 - nUkVVP2, PICPIC ) )
+                  qqout_sa_x( Transform( nUDug2 - nUPot2, PICPIC ) )
                ENDIF
 
                IF lExpRpt == .T.
@@ -616,13 +618,13 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
                ENDIF
             ELSE
                IF ( cValuta == "1" )
-                  PPljuc( Transform( nUkUVD - nUkUVP, PICPIC ) )
-                  PPljuc( Transform( nUkVVD - nUkVVP, PICPIC ) )
-                  PPljuc( Transform( nUDug - nUPot, PICPIC ) )
+                  qqout_sa_x( Transform( nUkUVD - nUkUVP, PICPIC ) )
+                  qqout_sa_x( Transform( nUkVVD - nUkVVP, PICPIC ) )
+                  qqout_sa_x( Transform( nUDug - nUPot, PICPIC ) )
                ELSE
-                  PPljuc( Transform( nUkUVD2 - nUkUVP2, PICPIC ) )
-                  PPljuc( Transform( nUkVVD2 - nUkVVP2, PICPIC ) )
-                  PPljuc( Transform( nUDug2 - nUPot2, PICPIC ) )
+                  qqout_sa_x( Transform( nUkUVD2 - nUkUVP2, PICPIC ) )
+                  qqout_sa_x( Transform( nUkVVD2 - nUkVVP2, PICPIC ) )
+                  qqout_sa_x( Transform( nUDug2 - nUPot2, PICPIC ) )
                ENDIF
 
                IF lExpRpt == .T.
@@ -732,38 +734,38 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
 
       ? cTmpL
 
-      Pljuc( PadR( "UKUPNO", Len( POM->IDPARTNER + PadR( PARTN->naz, 25 ) ) + 1 ) )
+      qqout_sa_x_x( PadR( "UKUPNO", Len( POM->IDPARTNER + PadR( PARTN->naz, 25 ) ) + 1 ) )
 
       _get_line2( @cTmpL, cSaRokom, PICPIC )
 
       IF cSaRokom == "D"
          FOR i := 1 TO Len( anInterUV )
             IF ( cValuta == "1" )
-               PPljuc( Transform( anInterUV[ i, 1, 2 ] -anInterUV[ i, 2, 2 ], PICPIC ) )
+               qqout_sa_x( Transform( anInterUV[ i, 1, 2 ] -anInterUV[ i, 2, 2 ], PICPIC ) )
             ELSE
-               PPljuc( Transform( anInterUV[ i, 3, 2 ] -anInterUV[ i, 4, 2 ], PICPIC ) )
+               qqout_sa_x( Transform( anInterUV[ i, 3, 2 ] -anInterUV[ i, 4, 2 ], PICPIC ) )
             ENDIF
          NEXT
          IF ( cValuta == "1" )
-            PPljuc( Transform( nTUkUVD - nTUkUVP, PICPIC ) )
+            qqout_sa_x( Transform( nTUkUVD - nTUkUVP, PICPIC ) )
          ELSE
-            PPljuc( Transform( nTUkUVD2 - nTUkUVP2, PICPIC ) )
+            qqout_sa_x( Transform( nTUkUVD2 - nTUkUVP2, PICPIC ) )
          ENDIF
 
          FOR i := 1 TO Len( anInterVV )
             IF ( cValuta == "1" )
-               PPljuc( Transform( anInterVV[ i, 1, 2 ] -anInterVV[ i, 2, 2 ], PICPIC ) )
+               qqout_sa_x( Transform( anInterVV[ i, 1, 2 ] -anInterVV[ i, 2, 2 ], PICPIC ) )
             ELSE
-               PPljuc( Transform( anInterVV[ i, 3, 2 ] -anInterVV[ i, 4, 2 ], PICPIC ) )
+               qqout_sa_x( Transform( anInterVV[ i, 3, 2 ] -anInterVV[ i, 4, 2 ], PICPIC ) )
             ENDIF
          NEXT
 
          IF ( cValuta == "1" )
-            PPljuc( Transform( nTUkVVD - nTUkVVP, PICPIC ) )
-            PPljuc( Transform( nTUDug - nTUPot, PICPIC ) )
+            qqout_sa_x( Transform( nTUkVVD - nTUkVVP, PICPIC ) )
+            qqout_sa_x( Transform( nTUDug - nTUPot, PICPIC ) )
          ELSE
-            PPljuc( Transform( nTUkVVD2 - nTUkVVP2, PICPIC ) )
-            PPljuc( Transform( nTUDug2 - nTUPot2, PICPIC ) )
+            qqout_sa_x( Transform( nTUkVVD2 - nTUkVVP2, PICPIC ) )
+            qqout_sa_x( Transform( nTUDug2 - nTUPot2, PICPIC ) )
          ENDIF
 
          IF lExpRpt == .T.
@@ -778,13 +780,13 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
 
       ELSE
          IF ( cValuta == "1" )
-            PPljuc( Transform( nTUkUVD - nTUkUVP, PICPIC ) )
-            PPljuc( Transform( nTUkVVD - nTUkVVP, PICPIC ) )
-            PPljuc( Transform( nTUDug - nTUPot, PICPIC ) )
+            qqout_sa_x( Transform( nTUkUVD - nTUkUVP, PICPIC ) )
+            qqout_sa_x( Transform( nTUkVVD - nTUkVVP, PICPIC ) )
+            qqout_sa_x( Transform( nTUDug - nTUPot, PICPIC ) )
          ELSE
-            PPljuc( Transform( nTUkUVD2 - nTUkUVP2, PICPIC ) )
-            PPljuc( Transform( nTUkVVD2 - nTUkVVP2, PICPIC ) )
-            PPljuc( Transform( nTUDug2 - nTUPot2, PICPIC ) )
+            qqout_sa_x( Transform( nTUkUVD2 - nTUkUVP2, PICPIC ) )
+            qqout_sa_x( Transform( nTUkVVD2 - nTUkVVP2, PICPIC ) )
+            qqout_sa_x( Transform( nTUDug2 - nTUPot2, PICPIC ) )
          ENDIF
 
          IF lExpRpt == .T.
@@ -1206,7 +1208,7 @@ STATIC FUNCTION _f_text( cTxt, nLen )
    RETURN PadC( cTxt, nLen )
 
 
-FUNCTION Pljuc( xVal )
+FUNCTION qqout_sa_x_x( xVal )
 
    ? "+"
    ?? xVal
@@ -1217,7 +1219,7 @@ FUNCTION Pljuc( xVal )
 // -------------------------------------------
 // prikaz vrijednosti na izvjestaju
 // -------------------------------------------
-FUNCTION PPljuc( xVal )
+FUNCTION qqout_sa_x( xVal )
 
    ?? xVal
    ?? "+"

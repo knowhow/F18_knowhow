@@ -179,7 +179,10 @@ FUNCTION RedIspisa()
    IF Empty( idpartner )
       cVrati += PadR( opis, 40 )
    ELSE
-      cVrati += PadR( Ocitaj( F_PARTN, idpartner, "naz" ), 40 )
+      PushWa()
+      select_o_partner( field->idpartner )
+      cVrati += PadR( partn->naz, 40 )
+      PopWa()
    ENDIF
    cVrati += ( " " + Transform( iznosbhd, picbhd ) )
 

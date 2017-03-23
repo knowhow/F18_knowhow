@@ -37,7 +37,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
 
    o_suban()
    //o_partner()
-   o_konto()
+   //o_konto()
 
 
    cIdFirma := self_organizacija_id()
@@ -284,8 +284,9 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
          SELECT pom
 
          IF cLastIdPartner != cIdPartner .OR. Len( cLastIdPartner ) < 1
-            Pljuc( cIdPartner )
-            PPljuc( PadR( Ocitaj( F_PARTN, cIdPartner, "naz" ), 25 ) )
+            qqout_sa_x_x( cIdPartner )
+            select_o_partner( cIdPartner )
+            qqout_sa_x( PadR( partn->naz, 25 ) )
             cLastIdPartner := cIdPartner
          ENDIF
 
@@ -347,20 +348,20 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
             IF ( cValuta == "1" )
                nIznosRok += anInterVV[ i, 1, 1 ] - anInterVV[ i, 2, 1 ]
                nIznosStavke := nSaldo - nIznosRok
-               PPljuc( Transform( nIznosStavke, PICPIC ) )
+               qqout_sa_x( Transform( nIznosStavke, PICPIC ) )
             ELSE
                nIznosRok += anInterVV[ i, 3, 1 ] - anInterVV[ i, 4, 1 ]
                nIznosStavke := nSldDem - nIznosRok
-               PPljuc( Transform( nIznosStavke, PICPIC ) )
+               qqout_sa_x( Transform( nIznosStavke, PICPIC ) )
 
             ENDIF
          NEXT
          IF ( cValuta == "1" )
-            PPljuc( Transform( nUkVVD - nUkVVP, PICPIC ) )
-            PPljuc( Transform( nSaldo, PICPIC ) )
+            qqout_sa_x( Transform( nUkVVD - nUkVVP, PICPIC ) )
+            qqout_sa_x( Transform( nSaldo, PICPIC ) )
          ELSE
-            PPljuc( Transform( nUkVVD2 - nUkVVP2, PICPIC ) )
-            PPljuc( Transform( nSldDem, PICPIC ) )
+            qqout_sa_x( Transform( nUkVVD2 - nUkVVP2, PICPIC ) )
+            qqout_sa_x( Transform( nSldDem, PICPIC ) )
          ENDIF
 
          IF PRow() > 52 + dodatni_redovi_po_stranici()
@@ -385,22 +386,22 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
 
    ? "+" + REPL( "+", FIELD_PARTNER_ID_LENGTH ) + "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Ĵ"
 
-   Pljuc( PadR( "UKUPNO", Len( POM->IDPARTNER + PadR( PARTN->naz, 25 ) ) + 1 ) )
+   qqout_sa_x_x( PadR( "UKUPNO", Len( POM->IDPARTNER + PadR( PARTN->naz, 25 ) ) + 1 ) )
 
    FOR i := 1 TO Len( anInterVV )
       IF ( cValuta == "1" )
-         PPljuc( Transform( anInterVV[ i, 1, 2 ] -anInterVV[ i, 2, 2 ], PICPIC ) )
+         qqout_sa_x( Transform( anInterVV[ i, 1, 2 ] -anInterVV[ i, 2, 2 ], PICPIC ) )
       ELSE
-         PPljuc( Transform( anInterVV[ i, 3, 2 ] -anInterVV[ i, 4, 2 ], PICPIC ) )
+         qqout_sa_x( Transform( anInterVV[ i, 3, 2 ] -anInterVV[ i, 4, 2 ], PICPIC ) )
       ENDIF
    NEXT
 
    IF ( cValuta == "1" )
-      PPljuc( Transform( nTUkVVD - nTUkVVP, PICPIC ) )
-      PPljuc( Transform( nTUDug - nTUPot, PICPIC ) )
+      qqout_sa_x( Transform( nTUkVVD - nTUkVVP, PICPIC ) )
+      qqout_sa_x( Transform( nTUDug - nTUPot, PICPIC ) )
    ELSE
-      PPljuc( Transform( nTUkVVD2 - nTUkVVP2, PICPIC ) )
-      PPljuc( Transform( nTUDug2 - nTUPot2, PICPIC ) )
+      qqout_sa_x( Transform( nTUkVVD2 - nTUkVVP2, PICPIC ) )
+      qqout_sa_x( Transform( nTUDug2 - nTUPot2, PICPIC ) )
    ENDIF
 
    ? "+" + REPL( "+", FIELD_PARTNER_ID_LENGTH ) + "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -413,19 +414,10 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
 
    CLOSERET
 
-   RETURN
+   RETURN .T.
 
 
 
-
-
-// ///////////////////
-
-/* ZaglDuznici(fStrana, lSvi)
- *     Zaglavlje izvjestaja duznika
- *   param: fStrana
- *   param: lSvi
- */
 
 FUNCTION ZaglDuznici( fStrana, lSvi )
 
@@ -453,8 +445,7 @@ FUNCTION ZaglDuznici( fStrana, lSvi )
 
    ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    ? "KONTO  :", cIdKonto, naz
    ? "+" + REPL( "+", FIELD_PARTNER_ID_LENGTH ) + "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Ŀ"

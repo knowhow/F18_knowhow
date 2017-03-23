@@ -618,7 +618,10 @@ STATIC FUNCTION FFor1()
 STATIC FUNCTION FSvaki1()
 
    ++nRbr
-   cNPartnera := PadR( Ocitaj( F_PARTN, IDPARTNER, "naz" ), 25 )
+   PushWa()
+   select_o_partner( field->idPartner )
+   cNPartnera := PadR( partn->naz, 25 )
+   PopWa()
 
    RETURN .T.
 

@@ -59,10 +59,14 @@ FUNCTION PartVanProm()
    ? PadC ( "PARTNERI BEZ PROMETA", 80 )
    ? PadC ( "na dan " + DToC ( Date() ) + ".", 80 )
    ?
+   PushWa()
+   select_o_konto( cIdKonto )
    ? Space ( 5 ) + "    Konto:", ;
-      iif ( Empty ( cIdKonto ), "SVI", cIdKonto + Ocitaj ( F_KONTO, cIdKonto, "Naz" ) )
+      iif ( Empty ( cIdKonto ), "SVI", cIdKonto + konto->Naz )
+   PopWa()
+   
    ? Space ( 5 ) + " Kriterij:", cKrit
-   ? Space ( 5 ) + "Za period:", IF ( Empty ( dDatOd ), "", DToC ( dDatOd ) + " " ) + ;
+   ? Space ( 5 ) + "Za period:", IIF ( Empty ( dDatOd ), "", DToC ( dDatOd ) + " " ) + ;
       "do", DToC ( dDatDo )
    ?
    ? Space ( 5 ) + PadR( "Sifra", FIELD_PARTNER_ID_LENGTH ), PadR( "NAZIV", 25 ), ;

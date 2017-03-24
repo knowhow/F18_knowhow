@@ -209,7 +209,7 @@ FUNCTION fin_specifikacija_suban()
          SET ORDER TO TAG "SUBSUB"
       ELSE
          cIdFirma := ""
-         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + RBr TO SVESUB
+         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + STR( RBr, 5, 0) TO SVESUB
          SET ORDER TO TAG "SVESUB"
       ENDIF
    ENDIF
@@ -217,7 +217,7 @@ FUNCTION fin_specifikacija_suban()
    IF gDUFRJ == "D"
       cFilter := aUsl3
    ELSE
-      cFilter := "IdFirma=" + dbf_quote( cidfirma )
+      cFilter := "IdFirma=" + dbf_quote( cIdfirma )
    ENDIF
 
    IF !Empty( cVN )

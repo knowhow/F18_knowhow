@@ -172,8 +172,8 @@ STATIC FUNCTION fin_parametri_izgleda()
    @ m_x + nX, m_y + 2 SAY8 "U subanalitici prikazati nazive i konta i partnera? (D/N)" GET gVSubOp VALID gVSubOp $ "DN" PICTURE "@!"
 
 
-   ++nX
-   @ m_x + nX, m_y + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ VALID gDUFRJ $ "DN" PICT "@!"
+   //++nX
+   //@ m_x + nX, m_y + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ VALID gDUFRJ $ "DN" PICT "@!"
 
    READ
    BoxC()
@@ -197,7 +197,7 @@ FUNCTION fin_read_params()
    gRavnot := fetch_metric( "fin_unos_ravnoteza_naloga", NIL, gRavnot )
    gBrojacFinNaloga := fetch_metric( "fin_vrsta_brojaca_naloga", NIL, gBrojacFinNaloga )
    gnLOst := fetch_metric( "fin_limit_otvorene_stavke", NIL, gnLOst )
-   gDUFRJ := fetch_metric( "fin_dugi_uslov_za_rj", NIL, gDUFRJ )
+   //gDUFRJ := fetch_metric( "fin_dugi_uslov_za_rj", NIL, gDUFRJ )
    gBezVracanja := fetch_metric( "fin_zabrana_povrata_naloga", NIL, gBezVracanja )
    // gBuIz := fetch_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
 
@@ -237,7 +237,7 @@ FUNCTION fin_write_params()
    set_metric( "fin_unos_ravnoteza_naloga", NIL, gRavnot )
    set_metric( "fin_vrsta_brojaca_naloga", NIL, gBrojacFinNaloga )
    set_metric( "fin_limit_otvorene_stavke", NIL, gnLOst )
-   set_metric( "fin_dugi_uslov_za_rj", NIL, gDUFRJ )
+   //set_metric( "fin_dugi_uslov_za_rj", NIL, gDUFRJ )
    set_metric( "fin_zabrana_povrata_naloga", NIL, gBezVracanja )
    // set_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
 

@@ -89,25 +89,25 @@ FUNCTION fin_specifikacija_suban()
    PRIVATE cK3 := cK4 := "99"
 
 
-   IF gDUFRJ == "D"
-      cIdRj := Space( 60 )
-   ELSE
+   //IF gDUFRJ == "D"
+    //  cIdRj := Space( 60 )
+   //ELSE
       cIdRj := "999999"
-   ENDIF
+   //ENDIF
    cFunk := "99999"
    cFond := "9999"
    cNula := "N"
    DO WHILE .T.
       @ m_x + 1, m_y + 6 SAY8 "SPECIFIKACIJA SUBANALITIČKIH KONTA"
-      IF gDUFRJ == "D"
-         cIdFirma := PadR( self_organizacija_id() + ";", 30 )
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
-      ELSE
+      //IF gDUFRJ == "D"
+      //   cIdFirma := PadR( self_organizacija_id() + ";", 30 )
+      //   @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
+      //ELSE
 
          @ m_x + 3, m_y + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
-      ENDIF
+      //ENDIF
       @ m_x + 4, m_y + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
       @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
       @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
@@ -153,13 +153,13 @@ FUNCTION fin_specifikacija_suban()
       cSqlWhere := parsiraj_sql( "idkonto", qqKonto )
       cSqlWhere += " AND " + parsiraj_sql( "idpartner", Trim( qqPartner) )
 
-      IF gDUFRJ == "D"
-         aUsl3 := Parsiraj( cIdFirma, "IdFirma" )
-         aUsl4 := Parsiraj( cIdRJ, "IdRj" )
-      ENDIF
+      //IF gDUFRJ == "D"
+      //   aUsl3 := Parsiraj( cIdFirma, "IdFirma" )
+      //   aUsl4 := Parsiraj( cIdRJ, "IdRj" )
+      //ENDIF
       aBV := Parsiraj( qqBrDok, "UPPER(BRDOK)", "C" )
       aVN := Parsiraj( cVN, "IDVN", "C" )
-      IF aBV <> NIL .AND. aVN <> NIL .AND. iif( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
+      IF aBV <> NIL .AND. aVN <> NIL  //.AND. iif( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
          EXIT
       ENDIF
    ENDDO
@@ -189,7 +189,7 @@ FUNCTION fin_specifikacija_suban()
    CistiK1k4()
 
    SELECT SUBAN
-   IF !Empty( cIdFirma ) .AND. gDUFRJ != "D"
+   //IF !Empty( cIdFirma ) .AND. gDUFRJ != "D"
       IF cRasclaniti == "D"
          INDEX ON idfirma + idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
          SET ORDER TO TAG "SUBSUB"
@@ -200,25 +200,25 @@ FUNCTION fin_specifikacija_suban()
       ELSE
          SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
       ENDIF
-   ELSE
-      IF cRasclaniti == "D"
-         INDEX ON idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
-         SET ORDER TO TAG "SUBSUB"
-      ELSEIF cRascFunkFond == "D"
-         INDEX ON idkonto + idpartner + idrj + funk + fond + DToS( datdok ) TO SUBSUB
-         SET ORDER TO TAG "SUBSUB"
-      ELSE
-         cIdFirma := ""
-         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + STR( RBr, 5, 0) TO SVESUB
-         SET ORDER TO TAG "SVESUB"
-      ENDIF
-   ENDIF
+   //ELSE
+    //  IF cRasclaniti == "D"
+    //     INDEX ON idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
+    //     SET ORDER TO TAG "SUBSUB"
+    //  ELSEIF cRascFunkFond == "D"
+    //     INDEX ON idkonto + idpartner + idrj + funk + fond + DToS( datdok ) TO SUBSUB
+    //     SET ORDER TO TAG "SUBSUB"
+    //  ELSE
+    //     cIdFirma := ""
+    //     INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + STR( RBr, 5, 0) TO SVESUB
+    //     SET ORDER TO TAG "SVESUB"
+    //  ENDIF
+   //ENDIF
 
-   IF gDUFRJ == "D"
-      cFilter := aUsl3
-   ELSE
+   //IF gDUFRJ == "D"
+  //    cFilter := aUsl3
+   //ELSE
       cFilter := "IdFirma=" + dbf_quote( cIdfirma )
-   ENDIF
+   //ENDIF
 
    IF !Empty( cVN )
       cFilter += ( ".and. " + aVN )

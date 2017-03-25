@@ -12,6 +12,9 @@ function usage() {
 F18_TYPE=$1
 F18_VER=$2
 
+
+date +%d.%m.%Y
+
 git pull
 
 

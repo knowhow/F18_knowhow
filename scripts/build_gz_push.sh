@@ -12,7 +12,12 @@ function usage() {
 F18_TYPE=$1
 F18_VER=$2
 
-
+if [ -z "$F18_VER" ] ; then
+  echo updating f18_ver.ch
+  scripts/update_f18_ver_ch.sh
+  F18_VER=`git describe --tags`
+fi
+  
 date +%d.%m.%Y
 
 git pull
@@ -25,6 +30,7 @@ echo "export F18_USE_MATCH_CODE=1"
 echo "export F18_FMK=1"
 echo "export F18_POS=1"
 echo "export POS_PRENOS_POS_KALK=1"
+
 
 
 ./build.sh --no-rm && scripts/build_gz.sh $F18_VER && scripts/push_to_downloads.sh F18_${F18_TYPE}_${F18_VER}.gz 

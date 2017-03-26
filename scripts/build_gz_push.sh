@@ -12,6 +12,8 @@ function usage() {
 F18_TYPE=$1
 F18_VER=$2
 
+git pull
+
 if [ -z "$F18_VER" ] ; then
   echo updating f18_ver.ch
   scripts/update_f18_ver_ch.sh
@@ -20,8 +22,9 @@ fi
   
 date +%d.%m.%Y
 
-git pull
 
+echo F18_TYPE=$F18_TYPE, F18_VER=$F18_VER
+cat include/f18_ver.ch
 
 echo "NAPOMENA: envars su bitne, npr:"
 echo "--------------------------------------"

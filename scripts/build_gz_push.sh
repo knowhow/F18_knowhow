@@ -7,7 +7,6 @@ function usage() {
 }
 
 [ -z "$1" ] && echo "set envar F18_TYPE argument 1"  && usage && exit 1
-[ -z "$2" ] && echo "set envar F18_VER argument 2"  && usage && exit 1
 
 F18_TYPE=$1
 F18_VER=$2
@@ -20,6 +19,7 @@ if [ -z "$F18_VER" ] ; then
   F18_VER=`git describe --tags`
 fi
   
+[ -z "$2" ] && echo "set envar F18_VER argument 2"  && usage && exit 1
 date +%d.%m.%Y
 
 

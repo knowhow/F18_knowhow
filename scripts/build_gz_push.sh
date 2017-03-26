@@ -14,9 +14,9 @@ F18_VER=$2
 git pull
 
 if [ -z "$F18_VER" ] ; then
+  F18_VER=`git describe --tags`
   echo updating f18_ver.ch
   scripts/update_f18_ver_ch.sh
-  F18_VER=`git describe --tags`
 fi
   
 [ -z "$F18_VER" ] && echo "set envar F18_VER argument 2"  && usage && exit 1

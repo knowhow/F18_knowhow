@@ -19,7 +19,7 @@ if [ -z "$F18_VER" ] ; then
   F18_VER=`git describe --tags`
 fi
   
-[ -z "$2" ] && echo "set envar F18_VER argument 2"  && usage && exit 1
+[ -z "$F18_VER" ] && echo "set envar F18_VER argument 2"  && usage && exit 1
 date +%d.%m.%Y
 
 

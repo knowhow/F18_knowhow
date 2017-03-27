@@ -11,11 +11,23 @@
 
 #include "f18.ch"
 
+MEMVAR m, nVrstaInvaliditeta, nStepenInvaliditeta, cPom
 
 FUNCTION ld_pregled_plata()
 
-   LOCAL nC1 := 20
+   LOCAL nC1 := 20, i
    LOCAL cPrBruto := "N"
+
+   LOCAL nIznosVanNetaPozitivneStavke, nIznosVanNetaNegativneStavke, nIznosMinuliRad
+   LOCAL cIdMinuli
+   LOCAL nNetoZaIzbiti, nVanNetoZaIzbiti // ako je neko primanje iz neta, ili van neta stavljeno kao "primanje_out"
+   LOCAL nUkupnoRedovanRad, nUkupnoMinuliRad // varijanta izvjestaja 2
+   LOCAL nNetoNaRuke, nUkupnoSati, nUkupnoPrimanja, nUkunoNetoPrimanja, nUkupnoZaIsplatu
+   LOCAL nUkupnoIznosVanNetaOstaleNaknade, nUkupnoIznosVanNetaOdbici
+
+   LOCAL hParams := hb_Hash()
+
+   hParams[ "primanja_out" ] := ""
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
@@ -24,14 +36,16 @@ FUNCTION ld_pregled_plata()
    cObracun := gObracun
    cVarSort := "2"
 
-   //o_koef_beneficiranog_radnog_staza()
-   //o_ld_vrste_posla()
-   //o_ld_rj()
-   //o_dopr()
-   //o_por()
-   //o_ld_radn()
-   //select_o_ld()
-   //o_ld_parametri_obracuna()
+   PRIVATE cPom
+
+   // o_koef_beneficiranog_radnog_staza()
+   // o_ld_vrste_posla()
+   // o_ld_rj()
+   // o_dopr()
+   // o_por()
+   // o_ld_radn()
+   // select_o_ld()
+   // o_ld_parametri_obracuna()
    O_PARAMS
 
    PRIVATE cSection := "4"
@@ -39,6 +53,8 @@ FUNCTION ld_pregled_plata()
    PRIVATE aHistory := {}
 
    RPar( "VS", @cVarSort )
+   RPar( "PI", @hParams[ "primanja_out" ] )
+   hParams[ "primanja_out" ] := PadR( hParams[ "primanja_out" ], 50 )
 
    PRIVATE cKBenef := " "
    PRIVATE cVPosla := "  "
@@ -49,8 +65,8 @@ FUNCTION ld_pregled_plata()
    cIdMinuli := "17"
    cKontrola := "N"
 
-   Box(, 14, 75 )
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 _l( "Radna jedinica (prazno-sve): " )  GET cIdRJ
+   Box(, 17, 75 )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Radna jedinica (prazno-sve): "  GET cIdRJ
    @ form_x_koord() + 2, form_y_koord() + 2 SAY8 "Mjesec: "  GET  nMjesec  PICT "99"
    IF ld_vise_obracuna()
       @ form_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
@@ -60,20 +76,23 @@ FUNCTION ld_pregled_plata()
    @ form_x_koord() + 5, form_y_koord() + 2 SAY8 "Vrsta posla (prazno-svi): "  GET  cVPosla
    @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "Šifra primanja minuli: "  GET  cIdMinuli PICT "@!"
    @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "Sortirati po (1-šifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
-   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
-      VALID cPrBruto $ "DN" PICT "@!"
+   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto VALID cPrBruto $ "DN" PICT "@!"
    @ form_x_koord() + 11, form_y_koord() + 2 SAY8 "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
 
 
    @ form_x_koord() + 13, form_y_koord() + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
    @ form_x_koord() + 14, form_y_koord() + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
+
+   @ form_x_koord() + 16, form_y_koord() + 2 SAY8 "Iz pregleda izbaciti slijedeća primanja :" GET hParams[ "primanja_out" ] PICT  "@S20"
    READ
+
    clvbox()
    ESC_BCR
    BoxC()
 
    WPar( "VS", cVarSort )
+   WPar( "PI", hParams[ "primanja_out" ] )
    SELECT PARAMS
    USE
 
@@ -89,8 +108,8 @@ FUNCTION ld_pregled_plata()
       select_o_vposla( cVposla )
    ENDIF
 
-   //SELECT ld
-   //USE
+   // SELECT ld
+   // USE
    use_sql_ld_ld( nGodina, nMjesec, nMjesec, nVrstaInvaliditeta, nStepenInvaliditeta )
 
    // 1 - "str(godina)+idrj+str(mjesec)+idradn"
@@ -98,15 +117,15 @@ FUNCTION ld_pregled_plata()
    IF Empty( cIdrj )
       cidrj := ""
       IF cVarSort == "1"
-         //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-         //HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
+         // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
+         // HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
          seek_ld_2( NIL, nGodina, nMjesec, iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ) )
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
          cFilt := IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
-            IIF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+            iif( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
          IF ld_vise_obracuna() .AND. !Empty( cObracun )
             cFilt += ".and.OBR=" + _filter_quote( cObracun )
          ENDIF
@@ -155,7 +174,8 @@ FUNCTION ld_pregled_plata()
       m += " " + Replicate( "-", 12 )
    ENDIF
 
-   bZagl := {|| zagl_pregled_plata() }
+
+   bZagl := {|| zagl_pregled_plata( @hParams ) }
 
    select_o_ld_rj( ld->idrj )
    SELECT ld
@@ -167,24 +187,27 @@ FUNCTION ld_pregled_plata()
    Eval( bZagl )
 
    nRbr := 0
-   nT2a := nT2b := 0
-   nT1 := nT2 := nT3 := nT3b := nT4 := nT5 := 0
-   nVanP := 0  // van neta plus
-   nVanM := 0  // van neta minus
-
+   nUkupnoRedovanRad := nUkupnoMinuliRad := 0
+   nUkupnoSati := nUkupnoPrimanja := 0
+   nUkupnoIznosVanNetaOstaleNaknade := nUkupnoIznosVanNetaOdbici := nUkupnoZaIsplatu := nT5 := 0
+   nIznosVanNetaPozitivneStavke := 0
+   nIznosVanNetaNegativneStavke := 0
+   nNetoZaIzbiti  := 0  // ako se navode "primanja_out" ovdje se racuna iznos neto primanja out
+   nVanNetoZaIzbiti := 0  // ako se navode "primanja_out" ovdje se racuna iznos van neto primanja out
    nULicOdb := 0
    nUBruto := 0
    nUDoprIz := 0
    nUPorez := 0
    nUNetNr := 0
-   nUNeto := 0
+   nUkunoNetoPrimanja := 0
 
-   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+   DO WHILE !Eof() .AND.  nGodina == ld->godina .AND. ld->idrj = cIdrj .AND. nMjesec = ld->mjesec ;
+         .AND. !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. ld->obr <> cObracun )
 
       ld_pozicija_parobr( ld->mjesec, ld->godina, iif( ld_vise_obracuna(), cObracun, ), ld->idrj )
 
       IF ld_vise_obracuna() .AND. Empty( cObracun )
-         ScatterS( godina, mjesec, idrj, idradn )
+         ScatterS( ld->godina, ld->mjesec, ld->idrj, ld->idradn )
       ELSE
          Scatter()
       ENDIF
@@ -205,9 +228,11 @@ FUNCTION ld_pregled_plata()
          LOOP
       ENDIF
 
-      nVanP := 0
-      nVanM := 0
-      nMinuli := 0
+      nIznosVanNetaPozitivneStavke := 0
+      nIznosVanNetaNegativneStavke := 0
+      nNetoZaIzbiti := 0
+      nVanNetoZaIzbiti := 0
+      nIznosMinuliRad := 0
 
       FOR i := 1 TO cLDPolja
 
@@ -215,26 +240,37 @@ FUNCTION ld_pregled_plata()
          select_o_tippr( cPom )
          SELECT ld
 
-         IF tippr->( Found() ) .AND. tippr->aktivan == "D"
+         IF tippr->( Found() ) .AND. tippr->aktivan == "D" // aktivno primanje
 
-            nIznos := _I&cpom
+            nIznos := _I&cPom
 
-            IF tippr->uneto == "N" .AND. nIznos <> 0
+            IF tippr->uneto == "N" .AND. nIznos <> 0 // van neto primanja
 
-               IF nIznos > 0
-                  nVanP += nIznos
-               ELSE
-                  nVanM += nIznos
+               IF !Empty( hParams[ "primanja_out" ] ) .AND. cPom $ hParams[ "primanja_out" ] // preskoci ovo van-neta primanje
+                  nVanNetoZaIzbiti += Iznos
+                  LOOP
                ENDIF
 
-            ELSEIF tippr->uneto == "D" .AND. nIznos <> 0
+               IF nIznos > 0
+                  nIznosVanNetaPozitivneStavke += nIznos
+               ELSE
+                  nIznosVanNetaNegativneStavke += nIznos
+               ENDIF
+
+            ELSEIF tippr->uneto == "D" .AND. nIznos <> 0 // u neto primanja
+
+               IF !Empty( hParams[ "primanja_out" ] ) .AND. cPom $ hParams[ "primanja_out" ] // preskoci ovo neto primanje
+                  nNetoZaIzbiti += nIznos
+                  LOOP
+               ENDIF
 
                IF cPom == cIdMinuli
-                  nMinuli := nIznos
+                  nIznosMinuliRad := nIznos
                ENDIF
 
             ENDIF
          ENDIF
+
       NEXT
 
 
@@ -243,7 +279,7 @@ FUNCTION ld_pregled_plata()
       cOpor := ""
       cTrosk := ""
       nLicOdb := 0
-      nNetNr := 0
+      nNetoNaRuke := 0
       nNeto := 0
 
       SELECT ld
@@ -254,7 +290,7 @@ FUNCTION ld_pregled_plata()
       cTrosk := radn->trosk
       nLicOdb := _ulicodb
 
-      nBO := ld_get_bruto_osnova( _uneto, cRTipRada, nLicOdb, nPrKoef, cTrosk )
+      nBO := ld_get_bruto_osnova( _uneto - nNetoZaIzbiti, cRTipRada, nLicOdb, nPrKoef, cTrosk )
       nMBO := nBO
 
       IF calc_mbruto()
@@ -279,7 +315,7 @@ FUNCTION ld_pregled_plata()
       ENDIF
 
       nNeto := ( nBrOsn - nDoprIz )
-      nNetNr := ( nBrOsn - nDoprIz - nPorez )
+      nNetoNaRuke := ( nBrOsn - nDoprIz - nPorez )
 
       SELECT ld
 
@@ -289,43 +325,45 @@ FUNCTION ld_pregled_plata()
       @ PRow(), PCol() + 1 SAY _usati PICT gpics
 
       IF gVarPP == "2"
-         @ PRow(), PCol() + 1 SAY _uneto - nMinuli PICT gpici
-         @ PRow(), PCol() + 1 SAY nMinuli PICT gpici
+         @ PRow(), PCol() + 1 SAY _uneto - nNetoZaIzbiti - nIznosMinuliRad PICT gpici
+         @ PRow(), PCol() + 1 SAY nIznosMinuliRad PICT gpici
       ENDIF
 
-      @ PRow(), PCol() + 1 SAY _uneto PICT gpici
-      @ PRow(), PCol() + 1 SAY nBrOsn PICT gpici
+      @ PRow(), PCol() + 1 SAY _uneto - nNetoZaIzbiti PICT gpici
+      @ PRow(), PCol() + 1 SAY nBrOsn PICT gpici  // bruto
       @ PRow(), PCol() + 1 SAY nDoprIz PICT gpici
       @ PRow(), PCol() + 1 SAY nLicOdb PICT gpici
       @ PRow(), PCol() + 1 SAY nPorez PICT gpici
       @ PRow(), PCol() + 1 SAY nNeto PICT gpici
-      @ PRow(), PCol() + 1 SAY nNetNr PICT gpici
-      @ PRow(), PCol() + 1 SAY nVanP PICT gpici
-      @ PRow(), PCol() + 1 SAY nVanM PICT gpici
-      @ PRow(), PCol() + 1 SAY _uiznos PICT gpici
+      @ PRow(), PCol() + 1 SAY nNetoNaRuke PICT gpici
+      @ PRow(), PCol() + 1 SAY nIznosVanNetaPozitivneStavke PICT gpici
+      @ PRow(), PCol() + 1 SAY nIznosVanNetaNegativneStavke PICT gpici
+      @ PRow(), PCol() + 1 SAY _uiznos - nNetoZaIzbiti - nVanNetoZaIzbiti PICT gpici // ukupno za isplatu
 
       IF cKontrola == "D"
-         nKontrola := ( nBrOsn - nDoprIz - nPorez ) + nVanP + nVanM
-         IF Round( _uiznos, 2 ) = Round( nKontrola, 2 )
+         nKontrola := ( nBrOsn - nDoprIz - nPorez ) + nIznosVanNetaPozitivneStavke + nIznosVanNetaNegativneStavke
+         IF Round( _uiznos - nNetoZaIzbiti - nVanNetoZaIzbiti, 2 ) == Round( nKontrola, 2 )
             // nista
          ELSE
             @ PRow(), PCol() + 1 SAY "ERR"
          ENDIF
       ENDIF
 
-      nT1 += _usati
-      nT2a += _uneto - nMinuli
-      nT2b += nMinuli
-      nT2 += _uneto
-      nT3 += nVanP
-      nT3b += nVanM
-      nT4 += _uiznos
+      nUkupnoSati += _usati
+
+      nUkupnoRedovanRad += _uneto - nNetoZaIzbiti - nIznosMinuliRad  // koristi se samo za varijantu 2
+      nUkupnoMinuliRad += nIznosMinuliRad // koristi se samo za varijantu 2
+
+      nUkupnoPrimanja += _uneto - nNetoZaIzbiti // koristi se samo za varijantu 1
+      nUkupnoIznosVanNetaOstaleNaknade += nIznosVanNetaPozitivneStavke
+      nUkupnoIznosVanNetaOdbici += nIznosVanNetaNegativneStavke
+      nUkupnoZaIsplatu += _uiznos - nNetoZaIzbiti - nVanNetoZaIzbiti
       nULicOdb += nLicOdb
       nUBruto += nBrOsn
       nUDoprIz += nDoprIz
       nUPorez += nPorez
-      nUNetNr += nNetNr
-      nUNeto += nNeto
+      nUNetNr += nNetoNaRuke
+      nUkunoNetoPrimanja += nNeto
 
       SKIP
 
@@ -333,23 +371,23 @@ FUNCTION ld_pregled_plata()
 
    ? m
    ? Space( 1 ) + _l( "UKUPNO:" )
-   @ PRow(), nC1 SAY  nT1 PICT gpics
+   @ PRow(), nC1 SAY  nUkupnoSati PICT gpics
 
    IF gVarPP == "2"
-      @ PRow(), PCol() + 1 SAY nT2a PICT gpici
-      @ PRow(), PCol() + 1 SAY nT2b PICT gpici
+      @ PRow(), PCol() + 1 SAY nUkupnoRedovanRad PICT gpici
+      @ PRow(), PCol() + 1 SAY nUkupnoMinuliRad PICT gpici
    ENDIF
 
-   @ PRow(), PCol() + 1 SAY nT2 PICT gpici
-   @ PRow(), PCol() + 1 SAY nUBruto PICT gpici
-   @ PRow(), PCol() + 1 SAY nUDoprIz PICT gpici
-   @ PRow(), PCol() + 1 SAY nULicOdb PICT gpici
-   @ PRow(), PCol() + 1 SAY nUPorez PICT gpici
-   @ PRow(), PCol() + 1 SAY nUNeto PICT gpici
-   @ PRow(), PCol() + 1 SAY nUNetNR PICT gpici
-   @ PRow(), PCol() + 1 SAY nT3 PICT gpici
-   @ PRow(), PCol() + 1 SAY nT3b PICT gpici
-   @ PRow(), PCol() + 1 SAY nT4 PICT gpici
+   @ PRow(), PCol() + 1 SAY nUkupnoPrimanja PICT gpici
+   @ PRow(), PCol() + 1 SAY nUBruto PICT gpici // bruto
+   @ PRow(), PCol() + 1 SAY nUDoprIz PICT gpici // doprinosi
+   @ PRow(), PCol() + 1 SAY nULicOdb PICT gpici // licni odbici
+   @ PRow(), PCol() + 1 SAY nUPorez PICT gpici // porez
+   @ PRow(), PCol() + 1 SAY nUkunoNetoPrimanja PICT gpici // neto
+   @ PRow(), PCol() + 1 SAY nUNetNR PICT gpici // neto na ruke
+   @ PRow(), PCol() + 1 SAY nUkupnoIznosVanNetaOstaleNaknade PICT gpici // ostale naknade
+   @ PRow(), PCol() + 1 SAY nUkupnoIznosVanNetaOdbici PICT gpici // odbici
+   @ PRow(), PCol() + 1 SAY nUkupnoZaIsplatu PICT gpici // za isplatu
 
    ? m
    ?
@@ -360,11 +398,11 @@ FUNCTION ld_pregled_plata()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
-STATIC FUNCTION zagl_pregled_plata()
+STATIC FUNCTION zagl_pregled_plata( hParams )
 
    ?
 
@@ -394,6 +432,10 @@ STATIC FUNCTION zagl_pregled_plata()
       ?? " St.invaliditeta", Str( nStepenInvaliditeta, 3, 0 )
    ENDIF
 
+
+   IF !Empty( hParams[ "primanja_out" ] )
+      ?U "Iz pregleda izbačena slijedeća primanja: ", hParams[ "primanja_out" ]
+   ENDIF
 
    IF !Empty( cVposla )
       ? "Vrsta posla:", cVposla, "-", vposla->naz

@@ -172,8 +172,10 @@ FUNCTION find_radn_by_naz_or_id( cId )
    LOCAL cIdSql
 
    cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
-   cSqlQuery += " WHERE id ilike " + cIdSql
+   cSqlQuery += " WHERE aktivan<>'N' and ( id ilike " + cIdSql
    cSqlQuery += " OR naz ilike " + cIdSql
+   cSqlQuery += " OR ime ilike " + cIdSql + ")"
+
 
    IF !use_sql( cTable, cSqlQuery, cAlias )
       RETURN .F.

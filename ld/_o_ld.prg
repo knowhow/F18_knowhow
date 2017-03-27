@@ -83,6 +83,113 @@ FUNCTION select_o_radn( cID )
 
 
 
+/*
+
+-- Table: fmk.ld_radn
+
+-- DROP TABLE fmk.ld_radn;
+
+CREATE TABLE fmk.ld_radn
+(
+  id character(6) NOT NULL,
+  match_code character(10),
+  naz character(20),
+  imerod character(15),
+  ime character(15),
+  brbod numeric(11,2),
+  kminrad numeric(7,2),
+  idstrspr character(3),
+  idvposla character(2),
+  idopsst character(4),
+  idopsrad character(4),
+  pol character(1),
+  matbr character(13),
+  datod date,
+  k1 character(1),
+  k2 character(1),
+  k3 character(2),
+  k4 character(2),
+  rmjesto character(30),
+  brknjiz character(12),
+  brtekr character(20),
+  isplata character(2),
+  idbanka character(6),
+  porol numeric(5,2),
+  n1 numeric(12,2),
+  n2 numeric(12,2),
+  n3 numeric(12,2),
+  osnbol numeric(11,4),
+  idrj character(2),
+  streetname character(40),
+  streetnum character(6),
+  hiredfrom date,
+  hiredto date,
+  klo numeric(5,2),
+  tiprada character(1),
+  sp_koef numeric(5,2),
+  opor character(1),
+  trosk character(1),
+  aktivan character(1),
+  ben_srmj character(20),
+  s1 character(10),
+  s2 character(10),
+  s3 character(10),
+  s4 character(10),
+  s5 character(10),
+  s6 character(10),
+  s7 character(10),
+  s8 character(10),
+  s9 character(10),
+  st_invalid integer,
+  vr_invalid integer,
+  CONSTRAINT ld_radn_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE fmk.ld_radn
+  OWNER TO admin;
+GRANT ALL ON TABLE fmk.ld_radn TO admin;
+GRANT ALL ON TABLE fmk.ld_radn TO xtrole;
+
+-- Index: fmk.ld_radn_id1
+
+-- DROP INDEX fmk.ld_radn_id1;
+
+CREATE INDEX ld_radn_id1
+  ON fmk.ld_radn
+  USING btree
+  (id COLLATE pg_catalog."default");
+
+*/
+
+FUNCTION find_radn_by_naz_or_id( cId )
+
+   LOCAL cAlias := "RADN"
+   LOCAL cTable := "ld_radn"
+   LOCAL cSqlQuery := "select * from fmk." + cTable
+
+   LOCAL cIdSql
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+   cSqlQuery += " OR naz ilike " + cIdSql
+
+   IF !use_sql( cTable, cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN .T.
+
 
 
 FUNCTION o_kred( cId )

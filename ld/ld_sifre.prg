@@ -106,11 +106,11 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
 
    // Dodaj specificna polja za popunu obrasca DP
    IF radn->( FieldPos( "STREETNAME" ) <> 0 )
-      AAdd( ImeKol, { _l( PadC( "Ime ul.", 40 ) ), {|| field->streetname }, "streetname" } )
-      AAdd( ImeKol, { _l( PadC( "Broj ul.", 10 ) ), {|| field->streetnum }, "streetnum" } )
-      AAdd( ImeKol, { _l( PadC( "Zaposl.od", 12 ) ), {|| field->hiredfrom }, "hiredfrom", ;
+      AAdd( ImeKol, { PadC( "Ime ul.", 40 ), {|| field->streetname }, "streetname" } )
+      AAdd( ImeKol, { PadC( "Broj ul.", 10 ), {|| field->streetnum }, "streetnum" } )
+      AAdd( ImeKol, { PadC( "Zaposl.od", 12 ), {|| field->hiredfrom }, "hiredfrom", ;
          {|| .T. }, {|| P_HiredFrom( @wHiredfrom ) } } )
-      AAdd( ImeKol, { _l( PadC( "Zaposl.do", 12 ) ), {|| field->hiredto }, "hiredto" } )
+      AAdd( ImeKol, { PadC( "Zaposl.do", 12 ), {|| field->hiredto }, "hiredto" } )
    ENDIF
 
    IF radn->( FieldPos( "AKTIVAN" ) ) <> 0
@@ -149,7 +149,8 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := p_sifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, {| Ch | browse_edit_radnik( Ch ) },,,,, { "ID" } )
+   lRet := p_sifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, ;
+      {| Ch | browse_edit_radnik( Ch ) },,,,, { "ID" } )
 
    PopWa( F_RADN )
 
@@ -268,7 +269,7 @@ FUNCTION browse_edit_radnik( Ch )
          RETURN DE_CONT
       ENDIF
 
-      MsgO( _l( "Prolazim kroz tabelu radnika.." ) )
+      MsgO( "Prolazim kroz tabelu radnika.." )
 
       SELECT radn
       GO TOP
@@ -294,8 +295,7 @@ FUNCTION browse_edit_radnik( Ch )
 
          ENDIF
 
-         IF _rec[ "kminrad" ] > 20
-            // ogranicenje minulog rada
+         IF _rec[ "kminrad" ] > 20 // ogranicenje minulog rada
             _rec[ "kminrad" ] := 20
          ENDIF
 
@@ -366,15 +366,13 @@ FUNCTION browse_edit_radnik( Ch )
          RETURN DE_CONT
 
       ENDIF
-
+*/
    ELSEIF ( Upper( Chr( Ch ) ) == "Q" )
 
-      // filter po ime, prezime itd...
-      _filter_radn()
+      _filter_radn()   // filter po ime, prezime
       __filter_radn := .T.
       RETURN DE_REFRESH
 
-*/
    ELSEIF ( Upper( Chr( Ch ) ) == "S" )
 
       // filter po radnicima
@@ -438,9 +436,7 @@ STATIC FUNCTION _filter_radn()
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "RODITELJ:" GET _imerod PICT "@S40"
 
-   ++nX
-   ++nX
-
+   nX += 2
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Sortiranje: 1 - sifra, 2 - prezime:" GET _sort PICT "9" VALID _sort >= 1 .AND. _sort <= 2
 
    READ
@@ -482,7 +478,6 @@ STATIC FUNCTION _filter_radn()
    ENDIF
 
    IF Empty( _filter )
-
 
       SET FILTER TO   // ukidam filter, setujem pravi sort
       SET ORDER TO TAG "1"

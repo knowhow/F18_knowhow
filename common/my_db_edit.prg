@@ -433,7 +433,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
          READ
          BoxC()
          IF LastKey() != K_ESC
-            find_partn_by_naz_or_id( cIdOrNaz )
+            find_radn_by_naz_or_id( cIdOrNaz )
             TB:RefreshAll()
             RETURN DE_REFRESH
          ENDIF

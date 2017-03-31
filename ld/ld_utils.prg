@@ -538,22 +538,21 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    BoxC()
 
-   // o_ld_radn()
-   seek_ld_2( NIL,  nGodina, nMjesec, cObracun )
+
+   seek_ld_2( NIL,  nGodina, nMjesec, cObracun ) // hIndexes[ "2" ] := "str(godina,4,0)+str(mjesec,2,0)+obr+idradn+idrj"
 
    Box(, 1, 60 )
 
    _count := 0
 
-   DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun == Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + obr
+   DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun == Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) + obr
 
       cIdRadn := ld->idradn
       nProlaz := 0
 
       ++_count
       @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radnik: " + cIdRadn
-
-      DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun == Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->obr .AND. field->idradn == cIdradn
+      DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun == Str( ld->godina, 4, 0 ) + Str( ld->mjesec, 2, 0 ) + ld->obr .AND. ld->idradn == cIdradn
          ++nProlaz
          SKIP
       ENDDO
@@ -561,10 +560,10 @@ FUNCTION ld_obracun_napravljen_vise_puta()
       IF nProlaz > 1
 
          select_o_radn( cIdRadn )
-         // SELECT ld
-         // SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun + cIdRadn
 
-         DO WHILE !Eof() .AND. Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->obr == Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun .AND. field->idradn == cIdRadn
+         SELECT ld
+         SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + cIdRadn
+         DO WHILE !Eof() .AND. Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->obr == Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun .AND. field->idradn == cIdRadn
             AAdd( _data, { field->obr, field->idradn, PadR( AllTrim( radn->naz ) + " " + AllTrim( radn->ime ), 20 ), field->idrj, field->uneto, field->usati } )
             SKIP
          ENDDO

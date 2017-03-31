@@ -132,7 +132,7 @@ METHOD set_module_gvars()
    PUBLIC gFUSati := PadR( "USATI", 50 )
    PUBLIC gFURSati := PadR( "", 50 )
    PUBLIC gFUGod := PadR( "I06", 40 )
-   PUBLIC gUNMjesec := "N"
+   //PUBLIC gUNMjesec := "N"
    PUBLIC gMRM := 0.6
    PUBLIC gMRZ := 0.6
    PUBLIC gPDLimit := 0

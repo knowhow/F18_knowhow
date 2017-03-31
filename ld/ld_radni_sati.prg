@@ -119,7 +119,7 @@ FUNCTION UbaciURadneSate( cIdRadnik, nIznosSati )
 
    SELECT ( nDbfArea )
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------

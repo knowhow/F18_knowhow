@@ -78,6 +78,7 @@ FUNCTION ld_pozicija_parobr( nMjesec, nGodina, cObr, cIdRj )
    LOCAL nRec2 := 0
    LOCAL nRec3 := 0
    LOCAL nRet := 1
+   LOCAL cMj, cGod
 
    IF cObr == nil
       cObr := ""

@@ -39,7 +39,6 @@ FUNCTION ld_postavi_parametre_obracuna()
    @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( "Godina", _pad_l ) GET nGodina PICT "9999"
 
    IF _v_obr_unos
-
       ++nX
       @ form_x_koord() + nX, form_y_koord() + 2 SAY8 PadL( "Obračun broj", _pad_l ) GET gObracun WHEN HelpObr( .F., gObracun ) VALID ValObr( .F., gObracun )
 

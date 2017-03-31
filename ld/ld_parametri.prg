@@ -95,7 +95,7 @@ FUNCTION ld_get_params( hParams )
    gMinR := fetch_metric( "ld_minuli_rad", NIL, gMinR )
    gDaPorOl := fetch_metric( "ld_poreske_olaksice", NIL, gDaPorOl )
    gTipObr := fetch_metric( "ld_tip_obracuna_legacy", NIL, gTipObr )
-   gUnMjesec := fetch_metric( "ld_unos_mjeseca_kod_obracuna", NIL, gUnMjesec )
+   //gUnMjesec := fetch_metric( "ld_unos_mjeseca_kod_obracuna", NIL, gUnMjesec )
    gVarSpec := fetch_metric( "ld_grupe_poslova_specifikacija", NIL, gVarSpec )
    gRadnFilter := fetch_metric( "ld_filter_radnici", NIL, gRadnFilter )
 
@@ -288,7 +288,7 @@ FUNCTION ld_set_obracun()
 
    nX += 2
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Tip obracuna (legacy)" GET gTipObr
-   @ form_x_koord() + nX, Col() + 1 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  PICT "@!" VALID gUnMjesec $ "DN"
+   //@ form_x_koord() + nX, Col() + 1 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  PICT "@!" VALID gUnMjesec $ "DN"
 
    ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm PICT "9"
@@ -335,7 +335,7 @@ FUNCTION ld_set_obracun()
       set_metric( "ld_minuli_rad", NIL, gMinR )
       set_metric( "ld_poreske_olaksice", NIL, gDaPorOl )
       set_metric( "ld_tip_obracuna_legacy", NIL, gTipObr )
-      set_metric( "ld_unos_mjeseca_kod_obracuna", NIL, gUnMjesec )
+      //set_metric( "ld_unos_mjeseca_kod_obracuna", NIL, gUnMjesec )
       set_metric( "ld_varijanta_porezne_olaksice", NIL, cVarPorOl )
       set_metric( "ld_grupe_poslova_specifikacija", NIL, gVarSpec )
       set_metric( "ld_filter_radnici", NIL, gRadnFilter )

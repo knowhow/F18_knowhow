@@ -27,8 +27,8 @@ FUNCTION ld_unos_obracuna()
    cIdRadn := Space( LEN_IDRADNIK )
    GetList := {}
    cRj     := gLDRadnaJedinica
-   nGodina := ld_tekuca_godina()
-   nMjesec := ld_tekuci_mjesec()
+   //nGodina := ld_tekuca_godina()
+   //nMjesec := ld_tekuci_mjesec()
 
    // select_o_ld()
 
@@ -73,7 +73,7 @@ FUNCTION ld_unos_obracuna()
          ENDIF
 
          IF _pr_kart_pl == "D"
-            ld_kartica_plate( cRj, nMjesec, nGodina, cIdRadn, IF( ld_vise_obracuna(), gObracun, NIL ) )
+            ld_kartica_plate( cRj, ld_tekuci_mjesec(), ld_tekuca_godina(), cIdRadn, IIF( ld_vise_obracuna(), gObracun, NIL ) )
          ENDIF
 
       ELSE
@@ -198,10 +198,11 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    LOCAL cTrosk
    LOCAL cOpor
    LOCAL _radni_sati := fetch_metric( "ld_radni_sati", NIL, "N" )
-   PRIVATE cIdRj
-   PRIVATE nGodina
-   PRIVATE cIdRadn
-   PRIVATE nMjesec
+   LOCAL nO_ret
+   LOCAL cRadnikObracun
+
+   // ove varijable koriste formule garant ?
+   PRIVATE cIdRadn, cIdRj, nGodina, nMjesec, cIdRadn
 
    cIdRadn := Space( 6 )
    cIdRj := gLDRadnaJedinica
@@ -220,20 +221,20 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    @ form_x_koord() + 1, form_y_koord() + 2 SAY _l( "Radna jedinica: " )
    QQOutC( cIdRJ, "GR+/N" )
 
-   IF gUNMjesec == "D"
-      @ form_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )  GET nMjesec PICT "99"
-   ELSE
+   //IF gUNMjesec == "D"
+  //    @ form_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )  GET nMjesec PICT "99"
+   //ELSE
       @ form_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )
       QQOutC( Str( nMjesec, 2 ), "GR+/N" )
-   ENDIF
+   //ENDIF
 
    IF ld_vise_obracuna()
-      IF gUNMjesec == "D"
-         @ form_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
-      ELSE
-         @ form_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " )
+      //IF gUNMjesec == "D"
+      //   @ form_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+      //ELSE
+         @ form_x_koord() + 1, Col() + 2 SAY8  "Obračun: "
          QQOutC( cObracun, "GR+/N" )
-      ENDIF
+      //ENDIF
    ENDIF
 
    @ form_x_koord() + 1, Col() + 2 SAY _l( "Godina: " )
@@ -251,18 +252,15 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    nO_Ret := ld_pozicija_parobr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, NIL ), cIdRj )
 
-   IF nO_ret = 0
+   IF nO_ret == 0
 
       MsgBeep( "Ne postoje unešeni parametri obračuna za " + Str( nMjesec, 2 ) + "/" + Str( nGodina, 4 ) + " !" )
-
       BoxC()
-
       RETURN .F.
 
    ELSEIF nO_ret == 2
 
-      MsgBeep( "Ne postoje unešeni parametri obračuna za " + ;
-         Str( nMjesec, 2 ) + "/" + Str( nGodina, 4 ) + " !!" + ;
+      MsgBeep( "Ne postoje unešeni parametri obračuna za " + Str( nMjesec, 2 ) + "/" + Str( nGodina, 4 ) + " !" + ;
          "#Koristit ću postojeće parametre." )
    ENDIF
 
@@ -281,15 +279,17 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       nULicOdb := 0
    ENDIF
 
+   cRadnikObracun := cIdRadn + " : " + Str( nMjesec, 2, 0 ) + "/" + Str( nGodina, 4, 0 ) + "/" + cObracun
+
    seek_ld( cIdRj,  nGodina,  nMjesec,  iif( ld_vise_obracuna(), cObracun, "" ),  cIdRadn )
 
-   IF !Eof() // vec postoji obracun
+   IF !Eof()
+      MsgBeep( "Već postoji obračun za radnika: " + cRadnikObracun + " !")
       lNovi := .F.
       set_global_vars_from_dbf()
    ELSE
       lNovi := .T.
       APPEND BLANK
-
       set_global_vars_from_dbf()
 
       _Godina := nGodina
@@ -307,6 +307,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       ENDIF
 
    ENDIF
+
 
    IF lNovi
       _brbod := radn->brbod
@@ -416,6 +417,8 @@ STATIC FUNCTION izracunaj_ukupno_za_isplatu_za_radnika( cTipRada, cTrosk, nTrosk
 
 
 STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
+
+   LOCAL nTArea, nI
 
    kalkulisi_uneto_usati_uiznos_za_radnika()
 

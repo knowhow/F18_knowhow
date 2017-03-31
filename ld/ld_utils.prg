@@ -523,7 +523,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
    LOCAL nGodina := ld_tekuca_godina()
    LOCAL cObracun := gObracun
    LOCAL _data := {}
-   LOCAL cIdRadn, nProlaz, _count
+   LOCAL cIdRadn, nProlaz, nCount
    LOCAL nI
 
    Box(, 3, 50 )
@@ -543,14 +543,14 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    Box(, 1, 60 )
 
-   _count := 0
+   nCount := 0
 
-   DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun == Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) + obr
+   DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun == Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) + ld->obr
 
       cIdRadn := ld->idradn
       nProlaz := 0
 
-      ++_count
+      ++nCount
       @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radnik: " + cIdRadn
       DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun == Str( ld->godina, 4, 0 ) + Str( ld->mjesec, 2, 0 ) + ld->obr .AND. ld->idradn == cIdradn
          ++nProlaz

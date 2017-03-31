@@ -11,24 +11,30 @@
 
 #include "f18.ch"
 
+MEMVAR cIdRadn, cIdRj, nGodina, nMjesec, lNovi, gVarObracun
+
 
 FUNCTION ld_unos_obracuna()
 
    LOCAL lSaveObracun
-   LOCAL _vals
+   LOCAL hLdRec
    LOCAL _fields
    LOCAL _pr_kart_pl := fetch_metric( "ld_obracun_prikaz_kartice_na_unosu", NIL, "N" )
    LOCAL nI
+
+   // ove varijable koriste formule garant ?
    PRIVATE lNovi
    PRIVATE GetList
-   PRIVATE cIdRadn
    PRIVATE nPlacenoRSati
+   PRIVATE cIdRadn, cIdRj, nGodina, nMjesec
+
+   cIdRj := gLDRadnaJedinica
 
    cIdRadn := Space( LEN_IDRADNIK )
    GetList := {}
-   cRj     := gLDRadnaJedinica
-   //nGodina := ld_tekuca_godina()
-   //nMjesec := ld_tekuci_mjesec()
+
+   nGodina := ld_tekuca_godina()
+   nMjesec := ld_tekuci_mjesec()
 
    // select_o_ld()
 
@@ -39,9 +45,7 @@ FUNCTION ld_unos_obracuna()
 
       IF ( lSaveObracun )
 
-         // select_o_ld()
-         SELECT ld
-
+         seek_ld( cIdRj,  nGodina,  nMjesec,  iif( ld_vise_obracuna(), cObracun, "" ),  cIdRadn )
          cIdRadn := field->idRadn
 
          IF ( _UIznos < 0 )
@@ -57,10 +61,10 @@ FUNCTION ld_unos_obracuna()
 
          IF ( nPom <> 0 )
 
-            _vals := get_hash_record_from_global_vars()
-            _vals[ "varobr" ] := gVarObracun
+            hLdRec := get_hash_record_from_global_vars()
+            hLdRec[ "varobr" ] := gVarObracun
 
-            IF !update_rec_server_and_dbf( "ld_ld",  _vals, 1, "FULL" )
+            IF !update_rec_server_and_dbf( "ld_ld",  hLdRec, 1, "FULL" )
                delete_with_rlock()
             ELSE
                log_write( "F18_DOK_OPER: ld, " + iif( lNovi, "unos novog", "korekcija" ) + " obracuna plate - radnik: " + ld->idradn + ", mjesec: " + AllTrim( Str( ld->mjesec ) ) + ", godina: " + AllTrim( Str( ld->godina ) ), 2 )
@@ -73,7 +77,7 @@ FUNCTION ld_unos_obracuna()
          ENDIF
 
          IF _pr_kart_pl == "D"
-            ld_kartica_plate( cRj, ld_tekuci_mjesec(), ld_tekuca_godina(), cIdRadn, IIF( ld_vise_obracuna(), gObracun, NIL ) )
+            ld_kartica_plate( cIdRj, ld_tekuci_mjesec(), ld_tekuca_godina(), cIdRadn, iif( ld_vise_obracuna(), gObracun, NIL ) )
          ENDIF
 
       ELSE
@@ -112,85 +116,6 @@ FUNCTION QQOUTC( cTekst, cBoja )
 
 
 
-FUNCTION OObracun()
-
-   // select_o_ld()
-
-
-// SELECT F_PAROBR
-// IF !Used()
-// o_ld_parametri_obracuna()
-// ENDIF
-
-// SELECT F_RADN
-// IF !Used()
-// o_ld_radn()
-// ENDIF
-
-// SELECT F_VPOSLA
-// IF !Used()
-// o_ld_vrste_posla()
-// ENDIF
-
-   // SELECT F_STRSPR
-// IF !Used()
-// o_str_spr()
-// ENDIF
-
-// SELECT F_DOPR
-// IF !Used()
-// o_dopr()
-// ENDIF
-
-// SELECT F_POR
-// IF !Used()
-// o_por()
-// ENDIF
-
-// SELECT F_KBENEF
-// IF !Used()
-// o_koef_beneficiranog_radnog_staza()
-// ENDIF
-
-   // SELECT F_OPS
-   // IF !Used()
-   // o_ops()
-// ENDIF
-
-   // SELECT F_LD_RJ
-   // IF !Used()
-   // o_ld_rj()
-   // ENDIF
-
-   // SELECT F_RADKR
-   // IF !Used()
-   // O_RADKR
-   // ENDIF
-
-   // SELECT F_KRED
-   // IF !Used()
-   // o_kred()
-   // ENDIF
-
-//   SELECT F_RADSAT
-//   IF !Used()
-//      O_RADSAT
-//   ENDIF
-
-   IF ( IsRamaGlas() )
-      MsgBeep( "http://redmine.bring.out.ba/issues/25988" )
-      QUIT_1
-      o_radsiht()
-      o_fakt_objekti()
-   ENDIF
-
-   set_tippr_ili_tippr2( cObracun )
-
-   RETURN .T.
-
-
-
-
 STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    LOCAL nULicOdb
@@ -201,11 +126,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    LOCAL nO_ret
    LOCAL cRadnikObracun
 
-   // ove varijable koriste formule garant ?
-   PRIVATE cIdRadn, cIdRj, nGodina, nMjesec, cIdRadn
-
    cIdRadn := Space( 6 )
-   cIdRj := gLDRadnaJedinica
    nMjesec := ld_tekuci_mjesec()
    nGodina := ld_tekuca_godina()
    cObracun := gObracun
@@ -218,30 +139,30 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    Box( , MAXROWS() - 3, MAXCOLS() - 10 )
 
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY _l( "Radna jedinica: " )
+   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: "
    QQOutC( cIdRJ, "GR+/N" )
 
-   //IF gUNMjesec == "D"
-  //    @ form_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )  GET nMjesec PICT "99"
-   //ELSE
-      @ form_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )
-      QQOutC( Str( nMjesec, 2 ), "GR+/N" )
-   //ENDIF
+   // IF gUNMjesec == "D"
+   // @ form_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )  GET nMjesec PICT "99"
+   // ELSE
+   @ form_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )
+   QQOutC( Str( nMjesec, 2 ), "GR+/N" )
+   // ENDIF
 
    IF ld_vise_obracuna()
-      //IF gUNMjesec == "D"
-      //   @ form_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
-      //ELSE
-         @ form_x_koord() + 1, Col() + 2 SAY8  "Obračun: "
-         QQOutC( cObracun, "GR+/N" )
-      //ENDIF
+      // IF gUNMjesec == "D"
+      // @ form_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+      // ELSE
+      @ form_x_koord() + 1, Col() + 2 SAY8  "Obračun: "
+      QQOutC( cObracun, "GR+/N" )
+      // ENDIF
    ENDIF
 
    @ form_x_koord() + 1, Col() + 2 SAY _l( "Godina: " )
 
    QQOutC( Str( nGodina, 4 ), "GR+/N" )
 
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY _l( "Radnik:" ) GET cIdRadn VALID {|| P_Radn( @cIdRadn ), SetPos( form_x_koord() + 2, form_y_koord() + 17 ), ;
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY  "Radnik:" GET cIdRadn VALID {|| P_Radn( @cIdRadn ), SetPos( form_x_koord() + 2, form_y_koord() + 17 ), ;
       QQOut( PadR( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + Trim( radn->ime ), 28 ) ), .T. }
 
    READ
@@ -284,7 +205,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    seek_ld( cIdRj,  nGodina,  nMjesec,  iif( ld_vise_obracuna(), cObracun, "" ),  cIdRadn )
 
    IF !Eof()
-      MsgBeep( "Već postoji obračun za radnika: " + cRadnikObracun + " !")
+      MsgBeep( "Već postoji obračun za radnika: " + cRadnikObracun + " !" )
       lNovi := .F.
       set_global_vars_from_dbf()
    ELSE
@@ -672,5 +593,84 @@ FUNCTION ValRNal( cPom, nI )
       P_fakt_objekti( @cPom )
       cRNal[ nI ] := cPom
    ENDIF
+
+   RETURN .T.
+
+
+
+
+FUNCTION OObracun()
+
+   // select_o_ld()
+
+
+   // SELECT F_PAROBR
+   // IF !Used()
+   // o_ld_parametri_obracuna()
+   // ENDIF
+
+   // SELECT F_RADN
+   // IF !Used()
+   // o_ld_radn()
+   // ENDIF
+
+   // SELECT F_VPOSLA
+   // IF !Used()
+   // o_ld_vrste_posla()
+   // ENDIF
+
+   // SELECT F_STRSPR
+   // IF !Used()
+   // o_str_spr()
+   // ENDIF
+
+   // SELECT F_DOPR
+   // IF !Used()
+   // o_dopr()
+   // ENDIF
+
+   // SELECT F_POR
+   // IF !Used()
+   // o_por()
+   // ENDIF
+
+   // SELECT F_KBENEF
+   // IF !Used()
+   // o_koef_beneficiranog_radnog_staza()
+   // ENDIF
+
+   // SELECT F_OPS
+   // IF !Used()
+   // o_ops()
+   // ENDIF
+
+   // SELECT F_LD_RJ
+   // IF !Used()
+   // o_ld_rj()
+   // ENDIF
+
+   // SELECT F_RADKR
+   // IF !Used()
+   // O_RADKR
+   // ENDIF
+
+   // SELECT F_KRED
+   // IF !Used()
+   // o_kred()
+   // ENDIF
+
+   // SELECT F_RADSAT
+   // IF !Used()
+   // O_RADSAT
+   // ENDIF
+
+   IF ( IsRamaGlas() )
+      MsgBeep( "http://redmine.bring.out.ba/issues/25988" )
+      QUIT_1
+      o_radsiht()
+      o_fakt_objekti()
+   ENDIF
+
+   set_tippr_ili_tippr2( cObracun )
 
    RETURN .T.

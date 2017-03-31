@@ -11,6 +11,9 @@
 
 #include "f18.ch"
 
+MEMVAR cIdRadn, cIdkred, cNaOsnovu
+
+
 FUNCTION ld_krediti_menu()
 
    LOCAL _izbor := 1
@@ -418,7 +421,8 @@ FUNCTION ld_iznosi_za_kredit( _idradn, cIdkred, cNaOsnovu, _mjesec, _godina )
    ENDIF
 */
 
-   seek_radkr_2( _idradn, cIdkred, cNaOsnovu, NIL, NIL, NIL, { F_RADKR + 1000, "RADKR_1000" } ) // seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu, nGodina, nMjesec, cTag, aWorkarea )
+   seek_radkr_2( _idradn, cIdkred, cNaOsnovu, ;           // seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu,
+        NIL, NIL, NIL, { F_RADKR + 1000, "RADKR_1000" } ) // nGodina, nMjesec, cTag, aWorkarea )
 
    nUkupno := 0
    nPlaceno := 0
@@ -785,8 +789,7 @@ FUNCTION P_Krediti
    PushWA()
 
    select_o_radn( cIdRadn )
-   seek_radkr_2( cIdRadn )
-   SET ORDER TO TAG "3" // "idkred+naosnovu+idradn+str(godina,4,0)+str(mjesec,2,0)"
+   seek_radkr_2( cIdRadn, NIL, NIL, NIL, NIL, "3", NIL)  // seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu, nGodina, nMjesec, aWorkarea )
 
 
    PRIVATE Imekol := {}

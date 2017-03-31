@@ -35,7 +35,7 @@ FUNCTION ld_pregled_plata_za_period()
    LOCAL cObracun := gObracun
    LOCAL cM4TipoviIzdvojitiPrimanja := fetch_metric( "ld_m4_izdvojena_primanja", NIL, Space( 100 ) )
    LOCAL nCount
-   LOCAL lUkupnoZaRadnika := .F.
+   LOCAL lUkupnoZaRadnika := .T.
 
    napravi_pomocnu_tabelu()
 

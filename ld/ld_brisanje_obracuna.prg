@@ -40,6 +40,7 @@ FUNCTION ld_brisi_radnika()
    LOCAL fnovi
    LOCAL _rec
    LOCAL hParams
+   LOCAL cRadnikObracun
 
    nUser := 001
    o_ld_radn()
@@ -55,7 +56,7 @@ FUNCTION ld_brisi_radnika()
       cIdRj := gLDRadnaJedinica
       nMjesec := ld_tekuci_mjesec()
       nGodina := ld_tekuca_godina()
-      cObracun := gObracun
+      cObracun := ld_broj_obracuna()
 
       Box(, 4, 60 )
       @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: "
@@ -75,16 +76,18 @@ FUNCTION ld_brisi_radnika()
 
       IF cIdRadn <> "XXXXXX"
 
-         seek_ld( cIdRj, nGodina, nMjesec, ld_broj_obracuna(), cIdRadn )
+         seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
+
+         cRadnikObracun := cIdRadn + " : " + Str( nMjesec, 2, 0 ) + "/" + Str( nGodina, 4, 0 ) + "/" + cObracun
 
          IF !Eof()
 
-            IF Pitanje(, "Sigurno želite izbrisati ovaj zapis D/N", "N" ) == "D"
+            IF Pitanje(, "Sigurno želite izbrisati " + cRadnikObracun + " ?!", "N" ) == "D"
 
                _rec := dbf_get_rec()
                delete_rec_server_and_dbf( "ld_ld", _rec, 1, "FULL" )
 
-               MsgBeep( "Izbrisan obračun za radnika: " + cIdRadn + "  !" )
+               MsgBeep( "Izbrisan obračun za radnika: " + cRadnikObracun + "  !" )
 
 
             ENDIF

@@ -24,7 +24,7 @@ FUNCTION seek_ld( cIdRj, xGodina, nMjesec, cObracun, cIdRadn, cTag )
    LOCAL hIndexes, cKey
    LOCAL lWhere := .F.
    LOCAL nGodinaOd, nGodinaDo
-
+   
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
 
    IF xGodina != NIL

@@ -35,7 +35,7 @@ FUNCTION ld_pregled_plata_za_period()
    LOCAL cObracun := gObracun
    LOCAL cM4TipoviIzdvojitiPrimanja := fetch_metric( "ld_m4_izdvojena_primanja", NIL, Space( 100 ) )
    LOCAL nCount
-   LOCAL cTotal := "N"
+   LOCAL lUkupnoZaRadnika := .F.
 
    napravi_pomocnu_tabelu()
 
@@ -77,6 +77,10 @@ FUNCTION ld_pregled_plata_za_period()
 
    READ
 
+   IF !Empty( cRadnik ) // za jednog radnika prikazati odvojeno po mjesecima
+      lUkupnoZaRadnika := .F.
+   ENDIF
+
    clvbox()
 
    ESC_BCR
@@ -98,22 +102,22 @@ FUNCTION ld_pregled_plata_za_period()
 
    napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
       cDoprPio, cDoprZdr, cDoprNez, cObracun, cDoprD4, cDoprD5, cDoprD6, ;
-      cM4TipoviIzdvojitiPrimanja, cTotal, cIdOpcinaStanUslov, cKanton )
+      cM4TipoviIzdvojitiPrimanja, lUkupnoZaRadnika, cIdOpcinaStanUslov, cKanton )
 
-   // IF cTotal == "N"
-   prikazi_pregled( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
-      cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cIdOpcinaStanUslov, cKanton )
-   // ELSE
-   // prikazi_pregled_ukupno( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
-   // cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cIdOpcinaStanUslov, cKanton )
-   // ENDIF
+   IF lUkupnoZaRadnika
+      prikazi_pregled_ukupno( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
+         cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cIdOpcinaStanUslov, cKanton )
+   ELSE
+      prikazi_pregled( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, ;
+         cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cIdOpcinaStanUslov, cKanton )
+   ENDIF
 
    RETURN .T.
 
 
 STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
       cRadnik, cDoprPio, cDoprZdr, cDoprNez, cObracun, cDop4, cDop5, cDop6, ;
-      cM4TipoviIzdvojitiPrimanja, cTotal, cIdOpcinaStanUslov, cKanton )
+      cM4TipoviIzdvojitiPrimanja, lUkupnoZaRadnika, cIdOpcinaStanUslov, cKanton )
 
    LOCAL i
    LOCAL cPom
@@ -125,10 +129,60 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
    LOCAL nRadIznosM4
    LOCAL nBolovanjeSatiM4
    LOCAL nBolovanjeIznosM4
+   LOCAL nF_mj, nF_god
+   LOCAL nSati, nR_sati, nB_sati, nNeto, nR_net, nB_neto
+   LOCAL nR_neto
+   LOCAL nUNeto
+   LOCAL nPrim
+   LOCAL nBruto
+   LOCAL nUDopIz
+   LOCAL nIDoprPio
+   LOCAL nIDoprZdr
+   LOCAL nIDoprNez
+   LOCAL nIDoprD4
+   LOCAL nIDoprD5
+   LOCAL nIDoprD6
+   LOCAL nOdbici
+   LOCAL nL_odb
+   LOCAL nPorez
+   LOCAL nIsplata
+   LOCAL nURad_izn
+   LOCAL nUBol_izn
+   LOCAL nUkRadnihSati
+   LOCAL nUkBolovanjeSati
+   LOCAL bNulirajVarijable
 
-   IF cTotal == nil
-      cTotal := "N"
-   ENDIF
+   bNulirajVarijable := { || ;
+     nSati := 0,;
+     nR_sati := 0,;
+     nB_sati := 0,;
+     nNeto := 0,;
+     nB_neto := 0,;
+     nR_neto := 0,;
+     nUNeto := 0,;
+     nPrim := 0,;
+     nBruto := 0,;
+     nUDopIz := 0,;
+     nIDoprPio := 0,;
+     nIDoprZdr := 0,;
+     nIDoprNez := 0,;
+     nIDoprD4 := 0,;
+     nIDoprD5 := 0,;
+     nIDoprD6 := 0,;
+     nOdbici := 0,;
+     nL_odb := 0,;
+     nPorez := 0,;
+     nIsplata := 0,;
+     nUNetobp := 0,;
+     nRadSatiM4 := 0,;
+     nRadIznosM4 := 0,;
+     nBolovanjeSatiM4 := 0,;
+     nBolovanjeIznosM4 := 0,;
+     nURad_izn := 0,;
+     nUBol_izn := 0,;
+     nUkRadnihSati := 0,;
+     nUkBolovanjeSati := 0  }
+
 
    SELECT ld
 
@@ -173,37 +227,11 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
 
       SELECT ld
 
-      nSati := 0
-      nR_sati := 0
-      nB_sati := 0
-      nNeto := 0
-      nR_neto := 0
-      nB_neto := 0
-      nUNeto := 0
-      nPrim := 0
-      nBruto := 0
-      nUDopIz := 0
-      nIDoprPio := 0
-      nIDoprZdr := 0
-      nIDoprNez := 0
-      nIDoprD4 := 0
-      nIDoprD5 := 0
-      nIDoprD6 := 0
-      nOdbici := 0
-      nL_odb := 0
-      nPorez := 0
-      nIsplata := 0
-      nUNetobp := 0
-      nRadSatiM4 := 0
-      nRadIznosM4 := 0
-      nBolovanjeSatiM4 := 0
-      nBolovanjeIznosM4 := 0
-      nURad_izn := 0
-      nUBol_izn := 0
-      nUkRadnihSati := 0
-      nUkBolovanjeSati := 0
 
-      DO WHILE !Eof() .AND. field->idradn == cT_radnik
+      EVAL( bNulirajVarijable )
+
+
+      DO WHILE !Eof() .AND. ld->idradn == cT_radnik
 
          IF !pripada_opcina_kanton( ld->idradn, cIdOpcinaStanUslov, cKanton )
             SKIP
@@ -222,11 +250,8 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
 
          nF_mj := field->mjesec
          nF_god := field->godina
-
-         cObr_za := AllTrim( Str( ld->mjesec ) ) + "/" + AllTrim( Str( ld->godina ) )
-
          cId_rj := ld->idrj
-
+         cObr_za := AllTrim( Str( ld->mjesec, 2, 0 ) ) + "/" + AllTrim( Str( ld->godina, 4, 0 ) )
 
          cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj ) // uvijek provjeri tip rada, ako ima vise obracuna
          cTrosk := radn->trosk
@@ -247,136 +272,169 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
          nRadIznosM4 := 0 // redovan rad iznos, sati
          nRadSatiM4 := 0
 
-         sum_primanja_za_tipove_primanja( cM4TipoviIzdvojitiPrimanja, @nBolovanjeIznosM4, @nBolovanjeSatiM4 )
+         DO WHILE !Eof() .AND. ld->idradn == cT_radnik .AND. ld->mjesec == nF_mj .AND. ld->godina == nF_god
+
+            sum_primanja_za_tipove_primanja( cM4TipoviIzdvojitiPrimanja, @nBolovanjeIznosM4, @nBolovanjeSatiM4 )
 
 
-         nPrim += field->uneto // primanja
-         nOdbici += field->uodbici // odbici
-         nSati += field->usati
-         nIsplata += field->uiznos // isplata
-         nLOdbitak := field->ulicodb // licni odbitak
-         nL_odb += nLOdbitak
+            nPrim += field->uneto // primanja
+            nOdbici += field->uodbici // odbici
+            nSati += field->usati
+            nIsplata += field->uiznos // isplata
+            nLOdbitak := field->ulicodb // licni odbitak
+            nL_odb += nLOdbitak
 
 
-         IF ( nBolovanjeIznosM4 != 0 ) .OR. ( nBolovanjeSatiM4 != 0 )  // radni sati ukupni
-            nRadSatiM4 := ( field->usati - nBolovanjeSatiM4 )
-            nRadIznosM4 := ( field->uneto - nBolovanjeIznosM4 )
-         ELSE
-            nRadSatiM4 := ( field->usati )
-            nRadIznosM4 := ( field->uneto )
-         ENDIF
-
-
-         nUkRadnihSati += nRadSatiM4 // totali za bolovanje i radne sate
-         nUkBolovanjeSati += nBolovanjeSatiM4
-
-
-         nBrutoST := ld_get_bruto_osnova( ld->uneto, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto sa troskovima
-         nBr_bol := ld_get_bruto_osnova( nBolovanjeIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto bolovanja
-         nBr_rad := ld_get_bruto_osnova( nRadIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk )  // bruto rada
-
-         nTrosk := 0
-
-
-         IF cTipRada == "U" .AND. cTrosk <> "N" // ugovori o djelu
-
-            nTrosk := ROUND2( nBrutoST * ( gUgTrosk / 100 ), gZaok2 )
-
-            IF lInRs == .T.
-               nTrosk := 0
+            IF ( nBolovanjeIznosM4 != 0 ) .OR. ( nBolovanjeSatiM4 != 0 )  // radni sati ukupni
+               nRadSatiM4 := ( field->usati - nBolovanjeSatiM4 )
+               nRadIznosM4 := ( field->uneto - nBolovanjeIznosM4 )
+            ELSE
+               nRadSatiM4 := ( field->usati )
+               nRadIznosM4 := ( field->uneto )
             ENDIF
 
-         ENDIF
+
+            nUkRadnihSati += nRadSatiM4 // totali za bolovanje i radne sate
+            nUkBolovanjeSati += nBolovanjeSatiM4
 
 
-         IF cTipRada == "A" .AND. cTrosk <> "N" // autorski honorar
+            nBrutoST := ld_get_bruto_osnova( ld->uneto, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto sa troskovima
+            nBr_bol := ld_get_bruto_osnova( nBolovanjeIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto bolovanja
+            nBr_rad := ld_get_bruto_osnova( nRadIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk )  // bruto rada
 
-            nTrosk := ROUND2( nBrutoST * ( gAhTrosk / 100 ), gZaok2 )
+            nTrosk := 0
 
-            IF lInRs == .T.
-               nTrosk := 0
+
+            IF cTipRada == "U" .AND. cTrosk <> "N" // ugovori o djelu
+
+               nTrosk := ROUND2( nBrutoST * ( gUgTrosk / 100 ), gZaok2 )
+
+               IF lInRs == .T.
+                  nTrosk := 0
+               ENDIF
+
             ENDIF
 
+
+            IF cTipRada == "A" .AND. cTrosk <> "N" // autorski honorar
+
+               nTrosk := ROUND2( nBrutoST * ( gAhTrosk / 100 ), gZaok2 )
+
+               IF lInRs == .T.
+                  nTrosk := 0
+               ENDIF
+            ENDIF
+
+            nBrPoj := nBrutoST - nTrosk // bruto pojedinacno za radnika
+
+            nMBrutoST := nBrPoj
+
+            IF calc_mbruto() // minimalni bruto
+               nMBrutoST := min_bruto( nBrPoj, ld->usati )
+            ENDIF
+
+            nBruto += nBrPoj // ukupni bruto
+
+
+            nDoprIz := u_dopr_iz( nMBrutoST, cTipRada ) // ukupno dopr iz 31%
+            nUDopIz += nDoprIz
+
+
+            nDop_rad := u_dopr_iz( nBr_rad, cTipRada ) // doprinos za bol i rad
+            nDop_bol := u_dopr_iz( nBr_bol, cTipRada )
+
+            nURad_izn += ( nBr_rad - nDop_rad )
+            nUBol_izn += ( nBr_bol - nDop_bol )
+
+
+            nPorOsnP := ( nBrPoj - nDoprIz ) - nLOdbitak // osnovica za porez
+
+            IF nPorOsnP < 0 .OR. !radn_oporeziv( ld->idradn, ld->idrj )
+               nPorOsnP := 0
+            ENDIF
+
+
+            nPorPoj := izr_porez( nPorOsnP, "B" ) // porez je
+            nPorez += nPorPoj
+
+
+            nNetoBp := ( nBrPoj - nDoprIz ) // neto bez poreza
+            nNeto := ( nBrPoj - nDoprIz - nPorPoj ) // neto isplata
+            nNeto := min_neto( nNeto, ld->usati )  // minimalni neto uslov
+
+            nUNeto += nNeto
+            nUNetobp += nNetoBp
+
+
+            IF !Empty( cDoprPio ) // ocitaj doprinose, njihove iznose
+               nDoprPIO := get_dopr( cDoprPIO, cTipRada )
+               nIDoprPIO += round2( nMBrutoST * nDoprPIO / 100, gZaok2 )
+            ENDIF
+
+            IF !Empty( cDoprZdr )
+               nDoprZDR := get_dopr( cDoprZDR, cTipRada )
+               nIDoprZDR += round2( nMBrutoST * nDoprZDR / 100, gZaok2 )
+            ENDIF
+
+            IF !Empty( cDoprNez )
+               nDoprNEZ := get_dopr( cDoprNEZ, cTipRada )
+               nIDoprNEZ += round2( nMBrutoST * nDoprNEZ / 100, gZaok2 )
+            ENDIF
+
+            IF !Empty( cDop4 )
+               nDoprD4 := get_dopr( cDop4, cTipRada )
+               nIDoprD4 += round2( nMBrutoST * nDoprD4 / 100, gZaok2 )
+            ENDIF
+            IF !Empty( cDop4 )
+               nDoprD5 := get_dopr( cDop5, cTipRada )
+               nIDoprD5 += round2( nMBrutoST * nDoprD5 / 100, gZaok2 )
+            ENDIF
+            IF !Empty( cDop4 )
+               nDoprD6 := get_dopr( cDop6, cTipRada )
+               nIDoprD6 += round2( nMBrutoST * nDoprD6 / 100, gZaok2 )
+            ENDIF
+
+
+            SELECT ld
+            SKIP
+
+         ENDDO // godina, mjesec
+
+         IF !lUkupnoZaRadnika
+            dodaj_u_pomocnu_tabelu( nF_god, ;
+               nF_mj, ;
+               cT_radnik, ;
+               cId_rj, ;
+               cObr_za, ;
+               cT_rnaziv, ;
+               nSati, ;
+               nUkRadnihSati, ;
+               nUkBolovanjeSati, ;
+               nPrim, ;
+               nBruto, ;
+               nUDopIZ, ;
+               nIDoprPIO, ;
+               nIDoprZDR, ;
+               nIDoprNEZ, ;
+               0, ;
+               nL_Odb, ;
+               nPorez, ;
+               nUNetobp, ;
+               nUNeto, ;
+               nURad_izn, ;
+               nUBol_izn, ;
+               nOdbici, ;
+               nIsplata, ;
+               nIDoprD4, ;
+               nIDoprD5, ;
+               nIDoprD6 )
+             EVAL( bNulirajVarijable )
          ENDIF
-
-
-         nBrPoj := nBrutoST - nTrosk // bruto pojedinacno za radnika
-
-         nMBrutoST := nBrPoj
-
-         IF calc_mbruto() // minimalni bruto
-            nMBrutoST := min_bruto( nBrPoj, ld->usati )
-         ENDIF
-
-         nBruto += nBrPoj // ukupni bruto
-
-
-         nDoprIz := u_dopr_iz( nMBrutoST, cTipRada ) // ukupno dopr iz 31%
-         nUDopIz += nDoprIz
-
-
-         nDop_rad := u_dopr_iz( nBr_rad, cTipRada ) // doprinos za bol i rad
-         nDop_bol := u_dopr_iz( nBr_bol, cTipRada )
-
-         nURad_izn += ( nBr_rad - nDop_rad )
-         nUBol_izn += ( nBr_bol - nDop_bol )
-
-
-         nPorOsnP := ( nBrPoj - nDoprIz ) - nLOdbitak // osnovica za porez
-
-         IF nPorOsnP < 0 .OR. !radn_oporeziv( ld->idradn, ld->idrj )
-            nPorOsnP := 0
-         ENDIF
-
-
-         nPorPoj := izr_porez( nPorOsnP, "B" ) // porez je
-         nPorez += nPorPoj
-
-
-         nNetoBp := ( nBrPoj - nDoprIz ) // neto bez poreza
-         nNeto := ( nBrPoj - nDoprIz - nPorPoj ) // neto isplata
-         nNeto := min_neto( nNeto, ld->usati )  // minimalni neto uslov
-
-         nUNeto += nNeto
-         nUNetobp += nNetoBp
-
-
-         IF !Empty( cDoprPio ) // ocitaj doprinose, njihove iznose
-            nDoprPIO := get_dopr( cDoprPIO, cTipRada )
-            nIDoprPIO += round2( nMBrutoST * nDoprPIO / 100, gZaok2 )
-         ENDIF
-
-         IF !Empty( cDoprZdr )
-            nDoprZDR := get_dopr( cDoprZDR, cTipRada )
-            nIDoprZDR += round2( nMBrutoST * nDoprZDR / 100, gZaok2 )
-         ENDIF
-
-         IF !Empty( cDoprNez )
-            nDoprNEZ := get_dopr( cDoprNEZ, cTipRada )
-            nIDoprNEZ += round2( nMBrutoST * nDoprNEZ / 100, gZaok2 )
-         ENDIF
-
-         IF !Empty( cDop4 )
-            nDoprD4 := get_dopr( cDop4, cTipRada )
-            nIDoprD4 += round2( nMBrutoST * nDoprD4 / 100, gZaok2 )
-         ENDIF
-         IF !Empty( cDop4 )
-            nDoprD5 := get_dopr( cDop5, cTipRada )
-            nIDoprD5 += round2( nMBrutoST * nDoprD5 / 100, gZaok2 )
-         ENDIF
-         IF !Empty( cDop4 )
-            nDoprD6 := get_dopr( cDop6, cTipRada )
-            nIDoprD6 += round2( nMBrutoST * nDoprD6 / 100, gZaok2 )
-         ENDIF
-
-
-         SELECT ld
-         SKIP
 
       ENDDO // radnik
 
 
-      IF cTotal == "N"
+      IF lUkupnoZaRadnika
          dodaj_u_pomocnu_tabelu( nF_god, ;
             nF_mj, ;
             cT_radnik, ;
@@ -405,72 +463,13 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
             nIDoprD5, ;
             nIDoprD6 )
 
-         // resetuj varijable
-         nSati := 0
-         nR_sati := 0
-         nB_sati := 0
-         nNeto := 0
-         nR_neto := 0
-         nB_neto := 0
-         nUNeto := 0
-         nPrim := 0
-         nBruto := 0
-         nUDopIz := 0
-         nIDoprPio := 0
-         nIDoprZdr := 0
-         nIDoprNez := 0
-         nIDoprD4 := 0
-         nIDoprD5 := 0
-         nIDoprD6 := 0
-         nOdbici := 0
-         nL_odb := 0
-         nPorez := 0
-         nIsplata := 0
-         nUNetobp := 0
-         nRadSatiM4 := 0
-         nRadIznosM4 := 0
-         nBolovanjeSatiM4 := 0
-         nBolovanjeIznosM4 := 0
-         nURad_izn := 0
-         nUBol_izn := 0
-         nUkRadnihSati := 0
-         nUkBolovanjeSati := 0
-
       ENDIF
 
 
 
-   ENDDO // eof
+   ENDDO
 
-/*
-   IF cTotal == "D"
-      dodaj_u_pomocnu_tabelu( 0, 0, cT_radnik, ;
-         cId_rj, ;
-         cObr_za, ;
-         cT_rnaziv, ;
-         nSati, ;
-         nUkRadnihSati, ;
-         nUkBolovanjeSati, ;
-         nPrim, ;
-         nBruto, ;
-         nUDopIZ, ;
-         nIDoprPIO, ;
-         nIDoprZDR, ;
-         nIDoprNEZ, ;
-         0, ;
-         nL_Odb, ;
-         nPorez, ;
-         nUNetobp, ;
-         nUNeto, ;
-         nURad_izn, ;
-         nUBol_izn, ;
-         nOdbici, ;
-         nIsplata, ;
-         nIDoprD4, ;
-         nIDoprD5, ;
-         nIDoprD6 )
-   ENDIF
-*/
+
 
    RETURN .T.
 
@@ -695,7 +694,7 @@ STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
    RETURN .T.
 
 
-/*
+
 STATIC FUNCTION prikazi_pregled_ukupno( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
       cDop1, cDop2, cDop3, cDop4, cDop5, cDop6, cIdOpcinaStanUslov, cKanton )
 
@@ -966,7 +965,7 @@ STATIC FUNCTION prikazi_pregled_ukupno( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
    ENDPRINT
 
    RETURN .T.
-*/
+
 
 
 

@@ -536,7 +536,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
 
 
 
-FUNCTION Predhodni( i, cVar, cObr )
+FUNCTION Predhodni( nI, cVar, cObr )
 
    LOCAL cKljuc := ""
 
@@ -562,12 +562,12 @@ FUNCTION Predhodni( i, cVar, cObr )
    // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
    // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
 
-   IF _Mjesec - i < 1
+   IF _Mjesec - nI < 1
       // HSEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1, 2 ) + _idradn
       seek_ld_2( NIL, _Godina - 1, 12 + _Mjesec - 1, NIL, _idradn )
    ELSE
-      // HSEEK Str( _Godina, 4 ) + Str( _Mjesec - i, 2 ) + _idradn
-      seek_ld_2( NIL, _Godina, _Mjesec - i, NIL, _idradn )
+      // HSEEK Str( _Godina, 4 ) + Str( _Mjesec - nI, 2 ) + _idradn
+      seek_ld_2( NIL, _Godina, _Mjesec - nI, NIL, _idradn )
    ENDIF
 
    cPom := cVar

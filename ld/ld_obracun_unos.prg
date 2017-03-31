@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR cIdRadn, cIdRj, nGodina, nMjesec, lNovi, gVarObracun
+MEMVAR cIdRadn, cIdRj, nGodina, nMjesec, lNovi, cObracun, gObracun, gVarObracun
 
 
 FUNCTION ld_unos_obracuna()
@@ -26,7 +26,7 @@ FUNCTION ld_unos_obracuna()
    PRIVATE lNovi
    PRIVATE GetList
    PRIVATE nPlacenoRSati
-   PRIVATE cIdRadn, cIdRj, nGodina, nMjesec
+   PRIVATE cIdRadn, cIdRj, nGodina, nMjesec, cObracun
 
    cIdRj := gLDRadnaJedinica
 
@@ -35,6 +35,7 @@ FUNCTION ld_unos_obracuna()
 
    nGodina := ld_tekuca_godina()
    nMjesec := ld_tekuci_mjesec()
+   cObracun := gObracun
 
    // select_o_ld()
 
@@ -129,7 +130,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    cIdRadn := Space( 6 )
    nMjesec := ld_tekuci_mjesec()
    nGodina := ld_tekuca_godina()
-   cObracun := gObracun
+
 
    lLogUnos := .F.
 

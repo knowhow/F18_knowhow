@@ -779,13 +779,14 @@ FUNCTION P_Krediti
 
    PARAMETERS cIdRadn, cIdkred, cNaOsnovu
 
-   LOCAL i, lRet
+   LOCAL nI, lRet
    PRIVATE ImeKol
 
    PushWA()
 
    select_o_radn( cIdRadn )
    seek_radkr_2( cIdRadn )
+   SET ORDER TO TAG "3" // "idkred+naosnovu+idradn+str(godina,4,0)+str(mjesec,2,0)"
 
 
    PRIVATE Imekol := {}
@@ -797,8 +798,8 @@ FUNCTION P_Krediti
 
    Kol := {}
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    Box(, 18, 60 )

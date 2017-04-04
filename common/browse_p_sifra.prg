@@ -595,6 +595,7 @@ STATIC FUNCTION edit_sql_sif_item( nCh, cOrderTag, aZabIsp, lNovi )
    LOCAL nMCScan
    LOCAL _vars
    LOCAL cTekuciZapis
+   LOCAL lShowPGroup
 
    PRIVATE nXP
    PRIVATE nYP

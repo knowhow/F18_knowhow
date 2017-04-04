@@ -524,24 +524,26 @@ FUNCTION P_ParObr( cId, nDeltaX, nDeltaY )
    PRIVATE imekol := {}
    PRIVATE kol := {}
 
-   AAdd( ImeKol, { PadR( "mjesec", 8 ),  {|| id }, "id", {|| iif( ValType( wId ) == "C", Eval( MemVarBlock( "wId" ), Val( wId ) ), NIL ), .T. } } )
-   AAdd( ImeKol, { "godina", {|| godina }, "godina", {|| iif( ValType( wId ) == "N", Eval( MemVarBlock( "wID" ), Str( wId, 2 ) ), NIL ), .T. }  } )
-   AAdd( ImeKol, { PadR( "obracun", 10 ), {|| obr }, "obr" } )
+   AAdd( ImeKol, { PadR( "mjesec", 8 ),  {|| field->id }, "id", {|| iif( ValType( wId ) == "C", Eval( MemVarBlock( "wId" ), Val( wId ) ), NIL ), .T. },;
+         NIL, NIL, "99" } )
+   AAdd( ImeKol, { "godina", {|| field->godina }, "godina", {|| iif( ValType( wId ) == "N", Eval( MemVarBlock( "wID" ), Str( wId, 2 ) ), NIL ), .T. },;
+         NIL, NIL, "9999" } )
+   AAdd( ImeKol, { PadR( "obracun", 10 ), {|| field->obr }, "obr" } )
 
-   IF my_get_from_ini( "LD", "VrBodaPoRJ", "N", KUMPATH ) == "D"
-      AAdd( ImeKol, { "rj", {|| IDRJ }, "IDRJ" } )
-   ENDIF
+   //IF my_get_from_ini( "LD", "VrBodaPoRJ", "N", KUMPATH ) == "D"
+    //  AAdd( ImeKol, { "rj", {|| field->IDRJ }, "IDRJ" } )
+   //ENDIF
 
-   AAdd( ImeKol, { PadR( "opis", 10 ), {|| naz }, "naz" } )
-   AAdd( ImeKol, { PadR( iif( gBodK == "1", "vrijednost boda", "vr.koeficijenta" ), 15 ),  {|| vrbod }, "vrbod" } )
-   AAdd( ImeKol, { PadR( "n.koef.1", 8 ), {|| k5 }, "k5"  } )
-   AAdd( ImeKol, { PadR( "n.koef.2", 8 ), {|| k6 }, "k6"  } )
-   AAdd( ImeKol, { PadR( "n.koef.3", 8 ), {|| k7 }, "k7"  } )
-   AAdd( ImeKol, { PadR( "n.koef.4", 8 ), {|| k8 }, "k8"  } )
-   AAdd( ImeKol, { PadR( "br.sati", 5 ), {|| k1 }, "k1"  } )
-   AAdd( ImeKol, { PadR( "prosj.LD", 12 ), {|| Prosld }, "PROSLD"  }  )
-   AAdd( ImeKol, { PadR( "mn sat.", 12 ), {|| m_net_sat }, "m_net_sat"  } )
-   AAdd( ImeKol, { PadR( "mb sat.", 12 ), {|| m_br_sat }, "m_br_sat"  } )
+   AAdd( ImeKol, { PadR( "opis", 10 ), {|| field->naz }, "naz" } )
+   AAdd( ImeKol, { PadR( iif( gBodK == "1", "vrijednost boda", "vr.koeficijenta" ), 15 ),  {|| field->vrbod }, "vrbod" } )
+   AAdd( ImeKol, { PadR( "n.koef.1", 8 ), {|| field->k5 }, "k5"  } )
+   AAdd( ImeKol, { PadR( "n.koef.2", 8 ), {|| field->k6 }, "k6"  } )
+   AAdd( ImeKol, { PadR( "n.koef.3", 8 ), {|| field->k7 }, "k7"  } )
+   AAdd( ImeKol, { PadR( "n.koef.4", 8 ), {|| field->k8 }, "k8"  } )
+   AAdd( ImeKol, { PadR( "br.sati", 5 ),  {|| field->k1 }, "k1"  } )
+   AAdd( ImeKol, { PadR( "prosj.LD", 12 ),{|| field->Prosld }, "PROSLD"  }  )
+   AAdd( ImeKol, { PadR( "mn sat.", 12 ), {|| field->m_net_sat }, "m_net_sat"  } )
+   AAdd( ImeKol, { PadR( "mb sat.", 12 ), {|| field->m_br_sat }, "m_br_sat"  } )
 
    FOR nI := 1 TO Len( ImeKol )
       AAdd( kol, nI )

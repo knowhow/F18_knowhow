@@ -11,18 +11,19 @@
 
 #include "f18.ch"
 
-MEMVAR ImeKol
+MEMVAR ImeKol, m_x, m_y
 
-FUNCTION browse_stavka_formiraj_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, nI, nTekRed )
+FUNCTION browse_stavka_formiraj_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowPGroup, Ch, nGet, nI, nTekRed )
 
-   LOCAL bWhen, bValid, cPic
+   LOCAL bWhen, bValid, cGetPictureCode
    LOCAL nRed, nKolona
    LOCAL cWhenSifk, cValidSifk
-   LOCAL _when_block, _valid_block
+   LOCAL bWhenSifk, bValidSifk
    LOCAL bVariableEval := MemVarBlock( cVariableName )
    LOCAL cFieldName
    LOCAL tmpRec
    LOCAL aFieldLen, nFieldWidth
+   LOCAL nXP, nYP
 
    // uzmi when, valid kodne blokove
    IF ( Ch == K_F2 .AND. lZabIsp .AND. AScan( aZabIsp, Upper( ImeKol[ nI, 3 ] ) ) > 0 )
@@ -46,19 +47,19 @@ FUNCTION browse_stavka_formiraj_getlist( cVariableName, GetList, lZabIsp, aZabIs
    ENDIF
 
    cFieldName := SubStr( cVariableName, 2 ) // wID -> ID
-   cPic := get_field_get_picture_code( Alias(), cFieldName )
+   cGetPictureCode := get_field_get_picture_code( Alias(), cFieldName )
    aFieldLen := get_field_len( Alias(), cFieldName )
    IF aFieldLen != NIL .AND. aFieldLen[ 1 ] == "C"
       nFieldWidth := aFieldLen[ 2 ] // char polje sirina
    ENDIF
 
-   IF cPic ==  "@S50" .OR. Len( ToStr( Eval( bVariableEval ) ) ) > 50
-      cPic :=  "@S50"
+   IF cGetPictureCode ==  "@S50" .OR. Len( ToStr( Eval( bVariableEval ) ) ) > 50
+      cGetPictureCode :=  "@S50"
       @ m_x + nTekRed + 1, m_y + 67 SAY Chr( 16 )
    ENDIF
 
    IF Len( ImeKol[ nI ] ) >= 7 .AND. ImeKol[ nI, 7 ] <> NIL // picture kod zadan u ImeKol
-      cPic := ImeKol[ nI, 7 ]
+      cGetPictureCode := ImeKol[ nI, 7 ]
    ENDIF
 
    nRed := 1
@@ -88,19 +89,19 @@ FUNCTION browse_stavka_formiraj_getlist( cVariableName, GetList, lZabIsp, aZabIs
       IzSifKWV( Alias(), SubStr( cVariableName, 7 ), @cWhenSifk, @cValidSifk )
 
       IF !Empty( cWhenSifk )
-         _when_block := & ( "{|| " + cWhenSifk + "}" )
+         bWhenSifk := & ( "{|| " + cWhenSifk + "}" )
       ELSE
-         _when_block := bWhen
+         bWhenSifk := bWhen
       ENDIF
 
       IF !Empty( cValidSifk )
-         _valid_block := & ( "{|| " + cValidSifk + "}" )
+         bValidSifk := & ( "{|| " + cValidSifk + "}" )
       ELSE
-         _valid_block := bValid
+         bValidSifk := bValid
       ENDIF
    ELSE
-      _when_block := bWhen
-      _valid_block := bValid
+      bWhenSifk := bWhen
+      bValidSifk := bValid
    ENDIF
 
    @ m_x + nTekRed, m_y + nKolona SAY  iif( nKolona > 1, "  " + AllTrim( ImeKol[ nI, 1 ] ), PadL( AllTrim( ImeKol[ nI, 1 ] ), 15 ) )  + " "
@@ -126,7 +127,7 @@ FUNCTION browse_stavka_formiraj_getlist( cVariableName, GetList, lZabIsp, aZabIs
 
 
 
-   AAdd( GetList, _GET_( &cVariableName, cVariableName,  cPic, _valid_block, _when_block ) ) ;;
+   AAdd( GetList, _GET_( &cVariableName, cVariableName,  cGetPictureCode, bValidSifk, bWhenSifk ) ) ;;
       ATail( GetList ):display()
 
    RETURN .T.

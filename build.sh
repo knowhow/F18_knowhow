@@ -18,5 +18,7 @@ unset F18_DEBUG_SQL
 
 ./build_lib.sh
 
+scripts/update_f18_ver_ch.sh
+
 hbmk2 -workdir=.h F18.hbp
 

@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+MEMVAR m
 
 FUNCTION ld_pregled_primanja()
 
@@ -73,7 +74,6 @@ FUNCTION ld_pregled_primanja()
    USE
 
    set_tippr_ili_tippr2( cObracun )
-
    select_o_tippr( cTip )
 
 
@@ -119,8 +119,8 @@ FUNCTION ld_pregled_primanja()
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
-         cFilt := IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
-            IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
+         cFilt := IIF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + ;
+            IIF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
          IF ld_vise_obracuna()
             cFilt += ".and. OBR=" + _filter_quote( cObracun )
          ENDIF
@@ -156,8 +156,7 @@ FUNCTION ld_pregled_primanja()
    EOF CRET
 
    nStrana := 0
-   m := "----- " + Replicate( "-", LEN_IDRADNIK ) + " ---------------------------------- " + IF( lKredit .AND. !Empty( cSifKred ), REPL( "-", Len( RADKR->naosnovu ) + 1 ), "-" + REPL( "-", Len( gPicS ) ) ) + " ----------- -----------"
-   IF cdod == "D"
+   IF cDOd == "D"
       IF Type( ckolona ) $ "UUIUE"
          Msg( "Nepostojeca kolona" )
          closeret
@@ -177,11 +176,11 @@ FUNCTION ld_pregled_primanja()
    nT1 := nT2 := nT3 := nT4 := 0
    nC1 := 10
 
-   DO WHILE !Eof() .AND.  nGodina == godina .AND. idrj = cidrj .AND. nMjesec = mjesec .AND. ;
-         !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+   DO WHILE !Eof() .AND.  nGodina == ld->godina .AND. ld->idrj = cIdrj .AND. nMjesec = ld->mjesec .AND. ;
+         !( ld_vise_obracuna() .AND. !Empty( cObracun ) .AND. ld->obr <> cObracun )
 
       IF ld_vise_obracuna() .AND. Empty( cObracun )
-         ScatterS( godina, mjesec, idrj, idradn )
+         ScatterS( ld->godina, ld->mjesec, ld->idrj, ld->idradn )
       ELSE
          Scatter()
       ENDIF
@@ -193,7 +192,7 @@ FUNCTION ld_pregled_primanja()
          //SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred
          seek_radkr( nGodina, nMjesec, ld->IdRadn, cSifKred )
          lImaJos := .F.
-         DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
+         DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + idradn + idkred
             IF placeno > 0
                lImaJos := .T.
                EXIT
@@ -201,7 +200,9 @@ FUNCTION ld_pregled_primanja()
             SKIP 1
          ENDDO
          IF !lImaJos
-            SELECT LD; SKIP 1; LOOP
+            SELECT LD
+            SKIP 1
+            LOOP
          ELSE
             SELECT LD
          ENDIF
@@ -241,7 +242,8 @@ FUNCTION ld_pregled_primanja()
          ENDIF
          IF lKredit .AND. !Empty( cSifKred )
             lImaJos := .F.
-            SELECT RADKR; SKIP 1
+            SELECT RADKR
+            SKIP 1
             DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
                IF placeno > 0
                   lImaJos := .T.
@@ -266,6 +268,10 @@ FUNCTION ld_pregled_primanja()
       FF
       Eval( bZagl )
    ENDIF
+
+   m := "----- " + Replicate( "-", LEN_IDRADNIK ) + " ---------------------------------- " + ;
+         IIF( lKredit .AND. !Empty( cSifKred ), REPL( "-", Len( FIELD_LENGTH_LD_RADKR_NA_OSNOVU ) + 1 ), "-" + REPL( "-", Len( gPicS ) ) ) + " ----------- -----------"
+
    ? m
    ? Space( 1 ) + _l( "UKUPNO:" )
    IF lKredit .AND. !Empty( cSifKred )
@@ -281,7 +287,7 @@ FUNCTION ld_pregled_primanja()
    ENDPRINT
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -317,10 +323,10 @@ FUNCTION ZPregPrim()
    ?
    ? m
    IF lKredit .AND. !Empty( cSifKred )
-      ? " Rbr  " + PadC( "Sifra ", LEN_IDRADNIK ) + "          " + _l( "Naziv radnika" ) + "               " + PadC( "Na osnovu", Len( RADKR->naosnovu ) ) + "      " + _l( "Iznos" )
+      ? " Rbr  " + PadC( "Sifra ", LEN_IDRADNIK ) + "          " +  "Naziv radnika" + "               " + PadC( "Na osnovu", Len( RADKR->naosnovu ) ) + "      " +  "Iznos"
    ELSE
-      ? " Rbr  " + PadC( "Sifra ", LEN_IDRADNIK ) + "          " + _l( "Naziv radnika" ) + "               " + iif( tippr->fiksan == "P", " %  ", "Sati" ) + "      " + _l( "Iznos" )
+      ? " Rbr  " + PadC( "Sifra ", LEN_IDRADNIK ) + "          " + "Naziv radnika" + "               " + iif( tippr->fiksan == "P", " %  ", "Sati" ) + "      " +  "Iznos"
    ENDIF
    ? m
 
-   RETURN
+   RETURN .T.

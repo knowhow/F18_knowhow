@@ -71,7 +71,7 @@ FUNCTION ld_pregled_plata_za_period()
    @ form_x_koord() + 14, form_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 5 : " GET cDoprD5
    @ form_x_koord() + 15, form_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 6 : " GET cDoprD6
 
-   @ form_x_koord() + 17, form_y_koord() + 2 SAY8 "Izdvojena primanja (bolovanje, neplaceno) za M4:" GET cM4TipoviIzdvojitiPrimanja PICT "@S20"
+   @ form_x_koord() + 17, form_y_koord() + 2 SAY8 "Izdvojena primanja (bolovanje, neplaceno):" GET cM4TipoviIzdvojitiPrimanja PICT "@S20"
 
    // @ form_x_koord() + 19, form_y_koord() + 2 SAY8 "Prikazati ukupno za sve mjesece (D/N)" GET cTotal PICT "@!" VALID cTotal $ "DN"
 
@@ -123,8 +123,8 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
    LOCAL nPrimanje
    LOCAL nRadSatiM4
    LOCAL nRadIznosM4
-   LOCAL nBolovanjeSatiM4
-   LOCAL nBolovanjeIznosM4
+   LOCAL nIzdvojenaPrimanjaSatiM4
+   LOCAL nIzdvojenaPrimanjaIznosM4
    LOCAL nF_mj, nF_god
    LOCAL nSati, nR_sati, nB_sati, nNeto, nR_net, nB_neto
    LOCAL nR_neto
@@ -145,8 +145,10 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
    LOCAL nURad_izn
    LOCAL nUBol_izn
    LOCAL nUkRadnihSati
-   LOCAL nUkBolovanjeSati
+   LOCAL nUkIzdvojenaPrimanjaSati
    LOCAL bNulirajVarijable
+   LOCAL nLOdbitak
+   LOCAL aPrimanja
 
    bNulirajVarijable := {|| ;
       nSati := 0, ;
@@ -172,12 +174,12 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
       nUNetobp := 0, ;
       nRadSatiM4 := 0, ;
       nRadIznosM4 := 0, ;
-      nBolovanjeSatiM4 := 0, ;
-      nBolovanjeIznosM4 := 0, ;
+      nIzdvojenaPrimanjaSatiM4 := 0, ;
+      nIzdvojenaPrimanjaIznosM4 := 0, ;
       nURad_izn := 0, ;
       nUBol_izn := 0, ;
       nUkRadnihSati := 0, ;
-      nUkBolovanjeSati := 0  }
+      nUkIzdvojenaPrimanjaSati := 0  }
 
 
    SELECT ld
@@ -200,12 +202,12 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
          LOOP
       ENDIF
 
-      cT_radnik := field->idradn
+      cIdRadnikTekuci := field->idradn
 
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
       IF !Empty( cRadnik )
-         IF cT_radnik <> cRadnik
+         IF cIdRadnikTekuci <> cRadnik
             SKIP
             LOOP
          ENDIF
@@ -214,10 +216,9 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
       cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
       cOpor := g_oporeziv( ld->idradn, ld->idrj )
 
-      // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ld_pozicija_parobr( ld->mjesec, ld->godina, IF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
+      ld_pozicija_parobr( ld->mjesec, ld->godina, IIF( ld_vise_obracuna(), ld->obr, ), ld->idrj )
 
-      select_o_radn( cT_radnik )
+      select_o_radn( cIdRadnikTekuci )
 
       cT_rnaziv := AllTrim( radn->ime ) + " " + AllTrim( radn->naz )
 
@@ -227,7 +228,7 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
       Eval( bNulirajVarijable )
 
 
-      DO WHILE !Eof() .AND. ld->idradn == cT_radnik
+      DO WHILE !Eof() .AND. ld->idradn == cIdRadnikTekuci
 
          IF !pripada_opcina_kanton( ld->idradn, cIdOpcinaStanUslov, cKanton )
             SKIP
@@ -262,15 +263,17 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
          ENDIF
 
 
-         nBolovanjeIznosM4 := 0 // bolovanje iznosi, sati
-         nBolovanjeSatiM4 := 0
+         //nIzdvojenaPrimanjaIznosM4 := 0 // bolovanje iznosi, sati
+         //nIzdvojenaPrimanjaSatiM4 := 0
 
          nRadIznosM4 := 0 // redovan rad iznos, sati
          nRadSatiM4 := 0
 
-         DO WHILE !Eof() .AND. ld->idradn == cT_radnik .AND. ld->mjesec == nF_mj .AND. ld->godina == nF_god
+         DO WHILE !Eof() .AND. ld->idradn == cIdRadnikTekuci .AND. ld->mjesec == nF_mj .AND. ld->godina == nF_god
 
-            sum_primanja_za_tipove_primanja( cM4TipoviIzdvojitiPrimanja, @nBolovanjeIznosM4, @nBolovanjeSatiM4 )
+            aPrimanja := sum_primanja_za_tipove_primanja( cM4TipoviIzdvojitiPrimanja )
+            nIzdvojenaPrimanjaSatiM4 := aPrimanja[ 1 ]
+            nIzdvojenaPrimanjaIznosM4 := aPrimanja[ 2 ]
 
 
             nPrim += field->uneto // primanja
@@ -281,21 +284,20 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
             nL_odb += nLOdbitak
 
 
-            IF ( nBolovanjeIznosM4 != 0 ) .OR. ( nBolovanjeSatiM4 != 0 )  // radni sati ukupni
-               nRadSatiM4 := ( field->usati - nBolovanjeSatiM4 )
-               nRadIznosM4 := ( field->uneto - nBolovanjeIznosM4 )
+            IF ( nIzdvojenaPrimanjaIznosM4 != 0 ) .OR. ( nIzdvojenaPrimanjaSatiM4 != 0 )  // radni sati ukupni
+               nRadSatiM4 := ( field->usati - nIzdvojenaPrimanjaSatiM4 )
+               nRadIznosM4 := ( field->uneto - nIzdvojenaPrimanjaIznosM4 )
             ELSE
                nRadSatiM4 := ( field->usati )
                nRadIznosM4 := ( field->uneto )
             ENDIF
 
-
-            nUkRadnihSati += nRadSatiM4 // totali za bolovanje i radne sate
-            nUkBolovanjeSati += nBolovanjeSatiM4
+            nUkRadnihSati += nRadSatiM4 // totali za izdvojena primanja i radne sate
+            nUkIzdvojenaPrimanjaSati += nIzdvojenaPrimanjaSatiM4
 
 
             nBrutoST := ld_get_bruto_osnova( ld->uneto, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto sa troskovima
-            nBr_bol := ld_get_bruto_osnova( nBolovanjeIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto bolovanja
+            nBr_bol := ld_get_bruto_osnova( nIzdvojenaPrimanjaIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk ) // bruto bolovanja
             nBr_rad := ld_get_bruto_osnova( nRadIznosM4, cTipRada, ld->ulicodb, nPrKoef, cTrosk )  // bruto rada
 
             nTrosk := 0
@@ -399,13 +401,13 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
          IF !lUkupnoZaRadnika
             dodaj_u_pomocnu_tabelu( nF_god, ;
                nF_mj, ;
-               cT_radnik, ;
+               cIdRadnikTekuci, ;
                cId_rj, ;
                cObr_za, ;
                cT_rnaziv, ;
                nSati, ;
                nUkRadnihSati, ;
-               nUkBolovanjeSati, ;
+               nUkIzdvojenaPrimanjaSati, ;
                nPrim, ;
                nBruto, ;
                nUDopIZ, ;
@@ -433,13 +435,13 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
       IF lUkupnoZaRadnika
          dodaj_u_pomocnu_tabelu( nF_god, ;
             nF_mj, ;
-            cT_radnik, ;
+            cIdRadnikTekuci, ;
             cId_rj, ;
             cObr_za, ;
             cT_rnaziv, ;
             nSati, ;
             nUkRadnihSati, ;
-            nUkBolovanjeSati, ;
+            nUkIzdvojenaPrimanjaSati, ;
             nPrim, ;
             nBruto, ;
             nUDopIZ, ;
@@ -468,28 +470,53 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
    RETURN .T.
 
 
-FUNCTION sum_primanja_za_tipove_primanja( cM4TipoviIzdvojitiPrimanja, nBolovanjeIznosM4, nBolovanjeSatiM4 )
+FUNCTION sum_primanja_za_tipove_primanja( cM4TipoviIzdvojitiPrimanja )
 
-   LOCAL nPrimanje, cPom
+   LOCAL nPrimanje, cPom, aPrimanja := { 0, 0 }
 
    IF !Empty( cM4TipoviIzdvojitiPrimanja )
       FOR nPrimanje := 1 TO 60
          cPom := PadL( AllTrim( Str( nPrimanje ) ), 2, "0" )
          IF cPom $ cM4TipoviIzdvojitiPrimanja .AND. ( ld->( FieldPos( "I" + cPom ) ) != 0 )
-            nBolovanjeIznosM4 += iif( cPom $ cM4TipoviIzdvojitiPrimanja, LD->&( "I" + cPom ), 0 )
-            nBolovanjeSatiM4 += iif( cPom $ cM4TipoviIzdvojitiPrimanja, LD->&( "S" + cPom ), 0 )
+            aPrimanja[ 1 ] += iif( cPom $ cM4TipoviIzdvojitiPrimanja, LD->&( "S" + cPom ), 0 )
+            aPrimanja[ 2 ] += iif( cPom $ cM4TipoviIzdvojitiPrimanja, LD->&( "I" + cPom ), 0 )
          ENDIF
       NEXT
    ENDIF
 
-   RETURN .T.
+   RETURN aPrimanja
 
 
 STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
       cDop1, cDop2, cDop3, cDop4, cDop5, cDop6, cIdOpcinaStanUslov, cKanton )
 
-   LOCAL cT_radnik := ""
+   LOCAL cIdRadnikTekuci := ""
    LOCAL cLine := ""
+   LOCAL nUSati := 0
+   LOCAL nUNeto := 0
+   LOCAL nUNetoBP := 0
+   LOCAL nUPrim := 0
+   LOCAL nUBruto := 0
+   LOCAL nUDoprPio := 0
+   LOCAL nUDoprZdr := 0
+   LOCAL nUDoprNez := 0
+   LOCAL nUDoprD4 := 0
+   LOCAL nUDoprD5 := 0
+   LOCAL nUDoprD6 := 0
+   LOCAL nUDoprIZ := 0
+   LOCAL nUPorez := 0
+   LOCAL nUOdbici := 0
+   LOCAL nULicOdb := 0
+   LOCAL nUIsplata := 0
+   LOCAL nUkRadnihSati := 0
+   LOCAL nUkRadIznos := 0
+   LOCAL nUkIzdvojenaPrimanjaSati := 0
+   LOCAL nUkIzdvojenaPrimanjaIznos := 0
+   LOCAL nRbr := 0
+   LOCAL nPoc := 10
+   LOCAL nCount := 0
+   LOCAL nNBP_pt
+
 
    O_R_EXP
    SELECT r_export
@@ -522,8 +549,9 @@ STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
    nUIsplata := 0
    nUkRadnihSati := 0
    nUkRadIznos := 0
-   nUkBolovanjeSati := 0
-   nUkBolovanjeIznos := 0
+   nUkIzdvojenaPrimanjaSati := 0
+   nUkIzdvojenaPrimanjaIznos := 0
+
 
    nRbr := 0
    nPoc := 10
@@ -547,7 +575,7 @@ STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
       @ PRow(), PCol() + 1 SAY Str( field->prim, 12, 2 )
       nUPrim += field->prim
 
-      @ PRow(), PCol() + 1 SAY Str( bruto, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( field->bruto, 12, 2 )
       nUBruto += field->bruto
 
       @ PRow(), PCol() + 1 SAY Str( field->dop_iz, 12, 2 )
@@ -611,11 +639,11 @@ STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
 
 
          ?
-         @ PRow(), nPoc - 3 SAY "b: " + Str( field->b_sati, 12, 2 ) // bolovanja
+         @ PRow(), nPoc - 3 SAY "i: " + Str( field->b_sati, 12, 2 ) // bolovanja
          @ PRow(), nNBP_pt SAY Str( field->b_neto, 12, 2 )
 
-         nUkBolovanjeSati += field->b_sati
-         nUkBolovanjeIznos += field->b_neto
+         nUkIzdvojenaPrimanjaSati += field->b_sati
+         nUkIzdvojenaPrimanjaIznos += field->b_neto
 
       ELSE
          nUkRadnihSati += field->sati
@@ -666,17 +694,17 @@ STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
    ENDIF
 
 
-   IF ( nUkBolovanjeIznos <> 0 ) // ako ima bolovanja
+   IF ( nUkIzdvojenaPrimanjaIznos <> 0 ) // ako ima izdvojenih primanja
 
       // redovan rad
       ?
       @ PRow(), nPoc - 3 SAY "r: " + Str( nUkRadnihSati, 12, 2 )
       @ PRow(), nNBP_pt SAY Str( nUkRadIznos, 12, 2 )
 
-      // bolovanja
+      // izdvojena primanja
       ?
-      @ PRow(), nPoc - 3 SAY "b: " + Str( nUkBolovanjeSati, 12, 2 )
-      @ PRow(), nNBP_pt SAY Str( nUkBolovanjeIznos, 12, 2 )
+      @ PRow(), nPoc - 3 SAY "i: " + Str( nUkIzdvojenaPrimanjaSati, 12, 2 )
+      @ PRow(), nNBP_pt SAY Str( nUkIzdvojenaPrimanjaIznos, 12, 2 )
 
    ENDIF
 
@@ -872,12 +900,12 @@ STATIC FUNCTION pripada_opcina_kanton( cIdRadnik, cIdOpcinaStanUslov, cIdKanton 
 STATIC FUNCTION seek_pa_sortiraj_tabelu_ld( cRj, nGodina, nMjesec, cMjesecDo, cRadnik, cObr )
 
    LOCAL cFilter := ""
-   PRIVATE cObracun := cObr
+   //PRIVATE cObracun := cObr
 
    seek_ld( NIL, nGodina, NIL, NIL, cRadnik )
 
-   IF !Empty( cObracun )
-      cFilter += "obr == " + _filter_quote( cObracun )
+   IF !Empty( cObr )
+      cFilter += "obr == " + _filter_quote( cObr )
    ENDIF
 
    IF !Empty( cRj )
@@ -913,8 +941,7 @@ STATIC FUNCTION dodaj_u_pomocnu_tabelu( nGodina, nMjesec, cRadnik, cIdRj, cObrZa
       nSati, nR_sati, ;
       nB_sati, nPrim, nBruto, nDoprIz, nDopPio, ;
       nDopZdr, nDopNez, nOporDoh, nLOdb, nPorez, nNetoBp, nNeto, ;
-      nR_neto, nB_neto, ;
-      nOdbici, nIsplata, nDop4, nDop5, nDop6 )
+      nR_neto, nB_neto, nOdbici, nIsplata, nDop4, nDop5, nDop6 )
 
    LOCAL nTArea := Select()
 

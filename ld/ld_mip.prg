@@ -283,6 +283,7 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
    LOCAL cIdRadnikTekuci
    LOCAL m
    LOCAL aBeneficiraniRadniStaz
+   LOCAL aPrimanja
 
    // LOCAL nGodina, nMjesec
    LOCAL nFondSati
@@ -396,16 +397,30 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
          // nPrimanjaNeUlazeUBeneficiraniIznos := 0
 
 
-         sum_primanja_za_tipove_primanja( cTipPrimIsplateUslugeIliDobra, @nPrimanjaUslugeIliDobraIznos, @nPrimanjaUslugeIliDobraSati )
-         sum_primanja_za_tipove_primanja( cTipoviPrimanjaNeUlazeBeneficirani, @nPrimanjaNeUlazeUBeneficiraniIznos, @nPrimanjaNeUlazeUBeneficiraniSati )
+         aPrimanja := sum_primanja_za_tipove_primanja( cTipPrimIsplateUslugeIliDobra )
+         nPrimanjaUslugeIliDobraSati := aPrimanja[ 1 ]
+         nPrimanjaUslugeIliDobraIznos := aPrimanja[ 2 ]
+
+         aPrimanja := sum_primanja_za_tipove_primanja( cTipoviPrimanjaNeUlazeBeneficirani )
+         nPrimanjaNeUlazeUBeneficiraniSati := aPrimaja[ 1 ]
+         nPrimanjaNeUlazeUBeneficiraniIznos := aPrimanja[ 2 ]
+
 
          nSatiBolovanje := 0
-         sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanje, @nBolovanjaIznos, @nSatiBolovanje )
+         aPrimanja := sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanje )
+         nSatiBolovanje := aPrimanja[ 1 ]
+         nBolovanjaIznos := aPrimanja[ 2 ]
+
+
 
          lImaBovanjaPreko42 := .F. // provjeriti da li ima bolovanja preko 42 dana ili trudnickog bolovanja
          nBolovanjaPreko42Iznos := 0
          nBolovanjaPreko42Sati := 0
-         sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanjePreko, @nBolovanjaPreko42Iznos, @nBolovanjaPreko42Sati )
+         aPrimanja := sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanjePreko )
+         nBolovanjaPreko42Sati := aPrimanja[ 1 ]
+         nBolovanjaPreko42Iznos := aPrimanja[ 2 ]
+
+         
          IF Round( nBolovanjaPreko42Iznos, 2 ) != 0 .OR. Round( nBolovanjaPreko42Sati, 2 ) != 0
             lImaBovanjaPreko42 := .T.
          ENDIF

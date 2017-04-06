@@ -203,8 +203,8 @@ FUNCTION kalk_generisi_95_za_manjak_16_za_visak()
    PRIVATE nRBr := 0, nRBr2 := 0
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cbrdok == brdok
       scatter()
-      SELECT roba
-      HSEEK _idroba
+
+      select_o_roba( _idroba )
 
       IF koncij->naz <> "N1"
          kalk_vpc_po_kartici( @nFaktVPC, _idfirma, _idkonto, _idroba )

@@ -33,3 +33,4 @@ include/f18_ver.ch
 /keyrings/live/pubring.gpg~
 /keyrings/live/pubring.kbx~
 /keyrings/live/secring.gpg
+/test_secret.txt

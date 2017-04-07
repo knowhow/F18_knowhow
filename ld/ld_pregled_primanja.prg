@@ -16,6 +16,7 @@ MEMVAR m
 
 FUNCTION ld_pregled_primanja()
 
+   LOCAL bZagl
    LOCAL nC1 := 20
 
    cIdRadn := Space( LEN_IDRADNIK )
@@ -162,6 +163,10 @@ FUNCTION ld_pregled_primanja()
          closeret
       ENDIF
    ENDIF
+
+   m := "----- " + Replicate( "-", LEN_IDRADNIK ) + " ---------------------------------- " + ;
+         IIF( lKredit .AND. !Empty( cSifKred ), REPL( "-", Len( FIELD_LENGTH_LD_RADKR_NA_OSNOVU ) + 1 ), "-" + REPL( "-", Len( gPicS ) ) ) + " ----------- -----------"
+
    bZagl := {|| ZPregPrim() }
 
    select_o_ld_rj( ld->idrj )
@@ -192,8 +197,8 @@ FUNCTION ld_pregled_primanja()
          //SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred
          seek_radkr( nGodina, nMjesec, ld->IdRadn, cSifKred )
          lImaJos := .F.
-         DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) + idradn + idkred
-            IF placeno > 0
+         DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( ld->godina, 4, 0 ) + Str( ld->mjesec, 2, 0 ) + ld->idradn + ld->idkred
+            IF ld->placeno > 0
                lImaJos := .T.
                EXIT
             ENDIF
@@ -269,8 +274,6 @@ FUNCTION ld_pregled_primanja()
       Eval( bZagl )
    ENDIF
 
-   m := "----- " + Replicate( "-", LEN_IDRADNIK ) + " ---------------------------------- " + ;
-         IIF( lKredit .AND. !Empty( cSifKred ), REPL( "-", Len( FIELD_LENGTH_LD_RADKR_NA_OSNOVU ) + 1 ), "-" + REPL( "-", Len( gPicS ) ) ) + " ----------- -----------"
 
    ? m
    ? Space( 1 ) + _l( "UKUPNO:" )
@@ -297,7 +300,7 @@ FUNCTION ZPregPrim()
    ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
    IF Empty( cidrj )
-      ? _l( "Pregled za sve RJ ukupno:" )
+      ? "Pregled za sve RJ ukupno:"
    ELSE
       ? _l( "RJ:" ), cidrj, ld_rj->naz
    ENDIF

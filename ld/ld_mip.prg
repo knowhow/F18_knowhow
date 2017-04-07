@@ -402,7 +402,7 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
          nPrimanjaUslugeIliDobraIznos := aPrimanja[ 2 ]
 
          aPrimanja := sum_primanja_za_tipove_primanja( cTipoviPrimanjaNeUlazeBeneficirani )
-         nPrimanjaNeUlazeUBeneficiraniSati := aPrimaja[ 1 ]
+         nPrimanjaNeUlazeUBeneficiraniSati := aPrimanja[ 1 ]
          nPrimanjaNeUlazeUBeneficiraniIznos := aPrimanja[ 2 ]
 
 
@@ -420,7 +420,7 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
          nBolovanjaPreko42Sati := aPrimanja[ 1 ]
          nBolovanjaPreko42Iznos := aPrimanja[ 2 ]
 
-         
+
          IF Round( nBolovanjaPreko42Iznos, 2 ) != 0 .OR. Round( nBolovanjaPreko42Sati, 2 ) != 0
             lImaBovanjaPreko42 := .T.
          ENDIF

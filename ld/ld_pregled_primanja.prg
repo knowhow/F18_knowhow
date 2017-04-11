@@ -167,7 +167,7 @@ FUNCTION ld_pregled_primanja()
    m := "----- " + Replicate( "-", LEN_IDRADNIK ) + " ---------------------------------- " + ;
          IIF( lKredit .AND. !Empty( cSifKred ), REPL( "-", FIELD_LENGTH_LD_RADKR_NA_OSNOVU + 1 ), "-" + REPL( "-", Len( gPicS ) ) ) + " ----------- -----------"
 
-   bZagl := {|| ZPregPrim() }
+   bZagl := {|| ld_zagl_pregled_primanja() }
 
    select_o_ld_rj( ld->idrj )
    SELECT ld
@@ -294,7 +294,7 @@ FUNCTION ld_pregled_primanja()
 
 
 
-FUNCTION ZPregPrim()
+FUNCTION ld_zagl_pregled_primanja()
 
    P_12CPI
    ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
@@ -302,7 +302,7 @@ FUNCTION ZPregPrim()
    IF Empty( cidrj )
       ? "Pregled za sve RJ ukupno:"
    ELSE
-      ? _l( "RJ:" ), cidrj, ld_rj->naz
+      ? "RJ:", cidrj, ld_rj->naz
    ENDIF
 
    ?? Space( 2 ) + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
@@ -326,7 +326,7 @@ FUNCTION ZPregPrim()
    ?
    ? m
    IF lKredit .AND. !Empty( cSifKred )
-      ? " Rbr  " + PadC( "Sifra ", LEN_IDRADNIK ) + "          " +  "Naziv radnika" + "               " + PadC( "Na osnovu", Len( RADKR->naosnovu ) ) + "      " +  "Iznos"
+      ? " Rbr  " + PadC( "Sifra ", LEN_IDRADNIK ) + "          " +  "Naziv radnika" + "               " + PadC( "Na osnovu", FIELD_LENGTH_LD_RADKR_NA_OSNOVU ) + "      " +  "Iznos"
    ELSE
       ? " Rbr  " + PadC( "Sifra ", LEN_IDRADNIK ) + "          " + "Naziv radnika" + "               " + iif( tippr->fiksan == "P", " %  ", "Sati" ) + "      " +  "Iznos"
    ENDIF

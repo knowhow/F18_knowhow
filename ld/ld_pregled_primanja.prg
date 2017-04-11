@@ -18,6 +18,7 @@ FUNCTION ld_pregled_primanja()
 
    LOCAL bZagl
    LOCAL nC1 := 20
+   LOCAL lImaJos
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
@@ -197,8 +198,8 @@ FUNCTION ld_pregled_primanja()
          //SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred
          seek_radkr( nGodina, nMjesec, ld->IdRadn, cSifKred )
          lImaJos := .F.
-         DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( ld->godina, 4, 0 ) + Str( ld->mjesec, 2, 0 ) + ld->idradn + ld->idkred
-            IF ld->placeno > 0
+         DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( rakdr->godina, 4, 0 ) + Str( radkr->mjesec, 2, 0 ) + radkr->idradn + radkr->idkred
+            IF radkr->placeno > 0
                lImaJos := .T.
                EXIT
             ENDIF
@@ -249,8 +250,8 @@ FUNCTION ld_pregled_primanja()
             lImaJos := .F.
             SELECT RADKR
             SKIP 1
-            DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
-               IF placeno > 0
+            DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( radkr->godina, 4 ) + Str( radkr->mjesec, 2 ) + radkr->idradn + radkr->idkred
+               IF radkr->placeno > 0
                   lImaJos := .T.
                   EXIT
                ENDIF

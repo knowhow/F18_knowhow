@@ -150,7 +150,7 @@ FUNCTION _gmainline()
 // godinu i mjesec (prije toga nema svrhe), a prije glavne izvjestajne
 // petlje.
 // ---------------------------------------------------------------------
-FUNCTION PoDoIzSez( cG, cM )
+FUNCTION ld_porezi_i_doprinosi_iz_sezone( cG, cM )
 
    LOCAL nArr := Select()
    LOCAL cPath

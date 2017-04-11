@@ -169,7 +169,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    set_metric( "ld_specifikacija_opcine", NIL, qqOpSt )
    set_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
 
-   PoDoIzSez( nGodina, nMjesec )
+   ld_porezi_i_doprinosi_iz_sezone( nGodina, nMjesec )
 
    cIniName := _proizvj_ini
 

@@ -955,6 +955,8 @@ STATIC FUNCTION IspisKred( lSvi )
    LOCAL nMjesecFor, nMjesecRadKr
    LOCAL _t_rec
    LOCAL cIdKred, cNaOsnovu, nUkKred, nUkKrRad, cOpis2
+   LOCAL cFilter
+
 
    IF "SUMKREDITA" $ tippr->formula
 
@@ -999,9 +1001,14 @@ STATIC FUNCTION IspisKred( lSvi )
                      // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
                      // HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun + radkr->idradn
                      seek_ld_2( NIL, nGodina, nMjesecRadKr, cObracun, radkr->idradn )
+                     IF !Empty( qqRj )
+                        cFilter := Parsiraj( qqRj, "IDRJ" )
+                        SET FILTER TO &cFilter
+                        GO TOP
+                     ENDIF
 
                      _t_rec := RecNo()
-                     DO WHILE !Eof() .AND. godina == nGodina .AND. mjesec == nMjesec .AND. obr == cObracun .AND. idradn == radkr->idradn
+                     DO WHILE !Eof() .AND. ld->godina == nGodina .AND. ld->mjesec == nMjesec .AND. ld->obr == cObracun .AND. ld->idradn == radkr->idradn
                         IF ld->i30 <> 0
                            lFoundKreditI30 := .T.
                            EXIT
@@ -1035,8 +1042,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
                IF nUkKrRad <> 0
                   _kr_partija := AllTrim( kred->zirod )
-                  rekap_ld( "KRED" + cIdKred + cNaOsnovu, nGodina, nMjesecDo, nUkKrRad, 0, ;
-                     cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )
+                  rekap_ld( "KRED" + cIdKred + cNaOsnovu, nGodina, nMjesecDo, nUkKrRad, 0, cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )
 
                ENDIF
 
@@ -1077,7 +1083,7 @@ STATIC FUNCTION IspisKred( lSvi )
             cNaOsnovu := radkr->naosnovu
             nUkKred := 0
 
-            DO WHILE !Eof() .AND. idkred == cIdkred .AND. ( cNaosnovu == naosnovu .OR. gReKrOs == "N" )
+            DO WHILE !Eof() .AND. radkr->idkred == cIdkred .AND. ( cNaosnovu == radkr->naosnovu .OR. gReKrOs == "N" )
 
                lFoundKreditI30 := .F.
 
@@ -1086,6 +1092,12 @@ STATIC FUNCTION IspisKred( lSvi )
                   // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
                   // HSEEK  Str( nGodina, 4 ) + Str( nMjesec, 2 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                   seek_ld_2( NIL, nGodina, nMjesec, cObracun, radkr->idradn )
+                  // medjutim ovdje treba uzeti u obzir listu radnih jedinica koje su navedene u qqRJ, npr "10;20;"
+                  IF !Empty( qqRj )
+                     cFilter := Parsiraj( qqRj, "IDRJ" )
+                     SET FILTER TO &cFilter
+                     GO TOP
+                  ENDIF
                ELSE
                   seek_ld( cIdRj, nGodina, nMjesec, iif( !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
                   // SELECT ld
@@ -1098,7 +1110,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
                SELECT radkr
 
-               IF lFoundKreditI30 .AND. godina == nGodina .AND. mjesec == nMjesec
+               IF lFoundKreditI30 .AND. radkr->godina == nGodina .AND. radkr->mjesec == nMjesec
                   nUkKred += radkr->iznos
                ENDIF
 
@@ -1110,6 +1122,12 @@ STATIC FUNCTION IspisKred( lSvi )
                         // HSEEK  Str( nGodina, 4 ) + Str( nMjesecFor, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                         // "LDi2","str(godina)+str(mjesec)+idradn"
                         seek_ld_2( NIL, nGodina, nMjesecFor, iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, NIL ), radkr->idradn )
+                        IF !Empty( qqRj )
+                           cFilter := Parsiraj( qqRj, "IDRJ" )
+                           SET FILTER TO &cFilter
+                           GO TOP
+                        ENDIF
+
                      ELSE
                         // SELECT ld
                         // HSEEK  Str( nGodina, 4 ) + cIdrj + Str( nMjesecFor, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn

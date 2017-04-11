@@ -374,7 +374,7 @@ FUNCTION ld_specifikacija_plate()
 
    set_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
 
-   PoDoIzSez( nGodina, nMjesec )
+   ld_porezi_i_doprinosi_iz_sezone( nGodina, nMjesec )
 
    cIniName := _proizv_ini
 

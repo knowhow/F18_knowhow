@@ -112,7 +112,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
       EOF CRET
    ENDIF
 
-   PoDoIzSez( nGodina, nMjesecDo )
+   ld_porezi_i_doprinosi_iz_sezone( nGodina, nMjesecDo )
 
    cre_ops_ld_temp()
    cre_rekld_temp()

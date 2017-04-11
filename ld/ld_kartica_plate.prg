@@ -97,7 +97,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       set_tippr_ili_tippr2( cObracun )
    ENDIF
 
-   PoDoIzSez( nGodina, nMjesec )
+   ld_porezi_i_doprinosi_iz_sezone( nGodina, nMjesec )
 
    IF cVarijanta == "5"
       O_LDSM

@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 MEMVAR m
@@ -132,8 +131,6 @@ FUNCTION ld_pregled_primanja()
       ENDIF
    ELSE
       IF cVarSort == "1"
-         //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
-         //HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + cObracun
          seek_ld( cIdRj, nGodina, nMjesec, cObracun )
       ELSE
          seek_ld( cIdRj, nGodina, nMjesec, cObracun )
@@ -191,14 +188,11 @@ FUNCTION ld_pregled_primanja()
          Scatter()
       ENDIF
 
-      IF lKredit .AND. !Empty( cSifKred )
-         // provjerimo da li otplacuje zadanom kreditoru
-         // --------------------------------------------
-         //SELECT RADKR
-         //SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred
+      IF lKredit .AND. !Empty( cSifKred ) // provjerimo da li otplacuje zadanom kreditoru
+
          seek_radkr( nGodina, nMjesec, ld->IdRadn, cSifKred )
          lImaJos := .F.
-         DO WHILE !Eof() .AND. Str( nGodina, 4 ) + Str( nMjesec, 2 ) + LD->idradn + cSifKred == Str( rakdr->godina, 4, 0 ) + Str( radkr->mjesec, 2, 0 ) + radkr->idradn + radkr->idkred
+         DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + LD->idradn + cSifKred == Str( rakdr->godina, 4, 0 ) + Str( radkr->mjesec, 2, 0 ) + radkr->idradn + radkr->idkred
             IF radkr->placeno > 0
                lImaJos := .T.
                EXIT

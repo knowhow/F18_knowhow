@@ -23,7 +23,7 @@ FUNCTION ld_izvjestaji()
    AAdd( _opc, "2. rekapitulacije" )
    AAdd( _opcexe, {|| izvjestaji_rekapitulacije() } )
    AAdd( _opc, "3. pregledi" )
-   AAdd( _opcexe, {|| izvjestaji_pregledi() } )
+   AAdd( _opcexe, {|| ld_izvjestaji_pregledi() } )
    AAdd( _opc, "4. specifikacije" )
    AAdd( _opcexe, {|| izvjestaji_specifikacije() } )
    AAdd( _opc, "5. ostali izvještaji" )
@@ -105,7 +105,7 @@ STATIC FUNCTION izvjestaji_specifikacije()
 
 
 
-STATIC FUNCTION izvjestaji_pregledi()
+STATIC FUNCTION ld_izvjestaji_pregledi()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}

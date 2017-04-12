@@ -10,8 +10,7 @@
  */
 
 #include "f18.ch"
-
-
+ 
 /*
    update hRecord na serveru
 */

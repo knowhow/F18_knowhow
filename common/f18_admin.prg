@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+
 MEMVAR m_x, m_y, GetList
 
 CLASS F18Admin
@@ -73,7 +74,7 @@ METHOD F18Admin:New()
    ::create_db_result := {}
 
    IF ! ::relogin_as_admin( "postgres" )
-      MsgBeep( "relogin psotgresql as admin neuspjesno " )
+      MsgBeep( "relogin postgresql as admin neuspjesno " )
       RETURN .F.
    ENDIF
 

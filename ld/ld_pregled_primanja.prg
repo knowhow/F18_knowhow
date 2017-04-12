@@ -242,7 +242,7 @@ FUNCTION ld_pregled_primanja()
                @ PRow(), PCol() + 1 SAY _I&cTip  PICT gpici
                nT1 += _S&cTip; nT2 += _I&cTip
             ENDIF
-            IF cdod == "D"
+            IF cDod == "D"
                @ PRow(), PCol() + 1 SAY &ckolona
             ENDIF
          ENDIF

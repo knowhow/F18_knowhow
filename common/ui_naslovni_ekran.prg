@@ -12,7 +12,8 @@
 #include "f18.ch"
 #include "f18_color.ch"
 
-
+// nOldCursor koriste browse funkcije
+MEMVAR gNaslov, h, nOldCursor
 
 FUNCTION pripremi_naslovni_ekran( oApp )
 

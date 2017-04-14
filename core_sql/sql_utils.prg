@@ -697,7 +697,7 @@ FUNCTION sql_table_empty( alias )
 
    RETURN table_count( F18_PSQL_SCHEMA_DOT + _a_dbf_rec[ "cTable" ] ) == 0
 
-
+/*
 FUNCTION sql_from_adbf( aDbf, cTable )
 
    LOCAL i
@@ -735,6 +735,57 @@ FUNCTION sql_from_adbf( aDbf, cTable )
       OTHERWISE
          MsgBeep( "ERROR sql_from_adbf field type !" )
          RETURN NIL
+      ENDCASE
+      cRet += " AS " + aDbf[ i, 1 ]
+
+      IF i < Len( aDbf )
+         cRet += ","
+      ENDIF
+
+   NEXT
+
+   RETURN cRet
+*/
+
+
+FUNCTION sql_from_adbf( aDbf, cTable )
+
+   LOCAL i
+   LOCAL cRet := ""
+   LOCAL cField, cFieldPrefix := ""
+
+   IF cTable != NIL
+      cFieldPrefix := cTable + "."
+   ENDIF
+
+
+   FOR i := 1 TO Len( aDbf )
+
+      cField := cFieldPrefix + aDbf[ i, 1 ]
+
+      DO CASE
+      //CASE aDbf[ i, 2 ] == "C"
+         // naz2::char(4)
+      //   cRet += cField + "::char(" + AllTrim( Str( aDbf[ i, 3 ] ) ) + ")"
+
+      //CASE aDbf[ i, 2 ] == "N"
+      //   // COALESCE(kurs1,0)::numeric(18,8) AS kurs1
+      //   cRet += "COALESCE(" + cField + ",0)::numeric(" + ;
+      //      AllTrim( Str( aDbf[ i, 3 ] ) ) + "," + AllTrim( Str( aDbf[ i, 4 ] ) ) + ")"
+
+      //CASE aDbf[ i, 2 ] == "I"
+      //   cRet += "COALESCE(" + cField + ",0)::integer"
+
+
+      CASE aDbf[ i, 2 ] == "D"
+         // (CASE WHEN datum IS NULL THEN '1960-01-01'::date ELSE datum END) AS datum
+         cRet += "(CASE WHEN " + cField + "IS NULL THEN '1960-01-01'::date ELSE " + cField + ;
+            " END)"
+
+      OTHERWISE
+         //MsgBeep( "ERROR sql_from_adbf field type !" )
+         //RETURN NIL
+          cRet += cField 
       ENDCASE
       cRet += " AS " + aDbf[ i, 1 ]
 

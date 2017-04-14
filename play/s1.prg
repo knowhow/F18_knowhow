@@ -20,7 +20,7 @@ METHOD Class1:m1()
   ? ::nArea, SELECT( ::nArea )
   ? ::cArea, SELECT( ::cArea )
 
-  ? dbSelectArea( ::cArea )
+  ? my_dbSelectArea( ::cArea )
   SELECT ::cArea
   USE 
   RETURN .T.

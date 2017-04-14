@@ -35,21 +35,16 @@ FUNCTION add_global_idle_handlers()
 
 PROCEDURE on_idle_dbf_refresh()
 
-   LOCAL cAlias, aDBfRec, cSql
+   LOCAL cAlias, aDBfRec, oQry
 
    IF my_database() != "?undefined?" .AND. my_login():lOrganizacijaSpojena
-      PushWa()
-      cSql := "SELECT count(*) from fin_nalog"
-      SELECT F_NALOG_REFRESH
-      IF use_sql( "nalog_refresh", cSql, "NALOG_REFRESH" )
-         s_nFinNalogCount := field->count
-         USE
+         oQry := run_sql_query( "SELECT count(*) from fin_nalog" )
+         IF sql_error_in_query( oQry, "SELECT" )
+            MsgBeep( "ERR fin_nalog ne postoji?! " + my_database() )
+            QUIT
+         ENDIF
+         s_nFinNalogCount := oQry:FieldGet( 1 )
          hb_DispOutAt( maxrows(),  maxcols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
-      ELSE
-         MsgBeep( "ERR fin_nalog ne postoji?! " + my_database() )
-         QUIT
-      ENDIF
-      PopWA()
    ENDIF
 
    IF s_nIdleRefresh > 0
@@ -100,7 +95,7 @@ PROCEDURE on_idle_dbf_refresh()
 
    cAlias := Alias()
 
-   IF Empty( cAlias ) .OR. ( rddName() != DBFENGINE )
+   IF Empty( cAlias ) .OR. ( my_rddName() != DBFENGINE )
       s_nIdleRefresh := 0
       RETURN
    ENDIF

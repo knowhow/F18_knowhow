@@ -190,6 +190,7 @@
 #define F_LDT22    192
 #define F_LD_RJ    193
 #define F_EXP_BANK 194
+#define F_RADKR_2  195
 
 // modul OS (wa 200-206)
 #define F_OS       200

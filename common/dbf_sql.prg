@@ -21,7 +21,7 @@ FUNCTION dbf_update_rec( hRec, lNoLock )
    LOCAL _field_b
    LOCAL cMsg
    LOCAL _a_dbf_rec
-   LOCAL lSql := ( rddName() == "SQLMIX" )
+   LOCAL lSql := ( my_rddName() == "SQLMIX" )
 
    IF lNoLock == NIL
       lNoLock := .F.

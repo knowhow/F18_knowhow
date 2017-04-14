@@ -98,7 +98,7 @@ FUNCTION dbf_get_rec( lConvertToUtf )
 
    LOCAL cImeDbfPolja, nI, aDbfStruct
    LOCAL cRet := hb_Hash()
-   LOCAL lSql := ( rddName() ==  "SQLMIX" )
+   LOCAL lSql := ( my_rddName() ==  "SQLMIX" )
 
    hb_default( @lConvertToUtf, .F. )
 

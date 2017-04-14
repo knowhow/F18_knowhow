@@ -25,7 +25,7 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
       cTmp := Trim( ( nDbf )->naziv  )
    ENDIF
 
-   //IF ( nDbf )->( rddName() ) == "SQLMIX" // sql data utf-8
+   //IF ( nDbf )->( my_rddName() ) == "SQLMIX" // sql data utf-8
       //cTmp := _u( cTmp )
    //ENDIF
 

@@ -985,7 +985,7 @@ STATIC FUNCTION AR_DUMMY()
 
 /*
  * This function have to exist in all RDD and then name have to be in
- * format: <RDDNAME>_GETFUNCTABLE
+ * format: <my_rddName>_GETFUNCTABLE
  */
 FUNCTION ARRAYRDD_GETFUNCTABLE( pFuncCount, pFuncTable, pSuperTable, nRddID, pSuperRddID )
 

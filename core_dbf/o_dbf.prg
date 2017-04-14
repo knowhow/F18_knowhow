@@ -70,7 +70,7 @@ FUNCTION select_o_dbf( cAlias, nArea, xTable, cTag )
    ENDIF
 
    Select( nArea )
-   IF rddName() == "SQLMIX" // ako je otvoren kao sql, zatvori, pa otvori kao dbf
+   IF my_rddName() == "SQLMIX" // ako je otvoren kao sql, zatvori, pa otvori kao dbf
       USE
       RETURN o_dbf_table( nArea, xTable, cTag )
    ENDIF

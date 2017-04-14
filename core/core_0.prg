@@ -77,7 +77,7 @@ FUNCTION browse_dbf( cDbf )
 
    PushWA()
    SET SCOREBOARD ON
-   dbSelectArea( cDbf )
+   my_dbSelectArea( cDbf )
    dbEdit()
    PopWA()
    RESTORE SCREEN FROM cScr

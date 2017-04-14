@@ -131,14 +131,13 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
    LOCAL pConn, oError
    LOCAL nI, cMsg, cLogMsg := ""
    LOCAL nWa
+   LOCAL lError := .F.
+   LOCAL lOpenInNewArea := .F.
 
-   // IF Used()
-   // USE
-   // ENDIF
    IF ValType( sql_data_conn() ) != "O"
       RETURN .F.
    ENDIF
-   
+
    pConn := sql_data_conn():pDB
 
    IF HB_ISNIL( pConn )
@@ -146,17 +145,11 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
       RETURN .F.
    ENDIF
 
-   nWa := Select( cTable )
-   IF nWa > 0
-      SELECT ( nWa )
-      USE
-   ENDIF
 
-   nWa := Select( cAlias )
-   IF nWa > 0
-      SELECT ( nWa )
-      USE
-   ENDIF
+   // IF is_in_main_thread() .AND. cTable != "nalog_refresh"
+   // AltD()
+   // ENDIF
+
 
    rddSetDefault( "SQLMIX" )
 
@@ -164,22 +157,72 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
       LOG_CALL_STACK cLogMsg
       ?E "Unable connect to the PSQLserver", cLogMsg
       error_bar( "SQL", "SQLMIX connect " + cTable )
-      RETURN .F.
+      lError := .T.
+   ENDIF
+
+   nWa := Select( cTable )
+   IF nWa > 0
+      SELECT ( nWa )
+      USE
+      dbSelectArea( nWa )
+      IF Select() == 501 .AND. cTable != "nalog_refresh"
+         Alert( "dbSelectArea bug 501 fin nalog_refresh" )
+         AltD()
+      ENDIF
+   ENDIF
+
+   IF cAlias == NIL
+      cAlias := cTable
+   ELSE
+      IF cAlias == "_NEW_WA_"
+         lOpenInNewArea := .T.
+         cAlias := cTable
+      ENDIF
+      nWa := Select( cAlias )
+      IF nWa > 0
+         SELECT ( nWa )
+         USE
+         dbSelectArea( nWa )
+         IF Select() == 501 .AND. cTable != "nalog_refresh"
+            Alert( "dbSelectArea bug 501 fin nalog_refresh" )
+            AltD()
+         ENDIF
+      ENDIF
+
+   ENDIF
+
+
+   IF Select() == 501 .AND. cTable != "nalog_refresh"
+      Alert( "dbSelectArea bug 501 fin nalog_refresh" )
+      AltD()
    ENDIF
 
    BEGIN SEQUENCE WITH {| err | Break( err ) }
-      dbUseArea( .F., "SQLMIX", cSqlQuery, iif( cAlias == NIL, cTable, cAlias ) )
+      dbUseArea( lOpenInNewArea, "SQLMIX", cSqlQuery, cAlias )
+      IF Used() .AND. my_rddName() == "SQLMIX" .AND. Select( cAlias ) > 0
+         lError := .F.
+      ELSE
+         ?E "ERROR dbUseArea SQLMIX:", cSqlQuery, "Alias:", cAlias
+         error_bar( "SQLMIX", "ERR: use_sql" + cSqlQuery )
+         lError := .T.
+      ENDIF
+
+
    RECOVER USING oError
-      ?E "SQL ERR", oError:description, cSqlQuery
+      ?E "SQL ERR:", oError:description, cSqlQuery
       error_bar( "SQL", "ERR: use_sql" + oError:description + " " + cSqlQuery )
-      RETURN .F.
+      lError := .T.
    END SEQUENCE
 
    rddSetDefault( "DBFCDX" )
 
-   RETURN .T.
+   RETURN !lError
 
 
+
+FUNCTION my_dbSelectArea( xArea )
+
+   RETURN dbSelectArea( xArea )
 
 
 
@@ -589,7 +632,6 @@ FUNCTION use_sql_rules()
 
    RETURN .T.
 
-   RETURN .T.
 
 
 
@@ -610,3 +652,12 @@ FUNCTION is_partn_sql()
 FUNCTION is_konto_sql()
 
    RETURN .F.
+
+
+FUNCTION my_rddName()
+
+   IF Used()
+      RETURN rddName()
+   ENDIF
+
+   RETURN "unused"

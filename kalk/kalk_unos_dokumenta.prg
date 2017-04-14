@@ -66,7 +66,7 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
-   AAdd( ImeKol, { "F.", {|| dbSelectArea( F_KALK_PRIPR ), field->idfirma   }, "idfirma"   } )
+   AAdd( ImeKol, { "F.", {|| my_dbSelectArea( F_KALK_PRIPR ), field->idfirma   }, "idfirma"   } )
    AAdd( ImeKol, { "VD", {|| field->IdVD                     }, "IdVD"        } )
    AAdd( ImeKol, { "BrDok", {|| field->BrDok                 }, "BrDok"       } )
    AAdd( ImeKol, { "R.Br", {|| field->Rbr                    }, "Rbr"         } )

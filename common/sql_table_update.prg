@@ -42,7 +42,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
          cTable := Alias()
       ENDIF
 
-      // IF USED() .AND. ( rddName() == "SQLMIX" )
+      // IF USED() .AND. ( my_rddName() == "SQLMIX" )
       // lSqlDbf := .T.  // u sql tabeli su utf enkodirani stringovi
       // ENDIF
 

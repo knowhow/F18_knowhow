@@ -78,7 +78,7 @@ FUNCTION Scatter( cZn, lUtf )
 FUNCTION set_global_vars_from_dbf( cVarPrefix, lConvertToUtf )
 
    LOCAL nI, aDbStruct, cFieldName, cFieldType, cFieldWidth, _var
-   LOCAL lSql := ( rddName() ==  "SQLMIX" )
+   LOCAL lSql := ( my_rddName() ==  "SQLMIX" )
 
    PRIVATE cImeP, cVar
 

@@ -61,7 +61,7 @@ FUNCTION fin_knjizenje_naloga()
    o_fin_edit()
 
    ImeKol := { ;
-      { "F.",            {|| dbSelectArea( F_FIN_PRIPR ), field->IdFirma }, "IdFirma" }, ;
+      { "F.",            {|| my_dbSelectArea( F_FIN_PRIPR ), field->IdFirma }, "IdFirma" }, ;
       { "VN",            {|| field->IdVN    }, "IdVN" }, ;
       { "Br.",           {|| field->BrNal   }, "BrNal" }, ;
       { "R.br",          {|| Str( field->RBr, 5, 0 ) }, "rbr", {|| wRbr() }, {|| .T. } }, ;

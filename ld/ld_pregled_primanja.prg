@@ -13,7 +13,7 @@
 
 MEMVAR m
 
-FUNCTION ld_pregled_primanja()
+FUNCTION ld_pregled_odredjenog_primanja()
 
    LOCAL bZagl
    LOCAL nC1 := 20
@@ -66,7 +66,7 @@ FUNCTION ld_pregled_primanja()
       @ form_x_koord() + 7, form_y_koord() + 2 SAY "Naziv kolone:" GET cKolona
       READ
    ENDIF
-   ckolona := "radn->" + ckolona
+   cKolona := "radn->" + cKolona
 
    BoxC()
 
@@ -80,13 +80,13 @@ FUNCTION ld_pregled_primanja()
 
    EOF CRET
 
-   IF "SUMKREDITA" $ formula
+altd()
+   IF "SUMKREDITA" $ tippr->formula
       // radi se o kreditu, upitajmo da li je potreban prikaz samo za
       // jednog kreditora
       // ------------------------------------------------------------
       lKredit := .T.
-      o_kred()
-      cSifKred := Space( Len( id ) )
+      cSifKred := Space( 6 )
       Box(, 6, 75 )
       @ form_x_koord() + 2, form_y_koord() + 2 SAY "Izabrani tip primanja je kredit ili se tretira na isti nacin kao i kredit."
       @ form_x_koord() + 3, form_y_koord() + 2 SAY "Ako zelite mozete dobiti spisak samo za jednog kreditora."
@@ -108,12 +108,11 @@ FUNCTION ld_pregled_primanja()
       cObracun := ""
    ENDIF
 
+altd()
    IF Empty( cIdRJ )
 
       cIdrj := ""
       IF cVarSort == "1"
-         //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
-         //HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
          seek_ld_2( NIL, nGodina, nMjesec, cObracun )
       ELSE
          seek_ld( NIL, nGodina, nMjesec, cObracun )
@@ -190,9 +189,10 @@ FUNCTION ld_pregled_primanja()
 
       IF lKredit .AND. !Empty( cSifKred ) // provjerimo da li otplacuje zadanom kreditoru
 
+altd()
          seek_radkr( nGodina, nMjesec, ld->IdRadn, cSifKred )
          lImaJos := .F.
-         DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + LD->idradn + cSifKred == Str( rakdr->godina, 4, 0 ) + Str( radkr->mjesec, 2, 0 ) + radkr->idradn + radkr->idkred
+         DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + LD->idradn + cSifKred == Str( radkr->godina, 4, 0 ) + Str( radkr->mjesec, 2, 0 ) + radkr->idradn + radkr->idkred
             IF radkr->placeno > 0
                lImaJos := .T.
                EXIT

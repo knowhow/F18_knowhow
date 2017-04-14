@@ -233,7 +233,7 @@ STATIC FUNCTION browse_only( hParams, lIzOBJDB )
 
    LOCAL i, j, k
    LOCAL _rows, _width
-   LOCAL lSql := ( rddName() == "SQLMIX" )
+   LOCAL lSql := ( my_rddName() == "SQLMIX" )
    LOCAL bShowField
 
    IF lIzOBJDB == NIL

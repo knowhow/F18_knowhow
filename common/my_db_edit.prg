@@ -285,7 +285,7 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
    LOCAL _rows, _width, _rows_prazno, _rows_poruke
    LOCAL TCol
    LOCAL bShowField
-   LOCAL lSql := ( rddName() == "SQLMIX" )
+   LOCAL lSql := ( my_rddName() == "SQLMIX" )
 
    IF lIzOBJDB == NIL
       lIzOBJDB := .F.

@@ -90,7 +90,7 @@ METHOD open_attr_dbf()  CLASS DokAttr
       ENDIF
    ENDIF
 
-   dbSelectArea( ::cTableNameDbf )
+   my_dbSelectArea( ::cTableNameDbf )
    SET ORDER TO TAG "1"
 
    // #ifdef F18_DEBUG
@@ -666,7 +666,7 @@ METHOD brisi_visak_atributa( nAreaPriprema )  CLASS DokAttr
 
 
       IF SELECT ( ::cAliasAttribTable ) > 0
-         dbSelectArea( ::cAliasAttribTable )
+         my_dbSelectArea( ::cAliasAttribTable )
          cSeek := field->idfirma + field->idtipdok + field->brdok + field->rbr
       ELSE
          error_bar( "bug", log_stack( 1 ) )
@@ -677,7 +677,7 @@ METHOD brisi_visak_atributa( nAreaPriprema )  CLASS DokAttr
       dbSeek( cSeek, .T. )
       lStavkaInPriprema := Found()
 
-      dbSelectArea( ::cAliasAttribTable )
+      my_dbSelectArea( ::cAliasAttribTable )
 
       IF !lStavkaInPriprema // u fakt_pripr nema ove stavke vise, brisi atribut u dbf tabeli atributa
          DELETE

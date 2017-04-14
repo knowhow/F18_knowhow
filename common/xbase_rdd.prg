@@ -33,7 +33,7 @@ FUNCTION PushWA()
 
    IF Used()
 
-      IF rddName() != "SQLMIX"
+      IF my_rddName() != "SQLMIX"
          cFilter := dbFilter()
          lSql := .F.
       ELSE
@@ -81,27 +81,27 @@ FUNCTION PopWA( nWANeDiraj )
 
    hRet := StackPop( aWaStack )
 
-   IF !HB_ISHASH( hRet )  .OR. !hb_HHasKey( hRet, 'wa' )
+   IF !HB_ISHASH( hRet )  .OR. !hb_HHasKey( hRet, "wa" )
       error_bar( "bug", log_stack( 1 ) )
       RETURN NIL
    ENDIF
 
-   IF hRet[ 'wa' ] <> NIL  .AND. ( hRet[ 'wa' ] != nWaNeDiraj )
+   IF hRet[ 'wa' ] <> NIL  .AND. ( hRet[ "wa" ] != nWaNeDiraj )
 
-      Select( hRet[ 'wa' ] )
+      my_dbSelectArea( hRet[ "wa" ] )
 
       IF Used()
-         ordSetFocus( hRet[ 'index' ] )
+         ordSetFocus( hRet[ "index" ] )
 
-         IF !Empty( hRet[ 'filter' ] )
-            SET FILTER to &( hRet[ 'filter' ] )
+         IF !Empty( hRet[ "filter" ] )
+            SET FILTER to &( hRet[ "filter" ] )
          ELSE
             IF !Empty( dbFilter() )
                SET FILTER TO
             ENDIF
          ENDIF
 
-         GO hRet[ 'recno' ]
+         GO hRet[ "recno" ]
       ENDIF
 
    ENDIF
@@ -135,7 +135,7 @@ FUNCTION index_tag_num( cName )
       RETURN -1
    ENDIF
 
-   IF rddName() != "SQLMIX"
+   IF my_rddName() != "SQLMIX"
       RETURN ordNumber( cName )
    ELSE
       FOR nI := 1 TO ordCount()
@@ -155,7 +155,7 @@ FUNCTION my_flock()
 
    LOCAL lRet
 
-   IF Used() .AND.  ( rddName() != "SQLMIX" )
+   IF Used() .AND.  ( my_rddName() != "SQLMIX" )
       lRet := FLock()
       IF !lRet
          ?E "FLOCK neuspjesno: " + Alias()
@@ -168,7 +168,7 @@ FUNCTION my_flock()
 
 FUNCTION my_rlock()
 
-   IF Used() .AND. ( rddName() != "SQLMIX" )
+   IF Used() .AND. ( my_rddName() != "SQLMIX" )
       RETURN RLock()
    ELSE
       RETURN .T.
@@ -176,7 +176,7 @@ FUNCTION my_rlock()
 
 FUNCTION my_unlock()
 
-   IF Used() .AND. ( rddName() != "SQLMIX" )
+   IF Used() .AND. ( my_rddName() != "SQLMIX" )
       RETURN dbUnlock()
    ELSE
       RETURN .T.

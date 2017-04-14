@@ -728,7 +728,6 @@ FUNCTION P_Kred( cId, nDeltaX, nDeltaY )
       { PadR( "Partija", 20 ), {||  zirod }, "zirod" }                 ;
       }
 
-   // Dorade 2001
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
    lRet := p_sifra( F_KRED, 1, MAXROWS() - 15, MAXCOLS() - 20, _u( "Lista kreditora" ), @cId, nDeltaX, nDeltaY )
@@ -1089,7 +1088,7 @@ FUNCTION P_VPosla( cId, nDeltaX, nDeltaY )
    PopWA()
 
    RETURN xRet
-   
+
 
 FUNCTION P_NorSiht( cId, nDeltaX, nDeltaY )
 

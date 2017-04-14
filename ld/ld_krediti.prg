@@ -422,12 +422,12 @@ FUNCTION ld_iznosi_za_kredit( _idradn, cIdkred, cNaOsnovu, _mjesec, _godina )
 */
 
    seek_radkr_2( _idradn, cIdkred, cNaOsnovu, ;           // seek_radkr_2( cIdRadn, cIdkred, cNaOsnovu,
-        NIL, NIL, NIL, { F_RADKR + 1000, "RADKR_1000" } ) // nGodina, nMjesec, cTag, aWorkarea )
+        NIL, NIL, NIL, { F_RADKR_2, "RADKR_2" } ) // nGodina, nMjesec, cTag, aWorkarea )
 
    nUkupno := 0
    nPlaceno := 0
 
-   SELECT radkr_1000
+   SELECT radkr_2
    DO WHILE !Eof() .AND. AllTrim( idradn ) == AllTrim( _idradn ) .AND. AllTrim( idkred ) == AllTrim( cIdKred ) .AND. naosnovu == cNaOsnovu
       nUkupno += iznos
 

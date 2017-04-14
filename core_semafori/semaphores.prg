@@ -743,7 +743,7 @@ FUNCTION we_need_dbf_refresh( cTable )
    ENDIF
 
    IF cTable == NIL
-      IF !Used() .OR. ( rddName() $  "SQLMIX#ARRAYRDD" )
+      IF !Used() .OR. ( my_rddName() $  "SQLMIX#ARRAYRDD" )
          RETURN .F.
       ENDIF
       cTable := Alias()

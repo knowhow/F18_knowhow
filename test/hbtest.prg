@@ -337,7 +337,7 @@ FUNCTION TEST_OPT_Z()
 PROCEDURE TEST_END()
 
    IF s_lDBFAvail
-      dbSelectArea( "w_TEST" )
+      my_dbSelectArea( "w_TEST" )
       dbCloseArea()
       FErase( "_hbtmp_.dbf" )
       FErase( "_hbtmp_.dbt" )

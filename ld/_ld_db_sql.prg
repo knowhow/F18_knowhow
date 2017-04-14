@@ -136,13 +136,14 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag, aWorka
    LOCAL cSql
    LOCAL cTable := "ld_radkr"
    LOCAL hIndexes, cKey, lWhere := .F.
-   LOCAL nWa := F_RADKR, cAlias := "RADKR"
+   LOCAL cAlias := "RADKR"
+   LOCAL nWa := F_RADKR
 
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
 
    IF aWorkarea != NIL
-      nWa := aWorkarea[ 1 ]
-      cAlias := aWorkarea[ 2 ]
+        nWa := aWorkarea[ 1 ]
+        cAlias := aWorkarea[ 2 ]
    ENDIF
 
    IF nGodina != NIL
@@ -198,13 +199,18 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag, aWorka
       cSql += "naosnovu=" + sql_quote( cNaOsnovu )
    ENDIF
 
-   SELECT ( nWa )
-   use_sql( cTable, cSql, cAlias )
+
+   my_dbSelectArea( nWa )
+   altd()
+   IF !use_sql( cTable, cSql, cAlias )
+      Alert( cSql )
+      QUIT
+   ENDIF
 
    hIndexes := h_ld_radkr_indexes()
 
    FOR EACH cKey IN hIndexes:Keys
-      INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cAlias )
+      INDEX ON  &( hIndexes[ cKey ] ) TAG ( cKey )
    NEXT
 
    IF cTag == NIL
@@ -315,7 +321,6 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, hPa
       Alert( cSql )
       QUIT
    ENDIF
-   altd()
    hIndexes := h_ld_ld_indexes()
 
    FOR EACH cKey IN hIndexes:Keys

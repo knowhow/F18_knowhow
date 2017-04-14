@@ -86,7 +86,6 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    hParams := hb_Hash()
    hParams[ "svi" ] := lSvi
    hParams[ "str_sprema" ] := cStrSpr
-   altd()
    hParams[ "q_rj" ] := qqRj
 
    hParams[ "usl1" ] := aUsl1
@@ -97,8 +96,6 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    hParams[ "godina" ] := nGodina
 
    use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta, hParams )
-
-altd()
 
    IF lSvi
       SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )

@@ -201,7 +201,6 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag, aWorka
 
 
    my_dbSelectArea( nWa )
-   altd()
    IF !use_sql( cTable, cSql, cAlias )
       Alert( cSql )
       QUIT

@@ -146,10 +146,6 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
    ENDIF
 
 
-   // IF is_in_main_thread() .AND. cTable != "nalog_refresh"
-   // AltD()
-   // ENDIF
-
 
    rddSetDefault( "SQLMIX" )
 
@@ -165,10 +161,6 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
       SELECT ( nWa )
       USE
       dbSelectArea( nWa )
-      IF Select() == 501 .AND. cTable != "nalog_refresh"
-         Alert( "dbSelectArea bug 501 fin nalog_refresh" )
-         AltD()
-      ENDIF
    ENDIF
 
    IF cAlias == NIL
@@ -183,19 +175,10 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
          SELECT ( nWa )
          USE
          dbSelectArea( nWa )
-         IF Select() == 501 .AND. cTable != "nalog_refresh"
-            Alert( "dbSelectArea bug 501 fin nalog_refresh" )
-            AltD()
-         ENDIF
       ENDIF
 
    ENDIF
 
-
-   IF Select() == 501 .AND. cTable != "nalog_refresh"
-      Alert( "dbSelectArea bug 501 fin nalog_refresh" )
-      AltD()
-   ENDIF
 
    BEGIN SEQUENCE WITH {| err | Break( err ) }
       dbUseArea( lOpenInNewArea, "SQLMIX", cSqlQuery, cAlias )

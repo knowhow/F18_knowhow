@@ -69,7 +69,6 @@ FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
 
       IF !oLogin:odabir_organizacije()
 
-         //AltD()
          IF fetch_metric_error() > 0
             MsgBeep( "fetch metric error ?! : Cnt: "  + AllTrim( Str( fetch_metric_error() ) ) )
             RETURN .F.

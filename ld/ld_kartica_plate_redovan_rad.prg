@@ -220,7 +220,6 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
 
             ELSEIF "SUMKREDITA" $ tippr->formula
 
-altd()
                seek_radkr( _godina, _mjesec, _idradn)
                ukredita := 0
 

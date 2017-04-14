@@ -80,7 +80,6 @@ FUNCTION ld_pregled_odredjenog_primanja()
 
    EOF CRET
 
-altd()
    IF "SUMKREDITA" $ tippr->formula
       // radi se o kreditu, upitajmo da li je potreban prikaz samo za
       // jednog kreditora
@@ -108,7 +107,6 @@ altd()
       cObracun := ""
    ENDIF
 
-altd()
    IF Empty( cIdRJ )
 
       cIdrj := ""
@@ -189,7 +187,6 @@ altd()
 
       IF lKredit .AND. !Empty( cSifKred ) // provjerimo da li otplacuje zadanom kreditoru
 
-altd()
          seek_radkr( nGodina, nMjesec, ld->IdRadn, cSifKred )
          lImaJos := .F.
          DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + LD->idradn + cSifKred == Str( radkr->godina, 4, 0 ) + Str( radkr->mjesec, 2, 0 ) + radkr->idradn + radkr->idkred

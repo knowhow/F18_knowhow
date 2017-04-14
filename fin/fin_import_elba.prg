@@ -728,7 +728,6 @@ STATIC FUNCTION get_partner_by_elba_partner_opis( cDesc )
 
    ENDIF
 
-altd()
    find_partner_by_naz_or_id( cTemp )
 
    IF RecCount() == "1"

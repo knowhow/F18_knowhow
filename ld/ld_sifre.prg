@@ -667,7 +667,6 @@ FUNCTION P_LD_RJ( cId, nDeltaX, nDeltaY )
    PRIVATE kol := {}
 
    PushWA()
-
    select_o_ld_rj()
 
    AAdd( ImeKol, { PadR( "Id", 2 ),      {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } } )
@@ -734,7 +733,7 @@ FUNCTION P_Kred( cId, nDeltaX, nDeltaY )
 
    lRet := p_sifra( F_KRED, 1, MAXROWS() - 15, MAXCOLS() - 20, _u( "Lista kreditora" ), @cId, nDeltaX, nDeltaY )
 
-   PopWa()
+   PopWa( F_KRED )
 
    RETURN lRet
 
@@ -883,6 +882,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
 
    PushWA()
 
+   select_o_por()
    o_sifk()
    o_sifv()
    SELECT sifk
@@ -923,7 +923,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
       @cId, nDeltaX, nDeltaY, {| Ch | PorBl( Ch ) } )
 
 
-   PopWa()
+   PopWa( F_POR )
 
    RETURN lRet
 
@@ -957,7 +957,7 @@ FUNCTION wh_oldpor( cAlg )
 
 
 
-FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
+FUNCTION P_Dopr( cId, nDeltaX, nDeltaY )
 
    LOCAL lRet
    PRIVATE imekol := {}
@@ -1016,9 +1016,11 @@ FUNCTION P_DOPR( cId, nDeltaX, nDeltaY )
    lRet := p_sifra( F_DOPR, 1, MAXROWS() - 15, MAXCOLS() - 20, ;
       _u( "Lista doprinosa na platu" ), @cId, nDeltaX, nDeltaY, {| Ch | DoprBl( Ch ) } )
 
-   PopWa()
+   PopWa( F_DOPR )
 
    RETURN lRet
+
+
 
 FUNCTION P_KBenef( cId, nDeltaX, nDeltaY )
 
@@ -1027,6 +1029,8 @@ FUNCTION P_KBenef( cId, nDeltaX, nDeltaY )
    PRIVATE kol
 
    PushWa()
+   select_o_kbenef()
+
    ImeKol := { { PadR( "Id", 3 ), {|| PadC( id, 3 ) }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 8 ), {||  naz }, "naz" }, ;
       { PadR( "Iznos", 5 ), {||  iznos }, "iznos" }                       ;
@@ -1036,7 +1040,7 @@ FUNCTION P_KBenef( cId, nDeltaX, nDeltaY )
 
    xRet := p_sifra( F_KBENEF, 1, MAXROWS() - 15, MAXCOLS() - 20,  "Lista koef.beneficiranog radnog staza", @cId, nDeltaX, nDeltaY )
 
-   PopWa()
+   PopWa( F_KBENEF )
 
    RETURN xRet
 
@@ -1058,7 +1062,7 @@ FUNCTION P_StrSpr( cId, nDeltaX, nDeltaY )
    select_o_str_spr()
    xRet := p_sifra( F_STRSPR, 1, MAXROWS() - 15, MAXCOLS() - 15,  _u( "Lista: stručne spreme" ), @cId, nDeltaX, nDeltaY )
 
-   PopWa()
+   PopWa( F_STRSPR )
 
    RETURN xRet
 

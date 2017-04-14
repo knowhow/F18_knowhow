@@ -1049,7 +1049,7 @@ FUNCTION P_KBenef( cId, nDeltaX, nDeltaY )
 FUNCTION P_StrSpr( cId, nDeltaX, nDeltaY )
 
    LOCAL xRet
-   PRIVATE imekol, kol
+   PRIVATE Imekol, Kol
 
    ImeKol := { { PadR( "Id", 3 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 20 ), {||  naz }, "naz" }, ;
@@ -1084,11 +1084,12 @@ FUNCTION P_VPosla( cId, nDeltaX, nDeltaY )
    PushWA()
 
    select_o_vposla()
-   xRet := p_sifra( F_VPOSLA, 1, 10, 55, _l( "Lista: Vrste posla" ), @cId, nDeltaX, nDeltaY )
+   xRet := p_sifra( F_VPOSLA, 1, 10, 55,  "Lista: Vrste posla", @cId, nDeltaX, nDeltaY )
 
    PopWA()
 
    RETURN xRet
+   
 
 FUNCTION P_NorSiht( cId, nDeltaX, nDeltaY )
 

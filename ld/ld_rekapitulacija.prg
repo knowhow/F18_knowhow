@@ -17,6 +17,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    LOCAL _a_benef := {}
    LOCAL i
+   LOCAL hParams
 
    PRIVATE nC1 := 20
    PRIVATE cTPNaz
@@ -29,6 +30,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    PRIVATE aNetoMj
    PRIVATE cDoprSpace := ""
    PRIVATE cLmSk := ""
+
 
    cTpLine := _gtprline()
    cDoprLine := _gdoprline( cDoprSpace )
@@ -83,6 +85,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    hParams := hb_Hash()
    hParams[ 'svi' ] := lSvi
    hParams[ 'str_sprema' ] := cStrSpr
+   altd()
    hParams[ 'q_rj' ] := qqRj
 
    hParams[ 'usl1' ] := aUsl1

@@ -115,7 +115,7 @@ FUNCTION ld_pregled_plata()
    // 1 - "str(godina)+idrj+str(mjesec)+idradn"
    // 2 - "str(godina)+str(mjesec)+idradn"
    IF Empty( cIdrj )
-      cidrj := ""
+      cIdrj := ""
       IF cVarSort == "1"
          // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
          // HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + iif( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )

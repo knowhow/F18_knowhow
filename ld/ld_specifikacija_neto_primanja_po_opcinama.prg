@@ -179,7 +179,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -189,7 +189,7 @@ STATIC FUNCTION napravi_filter_na_tabeli_ld( cIdRj, nGodina, nMjesec, cObracun, 
    LOCAL nUkupno
    LOCAL cSort1, cFilt
 
-   SELECT ld
+   seek_ld( cIdRj, nGodina, nMjesec, cObracun )
 
    IF Empty( cIdRj )
       cIdrj := ""
@@ -252,7 +252,7 @@ STATIC FUNCTION napravi_filter_na_tabeli_ld( cIdRj, nGodina, nMjesec, cObracun, 
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

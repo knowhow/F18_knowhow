@@ -34,10 +34,6 @@ FUNCTION sql_fields( aFields )
 
 
 
-
-// ----------------------------------------
-// sql date
-// ----------------------------------------
 FUNCTION _sql_date_str( var )
 
    LOCAL _out

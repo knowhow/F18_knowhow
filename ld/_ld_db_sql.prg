@@ -24,7 +24,7 @@ FUNCTION seek_ld( cIdRj, xGodina, nMjesec, cObracun, cIdRadn, cTag )
    LOCAL hIndexes, cKey
    LOCAL lWhere := .F.
    LOCAL nGodinaOd, nGodinaDo
-   
+
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
 
    IF xGodina != NIL
@@ -139,7 +139,6 @@ FUNCTION seek_radkr( nGodina, nMjesec, cIdRadn, cIdKred, cNaOsnovu, cTag, aWorka
    LOCAL nWa := F_RADKR, cAlias := "RADKR"
 
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
-
 
    IF aWorkarea != NIL
       nWa := aWorkarea[ 1 ]
@@ -302,7 +301,6 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
 
    SELECT F_LD
    use_sql( cTable, cSql, "LD" )
-
 
    hIndexes := h_ld_ld_indexes()
 

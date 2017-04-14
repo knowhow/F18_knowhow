@@ -136,7 +136,7 @@ FUNCTION ld_pregled_plata()
    ELSE
       IF cVarSort == "1"
          SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
-         HSEEK Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
+         HSEEK Str( nGodina, 4 ) + cIdrj + Str( nMjesec, 2 ) + if( ld_vise_obracuna() .AND. !Empty( cObracun ), cObracun, "" )
       ELSE
          Box(, 2, 30 )
          nSlog := 0

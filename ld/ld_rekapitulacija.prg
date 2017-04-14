@@ -82,23 +82,23 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    cObracun := Trim( cObracun )
 
+
    hParams := hb_Hash()
-   hParams[ 'svi' ] := lSvi
-   hParams[ 'str_sprema' ] := cStrSpr
+   hParams[ "svi" ] := lSvi
+   hParams[ "str_sprema" ] := cStrSpr
    altd()
-   hParams[ 'q_rj' ] := qqRj
+   hParams[ "q_rj" ] := qqRj
 
-   hParams[ 'usl1' ] := aUsl1
-   hParams[ 'mjesec' ] := nMjesec
-   hParams[ 'mjesec_do' ] := nMjesecDo
+   hParams[ "usl1" ] := aUsl1
+   hParams[ "mjesec" ] := nMjesec
+   hParams[ "mjesec_do" ] := nMjesecDo
 
-   hParams[ 'obracun' ] := cObracun
-   hParams[ 'godina' ] := nGodina
+   hParams[ "obracun" ] := cObracun
+   hParams[ "godina" ] := nGodina
 
-   cFilt1 := get_ld_rekap_filter( hParams )
+   use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta, hParams )
 
-   use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta, cFilt1 )
-
+altd()
 
    IF lSvi
       SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2" ) )
@@ -196,7 +196,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    B_OFF
 
    IF !Empty( cStrSpr )
-      ??U Space( 1 ) + "za radnike stručne spreme" + Space( 1 ), cStrSpr
+      ??U Space( 1 ) + "za radnike stručne spreme:", cStrSpr
    ENDIF
 
    IF !Empty( cOpsSt )
@@ -830,42 +830,3 @@ STATIC FUNCTION get_bruto( nIznos )
    ? cMainLine
 
    RETURN .T.
-
-
-
-FUNCTION get_ld_rekap_filter( hParams )
-
-   LOCAL cFilt1
-   LOCAL lSvi := hParams[ "svi" ]
-   LOCAL cStrSpr := hParams[ "str_sprema" ]
-   LOCAL qqRj := hParams[ "q_rj" ]
-   LOCAL aUsl1 := hParams[ 'usl1' ]
-   LOCAL cObracun := hParams[ 'obracun' ]
-   LOCAL nGodina := hParams[ 'godina' ]
-   LOCAL nMjesec := hParams[ 'mjesec' ]
-   LOCAL nMjesecDo := hParams[ 'mjesec_do' ]
-
-   IF lSvi
-
-      cFilt1 := ".t." + iif( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + dbf_quote( cStrSpr ) ) + ;
-         iif( Empty( qqRJ ), "", ".and." + aUsl1 )
-
-      IF nMjesec != nMjesecDo
-         cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( nMjesec ) + ;
-            ".and. mjesec <= " + dbf_quote( nMjesecDo ) + ".and. godina = " + dbf_quote( nGodina )
-      ENDIF
-
-   ELSE
-
-      cFilt1 := ".t." +  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + dbf_quote( cStrSpr ) )
-      IF nMjesec != nMjesecDo
-         cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( nMjesec ) + ;
-            ".and. mjesec <= " + dbf_quote( nMjesecDo ) + ".and. godina = " + dbf_quote( nGodina )
-      ENDIF
-
-   ENDIF
-
-   cFilt1 += ".and. obr = " + dbf_quote( cObracun )
-   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
-
-   RETURN cFilt1

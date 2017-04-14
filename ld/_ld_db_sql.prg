@@ -272,14 +272,14 @@ FUNCTION o_radkr( lRec1, lSamoOtvoreni )
    RETURN lRet
 
 
-FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFilter )
+FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, hParams )
 
    LOCAL cSql
    LOCAL aDbf := a_dbf_ld_ld()
    LOCAL cTable := "ld_ld"
+   LOCAL cAlias := "LD"
    LOCAL hIndexes, cKey
-
-   hb_default( @cFilter, ".t." )
+   LOCAL cFilter
 
    cSql := "SELECT "
    cSql += sql_from_adbf( @aDbf, cTable )
@@ -291,23 +291,84 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
    cSql += " WHERE godina =" + Str( nGodina, 4 ) + ;
       " AND mjesec>=" + Str( nMjesec, 2, 0 ) + " AND mjesec<=" + Str( nMjesecDo, 2, 0 )
 
+   IF hParams != NIL
+      IF !Empty( hParams[ "str_sprema" ] )
+         cSql += " AND ld_ld.idStrSpr = " + sql_quote( hParams[ "str_sprema" ] )
+      ENDIF
+      IF !Empty( hParams[ "obracun" ] )
+         cSql += " AND ld_ld.obr = " + sql_quote( hParams[ "obracun" ] )
+      ENDIF
+
+      cFilter := get_ld_rekap_filter( hParams )
+   ENDIF
+
    IF nVrInvalid > 0
-      cSql += "AND vr_invalid = " + sql_quote( nVrInvalid )
+      cSql += " AND ld_radn.vr_invalid = " + sql_quote( nVrInvalid )
    ENDIF
 
    IF nStInvalid > 0
-      cSql += "AND st_invalid >= " + sql_quote( nStInvalid )
+      cSql += " AND ld_radn.st_invalid >= " + sql_quote( nStInvalid )
    ENDIF
 
    SELECT F_LD
-   use_sql( cTable, cSql, "LD" )
-
+   IF !use_sql( cTable, cSql, "LD" )
+      Alert( cSql )
+      QUIT
+   ENDIF
+   altd()
    hIndexes := h_ld_ld_indexes()
 
    FOR EACH cKey IN hIndexes:Keys
-      INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cTable ) FOR &cFilter
+      IF cFilter != NIL .AND. cFilter != ".t."
+         INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cAlias ) FOR ( cFilter )
+      ELSE
+         INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cAlias )
+      ENDIF
    NEXT
    SET ORDER TO TAG "1"
    GO TOP
 
    RETURN .T.
+
+
+
+FUNCTION get_ld_rekap_filter( hParams )
+
+   LOCAL cFilt1
+   LOCAL lSvi := hParams[ "svi" ]
+
+   // LOCAL cStrSpr := hParams[ "str_sprema" ]
+   LOCAL qqRj := hParams[ "q_rj" ]
+   LOCAL aUsl1 := hParams[ "usl1" ]
+   // LOCAL cObracun := hParams[ "obracun" ]
+   LOCAL nGodina := hParams[ "godina" ]
+   LOCAL nMjesec := hParams[ "mjesec" ]
+   LOCAL nMjesecDo := hParams[ "mjesec_do" ]
+
+   IF lSvi
+
+      cFilt1 := ".t."
+      // cFilt1 += iif( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + dbf_quote( cStrSpr ) )
+      cFilt1 += iif( Empty( qqRJ ), "", ".and." + aUsl1 )
+
+      IF nMjesec != nMjesecDo
+         cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( nMjesec ) + ;
+            ".and. mjesec <= " + dbf_quote( nMjesecDo ) + ".and. godina = " + dbf_quote( nGodina )
+      ENDIF
+
+   ELSE
+
+      cFilt1 := ".t."
+      // cFilt1 +=  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + dbf_quote( cStrSpr ) )
+
+      IF nMjesec != nMjesecDo
+         cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( nMjesec ) + ;
+            ".and. mjesec <= " + dbf_quote( nMjesecDo ) + ".and. godina = " + dbf_quote( nGodina )
+      ENDIF
+
+   ENDIF
+
+   // cFilt1 += ".and. obr = " + dbf_quote( cObracun )
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
+
+   RETURN cFilt1

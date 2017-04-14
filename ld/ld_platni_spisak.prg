@@ -691,7 +691,9 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
       cIsplata := "SK"
    ENDIF
 
-   cIDBanka := Space( Len( radn->idbanka ) )
+
+
+   cIDBanka := Space( FIELD_LD_RADN_IDBANKA )
    cVarSort := fetch_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
 
    Box(, 10, 50 )

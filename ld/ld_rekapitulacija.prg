@@ -768,7 +768,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
          nUBNOsnova += _oUNeto - if( !Empty( gBFForm ), &gBFForm, 0 )
       ENDIF
 
-      cTR := IIF( RADN->isplata $ "TR#SK", RADN->idbanka, Space( Len( RADN->idbanka ) ) )
+      cTR := IIF( RADN->isplata $ "TR#SK", RADN->idbanka, Space( FIELD_LD_RADN_IDBANKA ) )
 
       IF Len( aUkTR ) > 0 .AND. ( nPomTR := AScan( aUkTr, {| x | x[ 1 ] == cTR } ) ) > 0
          aUkTR[ nPomTR, 2 ] += _uiznos

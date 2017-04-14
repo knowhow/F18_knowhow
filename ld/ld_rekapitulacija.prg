@@ -836,9 +836,9 @@ STATIC FUNCTION get_bruto( nIznos )
 FUNCTION get_ld_rekap_filter( hParams )
 
    LOCAL cFilt1
-   LOCAL lSvi := hParams[ 'svi' ]
-   LOCAL cStrSpr := hParams[ 'str_sprema' ]
-   LOCAL qqRj := hParams[ 'q_rj' ]
+   LOCAL lSvi := hParams[ "svi" ]
+   LOCAL cStrSpr := hParams[ "str_sprema" ]
+   LOCAL qqRj := hParams[ "q_rj" ]
    LOCAL aUsl1 := hParams[ 'usl1' ]
    LOCAL cObracun := hParams[ 'obracun' ]
    LOCAL nGodina := hParams[ 'godina' ]
@@ -847,7 +847,7 @@ FUNCTION get_ld_rekap_filter( hParams )
 
    IF lSvi
 
-      cFilt1 := ".t." + iif( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + sql_quote( cStrSpr ) ) + ;
+      cFilt1 := ".t." + iif( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + dbf_quote( cStrSpr ) ) + ;
          iif( Empty( qqRJ ), "", ".and." + aUsl1 )
 
       IF nMjesec != nMjesecDo
@@ -857,7 +857,7 @@ FUNCTION get_ld_rekap_filter( hParams )
 
    ELSE
 
-      cFilt1 := ".t." +  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + sql_quote( cStrSpr ) )
+      cFilt1 := ".t." +  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + dbf_quote( cStrSpr ) )
       IF nMjesec != nMjesecDo
          cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( nMjesec ) + ;
             ".and. mjesec <= " + dbf_quote( nMjesecDo ) + ".and. godina = " + dbf_quote( nGodina )

@@ -320,7 +320,7 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, hPa
 
    FOR EACH cKey IN hIndexes:Keys
       IF cFilter != NIL .AND. cFilter != ".t."
-         INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cAlias ) FOR ( cFilter )
+         INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cAlias ) FOR &cFilter
       ELSE
          INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cAlias )
       ENDIF

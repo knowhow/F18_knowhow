@@ -131,8 +131,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    set_tippr_ili_tippr2( cObracun )
 
    aRasponi := { nDo1, nDo2, nDo3, nDo4, nDo5, nDo6, nDo7, nDo8, nDo9,;
-      nDo10, nDo11, nDo12, nDo13, nDo14, nDo15, nDo16, nDo17,;
-      nDo18, nDo19, nDo20 }
+      nDo10, nDo11, nDo12, nDo13, nDo14, nDo15, nDo16, nDo17, nDo18, nDo19, nDo20 }
 
    ASort( aRasponi )
 
@@ -166,32 +165,35 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
 
    IF Len( aKol ) < 2
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    ASort( aKol,,, {| x, y| 100 * x[ 8 ] + x[ 7 ] < 100 * y[ 8 ] + y[ 7 ] } )
 
-   SELECT LD
 
-   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
 
-   PRIVATE cFilt1 := ""
+   PRIVATE cFilt1 := ".t."
 
-   cFilt1 := "GODINA==" + dbf_quote( nGodina ) + ".and.MJESEC==" + dbf_quote( nMjesec ) + ;
-      IF( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) )
-   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
+   //cFilt1 := "GODINA==" + dbf_quote( nGodina ) + ".and.MJESEC==" + dbf_quote( nMjesec ) + ;
+  //    IIF( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) )
+   //cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
-   IF ld_vise_obracuna() .AND. !Empty( cObracun )
-      cFilt1 += ( ".and. OBR==" + dbf_quote( cObracun ) )
-   ENDIF
+   //IF ld_vise_obracuna() .AND. !Empty( cObracun )
+    //  cFilt1 += ( ".and. OBR==" + dbf_quote( cObracun ) )
+   //ENDIF
 
-   IF cFilt1 == ".t."
-      SET FILTER TO
-   ELSE
-      SET FILTER TO &cFilt1
-   ENDIF
+   //IF cFilt1 == ".t."
+  //    SET FILTER TO
+  // ELSE
+  //    SET FILTER TO &cFilt1
+  // ENDIF
 
-   GO TOP
+  // SELECT LD
+
+   seek_ld( cIdRj, nGodina, nMjesec, cObracun )
+
+   //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "1" ) )
+   //GO TOP
 
    START PRINT CRET
 
@@ -218,7 +220,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    ENDPRINT
 
    my_close_all_dbf()
-   RETURN
+   RETURN .T.
 
 
 

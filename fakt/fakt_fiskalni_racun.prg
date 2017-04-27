@@ -1154,7 +1154,7 @@ STATIC FUNCTION set_fiscal_rn_zbirni( aRacunData )
       RETURN .F.
    ENDIF
 
-   cNazivArtikla := "Stavke po racunu"
+   cNazivArtikla := "Stav.RN:"
 
    IF __DRV_CURRENT  $ "#FPRINT#HCP#TRING#"
       cNazivArtikla += " " + AllTrim( aRacunData[ 1, 1 ] )

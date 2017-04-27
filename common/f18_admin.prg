@@ -584,10 +584,6 @@ METHOD F18Admin:update_db()
       RETURN lOk
    ENDIF
 
-   IF Len( ::update_db_result ) > 0
-      // imamo i rezultate...
-
-   ENDIF
 
    lOk := .T.
 
@@ -928,7 +924,6 @@ METHOD F18Admin:create_new_pg_db( params )
 
    ENDIF
 
-   // uzmi parametre koje ces koristiti dalje...
    cDatabaseName := params[ "db_name" ]
    _db_template := params[ "db_template" ]
    _db_drop := params[ "db_drop" ] == "D"

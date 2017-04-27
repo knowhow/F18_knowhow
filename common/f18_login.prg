@@ -465,7 +465,7 @@ METHOD F18Login:server_login_form()
    IF _srv_config == "D"
       ++nX
       @ nX, _left SAY PadL( "Server:", 8 ) GET _host PICT "@S20"
-      @ nX, 37 SAY "Port:" GET _port PICT "9999"
+      @ nX, 37 SAY "Port:" GET _port PICT "99999"
    ELSE
       ++nX
    ENDIF

@@ -202,16 +202,13 @@ STATIC FUNCTION _vars_export( hParams )
    @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
    @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
 
-   ++ _x
-   ++ _x
+   _x += 2
    @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksportovati sifarnike (D/N/F) ?" GET cExportSifarnika PICT "@!" VALID cExportSifarnika $ "DNF"
+   _x += 2
+   @ m_x + _x, m_y + 2 SAY8 "Eksportovati šifarnike (D/N/F) ?" GET cExportSifarnika PICT "@!" VALID cExportSifarnika $ "DNF"
 
-   ++ _x
-   ++ _x
+   _x += 2
    @ m_x + _x, m_y + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
 
    READ
@@ -439,8 +436,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          dbf_update_rec( aDoksRec )
 
 
-         select_o_roba(  cIdRoba ) // uzmi sada robu sa ove stavke pa je ubaci u e_roba
-         IF Found() .AND. cExportSif == "D"
+         IF select_o_roba( cIdRoba ) .AND. cExportSif == "D"
             hRec := dbf_get_rec()
             SELECT e_roba
             SET ORDER TO TAG "ID"
@@ -458,12 +454,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
 
       ENDDO
 
-
-
-      // e sada mozemo  ici na export partnera
-      SELECT partn
-      HSEEK _id_partn
-      IF Found() .AND. cExportSif == "D"
+      IF select_o_partner( _id_partn ) .AND. cExportSif == "D"
          aDoksRec := dbf_get_rec()
          SELECT e_partn
          SET ORDER TO TAG "ID"
@@ -471,15 +462,13 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          IF !Found()
             APPEND BLANK
             dbf_update_rec( aDoksRec )
-            // napuni i sifk, sifv parametre
-            fill_sifk_sifv( "PARTN", _id_partn )
+            fill_sifk_sifv( "PARTN", _id_partn ) // napuni i sifk, sifv parametre
          ENDIF
       ENDIF
 
-      // i konta, naravno, prvo M_KONTO
-      SELECT konto
-      HSEEK _m_konto
-      IF Found() .AND. cExportSif == "D"
+
+
+      IF select_o_konto( _m_konto ) .AND. cExportSif == "D"
          aDoksRec := dbf_get_rec()
          SELECT e_konto
          SET ORDER TO TAG "ID"
@@ -491,9 +480,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
       ENDIF
 
       // zatim P_KONTO
-      SELECT konto
-      HSEEK _p_konto
-      IF Found() .AND. cExportSif == "D"
+      IF select_o_konto( _p_konto ) .AND. cExportSif == "D"
          aDoksRec := dbf_get_rec()
          SELECT e_konto
          SET ORDER TO TAG "ID"
@@ -511,11 +498,10 @@ STATIC FUNCTION kalk_export( hParams, a_details )
 
 
    IF cExportSif == "F" // full export sifarnika robe
-      SELECT roba
-      GO TOP
+
+      o_roba()
       _cnt := 0
       DO WHILE !Eof()
-
          hRec := dbf_get_rec()
          SELECT e_roba
          SET ORDER TO TAG "ID"
@@ -527,6 +513,22 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          SELECT ROBA
          SKIP
       ENDDO
+
+      o_partner()
+      _cnt := 0
+      DO WHILE !Eof()
+         hRec := dbf_get_rec()
+         SELECT e_partn
+         SET ORDER TO TAG "ID"
+         APPEND BLANK
+         dbf_update_rec( hRec )
+         @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( ++_cnt ) ), 6 ) + ". " + "partn: " + hRec[ "id" ] , 50 )
+         fill_sifk_sifv( "PARTN", hRec[ "id" ] ) // napuni i sifk, sifv parametre
+         SELECT PARTN
+         SKIP
+      ENDDO
+
+
    ENDIF
 
    BoxC()

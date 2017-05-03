@@ -119,7 +119,7 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
 
          k := AScan( ImeKol, {| x| FIELD( i ) == Upper( x[ 3 ] ) } ) // treci element jednog reda u matrici imekol
 
-         j := IF( k <> 0, Kol[ k ], 0 )
+         j := IIF( k <> 0, Kol[ k ], 0 )
 
          IF j <> 0
             xPom := Eval( ImeKol[ k, 2 ] )

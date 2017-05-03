@@ -29,7 +29,7 @@ FUNCTION o_roba( cId )
       SEEK cId
    ENDIF
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 
@@ -58,7 +58,8 @@ FUNCTION find_roba_by_naz_or_id( cId )
       GO TOP
    ENDIF
 
-   RETURN .T.
+   RETURN !Eof()
+
 
 
 FUNCTION select_o_roba( cId )
@@ -112,7 +113,7 @@ FUNCTION find_partner_by_naz_or_id( cId )
       GO TOP
    ENDIF
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 FUNCTION o_partner( cId )
@@ -129,7 +130,7 @@ FUNCTION o_partner( cId )
       SEEK cId
    ENDIF
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 
@@ -171,7 +172,7 @@ FUNCTION find_konto_by_naz_or_id( cId )
       GO TOP
    ENDIF
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 
@@ -189,7 +190,7 @@ FUNCTION o_konto( cId )
       SEEK cId
    ENDIF
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 FUNCTION select_o_konto( cId )
@@ -220,7 +221,7 @@ FUNCTION o_vrste_placanja()
 
    SET ORDER TO TAG "ID"
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 /*
@@ -265,7 +266,7 @@ FUNCTION o_tdok()
 
    SET ORDER TO TAG "ID"
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 
@@ -281,7 +282,8 @@ FUNCTION o_tnal()
 
    SET ORDER TO TAG "ID"
 
-   RETURN .T.
+   RETURN !Eof()
+
 
 
 FUNCTION o_valute()
@@ -308,7 +310,8 @@ FUNCTION o_ops( cId )
    use_sql_opstine( cId )
    SET ORDER TO TAG "ID"
 
-   RETURN .T.
+   RETURN !Eof()
+   
 
 
 FUNCTION select_o_ops( cId )

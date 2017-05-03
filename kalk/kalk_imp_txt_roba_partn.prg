@@ -135,7 +135,7 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
    LOCAL cTmpSif, hRec, lOk := .T., hParams, lPromjena
 
-//   o_roba()
+// o_roba()
    o_sifk()
    o_sifv()
 
@@ -286,8 +286,32 @@ STATIC FUNCTION CheckPartn()
 // --------------------------------------------------------------------------
 STATIC FUNCTION kalk_imp_txt_check_roba()
 
-   LOCAL i, cLine, aPomRoba := kalk_imp_temp_provjera_roba_po_sifradob_postoji( .T. )
+   LOCAL i, cLine, aPomRoba := {}
    LOCAL nCijena
+   LOCAL aRet, cInd
+
+   // o_roba()
+   SELECT kalk_imp_temp
+   GO TOP
+
+
+   DO WHILE !Eof()
+
+      IF AScan( aPomRoba, {| aItem | Trim( kalk_imp_temp->sifradob ) == aItem[ 2 ] } ) == 0
+
+         IF find_roba_by_sifradob( Trim( kalk_imp_temp->sifradob ) )
+            cInd := "1"
+         ELSE
+            cInd := "0"
+         ENDIF
+         AAdd( aPomRoba, { cInd, Trim( kalk_imp_temp->sifradob ), kalk_imp_temp->idpm, kalk_imp_temp->mpc, roba->id, roba->vpc, roba->vpc2, roba->mpc, kalk_imp_temp->naz } )
+      ENDIF
+
+      SELECT kalk_imp_temp
+      SKIP
+
+   ENDDO
+
 
    IF ( Len( aPomRoba ) > 0 )
 
@@ -343,40 +367,7 @@ STATIC FUNCTION kalk_imp_txt_check_roba()
    RETURN Len( aPomRoba )
 
 
-STATIC FUNCTION kalk_imp_temp_provjera_roba_po_sifradob_postoji()
 
-   LOCAL aRet, cInd
-
-  // o_roba()
-   SELECT kalk_imp_temp
-   GO TOP
-
-   aRet := {}
-
-   DO WHILE !Eof()
-
-/*
-      SELECT roba
-      -- SET ORDER TO TAG "SIFRADOB"
-      GO TOP
-      -- SEEK kalk_imp_temp->sifradob
-
-      IF Found()
-*/
-      IF find_roba_by_sifradob( kalk_imp_temp->sifradob )
-         cInd := "1"
-      ELSE
-         cInd := "0"
-      ENDIF
-
-      AAdd( aRet, { cInd, kalk_imp_temp->sifradob, kalk_imp_temp->idpm, kalk_imp_temp->mpc, roba->id, roba->vpc, roba->vpc2, roba->mpc, kalk_imp_temp->naz } )
-
-      SELECT kalk_imp_temp
-      SKIP
-
-   ENDDO
-
-   RETURN aRet
 
 
 

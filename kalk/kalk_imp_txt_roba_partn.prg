@@ -106,7 +106,7 @@ FUNCTION kalk_import_txt_roba()
 
    kalk_imp_txt_to_temp( aDbf, aRules, cImpFile )  // prebaci iz txt => temp tbl
 
-   IF CheckRoba() > 0
+   IF kalk_imp_txt_check_roba() > 0
       IF Pitanje(, "Importovati nove cijene u šifarnika robe (D/N)?", "D" ) == "N"
          MsgBeep( "Opcija prekinuta!" )
          RETURN .F.
@@ -284,9 +284,9 @@ STATIC FUNCTION CheckPartn()
 // --------------------------------------------------------------------------
 // Provjerava i daje listu promjena na robi
 // --------------------------------------------------------------------------
-STATIC FUNCTION CheckRoba()
+STATIC FUNCTION kalk_imp_txt_check_roba()
 
-   LOCAL i, cLine, aPomRoba := provjera_roba_po_sifradob_postoji( .T. )
+   LOCAL i, cLine, aPomRoba := kalk_imp_temp_provjera_roba_po_sifradob_postoji( .T. )
    LOCAL nCijena
 
    IF ( Len( aPomRoba ) > 0 )
@@ -343,7 +343,7 @@ STATIC FUNCTION CheckRoba()
    RETURN Len( aPomRoba )
 
 
-STATIC FUNCTION provjera_roba_po_sifradob_postoji()
+STATIC FUNCTION kalk_imp_temp_provjera_roba_po_sifradob_postoji()
 
    LOCAL aRet, cInd
 

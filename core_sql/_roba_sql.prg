@@ -17,6 +17,10 @@ FUNCTION find_roba_by_sifradob( cIdSifraDob, cOrderBy, cWhere )
 
    hb_default( @cOrderBy, "id,naz" )
 
+   IF Len( Trim( cIdSifraDob ) ) < 5 // https://redmine.bring.out.ba/issues/36373
+      cIdSifraDob := PadL( Trim( cIdSifraDob ), 5, "0" ) // 7148 => 07148, 22 => 00022
+   ENDIF
+
    IF cIdSifraDob <> NIL
       hParams[ "sifradob" ] := cIdSifraDob
    ENDIF

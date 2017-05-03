@@ -140,10 +140,9 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
       ENDIF
 */
       cPomTag := Trim( cTagTraziPoSifraDob )
-      IF Len( Trim( cId ) ) < 5 // https://redmine.bring.out.ba/issues/36373
-         cId := PadL( Trim( cId ), 5, "0" ) // 7148 => 07148, 22 => 00022
+      IF find_roba_by_sifradob( cId )
+         cId := roba->id
       ENDIF
-      find_roba_by_sifradob( cId )
    ELSE
       cPomTag := "ID"
    ENDIF

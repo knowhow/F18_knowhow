@@ -444,7 +444,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
             IF !Found()
                APPEND BLANK
                dbf_update_rec( hRec )
-               fill_sifk_sifv( "ROBA", cIdRoba ) // napuni i sifk, sifv parametre
+               razmjena_fill_sifk_sifv( "ROBA", cIdRoba ) // napuni i sifk, sifv parametre
             ENDIF
          ENDIF
 
@@ -462,7 +462,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          IF !Found()
             APPEND BLANK
             dbf_update_rec( aDoksRec )
-            fill_sifk_sifv( "PARTN", _id_partn ) // napuni i sifk, sifv parametre
+            razmjena_fill_sifk_sifv( "PARTN", _id_partn ) // napuni i sifk, sifv parametre
          ENDIF
       ENDIF
 
@@ -508,7 +508,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          APPEND BLANK
          dbf_update_rec( hRec )
          @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( ++_cnt ) ), 6 ) + ". " + "roba: " + hRec[ "id" ] , 50 )
-         fill_sifk_sifv( "ROBA", hRec[ "id" ] ) // napuni i sifk, sifv parametre
+         razmjena_fill_sifk_sifv( "ROBA", hRec[ "id" ] ) // napuni i sifk, sifv parametre
 
          SELECT ROBA
          SKIP
@@ -523,7 +523,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          APPEND BLANK
          dbf_update_rec( hRec )
          @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( ++_cnt ) ), 6 ) + ". " + "partn: " + hRec[ "id" ] , 50 )
-         fill_sifk_sifv( "PARTN", hRec[ "id" ] ) // napuni i sifk, sifv parametre
+         razmjena_fill_sifk_sifv( "PARTN", hRec[ "id" ] ) // napuni i sifk, sifv parametre
          SELECT PARTN
          SKIP
       ENDDO

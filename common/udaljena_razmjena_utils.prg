@@ -424,7 +424,7 @@ FUNCTION update_sifk_sifv( lFullTransaction )
 
    DO WHILE !Eof()
 
-      hRec := dbf_get_rec( .T. ) // konvertuj stringove u utf8
+      hRec := dbf_get_rec()
       update_rec_sifk_struct( @hRec )
 
       SELECT sifk
@@ -710,7 +710,7 @@ FUNCTION _decompress_files( imp_file, import_dbf_path, import_zip_name )
   popunjava sifrarnike e_sifk, e_sifv
 */
 
-FUNCTION fill_sifk_sifv( cSifarnik, cIdSifra )
+FUNCTION razmjena_fill_sifk_sifv( cSifarnik, cIdSifra )
 
    LOCAL _rec
 

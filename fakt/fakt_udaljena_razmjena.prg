@@ -608,7 +608,7 @@ STATIC FUNCTION __export( vars, a_details )
             IF !Found()
                APPEND BLANK
                dbf_update_rec( hAppendRec )
-               fill_sifk_sifv( "ROBA", cIdRoba )
+               razmjena_fill_sifk_sifv( "ROBA", cIdRoba )
             ENDIF
          ENDIF
 
@@ -644,7 +644,7 @@ STATIC FUNCTION __export( vars, a_details )
          IF !Found()
             APPEND BLANK
             dbf_update_rec( hAppendRec )
-            fill_sifk_sifv( "PARTN", _id_partn )
+            razmjena_fill_sifk_sifv( "PARTN", _id_partn )
          ENDIF
       ENDIF
 

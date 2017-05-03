@@ -70,10 +70,10 @@ FUNCTION update_table_konto( lZamijenitiSifre )
    LOCAL hParams
 
    run_sql_query( "BEGIN" )
-   IF !f18_lock_tables( { "konto" }, .T. )
-      run_sql_query( "ROLLBACK" )
-      RETURN lRet
-   ENDIF
+   //IF !f18_lock_tables( { "konto" }, .T. )
+    //  run_sql_query( "ROLLBACK" )
+    //  RETURN lRet
+  // ENDIF
 
    SELECT e_konto
    SET ORDER TO TAG "ID"
@@ -84,11 +84,8 @@ FUNCTION update_table_konto( lZamijenitiSifre )
       hRec := dbf_get_rec()
       update_rec_konto_struct( @hRec )
 
-      SELECT konto
-      HSEEK hRec[ "id" ]
-
       _sif_exist := .T.
-      IF !Found()
+      IF !select_o_konto( hRec[ "id" ] )
          _sif_exist := .F.
       ENDIF
 
@@ -97,7 +94,6 @@ FUNCTION update_table_konto( lZamijenitiSifre )
          @ m_x + 3, m_y + 2 SAY "import konto id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
          SELECT konto
-
          IF !_sif_exist
             APPEND BLANK
          ENDIF
@@ -122,7 +118,7 @@ FUNCTION update_table_konto( lZamijenitiSifre )
    IF lOk
       lRet := .T.
       hParams := hb_Hash()
-      hParams[ "unlock" ] :=  { "konto" }
+      //hParams[ "unlock" ] :=  { "konto" }
       run_sql_query( "COMMIT", hParams )
 
    ELSE
@@ -146,10 +142,10 @@ FUNCTION update_table_partn( lZamijenitiSifre )
    LOCAL hParams
 
    run_sql_query( "BEGIN" )
-   IF !f18_lock_tables( { "partn" }, .T. )
-      run_sql_query( "ROLLBACK" )
-      RETURN lRet
-   ENDIF
+   //IF !f18_lock_tables( { "partn" }, .T. )
+    //  run_sql_query( "ROLLBACK" )
+  //    RETURN lRet
+  // ENDIF
 
    SELECT e_partn
    SET ORDER TO TAG "ID"
@@ -161,10 +157,8 @@ FUNCTION update_table_partn( lZamijenitiSifre )
 
       update_rec_partn_struct( @hRec )
 
-      select_o_partner( hRec[ "id" ] )
-
       _sif_exist := .T.
-      IF !Found()
+      IF !select_o_partner( hRec[ "id" ] )
          _sif_exist := .F.
       ENDIF
 
@@ -198,7 +192,7 @@ FUNCTION update_table_partn( lZamijenitiSifre )
    IF lOk
       lRet := .T.
       hParams := hb_Hash()
-      hParams[ "unlock" ] :=  { "partn" }
+      //hParams[ "unlock" ] :=  { "partn" }
       run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
@@ -217,10 +211,10 @@ FUNCTION update_table_roba( lZamijenitiSifre )
    LOCAL hParams
 
    run_sql_query( "BEGIN" )
-   IF !f18_lock_tables( { "roba" }, .T. )
-      run_sql_query( "ROLLBACK" )
-      RETURN lRet
-   ENDIF
+   //IF !f18_lock_tables( { "roba" }, .T. )
+    //  run_sql_query( "ROLLBACK" )
+  //    RETURN lRet
+   //ENDIF
 
    SELECT e_roba
    SET ORDER TO TAG "ID"
@@ -232,11 +226,9 @@ FUNCTION update_table_roba( lZamijenitiSifre )
 
       update_rec_roba_struct( @hRec )
 
-      SELECT roba
-      HSEEK hRec[ "id" ]
 
       _sif_exist := .T.
-      IF !Found()
+      IF ! select_o_roba( hRec[ "id" ] )
          _sif_exist := .F.
       ENDIF
 
@@ -270,7 +262,7 @@ FUNCTION update_table_roba( lZamijenitiSifre )
    IF lOk
       lRet := .T.
       hParams := hb_Hash()
-      hParams[ "unlock" ] :=  { "roba" }
+      //hParams[ "unlock" ] :=  { "roba" }
       run_sql_query( "COMMIT", hParams )
 
    ELSE
@@ -616,6 +608,7 @@ STATIC FUNCTION _file_list( use_path, modul )
       AAdd( _a_files, use_path + "e_kalk.dbf" )
       AAdd( _a_files, use_path + "e_doks.dbf" )
       AAdd( _a_files, use_path + "e_roba.dbf" )
+      AAdd( _a_files, use_path + "e_roba.fpt" )
       AAdd( _a_files, use_path + "e_partn.dbf" )
       AAdd( _a_files, use_path + "e_konto.dbf" )
       AAdd( _a_files, use_path + "e_sifk.dbf" )
@@ -628,6 +621,7 @@ STATIC FUNCTION _file_list( use_path, modul )
       AAdd( _a_files, use_path + "e_doks.dbf" )
       AAdd( _a_files, use_path + "e_doks2.dbf" )
       AAdd( _a_files, use_path + "e_roba.dbf" )
+      AAdd( _a_files, use_path + "e_roba.fpt" )
       AAdd( _a_files, use_path + "e_partn.dbf" )
       AAdd( _a_files, use_path + "e_sifk.dbf" )
       AAdd( _a_files, use_path + "e_sifv.dbf" )

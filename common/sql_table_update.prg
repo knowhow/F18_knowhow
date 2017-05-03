@@ -10,7 +10,7 @@
  */
 
 #include "f18.ch"
- 
+
 /*
    update hRecord na serveru
 */
@@ -120,7 +120,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
             LOOP
          ENDIF
 
-         IF !hb_HHasKey( hRecord, _tmp )
+         IF _tmp != "match_code" .AND. !hb_HHasKey( hRecord, _tmp ) // match_code je nebitan
             _msg := "record " + cSqlOperator + " ne sadrzi " + _tmp + " field !?## pogledaj log !"
             log_write( _msg + " " + pp( hRecord ), 2 )
             MsgBeep( _msg )

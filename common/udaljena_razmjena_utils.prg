@@ -275,6 +275,7 @@ FUNCTION update_table_roba( lZamijenitiSifre )
 
 STATIC FUNCTION update_rec_sifk_struct( hRec )
 
+/*
    IF hb_HHasKey( hRec, "unique" )
       hRec[ "f_unique" ] := hRec[ "unique" ]
       hb_HDel( hRec, "unique" )
@@ -288,6 +289,7 @@ STATIC FUNCTION update_rec_sifk_struct( hRec )
    IF !hb_HHasKey( hRec, "match_code" ) .OR. hRec[ "match_code" ] == NIL
       hRec[ "match_code" ] := PadR( "", 10 )
    ENDIF
+*/
 
    RETURN .T.
 
@@ -297,11 +299,11 @@ STATIC FUNCTION update_rec_konto_struct( hRec )
 
    LOCAL _struct := {}
 
-   AAdd( _struct, "match_code" )
-   AAdd( _struct, "pozbilu" )
-   AAdd( _struct, "pozbils" )
+//   AAdd( _struct, "match_code" )
+//   AAdd( _struct, "pozbilu" )
+//   AAdd( _struct, "pozbils" )
 
-   dodaj_u_hash_matricu( _struct, @hRec )
+//   dodaj_u_hash_matricu( _struct, @hRec )
 
    RETURN .T.
 
@@ -354,12 +356,12 @@ STATIC FUNCTION update_rec_partn_struct( hRec )
    LOCAL _add := {}
    LOCAL _remove := {}
 
-   AAdd( _add, "match_code" )
-   dodaj_u_hash_matricu( _add, @hRec )
+//   AAdd( _add, "match_code" )
+//   dodaj_u_hash_matricu( _add, @hRec )
 
-   AAdd( _remove, "brisano" )
-   AAdd( _remove, "rejon" )
-   brisi_iz_hash_matrice( _remove, @hRec )
+//   AAdd( _remove, "brisano" )
+//   AAdd( _remove, "rejon" )
+//   brisi_iz_hash_matrice( _remove, @hRec )
 
    RETURN .T.
 
@@ -373,6 +375,7 @@ STATIC FUNCTION update_rec_roba_struct( hRec )
    LOCAL _add := {}
    LOCAL _remove := {}
 
+/*
    AAdd( _add, "idkonto" )
    AAdd( _add, "sifradob" )
    AAdd( _add, "strings" )
@@ -390,10 +393,12 @@ STATIC FUNCTION update_rec_roba_struct( hRec )
    AAdd( _add, "mpc9" )
 
    dodaj_u_hash_matricu( _add, @hRec )
+   */
 
-   AAdd( _remove, "carina" )
-   AAdd( _remove, "_m1_" )
-   AAdd( _remove, "brisano" )
+
+   //AAdd( _remove, "carina" )
+   //AAdd( _remove, "_m1_" )
+  // AAdd( _remove, "brisano" )
 
    brisi_iz_hash_matrice( _remove, @hRec )
 

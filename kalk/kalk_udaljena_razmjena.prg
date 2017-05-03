@@ -916,8 +916,8 @@ STATIC FUNCTION kalk_o_tabele()
    // o_kalk_doks()
    o_sifk()
    o_sifv()
-   o_konto()
-   o_partner()
+   //o_konto()
+   //o_partner()
   // o_roba()
 
    RETURN .T.
@@ -959,28 +959,32 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, lFromFmk )
       cDbfName := Upper( cDbfName )
    ENDIF
    SELECT ( F_TMP_E_DOKS )
+   USE
    my_use_temp( "E_DOKS", cDbfPath + cDbfName, .F., .T. )
    INDEX on ( idfirma + idvd + brdok ) TAG "1"
    ?E Alias(), ordKey()
    // log_write( "otvorio i indeksirao: " + cDbfPath + cDbfName, 5 )
-
-   cDbfName := "e_roba.dbf"
-   IF lFromFmk
-      cDbfName := Upper( cDbfName )
-   ENDIF
-   SELECT ( F_TMP_E_ROBA )
-   my_use_temp( "E_ROBA", cDbfPath + cDbfName, .F., .T. )
-   INDEX on ( id ) TAG "ID"
-   ?E Alias(), ordKey()
 
    cDbfName := "e_partn.dbf"
    IF lFromFmk
       cDbfName := Upper( cDbfName )
    ENDIF
    SELECT ( F_TMP_E_PARTN )
+   USE
    my_use_temp( "E_PARTN", cDbfPath + cDbfName, .F., .T. )
    INDEX on ( id ) TAG "ID"
    ?E Alias(), ordKey()
+
+   cDbfName := "e_roba.dbf"
+   IF lFromFmk
+      cDbfName := Upper( cDbfName )
+   ENDIF
+   SELECT ( F_TMP_E_ROBA )
+   USE
+   my_use_temp( "E_ROBA", cDbfPath + cDbfName, .F., .T. )
+   INDEX on ( id ) TAG "ID"
+   ?E Alias(), ordKey()
+
 
    cDbfName := "e_konto.dbf"
    IF lFromFmk

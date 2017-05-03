@@ -975,6 +975,16 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, lFromFmk )
    INDEX on ( id ) TAG "ID"
    ?E Alias(), ordKey()
 
+
+   cDbfName := "e_konto.dbf"
+   IF lFromFmk
+      cDbfName := Upper( cDbfName )
+   ENDIF
+   SELECT ( F_TMP_E_KONTO )
+   my_use_temp( "E_KONTO", cDbfPath + cDbfName, .F., .T. )
+   INDEX on ( id ) TAG "ID"
+   ?E Alias(), ordKey()
+
    cDbfName := "e_roba.dbf"
    IF lFromFmk
       cDbfName := Upper( cDbfName )
@@ -985,15 +995,6 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, lFromFmk )
    INDEX on ( id ) TAG "ID"
    ?E Alias(), ordKey()
 
-
-   cDbfName := "e_konto.dbf"
-   IF lFromFmk
-      cDbfName := Upper( cDbfName )
-   ENDIF
-   SELECT ( F_TMP_E_KONTO )
-   my_use_temp( "E_KONTO", cDbfPath + cDbfName, .F., .T. )
-   INDEX on ( id ) TAG "ID"
-   ?E Alias(), ordKey()
 
    cDbfName := "e_sifk.dbf"
    IF lFromFmk

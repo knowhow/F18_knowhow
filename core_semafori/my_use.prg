@@ -169,7 +169,7 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 
          IF nCnt > 0
-            log_write( "use_cnt=" + AllTrim( Str( nCnt ) ) + " t: " + aDbfRec[ 'table' ] + " a: " + cAlias, 5 )
+            log_write( "use_cnt=" + AllTrim( Str( nCnt ) ) + " t: " + aDbfRec[ "table" ] + " a: " + cAlias, 5 )
          ENDIF
 
          SELECT ( aDbfRec[ "wa" ] )

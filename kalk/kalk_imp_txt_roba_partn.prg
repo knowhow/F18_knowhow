@@ -118,7 +118,7 @@ FUNCTION kalk_import_txt_roba()
 
    lEdit := .F.
 
-   IF kalk_imp_temp_to_roba( lEdit ) == 0
+   IF !kalk_imp_temp_to_roba( lEdit )
       MsgBeep( "Operacija prekinuta!" )
       RETURN .F.
    ENDIF

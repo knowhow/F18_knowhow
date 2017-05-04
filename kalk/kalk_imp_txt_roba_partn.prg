@@ -152,12 +152,6 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
       cTmpSif := AllTrim( kalk_imp_temp->sifradob )
 
-/*
-      SELECT roba
-      -- SET ORDER TO TAG "SIFRADOB" // pronadji robu
-
-      SEEK cTmpSif
-*/
       IF find_roba_by_sifradob( cTmpSif )
 
 
@@ -208,7 +202,7 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
       MsgBeep( "SQL roba transakcija neuspjesna !" )
    ENDIF
 
-   RETURN 1
+   RETURN .T.
 
 
    /*
@@ -297,15 +291,13 @@ STATIC FUNCTION kalk_imp_txt_check_roba()
 
    DO WHILE !Eof()
 
-      IF AScan( aPomRoba, {| aItem | Trim( kalk_imp_temp->sifradob ) == aItem[ 2 ] } ) == 0
-
-         IF find_roba_by_sifradob( Trim( kalk_imp_temp->sifradob ) )
-            cInd := "1"
-         ELSE
-            cInd := "0"
-         ENDIF
-         AAdd( aPomRoba, { cInd, Trim( kalk_imp_temp->sifradob ), kalk_imp_temp->idpm, kalk_imp_temp->mpc, roba->id, roba->vpc, roba->vpc2, roba->mpc, kalk_imp_temp->naz } )
+      IF find_roba_by_sifradob( Trim( kalk_imp_temp->sifradob ) )
+         cInd := "1"
+      ELSE
+         cInd := "0"
       ENDIF
+      AAdd( aPomRoba, { cInd, Trim( kalk_imp_temp->sifradob ), kalk_imp_temp->idpm, kalk_imp_temp->mpc, roba->id, roba->vpc, roba->vpc2, roba->mpc, kalk_imp_temp->naz } )
+
 
       SELECT kalk_imp_temp
       SKIP
@@ -317,11 +309,11 @@ STATIC FUNCTION kalk_imp_txt_check_roba()
 
       START PRINT EDITOR
 
-      ? "Lista promjena u sifrarniku robe:"
-      ? "---------------------------------------------------------------------------"
-      ? "sifradob    naziv                          stara cijena -> nova cijena "
-      ? "---------------------------------------------------------------------------"
-      ?
+      ?U "Lista promjena u šifarniku robe:"
+      ?U "---------------------------------------------------------------------------------"
+      ?U "šifraDob    naziv                          TIP       stara cijena -> nova cijena "
+      ?U "----------------------------------------------------------------------------------"
+      ?U
 
       FOR i := 1 TO Len( aPomRoba )
 
@@ -333,12 +325,15 @@ STATIC FUNCTION kalk_imp_txt_check_roba()
 
             IF aPomRoba[ i, 3 ] == "001"
                nCijena := aPomRoba[ i, 6 ] // vpc
+               cLine += " VPC "
 
             ELSEIF aPomRoba[ i, 3 ] == "002"
                nCijena := aPomRoba[ i, 7 ]  // vpc2
+               cLine += " VP2 "
 
             ELSEIF aPomRoba[ i, 3 ] == "003"
                nCijena := aPomRoba[ i, 8 ] // mpc
+               cLine += " MPC "
 
             ENDIF
 

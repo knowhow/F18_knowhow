@@ -310,7 +310,7 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
 
 
    CASE Ch == K_F5
-      Kmag()
+      kalk_kartica_magacin_u_pripremi()
       RETURN DE_CONT
 
    CASE Ch == K_F6

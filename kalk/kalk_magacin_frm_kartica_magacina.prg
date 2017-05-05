@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION KMag()
+FUNCTION kalk_kartica_magacin_u_pripremi()
 
    LOCAL nR1
    LOCAL nR2
@@ -22,6 +22,7 @@ FUNCTION KMag()
    LOCAL cKonto := Space( 7 )
    PRIVATE GetList := {}
 
+/*
    SELECT  roba
    nR1 := RecNo()
 
@@ -30,6 +31,9 @@ FUNCTION KMag()
 
    SELECT tarifa
    nR3 := RecNo()
+*/
+
+   PushWa()
 
    IF Empty( kalk_pripr->mkonto )
       Box(, 2, 50 )
@@ -51,6 +55,7 @@ FUNCTION KMag()
 
    o_kalk_edit()
 
+/*
    SELECT roba
    GO nR1
 
@@ -59,7 +64,8 @@ FUNCTION KMag()
 
    SELECT tarifa
    GO nR3
-
-   SELECT kalk_pripr
+*/
+   PopWa()
+   //SELECT kalk_pripr
 
    RETURN .T.

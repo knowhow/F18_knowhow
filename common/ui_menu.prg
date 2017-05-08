@@ -19,7 +19,7 @@ MEMVAR m_x, m_y, goModul
 FUNCTION f18_menu( cIzp, lOsnovniMeni, nIzbor, aOpc, aOpcExe )
 
    LOCAL cOdgovor
-   LOCAL _menu_opc
+   LOCAL nMenuExeOpcija
 
    IF lOsnovniMeni == NIL
       lOsnovniMeni := .F.
@@ -54,10 +54,10 @@ FUNCTION f18_menu( cIzp, lOsnovniMeni, nIzbor, aOpc, aOpcExe )
       OTHERWISE
 
          IF aOpcExe[ nIzbor ] <> nil
-            _menu_opc := aOpcExe[ nIzbor ]
+            nMenuExeOpcija := aOpcExe[ nIzbor ]
 
-            IF ValType( _menu_opc ) == "B"
-               Eval( _menu_opc )
+            IF ValType( nMenuExeOpcija ) == "B"
+               Eval( nMenuExeOpcija )
             ELSE
                MsgBeep( "meni cudan ?" + hb_ValToStr( nIzbor ) )
             ENDIF

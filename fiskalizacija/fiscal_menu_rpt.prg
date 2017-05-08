@@ -16,10 +16,10 @@ STATIC __device_id
 STATIC __device_params
 
 
-FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
+FUNCTION fiskalni_izvjestaji_komande( lLowLevel, lPozivFromPOS )
 
    LOCAL _dev_id := 0
-   LOCAL _dev_drv
+   LOCAL cFiskalniDrajver
    LOCAL _m_x
    LOCAL _m_y
 
@@ -32,11 +32,11 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
       lLowLevel := .F.
    ENDIF
 
-   IF from_pos == NIL
-      from_pos := .F.
+   IF lPozivFromPOS == NIL
+      lPozivFromPOS := .F.
    ENDIF
 
-   __device_id := odaberi_fiskalni_uredjaj( NIL, from_pos, .F. )
+   __device_id := odaberi_fiskalni_uredjaj( NIL, lPozivFromPOS, .F. )
 
    IF __device_id == 0
       RETURN .F.
@@ -49,29 +49,33 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
       RETURN .F.
    ENDIF
 
-   _dev_drv := __device_params[ "drv" ]
+   cFiskalniDrajver := __device_params[ "drv" ]
 
    DO CASE
 
-   CASE _dev_drv == "FLINK"
+   CASE cFiskalniDrajver == "FLINK"
 
       AAdd( aOpc, "------ izvještaji ---------------------------------" )
-      AAdd( aOpcExe, {|| .F. } )
+      AAdd( aOpcExe, {|| NIL } )
+
       AAdd( aOpc, "1. dnevni izvještaj  (Z-rep / X-rep)          " )
       AAdd( aOpcExe, {|| flink_dnevni_izvjestaj( AllTrim( flink_path() ), AllTrim( flink_name() ) ) } )
+
       AAdd( aOpc, "------ ostale komande --------------------" )
-      AAdd( aOpcExe, {|| .F. } )
+      AAdd( aOpcExe, {|| NIL } )
+
       AAdd( aOpc, "5. unos depozita u uređaj       " )
       AAdd( aOpcExe, {|| fl_polog( AllTrim( flink_path() ), AllTrim( flink_name() ) ) } )
+
       AAdd( aOpc, "6. poništi otvoren racun      " )
       AAdd( aOpcExe, {|| fl_reset( AllTrim( flink_path() ), AllTrim( flink_name() ) ) } )
 
-   CASE _dev_drv == "FPRINT"
+   CASE cFiskalniDrajver == "FPRINT"
 
       IF !lLowLevel
 
-         AAdd( aOpc, "------ izvjestaji ---------------------------------" )
-         AAdd( opcexe, {|| NIL } )
+         AAdd( aOpc, "------ izvještaji ---------------------------------" )
+         AAdd( aOpcExe, {|| NIL } )
 
          AAdd( aOpc, "1. dnevni izvještaj  (Z-rep / X-rep)          " )
          AAdd( aOpcExe, {|| fprint_daily_rpt( __device_params ) } )
@@ -105,7 +109,6 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
          AAdd( aOpcExe, {|| fprint_manual_cmd( __device_params ) } )
 
          IF __device_params[ "type" ] == "P"
-
             AAdd( aOpc, "10. brisanje artikala iz uređaja (cmd 107)" )
             AAdd( aOpcExe, {|| fprint_delete_plu( __device_params, .F. ) } )
          ENDIF
@@ -121,10 +124,9 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
 
       ENDIF
 
-   CASE _dev_drv == "HCP"
+   CASE cFiskalniDrajver == "HCP"
 
       IF !lLowLevel
-
          AAdd( aOpc, "------ izvještaji -----------------------" )
          AAdd( aOpcExe, {|| .F. } )
          AAdd( aOpc, "1. dnevni fiskalni izvještaj (Z rep.)    " )
@@ -134,7 +136,6 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
 
          AAdd( aOpc, "3. periodični izvjestaj (Z rep.)    " )
          AAdd( aOpcExe, {|| hcp_s_rpt( __device_params ) } )
-
       ENDIF
 
       AAdd( aOpc, "------ ostale komande --------------------" )
@@ -156,7 +157,7 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
 
       ENDIF
 
-   CASE _dev_drv == "TREMOL"
+   CASE cFiskalniDrajver == "TREMOL"
 
       IF !lLowLevel
 
@@ -202,12 +203,12 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
       ENDIF
 
 
-   CASE _dev_drv == "TRING"
+   CASE cFiskalniDrajver == "TRING"
 
       IF !lLowLevel
 
          AAdd( aOpc, "------ izvještaji ---------------------------------" )
-         AAdd( aOpcExe, {|| .F. } )
+         AAdd( aOpcExe, {|| NIL } )
          AAdd( aOpc, "1. dnevni izvještaj                               " )
          AAdd( aOpcExe, {|| tring_daily_rpt( __device_params ) } )
          AAdd( aOpc, "2. periodični izvjestaj" )
@@ -237,6 +238,10 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
          AAdd( aOpcExe, {|| auto_plu( .T., NIL, __device_params ) } )
 
       ENDIF
+
+   OTHERWISE
+      MsgBeep( "Fiskalni drajver:" + cFiskalniDrajver + " ne postoji?!" )
+      QUIT_1
 
    ENDCASE
 

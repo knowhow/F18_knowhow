@@ -502,9 +502,7 @@ FUNCTION fl_reset( cFPath, cFName )
 
 
 
-// ----------------------------------------------------
-// flink: dnevni izvjestaji
-// ----------------------------------------------------
+
 FUNCTION flink_dnevni_izvjestaj( cFPath, cFName )
 
    LOCAL cSep := ";"

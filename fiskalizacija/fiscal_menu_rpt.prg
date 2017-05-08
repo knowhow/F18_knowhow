@@ -23,9 +23,10 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
    LOCAL _m_x
    LOCAL _m_y
 
-   PRIVATE izbor := 1
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
+
+   LOCAL nIzbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
 
    IF lLowLevel == NIL
       lLowLevel := .F.
@@ -54,69 +55,69 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
 
    CASE _dev_drv == "FLINK"
 
-      AAdd( opc, "------ izvještaji ---------------------------------" )
-      AAdd( opcexe, {|| .F. } )
-      AAdd( opc, "1. dnevni izvještaj  (Z-rep / X-rep)          " )
-      AAdd( opcexe, {|| flink_dnevni_izvjestaj( AllTrim( flink_path() ), AllTrim( flink_name() ), nDevice ) } )
-      AAdd( opc, "------ ostale komande --------------------" )
-      AAdd( opcexe, {|| .F. } )
-      AAdd( opc, "5. unos depozita u uređaj       " )
-      AAdd( opcexe, {|| fl_polog( AllTrim( flink_path() ), AllTrim( flink_name() ) ) } )
-      AAdd( opc, "6. poništi otvoren racun      " )
-      AAdd( opcexe, {|| fl_reset( AllTrim( flink_path() ), AllTrim( flink_name() ) ) } )
+      AAdd( aOpc, "------ izvještaji ---------------------------------" )
+      AAdd( aOpcExe, {|| .F. } )
+      AAdd( aOpc, "1. dnevni izvještaj  (Z-rep / X-rep)          " )
+      AAdd( aOpcExe, {|| flink_dnevni_izvjestaj( AllTrim( flink_path() ), AllTrim( flink_name() ) ) } )
+      AAdd( aOpc, "------ ostale komande --------------------" )
+      AAdd( aOpcExe, {|| .F. } )
+      AAdd( aOpc, "5. unos depozita u uređaj       " )
+      AAdd( aOpcExe, {|| fl_polog( AllTrim( flink_path() ), AllTrim( flink_name() ) ) } )
+      AAdd( aOpc, "6. poništi otvoren racun      " )
+      AAdd( aOpcExe, {|| fl_reset( AllTrim( flink_path() ), AllTrim( flink_name() ) ) } )
 
    CASE _dev_drv == "FPRINT"
 
       IF !lLowLevel
 
-         AAdd( opc, "------ izvjestaji ---------------------------------" )
-         AAdd( opcexe, {|| nil } )
+         AAdd( aOpc, "------ izvjestaji ---------------------------------" )
+         AAdd( opcexe, {|| NIL } )
 
-         AAdd( opc, "1. dnevni izvještaj  (Z-rep / X-rep)          " )
-         AAdd( opcexe, {|| fprint_daily_rpt( __device_params ) } )
+         AAdd( aOpc, "1. dnevni izvještaj  (Z-rep / X-rep)          " )
+         AAdd( aOpcExe, {|| fprint_daily_rpt( __device_params ) } )
 
-         AAdd( opc, "2. periodični izvještaj" )
-         AAdd( opcexe, {|| fprint_per_rpt( __device_params ) } )
+         AAdd( aOpc, "2. periodični izvještaj" )
+         AAdd( aOpcExe, {|| fprint_per_rpt( __device_params ) } )
 
-         AAdd( opc, "3. pregled artikala " )
-         AAdd( opcexe, {|| fprint_sold_plu( __device_params ) } )
+         AAdd( aOpc, "3. pregled artikala " )
+         AAdd( aOpcExe, {|| fprint_sold_plu( __device_params ) } )
 
       ENDIF
 
-      AAdd( opc, "------ ostale komande --------------------" )
-      AAdd( opcexe, {|| nil } )
+      AAdd( aOpc, "------ ostale komande --------------------" )
+      AAdd( aOpcExe, {|| NIL } )
 
-      AAdd( opc, "5. unos depozita u uredjaj       " )
-      AAdd( opcexe, {|| fprint_polog( __device_params ) } )
+      AAdd( aOpc, "5. unos depozita u uredjaj       " )
+      AAdd( aOpcExe, {|| fprint_polog( __device_params ) } )
 
-      AAdd( opc, "6. štampanje duplikata       " )
-      AAdd( opcexe, {|| fprint_dupliciraj_racun( __device_params ) } )
+      AAdd( aOpc, "6. štampanje duplikata       " )
+      AAdd( aOpcExe, {|| fprint_dupliciraj_racun( __device_params ) } )
 
-      AAdd( opc, "7. zatvori račun (cmd 56)       " )
-      AAdd( opcexe, {|| fprint_rn_close( __device_params ) } )
+      AAdd( aOpc, "7. zatvori račun (cmd 56)       " )
+      AAdd( aOpcExe, {|| fprint_rn_close( __device_params ) } )
 
-      AAdd( opc, "8. zatvori nasilno račun (cmd 301) " )
-      AAdd( opcexe, {|| fprint_komanda_301_zatvori_racun( __device_params ) } )
+      AAdd( aOpc, "8. zatvori nasilno račun (cmd 301) " )
+      AAdd( aOpcExe, {|| fprint_komanda_301_zatvori_racun( __device_params ) } )
 
       IF !lLowLevel
 
-         AAdd( opc, "9. proizvoljna komanda " )
-         AAdd( opcexe, {|| fprint_manual_cmd( __device_params ) } )
+         AAdd( aOpc, "9. proizvoljna komanda " )
+         AAdd( aOpcExe, {|| fprint_manual_cmd( __device_params ) } )
 
          IF __device_params[ "type" ] == "P"
 
-            AAdd( opc, "10. brisanje artikala iz uređaja (cmd 107)" )
-            AAdd( opcexe, {|| fprint_delete_plu( __device_params, .F. ) } )
+            AAdd( aOpc, "10. brisanje artikala iz uređaja (cmd 107)" )
+            AAdd( aOpcExe, {|| fprint_delete_plu( __device_params, .F. ) } )
          ENDIF
 
-         AAdd( opc, "11. reset PLU " )
-         AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
+         AAdd( aOpc, "11. reset PLU " )
+         AAdd( aOpcExe, {|| auto_plu( .T., NIL, __device_params ) } )
 
-         AAdd( opc, "12. non-fiscal racun - test" )
-         AAdd( opcexe, {|| fprint_nf_txt( __device_params, "ČčĆćŽžĐđŠš" ) } )
+         AAdd( aOpc, "12. non-fiscal racun - test" )
+         AAdd( aOpcExe, {|| fprint_nf_txt( __device_params, "ČčĆćŽžĐđŠš" ) } )
 
-         AAdd( opc, "13. test email" )
-         AAdd( opcexe, {|| f18_email_test() } )
+         AAdd( aOpc, "13. test email" )
+         AAdd( aOpcExe, {|| f18_email_test() } )
 
       ENDIF
 
@@ -124,34 +125,34 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
 
       IF !lLowLevel
 
-         AAdd( opc, "------ izvještaji -----------------------" )
-         AAdd( opcexe, {|| .F. } )
-         AAdd( opc, "1. dnevni fiskalni izvještaj (Z rep.)    " )
-         AAdd( opcexe, {|| hcp_z_rpt( __device_params ) } )
-         AAdd( opc, "2. presjek stanja (X rep.)    " )
-         AAdd( opcexe, {|| hcp_x_rpt( __device_params ) } )
+         AAdd( aOpc, "------ izvještaji -----------------------" )
+         AAdd( aOpcExe, {|| .F. } )
+         AAdd( aOpc, "1. dnevni fiskalni izvještaj (Z rep.)    " )
+         AAdd( aOpcExe, {|| hcp_z_rpt( __device_params ) } )
+         AAdd( aOpc, "2. presjek stanja (X rep.)    " )
+         AAdd( aOpcExe, {|| hcp_x_rpt( __device_params ) } )
 
-         AAdd( opc, "3. periodični izvjestaj (Z rep.)    " )
-         AAdd( opcexe, {|| hcp_s_rpt( __device_params ) } )
+         AAdd( aOpc, "3. periodični izvjestaj (Z rep.)    " )
+         AAdd( aOpcExe, {|| hcp_s_rpt( __device_params ) } )
 
       ENDIF
 
-      AAdd( opc, "------ ostale komande --------------------" )
-      AAdd( opcexe, {|| .F. } )
+      AAdd( aOpc, "------ ostale komande --------------------" )
+      AAdd( aOpcExe, {|| .F. } )
 
-      AAdd( opc, "5. kopija računa    " )
-      AAdd( opcexe, {|| hcp_rn_copy( __device_params ) } )
-      AAdd( opc, "6. unos depozita u uređaj    " )
-      AAdd( opcexe, {|| hcp_polog( __device_params ) } )
-      AAdd( opc, "7. pošalji cmd.ok    " )
-      AAdd( opcexe, {|| hcp_create_cmd_ok( __device_params ) } )
+      AAdd( aOpc, "5. kopija računa    " )
+      AAdd( aOpcExe, {|| hcp_rn_copy( __device_params ) } )
+      AAdd( aOpc, "6. unos depozita u uređaj    " )
+      AAdd( aOpcExe, {|| hcp_polog( __device_params ) } )
+      AAdd( aOpc, "7. pošalji cmd.ok    " )
+      AAdd( aOpcExe, {|| hcp_create_cmd_ok( __device_params ) } )
 
       IF !lLowLevel
 
-         AAdd( opc, "8. izbaci stanje računa    " )
-         AAdd( opcexe, {|| hcp_fisc_no( __device_params ) } )
-         AAdd( opc, "P. reset PLU " )
-         AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
+         AAdd( aOpc, "8. izbaci stanje računa    " )
+         AAdd( aOpcExe, {|| hcp_fisc_no( __device_params ) } )
+         AAdd( aOpc, "P. reset PLU " )
+         AAdd( aOpcExe, {|| auto_plu( .T., NIL, __device_params ) } )
 
       ENDIF
 
@@ -159,45 +160,45 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
 
       IF !lLowLevel
 
-         AAdd( opc, "------ izvještaji -----------------------" )
-         AAdd( opcexe, {|| .F. } )
+         AAdd( aOpc, "------ izvještaji -----------------------" )
+         AAdd( aOpcExe, {|| .F. } )
 
-         AAdd( opc, "1. dnevni fiskalni izvještaj (Z rep.)    " )
-         AAdd( opcexe, {|| tremol_z_rpt( __device_params ) } )
+         AAdd( aOpc, "1. dnevni fiskalni izvještaj (Z rep.)    " )
+         AAdd( aOpcExe, {|| tremol_z_rpt( __device_params ) } )
 
-         AAdd( opc, "2. izvještaj po artiklima (Z rep.)    " )
-         AAdd( opcexe, {|| tremol_z_item( __device_params ) } )
+         AAdd( aOpc, "2. izvještaj po artiklima (Z rep.)    " )
+         AAdd( aOpcExe, {|| tremol_z_item( __device_params ) } )
 
-         AAdd( opc, "3. presjek stanja (X rep.)    " )
-         AAdd( opcexe, {|| tremol_x_rpt( __device_params ) } )
+         AAdd( aOpc, "3. presjek stanja (X rep.)    " )
+         AAdd( aOpcExe, {|| tremol_x_rpt( __device_params ) } )
 
-         AAdd( opc, "4. izvještaj po artiklima (X rep.)    " )
-         AAdd( opcexe, {|| tremol_x_item( __device_params ) } )
+         AAdd( aOpc, "4. izvještaj po artiklima (X rep.)    " )
+         AAdd( aOpcExe, {|| tremol_x_item( __device_params ) } )
 
-         AAdd( opc, "5. periodični izvjestaj (Z rep.)    " )
-         AAdd( opcexe, {|| tremol_per_rpt( __device_params ) } )
-
-      ENDIF
-
-      AAdd( opc, "------ ostale komande --------------------" )
-      AAdd( opcexe, {|| .F. } )
-
-      AAdd( opc, "K. kopija računa    " )
-      AAdd( opcexe, {|| tremol_rn_copy( __device_params ) } )
-
-      IF !lLowLevel
-
-         AAdd( opc, "R. reset artikala    " )
-         AAdd( opcexe, {|| tremol_reset_plu( __device_params ) } )
+         AAdd( aOpc, "5. periodični izvjestaj (Z rep.)    " )
+         AAdd( aOpcExe, {|| tremol_per_rpt( __device_params ) } )
 
       ENDIF
 
-      AAdd( opc, "P. unos depozita u uređaj    " )
-      AAdd( opcexe, {|| tremol_polog( __device_params ) } )
+      AAdd( aOpc, "------ ostale komande --------------------" )
+      AAdd( aOpcExe, {|| .F. } )
+
+      AAdd( aOpc, "K. kopija računa    " )
+      AAdd( aOpcExe, {|| tremol_rn_copy( __device_params ) } )
 
       IF !lLowLevel
-         AAdd( opc, "R. reset PLU " )
-         AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
+
+         AAdd( aOpc, "R. reset artikala    " )
+         AAdd( aOpcExe, {|| tremol_reset_plu( __device_params ) } )
+
+      ENDIF
+
+      AAdd( aOpc, "P. unos depozita u uređaj    " )
+      AAdd( aOpcExe, {|| tremol_polog( __device_params ) } )
+
+      IF !lLowLevel
+         AAdd( aOpc, "R. reset PLU " )
+         AAdd( aOpcExe, {|| auto_plu( .T., NIL, __device_params ) } )
       ENDIF
 
 
@@ -205,35 +206,35 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
 
       IF !lLowLevel
 
-         AAdd( opc, "------ izvještaji ---------------------------------" )
-         AAdd( opcexe, {|| .F. } )
-         AAdd( opc, "1. dnevni izvještaj                               " )
-         AAdd( opcexe, {|| tring_daily_rpt( __device_params ) } )
-         AAdd( opc, "2. periodični izvjestaj" )
-         AAdd( opcexe, {|| tring_per_rpt( __device_params ) } )
-         AAdd( opc, "3. presjek stanja" )
-         AAdd( opcexe, {|| tring_x_rpt( __device_params ) } )
+         AAdd( aOpc, "------ izvještaji ---------------------------------" )
+         AAdd( aOpcExe, {|| .F. } )
+         AAdd( aOpc, "1. dnevni izvještaj                               " )
+         AAdd( aOpcExe, {|| tring_daily_rpt( __device_params ) } )
+         AAdd( aOpc, "2. periodični izvjestaj" )
+         AAdd( aOpcExe, {|| tring_per_rpt( __device_params ) } )
+         AAdd( aOpc, "3. presjek stanja" )
+         AAdd( aOpcExe, {|| tring_x_rpt( __device_params ) } )
 
       ENDIF
 
-      AAdd( opc, "------ ostale komande --------------------" )
-      AAdd( opcexe, {|| .F. } )
-      AAdd( opc, "5. unos depozita u uređaj       " )
-      AAdd( opcexe, {|| tring_polog( __device_params ) } )
-      AAdd( opc, "6. štampanje duplikata       " )
-      AAdd( opcexe, {|| tring_double( __device_params ) } )
-      AAdd( opc, "7. zatvori (poništi) racun " )
-      AAdd( opcexe, {|| tring_close_rn( __device_params ) } )
+      AAdd( aOpc, "------ ostale komande --------------------" )
+      AAdd( aOpcExe, {|| .F. } )
+      AAdd( aOpc, "5. unos depozita u uređaj       " )
+      AAdd( aOpcExe, {|| tring_polog( __device_params ) } )
+      AAdd( aOpc, "6. štampanje duplikata       " )
+      AAdd( aOpcExe, {|| tring_double( __device_params ) } )
+      AAdd( aOpc, "7. zatvori (poništi) racun " )
+      AAdd( aOpcExe, {|| tring_close_rn( __device_params ) } )
 
       IF !lLowLevel
 
-         AAdd( opc, "8. inicijalizacija " )
-         AAdd( opcexe, {|| tring_init( __device_params, "1", "" ) } )
-         AAdd( opc, "S. reset zahtjeva na PU serveru " )
-         AAdd( opcexe, {|| tring_reset( __device_params ) } )
+         AAdd( aOpc, "8. inicijalizacija " )
+         AAdd( aOpcExe, {|| tring_init( __device_params, "1", "" ) } )
+         AAdd( aOpc, "S. reset zahtjeva na PU serveru " )
+         AAdd( aOpcExe, {|| tring_reset( __device_params ) } )
 
-         AAdd( opc, "R. reset PLU " )
-         AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
+         AAdd( aOpc, "R. reset PLU " )
+         AAdd( aOpcExe, {|| auto_plu( .T., NIL, __device_params ) } )
 
       ENDIF
 
@@ -242,9 +243,10 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
    _m_x := m_x
    _m_y := m_y
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "izvf" )
+
+   f18_menu( "izvf", .F., nIzbor, aOpc, aOpcExe )
 
    m_x := _m_x
    m_y := _m_y
 
-   RETURN
+   RETURN .T.

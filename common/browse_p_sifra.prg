@@ -1473,7 +1473,7 @@ FUNCTION valid_sifarnik_id_postoji( wId )
    IF ( Ch == K_CTRL_N .OR. Ch == K_F4 )
       hRec := get_hash_record_from_global_vars( "w", .F., .F. ) // uvijek napraviti cp852 enkodiran string
       IF is_sifra_postoji_u_sifarniku( hRec )
-         MsgBeep( "Sifarnik: " + Alias() + ", ID vec postoji: " + ToStr( wId ) + " !" )
+         MsgBeep( "Šifarnik: " + Alias() + ", ID vec postoji: " + Trim( ToStr( wId ) ) + " !" )
          RETURN .F.
       ENDIF
    ENDIF

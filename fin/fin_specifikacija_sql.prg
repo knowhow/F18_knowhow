@@ -12,8 +12,8 @@
 #include "f18.ch"
 
 
-STATIC LEN_VRIJEDNOST := 12
-STATIC PIC_VRIJEDNOST := ""
+//STATIC LEN_VRIJEDNOST := 12
+//STATIC PIC_VRIJEDNOST := ""
 STATIC _template
 STATIC _my_xml
 
@@ -28,7 +28,7 @@ FUNCTION fin_suban_specifikacija_sql()
    _template := "fin_specif.odt"
 
    IF !uslovi_izvjestaja( @_rpt_vars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _rpt_data := _cre_rpt( _rpt_vars )
@@ -343,7 +343,7 @@ FUNCTION fin_specifikacija_dbf_struct()
 STATIC FUNCTION _cre_xml( table, rpt_vars )
 
    LOCAL nI, oRow, oItem
-   LOCAL PIC_VRIJEDNOST := PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
+   //LOCAL PIC_VRIJEDNOST := PadL( AllTrim( Right( pic_iznos_eur(), LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
    LOCAL _dug := 0
    LOCAL _pot := 0
    LOCAL _saldo := 0
@@ -438,13 +438,13 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
          xml_node( "funk", to_xml_encoding( hb_UTF8ToStr( _funk ) ) )
       ENDIF
 
-      xml_node( "dug", show_number( _dug, PIC_VRIJEDNOST ) )
+      xml_node( "dug", show_number( _dug, pic_iznos_eur() ) )
       _u_dug1 += _dug
 
-      xml_node( "pot", show_number( _pot, PIC_VRIJEDNOST ) )
+      xml_node( "pot", show_number( _pot, pic_iznos_eur() ) )
       _u_pot1 += _pot
 
-      xml_node( "saldo", show_number( _saldo, PIC_VRIJEDNOST ) )
+      xml_node( "saldo", show_number( _saldo, pic_iznos_eur() ) )
       _u_saldo1 += _saldo
 
       xml_subnode( "specif_item", .T. )
@@ -453,9 +453,9 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
 
    ENDDO
 
-   xml_node( "dug", show_number( _u_dug1, PIC_VRIJEDNOST ) )
-   xml_node( "pot", show_number( _u_pot1, PIC_VRIJEDNOST ) )
-   xml_node( "saldo", show_number( _u_saldo1, PIC_VRIJEDNOST ) )
+   xml_node( "dug", show_number( _u_dug1, pic_iznos_eur() ) )
+   xml_node( "pot", show_number( _u_pot1, pic_iznos_eur() ) )
+   xml_node( "saldo", show_number( _u_saldo1, pic_iznos_eur() ) )
 
    xml_subnode( "specif", .T. )
 

@@ -27,7 +27,7 @@ FUNCTION P_RJ( cId, nDeltaX, nDeltaY )
 
    o_rj()
 
-   AAdd( ImeKol, { PadR( "Id",  2 ),       {|| id },   "id",     {|| .T. }, {|| sifra_postoji( wId ) } } )
+   AAdd( ImeKol, { PadR( "Id",  2 ),       {|| id },   "id",     {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ),    {|| PadR( naz, 35 ) },  "naz" } )
    AAdd( ImeKol, { PadR( "Tip cij.", 10 ), {|| tip },    "tip" } )
    AAdd( ImeKol, { PadR( "Konto", 10 ),    {|| konto },  "konto" } )

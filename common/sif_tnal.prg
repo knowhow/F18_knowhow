@@ -26,7 +26,7 @@ FUNCTION browse_tnal( cId, dx, dy )
 
    o_tnal()
 
-   AAdd( ImeKol, { "ID", {|| field->id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
+   AAdd( ImeKol, { "ID", {|| field->id }, "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| PadR( field->naz , 30 ) }, "naz" } )
 
    FOR i := 1 TO Len( ImeKol )

@@ -112,7 +112,7 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
 
    ImeKol := {}
 
-   AAdd( ImeKol, { PadR( "ID", 6 ),   {|| id },  "id", {|| .T. }, {|| sifra_postoji( wId ) }    } )
+   AAdd( ImeKol, { PadR( "ID", 6 ),   {|| id },  "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) }    } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ),  {|| PadR( naz, 35 ) },  "naz" } )
 
    AAdd( ImeKol, { PadR( "PTT", 5 ),      {|| PTT },     "ptt"      } )

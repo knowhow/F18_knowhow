@@ -33,7 +33,7 @@ FUNCTION p_refer( cId, dx, dy )
    ImeKol := {}
    Kol := {}
 
-   AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| sifra_postoji( wid ) } } )
+   AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wid ) } } )
    AAdd( ImeKol, { PadR( "idops", 5 ), {|| idops }, "idops", {|| .T. }, {|| p_ops( widops ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 40 ), {|| naz }, "naz" } )
 

@@ -37,7 +37,7 @@ FUNCTION P_VrsteP( cId, dx, dy )
 
    O_VRSTEP
 
-   ImeKol := { { "ID ",             {|| id },  "id", {|| .T. }, {|| sifra_postoji( wId ) }      }, ;
+   ImeKol := { { "ID ",             {|| id },  "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) }      }, ;
       { PadC( "Naziv", 20 ), {|| PadR( ToStrU( naz ), 20 ) },  "naz" };
       }
 

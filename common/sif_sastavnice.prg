@@ -74,7 +74,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aImeKol := {}
    aKol := {}
 
-   AAdd( aImeKol, { PadC( "ID", 10 ), {|| field->id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
+   AAdd( aImeKol, { PadC( "ID", 10 ), {|| field->id }, "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) } } )
    AAdd( aImeKol, { PadC( "Naziv", 20 ), {|| PadR( field->naz, 20 ) }, "naz" } )
    AAdd( aImeKol, { PadC( "JMJ", 3 ), {|| field->jmj }, "jmj" } )
    AAdd( aImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc" } )

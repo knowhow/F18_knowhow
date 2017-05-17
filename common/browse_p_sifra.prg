@@ -783,9 +783,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    lSqlTable := is_sql_table( cAlias )
 
-   // hRec := get_hash_record_from_global_vars( "w", NIL, lSqlTable )
-   hRec := get_hash_record_from_global_vars( "w", NIL, .F. ) // uvijek napraviti cp852 enkodiran string
-
+   hRec := get_hash_record_from_global_vars( "w", .T., .F. ) // uvijek napraviti cp852 enkodiran string
    IF  !begin_sql_tran_lock_tables( { cAlias } )
       RETURN .F.
    ENDIF
@@ -1175,11 +1173,11 @@ FUNCTION is_sifra_postoji_u_sifarniku( hTekuciRec )
    LOCAL cTable, cWhere
 
    IF ValType( hTblRec ) <> "H"
-      RETURN lRet
+      RETURN .F.
    ENDIF
 
    IF hTblRec[ "temp" ]
-      RETURN lRet
+      RETURN .F.
    ENDIF
 
    cTable := hTblRec[ "table" ]
@@ -1207,6 +1205,7 @@ STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
    LOCAL cWhere := ""
    LOCAL cTmp := ""
 
+altd()
    cSqlFields := hTblRec[ "algoritam" ][ 1 ][ "sql_in" ]
    aDbfFields := hTblRec[ "algoritam" ][ 1 ][ "dbf_key_fields" ]
 
@@ -1462,14 +1461,33 @@ FUNCTION UslovSif()
 
 
 FUNCTION validacija_postoji_sifra( wId, cTag )
-   RETURN sifra_postoji( wId, cTag )
+   RETURN valid_sifarnik_id_postoji( wId, cTag )
 
 
-FUNCTION sifra_postoji( wId, cTag )
+
+
+FUNCTION valid_sifarnik_id_postoji( wId )
+
+   LOCAL hRec
+
+   IF ( Ch == K_CTRL_N .OR. Ch == K_F4 )
+      hRec := get_hash_record_from_global_vars( "w", .F., .F. ) // uvijek napraviti cp852 enkodiran string
+      IF is_sifra_postoji_u_sifarniku( hRec )
+         MsgBeep( "Sifarnik: " + Alias() + ", ID vec postoji: " + ToStr( wId ) + " !" )
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   RETURN .T.
+
+
+/*
+FUNCTION valid_sifarnik_id_postoji( wId, cTag )
 
    LOCAL nRec := RecNo()
    LOCAL nRet := .T.
    LOCAL cUpozorenje
+
 
    IF cTag == NIL
       cTag := "ID"
@@ -1494,7 +1512,6 @@ FUNCTION sifra_postoji( wId, cTag )
    SEEK wId
 
    IF ( Found() .AND. ( Ch == K_CTRL_N .OR. Ch == K_F4 ) )
-
       MsgBeep( cUpozorenje )
       nRet := .F.
 
@@ -1514,24 +1531,10 @@ FUNCTION sifra_postoji( wId, cTag )
    PopWa()
 
    RETURN nRet
+*/
 
 
 
-// prikaz idroba
-// nalazim se u tabeli koja sadrzi IDROBA, IDROBA_J
-FUNCTION StIdROBA()
-
-   STATIC cPrikIdRoba := ""
-
-   IF cPrikIdroba == ""
-      cPrikIdRoba := 'ID'
-   ENDIF
-
-   IF cPrikIdRoba = "ID_J"
-      RETURN IDROBA_J
-   ELSE
-      RETURN IDROBA
-   ENDIF
 
 FUNCTION n_num_sif()
 

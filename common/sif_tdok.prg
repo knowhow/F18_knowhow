@@ -27,7 +27,7 @@ FUNCTION browse_tdok( cId, nDeltaX, nDeltaY )
    PushWA()
    o_tdok()
 
-   AAdd( ImeKol, { "ID",    {|| PadR( field->id, 2 ) },  "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
+   AAdd( ImeKol, { "ID",    {|| PadR( field->id, 2 ) },  "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| PadR(  field->naz, 35 ) }, "naz" } )
 
    FOR nI := 1 TO Len( ImeKol )

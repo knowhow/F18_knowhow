@@ -34,7 +34,8 @@ FUNCTION P_Konto( cId, dx, dy )
       select_o_konto()
    ENDIF
 
-   AAdd( ImeKol, { PadC( "ID", 7 ), {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
+
+   AAdd( ImeKol, { PadC( "ID", 7 ), {|| id }, "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| naz }, "naz" } )
 
    FOR i := 1 TO Len( ImeKol )
@@ -133,6 +134,7 @@ FUNCTION KontoBlok( Ch )
             RETURN 7
          ENDIF
       ENDIF
+
    ELSEIF Ch == K_F2 .AND. gSKSif == "D"
       IF is_konto_ima_u_prometu( KONTO->id )
          RETURN 99

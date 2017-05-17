@@ -1276,12 +1276,12 @@ FUNCTION fakt_set_pozicija_sif_roba( cIdRoba, lRobaIdSintetika )
 
    IF ( lRobaIdSintetika )
       find_roba_by_id_sintetika( cIdRoba )
-      //IF !Found() .OR. ROBA->tip != "S"
-        // HSEEK cIdRoba
-      //ENDIF
+      // IF !Found() .OR. ROBA->tip != "S"
+      // HSEEK cIdRoba
+      // ENDIF
    ELSE
       find_roba_by_id( cIdRoba )
-      //HSEEK cIdRoba
+      // HSEEK cIdRoba
    ENDIF
 
    IF cIdRoba == NIL
@@ -1735,7 +1735,7 @@ FUNCTION fakt_prikazi_Roba()
 
    LOCAL cRet := ""
 
-   cRet += Trim( StIdROBA() ) + " "
+   cRet += Trim( field->idroba ) + " "
    DO CASE
    CASE Eof()
       cRet := ""

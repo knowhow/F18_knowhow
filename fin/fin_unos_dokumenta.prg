@@ -201,7 +201,7 @@ FUNCTION edit_fin_priprema()
       @ m_x + 8, m_y + 2 SAY "Vezni broj:" GET _brdok
    ENDIF
 
-   @ m_x + 8, m_y + Col() + 2  SAY "Datum:" GET _DatDok
+   @ m_x + 8, m_y + Col() + 2  SAY "Datum:" GET _DatDok VALID {||  datum_not_empty_upozori_godina( _datDok, "Datum FIN dokumenta" ) }
 
    IF gDatVal == "D"
       @ m_x + 8, Col() + 2 SAY "Valuta: " GET _DatVal

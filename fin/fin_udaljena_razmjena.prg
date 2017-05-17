@@ -822,49 +822,33 @@ STATIC FUNCTION __import( vars, a_details )
 
 
 
-STATIC FUNCTION brisi_dokument_iz_kumulativa( id_firma, id_vd, br_dok )
+STATIC FUNCTION brisi_dokument_iz_kumulativa( cIdFirma, cIdVN, cBrNal )
 
    LOCAL nDbfArea := Select()
    LOCAL _del_rec, _t_rec
    LOCAL lOk := .T.
 
-   SELECT suban
-   SET ORDER TO TAG "4"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-   IF Found()
+   if find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
       _del_rec := dbf_get_rec()
       lOk := delete_rec_server_and_dbf( "fin_suban", _del_rec, 2, "CONT" )
    ENDIF
 
    IF lOk
-      SELECT nalog
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK id_firma + id_vd + br_dok
-      IF Found()
+      if find_nalog_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
          _del_rec := dbf_get_rec()
          lOk := delete_rec_server_and_dbf( "fin_nalog", _del_rec, 1, "CONT" )
       ENDIF
    ENDIF
 
    IF lOk
-      SELECT anal
-      SET ORDER TO TAG "2"
-      GO TOP
-      SEEK id_firma + id_vd + br_dok
-      IF Found()
+      if find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
          _del_rec := dbf_get_rec()
          lOk := delete_rec_server_and_dbf( "fin_anal", _del_rec, 2, "CONT" )
       ENDIF
    ENDIF
 
    IF lOk
-      SELECT sint
-      SET ORDER TO TAG "2"
-      GO TOP
-      SEEK id_firma + id_vd + br_dok
-      IF Found()
+      if find_sint_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
          _del_rec := dbf_get_rec()
          lOk := delete_rec_server_and_dbf( "fin_sint", _del_rec, 2, "CONT" )
       ENDIF

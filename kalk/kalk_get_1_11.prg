@@ -83,8 +83,7 @@ FUNCTION kalk_get_1_11()
    _MKonto := _Idkonto2
    _PKonto := _Idkonto
 
-   SELECT koncij
-   SEEK Trim( _pkonto )
+   select_o_koncij( _pkonto )
 
 
    SELECT kalk_pripr  // napuni tarifu
@@ -96,10 +95,10 @@ FUNCTION kalk_get_1_11()
 
    _GKolicina := _GKolicin2 := 0
    IF kalk_is_novi_dokument()
-      //SELECT roba
+      // SELECT roba
       _MPCSaPP := kalk_get_mpc_by_koncij_pravilo( _pkonto )
 
-select roba
+      SELECT roba
       _FCJ := NC
       _VPC := NC
 
@@ -109,13 +108,11 @@ select roba
    ENDIF
 
    IF nije_dozvoljeno_azuriranje_sumnjivih_stavki() .OR. Round( _VPC, 3 ) = 0 // uvijek nadji
-      SELECT koncij
-      SEEK Trim( _mkonto )
+      select_o_koncij( _mkonto )
       SELECT kalk_pripr  // magacin
       kalk_vpc_po_kartici( @_VPC, _idfirma, _mkonto, _idroba )
 
-      SELECT koncij
-      SEEK Trim( _pkonto )
+      select_o_koncij( _pkonto )
       SELECT kalk_pripr  // magacin
    ENDIF
 
@@ -147,8 +144,7 @@ select roba
       @ m_x + 12, m_y + 30   SAY "Na stanju prodavn "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
    ENDIF
 
-   SELECT koncij
-   SEEK Trim( _idkonto2 )
+   select_o_koncij( _idkonto2 )
    SELECT kalk_pripr
 
 
@@ -164,8 +160,7 @@ select roba
 
 
    // prodavnica
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_koncij( _idkonto )
    SELECT kalk_pripr
 
    IF kalk_is_novi_dokument()
@@ -182,9 +177,9 @@ select roba
    PRIVATE fMarza := " "
    @ m_x + 16, m_y + 2 SAY "MP marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
    @ m_x + 16, Col() + 1  GET _Marza2 PICTURE  PicDEM ;
-      valid {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), ;
+      VALID {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), ;
       _Tmarza := "A", ;
-      _marza := _vpc / ( 1 + _PORVT ) -_fcj, .T. }
+      _marza := _vpc / ( 1 + _PORVT ) - _fcj, .T. }
    @ m_x + 16, Col() + 1 GET fMarza PICT "@!"   VALID {|| Marza2( fMarza ), fMarza := " ", .T. }
 
 
@@ -203,8 +198,7 @@ select roba
    READ
    ESC_RETURN K_ESC
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_koncij( _idkonto )
    StaviMPCSif( _mpcsapp, .T. )       // .t. znaci sa upitom
    SELECT kalk_pripr
 

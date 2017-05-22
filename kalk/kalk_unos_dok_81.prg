@@ -137,8 +137,7 @@ FUNCTION kalk_unos_dok_81( hParams )
    @ m_x + _x, m_y + 2 SAY8 "Količina " GET _kolicina PICT PicKol VALID _kolicina <> 0
 
    IF kalk_is_novi_dokument()
-      SELECT koncij
-      SEEK Trim( _idkonto )
+      select_o_koncij( _idkonto )
       select_o_roba(  _idroba )
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
       _TMarza2 := "%"
@@ -384,8 +383,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
 
    ESC_RETURN K_ESC
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_koncij( _idkonto )
 
    StaviMPCSif( _mpcsapp, .T. )
 

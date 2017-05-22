@@ -160,13 +160,13 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
    SELECT finmat
    GO TOP
 
-   SELECT koncij
-   GO TOP
+   //SELECT koncij
+   //GO TOP
 
    IF finmat->idvd $ "14#94#96#95"
-      SEEK Trim( finmat->idkonto2 )
+      select_o_koncij( finmat->idkonto2 )
    ELSE
-      SEEK Trim( finmat->idkonto )
+      select_o_koncij( finmat->idkonto )
    ENDIF
 
    SELECT trfp
@@ -191,7 +191,6 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
          ENDIF
 
       ELSE
-
          cBrNalF := cNalog // ako je zadat broj naloga taj i uzmi
       ENDIF
 
@@ -278,13 +277,10 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
          lDatFakt := .F.
 
-         SELECT koncij
-         GO TOP
-
          IF finmat->idvd $ "14#94#96#95"
-            SEEK finmat->idkonto2
+             select_o_koncij( finmat->idkonto2 )
          ELSE
-            SEEK finmat->idkonto
+            select_o_koncij( finmat->idkonto )
          ENDIF
 
          select_o_roba( finmat->idroba )
@@ -382,24 +378,20 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
                IF ( cIdkonto = 'KK' )  .OR.  ( cIdkonto = 'KP' )  .OR. ( cIdkonto = 'KO' ) // pocinje sa KK, KO, KP
                   IF Right( Trim( cIdkonto ), 3 ) == "(2)"  // trazi idkonto2
-                     SELECT koncij
-                     nRecno := RecNo()
-                     SEEK finmat->idkonto2
+                     select_o_koncij( finmat->idkonto2 )
                      cIdkonto := StrTran( cIdkonto, "(2)", "" )
                      cIdkonto := koncij->( &cIdkonto )
-                     SELECT koncij
-                     GO nRecNo
+                     //SELECT koncij
+                     //GO nRecNo
                      // vrati se na glavni konto
                      SELECT fin_pripr
 
                   ELSEIF Right( Trim( cIdkonto ), 3 ) == "(1)"  // trazi idkonto
-                     SELECT koncij
-                     nRecNo := RecNo()
-                     SEEK finmat->idkonto
+                     select_o_koncij( finmat->idkonto )
                      cIdkonto := StrTran( cIdkonto, "(1)", "" )
                      cIdkonto := koncij->( &cIdkonto )
-                     SELECT koncij
-                     GO nRecNo
+                     //SELECT koncij
+                     //GO nRecNo
                      // vrati se na glavni konto
                      SELECT fin_pripr
 
@@ -511,7 +503,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                my_flock()
                IF Found()
                   fExist := .F.
-                  DO WHILE !Eof() .AND. finmat->idfirma + cidvn + cBrNalF == IdFirma + idvn + BrNal
+                  DO WHILE !Eof() .AND. finmat->idfirma + cIdvn + cBrNalF == IdFirma + idvn + BrNal
                      IF IdKonto == cIdKonto .AND. IdPartner == cIdPartner .AND. ;
                            hRecTrfp[ "d_p" ] == d_p  .AND. idtipdok == finmat->idvd .AND. ;
                            PadR( brdok, 10 ) == PadR( cBrDok, 10 ) .AND. datdok == dDatDok .AND. ;

@@ -122,9 +122,7 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
    */
    find_kalk_za_period( _id_firma, NIL, NIL, NIL, NIL, NIL, "idFirma,datdok,idvd,brdok,rbr" )
 
-
-   SELECT koncij
-   SEEK Trim( _konto )
+   select_o_koncij( _konto )
 
    SELECT kalk
 

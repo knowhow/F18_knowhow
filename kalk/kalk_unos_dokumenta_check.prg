@@ -306,7 +306,7 @@ FUNCTION knjizno_stanje_prodavnica()
 
   -- SELECT roba
 --   HSEEK cIdRoba
-   SELECT koncij
+--   SELECT koncij
    HSEEK cIdKonto
 
    SELECT kalk
@@ -1144,7 +1144,7 @@ STATIC FUNCTION tops_dok_na_stanju( cFirma, cIdVd, cBrDok, cKonto )
    LOCAL cTSPath := ""
    LOCAL cTPM := ""
 
-   SELECT koncij
+--   SELECT koncij
    SET ORDER TO TAG "ID"
    HSEEK cKonto
 

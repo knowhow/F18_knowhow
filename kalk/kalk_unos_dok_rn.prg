@@ -158,9 +158,10 @@ FUNCTION Get1_RN()
       _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
    @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   read; ESC_RETURN K_ESC
-   SELECT koncij
-   HSEEK Trim( _idkonto )
+   read
+   ESC_RETURN K_ESC
+   
+   select_o_koncij( _idkonto )
    SELECT kalk_pripr
 
    _MKonto := _Idkonto

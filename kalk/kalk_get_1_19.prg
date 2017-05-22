@@ -49,8 +49,7 @@ FUNCTION kalk_get_1_19()
    _MKonto := _Idkonto
    //kalk_dat_poslj_promjene_prod()
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_koncij( _idkonto )
    SELECT kalk_pripr  // napuni tarifu
 
    //kalk_dat_poslj_promjene_prod()
@@ -77,8 +76,7 @@ FUNCTION kalk_get_1_19()
    nStCj := nNCJ := 0
 
    IF kalk_is_novi_dokument()
-      SELECT koncij
-      SEEK Trim( _idkonto )
+      select_o_koncij( _idkonto )
       nStCj := Round( kalk_get_mpc_by_koncij_pravilo(), 3 )
    ELSE
       nStCj := _fcj
@@ -113,8 +111,7 @@ FUNCTION kalk_get_1_19()
    _mpc := MpcBezPor( nNCj, aPorezi, , _nc ) -MpcBezPor( nStCj, aPorezi, , _nc )
 
    IF Pitanje(, "Staviti u šifrarnik novu cijenu", gDefNiv ) == "D"
-      SELECT koncij
-      SEEK Trim( _idkonto )
+      select_o_koncij( _idkonto )
     //  SELECT roba
       StaviMPCSif( _fcj + _mpcsapp )
       SELECT kalk_pripr

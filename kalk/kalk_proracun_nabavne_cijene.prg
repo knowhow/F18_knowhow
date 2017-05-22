@@ -384,14 +384,12 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
 
    LOCAL nCV := 0, nArr := Select()
 
-   IF lKoncij = NIL; lKoncij := .F. ; ENDIF
-   SELECT KONCIJ
-   nRec := RecNo()
-   SEEK Trim( cMKonto )
+   //IF lKoncij = NIL; lKoncij := .F. ; ENDIF
+   select_o_koncij( cMKonto )
    nCV := KoncijVPC()
-   IF !lKoncij
-      GO ( nRec )
-   ENDIF
+   //IF !lKoncij
+    //  GO ( nRec )
+   //ENDIF
    SELECT ( nArr )
 
    RETURN nCV

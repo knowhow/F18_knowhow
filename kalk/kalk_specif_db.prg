@@ -418,8 +418,7 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
             SELECT kalk
             nGGOrd := IndexOrd()
             nGGo := RecNo()
-            SELECT koncij
-            SEEK Trim( kalk->mKonto )
+            select_o_koncij( kalk->mKonto )
             SELECT kalk
             // dan prije inventure !!!
             kalk_vpc_po_kartici( @nmpc, cSeek, dDatDo - 1 )
@@ -536,8 +535,7 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
          SELECT kalk
          nGGo := RecNo()
          nGGOrd := IndexOrd()
-         SELECT koncij
-         SEEK Trim( kalk->pkonto )
+         select_o_koncij( kalk->pkonto )
          SELECT kalk
 
 

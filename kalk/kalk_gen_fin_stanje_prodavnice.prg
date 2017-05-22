@@ -137,8 +137,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
   */
 
 
-   SELECT koncij
-   SEEK Trim( _konto )
+   select_o_koncij( _konto )
 
    SELECT kalk
 

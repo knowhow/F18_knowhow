@@ -378,10 +378,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
       cIdKontoZaduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
       cIdKontoRazduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 
-      SELECT koncij // pozicionirati se na konto zaduzuje
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdKontoZaduzuje
+      select_o_koncij( cIdKontoZaduzuje )
 
 
       select_o_kalk_pript()

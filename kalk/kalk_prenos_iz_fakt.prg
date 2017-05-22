@@ -416,8 +416,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
             nRbr := Val( field->rbr )
          ENDIF
 
-         SELECT koncij
-         SEEK Trim( cIdKonto )
+         select_o_koncij( cIdKonto )
 
          SELECT fakt
 
@@ -600,8 +599,7 @@ FUNCTION kalk_fakt_prenos_period()
 
          ENDIF
 
-         SELECT KONCIJ
-         SEEK Trim( _id_konto )
+         select_o_koncij( _id_konto )
 
          SELECT fakt
 

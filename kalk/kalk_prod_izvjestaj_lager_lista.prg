@@ -538,9 +538,7 @@ FUNCTION lager_lista_prodavnica()
          @ PRow(), PCol() + 1 SAY nMPVI PICT pic_iznos_bilo_gpicdem()
          @ PRow(), PCol() + 1 SAY nMPVU - nMPVI + nPMPV PICT pic_iznos_bilo_gpicdem()
 
-         SELECT koncij
-         SEEK Trim( cIdKonto )
-
+         select_o_koncij( cIdKonto )
          select_o_roba( cIdRoba )
 
          _mpc := kalk_get_mpc_by_koncij_pravilo()

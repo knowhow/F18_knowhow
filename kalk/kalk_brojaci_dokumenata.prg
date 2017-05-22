@@ -359,11 +359,7 @@ FUNCTION kalk_sufiks_brdok( cIdKonto )
    LOCAL cSufiks := Space( 3 )
 
    PushWa()
-   select_o_koncij()
-   SELECT koncij
-   SEEK cIdKonto
-
-   IF Found()
+   IF select_o_koncij( cIdKonto )
       cSufiks := field->sufiks
    ENDIF
    PopWa()

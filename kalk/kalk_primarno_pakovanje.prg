@@ -85,7 +85,7 @@ FUNCTION NaPrimPak()
    DO WHILE !Eof()
       cIdKonto := PKONTO
 
-      SELECT KONCIJ
+  --    SELECT KONCIJ
       HSEEK cIdKonto
 
       SELECT KALK
@@ -257,7 +257,7 @@ FUNCTION NaPrPak2()
    DO WHILE !Eof()
       IF idvd != "42"; SKIP 1; LOOP; ENDIF
       cIdKonto := IDKONTO
-      SELECT KONCIJ; HSEEK cIdKonto
+    --  SELECT KONCIJ; HSEEK cIdKonto
       SELECT _KALK
       DO WHILE !Eof() .AND. IDKONTO == cIdKonto
          cIdRoba := IDROBA

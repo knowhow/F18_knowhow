@@ -105,8 +105,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
       select_o_roba(  kalk_pripr->idroba )
 
-      SELECT koncij
-      SEEK kalk_pripr->pkonto
+      select_o_koncij( kalk_pripr->pkonto )
       cPKonto := kalk_pripr->pkonto
 
       IF Empty( koncij->idprodmjes ) // provjeri postoji li koncij zapis

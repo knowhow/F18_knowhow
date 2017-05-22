@@ -191,8 +191,7 @@ FUNCTION kalk_kartica_magacin()
 
    EOF CRET
 
-   SELECT koncij
-   SEEK Trim( cIdKonto )
+   select_o_koncij( cIdKonto )
 
    SELECT kalk
 

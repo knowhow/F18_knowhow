@@ -76,12 +76,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
    ENDIF
    GO TOP
 
-   SELECT F_KONCIJ
-   IF !Used()
-      o_koncij()
-   ENDIF
-   SELECT koncij
-   SEEK Trim( kalk_pripr->mkonto )
+   select_o_koncij( kalk_pripr->mkonto )
    SELECT kalk_pripr
 
    IF IsVindija()

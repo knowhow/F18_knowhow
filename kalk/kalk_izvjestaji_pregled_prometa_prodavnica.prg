@@ -381,7 +381,7 @@ STATIC FUNCTION ScanKoncij( dDatumOd, dDatumDo )
       SELECT roba
       USE
 
-      SELECT koncij
+    --  SELECT koncij
       SKIP 1
    ENDDO
    BoxC()

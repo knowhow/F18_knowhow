@@ -117,7 +117,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
       HSEEK cidfirma + cidkonto
    ENDIF
 
-   SELECT koncij
+  -- SELECT koncij
    SEEK Trim( cidkonto )
    SELECT kalk
 

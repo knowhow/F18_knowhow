@@ -250,8 +250,7 @@ STATIC FUNCTION zagl()
    ENDIF
 
    SELECT kalk_pripr
-   SELECT koncij
-   SEEK Trim( kalk_pripr->mkonto )
+   select_o_koncij( kalk_pripr->mkonto )
    SELECT kalk_pripr
 
    ? m

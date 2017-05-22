@@ -150,7 +150,7 @@ FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
    SET ORDER TO TAG "1"
    // "KALKi1","idFirma+IdVD+BrDok+RBr","KALK")
 
-   SELECT koncij; SEEK Trim( cidkonto )
+   select_o_koncij( cIdkonto )
 
 
    find_kalk_by_broj_dokumenta( cIdfirma, cIdvd, cOlddok, "KALK_1", F_KALK + 300 )
@@ -293,7 +293,7 @@ FUNCTION NivPoProc()
 
    MsgO( "Generacija dokumenta 19 - " + cbrdok )
 
-   SELECT koncij
+  -- SELECT koncij
    SEEK Trim( cidkonto )
    SELECT kalk
    HSEEK cidfirma + cidkonto

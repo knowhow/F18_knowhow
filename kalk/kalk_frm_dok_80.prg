@@ -107,7 +107,7 @@ FUNCTION Get1_80( atrib )
    select_o_roba( _idroba )
    select_o_tarifa( roba->idtarifa )
    select_o_koncij( _idkonto )
-   
+
    SELECT kalk_pripr
 
    _pkonto := _idkonto
@@ -117,9 +117,7 @@ FUNCTION Get1_80( atrib )
 
    IF kalk_is_novi_dokument()
 
-      SELECT koncij
-      SEEK Trim( _idkonto )
-
+      select_o_koncij( _idkonto )
       select_o_roba( _idroba )
 
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
@@ -167,8 +165,7 @@ FUNCTION Get1_80( atrib )
    ESC_RETURN K_ESC
 
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_koncij( _idkonto )
 
    StaviMPCSif( _MpcSapp, .T. )
 
@@ -227,8 +224,7 @@ FUNCTION kalk_get_1_80_protustavka()
 
    ESC_RETURN K_ESC
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_koncij( _idkonto )
 
    SELECT kalk_pripr
 
@@ -241,9 +237,7 @@ FUNCTION kalk_get_1_80_protustavka()
    ++nX
    @ m_x + nX, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
-
+   select_o_koncij( _idkonto )
    select_o_roba( _idroba )
 
    // ako nije popunjeno
@@ -293,8 +287,7 @@ FUNCTION kalk_get_1_80_protustavka()
 
    ESC_RETURN K_ESC
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_koncij( _idkonto )
 
    StaviMPCSif( _mpcsapp, .T. )
 
@@ -317,8 +310,7 @@ FUNCTION Svedi( cSvedi )
 
    IF cSvedi == "M"
 
-      SELECT koncij
-      SEEK Trim( _idkonto )
+      select_o_koncij( _idkonto )
       select_o_roba( _idroba )
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
 

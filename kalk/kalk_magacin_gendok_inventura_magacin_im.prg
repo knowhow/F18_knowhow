@@ -75,8 +75,7 @@ FUNCTION kalk_generacija_inventura_magacin_im()
    // SET ORDER TO TAG "3"
 
 
-   SELECT koncij
-   SEEK Trim( cIdKonto )
+   select_o_koncij( cIdKonto )
 
    MsgO( "Preuzimanje podataka sa servera ..." )
    find_kalk_by_mkonto_idroba( cIdFirma, cIdkonto )
@@ -242,8 +241,7 @@ FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
    MsgO( "Generacija dokumenta IM - " + cBrdok )
 
 
-   SELECT koncij
-   SEEK Trim( cIdKonto )
+   select_o_koncij( cIdKonto )
 
    MsgO( "Preuzimanje podataka sa servera: " + cIdFirma + "-" + cIdKonto )
    find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto )

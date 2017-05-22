@@ -365,8 +365,7 @@ FUNCTION kalk_get_mpc_by_koncij_pravilo( cIdKonto )
 
    IF cIdKonto != NIL
       PushWa()
-      SELECT koncij
-      SEEK cIdKonto
+      select_o_koncij( cIdKonto )
       cRule := koncij->naz
       PopWa()
    ELSE

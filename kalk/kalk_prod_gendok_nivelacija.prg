@@ -122,7 +122,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
 
    cIdFirma := self_organizacija_id()
 
-   SELECT koncij
+--   SELECT koncij
    SEEK Trim( cPKonto )
 
    SELECT roba
@@ -438,7 +438,7 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
 
    cIdFirma := self_organizacija_id()
 
-   SELECT koncij
+  -- SELECT koncij
    SEEK Trim( cPKonto )
 
 

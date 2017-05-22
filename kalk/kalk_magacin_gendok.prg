@@ -169,8 +169,7 @@ FUNCTION kalk_generisi_95_za_manjak_16_za_visak()
    IF !( cidvd $ "IM" )
       closeret
    ENDIF
-   SELECT koncij
-   SEEK Trim( kalk_pripr->idkonto )
+   select_o_koncij( kalk_pripr->idkonto )
 
    lOdvojiVisak := Pitanje(, "Napraviti poseban dokument za visak?", "N" ) == "D"
 
@@ -321,7 +320,7 @@ FUNCTION MNivPoProc()
 
    MsgO( "Generacija dokumenta 18 - " + cbrdok )
 
-   SELECT koncij; SEEK Trim( cidkonto )
+   --SELECT koncij; SEEK Trim( cidkonto )
    SELECT kalk
    HSEEK cidfirma + cidkonto
    DO WHILE !Eof() .AND. cidfirma + cidkonto == idfirma + mkonto
@@ -641,11 +640,10 @@ FUNCTION kalk_generisi_prijem16_iz_otpreme96()
       _TMarza := "%"
       _TMarza := "A"
       _gkolicina := _gkolicin2 := _mpc := 0
-      SELECT koncij
-      SEEK Trim( kalk_pripr->idkonto2 )
+      select_o_koncij( kalk_pripr->idkonto2 )
+
       IF koncij->naz == "N1"  // otprema je izvrsena iz magacina koji se vodi po nc
-         SELECT koncij
-         SEEK Trim( kalk_pripr->idkonto )
+         select_o_koncij( kalk_pripr->idkonto )
          IF koncij->naz <> "N1"     // ulaz u magacin sa vpc
             _VPC := KoncijVPC()
             _marza := KoncijVPC() - kalk_pripr->nc

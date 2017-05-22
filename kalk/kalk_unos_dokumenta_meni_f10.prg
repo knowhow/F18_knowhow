@@ -210,8 +210,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
          RETURN .F.
       ENDIF
 
-      SELECT koncij
-      HSEEK _konto
+      select_o_koncij( _konto )
 
       SELECT kalk_pripr
       GO TOP

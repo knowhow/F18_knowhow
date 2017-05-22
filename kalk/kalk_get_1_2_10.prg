@@ -106,8 +106,7 @@ FUNCTION kalk_get_1_10()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_koncij( _idkonto )
    SELECT kalk_pripr
 
    _MKonto := _Idkonto

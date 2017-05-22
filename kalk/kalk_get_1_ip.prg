@@ -145,8 +145,7 @@ FUNCTION kalk_generisi_ip()
 
    MsgO( "Generacija dokumenta IP - " + cBrdok )
 
-   SELECT koncij
-   SEEK Trim( cIdkonto )
+   select_o_koncij( cIdkonto )
 
    find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto )
 
@@ -320,8 +319,7 @@ FUNCTION gen_ip_razlika()
 
    @ m_x + 1, m_y + 2 SAY "generacija IP-" + AllTrim( cBrDok ) + " u toku..."
 
-   SELECT koncij
-   SEEK Trim( cIdKonto )
+   select_o_koncij( cIdKonto )
 
    // SELECT kalk
    // HSEEK cIdFirma + cIdKonto
@@ -352,9 +350,7 @@ FUNCTION gen_ip_razlika()
       nRabat := 0
 
       select_o_roba( cIdRoba )
-
-      SELECT koncij
-      HSEEK cIdKonto
+      select_o_koncij( cIdKonto )
 
       SELECT kalk
 

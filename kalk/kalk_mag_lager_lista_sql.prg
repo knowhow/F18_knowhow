@@ -272,9 +272,7 @@ STATIC FUNCTION kalk_mag_insert_ps_into_pripr( oDataSet, hParams )
       cBrKalk := PadR( "00001", 8 )
    ENDIF
 
-   SELECT koncij
-   GO TOP
-   SEEK cIdKontoMagacin
+   select_o_koncij( cIdKontoMagacin )
 
    MsgO( "Punjenje pripreme podacima početnog stanja u toku, dok: " + cIdVd + "-" + AllTrim( cBrKalk ) )
 

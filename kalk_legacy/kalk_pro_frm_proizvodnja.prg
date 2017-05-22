@@ -203,8 +203,7 @@ FUNCTION legacy_get_1_pr()
       SELECT kalk_pripr
    ENDIF
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_koncij( _idkonto )
    SELECT kalk_pripr
 
    _MKonto := _Idkonto

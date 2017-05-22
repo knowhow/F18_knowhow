@@ -145,8 +145,7 @@ FUNCTION finansijsko_stanje_magacin()
 
 
 
-   SELECT koncij
-   SEEK Trim( cidkonto )
+   select_o_koncij( cIdkonto )
 
    SELECT kalk
    EOF CRET

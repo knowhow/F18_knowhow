@@ -303,8 +303,7 @@ FUNCTION lager_lista_magacin()
    ENDIF
    GO TOP
 
-   SELECT koncij
-   SEEK Trim( cIdKonto )
+   select_o_koncij( cIdKonto )
 
    SELECT kalk
    ?E "trace-kalk-llm-11"

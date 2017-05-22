@@ -128,8 +128,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 
    EOF CRET
 
-   SELECT koncij
-   SEEK Trim( cIdkonto )
+   select_o_koncij( cIdkonto )
 
    SELECT KALK
 

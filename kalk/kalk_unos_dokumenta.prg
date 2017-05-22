@@ -150,7 +150,7 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
       kalk_asistent_stop()
    ENDIF
 
-   //my_close_all_dbf()
+   // my_close_all_dbf()
 
    RETURN .T.
 
@@ -192,7 +192,7 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
       RETURN kalk_kontiraj_alt_k()
 
    CASE Ch == K_SH_F9
-      renumeracija_kalk_pripr( nil, nil, .F. )
+      renumeracija_kalk_pripr( NIL, NIL, .F. )
       RETURN DE_REFRESH
 
    CASE Ch == K_SH_F8
@@ -512,7 +512,7 @@ FUNCTION kalk_unos_nova_stavka()
    LOCAL _rok, _opis
    LOCAL _rbr_uvecaj := 0
 
-   //aNC_ctrl := {} // isprazni kontrolnu matricu
+   // aNC_ctrl := {} // isprazni kontrolnu matricu
 
    _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
    _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
@@ -677,7 +677,7 @@ FUNCTION kalk_edit_sve_stavke( lAsistentObrada, lStartPocetak )
    PushWA()
 
    select_o_tarifa()
-  // select_o_roba()
+   // select_o_roba()
    select_o_koncij()
 
    select_o_kalk_pripr()
@@ -973,7 +973,7 @@ FUNCTION kalk_edit_stavka( lNoviDokument, hParams )
 
    IF ( nRet ) <> K_ESC
       _Rbr := RedniBroj( nRbr )
-      _Dokument := P_TipDok( _IdVD, -2 )
+      _Dokument := P_TipDok( _IdVD, - 2 )
       RETURN nRet
    ENDIF
 
@@ -1148,7 +1148,7 @@ FUNCTION kalk_header_get1( lNoviDokument )
    ENDIF
 
    @ m_x + 2, m_y + 40  SAY "Broj:" GET _brdok ;
-      valid {|| !kalk_dokument_postoji( _idfirma, _idvd, _brdok ) }
+      VALID {|| !kalk_dokument_postoji( _idfirma, _idvd, _brdok ) }
 
    @ m_x + 2, Col() + 2 SAY "Datum:" GET _datdok ;
       VALID {||  datum_not_empty_upozori_godina( _datDok, "Datum KALK" ) }
@@ -1217,7 +1217,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
          hRec[ "idpartner" ] := _tek_dok[ "idpartner" ]
       ENDIF
 
-      IF ! ( hRec[ "idvd" ] $ "16#80" ) .AND. !_vise_konta
+      IF !( hRec[ "idvd" ] $ "16#80" ) .AND. !_vise_konta
          hRec[ "idkonto" ] := _tek_dok[ "idkonto" ]
          hRec[ "idkonto2" ] := _tek_dok[ "idkonto2" ]
          hRec[ "pkonto" ] := _tek_dok[ "pkonto" ]
@@ -1422,8 +1422,7 @@ FUNCTION MPCSAPPuSif()
    GO TOP
    DO WHILE !Eof()
       cIdKonto := kalk_pripr->pkonto
-      SELECT KONCIJ
-      HSEEK cIdKonto
+      select_o_koncij( cIdKonto )
       SELECT kalk_pripr
       DO WHILE !Eof() .AND. pkonto == cIdKonto
          select_o_roba(  kalk_pripr->idroba )
@@ -1463,8 +1462,7 @@ FUNCTION MPCSAPPiz80uSif()
    SELECT KALK
    SEEK cIdFirma + cIdVDU + cBrDokU
    cIdKonto := KALK->pkonto
-   SELECT KONCIJ
-   HSEEK cIdKonto
+   select_o_koncij( cIdKonto )
 
    SELECT KALK
    DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
@@ -1495,8 +1493,7 @@ FUNCTION VPCSifUDok()
    my_flock()
    DO WHILE !Eof()
       select_o_roba(  kalk_pripr->idroba )
-      SELECT KONCIJ
-      SEEK Trim( kalk_pripr->mkonto )
+      select_o_koncij( kalk_pripr->mkonto )
       // SELECT TARIFA; HSEEK ROBA->idtarifa
       SELECT kalk_pripr
       Scatter()
@@ -1521,7 +1518,7 @@ FUNCTION VPCSifUDok()
 FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
 
    o_koncij()
-//   select_o_roba()
+// select_o_roba()
    o_tarifa()
    select_o_partner()
    select_o_konto()
@@ -1576,11 +1573,11 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
 FUNCTION o_kalk_edit()
 
-   //select_o_partner()
+   // select_o_partner()
    // o_kalk_doks()
-   //select_o_roba()
+   // select_o_roba()
    // o_kalk()
-   //select_o_konto()
+   // select_o_konto()
    o_tdok()
    o_valute()
    o_tarifa()

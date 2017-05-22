@@ -56,11 +56,8 @@ FUNCTION kalk_nivelacija_11()
 
       scatter()
 
-      SELECT koncij
-      SEEK Trim( hRec[ "idkonto" ] )
-
+      select_o_koncij( hRec[ "idkonto" ] )
       select_o_roba( hRec[ "idroba" ] )
-
       select_o_tarifa( roba->idtarifa )
 
       SELECT roba
@@ -119,8 +116,7 @@ FUNCTION kalk_nivelacija_11()
          ENDIF
 
          IF cPromCj == "D"
-            SELECT koncij
-            SEEK Trim( hRec[ "idkonto" ] )
+            select_o_koncij( hRec[ "idkonto" ] )
             SELECT roba
             StaviMPCSif( hRec[ "fcj" ] + hRec[ "mpcsapp" ] )
          ENDIF

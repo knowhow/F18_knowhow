@@ -845,8 +845,7 @@ FUNCTION kalk_roba_prodavnica_stanje( cIdKontoProdavnica, cIdRoba, dDatDok, nKol
       RETURN .F.
    ENDIF
 
-   SELECT koncij
-   HSEEK cIdKontoProdavnica
+   select_o_koncij( cIdKontoProdavnica )
 
    SELECT kalk
    SET ORDER TO TAG "4"

@@ -83,8 +83,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
 
    head_11( lPrikPRUC, m )
 
-   SELECT koncij
-   SEEK Trim( kalk_pripr->pkonto )
+   select_o_koncij( kalk_pripr->pkonto )
    SELECT kalk_pripr
 
    nTot1 := nTot1b := nTot2 := nTot3 := nTot4 := nTot4b := nTot5 := nTot6 := nTot7 := 0

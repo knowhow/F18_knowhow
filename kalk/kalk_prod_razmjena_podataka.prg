@@ -1094,7 +1094,7 @@ FUNCTION fakt_15_kalk_15()
         --    SELECT ROBA; HSEEK fakt->idroba
 
           --  SELECT tarifa; HSEEK roba->idtarifa
-            SELECT koncij; SEEK Trim( cidkonto )
+          --  SELECT koncij; SEEK Trim( cidkonto )
 
             SELECT fakt
             IF AllTrim( podbr ) == "."  .OR. idroba = "U"

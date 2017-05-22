@@ -63,10 +63,8 @@ FUNCTION Get1_82()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-   SELECT TARIFA
-   HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_tarifa( _IdTarifa )
+   select_o_koncij( _idkonto )
    SELECT kalk_pripr  // napuni tarifu
 
    _MKonto := _Idkonto2

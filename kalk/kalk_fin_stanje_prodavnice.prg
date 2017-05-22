@@ -221,8 +221,7 @@ FUNCTION finansijsko_stanje_prodavnica()
          ENDIF
 
          select_o_roba( KALK->idroba )
-         SELECT tarifa
-         HSEEK KALK->idtarifa
+         select_o_tarifa( KALK->idtarifa )
          SELECT KALK
 
          set_pdv_public_vars()

@@ -366,11 +366,8 @@ FUNCTION fakt_13_kalk_11()
          ENDIF
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
             select_o_roba( fakt->idroba )
-
-            SELECT tarifa
-            HSEEK roba->idtarifa
-            SELECT koncij
-            SEEK Trim( cidkonto )
+            select_o_tarifa( roba->idtarifa )
+            select_o_koncij( cidkonto )
 
             SELECT fakt
             IF AllTrim( podbr ) == "."  .OR. idroba = "U"
@@ -541,8 +538,7 @@ FUNCTION fakt_11_kalk_41()
             ENDIF
             DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
                select_o_roba( fakt->idroba )
-               SELECT tarifa
-               HSEEK roba->idtarifa
+               select_o_tarifa( roba->idtarifa )
                SELECT fakt
                IF AllTrim( podbr ) == "."
                   SKIP
@@ -770,8 +766,8 @@ FUNCTION fakt_01_kalk_81()
             LOOP
          ENDIF
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-            SELECT ROBA; HSEEK fakt->idroba
-            SELECT tarifa; HSEEK roba->idtarifa
+            select_o_roba( fakt->idroba )
+            select_o_tarifa( roba->idtarifa )
 
             SELECT fakt
             IF AllTrim( podbr ) == "."
@@ -904,8 +900,8 @@ FUNCTION fakt_13_kalk_80()
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
             select_o_roba( fakt->idroba )
 
-            SELECT tarifa; HSEEK roba->idtarifa
-            SELECT koncij; SEEK Trim( cidkonto )
+            select_o_tarifa( roba->idtarifa )
+            select_o_koncij( cIdkonto )
 
             SELECT fakt
             IF AllTrim( podbr ) == "."  .OR. idroba = "U"
@@ -1100,7 +1096,7 @@ FUNCTION fakt_15_kalk_15()
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
         --    SELECT ROBA; HSEEK fakt->idroba
 
-            SELECT tarifa; HSEEK roba->idtarifa
+          --  SELECT tarifa; HSEEK roba->idtarifa
             SELECT koncij; SEEK Trim( cidkonto )
 
             SELECT fakt
@@ -1305,9 +1301,7 @@ FUNCTION fakt_11_kalk_42()
             DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
 
                select_o_roba( fakt->idroba )
-
-               SELECT tarifa
-               HSEEK roba->idtarifa
+               select_o_tarifa( roba->idtarifa )
 
                SELECT fakt
 

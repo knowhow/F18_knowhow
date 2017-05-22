@@ -283,25 +283,13 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
          field->idtipdok == dok[ "idtipdok" ] .AND. ;
          field->brdok == dok[ "brdok" ]
 
-      // Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
-      // fakt_set_pozicija_sif_roba()
-      SELECT roba
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK fakt_pripr->idroba
 
-      IF !Found()
+      IF !select_o_roba( fakt_pripr->idroba )
          Msgbeep( "Artikal " + fakt_pripr->idroba + " ne postoji u sifrarniku !!!" )
          RETURN .F.
       ENDIF
 
-      // nastimaj i tarifu
-      SELECT tarifa
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK roba->idtarifa
-
-      IF !Found()
+      IF !select_o_tarifa( roba->idtarifa )
          MsgBeep( "Tarifa " + roba->idtarifa + " ne postoji u sifraniku !!!" )
          RETURN .F.
       ENDIF

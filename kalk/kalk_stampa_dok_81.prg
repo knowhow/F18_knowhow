@@ -37,7 +37,7 @@ FUNCTION StKalk81( fzatops )
 
    P_COND2
 
-   ?? "KALK: KALKULACIJA BR:", cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
+   ?? "KALK: KALKULACIJA BR:", cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
 
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
@@ -123,7 +123,7 @@ FUNCTION StKalk81( fzatops )
          nMarza2 := nMarza2 - nPRUC
       ENDIF
 
-      IF PRow() > page_length() -4
+      IF PRow() > page_length() - 4
          FF
          @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF
@@ -240,7 +240,7 @@ FUNCTION StKalk81( fzatops )
             @ PRow(), PCol() + 1  SAY nU9a        PICTURE         PICDEM
          ENDIF
       ELSE
-         @ PRow() + 1, nCol1 -1   SAY Space( Len( picdem ) )
+         @ PRow() + 1, nCol1 - 1   SAY Space( Len( picdem ) )
       ENDIF
       @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
 
@@ -250,7 +250,7 @@ FUNCTION StKalk81( fzatops )
       SKIP
    ENDDO
 
-   IF PRow() > page_length() -3
+   IF PRow() > page_length() - 3
       FF
       @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF
@@ -274,7 +274,7 @@ FUNCTION StKalk81( fzatops )
          @ PRow(), PCol() + 1  SAY nTot9a        PICTURE         PICDEM
       ENDIF
    ELSE
-      @ PRow() + 1, nCol1 -1   SAY Space( Len( picdem ) )
+      @ PRow() + 1, nCol1 - 1   SAY Space( Len( picdem ) )
    ENDIF
    @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
 
@@ -296,7 +296,7 @@ FUNCTION StKalk81( fzatops )
    ? m
 
    // potpis na dokumentu
-   dok_potpis( 90, "L", nil, nil )
+   dok_potpis( 90, "L", NIL, NIL )
 
    RETURN .T.
 
@@ -332,7 +332,7 @@ FUNCTION kalk_stampa_dok_81()
    ?? "ULAZ U PRODAVNICU DIREKTNO OD DOBAVLJACA"
    P_COND
    ?
-   ?? "KALK: KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
+   ?? "KALK: KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    SELECT PARTN; HSEEK cIdPartner
 
@@ -388,8 +388,7 @@ FUNCTION kalk_stampa_dok_81()
       set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
 
       select_o_roba( kalk_pripr->IdRoba )
-      SELECT TARIFA
-      HSEEK kalk_pripr->IdTarifa
+      select_o_tarifa( kalk_pripr->IdTarifa )
       SELECT kalk_pripr
 
       aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
@@ -457,7 +456,7 @@ FUNCTION kalk_stampa_dok_81()
       nCol1 := PCol() + 1
       @ PRow(), PCol() + 1 SAY FCJ                   PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY -Rabat                PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY fcj * ( 1 -Rabat / 100 )     PICTURE piccdem
+      @ PRow(), PCol() + 1 SAY fcj * ( 1 - Rabat / 100 )     PICTURE piccdem
       @ PRow(), PCol() + 1 SAY ( nPrevoz + nBankTr + nSpedtr + nCarDaz + nZavTr ) / FCJ2 * 100       PICTURE PicProc
       @ PRow(), PCol() + 1 SAY NC                    PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY nMarza2 / NC * 100        PICTURE PicProc

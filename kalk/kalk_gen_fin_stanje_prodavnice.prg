@@ -260,8 +260,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
             LOOP
          ENDIF
 
-         SELECT tarifa
-         HSEEK kalk->idtarifa
+         select_o_tarifa( kalk->idtarifa )
 
          SELECT kalk
 

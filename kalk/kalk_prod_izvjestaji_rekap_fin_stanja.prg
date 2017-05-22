@@ -172,8 +172,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
          ENDIF
 
          select_o_roba( kalk->idroba )
-         SELECT tarifa
-         HSEEK kalk->idtarifa
+         select_o_tarifa( kalk->idtarifa )
          SELECT kalk
 
          set_pdv_array_by_koncij_region_roba_idtarifa_2_3( pkonto, idroba, @aPorezi, idtarifa )

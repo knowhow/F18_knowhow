@@ -427,11 +427,9 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
       _kol := field->kolicina
       _rab := field->rabat
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
-      SELECT tarifa
-      HSEEK roba->idtarifa
+      select_o_tarifa( roba->idtarifa )
 
       _tar := tarifa->id
 

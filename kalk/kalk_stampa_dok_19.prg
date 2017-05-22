@@ -79,8 +79,8 @@ FUNCTION kalk_stampa_dok_19()
 
       nTot3 +=  ( nU3 := MPC * Kolicina )
 
-      nPor1 := aIPor1[ 1 ] -aIPor2[ 1 ]
-      nPor2 := aIPor1[ 2 ] -aIPor2[ 2 ]
+      nPor1 := aIPor1[ 1 ] - aIPor2[ 1 ]
+      nPor2 := aIPor1[ 2 ] - aIPor2[ 2 ]
 
       nTot4 +=  ( nU4 := ( nPor1 + nPor2 ) * Kolicina )
       nTot5 +=  ( nU5 := MPcSaPP * Kolicina )
@@ -210,11 +210,9 @@ FUNCTION Obraz19()
 
       vise_kalk_dok_u_pripremi( cIdd )
 
-    select_o_roba(  kalk_pripr->IdRoba )
-      SELECT TARIFA
-      HSEEK kalk_pripr->IdTarifa
+      select_o_roba( kalk_pripr->IdRoba )
+      select_o_tarifa( kalk_pripr->IdTarifa )
       SELECT kalk_pripr
-
 
       print_nova_strana( 110, @nStr, iif( cProred == "D", 2, 1 ) )
 

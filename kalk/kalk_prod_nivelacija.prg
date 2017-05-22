@@ -61,8 +61,7 @@ FUNCTION kalk_nivelacija_11()
 
       select_o_roba( hRec[ "idroba" ] )
 
-      SELECT tarifa
-      HSEEK roba->idtarifa
+      select_o_tarifa( roba->idtarifa )
 
       SELECT roba
 

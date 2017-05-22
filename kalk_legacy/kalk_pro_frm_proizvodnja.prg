@@ -37,8 +37,7 @@ FUNCTION legacy_get_1_pr()
          _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
       @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-      SELECT tarifa
-      hseek _IdTarifa
+     select_o_tarifa( _IdTarifa )
 
       // postavi TARIFA na pravu poziciju
       SELECT kalk_pripr

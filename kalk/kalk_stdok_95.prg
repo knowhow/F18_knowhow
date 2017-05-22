@@ -131,9 +131,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
          ENDIF
 
          select_o_roba( kalk_pripr->idroba )
-
-         SELECT tarifa
-         hseek kalk_pripr->idtarifa
+         select_o_tarifa( kalk_pripr->idtarifa )
 
          SELECT kalk_pripr
 

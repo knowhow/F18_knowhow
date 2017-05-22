@@ -166,9 +166,7 @@ FUNCTION kalk_kartica_prodavnica()
       cIdRoba := field->idroba
 
       select_o_roba( cIdRoba )
-
-      SELECT tarifa
-      HSEEK roba->idtarifa
+      select_o_tarifa( roba->idtarifa )
 
       ? __line
 

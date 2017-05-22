@@ -39,7 +39,7 @@ FUNCTION kalk_get_1_ip()
    kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + _x, m_y + 2, @aPorezi )
 
 
-   @ m_x + _x, m_y + ( MAXCOLS() -20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
+   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
 
    READ
 
@@ -57,9 +57,7 @@ FUNCTION kalk_get_1_ip()
    ENDIF
 */
 
-   SELECT tarifa
-   HSEEK _idtarifa
-
+   select_o_tarifa( _idtarifa )
    select_o_roba( _idroba )
 
    _mpcsapp := kalk_get_mpc_by_koncij_pravilo( _IdKonto )
@@ -117,7 +115,7 @@ FUNCTION kalk_generisi_ip()
    o_tarifa()
    o_sifk()
    o_sifv()
-//   o_roba()
+// o_roba()
 
    Box(, 4, 50 )
 
@@ -304,7 +302,7 @@ FUNCTION gen_ip_razlika()
    o_tarifa()
    o_sifk()
    o_sifv()
-//   o_roba()
+// o_roba()
    o_koncij()
    o_kalk_pripr()
    o_kalk_pript()

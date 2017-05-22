@@ -299,8 +299,7 @@ FUNCTION Porezi( cIdVd, cDat0, aTarife, cNaplaceno )
 
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-         SELECT TARIFA
-         HSEEK POS->IdTarifa
+         select_o_tarifa( POS->IdTarifa )
 
          IF cNaplaceno == "1"
 

@@ -802,7 +802,7 @@ FUNCTION Gen41S()
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. Pkonto == cPKonto
       cIdTarifa := IdTarifa
       SELECT roba; HSEEK kalk->idroba
-      SELECT tarifa; HSEEK cIdTarifa; SELECT kalk
+  --    SELECT tarifa; HSEEK cIdTarifa; SELECT kalk
       set_pdv_public_vars()
       nOPP := TARIFA->OPP; nPPP := TARIFA->PPP
       nZPP := tarifa->zpp

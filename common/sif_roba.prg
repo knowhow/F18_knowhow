@@ -203,8 +203,7 @@ FUNCTION MpcIzVpc()
    PRIVATE cVPC := " "
 
    Scatter()
-   SELECT tarifa
-   HSEEK _idtarifa
+   select_o_tarifa( _idtarifa )
    SELECT roba
 
    Box(, 4, 70 )
@@ -241,8 +240,7 @@ FUNCTION MpcIzVpc()
          DO WHILE !Eof()
             IF ROBA->MPC&cMPC == 0
                Scatter()
-               SELECT tarifa
-               HSEEK _idtarifa
+               select_o_tarifa( _idtarifa )
                SELECT roba
                _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa )
                Gather()
@@ -627,8 +625,7 @@ FUNCTION roba_setuj_mpc_iz_vpc()
          LOOP
       ENDIF
 
-      SELECT tarifa
-      HSEEK _tarifa
+      select_o_tarifa( _tarifa )
 
       IF !Found()
          SELECT roba

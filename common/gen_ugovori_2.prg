@@ -28,9 +28,9 @@ STATIC FUNCTION g_ug_params( dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoP
    // datum posljenje uplate u fin
    dDatLUpl := CToD( "" )
    // konto kupac
-   cKtoDug := fetch_metric( "ugovori_konto_duguje", nil, PadR( "2110", 7 ) )
+   cKtoDug := fetch_metric( "ugovori_konto_duguje", NIL, PadR( "2110", 7 ) )
    // konto dobavljac
-   cKtoPot := fetch_metric( "ugovori_konto_potrazuje", nil, PadR( "5410", 7 ) )
+   cKtoPot := fetch_metric( "ugovori_konto_potrazuje", NIL, PadR( "5410", 7 ) )
    // opis
    cOpis := PadR( "", 100 )
    // artikal
@@ -79,7 +79,7 @@ STATIC FUNCTION g_ug_params( dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoP
    nX += 2
    @ m_x + nX, m_y + 2 SAY PadL( "Konto duguje", nBoxLen ) GET cKtoDug VALID P_Konto( @cKtoDug )
 
-   ++ nX
+   ++nX
    @ m_x + nX, m_y + 2 SAY PadL( "Konto potrazuje", nBoxLen ) GET cKtoPot VALID P_Konto( @cKtoPot )
 
    nX += 2
@@ -124,8 +124,8 @@ STATIC FUNCTION g_ug_params( dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoP
    dDatObr := mo_ye( nMjesec, nGodina )
 
    // snimi parametre
-   set_metric( "ugovori_konto_duguje", nil, cKtoDug )
-   set_metric( "ugovori_konto_potrazuje", nil, cKtoPot )
+   set_metric( "ugovori_konto_duguje", NIL, cKtoDug )
+   set_metric( "ugovori_konto_potrazuje", NIL, cKtoPot )
 
    RETURN 1
 
@@ -221,7 +221,7 @@ FUNCTION gen_ug_2()
 
    SELECT ugov
    SET ORDER TO TAG "ID"
-   SET FILTER to &cFilter
+   SET FILTER TO &cFilter
    GO TOP
 
    nSaldo := 0
@@ -270,7 +270,7 @@ FUNCTION gen_ug_2()
          cIdFirma := self_organizacija_id()
       ENDIF
 
-      ++ _count
+      ++_count
 
       IF Empty( cGenTipDok )
          cGenTipDok := ugov->idtipdok
@@ -489,7 +489,7 @@ STATIC FUNCTION pr_mjesec( dPom )
    IF nPMonth == 0
       // dPom je bio 01/YYYY
       nPMonth := 12
-      nPYear --
+      nPYear--
    ENDIF
 
    RETURN  dPObr := mo_ye( nPMonth, nPYear )
@@ -711,7 +711,7 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
          IF lFromDest == .T. .AND. nCount > 0
 
             // uvecaj uk.broj gen.faktura
-            ++ nFaktBr
+            ++nFaktBr
 
             // resetuj brojac stavki na 0
             nRbr := 0
@@ -726,15 +726,13 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
       // nastimaj roba na rugov-idroba
       n_roba( rugov->idroba )
 
-      // uzmi porez na osnovu robe
-      SELECT tarifa
-      SEEK roba->idtarifa
+      select_o_tarifa( roba->idtarifa )
       nPorez := tarifa->opp
 
       SELECT fakt_pripr
       APPEND BLANK
 
-      ++ nCount
+      ++nCount
 
       Scatter()
 
@@ -924,7 +922,7 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
    a_to_gen_p( dDatObr, cUId, cUPartn, nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, nFaktIzn, nFaktPdv )
 
    // uvecaj broj faktura
-   ++ nFaktBr
+   ++nFaktBr
 
    SELECT gen_ug
    SET ORDER TO TAG "dat_obr"
@@ -965,14 +963,14 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
 // ----------------------------------------------------------------------
 // dodaj u kontrolnu matricu sta je generisano
 // ----------------------------------------------------------------------
-STATIC FUNCTION add_to_generated_data( data, ;
+STATIC FUNCTION add_to_generated_data( DATA, ;
       id_firma, id_tip_dok, br_dok, ;
       id_partner, destinacija )
 
-   _scan := AScan( data, {|srch| srch[ 1 ] == id_firma .AND.  srch[ 2 ] == id_tip_dok .AND.  srch[ 3 ] == br_dok } )
+   _scan := AScan( DATA, {| srch | srch[ 1 ] == id_firma .AND.  srch[ 2 ] == id_tip_dok .AND.  srch[ 3 ] == br_dok } )
 
    IF _scan == 0
-      AAdd( data, { id_firma, id_tip_dok, br_dok, id_partner, destinacija } )
+      AAdd( DATA, { id_firma, id_tip_dok, br_dok, id_partner, destinacija } )
    ENDIF
 
    RETURN
@@ -982,7 +980,7 @@ STATIC FUNCTION add_to_generated_data( data, ;
 //
 // data = [ idfirma, idtipdok, brdok, idpartner, destinacija ]
 // ----------------------------------------------------------------------
-STATIC FUNCTION info_generated_data( data )
+STATIC FUNCTION info_generated_data( DATA )
 
    LOCAL nI
    LOCAL _cnt := 0
@@ -999,7 +997,7 @@ STATIC FUNCTION info_generated_data( data )
    ? PadR( "R.br", 5 ), PadR( "dokument", 15 ), PadR( "partner", 34 ), PadR( "destinacija", 100 )
    ? Replicate( "-", 150 )
 
-   FOR nI := 1 TO Len( data )
+   FOR nI := 1 TO Len( DATA )
 
       SELECT partn
       HSEEK DATA[ nI, 4 ]
@@ -1079,7 +1077,7 @@ STATIC FUNCTION vrati_nazad( dDatObr, cIdArt )
          fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do )
 
       cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
-      Povrat_fakt_po_kriteriju( cBrDokOdDo, nil, nil, cFirma )
+      Povrat_fakt_po_kriteriju( cBrDokOdDo, NIL, NIL, cFirma )
 
    ENDIF
 

@@ -36,7 +36,7 @@ FUNCTION o_kalk_tabele_izvj()
    o_sifk()
    o_sifv()
    o_tarifa()
-   //select_o_roba()
+   // select_o_roba()
    o_koncij()
    select_o_konto()
    select_o_partner()
@@ -135,10 +135,10 @@ FUNCTION VVT()
    @ m_x + 13, Col() + 2 SAY tarifa->opp PICT "99.99%"
    IF roba->tip = "X"
       @ m_x + 13, Col() + 2 SAY roba->mpc / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 PICT picdem
-      _marza := roba->mpc / ( 1 + tarifa->opp / 100 ) -_nc
+      _marza := roba->mpc / ( 1 + tarifa->opp / 100 ) - _nc
    ELSE
       @ m_x + 13, Col() + 2 SAY _vpc / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 PICT picdem
-      _marza := _vpc / ( 1 + tarifa->opp / 100 ) -_nc
+      _marza := _vpc / ( 1 + tarifa->opp / 100 ) - _nc
    ENDIF
    _tmarza := "A"
 
@@ -599,10 +599,10 @@ FUNCTION ObracunPorezaUvoz()
             skol := _kolicina
          ENDIF
 
-         if &aUT1
+         IF &aUT1
             _t&cPom := "U"
             _&cPom := skol * _nc * 0.2
-         elseif &aUT2
+         ELSEIF &aUT2
             _t&cPom := "U"
             _&cPom := skol * _nc * 0.1
          ENDIF
@@ -699,7 +699,7 @@ FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
       kalk_sumiraj_kolicinu( kolicina, 0, @nTotalUlaz, 0 )
    ELSEIF field->pu_i == "5"
       IF field->idvd $ "12#13"
-         kalk_sumiraj_kolicinu( -kolicina, 0, @nTotalUlaz, 0 )
+         kalk_sumiraj_kolicinu( - kolicina, 0, @nTotalUlaz, 0 )
       ELSE
          kalk_sumiraj_kolicinu( 0, kolicina, 0, @nTotalIzlaz )
       ENDIF
@@ -734,7 +734,7 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
          kalk_sumiraj_kolicinu( field->kolicina - field->gKolicina - field->gKolicin2, 0, @nTotalUlaz, 0 )
 
       ELSE
-         kalk_sumiraj_kolicinu( 0, -field->kolicina, 0, @nTotalIzlaz )
+         kalk_sumiraj_kolicinu( 0, - field->kolicina, 0, @nTotalIzlaz )
       ENDIF
 
    ELSEIF field->mu_i == "5"
@@ -744,7 +744,7 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
 
    ELSEIF field->mu_i == "8"
       // sta je mu_i==8 ??
-      kalk_sumiraj_kolicinu( -field->kolicina, -field->kolicina, @nTotUlaz, @nTotalIzlaz )
+      kalk_sumiraj_kolicinu( - field->kolicina, - field->kolicina, @nTotUlaz, @nTotalIzlaz )
    ENDIF
 
    RETURN .T.
@@ -758,9 +758,7 @@ FUNCTION kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
    nArea := Select()
 
    select_o_roba( ( nArea )->IdRoba )
-
-   SELECT tarifa
-   HSEEK ( nArea )->IdTarifa
+   select_o_tarifa( ( nArea )->IdTarifa )
    SELECT ( nArea )
 
    RETURN .T.
@@ -815,7 +813,7 @@ FUNCTION UzmiIzP( cSta )
          nVrati := -mpc * kolicina
       ELSEIF pu_i == "I"
          nArr := Select()
-         SELECT TARIFA; HSEEK ( nArr )->IDTARIFA; set_pdv_public_vars()
+         select_o_tarifa( ( nArr )->IDTARIFA ); set_pdv_public_vars()
          SELECT ( nArr )
          nVrati := -mpcsapp / ( ( 1 + _OPP ) * ( 1 + _PPP ) ) * gkolicin2
       ELSEIF pu_i == "5"  .AND. ( idvd $ "12#13#22" )    // povrat
@@ -836,7 +834,7 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
    nArr := Select()
    o_tarifa()
    o_koncij()
-  // o_roba()
+   // o_roba()
    o_kalk_pripr9()
    cOtpremnica := Space( 10 )
    cIdKonto := "1320   "
@@ -857,8 +855,7 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
       cRoba := kalk_pripr->idRoba
       cTarifa := kalk_pripr->idtarifa
       select_o_roba( cRoba )
-      SELECT tarifa
-      SEEK cTarifa
+      select_o_tarifa( cTarifa )
       set_pdv_array( @aPorezi )
       set_pdv_public_vars()
       SELECT kalk_pripr
@@ -872,7 +869,7 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
       _brFaktP := cOtpremnica
       _tPrevoz := "R"
       _tMarza := "A"
-      _marza := _vpc / ( 1 + _PORVT ) -_fcj
+      _marza := _vpc / ( 1 + _PORVT ) - _fcj
       _tMarza2 := "A"
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
       VMPC( .F., fMarza )
@@ -987,7 +984,7 @@ FUNCTION kopiraj_set_cijena()
 
    ENDCASE
 
-  // o_roba()
+   // o_roba()
    _count := RecCount()
 
    SELECT roba

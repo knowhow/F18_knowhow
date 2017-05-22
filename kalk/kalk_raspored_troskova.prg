@@ -380,8 +380,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                ENDIF
 
                select_o_roba( _idroba )
-               SELECT tarifa
-               HSEEK _idtarifa
+               select_o_tarifa( _idtarifa )
 
                SELECT kalk_pripr
                IF _idvd == "RN"
@@ -515,8 +514,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
             _marza := _VPC - _FCJ
             _TMarza := "A"
             select_o_roba( _idroba )
-            SELECT tarifa
-            HSEEK _idtarifa
+            select_o_tarifa( _idtarifa )
             SELECT kalk_pripr
             Marza2()
             _TMarza2 := "A"

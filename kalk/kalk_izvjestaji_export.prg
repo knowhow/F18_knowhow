@@ -282,8 +282,7 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
          select_o_roba(  cIdRoba )
 
-         SELECT tarifa
-         SEEK cIdTarifa
+         select_o_tarifa( cIdTarifa )
 
          cPom1 := KonvznWin( Left( roba->naz, 40 ), cKonverzija )
          cPom2 := KonvznWin( roba->jmj, cKonverzija )

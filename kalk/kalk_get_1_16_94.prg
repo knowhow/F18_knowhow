@@ -76,10 +76,9 @@ FUNCTION kalk_get_1_94()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-   SELECT koncij
-   SEEK Trim( _idkonto )  // postavi TARIFA na pravu poziciju
-   SELECT TARIFA
-   HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
+   select_o_koncij( _idkonto )
+   select_o_tarifa( _IdTarifa )
+   
    SELECT kalk_pripr  // napuni tarifu
    _MKonto := _Idkonto
    _MU_I := "1"

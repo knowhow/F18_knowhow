@@ -25,7 +25,7 @@ FUNCTION kalk_stampa_dok_82()
    cIdKonto := IdKonto; cIdKonto2 := IdKonto2
 
    P_COND
-   ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
+   ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    SELECT PARTN; HSEEK cIdPartner
 
@@ -59,7 +59,7 @@ FUNCTION kalk_stampa_dok_82()
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
       select_o_roba( kalk_pripr->IdRoba )
-      SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
+      select_o_tarifa( kalk_pripr->IdTarifa )
       SELECT kalk_pripr
       set_pdv_public_vars()
 
@@ -69,7 +69,7 @@ FUNCTION kalk_stampa_dok_82()
       ENDIF
 
       nTot3 +=  ( nU3 := NC * kolicina )
-      nTot4 +=  ( nU4 := vpc * ( 1 -rabatv / 100 ) * Kolicina )
+      nTot4 +=  ( nU4 := vpc * ( 1 - rabatv / 100 ) * Kolicina )
       nTot5 +=  ( nU5 := MPC * Kolicina )
       nPor1 :=  MPC * _OPP
       nPor2 :=  MPC * ( 1 + _OPP ) * _PPP
@@ -88,7 +88,7 @@ FUNCTION kalk_stampa_dok_82()
 
       nCol0 := PCol() + 1
       @ PRow(), PCol() + 1 SAY NC                   PICTURE PicCDEM
-      @ PRow(), PCol() + 1 SAY vpc * ( 1 -rabatv / 100 )   PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY vpc * ( 1 - rabatv / 100 )   PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY MPC                  PICTURE PicCDEM
       nCol1 := PCol() + 1
       @ PRow(), PCol() + 1 SAY TARIFA->OPP          PICTURE PicProc
@@ -96,7 +96,7 @@ FUNCTION kalk_stampa_dok_82()
       @ PRow(), PCol() + 1 SAY MPCSAPP              PICTURE PicCDEM
 
       @ PRow() + 1, nCol0     SAY  nc * kolicina      PICTURE picdem
-      @ PRow(),   PCol() + 1  SAY  vpc * ( 1 -rabatv / 100 ) * kolicina  PICTURE picdem
+      @ PRow(),   PCol() + 1  SAY  vpc * ( 1 - rabatv / 100 ) * kolicina  PICTURE picdem
       @ PRow(),   PCol() + 1  SAY  mpc * kolicina      PICTURE picdem
 
       @ PRow(), nCol1    SAY    _PPP       PICTURE picproc
@@ -138,7 +138,7 @@ FUNCTION kalk_stampa_dok_82()
    DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok
       cidtarifa := idtarifa
       nU1 := nU2 := nU3 := nU4 := 0
-      SELECT tarifa; HSEEK cidtarifa
+      select_o_tarifa( cIdtarifa )
       SELECT kalk_pripr
       DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok .AND. idtarifa == cidtarifa
          select_o_roba( kalk_pripr->idroba )

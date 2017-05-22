@@ -71,14 +71,12 @@ FUNCTION pos_setuj_tarife( cIdRoba, nIzn, aTarife, nPPP, nPPU, nOsn, nPP )
 
    nArr := Select()
 
-   o_roba()
-   o_tarifa()
+   //o_roba()
+   //o_tarifa()
 
-   SELECT ( F_ROBA )
-   SEEK cIdRoba
-
-   SELECT ( F_TARIFA )
-   SEEK roba->idtarifa
+   select_o_roba( cIdRoba )
+   select_o_tarifa( roba->idtarifa )
+   
    SELECT ( nArr )
 
    nOsn := nIzn / ( tarifa->zpp / 100 + ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 ) )

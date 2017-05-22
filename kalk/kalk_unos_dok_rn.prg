@@ -167,8 +167,7 @@ FUNCTION Get1_RN()
    _MU_I := "1"
    // check_datum_posljednje_kalkulacije()
 
-   SELECT TARIFA
-   HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
+   select_o_tarifa( _IdTarifa  )
    SELECT kalk_pripr  // napuni tarifu
 
    @ m_x + 13, m_y + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0

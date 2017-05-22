@@ -47,12 +47,12 @@ FUNCTION realizacija_kase
       cPVrstePl := "D"
    ENDIF
 
-   IF ( dDat0 == nil )
+   IF ( dDat0 == NIL )
       dDat0 := gDatum
       dDat1 := gDatum
    ENDIF
 
-   IF ( cVarijanta == nil )
+   IF ( cVarijanta == NIL )
       cVarijanta := "0"
    ELSEIF ( cVarijanta == "2" )
       cVarijanta := "0"
@@ -143,7 +143,7 @@ FUNCTION realizacija_kase
 
       // Porezi po tarifama
 
-      PDVPorPoTar( dDat0, dDat1, cIdPos, nil, cIdodj )
+      PDVPorPoTar( dDat0, dDat1, cIdPos, NIL, cIdodj )
 
 
       IF Round( Abs( nTotal2 ) + Abs( nTotal3 ), 4 ) <> 0
@@ -379,7 +379,6 @@ STATIC FUNCTION ZaglZ( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP,
 
 FUNCTION RekVrstePl()
 
-
    // Rekapitulacija vrsta placanja
 
    LOCAL nTotal
@@ -497,11 +496,11 @@ STATIC FUNCTION o_pom_table()
    my_use_temp( "POM", my_home() + "pom", .F., .T. )
    SET ORDER TO TAG "1"
 
-   INDEX on ( IdPos + IdRadnik + IdVrsteP + IdOdj + IdRoba + IdCijena ) TAG "1"
-   INDEX on ( IdPos + IdOdj + IdRoba + IdCijena ) TAG "2"
-   INDEX on ( IdPos + IdRoba + IdCijena ) TAG "3"
-   INDEX on ( IdPos + IdVrsteP ) TAG "4"
-   INDEX on ( IdPos + K1 + idroba ) TAG "K1"
+   INDEX ON ( IdPos + IdRadnik + IdVrsteP + IdOdj + IdRoba + IdCijena ) TAG "1"
+   INDEX ON ( IdPos + IdOdj + IdRoba + IdCijena ) TAG "2"
+   INDEX ON ( IdPos + IdRoba + IdCijena ) TAG "3"
+   INDEX ON ( IdPos + IdVrsteP ) TAG "4"
+   INDEX ON ( IdPos + K1 + idroba ) TAG "K1"
 
    RETURN
 
@@ -663,7 +662,7 @@ STATIC FUNCTION RealPoRadn()
                ENDDO
 
                cStr2 := ""
-               cStr2 += show_number( nKol, nil, -8 )
+               cStr2 += show_number( nKol, NIL, - 8 )
                nLen2 := Len( cStr2 )
 
                cStr3 := show_number( nIzn, PIC_UKUPNO )
@@ -974,30 +973,21 @@ STATIC FUNCTION TotalKasa( cIdPos, nTotPos, nTotPos2, nTotPos3, nTotPosk, cK1, c
 
 STATIC FUNCTION PrikaziPorez( nIznosSt, cIdTarifa )
 
-   // {
    LOCAL nArr
    LOCAL nMpVBP, nPPPIznos, nPPIznos, nPPUIznos, nPPP, nPPU
+
    nArr := Select()
 
-   // obracun poreza
-   SELECT ( F_TARIFA )
-   IF !Used()
-      o_tarifa()
-   ENDIF
-   Seek2( cIdTarifa )
+   select_o_tarifa( cIdTarifa )
 
    nPPP := tarifa->opp
    nPPU := tarifa->ppp
 
-   IF my_get_from_ini( "POREZI", "PPUgostKaoPPU", "N" ) == "D"
-      nMpVBP := nIznosSt / ( 1 + zpp / 100 + ppp / 100 ) / ( 1 + opp / 100 )
-      nPPPIznos := nMPVBP * opp / 100
-      nPPIznos := ( nMPVBP + nPPPIznos ) * zpp / 100
-   ELSE
-      nMpVBP := nIznosSt / ( zpp / 100 + ( 1 + opp / 100 ) * ( 1 + ppp / 100 ) )
-      nPPPIznos := nMPVBP * opp / 100
-      nPPIznos := nMPVBP * zpp / 100
-   ENDIF
+
+   nMpVBP := nIznosSt / ( zpp / 100 + ( 1 + opp / 100 ) * ( 1 + ppp / 100 ) )
+   nPPPIznos := nMPVBP * opp / 100
+   nPPIznos := nMPVBP * zpp / 100
+
 
    ? Space( 1 ) + "PPP(" + AllTrim( Str( nPPP ) ) + "%) " + AllTrim( Str( nPPPIznos ) )
 
@@ -1008,4 +998,3 @@ STATIC FUNCTION PrikaziPorez( nIznosSt, cIdTarifa )
    SELECT ( nArr )
 
    RETURN
-// }

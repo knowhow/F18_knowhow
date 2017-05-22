@@ -117,11 +117,8 @@ FUNCTION kalk_unos_dok_81( hParams )
       _idroba := Left( _idroba, 10 )
    ENDIF
 
-   SELECT tarifa
-   SEEK roba->idtarifa
-
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_tarifa( roba->idtarifa )
+   select_o_koncij( _idkonto )
    SELECT kalk_pripr
 
    _pkonto := _idkonto

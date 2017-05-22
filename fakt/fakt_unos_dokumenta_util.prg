@@ -443,8 +443,7 @@ FUNCTION V_Roba( lPrikTar )
    SELECT roba
    SELECT fakt_pripr
 
-   SELECT tarifa
-   SEEK roba->idtarifa
+   select_o_tarifa( roba->idtarifa )
 
    IF lPrikTar
       @ m_x + 16, m_y + 28 SAY "TBr: "
@@ -1176,7 +1175,7 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
       IF cSetPor == "D"
          fakt_set_pozicija_sif_roba()
          // select roba; HSEEK fakt_pripr->idroba
-         SELECT tarifa; HSEEK roba->idtarifa
+         select_o_tarifa( roba->idtarifa )
          IF Found()
             SELECT fakt_pripr
             REPLACE porez WITH tarifa->opp
@@ -1230,11 +1229,7 @@ FUNCTION TarifaR( cRegion, cIdRoba, aPorezi )
    SEEK cIdRoba
    cTarifa := &cPolje
 
-   SELECT ( F_TARIFA )
-   IF !Used()
-      o_tarifa()
-   ENDIF
-   SEEK cTarifa
+   select_o_tarifa( cTarifa )
 
    set_pdv_array( @aPorezi )
 

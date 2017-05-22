@@ -202,9 +202,7 @@ FUNCTION fakt_kalk_prenos_10_14()
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
 
             select_o_roba(  fakt->idroba )
-
-            SELECT tarifa
-            HSEEK roba->idtarifa
+            select_o_tarifa( roba->idtarifa )
 
             IF ( RobaZastCijena( roba->idTarifa ) .AND. !IsPdvObveznik( cIdPartner ) )
                // nije pdv obveznik
@@ -431,9 +429,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == field->IdFirma + field->IdTipDok + field->BrDok
 
             select_o_roba( fakt->idroba )
-
-            SELECT tarifa
-            HSEEK roba->idtarifa
+            select_o_tarifa( roba->idtarifa )
 
             SELECT fakt
             IF AllTrim( podbr ) == "."  .OR. roba->tip $ "UY"
@@ -616,9 +612,7 @@ FUNCTION kalk_fakt_prenos_period()
          ENDIF
 
          select_o_roba( fakt->idroba )
-
-         SELECT tarifa
-         HSEEK roba->idtarifa
+         select_o_tarifa( roba->idtarifa )
 
          SELECT fakt
 

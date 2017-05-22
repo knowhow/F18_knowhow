@@ -114,8 +114,7 @@ FUNCTION kalk_get_1_10()
    _MU_I := "1"
    // check_datum_posljednje_kalkulacije()
 
-   SELECT TARIFA
-   HSEEK _IdTarifa
+   select_o_tarifa( _IdTarifa )
    SELECT kalk_pripr
 
    ++ nX

@@ -135,8 +135,7 @@ FUNCTION kalk_real_partnera()
       DO WHILE !Eof() .AND. idfirma == cidfirma .AND. idpartner == cidpartner  .AND. cidkonto = mkonto .AND. IspitajPrekid()
 
          select_o_roba( kalk->idroba )
-         SELECT tarifa
-         HSEEK kalk->idtarifa
+         select_o_tarifa( kalk->idtarifa )
          SELECT kalk
 
          IF idvd = "14"

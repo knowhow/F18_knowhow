@@ -376,8 +376,7 @@ FUNCTION kalk_stdok_41_rekap_pdv( cIdFirma, cIdVd, cBrDok, nStr )
       nU5 := 0
       nUp := 0
 
-      SELECT tarifa
-      HSEEK cIdtarifa
+      select_o_tarifa( cIdtarifa )
 
       set_pdv_array_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, kalk_pripr->idtarifa )
 

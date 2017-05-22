@@ -74,11 +74,8 @@ FUNCTION kalk_get_1_16()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
-
-   SELECT TARIFA
-   HSEEK _IdTarifa
+   select_o_koncij( _idkonto )
+   select_o_tarifa( _IdTarifa )
 
    SELECT kalk_pripr
    _MKonto := _Idkonto
@@ -147,12 +144,9 @@ kalk_is_novi_dokument( .T. )
 
    READ
    ESC_RETURN K_ESC
-   SELECT TARIFA
-   HSEEK _IdTarifa // postavi TARIFA na pravu poziciju
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_tarifa( _IdTarifa )
+   select_o_koncij( _idkonto )
    SELECT kalk_pripr
-   // napuni tarifu
 
    _PKonto := _Idkonto
 

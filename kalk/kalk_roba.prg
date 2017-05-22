@@ -89,8 +89,7 @@ STATIC FUNCTION valid_roba( cIdRoba, cIdTarifa, lNoviDokument, aPorezi )
       cTarifa := set_pdv_array_by_koncij_region_roba_idtarifa_2_3( _IdKonto, cIdRoba, @aPorezi ) // nadji odgovarajucu tarifu regiona
    ELSE
 
-      SELECT TARIFA // za postojece dokumente uzmi u obzir unesenu tarifu
-      SEEK cIdTarifa
+      select_o_tarifa( cIdTarifa )
       set_pdv_array( @aPorezi )
    ENDIF
 
@@ -130,7 +129,7 @@ FUNCTION VRoba( lSay )
    ELSE
       // za postojece dokumente uzmi u obzir unesenu tarifu
       SELECT TARIFA
-      SEEK _idtarifa
+    --  SEEK _idtarifa
       set_pdv_array( @aPorezi )
    ENDIF
 

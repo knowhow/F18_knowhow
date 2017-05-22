@@ -1385,8 +1385,7 @@ FUNCTION kalk_set_diskont_mpc()
 
    DO WHILE !Eof()
       select_o_roba(  kalk_pripr->idroba )
-      SELECT TARIFA
-      HSEEK ROBA->idtarifa
+      select_o_tarifa( ROBA->idtarifa )
       set_pdv_array_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pKonto, kalk_pripr->idRoba, @aPorezi )
       SELECT kalk_pripr
       Scatter()

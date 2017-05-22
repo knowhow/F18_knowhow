@@ -69,13 +69,11 @@ FUNCTION kalk_get_1_14()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-   SELECT TARIFA
-   HSEEK _IdTarifa
+   select_o_tarifa( _IdTarifa )
 
    select_o_roba(_IdRoba )
 
-   SELECT koncij
-   SEEK Trim( _idkonto2 )
+   select_o_koncij( _idkonto2 )
    SELECT kalk_pripr
 
    IF koncij->naz = "P"

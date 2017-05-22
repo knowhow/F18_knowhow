@@ -75,8 +75,8 @@ FUNCTION pornar()
    P_12CPI
 
    DO WHILE !Eof()
-      SELECT roba; HSEEK mat_suban->idroba
-      SELECT tarifa; HSEEK roba->idtarifa
+      select_o_roba( mat_suban->idroba )
+      select_o_tarifa( roba->idtarifa )
       SELECT mat_suban
       IF Iznos <> 0 .AND. Kolicina <> 0
          nCijena := Iznos / Kolicina

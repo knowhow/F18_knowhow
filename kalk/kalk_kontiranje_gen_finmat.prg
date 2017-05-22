@@ -214,8 +214,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
          select_o_roba( KALK_PRIPR->IdRoba )
 
-         SELECT TARIFA
-         HSEEK KALK_PRIPR->idtarifa
+         select_o_tarifa( KALK_PRIPR->idtarifa )
 
          SELECT KALK_PRIPR
 

@@ -108,11 +108,9 @@ FUNCTION kalk_unos_dok_pr()
 
    PopWa()
 
-   SELECT tarifa
-   HSEEK _IdTarifa
-
-   SELECT koncij
-   SEEK Trim( _idkonto )
+   select_o_tarifa( _IdTarifa )
+   select_o_koncij( _idkonto )
+   
    SELECT kalk_pripr
 
    _MKonto := _Idkonto

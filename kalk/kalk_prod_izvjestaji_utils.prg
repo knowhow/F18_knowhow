@@ -102,8 +102,7 @@ FUNCTION RekTarPDV()
          // mpv sa porezom
          nU3 := 0
 
-         SELECT tarifa
-         HSEEK cIdtarifa
+         select_o_tarifa( cIdtarifa )
 
          SELECT kalk_pripr
 

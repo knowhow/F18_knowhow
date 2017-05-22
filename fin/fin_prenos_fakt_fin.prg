@@ -155,10 +155,8 @@ FUNCTION fakt_fin_prenos()
          nFV := Cijena * Kolicina
          nRabat := Cijena * kolicina * Rabat / 100
 
-         SELECT ROBA
-         HSEEK FAKT->IdRoba
-         SELECT TARIFA
-         HSEEK roba->idtarifa
+         select_o_roba( FAKT->IdRoba )
+         select_o_tarifa( roba->idtarifa )
          SELECT fakt
 
          nNV := 0

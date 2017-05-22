@@ -857,7 +857,8 @@ FUNCTION mat_inv_obr_poreza()
 
    DO WHILE !Eof()
 
-      SELECT roba; HSEEK mat_invent->idroba; SELECT tarifa; HSEEK roba->idtarifa
+      select_o_roba( mat_invent->idroba)
+      select_o_tarifa( roba->idtarifa )
       SELECT mat_invent
       nMPVSAPP := kolicina * cijena
       IF nMPVSAPP == 0; skip; loop; ENDIF

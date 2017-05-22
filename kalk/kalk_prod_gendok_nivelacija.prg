@@ -198,7 +198,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
       _pkonto := cPKonto
       _pu_i := "3"
       _idroba := cIdRoba
-      _idtarifa := get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, cIdRoba, @aPorezi, roba->idtarifa )
+      _idtarifa := set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cPKonto, cIdRoba, @aPorezi, roba->idtarifa )
       _idvd := "19"
       _brdok := cBrKalk
       _tmarza2 := "A"
@@ -530,7 +530,7 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
       _pkonto := cPKonto
       _pu_i := "3"
       _idroba := cIdRoba
-      _idtarifa := get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, cIdRoba, @aPorezi, cIdTarifa )
+      _idtarifa := set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cPKonto, cIdRoba, @aPorezi, cIdTarifa )
       _idvd := "19"
       _brdok := cBrKalk
       _tmarza2 := "A"

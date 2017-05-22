@@ -207,7 +207,7 @@ FUNCTION fakt_11_kalk_prenos_11()
                idvd WITH "11", ;
                brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
-               idtarifa WITH get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi ), ;
+               idtarifa WITH set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi ), ;
                brfaktp WITH "", ;
                datfaktp WITH fakt->datdok, ;
                idkonto   WITH cPKonto, ;
@@ -387,7 +387,7 @@ FUNCTION fakt_13_kalk_11()
                idvd WITH "11", ;   // izlazna faktura
                brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
-               idtarifa WITH get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi ), ;
+               idtarifa WITH set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi ), ;
                brfaktp WITH fakt->brdok, ;
                datfaktp WITH fakt->datdok, ;
                idkonto   WITH cPKonto, ;
@@ -553,7 +553,7 @@ FUNCTION fakt_11_kalk_41()
 
                PRIVATE aPorezi := {}
 
-               get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
+               set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
 
                nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
 
@@ -634,7 +634,7 @@ FUNCTION fakt_11_kalk_41()
 
                PRIVATE aPorezi := {}
 
-               get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
+               set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
 
                nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
 
@@ -913,7 +913,7 @@ FUNCTION fakt_13_kalk_80()
             ENDIF
             cPKonto := cIdKonto
             PRIVATE aPorezi := {}
-            cIdTarifa := get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi )
+            cIdTarifa := set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi )
             SELECT kalk_pripr
             APPEND BLANK
             REPLACE idfirma WITH cIdFirma, ;
@@ -1319,7 +1319,7 @@ FUNCTION fakt_11_kalk_42()
                SELECT kalk_pripr
 
                PRIVATE aPorezi := {}
-               get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
+               set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
                nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
 
                APPEND BLANK
@@ -1408,7 +1408,7 @@ FUNCTION fakt_11_kalk_42()
 
                   PRIVATE aPorezi := {}
 
-                  get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
+                  set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
                   nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
 
                   APPEND BLANK

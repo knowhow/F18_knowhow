@@ -108,13 +108,12 @@ FUNCTION StKalk81( fzatops )
 
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-    select_o_roba(  kalk_pripr->IdRoba )
-      SELECT TARIFA
-      HSEEK kalk_pripr->IdTarifa
+      select_o_roba(  kalk_pripr->IdRoba )
+      select_o_tarifa( kalk_pripr->IdTarifa )
 
       SELECT kalk_pripr
 
-      get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
+      set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
       aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 
       nPor1 := aIPor[ 1 ]
@@ -386,7 +385,7 @@ FUNCTION kalk_stampa_dok_81()
 */
 
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
-      get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
+      set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
 
       select_o_roba( kalk_pripr->IdRoba )
       SELECT TARIFA

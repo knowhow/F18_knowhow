@@ -113,7 +113,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
          kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
          kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
-         get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi )
+         set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi )
 
          aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 

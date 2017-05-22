@@ -338,7 +338,7 @@ FUNCTION lager_lista_prodavnica()
                ELSEIF field->pu_i == "5"
 
                   aPorezi := {}
-                  get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
+                  set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
                   aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
                   nPor1 := aIPor[ 1 ]
                   set_pdv_public_vars()
@@ -389,7 +389,7 @@ FUNCTION lager_lista_prodavnica()
             ELSEIF field->pu_i == "5"
 
                aPorezi := {}
-               get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
+               set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
                aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
                nPor1 := aIPor[ 1 ]
                set_pdv_public_vars()
@@ -464,7 +464,7 @@ FUNCTION lager_lista_prodavnica()
                REPLACE idroba WITH cIdRoba
                REPLACE idkonto WITH cIdKonto
                REPLACE datdok WITH dDatDo + 1
-               REPLACE idTarifa WITH get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, @aPorezi )
+               REPLACE idTarifa WITH set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, @aPorezi )
                REPLACE datfaktp WITH dDatDo + 1
                REPLACE kolicina WITH nulaz - nizlaz
                REPLACE idvd WITH "80"
@@ -488,7 +488,7 @@ FUNCTION lager_lista_prodavnica()
                   REPLACE idroba WITH cIdRoba
                   REPLACE idkonto WITH cIdKonto
                   REPLACE datdok WITH dDatDo + 1
-                  REPLACE idTarifa WITH get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, @aPorezi )
+                  REPLACE idTarifa WITH set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, @aPorezi )
                   REPLACE datfaktp WITH dDatDo + 1
                   REPLACE kolicina WITH -1
                   REPLACE idvd WITH "80"
@@ -509,7 +509,7 @@ FUNCTION lager_lista_prodavnica()
                   REPLACE idroba WITH cIdRoba
                   REPLACE idkonto WITH cIdKonto
                   REPLACE datdok WITH dDatDo + 1
-                  REPLACE idTarifa WITH get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, @aPorezi )
+                  REPLACE idTarifa WITH set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, @aPorezi )
                   REPLACE datfaktp WITH dDatDo + 1
                   REPLACE kolicina WITH 1
                   REPLACE idvd WITH "80"
@@ -986,7 +986,7 @@ STATIC FUNCTION _gen_xml( params )
                _nv_u += field->nc * ( field->kolicina )
             ELSEIF field->pu_i == "5"
                aPorezi := {}
-               get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
+               set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
                aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
                nPor1 := aIPor[ 1 ]
                set_pdv_public_vars()

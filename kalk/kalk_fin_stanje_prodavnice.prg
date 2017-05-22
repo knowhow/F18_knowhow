@@ -235,7 +235,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 
          ELSEIF field->pu_i == "5"
 
-            get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
+            set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
             // uracunaj i popust
             // racporezemp( matrica, mp_bez_pdv, mp_sa_pdv, nc )
             aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
@@ -264,7 +264,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 
          ELSEIF pu_i == "I"
 
-            get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi, field->idtarifa )
+            set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi, field->idtarifa )
             nMPVBI += DokMpc( field->idvd, aPorezi ) * field->gkolicin2
             // nMPVBI+=mpcsapp/((1+_OPP)*(1+_PPP))*gkolicin2
             nMPVI += mpcsapp * gkolicin2

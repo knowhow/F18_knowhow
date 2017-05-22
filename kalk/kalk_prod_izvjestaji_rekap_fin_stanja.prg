@@ -176,7 +176,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
          HSEEK kalk->idtarifa
          SELECT kalk
 
-         get_tarifa_by_koncij_region_roba_idtarifa_2_3( pkonto, idroba, @aPorezi, idtarifa )
+         set_pdv_array_by_koncij_region_roba_idtarifa_2_3( pkonto, idroba, @aPorezi, idtarifa )
          set_pdv_public_vars()
 
          nBezP := 0

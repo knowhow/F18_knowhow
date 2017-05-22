@@ -48,7 +48,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
  * param: cIdTar - oznaka tarife, ovaj parametar je nil, ali se koristi za izvjestaje radi starih dokumenata (gdje je bilo promjene tarifa)
  */
 
-FUNCTION get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPorezi, cIdTar )
+FUNCTION set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPorezi, cIdTar )
 
    LOCAL cTarifa
    LOCAL lUsedRoba
@@ -66,12 +66,7 @@ FUNCTION get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPore
       cPolje := "IdTarifa"
 
    ELSE
-      SELECT ( F_KONCIJ )
-      IF ( !Used() )
-         o_koncij()
-      ENDIF
-      SEEK cIdKonto
-      IF !Found()
+      IF select_o_koncij( cIdKonto )
          cPolje := "IdTarifa"
       ELSE
 
@@ -89,43 +84,18 @@ FUNCTION get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPore
    ENDIF
 
    IF cIdTar == nil
-      Select( F_ROBA )
-      IF ( !Used() )
-         lUsedRoba := .F.
-         o_roba()
-      ENDIF
-      SEEK cIdRoba
+      select_o_roba( cIdRoba )
       cTarifa := &cPolje
 
-      Select( F_TARIFA )
-      IF ( !Used() )
-         lUsedTarifa := .F.
-         o_tarifa()
-      ENDIF
-      SEEK cTarifa
+      select_o_tarifa( cTarifa )
       cIdTarifa := tarifa->id
    ELSE
       cTarifa := cIdTar
-      Select( F_TARIFA )
-      IF ( !Used() )
-         lUsedTarifa := .F.
-         o_tarifa()
-      ENDIF
-      SEEK cTarifa
+      select_o_tarifa( cTarifa )
       cIdTarifa := cIdTar
    ENDIF
 
    set_pdv_array( @aPorezi )
-
-   IF ( !lUsedRoba )
-      Select( F_ROBA )
-      USE
-   ENDIF
-
-   IF ( !lUsedTarifa )
-      Select( F_TARIFA )
-      USE
-   ENDIF
 
    PopWa()
 
@@ -303,7 +273,7 @@ FUNCTION KorekTar()
 
             PRIVATE aPorezi := {}
             IF gModul == "KALK"
-               cTekIdTarifa := get_tarifa_by_koncij_region_roba_idtarifa_2_3( ( nKumArea )->PKONTO, ( nKumArea )->IdRoba, @aPorezi )
+               cTekIdTarifa := set_pdv_array_by_koncij_region_roba_idtarifa_2_3( ( nKumArea )->PKONTO, ( nKumArea )->IdRoba, @aPorezi )
             ELSE
                cTekIdTarifa := roba->IdTarifa
             ENDIF

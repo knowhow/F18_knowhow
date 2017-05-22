@@ -219,7 +219,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
          SELECT KALK_PRIPR
 
-         get_tarifa_by_koncij_region_roba_idtarifa_2_3( pkonto, idroba, @aPorezi )
+         set_pdv_array_by_koncij_region_roba_idtarifa_2_3( pkonto, idroba, @aPorezi )
          kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
          set_pdv_public_vars()
 

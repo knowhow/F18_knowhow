@@ -63,7 +63,7 @@ FUNCTION kalk_stampa_dok_19()
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
       set_pdv_public_vars()
 
-      get_tarifa_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi )
+      set_pdv_array_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi )
 
       // nova cijena
       nMpcSaPP1 := field->mpcSaPP + field->fcj

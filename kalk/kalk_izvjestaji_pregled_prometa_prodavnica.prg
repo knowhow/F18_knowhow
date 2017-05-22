@@ -417,7 +417,7 @@ STATIC FUNCTION ScanPos( dDatumOd, dDatumDo, cTKumP )
   --    SEEK pos->idroba
       SELECT pos
 
-      get_tarifa_by_koncij_region_roba_idtarifa_2_3( koncij->id, pos->idRoba, @aPorezi )
+      set_pdv_array_by_koncij_region_roba_idtarifa_2_3( koncij->id, pos->idRoba, @aPorezi )
       // Provjeri da li je bilo popusta u POS-u
       // Popust POS se evidentira u POS->NCIJENA
       // iznos postotka npr.10 kao 10%

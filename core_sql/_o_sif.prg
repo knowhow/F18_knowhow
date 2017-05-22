@@ -69,48 +69,68 @@ FUNCTION o_sifv()
    )
 */
 
-FUNCTION o_koncij()
-
-   SELECT ( F_KONCIJ )
-
-   IF !use_sql_sif ( "koncij" )
-      RETURN .F.
-   ENDIF
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
 
 
-FUNCTION select_o_koncij()
+FUNCTION o_koncij( cId )
 
-   LOCAL lRet := .T.
-
-   IF Select( "KONCIJ" ) == 0 // nije otvoren, otvori
-      lRet := o_koncij()
-   ENDIF
-
-   Select( F_KONCIJ )
-
-   RETURN lRet
-
-
-FUNCTION o_tarifa()
+   LOCAL cTabela := "koncij"
 
    SELECT ( F_TARIFA )
-   IF !use_sql_tarifa()
+   IF !use_sql_sif  ( cTabela, .T., "KONCIJ", cId  )
+      error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
-
-   RETURN .T.
-
-
-FUNCTION select_o_tarifa()
-
-   LOCAL lRet := .T.
-
-   IF Select( "TARIFA" ) == 0
-      lRet := o_tarifa()
+   IF cId != NIL
+      SEEK cId
    ENDIF
 
-   RETURN lRet
+   RETURN !Eof()
+
+
+
+FUNCTION select_o_koncij( cId )
+
+   SELECT ( F_KONCIJ )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_koncij( cId )
+
+
+
+FUNCTION o_tarifa( cId )
+
+   LOCAL cTabela := "tarifa"
+
+   SELECT ( F_TARIFA )
+   IF !use_sql_sif  ( cTabela, .T., "TARIFA", cId  )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN !Eof()
+
+
+
+FUNCTION select_o_tarifa( cId )
+
+   SELECT ( F_TARIFA )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_tarifa( cId )

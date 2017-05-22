@@ -278,7 +278,7 @@ FUNCTION kalk_kartica_prodavnica()
 
             nIzlaz += field->kolicina
 
-            get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
+            set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
             aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
             nPor1 := aIPor[ 1 ]
             set_pdv_public_vars()

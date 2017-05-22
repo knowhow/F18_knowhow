@@ -121,7 +121,7 @@ FUNCTION RekMagTar()
       DO WHILE !Eof() .AND. cIdFirma == KALK->IdFirma .AND. IspitajPrekid()
          cIdKonto := IdKonto
          cIdTarifa := IdTarifa
-         SELECT tarifa
+      --   SELECT tarifa
       --   HSEEK cIdTarifa
          SELECT kalk
          nVPP := TARIFA->VPP

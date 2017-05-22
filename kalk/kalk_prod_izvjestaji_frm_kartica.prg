@@ -27,8 +27,8 @@ FUNCTION KPro()
    nR1 := RecNo()
    SELECT kalk_pripr
    nR2 := RecNo()
-   SELECT tarifa
-   nR3 := RecNo()
+   //SELECT tarifa
+   //nR3 := RecNo()
 
    IF Empty( kalk_pripr->pkonto )
       Box(, 2, 50 )
@@ -55,8 +55,8 @@ FUNCTION KPro()
    SELECT kalk_pripr
    GO nR2
 
-   SELECT tarifa
-   GO nR3
+   //SELECT tarifa
+   //GO nR3
 
    SELECT kalk_pripr
 

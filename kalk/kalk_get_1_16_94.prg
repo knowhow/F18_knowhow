@@ -78,7 +78,7 @@ FUNCTION kalk_get_1_94()
 
    select_o_koncij( _idkonto )
    select_o_tarifa( _IdTarifa )
-   
+
    SELECT kalk_pripr  // napuni tarifu
    _MKonto := _Idkonto
    _MU_I := "1"
@@ -142,8 +142,8 @@ FUNCTION KM94()
    nR1 := RecNo()
    SELECT kalk_pripr
    nR2 := RecNo()
-   SELECT tarifa
-   nR3 := RecNo()
+   //SELECT tarifa
+   //nR3 := RecNo()
    my_close_all_dbf()
    kalk_kartica_magacin( _IdFirma, _idroba, _IdKonto )
    o_kalk_edit()
@@ -151,8 +151,8 @@ FUNCTION KM94()
    GO nR1
    SELECT kalk_pripr
    GO nR2
-   SELECT tarifa
-   GO nR3
+   //SELECT tarifa
+   //GO nR3
    SELECT kalk_pripr
 
    RETURN .T.

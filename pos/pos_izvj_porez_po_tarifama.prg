@@ -197,8 +197,7 @@ FUNCTION PorPoTar
 
       ? m
       FOR nCnt := 1 TO Len( aTarife )
-         SELECT tarifa
-         HSEEK aTarife[ nCnt ][ 1 ]
+         select_o_tarifa( aTarife[ nCnt ][ 1 ] )
          nPPP := tarifa->opp
          nPPU := tarifa->ppp
          SELECT pos_doks
@@ -416,8 +415,7 @@ FUNCTION POSRekapTar( aRekPor )
 
    FOR nCnt := 1 TO Len( aRekPor )
       ? " T" + PadR( aRekPor[ nCnt ][ 1 ], 4 )
-      SELECT tarifa
-      seek2( aRekPor[ nCnt, 1 ] )
+      select_o_tarifa( aRekPor[ nCnt, 1 ] )
       ?? " (PPP " + Str( tarifa->opp, 2, 0 ) + "%,PPU " + Str( tarifa->ppp, 2, 0 ) + "%,PP " + Str( tarifa->zpp, 2, 0 ) + "%)"
       SELECT ( nArr )
       ? Space( 6 )

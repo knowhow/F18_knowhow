@@ -186,8 +186,7 @@ FUNCTION PDVPorPoTar
 
       FOR nCnt := 1 TO Len( aTarife )
 
-         SELECT tarifa
-         HSEEK aTarife[ nCnt ][ 1 ]
+         select_o_tarifa( aTarife[ nCnt ][ 1 ] )
          nPDV := tarifa->opp
          SELECT pos_doks
 

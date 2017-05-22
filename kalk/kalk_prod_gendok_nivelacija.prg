@@ -495,7 +495,7 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
       cIdTarifa := roba->idtarifa
 
       // nadji tarifu
-      SELECT tarifa
+  --    SELECT tarifa
       SET ORDER TO TAG "ID"
   --    HSEEK cIdTarifa
       nTarStopa := tarifa->opp
@@ -726,7 +726,7 @@ FUNCTION st_res_niv_p( cVar, cKolNula )
          SET ORDER TO TAG "ID"
       --   HSEEK cIdRoba
 
-         SELECT tarifa
+      --   SELECT tarifa
          SEEK cIdTar
 
          SELECT pript
@@ -1071,7 +1071,7 @@ FUNCTION st_pr_cijena( cFirma, cIdTip, cBrDok, cPodvuceno, cProred )
       SELECT ROBA
       HSEEK PRIPT->IdRoba
 
-      SELECT TARIFA
+    --  SELECT TARIFA
   --    HSEEK PRIPT->IdTarifa
 
       SELECT PRIPT

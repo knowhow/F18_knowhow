@@ -192,6 +192,10 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_
       find_konto_by_naz_or_id( cId )
    ELSEIF Alias() == "RADN"
       find_radn_by_naz_or_id( cId )
+   ELSEIF Alias() == "TARIFA"
+         select_o_tarifa( cId )
+   ELSEIF Alias() == "KONCIJ"
+         select_o_koncij( cId )
    ELSE
       SEEK cId
    ENDIF

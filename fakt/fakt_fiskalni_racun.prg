@@ -375,8 +375,7 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, cIdTipDok )
       _tar := PadR( arr[ nI, 1 ], 6 )
       _iznos := arr[ nI, 2 ]
 
-      SELECT tarifa
-      HSEEK _tar
+      select_o_tarifa( _tar )
 
       IF cIdTipDok $ "11#13#23"
          IF !IsIno( partner ) .AND. !is_part_pdv_oslob_po_clanu( partner ) .AND. tarifa->opp > 0

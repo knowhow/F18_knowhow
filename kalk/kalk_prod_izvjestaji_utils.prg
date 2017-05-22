@@ -42,9 +42,6 @@ FUNCTION RekTarPDV()
 
    nKolona := 3
 
-   IF glUgost
-      nKolona += 2
-   ENDIF
 
    FOR i := 1 TO nKolona
       m += " --------------"

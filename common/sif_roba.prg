@@ -304,7 +304,7 @@ FUNCTION OFmkRoba()
    o_roba()
    o_sastavnica()
 
-   RETURN
+   RETURN .T.
 
 
 

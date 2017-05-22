@@ -26,8 +26,8 @@ FUNCTION kalk_kartica_magacin_pomoc_unos_14()
    nR1 := RecNo()
    SELECT kalk_pripr
    nR2 := RecNo()
-   SELECT tarifa
-   nR3 := RecNo()
+   //SELECT tarifa
+   //nR3 := RecNo()
    my_close_all_dbf()
    kalk_kartica_magacin( _IdFirma, _idroba, _IdKonto2 )
    o_kalk_edit()
@@ -35,8 +35,8 @@ FUNCTION kalk_kartica_magacin_pomoc_unos_14()
    GO nR1
    SELECT kalk_pripr
    GO nR2
-   SELECT tarifa
-   GO nR3
+   //SELECT tarifa
+   //GO nR3
    SELECT kalk_pripr
 
    RETURN NIL

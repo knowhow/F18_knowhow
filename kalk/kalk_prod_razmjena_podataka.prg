@@ -179,11 +179,8 @@ FUNCTION fakt_11_kalk_prenos_11()
 
          cIdTar := roba->idtarifa
 
-         SELECT tarifa
-         HSEEK cIdTar
-
-         SELECT koncij
-         SEEK Trim( cIdKonto )
+         select_o_tarifa( cIdTar )
+         select_o_koncij( cIdKonto )
 
          PRIVATE aPorezi := {}
 

@@ -63,12 +63,7 @@ STATIC FUNCTION _append_tarifa( tar_id, naziv, iznos )
 
    LOCAL _rec
 
-   SELECT tarifa
-   SET ORDER TO TAG "ID"
-   GO TOP
-   SEEK tar_id
-
-   IF !Found()
+   IF select_o_tarifa( tar_id )
 
       APPEND BLANK
       _rec := dbf_get_rec()

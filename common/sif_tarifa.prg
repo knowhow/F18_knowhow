@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-FUNCTION P_Tarifa( cid, dx, dy )
+FUNCTION P_Tarifa( cId, dx, dy )
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -22,7 +22,12 @@ FUNCTION P_Tarifa( cid, dx, dy )
    Kol := {}
 
    PushWA()
-   o_tarifa()
+   altd()
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_tarifa( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_tarifa()
+   ENDIF
 
    AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) }  } )
    AAdd( ImeKol, { PadC( "Naziv", 35 ), {|| PadR( ToStrU( naz ), 35 ) }, "naz" } )
@@ -32,7 +37,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   lRet := p_sifra( F_TARIFA, 1, MAXROWS() -15, MAXCOLS() -25, "Tarifne grupe", @cid, dx, dy )
+   lRet := p_sifra( F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy )
 
    PopWa()
 
@@ -138,11 +143,8 @@ FUNCTION MpcSaPor( nMPCBp, aPorezi, aPoreziIzn )
 
    nPDV := aPorezi[ POR_PPP ] / 100
 
-   IF glUgost
-      nPP := aPorezi[ POR_PP ] / 100
-   ELSE
-      nPP := 0
-   ENDIF
+   nPP := 0
+
 
 
    // bez poreza * ( 0.17 + 0 + 1)

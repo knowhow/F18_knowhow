@@ -128,7 +128,7 @@ FUNCTION VRoba( lSay )
       cTarifa := set_pdv_array_by_koncij_region_roba_idtarifa_2_3( _idkonto, _idroba, @aPorezi )
    ELSE
       // za postojece dokumente uzmi u obzir unesenu tarifu
-      SELECT TARIFA
+    --  SELECT TARIFA
     --  SEEK _idtarifa
       set_pdv_array( @aPorezi )
    ENDIF

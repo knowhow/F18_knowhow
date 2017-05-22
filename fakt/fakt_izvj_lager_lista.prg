@@ -613,8 +613,7 @@ FUNCTION fakt_lager_lista()
             ? z1
             ? m
          ENDIF
-         SELECT tarifa
-         HSEEK aPorezi[ i, 1 ]
+         select_o_tarifa( aPorezi[ i, 1 ] )
          fakt_vt_porezi()
          nMPV := aPorezi[ i, 2 ]
          nMPV0 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ), ZAOKRUZENJE )

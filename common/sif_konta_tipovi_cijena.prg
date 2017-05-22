@@ -24,10 +24,13 @@ FUNCTION P_KonCij( cId, dx, dy )
    ImeKol := {}
    Kol := {}
 
-
    nTArea := Select()
 
-   o_koncij()
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_koncij( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_koncij()
+   ENDIF
 
    AAdd( ImeKol, { "ID", {|| dbf_get_rec()[ "id" ] }, "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) } } )
    AAdd( ImeKol, { PadC( "Shema", 5 ), {|| PadC( shema, 5 ) }, "shema" } )

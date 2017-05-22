@@ -45,8 +45,7 @@ FUNCTION pos_rekapitulacija_tarifa( aTarife )
 
    FOR nCnt := 1 TO Len( aTarife )
 
-      SELECT tarifa
-      HSEEK aTarife[ nCnt ][ 1 ]
+      select_o_tarifa( aTarife[ nCnt ][ 1 ] )
       nPDV := tarifa->opp
 
       ? aTarife[ nCnt ][ 1 ], "(" + Str( nPDV ) + "%)"
@@ -76,7 +75,7 @@ FUNCTION pos_setuj_tarife( cIdRoba, nIzn, aTarife, nPPP, nPPU, nOsn, nPP )
 
    select_o_roba( cIdRoba )
    select_o_tarifa( roba->idtarifa )
-   
+
    SELECT ( nArr )
 
    nOsn := nIzn / ( tarifa->zpp / 100 + ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 ) )

@@ -59,7 +59,7 @@ FUNCTION kalk_unos_dok_81( hParams )
       _kord_x := m_x + _x
 
       @ m_x + _x, m_y + 2 SAY8 "DOBAVLJAČ:" GET _IdPartner PICT "@!" ;
-         VALID {|| Empty( _IdPartner ) .OR. p_partner( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x -1, 22, 20 ) }
+         VALID {|| Empty( _IdPartner ) .OR. p_partner( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ) }
       @ m_x + _x, 50 SAY "Broj fakture:" GET _brfaktp
       @ m_x + _x, Col() + 1 SAY "Datum:" GET _datfaktp
 
@@ -108,7 +108,7 @@ FUNCTION kalk_unos_dok_81( hParams )
 
 
 
-   @ m_x + _x, m_y + ( MAXCOLS() -20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N"  VALID P_Tarifa( @_IdTarifa )
+   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N"  VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -139,7 +139,7 @@ FUNCTION kalk_unos_dok_81( hParams )
    IF kalk_is_novi_dokument()
       SELECT koncij
       SEEK Trim( _idkonto )
-    select_o_roba(  _idroba )
+      select_o_roba(  _idroba )
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
       _TMarza2 := "%"
       _TCarDaz := "%"
@@ -226,7 +226,7 @@ STATIC FUNCTION _kaskadni_rabat( krabat )
       RETURN _ok
    ENDIF
 
-   _rabat := ( 100 -100 * ( 1 - _r_1 / 100 ) * ;
+   _rabat := ( 100 - 100 * ( 1 - _r_1 / 100 ) * ;
       IF( _r_2 > 0, ( 1 - _r_2 / 100 ), 1 ) * ;
       IF( _r_3 > 0, ( 1 - _r_3 / 100 ), 1 ) * ;
       IF( _r_4 > 0, ( 1 - _r_4 / 100 ), 1 ) ;
@@ -369,12 +369,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
    ++_x
 
    @ m_x + _x, m_y + 2 SAY "PDV (%):"
-   @ m_x + _x, Col() + 2 SAY TARIFA->OPP PICTURE "99.99"
-
-   IF glUgost
-      @ m_x + _x, Col() + 2 SAY "PP (%):"
-      @ m_x + _x, Col() + 2 SAY TARIFA->ZPP PICTURE "99.99"
-   ENDIF
+   @ m_x + _x, Col() + 2 SAY aPorezi[ POR_PPP ] PICTURE "99.99"
 
    ++_x
 

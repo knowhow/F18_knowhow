@@ -139,10 +139,7 @@ FUNCTION SayPorezi( nRow )
 
    @ m_x + nRow, m_y + 2  SAY "PDV (%):"
    @ Row(), Col() + 2 SAY aPorezi[ POR_PPP ] PICTURE "99.99"
-   IF glUgost
-      @ m_x + nRow, Col() + 8  SAY "PP (%):"
-      @ Row(), Col() + 2  SAY aPorezi[ POR_PP ] PICTURE "99.99"
-   ENDIF
+
 
    RETURN .T.
 
@@ -150,7 +147,7 @@ FUNCTION SayPorezi( nRow )
 
 
 
-/* 
+/*
  *     Puni polja izgenerisane stavke
  *   param: pIzgStavke - .f. ne puni, .t. puni
  */

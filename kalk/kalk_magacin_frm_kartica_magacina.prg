@@ -29,7 +29,7 @@ FUNCTION kalk_kartica_magacin_u_pripremi()
    SELECT kalk_pripr
    nR2 := RecNo()
 
-   SELECT tarifa
+--   SELECT tarifa
    nR3 := RecNo()
 */
 
@@ -62,7 +62,7 @@ FUNCTION kalk_kartica_magacin_u_pripremi()
    SELECT kalk_pripr
    GO nR2
 
-   SELECT tarifa
+--   SELECT tarifa
    GO nR3
 */
    PopWa()

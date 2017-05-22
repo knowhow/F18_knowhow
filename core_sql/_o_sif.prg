@@ -75,7 +75,7 @@ FUNCTION o_koncij( cId )
 
    LOCAL cTabela := "koncij"
 
-   SELECT ( F_TARIFA )
+   SELECT ( F_KONCIJ )
    IF !use_sql_sif  ( cTabela, .T., "KONCIJ", cId  )
       error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.

@@ -56,6 +56,7 @@ FUNCTION kalk_nivelacija_11()
 
       scatter()
 
+altd()
       select_o_koncij( hRec[ "idkonto" ] )
       select_o_roba( hRec[ "idroba" ] )
       select_o_tarifa( roba->idtarifa )

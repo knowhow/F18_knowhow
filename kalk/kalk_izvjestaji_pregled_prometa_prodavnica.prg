@@ -82,7 +82,7 @@ FUNCTION PPProd()
    nUNeto2 := 0
    nUNeto := 0
 
-   cPicKol := Replicate( "9", Len( pic_kolicina_bilo_gpickol() ) )
+   cPicKol := Replicate( "9", Len( kalk_pic_kolicina_bilo_gpickol() ) )
 
    SELECT ppprod
    GO TOP
@@ -93,13 +93,13 @@ FUNCTION PPProd()
 
       ? PadR( cNazivProdKonto, NAZIV_PROD_LEN )
       @ PRow(), PCol() + 1 SAY field->pari PICTURE cPicKol
-      @ PRow(), PCol() + 1 SAY field->bruto1 PICTURE pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY field->bruto2 PICTURE pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY field->bruto PICTURE pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY field->bruto1 PICTURE kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY field->bruto2 PICTURE kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY field->bruto PICTURE kalk_pic_iznos_bilo_gpicdem()
 
-      @ PRow(), PCol() + 1 SAY field->neto1 PICTURE pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY field->neto2 PICTURE pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY field->neto PICTURE pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY field->neto1 PICTURE kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY field->neto2 PICTURE kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY field->neto PICTURE kalk_pic_iznos_bilo_gpicdem()
 
       nUPari += field->pari
       nUBruto1 += field->bruto1
@@ -111,7 +111,7 @@ FUNCTION PPProd()
 
       FOR i := 1 TO Len( aPolozi )
          nPolog := FldPolog( i )
-         @ PRow(), PCol() + 1 SAY nPolog PICTURE pic_iznos_bilo_gpicdem()
+         @ PRow(), PCol() + 1 SAY nPolog PICTURE kalk_pic_iznos_bilo_gpicdem()
          // suma za polog vrste i
          aPolozi[ i, 2 ] += nPolog
       NEXT
@@ -152,8 +152,8 @@ STATIC FUNCTION Header( dDatumOd, dDatumDo, aPolozi, nStr )
    LOCAL i
    LOCAL nSirina
 
-   nSirina := ( Len( pic_kolicina_bilo_gpickol() ) + 1 )
-   nSirina += ( 6 + Len( aPolozi ) ) * ( Len( pic_iznos_bilo_gpicdem() ) + 1 )
+   nSirina := ( Len( kalk_pic_kolicina_bilo_gpickol() ) + 1 )
+   nSirina += ( 6 + Len( aPolozi ) ) * ( Len( kalk_pic_iznos_bilo_gpicdem() ) + 1 )
 
    print_nova_strana( nSirina - 8, @nStr, -1 )
    B_ON
@@ -163,30 +163,30 @@ STATIC FUNCTION Header( dDatumOd, dDatumDo, aPolozi, nStr )
    Linija( Len( aPolozi ) )
    // prvi red
    ? PadC( "Prodavnica", NAZIV_PROD_LEN )
-   @ PRow(), PCol() + 1 SAY PadC( "pari", Len( pic_kolicina_bilo_gpickol() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "bruto", Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "bruto", Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "bruto", Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "neto", Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "neto", Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "neto", Len( pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "pari", Len( kalk_pic_kolicina_bilo_gpickol() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "bruto", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "bruto", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "bruto", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "neto", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "neto", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "neto", Len( kalk_pic_iznos_bilo_gpicdem() ) )
 
    FOR i := 1 TO Len( aPolozi )
-      @ PRow(), PCol() + 1 SAY PadC( aPolozi[ i, 1 ], Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY PadC( aPolozi[ i, 1 ], Len( kalk_pic_iznos_bilo_gpicdem() ) )
    NEXT
 
    // drugi red
    ? PadC( "", NAZIV_PROD_LEN )
-   @ PRow(), PCol() + 1 SAY PadC( "", Len( pic_kolicina_bilo_gpickol() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "visa tarifa", Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "niza tarifa", Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "svega", Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "visa tarifa", Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "niza tarifa", Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY PadC( "svega", Len( pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "", Len( kalk_pic_kolicina_bilo_gpickol() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "visa tarifa", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "niza tarifa", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "svega", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "visa tarifa", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "niza tarifa", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY PadC( "svega", Len( kalk_pic_iznos_bilo_gpicdem() ) )
 
    FOR i := 1 TO Len( aPolozi )
-      @ PRow(), PCol() + 1 SAY PadC( "", Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY PadC( "", Len( kalk_pic_iznos_bilo_gpicdem() ) )
    NEXT
 
    Linija( Len( aPolozi ) )
@@ -201,20 +201,20 @@ STATIC FUNCTION Footer( nUPari, nUBruto1, nUBruto2, nUBruto, nUNeto1, nUNeto2, n
    LOCAL cPicKol
    LOCAL nUkupnoPolozi
 
-   cPicKol := Replicate( "9", Len( pic_kolicina_bilo_gpickol() ) )
+   cPicKol := Replicate( "9", Len( kalk_pic_kolicina_bilo_gpickol() ) )
 
    ? PadC( "UKUPNO:", NAZIV_PROD_LEN )
    @ PRow(), PCol() + 1 SAY nUPari PICTURE cPicKol
-   @ PRow(), PCol() + 1 SAY nUBruto1 PICTURE pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY nUBruto2 PICTURE pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY nUBruto PICTURE pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY nUNeto1 PICTURE pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY nUNeto2 PICTURE pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY nUNeto PICTURE pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nUBruto1 PICTURE kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nUBruto2 PICTURE kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nUBruto PICTURE kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nUNeto1 PICTURE kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nUNeto2 PICTURE kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nUNeto PICTURE kalk_pic_iznos_bilo_gpicdem()
 
    nUkupnoPolozi := 0
    FOR i := 1 TO Len( aPolozi )
-      @ PRow(), PCol() + 1 SAY aPolozi[ i, 2 ] PICTURE pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY aPolozi[ i, 2 ] PICTURE kalk_pic_iznos_bilo_gpicdem()
       nUkupnoPolozi += aPolozi[ i, 2 ]
    NEXT
    IF ( Round( nUkupnoPolozi - nUBruto, 4 ) <> 0 )
@@ -230,12 +230,12 @@ STATIC FUNCTION Linija( nPologa )
    LOCAL i
 
    ? Replicate( "-", NAZIV_PROD_LEN )
-   @ PRow(), PCol() + 1 SAY Replicate( "-", Len( pic_kolicina_bilo_gpickol() ) )
+   @ PRow(), PCol() + 1 SAY Replicate( "-", Len( kalk_pic_kolicina_bilo_gpickol() ) )
    FOR i := 1 TO 6
-      @ PRow(), PCol() + 1 SAY Replicate( "-", Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY Replicate( "-", Len( kalk_pic_iznos_bilo_gpicdem() ) )
    NEXT
    FOR i := 1 TO nPologa
-      @ PRow(), PCol() + 1 SAY Replicate( "-", Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY Replicate( "-", Len( kalk_pic_iznos_bilo_gpicdem() ) )
    NEXT
 
    RETURN

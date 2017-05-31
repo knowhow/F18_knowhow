@@ -56,10 +56,10 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    o_kalk_edit()
    kalk_is_novi_dokument( .F. )
 
-   PRIVATE PicCDEM := pic_cijena_bilo_gpiccdem()
+   PRIVATE PicCDEM := kalk_pic_cijena_bilo_gpiccdem()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := pic_iznos_bilo_gpicdem()
-   PRIVATE Pickol := pic_kolicina_bilo_gpickol()
+   PRIVATE PicDEM := kalk_pic_iznos_bilo_gpicdem()
+   PRIVATE Pickol := kalk_pic_kolicina_bilo_gpickol()
    PRIVATE gVarijanta := "2"
    PRIVATE PicV := "99999999.9"
 
@@ -929,7 +929,7 @@ FUNCTION kalk_edit_stavka( lNoviDokument, hParams )
    PRIVATE nMarza2 := 0
 
    PRIVATE PicDEM := "9999999.99999999"
-   PRIVATE PicKol := pic_kolicina_bilo_gpickol()
+   PRIVATE PicKol := kalk_pic_kolicina_bilo_gpickol()
 
    nStrana := 1
 

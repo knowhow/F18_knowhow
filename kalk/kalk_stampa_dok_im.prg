@@ -124,27 +124,27 @@ FUNCTION kalk_stampa_dok_im()
 
       @ PRow() + 1, 4 SAY IdTarifa + Space( 4 )
       IF cSamoObrazac == "D"
-         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE Replicate( "_", Len( pic_kolicina_bilo_gpickol() ) )
-         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE Replicate( " ", Len( pic_kolicina_bilo_gpickol() ) )
+         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE Replicate( "_", Len( kalk_pic_kolicina_bilo_gpickol() ) )
+         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE Replicate( " ", Len( kalk_pic_kolicina_bilo_gpickol() ) )
       ELSE
-         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE pic_kolicina_bilo_gpickol()
-         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE pic_kolicina_bilo_gpickol()
+         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE kalk_pic_kolicina_bilo_gpickol()
+         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE kalk_pic_kolicina_bilo_gpickol()
       ENDIF
       nC1 := PCol() + 1
 
       IF cSamoObrazac == "D"
-         @ PRow(), PCol() + 1 SAY gkolicina * nCijena  PICTURE Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) )
-         @ PRow(), PCol() + 1 SAY kolicina * nCijena   PICTURE Replicate( "_", Len( pic_iznos_bilo_gpicdem() ) )
-         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE Replicate( " ", Len( pic_kolicina_bilo_gpickol() ) )
+         @ PRow(), PCol() + 1 SAY gkolicina * nCijena  PICTURE Replicate( " ", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+         @ PRow(), PCol() + 1 SAY kolicina * nCijena   PICTURE Replicate( "_", Len( kalk_pic_iznos_bilo_gpicdem() ) )
+         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE Replicate( " ", Len( kalk_pic_kolicina_bilo_gpickol() ) )
       ELSE
-         @ PRow(), PCol() + 1 SAY gkolicina * nCijena PICTURE pic_iznos_bilo_gpicdem() // knjizna vrijednost
-         @ PRow(), PCol() + 1 SAY kolicina * nCijena  PICTURE pic_iznos_bilo_gpicdem() // popisana vrijednost
-         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE pic_kolicina_bilo_gpickol() // visak-manjak
+         @ PRow(), PCol() + 1 SAY gkolicina * nCijena PICTURE kalk_pic_iznos_bilo_gpicdem() // knjizna vrijednost
+         @ PRow(), PCol() + 1 SAY kolicina * nCijena  PICTURE kalk_pic_iznos_bilo_gpicdem() // popisana vrijednost
+         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE kalk_pic_kolicina_bilo_gpickol() // visak-manjak
       ENDIF
       IF ( cPrikazCijene == "D" )
          @ PRow(), PCol() + 1 SAY nCijena  PICTURE PicCDEM // veleprodajna cij
       ELSE
-         @ PRow(), PCol() + 1 SAY nCijena  PICTURE Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) )
+         @ PRow(), PCol() + 1 SAY nCijena  PICTURE Replicate( " ", Len( kalk_pic_iznos_bilo_gpicdem() ) )
       ENDIF
 
       nTotb += kalk_pripr->gkolicina * nCijena
@@ -162,10 +162,10 @@ FUNCTION kalk_stampa_dok_im()
       nTotGKol += kalk_pripr->gkolicina
 
       IF cSamoObrazac == "D"
-         @ PRow(), PCol() + 1 SAY nU4  PICT Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) )
+         @ PRow(), PCol() + 1 SAY nU4  PICT Replicate( " ", Len( kalk_pic_iznos_bilo_gpicdem() ) )
       ELSE
-         @ PRow(), PCol() + 1 SAY nU4 PICT iif( nU4 > 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) ) )
-         @ PRow(), PCol() + 1 SAY iif( nU4 < 0, - nU4, nU4 ) PICT iif( nU4 < 0, pic_iznos_bilo_gpicdem(), Replicate( " ", Len( pic_iznos_bilo_gpicdem() ) ) )
+         @ PRow(), PCol() + 1 SAY nU4 PICT iif( nU4 > 0, kalk_pic_iznos_bilo_gpicdem(), Replicate( " ", Len( kalk_pic_iznos_bilo_gpicdem() ) ) )
+         @ PRow(), PCol() + 1 SAY iif( nU4 < 0, - nU4, nU4 ) PICT iif( nU4 < 0, kalk_pic_iznos_bilo_gpicdem(), Replicate( " ", Len( kalk_pic_iznos_bilo_gpicdem() ) ) )
       ENDIF
 
       SKIP
@@ -181,32 +181,32 @@ FUNCTION kalk_stampa_dok_im()
 
    ? m
    @ PRow() + 1, 0 SAY "Ukupno:"
-   @ PRow(), ( PCol() * 6 ) + 2 SAY nTotKol PICT pic_kolicina_bilo_gpickol()
-   @ PRow(), PCol() + 1 SAY nTotGKol PICT pic_kolicina_bilo_gpickol()
-   @ PRow(), PCol() + 1 SAY nTotb PICT pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY nTotc PICT pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
-   @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), ( PCol() * 6 ) + 2 SAY nTotKol PICT kalk_pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY nTotGKol PICT kalk_pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY nTotb PICT kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nTotc PICT kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY Space( Len( kalk_pic_iznos_bilo_gpicdem() ) )
+   @ PRow(), PCol() + 1 SAY Space( Len( kalk_pic_iznos_bilo_gpicdem() ) )
    nColTotal := PCol() + 1
 
    IF nTotalVisak > 0
-      @ PRow(), nColTotal SAY nTotalVisak PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), nColTotal SAY nTotalVisak PICT kalk_pic_iznos_bilo_gpicdem()
    ELSE
-      @ PRow(), nColTotal SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), nColTotal SAY Space( Len( kalk_pic_iznos_bilo_gpicdem() ) )
    ENDIF
    IF nTotalManjak > 0
-      @ PRow(), PCol() + 1 SAY nTotalManjak PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nTotalManjak PICT kalk_pic_iznos_bilo_gpicdem()
    ELSE
-      @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY Space( Len( kalk_pic_iznos_bilo_gpicdem() ) )
    ENDIF
 
    ?
    IF nTotalVisak - nTotalManjak > 0
-      @ PRow(), nColTotal SAY nTotalVisak - nTotalManjak PICT pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), nColTotal SAY nTotalVisak - nTotalManjak PICT kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY Space( Len( kalk_pic_iznos_bilo_gpicdem() ) )
    ELSE
-      @ PRow(), nColTotal SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
-      @ PRow(), PCol() + 1 SAY - nTotalVisak + nTotalManjak PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), nColTotal SAY Space( Len( kalk_pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY - nTotalVisak + nTotalManjak PICT kalk_pic_iznos_bilo_gpicdem()
    ENDIF
 
 

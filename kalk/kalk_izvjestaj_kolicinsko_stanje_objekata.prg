@@ -75,7 +75,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    cPicCDem := "999999.999"
    cPicProc := "999999.99%"
    cPicDem := "9999999.99"
-   cPicKol := pic_kolicina_bilo_gpickol()
+   cPicKol := kalk_pic_kolicina_bilo_gpickol()
    qqKonto := PadR( "13;", 60 )
    qqRoba := Space( 60 )
 

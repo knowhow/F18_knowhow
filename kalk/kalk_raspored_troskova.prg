@@ -186,10 +186,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
 
             ENDIF
 
-            @ m_x + 1, m_y + 2 SAY "Step set " + cSet + " step: " + AllTrim( say_iznos( nSet ) )
+            @ m_x + 1, m_y + 2 SAY "Step set " + cSet + " step: " + AllTrim( kalk_say_iznos( nSet ) )
 
             IF !Empty( cSet )
-               ??  " / " +  AllTrim( say_iznos( hTrosakSet[ cSet + "_step" ] ) )
+               ??  " / " +  AllTrim( kalk_say_iznos( hTrosakSet[ cSet + "_step" ] ) )
             ENDIF
 
 
@@ -419,7 +419,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
             @ m_x + 3, m_y + 2 SAY "Step set " + cSet + " iznos: "
             SWITCH cSet
             CASE "prevoz"
-               ?? say_iznos( nUPrevoz )
+               ?? kalk_say_iznos( nUPrevoz )
                hTrosakSet[ "prevoz_last_2" ] := hTrosakSet[ "prevoz_last" ]
                hTrosakSet[ "prevoz_last" ] := nUPrevoz
                IF nSetStep == NIL .AND.  Round( hTrosakSet[ "prevoz" ] - nUPrevoz, 2 ) == 0
@@ -429,7 +429,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                EXIT
 
             CASE "banktr"
-               ?? say_iznos( nUBankTr )
+               ?? kalk_say_iznos( nUBankTr )
                hTrosakSet[ "banktr_last_2" ] := hTrosakSet[ "banktr_last" ]
                hTrosakSet[ "banktr_last" ] := nUBankTr
                IF nSetStep == NIL .AND. Round( hTrosakSet[ "banktr" ] - nUBanktr, 2 ) == 0
@@ -439,7 +439,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                EXIT
 
             CASE "spedtr"
-               ?? say_iznos( nUSpedtr )
+               ?? kalk_say_iznos( nUSpedtr )
                hTrosakSet[ "spedtr_last_2" ] := hTrosakSet[ "spedtr_last" ]
                hTrosakSet[ "spedtr_last" ] := nUSpedTr
                IF nSetStep == NIL .AND. Round( hTrosakSet[ "spedtr" ] - nUSpedTr, 2 ) == 0
@@ -449,7 +449,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                EXIT
 
             CASE "zavtr"
-               ?? say_iznos( nUZavTr )
+               ?? kalk_say_iznos( nUZavTr )
                hTrosakSet[ "zavtr_last_2" ] := hTrosakSet[ "zavtr_last" ]
                hTrosakSet[ "zavtr_last" ] := nUZavTr
                IF nSetStep == NIL .AND. Round( hTrosakSet[ "zavtr" ] - nUZavTr, 2 ) == 0
@@ -460,7 +460,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
 
 
             CASE "cardaz"
-               ?? say_iznos( nUCarDaz )
+               ?? kalk_say_iznos( nUCarDaz )
                hTrosakSet[ "cardaz_last_2" ] := hTrosakSet[ "cardaz_last" ]
                hTrosakSet[ "cardaz_last" ] := nUCarDaz
                IF nSetStep == NIL .AND. Round( hTrosakSet[ "cardaz" ] - nUCarDaz, 2 ) == 0
@@ -569,32 +569,32 @@ FUNCTION raspored_procent_tr( cTipPrevoz, nIznosPrevoz, cTipCarDaz, nIznosCarDaz
    IF cTipPrevoz == "%"  .AND. Round(  nIznosPrevoz, 3 ) >  0
       hRet[ "prevoz_0" ] := nIznosPrevoz
       hRet[ "prevoz" ] := nIznosPrevoz
-      @ m_x + 1, m_y + 2 SAY  " [T1] : " + say_iznos( nIznosPrevoz ) GET hRet[ "prevoz" ]
+      @ m_x + 1, m_y + 2 SAY  " [T1] : " + kalk_say_iznos( nIznosPrevoz ) GET hRet[ "prevoz" ]
 
    ENDIF
 
    IF cTipBankTr == "%" .AND. Round(  nIznosBankTr, 3 ) >  0
       hRet[ "banktr_0" ] := nIznosBankTr
       hRet[ "banktr" ] := nIznosBankTr
-      @ m_x + 2, m_y + 2 SAY  " [T2]  " + say_iznos( nIznosBankTr ) GET hRet[ "banktr" ]
+      @ m_x + 2, m_y + 2 SAY  " [T2]  " + kalk_say_iznos( nIznosBankTr ) GET hRet[ "banktr" ]
    ENDIF
 
    IF cTipSpedTr == "%" .AND. Round(  nIznosSpedTr, 3 ) >  0
       hRet[ "spedtr_0" ] := nIznosSpedTr
       hRet[ "spedtr" ] := nIznosSpedTr
-      @ m_x + 3, m_y + 2 SAY  " [T3]  " + say_iznos( nIznosSpedTr ) GET hRet[ "spedtr" ]
+      @ m_x + 3, m_y + 2 SAY  " [T3]  " + kalk_say_iznos( nIznosSpedTr ) GET hRet[ "spedtr" ]
    ENDIF
 
    IF cTipCarDaz == "%" .AND. Round(  nIznosCarDaz, 3 ) >  0
       hRet[ "cardaz_0" ] := nIznosCarDaz
       hRet[ "cardaz" ] := nIznosCarDaz
-      @ m_x + 4, m_y + 2 SAY  " [T4]  " + say_iznos( nIznosCarDaz ) GET hRet[ "cardaz" ]
+      @ m_x + 4, m_y + 2 SAY  " [T4]  " + kalk_say_iznos( nIznosCarDaz ) GET hRet[ "cardaz" ]
    ENDIF
 
    IF cTipZavTr == "%" .AND. Round(  nIznosZavTr, 3 ) >  0
       hRet[ "zavtr_0" ] := nIznosCarDaz
       hRet[ "zavtr" ] := nIznosZavTr
-      @ m_x + 5, m_y + 2 SAY  " [T5]  " + say_iznos( nIznosZavTr ) GET hRet[ "zavtr" ]
+      @ m_x + 5, m_y + 2 SAY  " [T5]  " + kalk_say_iznos( nIznosZavTr ) GET hRet[ "zavtr" ]
    ENDIF
 
    READ

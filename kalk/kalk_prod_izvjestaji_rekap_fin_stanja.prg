@@ -22,8 +22,8 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
 
    aPorezi := {}
 
-   PicDEM := prosiri_pic_iznos_za_2()
-   PicCDEM := prosiri_pic_cjena_za_2()
+   PicDEM := kalk_prosiri_pic_iznos_za_2()
+   PicCDEM := kalk_prosiri_pic_cjena_za_2()
 
    cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "132.", gDuzKonto )

@@ -197,4 +197,4 @@ STATIC FUNCTION Zagl12()
    RETURN
 
 FUNCTION g_picdem_mat()
-   RETURN iif( g2Valute == "N", gPicDin, pic_iznos_bilo_gpicdem() )
+   RETURN iif( g2Valute == "N", gPicDin, kalk_pic_iznos_bilo_gpicdem() )

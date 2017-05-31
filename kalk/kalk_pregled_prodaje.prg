@@ -299,9 +299,9 @@ FUNCTION roba_pregled_prodaje_po_grupama()
       nIznos := nKol := 0
       FOR i := 1 TO Len( aGr )
          ? PadR( aGr[ i, 1 ], 40 ), ;
-            TRANS( aGr[ i, 2 ], pic_iznos_bilo_gpicdem() ), ;
+            TRANS( aGr[ i, 2 ], kalk_pic_iznos_bilo_gpicdem() ), ;
             PadR( aGr[ i, 3 ], 10 ), ;
-            TRANS( aGr[ i, 4 ], pic_iznos_bilo_gpicdem() )
+            TRANS( aGr[ i, 4 ], kalk_pic_iznos_bilo_gpicdem() )
          nKol += aGr[ i, 2 ]
          nIznos += aGr[ i, 4 ]
       NEXT
@@ -522,11 +522,11 @@ FUNCTION SDiv( nDjelilac, nDijeljenik )
 FUNCTION GetPictDem( nLen, nDec )
 
    // ovo odmah znamo = duzina
-   nLen := Len( pic_iznos_bilo_gpicdem() )
+   nLen := Len( kalk_pic_iznos_bilo_gpicdem() )
 
    // sracunaj broj decimala
-   nAt := At( ".", pic_iznos_bilo_gpicdem() )
-   nPom := SubStr( pic_iznos_bilo_gpicdem(), ( nAt + 1 ), ( nLen - nAt ) )
+   nAt := At( ".", kalk_pic_iznos_bilo_gpicdem() )
+   nPom := SubStr( kalk_pic_iznos_bilo_gpicdem(), ( nAt + 1 ), ( nLen - nAt ) )
 
    nDec := Len( nPom )
 

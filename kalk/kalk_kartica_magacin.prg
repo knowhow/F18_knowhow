@@ -34,10 +34,10 @@ FUNCTION kalk_kartica_magacin()
    PRIVATE fKNabC := .F.
    PRIVATE fVeci := .F.
 
-   PRIVATE PicCDEM := prosiri_pic_cjena_za_2()
+   PRIVATE PicCDEM := kalk_prosiri_pic_cjena_za_2()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := prosiri_pic_iznos_za_2()
-   PRIVATE PicKol := prosiri_pic_kolicina_za_2()
+   PRIVATE PicDEM := kalk_prosiri_pic_iznos_za_2()
+   PRIVATE PicKol := kalk_prosiri_pic_kolicina_za_2()
 
    kartica_magacin_open_tabele()
 
@@ -277,12 +277,12 @@ FUNCTION kalk_kartica_magacin()
             ENDIF
 
             IF cPVSS == "N"
-               @ PRow(), PCol() + 1 SAY say_iznos( tnNVd ) // NV dug. NV pot.
-               @ PRow(), PCol() + 1 SAY say_iznos( tnNVp )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( tnNVd ) // NV dug. NV pot.
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( tnNVp )
             ENDIF
 
 
-            @ PRow(), PCol() + 1 SAY say_iznos( nNV ) // NV
+            @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNV ) // NV
 
             @ PRow(), PCol() + 1 SAY say_kolicina( nRabat ) // RABAT
 
@@ -335,12 +335,12 @@ FUNCTION kalk_kartica_magacin()
             IF datdok >= dDatod
 
                IF cPVSS == "N" // NV dug. NV pot.
-                  @ PRow(), PCol() + 1 SAY say_iznos( nNVd   )
-                  @ PRow(), PCol() + 1 SAY say_iznos( nNVp   )
+                  @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVd   )
+                  @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVp   )
                ENDIF
 
 
-               @ PRow(), PCol() + 1 SAY say_iznos( nNV   )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNV   )
 
 
                @ PRow(), PCol() + 1 SAY say_cijena( 0 ) // RABAT
@@ -403,11 +403,11 @@ FUNCTION kalk_kartica_magacin()
 
                // NV pot. NV dug.
                IF cPVSS == "N"
-                  @ PRow(), PCol() + 1 SAY say_iznos( nNVd )
-                  @ PRow(), PCol() + 1 SAY say_iznos( nNVp )
+                  @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVd )
+                  @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVp )
                ENDIF
 
-               @ PRow(), PCol() + 1 SAY say_iznos( nNV )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNV )
 
                // VPC
                IF koncij->naz == "P2"
@@ -442,11 +442,11 @@ FUNCTION kalk_kartica_magacin()
 
                // NC pot. NC dug.
                IF cPVSS == "N"
-                  @ PRow(), PCol() + 1 SAY say_iznos( nNVd   )
-                  @ PRow(), PCol() + 1 SAY say_iznos( nNVp   )
+                  @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVd   )
+                  @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVp   )
                ENDIF
 
-               @ PRow(), PCol() + 1 SAY say_iznos( nNV )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNV )
 
             ENDIF
             nNVp := -field->nc * ( kolicina )
@@ -528,10 +528,10 @@ FUNCTION kalk_kartica_magacin()
             IF field->datdok >= dDatod
 
                IF cPVSS == "N"
-                  @ PRow(), PCol() + 1 SAY say_iznos( nNVd   )
-                  @ PRow(), PCol() + 1 SAY say_iznos( nNVp   )
+                  @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVd   )
+                  @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVp   )
                ENDIF
-               @ PRow(), PCol() + 1 SAY say_iznos( nNv  )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNv  )
                IF koncij->naz == "P2"
                   @ PRow(), PCol() + 1 SAY say_cijena( vpc * rabatv / 100 * kolicina  )
                   @ PRow(), PCol() + 1 SAY say_cijena( roba->plc  )
@@ -625,10 +625,10 @@ FUNCTION kalk_kartica_magacin()
          @ PRow(), PCol() + 1 SAY say_kolicina( 0 )
       ENDIF
       IF cPVSS == "N"
-         @ PRow(), PCol() + 1 SAY say_iznos( tnNVd )
-         @ PRow(), PCol() + 1 SAY say_iznos( tnNVp )
+         @ PRow(), PCol() + 1 SAY kalk_say_iznos( tnNVd )
+         @ PRow(), PCol() + 1 SAY kalk_say_iznos( tnNVp )
       ENDIF
-      @ PRow(), PCol() + 1 SAY say_iznos( nNV )
+      @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNV )
       @ PRow(), PCol() + 1 SAY say_kolicina( nRabat  )
 
 

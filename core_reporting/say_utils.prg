@@ -14,34 +14,37 @@
 
 FUNCTION say_kolicina( nVar, cPic )
 
-   hb_default( @cPic, prosiri_pic_kolicina_za_2() )
+   hb_default( @cPic, kalk_prosiri_pic_kolicina_za_2() )
 
    RETURN say_pict( nVar, cPic, .T. )
 
 
-FUNCTION say_iznos( nVar, cPic )
+FUNCTION kalk_say_iznos( nVar, cPic )
 
-   hb_default( @cPic, prosiri_pic_iznos_za_2() )
+   hb_default( @cPic, kalk_prosiri_pic_iznos_za_2() )
 
    RETURN say_pict( nVar, cPic )
 
 
 FUNCTION say_cijena( nVar, cPic )
 
-   hb_default( @cPic, prosiri_pic_cjena_za_2() )
+   hb_default( @cPic, kalk_prosiri_pic_cjena_za_2() )
 
    RETURN say_pict( nVar, cPic )
 
 
 FUNCTION say_pict( nVar, cPicture, lZero )
 
-   LOCAL nLen := Len( cPicture ), cPic2, cVar, nI
+   LOCAL nLen, cPic1, cPic2, cIspis, nI
 
    hb_default( @lZero, .F. )
 
+   cPic1 := StrTran( cPicture, "@Z ", "" )
+   cPic1 := StrTran( cPic1, " ", "" )
+   nLen := Len( cPic1 )
 
    nVar := Round( nVar, 4 )
-   FOR nI := 0 TO 3
+   FOR nI := 0 TO 3  // 99999, 9999.9, 999.99, 99.999
       IF nI == 0
          cPic2 := Replicate( "9", nLen )
       ELSE
@@ -51,10 +54,10 @@ FUNCTION say_pict( nVar, cPicture, lZero )
       IF lZero
          cPic2 := "@Z " + cPic2
       ENDIF
-      cVar := Transform( nVar, cPic2 ) // 5.2 "999999" => "    5"
+      cIspis := Transform( nVar, cPic2 ) // 5.2 "999999" => "    5"
 
-      IF Val( cVar ) == nVar
-         RETURN cVar
+      IF Val( cIspis ) == nVar
+         RETURN cIspis
       ENDIF
 
    NEXT

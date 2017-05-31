@@ -26,10 +26,10 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    nCol2 := 0
    nPom := 0
 
-   PRIVATE PicCDEM := pic_cijena_bilo_gpiccdem()
+   PRIVATE PicCDEM := kalk_pic_cijena_bilo_gpiccdem()
    PRIVATE PicProc := gPICPROC
-   PRIVATE PicDEM  := pic_iznos_bilo_gpicdem()
-   PRIVATE Pickol  := pic_kolicina_bilo_gpickol()
+   PRIVATE PicDEM  := kalk_pic_iznos_bilo_gpicdem()
+   PRIVATE Pickol  := kalk_pic_kolicina_bilo_gpickol()
    PRIVATE nStr := 0
 
    IF ( PCount() == 0 )

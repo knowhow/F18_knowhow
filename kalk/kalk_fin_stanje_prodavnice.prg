@@ -24,8 +24,8 @@ FUNCTION finansijsko_stanje_prodavnica()
    LOCAL dDatOd, dDatDo
    LOCAL cIdFirma
 
-   cPicIznos := prosiri_pic_iznos_za_2()
-   cPicCijena := prosiri_pic_cjena_za_2()
+   cPicIznos := kalk_prosiri_pic_iznos_za_2()
+   cPicCijena := kalk_prosiri_pic_cjena_za_2()
 
    cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "133", gDuzKonto )

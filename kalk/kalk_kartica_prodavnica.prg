@@ -33,20 +33,20 @@ FUNCTION kalk_kartica_prodavnica()
    LOCAL cIdvd := Space( 100 )
    LOCAL hParams := hb_Hash(), cExportDN := "N", lExport := .F.
 
-   PRIVATE PicCDEM := prosiri_pic_cjena_za_2()
+   PRIVATE PicCDEM := kalk_prosiri_pic_cjena_za_2()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := prosiri_pic_iznos_za_2()
-   PRIVATE PicKol := prosiri_pic_kolicina_za_2()
+   PRIVATE PicDEM := kalk_prosiri_pic_iznos_za_2()
+   PRIVATE PicKol := kalk_prosiri_pic_kolicina_za_2()
    PRIVATE nMarza, nMarza2, nPRUC, aPorezi
 
    _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
-   o_tarifa()
+   //o_tarifa()
    o_sifk()
    o_sifv()
   // o_roba()
-   o_konto()
-   o_partner()
+   //o_konto()
+   //o_partner()
 
    cPredh := "N"
    dDatOd := Date()
@@ -212,8 +212,8 @@ FUNCTION kalk_kartica_prodavnica()
                @ PRow(), PCol() + 1 SAY say_kolicina( 0            )
                @ PRow(), PCol() + 1 SAY say_cijena( nMPV / ( nUlaz - nIzlaz ) )
             ELSEIF Round( nMpv, 3 ) <> 0
-               @ PRow(), PCol() + 1 SAY say_kolicina( 0            )
-               @ PRow(), PCol() + 1 SAY say_kolicina( 0            )
+               @ PRow(), PCol() + 1 SAY say_kolicina( 0  )
+               @ PRow(), PCol() + 1 SAY say_kolicina( 0  )
                @ PRow(), PCol() + 1 SAY PadC( "ERR", Len( piccdem ) )
             ELSE
                @ PRow(), PCol() + 1 SAY say_kolicina( 0            )
@@ -254,7 +254,7 @@ FUNCTION kalk_kartica_prodavnica()
             nNV += field->nc * field->kolicina
 
             IF field->datdok >= dDatOd
-               @ PRow(), PCol() + 1 SAY say_iznos( nMpv )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nMpv )
             ENDIF
 
             IF _is_rok
@@ -306,7 +306,7 @@ FUNCTION kalk_kartica_prodavnica()
             nNV -= field->nc * field->kolicina
 
             IF field->datdok >= dDatOd
-               @ PRow(), PCol() + 1 SAY say_iznos( nMpv )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nMpv )
             ENDIF
 
          ELSEIF field->pu_i == "I"
@@ -330,7 +330,7 @@ FUNCTION kalk_kartica_prodavnica()
             nNV -= field->nc * field->gkolicin2
 
             IF field->datdok >= dDatod
-               @ PRow(), PCol() + 1 SAY say_iznos( nMpv )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nMpv )
             ENDIF
 
          ELSEIF field->pu_i == "5" .AND. ( field->idvd $ "12#13#22" )
@@ -358,7 +358,7 @@ FUNCTION kalk_kartica_prodavnica()
             nNV -= field->nc * field->kolicina
 
             IF field->datdok >= dDatod
-               @ PRow(), PCol() + 1 SAY say_iznos( nMpv )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nMpv )
             ENDIF
 
          ELSEIF field->pu_i == "3"
@@ -380,7 +380,7 @@ FUNCTION kalk_kartica_prodavnica()
             nMPV += field->mpcsapp * field->kolicina
 
             IF field->datdok >= dDatod
-               @ PRow(), PCol() + 1 SAY say_iznos( nMpv )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nMpv )
             ENDIF
 
          ENDIF
@@ -450,7 +450,7 @@ FUNCTION kalk_kartica_prodavnica()
          @ PRow(), PCol() + 1 SAY say_kolicina( 0 )
       ENDIF
 
-      @ PRow(), PCol() + 1 SAY say_iznos( nMpv )
+      @ PRow(), PCol() + 1 SAY kalk_say_iznos( nMpv )
 
       ? __line
       ?
@@ -488,12 +488,12 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1 )
    nPom := 6
    AAdd( aKProd, { nPom, PadC( "Partn", nPom ) } )
 
-   nPom := Len( prosiri_pic_kolicina_za_2() )
+   nPom := Len( kalk_prosiri_pic_kolicina_za_2() )
    AAdd( aKProd, { nPom, PadC( "Ulaz", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "Izlaz", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "Stanje", nPom ) } )
 
-   nPom := Len( prosiri_pic_iznos_za_2() )
+   nPom := Len( kalk_prosiri_pic_iznos_za_2() )
    AAdd( aKProd, { nPom, PadC( "NC", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "PC", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "PC sa PDV", nPom ) } )
@@ -520,8 +520,7 @@ FUNCTION Test( cIdRoba )
 
 STATIC FUNCTION Zagl()
 
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    Preduzece()
    P_12CPI
@@ -541,8 +540,8 @@ STATIC FUNCTION Zagl()
 
 FUNCTION naprometniji_artikli_prodavnica()
 
-   LOCAL PicDEM := pic_iznos_bilo_gpicdem()
-   LOCAL Pickol := "@Z " + pic_kolicina_bilo_gpickol()
+   LOCAL PicDEM := kalk_pic_iznos_bilo_gpicdem()
+   LOCAL Pickol := "@Z " + kalk_pic_kolicina_bilo_gpickol()
 
    qqKonto := "133;"
    qqRoba  := ""

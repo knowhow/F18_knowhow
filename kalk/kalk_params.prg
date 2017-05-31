@@ -399,9 +399,9 @@ FUNCTION metodanc_info()
 
 FUNCTION kalk_par_cijene()
 
-   LOCAL cCijena := pic_cijena_bilo_gpiccdem()
-   LOCAL cIznos := pic_iznos_bilo_gpicdem()
-   LOCAL cKolicina :=  pic_kolicina_bilo_gpickol()
+   LOCAL cCijena := kalk_pic_cijena_bilo_gpiccdem()
+   LOCAL cIznos := kalk_pic_iznos_bilo_gpicdem()
+   LOCAL cKolicina :=  kalk_pic_kolicina_bilo_gpickol()
    LOCAL GetList := {}
 
    Box(, 10, 60, .F., "PARAMETRI PRIKAZA - PICTURE KODOVI" )
@@ -424,10 +424,10 @@ FUNCTION kalk_par_cijene()
    BoxC()
 
    IF LastKey() <> K_ESC
-      pic_cijena_bilo_gpiccdem( cCijena )
+      kalk_pic_cijena_bilo_gpiccdem( cCijena )
       set_metric( "kalk_format_prikaza_procenta", NIL, gPicProc )
-      pic_iznos_bilo_gpicdem( cIznos )
-      pic_kolicina_bilo_gpickol( cKolicina )
+      kalk_pic_iznos_bilo_gpicdem( cIznos )
+      kalk_pic_kolicina_bilo_gpickol( cKolicina )
       set_metric( "kalk_format_prikaza_nabavne_cijene", NIL, gPicNC )
       // set_metric( "kalk_format_prikaza_cijene_prosirenje", nil, gFPicCDem )
       // set_metric( "kalk_format_prikaza_iznosa_prosirenje", nil, gFPicDem )

@@ -50,9 +50,9 @@ FUNCTION lager_lista_magacin()
    LOCAL dL_izlaz := CToD( "" )
    LOCAL hParams
 
-   // pPicDem := prosiri_pic_iznos_za_2()
-   // pPicCDem := prosiri_pic_cjena_za_2()
-   // pPicKol := prosiri_pic_kolicina_za_2()
+   // pPicDem := kalk_prosiri_pic_iznos_za_2()
+   // pPicCDem := kalk_prosiri_pic_cjena_za_2()
+   // pPicKol := kalk_prosiri_pic_kolicina_za_2()
 
    cIdFirma := self_organizacija_id()
    cPrikazDob := "N"
@@ -681,25 +681,25 @@ FUNCTION lager_lista_magacin()
 
 
          // NV
-         @ PRow(), PCol() + 1 SAY say_iznos( nNVU )
-         @ PRow(), PCol() + 1 SAY say_iznos( nNVI  )
-         @ PRow(), PCol() + 1 SAY say_iznos( nNVU - nNVI )
+         @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVU )
+         @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVI  )
+         @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVU - nNVI )
 
          IF cDoNab == "N"
 
 
             IF _vpc_iz_sif == "D"
                // sa vpc iz sifrarnika robe
-               @ PRow(), PCol() + 1 SAY say_iznos( nVPVU )
-               @ PRow(), PCol() + 1 SAY say_iznos( nRabat )
-               @ PRow(), PCol() + 1 SAY say_iznos( nVPVI )
-               @ PRow(), PCol() + 1 SAY say_iznos( nVPVU - nVPVI )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nVPVU )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nRabat )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nVPVI )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nVPVU - nVPVI )
             ELSE
                // sa vpc iz tabele kalk
-               @ PRow(), PCol() + 1 SAY say_iznos( nVPVRU )
-               @ PRow(), PCol() + 1 SAY say_iznos( nRabat )
-               @ PRow(), PCol() + 1 SAY say_iznos( nVPVRI )
-               @ PRow(), PCol() + 1 SAY say_iznos( nVPVRU - nVPVRI )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nVPVRU )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nRabat )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nVPVRI )
+               @ PRow(), PCol() + 1 SAY kalk_say_iznos( nVPVRU - nVPVRI )
             ENDIF
 
          ENDIF
@@ -734,34 +734,34 @@ FUNCTION lager_lista_magacin()
 
 
          IF cMink <> "N" .AND. nMink > 0
-            @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( prosiri_pic_kolicina_za_2() ) )
+            @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( kalk_prosiri_pic_kolicina_za_2() ) )
             @ PRow(), PCol() + 1 SAY say_kolicina( nKJMJ * nMink  )
          ENDIF
 
 
          // ulaz - prazno
-         @ PRow(), nCol0 SAY Space( Len( prosiri_pic_kolicina_za_2() ) )
+         @ PRow(), nCol0 SAY Space( Len( kalk_prosiri_pic_kolicina_za_2() ) )
          // izlaz - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_kolicina_za_2() ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( kalk_prosiri_pic_kolicina_za_2() ) )
          // stanje - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_kolicina_za_2() ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( kalk_prosiri_pic_kolicina_za_2() ) )
          // nv.dug - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_iznos_za_2() ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( kalk_prosiri_pic_iznos_za_2() ) )
          // nv.pot - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_iznos_za_2() ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( kalk_prosiri_pic_iznos_za_2() ) )
          // prikazi NC
          IF Round( nUlaz - nIzlaz, 4 ) <> 0
 
-            @ PRow(), PCol() + 1 SAY say_iznos( ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) )
+            @ PRow(), PCol() + 1 SAY kalk_say_iznos( ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) )
 
          ENDIF
          IF cDoNab == "N"
             // pv.dug - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_iznos_za_2() ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( kalk_prosiri_pic_iznos_za_2() ) )
             // rabat - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_iznos_za_2() ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( kalk_prosiri_pic_iznos_za_2() ) )
             // pv.pot - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( prosiri_pic_iznos_za_2() ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( kalk_prosiri_pic_iznos_za_2() ) )
             // prikazi PC
             IF Round( nUlaz - nIzlaz, 4 ) <> 0
                @ PRow(), PCol() + 1 SAY say_cijena( nVPCIzSif )
@@ -1014,7 +1014,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
    nPom := 3
    AAdd( aLLM, { nPom, PadC( "jmj", nPom ), PadC( "", nPom ), PadC( "3", nPom ) } )
 
-   nPom := Len( prosiri_pic_kolicina_za_2() )
+   nPom := Len( kalk_prosiri_pic_kolicina_za_2() )
    // ulaz
    AAdd( aLLM, { nPom, PadC( "ulaz", nPom ), PadC( "", nPom ), PadC( "4", nPom ) } )
    // izlaz
@@ -1026,7 +1026,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    // NV podaci
    // -------------------------------
-   nPom := Len( prosiri_pic_cjena_za_2() )
+   nPom := Len( kalk_prosiri_pic_cjena_za_2() )
    // nv dug.
    AAdd( aLLM, { nPom, PadC( "NV.Dug.", nPom ), PadC( "", nPom ), PadC( "6", nPom ) } )
    // nv pot.
@@ -1036,7 +1036,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    IF cDoNab == "N"
 
-      nPom := Len( prosiri_pic_cjena_za_2() )
+      nPom := Len( kalk_prosiri_pic_cjena_za_2() )
       // pv.dug
       AAdd( aLLM, { nPom, PadC( "PV.Dug.", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
       // rabat
@@ -1052,7 +1052,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    IF cSredCij == "D"
 
-      nPom := Len( prosiri_pic_cjena_za_2() )
+      nPom := Len( kalk_prosiri_pic_cjena_za_2() )
       // sredi cijene
       AAdd( aLLM, { nPom, PadC( "Sred.cij", nPom ), PadC( "", nPom ), PadC( "", nPom ) } )
 

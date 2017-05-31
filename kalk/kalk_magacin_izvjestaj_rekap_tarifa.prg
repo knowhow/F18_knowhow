@@ -20,10 +20,10 @@ FUNCTION RekMagTar()
    LOCAL nTT1 := nTT4 := nTT5 := nTT6 := nTT7 := 0
    LOCAL n1 := n4 := n5 := n6 := n7 := 0
    LOCAL nCol1 := 0
-   LOCAL PicCDEM := prosiri_pic_cjena_za_2()
+   LOCAL PicCDEM := kalk_prosiri_pic_cjena_za_2()
    LOCAL PicProc := gPicProc
-   LOCAL PicDEM := prosiri_pic_iznos_za_2()
-   LOCAL Pickol := pic_kolicina_bilo_gpickol()
+   LOCAL PicDEM := kalk_prosiri_pic_iznos_za_2()
+   LOCAL Pickol := kalk_pic_kolicina_bilo_gpickol()
 
    dDat1 := dDat2 := CToD( "" )
    qqKonto := PadR( "1310;", 60 )

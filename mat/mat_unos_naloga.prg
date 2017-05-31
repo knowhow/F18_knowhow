@@ -737,18 +737,18 @@ FUNCTION mat_st_anal_nalog( fnovi )
             @ PRow(), PCol() + 1 SAY DatDok
             IF ( gkonto == "D" .OR. g2Valute == "N" ) .AND. gNW != "R"
                IF Round( kolicina, 4 ) <> 0
-                  @ PRow(), PCol() + 1 SAY iznos / kolicina PICTURE Right( pic_iznos_bilo_gpicdem() + "9", Len( pic_iznos_bilo_gpicdem() ) )
+                  @ PRow(), PCol() + 1 SAY iznos / kolicina PICTURE Right( kalk_pic_iznos_bilo_gpicdem() + "9", Len( kalk_pic_iznos_bilo_gpicdem() ) )
                ELSE
-                  @ PRow(), PCol() + 1  SAY 0 PICTURE Right( pic_iznos_bilo_gpicdem() + "9", Len( pic_iznos_bilo_gpicdem() ) )
+                  @ PRow(), PCol() + 1  SAY 0 PICTURE Right( kalk_pic_iznos_bilo_gpicdem() + "9", Len( kalk_pic_iznos_bilo_gpicdem() ) )
                ENDIF
             ENDIF
             nCK := PCol() + 1
             IF U_I == "1"
-               @ PRow(), PCol() + 1 SAY Kolicina PICTURE "@Z " + pic_kolicina_bilo_gpickol()
-               @ PRow(), PCol() + 1 SAY 0        PICTURE "@Z " + pic_kolicina_bilo_gpickol()
+               @ PRow(), PCol() + 1 SAY Kolicina PICTURE "@Z " + kalk_pic_kolicina_bilo_gpickol()
+               @ PRow(), PCol() + 1 SAY 0        PICTURE "@Z " + kalk_pic_kolicina_bilo_gpickol()
             ELSE
-               @ PRow(), PCol() + 1 SAY 0        PICTURE "@Z " + pic_kolicina_bilo_gpickol()
-               @ PRow(), PCol() + 1 SAY Kolicina PICTURE "@Z " + pic_kolicina_bilo_gpickol()
+               @ PRow(), PCol() + 1 SAY 0        PICTURE "@Z " + kalk_pic_kolicina_bilo_gpickol()
+               @ PRow(), PCol() + 1 SAY Kolicina PICTURE "@Z " + kalk_pic_kolicina_bilo_gpickol()
             ENDIF
 
             nCI := PCol() + 1

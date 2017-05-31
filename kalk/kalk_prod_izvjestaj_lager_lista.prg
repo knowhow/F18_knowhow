@@ -27,9 +27,9 @@ FUNCTION lager_lista_prodavnica()
    // indikator gresaka
    LOCAL lImaGresaka := .F.
    LOCAL cKontrolnaTabela
-   LOCAL cPicKol := pic_kolicina_bilo_gpickol()
-   LOCAL cPicCDEm := prosiri_pic_cjena_za_2()
-   LOCAL cPicDem := pic_iznos_bilo_gpicdem()
+   LOCAL cPicKol := kalk_pic_kolicina_bilo_gpickol()
+   LOCAL cPicCDEm := kalk_prosiri_pic_cjena_za_2()
+   LOCAL cPicDem := kalk_pic_iznos_bilo_gpicdem()
    LOCAL cSrKolNula := "0"
    LOCAL _curr_user := "<>"
    LOCAL cMpcIzSif := "N"
@@ -220,22 +220,22 @@ FUNCTION lager_lista_prodavnica()
    nLen := 1
 
    m := "----- ---------- -------------------- ---"
-   nPom := Len( pic_kolicina_bilo_gpickol() )
+   nPom := Len( kalk_pic_kolicina_bilo_gpickol() )
    m += " " + REPL( "-", nPom )
    m += " " + REPL( "-", nPom )
    m += " " + REPL( "-", nPom )
-   nPom := Len( pic_iznos_bilo_gpicdem() )
+   nPom := Len( kalk_pic_iznos_bilo_gpicdem() )
    m += " " + REPL( "-", nPom )
    m += " " + REPL( "-", nPom )
    m += " " + REPL( "-", nPom )
    m += " " + REPL( "-", nPom )
 
    IF cPredhstanje == "D"
-      nPom := Len( pic_kolicina_bilo_gpickol() ) - 2
+      nPom := Len( kalk_pic_kolicina_bilo_gpickol() ) - 2
       m += " " + REPL( "-", nPom )
    ENDIF
    IF cSredCij == "D"
-      nPom := Len( pic_cijena_bilo_gpiccdem() )
+      nPom := Len( kalk_pic_cijena_bilo_gpiccdem() )
       m += " " + REPL( "-", nLen )
    ENDIF
 
@@ -445,12 +445,12 @@ FUNCTION lager_lista_prodavnica()
          nCol0 := PCol() + 1
 
          IF cPredhStanje == "D"
-            @ PRow(), PCol() + 1 SAY nPKol PICT pic_kolicina_bilo_gpickol()
+            @ PRow(), PCol() + 1 SAY nPKol PICT kalk_pic_kolicina_bilo_gpickol()
          ENDIF
 
-         @ PRow(), PCol() + 1 SAY nUlaz PICT pic_kolicina_bilo_gpickol()
-         @ PRow(), PCol() + 1 SAY nIzlaz PICT pic_kolicina_bilo_gpickol()
-         @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz + nPkol PICT pic_kolicina_bilo_gpickol()
+         @ PRow(), PCol() + 1 SAY nUlaz PICT kalk_pic_kolicina_bilo_gpickol()
+         @ PRow(), PCol() + 1 SAY nIzlaz PICT kalk_pic_kolicina_bilo_gpickol()
+         @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz + nPkol PICT kalk_pic_kolicina_bilo_gpickol()
 
          IF lPocStanje
 
@@ -534,9 +534,9 @@ FUNCTION lager_lista_prodavnica()
 
          nCol1 := PCol() + 1
 
-         @ PRow(), PCol() + 1 SAY nMPVU PICT pic_iznos_bilo_gpicdem()
-         @ PRow(), PCol() + 1 SAY nMPVI PICT pic_iznos_bilo_gpicdem()
-         @ PRow(), PCol() + 1 SAY nMPVU - nMPVI + nPMPV PICT pic_iznos_bilo_gpicdem()
+         @ PRow(), PCol() + 1 SAY nMPVU PICT kalk_pic_iznos_bilo_gpicdem()
+         @ PRow(), PCol() + 1 SAY nMPVI PICT kalk_pic_iznos_bilo_gpicdem()
+         @ PRow(), PCol() + 1 SAY nMPVU - nMPVI + nPMPV PICT kalk_pic_iznos_bilo_gpicdem()
 
          select_o_koncij( cIdKonto )
          select_o_roba( cIdRoba )
@@ -548,11 +548,11 @@ FUNCTION lager_lista_prodavnica()
          IF Round( nUlaz - nIzlaz + nPKOL, 2 ) <> 0
 
             // if cMpcIzSif == "D"
-            // @ prow(), pcol() + 1 SAY _mpc pict pic_cijena_bilo_gpiccdem()
+            // @ prow(), pcol() + 1 SAY _mpc pict kalk_pic_cijena_bilo_gpiccdem()
             // nTMpv += ( ( nUlaz - nIzlaz + nPKOL ) * _mpc )
             // else
             // mpcsapdv
-            @ PRow(), PCol() + 1 SAY ( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ) PICT pic_cijena_bilo_gpiccdem()
+            @ PRow(), PCol() + 1 SAY ( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ) PICT kalk_pic_cijena_bilo_gpiccdem()
 
             // if ROUND(( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol ), 2) <> ROUND( _mpc, 2 )
             // ?? " ERR MPC =", ALLTRIM( STR( _mpc, 12, 2 )  )
@@ -562,7 +562,7 @@ FUNCTION lager_lista_prodavnica()
          ELSE
 
             // stanje artikla je 0
-            @ PRow(), PCol() + 1 SAY 0 PICT pic_iznos_bilo_gpicdem()
+            @ PRow(), PCol() + 1 SAY 0 PICT kalk_pic_iznos_bilo_gpicdem()
 
             IF Round( ( nMPVU - nMPVI + nPMPV ), 4 ) <> 0
                ?? " ERR"
@@ -588,25 +588,25 @@ FUNCTION lager_lista_prodavnica()
          ENDIF
 
          IF cPredhStanje == "D"
-            @ PRow(), PCol() + 1 SAY nPMPV PICT pic_iznos_bilo_gpicdem()
+            @ PRow(), PCol() + 1 SAY nPMPV PICT kalk_pic_iznos_bilo_gpicdem()
          ENDIF
 
          IF cPNab == "D"
 
-            @ PRow(), PCol() + 1 SAY Space( Len( pic_kolicina_bilo_gpickol() ) )
-            @ PRow(), PCol() + 1 SAY Space( Len( pic_kolicina_bilo_gpickol() ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( kalk_pic_kolicina_bilo_gpickol() ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( kalk_pic_kolicina_bilo_gpickol() ) )
 
             IF Round( nUlaz - nIzlaz + nPKol, 4 ) <> 0
-               @ PRow(), PCol() + 1 SAY ( nNVU - nNVI + nPNV ) / ( nUlaz - nIzlaz + nPKol ) PICT pic_iznos_bilo_gpicdem()
+               @ PRow(), PCol() + 1 SAY ( nNVU - nNVI + nPNV ) / ( nUlaz - nIzlaz + nPKol ) PICT kalk_pic_iznos_bilo_gpicdem()
             ELSE
-               @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
+               @ PRow(), PCol() + 1 SAY Space( Len( kalk_pic_iznos_bilo_gpicdem() ) )
             ENDIF
 
-            @ PRow(), nCol1 SAY nNVU PICT pic_iznos_bilo_gpicdem()
-            // @ prow(),pcol()+1 SAY space(len(pic_iznos_bilo_gpicdem()))
-            @ PRow(), PCol() + 1 SAY nNVI PICT pic_iznos_bilo_gpicdem()
-            @ PRow(), PCol() + 1 SAY nNVU - nNVI + nPNV PICT pic_iznos_bilo_gpicdem()
-            @ PRow(), PCol() + 1 SAY _mpc PICT pic_cijena_bilo_gpiccdem()
+            @ PRow(), nCol1 SAY nNVU PICT kalk_pic_iznos_bilo_gpicdem()
+            // @ prow(),pcol()+1 SAY space(len(kalk_pic_iznos_bilo_gpicdem()))
+            @ PRow(), PCol() + 1 SAY nNVI PICT kalk_pic_iznos_bilo_gpicdem()
+            @ PRow(), PCol() + 1 SAY nNVU - nNVI + nPNV PICT kalk_pic_iznos_bilo_gpicdem()
+            @ PRow(), PCol() + 1 SAY _mpc PICT kalk_pic_cijena_bilo_gpiccdem()
 
          ENDIF
 
@@ -642,32 +642,32 @@ FUNCTION lager_lista_prodavnica()
    @ PRow(), nCol0 - 1 SAY ""
 
    IF cPredhStanje == "D"
-      @ PRow(), PCol() + 1 SAY nTPMPV PICT pic_kolicina_bilo_gpickol()
+      @ PRow(), PCol() + 1 SAY nTPMPV PICT kalk_pic_kolicina_bilo_gpickol()
    ENDIF
 
-   @ PRow(), PCol() + 1 SAY nTUlaz PICT pic_kolicina_bilo_gpickol()
-   @ PRow(), PCol() + 1 SAY nTIzlaz PICT pic_kolicina_bilo_gpickol()
-   @ PRow(), PCol() + 1 SAY nTUlaz - nTIzlaz + nTPKol PICT pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY nTUlaz PICT kalk_pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY nTIzlaz PICT kalk_pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY nTUlaz - nTIzlaz + nTPKol PICT kalk_pic_kolicina_bilo_gpickol()
 
    nCol1 := PCol() + 1
 
-   @ PRow(), PCol() + 1 SAY nTMPVU PICT pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY nTMPVI PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nTMPVU PICT kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nTMPVI PICT kalk_pic_iznos_bilo_gpicdem()
 
-   @ PRow(), PCol() + 1 SAY nTMPVU - nTMPVI + nTPMPV PICT pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY nTMpv PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nTMPVU - nTMPVI + nTPMPV PICT kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY nTMpv PICT kalk_pic_iznos_bilo_gpicdem()
 
    IF cPNab == "D"
       @ PRow() + 1, nCol0 - 1 SAY ""
       IF cPredhStanje == "D"
-         @ PRow(), PCol() + 1 SAY nTPNV PICT pic_kolicina_bilo_gpickol()
+         @ PRow(), PCol() + 1 SAY nTPNV PICT kalk_pic_kolicina_bilo_gpickol()
       ENDIF
-      @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
-      @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
-      @ PRow(), PCol() + 1 SAY Space( Len( pic_iznos_bilo_gpicdem() ) )
-      @ PRow(), PCol() + 1 SAY nTNVU PICT pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY nTNVI PICT pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY nTNVU - nTNVI + nTPNV PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY Space( Len( kalk_pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY Space( Len( kalk_pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY Space( Len( kalk_pic_iznos_bilo_gpicdem() ) )
+      @ PRow(), PCol() + 1 SAY nTNVU PICT kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nTNVI PICT kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY nTNVU - nTNVI + nTPNV PICT kalk_pic_iznos_bilo_gpicdem()
    ENDIF
 
    ? __line
@@ -728,15 +728,15 @@ FUNCTION ZaglLLP( lSint )
 
 
       cTmp := " R.  * Artikal  *   Naziv            *jmj*"
-      nPom := Len( pic_kolicina_bilo_gpickol() )
+      nPom := Len( kalk_pic_kolicina_bilo_gpickol() )
       cTmp += PadC( "Predh.st", nPom ) + "*"
       cTmp += PadC( "ulaz", nPom ) + " " + PadC( "izlaz", nPom ) + "*"
       cTmp += PadC( "STANJE", nPom ) + "*"
-      nPom := Len( pic_iznos_bilo_gpicdem() )
+      nPom := Len( kalk_pic_iznos_bilo_gpicdem() )
       cTmp += PadC( "PV.Dug.", nPom ) + "*"
       cTmp += PadC( "PV.Pot.", nPom ) + "*"
       cTmp += PadC( "PV", nPom ) + "*"
-      nPom := Len( pic_cijena_bilo_gpiccdem() )
+      nPom := Len( kalk_pic_cijena_bilo_gpiccdem() )
       cTmp += PadC( "PC.SA PDV", nPom ) + "*"
       cTmp += cSC1
 
@@ -745,10 +745,10 @@ FUNCTION ZaglLLP( lSint )
 
 
       cTmp := " br. *          *                    *   *"
-      nPom := Len( pic_kolicina_bilo_gpickol() )
+      nPom := Len( kalk_pic_kolicina_bilo_gpickol() )
       cTmp += PadC( "Kol/MPV", nPom ) + "*"
       cTmp += REPL( " ", nPom ) + " " + REPL( " ", nPom ) + "*"
-      nPom := Len( pic_iznos_bilo_gpicdem() )
+      nPom := Len( kalk_pic_iznos_bilo_gpicdem() )
       cTmp += REPL( " ", nPom ) + "*"
       cTmp += REPL( " ", nPom ) + "*"
       cTmp += REPL( " ", nPom ) + "*"
@@ -761,10 +761,10 @@ FUNCTION ZaglLLP( lSint )
       IF cPNab == "D"
 
          cTmp := "     *          *                    *   *"
-         nPom := Len( pic_kolicina_bilo_gpickol() )
+         nPom := Len( kalk_pic_kolicina_bilo_gpickol() )
          cTmp += REPL( " ", nPom ) + "*"
          cTmp += REPL( " ", nPom ) + " " + REPL( " ", nPom ) + "*"
-         nPom := Len( pic_iznos_bilo_gpicdem() )
+         nPom := Len( kalk_pic_iznos_bilo_gpicdem() )
          cTmp += PadC( "SR.NAB.C", nPom ) + "*"
          cTmp += PadC( "NV.Dug.", nPom ) + "*"
          cTmp += PadC( "NV.Pot", nPom ) + "*"
@@ -776,10 +776,10 @@ FUNCTION ZaglLLP( lSint )
       ENDIF
    ELSE
       cTmp := " R.  * Artikal  *   Naziv            *jmj*"
-      nPom := Len( pic_kolicina_bilo_gpickol() )
+      nPom := Len( kalk_pic_kolicina_bilo_gpickol() )
       cTmp += PadC( "ulaz", nPom ) + " " + PadC( "izlaz", nPom ) + "*"
       cTmp += PadC( "STANJE", nPom ) + "*"
-      nPom := Len( pic_iznos_bilo_gpicdem() )
+      nPom := Len( kalk_pic_iznos_bilo_gpicdem() )
       cTmp += PadC( "PV.Dug.", nPom ) + "*"
       cTmp += PadC( "PV.Pot.", nPom ) + "*"
       cTmp += PadC( "PV", nPom ) + "*"
@@ -788,10 +788,10 @@ FUNCTION ZaglLLP( lSint )
       ?U cTmp
 
       cTmp := " br. *          *                    *   *"
-      nPom := Len( pic_kolicina_bilo_gpickol() )
+      nPom := Len( kalk_pic_kolicina_bilo_gpickol() )
       cTmp += REPL( " ", nPom ) + " " + REPL( " ", nPom ) + "*"
       cTmp += REPL( " ", nPom ) + "*"
-      nPom := Len( pic_iznos_bilo_gpicdem() )
+      nPom := Len( kalk_pic_iznos_bilo_gpicdem() )
       cTmp += REPL( " ", nPom ) + "*"
       cTmp += REPL( " ", nPom ) + "*"
       cTmp += REPL( " ", nPom ) + "*"
@@ -803,9 +803,9 @@ FUNCTION ZaglLLP( lSint )
       IF cPNab == "D"
 
          cTmp := "     *          *                    *   *"
-         nPom := Len( pic_kolicina_bilo_gpickol() )
+         nPom := Len( kalk_pic_kolicina_bilo_gpickol() )
          cTmp += REPL( " ", nPom ) + " " + REPL( " ", nPom ) + "*"
-         nPom := Len( pic_iznos_bilo_gpicdem() )
+         nPom := Len( kalk_pic_iznos_bilo_gpicdem() )
          cTmp += PadC( "SR.NAB.C", nPom ) + "*"
          cTmp += PadC( "NV.Dug.", nPom ) + "*"
          cTmp += PadC( "NV.Pot", nPom ) + "*"
@@ -821,12 +821,12 @@ FUNCTION ZaglLLP( lSint )
    IF cPredhStanje == "D"
 
       cTmp := "     *    1     *        2           * 3 *"
-      nPom := Len( pic_kolicina_bilo_gpickol() )
+      nPom := Len( kalk_pic_kolicina_bilo_gpickol() )
       cTmp += PadC( "4", nPom ) + "*"
       cTmp += PadC( "5", nPom ) + "*"
       cTmp += PadC( "6", nPom ) + "*"
       cTmp += PadC( "5 - 6", nPom ) + "*"
-      nPom := Len( pic_iznos_bilo_gpicdem() )
+      nPom := Len( kalk_pic_iznos_bilo_gpicdem() )
       cTmp += PadC( "7", nPom ) + "*"
       cTmp += PadC( "8", nPom ) + "*"
       cTmp += PadC( "7 - 8", nPom ) + "*"
@@ -838,11 +838,11 @@ FUNCTION ZaglLLP( lSint )
    ELSE
 
       cTmp := "     *    1     *        2           * 3 *"
-      nPom := Len( pic_kolicina_bilo_gpickol() )
+      nPom := Len( kalk_pic_kolicina_bilo_gpickol() )
       cTmp += PadC( "4", nPom ) + "*"
       cTmp += PadC( "5", nPom ) + "*"
       cTmp += PadC( "4 - 5", nPom ) + "*"
-      nPom := Len( pic_iznos_bilo_gpicdem() )
+      nPom := Len( kalk_pic_iznos_bilo_gpicdem() )
       cTmp += PadC( "6", nPom ) + "*"
       cTmp += PadC( "7", nPom ) + "*"
       cTmp += PadC( "6 - 7", nPom ) + "*"

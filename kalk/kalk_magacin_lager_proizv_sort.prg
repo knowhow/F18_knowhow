@@ -535,10 +535,10 @@ METHOD setLinija
    ::cLinija += Replicate( "-", 40 ) + " "
 
 
-   ::cLinija += Replicate( "-", Len( pic_kolicina_bilo_gpickol() ) )
+   ::cLinija += Replicate( "-", Len( kalk_pic_kolicina_bilo_gpickol() ) )
 
    FOR i := 1 TO 3
-      ::cLinija += " " + Replicate( "-", Len( pic_iznos_bilo_gpicdem() ) )
+      ::cLinija += " " + Replicate( "-", Len( kalk_pic_iznos_bilo_gpicdem() ) )
    NEXT
 
    RETURN
@@ -568,15 +568,15 @@ METHOD printHeader
    cHeader += PadC( "idRoba", Len( field->idRoba ) ) + " "
    cHeader += PadC( "Tar.", Len( field->idTarifa ) ) + " "
    cHeader += PadC( " Naziv artikla", 40 ) + " "
-   cHeader += PadC( "kolicina", Len( pic_kolicina_bilo_gpickol() ) ) + " "
+   cHeader += PadC( "kolicina", Len( kalk_pic_kolicina_bilo_gpickol() ) ) + " "
    IF ( ::cNabIliProd == "P" )
-      cHeader += PadC( "Vpv Ul.", Len( pic_kolicina_bilo_gpickol() ) ) + " "
-      cHeader += PadC( "Vpv Izl.", Len( pic_kolicina_bilo_gpickol() ) ) + " "
-      cHeader += PadC( "VPV", Len( pic_kolicina_bilo_gpickol() ) )
+      cHeader += PadC( "Vpv Ul.", Len( kalk_pic_kolicina_bilo_gpickol() ) ) + " "
+      cHeader += PadC( "Vpv Izl.", Len( kalk_pic_kolicina_bilo_gpickol() ) ) + " "
+      cHeader += PadC( "VPV", Len( kalk_pic_kolicina_bilo_gpickol() ) )
    ELSE
-      cHeader += PadC( "Nv Ul.", Len( pic_kolicina_bilo_gpickol() ) ) + " "
-      cHeader += PadC( "Nv Izl.", Len( pic_kolicina_bilo_gpickol() ) ) + " "
-      cHeader += PadC( "Nab.vr", Len( pic_kolicina_bilo_gpickol() ) )
+      cHeader += PadC( "Nv Ul.", Len( kalk_pic_kolicina_bilo_gpickol() ) ) + " "
+      cHeader += PadC( "Nv Izl.", Len( kalk_pic_kolicina_bilo_gpickol() ) ) + " "
+      cHeader += PadC( "Nab.vr", Len( kalk_pic_kolicina_bilo_gpickol() ) )
    ENDIF
 
    ? cHeader
@@ -605,10 +605,10 @@ METHOD printDetail
    @ PRow(), PCol() + 1 SAY field->idRoba
    @ PRow(), PCol() + 1 SAY field->idTarifa
    @ PRow(), PCol() + 1 SAY Left( field->robaNaz, 40 )
-   @ PRow(), PCol() + 1 SAY field->ulazK - field->izlazK PICT pic_kolicina_bilo_gpickol()
-   @ PRow(), PCol() + 1 SAY field->ulazF PICT pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY field->izlazF PICT pic_iznos_bilo_gpicdem()
-   @ PRow(), PCol() + 1 SAY field->ulazF - field->izlazF PICT pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY field->ulazK - field->izlazK PICT kalk_pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY field->ulazF PICT kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY field->izlazF PICT kalk_pic_iznos_bilo_gpicdem()
+   @ PRow(), PCol() + 1 SAY field->ulazF - field->izlazF PICT kalk_pic_iznos_bilo_gpicdem()
 
    RETURN
 // }
@@ -649,16 +649,16 @@ METHOD printTotal
    @ PRow(), PCol() + 1 SAY Space( Len( field->idTarifa ) )
    @ PRow(), PCol() + 1 SAY Space( 40 )
 
-   @ PRow(), PCol() + 1 SAY ::nTUlazK - ::nTIzlazK PICT pic_kolicina_bilo_gpickol()
+   @ PRow(), PCol() + 1 SAY ::nTUlazK - ::nTIzlazK PICT kalk_pic_kolicina_bilo_gpickol()
 
    IF ( ::cNabIliProd == "P" )
-      @ PRow(), PCol() + 1 SAY ::nTVpvU PICT pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY ::nTVpvI PICT pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY ::nTVpvU - ::nTVpvI PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY ::nTVpvU PICT kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY ::nTVpvI PICT kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY ::nTVpvU - ::nTVpvI PICT kalk_pic_iznos_bilo_gpicdem()
    ELSE
-      @ PRow(), PCol() + 1 SAY ::nTNvU PICT pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY ::nTNvI PICT pic_iznos_bilo_gpicdem()
-      @ PRow(), PCol() + 1 SAY ::nTNvU - ::nTNvI PICT pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY ::nTNvU PICT kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY ::nTNvI PICT kalk_pic_iznos_bilo_gpicdem()
+      @ PRow(), PCol() + 1 SAY ::nTNvU - ::nTNvI PICT kalk_pic_iznos_bilo_gpicdem()
    ENDIF
 
    ? ::cLinija

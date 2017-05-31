@@ -31,7 +31,7 @@ FUNCTION pic_iznos_eur( cSet )
 
 
 
-FUNCTION pic_iznos_bilo_gpicdem( cSet )
+FUNCTION kalk_pic_iznos_bilo_gpicdem( cSet )
 
    IF s_cKalkPicIznos == NIL
       s_cKalkPicIznos := fetch_metric( "kalk_format_prikaza_iznosa", NIL,   "9999999.99" )
@@ -45,7 +45,7 @@ FUNCTION pic_iznos_bilo_gpicdem( cSet )
    RETURN s_cKalkPicIznos
 
 
-FUNCTION pic_cijena_bilo_gpiccdem( cSet )
+FUNCTION kalk_pic_cijena_bilo_gpiccdem( cSet )
 
    IF s_cKalkPicCijena == NIL
       s_cKalkPicCijena := fetch_metric( "kalk_format_prikaza_cijene", NIL,  "999999.999" )
@@ -60,7 +60,7 @@ FUNCTION pic_cijena_bilo_gpiccdem( cSet )
 
 
 
-FUNCTION pic_kolicina_bilo_gpickol( cSet )
+FUNCTION kalk_pic_kolicina_bilo_gpickol( cSet )
 
    IF s_cKalkPicKolicina == NIL
       s_cKalkPicKolicina := fetch_metric( "kalk_format_prikaza_kolicine", NIL,  "999999.999" )
@@ -120,15 +120,15 @@ FUNCTION fakt_pic_iznos( cSet )
 
 
 
-FUNCTION prosiri_pic_iznos_za_2()
-   RETURN "99" + pic_iznos_eur()
+FUNCTION kalk_prosiri_pic_iznos_za_2()
+   RETURN "99" + kalk_pic_iznos_bilo_gpicdem()
 
 
-FUNCTION prosiri_pic_kolicina_za_2()
-   RETURN "99" + pic_kolicina_bilo_gpickol()
+FUNCTION kalk_prosiri_pic_kolicina_za_2()
+   RETURN "99" + kalk_pic_kolicina_bilo_gpickol()
 
-FUNCTION prosiri_pic_cjena_za_2()
-   RETURN "99" + pic_cijena_bilo_gpiccdem()
+FUNCTION kalk_prosiri_pic_cjena_za_2()
+   RETURN "99" + kalk_pic_cijena_bilo_gpiccdem()
 
 
 FUNCTION  os_pic_kolicina()

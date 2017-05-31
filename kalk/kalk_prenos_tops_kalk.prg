@@ -63,7 +63,7 @@ STATIC FUNCTION tops_kalk_import_meni()
    LOCAL aProdajnaMjesta, cProdajnaMjesta
    LOCAL lReturn := .T.
    LOCAL nI, aTopskaDbfs, _opt, _h, _n
-   LOCAL cDbfImportUslov := "TK*.DBF"
+   LOCAL cDbfImportUslov := "tk*.dbf"
    LOCAL lIzvrsitiPrenos, nMeniOdabir, _a_tmp1, _a_tmp2
    LOCAL cTopsDest := kalk_destinacija_topska()
    LOCAL cTopsKalkImeDbf
@@ -178,8 +178,8 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
    cBrKalk := Left( StrTran( DToC( field->datum ), ".", "" ), 4 ) + "/" + AllTrim( field->idpos ) // utvrditi broj kalkulacije
    cIdVdPos := field->idvd
 
-   SELECT koncij // provjeri da li postoji podesenje za ovaj fajl importa
-   LOCATE FOR koncij->idprodmjes == topska->idpos
+   o_koncij()
+   LOCATE FOR koncij->idprodmjes == topska->idpos // provjeri da li postoji podesenje za ovaj fajl importa
 
    IF !Found()
       MsgBeep( "U šifarniku KONTA-TIPOVI CIJENA nije postavljeno#nigdje prodajno mjesto :" + field->idprodmjes + "#Prenos nije izvrsen." )
@@ -768,7 +768,7 @@ STATIC FUNCTION get_sva_prodajna_mjesta_iz_koncij()
    LOCAL _a_pm := {}
    LOCAL _scan
 
-   SELECT koncij
+   o_koncij()
    GO TOP
 
    DO WHILE !Eof()
@@ -795,20 +795,12 @@ STATIC FUNCTION tops_kalk_o_import_tabele()
   //    o_roba()
   // ENDIF
 
-   SELECT ( F_TARIFA )
-   IF !Used()
-      o_tarifa()
-   ENDIF
 
    SELECT ( F_KALK_PRIPR )
    IF !Used()
       o_kalk_pripr()
    ENDIF
 
-   SELECT ( F_KONCIJ )
-   IF !Used()
-      o_koncij()
-   ENDIF
 
    RETURN .T.
 

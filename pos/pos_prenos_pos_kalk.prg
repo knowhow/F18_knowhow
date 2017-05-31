@@ -274,6 +274,7 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dat_dok, cBrDok )
    LOCAL _iznos
    LOCAL nDbfArea := Select()
    LOCAL _count
+   LOCAL cIdRoba
 
    IF cIdTipDk <> VD_INV
       RETURN .F.
@@ -310,8 +311,7 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dat_dok, cBrDok )
 
       cIdRoba := field->idroba
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       SELECT pom
       APPEND BLANK
@@ -346,7 +346,7 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dat_dok, cBrDok )
    IF _r_br == 0
       MsgBeep( "Ne postoji niti jedna stavka u eksport tabeli !" )
       SELECT ( nDbfArea )
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT pom
@@ -464,9 +464,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
             ENDIF
          ENDIF
 
-         SELECT roba
-         SET ORDER TO TAG "ID"
-         HSEEK pos->idroba
+         select_o_roba( pos->idroba )
 
          SELECT pom
          SET ORDER TO TAG "1"
@@ -543,7 +541,7 @@ STATIC FUNCTION _print_report( dDatOd, dDatDo, kolicina, iznos, broj_stavki )
    ? "Broj stavki:", AllTrim( Str( broj_stavki ) )
    ?
    ?U "Ukupna količina:", AllTrim( Str( kolicina, 12, 2 ) )
-   ? "  Ukupan iznos:", AllTrim( Str( iznos, 12, 2 ) )
+   ?U "   Ukupan iznos:", AllTrim( Str( iznos, 12, 2 ) )
 
    FF
    ENDPRINT

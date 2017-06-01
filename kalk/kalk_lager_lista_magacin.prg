@@ -18,7 +18,7 @@ STATIC __txt3
 
 
 
-FUNCTION lager_lista_magacin()
+FUNCTION kalk_lager_lista_magacin()
 
    PARAMETERS fPocStanje
 
@@ -1108,7 +1108,7 @@ FUNCTION Zagllager_lista_magacin()
 
 FUNCTION kalk_pocetno_stanje_magacin_legacy()
 
-   lager_lista_magacin( .T. )
+   kalk_lager_lista_magacin( .T. )
 
    RETURN .T.
 

@@ -21,7 +21,7 @@ FUNCTION kalk_izvjestaji_magacina()
    AAdd( _opc, "1. kartica - magacin                                " )
    AAdd( _opcexe, {|| kalk_kartica_magacin() } )
    AAdd( _Opc, "2. lager lista - magacin" )
-   AAdd( _opcexe, {|| lager_lista_magacin() } )
+   AAdd( _opcexe, {|| kalk_lager_lista_magacin() } )
 /*
    AAdd( _Opc, "3. lager lista - proizvoljni sort" )
    AAdd( _opcexe, {|| KaLagM() } )

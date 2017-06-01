@@ -314,7 +314,7 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
       RETURN DE_CONT
 
    CASE Ch == K_F6
-      KPro()
+      kalk_kartica_prodavnica_f6()
       RETURN DE_CONT
 
 

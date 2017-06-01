@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-FUNCTION KPro()
+FUNCTION kalk_kartica_prodavnica_f6()
 
    LOCAL nR1
    LOCAL nR2
@@ -23,8 +23,8 @@ FUNCTION KPro()
    LOCAL cKonto := Space( 7 )
    PRIVATE GetList := {}
 
-   SELECT  roba
-   nR1 := RecNo()
+   //SELECT  roba
+   //nR1 := RecNo()
    SELECT kalk_pripr
    nR2 := RecNo()
    //SELECT tarifa
@@ -49,8 +49,8 @@ FUNCTION KPro()
    kalk_kartica_prodavnica( cIdFirma, cIdRoba, cKonto )
 
    o_kalk_edit()
-   SELECT roba
-   GO nR1
+   //SELECT roba
+   //GO nR1
 
    SELECT kalk_pripr
    GO nR2

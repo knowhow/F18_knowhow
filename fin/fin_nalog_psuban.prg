@@ -138,8 +138,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
             ELSE
 
-               select_o_partner( ( nArr )->idpartner )
-               IF Found()
+               IF select_o_partner( ( nArr )->idpartner )
                   _part_naz := partn->naz
                   _part_naz2 := partn->naz2
                ENDIF
@@ -149,10 +148,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
             ENDIF
          ELSE
 
-            SELECT KONTO
-            HSEEK ( nArr )->idkonto
-
-            IF Found()
+            IF select_o_konto( ( nArr )->idkonto )
                _kto_naz := konto->naz
             ENDIF
 
@@ -352,13 +348,13 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
 FUNCTION fin_nalog_zaglavlje( dDatNal )
 
-   LOCAL nArr, lDnevnik := .F.
+   LOCAL nArr, lDnevnik := is_stampa_dnevnika_naloga()
    LOCAL _fin_params := fin_params()
    LOCAL cTmp
 
-   IF "DNEVNIKN" == PadR( Upper( ProcName( 1 ) ), 8 ) .OR. "DNEVNIKN" == PadR( Upper( ProcName( 2 ) ), 8 )
-      lDnevnik := .T.
-   ENDIF
+   //IF "DNEVNIKN" == PadR( Upper( ProcName( 1 ) ), 8 ) .OR. "DNEVNIKN" == PadR( Upper( ProcName( 2 ) ), 8 )
+  //    lDnevnik := .T.
+   //ENDIF
 
 
    ?
@@ -377,13 +373,13 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    IF _fin_params[ "fin_tip_dokumenta" ]
       select_o_partner( cIdfirma )
       SELECT ( nArr )
-      ? cidfirma, "-", AllTrim( partn->naz )
+      ? cIdfirma, "-", AllTrim( partn->naz )
    ENDIF
 
    ?
    IF lDnevnik
       ?U "FIN:      D N E V N I K    K NJ I Ž E NJ A    Z A    " + ;
-         Upper( NazMjeseca( Month( dDatNal ) ) ) + " " + Str( Year( dDatNal ) ) + ". GODINE"
+      Upper( NazMjeseca( Month( dDatNal ) ) ) + " " + Str( Year( dDatNal ) ) + ". GODINE"
    ELSE
       ?U "FIN: NALOG ZA KNJIŽENJE BROJ :"
       @ PRow(), PCol() + 2 SAY cIdFirma + " - " + cIdVn + " - " + cBrNal
@@ -396,7 +392,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    ENDIF
 
    IF !lDnevnik
-      SELECT TNAL; HSEEK cidvn
+      select_o_tnal( cIdvn )
       @ PRow(), PCol() + 4 SAY naz
    ENDIF
 

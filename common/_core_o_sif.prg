@@ -270,19 +270,37 @@ FUNCTION o_tdok()
 
 
 
-FUNCTION o_tnal()
+
+FUNCTION o_tnal( cId )
 
    LOCAL cTabela := "tnal"
 
    SELECT ( F_TNAL )
-   IF !use_sql_sif  ( cTabela )
+   IF !use_sql_sif  ( cTabela, .T., "TNAL", cId  )
       error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.
    ENDIF
-
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN !Eof()
+
+
+
+FUNCTION select_o_tnal( cId )
+
+   SELECT ( F_TNAL )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_tnal( cId )
 
 
 
@@ -311,7 +329,7 @@ FUNCTION o_ops( cId )
    SET ORDER TO TAG "ID"
 
    RETURN !Eof()
-   
+
 
 
 FUNCTION select_o_ops( cId )

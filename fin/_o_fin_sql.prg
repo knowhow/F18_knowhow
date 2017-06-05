@@ -207,11 +207,14 @@ FUNCTION find_anal_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy )
    RETURN ! Eof()
 
 
-FUNCTION find_nalog_za_period( cIdFirma, cIdVN, dDatOd, dDatDo, cOrderBy )
+FUNCTION find_nalog_za_period( cIdFirma, cIdVN, dDatOd, dDatDo, cOrderBy, cAlias )
 
    LOCAL hParams := hb_Hash()
 
    hb_default( @cOrderBy, "idFirma,IdVN,BrNal" )
+   hb_default( @cAlias, "NALOG" )
+
+   hParams[ "alias" ] := cAlias
 
    IF cIdFirma <> NIL
       hParams[ "idfirma" ] := cIdFirma
@@ -404,7 +407,8 @@ FUNCTION use_sql_fin_nalog( cIdVN, lMakeIndex )
 
 FUNCTION use_sql_nalog( hParams )
 
-   LOCAL cTable := "NALOG"
+   LOCAL cTable := "fin_nalog"
+   LOCAL cAlias := "NALOG"
    LOCAL cWhere, cOrder
    LOCAL cSql
 
@@ -437,7 +441,7 @@ CREATE TABLE fmk.fin_nalog
    cSql += coalesce_num_num_zarez( "dugdem", 15, 2  )
    cSql += coalesce_num_num( "potdem", 15, 2  )
 
-   cSql += " FROM fmk.fin_nalog"
+   cSql += " FROM fmk." + cTable
 
 
    cWhere := use_sql_nalog_where( hParams )
@@ -453,12 +457,14 @@ CREATE TABLE fmk.fin_nalog
    ENDIF
 
    IF hb_HHasKey( hParams, "alias" )
-      cTable := hParams[ "alias" ]
+   altd()
+      cAlias := hParams[ "alias" ]
+      SELECT 0
+   ELSE
+      SELECT ( F_NALOG )
    ENDIF
 
-   SELECT ( F_NALOG )
-
-   IF !use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql, cAlias )
       RETURN .F.
    ENDIF
 

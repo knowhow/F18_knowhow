@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+STATIC s_lStampaDnevnika := .F.
+
 MEMVAR M
 MEMVAR nUkDugBHD, nUkPotBHD, nUkDugDEM, nUkPotDEM
 
@@ -20,11 +22,8 @@ FUNCTION fin_dnevnik_naloga()
    LOCAL cMjGod := ""
    LOCAL _filter := ""
    LOCAL dOd, dDo
-   LOCAL cIdFirma
-   LOCAL cIdVN
-   LOCAL cBrNal
-   LOCAL dDatNal
 
+   PRIVATE cIdFirma, cIdVN, cBrNal, dDatNal  // fin stampa naloga ocekuje ove priv varijable
 
    PRIVATE nUkDugBHD, nUkPotBHD, nUkDugDEM, nUkPotDEM
 
@@ -51,17 +50,21 @@ FUNCTION fin_dnevnik_naloga()
    SET KEY K_F5 TO
 
    O_VRSTEP
-   o_tnal()
-   o_tdok()
+   // o_tnal()
+   // o_tdok()
    // o_partner()
-   //o_konto()
-   o_nalog()
-   //o_suban()
+   // o_konto()
+   // o_nalog()
+   AltD()
+
+   find_nalog_za_period( cIdFirma, cIdVN, dOd, dDo, NIL, "NALOG_DNEVNIK" )
+   // o_suban()
 
 
-   //SELECT SUBAN
-   //SET ORDER TO TAG "4"
+   // SELECT SUBAN
+   // SET ORDER TO TAG "4"
 
+/*
    SELECT NALOG
    SET ORDER TO TAG "3" // nalog
 
@@ -74,12 +77,18 @@ FUNCTION fin_dnevnik_naloga()
       SET FILTER TO &_filter
 
    ENDIF
+*/
+
+
+   SELECT NALOG_DNEVNIK
 
    GO TOP
 
    IF !start_print()
       RETURN .F.
    ENDIF
+
+   is_stampa_dnevnika_naloga( .T. )
 
    nUkDugBHD := nUkPotBHD := nUkDugDEM := nUkPotDEM := 0  // sve strane ukupno
 
@@ -93,9 +102,9 @@ FUNCTION fin_dnevnik_naloga()
    lJerry := .F.
 
    IF gNW == "N"
-      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + IIF( fin_jednovalutno() .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " -- ------------- ----------- -------- -------- --------------- ---------------" + IF( fin_jednovalutno(), "-", " ---------- ----------" )
+      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + iif( fin_jednovalutno() .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " -- ------------- ----------- -------- -------- --------------- ---------------" + IF( fin_jednovalutno(), "-", " ---------- ----------" )
    ELSE
-      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + IIF( fin_jednovalutno() .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " ----------- -------- -------- --------------- ---------------" + IF( fin_jednovalutno(), "-", " ---------- ----------" )
+      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + iif( fin_jednovalutno() .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " ----------- -------- -------- --------------- ---------------" + IF( fin_jednovalutno(), "-", " ---------- ----------" )
    ENDIF
 
    cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
@@ -115,7 +124,7 @@ FUNCTION fin_dnevnik_naloga()
       cBrNal   := field->BRNAL
       dDatNal  := field->DATNAL
 
-      IF cMjGod != Str( Month( dDatNal ), 2, 0 ) + Str( Year( dDatNal ), 4, 0)
+      IF cMjGod != Str( Month( dDatNal ), 2, 0 ) + Str( Year( dDatNal ), 4, 0 )
          PrenosDNal() // završi stranu
          fin_nalog_zaglavlje( dDatNal ) // stampaj zaglavlje (nova stranica)
       ENDIF
@@ -125,7 +134,7 @@ FUNCTION fin_dnevnik_naloga()
       find_suban_by_broj_dokumenta( cIdFirma, cIdVn, cBrNal )
       fin_nalog_stampa_fill_psuban( "3", NIL, dDatNal )
 
-      SELECT NALOG
+      SELECT NALOG_DNEVNIK
 
       SKIP 1
    ENDDO
@@ -136,10 +145,10 @@ FUNCTION fin_dnevnik_naloga()
 
    end_print()
 
+   is_stampa_dnevnika_naloga( .F. )
    my_close_all_dbf()
 
    RETURN .T.
-
 
 
 /* NazMjeseca(nMjesec)
@@ -219,3 +228,13 @@ FUNCTION EdNal()
    ENDIF
 
    RETURN nVrati
+
+
+
+FUNCTION is_stampa_dnevnika_naloga( lSet )
+
+   IF lSet != NIL
+      s_lStampaDnevnika := lSet
+   ENDIF
+
+   RETURN s_lStampaDnevnika

@@ -13,19 +13,16 @@
 
 
 
-FUNCTION zip_files( output_path, output_file_name, files, relative_path )
+FUNCTION zip_files( output_path, output_file_name, files )
 
    LOCAL _error
 
-   IF ( relative_path == NIL )
-      relative_path := .F.
-   ENDIF
 
    IF ( files == NIL ) .OR. Len( files ) == 0
-      RETURN MsgBeep( "Nema fajlova za arhiviranje ?!???" )
+      RETURN MsgBeep( "Nema fajlova za arhiviranje ?!" )
    ENDIF
 
-   _error := __zip( output_path, output_file_name, files, relative_path )
+   _error := __zip( output_path, output_file_name, files )
 
    RETURN _error
 
@@ -41,7 +38,7 @@ FUNCTION unzip_files( zip_path, zip_file_name, extract_destination, files, overw
 
 
 
-STATIC FUNCTION __zip( zf_path, zf_name, files, relative_path )
+STATIC FUNCTION __zip( zf_path, zf_name, files )
 
    LOCAL _h_zip
    LOCAL _file
@@ -51,20 +48,19 @@ STATIC FUNCTION __zip( zf_path, zf_name, files, relative_path )
    LOCAL __file_path, __file_ext, __file_name
    LOCAL _a_file, _a_dir
 
-   // otvori fajl
-   _h_zip := hb_zipOpen( _zip_file )
+
+   _h_zip := hb_zipOpen( _zip_file ) // otvori fajl
 
    IF !Empty( _h_zip )
 
-      Box(, 2, 65 )
-
-      @ m_x + 1, m_y + 2 SAY "Kompresujem fajl: ..." + PadL( AllTrim( _zip_file ), 40 )
+      Box(, 3, 65 )
+      @ m_x + 1, m_y + 2 SAY _h_zip
+      @ m_x + 2, m_y + 2 SAY "Kompresujem fajl: " + PadL( AllTrim( _zip_file ), 40 )
 
       FOR EACH _file IN files
          IF !Empty( _file )
 
-            // odvoji mi lokaciju fajlova i nazive
-            hb_FNameSplit( _file, @__file_path, @__file_name, @__file_ext )
+            hb_FNameSplit( _file, @__file_path, @__file_name, @__file_ext ) // odvoji lokaciju fajlova i nazive
 
             _a_dir := hb_DirScan( __file_path, __file_name + __file_ext )
 
@@ -72,14 +68,13 @@ STATIC FUNCTION __zip( zf_path, zf_name, files, relative_path )
                IF ! ( __file_path + _a_file[ 1 ] == _zip_file )
 
                   ++ _cnt
-
                   @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( _cnt ) ), 3 ) + ") ..." + PadR( AllTrim( _a_file[ 1 ] ), 40 )
 
-                  IF relative_path
-                     _error := hb_zipStoreFile( _h_zip, __file_path + _a_file[ 1 ], __file_path + _a_file[ 1 ], nil )
-                  ELSE
+                  //IF relative_path
+                  //   _error := hb_zipStoreFile( _h_zip, __file_path + _a_file[ 1 ], __file_path + _a_file[ 1 ], nil )
+                  //ELSE
                      _error := hb_zipStoreFile( _h_zip, _a_file[ 1 ], _a_file[ 1 ], nil )
-                  ENDIF
+                  //ENDIF
 
                   IF ( _error <> 0 )
                      __zip_error( _error, "operacija: kompresovanje fajla" )
@@ -105,9 +100,7 @@ STATIC FUNCTION __zip( zf_path, zf_name, files, relative_path )
    RETURN _error
 
 
-// -----------------------------------
-// obrada gresaka
-// -----------------------------------
+
 STATIC FUNCTION __zip_error( err, descr )
 
    LOCAL _add_msg := ""
@@ -122,10 +115,10 @@ STATIC FUNCTION __zip_error( err, descr )
          _add_msg := "#" + descr
       ENDIF
 
-      MsgBeep( "Imamo gresku ?!???" + AllTrim( Str( err ) ) + _add_msg )
+      MsgBeep( "Greška pri kompresovanju ?!" + AllTrim( Str( err ) ) + _add_msg )
    ENDIF
 
-   RETURN
+   RETURN .F.
 
 
 

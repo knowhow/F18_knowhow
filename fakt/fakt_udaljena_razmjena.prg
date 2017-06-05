@@ -50,7 +50,7 @@ STATIC FUNCTION _fakt_export()
    LOCAL _a_data := {}
 
    IF !_vars_export( @_vars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    delete_exp_files( __export_dbf_path, "fakt" )
@@ -61,7 +61,7 @@ STATIC FUNCTION _fakt_export()
 
    IF _exported_rec > 0
 
-      _error := _compress_files( "fakt", __export_dbf_path )
+      _error := udaljenja_razmjena_compress_files( "fakt", __export_dbf_path )
 
       IF _error == 0
          delete_exp_files( __export_dbf_path, "fakt" )
@@ -81,7 +81,7 @@ STATIC FUNCTION _fakt_export()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -99,7 +99,7 @@ STATIC FUNCTION _fakt_import()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    __import_dbf_path := AllTrim( _imp_path )
@@ -109,20 +109,20 @@ STATIC FUNCTION _fakt_import()
 
    IF _imp_file == NIL .OR. Empty( _imp_file )
       MsgBeep( "Nema odabranog import fajla !????" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !_vars_import( @_vars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !import_file_exist( _imp_file )
       MsgBeep( "Import fajl ne postoji! Prekidam operaciju." )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
-      RETURN
+      RETURN .F.
    ENDIF
 
 #ifdef __PLATFORM__UNIX
@@ -143,7 +143,7 @@ STATIC FUNCTION _fakt_import()
 
    DirChange( my_home() )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION print_imp_exp_report( DATA )
@@ -1049,7 +1049,7 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    USE
    CREATE ( use_path + "e_sifv" ) FROM ( my_home() + "struct" )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------
@@ -1065,7 +1065,7 @@ STATIC FUNCTION _o_tables()
    o_partner()
    o_roba()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1131,4 +1131,4 @@ STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
 
    log_write( "otvorene sve import tabele i indeksirane...", 9 )
 
-   RETURN
+   RETURN .T.

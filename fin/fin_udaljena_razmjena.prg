@@ -72,7 +72,7 @@ STATIC FUNCTION _fin_export()
    IF _exported_rec > 0
 
       // kompresuj ih u zip fajl za prenos
-      _error := _compress_files( "fin", __export_dbf_path )
+      _error := udaljenja_razmjena_compress_files( "fin", __export_dbf_path )
 
       // sve u redu
       IF _error == 0

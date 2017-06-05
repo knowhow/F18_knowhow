@@ -23,9 +23,8 @@ FUNCTION fakt_export_tbl_fakt()
    LOCAL cId_f
    LOCAL cId_td
 
-   // daj uslove
    IF get_vars( @dD_f, @dD_t, @cId_f, @cId_td ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    // kreiraj export tabelu

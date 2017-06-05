@@ -67,7 +67,7 @@ STATIC FUNCTION kalk_export_start()
    // arhiviraj podatke
    IF _exported_rec > 0
 
-      _error := _compress_files( "kalk", __export_dbf_path ) // kompresuj ih u zip fajl za prenos
+      _error := udaljenja_razmjena_compress_files( "kalk", __export_dbf_path ) // kompresuj ih u zip fajl za prenos
 
       // sve u redu
       IF _error == 0

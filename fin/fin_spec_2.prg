@@ -2,7 +2,7 @@
 
 /*
  *     Specifikacija subanalitike po proizvoljnom sortiranju, verzija C52
- */
+
 
 FUNCTION SpecSubPro()
 
@@ -260,3 +260,4 @@ FUNCTION SpecSubPro()
          closeret
 
          RETURN
+ */

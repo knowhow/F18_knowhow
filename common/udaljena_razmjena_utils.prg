@@ -12,6 +12,31 @@
 #include "f18.ch"
 
 
+// ------------------------------------------
+// kompresuj fajlove i vrati path
+// ------------------------------------------
+FUNCTION udaljenja_razmjena_compress_files( modul, export_dbf_path )
+
+   LOCAL _files
+   LOCAL _error
+   LOCAL _zip_path, _zip_name, _file
+   LOCAL __path, __name, __ext
+
+
+   _files := _file_list( export_dbf_path, modul )    // lista fajlova za kompresovanje
+
+   _file := zip_name( modul, export_dbf_path )
+
+   hb_FNameSplit( _file, @__path, @__name, @__ext )
+
+   _zip_path := __path
+   _zip_name := __name + __ext
+
+   _error := zip_files( _zip_path, _zip_name, _files )
+
+   RETURN _error
+
+
 // --------------------------------------------
 // promjena privilegija fajlova
 // --------------------------------------------
@@ -504,7 +529,7 @@ FUNCTION delete_zip_files( zip_file )
       FErase( zip_file )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -648,31 +673,6 @@ STATIC FUNCTION _file_list( use_path, modul )
    RETURN _a_files
 
 
-
-// ------------------------------------------
-// kompresuj fajlove i vrati path
-// ------------------------------------------
-FUNCTION _compress_files( modul, export_dbf_path )
-
-   LOCAL _files
-   LOCAL _error
-   LOCAL _zip_path, _zip_name, _file
-   LOCAL __path, __name, __ext
-
-   // lista fajlova za kompresovanje
-   _files := _file_list( export_dbf_path, modul )
-
-   _file := zip_name( modul, export_dbf_path )
-
-   hb_FNameSplit( _file, @__path, @__name, @__ext )
-
-   _zip_path := __path
-   _zip_name := __name + __ext
-
-   // unzipuj fajlove
-   _error := zip_files( _zip_path, _zip_name, _files )
-
-   RETURN _error
 
 
 

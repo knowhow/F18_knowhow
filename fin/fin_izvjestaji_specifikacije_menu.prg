@@ -76,8 +76,8 @@ STATIC FUNCTION fin_specifikacije_meni()
    // AAdd( _opc, "4. za subanalitički konto / 2" )
    // AAdd( _opcexe, {|| SpecSubPro() } )
 
-   //AAdd( _opc, "3. za subanalitički konto/konto2" )
-   //AAdd( _opcexe, {|| SpecKK2() } )
+   AAdd( _opc, "3. prebijeno stanje konto/konto2" )
+   AAdd( _opcexe, {|| fin_spec_prebijeno_konto_konto2() } )
 
 
    AAdd( _opc, "A. po analitičkim kontima" )

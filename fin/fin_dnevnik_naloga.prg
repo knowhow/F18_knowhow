@@ -15,11 +15,16 @@ MEMVAR M
 MEMVAR nUkDugBHD, nUkPotBHD, nUkDugDEM, nUkPotDEM
 
 
-FUNCTION DnevnikNaloga()
+FUNCTION fin_dnevnik_naloga()
 
    LOCAL cMjGod := ""
    LOCAL _filter := ""
    LOCAL dOd, dDo
+   LOCAL cIdFirma
+   LOCAL cIdVN
+   LOCAL cBrNal
+   LOCAL dDatNal
+
 
    PRIVATE nUkDugBHD, nUkPotBHD, nUkDugDEM, nUkPotDEM
 
@@ -49,13 +54,13 @@ FUNCTION DnevnikNaloga()
    o_tnal()
    o_tdok()
    // o_partner()
-   o_konto()
+   //o_konto()
    o_nalog()
-   o_suban()
+   //o_suban()
 
 
-   SELECT SUBAN
-   SET ORDER TO TAG "4"
+   //SELECT SUBAN
+   //SET ORDER TO TAG "4"
 
    SELECT NALOG
    SET ORDER TO TAG "3" // nalog
@@ -88,9 +93,9 @@ FUNCTION DnevnikNaloga()
    lJerry := .F.
 
    IF gNW == "N"
-      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + IF( fin_jednovalutno() .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " -- ------------- ----------- -------- -------- --------------- ---------------" + IF( fin_jednovalutno(), "-", " ---------- ----------" )
+      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + IIF( fin_jednovalutno() .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " -- ------------- ----------- -------- -------- --------------- ---------------" + IF( fin_jednovalutno(), "-", " ---------- ----------" )
    ELSE
-      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + IF( fin_jednovalutno() .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " ----------- -------- -------- --------------- ---------------" + IF( fin_jednovalutno(), "-", " ---------- ----------" )
+      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + IIF( fin_jednovalutno() .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " ----------- -------- -------- --------------- ---------------" + IF( fin_jednovalutno(), "-", " ---------- ----------" )
    ENDIF
 
    cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
@@ -105,20 +110,19 @@ FUNCTION DnevnikNaloga()
          fin_nalog_zaglavlje( dDatNal )
       ENDIF
 
-      cIdFirma := IDFIRMA
-      cIdVN    := IDVN
-      cBrNal   := BRNAL
-      dDatNal  := DATNAL
+      cIdFirma := field->IDFIRMA
+      cIdVN    := field->IDVN
+      cBrNal   := field->BRNAL
+      dDatNal  := field->DATNAL
 
       IF cMjGod != Str( Month( dDatNal ), 2, 0 ) + Str( Year( dDatNal ), 4, 0)
-
          PrenosDNal() // završi stranu
          fin_nalog_zaglavlje( dDatNal ) // stampaj zaglavlje (nova stranica)
       ENDIF
 
       cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
 
-      find_suban_by_broj_dokumenta( cIdFirma, cIdVn, cBrDok )
+      find_suban_by_broj_dokumenta( cIdFirma, cIdVn, cBrNal )
       fin_nalog_stampa_fill_psuban( "3", NIL, dDatNal )
 
       SELECT NALOG

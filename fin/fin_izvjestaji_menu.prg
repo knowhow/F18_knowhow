@@ -34,7 +34,7 @@ FUNCTION fin_izvjestaji()
 //   AAdd( opcexe, {|| ProizvFin() } )
 
    AAdd( opc, "6. dnevnik naloga" )
-   AAdd( opcexe, {|| DnevnikNaloga() } )
+   AAdd( opcexe, {|| fin_dnevnik_naloga() } )
 
    AAdd( opc, "7. ostali izvještaji" )
    AAdd( opcexe, {|| fin_izvjestaji_ostali() } )

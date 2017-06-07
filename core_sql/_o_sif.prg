@@ -88,7 +88,6 @@ FUNCTION o_koncij( cId )
    RETURN !Eof()
 
 
-
 FUNCTION select_o_koncij( cId )
 
    SELECT ( F_KONCIJ )
@@ -102,6 +101,29 @@ FUNCTION select_o_koncij( cId )
 
    RETURN o_koncij( cId )
 
+
+FUNCTION find_koncij_by_id( cId )
+
+   LOCAL cAlias := "KONCIJ"
+   LOCAL cSqlQuery := "select * from fmk.koncij"
+   LOCAL cIdSql
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+
+   IF !use_sql( "koncij", cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN !Eof()
 
 
 FUNCTION o_tarifa( cId )
@@ -134,3 +156,27 @@ FUNCTION select_o_tarifa( cId )
    ENDIF
 
    RETURN o_tarifa( cId )
+
+
+FUNCTION find_tarifa_by_id( cId )
+
+   LOCAL cAlias := "TARIFA"
+   LOCAL cSqlQuery := "select * from fmk.tarifa"
+   LOCAL cIdSql
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+
+   IF !use_sql( "tarifa", cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN !Eof()

@@ -14,6 +14,8 @@
 
 FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
+   LOCAL cSort := "D"
+
    open_otv_stavke_tabele()
 
    cIdFirma := self_organizacija_id()
@@ -29,17 +31,19 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    SET CURSOR ON
 
    @ m_x + 1, m_y + 2 SAY "ISPRAVKA BROJA VEZE - OTVORENE STAVKE"
-   IF gNW == "D"
-      @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
-   ELSE
-      @ m_x + 3, m_y + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-   ENDIF
+   @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+
    @ m_x + 4, m_y + 2 SAY "Konto  " GET cIdKonto  VALID  p_konto( @cIdKonto )
    @ m_x + 5, m_y + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner ) PICT "@!"
+
+   @ m_x + 6, m_y + 2 SAY "Sortiranje B/D (broj veze/datum) " GET cSort VALID cSort $ "BD" PICT "@!"
+
    IF gFinRj == "D"
       cIdRj := Space( Len( RJ->id ) )
-      @ m_x + 6, m_y + 2 SAY "RJ" GET cidrj PICT "@!" VALID Empty( cidrj ) .OR. P_Rj( @cidrj )
+      @ m_x + 7, m_y + 2 SAY "RJ" GET cidrj PICT "@!" VALID Empty( cidrj ) .OR. P_Rj( @cidrj )
    ENDIF
+
+
    READ
    ESC_BCR
 
@@ -102,7 +106,14 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    NEXT
 
    MsgO( "Preuzimam podatke sa SQL servera ..." )
-   find_suban_by_konto_partner(  cIdFirma, cIdkonto, cIdPartner, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
+
+   IF cSort == "B"
+      cOrderBy := "IdFirma,IdKonto,IdPartner,brdok,datdok"
+   ELSE
+      cOrderBy := "IdFirma,IdKonto,IdPartner,datdok,brdok"
+   ENDIF
+
+   find_suban_by_konto_partner(  cIdFirma, cIdkonto, cIdPartner, NIL, cOrderBy )
    MsgC()
 
    // PRIVATE bBKUslov := {|| idFirma + idkonto + idpartner == cIdFirma + cIdkonto + cIdpartner }
@@ -245,7 +256,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
 
          open_otv_stavke_tabele( l_osuban )
          SELECT ( nDbfArea )
-         SET FILTER to &( _tb_filter )
+         SET FILTER TO &( _tb_filter )
          GO ( _t_rec )
 
 
@@ -268,7 +279,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
 
       open_otv_stavke_tabele( l_osuban )
       SELECT ( nDbfArea )
-      SET FILTER to &( _tb_filter )
+      SET FILTER TO &( _tb_filter )
       GO ( _t_rec )
 
 
@@ -280,7 +291,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
 
       open_otv_stavke_tabele( l_osuban )
       SELECT ( nDbfArea )
-      SET FILTER to &( _tb_filter )
+      SET FILTER TO &( _tb_filter )
       GO ( _t_rec )
 
       nRet := DE_REFRESH

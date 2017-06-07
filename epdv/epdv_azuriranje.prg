@@ -31,8 +31,7 @@ FUNCTION azur_ku_ki( cTbl )
    LOCAL nBrDok
    LOCAL _rec
    LOCAL nNextGRbr
-
-   PUBLIC __br_dok := 0
+   LOCAL nLastBrDok := 0
 
    IF cTbl == "KUF"
       epdv_otvori_kuf_tabele( .T. )
@@ -53,6 +52,7 @@ FUNCTION azur_ku_ki( cTbl )
       RETURN 0
    ENDIF
 
+altd()
    nNextGRbr := next_redni_broj_globalno( cTbl )
 
    SELECT ( nPArea )
@@ -78,7 +78,7 @@ FUNCTION azur_ku_ki( cTbl )
          _g_r_br := nNextGRbr
 
          _br_dok := nBrDok
-         __br_dok := _br_dok
+         nLastBrDok := _br_dok
 
          ++nCount
          @ m_x + 1, m_y + 2 SAY PadR( "Dodajem P_KIF -> KUF " + Transform( nCount, "9999" ), 40 )
@@ -99,7 +99,7 @@ FUNCTION azur_ku_ki( cTbl )
    ELSE
 
       MsgBeep( "Neuspješno ažuriranje epdv/sql !" )
-      RETURN
+      RETURN .F.
 
    ENDIF
 
@@ -121,13 +121,13 @@ FUNCTION azur_ku_ki( cTbl )
 
    BoxC()
 
-   MsgBeep( "Ažuriran je " + cTbl + " dokument " + Str( __br_dok, 6, 0 ) )
+   MsgBeep( "Ažuriran je " + cTbl + " dokument " + Str( nNextBrDok, 6, 0 ) )
 
-   RETURN __br_dok
+   RETURN nLastBrDok
 
 
 
-FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
+FUNCTION kuf_kif_azur_sql( tbl, nNextRbrGlobalno, nNextBrDok )
 
    LOCAL lOk := .T.
    LOCAL record := hb_Hash()
@@ -156,18 +156,16 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
 
    lOk := .T.
 
-
    IF lOk = .T.
 
       SELECT ( __area )
       GO TOP
-
       DO WHILE !Eof()
 
          record := dbf_get_rec()
          record[ "datum_2" ] := Date()
-         record[ "br_dok" ] := next_br_dok
-         record[ "g_r_br" ] := next_g_rbr
+         record[ "br_dok" ] := nNextBrDok
+         record[ "g_r_br" ] := nNextRbrGlobalno
 
          IF tbl == "KIF"
             record[ "src_pm" ] := field->src_pm

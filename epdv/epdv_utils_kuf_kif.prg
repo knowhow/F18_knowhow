@@ -125,14 +125,14 @@ FUNCTION next_br_dok( cTblName )
    SET ORDER TO TAG "BR_DOK"
 
    GO BOTTOM
-   nLastBrDok := br_dok
+   nLastBrDok := field->br_dok
    PopWa()
 
    RETURN nLastBrdok + 1
 
 
 
-FUNCTION rn_g_r_br( cTblName )
+FUNCTION epdv_renumeracija_g_r_br( cTblName )
 
    LOCAL nRbr, _rec
    LOCAL _table := "epdv_kuf"

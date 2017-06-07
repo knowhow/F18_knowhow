@@ -22,25 +22,24 @@ FUNCTION epdv_admin_menu()
 
 
    AAdd( opc, "1. renumeracija g_r_br KUF" )
-   AAdd( opcexe, {|| rn_gr( "KUF" ) } )
+   AAdd( opcexe, {|| epdv_renumeracija_rbr_globalni( "KUF" ) } )
    AAdd( opc, "2. renumeracija g_r_br KIF" )
-   AAdd( opcexe, {|| rn_gr( "KIF" ) } )
+   AAdd( opcexe, {|| epdv_renumeracija_rbr_globalni( "KIF" ) } )
 
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "adm" )
 
-   RETURN
+   RETURN .T.
 
 
-// ---------------------------------
-// ---------------------------------
-STATIC FUNCTION rn_gr( cTblName )
+
+STATIC FUNCTION epdv_renumeracija_rbr_globalni( cTblName )
 
    IF Pitanje(, "Izvrsiti renumeriranje ? " + cTblName, "N" ) == "D"
       IF spec_funkcije_sifra( "RNGR" )
-         rn_g_r_br( cTblName )
+         epdv_renumeracija_g_r_br( cTblName )
       ELSE
          MsgBeep( "Pogresna lozinka, nista od posla ..." )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.

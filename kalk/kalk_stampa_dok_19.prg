@@ -131,7 +131,7 @@ FUNCTION kalk_stampa_dok_19()
    ? m
 
    ?
-   Rektarife()
+   kalk_pripr_rekap_tarife()
 
    PrnClanoviKomisije()
 

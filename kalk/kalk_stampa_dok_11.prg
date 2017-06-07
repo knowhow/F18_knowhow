@@ -249,7 +249,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
    ? m
 
    nTot5 := nTot6 := nTot7 := 0
-   RekTarife()
+   kalk_pripr_rekap_tarife()
 
 
    IF fZaTops

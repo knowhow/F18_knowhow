@@ -13,41 +13,30 @@
 
 
 
-FUNCTION epdv_edit_kuf()
-
-   epdv_otvori_kuf_tabele( .T. )
-   epdv_kuf_tbl_priprema()
-
-   RETURN .T.
-
-
-STATIC FUNCTION epdv_kuf_tbl_priprema()
+STATIC FUNCTION epdv_kif_tbl_priprema()
 
    LOCAL _row := maxrows() - 4
    LOCAL _col := maxcols() - 3
 
    Box(, _row, _col )
-
    @ m_x + _row - 2, m_y + 2 SAY8 "<c-N>  Nove stavke    | <ENT> Ispravi stavku   | <c-T> Briši stavku         "
-   @ m_x + _row - 1, m_y + 2 SAY8 "<c-A>  Ispravka Naloga| <c-P> Štampa dokumenta | <a-A> Ažuriranje           "
+   @ m_x + _row - 1, m_y + 2 SAY8 "<c-A>  Ispravka naloga| <c-P> Štampa dokumenta | <a-A> Ažuriranje           "
    @ m_x + _row, m_y + 2 SAY8 "<a-P>  Povrat dok.    | <a-X> Renumeracija"
 
    PRIVATE ImeKol
    PRIVATE Kol
 
-   SELECT ( F_P_KUF )
+   SELECT ( F_P_KIF )
    SET ORDER TO TAG "br_dok"
    GO TOP
 
-   set_a_kol_kuf( @Kol, @ImeKol )
-   my_db_edit( "ekuf", _row, _col, {|| epdv_kuf_key_handler() }, "", "KUF Priprema...", , , , , 3 )
+   set_a_kol_kif( @Kol, @ImeKol )
+   my_db_edit( "ekif", _row, _col, {|| epdv_kif_key_handler() }, "", "KIF Priprema...", , , , , 3 )
    BoxC()
-   my_close_all_dbf()
-
-   RETURN .T.
+   closeret
 
 
-STATIC FUNCTION set_a_kol_kuf( aKol, aImeKol )
+STATIC FUNCTION set_a_kol_kif( aKol, aImeKol )
 
    aImeKol := {}
 
@@ -56,8 +45,9 @@ STATIC FUNCTION set_a_kol_kuf( aKol, aImeKol )
 
    AAdd( aImeKol, { "Datum", {|| datum }, "datum", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { PadR( "Tarifa", 6 ), {|| id_tar }, "id_tar", {|| .T. }, {|| .T. } } )
-   AAdd( aImeKol, { PadR( "Dobavljac", 15 ), {|| PadR( s_partner( id_part ), 13 ) + ".." }, "opis", {|| .T. }, {|| .T. } } )
-   AAdd( aImeKol, { PadR( "Broj dobavljaca - Opis", 37 ), {|| PadR( AllTrim( src_br_2 ) + "-" + opis, 35 ) + ".." }, "", {|| .T. }, {|| .T. } } )
+
+   AAdd( aImeKol, { PadR( "Kupac", 19 ), {|| PadR( s_partner( id_part ), 17 ) + ".." }, "opis", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadR( "Broj dobavljaca - opis", 37 ), {|| PadR( AllTrim( src_br_2 ) + "-" + opis, 35 ) + ".." }, "", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Izn.b.pdv", {|| Transform( i_b_pdv, PIC_IZN() ) }, "i_b_pdv", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Izn.pdv", {|| Transform( i_pdv, PIC_IZN() ) }, "i_pdv", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Izn.s.pdv", {|| Transform( i_b_pdv + i_pdv, PIC_IZN() ) }, "", {|| .T. }, {|| .T. } } )
@@ -67,10 +57,10 @@ STATIC FUNCTION set_a_kol_kuf( aKol, aImeKol )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
-STATIC FUNCTION epdv_kuf_edit_item( lNova )
+STATIC FUNCTION epdv_kif_edit_item( lNova )
 
    LOCAL cIspravno := "D"
    LOCAL nI_s_pdv := 0
@@ -81,7 +71,7 @@ STATIC FUNCTION epdv_kuf_edit_item( lNova )
    Box(, MAXROWS() - 10, MAXCOLS() - 12 )
    IF lNova
       _br_dok := 0
-      _r_br := next_r_br( "P_KUF" )
+      _r_br := next_r_br( "P_KIF" )
       _id_part := Space( Len( id_part ) )
       _id_tar := PadR( "PDV17", Len( id_tar ) )
       _datum := Date()
@@ -98,14 +88,14 @@ STATIC FUNCTION epdv_kuf_edit_item( lNova )
    nX += 2
 
    nXPart := nX
-   @ m_x + nX, m_y + 2 SAY8 "Dobavljač: " GET _id_part ;
-      VALID v_part( @_id_part, @_id_tar, "KUF", .T. ) ;
+   @ m_x + nX, m_y + 2 SAY "Kupac: " GET _id_part ;
+      VALID v_part( @_id_part, @_id_tar, "KIF", .T. ) ;
       PICT "@!"
 
    nX += 2
 
 
-   @ m_x + nX, m_y + 2 SAY "Broj fakture " GET _src_br_2
+   @ m_x + nX, m_y + 2 SAY8 "Broj računa (externi broj) " GET _src_br_2
    nX ++
 
    @ m_x + nX, m_y + 2 SAY "Opis stavke: " GET _opis ;
@@ -136,12 +126,13 @@ STATIC FUNCTION epdv_kuf_edit_item( lNova )
    nX += 2
 
    @ m_x + nX, m_y + 2 SAY "Ispravno (D/N) ?" GET cIspravno ;
+      valid {|| cIspravno == "D" } ;
       PICT "@!"
    ++nX
 
    READ
 
-   SELECT F_P_KUF
+   SELECT F_P_KIF
    BoxC()
 
    ESC_RETURN .F.
@@ -152,10 +143,11 @@ STATIC FUNCTION epdv_kuf_edit_item( lNova )
       RETURN .F.
    ENDIF
 
-STATIC FUNCTION epdv_kuf_key_handler()
+STATIC FUNCTION epdv_kif_key_handler()
 
    LOCAL nTekRec
    LOCAL nBrDokP
+   LOCAL lDelete := .F.
 
    IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0
       RETURN DE_CONT
@@ -165,17 +157,17 @@ STATIC FUNCTION epdv_kuf_key_handler()
 
    CASE ( Ch == K_CTRL_T )
 
-      SELECT P_KUF
-      RETURN browse_brisi_stavku( .T. )
+      SELECT P_KIF
+      RETURN browse_brisi_stavku()
 
    CASE ( Ch == K_ENTER )
 
-      SELECT P_KUF
+      SELECT P_KIF
       nTekRec := RecNo()
       my_flock()
       Scatter()
-      IF epdv_kuf_edit_item( .F. )
-         SELECT P_KUF
+      IF epdv_kif_edit_item( .F. )
+         SELECT P_KIF
          GO nTekRec
          Gather()
          RETURN DE_REFRESH
@@ -185,25 +177,29 @@ STATIC FUNCTION epdv_kuf_key_handler()
 
    CASE ( Ch == K_CTRL_N )
 
-      SELECT P_KUF
+      SELECT P_KIF
+      SET ORDER TO TAG "BR_DOK"
+
       my_flock()
 
       DO WHILE .T.
 
-         SELECT P_KUF
+         SELECT P_KIF
          APPEND BLANK
          nTekRec := RecNo()
          Scatter()
 
-         IF epdv_kuf_edit_item( .T. )
+         IF epdv_kif_edit_item( .T. )
             GO nTekRec
             Gather()
          ELSE
-            SELECT P_KUF
+            SELECT P_KIF
             GO nTekRec
             DELETE
             EXIT
          ENDIF
+
+
       ENDDO
 
       my_unlock()
@@ -229,22 +225,20 @@ STATIC FUNCTION epdv_kuf_key_handler()
       READ
       BoxC()
       IF LastKey() <> K_ESC
-         rpt_kuf( nBrDokP )
+         rpt_kif( nBrDokP )
       ENDIF
 
       my_close_all_dbf()
-
-      epdv_otvori_kuf_tabele( .T. )
-
-      SELECT P_KUF
+      epdv_otvori_kif_tabele( .T. )
+      SELECT P_KIF
       SET ORDER TO TAG "br_dok"
 
       RETURN DE_REFRESH
 
    CASE is_key_alt_a( Ch )
 
-      IF Pitanje( , "Ažurirati KUF dokument (D/N) ?", "N" ) == "D"
-         azur_kuf()
+      IF Pitanje( , "Ažurirati pripremu KIF-a (D/N) ?", "N" ) == "D"
+         azur_kif()
          RETURN DE_REFRESH
       ELSE
          RETURN DE_CONT
@@ -252,35 +246,46 @@ STATIC FUNCTION epdv_kuf_key_handler()
 
    CASE Ch == K_ALT_P
 
-      IF Pitanje( , "Povrat KUF dokumenta u pripremu (D/N) ?", "N" ) == "D"
+      IF Pitanje( , "Povrat KIF dokumenta u pripremu (D/N) ?", "N" ) == "D"
          nBrDokP := 0
          Box(, 1, 40 )
-         @ m_x + 1, m_y + 2 SAY "KUF dokument br:" GET nBrDokP  PICT "999999"
+         @ m_x + 1, m_y + 2 SAY "KIF dokument br:" GET nBrDokP  PICT "999999"
 
          READ
          BoxC()
 
          IF LastKey() <> K_ESC
-            pov_kuf( nBrDokP )
+            pov_kif( nBrDokP )
             RETURN DE_REFRESH
          ENDIF
       ENDIF
 
-      SELECT P_KUF
+      SELECT P_KIF
       RETURN DE_REFRESH
 
    CASE Ch == K_ALT_X
 
-      IF Pitanje (, "Izvršiti renumeraciju KUF pripreme (D/N) ?", "N" ) == "D"
-         epdv_renumeracija_rbr( "P_KUF", .F. )
+      IF Pitanje (, "Izvršiti renumeraciju pripreme (D/N) ?", "N" ) == "D"
+         epdv_renumeracija_rbr( "P_KIF", .F. )
       ENDIF
 
-      SELECT P_KUF
+      SELECT P_KIF
       SET ORDER TO TAG "BR_DOK"
       GO TOP
 
       RETURN DE_REFRESH
 
+
    ENDCASE
 
    RETURN DE_CONT
+
+
+
+
+FUNCTION epdv_edit_kif()
+
+   epdv_otvori_kif_tabele( .T. )
+   epdv_kif_tbl_priprema()
+
+   RETURN .T.

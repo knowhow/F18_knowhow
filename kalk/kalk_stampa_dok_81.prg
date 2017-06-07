@@ -287,7 +287,7 @@ FUNCTION StKalk81( fzatops )
    nTot1 := nTot2 := nTot2b := nTot3 := nTot4 := 0
    nTot5 := nTot6 := nTot7 := 0
 
-   RekTarife()
+   kalk_pripr_rekap_tarife()
 
    IF !fZaTops
       ? "RUC:";  @ PRow(), PCol() + 1 SAY nTot6 PICT picdem
@@ -554,7 +554,7 @@ FUNCTION kalk_stampa_dok_81()
 
    nTot1 := nTot2 := nTot2b := nTot3 := nTot4 := 0
    nTot5 := nTot6 := nTot7 := 0
-   RekTarife()
+   kalk_pripr_rekap_tarife()
 
    ? "RUC:";  @ PRow(), PCol() + 1 SAY nTot6 PICT picdem
    ? m

@@ -20,11 +20,7 @@ FUNCTION epdv_otvori_kuf_tabele( lPriprema )
       lPriprema := .F.
    ENDIF
 
-   SELECT F_TARIFA
-   IF !Used()
-      o_tarifa()
-   ENDIF
-
+   select_o_tarifa()
    select_o_epdv_kuf()
 
    IF lPriprema == .T.
@@ -69,6 +65,8 @@ FUNCTION epdv_otvori_kif_tabele( lPriprema )
 
 FUNCTION next_r_br( cTblName )
 
+   LOCAL nLastBr
+
    PushWA()
    DO CASE
    CASE cTblName == "P_KUF"
@@ -80,15 +78,17 @@ FUNCTION next_r_br( cTblName )
 
    SET ORDER TO TAG "BR_DOK"
    GO BOTTOM
-   nLastRbr := r_br
+   nLastRbr := field->r_br
    PopWa()
 
    RETURN nLastRbr + 1
 
 
-// ------------------------
-// ------------------------
-FUNCTION next_g_r_br( cTblName )
+
+
+FUNCTION next_redni_broj_globalno( cTblName )
+
+   LOCAL nLastRbr
 
    PushWA()
    DO CASE
@@ -102,14 +102,13 @@ FUNCTION next_g_r_br( cTblName )
    SET ORDER TO TAG "G_R_BR"
 
    GO BOTTOM
-   nLastRbr := g_r_br
+   nLastRbr := field->g_r_br
    PopWa()
 
    RETURN nLastRbr + 1
 
 
-// -----------------------------
-// -----------------------------
+
 FUNCTION next_br_dok( cTblName )
 
    LOCAL nLastBrDok

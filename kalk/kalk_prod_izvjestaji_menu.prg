@@ -33,7 +33,7 @@ FUNCTION kalk_izvjestaji_prodavnice_menu()
    AAdd( _opcexe, {|| naprometniji_artikli_prodavnica() } )
 
    AAdd( _Opc,  "V. pregled za više objekata" )
-   AAdd( _opcexe, {|| RekProd() } )
+   AAdd( _opcexe, {|| kalk_prodavnica_pregled_vise_objekata() } )
 
    f18_menu( "izp", .F., _izbor, _opc, _opcexe )
 
@@ -47,7 +47,7 @@ FUNCTION kalk_izvjestaji_prodavnice_menu()
  pregledi za vise objekata
 */
 
-FUNCTION RekProd()
+FUNCTION kalk_prodavnica_pregled_vise_objekata()
 
    LOCAL _izbor := 1
    LOCAL _opc := {}

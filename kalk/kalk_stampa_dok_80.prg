@@ -208,7 +208,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
 
    print_nova_strana( 125, @nStr, 8 )
    nRec := RecNo()
-   RekTarife()
+   kalk_pripr_rekap_tarife()
 
    // potpis na dokumentu
    dok_potpis( 90, "L", nil, nil )

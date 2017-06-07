@@ -11,15 +11,9 @@
 
 #include "f18.ch"
 
-FUNCTION RekTarife( lVisak )
-
-   RekTarPDV()
-
-   RETURN
-
 
 // PDV obracun
-FUNCTION RekTarPDV()
+FUNCTION kalk_pripr_rekap_tarife()
 
    LOCAL _pict := "99999999999.99"
    LOCAL nKolona
@@ -49,13 +43,10 @@ FUNCTION RekTarPDV()
 
    ? m
 
-   IF !glUgost
-      ?  "* Tar.*  PDV%    *      MPV     *      PDV     *     MPV     *"
-      ?  "*     *          *    bez PDV   *     iznos    *    sa PDV   *"
-   ELSE
-      ?  "* Tar.*   PDV    *    Por potr   *     MPV     *      PDV     *    Porez     *     MPV     *"
-      ?  "*     *   (%)    *      (%)      *   bez PDV   *     iznos    *    na potr.  *    sa PDV   *"
-   ENDIF
+
+   ?  "* Tar.*  PDV%    *      MPV     *      PDV     *     MPV     *"
+   ?  "*     *          *    bez PDV   *     iznos    *    sa PDV   *"
+
 
    ? m
 
@@ -111,7 +102,7 @@ FUNCTION RekTarPDV()
                LOOP
             ENDIF
 
-          select_o_roba(  kalk_pripr->idroba )
+            select_o_roba(  kalk_pripr->idroba )
 
             set_pdv_array_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, cIdTarifa )
             SELECT kalk_pripr
@@ -130,7 +121,7 @@ FUNCTION RekTarPDV()
                nMpc2 := MpcBezPor( nMpcsaPdv2, aPorezi,, field->nc )
                aIPor2 := RacPorezeMP( aPorezi, nMpc2, nMpcsaPdv2, field->nc )
                aIPor := { 0, 0, 0 }
-               aIPor[ 1 ] := aIPor1[ 1 ] -aIPor2[ 1 ]
+               aIPor[ 1 ] := aIPor1[ 1 ] - aIPor2[ 1 ]
 
             ELSE
 
@@ -157,10 +148,6 @@ FUNCTION RekTarPDV()
 
          nTot1 += nU1
          nTot2 += nU2
-
-         IF glUgost
-            nTot2b += nU2b
-         ENDIF
 
          nTot3 += nU3
 

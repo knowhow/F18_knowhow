@@ -214,7 +214,7 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
    ? m
 
    // Visak
-   RekTarife( .T. )
+   kalk_pripr_rekap_tarife( .T. )
 
    IF !fZaTops
       ?

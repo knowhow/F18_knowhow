@@ -30,6 +30,8 @@ FUNCTION azur_ku_ki( cTbl )
 
    LOCAL nBrDok
    LOCAL _rec
+   LOCAL nNextGRbr
+
    PUBLIC __br_dok := 0
 
    IF cTbl == "KUF"
@@ -51,7 +53,7 @@ FUNCTION azur_ku_ki( cTbl )
       RETURN 0
    ENDIF
 
-   nNextGRbr := next_g_r_br( cTbl )
+   nNextGRbr := next_redni_broj_globalno( cTbl )
 
    SELECT ( nPArea )
    GO TOP

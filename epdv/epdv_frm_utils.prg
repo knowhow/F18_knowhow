@@ -76,7 +76,10 @@ FUNCTION v_part( cIdPart, cIdTar, cTbl, lShow )
 
    RETURN .T.
 
+
 FUNCTION v_nazad( nNazad )
+
+   LOCAL i
 
    FOR i := 1 TO nNazad
       KEYBOARD K_UP

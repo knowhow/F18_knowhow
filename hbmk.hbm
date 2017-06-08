@@ -31,4 +31,4 @@ hbtip.hbc
 rdduser.hbc
 hbhpdf.hbc
 hbhttpd.hbc
-#hbcurl.hbc
+hbcurl.hbc

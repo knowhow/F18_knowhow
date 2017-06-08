@@ -85,7 +85,7 @@ METHOD F18Admin:New()
 METHOD F18Admin:update_app()
 
    LOCAL _ver_params := hb_Hash()
-   LOCAL _upd_params := hb_Hash()
+   LOCAL _hF18UpdateParams := hb_Hash()
    LOCAL _upd_file := ""
    LOCAL lOk := .F.
 
@@ -240,30 +240,41 @@ METHOD F18Admin:update_app_run_script( update_file )
 
 
 
-METHOD F18Admin:update_app_form( upd_params )
+METHOD F18Admin:update_app_form( hF18UpdateParams )
 
    LOCAL lOk := .F.
-   LOCAL _f_ver_prim := 2
-   LOCAL _f_ver_sec := 3
-   LOCAL _f_ver_third := Space( 10 )
+   LOCAL nVerzijaMajor := 2
+   LOCAL nVerzijaMinor := 3
+   LOCAL nVerzijaPatch := Space( 10 )
    LOCAL _t_ver_prim := 1
    LOCAL _t_ver_sec := 5
    LOCAL _t_ver_third := Space( 10 )
    LOCAL nX := 1
    LOCAL _col_app, _col_temp, cLine
    LOCAL _upd_f, _upd_t, nPos
+   LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
+   LOCAL aMatch
+
 
    _upd_f := "D"
    _upd_t := "N"
    _col_app := "W/G+"
    _col_temp := "W/G+"
 
-   IF f18_ver() < upd_params[ "f18" ]
+   aMatch := hb_regex( pRegex, hF18UpdateParams[ "f18" ] )
+
+   IF Len( aMatch ) > 0 // aMatch[1]="2.3.500" aMatch[2]="2", aMatch[3]="3", aMatch[4]="500"
+      nVerzijaMajor := Val( aMatch[ 2 ] )
+      nVerzijaMinor := Val( aMatch[ 3 ] )
+      nVerzijaPatch := Val( aMatch[ 4 ] )
+   ENDIF
+
+   //IF f18_ver() < hF18UpdateParams[ "f18" ]
       _col_app := "W/R+"
-   ENDIF
-   IF f18_template_ver() < upd_params[ "templates" ]
+   //ENDIF
+   //IF f18_template_ver() < hF18UpdateParams[ "templates" ]
       _col_temp := "W/R+"
-   ENDIF
+   //ENDIF
 
    Box(, 14, 65 )
 
@@ -282,12 +293,12 @@ METHOD F18Admin:update_app_form( upd_params )
    ++nX
    @ m_x + nX, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( f18_ver(), 20 )
    @ m_x + nX, Col() SAY " "
-   @ m_x + nX, Col() SAY PadC( upd_params[ "f18" ], 20 ) COLOR _col_app
+   @ m_x + nX, Col() SAY PadC( hF18UpdateParams[ "f18" ], 20 ) COLOR _col_app
 
    ++nX
    @ m_x + nX, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( f18_template_ver(), 20 )
    @ m_x + nX, Col() SAY " "
-   @ m_x + nX, Col() SAY PadC( upd_params[ "templates" ], 20 ) COLOR _col_temp
+   @ m_x + nX, Col() SAY PadC( hF18UpdateParams[ "templates" ], 20 ) COLOR _col_temp
 
    ++nX
 
@@ -302,9 +313,9 @@ METHOD F18Admin:update_app_form( upd_params )
    READ
 
    IF _upd_f == "D"
-      @ m_x + nX, m_y + 25 SAY "VERZIJA:" GET _f_ver_prim PICT "99" VALID _f_ver_prim > 0
-      @ m_x + nX, Col() + 1 SAY "." GET _f_ver_sec PICT "99" VALID _f_ver_sec > 0
-      @ m_x + nX, Col() + 1 SAY "." GET _f_ver_third PICT "@S10"
+      @ m_x + nX, m_y + 25 SAY "VERZIJA:" GET nVerzijaMajor PICT "999" VALID nVerzijaMajor > 0
+      @ m_x + nX, Col() + 1 SAY "." GET nVerzijaMinor PICT "999" VALID nVerzijaMinor > 0
+      @ m_x + nX, Col() + 1 SAY "." GET nVerzijaPatch PICT "9999"
 
    ENDIF
 
@@ -338,13 +349,13 @@ METHOD F18Admin:update_app_form( upd_params )
 
    IF ::update_app_f18
       // sastavi mi verziju
-      IF !Empty( _f_ver_third )
+      IF !Empty( nVerzijaPatch )
          // zadana verzija
-         ::update_app_f18_version := AllTrim( Str( _f_ver_prim ) ) + ;
+         ::update_app_f18_version := AllTrim( Str( nVerzijaMajor ) ) + ;
             "." + ;
-            AllTrim( Str( _f_ver_sec ) ) + ;
+            AllTrim( Str( nVerzijaMinor ) ) + ;
             "." + ;
-            AllTrim( _f_ver_third )
+            AllTrim( Str( nVerzijaPatch ) )
       ELSE
          ::update_app_f18_version := "#LAST#"
       ENDIF
@@ -464,6 +475,7 @@ METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only
    LOCAL _cmd := ""
    LOCAL nFileHandle, _lenght
 
+altd()
    IF erase_file == NIL
       erase_file := .F.
    ENDIF
@@ -478,7 +490,7 @@ METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only
 
    IF erase_file
       FErase( location )
-      Sleep( 1 )
+      //Sleep( 1 )
    ENDIF
 
    _cmd += "wget "
@@ -499,7 +511,7 @@ METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only
 
    hb_run( _cmd )
 
-   Sleep( 1 )
+   //Sleep( 1 )
 
    IF !File( location )
       // nema fajle

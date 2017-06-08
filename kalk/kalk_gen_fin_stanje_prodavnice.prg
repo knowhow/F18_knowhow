@@ -318,7 +318,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
             set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
 
-            _mp_izlaz += DokMpc( field->idvd, aPorezi ) * field->gkolicin2
+            _mp_izlaz += kalk_mpc_by_vrsta_dokumenta( field->idvd, aPorezi ) * field->gkolicin2
             _mp_izlaz_p += field->mpcsapp * field->gkolicin2
             _nv_izlaz += field->nc * field->gkolicin2
 

@@ -263,7 +263,7 @@ FUNCTION finansijsko_stanje_prodavnica()
          ELSEIF pu_i == "I"
 
             set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi, field->idtarifa )
-            nMPVBI += DokMpc( field->idvd, aPorezi ) * field->gkolicin2
+            nMPVBI += kalk_mpc_by_vrsta_dokumenta( field->idvd, aPorezi ) * field->gkolicin2
             // nMPVBI+=mpcsapp/((1+_OPP)*(1+_PPP))*gkolicin2
             nMPVI += mpcsapp * gkolicin2
             nNVI += nc * gkolicin2

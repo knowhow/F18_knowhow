@@ -221,7 +221,6 @@ FUNCTION kalk_ukalkulisani_porez_prodavnice()
       @ PRow(), PCol() + 1  SAY  0       PICT "@Z " + cPicProcenat
 
       @ PRow(), PCol() + 1  SAY  nT4     PICT cPicIznos
-
       @ PRow(), PCol() + 1  SAY  nT7     PICT cPicIznos
       ? cLine
 

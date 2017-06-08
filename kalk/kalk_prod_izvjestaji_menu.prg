@@ -37,7 +37,10 @@ FUNCTION kalk_izvjestaji_prodavnice_menu()
 
    AAdd( _opc,  "K. ukalkulisani porez prodavnice" )
    AAdd( _opcexe, {|| kalk_ukalkulisani_porez_prodavnice() } )
-   
+
+   AAdd( _opc,  "R. realizovani porez prodavnice" )
+   AAdd( _opcexe, {|| kalk_realizovani_porez_prodavnice() } )
+
    f18_menu( "izp", .F., _izbor, _opc, _opcexe )
 
    RETURN NIL

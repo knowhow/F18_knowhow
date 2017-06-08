@@ -82,10 +82,6 @@ FUNCTION kalk_pripr_rekap_tarife()
          // pdv
          nU2 := 0
 
-         IF glUgost
-            // porez na potrosnju
-            nU2b := 0
-         ENDIF
 
          // mpv sa porezom
          nU3 := 0
@@ -107,7 +103,7 @@ FUNCTION kalk_pripr_rekap_tarife()
             set_pdv_array_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, cIdTarifa )
             SELECT kalk_pripr
 
-            nMpc := DokMpc( field->idvd, aPorezi )
+            nMpc := kalk_mpc_by_vrsta_dokumenta( field->idvd, aPorezi )
 
             IF field->idvd == "19"
 
@@ -155,18 +151,11 @@ FUNCTION kalk_pripr_rekap_tarife()
 
          @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ] PICT picproc
 
-         IF glUgost
-            @ PRow(), PCol() + 1 SAY aPorezi[ POR_PP ] PICT picproc
-         ENDIF
 
          nCol1 := PCol() + 1
 
          @ PRow(), PCol() + 1   SAY nU1 PICT _pict
          @ PRow(), PCol() + 1   SAY nU2 PICT _pict
-
-         IF glUgost
-            @ PRow(), PCol() + 1   SAY nU2b PICT _pict
-         ENDIF
 
          @ PRow(), PCol() + 1   SAY nU3 PICT _pict
 
@@ -245,7 +234,7 @@ FUNCTION DokKolicina( cIdVd )
 
 
 
-FUNCTION DokMpc( cIdVd, aPorezi )
+FUNCTION kalk_mpc_by_vrsta_dokumenta( cIdVd, aPorezi )
 
    LOCAL nMpc
 

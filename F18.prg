@@ -288,6 +288,9 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    LOCAL _count := 0
    LOCAL cMenuBrojac
 
+   AAdd( aMeniOpcije,  " U. update F18"  )
+   AAdd( aMeniExec, {|| F18Admin():New():update_app(), .T. } )
+
    IF f18_use_module( "fin" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
       AAdd( aMeniOpcije, cMenuBrojac + ". FIN   # finansijsko poslovanje                 " )
@@ -374,9 +377,6 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
 
    AAdd( aMeniOpcije, " V. vpn podrška" )
    AAdd( aMeniExec, {|| vpn_support() } )
-
-   AAdd( aMeniOpcije,  " U. update F18"  )
-   AAdd( aMeniExec, {|| F18Admin():New():update_app(), .T. } )
 
 
    AAdd( aMeniOpcije, " X. diag info" )

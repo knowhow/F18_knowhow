@@ -111,11 +111,11 @@ METHOD F18Admin:update_app()
       RETURN SELF
    ENDIF
 
-   if ::update_app_templates
+   IF ::update_app_templates
       ::update_app_run_templates_update( _ver_params )
    ENDIF
 
-   if ::update_app_f18
+   IF ::update_app_f18
       ::update_app_run_app_update( _ver_params )
    ENDIF
 
@@ -133,7 +133,7 @@ METHOD F18Admin:update_app_run_templates_update( params )
    _dest := "c:" + SLASH + "knowhowERP" + SLASH
 #endif
 
-   if ::update_app_templates_version == "#LAST#"
+   IF ::update_app_templates_version == "#LAST#"
       ::update_app_templates_version := params[ "templates" ]
    ENDIF
 
@@ -183,7 +183,7 @@ METHOD F18Admin:update_app_run_app_update( params )
 
    LOCAL _upd_file := "F18_#OS#_#VER#.gz"
 
-   if ::update_app_f18_version == "#LAST#"
+   IF ::update_app_f18_version == "#LAST#"
       ::update_app_f18_version := params[ "f18" ]
    ENDIF
 
@@ -195,7 +195,7 @@ METHOD F18Admin:update_app_run_app_update( params )
 
    _upd_file := StrTran( _upd_file, "#VER#", ::update_app_f18_version )
 
-   if ::update_app_f18_version == f18_ver()
+   IF ::update_app_f18_version == f18_ver()
       MsgBeep( "Verzija aplikacije " + f18_ver() + " je vec instalirana !" )
       RETURN SELF
    ENDIF
@@ -336,7 +336,7 @@ METHOD F18Admin:update_app_form( upd_params )
    ::update_app_f18 := ( _upd_f == "D" ) // setuj postavke
    ::update_app_templates := ( _upd_t == "D" )
 
-   if ::update_app_f18
+   IF ::update_app_f18
       // sastavi mi verziju
       IF !Empty( _f_ver_third )
          // zadana verzija
@@ -353,7 +353,7 @@ METHOD F18Admin:update_app_form( upd_params )
 
    ENDIF
 
-   if ::update_app_templates  // sastavi mi verziju
+   IF ::update_app_templates  // sastavi mi verziju
       IF !Empty( _t_ver_third ) // zadana verzija
          ::update_app_templates_version := AllTrim( Str( _t_ver_prim ) ) + "." +  AllTrim( Str( _t_ver_sec ) ) + "." +  AllTrim( _t_ver_third )
       ELSE
@@ -421,16 +421,20 @@ METHOD F18Admin:f18_upd_download()
 
    info_bar( "upd", "download " +  ::update_app_info_file )
 
+   MsgO( "preuzimanje podataka o aktuelnoj verziji ..." )
    _url := "https://raw.github.com/knowhow/F18_knowhow/" + cBranch + "/"
    IF !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, _always_erase, _silent )
+      MsgC()
       RETURN .F.
    ENDIF
 
    info_bar( "upd", "download " +  ::update_app_script_file )
    _url := "https://raw.github.com/knowhow/F18_knowhow/" + cBranch + "/scripts/"
    IF !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, _always_erase, _silent )
+      MsgC()
       RETURN .F.
    ENDIF
+   MsgC()
 
    RETURN .T.
 
@@ -614,7 +618,7 @@ METHOD F18Admin:update_db_download()
    ENDIF
 
 
-   if ::wget_download( _url, _file, _path + _file )  // download fajla
+   IF ::wget_download( _url, _file, _path + _file )  // download fajla
       ::_update_params[ "file" ] := AllTrim( _path ) + AllTrim( _file )
       lOk := .T.
    ENDIF
@@ -639,7 +643,7 @@ METHOD F18Admin:update_db_all( arr )
    RETURN lOk
 
 
-METHOD F18Admin:update_db_command( database )
+METHOD F18Admin:update_db_command( DATABASE )
 
    LOCAL _cmd := ""
    LOCAL _file := ::_update_params[ "file" ]
@@ -678,7 +682,7 @@ METHOD F18Admin:update_db_command( database )
 
    _cmd += AllTrim( Str( ::_update_params[ "port" ] ) )
 
-   _cmd += "/" + AllTrim( database )
+   _cmd += "/" + AllTrim( DATABASE )
 
    _cmd += " -username=admin"
 
@@ -712,21 +716,21 @@ METHOD F18Admin:update_db_company( cOrganizacija )
 
       IF Left( cOrganizacija, 1 ) == "!"
 
-         cOrganizacija := Right( AllTrim( cOrganizacija ), Len( AllTrim( cOrganizacija ) ) -1 )
+         cOrganizacija := Right( AllTrim( cOrganizacija ), Len( AllTrim( cOrganizacija ) ) - 1 )
 
          AAdd( aListaSezona, { "empty" } ) // rucno zadan naziv baze, ne gledati sezone
 
-      ELSEIF ! ( "_" $ cOrganizacija )
+      ELSEIF !( "_" $ cOrganizacija )
 
 
          aListaSezona := my_login():get_database_sessions( cOrganizacija ) // nema sezone, uzeti sa servera
 
       ELSE
 
-         IF SubStr( cOrganizacija, Len( cOrganizacija ) -3, 1 ) $ "1#2"
+         IF SubStr( cOrganizacija, Len( cOrganizacija ) - 3, 1 ) $ "1#2"
 
             AAdd( aListaSezona, { Right( AllTrim( cOrganizacija ), 4 ) } ) // vec postoji zadana sezona, samo je dodati u matricu
-            cOrganizacija := PadR( AllTrim( cOrganizacija ), Len( AllTrim( cOrganizacija ) ) -5  )
+            cOrganizacija := PadR( AllTrim( cOrganizacija ), Len( AllTrim( cOrganizacija ) ) - 5  )
          ELSE
             aListaSezona := my_login():get_database_sessions( cOrganizacija )
          ENDIF
@@ -793,7 +797,7 @@ METHOD F18Admin:razdvajanje_sezona()
 
    stop_refresh_operations()
 
-   nFromSezona := Year( Date() ) -1
+   nFromSezona := Year( Date() ) - 1
    nToSezona := Year( Date() )
 
    SET CURSOR ON

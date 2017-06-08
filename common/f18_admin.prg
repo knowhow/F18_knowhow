@@ -417,16 +417,17 @@ METHOD F18Admin:f18_upd_download()
    LOCAL _ver_params
    LOCAL _silent := .T.
    LOCAL _always_erase := .T.
+   LOCAL cBranch := "23100-ld"
 
    info_bar( "upd", "download " +  ::update_app_info_file )
 
-   _url := "https://raw.github.com/knowhow/F18_knowhow/master/"
+   _url := "https://raw.github.com/knowhow/F18_knowhow/" + cBranch + "/"
    IF !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, _always_erase, _silent )
       RETURN .F.
    ENDIF
 
    info_bar( "upd", "download " +  ::update_app_script_file )
-   _url := "https://raw.github.com/knowhow/F18_knowhow/master/scripts/"
+   _url := "https://raw.github.com/knowhow/F18_knowhow/" + cBranch + "/scripts/"
    IF !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, _always_erase, _silent )
       RETURN .F.
    ENDIF

@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 #include "f18_color.ch"
-#include "hbcurl.ch"
+//#include "hbcurl.ch"
 
 STATIC __relogin_opt := .F.
 
@@ -48,7 +48,7 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 #endif
 
 
-
+/*
 FUNCTION curl_get( cUrl )
 
    LOCAL hFile
@@ -91,6 +91,7 @@ FUNCTION curl_get( cUrl )
 
    RETURN cRead
 
+*/
 
 FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
 
@@ -333,12 +334,12 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    LOCAL _count := 0
    LOCAL cMenuBrojac
 
-   cVersion := curl_get( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
+   //cVersion := curl_get( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
 
-   if cVersion != f18_ver()
+   //if cVersion != f18_ver()
      AAdd( aMeniOpcije,  " U. F18 upgrade verzija: " + cVersion  )
      AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
-   endif
+   //endif
 
    AAdd( aMeniOpcije, "---------------------------------------------" )
    AAdd( aMeniExec, {|| NIL } )

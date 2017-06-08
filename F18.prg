@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 #include "f18_color.ch"
+#include "hbcurl.ch"
 
 STATIC __relogin_opt := .F.
 
@@ -45,6 +46,50 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
    RETURN .T.
 
 #endif
+
+
+
+FUNCTION curl_get( cUrl )
+
+   LOCAL hFile
+   LOCAL cFileName
+
+   hFile := hb_vfTempFile( @cFileName, my_home_root(), "curl_", ".txt" )
+   hb_vfClose( hFile )
+
+// set_f18_home_root
+
+// ? curl_version()
+// ? curl_getdate( "Sun, 1 Jun 2008 02:10:58 +0200" )
+
+   curl_global_init()
+
+   curl := curl_easy_init()
+   curl_easy_setopt( curl, HB_CURLOPT_DOWNLOAD )
+// curl_easy_setopt( curl, HB_CURLOPT_URL, "http://download.bring.out.ba/greenbox-5.10.3.iso.sha256sum" )
+   curl_easy_setopt( curl, HB_CURLOPT_URL, cUrl )
+   curl_easy_setopt( curl, HB_CURLOPT_NOPROGRESS, 1 )
+   curl_easy_setopt( curl, HB_CURLOPT_DEBUGBLOCK, {| ... | QOut( "DEBUG:", ... ) } )
+   curl_easy_setopt( curl, HB_CURLOPT_DL_FILE_SETUP, cFileName )
+   curl_easy_perform( curl )
+   curl_easy_cleanup( curl )
+
+   oFile := TFileRead():New( cFileName )
+   oFile:Open()
+
+   IF oFile:Error()
+      MsgBeep( oFile:ErrorMsg( "Problem sa otvaranjem fajla: " + cFileName ) )
+      RETURN .F.
+   ENDIF
+
+   cRead := oFile:ReadLine()
+
+   oFile:Close()
+   FErase( cFileName )
+
+   curl_global_cleanup()
+
+   RETURN cRead
 
 
 FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
@@ -288,8 +333,12 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    LOCAL _count := 0
    LOCAL cMenuBrojac
 
-   AAdd( aMeniOpcije,  " U. update F18"  )
-   AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
+   cVersion := curl_get( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
+
+   if cVersion != f18_ver()
+     AAdd( aMeniOpcije,  " U. F18 upgrade verzija: " + cVersion  )
+     AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
+   endif
 
    AAdd( aMeniOpcije, "---------------------------------------------" )
    AAdd( aMeniExec, {|| NIL } )

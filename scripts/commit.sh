@@ -11,5 +11,6 @@ NEW_VER=$1
 
 sed -i -e "s/f18=.*/f18=$NEW_VER/" UPDATE_INFO 
 git commit -a -m "publish nver $NEW_VER"
+echo $NEW_VER > VERSION
 git tag $NEW_VER
 git push origin $BRANCH --tags

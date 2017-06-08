@@ -475,7 +475,6 @@ METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only
    LOCAL _cmd := ""
    LOCAL nFileHandle, _lenght
 
-altd()
    IF erase_file == NIL
       erase_file := .F.
    ENDIF

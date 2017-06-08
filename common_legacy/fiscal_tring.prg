@@ -635,7 +635,7 @@ FUNCTION tring_daily_rpt( dev_param )
 
    // nakon ovoga provjeri
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------

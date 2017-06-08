@@ -55,7 +55,7 @@ FUNCTION fprint_rn( hFiskalniParams, items, head, storno )
 
    _struct := _g_f_struct( F_POS_RN ) // uzmi strukturu tabele za pos racun
 
-   _data := _fprint_rn( items, head, storno, hFiskalniParams ) // iscitaj pos matricu
+   _data := fisk_fprint_get_array( items, head, storno, hFiskalniParams ) // iscitaj pos matricu
 
    fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], _struct, _data )
 
@@ -118,7 +118,7 @@ FUNCTION fprint_polog( hFiskalniParams, nPolog, lShowBox )
 
    aStruct := _g_f_struct( F_POS_RN )
 
-   aPolog := _fp_polog( nPolog )
+   aPolog := fisk_unos_polog( nPolog )
 
    fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aPolog )
 
@@ -254,7 +254,7 @@ FUNCTION fprint_komanda_301_zatvori_racun( hFiskalniParams )
    aStruct := _g_f_struct( F_POS_RN ) // uzmi strukturu tabele za pos racun
 
    // iscitaj pos matricu
-   aVoid := _fp_void_rn()
+   aVoid := fisk_nasilno_zatvori_racun_iznos_0()
 
    fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aVoid )
 
@@ -545,7 +545,7 @@ FUNCTION fprint_per_rpt( hFiskalniParams )
 // vraca popunjenu matricu za ispis racuna
 // FPRINT driver
 // ----------------------------------------
-STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
+STATIC FUNCTION fisk_fprint_get_array( aData, aKupac, lStorno, params )
 
    LOCAL aArr := {}
    LOCAL cTmp := ""
@@ -580,9 +580,7 @@ STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
    // ocekuje se matrica formata
    // aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa,
    // rek_rn, plu, plu_cijena, popust, barkod, vrsta plac, total racuna }
-
-   // prvo dodaj artikle za prodaju...
-   _a_fp_articles( @aArr, aData, lStorno, params )
+   fisk_dodaj_artikle_za_racun( @aArr, aData, lStorno, params )
 
    // broj racuna
    cRnBroj := AllTrim( aData[ 1, 1 ] )
@@ -781,7 +779,6 @@ STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
    cTmp += cSep
 
    AAdd( aArr, { cTmp } )
-
 
 
    // 7. zatvaranje racuna
@@ -1184,10 +1181,9 @@ STATIC FUNCTION _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
 
    RETURN aArr
 
-// ---------------------------------------------------
-// unos pologa u printer
-// ---------------------------------------------------
-STATIC FUNCTION _fp_polog( nIznos )
+
+
+STATIC FUNCTION fisk_unos_polog( nIznos )
 
    LOCAL cTmp := ""
    LOCAL cLogic
@@ -1220,10 +1216,8 @@ STATIC FUNCTION _fp_polog( nIznos )
    RETURN aArr
 
 
-// ---------------------------------------------------
-// zatvori nasilno racun sa 0.0 iznosom
-// ---------------------------------------------------
-STATIC FUNCTION _fp_void_rn()
+
+STATIC FUNCTION fisk_nasilno_zatvori_racun_iznos_0()
 
    LOCAL cTmp := ""
    LOCAL cLogic
@@ -1249,10 +1243,8 @@ STATIC FUNCTION _fp_void_rn()
    RETURN aArr
 
 
-// ----------------------------------------------------
-// dodaj artikle za racun
-// ----------------------------------------------------
-STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, hFiskalniParams )
+
+STATIC FUNCTION fisk_dodaj_artikle_za_racun( aArr, aData, lStorno, hFiskalniParams )
 
    LOCAL i
    LOCAL cTmp := ""
@@ -1293,8 +1285,7 @@ STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, hFiskalniParams )
       cTmp += cOp_add
       cTmp += cSep
 
-      // poreska stopa
-      cTmp += fiscal_txt_get_tarifa( aData[ i, 7 ], hFiskalniParams[ "pdv" ], "FPRINT" )
+      cTmp += fiscal_txt_get_tarifa( aData[ i, 7 ], hFiskalniParams[ "pdv" ], "FPRINT" ) // poreska stopa
       cTmp += cSep
 
       // plu kod
@@ -1340,14 +1331,11 @@ STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, hFiskalniParams )
 
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 
 
-// ----------------------------------------------
-// pobrisi answer fajl
-// ----------------------------------------------
 FUNCTION fprint_delete_answer( params )
 
    LOCAL _f_name
@@ -1365,12 +1353,10 @@ FUNCTION fprint_delete_answer( params )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
-// ----------------------------------------------
-// pobrisi out fajl
-// ----------------------------------------------
+
 FUNCTION fprint_delete_out( file_path )
 
    IF File( file_path )
@@ -1379,7 +1365,7 @@ FUNCTION fprint_delete_out( file_path )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------
@@ -1400,6 +1386,7 @@ FUNCTION fprint_read_error( hFiskalniParams, fiscal_no, storno, time_out )
    LOCAL _time
    LOCAL _serial := hFiskalniParams[ "serial" ]
    LOCAL _o_file, _msg, _tmp
+   LOCAL cFiskalniTxt
 
    IF storno == NIL
       storno := .F.
@@ -1427,14 +1414,12 @@ FUNCTION fprint_read_error( hFiskalniParams, fiscal_no, storno, time_out )
 
    Box( , 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY8 "Uređaj ID:" + AllTrim( Str( hFiskalniParams[ "id" ] ) ) + ;
-      " : " + PadR( hFiskalniParams[ "name" ], 40 )
+   @ m_x + 1, m_y + 2 SAY8 "Uređaj ID:" + AllTrim( Str( hFiskalniParams[ "id" ] ) ) +  " : " + PadR( hFiskalniParams[ "name" ], 40 )
 
    DO WHILE _time > 0
 
       -- _time
-
-      @ m_x + 3, m_y + 2 SAY8 PadR( "Čekam odgovor fiskalnog uređaja: " + AllTrim( Str( _time ) ), 48 )
+      @ m_x + 3, m_y + 2 SAY8 PadR( "Čeka se odgovor fiskalnog uređaja: " + AllTrim( Str( _time ) ), 48 )
 
       Sleep( 1 )
 
@@ -1468,7 +1453,7 @@ FUNCTION fprint_read_error( hFiskalniParams, fiscal_no, storno, time_out )
 #endif
 
    fiscal_no := 0
-   _fiscal_txt := ""
+   cFiskalniTxt := ""
 
    _f_name := AllTrim( _f_name )
 
@@ -1497,7 +1482,7 @@ FUNCTION fprint_read_error( hFiskalniParams, fiscal_no, storno, time_out )
       // ovu liniju zapamti, sadrzi fiskalni racun broj
       // komanda 56, zatvaranje racuna
       IF ( "56,1," + _serial ) $ _err_line
-         _fiscal_txt := _err_line
+         cFiskalniTxt := _err_line
       ENDIF
 
       IF "Er;" $ _err_line
@@ -1520,10 +1505,10 @@ FUNCTION fprint_read_error( hFiskalniParams, fiscal_no, storno, time_out )
 
    log_write( "FISC ANSWER fajl sadržaj: " + _tmp, 3 )
 
-   IF Empty( _fiscal_txt )
+   IF Empty( cFiskalniTxt )
       log_write( "ERR FISC nema komande 56,1," + _serial + " - broj fiskalnog računa, možda vam nije dobar serijski broj !", 1 )
    ELSE
-      fiscal_no := _g_fisc_no( _fiscal_txt, storno )
+      fiscal_no := _g_fisc_no( cFiskalniTxt, storno )
    ENDIF
 
    RETURN _err_level
@@ -1542,6 +1527,7 @@ FUNCTION fprint_read_error( hFiskalniParams, fiscal_no, storno, time_out )
      2 - u slučaju greške na liniji 55
      1 - u slučaju bilo koje druge greške
 */
+
 STATIC FUNCTION nivo_greske_na_osnovu_odgovora( line )
 
    LOCAL nLevel := 1

@@ -76,12 +76,12 @@ FUNCTION fiscal_out_filename( file_name, rn_broj, trig )
 // ---------------------------------------------------
 // ispravi naziv artikla
 // ---------------------------------------------------
-FUNCTION fiscal_art_naz_fix( naz, drv )
+FUNCTION fiscal_art_naz_fix( naz, cDriver )
 
    LOCAL _ret := ""
 
    DO CASE
-   CASE drv == "FPRINT"
+   CASE cDriver == "FPRINT"
       _ret := StrTran( naz, ";", "" )
    OTHERWISE
       _ret := naz
@@ -313,71 +313,70 @@ STATIC FUNCTION _get_auto_plu_param_name( device_id )
 
 
 
-FUNCTION fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
+FUNCTION fiscal_txt_get_tarifa( cIdTarifa, cPDVDN, cDriver )
 
    LOCAL _tar := "2"
    LOCAL _tmp
 
 
-   _tmp := Left( Upper( AllTrim( tarifa_id ) ), 4 ) // PDV17 -> PDV1 ili PDV7NP -> PDV7 ili PDV0IZ -> PDV0 ili PDVM
+   _tmp := Left( Upper( AllTrim( cIdTarifa ) ), 4 ) // PDV17 -> PDV1 ili PDV7NP -> PDV7 ili PDV0IZ -> PDV0 ili PDVM
 
    DO CASE
 
-   CASE ( _tmp == "PDV1" .OR. _tmp == "PDV7" ) .AND. pdv == "D"
+   CASE ( _tmp == "PDV1" .OR. _tmp == "PDV7" ) .AND. cPDVDN == "D"
 
-
-      IF drv == "TRING" // PDV je tarifna skupina "E"
+      IF cDriver == "TRING" // PDV je tarifna skupina "E"
          _tar := "E"
-      ELSEIF drv == "FPRINT"
+      ELSEIF cDriver == "FPRINT"
          _tar := "2"
-      ELSEIF drv == "HCP"
+      ELSEIF cDriver == "HCP"
          _tar := "1"
-      ELSEIF drv == "TREMOL"
+      ELSEIF cDriver == "TREMOL"
          _tar := "2"
       ENDIF
 
-   CASE _tmp == "PDV0" .AND. pdv == "D"
+   CASE _tmp == "PDV0" .AND. cPDVDN == "D"
 
-      IF drv == "TRING" // bez PDV-a je tarifna skupina "K"
+      IF cDriver == "TRING" // bez PDV-a je tarifna skupina "K"
          _tar := "K"
-      ELSEIF drv == "FPRINT"
+      ELSEIF cDriver == "FPRINT"
          _tar := "4"
-      ELSEIF drv == "HCP"
+      ELSEIF cDriver == "HCP"
          _tar := "3"
-      ELSEIF drv == "TREMOL"
+      ELSEIF cDriver == "TREMOL"
          _tar := "1"
       ENDIF
 
    CASE _tmp == "PDVM"
 
-      IF drv == "FPRINT"
+      IF cDriver == "FPRINT"
          _tar := "5"
-      ELSEIF drv == "TRING"
+      ELSEIF cDriver == "TRING"
          _tar := "M"
       ENDIF
 
-   CASE pdv == "N"
+   CASE cPDVDN == "N"
 
-      IF drv == "TRING" // ne-pdv obveznik, skupina "A"
+      IF cDriver == "TRING" // ne-pdv obveznik, skupina "A"
          _tar := "A"
-      ELSEIF drv == "FPRINT"
+      ELSEIF cDriver == "FPRINT"
          _tar := "1"
-      ELSEIF drv == "HCP"
+      ELSEIF cDriver == "HCP"
          _tar := "0"
-      ELSEIF drv == "TREMOL"
+      ELSEIF cDriver == "TREMOL"
          _tar := "3"
       ENDIF
 
    OTHERWISE
 
-      MsgBeep( "Greška sa tarifom !!!" )
+      MsgBeep( "FISK: Greška sa tarifom (" + cIdTarifa + ") ?!" )
 
    ENDCASE
 
    RETURN _tar
 
 
-FUNCTION fiscal_txt_get_vr_plac( id_plac, drv )
+FUNCTION fiscal_txt_get_vr_plac( id_plac, cDriver )
 
    LOCAL _ret := ""
 
@@ -385,41 +384,41 @@ FUNCTION fiscal_txt_get_vr_plac( id_plac, drv )
 
    CASE id_plac == "0"
 
-      IF drv == "TRING"
+      IF cDriver == "TRING"
          _ret := "Gotovina"
-      ELSEIF drv $ "#HCP#FPRINT#"
+      ELSEIF cDriver $ "#HCP#FPRINT#"
          _ret := id_plac
-      ELSEIF drv == "TREMOL"
+      ELSEIF cDriver == "TREMOL"
          _ret := "Gotovina"
       ENDIF
 
    CASE id_plac == "1"
 
-      IF drv == "TRING"
+      IF cDriver == "TRING"
          _ret := "Cek"
-      ELSEIF drv $ "#HCP#FPRINT#"
+      ELSEIF cDriver $ "#HCP#FPRINT#"
          _ret := id_plac
-      ELSEIF drv == "TREMOL"
+      ELSEIF cDriver == "TREMOL"
          _ret := "Cek"
       ENDIF
 
    CASE id_plac == "2"
 
-      IF drv == "TRING"
+      IF cDriver == "TRING"
          _ret := "Virman"
-      ELSEIF drv $ "#HCP#FPRINT#"
+      ELSEIF cDriver $ "#HCP#FPRINT#"
          _ret := id_plac
-      ELSEIF drv == "TREMOL"
+      ELSEIF cDriver == "TREMOL"
          _ret := "Kartica"
       ENDIF
 
    CASE id_plac == "3"
 
-      IF drv == "TRING"
+      IF cDriver == "TRING"
          _ret := "Kartica"
-      ELSEIF drv $ "#HCP#FPRINT#"
+      ELSEIF cDriver $ "#HCP#FPRINT#"
          _ret := id_plac
-      ELSEIF drv == "TREMOL"
+      ELSEIF cDriver == "TREMOL"
          _ret := "Virman"
       ENDIF
 
@@ -429,22 +428,22 @@ FUNCTION fiscal_txt_get_vr_plac( id_plac, drv )
 
 
 
-FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, drv )
+FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, cDriver )
 
    LOCAL nI, _cijena, _plu_cijena, _kolicina, _naziv
    LOCAL _fix := 0
    LOCAL _ret := 0
    LOCAL lImaGreska := .F.
 
-   IF drv == NIL
-      drv := "FPRINT"
+   IF cDriver == NIL
+      cDriver := "FPRINT"
    ENDIF
 
    // aData[4] - naziv
    // aData[5] - cijena
    // aData[6] - kolicina
 
-   set_min_max_values( drv )
+   set_min_max_values( cDriver )
 
    IF storno == NIL
       storno := .F.
@@ -505,11 +504,11 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, drv
 
 
 
-STATIC FUNCTION set_min_max_values( drv )
+STATIC FUNCTION set_min_max_values( cDriver )
 
    DO CASE
 
-   CASE drv $ "FPRINT#TRING"
+   CASE cDriver $ "FPRINT#TRING"
 
       __MAX_QT := 99999.999
       __MIN_QT := 0.001
@@ -518,7 +517,7 @@ STATIC FUNCTION set_min_max_values( drv )
       __MAX_PERC := 99.99
       __MIN_PERC := -99.99
 
-   CASE drv $ "HCP#TREMOL"
+   CASE cDriver $ "HCP#TREMOL"
 
       __MAX_QT := 99999.999
       __MIN_QT := 0.001

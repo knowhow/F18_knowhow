@@ -68,12 +68,12 @@ FUNCTION kalk_stampa_dok_19()
       // nova cijena
       nMpcSaPP1 := field->mpcSaPP + field->fcj
       nMpc1 := MpcBezPor( nMpcSaPP1, aPorezi,, field->nc )
-      aIPor1 := RacPorezeMP( aPorezi, nMpc1, nMpcSaPP1, field->nc )
+      aIPor1 := kalk_porezi_maloprodaja_legacy_array( aPorezi, nMpc1, nMpcSaPP1, field->nc )
 
       // stara cijena
       nMpcSaPP2 := field->fcj
       nMpc2 := MpcBezPor( nMpcSaPP2, aPorezi,, field->nc )
-      aIPor2 := RacPorezeMP( aPorezi, nMpc2, nMpcSaPP2, field->nc )
+      aIPor2 := kalk_porezi_maloprodaja_legacy_array( aPorezi, nMpc2, nMpcSaPP2, field->nc )
 
       print_nova_strana( 125, @nStr, 2 )
 

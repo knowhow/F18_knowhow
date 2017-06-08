@@ -275,7 +275,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
          ELSEIF field->pu_i == "5"
 
-            _a_porezi := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
+            _a_porezi := kalk_porezi_maloprodaja_legacy_array( aPorezi, field->mpc, field->mpcsapp, field->nc )
 
             __porez := _a_porezi[ 1 ]
 

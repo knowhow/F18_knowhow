@@ -35,10 +35,9 @@ FUNCTION kalk_izvjestaji_prodavnice_menu()
    AAdd( _opc,  "V. pregled za više objekata" )
    AAdd( _opcexe, {|| kalk_prodavnica_pregled_vise_objekata() } )
 
-   AAdd( _opc,  "K. ukalkulisani porez" )
+   AAdd( _opc,  "K. ukalkulisani porez prodavnice" )
    AAdd( _opcexe, {|| kalk_ukalkulisani_porez_prodavnice() } )
    
-
    f18_menu( "izp", .F., _izbor, _opc, _opcexe )
 
    RETURN NIL

@@ -109,7 +109,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
       set_pdv_public_vars()
 
       set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi, field->idtarifa )
-      aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
+      aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 
       nPor1 := aIPor[ 1 ]
 

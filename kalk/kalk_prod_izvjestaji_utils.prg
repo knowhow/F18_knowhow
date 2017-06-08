@@ -114,18 +114,18 @@ FUNCTION kalk_pripr_rekap_tarife()
                // nova cijena
                nMpcsaPdv1 := field->mpcSaPP + field->fcj
                nMpc1 := MpcBezPor( nMpcsaPdv1, aPorezi,, field->nc )
-               aIPor1 := RacPorezeMP( aPorezi, nMpc1, nMpcsaPdv1, field->nc )
+               aIPor1 := kalk_porezi_maloprodaja_legacy_array( aPorezi, nMpc1, nMpcsaPdv1, field->nc )
 
                // stara cijena
                nMpcsaPdv2 := field->fcj
                nMpc2 := MpcBezPor( nMpcsaPdv2, aPorezi,, field->nc )
-               aIPor2 := RacPorezeMP( aPorezi, nMpc2, nMpcsaPdv2, field->nc )
+               aIPor2 := kalk_porezi_maloprodaja_legacy_array( aPorezi, nMpc2, nMpcsaPdv2, field->nc )
                aIPor := { 0, 0, 0 }
                aIPor[ 1 ] := aIPor1[ 1 ] - aIPor2[ 1 ]
 
             ELSE
 
-               aIPor := RacPorezeMP( aPorezi, nMpc, field->mpcsapp, field->nc )
+               aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, nMpc, field->mpcsapp, field->nc )
 
             ENDIF
 

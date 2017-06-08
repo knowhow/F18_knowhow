@@ -115,7 +115,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
 
          set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi )
 
-         aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
+         aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 
          print_nova_strana( 125, @nStr, 2 )
 

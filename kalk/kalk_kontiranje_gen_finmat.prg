@@ -267,7 +267,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
          REPLACE MPV WITH nPom
 
 
-         // aIPor := RacPorezeMP( aPorezi, nKolicina * field->mpc, nKolicina * field->mpcSaPP, field->nc )
+         // aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, nKolicina * field->mpc, nKolicina * field->mpcSaPP, field->nc )
          // nPom := kalk_pripr->( aIPor[ 1 ] * ( Kolicina - GKolicina - GKolicin2 ) )
 
          // PDV

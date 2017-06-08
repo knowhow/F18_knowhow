@@ -357,7 +357,7 @@ FUNCTION Porezi( cIdVd, cDat0, aTarife, cNaplaceno )
          ELSE // stari obr poreza
             aPorezi := {}
             set_pdv_array( @aPorezi )
-            aIPor := RacPorezeMP( aPorezi, nOsn, nIzn, 0 )
+            aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, nOsn, nIzn, 0 )
             nPoz := AScan( aTarife, {| x| x[ 1 ] == POS->IdTarifa } )
             IF nPoz == 0
                AAdd( aTarife, { POS->IdTarifa, nOsn, aIPor[ 1 ], aIPor[ 2 ], aIPor[ 3 ], nIzn } )

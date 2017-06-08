@@ -114,7 +114,7 @@ FUNCTION StKalk81( fzatops )
       SELECT kalk_pripr
 
       set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
-      aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
+      aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 
       nPor1 := aIPor[ 1 ]
 
@@ -391,7 +391,7 @@ FUNCTION kalk_stampa_dok_81()
       select_o_tarifa( kalk_pripr->IdTarifa )
       SELECT kalk_pripr
 
-      aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
+      aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 
       nPor1 := aIPor[ 1 ]
 

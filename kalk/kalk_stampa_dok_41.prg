@@ -74,8 +74,8 @@ FUNCTION kalk_stampa_dok_41()
       set_pdv_array_by_koncij_region_roba_idtarifa_2_3( pkonto, idRoba, @aPorezi, _idtarifa )
 
       // uracunaj i popust
-      // racporezemp( matrica, mp_bez_pdv, mp_sa_pdv, nc )
-      aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
+      // kalk_porezi_maloprodaja_legacy_array( matrica, mp_bez_pdv, mp_sa_pdv, nc )
+      aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, field->mpc, field->mpcsapp, field->nc )
 
       nPor1 := aIPor[ 1 ]
 
@@ -398,7 +398,7 @@ FUNCTION kalk_stdok_41_rekap_pdv( cIdFirma, cIdVd, cBrDok, nStr )
          // mpc bez poreza sa uracunatim popustom
          nU1 += field->mpc * field->kolicina
 
-         aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
+         aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, field->mpc, field->mpcsapp, field->nc )
 
          // PDV
 

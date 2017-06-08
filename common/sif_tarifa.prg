@@ -292,14 +292,14 @@ FUNCTION KorekTar()
 
 
 
-/*  RacPorezeMP(aPorezi, nMpc, nMpcSaPP, nNc)
+/*  kalk_porezi_maloprodaja_legacy_array(aPorezi, nMpc, nMpcSaPP, nNc)
  *    Racunanje poreza u maloprodaji
  *  param: aPorezi Matrica poreza
  *  param: nMpc Maloprodajna cijena
  *  param: nMpcSaPP Maloprodajna cijena sa porezom
  *  param: nNc Nabavna cijena
 */
-FUNCTION RacPorezeMP( aPorezi, nMpc, nMpcSaPP, nNc )
+FUNCTION kalk_porezi_maloprodaja_legacy_array( aPorezi, nMpc, nMpcSaPP, nNc )
 
    LOCAL nIznPRuc
    LOCAL nP1, nP2, nP3

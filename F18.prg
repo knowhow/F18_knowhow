@@ -337,7 +337,8 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    //cVersion := curl_get( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
 
    //if cVersion != f18_ver()
-     AAdd( aMeniOpcije,  " U. F18 upgrade verzija: " + cVersion  )
+     //AAdd( aMeniOpcije,  " U. F18 upgrade verzija: " + cVersion  )
+     AAdd( aMeniOpcije,  " U. F18 upgrade" )
      AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
    //endif
 

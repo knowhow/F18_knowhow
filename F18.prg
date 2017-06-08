@@ -86,9 +86,9 @@ FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
 
          oLogin:disconnect_user_database()
          IF oLogin:connect_user_database()
-         odaberi_programski_modul( hProgramParametri )
+            odaberi_programski_modul( hProgramParametri )
          ELSE
-            MsgBeep( "Spajanje na bazu traženog preduzeća/organizacije neuspješno !?")
+            MsgBeep( "Spajanje na bazu traženog preduzeća/organizacije neuspješno !?" )
          ENDIF
 
          // ENDIF
@@ -290,6 +290,9 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
 
    AAdd( aMeniOpcije,  " U. update F18"  )
    AAdd( aMeniExec, {|| F18Admin():New():update_app(), .T. } )
+
+   AAdd( aMeniOpcije, "---------------------------------------------" )
+   AAdd( aMeniExec, {|| NIL } )
 
    IF f18_use_module( "fin" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )

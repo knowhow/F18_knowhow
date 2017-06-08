@@ -765,7 +765,7 @@ STATIC FUNCTION _set_menu_choices( menuop, menuexec )
    AAdd( menuexec, {|| f18_login_loop( .F. ), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "2. update F18" ) )
-   AAdd( menuexec, {|| F18Admin():New():update_app(), .T. } )
+   AAdd( menuexec, {|| F18Admin():update_app(), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "3. update baze" ) )
    AAdd( menuexec, {|| F18Admin():New():update_db(), .T. } )

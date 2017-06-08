@@ -289,7 +289,7 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    LOCAL cMenuBrojac
 
    AAdd( aMeniOpcije,  " U. update F18"  )
-   AAdd( aMeniExec, {|| F18Admin():New():update_app(), .T. } )
+   AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
 
    AAdd( aMeniOpcije, "---------------------------------------------" )
    AAdd( aMeniExec, {|| NIL } )

@@ -32,8 +32,12 @@ FUNCTION kalk_izvjestaji_prodavnice_menu()
    AAdd( _opc, "N. najprometniji artikli u prodavnicama" )
    AAdd( _opcexe, {|| naprometniji_artikli_prodavnica() } )
 
-   AAdd( _Opc,  "V. pregled za više objekata" )
+   AAdd( _opc,  "V. pregled za više objekata" )
    AAdd( _opcexe, {|| kalk_prodavnica_pregled_vise_objekata() } )
+
+   AAdd( _opc,  "K. ukalkulisani porez" )
+   AAdd( _opcexe, {|| kalk_ukalkulisani_porez_prodavnice() } )
+   
 
    f18_menu( "izp", .F., _izbor, _opc, _opcexe )
 

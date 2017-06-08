@@ -65,6 +65,8 @@ FUNCTION set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aP
    lUsedRoba := .T.
    lUsedTarifa := .T.
 
+   hb_default( @cIdRoba, NIL )
+
    PushWA()
 
    IF Empty( cIdKonto )
@@ -109,23 +111,7 @@ FUNCTION set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aP
 
 
 
-/* MpcSaPorUgost(nPosebniPorez, nPorezNaRuc, aPorezi)
- *     Racuna maloprodajnu cijenu u ugostiteljstvu
- *   param: nPosebniPorez Posebni porez
- *   param: nPorezNaRuc Porez na razliku u cijeni
- *   param: aPorezi Matrica sa porezima
- */
-FUNCTION MpcSaPorUgost( nPosebniPorez, nPorezNaRuc, aPorezi )
 
-   LOCAL nPom
-
-   // (MpcSapp - PorezNaRuc) * StopaPP = PosebniPorez
-   // PosebniPorez/StopaPP = MpcSaPP - PorezNaRuc
-   // MpcSaPP = PosebniPorez/StopaPP + PorezNaRuc
-
-   nPom := nPosebniPorez / ( aPorezi[ POR_P_PRUC ] / 100 ) + nPorezNaRUC
-
-   RETURN nPom
 
 
 /* MpcSaPor(nMpcBP, aPorezi, aPoreziIzn)

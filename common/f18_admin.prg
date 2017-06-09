@@ -20,6 +20,8 @@ FUNCTION download_version( cUrl )
 
    LOCAL hFile
    LOCAL cFileName, oFile, cRead := ""
+   LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
+   LOCAL aMatch
 
    IF s_cDownloadVersion != NIL
       RETURN s_cDownloadVersion
@@ -39,7 +41,7 @@ FUNCTION download_version( cUrl )
    IF oFile:Error()
       BoxC()
       MsgBeep( oFile:ErrorMsg( "Problem sa otvaranjem fajla: " + cFileName ) )
-      RETURN .F.
+      RETURN ""
    ENDIF
 
    cRead := oFile:ReadLine()
@@ -48,6 +50,14 @@ FUNCTION download_version( cUrl )
    FErase( cFileName )
 
    BoxC()
+
+   aMatch := hb_regex( pRegex, cRead )
+
+   IF Len( aMatch ) < 4 // aMatch[1]="2.3.500" aMatch[2]="2", aMatch[3]="3", aMatch[4]="500"
+      MsgBeep( "VERSION format error " + cRead )
+      RETURN ""
+   ENDIF
+
    IF !Empty( cRead )
       s_cDownloadVersion := cRead
    ENDIF

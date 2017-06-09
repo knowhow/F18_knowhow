@@ -295,7 +295,7 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
 
    cVersion := download_version( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
 
-   if cVersion != f18_ver()
+   if !Empty( cVersion ) .AND. cVersion != f18_ver()
      AAdd( aMeniOpcije,  " U. F18 upgrade -> " + cVersion  )
      AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
    endif

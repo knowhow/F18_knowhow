@@ -36,6 +36,12 @@ If NOT exist "%DEST%\libcurl-4.dll" (
  gzip -dNfc < libcurl-4.dll.gz > %DEST%\libcurl-4.dll
 )
 
+If NOT exist "%DEST%\libnghttp2-14.dll" (
+ wget  http://download.bring.out.ba/libnghttp2-14.dll.gz -O libnghttp2-14.dll.gz
+ gzip -dNfc < libnghttp2-14.dll.gz > %DEST%\libnghttp2-14.dll
+)
+
+
 gzip -dNfc  < %1 > %DEST%\F18.exe
 del /Q  %1
 goto END

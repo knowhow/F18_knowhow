@@ -292,16 +292,15 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    LOCAL cMenuBrojac
    LOCAL cVersion
 
-
    cVersion := download_version( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
 
-   if !Empty( cVersion ) .AND. cVersion != f18_ver()
-     AAdd( aMeniOpcije,  " U. F18 upgrade -> " + cVersion  )
-     AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
-   endif
+   IF !Empty( cVersion ) .AND. cVersion != f18_ver()
+      AAdd( aMeniOpcije,  " U. F18 upgrade -> " + cVersion  )
+      AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
 
-   AAdd( aMeniOpcije, "---------------------------------------------" )
-   AAdd( aMeniExec, {|| NIL } )
+      AAdd( aMeniOpcije, "---------------------------------------------" )
+      AAdd( aMeniExec, {|| NIL } )
+   ENDIF
 
    IF f18_use_module( "fin" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )

@@ -49,36 +49,6 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 
 
-FUNCTION download_version( cUrl )
-
-   LOCAL hFile
-   LOCAL cFileName, oFile, cRead
-
-   hFile := hb_vfTempFile( @cFileName, my_home_root(), "curl_", ".txt" )
-   hb_vfClose( hFile )
-
-   F18Admin():wget_download( cUrl , "" , cFileName )
-
-   cRead := StrTran( cRead, Chr(10), "" )
-   cRead := StrTran( cRead, Chr(13), "" )
-
-
-   oFile := TFileRead():New( cFileName )
-   oFile:Open()
-
-   IF oFile:Error()
-      MsgBeep( oFile:ErrorMsg( "Problem sa otvaranjem fajla: " + cFileName ) )
-      RETURN .F.
-   ENDIF
-
-   cRead := oFile:ReadLine()
-
-   oFile:Close()
-   FErase( cFileName )
-
-
-   RETURN cRead
-
 
 FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
 

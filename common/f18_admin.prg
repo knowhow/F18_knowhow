@@ -11,8 +11,50 @@
 
 #include "f18.ch"
 
+STATIC s_cDownloadVersion := NIL
 
 MEMVAR m_x, m_y, GetList
+
+
+FUNCTION download_version( cUrl )
+
+   LOCAL hFile
+   LOCAL cFileName, oFile, cRead := ""
+
+   IF s_cDownloadVersion != NIL
+      RETURN s_cDownloadVersion
+   ENDIF
+
+   Box( "#Download VERSION", 2, 70 )
+   hFile := hb_vfTempFile( @cFileName, my_home_root(), "wget_", ".txt" )
+   hb_vfClose( hFile )
+
+   @ m_x + 1, m_y + 2 SAY Left( cUrl, 67 )
+
+   F18Admin():wget_download( cUrl, "", cFileName )
+
+   oFile := TFileRead():New( cFileName )
+   oFile:Open()
+
+   IF oFile:Error()
+      BoxC()
+      MsgBeep( oFile:ErrorMsg( "Problem sa otvaranjem fajla: " + cFileName ) )
+      RETURN .F.
+   ENDIF
+
+   cRead := oFile:ReadLine()
+
+   oFile:Close()
+   FErase( cFileName )
+
+   BoxC()
+   IF !Empty( cRead )
+      s_cDownloadVersion := cRead
+   ENDIF
+
+   RETURN cRead
+
+
 
 CLASS F18Admin
 
@@ -118,6 +160,8 @@ METHOD F18Admin:update_app()
    IF ::update_app_f18
       ::update_app_run_app_update( _ver_params )
    ENDIF
+
+   s_cDownloadVersion := NIL
 
    RETURN SELF
 
@@ -255,7 +299,6 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
    LOCAL aMatch
 
-
    _upd_f := "D"
    _upd_t := "N"
    _col_app := "W/G+"
@@ -269,12 +312,12 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
       nVerzijaPatch := Val( aMatch[ 4 ] )
    ENDIF
 
-   //IF f18_ver() < hF18UpdateParams[ "f18" ]
-      _col_app := "W/R+"
-   //ENDIF
-   //IF f18_template_ver() < hF18UpdateParams[ "templates" ]
-      _col_temp := "W/R+"
-   //ENDIF
+   // IF f18_ver() < hF18UpdateParams[ "f18" ]
+   _col_app := "W/R+"
+   // ENDIF
+   // IF f18_template_ver() < hF18UpdateParams[ "templates" ]
+   _col_temp := "W/R+"
+   // ENDIF
 
    Box(, 14, 65 )
 
@@ -489,7 +532,7 @@ METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, onl
 
    IF erase_file
       FErase( location )
-      //Sleep( 1 )
+      // Sleep( 1 )
    ENDIF
 
    _cmd += "wget "
@@ -510,7 +553,7 @@ METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, onl
 
    hb_run( _cmd )
 
-   //Sleep( 1 )
+   // Sleep( 1 )
 
    IF !File( location )
       // nema fajle

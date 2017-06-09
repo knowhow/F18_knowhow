@@ -518,22 +518,22 @@ METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, onl
    LOCAL _cmd := ""
    LOCAL nFileHandle, _lenght
 
-   IF erase_file == NIL
-      erase_file := .F.
-   ENDIF
+   //IF erase_file == NIL
+  //    erase_file := .F.
+   //ENDIF
 
-   IF silent == NIL
-      silent := .F.
-   ENDIF
+   //IF silent == NIL
+  //    silent := .F.
+   //ENDIF
 
-   IF only_newer == NIL
-      only_newer := .F.
-   ENDIF
+   //IF only_newer == NIL
+    //  only_newer := .F.
+   //ENDIF
 
-   IF erase_file
-      FErase( location )
+   //IF erase_file
+    //  FErase( location )
       // Sleep( 1 )
-   ENDIF
+   //ENDIF
 
    _cmd += "wget "
 

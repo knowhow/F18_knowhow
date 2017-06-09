@@ -371,7 +371,6 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
 #endif
 
 
-
    AAdd( aMeniOpcije, "---------------------------------------------" )
    AAdd( aMeniExec, {|| NIL } )
 

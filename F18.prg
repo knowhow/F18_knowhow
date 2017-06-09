@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 #include "f18_color.ch"
-//#include "hbcurl.ch"
+
 
 STATIC __relogin_opt := .F.
 
@@ -49,38 +49,20 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 
 
-FUNCTION curl_get( cUrl )
+FUNCTION download_version( cUrl )
 
-   LOCAL cRead, pCurl
-   //LOCAL hFile
-   //LOCAL cFileName, oFile, cRead
+   LOCAL hFile
+   LOCAL cFileName, oFile, cRead
 
-   //hFile := hb_vfTempFile( @cFileName, my_home_root(), "curl_", ".txt" )
-   //hb_vfClose( hFile )
+   hFile := hb_vfTempFile( @cFileName, my_home_root(), "curl_", ".txt" )
+   hb_vfClose( hFile )
 
-   curl_global_init()
+   F18Admin():wget_download( cUrl , "" , cFileName )
 
-   pCurl := curl_easy_init()
-   curl_easy_setopt( pCurl, HB_CURLOPT_DOWNLOAD )
-   curl_easy_setopt( pCurl, HB_CURLOPT_SSL_VERIFYPEER, 0 )
-   curl_easy_setopt( pCurl, HB_CURLOPT_DL_BUFF_SETUP ) // memorija
-  //  curl_easy_setopt( pCurl, HB_CURLOPT_DL_FILE_SETUP, cFileName )
-
-   curl_easy_setopt( pCurl, HB_CURLOPT_URL, cUrl )
-   curl_easy_setopt( pCurl, HB_CURLOPT_NOPROGRESS, 1 )
-   curl_easy_setopt( pCurl, HB_CURLOPT_DEBUGBLOCK, {| ... | QOut( "DEBUG:", ... ) } )
-
-   curl_easy_perform( pCurl )
-
-   cRead := curl_easy_dl_buff_get( pCurl )
    cRead := StrTran( cRead, Chr(10), "" )
    cRead := StrTran( cRead, Chr(13), "" )
-   //curl_easy_setopt( pCurl, HB_CURLOPT_DL_BUFF_GET, @cRead )
 
-   //curl_easy_reset( pCurl )
-   curl_easy_cleanup( pCurl )
 
-/*
    oFile := TFileRead():New( cFileName )
    oFile:Open()
 
@@ -93,9 +75,7 @@ FUNCTION curl_get( cUrl )
 
    oFile:Close()
    FErase( cFileName )
-*/
 
-   curl_global_cleanup()
 
    RETURN cRead
 
@@ -342,8 +322,8 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    LOCAL cMenuBrojac
    LOCAL cVersion
 
-altd()
-   cVersion := curl_get( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
+
+   cVersion := download_version( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
 
    if cVersion != f18_ver()
      AAdd( aMeniOpcije,  " U. F18 upgrade -> " + cVersion  )

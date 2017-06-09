@@ -149,7 +149,7 @@ METHOD F18Admin:update_app_run_templates_update( params )
 
 
 
-METHOD F18Admin:update_app_unzip_templates( destination_path, location_path, filename )
+METHOD F18Admin:update_app_unzip_templates( destination_path, location_path, cFileName )
 
    LOCAL _cmd
    LOCAL _args := "-jxf"
@@ -160,15 +160,15 @@ METHOD F18Admin:update_app_unzip_templates( destination_path, location_path, fil
 
    DirChange( destination_path )
 
-   _cmd := "bunzip2 -f " + location_path + filename
+   _cmd := "bunzip2 -f " + location_path + cFileName
    hb_run( _cmd )
 
-   _cmd := "tar xvf " + StrTran( filename, ".bz2", "" )
+   _cmd := "tar xvf " + StrTran( cFileName, ".bz2", "" )
    hb_run( _cmd )
 
 #else
 
-   _cmd := "tar -C " + location_path + " " + _args + " " + location_path + filename
+   _cmd := "tar -C " + location_path + " " + _args + " " + location_path + cFileName
    hb_run( _cmd )
 
 #endif
@@ -469,7 +469,7 @@ METHOD F18Admin:get_os_name()
 
 
 
-METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only_newer )
+METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, only_newer )
 
    LOCAL lOk := .F.
    LOCAL _cmd := ""
@@ -498,7 +498,7 @@ METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only
    _cmd += " --no-check-certificate "
 #endif
 
-   _cmd += url + filename
+   _cmd += url + cFileName
 
    _cmd += " -O "
 

@@ -31,11 +31,6 @@ if errorlevel 1 goto ERR2 if errorlevel 0 goto OK
 
 :OK
 
-If NOT exist "%DEST%\libcurl-4.dll" (
- wget  http://download.bring.out.ba/libcurl-4.dll.gz -O libcurl-4.dll.gz
- gzip -dNfc < libcurl-4.dll.gz > %DEST%\libcurl-4.dll
-)
-
 gzip -dNfc  < %1 > %DEST%\F18.exe
 del /Q  %1
 goto END

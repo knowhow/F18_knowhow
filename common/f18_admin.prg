@@ -538,7 +538,7 @@ METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, onl
    _cmd += "wget "
 
 #ifdef __PLATFORM__WINDOWS
-   _cmd += " -q --no-check-certificate "
+   _cmd += " -q  --tries=4 --timeout=4  --no-cache --no-check-certificate "
 #endif
 
    _cmd += url + cFileName

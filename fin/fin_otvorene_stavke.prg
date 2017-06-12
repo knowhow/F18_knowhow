@@ -83,6 +83,34 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 
 
 
+   /*
+
+   brisanje markera za stavke nalog koji se vraca u pripremu
+
+   UPDATE fmk.fin_suban set otvst=' '
+    FROM
+   ( select idfirma,idkonto,idpartner,brdok from fmk.fin_suban where idfirma='10' and idvn='61' and brnal='00000001' and otvst='9' ) as SUBQ
+    WHERE fmk.fin_suban.idfirma=SUBQ.idfirma and fmk.fin_suban.idpartner=SUBQ.idpartner and fmk.fin_suban.brdok=SUBQ.brdok
+
+   */
+
+   FUNCTION fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn, cBrNal )
+
+      LOCAL cSql
+
+      cSql := "UPDATE fmk.fin_suban set otvst=' ' FROM "
+      cSql += "( select idfirma,idkonto,idpartner,brdok from fmk.fin_suban WHERE "
+      cSql += "idfirma=" + sql_quote( cIdFirma )
+      cSql += "AND idvn=" + sql_quote( cIdVn )
+      cSql += "AND brnal=" + sql_quote( cBrNal )
+      cSql += ") AS SUBQ "
+      cSql += "WHERE fmk.fin_suban.idfirma=SUBQ.idfirma and fmk.fin_suban.idpartner=SUBQ.idpartner and fmk.fin_suban.brdok=SUBQ.brdok"
+
+      run_sql_query( cSql )
+
+      RETURN .T.
+
+
 
 
 

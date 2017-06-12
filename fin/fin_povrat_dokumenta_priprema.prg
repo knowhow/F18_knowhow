@@ -131,6 +131,8 @@ FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
    Box(, 5, 70 )
 
+   fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn, cBrNal )
+
    cTbl := "fin_suban"
    @ m_x + 1, m_y + 2 SAY "delete " + cTbl
    SELECT suban

@@ -11,302 +11,10 @@
 
 #include "f18.ch"
 
+MEMVAR m
 
-FUNCTION StKalk81( fzatops )
 
-   LOCAL nCol1 := nCol2 := 0, npom := 0
-   LOCAL _is_rok, _hAttrId
 
-   PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2, nPRUC, aPorezi
-
-   nMarza := nMarza2 := nPRUC := 0
-   aPorezi := {}
-
-   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
-
-   nStr := 0
-   cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
-
-   cIdKonto := IdKonto; cIdKonto2 := IdKonto2
-
-   IF fzaTops == NIL
-      fzaTops := .F.
-   ENDIF
-
-   _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
-
-   P_COND2
-
-   ?? "KALK: KALKULACIJA BR:", cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
-
-   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-
-   SELECT PARTN
-   HSEEK cIdPartner
-
-   ?U "DOBAVLJAČ:", cIdPartner, "-", PadR( naz, 20 ), Space( 5 ), "DOKUMENT Broj:", AllTrim( cBrFaktP ), "Datum:", dDatFaktP
-
-   SELECT KONTO
-   HSEEK cIdKonto
-
-   ?U  "KONTO zadužuje :", cIdKonto, "-", AllTrim( naz )
-
-   IF !fZaTops
-
-      m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
-
-
-      m += " -----------"
-
-
-      IF lPrikPRUC
-         m += " ----------"
-         ? m
-         ? "*R * ROBA     *  FCJ     * TRKALO   * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     * MARZA.   * POREZ NA *   MPC    * MPCSaPP *"
-         ? "*BR* TARIFA   *  KOLICINA* OST.KALO * SKONTO   *          *          *          *          *          *          *          *   MARZU  *          *         *"
-         ? "*  *          *          *          *          *          *          *          *          *          *          *          *          *          *         *"
-      ELSE
-
-         ? m
-         ? "*R * ROBA     *  FCJ     * TRKALO   * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     * MARZA.   *   MPC    * MPCSaPP *"
-         ? "*BR* TARIFA   *  KOLICINA* OST.KALO * SKONTO   *          *          *          *          *          *          *          *          *         *"
-         ? "*  *          *          *          *          *          *          *          *          *          *          *          *          *         *"
-
-      ENDIF
-      ? m
-
-   ELSE
-
-      m := "--- ---------- ---------- ---------- ----------"
-
-      ? m
-
-      ? "*R * ROBA     * Kolicina *    PC    *PC sa PDV*"
-      ? "*BR* TARIFA   *          *          *         *"
-      ? "*  *          *          *          *         *"
-      ? m
-
-   ENDIF
-
-   nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := nTotb := nTotC := 0
-   nTot9a := 0
-   nUC := 0
-
-   SELECT kalk_pripr
-
-   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
-   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
-
-/*
-    if idpartner+brfaktp+idkonto+idkonto2<>cidd
-     set device to screen
-     Beep(2)
-     Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
-     set device to printer
-    endif
-*/
-
-      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
-
-      select_o_roba(  kalk_pripr->IdRoba )
-      select_o_tarifa( kalk_pripr->IdTarifa )
-
-      SELECT kalk_pripr
-
-      set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
-      aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, field->mpc, field->mpcSaPP, field->nc )
-
-      nPor1 := aIPor[ 1 ]
-
-      IF lPrikPRUC
-         nPRUC := aIPor[ 2 ]
-         nMarza2 := nMarza2 - nPRUC
-      ENDIF
-
-      IF PRow() > page_length() - 4
-         FF
-         @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-      ENDIF
-
-      IF gKalo == "1"
-         SKol := Kolicina - GKolicina - GKolicin2
-      ELSE
-         SKol := Kolicina
-      ENDIF
-
-      nTot +=  ( nU := FCj * Kolicina )
-      IF gKalo == "1"
-         nTot1 += ( nU1 := FCj2 * ( GKolicina + GKolicin2 ) )
-      ELSE
-         nTot1 += ( nU1 := NC * ( GKolicina + GKolicin2 ) )
-      ENDIF
-      nTot2 += ( nU2 := -Rabat / 100 * FCJ * Kolicina )
-      nTot3 += ( nU3 := nPrevoz * SKol )
-      nTot4 += ( nU4 := nBankTr * SKol )
-      nTot5 += ( nU5 := nSpedTr * SKol )
-      nTot6 += ( nU6 := nCarDaz * SKol )
-      nTot7 += ( nU7 := nZavTr * SKol )
-      nTot8 += ( nU8 := NC *    ( Kolicina - Gkolicina - GKolicin2 ) )
-      nTot9 += ( nU9 := nMarza2 * ( Kolicina - Gkolicina - GKolicin2 ) )
-      IF lPrikPRUC
-         nTot9a += ( nU9a := nPRUC * ( Kolicina - Gkolicina - GKolicin2 ) )
-      ENDIF
-      nTotA += ( nUA := MPC   * ( Kolicina - Gkolicina - GKolicin2 ) )
-      nTotB += ( nUB := MPCSAPP * ( Kolicina - Gkolicina - GKolicin2 ) )
-      nTotC += ( nUC := nPor1 * ( Kolicina - Gkolicina - GKolicin2 ) )
-
-      // prvi red
-      @ PRow() + 1, 0 SAY rbr PICT "999"
-      @ PRow(), 4 SAY ""
-      ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
-
-      IF roba_barkod_pri_unosu() .AND. !Empty( roba->barkod )
-         ?? ", BK: " + ROBA->barkod
-      ENDIF
-
-      IF _is_rok
-         _hAttrId := hb_Hash()
-         _hAttrId[ "idfirma" ] := field->idfirma
-         _hAttrId[ "idtipdok" ] := field->idvd
-         _hAttrId[ "brdok" ] := field->brdok
-         _hAttrId[ "rbr" ] := field->rbr
-         _item_istek_roka := CToD( get_kalk_attr_rok( _hAttrId, .T. ) )
-         IF DToC( _item_istek_roka ) <> DToC( CToD( "" ) )
-            ?? " datum isteka roka:", _item_istek_roka
-         ENDIF
-      ENDIF
-
-      @ PRow() + 1, 4 SAY IdRoba
-      nCol1 := PCol() + 1
-      IF !fZaTops
-         @ PRow(), PCol() + 1 SAY FCJ                   PICTURE PicCDEM
-         @ PRow(), PCol() + 1 SAY GKolicina             PICTURE PicKol
-         @ PRow(), PCol() + 1 SAY -Rabat                PICTURE PicProc
-         @ PRow(), PCol() + 1 SAY nPrevoz / FCJ2 * 100      PICTURE PicProc
-         @ PRow(), PCol() + 1 SAY nBankTr / FCJ2 * 100      PICTURE PicProc
-         @ PRow(), PCol() + 1 SAY nSpedTr / FCJ2 * 100      PICTURE PicProc
-         @ PRow(), PCol() + 1 SAY nCarDaz / FCJ2 * 100      PICTURE PicProc
-         @ PRow(), PCol() + 1 SAY nZavTr / FCJ2 * 100       PICTURE PicProc
-         @ PRow(), PCol() + 1 SAY NC                    PICTURE PicCDEM
-         @ PRow(), PCol() + 1 SAY nMarza2 / NC * 100        PICTURE PicProc
-         IF lPrikPRUC
-            @ PRow(), PCol() + 1 SAY aPorezi[ POR_PRUCMP ] PICTURE PicProc
-         ENDIF
-      ELSE
-         @ PRow(), PCol() + 1 SAY Kolicina             PICTURE PicCDEM
-      ENDIF
-      @ PRow(), PCol() + 1 SAY MPC                   PICTURE PicCDEM
-
-      @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ] PICTURE PicProc
-
-      @ PRow(), PCol() + 1 SAY MPCSaPP               PICTURE PicCDEM
-
-      // drugi red
-      @ PRow() + 1, 4 SAY IdTarifa
-      IF !fzatops
-         @ PRow(), nCol1    SAY Kolicina             PICTURE PicCDEM
-         @ PRow(), PCol() + 1 SAY GKolicin2            PICTURE PicKol
-         @ PRow(), PCol() + 1 SAY -Rabat / 100 * FCJ       PICTURE PicCDEM
-         @ PRow(), PCol() + 1 SAY nPrevoz              PICTURE PicCDEM
-         @ PRow(), PCol() + 1 SAY nBankTr              PICTURE PicCDEM
-         @ PRow(), PCol() + 1 SAY nSpedTr              PICTURE PicCDEM
-         @ PRow(), PCol() + 1 SAY nCarDaz              PICTURE PicCDEM
-         @ PRow(), PCol() + 1 SAY nZavTr               PICTURE PicCDEM
-         @ PRow(), PCol() + 1 SAY Space( Len( picdem ) )
-         @ PRow(), PCol() + 1 SAY nMarza2              PICTURE PicCDEM
-         IF lPrikPRUC
-            @ PRow(), PCol() + 1 SAY nPRUC                PICTURE PicCDEM
-         ELSE
-            @ PRow(), PCol() + 1 SAY Space( Len( PicCDEM ) )
-         ENDIF
-
-         @ PRow(), PCol() + 1 SAY nPor1 PICTURE PicCDEM
-
-      ENDIF
-
-      // treci red
-      IF !fZatops
-         @ PRow() + 1, nCol1   SAY nU          PICTURE         PICDEM
-         @ PRow(), PCol() + 1  SAY nU1         PICTURE         PICDEM
-         @ PRow(), PCol() + 1  SAY nU2         PICTURE         PICDEM
-         @ PRow(), PCol() + 1  SAY nU3         PICTURE         PICDEM
-         @ PRow(), PCol() + 1  SAY nU4         PICTURE         PICDEM
-         @ PRow(), PCol() + 1  SAY nU5         PICTURE         PICDEM
-         @ PRow(), PCol() + 1  SAY nU6         PICTURE         PICDEM
-         @ PRow(), PCol() + 1  SAY nU7         PICTURE         PICDEM
-         @ PRow(), PCol() + 1  SAY nU8         PICTURE         PICDEM
-         @ PRow(), PCol() + 1  SAY nU9         PICTURE         PICDEM
-         IF lPrikPRUC
-            @ PRow(), PCol() + 1  SAY nU9a        PICTURE         PICDEM
-         ENDIF
-      ELSE
-         @ PRow() + 1, nCol1 - 1   SAY Space( Len( picdem ) )
-      ENDIF
-      @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
-
-      @ PRow(), PCol() + 1  SAY nUC  PICTURE PICDEM
-
-      @ PRow(), PCol() + 1  SAY nUB         PICTURE         PICDEM
-      SKIP
-   ENDDO
-
-   IF PRow() > page_length() - 3
-      FF
-      @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-   ENDIF
-
-   ? m
-
-   @ PRow() + 1, 0        SAY "Ukupno:"
-   // ************************** magacin *****************************
-   IF !fzatops
-      @ PRow(), nCol1     SAY nTot          PICTURE         PICDEM
-      @ PRow(), PCol() + 1  SAY nTot1         PICTURE         PICDEM
-      @ PRow(), PCol() + 1  SAY nTot2         PICTURE         PICDEM
-      @ PRow(), PCol() + 1  SAY nTot3         PICTURE         PICDEM
-      @ PRow(), PCol() + 1  SAY nTot4         PICTURE         PICDEM
-      @ PRow(), PCol() + 1  SAY nTot5         PICTURE         PICDEM
-      @ PRow(), PCol() + 1  SAY nTot6         PICTURE         PICDEM
-      @ PRow(), PCol() + 1  SAY nTot7         PICTURE         PICDEM
-      @ PRow(), PCol() + 1  SAY nTot8         PICTURE         PICDEM
-      @ PRow(), PCol() + 1  SAY nTot9         PICTURE         PICDEM
-      IF lPrikPRUC
-         @ PRow(), PCol() + 1  SAY nTot9a        PICTURE         PICDEM
-      ENDIF
-   ELSE
-      @ PRow() + 1, nCol1 - 1   SAY Space( Len( picdem ) )
-   ENDIF
-   @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
-
-   @ PRow(), PCol() + 1 SAY nTotC PICTURE PICDEM
-
-   @ PRow(), PCol() + 1  SAY nTotB         PICTURE         PICDEM
-
-   ? m
-
-   nTot1 := nTot2 := nTot2b := nTot3 := nTot4 := 0
-   nTot5 := nTot6 := nTot7 := 0
-
-   kalk_pripr_rekap_tarife()
-
-   IF !fZaTops
-      ? "RUC:";  @ PRow(), PCol() + 1 SAY nTot6 PICT picdem
-   ENDIF
-
-   ? m
-
-   // potpis na dokumentu
-   dok_potpis( 90, "L", NIL, NIL )
-
-   RETURN .T.
-
-
-
-
-
-/* kalk_stampa_dok_81()
- *     Stampa kalkulacije 81 - direktno zaduzenje prodavnice
- */
 
 FUNCTION kalk_stampa_dok_81()
 
@@ -334,40 +42,32 @@ FUNCTION kalk_stampa_dok_81()
    ?
    ?? "KALK: KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-   SELECT PARTN; HSEEK cIdPartner
+   select_o_partner( cIdPartner )
 
    ?  "DOBAVLJAC:", cIdPartner, "-", PadR( naz, 20 ), Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    ?  "KONTO zaduzuje :", cIdKonto, "-", AllTrim( naz )
 
-   m := "---- ---------- ---------- ---------- ---------- ---------- ---------- ----------" + ;
-      IF( lPrikPRUC, " ----------", "" ) + " ---------- -----------"
+   m := "---- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------"
 
 
    m += " ----------"
 
 
    ? m
+   ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   *    PC    *  PDV(%)  *    PC    *"
+   ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *  BEZ PDV *  PDV     *  SA PDV  *"
+   ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *          *"
 
-   IF lPrikPRUC
-      ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   * POREZ NA *   MPC    * MPCSaPDV *"
-      ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *   MARZU  *          *          *"
-      ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *   sum    *"
-   ELSE
-      ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   *    PC    *  PDV(%)  *    PC    *"
-      ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *  BEZ PDV *  PDV     *  SA PDV  *"
-      ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *          *"
-   ENDIF
 
 
    ? m
    nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := nTotb := 0
    nTot9a := 0
    nTotC := nUC := 0
-   nPor1 := 0
+   nPDV := 0
 
    SELECT kalk_pripr
 
@@ -375,14 +75,6 @@ FUNCTION kalk_stampa_dok_81()
    PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
-/*
-    if idpartner+brfaktp+idkonto+idkonto2<>cidd
-      set device to screen
-      Beep(2)
-      Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
-     set device to printer
-    endif
-*/
 
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
       set_pdv_array_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
@@ -393,7 +85,7 @@ FUNCTION kalk_stampa_dok_81()
 
       aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 
-      nPor1 := aIPor[ 1 ]
+      nPDV := aIPor[ 1 ]
 
       IF lPrikPRUC
          nPRUC := aIPor[ 2 ]
@@ -430,7 +122,7 @@ FUNCTION kalk_stampa_dok_81()
       ENDIF
       nTotA += ( nUA := MPC   * ( Kolicina - Gkolicina - GKolicin2 ) )
       nTotB += ( nUB := MPCSAPP * ( Kolicina - Gkolicina - GKolicin2 ) )
-      nTotC += ( nUC := nPor1 * ( Kolicina - Gkolicina - GKolicin2 ) )
+      nTotC += ( nUC := nPDV * ( Kolicina - Gkolicina - GKolicin2 ) )
 
       // prvi red
       @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
@@ -482,7 +174,7 @@ FUNCTION kalk_stampa_dok_81()
       ENDIF
 
       @ PRow(), PCol() + 1 SAY Space( Len( picdem ) )
-      @ PRow(), PCol() + 1 SAY nPor1  PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY nPDV  PICTURE PicCDEM
 
       // treci red
       @ PRow() + 1, nCol1   SAY nU          PICTURE         PICDEM
@@ -559,4 +251,271 @@ FUNCTION kalk_stampa_dok_81()
    ? "RUC:";  @ PRow(), PCol() + 1 SAY nTot6 PICT picdem
    ? m
 
-   RETURN
+   RETURN .T.
+
+
+FUNCTION kalk_stampa_dok_81_tops( lZaTops )
+
+   LOCAL nCol1 := nCol2 := 0, nPom := 0
+   LOCAL _is_rok, _hAttrId
+   LOCAL nPDV
+
+   PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2, nPRUC, aPorezi
+
+   nMarza := nMarza2 := nPRUC := 0
+   aPorezi := {}
+
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
+
+   nStr := 0
+   cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
+
+   cIdKonto := IdKonto; cIdKonto2 := IdKonto2
+
+   IF lZaTops == NIL
+      lZaTops := .F.
+   ENDIF
+
+   _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
+
+   P_COND2
+
+   ?? "KALK: KALKULACIJA BR:", cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
+
+   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+
+   select_o_partner( cIdPartner )
+
+   ?U "DOBAVLJAČ:", cIdPartner, "-", PadR( naz, 20 ), Space( 5 ), "DOKUMENT Broj:", AllTrim( cBrFaktP ), "Datum:", dDatFaktP
+
+   select_o_konto( cIdKonto )
+
+   ?U  "KONTO zadužuje :", cIdKonto, "-", AllTrim( naz )
+
+   IF !lZaTops
+
+      m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
+      m += " -----------"
+
+      ? m
+      ? "*R * ROBA     *  FCJ     * TRKALO   * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     * MARZA.   *   MPC    * MPCSaPP *"
+      ? "*BR* TARIFA   *  KOLICINA* OST.KALO * SKONTO   *          *          *          *          *          *          *          *          *         *"
+      ? "*  *          *          *          *          *          *          *          *          *          *          *          *          *         *"
+
+      ? m
+
+   ELSE
+
+      m := "--- ---------- --------- ---------- ----------- ----------"
+      ? m
+      ?U "*R * ROBA     * Količina *   PDV   *    PC    * PC sa PDV *"
+      ?U "*BR* TARIFA   *          *         *          *           *"
+      ?U "*  *          *          *         *          *           *"
+      ? m
+
+   ENDIF
+
+   nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := nTotb := nTotC := 0
+   nTot9a := 0
+   nUC := 0
+
+   SELECT kalk_pripr
+
+   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
+
+/*
+    if idpartner+brfaktp+idkonto+idkonto2<>cidd
+     set device to screen
+     Beep(2)
+     Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
+     set device to printer
+    endif
+*/
+
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
+
+      select_o_roba( kalk_pripr->IdRoba )
+      select_o_tarifa( kalk_pripr->IdTarifa )
+
+      SELECT kalk_pripr
+
+      set_pdv_array_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi )
+      aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, field->mpc, field->mpcSaPP, field->nc )
+
+      nPDV := aIPor[ 1 ]
+
+      IF PRow() > page_length() - 4
+         FF
+         @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+      ENDIF
+
+      IF gKalo == "1"
+         SKol := Kolicina - GKolicina - GKolicin2
+      ELSE
+         SKol := Kolicina
+      ENDIF
+
+      nTot +=  ( nU := FCj * Kolicina )
+      IF gKalo == "1"
+         nTot1 += ( nU1 := FCj2 * ( GKolicina + GKolicin2 ) )
+      ELSE
+         nTot1 += ( nU1 := NC * ( GKolicina + GKolicin2 ) )
+      ENDIF
+      nTot2 += ( nU2 := -Rabat / 100 * FCJ * Kolicina )
+      nTot3 += ( nU3 := nPrevoz * SKol )
+      nTot4 += ( nU4 := nBankTr * SKol )
+      nTot5 += ( nU5 := nSpedTr * SKol )
+      nTot6 += ( nU6 := nCarDaz * SKol )
+      nTot7 += ( nU7 := nZavTr * SKol )
+      nTot8 += ( nU8 := NC *    ( Kolicina - Gkolicina - GKolicin2 ) )
+      nTot9 += ( nU9 := nMarza2 * ( Kolicina - Gkolicina - GKolicin2 ) )
+
+      nTotA += ( nUA := MPC   * ( Kolicina - Gkolicina - GKolicin2 ) )
+      nTotB += ( nUB := MPCSAPP * ( Kolicina - Gkolicina - GKolicin2 ) )
+      nTotC += ( nUC := nPDV * ( Kolicina - Gkolicina - GKolicin2 ) )
+
+      // prvi red
+      @ PRow() + 1, 0 SAY rbr PICT "999"
+      @ PRow(), 4 SAY ""
+      ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
+
+      IF roba_barkod_pri_unosu() .AND. !Empty( roba->barkod )
+         ?? ", BK: " + ROBA->barkod
+      ENDIF
+
+      IF _is_rok
+         _hAttrId := hb_Hash()
+         _hAttrId[ "idfirma" ] := field->idfirma
+         _hAttrId[ "idtipdok" ] := field->idvd
+         _hAttrId[ "brdok" ] := field->brdok
+         _hAttrId[ "rbr" ] := field->rbr
+         _item_istek_roka := CToD( get_kalk_attr_rok( _hAttrId, .T. ) )
+         IF DToC( _item_istek_roka ) <> DToC( CToD( "" ) )
+            ?? " datum isteka roka:", _item_istek_roka
+         ENDIF
+      ENDIF
+
+      @ PRow() + 1, 4 SAY IdRoba
+      nCol1 := PCol() + 1
+
+      IF !lZaTops
+         @ PRow(), PCol() + 1 SAY FCJ                   PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY GKolicina             PICTURE PicKol
+         @ PRow(), PCol() + 1 SAY -Rabat                PICTURE PicProc
+         @ PRow(), PCol() + 1 SAY nPrevoz / FCJ2 * 100      PICTURE PicProc
+         @ PRow(), PCol() + 1 SAY nBankTr / FCJ2 * 100      PICTURE PicProc
+         @ PRow(), PCol() + 1 SAY nSpedTr / FCJ2 * 100      PICTURE PicProc
+         @ PRow(), PCol() + 1 SAY nCarDaz / FCJ2 * 100      PICTURE PicProc
+         @ PRow(), PCol() + 1 SAY nZavTr / FCJ2 * 100       PICTURE PicProc
+         @ PRow(), PCol() + 1 SAY NC                    PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY nMarza2 / NC * 100        PICTURE PicProc
+
+      ELSE
+         @ PRow(), PCol() + 1 SAY Kolicina             PICTURE PicCDEM
+      ENDIF
+      @ PRow(), PCol() + 1 SAY MPC                   PICTURE PicCDEM
+
+      @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ] PICTURE PicProc
+
+      @ PRow(), PCol() + 1 SAY MPCSaPP               PICTURE PicCDEM
+
+      // drugi red
+      @ PRow() + 1, 4 SAY IdTarifa
+      IF !lZaTops
+         @ PRow(), nCol1    SAY Kolicina             PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY GKolicin2            PICTURE PicKol
+         @ PRow(), PCol() + 1 SAY -Rabat / 100 * FCJ       PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY nPrevoz              PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY nBankTr              PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY nSpedTr              PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY nCarDaz              PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY nZavTr               PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY Space( Len( picdem ) )
+         @ PRow(), PCol() + 1 SAY nMarza2              PICTURE PicCDEM
+
+         @ PRow(), PCol() + 1 SAY Space( Len( PicCDEM ) )
+
+         @ PRow(), PCol() + 1 SAY nPDV PICTURE PicCDEM
+
+      ENDIF
+
+      // treci red
+      IF !lZaTops
+         @ PRow() + 1, nCol1   SAY nU          PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU1         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU2         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU3         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU4         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU5         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU6         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU7         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU8         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU9         PICTURE         PICDEM
+
+      ELSE
+         @ PRow() + 1, nCol1 - 1   SAY Space( Len( picdem ) )
+      ENDIF
+      @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
+
+      @ PRow(), PCol() + 1  SAY nUC  PICTURE PICDEM
+
+      @ PRow(), PCol() + 1  SAY nUB         PICTURE         PICDEM
+      SKIP
+   ENDDO
+
+   IF PRow() > page_length() - 3
+      FF
+      @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   ENDIF
+
+   ? m
+
+   @ PRow() + 1, 0        SAY "Ukupno:"
+   // ************************** magacin *****************************
+   IF !lZaTops
+      @ PRow(), nCol1     SAY nTot          PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nTot1         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nTot2         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nTot3         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nTot4         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nTot5         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nTot6         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nTot7         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nTot8         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nTot9         PICTURE         PICDEM
+      IF lPrikPRUC
+         @ PRow(), PCol() + 1  SAY nTot9a        PICTURE         PICDEM
+      ENDIF
+   ELSE
+      @ PRow() + 1, nCol1 - 1   SAY Space( Len( picdem ) )
+   ENDIF
+   @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
+
+   @ PRow(), PCol() + 1 SAY nTotC PICTURE PICDEM
+
+   @ PRow(), PCol() + 1  SAY nTotB         PICTURE         PICDEM
+
+   ? m
+
+   nTot1 := nTot2 := nTot2b := nTot3 := nTot4 := 0
+   nTot5 := nTot6 := nTot7 := 0
+
+   kalk_pripr_rekap_tarife()
+
+   IF !lZaTops
+      ? "RUC:";  @ PRow(), PCol() + 1 SAY nTot6 PICT picdem
+   ENDIF
+
+   ? m
+
+   // potpis na dokumentu
+   dok_potpis( 90, "L", NIL, NIL )
+
+   RETURN .T.
+
+
+
+
+
+// /

@@ -66,8 +66,7 @@ FUNCTION kalk_unos_dok_81( hParams )
       ++_x
       _kord_x := m_x + _x
 
-      @ m_x + _x, m_y + 2 SAY8 "Konto zadužuje:" GET _idkonto ;
-         VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
+      @ m_x + _x, m_y + 2 SAY8 "Konto zadužuje:" GET _idkonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
 
       // IF gNW <> "X"
       // @ m_x + _x, m_y + 42 SAY8 "Zadužuje: " GET _idzaduz PICT "@!" VALID Empty( _idzaduz ) .OR. p_partner( @_idzaduz )
@@ -125,9 +124,9 @@ FUNCTION kalk_unos_dok_81( hParams )
    // kalk_dat_poslj_promjene_prod()
 
    ++_x
-   IF _use_rok
-      @ m_x + _x, m_y + 2 SAY8 "Datum isteka roka:" GET _rok
-   ENDIF
+   //IF _use_rok
+    //  @ m_x + _x, m_y + 2 SAY8 "Datum isteka roka:" GET _rok
+   //ENDIF
 
    IF _use_opis
       @ m_x + _x, m_y + 30 SAY8 "Opis:" GET _opis PICT "@S40"
@@ -361,8 +360,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
    @ m_x + _x, m_y + 2 SAY "PC BEZ PDV:"
 
 
-   @ m_x + _x, m_y + _unos_left GET _mpc PICT PicDEM ;
-      WHEN W_MPC_( "81", ( fMarza == "F" ), @aPorezi ) ;
+   @ m_x + _x, m_y + _unos_left GET _mpc PICT PicDEM WHEN W_MPC_( "81", ( fMarza == "F" ), @aPorezi ) ;
       VALID V_Mpc_( "81", ( fMarza == "F" ), @aPorezi )
 
    ++_x
@@ -376,8 +374,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
 
 
    @ m_x + _x, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
-      WHEN {|| fMarza := " ", _Marza2 := 0, .T. } ;
-      VALID V_MpcSaPP_( "81", .F., @aPorezi, .T. )
+      WHEN {|| fMarza := " ", _Marza2 := 0, .T. } VALID V_MpcSaPP_( "81", .F., @aPorezi, .T. )
 
    READ
 

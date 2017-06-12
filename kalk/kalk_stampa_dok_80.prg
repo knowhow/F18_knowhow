@@ -36,13 +36,11 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
    P_COND
    ? "KALK. DOKUMENT BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-   SELECT PARTN
-   HSEEK cIdPartner
+   select_o_partner( cIdPartner )
 
    ?  "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    ?  "KONTO zaduzuje :", cIdKonto, "-", AllTrim( naz )
 
@@ -71,7 +69,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
    nRec := RecNo()
    PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
    IF !Empty( idkonto2 )
-      cidkont := idkonto
+      cIdkont := idkonto
       cIdkont2 := idkonto2
       nProlaza := 2
    ELSE
@@ -85,7 +83,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
    PRIVATE aPorezi
    aPorezi := {}
 
-   FOR i := 1 TO nprolaza
+   FOR i := 1 TO nProlaza
       nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := nTotb := 0
       nTot9a := 0
       GO nRec
@@ -166,7 +164,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
          SKIP
       ENDDO
 
-      IF nprolaza == 2
+      IF nProlaza == 2
          ? m
          ? "Konto "
          IF i == 1
@@ -213,4 +211,4 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
    // potpis na dokumentu
    dok_potpis( 90, "L", nil, nil )
 
-   RETURN
+   RETURN .F.

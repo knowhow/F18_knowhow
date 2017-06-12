@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+MEMVAR cPolje
 
 FUNCTION P_Tarifa( cId, dx, dy )
 
@@ -22,7 +23,7 @@ FUNCTION P_Tarifa( cId, dx, dy )
    Kol := {}
 
    PushWA()
-   altd()
+   AltD()
    IF cId != NIL .AND. !Empty( cId )
       select_o_tarifa( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
    ELSE
@@ -60,12 +61,11 @@ FUNCTION set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aP
    LOCAL lUsedTarifa
    LOCAL cIdTarifa
 
+
    PRIVATE cPolje
 
    lUsedRoba := .T.
    lUsedTarifa := .T.
-
-   hb_default( @cIdRoba, NIL )
 
    PushWA()
 
@@ -93,7 +93,6 @@ FUNCTION set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aP
    IF cIdTar == nil
       select_o_roba( cIdRoba )
       cTarifa := &cPolje
-
       select_o_tarifa( cTarifa )
       cIdTarifa := tarifa->id
    ELSE
@@ -323,6 +322,6 @@ FUNCTION stopa_pdv( nPdv )
 
    IF Round( nPdv, 1 ) == Round( nPdv, 0 )
       RETURN Str( nPdv, 3, 0 ) + " %"
-   ELSE
-      RETURN Str( nPdv, 3, 1 ) + "%"
    ENDIF
+
+   RETURN Str( nPdv, 3, 1 ) + "%"

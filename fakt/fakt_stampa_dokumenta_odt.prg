@@ -28,9 +28,6 @@ STATIC __auto_odt := ""
 
 
 
-// ------------------------------------------------
-// stampa dokumenta u odt formatu
-// ------------------------------------------------
 FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
 
    LOCAL _template := ""
@@ -74,7 +71,7 @@ FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
       ENDIF
    ENDIF
 
-   MsgO( "formiram stavke računa..." )
+   MsgO( "formiraju se stavke odt računa..." )
 
    AAdd( _racuni, { cIdF, cIdVd, cBrDok  } )
 
@@ -91,15 +88,12 @@ FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
       IF _gen_pdf .AND. !Empty( _file_pdf )
 
          _ext_path := AllTrim( _ext_pdf )
-
          IF Left( AllTrim( _ext_pdf ), 4 ) == "HOME"
             _ext_path := my_home()
          ENDIF
-
          konvertuj_odt_u_pdf( NIL, _ext_path + _file_pdf )
 
       ENDIF
-
       prikazi_odt()
 
    ENDIF

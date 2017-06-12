@@ -13,7 +13,7 @@
 
 MEMVAR m_x, m_y, gcF9usmece
 
-FUNCTION azur_fakt( lSilent )
+FUNCTION fakt_azuriraj_dokument( lSilent )
 
    LOCAL _a_fakt_doks := {}
    LOCAL _id_firma

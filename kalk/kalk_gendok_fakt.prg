@@ -339,8 +339,8 @@ FUNCTION kalk_prenos_fakt()
    glRadNal := .F.
    glDistrib := .F.
 
-   azur_fakt( .T. )
+   fakt_azuriraj_dokument( .T. )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

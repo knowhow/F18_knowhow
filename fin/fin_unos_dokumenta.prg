@@ -262,8 +262,7 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 16, m_y + 2  SAY8 "Duguje/Potražuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
 
-   @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| .T. } ;
-      VALID {|| lDugmeOtvoreneStavke := .T., .T. }
+   @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| .T. } VALID {|| lDugmeOtvoreneStavke := .T., .T. }
 
    @ m_x + 17, m_y + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| konverzija_valute( , , "_IZNOSBHD" ),  .T. } ;
       VALID {|| lDugmeOtvoreneStavke := .F., .T. }
@@ -399,7 +398,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 
       IF edit_fin_priprema( .F. ) == 0
          BoxC()
-         RETURN DE_CONT
+         RETURN DE_REFRESH // radi asistenta otvorenih stavki
       ELSE
          dbf_update_rec( get_hash_record_from_global_vars( "_" ), .F. )
          BrisiPBaze()

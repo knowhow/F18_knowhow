@@ -36,8 +36,8 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
    cPrelomljeno := "N"
 
    o_suban()
-   //o_partner()
-   //o_konto()
+   // o_partner()
+   // o_konto()
 
 
    cIdFirma := self_organizacija_id()
@@ -290,6 +290,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
             cLastIdPartner := cIdPartner
          ENDIF
 
+         SELECT pom
          IF otvst <> " "
             nUkVVD  += Dug
             nUkVVP  += Pot
@@ -390,9 +391,9 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
 
    FOR i := 1 TO Len( anInterVV )
       IF ( cValuta == "1" )
-         qqout_sa_x( Transform( anInterVV[ i, 1, 2 ] -anInterVV[ i, 2, 2 ], PICPIC ) )
+         qqout_sa_x( Transform( anInterVV[ i, 1, 2 ] - anInterVV[ i, 2, 2 ], PICPIC ) )
       ELSE
-         qqout_sa_x( Transform( anInterVV[ i, 3, 2 ] -anInterVV[ i, 4, 2 ], PICPIC ) )
+         qqout_sa_x( Transform( anInterVV[ i, 3, 2 ] - anInterVV[ i, 4, 2 ], PICPIC ) )
       ENDIF
    NEXT
 

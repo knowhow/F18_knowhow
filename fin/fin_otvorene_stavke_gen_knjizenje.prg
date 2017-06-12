@@ -42,11 +42,14 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    lAsistJednaStavka := .T.
    lSumirano := .F.
    nZbir := 0
-   nZbir := oasist_provjeri_duple_partnere( _idpartner, _idkonto, _d_p, @lAsistJednaStavka, @lSumirano )
+
+   SELECT fin_pripr
+
+   nZbir := oasist_provjeri_duple_stavke_za_partnera( _idpartner, _idkonto, _d_p, @lAsistJednaStavka, @lSumirano )
 
    IF nZbir > 0 .AND. !lAsistJednaStavka
       MsgBeep( "Na dokumentu postoje dvije ili vise uplata#za istog kupca. Asistent onemogucen!" )
-      RETURN ( NIL )
+      RETURN .F.
    ENDIF
 
    cIdFirma := self_organizacija_id()
@@ -57,7 +60,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
       IF fin_pripr_nova_stavka()
          nIznos := _iznosbhd + nZbir
       ELSE
-         nIznos := _iznosbhd
+         nIznos := nZbir
       ENDIF
    ELSE
       nIznos := _iznosbhd
@@ -200,7 +203,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
          SELECT ostav
          APPEND BLANK
-         REPLACE field->iznosbhd with ( nDug - nPot ), ;
+         REPLACE field->iznosbhd WITH ( nDug - nPot ), ;
             field->datdok WITH aFaktura[ 1 ], ;
             field->datval WITH aFaktura[ 2 ], ;
             field->datzpr WITH aFaktura[ 3 ], ;
@@ -434,7 +437,6 @@ STATIC FUNCTION _del_nal_xx()
    GO TOP
 
    SEEK "XX"
-
    DO WHILE !Eof() .AND. field->idfirma == "XX"
 
       IF field->rbr == 0
@@ -481,7 +483,6 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
          IF LastKey() <> K_ESC
 
             PushWA()
-
 
             find_suban_by_konto_partner( _idfirma, _idkonto, _idpartner, cOldBrDok, "IdFirma,IdKonto,IdPartner,brdok" )
             DO WHILE !Eof() .AND. _idfirma + _idkonto + _idpartner + cOldBrDok == field->idfirma + field->idkonto + field->idpartner + field->brdok
@@ -557,7 +558,6 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
       IF Pitanje(, "Asistent zatvara stavke ( " + AllTrim( kalk_say_iznos( nIznos ) ) + " KM) ?", "D" ) == "D"
 
          nPredhodniIznos := nIznos
-
          GO TOP
          my_flock()
          DO WHILE !Eof()
@@ -611,12 +611,12 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
 
 
 
-STATIC FUNCTION oasist_provjeri_duple_partnere( cIdPartner, cIdKonto, cDp, lAsistJednaStavka, lSumirano )
+STATIC FUNCTION oasist_provjeri_duple_stavke_za_partnera( cIdPartner, cIdKonto, cDp, lAsistJednaStavka, lSumirano )
 
-   LOCAL nSuma, nCnt, nTot
+   LOCAL nSuma, nCnt, nTot, lNovaStavka, nRecNext
 
    SELECT fin_pripr
-   GO TOP
+   PushWa()
 
    nCnt := 0
    nSuma := 0
@@ -629,9 +629,10 @@ STATIC FUNCTION oasist_provjeri_duple_partnere( cIdPartner, cIdKonto, cDp, lAsis
       nTot := 1
    ENDIF
 
+   GO TOP
    DO WHILE !Eof()
       IF field->idpartner == cIdPartner .AND. field->idkonto == cIdKonto .AND. field->d_p == cDp
-         ++ nCnt
+         ++nCnt
          nSuma += field->iznosbhd
       ENDIF
       SKIP
@@ -639,13 +640,16 @@ STATIC FUNCTION oasist_provjeri_duple_partnere( cIdPartner, cIdKonto, cDp, lAsis
 
    IF ( nCnt > nTot ) // ima vise stavki za jednog partnera
 
-      IF  Pitanje(, "Spojiti duple uplate za partnera?", "D" ) == "D"
+      IF  Pitanje(, "Spojiti " +  AllTrim( Str( nCnt ) ) + " uplate (" + AllTrim( Str( nSuma, 15, 2 ) )  + "KM ) za partnera " + cIdPartner + "?", "D" ) == "D"
          GO TOP
          DO WHILE !Eof()
+            SKIP
+            nRecNext := RecNo()
+            SKIP -1
             IF field->idpartner == cIdPartner .AND. field->idkonto == cIdKonto .AND. field->d_p == cDp
                my_delete()
             ENDIF
-            SKIP
+            GO nRecNext
          ENDDO
          lSumirano := .T.
       ELSE
@@ -654,6 +658,8 @@ STATIC FUNCTION oasist_provjeri_duple_partnere( cIdPartner, cIdKonto, cDp, lAsis
       ENDIF
 
    ENDIF
+
+   PopWa()
 
    RETURN nSuma
 

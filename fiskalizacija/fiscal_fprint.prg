@@ -42,7 +42,7 @@ STATIC POLOG_LIMIT := 100
 // aData - podaci racuna
 // lStorno - da li se stampa storno ili ne (.T. ili .F. )
 // --------------------------------------------------------
-FUNCTION fprint_rn( hFiskalniParams, items, head, storno )
+FUNCTION fiskalni_fprint_racun( hFiskalniParams, aRacunData, head, storno )
 
    LOCAL _sep := ";"
    LOCAL _data := {}
@@ -55,7 +55,7 @@ FUNCTION fprint_rn( hFiskalniParams, items, head, storno )
 
    _struct := _g_f_struct( F_POS_RN ) // uzmi strukturu tabele za pos racun
 
-   _data := fisk_fprint_get_array( items, head, storno, hFiskalniParams ) // iscitaj pos matricu
+   _data := fisk_fprint_get_array( aRacunData, head, storno, hFiskalniParams ) // iscitaj pos matricu
 
    fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], _struct, _data )
 
@@ -523,7 +523,7 @@ FUNCTION fprint_per_rpt( hFiskalniParams )
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    aStruct := _g_f_struct( F_POS_RN )
@@ -545,7 +545,7 @@ FUNCTION fprint_per_rpt( hFiskalniParams )
 // vraca popunjenu matricu za ispis racuna
 // FPRINT driver
 // ----------------------------------------
-STATIC FUNCTION fisk_fprint_get_array( aData, aKupac, lStorno, params )
+STATIC FUNCTION fisk_fprint_get_array( aData, aKupac, lStorno, hFiskalniParams )
 
    LOCAL aArr := {}
    LOCAL cTmp := ""
@@ -561,13 +561,13 @@ STATIC FUNCTION fisk_fprint_get_array( aData, aKupac, lStorno, params )
    LOCAL cVr_placanja := "0"
    LOCAL _convert_852 := .T.
 
-   // provjeri operatera i lozinku iz podesenja...
-   IF !Empty( params[ "op_id" ] )
-      cOperater := params[ "op_id" ]
+
+   IF !Empty( hFiskalniParams[ "op_id" ] ) // provjeri operatera i lozinku iz podesenja...
+      cOperater := hFiskalniParams[ "op_id" ]
    ENDIF
 
-   IF !Empty( params[ "op_pwd" ] )
-      cOp_pwd := params[ "op_pwd" ]
+   IF !Empty( hFiskalniParams[ "op_pwd" ] )
+      cOp_pwd := hFiskalniParams[ "op_pwd" ]
    ENDIF
 
    cVr_placanja := AllTrim( aData[ 1, 13 ] )
@@ -580,7 +580,7 @@ STATIC FUNCTION fisk_fprint_get_array( aData, aKupac, lStorno, params )
    // ocekuje se matrica formata
    // aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa,
    // rek_rn, plu, plu_cijena, popust, barkod, vrsta plac, total racuna }
-   fisk_dodaj_artikle_za_racun( @aArr, aData, lStorno, params )
+   fisk_dodaj_artikle_za_racun( @aArr, aData, lStorno, hFiskalniParams )
 
    // broj racuna
    cRnBroj := AllTrim( aData[ 1, 1 ] )
@@ -600,7 +600,7 @@ STATIC FUNCTION fisk_fprint_get_array( aData, aKupac, lStorno, params )
    cTmp += cLogSep
    cTmp += Replicate( "_", 2 )
    cTmp += cSep
-   cTmp += params[ "iosa" ]
+   cTmp += hFiskalniParams[ "iosa" ]
    cTmp += cSep
    cTmp += cOperator
    cTmp += cSep
@@ -1281,8 +1281,7 @@ STATIC FUNCTION fisk_dodaj_artikle_za_racun( aArr, aData, lStorno, hFiskalniPara
       cTmp += Replicate( "_", 2 )
       cTmp += cSep
 
-      // opcija dodavanja "2"
-      cTmp += cOp_add
+      cTmp += cOp_add // opcija dodavanja "2"
       cTmp += cSep
 
       cTmp += fiscal_txt_get_tarifa( aData[ i, 7 ], hFiskalniParams[ "pdv" ], "FPRINT" ) // poreska stopa
@@ -1336,14 +1335,14 @@ STATIC FUNCTION fisk_dodaj_artikle_za_racun( aArr, aData, lStorno, hFiskalniPara
 
 
 
-FUNCTION fprint_delete_answer( params )
+FUNCTION fprint_delete_answer( hFiskalniParams )
 
    LOCAL _f_name
 
-   _f_name := params[ "out_dir" ] + ANSW_DIR + SLASH + params[ "out_answer" ]
+   _f_name := hFiskalniParams[ "out_dir" ] + ANSW_DIR + SLASH + hFiskalniParams[ "out_answer" ]
 
-   IF Empty( params[ "out_answer" ] )
-      _f_name := params[ "out_dir" ] + ANSW_DIR + SLASH + params[ "out_file" ]
+   IF Empty( hFiskalniParams[ "out_answer" ] )
+      _f_name := hFiskalniParams[ "out_dir" ] + ANSW_DIR + SLASH + hFiskalniParams[ "out_file" ]
    ENDIF
 
    // ako postoji fajl obrisi ga

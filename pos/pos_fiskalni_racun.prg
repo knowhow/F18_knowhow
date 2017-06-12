@@ -246,7 +246,7 @@ STATIC FUNCTION pos_to_fprint( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, s
 
    fprint_delete_answer( __device_params )
 
-   fprint_rn( __device_params, items, NIL, storno )
+   fiskalni_fprint_racun( __device_params, items, NIL, storno )
 
    _err_level := fprint_read_error( __device_params, @_fiscal_no )
 

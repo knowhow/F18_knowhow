@@ -12,11 +12,11 @@
 #include "f18.ch"
 
 
-FUNCTION azur_kif()
-   RETURN azur_ku_ki( "KIF" )
+FUNCTION epdv_azur_kif()
+   RETURN epdv_azur_kuf_kif( "KIF" )
 
-FUNCTION azur_kuf()
-   RETURN azur_ku_ki( "KUF" )
+FUNCTION epdv_azur_kuf()
+   RETURN epdv_azur_kuf_kif( "KUF" )
 
 
 FUNCTION pov_kuf( nBrDok )
@@ -26,12 +26,14 @@ FUNCTION pov_kif( nBrDok )
    RETURN pov_ku_ki( "KIF", nBrDok )
 
 
-FUNCTION azur_ku_ki( cTbl )
+FUNCTION epdv_azur_kuf_kif( cTbl )
 
-   LOCAL nBrDok
-   LOCAL _rec
-   LOCAL nNextGRbr
+   LOCAL nPArea, nKArea, nCount
+   LOCAL hRec
+   LOCAL nNextGRbr := 0
    LOCAL nLastBrDok := 0
+   LOCAL nNextBrDok := 0
+   LOCAL nBrDok := 0
 
    IF cTbl == "KUF"
       epdv_otvori_kuf_tabele( .T. )
@@ -52,7 +54,7 @@ FUNCTION azur_ku_ki( cTbl )
       RETURN 0
    ENDIF
 
-altd()
+   AltD()
    nNextGRbr := next_redni_broj_globalno( cTbl )
 
    SELECT ( nPArea )
@@ -84,13 +86,13 @@ altd()
          @ m_x + 1, m_y + 2 SAY PadR( "Dodajem P_KIF -> KUF " + Transform( nCount, "9999" ), 40 )
          @ m_x + 2, m_y + 2 SAY PadR( "   " + cTbl + " G.R.BR: " + Transform( nNextGRbr, "99999" ), 40 )
 
-         nNextGRbr ++
+         nNextGRbr++
 
          SELECT ( nKArea )
          APPEND BLANK
 
-         _rec := get_hash_record_from_global_vars()
-         dbf_update_rec( _rec )
+         hRec := get_hash_record_from_global_vars()
+         dbf_update_rec( hRec )
 
          SELECT ( nPArea )
          SKIP
@@ -127,10 +129,10 @@ altd()
 
 
 
-FUNCTION kuf_kif_azur_sql( tbl, nNextRbrGlobalno, nNextBrDok )
+FUNCTION kuf_kif_azur_sql( cTable, nNextRbrGlobalno, nNextBrDok )
 
    LOCAL lOk := .T.
-   LOCAL record := hb_Hash()
+   LOCAL hRec := hb_Hash()
    LOCAL _tbl_epdv
    LOCAL nI
    LOCAL _tmp_id
@@ -138,13 +140,13 @@ FUNCTION kuf_kif_azur_sql( tbl, nNextRbrGlobalno, nNextBrDok )
    LOCAL __area
    LOCAL hParams
 
-   IF tbl == "KIF"
+   IF cTable == "KIF"
       __area := F_P_KIF
-   ELSEIF tbl == "KUF"
+   ELSEIF cTable == "KUF"
       __area := F_P_KUF
    ENDIF
 
-   _tbl_epdv := "epdv_" + Lower( tbl )
+   _tbl_epdv := "epdv_" + Lower( cTable )
 
    info_bar( "epdv", "sql " + _tbl_epdv )
 
@@ -162,18 +164,18 @@ FUNCTION kuf_kif_azur_sql( tbl, nNextRbrGlobalno, nNextBrDok )
       GO TOP
       DO WHILE !Eof()
 
-         record := dbf_get_rec()
-         record[ "datum_2" ] := Date()
-         record[ "br_dok" ] := nNextBrDok
-         record[ "g_r_br" ] := nNextRbrGlobalno
+         hRec := dbf_get_rec()
+         hRec[ "datum_2" ] := Date()
+         hRec[ "br_dok" ] := nNextBrDok
+         hRec[ "g_r_br" ] := nNextRbrGlobalno
 
-         IF tbl == "KIF"
-            record[ "src_pm" ] := field->src_pm
+         IF cTable == "KIF"
+            hRec[ "src_pm" ] := field->src_pm
          ENDIF
 
-         _tmp_id := "#2" + PadL( AllTrim( Str( record[ "br_dok" ], 6 ) ), 6 )
+         _tmp_id := "#2" + PadL( AllTrim( Str( hRec[ "br_dok" ], 6 ) ), 6 )
 
-         IF !sql_table_update( _tbl_epdv, "ins", record )
+         IF !sql_table_update( _tbl_epdv, "ins", hRec )
             lOk := .F.
             EXIT
          ENDIF
@@ -202,7 +204,7 @@ FUNCTION kuf_kif_azur_sql( tbl, nNextRbrGlobalno, nNextBrDok )
 FUNCTION pov_ku_ki( cTbl, nBrDok )
 
    LOCAL _del_rec, _ok
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _p_area
    LOCAL _k_area
    LOCAL _cnt
@@ -243,15 +245,15 @@ FUNCTION pov_ku_ki( cTbl, nBrDok )
 
    DO WHILE !Eof() .AND. ( br_dok == nBrDok )
 
-      ++ _cnt
+      ++_cnt
       @ m_x + 1, m_y + 2 SAY PadR( "P_" + cTbl +  " -> " + cTbl + " :" + Transform( _cnt, "9999" ), 40 )
 
       SELECT ( _k_area )
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       SELECT ( _p_area )
       APPEND BLANK
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       SELECT ( _k_area )
       SKIP
@@ -301,7 +303,7 @@ FUNCTION pov_ku_ki( cTbl, nBrDok )
 
 FUNCTION epdv_renumeracija_rbr( cTbl, lShow )
 
-   LOCAL _rec
+   LOCAL hRec
 
    IF lShow == nil
       lShow := .T.
@@ -327,9 +329,9 @@ FUNCTION epdv_renumeracija_rbr( cTbl, lShow )
    nRbr := 1
 
    DO WHILE !Eof()
-      _rec := dbf_get_rec()
-      _rec[ "r_br" ] := nRbr
-      dbf_update_rec( _rec )
+      hRec := dbf_get_rec()
+      hRec[ "r_br" ] := nRbr
+      dbf_update_rec( hRec )
       ++nRbr
       SKIP
    ENDDO
@@ -343,7 +345,7 @@ FUNCTION epdv_renumeracija_rbr( cTbl, lShow )
 
 FUNCTION renm_g_rbr( cTbl, lShow )
 
-   LOCAL nRbr, _rec
+   LOCAL nRbr, hRec
    LOCAL nLRbr
 
    IF lShow == nil
@@ -351,9 +353,7 @@ FUNCTION renm_g_rbr( cTbl, lShow )
    ENDIF
 
    IF cTbl == "KUF"
-
-         select_o_epdv_kuf()
-
+      select_o_epdv_kuf()
 
    ELSEIF cTbl == "P_KIF"
       SELECT F_KIF
@@ -385,9 +385,9 @@ FUNCTION renm_g_rbr( cTbl, lShow )
 
       ++nRbr
       @ m_x + 1, m_y + 2 SAY cTbl + ":" + Str( nRbr, 8, 0 )
-      _rec := dbf_get_rec()
-      _rec[ "g_r_br" ] := nRbr
-      dbf_update_rec( _rec )
+      hRec := dbf_get_rec()
+      hRec[ "g_r_br" ] := nRbr
+      dbf_update_rec( hRec )
 
       ++nRbr
       SKIP

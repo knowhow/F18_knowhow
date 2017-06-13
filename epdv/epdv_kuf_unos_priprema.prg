@@ -232,7 +232,7 @@ STATIC FUNCTION epdv_kuf_key_handler()
    CASE is_key_alt_a( Ch )
 
       IF Pitanje( , "Ažurirati KUF dokument (D/N) ?", "N" ) == "D"
-         azur_kuf()
+         epdv_azur_kuf()
          RETURN DE_REFRESH
       ELSE
          RETURN DE_CONT

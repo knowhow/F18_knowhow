@@ -65,8 +65,8 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    cPodvuci := "N"
 
-   o_sifk()
-   o_sifv()
+//   o_sifk()
+//   o_sifv()
 //   o_roba()
    O_K1
    kalk_o_objekti()
@@ -80,7 +80,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    qqRoba := Space( 60 )
 
    IF uslovi_izvjestaja( @cNObjekat ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF Right( Trim( qqRoba ), 1 ) = "*"
@@ -150,8 +150,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
          ShowKorner( nRecno, 100 )
          cIdroba := rekap1->idRoba
 
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
          cIdTarifa := roba->idTarifa
 
          SELECT rekap1
@@ -418,8 +417,8 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
    ENDDO
    BoxC()
 
-   SELECT roba
-   USE
+   //SELECT roba
+   //USE
 
    SELECT params
    IF Params2()
@@ -490,7 +489,7 @@ STATIC FUNCTION ispisi_zalihe( cG1, cIdTarifa, cIdRoba, cDUslov )
       dbf_update_rec( hRec )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cDUslov )
@@ -554,9 +553,11 @@ STATIC FUNCTION ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cDUslov )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 STATIC FUNCTION PrintZalGr()
+
+   LOCAL i
 
    SELECT pobjekti
    GO BOTTOM
@@ -570,7 +571,7 @@ STATIC FUNCTION PrintZalGr()
       SKIP
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION PrintProdGr()
@@ -622,7 +623,7 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
 
    MsgC()
 
-   RETURN
+   RETURN .T.
 
 
 

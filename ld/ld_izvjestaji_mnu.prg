@@ -14,40 +14,40 @@
 
 FUNCTION ld_izvjestaji()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. kartice                                           " )
-   AAdd( _opcexe, {|| izvjestaji_kartice() } )
-   AAdd( _opc, "2. rekapitulacije" )
-   AAdd( _opcexe, {|| izvjestaji_rekapitulacije() } )
-   AAdd( _opc, "3. pregledi" )
-   AAdd( _opcexe, {|| ld_izvjestaji_pregledi() } )
-   AAdd( _opc, "4. specifikacije" )
-   AAdd( _opcexe, {|| izvjestaji_specifikacije() } )
-   AAdd( _opc, "5. ostali izvještaji" )
-   AAdd( _opcexe, {|| izvjestaji_ostali() } )
-   AAdd( _opc, "6. obrasci (MIP/GIP/OLP)" )
-   AAdd( _opcexe, {|| izvjestaji_obrasci() } )
+   AAdd( aOpc, "1. kartice                                           " )
+   AAdd( aOpcExe, {|| izvjestaji_kartice() } )
+   AAdd( aOpc, "2. rekapitulacije" )
+   AAdd( aOpcExe, {|| izvjestaji_rekapitulacije() } )
+   AAdd( aOpc, "3. pregledi" )
+   AAdd( aOpcExe, {|| ld_izvjestaji_pregledi() } )
+   AAdd( aOpc, "4. specifikacije" )
+   AAdd( aOpcExe, {|| izvjestaji_specifikacije() } )
+   AAdd( aOpc, "5. ostali izvještaji" )
+   AAdd( aOpcExe, {|| izvjestaji_ostali() } )
+   AAdd( aOpc, "6. obrasci (MIP/GIP/OLP)" )
+   AAdd( aOpcExe, {|| izvjestaji_obrasci() } )
 
-   f18_menu( "izvj", .F., _izbor, _opc, _opcexe )
+   f18_menu( "izvj", .F., _izbor, aOpc, aOpcExe )
 
    RETURN .T.
 
 
 STATIC FUNCTION izvjestaji_kartice()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _Izbor := 1
 
-   AAdd( _opc, "1. kartica plate                  " )
-   AAdd( _opcexe, {|| ld_kartica_plate() } )
-   AAdd( _opc, "2. kartica plate za više mjeseci" )
-   AAdd( _opcexe, {|| ld_kartica_plate_za_vise_mjeseci() } )
+   AAdd( aOpc, "1. kartica plate                  " )
+   AAdd( aOpcExe, {|| ld_kartica_plate() } )
+   AAdd( aOpc, "2. kartica plate za više mjeseci" )
+   AAdd( aOpcExe, {|| ld_kartica_plate_za_vise_mjeseci() } )
 
-   f18_menu( "krt", .F., _izbor, _opc, _opcexe )
+   f18_menu( "krt", .F., _izbor, aOpc, aOpcExe )
 
    RETURN .T.
 
@@ -55,23 +55,23 @@ STATIC FUNCTION izvjestaji_kartice()
 
 STATIC FUNCTION izvjestaji_obrasci()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _Izbor := 1
 
-   AAdd( _opc, "1. mjesečni obrazac MIP-1023                  " )
-   AAdd( _opcexe, {|| ld_mip_obrazac_1023() } )
+   AAdd( aOpc, "1. mjesečni obrazac MIP-1023                  " )
+   AAdd( aOpcExe, {|| ld_mip_obrazac_1023() } )
 
-   AAdd( _opc, "2. obračunski listovi (obrasci OLP i GIP)" )
-   AAdd( _opcexe, {|| ld_olp_gip_obrazac() } )
+   AAdd( aOpc, "2. obračunski listovi (obrasci OLP i GIP)" )
+   AAdd( aOpcExe, {|| ld_olp_gip_obrazac() } )
 
-   AAdd( _opc, "3. akontacije poreza (obrasci ASD i AUG)" )
-   AAdd( _opcexe, {|| ld_asd_aug_obrazac() } )
+   AAdd( aOpc, "3. akontacije poreza (obrasci ASD i AUG)" )
+   AAdd( aOpcExe, {|| ld_asd_aug_obrazac() } )
 
-   AAdd( _opc, "4. prijave doprinosa (JS-3400)" )
-   AAdd( _opcexe, {|| ld_js3400_obrazac() } )
+   AAdd( aOpc, "4. prijave doprinosa (JS-3400)" )
+   AAdd( aOpcExe, {|| ld_js3400_obrazac() } )
 
-   f18_menu( "obr", .F., _izbor, _opc, _opcexe )
+   f18_menu( "obr", .F., _izbor, aOpc, aOpcExe )
 
    RETURN .T.
 
@@ -79,27 +79,32 @@ STATIC FUNCTION izvjestaji_obrasci()
 
 STATIC FUNCTION izvjestaji_specifikacije()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. specifikacija uz isplatu plata                              " )
-   AAdd( _opcexe, {|| ld_specifikacija_plate() } )
-   AAdd( _opc, "2. specifikacija za samostalne poduzetnike obrazac 2002  " )
-   AAdd( _opcexe, {|| ld_specifikacija_plate_samostalni_obr_2002() } )
-   AAdd( _opc, "3. specifikacija ostale samostalne djelatnosti" )
-   AAdd( _opcexe, {|| ld_specifikacija_plate_ostali() } )
-   AAdd( _opc, "4. specifikacija primanja po mjesecima" )
-   AAdd( _opcexe, {|| ld_specifikacija_po_mjesecima() } )
-   AAdd( _opc, "5. specifikacija primanja po RJ" )
-   AAdd( _opcexe, {|| ld_specifikacija_po_rj() } )
-   AAdd( _opc, "6. specifikacija po rasponima primanja" )
-   AAdd( _opcexe, {|| ld_specifikacija_po_rasponima_primanja() } )
-   AAdd( _opc, "7. specifikacija neto primanja radnika po općinama stanovanja " )
-   AAdd( _opcexe, {|| ld_specifikacija_neto_primanja_po_opcinama() } )
+   AAdd( aOpc, "1. specifikacija uz isplatu plata 2001                            " )
+   AAdd( aOpcExe, {|| ld_specifikacija_plate_obr_2001() } )
+
+   AAdd( aOpc, "X. specifikacija uz isplatu plata 2001 (stari) " )
+   AAdd( aOpcExe, {|| ld_specifikacija_plate_2001_stari() } )
+
+   AAdd( aOpc, "2. specifikacija za samostalne poduzetnike obrazac 2002  " )
+   AAdd( aOpcExe, {|| ld_specifikacija_plate_samostalni_obr_2002() } )
+
+   AAdd( aOpc, "3. specifikacija ostale samostalne djelatnosti" )
+   AAdd( aOpcExe, {|| ld_specifikacija_plate_ostali() } )
+   AAdd( aOpc, "4. specifikacija primanja po mjesecima" )
+   AAdd( aOpcExe, {|| ld_specifikacija_po_mjesecima() } )
+   AAdd( aOpc, "5. specifikacija primanja po RJ" )
+   AAdd( aOpcExe, {|| ld_specifikacija_po_rj() } )
+   AAdd( aOpc, "6. specifikacija po rasponima primanja" )
+   AAdd( aOpcExe, {|| ld_specifikacija_po_rasponima_primanja() } )
+   AAdd( aOpc, "7. specifikacija neto primanja radnika po općinama stanovanja " )
+   AAdd( aOpcExe, {|| ld_specifikacija_neto_primanja_po_opcinama() } )
 
 
-   f18_menu( "spec", .F., _izbor, _opc, _opcexe )
+   f18_menu( "spec", .F., _izbor, aOpc, aOpcExe )
 
    RETURN .T.
 
@@ -107,26 +112,26 @@ STATIC FUNCTION izvjestaji_specifikacije()
 
 STATIC FUNCTION ld_izvjestaji_pregledi()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. pregled plata                                  " )
-   AAdd( _opcexe, {|| ld_pregled_plata() } )
-   AAdd( _opc, "2. pregled plata za više mjeseci  " )
-   AAdd( _opcexe, {|| ld_pregled_plata_za_period() } )
-   AAdd( _opc, "3. pregled određenog primanja" )
-   AAdd( _opcexe, {|| ld_pregled_odredjenog_primanja() } )
-   AAdd( _opc, "4. pregled primanja za period" )
-   AAdd( _opcexe, {|| ld_pregled_primanja_za_period() } )
-   AAdd( _opc, "5. platni spisak" )
-   AAdd( _opcexe, {|| ld_platni_spisak() } )
-   AAdd( _opc, "6. platni spisak tekući račun" )
-   AAdd( _opcexe, {|| ld_platni_spisak_tekuci_racun( "1" ) } )
-   AAdd( _opc, "8. isplata jednog tipa primanja na tekući račun" )
-   AAdd( _opcexe, {|| ld_pregled_isplate_za_tekuci_racun( "1" ) } )
+   AAdd( aOpc, "1. pregled plata                                  " )
+   AAdd( aOpcExe, {|| ld_pregled_plata() } )
+   AAdd( aOpc, "2. pregled plata za više mjeseci  " )
+   AAdd( aOpcExe, {|| ld_pregled_plata_za_period() } )
+   AAdd( aOpc, "3. pregled određenog primanja" )
+   AAdd( aOpcExe, {|| ld_pregled_odredjenog_primanja() } )
+   AAdd( aOpc, "4. pregled primanja za period" )
+   AAdd( aOpcExe, {|| ld_pregled_primanja_za_period() } )
+   AAdd( aOpc, "5. platni spisak" )
+   AAdd( aOpcExe, {|| ld_platni_spisak() } )
+   AAdd( aOpc, "6. platni spisak tekući račun" )
+   AAdd( aOpcExe, {|| ld_platni_spisak_tekuci_racun( "1" ) } )
+   AAdd( aOpc, "8. isplata jednog tipa primanja na tekući račun" )
+   AAdd( aOpcExe, {|| ld_pregled_isplate_za_tekuci_racun( "1" ) } )
 
-   f18_menu( "preg", .F., _izbor, _opc, _opcexe )
+   f18_menu( "preg", .F., _izbor, aOpc, aOpcExe )
 
    RETURN .T.
 
@@ -134,32 +139,32 @@ STATIC FUNCTION ld_izvjestaji_pregledi()
 
 STATIC FUNCTION izvjestaji_ostali()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. pregled utroška po šihtaricama                        " )
-   AAdd( _opcexe, {|| ld_utrosak_po_sihtaricama() } )
-   AAdd( _opc, "2. lista radnika za isplatu toplog obroka" )
-   AAdd( _opcexe, {|| ld_lista_isplate_toplog_obroka() } )
+   AAdd( aOpc, "1. pregled utroška po šihtaricama                        " )
+   AAdd( aOpcExe, {|| ld_utrosak_po_sihtaricama() } )
+   AAdd( aOpc, "2. lista radnika za isplatu toplog obroka" )
+   AAdd( aOpcExe, {|| ld_lista_isplate_toplog_obroka() } )
 
-   f18_menu( "ost", .F., _izbor, _opc, _opcexe )
+   f18_menu( "ost", .F., _izbor, aOpc, aOpcExe )
 
    RETURN .T.
 
 
 STATIC FUNCTION izvjestaji_rekapitulacije()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. rekapitulacija plate za radnu jedinicu   " )
-   AAdd( _opcexe, {|| ld_rekapitulacija_sql( .F. ) } )
-   AAdd( _opc, "2. rekapitulacija za sve radne jedinice" )
-   AAdd( _opcexe, {|| ld_rekapitulacija_sql( .T. ) } )
+   AAdd( aOpc, "1. rekapitulacija plate za radnu jedinicu   " )
+   AAdd( aOpcExe, {|| ld_rekapitulacija_sql( .F. ) } )
+   AAdd( aOpc, "2. rekapitulacija za sve radne jedinice" )
+   AAdd( aOpcExe, {|| ld_rekapitulacija_sql( .T. ) } )
 
 
-   f18_menu( "rekap", .F., _izbor, _opc, _opcexe )
+   f18_menu( "rekap", .F., _izbor, aOpc, aOpcExe )
 
    RETURN .T.

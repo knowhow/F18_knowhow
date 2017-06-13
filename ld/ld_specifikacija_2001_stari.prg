@@ -13,94 +13,7 @@
 #include "f18.ch"
 
 
-
-FUNCTION zadnji_dan_mjeseca( nMonth )
-
-   LOCAL nDay := 0
-
-   DO CASE
-   CASE nMonth = 1
-      nDay := 31
-   CASE nMonth = 2
-      nDay := 28
-   CASE nMonth = 3
-      nDay := 31
-   CASE nMonth = 4
-      nDay := 30
-   CASE nMonth = 5
-      nDay := 31
-   CASE nMonth = 6
-      nDay := 30
-   CASE nMonth = 7
-      nDay := 31
-   CASE nMonth = 8
-      nDay := 31
-   CASE nMonth = 9
-      nDay := 30
-   CASE nMonth = 10
-      nDay := 31
-   CASE nMonth = 11
-      nDay := 30
-   CASE nMonth = 12
-      nDay := 31
-   ENDCASE
-
-   RETURN nDay
-
-
-
-FUNCTION prvi_dan_mjeseca( nMonth )
-
-   LOCAL nDay := 1
-
-   RETURN nDay
-
-
-
-// ----------------------------------------------
-// da li je radnik u republ.srpskoj
-// gleda polje region "REG" iz opcina
-// " " ili "1" = federacija
-// "2" = rs
-// ----------------------------------------------
-FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
-
-   LOCAL lRet := .F.
-   LOCAL cSql, oQry
-
-   cSql := "SELECT reg FROM " + F18_PSQL_SCHEMA_DOT + "ops "
-   cSql += "WHERE id = " + sql_quote( cOpsSt )
-
-   oQry := run_sql_query( cSql )
-
-   IF is_var_objekat_tpqquery( oQry )
-      IF oQry:FieldGet( 1 ) == "2"
-         lRet := .T.
-      ENDIF
-   ENDIF
-
-   RETURN lRet
-
-
-
-FUNCTION ld_iz_koje_opcine_je_radnik( cIdRadn )
-
-   LOCAL cOpc := ""
-   LOCAL cSql, oQry
-
-   cSql := "SELECT idopsst FROM " + F18_PSQL_SCHEMA_DOT + "ld_radn WHERE id = " + sql_quote( cIdRadn )
-
-   oQry := run_sql_query( cSql )
-
-   IF is_var_objekat_tpqquery( oQry )
-      cOpc := hb_UTF8ToStr( oQry:FieldGet( 1 ) )
-   ENDIF
-
-   RETURN cOpc
-
-
-
-FUNCTION ld_specifikacija_plate()
+FUNCTION ld_specifikacija_plate_2001_stari()
 
    LOCAL GetList := {}
    LOCAL aPom := {}
@@ -428,7 +341,7 @@ FUNCTION ld_specifikacija_plate()
 
    IF Eof()
       MsgBeep( "Obračun za ovaj mjesec ne postoji !" )
-      //my_close_all_dbf()
+      // my_close_all_dbf()
       RETURN .T.
    ENDIF
 
@@ -441,7 +354,7 @@ FUNCTION ld_specifikacija_plate()
    nDodDoprZ := 0
    nDodDoprP := 0
 
-   DO WHILE Str( nGodina, 4, 0) + Str( nMjesec, 2, 0 ) == Str( godina, 4, 0 ) + Str( mjesec, 2, 0 )
+   DO WHILE Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) == Str( godina, 4, 0 ) + Str( mjesec, 2, 0 )
 
       select_o_radn( LD->idradn )
       cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
@@ -947,6 +860,95 @@ FUNCTION ld_specifikacija_plate()
    RETURN .T.
 
 
+
+
+
+FUNCTION zadnji_dan_mjeseca( nMonth )
+
+   LOCAL nDay := 0
+
+   DO CASE
+   CASE nMonth = 1
+      nDay := 31
+   CASE nMonth = 2
+      nDay := 28
+   CASE nMonth = 3
+      nDay := 31
+   CASE nMonth = 4
+      nDay := 30
+   CASE nMonth = 5
+      nDay := 31
+   CASE nMonth = 6
+      nDay := 30
+   CASE nMonth = 7
+      nDay := 31
+   CASE nMonth = 8
+      nDay := 31
+   CASE nMonth = 9
+      nDay := 30
+   CASE nMonth = 10
+      nDay := 31
+   CASE nMonth = 11
+      nDay := 30
+   CASE nMonth = 12
+      nDay := 31
+   ENDCASE
+
+   RETURN nDay
+
+
+
+FUNCTION prvi_dan_mjeseca( nMonth )
+
+   LOCAL nDay := 1
+
+   RETURN nDay
+
+
+
+// ----------------------------------------------
+// da li je radnik u republ.srpskoj
+// gleda polje region "REG" iz opcina
+// " " ili "1" = federacija
+// "2" = rs
+// ----------------------------------------------
+FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
+
+   LOCAL lRet := .F.
+   LOCAL cSql, oQry
+
+   cSql := "SELECT reg FROM " + F18_PSQL_SCHEMA_DOT + "ops "
+   cSql += "WHERE id = " + sql_quote( cOpsSt )
+
+   oQry := run_sql_query( cSql )
+
+   IF is_var_objekat_tpqquery( oQry )
+      IF oQry:FieldGet( 1 ) == "2"
+         lRet := .T.
+      ENDIF
+   ENDIF
+
+   RETURN lRet
+
+
+
+FUNCTION ld_iz_koje_opcine_je_radnik( cIdRadn )
+
+   LOCAL cOpc := ""
+   LOCAL cSql, oQry
+
+   cSql := "SELECT idopsst FROM " + F18_PSQL_SCHEMA_DOT + "ld_radn WHERE id = " + sql_quote( cIdRadn )
+
+   oQry := run_sql_query( cSql )
+
+   IF is_var_objekat_tpqquery( oQry )
+      cOpc := hb_UTF8ToStr( oQry:FieldGet( 1 ) )
+   ENDIF
+
+   RETURN cOpc
+
+
+
 // ---------------------------------------------
 // isplata doprinosa, kontrola iznosa
 // ---------------------------------------------
@@ -958,7 +960,7 @@ FUNCTION _ispl_d( nIzn, cIspl )
       RETURN 0
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // ---------------------------------------------
 // isplata poreza, kontrola iznosa

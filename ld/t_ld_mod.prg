@@ -55,8 +55,8 @@ METHOD programski_modul_osnovni_meni
    AAdd( aOpcije, "M. mjesečni obrazac MIP-1023" )
    AAdd( aOpcijeB, {|| ld_mip_obrazac_1023() } )
 
-   AAdd( aOpcije, "P. specifikacija uz isplatu plata" )
-   AAdd( aOpcijeB, {|| ld_specifikacija_plate() } )
+   AAdd( aOpcije, "P. specifikacija uz isplatu plata obrazac 2001" )
+   AAdd( aOpcijeB, {|| ld_specifikacija_plate_obr_2001() } )
 
    AAdd( aOpcije, "------------------------------------" )
    AAdd( aOpcijeB, NIL )

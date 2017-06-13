@@ -22,16 +22,16 @@ FUNCTION kalk_real_partnera()
    LOCAL PicDEM := kalk_pic_iznos_bilo_gpicdem()         // "9999999.99"
    LOCAL Pickol := kalk_pic_kolicina_bilo_gpickol()         // "999999.999"
 
-   o_sifk()
-   o_sifv()
-   //o_roba()
-   o_konto()
-   o_tarifa()
-   o_partner()
+   // o_sifk()
+   // o_sifv()
+   // o_roba()
+   // o_konto()
+   // o_tarifa()
+   // o_partner()
 
    PRIVATE dDat1 := dDat2 := CToD( "" )
    cIdFirma := self_organizacija_id()
-   cIdKonto := PadR( "1310", 7 )
+   cIdKonto := PadR( "1320", 7 )
 
    IF IsVindija()
       cOpcine := Space( 50 )
@@ -43,12 +43,10 @@ FUNCTION kalk_real_partnera()
    Box(, 8, 70 )
    DO WHILE .T.
       SET CURSOR ON
-      IF gNW $ "DX"
-         @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
-      ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      ENDIF
-      @ m_x + 2, m_y + 2 SAY "Magacinski konto:" GET cidKonto PICT "@!" VALID P_Konto( @cIdKonto )
+
+      @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+
+      @ m_x + 2, m_y + 2 SAY "Magacinski konto:" GET cIdKonto PICT "@!" VALID P_Konto( @cIdKonto )
       @ m_x + 4, m_y + 2 SAY "Period:" GET dDat1
       @ m_x + 4, Col() + 1 SAY "do" GET dDat2
 
@@ -62,22 +60,23 @@ FUNCTION kalk_real_partnera()
 
       ESC_BCR
 
-      aUslP := Parsiraj( qqPartn, "Idpartner" )
-      IF auslp <> NIL
+      cUslovPartner := Parsiraj( qqPartn, "Idpartner" )
+      IF cUslovPartner <> NIL
          EXIT
       ENDIF
    ENDDO
    BoxC()
 
 
-   o_tarifa()
-   o_kalk()
-   SET ORDER TO TAG PMAG
+   //o_tarifa()
+   find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, NIL , "idfirma,mkonto,idpartner", .F., NIL )
+
+   //SET ORDER TO TAG PMAG
 
    PRIVATE cFilt1 := ""
 
-   cFilt1 := ".t." + IF( Empty( dDat1 ), "", ".and.DATDOK>=" + dbf_quote( dDat1 ) ) + ;
-      IF( Empty( dDat2 ), "", ".and.DATDOK<=" + dbf_quote( dDat2 ) )
+   cFilt1 := ".t." + IIF( Empty( dDat1 ), "", ".and.DATDOK>=" + dbf_quote( dDat1 ) ) + ;
+      IIF( Empty( dDat2 ), "", ".and.DATDOK<=" + dbf_quote( dDat2 ) )
 
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
@@ -86,7 +85,8 @@ FUNCTION kalk_real_partnera()
       SET FILTER TO &cFilt1
    ENDIF
 
-   HSEEK cIdFirma
+   //HSEEK cIdFirma
+   GO TOP
    EOF CRET
 
    PRIVATE M := "   -------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------" + ""
@@ -98,8 +98,6 @@ FUNCTION kalk_real_partnera()
 
    PRIVATE nStrana := 0
    kalk_zagl_real_partnera()
-
-   SEEK cIdFirma + cIdkonto
 
    nVPV := nNV := nVPVBP := nPRUC := nPP := nZarada := nRabat := 0
    nRuc := 0
@@ -115,15 +113,14 @@ FUNCTION kalk_real_partnera()
    nIzlazO := nIzlazNO := 0
    // ostali izlazi
 
-   DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cidkonto = mkonto .AND. IspitajPrekid()
+   DO WHILE !Eof() .AND. idfirma == cIdfirma .AND. cIdkonto = mkonto .AND. IspitajPrekid()
 
       nPaNV := nPaVPV := nPaPruc := nPaRuc := nPaPP := nPaZarada := nPaRabat := 0
       cIdPartner := idpartner
 
       // Vindija - ispitaj opcine za partnera
       IF IsVindija() .AND. !Empty( cOpcine )
-         SELECT partn
-         HSEEK cIdPartner
+         select_o_partner( cIdPartner )
          IF At( AllTrim( partn->idops ), cOpcine ) == 0
             SELECT kalk
             SKIP
@@ -132,7 +129,7 @@ FUNCTION kalk_real_partnera()
          SELECT kalk
       ENDIF
 
-      DO WHILE !Eof() .AND. idfirma == cidfirma .AND. idpartner == cidpartner  .AND. cidkonto = mkonto .AND. IspitajPrekid()
+      DO WHILE !Eof() .AND. idfirma == cIdfirma .AND. idpartner == cIdpartner  .AND. cIdkonto = mkonto .AND. IspitajPrekid()
 
          select_o_roba( kalk->idroba )
          select_o_tarifa( kalk->idtarifa )
@@ -140,7 +137,7 @@ FUNCTION kalk_real_partnera()
 
          IF idvd = "14"
 
-            IF aUslp <> ".t." .AND. ! &aUslP
+            IF cUslovPartner <> ".t." .AND. ! &cUslovPartner
                SKIP
                LOOP
             ENDIF
@@ -150,10 +147,10 @@ FUNCTION kalk_real_partnera()
             nVPVBP := nVPV / ( 1 + _PORVT )
             nPaNV += Round( NC * kolicina, gZaokr )
             nPaVPV += Round( VPC * ( Kolicina ), gZaokr )
-            nPaPP += Round( MPC / 100 * VPC * ( 1 -RabatV / 100 ) * Kolicina, gZaokr )
+            nPaPP += Round( MPC / 100 * VPC * ( 1 - RabatV / 100 ) * Kolicina, gZaokr )
 
             nPaRabat += Round( RabatV / 100 * VPC * Kolicina, gZaokr )
-            nPom := VPC * ( 1 -RabatV / 100 ) - NC
+            nPom := VPC * ( 1 - RabatV / 100 ) - NC
             nPaRuc += Round( nPom * Kolicina, gZaokr )
 
             IF nPom > 0
@@ -215,8 +212,7 @@ FUNCTION kalk_real_partnera()
          FF
          kalk_zagl_real_partnera()
       ENDIF
-      SELECT partn
-      HSEEK cIdPartner
+      select_o_partner( cIdPartner )
       SELECT kalk
 
       ? Space( 2 ), cIdPartner, PadR( partn->naz, 25 )
@@ -281,7 +277,7 @@ FUNCTION kalk_real_partnera()
    ?
 
    ? "**** ULAZI: ********"
-   IF nulazPS <> 0
+   IF nUlazPS <> 0
       ? "-    pocetno stanje:  "
       @ PRow(), PCol() + 1 SAY nUlazNPS PICT kalk_pic_iznos_bilo_gpicdem()
       @ PRow(), PCol() + 1 SAY nUlazPS PICT kalk_pic_iznos_bilo_gpicdem()
@@ -290,7 +286,7 @@ FUNCTION kalk_real_partnera()
       ENDIF
 
    ENDIF
-   IF nulazd <> 0
+   IF nUlazd <> 0
       ? "-       Dobavljaci :  "
       @ PRow(), PCol() + 1 SAY nUlazND PICT kalk_pic_iznos_bilo_gpicdem()
       @ PRow(), PCol() + 1 SAY nUlazD PICT kalk_pic_iznos_bilo_gpicdem()
@@ -299,7 +295,7 @@ FUNCTION kalk_real_partnera()
       ENDIF
    ENDIF
 
-   IF nulazo <> 0
+   IF nUlazo <> 0
       ? "-           ostalo :  "
       @ PRow(), PCol() + 1 SAY nUlazNO PICT kalk_pic_iznos_bilo_gpicdem()
       @ PRow(), PCol() + 1 SAY nUlazO PICT kalk_pic_iznos_bilo_gpicdem()
@@ -368,7 +364,6 @@ FUNCTION kalk_real_partnera()
  */
 
 FUNCTION kalk_zagl_real_partnera( fTabela )
-
 
    IF ftabela = NIL
       ftabela := .T.

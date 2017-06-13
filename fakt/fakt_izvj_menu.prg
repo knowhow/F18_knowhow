@@ -31,7 +31,7 @@ FUNCTION fakt_izvjestaji()
    AAdd( _opc, "7. specifikacija prodaje - realizacija po kolicinama" )
    AAdd( _opcexe, {|| fakt_specif_prodaje_real_kolicina() } )
 
-   AAdd( _opc, "8. kolicinski pregled isporuke robe po partnerima " )
+   AAdd( _opc, "8. količinski pregled isporuke robe po partnerima " )
    AAdd( _opcexe, {|| spec_kol_partn() } )
    AAdd( _opc, "9. realizacija maloprodaje " )
    AAdd( _opcexe, {|| fakt_real_maloprodaje() } )

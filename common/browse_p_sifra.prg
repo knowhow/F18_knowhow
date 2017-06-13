@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR ImeKol
-MEMVAR Ch  //, fID_J
+MEMVAR Ch  // , fID_J
 MEMVAR aAstruct
 
 THREAD STATIC __PSIF_NIVO__ := 0
@@ -40,7 +40,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    LOCAL lOtvoriBrowse := .F.
    LOCAL lRet := .T.
 
-   //PRIVATE fID_J := .F.
+   // PRIVATE fID_J := .F.
 
    IF aZabIsp == nil
       aZabIsp := {}
@@ -82,9 +82,10 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    ENDIF
 
    cOrderTag := ordName( 1 )
-   sif_set_order( xIndex, cOrderTag ) //, @fID_j )
+   sif_set_order( xIndex, cOrderTag ) // , @fID_j )
 
-   IF p_sifra_da_li_vec_postoji_sifra( @cId, @cIdBK, @cUslovSrch, @cNazSrch ) //, fId_j, cOrderTag )
+
+   IF p_sifra_da_li_vec_postoji_sifra( @cId, @cIdBK, @cUslovSrch, @cNazSrch ) // , fId_j, cOrderTag )
 // IF cSeekRet == "naz" .or. cSeekRet == "sint_konto"
       lOtvoriBrowse := .F.
    ELSE
@@ -109,8 +110,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
          GO TOP // bez parametara
       ENDIF
 
-      lRet := my_db_edit_sql( NIL, nVisina, nSirina,  ;
-         {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
+      lRet := my_db_edit_sql( NIL, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
          ToStrU( cNaslov ), "", lInvert, aOpcije, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
@@ -122,19 +122,20 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
          ENDIF
 
          cID := ( nDbf )->id
-        // IF fID_J
-      //      __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
-      //   ENDIF
+         // IF fID_J
+         // __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
+         // ENDIF
       ENDIF
 
-   ELSE
-
-      //IF fID_J
-      //   cId := ( nDBF )->id
-      //   __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
-      //ENDIF
-
    ENDIF
+   // ELSE
+
+   // IF fID_J
+   // cId := ( nDBF )->id
+   // __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
+   // ENDIF
+
+   // ENDIF
 
    __A_SIFV__[ __PSIF_NIVO__, 2 ] := RecNo()
 
@@ -152,12 +153,13 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
 
 
 
-FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
+FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // , fId_j )
 
    LOCAL _bk := ""
 
    // LOCAL _order := IndexOrd()
    LOCAL _tezina := 0
+
 
    IF cId == NIL
       // RETURN "nil"
@@ -178,7 +180,27 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_
 // RETURN .F.
 // ENDIF
 
-   // IF Right( Trim( cId ), 1 ) $ ".$"
+
+   IF AllTrim( cId ) == "?"
+      Box( NIL, 7, 60, .T. )
+
+      @ m_x + 1, m_y + 2 SAY8 'Džokeri za pretragu naziv: ".$", id: ">#"'
+
+      @ m_x + 3, m_y + 2  SAY8 '"BRI." - naziv počinje sa "BRI" ili "bri"'
+      @ m_x + 4, m_y + 2  SAY8 '"BRI$" - unutar naziva postoji "BRI"'
+
+      @ m_x + 6, m_y + 2  SAY8 '"23>" - id počinje sa "23"'
+      @ m_x + 7, m_y + 2  SAY8 '"23#" - unutar id-a postoji "23"'
+      Inkey( 0 )
+
+      BoxC()
+   ENDIF
+
+   IF Right( Trim( cId ), 1 ) $ ".$>#" // . - pocetni dio naziva, $ - unutar naziva, > - pocetni dio sifre, # - unutar sifre
+      IF find_sifra_by_naz( Lower( Alias() ), Left( Trim( cId ), Len( Trim( cId ) ) - 1 ), Right( Trim( cId ), 1 ) )
+         RETURN .F.
+      ENDIF
+   ENDIF
    // sifra_na_kraju_ima_tacka_ili_dolar( @cId, @cUslovSrch, @cNazSrch )
    // // RETURN "naz"
    // RETURN .F.
@@ -231,7 +253,41 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_
    RETURN .F.
 
 
-STATIC FUNCTION sif_set_order( xIndex, cOrderTag ) //, fID_j )
+
+FUNCTION find_sifra_by_naz( cTable, cIdPart, cDjoker )
+
+   LOCAL cSqlQuery := "select * from fmk." + cTable
+   LOCAL cIdSql
+   LOCAL cField
+
+   cIdSql := sql_quote( Upper( AllTrim( cIdPart ) ) + "%" )
+
+   IF cDjoker $ ".>" // "." - pocetni dio naziva, ">" pocetni dio sifre
+      cIdSql := sql_quote( Upper( AllTrim( cIdPart ) ) + "%" ) // NAZ%
+   ELSE
+      // "$" - unutar naziva,  '#' - unutar sifre
+      cIdSql := sql_quote( "%" + Upper( AllTrim( cIdPart ) ) + "%" )  // %NAZ%
+   ENDIF
+   IF cDjoker $ ".$"
+      cField := "naz"
+   ELSE
+      cField := "id"
+   ENDIF
+   cSqlQuery += " WHERE " + cField + " ilike " + cIdSql
+
+   IF !use_sql( cTable, cSqlQuery )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID
+   INDEX ON NAZ TAG NAZ
+   SET ORDER TO TAG "ID"
+   GO TOP
+
+   RETURN !Eof()
+
+
+
+STATIC FUNCTION sif_set_order( xIndex, cOrderTag ) // , fID_j )
 
    LOCAL nPos
 
@@ -247,10 +303,10 @@ STATIC FUNCTION sif_set_order( xIndex, cOrderTag ) //, fID_j )
          ENDIF
       ENDIF
 
-   //CASE ValType( xIndex ) == "C" .AND. Right( Upper( Trim( xIndex ) ), 2 ) == "_J"
+      // CASE ValType( xIndex ) == "C" .AND. Right( Upper( Trim( xIndex ) ), 2 ) == "_J"
 //
-    //  SET ORDER TO TAG ( xIndex )
-      //fID_J := .T.
+      // SET ORDER TO TAG ( xIndex )
+      // fID_J := .T.
 
    OTHERWISE
 
@@ -273,7 +329,7 @@ STATIC FUNCTION sif_set_order( xIndex, cOrderTag ) //, fID_j )
 
 
 /*
-STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
+-- STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
    cId := PadR( cId, 10 )
 
@@ -299,7 +355,7 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
          SEEK cId
          cId := Id
-         IF fid_j
+      --   IF fid_j
             cId := ID_J
             SET ORDER TO TAG "ID_J"
             SEEK cId
@@ -1209,7 +1265,7 @@ STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
    LOCAL cWhere := ""
    LOCAL cTmp := ""
 
-altd()
+   AltD()
    cSqlFields := hTblRec[ "algoritam" ][ 1 ][ "sql_in" ]
    aDbfFields := hTblRec[ "algoritam" ][ 1 ][ "dbf_key_fields" ]
 

@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR ImeKol
-MEMVAR Ch, fID_J
+MEMVAR Ch  //, fID_J
 MEMVAR aAstruct
 
 THREAD STATIC __PSIF_NIVO__ := 0
@@ -40,7 +40,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    LOCAL lOtvoriBrowse := .F.
    LOCAL lRet := .T.
 
-   PRIVATE fID_J := .F.
+   //PRIVATE fID_J := .F.
 
    IF aZabIsp == nil
       aZabIsp := {}
@@ -82,9 +82,9 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    ENDIF
 
    cOrderTag := ordName( 1 )
-   sif_set_order( xIndex, cOrderTag, @fID_j )
+   sif_set_order( xIndex, cOrderTag ) //, @fID_j )
 
-   IF p_sifra_da_li_vec_postoji_sifra( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
+   IF p_sifra_da_li_vec_postoji_sifra( @cId, @cIdBK, @cUslovSrch, @cNazSrch ) //, fId_j, cOrderTag )
 // IF cSeekRet == "naz" .or. cSeekRet == "sint_konto"
       lOtvoriBrowse := .F.
    ELSE
@@ -122,17 +122,17 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
          ENDIF
 
          cID := ( nDbf )->id
-         IF fID_J
-            __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
-         ENDIF
+        // IF fID_J
+      //      __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
+      //   ENDIF
       ENDIF
 
    ELSE
 
-      IF fID_J
-         cId := ( nDBF )->id
-         __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
-      ENDIF
+      //IF fID_J
+      //   cId := ( nDBF )->id
+      //   __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
+      //ENDIF
 
    ENDIF
 
@@ -231,7 +231,7 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch, fId_
    RETURN .F.
 
 
-STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
+STATIC FUNCTION sif_set_order( xIndex, cOrderTag ) //, fID_j )
 
    LOCAL nPos
 
@@ -247,10 +247,10 @@ STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
          ENDIF
       ENDIF
 
-   CASE ValType( xIndex ) == "C" .AND. Right( Upper( Trim( xIndex ) ), 2 ) == "_J"
-
-      SET ORDER TO TAG ( xIndex )
-      fID_J := .T.
+   //CASE ValType( xIndex ) == "C" .AND. Right( Upper( Trim( xIndex ) ), 2 ) == "_J"
+//
+    //  SET ORDER TO TAG ( xIndex )
+      //fID_J := .T.
 
    OTHERWISE
 

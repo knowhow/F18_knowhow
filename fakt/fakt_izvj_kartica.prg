@@ -40,13 +40,13 @@ FUNCTION fakt_kartica()
    o_fakt()
 
    SELECT fakt
-   IF fId_J
-      SET ORDER TO TAG "3J"
+   //IF fId_J
+    //  SET ORDER TO TAG "3J"
       // idroba_J+Idroba+dtos(datDok)
-   ELSE
+   //ELSE
       SET ORDER TO TAG "3"
       // idroba+dtos(datDok)
-   ENDIF
+   //ENDIF
 
    cIdfirma := self_organizacija_id()
    PRIVATE qqRoba := ""
@@ -99,11 +99,11 @@ FUNCTION fakt_kartica()
       IF cBrza == "D"
          RPar( "c3", @qqRoba )
          qqRoba := PadR( qqRoba, 10 )
-         IF fID_J
-            @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!" valid {|| P_Roba( @qqRoba ), qqRoba := roba->id_j, .T. }
-         ELSE
+         //IF fID_J
+          //  @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!" valid {|| P_Roba( @qqRoba ), qqRoba := roba->id_j, .T. }
+         //ELSE
             @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!" VALID P_Roba( @qqRoba )
-         ENDIF
+         //ENDIF
       ELSE
          RPar( "c2", @qqRoba )
          qqRoba := PadR( qqRoba, 60 )
@@ -141,9 +141,9 @@ FUNCTION fakt_kartica()
 
       ESC_BCR
 
-      IF fID_J .AND. cBrza == "D"
-         qqRoba := roba->( ID_J + ID )
-      ENDIF
+      //IF fID_J .AND. cBrza == "D"
+    //     qqRoba := roba->( ID_J + ID )
+    //  ENDIF
 
       cSintetika := "N"
       IF cSintetika == "D" .AND.  IF( cBrza == "D", ROBA->tip == "S", .T. )
@@ -154,11 +154,11 @@ FUNCTION fakt_kartica()
       read;ESC_BCR
 
       IF cBrza == "N"
-         IF fID_J
-            aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
-         ELSE
+        // IF fID_J
+        //    aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
+        // ELSE
             aUsl1 := Parsiraj( qqRoba, "IdRoba" )
-         ENDIF
+      //   ENDIF
       ENDIF
 
       IF IIF( cBrza == "N", aUsl1 <> NIL, .T. )
@@ -276,27 +276,27 @@ FUNCTION fakt_kartica()
 
    DO WHILE !Eof()
       IF cBrza == "D"
-         IF qqRoba <> iif( fID_j, IdRoba_J + IdRoba, IdRoba ) .AND. ;
+         IF qqRoba <> IdRoba .AND. ;
                IF( cSintetika == "D", Left( qqRoba, gnDS ) != Left( IdRoba, gnDS ), .T. )
             // tekuci slog nije zeljena kartica
             EXIT
          ENDIF
       ENDIF
-      IF fId_j
-         cIdRoba := IdRoba_J + IdRoba
-      ELSE
+    //  IF fId_j
+    //     cIdRoba := IdRoba_J + IdRoba
+    //  ELSE
          cIdRoba := IdRoba
-      ENDIF
+    //  ENDIF
       nUl := nIzl := 0
       nRezerv := nRevers := 0
       nRbr := 0
       nIzn := 0
 
-      IF fId_j
-         fakt_set_pozicija_sif_roba( SubStr( cIdRoba, 11 ), cSintetika == "D" )
-      ELSE
+    //  IF fId_j
+    //     fakt_set_pozicija_sif_roba( SubStr( cIdRoba, 11 ), cSintetika == "D" )
+    //  ELSE
          fakt_set_pozicija_sif_roba( cIdRoba, cSintetika == "D" )
-      ENDIF
+    //  ENDIF
       SELECT FAKT
 
       IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
@@ -317,16 +317,16 @@ FUNCTION fakt_kartica()
          PushWA()
          SELECT fakt
          SET FILTER TO
-         IF fID_J
-            // TODO : pogledati
+        // IF fID_J
+        //    // TODO : pogledati
+          //  SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
+        // ELSE
             SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
-         ELSE
-            SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
-         ENDIF
+        // ENDIF
          // DO-WHILE za cPredh=2
          DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", ;
                Left( cIdRoba, gnDS ) == Left( IdROba, gnDS ), ;
-               cIdRoba == iif( fID_J, IdRoba_J + Idroba, IdRoba ) ) .AND. dDatOd > datdok
+               cIdRoba == IdRoba ) .AND. dDatOd > datdok
 
             IF !Empty( cK1 )
                IF ck1 <> K2 ; skip; loop; ENDIF
@@ -368,8 +368,7 @@ FUNCTION fakt_kartica()
       ENDIF
 
       DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", ;
-            Left( cIdRoba, gnDS ) == Left( IdRoba, gnDS ), ;
-            cIdRoba == iif( fID_J, IdRoba_J + IdRoba, IdRoba ) )
+            Left( cIdRoba, gnDS ) == Left( IdRoba, gnDS ), cIdRoba == IdRoba )
          cKolona := "N"
 
          IF !Empty( cidfirma ); IF idfirma <> cidfirma; skip; loop; end; END
@@ -493,11 +492,11 @@ STATIC FUNCTION ZaglKart( lIniStrana )
    ?? m
    ? Space( gnLMarg )
    ?? "ŠIFRA:"
-   IF fID_J
-      ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->ID_J, Left( cidroba, 10 ) ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
-   ELSE
-      ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->id, cidroba ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
-   ENDIF
+   //IF fID_J
+  //    ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->ID_J, Left( cidroba, 10 ) ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
+   //ELSE
+      ?? IIF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->id, cidroba ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
+  // ENDIF
    ? Space( gnLMarg ); ?? m
    B_OFF
    ? Space( gnLMarg )

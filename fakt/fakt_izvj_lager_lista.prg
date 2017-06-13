@@ -58,10 +58,10 @@ FUNCTION fakt_lager_lista()
    ENDIF
 
    IF lPocStanje
-      PRIVATE fId_J := .F.
-      IF my_get_from_ini( "SifRoba", "ID_J", "N" ) == "D"
-         fId_J := .T.
-      ENDIF
+    //  PRIVATE fId_J := .F.
+      //IF my_get_from_ini( "SifRoba", "ID_J", "N" ) == "D"
+      //   fId_J := .T.
+    //  ENDIF
    ENDIF
 
    o_fakt_doks()
@@ -72,15 +72,15 @@ FUNCTION fakt_lager_lista()
    select_o_roba()
    o_rj()
 
-   IF fId_J
-      o_fakt()
+  // IF fId_J
+  //    o_fakt()
       // idroba+dtos(datDok)
-      SET ORDER TO TAG "3J"
-   ELSE
+    //  SET ORDER TO TAG "3J"
+   //ELSE
       o_fakt()
       // idroba+dtos(datDok)
       SET ORDER TO TAG "3"
-   ENDIF
+   //ENDIF
 
    lSaberikol := .F.
    nKU := nKI := 0
@@ -190,11 +190,11 @@ FUNCTION fakt_lager_lista()
       READ
 
       ESC_BCR
-      IF fID_J
-         aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
-      ELSE
+    //  IF fID_J
+      //   aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
+    //  ELSE
          aUsl1 := Parsiraj( qqRoba, "IdRoba" )
-      ENDIF
+    //  ENDIF
 
       IF aUsl1 <> NIL
          EXIT
@@ -289,19 +289,19 @@ FUNCTION fakt_lager_lista()
    IF cSintetika == "D"
       bWhile1 := {|| !Eof() .AND. Left( cIdroba, gnDS ) == Left( IdRoba, gnDS )  }
    ELSE
-      IF fId_J
-         bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba_J + IdRoba }
-      ELSE
+    //  IF fId_J
+      //   bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba_J + IdRoba }
+    //  ELSE
          bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba }
-      ENDIF
+    //  ENDIF
    ENDIF
 
    DO WHILE !Eof()
-      IF fID_J
-         cIdRoba := IdRoba_J + IdRoba
-      ELSE
+      //IF fID_J
+        // cIdRoba := IdRoba_J + IdRoba
+      //ELSE
          cIdRoba := IdRoba
-      ENDIF
+      //ENDIF
 
       IF cSintetika == "D"
          fakt_set_pozicija_sif_roba( cIdRoba, .T. ); SELECT FAKT
@@ -317,11 +317,11 @@ FUNCTION fakt_lager_lista()
          bWhile1 := {|| !Eof() .AND. ;
             Left( cIdroba, gnDS ) == Left( IdRoba, gnDS ) }
       ELSE
-         IF fId_J
-            bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba_J + IdRoba  }
-         ELSE
+         //IF fId_J
+        //    bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba_J + IdRoba  }
+        // ELSE
             bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba }
-         ENDIF
+        // ENDIF
       ENDIF
 
       DO WHILE Eval( bWhile1 )
@@ -404,12 +404,12 @@ FUNCTION fakt_lager_lista()
 
       IF !Empty( cIdRoba )
          IF !( cSaldo0 == "N" .AND. ( nUl - nIzl ) == 0 )
-            IF fID_J
-               fakt_set_pozicija_sif_roba( SubStr( cIdRoba, 11 ), ( cSintetika == "D" ) )
+            //IF fID_J
+              // fakt_set_pozicija_sif_roba( SubStr( cIdRoba, 11 ), ( cSintetika == "D" ) )
                // desni dio sifre je interna sifra
-            ELSE
+          //  ELSE
                fakt_set_pozicija_sif_roba( cIdRoba, ( cSintetika == "D" ) )
-            ENDIF
+          //  ENDIF
 
             IF nGrZn <> 99 .AND. ( Empty( cLastIdRoba ) .OR. Left( cLastIdRoba, nGrZn ) <> Left( cIdRoba, nGrZn ) )
                SELECT ROBA
@@ -485,10 +485,10 @@ FUNCTION fakt_lager_lista()
                      Rbr WITH Rednibroj( ++nRbrPst ), ;
                      kolicina WITH nPrenesi
 
-                  IF fId_J
-                     REPLACE idroba_J WITH Left( cIdRoba, 10 ), ;
-                        idroba WITH SubStr( cIdroba, 11 )
-                  ENDIF
+                //  IF fId_J
+                  //   REPLACE idroba_J WITH Left( cIdRoba, 10 ), ;
+                  //      idroba WITH SubStr( cIdroba, 11 )
+                  //ENDIF
                   REPLACE txt   WITH Chr( 16 ) + "" + Chr( 17 ) + ;
                      Chr( 16 ) + "" + Chr( 17 ) + Chr( 16 ) + "POCETNO STANJE" + Chr( 17 ) + ;
                      Chr( 16 ) + "" + Chr( 17 ) + Chr( 16 ) + "" + Chr( 17 )

@@ -41,7 +41,7 @@ FUNCTION fakt_izvjestaji()
       AAdd( _opcexe, {|| fiskalni_izvjestaji_komande() } )
    ENDIF
 
-   PRIVATE fID_J := .F.
+   //PRIVATE fID_J := .F.
 
    f18_menu( "izvj", .F., _izbor, _opc, _opcexe )
 

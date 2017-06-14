@@ -102,13 +102,13 @@ FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDevicePa
       ENDIF
    ENDIF
 
-   _partn_data := fakt_fiscal_podaci_partnera( cIdFirma, cIdTipDok, cBrDok, _storno, lRacunBezgBezPartnera )
+   _partn_data := fakt_fiscal_podaci_partnera( cIdFirma, cIdTipDok, cBrDok, (nStorno == 1), lRacunBezgBezPartnera )
 
    IF ValType( _partn_data ) == "L"
       RETURN 1
    ENDIF
 
-   aRacunStavkeData := fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTipDok, cBrDok, _storno, _partn_data )
+   aRacunStavkeData := fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTipDok, cBrDok, (nStorno == 1), _partn_data )
 
    IF ValType( aRacunStavkeData ) == "L"  .OR. aRacunStavkeData == NIL
       RETURN 1
@@ -120,21 +120,21 @@ FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDevicePa
       _err_level := 0
 
    CASE _dev_drv == __DRV_FPRINT
-      _err_level := fakt_to_fprint( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno )
+      _err_level := fakt_to_fprint( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, (nStorno == 1) )
 
    CASE _dev_drv == __DRV_TREMOL
       _cont := "1"
-      _err_level := fakt_to_tremol( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno, _cont )
+      _err_level := fakt_to_tremol( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, (nStorno == 1), _cont )
 
    CASE _dev_drv == __DRV_HCP
-      _err_level := fakt_to_hcp( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno )
+      _err_level := fakt_to_hcp( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, (nStorno == 1) )
 
    CASE _dev_drv == __DRV_FLINK
-      _err_level := fakt_to_flink( s_hFiskalniParams, cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno )
+      _err_level := fakt_to_flink( s_hFiskalniParams, cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, (nStorno == 1) )
 
 
    CASE _dev_drv == __DRV_TRING
-      _err_level := fakt_to_tring( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno )
+      _err_level := fakt_to_tring( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, (nStorno == 1) )
 
    ENDCASE
 
@@ -151,7 +151,7 @@ FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDevicePa
       IF _dev_drv == __DRV_TREMOL
 
          _cont := "2"
-         _err_level := fakt_to_tremol( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, _storno, _cont )
+         _err_level := fakt_to_tremol( cIdFirma, cIdTipDok, cBrDok, aRacunStavkeData, _partn_data, (nStorno == 1), _cont )
 
          IF _err_level > 0
             MsgBeep( "Problem sa štampanjem na fiskalni uređaj !" )
@@ -894,9 +894,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( cIdFirma, cIdTipDok, cBrDok, lStorn
 
 
 
-// -------------------------------------------------------------
-// obradi izlaz fiskalnog racuna na FPRINT uredjaj
-// -------------------------------------------------------------
+
 STATIC FUNCTION fakt_to_fprint( cIdFirma, cIdTipDok, cBrDok, aRacunData, head, lStorno )
 
    LOCAL _path := s_hFiskalniParams[ "out_dir" ]

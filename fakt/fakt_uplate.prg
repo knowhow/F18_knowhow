@@ -42,7 +42,7 @@ FUNCTION fakt_uplate()
       AAdd( Kol, i )
    NEXT
 
-   PRIVATE bBKUslov := {|| idpartner = cidpartner }
+   PRIVATE bPartnerUslov := {|| idpartner == cIdpartner }
    PRIVATE bBkTrazi := {|| cIdPartner }
    // Brows ekey uslova
 
@@ -85,8 +85,8 @@ FUNCTION fakt_uplate()
       @ m_x + 4, m_y + 1 SAY REPL( "=", 70 )
 
       SEEK cIdPartner
-      my_db_edit( "EvUpl", MAXROWS() -5, MAXCOLS() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
-         .F., NIL, 1, NIL, 4, 3, NIL, {| nSkip| SkipDBBK( nSkip ) } )
+      my_db_edit_sql( "EvUpl", MAXROWS() -5, MAXCOLS() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
+         .F., NIL, 1, NIL, 4, 3, NIL, {| nSkip| fakt_uplate_skip_block( nSkip ) } )
 
    ENDDO
    BoxC()
@@ -223,43 +223,39 @@ FUNCTION UkUplata( lPushWA )
    RETURN nVrati
 
 
-/* SkipDBBK(nRequest)
- *
- *   param: nRequest
- */
 
-STATIC FUNCTION SkipDBBK( nRequest )
+STATIC FUNCTION fakt_uplate_skip_block( nRequest )
 
-   // {
+
    LOCAL nCount
    nCount := 0
    IF LastRec() != 0
-      IF ! Eval( bBKUslov )
+      IF ! Eval( bPartnerUslov )
          SEEK Eval( bBkTrazi )
-         IF ! Eval( bBKUslov )
+         IF ! Eval( bPartnerUslov )
             GO BOTTOM
             SKIP 1
          ENDIF
          nRequest = 0
       ENDIF
       IF nRequest > 0
-         DO WHILE nCount < nRequest .AND. Eval( bBKUslov )
+         DO WHILE nCount < nRequest .AND. Eval( bPartnerUslov )
             SKIP 1
-            IF Eof() .OR. !Eval( bBKUslov )
+            IF Eof() .OR. !Eval( bPartnerUslov )
                SKIP -1
                EXIT
             ENDIF
             nCount++
          ENDDO
       ELSEIF nRequest < 0
-         DO WHILE nCount > nRequest .AND. Eval( bBKUslov )
+         DO WHILE nCount > nRequest .AND. Eval( bPartnerUslov )
             SKIP -1
             IF ( Bof() )
                EXIT
             ENDIF
             nCount--
          ENDDO
-         IF ( !Eval( bBKUslov ) )
+         IF ( !Eval( bPartnerUslov ) )
             SKIP 1
             nCount++
          ENDIF
@@ -275,7 +271,6 @@ STATIC FUNCTION SkipDBBK( nRequest )
 
 STATIC FUNCTION StKartKup()
 
-   // {
    LOCAL nRec := 0
 
    START PRINT CRET

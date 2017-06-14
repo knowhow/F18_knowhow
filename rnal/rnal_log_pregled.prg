@@ -53,7 +53,7 @@ STATIC FUNCTION tabelarni_pregled_loga()
 
    Beep( 2 )
 
-   my_db_edit( "lstlog", 20, 77, {|| pregled_loga_key_handler() }, cHeader, cFooter,,,,, 5 )
+   my_db_edit_sql( "lstlog", 20, 77, {|| pregled_loga_key_handler() }, cHeader, cFooter,,,,, 5 )
 
    BoxC()
 

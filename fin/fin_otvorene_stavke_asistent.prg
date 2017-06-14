@@ -523,7 +523,7 @@ FUNCTION fin_asistent_otv_st()
 
    SEEK Eval( bBkTrazi )
 
-   my_db_edit( "Ost", _max_rows, _max_cols, {|| rucno_zatvaranje_otv_stavki_key_handler( .T. ) }, "", "", .F., NIL, 1, {|| brdok <> _obrdok }, 6, 0, ;  // zadnji par: nGPrazno
+   my_db_edit_sql( "Ost", _max_rows, _max_cols, {|| rucno_zatvaranje_otv_stavki_key_handler( .T. ) }, "", "", .F., NIL, 1, {|| brdok <> _obrdok }, 6, 0, ;  // zadnji par: nGPrazno
    NIL, NIL )
    //{| nSkip| fin_otvorene_stavke_browse_skip( nSkip ) } )
 

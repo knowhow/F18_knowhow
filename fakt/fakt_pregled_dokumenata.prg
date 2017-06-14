@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION fakt_pregled_liste_dokumenata()
 
    LOCAL _curr_user := "<>"
@@ -27,8 +25,8 @@ FUNCTION fakt_pregled_liste_dokumenata()
    LOCAL _vezni_dokumenti := _params[ "fakt_dok_veze" ]
    LOCAL lOpcine := .T.
    LOCAL valute := Space( 3 )
+   LOCAL cFilter := ".t."
    PRIVATE cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
-   PRIVATE cFilter := ".t."
 
    O_VRSTEP
    o_ops()
@@ -36,7 +34,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    o_rj()
    o_fakt_objekti()
    o_fakt()
-   o_partner()
+   // o_partner()
    o_fakt_doks()
 
    qqVrsteP := Space( 20 )
@@ -73,13 +71,13 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    DO WHILE .T.
 
-      IF gNW $ "DR"
-         cIdFirma := PadR( cIdfirma, 2 )
-         @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma valid {|| Empty( cidfirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
-         READ
-      ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
-      ENDIF
+      // IF gNW $ "DR"
+      cIdFirma := PadR( cIdfirma, 2 )
+      @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma VALID {|| Empty( cidfirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      READ
+      // ELSE
+      // @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      // ENDIF
 
       @ m_x + 2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok PICT "@!"
       @ m_x + 3, m_y + 2 SAY "Od datuma " GET dDatOd
@@ -140,9 +138,9 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    BoxC()
 
-   SELECT partn
+   //SELECT partn
    // radi filtera aUslOpc partneri trebaju biti na ID-u indeksirani
-   SET ORDER TO TAG "ID"
+   //SET ORDER TO TAG "ID"
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
@@ -199,7 +197,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
 
    @ MaxRow() - 4, MaxCol() - 3 SAY Str( rloptlevel(), 2 )
@@ -222,6 +220,8 @@ FUNCTION fakt_pregled_liste_dokumenata()
    RETURN .T.
 
 
+
+
 FUNCTION print_porezna_faktura( lOpcine )
 
    LOCAL nTrec
@@ -235,20 +235,13 @@ FUNCTION print_porezna_faktura( lOpcine )
 
    close_open_fakt_tabele()
 
-   fakt_stamp_txt_dokumenta( _cidfirma, _cIdTipdok, _cbrdok )
+   fakt_stamp_txt_dokumenta( _cidfirma, _cIdTipdok, _cBrdok )
 
    SELECT ( F_FAKT_DOKS )
    USE
 
    o_fakt_doks()
-   o_partner()
-   SELECT fakt_doks
-   IF cFilter == ".t."
-      SET FILTER TO
-   ELSE
-      SET FILTER to &cFilter
-   ENDIF
-   GO nTrec
+
 
    RETURN DE_CONT
 
@@ -265,20 +258,20 @@ FUNCTION fakt_print_odt( lOpcine )
 
    fakt_stampa_dok_odt( _cidfirma, _cIdTipdok, _cbrdok )
 
-
+/*
    close_open_fakt_tabele()
    SELECT ( F_FAKT_DOKS )
    USE
    o_fakt_doks()
-   o_partner()
+   //o_partner()
    SELECT fakt_doks
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
    GO nTrec
-
+*/
    RETURN DE_CONT
 
 
@@ -306,7 +299,7 @@ FUNCTION generisi_fakturu( is_opcine )
    o_fakt()
 
    IF fakt_pripr->( RecCount() ) <> 0
-      MsgBeep( "Priprema mora biti prazna !!!" )
+      MsgBeep( "Priprema mora biti prazna !" )
       SELECT ( nDbfArea )
       RETURN DE_CONT
    ENDIF
@@ -343,7 +336,7 @@ FUNCTION generisi_fakturu( is_opcine )
 
    DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + field->brdok == cFirma + cTipDok + cBrFakt
 
-      ++ nCnt
+      ++nCnt
 
       _rec := dbf_get_rec()
       aMemo := ParsMemo( _rec[ "txt" ] )
@@ -414,296 +407,23 @@ FUNCTION generisi_fakturu( is_opcine )
 
    SELECT fakt_doks
 
-   o_partner()
+/*
+   //o_partner()
    SELECT fakt_doks
 
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
 
    GO nTrec
-
+*/
    RETURN DE_REFRESH
 
 
 
-STATIC FUNCTION prikazi_broj_fiskalnog_racuna( model )
-
-   LOCAL _fisc_rn
-   LOCAL _rekl_rn
-   LOCAL _total
-   LOCAL _txt := ""
-
-   IF fakt_doks->idtipdok $ "10#11"
-      IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
-         _txt := "nema fiskalnog računa !"
-         @ m_x + 1, m_y + 2 SAY8 PadR( _txt, 60 ) COLOR "W/R+"
-      ELSE
-         _fisc_rn := AllTrim( Str( fakt_doks->fisc_rn ) )
-         _rekl_rn := AllTrim( Str( fakt_doks->fisc_st ) )
-         _txt := ""
-         IF _rekl_rn <> "0"
-            _txt += "reklamirani račun: " + _rekl_rn + ", "
-         ENDIF
-         _txt += "fiskalni račun: " + _fisc_rn
-         @ m_x + 1, m_y + 2 SAY8 PadR( _txt, 60 ) COLOR "GR+/B"
-      ENDIF
-   ELSE
-      @ m_x + 1, m_y + 2 SAY PadR( "", 60 )
-   ENDIF
-
-   RETURN .T.
-
-
-
-FUNCTION fakt_pregled_dokumenata_browse_komande( lOpcine, fakt_doks_filt, model )
-
-   LOCAL nRet := DE_CONT
-   LOCAL _rec
-   LOCAL _filter
-   LOCAL _dev_id, _dev_params
-   LOCAL _refresh
-   LOCAL _t_rec := RecNo()
-   LOCAL nDbfArea := Select()
-
-   _filter := dbFilter()
-
-   prikazi_broj_fiskalnog_racuna( model )
-
-   _refresh := .F.
-
-   DO CASE
-
-   CASE Ch == K_ENTER
-
-      nRet := print_porezna_faktura( lOpcine )
-      _refresh := .T.
-
-   CASE Ch == K_ALT_P
-
-      nRet := fakt_print_odt( lOpcine )
-      _refresh := .T.
-
-   CASE Ch == K_F5
-
-      SELECT fakt_doks
-      USE
-      o_fakt_doks()
-
-      nRet := DE_REFRESH
-      _refresh := .T.
-
-
-   CASE Ch == K_CTRL_V
-
-      SELECT fakt_doks
-
-      IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
-
-         MsgBeep( "veza: fiskalni račun već setovana !" )
-
-         IF Pitanje( "FAKT_PROM_VEZU", "Promjeniti postojeću vezu (D/N)?", "N" ) == "N"
-            RETURN DE_CONT
-         ENDIF
-
-      ENDIF
-
-      IF Pitanje( "FISC_NVEZA_SET", "Setovati novu vezu sa fiskalnim računom (D/N)?", "D" ) == "N"
-         RETURN DE_CONT
-      ENDIF
-
-      nFiscal := field->fisc_rn
-      nRekl := field->fisc_st
-      dFiscal_date := field->fisc_date
-      cFiscal_time := PadR( field->fisc_time, 10 )
-
-      Box(, 4, 40 )
-      @ m_x + 1, m_y + 2 SAY "fiskalni racun:" GET nFiscal PICT "9999999999"
-      @ m_x + 2, m_y + 2 SAY "reklamni racun:" GET nRekl PICT "9999999999"
-      @ m_x + 3, m_y + 2 SAY "         datum:" GET dFiscal_date
-      @ m_x + 4, m_y + 2 SAY "       vrijeme:" GET cFiscal_time PICT "@S10"
-      READ
-      BoxC()
-
-      IF nFiscal <> field->fisc_rn .OR. nRekl <> field->fisc_st
-
-         _rec := dbf_get_rec()
-         _rec[ "fisc_rn" ] := nFiscal
-         _rec[ "fisc_st" ] := nRekl
-         _rec[ "fisc_time" ] := cFiscal_time
-         _rec[ "fisc_date" ] := dFiscal_date
-
-         update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
-
-         nRet := DE_REFRESH
-         _refresh := .T.
-
-      ENDIF
-
-   CASE Chr( Ch ) $ "kK"
-
-      IF fakt_ispravka_podataka_azuriranog_dokumenta( field->idfirma, field->idtipdok, field->brdok )
-         nRet := DE_REFRESH
-         _refresh := .T.
-      ENDIF
-
-   CASE Upper( Chr( Ch ) ) == "T"
-
-      IF ! ( field->idtipdok $ "10#11" )
-         MsgBeep( "Opcija moguća samo za račune !" )
-         RETURN DE_CONT
-      ENDIF
-
-      IF !fiscal_opt_active()
-         RETURN DE_CONT
-      ENDIF
-
-      _dev_id := odaberi_fiskalni_uredjaj( field->idtipdok, .F., .F. )
-
-      IF _dev_id > 0
-         _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-         IF _dev_params == NIL
-            RETURN DE_CONT
-         ENDIF
-      ELSE
-
-         RETURN DE_CONT
-      ENDIF
-
-      IF _dev_params[ "drv" ] <> "FPRINT"
-         MsgBeep( "Opcija moguća samo za FPRINT/DATECS uređaje !" )
-         RETURN DE_CONT
-      ENDIF
-
-      _rn_params := hb_Hash()
-
-      IF field->fisc_st <> 0
-         _rn_params[ "storno" ] := .T.
-      ELSE
-         _rn_params[ "storno" ] := .F.
-      ENDIF
-
-      _rn_params[ "datum" ] := field->fisc_date
-      _rn_params[ "vrijeme" ] := field->fisc_time
-
-      fprint_dupliciraj_racun( _dev_params, _rn_params )
-
-      MsgBeep( "Duplikat računa za datum: " + DToC( field->fisc_date ) + ", vrijeme: " + AllTrim( field->fisc_time ) )
-
-
-   CASE Upper( Chr( Ch ) ) == "R"
-
-      IF !fiscal_opt_active()
-         RETURN DE_CONT
-      ENDIF
-
-      IF field->idtipdok $ "10#11"
-
-         IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
-            MsgBeep( "Fiskalni račun već štampan za ovaj dokument !#Ako je potrebna ponovna štampa resetujte broj veze." )
-            RETURN DE_CONT
-         ENDIF
-
-         IF Pitanje( "ST FISK RN5", "Štampati fiskalni račun za dokument " + ;
-               AllTrim( field->idfirma ) + "-" + ;
-               AllTrim( field->idtipdok ) + "-" + ;
-               AllTrim( field->brdok ) + " (D/N) ?", "D" ) == "D"
-
-            _dev_id := odaberi_fiskalni_uredjaj( field->idtipdok, .F., .F. )
-
-            IF _dev_id > 0
-               _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-
-               IF _dev_params == NIL
-                  RETURN DE_CONT
-               ENDIF
-            ELSE
-               RETURN DE_CONT
-            ENDIF
-
-            IF _dev_params[ "print_fiscal" ] == "N"
-               MsgBeep( "Nije Vam dozvoljena opcija za štampu fiskalnih računa !" )
-               RETURN DE_CONT
-            ENDIF
-
-            fakt_fiskalni_racun( field->idfirma, field->idtipdok, field->brdok, .F., _dev_params )
-
-            SELECT ( nDbfArea )
-
-            nRet := DE_REFRESH
-            _refresh := .T.
-
-         ENDIF
-
-      ENDIF
-
-   CASE Chr( ch ) $ "wW"
-
-      fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
-      SELECT fakt_doks
-
-   CASE Chr( Ch ) $ "sS"
-
-      fakt_generisi_storno_dokument( field->idfirma, field->idtipdok, field->brDok )
-
-      IF Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
-         fUPripremu := .T.
-         nRet := DE_ABORT
-      ELSE
-         nRet := DE_REFRESH
-         _refresh := .T.
-      ENDIF
-
-   CASE Chr( Ch ) $ "nN"
-
-      SELECT fakt_doks
-      fakt_print_narudzbenica( field->idFirma, field->IdTipDok, field->BrDok )
-      nRet := DE_CONT
-      _refresh := .T.
-
-   CASE Chr( Ch ) $ "fF"
-
-      IF idtipdok $ "20"
-         nRet := generisi_fakturu( lOpcine )
-         _refresh := .T.
-      ENDIF
-
-   CASE Chr( Ch ) $ "pP"
-
-      _tmp := povrat_fakt_dokumenta( .F., field->idfirma, field->idtipdok, field->brdok )
-
-      o_fakt_doks()
-
-      IF _tmp <> 0 .AND. Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
-         fUPripremu := .T.
-         _refresh := .F.
-         nRet := DE_ABORT
-      ELSE
-         nRet := DE_REFRESH
-         _refresh := .T.
-      ENDIF
-
-   ENDCASE
-
-   IF _refresh
-
-      SELECT ( nDbfArea )
-      SET ORDER TO TAG "1"
-
-      refresh_fakt_tbl_dbfs( _filter )
-
-      GO ( _t_rec )
-
-   ENDIF
-
-   RETURN nRet
-
-
-
-
-FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
+FUNCTION fakt_pregled_reopen_fakt_tabele( cFilter )
 
    my_close_all_dbf()
 
@@ -714,14 +434,14 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
    o_rj()
    o_fakt_objekti()
    o_fakt()
-   //o_partner()
+   // o_partner()
    o_fakt_doks()
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
    GO TOP
 
-   SET FILTER TO &( tbl_filter )
+   SET FILTER TO &( cFilter )
 
    RETURN .T.
 
@@ -731,7 +451,7 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
 FUNCTION fakt_real_partnera()
 
    o_fakt_doks()
-   o_partner()
+   //o_partner()
    o_valute()
    o_rj()
 
@@ -764,7 +484,7 @@ FUNCTION fakt_real_partnera()
 
    DO WHILE .T.
       cIdFirma := PadR( cidfirma, 2 )
-      @ m_x + 1, m_y + 2 SAY "RJ            " GET cIdFirma valid {|| Empty( cidfirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      @ m_x + 1, m_y + 2 SAY "RJ            " GET cIdFirma VALID {|| Empty( cidfirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       @ m_x + 2, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
       @ m_x + 3, m_y + 2 SAY "Od datuma "  GET dDatOd
       @ m_x + 3, Col() + 1 SAY "do"  GET dDatDo
@@ -774,7 +494,7 @@ FUNCTION fakt_real_partnera()
       READ
       ESC_BCR
       aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
-      aUslovSifraKupca:=Parsiraj( qqPartn,"IDPARTNER")
+      aUslovSifraKupca := Parsiraj( qqPartn, "IDPARTNER" )
       aUslTD := Parsiraj( qqTipdok, "IdTipdok", "C" )
       IF aUslBFD <> NIL .AND. aUslTD <> NIL
          EXIT
@@ -810,9 +530,9 @@ FUNCTION fakt_real_partnera()
       cFilter += ".and." + aUslBFD
    ENDIF
 
-   if !empty(qqPartn)
-    cFilter+=".and."+aUslovSifraKupca
-   endif
+   IF !Empty( qqPartn )
+      cFilter += ".and." + aUslovSifraKupca
+   ENDIF
 
    IF !Empty( qqTipDok )
       cFilter += ".and." + aUslTD
@@ -825,7 +545,7 @@ FUNCTION fakt_real_partnera()
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
 
    EOF CRET
@@ -944,7 +664,7 @@ FUNCTION fakt_zagl_real_partnera()
    ? Space( gnLMarg ); ?? "                                           (1)          (2)            (1-2)"
    ? Space( gnLMarg ); ?? m
 
-   RETURN
+   RETURN .T.
 
 
 /*

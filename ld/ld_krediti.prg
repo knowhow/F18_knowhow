@@ -806,7 +806,7 @@ FUNCTION P_Krediti
    NEXT
 
    Box(, 18, 60 )
-   lRet := my_db_edit( "PKred", 18, 60, {|| ld_lista_kredita_key_handler() }, "Radnik-krediti za " + cIdradn, "", , , , )
+   lRet := my_db_edit_sql( "PKred", 18, 60, {|| ld_lista_kredita_key_handler() }, "Radnik-krediti za " + cIdradn, "", , , , )
    Boxc()
 
    // SET SCOPE TO

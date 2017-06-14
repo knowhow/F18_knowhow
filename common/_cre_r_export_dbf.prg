@@ -56,7 +56,7 @@ FUNCTION open_r_export_table()
 
    my_close_all_dbf()
 
-   cCommand := get_run_prefix() + file_path_quote( my_home() + my_dbf_prefix() + s_cExportDbf + ".dbf" )
+   cCommand := get_run_prefix_cmd() + file_path_quote( my_home() + my_dbf_prefix() + s_cExportDbf + ".dbf" )
 
    // log_write( "Export " + s_cExportDbf + " cmd: " + _cmd, 9 )
 

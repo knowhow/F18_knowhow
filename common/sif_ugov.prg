@@ -592,8 +592,8 @@ STATIC FUNCTION ugovor_promjeni_id( cId )
    RETURN .T.
 
 
-// ----------------------------------------
-// ----------------------------------------
+
+
 FUNCTION P_Ugov2( cIdPartner )
 
    // cidpartner - proslijediti partnera
@@ -661,7 +661,7 @@ FUNCTION P_Ugov2( cIdPartner )
 
    // zaglavlje se edituje kada je kursor u prvoj koloni
    // prvog reda
-   PRIVATE  TBSkipBlock := {| nSkip| SkipDB( nSkip, @nTBLine ) }
+   //PRIVATE  TBSkipBlock := {| nSkip| SkipDB( nSkip, @nTBLine ) }
    // tekuca linija-kod viselinijskog browsa
    PRIVATE  nTBLine := 1
    // broj linija kod viselinijskog browsa
@@ -684,7 +684,7 @@ FUNCTION P_Ugov2( cIdPartner )
       EdUgov2()
    ELSE
       TempIni( 'Fakt_Ugovori_Novi', 'Partner', '_NIL_', "WRITE" )
-      my_db_edit( "", 20, 72, {|| EdUgov2() }, "", "Stavke ugovora...", , , , , 2, 6 )
+      my_db_edit_sql( "", 20, 72, {|| EdUgov2() }, "", "Stavke ugovora...", , , , , 2, 6 )
    ENDIF
 
    BoxC()

@@ -291,7 +291,7 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
 
    LOCAL _ret
    LOCAL cStdOut := "", cStdErr := ""
-   LOCAL _prefix
+   LOCAL cPrefixCmd
    LOCAL _msg
 
    IF lAlwaysOk == NIL
@@ -302,11 +302,11 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
       lAsync := .F. // najcesce zelimo da okinemo eksternu komandu i nastavimo rad
    ENDIF
 
-//#ifdef __PLATFORM__UNIX
-  // _ret := __run_system( cCommand + iif( lAsync, "&", "" ) )
-//#else
+// #ifdef __PLATFORM__UNIX
+   // _ret := __run_system( cCommand + iif( lAsync, "&", "" ) )
+// #else
    _ret := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr, lAsync )
-//#endif
+// #endif
    ?E cCommand, _ret, "stdout:", cStdOut, "stderr:", cStdErr
 
    IF _ret == 0
@@ -314,24 +314,24 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
    ELSE
       error_bar( "run1", cCommand + cStdOut + " : " + cStdErr )
 
-      _prefix := get_run_prefix( cCommand )
+      cPrefixCmd := get_run_prefix_cmd( cCommand )
 
 #ifdef __PLATFORM__LINUX
       IF lAsync
-         _ret := __run_system( _prefix + cCommand + "&" )
+         _ret := __run_system( cPrefixCmd + cCommand + "&" )
       ELSE
-         _ret := hb_processRun( _prefix + cCommand, NIL, @cStdOut, @cStdErr )
+         _ret := hb_processRun( cPrefixCmd + cCommand, NIL, @cStdOut, @cStdErr )
       ENDIF
 #else
-      _ret := hb_processRun( _prefix + cCommand, NIL, @cStdOut, @cStdErr, lAsync )
+      _ret := hb_processRun( cPrefixCmd + cCommand, NIL, @cStdOut, @cStdErr, lAsync )
 #endif
       ?E cCommand, _ret, "stdout:", cStdOut, "stderr:", cStdErr
 
 
       IF _ret == 0
-         info_bar( "run2", _prefix + cCommand + " : " + cStdOut + " : " + cStdErr )
+         info_bar( "run2", cPrefixCmd + cCommand + " : " + cStdOut + " : " + cStdErr )
       ELSE
-         error_bar( "run2", _prefix + cCommand + " : " + cStdOut + " : " + cStdErr )
+         error_bar( "run2", cPrefixCmd + cCommand + " : " + cStdOut + " : " + cStdErr )
 
          _ret := __run_system( cCommand )  // npr. copy komanda trazi system run a ne hbprocess run
          ?E cCommand, _ret, "stdout:", cStdOut, "stderr:", cStdErr
@@ -356,11 +356,48 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
 
    RETURN _ret
 
-FUNCTION get_run_prefix( cCommand )
+
+FUNCTION f18_open_document( cDocument )
+
+   LOCAL _ret, cPrefixCmd
+   LOCAL _msg
+
+
+#ifdef __PLATFORM__WINDOWS
+
+   cPrefixCmd := "cmd /c "
+#else
+#ifdef __PLATFORM__DARWIN
+   cPrefixCmd := "open "
+#else
+   cPrefixCmd := "xdg-open "
+#endif
+#endif
+
+
+#ifdef __PLATFORM__WINDOWS
+   cDocument := '"' + cDocument + '"'
+#endif
+
+   /*
+   #ifdef __PLATFORM__LINUX
+      _ret := __run_system( cPrefixCmd + cDocument + "&" )
+   #else
+      _ret := hb_processRun( cPrefixCmd + cDocument )
+   #endif
+   */
+
+   f18_run( cPrefixCmd, NIL, NIL, .T. )
+
+   RETURN _ret
+
+
+FUNCTION get_run_prefix_cmd( cCommand )
 
    LOCAL cPrefix
 
 #ifdef __PLATFORM__WINDOWS
+
    cPrefix := "cmd /c "
 #else
 #ifdef __PLATFORM__DARWIN
@@ -377,35 +414,7 @@ FUNCTION get_run_prefix( cCommand )
    RETURN cPrefix
 
 
-FUNCTION f18_open_document( cDocument )
 
-   LOCAL _ret, _prefix
-   LOCAL _msg
-
-
-#ifdef __PLATFORM__WINDOWS
-
-   _prefix := "cmd /c "
-#else
-#ifdef __PLATFORM__DARWIN
-   _prefix := "open "
-#else
-   _prefix := "xdg-open "
-#endif
-#endif
-
-
-#ifdef __PLATFORM__WINDOWS
-   cDocument := '"' + cDocument + '"'
-#endif
-
-#ifdef __PLATFORM__LINUX
-   _ret := __run_system( _prefix + cDocument + "&" )
-#else
-   _ret := hb_processRun( _prefix + cDocument )
-#endif
-
-   RETURN _ret
 
 
 
@@ -425,9 +434,9 @@ FUNCTION f18_open_mime_document( cDocument )
 
    cDocument := file_path_quote( cDocument )
 
-   //IF Pitanje(, "Otvoriti " + AllTrim( cDocument ) + " ?", "D" ) == "N"
-   //    RETURN .F.
-   //ENDIF
+   // IF Pitanje(, "Otvoriti " + AllTrim( cDocument ) + " ?", "D" ) == "N"
+   // RETURN .F.
+   // ENDIF
 
 #ifdef __PLATFORM__UNIX
 

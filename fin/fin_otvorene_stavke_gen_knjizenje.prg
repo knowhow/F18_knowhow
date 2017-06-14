@@ -258,7 +258,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    SELECT ostav
    GO TOP
 
-   my_db_edit( "KOStav", _row, _col, {|| oasist_key_handler( nIznos, cDugPot ) }, "", "Otvorene stavke.", , , , {|| field->m2 = '3' }, 3 )
+   my_db_edit_sql( "KOStav", _row, _col, {|| oasist_key_handler( nIznos, cDugPot ) }, "", "Otvorene stavke.", , , , {|| field->m2 = '3' }, 3 )
 
    BoxC() // rucni asistent
 

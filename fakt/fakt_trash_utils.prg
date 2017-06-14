@@ -61,7 +61,7 @@ FUNCTION Pripr9View()
    @ m_x + 19, m_y + 2 SAY "<P> Povrat dokumenta u pripremu "
    @ m_x + 20, m_y + 2 SAY "               "
 
-   my_db_edit( "PRIPR9", 20, 77, {|| fa_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
+   my_db_edit_sql( "PRIPR9", 20, 77, {|| fa_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
    BoxC()
 
    RETURN

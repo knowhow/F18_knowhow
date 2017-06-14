@@ -136,8 +136,7 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
       ENDIF
 
       IF lOpcine
-         SELECT PARTN
-         HSEEK fakt_doks->idpartner
+         select_o_partner( fakt_doks->idpartner )
          SELECT fakt_doks
          IF !( PARTN->( &aUslOpc ) )
             SKIP

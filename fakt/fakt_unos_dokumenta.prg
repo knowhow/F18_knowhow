@@ -112,7 +112,7 @@ FUNCTION fakt_unos_dokumenta()
 
    @ m_x + _x - 1, m_y + 2 SAY8 _opt_row
 
-   my_db_edit( "PNal", _x, _y, {|| fakt_pripr_keyhandler() }, "", "FAKT Priprema...", , , , , 4 )
+   my_db_edit_sql( "PNal", _x, _y, {|| fakt_pripr_keyhandler() }, "", "FAKT Priprema...", , , , , 4 )
 
    BoxC()
 
@@ -374,7 +374,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
                   select_fakt_pripr()
                ENDIF
 
-               IF _dev_params[ "print_a4" ] $ "G#X" .AND. Pitanje(, "Štampati LibreOffice fakturu ?", "N" ) == "D"
+               IF _dev_params[ "print_a4" ] $ "G#X" .AND. Pitanje(, "Štampati LibreOffice fakturu "+ cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "?", "N" ) == "D"
                   fakt_stampa_dok_odt( cIdFirma, cIdTipDok, cBrDok )
                   close_open_fakt_tabele()
                   select_fakt_pripr()

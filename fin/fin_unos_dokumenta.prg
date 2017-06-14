@@ -124,7 +124,7 @@ FUNCTION fin_knjizenje_naloga()
 
    @ m_x + _x_row, m_y + 2 SAY8 _opt_row
 
-   my_db_edit( "PN2", _x_row, _y_row, {| nCh | edit_fin_pripr_key_handler( nCh ) }, "", "FIN Priprema", , , , , _help_columns )
+   my_db_edit_sql( "PN2", _x_row, _y_row, {| nCh | edit_fin_pripr_key_handler( nCh ) }, "", "FIN Priprema", , , , , _help_columns )
 
    BoxC()
 

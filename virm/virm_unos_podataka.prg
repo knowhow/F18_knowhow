@@ -47,7 +47,7 @@ FUNCTION unos_virmana()
 
    @ 12, 0 SAY ""
 
-   my_db_edit( "PripVir", MAXROWS() - 10, MAXCOLS() - 12, {|| virm_browse_key_handler() }, "", "Priprema virmana", ;
+   my_db_edit_sql( "PripVir", MAXROWS() - 10, MAXCOLS() - 12, {|| virm_browse_key_handler() }, "", "Priprema virmana", ;
       .F., { "<c-N>   Nova uplatnica", "<c-T>   Brisi ", ;
       "<Enter> Ispravi uplatnicu", "<c-F9>  Brisi sve", ;
       "<c-P>   Stampanje", ;

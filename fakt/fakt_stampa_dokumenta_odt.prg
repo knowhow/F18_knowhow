@@ -74,7 +74,6 @@ FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
    MsgO( "formiraju se stavke odt računa..." )
 
    AAdd( _racuni, { cIdF, cIdVd, cBrDok  } )
-
    _fakt_dok_gen_xml( _xml_file, _racuni )
 
    MsgC()
@@ -86,7 +85,6 @@ FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
    IF generisi_odt_iz_xml( _template, _xml_file )
 
       IF _gen_pdf .AND. !Empty( _file_pdf )
-
          _ext_path := AllTrim( _ext_pdf )
          IF Left( AllTrim( _ext_pdf ), 4 ) == "HOME"
             _ext_path := my_home()

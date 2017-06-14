@@ -136,7 +136,7 @@ STATIC FUNCTION lom_stakla_box( cDesc )
 
    @ m_x + ( nBoxX - 1 ), m_y + 1 SAY cOptions
 
-   my_db_edit( "damage", nBoxX, nBoxY, {|| evidencija_loma_key_handler() }, cHeader, cFooter,,,,, 2 )
+   my_db_edit_sql( "damage", nBoxX, nBoxY, {|| evidencija_loma_key_handler() }, cHeader, cFooter,,,,, 2 )
 
    BoxC()
 

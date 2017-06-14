@@ -45,7 +45,7 @@ FUNCTION rnal_print_odabir_stavki( lPriprema )
 
    set_a_kol( @ImeKol, @Kol )
 
-   my_db_edit( "t_docit", nBoxX, nBoxY, {|| rnal_odabir_key_handler( lPriprema ) }, cHeader, cFooter,,,,, 1 )
+   my_db_edit_sql( "t_docit", nBoxX, nBoxY, {|| rnal_odabir_key_handler( lPriprema ) }, cHeader, cFooter,,,,, 1 )
 
    BoxC()
 

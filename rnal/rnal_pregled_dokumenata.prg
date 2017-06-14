@@ -62,7 +62,7 @@ STATIC FUNCTION rnal_browse_azurirani_nalozi()
 
    SELECT docs
 
-   my_db_edit( "lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , , 5 )
+   my_db_edit_sql( "lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , , 5 )
 
    BoxC()
 

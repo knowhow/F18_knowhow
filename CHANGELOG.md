@@ -495,7 +495,7 @@
 1.7.30  2014-04-10, vsasa
 
   - RNAL, import podataka iz CSV fajlova
-  - my_db_edit(), korekcija praznina
+  - my_db_edit_sql(), korekcija praznina
   - ePDV, snimanje pdv prijave u bazu - bugfix
   - KAM, ispravke sa LOCK REQUIRED
 

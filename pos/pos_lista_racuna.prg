@@ -140,7 +140,7 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
       bMarkF := NIL
    ENDIF
 
-   my_db_edit( "racun", MAXROWS() - 12, MAXCOLS() - 25, {|| lista_racuna_key_handler( fMark ) }, _u(" POS RAČUNI "), "", nil, cFnc,, bMarkF )
+   my_db_edit_sql( "racun", MAXROWS() - 12, MAXCOLS() - 25, {|| lista_racuna_key_handler( fMark ) }, _u(" POS RAČUNI "), "", nil, cFnc,, bMarkF )
 
    SET FILTER TO
 

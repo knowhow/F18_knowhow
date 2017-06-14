@@ -327,7 +327,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       close_open_fakt_tabele()
 
-      IF lFiskalniStampati .AND. cIdTipDok $ "10#11" .AND. aFaktAzuriraniDokumenti <> NIL .AND. Len( aFaktAzuriraniDokumenti ) == 0
+      IF lFiskalniStampati .AND. cIdTipDok $ "10#11" .AND. aFaktAzuriraniDokumenti <> NIL .AND. Len( aFaktAzuriraniDokumenti ) == 1
 
             //cIdFirma := aFaktAzuriraniDokumenti[ 1, 1 ]
             //cIdTipDok := aFaktAzuriraniDokumenti[ 1, 2 ]

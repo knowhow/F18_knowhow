@@ -59,7 +59,7 @@ STATIC FUNCTION check_exe_download()
    cUrl += cVersion + "/F18_sha256sum_" + cPlatform + ".zip"
 
    IF DirChange( s_cDirF18Util ) != 0
-      IF ! MakeDir( s_cDirF18Util )
+      IF MakeDir( s_cDirF18Util ) != 0
          MsgBeep( "Kreiranje dir: " + s_cDirF18Util + " neuspješno?! STOP" )
          RETURN .F.
       ENDIF

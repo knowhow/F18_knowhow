@@ -1026,7 +1026,7 @@ STATIC FUNCTION download_template()
 
    s_cDirF18Template := ExePath() + "template" + SLASH
    s_cUrl := "https://github.com/hernad/F18_template/releases/download/" + ;
-      f18_template_ver() + SLASH + s_cTemplateName
+      f18_template_ver() + "/" + s_cTemplateName
 
    IF DirChange( s_cDirF18Template ) != 0
       IF MakeDir( s_cDirF18Template ) != 0

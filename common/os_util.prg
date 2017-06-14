@@ -218,11 +218,11 @@ HB_FUNC( FILEBASE )
    if( szPath )
    {
       PHB_FNAME pFileName = hb_fsFNameSplit( szPath );
-      hbnRetc( pFileName->szName );
+      hb_retc( pFileName->szName );
       hb_xfree( pFileName );
    }
    else
-      hbnRetc_null();
+      hb_retc_null();
 }
 
 /* FileExt( <cFile> ) --> cFileExt
@@ -234,13 +234,13 @@ HB_FUNC( FILEEXT )
    {
       PHB_FNAME pFileName = hb_fsFNameSplit( szPath );
       if( pFileName->szExtension != NULL )
-         hbnRetc( pFileName->szExtension + 1 ); /* Skip the dot */
+         hb_retc( pFileName->szExtension + 1 ); /* Skip the dot */
       else
-         hbnRetc_null();
+         hb_retc_null();
       hb_xfree( pFileName );
    }
    else
-      hbnRetc_null();
+      hb_retc_null();
 }
 
 #pragma ENDDUMP
@@ -268,7 +268,7 @@ HB_FUNC( __RUN_SYSTEM )
 
       iResult = system( hb_osEncodeCP( pszCommand, &pszFree, NULL ) );
 
-      hbnRetni(iResult);
+      hb_retni(iResult);
 
       if( pszFree )
          hb_xfree( pszFree );
@@ -357,38 +357,6 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
    RETURN nRet
 
 
-FUNCTION f18_open_document( cDocument )
-
-   LOCAL nRet, cPrefixCmd
-
-
-#ifdef __PLATFORM__WINDOWS
-
-   cPrefixCmd := "cmd /c "
-#else
-#ifdef __PLATFORM__DARWIN
-   cPrefixCmd := "open "
-#else
-   cPrefixCmd := "xdg-open "
-#endif
-#endif
-
-
-#ifdef __PLATFORM__WINDOWS
-   cDocument := '"' + cDocument + '"'
-#endif
-
-   /*
-   #ifdef __PLATFORM__LINUX
-      nRet := __run_system( cPrefixCmd + cDocument + "&" )
-   #else
-      nRet := hb_processRun( cPrefixCmd + cDocument )
-   #endif
-   */
-
-   RETURN f18_run( cPrefixCmd, NIL, NIL, .T. )
-
-
 FUNCTION get_run_prefix_cmd( cCommand )
 
    LOCAL cPrefix
@@ -411,7 +379,29 @@ FUNCTION get_run_prefix_cmd( cCommand )
    RETURN cPrefix
 
 
+FUNCTION f18_open_document( cDocument )
 
+   LOCAL cPrefixCmd
+   LOCAL _msg
+
+
+#ifdef __PLATFORM__WINDOWS
+
+   cPrefixCmd := "cmd /c "
+#else
+#ifdef __PLATFORM__DARWIN
+   cPrefixCmd := "open "
+#else
+   cPrefixCmd := "xdg-open "
+#endif
+#endif
+
+
+#ifdef __PLATFORM__WINDOWS
+   cDocument := '"' + cDocument + '"'
+#endif
+
+   RETURN f18_run( cPrefixCmd + cDocument, NIL, NIL, .T. )
 
 
 

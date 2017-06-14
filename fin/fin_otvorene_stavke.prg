@@ -43,8 +43,8 @@ FUNCTION fin_otvorene_stavke_meni()
    AAdd( opc, "8. kompenzacija" )
    AAdd( opcexe, {|| Kompenzacija() } )
 
-   //AAdd( opc, "9. asistent otvorenih stavki" )
-   //AAdd( opcexe, {|| fin_asistent_otv_st() } )
+   // AAdd( opc, "9. asistent otvorenih stavki" )
+   // AAdd( opcexe, {|| fin_asistent_otv_st() } )
 
    AAdd( opc, "B. brisanje svih markera otvorenih stavki" )
    AAdd( opcexe, {|| fin_brisanje_markera_otvorenih_stavki() } )
@@ -76,7 +76,7 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
    lRet := use_sql( "del_ostav", cSql )
    MsgC()
 
-   MsgBeep( "ostav cnt=" + STR(del_ostav->count,5) )
+   MsgBeep( "ostav cnt=" + Str( del_ostav->count, 5 ) )
 
    RETURN lRet
 
@@ -94,21 +94,25 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 
    */
 
-   FUNCTION fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn, cBrNal )
+FUNCTION fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn, cBrNal )
 
-      LOCAL cSql
+   LOCAL cSql
+   LOCAL cKupciLike := "211%"
 
-      cSql := "UPDATE fmk.fin_suban set otvst=' ' FROM "
-      cSql += "( select idfirma,idkonto,idpartner,brdok from fmk.fin_suban WHERE "
-      cSql += "idfirma=" + sql_quote( cIdFirma )
-      cSql += "AND idvn=" + sql_quote( cIdVn )
-      cSql += "AND brnal=" + sql_quote( cBrNal )
-      cSql += ") AS SUBQ "
-      cSql += "WHERE fmk.fin_suban.idfirma=SUBQ.idfirma and fmk.fin_suban.idpartner=SUBQ.idpartner and fmk.fin_suban.brdok=SUBQ.brdok"
+   MsgO( "Brisanje markera otvorenih stavki " + cKupciLike )
+   cSql := "UPDATE fmk.fin_suban set otvst=' ' FROM "
+   cSql += "( select idfirma,idkonto,idpartner,brdok from fmk.fin_suban WHERE "
+   cSql += "idfirma=" + sql_quote( cIdFirma )
+   cSql += "AND idvn=" + sql_quote( cIdVn )
+   cSql += "AND brnal=" + sql_quote( cBrNal )
+   cSql += "AND idkonto like " + sql_quote( cKupciLike )
+   cSql += ") AS SUBQ "
+   cSql += "WHERE fmk.fin_suban.idfirma=SUBQ.idfirma and fmk.fin_suban.idpartner=SUBQ.idpartner and fmk.fin_suban.brdok=SUBQ.brdok"
 
-      run_sql_query( cSql )
+   run_sql_query( cSql )
+   MsgC()
 
-      RETURN .T.
+   RETURN .T.
 
 
 
@@ -175,7 +179,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       IF gNW == "D"
          @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 2, m_y + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID p_konto( @cIdkonto )
       @ m_x + 3, m_y + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
@@ -570,8 +574,8 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
       FOR i := 1 TO Len( aGod )
          AAdd( aDBf, { 'GOD' + aGod[ i, 1 ], 'N', 15,  2 } )
       NEXT
-      AAdd( aDBf, { 'GOD' + Str( Val( aGod[ i - 1, 1 ] ) -1, 4 ), 'N', 15,  2 } )
-      AAdd( aDBf, { 'GOD' + Str( Val( aGod[ i - 1, 1 ] ) -2, 4 ), 'N', 15,  2 } )
+      AAdd( aDBf, { 'GOD' + Str( Val( aGod[ i - 1, 1 ] ) - 1, 4 ), 'N', 15,  2 } )
+      AAdd( aDBf, { 'GOD' + Str( Val( aGod[ i - 1, 1 ] ) - 2, 4 ), 'N', 15,  2 } )
    ENDIF
 
    dbCreate( _ime_dbf + ".dbf", aDbf )
@@ -580,7 +584,7 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
    SELECT ( F_POM )
    my_use_temp( _alias, _ime_dbf, .F., .T. )
 
-   INDEX on ( IDPARTNER + DToS( DATDOK ) + DToS( iif( Empty( DATVAL ), DATDOK, DATVAL ) ) + BRDOK ) TAG "1"
+   INDEX ON ( IDPARTNER + DToS( DATDOK ) + DToS( iif( Empty( DATVAL ), DATDOK, DATVAL ) ) + BRDOK ) TAG "1"
 
    SET ORDER TO TAG "1"
    GO TOP

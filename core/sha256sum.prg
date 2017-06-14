@@ -40,6 +40,11 @@ STATIC FUNCTION check_exe_download()
    LOCAL cZip
    LOCAL cVersion := "1.0.0"
 
+   IF s_cDirF18Util == NIL
+      s_cDirF18Util := ExePath() + "F18_util" + SLASH
+      s_cProg := "F18_sha256sum" + iif( is_windows(), ".exe", "" )
+   ENDIF
+
    DO CASE
    CASE is_windows()
       cPlatform := "windows_386"
@@ -73,7 +78,6 @@ STATIC FUNCTION check_exe_download()
 
 INIT PROCEDURE sha256_init()
 
-   s_cDirF18Util := ExePath() + "F18_util" + SLASH
-   s_cProg := "F18_sha256sum" + iif( is_windows(), ".exe", "" )
+
 
    RETURN

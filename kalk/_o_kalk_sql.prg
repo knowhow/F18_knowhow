@@ -303,7 +303,7 @@ FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lRep
    IF cIdKonto != NIL
       hParams[ "mkonto" ] := cIdKonto
    ENDIF
-   IF cIdRoba != NIL
+   IF cIdRoba != NIL .AND. !Empty( cIdRoba )
       hParams[ "idroba" ] := cIdRoba
    ENDIF
    IF cAlias != NIL

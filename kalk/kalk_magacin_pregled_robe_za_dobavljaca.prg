@@ -1,40 +1,42 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
 
 FUNCTION kalk_magacin_pregled_robe_za_dobavljaca()
 
-   //O_SIFK
-   //O_SIFV
-   //O_ROBA
-   //O_PARTN
-   //-- o_kalk()
+   // O_SIFK
+   // O_SIFV
+   // O_ROBA
+   // O_PARTN
+   // -- o_kalk()
 
-   //SET RELATION TO idroba INTO ROBA
+   // SET RELATION TO idroba INTO ROBA
+   LOCAL cIdFirma := self_organizacija_id()
+   LOCAL cIdRoba    := Space( FIELD_ROBA_ID_LENGTH )
+   LOCAL cIdPartner := Space( FIELD_PARTNER_ID_LENGTH )
+   LOCAL dOd := CToD( "" )
+   LOCAL dDo := Date()
+   LOCAL cFilt
 
-   cIdRoba    := Space( Len( ROBA->id ) )
-   cIdPartner := Space( Len( PARTN->id ) )
-   dOd := CToD( "" )
-   dDo := Date()
-   nPrSez := 0
 
    Box( "#PREGLED ROBE ZA DOBAVLJACA", 6, 70 )
-   @ m_x + 2, m_y + 2 SAY8 "Artikal (prazno-svi)" GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
-   @ m_x + 3, m_y + 2 SAY8 "Dobavljac           " GET cIdPartner VALID P_Partner( @cIdPartner ) PICT "@!"
+
+   @ m_x + 2, m_y + 2 SAY8 "Dobavljač           " GET cIdPartner VALID P_Partner( @cIdPartner ) PICT "@!"
+   @ m_x + 3, m_y + 2 SAY8 "Artikal (prazno-svi)" GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
+
    @ m_x + 4, m_y + 2 SAY8 "Za period od" GET dOd
    @ m_x + 4, Col() + 2 SAY "do" GET dDo
-   //@ m_x + 5, m_y + 2 SAY "Koliko prethodnih sezona gledati? (0/1/2/3)" GET nPrSez VALID nPrSez < 4 PICT "9"
+   // @ m_x + 5, m_y + 2 SAY "Koliko prethodnih sezona gledati? (0/1/2/3)" GET nPrSez VALID nPrSez < 4 PICT "9"
    READ
    ESC_BCR
    BoxC()
@@ -43,18 +45,18 @@ FUNCTION kalk_magacin_pregled_robe_za_dobavljaca()
       lPromVP := ( Pitanje(, "Prikazati stanje samo za artikle sa promjenama(ulaz/izlaz) u VP? (D/N)", "D" ) == "D" )
    ENDIF
 
+
+   find_kalk_by_mkonto_idroba( cIdFirma, NIL, cIdRoba, "idroba,datdok", .F. )
+
    cFilt := "DATDOK>=dOd .and. DATDOK<=dDo"
 
    IF !Empty( cIdRoba )
       cFilt += ".and. IDROBA==cIdRoba"
    ENDIF
 
-   cSort := "idroba+dtos(datdok)"
 
    nSlog := 0
    nUkupno := RECCOUNT2()
-
-   INDEX ON idroba + DToS( datdok ) TO "TMPLD" FOR &cFilt
 
    IF Empty( cIdRoba )
 
@@ -81,9 +83,9 @@ FUNCTION kalk_magacin_pregled_robe_za_dobavljaca()
       ?U "PREGLED ROBE OD DOBAVLJAČA ZA PERIOD OD", dOD, "DO", dDo
       ?U "DOBAVLJAČ:", cIdPartner, "-", PARTN->naz
       ?
-      print_lista_2( aKol, {|| FSvakiPRD() },, gTabela,, ;
+      print_lista_2( aKol, {|| NIL },, gTabela,, ;
          ,, ;
-         {|| FForPRD1() }, IF( gOstr == "D",, -1 ),,,,, )
+         {|| FForPRD1( cIdPartner ) }, IIF( gOstr == "D",, - 1 ),,,,, )
       FF
       ENDPRINT
    ELSE
@@ -110,18 +112,18 @@ FUNCTION kalk_magacin_pregled_robe_za_dobavljaca()
       ? "DOBAVLJAC:", cIdPartner, "-", PARTN->naz
       ? "ROBA:", cIdRoba, "-", Left( ROBA->naz, 40 )
       ?
-      print_lista_2( aKol, {|| FSvakiPRD() },, gTabela,, ;
+      print_lista_2( aKol, {|| NIL },, gTabela,, ;
          ,, ;
-         {|| FForPRD2() }, IF( gOstr == "D",, -1 ),,,,, )
+         {|| FForPRD2( cIdPartner ) }, iif( gOstr == "D",, - 1 ),,,,, )
       FF
       ENDPRINT
    ENDIF
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
-
+/*
 // Prikaz toka filterisanja glavne baze
 FUNCTION TekRec2()
 
@@ -136,13 +138,18 @@ FUNCTION TekRec2()
 FUNCTION FSvakiPRD()
    RETURN
 
+*/
+
 // Obrada podataka - koristi je print_lista_2()
 // return .t. ako se slog prikazuje, .f. - ako se ne prikazuje u tabeli
-FUNCTION FForPRD1()
+STATIC FUNCTION FForPRD1( cIdPartner )
 
    LOCAL cIdR
    LOCAL dLastNab
 
+   select_o_roba( kalk->idroba )
+
+   SELECT KALK
    cRoba  := IDROBA + "-" + Left( ROBA->naz, 40 ) + "(" + ROBA->jmj + ")"
    cIdR   := idroba
    nUlaz  := nStanje := 0
@@ -176,7 +183,7 @@ FUNCTION FForPRD1()
             nStanje -= ( kolicina )
             lImaVP := .T.
          ELSEIF mu_i == "1" .AND. ( idvd $ "12#22#94" )    // povrat
-            nStanje -= ( -kolicina )
+            nStanje -= ( - kolicina )
             lImaVP := .T.
          ELSEIF mu_i == "8"
          ENDIF
@@ -187,19 +194,21 @@ FUNCTION FForPRD1()
 
    SKIP -1
 
-   //IF nUlaz = 0 .AND. nPrSez > 0
-  //    lIzProsleGod := ImaUProsGod( nPrSez, cIdPartner, cIdR, @nNC )
-  // ENDIF
+   // IF nUlaz = 0 .AND. nPrSez > 0
+   // lIzProsleGod := ImaUProsGod( nPrSez, cIdPartner, cIdR, @nNC )
+   // ENDIF
 
    RETURN ( nUlaz <> 0 .OR. lIzProsleGod )
 
 
 // Obrada podataka - koristi je print_lista_2()
 // return .t. ako se slog prikazuje, .f. - ako se ne prikazuje u tabeli
-FUNCTION FForPRD2()
+STATIC FUNCTION FForPRD2( cIdPartner )
 
    LOCAL cIdR
 
+   select_o_roba( kalk->idroba )
+   SELECT KALK
    cDokum := idfirma + "-" + idvd + "-" + brdok
    nUlaz := nUlaz2 := nIzlaz := 0
 
@@ -216,7 +225,7 @@ FUNCTION FForPRD2()
       ELSEIF mu_i == "5"
          nIzlaz := ( kolicina )
       ELSEIF mu_i == "1" .AND. ( idvd $ "12#22#94" )    // povrat
-         nIzlaz := ( -kolicina )
+         nIzlaz := ( - kolicina )
       ELSEIF mu_i == "8"
          nUlaz2 := nIzlaz := -kolicina
       ENDIF
@@ -228,13 +237,14 @@ FUNCTION FForPRD2()
       ELSEIF pu_i == "I"
          nIzlaz := ( gkolicin2 )
       ELSEIF pu_i == "5"  .AND. ( idvd $ "12#13#22" )    // povrat
-         nUlaz2 := ( -kolicina )
+         nUlaz2 := ( - kolicina )
       ENDIF
    ENDIF
 
    nStanje += ( nUlaz2 - nIzlaz )
 
    RETURN .T.
+
 
 /*
 FUNCTION ImaUProsGod( nPrSez, cIdPartner, cIdRoba, nNC )

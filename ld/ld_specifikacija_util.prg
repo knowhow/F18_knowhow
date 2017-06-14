@@ -394,11 +394,11 @@ STATIC FUNCTION FFor3()
 
 
 STATIC FUNCTION FSvaki3()
-   RETURN
+   RETURN .T.
 
 
 
-FUNCTION Izrezi( cPoc, nIza, cOstObav )
+FUNCTION ld_izrezi_string( cPoc, nIza, cOstObav )
 
    LOCAL cVrati := "", nPoz := 0
 

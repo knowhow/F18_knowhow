@@ -146,10 +146,10 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
       BoxC()
 
-      aUslRJ := Parsiraj( qqIdRj, "IDRJ" )
-      aUslOpSt := Parsiraj( qqOpSt, "IDOPSST" )
+      cUslovRj := Parsiraj( qqIdRj, "IDRJ" )
+      cUslovOpstStan := Parsiraj( qqOpSt, "IDOPSST" )
 
-      IF ( aUslRJ <> NIL .AND. aUslOpSt <> NIL )
+      IF ( cUslovRj <> NIL .AND. cUslovOpstStan <> NIL )
          EXIT
       ENDIF
    ENDDO
@@ -246,7 +246,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    PRIVATE cFilt := ".t."
 
    IF !Empty( qqIdRJ )
-      cFilt += ( ".and." + aUslRJ )
+      cFilt += ( ".and." + cUslovRj )
    ENDIF
 
    IF !Empty( cObracun )
@@ -287,7 +287,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
       SELECT LD
 
-      IF !( RADN->( &aUslOpSt ) )
+      IF !( RADN->( &cUslovOpstStan ) )
          SKIP 1
          LOOP
       ENDIF

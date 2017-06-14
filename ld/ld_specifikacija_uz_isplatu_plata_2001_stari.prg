@@ -310,13 +310,13 @@ FUNCTION ld_specifikacija_plate_2001_stari()
 
    cObracun := Trim( cObracun )
 
-   cDoprOO1 := Izrezi( "D->", 2, @cnOO1 )
-   cDoprOO2 := Izrezi( "D->", 2, @cnOO2 )
-   cDoprOO3 := Izrezi( "D->", 2, @cnOO3 )
-   cDoprOO4 := Izrezi( "D->", 2, @cnOO4 )
+   cDoprOO1 := ld_izrezi_string( "D->", 2, @cnOO1 )
+   cDoprOO2 := ld_izrezi_string( "D->", 2, @cnOO2 )
+   cDoprOO3 := ld_izrezi_string( "D->", 2, @cnOO3 )
+   cDoprOO4 := ld_izrezi_string( "D->", 2, @cnOO4 )
 
-   cDodDoprP := Izrezi( "D->", 2, @cDDoprPio )
-   cDodDoprZ := Izrezi( "D->", 2, @cDDoprZdr )
+   cDodDoprP := ld_izrezi_string( "D->", 2, @cDDoprPio )
+   cDodDoprZ := ld_izrezi_string( "D->", 2, @cDDoprZdr )
 
    ld_pozicija_parobr( nMjesec, nGodina, cObracun, Left( qqIdRJ, 2 ) )
 

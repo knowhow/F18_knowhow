@@ -27,7 +27,6 @@ FUNCTION sha256sum( cFile )
       RETURN ""
    ENDIF
 
-altd()
    f18_run( cCmd, @hOutput )
 
    RETURN hOutput[ "stdout" ]

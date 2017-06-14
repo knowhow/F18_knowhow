@@ -1047,7 +1047,7 @@ STATIC FUNCTION download_template()
    ENDIF
 
    IF sha256sum( s_cDirF18Template + s_cTemplateName ) != s_cSHA256sum
-      MsgBeep( "ERROR sha256sum" + s_cDirF18Template + s_cTemplateName )
+      MsgBeep( "ERROR sha256sum: " + s_cDirF18Template + s_cTemplateName + "##" + s_cSHA256sum )
       RETURN .F.
    ENDIF
 

@@ -112,13 +112,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
       dDatFaktP := field->datfaktp
       cIdpartner := field->idpartner
 
-      SELECT ( F_PARTN )
-      IF !Used()
-         o_partner()
-      ENDIF
-      SELECT partn
-      hseek cIdPartner
-
+      select_o_partner( cIdPartner )
 
       SELECT kalk_pripr
 

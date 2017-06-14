@@ -200,8 +200,7 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
       HSEEK _tip_dok
       _tip_dok_naz := field->naz
 
-      SELECT partn
-      HSEEK _id_partner
+      select_o_partner( _id_partner )
 
       _partn_naziv := field->naz
       _partn_ptt := field->ptt

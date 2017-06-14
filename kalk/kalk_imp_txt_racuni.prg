@@ -873,9 +873,7 @@ FUNCTION kalk_imp_partn_exist()
    Box( "#Sifra partnera provjera", 3, 50 )
 
    DO WHILE !Eof()
-      SELECT partn
-      GO TOP
-      SEEK kalk_imp_temp->idpartner
+      select_o_partner( kalk_imp_temp->idpartner )
       ++nCount
       @ m_x + 1, m_y + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
       IF !Found()

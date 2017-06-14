@@ -245,12 +245,10 @@ FUNCTION kalk_prenos_fakt()
 
             ELSE
 
-               SELECT PARTN
-               HSEEK kalk_pripr->idpartner
+               select_o_partner( kalk_pripr->idpartner )
 
                IF kalk_pripr->idvd $ "11#12#13#95#PR#RN"
-                  SELECT konto
-                  HSEEK kalk_pripr->idkonto
+                  select_o_konto( kalk_pripr->idkonto )
                   cTxta := PadR( kalk_pripr->idkonto, 30 )
                   cTxtb := PadR( konto->naz, 30 )
                   cTxtc := PadR( "", 30 )

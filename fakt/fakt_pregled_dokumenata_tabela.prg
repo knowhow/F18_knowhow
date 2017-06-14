@@ -113,7 +113,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
       AAdd( adKol, i )
    NEXT
 
-   my_db_edit( "", _x - 3, _y, {|| fakt_tabela_komande ( lOpcine, cFilter, _model_uredjaja ) }, "", "", , , , , 2 )
+   my_db_edit( "", _x - 3, _y, {|| fakt_pregled_dokumenata_browse_komande ( lOpcine, cFilter, _model_uredjaja ) }, "", "", , , , , 2 )
    BoxC()
 
    IF fUpripremu

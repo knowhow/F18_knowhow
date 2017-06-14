@@ -219,7 +219,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION print_porezna_faktura( lOpcine )
@@ -458,7 +458,7 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( model )
 
 
 
-FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
+FUNCTION fakt_pregled_dokumenata_browse_komande( lOpcine, fakt_doks_filt, model )
 
    LOCAL nRet := DE_CONT
    LOCAL _rec
@@ -714,7 +714,7 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
    o_rj()
    o_fakt_objekti()
    o_fakt()
-   o_partner()
+   //o_partner()
    o_fakt_doks()
 
    SELECT fakt_doks
@@ -857,8 +857,7 @@ FUNCTION fakt_real_partnera()
       nIznos := 0
       nRabat := 0
       cIdPartner := idpartner
-      SELECT partn
-      HSEEK cIdPartner
+      select_o_partner( cIdPartner )
       SELECT fakt_doks
 
 
@@ -959,8 +958,7 @@ FUNCTION flt_fakt_part_opc()
 
    LOCAL cRet
 
-   SELECT partn
-   SEEK fakt_doks->idpartner
+   select_o_partner( fakt_doks->idpartner )
    cRet := partn->idops
    SELECT fakt_doks
 

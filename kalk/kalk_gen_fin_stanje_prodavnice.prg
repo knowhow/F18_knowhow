@@ -205,8 +205,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
       _tip_dok_naz := field->naz
 
       IF !Empty( _id_partner )
-         SELECT partn
-         HSEEK _id_partner
+         select_o_partner( _id_partner )
 
          _partn_naziv := field->naz
          _partn_ptt := field->ptt

@@ -548,14 +548,12 @@ STATIC FUNCTION ZPrUnKol( vars, line )
    @ PRow(), PCol() + 1 SAY AllTrim( field->naz )
    @ PRow(), PCol() + 1 SAY AllTrim( field->naz2 )
 
-   SELECT PARTN
-   HSEEK vars[ "partner" ]
+   select_o_partner( vars[ "partner" ] )
    @ PRow() + 1, 0 SAY "Partner:"
    @ PRow(), PCol() + 1 SAY AllTrim( field->naz )
    @ PRow(), PCol() + 1 SAY AllTrim( field->naz2 )
 
-   SELECT KONTO
-   HSEEK vars[ "konto" ]
+   select_o_konto( vars[ "konto" ] )
 
    ? "Konto: ", vars[ "konto" ], AllTrim( field->naz )
 
@@ -978,8 +976,7 @@ FUNCTION mat_popisna_lista()
 
          IF !Empty( _partner )
 
-            SELECT partn
-            HSEEK _partner
+            select_o_partner( _partner )
 
             xml_node( "pid", to_xml_encoding( _partner ) )
             xml_node( "pnaz", to_xml_encoding( AllTrim( field->naz ) ) )

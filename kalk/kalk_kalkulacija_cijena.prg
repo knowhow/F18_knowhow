@@ -428,11 +428,9 @@ STATIC FUNCTION gen_kalk_mp_xml( vars )
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
    PRIVATE aPorezi := {}
 
-   SELECT konto
-   HSEEK kalk_pripr->pkonto
+   select_o_konto( kalk_pripr->pkonto )
 
-   SELECT partn
-   HSEEK kalk_pripr->idpartner
+   select_o_partner( kalk_pripr->idpartner )
 
    SELECT tdok
    HSEEK kalk_pripr->idvd
@@ -633,11 +631,9 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
-   SELECT konto
-   HSEEK kalk_pripr->mkonto
+   select_o_konto( kalk_pripr->mkonto )
 
-   SELECT partn
-   HSEEK kalk_pripr->idpartner
+   select_o_partner( kalk_pripr->idpartner )
 
    SELECT tdok
    HSEEK kalk_pripr->idvd

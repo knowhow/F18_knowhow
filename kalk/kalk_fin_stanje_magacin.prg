@@ -235,8 +235,7 @@ FUNCTION finansijsko_stanje_magacin()
       HSEEK cTipDok
       cDokNaz := field->naz
 
-      SELECT partn
-      HSEEK cIdPartner
+      select_o_partner( cIdPartner )
 
       cPartnNaz := field->naz
       cPartnPtt := field->ptt

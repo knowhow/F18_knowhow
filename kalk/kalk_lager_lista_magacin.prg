@@ -420,9 +420,7 @@ FUNCTION kalk_lager_lista_magacin()
 
       // Vindija - uslov po opcinama
       IF ( IsVindija() .AND. !Empty( cOpcine ) )
-         SELECT partn
-         SET ORDER TO TAG "ID"
-         HSEEK kalk->idpartner
+         select_o_partner( kalk->idpartner )
          IF At( AllTrim( partn->idops ), cOpcine ) == 0
             SELECT kalk
             SKIP

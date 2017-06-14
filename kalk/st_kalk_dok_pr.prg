@@ -36,8 +36,7 @@ FUNCTION kalk_stampa_dok_pr()
    ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), "PROZVODNJA PO SASTAVNICAMA ", Space( 2 ), "Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
-   SELECT PARTN
-   HSEEK cIdPartner
+   select_o_partner( cIdPartner )
 
    m := "--- ------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
    ? m
@@ -109,7 +108,6 @@ FUNCTION kalk_stampa_dok_pr()
             nT7 += nU7; nT8 += nU8; nT9 += nU9; nTA += nUA
 
          ENDIF
-
 
 
          IF Val( field->rbr ) > 100 .AND. cProizvod != Eval( bProizvod )

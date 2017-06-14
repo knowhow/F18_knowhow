@@ -456,7 +456,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          aDoksRec := dbf_get_rec()
          SELECT e_partn
          SET ORDER TO TAG "ID"
-         SEEK _id_partn
+         SEEK _id_partn // e_partn
          IF !Found()
             APPEND BLANK
             dbf_update_rec( aDoksRec )

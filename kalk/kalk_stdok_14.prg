@@ -226,8 +226,7 @@ STATIC FUNCTION zagl()
 
    ? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, ", Datum:", DatDok
 
-   SELECT PARTN
-   HSEEK cIdPartner
+   select_o_partner( cIdPartner )
 
    ? "KUPAC:", cIdPartner, "-", PadR( naz, 20 ), " FAKT br.:", cBrFaktP, "Datum:", dDatFaktP
 
@@ -235,14 +234,11 @@ STATIC FUNCTION zagl()
    find_kalk_doks2_by_broj_dokumenta( kalk_pripr->idfirma, kalk_pripr->idvd, kalk_pripr->brdok )
    ?? "  DatVal:", kalk_doks2->datval
 
-
    IF cIdvd == "94"
-      SELECT konto
-      HSEEK cidkonto2
+      select_o_partner( cIdkonto2 )
       ?  "Storno razduzenja KONTA:", cIdKonto, "-", AllTrim( naz )
    ELSE
-      SELECT konto
-      HSEEK cidkonto2
+      select_o_partner( cIdkonto2 )
       ?  "KONTO razduzuje:", kalk_pripr->mkonto, "-", AllTrim( naz )
       IF !Empty( kalk_pripr->Idzaduz2 )
          ?? " Rad.nalog:", kalk_pripr->Idzaduz2

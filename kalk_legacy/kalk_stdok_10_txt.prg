@@ -36,15 +36,13 @@ FUNCTION kalk_stampa_dok_10_txt()
 
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
-   SELECT PARTN
-   HSEEK cIdPartner
+   select_o_partner( cIdPartner )
 
    ?U  "DOBAVLJAČ:", cIdPartner, "-", PadR( field->naz, 25 ), Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
 
    SELECT kalk_pripr
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    ?U  "MAGACINSKI KONTO zadužuje :", cIdKonto, "-", field->naz
 

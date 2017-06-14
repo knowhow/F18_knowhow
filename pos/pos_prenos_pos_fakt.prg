@@ -106,8 +106,7 @@ FUNCTION Stanje2Fakt()
    ENDIF
 
    IF !Empty( cIdPartnG )
-      SELECT partn
-      HSEEK cIdPartnG
+      select_o_partner( cIdPartnG )
       cIdPartnG := partn->idfmk
    ELSE
       cIdPartnG := Space( LEN_PARTNER_ID )

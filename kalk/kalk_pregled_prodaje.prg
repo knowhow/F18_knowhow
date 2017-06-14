@@ -120,8 +120,7 @@ FUNCTION roba_pregled_prodaje_po_grupama()
             LOOP
          ENDIF
 
-         SELECT partn
-         HSEEK kalk->idPartner
+         select_o_partner( kalk->idPartner )
 
          SELECT kalk
 

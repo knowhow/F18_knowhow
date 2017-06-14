@@ -1041,7 +1041,7 @@ STATIC FUNCTION download_template()
       IF !Empty( download_file( s_cUrl, s_cDirF18Template + s_cTemplateName ) )
          MsgBeep( "Download " + s_cDirF18Template + s_cTemplateName )
       ELSE
-         MsgBeep( "Error download:" + s_cDirF18Template + s_cTemplateName )
+         MsgBeep( "Error download:" + s_cDirF18Template + s_cTemplateName + "##" + s_cUrl )
          RETURN .F.
       ENDIF
    ENDIF

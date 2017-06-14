@@ -23,7 +23,6 @@ FUNCTION sha256sum( cFile )
    check_exe_download()
    cCmd := s_cDirF18Util + s_cProg + " " + cFile
 
-
    IF ! File(  s_cDirF18Util + s_cProg )
       MsgBeep( "Error NO EXEC: " + s_cDirF18Util + s_cProg + "!? STOP" )
       RETURN ""

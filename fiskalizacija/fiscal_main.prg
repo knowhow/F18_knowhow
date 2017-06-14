@@ -117,7 +117,7 @@ STATIC F_POS_RN := "POS_RN"
 // -------------------------------------------------------
 FUNCTION flink_racun_veleprodaja( cFPath, aItems, aTxt, aPla_data, aSem_data )
 
-   // cFPath := PRIVPATH
+   // cFPath := my_home()
 
    // uzmi strukturu tabele za f_v_racun.txt
    aS_rn_txt := _g_f_struct( F_RN_TXT )
@@ -134,7 +134,7 @@ FUNCTION flink_racun_veleprodaja( cFPath, aItems, aTxt, aPla_data, aSem_data )
 
    cPom := f_filename( _F_VRN_TXT, nInvoice )
 
-   // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
+   // upisi aItems prema aVRnTxt u my_home() + "F_V_RACUN.TXT"
    fiscal_array_to_file( cFPath, cPom, aS_rn_txt, aItems )
 
    IF Len( aTxt ) <> 0
@@ -158,7 +158,7 @@ FUNCTION flink_racun_veleprodaja( cFPath, aItems, aTxt, aPla_data, aSem_data )
 
 FUNCTION flink_racun_maloprodaja( cFPath, aItems, aTxt, aPla_data, aSem_data )
 
-   // cFPath := PRIVPATH
+   // cFPath := my_home()
 
    // uzmi strukturu tabele za f_v_racun.txt
    aS_rn_txt := _g_f_struct( F_RN_TXT )
@@ -174,7 +174,7 @@ FUNCTION flink_racun_maloprodaja( cFPath, aItems, aTxt, aPla_data, aSem_data )
 
 
    cPom := f_filename( _F_MRN_TXT, nInvoice )
-   // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
+   // upisi aItems prema aVRnTxt u my_home() + "F_V_RACUN.TXT"
    fiscal_array_to_file( cFPath, cPom, aS_rn_txt, aItems )
 
    IF Len( aTxt ) <> 0

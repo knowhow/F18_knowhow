@@ -94,7 +94,7 @@ STATIC FUNCTION r_gvim_cmd( aArgs, aOpts )
    LOCAL nArgs
 
    // putanja i naziv bat fajla za pokretanje gvim-a
-   cRunGvim := PRIVPATH + "run_gvim.bat"
+   cRunGvim := my_home() + "run_gvim.bat"
 
    // putanja do desktopa
    s_cDesktopPath := '%HOMEDRIVE%%HOMEPATH%\Desktop\'
@@ -145,7 +145,7 @@ STATIC FUNCTION r_gvim_cmd( aArgs, aOpts )
    ? 'DEL "' + s_cDesktopPath + '.' + txt_out_name + '.swp"'
 
    // komanda kopiranja fajla outf.txt na desktop
-   ? 'COPY ' + PRIVPATH + txt_in_name + ' "' + s_cDesktopPath + txt_out_name + '"'
+   ? 'COPY ' + my_home() + txt_in_name + ' "' + s_cDesktopPath + txt_out_name + '"'
 
    // komanda za pokretanje gvima
    ? cGvimCmd

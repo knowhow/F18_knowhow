@@ -268,7 +268,7 @@ FUNCTION GetSendVars( cScript, cPSite, cRptFile )
 
    cScript := my_get_from_ini( "Ruby", "Err2Mail", "c:\sigma\err2mail.rb", EXEPATH )
    cPSite := ""
-   cRptFile := PRIVPATH + "outf.txt"
+   cRptFile := my_home() + "outf.txt"
 
    RETURN .T.
 

@@ -116,7 +116,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
 
       SET CONSOLE OFF
 
-      cKom := PRIVPATH + cFName
+      cKom := my_home() + cFName
 
       IF gnDebug >= 5
          MsgBeep( "Direktno N, cKom=" + AllTrim( cKom ) )
@@ -185,7 +185,7 @@ STATIC FUNCTION GPPortTransform( cKom )
       ELSEIF gPPort == "7"
          cKom := "LPT3"
       ELSEIF gPPort $ "89"
-         cKom := PRIVPATH + cFName
+         cKom := my_home() + cFName
          IF gnDebug >= 5
             MsgBeep( "Inicijalizacija var cKom##var cKom=" + AllTrim( cKom ) )
          ENDIF
@@ -203,7 +203,7 @@ FUNCTION EndPrint()
    LOCAL i
    LOCAL nSek2
    LOCAL cOutfTxt
-   LOCAL _f_path
+   LOCAL cCommand
    PRIVATE cPom
 
    // #ifdef __PLATFORM__UNIX
@@ -273,21 +273,21 @@ FUNCTION EndPrint()
 
          // VidiFajl(cKom, gaZagFix, gaKolFix)
 
-         _f_path := "f18_editor " + my_home() + cFName
+         cCommand := run_cmd_with_prefix( "f18_editor " + my_home() + cFName )
 
-         f18_run( _f_path )
+         f18_run( cCommand )
 
          gaZagFix := NIL
          gaKolFix := NIL
 
       ELSEIF cPrinter == "G"
          // gvim stampa...
-         cKom := PRIVPATH + cFName
+         cKom := my_home() + cFName
          gvim_cmd( cKom )
       ELSE
          // R - Windowsi
          Beep( 1 )
-         cKom := PRIVPATH + cFName
+         cKom := my_home() + cFName
 
          IF gPrinter == "R"
             IF gPDFprint == "X" .AND. programski_modul() == "FAKT"
@@ -375,7 +375,7 @@ FUNCTION SPrint2( cKom )
       ELSEIF nNport == 7
          cKom := "LPT3"
       ELSEIF nNPort > 7
-         cKom := PRIVPATH + cFName
+         cKom := my_home() + cFName
          IF gnDebug >= 5
             MsgBeep( "SPrint2() var cKom=" + AllTrim( cKom ) )
          ENDIF
@@ -425,7 +425,7 @@ FUNCTION EPrint2( xPos )
    SET PRINTER TO
 
    IF gPPort $ "89"
-      cKom := PRIVPATH + cFName
+      cKom := my_home() + cFName
       IF gnDebug >= 5
          MsgBeep( "EPrint2(), var cKom=" + AllTrim( cKom ) )
       ENDIF

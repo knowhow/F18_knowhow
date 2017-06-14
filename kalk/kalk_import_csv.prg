@@ -607,7 +607,7 @@ STATIC FUNCTION kalk_imp_csv_to_temp( aDbf, cTxtFile )
 
 
 // ----------------------------------------------------------------
-// Kreira tabelu PRIVPATH/TEMP.DBF prema definiciji polja iz aDbf
+// Kreira tabelu my_home()/TEMP.DBF prema definiciji polja iz aDbf
 // ----------------------------------------------------------------
 STATIC FUNCTION CreTemp( aDbf, lIndex )
 

@@ -24,7 +24,7 @@ FUNCTION pos_init_dbfs()
 
 STATIC FUNCTION cre_priprz()
 
-   LOCAL cFileName := PRIVPATH + "PRIPRZ"
+   LOCAL cFileName := my_home() + "PRIPRZ"
    LOCAL lCreate := .F.
 
    IF !File( f18_ime_dbf( "priprz" ) )

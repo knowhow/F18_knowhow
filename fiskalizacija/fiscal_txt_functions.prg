@@ -21,7 +21,7 @@ FUNCTION _txt_copy( cFile, cDest )
 
    SAVE SCREEN TO cScreen
 
-   cKLin := "copy " + PRIVPATH + cFile + " " + cDest
+   cKLin := "copy " + my_home() + cFile + " " + cDest
    f18_run( cKLin )
 
    RESTORE SCREEN FROM cScreen

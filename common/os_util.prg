@@ -361,25 +361,43 @@ FUNCTION get_run_prefix_cmd( cCommand )
 
    LOCAL cPrefix
 
-#ifdef __PLATFORM__WINDOWS
+   IF is_windows()
+      // cPrefix := "cmd /c "
+      cPrefix := "start  "
 
-   // cPrefix := "cmd /c "
-   cPrefix := "start  "
-
-
-#else
-#ifdef __PLATFORM__DARWIN
-   cPrefix := "open "
-#else
-   cPrefix := "xdg-open "
-#endif
-#endif
+   ELSE
+      IF is_mac()
+         cPrefix := "open "
+      ELSE
+         cPrefix := "xdg-open "
+      ENDIF
+   ENDIF
 
    IF cCommand != NIL .AND. Left( cCommand, 4 ) == "java"
-      cPrefix := ""
+      cPrefix := "" // if java ..., ne treba start
+   ENDIF
+
+   IF cCommand != NIL .AND. Left( cCommand, 10 ) == "f18_editor"
+      IF is_linux() .OR. is_mac()  // if f18_editor ..., samo windows sa prefix start
+         cPrefix := ""
+      ENDIF
    ENDIF
 
    RETURN cPrefix
+
+
+/*
+    run_cmd_with_prefix( "f18_editor test.txt" ) => "f18_editor.cmd test.txt"
+*/
+FUNCTION run_cmd_with_prefix( cCommand )
+
+   LOCAL cCmdWithPrefix := get_run_prefix_cmd( cCommand ) + cCommand
+
+   IF is_windows()
+      cCmdWithPrefix := StrTran( cCmdWithPrefix, "start f18_editor", "f18_editor.cmd" )
+   ENDIF
+
+   RETURN cCmdWithPrefix
 
 
 FUNCTION f18_open_document( cDocument )

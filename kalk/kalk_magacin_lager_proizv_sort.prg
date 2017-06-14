@@ -380,7 +380,7 @@ METHOD creTmpTbl
 
    LOCAL aTbl
 
-   cTbl := PRIVPATH + "rpt_tmp.dbf"
+   cTbl := my_home() + "rpt_tmp.dbf"
 
    aTbl := {}
    AAdd( aTbl, { "idRoba",  "C", 10, 0 } )

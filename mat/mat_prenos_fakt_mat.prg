@@ -33,7 +33,7 @@ FUNCTION mat_prenos_fakmat()
 STATIC FUNCTION parametri_prenosa()
 
    O_PARAMS
-   // select 99; use (PRIVPATH+"params") index (PRIVPATH+"parai1")
+   // select 99; use (my_home()+"params") index (my_home()+"parai1")
    PRIVATE cSection := "T", cHistory := " "; aHistory := {}
 
    gDirFakt := PadR( gDirFakt, 25 )

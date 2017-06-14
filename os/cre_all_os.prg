@@ -153,7 +153,7 @@ FUNCTION cre_all_os( ver )
       AAdd( aDBf, { 'RBR', 'C',   4,  0 } )
       AAdd( aDBf, { 'KOLICINA', 'N',   6,  1 } )
       AAdd( aDBf, { 'IZNOS', 'N',  14,  2 } )
-      DBCREATE2( PRIVPATH + 'INVENT.DBF', aDbf )
+      DBCREATE2( my_home() + 'INVENT.DBF', aDbf )
 
    ENDIF
    CREATE_INDEX( "ID", "Id", "INVENT" ) // Inventura

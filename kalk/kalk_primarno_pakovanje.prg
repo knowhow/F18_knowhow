@@ -357,7 +357,7 @@ FUNCTION NaPrPak2()
 
    SELECT kalk_pripr
    IF RecCount() > 0
-      UzmiIzINI( PRIVPATH + "FMK.INI", "Indikatori", "ImaU_KALK", "D", "WRITE" )
+      UzmiIzINI( my_home() + "FMK.INI", "Indikatori", "ImaU_KALK", "D", "WRITE" )
       MsgBeep( "Stavke iz kalk_pripreme su privremeno sklonjene!" + ;
          "#Prvo obradite izgenerisane stavke u kalk_pripremi, a nakon" + ;
          "#azuriranja sklonjene stavke bice vracene u pripremu!" )

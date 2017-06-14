@@ -490,7 +490,7 @@ FUNCTION O_POMDB( nArea, cImeDBF )
    cImeCDX := StrTran( Upper( cImeDBF ), "." + DBFEXT, "." + INDEXEXT )
    cImeCDX := ToUnix( cImeCDX )
 
-   usex ( PRIVPATH + cImeDBF )
+   usex ( my_home() + cImeDBF )
 
    RETURN
 
@@ -582,8 +582,8 @@ FUNCTION ExportBaze( cBaza )
    FErase( cBaza + "." + INDEXEXT )
    FErase( cBaza + "." + DBFEXT )
    cBaza += "." + DBFEXT
-   COPY STRUCTURE EXTENDED TO ( PRIVPATH + "struct" )
-   CREATE ( cBaza ) FROM ( PRIVPATH + "struct" ) NEW
+   COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
+   CREATE ( cBaza ) FROM ( my_home() + "struct" ) NEW
    MsgO( "apendujem..." )
    APPEND FROM ( Alias( nArr ) )
    MsgC()

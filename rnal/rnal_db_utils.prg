@@ -198,7 +198,7 @@ FUNCTION setuj_novi_id_tabele( nId, cIdField, lAuto, cont )
 
 
 // ------------------------------------------
-// kreiranje tabele PRIVPATH + _TMP1
+// kreiranje tabele my_home() + _TMP1
 // ------------------------------------------
 FUNCTION cre_tmp1( aFields )
 
@@ -217,7 +217,7 @@ FUNCTION cre_tmp1( aFields )
    RETURN
 
 // ------------------------------------------
-// kreiranje tabele PRIVPATH + _TMP1
+// kreiranje tabele my_home() + _TMP1
 // ------------------------------------------
 FUNCTION cre_tmp2( aFields )
 

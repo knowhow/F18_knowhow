@@ -143,7 +143,7 @@ FUNCTION CreDIntDB()
 FUNCTION cre_tbl_errors()
 
    // provjeri da li postoji tabela ERRORS.DBF
-   IF !File( PRIVPATH + "ERRORS.DBF" )
+   IF !File( my_home() + "ERRORS.DBF" )
       aDbf := {}
       AAdd( aDbf, { "TYPE", "C", 10, 0 } )
       AAdd( aDbf, { "IDROBA", "C", 10, 0 } )

@@ -59,27 +59,27 @@ FUNCTION t_rpt_create()
    ENDIF
 
    // kreiraj T_DOCIT
-   IF !File( PRIVPATH + cT_DOCIT )
+   IF !File( my_home() + cT_DOCIT )
       g_docit_fields( @aT_DOCIT )
-      dbcreate2( PRIVPATH + cT_DOCIT, aT_DOCIT )
+      dbcreate2( my_home() + cT_DOCIT, aT_DOCIT )
    ENDIF
 
    // kreiraj T_DOCIT2
-   IF !File( PRIVPATH + cT_DOCIT2 )
+   IF !File( my_home() + cT_DOCIT2 )
       g_docit2_fields( @aT_DOCIT2 )
-      dbcreate2( PRIVPATH + cT_DOCIT2, aT_DOCIT2 )
+      dbcreate2( my_home() + cT_DOCIT2, aT_DOCIT2 )
    ENDIF
 
    // kreiraj T_DOCOP
-   IF !File( PRIVPATH + cT_DOCOP )
+   IF !File( my_home() + cT_DOCOP )
       g_docop_fields( @aT_DOCOP )
-      dbcreate2( PRIVPATH + cT_DOCOP, aT_DOCOP )
+      dbcreate2( my_home() + cT_DOCOP, aT_DOCOP )
    ENDIF
 
    // kreiraj T_PARS
-   IF !File( PRIVPATH + cT_PARS )
+   IF !File( my_home() + cT_PARS )
       g_pars_fields( @aT_PARS )
-      dbcreate2( PRIVPATH + cT_PARS, aT_PARS )
+      dbcreate2( my_home() + cT_PARS, aT_PARS )
    ENDIF
 
    // kreiraj indexe

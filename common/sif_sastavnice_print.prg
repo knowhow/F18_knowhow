@@ -742,7 +742,7 @@ FUNCTION _exp_sast_dbf()
 
    BoxC()
 
-   MsgBeep( "Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !" )
+   MsgBeep( "Podaci se nalaze u " + my_home() + "r_export.dbf tabeli !" )
 
    SELECT r_export
    USE

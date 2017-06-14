@@ -712,8 +712,8 @@ FUNCTION mat_nal_inventure()
    cIdF := self_organizacija_id()
    cIdK := Space( 7 )
    cIdD := Date()
-   IF File( PRIVPATH + "invent.mem" )
-      RESTORE from ( PRIVPATH + "invent.mem" ) additive
+   IF File( my_home() + "invent.mem" )
+      RESTORE from ( my_home() + "invent.mem" ) additive
    ENDIF
    cIdF := Left( cIdF, 2 )
    cIdZaduz := Space( 6 )
@@ -733,7 +733,7 @@ FUNCTION mat_nal_inventure()
    READ; ESC_BCR
 
    BoxC()
-   SAVE to  ( PRIVPATH + "invent.mem" ) ALL LIKE cId?
+   SAVE to  ( my_home() + "invent.mem" ) ALL LIKE cId?
 
    picD := '@Z 99999999999.99'
    picD1 := '@Z 99999999.99'
@@ -821,8 +821,8 @@ FUNCTION mat_inv_obr_poreza()
    cIdK := Space( 7 )
    cIdD := Date()
    cIdX := Space( 35 )
-   IF File( PRIVPATH + "invent.mem" )
-      RESTORE from ( PRIVPATH + "invent.mem" ) additive
+   IF File( my_home() + "invent.mem" )
+      RESTORE from ( my_home() + "invent.mem" ) additive
    ENDIF
    cIdF := Left( cIdF, 2 )
    cIdX := PadR( cIdX, 35 )
@@ -842,7 +842,7 @@ FUNCTION mat_inv_obr_poreza()
    READ; ESC_BCR
    BoxC()
 
-   SAVE to  ( PRIVPATH + "invent.mem" ) ALL LIKE cId?
+   SAVE to  ( my_home() + "invent.mem" ) ALL LIKE cId?
 
    cIdDir := gDirPor
 

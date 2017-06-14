@@ -64,7 +64,7 @@ FUNCTION pornar()
    SELECT 95
    my_use ( "real" )
 
-   // dbcreateind(PRIVPATH+"reali1","d()+idtarifa",{|| d()+idtarifa})
+   // dbcreateind(my_home()+"reali1","d()+idtarifa",{|| d()+idtarifa})
 
    SELECT mat_suban; SET FILTER TO Tacno( aUsl1 ) .AND. IdFirma == cIdFirma .AND. ;
       idvn $ cNalPr .AND. u_i == "2" .AND. dDatOd <= datdok .AND. dDatDo >= datdok

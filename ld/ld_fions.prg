@@ -610,7 +610,7 @@ FUNCTION PrimSM( cOznaka, cTipPr )
    LOCAL nRez := 0
 
    PRIVATE cTipa := ""
-   // "LDSMi1","Obr+str(godina)+str(mjesec)+idradn+idrj",PRIVPATH+"LDSM")
+   // "LDSMi1","Obr+str(godina)+str(mjesec)+idradn+idrj",my_home()+"LDSM")
 
    PRIVATE cpom := ""
 

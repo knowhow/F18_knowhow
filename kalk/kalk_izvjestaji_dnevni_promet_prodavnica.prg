@@ -421,7 +421,7 @@ STATIC FUNCTION CopyZaSlanje( dDan )
 
    cDirDest := ToUnix( "C:" + SLASH + "SIGMA" + SLASH + "SALJI" + SLASH )
    cLokS := my_get_from_ini( "FMK", "LokacijaZaSlanje", cDirDest, EXEPATH )
-   cPom := "copy " + PRIVPATH + "OUTF.TXT " + cLokS + cNf
+   cPom := "copy " + my_home() + "OUTF.TXT " + cLokS + cNf
 
    f18_run( cPom )
 

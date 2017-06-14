@@ -197,15 +197,15 @@ FUNCTION kcreate_dbf_r_export( cIdVd, lVpcCij, lMpcCij )
 
    my_close_all_dbf()
 
-   // ferase ( PRIVPATH + "R_EXPORT.CDX" )
+   // ferase ( my_home() + "R_EXPORT.CDX" )
 
    get_exp_fields( @aArr, cIdVd, lVpcCij, lMpcCij )
    // kreiraj tabelu
-   dbcreate2( PRIVPATH + cExpTbl, aArr )
+   dbcreate2( my_home() + cExpTbl, aArr )
 
    // kreiraj indexe
-   // CREATE_INDEX("ROB", "idRoba", PRIVPATH +  cExpTbl, .t.)
-   // CREATE_INDEX("TAR", "idTarifa+idRoba", PRIVPATH +  cExpTbl, .t.)
+   // CREATE_INDEX("ROB", "idRoba", my_home() +  cExpTbl, .t.)
+   // CREATE_INDEX("TAR", "idTarifa+idRoba", my_home() +  cExpTbl, .t.)
 
    RETURN .T.
 
@@ -332,12 +332,12 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
    cLauncher := AllTrim( cLauncher )
    IF ( cLauncher == "start" )
-      cKom := cLauncher + " " + PRIVPATH
+      cKom := cLauncher + " " + my_home()
    ELSE
-      cKom := cLauncher + " " + PRIVPATH + "r_export.dbf"
+      cKom := cLauncher + " " + my_home() + "r_export.dbf"
    ENDIF
 
-   MsgBeep( "Tabela " + PRIVPATH + "R_EXPORT.DBF je formirana, i ima:" + Str( nRbr, 5 ) + "stavki##" + ;
+   MsgBeep( "Tabela " + my_home() + "R_EXPORT.DBF je formirana, i ima:" + Str( nRbr, 5 ) + "stavki##" + ;
       "Sa opcijom Open file se ova tabela ubacuje u excel #" + ;
       "Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" + ;
       "Tako dobijeni xls fajl mozete mijenjati #" + ;

@@ -236,7 +236,7 @@ FUNCTION KorekTar()
 
    IF gModul == "KALK"
       IF cPriprema == "D"
-         USE ( PRIVPATH + "PRIPR" )
+         USE ( my_home() + "PRIPR" )
       ELSE
          USE ( KUMPATH + "KALK" )
       ENDIF

@@ -201,9 +201,9 @@ FUNCTION cre_ops_ld_temp()
       { "LJUDI", "N", 10, 0 } }
 
 
-   IF File( PRIVPATH + "OPSLD.DBF" )
-      FErase( PRIVPATH + "OPSLD.DBF" )
-      FErase( PRIVPATH + "OPSLD.CDX" )
+   IF File( my_home() + "OPSLD.DBF" )
+      FErase( my_home() + "OPSLD.DBF" )
+      FErase( my_home() + "OPSLD.CDX" )
    ENDIF
 
    DBCreate2( "opsld", aDbf )

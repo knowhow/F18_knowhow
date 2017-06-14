@@ -175,7 +175,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       SET PRINTER TO
       SET CONSOLE ON
       IF lShowErrorReport
-         cCmd := "f18_editor " + _out_file
+         cCmd := run_cmd_with_prefix( "f18_editor " + _out_file )
          f18_run( cCmd )
       ENDIF
       log_write( cLogMsg, 1 )

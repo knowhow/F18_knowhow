@@ -581,7 +581,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE Ch == K_CTRL_P
 
       PushWA()
-      IzborP2( Kol, PRIVPATH + Alias() )
+      IzborP2( Kol, my_home() + Alias() )
       IF LastKey() == K_ESC
          RETURN DE_CONT
       ENDIF

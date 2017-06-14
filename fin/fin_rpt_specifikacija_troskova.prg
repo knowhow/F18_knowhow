@@ -873,7 +873,7 @@ STATIC FUNCTION __get_ld( dD_from, cGroup )
    LOCAL nT_tp_4 := 0
    LOCAL nT_tp_5 := 0
    LOCAL nCol := 15
-   LOCAL cPath := StrTran( PRIVPATH, "FIN", "LD" )
+   LOCAL cPath := StrTran( my_home(), "FIN", "LD" )
 
    SELECT ( 101 )
    USE ( cPath + SLASH + "r_export" ) ALIAS "ld_exp"

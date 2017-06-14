@@ -129,7 +129,7 @@ STATIC FUNCTION set_print_codes( cOpt )
 
 FUNCTION f18_end_print( cFileName, xPrintOpt )
 
-   LOCAL _ret
+   LOCAL nRet
    LOCAL cCommand := ""
    LOCAL cKom
    LOCAL _port
@@ -224,10 +224,10 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 
    OTHERWISE
 
-      cCommand := "f18_editor " + cFileName
-      _ret := f18_run( cCommand )
+      cCommand := run_cmd_with_prefix( "f18_editor "  + cFileName )
+      nRet := f18_run( cCommand )
 
-      IF _ret <> 0
+      IF nRet <> 0
          MsgBeep ( "f18_edit nije u pathu ?!##" + "cmd:" + cCommand )
       ENDIF
    END CASE
@@ -406,7 +406,7 @@ FUNCTION gpPicH( nRows )
 
    IF nRows > 0
       cPom := PadL( AllTrim( Str( nRows ) ), 2, "0" )
-  
+
       QQOut( "#%PH0" + cPom + "#" )
    ENDIF
 

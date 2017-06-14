@@ -38,7 +38,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
 
    IF DABLAGAS
 
-      cKontoBlag := PadR( my_get_from_ini( "BLAGAJNA", "Konto", "202000", PRIVPATH ), 7 )
+      cKontoBlag := PadR( my_get_from_ini( "BLAGAJNA", "Konto", "202000", my_home() ), 7 )
 
       SET ORDER TO TAG "2"
       SEEK cidfirma + _idvn + cBrDok + cKontoBlag
@@ -361,7 +361,7 @@ FUNCTION blag_azur()
    PRIVATE pici := FormPicL( "9," + pic_iznos_eur(), 12 )
    PRIVATE cLine := ""
 
-   // lSumiraj := ( my_get_from_ini("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
+   // lSumiraj := ( my_get_from_ini("BLAGAJNA","DBISumirajPoBrojuVeze","N",my_home())=="D" )
    lSumiraj := .F.
 
    //o_partner()

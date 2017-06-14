@@ -326,7 +326,7 @@ FUNCTION RacHeder( cIdPos, cDatBrDok, cSto, fPrepis, aVezani )
    LOCAL cJedan
    LOCAL dDat
 
-   cStr := MemoRead( PRIVPATH + AllTrim( gRnHeder ) )
+   cStr := MemoRead( my_home() + AllTrim( gRnHeder ) )
 
    IF ! Empty ( cStr )
       QQOut ( cStr )
@@ -387,7 +387,7 @@ FUNCTION RacFuter( cIdRadnik, cSmjena )
    SET ORDER TO TAG "NAZ"
    HSEEK cIdRadnik
    ? " " + PadR ( AllTrim ( OSOB->Naz ), 29 ), "Smjena " + cSmjena
-   cStr := MemoRead ( PRIVPATH + AllTrim ( gRnFuter ) )
+   cStr := MemoRead ( my_home() + AllTrim ( gRnFuter ) )
    IF !Empty( cStr )
       QOut( cStr )
    ENDIF

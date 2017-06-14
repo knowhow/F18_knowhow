@@ -205,7 +205,6 @@
 #define EXEPATH   my_home_root()
 #define SIFPATH   my_home()
 
-#define PRIVPATH  my_home()
 
 #define KUMPATH   my_home()
 #define CURDIR    my_home()

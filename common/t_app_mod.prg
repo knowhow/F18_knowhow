@@ -282,7 +282,7 @@ METHOD gParams()
       ELSEIF  cFMKINI == "K"
          cKom += KUMPATH
       ELSEIF  cFMKINI == "P"
-         cKom += PRIVPATH
+         cKom += my_home()
       ELSEIF  cFMKINI == "S"
          cKom += SIFPATH
       ENDIF

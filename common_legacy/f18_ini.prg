@@ -36,7 +36,7 @@ STATIC INI_SECTION := 'xx'
  *  param cSection  - [SECTION]
  *  param cVar      - Variable
  *  param cValue    - Default value of Variable
- *  param cLokacija - Default = EXEPATH, or PRIVPATH, or SIFPATH or KUMPATH (FileName='FMK.INI')
+ *  param cLokacija - Default = EXEPATH, or my_home(), or SIFPATH or KUMPATH (FileName='FMK.INI')
  *  param lAppend   - True - ako zapisa u ini-ju nema dodaj ga, default false
  * // uzmi vrijednost varijable Debug, sekcija Gateway, iz EXEPATH/FMK.INI
  * cDN:=my_get_from_ini("Gateway","Debug","N",EXEPATH)

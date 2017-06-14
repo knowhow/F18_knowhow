@@ -59,8 +59,8 @@ FUNCTION PripTOPSFAKT( cIdPartnG )
    SELECT 7000
    USE
    my_use ( "topsfakt", "TOPSFAKT" )
-   INDEX ON IdPos + idVd + idPartner + IdRoba + Str( mpc, 13, 4 ) + Str( stmpc, 13, 4 ) TAG ( "1" ) TO ( PRIVPATH + "TOPSFAKT" )
-   INDEX ON brisano + "10" TAG "BRISAN"    // TO (PRIVPATH+"ZAKSM")
+   INDEX ON IdPos + idVd + idPartner + IdRoba + Str( mpc, 13, 4 ) + Str( stmpc, 13, 4 ) TAG ( "1" ) TO ( my_home() + "TOPSFAKT" )
+   INDEX ON brisano + "10" TAG "BRISAN"    // TO (my_home()+"ZAKSM")
    SET ORDER TO TAG "1"
 
    RETURN .T.
@@ -210,9 +210,9 @@ FUNCTION Stanje2Fakt()
    READ
    IF LastKey() <> K_ESC
       SAVE SCREEN TO cS
-      cPom := "copy " + PRIVPATH + "TOPSFAKT.DBF " + Trim( cLokacija ) + "TOPSFAKT.DBF"
+      cPom := "copy " + my_home() + "TOPSFAKT.DBF " + Trim( cLokacija ) + "TOPSFAKT.DBF"
       f18_run( cPom )
-      cPom := "copy " + PRIVPATH + "TOPSFAKT.CDX " + Trim( cLokacija ) + "TOPSFAKT.CDX"
+      cPom := "copy " + my_home() + "TOPSFAKT.CDX " + Trim( cLokacija ) + "TOPSFAKT.CDX"
       f18_run( cPom )
       RESTORE SCREEN FROM cS
    ENDIF

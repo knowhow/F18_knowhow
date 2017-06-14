@@ -364,7 +364,7 @@ FUNCTION get_run_prefix_cmd( cCommand )
 #ifdef __PLATFORM__WINDOWS
 
    // cPrefix := "cmd /c "
-   cPrefix := "start /b "
+   cPrefix := "start  "
 
 
 #else

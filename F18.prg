@@ -21,17 +21,19 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    LOCAL _arg_v := hb_Hash()
 
+
    cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
-
    set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
-
    harbour_init()
+
    init_parameters_cache()
    set_f18_current_directory()
    set_f18_home_root()
    set_global_vars_0()
    f18_error_block()
+
    set_screen_dimensions()
+   //MsgBeep( sha256sum( hb_ProgName() ) )
 
    naslovni_ekran_splash_screen( "F18", f18_ver() )
 

@@ -150,7 +150,7 @@ STATIC FUNCTION _fin_import()
    ENDIF
 
    // dekompresovanje podataka
-   IF _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
+   IF razmjena_decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
       // ako je bilo greske
       RETURN .F.
    ENDIF

@@ -459,7 +459,7 @@ STATIC FUNCTION out_file_op_sys( dev_type )
 // -------------------------------------------------------
 // validacija path-a izlaznih fajlova
 // -------------------------------------------------------
-STATIC FUNCTION _valid_fiscal_path( fiscal_path, create_dir )
+STATIC FUNCTION _valid_fiscal_path( cFiscalPath, create_dir )
 
    LOCAL _ok := .T.
    LOCAL _cre
@@ -468,23 +468,23 @@ STATIC FUNCTION _valid_fiscal_path( fiscal_path, create_dir )
       create_dir := .T.
    ENDIF
 
-   fiscal_path := AllTrim( fiscal_path )
+   cFiscalPath := AllTrim( cFiscalPath )
 
-   IF Empty( fiscal_path )
+   IF Empty( cFiscalPath )
       MsgBeep( "Izlazni direktorij za fiskalne fajlove ne smije biti prazan ?!!!" )
       _ok := .F.
       RETURN _ok
    ENDIF
 
-   IF DirChange( fiscal_path ) != 0
+   IF DirChange( cFiscalPath ) != 0
       IF create_dir
-         _cre := MakeDir( fiscal_path )
+         _cre := MakeDir( cFiscalPath )
          IF _cre != 0
-            MsgBeep( "Kreiranje " + fiscal_path + " neuspjesno ?!#Provjerite putanju direktorija izlaznih fajlova." )
+            MsgBeep( "Kreiranje " + cFiscalPath + " neuspjesno ?!#Provjerite putanju direktorija izlaznih fajlova." )
             _ok := .F.
          ENDIF
       ELSE
-         MsgBeep( "Izlazni direktorij: " + fiscal_path + "#ne postoji !!!" )
+         MsgBeep( "Izlazni direktorij: " + cFiscalPath + "#ne postoji !!!" )
          _ok := .F.
       ENDIF
    ENDIF

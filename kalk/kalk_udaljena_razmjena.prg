@@ -41,9 +41,7 @@ FUNCTION kalk_udaljena_razmjena_podataka()
    RETURN .T.
 
 
-// ----------------------------------------
-// export podataka modula KALK
-// ----------------------------------------
+
 STATIC FUNCTION kalk_export_start()
 
    LOCAL _vars := hb_Hash()
@@ -137,7 +135,7 @@ STATIC FUNCTION kalk_import_start()
    ENDIF
 
 
-   IF _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0 // dekompresovanje podataka
+   IF razmjena_decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0 // dekompresovanje podataka
       // ako je bilo greske
       RETURN .F.
    ENDIF
@@ -923,9 +921,7 @@ STATIC FUNCTION kalk_o_tabele()
    RETURN .T.
 
 
-// ----------------------------------------------------
-// otvaranje export tabela
-// ----------------------------------------------------
+
 STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, lFromFmk )
 
    LOCAL cDbfName

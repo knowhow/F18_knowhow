@@ -12,72 +12,71 @@
 #include "f18.ch"
 
 
+FUNCTION zip_files( cOutputDir, cFileNameOutput, aFiles )
 
-FUNCTION zip_files( output_path, output_file_name, files )
-
-   LOCAL _error
+   LOCAL nError
 
 
-   IF ( files == NIL ) .OR. Len( files ) == 0
+   IF ( aFiles == NIL ) .OR. Len( aFiles ) == 0
       RETURN MsgBeep( "Nema fajlova za arhiviranje ?!" )
    ENDIF
 
-   _error := __zip( output_path, output_file_name, files )
+   nError := __zip( cOutputDir, cFileNameOutput, aFiles )
 
-   RETURN _error
-
-
-
-FUNCTION unzip_files( zip_path, zip_file_name, extract_destination, files, overwrite_file )
-
-   LOCAL _error
-
-   _error := __unzip( zip_path, zip_file_name, extract_destination, files, overwrite_file )
-
-   RETURN _error
+   RETURN nError
 
 
 
-STATIC FUNCTION __zip( zf_path, zf_name, files )
+FUNCTION unzip_files( cZipFileDir, cZipFileName, cExtractDir, aFiles, lOverwriteFiles )
 
-   LOCAL _h_zip
+   LOCAL nError
+
+   nError := __unzip( cZipFileDir, cZipFileName, cExtractDir, aFiles, lOverwriteFiles )
+
+   RETURN nError
+
+
+
+STATIC FUNCTION __zip( cZipFileDir, cZipFileName, aFiles )
+
+   LOCAL cZipFileHandle
    LOCAL _file
-   LOCAL _error := 0
+   LOCAL nError := 0
    LOCAL _cnt := 0
-   LOCAL _zip_file := zf_path + zf_name
-   LOCAL __file_path, __file_ext, __file_name
-   LOCAL _a_file, _a_dir
+   LOCAL cZipFileFullName := cZipFileDir + cZipFileName
+   LOCAL cFilePath, cFileExt, cFileName
+   LOCAL _a_file, aFajlovi
 
 
-   _h_zip := hb_zipOpen( _zip_file ) // otvori fajl
+   cZipFileHandle := hb_zipOpen( cZipFileFullName ) // otvori fajl
 
-   IF !Empty( _h_zip )
+   IF !Empty( cZipFileHandle )
 
       Box(, 3, 65 )
-      @ m_x + 1, m_y + 2 SAY _h_zip
-      @ m_x + 2, m_y + 2 SAY "Kompresujem fajl: " + PadL( AllTrim( _zip_file ), 40 )
+      @ m_x + 1, m_y + 2 SAY cZipFileHandle
+      @ m_x + 2, m_y + 2 SAY "Kompresujem fajl: " + PadL( AllTrim( cZipFileFullName ), 40 )
 
-      FOR EACH _file IN files
+      FOR EACH _file IN aFiles
          IF !Empty( _file )
 
-            hb_FNameSplit( _file, @__file_path, @__file_name, @__file_ext ) // odvoji lokaciju fajlova i nazive
+            hb_FNameSplit( _file, @cFilePath, @cFileName, @cFileExt ) // odvoji lokaciju fajlova i nazive
 
-            _a_dir := hb_DirScan( __file_path, __file_name + __file_ext )
+            aFajlovi := hb_DirScan( cFilePath, cFileName + cFileExt )
 
-            FOR EACH _a_file IN _a_dir
-               IF ! ( __file_path + _a_file[ 1 ] == _zip_file )
+            FOR EACH _a_file IN aFajlovi
+               IF ! ( cFilePath + _a_file[ 1 ] == cZipFileFullName )
 
                   ++ _cnt
                   @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( _cnt ) ), 3 ) + ") ..." + PadR( AllTrim( _a_file[ 1 ] ), 40 )
 
                   //IF relative_path
-                  //   _error := hb_zipStoreFile( _h_zip, __file_path + _a_file[ 1 ], __file_path + _a_file[ 1 ], nil )
+                  //   nError := hb_zipStoreFile( cZipFileHandle, cFilePath + _a_file[ 1 ], cFilePath + _a_file[ 1 ], nil )
                   //ELSE
-                     _error := hb_zipStoreFile( _h_zip, _a_file[ 1 ], _a_file[ 1 ], nil )
+                     nError := hb_zipStoreFile( cZipFileHandle, _a_file[ 1 ], _a_file[ 1 ], nil )
                   //ENDIF
 
-                  IF ( _error <> 0 )
-                     __zip_error( _error, "operacija: kompresovanje fajla" )
+                  IF ( nError <> 0 )
+                     __zip_error( nError, "operacija: kompresovanje fajla" )
                      // RETURN -99
                   ENDIF
 
@@ -87,17 +86,17 @@ STATIC FUNCTION __zip( zf_path, zf_name, files )
          ENDIF
       NEXT
 
-      _error := hb_zipClose( _h_zip, "" )
+      nError := hb_zipClose( cZipFileHandle, "" )
 
       BoxC()
 
    ENDIF
 
-   IF ( _error <> 0 )
-      __zip_error( _error, "operacija: zatvaranje zip fajla" )
+   IF ( nError <> 0 )
+      __zip_error( nError, "operacija: zatvaranje zip fajla" )
    ENDIF
 
-   RETURN _error
+   RETURN nError
 
 
 
@@ -122,59 +121,59 @@ STATIC FUNCTION __zip_error( err, descr )
 
 
 
-STATIC FUNCTION __unzip( zf_path, zf_name, zf_destination, files, overwrite_file )
+STATIC FUNCTION __unzip( cZipFileDir, cZipFileName, zf_destination, aFiles, lOverwriteFiles )
 
-   LOCAL _h_zip
+   LOCAL cZipFileHandle
    LOCAL _file
-   LOCAL _error := 0
+   LOCAL nError := 0
    LOCAL _cnt := 0
    LOCAL _extract := .T.
    LOCAL _scan
    LOCAL _file_in_zip
-   LOCAL _zip_file := zf_path + zf_name
+   LOCAL cZipFileFullName := cZipFileDir + cZipFileName
    LOCAL __file, __date, __time, __size
 
    // paterni fajlova za ekstrakt
-   IF ( files == NIL )
-      files := {}
+   IF ( aFiles == NIL )
+      aFiles := {}
    ENDIF
 
    IF ( zf_destination == NIL )
       zf_destination := ""
    ENDIF
 
-   IF ( overwrite_file == NIL )
-      overwrite_file := .T.
+   IF ( lOverwriteFiles == NIL )
+      lOverwriteFiles := .T.
    ENDIF
 
    // otvori zip fajl
-   _h_zip := hb_unzipOpen( _zip_file )
+   cZipFileHandle := hb_unzipOpen( cZipFileFullName )
 
-   IF !Empty( _h_zip )
+   IF !Empty( cZipFileHandle )
 
       Box(, 2, 65 )
 
-      @ m_x + 1, m_y + 2 SAY "Dekompresujem fajl: ..." + PadL( AllTrim( _zip_file ), 30 )
+      @ m_x + 1, m_y + 2 SAY "Dekompresujem fajl: ..." + PadL( AllTrim( cZipFileFullName ), 30 )
 
       IF !Empty( zf_destination )
          // skoci u direktorij za raspakivanje ...
          DirChange( zf_destination )
       ENDIF
 
-      _error := hb_unzipFileFirst( _h_zip )
+      nError := hb_unzipFileFirst( cZipFileHandle )
 
-      DO WHILE _error == 0
+      DO WHILE nError == 0
 
-         hb_unzipFileInfo( _h_zip, @__file, @__date, @__time, , , , @__size )
+         hb_unzipFileInfo( cZipFileHandle, @__file, @__date, @__time, , , , @__size )
 
          IF ( __file == NIL ) .OR. Empty( __file )
-            _error := hb_unzipFileNext( _h_zip )
+            nError := hb_unzipFileNext( cZipFileHandle )
          ENDIF
 
          // da li imamo kakve paterne ?
-         IF Len( files ) > 0
+         IF Len( aFiles ) > 0
             // daj info o zip fajlu...
-            _scan := AScan( files, {| pattern | hb_WildMatch( pattern, __file, .T. ) } )
+            _scan := AScan( aFiles, {| pattern | hb_WildMatch( pattern, __file, .T. ) } )
             IF _scan == 0
                _extract := .F.
             ENDIF
@@ -182,7 +181,7 @@ STATIC FUNCTION __unzip( zf_path, zf_name, zf_destination, files, overwrite_file
          ENDIF
 
          // prvo provjeri postoji li fajl, ako je u overwrite modu
-         IF overwrite_file
+         IF lOverwriteFiles
             IF File( __file )
                FErase( __file )
             ENDIF
@@ -194,10 +193,10 @@ STATIC FUNCTION __unzip( zf_path, zf_name, zf_destination, files, overwrite_file
 
             @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( _cnt ) ), 3 ) + ") ... " + PadL( AllTrim( __file ), 38 )
 
-            _error := hb_unzipExtractCurrentFile( _h_zip, NIL, NIL )
+            nError := hb_unzipExtractCurrentFile( cZipFileHandle, NIL, NIL )
 
-            IF ( _error <> 0 )
-               __zip_error( _error, "operacija: dekompresovanje fajla" )
+            IF ( nError <> 0 )
+               __zip_error( nError, "operacija: dekompresovanje fajla" )
                // RETURN -99
             ENDIF
 
@@ -205,18 +204,18 @@ STATIC FUNCTION __unzip( zf_path, zf_name, zf_destination, files, overwrite_file
 
          // ovdje ne treba obrada error-a
          // zato sto je kraj arhive greska = -100
-         _error := hb_unzipFileNext( _h_zip )
+         nError := hb_unzipFileNext( cZipFileHandle )
 
       ENDDO
 
-      _error := hb_unzipClose( _h_zip, "" )
+      nError := hb_unzipClose( cZipFileHandle, "" )
 
       BoxC()
 
    ENDIF
 
-   IF ( _error <> 0 )
-      __zip_error( _error, "operacija: zatvaranje zip fajla" )
+   IF ( nError <> 0 )
+      __zip_error( nError, "operacija: zatvaranje zip fajla" )
    ENDIF
 
-   RETURN _error
+   RETURN nError

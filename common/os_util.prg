@@ -302,11 +302,11 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
       lAsync := .F. // najcesce zelimo da okinemo eksternu komandu i nastavimo rad
    ENDIF
 
-#ifdef __PLATFORM__UNIX
-   _ret := __run_system( cCommand + iif( lAsync, "&", "" ) )
-#else
+//#ifdef __PLATFORM__UNIX
+  // _ret := __run_system( cCommand + iif( lAsync, "&", "" ) )
+//#else
    _ret := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr, lAsync )
-#endif
+//#endif
    ?E cCommand, _ret, "stdout:", cStdOut, "stderr:", cStdErr
 
    IF _ret == 0

@@ -121,7 +121,7 @@ STATIC FUNCTION _fakt_import()
       RETURN .F.
    ENDIF
 
-   IF _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
+   IF razmjena_decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
       RETURN .F.
    ENDIF
 

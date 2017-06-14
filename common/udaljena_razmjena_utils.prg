@@ -679,7 +679,7 @@ STATIC FUNCTION _file_list( use_path, modul )
 // ------------------------------------------
 // dekompresuj fajlove i vrati path
 // ------------------------------------------
-FUNCTION _decompress_files( imp_file, import_dbf_path, import_zip_name )
+FUNCTION razmjena_decompress_files( imp_file, import_dbf_path, import_zip_name )
 
    LOCAL _zip_name, _zip_path
    LOCAL _error
@@ -698,9 +698,8 @@ FUNCTION _decompress_files( imp_file, import_dbf_path, import_zip_name )
 
    ENDIF
 
-   log_write( "dekompresujem fajl:" + _zip_path + _zip_name, 7 )
+   log_write( "unzip fajl:" + _zip_path + _zip_name, 7 )
 
-   // unzipuj fajlove
    _error := unzip_files( _zip_path, _zip_name, import_dbf_path )
 
    RETURN _error

@@ -11,6 +11,12 @@
 
 #include "f18.ch"
 
+STATIC s_cDirF18Template
+STATIC s_cTemplateName := "ld_obr_2001.xlsx"
+STATIC s_cUrl
+STATIC s_cSHA256sum := "903ddeb99969e4e5d0e59c09873029b60daa9a803366b8e2a53a200d3b7a2c13"
+
+
 
 FUNCTION ld_specifikacija_plate_obr_2001()
 
@@ -45,10 +51,10 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL nPojBrBenef := 0
    LOCAL nOstaleObaveze := 0
    LOCAL uNaRuke := 0
-   LOCAL cFirmNaz := Padr( fetch_metric( "org_naziv", NIL, Space( 35 ) ), 35 )
-   LOCAL cFirmAdresa := PAdR( fetch_metric( "ld_firma_adresa", NIL, Space( 35 ) ), 35)
-   LOCAL cFirmOpc := Padr( fetch_metric( "ld_firma_opcina", NIL, Space( 35 ) ), 35)
-   LOCAL cFirmVD := Padr( fetch_metric( "ld_firma_vrsta_djelatnosti", NIL, Space( 50 ) ), 50)
+   LOCAL cFirmNaz := PadR( fetch_metric( "org_naziv", NIL, Space( 35 ) ), 35 )
+   LOCAL cFirmAdresa := PadR( fetch_metric( "ld_firma_adresa", NIL, Space( 35 ) ), 35 )
+   LOCAL cFirmOpc := PadR( fetch_metric( "ld_firma_opcina", NIL, Space( 35 ) ), 35 )
+   LOCAL cFirmVD := PadR( fetch_metric( "ld_firma_vrsta_djelatnosti", NIL, Space( 50 ) ), 50 )
    LOCAL cRadn := Space( LEN_IDRADNIK )
    LOCAL dDatIspl
    LOCAL cMRad := fetch_metric( "ld_specifikacija_minuli_rad", NIL, cMRad )
@@ -84,6 +90,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cDodDoprP
    LOCAL cDodDoprZ
 
+   download_template()
+
    cIdRJ := "  "
    cUslovIdRj := ""
    cUslovOpstStan := ""
@@ -107,7 +115,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    dDatIspl := Date()
 
    DO WHILE .T.
-      Box(, 22 + IIF( gVarSpec == "1", 0, 1 ), 75 )
+      Box(, 22 + iif( gVarSpec == "1", 0, 1 ), 75 )
 
       @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " ;
          GET cUslovIdRj PICT "@!S15"
@@ -1013,3 +1021,34 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
    RETURN .T.
 */
+
+STATIC FUNCTION download_template()
+
+   s_cDirF18Template := ExePath() + "template" + SLASH
+   s_cUrl := "https://github.com/hernad/F18_template/releases/download/" + ;
+      f18_template_ver() + SLASH + s_cTemplateName
+
+   IF DirChange( s_cDirF18Template ) != 0
+      IF ! MakeDir( s_cDirF18Template )
+         MsgBeep( "Kreiranje dir: " + s_cDirF18Template + " neuspješno?! STOP" )
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   IF !File( s_cDirF18Template + s_cTemplateName ) .OR. ;
+         ( sha256sum( s_cDirF18Template + s_cTemplateName ) != s_cSHA256sum )
+
+      IF !Empty( download_file( s_cUrl, s_cDirF18Template + s_cTemplateName ) )
+         MsgBeep( "Download " + s_cDirF18Template + s_cTemplateName )
+      ELSE
+         MsgBeep( "Error download:" + s_cDirF18Template + s_cTemplateName )
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   IF sha256sum( s_cDirF18Template + s_cTemplateName ) != s_cSHA256sum
+      MsgBeep( "ERROR sha256sum" + s_cDirF18Template + s_cTemplateName )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.

@@ -24,13 +24,13 @@ FUNCTION harbour_init()
    f18_init_threads()
 
 
-SET( _SET_OSCODEPAGE, hb_cdpOS() )
+   Set( _SET_OSCODEPAGE, hb_cdpOS() )
 
-//? SET( _SET_OSCODEPAGE )
+// ? SET( _SET_OSCODEPAGE )
 
 
    hb_cdpSelect( "SL852" )
-   //hb_SetTermCP( "SLISO" )
+   // hb_SetTermCP( "SLISO" )
 
 
 
@@ -92,3 +92,42 @@ FUNCTION k_ctrl_f9()
    ENDIF
 
    RETURN K_CTRL_F9
+
+/*
+    download_file( "http://download/test.zip", NIL ) => /home/bringout/.f18/wget_232X66.tmp
+
+    ako je Error
+*/
+
+FUNCTION download_file( cUrl, cDestFile )
+
+   LOCAL hFile
+   LOCAL cFileName, lRet := .F.
+
+   Box( "#Download: " + Alltrim( Right( cUrl, 60) ), 2, 70 )
+   hFile := hb_vfTempFile( @cFileName, my_home_root(), "wget_", ".tmp" )
+   hb_vfClose( hFile )
+
+   @ m_x + 1, m_y + 2 SAY Left( cUrl, 67 )
+
+   lRet := F18Admin():wget_download( cUrl, "", cFileName )
+
+   BoxC()
+
+   IF lRet
+      IF cDestFile != NIL
+         COPY FILE ( cFileName ) TO ( cDestFile )
+         RETURN cDestFile
+      ELSE
+         RETURN cFileName
+      ENDIF
+   ELSE
+      RETURN ""
+   ENDIF
+
+   RETURN ""
+
+
+FUNCTION ExePath()
+
+   RETURN hb_FNameDir( hb_ProgName() )

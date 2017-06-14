@@ -363,7 +363,10 @@ FUNCTION get_run_prefix_cmd( cCommand )
 
 #ifdef __PLATFORM__WINDOWS
 
-   cPrefix := "cmd /c "
+   //cPrefix := "cmd /c "
+   cPrefix := "start /b "
+
+
 #else
 #ifdef __PLATFORM__DARWIN
    cPrefix := "open "

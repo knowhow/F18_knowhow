@@ -363,7 +363,7 @@ FUNCTION get_run_prefix_cmd( cCommand )
 
 #ifdef __PLATFORM__WINDOWS
 
-   //cPrefix := "cmd /c "
+   // cPrefix := "cmd /c "
    cPrefix := "start /b "
 
 
@@ -387,18 +387,7 @@ FUNCTION f18_open_document( cDocument )
    LOCAL cPrefixCmd
    LOCAL _msg
 
-
-#ifdef __PLATFORM__WINDOWS
-
-   cPrefixCmd := "cmd /c "
-#else
-#ifdef __PLATFORM__DARWIN
-   cPrefixCmd := "open "
-#else
-   cPrefixCmd := "xdg-open "
-#endif
-#endif
-
+   cPrefixCmd := get_run_prefix_cmd()
 
 #ifdef __PLATFORM__WINDOWS
    cDocument := '"' + cDocument + '"'

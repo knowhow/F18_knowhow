@@ -496,7 +496,7 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( lOpcine, fakt_doks_filt, model 
       _refresh := .T.
 
 
-   CASE CH == K_CTRL_V
+   CASE Ch == K_CTRL_V
 
       SELECT fakt_doks
 

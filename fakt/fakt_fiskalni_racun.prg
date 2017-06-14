@@ -310,7 +310,7 @@ FUNCTION postoji_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, model )
 
 STATIC FUNCTION fakt_is_storno_dok( cIdFirma, cIdTipDok, cBrDok )
 
-   LOCAL nStorno := 1
+   LOCAL nStorno := 0 // 0 - nije storno, 1 - storno, -1 = error
    LOCAL _t_rec
 
    SELECT fakt
@@ -324,21 +324,19 @@ STATIC FUNCTION fakt_is_storno_dok( cIdFirma, cIdTipDok, cBrDok )
    ENDIF
 
    _t_rec := RecNo()
-
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
 
-      IF field->kolicina > 0
+      IF field->kolicina < 0
          nStorno := 1
          EXIT
       ENDIF
-
       SKIP
 
    ENDDO
 
    GO ( _t_rec )
 
-   RETURN nStornoe
+   RETURN nStorno
 
 
 

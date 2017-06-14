@@ -13,7 +13,7 @@
 
 MEMVAR m_x, m_y, gcF9usmece
 
-FUNCTION fakt_azuriraj_dokument( lSilent )
+FUNCTION fakt_azuriraj_dokumente_u_pripremi( lSilent )
 
    LOCAL _a_fakt_doks := {}
    LOCAL _id_firma

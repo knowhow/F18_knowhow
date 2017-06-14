@@ -45,7 +45,7 @@ FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDevicePa
 
    LOCAL _err_level := 0
    LOCAL _dev_drv
-   LOCAL _storno := .F.
+   LOCAL nStorno := 0
    LOCAL aRacunStavkeData, _partn_data
    LOCAL _cont := "1"
    LOCAL lRacunBezgBezPartnera
@@ -90,13 +90,14 @@ FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDevicePa
       RETURN _err_level
    ENDIF
 
-   _storno := fakt_dok_is_storno( cIdFirma, cIdTipDok, cBrDok )
+altd()
+   nStorno := fakt_is_storno_dok( cIdFirma, cIdTipDok, cBrDok )
 
-   IF ValType( _storno ) == "N" .AND. _storno == -1
+   IF  nStorno == -1 // error
       RETURN _err_level
    ENDIF
 
-   IF _storno
+   IF nStorno == 1
       IF !fakt_reklamirani_racun_preduslovi( cIdFirma, cIdTipDok, cBrDok, hDeviceParams )
          RETURN _err_level
       ENDIF
@@ -308,9 +309,9 @@ FUNCTION postoji_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, model )
    RETURN lRet
 
 
-STATIC FUNCTION fakt_dok_is_storno( cIdFirma, cIdTipDok, cBrDok )
+STATIC FUNCTION fakt_is_storno_dok( cIdFirma, cIdTipDok, cBrDok )
 
-   LOCAL _storno := .T.
+   LOCAL nStorno := 1
    LOCAL _t_rec
 
    SELECT fakt
@@ -319,18 +320,16 @@ STATIC FUNCTION fakt_dok_is_storno( cIdFirma, cIdTipDok, cBrDok )
    SEEK ( cIdFirma + cIdTipDok + cBrDok )
 
    IF !Found()
-      MsgBeep( "Ne mogu locirati dokument - is storno !" )
+      MsgBeep( "Ne mogu locirati dokument " + cIdFirma + "-" + cIdTipDok + "-" + AllTrim( cBrDok ) + "  (is storno) ?!"  )
       RETURN -1
    ENDIF
 
    _t_rec := RecNo()
 
-   DO WHILE !Eof() .AND. field->idfirma == cIdFirma ;
-         .AND. field->idtipdok == cIdTipDok ;
-         .AND. field->brdok == cBrDok
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
 
       IF field->kolicina > 0
-         _storno := .F.
+         nStorno := 1
          EXIT
       ENDIF
 
@@ -340,7 +339,7 @@ STATIC FUNCTION fakt_dok_is_storno( cIdFirma, cIdTipDok, cBrDok )
 
    GO ( _t_rec )
 
-   RETURN _storno
+   RETURN nStornoe
 
 
 

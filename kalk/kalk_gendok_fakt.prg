@@ -337,7 +337,7 @@ FUNCTION kalk_prenos_fakt()
    glRadNal := .F.
    glDistrib := .F.
 
-   fakt_azuriraj_dokument( .T. )
+   fakt_azuriraj_dokumente_u_pripremi( .T. )
 
    my_close_all_dbf()
 

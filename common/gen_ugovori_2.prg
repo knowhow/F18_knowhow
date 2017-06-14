@@ -334,7 +334,7 @@ FUNCTION gen_ug_2()
    // ako je opcija automatike ukljucena
    IF _auto_azur == "D"
       // funkcija azuriranja modula FAKT
-      fakt_azuriraj_dokument( .T. )
+      fakt_azuriraj_dokumente_u_pripremi( .T. )
    ENDIF
 
    // prikazi info o generisanim dokumentima

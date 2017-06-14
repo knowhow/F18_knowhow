@@ -12,31 +12,29 @@
 
 #include "f18.ch"
 
-/*
 
-// pregled robe za dobavljaca
-FUNCTION PRobDob()
+FUNCTION kalk_magacin_pregled_robe_za_dobavljaca()
 
-   o_sifk()
-   o_sifv()
-  -- o_roba()
-   o_partner()
-   -- o_kalk()
+   //O_SIFK
+   //O_SIFV
+   //O_ROBA
+   //O_PARTN
+   //-- o_kalk()
 
-   SET RELATION TO idroba INTO ROBA
+   //SET RELATION TO idroba INTO ROBA
 
    cIdRoba    := Space( Len( ROBA->id ) )
-  -- cIdPartner := Space( Len( PARTN->id ) )
+   cIdPartner := Space( Len( PARTN->id ) )
    dOd := CToD( "" )
    dDo := Date()
    nPrSez := 0
 
    Box( "#PREGLED ROBE ZA DOBAVLJACA", 6, 70 )
-   @ m_x + 2, m_y + 2 SAY "Artikal (prazno-svi)" GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
-   @ m_x + 3, m_y + 2 SAY "Dobavljac           " GET cIdPartner VALID p_partner( @cIdPartner ) PICT "@!"
-   @ m_x + 4, m_y + 2 SAY "Za period od" GET dOd
+   @ m_x + 2, m_y + 2 SAY8 "Artikal (prazno-svi)" GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
+   @ m_x + 3, m_y + 2 SAY8 "Dobavljac           " GET cIdPartner VALID P_Partner( @cIdPartner ) PICT "@!"
+   @ m_x + 4, m_y + 2 SAY8 "Za period od" GET dOd
    @ m_x + 4, Col() + 2 SAY "do" GET dDo
-   @ m_x + 5, m_y + 2 SAY "Koliko prethodnih sezona gledati? (0/1/2/3)" GET nPrSez VALID nPrSez < 4 PICT "9"
+   //@ m_x + 5, m_y + 2 SAY "Koliko prethodnih sezona gledati? (0/1/2/3)" GET nPrSez VALID nPrSez < 4 PICT "9"
    READ
    ESC_BCR
    BoxC()
@@ -77,11 +75,11 @@ FUNCTION PRobDob()
          { "VPC", {|| nVPC     }, .F., "N-", 10, 2, 1, 5 } }
 
       ?? Space( gnLMarg )
-      ?? "KALK: Izvjestaj na dan", Date()
+      ??U "KALK: Izvještaj na dan", Date()
       ? Space( gnLMarg ); IspisFirme( "" )
       ?
-      ? "PREGLED ROBE OD DOBAVLJACA ZA PERIOD OD", dOD, "DO", dDo
-      ? "DOBAVLJAC:", cIdPartner, "-", PARTN->naz
+      ?U "PREGLED ROBE OD DOBAVLJAČA ZA PERIOD OD", dOD, "DO", dDo
+      ?U "DOBAVLJAČ:", cIdPartner, "-", PARTN->naz
       ?
       print_lista_2( aKol, {|| FSvakiPRD() },, gTabela,, ;
          ,, ;
@@ -189,9 +187,9 @@ FUNCTION FForPRD1()
 
    SKIP -1
 
-   IF nUlaz = 0 .AND. nPrSez > 0
-      lIzProsleGod := ImaUProsGod( nPrSez, cIdPartner, cIdR, @nNC )
-   ENDIF
+   //IF nUlaz = 0 .AND. nPrSez > 0
+  //    lIzProsleGod := ImaUProsGod( nPrSez, cIdPartner, cIdR, @nNC )
+  // ENDIF
 
    RETURN ( nUlaz <> 0 .OR. lIzProsleGod )
 
@@ -238,7 +236,7 @@ FUNCTION FForPRD2()
 
    RETURN .T.
 
-
+/*
 FUNCTION ImaUProsGod( nPrSez, cIdPartner, cIdRoba, nNC )
 
    LOCAL lIma
@@ -254,7 +252,7 @@ FUNCTION ImaUProsGod( nPrSez, cIdPartner, cIdRoba, nNC )
    dLastNab := CToD( "" )
    nArr := Select()
    FOR i := 1 TO nPrSez
-      cSez := Str( tekuca_sezona() -i, 4 )
+      cSez := Str( Val( tekuca_sezona() ) -i, 4 )
       cPom := "KALK" + cSez
       IF SELECT( cPom ) = 0
          SELECT 0

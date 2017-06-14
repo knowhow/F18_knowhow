@@ -323,15 +323,16 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       my_close_all_dbf()
 
-      aFaktAzuriraniDokumenti := fakt_azuriraj_dokument()
+      aFaktAzuriraniDokumenti := fakt_azuriraj_dokumente_u_pripremi()
 
       close_open_fakt_tabele()
 
-      IF lFiskalniStampati .AND. cIdTipDok $ "10#11" .AND. aFaktAzuriraniDokumenti <> NIL .AND. Len( aFaktAzuriraniDokumenti ) > 0
+      IF lFiskalniStampati .AND. cIdTipDok $ "10#11" .AND. aFaktAzuriraniDokumenti <> NIL .AND. Len( aFaktAzuriraniDokumenti ) == 0
 
-            cIdFirma := aFaktAzuriraniDokumenti[ 1, 1 ]
-            cIdTipDok := aFaktAzuriraniDokumenti[ 1, 2 ]
-            cBrDok := aFaktAzuriraniDokumenti[ 1, 3 ]
+            //cIdFirma := aFaktAzuriraniDokumenti[ 1, 1 ]
+            //cIdTipDok := aFaktAzuriraniDokumenti[ 1, 2 ]
+            //cBrDok := aFaktAzuriraniDokumenti[ 1, 3 ]
+
             //__fiscal_marker := .T.
 
             // IF fakt_pripr->( RecCount() ) <> 0
@@ -339,7 +340,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
             // RETURN DE_CONT
             // ENDIF
 
-            IF Pitanje(, "Odštampati račun na fiskalni printer ?", "D" ) == "N"
+            IF Pitanje(, "Odštampati račun " + cIdFirma + "-" + cIdTipDok + "-" + Alltrim( cBrDok ) +  " na fiskalni printer ?", "D" ) == "N"
                RETURN DE_REFRESH
             ENDIF
 
@@ -359,7 +360,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
                RETURN DE_REFRESH
             ENDIF
 
-            MsgO( "Štampa na fiskalni printer u toku..." )
+            MsgO( "Štampa " + cIdFirma + "-" + cIdTipDok + "-" + Alltrim( cBrDok ) + " na fiskalni printer u toku..." )
             fakt_fiskalni_racun( cIdFirma, cIdFirma, cBrDok, .F., _dev_params )
             MsgC()
 

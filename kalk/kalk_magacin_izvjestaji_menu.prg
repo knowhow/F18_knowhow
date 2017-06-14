@@ -37,10 +37,9 @@ FUNCTION kalk_izvjestaji_magacina()
    AAdd( _opcexe, {|| kalk_mag_promet_grupe_partnera() } )
 */
 
-/*
+
    AAdd( _opc, "7. pregled robe za dobavljača" )
-   AAdd( _opcexe, {|| ProbDob() } )
-  */
+   AAdd( _opcexe, {|| kalk_magacin_pregled_robe_za_dobavljaca() } )
 
    AAdd( _Opc, "8. trgovačka knjiga na veliko" )
    AAdd( _opcexe, {|| kalk_tkv() } )

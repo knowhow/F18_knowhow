@@ -17,10 +17,12 @@ STATIC s_cProg
 
 FUNCTION sha256sum( cFile )
 
-   LOCAL cCmd := s_cDirF18Util + s_cProg + " " + cFile
+   LOCAL cCmd
    LOCAL hOutput := hb_Hash()
 
    check_exe_download()
+   cCmd := s_cDirF18Util + s_cProg + " " + cFile
+
 
    IF ! File(  s_cDirF18Util + s_cProg )
       MsgBeep( "Error NO EXEC: " + s_cDirF18Util + s_cProg + "!? STOP" )

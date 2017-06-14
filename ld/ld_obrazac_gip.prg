@@ -517,7 +517,7 @@ STATIC FUNCTION _xml_export( cTip, mjesec, godina )
 
    LOCAL cMsg
    LOCAL _id_br, _naziv, _adresa, _mjesto
-   LOCAL _lokacija, _cre, _error, _a_files
+   LOCAL _lokacija, nMakeDir, _error, _a_files
    LOCAL _output_file := ""
 
    IF s_nXml0ili1 == 1
@@ -558,8 +558,8 @@ STATIC FUNCTION _xml_export( cTip, mjesec, godina )
 
    IF DirChange( _lokacija ) != 0
 
-      _cre := MakeDir ( _lokacija )
-      IF _cre != 0
+      nMakeDir := MakeDir ( _lokacija )
+      IF nMakeDir != 0
          MsgBeep( "kreiranje " + _lokacija + " neuspjesno ?!" )
          log_write( "dircreate err:" + _lokacija, 6 )
          RETURN .F.

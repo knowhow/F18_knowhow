@@ -74,10 +74,3 @@ STATIC FUNCTION check_exe_download()
    ENDIF
 
    RETURN .T.
-
-
-INIT PROCEDURE sha256_init()
-
-
-
-   RETURN

@@ -459,13 +459,13 @@ STATIC FUNCTION out_file_op_sys( dev_type )
 // -------------------------------------------------------
 // validacija path-a izlaznih fajlova
 // -------------------------------------------------------
-STATIC FUNCTION _valid_fiscal_path( cFiscalPath, create_dir )
+STATIC FUNCTION _valid_fiscal_path( cFiscalPath, lCreateDir )
 
    LOCAL _ok := .T.
-   LOCAL _cre
+   LOCAL nMakeDir
 
-   IF create_dir == NIL
-      create_dir := .T.
+   IF lCreateDir == NIL
+      lCreateDir := .T.
    ENDIF
 
    cFiscalPath := AllTrim( cFiscalPath )
@@ -477,9 +477,9 @@ STATIC FUNCTION _valid_fiscal_path( cFiscalPath, create_dir )
    ENDIF
 
    IF DirChange( cFiscalPath ) != 0
-      IF create_dir
-         _cre := MakeDir( cFiscalPath )
-         IF _cre != 0
+      IF lCreateDir
+         nMakeDir := MakeDir( cFiscalPath )
+         IF nMakeDir != 0
             MsgBeep( "Kreiranje " + cFiscalPath + " neuspjesno ?!#Provjerite putanju direktorija izlaznih fajlova." )
             _ok := .F.
          ENDIF

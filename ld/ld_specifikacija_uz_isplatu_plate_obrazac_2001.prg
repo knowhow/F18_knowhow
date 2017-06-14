@@ -1029,7 +1029,7 @@ STATIC FUNCTION download_template()
       f18_template_ver() + SLASH + s_cTemplateName
 
    IF DirChange( s_cDirF18Template ) != 0
-      IF ! MakeDir( s_cDirF18Template )
+      IF MakeDir( s_cDirF18Template ) != 0
          MsgBeep( "Kreiranje dir: " + s_cDirF18Template + " neuspješno?! STOP" )
          RETURN .F.
       ENDIF

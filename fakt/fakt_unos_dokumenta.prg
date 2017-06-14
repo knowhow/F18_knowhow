@@ -361,7 +361,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
             ENDIF
 
             MsgO( "Štampa " + cIdFirma + "-" + cIdTipDok + "-" + Alltrim( cBrDok ) + " na fiskalni printer u toku..." )
-            fakt_fiskalni_racun( cIdFirma, cIdFirma, cBrDok, .F., _dev_params )
+            fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, .F., _dev_params )
             MsgC()
 
             select_fakt_pripr()

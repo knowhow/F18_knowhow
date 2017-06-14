@@ -86,11 +86,10 @@ FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDevicePa
    SELECT fakt_doks
 
    IF postoji_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, _dev_drv )
-      MsgBeep( "Za dokument " + cIdTipDok + "-" + AllTrim( cBrDok ) + " već postoji izdat fiskalni račun !" )
+      MsgBeep( "Za dokument " + cIdFirma + "-" + cIdTipDok + "-" + AllTrim( cBrDok ) + " već postoji izdat fiskalni račun !" )
       RETURN _err_level
    ENDIF
 
-altd()
    nStorno := fakt_is_storno_dok( cIdFirma, cIdTipDok, cBrDok )
 
    IF  nStorno == -1 // error

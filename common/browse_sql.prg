@@ -272,13 +272,11 @@ STATIC FUNCTION browse_only( hParams, lIzOBJDB )
       Tb:SkipBlock := TBSkipBlock
    ENDIF
 
-   // Dodavanje kolona  za stampanje
-   FOR k := 1 TO Len( Kol )
+   FOR k := 1 TO Len( Kol ) // Dodavanje kolona  za stampanje
 
       i := AScan( Kol, k )
       IF i <> 0
 
-         // TODO: SQL vraca nil .and. (ImeKol[i,2] <> NIL)
          bShowField := ImeKol[ i, 2 ]
          TCol := TBColumnNew( ImeKol[ i, 1 ], bShowField )
 
@@ -548,7 +546,6 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
    DO CASE
 
    CASE Upper( Chr( nKey ) ) == "F"
-
 
       IF Alias() == "PARTN"
          Box( "#Unijeti dio šifre ili naziva ili mjesta", 1, 70 )
@@ -822,11 +819,10 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    cAlias := Lower( Alias() )
 
    IF lImaSemafor
-
-      IF !begin_sql_tran_lock_tables( { cAlias  } )
-         RETURN .F.
-      ENDIF
-
+      RETURN .F.
+      //IF !begin_sql_tran_lock_tables( { cAlias  } )
+      //   RETURN .F.
+      //ENDIF
    ENDIF
 
    GO TOP
@@ -838,11 +834,11 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
          hRec := dbf_get_rec()
          hRec[ Lower( cKolona ) ] := cTrazi
 
-         IF lImaSemafor
-            lOk := ( Alias(), hRec, 1, "CONT" )
-         ELSE
+        // IF lImaSemafor
+        //    lOk := ( Alias(), hRec, 1, "CONT" )
+        // ELSE
             dbf_update_rec( hRec )
-         ENDIF
+        // ENDIF
 
       ENDIF
 
@@ -854,6 +850,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
 
    ENDDO
 
+/*
    IF lImaSemafor
       IF lOk
          lRet := .T.
@@ -864,8 +861,9 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
          run_sql_query( "ROLLBACK" )
       ENDIF
    ELSE
+  */
       lRet := .T.
-   ENDIF
+  // ENDIF
 
    IF lRet
       dbSetOrder( nOrder )

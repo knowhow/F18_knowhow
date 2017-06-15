@@ -285,6 +285,20 @@ FUNCTION find_sifra_by_naz( cTable, cIdPart, cDjoker )
 
    RETURN !Eof()
 
+/*
+   find_field_by_id( "dopr", "01, "iznos" )
+*/
+FUNCTION find_field_by_id( cTable, cId, cField )
+
+   LOCAL cSqlQuery := "select " + cField + " from fmk." + cTable
+
+   cSqlQuery += " WHERE " + cField + "=" + sql_quote( cId )
+
+   IF !use_sql( cTable, cSqlQuery )
+      RETURN .F.
+   ENDIF
+
+   RETURN &cField
 
 
 STATIC FUNCTION sif_set_order( xIndex, cOrderTag ) // , fID_j )

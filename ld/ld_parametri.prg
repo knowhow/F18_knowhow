@@ -96,7 +96,7 @@ FUNCTION ld_get_params( hParams )
    gDaPorOl := fetch_metric( "ld_poreske_olaksice", NIL, gDaPorOl )
    gTipObr := fetch_metric( "ld_tip_obracuna_legacy", NIL, gTipObr )
    //gUnMjesec := fetch_metric( "ld_unos_mjeseca_kod_obracuna", NIL, gUnMjesec )
-   gVarSpec := fetch_metric( "ld_grupe_poslova_specifikacija", NIL, gVarSpec )
+   gcLdSpec2001GrupePoslovaAutoRucno := fetch_metric( "ld_grupe_poslova_specifikacija", NIL, gcLdSpec2001GrupePoslovaAutoRucno )
    gRadnFilter := fetch_metric( "ld_filter_radnici", NIL, gRadnFilter )
 
    // ----------
@@ -307,7 +307,7 @@ FUNCTION ld_set_obracun()
    @ form_x_koord() + nX, form_y_koord() + 2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ->" GET cVarPorOl WHEN gDaPorOl == "D"   PICT "99"
 
    nX += 2
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definise):" GET gVarSpec  VALID gVarSpec $ "12" PICT "9"
+   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definiše):" GET gcLdSpec2001GrupePoslovaAutoRucno  VALID gcLdSpec2001GrupePoslovaAutoRucno $ "12" PICT "9"
 
    nX  += 2
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Obrada sihtarice ?" GET gSihtarica VALID gSihtarica $ "DN" PICT "@!"
@@ -337,7 +337,7 @@ FUNCTION ld_set_obracun()
       set_metric( "ld_tip_obracuna_legacy", NIL, gTipObr )
       //set_metric( "ld_unos_mjeseca_kod_obracuna", NIL, gUnMjesec )
       set_metric( "ld_varijanta_porezne_olaksice", NIL, cVarPorOl )
-      set_metric( "ld_grupe_poslova_specifikacija", NIL, gVarSpec )
+      set_metric( "ld_grupe_poslova_specifikacija", NIL, gcLdSpec2001GrupePoslovaAutoRucno )
       set_metric( "ld_filter_radnici", NIL, gRadnFilter )
       set_metric( "ld_varijanta_obracuna", NIL, gVarObracun )
       set_metric( "ld_obrada_sihtarica", NIL, gSihtarica )

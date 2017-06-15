@@ -59,14 +59,15 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL dDatIspl
    LOCAL cMRad := fetch_metric( "ld_specifikacija_minuli_rad", NIL, cMRad )
    LOCAL cPrimDobra := fetch_metric( "ld_specifikacija_primanja_dobra", NIL, cPrimDobra )
-   LOCAL cDopr1 := fetch_metric( "ld_specifikacija_doprinos_1", NIL, "1X" )
-   LOCAL cDopr2 := fetch_metric( "ld_specifikacija_doprinos_2", NIL, "2X" )
-   LOCAL cDopr3 := fetch_metric( "ld_specifikacija_doprinos_3", NIL, "  " )
-   LOCAL cDopr5 := fetch_metric( "ld_specifikacija_doprinos_5", NIL, cDopr5 )
-   LOCAL cDopr6 := fetch_metric( "ld_specifikacija_doprinos_6", NIL, cDopr6 )
-   LOCAL cDopr7 := fetch_metric( "ld_specifikacija_doprinos_7", NIL, cDopr7 )
-   LOCAL cDDoprPio := fetch_metric( "ld_specifikacija_doprinos_pio", NIL, cDDoprPio )
-   LOCAL cDDoprZdr := fetch_metric( "ld_specifikacija_doprinos_zdr", NIL, cDDoprZdr )
+   LOCAL cDoprIz1 := fetch_metric( "ld_specifikacija_doprinos_1", NIL, "1X" )
+   LOCAL cDoprIz2 := fetch_metric( "ld_specifikacija_doprinos_2", NIL, "2X" )
+   LOCAL cDoprIz3 := fetch_metric( "ld_specifikacija_doprinos_3", NIL, "  " )
+
+   LOCAL cDoprNa1 := fetch_metric( "ld_specifikacija_doprinos_5", NIL, cDoprNa1 )
+   LOCAL cDoprNa2 := fetch_metric( "ld_specifikacija_doprinos_6", NIL, cDoprNa2 )
+   LOCAL cDoprNa3 := fetch_metric( "ld_specifikacija_doprinos_7", NIL, cDoprNa3 )
+   LOCAL cDodatniDoprPio := fetch_metric( "ld_specifikacija_doprinos_pio", NIL, cDodatniDoprPio )
+   LOCAL cDodatniDoprZdravstvo := fetch_metric( "ld_specifikacija_doprinos_zdr", NIL, cDodatniDoprZdravstvo )
    LOCAL cCOO1 := fetch_metric( "ld_specifikacija_c1", NIL, Space( 20 ) )
    LOCAL cCOO2 := fetch_metric( "ld_specifikacija_c2", NIL, Space( 20 ) )
    LOCAL cCOO3 := fetch_metric( "ld_specifikacija_c3", NIL, Space( 20 ) )
@@ -89,6 +90,19 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cDoprOO4
    LOCAL cDodDoprP
    LOCAL cDodDoprZ
+   LOCAL t
+   LOCAL nKoefLO
+   LOCAL nULicOdbitak
+   LOCAL nP77
+   LOCAL nP78
+   LOCAL nP79
+   LOCAL nPrDobra, nUNet, nNetoOsn, nUNetoOsnova
+   LOCAL nKoefDopr1X, nKoefDopr2X, nKoefDopr3X
+   LOCAL nKoefDopr5X, nKoefDopr6X, nKoefDopr7X
+   LOCAL nKoefDodatniDoprinosZdravstvo, nKoefDodatniDoprinosPio
+   LOCAL nDopr1X, nDopr2X, nDopr3X  // iznosi dopr IZ
+   LOCAL nDopr5X, nDopr6X, nDopr7X  // iznosi dopr NA
+
 
    download_template()
 
@@ -115,16 +129,16 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    dDatIspl := Date()
 
    DO WHILE .T.
-      Box(, 22 + iif( gVarSpec == "1", 0, 1 ), 75 )
+      Box(, 22 + iif( gcLdSpec2001GrupePoslovaAutoRucno == "1", 0, 1 ), 75 )
 
       @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " ;
          GET cUslovIdRj PICT "@!S15"
       @ form_x_koord() + 1, Col() + 1 SAY "Djelatnost" GET cRTipRada ;
          VALID val_tiprada( cRTipRada ) PICT "@!"
-      @ form_x_koord() + 1, Col() + 1 SAY "Spec.za RS" GET cRepSr ;
-         VALID cRepSr $ "DN" PICT "@!"
+      // @ form_x_koord() + 1, Col() + 1 SAY "Spec.za RS" GET cRepSr ;
+      // VALID cRepSr $ "DN" PICT "@!"
 
-      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Opstina stanov.(prazno-sve): " ;
+      @ form_x_koord() + 2, form_y_koord() + 2 SAY8 "Opština stan (prazno-sve): " ;
          GET cUslovOpstStan PICT "@!S20"
 
       IF ld_vise_obracuna()
@@ -152,17 +166,17 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       @ form_x_koord() + 9, form_y_koord() + 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" ;
          GET cPrimDobra  PICT "@!S20"
 
-      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Dopr.pio (iz)" GET cDopr1
-      @ form_x_koord() + 10, Col() + 2 SAY "Dopr.pio (na)" GET cDopr5
-      @ form_x_koord() + 11, form_y_koord() + 2 SAY "Dopr.zdr (iz)" GET cDopr2
-      @ form_x_koord() + 11, Col() + 2 SAY "Dopr.zdr (na)" GET cDopr6
+      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Dopr.pio (iz)" GET cDoprIz1
+      @ form_x_koord() + 10, Col() + 2 SAY "Dopr.pio (na)" GET cDoprNa1
+      @ form_x_koord() + 11, form_y_koord() + 2 SAY "Dopr.zdr (iz)" GET cDoprIz2
+      @ form_x_koord() + 11, Col() + 2 SAY "Dopr.zdr (na)" GET cDoprNa2
       @ form_x_koord() + 11, Col() + 1 SAY "Omjer dopr.zdr (%):" GET nOmjerZdravstvo PICT "999.99999"
-      @ form_x_koord() + 12, form_y_koord() + 2 SAY "Dopr.nez (iz)" GET cDopr3
-      @ form_x_koord() + 12, Col() + 2 SAY "Dopr.nez (na)" GET cDopr7
+      @ form_x_koord() + 12, form_y_koord() + 2 SAY "Dopr.nez (iz)" GET cDoprIz3
+      @ form_x_koord() + 12, Col() + 2 SAY "Dopr.nez (na)" GET cDoprNa3
       @ form_x_koord() + 12, Col() + 1 SAY "Omjer dopr.nez (%):" GET nOmjerNezaposlenost PICT "999.99999"
 
-      @ form_x_koord() + 13, form_y_koord() + 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
-      @ form_x_koord() + 14, form_y_koord() + 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"
+      @ form_x_koord() + 13, form_y_koord() + 2 SAY "Dod.dopr.pio" GET cDodatniDoprPio PICT "@S35"
+      @ form_x_koord() + 14, form_y_koord() + 2 SAY "Dod.dopr.zdr" GET cDodatniDoprZdravstvo PICT "@S35"
 
       @ form_x_koord() + 15, form_y_koord() + 2 SAY "Ost.obaveze: NAZIV                  USLOV"
       @ form_x_koord() + 16, form_y_koord() + 2 SAY " 1." GET cCOO1
@@ -194,14 +208,14 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    set_metric( "ld_firma_vrsta_djelatnosti", NIL, cFirmVD )
    set_metric( "ld_specifikacija_minuli_rad", NIL, cMRad )
    set_metric( "ld_specifikacija_primanja_dobra", NIL, cPrimDobra )
-   set_metric( "ld_specifikacija_doprinos_1", NIL, cDopr1 )
-   set_metric( "ld_specifikacija_doprinos_2", NIL, cDopr2 )
-   set_metric( "ld_specifikacija_doprinos_3", NIL, cDopr3 )
-   set_metric( "ld_specifikacija_doprinos_5", NIL, cDopr5 )
-   set_metric( "ld_specifikacija_doprinos_6", NIL, cDopr6 )
-   set_metric( "ld_specifikacija_doprinos_7", NIL, cDopr7 )
-   set_metric( "ld_specifikacija_doprinos_pio", NIL, cDDoprPio )
-   set_metric( "ld_specifikacija_doprinos_zdr", NIL, cDDoprZdr )
+   set_metric( "ld_specifikacija_doprinos_1", NIL, cDoprIz1 )
+   set_metric( "ld_specifikacija_doprinos_2", NIL, cDoprIz2 )
+   set_metric( "ld_specifikacija_doprinos_3", NIL, cDoprIz3 )
+   set_metric( "ld_specifikacija_doprinos_5", NIL, cDoprNa1 )
+   set_metric( "ld_specifikacija_doprinos_6", NIL, cDoprNa2 )
+   set_metric( "ld_specifikacija_doprinos_7", NIL, cDoprNa3 )
+   set_metric( "ld_specifikacija_doprinos_pio", NIL, cDodatniDoprPio )
+   set_metric( "ld_specifikacija_doprinos_zdr", NIL, cDodatniDoprZdravstvo )
    set_metric( "ld_specifikacija_c1", NIL, cCOO1 )
    set_metric( "ld_specifikacija_c2", NIL, cCOO2 )
    set_metric( "ld_specifikacija_c3", NIL, cCOO3 )
@@ -219,14 +233,12 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
    set_metric( "ld_specifikacija_rj", NIL, cUslovIdRj )
    set_metric( "ld_specifikacija_opcine", NIL, cUslovOpstStan )
-
    set_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
 
    ld_porezi_i_doprinosi_iz_sezone( nGodina, nMjesec )
 
 
    hRec := hb_Hash()
-
    oReport := YargReport():New( "ld_obr_2001", "xlsx" )
 
 
@@ -309,14 +321,14 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
 
    cObracun := Trim( cObracun )
-
+   AltD()
    cDoprOO1 := ld_izrezi_string( "D->", 2, @cNOO1 )
    cDoprOO2 := ld_izrezi_string( "D->", 2, @cNOO2 )
    cDoprOO3 := ld_izrezi_string( "D->", 2, @cNOO3 )
    cDoprOO4 := ld_izrezi_string( "D->", 2, @cNOO4 )
 
-   cDodDoprP := ld_izrezi_string( "D->", 2, @cDDoprPio )
-   cDodDoprZ := ld_izrezi_string( "D->", 2, @cDDoprZdr )
+   cDodDoprP := ld_izrezi_string( "D->", 2, @cDodatniDoprPio )
+   cDodDoprZ := ld_izrezi_string( "D->", 2, @cDodatniDoprZdravstvo )
 
    ld_pozicija_parobr( nMjesec, nGodina, cObracun, Left( cUslovIdRj, 2 ) )
 
@@ -369,13 +381,13 @@ FUNCTION ld_specifikacija_plate_obr_2001()
          LOOP
       ENDIF
 
-      IF cRepSr == "N"
+      IF cRepSr == "N" // preskoci RS
          IF radnik_iz_rs( radn->idopsst, radn->idopsrad )
             SELECT ld
             SKIP
             LOOP
          ENDIF
-      ELSE
+      ELSE  // preskoci FBiH
          IF !radnik_iz_rs( radn->idopsst, radn->idopsrad )
             SELECT ld
             SKIP
@@ -392,8 +404,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
       nKoefLO := ld->ulicodb
       nULicOdbitak += nKoefLO
-      nP77 := IF( !Empty( cMRad ), LD->&( "I" + cMRad ), 0 )
-      nP78 := IF( !Empty( cPorOl ), LD->&( "I" + cPorOl ), 0 )
+      nP77 := iif( !Empty( cMRad ), LD->&( "I" + cMRad ), 0 )
+      nP78 := iif( !Empty( cPorOl ), LD->&( "I" + cPorOl ), 0 )
       nP79 := 0
 
       IF !Empty( cBolPr ) .OR. !Empty( cBolPr )
@@ -408,7 +420,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
       nP80 := nP81 := nP82 := nP83 := nP84 := nP85 := 0
 
-      IF LD->uneto > 0  // zbog npr.bol.preko 42 dana koje ne ide u neto
+      IF LD->uneto > 0  // zbog bol.preko 42 dana koje ne ide u neto
          IF Len( aPom ) < 1 .OR. ( nPom := AScan( aPom, {| x | x[ 1 ] == LD->brbod } ) ) == 0
             AAdd( aPom, { LD->brbod, 1, nP77, LD->uneto } )
          ELSE
@@ -419,6 +431,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
             aPom[ nPom, 4 ] += LD->uneto // neto
          ENDIF
       ENDIF
+
 
       nPrDobra := 0
       IF !Empty( cPrimDobra )
@@ -435,7 +448,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       nNetoOsn := Max( ld->uneto, PAROBR->prosld * gPDLimit / 100 )
       nUNetoOsnova += nNetoOsn
 
-      // prvo doprinosi i bruto osnova ....
+      // prvo doprinosi i bruto osnova
       nPojBrOsn := ld_get_bruto_osnova( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
 
       // pojedinacni bruto - dobra ili usluge
@@ -456,7 +469,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       nMBrutoOsnova += nMPojBrOsn
 
       // reset matrice
-      _a_benef := {}
+      aBeneficirani := {}
 
       // beneficirani radnici
       IF is_radn_k4_bf_ide_u_benef_osnovu()
@@ -467,9 +480,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
          nPojBrBenef := ld_get_bruto_osnova( nNetoOsn - IF( !Empty( gBFForm ), &gBFForm, 0 ), cRTR, nKoefLO, nRSpr_koef )
 
          nBrutoOsBenef += nPojBrBenef
-
          _benef_st := BenefStepen()
-         add_to_a_benef( @_a_benef, AllTrim( radn->k3 ), _benef_st, nPojBrBenef )
+         add_to_a_benef( @aBeneficirani, AllTrim( radn->k3 ), _benef_st, nPojBrBenef )
 
          gBFForm := cFFtmp
 
@@ -477,10 +489,11 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
       nPom := nMBrutoOsnova
 
-      nkDopZX := 0
-      nkDopPX := 0
+      nKoefDodatniDoprinosZdravstvo := 0
+      nKoefDodatniDoprinosPio := 0
 
-      UzmiIzIni( cIniName, 'Varijable', 'U017', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+
+      // UzmiIzIni( cIniName, 'Varijable', 'U017', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
       select_o_dopr()
       GO TOP
@@ -500,19 +513,19 @@ FUNCTION ld_specifikacija_plate_obr_2001()
          ENDIF
 
          IF ID $ cDodDoprP
-            nkDopPX += iznos
+            nKoefDodatniDoprinosPio += iznos
             IF !Empty( field->idkbenef )
-               nDodDoprP += ROUND2( Max( DLIMIT, get_benef_osnovica( _a_benef, field->idkbenef ) * iznos / 100 ), gZaok2 )
+               nDodDoprP += ROUND2( Max( DLIMIT, get_benef_osnovica( aBeneficirani, field->idkbenef ) * iznos / 100 ), gZaok2 )
             ELSE
                nDodDoprP += ROUND2( Max( DLIMIT, nBOO * iznos / 100 ), gZaok2 )
             ENDIF
          ENDIF
 
          IF ID $ cDodDoprZ
-            nkDopZX += iznos
+            nKoefDodatniDoprinosZdravstvo += iznos
             IF !Empty( field->idkbenef )
                // beneficirani
-               nDodDoprZ += ROUND2( Max( DLIMIT, get_benef_osnovica( _a_benef, field->idkbenef ) * iznos / 100 ), gZaok2 )
+               nDodDoprZ += ROUND2( Max( DLIMIT, get_benef_osnovica( aBeneficirani, field->idkbenef ) * iznos / 100 ), gZaok2 )
             ELSE
                nDodDoprZ += ROUND2( Max( DLIMIT, nBOO * iznos / 100 ), gZaok2 )
             ENDIF
@@ -522,75 +535,96 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
       ENDDO
 
-      nkD1X := Ocitaj( F_DOPR, cDopr1, "iznos", .T. )
-      nkD2X := Ocitaj( F_DOPR, cDopr2, "iznos", .T. )
-      nkD3X := Ocitaj( F_DOPR, cDopr3, "iznos", .T. )
-      nkD5X := Ocitaj( F_DOPR, cDopr5, "iznos", .T. )
-      nkD6X := Ocitaj( F_DOPR, cDopr6, "iznos", .T. )
-      nkD7X := Ocitaj( F_DOPR, cDopr7, "iznos", .T. )
 
-      nPom := nKD1X + nKD2X + nKD3X
-      UzmiIzIni( cIniName, 'Varijable', 'D11B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
-      nPom := nKD1X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_1B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
-      nPom := nKD2X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_2B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
-      nPom := nKD3X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_3B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
+      nKoefDopr1X := find_field_by_id( "dopr", cDoprIz1, "iznos" )
+      nKoefDopr2X := find_field_by_id( "dopr", cDoprIz2, "iznos" )
+      nKoefDopr3X := find_field_by_id( "dopr", cDoprIz3, "iznos" )
+      nKoefDopr5X := find_field_by_id( "dopr", cDoprNa1, "iznos" )
 
-      nPom := nKD5X + nKD6X + nKD7X + nkDopZX + nkDopPX
-      UzmiIzIni( cIniName, 'Varijable', 'D12B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
-      nPom := nKD5X
-      UzmiIzIni( cIniName, 'Varijable', 'D12_1B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
-      nPom := nKD6X
-      UzmiIzIni( cIniName, 'Varijable', 'D12_2B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
-      nPom := nKD7X
-      UzmiIzIni( cIniName, 'Varijable', 'D12_3B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
+      nKoefDopr6X := find_field_by_id( "dopr", cDoprNa2, "iznos" )
+      nKoefDopr7X := find_field_by_id( "dopr", cDoprNa3, "iznos" )
 
-      nPom := nkDopPX
-      UzmiIzIni( cIniName, 'Varijable', 'D12_4B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
+      nPom := nKoefDopr1X + nKoefDopr2X + nKoefDopr3X
 
-      nPom := nkDopZX
-      UzmiIzIni( cIniName, 'Varijable', 'D12_5B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
 
-      nDopr1X := round2( nMBrutoOsnova * nkD1X / 100, gZaok2 )
-      nDopr2X := round2( nMBrutoOsnova * nkD2X / 100, gZaok2 )
-      nDopr3X := round2( nMBrutoOsnova * nkD3X / 100, gZaok2 )
-      nDopr5X := round2( nMBrutoOsnova * nkD5X / 100, gZaok2 )
-      nDopr6X := round2( nMBrutoOsnova * nkD6X / 100, gZaok2 )
-      nDopr7X := round2( nMBrutoOsnova * nkD7X / 100, gZaok2 )
+      // UzmiIzIni( cIniName, 'Varijable', 'D11B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
 
-      nPojDoprIZ := round2( ( nMPojBrOsn * nkD1X / 100 ), gZaok2 ) + ;
-         round2( ( nMPojBrOsn * nkD2X / 100 ), gZaok2 ) + ;
-         round2( ( nMPojBrOsn * nkD3X / 100 ), gZaok2 )
+      nPom := nKoefDopr1X
+      // UzmiIzIni( cIniName, 'Varijable', 'D11_1B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
+      hRec[ "stopa_16" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // PIO iz
 
-      nPom := nDopr1X + nDopr2X + nDopr3X
 
-      nUkDoprIZ := nPom
+      nPom := nKoefDopr2X
+      // UzmiIzIni( cIniName, 'Varijable', 'D11_2B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
+      hRec[ "stopa_17" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // zdravstvo iz
 
-      UzmiIzIni( cIniName, 'Varijable', 'D11I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
-      nPom := nDopr1X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_1I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
-      nPom := nDopr2X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_2I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
-      nPom := nDopr3X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_3I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      nPom := nKoefDopr3X
+      // UzmiIzIni( cIniName, 'Varijable', 'D11_3B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
+      hRec[ "stopa_18" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezaposlenost iz
 
-      nPom := nDopr5X + nDopr6X + nDopr7X + nDodDoprP + nDodDoprZ
-      UzmiIzIni( cIniName, 'Varijable', 'D12I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
-      nPom := nDopr5X
-      UzmiIzIni( cIniName, 'Varijable', 'D12_1I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
-      nPom := nDopr6X
-      UzmiIzIni( cIniName, 'Varijable', 'D12_2I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
-      nPom := nDopr7X
-      UzmiIzIni( cIniName, 'Varijable', 'D12_3I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+
+      nPom := nKoefDopr5X
+      // UzmiIzIni( cIniName, 'Varijable', 'D12_1B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
+      hRec[ "stopa_20" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // PIO na
+
+      nPom := nKoefDopr6X
+      // UzmiIzIni( cIniName, 'Varijable', 'D12_2B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
+      hRec[ "stopa_21" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // zdrav na
+
+      nPom := nKoefDopr7X
+      // UzmiIzIni( cIniName, 'Varijable', 'D12_3B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
+      hRec[ "stopa_22" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezap na
+
+      nPom := nKoefDopr5X + nKoefDopr6X + nKoefDopr7X + nKoefDodatniDoprinosZdravstvo + nKoefDodatniDoprinosPio
+      // UzmiIzIni( cIniName, 'Varijable', 'D12B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
+
+
+      nPom := nKoefDodatniDoprinosPio
+      // UzmiIzIni( cIniName, 'Varijable', 'D12_4B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
+      hRec[ "stopa_23" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // dodatni PIO i invalid
+
+      nPom := nKoefDodatniDoprinosZdravstvo
+      // UzmiIzIni( cIniName, 'Varijable', 'D12_5B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
+      hRec[ "stopa_24" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // dodatni zdravstvo
+
+
+      nDopr1X := round2( nMBrutoOsnova * nKoefDopr1X / 100, gZaok2 ) // iznos pio iz
+      // UzmiIzIni( cIniName, 'Varijable', 'D11_1I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      hRec[ "iznos_16" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr1X, cIsplata ), 16, cPictureIznos )
+
+      nDopr2X := round2( nMBrutoOsnova * nKoefDopr2X / 100, gZaok2 ) // iznos zdr iz
+      hRec[ "iznos_17" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr2X, cIsplata ), 16, cPictureIznos )
+
+      nDopr3X := round2( nMBrutoOsnova * nKoefDopr3X / 100, gZaok2 ) // iznos nez iz
+      hRec[ "iznos_18" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr3X, cIsplata ), 16, cPictureIznos )
+
+      nUkDoprIZ := nDopr1X + nDopr2X + nDopr3X
+      hRec[ "iznos_19" ] := FormNum2( isplata_dopr_kontrola_iznosa( nUkDoprIZ, cIsplata ), 16, cPictureIznos )
+
+      // UzmiIzIni( cIniName, 'Varijable', 'D11I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+
+      nDopr5X := round2( nMBrutoOsnova * nKoefDopr5X / 100, gZaok2 )  // iznos pio na
+      hRec[ "iznos_20" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr5X, cIsplata ), 16, cPictureIznos )
+
+      nDopr6X := round2( nMBrutoOsnova * nKoefDopr6X / 100, gZaok2 )
+      hRec[ "iznos_21" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr6X, cIsplata ), 16, cPictureIznos )
+
+      nDopr7X := round2( nMBrutoOsnova * nKoefDopr7X / 100, gZaok2 )
+      hRec[ "iznos_22" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr7X, cIsplata ), 16, cPictureIznos )
 
       // dodatni doprinos zdr i pio
-      nPom := nDodDoprP
-      UzmiIzIni( cIniName, 'Varijable', 'D12_4I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      hRec[ "iznos_23" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDodDoprP, cIsplata ), 16, cPictureIznos )
+      hRec[ "iznos_24" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDodDoprZ, cIsplata ), 16, cPictureIznos )
 
-      nPom := nDodDoprZ
-      UzmiIzIni( cIniName, 'Varijable', 'D12_5I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+
+      nPojDoprIZ := round2( ( nMPojBrOsn * nKoefDopr1X / 100 ), gZaok2 ) + ;
+         round2( ( nMPojBrOsn * nKoefDopr2X / 100 ), gZaok2 ) + ;
+         round2( ( nMPojBrOsn * nKoefDopr3X / 100 ), gZaok2 )
+
+
+      nPom := nDopr5X + nDopr6X + nDopr7X + nDodDoprP + nDodDoprZ
+      //UzmiIzIni( cIniName, 'Varijable', 'D12I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      hRec[ "iznos_25" ] := FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, cPictureIznos )
 
       nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
 
@@ -616,7 +650,6 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       DO WHILE !Eof()
 
          PozicOps( POR->poopst )
-
          IF !ImaUOp( "POR", POR->id )
             SKIP 1
             LOOP
@@ -668,7 +701,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
    ASort( aPom, , , {| x, y | x[ 1 ] > y[ 1 ] } )
    FOR i := 1 TO Len( aPom )
-      IF gVarSpec == "1"
+      IF gcLdSpec2001GrupePoslovaAutoRucno == "1"
          IF i <= nGrupaPoslova
             aSpec[ i, 1 ] := aPom[ i, 1 ]; aSpec[ i, 2 ] := aPom[ i, 2 ]; aSpec[ i, 3 ] := aPom[ i, 3 ]
             aSpec[ i, 4 ] := aPom[ i, 4 ]
@@ -676,7 +709,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
             aSpec[ nGrupaPoslova, 2 ] += aPom[ i, 2 ]; aSpec[ nGrupaPoslova, 3 ] += aPom[ i, 3 ]
             aSpec[ nGrupaPoslova, 4 ] += aPom[ i, 4 ]
          ENDIF
-      ELSE     // gVarSpec=="2"
+      ELSE     // gcLdSpec2001GrupePoslovaAutoRucno=="2"
          DO CASE
          CASE aPom[ i, 1 ] <= nLimG5
             aSpec[ 5, 1 ] := aPom[ i, 1 ]; aSpec[ 5, 2 ] += aPom[ i, 2 ]
@@ -700,22 +733,23 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    NEXT
 
    // ukupno radnika
-   UzmiIzIni( cIniName, 'Varijable', 'U016', Str( nURadnika, 0 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'U016', Str( nURadnika, 0 ), 'WRITE' )
+
    // ukupno neto
-   UzmiIzIni( cIniName, 'Varijable', 'U018', FormNum2( nUNETO, 16, gPici2 ), 'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', 'D13N', " ", 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'U018', FormNum2( nUNETO, 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'D13N', " ", 'WRITE' )
 
    select_o_por()
    SEEK "01"
 
-   UzmiIzIni( cIniName, 'Varijable', 'D13_1N', FormNum2( POR->IZNOS, 16, gpici3 ) + "%", 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D13_1N', FormNum2( POR->IZNOS, 16, cPictureIznos ) + "%", 'WRITE' )
 
    nPom = nPorNaPlatu - nPorOlaksice
-   UzmiIzIni( cIniName, 'Varijable', 'D13I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D13I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
    nPom = nPorNaPlatu
-   UzmiIzIni( cIniName, 'Varijable', 'D13_1I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D13_1I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
    nPom := nPorOlaksice
-   UzmiIzIni( cIniName, 'Varijable', 'D13_2I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D13_2I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
    nPom := nBolPreko
    UzmiIzIni( cIniName, 'Varijable', 'N17I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
@@ -736,6 +770,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       // samo doprinosi
       nPom := nDopr1X + nDopr2x + nDopr3x + nDopr5x + nDopr6x + nDopr7x + nDodDoprP + nDodDoprZ
 
+
    ELSEIF cIsplata == "C"
       // samo porez
       nPom := nPorNaPlatu + nPorezOstali - nPorOlaksice + nOstaleOBaveze
@@ -743,74 +778,74 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    ENDIF
 
    // ukupno obaveze
-   UzmiIzIni( cIniName, 'Varijable', 'U15I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'U15I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
    nPom := nMBrutoOsnova - nBrutoDobra
    nUUNR := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'UNR', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'UNR', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
    // ukupno ostalo
    nPom := nBrutoDobra
    nUUsluge := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'UNUS', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'UNUS', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
    // ukupno ostalo
    nPom := nUUNR + nUUsluge
-   UzmiIzIni( cIniName, 'Varijable', 'UNUK', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'UNUK', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
    // ukupno placa_i_obaveze = obaveze + ukupno_neto + poreskeolaksice
    nPom := nPom + nUNETO + nPorOlaksice
-   UzmiIzIni( cIniName, 'Varijable', 'U16I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'U16I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
    // obustave
    nPom := nObustave
-   UzmiIzIni( cIniName, 'Varijable', 'O18I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'O18I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
    // neto za isplatu  = neto  + nPorOlaksice
    // -----------------------------------------
    // varijanta D - specificno za FEB jer treba da izbazi bol.preko.42
    // dana iz neta za isplatu na specifikaciji, vec je uracunat u netu.
 
-   IF my_get_from_ini( 'LD', 'BolPreko42IzbaciIz19', 'N', KUMPATH ) == 'D'
-      nPom := nUNETO + nPorOlaksice - nObustave
-   ELSE
+   //IF my_get_from_ini( 'LD', 'BolPreko42IzbaciIz19', 'N', KUMPATH ) == 'D'
+  //    nPom := nUNETO + nPorOlaksice - nObustave
+   //ELSE
       nPom := nUNETO + nBolPreko + nPorOlaksice - nObustave
-   ENDIF
+   //ENDIF
 
-   UzmiIzIni( cIniName, 'Varijable', 'N19I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'N19I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
    // PIO iz + PIO na placu
    nPom := nDopr1x + nDopr5x + nDodDoprP
-   UzmiIzIni( cIniName, 'Varijable', 'D20', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+  // UzmiIzIni( cIniName, 'Varijable', 'D20', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // zdravsveno iz + zdravstveno na placu
    nPom := nDopr2x + nDopr6x + nDodDoprZ
    nPom2 := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'D21', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+  // UzmiIzIni( cIniName, 'Varijable', 'D21', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // zdravstvo za RS
    nPom := nPom2 * ( nOmjerZdravstvo / 100 )
    nD21a := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'D21a', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'D21a', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // nezaposlenost iz + nezaposlenost na placu
    nPom := nDopr3x + nDopr7x
    nPom2 := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'D22', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'D22', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // nezaposlenost za RS
    nPom := nPom2 * ( nOmjerNezaposlenost / 100 )
    nD22a := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'D22a', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'D22a', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    nPom = nPorNaPlatu - nPorOlaksice
-   UzmiIzIni( cIniName, 'Varijable', 'P23', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'P23', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    nPom = nPorezOstali
-   UzmiIzIni( cIniName, 'Varijable', 'O14_1I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'O14_1I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    nPom = nOstaleObaveze + nPorezOstali
-   UzmiIzIni( cIniName, 'Varijable', 'O14I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   //UzmiIzIni( cIniName, 'Varijable', 'O14I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // ukupno za RS obaveze
 
@@ -828,31 +863,19 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
    ENDIF
 
-   UzmiIzIni( cIniName, 'Varijable', 'URSOB', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+   my_close_all_dbf()
+   hb_cdpSelect( "SL852" )
+   FOR EACH cKey in hRec:keys()
+      IF ValType( hRec[ cKey ] ) == "C"
+         hRec[ cKey ] := to_xml_encoding (  hRec[ cKey ] ) // hRec[ cKey ] je cp852 string
+      ENDIF
+   NEXT
 
-   IniRefresh()
 
    my_close_all_dbf()
+   oReport:aRecords := { hRec }
+   oReport:run()
 
-   IF LastKey() != K_ESC
-
-      cSpecRtm := "spec"
-
-      IF cRepSr == "D"
-         cSpecRtm := cSpecRtm + "rs"
-      ELSE
-         cSpecRtm := cSpecRtm + "b"
-      ENDIF
-
-      IF cRTipRada $ "I#N"
-         cRTipRada := ""
-      ENDIF
-
-      // "SPECBN", "SPECBR" ...
-      // cSpecRtm := cSpecRtm + cRTipRada
-
-
-   ENDIF
 
 
 /* -------------------------------------
@@ -933,30 +956,30 @@ FUNCTION ld_specifikacija_plate_obr_2001()
          SKIP 1
       ENDDO
 
-      nkD1X := get_dopr( cDopr1, "S" )
-      nkD2X := get_dopr( cDopr2, "S" )
-      nkD3X := get_dopr( cDopr3, "S" )
+      nKoefDopr1X := get_dopr( cDoprIz1, "S" )
+      nKoefDopr2X := get_dopr( cDoprIz2, "S" )
+      nKoefDopr3X := get_dopr( cDoprIz3, "S" )
 
 
-      nPom := nKD1X // stope na bruto
+      nPom := nKoefDopr1X // stope na bruto
       hRec[ "stopa_19" ] := FormNum2( nPom, 16, cPictureStopa ) + "%"
 
-      nPom := nKD2X
+      nPom := nKoefDopr2X
       hRec[ "stopa_20" ] := FormNum2( nPom, 16, cPictureStopa ) + "%"
 
-      nPom := nKD3X
+      nPom := nKoefDopr3X
       hRec[ "stopa_21" ] := FormNum2( nPom, 16, cPictureStopa ) + "%"
 
-      nPom := nKD1X + nKD2X + nKD3X
+      nPom := nKoefDopr1X + nKoefDopr2X + nKoefDopr3X
       hRec[ "stopa_22" ] := FormNum2( nPom, 16, cPictureStopa ) + "%"
 
-      nDopr1X := round2( nBrutoOsnova * nKD1X / 100, gZaok2 )
-      nDopr2X := round2( nBrutoOsnova * nKD2X / 100, gZaok2 )
-      nDopr3X := round2( nBrutoOsnova * nKD3X / 100, gZaok2 )
+      nDopr1X := round2( nBrutoOsnova * nKoefDopr1X / 100, gZaok2 )
+      nDopr2X := round2( nBrutoOsnova * nKoefDopr2X / 100, gZaok2 )
+      nDopr3X := round2( nBrutoOsnova * nKoefDopr3X / 100, gZaok2 )
 
-      nPojDoprIZ := round2( ( nPojBrOsn * nkD1X / 100 ), gZaok2 ) + ;
-         round2( ( nPojBrOsn * nkD2X / 100 ), gZaok2 ) + ;
-         round2( ( nPojBrOsn * nkD3X / 100 ), gZaok2 )
+      nPojDoprIZ := round2( ( nPojBrOsn * nKoefDopr1X / 100 ), gZaok2 ) + ;
+         round2( ( nPojBrOsn * nKoefDopr2X / 100 ), gZaok2 ) + ;
+         round2( ( nPojBrOsn * nKoefDopr3X / 100 ), gZaok2 )
 
 
       nPom := nDopr1X // iznos doprinosa

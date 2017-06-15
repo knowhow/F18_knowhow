@@ -180,7 +180,7 @@ FUNCTION ld_specifikacija_plate_2001_stari()
    dDatIspl := Date()
 
    DO WHILE .T.
-      Box(, 22 + IF( gVarSpec == "1", 0, 1 ), 75 )
+      Box(, 22 + IF( gcLdSpec2001GrupePoslovaAutoRucno == "1", 0, 1 ), 75 )
 
       @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " ;
          GET qqIdRJ PICT "@!S15"
@@ -569,29 +569,29 @@ FUNCTION ld_specifikacija_plate_2001_stari()
 
       nUkDoprIZ := nPom
 
-      UzmiIzIni( cIniName, 'Varijable', 'D11I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      UzmiIzIni( cIniName, 'Varijable', 'D11I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
       nPom := nDopr1X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_1I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      UzmiIzIni( cIniName, 'Varijable', 'D11_1I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
       nPom := nDopr2X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_2I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      UzmiIzIni( cIniName, 'Varijable', 'D11_2I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
       nPom := nDopr3X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_3I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      UzmiIzIni( cIniName, 'Varijable', 'D11_3I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
       nPom := nDopr5X + nDopr6X + nDopr7X + nDodDoprP + nDodDoprZ
-      UzmiIzIni( cIniName, 'Varijable', 'D12I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      UzmiIzIni( cIniName, 'Varijable', 'D12I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
       nPom := nDopr5X
-      UzmiIzIni( cIniName, 'Varijable', 'D12_1I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      UzmiIzIni( cIniName, 'Varijable', 'D12_1I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
       nPom := nDopr6X
-      UzmiIzIni( cIniName, 'Varijable', 'D12_2I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      UzmiIzIni( cIniName, 'Varijable', 'D12_2I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
       nPom := nDopr7X
-      UzmiIzIni( cIniName, 'Varijable', 'D12_3I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      UzmiIzIni( cIniName, 'Varijable', 'D12_3I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
       // dodatni doprinos zdr i pio
       nPom := nDodDoprP
-      UzmiIzIni( cIniName, 'Varijable', 'D12_4I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      UzmiIzIni( cIniName, 'Varijable', 'D12_4I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
       nPom := nDodDoprZ
-      UzmiIzIni( cIniName, 'Varijable', 'D12_5I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+      UzmiIzIni( cIniName, 'Varijable', 'D12_5I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
       nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
 
@@ -669,7 +669,7 @@ FUNCTION ld_specifikacija_plate_2001_stari()
 
    ASort( aPom, , , {| x, y | x[ 1 ] > y[ 1 ] } )
    FOR i := 1 TO Len( aPom )
-      IF gVarSpec == "1"
+      IF gcLdSpec2001GrupePoslovaAutoRucno == "1"
          IF i <= nGrupaPoslova
             aSpec[ i, 1 ] := aPom[ i, 1 ]; aSpec[ i, 2 ] := aPom[ i, 2 ]; aSpec[ i, 3 ] := aPom[ i, 3 ]
             aSpec[ i, 4 ] := aPom[ i, 4 ]
@@ -677,7 +677,7 @@ FUNCTION ld_specifikacija_plate_2001_stari()
             aSpec[ nGrupaPoslova, 2 ] += aPom[ i, 2 ]; aSpec[ nGrupaPoslova, 3 ] += aPom[ i, 3 ]
             aSpec[ nGrupaPoslova, 4 ] += aPom[ i, 4 ]
          ENDIF
-      ELSE     // gVarSpec=="2"
+      ELSE     // gcLdSpec2001GrupePoslovaAutoRucno=="2"
          DO CASE
          CASE aPom[ i, 1 ] <= nLimG5
             aSpec[ 5, 1 ] := aPom[ i, 1 ]; aSpec[ 5, 2 ] += aPom[ i, 2 ]
@@ -712,11 +712,11 @@ FUNCTION ld_specifikacija_plate_2001_stari()
    UzmiIzIni( cIniName, 'Varijable', 'D13_1N', FormNum2( POR->IZNOS, 16, gpici3 ) + "%", 'WRITE' )
 
    nPom = nPorNaPlatu - nPorOlaksice
-   UzmiIzIni( cIniName, 'Varijable', 'D13I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D13I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
    nPom = nPorNaPlatu
-   UzmiIzIni( cIniName, 'Varijable', 'D13_1I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D13_1I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
    nPom := nPorOlaksice
-   UzmiIzIni( cIniName, 'Varijable', 'D13_2I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D13_2I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
    nPom := nBolPreko
    UzmiIzIni( cIniName, 'Varijable', 'N17I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
 
@@ -782,36 +782,36 @@ FUNCTION ld_specifikacija_plate_2001_stari()
 
    // PIO iz + PIO na placu
    nPom := nDopr1x + nDopr5x + nDodDoprP
-   UzmiIzIni( cIniName, 'Varijable', 'D20', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D20', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // zdravsveno iz + zdravstveno na placu
    nPom := nDopr2x + nDopr6x + nDodDoprZ
    nPom2 := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'D21', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D21', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // zdravstvo za RS
    nPom := nPom2 * ( _omjer_zdravstvo / 100 )
    nD21a := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'D21a', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D21a', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // nezaposlenost iz + nezaposlenost na placu
    nPom := nDopr3x + nDopr7x
    nPom2 := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'D22', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D22', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // nezaposlenost za RS
    nPom := nPom2 * ( _omjer_nezap / 100 )
    nD22a := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'D22a', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'D22a', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    nPom = nPorNaPlatu - nPorOlaksice
-   UzmiIzIni( cIniName, 'Varijable', 'P23', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'P23', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    nPom = nPorezOstali
-   UzmiIzIni( cIniName, 'Varijable', 'O14_1I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'O14_1I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    nPom = nOstaleObaveze + nPorezOstali
-   UzmiIzIni( cIniName, 'Varijable', 'O14I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'O14I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // ukupno za RS obaveze
 
@@ -949,28 +949,19 @@ FUNCTION ld_iz_koje_opcine_je_radnik( cIdRadn )
 
 
 
-// ---------------------------------------------
-// isplata doprinosa, kontrola iznosa
-// ---------------------------------------------
-FUNCTION _ispl_d( nIzn, cIspl )
+FUNCTION isplata_dopr_kontrola_iznosa( nIzn, cIspl )
 
    IF cIspl $ "AB"
       RETURN nIzn
-   ELSE
-      RETURN 0
    ENDIF
 
-   RETURN .T.
+   RETURN 0
 
-// ---------------------------------------------
-// isplata poreza, kontrola iznosa
-// ---------------------------------------------
-FUNCTION _ispl_p( nIzn, cIspl )
+
+FUNCTION isplata_poreza_kontrola_iznosa( nIzn, cIspl )
 
    IF cIspl $ "AC"
       RETURN nIzn
-   ELSE
-      RETURN 0
    ENDIF
 
-   RETURN .T.
+   RETURN 0

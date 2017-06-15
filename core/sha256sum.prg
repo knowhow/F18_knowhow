@@ -39,7 +39,7 @@ STATIC FUNCTION check_exe_download()
    LOCAL cPlatform
    LOCAL cUrl
    LOCAL cZip
-   LOCAL cVersion := "1.0.0"
+   LOCAL cVersion := F18_UTIL_VER
 
    IF s_cDirF18Util == NIL
       s_cDirF18Util := ExePath() + "F18_util" + SLASH
@@ -55,7 +55,7 @@ STATIC FUNCTION check_exe_download()
       cPlatform := "linux_386"
    ENDCASE
 
-   cUrl := "https://github.com/hernad/F18_util/releases/download/"
+   cUrl := F18_UTIL_URL_BASE
    cUrl += cVersion + "/F18_sha256sum_" + cPlatform + ".zip"
 
    IF DirChange( s_cDirF18Util ) != 0

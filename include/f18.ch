@@ -67,7 +67,8 @@
 #define MIN_LAST_REFRESH_SEC 10
 
 
-
+#define F18_UTIL_VER  "1.0.0"
+#define F18_UTIL_URL_BASE "https://github.com/hernad/F18_util/releases/download/"
 
 
 #define INFO_MESSAGES_LENGTH       40

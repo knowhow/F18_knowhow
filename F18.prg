@@ -34,6 +34,8 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    set_screen_dimensions()
    //MsgBeep( sha256sum( hb_ProgName() ) )
+   //f18_editor( "/tmp/test.txt" )
+
 
    naslovni_ekran_splash_screen( "F18", f18_ver() )
 

@@ -41,6 +41,7 @@ METHOD YargReport:New( cName, cType, cBands )
 
    ::cName := cName
 
+   check_yarg_download()
    IF cType != NIL
       ::cType := cType
    ENDIF
@@ -103,7 +104,7 @@ METHOD YargReport:create_report_properties()
 
    ::cReportProperties := my_home() + my_dbf_prefix() + ::cName + ".properties"
 
-   SET PRINTER to ( ::cReportProperties )
+   SET PRINTER TO ( ::cReportProperties )
    SET PRINTER ON
    SET CONSOLE OFF
 

@@ -104,11 +104,11 @@ FUNCTION download_file( cUrl, cDestFile )
    LOCAL hFile
    LOCAL cFileName, lRet := .F.
 
-   Box( "#Download: " + Alltrim( Right( cUrl, 60) ), 2, 70 )
+   Box( "#Download: " + Alltrim( Right( cUrl, 60) ), 2, 75 )
    hFile := hb_vfTempFile( @cFileName, my_home_root(), "wget_", ".tmp" )
    hb_vfClose( hFile )
 
-   @ m_x + 1, m_y + 2 SAY Left( cUrl, 67 )
+   @ m_x + 1, m_y + 2 SAY Left( cUrl, 72 )
 
    lRet := F18Admin():wget_download( cUrl, "", cFileName )
 

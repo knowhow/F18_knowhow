@@ -34,7 +34,7 @@ FUNCTION f18_template_location( cTemplate )
       cLoc := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
    ENDIF
    aFileList := Directory( cLoc + cTemplate )
-   IF Len( aFileList ) > 1
+   IF Len( aFileList ) > 0
       s_cTemplatesLoc := cLoc
       IF cTemplate == "*.*"
          s_cTemplatesLoc := cLoc
@@ -123,7 +123,7 @@ FUNCTION copy_template_to_my_home( cTemplate )
       IF File( f18_template_location(  cTemplate ) )
          FileCopy( f18_template_location( cTemplate ), my_home() + cTemplate )
       ELSE
-         MsgBeep( "Fajl template " + f18_template_location( cTemplate ) + " ne postoji !?" )
+         MsgBeep( "Fajl template " + cTemplate + "(" + f18_template_location( cTemplate ) + ") ne postoji !?" )
          RETURN _ret
       ENDIF
    ENDIF

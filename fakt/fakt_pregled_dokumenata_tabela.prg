@@ -144,7 +144,8 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
    LOCAL _dev_id, _dev_params
    LOCAL lRefresh
    LOCAL _t_rec := RecNo()
-   //LOCAL nDbfArea := Select()
+
+   // LOCAL nDbfArea := Select()
    LOCAL hFiskRacunParams
    LOCAL nFiscal
    LOCAL nRekl
@@ -164,7 +165,7 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
       nRet := print_porezna_faktura( lOpcine )
       lRefresh := .T.
 
-   CASE nCh == K_ALT_P
+   CASE nCh == K_ALT_P .OR. Upper( Chr( nCh ) ) == "L"
 
       nRet := fakt_print_odt( lOpcine )
       lRefresh := .T.
@@ -225,7 +226,7 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
 
       ENDIF
 
-   CASE Chr( nCh ) $ "kK"
+   CASE Upper( Chr( nCh ) ) $ "kK"
 
       IF fakt_ispravka_podataka_azuriranog_dokumenta( field->idfirma, field->idtipdok, field->brdok )
          nRet := DE_REFRESH
@@ -313,8 +314,8 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
 
             fakt_fiskalni_racun( field->idfirma, field->idtipdok, field->brdok, .F., _dev_params )
 
-            //SELECT ( nDbfArea )
-            //nRet := DE_REFRESH
+            // SELECT ( nDbfArea )
+            // nRet := DE_REFRESH
             lRefresh := .T.
 
          ENDIF
@@ -371,8 +372,8 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
 
    IF lRefresh
 
-      //SELECT ( nDbfArea )
-      //SET ORDER TO TAG "1"
+      // SELECT ( nDbfArea )
+      // SET ORDER TO TAG "1"
       fakt_pregled_reload_tables( _filter )
       GO ( _t_rec )
 

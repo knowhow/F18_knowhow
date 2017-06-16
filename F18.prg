@@ -12,7 +12,6 @@
 #include "f18.ch"
 #include "f18_color.ch"
 
-
 STATIC __relogin_opt := .F.
 
 #ifndef TEST

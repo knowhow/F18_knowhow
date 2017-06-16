@@ -31,7 +31,7 @@ STATIC __auto_odt := ""
 FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
 
    LOCAL _template := ""
-   LOCAL _jod_templates_path := f18_template_location()
+   LOCAL cTemplatesDir := f18_template_location()
    LOCAL _xml_file := my_home() + "data.xml"
    LOCAL _file_pdf := ""
    LOCAL _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), "" )
@@ -60,8 +60,8 @@ FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
 
    ENDIF
 
-   IF !Empty( _jod_templates_path )
-      _t_path := AllTrim( _jod_templates_path )
+   IF !Empty( cTemplatesDir )
+      _t_path := AllTrim( cTemplatesDir )
    ENDIF
 
    // treba li generisati pdf fajl
@@ -100,7 +100,7 @@ FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
 
 
 
-STATIC FUNCTION fakt_odaberi_template( template, tip_dok )
+STATIC FUNCTION fakt_odaberi_template( cTemplate, tip_dok )
 
    LOCAL _ok := .T.
    LOCAL _mp_template := "f-stdm.odt"
@@ -110,11 +110,10 @@ STATIC FUNCTION fakt_odaberi_template( template, tip_dok )
    LOCAL _f_path := f18_template_location()
    LOCAL _f_filter := "f-*.odt"
 
-   // imamo i gpsamokol parametar koji je bitan... valjda !
 
-   template := ""
+   cTemplate := ""
 
-   // odabir template fajla na osnovu tipa dokumenta
+   // odabir cTemplate fajla na osnovu tipa dokumenta
    DO CASE
 
    CASE tip_dok $ "12#13#21#22#23#26"
@@ -122,11 +121,11 @@ STATIC FUNCTION fakt_odaberi_template( template, tip_dok )
       // tipovi dokumenata gdje trebaju samo kolicine
 
       IF !Empty( __default_odt_kol_template )
-         template := __default_odt_kol_template
+         cTemplate := __default_odt_kol_template
       ENDIF
 
-      IF Empty( template ) .AND. _auto_odabir
-         template := _kol_template
+      IF Empty( cTemplate ) .AND. _auto_odabir
+         cTemplate := _kol_template
       ENDIF
 
    CASE  tip_dok $ "11#"
@@ -134,11 +133,11 @@ STATIC FUNCTION fakt_odaberi_template( template, tip_dok )
       // maloprodajni racuni i ostalo...
 
       IF !Empty( __default_odt_mp_template )
-         template := __default_odt_mp_template
+         cTemplate := __default_odt_mp_template
       ENDIF
 
-      IF Empty( template ) .AND. _auto_odabir
-         template := _mp_template
+      IF Empty( cTemplate ) .AND. _auto_odabir
+         cTemplate := _mp_template
       ENDIF
 
    OTHERWISE
@@ -146,17 +145,17 @@ STATIC FUNCTION fakt_odaberi_template( template, tip_dok )
       // ostalo cemo smatrati veleprodajom
 
       IF !Empty( __default_odt_vp_template )
-         template := __default_odt_vp_template
+         cTemplate := __default_odt_vp_template
       ENDIF
 
-      IF Empty( template ) .AND. _auto_odabir
-         template := _vp_template
+      IF Empty( cTemplate ) .AND. _auto_odabir
+         cTemplate := _vp_template
       ENDIF
 
    ENDCASE
 
-   IF Empty( template )
-      _ok := get_file_list_array( _f_path, _f_filter, @template, .T. ) == 1
+   IF Empty( cTemplate )
+      _ok := get_file_list_array( _f_path, _f_filter, @cTemplate, .T. ) == 1
    ENDIF
 
    RETURN _ok
@@ -347,7 +346,7 @@ FUNCTION stdokodt_grupno()
    LOCAL _template := ""
    LOCAL _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), "" )
    LOCAL _file_out := ""
-   LOCAL _jod_templates_path := f18_template_location()
+   LOCAL cTemplatesDir := f18_template_location()
    LOCAL _xml_file := my_home() + "data.xml"
    LOCAL _ext_path
    LOCAL _racuni := {}
@@ -385,8 +384,8 @@ FUNCTION stdokodt_grupno()
 
       _fakt_dok_gen_xml( _xml_file, _racuni, @_ctrl_data )
 
-      IF !Empty( _jod_templates_path )
-         _t_path := AllTrim( _jod_templates_path )
+      IF !Empty( cTemplatesDir )
+         _t_path := AllTrim( cTemplatesDir )
       ENDIF
 
       IF get_file_list_array( _t_path, _filter, @_template, .T. ) == 0
@@ -420,8 +419,8 @@ FUNCTION stdokodt_grupno()
 
          _fakt_dok_gen_xml( _xml_file, _gen_jedan, @_ctrl_data )
 
-         IF !Empty( _jod_templates_path )
-            _t_path := AllTrim( _jod_templates_path )
+         IF !Empty( cTemplatesDir )
+            _t_path := AllTrim( cTemplatesDir )
          ENDIF
 
          IF __auto_odt == "D"
@@ -789,7 +788,7 @@ STATIC FUNCTION _fakt_dok_gen_xml( xml_file, a_racuni, ctrl_data )
 
 
 // ------------------------------------------------------
-// setuje defaultni odt template
+// setuje defaultni odt cTemplate
 // ------------------------------------------------------
 FUNCTION __default_odt_template()
 

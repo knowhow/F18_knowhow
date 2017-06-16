@@ -26,12 +26,31 @@ FUNCTION f18_template_location( cTemplate )
    ENDIF
 
    AltD()
-   // 1) F18.exe/template/
+
+   // 1) /opt/knowhowERP/template - prvo pogledati u starim template-ovima
+   IF is_windows()
+      cLoc := "c:" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
+   ELSE
+      cLoc := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
+   ENDIF
+   aFileList := Directory( cLoc + cTemplate )
+   IF Len( aFileList ) > 1
+      s_cTemplatesLoc := cLoc
+      IF cTemplate == "*.*"
+         s_cTemplatesLoc := cLoc
+         RETURN cLoc
+      ELSE
+         RETURN cLoc + cTemplate
+      ENDIF
+   ENDIF
+
+   // 2) F18.exe/template/
    cLoc := ExePath() + "template" + SLASH
    aFileList := Directory( cLoc + cTemplate )
    IF Len( aFileList ) > 0
       s_cTemplatesLoc := cLoc
       IF cTemplate == "*.*"
+         s_cTemplatesLoc := cLoc
          RETURN cLoc
       ELSE
          RETURN cLoc + cTemplate
@@ -44,27 +63,14 @@ FUNCTION f18_template_location( cTemplate )
    IF Len( aFileList ) > 0
       s_cTemplatesLoc := cLoc
       IF cTemplate == "*.*"
+         s_cTemplatesLoc := cLoc
          RETURN cLoc
       ELSE
          RETURN cLoc + cTemplate
       ENDIF
    ENDIF
 
-   // 3) /opt/knowhowERP/template
-   IF is_windows()
-      cLoc := "c:" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
-   ELSE
-      cLoc := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
-   ENDIF
-   aFileList := Directory( cLoc + cTemplate )
-   IF Len( aFileList ) > 1
-      s_cTemplatesLoc := cLoc
-      IF cTemplate == "*.*"
-         RETURN cLoc
-      ELSE
-         RETURN cLoc + cTemplate
-      ENDIF
-   ENDIF
+
 
    RETURN ""
 

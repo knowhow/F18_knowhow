@@ -13,31 +13,57 @@
 
 STATIC  s_cTemplatesLoc
 
-FUNCTION f18_template_location()
+FUNCTION f18_template_location( cTemplate )
 
    LOCAL cLoc, aFileList
-#ifdef __PLATFORM__WINDOWS
 
-   cLoc := "c:" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
-#else
-   cLoc := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
-#endif
-
-   IF s_cTemplatesLoc != NIL
+   IF cTemplate == NIL .AND. s_cTemplatesLoc != NIL
       RETURN s_cTemplatesLoc
    ENDIF
 
-   aFileList := hb_vfDirectory( cLoc )
-   IF Len( aFileList ) > 1
-      s_cTemplatesLoc := cLoc
-      RETURN cLoc
+   IF cTemplate == NIL
+      cTemplate := "*.*" // ponudice prvi template od 3 opcije
    ENDIF
 
+   AltD()
+   // 1) F18.exe/template/
+   cLoc := ExePath() + "template" + SLASH
+   aFileList := Directory( cLoc + cTemplate )
+   IF Len( aFileList ) > 0
+      s_cTemplatesLoc := cLoc
+      IF cTemplate == "*.*"
+         RETURN cLoc
+      ELSE
+         RETURN cLoc + cTemplate
+      ENDIF
+   ENDIF
+
+   // 2) ~/.f18/template
    cLoc := my_home_root() + "template" +  SLASH
-   aFileList := hb_vfDirectory( cLoc )
+   aFileList := Directory( cLoc + cTemplate )
+   IF Len( aFileList ) > 0
+      s_cTemplatesLoc := cLoc
+      IF cTemplate == "*.*"
+         RETURN cLoc
+      ELSE
+         RETURN cLoc + cTemplate
+      ENDIF
+   ENDIF
+
+   // 3) /opt/knowhowERP/template
+   IF is_windows()
+      cLoc := "c:" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
+   ELSE
+      cLoc := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
+   ENDIF
+   aFileList := Directory( cLoc + cTemplate )
    IF Len( aFileList ) > 1
       s_cTemplatesLoc := cLoc
-      RETURN cLoc
+      IF cTemplate == "*.*"
+         RETURN cLoc
+      ELSE
+         RETURN cLoc + cTemplate
+      ENDIF
    ENDIF
 
    RETURN ""
@@ -66,11 +92,11 @@ FUNCTION copy_template_to_my_home( cTemplate )
          Alert( "file atributi error: " + my_home() + cTemplate )
       ENDIF
 
-      _a_template := Directory( f18_template_location() + cTemplate )
-      IF ValType( _a_template ) == "A" .AND. Len( _a_template) > 0 .AND. Len( _a_template[ 1 ] ) > 4
+      _a_template := Directory( f18_template_location( cTemplate ) )
+      IF ValType( _a_template ) == "A" .AND. Len( _a_template ) > 0 .AND. Len( _a_template[ 1 ] ) > 4
          ?E "template location:", f18_template_location(), pp( _a_template[ 1 ] )
       ELSE
-         Alert( "file atributi error: " + f18_template_location() + cTemplate )
+         Alert( "file atributi error: " + f18_template_location( cTemplate ) )
       ENDIF
 
       _src_size := AllTrim( Str( _a_source[ 1, 2 ] ) )
@@ -88,10 +114,10 @@ FUNCTION copy_template_to_my_home( cTemplate )
    ENDIF
 
    IF _copy
-      IF File( f18_template_location() + cTemplate )
-         FileCopy( f18_template_location() + cTemplate, my_home() + cTemplate )
+      IF File( f18_template_location(  cTemplate ) )
+         FileCopy( f18_template_location( cTemplate ), my_home() + cTemplate )
       ELSE
-         MsgBeep( "Fajl " + f18_template_location() + cTemplate + " ne postoji !?" )
+         MsgBeep( "Fajl template " + f18_template_location( cTemplate ) + " ne postoji !?" )
          RETURN _ret
       ENDIF
    ENDIF

@@ -122,7 +122,7 @@ METHOD set_module_gvars()
    PUBLIC gPicI := "99999999.99"
    PUBLIC gPicS := "99999999"
    PUBLIC gTipObr := "1"
-   PUBLIC gcLdSpec2001GrupePoslovaAutoRucno := "1"
+   PUBLIC gcLdSpec2001GrupePoslovaAutoRucno // automatski
    PUBLIC cVarPorOl := "1"
    PUBLIC gSihtarica := "N"
    PUBLIC gSihtGroup := "N"

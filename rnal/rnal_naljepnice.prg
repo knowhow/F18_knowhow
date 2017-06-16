@@ -21,12 +21,12 @@ FUNCTION rnal_stampa_naljepnica_odt()
    LOCAL nMax_Komada := fetch_metric( "rnal_label_br_kom_razdvoji", NIL, 200 )
    LOCAL lDijeli := .F.
    LOCAL _template := ""
-   LOCAL _t_path := F18_TEMPLATE_LOCATION
+   LOCAL _t_path := f18_template_location()
    LOCAL _desktop_folder
    LOCAL _output_odt := NIL
 
    IF get_file_list_array( _t_path, "_rg*.odt", @_template ) = 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    t_rpt_open()

@@ -96,7 +96,7 @@ FUNCTION ld_get_params( hParams )
    gDaPorOl := fetch_metric( "ld_poreske_olaksice", NIL, gDaPorOl )
    gTipObr := fetch_metric( "ld_tip_obracuna_legacy", NIL, gTipObr )
    //gUnMjesec := fetch_metric( "ld_unos_mjeseca_kod_obracuna", NIL, gUnMjesec )
-   gcLdSpec2001GrupePoslovaAutoRucno := fetch_metric( "ld_grupe_poslova_specifikacija", NIL, gcLdSpec2001GrupePoslovaAutoRucno )
+   gcLdSpec2001GrupePoslovaAutoRucno := fetch_metric( "ld_grupe_poslova_specifikacija", NIL, "1" )
    gRadnFilter := fetch_metric( "ld_filter_radnici", NIL, gRadnFilter )
 
    // ----------

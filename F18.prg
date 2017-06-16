@@ -21,7 +21,6 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    LOCAL _arg_v := hb_Hash()
 
-
    cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
    set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
    harbour_init()
@@ -33,8 +32,8 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
    f18_error_block()
 
    set_screen_dimensions()
-   //MsgBeep( sha256sum( hb_ProgName() ) )
-   //f18_editor( "/tmp/test.txt" )
+   // MsgBeep( sha256sum( hb_ProgName() ) )
+   // f18_editor( "/tmp/test.txt" )
 
 
    naslovni_ekran_splash_screen( "F18", f18_ver() )
@@ -296,6 +295,7 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    LOCAL cMenuBrojac
    LOCAL cVersion
 
+#ifndef F18_DEBUG
    cVersion := download_version( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
 
    IF !Empty( cVersion ) .AND. cVersion != f18_ver()
@@ -305,6 +305,7 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
       AAdd( aMeniOpcije, "---------------------------------------------" )
       AAdd( aMeniExec, {|| NIL } )
    ENDIF
+#endif
 
    IF f18_use_module( "fin" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )

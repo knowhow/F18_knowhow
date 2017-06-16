@@ -31,7 +31,7 @@ STATIC __auto_odt := ""
 FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
 
    LOCAL _template := ""
-   LOCAL _jod_templates_path := F18_TEMPLATE_LOCATION
+   LOCAL _jod_templates_path := f18_template_location()
    LOCAL _xml_file := my_home() + "data.xml"
    LOCAL _file_pdf := ""
    LOCAL _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), "" )
@@ -107,7 +107,7 @@ STATIC FUNCTION fakt_odaberi_template( template, tip_dok )
    LOCAL _vp_template := "f-std.odt"
    LOCAL _kol_template := "f-stdk.odt"
    LOCAL _auto_odabir := __auto_odt == "D"
-   LOCAL _f_path := F18_TEMPLATE_LOCATION
+   LOCAL _f_path := f18_template_location()
    LOCAL _f_filter := "f-*.odt"
 
    // imamo i gpsamokol parametar koji je bitan... valjda !
@@ -347,7 +347,7 @@ FUNCTION stdokodt_grupno()
    LOCAL _template := ""
    LOCAL _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), "" )
    LOCAL _file_out := ""
-   LOCAL _jod_templates_path := F18_TEMPLATE_LOCATION
+   LOCAL _jod_templates_path := f18_template_location()
    LOCAL _xml_file := my_home() + "data.xml"
    LOCAL _ext_path
    LOCAL _racuni := {}

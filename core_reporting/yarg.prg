@@ -76,7 +76,8 @@ METHOD YargReport:create_run_yarg_file()
       ?? "#!/bin/bash"
    ENDIF
 
-   ? file_path_quote( f18_current_directory() + SLASH + "yarg" + SLASH + "bin" + SLASH + "yarg" + iif( is_windows(), ".bat", "" ) )
+altd()
+   ? file_path_quote( yarg_cmd() )
    ?? " -rp " + file_path_quote( ::cReportXml )
    ?? " -op " + file_path_quote( ::cReportOutput )
    // -Pparam1="string a b c d" \
@@ -276,7 +277,7 @@ METHOD YargReport:run()
    ? "Generisanje ", ::cName, ::cType
 
 
-   MsgO( "Generacija YARG izvještaja ..." )
+   MsgO( "Generacija YARG izvještaja " + ::cName + "." + ::cType + " ..." )
    nError := hb_processRun( file_path_quote( ::cRunScript ), NIL, @cStdOut, @cStdErr, .F. )
    MsgC()
 

@@ -626,7 +626,7 @@ STATIC FUNCTION print_kompen( vars )
    LOCAL _ret := .T.
    LOCAL cFilter := "komp*.odt"
    LOCAL _template := ""
-   LOCAL _templates_path := F18_TEMPLATE_LOCATION
+   LOCAL _templates_path := f18_template_location()
    LOCAL _xml_file := my_home() + "data.xml"
 
    IF !Empty( vars[ "partn" ] )

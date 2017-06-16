@@ -59,8 +59,8 @@ FUNCTION kalkulacija_cijena( azurirana )
 
    ENDIF
 
-   IF !File( F18_TEMPLATE_LOCATION + _template )
-      MsgBeep( "Template fajl ne postoji: " + F18_TEMPLATE_LOCATION + _template )
+   IF !File( f18_template_location( _template ) )
+      MsgBeep( "Template fajl ne postoji: " + f18_template_location( _template ) )
       RETURN .F.
    ENDIF
 

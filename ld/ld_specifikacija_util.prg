@@ -440,8 +440,8 @@ FUNCTION ld_specifikacije_otvori_tabele()
    // o_ld_vrste_posla()
    // o_ld_rj()
    // o_ld_radn()
-   O_PARAMS
+   //O_PARAMS
    // select_o_ld()
-   // o_ops()
+   o_ops()
 
    RETURN .T.

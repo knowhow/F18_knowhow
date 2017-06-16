@@ -292,7 +292,7 @@ FUNCTION find_field_by_id( cTable, cId, cField )
 
    LOCAL cSqlQuery := "select " + cField + " from fmk." + cTable
 
-   cSqlQuery += " WHERE " + cField + "=" + sql_quote( cId )
+   cSqlQuery += " WHERE id=" + sql_quote( cId )
 
    IF !use_sql( cTable, cSqlQuery )
       RETURN .F.

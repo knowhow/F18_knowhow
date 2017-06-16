@@ -211,10 +211,9 @@ STATIC FUNCTION copy_rtm_template( template )
       _copy := .T.
    ELSE
 
-      // fajl postoji na lokaciji
-      // ispitaj velicinu, datum vrijeme...
+      // fajl postoji na lokaciji, ispitaj velicinu, datum vrijeme
       _a_source := Directory( my_home() + template + _rtm_ext )
-      _a_template := Directory( F18_TEMPLATE_LOCATION + template + _rtm_ext )
+      _a_template := Directory( f18_template_location( template + _rtm_ext ) )
 
       // datum, vrijeme, velicina
       _src_size := AllTrim( Str( _a_source[ 1, 2 ] ) )
@@ -235,11 +234,11 @@ STATIC FUNCTION copy_rtm_template( template )
    // treba ga kopirati
    IF _copy
 
-      IF !File( F18_TEMPLATE_LOCATION + template + _rtm_ext )
-         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + template + _rtm_ext + " ne postoji !" )
+      IF !File( f18_template_location( template + _rtm_ext ) )
+         MsgBeep( "Fajl " + f18_template_location( template + _rtm_ext ) + " ne postoji !" )
          RETURN _ret
       ELSE
-         FileCopy( F18_TEMPLATE_LOCATION + template + _rtm_ext, my_home() + template + _rtm_ext )
+         FileCopy( f18_template_location( template + _rtm_ext ), my_home() + template + _rtm_ext )
       ENDIF
 
    ENDIF

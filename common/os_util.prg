@@ -364,12 +364,24 @@ FUNCTION get_run_prefix_cmd( cCommand )
 
    IF is_windows()
       // cPrefix := "cmd /c "
-      cPrefix := "start "
+      IF cCommand != NIL .AND. Left( cCommand, 6 ) == "start "
+         cPrefix := ""  // sprijeciti duplo "start start program"
+      ELSE
+         cPrefix := 'start "" '
+      ENDIF
    ELSE
       IF is_mac()
-         cPrefix := "open "
+         IF cCommand != NIL .AND. Left( cCommand, 5 ) == "open "
+            cPrefix := ""
+         ELSE
+            cPrefix := "open "
+         ENDIF
       ELSE
-         cPrefix := "xdg-open "
+         IF cCommand != NIL .AND. Left( cCommand, 9 ) == "xdg-open "
+            cPrefix := ""
+         ELSE
+            cPrefix := "xdg-open "
+         ENDIF
       ENDIF
    ENDIF
 
@@ -394,7 +406,7 @@ FUNCTION run_cmd_with_prefix( cCommand )
    LOCAL cCmdWithPrefix := get_run_prefix_cmd( cCommand ) + cCommand
 
    IF is_windows()
-        cCmdWithPrefix := StrTran( cCmdWithPrefix, "start f18_editor", "f18_editor.cmd" )
+      cCmdWithPrefix := StrTran( cCmdWithPrefix, "start f18_editor", "f18_editor.cmd" )
    ENDIF
 
    RETURN cCmdWithPrefix
@@ -452,7 +464,7 @@ FUNCTION f18_open_mime_document( cDocument )
    cDocument := file_path_quote( cDocument )
 
    cPrefixCmd := get_run_prefix_cmd()
-   cCmd += cPrefixCmd + cDocument + iif( is_windows(), "", "& ")
+   cCmd += cPrefixCmd + cDocument + iif( is_windows(), "", "& " )
 
    nError := f18_run( cCmd )
 

@@ -51,7 +51,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cFirmNaz := PadR( fetch_metric( "org_naziv", NIL, Space( 35 ) ), 35 )
    LOCAL cFirmAdresa := PadR( fetch_metric( "ld_firma_adresa", NIL, Space( 35 ) ), 35 )
    LOCAL cFirmOpc := PadR( fetch_metric( "ld_firma_opcina", NIL, Space( 35 ) ), 35 )
-   LOCAL cFirmVD := PadR( fetch_metric( "ld_firma_vrsta_djelatnosti", NIL, Space( 50 ) ), 50 )
+   LOCAL cVrstaDjelatnosti := PadR( fetch_metric( "ld_firma_vrsta_djelatnosti", NIL, Space( 50 ) ), 50 )
    LOCAL cRadn := Space( LEN_IDRADNIK )
    LOCAL dDatIspl
    LOCAL cMRad := fetch_metric( "ld_specifikacija_minuli_rad", NIL, cMRad )

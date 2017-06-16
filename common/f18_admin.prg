@@ -249,10 +249,10 @@ METHOD F18Admin:update_app_run_app_update( params )
 
    _upd_file := StrTran( _upd_file, "#VER#", ::update_app_f18_version )
 
-   IF ::update_app_f18_version == f18_ver()
-      MsgBeep( "Verzija aplikacije " + f18_ver() + " je vec instalirana !" )
-      RETURN SELF
-   ENDIF
+//   IF ::update_app_f18_version == f18_ver()
+//      MsgBeep( "Verzija aplikacije " + f18_ver() + " je vec instalirana !" )
+//      RETURN SELF
+//   ENDIF
 
    IF !::wget_download( params[ "url" ], _upd_file, my_home_root() + _upd_file, .T., .T. )
       RETURN SELF

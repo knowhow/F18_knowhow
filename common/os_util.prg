@@ -364,7 +364,7 @@ FUNCTION get_run_prefix_cmd( cCommand )
 
    IF is_windows()
       // cPrefix := "cmd /c "
-      cPrefix := "start /MIN "
+      cPrefix := "start "
    ELSE
       IF is_mac()
          cPrefix := "open "
@@ -393,9 +393,9 @@ FUNCTION run_cmd_with_prefix( cCommand )
 
    LOCAL cCmdWithPrefix := get_run_prefix_cmd( cCommand ) + cCommand
 
-   //IF is_windows()
-   //     cCmdWithPrefix := StrTran( cCmdWithPrefix, "start f18_editor", "f18_editor.cmd" )
-   //ENDIF
+   IF is_windows()
+        cCmdWithPrefix := StrTran( cCmdWithPrefix, "start f18_editor", "f18_editor.cmd" )
+   ENDIF
 
    RETURN cCmdWithPrefix
 

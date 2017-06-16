@@ -31,7 +31,7 @@ FUNCTION f18_editor( cTxt )
 
    check_prog_download()
 
-   IF is_linux() .OR. is_mac() .OR. is_windows()
+   IF is_linux() .OR. is_mac()
       cCmd := "f18_editor" + " " + cTxt
    ELSE
       cCmd := "start f18_editor.cmd" + " " + cTxt

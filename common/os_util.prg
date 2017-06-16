@@ -364,7 +364,7 @@ FUNCTION get_run_prefix_cmd( cCommand )
 
    IF is_windows()
       // cPrefix := "cmd /c "
-      cPrefix := "start "
+      cPrefix := "start /MIN "
    ELSE
       IF is_mac()
          cPrefix := "open "

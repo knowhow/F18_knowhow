@@ -65,10 +65,10 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    cPodvuci := "N"
 
-//   o_sifk()
-//   o_sifv()
-//   o_roba()
-   O_K1
+// o_sifk()
+// o_sifv()
+// o_roba()
+   // o_k1()
    kalk_o_objekti()
 
    lMarkiranaRoba := .F.
@@ -95,7 +95,8 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    otvori_tabele()
 
-   GenRekap1( cUslov1, cUslov2, cUslovRoba, "N", "1", "N", lMarkiranaRoba, nil, cK9 )
+   AltD()
+   GenRekap1( cUslov1, cUslov2, qqRoba, "N", "1", "N", lMarkiranaRoba, NIL, cK9 )
 
    SetLinSpo()
 
@@ -213,8 +214,8 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
       ? StrTran( cLinija, "-", "=" )
 
-      SELECT k1
-      HSEEK cG1
+      // SELECT k1
+      // HSEEK cG1
       SELECT rekap1
       StrTran( cLinija, "-", "=" )
    ENDDO
@@ -232,21 +233,482 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    RETURN .T.
 
 
+FUNCTION o_pobjekti()
 
-STATIC FUNCTION otvori_tabele()
-
-   O_POBJEKTI
-   o_koncij()
-  // o_roba()
-   o_konto()
-   o_tarifa()
-   O_K1
-   kalk_o_objekti()
-   //o_kalk()
-   O_REKAP1
+   Select( F_POBJEKTI )
+   my_use ( "pobjekti" )
+   SET ORDER TO TAG "1"
 
    RETURN .T.
 
+/*
+FUNCTION o_k1()
+
+altd()
+   SELECT ( F_K1 )
+   my_use ( "k1" )
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+*/
+
+
+FUNCTION GenRekap1( aUsl1, aUsl2, qqRoba, cKartica, cVarijanta, cKesiraj, fSMark,  cK1, cK7, cK9, cIdKPovrata, aUslSez )
+
+   LOCAL nSec
+
+   IF ( cKesiraj = NIL )
+      cKesiraj := "N"
+   ENDIF
+
+   IF ( fSMark == NIL )
+      fSMark := .F.
+   ENDIF
+
+   IF ( cK1 == NIL )
+      cK1 := "9999"
+   ENDIF
+
+   IF ( cK7 == NIL )
+      cK7 := "N"
+   ENDIF
+
+   IF ( cK9 == NIL )
+      cK9 := "999"
+   ENDIF
+
+   IF ( cIdKPovrata == NIL )
+      cIdKPovrata := "XXXXXXXX"
+   ENDIF
+
+   IF ( aUslSez == NIL )
+      aUslSez := ".t."
+   ENDIF
+
+
+   nSec := Seconds()
+
+   find_kalk_by_mkonto_idroba_idvd( self_organizacija_id(), NIL, cIdKonto, qqRoba, "cOrderBy" )
+
+   PRIVATE cFilt1 := ""
+
+   cFilt1 := "DatDok<=" + dbf_quote( dDatDo ) + ".and.(" + aUsl1 + ".or." + aUsl2 + ")"
+
+   // IF aUslr <> ".t."
+   // cFilt1 += ".and." + aUslR
+   // ENDIF
+
+   IF aUslSez <> ".t."
+      cFilt1 += ".and." + aUslSez
+   ENDIF
+
+   SELECT kalk
+   SET FILTER TO &cFilt1
+   showkorner( rloptlevel() + 100, 1, 66 )
+
+   GO TOP
+
+   nStavki := 0
+   Box(, 2, 70 )
+   DO WHILE !Eof()
+      IF fSMark .AND. SkLoNMark( "ROBA", kalk->idroba )
+         SKIP
+         LOOP
+      ENDIF
+
+      select_o_roba(  kalk->( idroba ) )
+      IF cK7 == "D" .AND. Empty( roba->k7 )
+         SELECT kalk
+         SKIP
+         LOOP
+      ENDIF
+
+
+      IF ( cK1 <> "9999" .AND. !Empty( cK1 ) .AND. roba->k1 <> cK1 )
+         SELECT kalk
+         SKIP
+         LOOP
+      ENDIF
+
+      IF ( cK9 <> "999" .AND. !Empty( cK9 ) .AND. roba->k9 <> cK9 )
+         SELECT kalk
+         SKIP
+         LOOP
+      ENDIF
+
+      SELECT rekap1
+      ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
+
+      SELECT rekap1
+      ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
+
+      IF ( ( ++nStavki % 100 ) == 0 )
+         @ m_x + 1, m_y + 2 SAY nStavki PICT "99999999999999"
+      ENDIF
+
+      SELECT kalk
+      SKIP
+   ENDDO
+
+   nStavki := 0
+
+   SELECT roba
+   GO TOP
+   DO WHILE !Eof()
+      IF roba->tip == "N"
+         // nova roba
+         SELECT pobjekti
+         GO TOP
+         // za sve objekte
+         DO WHILE !Eof()
+            SELECT rekap1
+            HSEEK pobjekti->idobj + roba->id
+            IF !Found()
+               APPEND BLANK
+               REPLACE objekat WITH pobjekti->idobj
+               REPLACE idroba WITH roba->id
+               REPLACE idtarifa WITH roba->idtarifa
+               REPLACE g1 WITH roba->k1
+               field->mpc := roba->mpc
+            ENDIF
+            SELECT pobjekti
+            SKIP
+         ENDDO
+      ENDIF
+      @ m_x + 1, m_y + 2 SAY "***********************"
+      @ m_x + 1, Col() + 2 SAY ++nStavki PICT "99999999999999"
+      SELECT roba
+      SKIP
+   ENDDO
+
+   BoxC()
+
+   nSec := Seconds() - nSec
+   IF ( nSec > 1 )
+      // nemoj "brze izvjestaje"
+      @ 23, 75 SAY nSec PICT "9999"
+   ENDIF
+
+   RETURN .T.
+
+
+
+FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
+
+   LOCAL nGGOrd
+   LOCAL nGGo
+   LOCAL nMpc
+   LOCAL cSeek
+   LOCAL hRec
+
+   IF Empty( kalk->mKonto )
+      RETURN 0
+   ENDIF
+
+   HSEEK kalk->( mKonto + idroba )
+
+   IF !Found()
+
+      APPEND BLANK
+
+      hRec := dbf_get_rec()
+
+      // radi promjene tarifa promjenio sam kalk->idtarifa u roba->idtarifa
+      // replace objekat with kalk->mKonto, idroba with kalk->idroba, idtarifa with kalk->idtarifa, g1 with roba->k1
+
+      hRec[ "objekat" ] := kalk->mkonto
+      hRec[ "idroba" ] := kalk->idroba
+      hRec[ "idtarifa" ] := roba->idtarifa
+      hRec[ "g1" ] := roba->k1
+
+      IF ( cKartica == "D" )
+         // ocitaj sa kartica
+         nMpc := 0
+         IF ( cVarijanta <> "1" )
+            // varijanta="1" - pregled kretanja zaliha
+            cSeek := kalk->( idfirma + mKonto + idroba )
+            SELECT kalk
+            nGGOrd := IndexOrd()
+            nGGo := RecNo()
+            select_o_koncij( kalk->mKonto )
+            SELECT kalk
+            // dan prije inventure !!!
+            kalk_vpc_po_kartici( @nmpc, cSeek, dDatDo - 1 )
+            dbSetOrder( nGGOrd )
+            GO nGGo
+
+            SELECT rekap1
+            hRec[ "mpc" ] := nMpc
+
+         ENDIF
+      ELSE
+
+         hRec[ "mpc" ] := roba->mpc
+
+      ENDIF
+
+   ELSE
+      hRec := dbf_get_rec()
+   ENDIF
+
+   IF kalk->mu_i == "1"
+
+      IF kalk->datdok <= dDatDo
+         // stanje zalihe
+         hRec[ "k2" ] := hRec[ "k2" ] + kalk->kolicina
+      ENDIF
+
+      IF cVarijanta <> "1"
+         // u pregledu kretanja zaliha ovo nam ne treba
+         IF ( kalk->datdok < dDatOd )
+            // predhodno stanje
+            hRec[ "k0" ] := hRec[ "k0" ] + kalk->kolicina
+         ENDIF
+         IF DInRange( kalk->datdok, dDatOd, dDatDo )
+            // tekuci prijem
+            hRec[ "k4" ] := hRec[ "k4" ] + kalk->kolicina
+         ENDIF
+      ENDIF
+
+   ELSEIF kalk->mu_i == "5"
+      // izlaz iz magacina
+      IF cVarijanta <> "1"
+         // u pregledu kretanja zaliha ovo nam ne treba
+         IF ( kalk->datdok < dDatOd )
+            // predhodno stanje
+            hRec[ "k0" ] := hRec[ "k0" ] - kalk->kolicina
+         ENDIF
+      ENDIF
+      IF kalk->datdok <= dDatDo
+         // stanje trenutne zalihe
+         hRec[ "k2" ] := hRec[ "k2" ] - kalk->kolicina
+      ENDIF
+
+      IF kalk->idvd $ "14#94"
+         IF ( cVarijanta <> "1" )
+            // u pregledu kretanja zaliha ovo nam ne treba
+            IF ( kalk->datdok <= dDatDo )
+               // kumulativna prodaja
+               hRec[ "k3" ] := hRec[ "k3" ] + kalk->kolicina
+            ENDIF
+         ENDIF
+         IF DInRange( kalk->datDok, dDatOd, dDatDo )
+            // stanje trenutne prodaje
+            hRec[ "k1" ] := hRec[ "k1" ] + kalk->kolicina
+         ENDIF
+      ENDIF
+
+   ELSEIF ( kalk->mu_i == "3" )
+      // nivelacija
+      IF ( kalk->datDok = dDatDo )
+         // dokument nivelacije na dan inventure
+         IF ( cVarijanta <> "1" )
+            hRec[ "novampc" ] := kalk->mpcsapp + kalk->vpc
+         ENDIF
+         hRec[ "mpc" ] := kalk->mpcsapp
+      ENDIF
+   ENDIF
+
+   dbf_update_rec( hRec )
+
+   RETURN 1
+
+
+
+FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
+
+   LOCAL nGGOrd
+   LOCAL nGGo
+   LOCAL nMpc
+   LOCAL cSeek
+   LOCAL hRec
+
+   IF Empty( kalk->pkonto )
+      RETURN 0
+   ENDIF
+
+   HSEEK kalk->( pkonto + idroba )
+
+   IF !Found()
+
+      APPEND BLANK
+
+      hRec := dbf_get_rec()
+
+      hRec[ "objekat" ] := kalk->pkonto
+      hRec[ "idroba" ] := kalk->idroba
+      hRec[ "idtarifa" ] := roba->idtarifa
+      hRec[ "g1" ] := roba->k1
+
+      IF ( cKartica == "D" )
+         // ocitaj sa kartica
+         nMpc := 0
+         // cSeek := kalk->( idfirma + pkonto + idroba )
+         SELECT kalk
+         nGGo := RecNo()
+         nGGOrd := IndexOrd()
+         select_o_koncij( kalk->pkonto )
+         SELECT kalk
+
+
+         kalk_fakticka_mpc( @nMpc, kalk->idfirma, kalk->pkonto, kalk->idroba, dDatDo - 1 ) // dan prije inventure !
+         dbSetOrder( nGGOrd )
+         GO nGGo
+         SELECT rekap1
+         hRec[ "mpc" ] := nMpc
+      ELSE
+         hRec[ "mpc" ] := roba->mpc
+      ENDIF
+
+   ELSE
+
+      hRec := dbf_get_rec()
+
+   ENDIF
+
+   IF ( kalk->pu_i == "1" .AND. kalk->kolicina > 0 )
+
+      // ulaz moze biti po osnovu prijema, 80 - preknjizenja
+      // odnosno internog dokumenta
+
+      IF kalk->datdok <= dDatDo  // kumulativno stanje
+         hRec[ "k2" ] += kalk->kolicina  // zalihe
+      ENDIF
+      IF ( cVarijanta <> "1" )
+         IF kalk->datdok < dDatOd
+            // predhodno stanje
+            hRec[ "k0" ] += kalk->kolicina
+         ENDIF
+         IF DInRange( kalk->datdok, dDatOd, dDatDo )
+            // tekuci prijem
+            hRec[ "k4" ] += kalk->kolicina
+         ENDIF
+      ELSE
+         IF DInRange( kalk->datdok, dDatOd, dDatDo )
+            // tekuci prijem
+            IF kalk->idvd == "80" .AND. !Empty( kalk->idkonto2 )
+               // bilo je promjena po osnovu predispozicije
+               hRec[ "k4pp" ] += kalk->kolicina
+            ENDIF
+         ENDIF
+      ENDIF
+
+   ELSEIF ( kalk->pu_i == "3" )
+
+      // nivelacija
+      IF kalk->datdok = dDatDo
+         // dokument nivelacije na dan inventure
+         IF cVarijanta <> "1"
+            hRec[ "novampc" ] := kalk->( fcj + mpcsapp )
+         ENDIF
+         // stara cijena
+         hRec[ "mpc" ] := kalk->fcj
+
+      ENDIF
+
+   ELSEIF kalk->pu_i == "5" .OR. ( kalk->pu_i == "1" .AND. kalk->kolicina < 0 )
+
+      // izlaz iz prodavnice moze biti 42,41,11,12,13
+      // f1 - tekuca prodaja, f2 zaliha, f3 - kumulativna prodaja
+      // f4 - prijem u toku mjeseca
+      // f6 - izlaz iz prodavnice po ostalim osnovama
+      // f5 - reklamacije u toku mjeseca, f7 - reklamacije u toku godine
+
+      IF ( cVarijanta <> "1" )
+         IF kalk->datdok < dDatOd
+            IF kalk->pu_i == "5"
+               // predhodno stanje
+               hRec[ "k0" ] -= kalk->kolicina
+            ELSE
+               hRec[ "k0" ] -= Abs( kalk->kolicina )
+            ENDIF
+         ENDIF
+      ENDIF
+
+      IF ( kalk->datdok <= dDatDo )
+         IF kalk->pu_i == "5"
+            // zaliha
+            hRec[ "k2" ] -= kalk->kolicina
+         ELSE
+            hRec[ "k2" ] -= Abs( kalk->kolicina )
+         ENDIF
+      ENDIF
+
+      IF ( kalk->idvd $ "41#42#43" )
+         // prodaja
+         IF DInRange( kalk->datdok, dDatOd, dDatDo )
+            // tekuca prodaja
+            hRec[ "k1" ] += kalk->kolicina
+         ENDIF
+         IF ( cVarijanta <> "1" )
+            IF kalk->datdok <= dDatDo
+               // kumulativna prodaja
+               hRec[ "k3" ] += kalk->kolicina
+            ENDIF
+         ENDIF
+
+      ELSE
+
+         // izlazi iz prodavnice po ostalim osnovima
+
+         IF ( cVarijanta <> "1" )
+            IF ( kalk->idvd $ "11#12#13" .AND. kalk->mKonto == cIdKPovrata )
+               // reklamacija
+               IF DInRange( kalk->datdok, dDatOd, dDatDo )
+                  // tekuce reklamacije
+                  // reklamacije u mjesecu
+                  hRec[ "k5" ] += Abs( kalk->kolicina )
+               ENDIF
+               IF kalk->datdok <= dDatDo
+                  // kumulativno reklamacije
+                  hRec[ "k7" ] += Abs( kalk->kolicina )
+               ENDIF
+            ELSE
+               IF DInRange( kalk->datdok, dDatOd, dDatDo )
+                  // izlaz-otprema po ostalim osnovama
+                  hRec[ "k6" ] += Abs( kalk->kolicina )
+               ENDIF
+            ENDIF
+         ELSE
+            IF DInRange( kalk->datdok, dDatOd, dDatDo )
+               IF kalk->idvd == "80" .AND. !Empty( kalk->idkonto2 )
+                  // bilo je promjena po osnovu predispozicije
+                  hRec[ "k4pp" ] += kalk->kolicina
+               ENDIF
+            ENDIF
+         ENDIF
+      ENDIF
+   ENDIF
+
+   dbf_update_rec( hRec )
+
+   RETURN 1
+
+
+
+
+STATIC FUNCTION otvori_tabele()
+
+   o_pobjekti()
+   o_koncij()
+   // o_roba()
+   // o_konto()
+   // o_tarifa()
+   // o_k1()
+   kalk_o_objekti()
+   // o_kalk()
+   o_rekap1()
+
+   RETURN .T.
+
+
+FUNCTION o_rekap1()
+
+   Select( F_REKAP1 )
+   my_use  ( "rekap1" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
 
 
 
@@ -282,14 +744,14 @@ STATIC FUNCTION SetLinSpo()
 
    DO WHILE !Eof()
 
-      IF ! ( "SVE" $ UPPER( field->naz ) ) .AND. ( field->id <> "99" .AND. !Empty( cObjUsl ) .AND. !( &cObjUsl ) )
+      IF !( "SVE" $ Upper( field->naz ) ) .AND. ( field->id <> "99" .AND. !Empty( cObjUsl ) .AND. !( &cObjUsl ) )
          SKIP
          LOOP
       ENDIF
 
       cLinija := cLinija + " " + Replicate( "-", KOLICINA_LEN )
 
-      ++ nObjekata
+      ++nObjekata
 
       SKIP
 
@@ -306,11 +768,11 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
 
    ? tip_organizacije() + ":", self_organizacija_naziv(), Space( 40 ), "Strana:" + Str( ++nStr, 3 )
    ?
-   ?U  "Količinsko stanje " + IIF( cPrikProd == "D", "zaliha i prodaje", "zaliha" ) + " artikala po objektima za period:"
+   ?U  "Količinsko stanje " + iif( cPrikProd == "D", "zaliha i prodaje", "zaliha" ) + " artikala po objektima za period:"
    ?? dDatOd, "-", dDatDo
    ?
 
-   IF ( qqRoba == nil )
+   IF ( qqRoba == NIL )
       qqRoba := ""
    ENDIF
 
@@ -345,7 +807,7 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
 
    ? PadC( " ", 4 ) + " " + PadC( " ", 10 ) + " " + PadC( " ", ROBAN_LEN )
 
-   ?? " " + PadC( IIF( cPrikProd == "D", "zal/pr", "zaliha" ), KOLICINA_LEN )
+   ?? " " + PadC( iif( cPrikProd == "D", "zal/pr", "zaliha" ), KOLICINA_LEN )
 
    SELECT pobjekti
    GO TOP
@@ -356,7 +818,7 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
          LOOP
       ENDIF
 
-      ?? " " + PadC( IIF( cPrikProd == "D", "zal/pr", "zaliha" ), KOLICINA_LEN )
+      ?? " " + PadC( iif( cPrikProd == "D", "zal/pr", "zaliha" ), KOLICINA_LEN )
 
       SKIP
 
@@ -411,14 +873,14 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
       cObjUsl := Parsiraj( qqKonto, "IDOBJ" )
       cUslovRoba := Parsiraj( qqRoba, "IdRoba" )
 
-      IF ( cUslov1 <> NIL .AND. cUslovRoba <> nil )
+      IF ( cUslov1 <> NIL .AND. cUslovRoba <> NIL )
          EXIT
       ENDIF
    ENDDO
    BoxC()
 
-   //SELECT roba
-   //USE
+   // SELECT roba
+   // USE
 
    SELECT params
    IF Params2()
@@ -588,15 +1050,13 @@ STATIC FUNCTION PrintProdGr()
       SKIP
    ENDDO
 
-
-
 FUNCTION brisi_tabelu_pobjekti()
 
-   O_POBJEKTI
+   o_pobjekti()
 
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -604,10 +1064,10 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
 
    LOCAL hRec
 
-   O_POBJEKTI
+   o_pobjekti()
    kalk_o_objekti()
 
-   MsgO("objekti -> pobjekti")
+   MsgO( "objekti -> pobjekti" )
 
    SELECT objekti
    GO TOP
@@ -615,10 +1075,10 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
    DO WHILE !Eof()
       hRec := dbf_get_rec()
       SELECT pobjekti
-	  APPEND BLANK
-	  dbf_update_rec( hRec )
-	  SELECT objekti
-	  SKIP
+      APPEND BLANK
+      dbf_update_rec( hRec )
+      SELECT objekti
+      SKIP
    ENDDO
 
    MsgC()
@@ -638,10 +1098,10 @@ FUNCTION resetuj_vrijednosti_tabele_pobjekti()
 
       hRec := dbf_get_rec()
 
-      hRec["prodtu"] := 0
-      hRec["produ"] := 0
-      hRec["zaltu"] := 0
-      hRec["zalu"] := 0
+      hRec[ "prodtu" ] := 0
+      hRec[ "produ" ] := 0
+      hRec[ "zaltu" ] := 0
+      hRec[ "zalu" ] := 0
 
       dbf_update_rec( hRec )
 

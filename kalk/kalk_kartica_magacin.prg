@@ -30,9 +30,12 @@ FUNCTION kalk_kartica_magacin()
    LOCAL lPrikaziObradjeno := .F.
    LOCAL cOrderBy
    LOCAL hParams := hb_Hash(), cExportDN := "N", lExport := .F.
+   LOCAL lRobaTackaZarez := .F.
+   LOCAL cIdRobaTackaZarez := cIdRoba
 
    PRIVATE fKNabC := .F.
-   PRIVATE fVeci := .F.
+
+   // PRIVATE lRobaTackaZarez := .F.
 
    PRIVATE PicCDEM := kalk_prosiri_pic_cjena_za_2()
    PRIVATE PicProc := gPicProc
@@ -50,7 +53,6 @@ FUNCTION kalk_kartica_magacin()
    dDatDo := Date()
    cPredh := "N"
 
-   PRIVATE cIdR := cIdRoba
 
    cBrFDa := "N"
    cPrikFCJ2 := "N"
@@ -123,25 +125,29 @@ FUNCTION kalk_kartica_magacin()
       ENDDO
       BoxC()
 
+altd()
       IF Empty( cIdRoba )
          IF pitanje(, "Niste zadali sifru artikla, izlistati sve kartice ?", "N" ) == "N"
             my_close_all_dbf()
             RETURN .F.
          ELSE
-            cIdR := ""
+            cIdRobaTackaZarez := ""
+            lRobaTackaZarez := .T.
          ENDIF
       ELSE
-         cIdr := cIdRoba
+         cIdRobaTackaZarez := cIdRoba
+         lRobaTackaZarez := .F.
       ENDIF
 
       IF Right( Trim( cIdroba ), 1 ) == ";"
-         fVeci := .F.
-         cIdR := Trim( StrTran( cIdroba, ";", "" ) )
-
-      ELSEIF Right( Trim( cIdRoba ), 1 ) == ">"
-         cIdR := Trim( StrTran( cIdroba, ">", "" ) )
-         fVeci := .T.
+         lRobaTackaZarez := .T.
+         cIdRobaTackaZarez := Trim( StrTran( cIdroba, ";", "" ) )
       ENDIF
+
+      //IF Right( Trim( cIdRoba ), 1 ) == ">"
+      //   cIdRobaTackaZarez := Trim( StrTran( cIdroba, ">", "" ) )
+      //   lRobaTackaZarez := .T.
+      //ENDIF
 
       IF LastKey() <> K_ESC
          set_metric( "kalk_kartica_magacin_id_roba", my_user(), cIdRoba )
@@ -185,7 +191,7 @@ FUNCTION kalk_kartica_magacin()
    ENDIF
 
    IF !( cFilt == ".t." )
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
    ENDIF
    GO TOP
 
@@ -210,7 +216,8 @@ FUNCTION kalk_kartica_magacin()
 
    zagl_mag_kart()
 
-   DO WHILE !Eof() .AND. iif( fVeci, idfirma + mkonto + field->idroba >= cIdFirma + cIdKonto + cIdR, idfirma + mkonto + field->idroba == cIdFirma + cIdKonto + cIdR )
+altd()
+   DO WHILE !Eof() .AND. iif( lRobaTackaZarez, idfirma + mkonto + field->idroba >= cIdFirma + cIdKonto + cIdRobaTackaZarez, idfirma + mkonto + field->idroba == cIdFirma + cIdKonto + cIdRobaTackaZarez )
 
       IF field->mkonto <> cIdKonto .OR. field->idfirma <> cIdFirma
          EXIT
@@ -294,7 +301,7 @@ FUNCTION kalk_kartica_magacin()
 
          ENDIF
 
-         IF PRow() -dodatni_redovi_po_stranici() > 62
+         IF PRow() - dodatni_redovi_po_stranici() > 62
             FF
             zagl_mag_kart()
          ENDIF
@@ -433,7 +440,7 @@ FUNCTION kalk_kartica_magacin()
                ?? "", idpartner
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY say_kolicina( 0          )
-               @ PRow(), PCol() + 1 SAY say_kolicina( -kolicina  )
+               @ PRow(), PCol() + 1 SAY say_kolicina( - kolicina  )
                @ PRow(), PCol() + 1 SAY say_kolicina( nUlaz - nIzlaz    )
 
 
@@ -491,7 +498,7 @@ FUNCTION kalk_kartica_magacin()
             IF field->datdok >= dDatod
 
                @ PRow(), PCol() + 1 SAY PadR( "NIV   (" + Transform( kolicina, pickol ) + ")", Len( pickol ) * 2 + 1 )
-               @ PRow(), PCol() + 1 SAY PadR( " stara VPC:", Len( pickol ) -2 )
+               @ PRow(), PCol() + 1 SAY PadR( " stara VPC:", Len( pickol ) - 2 )
                @ PRow(), PCol() + 1 SAY say_cijena( mpcsapp       )  // kod ove kalk to predstavlja staru vpc
                @ PRow(), PCol() + 1 SAY PadR( "nova VPC:", Len( piccdem ) + iif( cPVSS == "N", 2 * ( Len( picdem ) + 1 ), 0 ) )
                @ PRow(), PCol() + 1 SAY say_cijena( vpc + mpcsapp )
@@ -514,8 +521,8 @@ FUNCTION kalk_kartica_magacin()
                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa
                ?? "", field->idpartner
                nCol1 := PCol() + 1
-               @ PRow(), PCol() + 1 SAY say_kolicina( -kolicina  )
-               @ PRow(), PCol() + 1 SAY say_kolicina( -kolicina  )
+               @ PRow(), PCol() + 1 SAY say_kolicina( - kolicina  )
+               @ PRow(), PCol() + 1 SAY say_kolicina( - kolicina  )
                @ PRow(), PCol() + 1 SAY say_kolicina( nUlaz - nIzlaz    )
 
                nNc := field->nc
@@ -697,7 +704,7 @@ STATIC FUNCTION kartica_magacin_open_tabele()
    o_tarifa()
    o_sifk()
    o_sifv()
-   //o_roba()
+   // o_roba()
    o_konto()
    o_koncij()
    o_kalk() // kalk_kartica
@@ -795,7 +802,7 @@ STATIC FUNCTION zagl_mag_kart()
    ? __txt2
    ? __line
 
-   RETURN ( nil )
+   RETURN ( NIL )
 
 
 

@@ -18,15 +18,15 @@ FUNCTION form_get_roba_id( cIdRoba, nX, nY )
 
    LOCAL bWhen, bValid
 
+   // empty, "5;" - klasa sifri 5,  
    IF roba_barkod_pri_unosu()
       bWhen := {|| cIdRoba := PadR( cIdRoba, roba_duzina_sifre() ), .T. }
-      bValid := {|| Empty( cIdRoba ), ;
-         cIdRoba := iif( Len( Trim( cIdRoba ) ) <= 10, Left( cIdRoba, 10 ), cIdRoba ), ;
-         P_Roba( @cIdRoba ) }
+      bValid := {|| cIdRoba := iif( Len( Trim( cIdRoba ) ) <= 10, Left( cIdRoba, 10 ), cIdRoba ), ;
+         Empty( cIdRoba ) .OR. Right( Trim( cIdRoba ), 1 ) == ";" .OR. P_Roba( @cIdRoba ) }
 
    ELSE
       bWhen := {|| .T. }
-      bValid := {|| Empty( cIdroba ) .OR. P_Roba( @cIdRoba ) }
+      bValid := {|| Empty( cIdroba ) .OR. Right( Trim( cIdRoba ), 1 ) == ";" .OR. P_Roba( @cIdRoba ) }
    ENDIF
 
    @ nX, nY SAY "Roba  " GET cIdRoba WHEN Eval( bWhen )  VALID  Eval( bValid ) PICT "@!"
@@ -309,7 +309,7 @@ STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
       @ m_x + 2, m_y + 2 SAY _head
       @ m_x + 3, m_y + 2 SAY Replicate( "-", 59 )
 
-      FOR nI := _len to ( _len - ul_count ) STEP -1
+      FOR nI := _len TO ( _len - ul_count ) STEP -1
 
          IF nI > 0
 
@@ -324,14 +324,14 @@ STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
             cLine += Str( ulazi[ nI, 5 ], 12, 3 ) + "%"
 
             @ m_x + nX, m_y + 2 SAY cLine
-            ++ nX
+            ++nX
 
          ENDIF
 
       NEXT
 
       @ m_x + nX, m_y + 2 SAY Replicate( "-", 59 )
-      ++ nX
+      ++nX
       @ m_x + nX, m_y + 2 SAY "Pritisni 'ENTER' za nastavak ..." GET _ok
 
       READ

@@ -124,9 +124,9 @@
 #xcommand O_PRODNC         => select(F_PRODNC);  my_use  ("prodnc")  ; set order to tag "PRODROBA"
 #xcommand O_RVRSTA         => select(F_RVRSTA);  my_use  ("rvrsta")  ; set order to tag "ID"
 
-#xcommand O_K1             => select(F_ROBASEZ)  ;  my_use  ("k1")       ; set order to tag "1"
+//#xcommand o_k1()             => select(F_ROBASEZ)  ;  my_use  ("k1")       ; set order to tag "1"
 
-#xcommand O_REKAP1         => select(F_REKAP1)   ;  my_use  ("rekap1")   ; set order to tag "1"
+
 #xcommand O_REKAP2         => select(F_REKAP2)   ;  my_use  ("rekap2")   ; set order to tag "1"
 #xcommand O_REKA22         => select(F_REKA22)   ;  my_use  ("reka22")   ; set order to tag "1"
 #xcommand O_R_UIO          => select(F_R_UIO)    ;  my_use  ("r_uio")
@@ -245,7 +245,7 @@
 #xcommand O_INVENT       => select (F_INVENT)  ; my_use ("invent") ; set order to tag "1"
 #xcommand O_AMORT        => select (F_AMORT)   ; my_use ("amort")  ; set order to tag "ID"
 #xcommand O_REVAL        => select (F_REVAL)   ; my_use ("reval")  ; set order to tag "ID"
-#xcommand O_K1           => select (F_K1)      ; my_use ("k1")     ; set order to tag "ID"
+
 
 // modul POS
 #xcommand O_PROMVP    => SELECT (F_PROMVP); my_use ("promvp"); set order to tag "1"
@@ -328,6 +328,3 @@
 
 #xcommand O_KALKSEZ        => select(F_KALK);  my_use  ("kalk")  ; set order to tag "1"
 #xcommand O_ROBASEZ        => select(F_ROBA);  my_use  ("roba")  ; set order to tag "ID"
-
-
-#xcommand O_POBJEKTI       => select(F_POBJEKTI);  my_use  ("pobjekti") ; set order to tag "1"

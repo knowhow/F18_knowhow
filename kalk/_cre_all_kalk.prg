@@ -104,7 +104,6 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    AFTER_CREATE_INDEX
 
    // pobjekti
-
    _alias := "POBJEKTI"
    _table_name := "pobjekti"
 

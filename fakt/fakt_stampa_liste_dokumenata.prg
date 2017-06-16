@@ -151,7 +151,7 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
       ?? Str( ++nC, 4 ) + ".", datdok, idfirma, idtipdok, brdok + Rezerv + " "
 
       IF m1 <> "Z"
-         ?? PadR( fakt_doks->partner, PARTNER_LEN )
+         ?? PadR( Trim( fakt_doks->idpartner ) + " - " + fakt_doks->partner, PARTNER_LEN )
       ELSE
          ?? PadC ( "<<dokument u pripremi>>", PARTNER_LEN )
       ENDIF

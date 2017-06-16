@@ -48,11 +48,14 @@ FUNCTION kalk_magacin_pregled_robe_za_dobavljaca()
 
    find_kalk_by_mkonto_idroba( cIdFirma, NIL, cIdRoba, "idroba,datdok", .F. )
 
-   cFilt := "DATDOK>=dOd .and. DATDOK<=dDo"
+   cFilt := "DATDOK>=" + dbf_quote( dOd ) + ".and. DATDOK<=" + dbf_quote( dDo )
 
    IF !Empty( cIdRoba )
-      cFilt += ".and. IDROBA==cIdRoba"
+      cFilt += ".and. IDROBA==" + dbf_quote( cIdRoba )
    ENDIF
+
+   SET FILTER TO &cFilt
+   GO TOP
 
 
    nSlog := 0
@@ -85,7 +88,7 @@ FUNCTION kalk_magacin_pregled_robe_za_dobavljaca()
       ?
       print_lista_2( aKol, {|| NIL },, gTabela,, ;
          ,, ;
-         {|| FForPRD1( cIdPartner ) }, IIF( gOstr == "D",, - 1 ),,,,, )
+         {|| FForPRD1( cIdPartner ) }, iif( gOstr == "D",, - 1 ),,,,, )
       FF
       ENDPRINT
    ELSE

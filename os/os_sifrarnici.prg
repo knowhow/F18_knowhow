@@ -38,8 +38,9 @@ FUNCTION os_sifarnici()
    AAdd( _opcexe, {|| nil } )
    AAdd( _opc, "6. konta" )
    AAdd( _opcexe, {|| p_konto() } )
-   AAdd( _opc, "7. grupacije K1" )
-   AAdd( _opcexe, {|| p_k1() } )
+   //AAdd( _opc, "7. grupacije K1" )
+   //AAdd( _opcexe, {|| p_k1() } )
+
    AAdd( _opc, "8. partneri" )
    AAdd( _opcexe, {|| p_partner() } )
    AAdd( _opc, "9. valute" )
@@ -80,7 +81,8 @@ FUNCTION P_OS( cId, dx, dy )
       }
 
    IF os_postoji_polje( "K1" )
-      AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| P_K1( @wK1 ) } } )
+      //AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| P_K1( @wK1 ) } } )
+      AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { PadC( "K2", 2 ), {|| k2 }, "k2"   } )
       AAdd ( ImeKol, { PadC( "K3", 2 ), {|| k3 }, "k3"   } )
       AAdd ( ImeKol, { PadC( "Opis", 2 ), {|| opis }, "opis"   } )
@@ -259,7 +261,7 @@ STATIC FUNCTION _o_sif_tables()
    O_AMORT
    O_REVAL
    o_rj()
-   O_K1
+//   o_k1()
    o_partner()
    o_sifk()
    o_sifv()

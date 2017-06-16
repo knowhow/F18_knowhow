@@ -30,7 +30,7 @@ STATIC aToken2 := { ".or.", ".and.", ".or." }
 
 */
 
-FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
+FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno ) // , nSifWA )
 
    LOCAL cStartSifra, cOperator, nPoz1, nPos, nPoz1End, nSiflen
    LOCAL cIzraz, cLijevo, cDesno
@@ -47,7 +47,8 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
 
    cFilterUpit := Trim( cFilterUpit )
 
-   IF nSifWA == NIL .AND. !Empty( cFilterUpit ) .AND. Right( cFilterUpit, 1 ) <> ";"
+   //IF nSifWA == NIL .AND. !Empty( cFilterUpit ) .AND. Right( cFilterUpit, 1 ) <> ";"
+   IF !Empty( cFilterUpit ) .AND. Right( cFilterUpit, 1 ) <> ";"
       cFilterUpit := cFilterUpit + ";"
    ENDIF
 
@@ -55,6 +56,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
       cStartSifra := cFilterUpit
    ENDIF
 
+/*
    IF  nSifWA <> NIL .AND. Right( Trim( cFilterUpit ), 1 ) <> ";" .AND. !lRekurzivno
 
       IF !Empty( cFilterUpit )
@@ -83,6 +85,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
          RETURN NIL
       ENDIF
    ENDIF
+*/
 
    cIzraz := ""
    IF cTip == NIL;  cTip := "C";  ENDIF

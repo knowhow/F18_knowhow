@@ -129,7 +129,7 @@ FUNCTION kalk_finansijski_obrt()
    o_konto()
    o_tarifa()
    //o_kalk()
-   O_K1
+   //o_k1()
    kalk_o_objekti()
 
    lVpRabat := .F.

@@ -15,7 +15,7 @@
 
 FUNCTION os_rekapitulacija_po_k1()
 
-   O_K1
+  // o_k1()
    o_rj()
 
    o_os_sii()

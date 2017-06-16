@@ -180,7 +180,7 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
       lRet := .T.
    ELSE
 
-      IF  ( lAuto .OR. ( Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "D" ) == "D" ) )
+      IF  ( lAuto .OR. ( Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "N" ) == "D" ) )
 
          hRec[ "opis" ] := "GRESKA ZAOKRUZ."
          hRec[ "brdok" ] := ""

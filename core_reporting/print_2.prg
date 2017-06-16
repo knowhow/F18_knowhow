@@ -229,7 +229,7 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
       nRet := f18_editor( cFileName )
 
       IF nRet <> 0
-         MsgBeep ( "f18_edit nije u pathu ?!##" + "cmd:" + cCommand )
+         MsgBeep ( "f18_editor() ERROR ?!" )
       ENDIF
    END CASE
 

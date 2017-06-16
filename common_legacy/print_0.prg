@@ -280,7 +280,6 @@ FUNCTION EndPrint()
          gaKolFix := NIL
 
       ELSEIF cPrinter == "G"
-         // gvim stampa...
          cKom := my_home() + cFName
          gvim_cmd( cKom )
       ELSE

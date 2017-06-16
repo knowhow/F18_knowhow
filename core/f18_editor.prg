@@ -35,13 +35,12 @@ FUNCTION f18_editor( cTxt )
       cCmd := "f18_editor"
    ELSE
       cCmd := s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " " + cTxt
-   ENDIF
 
-   IF ! File( s_cDirF18Util + s_cUtilName + SLASH + s_cProg )
-      MsgBeep( "Error NO CMD: " + s_cDirF18Util + s_cUtilName + SLASH + s_cProg + "!? STOP" )
-      RETURN ""
+      IF ! File( s_cDirF18Util + s_cUtilName + SLASH + s_cProg )
+         MsgBeep( "Error NO CMD: " + s_cDirF18Util + s_cUtilName + SLASH + s_cProg + "!? STOP" )
+         RETURN ""
+      ENDIF
    ENDIF
-
 
    // DirChange( s_cDirF18Util + s_cUtilName )
    // f18_run( cCmd, @hOutput )

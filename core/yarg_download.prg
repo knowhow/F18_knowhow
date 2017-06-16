@@ -42,10 +42,6 @@ FUNCTION check_yarg_download()
    LOCAL cDownloadRazlog := "FILE"
    LOCAL cYargCmd
 
-   IF is_linux()
-      RETURN .T.
-   ENDIF
-
    IF s_cDirF18Util == NIL
       s_cDirF18Util := ExePath() + "F18_util" + SLASH
       s_cProg := "bin" + SLASH + s_cUtilName + iif( is_windows(), ".bat", "" )

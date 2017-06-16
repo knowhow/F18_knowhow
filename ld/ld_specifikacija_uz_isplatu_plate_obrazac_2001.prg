@@ -14,7 +14,7 @@
 STATIC s_cDirF18Template
 STATIC s_cTemplateName := "ld_obr_2001.xlsx"
 STATIC s_cUrl
-STATIC s_cSHA256sum := "c4862f84d731aadf67d387849bf979fbf1bc4a1a106510cc5f0abd23bf9944e3" // v16
+STATIC s_cSHA256sum := "23721f993561d4aa178730a18bde38294b3c720733d64bb9c691e973f00165fc" // v17
 
 
 FUNCTION ld_specifikacija_plate_obr_2001()
@@ -206,7 +206,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       @ form_x_koord() + 4, form_y_koord() + 2 SAY " Naziv: " GET cFirmNaz
       @ form_x_koord() + 5, form_y_koord() + 2 SAY "Adresa: " GET cFirmAdresa
       @ form_x_koord() + 6, form_y_koord() + 2 SAY "Opcina: " GET cFirmOpc
-      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Vrsta djelatnosti: " GET cFirmVD
+      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Vrsta djelatnosti: " GET cVrstaDjelatnosti
 
       @ form_x_koord() + 4, form_y_koord() + 52 SAY "ID.broj :" GET cMatBR
       @ form_x_koord() + 5, form_y_koord() + 52 SAY "Dat.ispl:" GET dDatIspl
@@ -258,7 +258,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    set_metric( "org_naziv", NIL, cFirmNaz )
    set_metric( "ld_firma_adresa", NIL, cFirmAdresa )
    set_metric( "ld_firma_opcina", NIL, cFirmOpc )
-   set_metric( "ld_firma_vrsta_djelatnosti", NIL, cFirmVD )
+   set_metric( "ld_firma_vrsta_djelatnosti", NIL, cVrstaDjelatnosti )
    set_metric( "ld_specifikacija_minuli_rad", NIL, cMRad )
    set_metric( "ld_specifikacija_primanja_dobra", NIL, cPrimDobra )
    set_metric( "ld_specifikacija_doprinos_1", NIL, cDoprIz1 )
@@ -299,7 +299,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    hRec[ "naziv" ] := cFirmNaz
    hRec[ "adresa" ] := cFirmAdresa
    hRec[ "opcina" ] :=  cFirmOpc
-   hRec[ "vrsta_djelatnosti" ] :=  cFirmVD
+   hRec[ "vrsta_djelatnosti" ] :=  cVrstaDjelatnosti
 
    DO CASE
    CASE cVrstaIsplate == "A"

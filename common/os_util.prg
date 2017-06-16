@@ -418,7 +418,7 @@ FUNCTION f18_open_document( cDocument )
 
 FUNCTION open_folder( cFolder )
 
-   LOCAL _cmd
+   LOCAL cCmd
 
    cFolder := file_path_quote( cFolder )
 
@@ -428,32 +428,36 @@ FUNCTION open_folder( cFolder )
 
 FUNCTION f18_open_mime_document( cDocument )
 
-   LOCAL _cmd := "", _error
-
-   cDocument := file_path_quote( cDocument )
+   LOCAL cCmd := "", nError, cPrefixCmd
 
    // IF Pitanje(, "Otvoriti " + AllTrim( cDocument ) + " ?", "D" ) == "N"
    // RETURN .F.
    // ENDIF
-
+/*
 #ifdef __PLATFORM__UNIX
 
 #ifdef __PLATFORM__DARWIN
-   _cmd += "open " + cDocument
+   cCmd += "open " + cDocument
 #else
-   _cmd += "xdg-open " + cDocument + " &"
+   cCmd += "xdg-open " + cDocument + " &"
 #endif
 
 #else __PLATFORM__WINDOWS
 
-   _cmd += "cmd /c " + cDocument
+   cCmd += "cmd /c " + cDocument
 
 #endif
+*/
 
-   _error := f18_run( _cmd )
+   cDocument := file_path_quote( cDocument )
 
-   IF _error <> 0
-      MsgBeep( "Problem sa otvaranjem dokumenta !#Greška: " + AllTrim( Str( _error ) ) )
+   cPrefixCmd := get_run_prefix_cmd()
+   cCmd += cPrefixCmd + cDocument
+
+   nError := f18_run( cCmd )
+
+   IF nError <> 0
+      MsgBeep( "Problem sa otvaranjem dokumenta !#Greška: " + AllTrim( Str( nError ) ) )
       RETURN .F.
    ENDIF
 

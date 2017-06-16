@@ -44,7 +44,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL nDanOd, nDanDo, nMjesecOd, nGodinaOd, nMjesecDo, nGodinaDo
    LOCAL nBrutoOsnova := 0
    LOCAL nBrutoOsBenef := 0
-   LOCAL nPojBrOsn := 0
+   LOCAL nRadnikBrutoOsnovica := 0
    LOCAL nPojBrBenef := 0
    LOCAL nOstaleObaveze := 0
    LOCAL uNaRuke := 0
@@ -89,7 +89,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cDodDoprP
    LOCAL cDodDoprZ
    LOCAL t
-   LOCAL nKoefLO
+   LOCAL nKoefLicniOdbici
    LOCAL nULicOdbitak
    LOCAL nP77
    // LOCAL nP78
@@ -101,9 +101,9 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL nDopr1X, nDopr2X, nDopr3X  // iznosi dopr IZ
    LOCAL nDopr5X, nDopr6X, nDopr7X  // iznosi dopr NA
 
-   LOCAL nPojPorOsn := 0
+   LOCAL nRadnikPoreznaOsnovica := 0
    LOCAL nPojDoprIz := 0
-   LOCAL nPorOsnovica := 0
+   LOCAL nPoreznaOsnovicaUkupno := 0
    LOCAL nPorNaPlatu := 0
    LOCAL nPorezOstali := 0
 
@@ -115,7 +115,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL nOstOb3 := 0
    LOCAL nOstOb4 := 0
 
-   LOCAL nMBrutoOsnova := 0
+   LOCAL nMinimalnaBrutoOsnovica := 0
    LOCAL nBrutoDobra := 0
 
    LOCAL lPDNE := .F.
@@ -433,7 +433,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    nUNeto := 0
    nUNetoOsnova := 0
    nPorNaPlatu := 0
-   nKoefLO := 0
+   nKoefLicniOdbici := 0
    nBrojZaposlenih := 0
    nULicOdbitak := 0
    nDodDoprZ := 0
@@ -475,8 +475,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
          LOOP
       ENDIF
 
-      nKoefLO := ld->ulicodb
-      nULicOdbitak += nKoefLO
+      nKoefLicniOdbici := ld->ulicodb
+      nULicOdbitak += nKoefLicniOdbici
       nP77 := iif( !Empty( cMRad ), LD->&( "I" + cMRad ), 0 )
       // nP78 := iif( !Empty( cPorOl ), LD->&( "I" + cPorOl ), 0 )
       nP79 := 0
@@ -524,22 +524,22 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       nUNetoOsnova += nNetoOsn
 
       // prvo doprinosi i bruto osnova
-      nPojBrOsn := ld_get_bruto_osnova( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
+      nRadnikBrutoOsnovica := ld_get_bruto_osnova( nNetoOsn, cRTR, nKoefLicniOdbici, nRSpr_koef )
 
       nPojedinacniBrutoDobraUsluge := 0
       IF nPrDobra > 0
-         nPojedinacniBrutoDobraUsluge := ld_get_bruto_osnova( nPrDobra, cRTR, nKoefLO, nRSpr_koef )
+         nPojedinacniBrutoDobraUsluge := ld_get_bruto_osnova( nPrDobra, cRTR, nKoefLicniOdbici, nRSpr_koef )
       ENDIF
 
-      nMPojBrOsn := nPojBrOsn
+      nMPojBrOsn := nRadnikBrutoOsnovica
 
       IF calc_mbruto()
-         nMPojBrOsn := min_bruto( nPojBrOsn, field->usati ) // minimalni bruto
+         nMPojBrOsn := min_bruto( nRadnikBrutoOsnovica, field->usati ) // minimalni bruto
       ENDIF
 
-      nBrutoOsnova += nPojBrOsn
+      nBrutoOsnova += nRadnikBrutoOsnovica
       nBrutoDobra += nPojedinacniBrutoDobraUsluge
-      nMBrutoOsnova += nMPojBrOsn
+      nMinimalnaBrutoOsnovica += nMPojBrOsn
 
 
       aBeneficirani := {}
@@ -549,7 +549,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
          cFFTmp := gBFForm
          gBFForm := StrTran( gBFForm, "_", "" )
 
-         nPojBrBenef := ld_get_bruto_osnova( nNetoOsn - IF( !Empty( gBFForm ), &gBFForm, 0 ), cRTR, nKoefLO, nRSpr_koef )
+         nPojBrBenef := ld_get_bruto_osnova( nNetoOsn - IF( !Empty( gBFForm ), &gBFForm, 0 ), cRTR, nKoefLicniOdbici, nRSpr_koef )
 
          nBrutoOsBenef += nPojBrBenef
          _benef_st := BenefStepen()
@@ -559,7 +559,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
       ENDIF
 
-      nPom := nMBrutoOsnova
+      nPom := nMinimalnaBrutoOsnovica
 
       nKoefDodatniDoprinosZdravstvo := 0
       nKoefDodatniDoprinosPio := 0
@@ -578,9 +578,9 @@ FUNCTION ld_specifikacija_plate_obr_2001()
                   nBOO += aOps[ i, 3 ]
                ENDIF
             NEXT
-            nBOO := ld_get_bruto_osnova( nBOO, cRTR, nKoefLO )
+            nBOO := ld_get_bruto_osnova( nBOO, cRTR, nKoefLicniOdbici )
          ELSE
-            nBOO := nMBrutoOsnova
+            nBOO := nMinimalnaBrutoOsnovica
          ENDIF
 
          IF ID $ cDodDoprP
@@ -606,9 +606,9 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
       ENDDO
 
-      hRec[ "place_u_novcu" ] := FormNum2( nUNETO, 16, cPictureIznos )
+      hRec[ "place_u_novcu" ] := FormNum2( nMinimalnaBrutoOsnovica, 16, cPictureIznos )
       hRec[ "place_u_stvarima" ] := FormNum2( 0, 16, cPictureIznos )
-      hRec[ "ukupne_place" ] := FormNum2( nUNETO + 0, 16, cPictureIznos )
+      hRec[ "ukupne_place" ] := FormNum2( nMinimalnaBrutoOsnovica + 0, 16, cPictureIznos )
 
       nKoefDopr1X := find_field_by_id( "dopr", cDoprIz1, "iznos" )
       nKoefDopr2X := find_field_by_id( "dopr", cDoprIz2, "iznos" )
@@ -642,34 +642,29 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       hRec[ "stopa_20" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // PIO na
 
       nPom := nKoefDopr6X
-      // UzmiIzIni( cIniName, 'Varijable', 'D12_2B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
       hRec[ "stopa_21" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // zdrav na
 
       nPom := nKoefDopr7X
-      // UzmiIzIni( cIniName, 'Varijable', 'D12_3B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
       hRec[ "stopa_22" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezap na
 
       nPom := nKoefDopr5X + nKoefDopr6X + nKoefDopr7X + nKoefDodatniDoprinosZdravstvo + nKoefDodatniDoprinosPio
-      // UzmiIzIni( cIniName, 'Varijable', 'D12B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
 
 
       nPom := nKoefDodatniDoprinosPio
-      // UzmiIzIni( cIniName, 'Varijable', 'D12_4B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
       hRec[ "stopa_23" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // dodatni PIO i invalid
 
       nPom := nKoefDodatniDoprinosZdravstvo
-      // UzmiIzIni( cIniName, 'Varijable', 'D12_5B', FormNum2( nPom, 16, cPictureIznos ) + "%", 'WRITE' )
       hRec[ "stopa_24" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // dodatni zdravstvo
 
 
-      nDopr1X := round2( nMBrutoOsnova * nKoefDopr1X / 100, gZaok2 ) // iznos pio iz
+      nDopr1X := round2( nMinimalnaBrutoOsnovica * nKoefDopr1X / 100, gZaok2 ) // iznos pio iz
 
       hRec[ "iznos_16" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr1X, cVrstaIsplate ), 16, cPictureIznos )
 
-      nDopr2X := round2( nMBrutoOsnova * nKoefDopr2X / 100, gZaok2 ) // iznos zdr iz
+      nDopr2X := round2( nMinimalnaBrutoOsnovica * nKoefDopr2X / 100, gZaok2 ) // iznos zdr iz
       hRec[ "iznos_17" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr2X, cVrstaIsplate ), 16, cPictureIznos )
 
-      nDopr3X := round2( nMBrutoOsnova * nKoefDopr3X / 100, gZaok2 ) // iznos nez iz
+      nDopr3X := round2( nMinimalnaBrutoOsnovica * nKoefDopr3X / 100, gZaok2 ) // iznos nez iz
       hRec[ "iznos_18" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr3X, cVrstaIsplate ), 16, cPictureIznos )
 
       nUkDoprIZ := nDopr1X + nDopr2X + nDopr3X
@@ -677,13 +672,13 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
       // UzmiIzIni( cIniName, 'Varijable', 'D11I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cVrstaIsplate ), 16, cPictureIznos ), 'WRITE' )
 
-      nDopr5X := round2( nMBrutoOsnova * nKoefDopr5X / 100, gZaok2 )  // iznos pio na
+      nDopr5X := round2( nMinimalnaBrutoOsnovica * nKoefDopr5X / 100, gZaok2 )  // iznos pio na
       hRec[ "iznos_20" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr5X, cVrstaIsplate ), 16, cPictureIznos )
 
-      nDopr6X := round2( nMBrutoOsnova * nKoefDopr6X / 100, gZaok2 )
+      nDopr6X := round2( nMinimalnaBrutoOsnovica * nKoefDopr6X / 100, gZaok2 )
       hRec[ "iznos_21" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr6X, cVrstaIsplate ), 16, cPictureIznos )
 
-      nDopr7X := round2( nMBrutoOsnova * nKoefDopr7X / 100, gZaok2 )
+      nDopr7X := round2( nMinimalnaBrutoOsnovica * nKoefDopr7X / 100, gZaok2 )
       hRec[ "iznos_22" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr7X, cVrstaIsplate ), 16, cPictureIznos )
 
       // dodatni doprinos zdr i pio
@@ -700,17 +695,17 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       // UzmiIzIni( cIniName, 'Varijable', 'D12I', FormNum2( isplata_dopr_kontrola_iznosa( nPom, cVrstaIsplate ), 16, cPictureIznos ), 'WRITE' )
       hRec[ "iznos_25" ] := FormNum2( isplata_dopr_kontrola_iznosa( nPom, cVrstaIsplate ), 16, cPictureIznos )
 
-      nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
+      nRadnikPoreznaOsnovica := ( nRadnikBrutoOsnovica - nPojDoprIz ) - nKoefLicniOdbici
 
-      IF nPojPorOsn >= 0 .AND. radn_oporeziv( radn->id, ld->idrj )
+      IF nRadnikPoreznaOsnovica >= 0 .AND. radn_oporeziv( radn->id, ld->idrj )
          // osnovica za porez na platu
-         // nPorOsnovica := ( nBrutoOsnova - nUKDoprIZ ) - nULicOdbitak
-         nPorOsnovica += nPojPorOsn
+         // nPoreznaOsnovicaUkupno := ( nBrutoOsnova - nUKDoprIZ ) - nULicOdbitak
+         nPoreznaOsnovicaUkupno += nRadnikPoreznaOsnovica
       ENDIF
 
       // osnovica mora biti veca od 0
-      IF nPorOsnovica < 0
-         nPorOsnovica := 0
+      IF nPoreznaOsnovicaUkupno < 0
+         nPoreznaOsnovicaUkupno := 0
       ENDIF
 
       // resetuj varijable
@@ -720,7 +715,6 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
       o_por()   // porez na platu i ostali porez
       GO TOP
-
       DO WHILE !Eof()
 
          PozicOps( POR->poopst )
@@ -729,7 +723,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
             LOOP
          ENDIF
          IF por->por_tip == "B"
-            nPorNaPlatu  += POR->iznos * Max( nPorOsnovica, PAROBR->prosld * gPDLimit / 100 ) / 100
+            nPorNaPlatu  += POR->iznos * Max( nPoreznaOsnovicaUkupno, PAROBR->prosld * gPDLimit / 100 ) / 100
          ENDIF
          SKIP 1
       ENDDO
@@ -761,7 +755,9 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
    ENDDO
 
+   // =====================================================================
    hRec[ "broj_zaposlenih" ] := AllTrim( Str( nBrojZaposlenih, 6, 0 ) )
+
 
    IF nObrCount == 0
       MsgBeep( "Štampa specifikacije nije moguća, nema obračuna !" )
@@ -834,7 +830,6 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    // UzmiIzIni( cIniName, 'Varijable', 'D13_1N', FormNum2( POR->IZNOS, 16, cPictureIznos ) + "%", 'WRITE' )
 
    nPom := nPorNaPlatu - nPorOlaksice // efektivno porez na dohodak
-
    hRec[ "iznos_29" ] :=   FormNum2( isplata_poreza_kontrola_iznosa( nPom, cVrstaIsplate ), 16, cPictureIznos )
 
    // nPom = nPorNaPlatu
@@ -869,7 +864,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    ENDIF
 
 
-   nPom := nMBrutoOsnova - nBrutoDobra
+   nPom := nMinimalnaBrutoOsnovica - nBrutoDobra
    nUUNR := nPom
 
    // ukupno ostalo

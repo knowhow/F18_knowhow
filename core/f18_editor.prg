@@ -34,6 +34,11 @@ FUNCTION f18_editor( cTxt )
    IF is_linux() .OR. is_mac() .OR. is_windows()
       cCmd := "f18_editor" + " " + cTxt
    ELSE
+      cCmd := "start f18_editor.cmd" + " " + cTxt
+   ENDIF
+
+   /*
+   ELSE
       cCmd := s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " " + cTxt
 
       IF ! File( s_cDirF18Util + s_cUtilName + SLASH + s_cProg )
@@ -41,7 +46,7 @@ FUNCTION f18_editor( cTxt )
          RETURN ""
       ENDIF
    ENDIF
-
+*/
    // DirChange( s_cDirF18Util + s_cUtilName )
    // f18_run( cCmd, @hOutput )
 

@@ -369,8 +369,14 @@ FUNCTION get_run_prefix_cmd( cCommand, lAsync )
       // cPrefix := "cmd /c "
       IF cCommand != NIL .AND. Left( cCommand, 6 ) == "start "
          cPrefix := ""  // sprijeciti duplo "start start program"
+      ELSEIF cCommand != NIL .AND. Left( cCommand, 4 ) == "cmd "
+         cPrefix := ""
       ELSE
-         cPrefix := 'start "" ' + IIF( lAsync, "", "/WAIT ")
+         IF lAsync
+            cPrefix := 'start "" '
+         ELSE
+            cPrefix := 'cmd / '
+         ENDIF
       ENDIF
    ELSE
       IF is_mac()
@@ -408,9 +414,9 @@ FUNCTION get_run_cmd_with_prefix( cCommand, lAsync )
 
    LOCAL cCmdWithPrefix := get_run_prefix_cmd( cCommand, lAsync ) + cCommand
 
-   //IF is_windows()
-   //    cCmdWithPrefix := StrTran( cCmdWithPrefix, "start f18_editor", "f18_editor.cmd" )
-   //ENDIF
+   // IF is_windows()
+   // cCmdWithPrefix := StrTran( cCmdWithPrefix, "start f18_editor", "f18_editor.cmd" )
+   // ENDIF
 
    RETURN cCmdWithPrefix
 

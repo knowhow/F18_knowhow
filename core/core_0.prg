@@ -159,8 +159,7 @@ FUNCTION windows_run_invisible( cProg, cArg, lAsync )
    ENDIF
 
 
-
-   cCmd += 'wscript '
+   cCmd := 'wscript '
    cCmd += cDirF18Util + 'run_invisible.vbs '
 
    IF lAsync

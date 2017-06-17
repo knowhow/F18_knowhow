@@ -251,8 +251,8 @@ FUNCTION set_screen_dimensions()
 
    CASE  _pix_width >= 1024 .AND. _pix_height >= 768
 
-      font_size( 20 )
-      font_width( 10 )
+      font_size( 22 )
+      font_width( 11 )
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 100 )
 
@@ -260,8 +260,8 @@ FUNCTION set_screen_dimensions()
 
    OTHERWISE
 
-      font_size( 16 )
-      font_width( 8 )
+      font_size( 22 )
+      font_width( 11 )
 
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 100 )

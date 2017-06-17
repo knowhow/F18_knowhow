@@ -154,7 +154,7 @@ FUNCTION windows_run_invisible( cProg, cArg, lAsync )
    IF lAsync
       cStart := "start"
    ELSE
-      cStart := "'cmd /c'"
+      cStart := "cmd /c"
    ENDIF
 
    IF !File( cDirF18Util + "run_invisible.vbs" )

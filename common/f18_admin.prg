@@ -561,6 +561,7 @@ METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, onl
    cCmd += location
 #endif
 
+altd()
    f18_run( cCmd )
 
    // Sleep( 1 )

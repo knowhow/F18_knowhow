@@ -149,9 +149,9 @@ FUNCTION windows_run_invisible( cProg, cArg )
       RETURN .F.
    ENDIF
 
-   IF !File( cDirF18Util )
+   IF !File( cDirF18Util + "run_invisible.vbs" )
       nH := FCreate( cDirF18Util + "run_invisible.vbs" )
-      FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' )
+      FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' + hb_eol() )
       FWrite( nH, 'objShell.Run WScript.arguments(0) & WScript.arguments(1), 0, True' )
       FClose( nH )
    ENDIF

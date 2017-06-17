@@ -224,9 +224,9 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 
    OTHERWISE
 
-      cCommand := run_cmd_with_prefix( "f18_editor "  + cFileName )
-      nRet := f18_run( cCommand )
-      //nRet := f18_editor( cFileName )
+      //cCommand := run_cmd_with_prefix( "f18_editor "  + cFileName )
+      //nRet := f18_run( cCommand )
+      nRet := f18_editor( cFileName )
 
       IF nRet <> 0
          MsgBeep ( "f18_editor() ERROR ?!" )

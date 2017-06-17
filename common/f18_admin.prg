@@ -545,7 +545,7 @@ METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, onl
       // Sleep( 1 )
    //ENDIF
 
-   cCmd := 'start "" /WAIT ' + "wget "
+   cCmd := "wget "
 
 #ifdef __PLATFORM__WINDOWS
    cCmd += " -q  --tries=4 --timeout=4  --no-cache --no-check-certificate "

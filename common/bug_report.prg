@@ -15,7 +15,7 @@
 FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
    LOCAL cCmd
-   LOCAL _out_file
+   LOCAL cOutFile
    LOCAL cMsg, cLogMsg := "BUG REPORT: "
    LOCAL lNotify := .F.
    LOCAL bErr
@@ -68,7 +68,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       Beep( 5 )
    ENDIF
 
-   _out_file := my_home_root() + "error.txt"
+   cOutFile := my_home_root() + "error.txt"
 
    IF is_in_main_thread()
 #ifdef F18_DEBUG
@@ -79,7 +79,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       SET CONSOLE OFF
       SET PRINTER OFF
       SET DEVICE TO PRINTER
-      SET PRINTER to ( _out_file )
+      SET PRINTER to ( cOutFile )
       SET PRINTER ON
       P_12CPI
 
@@ -175,7 +175,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       SET PRINTER TO
       SET CONSOLE ON
       IF lShowErrorReport
-         cCmd := run_cmd_with_prefix( "f18_editor " + _out_file )
+         cCmd := "f18_editor " + cOutFile
          f18_run( cCmd )
       ENDIF
       log_write( cLogMsg, 1 )

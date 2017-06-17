@@ -289,7 +289,7 @@ HB_FUNC( __RUN_SYSTEM )
 
 FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
 
-   LOCAL nRet
+   LOCAL nRet := -1
    LOCAL cStdOut := "", cStdErr := ""
    LOCAL cPrefixCmd
    LOCAL _msg
@@ -305,6 +305,7 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
    IF  lAsync .AND. ( is_linux() .OR. is_mac() )
       nRet := __run_system( cCommand + "&" )
    ELSE
+      cCommand := get_run_cmd_with_prefix( cCommand, lAsync )
       nRet := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr, lAsync )
    ENDIF
 
@@ -317,7 +318,7 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
 
       cPrefixCmd := get_run_prefix_cmd( cCommand )
 
-#ifdef __PLATFORM__LINUX
+#ifdef __PLATFORM__UNIX
       IF lAsync
          nRet := __run_system( cPrefixCmd + cCommand + "&" )
       ELSE
@@ -358,16 +359,18 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
    RETURN nRet
 
 
-FUNCTION get_run_prefix_cmd( cCommand )
+FUNCTION get_run_prefix_cmd( cCommand, lAsync )
 
    LOCAL cPrefix
+
+   hb_default( @lAsync, .F. )
 
    IF is_windows()
       // cPrefix := "cmd /c "
       IF cCommand != NIL .AND. Left( cCommand, 6 ) == "start "
          cPrefix := ""  // sprijeciti duplo "start start program"
       ELSE
-         cPrefix := 'start "" '
+         cPrefix := 'start "" ' + IIF( lAsync, "", "/WAIT ")
       ENDIF
    ELSE
       IF is_mac()
@@ -401,13 +404,13 @@ FUNCTION get_run_prefix_cmd( cCommand )
 /*
     run_cmd_with_prefix( "f18_editor test.txt" ) => "f18_editor.cmd test.txt"
 */
-FUNCTION run_cmd_with_prefix( cCommand )
+FUNCTION get_run_cmd_with_prefix( cCommand, lAsync )
 
-   LOCAL cCmdWithPrefix := get_run_prefix_cmd( cCommand ) + cCommand
+   LOCAL cCmdWithPrefix := get_run_prefix_cmd( cCommand, lAsync ) + cCommand
 
-   IF is_windows()
-      cCmdWithPrefix := StrTran( cCmdWithPrefix, "start f18_editor", "f18_editor.cmd" )
-   ENDIF
+   //IF is_windows()
+   //    cCmdWithPrefix := StrTran( cCmdWithPrefix, "start f18_editor", "f18_editor.cmd" )
+   //ENDIF
 
    RETURN cCmdWithPrefix
 

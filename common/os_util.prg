@@ -271,7 +271,7 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
    ENDIF
 
    IF lAsync == NIL
-      lAsync := .F. // najcesce zelimo da okinemo eksternu komandu i nastavimo rad
+      lAsync := .F. // default sync execute
    ENDIF
 
    IF is_windows()

@@ -19,6 +19,7 @@ FUNCTION sha256sum( cFile )
 
    LOCAL cCmd
    LOCAL hOutput := hb_Hash()
+   LOCAL nRet
 
    check_exe_download()
    cCmd := s_cDirF18Util + s_cProg + " " + cFile
@@ -28,7 +29,8 @@ FUNCTION sha256sum( cFile )
       RETURN ""
    ENDIF
 
-   f18_run( cCmd, @hOutput )
+altd()
+   nRet := f18_run( cCmd, @hOutput )
 
    RETURN hOutput[ "stdout" ]
 

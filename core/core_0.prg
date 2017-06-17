@@ -136,7 +136,7 @@ FUNCTION f18_exe_path()
 FUNCTION windows_run_invisible( cProg, cArg, lAsync )
 
    LOCAL cDirF18Util := f18_exe_path() + "F18_util" + SLASH
-   LOCAL cCmd
+   LOCAL cStart, cCmd
    LOCAL nH
 
    hb_default( @lAsync, .F. )
@@ -154,20 +154,23 @@ FUNCTION windows_run_invisible( cProg, cArg, lAsync )
    IF !File( cDirF18Util + "run_invisible.vbs" )
       nH := FCreate( cDirF18Util + "run_invisible.vbs" )
       FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' + hb_eol() )
-      FWrite( nH, 'objShell.Run "cmd /c " & WScript.arguments(0) & " " & WScript.arguments(1), 0, True' )
+      FWrite( nH, 'objShell.Run WScript.arguments(0) & " " & WScript.arguments(1) & " " & WScript.arguments(2), 0, True' )
       FClose( nH )
    ENDIF
 
-   //IF lAsync
-  //    cCmd := 'start "" '
-  // ELSE
-      cCmd := ""
-  // ENDIF
+
 
    cCmd += 'wscript '
    cCmd += cDirF18Util + 'run_invisible.vbs '
-   cCmd += '"' + cProg + '" "' + cArg + '"'
+
+   IF lAsync
+      cStart := 'cmd /c start'
+   ELSE
+      cStart := 'cmd /c'
+   ENDIF
+
+   cCmd += '"' + cStart + '" "' + cProg + '" "' + cArg + '"'
 
    ?E cCmd
 
-   RETURN  hb_processRun( cCmd,, NIL, NIL, lAsync )
+   RETURN  hb_processRun( cCmd )

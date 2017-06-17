@@ -133,11 +133,13 @@ FUNCTION f18_exe_path()
    RETURN hb_FNameDir( hb_ProgName() )
 
 
-FUNCTION windows_run_invisible( cProg, cArg )
+FUNCTION windows_run_invisible( cProg, cArg, lAsync )
 
    LOCAL cDirF18Util := f18_exe_path() + "F18_util" + SLASH
+   LOCAL cStart
    LOCAL nH
 
+   hb_default( @lAsync, .F. )
    IF DirChange( cDirF18Util ) != 0  // e.g. F18.exe/F18_util
       IF MakeDir( cDirF18Util ) != 0
          MsgBeep( "Kreiranje dir: " + cDirF18Util + " neuspješno?! STOP" )
@@ -149,11 +151,17 @@ FUNCTION windows_run_invisible( cProg, cArg )
       RETURN .F.
    ENDIF
 
+   IF lAsync
+      cStart := "start"
+   ELSE
+      cStart := "'cmd /'"
+   ENDIF
+
    IF !File( cDirF18Util + "run_invisible.vbs" )
       nH := FCreate( cDirF18Util + "run_invisible.vbs" )
       FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' + hb_eol() )
-      FWrite( nH, 'objShell.Run WScript.arguments(0) & WScript.arguments(1), 0, True' )
+      FWrite( nH, 'objShell.Run WScript.arguments(0) & " " & WScript.arguments(1) & " " & WScript.arguments(2), 0, True' )
       FClose( nH )
    ENDIF
 
-   RETURN  hb_processRun( 'wscript ' + cDirF18Util + 'run_invisible.vbs ' + cProg + " " + cArg)
+   RETURN  hb_processRun( 'wscript ' + cDirF18Util + 'run_invisible.vbs ' + cStart + cProg + " " + cArg )

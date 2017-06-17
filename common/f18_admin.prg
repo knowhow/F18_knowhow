@@ -525,7 +525,7 @@ METHOD F18Admin:get_os_name()
 METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, only_newer )
 
    LOCAL lOk := .F.
-   LOCAL cCmd := ""
+   LOCAL cCmd
    LOCAL nFileHandle, _lenght
 
    //IF erase_file == NIL
@@ -545,7 +545,7 @@ METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, onl
       // Sleep( 1 )
    //ENDIF
 
-   cCmd +=  iif( is_windows(), 'start "" ', "" ) + "wget "
+   cCmd := 'start "" /WAIT ' + "wget "
 
 #ifdef __PLATFORM__WINDOWS
    cCmd += " -q  --tries=4 --timeout=4  --no-cache --no-check-certificate "
@@ -561,7 +561,7 @@ METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, onl
    cCmd += location
 #endif
 
-   hb_run( cCmd )
+   f18_run( cCmd )
 
    // Sleep( 1 )
 

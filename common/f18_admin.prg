@@ -561,7 +561,7 @@ METHOD F18Admin:wget_download( url, cFileName, cLocalFileName, erase_file, silen
    cCmd += cLocalFileName
 #endif
 
-   IF windows_run_invisible( cCmd, "", NIL, NIL, .F. ) != 0
+   IF f18_run( cCmd, NIL, NIL, .F. ) != 0
       MsgBeep( "Error: " + cCmd  + "?!" )
    ENDIF
    // Sleep( 1 )

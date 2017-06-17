@@ -136,7 +136,7 @@ FUNCTION f18_exe_path()
 FUNCTION windows_run_invisible( cProg, cArg, lAsync )
 
    LOCAL cDirF18Util := f18_exe_path() + "F18_util" + SLASH
-   LOCAL cStart
+   LOCAL cCmd, cStart
    LOCAL nH
 
    hb_default( @lAsync, .F. )
@@ -164,4 +164,8 @@ FUNCTION windows_run_invisible( cProg, cArg, lAsync )
       FClose( nH )
    ENDIF
 
-   RETURN  hb_processRun( 'wscript ' + cDirF18Util + 'run_invisible.vbs ' + cStart + cProg + " " + cArg )
+   cCmd := 'wscript '
+   cCmd += cDirF18Util + 'run_invisible.vbs '
+   cCmd += cStart + " " + cProg + " " + cArg
+
+   RETURN  hb_processRun( cCmd )

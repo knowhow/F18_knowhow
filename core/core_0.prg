@@ -158,11 +158,11 @@ FUNCTION windows_run_invisible( cProg, cArg, lAsync )
       FClose( nH )
    ENDIF
 
-   IF lAsync
-      cCmd := 'start "" '
-   ELSE
+   //IF lAsync
+  //    cCmd := 'start "" '
+  // ELSE
       cCmd := ""
-   ENDIF
+  // ENDIF
 
    cCmd += 'wscript '
    cCmd += cDirF18Util + 'run_invisible.vbs '
@@ -170,4 +170,4 @@ FUNCTION windows_run_invisible( cProg, cArg, lAsync )
 
    ?E cCmd
 
-   RETURN  hb_processRun( cCmd )
+   RETURN  hb_processRun( cCmd,, NIL, NIL, lAsync )

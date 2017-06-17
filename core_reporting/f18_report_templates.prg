@@ -45,7 +45,7 @@ FUNCTION f18_template_location( cTemplate )
    ENDIF
 
    // 2) F18.exe/template/
-   cLoc := ExePath() + "template" + SLASH
+   cLoc := f18_exe_path() + "template" + SLASH
    aFileList := Directory( cLoc + cTemplate )
    IF Len( aFileList ) > 0
       s_cTemplatesLoc := cLoc

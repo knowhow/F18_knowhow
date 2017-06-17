@@ -372,11 +372,12 @@ FUNCTION get_run_prefix_cmd( cCommand, lAsync )
       ELSEIF cCommand != NIL .AND. Left( cCommand, 4 ) == "cmd "
          cPrefix := ""
       ELSE
-         IF lAsync
+         //IF lAsync
             cPrefix := 'start "" '
-         ELSE
-            cPrefix := 'cmd /c '
-         ENDIF
+         //ELSE
+            // https://stackoverflow.com/questions/324539/how-can-i-run-a-program-from-a-batch-file-without-leaving-the-console-open-after
+          //  cPrefix := 'cmd /c '
+         //ENDIF
       ENDIF
    ELSE
       IF is_mac()

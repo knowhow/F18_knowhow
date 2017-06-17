@@ -33,6 +33,7 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    set_screen_dimensions()
 
+windows_run_invisible( "notepad", "test.txt" )
 
    naslovni_ekran_splash_screen( "F18", f18_ver() )
 

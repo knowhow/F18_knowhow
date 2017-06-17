@@ -16,7 +16,7 @@
 // Pocetna procedura za stampu u OUTF.TXT
 // * lUFajl - True -> cDirekt="V", False - tekuca postavka varijanta
 // * cF - ime izlaznog fajla, tekuca vrijednost OUTF.TXT
-// * FmkIni/ExePath/Printeri_DirektnoOUTFTXT
+// * FmkIni/f18_exe_path/Printeri_DirektnoOUTFTXT
 // --------------------------------------------------------------
 FUNCTION StartPrint( lUFajl, cF, cDocumentName )
 

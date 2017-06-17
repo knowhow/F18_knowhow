@@ -43,7 +43,7 @@ FUNCTION check_yarg_download()
    LOCAL cYargCmd
 
    IF s_cDirF18Util == NIL
-      s_cDirF18Util := ExePath() + "F18_util" + SLASH
+      s_cDirF18Util := f18_exe_path() + "F18_util" + SLASH
       s_cProg := "bin" + SLASH + s_cUtilName + iif( is_windows(), ".bat", "" )
    ENDIF
 

@@ -104,7 +104,7 @@ FUNCTION download_file( cUrl, cDestFile )
    LOCAL hFile
    LOCAL cFileName, lRet := .F.
 
-   Box( "#Download: " + Alltrim( Right( cUrl, 60) ), 2, 75 )
+   Box( "#Download: " + AllTrim( Right( cUrl, 60 ) ), 2, 75 )
    hFile := hb_vfTempFile( @cFileName, my_home_root(), "wget_", ".tmp" )
    hb_vfClose( hFile )
 
@@ -128,6 +128,32 @@ FUNCTION download_file( cUrl, cDestFile )
    RETURN ""
 
 
-FUNCTION ExePath()
+FUNCTION f18_exe_path()
 
    RETURN hb_FNameDir( hb_ProgName() )
+
+
+FUNCTION windows_run_invisible( cProg, cArg )
+
+   LOCAL cDirF18Util := f18_exe_path() + "F18_util" + SLASH
+   LOCAL nFh
+
+   IF DirChange( cDirF18Util ) != 0  // e.g. F18.exe/F18_util
+      IF MakeDir( cDirF18Util ) != 0
+         MsgBeep( "Kreiranje dir: " + cDirF18Util + " neuspješno?! STOP" )
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   IF !is_windows()
+      RETURN .F.
+   ENDIF
+
+   IF !File( cDirF18Util )
+      nFH := FCreate( cDirF18Util + "run_invisible.vbs" )
+      FClose( nFH )
+      FWrite( nFh, 'Set objShell = WScript.CreateObject("WScript.Shell")' )
+      FWrite( nFh, 'objShell.Run WScript.arguments(0) & WScript.arguments(1), 0, True' )
+   ENDIF
+
+   RETURN  hb_processRun( 'wscript ' + cDirF18Util + 'run_invisible.vbs ' + cProg + " " + cArg)

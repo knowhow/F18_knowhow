@@ -561,13 +561,12 @@ METHOD F18Admin:wget_download( url, cFileName, cLocalFileName, erase_file, silen
    cCmd += cLocalFileName
 #endif
 
-   IF windows_run_invisible( cCmd, "", .F. ) != 0
+   IF windows_run_invisible( cCmd, "", NIL, NIL, .F. ) != 0
       MsgBeep( "Error: " + cCmd  + "?!" )
    ENDIF
    // Sleep( 1 )
 
    IF !File( cLocalFileName )
-      // nema fajle
       error_bar( "upd", "Fajl " + cLocalFileName + " nije download-ovan !" )
       RETURN .F.
    ENDIF

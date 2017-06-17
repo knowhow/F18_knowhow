@@ -35,38 +35,10 @@ PROCEDURE OutMsg( hFile, cMsg )
 
 
 
-// ------------------------------------
-// vraca putanju exe fajlova
-// ------------------------------------
-FUNCTION GetExePath( cPath )
-
-   LOCAL cRet := ""
-   LOCAL i
-   LOCAL nBr := 0
-   LOCAL cTmp
-
-   FOR i := 1 TO Len( cPath )
-
-      cTmp := SubStr( cPath, i, 1 )
-
-      IF cTmp == SLASH
-         nBr += 1
-      ENDIF
-
-      cRet += cTmp
-
-      IF nBr == 2
-         EXIT
-      ENDIF
-
-   NEXT
-
-   RETURN cRet
-
 
 /* FilePath(cFile)
  *      Extract the full path name from a filename
- *  \return cFilePath
+ *  return cFilePath
  */
 
 FUNCTION My_FilePath( cFile )
@@ -302,11 +274,20 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
       lAsync := .F. // najcesce zelimo da okinemo eksternu komandu i nastavimo rad
    ENDIF
 
-   IF  lAsync .AND. ( is_linux() .OR. is_mac() )
+   IF is_windows()
+      nRet := windows_run_invisible( cCommand, "", @cStdOut, @cStdErr, lAsync )
+      IF ValType( hOutput ) == "H"
+         hOutput[ "stdout" ] := cStdOut // hash matrica
+         hOutput[ "stderr" ] := cStdErr
+      ENDIF
+      RETURN nRet
+   ENDIF
+
+   IF  lAsync // .AND. ( is_linux() .OR. is_mac() )
       nRet := __run_system( cCommand + "&" )
-   ELSE
-      cCommand := get_run_cmd_with_prefix( cCommand, lAsync )
-      nRet := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr, lAsync )
+      // ELSE
+      // cCommand := get_run_cmd_with_prefix( cCommand, lAsync )
+      // nRet := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr, lAsync )
    ENDIF
 
    ?E cCommand, nRet, "stdout:", cStdOut, "stderr:", cStdErr
@@ -315,18 +296,17 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
       info_bar( "run1", cCommand + " : " + cStdOut + " : " + cStdErr )
    ELSE
       error_bar( "run1", cCommand + cStdOut + " : " + cStdErr )
-
       cPrefixCmd := get_run_prefix_cmd( cCommand )
 
-#ifdef __PLATFORM__UNIX
+// #ifdef __PLATFORM__UNIX
       IF lAsync
          nRet := __run_system( cPrefixCmd + cCommand + "&" )
       ELSE
          nRet := hb_processRun( cPrefixCmd + cCommand, NIL, @cStdOut, @cStdErr )
       ENDIF
-#else
-      nRet := hb_processRun( cPrefixCmd + cCommand, NIL, @cStdOut, @cStdErr, lAsync )
-#endif
+// # else
+// nRet := hb_processRun( cPrefixCmd + cCommand, NIL, @cStdOut, @cStdErr, lAsync )
+// #endif
       ?E cCommand, nRet, "stdout:", cStdOut, "stderr:", cStdErr
 
 
@@ -359,6 +339,49 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
    RETURN nRet
 
 
+
+FUNCTION windows_run_invisible( cProg, cArg, cStdOut, cStdErr, lAsync )
+
+   LOCAL cDirF18Util := f18_exe_path() + "F18_util" + SLASH
+   LOCAL cStart, cCmd
+   LOCAL nH
+
+   hb_default( @lAsync, .F. )
+   IF DirChange( cDirF18Util ) != 0  // e.g. F18.exe/F18_util
+      IF MakeDir( cDirF18Util ) != 0
+         MsgBeep( "Kreiranje dir: " + cDirF18Util + " neuspješno?! STOP" )
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   IF !is_windows()
+      RETURN .F.
+   ENDIF
+
+   IF !File( cDirF18Util + "run_invisible.vbs" )
+      nH := FCreate( cDirF18Util + "run_invisible.vbs" )
+      FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' + hb_eol() )
+      FWrite( nH, 'objShell.Run WScript.arguments(0) & " " & WScript.arguments(1) & " " & WScript.arguments(2), 0, True' )
+      FClose( nH )
+   ENDIF
+
+
+   cCmd := 'wscript '
+   cCmd += cDirF18Util + 'run_invisible.vbs '
+
+   IF lAsync
+      cStart := 'cmd /c start'
+   ELSE
+      cStart := 'cmd /c'
+   ENDIF
+
+   cCmd += '"' + cStart + '" "' + cProg + '" "' + cArg + '"'
+
+   ?E cCmd
+
+   RETURN hb_processRun( cCmd, NIL, @cStdOut, @cStdErr, lAsync )
+
+
 FUNCTION get_run_prefix_cmd( cCommand, lAsync )
 
    LOCAL cPrefix
@@ -372,12 +395,12 @@ FUNCTION get_run_prefix_cmd( cCommand, lAsync )
       ELSEIF cCommand != NIL .AND. Left( cCommand, 4 ) == "cmd "
          cPrefix := ""
       ELSE
-         //IF lAsync
-            cPrefix := 'start "" '
-         //ELSE
-            // https://stackoverflow.com/questions/324539/how-can-i-run-a-program-from-a-batch-file-without-leaving-the-console-open-after
-          //  cPrefix := 'cmd /c '
-         //ENDIF
+         // IF lAsync
+         cPrefix := 'start "" '
+         // ELSE
+         // https://stackoverflow.com/questions/324539/how-can-i-run-a-program-from-a-batch-file-without-leaving-the-console-open-after
+         // cPrefix := 'cmd /c '
+         // ENDIF
       ENDIF
    ELSE
       IF is_mac()

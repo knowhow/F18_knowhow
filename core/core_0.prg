@@ -152,7 +152,7 @@ FUNCTION windows_run_invisible( cProg, cArg, lAsync )
    ENDIF
 
    IF lAsync
-      cStart := "start"
+      cStart := "start '"
    ELSE
       cStart := "cmd /c"
    ENDIF
@@ -166,7 +166,12 @@ FUNCTION windows_run_invisible( cProg, cArg, lAsync )
 
    cCmd := 'wscript '
    cCmd += cDirF18Util + 'run_invisible.vbs '
-   cCmd += '"' + cStart + '" "' + cProg + '" "' + cArg + '"'
-
+   cCmd += '"' + cStart + '" "' + cProg + '" "'
+   IF lAsync
+      cCmd += cArg + "'" + '"'   // "start '" "notepad" "test.txt'"
+   ELSE
+      cCmd += cArg + '"'
+   ENDIF
    ?E cCmd
+
    RETURN  hb_processRun( cCmd )

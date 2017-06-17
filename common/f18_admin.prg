@@ -249,10 +249,10 @@ METHOD F18Admin:update_app_run_app_update( params )
 
    _upd_file := StrTran( _upd_file, "#VER#", ::update_app_f18_version )
 
-//   IF ::update_app_f18_version == f18_ver()
-//      MsgBeep( "Verzija aplikacije " + f18_ver() + " je vec instalirana !" )
-//      RETURN SELF
-//   ENDIF
+// IF ::update_app_f18_version == f18_ver()
+// MsgBeep( "Verzija aplikacije " + f18_ver() + " je vec instalirana !" )
+// RETURN SELF
+// ENDIF
 
    IF !::wget_download( params[ "url" ], _upd_file, my_home_root() + _upd_file, .T., .T. )
       RETURN SELF
@@ -522,28 +522,28 @@ METHOD F18Admin:get_os_name()
 
 
 
-METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, only_newer )
+METHOD F18Admin:wget_download( url, cFileName, cLocalFileName, erase_file, silent, only_newer )
 
    LOCAL lOk := .F.
    LOCAL cCmd
    LOCAL nFileHandle, _lenght
 
-   //IF erase_file == NIL
-  //    erase_file := .F.
-   //ENDIF
+   // IF erase_file == NIL
+   // erase_file := .F.
+   // ENDIF
 
-   //IF silent == NIL
-  //    silent := .F.
-   //ENDIF
+   // IF silent == NIL
+   // silent := .F.
+   // ENDIF
 
-   //IF only_newer == NIL
-    //  only_newer := .F.
-   //ENDIF
+   // IF only_newer == NIL
+   // only_newer := .F.
+   // ENDIF
 
-   //IF erase_file
-    //  FErase( location )
-      // Sleep( 1 )
-   //ENDIF
+   // IF erase_file
+   // FErase( cLocalFileName )
+   // Sleep( 1 )
+   // ENDIF
 
    cCmd := "wget "
 
@@ -556,31 +556,31 @@ METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, onl
    cCmd += " -O "
 
 #ifdef __PLATFORM__WINDOWS
-   cCmd += '"' + location + '"'
+   cCmd += '"' + cLocalFileName + '"'
 #else
-   cCmd += location
+   cCmd += cLocalFileName
 #endif
 
-altd()
-   f18_run( cCmd )
-
+   IF windows_run_invisible( cCmd, "", .F. ) != 0
+      MsgBeep( "Error: " + cCmd  + "?!" )
+   ENDIF
    // Sleep( 1 )
 
-   IF !File( location )
+   IF !File( cLocalFileName )
       // nema fajle
-      error_bar( "upd", "Fajl " + location + " nije download-ovan !" )
+      error_bar( "upd", "Fajl " + cLocalFileName + " nije download-ovan !" )
       RETURN .F.
    ENDIF
 
 
-   nFileHandle := FOpen( location ) // provjeri velicinu fajla
+   nFileHandle := FOpen( cLocalFileName ) // provjeri velicinu fajla
 
    IF nFileHandle >= 0
       _length := FSeek( nFileHandle, 0, FS_END )
       FSeek( nFileHandle, 0 )
       FClose( nFileHandle )
       IF _length <= 0
-         error_bar( "upd", "Fajl " + location + " download ERROR!" )
+         error_bar( "upd", "Fajl " + cLocalFileName + " download ERROR!" )
          RETURN .F.
       ENDIF
    ENDIF

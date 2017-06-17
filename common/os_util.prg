@@ -365,7 +365,6 @@ FUNCTION windows_run_invisible( cProg, cArg, cStdOut, cStdErr, lAsync )
       FClose( nH )
    ENDIF
 
-
    cCmd := 'wscript '
    cCmd += cDirF18Util + 'run_invisible.vbs '
 

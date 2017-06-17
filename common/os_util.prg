@@ -375,7 +375,7 @@ FUNCTION get_run_prefix_cmd( cCommand, lAsync )
          IF lAsync
             cPrefix := 'start "" '
          ELSE
-            cPrefix := 'cmd / '
+            cPrefix := 'cmd /c '
          ENDIF
       ENDIF
    ELSE

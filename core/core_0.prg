@@ -136,7 +136,7 @@ FUNCTION f18_exe_path()
 FUNCTION windows_run_invisible( cProg, cArg )
 
    LOCAL cDirF18Util := f18_exe_path() + "F18_util" + SLASH
-   LOCAL nFh
+   LOCAL nH
 
    IF DirChange( cDirF18Util ) != 0  // e.g. F18.exe/F18_util
       IF MakeDir( cDirF18Util ) != 0
@@ -150,10 +150,11 @@ FUNCTION windows_run_invisible( cProg, cArg )
    ENDIF
 
    IF !File( cDirF18Util )
-      nFH := FCreate( cDirF18Util + "run_invisible.vbs" )
-      FClose( nFH )
-      FWrite( nFh, 'Set objShell = WScript.CreateObject("WScript.Shell")' )
-      FWrite( nFh, 'objShell.Run WScript.arguments(0) & WScript.arguments(1), 0, True' )
+      nH := FCreate( cDirF18Util + "run_invisible.vbs" )
+      FClose( nH )
+      FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' )
+      FWrite( nH, 'objShell.Run WScript.arguments(0) & WScript.arguments(1), 0, True' )
+      FClose( nH )
    ENDIF
 
    RETURN  hb_processRun( 'wscript ' + cDirF18Util + 'run_invisible.vbs ' + cProg + " " + cArg)

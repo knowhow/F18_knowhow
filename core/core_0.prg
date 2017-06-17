@@ -166,7 +166,7 @@ FUNCTION windows_run_invisible( cProg, cArg, lAsync )
 
    cCmd := 'wscript '
    cCmd += cDirF18Util + 'run_invisible.vbs '
-   cCmd += "'" + cStart + "' " + cProg + " '" + cArg + "'"
+   cCmd += '"' + cStart + '" "' + cProg + '" "' + cArg + "'"
 
    ?E cCmd
    RETURN  hb_processRun( cCmd )

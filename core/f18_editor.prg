@@ -31,22 +31,15 @@ FUNCTION f18_editor( cTxt )
 
    check_prog_download()
 
-   IF is_linux() .OR. is_mac()
+   IF is_linux()
       cCmd := "f18_editor" + " " + cTxt
    ELSE
-      cCmd := "start f18_editor.cmd" + " " + cTxt
-   ENDIF
-
-   /*
-   ELSE
       cCmd := s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " " + cTxt
-
       IF ! File( s_cDirF18Util + s_cUtilName + SLASH + s_cProg )
          MsgBeep( "Error NO CMD: " + s_cDirF18Util + s_cUtilName + SLASH + s_cProg + "!? STOP" )
          RETURN ""
       ENDIF
    ENDIF
-*/
    // DirChange( s_cDirF18Util + s_cUtilName )
    // f18_run( cCmd, @hOutput )
 

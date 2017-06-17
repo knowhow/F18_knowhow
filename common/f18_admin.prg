@@ -205,7 +205,7 @@ METHOD F18Admin:update_app_run_templates_update( params )
 
 METHOD F18Admin:update_app_unzip_templates( destination_path, location_path, cFileName )
 
-   LOCAL _cmd
+   LOCAL cCmd
    LOCAL _args := "-jxf"
 
    MsgO( "Vršim update template fajlova ..." )
@@ -214,16 +214,16 @@ METHOD F18Admin:update_app_unzip_templates( destination_path, location_path, cFi
 
    DirChange( destination_path )
 
-   _cmd := "bunzip2 -f " + location_path + cFileName
-   hb_run( _cmd )
+   cCmd := "bunzip2 -f " + location_path + cFileName
+   hb_run( cCmd )
 
-   _cmd := "tar xvf " + StrTran( cFileName, ".bz2", "" )
-   hb_run( _cmd )
+   cCmd := "tar xvf " + StrTran( cFileName, ".bz2", "" )
+   hb_run( cCmd )
 
 #else
 
-   _cmd := "tar -C " + location_path + " " + _args + " " + location_path + cFileName
-   hb_run( _cmd )
+   cCmd := "tar -C " + location_path + " " + _args + " " + location_path + cFileName
+   hb_run( cCmd )
 
 #endif
 
@@ -525,7 +525,7 @@ METHOD F18Admin:get_os_name()
 METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, only_newer )
 
    LOCAL lOk := .F.
-   LOCAL _cmd := ""
+   LOCAL cCmd := ""
    LOCAL nFileHandle, _lenght
 
    //IF erase_file == NIL
@@ -545,23 +545,23 @@ METHOD F18Admin:wget_download( url, cFileName, location, erase_file, silent, onl
       // Sleep( 1 )
    //ENDIF
 
-   _cmd +=  'start "" ' + "wget "
+   cCmd +=  iif( is_windows(), 'start "" ', "" ) + "wget "
 
 #ifdef __PLATFORM__WINDOWS
-   _cmd += " -q  --tries=4 --timeout=4  --no-cache --no-check-certificate "
+   cCmd += " -q  --tries=4 --timeout=4  --no-cache --no-check-certificate "
 #endif
 
-   _cmd += url + cFileName
+   cCmd += url + cFileName
 
-   _cmd += " -O "
+   cCmd += " -O "
 
 #ifdef __PLATFORM__WINDOWS
-   _cmd += '"' + location + '"'
+   cCmd += '"' + location + '"'
 #else
-   _cmd += location
+   cCmd += location
 #endif
 
-   hb_run( _cmd )
+   hb_run( cCmd )
 
    // Sleep( 1 )
 
@@ -664,7 +664,7 @@ METHOD F18Admin:update_db_download()
 
    LOCAL lOk := .F.
    LOCAL _ver := ::_update_params[ "version" ]
-   LOCAL _cmd := ""
+   LOCAL cCmd := ""
    LOCAL _path := my_home_root()
    LOCAL _file := "f18_db_migrate_package_" + AllTrim( _ver ) + ".gz"
    LOCAL _url := "http://download.bring.out.ba/"
@@ -709,58 +709,58 @@ METHOD F18Admin:update_db_all( arr )
 
 METHOD F18Admin:update_db_command( cDatabase )
 
-   LOCAL _cmd := ""
+   LOCAL cCmd := ""
    LOCAL _file := ::_update_params[ "file" ]
 
 #ifdef __PLATFORM__DARWIN
 
-   _cmd += "open "
+   cCmd += "open "
 #endif
 
 #ifdef __PLATFORM__WINDOWS
-   _cmd += "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   cCmd += "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #else
-   _cmd += SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   cCmd += SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #endif
 
-   _cmd += "knowhowERP_package_updater"
+   cCmd += "knowhowERP_package_updater"
 
 #ifdef __PLATFORM__WINDOWS
-   _cmd += ".exe"
+   cCmd += ".exe"
 #endif
 
 #ifdef __PLATFORM__DARWIN
-   _cmd += ".app"
+   cCmd += ".app"
 #endif
 
 #ifndef __PLATFORM__DARWIN
-   IF !File( _cmd )
-      MsgBeep( "Fajl " + _cmd  + " ne postoji !" )
+   IF !File( cCmd )
+      MsgBeep( "Fajl " + cCmd  + " ne postoji !" )
       RETURN NIL
    ENDIF
 #endif
 
-   _cmd += " -databaseURL=//" + AllTrim( ::_update_params[ "host" ] )
+   cCmd += " -databaseURL=//" + AllTrim( ::_update_params[ "host" ] )
 
-   _cmd += ":"
+   cCmd += ":"
 
-   _cmd += AllTrim( Str( ::_update_params[ "port" ] ) )
+   cCmd += AllTrim( Str( ::_update_params[ "port" ] ) )
 
-   _cmd += "/" + AllTrim( cDatabase )
+   cCmd += "/" + AllTrim( cDatabase )
 
-   _cmd += " -username=admin"
+   cCmd += " -username=admin"
 
-   _cmd += " -passwd=boutpgmin"
+   cCmd += " -passwd=boutpgmin"
 
 #ifdef __PLATFORM__WINDOWS
-   _cmd += " -file=" + '"' + ::_update_params[ "file" ] + '"'
+   cCmd += " -file=" + '"' + ::_update_params[ "file" ] + '"'
 #else
-   _cmd += " -file=" + ::_update_params[ "file" ]
+   cCmd += " -file=" + ::_update_params[ "file" ]
 #endif
 
-   _cmd += " -autorun"
+   cCmd += " -autorun"
 
-   RETURN _cmd
+   RETURN cCmd
 
 
 
@@ -770,7 +770,7 @@ METHOD F18Admin:update_db_company( cOrganizacija )
    LOCAL aListaSezona := {}
    LOCAL nI
    LOCAL cDatabase
-   LOCAL _cmd
+   LOCAL cCmd
    LOCAL lOk := .F.
 
    IF AllTrim( cOrganizacija ) $ "#empty#empty_sezona#"
@@ -813,16 +813,16 @@ METHOD F18Admin:update_db_company( cOrganizacija )
          cDatabase := AllTrim( cOrganizacija ) + "_" + AllTrim( aListaSezona[ nI, 1 ] )
       ENDIF
 
-      _cmd := ::update_db_command( cDatabase )
+      cCmd := ::update_db_command( cDatabase )
 
-      IF _cmd == NIL
+      IF cCmd == NIL
          RETURN lOk
       ENDIF
 
       MsgO( "Vršim update baze " + cDatabase )
 
-      lOk := hb_run( _cmd )
-      AAdd( ::update_db_result, { cOrganizacija, cDatabase, _cmd, lOk } ) // ubaci u matricu rezultat
+      lOk := hb_run( cCmd )
+      AAdd( ::update_db_result, { cOrganizacija, cDatabase, cCmd, lOk } ) // ubaci u matricu rezultat
 
       MsgC()
 

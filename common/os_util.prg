@@ -275,10 +275,13 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
    ENDIF
 
    IF is_windows()
-      nRet := windows_run_invisible( cCommand, "", @cStdOut, @cStdErr, lAsync )
+
       IF ValType( hOutput ) == "H"
-         hOutput[ "stdout" ] := cStdOut // hash matrica
+         nRet := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr )
+         hOutput[ "stdout" ] := cStdOut
          hOutput[ "stderr" ] := cStdErr
+      else
+         nRet := windows_run_invisible( cCommand, "", @cStdOut, @cStdErr, lAsync )
       ENDIF
       RETURN nRet
    ENDIF

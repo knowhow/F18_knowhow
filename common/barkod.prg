@@ -208,9 +208,6 @@ FUNCTION tezinski_barkod_get_tezina( barkod, tezina )
    RETURN .F.
 
 
-// --------------------------------------------------------------------------------------
-// provjerava tezinski barod
-// --------------------------------------------------------------------------------------
 FUNCTION tezinski_barkod( id, tezina, pop_push )
 
    LOCAL _ocitao := .F.

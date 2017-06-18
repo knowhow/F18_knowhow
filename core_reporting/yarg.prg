@@ -253,7 +253,7 @@ METHOD YargReport:create_yarg_xml()
 
 METHOD YargReport:view()
 
-   RETURN f18_open_mime_document( ::cReportOutput )
+   RETURN LO_open_dokument( ::cReportOutput )
 
 
 

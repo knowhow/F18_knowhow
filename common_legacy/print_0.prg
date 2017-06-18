@@ -272,9 +272,9 @@ FUNCTION EndPrint()
          ENDIF
 
          // VidiFajl(cKom, gaZagFix, gaKolFix)
-         cCommand := "f18_editor " + my_home() + cFName
-         f18_run( cCommand )
-         //f18_editor( cFName )
+         // cCommand := "f18_editor " + my_home() + cFName
+         // f18_run( cCommand )
+         f18_editor( cFName )
 
          gaZagFix := NIL
          gaKolFix := NIL

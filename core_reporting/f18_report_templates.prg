@@ -25,8 +25,6 @@ FUNCTION f18_template_location( cTemplate )
       cTemplate := "*.*" // ponudice prvi template od 3 opcije
    ENDIF
 
-   AltD()
-
    // 1) /opt/knowhowERP/template - prvo pogledati u starim template-ovima
    IF is_windows()
       cLoc := "c:" + SLASH + "knowhowERP" + SLASH + "template" + SLASH

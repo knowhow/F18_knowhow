@@ -20,7 +20,6 @@ STATIC __template
 STATIC __template_filename
 STATIC __jod_converter := "jodconverter-cli.jar"
 STATIC s_cJodReportsJar := "jodreports-cli.jar"
-STATIC s_cJavaRunCmd := "java -Xmx128m -jar"
 STATIC cKnowhowUtilPath
 STATIC __current_odt
 
@@ -111,7 +110,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    __template := _template
    __template_filename := cTemplate
 
-   _cmd := s_cJavaRunCmd + " " + cJodReportsFullPath + " "
+   _cmd := java_cmd() + " -jar " + cJodReportsFullPath + " "
    _cmd += _template + " "
    _cmd += __xml_file + " "
    _cmd += cOutOdtFile
@@ -506,7 +505,7 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
    cJodReportsFullPath := '"' + cJodReportsFullPath + '"'
 #endif
 
-   _cmd := s_cJavaRunCmd + " " + cJodReportsFullPath + " "
+   _cmd := java_cmd() + " -jar " + cJodReportsFullPath + " "
    _cmd += cOutOdtFile + " "
    _cmd += __output_pdf
 

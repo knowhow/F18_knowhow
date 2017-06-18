@@ -275,7 +275,6 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
    ENDIF
 
    IF is_windows()
-
       IF ValType( hOutput ) == "H"
          nRet := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr )
          hOutput[ "stdout" ] := cStdOut
@@ -286,11 +285,11 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
       RETURN nRet
    ENDIF
 
-   IF  lAsync // .AND. ( is_linux() .OR. is_mac() )
-      nRet := __run_system( cCommand + "&" )
-      // ELSE
-      // cCommand := get_run_cmd_with_prefix( cCommand, lAsync )
-      // nRet := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr, lAsync )
+   IF lAsync
+      nRet := __run_system( cCommand + "&" ) // .AND. ( is_linux() .OR. is_mac()
+   ELSE
+      //cCommand := get_run_cmd_with_prefix( cCommand, lAsync )
+      nRet := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr, lAsync )
    ENDIF
 
    ?E cCommand, nRet, "stdout:", cStdOut, "stderr:", cStdErr

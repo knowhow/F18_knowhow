@@ -45,10 +45,8 @@ FUNCTION f18_editor( cTxt )
    RETURN f18_run( cCmd, NIL, NIL, .F. )
 
 
-
 STATIC FUNCTION check_prog_download()
 
-   LOCAL cPlatform
    LOCAL cUrl
    LOCAL cZip
    LOCAL cVersion := F18_UTIL_VER
@@ -65,17 +63,8 @@ STATIC FUNCTION check_prog_download()
       s_cProg := s_cUtilName + iif( is_windows(), ".cmd", "" )
    ENDIF
 
-   DO CASE
-   CASE is_windows()
-      cPlatform := "windows_386"
-   CASE is_mac()
-      cPlatform := "darwin_amd64"
-   CASE is_linux()
-      cPlatform := "linux_386"
-   ENDCASE
-
    cUrl := F18_UTIL_URL_BASE
-   cUrl += cVersion + "/" + s_cUtilName + "_" + cPlatform + ".zip"
+   cUrl += cVersion + "/" + s_cUtilName + "_" + get_platform() + ".zip"
 
    IF DirChange( s_cDirF18Util ) != 0
       IF MakeDir( s_cDirF18Util ) != 0

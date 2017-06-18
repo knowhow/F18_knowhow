@@ -1279,7 +1279,6 @@ STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
    LOCAL cWhere := ""
    LOCAL cTmp := ""
 
-   AltD()
    cSqlFields := hTblRec[ "algoritam" ][ 1 ][ "sql_in" ]
    aDbfFields := hTblRec[ "algoritam" ][ 1 ][ "dbf_key_fields" ]
 

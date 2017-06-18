@@ -21,8 +21,6 @@ FUNCTION sha256sum( cFile )
    LOCAL hOutput := hb_Hash()
    LOCAL nRet
 
-altd()
-
    check_exe_download()
    cCmd := s_cDirF18Util + s_cProg + " " + cFile
 
@@ -39,7 +37,7 @@ altd()
 
 STATIC FUNCTION check_exe_download()
 
-   LOCAL cPlatform
+
    LOCAL cUrl
    LOCAL cZip
    LOCAL cVersion := F18_UTIL_VER
@@ -49,17 +47,8 @@ STATIC FUNCTION check_exe_download()
       s_cProg := "F18_sha256sum" + iif( is_windows(), ".exe", "" )
    ENDIF
 
-   DO CASE
-   CASE is_windows()
-      cPlatform := "windows_386"
-   CASE is_mac()
-      cPlatform := "darwin_amd64"
-   CASE is_linux()
-      cPlatform := "linux_386"
-   ENDCASE
-
    cUrl := F18_UTIL_URL_BASE
-   cUrl += cVersion + "/F18_sha256sum_" + cPlatform + ".zip"
+   cUrl += cVersion + "/F18_sha256sum_" + get_platform() + ".zip"
 
    IF DirChange( s_cDirF18Util ) != 0
       IF MakeDir( s_cDirF18Util ) != 0

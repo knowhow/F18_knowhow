@@ -125,7 +125,6 @@ FUNCTION kalk_kartica_magacin()
       ENDDO
       BoxC()
 
-altd()
       IF Empty( cIdRoba )
          IF pitanje(, "Niste zadali sifru artikla, izlistati sve kartice ?", "N" ) == "N"
             my_close_all_dbf()

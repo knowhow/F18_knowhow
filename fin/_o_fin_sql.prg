@@ -457,7 +457,6 @@ CREATE TABLE fmk.fin_nalog
    ENDIF
 
    IF hb_HHasKey( hParams, "alias" )
-   altd()
       cAlias := hParams[ "alias" ]
       SELECT 0
    ELSE

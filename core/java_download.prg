@@ -11,37 +11,49 @@
 
 #include "f18.ch"
 
-STATIC s_cUtilName := "LO"
-STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/LO/
-STATIC s_cProg // windows: lo.cmd, darwin: lo
+STATIC s_cUtilName := "java"
+STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/java/
+STATIC s_cProg // windows: java.cmd, darwin: java
+STATIC s_cJavaOpts := "-Xmx128m"
 
-#ifdef __PLATFORM__WINDOWS
-STATIC s_cSHA256sum := "976beceb43c806ffee561b97e0755affbabb11c11214a4e4d03cb50363565cf3"  // LO/lo.cmd
+#ifdef __PLATFORM__DARWIN
+STATIC s_cSHA256sum := "27f6ebb02ba92889dead894dc1e19b948f58577951372e74ce9eebfeca947f80"
 #endif
 
+#ifdef __PLATFORM__WINDOWS
+STATIC s_cSHA256sum :=  "1b69cb6f4e65acf52443b090c08e377b6366f1a21626f9907ecc3ddb891fe588"
+#endif
 
-FUNCTION LO_open_dokument( cFile )
+FUNCTION java_version()
 
-   LOCAL cCmd
+   LOCAL hOutput := hb_Hash(), pRegex, aMatch
 
-   IF is_windows()
-      cCmd := LO_cmd() + " " + cFile
-      f18_run( cCmd, NIL, NIL, .T. )
-   ELSE
-      f18_open_mime_document( cFile )
+   f18_run( java_cmd() + " -version", @hOutput )
+
+   pRegex := hb_regexComp( 'java version "(.*)"' ) // java version "1.8.0_131"
+
+   aMatch := hb_regex( pRegex, hOutput[ "stderr" ] )
+
+   IF Len( aMatch ) > 0
+      RETURN aMatch[ 2 ]
    ENDIF
 
-   RETURN .T.
+   RETURN "JAVA_VER_ERROR"
 
 
-FUNCTION LO_cmd()
 
-   check_LO_download()
-// f18_current_directory() + SLASH + "yarg" + SLASH + "bin" + SLASH + "yarg" + iif( is_windows(), ".bat", "" )
+FUNCTION java_cmd()
 
-   RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg
+   check_java_download()
 
-FUNCTION check_LO_download()
+   IF is_linux()
+      RETURN "java " + s_cJavaOpts
+   ENDIF
+
+   RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " " + s_cJavaOpts
+
+
+FUNCTION check_java_download()
 
    LOCAL cUrl
    LOCAL cZip
@@ -49,12 +61,13 @@ FUNCTION check_LO_download()
    LOCAL cMySum
    LOCAL lDownload := .F.
    LOCAL cDownloadRazlog := "FILE"
-   LOCAL cLOCmd
+   LOCAL cJavaCmd
 
    IF s_cDirF18Util == NIL
       s_cDirF18Util := f18_exe_path() + "F18_util" + SLASH
-      s_cProg := "lo" + iif( is_windows(), ".cmd", "" )
+      s_cProg := "java" + iif( is_windows(), ".cmd", "" )
    ENDIF
+
 
    cUrl := F18_UTIL_URL_BASE
    cUrl += cVersion + "/" + s_cUtilName + "_" + get_platform() + ".zip"
@@ -66,12 +79,12 @@ FUNCTION check_LO_download()
       ENDIF
    ENDIF
 
-   cLOCmd := s_cDirF18Util + s_cUtilName + SLASH + s_cProg
-   lDownload :=  !File( cLOCmd )
+   cJavaCmd := s_cDirF18Util + s_cUtilName + SLASH + s_cProg
+   lDownload :=  !File( cJavaCmd )
    IF !lDownload
-      cMySum := sha256sum( cLOCmd )
+      cMySum := sha256sum( cJavaCmd )
       IF ( cMySum !=  s_cSHA256sum )
-         MsgBeep( s_cProg + " sha256sum " + cLOCmd + "## local:" + cMySum + "## remote:" + s_cSHA256sum )
+         MsgBeep( s_cProg + " sha256sum " + cJavaCmd + "## local:" + cMySum + "## remote:" + s_cSHA256sum )
          lDownload := .T.
          cDownloadRazlog := "SUM"
       ENDIF
@@ -92,8 +105,8 @@ FUNCTION check_LO_download()
       ENDIF
    ENDIF
 
-   IF lDownload .AND. sha256sum( cLOCmd ) != s_cSHA256sum
-      MsgBeep( "ERROR sha256sum: " + cLOCmd  + "##" + s_cSHA256sum )
+   IF lDownload .AND. sha256sum( cJavaCmd ) != s_cSHA256sum
+      MsgBeep( "ERROR sha256sum: " + cJavaCmd  + "##" + s_cSHA256sum )
       RETURN .F.
    ENDIF
 

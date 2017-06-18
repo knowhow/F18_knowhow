@@ -54,7 +54,6 @@ FUNCTION epdv_azur_kuf_kif( cTbl )
       RETURN 0
    ENDIF
 
-   AltD()
    nNextGRbr := next_redni_broj_globalno( cTbl )
 
    SELECT ( nPArea )

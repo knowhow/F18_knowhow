@@ -76,7 +76,6 @@ METHOD YargReport:create_run_yarg_file()
       ?? "#!/bin/bash"
    ENDIF
 
-altd()
    ? file_path_quote( yarg_cmd() )
    ?? " -rp " + file_path_quote( ::cReportXml )
    ?? " -op " + file_path_quote( ::cReportOutput )

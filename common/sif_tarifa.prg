@@ -23,7 +23,6 @@ FUNCTION P_Tarifa( cId, dx, dy )
    Kol := {}
 
    PushWA()
-   AltD()
    IF cId != NIL .AND. !Empty( cId )
       select_o_tarifa( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
    ELSE

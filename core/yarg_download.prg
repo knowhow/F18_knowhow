@@ -16,11 +16,11 @@ STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/f18_editor/
 STATIC s_cProg // windows: f18_editor.cmd, darwin: f18_editor
 
 #ifdef __PLATFORM__WINDOWS
-STATIC s_cSHA256sum := "9ec070dd7575cbba959e23a85a4eb3e5fe12b518532e08ba2ad45441af28685f"  // yarg/bin/yarg.bat
+STATIC s_cSHA256sum := "7c48e4408e9b8bdb03ba555ded056a49ac40e1afca64a8de63ad222a05048051" // yarg/bin/yarg.bat
 #endif
 
 #ifdef __PLATFORM__UNIX
-STATIC s_cSHA256sum := "85e0db4dcda583fb806d76041d5f1951a59f4b63ded5c33e2ac2cc9e2a60a2e4" // yarg/bin/yarg
+STATIC s_cSHA256sum := "28ebffd2a04408b95cf20ec55c07154847008eb34bd8e2e08a8dab0dbeb21243" // yarg/bin/yarg
 #endif
 
 
@@ -33,7 +33,7 @@ FUNCTION yarg_cmd()
 
 FUNCTION check_yarg_download()
 
-   LOCAL cPlatform
+
    LOCAL cUrl
    LOCAL cZip
    LOCAL cVersion := F18_UTIL_VER
@@ -63,7 +63,7 @@ FUNCTION check_yarg_download()
    IF !lDownload
       cMySum := sha256sum( cYargCmd )
       IF ( cMySum !=  s_cSHA256sum )
-         MsgBeep( "yarg sha256sum " + cYargCmd + "## local:" + cMySum + "## remote:" + s_cSHA256sum )
+         MsgBeep( s_cProg + " sha256sum " + cYargCmd + "## local:" + cMySum + "## remote:" + s_cSHA256sum )
          lDownload := .T.
          cDownloadRazlog := "SUM"
       ENDIF

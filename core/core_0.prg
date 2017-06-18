@@ -127,6 +127,21 @@ FUNCTION download_file( cUrl, cDestFile )
 
    RETURN ""
 
+FUNCTION get_platform()
+
+   LOCAL cPlatform
+
+   DO CASE
+   CASE is_windows()
+      cPlatform := "windows_386"
+   CASE is_mac()
+      cPlatform := "darwin_amd64"
+   CASE is_linux()
+      cPlatform := "linux_386"
+   ENDCASE
+
+   RETURN cPlatform
+   
 
 FUNCTION f18_exe_path()
 

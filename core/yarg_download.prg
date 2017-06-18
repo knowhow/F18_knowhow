@@ -26,13 +26,12 @@ STATIC s_cSHA256sum := "28ebffd2a04408b95cf20ec55c07154847008eb34bd8e2e08a8dab0d
 
 FUNCTION yarg_cmd()
 
+   check_java_download()
    check_yarg_download()
-// f18_current_directory() + SLASH + "yarg" + SLASH + "bin" + SLASH + "yarg" + iif( is_windows(), ".bat", "" )
 
    RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg
 
 FUNCTION check_yarg_download()
-
 
    LOCAL cUrl
    LOCAL cZip

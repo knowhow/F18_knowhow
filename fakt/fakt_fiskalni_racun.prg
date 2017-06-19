@@ -268,33 +268,33 @@ STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, dev
 
  Opis: ispituje da li je za dokument napravljen fiskalni račun
 
- Usage: postoji_fiskalni_racun( idfirma, idtipdok, brdok, model ) -> SQL upit se šalje prema serveru
+ Usage: postoji_fiskalni_racun( idfirma, idtipdok, brdok, cFiskalniModel ) -> SQL upit se šalje prema serveru
 
    Parameters:
      - idfirma
      - idtipdok
      - brdok
-     - model - model uređaja, proslijeđuje se rezultat funkcije fiskalni_uredjaj_model()
+     - cFiskalniModel - cFiskalniModel uređaja, proslijeđuje se rezultat funkcije fiskalni_uredjaj_model()
 
    Retrun:
     .T. ako postoji fiskalni račun, .F. ako ne
 
 */
 
-FUNCTION postoji_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, model )
+FUNCTION postoji_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, cFiskalniModel )
 
    LOCAL lRet := .F.
    LOCAL cWhere
 
-   IF model == NIL
-      model := fiskalni_uredjaj_model()
+   IF cFiskalniModel == NIL
+      cFiskalniModel := fiskalni_uredjaj_model()
    ENDIF
 
    cWhere := " idfirma = " + sql_quote( cIdFirma )
    cWhere += " AND idtipdok = " + sql_quote( cIdTipDok )
    cWhere += " AND brdok = " + sql_quote( cBrDok )
 
-   IF AllTrim( model ) $ "FPRINT#HCP"
+   IF AllTrim( cFiskalniModel ) $ "FPRINT#HCP"
       cWhere += " AND ( ( iznos > 0 AND fisc_rn > 0 ) "
       cWhere += "  OR ( iznos < 0 AND fisc_st > 0 ) ) "
    ELSE

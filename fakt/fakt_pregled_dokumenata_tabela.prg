@@ -15,6 +15,7 @@
 MEMVAR ImeKol
 FIELD idfirma, idtipdok, brdok, rezerv, idvrstep, datdok, partner, iznos, rabat
 
+STATIC s_lBrowseInitialized  := .F.
 
 FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
@@ -24,9 +25,8 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    LOCAL _params := fakt_params()
    LOCAL cFiskalniUredjajModel := fiskalni_uredjaj_model()
 
-   AltD()
    ImeKol := {}
-   AAdd( ImeKol, { " ",            {|| select_fakt_doks(), g_fiscal_info( cFiskalniUredjajModel ) } } )
+   AAdd( ImeKol, { " ",            {|| select_fakt_doks(), get_fiscal_info( cFiskalniUredjajModel ) } } )
    AAdd( ImeKol, { "RJ",           {|| fakt_doks->idfirma }  } )
    AAdd( ImeKol, { "VD",           {|| fakt_doks->idtipdok } } )
    AAdd( ImeKol, { "Brdok",        {|| fakt_doks->brdok + fakt_doks->rezerv } } )
@@ -70,9 +70,9 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    @ m_x + _x - 4, m_y + 2 SAY8 _upadr( " <ENTER> Štampa TXT", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < P > Povrat dokumenta", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < I > Informacije", nWidthMeni )
-   @ m_x + _x - 3, m_y + 2 SAY8 _upadr( " < a+P > Štampa ODT", nWidthMeni ) + ;
+   @ m_x + _x - 3, m_y + 2 SAY8 _upadr( " <a+P> ili <L> Štampa ODT", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < S > Storno dokument", nWidthMeni ) + ;
-      BROWSE_COL_SEP + _upadr( " < c+V > Setuj vezu fisk.", nWidthMeni )
+      BROWSE_COL_SEP + _upadr( " < c+V > Postavi vezu fisk.", nWidthMeni )
    @ m_x + _x - 2, m_y + 2 SAY8 _upadr( " < R > Štampa fisk.računa", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < F > ponuda->račun", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < F5 > osvježi ", nWidthMeni )
@@ -88,9 +88,9 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    PRIVATE  bGoreRed := NIL
    PRIVATE  bDoleRed := NIL
    PRIVATE  bDodajRed := NIL
+   PRIVATE  TBInitialized := .F.
    PRIVATE  fTBNoviRed := .F. // trenutno smo u novom redu ?
    PRIVATE  TBCanClose := .T. // da li se moze zavrsiti unos podataka ?
-   PRIVATE  TBAppend := "N"  // mogu dodavati slogove
    PRIVATE  bZaglavlje := NIL
    // zaglavlje se edituje kada je kursor u prvoj koloni
    // prvog reda
@@ -117,7 +117,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    NEXT
 
 
-   my_db_edit_sql( "", _x - 3, _y, {| nCh | fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
+   my_db_edit_sql( "", _x - 3, _y, {| nCh | fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
       NIL, NIL, NIL, 2,  NIL, NIL, {| nSkip | fakt_pregled_dokumenata_skip_block( nSkip ) } ) // aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock
 
 
@@ -136,7 +136,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
 
 
-FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajModel )
+FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel )
 
    LOCAL nRet := DE_CONT
    LOCAL _rec
@@ -151,12 +151,17 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
    LOCAL nRekl
    LOCAL dFiscal_date
    LOCAL cFiscal_time
+   LOCAL lReload
+   LOCAL nPovrat
+
+   s_lBrowseInitialized := .T.
 
    _filter := dbFilter()
 
    // prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
    lRefresh := .F.
+   lReload := .F.
 
    DO CASE
 
@@ -164,11 +169,13 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
 
       nRet := print_porezna_faktura( lOpcine )
       lRefresh := .T.
+      lReload := .T.
 
    CASE nCh == K_ALT_P .OR. Upper( Chr( nCh ) ) == "L"
 
       nRet := fakt_print_odt( lOpcine )
       lRefresh := .T.
+      lReload := .T.
 
    CASE nCh == K_F5
 
@@ -178,6 +185,7 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
 
       nRet := DE_REFRESH
       lRefresh := .T.
+      lReload := .T.
 
 
    CASE nCh == K_CTRL_V
@@ -223,14 +231,15 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
 
          nRet := DE_REFRESH
          lRefresh := .T.
-
+         lReload := .F.
       ENDIF
 
-   CASE Upper( Chr( nCh ) ) $ "kK"
+   CASE Upper( Chr( nCh ) ) $ "K"
 
       IF fakt_ispravka_podataka_azuriranog_dokumenta( field->idfirma, field->idtipdok, field->brdok )
          nRet := DE_REFRESH
          lRefresh := .T.
+         lReload := .F.
       ENDIF
 
    CASE Upper( Chr( nCh ) ) == "T"
@@ -275,6 +284,8 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
       fprint_dupliciraj_racun( _dev_params, hFiskRacunParams )
 
       MsgBeep( "Duplikat računa za datum: " + DToC( field->fisc_date ) + ", vrijeme: " + AllTrim( field->fisc_time ) )
+      lRefresh := .T.
+      lReload := .F.
 
 
    CASE Upper( Chr( nCh ) ) == "R"
@@ -317,55 +328,61 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
             // SELECT ( nDbfArea )
             // nRet := DE_REFRESH
             lRefresh := .T.
+            lReload := .F.
 
          ENDIF
 
       ENDIF
 
-   CASE Chr( nCh ) $ "wW"
+   CASE Upper( Chr( nCh ) ) == "W"
 
       fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
       SELECT fakt_doks
 
-   CASE Chr( nCh ) $ "sS"
+   CASE Upper( Chr( nCh ) ) == "S"
 
       fakt_generisi_storno_dokument( field->idfirma, field->idtipdok, field->brDok )
 
       IF Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.
          nRet := DE_ABORT
+         lRefresh := .F.
       ELSE
          nRet := DE_REFRESH
          lRefresh := .T.
+         lReload := .F.
       ENDIF
 
-   CASE Chr( nCh ) $ "nN"
+   CASE Upper( Chr( nCh ) ) == "N"
 
       SELECT fakt_doks
       fakt_print_narudzbenica( field->idFirma, field->IdTipDok, field->BrDok )
       nRet := DE_CONT
       lRefresh := .T.
 
-   CASE Chr( nCh ) $ "fF"
+   CASE Upper( Chr( nCh ) ) == "F"
 
       IF idtipdok $ "20"
          nRet := generisi_fakturu( lOpcine )
          lRefresh := .T.
+         lReload := .F.
       ENDIF
 
-   CASE Chr( nCh ) $ "pP"
+   CASE Upper( Chr( nCh ) ) = "P"
 
-      _tmp := povrat_fakt_dokumenta( .F., field->idfirma, field->idtipdok, field->brdok )
+      nPovrat := povrat_fakt_dokumenta( .F., field->idfirma, field->idtipdok, field->brdok )
 
       o_fakt_doks()
 
-      IF _tmp <> 0 .AND. Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
+      IF nPovrat <> 0 .AND. Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.
          lRefresh := .F.
+         lReload := .F.
          nRet := DE_ABORT
       ELSE
          nRet := DE_REFRESH
          lRefresh := .T.
+         lReload := .F.
       ENDIF
 
    ENDCASE
@@ -374,8 +391,11 @@ FUNCTION fakt_pregled_dokumenata_browse_komande( nCh, lOpcine, cFiskalniUredjajM
 
       // SELECT ( nDbfArea )
       // SET ORDER TO TAG "1"
-      fakt_pregled_reload_tables( _filter )
+      IF lReload
+         fakt_pregled_reload_tables( _filter )
+      ENDIF
       GO ( _t_rec )
+      nRet := DE_REFRESH
 
    ENDIF
 
@@ -409,12 +429,11 @@ FUNCTION fakt_pregled_reload_tables( cFilter )
 STATIC FUNCTION fakt_pregled_dokumenata_skip_block( nRecs, cFiskalniUredjajModel )
 
    LOCAL nSkipped := 0
-   LOCAL lAppend := .F.
 
    IF LastRec() != 0
       DO CASE
       CASE nRecs == 0
-         IF Eof() .AND. ! lAppend
+         IF Eof()
             dbSkip( - 1 )
             nSkipped := -1
          ELSE
@@ -424,11 +443,7 @@ STATIC FUNCTION fakt_pregled_dokumenata_skip_block( nRecs, cFiskalniUredjajModel
          DO WHILE nSkipped < nRecs
             dbSkip()
             IF Eof()
-               IF lAppend
-                  nSkipped++
-               ELSE
-                  dbSkip( - 1 )
-               ENDIF
+               dbSkip( - 1 )
                EXIT
             ENDIF
             nSkipped++
@@ -443,7 +458,8 @@ STATIC FUNCTION fakt_pregled_dokumenata_skip_block( nRecs, cFiskalniUredjajModel
          ENDDO
       ENDCASE
    ENDIF
-   IF nSkipped != 0
+
+   IF TBInitialized .AND. nSkipped != 0  // TBInitialized se postavlja unutar my_db_edit_sql, znaci da je zavrseno inicijalno renderisanje browse objekta
       prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
    ENDIF
 
@@ -482,7 +498,7 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
 
 
-STATIC FUNCTION g_fiscal_info( cFiskalniUredjajModel )
+STATIC FUNCTION get_fiscal_info( cFiskalniUredjajModel )
 
    LOCAL cInfo := " "
 

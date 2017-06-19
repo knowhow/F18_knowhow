@@ -259,74 +259,70 @@ HB_FUNC( __RUN_SYSTEM )
 
 
 
-FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
+FUNCTION f18_run( cCommand, cArgument, hOutput, lAsync )
 
    LOCAL nRet := -1
    LOCAL cStdOut := "", cStdErr := ""
    LOCAL cPrefixCmd
    LOCAL _msg
 
-   IF lAlwaysOk == NIL
-      lAlwaysOk := .F.
-   ENDIF
-
    IF lAsync == NIL
       lAsync := .F. // default sync execute
    ENDIF
 
+   IF cArgument == NIL
+      cArgument := ""
+   ENDIF
+
    IF is_windows()
       IF ValType( hOutput ) == "H"
-         nRet := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr )
+         nRet := hb_processRun( cCommand + " " + cArgument, NIL, @cStdOut, @cStdErr )
          hOutput[ "stdout" ] := cStdOut
          hOutput[ "stderr" ] := cStdErr
-      else
-         nRet := windows_run_invisible( cCommand, "", @cStdOut, @cStdErr, lAsync )
+      ELSE
+         nRet := windows_run_invisible( cCommand, cArgument, @cStdOut, @cStdErr, lAsync )
       ENDIF
       RETURN nRet
    ENDIF
 
    IF lAsync
-      nRet := __run_system( cCommand + "&" ) // .AND. ( is_linux() .OR. is_mac()
+      nRet := __run_system( cCommand + " " + cArgument + "&" ) // .AND. ( is_linux() .OR. is_mac()
    ELSE
-      //cCommand := get_run_cmd_with_prefix( cCommand, lAsync )
-      nRet := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr, lAsync )
+      // cCommand := get_run_cmd_with_prefix( cCommand, lAsync )
+      nRet := hb_processRun( cCommand + " " + cArgument, NIL, @cStdOut, @cStdErr, lAsync )
    ENDIF
 
-   ?E cCommand, nRet, "stdout:", cStdOut, "stderr:", cStdErr
+   ?E cCommand + " " + cArgument, nRet, "stdout:", cStdOut, "stderr:", cStdErr
 
    IF nRet == 0
-      info_bar( "run1", cCommand + " : " + cStdOut + " : " + cStdErr )
+      info_bar( "run1", cCommand  + " " + cArgument + " : " + cStdOut + " : " + cStdErr )
    ELSE
-      error_bar( "run1", cCommand + cStdOut + " : " + cStdErr )
-      cPrefixCmd := get_run_prefix_cmd( cCommand )
+      error_bar( "run1", cCommand  + " " + cArgument + " : " + cStdOut + " : " + cStdErr )
+      cPrefixCmd := get_run_prefix_cmd( cCommand  + " " + cArgument )
 
 // #ifdef __PLATFORM__UNIX
       IF lAsync
-         nRet := __run_system( cPrefixCmd + cCommand + "&" )
+         nRet := __run_system( cPrefixCmd + cCommand +  " " + cArgument + "&" )
       ELSE
-         nRet := hb_processRun( cPrefixCmd + cCommand, NIL, @cStdOut, @cStdErr )
+         nRet := hb_processRun( cPrefixCmd + cCommand  + " " + cArgument, NIL, @cStdOut, @cStdErr )
       ENDIF
 // # else
 // nRet := hb_processRun( cPrefixCmd + cCommand, NIL, @cStdOut, @cStdErr, lAsync )
 // #endif
-      ?E cCommand, nRet, "stdout:", cStdOut, "stderr:", cStdErr
+      ?E cCommand  + " " + cArgument, nRet, "stdout:", cStdOut, "stderr:", cStdErr
 
 
       IF nRet == 0
-         info_bar( "run2", cPrefixCmd + cCommand + " : " + cStdOut + " : " + cStdErr )
+         info_bar( "run2", cPrefixCmd + cCommand + " " + cArgument + " : " + cStdOut + " : " + cStdErr )
       ELSE
-         error_bar( "run2", cPrefixCmd + cCommand + " : " + cStdOut + " : " + cStdErr )
+         error_bar( "run2", cPrefixCmd + cCommand  + " " + cArgument + " : " + cStdOut + " : " + cStdErr )
 
-         nRet := __run_system( cCommand )  // npr. copy komanda trazi system run a ne hbprocess run
-         ?E cCommand, nRet, "stdout:", cStdOut, "stderr:", cStdErr
-         IF nRet <> 0 .AND. !lAlwaysOk
-
-            error_bar( "run3", cCommand + " : " + cStdOut + " : " + cStdErr )
-            _msg := "ERR run cmd: "  + cCommand + " : " + cStdOut + " : " + cStdErr
+         nRet := __run_system( cCommand  + " " + cArgument )  // npr. copy komanda trazi system run a ne hbprocess run
+         ?E cCommand  + " " + cArgument, nRet, "stdout:", cStdOut, "stderr:", cStdErr
+         IF nRet <> 0
+            error_bar( "run3", cCommand +  " " + cArgument + " : " + cStdOut + " : " + cStdErr )
+            _msg := "ERR run cmd: " + cCommand  + " " + cArgument + " : " + cStdOut + " : " + cStdErr
             log_write( _msg, 2 )
-         ELSE
-            info_bar( "run3", cCommand + " : " + cStdOut + " : " + cStdErr )
-
          ENDIF
 
       ENDIF
@@ -352,12 +348,12 @@ FUNCTION windows_run_invisible( cProg, cArg, cStdOut, cStdErr, lAsync )
    IF DirChange( cDirF18Util ) != 0  // e.g. F18.exe/F18_util
       IF MakeDir( cDirF18Util ) != 0
          MsgBeep( "Kreiranje dir: " + cDirF18Util + " neuspješno?! STOP" )
-         RETURN .F.
+         RETURN -1
       ENDIF
    ENDIF
 
    IF !is_windows()
-      RETURN .F.
+      RETURN -1
    ENDIF
 
    IF !File( cDirF18Util + "run_invisible.vbs" )
@@ -457,7 +453,7 @@ FUNCTION f18_open_document( cDocument )
    cDocument := '"' + cDocument + '"'
 #endif
 
-   RETURN f18_run( cPrefixCmd + cDocument, NIL, NIL, .T. )
+   RETURN f18_run( cPrefixCmd, cDocument, NIL, .T. )
 
 
 

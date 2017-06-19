@@ -14,7 +14,7 @@
 
 FUNCTION VidiFajl( cImeF, aLinFiks, aKolFiks )
 
-   f18_run( "gedit" + cImeF )
+   f18_run( "gedit", cImeF )
 
 FUNCTION SljedLin( cFajl, nPocetak )
 

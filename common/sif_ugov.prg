@@ -654,8 +654,7 @@ FUNCTION P_Ugov2( cIdPartner )
 
    PRIVATE  TBCanClose := .T.
 
-   // mogu dodavati slogove
-   PRIVATE  TBAppend := "N"
+
 
    PRIVATE  bZaglavlje := NIL
 

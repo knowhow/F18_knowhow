@@ -14,7 +14,7 @@
 
 MEMVAR TB, Ch, GetList, goModul
 MEMVAR m_x, m_y
-MEMVAR bGoreREd, bDoleRed, bDodajRed, fTBNoviRed, TBCanClose, TBAppend, bZaglavlje, TBScatter, nTBLine, nTBLastLine, TBPomjerise
+MEMVAR bGoreREd, bDoleRed, bDodajRed, fTBNoviRed, TBCanClose, bZaglavlje, TBScatter, nTBLine, nTBLastLine, TBPomjerise
 MEMVAR TBSkipBlock
 
 MEMVAR  ImeKol, Kol
@@ -62,11 +62,10 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInv
    PRIVATE  bDoleRed := NIL
    PRIVATE  bDodajRed := NIL
 
-
+   PRIVATE  TBInitialized := .F.
    PRIVATE  fTBNoviRed := .F.  // trenutno smo u novom redu ?
    PRIVATE  TBCanClose := .T. // da li se moze zavrsiti unos podataka ?
 
-   PRIVATE  TBAppend := "N"
    PRIVATE  bZaglavlje := NIL // zaglavlje se edituje kada je kursor u prvoj koloni prvog reda
 
    PRIVATE  TBScatter := "N"  // uzmi samo tekuce polje
@@ -79,13 +78,6 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInv
    PRIVATE  TBSkipBlock // := {| nSkip | SkipDB( nSkip, @nTBLine ) }
 
 
-   IF bSkipBlock <> NIL
-      // ovo je zadavanje skip bloka kroz parametar
-      TBSkipBlock := bSkipBlock
-   ELSE
-      //TBSkipBlock := {| nSkip | SkipDB( nSkip, @nTBLine ) }
-
-   ENDIF
 
    PRIVATE bTekCol
    PRIVATE Ch := 0
@@ -127,8 +119,14 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInv
    hParams[ "gprazno" ]       := nGPrazno
    hParams[ "podvuci_b" ]     := bPodvuci
 
-   browse_only( hParams, .T. )
+   IF bSkipBlock <> NIL
+      // ovo je zadavanje skip bloka kroz parametar
+      TBSkipBlock := bSkipBlock
+      // ELSE
+      // TBSkipBlock := {| nSkip | SkipDB( nSkip, @nTBLine ) }
+   ENDIF
 
+   browse_only( hParams, .T. )
 
    DO WHILE .T.
 
@@ -154,11 +152,17 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInv
          Tb:stabilize()
       ENDDO
 
+
       IF in_calc()
          hb_idleSleep( 0.5 )
          LOOP
       ENDIF
 
+      IF !TBInitialized
+         TBInitialized := .T.
+         Eval( TB:SkipBlock, 1 )
+         Eval( TB:SkipBlock, -1 )
+      ENDIF
 
       Ch := Inkey( 0 )
 
@@ -820,9 +824,9 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
 
    IF lImaSemafor
       RETURN .F.
-      //IF !begin_sql_tran_lock_tables( { cAlias  } )
-      //   RETURN .F.
-      //ENDIF
+      // IF !begin_sql_tran_lock_tables( { cAlias  } )
+      // RETURN .F.
+      // ENDIF
    ENDIF
 
    GO TOP
@@ -834,11 +838,11 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
          hRec := dbf_get_rec()
          hRec[ Lower( cKolona ) ] := cTrazi
 
-        // IF lImaSemafor
-        //    lOk := ( Alias(), hRec, 1, "CONT" )
-        // ELSE
-            dbf_update_rec( hRec )
-        // ENDIF
+         // IF lImaSemafor
+         // lOk := ( Alias(), hRec, 1, "CONT" )
+         // ELSE
+         dbf_update_rec( hRec )
+         // ENDIF
 
       ENDIF
 
@@ -862,8 +866,8 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
       ENDIF
    ELSE
   */
-      lRet := .T.
-  // ENDIF
+   lRet := .T.
+   // ENDIF
 
    IF lRet
       dbSetOrder( nOrder )

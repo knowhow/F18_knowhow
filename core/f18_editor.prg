@@ -42,7 +42,7 @@ FUNCTION f18_editor( cTxt )
    // DirChange( s_cDirF18Util + s_cUtilName )
    // f18_run( cCmd, @hOutput )
 
-   RETURN f18_run( cCmd, NIL, NIL, .F. )
+   RETURN f18_run( cCmd )
 
 
 STATIC FUNCTION check_prog_download()

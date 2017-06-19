@@ -485,7 +485,6 @@ FUNCTION fin_asistent_otv_st()
    PRIVATE  bDodajRed := NIL
    PRIVATE  fTBNoviRed := .F. // trenutno smo u novom redu ?
    PRIVATE  TBCanClose := .T. // da li se moze zavrsiti unos podataka ?
-   PRIVATE  TBAppend := "N"  // mogu dodavati slogove
    PRIVATE  bZaglavlje := NIL
    // zaglavlje se edituje kada je kursor u prvoj koloni
    // prvog reda

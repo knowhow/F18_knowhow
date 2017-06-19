@@ -87,7 +87,6 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    PRIVATE bDodajRed := NIL
    PRIVATE fTBNoviRed := .F. // trenutno smo u novom redu ?
    PRIVATE TBCanClose := .T. // da li se moze zavrsiti unos podataka ?
-   PRIVATE TBAppend := "N"  // mogu dodavati slogove
    PRIVATE bZaglavlje := NIL
    // PRIVATE TBSkipBlock := {| nSkip| fin_otvorene_stavke_browse_skip( nSkip ) }
    PRIVATE nTBLine := 1      // tekuca linija-kod viselinijskog browsa

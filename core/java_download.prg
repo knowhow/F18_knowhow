@@ -29,16 +29,16 @@ FUNCTION java_version()
    LOCAL hOutput := hb_Hash(), pRegex, aMatch
    LOCAL hRet := hb_Hash()
 
-   f18_run( java_cmd() + " -version", @hOutput )
+   f18_run( java_cmd(), "-version", @hOutput )
 
    hRet[ "version" ] := "-1"
    hRet[ "name" ] := "JAVAERR"
+
    pRegex := hb_regexComp( 'java version "(.*)"' ) // java version "1.8.0_131"
    aMatch := hb_regex( pRegex, hOutput[ "stderr" ] )
    IF Len( aMatch ) > 0
       hRet[ "version" ] := aMatch[ 2 ]
       hRet[ "name" ] := "java"
-      RETURN aMatch[ 2 ]
    ENDIF
 
    pRegex := hb_regexComp( 'openjdk version "(.*)"' ) // java version "1.8.0_131"

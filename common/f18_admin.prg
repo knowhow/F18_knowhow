@@ -522,14 +522,14 @@ METHOD F18Admin:get_os_name()
 
 
 
-METHOD F18Admin:wget_download( url, cFileName, cLocalFileName, erase_file, silent, only_newer )
+METHOD F18Admin:wget_download( url, cFileName, cLocalFileName, lEraseFile, silent, only_newer )
 
    LOCAL lOk := .F.
    LOCAL cCmd
    LOCAL nFileHandle, _lenght
 
-   // IF erase_file == NIL
-   // erase_file := .F.
+   // IF lEraseFile == NIL
+   // lEraseFile := .F.
    // ENDIF
 
    // IF silent == NIL
@@ -540,7 +540,7 @@ METHOD F18Admin:wget_download( url, cFileName, cLocalFileName, erase_file, silen
    // only_newer := .F.
    // ENDIF
 
-   // IF erase_file
+   // IF lEraseFile
    // FErase( cLocalFileName )
    // Sleep( 1 )
    // ENDIF
@@ -561,7 +561,7 @@ METHOD F18Admin:wget_download( url, cFileName, cLocalFileName, erase_file, silen
    cCmd += cLocalFileName
 #endif
 
-   IF f18_run( cCmd, NIL, NIL, .F. ) != 0
+   IF f18_run( cCmd ) != 0
       MsgBeep( "Error: " + cCmd  + "?!" )
    ENDIF
    // Sleep( 1 )

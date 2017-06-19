@@ -556,7 +556,7 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
    cCmd += " -O "
 
 
-   IF os_windows()
+   IF is_windows()
       cLocalFileName := '"' + cLocalFileName + '"'
    ENDIF
 // cCmd += cLocalFileName

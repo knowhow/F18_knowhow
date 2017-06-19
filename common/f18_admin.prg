@@ -555,13 +555,13 @@ METHOD F18Admin:wget_download( url, cFileName, cLocalFileName, lEraseFile, silen
 
    cCmd += " -O "
 
-#ifdef __PLATFORM__WINDOWS
-   cCmd += '"' + cLocalFileName + '"'
-#else
-   cCmd += cLocalFileName
-#endif
+//#ifdef __PLATFORM__WINDOWS
+//   cCmd += '"' + cLocalFileName + '"'
+//#else
+//   cCmd += cLocalFileName
+//#endif
 
-   IF f18_run( cCmd ) != 0
+   IF f18_run( cCmd, cLocalFileName ) != 0
       MsgBeep( "Error: " + cCmd  + "?!" )
    ENDIF
    // Sleep( 1 )

@@ -12,11 +12,11 @@
 #include "f18.ch"
 
 STATIC s_cUtilName := "yarg"
-STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/f18_editor/
-STATIC s_cProg // windows: f18_editor.cmd, darwin: f18_editor
+STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/yarg
+STATIC s_cProg // windows: yarg/bin/yarg.bat, darwin: yarg/bin/yarg
 
 #ifdef __PLATFORM__WINDOWS
-STATIC s_cSHA256sum := "7c48e4408e9b8bdb03ba555ded056a49ac40e1afca64a8de63ad222a05048051" // yarg/bin/yarg.bat
+STATIC s_cSHA256sum := "9e067c6ae624e34952074393d9d2ed8c4ac6fa58bcdbb9d0c6b9c5940c9856e0" // yarg/bin/yarg.bat
 #endif
 
 #ifdef __PLATFORM__UNIX

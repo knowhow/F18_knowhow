@@ -259,7 +259,7 @@ METHOD YargReport:view()
 
 METHOD YargReport:run()
 
-   LOCAL cScreen, nError
+   LOCAL hJava, cScreen, nError
    LOCAL hOutput := hb_Hash()
 
    copy_template_to_my_home( ::cName + "." + ::cType )
@@ -275,18 +275,20 @@ METHOD YargReport:run()
    ? ::cRunScript
    ? "Generisanje ", ::cName, ::cType
 
-   MsgO( "Generacija YARG/java(" + java_version() + ") >" + ::cName + "." + ::cType + " ..." )
+   hJava := java_version()
+
+   MsgO( "Generacija YARG/" + hJava[ "name" ] + "(" + hJava[ "version" ] + ") > " + ::cName + "." + ::cType + " ..." )
    nError := f18_run( file_path_quote( ::cRunScript ) ) // 1. run - silent
    MsgC()
 
    IF nError <> 0 // 2. run - diag mode - catch stdout, stderr
-     MsgO( "YARG 2. run diag - catch stdout/stderr")
-     nError := f18_run( file_path_quote( ::cRunScript ), @hOutput, .F. , .F. )
-     MsgC()
+      MsgO( "YARG 2. run diag - catch stdout/stderr" )
+      nError := f18_run( file_path_quote( ::cRunScript ), @hOutput, .F., .F. )
+      MsgC()
    ENDIF
    IF nError <> 0
-      ? "STDOUT:", _u( hOutput[ "stdout"] )
-      ? "STDERR:", _u( hOutput[ "stderr"] )
+      ? "STDOUT:", _u( hOutput[ "stdout" ] )
+      ? "STDERR:", _u( hOutput[ "stderr" ] )
       ?
       ? "<ENTER> nastavak"
       Inkey( 0 )

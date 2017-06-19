@@ -27,18 +27,28 @@ STATIC s_cSHA256sum :=  "1b69cb6f4e65acf52443b090c08e377b6366f1a21626f9907ecc3dd
 FUNCTION java_version()
 
    LOCAL hOutput := hb_Hash(), pRegex, aMatch
+   LOCAL hRet := hb_Hash()
 
    f18_run( java_cmd() + " -version", @hOutput )
 
+   hRet[ "version" ] := "-1"
+   hRet[ "name" ] := "JAVAERR"
    pRegex := hb_regexComp( 'java version "(.*)"' ) // java version "1.8.0_131"
-
    aMatch := hb_regex( pRegex, hOutput[ "stderr" ] )
-
    IF Len( aMatch ) > 0
+      hRet[ "version" ] := aMatch[ 2 ]
+      hRet[ "name" ] := "java"
       RETURN aMatch[ 2 ]
    ENDIF
 
-   RETURN "JAVA_VER_ERROR"
+   pRegex := hb_regexComp( 'openjdk version "(.*)"' ) // java version "1.8.0_131"
+   aMatch := hb_regex( pRegex, hOutput[ "stderr" ] )
+   IF Len( aMatch ) > 0
+      hRet[ "version" ] := aMatch[ 2 ]
+      hRet[ "name" ] := "openjdk"
+   ENDIF
+
+   RETURN hRet
 
 
 

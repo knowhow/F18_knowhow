@@ -46,12 +46,13 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    LOCAL _ok := .F.
    LOCAL _template
    LOCAL _screen
-   LOCAL _cmd
-   LOCAL _error
+   LOCAL cCommand
+   LOCAL nError
    LOCAL _util_path
    LOCAL cJodReportsFullPath
    LOCAL cErr := ""
    LOCAL cOdgovor := "D"
+   LOCAL hJava
 
    IF lBezPitanja == NIL
       lBezPitanja := .F.
@@ -110,34 +111,33 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    __template := _template
    __template_filename := cTemplate
 
-   _cmd := java_cmd() + " -jar " + cJodReportsFullPath + " "
-   _cmd += _template + " "
-   _cmd += __xml_file + " "
-   _cmd += cOutOdtFile
+   cCommand := javacCommand() + " -jar " + cJodReportsFullPath + " "
+   cCommand += _template + " "
+   cCommand += __xml_file + " "
+   cCommand += cOutOdtFile
 
-   log_write( "ODT report gen, cmd: " + _cmd, 7 )
+   log_write( "ODT report gen, cmd: " + cCommand, 7 )
 
    SAVE SCREEN TO _screen
    CLEAR SCREEN
 
-   ? "Generisanje ODT reporta u toku ...  fajl: ..." + Right( __current_odt, 20 )
+ hJava := java_version()
+   ? "GEN JOD/" + hJava[ "name" ] + "(" + hJava[ "version" ] + ") > " + + Right( __current_odt, 20 )
 
-   _error := f18_run( _cmd, NIL, NIL, .F. )
+   nError := f18_run( cCommand, NIL, NIL, .F. )
    RESTORE SCREEN FROM _screen
 
-   IF _error <> 0
+   IF nError <> 0
 
-      log_write( "ODT report gen: greška - " + AllTrim( Str( _error ) ), 7 )
-      cErr := "Došlo je do greške prilikom generisanja reporta ! #" + "Greška: " + AllTrim( Str( _error ) )
+      log_write( "JOD report gen: greška - " + AllTrim( Str( nError ) ), 7 )
+      cErr := "Došlo je do greške prilikom generisanja reporta ! #" + "Greška: " + AllTrim( Str( nError ) )
 
       MsgBeep( cErr )
-
       IF fetch_metric( "bug_report_email", my_user(), "A" ) $ "D#A"
          odt_na_email_podrska( cErr )
       ENDIF
 
       RETURN lRet
-
    ENDIF
 
    IF cOdgovor == "P"
@@ -318,7 +318,7 @@ FUNCTION prikazi_odt( cOutput_file )
    ? "Prikaz odt fajla u toku ... fajl: ..." + Right( __current_odt, 20 )
 
 #ifndef TEST
-   nError := f18_open_document( cOutOdtFile )
+   nError := LO_open_dokument( cOutOdtFile )
 #endif
 
    RESTORE SCREEN FROM cScreen
@@ -460,8 +460,8 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
 
    LOCAL _ret := .F.
    LOCAL cJodReportsFullPath, _util_path
-   LOCAL _cmd
-   LOCAL _screen, _error
+   LOCAL cCommand
+   LOCAL _screen, nError
 
    IF ( cInput_file == NIL )
       cOutOdtFile := __current_odt
@@ -505,24 +505,24 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
    cJodReportsFullPath := '"' + cJodReportsFullPath + '"'
 #endif
 
-   _cmd := java_cmd() + " -jar " + cJodReportsFullPath + " "
-   _cmd += cOutOdtFile + " "
-   _cmd += __output_pdf
+   cCommand := javacCommand() + " -jar " + cJodReportsFullPath + " "
+   cCommand += cOutOdtFile + " "
+   cCommand += __output_pdf
 
-   log_write( "ODT report convert, cmd: " + _cmd, 7 )
+   log_write( "ODT report convert, cmd: " + cCommand, 7 )
 
    SAVE SCREEN TO _screen
    CLEAR SCREEN
 
    ? "Konvertovanje ODT dokumenta u toku..."
 
-   _error := f18_run( _cmd )
+   nError := f18_run( cCommand )
 
    RESTORE SCREEN FROM _screen
 
-   IF _error <> 0
-      log_write( "ODT report convert: greška - " + AllTrim( Str( _error ) ), 7 )
-      MsgBeep( "Došlo je do greške prilikom konvertovanja dokumenta !#" + "Greška: " + AllTrim( Str( _error ) ) )
+   IF nError <> 0
+      log_write( "ODT report convert: greška - " + AllTrim( Str( nError ) ), 7 )
+      MsgBeep( "Došlo je do greške prilikom konvertovanja dokumenta !#" + "Greška: " + AllTrim( Str( nError ) ) )
       RETURN _ret
    ENDIF
 

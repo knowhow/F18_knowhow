@@ -277,7 +277,7 @@ METHOD YargReport:run()
 
    hJava := java_version()
 
-   MsgO( "Generacija YARG/" + hJava[ "name" ] + "(" + hJava[ "version" ] + ") > " + ::cName + "." + ::cType + " ..." )
+   MsgO( "GEN YARG/" + hJava[ "name" ] + "(" + hJava[ "version" ] + ") > " + ::cName + "." + ::cType + " ..." )
    nError := f18_run( file_path_quote( ::cRunScript ) ) // 1. run - silent
    MsgC()
 

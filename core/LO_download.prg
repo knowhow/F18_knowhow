@@ -26,7 +26,7 @@ FUNCTION LO_open_dokument( cFile )
 
    IF is_windows()
       cCmd := LO_cmd() + " " + cFile
-      f18_run( cCmd, NIL, NIL, .T. )
+      f18_run( cCmd, NIL, NIL, .F. )
    ELSE
       f18_open_mime_document( cFile )
    ENDIF

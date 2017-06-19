@@ -116,7 +116,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    cCommand += __xml_file + " "
    cCommand += cOutOdtFile
 
-   log_write( "ODT report gen, cmd: " + cCommand, 7 )
+   log_write( "JOD report gen, cmd: " + cCommand, 7 )
 
    SAVE SCREEN TO _screen
    CLEAR SCREEN
@@ -124,7 +124,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    hJava := java_version()
    ? "GEN JOD/" + hJava[ "name" ] + "(" + hJava[ "version" ] + ") > " + + Right( __current_odt, 20 )
 
-   nError := f18_run( cCommand, NIL, NIL, .F. )
+   nError := f18_run( cCommand )
    RESTORE SCREEN FROM _screen
 
    IF nError <> 0

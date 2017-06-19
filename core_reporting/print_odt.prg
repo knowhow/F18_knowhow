@@ -111,7 +111,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    __template := _template
    __template_filename := cTemplate
 
-   cCommand := javacCommand() + " -jar " + cJodReportsFullPath + " "
+   cCommand := java_cmd() + " -jar " + cJodReportsFullPath + " "
    cCommand += _template + " "
    cCommand += __xml_file + " "
    cCommand += cOutOdtFile
@@ -121,7 +121,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    SAVE SCREEN TO _screen
    CLEAR SCREEN
 
- hJava := java_version()
+   hJava := java_version()
    ? "GEN JOD/" + hJava[ "name" ] + "(" + hJava[ "version" ] + ") > " + + Right( __current_odt, 20 )
 
    nError := f18_run( cCommand, NIL, NIL, .F. )
@@ -254,7 +254,7 @@ STATIC FUNCTION get_knowhow_util_path()
    ENDIF
 
    cPath := "." + SLASH // current dir ./
-   aFiles := hb_vfDirectory(  )
+   aFiles := hb_vfDirectory()
    IF Len( aFiles ) > 0
       s_cF18UtilPath := cPath
       info_bar( "f18_core", "util path: " + cPath )
@@ -505,7 +505,7 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
    cJodReportsFullPath := '"' + cJodReportsFullPath + '"'
 #endif
 
-   cCommand := javacCommand() + " -jar " + cJodReportsFullPath + " "
+   cCommand := java_cmd() + " -jar " + cJodReportsFullPath + " "
    cCommand += cOutOdtFile + " "
    cCommand += __output_pdf
 

@@ -33,7 +33,7 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    set_screen_dimensions()
 
-   //MsgBeep( java_version() )
+
    // windows_run_invisible( "notepad", "ernad husremovic test.txt", .T. )
    // windows_run_invisible( "notepad", "stani test.txt", .F. )
 

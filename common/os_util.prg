@@ -494,7 +494,6 @@ FUNCTION f18_open_mime_document( cDocument )
 #endif
 */
 
-
    cDocument := file_path_quote( cDocument )
 
    cPrefixCmd := get_run_prefix_cmd()
@@ -504,7 +503,7 @@ FUNCTION f18_open_mime_document( cDocument )
 
    IF nError <> 0
       MsgBeep( "Problem sa otvaranjem dokumenta !#Greška: " + AllTrim( Str( nError ) ) )
-      RETURN .F.
+      RETURN nError
    ENDIF
 
-   RETURN .T.
+   RETURN nError

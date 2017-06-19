@@ -22,16 +22,16 @@ STATIC s_cSHA256sum := "976beceb43c806ffee561b97e0755affbabb11c11214a4e4d03cb503
 
 FUNCTION LO_open_dokument( cFile )
 
-   LOCAL cCmd
+   LOCAL cCmd, nRet
 
    IF is_windows()
       cCmd := LO_cmd() + " " + cFile
-      f18_run( cCmd, NIL, NIL, .F. )
+      nRet := f18_run( cCmd, NIL, NIL, .F. )
    ELSE
-      f18_open_mime_document( cFile )
+      nRet := f18_open_mime_document( cFile )
    ENDIF
 
-   RETURN .T.
+   RETURN nRet
 
 
 FUNCTION LO_cmd()

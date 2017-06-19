@@ -275,8 +275,7 @@ METHOD YargReport:run()
    ? ::cRunScript
    ? "Generisanje ", ::cName, ::cType
 
-
-   MsgO( "Generacija YARG izvještaja " + ::cName + "." + ::cType + " ..." )
+   MsgO( "Generacija YARG/java(" + java_version() + ") >" + ::cName + "." + ::cType + " ..." )
    nError := f18_run( file_path_quote( ::cRunScript ) ) // 1. run - silent
    MsgC()
 

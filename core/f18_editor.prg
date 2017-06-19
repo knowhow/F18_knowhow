@@ -33,7 +33,7 @@ FUNCTION f18_editor( cTxt )
    IF is_linux()
       cCmd := "f18_editor" + " " + cTxt
    ELSE
-      cCmd := s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " " + cTxt
+      cCmd := s_cDirF18Util + s_cUtilName + SLASH + s_cProg
       IF ! File( s_cDirF18Util + s_cUtilName + SLASH + s_cProg )
          MsgBeep( "Error NO CMD: " + s_cDirF18Util + s_cUtilName + SLASH + s_cProg + "!? STOP" )
          RETURN ""
@@ -42,7 +42,7 @@ FUNCTION f18_editor( cTxt )
    // DirChange( s_cDirF18Util + s_cUtilName )
    // f18_run( cCmd, @hOutput )
 
-   RETURN f18_run( cCmd )
+   RETURN f18_run( cCmd, cTxt )
 
 
 STATIC FUNCTION check_prog_download()

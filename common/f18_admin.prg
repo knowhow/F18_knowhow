@@ -522,7 +522,7 @@ METHOD F18Admin:get_os_name()
 
 
 
-METHOD F18Admin:wget_download( url, cFileName, cLocalFileName, lEraseFile, silent, only_newer )
+METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, silent, only_newer )
 
    LOCAL lOk := .F.
    LOCAL cCmd
@@ -551,15 +551,16 @@ METHOD F18Admin:wget_download( url, cFileName, cLocalFileName, lEraseFile, silen
    cCmd += " -q  --tries=4 --timeout=4  --no-cache --no-check-certificate "
 #endif
 
-   cCmd += url + cFileName
+   cCmd += cUrl + cFileName
 
    cCmd += " -O "
 
-//#ifdef __PLATFORM__WINDOWS
-//   cCmd += '"' + cLocalFileName + '"'
-//#else
-//   cCmd += cLocalFileName
-//#endif
+
+   IF os_windows()
+      cLocalFileName := '"' + cLocalFileName + '"'
+   ENDIF
+// cCmd += cLocalFileName
+// #endif
 
    IF f18_run( cCmd, cLocalFileName ) != 0
       MsgBeep( "Error: " + cCmd  + "?!" )

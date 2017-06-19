@@ -277,7 +277,7 @@ METHOD YargReport:run()
 
 
    MsgO( "Generacija YARG izvještaja " + ::cName + "." + ::cType + " ..." )
-   nError := f18_run( file_path_quote( ::cRunScript ), @hOutput, .F. , .F. )
+   nError := f18_run( file_path_quote( ::cRunScript + " bug" ), @hOutput, .F. , .F. )
    MsgC()
 
    IF nError <> 0

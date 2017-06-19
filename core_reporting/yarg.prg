@@ -277,9 +277,14 @@ METHOD YargReport:run()
 
 
    MsgO( "Generacija YARG izvještaja " + ::cName + "." + ::cType + " ..." )
-   nError := f18_run( file_path_quote( ::cRunScript + " bug" ), @hOutput, .F. , .F. )
+   nError := f18_run( file_path_quote( ::cRunScript ) ) // 1. run - silent
    MsgC()
 
+   IF nError <> 0 // 2. run - diag mode - catch stdout, stderr
+     MsgO( "YARG 2. run diag - catch stdout/stderr")
+     nError := f18_run( file_path_quote( ::cRunScript ), @hOutput, .F. , .F. )
+     MsgC()
+   ENDIF
    IF nError <> 0
       ? "STDOUT:", _u( hOutput[ "stdout"] )
       ? "STDERR:", _u( hOutput[ "stderr"] )

@@ -60,7 +60,9 @@ FUNCTION java_cmd()
       RETURN "java " + s_cJavaOpts
    ENDIF
 
-   RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " " + s_cJavaOpts
+   // RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " " + s_cJavaOpts
+
+   RETURN s_cDirF18Util + s_cUtilName + SLASH + "bin" + "java" + iif( is_windows(), ".exe", "" ) + " " + s_cJavaOpts
 
 
 FUNCTION check_java_download()

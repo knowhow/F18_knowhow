@@ -259,7 +259,7 @@ METHOD YargReport:view()
 
 METHOD YargReport:run()
 
-   LOCAL cScreen, nError, cStdOut, cStdErr
+   LOCAL cScreen, nError
    LOCAL hOutput := hb_Hash()
 
    copy_template_to_my_home( ::cName + "." + ::cType )
@@ -277,12 +277,12 @@ METHOD YargReport:run()
 
 
    MsgO( "Generacija YARG izvještaja " + ::cName + "." + ::cType + " ..." )
-   nError := hb_processRun( file_path_quote( ::cRunScript ), NIL, @cStdOut, @cStdErr, .F. )
+   nError := f18_run( file_path_quote( ::cRunScript ), @hOutput, .F. , .F. )
    MsgC()
 
    IF nError <> 0
-      ? "STDOUT:", _u( cStdOut )
-      ? "STDERR:", _u( cStdErr )
+      ? "STDOUT:", _u( hOutput[ "stdout"] )
+      ? "STDERR:", _u( hOutput[ "stderr"] )
       ?
       ? "<ENTER> nastavak"
       Inkey( 0 )

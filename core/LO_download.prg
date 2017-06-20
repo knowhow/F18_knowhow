@@ -21,7 +21,7 @@ STATIC s_cSHA256sum := "976beceb43c806ffee561b97e0755affbabb11c11214a4e4d03cb503
 
 #ifdef __PLATFORM__LINUX
 STATIC s_cSHA256sum := "12c66749f6c9ec5c9141bd4d090fa84c6a2a98adcbf4ddf037ada73bacf04f38"
-$endif
+#endif
 
 FUNCTION LO_open_dokument( cFile )
 

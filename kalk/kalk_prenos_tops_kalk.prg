@@ -85,7 +85,7 @@ STATIC FUNCTION tops_kalk_import_meni()
       cProdajnaMjesta += AllTrim( aProdajnaMjesta[ nI ] ) + "; "
       cPosImportLokacija := cTopsDest + AllTrim( aProdajnaMjesta[ nI ] ) + SLASH  // putanja
 
-      BrisiSFajlove( cPosImportLokacija ) // brisi sve fajlove starije od 28 dana
+      brisi_stare_fajlove( cPosImportLokacija ) // brisi sve fajlove starije od 28 dana
       aTopskaDbfs := Directory( cPosImportLokacija + cDbfImportUslov ) // fajlove u matricu po pattern-u
 
       // ASort( aTopskaDbfs,,, { | x, y | DToS( x[ 3 ] ) + x[ 4 ] < DToS( y[ 3 ] ) + y[ 4 ] } ) // datum + vrijeme

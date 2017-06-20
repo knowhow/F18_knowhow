@@ -16,7 +16,7 @@ THREAD STATIC s_lAlreadyRunStartup := .F. // startup funkcija vec pokrenuta
 
 STATIC s_psqlServer_log := .F. // logiranje na server
 
-STATIC s_cF18HomeRoot := NIL // za sve threadove identican home_root
+STATIC s_cF18HomeRoot := NIL // za sve threadove identican cHomeRootDir
 STATIC s_cF18HomeBackup := NIL // svi threadovi ista backup lokacija
 
 STATIC s_cF18CurrentDirectory := NIL
@@ -446,10 +446,10 @@ FUNCTION file_path_quote( cPath )
 
 
 
-FUNCTION my_home_root( home_root )
+FUNCTION my_home_root( cHomeRootDir )
 
-   IF home_root != NIL
-      s_cF18HomeRoot := home_root
+   IF cHomeRootDir != NIL
+      s_cF18HomeRoot := cHomeRootDir
    ENDIF
 
    IF HB_ISNIL( s_cF18HomeRoot )

@@ -143,7 +143,7 @@ FUNCTION IsDirectory( cDir1 )
    RETURN lExists
 
 
-/* BrisiSFajlove(cDir)
+/* brisi_stare_fajlove(cDir)
   *    Brisi fajlove starije od 45 dana
   *
   * \code
@@ -156,24 +156,29 @@ FUNCTION IsDirectory( cDir1 )
   * \endcode
   */
 
-FUNCTION BrisiSFajlove( cDir, nDana )
+FUNCTION brisi_stare_fajlove( cDir, cFilesMatch, nDana )
 
    LOCAL cFile
 
-   IF nDana == nil
-      nDana := D_STAROST_DANA
+   IF cFilesMatch == NIL
+      cFilesMatch := "*.*"
    ENDIF
 
-   cDir := ToUnix( Trim( cdir ) )
-   cFile := FileSeek( Trim( cDir ) + "*.*" )
+   IF nDana == NIL
+      nDana := 30
+   ENDIF
+
+   cDir := ToUnix( Trim( cDir ) )
+   cFile := FileSeek( Trim( cDir ) + cFilesMatch )
    DO WHILE !Empty( cFile )
       IF Date() - FileDate() > nDana
-         FileDelete( cdir + cfile )
+         FileDelete( cDir + cFile )
       ENDIF
-      cfile := FileSeek()
+      cFile := FileSeek()
    ENDDO
 
    RETURN NIL
+
 
 FUNCTION ToUnix( cFileName )
    RETURN cFileName

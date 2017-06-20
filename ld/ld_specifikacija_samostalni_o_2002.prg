@@ -175,6 +175,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
    hRec := hb_Hash()
 
+   download_template_ld_obr_2002()
    oReport := YargReport():New( "ld_obr_2002", "xlsx" )
 
 

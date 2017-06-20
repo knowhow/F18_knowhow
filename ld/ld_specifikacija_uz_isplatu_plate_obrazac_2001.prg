@@ -13,11 +13,6 @@
 
 MEMVAR gZaok2
 
-STATIC s_cDirF18Template
-STATIC s_cTemplateName := "ld_obr_2001.xlsx"
-STATIC s_cUrl
-STATIC s_cSHA256sum := "23721f993561d4aa178730a18bde38294b3c720733d64bb9c691e973f00165fc" // v17
-
 
 FUNCTION ld_specifikacija_plate_obr_2001()
 
@@ -139,7 +134,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    NEXT
 */
 
-   download_template()
+   download_template_ld_obr_2001()
 
    cIdRJ := "  "
    cUslovIdRj := ""
@@ -936,40 +931,5 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    my_close_all_dbf()
    oReport:aRecords := { hRec }
    oReport:run()
-
-   RETURN .T.
-
-
-
-STATIC FUNCTION download_template()
-
-   s_cDirF18Template := f18_exe_path() + "template" + SLASH
-   s_cUrl := "https://github.com/hernad/F18_template/releases/download/" + ;
-      f18_template_ver() + "/" + s_cTemplateName
-
-   IF DirChange( s_cDirF18Template ) != 0
-      IF MakeDir( s_cDirF18Template ) != 0
-         MsgBeep( "Kreiranje dir: " + s_cDirF18Template + " neuspješno?! STOP" )
-         RETURN .F.
-      ENDIF
-   ENDIF
-
-#ifndef F18_DEBUG
-   IF !File( s_cDirF18Template + s_cTemplateName ) .OR. ;
-         ( sha256sum( s_cDirF18Template + s_cTemplateName ) != s_cSHA256sum )
-
-      IF !Empty( download_file( s_cUrl, s_cDirF18Template + s_cTemplateName ) )
-         MsgBeep( "Download " + s_cDirF18Template + s_cTemplateName )
-      ELSE
-         MsgBeep( "Error download:" + s_cDirF18Template + s_cTemplateName + "##" + s_cUrl )
-         RETURN .F.
-      ENDIF
-   ENDIF
-
-   IF sha256sum( s_cDirF18Template + s_cTemplateName ) != s_cSHA256sum
-      MsgBeep( "ERROR sha256sum: " + s_cDirF18Template + s_cTemplateName + "##" + s_cSHA256sum )
-      RETURN .F.
-   ENDIF
-#endif
 
    RETURN .T.

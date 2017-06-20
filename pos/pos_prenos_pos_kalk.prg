@@ -202,7 +202,7 @@ STATIC FUNCTION get_import_file( cBrDok, destinacija, import_fajl )
 
    destinacija := AllTrim( gKalkDest ) + cPrefixLocal
 
-   BrisiSFajlove( destinacija )
+   brisi_stare_fajlove( destinacija )
 
    _imp_files := Directory( destinacija + "kt*.dbf" )
 

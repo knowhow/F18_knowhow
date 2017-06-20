@@ -107,7 +107,7 @@
 #endif
 
 #define CHR254   254
-#define D_STAROST_DANA   25
+//#define D_STAROST_DANA   25
 
 #define LEN_IDRADNIK 6
 #define BOX_CHAR_BACKGROUND hb_UTF8ToStrBox( "░" )

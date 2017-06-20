@@ -39,6 +39,13 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    naslovni_ekran_splash_screen( "F18", f18_ver() )
 
+altd()
+   brisi_stare_fajlove( my_home_root(), "wget*.tmp", 1 )
+
+   IF !File( f18_exe_template_file_name( "f-std.odt" ) ) .OR. !File( f18_exe_template_file_name( "kupci_pregled_dugovanja.xlsx" ) )
+      download_all_templates()
+   ENDIF
+
    IF no_sql_mode()
       set_f18_home( "f18_test" )
       RETURN .T.

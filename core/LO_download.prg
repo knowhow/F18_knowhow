@@ -43,6 +43,7 @@ FUNCTION LO_cmd()
 
    RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg
 
+
 FUNCTION check_LO_download()
 
    LOCAL cUrl

@@ -12,8 +12,8 @@
 
 #include "f18.ch"
 
-STATIC _f18_delphi_exe := "f18_delphirb.exe"
-STATIC _f18_label_exe := "f18_labeliranje.exe"
+STATIC _f18_delphi_exe := "delphirb.exe"
+STATIC _f18_label_exe := "labeliranje.exe"
 
 // ------------------------------------------------------------
 // stampa rtm reporta kroz delphirb
@@ -25,10 +25,8 @@ STATIC _f18_label_exe := "f18_labeliranje.exe"
 // ------------------------------------------------------------
 FUNCTION f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
 
-   LOCAL _cmd
-   LOCAL _ok := .F.
-   LOCAL _delphi_exe := "delphirb.exe"
-   LOCAL _label_exe := "labeliranje.exe"
+   LOCAL cCmd
+   LOCAL lOk := .F.
    LOCAL _util_path
    LOCAL _error
 
@@ -45,8 +43,8 @@ FUNCTION f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
    // provjera uslova
 
    IF ( rtm_file == NIL )
-      MsgBeep( "Nije zadat rtm fajl !!!" )
-      RETURN _ok
+      MsgBeep( "Nije zadat rtm fajl !?" )
+      RETURN lOk
    ENDIF
 
    IF ( table_name == NIL )
@@ -67,83 +65,80 @@ FUNCTION f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
 
    // provjeri treba li kopirati delphirb.exe ?
    IF !copy_delphirb_exe( rtm_mode )
-      // sigurno ima neka greska... pa izadji
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
    // provjeri treba li kopirati template fajl
    IF !copy_rtm_template( rtm_file )
       // sigurno postoji opet neka greska...
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
    // ovdje treba kod za filovanje datoteke IZLAZ.DBF
    IF Pitanje(, "Stampati delphirb report ?", "D" ) == "N"
-      // ne zelimo stampati report...
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
    // idemo na slaganje komande za report
 
-   _cmd := ""
+   cCmd := ""
 
 #ifdef __PLATFORM__UNIX
-   _cmd += SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   cCmd += SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #endif
 
    IF rtm_mode == "drb"
-      _cmd += _f18_delphi_exe
+      cCmd += _f18_delphi_exe
    ELSE
-      _cmd += _f18_label_exe
+      cCmd += _f18_label_exe
    ENDIF
 
-   _cmd += " "
-   _cmd += rtm_file
-   _cmd += " "
+   cCmd += " "
+   cCmd += rtm_file
+   cCmd += " "
 
 #ifdef __PLATFORM__WINDOWS
-   _cmd += "." + SLASH
+   cCmd += "." + SLASH
 #else
-   _cmd += my_home()
+   cCmd += my_home()
 #endif
 
    IF !Empty( table_name )
 
       // dodaj i naziv tabele i index na komandu
-      _cmd += " "
-      _cmd += table_name
-      _cmd += " "
-      _cmd += table_index
+      cCmd += " "
+      cCmd += table_name
+      cCmd += " "
+      cCmd += table_index
 
    ENDIF
 
 #ifdef __PLATFORM__UNIX
-   _cmd += " "
-   _cmd += "&"
+   cCmd += " "
+   cCmd += "&"
 #endif
 
 #ifdef __PLATFORM__WINDOWS
    IF test_mode
-      _cmd += " & pause"
+      cCmd += " & pause"
    ENDIF
 #endif
 
    // pozicioniraj se na home direktorij tokom izvrsenja
    DirChange( my_home() )
 
-   log_write( "delphirb/label print, cmd: " + _cmd, 7 )
+   log_write( "delphirb/label print, cmd: " + cCmd, 7 )
 
-   _error := f18_run( _cmd )
+   _error := f18_run( cCmd )
 
    IF _error <> 0
       MsgBeep( "Postoji problem sa stampom#Greska: " + AllTrim( Str( _error ) ) )
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
-   // sve je ok
-   _ok := .T.
+   lOk := .T.
 
-   RETURN _ok
+   RETURN lOk
 
 
 
@@ -152,7 +147,7 @@ FUNCTION f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
 // --------------------------------------------------
 STATIC FUNCTION copy_delphirb_exe( mode )
 
-   LOCAL _ok := .T.
+   LOCAL lOk := .T.
    LOCAL _util_path
    LOCAL _drb := "delphirb.exe"
    LOCAL _lab := "labeliranje.exe"
@@ -176,21 +171,21 @@ STATIC FUNCTION copy_delphirb_exe( mode )
 #else
    _util_path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 
-   RETURN _ok
+   RETURN lOk
 #endif
 
 // kopiraj delphirb u home path
 IF !File( my_home() + _exe )
 IF !File( _util_path + _tmp )
 MsgBeep( "Fajl " + _util_path + _tmp + " ne postoji !?" )
-_ok := .F.
-RETURN _ok
+lOk := .F.
+RETURN lOk
 ELSE
 FileCopy( _util_path + _tmp, my_home() + _exe )
 ENDIF
 ENDIF
 
-   RETURN _ok
+   RETURN lOk
 
 
 // ---------------------------------------------------------

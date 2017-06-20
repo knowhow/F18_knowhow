@@ -33,7 +33,7 @@ FUNCTION download_version( cUrl )
 
    @ m_x + 1, m_y + 2 SAY Left( cUrl, 67 )
 
-   F18Admin():wget_download( cUrl, "", cFileName )
+   F18Admin():wget_download( cUrl, "",  cFileName )
 
    oFile := TFileRead():New( cFileName )
    oFile:Open()
@@ -138,7 +138,7 @@ METHOD F18Admin:update_app()
 
    LOCAL _ver_params := hb_Hash()
    LOCAL _hF18UpdateParams := hb_Hash()
-   LOCAL _upd_file := ""
+   LOCAL cUpdateFile := ""
    LOCAL lOk := .F.
 
    ::update_app_info_file := "UPDATE_INFO"
@@ -179,7 +179,7 @@ METHOD F18Admin:update_app()
 
 METHOD F18Admin:update_app_run_templates_update( params )
 
-   LOCAL _upd_file := "F18_template_#VER#.tar.bz2"
+   LOCAL cUpdateFile := "F18_template_#VER#.tar.bz2"
    LOCAL _dest := SLASH + "opt" + SLASH + "knowhowERP" + SLASH
 
 #ifdef __PLATFORM__WINDOWS
@@ -191,13 +191,13 @@ METHOD F18Admin:update_app_run_templates_update( params )
       ::update_app_templates_version := params[ "templates" ]
    ENDIF
 
-   _upd_file := StrTran( _upd_file, "#VER#", ::update_app_templates_version )
+   cUpdateFile := StrTran( cUpdateFile, "#VER#", ::update_app_templates_version )
 
-   IF !::wget_download( params[ "url" ], _upd_file, _dest + _upd_file, .T., .T. )
+   IF !::wget_download( params[ "url" ], cUpdateFile, _dest + cUpdateFile, .T., .T. )
       RETURN SELF
    ENDIF
 
-   ::update_app_unzip_templates( _dest, _dest, _upd_file )
+   ::update_app_unzip_templates( _dest, _dest, cUpdateFile )
 
    RETURN SELF
 
@@ -235,30 +235,30 @@ METHOD F18Admin:update_app_unzip_templates( destination_path, location_path, cFi
 
 METHOD F18Admin:update_app_run_app_update( params )
 
-   LOCAL _upd_file := "F18_#OS#_#VER#.gz"
+   LOCAL cUpdateFile := "F18_#OS#_#VER#.gz"
 
    IF ::update_app_f18_version == "#LAST#"
       ::update_app_f18_version := params[ "f18" ]
    ENDIF
 
 #ifdef __PLATFORM__LINUX
-   _upd_file := StrTran( _upd_file, "#OS#", ::get_os_name() + "_i686" )
+   cUpdateFile := StrTran( cUpdateFile, "#OS#", ::get_os_name() + "_i686" )
 #else
-   _upd_file := StrTran( _upd_file, "#OS#", ::get_os_name() )
+   cUpdateFile := StrTran( cUpdateFile, "#OS#", ::get_os_name() )
 #endif
 
-   _upd_file := StrTran( _upd_file, "#VER#", ::update_app_f18_version )
+   cUpdateFile := StrTran( cUpdateFile, "#VER#", ::update_app_f18_version )
 
 // IF ::update_app_f18_version == f18_ver()
 // MsgBeep( "Verzija aplikacije " + f18_ver() + " je vec instalirana !" )
 // RETURN SELF
 // ENDIF
 
-   IF !::wget_download( params[ "url" ], _upd_file, my_home_root() + _upd_file, .T., .T. )
+   IF !::wget_download( params[ "url" ], cUpdateFile, my_home_root() + cUpdateFile, .T., .T. )
       RETURN SELF
    ENDIF
 
-   ::update_app_run_script( my_home_root() + _upd_file )
+   ::update_app_run_script( my_home_root() + cUpdateFile )
 
    RETURN SELF
 
@@ -555,12 +555,11 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
 
    cCmd += " -O "
 
-
-   IF is_windows()
-      cLocalFileName := '"' + cLocalFileName + '"'
-   ENDIF
+//  f18_run - ( run_invisible.vbs ) radi quoting cLocalFileName
+//   IF is_windows()
+//      cLocalFileName := '"' + cLocalFileName + '"'
+//   ENDIF
 // cCmd += cLocalFileName
-// #endif
 
    IF f18_run( cCmd, cLocalFileName ) != 0
       MsgBeep( "Error: " + cCmd  + "?!" )

@@ -33,16 +33,14 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    set_screen_dimensions()
 
-
    // windows_run_invisible( "notepad", "ernad husremovic test.txt", .T. )
    // windows_run_invisible( "notepad", "stani test.txt", .F. )
 
    naslovni_ekran_splash_screen( "F18", f18_ver() )
 
-altd()
    brisi_stare_fajlove( my_home_root(), "wget_*.tmp", 1 )
 
-   IF !File( f18_exe_template_file_name( "f-std.odt" ) ) .OR. !File( f18_exe_template_file_name( "kupci_pregled_dugovanja.xlsx" ) )
+   IF !File( f18_exe_template_file_name( "rlab1.odt" ) ) .OR. !File( f18_exe_template_file_name( "rlab2.odt" ) )
       download_all_templates()
    ENDIF
 

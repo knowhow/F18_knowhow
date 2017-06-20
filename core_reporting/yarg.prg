@@ -262,7 +262,7 @@ METHOD YargReport:run()
    LOCAL hJava, cScreen, nError
    LOCAL hOutput := hb_Hash()
 
-   copy_template_to_my_home( ::cName + "." + ::cType )
+   f18_template_copy_to_my_home( ::cName + "." + ::cType )
    ::create_yarg_xml()
    ::create_report_properties()
    ::create_run_yarg_file()

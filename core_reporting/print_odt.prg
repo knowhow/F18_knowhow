@@ -43,7 +43,7 @@ STATIC __current_odt
 FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutOdtFile, lBezPitanja )
 
    LOCAL lRet := .F.
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
    LOCAL _template
    LOCAL cScreen
    LOCAL cCommand
@@ -80,10 +80,10 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutOdtFile, lBezPitanja )
 
    __current_odt := s_cOutOdtFile
 
-   _ok := copy_template_to_my_home( cTemplate )
+   lOk := f18_template_copy_to_my_home( cTemplate )
 
-   IF !_ok
-      RETURN _ok
+   IF !lOk
+      RETURN lOk
    ENDIF
 
    brisi_odt_fajlove_iz_home_path()
@@ -268,7 +268,7 @@ STATIC FUNCTION get_knowhow_util_path()
 
 FUNCTION f18_odt_copy( cOutOdtFile, cDestination_file )
 
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
 
    IF ( cOutOdtFile == NIL )
       s_cOutOdtFile := __current_odt

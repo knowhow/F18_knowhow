@@ -168,8 +168,8 @@ FUNCTION brisi_stare_fajlove( cDir, cFilesMatch, nDana )
       nDana := 30
    ENDIF
 
-   cDir := file_path_quote( ToUnix( Trim( cDir ) ) )
-   cFile := FileSeek( Trim( cDir ) + cFilesMatch )
+   cDir :=  ToUnix( Trim( cDir ) )
+   cFile := FileSeek( file_path_quote( Trim( cDir ) + cFilesMatch ) )
    DO WHILE !Empty( cFile )
       IF Date() - FileDate() > nDana
          FileDelete( cDir + cFile )

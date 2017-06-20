@@ -79,7 +79,7 @@ FUNCTION f18_template_location( cTemplate )
     Opis: kopira template sa lokacije /knowhowERP/templates => home path
 */
 
-FUNCTION copy_template_to_my_home( cTemplate )
+FUNCTION f18_template_copy_to_my_home( cTemplate )
 
    LOCAL _ret := .F.
    LOCAL _a_source, _a_template

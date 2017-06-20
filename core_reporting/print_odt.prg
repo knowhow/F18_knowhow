@@ -18,8 +18,8 @@ STATIC s_cOutOdtFile
 STATIC s_cOutputPdf
 STATIC __template
 STATIC __template_filename
-STATIC __jod_converter := "jodconverter-cli.jar"
-STATIC s_cJodReportsJar := "jodreports-cli.jar"
+STATIC __jod_converter := jodconverter_cli()
+STATIC s_cJodReportsJar := jodreports_cli()
 STATIC cKnowhowUtilPath
 STATIC __current_odt
 

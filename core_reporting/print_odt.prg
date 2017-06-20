@@ -18,8 +18,6 @@ STATIC s_cOutOdtFile
 STATIC s_cOutputPdf
 STATIC __template
 STATIC __template_filename
-STATIC __jod_converter := jodconverter_cli()
-STATIC s_cJodReportsJar := jodreports_cli()
 STATIC cKnowhowUtilPath
 STATIC __current_odt
 
@@ -93,11 +91,11 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutOdtFile, lBezPitanja )
    _template := my_home() + cTemplate
 
    cKnowhowUtilPath := get_knowhow_util_path()
-   cJodReportsFullPath := cKnowhowUtilPath + s_cJodReportsJar
+   cJodReportsFullPath := jodreports_cli()
 
    IF !File( AllTrim( cJodReportsFullPath ) )
-      log_write( "ODT report gen: " + s_cJodReportsJar + " ne postoji na lokaciji !", 7 )
-      MsgBeep( "java jar: " + s_cJodReportsJar + " ne postoji !" )
+      log_write( "ODT report gen: " + jodreports_cli() + " ne postoji na lokaciji !", 7 )
+      MsgBeep( "java jar: " + jodreports_cli() + " ne postoji !" )
       RETURN lRet
    ENDIF
 
@@ -492,11 +490,11 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutOdtFile, lOverwrite_file )
    ENDIF
 
    cUtilPath := get_knowhow_util_path()
-   cJodReportsFullPath := cUtilPath + __jod_converter
+   cJodReportsFullPath := jodconverter_cli()
 
    IF !File( AllTrim( cJodReportsFullPath ) )
-      log_write( "ODT report conv: " + __jod_converter + " ne postoji na lokaciji !", 7 )
-      MsgBeep( "Aplikacija " + __jod_converter + " ne postoji !" )
+      log_write( "ODT report conv: " + jodconverter_cli() + " ne postoji na lokaciji !", 7 )
+      MsgBeep( "Aplikacija " + jodconverter_cli() + " ne postoji !" )
       RETURN _ret
    ENDIF
 

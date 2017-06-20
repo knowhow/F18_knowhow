@@ -16,7 +16,7 @@ STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/LO/
 STATIC s_cProg // windows: lo.cmd, darwin: lo
 
 #ifdef __PLATFORM__WINDOWS
-STATIC s_cSHA256sum := "5ec93d4eb800eedac8763604edd46d53c4fc29f8bfe5ddcbc73a00a740b03789"  // LO/lo.cmd
+STATIC s_cSHA256sum := "7c983e88a4f3ee60035db62957aaf2380714b2be264a8fae852fda082c22664a"  // pdf/pdf.cmd
 #endif
 
 

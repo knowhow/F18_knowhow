@@ -25,8 +25,8 @@ FUNCTION LO_open_dokument( cFile )
    LOCAL cCmd, nRet
 
    IF is_windows()
-      cCmd := LO_cmd() + " " + cFile
-      nRet := f18_run( cCmd )
+      cCmd := LO_cmd()
+      nRet := f18_run( cCmd, cFile )
    ELSE
       nRet := f18_open_mime_document( cFile )
    ENDIF

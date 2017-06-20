@@ -410,6 +410,7 @@ FUNCTION windows_run_invisible( cProg, cArg, cStdOut, cStdErr, lAsync )
       cStart := 'cmd /c'
    ENDIF
 
+
    cCmd += '"' + cStart + '" "' + cProg + '" "' + cArg + '"'
 
    ?E cCmd

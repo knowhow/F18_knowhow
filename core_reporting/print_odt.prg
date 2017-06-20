@@ -27,20 +27,20 @@ STATIC __current_odt
 /*
    Opis: generisanja odt dokumenta na osnovu XML fajla i ODT template-a putem jodreports
 
-   Usage: generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
+   Usage: generisi_odt_iz_xml( cTemplate, cXml_file, cOutOdtFile, lBezPitanja )
 
    Params:
        cTemplate - naziv tempate fajla (template ODT)
                  // fajl će se pretražiti u template lokaciji pa će se kopirati u home direktorij
        cXml_file - lokacija + naziv xml fajla
-       cOutput_file - lokacija + naziv izlaznog ODT fajla koji će se generisati
+       cOutOdtFile - lokacija + naziv izlaznog ODT fajla koji će se generisati
        lBezPitanja - generiši odt report bez ikakvih pitanja da li želite
 
    Returns:
       .T. - ukoliko je operacija uspješna
       .F. - ukoliko je neuspješna
 */
-FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
+FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutOdtFile, lBezPitanja )
 
    LOCAL lRet := .F.
    LOCAL _ok := .F.
@@ -72,10 +72,10 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
       s_cXmlFile := cXml_file
    ENDIF
 
-   IF ( cOutput_file == NIL )
+   IF ( cOutOdtFile == NIL )
       s_cOutOdtFile := my_home() + naziv_izlaznog_odt_fajla()
    ELSE
-      s_cOutOdtFile := cOutput_file
+      s_cOutOdtFile := cOutOdtFile
    ENDIF
 
    __current_odt := s_cOutOdtFile
@@ -228,12 +228,11 @@ STATIC FUNCTION get_knowhow_util_path()
 
    LOCAL aFiles, cPath := ""
 
-#ifdef __PLATFORM__WINDOWS
-
-   cPath := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
-#else
-   cPath := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
-#endif
+   IF is_windows()
+      cPath := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   ELSE
+      cPath := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   ENDIF
 
    IF s_cF18UtilPath != NIL
       RETURN s_cF18UtilPath
@@ -267,14 +266,14 @@ STATIC FUNCTION get_knowhow_util_path()
 
 
 
-FUNCTION f18_odt_copy( cOutput_file, cDestination_file )
+FUNCTION f18_odt_copy( cOutOdtFile, cDestination_file )
 
    LOCAL _ok := .F.
 
-   IF ( cOutput_file == NIL )
+   IF ( cOutOdtFile == NIL )
       s_cOutOdtFile := __current_odt
    ELSE
-      s_cOutOdtFile := cOutput_file
+      s_cOutOdtFile := cOutOdtFile
    ENDIF
 
    FileCopy( s_cOutOdtFile, cDestination_file )
@@ -286,26 +285,26 @@ FUNCTION f18_odt_copy( cOutput_file, cDestination_file )
 /*
    Opis: otvara i prikazuje ODT fajl
 
-   Usage: pokreni_odt( cOutput_file )
+   Usage: pokreni_odt( cOutOdtFile )
 
    Params:
-     cOutput_file - izlazni fajl za prikaz (path + filename)
+     cOutOdtFile - izlazni fajl za prikaz (path + filename)
 
    Napomene:
-     Ukoliko nije zadat parametar cOutput_file, štampa se zadnji generisani ODT dokuement koji je smješten
+     Ukoliko nije zadat parametar cOutOdtFile, štampa se zadnji generisani ODT dokuement koji je smješten
      u statičku varijablu __current_odt
 */
 
-FUNCTION prikazi_odt( cOutput_file )
+FUNCTION prikazi_odt( cOutOdtFile )
 
    LOCAL lOk := .F.
    LOCAL cScreen, nError := 0
    LOCAL cOdgovor
 
-   IF ( cOutput_file == NIL )
+   IF ( cOutOdtFile == NIL )
       s_cOutOdtFile := __current_odt
    ELSE
-      s_cOutOdtFile := cOutput_file
+      s_cOutOdtFile := cOutOdtFile
    ENDIF
 
    IF !File( s_cOutOdtFile )
@@ -449,16 +448,16 @@ STATIC FUNCTION odt_email_attachment( lIzlazniOdt )
 /*
    Opis: konvertuje ODT fajl u PDF putem java aplikacije jod-convert
 
-   Usage: konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOwerwrite_file )
+   Usage: konvertuj_odt_u_pdf( cInput_file, cOutOdtFile, lOwerwrite_file )
 
    Params:
 
      - cInput_file - ulazni ODT fajl (lokacija + naziv)
-     - cOutput_file - izlazni PDF fajl (lokacija + naziv)
+     - cOutOdtFile - izlazni PDF fajl (lokacija + naziv)
      - lOwerwrite_file - .T. - briši uvijek postojeći, .F. - daj novi broj PDF dokumenta inkrementalnim brojačem
 */
 
-FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
+FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutOdtFile, lOverwrite_file )
 
    LOCAL _ret := .F.
    LOCAL cJodReportsFullPath, cUtilPath
@@ -471,10 +470,10 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
       s_cOutOdtFile := cInput_file
    ENDIF
 
-   IF ( cOutput_file == NIL )
+   IF ( cOutOdtFile == NIL )
       s_cOutputPdf := StrTran( __current_odt, ".odt", ".pdf" )
    ELSE
-      s_cOutputPdf := cOutput_file
+      s_cOutputPdf := cOutOdtFile
    ENDIF
 
    IF lOverwrite_file == NIL
@@ -503,9 +502,9 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
 
    log_write( "ODT report convert start", 9 )
 
-//#ifdef __PLATFORM__WINDOWS
-//   cJodReportsFullPath := '"' + cJodReportsFullPath + '"'
-//#endif
+// #ifdef __PLATFORM__WINDOWS
+// cJodReportsFullPath := '"' + cJodReportsFullPath + '"'
+// #endif
 
    cCommand := java_cmd() + " -jar " + cJodReportsFullPath + " "
    cCommand += s_cOutOdtFile + " "

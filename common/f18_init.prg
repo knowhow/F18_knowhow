@@ -438,16 +438,9 @@ FUNCTION my_home( cHome )
 FUNCTION file_path_quote( cPath )
 
    // f18_run / run_invisible.vbs podesava shortpath, quotes sada smetaju
-    //IF ( At( " ", cPath ) != 0 ) .AND. ( At( '"', cPath ) == 0 )
-    //  RETURN  '"' + cPath + '"'
-   //ENDIF
-
-
-/*
-   IF ( At( ' ', cPath ) != 0 ) .AND. ( At( '\ ', cPath ) == 0 )
-      RETURN  StrTran( cPath, ' ', '\ ' )
+   IF ( At( " ", cPath ) != 0 ) .AND. ( At( '"', cPath ) == 0 )
+      RETURN  '"' + cPath + '"'
    ENDIF
-*/
 
    RETURN cPath
 

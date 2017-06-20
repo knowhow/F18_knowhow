@@ -818,19 +818,9 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    GO TOP
    SEEK "01"
 
-   // UzmiIzIni( cIniName, 'Varijable', 'D13_1N', FormNum2( POR->IZNOS, 16, cPictureIznos ) + "%", 'WRITE' )
-
    nPom := nPorNaPlatu - nPorOlaksice // efektivno porez na dohodak
    hRec[ "iznos_29" ] :=   FormNum2( isplata_poreza_kontrola_iznosa( nPom, cVrstaIsplate ), 16, cPictureIznos )
 
-   // nPom = nPorNaPlatu
-   // UzmiIzIni( cIniName, 'Varijable', 'D13_1I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cVrstaIsplate ), 16, cPictureIznos ), 'WRITE' )
-
-   // nPom := nPorOlaksice
-   // UzmiIzIni( cIniName, 'Varijable', 'D13_2I', FormNum2( isplata_poreza_kontrola_iznosa( nPom, cVrstaIsplate ), 16, cPictureIznos ), 'WRITE' )
-
-   // nPom := nBolPreko
-   // UzmiIzIni( cIniName, 'Varijable', 'N17I', FormNum2( nPom, 16, cPictureIznos ), 'WRITE' )
 
    nPorOlaksice   := Abs( nPorOlaksice   )
    nBolPreko      := Abs( nBolPreko      )

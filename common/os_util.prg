@@ -340,6 +340,7 @@ FUNCTION f18_run( cCommand, cArgument, hOutput, lAsync )
 
 FUNCTION windows_run_invisible( cProg, cArg, cStdOut, cStdErr, lAsync )
 
+   LOCAL nBytes := 0, cBuf := Space( 4 ), lStaraVerzija := .F.
    LOCAL cDirF18Util := f18_exe_path() + "F18_util" + SLASH
    LOCAL cStart, cCmd
    LOCAL nH
@@ -356,13 +357,49 @@ FUNCTION windows_run_invisible( cProg, cArg, cStdOut, cStdErr, lAsync )
       RETURN -1
    ENDIF
 
-   //IF !File( cDirF18Util + "run_invisible.vbs" )
-      nH := FCreate( cDirF18Util + "run_invisible.vbs" )
-      FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' + hb_eol() )
-      FWrite( nH, 'objShell.Run WScript.arguments(0) & " " & WScript.arguments(1) & " """ & WScript.arguments(2) & """", 0, True' )
-      //FWrite( nH, 'objShell.Run WScript.arguments(0) & " " & WScript.arguments(1) & " " & WScript.arguments(2), 0, True' )
+   IF File( cDirF18Util + "run_invisible.vbs" )
+      nH := FOpen( cDirF18Util + "run_invisible.vbs" )
+      nBytes := FRead( nH, @cBuf, 4 )
       FClose( nH )
-   //ENDIF
+      IF nBytes < 4 .OR. cBuf != "'002"
+         lStaraVerzija := .T.
+      ENDIF
+   ENDIF
+
+   IF lStaraVerzija .OR. !File( cDirF18Util + "run_invisible.vbs" )
+      nH := FCreate( cDirF18Util + "run_invisible.vbs" )
+
+      FWrite( nH, "'002" + hb_eol() )
+      FWrite( nH, 'Dim cArg1, cArg2, cArg3, cUserProfile, cShortUserProfile' + hb_eol() )
+      FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' + hb_eol() )
+      FWrite( nH, 'Set fso = CreateObject("Scripting.FileSystemObject")' + hb_eol() )
+      FWrite( nH, 'cUserProfile=objShell.ExpandEnvironmentStrings("%UserProfile%")' + hb_eol() )
+
+      // https://www.codeproject.com/Tips/44521/Get-DOS-short-name-with-VbScript
+
+      FWrite( nH, 'if fso is nothing then' + hb_eol() )
+      FWrite( nH, '   WScript.echo "fso not object?!"' + hb_eol() )
+      FWrite( nH, 'end if' + hb_eol() )
+
+      FWrite( nH, 'On Error Resume Next' + hb_eol() )
+      FWrite( nH, 'Set fsoFile = fso.GetFile( cUserProfile )' + hb_eol() )
+      FWrite( nH, 'if Err.number <> 0 then' + hb_eol() )
+      FWrite( nH, '        Set fsoFile = fso.GetFolder( cUserProfile )' + hb_eol() )
+      FWrite( nH, 'end if' + hb_eol() )
+
+      FWrite( nH, 'if fsoFile is not nothing then' + hb_eol() )
+      FWrite( nH, '   cShortUserProfile = fsoFile.ShortPath' + hb_eol() )
+      FWrite( nH, 'end if' + hb_eol() )
+
+      // ' WScript.echo objShell.Environment("System").Item("NUMBER_OF_PROCESSORS")
+
+      FWrite( nH, 'cArg1=replace(Wscript.arguments(0),cUserProfile,cShortUserProfile)' + hb_eol() )
+      FWrite( nH, 'cArg2=replace(Wscript.arguments(1),cUserProfile,cShortUserProfile)' + hb_eol() )
+      FWrite( nH, 'cArg3=replace(Wscript.arguments(2),cUserProfile,cShortUserProfile)' + hb_eol() )
+      FWrite( nH, 'objShell.Run cArg1 & " " & cArg2 & " " & cArg3, 0, True' )
+
+      FClose( nH )
+   ENDIF
 
    cCmd := 'wscript '
    cCmd += cDirF18Util + 'run_invisible.vbs '

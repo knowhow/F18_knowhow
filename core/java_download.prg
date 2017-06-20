@@ -24,6 +24,10 @@ STATIC s_cSHA256sum := "27f6ebb02ba92889dead894dc1e19b948f58577951372e74ce9eebfe
 STATIC s_cSHA256sum :=  "1b69cb6f4e65acf52443b090c08e377b6366f1a21626f9907ecc3ddb891fe588"
 #endif
 
+#ifdef __PLATFORM__LINUX
+STATIC s_cSHA256sum :=  "c02daaf31a7098d7e71dca1d8325c00c528596d2a29530a097c6962be9087931"
+#endif
+
 FUNCTION java_version()
 
    LOCAL hOutput := hb_Hash(), pRegex, aMatch
@@ -56,9 +60,9 @@ FUNCTION java_cmd()
 
    check_java_download()
 
-   IF is_linux()
-      RETURN "java " + s_cJavaOpts
-   ENDIF
+   //IF is_linux()
+    //  RETURN "java " + s_cJavaOpts
+   //ENDIF
 
    // RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " " + s_cJavaOpts
 

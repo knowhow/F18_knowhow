@@ -158,7 +158,7 @@ FUNCTION IsDirectory( cDir1 )
 
 FUNCTION brisi_stare_fajlove( cDir, cFilesMatch, nDana )
 
-   LOCAL cFile
+   LOCAL cFile, nCnt, nCntNew
 
    IF cFilesMatch == NIL
       cFilesMatch := "*.*"
@@ -170,12 +170,20 @@ FUNCTION brisi_stare_fajlove( cDir, cFilesMatch, nDana )
 
    cDir :=  ToUnix( Trim( cDir ) )
    cFile := FileSeek( file_path_quote( Trim( cDir ) + cFilesMatch ) )
+
+   nCnt := 0
+   nCntNew := 0
    DO WHILE !Empty( cFile )
       IF Date() - FileDate() > nDana
-         FileDelete( cDir + cFile )
+         nCnt++
+         FileDelete( file_path_quote( cDir + cFile ) )
+      ELSE
+         nCntNew++
       ENDIF
       cFile := FileSeek()
    ENDDO
+
+   ?E file_path_quote( Trim( cDir ) + cFilesMatch ), "COUNT OLD DEL:", nCnt, " NEW:", nCntNew
 
    RETURN NIL
 

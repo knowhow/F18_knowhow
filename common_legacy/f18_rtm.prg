@@ -12,8 +12,8 @@
 
 #include "f18.ch"
 
-STATIC _f18_delphi_exe := "delphirb.exe"
-STATIC _f18_label_exe := "labeliranje.exe"
+STATIC _f18_delphi_exe := "f18_delphirb.exe" // pod ovim imenom u my_home se pokrece
+STATIC _f18_label_exe := "f18_labeliranje.exe"
 
 // ------------------------------------------------------------
 // stampa rtm reporta kroz delphirb
@@ -28,7 +28,7 @@ FUNCTION f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
    LOCAL cCmd
    LOCAL lOk := .F.
    LOCAL _util_path
-   LOCAL _error
+   LOCAL nError
 
 #ifdef __PLATFORM__UNIX
 
@@ -64,7 +64,7 @@ FUNCTION f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
    ENDIF
 
    // provjeri treba li kopirati delphirb.exe ?
-   IF !copy_delphirb_exe( rtm_mode )
+   IF !delphirb_exe_copy_to_my_home( rtm_mode )
       RETURN lOk
    ENDIF
 
@@ -75,7 +75,7 @@ FUNCTION f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
    ENDIF
 
    // ovdje treba kod za filovanje datoteke IZLAZ.DBF
-   IF Pitanje(, "Stampati delphirb report ?", "D" ) == "N"
+   IF Pitanje(, "Štampati delphirb report ?", "D" ) == "N"
       RETURN lOk
    ENDIF
 
@@ -124,15 +124,15 @@ FUNCTION f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
    ENDIF
 #endif
 
-   // pozicioniraj se na home direktorij tokom izvrsenja
-   DirChange( my_home() )
 
-   log_write( "delphirb/label print, cmd: " + cCmd, 7 )
+?E "delphirb/label print, cmd: " + cCmd, " start in dir", my_home()
 
-   _error := f18_run( cCmd )
 
-   IF _error <> 0
-      MsgBeep( "Postoji problem sa stampom#Greska: " + AllTrim( Str( _error ) ) )
+   DirChange( my_home() ) // pozicionirati se na home direktorij tokom izvrsenja
+   nError := hb_run( cCmd ) // f18_run pravi probleme, izgleda da mijenja direktorij, zato se koristi obicni hb_run
+
+   IF nError <> 0
+      MsgBeep( "Postoji problem sa stampom#Greska: " + AllTrim( Str( nError ) ) )
       RETURN lOk
    ENDIF
 
@@ -142,10 +142,7 @@ FUNCTION f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
 
 
 
-// --------------------------------------------------
-// kopira delphirb.exe u home/f18_delphirb.exe
-// --------------------------------------------------
-STATIC FUNCTION copy_delphirb_exe( mode )
+STATIC FUNCTION delphirb_exe_copy_to_my_home( mode )
 
    LOCAL lOk := .T.
    LOCAL _util_path
@@ -165,7 +162,7 @@ STATIC FUNCTION copy_delphirb_exe( mode )
       _tmp := _lab
    ENDIF
 
-   // util path...
+
 #ifdef __PLATFORM__WINDOWS
    _util_path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #else

@@ -41,6 +41,7 @@ METHOD YargReport:New( cName, cType, cBands )
 
    ::cName := cName
 
+   check_java_download()
    check_yarg_download()
    IF cType != NIL
       ::cType := cType

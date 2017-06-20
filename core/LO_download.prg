@@ -19,12 +19,15 @@ STATIC s_cProg // windows: lo.cmd, darwin: lo
 STATIC s_cSHA256sum := "976beceb43c806ffee561b97e0755affbabb11c11214a4e4d03cb50363565cf3"  // LO/lo.cmd
 #endif
 
+#ifdef __PLATFORM__LINUX
+STATIC s_cSHA256sum := "12c66749f6c9ec5c9141bd4d090fa84c6a2a98adcbf4ddf037ada73bacf04f38"
+$endif
 
 FUNCTION LO_open_dokument( cFile )
 
    LOCAL cCmd, nRet
 
-   IF is_windows()
+   IF is_windows() .OR. is_linux()
       cCmd := LO_cmd()
       nRet := f18_run( cCmd, cFile )
    ELSE
@@ -37,7 +40,6 @@ FUNCTION LO_open_dokument( cFile )
 FUNCTION LO_cmd()
 
    check_LO_download()
-// f18_current_directory() + SLASH + "yarg" + SLASH + "bin" + SLASH + "yarg" + iif( is_windows(), ".bat", "" )
 
    RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg
 

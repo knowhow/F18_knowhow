@@ -399,7 +399,7 @@ METHOD PageHeader() CLASS PDFClass
 
 METHOD View() CLASS PDFClass
 
-   f18_open_document( ::cFileName )
+   PDF_open_dokument( ::cFileName )
 
    RETURN .T.
 

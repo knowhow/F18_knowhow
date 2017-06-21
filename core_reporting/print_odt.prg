@@ -313,8 +313,7 @@ FUNCTION prikazi_odt( cOutOdtFile )
 
    SAVE SCREEN TO cScreen
    CLEAR SCREEN
-
-   ? "Prikaz odt fajla u toku ... fajl: ..." + Right( __current_odt, 20 )
+   ? "LO_prikaz : " + Right( __current_odt, 50 )
 
 #ifndef TEST
    nError := LO_open_dokument( s_cOutOdtFile )

@@ -152,6 +152,7 @@ STATIC FUNCTION __unzip( cZipFileDir, cZipFileName, cZipFileDestination, aFiles,
 
       Box(, 2, 75 )
 
+      @ m_x + 1, m_y + 8 SAY Space( 50 )
       @ m_x + 1, m_y + 2 SAY "unzip: " + PadR( AllTrim( cZipFileFullName ), 50 )
 
       IF !Empty( cZipFileDestination )

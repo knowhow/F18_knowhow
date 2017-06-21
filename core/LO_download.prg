@@ -16,7 +16,7 @@ STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/LO/
 STATIC s_cProg // windows: lo.cmd, darwin: lo
 
 #ifdef __PLATFORM__WINDOWS
-STATIC s_cSHA256sum := "aaf3bf9620d6feae758638b6414c131bb954d57b21bdb8b719cf2a3e430270fc"  // LO/lo.cmd
+STATIC s_cSHA256sum := "f5187c5e0b091bd11ee67a4209cb3075e92eb1881a788fa003a8cbe8891972ed"  // LO/lo.cmd (004 verzija - with SYSTEM/vcredist_x86.exe)
 #endif
 
 #ifdef __PLATFORM__LINUX

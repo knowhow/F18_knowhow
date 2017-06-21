@@ -14,26 +14,20 @@
 #define TEMPLATE_URL_BASE "https://github.com/hernad/F18_template/releases/download/"
 
 STATIC s_cDirF18Template
-STATIC s_cTemplateName
 STATIC s_cUrl
-STATIC s_cSHA256sum
+STATIC s_hTemplates
+
 
 
 
 FUNCTION download_template_ld_obr_2002()
 
-   s_cTemplateName := "ld_obr_2002.xlsx"
-   s_cSHA256sum := "b7f74944d0f30e0e3eed82a67ffff0f9cef943a79dd2fdc788bc05f2a6aac228"
-
-   RETURN download_template()
+   RETURN download_template( "ld_obr_2002.xlsx", "b7f74944d0f30e0e3eed82a67ffff0f9cef943a79dd2fdc788bc05f2a6aac228" )
 
 
-FUNCTION download_template_ld_obr_2001()
+FUNCTION download_template_ld_obr_2001() // v17
 
-   s_cTemplateName := "ld_obr_2001.xlsx"
-   s_cSHA256sum := "23721f993561d4aa178730a18bde38294b3c720733d64bb9c691e973f00165fc"  // v17
-
-   RETURN download_template()
+   RETURN download_template( "ld_obr_2001.xlsx", "23721f993561d4aa178730a18bde38294b3c720733d64bb9c691e973f00165fc" )
 
 
 FUNCTION f18_exe_template_file_name( cTemplate )
@@ -43,17 +37,16 @@ FUNCTION f18_exe_template_file_name( cTemplate )
 
 FUNCTION download_template( cTemplateName,  cSHA256sum )
 
-   IF cTemplateName != NIL
-      s_cTemplateName := cTemplateName
+   IF s_hTemplates == NIL
+      s_hTemplates := hb_Hash()
    ENDIF
 
-   IF cSHA256sum != NIL
-      s_cSHA256sum := cSHA256sum
+   IF hb_HHasKey( s_hTemplates, cTemplateName )
+      RETURN .T. // template je vec ucitan
    ENDIF
 
    s_cDirF18Template := f18_exe_path() + "template" + SLASH
-   s_cUrl := TEMPLATE_URL_BASE + ;
-      f18_template_ver() + "/" + s_cTemplateName
+   s_cUrl := TEMPLATE_URL_BASE + f18_template_ver() + "/" + cTemplateName
 
    IF DirChange( s_cDirF18Template ) != 0
       IF MakeDir( s_cDirF18Template ) != 0
@@ -63,21 +56,23 @@ FUNCTION download_template( cTemplateName,  cSHA256sum )
    ENDIF
 
 // #ifndef F18_DEBUG
-   IF !File( s_cDirF18Template + s_cTemplateName ) .OR. ;
-         ( sha256sum( s_cDirF18Template + s_cTemplateName ) != s_cSHA256sum )
+   IF !File( s_cDirF18Template + cTemplateName ) .OR. ;
+         ( sha256sum( s_cDirF18Template + cTemplateName ) != cSHA256sum )
 
-      IF !Empty( download_file( s_cUrl, s_cDirF18Template + s_cTemplateName ) )
-         info_bar( "tpl", "Download " + s_cDirF18Template + s_cTemplateName )
+      IF !Empty( download_file( s_cUrl, s_cDirF18Template + cTemplateName ) )
+         info_bar( "tpl", "Download " + s_cDirF18Template + cTemplateName )
       ELSE
-         error_bar( "tpl", "Error download:" + s_cDirF18Template + s_cTemplateName + "##" + s_cUrl )
+         error_bar( "tpl", "Error download:" + s_cDirF18Template + cTemplateName + "##" + s_cUrl )
          RETURN .F.
       ENDIF
    ENDIF
 
-   IF sha256sum( s_cDirF18Template + s_cTemplateName ) != s_cSHA256sum
-      MsgBeep( "ERROR sha256sum: " + s_cDirF18Template + s_cTemplateName + "##" + s_cSHA256sum )
+   IF sha256sum( s_cDirF18Template + cTemplateName ) != cSHA256sum
+      MsgBeep( "ERROR sha256sum: " + s_cDirF18Template + cTemplateName + "##" + cSHA256sum )
       RETURN .F.
    ENDIF
 // #endif
+
+   s_hTemplates[ cTemplateName ] := .T.
 
    RETURN .T.

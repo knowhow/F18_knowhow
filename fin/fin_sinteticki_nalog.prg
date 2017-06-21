@@ -253,14 +253,14 @@ STATIC FUNCTION nova_strana( dDatNal )
 
 STATIC FUNCTION close_open_panal()
 
+altd()
    my_close_all_dbf()
 
    SELECT ( F_ANAL )
    my_use( "panal", "fin_anal" )
 
-   SET ORDER TO TAG "2"
 
-   o_konto()
+   //o_konto()
    //o_partner()
    o_tnal()
    o_nalog()

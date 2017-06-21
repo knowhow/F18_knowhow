@@ -41,7 +41,7 @@ FUNCTION f18_exe_template_file_name( cTemplate )
    RETURN f18_exe_path() + "template" + SLASH + cTemplate
 
 
-STATIC FUNCTION download_template( cTemplateName,  cSHA256sum )
+FUNCTION download_template( cTemplateName,  cSHA256sum )
 
    IF cTemplateName != NIL
       s_cTemplateName := cTemplateName

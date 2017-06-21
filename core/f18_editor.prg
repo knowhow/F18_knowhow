@@ -16,7 +16,7 @@ STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/f18_editor/
 STATIC s_cProg // windows: f18_editor.cmd, darwin: f18_editor
 
 #ifdef __PLATFORM__WINDOWS
-STATIC s_cSHA256sum := "48696450d0e4d4d21cb1f7e9381e78b4d9cf709fd25d86d858abb8cd5c618e75"
+STATIC s_cSHA256sum := "766cc019866ea2412a2023d3b3ad72c3e850ecc1b379a9ee722b1a329f17bfa4" // 006
 #endif
 
 #ifdef __PLATFORM__DARWIN
@@ -36,7 +36,7 @@ FUNCTION f18_editor( cTxt )
       cCmd := s_cDirF18Util + s_cUtilName + SLASH + s_cProg
       IF ! File( s_cDirF18Util + s_cUtilName + SLASH + s_cProg )
          MsgBeep( "Error NO CMD: " + s_cDirF18Util + s_cUtilName + SLASH + s_cProg + "!? STOP" )
-         RETURN ""
+         RETURN -1
       ENDIF
    ENDIF
    // DirChange( s_cDirF18Util + s_cUtilName )

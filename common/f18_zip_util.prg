@@ -199,7 +199,8 @@ STATIC FUNCTION __unzip( cZipFileDir, cZipFileName, cZipFileDestination, aFiles,
          IF nSize > 0 .AND. lExtract
 
             ++nCount
-            @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( nCount ) ), 3 ) + ")  " + Left( AllTrim( cFile ), 60 )
+            @ m_x + 2, m_y + 5 SAY Space( 60 )
+            @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( nCount ) ), 3 ) + ") " + Left( AllTrim( cFile ), 60 )
 
             nError := hb_unzipExtractCurrentFile( cZipFileHandle, NIL, NIL )
 

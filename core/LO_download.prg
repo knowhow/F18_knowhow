@@ -29,29 +29,39 @@ STATIC s_cDownloadF18LO
 FUNCTION LO_open_dokument( cFile )
 
    LOCAL lAsync := .F.
-   LOCAL cCmd, nRet, lUseLibreofficeSystem := .F.
+   LOCAL cCmd, lUseLibreofficeSystem := .F., lFirstRun := .F.
    LOCAL cOdgovor
 
    IF s_cDownloadF18LO == NIL
       s_cDownloadF18LO := fetch_metric( "F18_LO", NIL, "N" )
+      lFirstRun := .T. // prvi pit postavlja pitanje
    ENDIF
 
    IF is_mac()
       lUseLibreofficeSystem := .T.
    ELSE
-      IF s_cDownloadF18LO == "0" // ne pitaj korisnika da li da ucitava
+      IF s_cDownloadF18LO == "0" // ne pitaj korisnika da li da ucitava F18 LO koristiti system LibreOffic3
          lUseLibreofficeSystem := .T.
-      ELSEIF s_cDownloadF18LO == "N"
-         cOdgovor := Pitanje( , "Instalirati F18 LibreOffice za pregled dokumenata ?", "N", "DN0" )
-         IF cOdgovor == "D"
-            set_metric( "F18_LO", NIL, "D" )
-            lUseLibreofficeSystem := .F.
-         ELSE
-            IF cOdgovor == "0"
-               set_metric( "F18_LO", NIL, "0" ) // ne pitaj korisnika vise
+      ELSEIF s_cDownloadF18LO == "N" // pitati korisnika
+         IF lFirstRun
+            cOdgovor := Pitanje( , "Instalirati F18 LibreOffice za pregled dokumenata (D/N/0) ?", "N", "DN0" )
+
+            IF cOdgovor == "D"
+               set_metric( "F18_LO", NIL, "D" )
+               s_cDownloadF18LO := "D"
+               lUseLibreofficeSystem := .F.
+            ELSE
+               IF cOdgovor == "0"
+                  set_metric( "F18_LO", NIL, "0" ) // ne pitaj korisnika vise
+                  s_cDownloadF18LO := "0"
+               ENDIF
+               lUseLibreofficeSystem := .T.
             ENDIF
+         ELSE
             lUseLibreofficeSystem := .T.
          ENDIF
+      ELSE // D - koristit F18 LO
+         lUseLibreofficeSystem := .F.
       ENDIF
    ENDIF
 

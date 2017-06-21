@@ -16,7 +16,7 @@ STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/f18_editor/
 STATIC s_cProg // windows: f18_editor.cmd, darwin: f18_editor
 
 #ifdef __PLATFORM__WINDOWS
-STATIC s_cSHA256sum := "766cc019866ea2412a2023d3b3ad72c3e850ecc1b379a9ee722b1a329f17bfa4" // 006
+STATIC s_cSHA256sum := "7876a26bde9a59349c25608496664814e9e27680f0f9cdd3f271c815bbbc39f4" // 007
 #endif
 
 #ifdef __PLATFORM__DARWIN

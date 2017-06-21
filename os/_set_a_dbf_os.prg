@@ -34,14 +34,14 @@ FUNCTION set_a_dbf_os()
    set_a_dbf_sifarnik( "os_os", "OS", F_OS, _alg )
    set_a_dbf_sifarnik( "sii_sii", "SII", F_SII, _alg )
 
-   set_a_dbf_sifarnik( "os_k1", "K1", F_K1 )
+   set_a_sql_sifarnik( "os_k1", "K1", F_K1 )
    set_a_dbf_sifarnik( "os_amort", "AMORT", F_AMORT )
    set_a_dbf_sifarnik( "os_reval", "REVAL", F_REVAL )
 
    // temp epdv tabele - ne idu na server
    set_a_dbf_temp( "os_invent", "INVENT", F_INVENT )
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -129,7 +129,7 @@ FUNCTION kalk_finansijski_obrt()
    o_konto()
    o_tarifa()
    //o_kalk()
-   //o_k1()
+   o_k1()
    kalk_o_objekti()
 
    lVpRabat := .F.
@@ -141,6 +141,7 @@ FUNCTION kalk_finansijski_obrt()
       lPrDatumOd := .T.
    ENDIF
 
+altd()
    GenRekap2( .T., cCijena, lPrDatumOd, lVpRabat, fSMark )
 
    // setuj liniju za izvjestaj

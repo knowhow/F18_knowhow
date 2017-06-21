@@ -124,9 +124,6 @@
 #xcommand O_PRODNC         => select(F_PRODNC);  my_use  ("prodnc")  ; set order to tag "PRODROBA"
 #xcommand O_RVRSTA         => select(F_RVRSTA);  my_use  ("rvrsta")  ; set order to tag "ID"
 
-//#xcommand o_k1()             => select(F_ROBASEZ)  ;  my_use  ("k1")       ; set order to tag "1"
-
-
 #xcommand O_REKAP2         => select(F_REKAP2)   ;  my_use  ("rekap2")   ; set order to tag "1"
 #xcommand O_REKA22         => select(F_REKA22)   ;  my_use  ("reka22")   ; set order to tag "1"
 #xcommand O_R_UIO          => select(F_R_UIO)    ;  my_use  ("r_uio")

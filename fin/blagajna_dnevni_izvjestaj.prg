@@ -267,7 +267,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
    SELECT anal
 
 
-   find_anal_by_konto( cIdForma, cIdkonto )
+   find_anal_by_konto( cIdFirma, cIdkonto )
 
    nDugSt := nPotSt := 0
    DO WHILE !Eof() .AND. idfirma == cIdfirma .AND. idkonto == cIdkonto .AND. datnal <= dDatDok

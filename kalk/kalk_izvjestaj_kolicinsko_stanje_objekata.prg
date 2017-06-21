@@ -68,7 +68,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 // o_sifk()
 // o_sifv()
 // o_roba()
-   // o_k1()
+   o_k1()
    kalk_o_objekti()
 
    lMarkiranaRoba := .F.
@@ -241,16 +241,42 @@ FUNCTION o_pobjekti()
 
    RETURN .T.
 
-/*
-FUNCTION o_k1()
 
-altd()
+FUNCTION o_k1( cId )
+
+   LOCAL cTabela := "os_k1"
+
+   IF ! f18_use_module( "os" )
+      MsgBeep( "k1 tabela trazi aktiviran modul OS" )
+      RETURN .F.
+   ENDIF
+
    SELECT ( F_K1 )
-   my_use ( "k1" )
-   SET ORDER TO TAG "ID"
 
-   RETURN .T.
-*/
+   IF !use_sql_sif  ( cTabela, .T., "K1", cId  )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN !Eof()
+
+
+FUNCTION select_o_k1( cId )
+
+   SELECT ( F_K1 )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_k1( cId )
 
 
 FUNCTION GenRekap1( aUsl1, aUsl2, qqRoba, cKartica, cVarijanta, cKesiraj, fSMark,  cK1, cK7, cK9, cIdKPovrata, aUslSez )
@@ -288,7 +314,8 @@ FUNCTION GenRekap1( aUsl1, aUsl2, qqRoba, cKartica, cVarijanta, cKesiraj, fSMark
 
    nSec := Seconds()
 
-   find_kalk_by_mkonto_idroba_idvd( self_organizacija_id(), NIL, cIdKonto, qqRoba, "cOrderBy" )
+altd()
+   find_kalk_by_mkonto_idroba_idvd( self_organizacija_id(), NIL, NIL, qqRoba, "idkonto,idroba" )
 
    PRIVATE cFilt1 := ""
 
@@ -352,7 +379,7 @@ FUNCTION GenRekap1( aUsl1, aUsl2, qqRoba, cKartica, cVarijanta, cKesiraj, fSMark
 
    nStavki := 0
 
-   SELECT roba
+   o_roba()
    GO TOP
    DO WHILE !Eof()
       IF roba->tip == "N"

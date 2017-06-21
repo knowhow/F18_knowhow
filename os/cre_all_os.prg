@@ -139,6 +139,7 @@ FUNCTION cre_all_os( ver )
    AAdd( aDBf, { 'ID', 'C',   4,  0 } )
    AAdd( aDBf, { 'NAZ', 'C',  25,  0 } )
 
+/*
    _alias := "k1"
    _table_name := "os_k1"
 
@@ -146,7 +147,7 @@ FUNCTION cre_all_os( ver )
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
    AFTER_CREATE_INDEX
-
+*/
    IF !File( f18_ime_dbf( "invent" ) )
       aDbf := {}
       AAdd( aDBf, { 'ID', 'C',  10,  0 } )

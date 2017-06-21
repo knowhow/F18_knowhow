@@ -41,7 +41,6 @@ FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
    LOCAL _racuni := {}
    LOCAL __tip_dok
 
-
    __auto_odt_template() // setuj static var
 
    IF ( cIdF <> NIL )
@@ -110,6 +109,9 @@ STATIC FUNCTION fakt_odaberi_template( cTemplate, tip_dok )
    LOCAL _f_path := f18_template_location()
    LOCAL _f_filter := "f-*.odt"
 
+   download_template( "f-std.odt", "a2faecede3dc1477161e848e8a288fb4359c767b29fac1b535d2082585a512b1" )
+   download_template( "f-stdk.odt", "e4158099b8f42b10f9afc1d1fa7d622a56f2f05bb814776356e64beff00bb9c1" )
+   download_template( "f-stdm.odt", "7661536736d43f3c678c3c11612e62952ea1e9c27c6dba953845b9349a105079" )
 
    cTemplate := ""
 
@@ -190,41 +192,41 @@ STATIC FUNCTION _grupno_params( params )
 
    @ m_x + _x, m_y + 2 SAY "*** Stampa ODT dokumenata po zadanom uslovu:"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Radna jedinica / vrsta:" GET _id_firma VALID !Empty( _id_firma )
    @ m_x + _x, Col() + 1 SAY "-" GET _id_tip_dok VALID !Empty( _id_tip_dok )
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Za datum od:" GET _datum_od
    @ m_x + _x, Col() + 1 SAY "do:" GET _datum_do
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata:" GET _brojevi PICT "@S45"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Obuhvati artikle:" GET cIdRoba PICT "@S45"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Obuhvati partnere:" GET _partneri PICT "@S45"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Generisati grupno/jedan po jedan (1/2) ?" GET _tip_gen VALID _tip_gen $ "12"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Formirati PDF dokument (D/N) ?" GET _gen_pdf VALID _gen_pdf $ "DN"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Prebaci na lokaciju:" GET _na_lokaciju PICT "@S40"
 
@@ -319,7 +321,7 @@ STATIC FUNCTION _grupno_sql_gen( racuni, params )
 
       oRow := _table:GetRow()
 
-      _scan := AScan( racuni, {| val| val[ 1 ] + val[ 2 ] + val[ 3 ] == oRow:FieldGet( 1 ) + oRow:FieldGet( 2 ) + oRow:FieldGet( 3 ) } )
+      _scan := AScan( racuni, {| val | val[ 1 ] + val[ 2 ] + val[ 3 ] == oRow:FieldGet( 1 ) + oRow:FieldGet( 2 ) + oRow:FieldGet( 3 ) } )
 
       IF _scan == 0
          AAdd( racuni, { oRow:FieldGet( 1 ), oRow:FieldGet( 2 ), oRow:FieldGet( 3 ) } )
@@ -371,7 +373,7 @@ FUNCTION stdokodt_grupno()
 
    IF Len( _racuni ) == 0
       MsgBeep( "Nema podataka za export !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _tip_gen := _params[ "tip_gen" ]
@@ -542,7 +544,7 @@ STATIC FUNCTION _fakt_dok_gen_xml( xml_file, a_racuni, ctrl_data )
       fakt_stdok_pdv( a_racuni[ _n, 1 ], a_racuni[ _n, 2 ], a_racuni[ _n, 3 ], .T. )
 
 
-      IF SELECT( "RN" ) == 0  .OR. SELECT( "DRN" ) == 0 // da je fakt_stdok_pdv napunio rn.dbf, drn.dbf
+      IF Select( "RN" ) == 0  .OR. Select( "DRN" ) == 0 // da je fakt_stdok_pdv napunio rn.dbf, drn.dbf
          error_bar( "fa_bug", log_stack( 1 ) )
          LOOP
       ENDIF
@@ -716,7 +718,7 @@ STATIC FUNCTION _fakt_dok_gen_xml( xml_file, a_racuni, ctrl_data )
       // koliko ima redova ?
       nTxtR := Val( get_dtxt_opis( "P02" ) )
 
-      FOR i := 20 to ( 20 + nTxtR )
+      FOR i := 20 TO ( 20 + nTxtR )
 
          cTmp := "F" + AllTrim( Str( i ) )
          cTmpTxt := AllTrim( get_dtxt_opis( cTmp ) )

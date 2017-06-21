@@ -24,6 +24,8 @@ FUNCTION fin_suban_specifikacija_sql()
    LOCAL _rpt_vars := hb_Hash()
    LOCAL _exported := .F.
 
+   download_template( "fin_specif.odt", "b1435934623a308b0a3e2c39c018840e92a86a66ebd5f2e5daa24722c8eae0ba" )
+
    _my_xml := my_home() + "data.xml"
    _template := "fin_specif.odt"
 

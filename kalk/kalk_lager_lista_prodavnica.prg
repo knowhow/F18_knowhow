@@ -170,10 +170,10 @@ FUNCTION kalk_lager_lista_prodavnica()
    o_sifk()
    o_sifv()
    // o_roba()
-   //o_tarifa()
+   // o_tarifa()
    // o_konto()
    // o_partner()
-   //o_koncij()
+   // o_koncij()
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    find_kalk_by_pkonto_idroba( self_organizacija_id(), cIdKonto )
@@ -905,14 +905,16 @@ STATIC FUNCTION kalk_prodavnica_llp_odt( params )
 
    IF !_gen_xml( params )
       MsgBeep( "Problem sa generisanjem podataka ili nema podataka !" )
-      RETURN
+      RETURN .F.
    ENDIF
+
+   download_template( "kalk_llp.odt", "82a8c006e7e6349334332997fbb37e0683d1ea870ad4876a4d9904625afd8495" )
 
    IF generisi_odt_iz_xml( "kalk_llp.odt", my_home() + "data.xml" )
       prikazi_odt()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

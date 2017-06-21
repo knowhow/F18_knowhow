@@ -602,6 +602,12 @@ STATIC FUNCTION _xml_print( tip )
       RETURN .F.
    ENDIF
 
+   download_template( "ld_aop.odt", "bd41446955e753f0e4f1e34b9f5f70aa44fcb455167117abfdb80403d18e938e" )
+   download_template( "ld_aop2.odt", "c010ca96454ca0e69c09a34c6293a919124a8f25409553946014b2ca56298fee" )
+   download_template( "ld_olp.odt", "8e019f9d8a646fe5ec3b5aee9b49d0e5b147cc6c54fbdd2ee4ebefcb4e589588" )
+   download_template( "ld_gip.odt", "9bb6dbb630c362cb0363d1830c3408e03ba28ff82882bfe9388577f6eeb62085" )
+
+
    _fill_xml( tip, _xml_file )
 
    DO CASE

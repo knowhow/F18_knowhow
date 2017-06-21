@@ -40,10 +40,6 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    brisi_stare_fajlove( my_home_root(), "wget_*.tmp", 1 )
 
-   IF !File( f18_exe_template_file_name( "rlab1.odt" ) ) .OR. !File( f18_exe_template_file_name( "rlab2.odt" ) )
-      download_all_templates()
-   ENDIF
-
    IF no_sql_mode()
       set_f18_home( "f18_test" )
       RETURN .T.

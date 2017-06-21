@@ -23,6 +23,10 @@ FUNCTION fin_suban_kartica_sql( otv_stavke )
    LOCAL _rpt_vars := hb_Hash()
    LOCAL _exported := .F.
 
+   download_template( "fin_kart_brza.odt", "623667ba6348dd29eeed14877d78ec990cecb4e113ab27ffb802cd2a17063dd7" )
+   download_template( "fin_kart_svi.odt",  "e8b5d5d57400ce8eadec3da2b1cc68816cd266a321983ba9de6a2186c5f63a3a" )
+
+
    _my_xml := my_home() + "data.xml"
    _template := "fin_kart_brza.odt"
 

@@ -895,8 +895,6 @@ FUNCTION mat_inv_obr_poreza()
    RETURN
 
 
-// ------------------------------------
-// ------------------------------------
 FUNCTION mat_popisna_lista()
 
    LOCAL _vars := hb_Hash()
@@ -907,12 +905,14 @@ FUNCTION mat_popisna_lista()
    LOCAL _filter := ""
    LOCAL _my_xml := my_home() + "data.xml"
 
+   download_template( "mat_invent.odt", "cd3fd5ebd1ac18d4b5abda4f9cbffcf01b6bc844d5725cb02dd9cce79ba235c0" )
+
    o_konto()
    o_partner()
 
    IF !_get_inv_vars( @_vars )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    _konto := _vars[ "konto" ]
@@ -1064,4 +1064,4 @@ FUNCTION mat_popisna_lista()
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.

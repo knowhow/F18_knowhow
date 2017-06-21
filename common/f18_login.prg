@@ -89,7 +89,7 @@ METHOD F18Login:New()
    ::lOrganizacijaSpojena := .F.
    ::lPostgresDbSpojena := .F.
    s_cTekucaSezona := AllTrim( Str( Year( Date() ) ) )
-   s_cPredhodnaSezona := AllTrim( Str( Year( Date() ) -1 ) )
+   s_cPredhodnaSezona := AllTrim( Str( Year( Date() ) - 1 ) )
    s_lPrvoPokretanje := .T.
 
 
@@ -348,7 +348,7 @@ METHOD F18Login:promjena_sezone( cDatabase, cSezona )
       cNovaSezona := hParams[ "posljednji_put" ]
    ENDIF
 
-   IF ! ( "_" $ cTrenutnaDatabase )
+   IF !( "_" $ cTrenutnaDatabase )
       RETURN .F.
    ENDIF
 
@@ -557,23 +557,22 @@ METHOD F18Login:odabir_organizacije()
 
    ::lOrganizacijaSpojena := .T.
 
-
    RETURN .T.
 
 
 
 
-METHOD F18Login:get_database_sessions( database )
+METHOD F18Login:get_database_sessions( DATABASE )
 
    LOCAL cSezona := ""
    LOCAL oDataSet, oRow, _db, cQuery
    LOCAL aOrganizacijeZaBrowse := {}
 
-   IF Empty( database )
+   IF Empty( DATABASE )
       RETURN NIL
    ENDIF
 
-   cQuery := "SELECT DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') AS godina " + ;
+   cQuery := "SELECT DISTINCT substring( datname, '" + AllTrim( DATABASE ) +  "_([0-9]+)') AS godina " + ;
       "FROM pg_database " + ;
       "ORDER BY godina"
 
@@ -602,12 +601,12 @@ METHOD F18Login:get_database_sessions( database )
 
 
 
-METHOD F18Login:get_database_top_session( database )
+METHOD F18Login:get_database_top_session( DATABASE )
 
    LOCAL cSezona := ""
    LOCAL oDataSet, oRow, _db, cQuery
 
-   cQuery := "SELECT MAX( DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') ) AS godina " + ;
+   cQuery := "SELECT MAX( DISTINCT substring( datname, '" + AllTrim( DATABASE ) +  "_([0-9]+)') ) AS godina " + ;
       "FROM pg_database " + ;
       "ORDER BY godina"
 
@@ -629,11 +628,11 @@ METHOD F18Login:get_database_description( database, cSezona )
    LOCAL oDataSet, oRow, cQuery
    LOCAL _database_name := ""
 
-   IF Empty( database )
+   IF Empty( DATABASE )
       RETURN _descr
    ENDIF
 
-   _database_name := database + iif( !Empty( cSezona ), "_" + cSezona, "" )
+   _database_name := DATABASE + iif( !Empty( cSezona ), "_" + cSezona, "" )
 
    cQuery := "SELECT description AS opis " + ;
       "FROM pg_shdescription " + ;
@@ -711,7 +710,7 @@ METHOD F18Login:database_array()
       _db := oRow:FieldGet( oRow:FieldPos( "datab" ) )
 
       // filter za tabele
-      IF !Empty( _db ) .AND. ! ( AllTrim( _db ) $ _filter_db )
+      IF !Empty( _db ) .AND. !( AllTrim( _db ) $ _filter_db )
          AAdd( aOrganizacije, { _db } )
       ENDIF
 
@@ -730,7 +729,7 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
    LOCAL aMeniOpcije, _menuexec, _mnu_choice
 
    nX := x_pos
-   _y := ( MAXCOLS() / 2 ) -5
+   _y := ( MAXCOLS() / 2 ) - 5
 
 
    aMeniOpcije := {} // resetuj
@@ -828,7 +827,7 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
    LOCAL _pos_left := 3
    LOCAL _pos_top := 5
    LOCAL _pos_bottom := _pos_top + 12
-   LOCAL _pos_right := MAXCOLS() -12
+   LOCAL _pos_right := MAXCOLS() - 12
    LOCAL _company_count
 
    IF table_type == NIL
@@ -867,7 +866,7 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
    @ _pos_bottom + 2, 3 SAY hb_UTF8ToStr( "[2] Ručna konekcija na bazu" )
 
    // box za rucni odabir firme
-   @ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) -3 BOX B_DOUBLE_SINGLE
+   @ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) - 3 BOX B_DOUBLE_SINGLE
    @ _pos_bottom + 6, 11 SAY hb_UTF8ToStr( "<<< pritisni TAB >>>" )
 
    // opcija 3
@@ -888,7 +887,7 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
       oTBrowse:footSep := "-"
       oTBrowse:colSep := "|"
    ELSEIF table_type == 2
-      oTBrowse:HeadSep := hb_UTF8ToStrBox(BROWSE_HEAD_SEP )
+      oTBrowse:HeadSep := hb_UTF8ToStrBox( BROWSE_HEAD_SEP )
       oTBrowse:FootSep := hb_UTF8ToStrBox( BROWSE_FOOT_SEP )
       oTBrowse:ColSep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    ENDIF
@@ -924,7 +923,7 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
             ::administrative_options( _pos_bottom + 4, _pos_left )
             RETURN -1
          CASE ( _key == K_TAB )
-            if ::manual_enter_company_data( _pos_bottom + 4, _pos_left )
+            IF ::manual_enter_company_data( _pos_bottom + 4, _pos_left )
                RETURN 1
             ELSE
                RETURN -1
@@ -949,8 +948,8 @@ METHOD F18Login:show_info_bar( database, x_pos )
    LOCAL nX := x_pos + 7
    LOCAL _y := 3
    LOCAL _info := ""
-   LOCAL aOrganizacijeZaBrowse := ::get_database_sessions( database )
-   LOCAL _max_len := MAXCOLS() -2
+   LOCAL aOrganizacijeZaBrowse := ::get_database_sessions( DATABASE )
+   LOCAL _max_len := MAXCOLS() - 2
    LOCAL _descr := ""
 
    IF !aOrganizacijeZaBrowse == NIL .AND. Len( aOrganizacijeZaBrowse ) > 0
@@ -993,7 +992,7 @@ STATIC FUNCTION _get_company_count( aArray )
 
 
 STATIC FUNCTION _browse_block( aArray, nX )
-   RETURN ( {| p| iif( PCount() == 0, aArray[ _row, nX ], aArray[ _row, nX ] := p ) } )
+   RETURN ( {| p | iif( PCount() == 0, aArray[ _row, nX ], aArray[ _row, nX ] := p ) } )
 
 
 
@@ -1001,7 +1000,7 @@ STATIC FUNCTION _skip_it( aArray, curr, skiped )
 
    IF ( curr + skiped < 1 )
       // Would skip past the top...
-      RETURN( -curr + 1 )
+      RETURN( - curr + 1 )
    ELSEIF ( curr + skiped > Len( aArray ) )
       // Would skip past the bottom...
       RETURN ( Len( aArray ) - curr )

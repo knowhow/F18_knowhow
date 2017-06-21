@@ -115,18 +115,18 @@ STATIC FUNCTION _get_vars( hParams )
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Godina" GET _godina PICT "9999"
    @ form_x_koord() + nX, Col() + 1 SAY "mjesec" GET _mjesec PICT "99"
 
-   ++ nX
-   ++ nX
+   ++nX
+   ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Radnik (prazno-svi):" GET cIdRadnik VALID Empty( cIdRadnik ) .OR. P_Radn( @cIdRadnik )
 
-   ++ nX
+   ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Kreditor (prazno-svi):" GET cIdKreditor VALID Empty( cIdKreditor ) .OR. P_Kred( @cIdKreditor )
 
-   ++ nX
-   ++ nX
+   ++nX
+   ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "   Filter po osnovi kredita:" GET _osnova PICT "@S30"
 
-   ++ nX
+   ++nX
    @ form_x_koord() + nX, form_y_koord() + 2 SAY "Filter po radnim jedinicama:" GET _rj PICT "@S30"
 
    READ
@@ -168,6 +168,8 @@ STATIC FUNCTION _get_vars( hParams )
 STATIC FUNCTION _print_data( oDataset, hParams )
 
    LOCAL _template := "kred_spec.odt"
+
+   download_template( "kred_spec.odt", "8e996b671e63960c9466f5326cd78d00f2aefced0537104cda8b196763ccc55c" )
 
    _cre_xml( oDataset, hParams )
 

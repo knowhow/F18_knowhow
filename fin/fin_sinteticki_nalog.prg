@@ -72,7 +72,8 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
 
    nCol1 := 70
 
-   cIdFirma := IdFirma; cIDVn = IdVN; cBrNal := BrNal
+   cIdFirma := IdFirma; cIDVn = IdVN
+   cBrNal := BrNal
    b2 := {|| cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal }
    b3 := {|| cIdSinKon == Left( IdKonto, 3 ) }
    b4 := {|| cIdKonto == IdKonto }
@@ -256,9 +257,8 @@ STATIC FUNCTION close_open_panal()
 altd()
    my_close_all_dbf()
 
-   SELECT ( F_ANAL )
-   my_use( "panal", "fin_anal" )
-
+   //SELECT ( F_ANAL )
+   //my_use( "panal", "fin_anal" )
 
    //o_konto()
    //o_partner()

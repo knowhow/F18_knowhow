@@ -30,7 +30,8 @@ FUNCTION ld_mip_obrazac_1023()
    LOCAL cIdRjTekuca := Space( 2 )
    LOCAL cIdRadnik := fetch_metric( "ld_izvj_radnik", my_user(), Space( LEN_IDRADNIK ) )
    LOCAL cTipPrimIsplateUslugeIliDobra := Space( 100 )
-   //LOCAL cIdRj := NIL
+
+   // LOCAL cIdRj := NIL
    LOCAL cDopr10 := "10"
    LOCAL cDopr11 := "11"
    LOCAL cDopr12 := "12"
@@ -60,7 +61,7 @@ FUNCTION ld_mip_obrazac_1023()
       RETURN .F.
    ENDIF
 
-   //cIdRj := gLDRadnaJedinica
+   // cIdRj := gLDRadnaJedinica
 
    cPredNaz := PadR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, "" ), 100 )
    cPredJMB := PadR( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, "" ), 13 )
@@ -377,7 +378,7 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
 
          cRadJed := ld->idrj // radna jedinica
 
-         //SELECT radn
+         // SELECT radn
          cR_ime := AllTrim( radn->ime ) + " " + AllTrim( radn->naz )
          cR_jmb := AllTrim( radn->matbr )
 
@@ -1116,6 +1117,9 @@ STATIC FUNCTION mip_print_odt( lPojedinacni )
 
    LOCAL _template := "ld_mip.odt"
    LOCAL _xml_file := my_home() + "data.xml"
+
+   download_template( "ld_mip.odt", "a84eae91a305489ee8098ef963c810c99b9fb80f8b38c7c05de30354116f4cb0" )
+   download_template( "ld_pmip.odt", "bd415862f7188148fffda5b0be007a3d47ae60f92e9532317635cd003c3f5ff7" )
 
    IF s_lExportXml
       RETURN .F.

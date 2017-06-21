@@ -100,6 +100,8 @@ METHOD FinBrutoBilans:init_params()
 
 METHOD FinBrutoBilans:set_bb_params()
 
+   download_template( "fin_bbl.odt", "11db1d0d324024423dc153f67b19e1495fddfe5900740458c98b5bdc52f01e3f" )
+
    DO CASE
    CASE ::tip == 1
       ::hParams[ "naziv" ] := "SUBANALITIČKI BRUTO BILANS"
@@ -657,7 +659,7 @@ METHOD FinBrutoBilans:gen_xml()
             _tt_sld_dug += field->sld_dug
             _tt_sld_pot += field->sld_pot
 
-            _scan := AScan( _a_klase, {| var | VAR[ 1 ] == Left( _sint, 1 ) } )
+            _scan := AScan( _a_klase, {| VAR | VAR[ 1 ] == Left( _sint, 1 ) } )
 
             IF _scan == 0
                AAdd( _a_klase, { Left( _sint, 1 ), ;
@@ -962,7 +964,7 @@ METHOD FinBrutoBilans:print_txt()
             _tt_sld_pot += field->sld_pot
 
             // dodaj u matricu sa klasama, takodjer totale...
-            _scan := AScan( _a_klase, {| var | VAR[ 1 ] == Left( _sint, 1 ) } )
+            _scan := AScan( _a_klase, {| VAR | VAR[ 1 ] == Left( _sint, 1 ) } )
 
             IF _scan == 0
                // dodaj novu stavku u matricu...
@@ -1287,7 +1289,7 @@ METHOD FinBrutoBilans:create_r_export()
    IF !create_dbf_r_export( _dbf )
       RETURN .F.
    ENDIF
-   
+
    O_R_EXP
 
    IF ::tip == 1

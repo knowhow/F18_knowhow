@@ -19,6 +19,8 @@ FUNCTION kalk_magacin_llm_odt( hParams )
       RETURN .F.
    ENDIF
 
+   download_template( "kalk_llm.odt", "ccf6c854f27e109357678b781716f38ba58bd72f7c901e699317fc04cc5031df" )
+
    IF generisi_odt_iz_xml( "kalk_llm.odt", my_home() + "data.xml" )
       prikazi_odt()
    ENDIF

@@ -25,6 +25,8 @@ FUNCTION rnal_obracunski_list_odt()
    LOCAL _ok := .F.
    LOCAL _template := "obrlist.odt"
 
+   download_template( "obrlist.odt", "b8be3841cea218a18fe804e34ba9aa035924ce0449095b910365e6d1c83d70e9" )
+
    t_rpt_open()
 
    _get_t_pars( @_params )
@@ -193,7 +195,7 @@ STATIC FUNCTION _cre_xml( params )
          _art_sh := field->art_sh_des
 
          // da li se stavka stampa ili ne ?
-         IF field->print == "N"
+         IF field->PRINT == "N"
             SKIP
             LOOP
          ENDIF
@@ -211,10 +213,10 @@ STATIC FUNCTION _cre_xml( params )
                .AND. PadR( field->art_sh_des, 150 ) == ;
                PadR( _art_sh, 150 )
 
-            ++ _count
+            ++_count
 
             // da li se stavka stampa ili ne ?
-            IF field->print == "N"
+            IF field->PRINT == "N"
                SKIP
                LOOP
             ENDIF
@@ -318,7 +320,7 @@ STATIC FUNCTION _cre_xml( params )
          SELECT t_docit
          SEEK docno_str( _r_doc ) + docit_str( _r_doc_it_no )
 
-         IF field->print == "N"
+         IF field->PRINT == "N"
             SELECT t_docit2
             SKIP
             LOOP

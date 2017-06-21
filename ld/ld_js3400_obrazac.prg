@@ -258,6 +258,8 @@ STATIC FUNCTION _xml_print( tip )
 
    _fill_xml( tip, _xml_file )
 
+   download_template( "ld_js_1.odt", "4f3f455942d21b48221435e59750b26e8402b0357b5a50aa3b99b6796e93029d" )
+
    DO CASE
    CASE tip == "1"
       _template := "ld_js_1.odt"
@@ -267,7 +269,7 @@ STATIC FUNCTION _xml_print( tip )
       prikazi_odt()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------

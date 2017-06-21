@@ -332,6 +332,8 @@ STATIC FUNCTION print_frm_asort_nar( vars )
    LOCAL _template := "kalk_asort_nar.odt"
    LOCAL _count := 0
 
+   download_template( "kalk_asort_nar.odt", "b1124faac9f8e579bdc03e4bdfb39f1d002e7e6c190bf8aa79aaddc981c3f588" )
+
    create_xml( _my_xml )
    xml_head()
 

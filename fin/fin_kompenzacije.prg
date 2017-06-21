@@ -633,6 +633,8 @@ STATIC FUNCTION print_kompen( vars )
       _id_partn := vars[ "partn" ]
    ENDIF
 
+   download_template( "komp_01.odt", "7623ca44a8f2a0126dbb73540943e974f2e860cf884189ea9c5c67294cd87bc4" )
+
    _id_pov := fetch_metric( "fin_kompen_id_povjerioca", my_home(), _id_pov )
    _br_komp := fetch_metric( "fin_kompen_broj", my_home(), _br_komp )
    _rok_pl := fetch_metric( "fin_kompen_rok_placanja", my_home(), _rok_pl )

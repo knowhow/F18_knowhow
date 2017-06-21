@@ -364,12 +364,12 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
    LOCAL _group := params[ "group" ]
    LOCAL cObjekat, cPrioritet, cStat, cOper, cDescr
 
-
+download_template( "specnalp.odt", "bed30593b51aff30920179333346e46d3a0a8b992463d88232d4391f1902d2c5" )
    SELECT _tmp1
 
    IF RecCount() == 0
        MsgBeep("Ne postoje traženi podaci !")
-       RETURN
+       RETURN .F.
    ENDIF
 
    GO TOP

@@ -36,6 +36,9 @@ FUNCTION fin_kupci_pregled_dugovanja()
    IF LastKey() == K_ESC
       RETURN .F.
    ENDIF
+
+   download_template( "kupci_pregled_dugovanja.xlsx", "cec90f10beff71ca9ac3f487b7d1734dca727b1953c3bb8d3683313a25b35e27" )
+   
    oReport := YargReport():New( "kupci_pregled_dugovanja", "xlsx", "Header#BandSql1" )
    cSql := "select * from sp_dugovanja("
    cSql += sql_quote( dDatOd ) + ","

@@ -25,6 +25,10 @@ FUNCTION kalkulacija_cijena( azurirana )
       azurirana := .T.
    ENDIF
 
+   download_template( "kalk_mp.odt", "f745ca8770ca02b9781f935ecff90e0e34aa625af26b103d5e3a3f9d5f568ca8" )
+   download_template( "kalk_mp_pred.odt", "5442e7b9d5ef0044217e04a5294f3aa15577218b45850714b4152cddb86e26ca" )
+   download_template( "kalk_vp.odt", "7e38d1455c0f8be2054ec688eccf1106de2ca0a2d91ac60eb3553d492d522285" )
+
    o_tables( azurirana )
 
    IF azurirana .AND. !get_vars( @_vars )

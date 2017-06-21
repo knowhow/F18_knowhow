@@ -24,6 +24,7 @@ FUNCTION rnal_nalog_za_proizvodnju_odt()
    LOCAL _template := "nalprg.odt"
    LOCAL _po_grupama := .T.
 
+   download_template( "nalprg.odt", "51ad3aa8eb08836029345a48189e9acf08da758113b4346e542cfb980997eb19" )
    t_rpt_open()
 
    SELECT t_docit
@@ -34,9 +35,9 @@ FUNCTION rnal_nalog_za_proizvodnju_odt()
    DO WHILE !Eof() .AND. field->doc_no == _doc_no
       _doc_gr := field->doc_gr_no
       DO WHILE !Eof() .AND. field->doc_no == _doc_no .AND. field->doc_gr_no == _doc_gr
-         skip
+         SKIP
       ENDDO
-      ++ _cnt
+      ++_cnt
       AAdd( _groups, { _doc_gr, _cnt } )
    ENDDO
 
@@ -339,7 +340,7 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
             IF field->doc_it_sch == "D"
                _tmp += " "
                _tmp += "(SHEMA U PRILOGU)"
-            endif
+            ENDIF
 
             IF field->doc_it_alt <> 0
 
@@ -377,7 +378,7 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
          _opis_stavke_tmp := _opis_stavke
          _art_tmp := _art_id
 
-         ++ _count
+         ++_count
 
       ENDDO
 
@@ -433,7 +434,7 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
          SELECT t_docit
          SEEK docno_str( _doc_no ) + docit_str( _doc_it_no )
 
-         IF field->print == "N"
+         IF field->PRINT == "N"
             SELECT t_docit2
             SKIP
             LOOP

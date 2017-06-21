@@ -73,7 +73,10 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL nCount, nCountLimit := 12000 // broj izgenerisanih stavki
    LOCAL cNastavak := "N"
 
-   o_konto()
+   download_template( "ios.odt",  "0d6a8b1dade0e934536ff1173598e39d498ae9480f495d2fe618ff32e6ea71df" )
+   download_template( "ios_2.odt", "6b8fa9cb492c13e3abf6d45f3bc2c262958512b1ffc8bbe5c01242894714b5c0" )
+
+   //o_konto()
    // o_partner()
 
    Box(, 16, 65, .F. )
@@ -610,7 +613,7 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    LOCAL cPrikazSaSaldoNulaDN := "D"
    LOCAL dDatumDo := Date()
 
-   o_konto()
+   //o_konto()
 
    Box( "", 6, 60 )
    @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA IOS-a"
@@ -622,7 +625,7 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    READ
    BoxC()
 
-   SELECT konto
+   //SELECT konto
    USE
 
    IF LastKey() == K_ESC

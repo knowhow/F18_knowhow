@@ -96,7 +96,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    otvori_tabele()
 
    AltD()
-   GenRekap1( cUslov1, cUslov2, qqRoba, "N", "1", "N", lMarkiranaRoba, NIL, cK9 )
+   kalk_gen_rekap1( cUslov1, cUslov2, qqRoba, "N", "1", "N", lMarkiranaRoba, NIL, cK9 )
 
    SetLinSpo()
 
@@ -279,7 +279,7 @@ FUNCTION select_o_k1( cId )
    RETURN o_k1( cId )
 
 
-FUNCTION GenRekap1( aUsl1, aUsl2, qqRoba, cKartica, cVarijanta, cKesiraj, fSMark,  cK1, cK7, cK9, cIdKPovrata, aUslSez )
+FUNCTION kalk_gen_rekap1( aUsl1, aUsl2, qqRoba, cKartica, cVarijanta, cKesiraj, fSMark,  cK1, cK7, cK9, cIdKPovrata, aUslSez )
 
    LOCAL nSec
 
@@ -364,10 +364,10 @@ altd()
       ENDIF
 
       SELECT rekap1
-      ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
+      kalk_scan_magacinski_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
 
       SELECT rekap1
-      ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
+      kalk_scan_prodavnicki_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
 
       IF ( ( ++nStavki % 100 ) == 0 )
          @ m_x + 1, m_y + 2 SAY nStavki PICT "99999999999999"
@@ -420,7 +420,7 @@ altd()
 
 
 
-FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
+FUNCTION kalk_scan_magacinski_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
 
    LOCAL nGGOrd
    LOCAL nGGo
@@ -542,7 +542,7 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
 
 
 
-FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
+FUNCTION kalk_scan_prodavnicki_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
 
    LOCAL nGGOrd
    LOCAL nGGo

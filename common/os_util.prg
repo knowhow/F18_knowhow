@@ -542,12 +542,17 @@ FUNCTION f18_open_mime_document( cDocument )
 #endif
 */
 
-   cDocument := file_path_quote( cDocument )
+   // cDocument := file_path_quote( cDocument )
 
-   cPrefixCmd := get_run_prefix_cmd()
-   cCmd += cPrefixCmd + cDocument + iif( is_windows(), "", "& " )
 
-   nError := f18_run( cCmd )
+   IF is_windows()
+      nError := f18_run( cCmd, cDocument )
+   ELSE
+      cPrefixCmd := get_run_prefix_cmd()
+      cCmd += cPrefixCmd
+      AltD()
+      nError := f18_run( cCmd, cDocument, NIL, .T. ) // async
+   ENDIF
 
    IF nError <> 0
       MsgBeep( "Problem sa otvaranjem dokumenta !#Greška: " + AllTrim( Str( nError ) ) )

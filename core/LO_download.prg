@@ -23,22 +23,49 @@ STATIC s_cSHA256sum := "f5187c5e0b091bd11ee67a4209cb3075e92eb1881a788fa003a8cbe8
 STATIC s_cSHA256sum := "a02233dba2c09f88a54107d7605b6e0888f2a9a68558af9a223230e600b02c8e" // LO/lo
 #endif
 
+STATIC s_cDownloadF18LO
+
+
 FUNCTION LO_open_dokument( cFile )
 
    LOCAL lAsync := .F.
-   LOCAL cCmd, nRet
+   LOCAL cCmd, nRet, lUseLibreofficeSystem := .F.
+   LOCAL cOdgovor
 
-   IF is_windows() .OR. is_linux()
-      cCmd := LO_cmd()
-      IF is_linux()
-         lAsync := .T.
-      ENDIF
-      nRet := f18_run( cCmd, cFile, NIL, lAsync )
-   ELSE
-      nRet := f18_open_mime_document( cFile )
+   IF s_cDownloadF18LO == NIL
+      s_cDownloadF18LO := fetch_metric( "F18_LO", NIL, "N" )
    ENDIF
 
-   RETURN nRet
+   IF is_mac()
+      lUseLibreofficeSystem := .T.
+   ELSE
+      IF s_cDownloadF18LO == "0" // ne pitaj korisnika da li da ucitava
+         lUseLibreofficeSystem := .T.
+      ELSEIF s_cDownloadF18LO == "N"
+         cOdgovor := Pitanje( , "Instalirati F18 LibreOffice za pregled dokumenata ?", "N", "DN0" )
+         IF cOdgovor == "D"
+            set_metric( "F18_LO", NIL, "D" )
+            lUseLibreofficeSystem := .F.
+         ELSE
+            IF cOdgovor == "0"
+               set_metric( "F18_LO", NIL, "0" ) // ne pitaj korisnika vise
+            ENDIF
+            lUseLibreofficeSystem := .T.
+         ENDIF
+      ENDIF
+   ENDIF
+
+   IF lUseLibreofficeSystem
+      RETURN f18_open_mime_document( cFile )
+   ENDIF
+
+   cCmd := LO_cmd()
+   IF is_linux()
+      lAsync := .T.
+   ENDIF
+
+   RETURN f18_run( cCmd, cFile, NIL, lAsync )
+
 
 
 FUNCTION LO_cmd()

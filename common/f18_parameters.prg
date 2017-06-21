@@ -29,7 +29,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
    LOCAL _backup_removable, _backup_ping_time
    LOCAL _rpt_page_len, _bug_report
    LOCAL _log_level
-   LOCAL cLdRekapDbf, cLegacyKalkPr
+   LOCAL cLdRekapDbf, cLegacyKalkPr, cLegacyPTxt, cDownloadF18LO
    LOCAL cErrMsg
 
    info_bar( "init", "set_parametre_f18_aplikacije - start" )
@@ -92,6 +92,8 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
    // cLdRekapDbf := fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" )
    cLegacyKalkPr := fetch_metric( "legacy_kalk_pr", NIL, "N" )
    cLegacyPTxt := fetch_metric( "legacy_ptxt", NIL, "D" )
+   cDownloadF18LO := fetch_metric( "F18_LO", NIL, "N" )
+
 
    IF lUpravoSetovani == nil
       lUpravoSetovani := .F.
@@ -183,6 +185,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       // @ _pos_x + nX, _pos_y SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
       @ _pos_x + nX, Col() + 2 SAY "KALK PR:" GET cLegacyKalkPr PICT "!@" VALID cLegacyKalkPr $ "DN"
       @ _pos_x + nX, Col() + 2 SAY "PTXT:" GET cLegacyPTxt PICT "!@" VALID cLegacyPTxt $ "DN"
+      @ _pos_x + nX, Col() + 2 SAY "Download F18 LO:" GET cDownloadF18LO PICT "!@" VALID cDownloadF18LO $ "DN0"
 
       READ
 
@@ -227,6 +230,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       // set_metric( "legacy_ld_rekap_dbf", NIL, cLdRekapDbf )
       set_metric( "legacy_kalk_pr", NIL, cLegacyKalkPr )
       set_metric( "legacy_ptxt", NIL, cLegacyPTxt )
+      set_metric( "F18_LO", NIL, cDownloadF18LO )
 
       info_bar( "init", "set_parametre_f18_aplikacije - end" )
 

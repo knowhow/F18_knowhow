@@ -47,7 +47,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
    set_ptxt_sekvence()
 
    IF !( cOpt == "PDF" .OR. cOpt == "D" .OR. cOpt $ "EFG" .OR. cOpt == "0" ) // pdf, direktna stampa, interni editor, bez dijaloga
-   altd()
+      AltD()
       cOpt := print_dialog_box( cOpt )
       IF cOpt == "X"
          RETURN cOpt
@@ -183,11 +183,11 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 
    CASE cOpt $ "E#F#G" // direct print
 
-#ifdef __PLATFORM__WINDOWS
-      direct_print_windows( cFileName, _port )
-#else
-      direct_print_unix( cFileName, _port )
-#endif
+      IF is_windows()
+         direct_print_windows( cFileName, _port )
+      ELSE
+         direct_print_unix( cFileName, _port )
+      ENDIF
 
    CASE cOpt == "PDF"
 
@@ -225,8 +225,8 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 
    OTHERWISE
 
-      //cCommand := run_cmd_with_prefix( "f18_editor "  + cFileName )
-      //nRet := f18_run( cCommand )
+      // cCommand := run_cmd_with_prefix( "f18_editor "  + cFileName )
+      // nRet := f18_run( cCommand )
       nRet := f18_editor( cFileName )
 
       IF nRet <> 0
@@ -287,18 +287,18 @@ STATIC FUNCTION get_printer_port( xPrintOpt )
    RETURN _port
 
 
-STATIC FUNCTION direct_print_unix( cFileName, port_number )
+STATIC FUNCTION direct_print_unix( cFileName, cPrinterPortNumber )
 
    LOCAL cCommand
    LOCAL _printer := "epson"
    LOCAL _printer_name
    LOCAL _err
 
-   IF port_number == NIL
-      port_number := "1"
+   IF cPrinterPortNumber == NIL
+      cPrinterPortNumber := "1"
    ENDIF
 
-   _printer_name := _printer + "_" + port_number
+   _printer_name := _printer + "_" + cPrinterPortNumber
 
    cCommand := "lpq -P " + _printer_name + " | grep " + _printer_name
 
@@ -321,23 +321,22 @@ STATIC FUNCTION direct_print_unix( cFileName, port_number )
    RETURN .T.
 
 
-STATIC FUNCTION direct_print_windows( cFileName, port_number )
+STATIC FUNCTION direct_print_windows( cFileName, cPrinterPortNumber )
 
    LOCAL cCommand
    LOCAL _err
 
-   IF port_number == NIL
-      port_number := "1"
+   IF cPrinterPortNumber == NIL
+      cPrinterPortNumber := "1"
    ENDIF
 
-   cFileName := '"' + cFileName + '"'
+   cFileName := file_path_quote( cFileName )
 
-   cCommand := "copy " + cFileName + " LPT" + port_number
-
-   _err := f18_run( cCommand )
+   cCommand := "copy " + cFileName + " LPT" + cPrinterPortNumber
+   _err := hb_run( cCommand ) // ovaj antikvitet koriste knjigovodstveni servisi
 
    IF _err <> 0
-      MsgBeep( "Greška sa direktnom štampom !" )
+      MsgBeep( "Greška sa direktnom štampom !?##" + cCommand )
    ENDIF
 
    RETURN .T.
@@ -732,12 +731,12 @@ FUNCTION SetGParams( cs, ch, cid, cvar, cval )
 FUNCTION dodatni_redovi_po_stranici( nSet )
 
    IF nSet != NIL
-      set_metric( "print_dodatni_redovi_po_stranici", nil, nSet )
+      set_metric( "print_dodatni_redovi_po_stranici", NIL, nSet )
       s_nDodatniRedoviPoStranici := nSet
    ENDIF
 
    IF HB_ISNIL( s_nDodatniRedoviPoStranici )
-      s_nDodatniRedoviPoStranici := fetch_metric( "print_dodatni_redovi_po_stranici", nil, 0 )
+      s_nDodatniRedoviPoStranici := fetch_metric( "print_dodatni_redovi_po_stranici", NIL, 0 )
    ENDIF
 
    RETURN s_nDodatniRedoviPoStranici

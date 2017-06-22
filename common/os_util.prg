@@ -288,6 +288,10 @@ FUNCTION f18_run( cCommand, cArgument, hOutput, lAsync )
    ENDIF
 
    IF is_windows()
+      IF left( cCommand, 4) == "copy"
+          RETURN hb_run( cCommand + " " + cArgument )
+      endif
+
       IF ValType( hOutput ) == "H"
          nRet := hb_processRun( cCommand + " " + cArgument, NIL, @cStdOut, @cStdErr )
          hOutput[ "stdout" ] := cStdOut

@@ -53,7 +53,6 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
    cOutfTXT := my_get_from_ini( 'Printeri', 'DirektnoOUTFTXT', 'N' )
 
    IF !( lUFajl )
-
       cDirekt := print_dialog_box( cDirekt )
       cKom := "LPT" + gPPort
 

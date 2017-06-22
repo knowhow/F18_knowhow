@@ -302,7 +302,7 @@ FUNCTION find_sint_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
    RETURN ! Eof()
 
 
-FUNCTION find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
+FUNCTION find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal, cAlias )
 
    LOCAL hParams := hb_Hash()
 
@@ -316,6 +316,10 @@ FUNCTION find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
    IF cBrNal <> NIL
       hParams[ "brnal" ] := cBrNal
+   ENDIF
+
+   IF cAlias <> NIL
+      hParams[ "alias" ] := cAlias
    ENDIF
 
    hParams[ "order_by" ] := "idfirma,idvn,brnal,rbr" // ako ima vise brojeva dokumenata sortiraj po njima
@@ -651,9 +655,10 @@ STATIC FUNCTION use_sql_sint_where( hParams )
 
 FUNCTION use_sql_anal( hParams )
 
-   LOCAL cTable := "ANAL"
+   LOCAL cTable := "fin_anal"
    LOCAL cWhere, cOrder
    LOCAL cSql
+   LOCAL cAlias := "ANAL"
 
 
 /*
@@ -710,11 +715,11 @@ GRANT ALL ON TABLE fmk.fin_anal TO xtrole;
    ENDIF
 
    IF hb_HHasKey( hParams, "alias" )
-      cTable := hParams[ "alias" ]
+      cAlias := hParams[ "alias" ]
    ENDIF
 
    SELECT ( F_ANAL )
-   IF !use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql, cAlias )
       RETURN .F.
    ENDIF
 

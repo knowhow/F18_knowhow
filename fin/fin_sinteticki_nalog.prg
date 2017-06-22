@@ -47,24 +47,25 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
       ESC_BCR
       BoxC()
 
-      find_nalog_by_broj_dokumenta( cIdFirma, cIdVn, cBrNal )
-      IF Eof()
+      IF !find_nalog_by_broj_dokumenta( cIdFirma, cIdVn, cBrNal )
          my_close_all_dbf()
          RETURN .F.
       ENDIF
 
       dDatNal := field->datnal
 
-      SELECT PANAL
+      // SELECT PANAL
+      find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal, "PANAL" )
 
    ELSE
       cIdFirma := idfirma
       cIdvn := idvn
       cBrNal := brnal
       dDatNal := datnal
+      SEEK cIdfirma + cIdvn + cBrNal
    ENDIF
 
-   SEEK cIdfirma + cIdvn + cBrNal
+
    START PRINT RET
    nStr := 0
 
@@ -99,8 +100,7 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
          nova_strana( dDatNal )
 
          DO WHILE  Eval( b1 ) .AND. Eval( b2 ) .AND. Eval( b4 )
-            SELECT KONTO
-            HSEEK cIdkonto
+            select_o_konto( cIdkonto )
             SELECT PANAL
             P_NRED
             @ PRow(), 0 SAY  ++nRBr PICTURE '9999'
@@ -137,8 +137,7 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
       @ PRow(), 1 SAY ++nRBr2 PICTURE '999'
       @ PRow(), PCol() + 1 SAY PadR( cIdSinKon, 6 )
 
-      SELECT KONTO
-      HSEEK cIdSinKon
+      select_o_konto( cIdSinKon )
 
       @ PRow(), PCol() + 1 SAY Left( Naz, 45 )
 
@@ -189,7 +188,7 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
       my_close_all_dbf()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -229,7 +228,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
    P_NRED
    ?? m
    P_NRED
-   ?? "*RED*" + PadC( IIF( gDatNal == "D", "", "DATUM" ), 8 ) + "*           NAZIV KONTA                               *            IZNOS U " + ValDomaca() + "           *" + IF( fin_jednovalutno(), "", "     IZNOS U " + ValPomocna() + "       *" )
+   ?? "*RED*" + PadC( iif( gDatNal == "D", "", "DATUM" ), 8 ) + "*           NAZIV KONTA                               *            IZNOS U " + ValDomaca() + "           *" + IF( fin_jednovalutno(), "", "     IZNOS U " + ValPomocna() + "       *" )
    P_NRED
    ?? "    *        *                                                      ----------------------------------- " + IF( fin_jednovalutno(), "", "-------------------------" )
    P_NRED
@@ -254,14 +253,13 @@ STATIC FUNCTION nova_strana( dDatNal )
 
 STATIC FUNCTION close_open_panal()
 
-altd()
    my_close_all_dbf()
 
-   //SELECT ( F_ANAL )
-   //my_use( "panal", "fin_anal" )
+   // SELECT ( F_ANAL )
+   // my_use( "panal", "fin_anal" )
 
-   //o_konto()
-   //o_partner()
+   // o_konto()
+   // o_partner()
    o_tnal()
    o_nalog()
 

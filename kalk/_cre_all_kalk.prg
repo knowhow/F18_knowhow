@@ -103,9 +103,8 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    CREATE_INDEX( "IdObj", "IdObj", _alias )
    AFTER_CREATE_INDEX
 
-   // pobjekti
    _alias := "POBJEKTI"
-   _table_name := "pobjekti"
+   _table_name := "kalk_pobjekti"
 
    aDbf := {}
    AAdd( aDbf, { "id", "C", 2, 0 } )

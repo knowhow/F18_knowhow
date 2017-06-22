@@ -47,7 +47,6 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
    set_ptxt_sekvence()
 
    IF !( cOpt == "PDF" .OR. cOpt == "D" .OR. cOpt $ "EFG" .OR. cOpt == "0" ) // pdf, direktna stampa, interni editor, bez dijaloga
-      AltD()
       cOpt := print_dialog_box( cOpt )
       IF cOpt == "X"
          RETURN cOpt

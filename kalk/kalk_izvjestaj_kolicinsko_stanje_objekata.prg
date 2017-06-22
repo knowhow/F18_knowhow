@@ -19,11 +19,11 @@ STATIC cPicDem
 STATIC cPicKol
 STATIC cStrRedova2 := 62
 STATIC cPrikProd := "N"
-STATIC qqKonto
-STATIC qqRoba
-STATIC cUslov1
-STATIC cUslov2
-STATIC cObjUsl
+STATIC s_cUslovIdKonto
+STATIC s_cUslovIdRoba
+STATIC s_cUslovPKonto
+STATIC s_cUslovMKonto
+STATIC s_cUslovIdObj
 STATIC cUslovRoba
 STATIC cK9
 STATIC cNObjekat
@@ -76,14 +76,14 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    cPicProc := "999999.99%"
    cPicDem := "9999999.99"
    cPicKol := kalk_pic_kolicina_bilo_gpickol()
-   qqKonto := PadR( "13;", 100 )
-   qqRoba := Space( 100 )
+   s_cUslovIdKonto := PadR( "13;", 100 )
+   s_cUslovIdRoba := Space( 100 )
 
    IF uslovi_izvjestaja( @cNObjekat ) == 0
       RETURN .F.
    ENDIF
 
-   IF Right( Trim( qqRoba ), 1 ) = "*"
+   IF Right( Trim( s_cUslovIdRoba ), 1 ) = "*"
       lMarkiranaRoba := .T.
    ENDIF
 
@@ -96,9 +96,9 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    otvori_tabele()
 
    AltD()
-   kalk_gen_rekap1( cUslov1, cUslov2, qqRoba, "N", "1", "N", lMarkiranaRoba, NIL, cK9 )
+   kalk_gen_rekap1( s_cUslovPKonto, s_cUslovMKonto, s_cUslovIdRoba, "N", "1", "N", lMarkiranaRoba, NIL, cK9 )
 
-   SetLinSpo()
+   set_linije_razdvajanja()
 
    SELECT rekap1
    SET ORDER TO TAG "2"
@@ -114,6 +114,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    nStr := 0
 
+   AltD()
    zaglavlje_izvjestaja( @nStr )
 
    nCol1 := 43
@@ -141,7 +142,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
       ENDDO
 
       SELECT rekap1
-
+      AltD()
       fFilGr := .F.
       fFilovo := .F.
 
@@ -157,7 +158,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
          SELECT rekap1
 
          nK2 := nK1 := 0
-         SetK1K2( cG1, cIdTarifa, cIdRoba, @nK1, @nK2 )
+         get_k1_k2_rekap1_za_grupa_tarifa_roba_idobj( cG1, cIdTarifa, cIdRoba, @nK1, @nK2 )
 
          IF ( ( Round( nK2, 3 ) == 0 .AND. Round( nK1, 2 ) == 0 ) )
             SELECT rekap1
@@ -181,7 +182,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
          @ PRow(), nColR  SAY PadR( aStrRoba[ 1 ], ROBAN_LEN )
          nCol1 := PCol()
 
-         ispisi_zalihe( cG1, cIdTarifa, cIdRoba, cObjUsl )
+         ispisi_zalihe( cG1, cIdTarifa, cIdRoba, s_cUslovIdObj )
 
          nK1 := 0
          IF ( ( cPrikProd == "D" ) .OR. Len( aStrRoba ) > 1 )
@@ -191,7 +192,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
             ENDIF
             @ PRow(), nCol1 SAY ""
             IF ( cPrikProd == "D" )
-               ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cObjUsl )
+               ispisi_prodaju( cG1, cIdTarifa, cIdRoba, s_cUslovIdObj )
             ENDIF
          ENDIF
 
@@ -233,7 +234,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    RETURN .T.
 
 
-FUNCTION o_pobjekti()
+FUNCTION kalk_o_pobjekti()
 
    Select( F_POBJEKTI )
    my_use ( "pobjekti" )
@@ -279,7 +280,7 @@ FUNCTION select_o_k1( cId )
    RETURN o_k1( cId )
 
 
-FUNCTION kalk_gen_rekap1( aUsl1, aUsl2, qqRoba, cKartica, cVarijanta, cKesiraj, fSMark,  cK1, cK7, cK9, cIdKPovrata, aUslSez )
+FUNCTION kalk_gen_rekap1( aUsl1, aUsl2, s_cUslovIdRoba, cKartica, cVarijanta, cKesiraj, lMarkiranaRoba,  cK1, cK7, cK9, cIdKPovrata, aUslSez )
 
    LOCAL nSec
 
@@ -287,8 +288,8 @@ FUNCTION kalk_gen_rekap1( aUsl1, aUsl2, qqRoba, cKartica, cVarijanta, cKesiraj, 
       cKesiraj := "N"
    ENDIF
 
-   IF ( fSMark == NIL )
-      fSMark := .F.
+   IF ( lMarkiranaRoba == NIL )
+      lMarkiranaRoba := .F.
    ENDIF
 
    IF ( cK1 == NIL )
@@ -314,8 +315,8 @@ FUNCTION kalk_gen_rekap1( aUsl1, aUsl2, qqRoba, cKartica, cVarijanta, cKesiraj, 
 
    nSec := Seconds()
 
-altd()
-   find_kalk_by_mkonto_idroba_idvd( self_organizacija_id(), NIL, NIL, qqRoba, "idkonto,idroba" )
+   AltD()
+   find_kalk_by_mkonto_idroba_idvd( self_organizacija_id(), NIL, NIL, s_cUslovIdRoba, "idkonto,idroba" )
 
    PRIVATE cFilt1 := ""
 
@@ -331,19 +332,21 @@ altd()
 
    SELECT kalk
    SET FILTER TO &cFilt1
+
    showkorner( rloptlevel() + 100, 1, 66 )
 
+   AltD()
    GO TOP
 
    nStavki := 0
    Box(, 2, 70 )
    DO WHILE !Eof()
-      IF fSMark .AND. SkLoNMark( "ROBA", kalk->idroba )
+      IF lMarkiranaRoba .AND. SkLoNMark( "ROBA", kalk->idroba )
          SKIP
          LOOP
       ENDIF
 
-      select_o_roba(  kalk->( idroba ) )
+      select_o_roba(  kalk->idroba )
       IF cK7 == "D" .AND. Empty( roba->k7 )
          SELECT kalk
          SKIP
@@ -363,10 +366,10 @@ altd()
          LOOP
       ENDIF
 
-      SELECT rekap1
+
       kalk_scan_magacinski_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
 
-      SELECT rekap1
+
       kalk_scan_prodavnicki_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
 
       IF ( ( ++nStavki % 100 ) == 0 )
@@ -412,7 +415,6 @@ altd()
 
    nSec := Seconds() - nSec
    IF ( nSec > 1 )
-      // nemoj "brze izvjestaje"
       @ 23, 75 SAY nSec PICT "9999"
    ENDIF
 
@@ -428,10 +430,12 @@ FUNCTION kalk_scan_magacinski_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVar
    LOCAL cSeek
    LOCAL hRec
 
-   IF Empty( kalk->mKonto )
+
+   IF Empty( kalk->mKonto ) // nije stavka magacin
       RETURN 0
    ENDIF
 
+   SELECT rekap1
    HSEEK kalk->( mKonto + idroba )
 
    IF !Found()
@@ -469,7 +473,6 @@ FUNCTION kalk_scan_magacinski_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVar
 
          ENDIF
       ELSE
-
          hRec[ "mpc" ] := roba->mpc
 
       ENDIF
@@ -554,6 +557,7 @@ FUNCTION kalk_scan_prodavnicki_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVa
       RETURN 0
    ENDIF
 
+   SELECT rekap1
    HSEEK kalk->( pkonto + idroba )
 
    IF !Found()
@@ -716,7 +720,7 @@ FUNCTION kalk_scan_prodavnicki_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVa
 
 STATIC FUNCTION otvori_tabele()
 
-   o_pobjekti()
+   kalk_o_pobjekti()
    o_koncij()
    // o_roba()
    // o_konto()
@@ -740,11 +744,11 @@ FUNCTION o_rekap1()
 
 
 
-FUNCTION SetK1K2( cG1, cIdTarifa, cIdRoba, nK1, nK2 )
+FUNCTION get_k1_k2_rekap1_za_grupa_tarifa_roba_idobj( cG1, cIdTarifa, cIdRoba, nK1, nK2 )
 
    nK2 := 0
    nK1 := 0
-   SELECT pobjekti
+   SELECT pobjekti // kalk_pobjekti.dbf
    GO TOP
    DO WHILE ( !Eof()  .AND. field->id < "99" )
       SELECT rekap1
@@ -755,10 +759,10 @@ FUNCTION SetK1K2( cG1, cIdTarifa, cIdRoba, nK1, nK2 )
       SKIP
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
-STATIC FUNCTION SetLinSpo()
+STATIC FUNCTION set_linije_razdvajanja()
 
    LOCAL nObjekata
 
@@ -771,7 +775,7 @@ STATIC FUNCTION SetLinSpo()
 
    DO WHILE !Eof()
 
-      IF !( "SVE" $ Upper( field->naz ) ) .AND. ( field->id <> "99" .AND. !Empty( cObjUsl ) .AND. !( &cObjUsl ) )
+      IF !( "SVE" $ Upper( field->naz ) ) .AND. ( field->id <> "99" .AND. !Empty( s_cUslovIdObj ) .AND. !( &s_cUslovIdObj ) )
          SKIP
          LOOP
       ENDIF
@@ -784,7 +788,7 @@ STATIC FUNCTION SetLinSpo()
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -799,11 +803,11 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
    ?? dDatOd, "-", dDatDo
    ?
 
-   IF ( qqRoba == NIL )
-      qqRoba := ""
+   IF ( s_cUslovIdRoba == NIL )
+      s_cUslovIdRoba := ""
    ENDIF
 
-   ? "Kriterij za objekat:", Trim( qqKonto ), "Robu:", Trim( qqRoba )
+   ? "Kriterij za objekat:", Trim( s_cUslovIdKonto ), "Robu:", Trim( s_cUslovIdRoba )
    ?
 
    P_COND
@@ -821,7 +825,7 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
 
    DO WHILE ( !Eof() .AND. objekti->id < "99" )
 
-      IF !Empty( cObjUsl ) .AND. !( &cObjUsl )
+      IF !Empty( s_cUslovIdObj ) .AND. !( &s_cUslovIdObj )
          SKIP
          LOOP
       ENDIF
@@ -840,7 +844,7 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
    GO TOP
    DO WHILE ( !Eof() .AND. field->id < "99" )
 
-      IF !Empty( cObjUsl ) .AND. !( &cObjUsl )
+      IF !Empty( s_cUslovIdObj ) .AND. !( &s_cUslovIdObj )
          SKIP
          LOOP
       ENDIF
@@ -858,9 +862,9 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
 
 STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
 
-   cUslov1 := ""
-   cUslov2 := ""
-   cObjUsl := ""
+   s_cUslovPKonto := ""
+   s_cUslovMKonto := ""
+   s_cUslovIdObj := ""
    cUslovR := ""
    dDatOd := Date()
    dDatDo := Date()
@@ -869,12 +873,14 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
    PRIVATE cSection := "F", cHistory := " ", aHistory := {}
 
    Params1()
-   RPar( "c2", @qqKonto )
+   RPar( "c2", @s_cUslovIdKonto )
    RPar( "c3", @cPrSort )
    RPar( "d1", @dDatOd )
    RPar( "d2", @dDatDo )
-   RPar( "cR", @qqRoba )
+   RPar( "cR", @s_cUslovIdRoba )
 
+   s_cUslovIdRoba := PadR( s_cUslovIdRoba, 100 ) // sql parsiraj funkcije traze Len( cUslovString ) > 99
+   s_cUslovIdKonto := PadR( s_cUslovIdKonto, 100 )
    cKartica := "N"
    cNObjekat := Space( 20 )
 
@@ -884,10 +890,10 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
    SET CURSOR ON
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Konta objekata:" GET qqKonto PICT "@!S50"
+      @ m_x + 1, m_y + 2 SAY "Konta objekata:" GET s_cUslovIdKonto PICT "@!S50"
       @ m_x + 3, m_y + 2 SAY8 "tekući promet je period:" GET dDatOd
       @ m_x + 3, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 4, m_y + 2 SAY "Kriterij za robu :" GET qqRoba PICT "@!S50"
+      @ m_x + 4, m_y + 2 SAY "Kriterij za robu :" GET s_cUslovIdRoba PICT "@!S50"
       @ m_x + 5, m_y + 2 SAY "Prikaz prodaje (D/N)" GET cPrikProd PICT "@!" VALID cPrikProd $ "DN"
       READ
 
@@ -895,12 +901,12 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
          BoxC()
          RETURN 0
       ENDIF
-      cUslov1 := Parsiraj( qqKonto, "PKonto" )
-      cUslov2 := Parsiraj( qqKonto, "MKonto" )
-      cObjUsl := Parsiraj( qqKonto, "IDOBJ" )
-      cUslovRoba := Parsiraj( qqRoba, "IdRoba" )
+      s_cUslovPKonto := Parsiraj( s_cUslovIdKonto, "PKonto" )
+      s_cUslovMKonto := Parsiraj( s_cUslovIdKonto, "MKonto" )
+      s_cUslovIdObj := Parsiraj( s_cUslovIdKonto, "IDOBJ" )
+      cUslovRoba := Parsiraj( s_cUslovIdRoba, "IdRoba" )
 
-      IF ( cUslov1 <> NIL .AND. cUslovRoba <> NIL )
+      IF ( s_cUslovPKonto <> NIL .AND. cUslovRoba <> NIL )
          EXIT
       ENDIF
    ENDDO
@@ -911,11 +917,11 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
 
    SELECT params
    IF Params2()
-      WPar( "c2", qqKonto )
+      WPar( "c2", s_cUslovIdKonto )
       WPar( "c3", cPrSort )
       WPar( "d1", dDatOd )
       WPar( "d2", dDatDo )
-      WPar( "cR", @qqRoba )
+      WPar( "cR", @s_cUslovIdRoba )
    ENDIF
    SELECT params
    USE
@@ -1079,7 +1085,7 @@ STATIC FUNCTION PrintProdGr()
 
 FUNCTION brisi_tabelu_pobjekti()
 
-   o_pobjekti()
+   kalk_o_pobjekti()
 
    my_dbf_zap()
 
@@ -1091,7 +1097,7 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
 
    LOCAL hRec
 
-   o_pobjekti()
+   kalk_o_pobjekti()
    kalk_o_objekti()
 
    MsgO( "objekti -> pobjekti" )
@@ -1109,6 +1115,11 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
    ENDDO
 
    MsgC()
+
+   altd()
+   SELECT POBJEKTI
+   INDEX ON field->id TAG "1"
+
 
    RETURN .T.
 

@@ -662,7 +662,7 @@ FUNCTION st_res_niv_p( cVar, cKolNula )
    LOCAL nURazlspdv
 
    o_kalk_pript()
-   o_pobjekti()
+   kalk_o_pobjekti()
    o_roba()
    o_tarifa()
 

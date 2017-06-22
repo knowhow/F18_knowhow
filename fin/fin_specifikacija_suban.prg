@@ -32,10 +32,11 @@ FUNCTION fin_specifikacija_suban()
    LOCAL cExpRptDN := "N"
    LOCAL cOpcine := Space( 20 )
    LOCAL cVN := Space( 20 )
-   LOCAL bZagl :=  {|| zagl_fin_specif( cSkVar ) }
+   LOCAL cUslovPartnerTelefon := Space( 100 ), cFilterPartnerTelefon
+   LOCAL bZagl :=  {|| zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon ) }
    LOCAL oPDF, xPrintOpt
    LOCAL cSqlWhere
-
+   LOCAL nTArea
    LOCAL nC
    PRIVATE cSkVar := "N"
    PRIVATE fK1 := fk2 := fk3 := fk4 := "N"
@@ -80,40 +81,40 @@ FUNCTION fin_specifikacija_suban()
    SELECT params
    USE
 
-  // o_partner()
+   // o_partner()
 
    cTip := "1"
-   Box( "", 20, 65 )
+   Box( "", 20, 80 )
    SET CURSOR ON
    PRIVATE cK1 := cK2 := "9"
    PRIVATE cK3 := cK4 := "99"
 
 
-   //IF gDUFRJ == "D"
-    //  cIdRj := Space( 60 )
-   //ELSE
-      cIdRj := "999999"
-   //ENDIF
+   // IF gDUFRJ == "D"
+   // cIdRj := Space( 60 )
+   // ELSE
+   cIdRj := "999999"
+   // ENDIF
    cFunk := "99999"
    cFond := "9999"
    cNula := "N"
    DO WHILE .T.
       @ m_x + 1, m_y + 6 SAY8 "SPECIFIKACIJA SUBANALITIČKIH KONTA"
-      //IF gDUFRJ == "D"
-      //   cIdFirma := PadR( self_organizacija_id() + ";", 30 )
-      //   @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
-      //ELSE
+      // IF gDUFRJ == "D"
+      // cIdFirma := PadR( self_organizacija_id() + ";", 30 )
+      // @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
+      // ELSE
 
-         @ m_x + 3, m_y + 2 SAY "Firma "
-         ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ m_x + 3, m_y + 2 SAY "Firma "
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
-      //ENDIF
+      // ENDIF
       @ m_x + 4, m_y + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
       @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
       @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
       @ m_x + 6, Col() + 2 SAY "do" GET dDatDo
       IF fin_dvovalutno()
-         @ m_x + 7, m_y + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTip VALID ctip $ "123"
+         @ m_x + 7, m_y + 2 SAY8 "Obračun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTip VALID ctip $ "123"
       ELSE
          cTip := "1"
       ENDIF
@@ -127,11 +128,12 @@ FUNCTION fin_specifikacija_suban()
       cRasclaniti := "N"
 
       IF gFinRj == "D"
-         @ m_x + 13, m_y + 2 SAY "Rasclaniti po RJ (D/N) "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
-         @ m_x + 14, m_y + 2 SAY "Rasclaniti po RJ/FUNK/FOND? (D/N) "  GET cRascFunkFond PICT "@!" VALID cRascFunkFond $ "DN"
+         @ m_x + 13, m_y + 2 SAY8 "Rašclaniti po RJ (D/N) "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
+         @ m_x + 14, m_y + 2 SAY8 "Rašclaniti po RJ/FUNK/FOND? (D/N) "  GET cRascFunkFond PICT "@!" VALID cRascFunkFond $ "DN"
       ENDIF
 
-      @ m_x + 15, m_y + 2 SAY8 "Općina (prazno-sve):" GET cOpcine
+      @ m_x + 15, m_y + 2 SAY8 "PARTNER: Općina (prazno-sve):" GET cOpcine
+      @ m_x + 16, m_y + 2 SAY8 "        Telefon (prazno-svi):" GET cUslovPartnerTelefon PICT "@!S20"
 
       UpitK1k4( 16 )
 
@@ -151,15 +153,16 @@ FUNCTION fin_specifikacija_suban()
       USE
 
       cSqlWhere := parsiraj_sql( "idkonto", qqKonto )
-      cSqlWhere += " AND " + parsiraj_sql( "idpartner", Trim( qqPartner) )
+      cSqlWhere += " AND " + parsiraj_sql( "idpartner", Trim( qqPartner ) )
 
-      //IF gDUFRJ == "D"
-      //   aUsl3 := Parsiraj( cIdFirma, "IdFirma" )
-      //   aUsl4 := Parsiraj( cIdRJ, "IdRj" )
-      //ENDIF
+      // IF gDUFRJ == "D"
+      // aUsl3 := Parsiraj( cIdFirma, "IdFirma" )
+      // aUsl4 := Parsiraj( cIdRJ, "IdRj" )
+      // ENDIF
       aBV := Parsiraj( qqBrDok, "UPPER(BRDOK)", "C" )
       aVN := Parsiraj( cVN, "IDVN", "C" )
-      IF aBV <> NIL .AND. aVN <> NIL  //.AND. iif( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
+      cFilterPartnerTelefon := Parsiraj( cUslovPartnerTelefon, "telefon" )
+      IF aBV <> NIL .AND. aVN <> NIL  // .AND. iif( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
          EXIT
       ENDIF
    ENDDO
@@ -180,7 +183,7 @@ FUNCTION fin_specifikacija_suban()
       o_rj()
    ENDIF
 
-   //o_partner()
+   // o_partner()
    o_konto()
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    find_suban_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto,idpartner,brdok", cSqlWhere )
@@ -189,36 +192,36 @@ FUNCTION fin_specifikacija_suban()
    CistiK1k4()
 
    SELECT SUBAN
-   //IF !Empty( cIdFirma ) .AND. gDUFRJ != "D"
-      IF cRasclaniti == "D"
-         INDEX ON idfirma + idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
-         SET ORDER TO TAG "SUBSUB"
-      ELSEIF cRascFunkFond == "D"
-         INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond + DToS( datdok ) TO SUBSUB
-         SET ORDER TO TAG "SUBSUB"
+   // IF !Empty( cIdFirma ) .AND. gDUFRJ != "D"
+   IF cRasclaniti == "D"
+      INDEX ON idfirma + idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
+      SET ORDER TO TAG "SUBSUB"
+   ELSEIF cRascFunkFond == "D"
+      INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond + DToS( datdok ) TO SUBSUB
+      SET ORDER TO TAG "SUBSUB"
 
-      ELSE
-         SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
-      ENDIF
-   //ELSE
-    //  IF cRasclaniti == "D"
-    //     INDEX ON idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
-    //     SET ORDER TO TAG "SUBSUB"
-    //  ELSEIF cRascFunkFond == "D"
-    //     INDEX ON idkonto + idpartner + idrj + funk + fond + DToS( datdok ) TO SUBSUB
-    //     SET ORDER TO TAG "SUBSUB"
-    //  ELSE
-    //     cIdFirma := ""
-    //     INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + STR( RBr, 5, 0) TO SVESUB
-    //     SET ORDER TO TAG "SVESUB"
-    //  ENDIF
-   //ENDIF
+   ELSE
+      SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
+   ENDIF
+   // ELSE
+   // IF cRasclaniti == "D"
+   // INDEX ON idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
+   // SET ORDER TO TAG "SUBSUB"
+   // ELSEIF cRascFunkFond == "D"
+   // INDEX ON idkonto + idpartner + idrj + funk + fond + DToS( datdok ) TO SUBSUB
+   // SET ORDER TO TAG "SUBSUB"
+   // ELSE
+   // cIdFirma := ""
+   // INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + STR( RBr, 5, 0) TO SVESUB
+   // SET ORDER TO TAG "SVESUB"
+   // ENDIF
+   // ENDIF
 
-   //IF gDUFRJ == "D"
-  //    cFilter := aUsl3
-   //ELSE
-      cFilter := "IdFirma=" + dbf_quote( cIdfirma )
-   //ENDIF
+   // IF gDUFRJ == "D"
+   // cFilter := aUsl3
+   // ELSE
+   cFilter := "IdFirma=" + dbf_quote( cIdfirma )
+   // ENDIF
 
    IF !Empty( cVN )
       cFilter += ( ".and. " + aVN )
@@ -233,19 +236,19 @@ FUNCTION fin_specifikacija_suban()
       cFilter += ( ".and. DATDOK>=" + dbf_quote( dDatOd ) + ".and. DATDOK<=" + dbf_quote( dDatDo ) )
    ENDIF
 
-   IF fk1 == "D" .AND. Len( ck1 ) <> 0
+   IF fk1 == "D" .AND. Len( cK1 ) <> 0
       cFilter += ( ".and. k1='" + ck1 + "'" )
    ENDIF
 
-   IF fk2 == "D" .AND. Len( ck2 ) <> 0
+   IF fk2 == "D" .AND. Len( cK2 ) <> 0
       cFilter += ( ".and. k2='" + ck2 + "'" )
    ENDIF
 
-   IF fk3 == "D" .AND. Len( ck3 ) <> 0
+   IF fk3 == "D" .AND. Len( cK3 ) <> 0
       cFilter += ( ".and. k3='" + ck3 + "'" )
    ENDIF
 
-   IF fk4 == "D" .AND. Len( ck4 ) <> 0
+   IF fk4 == "D" .AND. Len( cK4 ) <> 0
       cFilter += ( ".and. k4='" + ck4 + "'" )
    ENDIF
 
@@ -265,7 +268,7 @@ FUNCTION fin_specifikacija_suban()
       cFilter += ( ".and. Fond='" + cFond + "'" )
    ENDIF
 
-   SET FILTER to &cFilter
+   SET FILTER TO &cFilter
 
    GO TOP
    EOF CRET
@@ -325,12 +328,20 @@ FUNCTION fin_specifikacija_suban()
          cIdKonto := IdKonto
          cIdPartner := field->idPartner
 
-         IF !Empty( cOpcine )
+         IF !Empty( cOpcine ) .OR. !Empty( cUslovPartnerTelefon )
             select_o_partner( cIdPartner )
-            IF AllTrim( field->idops ) $ cOpcine
-               // to je taj partner...
-            ELSE
-               // posto nije to taj preskoci...
+         ENDIF
+
+         IF !Empty( cOpcine )
+            IF !( AllTrim( field->idops ) $ cOpcine )
+               SELECT ( nTArea )
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
+
+         IF !Empty( cUslovPartnerTelefon )
+            IF ! &cFilterPartnerTelefon
                SELECT ( nTArea )
                SKIP
                LOOP
@@ -463,7 +474,7 @@ FUNCTION fin_specifikacija_suban()
                   cRj_naz := nil
                ENDIF
 
-               fill_ss_tbl( cIdKonto, cIdPartner, IIF( Empty( cIdPartner ), konto->naz, AllTrim( partn->naz ) ), nD, nP, nD - nP, cRj_id, cRj_naz )
+               fill_ss_tbl( cIdKonto, cIdPartner, iif( Empty( cIdPartner ), konto->naz, AllTrim( partn->naz ) ), nD, nP, nD - nP, cRj_id, cRj_naz )
             ENDIF
 
             nKd += nD
@@ -587,9 +598,9 @@ STATIC FUNCTION FFor1()
       cPom7777 := "ukGOD" + aGod[ i, 1 ]
       &cPom7777 := 0
    NEXT
-   cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) -1, 4 )
+   cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) - 1, 4 )
    &cPom7777 := 0
-   cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) -2, 4 )
+   cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) - 2, 4 )
    &cPom7777 := 0
 
    DO WHILE !Eof() .AND. IDPARTNER == cIdP
@@ -599,11 +610,11 @@ STATIC FUNCTION FFor1()
          &cPom7777 += &cPom7778
          ukPartner += &cPom7778
       NEXT
-      cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) -1, 4 )
+      cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) - 1, 4 )
       cPom7778 := SubStr( cPom7777, 3 )
       &cPom7777 += &cPom7778
       ukPartner += &cPom7778
-      cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) -2, 4 )
+      cPom7777 := "ukGOD" + Str( Val( aGod[ i - 1, 1 ] ) - 2, 4 )
       cPom7778 := SubStr( cPom7777, 3 )
       &cPom7777 += &cPom7778
       ukPartner += &cPom7778
@@ -632,7 +643,7 @@ STATIC FUNCTION FSvaki1()
  *  param cSkVar
  */
 
-FUNCTION zagl_fin_specif( cSkVar )
+FUNCTION zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon )
 
    ?
    IF is_legacy_ptxt()
@@ -657,7 +668,16 @@ FUNCTION zagl_fin_specif( cSkVar )
 
    ?? " NA DAN: "; ?? Date()
    IF !Empty( qqBrDok )
-      ? "Izvjestaj pravljen po uslovu za broj veze/racuna: '" + Trim( qqBrDok ) + "'"
+      ?U "Izvještaj pravljen po uslovu za broj veze/racuna: '" + Trim( qqBrDok ) + "'"
+   ENDIF
+
+  ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
+
+   IF !( Empty( cOpcine ) )
+      ?U "PARTNERI Općine", Trim( cOpcine )
+   ENDIF
+   IF !( Empty( cUslovPartnerTelefon ) )
+      ?U "PARTNERI Telefon:", Trim( cUslovPartnerTelefon )
    ENDIF
 
    IF is_legacy_ptxt()
@@ -665,16 +685,6 @@ FUNCTION zagl_fin_specif( cSkVar )
       B_OFF
    ENDIF
 
-   IF gNW == "D"
-      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
-   ELSE
-      IF Empty( cIdFirma )
-         ? "Firma:", self_organizacija_naziv(), "(SVE RJ)"
-      ELSE
-         select_o_partner( cIdFirma )
-         ? "Firma:", cIdfirma, PadR( partn->naz, 25 ), partn->naz2
-      ENDIF
-   ENDIF
 
    ?
    prikaz_k1_k4_rj()

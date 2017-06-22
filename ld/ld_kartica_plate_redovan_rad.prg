@@ -535,7 +535,7 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
       @ PRow(), 60 + Len( cLMSK ) SAY nMUkIspl PICT gpici
 
       ? cMainLine
-      ? cLMSK + "8. NEOPOREZIVE NAKNADE nI ODBICI (preb.stanje)"
+      ? cLMSK + "8. NEOPOREZIVE NAKNADE I ODBICI (preb.stanje)"
 
       @ PRow(), 60 + Len( cLMSK ) SAY nOsnOstalo PICT gpici
 
@@ -548,7 +548,7 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
       nZaIsplatu := ROUND2( nMUkIspl + nOsnOstalo, gZaok2 )
 
       ? cMainLine
-      ?  cLMSK + "UKUPNO ZA ISPLATU SA NAKNADAMA nI ODBICIMA (7+8)"
+      ?  cLMSK + "UKUPNO ZA ISPLATU SA NAKNADAMA I ODBICIMA (7+8)"
       @ PRow(), 60 + Len( cLMSK ) SAY nZaIsplatu PICT gpici
 
       ? cMainLine

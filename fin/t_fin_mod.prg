@@ -44,6 +44,7 @@ METHOD programski_modul_osnovni_meni()
    LOCAL _izbor := 1
    LOCAL _opc := {}
    LOCAL _opcexe := {}
+     LOCAL cSeparator := Replicate( "-", 50)
 
 
    AAdd( _opc, "1. unos/ispravka dokumenta                   " )
@@ -64,7 +65,7 @@ METHOD programski_modul_osnovni_meni()
 
    AAdd( _opc, "R. udaljene lokacije - razmjena podataka " )
    AAdd( _opcexe, {|| fin_udaljena_razmjena_podataka() } )
-   AAdd( _opc, "------------------------------------" )
+   AAdd( _opc, cSeparator )
    AAdd( _opcexe, {|| nil } )
    AAdd( _opc, "S. matični podaci - šifarnici" )
    AAdd( _opcexe, {|| MnuSifrarnik() } )
@@ -72,15 +73,15 @@ METHOD programski_modul_osnovni_meni()
    AAdd( _opc, "A. kontrolni izvještaji" )
    AAdd( _opcexe, {|| fin_kontrolni_izvjestaji_meni() } )
 
-   AAdd( _opc, "------------------------------------" )
+   AAdd( _opc, cSeparator )
    AAdd( _opcexe, {|| nil } )
-   AAdd( _opc, "K. kontrola zbira datoteka" )
+   AAdd( _opc, "K. kontrola zbira finansijskih transakcija" )
    AAdd( _opcexe, {|| fin_kontrola_zbira_tabele_prometa( .T. ) } )
    AAdd( _opc, "P. povrat dokumenta u pripremu" )
    AAdd( _opcexe, {|| fin_povrat_naloga() } )
 
 
-   AAdd( _opc, "------------------------------------" )
+   AAdd( _opc, cSeparator )
    AAdd( _opcexe, {|| nil } )
    AAdd( _opc, "X. parametri" )
    AAdd( _opcexe, {|| mnu_fin_params() } )

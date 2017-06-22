@@ -40,9 +40,9 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
    IF ( lKontrolaZaDatumskiPeriod )
       dDatOd := CToD( "01.01." + Str( tekuca_sezona(), 4, 0 ) )
       dDatDo := CToD( "31.12." + Str( tekuca_sezona(), 4, 0 ) )
-      Box(, 1, 40 )
-      @ 1 + m_x, 2 + m_y SAY "Datum od" GET dDatOd
-      @ 1 + m_x, Col() + 2 SAY "do" GET dDatDo
+      Box(, 1, 45 )
+      @ 1 + m_x, 2 + m_y SAY "Kontrola za period: " GET dDatOd
+      @ 1 + m_x, Col() + 2 SAY "-" GET dDatDo
       READ
       BoxC()
    ENDIF
@@ -263,7 +263,7 @@ FUNCTION auto_kzb()
    lKzbOk := fin_kontrola_zbira_tabele_prometa( NIL, .T. )
 
    IF !lKzbOk
-      MsgBeep( "Kontrola zbira datoteka je pronasla greske!#Pregledajte greske..." )
+      MsgBeep( "Kontrola zbira datoteka je pronašla greske!#Pregledajte greške." )
       fin_kontrola_zbira_tabele_prometa()
    ENDIF
 

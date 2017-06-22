@@ -40,8 +40,7 @@ METHOD mMenu()
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
+
 METHOD programski_modul_osnovni_meni()
 
    PRIVATE Izbor := 1

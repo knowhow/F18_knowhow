@@ -16,7 +16,7 @@ unset F18_DEBUG_THREAD
 unset F18_DEBUG_SYNC
 unset F18_DEBUG_SQL
 
-./build_lib.sh
+#./build_lib.sh
 
 scripts/update_f18_ver_ch.sh
 

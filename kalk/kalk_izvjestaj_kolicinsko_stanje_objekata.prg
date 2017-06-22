@@ -76,8 +76,8 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    cPicProc := "999999.99%"
    cPicDem := "9999999.99"
    cPicKol := kalk_pic_kolicina_bilo_gpickol()
-   qqKonto := PadR( "13;", 60 )
-   qqRoba := Space( 60 )
+   qqKonto := PadR( "13;", 100 )
+   qqRoba := Space( 100 )
 
    IF uslovi_izvjestaja( @cNObjekat ) == 0
       RETURN .F.
@@ -91,7 +91,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    napuni_tabelu_pobjekti_iz_objekti()
 
-   CreTblRek1( "1" )
+   kalk_cre_tabela_kalk_rekap1( "1" )
 
    otvori_tabele()
 

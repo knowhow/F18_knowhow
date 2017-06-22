@@ -31,7 +31,7 @@ FUNCTION kalk_sumiraj_kolicinu( nUlaz, nIzlaz, nTotalUlaz, nTotalIzlaz, fPocStan
 
 
 
-FUNCTION CreTblRek1( cVarijanta )
+FUNCTION kalk_cre_tabela_kalk_rekap1( cVarijanta )
 
    LOCAL _table := "kalk_rekap1"
 

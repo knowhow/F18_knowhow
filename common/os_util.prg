@@ -550,7 +550,7 @@ FUNCTION f18_open_mime_document( cDocument )
 
 
    IF is_windows()
-      nError := f18_run( cCmd, cDocument )
+      nError := f18_run( cCmd, cDocument, NIL, .T. )
    ELSE
       cPrefixCmd := get_run_prefix_cmd()
       cCmd += cPrefixCmd

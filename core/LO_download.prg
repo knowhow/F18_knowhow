@@ -16,7 +16,7 @@ STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/LO/
 STATIC s_cProg // windows: lo.cmd, darwin: lo
 
 #ifdef __PLATFORM__WINDOWS
-STATIC s_cSHA256sum := "bb71885d86bc56c02dbd2f1d329c52ecd476e35f58c77fa86fe81b9533a3bc8e"  // LO/lo.cmd (005 verzija)
+STATIC s_cSHA256sum := "a7c97470ad4606eecc029cf7934dac9101ca62d201c5a34bb605efe297c83a75"  // LO/lo.cmd (006 verzija)
 #endif
 
 #ifdef __PLATFORM__LINUX
@@ -77,10 +77,9 @@ FUNCTION LO_open_dokument( cFile, lDbf )
    ENDIF
 
    IF lDbf
-   altd()
+      AltD()
       MsgO( " LO konvert .dbf -> .xlsx" )
-      // libreoffice --invisible --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25 r_export.dbf
-      f18_run( cCmd + " --invisible --convert-to xlsx:'Calc MS Excel 2007 XML' --infilter=dBase:25", cFile )
+      f18_run( LO_convert_xlsx_cmd(), cFile ) // libreoffice --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25 r_export.dbf
       Msgc()
       cFile := StrTran( cFile, ".dbf", ".xlsx" )
    ENDIF
@@ -94,6 +93,12 @@ FUNCTION LO_cmd()
    check_LO_download()
 
    RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg
+
+FUNCTION LO_convert_xlsx_cmd()
+
+   check_LO_download()
+
+   RETURN s_cDirF18Util + s_cUtilName + SLASH + "lo_xlsx" + iif( is_windows(), ".cmd", "" )
 
 
 FUNCTION check_LO_download()

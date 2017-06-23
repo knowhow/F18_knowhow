@@ -31,6 +31,7 @@ FUNCTION LO_open_dokument( cFile, lDbf )
    LOCAL lAsync := .F.
    LOCAL cCmd, lUseLibreofficeSystem := .F., lFirstRun := .F.
    LOCAL cOdgovor
+   LOCAL cFileOut
 
    hb_default( @lDbf, .F. ) // aka r_export.dbf
    IF s_cDownloadF18LO == NIL
@@ -79,9 +80,10 @@ FUNCTION LO_open_dokument( cFile, lDbf )
    IF lDbf
       AltD()
       MsgO( " LO konvert .dbf -> .xlsx" )
-      f18_run( LO_convert_xlsx_cmd(), cFile ) // libreoffice --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25 r_export.dbf
+      cFileOut := StrTran( cFile, ".dbf", ".xlsx" )
+      f18_run( LO_convert_xlsx_cmd(), cFile, cFile ) // libreoffice --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25 r_export.dbf
       Msgc()
-      cFile := StrTran( cFile, ".dbf", ".xlsx" )
+      cFile := cFileOut
    ENDIF
 
    RETURN f18_run( cCmd, cFile, NIL, lAsync )

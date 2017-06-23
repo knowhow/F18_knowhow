@@ -77,7 +77,7 @@ FUNCTION krpt_export()
 
    @ m_x + 11, m_y + 2 SAY PadR( "-", 30, "-" )
    @ m_x + 12, m_y + 2 SAY "Konverzija slova (0-8) " GET cKonverzija PICT "9"
-   @ m_x + 13, m_y + 2 SAY "Pokreni oo/office97/officexp/office2003 ?" GET cLauncher PICT "@S26" VALID set_launcher( @cLauncher )
+   //@ m_x + 13, m_y + 2 SAY "Pokreni oo/office97/officexp/office2003 ?" GET cLauncher PICT "@S26" VALID set_launcher( @cLauncher )
 
    READ
    BoxC()
@@ -89,7 +89,7 @@ FUNCTION krpt_export()
    find_kalk_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
 
 
-  // o_roba()
+   // o_roba()
    o_konto()
    o_koncij()
    o_tarifa()
@@ -101,8 +101,7 @@ FUNCTION krpt_export()
 
    my_close_all_dbf()
 
-
-
+/*
 STATIC FUNCTION set_launcher( cLauncher )
 
    LOCAL cPom
@@ -125,14 +124,13 @@ STATIC FUNCTION set_launcher( cLauncher )
    ENDIF
 
    RETURN .T.
+*/
 
 /* get_uio_fields(aArr)
  *     napuni matricu aArr sa specifikacijom polja tabele
  *   param: aArr - matrica
  */
 STATIC FUNCTION get_exp_fields( aArr, cIdVd, lVpcCij, lMpcCij )
-
-
 
    IF lZaokruziti
       nCijDec := cij_decimala
@@ -191,8 +189,7 @@ STATIC FUNCTION get_exp_fields( aArr, cIdVd, lVpcCij, lMpcCij )
 
 FUNCTION kcreate_dbf_r_export( cIdVd, lVpcCij, lMpcCij )
 
-
-   LOCAL cExpTbl := "R_EXPORT.DBF"
+   LOCAL cExpTbl := "r_export.dbf"
    LOCAL aArr := {}
 
    my_close_all_dbf()
@@ -215,7 +212,6 @@ FUNCTION kcreate_dbf_r_export( cIdVd, lVpcCij, lMpcCij )
 // napuni r_uio
 STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
-
    LOCAL cPom1
    LOCAL cPom2
    LOCAL cKomShow
@@ -232,11 +228,11 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
    SELECT ( F_KALK )
 
-///
-//   SELECT ( F_ROBA )
-//   IF !Used()
-//      o_roba()
-  // ENDIF
+// /
+// SELECT ( F_ROBA )
+// IF !Used()
+// o_roba()
+   // ENDIF
 
    SELECT ( F_TARIFA )
    IF !Used()
@@ -289,11 +285,11 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
          SELECT r_export
          REPLACE jmj WITH cPom2, ;
-            naziv_roba WITH cPom1,;
-            pst_tarifa WITH ( 1 -1 / ( 1 + tarifa->opp / 100 ) ) * 100, ;
+            naziv_roba WITH cPom1, ;
+            pst_tarifa WITH ( 1 - 1 / ( 1 + tarifa->opp / 100 ) ) * 100, ;
             st_tarifa WITH tarifa->opp
 
-         REPLACE cij_nab_d WITH kalk->nc,;
+         REPLACE cij_nab_d WITH kalk->nc, ;
             cij_nab WITH roba->nc
 
          IF lMpcCij
@@ -309,7 +305,7 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
          ENDIF
 
          IF roba->( FieldPos( "zanivel" ) <> 0 )
-            REPLACE cij_nov_1 WITH roba->zanivel,;
+            REPLACE cij_nov_1 WITH roba->zanivel, ;
                cij_nov_2 WITH roba->zaniv2
          ENDIF
 
@@ -330,27 +326,26 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
    my_close_all_dbf()
 
-   cLauncher := AllTrim( cLauncher )
-   IF ( cLauncher == "start" )
-      cKom := cLauncher + " " + my_home()
-   ELSE
-      cKom := cLauncher + " " + my_home() + "r_export.dbf"
-   ENDIF
+   // cLauncher := AllTrim( cLauncher )
+   // IF ( cLauncher == "start" )
+   // cKom := cLauncher + " " + my_home()
+   // ELSE
+   // cKom := cLauncher + " " + my_home() + "r_export.dbf"
+   // ENDIF
 
-   MsgBeep( "Tabela " + my_home() + "R_EXPORT.DBF je formirana, i ima:" + Str( nRbr, 5 ) + "stavki##" + ;
+   MsgBeep( "Tabela " + my_home() + "r_export.dbf je formirana, i ima:" + Str( nRbr, 5 ) + "stavki##" + ;
       "Sa opcijom Open file se ova tabela ubacuje u excel #" + ;
       "Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" + ;
       "Tako dobijeni xls fajl mozete mijenjati #" + ;
       "prema svojim potrebama ..." )
 
-   IF Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D" ) == "D"
-      f18_run( cKom )
-   ENDIF
 
-   RETURN
+   LO_open_dokument( my_home() + "r_export.dbf", .T. )
 
+   RETURN .T.
 
 
+/*
 STATIC FUNCTION msoff_start( cVersion )
 
    LOCAL cPom :=  'start "C:\Program Files\Microsoft Office\Office#\excel.exe"'
@@ -371,3 +366,4 @@ STATIC FUNCTION msoff_start( cVersion )
       // office najnoviji 2005?2006
       RETURN StrTran( cPom, "#", "12" )
    ENDIF
+*/

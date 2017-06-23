@@ -80,9 +80,9 @@ FUNCTION LO_open_dokument( cFile, lDbf )
    altd()
       MsgO( " LO konvert .dbf -> .xlsx" )
       // libreoffice --invisible --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25 r_export.dbf
-      f18_run( cCmd + ' --invisible --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25', cFile )
+      f18_run( cCmd + " --invisible --convert-to xlsx:'Calc MS Excel 2007 XML' --infilter=dBase:25", cFile )
       Msgc()
-      cFile := SubStr( cFile, ".dbf", ".xlsx" )
+      cFile := StrTran( cFile, ".dbf", ".xlsx" )
    ENDIF
 
    RETURN f18_run( cCmd, cFile, NIL, lAsync )

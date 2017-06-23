@@ -65,7 +65,7 @@ FUNCTION fin_suban_kartica_sql( otv_stavke )
 
    IF _exported
       my_close_all_dbf()
-      f18_open_mime_document( my_home() + "r_export.dbf" )
+      LO_open_dokument( my_home() + "r_export.dbf", .T. )
    ENDIF
 
    RETURN .T.

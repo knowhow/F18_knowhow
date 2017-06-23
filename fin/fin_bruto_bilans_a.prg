@@ -788,7 +788,7 @@ METHOD FinBrutoBilans:print()
    ::fill_r_export()
 
    IF ::hParams[ "export_dbf" ]
-      f18_open_mime_document( my_home() + my_dbf_prefix() + "r_export.dbf" )
+      open_r_export_table()
       RETURN SELF
    ENDIF
 

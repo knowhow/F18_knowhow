@@ -53,10 +53,10 @@ FUNCTION fin_suban_specifikacija_sql()
    ENDIF
 
    IF _exported
-      f18_open_mime_document( my_home() + my_dbf_prefix() + "r_export.dbf" )
+      open_r_export_table()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -386,7 +386,7 @@ FUNCTION windows_run_invisible( cProg, cArg, cStdOut, cStdErr, lAsync )
    IF lStaraVerzija .OR. !File( cDirF18Util + "run_invisible.vbs" )
       nH := FCreate( cDirF18Util + "run_invisible.vbs" )
 
-      FWrite( nH, "'002" + hb_eol() )
+      FWrite( nH, "'003" + hb_eol() )
       FWrite( nH, 'Dim cArg1, cArg2, cArg3, cUserProfile, cShortUserProfile' + hb_eol() )
       FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' + hb_eol() )
       FWrite( nH, 'Set fso = CreateObject("Scripting.FileSystemObject")' + hb_eol() )
@@ -403,16 +403,29 @@ FUNCTION windows_run_invisible( cProg, cArg, cStdOut, cStdErr, lAsync )
       FWrite( nH, 'if Err.number <> 0 then' + hb_eol() )
       FWrite( nH, '        Set fsoFile = fso.GetFolder( cUserProfile )' + hb_eol() )
       FWrite( nH, 'end if' + hb_eol() )
-
       FWrite( nH, 'if fsoFile is not nothing then' + hb_eol() )
       FWrite( nH, '   cShortUserProfile = fsoFile.ShortPath' + hb_eol() )
       FWrite( nH, 'end if' + hb_eol() )
-
       // ' WScript.echo objShell.Environment("System").Item("NUMBER_OF_PROCESSORS")
-
       FWrite( nH, 'cArg1=replace(Wscript.arguments(0),cUserProfile,cShortUserProfile)' + hb_eol() )
       FWrite( nH, 'cArg2=replace(Wscript.arguments(1),cUserProfile,cShortUserProfile)' + hb_eol() )
       FWrite( nH, 'cArg3=replace(Wscript.arguments(2),cUserProfile,cShortUserProfile)' + hb_eol() )
+
+      FWrite( nH, 'Set fsoFile = fso.GetFile( cArg2 )' + hb_eol() ) // cArg2 shortPath if file or directory
+      FWrite( nH, 'if Err.number <> 0 then' + hb_eol() )
+      FWrite( nH, '      Set fsoFile = fso.GetFolder( cArg2 )' + hb_eol() )
+      FWrite( nH, 'end if' + hb_eol() )
+      FWrite( nH, 'if fsoFile is not nothing then' + hb_eol() )
+      FWrite( nH, '   cArg2 = fsoFile.ShortPath' + hb_eol() )
+      FWrite( nH, 'end if' + hb_eol() )
+      FWrite( nH, 'Set fsoFile = fso.GetFile( cArg3 )' + hb_eol() ) // cArg3 shortPath if file or directory
+      FWrite( nH, 'if Err.number <> 0 then' + hb_eol() )
+      FWrite( nH, '      Set fsoFile = fso.GetFolder( cArg3 )' + hb_eol() )
+      FWrite( nH, 'end if' + hb_eol() )
+      FWrite( nH, 'if fsoFile is not nothing then' + hb_eol() )
+      FWrite( nH, '   cArg3 = fsoFile.ShortPath' + hb_eol() )
+      FWrite( nH, 'end if' + hb_eol() )
+
       FWrite( nH, 'objShell.Run cArg1 & " " & cArg2 & " " & cArg3, 0, True' )
 
       FClose( nH )

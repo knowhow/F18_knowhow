@@ -103,7 +103,7 @@ FUNCTION LO_convert_xlsx_cmd()
 
    check_LO_download()
 
-   RETURN s_cDirF18Util + s_cUtilName + SLASH + "lo_xlsx" + iif( is_windows(), ".cmd", "" )
+   RETURN s_cDirF18Util + s_cUtilName + SLASH + "lo_dbf_xlsx" + iif( is_windows(), ".cmd", "" )
 
 
 FUNCTION check_LO_download()

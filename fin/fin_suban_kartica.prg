@@ -451,8 +451,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       ENDIF
 */
       IF !Empty( qqNazKonta )
-         SELECT konto
-         HSEEK cIdKonto
+         select_o_konto( cIdKonto )
          IF !( &( aNK ) )
             SELECT suban
             SKIP 1
@@ -513,8 +512,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          ? "KONTO:  "
          @ PRow(), PCol() + 1 SAY cIdKonto
 
-         SELECT KONTO
-         HSEEK cIdKonto
+         select_o_konto( cIdKonto )
          cKontoNaziv := field->naz
 
          @ PRow(), PCol() + 2 SAY cKontoNaziv
@@ -554,8 +552,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                ? m
                ?U "KONTO: "
                @ PRow(), PCol() + 1 SAY cIdKonto
-               SELECT KONTO
-               HSEEK cIdKonto
+               select_o_konto( cIdKonto )
                @ PRow(), PCol() + 2 SAY naz
                ?U "Partner: "
                @ PRow(), PCol() + 1 SAY iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", ":  SVI", cIdPartner )
@@ -1288,7 +1285,7 @@ STATIC FUNCTION kartica_otvori_tabele()
 
    my_close_all_dbf()
 
-   o_konto()
+  // o_konto()
   // o_partner()
    o_sifk()
    o_sifv()

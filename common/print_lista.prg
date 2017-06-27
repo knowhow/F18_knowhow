@@ -42,7 +42,7 @@
 
 FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
 
-   LOCAL i, k
+   LOCAL i, j, k
    LOCAL bErrorHandler
    LOCAL bLastHandler
    LOCAL objErrorInfo
@@ -50,7 +50,6 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
    LOCAL nSort
    LOCAL cStMemo := "N"
    LOCAL aKol := {}
-   LOCAL j
    LOCAL xPom
    LOCAL nDuz1
    LOCAL nDuz2
@@ -109,33 +108,33 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
    ENDIF
 
    lImaSifK := .F.
-   IF AScan( ImeKol, {| x| Len( x ) > 2 .AND. ValType( x[ 3 ] ) == "C" .AND. "SIFK->" $ x[ 3 ] } ) <> 0
+   IF AScan( ImeKol, {| x | Len( x ) > 2 .AND. ValType( x[ 3 ] ) == "C" .AND. "SIFK->" $ x[ 3 ] } ) <> 0
       lImaSifK := .T.
    ENDIF
 
    IF Len( ImeKol[ 1 ] ) > 2 .AND. !lImaSifK
-      PRIVATE aStruct := dbStruct(), anDuz[ FCount(), 2 ], cTxt2
+
+      PRIVATE aStruct := dbStruct(), aNDuzine[ FCount(), 2 ], cTxt2
       FOR i := 1 TO Len( aStruct )
 
-         k := AScan( ImeKol, {| x| FIELD( i ) == Upper( x[ 3 ] ) } ) // treci element jednog reda u matrici imekol
+         k := AScan( ImeKol, {| x | Field( i ) == Upper( x[ 3 ] ) } ) // treci element jednog reda u matrici imekol
 
-         j := IIF( k <> 0, Kol[ k ], 0 )
+         j := iif( k <> 0, Kol[ k ], 0 )
 
          IF j <> 0
             xPom := Eval( ImeKol[ k, 2 ] )
-            anDuz[ j, 1 ] := Max( Len( ImeKol[ k, 1 ] ), Len( iif( ValType( xPom ) == "D", ;
-               DToC( xPom ), IF( ValType( xPom ) == "N", Str( xPom ), xPom ) ) ) )
-            IF anDuz[ j, 1 ] > 100
-               anDuz[ j, 1 ] := 100
-               anDuz[ j, 2 ] := { ImeKol[ k, 1 ], ImeKol[ k, 2 ], .F., ;
+            aNDuzine[ j, 1 ] := Max( Len( ImeKol[ k, 1 ] ), Len( iif( ValType( xPom ) == "D", DToC( xPom ), IF( ValType( xPom ) == "N", Str( xPom ), xPom ) ) ) )
+            IF aNDuzine[ j, 1 ] > 100
+               aNDuzine[ j, 1 ] := 100
+               aNDuzine[ j, 2 ] := { ImeKol[ k, 1 ], ImeKol[ k, 2 ], .F., ;
                   "P", ;
-                  anDuz[ j, 1 ], iif( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
+                  aNDuzine[ j, 1 ], iif( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
             ELSE
-               anDuz[ j, 2 ] := { ImeKol[ k, 1 ], ImeKol[ k, 2 ], .F., ValType( Eval( ImeKol[ k, 2 ] ) ), anDuz[ j, 1 ], iif( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
+               aNDuzine[ j, 2 ] := { ImeKol[ k, 1 ], ImeKol[ k, 2 ], .F., ValType( Eval( ImeKol[ k, 2 ] ) ), aNDuzine[ j, 1 ], iif( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
             ENDIF
          ELSE
             IF aStruct[ i, 2 ] == "M"
-               @ m_x + 6, m_y + 3 SAY "Stampati " + aStruct[ i, 1 ] GET cStMemo PICT "@!" VALID cStMemo $ "DN"
+               @ m_x + 6, m_y + 3 SAY8 "Štampati " + aStruct[ i, 1 ] GET cStMemo PICT "@!" VALID cStMemo $ "DN"
                READ
                IF cStMemo == "D"
                   cNazMemo := aStruct[ i, 1 ]
@@ -147,10 +146,10 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
       AAdd( aKol, { "R.br.", {|| Str( RedBr, 4 ) + "." }, .F., "C", 5, 0, 1, 1 } )
       j := 1
       FOR i := 1 TO Len( aStruct )
-         IF anDuz[ i, 1 ] != nil
+         IF aNDuzine[ i, 1 ] != nil
             ++j
-            AAdd( anDuz[ i, 2 ], 1 ); AAdd( anDuz[ i, 2 ], j )
-            AAdd( aKol, anDuz[ i, 2 ] )
+            AAdd( aNDuzine[ i, 2 ], 1 ); AAdd( aNDuzine[ i, 2 ], j )
+            AAdd( aKol, aNDuzine[ i, 2 ] )
          ENDIF
       NEXT
 
@@ -161,7 +160,7 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
       AAdd( aKol, { "R.br.", {|| Str( RedBr, 4 ) + "." }, .F., "C", 5, 0, 1, 1 } )
       aPom := {}
       FOR i := 1 TO Len( Kol ); AAdd( aPom, { Kol[ i ], i } ); NEXT
-      ASort( aPom,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+      ASort( aPom,,, {| x, y | x[ 1 ] < y[ 1 ] } )
       j := 0
       FOR i := 1 TO Len( Kol )
          IF aPom[ i, 1 ] > 0
@@ -169,7 +168,7 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
             aPom[ i, 1 ] := j
          ENDIF
       NEXT
-      ASort( aPom,,, {| x, y| x[ 2 ] < y[ 2 ] } )
+      ASort( aPom,,, {| x, y | x[ 2 ] < y[ 2 ] } )
       FOR i := 1 TO Len( Kol )
          Kol[ i ] := aPom[ i, 1 ]
       NEXT
@@ -239,7 +238,7 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
       QQOut( Space( gnLMarg ) )
       gP10CPI()
       gPB_ON()
-      QQOut( PadC( AllTrim( Zaglavlje ), 79 * IF( gA43 == "4", 1, 2 ) -gnLMarg ) )
+      QQOut( PadC( AllTrim( Zaglavlje ), 79 * IIF( gA43 == "4", 1, 2 ) - gnLMarg ) )
       gPB_OFF()
       QOut()
    ENDIF
@@ -260,10 +259,8 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
    ENDIF
 
 
-   print_lista_2( aKol, {|| ZaRedBlok() }, gnLMarg, ;
-      iif( Upper( Right( AllTrim( Set( _SET_PRINTFILE ) ), 3 ) ) == "RTF", 9, gTabela ), ;
-      , iif( gPrinter == "L", "L4", gA43 == "4" ), ;
-      ,, iif( gOstr == "N", -1, ),, gOdvTab == "D",, nSlogova, "Kreiranje tabele" )
+   print_lista_2( aKol, {|| ZaRedBlok() }, gnLMarg, iif( Upper( Right( AllTrim( Set( _SET_PRINTFILE ) ), 3 ) ) == "RTF", 9, gTabela ), ;
+      , iif( gPrinter == "L", "L4", gA43 == "4" ), ,, iif( gOstr == "N", - 1, ),, gOdvTab == "D",, nSlogova, "Kreiranje tabele" )
 
    IF ( gPrinter == "L" .OR. gA43 == "4" .AND. nSirIzvj > 165 )
       gPO_Port()
@@ -280,7 +277,7 @@ FUNCTION ZaRedBlok()
 
    ++RedBr
 
-   WhileEvent( RedBr, nil )
+   WhileEvent( RedBr, NIL )
 
    IF !Empty( cNazMemo )
       cTxt2 := UkloniRet( cNazMemo, .F. )
@@ -306,12 +303,11 @@ FUNCTION UkloniRet( xTekst, lPrazno )
    ENDIF
 
    RETURN cTekst
-// }
+
 
 
 STATIC FUNCTION Karaktera( cK )
 
-   // {
    IF cK == "10"
       RETURN 80
    ELSEIF cK == "12"
@@ -321,18 +317,18 @@ STATIC FUNCTION Karaktera( cK )
    ELSEIF cK == "20"
       RETURN 156
    ENDIF
-   // }
+
 
 FUNCTION IzborP2( Kol, cImef )
 
-   // {
+   LOCAL i
    PRIVATE aOBjG, cKolona, Kl
 
    Kl := Array( Len( Kol ) )
    ACopy( Kol, Kl )
 
    IF File( cImef + MEMOEXT )
-      RESTORE FROM &cImeF ADDITIVE // u~itavanje string kolona
+      RESTORE FROM &cImeF ADDITIVE // ucitavanje string kolona
       FOR i := 1 TO Len( Kl )
          IF ValType( cKolona ) == "C"
             Kl[ i ] := Val( SubStr( cKolona, ( i - 1 ) * 2 + 1, 2 ) )
@@ -366,14 +362,14 @@ FUNCTION IzborP2( Kol, cImef )
          QUIT_1
       ENDIF
       aObjG[ i ] := GetNew( m_x + j + 1, m_y + yStep )
-      @ aObjG[ i ]:row, ( aObjG[ i ]:col ) -22 SAY PadR( AllTrim( ImeKol[ i, 1 ] ), 20 )
+      @ aObjG[ i ]:row, ( aObjG[ i ]:col ) - 22 SAY PadR( AllTrim( ImeKol[ i, 1 ] ), 20 )
       aObjG[ i ]:name := "Kl[" + cIdx + "]"
 
       b1 := "Kl[" + cIdx + "]"                                                    // 3
-      aObjG[ i ]:block := {| cVal| IF( PCount() == 0, &b1., &b1. := cVal ) }               // 3
+      aObjG[ i ]:block := {| cVal | IF( PCount() == 0, &b1., &b1. := cVal ) }               // 3
 
-      aObjG[ i ]:picture := "99"
-      aObjG[ i ]:postBlock := {| nVal| DobraKol( @Kl, &cIdx. ) }
+      aObjG[ i ]:PICTURE := "99"
+      aObjG[ i ]:postBlock := {| nVal | DobraKol( @Kl, &cIdx. ) }
 
       aObjG[ i ]:display()
    NEXT
@@ -382,22 +378,25 @@ FUNCTION IzborP2( Kol, cImef )
    aObjG[ Len( Kl ) + 1 ]:row := m_x + wx
    aObjG[ Len( Kl ) + 1 ]:col := m_y + 40
    aObjG[ Len( Kl ) + 1 ]:name := "Odg"
-   aObjG[ Len( Kl ) + 1 ]:block := {| cVal| iif( cVal == nil, Odg, Odg := cVal ) }
+   aObjG[ Len( Kl ) + 1 ]:block := {| cVal | iif( cVal == NIL, Odg, Odg := cVal ) }
    aObjG[ Len( Kl ) + 1 ]:display()
    @ m_x + wx, m_y + 8 SAY 'Kraj - <PgDown>, Nuliraj-<F5>'
    SET KEY K_F5  TO Nuliraj()
    ReadModal( aObjG )
    SET KEY K_F5
    BoxC()
+
    IF LastKey() == K_ESC
       RETURN .F.
    END IF
 
    cKolona := ""
-   AEval( Kl, {| broj| cKolona := cKolona + Str( Broj, 2 ) } )
+   AEval( Kl, {| broj | cKolona := cKolona + Str( Broj, 2 ) } )
    // Pretvaranje matrice u jedan string radi mogu}nosti pohranjivanja
    // matrice kao karakterne memorijske varijable
-   SAVE  ALL LIKE cKolona to &cImeF
+   SAVE  ALL LIKE cKolona TO &cImeF
+
+   altd()
    ACopy( Kl, Kol )
 
    RETURN .T.
@@ -416,7 +415,7 @@ FUNCTION DobraKol( Kol, i )
    IF Kol[ i ] = 0 ; RETURN .T. ; END IF
    nNum := 0
    FOR k := 1 TO Len( Kol )
-      IF Kol[ i ] = Kol[ k ] ; nNum++ ; END IF
+      IF Kol[ i ] = Kol[ k ] ; nNum++; END IF
    NEXT
    IF nNum > 1
       RETURN .F.
@@ -437,9 +436,9 @@ FUNCTION Nuliraj()
    FOR i := 1 TO Len( Kl )
       Kl[ i ] := 0
    NEXT
-   AEval( aObjG, {| oE|  oE:Display() } )
+   AEval( aObjG, {| oE |  oE:Display() } )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION TrebaPrelom( nPos, nPosRKol )

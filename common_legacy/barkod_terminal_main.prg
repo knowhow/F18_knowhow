@@ -195,8 +195,7 @@ FUNCTION export_BTerm_data()
    SELECT r_export
    USE
 
-   _dbf_to_file( cFilePath, cFileName, aStruct, "r_export.dbf", ;
-      cSeparator, lTrimData, lLastSeparator )
+   _dbf_to_file( cFilePath, cFileName, aStruct, "r_export.dbf", cSeparator, lTrimData, lLastSeparator )
 
    MsgBeep( "Exportovao " + AllTrim( Str( nCnt ) ) + " zapisa robe !" )
 

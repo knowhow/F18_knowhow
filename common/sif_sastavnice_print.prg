@@ -655,7 +655,7 @@ FUNCTION pr_dupl_sast()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 // -----------------------------------------------
 // eksport sastavnica u dbf fajl
@@ -678,7 +678,7 @@ FUNCTION _exp_sast_dbf()
    IF !create_dbf_r_export( aDbf )
       RETURN .F.
    ENDIF
-   
+
    O_R_EXP
    o_sastavnica()
    o_roba()

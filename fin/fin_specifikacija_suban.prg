@@ -184,7 +184,7 @@ FUNCTION fin_specifikacija_suban()
    ENDIF
 
    // o_partner()
-   o_konto()
+   // o_konto()
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    find_suban_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto,idpartner,brdok", cSqlWhere )
    Msgc()
@@ -415,8 +415,7 @@ FUNCTION fin_specifikacija_suban()
                select_o_partner( cIdPartner )
                SELECT SUBAN
                IF gVSubOp == "D"
-                  SELECT KONTO
-                  HSEEK cIdKonto
+                  select_o_konto( cIdKonto )
                   SELECT SUBAN
                   cPom := AllTrim( KONTO->naz ) + " (" + AllTrim( AllTrim( PARTN->naz ) + PN2() ) + ")"
                   ?? PadR( cPom, nDOpis - DifIdP( cIdpartner ) )
@@ -438,8 +437,7 @@ FUNCTION fin_specifikacija_suban()
                   ?? PadR( cPom, nDOpis )
                ENDIF
             ELSE
-               SELECT KONTO
-               HSEEK cIdKonto
+               select_o_konto( cIdKonto )
                SELECT SUBAN
                ?? PadR( KONTO->naz, nDOpis )
             ENDIF
@@ -652,6 +650,9 @@ FUNCTION zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon )
       P_COND
    ENDIF
 
+   hb_default( @cOpcine, "" )
+   hb_default( @cUslovPartnerTelefon, "" )
+
    ??U "FIN: SPECIFIKACIJA SUBANALITIČKIH KONTA  ZA "
 
    IF cTip == "1"
@@ -671,7 +672,7 @@ FUNCTION zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon )
       ?U "Izvještaj pravljen po uslovu za broj veze/racuna: '" + Trim( qqBrDok ) + "'"
    ENDIF
 
-  ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
+   ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
 
    IF !( Empty( cOpcine ) )
       ?U "PARTNERI Općine", Trim( cOpcine )

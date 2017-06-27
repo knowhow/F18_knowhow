@@ -93,7 +93,7 @@
 
 #define FIELD_LEN_POS_BRDOK  6
 #define FIELD_LEN_POS_RBR    5
-
+#define FIELD_LEN_PARTNER_ID 6
 
 
 #ifndef TEST
@@ -613,7 +613,6 @@
 
 // -----------------------------
 
-#define LEN_PARTNER_ID 6
 
 #define FIELD_LENGTH_LD_RADKR_NA_OSNOVU 20
 #define FIELD_LD_RADN_IDBANKA 6

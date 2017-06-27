@@ -430,22 +430,6 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
       FWrite( nH, 'cArg2=replace(Wscript.arguments(1),cUserProfile,cShortUserProfile)' + hb_eol() )
       FWrite( nH, 'cArg3=replace(Wscript.arguments(2),cUserProfile,cShortUserProfile)' + hb_eol() )
 
-      FWrite( nH, 'Set fsoFile = fso.GetFile( cArg2 )' + hb_eol() ) // cArg2 shortPath if file or directory
-      FWrite( nH, 'if Err.number <> 0 then' + hb_eol() )
-      FWrite( nH, '      Set fsoFile = fso.GetFolder( cArg2 )' + hb_eol() )
-      FWrite( nH, 'end if' + hb_eol() )
-      FWrite( nH, 'if fsoFile is not nothing then' + hb_eol() )
-      FWrite( nH, '   cArg2 = fsoFile.ShortPath' + hb_eol() )
-      FWrite( nH, 'end if' + hb_eol() )
-
-      FWrite( nH, 'Set fsoFile = fso.GetFile( cArg3 )' + hb_eol() ) // cArg3 shortPath if file or directory
-      FWrite( nH, 'if Err.number <> 0 then' + hb_eol() )
-      FWrite( nH, '      Set fsoFile = fso.GetFolder( cArg3 )' + hb_eol() )
-      FWrite( nH, 'end if' + hb_eol() )
-      FWrite( nH, 'if fsoFile is not nothing then' + hb_eol() )
-      FWrite( nH, '   cArg3 = fsoFile.ShortPath' + hb_eol() )
-      FWrite( nH, 'end if' + hb_eol() )
-
       FWrite( nH, 'objShell.Run cArg1 & " " & cArg2 & " " & cArg3, 0, True' )
 
       FClose( nH )

@@ -437,6 +437,7 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
       FWrite( nH, 'if fsoFile is not nothing then' + hb_eol() )
       FWrite( nH, '   cArg2 = fsoFile.ShortPath' + hb_eol() )
       FWrite( nH, 'end if' + hb_eol() )
+
       FWrite( nH, 'Set fsoFile = fso.GetFile( cArg3 )' + hb_eol() ) // cArg3 shortPath if file or directory
       FWrite( nH, 'if Err.number <> 0 then' + hb_eol() )
       FWrite( nH, '      Set fsoFile = fso.GetFolder( cArg3 )' + hb_eol() )
@@ -454,9 +455,9 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
    cCmd += cDirF18Util + 'run_invisible.vbs '
 
    IF lAsync
-      cCmd += 'cmd /c start '
+      cCmd += '"cmd /c start" '
    ELSE
-      cCmd += 'cmd /c '
+      cCmd += '"cmd /c" '
    ENDIF
 
 

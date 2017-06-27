@@ -26,15 +26,13 @@ STATIC s_cSHA256sum := "3f1e4b90548791a7d787a6d63e224cdce74aaa92212c6ff818b66c1f
 STATIC s_cDownloadF18LO
 
 
-FUNCTION LO_open_dokument( cFile, lDbf )
+FUNCTION LO_open_dokument( cFile )
 
    LOCAL lAsync := .F.
    LOCAL cCmd, lUseLibreofficeSystem := .F., lFirstRun := .F.
    LOCAL cOdgovor
-   LOCAL cPath, cName, cExt, cDrive
 
 
-   hb_default( @lDbf, .F. ) // aka r_export.dbf
    IF s_cDownloadF18LO == NIL
       s_cDownloadF18LO := fetch_metric( "F18_LO", NIL, "N" )
       lFirstRun := .T. // prvi put postavlja pitanje
@@ -78,16 +76,6 @@ FUNCTION LO_open_dokument( cFile, lDbf )
       lAsync := .T.
    ENDIF
 
-   IF lDbf
-      AltD()
-      hb_FNameSplit( cFile, @cPath, @cName, @cExt, @cDrive )
-
-      MsgO( "LO konvert " + cName + ".dbf -> .xlsx" )
-      hb_FNameSplit( cFile, @cPath, @cName, @cExt, @cDrive )
-      f18_run( LO_convert_xlsx_cmd(), cFile, cPath ) // libreoffice --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25 r_export.dbf
-      Msgc()
-      cFile := StrTran( cFile, ".dbf", ".xlsx" )
-   ENDIF
 
    RETURN f18_run( cCmd, cFile, NIL, lAsync )
 

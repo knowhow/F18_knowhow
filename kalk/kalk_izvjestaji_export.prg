@@ -340,7 +340,7 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
       "prema svojim potrebama ..." )
 
 
-   LO_open_dokument( my_home() + "r_export.dbf", .T. )
+   open_r_export_table( my_home() + "r_export.dbf" )
 
    RETURN .T.
 

@@ -18,18 +18,17 @@ FUNCTION usex( cTable )
 
 FUNCTION f18_create_dir( cLocation )
 
-   LOCAL _len
-   LOCAL _loc
-   LOCAL _create
+   LOCAL nLen
+   LOCAL cTmp
+   LOCAL nCreate
 
-   _loc := cLocation + "*.*"
-   _loc := file_path_quote( cLocation + "*.*" )
-   _len := ADir( _loc )
+   cTmp := cLocation + "*.*"
+   cTmp := file_path_quote( cLocation + "*.*" )
+   nLen := ADir( cTmp )
 
-   IF _len == 0
-
-      _create := DirMake( cLocation )
-      IF _create <> 0
+   IF nLen == 0
+      nCreate := DirMake( file_path_quote( cLocation ) )
+      IF nCreate <> 0
          log_write( "f18_create_dir, problem sa kreiranjem direktorija: " + cLocation, 5 )
       ENDIF
 

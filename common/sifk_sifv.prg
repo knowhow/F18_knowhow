@@ -471,7 +471,7 @@ FUNCTION USifk( cDbfName, cOznaka, cIdSif, xValue, cTransaction )
 
 STATIC FUNCTION update_sifv_n_relation( hRecSifk, cIdSif, cValues )
 
-   LOCAL nI, _numtok, _tmp, _naz, _values
+   LOCAL nI, nNumTokens, _tmp, _naz, _values
    LOCAL _sifv_rec
 
    _sifv_rec := hb_Hash()
@@ -486,9 +486,9 @@ STATIC FUNCTION update_sifv_n_relation( hRecSifk, cIdSif, cValues )
    IF ! HB_ISCHAR( cValues )
       ?E "update_sifv_n_relation cValues != char"
    ENDIF
-   _numtok := NumToken( cValues, "," )
+   nNumTokens := NumToken( cValues, "," )
 
-   FOR nI := 1 TO _numtok
+   FOR nI := 1 TO nNumTokens
 
       _tmp := Token( cValues, ",", nI )
       APPEND BLANK

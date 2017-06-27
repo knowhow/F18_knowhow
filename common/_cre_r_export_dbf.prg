@@ -50,21 +50,38 @@ FUNCTION create_dbf_r_export( aFieldList, lCloseDbfs )
    RETURN .T.
 
 
-FUNCTION open_r_export_table()
+FUNCTION open_r_export_table( cExportDbf )
 
    LOCAL cCommand
+   LOCAL cPath, cName, cExt, cDrive
+   LOCAL cXlsx
 
    my_close_all_dbf()
 
-   //cCommand := get_run_prefix_cmd() + file_path_quote( my_home() + my_dbf_prefix() + s_cExportDbf + ".dbf" )
+   // cCommand := get_run_prefix_cmd() + file_path_quote( my_home() + my_dbf_prefix() + s_cExportDbf + ".dbf" )
 
    // log_write( "Export " + s_cExportDbf + " cmd: " + _cmd, 9 )
 
    // DirChange( my_home() )
-   //IF f18_run( cCommand ) <> 0
-  //    MsgBeep( "Problem sa pokretanjem ?!" )
-   //ENDIF
+   // IF f18_run( cCommand ) <> 0
+   // MsgBeep( "Problem sa pokretanjem ?!" )
+   // ENDIF
 
-   LO_open_dokument( my_home() + my_dbf_prefix() + s_cExportDbf + ".dbf", .T. )
+altd()
+
+   IF cExportDbf == NIL
+      cExportDbf := my_home() + my_dbf_prefix() + s_cExportDbf + ".dbf"
+   ENDIF
+
+   AltD()
+   hb_FNameSplit( cExportDbf, @cPath, @cName, @cExt, @cDrive )
+
+   MsgO( "LO konvert " + cName + ".dbf -> .xlsx" )
+   hb_FNameSplit( cExportDbf, @cPath, @cName, @cExt, @cDrive )
+   f18_run( LO_convert_xlsx_cmd(), cExportDbf + ";" + cPath ) // libreoffice --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25 r_export.dbf
+   Msgc()
+   cXlsx := StrTran( cExportDbf, ".dbf", ".xlsx" )
+
+   LO_open_dokument( cXlsx )
 
    RETURN .T.

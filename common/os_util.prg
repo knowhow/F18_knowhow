@@ -454,9 +454,9 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
    cCmd += cDirF18Util + 'run_invisible.vbs '
 
    IF lAsync
-      cCmd += 'cmd /c start'
+      cCmd += 'cmd /c start '
    ELSE
-      cCmd += 'cmd /c'
+      cCmd += 'cmd /c '
    ENDIF
 
 

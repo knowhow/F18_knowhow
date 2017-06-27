@@ -41,7 +41,9 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
    LOCAL cPom21
    LOCAL cPom22
    LOCAL nLenIzn
-   LOCAL _export := "N"
+   LOCAL lExport := "N"
+   LOCAL cExportDbf
+
 
    // 1 - red.br / ili br.dok
    // 2 - br.dok / ili r.br
@@ -108,8 +110,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
       nX += 2
 
-      @ m_x + nX, m_y + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET _export ;
-         VALID _export $ "DN" PICT "@!"
+      @ m_x + nX, m_y + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET lExport  VALID lExport $ "DN" PICT "@!"
 
       nX += 2
 
@@ -123,7 +124,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
       IF LastKey() == K_ESC
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
 
    ENDIF
@@ -178,10 +179,10 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
    my_close_all_dbf()
 
-   IF _export == "D"
+   IF lExport == "D"
 
-      _file := my_home() + "epdv_r_kuf.dbf"
-      f18_open_document( _file )
+      cExportDbf := my_home() + "epdv_r_kuf.dbf"
+      open_r_export_table( cExportDbf )
 
    ELSE
       show_rpt(  .F.,  .F. )

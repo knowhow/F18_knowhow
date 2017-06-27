@@ -40,6 +40,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    LOCAL cPom22
    LOCAL nLenIzn
    LOCAL _export := "N"
+   LOCAL cExportDbf
 
    // 1 - red.br / ili br.dok
    // 2 - br.dok / ili r.br
@@ -117,7 +118,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
 
       IF LastKey() == K_ESC
          my_close_all_dbf()
-         RETURN
+         RETURN .T.
       ENDIF
 
    ENDIF
@@ -178,8 +179,8 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    my_close_all_dbf()
 
    IF _export == "D"
-      _file := my_home() + "epdv_r_kif.dbf"
-      f18_open_document( _file )
+      cExportDbf := my_home() + "epdv_r_kif.dbf"
+      open_r_export_table( cExportDbf )
 
    ELSE
       show_rpt(  .F.,  .F. )

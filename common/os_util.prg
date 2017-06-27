@@ -397,7 +397,7 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
       nH := FOpen( cDirF18Util + "run_invisible.vbs" )
       nBytes := FRead( nH, @cBuf, 4 )
       FClose( nH )
-      IF nBytes < 4 .OR. cBuf != "'004"
+      IF nBytes < 4 .OR. cBuf != "'005"
          lStaraVerzija := .T.
       ENDIF
    ENDIF
@@ -405,8 +405,8 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
    IF lStaraVerzija .OR. !File( cDirF18Util + "run_invisible.vbs" )
       nH := FCreate( cDirF18Util + "run_invisible.vbs" )
 
-      FWrite( nH, "'004" + hb_eol() )
-      FWrite( nH, 'Dim cArg1, cArg2, cArg3, cUserProfile, cShortUserProfile' + hb_eol() )
+      FWrite( nH, "'005" + hb_eol() )
+      FWrite( nH, 'Dim cArg1, cArg2, cArg3, cArg4, cUserProfile, cShortUserProfile' + hb_eol() )
       FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' + hb_eol() )
       FWrite( nH, 'Set fso = CreateObject("Scripting.FileSystemObject")' + hb_eol() )
       FWrite( nH, 'cUserProfile=objShell.ExpandEnvironmentStrings("%UserProfile%")' + hb_eol() )
@@ -429,8 +429,8 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
       FWrite( nH, 'cArg1=replace(Wscript.arguments(0),cUserProfile,cShortUserProfile)' + hb_eol() )
       FWrite( nH, 'cArg2=replace(Wscript.arguments(1),cUserProfile,cShortUserProfile)' + hb_eol() )
       FWrite( nH, 'cArg3=replace(Wscript.arguments(2),cUserProfile,cShortUserProfile)' + hb_eol() )
-
-      FWrite( nH, 'objShell.Run cArg1 & " " & cArg2 & " " & cArg3, 0, True' )
+      FWrite( nH, 'cArg4=replace(Wscript.arguments(3),cUserProfile,cShortUserProfile)' + hb_eol() )
+      FWrite( nH, 'objShell.Run cArg1 & " " & cArg2 & " " & cArg3 & " " & cArg4, 0, True' )
 
       FClose( nH )
    ENDIF

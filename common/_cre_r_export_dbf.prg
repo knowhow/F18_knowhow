@@ -78,6 +78,9 @@ altd()
 
    MsgO( "LO konvert " + cName + ".dbf -> .xlsx" )
    hb_FNameSplit( cExportDbf, @cPath, @cName, @cExt, @cDrive )
+   IF Right( cPath, 1 ) == SLASH // c:\temp\ => c:\temp, bez ovoga soffice --outdir zaglavi !
+     cPath := Substr( cPath, Len( cPath ) - 1 )
+   endif
    f18_run( LO_convert_xlsx_cmd(), cExportDbf + ";" + cPath ) // libreoffice --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25 r_export.dbf
    Msgc()
    cXlsx := StrTran( cExportDbf, ".dbf", ".xlsx" )

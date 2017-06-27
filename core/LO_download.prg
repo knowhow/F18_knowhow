@@ -16,11 +16,15 @@ STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/LO/
 STATIC s_cProg // windows: lo.cmd, darwin: lo
 
 #ifdef __PLATFORM__WINDOWS
-STATIC s_cSHA256sum := "2fe1a1b7a204ec6d282518a9e04acc4bfb6abb4b7bc84de1a65557e0168c56dc"  // LO/lo.cmd (007 verzija)
+STATIC s_cSHA256sum := "517e119174208cf58b51bfcc97e8de6d5183c2a1d128975b2d4ce6007c3ff673"  // LO/lo.cmd (008 verzija)
 #endif
 
 #ifdef __PLATFORM__LINUX
-STATIC s_cSHA256sum := "3f1e4b90548791a7d787a6d63e224cdce74aaa92212c6ff818b66c1fe24eb24f" // LO/lo
+STATIC s_cSHA256sum := "85fd87e00feb8dedc4608c6684a5622f8e6294d48283055b7376b6979960acff" // LO/lo
+#endif
+
+#ifdef __PLATFORM__DARWIN
+STATIC s_cSHA256sum := "0ca05dbf7af248697a97f45d11732ba6fa51127304403b0396f9544c26230c07" // LO/lo
 #endif
 
 STATIC s_cDownloadF18LO

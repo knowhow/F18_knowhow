@@ -397,7 +397,7 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
       nH := FOpen( cDirF18Util + "run_invisible.vbs" )
       nBytes := FRead( nH, @cBuf, 4 )
       FClose( nH )
-      IF nBytes < 4 .OR. cBuf != "'003"
+      IF nBytes < 4 .OR. cBuf != "'004"
          lStaraVerzija := .T.
       ENDIF
    ENDIF
@@ -405,7 +405,7 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
    IF lStaraVerzija .OR. !File( cDirF18Util + "run_invisible.vbs" )
       nH := FCreate( cDirF18Util + "run_invisible.vbs" )
 
-      FWrite( nH, "'003" + hb_eol() )
+      FWrite( nH, "'004" + hb_eol() )
       FWrite( nH, 'Dim cArg1, cArg2, cArg3, cUserProfile, cShortUserProfile' + hb_eol() )
       FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' + hb_eol() )
       FWrite( nH, 'Set fso = CreateObject("Scripting.FileSystemObject")' + hb_eol() )

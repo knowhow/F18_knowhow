@@ -390,7 +390,7 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
    // FOR nI := 1 TO 2
 
    cArg := Token( cArgumenti, ";", 1 )
-   cArg2 := Token( cArgumenti, ";", 1 )
+   cArg2 := Token( cArgumenti, ";", 2 )
 
 
    IF File( cDirF18Util + "run_invisible.vbs" )

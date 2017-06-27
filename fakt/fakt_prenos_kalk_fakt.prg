@@ -393,7 +393,7 @@ FUNCTION kalkp_2_fakt()
    dOd := Date()
    dDo := Date()
    dDatPl := Date()
-   cIdPartner := Space( LEN_PARTNER_ID )
+   cIdPartner := Space( FIELD_LEN_PARTNER_ID )
    cFaktPartn := cIdPartner
    qqIdVd     := PadR( "41;", 40 )
    cIdTipDok  := "11"

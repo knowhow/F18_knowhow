@@ -605,9 +605,9 @@ STATIC FUNCTION pozicioniraj_rec_kreditor_partner( cIdKreditor )
 
    LOCAL hRec
 
-   select_o_kred( PadR( cIdKreditor, LEN_PARTNER_ID ) ) // kred.id char(6)
+   select_o_kred( PadR( cIdKreditor, FIELD_LEN_PARTNER_ID ) ) // kred.id char(6)
 
-   select_o_partner( PadR( cIdKreditor, LEN_PARTNER_ID ) )
+   select_o_partner( PadR( cIdKreditor, FIELD_LEN_PARTNER_ID ) )
    IF Eof()
 
       APPEND BLANK     // dodaj kreditora u listu partnera
@@ -643,7 +643,7 @@ STATIC FUNCTION ld_virm_generacija_krediti( nGodina, nMjesec, dDatVirm, r_br, do
    DO WHILE !Eof() .AND. Left( field->id, Len( cOznakaIsplatePrefix ) ) == cOznakaIsplatePrefix
 
 
-      cIdKreditor := PadR( SubStr( field->id, 5 ), LEN_PARTNER_ID )      // sifra kreditora KREDBBI001 -> BBI001
+      cIdKreditor := PadR( SubStr( field->id, 5 ), FIELD_LEN_PARTNER_ID )      // sifra kreditora KREDBBI001 -> BBI001
       pozicioniraj_rec_kreditor_partner( cIdKreditor )     // nastimaj kreditora i dodaj po potrebi
       pozicioniraj_rec_vrprim_sifra_kr()     // vrsta primanja - kredit
 

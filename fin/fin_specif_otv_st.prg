@@ -30,7 +30,7 @@ FUNCTION fin_specif_otvorene_stavke()
    qqBrDok := Space( 40 )
 
    // o_partner()
-   M := "---- " + REPL( "-", LEN_PARTNER_ID ) + " ------------------------------------- ----- ----------------- ---------- ---------------------- --------------------"
+   M := "---- " + REPL( "-", FIELD_LEN_PARTNER_ID ) + " ------------------------------------- ----- ----------------- ---------- ---------------------- --------------------"
    o_konto()
    dDatOd := dDatDo := CToD( "" )
 
@@ -246,7 +246,7 @@ FUNCTION ZaglSpK()
    ?
    prikaz_k1_k4_rj( .F. )
 
-   nDSP := LEN_PARTNER_ID
+   nDSP := FIELD_LEN_PARTNER_ID
 
    ? M
    ?U "*R. *" + PadC( "SIFRA", nDSP ) + "*       NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *  BROJ    *               IZNOS                      *" + iif( cPrelomljeno == "N", "                    *", "" )

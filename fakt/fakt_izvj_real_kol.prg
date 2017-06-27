@@ -64,7 +64,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    qqPartn := Space( 20 )
    RPar( "sk", @qqPartn )
    RPar( "td", @qqTipDok )
-   qqPartn := PadR( qqPartn, LEN_PARTNER_ID )
+   qqPartn := PadR( qqPartn, FIELD_LEN_PARTNER_ID )
    qqIdRoba := PadR( qqIdRoba, 200 )
    qqTipDok := PadR( qqTipDok, 40 )
 

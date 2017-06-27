@@ -273,7 +273,7 @@ HB_FUNC( __RUN_SYSTEM )
 
 /*
   f18_run( "lo.cmd", "c:\temp\test.odt")
-  f18_run( "lo_dbf_xlsx.cmd", "c:\temp\test.dbf;c:\temp\")
+  f18_run( "lo_dbf_xlsx.cmd", "c:\temp\test.dbf;c:\temp")
 */
 
 FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
@@ -291,7 +291,6 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
       cArgumenti := ""
    ENDIF
 
-altd()
    nNumArgs := NumToken( cArgumenti, ";" ) // "c:\temp\test.dbf;c:\temp" => "c:\temp\test.dbf c:\temp"
    FOR nI := 1 TO nNumArgs
       cArg += IIF( nI > 1, " ", "" ) + Token( cArgumenti, ";", nI )
@@ -371,6 +370,7 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
    LOCAL cDirF18Util := f18_exe_path() + "F18_util" + SLASH
    LOCAL cStart, cCmd
    LOCAL nH, cArg, cArg2
+   LOCAL cVer := "'006"
 
    hb_default( @lAsync, .F. )
    IF DirChange( cDirF18Util ) != 0  // e.g. F18.exe/F18_util
@@ -384,20 +384,14 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
       RETURN -1
    ENDIF
 
-
-   // nNumArgs := NumToken( cArgumenti, ";" )
-
-   // FOR nI := 1 TO 2
-
    cArg := Token( cArgumenti, ";", 1 )
    cArg2 := Token( cArgumenti, ";", 2 )
-
 
    IF File( cDirF18Util + "run_invisible.vbs" )
       nH := FOpen( cDirF18Util + "run_invisible.vbs" )
       nBytes := FRead( nH, @cBuf, 4 )
       FClose( nH )
-      IF nBytes < 4 .OR. cBuf != "'005"
+      IF nBytes < 4 .OR. cBuf != cVer
          lStaraVerzija := .T.
       ENDIF
    ENDIF
@@ -405,7 +399,7 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
    IF lStaraVerzija .OR. !File( cDirF18Util + "run_invisible.vbs" )
       nH := FCreate( cDirF18Util + "run_invisible.vbs" )
 
-      FWrite( nH, "'005" + hb_eol() )
+      FWrite( nH, cVer + hb_eol() )
       FWrite( nH, 'Dim cArg1, cArg2, cArg3, cArg4, cUserProfile, cShortUserProfile' + hb_eol() )
       FWrite( nH, 'Set objShell = WScript.CreateObject("WScript.Shell")' + hb_eol() )
       FWrite( nH, 'Set fso = CreateObject("Scripting.FileSystemObject")' + hb_eol() )

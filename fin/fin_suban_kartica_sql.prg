@@ -154,7 +154,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksport kartice u DBF (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
+   @ m_x + _x, m_y + 2 SAY "Export u XLSX (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
 
    READ
 

@@ -516,7 +516,7 @@ METHOD LDExportTxt:create_txt_from_dbf()
       MsgBeep( "Fajl uspjesno kreiran !" )
       _ok := .T.
    ELSE
-      MsgBeep( "Postoji problem sa operacijom kreiranja fajla !!!" )
+      MsgBeep( "Postoji problem sa operacijom kreiranja fajla !" )
    ENDIF
 
    // zatvori tabelu...

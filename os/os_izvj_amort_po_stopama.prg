@@ -41,7 +41,7 @@ FUNCTION os_amortizacija_po_stopama()
    cBrojSobe := Space( 6 )
    lBrojSobe := .F.
 
-   cExpDbf := "N"
+   cExportXlsxDN := "N"
 
    Box(, 12, 77 )
    DO WHILE .T.
@@ -59,7 +59,7 @@ FUNCTION os_amortizacija_po_stopama()
       @ m_x + 10, m_y + 2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
       @ m_x + 11, m_y + 2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" GET cON VALID con $ "ONBG " PICT "@!"
 
-      @ m_x + 12, m_y + 2 SAY "export izvjestaja u DBF ?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
+      @ m_x + 12, m_y + 2 SAY "Export u XLSX (D/N)?" GET cExportXlsxDN VALID cExportXlsxDN $ "DN" PICT "@!"
       read; ESC_BCR
       aUsl1 := Parsiraj( cFiltK1, "K1" )
       IF aUsl1 <> NIL; exit; ENDIF
@@ -68,7 +68,7 @@ FUNCTION os_amortizacija_po_stopama()
 
    cIdRj := PadR( cIdRj, 4 )
 
-   lExpRpt := ( cExpDbf == "D" )
+   lExpRpt := ( cExportXlsxDN == "D" )
 
    IF lExpRpt
       aDbfFields := get_exp_fields()

@@ -137,7 +137,7 @@ FUNCTION fin_specifikacija_suban()
 
       UpitK1k4( 16 )
 
-      @ m_x + 19, m_y + 2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN PICT "@!" VALID cExpRptDN $ "DN"
+      @ m_x + 19, m_y + 2 SAY "Export u XLSX (D/N)?" GET cExpRptDN PICT "@!" VALID cExpRptDN $ "DN"
 
       READ
       ESC_BCR

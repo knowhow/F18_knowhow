@@ -60,7 +60,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL _din_dem := "1"
    LOCAL _kao_kartica := fetch_metric( "ios_print_kartica", my_user(), "D" )
    LOCAL _prelomljeno := fetch_metric( "ios_print_prelom", my_user(), "N" )
-   LOCAL _export_dbf := "N"
+   LOCAL lExportXLSX := "N"
    LOCAL _print_tip := fetch_metric( "ios_print_tip", my_user(), "1" )
 
    // LOCAL _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
@@ -114,7 +114,7 @@ STATIC FUNCTION mnu_ios_print()
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Eksport podataka u dbf (D/N) ?" GET _export_dbf   VALID _export_dbf $ "DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY8 "Export u XLSX (D/N)?" GET lExportXLSX   VALID lExportXLSX $ "DN" PICT "@!"
 
    ++nX
    @ m_x + nX, m_y + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
@@ -158,7 +158,7 @@ STATIC FUNCTION mnu_ios_print()
    // ENDIF
 
 
-   IF _export_dbf == "D"    // eksport podataka u dbf tabelu
+   IF lExportXLSX == "D"    // eksport podataka u dbf tabelu
       _exp_fields := g_exp_fields()
       IF !create_dbf_r_export( _exp_fields )
          RETURN .F.
@@ -216,7 +216,7 @@ STATIC FUNCTION mnu_ios_print()
       hParams[ "din_dem" ] := _din_dem
       hParams[ "datum_do" ] := dDatumDo
       hParams[ "ios_datum" ] := dDatumIOS
-      hParams[ "export_dbf" ] := _export_dbf
+      hParams[ "export_dbf" ] := lExportXLSX
       hParams[ "iznos_bhd" ] := ios->iznosbhd
       hParams[ "iznos_dem" ] := ios->iznosdem
       hParams[ "kartica" ] := _kao_kartica
@@ -247,7 +247,7 @@ STATIC FUNCTION mnu_ios_print()
       close_xml()
    ENDIF
 
-   IF _print_tip == "2" .AND. _export_dbf == "D"
+   IF _print_tip == "2" .AND. lExportXLSX == "D"
       open_r_export_table()
    ENDIF
 
@@ -1049,7 +1049,7 @@ STATIC FUNCTION print_ios_txt( hParams )
    LOCAL _din_dem := hParams[ "din_dem" ]
    LOCAL dDatumDo := hParams[ "datum_do" ]
    LOCAL dDatumIOS := hParams[ "ios_datum" ]
-   LOCAL _export_dbf := hParams[ "export_dbf" ]
+   LOCAL lExportXLSX := hParams[ "export_dbf" ]
    LOCAL _kao_kartica := hParams[ "kartica" ]
    LOCAL _prelomljeno := hParams[ "prelom" ]
    LOCAL cPartnerNaziv
@@ -1205,7 +1205,7 @@ STATIC FUNCTION print_ios_txt( hParams )
                   @ PRow(), PCol() + 1 SAY iif( field->D_P == "2", field->iznosdem, 0 ) PICT picBHD
                ENDIF
 
-               IF _export_dbf == "D"
+               IF lExportXLSX == "D"
                   fill_exp_tbl( cIdPartner, ;
                      cPartnerNaziv, ;
                      field->brdok, ;
@@ -1280,7 +1280,7 @@ STATIC FUNCTION print_ios_txt( hParams )
                @ PRow(), nCol1 SAY nDBHD PICT picBHD
                @ PRow(), PCol() + 1 SAY nPBhD PICT picBHD
 
-               IF _export_dbf == "D"
+               IF lExportXLSX == "D"
                   fill_exp_tbl( cIdPartner, ;
                      cPartnerNaziv, ;
                      cBrDok, ;
@@ -1309,7 +1309,7 @@ STATIC FUNCTION print_ios_txt( hParams )
                @ PRow(), nCol1 SAY nDDEM PICT picBHD
                @ PRow(), PCol() + 1 SAY nPDEM PICT picBHD
 
-               IF _export_dbf == "D"
+               IF lExportXLSX == "D"
                   fill_exp_tbl( cIdPartner, ;
                      cPartnerNaziv, ;
                      cBrdok, ;

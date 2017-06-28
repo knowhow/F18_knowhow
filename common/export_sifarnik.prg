@@ -150,8 +150,6 @@ FUNCTION export_sifarnik()
    ENDIF
 
 
-   MsgBeep( Str( Len( aKol ) ) )
-
    aDbfStruct := {}
    FOR i := 1 TO Len( aKol )
       hField := get_field_from_a_kol( aKol[ i, 1 ] )

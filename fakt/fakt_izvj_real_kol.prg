@@ -121,7 +121,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
       nX := nX + 2
 
-      @ m_x + nX, m_y + 2 SAY "Export izvjestaja u DBF?" GET cExport VALID cExport $ "DN" PICT "@!"
+      @ m_x + nX, m_y + 2 SAY "Export u XLSX?" GET cExport VALID cExport $ "DN" PICT "@!"
 
 
       READ

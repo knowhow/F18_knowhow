@@ -125,7 +125,7 @@ METHOD VirmExportTxt:create_export_dbf()
    USE
    my_use_temp( "EXP_BANK", my_home() + _table_name + ".dbf", .F., .F. )
 
-   // indeksi...
+
    INDEX on ( Str( rbr, 3 ) ) TAG "1"
 
    RETURN .T.
@@ -174,7 +174,7 @@ METHOD VirmExportTxt:params()
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY "Export podataka (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
 
    READ
 
@@ -289,7 +289,7 @@ METHOD VirmExportTxt:fill_data_from_virm()
    GO TOP
 
    IF RecCount() == 0
-      MsgBeep( "U pripremi nema virmana !!!" )
+      MsgBeep( "U pripremi nema virmana !" )
       RETURN _ok
    ENDIF
 
@@ -939,8 +939,7 @@ FUNCTION virm_export_txt_banka( params )
 
    oExp:export()
 
-   RETURN
-
+   RETURN .T.
 
 
 
@@ -951,4 +950,4 @@ FUNCTION virm_export_txt_setup()
    oExp := VirmExportTxt():New()
    oExp:export_setup()
 
-   RETURN
+   RETURN .T.

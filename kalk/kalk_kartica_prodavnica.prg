@@ -85,7 +85,7 @@ FUNCTION kalk_kartica_prodavnica()
 
          @ m_x + 9, m_y + 2 SAY "Prikaz srednje nabavne cijene ?" GET cPrikSredNc VALID cPrikSredNc $ "DN" PICT "@!"
 
-         @ m_x + 11, m_y + 2 SAY "Eksport u dbf:"  GET cExportDn PICT "@!" VALID cExportDN $ "DN"
+         @ m_x + 11, m_y + 2 SAY "Export XLSX:"  GET cExportDn PICT "@!" VALID cExportDN $ "DN"
 
          READ
          ESC_BCR

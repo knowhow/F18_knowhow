@@ -106,7 +106,7 @@ FUNCTION kalk_kartica_magacin()
          @ m_x + 12, m_y + 2 SAY "Tip dokumenta (;) :"  GET cIdVd PICT "@S20"
          @ m_x + 14, m_y + 2 SAY "Prikaz srednje nabavne cijene ?" GET cPrikSredNc VALID cPrikSredNc $ "DN" PICT "@!"
 
-         @ m_x + 16, m_y + 2 SAY "Eksport u dbf:"  GET cExportDn PICT "@!" VALID cExportDN $ "DN"
+         @ m_x + 16, m_y + 2 SAY "Export XLSX:"  GET cExportDn PICT "@!" VALID cExportDN $ "DN"
          READ
          ESC_BCR
 

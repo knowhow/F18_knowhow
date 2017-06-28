@@ -98,9 +98,9 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    @ m_x + 15, m_y + 2 SAY "Prikaz stavki kojima je saldo 0 (D/N)?" GET cPrikNule VALID cPrikNule $ "DN" PICT "@!"
 
    IF cPoRN == "N"
-      @ m_x + 16, m_y + 2 SAY "Prikaz izvjestaja u (1)KM (2)EURO" GET cValuta VALID cValuta $ "12"
+      @ m_x + 16, m_y + 2 SAY8 "Prikaz izvještaja u (1)KM (2)EURO" GET cValuta VALID cValuta $ "12"
    ENDIF
-   @ m_x + 18, m_y + 2 SAY "Export izvjestaja u DBF ?" GET cExpRpt VALID cExpRpt $ "DN" PICT "@!"
+   @ m_x + 18, m_y + 2 SAY "Export u XLSX?" GET cExpRpt VALID cExpRpt $ "DN" PICT "@!"
    READ
    ESC_BCR
    Boxc()

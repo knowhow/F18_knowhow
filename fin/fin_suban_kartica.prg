@@ -205,7 +205,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
       @ Row() + 1, m_y + 2 SAY8 "Općina (prazno-sve):" GET cOpcine
       @ Row() + 1, m_y + 2 SAY "Svaka kartica treba da ima zaglavlje kolona ? (D/N)"  GET c1k1z PICT "@!" VALID c1k1z $ "DN"
-      @ Row() + 1, m_y + 2 SAY "Export kartice u dbf ? (D/N)"  GET cExpDbf PICT "@!" VALID cExpDbf $ "DN"
+      @ Row() + 1, m_y + 2 SAY "Export u XLSX (D/N)?"  GET cExpDbf PICT "@!" VALID cExpDbf $ "DN"
 
       READ
       ESC_BCR

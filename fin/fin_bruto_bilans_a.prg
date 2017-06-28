@@ -155,7 +155,7 @@ METHOD FinBrutoBilans:get_vars()
    LOCAL _podklase := fetch_metric( "fin_bb_pod_klase", _user, "N" )
    LOCAL _format := fetch_metric( "fin_bb_format", _user, "2" )
    LOCAL _id_rj := Space( 6 )
-   LOCAL _export_dbf := "N"
+   LOCAL lExportXLSX := "N"
    LOCAL _tip := 1
 
    IF ::tip <> NIL
@@ -239,7 +239,7 @@ METHOD FinBrutoBilans:get_vars()
    @ m_x + nX, m_y + 2 SAY8 "Format izvještaja (1 - A3, 2 - A4, 3 - A4L) ?" GET _format PICT "@S1" VALID _format $ "123"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Export izvještaja u DBF (D/N) ?" GET _export_dbf VALID _export_dbf $ "DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY8 "Export u XLSX (D/N)?" GET lExportXLSX VALID lExportXLSX $ "DN" PICT "@!"
 
    READ
 
@@ -269,7 +269,7 @@ METHOD FinBrutoBilans:get_vars()
    ::hParams[ "datum_do" ] := _dat_do
    ::hParams[ "valuta" ] := _valuta
    ::hParams[ "id_rj" ] := IF( Empty( _id_rj ), AllTrim( _id_rj ), _id_rj )
-   ::hParams[ "export_dbf" ] := ( _export_dbf == "D" )
+   ::hParams[ "export_dbf" ] := ( lExportXLSX == "D" )
    ::hParams[ "saldo_nula" ] := ( _saldo_nula == "D" )
    ::hParams[ "kolona_tek_prom" ] := ( _tek_prom == "D" )
    ::hParams[ "varijanta" ] := _var_ab

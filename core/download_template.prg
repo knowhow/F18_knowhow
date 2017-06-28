@@ -27,7 +27,9 @@ FUNCTION download_template_ld_obr_2002()
 
 FUNCTION download_template_ld_obr_2001() // v17
 
-   RETURN download_template( "ld_obr_2001.xlsx", "23721f993561d4aa178730a18bde38294b3c720733d64bb9c691e973f00165fc" )
+   download_template( "ld_obr_2001-A.xlsx", "62f994cded4cd1e5325ee5dca99a67b58f500157b45c268c790ea445c634a4e1" )
+
+   RETURN download_template( "ld_obr_2001.xlsx", "e4a0e83befd7c7ae477feeaf382986044f62e4ae31dbb722087d392c10494f38" )
 
 
 FUNCTION f18_exe_template_file_name( cTemplate )

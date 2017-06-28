@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 /*
- *   brief Stampa tabele
+ *  Stampa tabele
  *
  *  code
  * ULAZI
@@ -76,7 +76,9 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
    IF "U" $ Type( "gaSubTotal" ); gaSubTotal := {}; ENDIF
    IF "U" $ Type( "gnRedova" ); gnRedova := 64; ENDIF
    IF "U" $ Type( "gbFIznos" ); gbFIznos := nil; ENDIF
-   IF !( "U" $ Type( "dodatni_redovi_po_stranici()" ) ); gnRedova := 64 + dodatni_redovi_po_stranici(); ENDIF
+   IF !( "U" $ Type( "dodatni_redovi_po_stranici()" ) )
+      gnRedova := 64 + dodatni_redovi_po_stranici()
+   ENDIF
 
    IF bSubTot == nil; bSubTot := {|| { .F., } }; xTot := { .F., }; ENDIF
    IF lLinija == nil; lLinija := .F. ; ENDIF
@@ -86,13 +88,14 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
    IF nOdvoji == nil; nOdvoji := 0; ENDIF
 
    IF bUslov == nil
-      bUslov := {|| Inkey(), IF( LastKey() == 27, PrekSaEsc(), .T. ) }
+      bUslov := {|| Inkey(), IIF( LastKey() == 27, PrekSaEsc(), .T. ) }
    ENDIF
 
    IF bZaRed == nil
       bZaRed := {|| .T. }
    ENDIF
 
+altd()
    IF bFor == nil; bFor := {|| .T. }; ENDIF
    IF lCTab == nil; lCTab := .T. ; ENDIF
    IF lA4papir == nil; lA4papir := "4"; ENDIF
@@ -101,7 +104,7 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
    IF nSlogova != nil; Postotak( 1, nSlogova, cTabBr,,, .F. ); ENDIF
 
    AEval( aKol, {| x| xPom := x[ 8 ], xPom1 := x[ 5 ], xPom2 := x[ 3 ], iif( AScan( aPom, {| y| y[ 1 ] == xPom } ) == 0, Eval( {|| nDReda += xPom1, AAdd( aPom, { xPom, xPom1, xPom2 } ) } ), ), ;
-      IF( x[ 3 ], lPrenos := .T., ), IF( x[ 8 ] > nKol, nKol := x[ 8 ], ), iif( x[ 7 ] > nRed, nRed := x[ 7 ], ), IF( x[ 4 ] == "P", lPRed := .T., ) } )
+      IIF( x[ 3 ], lPrenos := .T., ), IIF( x[ 8 ] > nKol, nKol := x[ 8 ], ), iif( x[ 7 ] > nRed, nRed := x[ 7 ], ), IF( x[ 4 ] == "P", lPRed := .T., ) } )
    ASort( aPom,,, {| x, y| x[ 1 ] < y[ 1 ] } )
 
    FOR i := 1 TO nRed
@@ -144,7 +147,10 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
       NEXT
    NEXT
 
-   ASort( aPrZag ); ASort( aPrSum ); ASort( aPrStav )
+   ASort( aPrZag )
+   ASort( aPrSum )
+   ASort( aPrStav )
+
    nDReda += nKol + 1 + nOdvoji
    nMDReda := IF( lA4papir == "POS", 40, MDDReda( nDReda, lA4papir ) )
    cLM := iif( nMDReda - nDReda >= 0, Space( nOdvoji + Int( ( nMDReda - nDReda ) / 2 ) ), "" )
@@ -196,11 +202,11 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
 
    FOR j := 1 TO Len( aPrZag )
       i := 0; QOut( cLM2 + cOk[ 12 ] )
-      AEval( aKol, {| x| ++i, QQOut( PadC( x[ 1 ], x[ 5 ] ) + IF( i < nKol, cOk[ 5 ], cOk[ 12 ] ) ) }, ( aPrZag[ j ] -1 ) * nKol + 1, nKol )
+      AEval( aKol, {| x| ++i, QQOut( PadC( x[ 1 ], x[ 5 ] ) + IIF( i < nKol, cOk[ 5 ], cOk[ 12 ] ) ) }, ( aPrZag[ j ] -1 ) * nKol + 1, nKol )
    NEXT
 
    i := 0; QOut( cLM2 + cOk[ 6 ] )
-   AEval( aPom, {| x| ++i, QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, cOk[ 7 ], cOk[ 8 ] ) ) } )
+   AEval( aPom, {| x| ++i, QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IIF( i < nKol, cOk[ 7 ], cOk[ 8 ] ) ) } )
 
    // idemo po bazi
    // -------------
@@ -210,9 +216,8 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
          Postotak( 2, ++nBrojacSlogova )
       ENDIF
 
-      // evaluacija "ZA" bloka (korisnicke "FOR" funkcije)
-      // -------------------------------------------------
-      IF !( lFor := Eval( bFor ) )
+
+      IF !( lFor := Eval( bFor ) ) // evaluacija "ZA" bloka (korisnicke "FOR" funkcije)
          IF Empty( gaDodStavke ) .AND. Empty( gaSubTotal )
             IF !glNeSkipuj
                SKIP 1
@@ -223,13 +228,11 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
 
       IF lFor
 
-         // evaluacija bloka internog subtotala
-         // -----------------------------------
-         IF lMozeL; xTot := Eval( bSubTot ); ENDIF
 
-         // izvrsimo blok koji se izvrsava za svaku stavku koja se stampa
-         // -------------------------------------------------------------
-         xPodvuci := Eval( bZaRed )
+         IF lMozeL; xTot := Eval( bSubTot ); ENDIF // evaluacija bloka internog subtotala
+
+
+         xPodvuci := Eval( bZaRed ) // izvrsimo blok koji se izvrsava za svaku stavku koja se stampa
          // treba li na kraju izvrsiti podvlacenje
          // --------------------------------------
          IF ValType( xPodvuci ) == "C" .AND. Left( Upper( xPodvuci ), 7 ) == "PODVUCI"
@@ -244,24 +247,22 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
       // ako ima kolona koje moraju za jednu stavku ici u vise redova
       // potrebno je izracunati max.broj tih redova (nPRed)
       // ------------------------------------------------------------
-      IF lfor .AND. lPRed
+      IF lFor .AND. lPRed
          aPRed := {}; nPRed := 0
-         AEval( aKol, {| x| IF( Left( x[ 4 ], 1 ) == "P", IF( !Empty( xPom := LomiGa( Eval( x[ 2 ] ), IF( Len( x[ 4 ] ) > 1, Val( SubStr( x[ 4 ], 2 ) ), 1 ), 0, x[ 5 ] ) ), AAdd( aPRed, { xPom, x[ 5 ], Len( xPom ) / x[ 5 ], x[ 8 ], Len( xPom ) / x[ 5 ], x[ 7 ] } ), ), ) } )
+         AEval( aKol, {| x| IIF( Left( x[ 4 ], 1 ) == "P", IIF( !Empty( xPom := LomiGa( Eval( x[ 2 ] ), IIF( Len( x[ 4 ] ) > 1, Val( SubStr( x[ 4 ], 2 ) ), 1 ), 0, x[ 5 ] ) ), AAdd( aPRed, { xPom, x[ 5 ], Len( xPom ) / x[ 5 ], x[ 8 ], Len( xPom ) / x[ 5 ], x[ 7 ] } ), ), ) } )
          ASort( aPRed,,, {| x, y| x[ 4 ] < y[ 4 ] } )
-         AEval( aPRed, {| x| IF( nPRed < x[ 3 ] + x[ 6 ] -1, nPRed := x[ 3 ] + x[ 6 ] -1, ) } )
+         AEval( aPRed, {| x| IIF( nPRed < x[ 3 ] + x[ 6 ] -1, nPRed := x[ 3 ] + x[ 6 ] -1, ) } )
       ENDIF
 
       // ispitivanje uslova za prelazak na novu stranicu
       // -----------------------------------------------
-      IF lFor .AND. nStr >= 0 .AND. ( PRow() > gnRedova + IF( gPrinter = "R", 2, 0 ) -IF( xPodvuci, 1, 0 ) -5 -Max( Len( aPrStav ), nPRed ) -IF( lPrenos, Len( aPrSum ) * IF( xTot[ 1 ], ( 2 + 1 / Len( aPrSum ) ), 1 ), 0 ) )
+      IF lFor .AND. nStr >= 0 .AND. ( PRow() > gnRedova + IIF( gPrinter = "R", 2, 0 ) -IIF( xPodvuci, 1, 0 ) -5 -Max( Len( aPrStav ), nPRed ) -IIF( lPrenos, Len( aPrSum ) * IF( xTot[ 1 ], ( 2 + 1 / Len( aPrSum ) ), 1 ), 0 ) )
          NaSljedStranu( @lMozeL, @lPrenos, cLM2, cOk, aPom, nKol, @nStr, cLM, ;
             nDReda, nOdvoji, aPrSum, aKol, nSuma, cTek3, bZagl, ;
             cNaslov, aPrZag, cTek1, xTot )
       ENDIF
 
-      // stampanje internog subtotala
-      // ----------------------------
-      IF lfor .AND. xTot[ 1 ]
+      IF lfor .AND. xTot[ 1 ] // stampanje internog subtotala
          // podvlacenje prije subtotala (ako nije prvi red na stranici)
          IF lMozeL
             i := 0; QOut( cLM2 + cOk[ 6 ] )
@@ -269,7 +270,8 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
                QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !x[ 3 ] .AND. !aPom[ i + 1, 3 ], cOk[ 10 ], cOk[ 7 ] ), cOk[ 8 ] ) ) } )
          ENDIF
          FOR j := 1 TO Len( aPrSum )
-            i := 0; cPom := ""
+            i := 0
+            cPom := ""
             AEval( aKol, {| x| ++i, ;
                cPom += IF( x[ 3 ], Str( nSubTot[ aPrSum[ j ] ][ i ], x[ 5 ], x[ 6 ] ), Space( x[ 5 ] ) ) + IF( i < nKol, IF( !aPom[ i, 3 ] .AND. !aPom[ i + 1, 3 ], " ", cOk[ 5 ] ), cOk[ 12 ] ), nSubTot[ aPrSum[ j ] ][ i ] := 0 }, ( aPrSum[ j ] -1 ) * nKol + 1, nKol )
             xPom := IF( j == Len( aPrSum ), xTot[ 2 ], Space( Len( xTot[ 2 ] ) ) )

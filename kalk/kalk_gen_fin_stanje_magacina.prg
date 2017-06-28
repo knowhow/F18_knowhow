@@ -355,7 +355,7 @@ STATIC FUNCTION kalk_fin_stanje_add_to_r_export( id_firma, id_tip_dok, broj_dok,
    LOCAL nDbfArea := Select()
    LOCAL hRec
 
-   O_R_EXP
+   o_r_export()
 
    APPEND BLANK
 

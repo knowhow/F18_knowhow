@@ -466,7 +466,7 @@ STATIC FUNCTION _add_to_exp( broj_dok, datum_dok, vrsta_dok, id_partner, ;
 
    LOCAL nDbfArea := Select()
 
-   O_R_EXP
+   o_r_export()
 
    APPEND BLANK
 

@@ -64,12 +64,12 @@ FUNCTION fill_all_partneri_idbr_pdvb()
 
 FUNCTION fill_sifk_partn_idbr()
 
-   RETURN fill_sifk_partn( "IDBR", "Identfikacijski broj:", "07", 13 )
+   RETURN fill_sifk_partn( "IDBR", "IDENT br:", "07", 13 )
 
 
 FUNCTION fill_sifk_partn_pdvb()
 
-   RETURN fill_sifk_partn( "PDVB", "PDV broj:", "08", 12 )
+   RETURN fill_sifk_partn( "PDVB", "PDV br:", "08", 12 )
 
 
 /*

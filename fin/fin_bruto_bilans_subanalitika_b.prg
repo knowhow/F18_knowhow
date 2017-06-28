@@ -587,7 +587,7 @@ STATIC FUNCTION dodaj_stavku_u_tabelu_eksporta( cKonto, cIdPart, cNaziv, nPsDug,
 
    nArr := Select()
 
-   O_R_EXP
+   o_r_export()
    APPEND BLANK
    REPLACE field->konto WITH cKonto
    REPLACE field->idpart WITH cIdPart

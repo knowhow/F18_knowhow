@@ -23,7 +23,7 @@ FUNCTION fill_ost_tbl( cIntervals, cIdPart, cP_naz, ;
 
    nArr := Select()
 
-   O_R_EXP
+   o_r_export()
    APPEND BLANK
    REPLACE field->idpart WITH cIdPart
    REPLACE field->p_naz WITH cP_naz

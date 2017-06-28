@@ -146,7 +146,7 @@ STATIC FUNCTION fill_exp_tbl( cRbr, cDistrib, cPmId, cPmNaz, ;
 
    nDbfArea := Select()
 
-   O_R_EXP
+   o_r_export()
    APPEND BLANK
    REPLACE field->rbr WITH cRbr
    REPLACE field->distrib WITH cDistrib

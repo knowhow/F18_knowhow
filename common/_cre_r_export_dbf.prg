@@ -67,24 +67,31 @@ FUNCTION open_r_export_table( cExportDbf )
    // MsgBeep( "Problem sa pokretanjem ?!" )
    // ENDIF
 
-altd()
 
    IF cExportDbf == NIL
       cExportDbf := my_home() + my_dbf_prefix() + s_cExportDbf + ".dbf"
    ENDIF
 
-   AltD()
    hb_FNameSplit( cExportDbf, @cPath, @cName, @cExt, @cDrive )
 
    MsgO( "LO konvert " + cName + ".dbf -> .xlsx" )
    hb_FNameSplit( cExportDbf, @cPath, @cName, @cExt, @cDrive )
    IF Right( cPath, 1 ) == SLASH // c:\temp\ => c:\temp, bez ovoga soffice --outdir zaglavi !
-     cPath := Left( cPath, Len( cPath ) - 1 )
-   endif
+      cPath := Left( cPath, Len( cPath ) - 1 )
+   ENDIF
    f18_run( LO_convert_xlsx_cmd(), cExportDbf + ";" + cPath ) // libreoffice --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25 r_export.dbf
    Msgc()
    cXlsx := StrTran( cExportDbf, ".dbf", ".xlsx" )
 
    LO_open_dokument( cXlsx )
+
+   RETURN .T.
+
+
+
+FUNCTION o_r_export()
+
+   SELECT ( F_R_EXP )
+   my_usex ( "r_export" )
 
    RETURN .T.

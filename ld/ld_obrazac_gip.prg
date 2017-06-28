@@ -1316,7 +1316,7 @@ STATIC FUNCTION _ins_tbl( cIdRadnik, cIdRj, cTipRada, cNazIspl, dDatIsplate, ;
 
    LOCAL nTArea := Select()
 
-   O_R_EXP
+   o_r_export()
    SELECT r_export
    APPEND BLANK
 
@@ -1417,7 +1417,7 @@ FUNCTION ol_tmp_tbl()
 
    create_dbf_r_export( aDbf )
 
-   O_R_EXP
+   o_r_export()
    INDEX ON idradn + Str( godina, 4 ) + Str( mjesec, 2 ) TAG "1"
 
    RETURN

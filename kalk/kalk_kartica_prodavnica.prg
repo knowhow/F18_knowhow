@@ -713,7 +713,7 @@ STATIC FUNCTION kalk_kartica_prodavnica_add_item_to_r_export( hParams )
 
    LOCAL nTArea := Select()
 
-   O_R_EXP
+   o_r_export()
    SELECT r_export
 
    APPEND BLANK

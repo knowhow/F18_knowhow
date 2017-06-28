@@ -628,7 +628,7 @@ STATIC FUNCTION cre_tmp_tbl()
 
    create_dbf_r_export( aDbf )
 
-   O_R_EXP
+   o_r_export()
 
    // index on ......
    INDEX ON group + idradn + Str( godina, 4 ) + Str( mjesec, 2 ) TAG "1"

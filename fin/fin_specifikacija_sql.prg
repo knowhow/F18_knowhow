@@ -22,7 +22,7 @@ FUNCTION fin_suban_specifikacija_sql()
 
    LOCAL _rpt_data := {}
    LOCAL _rpt_vars := hb_Hash()
-   LOCAL _exported := .F.
+   LOCAL lExported := .F.
 
    download_template( "fin_specif.odt", "b1435934623a308b0a3e2c39c018840e92a86a66ebd5f2e5daa24722c8eae0ba" )
 
@@ -42,7 +42,7 @@ FUNCTION fin_suban_specifikacija_sql()
 
    IF _rpt_vars[ "export_dbf" ] == "D"
       IF export_podataka_u_dbf( _rpt_data, _rpt_vars )
-         _exported := .T.
+         lExported := .T.
       ENDIF
    ENDIF
 
@@ -52,7 +52,7 @@ FUNCTION fin_suban_specifikacija_sql()
       ENDIF
    ENDIF
 
-   IF _exported
+   IF lExported
       open_r_export_table()
    ENDIF
 
@@ -278,7 +278,7 @@ STATIC FUNCTION export_podataka_u_dbf( table, rpt_vars )
    _struct := fin_specifikacija_dbf_struct()
    create_dbf_r_export( _struct )
 
-   O_R_EXP
+   o_r_export()
 
    FOR nI := 1 TO table:LastRec()
 

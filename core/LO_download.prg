@@ -73,7 +73,7 @@ FUNCTION LO_open_dokument( cFile )
    ENDIF
 
    cCmd := LO_cmd()
-   IF is_linux() //.OR. is_mac()
+   IF is_linux() .OR. is_mac()
       lAsync := .T.
    ENDIF
 

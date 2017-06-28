@@ -682,7 +682,7 @@ METHOD export2DBF
 
    // kopiraj sve iz rpt_tmp u r_export
    O_RPT_TMP
-   O_R_EXP
+   o_r_export()
    SELECT rpt_tmp
    GO TOP
 

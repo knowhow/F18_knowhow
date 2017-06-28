@@ -46,7 +46,7 @@ STATIC FUNCTION _exp_dok()
    // pripremi fakturu za stampu, samo napuni tabele...
    fakt_stdok_pdv( NIL, NIL, NIL, .T. )
 
-   O_R_EXP
+   o_r_export()
    O_DRN
    O_DRNTEXT
    O_RN

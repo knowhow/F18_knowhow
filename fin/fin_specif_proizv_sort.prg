@@ -75,10 +75,10 @@ FUNCTION fin_specif_suban_proizv_sort()
       READ
       ESC_BCR
 
-      aUsl2 := Parsiraj( qqPartner, "IdPartner" )
+      cFilterIdPartner := Parsiraj( qqPartner, "IdPartner" )
       cFilterPartnerTelefon := Parsiraj( qqTel, "suban_partn_telefon()" )
 
-      IF aUsl2 <> NIL // cFilterPartnerTelefon <> NIL .AND.
+      IF cFilterIdPartner <> NIL // cFilterPartnerTelefon <> NIL .AND.
          EXIT
       ENDIF
 
@@ -129,8 +129,8 @@ FUNCTION fin_specif_suban_proizv_sort()
       cFilt1 += iif( Empty( cFilt1 ), "", ".and." ) + "(k1=ck1 .and. k2=ck2 .and. k3=ck3 .and. k4=ck4)"
    ENDIF
 
-   IF aUsl2 <> ".t."
-      cFilt1 += ".and.(" + aUsl2 + ")"
+   IF cFilterIdPartner <> ".t."
+      cFilt1 += ".and.(" + cFilterIdPartner + ")"
    ENDIF
    IF cFilterPartnerTelefon <> ".t."
       cFilt1 += ".and.(" + cFilterPartnerTelefon + ")"
@@ -140,7 +140,8 @@ FUNCTION fin_specif_suban_proizv_sort()
 
    Box(, 1, 30 )
 
-   INDEX ON &cSort1 TO TELSORT
+   INDEX ON &cSort1 TAG "TELSORT"
+   SET ORDER TO TAG "TELSORT"
    GO TOP
    AltD()
 
@@ -178,8 +179,8 @@ FUNCTION fin_specif_suban_proizv_sort()
    DO WHILE !Eof()
 
       SELECT suban
-      nkd := nkp := 0
-      nkd2 := nkp2 := 0
+      nKd := nKp := 0
+      nKd2 := nKp2 := 0
       cIdkonto := idkonto
 
       IF cSort == "1"

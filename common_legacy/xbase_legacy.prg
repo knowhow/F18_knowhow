@@ -559,7 +559,7 @@ FUNCTION Sel_Bazu( tbl )
       // QUIT_1
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION gaDBFDir( nPos )
@@ -571,7 +571,7 @@ FUNCTION O_Bazu( tbl )
 
    my_use( Lower( tbl ) )
 
-   RETURN
+   RETURN .T.
 
 
 

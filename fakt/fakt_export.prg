@@ -29,7 +29,7 @@ FUNCTION fakt_export_tbl_fakt()
 
    // kreiraj export tabelu
    cre_export_table()
-   O_R_EXP
+   o_r_export()
    INDEX ON idfirma + idtipdok + brdok TAG "1"
 
    fill_export_table( dD_f, dD_t, cId_f, cId_td )
@@ -114,7 +114,7 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
    LOCAL cIdRoba
    LOCAL nCount := 0
 
-   O_R_EXP
+   o_r_export()
    o_roba()
    o_fakt_doks()
    o_fakt()

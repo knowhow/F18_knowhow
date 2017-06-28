@@ -223,7 +223,7 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
    kcreate_dbf_r_export( cIdVd, lVpcCij, lMpcCij )
 
-   O_R_EXP
+   o_r_export()
    // set ORDER to TAG "ROB"
 
    SELECT ( F_KALK )

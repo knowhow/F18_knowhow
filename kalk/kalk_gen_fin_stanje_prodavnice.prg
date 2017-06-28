@@ -397,7 +397,7 @@ STATIC FUNCTION insert_into_rexport( id_firma, id_tip_dok, broj_dok, d_opis, dat
    LOCAL nDbfArea := Select()
    LOCAL hRec
 
-   O_R_EXP
+   o_r_export()
 
    APPEND BLANK
 

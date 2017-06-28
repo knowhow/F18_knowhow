@@ -467,7 +467,7 @@ FUNCTION pr_dupl_sast()
       RETURN .F.
    ENDIF
 
-   O_R_EXP
+   o_r_export()
    INDEX ON sast TAG "1"
 
    o_sastavnica()
@@ -679,7 +679,7 @@ FUNCTION _exp_sast_dbf()
       RETURN .F.
    ENDIF
 
-   O_R_EXP
+   o_r_export()
    o_sastavnica()
    o_roba()
 

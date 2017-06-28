@@ -29,7 +29,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
 
    LOCAL cRet, cIdBK
    LOCAL nI
-   LOCAL aOpcije := { "<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str( "<c-T> Briši" ), "<c-P> Print", ;
+   LOCAL aOpcije := { "<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str( "<c-T> Briši" ), "<c-P> Print", IIF( is_mac(), "<X> Export", "<a-E> Export"), ;
       "<F4>  Dupliciraj", _to_str( "<c-F9> Briši SVE" ), _to_str( "<c-F> Traži" ), "<a-S> Popuni kol.", ;
       "<a-R> Zamjena vrij.", "<c-A> Cirk.ispravka" }
    LOCAL cUslovSrch :=  ""
@@ -142,9 +142,10 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    sif_ispisi_naziv( nDbf, nDeltaX, nDeltaY )
 
    SELECT ( nDbf )
-   ordSetFocus( cOrderTag )
-
-   SET FILTER TO
+   IF Used()
+      ordSetFocus( cOrderTag )
+      SET FILTER TO
+   ENDIF
 
    PopSifV()
    PopWa( nDbf )
@@ -595,7 +596,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE Ch == K_CTRL_P
 
       PushWA()
-      IzborP2( Kol, my_home() + Alias() )
+      sifarnik_izbor_polja( Kol, my_home() + Alias() )
       IF LastKey() == K_ESC
          RETURN DE_CONT
       ENDIF
@@ -604,6 +605,19 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       PopWa()
 
       RETURN DE_CONT
+
+
+   CASE Ch == K_ALT_E .OR. ( is_mac() .AND. Upper( Chr( Ch ) ) == "X" )
+
+      PushWA()
+      sifarnik_izbor_polja( Kol, my_home() + Alias() )
+      IF LastKey() == K_ESC
+         RETURN DE_CONT
+      ENDIF
+
+      export_sifarnik()
+      RETURN DE_ABORT
+
 
    CASE Ch == K_ALT_F
       uslovsif()

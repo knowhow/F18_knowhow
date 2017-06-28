@@ -1063,7 +1063,7 @@ STATIC FUNCTION fin_suban_add_item_to_r_export( cKonto, cK_naz, cPartn, cP_naz, 
 
    LOCAL nTArea := Select()
 
-   O_R_EXP
+   o_r_export()
    SELECT r_export
 
    APPEND BLANK

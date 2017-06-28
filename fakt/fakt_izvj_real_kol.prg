@@ -551,12 +551,12 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    FF
    ENDPRINT
 
-   // lansiraj export....
+
    IF lExpRpt
       open_r_export_table()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------
@@ -681,7 +681,7 @@ STATIC FUNCTION fill_exp_tbl( cIdSif, cNazSif, nKol, nOsn, nUk )
 
    nArr := Select()
 
-   O_R_EXP
+   o_r_export()
    APPEND BLANK
    REPLACE field->sifra WITH cIdSif
    REPLACE field->naziv WITH cNazSif

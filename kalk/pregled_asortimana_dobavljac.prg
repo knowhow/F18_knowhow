@@ -52,7 +52,7 @@ STATIC FUNCTION _cre_tmp()
 
    create_dbf_r_export( _dbf )
 
-   O_R_EXP
+   o_r_export()
    INDEX ON idroba TAG "roba"
 
    RETURN

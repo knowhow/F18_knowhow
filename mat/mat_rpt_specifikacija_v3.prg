@@ -701,7 +701,7 @@ STATIC FUNCTION _fill_tmp_tbl( id_roba, grupa, roba_naz, roba_jmj, ;
 
    SELECT ( F_R_EXP )
    IF !Used()
-      O_R_EXP
+      o_r_export()
    ENDIF
 
    APPEND BLANK
@@ -768,7 +768,7 @@ STATIC FUNCTION _cre_tmp_tbl()
    // kreiraj tabelu
    create_dbf_r_export( _dbf )
 
-   O_R_EXP
+   o_r_export()
    // indeksiraj...
    INDEX ON id_roba TAG "1"
    INDEX ON grupa TAG "2"

@@ -83,14 +83,13 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
       gPostotak := "N"
    ENDIF
 
-   IF lBezUpita
-   ELSE
+   IF !lBezUpita
       Zaglavlje := PadR( Zaglavlje, 70 )
       nColStr := 80
       nSort := "ID       "
       Box(, 8, 76, .T. )
       SET CURSOR ON
-      @ m_x + 1, m_y + 20 SAY "Tekst koji se stampa kao naslov:"
+      @ m_x + 1, m_y + 20 SAY8 "Tekst koji se štampa kao naslov:"
       @ m_x + 2, m_y + 3  GET Zaglavlje
       cValid := ""
       IF fIndex
@@ -154,7 +153,7 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
       NEXT
 
       IF !Empty( cNazMemo )
-         AAdd( aKol, { cNazMemo, {|| ctxt2 }, .F., "P", 30, 0, 1, ++j } )
+         AAdd( aKol, { cNazMemo, {|| cTxt2 }, .F., "P", 30, 0, 1, ++j } )
       ENDIF
    ELSE
       AAdd( aKol, { "R.br.", {|| Str( RedBr, 4 ) + "." }, .F., "C", 5, 0, 1, 1 } )
@@ -319,7 +318,7 @@ STATIC FUNCTION Karaktera( cK )
    ENDIF
 
 
-FUNCTION IzborP2( Kol, cImef )
+FUNCTION sifarnik_izbor_polja( Kol, cImef )
 
    LOCAL i
    PRIVATE aOBjG, cKolona, Kl
@@ -404,7 +403,7 @@ FUNCTION IzborP2( Kol, cImef )
 
 /*
  * function DobraKol(Kol,i)
- * Nalazenje kolona koje se stampaju, Koristi je IzborP2
+ * Nalazenje kolona koje se stampaju, Koristi je sifarnik_izbor_polja
  */
 
 FUNCTION DobraKol( Kol, i )

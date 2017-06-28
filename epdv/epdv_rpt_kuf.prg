@@ -41,7 +41,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
    LOCAL cPom21
    LOCAL cPom22
    LOCAL nLenIzn
-   LOCAL lExport := "N"
+   LOCAL cExportDN := "N"
    LOCAL cExportDbf
 
 
@@ -110,7 +110,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
       nX += 2
 
-      @ m_x + nX, m_y + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET lExport  VALID lExport $ "DN" PICT "@!"
+      @ m_x + nX, m_y + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET cExportDN  VALID cExportDN $ "DN" PICT "@!"
 
       nX += 2
 
@@ -179,7 +179,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
    my_close_all_dbf()
 
-   IF lExport == "D"
+   IF cExportDN == "D"
 
       cExportDbf := my_home() + "epdv_r_kuf.dbf"
       open_r_export_table( cExportDbf )
@@ -227,7 +227,7 @@ STATIC FUNCTION cre_r_tbl()
 
    CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  cTbl, .T. )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -362,7 +362,7 @@ STATIC FUNCTION fill_rpt( nBrDok )
    SELECT ( nIzArea )
    SET FILTER TO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -598,4 +598,4 @@ STATIC FUNCTION kuf_linija()
       ?? " "
    NEXT
 
-   RETURN
+   RETURN .T.

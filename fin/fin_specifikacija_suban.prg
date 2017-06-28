@@ -728,7 +728,7 @@ STATIC FUNCTION fill_ss_tbl( cKonto, cPartner, cNaziv, nFDug, nFPot, nFSaldo, cR
 
    nArr := Select()
 
-   O_R_EXP
+   o_r_export()
    APPEND BLANK
    REPLACE field->konto WITH cKonto
    REPLACE field->partner WITH cPartner

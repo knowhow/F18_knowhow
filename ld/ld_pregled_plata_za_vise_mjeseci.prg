@@ -518,7 +518,7 @@ STATIC FUNCTION prikazi_pregled( cRj, nGodina, cMjOd, cMjDo, cRadnik, ;
    LOCAL nNBP_pt
 
 
-   O_R_EXP
+   o_r_export()
    SELECT r_export
    GO TOP
 
@@ -945,7 +945,7 @@ STATIC FUNCTION dodaj_u_pomocnu_tabelu( nGodina, nMjesec, cRadnik, cIdRj, cObrZa
 
    LOCAL nTArea := Select()
 
-   O_R_EXP
+   o_r_export()
    SELECT r_export
    APPEND BLANK
 

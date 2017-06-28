@@ -1478,7 +1478,7 @@ STATIC FUNCTION fill_exp_tbl( cIdPart, cNazPart, cBrRn, cOpis, dDatum, dValuta, 
 
    LOCAL nDbfArea := Select()
 
-   O_R_EXP
+   o_r_export()
    APPEND BLANK
 
    REPLACE field->idpartner WITH cIdPart

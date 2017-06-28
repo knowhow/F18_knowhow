@@ -943,7 +943,7 @@ STATIC FUNCTION fill_exp_tbl( nVar, cIdRoba, cSifDob, cNazRoba, cTarifa, ;
       nVar := 0
    ENDIF
 
-   O_R_EXP
+   o_r_export()
 
    APPEND BLANK
 

@@ -61,7 +61,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
    o_tables()
 
    IF !Empty( cSirovina )
-      O_R_EXP
+      o_r_export()
    ENDIF
 
    kalk_set_brkalk_za_idvd( "96", @cBrKalk )

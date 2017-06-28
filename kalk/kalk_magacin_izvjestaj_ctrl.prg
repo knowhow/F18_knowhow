@@ -157,7 +157,7 @@ STATIC FUNCTION cre_r_tbl( nVar )
 // ---------------------------------------
 STATIC FUNCTION o_rxp( nVar )
 
-   O_R_EXP
+   o_r_export()
 
    IF nVar == 1
       INDEX ON idroba TAG "1"

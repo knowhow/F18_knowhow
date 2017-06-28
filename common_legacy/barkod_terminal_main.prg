@@ -155,7 +155,7 @@ FUNCTION export_BTerm_data()
 
    cre_tmp()
 
-   O_R_EXP
+   o_r_export()
    INDEX ON barkod TAG "ID"
 
    o_roba()

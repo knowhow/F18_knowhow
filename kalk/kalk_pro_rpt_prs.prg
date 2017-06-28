@@ -118,7 +118,7 @@ STATIC FUNCTION _gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
 
    _idx := my_home() + "brfakt_pr.idx"
 
-   O_R_EXP
+   o_r_export()
    o_kalk()
 //   o_roba()
    o_sifk()
@@ -256,7 +256,7 @@ STATIC FUNCTION _show_rpt( cValuta )
    LOCAL cLine
 
    // kreiraj indexe
-   O_R_EXP
+   o_r_export()
    INDEX ON r_export->idroba + r_export->idsast TAG "1"
 
    SELECT r_export
@@ -544,7 +544,7 @@ STATIC FUNCTION _show_rekap( cValuta, cFaktBr )
    LOCAL aTmp
    LOCAL i
 
-   O_R_EXP
+   o_r_export()
 
    INDEX ON r_export->ctarbr TAG "2"
 

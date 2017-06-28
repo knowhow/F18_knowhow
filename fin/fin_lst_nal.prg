@@ -94,7 +94,7 @@ STATIC FUNCTION fill_export( cIdF, cIdVn, cBrNal, cRbr, cIdKto, ;
 
    LOCAL nArr := Select()
 
-   O_R_EXP
+   o_r_export()
 
    APPEND BLANK
    REPLACE idvn WITH cIdVn

@@ -142,7 +142,7 @@ METHOD FinBrutoBilans:get_vars()
 
    LOCAL _ok := .F.
    LOCAL _val := 1
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _valuta := 1
    LOCAL _user := my_user()
    LOCAL _konto := PadR( fetch_metric( "fin_bb_konto", _user, "" ), 200 )
@@ -164,25 +164,25 @@ METHOD FinBrutoBilans:get_vars()
 
    Box(, 20, 75 )
 
-   @ m_x + _x, m_y + 2 SAY "***** BRUTO BILANS *****"
+   @ m_x + nX, m_y + 2 SAY "***** BRUTO BILANS *****"
 
-   ++_x
-   ++_x
+   ++nX
+   ++nX
 
-   @ m_x + _x, m_y + 2 SAY "ODABERI VRSTU BILANSA:"
+   @ m_x + nX, m_y + 2 SAY "ODABERI VRSTU BILANSA:"
 
-   ++_x
+   ++nX
 
-   @ m_x + _x, m_y + 2 SAY8 "[1] subanalitički [2] analitički [3] sintetički [4] po grupama :" GET _tip PICT "9"
+   @ m_x + nX, m_y + 2 SAY8 "[1] subanalitički [2] analitički [3] sintetički [4] po grupama :" GET _tip PICT "9"
 
-   ++_x
-   ++_x
+   ++nX
+   ++nX
 
-   @ m_x + _x, m_y + 2 SAY8 "VRSTA ŠTAMPE:"
+   @ m_x + nX, m_y + 2 SAY8 "VRSTA ŠTAMPE:"
 
-   ++_x
+   ++nX
 
-   @ m_x + _x, m_y + 2 SAY8 "[1] TXT [2] ODT (Libre Office) :" GET _var_txt PICT "@!" VALID _var_txt $ "12"
+   @ m_x + nX, m_y + 2 SAY8 "[1] TXT [2] ODT (Libre Office) :" GET _var_txt PICT "@!" VALID _var_txt $ "12"
 
    READ
 
@@ -197,49 +197,49 @@ METHOD FinBrutoBilans:get_vars()
       _var_ab := "A"
    ENDIF
 
-   ++_x
-   ++_x
+   ++nX
+   ++nX
 
-   @ m_x + _x, m_y + 2 SAY8 "**** USLOVI IZVJEŠTAJA:"
+   @ m_x + nX, m_y + 2 SAY8 "**** USLOVI IZVJEŠTAJA:"
 
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Firma "
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Konta (prazno-sva):" GET _konto PICT "@!S40"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Konta (prazno-sva):" GET _konto PICT "@!S40"
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Za period od:" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Za period od:" GET _dat_od
+   @ m_x + nX, Col() + 1 SAY "do:" GET _dat_do
 
-   ++_x
+   ++nX
 
    IF _var_txt == "1"
-      ++_x
-      @ m_x + _x, m_y + 2 SAY8 "Varijanta izvještaja (A/B):" GET _var_ab PICT "@!" VALID _var_ab $ "AB"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY8 "Varijanta izvještaja (A/B):" GET _var_ab PICT "@!" VALID _var_ab $ "AB"
    ENDIF
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Prikaz stavki sa saldom 0 (D/N) ?" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Prikaz stavki sa saldom 0 (D/N) ?" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Prikaz kolone tekući promet (D/N) ?" GET _tek_prom VALID _tek_prom $ "DN" PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Prikaz kolone tekući promet (D/N) ?" GET _tek_prom VALID _tek_prom $ "DN" PICT "@!"
 
-   @ m_x + _x, Col() + 1 SAY8 "Klase unutar izvještaja (D/N) ?" GET _podklase VALID _podklase $ "DN" PICT "@!"
+   @ m_x + nX, Col() + 1 SAY8 "Klase unutar izvještaja (D/N) ?" GET _podklase VALID _podklase $ "DN" PICT "@!"
 
    IF gFinRj == "D"
-      ++_x
+      ++nX
       _id_rj := Space( 6 )
-      @ m_x + _x, m_y + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj
+      @ m_x + nX, m_y + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj
    ENDIF
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Format izvještaja (1 - A3, 2 - A4, 3 - A4L) ?" GET _format PICT "@S1" VALID _format $ "123"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Format izvještaja (1 - A3, 2 - A4, 3 - A4L) ?" GET _format PICT "@S1" VALID _format $ "123"
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Export izvještaja u DBF (D/N) ?" GET _export_dbf VALID _export_dbf $ "DN" PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Export izvještaja u DBF (D/N) ?" GET _export_dbf VALID _export_dbf $ "DN" PICT "@!"
 
    READ
 
@@ -512,8 +512,7 @@ METHOD FinBrutoBilans:zaglavlje_txt()
 
 
 
-// ---------------------------------------------------
-// ---------------------------------------------------
+
 METHOD FinBrutoBilans:gen_xml()
 
    LOCAL _xml := "data.xml"
@@ -549,7 +548,7 @@ METHOD FinBrutoBilans:gen_xml()
       xml_node( "konto", to_xml_encoding( "- sva konta -" ) )
    ENDIF
 
-   O_R_EXP
+   o_r_export()
    SELECT r_export
    SET ORDER TO TAG "1"
    GO TOP
@@ -849,7 +848,7 @@ METHOD FinBrutoBilans:print_txt()
 
    ::zaglavlje_txt()
 
-   O_R_EXP
+   o_r_export()
    SELECT r_export
    SET ORDER TO TAG "1"
    GO TOP
@@ -1182,7 +1181,7 @@ METHOD FinBrutoBilans:fill_r_export()
    LOCAL __konto, __partn
    LOCAL _id_konto, _id_partn
 
-   O_R_EXP
+   o_r_export()
    SET ORDER TO TAG "1"
 
    ::data:goTo( 1 )
@@ -1290,7 +1289,7 @@ METHOD FinBrutoBilans:create_r_export()
       RETURN .F.
    ENDIF
 
-   O_R_EXP
+   o_r_export()
 
    IF ::tip == 1
       INDEX ON ( idkonto + idpartner ) TAG "1"

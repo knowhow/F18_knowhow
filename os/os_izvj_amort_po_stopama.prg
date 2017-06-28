@@ -353,7 +353,7 @@ STATIC FUNCTION fill_rpt_exp( cId, cNaz, dDatum, dDatOtp, ;
 
    nArr := Select()
 
-   O_R_EXP
+   o_r_export()
    APPEND BLANK
    REPLACE field->id WITH cId
    REPLACE field->naziv WITH cNaz

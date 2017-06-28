@@ -309,7 +309,7 @@ STATIC FUNCTION _a_to_exp( r_br, sredstvo, naziv_sredstva, jmj_sredstva, trenutn
 
    LOCAL nDbfArea := Select()
 
-   O_R_EXP
+   o_r_export()
    APPEND BLANK
    REPLACE field->rbr WITH r_br
    REPLACE field->sredstvo WITH sredstvo

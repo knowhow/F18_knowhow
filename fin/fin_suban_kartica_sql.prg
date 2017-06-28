@@ -285,7 +285,7 @@ STATIC FUNCTION _export_dbf( table, rpt_vars )
 
    create_dbf_r_export( fin_suban_export_dbf_struct() )
 
-   O_R_EXP
+   o_r_export()
 
    FOR nI := 1 TO table:LastRec()
 

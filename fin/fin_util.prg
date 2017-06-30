@@ -43,18 +43,20 @@ FUNCTION Preknjizenje()
    RETURN Prefin_unos_naloga()
 
 
+/*
 FUNCTION Prebfin_kartica()
 
    RETURN fin_prekart()
+*/
 
 
-
+/*
 FUNCTION GenPocStanja()
 
    PrenosFin()
 
    RETURN
-
+*/
 
 
 

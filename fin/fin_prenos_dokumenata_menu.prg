@@ -19,9 +19,11 @@ FUNCTION MnuGenDok()
 
    AAdd( _opc, "1. generacija dokumenta početnog stanja                          " )
    AAdd( _opcexe, {|| fin_pocetno_stanje_sql() } )
+/*
    AAdd( _opc, "2. generacija dokumenta početnog stanja (stara opcija/legacy)" )
    AAdd( _opcexe, {|| GenPocStanja() } )
-   AAdd( _opc, "3. generisanje storna naloga " )
+*/
+   AAdd( _opc, "S. generisanje storna naloga " )
    AAdd( _opcexe, {|| StornoNaloga() } )
 
    f18_menu( "gdk", .F., _izbor, _opc, _opcexe )

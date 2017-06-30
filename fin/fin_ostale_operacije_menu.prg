@@ -21,8 +21,11 @@ FUNCTION fin_ostale_operacije_meni()
    AAdd( _opcexe, {|| fin_povrat_naloga() } )
    AAdd( _opc, "2. preknjiženje     " )
    AAdd( _opcexe, {|| Preknjizenje() } )
+
+/*
    AAdd( _opc, "3. prebacivanje kartica" )
    AAdd( _opcexe, {|| Prebfin_kartica() } )
+*/
 
    AAdd( _opc, "4. otvorene stavke" )
    AAdd( _opcexe, {|| fin_otvorene_stavke_meni() } )

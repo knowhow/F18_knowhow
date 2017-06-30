@@ -47,7 +47,7 @@ STATIC FUNCTION fin_specif_kupci()
 
 
    AAdd( aOpc, "4. konta za partnera" )
-   AAdd( aOpcExe, {|| SpecPop() } )
+   AAdd( aOpcExe, {|| fin_specifikacija_konta_za_partnera() } )
    AAdd( aOpc, "5. pregled novih dugovanja/potraživanja" )
    AAdd( aOpcExe, {|| PregNDP() } )
    AAdd( aOpc, "6. pregled partnera bez prometa" )

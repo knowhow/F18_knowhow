@@ -1,16 +1,16 @@
 #include "f18.ch"
 
-/* SpecPop()
+/* fin_specifikacija_konta_za_partnera()
  *   Specifikacija konta za odredjene partnere
  */
-FUNCTION SpecPop()
+FUNCTION fin_specifikacija_konta_za_partnera()
 
    LOCAL nCol1 := nCol2 := 0
 
    M := "----- ------- ----------------------------- ----------------- ---------------- ------------ ------------ ---------------- ------------"
 
    cIdFirma := self_organizacija_id()
-   qqPartner := qqKonto := Space( 70 )
+   qqPartner := qqKonto := Space( 100 )
    picBHD := FormPicL( "9 " + gPicBHD, 16 )
    picDEM := FormPicL( "9 " + pic_iznos_eur(), 12 )
 
@@ -18,7 +18,7 @@ FUNCTION SpecPop()
 
 
 
-   Box( "SSK", 6, 60, .F. )
+   Box( "SSK", 6, 70, .F. )
 
    DO WHILE .T.
       @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA KONTA ZA ODREDJENE PARTNERE"
@@ -29,7 +29,9 @@ FUNCTION SpecPop()
       //ENDIF
       @ m_x + 5, m_y + 2 SAY "Partner:" GET qqPartner PICT "@!S50"
       @ m_x + 6, m_y + 2 SAY "Konta  :" GET  qqKonto PICT "@!S50"
-      READ; ESC_BCR
+      READ
+      ESC_BCR
+
       aUsl1 := parsiraj( qqPartner, "idpartner" )
       aUsl2 := parsiraj( qqKonto, "idkonto" )
       IF aUsl1 <> NIL .AND. aUsl2 <> NIL; exit; ENDIF
@@ -40,12 +42,15 @@ FUNCTION SpecPop()
    nDugBHD := nPotBHD := nUkDugBHD := nUkPotBHD := 0
    nDugDEM := nPotDEM := nUKDugDEM := nUkPotDEM := 0
 
-   o_konto()
-   o_suban()
+   //o_konto()
+   //o_suban()
 
-   SELECT SUBAN
-   SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto
+   //SELECT SUBAN
+   //SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto
+
    cIdFirma := Left( cIdFirma, 2 )
+
+  find_suban_by_konto_partner( cIdFirma, qqKonto, qqPartner, NIL, "idfirma,idpartner,idkonto" )
 
    IF aUsl1 <> ".t." .OR. aUsl2 <> ".t."
       cFilt1 := aUsl1 + ".and." + aUsl2
@@ -53,7 +58,8 @@ FUNCTION SpecPop()
    ELSE
       SET FILTER TO
    ENDIF
-   HSEEK cIdFirma
+   //HSEEK cIdFirma
+   GO TOP
    EOF CRET
 
 
@@ -89,7 +95,7 @@ FUNCTION SpecPop()
          ? m
          @ PRow() + 1, 1 SAY ++B PICTURE '9999'
          @ PRow(), 6 SAY cIdKonto
-         SELECT KONTO; HSEEK cIdKonto
+         select_o_konto( cIdKonto )
          aRez := SjeciStr( naz, 30 )
          nCol2 := PCol() + 1
          @ PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 30 )
@@ -138,14 +144,10 @@ FUNCTION SpecPop()
    end_print()
    CLOSERET
 
-   RETURN
+   RETURN .T.
 
 
-
-/* ZglSpSifK()
- *     Zaglavlje specifikacije po kontima
- */
-FUNCTION ZglSpSifK()
+STATIC FUNCTION ZglSpSifK()
 
    ?
    P_COND
@@ -162,10 +164,10 @@ FUNCTION ZglSpSifK()
       //? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
    //ENDIF
 
-   ? "----- ------- ----------------------------- ------------------------------------------------------------ -----------------------------"
-   ? "*RED.* KONTO *       N A Z I V             *     K U M U L A T I V N I    P R O M E T                   *      S A L D O              "
-   ? "                                            ------------------------------------------------------------ -----------------------------"
-   ? "*BROJ*       *       K O N T A             *  DUGUJE   " + ValDomaca() + "  *  POTRA�UJE " + ValDomaca() + "* DUGUJE " + ValPomocna() + "* POTRA� " + ValPomocna() + "*    " + ValDomaca() + "        *    " + ValPomocna() + "   *"
+   ?U "----- ------- ----------------------------- ------------------------------------------------------------ -----------------------------"
+   ?U "*RED.* KONTO *       N A Z I V             *     K U M U L A T I V N I    P R O M E T                   *      S A L D O              "
+   ?U "                                            ------------------------------------------------------------ -----------------------------"
+   ?U "*BROJ*       *       K O N T A             *  DUGUJE   " + ValDomaca() + "  *  POTRAŽUJE " + ValDomaca() + "* DUGUJE " + ValPomocna() + "* POTRAŽ " + ValPomocna() + "*    " + ValDomaca() + "        *    " + ValPomocna() + "   *"
    ? M
 
    SELECT SUBAN

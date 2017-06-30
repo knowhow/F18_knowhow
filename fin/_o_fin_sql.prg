@@ -898,10 +898,12 @@ STATIC FUNCTION use_sql_suban_where( hParams )
    ENDIF
 
    IF hb_HHasKey( hParams, "idkonto" )
+   altd()
       cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "idkonto", hParams[ "idkonto" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "idpartner" )
+   altd()
       cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "idpartner", hParams[ "idpartner" ] )
    ENDIF
 

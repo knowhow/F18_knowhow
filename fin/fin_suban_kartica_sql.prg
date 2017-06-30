@@ -86,36 +86,36 @@ STATIC FUNCTION _get_vars( rpt_vars )
    LOCAL _box_name := "SUBANALITIČKA KARTICA (LO)"
    LOCAL _box_x := 21
    LOCAL _box_y := 65
-   LOCAL _x := 1
+   LOCAL nX := 1
 
    o_sifk()
    o_sifv()
    o_konto()
-  // o_partner()
+   // o_partner()
 
    Box( "#" + _box_name, _box_x, _box_y )
 
    SET CURSOR ON
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Brza kartica (D/N)" GET _brza PICT "@!" VALID _brza $ "DN"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Brza kartica (D/N)" GET _brza PICT "@!" VALID _brza $ "DN"
    READ
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Firma "
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
-   ++ _x
-   ++ _x
+   ++nX
+   ++nX
    IF _brza = "D"
 
       _konto := PadR( _konto, 7 )
       _partner := PadR( _partner, FIELD_LEN_PARTNER_ID )
 
-      @ m_x + _x, m_y + 2 SAY "Konto   " GET _konto VALID !Empty( _konto ) .AND. p_konto( @_konto )
-      ++ _x
-      @ m_x + _x, m_y + 2 SAY "Partner " GET _partner VALID Empty( _partner ) .OR. ;
+      @ m_x + nX, m_y + 2 SAY "Konto   " GET _konto VALID !Empty( _konto ) .AND. p_konto( @_konto )
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Partner " GET _partner VALID Empty( _partner ) .OR. ;
          RTrim( _partner ) == ";" .OR. p_partner( @_partner ) PICT "@!"
 
    ELSE
@@ -123,38 +123,38 @@ STATIC FUNCTION _get_vars( rpt_vars )
       _konto := PadR( _konto, 200 )
       _partner := PadR( _partner, 200 )
 
-      @ m_x + _x, m_y + 2 SAY "Konto   " GET _konto PICT "@!S50"
-      ++ _x
-      @ m_x + _x, m_y + 2 SAY "Partner " GET _partner PICT "@!S50"
+      @ m_x + nX, m_y + 2 SAY "Konto   " GET _konto PICT "@!S50"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Partner " GET _partner PICT "@!S50"
 
    ENDIF
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Kartica za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Kartica za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datum dokumenta od:" GET _datum_od
-   @ m_x + _x, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Datum dokumenta od:" GET _datum_od
+   @ m_x + nX, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Prikaz kartica sa saldom nula (D/N)?" GET _nula VALID _nula $ "DN" PICT "@!"
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Prikaz kartica sa saldom nula (D/N)?" GET _nula VALID _nula $ "DN" PICT "@!"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Export u XLSX (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Export u XLSX (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
 
    READ
 
@@ -276,8 +276,8 @@ STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
 
 STATIC FUNCTION _export_dbf( table, rpt_vars )
 
-   LOCAL oRow, _struct
-   LOCAL _rec
+   LOCAL oRow, _struct, nI, nSaldo
+   LOCAL hRec
 
    IF table:LastRec() == 0
       RETURN .F.
@@ -287,6 +287,7 @@ STATIC FUNCTION _export_dbf( table, rpt_vars )
 
    o_r_export()
 
+   nSaldo := 0
    FOR nI := 1 TO table:LastRec()
 
       oRow := table:GetRow( nI )
@@ -294,24 +295,25 @@ STATIC FUNCTION _export_dbf( table, rpt_vars )
       SELECT r_export
       APPEND BLANK
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "id_konto" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idkonto" ) ) )
-      _rec[ "naz_konto" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "konto_naz" ) ) )
-      _rec[ "id_partn" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idpartner" ) ) )
-      _rec[ "naz_partn" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "partn_naz" ) ) )
-      _rec[ "vrsta_nal" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idvn" ) ) )
-      _rec[ "broj_nal" ] := oRow:FieldGet( oRow:FieldPos( "brnal" ) )
-      _rec[ "nal_rbr" ] := oRow:FieldGet( oRow:FieldPos( "rbr" ) )
-      _rec[ "broj_veze" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "brdok" ) ) )
-      _rec[ "dat_nal" ] := oRow:FieldGet( oRow:FieldPos( "datdok" ) )
-      _rec[ "dat_val" ] := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
-      _rec[ "opis_nal" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
-      _rec[ "duguje" ] := oRow:FieldGet( oRow:FieldPos( "duguje" ) )
-      _rec[ "potrazuje" ] := oRow:FieldGet( oRow:FieldPos( "potrazuje" ) )
-      _rec[ "saldo" ] := oRow:FieldGet( oRow:FieldPos( "saldo" ) )
+      hRec[ "id_konto" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idkonto" ) ) )
+      hRec[ "naz_konto" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "konto_naz" ) ) )
+      hRec[ "id_partn" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idpartner" ) ) )
+      hRec[ "naz_partn" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "partn_naz" ) ) )
+      hRec[ "vrsta_nal" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idvn" ) ) )
+      hRec[ "broj_nal" ] := oRow:FieldGet( oRow:FieldPos( "brnal" ) )
+      hRec[ "nal_rbr" ] := oRow:FieldGet( oRow:FieldPos( "rbr" ) )
+      hRec[ "broj_veze" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "brdok" ) ) )
+      hRec[ "dat_nal" ] := oRow:FieldGet( oRow:FieldPos( "datdok" ) )
+      hRec[ "dat_val" ] := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
+      hRec[ "opis_nal" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
+      hRec[ "duguje" ] := oRow:FieldGet( oRow:FieldPos( "duguje" ) )
+      hRec[ "potrazuje" ] := oRow:FieldGet( oRow:FieldPos( "potrazuje" ) )
+      nSaldo += hRec[ "duguje" ] - hRec[ "potrazuje" ]
+      hRec[ "saldo" ] := nSaldo
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
    NEXT
 
@@ -362,7 +364,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
       xml_node( "val", "EUR" )
    ENDIF
 
-   table:GoTo(1)
+   table:GoTo( 1 )
 
    DO WHILE !table:Eof()
 
@@ -470,9 +472,9 @@ STATIC FUNCTION _fin_kartica_saldo_nula( table, _konto, _partner )
    LOCAL _ret := .F.
    LOCAL _u_saldo := 0
    LOCAL oRow
+   LOCAL _dug, _pot
 
-   DO WHILE !table:Eof() .AND. table:FieldGet( table:FieldPos( "idkonto" ) ) == _konto ;
-         .AND. table:FieldGet( table:FieldPos( "idpartner" ) ) == _partner
+   DO WHILE !table:Eof() .AND. table:FieldGet( table:FieldPos( "idkonto" ) ) == _konto .AND. table:FieldGet( table:FieldPos( "idpartner" ) ) == _partner
 
       oRow := table:GetRow()
 

@@ -1,8 +1,6 @@
 #include "f18.ch"
 
-/* fin_specifikacija_konta_za_partnera()
- *   Specifikacija konta za odredjene partnere
- */
+
 FUNCTION fin_specifikacija_konta_za_partnera()
 
    LOCAL nCol1 := nCol2 := 0

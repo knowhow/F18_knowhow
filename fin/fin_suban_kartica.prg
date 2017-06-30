@@ -799,7 +799,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   ENDIF
                ELSE  // otvorene stavke
                   IF D_P == "1"
-                     @ PRow(), PCol() + 1 SAY hRec[ "iznosbhd" ]PICTURE picBHD
+                     @ PRow(), PCol() + 1 SAY hRec[ "iznosbhd" ]  PICTURE picBHD
                      @ PRow(), PCol() + 1 SAY 0        PICTURE picBHD
                      nDugBHD += hRec[ "iznosbhd" ]
                   ELSE
@@ -821,11 +821,11 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                ENDIF
             ENDIF
 
-            IF !( lOtvoreneStavke .AND. hRec[ "otvst" ] == "9" )
+            IF !( lOtvoreneStavke .AND. hRec[ "otvst" ] == "9" ) // ako se radi o otvorenim stavkama, prikazati samo ono sto nije zatvoreno
                IF cDinDem = "1"
-                  @ PRow(), PCol() + 1 SAY nDugBHD - nPotBHD PICT picbhd
+                  @ PRow(), PCol() + 1 SAY nDugBHD - nPotBHD PICT picbhd // saldo KM
                ELSEIF cDinDem == "2"
-                  @ PRow(), PCol() + 1 SAY nDugDEM - nPotDEM PICT picbhd
+                  @ PRow(), PCol() + 1 SAY nDugDEM - nPotDEM PICT picbhd // saldo EUR
                ENDIF
 
                IF cK14 == "3"
@@ -852,7 +852,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                ENDIF
 
                fin_suban_add_item_to_r_export( cIdKonto, cKontoNaziv, cIdPartner, __p_naz, __vr_nal, __br_nal, __r_br, ;
-                  __br_veze, __dat_nal, __dat_val, __opis, nDuguje, nPotrazuje, ( nDuguje - nPotrazuje ) )
+                  __br_veze, __dat_nal, __dat_val, __opis, nDuguje, nPotrazuje, nDugBHD - nPotBHD )
             ENDIF
 
             SKIP 1
@@ -1052,9 +1052,9 @@ FUNCTION fin_suban_export_dbf_struct()
    AAdd( aDbf, { "dat_nal", "D", 8, 0 }  )
    AAdd( aDbf, { "dat_val", "D", 8, 0 }  )
    AAdd( aDbf, { "opis_nal", "C", 100, 0 }  )
-   AAdd( aDbf, { "duguje", "N", 15, 5 }  )
-   AAdd( aDbf, { "potrazuje", "N", 15, 5 }  )
-   AAdd( aDbf, { "saldo", "N", 15, 5 }  )
+   AAdd( aDbf, { "duguje", "N", 15, 2 }  )
+   AAdd( aDbf, { "potrazuje", "N", 15, 2 }  )
+   AAdd( aDbf, { "saldo", "N", 15, 2 }  )
 
    RETURN aDbf
 

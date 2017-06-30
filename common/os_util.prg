@@ -143,18 +143,7 @@ FUNCTION IsDirectory( cDir1 )
    RETURN lExists
 
 
-/* brisi_stare_fajlove(cDir)
-  *    Brisi fajlove starije od 45 dana
-  *
-  * \code
-  *
-  * npr:  cDir ->  c:\tops\prenos\
-  *
-  * brisi sve fajlove u direktoriju
-  * starije od 45 dana
-  *
-  * \endcode
-  */
+
 
 FUNCTION brisi_stare_fajlove( cDir, cFilesMatch, nDana )
 

@@ -138,7 +138,10 @@ FUNCTION post_login()
 
 PROCEDURE post_login_cleanup()
 
+   LOCAL cFiles
+/*
    LOCAL aFileList, cLoc, aFile, cExt
+
 
    FOR EACH cExt IN { "txt", "pdf" }
       cLoc := my_home() + "F18_rpt_*." + cExt
@@ -147,6 +150,11 @@ PROCEDURE post_login_cleanup()
          FErase( my_home() + aFile[ 1 ] )
       NEXT
 
+   NEXT
+*/
+
+   FOR EACH cFiles in { "F18_rpt_*.txt", "F18_rpt_*.pdf", "r_export_*.xlsx", "out_*.odt" }
+      brisi_stare_fajlove( my_home(), cFiles, 1 )
    NEXT
 
    RETURN

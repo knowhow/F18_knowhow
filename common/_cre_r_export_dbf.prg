@@ -55,6 +55,8 @@ FUNCTION open_r_export_table( cExportDbf )
    LOCAL cCommand
    LOCAL cPath, cName, cExt, cDrive
    LOCAL cXlsx
+   LOCAL hFile, cOutFile
+
 
    my_close_all_dbf()
 
@@ -83,7 +85,13 @@ FUNCTION open_r_export_table( cExportDbf )
    Msgc()
    cXlsx := StrTran( cExportDbf, ".dbf", ".xlsx" )
 
-   LO_open_dokument( cXlsx )
+   IF ( hFile := hb_vfTempFile( @cOutFile, my_home(), "r_export_", ".xlsx" ) ) != NIL // hb_vfTempFile( @<cFileName>, [ <cDir> ], [ <cPrefix> ], [ <cExt> ], [ <nAttr> ] )
+      hb_vfClose( hFile )
+      COPY FILE ( cXlsx ) TO ( cOutFile )
+   ELSE
+      cOutFile := cXlsx
+   ENDIF
+   LO_open_dokument( cOutFile )
 
    RETURN .T.
 

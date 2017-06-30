@@ -624,8 +624,7 @@ STATIC FUNCTION RealPoRadn()
          SELECT POM
 
          DO WHILE !Eof() .AND. pom->idPos == _IdPos
-            SELECT ROBA
-            HSEEK pom->idRoba
+            select_o_roba( pom->idRoba )
 
             cStr1 := ""
 
@@ -869,8 +868,7 @@ STATIC FUNCTION RealPoOdj( fPrik, nTotal2, nTotal3 )
             SELECT POM
             DO WHILE !Eof() .AND. POM->( IdPos ) + Eval( bOdj ) == ( _IdPos + _IdOdj )
                _IdRoba := POM->IdRoba
-               SELECT ROBA
-               HSEEK _IdRoba
+               select_o_roba( _IdRoba )
                ? _IdRoba, Left( ROBA->Naz, 25 ), "(" + ROBA->Jmj + ")"
                IF cK1 == "D"
                   _K2 := roba->k2

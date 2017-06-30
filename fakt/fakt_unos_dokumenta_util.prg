@@ -1174,7 +1174,6 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
    DO WHILE !Eof()
       IF cSetPor == "D"
          fakt_set_pozicija_sif_roba()
-         // select roba; HSEEK fakt_pripr->idroba
          select_o_tarifa( roba->idtarifa )
          IF Found()
             SELECT fakt_pripr

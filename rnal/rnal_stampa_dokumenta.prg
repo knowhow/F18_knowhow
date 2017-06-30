@@ -601,8 +601,7 @@ STATIC FUNCTION fill_za_stampu_doc_it2()
       nIt_no := field->it_no
 
       // nadji artikal
-      SELECT roba
-      HSEEK cArt_id
+      select_o_roba( cArt_id )
 
       cArt_desc := AllTrim( roba->naz )
 

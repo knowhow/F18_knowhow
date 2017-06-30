@@ -62,8 +62,7 @@ FUNCTION pos2_pripr()
       hRec := dbf_get_rec()
       hb_HDel( hRec, "rbr" )
 
-      SELECT roba
-      HSEEK _IdRoba
+      select_o_roba( _IdRoba )
       hRec[ "robanaz" ] := roba->naz
       hRec[ "jmj" ] := roba->jmj
 

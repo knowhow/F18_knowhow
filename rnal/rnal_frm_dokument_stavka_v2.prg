@@ -344,8 +344,7 @@ FUNCTION g_roba_desc( cId )
       o_roba()
    ENDIF
 
-   SELECT roba
-   SEEK cId
+   select_o_roba( cId )
 
    IF Found()
       cDescr := AllTrim( roba->naz )
@@ -366,13 +365,12 @@ FUNCTION g_roba_price( cId )
    LOCAL nPrice
    LOCAL nTArea := Select()
 
-   SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
+   //SELECT ( F_ROBA )
+   //IF !Used()
+   //    o_roba()
+   //ENDIF
 
-   SELECT roba
-   SEEK cId
+   select_o_roba( cId )
 
    IF Found()
       nPrice := roba->vpc

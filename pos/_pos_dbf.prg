@@ -467,9 +467,7 @@ FUNCTION pos_import_fmk_roba()
 
       cIdRoba := field->id
 
-      SELECT roba
-      GO TOP
-      SEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       IF !Found()
          APPEND BLANK

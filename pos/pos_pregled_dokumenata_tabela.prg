@@ -339,8 +339,7 @@ FUNCTION pos_pregled_stavki_racuna()
 
       hRec := dbf_get_rec()
 
-      SELECT roba
-      HSEEK hRec[ "idroba" ]
+      select_o_roba( hRec[ "idroba" ] )
 
       hRec[ "robanaz" ] := roba->naz
       hRec[ "jmj" ] := roba->jmj

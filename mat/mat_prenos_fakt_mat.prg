@@ -136,7 +136,7 @@ STATIC FUNCTION prenos()
          IF brnal == cBrMat; nRbr := Val( Rbr ); ENDIF
          SELECT fakt
          DO WHILE !Eof() .AND. cIdFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-            SELECT ROBA; HSEEK fakt->idroba
+            select_o_roba( fakt->idroba )
 
             SELECT fakt
             IF AllTrim( podbr ) == "."
@@ -144,7 +144,7 @@ STATIC FUNCTION prenos()
                LOOP
             ENDIF
             IF fakt->cijena <> roba->mpc  // nivelacija
-               SELECT roba; HSEEK fakt->idroba
+               select_o_roba( fakt->idroba )
                SELECT mat_pripr
                APPEND BLANK
                REPLACE idfirma WITH fakt->idfirma, ;

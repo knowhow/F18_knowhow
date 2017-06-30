@@ -285,8 +285,7 @@ STATIC FUNCTION napravi_u_pripremi_storno_dokument( rn_datum, storno_rn, broj_fi
 
       _t_roba := field->idroba
 
-      SELECT roba
-      SEEK _t_roba
+      select_o_roba( _t_roba )
 
       SELECT pos
 

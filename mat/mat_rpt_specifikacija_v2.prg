@@ -190,8 +190,7 @@ FUNCTION mat_specifikacija()
 
          SELECT mat_suban
          cIdRoba := IdRoba
-         SELECT roba
-         HSEEK cidroba
+         select_o_roba( cIdroba )
          SELECT mat_suban
          IF !Empty( cIdTarifa )
             IF roba->idtarifa <> cIdtarifa
@@ -496,7 +495,7 @@ STATIC FUNCTION FFor2s()
 
    ++nRBr
    cIdRoba := idroba
-   SELECT ROBA; SEEK cIdRoba
+   select_o_roba( cIdRoba )
    cArtikal := Trim( naz )
    cJMJ     := Trim( jmj )
    SELECT ( nArr )

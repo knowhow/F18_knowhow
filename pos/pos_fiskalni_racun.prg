@@ -177,8 +177,7 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacun
 
       _art_id := field->idroba
 
-      SELECT roba
-      SEEK _art_id
+      select_o_roba( _art_id )
 
       _plu := roba->fisc_plu
 

@@ -925,8 +925,7 @@ FUNCTION g_art_price( cId, cPriceType )
       o_roba()
    ENDIF
 
-   SELECT roba
-   SEEK cId
+   select_o_roba( cId )
 
    IF Found() .AND. field->id == cID
       DO CASE

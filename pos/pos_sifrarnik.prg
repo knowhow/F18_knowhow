@@ -109,8 +109,7 @@ FUNCTION Id2Naz()
    LOCAL nSel := Select()
 
    PushWA()
-   SELECT roba
-   HSEEK sast->id2
+   select_o_roba( sast->id2 )
    popwa()
 
    RETURN Left( roba->naz, 25 )
@@ -426,9 +425,7 @@ FUNCTION P_Barkod( cBK )
       cID := ""
       ImaUSifV( "ROBA", "BARK", cBK, @cId )
       IF !Empty( cID )
-         SELECT roba
-         SET ORDER TO TAG "ID"
-         SEEK cId  // nasao sam sifru !!
+         select_o_roba( cId ) // sifra nadjena!
          MsgBeep( "Isti barkod pridruzen je sifri: " + id + " ??!" )
          PopWa()
          RETURN .F.

@@ -721,7 +721,7 @@ FUNCTION mat_st_anal_nalog( fnovi )
             nCP := PCol() + 1
             @ PRow(), PCol() + 1 SAY IdRoba
             nCR := PCol() + 1
-            SELECT ROBA; HSEEK mat_pripr->idroba
+            select_o_roba( mat_pripr->idroba )
             IF gkonto == "D" .OR. g2Valute == "N"
                aRez := SjeciStr( naz, 40 )
             ELSE
@@ -1052,12 +1052,11 @@ STATIC FUNCTION OsvCijSif()
    LOCAL cPom2 := " "
    LOCAL _vars
 
-   SELECT ROBA
-   SEEK _idroba
+   select_o_roba( _idroba )
    IF !Found()
       SELECT ( nArr )
       MsgBeep( "Nema sifre artikla!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // da vidimo osobine unesenog konta, ako postoje

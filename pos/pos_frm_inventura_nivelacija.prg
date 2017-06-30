@@ -775,10 +775,7 @@ STATIC FUNCTION update_ip_razlika()
 
       IF Round( nKolicinaZaInventuru, 3 ) <> 0
 
-         SELECT roba
-         SET ORDER TO TAG "ID"
-         GO TOP
-         SEEK ip_roba
+         select_o_roba( ip_roba )
 
          SELECT priprz
          APPEND BLANK
@@ -896,8 +893,7 @@ FUNCTION _set_cijena_artikla( id_vd, id_roba )
 
    IF id_vd == VD_INV
 
-      SELECT roba
-      HSEEK id_roba
+      select_o_roba( id_roba )
       _cijena := pos_get_mpc()
 
    ENDIF

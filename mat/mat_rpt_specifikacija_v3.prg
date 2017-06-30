@@ -366,8 +366,7 @@ STATIC FUNCTION _fill_rpt_data( param )
 
       ENDDO
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       // da li se grupa odredjuje putem sifre ili iz sifk ?
       IF PARAM[ "grupa_na_osnovu_sifre" ] == "D"

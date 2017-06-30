@@ -144,8 +144,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
          IF !lPrepis
             cPom += Trim( _IdRoba ) + " - " + Trim( _RobaNaz )
          ELSE
-            SELECT roba
-            SEEK Trim( _idRoba )
+            select_o_roba( Trim( _idRoba ) )
             cPom += Trim( _idRoba ) + " - " + Trim( roba->naz )
             SELECT pos
          ENDIF
@@ -519,8 +518,7 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
    GO TOP
    DO WHILE ! Eof()
       cPom := " * "
-      SELECT roba
-      HSEEK POM->IdRoba
+      select_o_roba( POM->IdRoba )
 
       cPom += Trim( POM->IdRoba ) + " - " + Trim( roba->Naz )
       aPom := SjeciStr( cPom, 38 )
@@ -1005,8 +1003,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          cIdRoba := field->idroba
          cIdTarifa := field->idtarifa
 
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
          cJmj := roba->jmj
          cRobaNaz := AllTrim( roba->naz )
 

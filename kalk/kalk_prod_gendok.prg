@@ -473,7 +473,7 @@ FUNCTION VratiZadNiv()
 
    MsgO( "Generacija dokumenta 19 - " + cBrDok )
    DO WHILE !Eof() .AND. idvd == "19" .AND. brdok == cStBrDok
-      SELECT ROBA; HSEEK KALK->idroba
+  --    SELECT ROBA; HSEEK KALK->idroba
       SELECT KALK; nSlog := RecNo()
       // nPom := StanjeProd( cIdFirma+cIdKonto+KALK->idroba , ddatdok )
       SET ORDER TO TAG "1"
@@ -558,8 +558,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
       nVPVU := nVPVI := nNVU := nNVI := 0
       nRabat := 0
 
-      SELECT roba
-      HSEEK cIdroba
+      select_o_roba( cIdroba )
       SELECT kalk
 
       IF roba->tip $ "TU"
@@ -801,7 +800,7 @@ FUNCTION Gen41S()
 
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. Pkonto == cPKonto
       cIdTarifa := IdTarifa
-      SELECT roba; HSEEK kalk->idroba
+  --    SELECT roba; HSEEK kalk->idroba
   --    SELECT tarifa; HSEEK cIdTarifa; SELECT kalk
       set_pdv_public_vars()
       nOPP := TARIFA->OPP; nPPP := TARIFA->PPP
@@ -821,7 +820,7 @@ FUNCTION Gen41S()
       DO WHILE !Eof() .AND. cIdFirma == IdFirma  .AND. PKonto == cPKonto .AND. ;
             cIdtarifa == IdTarifa
          IF DATDOK > dGledamDo .OR. !lUPripr; SKIP 1; LOOP; ENDIF
-         SELECT ROBA; HSEEK KALK->IDROBA  // pozicioniraj sifrarnik robe
+      --   SELECT ROBA; HSEEK KALK->IDROBA  // pozicioniraj sifrarnik robe
          SELECT KALK
          IF IDVD = "41" .OR. ( IDVD == "42" .AND. KOLICINA * MPC < 0 )
             // ----------------------------------

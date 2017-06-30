@@ -552,4 +552,4 @@ STATIC FUNCTION zav_tr( nZ1, nZ2, nZ3, nZ4, nZ5 )
    ENDIF
    nZ5 := nSpedTr
 
-   RETURN
+   RETURN .T.

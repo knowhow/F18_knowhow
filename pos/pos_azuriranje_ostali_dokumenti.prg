@@ -282,9 +282,6 @@ STATIC FUNCTION azuriraj_artikal_u_sifrarniku()
    LOCAL _field_mpc
    LOCAL _update := .F.
 
-   SELECT roba
-   SET ORDER TO TAG "ID"
-   GO TOP
 
    IF gSetMPCijena == "1"
       _field_mpc := "mpc"
@@ -292,7 +289,7 @@ STATIC FUNCTION azuriraj_artikal_u_sifrarniku()
       _field_mpc := "mpc" + AllTrim( gSetMPCijena )
    ENDIF
 
-   SEEK priprz->idroba
+   select_o_roba( priprz->idroba )
 
    lNovi := .F.
 

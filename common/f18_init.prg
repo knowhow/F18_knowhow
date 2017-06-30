@@ -567,21 +567,21 @@ FUNCTION no_sql_mode( val )
 
 
 
-FUNCTION log_write( msg, level, silent )
+FUNCTION log_write( cMsg, nLevel, lSilent )
 
    LOCAL _msg_time
 
-   IF level == NIL
+   IF nLevel == NIL
       // uzmi defaultni
-      level := log_level()
+      nLevel := log_level()
    ENDIF
 
-   IF silent == NIL
-      silent := .F.
+   IF lSilent == NIL
+      lSilent := .F.
    ENDIF
 
    // treba li logirati ?
-   IF level > log_level()
+   IF nLevel > log_level()
       RETURN .T.
    ENDIF
 
@@ -593,13 +593,13 @@ FUNCTION log_write( msg, level, silent )
    // time ide samo u fajl, ne na server
    // ovdje ima neki problem #30139 iskljucujem dok ne skontamo
    // baca mi ove poruke u outf.txt
-   // FWRITE( __log_handle, _msg_time + msg + hb_eol() )
+   // FWRITE( __log_handle, _msg_time + cMsg + hb_eol() )
 
    IF server_log()
-      server_log_write( msg, silent )
+      server_log_write( cMsg, lSilent )
    ENDIF
 
-   ?E _msg_time, msg
+   ?E _msg_time, cMsg
 
    RETURN .T.
 

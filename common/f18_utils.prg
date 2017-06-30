@@ -22,16 +22,13 @@ FUNCTION f18_create_dir( cLocation )
    LOCAL cTmp
    LOCAL nCreate
 
-   cTmp := cLocation + "*.*"
-   cTmp := file_path_quote( cLocation + "*.*" )
-   nLen := ADir( cTmp )
 
-   IF nLen == 0
+   IF ! hb_vfDirExists( cLocation )
       nCreate := DirMake( cLocation )
       IF nCreate <> 0
          log_write( "f18_create_dir, problem sa kreiranjem direktorija: (" + cLocation + ")", 5 )
+         RETURN .F.
       ENDIF
-
    ENDIF
 
    RETURN .T.

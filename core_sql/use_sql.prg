@@ -462,7 +462,6 @@ STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
 
 
 
-
 FUNCTION o_sifk()
 
    Select( F_SIFK )

@@ -464,6 +464,8 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
 
 STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
 
+   // direktno se unose globalne vars iz tabele ld: ld->usati, ld->lucodb, ... ld->uiznos
+
    @ form_x_koord() + 19, form_y_koord() + 2 SAY "Ukupno sati:"
    @ Row(), Col() + 1 SAY _usati PICT gPics
    @ form_x_koord() + 19, Col() + 2 SAY "Uk.lic.odb.:"
@@ -475,7 +477,7 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
    @ form_x_koord() + 20, Col() + 2 SAY "UKUPNO ZA ISPLATU:"
    @ Row(), Col() + 1 SAY _uiznos PICT gPici
 
-   @ form_x_koord() + 21, form_y_koord() + 2 SAY "Vrsta isplate (1 - 13):" GET _v_ispl
+   @ form_x_koord() + 21, form_y_koord() + 2 SAY "Vrsta isplate (1 - 17):" GET _v_ispl // globalna field varijabla ld->v_ispl
 
    @ form_x_koord() + 22, form_y_koord() + 10 SAY "Pritisni <ENTER> za snimanje, <ESC> napustanje"
    READ

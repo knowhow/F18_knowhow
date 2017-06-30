@@ -25,9 +25,9 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
       cTmp := Trim( ( nDbf )->naziv  )
    ENDIF
 
-   //IF ( nDbf )->( my_rddName() ) == "SQLMIX" // sql data utf-8
-      //cTmp := _u( cTmp )
-   //ENDIF
+   // IF ( nDbf )->( my_rddName() ) == "SQLMIX" // sql data utf-8
+   // cTmp := _u( cTmp )
+   // ENDIF
 
    IF dx <> NIL .AND. dy <> nil
 
@@ -50,10 +50,13 @@ FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
 
    LOCAL _rec, _recs, ii
 
-   use_sql_sifk( cDbf, NIL )
+   IF !use_sql_sifk( cDbf, NIL )
+      MsgBeep( "ERROR SIFK read ?!" )
+      RETURN .F.
+   ENDIF
    use_sql_sifv()
 
-   cDbf := PADR( cDbf, SIFK_LEN_DBF )
+   cDbf := PadR( cDbf, SIFK_LEN_DBF )
 
    SELECT sifk
    _recs := {}
@@ -87,7 +90,7 @@ FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
       // postavi PICT za brojeve
       IF _rec[ "tip" ] == "N"
          IF f_decimal > 0
-            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", _rec[ "duzina" ] - _rec[ "f_decimal" ] -1 ) + "." + Replicate( "9", _rec[ "f_decimal" ] )
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", _rec[ "duzina" ] - _rec[ "f_decimal" ] - 1 ) + "." + Replicate( "9", _rec[ "f_decimal" ] )
          ELSE
             ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", _rec[ "duzina" ] )
          ENDIF

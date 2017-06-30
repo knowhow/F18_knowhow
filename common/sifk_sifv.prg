@@ -25,7 +25,8 @@ FUNCTION copy_to_sifk()
    LOCAL nTekX
    LOCAL nTekY
    LOCAL nRec
-   //LOCAL lSql
+
+   // LOCAL lSql
    LOCAL nTRec
 
    Box(, 6, 65, .F. )
@@ -46,7 +47,7 @@ FUNCTION copy_to_sifk()
 
    BoxC()
 
-   //lSql := get_a_dbf_rec( Alias() )[ 'sql' ]
+   // lSql := get_a_dbf_rec( Alias() )[ 'sql' ]
 
    IF cRepl == "N"
       RETURN 0
@@ -67,7 +68,7 @@ FUNCTION copy_to_sifk()
 
       cCpVal := ( Alias() )->&cFldFrom
       IF !Empty( cCpval )
-         //USifK( Alias(), cFldTo,  Unicode():New( ( Alias() )->id, lSql ), cCpVal )
+         // USifK( Alias(), cFldTo,  Unicode():New( ( Alias() )->id, lSql ), cCpVal )
          USifK( Alias(), cFldTo,  ( Alias() )->id, cCpVal )
       ENDIF
 
@@ -94,7 +95,8 @@ FUNCTION repl_sifk_item()
    LOCAL cNewVal
    LOCAL cCurrVal
    LOCAL cPtnField
-   //LOCAL lSql := is_sql_table()
+
+   // LOCAL lSql := is_sql_table()
    LOCAL nTekX, nTekY, nTRec
 
    Box(, 3, 60, .F. )
@@ -134,7 +136,7 @@ FUNCTION repl_sifk_item()
    DO WHILE !Eof()
       &cCurrVal := IzSifK( Alias(), cField )
       IF &cCurrVal == cOldVal
-         //USifK( Alias(), cField, Unicode():New( ( Alias() )->id, lSql ), cNewVal )
+         // USifK( Alias(), cField, Unicode():New( ( Alias() )->id, lSql ), cNewVal )
          USifK( Alias(), cField, ( Alias() )->id, cNewVal )
       ENDIF
       SKIP
@@ -167,7 +169,7 @@ FUNCTION g_sk_flist( cField )
 
    SELECT ( nArr )
 
-   IF !Empty( cField ) .AND. AScan( aFields, {| xVal| xVal[ 1 ] == cField } ) > 0
+   IF !Empty( cField ) .AND. AScan( aFields, {| xVal | xVal[ 1 ] == cField } ) > 0
       RETURN .T.
    ENDIF
 
@@ -196,11 +198,11 @@ FUNCTION IzSifkPartn( cDbfName, cOznaka, cIdSif, return_nil )
 
    LOCAL xSif
 
-   //IF ValType( cIdSif ) != "O"
-    //  xSif := Unicode():New( cIdSif, is_partn_sql() )
-   //ELSE
-      xSif := cIdSif
-   //ENDIF
+   // IF ValType( cIdSif ) != "O"
+   // xSif := Unicode():New( cIdSif, is_partn_sql() )
+   // ELSE
+   xSif := cIdSif
+   // ENDIF
 
    RETURN  IzSifk( "PARTN", cDbfName, cOznaka, xSif, return_nil )
 
@@ -209,11 +211,11 @@ FUNCTION IzSifkKonto( cDbfName, cOznaka, cIdSif, return_nil )
 
    LOCAL xSif
 
-   //IF ValType( cIdSif ) != "O"
-    //  xSif := Unicode():New( cIdSif, is_konto_sql() )
-   //ELSE
-      xSif := cIdSif
-   //ENDIF
+   // IF ValType( cIdSif ) != "O"
+   // xSif := Unicode():New( cIdSif, is_konto_sql() )
+   // ELSE
+   xSif := cIdSif
+   // ENDIF
 
    RETURN  IzSifk( "KONTO", cDbfName, cOznaka, xSif, return_nil )
 
@@ -222,11 +224,11 @@ FUNCTION IzSifkRoba( cDbfName, cOznaka, cIdSif, return_nil )
 
    LOCAL xSif
 
-   //IF ValType( cIdSif ) != "O"
-    //  xSif := Unicode():New( cIdSif, is_roba_sql() )
-   //ELSE
-      xSif := cIdSif
-   //ENDIF
+   // IF ValType( cIdSif ) != "O"
+   // xSif := Unicode():New( cIdSif, is_roba_sql() )
+   // ELSE
+   xSif := cIdSif
+   // ENDIF
 
    RETURN  IzSifk( "ROBA", cDbfName, cOznaka, xSif, return_nil )
 
@@ -271,18 +273,21 @@ FUNCTION get_sifk_value ( cDbfName, cOznaka, cIdSif, return_nil )
    IF cIdSif == NIL
       cIdSif := ( cDbfName )->ID
       IF !Empty( cDbfName )
-         //lSql := is_sql_table( cDbfName )
+         // lSql := is_sql_table( cDbfName )
          lSql := .F. // F18_SQL_ENCODING nije UTF8
       ENDIF
    ENDIF
 
-   //cIdSif := Unicode():New( cIdSif, lSql )
+   // cIdSif := Unicode():New( cIdSif, lSql )
    cDbfName := PadR( cDbfName, SIFK_LEN_DBF )
    cOznaka     := PadR( cOznaka, SIFK_LEN_OZNAKA )
-   //cIdSif2   := cIdSif:PadR( SIFK_LEN_IDSIF )
-   cIdSif2 := PADR( cIdSif, SIFK_LEN_IDSIF )
+   // cIdSif2   := cIdSif:PadR( SIFK_LEN_IDSIF )
+   cIdSif2 := PadR( cIdSif, SIFK_LEN_IDSIF )
 
-   use_sql_sifk( cDbfName, cOznaka )
+   IF !use_sql_sifk( cDbfName, cOznaka )
+      MsgBeep( "ERROR 2 GET SIFK ?!" )
+      RETURN .F.
+   ENDIF
    _ret := NIL
 
    GO TOP
@@ -364,7 +369,9 @@ FUNCTION get_sifk_naz( cDBF, cOznaka )
    cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
 
    SELECT F_SIFK
-   use_sql_sifk( cDBF, cOznaka )
+   IF !use_sql_sifk( cDBF, cOznaka )
+      RETURN "?ERR?"
+   ENDIF
    xRet := field->NAZ
 
    PopWA()
@@ -380,14 +387,18 @@ FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
    cDBF := PadR( cDBF, SIFK_LEN_DBF )
    cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
    SELECT F_SIFK
-   use_sql_sifk( cDBF, cOznaka )
-
+   IF !use_sql_sifk( cDBF, cOznaka )
+      MsgBeep( "ERROR 3 GET SIFK ?!" )
+      PopWA()
+      RETURN .F.
+   ENDIF
    cWhen  := sifk->KWHEN
    cValid := sifk->KVALID
 
    PopWa()
 
-   RETURN NIL
+   RETURN .T.
+
 
 // -------------------------------------------------------
 // USifk
@@ -412,7 +423,8 @@ FUNCTION USifk( cDbfName, cOznaka, cIdSif, xValue, cTransaction )
    LOCAL ntrec, numtok
    LOCAL _sifk_rec
    LOCAL _tran
-   //LOCAL cIdSif
+
+   // LOCAL cIdSif
 
    IF cTransaction == NIL
       cTransaction := "FULL"
@@ -422,7 +434,7 @@ FUNCTION USifk( cDbfName, cOznaka, cIdSif, xValue, cTransaction )
       RETURN .F.
    ENDIF
 
-   //cIdSif := ( Unicode():New( cIdSif ) ):getString()
+   // cIdSif := ( Unicode():New( cIdSif ) ):getString()
    PushWA()
 
    cDbfName := PadR( cDbfName, SIFK_LEN_DBF )
@@ -430,7 +442,11 @@ FUNCTION USifk( cDbfName, cOznaka, cIdSif, xValue, cTransaction )
    cIdSif   := PadR( cIdSif, SIFK_LEN_IDSIF )
 
    SELECT F_SIFK
-   use_sql_sifk( cDbfName, cOznaka )
+   IF !use_sql_sifk( cDbfName, cOznaka )
+      MsgBeep( "ERROR 5 GET SIFK ?!" )
+      PopWa()
+      RETURN .F.
+   ENDIF
    GO TOP
    IF Eof() .OR. !( sifk->tip $ "CDN" )
       PopWa()
@@ -445,7 +461,7 @@ FUNCTION USifk( cDbfName, cOznaka, cIdSif, xValue, cTransaction )
 
    IF cTransaction == "FULL"
       _tran := "BEGIN"
-      sql_table_update( nil, _tran )
+      sql_table_update( NIL, _tran )
    ENDIF
 
    IF sifk->veza == "N"
@@ -460,7 +476,7 @@ FUNCTION USifk( cDbfName, cOznaka, cIdSif, xValue, cTransaction )
 
    IF cTransaction == "FULL"
       _tran := "END"
-      sql_table_update( nil, _tran )
+      sql_table_update( NIL, _tran )
    ENDIF
 
    PopWa()
@@ -596,11 +612,12 @@ FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
 
 FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( aImeKolone, cVariablePrefix, lNovi, cTransaction )
 
-   LOCAL nI, cId  //, uId
+   LOCAL nI, cId  // , uId
    LOCAL cAlias
    LOCAL _field_b
    LOCAL _a_dbf_rec
-   //LOCAL lSql := is_sql_table( Alias() )
+
+   // LOCAL lSql := is_sql_table( Alias() )
    LOCAL lOk := .T.
    LOCAL lRet := .F.
 
@@ -609,7 +626,7 @@ FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( aImeKolone, cVariablePre
    FOR nI := 1 TO Len( aImeKolone )
       IF Left( aImeKolone[ nI, 3 ], 6 ) == "SIFK->"
          _field_b :=  MemVarBlock( cVariablePrefix + "SIFK_" + SubStr( aImeKolone[ nI, 3 ], 7 ) )
-         //uId := Unicode():New( ( cAlias )->id,  lSql )
+         // uId := Unicode():New( ( cAlias )->id,  lSql )
          cId := ( cAlias )->id
          IF IzSifk( cAlias, SubStr( aImeKolone[ nI, 3 ], 7 ), cId ) <> NIL
             lOk := USifk( cAlias, SubStr( aImeKolone[ nI, 3 ], 7 ), cId, Eval( _field_b ), cTransaction )

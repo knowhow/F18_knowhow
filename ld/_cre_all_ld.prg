@@ -344,6 +344,7 @@ FUNCTION cre_all_ld( ver )
    aDbf := a_dbf_ld_ld()
    hIndexes := h_ld_ld_indexes()
 
+/*
    _alias := "LD"
    _table_name := "ld_ld"
 
@@ -352,7 +353,7 @@ FUNCTION cre_all_ld( ver )
       CREATE_INDEX( cKey, hIndexes[ cKey ], _alias )
    NEXT
    AFTER_CREATE_INDEX
-
+*/
 
    // --------------------------------------
    // LD_LDSM

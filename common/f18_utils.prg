@@ -27,9 +27,9 @@ FUNCTION f18_create_dir( cLocation )
    nLen := ADir( cTmp )
 
    IF nLen == 0
-      nCreate := DirMake( file_path_quote( cLocation ) )
+      nCreate := DirMake( cLocation )
       IF nCreate <> 0
-         log_write( "f18_create_dir, problem sa kreiranjem direktorija: " + cLocation, 5 )
+         log_write( "f18_create_dir, problem sa kreiranjem direktorija: (" + cLocation + ")", 5 )
       ENDIF
 
    ENDIF

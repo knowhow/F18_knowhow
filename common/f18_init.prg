@@ -504,18 +504,18 @@ FUNCTION my_home_backup( cF18HomeBackup )
 
 
 
-FUNCTION set_f18_home_backup( DATABASE )
+FUNCTION set_f18_home_backup( cDatabase )
 
-   LOCAL _home := hb_DirSepAdd( my_home_root() + "backup" )
+   LOCAL cHomeDir := hb_DirSepAdd( my_home_root() + "backup" )
 
-   f18_create_dir( _home )
+   f18_create_dir( cHomeDir )
 
-   IF DATABASE <> NIL
-      _home := hb_DirSepAdd( _home + DATABASE )
-      f18_create_dir( _home )
+   IF cDatabase <> NIL
+      cHomeDir := hb_DirSepAdd( cHomeDir + cDatabase )
+      f18_create_dir( cHomeDir )
    ENDIF
 
-   my_home_backup( _home )
+   my_home_backup( cHomeDir )
 
    RETURN .T.
 
@@ -527,16 +527,16 @@ FUNCTION set_f18_home_backup( DATABASE )
 // ~/.F18/rg1
 // ~/.F18/test
 // ---------------------------
-FUNCTION set_f18_home( DATABASE )
+FUNCTION set_f18_home( cDatabase )
 
-   LOCAL _home
+   LOCAL cHomeDir
 
-   IF DATABASE <> NIL
-      _home := hb_DirSepAdd( my_home_root() + DATABASE )
-      f18_create_dir( _home )
+   IF cDatabase <> NIL
+      cHomeDir := hb_DirSepAdd( my_home_root() + cDatabase )
+      f18_create_dir( cHomeDir )
    ENDIF
 
-   my_home( _home )
+   my_home( cHomeDir )
 
    RETURN .T.
 
@@ -562,10 +562,6 @@ FUNCTION no_sql_mode( val )
    ENDIF
 
    RETURN __no_sql_mode
-
-
-
-
 
 
 

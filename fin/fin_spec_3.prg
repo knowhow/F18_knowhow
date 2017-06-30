@@ -14,7 +14,7 @@ FUNCTION fin_specifikacija_konta_za_partnera()
    picBHD := FormPicL( "9 " + gPicBHD, 16 )
    picDEM := FormPicL( "9 " + pic_iznos_eur(), 12 )
 
-   //o_partner()
+   // o_partner()
 
 
 
@@ -22,11 +22,11 @@ FUNCTION fin_specifikacija_konta_za_partnera()
 
    DO WHILE .T.
       @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA KONTA ZA ODREDJENE PARTNERE"
-      //IF gNW == "D"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
-      //ELSE
-      //   @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      //ENDIF
+      // IF gNW == "D"
+      @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      // ELSE
+      // @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      // ENDIF
       @ m_x + 5, m_y + 2 SAY "Partner:" GET qqPartner PICT "@!S50"
       @ m_x + 6, m_y + 2 SAY "Konta  :" GET  qqKonto PICT "@!S50"
       READ
@@ -42,23 +42,23 @@ FUNCTION fin_specifikacija_konta_za_partnera()
    nDugBHD := nPotBHD := nUkDugBHD := nUkPotBHD := 0
    nDugDEM := nPotDEM := nUKDugDEM := nUkPotDEM := 0
 
-   //o_konto()
-   //o_suban()
+   // o_konto()
+   // o_suban()
 
-   //SELECT SUBAN
-   //SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto
+   // SELECT SUBAN
+   // SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto
 
    cIdFirma := Left( cIdFirma, 2 )
 
-  find_suban_by_konto_partner( cIdFirma, qqKonto, qqPartner, NIL, "idfirma,idpartner,idkonto" )
+   find_suban_by_konto_partner( cIdFirma, qqKonto, qqPartner, NIL, "idfirma,idpartner,idkonto" )
 
    IF aUsl1 <> ".t." .OR. aUsl2 <> ".t."
       cFilt1 := aUsl1 + ".and." + aUsl2
-      SET FILTER to  &cFilt1
+      SET FILTER TO  &cFilt1
    ELSE
       SET FILTER TO
    ENDIF
-   //HSEEK cIdFirma
+   // HSEEK cIdFirma
    GO TOP
    EOF CRET
 
@@ -157,12 +157,12 @@ STATIC FUNCTION ZglSpSifK()
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
 
-   //IF gNW == "D"
-      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
-   //ELSE
-    //  SELECT PARTN; HSEEK cIdFirma
-      //? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
-   //ENDIF
+   // IF gNW == "D"
+   ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
+   // ELSE
+   // SELECT PARTN; HSEEK cIdFirma
+   // ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
+   // ENDIF
 
    ?U "----- ------- ----------------------------- ------------------------------------------------------------ -----------------------------"
    ?U "*RED.* KONTO *       N A Z I V             *     K U M U L A T I V N I    P R O M E T                   *      S A L D O              "

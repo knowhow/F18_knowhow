@@ -56,7 +56,7 @@ FUNCTION os_pregled_po_rj()
 
       @ m_x + 10, m_y + 2 SAY "Pregled po amortizacionim stopama (D/N) ?" GET _po_amort PICT "@!" VALID _po_amort $ "DN"
 
-      @ m_x + 12, m_y + 2 SAY "Export izvjestaja (D/N) ?" GET _export_dn PICT "@!" VALID _export_dn $ "DN"
+      @ m_x + 12, m_y + 2 SAY8 "Export izvještaja (D/N) ?" GET _export_dn PICT "@!" VALID _export_dn $ "DN"
 
       READ
       ESC_BCR
@@ -100,7 +100,7 @@ FUNCTION os_pregled_po_rj()
 
    START PRINT CRET
 
-   m := "----- ---------- ----------------------------" + IF( cOpis == "D", " " + REPL( "-", Len( field->opis ) ), "" ) + "  ---- ------- -------------"
+   m := "----- ---------- ----------------------------" + IIF( cOpis == "D", " " + REPL( "-", Len( field->opis ) ), "" ) + "  ---- ------- -------------"
 
    IF lPoAmortStopama
 

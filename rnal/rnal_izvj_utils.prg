@@ -50,13 +50,11 @@ FUNCTION std_vars( dD_f, dD_t, nOper, cStatus, cExport )
    @ m_x + 1, Col() + 1 SAY "do:" GET dD_t
 
    @ m_x + 2, m_y + 2 SAY "Operater (0 - svi):" GET nOper ;
-      VALID {|| nOper == 0, iif( nOper == -99, choose_f18_user_from_list( @nOper ), .T. ) } ;
-      PICT "9999999999"
+      VALID {|| nOper == 0, iif( nOper == -99, choose_f18_user_from_list( @nOper ), .T. ) } PICT "9999999999"
 
-   @ m_x + 3, m_y + 2 SAY "(O)tvoreni / (Z)atvoreni / (S)vi" GET cStatus ;
-      VALID cStatus $ "OZS" PICT "@!"
+   @ m_x + 3, m_y + 2 SAY "(O)tvoreni / (Z)atvoreni / (S)vi" GET cStatus VALID cStatus $ "OZS" PICT "@!"
 
-   @ m_x + 5, m_y + 2 SAY "Export izvjestaja (D/N)?" GET cExport VALID cExport $ "DN" PICT "@!"
+   @ m_x + 5, m_y + 2 SAY8 "Export izvještaja (D/N)?" GET cExport VALID cExport $ "DN" PICT "@!"
 
    READ
 

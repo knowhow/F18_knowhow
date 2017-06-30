@@ -357,7 +357,7 @@ METHOD getVars
 
    @ m_x + 18, m_y + 2 SAY "(N)abavna / (P)rodajna vrijednost " GET ::cNabIliProd PICT "@!" VALID ::cNabIliProd $ "NP"
    @ m_x + 19, m_y + 2 SAY "Prikazati sve (i kolicina 0) " GET ::cPrikKolNula PICT "@!" VALID ::cPrikKolNula $ "DN"
-   @ m_x + 20, m_y + 2 SAY "Export izvjestaja (D/N)?" GET ::cExportDBF PICT "@!" VALID ::cExportDBF $ "DN"
+   @ m_x + 20, m_y + 2 SAY --"Export izvjestaja (D/N)?" GET ::cExportDBF PICT "@!" VALID ::cExportDBF $ "DN"
 
    READ
 

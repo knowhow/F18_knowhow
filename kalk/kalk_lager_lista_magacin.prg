@@ -76,7 +76,7 @@ FUNCTION kalk_lager_lista_magacin()
       cOpcine := Space( 50 )
    ENDIF
 
-   kalk_open_tables()
+   kalk_llm_open_tables()
 
    IF fPocStanje == NIL
       fPocStanje := .F.
@@ -180,7 +180,7 @@ FUNCTION kalk_lager_lista_magacin()
          @ m_x + 19, m_y + 2 SAY "Broj radnog naloga:"  GET cRNalBroj PICT "@S20"
       ENDIF
 
-      @ m_x + 20, m_y + 2 SAY8 "Export izvještaja u dbf?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
+      @ m_x + 20, m_y + 2 SAY8 "Export izvještaja u XLSX?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
 
       @ m_x + 20, Col() + 1 SAY "Pr.dodatnih informacija ?" GET cMoreInfo VALID cMoreInfo $ "DN" PICT "@!"
 
@@ -247,7 +247,7 @@ FUNCTION kalk_lager_lista_magacin()
       create_dbf_r_export( aExpFields )
    ENDIF
 
-   kalk_open_tables()
+   kalk_llm_open_tables()
 
 
    PRIVATE cFilt := ".t."
@@ -306,7 +306,7 @@ FUNCTION kalk_lager_lista_magacin()
    select_o_koncij( cIdKonto )
 
    SELECT kalk
-   ?E "trace-kalk-llm-11"
+   //?E "trace-kalk-llm-11"
 
    IF _print == "2"
       // stampa dokumenta u odt formatu
@@ -869,7 +869,7 @@ FUNCTION kalk_lager_lista_magacin()
    FF
    end_print()
 
-   kalk_open_tables()
+   kalk_llm_open_tables()
    o_kalk_pripr()
 
    IF fimagresaka
@@ -897,11 +897,6 @@ FUNCTION kalk_lager_lista_magacin()
 
 
 
-
-
-// --------------------------------------
-// export rpt, tbl fields
-// --------------------------------------
 STATIC FUNCTION g_exp_fields()
 
    LOCAL aDbf := {}
@@ -911,28 +906,25 @@ STATIC FUNCTION g_exp_fields()
    AAdd( aDbf, { "NAZIV", "C", 40, 0 } )
    AAdd( aDbf, { "TARIFA", "C", 6, 0 } )
    AAdd( aDbf, { "JMJ", "C", 3, 0 } )
-   AAdd( aDbf, { "ULAZ", "N", 15, 5 } )
-   AAdd( aDbf, { "IZLAZ", "N", 15, 5 } )
-   AAdd( aDbf, { "STANJE", "N", 15, 5 } )
-   AAdd( aDbf, { "NVDUG", "N", 20, 10 } )
-   AAdd( aDbf, { "NVPOT", "N", 20, 10 } )
-   AAdd( aDbf, { "NV", "N", 15, 5 } )
-   AAdd( aDbf, { "NC", "N", 15, 5 } )
-   AAdd( aDbf, { "PVDUG", "N", 20, 10 } )
-   AAdd( aDbf, { "PVPOT", "N", 20, 10 } )
-   AAdd( aDbf, { "PVRDUG", "N", 20, 10 } )
-   AAdd( aDbf, { "PVRPOT", "N", 20, 10 } )
-   AAdd( aDbf, { "PV", "N", 15, 5 } )
-   AAdd( aDbf, { "PC", "N", 15, 5 } )
+   AAdd( aDbf, { "ULAZ", "N", 15, 4 } )
+   AAdd( aDbf, { "IZLAZ", "N", 15, 4 } )
+   AAdd( aDbf, { "STANJE", "N", 15, 4 } )
+   AAdd( aDbf, { "NVDUG", "N", 20, 3 } )
+   AAdd( aDbf, { "NVPOT", "N", 20, 3 } )
+   AAdd( aDbf, { "NV", "N", 15, 4 } )
+   AAdd( aDbf, { "NC", "N", 15, 4 } )
+   AAdd( aDbf, { "PVDUG", "N", 20, 3 } )
+   AAdd( aDbf, { "PVPOT", "N", 20, 3 } )
+   AAdd( aDbf, { "PVRDUG", "N", 20, 3 } )
+   AAdd( aDbf, { "PVRPOT", "N", 20, 3 } )
+   AAdd( aDbf, { "PV", "N", 15, 3 } )
+   AAdd( aDbf, { "PC", "N", 15, 3 } )
    AAdd( aDbf, { "D_ULAZ", "D", 8, 0 } )
    AAdd( aDbf, { "D_IZLAZ", "D", 8, 0 } )
 
    RETURN aDbf
 
 
-// ------------------------------------------------------------
-// filovanje tabele exporta
-// ------------------------------------------------------------
 STATIC FUNCTION fill_exp_tbl( nVar, cIdRoba, cSifDob, cNazRoba, cTarifa, ;
       cJmj, nUlaz, nIzlaz, nSaldo, nNVDug, nNVPot, nNV, nNC, ;
       nPVDug, nPVPot, nPV, nPC, nPVrdug, nPVrpot, dL_ulaz, dL_izlaz )
@@ -1074,8 +1066,7 @@ FUNCTION Zagllager_lista_magacin()
 
    P_COND2
 
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    SET CENTURY ON
 
@@ -1148,29 +1139,27 @@ FUNCTION IsInGroup( cGr, cPodGr, cIdRoba )
 
 
 
+STATIC FUNCTION kalk_llm_open_tables()
 
-// ---------------------------------
-// tabele potrebne za report
-// ---------------------------------
-STATIC FUNCTION kalk_open_tables()
+   //o_sifk()
+   //o_sifv()
 
-   o_sifk()
-   o_sifv()
    //o_roba()
    IF o_koncij()
       ?E "open koncij ok"
    ELSE
       ?E "open koncij ERROR?!"
    ENDIF
-   IF o_konto()
-      ?E "open konto"
-   ELSE
-      ?E "open konto ERROR"
-   ENDIF
-   IF o_partner()
-      ?E "open partn ok"
-   ELSE
-      ?E "open partn error"
-   ENDIF
+
+   //IF o_konto()
+  //    ?E "open konto"
+   //ELSE
+  //    ?E "open konto ERROR"
+  // ENDIF
+  // IF o_partner()
+  //    ?E "open partn ok"
+  // ELSE
+//      ?E "open partn error"
+//   ENDIF
 
    RETURN .T.

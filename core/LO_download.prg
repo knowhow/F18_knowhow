@@ -37,7 +37,7 @@ FUNCTION LO_open_dokument( cFile )
    LOCAL cOdgovor
 
    IF s_cDownloadF18LO == NIL
-      s_cDownloadF18LO := fetch_metric( "F18_LO", NIL, "N" )
+      s_cDownloadF18LO := fetch_metric( "F18_LO", my_user(), "N" )
       lFirstRun := .T. // prvi put postavlja pitanje
    ENDIF
 
@@ -50,12 +50,12 @@ FUNCTION LO_open_dokument( cFile )
          cOdgovor := Pitanje( , "Instalirati F18 LibreOffice za pregled dokumenata (D/N/0) ?", "N", "DN0" )
 
          IF cOdgovor == "D"
-            set_metric( "F18_LO", NIL, "D" )
+            set_metric( "F18_LO", my_user(), "D" )
             s_cDownloadF18LO := "D"
             lUseLibreofficeSystem := .F.
          ELSE
             IF cOdgovor == "0"
-               set_metric( "F18_LO", NIL, "0" ) // ne pitaj korisnika vise
+               set_metric( "F18_LO", my_user(), "0" ) // ne pitaj korisnika vise
                s_cDownloadF18LO := "0"
             ENDIF
             lUseLibreofficeSystem := .T.

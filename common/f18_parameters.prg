@@ -92,7 +92,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
    // cLdRekapDbf := fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" )
    cLegacyKalkPr := fetch_metric( "legacy_kalk_pr", NIL, "N" )
    cLegacyPTxt := fetch_metric( "legacy_ptxt", NIL, "D" )
-   cDownloadF18LO := fetch_metric( "F18_LO", NIL, "N" )
+   cDownloadF18LO := fetch_metric( "F18_LO", my_user(), "N" )
 
 
    IF lUpravoSetovani == nil

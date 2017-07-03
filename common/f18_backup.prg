@@ -69,14 +69,14 @@ METHOD F18Backup:backup_in_progress_info()
 
 
 
-METHOD F18Backup:Backup_now( auto )
+METHOD F18Backup:Backup_now( AUTO )
 
-   IF auto == NIL
-      auto := .T.
+   IF AUTO == NIL
+      AUTO := .T.
    ENDIF
 
    // da li je backup vec pokrenut ?
-   if ::locked( .T. )
+   IF ::locked( .T. )
       IF Pitanje(, "Napravi unlock backup operacije (D/N)?", "N" ) == "D"
       ELSE
          RETURN .F.
@@ -86,13 +86,13 @@ METHOD F18Backup:Backup_now( auto )
       ::Lock()
    ENDIF
 
-   if ::backup_type == 1
+   IF ::backup_type == 1
       ::Backup_company()
    ELSE
       ::Backup_server()
    ENDIF
 
-   IF auto
+   IF AUTO
       // setuj datum kreiranja backup-a
       ::set_last_backup_date()
    ENDIF
@@ -158,26 +158,26 @@ METHOD F18Backup:Backup_company()
    @ _x, _y SAY8 "Obavještenje: nakon pokretanja procedure backup-a slobodno se prebacite"
    ++_x
    @ _x, _y SAY "              na prozor aplikacije i nastavite raditi."
-   ++ _x
+   ++_x
    @ _x, _y SAY _line
-   ++ _x
+   ++_x
    @ _x, _y SAY "Backup podataka u toku...."
-   ++ _x
+   ++_x
    @ _x, _y SAY _line
-   ++ _x
+   ++_x
    @ _x, _y SAY "   Lokacija backup-a: " + ::backup_path
-   ++ _x
+   ++_x
    @ _x, _y SAY "Naziv fajla backup-a: " + ::backup_filename
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ _x, _y SAY8 "očekujem rezulat operacije... "
 
-#ifdef __PLATFORM__WINDOWS
-   f18_run( _cmd )
-#else
+// #ifdef __PLATFORM__WINDOWS
    hb_run( _cmd )
-#endif
+// #else
+// hb_run( _cmd )
+// #endif
 
    IF File( ::backup_path + ::backup_filename )
       @ _x, Col() + 1 SAY "OK" COLOR _color_ok
@@ -191,7 +191,7 @@ METHOD F18Backup:Backup_company()
       log_write( "backup company kreiran uspjesno: " + ::backup_path + ::backup_filename, 6 )
 
       IF !Empty( ::removable_drive )
-         ++ _x
+         ++_x
          @ _x, _y SAY "Prebacujem backup na udaljenu lokaciju ... "
 
          IF ::backup_to_removable()
@@ -203,7 +203,7 @@ METHOD F18Backup:Backup_company()
 
    ENDIF
 
-   ++ _x
+   ++_x
 
    FOR nI := 10 TO 1 STEP -1
       @ _x, _y SAY "... izlazim za " + PadL( AllTrim( Str( nI ) ), 2 ) + " sekundi"
@@ -266,18 +266,18 @@ METHOD F18Backup:Backup_server()
    @ _x, _y SAY8 "Obavještenje: nakon pokretanja procedure backup-a slobodno se prebacite"
    ++_x
    @ _x, _y SAY8 "              na prozor aplikacije i nastavite raditi."
-   ++ _x
+   ++_x
    @ _x, _y SAY _line
-   ++ _x
+   ++_x
    @ _x, _y SAY8 "Backup podataka u toku...."
-   ++ _x
+   ++_x
    @ _x, _y SAY Replicate( "=", 70 )
-   ++ _x
+   ++_x
    @ _x, _y SAY "   Lokacija backup-a: " + ::backup_path
-   ++ _x
+   ++_x
    @ _x, _y SAY "Naziv fajla backup-a: " + ::backup_filename
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ _x, _y SAY8 "očekujem rezulat operacije... "
 
 #ifdef __PLATFORM__WINDOWS
@@ -298,7 +298,7 @@ METHOD F18Backup:Backup_server()
       log_write( "backup kreiran uspjesno: " + ::backup_path + ::backup_filename, 6 )
 
       IF !Empty( ::removable_drive )
-         ++ _x
+         ++_x
          @ _x, _y SAY "Prebacujem backup na udaljenu lokaciju ... "
 
          IF ::backup_to_removable()
@@ -310,7 +310,7 @@ METHOD F18Backup:Backup_server()
       ENDIF
    ENDIF
 
-   ++ _x
+   ++_x
 
    FOR nI := 10 TO 1 STEP -1
       @ _x, _y SAY "... izlazim za " + PadL( AllTrim( Str( nI ) ), 2 ) + " sekundi"
@@ -359,7 +359,7 @@ METHOD F18Backup:get_backup_path()
    LOCAL _path
    LOCAL _database
 
-   if ::backup_type == 0
+   IF ::backup_type == 0
       set_f18_home_backup()
       ::backup_path := my_home_backup()
    ELSE
@@ -380,7 +380,7 @@ METHOD F18Backup:get_backup_filename()
 
    _tmp := "server"
 
-   if ::backup_type == 1
+   IF ::backup_type == 1
       _tmp := AllTrim( _server_params[ "database" ] )
    ENDIF
 
@@ -403,7 +403,7 @@ METHOD F18Backup:get_backup_interval()
 
    LOCAL _param := "backup_company_interval"
 
-   if ::backup_type == 0
+   IF ::backup_type == 0
       _param := "backup_server_interval"
    ENDIF
 
@@ -424,22 +424,22 @@ METHOD F18Backup:get_backup_type( backup_type )
 
       @ _x, _y SAY "*** BACKUP procedura *** " + DToC( Date() )
 
-      ++ _x
+      ++_x
       @ _x, _y SAY _d_line
 
-      ++ _x
+      ++_x
       @ _x, _y SAY "Dostupne opcije:"
 
-      ++ _x
+      ++_x
       @ _x, _y SAY8 "   1 - backup tekuće firme"
 
-      ++ _x
+      ++_x
       @ _x, _y SAY "   0 - backup kompletnog servera"
 
-      ++ _x
+      ++_x
       @ _x, _y SAY8 "Vaš odabir:" GET _type VALID _type >= 0 PICT "9"
 
-      ++ _x
+      ++_x
       @ _x, _y SAY _s_line
 
       READ
@@ -496,17 +496,16 @@ METHOD F18Backup:locked( info )
    RETURN _ret
 
 
-// ---------------------------------------------------------
-// set/get backup date
-// ---------------------------------------------------------
+
 METHOD F18Backup:set_last_backup_date()
 
    LOCAL _type := "company"
 
-   if ::backup_type == 0
+   IF ::backup_type == 0
       _type := "server"
    ENDIF
 
+   ?E "set ", "f18_backup_date_" + _type, Date()
    set_metric( "f18_backup_date_" + _type, my_user(), Date() )
 
    RETURN .T.
@@ -516,13 +515,14 @@ METHOD F18Backup:get_last_backup_date()
 
    LOCAL _type := "company"
 
-   if ::backup_type == 0
+   IF ::backup_type == 0
       _type := "server"
    ENDIF
 
    ::last_backup := fetch_metric( "f18_backup_date_" + _type, my_user(), CToD( "" ) )
+   ?E "get ", "f18_backup_date_" + _type, ::last_backup
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------------------
 // poziv backupa podataka sa menija...
@@ -565,7 +565,7 @@ FUNCTION f18_auto_backup_data( backup_type_def, start_now )
       RETURN .F.
    ENDIF
 
-   // uslov za backup nije zadovoljen...
+
    IF ( !start_now .AND. ( _curr_date - oBackup:backup_interval ) > oBackup:last_backup ) .OR. start_now
       hb_threadStart( @thread_f18_backup(), backup_type_def )
    ENDIF

@@ -505,7 +505,7 @@ METHOD F18Backup:set_last_backup_date()
       _type := "server"
    ENDIF
 
-   ?E "set ", "f18_backup_date_" + _type, Date()
+   ?E "set", "f18_backup_date_" + _type, my_user(), Date()
    set_metric( "f18_backup_date_" + _type, my_user(), Date() )
 
    RETURN .T.
@@ -520,7 +520,7 @@ METHOD F18Backup:get_last_backup_date()
    ENDIF
 
    ::last_backup := fetch_metric( "f18_backup_date_" + _type, my_user(), CToD( "" ) )
-   ?E "get ", "f18_backup_date_" + _type, ::last_backup
+   ?E "get ", "f18_backup_date_" + _type, my_user(), ::last_backup
 
    RETURN .T.
 

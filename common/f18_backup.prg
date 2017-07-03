@@ -506,7 +506,7 @@ METHOD F18Backup:set_last_backup_date()
    ENDIF
 
    ?E "set", "f18_backup_date_" + _type, my_user(), Date()
-   set_metric( "f18_backup_date_" + _type, my_user(), Date() )
+   ?E set_metric( "f18_backup_date_" + _type, my_user(), Date() )
 
    RETURN .T.
 
@@ -577,6 +577,15 @@ PROCEDURE thread_f18_backup( type_def )
 
    LOCAL oBackup
    LOCAL auto_backup := .T.
+   LOCAL _w
+
+
+   IF open_thread( "f18_backup", .T., NIL )
+      ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
+   ELSE
+      ?E "!open_thread: f18_backup"
+   ENDIF
+
 
    init_parameters_cache()
    set_global_vars_0()
@@ -592,9 +601,6 @@ PROCEDURE thread_f18_backup( type_def )
    hb_gtReload( _w )
 
 
-
-
-   // podesi boje...
    _set_color()
 
    oBackup := F18Backup():New()
@@ -605,10 +611,11 @@ PROCEDURE thread_f18_backup( type_def )
       oBackup:get_backup_interval()
       oBackup:Backup_now( auto_backup ) // pokreni backup
 
-      QUIT_1
-
    ENDIF
 
+   close_thread( "f18_backup" )
+   QUIT_1
+   
    RETURN .T.
 
 

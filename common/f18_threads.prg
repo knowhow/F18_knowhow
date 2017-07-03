@@ -58,7 +58,7 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection, cTable )
          print_threads( "thread_cnt_max" + cInfo )
       ENDIF
 #endif
-      IF nCounter > 10000
+      IF cTable != NIL .AND. nCounter > 10000
          add_to_dbf_refresh_queue( cTable ) // refresh se ne moze trenutno napraviti, staviti u queue
          RETURN .F.
       ENDIF

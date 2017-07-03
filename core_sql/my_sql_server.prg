@@ -259,14 +259,13 @@ FUNCTION my_server_login( hSqlParams, nConnType )
       hParams[ "server" ] := oServer
       oQry := run_sql_query( "SELECT current_user, inet_client_port()", hParams )
 #ifdef F18_DEBUG_SQL
-      ??E "user:", oQry:FieldGet( 1 ), " client port", oQry:FieldGet( 2 )
+      ??E " user:", oQry:FieldGet( 1 ), " client port", oQry:FieldGet( 2 )
 #endif
       IF hb_mutexLock( s_mtxMutex )
          s_nSQLConnections++
          AAdd( s_aSQLConnections, { oServer,  oQry:FieldGet( 1 ), oQry:FieldGet( 2 ) } )
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
-
 
       RETURN .T.
 

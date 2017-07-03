@@ -69,10 +69,10 @@ METHOD F18Backup:backup_in_progress_info()
 
 
 
-METHOD F18Backup:Backup_now( AUTO )
+METHOD F18Backup:Backup_now( lAuto )
 
-   IF AUTO == NIL
-      AUTO := .T.
+   IF lAuto == NIL
+      lAuto := .T.
    ENDIF
 
    // da li je backup vec pokrenut ?
@@ -92,7 +92,7 @@ METHOD F18Backup:Backup_now( AUTO )
       ::Backup_server()
    ENDIF
 
-   IF AUTO
+   IF lAuto
       // setuj datum kreiranja backup-a
       ::set_last_backup_date()
    ENDIF

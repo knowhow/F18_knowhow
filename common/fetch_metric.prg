@@ -93,6 +93,14 @@ FUNCTION parametar_dinamican( cSectionIn )
       RETURN .T.
    ENDIF
 
+   IF "_counter_" $ cSectionIn
+      RETURN .T.
+   ENDIF
+
+   IF "f18_backup_" $ cSectionIn
+      RETURN .T.
+   ENDIF
+
    IF Left( cSectionIn, 5 ) == "fakt/"  // fakt brojaci
       RETURN .T.
    ENDIF

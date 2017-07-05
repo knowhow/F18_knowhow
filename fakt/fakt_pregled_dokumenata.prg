@@ -111,7 +111,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       ENDIF
 
       @ m_x + 19, m_y + 2 SAY "Valute ( /KM/EUR)"  GET valute
-      @ m_x + 19, Col() + 2 SAY " samo dokumenti koji sadrže robu D/N"  GET cSamoRobaDN PICT "@!" VALID cSamoRobaDN $ "DN"
+      @ m_x + 19, Col() + 2 SAY8 " samo dokumenti koji sadrže robu D/N"  GET cSamoRobaDN PICT "@!" VALID cSamoRobaDN $ "DN"
 
       READ
 
@@ -197,7 +197,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    IF cSamoRobaDN == "D"
       cFilter += ".and. fakt_dokument_sadrzi_robu()"
    ENDIF
-   
+
    IF cFilter == ".t. .and."
       cFilter := SubStr( cFilter, 9 )
    ENDIF
@@ -705,12 +705,13 @@ FUNCTION fakt_dokument_sadrzi_robu()
    cQuery += " AND fmk.fakt_fakt.idtipdok=" + sql_quote( fakt_doks->idtipdok )
    cQuery += " AND fmk.fakt_fakt.brdok=" + sql_quote( fakt_doks->brdok )
 
+   SELECT F_FAKT
    use_sql( "fakt_cnt", cQuery )
 
    IF field->CNT > 0
       lRet := .T. // ima robe unutar fakture
    ENDIF
-
+   USE
    SELECT fakt_doks
 
    RETURN lRet

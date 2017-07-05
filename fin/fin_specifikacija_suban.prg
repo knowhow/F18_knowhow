@@ -84,7 +84,7 @@ FUNCTION fin_specifikacija_suban()
    // o_partner()
 
    cTip := "1"
-   Box( "", 20, 85 )
+   Box( "", 20, 77 )
    SET CURSOR ON
    PRIVATE cK1 := cK2 := "9"
    PRIVATE cK3 := cK4 := "99"
@@ -133,7 +133,7 @@ FUNCTION fin_specifikacija_suban()
       ENDIF
 
       @ m_x + 15, m_y + 2 SAY8 " PARTNER: Općina (prazno-sve):" GET cOpcine
-      @ m_x + 16, m_y + 2 SAY8 " Telefon (prazno-svi, uslov: '033;032;'):" GET cUslovPartnerTelefon PICT "@!S40"
+      @ m_x + 16, m_y + 2 SAY8 " Telefon (prazno-svi, uslov: '033;032;'):" GET cUslovPartnerTelefon PICT "@!S30"
 
       UpitK1k4( 16 )
 

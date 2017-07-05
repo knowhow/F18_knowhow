@@ -144,7 +144,6 @@ FUNCTION finansijsko_stanje_magacin()
    MsgC()
 
 
-
    select_o_koncij( cIdkonto )
 
    SELECT kalk

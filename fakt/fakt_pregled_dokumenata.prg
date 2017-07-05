@@ -26,12 +26,14 @@ FUNCTION fakt_pregled_liste_dokumenata()
    LOCAL lOpcine := .T.
    LOCAL valute := Space( 3 )
    LOCAL cFilter := ".t."
+   LOCAL cFilterOpcina
+   LOCAL cSamoRobaDN := "N"
    PRIVATE cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
 
    O_VRSTEP
    o_ops()
    o_valute()
-   //o_rj()
+   // o_rj()
    o_fakt_objekti()
    o_fakt()
    // o_partner()
@@ -86,6 +88,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       @ m_x + 6, m_y + 2 SAY8 "Uslov po šifri kupca (prazno svi)" GET qqPartn PICT "@!" ;
          VALID {|| aUslovSifraKupca := Parsiraj( qqPartn, "IDPARTNER", "C", NIL, F_PARTN ), .T. }
       @ m_x + 7, m_y + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok PICT "@!"
+
       @ m_x + 9, m_y + 2 SAY "Tabelarni pregled" GET cTabela VALID cTabela $ "DN" PICT "@!"
 
       cRTarifa := "N"
@@ -108,6 +111,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       ENDIF
 
       @ m_x + 19, m_y + 2 SAY "Valute ( /KM/EUR)"  GET valute
+      @ m_x + 19, Col() + 2 SAY " samo dokumenti koji sadrže robu D/N"  GET cSamoRobaDN PICT "@!" VALID cSamoRobaDN $ "DN"
 
       READ
 
@@ -116,9 +120,9 @@ FUNCTION fakt_pregled_liste_dokumenata()
       aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
       aUslovSifraKupca := Parsiraj( qqPartn, "IDPARTNER", "C" )
       aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
-      aUslOpc := Parsiraj( cOpcina, "flt_fakt_part_opc()", "C" )
+      cFilterOpcina := Parsiraj( cOpcina, "flt_fakt_part_opc()", "C" )
 
-      IF ( !lOpcine .OR. aUslOpc <> NIL ) .AND. aUslBFD <> NIL .AND. aUslovSifraKupca <> NIL .AND. ( !_vrste_pl .OR. aUslVrsteP <> NIL )
+      IF ( !lOpcine .OR. cFilterOpcina <> NIL ) .AND. aUslBFD <> NIL .AND. aUslovSifraKupca <> NIL .AND. ( !_vrste_pl .OR. aUslVrsteP <> NIL )
          EXIT
       ENDIF
 
@@ -138,9 +142,9 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    BoxC()
 
-   //SELECT partn
-   // radi filtera aUslOpc partneri trebaju biti na ID-u indeksirani
-   //SET ORDER TO TAG "ID"
+   // SELECT partn
+   // radi filtera cFilterOpcina partneri trebaju biti na ID-u indeksirani
+   // SET ORDER TO TAG "ID"
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
@@ -171,7 +175,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    ENDIF
 
    IF !Empty( cOpcina )
-      cFilter += ".and. " + aUslOpc
+      cFilter += ".and. " + cFilterOpcina
    ENDIF
 
    IF _objekti .AND. !Empty( _objekat_id )
@@ -190,6 +194,10 @@ FUNCTION fakt_pregled_liste_dokumenata()
       cFilter += ".and. dindem = " + _filter_quote( valute )
    ENDIF
 
+   IF cSamoRobaDN == "D"
+      cFilter += ".and. fakt_dokument_sadrzi_robu()"
+   ENDIF
+   
    IF cFilter == ".t. .and."
       cFilter := SubStr( cFilter, 9 )
    ENDIF
@@ -212,7 +220,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
    ELSE
       gaZagFix := { 3, 3 }
-      stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, aUslOpc, valute )
+      stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, cFilterOpcina, valute )
    ENDIF
 
    my_close_all_dbf()
@@ -241,7 +249,6 @@ FUNCTION print_porezna_faktura( lOpcine )
    USE
 
    o_fakt_doks()
-
 
    RETURN DE_CONT
 
@@ -272,6 +279,7 @@ FUNCTION fakt_print_odt( lOpcine )
    ENDIF
    GO nTrec
 */
+
    RETURN DE_CONT
 
 
@@ -419,6 +427,7 @@ FUNCTION generisi_fakturu( is_opcine )
 
    GO nTrec
 */
+
    RETURN DE_REFRESH
 
 
@@ -431,7 +440,7 @@ FUNCTION fakt_pregled_reopen_fakt_tabele( cFilter )
    o_ops()
    o_fakt_doks2()
    o_valute()
-   //o_rj()
+   // o_rj()
    o_fakt_objekti()
    o_fakt()
    // o_partner()
@@ -451,9 +460,9 @@ FUNCTION fakt_pregled_reopen_fakt_tabele( cFilter )
 FUNCTION fakt_real_partnera()
 
    o_fakt_doks()
-   //o_partner()
+   // o_partner()
    o_valute()
-   //o_rj()
+   // o_rj()
 
    cIdfirma := self_organizacija_id()
    dDatOd := CToD( "" )
@@ -683,3 +692,25 @@ FUNCTION flt_fakt_part_opc()
    SELECT fakt_doks
 
    RETURN cRet
+
+
+FUNCTION fakt_dokument_sadrzi_robu()
+
+   LOCAL lRet := .F., cQuery
+
+   cQuery := "SELECT count(fakt_fakt.idroba) AS CNT FROM fmk.fakt_fakt"
+   cQuery += " LEFT JOIN fmk.roba ON fakt_fakt.idroba = roba.id"
+   cQuery += " WHERE roba.tip <> 'U'"
+   cQuery += " AND fmk.fakt_fakt.idfirma=" + sql_quote( fakt_doks->idfirma )
+   cQuery += " AND fmk.fakt_fakt.idtipdok=" + sql_quote( fakt_doks->idtipdok )
+   cQuery += " AND fmk.fakt_fakt.brdok=" + sql_quote( fakt_doks->brdok )
+
+   use_sql( "fakt_cnt", cQuery )
+
+   IF field->CNT > 0
+      lRet := .T. // ima robe unutar fakture
+   ENDIF
+
+   SELECT fakt_doks
+
+   RETURN lRet

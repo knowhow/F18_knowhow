@@ -481,7 +481,7 @@ FUNCTION fakt_set_param_broj_dokumenta()
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -491,7 +491,7 @@ FUNCTION fakt_admin_menu()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. podesavanje brojaca dokumenta " )
+   AAdd( _opc, "1. podešavanje brojača dokumenta " )
    AAdd( _opcexe, {|| fakt_set_param_broj_dokumenta() } )
    AAdd( _opc, "2. fakt export (r_exp) " )
    AAdd( _opcexe, {|| fakt_export_tbl_fakt() } )

@@ -52,8 +52,6 @@ FUNCTION fakt_ostale_operacije_doks()
    AAdd( _opc, "A. administrativne opcije " )
    AAdd( _opcexe, {|| fakt_admin_menu() } )
 
-   AAdd( _opc, "B. podesenje brojaca dokumenta" )
-   AAdd( _opcexe, {|| fakt_set_param_broj_dokumenta() } )
 
    f18_menu( "ostop", .F., _izbor, _opc, _opcexe )
 

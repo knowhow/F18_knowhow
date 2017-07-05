@@ -38,7 +38,7 @@ FUNCTION ld_pregled_odredjenog_primanja()
    cDod := "N"
    cKolona := Space( 20 )
 
-   O_PARAMS
+   o_params()
 
    PRIVATE cSection := "4"
    PRIVATE cHistory := " "

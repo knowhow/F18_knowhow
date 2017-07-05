@@ -53,7 +53,7 @@ FUNCTION kalk_finansijski_obrt()
 
    cLegenda := "D"
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "F"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}

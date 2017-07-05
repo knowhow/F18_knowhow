@@ -67,7 +67,7 @@ FUNCTION fakt_kartica()
 
    cOstran := "N"
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "5", cHistory := " "; aHistory := {}
    Params1()
    RPar( "c1", @cIdFirma )

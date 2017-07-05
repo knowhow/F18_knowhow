@@ -703,7 +703,7 @@ FUNCTION SetGParams( cs, ch, cid, cvar, cval )
 
    SELECT ( F_PARAMS )
    USE
-   O_PARAMS
+   o_params()
    RPar( "p?", @cPosebno )
    SELECT params
    USE

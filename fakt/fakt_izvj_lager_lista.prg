@@ -98,7 +98,7 @@ FUNCTION fakt_lager_lista()
    Box(, 20, 66 )
 
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "5"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}

@@ -32,7 +32,7 @@ FUNCTION mat_prenos_fakmat()
 
 STATIC FUNCTION parametri_prenosa()
 
-   O_PARAMS
+   o_params()
    // select 99; use (my_home()+"params") index (my_home()+"parai1")
    PRIVATE cSection := "T", cHistory := " "; aHistory := {}
 

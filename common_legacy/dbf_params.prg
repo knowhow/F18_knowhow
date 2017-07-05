@@ -27,7 +27,7 @@ FUNCTION RPar( cImeVar, xArg )
          SKIP
       ENDDO
 
-      cPom := Left( cPom, At( Chr( CHR254 ), cPom ) -1 )
+      cPom := Left( cPom, At( Chr( CHR254 ), cPom ) - 1 )
       IF clTip = "C"
          xArg := cPom
       ELSEIF clTip == "N"
@@ -39,7 +39,6 @@ FUNCTION RPar( cImeVar, xArg )
       ENDIF
 
    ENDIF
-
 
    RETURN NIL
 
@@ -53,7 +52,7 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
    IF Type( "gSql" ) <> "C"
       gSql := "N"
    ENDIF
-   IF ( goModul:lSqlDirektno == nil )
+   IF ( goModul:lSqlDirektno == NIL )
       goModul:lSqlDirektno := .T.
    ENDIF
 
@@ -65,10 +64,10 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
    IF ( gSQL == "N" )
       fSQL := .F.
    ENDIF
-   IF ( fSQL == nil )
+   IF ( fSQL == NIL )
       fSQL := .F.
    ENDIF
-   IF ( cAkcija == nil )
+   IF ( cAkcija == NIL )
       cAkcija := "A"
    ENDIF
 
@@ -154,8 +153,8 @@ FUNCTION Params1()
       ENDDO
 
       IF Len( aHistory ) > 0
-         @ -1, 70 SAY ""
-         cHistory := ( ABrowse( aHistory, 10, 1, {| ch|  HistUser( ch ) } ) )[ 1 ]
+         @ - 1, 70 SAY ""
+         cHistory := ( ABrowse( aHistory, 10, 1, {| ch |  HistUser( ch ) } ) )[ 1 ]
       ELSE
          cHistory := " "
       ENDIF
@@ -185,7 +184,7 @@ FUNCTION HistUser( Ch )
       IF Len( aHistory ) > 1
          cHi := aHistory[ aBrowRow(), 1 ]
          ADel( aHistory, aBrowRow() )
-         ASize( aHistory, Len( aHistory ) -1 )
+         ASize( aHistory, Len( aHistory ) - 1 )
          SEEK cSection + cHi
          DO WHILE !Eof() .AND. cSection + cHi == Fsec + Fh
             SKIP
@@ -204,3 +203,12 @@ FUNCTION HistUser( Ch )
    ENDCASE
 
    RETURN NIL
+
+
+FUNCTION  o_params()
+
+   SELECT ( F_PARAMS )
+   my_use ( "params" )
+   SET ORDER TO TAG  "ID"
+
+   RETURN .T.

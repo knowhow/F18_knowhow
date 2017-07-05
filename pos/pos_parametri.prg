@@ -290,7 +290,7 @@ FUNCTION pos_param_cijene()
    AAdd ( aNiz, { "Koristiti set cijena                  :", "gSetMPCijena",, "9", } )
    VarEdit( aNiz, 9, 2, 20, 78, "PARAMETRI RADA PROGRAMA - CIJENE", "B1" )
 
-   O_PARAMS
+   o_params()
 
    IF LastKey() <> K_ESC
       set_metric( "Popust", nil, gPopust )

@@ -869,7 +869,7 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
    dDatOd := Date()
    dDatDo := Date()
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "F", cHistory := " ", aHistory := {}
 
    Params1()

@@ -105,7 +105,7 @@ FUNCTION gen_ug()
    nN1 := 0
    nN2 := 0
    nN3 := 0
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "U"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
@@ -190,7 +190,7 @@ FUNCTION gen_ug()
          RETURN
       ENDIF
 
-      O_PARAMS
+      o_params()
       PRIVATE cSection := "U", cHistory := " "; aHistory := {}
       WPar( "uP", cUPartner )
       WPar( "dU", dDatDok )

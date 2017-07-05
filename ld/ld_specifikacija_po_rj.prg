@@ -19,7 +19,7 @@ FUNCTION ld_specifikacija_po_rj()
    qqRj := ""
    qqPrimanja := ""
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "5", cHistory := " ", aHistory := {}
 
    cMjesecOd := Str( cMjesecOd, 2 )

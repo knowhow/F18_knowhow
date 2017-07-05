@@ -33,7 +33,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    PRIVATE picDEM := FormPicL( pic_iznos_eur(), 12 )
    PRIVATE qqKonto := qqKonto2 := qqPartner := ""
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}

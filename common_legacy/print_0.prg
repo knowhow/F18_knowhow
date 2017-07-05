@@ -496,7 +496,7 @@ FUNCTION PPrint()
    IF Used()
       fUsed := .T.
    ELSE
-      O_PARAMS
+      o_params()
    ENDIF
 
    PRIVATE cSection := "1", cHistory := " "; aHistory := {}

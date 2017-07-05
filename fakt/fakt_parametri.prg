@@ -25,7 +25,7 @@ FUNCTION mnu_fakt_params()
    PRIVATE opcexe := {}
 
    o_roba()
-   O_PARAMS
+   o_params()
 
    SELECT params
    USE
@@ -152,7 +152,7 @@ FUNCTION fakt_par_razno()
    PRIVATE aHistory := {}
    PRIVATE GetList := {}
 
-   O_PARAMS
+   o_params()
 
    gKomLin := PadR( gKomLin, 70 )
 
@@ -459,7 +459,7 @@ FUNCTION fakt_par_varijante_prikaza()
 
    PRIVATE  GetList := {}
 
-   O_PARAMS
+   o_params()
 
    Box(, 23, 76, .F., "VARIJANTE OBRADE DOKUMENATA" )
    @ m_x + 1, m_y + 2 SAY "Unos Dat.pl, otpr., narudzbe D/N (1/2) ?" GET gDoDPar VALID gDodPar $ "12" PICT "@!"
@@ -545,7 +545,7 @@ FUNCTION par_fakt_izgled_dokumenta()
    PRIVATE GetList := {}
    PRIVATE cIzvj := "1"
 
-   O_PARAMS
+   o_params()
 
    IF ValType( gTabela ) <> "N"
       gTabela := 1
@@ -714,7 +714,7 @@ FUNCTION fakt_par_nazivi_dokumenata()
 
    PRIVATE  GetList := {}
 
-   O_PARAMS
+   o_params()
 
    g10Str := PadR( g10Str, 20 )
    g16Str := PadR( g16Str, 20 )

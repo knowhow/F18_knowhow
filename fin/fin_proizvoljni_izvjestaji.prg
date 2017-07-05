@@ -25,7 +25,7 @@ FUNCTION PrPromRn()
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
    PRIVATE picDEM := FormPicL( pic_iznos_eur(), 12 )
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "o", cHistory := " ", aHistory := {}
    RPar( "q1", @qqIDVN )
    RPar( "q2", @qqKonto )
@@ -56,7 +56,7 @@ FUNCTION PrPromRn()
    qqKonto     := Trim( qqKonto     )
    cNazivFirme := Trim( cNazivFirme )
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "o", cHistory := " ", aHistory := {}
    WPar( "q1", qqIDVN )
    WPar( "q2", qqKonto )

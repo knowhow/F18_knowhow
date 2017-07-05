@@ -74,7 +74,7 @@ STATIC FUNCTION kalk_auto_import_setup()
    IF LastKey() <> K_ESC
 
       kalk_imp_txt_param_auto_import_podataka_konto( cAImpRKonto )
-      O_PARAMS
+      o_params()
 
       PRIVATE cSection := "7"
       PRIVATE cHistory := " "
@@ -102,7 +102,7 @@ STATIC FUNCTION _g_params()
    cMKto := PadR( "1312", 7 )
    cPart := PadR( "", 6 )
 
-   O_PARAMS
+   o_params()
 
    PRIVATE cSection := "8"
    PRIVATE cHistory := " "
@@ -124,7 +124,7 @@ STATIC FUNCTION _g_params()
       RETURN 0
    ENDIF
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "8"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}

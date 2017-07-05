@@ -89,7 +89,7 @@ METHOD set_module_gvars()
 
    epdv_set_params()
 
-   O_PARAMS
+   o_params()
    Rpar( "p1", @gPicVrijednost )
 
    SELECT ( F_PARAMS )

@@ -24,7 +24,7 @@ FUNCTION prefin_unos_naloga()
 
    nC := 50
 
-   O_PARAMS
+   o_params()
 
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "

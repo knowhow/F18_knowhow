@@ -22,7 +22,7 @@ FUNCTION ld_parametri()
    LOCAL _izbor := 1
 
    o_ld_rj()
-   O_PARAMS
+   o_params()
 
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "

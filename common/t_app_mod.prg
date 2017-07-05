@@ -232,7 +232,7 @@ METHOD gParams()
 
    SELECT ( F_PARAMS )
    USE
-   O_PARAMS
+   o_params()
 
    RPar( "p?", @cPosebno )
 

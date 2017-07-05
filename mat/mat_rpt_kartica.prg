@@ -524,7 +524,7 @@ FUNCTION KSuban()
 
    Box( "", 10, 70, .F. )
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "4", cHistory := " ", aHistory := {}
    Params1()
    RPar( "c1", @_brza_k )

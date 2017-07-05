@@ -28,7 +28,7 @@ FUNCTION PoMjeTros()
    qqIDVN := Space( 30 )
    dDatOd := CToD( "" ); dDatDo := Date(); gOstr := "D"; gTabela := 1
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "5", cHistory := " "; aHistory := {}
    Params1()
    RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
@@ -178,7 +178,7 @@ FUNCTION CArDob()
    qqRoba := ""
    dDatOd := CToD( "" ); dDatDo := Date(); gOstr := "D"; gTabela := 1
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "6", cHistory := " "; aHistory := {}
    Params1()
    RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )

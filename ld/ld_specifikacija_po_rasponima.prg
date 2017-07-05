@@ -37,7 +37,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    nDo11 := 0 ; nDo12 := 0  ; nDo13 := 0  ; nDo14 := 0  ; nDo15 := 0
    nDo16 := 0 ; nDo17 := 0  ; nDo18 := 0  ; nDo19 := 0  ; nDo20 := 0
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "4", cHistory := " ", aHistory := {}
 
    RPar( "p1", @cNaziv )

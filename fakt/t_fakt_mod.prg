@@ -396,7 +396,7 @@ METHOD set_module_gvars()
       gDuzSifIni := "13"
    ENDIF
 
-   O_PARAMS
+   o_params()
 
    PRIVATE cSection := "1"
    PUBLIC cHistory := " "

@@ -304,7 +304,7 @@ STATIC FUNCTION DefKonv()
       fUsed := .T.
    ELSE
       fUsed := .F.
-      O_PARAMS
+      o_params()
    ENDIF
 
    PRIVATE cSection := "1", cHistory := " "; aHistory := {}

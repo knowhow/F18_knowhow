@@ -1071,7 +1071,7 @@ STATIC FUNCTION g_vars( dD_from, dD_to, cGroup, cKtoListZ, cKtoList, ;
    cKtoListZ := Space( 200 )
    cGroup := Space( 6 )
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "S"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}

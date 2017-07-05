@@ -325,7 +325,7 @@ FUNCTION IArtPoPogonima()
    qqPartner := ""
    // artikal : ulaz, izlaz, cijena
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "7", cHistory := " ", aHistory := {}
    Params1()
    RPar( "c1", @cIdRoba )

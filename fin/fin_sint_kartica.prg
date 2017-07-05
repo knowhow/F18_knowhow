@@ -29,7 +29,7 @@ FUNCTION fin_sint_kartica()
    cPredh := "2"
 
    //o_partner()
-   O_PARAMS
+   o_params()
 
    PRIVATE cSection := "1"; cHistory := " ";aHistory := {}
 

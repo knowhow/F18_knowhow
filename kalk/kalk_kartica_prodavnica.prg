@@ -556,7 +556,7 @@ FUNCTION naprometniji_artikli_prodavnica()
    AAdd ( aNiz, { "                   do datuma", "dDat1",              ,         , } )
    AAdd ( aNiz, { "Koliko artikala ispisati?", "nTop", "nTop > 0", "999", } )
 
-   O_PARAMS
+   o_params()
    PRIVATE cSection := "F", cHistory := " ", aHistory := {}
    Params1()
    RPar( "c2", @qqKonto )

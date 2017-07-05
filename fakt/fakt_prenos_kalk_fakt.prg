@@ -43,7 +43,7 @@ FUNCTION kalk_fakt()
 // ---------------------------------------
 STATIC FUNCTION _params()
 
-   O_PARAMS
+   o_params()
 
    PRIVATE cSection := "T"
    PRIVATE cHistory := " "
@@ -649,7 +649,7 @@ FUNCTION kalkp_2_fakt()
          @ m_x + 15, m_y + 2 SAY Space( 30 )
 
          // snimi parametre !!!
-         O_PARAMS
+         o_params()
          PRIVATE cSection := "K"
          PRIVATE cHistory := " "
          PRIVATE aHistory := {}

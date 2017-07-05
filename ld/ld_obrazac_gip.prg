@@ -1250,7 +1250,7 @@ FUNCTION ol_o_tbl()
 
    // o_ld_obracuni()
    // o_ld_parametri_obracuna()
-   O_PARAMS
+   o_params()
    // o_ld_rj()
    // o_ld_radn()
    // o_koef_beneficiranog_radnog_staza()

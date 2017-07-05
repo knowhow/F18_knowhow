@@ -331,7 +331,6 @@ FUNCTION o_ops( cId )
    RETURN !Eof()
 
 
-
 FUNCTION select_o_ops( cId )
 
    SELECT ( F_OPS )
@@ -347,7 +346,7 @@ FUNCTION select_o_ops( cId )
 
 
 /*
-      use_sql_opstine() => otvori šifarnik tarifa sa prilagođenim poljima
+         use_sql_opstine() => otvori šifarnik tarifa sa prilagođenim poljima
 */
 
 FUNCTION use_sql_opstine( cId )
@@ -364,7 +363,50 @@ FUNCTION use_sql_opstine( cId )
       SEEK cId
    ENDIF
 
-   RETURN .T.
+   RETURN !Eof()
+
+
+FUNCTION o_rj( cId )
+
+   SELECT ( F_RJ )
+   use_sql_rj( cId )
+   SET ORDER TO TAG "ID"
+
+   RETURN !Eof()
+
+
+FUNCTION select_o_rj( cId )
+
+   SELECT ( F_RJ )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_rj( cId )
+
+
+
+FUNCTION use_sql_rj( cId )
+
+   LOCAL cSql
+   LOCAL cTable := "rj"
+
+   SELECT ( F_RJ )
+   IF !use_sql_sif( cTable, .T., "RJ", cId )
+      RETURN .F.
+   ENDIF
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN !Eof()
+
+
 
 
 FUNCTION o_trfp()

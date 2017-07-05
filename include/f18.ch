@@ -95,6 +95,7 @@
 #define FIELD_LEN_POS_RBR    5
 #define FIELD_LEN_PARTNER_ID 6
 
+#define FIELD_LEN_KONTO_ID 7
 
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED

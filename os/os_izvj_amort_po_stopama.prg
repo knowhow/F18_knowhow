@@ -106,11 +106,10 @@ FUNCTION os_amortizacija_po_stopama()
 
    os_rpt_default_valute()
 
-   start PRINT cret
+   start PRINT cRet
    PRIVATE nStr := 0  // strana
 
-   SELECT rj
-   HSEEK cidrj
+   select_o_rj( cIdrj )
 
    select_os_sii()
 

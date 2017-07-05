@@ -76,7 +76,7 @@ FUNCTION PregNDP()
    find_suban_by_konto_partner( cIdFirma, cIdkonto)
 
    IF cPoRP == "1"
-      o_rj()
+      //o_rj()
       SELECT suban
       INDEX ON idfirma + idkonto + idrj + DToS( datdok ) TO SUBSUB
       SET ORDER TO TAG "SUBSUB"
@@ -188,8 +188,7 @@ FUNCTION PregNDP()
       IF ( cPrik == "1" ) .OR. ( cPrik == "2" .AND. fyear ) .OR. ( cPrik == "3" .AND. ( ns1 <> 0 .OR. ns2 <> 0 .OR. nt1 <> 0 .OR. nt2 <> 0 ) )
 
          IF cPoRP == "1"
-            SELECT rj
-            HSEEK cIdpartner
+            select_o_rj( cIdpartner )
             SELECT suban
          ELSE
             select_o_partner( cIdpartner )
@@ -279,8 +278,7 @@ FUNCTION Zagl9()
    ?? ", ZA PERIOD ", dDatOd, "-", dDatDo
 
    // uzmi konto
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    SELECT ( nTArea )
 
    ? Space( 2 )

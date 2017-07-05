@@ -140,8 +140,7 @@ FUNCTION os_pregled_po_kontima()
    PRIVATE nStr := 0
    // strana
 
-   SELECT rj
-   HSEEK cIdRj
+   select_o_rj( cIdrj )
 
    select_os_sii()
 

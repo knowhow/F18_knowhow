@@ -657,7 +657,7 @@ FUNCTION o_fin_edit()
       o_fakt_objekti()
    ENDIF
 
-   o_rj()
+   //o_rj()
 
    //IF gTroskovi == "D"
     //  o_fond()

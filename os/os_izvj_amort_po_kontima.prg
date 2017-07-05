@@ -26,7 +26,7 @@ FUNCTION os_amortizacija_po_kontima()
    ENDIF
 
    O_AMORT
-   o_konto()
+   //o_konto()
    o_rj()
 
    o_os_sii_promj()
@@ -121,9 +121,8 @@ FUNCTION os_amortizacija_po_kontima()
 
    ? tip_organizacije() + ":", self_organizacija_naziv()
 
-   IF !Empty( cidrj )
-      SELECT rj
-      HSEEK cIdrj
+   IF !Empty( cIdrj )
+      select_o_rj( cIdrj )
       select_os_sii()
       ? "Radna jedinica:", cIdrj, rj->naz
    ENDIF

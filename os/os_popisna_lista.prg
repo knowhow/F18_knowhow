@@ -36,7 +36,7 @@ FUNCTION os_popisna_lista()
 
 STATIC FUNCTION _o_tables()
 
-   o_rj()
+   //o_rj()
    o_os_sii()
 
    RETURN

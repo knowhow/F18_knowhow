@@ -497,7 +497,7 @@ STATIC FUNCTION _o_tables()
    //o_sifk()
    //o_sifv()
    //o_roba()
-   o_rj()
+   //o_rj()
    o_fakt()
    SET ORDER TO TAG "3"
 

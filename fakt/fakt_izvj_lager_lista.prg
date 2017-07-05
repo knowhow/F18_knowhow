@@ -70,7 +70,7 @@ FUNCTION fakt_lager_lista()
    //o_sifk()
    //o_sifv()
    //select_o_roba()
-   o_rj()
+   //o_rj()
 
   // IF fId_J
   //    o_fakt()

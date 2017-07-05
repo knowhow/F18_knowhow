@@ -93,15 +93,15 @@
 #xcommand O_BBKLAS    => select (F_BBKLAS);   my_use("bbklas")    ; set order to tag "1"
 
 
-#xcommand OX_KONTO    => select (F_KONTO);  my_usex ("konto")  ;  set order to tag "ID"
-#xcommand O_RKONTO    => select (F_KONTO);  my_usex ("konto") ; set order to tag "ID"
+//#xcommand OX_KONTO    => select (F_KONTO);  my_usex ("konto")  ;  set order to tag "ID"
+//#xcommand O_RKONTO    => select (F_KONTO);  my_usex ("konto") ; set order to tag "ID"
 #xcommand OX_PARTN    => select (F_PARTN);  my_usex ("partn") ; set order to tag "ID"
 #xcommand O_RPARTN    => select (F_PARTN);  my_usex ("partn") ; set order to tag "ID"
 #xcommand OX_TNAL    => select (F_TNAL);  my_usex ("tnal")      ; set order to tag "ID"
 #xcommand OX_TDOK    => select (F_TDOK);  my_usex ("tdok")      ; set order to tag "ID"
 #xcommand OX_PKONTO   => select (F_PKONTO); my_use  ("pkonto")  ; set order to tag "ID"
 #xcommand OX_VALUTE   => select(F_VALUTE);  my_usex  ("valute")  ; set order to tag "ID"
-#xcommand O__KONTO => select(F__KONTO); MY_USE  ("_konto")
+//#xcommand O__KONTO => select(F__KONTO); MY_USE  ("_konto")
 //#xcommand O__PARTN => select(F__PARTN); MY_USE  ("_partn")
 #xcommand O_PRENHH   => select(F_PRENHH); my_usex ("prenhh"); set order to tag "1"
 #xcommand O_OSTAV   => o_ostav()

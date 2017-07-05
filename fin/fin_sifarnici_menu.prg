@@ -97,13 +97,13 @@ STATIC FUNCTION _menu_budzet()
 
 FUNCTION OSifBudzet()
 
-   o_rj()
+// o_rj()
    //o_funk()
    //o_fond()
    //O_BUDZET
    //O_PAREK
    //o_buiz()
-   o_konto()
+  // o_konto()
    o_trfp2()
 
    RETURN .T.

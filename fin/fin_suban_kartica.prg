@@ -378,21 +378,21 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    IF Len( cIdFirma ) < 2 .OR. gDUFRJ == "D"
       SET INDEX TO
       IF cRasclaniti == "D"
-         INDEX ON idkonto + idpartner + idrj + funk + fond TO SUBSUB for &cFilter
+         INDEX ON idkonto + idpartner + idrj + funk + fond TO SUBSUB FOR &cFilter
       ELSEIF cBrza == "D" .AND. RTrim( qqPartner ) == ";"
-         INDEX ON IdKonto + DToS( DatDok ) + idpartner TO SUBSUB for &cFilter
+         INDEX ON IdKonto + DToS( DatDok ) + idpartner TO SUBSUB FOR &cFilter
       ELSE
-         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + Str( RBr, 5, 0 ) TO SUBSUB for &cFilter
+         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + Str( RBr, 5, 0 ) TO SUBSUB FOR &cFilter
       ENDIF
    ELSE
       IF cRasclaniti == "D"
          SET INDEX TO
-         INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond TO SUBSUB for &cFilter
+         INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond TO SUBSUB FOR &cFilter
       ELSE
          IF cfilter == ".t."
             SET FILTER TO
          ELSE
-            SET FILTER to &cFilter
+            SET FILTER TO &cFilter
          ENDIF
       ENDIF
    ENDIF
@@ -485,7 +485,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
          IF !Empty( cOpcine )
             select_o_partner( cIdPartner )
-            IF ! ( Found() .AND. field->id == cIdPartner .AND. AllTrim( field->idops ) $ AllTrim( cOpcine ) )
+            IF !( Found() .AND. field->id == cIdPartner .AND. AllTrim( field->idops ) $ AllTrim( cOpcine ) )
                SELECT ( nTarea )
                SKIP
                LOOP
@@ -519,9 +519,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          ? "Partner: "
          @ PRow(), PCol() + 1 SAY iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", ":  SVI", cIdPartner )
          IF cRasclaniti == "D"
-            SELECT rj
-            SET ORDER TO TAG "ID"
-            SEEK cRasclan
+            select_o_rj( cRasclan )
             ? "        "
             @ PRow(), PCol() + 1 SAY Left( cRasclan, 6 ) + "/" + SubStr( cRasclan, 7, 5 ) + "/" + SubStr( cRasclan, 12 ) + " / " + Ocitaj( F_RJ, Left( cRasclan, 6 ), "NAZ" )
             SELECT konto
@@ -675,7 +673,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   hRec[ "opis" ] := iif( cSpojiDP == "2", "uplate", "placanja" ) + " na dan " + DToC( field->datdok )
                   hRec[ "brdok" ] := iif( hRec[ "otvst" ] == "9", "Z", "O" ) + "-" + DToC( field->datdok )
                ENDIF
-               nSpojeno ++
+               nSpojeno++
                SKIP
             ENDDO
 
@@ -1068,16 +1066,16 @@ STATIC FUNCTION fin_suban_add_item_to_r_export( cKonto, cK_naz, cPartn, cP_naz, 
 
    APPEND BLANK
    REPLACE field->id_konto WITH cKonto
-   REPLACE field->naz_konto with ( cK_naz )
+   REPLACE field->naz_konto WITH ( cK_naz )
    REPLACE field->id_partn WITH cPartn
-   REPLACE field->naz_partn with ( cP_naz )
+   REPLACE field->naz_partn WITH ( cP_naz )
    REPLACE field->vrsta_nal WITH cVn
    REPLACE field->broj_nal WITH cBr
    REPLACE field->nal_rbr WITH nRbr
-   REPLACE field->broj_veze with ( cBrVeze )
+   REPLACE field->broj_veze WITH ( cBrVeze )
    REPLACE field->dat_nal WITH dDatum
    REPLACE field->dat_val WITH fix_dat_var( dDatVal, .T. )
-   REPLACE field->opis_nal with ( cOpis )
+   REPLACE field->opis_nal WITH ( cOpis )
    REPLACE field->duguje WITH nDug
    REPLACE field->potrazuje WITH nPot
    REPLACE field->saldo WITH nSaldo
@@ -1285,11 +1283,11 @@ STATIC FUNCTION kartica_otvori_tabele()
 
    my_close_all_dbf()
 
-  // o_konto()
-  // o_partner()
-//   o_sifk()
-//   o_sifv()
-   o_rj()
+   // o_konto()
+   // o_partner()
+// o_sifk()
+// o_sifv()
+   // o_rj()
    // o_suban()
    o_tdok()
 

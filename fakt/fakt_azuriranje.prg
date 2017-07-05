@@ -576,7 +576,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
    o_valute()
    o_fakt_doks2()
    o_fakt_doks()
-   o_rj()
+   //o_rj()
    //o_sifk()
    //o_sifv()
 

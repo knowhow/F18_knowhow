@@ -30,7 +30,7 @@ FUNCTION fakt_kartica()
    //select_o_partner()
    //select_o_roba()
    //o_tarifa()
-   o_rj()
+   //o_rj()
 
    IF _params[ "fakt_objekti" ]
       o_fakt_objekti()
@@ -90,11 +90,11 @@ FUNCTION fakt_kartica()
    DO WHILE .T.
       @ m_x + 1, m_y + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
       READ
-      IF gNW $ "DR"
-         @ m_x + 2, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
-      ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
-      ENDIF
+      //IF gNW $ "DR"
+         @ m_x + 2, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cIdfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      //ELSE
+      //   @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      //ENDIF
 
       IF cBrza == "D"
          RPar( "c3", @qqRoba )

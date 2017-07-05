@@ -16,7 +16,7 @@
 FUNCTION os_rekapitulacija_po_k1()
 
   // o_k1()
-   o_rj()
+   //o_rj()
 
    o_os_sii()
 
@@ -172,8 +172,7 @@ STATIC FUNCTION ZglK1()
 
    ?? "     Datum:", os_datum_obracuna()
 
-   SELECT rj
-   SEEK cIdRj
+   select_o_rj( cIdRj )
    select_os_sii()
 
    ? "Radna jedinica:", cIdrj, rj->naz

@@ -22,7 +22,7 @@
 
 FUNCTION print_nova_strana( nColumn, nStr, nSlijediRedovaZajedno )
 
-   IF ( nSlijediRedovaZajedno == nil )
+   IF ( nSlijediRedovaZajedno == NIL )
       nSlijediRedovaZajedno := 1
    ENDIF
 
@@ -93,8 +93,7 @@ FUNCTION IspisFirme( cIdRj )
    ?? self_organizacija_naziv()
    B_OFF
    IF !Empty( cidrj )
-      SELECT rj
-      HSEEK cidrj
+      select_o_rj( cIdrj )
       Select( nOArr )
       ?? "  RJ", rj->naz
    ENDIF

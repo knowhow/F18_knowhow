@@ -625,10 +625,7 @@ FUNCTION psuban_konto_check( arr, silent )
       silent := .F.
    ENDIF
 
-   SELECT konto
-   HSEEK psuban->idkonto
-
-   IF !Found()
+   IF !select_o_konto( psuban->idkonto )
 
       lOkAzuriranje := .F.
 

@@ -163,11 +163,11 @@ FUNCTION fakt_setuj_cijenu( tip_cijene )
    LOCAL _rj := .F.
    LOCAL _tmp
 
-   SELECT ( F_RJ )
-   IF Used()
-      _rj := .T.
-      HSEEK _idfirma
-   ENDIF
+   // SELECT ( F_RJ )
+   // IF Used()
+   _rj := .T.
+   select_o_rj( _idfirma )
+   // ENDIF
 
    SELECT roba
 
@@ -225,7 +225,7 @@ FUNCTION fakt_setuj_cijenu( tip_cijene )
 
    SELECT fakt_pripr
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -247,8 +247,7 @@ FUNCTION V_Kolicina( tip_vpc )
 
    IF _podbr <> " ."
 
-      SELECT rj
-      HSEEK _idfirma
+      select_o_rj( _idfirma )
 
       cRjTip := rj->tip
 

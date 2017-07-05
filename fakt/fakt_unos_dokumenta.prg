@@ -1380,10 +1380,7 @@ STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
    LOCAL nDbfArea := Select()
    LOCAL _color := "W/N+"
 
-   SELECT rj
-   SET ORDER TO TAG "ID"
-   GO TOP
-   SEEK id_rj
+   select_o_rj( id_rj )
 
    select_fakt_pripr()
 

@@ -91,9 +91,7 @@ FUNCTION os_pregled_amortizacije()
 
    PRIVATE nStr := 0
    // strana
-
-   SELECT rj
-   HSEEK cIdrj
+   select_o_rj( cIdrj )
    select_os_sii()
 
    P_10CPI

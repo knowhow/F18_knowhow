@@ -35,7 +35,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    //o_sifk()
    //o_sifv()
    //o_roba()
-   o_rj()
+   //o_rj()
    o_fakt()
 
    SELECT fakt
@@ -194,8 +194,7 @@ FUNCTION usporedna_lista_fakt_kalk()
       SET FILTER TO
    ENDIF
 
-   SELECT RJ
-   HSEEK cIdFirma
+   select_o_rj( cIdFirma )
 
    SELECT KALK
 

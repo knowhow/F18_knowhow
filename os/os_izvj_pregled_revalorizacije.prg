@@ -19,8 +19,8 @@ FUNCTION os_pregled_revalorizacije()
    LOCAL nCol1 := 10
    LOCAL _sr_id
 
-   o_konto()
-   o_rj()
+   //o_konto()
+   //o_rj()
 
    o_os_sii_promj()
    o_os_sii()
@@ -59,8 +59,7 @@ FUNCTION os_pregled_revalorizacije()
 
    start PRINT cret
    PRIVATE nStr := 0  // strana
-   SELECT rj
-   HSEEK cIdrj
+   select_o_rj( cIdrj )
    select_os_sii()
 
    IF !Empty( cFiltK1 )

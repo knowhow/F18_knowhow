@@ -29,10 +29,10 @@ FUNCTION kalk_prenos_fakt()
 
    o_fakt()
    o_fakt_pripr()
-   o_partner()
-   o_konto()
+   //o_partner()
+   //o_konto()
    o_kalk_pripr()
-   o_rj()
+   //o_rj()
 
    SET ORDER TO TAG "ID"
    SELECT kalk_pripr
@@ -43,8 +43,8 @@ FUNCTION kalk_prenos_fakt()
 
       cIdFirma := kalk_pripr->idfirma
 
-      SELECT RJ
-      GO TOP
+      //SELECT RJ
+      //GO TOP
 
       IF kalk_pripr->idvd $ "97"
          EXIT

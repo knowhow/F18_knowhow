@@ -180,7 +180,7 @@ FUNCTION fin_specifikacija_suban()
    ENDIF
 
    IF cRasclaniti == "D"
-      o_rj()
+    //  o_rj()
    ENDIF
 
    // o_partner()
@@ -401,8 +401,7 @@ FUNCTION fin_specifikacija_suban()
          IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0 .AND. cTip $ "13" .OR. Round( nd2 - np2, 3 ) <> 0 .AND. cTip $ "23"
             ? cIdKonto, IdPartner( cIdPartner ), ""
             IF cRasclaniti == "D"
-               SELECT RJ
-               SEEK Left( cRasclan, Len( SUBAN->idrj ) )
+               select_o_rj( Left( cRasclan, Len( SUBAN->idrj ) ) )
                SELECT SUBAN
                IF !Empty( Left( cRasclan, Len( SUBAN->idrj ) ) )
                   cLTreci := "RJ:" + Left( cRasclan, Len( SUBAN->idrj ) ) + "-" + Trim( RJ->naz )

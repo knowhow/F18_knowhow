@@ -260,7 +260,7 @@ STATIC FUNCTION _o_sif_tables()
 
    O_AMORT
    O_REVAL
-   o_rj()
+   //o_rj()
 //   o_k1()
   // o_partner()
    //o_sifk()

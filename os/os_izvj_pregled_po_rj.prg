@@ -346,8 +346,7 @@ FUNCTION ZglPrj()
       ?? "sredstava otpisanih u toku godine"
    ENDIF
 
-   SELECT rj
-   SEEK cidrj
+   select_o_rj( cIdrj )
 
    SELECT ( nArr )
 

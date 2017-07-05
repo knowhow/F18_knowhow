@@ -75,8 +75,7 @@ FUNCTION unos_osnovnih_sredstava()
             IF cID != field->id .OR. cIdRJ != field->idrj
                Msg( "Izabrano sredstvo ne postoji!", 5 )
             ELSE
-               SELECT RJ
-               SEEK cIdRj
+               select_o_rj( cIdRj )
 
                IF gOsSii == "O"
                   @ m_x + 1, m_y + 35 SAY os->naz
@@ -107,8 +106,7 @@ FUNCTION unos_osnovnih_sredstava()
             update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
          ELSE
             cIdRj := field->idrj
-            SELECT RJ
-            SEEK cIdRj
+            select_o_rj( cIdRj )
             select_os_sii()
             @ m_x + 2, m_y + 2 SAY "Radna jedinica: " GET cIdRj
             @ m_x + 2, m_y + 35 SAY RJ->naz
@@ -461,7 +459,7 @@ FUNCTION ShowSadVr()
    GO ( _t_rec )
    SELECT ( _arr )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -508,8 +506,8 @@ FUNCTION os_validate_date( os_date )
 STATIC FUNCTION _o_tables()
 
 //   o_k1()
-   o_rj()
-   o_konto()
+   //o_rj()
+  // o_konto()
    O_AMORT
    O_REVAL
    o_os_sii()

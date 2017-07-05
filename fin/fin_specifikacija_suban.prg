@@ -17,6 +17,7 @@ MEMVAR cIdFirma, cIdRj, dDatOd, dDatDo, cFunk, cFond, cNula
 MEMVAR cSkVar, cRasclaniti, cRascFunkFond, cN2Fin
 MEMVAR cFilter
 MEMVAR fK1, fK2, fK3, fK4, cK1, cK2, cSection, cHistory, aHistory
+MEMVAR m_x, m_y
 
 FIELD idkonto, idpartner, idrj
 
@@ -33,11 +34,15 @@ FUNCTION fin_specifikacija_suban()
    LOCAL cOpcine := Space( 20 )
    LOCAL cVN := Space( 20 )
    LOCAL cUslovPartnerTelefon := Space( 100 ), cFilterPartnerTelefon
-   LOCAL bZagl :=  {|| zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon ) }
+   LOCAL cTipDomacaStranaObje
+   LOCAL bZagl :=  {|| zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon, cTipDomacaStranaObje ) }
    LOCAL oPDF, xPrintOpt
    LOCAL cSqlWhere
    LOCAL nTArea
    LOCAL nC
+   LOCAL lExpRpt
+
+
    PRIVATE cSkVar := "N"
    PRIVATE fK1 := fk2 := fk3 := fk4 := "N"
    PRIVATE cRasclaniti := "N"
@@ -83,7 +88,7 @@ FUNCTION fin_specifikacija_suban()
 
    // o_partner()
 
-   cTip := "1"
+   cTipDomacaStranaObje := "1"
    Box( "", 20, 77 )
    SET CURSOR ON
    PRIVATE cK1 := cK2 := "9"
@@ -113,10 +118,11 @@ FUNCTION fin_specifikacija_suban()
       @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
       @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
       @ m_x + 6, Col() + 2 SAY "do" GET dDatDo
+
       IF fin_dvovalutno()
-         @ m_x + 7, m_y + 2 SAY8 "Obračun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTip VALID ctip $ "123"
+         @ m_x + 7, m_y + 2 SAY8 "Obračun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTipDomacaStranaObje VALID cTipDomacaStranaObje $ "123"
       ELSE
-         cTip := "1"
+         cTipDomacaStranaObje := "1"
       ENDIF
 
       @ m_x + 8, m_y + 2 SAY8 "Prikaz sintetičkih konta (D/N) ?" GET cSK  PICT "@!" VALID csk $ "DN"
@@ -180,7 +186,7 @@ FUNCTION fin_specifikacija_suban()
    ENDIF
 
    IF cRasclaniti == "D"
-    //  o_rj()
+      // o_rj()
    ENDIF
 
    // o_partner()
@@ -298,7 +304,7 @@ FUNCTION fin_specifikacija_suban()
       nDIznos := 20
    ENDIF
 
-   IF cTip == "3"
+   IF cTipDomacaStranaObje == "3"
       m := "------- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
    ELSE
       m := "------- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
@@ -398,7 +404,7 @@ FUNCTION fin_specifikacija_suban()
             ENDIF
          ENDDO
          check_nova_strana( bZagl, oPDF )
-         IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0 .AND. cTip $ "13" .OR. Round( nd2 - np2, 3 ) <> 0 .AND. cTip $ "23"
+         IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0 .AND. cTipDomacaStranaObje $ "13" .OR. Round( nd2 - np2, 3 ) <> 0 .AND. cTipDomacaStranaObje $ "23"
             ? cIdKonto, IdPartner( cIdPartner ), ""
             IF cRasclaniti == "D"
                select_o_rj( Left( cRasclan, Len( SUBAN->idrj ) ) )
@@ -442,11 +448,11 @@ FUNCTION fin_specifikacija_suban()
             ENDIF
             nC := PCol() + 1
             // ispis duguje/potrazuje/saldo
-            IF cTip == "1"
+            IF cTipDomacaStranaObje == "1"
                @ PRow(), PCol() + 1 SAY nD PICT pic
                @ PRow(), PCol() + 1 SAY nP PICT pic
                @ PRow(), PCol() + 1 SAY nD - nP PICT pic
-            ELSEIF cTip == "2"
+            ELSEIF cTipDomacaStranaObje == "2"
                @ PRow(), PCol() + 1 SAY nD2 PICT pic
                @ PRow(), PCol() + 1 SAY nP2 PICT pic
                @ PRow(), PCol() + 1 SAY nD2 - nP2 PICT pic
@@ -504,11 +510,11 @@ FUNCTION fin_specifikacija_suban()
       IF cSK == "D"
          ? m
          ?  "SINT.K.", cSin, ":"
-         IF cTip == "1"
+         IF cTipDomacaStranaObje == "1"
             @ PRow(), nC SAY nKd PICT pic
             @ PRow(), PCol() + 1 SAY nKp PICT pic
             @ PRow(), PCol() + 1 SAY nKd - nKp PICT pic
-         ELSEIF cTip == "2"
+         ELSEIF cTipDomacaStranaObje == "2"
             @ PRow(), nC SAY nKd2 PICT pic
             @ PRow(), PCol() + 1 SAY nKp2 PICT pic
             @ PRow(), PCol() + 1 SAY nKd2 - nKp2 PICT pic
@@ -529,11 +535,11 @@ FUNCTION fin_specifikacija_suban()
 
    ? m
    ? " UKUPNO:"
-   IF cTip == "1"
+   IF cTipDomacaStranaObje == "1"
       @ PRow(), nC       SAY nUd PICT pic
       @ PRow(), PCol() + 1 SAY nUp PICT pic
       @ PRow(), PCol() + 1 SAY nUd - nUp PICT pic
-   ELSEIF cTip == "2"
+   ELSEIF cTipDomacaStranaObje == "2"
       @ PRow(), nC       SAY nUd2 PICT pic
       @ PRow(), PCol() + 1 SAY nUp2 PICT pic
       @ PRow(), PCol() + 1 SAY nUd2 - nUp2 PICT pic
@@ -640,7 +646,7 @@ STATIC FUNCTION FSvaki1()
  *  param cSkVar
  */
 
-FUNCTION zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon )
+FUNCTION zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon, cTipDomacaStranaObje )
 
    ?
    IF is_legacy_ptxt()
@@ -654,9 +660,9 @@ FUNCTION zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon )
 
    ??U "FIN: SPECIFIKACIJA SUBANALITIČKIH KONTA  ZA "
 
-   IF cTip == "1"
+   IF cTipDomacaStranaObje == "1"
       ?? ValDomaca()
-   ELSEIF cTip == "2"
+   ELSEIF cTipDomacaStranaObje == "2"
       ?? ValPomocna()
    ELSE
       ?? AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() )
@@ -701,7 +707,7 @@ FUNCTION zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon )
 
    ? m
 
-   IF cTip $ "12"
+   IF cTipDomacaStranaObje $ "12"
       IF cSkVar != "D"
          ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  NAZIV KONTA / PARTNERA                                          duguje            potrazuje                saldo"
       ELSE
@@ -748,6 +754,8 @@ STATIC FUNCTION fill_ss_tbl( cKonto, cPartner, cNaziv, nFDug, nFPot, nFSaldo, cR
 
 // vraca matricu sa sub.bb poljima
 STATIC FUNCTION get_ss_fields( cRj, nPartLen )
+
+   LOCAL aFields
 
    IF cRj == nil
       cRj := "N"

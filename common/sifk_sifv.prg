@@ -269,7 +269,7 @@ FUNCTION get_sifk_value ( cDbfName, cOznaka, cIdSif, return_nil )
    LOCAL _sifk_tip, _sifk_duzina, _sifk_veza, cIdSif2
    LOCAL lSql := .F.
 
-//altd()
+// altd()
    // ID default polje
    IF cIdSif == NIL
       cIdSif := ( cDbfName )->ID
@@ -286,15 +286,20 @@ FUNCTION get_sifk_value ( cDbfName, cOznaka, cIdSif, return_nil )
    cIdSif2 := PadR( cIdSif, SIFK_LEN_IDSIF )
 
    IF !use_sql_sifk( cDbfName, cOznaka )
-      MsgBeep( "ERROR 2 GET SIFK ?!" )
-      RETURN .F.
+      ?E "ERROR 2 GET SIFK ?!", cDbfName, cOznaka
+      IF return_nil == NIL
+         RETURN NIL
+      ELSE
+         RETURN ""
+      ENDIF
+
    ENDIF
    _ret := NIL
 
    GO TOP
    IF Eof()  // uopste ne postoji takva karakteristika
       IF return_nil <> NIL
-         _ret := get_sifv_value( "X", "" )
+         _ret := "" // get_sifv_value( "X", "" ) ovo ce dati ?NEPTIP?
       ELSE
          _ret := NIL
       ENDIF
@@ -388,7 +393,7 @@ FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
    cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
    SELECT F_SIFK
    IF !use_sql_sifk( cDBF, cOznaka )
-      MsgBeep( "ERROR 3 GET SIFK ?!" )
+      ?E "ERROR 3 GET SIFK:", cDbf, cOznaka
       PopWA()
       RETURN .F.
    ENDIF
@@ -443,7 +448,7 @@ FUNCTION USifk( cDbfName, cOznaka, cIdSif, xValue, cTransaction )
 
    SELECT F_SIFK
    IF !use_sql_sifk( cDbfName, cOznaka )
-      MsgBeep( "ERROR 5 GET SIFK ?!" )
+      ?E "ERROR 5 GET SIFK ", cDbfName, cOznaka
       PopWa()
       RETURN .F.
    ENDIF

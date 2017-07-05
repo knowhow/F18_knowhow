@@ -1119,18 +1119,19 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
       aMemo := ParsMemo( txt )
       lFromMemo := .T.
    ELSE
-      o_partner()
-      SELECT partn
-      SET ORDER TO TAG "ID"
-      HSEEK cId
+      select_o_partner( cId )
    ENDIF
 
    IF !lFromMemo .AND. partn->id == cId
+
       cIdBroj := firma_id_broj( cId )
       cPdvBroj := firma_pdv_broj( cId )
-      cPorBroj := IzSifKPartn( "PORB", cId, .F. )
+      AltD()
+      // cPorBroj := IzSifKPartn( "PORB", cId, .F. )
+
       cBrRjes := IzSifKPartn( "BRJS", cId, .F. )
       cBrUpisa := IzSifKPartn( "BRUP", cId, .F. )
+
       cPartNaziv := partn->naz
       cPartAdres := partn->adresa
       cPartMjesto := partn->mjesto
@@ -1164,18 +1165,24 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    // idbroj, pdvbroj, nova polja
    add_drntext( "K15", cIdBroj )
    add_drntext( "K16", cPdvBroj )
-   // porbroj
-   add_drntext( "K05", cPorBroj )
+
+
+   // porbroj - OUT
+   // add_drntext( "K05", cPorBroj )
 
    // tel
    add_drntext( "K13", cPartTel )
    // fax
    add_drntext( "K14", cPartFax )
 
-   // brrjes
-   add_drntext( "K06", cBrRjes )
-   // brupisa
-   add_drntext( "K07", cBrUpisa )
+   IF cBrRjes != NIL
+      add_drntext( "K06", cBrRjes )
+   ENDIF
+
+   IF cBrUpisa != NIL
+      add_drntext( "K07", cBrUpisa )
+   ENDIF
+
 
    SELECT ( nDbfArea )
 

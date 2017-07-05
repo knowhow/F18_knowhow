@@ -107,7 +107,7 @@ FUNCTION get_dtxt_fields( aArr )
    AAdd( aArr, { "TIP",   "C",   3, 0 } )
    AAdd( aArr, { "OPIS",  "C", 200, 0 } )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION add_drntext( cTip, cOpis )
@@ -122,17 +122,20 @@ FUNCTION add_drntext( cTip, cOpis )
    SELECT drntext
    GO TOP
 
-
    SEEK cTip
 
    IF !Found()
       APPEND BLANK
    ENDIF
 
+   IF ValType( cOpis ) != "C"
+      MsgBeep( "bug add drntext " +  cTip )
+      quit_1
+   ENDIF
    REPLACE tip WITH cTip
    REPLACE opis WITH cOpis
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION add_drn( cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp, nZaokr, nUkkol )
@@ -148,10 +151,10 @@ FUNCTION add_drn( cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nU
 
    REPLACE brdok WITH cBrDok
    REPLACE datdok WITH dDatDok
-   IF ( dDatVal <> nil )
+   IF ( dDatVal <> NIL )
       REPLACE datval WITH dDatVal
    ENDIF
-   IF ( dDatIsp <> nil )
+   IF ( dDatIsp <> NIL )
       REPLACE datisp WITH dDatIsp
    ENDIF
    REPLACE vrijeme WITH cTime
@@ -370,7 +373,7 @@ FUNCTION AzurKupData( cIdPos )
    IF !begin_sql_tran_lock_tables( { _tbl }  )
       RETURN .F.
    ENDIF
-  
+
 
    SELECT drn
    GO TOP
@@ -400,7 +403,7 @@ FUNCTION AzurKupData( cIdPos )
 
    update_rec_server_and_dbf( _tbl, _rec, 1, "CONT" )
 
-   hParams := hb_hash()
+   hParams := hb_Hash()
    hParams[ "unlock" ] :=  { _tbl }
    run_sql_query( "COMMIT", hParams )
 
@@ -429,7 +432,7 @@ FUNCTION fnd_kup_data( cKupac ) // pretrazi tabelu kupaca i napuni matricu
 
    cFilter := Parsiraj( Lower( cKupac ), "lower(knaz)" )
 
-   SET FILTER to &cFilter
+   SET FILTER TO &cFilter
    SET ORDER TO TAG "2"
    GO TOP
 

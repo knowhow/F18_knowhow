@@ -479,6 +479,7 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    LOCAL cSql
    LOCAL cTable := "sifk"
 
+
 #ifdef F18_DEBUG_THREAD
 
    ?E "USE SQL SIFK in main thread:", is_in_main_thread()
@@ -492,22 +493,20 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
       cSql += " AND oznaka=" + sql_quote( cOznaka )
    ENDIF
 
-altd()
    cSQL += " ORDER BY id,oznaka,sort"
    SELECT F_SIFK
    IF !use_sql( cTable, cSql )
       RETURN .F.
    ENDIF
 
+   IF cDbf == NIL .AND. cOznaka == NIL
+      INDEX ON ID + SORT + NAZ TAG ID  TO ( cTable )
+      INDEX ON ID + OZNAKA TAG ID2  TO ( cTable )
+      INDEX ON NAZ  TAG NAZ TO ( cTable )
+      SET ORDER TO TAG ID
+   ENDIF
 
-   // IF cDbf == NIL .AND. cOznaka == NIL
-   INDEX ON ID + SORT + NAZ TAG ID  TO ( cTable )
-   INDEX ON ID + OZNAKA TAG ID2  TO ( cTable )
-   INDEX ON NAZ  TAG NAZ TO ( cTable )
-   SET ORDER TO TAG ID
    GO TOP  // ovo obavezno inace ostane na eof() poziciji?!
-   // ENDIF
-
    RETURN !Eof()
 
 
@@ -578,7 +577,7 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
    INDEX ON ID + IDSIF TAG IDIDSIF  TO ( cTable )
    SET ORDER TO TAG "ID"
    GO TOP
-   
+
    RETURN !Eof()
 
 

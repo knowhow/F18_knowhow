@@ -51,7 +51,7 @@ FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
    LOCAL _rec, _recs, ii
 
    IF !use_sql_sifk( cDbf, NIL )
-      MsgBeep( "ERROR SIFK read ?!" )
+      ?E "ERROR SIFK ", cDbf
       RETURN .F.
    ENDIF
    use_sql_sifv()

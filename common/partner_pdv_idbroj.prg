@@ -150,6 +150,7 @@ FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
    IF !Found()
 
       APPEND BLANK
+      ?E "fill_sifk_partn - not fonud", cIdSifk, cNazSifk, cSort, nLen
 
       hRec := dbf_get_rec()
       hRec[ "id" ] := cId

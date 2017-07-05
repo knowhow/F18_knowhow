@@ -266,8 +266,8 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
             ENDIF
          ENDIF
 
-         lIno := IsIno( _id_part )
-         lPdvObveznik := IsPdvObveznik( _id_part )
+         lIno := partner_is_ino( _id_part )
+         lPdvObveznik := partner_is_pdv_obveznik( _id_part )
 
          lSkip := .F.
          DO CASE

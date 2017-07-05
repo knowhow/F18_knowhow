@@ -30,11 +30,11 @@ FUNCTION usporedna_lista_fakt_kalk()
 
    o_fakt_doks()
    o_kalk() // usporedna lista fakt kalk
-   o_konto()
-   o_tarifa()
-   o_sifk()
-   o_sifv()
-   o_roba()
+   //o_konto()
+   //o_tarifa()
+   //o_sifk()
+   //o_sifv()
+   //o_roba()
    o_rj()
    o_fakt()
 
@@ -353,7 +353,7 @@ FUNCTION usporedna_lista_fakt_kalk()
             ELSEIF pu_i == "5"  .AND. !( idvd $ "12#13#22" )
                nSt -= kolicina
                nVr -= Round( mpcsapp * kolicina, ZAOKRUZENJE )
-               
+
             ELSEIF pu_i == "I"
                nSt += gkolicin2
                nVr -= mpcsapp * gkolicin2

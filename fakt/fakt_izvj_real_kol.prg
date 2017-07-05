@@ -645,12 +645,12 @@ STATIC FUNCTION _o_tables()
 
    o_fakt()
    o_fakt_doks()
-   o_partner()
+  // o_partner()
    o_valute()
    o_rj()
-   o_sifk()
-   o_sifv()
-   o_roba()
+   //o_sifk()
+   //o_sifv()
+   //o_roba()
 
    RETURN .T.
 

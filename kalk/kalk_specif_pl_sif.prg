@@ -69,8 +69,8 @@ FUNCTION PlFill_Sezona()
    IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
       nI := 0
       o_roba()
-      o_sifk()
-      o_sifv()
+      //o_sifk()
+      //o_sifv()
       SELECT roba
       GO TOP
       Box(, 3, 60 )
@@ -94,7 +94,7 @@ FUNCTION PlFill_Sezona()
    RETURN
 
 
-
+/*
 FUNCTION PlFill_Vrsta()
 
    LOCAL cVrstaPf
@@ -113,8 +113,8 @@ FUNCTION PlFill_Vrsta()
    IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
 
   //    o_roba()
-      o_sifk()
-      o_sifv()
+    //  o_sifk()
+  //    o_sifv()
       SELECT roba
       GO TOP
       MsgO( "Koverzija ..." )
@@ -134,9 +134,12 @@ FUNCTION PlFill_Vrsta()
    RETURN
 // }
 
+
+
+
 FUNCTION PlFillIdPartner( cIdPartner, cIdRoba )
 
-   // {
+
    LOCAL nArr
    IF Empty( cIdPartner ) .OR. Empty( cIdRoba )
       RETURN
@@ -149,3 +152,5 @@ FUNCTION PlFillIdPartner( cIdPartner, cIdRoba )
 
    RETURN
 // }
+
+*/

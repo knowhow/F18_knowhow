@@ -668,8 +668,8 @@ STATIC FUNCTION set_banku_za_partnera( cPartn, cBank )
    ENDIF
 
    PushWA()
-   o_sifk()
-   o_sifv()
+   //o_sifk()
+   //o_sifv()
 
    cNewBank := ""
    cOldBank := AllTrim( IzSifKPartn( "BANK", cPartn ) )  // stara banka

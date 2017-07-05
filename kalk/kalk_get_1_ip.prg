@@ -111,10 +111,10 @@ FUNCTION kalk_generisi_ip()
 
    LOCAL cIdFirma, cIdKonto, cIdRoba, dDatDok, cNulirati
 
-   o_konto()
-   o_tarifa()
-   o_sifk()
-   o_sifv()
+  // o_konto()
+//   o_tarifa()
+//   o_sifk()
+//   o_sifv()
 // o_roba()
 
    Box(, 4, 50 )
@@ -298,11 +298,11 @@ FUNCTION gen_ip_razlika()
    MsgC()
 
    // otvori potrebne tabele
-   o_tarifa()
-   o_sifk()
-   o_sifv()
+//   o_tarifa()
+//   o_sifk()
+//   o_sifv()
 // o_roba()
-   o_koncij()
+//   o_koncij()
    o_kalk_pripr()
    o_kalk_pript()
    // o_kalk()

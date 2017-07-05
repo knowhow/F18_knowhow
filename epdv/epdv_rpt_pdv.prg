@@ -257,7 +257,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
          nUkIzPdv += nPdv
 
-         IF IsPdvObveznik( id_part )
+         IF partner_is_pdv_obveznik( id_part )
 
             _i_pdv_r += nPdv
 

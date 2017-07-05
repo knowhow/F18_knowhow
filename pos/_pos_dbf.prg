@@ -197,16 +197,16 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    SET ORDER TO TAG "NAZ"
 
    O_VRSTEP
-   o_partner()
+//   o_partner()
    O_DIO
    O_K2C
    O_MJTRUR
    O_KASE
    o_sastavnica()
-   o_roba()
-   o_tarifa()
-   o_sifk()
-   o_sifv()
+//   o_roba()
+  // o_tarifa()
+  // o_sifk()
+  // o_sifv()
    O_PRIPRZ
    O_PRIPRG
    O__POS
@@ -236,15 +236,15 @@ FUNCTION o_pos_sifre()
    O_KASE
    O_UREDJ
    O_ODJ
-   o_roba()
-   o_tarifa()
+  // o_roba()
+  // o_tarifa()
    O_VRSTEP
-   o_valute()
-   o_partner()
+  // o_valute()
+  // o_partner()
    O_OSOB
    O_STRAD
-   o_sifk()
-   o_sifv()
+  // o_sifk()
+  // o_sifv()
 
    RETURN .T.
 

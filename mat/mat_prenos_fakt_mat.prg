@@ -61,11 +61,11 @@ STATIC FUNCTION prenos()
 
    O_MAT_PRIPR
    O_MAT_NALOG
-   o_roba()
-   o_sifk()
-   o_sifv()
-   o_konto()
-   o_partner()
+  // o_roba()
+  // o_sifk()
+//   o_sifv()
+//   o_konto()
+//   o_partner()
    o_valute()
    o_fakt()
 

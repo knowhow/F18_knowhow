@@ -492,6 +492,7 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
       cSql += " AND oznaka=" + sql_quote( cOznaka )
    ENDIF
 
+altd()
    cSQL += " ORDER BY id,oznaka,sort"
    SELECT F_SIFK
    IF !use_sql( cTable, cSql )
@@ -507,7 +508,7 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    GO TOP  // ovo obavezno inace ostane na eof() poziciji?!
    // ENDIF
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 /*
@@ -575,10 +576,10 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    INDEX ON ID + OZNAKA + IDSIF + NAZ TAG ID  TO ( cTable )
    INDEX ON ID + IDSIF TAG IDIDSIF  TO ( cTable )
-   GO TOP
    SET ORDER TO TAG "ID"
-
-   RETURN .T.
+   GO TOP
+   
+   RETURN !Eof()
 
 
 /*

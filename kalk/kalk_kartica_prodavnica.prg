@@ -42,8 +42,8 @@ FUNCTION kalk_kartica_prodavnica()
    _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
    //o_tarifa()
-   o_sifk()
-   o_sifv()
+//   o_sifk()
+//   o_sifv()
   // o_roba()
    //o_konto()
    //o_partner()

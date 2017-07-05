@@ -200,8 +200,8 @@ FUNCTION o_partn_sifk()
    //SELECT F_SIFV
    //USE
 
-   o_sifk()
-   o_sifv()
+   //o_sifk()
+   //o_sifv()
    //o_partner()
 
    RETURN .T.

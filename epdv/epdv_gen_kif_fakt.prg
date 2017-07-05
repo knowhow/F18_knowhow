@@ -212,8 +212,8 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
 
          // ispitati partnera koji stoji na fakt dokumentu
          lOslPoClanu := is_part_pdv_oslob_po_clanu( _id_part )
-         lIno := IsIno( _id_part )
-         lPdvObveznik := IsPdvObveznik( _id_part )
+         lIno := partner_is_ino( _id_part )
+         lPdvObveznik := partner_is_pdv_obveznik( _id_part )
 
          IF !Empty( cIdPart ) // ako se u shemi trazi da se stavi jedinstven partner sada ga staviti
             _id_part := cIdPart

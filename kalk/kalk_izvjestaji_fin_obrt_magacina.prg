@@ -47,8 +47,8 @@ FUNCTION kalk_finansijski_obrt()
    PRIVATE cPrDatOd := "N"
    PRIVATE PREDOVA2 := 62
 
-   o_sifk()
-   o_sifv()
+  // o_sifk()
+//   o_sifv()
 //   o_roba()
 
    cLegenda := "D"

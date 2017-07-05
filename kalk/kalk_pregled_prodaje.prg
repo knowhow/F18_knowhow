@@ -52,8 +52,8 @@ FUNCTION roba_pregled_prodaje_po_grupama()
    BoxC()
 
   // o_roba()
-   o_sifk()
-   o_sifv()
+  // o_sifk()
+  // o_sifv()
 
 
    MsgO( "Preuzimanje podataka sa SQL servera" )

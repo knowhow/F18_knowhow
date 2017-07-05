@@ -189,8 +189,7 @@ FUNCTION mat_inv_gen()
 
 
 
-// -------------------------------------------------
-// -------------------------------------------------
+
 FUNCTION mat_inv_tabela()
 
    LOCAL _cnt
@@ -199,10 +198,10 @@ FUNCTION mat_inv_tabela()
    PRIVATE imekol := {}
 
    O_MAT_INVENT
-   o_roba()
-   o_sifk()
-   o_sifv()
-   o_partner()
+   //o_roba()
+   //o_sifk()
+   //o_sifv()
+   //o_partner()
 
    SELECT MAT_INVENT
    GO TOP
@@ -459,11 +458,11 @@ FUNCTION mat_pregl_unesenih_stavki()
    LOCAL _vars := hb_Hash()
 
    O_MAT_INVENT
-   o_roba()
-   o_sifk()
-   o_sifv()
-   o_konto()
-   o_partner()
+   //o_roba()
+   //o_sifk()
+   //o_sifv()
+   //o_konto()
+   //o_partner()
 
    IF !_get_inv_vars( @_vars )
       my_close_all_dbf()
@@ -595,9 +594,9 @@ FUNCTION mat_obracun_inv()
    picK := '@Z 99999.99'
 
    O_MAT_INVENT
-   o_roba()
-   o_sifk()
-   o_sifv()
+   //o_roba()
+   //o_sifk()
+   //o_sifv()
    O_MAT_SUBAN
    SET ORDER TO TAG "3"
    SET FILTER TO DatDok <= cIdD
@@ -742,9 +741,9 @@ FUNCTION mat_nal_inventure()
    o_valute()
    O_MAT_PRIPR
    O_MAT_INVENT
-   o_roba()
-   o_sifk()
-   o_sifv()
+   //o_roba()
+   //o_sifk()
+   //o_sifv()
    O_MAT_SUBAN
    SET ORDER TO TAG "3"
    SET FILTER TO DatDok <= cIdD
@@ -925,9 +924,9 @@ FUNCTION mat_popisna_lista()
    C := 0
 
    O_MAT_SUBAN
-   o_sifk()
-   o_sifv()
-   o_roba()
+   //o_sifk()
+   //o_sifv()
+   //o_roba()
 
    SELECT mat_suban
    SET ORDER TO TAG "3"

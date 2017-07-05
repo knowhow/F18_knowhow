@@ -699,13 +699,13 @@ STATIC FUNCTION kartica_magacin_open_tabele()
       USE
    ENDIF
 
-   o_partner()
-   o_tarifa()
-   o_sifk()
-   o_sifv()
+  // o_partner()
+//   o_tarifa()
+//   o_sifk()
+//   o_sifv()
    // o_roba()
-   o_konto()
-   o_koncij()
+//   o_konto()
+//   o_koncij()
    o_kalk() // kalk_kartica
 
    RETURN .T.

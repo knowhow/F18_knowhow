@@ -342,12 +342,12 @@ STATIC FUNCTION fakt_is_storno_dok( cIdFirma, cIdTipDok, cBrDok )
 
 STATIC FUNCTION fakt_fiscal_o_tables()
 
-   o_tarifa()
+   //o_tarifa()
    o_fakt_doks()
    o_fakt()
-   o_roba()
-   o_sifk()
-   o_sifv()
+   //o_roba()
+   //o_sifk()
+   //o_sifv()
 
    RETURN .T.
 
@@ -374,7 +374,7 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, cIdTipDok )
       select_o_tarifa( cIdTarifa )
 
       IF cIdTipDok $ "11#13#23"
-         IF !IsIno( partner ) .AND. !is_part_pdv_oslob_po_clanu( partner ) .AND. tarifa->opp > 0
+         IF !partner_is_ino( partner ) .AND. !is_part_pdv_oslob_po_clanu( partner ) .AND. tarifa->opp > 0
             _calc[ "ukupno" ] := _calc[ "ukupno" ] + _iznos
             _calc[ "osnovica" ] := _calc[ "osnovica" ] + ( _iznos / ( 1 + tarifa->opp / 100 ) )
             _calc[ "pdv" ] := _calc[ "pdv" ] + ( ( _iznos / ( 1 + tarifa->opp / 100 ) ) * ( tarifa->opp / 100 ) )
@@ -383,7 +383,7 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, cIdTipDok )
             _calc[ "osnovica" ] := _calc[ "osnovica" ] + _iznos
          ENDIF
       ELSE
-         IF !IsIno( partner ) .AND. !is_part_pdv_oslob_po_clanu( partner ) .AND. tarifa->opp > 0
+         IF !partner_is_ino( partner ) .AND. !is_part_pdv_oslob_po_clanu( partner ) .AND. tarifa->opp > 0
             _calc[ "ukupno" ] := _calc[ "ukupno" ] + ( _iznos * ( 1 + tarifa->opp / 100 ) )
             _calc[ "osnovica" ] := _calc[ "osnovica" ] + _iznos
             _calc[ "pdv" ] := _calc[ "pdv" ] + ( _iznos * ( tarifa->opp / 100 ) )
@@ -847,7 +847,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( cIdFirma, cIdTipDok, cBrDok, lStorn
    __vrsta_pl := vrsta_placanja_za_fiskalni_uredjaj( cIdTipDok, _vrsta_p )
    lPartnClan := is_part_pdv_oslob_po_clanu( _partn_id )
 
-   IF IsIno( _partn_id )
+   IF partner_is_ino( _partn_id )
       __partn_ino := .T.
       __partn_pdv := .F.
       RETURN NIL
@@ -875,7 +875,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( cIdFirma, cIdTipDok, cBrDok, lStorn
    IF lPartnClan
       __partn_ino := .T.
       __partn_pdv := .F.
-   ELSEIF IsPdvObveznik( _partn_id )
+   ELSEIF partner_is_pdv_obveznik( _partn_id )
       __partn_ino := .F.
       __partn_pdv := .T.
    ELSE
@@ -887,8 +887,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( cIdFirma, cIdTipDok, cBrDok, lStorn
       RETURN NIL
    ENDIF
 
-   AAdd( _podaci, { _partn_id_broj, partn->naz, partn->adresa, ;
-      partn->ptt, partn->mjesto, __vrsta_pl, __partn_ino, __partn_pdv } )
+   AAdd( _podaci, { _partn_id_broj, partn->naz, partn->adresa, partn->ptt, partn->mjesto, __vrsta_pl, __partn_ino, __partn_pdv } )
 
    RETURN _podaci
 

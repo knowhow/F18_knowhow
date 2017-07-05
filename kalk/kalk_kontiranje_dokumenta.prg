@@ -61,15 +61,15 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
       lAutoBrojac := .T.
    ENDIF
 
-   SELECT F_SIFK
-   IF !Used()
-      o_sifk()
-   ENDIF
+  // SELECT F_SIFK
+//   IF !Used()
+//      o_sifk()
+//   ENDIF
 
-   SELECT F_SIFV
-   IF !Used()
-      o_sifv()
-   ENDIF
+//   SELECT F_SIFV
+//   IF !Used()
+//      o_sifv()
+//   ENDIF
 
   // SELECT F_ROBA
   // IF !Used()
@@ -701,7 +701,7 @@ FUNCTION Konto( nBroj, cDef, cTekst )
    RETURN 0
 
 
-// Primjer SetKonto(1, IsInoDob(finmat->IdPartner) , "30", "31")
+// Primjer SetKonto(1, partner_is_ino(finmat->IdPartner) , "30", "31")
 //
 FUNCTION SetKonto( nBroj, lValue, cTrue, cFalse )
 

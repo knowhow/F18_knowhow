@@ -204,7 +204,7 @@ FUNCTION fakt_kalk_prenos_10_14()
             select_o_roba(  fakt->idroba )
             select_o_tarifa( roba->idtarifa )
 
-            IF ( RobaZastCijena( roba->idTarifa ) .AND. !IsPdvObveznik( cIdPartner ) )
+            IF ( RobaZastCijena( roba->idTarifa ) .AND. !partner_is_pdv_obveznik( cIdPartner ) )
                // nije pdv obveznik
                // roba ima zasticenu cijenu
                nRabat := 0

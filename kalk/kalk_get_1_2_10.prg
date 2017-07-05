@@ -171,7 +171,7 @@ FUNCTION kalk_get_1_10()
 STATIC FUNCTION ino_dobavljac_set_konverzija_valute( cPartn, s_cKonverzijaValuteDN )
 
    // IF gDokKVal == "D" .AND.
-   IF kalk_is_novi_dokument() .AND. isInoDob( cPartn )
+   IF kalk_is_novi_dokument() .AND. partner_is_ino( cPartn )
       s_cKonverzijaValuteDN := "D"
    ENDIF
 
@@ -241,7 +241,7 @@ STATIC FUNCTION kalk_get_2_10( x_kord, cIdPartner )
       _TMarza := "%"
    ENDIF
 
-   IF !isInoDob( cIdPartner ) // domaci
+   IF !partner_is_ino( cIdPartner ) // domaci
       cTroskoviDN := "N"
    ENDIF
 

@@ -17,9 +17,9 @@ STATIC FUNCTION _o_tables()
 
    O_ODJ
    O_KASE
-   o_sifk()
-   o_sifv()
-   o_roba()
+//   o_sifk()
+//   o_sifv()
+//   o_roba()
    o_pos_pos()
    o_pos_doks()
 

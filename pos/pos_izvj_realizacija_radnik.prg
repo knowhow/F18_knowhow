@@ -17,12 +17,12 @@
 // -------------------------------------------
 STATIC FUNCTION o_tables()
 
-   o_sifk()
-   o_sifv()
+//   o_sifk()
+//   o_sifv()
    O_DIO
    O_KASE
    O_ODJ
-   o_roba()
+  // o_roba()
    O_OSOB
    SET ORDER TO TAG "NAZ"
    O_VRSTEP

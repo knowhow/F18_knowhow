@@ -572,13 +572,13 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
    //select_o_partner()
    //select_o_roba()
    o_fakt_txt()
-   o_tarifa()
+   //o_tarifa()
    o_valute()
    o_fakt_doks2()
    o_fakt_doks()
    o_rj()
-   o_sifk()
-   o_sifv()
+   //o_sifk()
+   //o_sifv()
 
    IF lOpenFaktAsPripr == .T.
 

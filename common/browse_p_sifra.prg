@@ -645,9 +645,9 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE Ch == k_ctrl_f9()
       RETURN sifarnik_brisi_sve()
 
-   CASE Ch == K_F10
-      Popup( cOrderTag )
-      RETURN DE_CONT
+//   CASE Ch == K_F10
+  //    Popup( cOrderTag )
+//      RETURN DE_CONT
 
    OTHERWISE
       IF nRet > -1
@@ -1095,7 +1095,7 @@ FUNCTION sifarnik_set_roba_defaults()
 
    RETURN .T.
 
-
+/*
 
 STATIC FUNCTION Popup( cOrderTag )
 
@@ -1118,7 +1118,7 @@ STATIC FUNCTION Popup( cOrderTag )
    f18_menu( "bsif", .F., izbor, opc, opcexe )
 
    RETURN 0
-
+*/
 
 // -------------------------------------------
 // sredi uslov ako nije postavljeno ; na kraj

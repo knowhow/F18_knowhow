@@ -310,7 +310,7 @@ FUNCTION ZaglPGP()
 
    STATIC FUNCTION _o_tables()
 
-      o_sifk()
+    --  o_sifk()
       o_sifv()
     --  o_roba()
       o_koncij()

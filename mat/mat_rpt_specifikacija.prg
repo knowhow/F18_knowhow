@@ -168,10 +168,10 @@ STATIC FUNCTION TekRec()
 // OPCINA - pregled cijene artikla po dobavljacima
 FUNCTION CArDob()
 
-   o_roba()
-   o_sifk()
-   o_sifv()
-   o_partner()
+  // o_roba()
+  // o_sifk()
+   //o_sifv()
+  // o_partner()
    O_MAT_SUBAN
 
    qqIDVN := Space( 30 )

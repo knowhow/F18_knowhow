@@ -34,8 +34,8 @@ FUNCTION p_epdv_sheme_generacije( cTabela, cId, dx, dy )
       nArea := F_SG_KUF
    ENDIF
 
-   o_sifk()
-   o_sifv()
+   //o_sifk()
+   //o_sifv()
 
 
    SELECT ( nArea )

@@ -23,11 +23,11 @@ STATIC PicKol := "99999999.999"
 // -------------------------------------------------
 STATIC FUNCTION _o_rpt_tables()
 
-   o_roba()
-   o_sifk()
-   o_sifv()
+//   o_roba()
+//   o_sifk()
+//   o_sifv()
    O_MAT_SUBAN
-   o_partner()
+//   o_partner()
 
    RETURN
 

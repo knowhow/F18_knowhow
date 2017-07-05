@@ -27,10 +27,10 @@ FUNCTION label_bkod()
    PRIVATE Kol
    PRIVATE ImeKol
 
-   o_sifk()
-   o_sifv()
-   o_partner()
-   o_roba()
+   //o_sifk()
+   //o_sifv()
+   //o_partner()
+   //o_roba()
    SET ORDER TO TAG "ID"
    O_BARKOD
    o_fakt_pripr()

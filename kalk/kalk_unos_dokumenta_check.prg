@@ -33,9 +33,9 @@ FUNCTION datum_not_empty_upozori_godina( dDate, cMsg )
 
 FUNCTION o_kalk_tabele_izvj()
 
-   o_sifk()
-   o_sifv()
-   o_tarifa()
+   //o_sifk()
+  // o_sifv()
+  // o_tarifa()
    // select_o_roba()
    o_koncij()
    select_o_konto()

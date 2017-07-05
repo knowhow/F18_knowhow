@@ -1580,10 +1580,10 @@ FUNCTION o_kalk_edit()
    // select_o_konto()
    o_tdok()
    o_valute()
-   o_tarifa()
+   //o_tarifa()
    o_koncij()
-   o_sifk()
-   o_sifv()
+   //o_sifk()
+   //o_sifv()
    o_kalk_pripr()
 
    SELECT kalk_pripr

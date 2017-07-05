@@ -385,10 +385,10 @@ FUNCTION KAnKKonto()
    // cIdFirma:=left(cIdFirma,2)
 
    O_MAT_SUBAN
-   o_konto()
-   o_roba()
-   o_sifk()
-   o_sifv()
+  // o_konto()
+  // o_roba()
+  // o_sifk()
+  // o_sifv()
 
    SELECT mat_anal
    SET ORDER TO TAG "2"

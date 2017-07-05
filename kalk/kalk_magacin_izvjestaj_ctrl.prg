@@ -43,7 +43,7 @@ FUNCTION r_ct_sast()
    --PRIVATE lKalkAsistentUToku := .T.
 
   // o_roba()
-   o_sifk()
+  -- o_sifk()
    o_sifv()
 
    // uslovi izvjestaja

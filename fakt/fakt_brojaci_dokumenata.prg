@@ -149,8 +149,7 @@ FUNCTION fill_part()
    RETURN
 
 
-// -------------------------------------------
-// -------------------------------------------
+
 STATIC FUNCTION add_n_found( cId, cNaz, cRbr, cOznaka, nDuzina )
 
    LOCAL cSeek, _rec

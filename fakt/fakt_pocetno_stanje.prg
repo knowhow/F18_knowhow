@@ -42,10 +42,10 @@ FUNCTION fakt_pocetno_stanje()
 
    MsgC()
 
-   o_roba()
-   o_partner()
-   o_sifk()
-   o_sifv()
+   //o_roba()
+   //o_partner()
+   //o_sifk()
+   //o_sifv()
    o_fakt_pripr()
 
    _n_br_dok := PadR( "00000", 8 )

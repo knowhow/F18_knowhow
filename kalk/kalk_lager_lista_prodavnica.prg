@@ -42,8 +42,8 @@ FUNCTION kalk_lager_lista_prodavnica()
    cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "1320", gDuzKonto )
 
-   o_sifk()
-   o_sifv()
+//   o_sifk()
+//   o_sifv()
    // o_roba()
    // o_konto()
    // o_partner()
@@ -167,8 +167,8 @@ FUNCTION kalk_lager_lista_prodavnica()
       lPrikK2 := .T.
    ENDIF
 
-   o_sifk()
-   o_sifv()
+  // o_sifk()
+  // o_sifv()
    // o_roba()
    // o_tarifa()
    // o_konto()

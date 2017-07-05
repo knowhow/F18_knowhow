@@ -102,16 +102,16 @@ FUNCTION mat_o_edit()
    O_MAT_SUBAN
    O_KARKON
    O_MAT_PRIPR
-   o_konto()
-   o_partner()
+   //o_konto()
+   //o_partner()
    o_tnal()
    o_tdok()
-   o_roba()
-   o_sifk()
-   o_sifv()
+   //o_roba()
+  // o_sifk()
+  // o_sifv()
    o_valute()
    O_MAT_NALOG
-   o_tarifa()
+   //o_tarifa()
 
    SELECT mat_pripr
    SET ORDER TO TAG "1"

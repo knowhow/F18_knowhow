@@ -499,12 +499,12 @@ STATIC FUNCTION _add_to_exp( broj_dok, datum_dok, vrsta_dok, id_partner, ;
 // -----------------------------------
 STATIC FUNCTION _o_tbl()
 
-   o_sifk()
-   o_sifv()
+  // o_sifk()
+  // o_sifv()
    o_tdok()
   // o_roba()
    o_koncij()
-   o_konto()
-   o_partner()
+  // o_konto()
+  // o_partner()
 
    RETURN .T.

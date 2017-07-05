@@ -121,7 +121,7 @@ STATIC FUNCTION _gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
    o_r_export()
    o_kalk()
 //   o_roba()
-   o_sifk()
+  -- o_sifk()
    o_sifv()
 
    SELECT kalk

@@ -19,16 +19,16 @@ FUNCTION mat_sifrarnik()
    PRIVATE opc := {}
    PRIVATE opcexe := {}
 
-   o_konto()
-   o_partner()
+//   o_konto()
+//   o_partner()
    o_tnal()
    o_tdok()
-   o_roba()
-   o_valute()
+//   o_roba()
+  // o_valute()
    O_KARKON
-   o_sifk()
-   o_sifv()
-   o_tarifa()
+  // o_sifk()
+  // o_sifv()
+  // o_tarifa()
 
    AAdd( opc, "1. partneri                            " )
    AAdd( opcexe, {|| p_partner() } )

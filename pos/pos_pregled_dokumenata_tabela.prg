@@ -404,10 +404,10 @@ STATIC FUNCTION browse_kolone( aImeKol, aKol )
 
 STATIC FUNCTION _o_pos_prepis_tbl()
 
-   SELECT ( F_PARTN )
-   IF !Used()
-      o_partner()
-   ENDIF
+//   SELECT ( F_PARTN )
+//   IF !Used()
+//      o_partner()
+//   ENDIF
 
    SELECT ( F_VRSTEP )
    IF !Used()
@@ -435,30 +435,30 @@ STATIC FUNCTION _o_pos_prepis_tbl()
       SET ORDER TO TAG "NAZ"
    ENDIF
 
-   SELECT ( F_TARIFA )
-   IF !Used()
-      o_tarifa()
-   ENDIF
+//   SELECT ( F_TARIFA )
+//   IF !Used()
+//      o_tarifa()
+//   ENDIF
 
    SELECT ( F_VALUTE )
    IF !Used()
       o_valute()
    ENDIF
 
-   SELECT ( F_SIFK )
-   IF !Used()
-      o_sifk()
-   ENDIF
+//   SELECT ( F_SIFK )
+  // IF !Used()
+//      o_sifk()
+//   ENDIF
 
-   SELECT ( F_SIFV )
-   IF !Used()
-      o_sifv()
-   ENDIF
+//   SELECT ( F_SIFV )
+//   IF !Used()
+//      o_sifv()
+//   ENDIF
 
-   SELECT ( F_ROBA )
-   IF !Used()
-      o_roba()
-   ENDIF
+//   SELECT ( F_ROBA )
+  // IF !Used()
+  //    o_roba()
+//   ENDIF
 
    SELECT ( F_POS_DOKS )
    IF !Used()

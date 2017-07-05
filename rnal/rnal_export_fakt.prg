@@ -793,9 +793,9 @@ STATIC FUNCTION fnd_roba( xRoba, nArtId, cDesc )
    LOCAL nTArea := Select()
    PRIVATE GetList := {}
 
-   o_roba()
-   o_sifk()
-   o_sifv()
+  //o_roba()
+  // o_sifk()
+  // o_sifv()
 
    xRoba := Space( 10 )
 

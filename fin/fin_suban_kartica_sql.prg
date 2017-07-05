@@ -88,9 +88,9 @@ STATIC FUNCTION _get_vars( rpt_vars )
    LOCAL _box_y := 65
    LOCAL nX := 1
 
-   o_sifk()
-   o_sifv()
-   o_konto()
+  // o_sifk()
+  // o_sifv()
+  // o_konto()
    // o_partner()
 
    Box( "#" + _box_name, _box_x, _box_y )

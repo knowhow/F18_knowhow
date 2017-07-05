@@ -33,10 +33,10 @@ FUNCTION kalk_generacija_inventura_magacin_im()
       ENDIF
    ENDIF
 
-   o_konto()
-   o_tarifa()
-   o_sifk()
-   o_sifv()
+//   o_konto()
+//   o_tarifa()
+//   o_sifk()
+//   o_sifv()
   // o_roba()
 
    IF lOsvjezi
@@ -223,9 +223,9 @@ FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
       RETURN .F.
    ENDIF
 
-   o_tarifa()
-   o_sifk()
-   o_sifv()
+//   o_tarifa()
+//   o_sifk()
+//   o_sifv()
   // o_roba()
    o_kalk_pripr()
    o_kalk_pript()

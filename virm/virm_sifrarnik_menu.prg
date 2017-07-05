@@ -77,9 +77,9 @@ STATIC FUNCTION _sif_spec()
 
 FUNCTION OSifVirm()
 
-   o_sifk()
-   o_sifv()
-   o_partner()
+  // o_sifk()
+  // o_sifv()
+  // o_partner()
    o_vrprim()
    o_valute()
    o_ldvirm()

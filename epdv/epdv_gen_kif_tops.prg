@@ -176,20 +176,20 @@ STATIC FUNCTION  gen_sg_item( cSezona )
    cSifPath := cPomSPath
 
 
-   SELECT F_TARIFA
-   IF !Used()
-      o_tarifa()
-   ENDIF
+   //SELECT F_TARIFA
+   //IF !Used()
+  //    o_tarifa()
+   //ENDIF
 
-   SELECT F_SIFK
-   IF !Used()
-      o_sifk()
-   ENDIF
+   //SELECT F_SIFK
+  // IF !Used()
+//      o_sifk()
+//   ENDIF
 
-   SELECT F_SIFV
-   IF !Used()
-      o_sifv()
-   ENDIF
+//   SELECT F_SIFV
+//   IF !Used()
+//      o_sifv()
+//   ENDIF
 
 
    SELECT POS
@@ -253,8 +253,8 @@ STATIC FUNCTION  gen_sg_item( cSezona )
             _id_part := cIdPart
          ENDIF
 
-         // lIno := IsIno(_id_part)
-         // lPdvObveznik := IsPdvObveznik(_id_part)
+         // lIno := partner_is_ino(_id_part)
+         // lPdvObveznik := partner_is_pdv_obveznik(_id_part)
 
          lIno := .F.
          lPdvObveznik := .F.

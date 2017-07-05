@@ -45,13 +45,13 @@ FUNCTION PorPoTar
    ENDIF
 
    // otvaranje potrebnih baza
-   o_tarifa()
+  // o_tarifa()
 
    IF fSolo
-      o_sifk()
-      o_sifv()
+    //  o_sifk()
+    //  o_sifv()
       O_KASE
-      o_roba()
+    //  o_roba()
       O_ODJ
       o_pos_doks()
       o_pos_pos()

@@ -310,8 +310,8 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
       // ako je roba grupa:
       IF glRGrPrn == "D"
-         cPom := _op_gr( roba->id, "GR1" ) + ": " + _val_gr( roba->id, "GR1" ) + ;
-            ", " + _op_gr( roba->id, "GR2" ) + ": " + _val_gr( roba->id, "GR2" )
+         cPom := roba_sifk_opis_grupe( roba->id, "GR1" ) + ": " + _val_gr( roba->id, "GR1" ) + ;
+            ", " + roba_sifk_opis_grupe( roba->id, "GR2" ) + ": " + _val_gr( roba->id, "GR2" )
 
          cRobaNaz += " "
          cRobaNaz += cPom
@@ -357,7 +357,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       IF dok[ "idtipdok" ] $ "10#11#12#13#20#22#25"
 
          // ino faktura
-         IF IsIno( cIdPartner )
+         IF partner_is_ino( cIdPartner )
             nPPDV := 0
             lIno := .T.
          ENDIF
@@ -686,7 +686,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 // -------------------------------------
 // vraca opis grupe iz sifK
 // -------------------------------------
-STATIC FUNCTION _op_gr( cId, cSifK )
+STATIC FUNCTION roba_sifk_opis_grupe( cId, cSifK )
 
    LOCAL nTArea := Select()
    LOCAL cRet := ""

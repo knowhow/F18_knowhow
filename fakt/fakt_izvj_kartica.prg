@@ -25,11 +25,11 @@ FUNCTION fakt_kartica()
 
    my_close_all_dbf()
 
-   o_sifk()
-   o_sifv()
-   select_o_partner()
-   select_o_roba()
-   o_tarifa()
+   //o_sifk()
+   //o_sifv()
+   //select_o_partner()
+   //select_o_roba()
+   //o_tarifa()
    o_rj()
 
    IF _params[ "fakt_objekti" ]

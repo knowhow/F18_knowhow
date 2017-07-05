@@ -60,9 +60,9 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
    O_KASE
    O_ODJ
    O_DIO
-   o_sifk()
-   o_sifv()
-   o_roba()
+  // o_sifk()
+  // o_sifv()
+  // o_roba()
    o_pos_pos()
 
    cIdPos := gIdPos

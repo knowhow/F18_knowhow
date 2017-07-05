@@ -186,12 +186,12 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
    o_fakt_doks()
    o_fakt()
-   o_roba()
-   o_sifk()
-   o_sifv()
+   //o_roba()
+   //o_sifk()
+   //o_sifv()
    O_VRSTEP
-   o_tarifa()
-   o_partner()
+   //o_tarifa()
+   //o_partner()
 
    // parametri
    _d_od := params[ "datum_od" ]
@@ -280,7 +280,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          cPart_id := field->idpartner
 
          _tip_partnera := "1" // fizicka lica
-         lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id ) .OR. IsIno( cPart_id )
+         lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id ) .OR. partner_is_ino( cPart_id )
 
 
 
@@ -511,7 +511,7 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
       nS_pdv := 0
       nUk_fakt := 0
 
-      lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id ) .OR. IsIno( cPart_id )
+      lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id ) .OR. partner_is_ino( cPart_id )
 
       DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + field->brdok == cIdFirma + cIdTipDok + cBrDok
 

@@ -561,7 +561,7 @@ FUNCTION UzorTxt()
    LOCAL cId := "  "
    LOCAL _user_name
 
-   IF _IdTipDok $ "10#20" .AND. IsIno( _IdPartner )
+   IF _IdTipDok $ "10#20" .AND. partner_is_ino( _IdPartner )
       InoKlauzula()
       IF Empty( AllTrim( _txt2 ) )
          cId := "IN"
@@ -656,7 +656,7 @@ FUNCTION UzorTxt2( cList, redni_broj )
       ENDIF
    ENDIF
 
-   IF  _IdTipDok $ "10#20" .AND. IsIno( _IdPartner )
+   IF  _IdTipDok $ "10#20" .AND. partner_is_ino( _IdPartner )
       InoKlauzula()
       IF Empty( AllTrim( _txt2 ) )
          cId := "IN"

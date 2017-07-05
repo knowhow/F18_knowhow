@@ -329,14 +329,14 @@ STATIC FUNCTION _open_tables()
    O_UGOV
    O_RUGOV
    o_dest()
-   o_partner()
-   o_roba()
-   o_sifk()
-   o_sifv()
+   //o_partner()
+   //o_roba()
+   //o_sifk()
+   //o_sifv()
 
    SELECT ugov
 
-   RETURN
+   RETURN .T.
 
 
 

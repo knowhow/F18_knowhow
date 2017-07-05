@@ -532,11 +532,11 @@ STATIC FUNCTION kalk_raspored_troskova_azuriranje()
          field->TSpedTr == "R" .OR. field->TZavTr == "R" ) .AND. field->idvd $ "10#81" )  .OR. ;
          field->idvd $ "RN"
 
-      o_sifk()
-      o_sifv()
-      select_o_roba()
-      o_tarifa()
-      o_koncij()
+    //  o_sifk()
+  //    o_sifv()
+    //  select_o_roba()
+    //  o_tarifa()
+    //  o_koncij()
 
       SELECT kalk_pripr
       kalk_raspored_troskova( .T. )

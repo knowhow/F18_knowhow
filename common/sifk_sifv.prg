@@ -269,6 +269,7 @@ FUNCTION get_sifk_value ( cDbfName, cOznaka, cIdSif, return_nil )
    LOCAL _sifk_tip, _sifk_duzina, _sifk_veza, cIdSif2
    LOCAL lSql := .F.
 
+//altd()
    // ID default polje
    IF cIdSif == NIL
       cIdSif := ( cDbfName )->ID
@@ -291,8 +292,7 @@ FUNCTION get_sifk_value ( cDbfName, cOznaka, cIdSif, return_nil )
    _ret := NIL
 
    GO TOP
-   IF Eof()
-      // uopste ne postoji takva karakteristika
+   IF Eof()  // uopste ne postoji takva karakteristika
       IF return_nil <> NIL
          _ret := get_sifv_value( "X", "" )
       ELSE
@@ -335,23 +335,23 @@ FUNCTION get_sifk_value ( cDbfName, cOznaka, cIdSif, return_nil )
 
 STATIC FUNCTION get_sifv_value( cSifkTip, nSifkDuzina, cNazValue )
 
-   LOCAL _ret
+   LOCAL xRet
 
    DO CASE
    CASE cSifkTip == "C"
-      _ret := PadR( cNazValue, nSifkDuzina )
+      xRet := PadR( cNazValue, nSifkDuzina )
 
    CASE cSifkTip == "N"
-      _ret := Val( AllTrim( cNazValue ) )
+      xRet := Val( AllTrim( cNazValue ) )
 
    CASE cSifkTip == "D"
-      _ret := SToD( Trim( cNazValue ) )
+      xRet := SToD( Trim( cNazValue ) )
    OTHERWISE
-      _ret := "?NEPTIP?"
+      xRet := "?NEPTIP?"
 
-   END DO
+   ENDCASE
 
-   RETURN _ret
+   RETURN xRet
 
 /*
 

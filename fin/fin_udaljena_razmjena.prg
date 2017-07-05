@@ -935,9 +935,9 @@ STATIC FUNCTION _o_tables()
    o_nalog()
    o_anal()
    o_sint()
-   o_sifk()
-   o_sifv()
-   o_konto()
+  // o_sifk()
+  // o_sifv()
+  // o_konto()
   // o_partner()
 
    RETURN .T.

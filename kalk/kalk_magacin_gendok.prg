@@ -158,8 +158,8 @@ FUNCTION kalk_generisi_95_za_manjak_16_za_visak()
    o_kalk_pripr()
    o_kalk_pripr2()
    // o_kalk()
-   o_sifk()
-   o_sifv()
+  // o_sifk()
+  // o_sifv()
   // o_roba()
 
    SELECT kalk_pripr
@@ -287,7 +287,7 @@ FUNCTION MNivPoProc()
 
    o_konto()
    o_tarifa()
-   o_sifk()
+--   o_sifk()
    o_sifv()
 //   o_roba()
    cVarijanta := "3"
@@ -582,8 +582,8 @@ FUNCTION kalk_generisi_prijem16_iz_otpreme96()
    o_kalk_pripr2()
    o_kalk_pripr()
    // o_kalk()
-   o_sifk()
-   o_sifv()
+//   o_sifk()
+  // o_sifv()
 //   o_roba()
 
    SELECT kalk_pripr

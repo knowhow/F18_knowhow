@@ -21,10 +21,10 @@ FUNCTION Adresar()
       O_ADRES
    ENDIF
 
-   Select( F_SIFK )
-   IF !Used()
-      o_sifk()
-   ENDIF
+   //Select( F_SIFK )
+   //IF !Used()
+    //  o_sifk()
+   //ENDIF
 
    Select( F_SIFV )
    IF !Used()

@@ -570,12 +570,12 @@ STATIC FUNCTION FormNum1( nIznos )
 
 FUNCTION o_virm_tabele_unos_print()
 
-   o_sifk()
-   o_sifv()
+  // o_sifk()
+//   o_sifv()
    o_jprih()
    o_banke()
    o_vrprim()
-   select_o_partner()
+//   select_o_partner()
    select_o_virm_pripr()
 
    RETURN .T.
@@ -587,22 +587,22 @@ FUNCTION virm_o_tables_razmjena()
    o_banke()
    select_o_jprih()
 
-   SELECT ( F_SIFK )
-   IF !Used()
-      o_sifk()
-   ENDIF
+  // SELECT ( F_SIFK )
+  // IF !Used()
+  //    o_sifk()
+//   ENDIF
 
-   SELECT ( F_SIFV )
-   IF !Used()
-      o_sifv()
-   ENDIF
+//   SELECT ( F_SIFV )
+//   IF !Used()
+//      o_sifv()
+//   ENDIF
 
 
    o_kred()
 
 
    select_o_rekld()
-   select_o_partner()
+  // select_o_partner()
 
    o_ldvirm()
 

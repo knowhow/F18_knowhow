@@ -13,10 +13,10 @@
 
 FUNCTION is_pdv_obveznik( cIdPartner )
 
-   RETURN IsPdvObveznik( cIdPartner )
+   RETURN partner_is_pdv_obveznik( cIdPartner )
 
 
-FUNCTION IsPdvObveznik( cIdPartner )
+FUNCTION partner_is_pdv_obveznik( cIdPartner )
 
    LOCAL cPdvBroj
 
@@ -29,21 +29,15 @@ FUNCTION IsPdvObveznik( cIdPartner )
    RETURN .F.
 
 
-FUNCTION IsIno( cIdPartner, lShow )
-
-   // isti je algoritam za utvrdjivanje
-   // ino partnera bio dobavljac ili kupac
-
-   RETURN IsInoDob( cIdPartner, lShow )
-
 
 /*
-    Ino dobavljač:
-    - PDV broj je prazan
-    - Id broj sadrži manje od 13 cifri: npr. ENG105
-*/
+       Ino partner
+       - PDV broj je prazan
+       - Id broj sadrži manje od 13 cifri: npr. ENG105
+   */
 
-FUNCTION IsInoDob( cIdPartner, lShow )
+FUNCTION partner_is_ino( cIdPartner, lShow )
+
 
    LOCAL cIdBroj
    LOCAL cPdvBroj
@@ -51,7 +45,7 @@ FUNCTION IsInoDob( cIdPartner, lShow )
    cPdvBroj := ALLTRIM( firma_pdv_broj( cIdPartner ) )
    cIdBroj :=  ALLTRIM( firma_id_broj( cIdPartner ) )
 
-   IF !Empty( cIdBroj )
+   IF !Empty( cIdBroj ) .AND. cIdBroj != "?NEPTIP?" // bug #36648
 
       IF EMPTY( cPdvBroj ) .AND. Len( cIdBroj ) < 13 .AND. Len( cIdBroj ) > 0
          RETURN .T.
@@ -89,11 +83,11 @@ FUNCTION PdvParIIIF( cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined )
       RETURN nUndefined
    ENDIF
 
-   IF IsPdvObveznik( cIdPartner )
+   IF partner_is_pdv_obveznik( cIdPartner )
       RETURN nPdvObv
    ENDIF
 
-   IF IsIno( cIdPartner )
+   IF partner_is_ino( cIdPartner )
       RETURN nIno
    ELSE
       RETURN nNoPdv

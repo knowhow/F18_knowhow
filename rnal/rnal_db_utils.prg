@@ -73,9 +73,9 @@ FUNCTION rnal_o_sif_tables()
    O_AOPS
    O_AOPS_ATT
    O_RAL
-   o_sifk()
-   o_sifv()
-   o_roba()
+  // o_sifk()
+//   o_sifv()
+//   o_roba()
 
    RETURN .T.
 

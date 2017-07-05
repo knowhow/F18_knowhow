@@ -34,9 +34,9 @@ FUNCTION pos_kartica_artikla()
 
    O_KASE
    O_DIO
-   o_sifk()
-   o_sifv()
-   o_roba()
+  // o_sifk()
+  // o_sifv()
+  // o_roba()
    o_pos_pos()
 
    cRoba := Space( 10 )

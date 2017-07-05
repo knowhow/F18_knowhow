@@ -65,11 +65,11 @@ FUNCTION fakt_lager_lista()
    ENDIF
 
    o_fakt_doks()
-   o_tarifa()
-   select_o_partner()
-   o_sifk()
-   o_sifv()
-   select_o_roba()
+   //o_tarifa()
+  // select_o_partner()
+   //o_sifk()
+   //o_sifv()
+   //select_o_roba()
    o_rj()
 
   // IF fId_J

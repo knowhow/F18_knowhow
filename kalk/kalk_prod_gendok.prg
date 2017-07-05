@@ -116,10 +116,10 @@ STATIC FUNCTION kalk_prod_gen_ip()
 
 FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
 
-   o_konto()
-   o_tarifa()
-   o_sifk()
-   o_sifv()
+  // o_konto()
+  // o_tarifa()
+//   o_sifk()
+//   o_sifv()
    //o_roba()
 
    Box(, 4, 70 )
@@ -255,7 +255,7 @@ FUNCTION NivPoProc()
 
    o_konto()
    o_tarifa()
-   o_sifk()
+--   o_sifk()
    o_sifv()
    o_roba()
 
@@ -421,7 +421,7 @@ FUNCTION VratiZadNiv()
 
    o_konto()
    o_tarifa()
-   o_sifk()
+--   o_sifk()
    o_sifv()
    o_roba()
 
@@ -707,13 +707,13 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
 // Generisanje dokumenta tipa 11 na osnovu 13-ke
 FUNCTION kalk_13_to_11()
 
-   o_konto()
+//   o_konto()
    o_kalk_pripr()
    o_kalk_pripr2()
    //o_kalk()
-   o_sifk()
-   o_sifv()
-   o_roba()
+//   o_sifk()
+//   o_sifv()
+//   o_roba()
 
    SELECT kalk_pripr
    GO TOP

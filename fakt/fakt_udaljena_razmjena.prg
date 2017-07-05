@@ -1060,10 +1060,10 @@ STATIC FUNCTION _o_tables()
    o_fakt()
    o_fakt_doks()
    o_fakt_doks2()
-   o_sifk()
-   o_sifv()
-   o_partner()
-   o_roba()
+   //o_sifk()
+   //o_sifv()
+   //o_partner()
+   //o_roba()
 
    RETURN .T.
 

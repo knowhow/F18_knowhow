@@ -22,10 +22,10 @@ FUNCTION pos_pregled_racuna_tabela()
    PRIVATE aVezani := {}
    PRIVATE dMinDatProm := CToD( "" )
 
-   o_sifk()
-   o_sifv()
+  // o_sifk()
+  // o_sifv()
    O_KASE
-   o_roba()
+//   o_roba()
    O__POS_PRIPR
    o_pos_doks()
    o_pos_pos()

@@ -57,7 +57,7 @@ FUNCTION v_part( cIdPart, cIdTar, cTbl, lShow )
 
    p_partner( @cIdPart )
 
-   IF IsIno( cIdPart )
+   IF partner_is_ino( cIdPart )
       IF lShow
          IF cTbl == "KUF"
             MsgBeep( "Ino dobavljač, setuje tarifu na PDV7UV !" )

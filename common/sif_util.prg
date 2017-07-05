@@ -46,41 +46,45 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
    RETURN .T.
 
 
+/*
+   sifk_fill_ImeKol( "PARTN", @ImeKol, @Kol )
+
+*/
 FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
 
-   LOCAL _rec, _recs, ii
+   LOCAL hRec, aRecords, ii
 
    IF !use_sql_sifk( cDbf, NIL )
       ?E "ERROR SIFK ", cDbf
       RETURN .F.
    ENDIF
-   use_sql_sifv()
+   //use_sql_sifv()
 
    cDbf := PadR( cDbf, SIFK_LEN_DBF )
 
    SELECT sifk
-   _recs := {}
+   aRecords := {}
    GO TOP
    DO WHILE !Eof() .AND. field->ID == cDbf
-      _rec := dbf_get_rec()
-      IF _rec[ "edkolona" ] == NIL
-         _rec[ "edkolona" ] := 0
+      hRec := dbf_get_rec()
+      IF hRec[ "edkolona" ] == NIL
+         hRec[ "edkolona" ] := 0
       ENDIF
-      AAdd( _recs, _rec )
+      AAdd( aRecords, hRec )
       SKIP
    ENDDO
 
-   FOR EACH _rec in _recs
+   FOR EACH hRec in aRecords
 
-      AAdd ( ImeKol, {  get_sifk_naz( cDbf, _rec[ "oznaka" ] ) } )
-      AAdd ( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr( IzSifkPartn('" + _rec[ "oznaka" ] + "')) }" ) )
-      AAdd ( ImeKol[ Len( ImeKol ) ], "SIFK->" + _rec[ "oznaka" ] )
+      AAdd ( ImeKol, {  get_sifk_naz( cDbf, hRec[ "oznaka" ] ) } )
+      AAdd ( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr( IzSifkPartn('" + hRec[ "oznaka" ] + "')) }" ) )
+      AAdd ( ImeKol[ Len( ImeKol ) ], "SIFK->" + hRec[ "oznaka" ] )
 
-      IF _rec[ "edkolona" ] > 0
+      IF hRec[ "edkolona" ] > 0
          FOR ii := 4 TO 9
             AAdd( ImeKol[ Len( ImeKol ) ], NIL  )
          NEXT
-         AAdd( ImeKol[ Len( ImeKol ) ], _rec[ "edkolona" ]  )
+         AAdd( ImeKol[ Len( ImeKol ) ], hRec[ "edkolona" ]  )
       ELSE
          FOR ii := 4 TO 10
             AAdd( ImeKol[ Len( ImeKol ) ], NIL  )
@@ -88,15 +92,15 @@ FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
       ENDIF
 
       // postavi PICT za brojeve
-      IF _rec[ "tip" ] == "N"
+      IF hRec[ "tip" ] == "N"
          IF f_decimal > 0
-            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", _rec[ "duzina" ] - _rec[ "f_decimal" ] - 1 ) + "." + Replicate( "9", _rec[ "f_decimal" ] )
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", hRec[ "duzina" ] - hRec[ "f_decimal" ] - 1 ) + "." + Replicate( "9", hRec[ "f_decimal" ] )
          ELSE
-            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", _rec[ "duzina" ] )
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", hRec[ "duzina" ] )
          ENDIF
       ENDIF
 
-      AAdd  ( Kol, iif( _rec[ "ubrowsu" ] == '1', ++i, 0 ) )
+      AAdd  ( Kol, iif( hRec[ "ubrowsu" ] == '1', ++i, 0 ) )
 
    NEXT
 

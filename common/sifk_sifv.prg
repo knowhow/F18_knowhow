@@ -373,8 +373,8 @@ FUNCTION get_sifk_naz( cDBF, cOznaka )
    cDBF := PadR( cDBF, SIFK_LEN_DBF )
    cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
 
-   SELECT F_SIFK
    IF !use_sql_sifk( cDBF, cOznaka )
+      PopWa()
       RETURN "?ERR?"
    ENDIF
    xRet := field->NAZ

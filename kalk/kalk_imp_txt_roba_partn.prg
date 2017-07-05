@@ -439,11 +439,16 @@ STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
 
       // ubaci --vezne-- podatke i u sifK tabelu
       USifK( "PARTN", "ROKP", kalk_imp_temp->idpartner, kalk_imp_temp->rokpl )
-      USifK( "PARTN", "PORB", kalk_imp_temp->idpartner, kalk_imp_temp->porbr )
-      USifK( "PARTN", "REGB", kalk_imp_temp->idpartner, kalk_imp_temp->idbroj )
-      USifK( "PARTN", "USTN", kalk_imp_temp->idpartner, kalk_imp_temp->ustn )
+
+      //USifK( "PARTN", "PORB", kalk_imp_temp->idpartner, kalk_imp_temp->porbr )
+
+      //USifK( "PARTN", "REGB", kalk_imp_temp->idpartner, kalk_imp_temp->idbroj )
+      //USifK( "PARTN", "USTN", kalk_imp_temp->idpartner, kalk_imp_temp->ustn )
+
+      /*
       USifK( "PARTN", "BRUP", kalk_imp_temp->idpartner, kalk_imp_temp->brupis )
       USifK( "PARTN", "BRJS", kalk_imp_temp->idpartner, kalk_imp_temp->brjes )
+      */
 
       SELECT kalk_imp_temp
       SKIP

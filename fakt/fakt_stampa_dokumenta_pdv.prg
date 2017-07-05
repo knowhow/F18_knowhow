@@ -1129,9 +1129,10 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
       AltD()
       // cPorBroj := IzSifKPartn( "PORB", cId, .F. )
 
+/*
       cBrRjes := IzSifKPartn( "BRJS", cId, .F. )
       cBrUpisa := IzSifKPartn( "BRUP", cId, .F. )
-
+*/
       cPartNaziv := partn->naz
       cPartAdres := partn->adresa
       cPartMjesto := partn->mjesto
@@ -1175,6 +1176,7 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    // fax
    add_drntext( "K14", cPartFax )
 
+/*
    IF cBrRjes != NIL
       add_drntext( "K06", cBrRjes )
    ENDIF
@@ -1182,7 +1184,7 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    IF cBrUpisa != NIL
       add_drntext( "K07", cBrUpisa )
    ENDIF
-
+*/
 
    SELECT ( nDbfArea )
 

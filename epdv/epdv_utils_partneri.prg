@@ -118,7 +118,7 @@ FUNCTION my_firma( lRetArray )
          update_rec_server_and_dbf( nil, _fields, 1, "FULL" )
 
          //USifK( "PARTN", "REGB", self_organizacija_id(), Unicode():New( cIdBroj, .F. ) )
-         USifK( "PARTN", "REGB", self_organizacija_id(), cIdBroj )
+         //USifK( "PARTN", "REGB", self_organizacija_id(), cIdBroj )
 
       ELSE
          MsgBeep( "Nepopunjeni podaci o matičnoj firmi !" )

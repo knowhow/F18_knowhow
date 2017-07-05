@@ -21,8 +21,6 @@ FUNCTION s_partner( cIdPartn )
 
    PushWA()
 
-   o_partn_sifk()
-
    select_o_partner( cIdPartn )
 
    cPom := ""
@@ -83,8 +81,6 @@ FUNCTION my_firma( lRetArray )
    IF lRetArray == nil
       lRetArray := .F.
    ENDIF
-
-   o_partn_sifk()
 
    select_o_partner( self_organizacija_id() )
 
@@ -176,9 +172,7 @@ FUNCTION part_rejon( cIdPart )
 
    PushWA()
 
-   o_partn_sifk()
-   GO TOP
-   SEEK self_organizacija_id()
+   select_o_partner( self_organizacija_id() )
 
    //cRejon := IzSifKPartn( "REJO", Unicode():New( cIdPart, .F. ), .F. )
    cRejon := IzSifKPartn( "REJO", cIdPart, .F. )
@@ -188,23 +182,6 @@ FUNCTION part_rejon( cIdPart )
    RETURN cRejon
 
 
-// -------------------------------------
-// sifrarnik partnera sa sifk/sifv
-// -------------------------------------
-FUNCTION o_partn_sifk()
-
-   //SELECT F_PARTN
-   //USE
-   //SELECT F_SIFK
-   //USE
-   //SELECT F_SIFV
-   //USE
-
-   //o_sifk()
-   //o_sifv()
-   //o_partner()
-
-   RETURN .T.
 
 // ---------------------------------------------
 // da li se radi o specijalnom partneru

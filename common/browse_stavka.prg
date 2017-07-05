@@ -121,11 +121,14 @@ FUNCTION browse_stavka_formiraj_getlist( cVariableName, GetList, lZabIsp, aZabIs
       ENDIF
    ENDIF
 
-   IF ValType( &cVariableName ) == "C" .AND. F18_SQL_ENCODING == "UTF8" // samo ako sql vraca UTF8 stringove izvrsitiŽŽŽ ovu konverziju
+   IF ValType( &cVariableName ) == "C" .AND. F18_SQL_ENCODING == "UTF8" // samo ako sql vraca UTF8 stringove izvrsiti ovu konverziju
       &cVariableName = hb_UTF8ToStr( &cVariableName ) // F18 SQL ENCODING UTF8
    ENDIF
 
 
+   //IF "wduzina" $ cVariableName DEBUG sifk->duzina
+   //    AltD()
+   //ENDIF
 
    AAdd( GetList, _GET_( &cVariableName, cVariableName,  cGetPictureCode, bValidSifk, bWhenSifk ) ) ;;
       ATail( GetList ):display()
@@ -140,6 +143,10 @@ FUNCTION get_field_get_picture_code( cAlias, cField )
 
    LOCAL aFieldLen := get_field_len( cAlias, Lower( cField ) )
 
+   //IF Upper( cField ) == "DUZINA" .AND. cAlias == "SIFK"
+   //    AltD()
+   //ENDIF
+
    IF aFieldLen == NIL
       RETURN ""
    ENDIF
@@ -152,7 +159,11 @@ FUNCTION get_field_get_picture_code( cAlias, cField )
    ENDIF
 
    IF ( aFieldLen[ 1 ] $ "NBY" )
-      RETURN Replicate( "9", aFieldLen[ 2 ] - aFieldLen[ 3 ] - 1 ) + "." + Replicate( "9", aFieldLen[ 3 ] ) // numeric 999999999.99999999
+      IF aFieldLen[ 3 ] == 0
+         RETURN Replicate( "9", aFieldLen[ 2 ] )
+      ELSE
+         RETURN Replicate( "9", aFieldLen[ 2 ] - aFieldLen[ 3 ] - 1 ) + "." + Replicate( "9", aFieldLen[ 3 ] ) // numeric 999999999.99999999
+      ENDIF
    ENDIF
 
    RETURN "" // nije numeric ni char

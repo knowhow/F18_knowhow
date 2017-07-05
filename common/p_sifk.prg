@@ -31,12 +31,12 @@ FUNCTION P_Sifk( cId, nDeltaX, nDeltaY )
       { PadR( "Uslov", 30 ),   {|| PadR( uslov, 30 ) }, "uslov" }, ;
       { PadR( "Tip", 3 ),      {|| tip }, "tip" }, ;
       { PadR( "Unique", 3 ),   {|| f_unique }, "f_unique", NIL, NIL, NIL, NIL, NIL, NIL, 20 }, ;
-      { PadR( "Duz", 3 ),      {|| duzina }, "duzina" }, ;
+      { _u( "Duž" ),      {|| field->duzina + 0 }, "duzina" }, ;
       { PadR( "Dec", 3 ),      {|| f_decimal }, "f_decimal" }, ;
       { PadR( "K Validacija", 50 ), {|| PadR( KValid, 50 ) }, "KValid" }, ;
       { PadR( "K When", 50 ),  {|| KWhen }, "KWhen" }, ;
       { PadR( "UBrowsu", 4 ),  {|| UBrowsu }, "UBrowsu" }, ;
-      { PadR( "EdKolona", 4 ), {|| EdKolona }, "EdKolona" }, ;
+      { PadR( "EdKolona", 4 ), {|| field->edkolona + 0 }, "EdKolona" }, ;
       { PadR( "K1", 4 ),       {|| k1 }, "k1" }, ;
       { PadR( "K2", 4 ),       {|| k2 }, "k2" }, ;
       { PadR( "K3", 4 ),       {|| k3 }, "k3" }, ;

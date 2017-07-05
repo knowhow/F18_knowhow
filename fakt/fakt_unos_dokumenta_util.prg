@@ -1266,7 +1266,6 @@ FUNCTION fakt_set_pozicija_sif_roba( cIdRoba, lRobaIdSintetika )
       cIdRoba := fakt_pripr->IdRoba
    ENDIF
 
-   SELECT ROBA
 
    IF ( lRobaIdSintetika )
       find_roba_by_id_sintetika( cIdRoba )

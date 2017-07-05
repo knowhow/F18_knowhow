@@ -297,8 +297,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
                SELECT fakt
             ENDIF
 
-            SELECT partn
-            HSEEK fakt->idPartner
+            select_o_partner( fakt->idPartner )
             SELECT fakt
             IF !( partn->( &aUslOpc ) )
                SKIP 1
@@ -317,8 +316,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             zagl_sp_prod()
          ENDIF
 
-         SELECT partn
-         HSEEK cIdPartner
+         select_o_partner( cIdPartner )
          SELECT fakt
 
          IF Round( nKolicina, 4 ) <> 0
@@ -415,8 +413,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
                SELECT fakt
             ENDIF
 
-            SELECT partn
-            HSEEK fakt->idPartner
+            select_o_partner( fakt->idPartner )
             SELECT fakt
             IF !( partn->( &aUslOpc ) )
                SKIP 1
@@ -425,8 +422,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
             IF lGroup .AND. !Empty( cPGroup )
                cPartn := fakt->idpartner
-               SELECT partn
-               HSEEK cPartn
+               select_o_partner( cPartn )
                SELECT fakt
                IF !p_in_group( cPartn, cPGroup )
                   SKIP
@@ -489,8 +485,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             zagl_sp_prod()
          ENDIF
 
-         SELECT roba
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
          SELECT fakt
 
          IF Round( nKolicina, 4 ) <> 0

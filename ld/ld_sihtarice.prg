@@ -248,9 +248,9 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
 
 
 
-   //o_radsiht()
-   //GO TOP
-   //SET FILTER TO
+   o_radsiht()
+   GO TOP
+   SET FILTER TO
 
    SELECT ( nTArea )
 
@@ -373,9 +373,9 @@ FUNCTION get_siht2()
    FF
    ENDPRINT
 
-   //o_radsiht()
-   //GO TOP
-   //SET FILTER TO
+   o_radsiht()
+   GO TOP
+   SET FILTER TO
 
    SELECT ( nTArea )
 

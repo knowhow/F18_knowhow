@@ -158,7 +158,7 @@ FUNCTION ld_js3400_obrazac()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    // staticke

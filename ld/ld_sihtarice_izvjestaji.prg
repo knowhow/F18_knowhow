@@ -31,10 +31,10 @@ FUNCTION ld_utrosak_po_sihtaricama()
    LOCAL cTipRpt := "1"
    LOCAL cIdRj
    LOCAL cRjDEF := Space( 2 )
-   LOCAL cMj_od
-   LOCAL cMj_do
-   LOCAL cGod_od
-   LOCAL cGod_do
+   LOCAL nMjesecOd
+   LOCAL nMjesecDo
+   LOCAL nGodinaOd
+   LOCAL nGodinaDo
    LOCAL cDopr10 := "10"
    LOCAL cDopr11 := "11"
    LOCAL cDopr12 := "12"
@@ -52,27 +52,25 @@ FUNCTION ld_utrosak_po_sihtaricama()
    ol_tmp_tbl()
 
    cIdRj := gLDRadnaJedinica
-   cMj_od := ld_tekuci_mjesec()
-   cMj_do := ld_tekuci_mjesec()
-   cGod_od := ld_tekuca_godina()
-   cGod_do := ld_tekuca_godina()
+   nMjesecOd := ld_tekuci_mjesec()
+   nMjesecDo := ld_tekuci_mjesec()
+   nGodinaOd := ld_tekuca_godina()
+   nGodinaDo := ld_tekuca_godina()
 
    // otvori tabele
    ol_o_tbl()
 
-   Box( "#PREGLED TROSKOVA PO SIHTARICAMA", 11, 75 )
+   Box( "#PREGLED TROŠKOVA PO ŠIHTARICAMA", 11, 75 )
 
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Period od:" GET cMj_od PICT "99"
-   @ form_x_koord() + 2, Col() + 1 SAY "/" GET cGod_od PICT "9999"
-   @ form_x_koord() + 2, Col() + 1 SAY "do:" GET cMj_do PICT "99"
-   @ form_x_koord() + 2, Col() + 1 SAY "/" GET cGod_do PICT "9999"
+   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Period od:" GET nMjesecOd PICT "99"
+   @ form_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
+   @ form_x_koord() + 2, Col() + 1 SAY "do:" GET nMjesecDo PICT "99"
+   @ form_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
    @ form_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
-      VALID Empty( cRadnik ) .OR. p_radn( @cRadnik )
+   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik VALID Empty( cRadnik ) .OR. p_radn( @cRadnik )
 
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Grupa (prazno-sve): " GET cGroup ;
-      VALID Empty( cGroup ) .OR. p_konto( @cGroup )
+   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Grupa (prazno-sve): " GET cGroup  VALID Empty( cGroup ) .OR. p_konto( @cGroup )
 
    @ form_x_koord() + 7, form_y_koord() + 2 SAY "Dodatna primanja za prikaz (1): " GET cDodPr1 ;
       VALID {|| _show_get_item_value( g_tp_naz( cDodPr1 ), 20 ), .T. }
@@ -98,10 +96,10 @@ FUNCTION ld_utrosak_po_sihtaricama()
    ENDIF
 
    // staticke
-   __mj_od := cMj_od
-   __mj_do := cMj_do
-   __god_od := cGod_od
-   __god_do := cGod_do
+   __mj_od := nMjesecOd
+   __mj_do := nMjesecDo
+   __god_od := nGodinaOd
+   __god_do := nGodinaDo
    __tp1 := ""
    __tp2 := ""
    __tp3 := ""
@@ -122,14 +120,20 @@ FUNCTION ld_utrosak_po_sihtaricama()
       __tp5 := g_tp_naz( cDodPr5 )
    ENDIF
 
-   SELECT ld
 
    Msgo( "... podaci plata ... molimo sacekajte" )
    // sortiraj tabelu i postavi filter
-   ld_obracunski_list_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, cTipRpt, cObracun )
+
+   IF nGodinaOd == nGodinaDo .AND. nMjesecOd == nMjesecDo
+      seek_ld( cRj, nGodinaOd, nMjesecOd, cObracun, cRadnik ) // seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn, cTag )
+   ELSE
+      seek_ld( cRj, NIL, NIL, cObracun, cRadnik )
+   ENDIF
+
+   ld_obracunski_list_sort( cRj, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, cRadnik, cTipRpt, cObracun )
 
    // nafiluj podatke obracuna
-   ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, ;
+   ol_fill_data( cRj, cRjDef, nGodinaOd, nGodinaDo, nMjesecOd, nMjesecDo, cRadnik, ;
       cPrimDobra, "", ;
       cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, cObracun, ;
       cDodPr1, cDodPr2, cDodPr3, cDodPr4, cDodPr5 )
@@ -144,7 +148,7 @@ FUNCTION ld_utrosak_po_sihtaricama()
    MsgO( "... generisem izvjestaj ...." )
 
    // generisi report
-   _gen_rpt( cGod_od, cMj_od, cRadnik, cGroup, aObr )
+   _gen_rpt( nGodinaOd, nMjesecOd, cRadnik, cGroup, aObr )
 
    MsgC()
 
@@ -197,12 +201,12 @@ STATIC FUNCTION _obr_2_arr( aArr )
 // -----------------------------
 STATIC FUNCTION o_tables()
 
-   //select_o_ld()
-   //o_ld_radn()
-   //o_konto()
-   //o_radsiht()
-   //o_dopr()
-   //o_por()
+   // select_o_ld()
+   // o_ld_radn()
+   // o_konto()
+   o_radsiht()
+   // o_dopr()
+   // o_por()
 
    RETURN .T.
 
@@ -236,7 +240,7 @@ STATIC FUNCTION _gen_rpt( nGod_od, nMj_od, cRadnik, cGroup, aObr )
       nRa_god := field->godina
 
       // pronadji radnika u matrici
-      nTmp := AScan( aObr, {|xVal| xVal[ 1 ] == nRa_god .AND. ;
+      nTmp := AScan( aObr, {| xVal | xVal[ 1 ] == nRa_god .AND. ;
          xVal[ 2 ] == nRa_mj .AND. xVal[ 3 ] == cRa_siht } )
 
       IF nTmp == 0
@@ -293,7 +297,7 @@ STATIC FUNCTION _gen_rpt( nGod_od, nMj_od, cRadnik, cGroup, aObr )
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------------------

@@ -673,9 +673,7 @@ FUNCTION cre_all_ld( ver )
    AFTER_CREATE_INDEX
 
 
-   // ------------------------------------------
-   // RADSIHT
-   // ------------------------------------------
+
    aDbf := {}
    AAdd( aDBf, { 'Godina', 'N',   4,  0 } )
    AAdd( aDBf, { 'Mjesec', 'N',   2,  0 } )

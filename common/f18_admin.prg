@@ -12,6 +12,7 @@
 #include "f18.ch"
 
 STATIC s_cDownloadVersion := NIL
+STATIC s_cCheckUpdates := NIL
 
 MEMVAR m_x, m_y, GetList
 
@@ -63,6 +64,16 @@ FUNCTION download_version( cUrl )
    ENDIF
 
    RETURN cRead
+
+
+
+FUNCTION check_updates()
+
+   IF s_cCheckUpdates == NIL
+      s_cCheckUpdates := fetch_metric( "F18_check_updates", my_user(), "D" )
+   ENDIF
+
+   RETURN s_cCheckUpdates == "D"
 
 
 
@@ -555,10 +566,10 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
 
    cCmd += " -O "
 
-//  f18_run - ( run_invisible.vbs ) radi quoting cLocalFileName
-//   IF is_windows()
-//      cLocalFileName := '"' + cLocalFileName + '"'
-//   ENDIF
+// f18_run - ( run_invisible.vbs ) radi quoting cLocalFileName
+// IF is_windows()
+// cLocalFileName := '"' + cLocalFileName + '"'
+// ENDIF
 // cCmd += cLocalFileName
 
    IF f18_run( cCmd, cLocalFileName ) != 0

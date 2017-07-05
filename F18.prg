@@ -296,14 +296,16 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
 
 #ifndef F18_DEBUG
 
-   cVersion := download_version( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
+   IF check_updates()
+      cVersion := download_version( "https://raw.githubusercontent.com/knowhow/F18_knowhow/23100-ld/VERSION" )
 
-   IF !Empty( cVersion ) .AND. cVersion != f18_ver()
-      AAdd( aMeniOpcije,  " U. F18 upgrade -> " + cVersion  )
-      AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
+      IF !Empty( cVersion ) .AND. cVersion != f18_ver()
+         AAdd( aMeniOpcije,  " U. F18 upgrade -> " + cVersion  )
+         AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
 
-      AAdd( aMeniOpcije, "---------------------------------------------" )
-      AAdd( aMeniExec, {|| NIL } )
+         AAdd( aMeniOpcije, "---------------------------------------------" )
+         AAdd( aMeniExec, {|| NIL } )
+      ENDIF
    ENDIF
 #endif
 

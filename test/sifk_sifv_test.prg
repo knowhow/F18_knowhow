@@ -133,14 +133,14 @@ FUNCTION sifk_sifv_test()
    TEST_LINE( USifK( _id_sif, _karakteristika_n, "01", "K2VAL4,K2VAL1,K2VAL2" ), .T. )
 
 
-   TEST_LINE( IzSifk( _id_sif, _karakteristika, "01" ), PadR( "K1VAL3", K1_LEN ) )
+   TEST_LINE( get_sifk_sifv( _id_sif, _karakteristika, "01" ), PadR( "K1VAL3", K1_LEN ) )
 
    _tmp := PadR( "K2VAL1", KN_LEN ) + ","
    _tmp += PadR( "K2VAL2", KN_LEN ) + ","
    _tmp += PadR( "K2VAL4", KN_LEN )
 
    _tmp := PadR( _tmp, 190 )
-   TEST_LINE( IzSifk( _id_sif, _karakteristika_n, "01" ), _tmp )
+   TEST_LINE( get_sifk_sifv( _id_sif, _karakteristika_n, "01" ), _tmp )
 
    RETURN
 

@@ -106,7 +106,7 @@ FUNCTION IsProfil( cIdPartner, cProfId )
 
    LOCAL cProfili
 
-   cProfili := IzSifKPartn( "PROF", cIdPartner, .F. )
+   cProfili := get_partn_sifk_sifv( "PROF", cIdPartner, .F. )
 
    IF cProfId $ Upper( cProfili )
       RETURN .T.

@@ -672,7 +672,7 @@ STATIC FUNCTION set_banku_za_partnera( cPartn, cBank )
    //o_sifv()
 
    cNewBank := ""
-   cOldBank := AllTrim( IzSifKPartn( "BANK", cPartn ) )  // stara banka
+   cOldBank := AllTrim( get_partn_sifk_sifv( "BANK", cPartn ) )  // stara banka
 
    IF !Empty( cOldBank ) // dodaj staru banku ako postoji
       cNewBank += cOldBank

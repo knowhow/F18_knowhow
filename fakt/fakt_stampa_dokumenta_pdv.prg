@@ -1127,11 +1127,11 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
       cIdBroj := firma_id_broj( cId )
       cPdvBroj := firma_pdv_broj( cId )
       AltD()
-      // cPorBroj := IzSifKPartn( "PORB", cId, .F. )
+      // cPorBroj := get_partn_sifk_sifv( "PORB", cId, .F. )
 
 /*
-      cBrRjes := IzSifKPartn( "BRJS", cId, .F. )
-      cBrUpisa := IzSifKPartn( "BRUP", cId, .F. )
+      cBrRjes := get_partn_sifk_sifv( "BRJS", cId, .F. )
+      cBrUpisa := get_partn_sifk_sifv( "BRUP", cId, .F. )
 */
       cPartNaziv := partn->naz
       cPartAdres := partn->adresa

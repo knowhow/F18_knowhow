@@ -145,8 +145,6 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
       RETURN .F.
    ENDIF
 
-
-
    rddSetDefault( "SQLMIX" )
 
    IF rddInfo( 1001, { "POSTGRESQL", pConn } ) == 0  // #define RDDI_CONNECT          1001
@@ -176,9 +174,7 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
          USE
          dbSelectArea( nWa )
       ENDIF
-
    ENDIF
-
 
    BEGIN SEQUENCE WITH {| err | Break( err ) }
       dbUseArea( lOpenInNewArea, "SQLMIX", cSqlQuery, cAlias )
@@ -189,7 +185,6 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
          error_bar( "SQLMIX", "ERR: use_sql" + cSqlQuery )
          lError := .T.
       ENDIF
-
 
    RECOVER USING oError
       ?E "SQL ERR:", oError:description, cSqlQuery
@@ -479,6 +474,7 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    ENDIF
 
    GO TOP  // ovo obavezno inace ostane na eof() poziciji?!
+
    RETURN !Eof()
 
 
@@ -491,7 +487,6 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    LOCAL cSql
    LOCAL cTable := "sifv"
-   LOCAL lSql // lSql := .T. - RDDSQL tabela
    LOCAL uIdSif, uVrijednost
 
    IF cDbf == NIL
@@ -504,10 +499,7 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
       cOznaka := field->oznaka
    ENDIF
 
-   // lSql := is_sql_table( cDbf )
-
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + "sifv"
-
    cSql += " WHERE id=" + sql_quote( cDbf )
 
    IF cOznaka != "*" // * - sve oznake
@@ -524,31 +516,27 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
          ELSE
             xIdSif := Space( 6 )
          ENDIF
-         // uIdSif := ( Unicode():New( xIdSif, lSql ) ):getString()
-         // cSql += " AND idsif=" + sql_quote_u( uIdSif )
          cSql += " AND idsif=" + sql_quote( xIdSif )
       ENDIF
    ELSE
-
-      // uIdSif := ( Unicode():New( xIdSif, .F. ) ):getString()
-      // cSql += " AND idsif=" + sql_quote_u( uIdSif )
       cSql += " AND idsif=" + sql_quote( xIdSif )
    ENDIF
 
-
    IF xVrijednost != NIL
-      // uVrijednost := ( Unicode():New( xVrijednost, lSql ) ):getString()
       cSql += " AND naz=" + sql_quote( xVrijednost )
    ENDIF
 
    cSQL += " ORDER BY id,oznaka,idsif,naz"
    SELECT F_SIFV
    use_sql( "sifv", cSql )
+   GO TOP
 
+/*
    INDEX ON ID + OZNAKA + IDSIF + NAZ TAG ID  TO ( cTable )
    INDEX ON ID + IDSIF TAG IDIDSIF  TO ( cTable )
    SET ORDER TO TAG "ID"
    GO TOP
+*/
 
    RETURN !Eof()
 

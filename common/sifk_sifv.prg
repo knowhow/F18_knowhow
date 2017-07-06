@@ -110,7 +110,7 @@ FUNCTION repl_sifk_item()
    READ
 
    cCurrVal := "wSifk_" + cField
-   &cCurrVal := IzSifk( Alias(), cField )
+   &cCurrVal := get_sifk_sifv( Alias(), cField )
    cOldVal := &cCurrVal
    cNewVal := Space( Len( cOldVal ) )
 
@@ -134,7 +134,7 @@ FUNCTION repl_sifk_item()
    nTRec := RecNo()
 
    DO WHILE !Eof()
-      &cCurrVal := IzSifK( Alias(), cField )
+      &cCurrVal := get_sifk_sifv( Alias(), cField )
       IF &cCurrVal == cOldVal
          // USifK( Alias(), cField, Unicode():New( ( Alias() )->id, lSql ), cNewVal )
          USifK( Alias(), cField, ( Alias() )->id, cNewVal )
@@ -194,7 +194,7 @@ FUNCTION g_sk_flist( cField )
 
 
 
-FUNCTION IzSifkPartn( cDbfName, cOznaka, cIdSif, return_nil )
+FUNCTION get_partn_sifk_sifv( cDbfName, cOznaka, cIdSif, return_nil )
 
    LOCAL xSif
 
@@ -204,7 +204,7 @@ FUNCTION IzSifkPartn( cDbfName, cOznaka, cIdSif, return_nil )
    xSif := cIdSif
    // ENDIF
 
-   RETURN  IzSifk( "PARTN", cDbfName, cOznaka, xSif, return_nil )
+   RETURN  get_sifk_sifv( "PARTN", cDbfName, cOznaka, xSif, return_nil )
 
 
 FUNCTION IzSifkKonto( cDbfName, cOznaka, cIdSif, return_nil )
@@ -217,7 +217,7 @@ FUNCTION IzSifkKonto( cDbfName, cOznaka, cIdSif, return_nil )
    xSif := cIdSif
    // ENDIF
 
-   RETURN  IzSifk( "KONTO", cDbfName, cOznaka, xSif, return_nil )
+   RETURN  get_sifk_sifv( "KONTO", cDbfName, cOznaka, xSif, return_nil )
 
 
 FUNCTION IzSifkRoba( cDbfName, cOznaka, cIdSif, return_nil )
@@ -230,18 +230,10 @@ FUNCTION IzSifkRoba( cDbfName, cOznaka, cIdSif, return_nil )
    xSif := cIdSif
    // ENDIF
 
-   RETURN  IzSifk( "ROBA", cDbfName, cOznaka, xSif, return_nil )
+   RETURN  get_sifk_sifv( "ROBA", cDbfName, cOznaka, xSif, return_nil )
 
 
-FUNCTION IzSifk( cDbfName, cOznaka, cIdSif, return_nil )
 
-   LOCAL cTmp
-
-   PushWA()
-   cTmp := get_sifk_value( cDbfName, cOznaka, cIdSif, return_nil )
-   PopWa()
-
-   RETURN cTmp
 
 // -----------------------------------------------------------
 // get_karakter_value
@@ -263,30 +255,25 @@ FUNCTION IzSifk( cDbfName, cOznaka, cIdSif, return_nil )
                   .T. => ""  - "" za nedefinisanu vrijednost
 */
 
-FUNCTION get_sifk_value ( cDbfName, cOznaka, cIdSif, return_nil )
 
-   LOCAL _ret := ""
-   LOCAL _sifk_tip, _sifk_duzina, _sifk_veza, cIdSif2
-   LOCAL lSql := .F.
 
-// altd()
-   // ID default polje
+FUNCTION get_sifk_sifv( cDbfName, cOznaka, cIdSif, return_nil )
+
+   LOCAL nArea := Select()
+   LOCAL xRet := ""
+   LOCAL cSifkTip, nSifkDuzina, cSifkVeza, cIdSif2
+
    IF cIdSif == NIL
       cIdSif := ( cDbfName )->ID
-      IF !Empty( cDbfName )
-         // lSql := is_sql_table( cDbfName )
-         lSql := .F. // F18_SQL_ENCODING nije UTF8
-      ENDIF
    ENDIF
 
-   // cIdSif := Unicode():New( cIdSif, lSql )
    cDbfName := PadR( cDbfName, SIFK_LEN_DBF )
    cOznaka     := PadR( cOznaka, SIFK_LEN_OZNAKA )
-   // cIdSif2   := cIdSif:PadR( SIFK_LEN_IDSIF )
    cIdSif2 := PadR( cIdSif, SIFK_LEN_IDSIF )
 
    IF !use_sql_sifk( cDbfName, cOznaka )
       ?E "ERROR 2 GET SIFK ?!", cDbfName, cOznaka
+      SELECT ( nArea )
       IF return_nil == NIL
          RETURN NIL
       ELSE
@@ -294,51 +281,53 @@ FUNCTION get_sifk_value ( cDbfName, cOznaka, cIdSif, return_nil )
       ENDIF
 
    ENDIF
-   _ret := NIL
+   xRet := NIL
 
    GO TOP
    IF Eof()  // uopste ne postoji takva karakteristika
       IF return_nil <> NIL
-         _ret := "" // get_sifv_value( "X", "" ) ovo ce dati ?NEPTIP?
+         xRet := "" // get_sifv_value_by_tip( "X", "" ) ovo ce dati ?NEPTIP?
       ELSE
-         _ret := NIL
+         xRet := NIL
       ENDIF
-      RETURN _ret
+      SELECT ( nArea )
+      RETURN xRet
    ENDIF
 
-   _sifk_duzina := sifk->duzina
-   _sifk_tip    := sifk->tip
-   _sifk_veza   := sifk->veza
+   nSifkDuzina := sifk->duzina
+   cSifkTip    := sifk->tip
+   cSifkVeza   := sifk->veza
 
-   SELECT F_SIFV
-   // proslijedi unicode objekat, to je najsigurnije
    use_sql_sifv( cDbfName, cOznaka, cIdSif )
-   GO TOP
-   IF Eof()
-      _ret := get_sifv_value( _sifk_tip, _sifk_duzina, "" )
-      IF _sifk_veza == "N"
-         _ret := PadR( _ret, 190 )
+
+   IF Eof() // nema sifv
+      xRet := get_sifv_value_by_tip( cSifkTip, nSifkDuzina, "" )
+      IF cSifkVeza == "N"
+         xRet := PadR( xRet, 190 )
       ENDIF
-      RETURN _ret
+      SELECT ( nArea )
+      RETURN xRet
    ENDIF
 
-   _ret := get_sifv_value( _sifk_tip, _sifk_duzina, sifv->naz )
+   xRet := get_sifv_value_by_tip( cSifkTip, nSifkDuzina, sifv->naz )
 
-   IF _sifk_veza == "N"
-      _ret := ToStr( _ret )
+   IF cSifkVeza == "N" // n vrijednosti
+      xRet := ToStr( xRet )
       SKIP
       DO WHILE !Eof() .AND.  ( ( sifv->id + sifv->oznaka + sifv->idsif ) == ( cDbfName + cOznaka + cIdSif2 ) )
-         _ret += "," + ToStr( get_sifv_value( _sifk_tip, _sifk_duzina, sifv->naz ) )
+         xRet += "," + ToStr( get_sifv_value_by_tip( cSifkTip, nSifkDuzina, sifv->naz ) )
          SKIP
       ENDDO
-      _ret := PadR( _ret, 190 )
+      xRet := PadR( xRet, 190 )
    ENDIF
 
-   RETURN _ret
+   SELECT ( nArea )
+
+   RETURN xRet
 
 
 
-STATIC FUNCTION get_sifv_value( cSifkTip, nSifkDuzina, cNazValue )
+STATIC FUNCTION get_sifv_value_by_tip( cSifkTip, nSifkDuzina, cNazValue )
 
    LOCAL xRet
 
@@ -458,7 +447,6 @@ FUNCTION USifk( cDbfName, cOznaka, cIdSif, xValue, cTransaction )
       RETURN .F.
    ENDIF
 
-   SELECT F_SIFV
    use_sql_sifv( cDbfName, cOznaka, cIdSif )
 
    SELECT sifk
@@ -633,7 +621,7 @@ FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( aImeKolone, cVariablePre
          _field_b :=  MemVarBlock( cVariablePrefix + "SIFK_" + SubStr( aImeKolone[ nI, 3 ], 7 ) )
          // uId := Unicode():New( ( cAlias )->id,  lSql )
          cId := ( cAlias )->id
-         IF IzSifk( cAlias, SubStr( aImeKolone[ nI, 3 ], 7 ), cId ) <> NIL
+         IF get_sifk_sifv( cAlias, SubStr( aImeKolone[ nI, 3 ], 7 ), cId ) <> NIL
             lOk := USifk( cAlias, SubStr( aImeKolone[ nI, 3 ], 7 ), cId, Eval( _field_b ), cTransaction )
          ENDIF
          IF !lOk

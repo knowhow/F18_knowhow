@@ -77,7 +77,7 @@ FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
    FOR EACH hRec in aRecords
 
       AAdd ( ImeKol, {  get_sifk_naz( cDbf, hRec[ "oznaka" ] ) } )
-      AAdd ( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr( IzSifkPartn('" + hRec[ "oznaka" ] + "')) }" ) )
+      AAdd ( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr( get_partn_sifk_sifv('" + hRec[ "oznaka" ] + "')) }" ) )
       AAdd ( ImeKol[ Len( ImeKol ) ], "SIFK->" + hRec[ "oznaka" ] )
 
       IF hRec[ "edkolona" ] > 0

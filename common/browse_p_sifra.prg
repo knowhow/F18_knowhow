@@ -992,7 +992,7 @@ STATIC FUNCTION set_w_var( aImeKol, nI, lShowGrupa )
 
       cVariableName := "wSifk_" + SubStr( aImeKol[ nI, 3 ], 7 )
 
-      _tmp := IzSifk( Alias(), SubStr( aImeKol[ nI, 3 ], 7 ) )
+      _tmp := get_sifk_sifv( Alias(), SubStr( aImeKol[ nI, 3 ], 7 ) )
 
       IF _tmp == NIL
          cVariableName := ""

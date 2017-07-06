@@ -890,7 +890,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
 
    DO WHILE !Eof() .AND. ID = "POR"
       AAdd ( ImeKol, {  get_sifk_naz( "POR", SIFK->Oznaka ) } )
-      AAdd ( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr(IzSifk('POR','" + sifk->oznaka + "')) }" ) )
+      AAdd ( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr(get_sifk_sifv('POR','" + sifk->oznaka + "')) }" ) )
       AAdd ( ImeKol[ Len( ImeKol ) ], "SIFK->" + SIFK->Oznaka )
 
       IF ( sifk->edkolona > 0 )
@@ -986,7 +986,7 @@ FUNCTION P_Dopr( cId, nDeltaX, nDeltaY )
 
    DO WHILE !Eof() .AND. ID = "DOPR"
       AAdd( ImeKol, { get_sifk_naz( "DOPR", SIFK->Oznaka ) } )
-      AAdd( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr(IzSifk('DOPR','" + sifk->oznaka + "')) }" ) )
+      AAdd( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr(get_sifk_sifv('DOPR','" + sifk->oznaka + "')) }" ) )
       AAdd( ImeKol[ Len( ImeKol ) ], "SIFK->" + SIFK->Oznaka )
       IF ( sifk->edkolona > 0 )
          FOR ii := 4 TO 9

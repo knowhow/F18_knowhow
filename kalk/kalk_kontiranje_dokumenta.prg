@@ -807,7 +807,7 @@ FUNCTION DatVal()
    IF Empty( dDatVal )
 
       // IF kalk_imp_autom() // osloni se na rok placanja
-      nRokPartner := IzSifkPartn( "ROKP", finmat->idpartner, .T. )
+      nRokPartner := get_partn_sifk_sifv( "ROKP", finmat->idpartner, .T. )
       IF ValType( nRokPartner ) == "N"
          _uvecaj := nRokPartner
       ENDIF

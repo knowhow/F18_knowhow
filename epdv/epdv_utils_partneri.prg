@@ -174,8 +174,8 @@ FUNCTION part_rejon( cIdPart )
 
    select_o_partner( self_organizacija_id() )
 
-   //cRejon := IzSifKPartn( "REJO", Unicode():New( cIdPart, .F. ), .F. )
-   cRejon := IzSifKPartn( "REJO", cIdPart, .F. )
+   //cRejon := get_partn_sifk_sifv( "REJO", Unicode():New( cIdPart, .F. ), .F. )
+   cRejon := get_partn_sifk_sifv( "REJO", cIdPart, .F. )
 
    PopWa()
 

@@ -248,7 +248,7 @@ altd()
          IF lBezG2 .AND. field->idvd == "14"
             IF !( cLastPar == field->idpartner )
                cLastPar := field->idpartner
-               cSKGrup := IzSifKPartn( "GRUP", idpartner, .F. ) // uzmi iz sifk karakteristiku GRUP
+               cSKGrup := get_partn_sifk_sifv( "GRUP", idpartner, .F. ) // uzmi iz sifk karakteristiku GRUP
             ENDIF
             IF cSKGrup == "2"
                SKIP 1

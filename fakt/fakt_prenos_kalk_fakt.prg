@@ -195,7 +195,7 @@ FUNCTION kalk_2_fakt()
 
                HSEEK cFaktPartn
 
-               nRokPl := IzSifKPartn( "ROKP", cFaktPartn, .F. )
+               nRokPl := get_partn_sifk_sifv( "ROKP", cFaktPartn, .F. )
                IF ValType( nRokPl ) == "N" .AND. nRokPl > 0
                   dDatPl := dDatDok + nRokPl
                ELSE
@@ -506,9 +506,9 @@ FUNCTION kalkp_2_fakt()
          nRokPl := 0
 
          IF lToRacun == .T.
-            nRokPl := IzSifKPartn( "ROKP", cFaktPartn, .F. )
+            nRokPl := get_partn_sifk_sifv( "ROKP", cFaktPartn, .F. )
          ELSE
-            nRokPl := IzSifKPartn( "ROKP", cIdPartner, .F. )
+            nRokPl := get_partn_sifk_sifv( "ROKP", cIdPartner, .F. )
          ENDIF
 
          IF ValType( nRokPl ) == "N"

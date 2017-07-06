@@ -75,7 +75,7 @@ FUNCTION svedi_na_jedinicu_mjere( nKol, cIdRoba, cJMJ )
    LOCAL cSvedi
    LOCAL cPom, cJmjRoba, oError
 
-   cSvedi := IzSifk( "ROBA", "SJMJ", cIdRoba, .F. )
+   cSvedi := get_sifk_sifv( "ROBA", "SJMJ", cIdRoba, .F. )
 
    IF !Empty( cSvedi )
 

@@ -315,7 +315,7 @@ FUNCTION spec_kol_partn()
 
          fill_exp_tbl( ;
             AllTrim( Str( ++nCount ) ), cDistNaz, firma_pdv_broj( cPartner ), partn->naz, ;
-            IzSifKPartn( "TIP", cPartner, .F. ), ;
+            get_partn_sifk_sifv( "TIP", cPartner, .F. ), ;
             partn->mjesto, ;
             partn->ptt, ;
             partn->adresa, ;
@@ -341,7 +341,7 @@ STATIC FUNCTION _k_br( partner_id )
    LOCAL _tmp := "bb"
    LOCAL _ret := ""
 
-   _ret := IzSifKPartn( "KBR", partner_id, .F. )
+   _ret := get_partn_sifk_sifv( "KBR", partner_id, .F. )
 
    IF Empty( _ret )
       _ret := _tmp

@@ -104,7 +104,7 @@ FUNCTION pdv_oslobodjen( cIdPartner )
 
    LOCAL cIdBroj
 
-   RETURN cIdBroj := IzSifKPartn( "PDVO", cIdPartner, .F. )
+   RETURN cIdBroj := get_partn_sifk_sifv( "PDVO", cIdPartner, .F. )
 
 
 /*

@@ -178,11 +178,11 @@ FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
 
 */
 
-FUNCTION firma_id_broj( partn_id )
+FUNCTION firma_id_broj( cPartnerId )
 
    LOCAL cBroj
 
-   cBroj := get_partn_idbr( partn_id )
+   cBroj := get_partn_idbr( cPartnerId )
 
    RETURN cBroj
 
@@ -192,11 +192,11 @@ FUNCTION firma_id_broj( partn_id )
          ukoliko je broj > 13 vraća se prazno
 */
 
-FUNCTION firma_pdv_broj( partn_id )
+FUNCTION firma_pdv_broj( cPartnerId )
 
    LOCAL cBroj
 
-   cBroj := get_partn_pdvb( partn_id )
+   cBroj := get_partn_pdvb( cPartnerId )
 
    RETURN cBroj
 
@@ -205,30 +205,20 @@ FUNCTION firma_pdv_broj( partn_id )
    Opis: vraća karaketristiku REGB iz tabele SIFK za partnera
 */
 
-FUNCTION get_partn_regb( partn_id )
+FUNCTION get_partn_regb( cPartnerId )
 
-   RETURN AllTrim( IzSifKPartn( "REGB", partn_id, .F. ) )
-
-
-FUNCTION get_partn_pdvb( partn_id )
-
-   RETURN AllTrim( IzSifKPartn( "PDVB", partn_id, .F. ) )
+   RETURN AllTrim( get_partn_sifk_sifv( "REGB", cPartnerId, .F. ) )
 
 
-FUNCTION get_partn_idbr( partn_id )
+FUNCTION get_partn_pdvb( cPartnerId )
 
-   RETURN AllTrim( IzSifKPartn( "IDBR", partn_id, .F. ) )
+   RETURN AllTrim( get_partn_sifk_sifv( "PDVB", cPartnerId, .F. ) )
 
 
-/*
-    partn.sifk/REGB - legacy !
+FUNCTION get_partn_idbr( cPartnerId )
 
-    koristiti PDVB, IDBR
-*/
+   RETURN AllTrim( get_partn_sifk_sifv( "IDBR", cPartnerId, .F. ) )
 
-FUNCTION fill_partn_sifk_regb()
-
-   RETURN fill_sifk_partn( "REGB", "ID broj", "01", 13 )
 
 
 FUNCTION delete_sifk_partner_regb()

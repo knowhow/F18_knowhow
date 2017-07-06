@@ -277,7 +277,7 @@ FUNCTION p_in_group( cPartn, cGroup )
 
    LOCAL cSifKVal
 
-   cSifKVal := IzSifKPARTN( "GRUP", cPartn, .F. )
+   cSifKVal := get_partn_sifk_sifv( "GRUP", cPartn, .F. )
 
    IF cSifKVal == cGroup
       RETURN .T.

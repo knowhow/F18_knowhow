@@ -26,10 +26,10 @@ FUNCTION Adresar()
     //  o_sifk()
    //ENDIF
 
-   Select( F_SIFV )
-   IF !Used()
-      use_sql_sifv( PadR( "ADRES", 8 ) )
-   ENDIF
+   //Select( F_SIFV )
+   //IF !Used()
+  //    use_sql_sifv( PadR( "ADRES", 8 ) )
+   //ENDIF
 
    P_Adres()
 

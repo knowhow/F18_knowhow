@@ -132,7 +132,8 @@ FUNCTION fakt_stanje_robe()
    WPar( "d1", dDatOd )
    WPar( "d2", dDatDo )
    WPar( "d3", cDDokOtpr )
-   SELECT params; USE
+   SELECT params
+   USE
 
    BoxC()
 
@@ -420,18 +421,14 @@ FUNCTION fakt_stanje_robe()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION ZaglSRobe()
 
-   LOCAL _rj_tip := ""
+   
 
-   IF rj->( FieldPos( "tip" ) ) <> 0
-      _rj_tip := rj->tip
-   ENDIF
-
-   IF nstr > 0
+   IF nStr > 0
       FF
    ENDIF
    ?
@@ -479,7 +476,7 @@ FUNCTION ZaglSRobe()
    IF lBezUlaza
       ?? "R.br  Sifra       Naziv                                 " + "   Stanje      jmj     "
    ELSE
-      ?? "R.br  Sifra       Naziv                                 " + "   Stanje      jmj     " + IF( _rj_tip $ "M1#M2" .AND. !Empty( cIdFirma ), "Cij.", " PC " ) + "      Iznos"
+      ?? "R.br  Sifra       Naziv                                 " + "   Stanje      jmj     Cij.      Iznos"
    ENDIF
 
    ? Space( gnLMarg )

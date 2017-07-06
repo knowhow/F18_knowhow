@@ -87,7 +87,6 @@ FUNCTION kalk_auto_import_racuni()
    ENDIF
 
 
-
    PRIVATE aDbf := {}
    PRIVATE aRules := {}
    PRIVATE aFaktEx
@@ -203,17 +202,15 @@ FUNCTION kalk_imp_txt_to_temp( aDbf, aRules, cTxtFile )
 
    DO WHILE oFile:MoreToRead() // prodji kroz svaku liniju i insertuj zapise u temp.dbf
 
-
       cVar := hb_StrToUTF8( oFile:ReadLine() ) // uzmi u cText liniju fajla
-
 
       SELECT kalk_imp_temp
       APPEND BLANK
 
-      FOR nCt := 1 TO Len( aRules )
-         fname := Field( nCt )
-         xVal := aRules[ nCt, 1 ]
-         RREPLACE &fname WITH &xVal
+      FOR nCnt := 1 TO Len( aRules )
+         cFName := Field( nCnt )
+         xVal := aRules[ nCnt, 1 ]
+         RREPLACE &cFName WITH &xVal
       NEXT
 
    ENDDO
@@ -702,7 +699,6 @@ STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
 
    DO WHILE (  ( nRslt := provjeri_stanje_kalk_pripreme( cIdVd ) ) <> 0 )
 
-
       IF lPrvi .OR. ( nRslt == 1 ) // vezni dokument u kalk_pripremi je ok
 
          IF !kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
@@ -730,7 +726,6 @@ STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
          o_kalk_edit()
 
       ENDIF
-
 
    ENDDO
 
@@ -814,7 +809,7 @@ STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
 
 STATIC FUNCTION kalk_imp_check_partn_roba_exist()
 
-   LOCAL aPomPart := {}, aPomRoba := {}
+   LOCAL aPomPart := {}, aPomRoba := {}, i
 
    aPomPart := kalk_imp_partn_exist()
 
@@ -840,8 +835,8 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
          ?U "Lista nepostojećih artikala (sifradob):"
          ? "-------------------------------------------"
          ?
-         FOR ii := 1 TO Len( aPomRoba )
-            ? aPomRoba[ ii, 1 ]
+         FOR i := 1 TO Len( aPomRoba )
+            ? aPomRoba[ i, 1 ]
          NEXT
          ?
       ENDIF
@@ -855,36 +850,6 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
 
 
 
-FUNCTION kalk_imp_partn_exist()
-
-   LOCAL aRet, nCount := 0
-
-   o_partner()
-   select_o_kalk_imp_temp()
-
-   GO TOP
-
-   aRet := {}
-
-   IF kalk_imp_temp->idtipdok == "96" // partner prazan
-      RETURN aRet
-   ENDIF
-
-   Box( "#Sifra partnera provjera", 3, 50 )
-
-   DO WHILE !Eof()
-      select_o_partner( kalk_imp_temp->idpartner )
-      ++nCount
-      @ m_x + 1, m_y + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
-      IF !Found()
-         AAdd( aRet, { kalk_imp_temp->idpartner } )
-      ENDIF
-      SELECT kalk_imp_temp
-      SKIP
-   ENDDO
-   BoxC()
-
-   RETURN aRet
 
 
 /*

@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
 /*
  *  Import sifarnika partnera
  */
@@ -26,11 +27,9 @@ FUNCTION kalk_import_txt_partner()
 
    cFFilt := "p*.p??"
 
-
    IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0  // pregled fajlova za import, te setuj varijablu cImpFile
       RETURN .F.
    ENDIF
-
 
    IF fajl_get_broj_linija( cImpFile ) == 0 // provjeri da li je fajl za import prazan
       MsgBeep( "Odabrani fajl je prazan!#Prekid operacije !" )
@@ -41,14 +40,13 @@ FUNCTION kalk_import_txt_partner()
    PRIVATE aRules := {}
 
 
-   set_adbf_partner( @aDbf ) // setuj polja temp tabele u matricu aDbf
+   set_adbf_kalk_imp_temp_for_partnere( @aDbf )
 
    import_txt_set_a_rules_partn( @aRules ) // setuj pravila upisa podataka u temp tabelu
 
-
    kalk_imp_txt_to_temp( aDbf, aRules, cImpFile ) // prebaci iz txt => temp tbl
 
-   IF CheckPartn() > 0
+   IF kalk_impt_txt_check_partnere() > 0
       IF Pitanje(, "Izvršiti import partnera (D/N)?", "D" ) == "N"
          MsgBeep( "Opcija prekinuta!" )
          RETURN .F.
@@ -136,8 +134,8 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
    LOCAL cTmpSif, hRec, lOk := .T., hParams, lPromjena
 
 // o_roba()
-//   o_sifk()
-//   o_sifv()
+// o_sifk()
+// o_sifv()
 
    SELECT kalk_imp_temp
    GO TOP
@@ -247,10 +245,10 @@ STATIC FUNCTION import_txt_set_a_rules_partn( aRule )
 
 
 
-   /*
-    *  Provjerava i daje listu nepostojecih partnera pri importu liste partnera
-    */
-STATIC FUNCTION CheckPartn()
+/*
+  *  Provjerava i daje listu nepostojecih partnera pri importu liste partnera
+*/
+STATIC FUNCTION kalk_impt_txt_check_partnere()
 
    LOCAL i, aPomPart := kalk_imp_partn_exist( .T. )
 
@@ -258,7 +256,7 @@ STATIC FUNCTION CheckPartn()
 
       start_print_editor()
 
-      ? "Lista nepostojecih partnera:"
+      ?U "Lista nepostojećih partnera:"
       ? "----------------------------"
       ?
       FOR i := 1 TO Len( aPomPart )
@@ -272,6 +270,36 @@ STATIC FUNCTION CheckPartn()
 
    RETURN Len( aPomPart )
 
+
+FUNCTION kalk_imp_partn_exist()
+
+   LOCAL aRet, nCount := 0
+
+   select_o_kalk_imp_temp()
+
+   aRet := {}
+
+   IF FieldPos( "idipdok" ) <> 0  .and. kalk_imp_temp->idtipdok == "96" // ovo polje postoji samo kada kalk_imp_temp sadrzi racune; za tip 96 polje partner je prazno
+      RETURN aRet
+   ENDIF
+
+   Box( "#Sifra partnera provjera", 3, 50 )
+
+   o_partner()
+   GO TOP
+   DO WHILE !Eof()
+      select_o_partner( kalk_imp_temp->idpartner )
+      ++nCount
+      @ m_x + 1, m_y + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
+      IF !Found()
+         AAdd( aRet, { kalk_imp_temp->idpartner } )
+      ENDIF
+      SELECT kalk_imp_temp
+      SKIP
+   ENDDO
+   BoxC()
+
+   RETURN aRet
 
 
 
@@ -377,9 +405,9 @@ STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
 
    LOCAL hRec, lNovi, cTmpPar
 
-  // o_partner()
-  // o_sifk()
-  // o_sifv()
+   // o_partner()
+   // o_sifk()
+   // o_sifv()
 
    SELECT kalk_imp_temp
    GO TOP
@@ -440,10 +468,10 @@ STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
       // ubaci --vezne-- podatke i u sifK tabelu
       USifK( "PARTN", "ROKP", kalk_imp_temp->idpartner, kalk_imp_temp->rokpl )
 
-      //USifK( "PARTN", "PORB", kalk_imp_temp->idpartner, kalk_imp_temp->porbr )
+      // USifK( "PARTN", "PORB", kalk_imp_temp->idpartner, kalk_imp_temp->porbr )
 
-      //USifK( "PARTN", "REGB", kalk_imp_temp->idpartner, kalk_imp_temp->idbroj )
-      //USifK( "PARTN", "USTN", kalk_imp_temp->idpartner, kalk_imp_temp->ustn )
+      // USifK( "PARTN", "REGB", kalk_imp_temp->idpartner, kalk_imp_temp->idbroj )
+      // USifK( "PARTN", "USTN", kalk_imp_temp->idpartner, kalk_imp_temp->ustn )
 
       /*
       USifK( "PARTN", "BRUP", kalk_imp_temp->idpartner, kalk_imp_temp->brupis )
@@ -485,7 +513,7 @@ STATIC FUNCTION import_txt_set_a_rules_roba( aRule )
        *   param: aDbf - matrica sa def.polja
 */
 
-STATIC FUNCTION set_adbf_partner( aDbf )
+STATIC FUNCTION set_adbf_kalk_imp_temp_for_partnere( aDbf )
 
    AAdd( aDbf, { "idpartner", "C", 6, 0 } )
    AAdd( aDbf, { "naz", "C", 25, 0 } )

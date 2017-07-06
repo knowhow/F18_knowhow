@@ -56,7 +56,6 @@ STATIC FUNCTION kalk_auto_import_setup()
 
    LOCAL cAImpRKonto := PadR( kalk_imp_txt_param_auto_import_podataka_konto(), 7 )
 
-
    nX := 1
 
    Box(, 10, 70 )
@@ -261,7 +260,7 @@ STATIC FUNCTION GetImpFilter()
 STATIC FUNCTION MnuObrDok()
 
    IF Pitanje(, "Obraditi automatski dokument iz kalk_pripreme (D/N)?", "N" ) == "D"
-      kalk_import_csv_obradi_dokument( nil, nil, __stampaj )
+      kalk_import_csv_obradi_dokument( NIL, NIL, __stampaj )
    ELSE
       MsgBeep( "Dokument nije obradjen!#Obradu uradite iz kalk_pripreme!" )
       my_close_all_dbf()
@@ -370,7 +369,7 @@ FUNCTION Txt2TOst( aDbf, cTxtFile )
       aRow := csvrow2arr( cVar, cDelimiter )
 
       // selektuj temp tabelu
-      SELECT temp
+      SELECT TEMP
       // dodaj novi zapis
       APPEND BLANK
 
@@ -394,7 +393,7 @@ FUNCTION Txt2TOst( aDbf, cTxtFile )
 
    _o_file:Close()
 
-   SELECT temp
+   SELECT TEMP
 
    MsgBeep( "Import txt => temp - OK" )
 
@@ -414,7 +413,7 @@ STATIC FUNCTION importost()
 
    o_partner()
 
-   SELECT temp
+   SELECT TEMP
    GO TOP
 
    DO WHILE !Eof()
@@ -427,11 +426,11 @@ STATIC FUNCTION importost()
       SEEK cPartId
 
       IF Found() .AND. AllTrim( partn->idrefer ) <> AllTrim( cRefId )
-         ++ nCnt
+         ++nCnt
          REPLACE idrefer WITH cRefId
       ENDIF
 
-      SELECT temp
+      SELECT TEMP
 
       SKIP
    ENDDO
@@ -551,7 +550,7 @@ STATIC FUNCTION kalk_imp_csv_to_temp( aDbf, cTxtFile )
       aRow := csvrow2arr( cVar, cDelimiter )
 
       // selektuj temp tabelu
-      SELECT temp
+      SELECT TEMP
       // dodaj novi zapis
       APPEND BLANK
 
@@ -597,7 +596,7 @@ STATIC FUNCTION kalk_imp_csv_to_temp( aDbf, cTxtFile )
 
    _o_file:Close()
 
-   SELECT temp
+   SELECT TEMP
 
    MsgBeep( "Import txt => temp - OK" )
 
@@ -628,12 +627,14 @@ STATIC FUNCTION CreTemp( aDbf, lIndex )
       create_index( "1", "idfirma+idtipdok+brdok+rbr", cTmpTbl )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // -----------------------------------------------------------------
 // Provjeri da li postoji broj fakture u azuriranim dokumentima
 // -----------------------------------------------------------------
 STATIC FUNCTION CheckBrFakt( aFakt )
+
+   LOCAL aPomFakt
 
    aPomFakt := FaktExist()
 
@@ -667,6 +668,8 @@ STATIC FUNCTION CheckBrFakt( aFakt )
    aFakt := aPomFakt
 
    RETURN 1
+
+
 
 // ---------------------------------------------------------------
 // Provjera da li postoje sve sifre u sifarnicima za dokumente
@@ -713,7 +716,7 @@ STATIC FUNCTION GetKTipDok( cFaktTD )
 
    LOCAL cRet := ""
 
-   IF ( cFaktTD == "" .OR. cFaktTD == nil )
+   IF ( cFaktTD == "" .OR. cFaktTD == NIL )
       RETURN "XX"
    ENDIF
 
@@ -735,7 +738,7 @@ STATIC FUNCTION FaktExist()
 
    o_kalk_doks()
 
-   SELECT temp
+   SELECT TEMP
    GO TOP
 
    aRet := {}
@@ -759,7 +762,7 @@ STATIC FUNCTION FaktExist()
          AAdd( aRet, { cBrFakt, kalk_doks->idfirma + "-" + kalk_doks->idvd + "-" + AllTrim( kalk_doks->brdok ) } )
       ENDIF
 
-      SELECT temp
+      SELECT TEMP
       SKIP
 
       cDok := cBrFakt
@@ -781,9 +784,9 @@ STATIC FUNCTION TTbl2Kalk()
    o_kalk_pripr()
    // o_kalk()
    // o_kalk_doks()
-//   o_roba()
+// o_roba()
 
-   SELECT temp
+   SELECT TEMP
    SET ORDER TO TAG "1"
    GO TOP
 
@@ -799,9 +802,9 @@ STATIC FUNCTION TTbl2Kalk()
 
    DO WHILE !Eof()
 
-    
+
       cTmpArt := AllTrim( temp->idroba )
-    select_o_roba( cTmpArt )
+      select_o_roba( cTmpArt )
 
       // dodaj zapis u kalk_pripr
       SELECT kalk_pripr
@@ -860,7 +863,7 @@ STATIC FUNCTION TTbl2Kalk()
          REPLACE zavtr WITH temp->trosk5
       ENDIF
 
-      SELECT temp
+      SELECT TEMP
       SKIP
    ENDDO
 
@@ -877,7 +880,7 @@ STATIC FUNCTION kalk_import_csv_obradi_dokument( lAsPokreni, lStampaj )
    // 2. azuriraj kalk
    // 3. azuriraj FIN
 
-   //PRIVATE lKalkAsistentUToku := .F.
+   // PRIVATE lKalkAsistentUToku := .F.
 
    IF lAsPokreni == nil
       lAsPokreni := .T.
@@ -899,7 +902,7 @@ STATIC FUNCTION kalk_import_csv_obradi_dokument( lAsPokreni, lStampaj )
    ENDIF
 
    IF lStampaj == .T.
-      kalk_stampa_dokumenta( nil, nil, .T. ) // odstampaj kalk
+      kalk_stampa_dokumenta( NIL, NIL, .T. ) // odstampaj kalk
    ENDIF
 
    kalk_azuriranje_dokumenta( .T. ) // azuriraj kalk

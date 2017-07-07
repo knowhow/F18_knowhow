@@ -478,6 +478,14 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    RETURN !Eof()
 
 
+
+FUNCTION o_sifv()
+
+   Select( F_SIFV )
+   USE
+
+   RETURN use_sql_sifv()
+
 /*
    use_sql_sifv( "ROBA", "GR1", NIL, "G000000001" ) =>  filter na ROBA/GR1/grupa1=G0000000001
    use_sql_isfv( "ROBA", "GR1", "ROBA99", NIL )        =>  filter na ROBA/GR1/idroba=ROBA99
@@ -508,7 +516,7 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    IF xIdSif == NIL
       IF Empty( cDbf )
-         uIdSif := "MLFJUSXX" // nepostojeca sifra
+         uIdSif := "MLFJUSXX" // navodi se namjerno nepostojeca sifra da bi se otvorila tabela sa 0 zapisa, slucajevi kada trebamo samo sif otvoreno radno podrucje - strukturu tabele
       ELSEIF xVrijednost == NIL  // samo ako je i xVrijednost NIL onda definisi uslov idsif
 
          IF ( cDbf )->( Used() )
@@ -529,8 +537,8 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
    cSQL += " ORDER BY id,oznaka,idsif,naz"
    SELECT F_SIFV
    IF !use_sql( "sifv", cSql )
-     ?E "use_sql sifv ERROR", cSql
-     RETURN .F.
+      ?E "use_sql sifv ERROR", cSql
+      RETURN .F.
    ENDIF
 
    GO TOP

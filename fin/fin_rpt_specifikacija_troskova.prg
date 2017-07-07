@@ -165,7 +165,7 @@ STATIC FUNCTION _g_gr_kto( cId )
 
   -- o_rj()
   -- SELECT rj
-   SEEK cId
+  -- SEEK cId
 
    IF Found()
       xRet := field->konto
@@ -228,7 +228,7 @@ STATIC FUNCTION _g_pt_naz( cId )
 
 --   o_partner()
 --   SELECT partn
-   SEEK cId
+  -- SEEK cId
 
    IF Found()
       xRet := AllTrim( field->naz )

@@ -110,8 +110,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
 
    HSEEK cIdFirma
 
-   SELECT koncij
-   SEEK Trim( cIdKonto )
+   select_o_koncij( cIdKonto )
    SELECT kalk
 
    EOF CRET
@@ -364,8 +363,7 @@ FUNCTION ZaglRfinansijsko_stanje_prodavnica()
 
    Preduzece()
    P_12CPI
-   SELECT konto
-   HSEEK cidkonto
+   select_o_konto( cIdkonto )
    ?? Space( 60 ), " DATUM "
    ?? Date(), Space( 5 ), "Str:", Str( ++nTStrana, 3 )
    IspisNaDan( 5 )

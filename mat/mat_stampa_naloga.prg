@@ -104,7 +104,7 @@ FUNCTION mat_st_sint_nalog( fnovi )
       nRbr := 0
       DO WHILE  Eval( b1 ) .AND. Eval( b2 ) .AND. Eval( b3 )  // mat_sinteticki konto
          cIdKonto := IdKonto
-         SELECT KONTO; HSEEK cIdKonto
+         select_o_konto( cIdKonto )
          SELECT mat_anal
 
          IF A == 0; Zagl12(); ENDIF
@@ -130,7 +130,7 @@ FUNCTION mat_st_sint_nalog( fnovi )
       @ ++A, 0 SAY M
       @ ++A, 2 SAY ++nRBr2 PICTURE '999'
       @ A, 13 SAY cSinKon
-      SELECT KONTO; HSEEK cSinKon
+      select_o_konto( cSinKon )
       @ A, PCol() + 5 SAY naz
       SELECT mat_anal
 

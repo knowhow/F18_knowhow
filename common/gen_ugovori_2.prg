@@ -999,8 +999,7 @@ STATIC FUNCTION info_generated_data( DATA )
 
    FOR nI := 1 TO Len( DATA )
 
-      SELECT partn
-      HSEEK DATA[ nI, 4 ]
+      select_o_partner( DATA[ nI, 4 ] )
 
       ? PadL( AllTrim( Str( ++_cnt ) ), 4 ) + "."
 
@@ -1013,7 +1012,7 @@ STATIC FUNCTION info_generated_data( DATA )
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 

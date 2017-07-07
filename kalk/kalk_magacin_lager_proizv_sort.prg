@@ -144,7 +144,7 @@ FUNCTION KaLagM()
 
 
    SELECT kalk
-   SEEK self_organizacija_id() + oRpt:cIdKonto
+  -- SEEK self_organizacija_id() + oRpt:cIdKonto
    EOF CRET
 
    nRec := 0
@@ -557,7 +557,7 @@ METHOD printHeader
    PushWA()
 
    SELECT konto
-   SEEK ::cIdKonto
+--   SEEK ::cIdKonto
    ? "Magacinski konto:", ::cIdKonto, konto->naz
    PopWa()
    ?

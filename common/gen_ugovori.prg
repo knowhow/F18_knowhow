@@ -251,7 +251,7 @@ FUNCTION gen_ug()
       SELECT rugov
       nRbr := 0
 
-      SEEK cidugov
+      SEEK cIdugov
 
       // prvi krug odredjuje glavnicu
       nGlavnica := 0  // jedna stavka mo§e biti glavnica za ostale
@@ -291,14 +291,15 @@ FUNCTION gen_ug()
          ENDIF
 
          IF nRbr == 0
-            SELECT PARTN
-            HSEEK ugov->idpartner
+            select_o_partner( ugov->idpartner )
             _txt3b := _txt3c := ""
             _txt3a := PadR( ugov->idpartner + ".", 30 )
 
             IzSifre( .T. )
 
-            SELECT ftxt; HSEEK ugov->iddodtxt; cDodTxt := Trim( naz )
+            SELECT ftxt
+            HSEEK ugov->iddodtxt
+            cDodTxt := Trim( naz )
             HSEEK ugov->idtxt
             PRIVATE _Txt1 := ""
 

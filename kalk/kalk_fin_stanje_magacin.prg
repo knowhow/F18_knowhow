@@ -403,8 +403,7 @@ STATIC FUNCTION Zaglfinansijsko_stanje_magacin()
    ENDIF
 
    IF cViseKonta == "N"
-      SELECT konto
-      HSEEK cIdkonto
+      select_o_konto( cIdkonto )
    ENDIF
 
    ?? "KALK:MAG Finansijsko stanje za period", dDatOd, "-", dDatDo, " NA DAN "

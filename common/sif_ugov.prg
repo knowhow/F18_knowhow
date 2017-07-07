@@ -1084,8 +1084,7 @@ STATIC FUNCTION ZaOdgovarajuci()
       IF Found()
          cUgovId   := UGOV->id
          cUgovNaz  := UGOV->naz
-         SELECT PARTN
-         SEEK UGOV->idpartner
+         select_o_partner( UGOV->idpartner )
          IF Found()
             cPartnNaz := PARTN->naz
          ELSE
@@ -1094,7 +1093,8 @@ STATIC FUNCTION ZaOdgovarajuci()
       ELSE
          MsgBeep( "Greška! Stavka ugovora '" + RUGOV->ID + "' postoji, ugovor ne postoji ?!" )
          IF Pitanje(, "Brisati problematičnu stavku (u RUGOV.DBF) ? (D/N)", "N" ) == "D"
-            SELECT RUGOV; DELETE
+            SELECT RUGOV
+            DELETE
          ENDIF
          cUgovId   := ""
          cUgovNaz  := ""

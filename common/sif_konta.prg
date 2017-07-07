@@ -89,11 +89,11 @@ FUNCTION P_Konto( cId, dx, dy )
       lBlag := .F.
    ENDIF
 
-   SELECT konto
+  -- SELECT konto
    sifk_fill_ImeKol( "KONTO", @ImeKol, @Kol )
 
 
-   SELECT KONTO
+--   SELECT KONTO
    SET ORDER TO TAG "ID"
 
    p_sifra( F_KONTO, 1, MAXROWS() -17, MAXCOLS() -10, "LKTF Lista: Konta ", @cId, dx, dy, {| Ch| KontoBlok( Ch ) },,,,, { "ID" } )
@@ -226,8 +226,7 @@ FUNCTION GetNameFromKonto( cIdKonto )
    LOCAL nArr, cRet
 
    nArr := Select()
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    cRet := AllTrim( field->naz )
    SELECT ( nArr )
 

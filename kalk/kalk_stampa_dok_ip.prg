@@ -44,8 +44,7 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
    ENDIF
 
    P_10CPI
-   SELECT konto
-   HSEEK cidkonto
+   select_o_konto( cIdkonto )
    SELECT kalk_pripr
 
    ?? "INVENTURA PRODAVNICA ", cIdkonto, "-", AllTrim( konto->naz )
@@ -251,7 +250,8 @@ FUNCTION stampa_obrasca_inventure_sank_lista()
 
 
    P_10CPI
-   SELECT konto; HSEEK cidkonto; SELECT kalk_pripr
+   select_o_konto( cIdkonto )
+   SELECT kalk_pripr
    ?? "INVENTURA PRODAVNICA ", cidkonto, "-", konto->naz
    P_COND
    ?

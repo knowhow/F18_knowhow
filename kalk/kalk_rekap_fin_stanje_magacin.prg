@@ -238,8 +238,7 @@ FUNCTION Zaglrekap_finansijsko_stanje_magacin()
 
    Preduzece()
    P_12CPI
-   SELECT konto
-   HSEEK cidkonto
+   select_o_konto( cIdkonto )
    ?? Space( 60 ), " DATUM "
    ?? Date(), Space( 5 ), "Str:", Str( ++nTStrana, 3 )
    ?

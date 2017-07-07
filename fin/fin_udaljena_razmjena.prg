@@ -33,9 +33,9 @@ FUNCTION fin_udaljena_razmjena_podataka()
    direktorij_kreiraj_ako_ne_postoji( __export_dbf_path )
 
    AAdd( _opc, "1. => export podataka               " )
-   AAdd( _opcexe, {|| _fin_export() } )
+   AAdd( _opcexe, {|| fin_export() } )
    AAdd( _opc, "2. <= import podataka    " )
-   AAdd( _opcexe, {|| _fin_import() } )
+   AAdd( _opcexe, {|| fin_import() } )
 
    f18_menu( "razmjena", .F., _izbor, _opc, _opcexe )
 
@@ -44,10 +44,8 @@ FUNCTION fin_udaljena_razmjena_podataka()
    RETURN .T.
 
 
-// ----------------------------------------
-// export podataka modula FIN
-// ----------------------------------------
-STATIC FUNCTION _fin_export()
+
+STATIC FUNCTION fin_export()
 
    LOCAL _vars := hb_Hash()
    LOCAL _exported_rec
@@ -63,7 +61,7 @@ STATIC FUNCTION _fin_export()
    delete_exp_files( __export_dbf_path, "fin" )
 
    // exportuj podatake
-   _exported_rec := __export( _vars, @_a_data )
+   _exported_rec := fin_export_impl( _vars, @_a_data )
 
    // zatvori sve tabele prije operacije pakovanja
    my_close_all_dbf()
@@ -87,15 +85,15 @@ STATIC FUNCTION _fin_export()
 
    ENDIF
 
-   // vrati se na glavni direktorij
-   DirChange( my_home() )
+
+   DirChange( my_home() )    // vrati se na glavni direktorij
 
    IF ( _exported_rec > 0 )
 
       MsgBeep( "Exportovao " + AllTrim( Str( _exported_rec ) ) + " dokumenta." )
 
-      // printaj izvjestaj
-      print_imp_exp_report( _a_data )
+
+      print_imp_exp_report( _a_data )       // printaj izvjestaj
 
    ENDIF
 
@@ -108,7 +106,7 @@ STATIC FUNCTION _fin_export()
 // ----------------------------------------
 // import podataka modula FIN
 // ----------------------------------------
-STATIC FUNCTION _fin_import()
+STATIC FUNCTION fin_import()
 
    LOCAL _imported_rec
    LOCAL _vars := hb_Hash()
@@ -134,8 +132,8 @@ STATIC FUNCTION _fin_import()
    _imp_file := get_import_file( "fin", __import_dbf_path )
 
    IF _imp_file == NIL .OR. Empty( _imp_file )
-      MsgBeep( "Nema odabranog import fajla !????" )
-      RETURN
+      MsgBeep( "Nema odabranog import fajla !?" )
+      RETURN .F.
    ENDIF
 
    // parametri
@@ -160,7 +158,7 @@ STATIC FUNCTION _fin_import()
 #endif
 
    // import procedura
-   _imported_rec := __import( _vars, @_a_data )
+   _imported_rec := fin_import_impl( _vars, @_a_data )
 
    // zatvori sve
    my_close_all_dbf()
@@ -203,7 +201,7 @@ STATIC FUNCTION _vars_export( vars )
    LOCAL _vrste_dok := fetch_metric( "fin_export_vrste_dokumenata", my_user(), PadR( "10;11;", 200 ) )
    LOCAL _exp_sif := fetch_metric( "fin_export_sifrarnik", my_user(), "D" )
    LOCAL _exp_path := fetch_metric( "fin_export_path", my_user(), PadR( "", 300 ) )
-   LOCAL _x := 1
+   LOCAL nX := 1
 
    IF Empty( AllTrim( _exp_path ) )
       _exp_path := PadR( __export_dbf_path, 300 )
@@ -211,27 +209,27 @@ STATIC FUNCTION _vars_export( vars )
 
    Box(, 15, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** Uslovi exporta dokumenata"
+   @ m_x + nX, m_y + 2 SAY "*** Uslovi exporta dokumenata"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Datumski period od" GET _dat_od
+   @ m_x + nX, Col() + 1 SAY "do" GET _dat_do
 
-   ++ _x
-   ++ _x
+   ++ nX
+   ++ nX
 
-   @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
+   @ m_x + nX, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksportovati sifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Eksportovati sifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
 
    READ
 
@@ -278,7 +276,7 @@ STATIC FUNCTION _vars_import( vars )
    LOCAL _zamjeniti_sif := fetch_metric( "fin_import_zamjeniti_sifre", my_user(), "N" )
    LOCAL _iz_fmk := fetch_metric( "fin_import_iz_fmk", my_user(), "N" )
    LOCAL _imp_path := fetch_metric( "fin_import_path", my_user(), PadR( "", 300 ) )
-   LOCAL _x := 1
+   LOCAL nX := 1
 
    IF Empty( AllTrim( _imp_path ) )
       _imp_path := PadR( __import_dbf_path, 300 )
@@ -287,35 +285,35 @@ STATIC FUNCTION _vars_import( vars )
 
    Box(, 15, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** Uslovi importa dokumenata"
+   @ m_x + nX, m_y + 2 SAY "*** Uslovi importa dokumenata"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Datumski period od" GET _dat_od
+   @ m_x + nX, Col() + 1 SAY "do" GET _dat_do
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
 
-   ++ _x
-   ++ _x
+   ++ nX
+   ++ nX
 
-   @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+   @ m_x + nX, m_y + 2 SAY "Zamjeniti postojece dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece sifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Zamjeniti postojece sifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
 
 
    READ
@@ -356,7 +354,7 @@ STATIC FUNCTION _vars_import( vars )
 // -------------------------------------------
 // export podataka
 // -------------------------------------------
-STATIC FUNCTION __export( vars, a_details )
+STATIC FUNCTION fin_export_impl( vars, a_details )
 
    LOCAL _ret := 0
    LOCAL _id_firma, _id_vd, _br_dok
@@ -455,8 +453,7 @@ STATIC FUNCTION __export( vars, a_details )
          dbf_update_rec( _app_rec )
 
 
-         SELECT konto // uzmi sada konto sa ove stavke pa je ubaci u e_konto
-         HSEEK _id_konto
+         SELECT select_o_konto( _id_konto )
          IF Found() .AND. _export_sif == "D"
             _app_rec := dbf_get_rec()
             SELECT e_konto
@@ -541,7 +538,7 @@ STATIC FUNCTION __export( vars, a_details )
 // ----------------------------------------
 // import podataka
 // ----------------------------------------
-STATIC FUNCTION __import( vars, a_details )
+STATIC FUNCTION fin_import_impl( vars, a_details )
 
    LOCAL _ret := 0
    LOCAL _id_firma, _id_vd, _br_dok

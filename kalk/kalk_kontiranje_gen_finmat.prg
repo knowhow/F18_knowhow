@@ -136,13 +136,10 @@ FUNCTION kalk_kontiranje_gen_finmat()
       cDalje := "D"
       cAutoRav := gAutoRavn
 
-      SELECT PARTN
-      HSEEK KALK_PRIPR->IDPARTNER
-      SELECT KONTO
-      HSEEK KALK_PRIPR->MKONTO
+      select_o_partner( KALK_PRIPR->IDPARTNER )
+      select_o_konto( KALK_PRIPR->MKONTO )
       cPom := naz
-      SELECT KONTO
-      HSEEK KALK_PRIPR->PKONTO
+      select_o_konto( KALK_PRIPR->PKONTO )
       SELECT kalk_pripr
       @ m_x + 2, m_y + 2 SAY "DATUM------------>"             COLOR "W+/B"
       @ m_x + 2, Col() + 1 SAY DToC( DATDOK )                   COLOR "N/W"

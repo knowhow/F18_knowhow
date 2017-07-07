@@ -199,8 +199,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
    DO WHILE !Eof() .AND. IdFirma == cIdFirma
 
-      SELECT partn
-      HSEEK kalk_doks->idpartner
+      select_o_partner( kalk_doks->idpartner )
 
       SELECT kalk_doks
 

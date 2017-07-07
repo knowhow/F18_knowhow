@@ -79,13 +79,13 @@ STATIC FUNCTION frm_vars( vars )
 
    _x += 2
    @ m_x + _x, m_y + 2 SAY8 "Prodavnički konto:" GET _p_konto VALID P_Konto( @_p_konto )
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Dobavljač:" GET _dob VALID p_partner( @_dob )
    _x += 2
    @ m_x + _x, m_y + 2 SAY8 "Artikli (prazno-svi):" GET _artikli PICT "@S35"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Prikaz stavki kojima je ulaz = 0 (D/N) ?" GET _prik_nule VALID _prik_nule $ "DN" PICT "@!"
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY8 "Štampati formu narudžbe (D/N) ?" GET _narudzba VALID _narudzba $ "DN" PICT "@!"
 
    READ
@@ -196,11 +196,11 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
 
    MsgO( "Prikupljanje podataka ulaza u maloprodaji... sačekajte !" )
 
-   _table:GoTo(1)
+   _table:GoTo( 1 )
 
    FOR nI := 1 TO _table:LastRec()
 
-      ++ _cnt
+      ++_cnt
 
       oRow := _table:GetRow( nI )
 
@@ -288,11 +288,11 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
    MsgO( "Prikupljanje podataka o izlazima robe... sačekajte !" )
 
    _table := run_sql_query( _qry )
-   _table:GoTo(1)
+   _table:GoTo( 1 )
 
    FOR nI := 1 TO _table:LastRec()
 
-      ++ _cnt
+      ++_cnt
 
       oRow := _table:GetRow( nI )
 
@@ -305,7 +305,7 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
 
       IF Found()
 
-         ++ _cnt
+         ++_cnt
 
          hRec := dbf_get_rec()
          hRec[ "izlaz" ] := oRow:FieldGet( oRow:FieldPos( "izlaz" ) )
@@ -341,9 +341,7 @@ STATIC FUNCTION print_frm_asort_nar( vars )
    SET ORDER TO TAG "roba"
    GO TOP
 
-   o_partner()
-   SELECT partn
-   HSEEK r_export->idpartner
+   select_o_partner(  r_export->idpartner )
 
    SELECT r_export
 
@@ -351,9 +349,9 @@ STATIC FUNCTION print_frm_asort_nar( vars )
 
    // podaci matične firme
    xml_node( "firma", to_xml_encoding( self_organizacija_naziv() ) )
-   xml_node( "f_adr", to_xml_encoding( fetch_metric( "org_adresa", nil, "" ) ) )
+   xml_node( "f_adr", to_xml_encoding( fetch_metric( "org_adresa", NIL, "" ) ) )
    xml_node( "f_mj", to_xml_encoding( gMjStr ) )
-   xml_node( "f_tel", to_xml_encoding( fetch_metric( "fakt_zagl_telefon", nil, "" ) ) )
+   xml_node( "f_tel", to_xml_encoding( fetch_metric( "fakt_zagl_telefon", NIL, "" ) ) )
 
    // podaci partnera
    xml_node( "part_id", to_xml_encoding( field->idpartner ) )
@@ -366,7 +364,7 @@ STATIC FUNCTION print_frm_asort_nar( vars )
 
    DO WHILE !Eof()
 
-      ++ _count
+      ++_count
 
       xml_subnode( "item", .F. )
 

@@ -19,11 +19,11 @@ FUNCTION sint_lager_lista_prodavnice()
 
    cIdFirma := self_organizacija_id()
    qqKonto := PadR( "132;", 60 )
-  // o_sifk()
-//   o_sifv()
-//   o_roba()
-  // o_konto()
-  // o_partner()
+   // o_sifk()
+// o_sifv()
+// o_roba()
+   // o_konto()
+   // o_partner()
 
    dDatOd := CToD( "" )
    dDatDo := Date()
@@ -43,7 +43,7 @@ FUNCTION sint_lager_lista_prodavnice()
          @ m_x + 1, m_y + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma  " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 2, m_y + 2 SAY "Prodavnice" GET qqKonto  PICT "@!S50"
       @ m_x + 3, m_y + 2 SAY "Artikli   " GET qqRoba PICT "@!S50"
@@ -82,7 +82,7 @@ FUNCTION sint_lager_lista_prodavnice()
    cFilt1 := "!EMPTY(pu_i).and." + aUsl1 + ".and." + aUsl4
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
    IF !( cFilt1 == ".t." )
-      SET FILTER to &cFilt1
+      SET FILTER TO &cFilt1
    ENDIF
 
    SELECT kalk
@@ -203,7 +203,7 @@ FUNCTION sint_lager_lista_prodavnice()
             nNVU += nc * ( kolicina )
          ELSEIF pu_i == "5"
             IF idvd $ "12#13"
-               kalk_sumiraj_kolicinu( -field->kolicina, 0, @nUlaz, 0 )
+               kalk_sumiraj_kolicinu( - field->kolicina, 0, @nUlaz, 0 )
                nMPVU -= mpcsapp * kolicina
                nNVU -= nc * kolicina
             ELSE
@@ -332,8 +332,7 @@ FUNCTION Zaglsint_lager_lista_prodavnice( lSint )
    IF lSint
       ? "Kriterij za prodavnice:", qqKonto
    ELSE
-      SELECT konto
-      HSEEK cIdKonto
+      select_o_konto( cIdKonto )
       ? "Prodavnica:", cIdKonto, "-", konto->naz
    ENDIF
 

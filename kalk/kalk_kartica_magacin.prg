@@ -775,15 +775,14 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, cPicKol, cPicCDem )
 
 STATIC FUNCTION zagl_mag_kart()
 
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    ?
 
    Preduzece()
    P_12CPI
 
-   ?? "KARTICA MAGACIN za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
+   ?? "KARTICA MAGACIN za period", dDatod, "-", dDatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
    IspisNaDan( 5 )
    ? "Konto: ", cIdKonto, "-", konto->naz
 

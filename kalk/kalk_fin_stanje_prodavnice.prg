@@ -31,7 +31,7 @@ FUNCTION finansijsko_stanje_prodavnica()
    cIdKonto := PadR( "133", gDuzKonto )
 
    o_koncij()
-  // o_roba()
+   // o_roba()
    o_tarifa()
    o_konto()
 
@@ -123,7 +123,7 @@ FUNCTION finansijsko_stanje_prodavnica()
       cFilt1 += ".and." + aUsl4
    ENDIF
 
-   SET FILTER to &cFilt1
+   SET FILTER TO &cFilt1
    GO TOP
 
    EOF CRET
@@ -344,8 +344,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 
 FUNCTION Zaglfinansijsko_stanje_prodavnica( dDatOd, dDatDo )
 
-   SELECT konto
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    Preduzece()
 
    // IF Val( gFPicDem ) > 0

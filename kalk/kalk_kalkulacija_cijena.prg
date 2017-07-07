@@ -42,7 +42,7 @@ FUNCTION kalkulacija_cijena( azurirana )
       _vars[ "br_dok" ] := kalk_pripr->brdok
    ENDIF
 
-   IF ! ( _vars[ "tip_dok" ] $ "10#16#95#96#81#80" )
+   IF !( _vars[ "tip_dok" ] $ "10#16#95#96#81#80" )
       RETURN .F.
    ENDIF
 
@@ -72,9 +72,9 @@ FUNCTION kalkulacija_cijena( azurirana )
       RETURN .F.
    ENDIF
 
-   IF !Empty ( cOk := kalkulacija_ima_sve_cijene( _vars["id_firma"], _vars["tip_dok"], _vars["br_dok"] ))
+   IF !Empty ( cOk := kalkulacija_ima_sve_cijene( _vars[ "id_firma" ], _vars[ "tip_dok" ], _vars[ "br_dok" ] ) )
       MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obračun!##Stavke: " + cOk )
-      //RETURN .F.
+      // RETURN .F.
    ENDIF
 
    DO CASE
@@ -121,7 +121,7 @@ FUNCTION mp_predispozicija( firma, tip_dok, br_dok )
    DO WHILE !Eof() .AND. field->idfirma + field->idvd + field->brdok == firma + tip_dok + br_dok
       IF field->idkonto2 = "XXX"
          _ret := .T.
-         exit
+         EXIT
       ENDIF
       SKIP
    ENDDO
@@ -148,10 +148,10 @@ STATIC FUNCTION o_tables( azurirana )
       o_koncij()
    ENDIF
 
-  // SELECT F_ROBA
-//   IF !Used()
-//      o_roba()
-//   ENDIF
+   // SELECT F_ROBA
+// IF !Used()
+// o_roba()
+// ENDIF
 
    SELECT F_TARIFA
    IF !Used()
@@ -257,14 +257,12 @@ STATIC FUNCTION gen_kalk_predispozicija_xml( vars )
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
    PRIVATE aPorezi := {}
 
-   SELECT konto
-   HSEEK kalk_pripr->pkonto
+   select_o_konto( kalk_pripr->pkonto )
 
    _razd_id := kalk_pripr->pkonto
    _razd_naz := konto->naz
 
-   GO TOP
-   HSEEK kalk_pripr->idkonto2
+   select_o_konto( kalk_pripr->idkonto2 )
 
    _zad_id := kalk_pripr->idkonto2
    _zad_naz := konto->naz
@@ -331,7 +329,7 @@ STATIC FUNCTION gen_kalk_predispozicija_xml( vars )
             ENDIF
          ENDIF
 
-         ++ _generated
+         ++_generated
 
          kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
          kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
@@ -476,7 +474,7 @@ STATIC FUNCTION gen_kalk_mp_xml( vars )
 
    DO WHILE !Eof() .AND. _firma == field->idfirma .AND. _tip_dok == field->idvd .AND. _br_dok == field->brdok
 
-      ++ _generated
+      ++_generated
 
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
       kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
@@ -492,10 +490,10 @@ STATIC FUNCTION gen_kalk_mp_xml( vars )
       _u_fv += Round( field->fcj2 * ( field->gkolicina + field->gkolicin2 ), gZaokr )
       _t_fv += _u_fv
 
-      _u_rabat := Round( -field->rabat, gZaokr )
+      _u_rabat := Round( - field->rabat, gZaokr )
       _t_rabat += _u_rabat
 
-      _u_fv_r := Round( -field->rabat / 100 * field->fcj * field->kolicina, gZaokr )
+      _u_fv_r := Round( - field->rabat / 100 * field->fcj * field->kolicina, gZaokr )
       _t_fv_r += _u_fv_r
 
       _u_tr_prevoz := Round( nPrevoz * _s_kolicina, gZaokr )
@@ -541,8 +539,8 @@ STATIC FUNCTION gen_kalk_mp_xml( vars )
       xml_node( "skol", Str( _s_kolicina, 12, 2 ) )
 
       xml_node( "fcj", Str( field->fcj, 12, 2 ) )
-      xml_node( "rabat", Str( -field->rabat, 12, 2 ) )
-      xml_node( "fcjr", Str( -field->rabat / 100 * field->fcj, 12, 2 ) )
+      xml_node( "rabat", Str( - field->rabat, 12, 2 ) )
+      xml_node( "fcjr", Str( - field->rabat / 100 * field->fcj, 12, 2 ) )
       xml_node( "nc", Str( field->nc, 12, 2 ) )
       xml_node( "marzap", Str( nMarza2 / field->nc * 100, 12, 2 ) )
       xml_node( "marza", Str( nMarza2, 12, 2 ) )
@@ -679,7 +677,7 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
 
    DO WHILE !Eof() .AND. _firma == field->idfirma .AND. _tip_dok == field->idvd .AND. _br_dok == field->brdok
 
-      ++ _generated
+      ++_generated
 
       kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
@@ -702,10 +700,10 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
       _u_fv += Round( field->fcj2 * ( field->gkolicina + field->gkolicin2 ), gZaokr )
       _t_fv += _u_fv
 
-      _u_rabat := Round( -field->rabat, gZaokr )
+      _u_rabat := Round( - field->rabat, gZaokr )
       _t_rabat += _u_rabat
 
-      _u_fv_r := Round( -field->rabat / 100 * field->fcj * field->kolicina, gZaokr )
+      _u_fv_r := Round( - field->rabat / 100 * field->fcj * field->kolicina, gZaokr )
       _t_fv_r += _u_fv_r
 
       _u_tr_prevoz := Round( nPrevoz * _s_kolicina, gZaokr )
@@ -755,8 +753,8 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
       xml_node( "skol", Str( _s_kolicina, 12, 2 ) )
 
       xml_node( "fcj", Str( field->fcj, 12, 2 ) )
-      xml_node( "rabat", Str( -field->rabat, 12, 2 ) )
-      xml_node( "fcjr", Str( -field->rabat / 100 * field->fcj, 12, 2 ) )
+      xml_node( "rabat", Str( - field->rabat, 12, 2 ) )
+      xml_node( "fcjr", Str( - field->rabat / 100 * field->fcj, 12, 2 ) )
       xml_node( "nc", Str( field->nc, 12, 2 ) )
       xml_node( "marzap", Str( nMarza / field->nc * 100, 12, 2 ) )
       xml_node( "marza", Str( nMarza, 12, 2 ) )
@@ -770,22 +768,22 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
          xml_node( "pcsap", Str( field->vpc + _porez, 12, 2 ) )
       ENDIF
 
-      IF round( field->fcj2, 4 ) != 0
-      _pr_tr_prev := nPrevoz / field->fcj2 * 100
-      _pr_tr_bank := nBankTr / field->fcj2 * 100
-      _pr_tr_sped := nSpedTr / field->fcj2 * 100
-      _pr_tr_car := nCarDaz / field->fcj2 * 100
-      _pr_tr_zav := nZavTr / field->fcj2 * 100
-      _pr_tr_svi := ( _pr_tr_prev + _pr_tr_bank + _pr_tr_sped + _pr_tr_car + _pr_tr_zav )
+      IF Round( field->fcj2, 4 ) != 0
+         _pr_tr_prev := nPrevoz / field->fcj2 * 100
+         _pr_tr_bank := nBankTr / field->fcj2 * 100
+         _pr_tr_sped := nSpedTr / field->fcj2 * 100
+         _pr_tr_car := nCarDaz / field->fcj2 * 100
+         _pr_tr_zav := nZavTr / field->fcj2 * 100
+         _pr_tr_svi := ( _pr_tr_prev + _pr_tr_bank + _pr_tr_sped + _pr_tr_car + _pr_tr_zav )
 
       ELSE
 
-      _pr_tr_prev := 0
-      _pr_tr_bank := 0
-      _pr_tr_sped := 0
-      _pr_tr_car := 0
-      _pr_tr_zav := 0
-      _pr_tr_svi := 0
+         _pr_tr_prev := 0
+         _pr_tr_bank := 0
+         _pr_tr_sped := 0
+         _pr_tr_car := 0
+         _pr_tr_zav := 0
+         _pr_tr_svi := 0
 
       ENDIF
 

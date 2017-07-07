@@ -196,7 +196,7 @@ FUNCTION SpecSubPro()
          IF !Empty( cIdPartner )
             ?? PadR( cNazPARTN, 50 -DifIdp( cIdPartner ) )
          ELSE
-            SELECT KONTO; HSEEK cidkonto; SELECT SUBAN
+        --    SELECT KONTO; HSEEK cidkonto; SELECT SUBAN
             ?? PadR( KONTO->naz, 50 )
          ENDIF
 

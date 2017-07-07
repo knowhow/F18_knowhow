@@ -142,8 +142,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
                cTmp := fakt->idfirma + "-" + ( cFBrDok )
                dTmpDate := fakt->datdok
 
-               SELECT partn
-               HSEEK fakt->idpartner
+               select_o_partner( fakt->idpartner )
 
                cTmpPartn := AllTrim( partn->naz )
 

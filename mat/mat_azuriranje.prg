@@ -79,9 +79,7 @@ STATIC FUNCTION _ispravne_sifre()
          EXIT
       ENDIF
 
-      // provjeri partnere
-      SELECT partn
-      HSEEK mat_psuban->idpartner
+      select_o_partner( mat_psuban->idpartner )
 
       IF !Found() .AND. !Empty( mat_psuban->idpartner )
          Beep( 1 )

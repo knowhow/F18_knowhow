@@ -111,7 +111,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
       IF PRow() > 55 + dodatni_redovi_po_stranici(); FF; ZaglSink2(); ENDIF
 
       ? m
-      SELECT KONTO; HSEEK cIdKonto
+      select_o_konto(  cIdKonto )
       ? "KONTO   "; @ PRow(), PCol() + 1 SAY cIdKonto
       @ PRow(), PCol() + 2 SAY konto->naz
       SELECT SINT

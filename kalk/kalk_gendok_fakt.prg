@@ -214,8 +214,7 @@ FUNCTION kalk_prenos_fakt()
                IF lRJKon97
                   SELECT fakt_pripr
                   HSEEK cFF97 + pripr->( cIdFakt97 + cBrFakt + rbr )
-                  SELECT konto
-                  HSEEK kalk_pripr->idkonto
+                  select_o_konto( kalk_pripr->idkonto )
                   cTxta := PadR( kalk_pripr->idkonto, 30 )
                   cTxtb := PadR( konto->naz, 30 )
                   cTxtc := PadR( "", 30 )
@@ -229,8 +228,7 @@ FUNCTION kalk_prenos_fakt()
                IF lRJKon97_2
                   SELECT fakt_pripr
                   HSEEK cFF97_2 + pripr->( cIdFakt97_2 + cBrFakt + rbr )
-                  SELECT konto
-                  HSEEK kalk_pripr->idkonto2
+                  select_o_konto( kalk_pripr->idkonto2 )
                   cTxta := PadR( kalk_pripr->idkonto2, 30 )
                   cTxtb := PadR( konto->naz, 30 )
                   cTxtc := PadR( "", 30 )

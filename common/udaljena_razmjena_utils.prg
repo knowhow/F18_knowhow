@@ -22,7 +22,6 @@ FUNCTION udaljenja_razmjena_compress_files( modul, export_dbf_path )
    LOCAL _zip_path, _zip_name, _file
    LOCAL __path, __name, __ext
 
-
    _files := _file_list( export_dbf_path, modul )    // lista fajlova za kompresovanje
 
    _file := zip_name( modul, export_dbf_path )
@@ -55,7 +54,7 @@ FUNCTION set_file_access( file_path, mask )
 
    _cmd := "chmod ugo+w " + file_path + mask + "*.*"
 
-   run &_cmd
+   RUN &_cmd
 
    RETURN _ret
 
@@ -95,10 +94,10 @@ FUNCTION update_table_konto( lZamijenitiSifre )
    LOCAL hParams
 
    run_sql_query( "BEGIN" )
-   //IF !f18_lock_tables( { "konto" }, .T. )
-    //  run_sql_query( "ROLLBACK" )
-    //  RETURN lRet
-  // ENDIF
+   // IF !f18_lock_tables( { "konto" }, .T. )
+   // run_sql_query( "ROLLBACK" )
+   // RETURN lRet
+   // ENDIF
 
    SELECT e_konto
    SET ORDER TO TAG "ID"
@@ -143,7 +142,7 @@ FUNCTION update_table_konto( lZamijenitiSifre )
    IF lOk
       lRet := .T.
       hParams := hb_Hash()
-      //hParams[ "unlock" ] :=  { "konto" }
+      // hParams[ "unlock" ] :=  { "konto" }
       run_sql_query( "COMMIT", hParams )
 
    ELSE
@@ -167,10 +166,10 @@ FUNCTION update_table_partn( lZamijenitiSifre )
    LOCAL hParams
 
    run_sql_query( "BEGIN" )
-   //IF !f18_lock_tables( { "partn" }, .T. )
-    //  run_sql_query( "ROLLBACK" )
-  //    RETURN lRet
-  // ENDIF
+   // IF !f18_lock_tables( { "partn" }, .T. )
+   // run_sql_query( "ROLLBACK" )
+   // RETURN lRet
+   // ENDIF
 
    SELECT e_partn
    SET ORDER TO TAG "ID"
@@ -217,7 +216,7 @@ FUNCTION update_table_partn( lZamijenitiSifre )
    IF lOk
       lRet := .T.
       hParams := hb_Hash()
-      //hParams[ "unlock" ] :=  { "partn" }
+      // hParams[ "unlock" ] :=  { "partn" }
       run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
@@ -236,10 +235,10 @@ FUNCTION update_table_roba( lZamijenitiSifre )
    LOCAL hParams
 
    run_sql_query( "BEGIN" )
-   //IF !f18_lock_tables( { "roba" }, .T. )
-    //  run_sql_query( "ROLLBACK" )
-  //    RETURN lRet
-   //ENDIF
+   // IF !f18_lock_tables( { "roba" }, .T. )
+   // run_sql_query( "ROLLBACK" )
+   // RETURN lRet
+   // ENDIF
 
    SELECT e_roba
    SET ORDER TO TAG "ID"
@@ -287,7 +286,7 @@ FUNCTION update_table_roba( lZamijenitiSifre )
    IF lOk
       lRet := .T.
       hParams := hb_Hash()
-      //hParams[ "unlock" ] :=  { "roba" }
+      // hParams[ "unlock" ] :=  { "roba" }
       run_sql_query( "COMMIT", hParams )
 
    ELSE
@@ -324,11 +323,11 @@ STATIC FUNCTION update_rec_konto_struct( hRec )
 
    LOCAL _struct := {}
 
-//   AAdd( _struct, "match_code" )
-//   AAdd( _struct, "pozbilu" )
-//   AAdd( _struct, "pozbils" )
+// AAdd( _struct, "match_code" )
+// AAdd( _struct, "pozbilu" )
+// AAdd( _struct, "pozbils" )
 
-//   dodaj_u_hash_matricu( _struct, @hRec )
+// dodaj_u_hash_matricu( _struct, @hRec )
 
    RETURN .T.
 
@@ -381,12 +380,12 @@ STATIC FUNCTION update_rec_partn_struct( hRec )
    LOCAL _add := {}
    LOCAL _remove := {}
 
-//   AAdd( _add, "match_code" )
-//   dodaj_u_hash_matricu( _add, @hRec )
+// AAdd( _add, "match_code" )
+// dodaj_u_hash_matricu( _add, @hRec )
 
-//   AAdd( _remove, "brisano" )
-//   AAdd( _remove, "rejon" )
-//   brisi_iz_hash_matrice( _remove, @hRec )
+// AAdd( _remove, "brisano" )
+// AAdd( _remove, "rejon" )
+// brisi_iz_hash_matrice( _remove, @hRec )
 
    RETURN .T.
 
@@ -420,10 +419,9 @@ STATIC FUNCTION update_rec_roba_struct( hRec )
    dodaj_u_hash_matricu( _add, @hRec )
    */
 
-
-   //AAdd( _remove, "carina" )
-   //AAdd( _remove, "_m1_" )
-  // AAdd( _remove, "brisano" )
+   // AAdd( _remove, "carina" )
+   // AAdd( _remove, "_m1_" )
+   // AAdd( _remove, "brisano" )
 
    brisi_iz_hash_matrice( _remove, @hRec )
 
@@ -443,6 +441,7 @@ FUNCTION update_sifk_sifv( lFullTransaction )
       cTran := "CONT"
    ENDIF
 
+   o_sifk()
    SELECT e_sifk
    SET ORDER TO TAG "ID2"
    GO TOP
@@ -473,7 +472,6 @@ FUNCTION update_sifk_sifv( lFullTransaction )
    SELECT e_sifv
    SET ORDER TO TAG "ID"
    GO TOP
-
    DO WHILE !Eof() // brisanje sifv
       hRec := dbf_get_rec( .T. ) // konvertuj stringove u utf8
       SELECT sifv
@@ -497,7 +495,6 @@ FUNCTION update_sifk_sifv( lFullTransaction )
 
       SELECT e_sifv
       SKIP
-
    ENDDO
 
    RETURN .T.
@@ -604,7 +601,7 @@ FUNCTION zip_name( modul, export_dbf_path )
       // generisi nove nazive fajlova
       DO WHILE _exist
 
-         ++ _count
+         ++_count
          _file := export_dbf_path + modul + "_exp_" + PadL( AllTrim( Str( _count ) ), 2, "0" ) + _ext
 
          IF !File( _file )

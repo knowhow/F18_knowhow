@@ -99,8 +99,7 @@ FUNCTION m_gen_ug()
 // -----------------------------------------
 FUNCTION gen_ug()
 
-   // otvori tabele
-   o_ugov()
+   o_ugov_tabele()
 
    nN1 := 0
    nN2 := 0

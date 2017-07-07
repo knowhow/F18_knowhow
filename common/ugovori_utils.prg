@@ -24,8 +24,8 @@ FUNCTION SifUgovori()
 
    AAdd( _opc, "1. ugovori                                    " )
    AAdd( _opcexe, {|| lPrev := gPregledSifriIzMenija, gPregledSifriIzMenija := .T., P_Ugov(), gPregledSifriIzMenija := lPrev } )
-   AAdd( _opc, "2. stampa naljepnica iz ugovora " )
-   AAdd( _opcexe, {|| kreiraj_adrese_iz_ugovora() } )
+   AAdd( _opc, "2. štampa naljepnica iz ugovora " )
+   AAdd( _opcexe, {|| ugov_stampa_naljenica() } )
    AAdd( _opc, "3. parametri ugovora" )
    AAdd( _opcexe, {|| DFTParUg( .F. ) } )
    AAdd( _opc, "4. grupna zamjena cijene artikla u ugovoru" )
@@ -38,10 +38,34 @@ FUNCTION SifUgovori()
    RETURN .T.
 
 
+FUNCTION o_ugov()
 
-FUNCTION MSAY2( x, y, c )
+   Select( F_UGOV )
+   my_use  ( "ugov" )
+   SET ORDER TO TAG "ID"
 
-   @ x, y SAY c
+   RETURN .T.
+
+FUNCTION o_rugov()
+
+   Select( F_RUGOV )
+   my_use  ( "rugov" )
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
+FUNCTION MSAY2( x, y, c, nDuzina )
+
+   LOCAL cSay
+
+   IF nDuzina == NIL
+      cSay := c
+   ELSE
+      cSay := LEFT( c, nDuzina )
+   ENDIF
+
+   @ x, y SAY cSay
 
    RETURN .T.
 
@@ -202,7 +226,7 @@ FUNCTION ug_ch_price()
    ENDIF
 
    // ako je sve ok
-   O_RUGOV
+   o_rugov()
    SELECT rugov
    GO TOP
 
@@ -223,4 +247,4 @@ FUNCTION ug_ch_price()
    ENDDO
    BoxC()
 
-   RETURN
+   RETURN .T.

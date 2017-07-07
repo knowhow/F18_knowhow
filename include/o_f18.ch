@@ -39,8 +39,7 @@
 
 
 // ugovori
-#xcommand O_UGOV     => select(F_UGOV)     ;  my_use  ("ugov")      ; set order to tag "ID"
-#xcommand O_RUGOV    => select(F_RUGOV)    ;  my_use  ("rugov")     ; set order to tag "ID"
+
 #xcommand O_GEN_UG   => select(F_GEN_UG)   ;  my_use  ("gen_ug")    ; set order to tag "DAT_GEN"
 #xcommand O_G_UG_P   => select(F_G_UG_P)   ;  my_use  ("gen_ug_p")  ; set order to tag "DAT_GEN"
 

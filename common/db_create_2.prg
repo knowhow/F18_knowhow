@@ -47,8 +47,8 @@ FUNCTION OSifFtxt()
 
 FUNCTION OSifUgov()
 
-   O_UGOV
-   O_RUGOV
+   o_ugov()
+   o_rugov()
    o_dest()
    //o_partner()
    //o_roba()

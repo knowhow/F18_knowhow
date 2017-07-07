@@ -241,10 +241,8 @@ STATIC FUNCTION a_gug_p()
    RETURN aDbf
 
 
-// --------------------------------
-// otvori tabele neophodne za UGOV
-// --------------------------------
-FUNCTION o_ugov()
+
+FUNCTION o_ugov_tabele()
 
    o_fakt_txt()
    //o_sifk()
@@ -255,8 +253,8 @@ FUNCTION o_ugov()
    //o_tarifa()
    //o_partner()
    o_dest()
-   O_UGOV
-   O_RUGOV
+   o_ugov()
+   o_rugov()
    O_GEN_UG
    O_G_UG_P
    //o_konto()
@@ -297,22 +295,3 @@ FUNCTION a_to_gen_p( dDatObr, cIdUgov, cUPartner,  ;
    update_rec_server_and_dbf( "fakt_gen_ug_p", _rec, 1, "FULL" )
 
    RETURN .T.
-
-
-// -------------------------------------
-// da li se koristi destinacija
-// -------------------------------------
-FUNCTION is_dest()
-
-   LOCAL lRet := .F.
-   LOCAL nTArea := Select()
-
-   IF rugov->( FieldPos( "dest" ) ) <> 0 .AND.  File( f18_ime_dbf( "dest" ) )
-
-      lRet := .T.
-
-   ENDIF
-
-   SELECT ( nTArea )
-
-   RETURN lRet

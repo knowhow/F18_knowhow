@@ -42,7 +42,7 @@ FUNCTION p_ugov( cId, dx, dy )
    cHeader += "<R> set.poslj.fakt, "
    cHeader += "<P> pregl.destin."
 
-   O_UGOV
+   o_ugov_tabele()
 
    DFTParUg( .T. )
 
@@ -166,7 +166,7 @@ STATIC FUNCTION ug_key_handler( Ch )
 
    CASE Upper( Chr( Ch ) ) == "P"
 
-      p_dest_2( NIL, ugov->idpartner )
+      p_destinacije( NIL, ugov->idpartner )
 
       RETURN DE_CONT
 
@@ -206,10 +206,10 @@ STATIC FUNCTION ug_key_handler( Ch )
 
       nRec := RecNo()
 
-      kreiraj_adrese_iz_ugovora()
-      O_RUGOV
+      ugov_stampa_naljenica()
+      o_rugov()
       o_dest()
-      O_UGOV
+      o_ugov()
 
       GO ( nRec )
 
@@ -420,16 +420,14 @@ FUNCTION edit_ugovor( lNovi )
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Partner", nBoxLen ) GET _idpartner VALID {|| x := p_partner( @_IdPartner ), MSAY2( m_x + 2, m_y + 35, get_partner_naziv( _IdPartner ) ), x } PICT "@!"
+   @ m_x + nX, m_y + 2 SAY PadL( "Partner", nBoxLen ) GET _idpartner VALID {|| x := p_partner( @_IdPartner ), MSAY2( m_x + 2, m_y + 35, get_partner_naziv( _IdPartner ), 40 ), x } PICT "@!"
 
-   IF is_dest()
+   //IF is_dest()
 
       ++nX
+      @ m_x + nX, m_y + 2 SAY PadL( "Def.dest", nBoxLen ) GET _def_dest  PICT "@!" VALID {|| Empty( _def_dest ) .OR. p_destinacije( @_def_dest, _idpartner ) }
 
-      @ m_x + nX, m_y + 2 SAY PadL( "Def.dest", nBoxLen ) GET _def_dest ;
-         PICT "@!" VALID {|| Empty( _def_dest ) .OR. p_dest_2( @_def_dest, _idpartner ) }
-
-   ENDIF
+   //ENDIF
 
    ++nX
 
@@ -460,25 +458,18 @@ FUNCTION edit_ugovor( lNovi )
    IF ugov->( FieldPos( "F_NIVO" ) ) <> 0
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY PadL( "Nivo fakt.", nBoxLen ) GET _f_nivo PICT "@!" VALID _f_nivo $ "MPG"
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY PadL( "Pr.nivo dana", nBoxLen ) GET _f_p_d_nivo PICT "99999" WHEN _f_nivo == "P"
 
       ++nX
-
       // mjesec
-      @ m_x + nX, m_y + 2 SAY PadL( "Fakturisano do", nBoxLen ) GET _fakt_do_mj ;
-         WHEN  {||  _fakt_do_mj := Month( dat_l_fakt ), .T. } ;
-         PICT "99"
+      @ m_x + nX, m_y + 2 SAY PadL( "Fakturisano do", nBoxLen ) GET _fakt_do_mj WHEN  {||  _fakt_do_mj := Month( ugov->dat_l_fakt ), .T. }  PICT "99"
 
       // godina
-      @ m_x + nX, m_y + 2 + 28  SAY "/" GET _fakt_do_go ;
-         WHEN {||  _fakt_do_go := Year( dat_l_fakt ), .T. } ;
-         VALID {||   _dat_l_fakt := mo_ye( _fakt_do_mj, _fakt_do_go ), .T. } ;
-         PICT "9999"
+      @ m_x + nX, m_y + 2 + 28  SAY "/" GET _fakt_do_go  WHEN {||  _fakt_do_go := Year( ugov->dat_l_fakt ), .T. } ;
+         VALID {||   _dat_l_fakt := mo_ye( _fakt_do_mj, _fakt_do_go ), .T. } PICT "9999"
 
    ENDIF
 
@@ -951,7 +942,7 @@ FUNCTION OsvjeziPrikUg( lWhen, lNew )
    @ m_x + 1, m_y + 30 SAY "Opis ugovora   :" GET wnaz WHEN lWhen
    @ m_x + 2, m_y + 1 SAY "PARTNER        :" GET widpartner ;
       WHEN lWhen ;
-      VALID !lWhen .OR. p_partner( @widpartner ) .AND. MSAY2( m_x + 2, 30, get_partner_naziv( wIdPartner ) ) PICT "@!"
+      VALID !lWhen .OR. p_partner( @widpartner ) .AND. MSAY2( m_x + 2, 30, get_partner_naziv( wIdPartner ), 40 ) PICT "@!"
 
    @ m_x + 3, m_y + 1 SAY "DATUM UGOVORA  :" GET wdatod ;
       WHEN lWhen
@@ -1121,9 +1112,8 @@ STATIC FUNCTION ZaOdgovarajuci()
    RETURN .T.
 
 
-// ----------------------------------------------
-// pogledaj ugovore za partnera
-// ----------------------------------------------
+/*
+
 FUNCTION IzfUgovor()
 
    IF my_get_from_ini( 'FIN', 'VidiUgovor', 'N' ) == "D"
@@ -1131,12 +1121,12 @@ FUNCTION IzfUgovor()
 
       SELECT ( F_UGOV )
       IF !Used()
-         O_UGOV
+         o_ugov()
       ENDIF
 
       SELECT ( F_RUGOV )
       IF !Used()
-         O_RUGOV
+         o_rugov()
       ENDIF
 
       SELECT ( F_DEST )
@@ -1208,6 +1198,7 @@ FUNCTION IzfUgovor()
 
    RETURN .T.
 
+*/
 
 // ----------------------------------
 // uzima prikaz .. 06/2005

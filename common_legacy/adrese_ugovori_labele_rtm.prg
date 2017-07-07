@@ -12,14 +12,14 @@
 #include "f18.ch"
 
 
-FUNCTION kreiraj_adrese_iz_ugovora()
+FUNCTION ugov_stampa_naljenica()
 
    LOCAL cIdRoba, _partner, _ptt, _mjesto
    LOCAL _n_sort, _dat_do, _g_dat
    LOCAL _filter := ""
    LOCAL _index_sort := ""
    LOCAL hRec, cFiltUslovPartner, _usl_mjesto, _usl_ptt
-   LOCAL _ima_destinacija
+   LOCAL lImaDestinacija
    LOCAL _count := 0
    LOCAL _total_kolicina := 0
 
@@ -45,15 +45,15 @@ FUNCTION kreiraj_adrese_iz_ugovora()
       @ m_x + 3, m_y + 2 SAY "Partner  :" GET _partner PICT "@S50!"
       @ m_x + 4, m_y + 2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
       @ m_x + 5, m_y + 2 SAY "PTT      :" GET _ptt PICT "@S50!"
-      @ m_x + 6, m_y + 2 SAY "Gledati tekuci datum (D/N):" GET _g_dat VALID _g_dat $ "DN" PICT "@!"
-      @ m_x + 7, m_y + 2 SAY "**** Nacin sortiranja podataka u pregledu: "
-      @ m_x + 8, m_y + 2 SAY " 1 - kolicina + mjesto + naziv"
-      @ m_x + 9, m_y + 2 SAY " 2 - mjesto + naziv + kolicina"
-      @ m_x + 10, m_y + 2 SAY " 3 - PTT + mjesto + naziv + kolicina"
-      @ m_x + 11, m_y + 2 SAY " 4 - kolicina + PTT + mjesto + naziv"
-      @ m_x + 12, m_y + 2 SAY " 5 - idpartner"
-      @ m_x + 13, m_y + 2 SAY " 6 - kolicina"
-      @ m_x + 14, m_y + 2 SAY "odabrana vrijednost:" GET _n_sort VALID _n_sort $ "1234567" PICT "9"
+      @ m_x + 6, m_y + 2 SAY8 "Gledati tekući datum (D/N):" GET _g_dat VALID _g_dat $ "DN" PICT "@!"
+      @ m_x + 7, m_y + 2 SAY8 "**** Način sortiranja podataka u pregledu: "
+      @ m_x + 8, m_y + 2 SAY8 " 1 - količina + mjesto + naziv"
+      @ m_x + 9, m_y + 2 SAY8 " 2 - mjesto + naziv + količina"
+      @ m_x + 10, m_y + 2 SAY8 " 3 - PTT + mjesto + naziv + kolicina"
+      @ m_x + 11, m_y + 2 SAY8 " 4 - količina + PTT + mjesto + naziv"
+      @ m_x + 12, m_y + 2 SAY8 " 5 - idpartner"
+      @ m_x + 13, m_y + 2 SAY8 " 6 - količina"
+      @ m_x + 14, m_y + 2 SAY8 "odabrana vrijednost:" GET _n_sort VALID _n_sort $ "1234567" PICT "9"
       READ
 
       IF LastKey() == K_ESC
@@ -82,10 +82,10 @@ FUNCTION kreiraj_adrese_iz_ugovora()
    _index_sort := _index_sort + AllTrim( _n_sort )
    _create_labelu_dbf()
 
-   IF is_dest()
+   //IF is_dest()
       SELECT dest
       SET FILTER TO
-   ENDIF
+   //ENDIF
 
    SELECT ugov
    SET FILTER TO
@@ -184,24 +184,25 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
       @ m_x + 2, m_y + 2 SAY "Partner: " + ugov->idpartner
 
-      _ima_destinacija := .F.
+      lImaDestinacija := .F.
 
-      IF is_dest() .AND. !Empty( rugov->dest )
+      IF !Empty( rugov->dest )
 
          SELECT dest
+
          SET ORDER TO TAG "ID"
          GO TOP
          SEEK ( ugov->idpartner + rugov->dest )
 
          IF Found()
-            _ima_destinacija := .T.
+            lImaDestinacija := .T.
          ENDIF
 
       ENDIF
 
       SELECT labelu
 
-      IF _ima_destinacija
+      IF lImaDestinacija
 
          hRec[ "destin" ] := dest->id
          hRec[ "naz" ] := dest->naziv
@@ -244,8 +245,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
    label_to_lab2( _index_sort )
 
-   MsgBeep( "Ukupno generisano " + AllTrim( Str( _count ) ) + ;
-      " naljepnica, kolicina: " + AllTrim( Str( _total_kolicina, 12, 0 ) ) )
+   MsgBeep( "Ukupno generisano " + AllTrim( Str( _count ) ) +  " naljepnica, količina: " + AllTrim( Str( _total_kolicina, 12, 0 ) ) )
 
    stampa_pregleda_naljepnica( _index_sort )
 
@@ -321,13 +321,13 @@ STATIC FUNCTION stampa_pregleda_naljepnica( index_sort )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _open_tables()
 
-   O_UGOV
-   O_RUGOV
+   o_ugov()
+   o_rugov()
    o_dest()
    //o_partner()
    //o_roba()

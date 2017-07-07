@@ -119,10 +119,25 @@ FUNCTION EdDestBlok( Ch, cDest )
 
 
 FUNCTION get_partner_naziv( cId )
-   RETURN find_field_by_id( "partn", cId, "naz" )
+
+   LOCAL cRet
+
+   PushWA()
+   cRet := find_field_by_id( "partn", cId, "naz" )
+   PopWA()
+
+   RETURN cRet
+
 
 FUNCTION get_partner_naziv2( cId )
-   RETURN find_field_by_id( "partn", cId, "naz2" )
+
+   LOCAL cRet
+
+   PushWA()
+   cRet := find_field_by_id( "partn", cId, "naz2" )
+   PopWA()
+
+   RETURN cRet
 
 
 
@@ -147,22 +162,56 @@ FUNCTION get_partner_name_mjesto( cIdPartner )
 
 
 FUNCTION get_kred_naz( cId )
-   RETURN find_field_by_id( "kred", cId, "naz" )
+
+   LOCAL cRet
+
+   PushWA()
+   cRet := find_field_by_id( "kred", cId, "naz" )
+   PopWA()
+
+   RETURN cRet
 
 
 FUNCTION get_rj_naz( cId )
-   RETURN find_field_by_id( "rj", cId, "naz" )
 
+   LOCAL cRet
+
+   PushWA()
+   cRet := find_field_by_id( "rj", cId, "naz" )
+   PopWA()
+
+   RETURN cRet
 
 FUNCTION get_ld_rj_naz( cId )
-   RETURN find_field_by_id( "ld_rj", cId, "naz" )
+
+   LOCAL cRet
+
+   PushWA()
+   cRet := find_field_by_id( "ld_rj", cId, "naz" )
+   PopWA()
+
+   RETURN cRet
 
 FUNCTION get_roba_sifradob( cId )
-   RETURN find_field_by_id( "roba", cId, "sifradob" )
+
+   LOCAL cRet
+
+   PushWA()
+   cRet := find_field_by_id( "roba", cId, "sifradob" )
+   PopWA()
+
+   RETURN cRet
 
 
 FUNCTION get_vrstep_naz( cId )
-   RETURN find_field_by_id( "vrstep", cId, "naz" )
+
+   LOCAL cRet
+
+   PushWA()
+   cRet := find_field_by_id( "vrstep", cId, "naz" )
+   PopWA()
+
+   RETURN cRet
 
 /*
 FUNCTION get_partner_naz_naz2_mjesto()

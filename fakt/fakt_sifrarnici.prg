@@ -363,8 +363,8 @@ STATIC FUNCTION ObSif()
    o_valute()
    //o_rj()
    o_sastavnica()
-   O_UGOV
-   O_RUGOV
+   o_ugov()
+   o_rugov()
 
    IF RUGOV->( FieldPos( "DEST" ) ) <> 0
       o_dest()
@@ -378,7 +378,7 @@ STATIC FUNCTION ObSif()
    O_VRSTEP
    o_ops()
 
-   RETURN
+   RETURN .T.
 
 
 

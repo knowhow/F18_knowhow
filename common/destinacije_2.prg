@@ -20,10 +20,8 @@ STATIC _x_pos
 STATIC _y_pos
 
 
-// ----------------------------------
-// pregled destinacije
-// ----------------------------------
-FUNCTION p_dest_2( cId, cPartId, dx, dy )
+
+FUNCTION p_destinacije( cId, cPartId, dx, dy )
 
    LOCAL nArr := Select()
    LOCAL cHeader := ""

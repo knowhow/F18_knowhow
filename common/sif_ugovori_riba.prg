@@ -165,7 +165,7 @@ FUNCTION edit_rugov( lNovi )
    LOCAL nCijena
    LOCAL lCijena := .F.
    LOCAL lK1 := .F.
-   LOCAL lDest := .F.
+   //LOCAL lDest := .F.
    LOCAL cK1
    LOCAL cK2
    LOCAL nX := 1
@@ -177,9 +177,9 @@ FUNCTION edit_rugov( lNovi )
    nRabat := rabat
    nPorez := porez
 
-   IF is_dest()
-      lDest := .T.
-   ENDIF
+   //IF is_dest()
+  //    lDest := .T.
+   //ENDIF
 
    IF rugov->( FieldPos( "K1" ) ) <> 0
       cK1 := k1
@@ -192,20 +192,20 @@ FUNCTION edit_rugov( lNovi )
       lCijena := .T.
    ENDIF
 
-   IF lDest
+   //IF lDest
       cDestinacija := dest
-   ENDIF
+   //ENDIF
 
    Box(, 8, 75, .F. )
 
    @ m_x + nX, m_y + 2 SAY PadL( "Roba", nBoxLen ) GET cIdRoba PICT "@!" VALID P_Roba( @cIDRoba )
 
-   IF lDest
+   //IF lDest
 
       ++ nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Destinacija:", nBoxLen ) GET cDestinacija PICT "@!" valid {|| Empty( cDestinacija ) .OR. p_dest_2( @cDestinacija, __partn ) }
+      @ m_x + nX, m_y + 2 SAY PadL( "Destinacija:", nBoxLen ) GET cDestinacija PICT "@!" valid {|| Empty( cDestinacija ) .OR. p_destinacije( @cDestinacija, __partn ) }
 
-   ENDIF
+   //ENDIF
 
    ++ nX
 
@@ -251,9 +251,9 @@ FUNCTION edit_rugov( lNovi )
    _vars[ "rabat" ] := nRabat
    _vars[ "porez" ] := nPorez
 
-   IF lDest
+   //IF lDest
       _vars[ "dest" ] := cDestinacija
-   ENDIF
+   //ENDIF
 
    IF lCijena
       _vars[ "cijena" ] := nCijena
@@ -300,7 +300,7 @@ FUNCTION vrati_opis_ugovora( cIdUgov )
 
    SELECT (F_RUGOV)
    IF !USED()
-      O_RUGOV
+      o_rugov()
    ENDIF
 
    SELECT rugov

@@ -96,7 +96,7 @@ STATIC FUNCTION g_ug_params( dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoP
       WHEN  {|| cOpis := iif( Empty( cOpis ), PadR( "Obracun " + fakt_do( dDatObr ), 100 ), cOpis ), .T. } ;
       PICT "@S40"
 
-   IF is_dest()
+   //IF is_dest()
 
       nX += 2
       @ m_x + nX, m_y + 2 SAY PadL( "Uzeti u obzir destinacije ?", nBoxLen + 10 ) GET cDestin VALID cDestin $ "DN" PICT "@!"
@@ -107,9 +107,9 @@ STATIC FUNCTION g_ug_params( dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoP
       nX += 1
       @ m_x + nX, m_y + 2 SAY PadL( "Datum zadnjeg fakturisanja ?", nBoxLen + 16 ) GET dLFakt
 
-   ELSE
-      cDestin := nil
-   ENDIF
+   //ELSE
+  //    cDestin := nil
+  // ENDIF
 
    nX += 1
    @ m_x + nX, m_y + 2 SAY PadL( "Automatski azuriraj fakture (D/N) ?", nBoxLen + 16 ) GET cAutoAzur ;
@@ -167,8 +167,8 @@ FUNCTION gen_ug_2()
    LOCAL _auto_azur
    LOCAL _doks_generated := {}
 
-   // otvori tabele
-   o_ugov()
+
+   o_ugov_tabele()
 
    // otvori parametre generacije
    lSetParams := .T.
@@ -1038,8 +1038,7 @@ STATIC FUNCTION postoji_generacija( dDatObr, cIdArt )
       vrati_nazad( dDatObr, cIdArt )
 
       my_close_all_dbf()
-      o_ugov()
-      // otvori i fakt
+      o_ugov_tabele()
       o_fakt()
       o_fakt_pripr()
       SELECT gen_ug

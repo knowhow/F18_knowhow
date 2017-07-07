@@ -397,7 +397,7 @@ FUNCTION generisi_fakturu( is_opcine )
 
       IF pitanje(, "Setovati datum uplate za partnera ?", "N" ) == "D"
 
-         O_UGOV
+         o_ugov()
          SELECT ugov
          SET ORDER TO TAG "PARTNER"
          GO TOP

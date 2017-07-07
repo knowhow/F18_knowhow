@@ -943,14 +943,14 @@ FUNCTION UGenNar()
 
    SELECT ( F_UGOV )
    IF !Used()
-      O_UGOV
+      o_ugov()
    ENDIF
    SET ORDER TO TAG "1"
    HSEEK "D" + "G" + _idpartner
    IF Found()
       SELECT ( F_RUGOV )
       IF !Used()
-         O_RUGOV
+         o_rugov()
       ENDIF
       SET ORDER TO TAG "ID"
       SELECT UGOV

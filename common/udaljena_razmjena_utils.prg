@@ -441,7 +441,9 @@ FUNCTION update_sifk_sifv( lFullTransaction )
       cTran := "CONT"
    ENDIF
 
-   o_sifk()
+   o_sifk() // treba za seek
+   o_sifv() // treba za brisanje
+
    SELECT e_sifk
    SET ORDER TO TAG "ID2"
    GO TOP
@@ -496,6 +498,11 @@ FUNCTION update_sifk_sifv( lFullTransaction )
       SELECT e_sifv
       SKIP
    ENDDO
+
+   SELECT sifk
+   USE
+   SELECT sifv
+   USE
 
    RETURN .T.
 

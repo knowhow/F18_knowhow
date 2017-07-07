@@ -13,27 +13,20 @@
 #include "f18.ch"
 
 
-
-// ------------------------------------------------
-// kalkulacija -> faktura : prenos
-// ------------------------------------------------
 FUNCTION kalk_fakt()
 
-   LOCAL izb := 1
-   PUBLIC gDirKalk := ""
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   PRIVATE izbor := 1
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
+   AAdd( aOpc, "1. prenos kalk -> fakt            " )
+   AAdd( aOpcExe, {|| kalk_2_fakt() } )
+   AAdd( aOpc, "2. prenos kalk->fakt za partnera  " )
+   AAdd( aOpcExe, {|| kalkp_2_fakt() } )
+   AAdd( aOpc, "3. parametri prenosa" )
+   AAdd( aOpcExe, {|| _params() } )
 
-   AAdd( opc, "1. prenos kalk -> fakt            " )
-   AAdd( opcexe, {|| kalk_2_fakt() } )
-   AAdd( opc, "2. prenos kalk->fakt za partnera  " )
-   AAdd( opcexe, {|| kalkp_2_fakt() } )
-   AAdd( opc, "3. parametri prenosa" )
-   AAdd( opcexe, {|| _params() } )
-
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "prenosfakt" )
+   f18_menu( "pfakt", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.
 

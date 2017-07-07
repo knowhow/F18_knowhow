@@ -14,67 +14,69 @@
 
 FUNCTION opci_sifarnici()
 
-   PRIVATE Opc := {}
-   PRIVATE opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor
 
-   AAdd( opc, "1. partneri                          " )
+   AAdd( aOpc, "1. partneri                          " )
 
-   AAdd( opcexe, {|| p_partner() } )
+   AAdd( aOpcExe, {|| p_partner() } )
 
    IF ( programski_modul() <> "FIN" )
-      AAdd( opc, "2. konta" )
-      AAdd( opcexe, {|| P_Konto() } )
+      AAdd( aOpc, "2. konta" )
+      AAdd( aOpcExe, {|| P_Konto() } )
 
    ELSE
-      AAdd( opc, "2. ----------------- " )
-      AAdd( opcexe, {|| NotImp() } )
+      AAdd( aOpc, "2. ----------------- " )
+      AAdd( aOpcExe, {|| NotImp() } )
    ENDIF
 
-   AAdd( opc, "3. tipovi naloga" )
-   AAdd( opcexe, {|| browse_tnal() } )
+   AAdd( aOpc, "3. tipovi naloga" )
+   AAdd( aOpcExe, {|| browse_tnal() } )
 
 
-   AAdd( opc, "4. tipovi dokumenata" )
-   AAdd( opcexe, {|| browse_tdok() } )
+   AAdd( aOpc, "4. tipovi dokumenata" )
+   AAdd( aOpcExe, {|| browse_tdok() } )
 
 
-   AAdd( opc, "5. valute" )
-   AAdd( opcexe, {|| P_Valuta() } )
+   AAdd( aOpc, "5. valute" )
+   AAdd( aOpcExe, {|| P_Valuta() } )
 
 
-   AAdd( opc, "6. radne jedinice" )
-   AAdd( opcexe, {|| P_RJ() } )
+   AAdd( aOpc, "6. radne jedinice" )
+   AAdd( aOpcExe, {|| P_RJ() } )
 
 
-   AAdd( opc, "7. općine" )
-   AAdd( opcexe, {|| P_Ops() } )
+   AAdd( aOpc, "7. općine" )
+   AAdd( aOpcExe, {|| P_Ops() } )
 
 
-   AAdd( opc, "8. banke" )
-   AAdd( opcexe, {|| P_Banke() } )
+   AAdd( aOpc, "8. banke" )
+   AAdd( aOpcExe, {|| P_Banke() } )
 
 
-   AAdd( opc, "9. sifk - karakteristike" )
-   AAdd( opcexe, {|| P_SifK() } )
+   AAdd( aOpc, "9. sifk - karakteristike" )
+   AAdd( aOpcExe, {|| P_SifK() } )
 
 
-   AAdd( opc, "A. vrste plaćanja" )
-   AAdd( opcexe, {|| P_VrsteP() } )
+   AAdd( aOpc, "A. vrste plaćanja" )
+   AAdd( aOpcExe, {|| P_VrsteP() } )
 
 
-   AAdd( opc, "R. pravila" )
-   AAdd( opcexe, {|| p_rules() } )
+   AAdd( aOpc, "R. pravila" )
+   AAdd( aOpcExe, {|| p_rules() } )
 
    IF ( IsRamaGlas() .OR.  gModul == "FAKT" .AND. glRadNal )
-      AAdd( opc, "O. objekti" )
-      AAdd( opcexe, {|| P_fakt_objekti() } )
+      AAdd( aOpc, "O. objekti" )
+      AAdd( aOpcExe, {|| P_fakt_objekti() } )
    ENDIF
 
    open_sif_tables_1()
 
-   PRIVATE Izbor := 1
    gPregledSifriIzMenija := .T.
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "ssvi" )
+
+   f18_menu( "ssvi", .F., nIzbor, aOpc, aOpcExe )
+
    gPregledSifriIzMenija := .F.
 
    my_close_all_dbf()

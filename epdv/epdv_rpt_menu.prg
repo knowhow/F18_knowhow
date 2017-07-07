@@ -15,34 +15,34 @@
 
 FUNCTION epdv_izvjestaji()
 
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( opc, "1. kuf lista dokumenata " )
-   AAdd( opcexe, {|| r_lista( "KUF" ) } )
-   AAdd( opc, "2. kuf" )
-   AAdd( opcexe, {|| rpt_kuf() } )
+   AAdd( aOpc, "1. kuf lista dokumenata " )
+   AAdd( aOpcExe, {|| r_lista( "KUF" ) } )
+   AAdd( aOpc, "2. kuf" )
+   AAdd( aOpcExe, {|| rpt_kuf() } )
 
-   AAdd( opc, "-------------------------" )
-   AAdd( opcexe, {|| nil } )
-
-
-   AAdd( opc, "3. kif lista dokumenata " )
-   AAdd( opcexe, {|| r_lista( "KIF" ) } )
-   AAdd( opc, "4. kif" )
-   AAdd( opcexe, {|| rpt_kif() } )
-
-   AAdd( opc, "-------------------------" )
-   AAdd( opcexe, {|| nil } )
-
-   AAdd( opc, "5. prijava pdv-a" )
-   AAdd( opcexe, {|| rpt_p_pdv() } )
-
-   AAdd( opc, "-------------------------" )
-   AAdd( opcexe, {|| nil } )
+   AAdd( aOpc, "-------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
 
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "rpt" )
+   AAdd( aOpc, "3. kif lista dokumenata " )
+   AAdd( aOpcExe, {|| r_lista( "KIF" ) } )
+   AAdd( aOpc, "4. kif" )
+   AAdd( aOpcExe, {|| rpt_kif() } )
 
-   RETURN
+   AAdd( aOpc, "-------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
+
+   AAdd( aOpc, "5. prijava pdv-a" )
+   AAdd( aOpcExe, {|| rpt_p_pdv() } )
+
+   AAdd( aOpc, "-------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
+
+
+   f18_menu( "erpt", .F., nIzbor, aOpc, aOpcExe )
+
+   RETURN .T.

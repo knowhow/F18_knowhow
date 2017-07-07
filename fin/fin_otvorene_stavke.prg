@@ -15,42 +15,42 @@
 
 FUNCTION fin_otvorene_stavke_meni()
 
-   PRIVATE izbor := 1
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
+
    PRIVATE gnLost := 0
 
-   AAdd( opc, "1. ručno zatvaranje                                 " )
-   AAdd( opcexe, {|| fin_rucno_zatvaranje_otvorenih_stavki() } )
+   AAdd( aOpc, "1. ručno zatvaranje                                 " )
+   AAdd( aOpcExe, {|| fin_rucno_zatvaranje_otvorenih_stavki() } )
 
-   AAdd( opc, "2. automatsko zatvaranje" )
-   AAdd( opcexe, {|| fin_automatsko_zatvaranje_otvorenih_stavki() } )
+   AAdd( aOpc, "2. automatsko zatvaranje" )
+   AAdd( aOpcExe, {|| fin_automatsko_zatvaranje_otvorenih_stavki() } )
 
-   AAdd( opc, "3. kartica otvorenih stavki" )
-   AAdd( opcexe, {|| fin_suban_kartica( .T. ) } )
+   AAdd( aOpc, "3. kartica otvorenih stavki" )
+   AAdd( aOpcExe, {|| fin_suban_kartica( .T. ) } )
 
-   AAdd( opc, "4. usporedna kartica dva konta" )
-   AAdd( opcexe, {|| fin_suban_kartica2( .T. ) } )
+   AAdd( aOpc, "4. usporedna kartica dva konta" )
+   AAdd( aOpcExe, {|| fin_suban_kartica2( .T. ) } )
 
-   AAdd( opc, "5. specifikacija otvorenih stavki" )
-   AAdd( opcexe, {|| fin_specif_otvorene_stavke() } )
+   AAdd( aOpc, "5. specifikacija otvorenih stavki" )
+   AAdd( aOpcExe, {|| fin_specif_otvorene_stavke() } )
 
-   AAdd( opc, "6. ios" )
-   AAdd( opcexe, {|| fin_ios_meni() } )
-   AAdd( opc, "7. kartice grupisane po brojevima veze" )
-   AAdd( opcexe, {|| fin_kartica_otvorene_stavke_po_broju_veze( .T. ) } )
+   AAdd( aOpc, "6. ios" )
+   AAdd( aOpcExe, {|| fin_ios_meni() } )
+   AAdd( aOpc, "7. kartice grupisane po brojevima veze" )
+   AAdd( aOpcExe, {|| fin_kartica_otvorene_stavke_po_broju_veze( .T. ) } )
 
-   AAdd( opc, "8. kompenzacija" )
-   AAdd( opcexe, {|| Kompenzacija() } )
+   AAdd( aOpc, "8. kompenzacija" )
+   AAdd( aOpcExe, {|| Kompenzacija() } )
 
-   // AAdd( opc, "9. asistent otvorenih stavki" )
-   // AAdd( opcexe, {|| fin_asistent_otv_st() } )
+   // AAdd( aOpc, "9. asistent otvorenih stavki" )
+   // AAdd( aOpcExe, {|| fin_asistent_otv_st() } )
 
-   AAdd( opc, "B. brisanje svih markera otvorenih stavki" )
-   AAdd( opcexe, {|| fin_brisanje_markera_otvorenih_stavki() } )
+   AAdd( aOpc, "B. brisanje svih markera otvorenih stavki" )
+   AAdd( aOpcExe, {|| fin_brisanje_markera_otvorenih_stavki() } )
 
-   Izbor := 1
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "oas" )
+   f18_menu( "oasi", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.
 
@@ -76,7 +76,7 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
    lRet := use_sql( "del_ostav", cSql )
    MsgC()
 
-   MsgBeep( "ostav cnt=" + Str( del_ostav->count, 5 ) )
+   MsgBeep( "ostav cnt=" + Str( del_ostav->COUNT, 5 ) )
 
    RETURN lRet
 

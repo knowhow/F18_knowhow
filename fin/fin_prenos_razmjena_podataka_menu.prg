@@ -15,22 +15,22 @@
 
 FUNCTION fin_razmjena_podataka_meni()
 
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( opc, "1. fakt->fin                              " )
-   AAdd( opcexe, {|| fakt_fin_prenos() } )
-   //AAdd( opc, "2. ld->fin " )
-   //AAdd( opcexe, {|| LdFin() } )
-   AAdd( opc, "3. import txt elektronsko bankarstvo bbi" )
-   AAdd( opcexe, {|| import_elektronsko_bankarstvo_bbi() } )
-   AAdd( opc, "4. export dbf (svi nalozi) " )
-   AAdd( opcexe, {|| st_sv_nal() } )
-   AAdd( opc, "6. pos->fin " )
-   AAdd( opcexe, {|| PosFin() } )
+   AAdd( aOpc, "1. fakt->fin                              " )
+   AAdd( aOpcExe, {|| fakt_fin_prenos() } )
+   //AAdd( aOpc, "2. ld->fin " )
+   //AAdd( aOpcExe, {|| LdFin() } )
+   AAdd( aOpc, "3. import txt elektronsko bankarstvo bbi" )
+   AAdd( aOpcExe, {|| import_elektronsko_bankarstvo_bbi() } )
+   AAdd( aOpc, "4. export dbf (svi nalozi) " )
+   AAdd( aOpcExe, {|| st_sv_nal() } )
+   AAdd( aOpc, "6. pos->fin " )
+   AAdd( aOpcExe, {|| PosFin() } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "raz" )
+   f18_menu( "fraz", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.
 
@@ -41,12 +41,12 @@ FUNCTION fin_razmjena_podataka_meni()
  */
 FUNCTION PosFin()
 
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
+   PRIVATE aOpc := {}
+   PRIVATE aOpcExe := {}
    PRIVATE Izbor := 1
 
-   AAdd( opc, "1. pos polozi                   " )
-   AAdd( opcexe, {|| PromVP2Fin() } )
+   AAdd( aOpc, "1. pos polozi                   " )
+   AAdd( aOpcExe, {|| PromVP2Fin() } )
 
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "pf" )
 

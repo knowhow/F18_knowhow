@@ -14,22 +14,23 @@
 
 FUNCTION fakt_sifrarnik()
 
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( opc, "1. opći šifarnici              " )
-   AAdd( opcexe, {|| opci_sifarnici() } )
+   AAdd( aOpc, "1. opći šifarnici              " )
+   AAdd( aOpcExe, {|| opci_sifarnici() } )
 
-   AAdd( opc, "2. robno-materijalno poslovanje " )
-   AAdd( opcexe, {|| sif_roba_tarife_koncij_sast() } )
+   AAdd( aOpc, "2. robno-materijalno poslovanje " )
+   AAdd( aOpcExe, {|| sif_roba_tarife_koncij_sast() } )
 
-   AAdd( opc, "3. fakt->txt" )
-   AAdd( opcexe, {|| OSifFtxt(), P_FTxt() } )
+   AAdd( aOpc, "3. fakt->txt" )
+   AAdd( aOpcExe, {|| OSifFtxt(), P_FTxt() } )
 
-   AAdd( opc, "U. ugovori" )
-   AAdd( opcexe, {|| o_ugov(), SifUgovori() } )
+   AAdd( aOpc, "U. ugovori" )
+   AAdd( aOpcExe, {|| o_ugov(), ugov_sif_meni() } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "fsif" )
+
+   f18_menu( "fasi", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.

@@ -14,18 +14,18 @@
 
 FUNCTION fin_izvjestaji_ostali()
 
-   PRIVATE Izbor := 1
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( opc, "1. pregled promjena na računu               " )
-   AAdd( opcexe, {|| PrPromRn() } )
+   AAdd( aOpc, "1. pregled promjena na računu               " )
+   AAdd( aOpcExe, {|| PrPromRn() } )
 
    IF ( IsRamaGlas() )
-      AAdd( opc, "P. specifikacije za pogonsko knjigovodstvo" )
-      AAdd( opcexe, {|| IzvjPogonK() } )
+      AAdd( aOpc, "P. specifikacije za pogonsko knjigovodstvo" )
+      AAdd( aOpcExe, {|| IzvjPogonK() } )
    ENDIF
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "ost" )
+   f18_menu( "fost", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .F.

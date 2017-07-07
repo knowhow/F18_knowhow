@@ -14,34 +14,35 @@
 
 FUNCTION fin_izvjestaji()
 
-   PRIVATE Izbor := 1
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( opc, "1. kartica                      " )
-   AAdd( opcexe, {|| fin_kartice_menu() } )
+   AAdd( aOpc, "1. kartica                      " )
+   AAdd( aOpcExe, {|| fin_kartice_menu() } )
 
-   AAdd( opc, "2. bruto bilansi" )
-   AAdd( opcexe, {|| FinBrutoBilans():New():print() } )
+   AAdd( aOpc, "2. bruto bilansi" )
+   AAdd( aOpcExe, {|| FinBrutoBilans():New():print() } )
 
-   AAdd( opc, "3. specifikacije" )
-   AAdd( opcexe, {|| fin_menu_specifikacije() } )
+   AAdd( aOpc, "3. specifikacije" )
+   AAdd( aOpcExe, {|| fin_menu_specifikacije() } )
 
-   AAdd( opc, "4. ročni intervali" )
-   AAdd( opcexe, {|| fin_rocni_intervali_meni() } )
+   AAdd( aOpc, "4. ročni intervali" )
+   AAdd( aOpcExe, {|| fin_rocni_intervali_meni() } )
 
-//   AAdd( opc, "5. proizvoljni izvještaji" )
-//   AAdd( opcexe, {|| ProizvFin() } )
+// AAdd( aOpc, "5. proizvoljni izvještaji" )
+// AAdd( aOpcExe, {|| ProizvFin() } )
 
-   AAdd( opc, "6. dnevnik naloga" )
-   AAdd( opcexe, {|| fin_dnevnik_naloga() } )
+   AAdd( aOpc, "6. dnevnik naloga" )
+   AAdd( aOpcExe, {|| fin_dnevnik_naloga() } )
 
-   AAdd( opc, "7. ostali izvještaji" )
-   AAdd( opcexe, {|| fin_izvjestaji_ostali() } )
+   AAdd( aOpc, "7. ostali izvještaji" )
+   AAdd( aOpcExe, {|| fin_izvjestaji_ostali() } )
 
-   AAdd( opc, "8. blagajnicki nalog" )
-   AAdd( opcexe, {|| blag_azur() } )
+   AAdd( aOpc, "8. blagajnički nalog" )
+   AAdd( aOpcExe, {|| blag_azur() } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "izvj" )
+
+   f18_menu( "fizvj", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .F.

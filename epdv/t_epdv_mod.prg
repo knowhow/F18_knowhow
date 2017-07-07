@@ -43,32 +43,33 @@ METHOD mMenu()
 
 METHOD programski_modul_osnovni_meni()
 
-   PRIVATE Izbor := 1
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( opc, "1. KUF unos/ispravka           " )
-   AAdd( opcexe, {|| epdv_edit_kuf() } )
-   AAdd( opc, "2. KIF unos/ispravka" )
-   AAdd( opcexe, {|| epdv_edit_kif() } )
-   AAdd( opc, "3. generacija dokumenata" )
-   AAdd( opcexe, {|| epdv_generisanje() } )
-   AAdd( opc, "4. izvještaji" )
-   AAdd( opcexe, {|| epdv_izvjestaji() } )
-   AAdd( opc, "------------------------------------" )
-   AAdd( opcexe, {|| nil } )
-   AAdd( opc, "S. šifarnici" )
-   AAdd( opcexe, {|| epdv_sifarnici() } )
-   AAdd( opc, "------------------------------------" )
-   AAdd( opcexe, {|| nil } )
-   AAdd( opc, "9. administracija baze podataka" )
-   AAdd( opcexe, {|| epdv_admin_menu() } )
-   AAdd( opc, "------------------------------------" )
-   AAdd( opcexe, {|| nil } )
-   AAdd( opc, "X. parametri" )
-   AAdd( opcexe, {|| epdv_parametri() } )
+   AAdd( aOpc, "1. KUF unos/ispravka           " )
+   AAdd( aOpcExe, {|| epdv_edit_kuf() } )
+   AAdd( aOpc, "2. KIF unos/ispravka" )
+   AAdd( aOpcExe, {|| epdv_edit_kif() } )
+   AAdd( aOpc, "3. generacija dokumenata" )
+   AAdd( aOpcExe, {|| epdv_generisanje() } )
+   AAdd( aOpc, "4. izvještaji" )
+   AAdd( aOpcExe, {|| epdv_izvjestaji() } )
+   AAdd( aOpc, "------------------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
+   AAdd( aOpc, "S. šifarnici" )
+   AAdd( aOpcExe, {|| epdv_sifarnici() } )
+   AAdd( aOpc, "------------------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
+   AAdd( aOpc, "9. administracija baze podataka" )
+   AAdd( aOpcExe, {|| epdv_admin_menu() } )
+   AAdd( aOpc, "------------------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
+   AAdd( aOpc, "X. parametri" )
+   AAdd( aOpcExe, {|| epdv_parametri() } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "gpdv", .T., .F. )
+
+   f18_menu( "gpdv", .T., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.
 
@@ -76,7 +77,6 @@ METHOD programski_modul_osnovni_meni()
 
 
 METHOD set_module_gvars()
-
 
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
@@ -97,6 +97,5 @@ METHOD set_module_gvars()
 
 
    gModul := "EPDV"
-
 
    RETURN .T.

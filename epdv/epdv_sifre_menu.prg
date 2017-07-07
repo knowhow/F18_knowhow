@@ -14,33 +14,32 @@
 
 FUNCTION epdv_sifarnici()
 
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( opc, "1. partneri               " )
-   AAdd( opcexe, {|| p_partner() } )
-   AAdd( opc, "-------------------------" )
-   AAdd( opcexe, {|| nil } )
+   AAdd( aOpc, "1. partneri               " )
+   AAdd( aOpcExe, {|| p_partner() } )
+   AAdd( aOpc, "-------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
 
-   AAdd( opc, "5. sheme generacije kuf" )
-   AAdd( opcexe, {|| p_sg_kuf() } )
-   AAdd( opc, "6. sheme generacije kif" )
-   AAdd( opcexe, {|| p_sg_kif() } )
+   AAdd( aOpc, "5. sheme generacije kuf" )
+   AAdd( aOpcExe, {|| p_sg_kuf() } )
+   AAdd( aOpc, "6. sheme generacije kif" )
+   AAdd( aOpcExe, {|| p_sg_kif() } )
 
-   AAdd( opc, "-------------------------" )
-   AAdd( opcexe, {|| nil } )
+   AAdd( aOpc, "-------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
 
-   AAdd( opc, "8. tarife" )
-   AAdd( opcexe, {|| P_Tarifa() } )
+   AAdd( aOpc, "8. tarife" )
+   AAdd( aOpcExe, {|| P_Tarifa() } )
 
-   AAdd( opc, "-------------------------" )
-   AAdd( opcexe, {|| nil } )
+   AAdd( aOpc, "-------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
 
-   AAdd( opc, "S. sifk" )
-   AAdd( opcexe, {|| P_SifK() } )
+   AAdd( aOpc, "S. sifk" )
+   AAdd( aOpcExe, {|| P_SifK() } )
 
-
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "sif" )
+   f18_menu( "esif", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.

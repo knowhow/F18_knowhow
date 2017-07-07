@@ -12,26 +12,24 @@
 #include "f18.ch"
 
 
-// --------------------------------------
-// meni sifrarnik ugovora
-// --------------------------------------
-FUNCTION SifUgovori()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+FUNCTION ugov_sif_meni()
+
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
    LOCAL lPrev
 
-   AAdd( _opc, "1. ugovori                                    " )
-   AAdd( _opcexe, {|| lPrev := gPregledSifriIzMenija, gPregledSifriIzMenija := .T., P_Ugov(), gPregledSifriIzMenija := lPrev } )
-   AAdd( _opc, "2. štampa naljepnica iz ugovora " )
-   AAdd( _opcexe, {|| ugov_stampa_naljenica() } )
-   AAdd( _opc, "3. parametri ugovora" )
-   AAdd( _opcexe, {|| DFTParUg( .F. ) } )
-   AAdd( _opc, "4. grupna zamjena cijene artikla u ugovoru" )
-   AAdd( _opcexe, {|| ug_ch_price() } )
+   AAdd( aOpc, "1. ugovori                                    " )
+   AAdd( aOpcExe, {|| lPrev := gPregledSifriIzMenija, gPregledSifriIzMenija := .T., P_Ugov(), gPregledSifriIzMenija := lPrev } )
+   AAdd( aOpc, "2. štampa naljepnica iz ugovora " )
+   AAdd( aOpcExe, {|| ugov_stampa_naljenica() } )
+   AAdd( aOpc, "3. parametri ugovora" )
+   AAdd( aOpcExe, {|| DFTParUg( .F. ) } )
+   AAdd( aOpc, "4. grupna zamjena cijene artikla u ugovoru" )
+   AAdd( aOpcExe, {|| ug_ch_price() } )
 
-   f18_menu( "mugo", .F., _izbor, _opc, _opcexe )
+   f18_menu( "mugo", .F., nIzbor, aOpc, aOpcExe )
 
    my_close_all_dbf()
 

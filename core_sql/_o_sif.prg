@@ -12,12 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION o_sifv()
 
-   Select( F_SIFV )
-   USE
-
-   RETURN use_sql_sifv()
 
 
 

@@ -453,7 +453,7 @@ FUNCTION kalk_scan_magacinski_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVar
       hRec[ "g1" ] := roba->k1
 
       IF ( cKartica == "D" )
-         // ocitaj sa kartica
+         // ocitaj_izbaci sa kartica
          nMpc := 0
          IF ( cVarijanta <> "1" )
             // varijanta="1" - pregled kretanja zaliha
@@ -572,7 +572,7 @@ FUNCTION kalk_scan_prodavnicki_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVa
       hRec[ "g1" ] := roba->k1
 
       IF ( cKartica == "D" )
-         // ocitaj sa kartica
+         // ocitaj_izbaci sa kartica
          nMpc := 0
          // cSeek := kalk->( idfirma + pkonto + idroba )
          SELECT kalk

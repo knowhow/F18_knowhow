@@ -86,9 +86,9 @@ FUNCTION realizacija_odjeljenja()
    ? PadC( "REALIZACIJA ODJELJENJA", nSir )
    ? PadC ( "NA DAN " + FormDat1( Date() ), nSir )
    ? PadC( "-------------------------------------", nSir )
-   ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", Ocitaj ( F_KASE, cIdPos, "Naz" ) )
+   ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", ocitaj_izbaci ( F_KASE, cIdPos, "Naz" ) )
    IF gvodiodj == "D"
-      ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", Ocitaj ( F_ODJ, cIdOdj, "Naz" ) )
+      ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", ocitaj_izbaci ( F_ODJ, cIdOdj, "Naz" ) )
    ENDIF
    ? "PERIOD     : " + FormDat1( dDat0 ) + " - " + FormDat1( dDat1 )
 
@@ -430,12 +430,12 @@ FUNCTION realizacija_dio_objekta
    ? PadC( "REALIZACIJA DIJELA OBJEKTA", 40 )
    ? PadC ( "NA DAN " + FormDat1( Date() ), 40 )
    ? PadC( "-------------------------------------", 40 )
-   ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", Ocitaj ( F_KASE, cIdPos, "Naz" ) )
+   ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", ocitaj_izbaci ( F_KASE, cIdPos, "Naz" ) )
    IF gvodiodj == "D"
-      ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", Ocitaj ( F_ODJ, cIdOdj, "Naz" ) )
+      ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", ocitaj_izbaci ( F_ODJ, cIdOdj, "Naz" ) )
    ENDIF
    ? "RADNIK     : " + IF( Empty( cIdRadnik ), "svi", ;
-      cIdRadnik + "-" + RTrim( Ocitaj( F_OSOB, cIdRadnik, "naz" ) ) )
+      cIdRadnik + "-" + RTrim( ocitaj_izbaci( F_OSOB, cIdRadnik, "naz" ) ) )
    ? "VR.PLACANJA: " + IF( Empty( cIdVrsteP ), "sve", RTrim( cIdVrsteP ) )
    ? "PERIOD     : " + FormDat1( dDat0 ) + " - " + FormDat1( dDat1 )
 

@@ -364,7 +364,7 @@ STATIC FUNCTION napuni_podatke( cRj, nGodina, nMjesec, cMjesecDo, ;
             nUNetobp += nNetoBp
 
 
-            IF !Empty( cDoprPio ) // ocitaj doprinose, njihove iznose
+            IF !Empty( cDoprPio ) // ocitaj_izbaci doprinose, njihove iznose
                nDoprPIO := get_dopr( cDoprPIO, cTipRada )
                nIDoprPIO += round2( nMBrutoST * nDoprPIO / 100, gZaok2 )
             ENDIF

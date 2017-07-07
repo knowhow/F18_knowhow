@@ -440,10 +440,10 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
    ? PadC( "-----------------------------------", nSir )
 
    IF cVrstaRs <> "K"
-      ? cLM + "Prod. mjesto:" + iif ( Empty( cIdPos ), "SVE", Ocitaj( F_KASE, cIdPos, "Naz" ) )
+      ? cLM + "Prod. mjesto:" + iif ( Empty( cIdPos ), "SVE", ocitaj_izbaci( F_KASE, cIdPos, "Naz" ) )
    ENDIF
    IF gvodiodj == "D"
-      ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( Ocitaj( F_ODJ, cIdOdj, "naz" ) )
+      ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( ocitaj_izbaci( F_ODJ, cIdOdj, "naz" ) )
    ENDIF
 
    ? cLM + "Artikal    : " + IF( Empty( cRoba ), "SVI", RTrim( cRoba ) )

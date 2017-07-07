@@ -523,12 +523,12 @@ FUNCTION ld_specifikacija_plate_2001_stari()
 
       ENDDO
 
-      nkD1X := Ocitaj( F_DOPR, cDopr1, "iznos", .T. )
-      nkD2X := Ocitaj( F_DOPR, cDopr2, "iznos", .T. )
-      nkD3X := Ocitaj( F_DOPR, cDopr3, "iznos", .T. )
-      nkD5X := Ocitaj( F_DOPR, cDopr5, "iznos", .T. )
-      nkD6X := Ocitaj( F_DOPR, cDopr6, "iznos", .T. )
-      nkD7X := Ocitaj( F_DOPR, cDopr7, "iznos", .T. )
+      nkD1X := ocitaj_izbaci( F_DOPR, cDopr1, "iznos", .T. )
+      nkD2X := ocitaj_izbaci( F_DOPR, cDopr2, "iznos", .T. )
+      nkD3X := ocitaj_izbaci( F_DOPR, cDopr3, "iznos", .T. )
+      nkD5X := ocitaj_izbaci( F_DOPR, cDopr5, "iznos", .T. )
+      nkD6X := ocitaj_izbaci( F_DOPR, cDopr6, "iznos", .T. )
+      nkD7X := ocitaj_izbaci( F_DOPR, cDopr7, "iznos", .T. )
 
       nPom := nKD1X + nKD2X + nKD3X
       UzmiIzIni( cIniName, 'Varijable', 'D11B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )

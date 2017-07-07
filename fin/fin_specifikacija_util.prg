@@ -321,7 +321,7 @@ FUNCTION prikaz_k1_k4_rj( lK )
          ENDIF
          ? "K4 =", ck4
          IF lVrsteP .AND. Len( ck4 ) > 1
-            ?? "-" + Ocitaj( F_VRSTEP, ck4, "naz" )
+            ?? "-" + get_vrstep_naz( cK4 )
          ENDIF
       ENDIF
    ENDIF

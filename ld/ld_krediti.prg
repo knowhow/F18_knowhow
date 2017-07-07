@@ -569,7 +569,7 @@ FUNCTION ld_lista_kredita()
       IF lRazdvojiPoRj
          cIdTekRj := radn->idRj
          ?
-         ? "RJ:", radn->idRj, "-", Ocitaj( F_LD_RJ, cIdTekRj, "naz" )
+         ? "RJ:", radn->idRj, "-", get_ld_rj_naz(  cIdTekRj )
          ?
       ENDIF
 
@@ -750,7 +750,7 @@ FUNCTION ld_lista_kredita_zaglavlje()
    ENDIF
 
    IF lRjRadn .AND. !Empty( cIdRj )
-      ? "RJ:", cIdRj, "-", Ocitaj( F_LD_RJ, cIdRj, "naz" )
+      ? "RJ:", cIdRj, "-", get_ld_rj_naz( cIdRj )
    ENDIF
 
    IF cRateDN == "R"

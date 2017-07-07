@@ -45,10 +45,10 @@ FUNCTION P_Destin( cId, cPartId, dx, dy )
       }
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-   p_sifra( F_DEST, "ID", 10, 70, "Destinacije za:" + cIdTek + "-" + Ocitaj( F_PARTN, cIdTek, "naz" ), , , , {| Ch| EdDestBlok( Ch ) },,,, .F. )
+   p_sifra( F_DEST, "ID", 10, 70, "Destinacije za:" + cIdTek + "-" + get_partner_naziv( cIdTek ), , , , {| Ch | EdDestBlok( Ch ) },,,, .F. )
 
    cId := cLastOznaka
-   SET scope TO
+   SET SCOPE TO
    SELECT ( nArr )
 
    RETURN .T.
@@ -66,8 +66,8 @@ FUNCTION EdDestBlok( Ch, cDest )
 
       sID       := cIdTek
       sOZNAKA   := IF( Ch == K_CTRL_N, cDest, OZNAKA )
-      sNAZ      := IF( Ch == K_CTRL_N, Ocitaj( F_PARTN, cIdTek, "naz" ), NAZ )
-      sNAZ2     := IF( Ch == K_CTRL_N, Ocitaj( F_PARTN, cIdTek, "naz2" ), NAZ2 )
+      sNAZ      := IF( Ch == K_CTRL_N, get_partner_naziv( cIdTek ), NAZ )
+      sNAZ2     := IF( Ch == K_CTRL_N, get_partner_naziv2( cIdTek ), NAZ2 )
       sPTT      := PTT
       sMJESTO   := MJESTO
       sADRESA   := ADRESA
@@ -92,14 +92,14 @@ FUNCTION EdDestBlok( Ch, cDest )
          REPLACE id WITH sid
       ENDIF
       IF LastKey() <> K_ESC
-         REPLACE OZNAKA   WITH sOZNAKA,;
-            NAZ      WITH sNAZ,;
-            NAZ2     WITH sNAZ2,;
-            PTT      WITH sPTT,;
-            MJESTO   WITH sMJESTO,;
-            ADRESA   WITH sADRESA,;
-            TELEFON  WITH sTELEFON,;
-            FAX      WITH sFAX,;
+         REPLACE OZNAKA   WITH sOZNAKA, ;
+            NAZ      WITH sNAZ, ;
+            NAZ2     WITH sNAZ2, ;
+            PTT      WITH sPTT, ;
+            MJESTO   WITH sMJESTO, ;
+            ADRESA   WITH sADRESA, ;
+            TELEFON  WITH sTELEFON, ;
+            FAX      WITH sFAX, ;
             MOBTEL   WITH sMOBTEL
       ENDIF
       nRet := DE_REFRESH
@@ -114,3 +114,68 @@ FUNCTION EdDestBlok( Ch, cDest )
    ENDCASE
 
    RETURN nRet
+
+
+
+
+FUNCTION get_partner_naziv( cId )
+   RETURN find_field_by_id( "partn", cId, "naz" )
+
+FUNCTION get_partner_naziv2( cId )
+   RETURN find_field_by_id( "partn", cId, "naz2" )
+
+
+
+// -----------------------------
+// get partner naziv + mjesto
+// -----------------------------
+FUNCTION get_partner_name_mjesto( cIdPartner )
+
+   LOCAL cRet
+
+   PushWA()
+
+   IF !select_o_partner( cIdPartner )
+      cRet := "!NOPARTN!"
+   ELSE
+      cRet := Trim( Left( field->naz, 25 ) ) + " " + Trim( field->mjesto )
+   ENDIF
+
+   PopWa()
+
+   RETURN cRet
+
+
+FUNCTION get_kred_naz( cId )
+   RETURN find_field_by_id( "kred", cId, "naz" )
+
+
+FUNCTION get_rj_naz( cId )
+   RETURN find_field_by_id( "rj", cId, "naz" )
+
+
+FUNCTION get_ld_rj_naz( cId )
+   RETURN find_field_by_id( "ld_rj", cId, "naz" )
+
+FUNCTION get_roba_sifradob( cId )
+   RETURN find_field_by_id( "roba", cId, "sifradob" )
+
+
+FUNCTION get_vrstep_naz( cId )
+   RETURN find_field_by_id( "vrstep", cId, "naz" )
+
+/*
+FUNCTION get_partner_naz_naz2_mjesto()
+
+   LOCAL cVrati
+   LOCAL cPom
+
+   cPom := Upper( AllTrim( mjesto ) )
+   IF cPom $ Upper( naz ) .OR. cPom $ Upper( naz2 )
+      cVrati := Trim( naz ) + " " + Trim( naz2 )
+   ELSE
+      cVrati := Trim( naz ) + " " + Trim( naz2 ) + " " + Trim( mjesto )
+   ENDIF
+
+   RETURN PadR( cVrati, 40 )
+*/

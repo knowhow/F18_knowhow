@@ -259,7 +259,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
             IF i == 2 .AND. ( !Empty( k1 + k2 + k3 + k4 ) .OR. gFinRj == "D" .OR. gtroskovi == "D" )
                ?? " " + k1 + "-" + k2 + "-" + K3Iz256( k3 ) + "-" + k4
                IF _vrste_placanja
-                  ?? "(" + Ocitaj( F_VRSTEP, k4, "naz" ) + ")"
+                  ?? "(" + get_vrstep_naz( k4 ) + ")"
                ENDIF
                IF gFinRj == "D"
                   ?? " RJ:", idrj

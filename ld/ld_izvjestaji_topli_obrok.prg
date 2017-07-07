@@ -451,8 +451,7 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
 
          ENDIF
 
-         ? "Banka: " + field->r_bank + " - " + ;
-            Ocitaj( F_KRED, field->r_bank, "NAZ" )
+         ? "Banka: " + field->r_bank + " - " +  get_kred_naz(  field->r_bank )
          ? Replicate( "-", 50 )
 
          cBank := r_bank

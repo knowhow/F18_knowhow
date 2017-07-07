@@ -592,7 +592,7 @@ STATIC FUNCTION zagl_sp_prod()
 
    IF cPrikaz == "2" .AND. !Empty( qqPartn )
       ? Space( gnLMarg )
-      ?? "Partner: " + qqPartn + " - " + Ocitaj( F_PARTN, qqPartn, "naz" )
+      ?? "Partner: " + qqPartn + " - " + get_partner_naziv( qqPartn )
    ENDIF
 
    IF !Empty( cOpcina )

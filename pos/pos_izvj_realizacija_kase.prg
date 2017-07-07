@@ -254,7 +254,7 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, 
          ? "PRODAJNO MJESTO: SVA"
       ENDIF
    ELSE
-      ? "PRODAJNO MJESTO: " + cIdPos + "-" + Ocitaj( F_KASE, cIdPos, "NAZ" )
+      ? "PRODAJNO MJESTO: " + cIdPos + "-" + ocitaj_izbaci( F_KASE, cIdPos, "NAZ" )
    ENDIF
 
    IF Empty( cIdDio )
@@ -262,7 +262,7 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, 
          ? "DIO OBJEKTA:  SVI"
       ENDIF
    ELSE
-      ? "DIO OBJEKTA: " + Ocitaj( F_DIO, cIdDio, "NAZ" )
+      ? "DIO OBJEKTA: " + ocitaj_izbaci( F_DIO, cIdDio, "NAZ" )
    ENDIF
 
    IF Empty( cRadnici )
@@ -270,7 +270,7 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, 
          ? "RADNIK     :  SVI"
       ENDIF
    ELSE
-      ? "RADNIK     : " + cRadnici + "-" + RTrim( Ocitaj( F_OSOB, cRadnici, "NAZ" ) )
+      ? "RADNIK     : " + cRadnici + "-" + RTrim( ocitaj_izbaci( F_OSOB, cRadnici, "NAZ" ) )
    ENDIF
 
    IF Empty( cVrsteP )
@@ -295,7 +295,7 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, 
             ? "ODJELJENJE : SVA"
          ENDIF
       ELSE
-         ? "ODJELJENJE : " + Ocitaj( F_ODJ, cIdOdj, "NAZ" )
+         ? "ODJELJENJE : " + ocitaj_izbaci( F_ODJ, cIdOdj, "NAZ" )
       ENDIF
    ENDIF
 

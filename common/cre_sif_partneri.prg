@@ -309,24 +309,7 @@ FUNCTION g_part_fax( cIdPartner )
 
    RETURN cFax
 
-// -----------------------------
-// get partner naziv + mjesto
-// -----------------------------
-FUNCTION g_part_name( cIdPartner )
 
-   LOCAL cRet
-
-   PushWA()
-
-   IF select_o_partner( cIdPartner )
-      cRet := "!NOPARTN!"
-   ELSE
-      cRet := Trim( Left( naz, 25 ) ) + " " + Trim( mjesto )
-   ENDIF
-
-   PopWa()
-
-   RETURN cRet
 
 
 FUNCTION is_kupac( cId )

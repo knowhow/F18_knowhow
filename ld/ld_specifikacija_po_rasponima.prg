@@ -207,7 +207,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    IF Empty( cidrj )
       ?? "Pregled za sve RJ ukupno:"
    ELSE
-      ?? "RJ:", cIdRj + " - " + Ocitaj( F_LD_RJ, cIdRj, "naz" )
+      ?? "RJ:", cIdRj + " - " + get_ld_rj_naz( cIdRj )
    ENDIF
    ?? "  Mjesec:", Str( nMjesec, 2 ) + IspisObr()
    ?? "    Godina:", Str( nGodina, 5 )

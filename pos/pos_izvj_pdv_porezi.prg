@@ -118,7 +118,7 @@ FUNCTION PDVPorPoTar
             IF ( Empty( cIdPos ) )
                ?? "SVA"
             ELSE
-               ?? cIdPos + "-" + AllTrim ( Ocitaj ( F_KASE, cIdPos, "Naz" ) )
+               ?? cIdPos + "-" + AllTrim ( ocitaj_izbaci ( F_KASE, cIdPos, "Naz" ) )
             ENDIF
          ELSE
             ?? gPosNaz

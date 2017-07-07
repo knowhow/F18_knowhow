@@ -528,7 +528,11 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    cSQL += " ORDER BY id,oznaka,idsif,naz"
    SELECT F_SIFV
-   use_sql( "sifv", cSql )
+   IF !use_sql( "sifv", cSql )
+     ?E "use_sql sifv ERROR", cSql
+     RETURN .F.
+   ENDIF
+
    GO TOP
 
 /*

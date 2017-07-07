@@ -171,14 +171,14 @@ FUNCTION realizacija_radnik
          ? PadC( "REALIZACIJA NA DAN " + FormDat1( gDatum ), 40 )
       ENDIF
       ? PadC( "-------------------------------------", 40 )
-      ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", Ocitaj ( F_KASE, cIdPos, "Naz" ) )
-      ? "RADNIK     : " + IF( Empty( cIdRadnik ), "svi", cIdRadnik + "-" + RTrim( Ocitaj( F_OSOB, cIdRadnik, "naz" ) ) )
+      ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", ocitaj_izbaci ( F_KASE, cIdPos, "Naz" ) )
+      ? "RADNIK     : " + IF( Empty( cIdRadnik ), "svi", cIdRadnik + "-" + RTrim( ocitaj_izbaci( F_OSOB, cIdRadnik, "naz" ) ) )
       ? "VR.PLACANJA: " + IF( Empty( cVrsteP ), "sve", RTrim( cVrsteP ) )
       IF ! Empty ( cSmjena )
          ? "SMJENA     : " + RTrim( cSmjena )
       ENDIF
       IF ! Empty ( gIdDio )
-         ? "DIO OBJEKTA: " + IF( Empty( cIdDio ), "SVI", Ocitaj ( F_DIO, cIdDio, "Naz" ) )
+         ? "DIO OBJEKTA: " + IF( Empty( cIdDio ), "SVI", ocitaj_izbaci ( F_DIO, cIdDio, "Naz" ) )
       ENDIF
       ? "PERIOD     : " + FormDat1( dDatOd ) + " - " + FormDat1( dDatDo )
       ?

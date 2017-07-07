@@ -93,7 +93,7 @@ FUNCTION ld_specifikacija_po_rj()
    FOR i := 1 TO cLDPolja
       cIDPRIM := PadL( AllTrim( Str( i ) ), 2, "0" )
       IF &aUslPrim
-         IF "SUMKREDITA" $ Ocitaj( F_TIPPR, cIdPrim, "formula" )
+         IF "SUMKREDITA" $ ocitaj_izbaci( F_TIPPR, cIdPrim, "formula" )
             AAdd( aPrimK, "I" + cIdPrim )
          ELSE
             AAdd( aPrim, "I" + cIdPrim )
@@ -274,9 +274,9 @@ STATIC FUNCTION formula_izvjestaja()
    LOCAL i, nPos, cIdPrim, cIdKred, cIdRj
 
    IF Empty( idkred )
-      cPrimanje := idprim + "-" + Ocitaj( F_TIPPR, idprim, "naz" )
+      cPrimanje := idprim + "-" + ocitaj_izbaci( F_TIPPR, idprim, "naz" )
    ELSE
-      cPrimanje := idprim + "-" + idkred + "-" + Ocitaj( F_KRED, idkred, "naz" )
+      cPrimanje := idprim + "-" + idkred + "-" + get_kred_naz( idkred )
    ENDIF
    cIdPrim := idprim
    cIdKred := idkred

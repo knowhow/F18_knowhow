@@ -46,13 +46,13 @@ FUNCTION OiNIsplate()
 
       ? Space( gnLMONI ) + Space( 77 ) + "sa " + IF( gKodnaS == "8", "�", "`" ) + "iro ra" + IF( gKodnaS == "8", "�", "~" ) + "una"
       // ? SPACE(gnLMONI); gPI_ON()
-      // ?? Ocitaj(F_KONTO,idkonto,"naz")
+      // ?? ocitaj_izbaci(F_KONTO,idkonto,"naz")
       // gPI_OFF()
       ?
       // ? SPACE(gnLMONI)+REPL("-",60)
       // ? SPACE(gnLMONI)+SPACE(77); gpI_ON()
       ? Space( gnLMONI ); gPI_ON()
-      ?? PadC( AllTrim( Ocitaj( F_KONTO, idkonto, "naz" ) ), 60 ); gPI_OFF()
+    --  ?? PadC( AllTrim( ocitaj_izbaci( F_KONTO, idkonto, "naz" ) ), 60 ); gPI_OFF()
       ?? Space( 17 ); gpI_ON()
       ?? PadC( AllTrim( idkonto ), 28 ); gPI_OFF()
       ? Space( gnLMONI ) + REPL( "-", 60 ) + Space( 17 ) + REPL( "-", 28 )
@@ -69,7 +69,7 @@ FUNCTION OiNIsplate()
       ?? "ODOBRENJE I NALOG ZA ISPLATU"; gPB_OFF(); gPCOND()
       ?; ?; ?; ?; ?
       ? Space( gnLMONI ) + "Kojim se odre" + IF( gKodnaS == "8", "�", "|" ) + "uje da se izvr" + IF( gKodnaS == "8", "�", "{" ) + "i isplata u korist "; gpI_ON()
-      ?? PadC( AllTrim( Ocitaj( F_PARTN, idpartner, "TRIM(naz)+', '+mjesto" ) ), 57 ); gpI_OFF()
+  --    ?? PadC( AllTrim( ocitaj_izbaci( F_PARTN, idpartner, "TRIM(naz)+', '+mjesto" ) ), 57 ); gpI_OFF()
       ? Space( gnLMONI ) + "                                                " + REPL( "-", 57 )
       ?
       ? Space( gnLMONI ) + REPL( "-", 105 )

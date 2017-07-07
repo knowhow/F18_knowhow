@@ -1300,7 +1300,7 @@ STATIC FUNCTION doc_name( dok, partner )
    // primjer cDocumentName = FAKT_DOK_10-10-00050_planika-flex-sarajevo_29.05.06_FAX:032440173
    cDocumentName := gModul + "_DOK_" + dok[ "idfirma" ]  + "-" + dok[ "idtipdok" ] + "-" + Trim( dok[ "brdok" ] ) + "-" + Trim( partner ) + "_" + DToC( DatDok )
 
-   cPartner := AllTrim( g_part_name( partner ) )
+   cPartner := AllTrim( get_partner_name_mjesto( partner ) )
 
    cPartner := StrTran( cPartner, " ", "-" )
    cPartner := StrTran( cPartner, '"', "" )

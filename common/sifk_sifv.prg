@@ -268,7 +268,7 @@ FUNCTION get_sifk_sifv( cDbfName, cOznaka, cIdSif, return_nil )
    ENDIF
 
    cDbfName := PadR( cDbfName, SIFK_LEN_DBF )
-   cOznaka     := PadR( cOznaka, SIFK_LEN_OZNAKA )
+   cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
    cIdSif2 := PadR( cIdSif, SIFK_LEN_IDSIF )
 
    IF !use_sql_sifk( cDbfName, cOznaka )
@@ -298,9 +298,7 @@ FUNCTION get_sifk_sifv( cDbfName, cOznaka, cIdSif, return_nil )
    cSifkTip    := sifk->tip
    cSifkVeza   := sifk->veza
 
-   use_sql_sifv( cDbfName, cOznaka, cIdSif )
-
-   IF Eof() // nema sifv
+   IF !use_sql_sifv( cDbfName, cOznaka, cIdSif )    //IF Eof() // nema sifv
       xRet := get_sifv_value_by_tip( cSifkTip, nSifkDuzina, "" )
       IF cSifkVeza == "N"
          xRet := PadR( xRet, 190 )

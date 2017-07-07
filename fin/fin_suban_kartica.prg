@@ -521,7 +521,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          IF cRasclaniti == "D"
             select_o_rj( cRasclan )
             ? "        "
-            @ PRow(), PCol() + 1 SAY Left( cRasclan, 6 ) + "/" + SubStr( cRasclan, 7, 5 ) + "/" + SubStr( cRasclan, 12 ) + " / " + Ocitaj( F_RJ, Left( cRasclan, 6 ), "NAZ" )
+            @ PRow(), PCol() + 1 SAY Left( cRasclan, 6 ) + "/" + SubStr( cRasclan, 7, 5 ) + "/" + SubStr( cRasclan, 12 ) + " / " + get_rj_naz( Left( cRasclan, 6 ) )
             SELECT konto
          ENDIF
 
@@ -862,7 +862,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          ? "UKUPNO:" + cIdkonto + iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", "", " - " + cIdPartner )
 
          IF cRasclaniti == "D"
-            @ PRow(), PCol() + 1 SAY Left( cRasclan, 6 ) + "/" + SubStr( cRasclan, 7, 5 ) + "/" + SubStr( cRasclan, 12 ) + " / " + Ocitaj( F_RJ, Left( cRasclan, 6 ), "NAZ" )
+            @ PRow(), PCol() + 1 SAY Left( cRasclan, 6 ) + "/" + SubStr( cRasclan, 7, 5 ) + "/" + SubStr( cRasclan, 12 ) + " / " + get_rj_naz( Left( cRasclan, 6 ) )
          ENDIF
 
          IF cDinDem == "1"
@@ -927,9 +927,9 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          nKonD += nDugBHD;  nKonP += nPotBHD
          nKonD2 += nDugDEM; nKonP2 += nPotDEM
 
-         IF _fin_params[ "fin_k1" ] .AND. !Len( ck3 ) = 0 .AND. cBrza == "D" .AND. ;
-               my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
-            nLimit  := Abs( Ocitaj( F_ULIMIT, k3iz256( ck3 ) + cIdPartner, "f_limit" ) )
+/*
+         IF _fin_params[ "fin_k1" ] .AND. !Len( ck3 ) = 0 .AND. cBrza == "D" .AND. my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+      --      nLimit  := Abs( ocitaj_izbaci( F_ULIMIT, k3iz256( ck3 ) + cIdPartner, "f_limit" ) )
             nSLimit := Abs( nDugBHD - nPotBHD )
             ? "------------------------------"
             ? "LIMIT PO K3  :", TRANS( nLimit, "999999999999.99" )
@@ -937,7 +937,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ? "R A Z L I K A:", TRANS( nLimit - nSLimit, "999999999999.99" )
             ? "------------------------------"
          ENDIF
-
+*/
          check_nova_strana( bZagl, oPdf, .F., 0, 1 )
 
       ENDDO // konto

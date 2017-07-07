@@ -466,7 +466,7 @@ FUNCTION IArtPoPogonima()
 STATIC FUNCTION FFor1s()
 
    cIdPartner := idpartner
-   cNPartnera := Ocitaj( F_PARTN, idpartner, "TRIM(naz)+' '+TRIM(naz2)" )
+   cNPartnera := ocitaj_izbaci( F_PARTN, idpartner, "TRIM(naz)+' '+TRIM(naz2)" )
    nUlaz := nIzlaz := nDuguje := nPotrazuje := nSaldo := 0
    DO WHILE !Eof() .AND. idpartner == cIdPartner
       IF u_i == "1"

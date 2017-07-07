@@ -12,11 +12,11 @@
 #include "f18.ch"
 
 
-FUNCTION Ocitaj( nObl, xKljuc, nPbr, lInd )
+FUNCTION ocitaj_izbaci( nObl, xKljuc, nPbr, lInd )
 
    // vraca trazeno polje (nPbr+1) iz
    // sifrarn.za zadanu vrijednost indeksa 'xKljuc'
-   // Primjer : xRez:=Ocitaj(F_VALUTE,"D","naz2")
+   // Primjer : xRez:=ocitaj_izbaci(F_VALUTE,"D","naz2")
 
    LOCAL xVrati
    IF lInd == NIL; lInd := .F. ; ENDIF

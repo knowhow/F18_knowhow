@@ -35,7 +35,7 @@ FUNCTION show_more_info( cPartner, dDatum, cFaktura, cMU_I )
 
    IF !Empty( cPartner )
 
-      cMIPart := AllTrim( Ocitaj( F_PARTN, cPartner, "NAZ" ) )
+      cMIPart := AllTrim( get_partner_naziv( cPartner ) )
 
       IF cMU_I == "1"
          cTip := "dob.:"
@@ -78,7 +78,7 @@ FUNCTION PrikaziDobavljaca( cIdRoba, nRazmak, lNeIspisujDob )
       lNeIspisujDob := .F.
    ENDIF
 
-   cIdDob := Ocitaj( F_ROBA, cIdRoba, "SifraDob" )
+   cIdDob := get_roba_sifradob( cIdRoba )
 
    IF lNeIspisujDob
       cVrati := Space( nRazmak ) + "Dobavljac: " + Trim( cIdDob )

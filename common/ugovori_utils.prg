@@ -38,27 +38,7 @@ FUNCTION SifUgovori()
    RETURN .T.
 
 
-// -------------------------------------------------------
-// vraca naziv partnera
-// -------------------------------------------------------
-FUNCTION NazPartn()
 
-   LOCAL cVrati
-   LOCAL cPom
-
-   cPom := Upper( AllTrim( mjesto ) )
-   IF cPom $ Upper( naz ) .OR. cPom $ Upper( naz2 )
-      cVrati := Trim( naz ) + " " + Trim( naz2 )
-   ELSE
-      cVrati := Trim( naz ) + " " + Trim( naz2 ) + " " + Trim( mjesto )
-   ENDIF
-
-   RETURN PadR( cVrati, 40 )
-
-
-// -----------------------------------
-// ??????
-// -----------------------------------
 FUNCTION MSAY2( x, y, c )
 
    @ x, y SAY c

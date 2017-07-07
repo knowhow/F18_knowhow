@@ -399,7 +399,7 @@ FUNCTION ol_fill_data( cRadneJedinice, cIdRjTekuca, nGodinaOd, nGodinaDo, nMjese
             nBrDobra := ld_get_bruto_osnova( nPrDobra, cTipRada, nL_odb )
          ENDIF
 
-         // ocitaj doprinose, njihove iznose
+         // ocitaj_izbaci doprinose, njihove iznose
          nDopr10 := get_dopr( cDopr10, cTipRada )
          nDopr11 := get_dopr( cDopr11, cTipRada )
          nDopr12 := get_dopr( cDopr12, cTipRada )

@@ -64,8 +64,8 @@ FUNCTION ImaUOps( cOStan, cORada )
 
    LOCAL lVrati := .F.
 
-   IF ( Empty( cOStan ) .OR. Ocitaj( F_RADN, _FIELD->IDRADN, "IDOPSST" ) == cOStan ) .AND. ;
-         ( Empty( cORada ) .OR. Ocitaj( F_RADN, _FIELD->IDRADN, "IDOPSRAD" ) == cORada )
+   IF ( Empty( cOStan ) .OR. ocitaj_izbaci( F_RADN, _FIELD->IDRADN, "IDOPSST" ) == cOStan ) .AND. ;
+         ( Empty( cORada ) .OR. ocitaj_izbaci( F_RADN, _FIELD->IDRADN, "IDOPSRAD" ) == cORada )
       lVrati := .T.
    ENDIF
 

@@ -38,7 +38,7 @@ FUNCTION p_dest_2( cId, cPartId, dx, dy )
    cHeader += "Destinacije za: "
    cHeader += cPartId
    cHeader += "-"
-   cHeader += PadR( Ocitaj( F_PARTN, cPartId, "naz" ), 20 ) + ".."
+   cHeader += PadR( get_partner_naziv( cPartId ), 20 ) + ".."
 
    SELECT dest
    SET ORDER TO TAG "IDDEST"
@@ -367,4 +367,4 @@ FUNCTION set_as_default( cUgovId, cDest )
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.

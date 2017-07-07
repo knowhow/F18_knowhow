@@ -52,11 +52,12 @@ FUNCTION p_ugov( cId, dx, dy )
    // setuj polje pri otvaranju za sortiranje
    set_fld_id( @cFieldId, cId )
 
-   xRet := p_sifra( F_UGOV, cFieldId, MAXROWS() - 10, MAXCOLS() - 3, cHeader, @cId, dx, dy, {| Ch| ug_key_handler( Ch ) } )
+   xRet := p_sifra( F_UGOV, cFieldId, MAXROWS() - 10, MAXCOLS() - 3, cHeader, @cId, dx, dy, {| Ch | ug_key_handler( Ch ) } )
 
    PopWa()
 
    RETURN xRet
+
 
 // ----------------------------------------------
 // setovanje vrijednosti polja ID pri otvaranju
@@ -65,7 +66,7 @@ STATIC FUNCTION set_fld_id( cVal, cId )
 
    cVal := "ID"
 
-   IF ( gVFU == "1" ) .OR. ( cId == nil )
+   IF ( gVFU == "1" ) .OR. ( cId == NIL )
       cVal := "ID"
    ELSE
       cVal := "NAZ2"
@@ -82,7 +83,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aImeKol := {}
    aKol := {}
 
-   AAdd( aImeKol, { "Ugovor", {|| PadR( Trim( id ) + "/" + Trim( IdPartner ) + ":" + g_part_name( IdPartner ), 34 ) }, "Idpartner", {|| valid_sifarnik_id_postoji( wid ), .T. }, {|| p_partner( @wIdPartner ) } } )
+   AAdd( aImeKol, { "Ugovor", {|| PadR( Trim( id ) + "/" + Trim( IdPartner ) + ":" + get_partner_name_mjesto( IdPartner ), 34 ) }, "Idpartner", {|| valid_sifarnik_id_postoji( wid ), .T. }, {|| p_partner( @wIdPartner ) } } )
 
    AAdd( aImeKol, { "Opis", {|| PadR( Trim( naz ) + ": " + vrati_opis_ugovora( id ), 30 )  }, "naz" } )
    AAdd( aImeKol, { "DatumOd", {|| DatOd }, "DatOd" } )
@@ -165,7 +166,7 @@ STATIC FUNCTION ug_key_handler( Ch )
 
    CASE Upper( Chr( Ch ) ) == "P"
 
-      p_dest_2( nil, ugov->idpartner )
+      p_dest_2( NIL, ugov->idpartner )
 
       RETURN DE_CONT
 
@@ -417,56 +418,56 @@ FUNCTION edit_ugovor( lNovi )
       WHEN lNovi ;
       PICT "@!"
 
-   ++ nX
+   ++nX
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Partner", nBoxLen ) GET _idpartner VALID {|| x := p_partner( @_IdPartner ), MSAY2( m_x + 2, m_y + 35, Ocitaj( F_PARTN, _IdPartner, "NazPartn()" ) ), x } PICT "@!"
+   @ m_x + nX, m_y + 2 SAY PadL( "Partner", nBoxLen ) GET _idpartner VALID {|| x := p_partner( @_IdPartner ), MSAY2( m_x + 2, m_y + 35, get_partner_naziv( _IdPartner ) ), x } PICT "@!"
 
    IF is_dest()
 
-      ++ nX
+      ++nX
 
       @ m_x + nX, m_y + 2 SAY PadL( "Def.dest", nBoxLen ) GET _def_dest ;
          PICT "@!" VALID {|| Empty( _def_dest ) .OR. p_dest_2( @_def_dest, _idpartner ) }
 
    ENDIF
 
-   ++ nX
+   ++nX
 
    @ m_x + nX, m_y + 2 SAY PadL( "Opis ugovora", nBoxLen ) GET _naz PICT "@!"
 
-   ++ nX
+   ++nX
 
    @ m_x + nX, m_y + 2 SAY PadL( "Datum ugovora", nBoxLen ) GET _datod
 
-   ++ nX
+   ++nX
 
    @ m_x + nX, m_y + 2 SAY PadL( "Datum kraja ugov.", nBoxLen ) GET _datdo
 
-   ++ nX
+   ++nX
 
    @ m_x + nX, m_y + 2 SAY PadL( "Aktivan (D/N)", nBoxLen ) GET _aktivan VALID _aktivan $ "DN" PICT "@!"
    @ m_x + nX, Col() + 2 SAY PadL( "labela print (D/N)", nBoxLen ) GET _lab_prn VALID _lab_prn $ "DN" PICT "@!"
 
-   ++ nX
+   ++nX
 
    @ m_x + nX, m_y + 2 SAY PadL( "Tip dokumenta", nBoxLen ) GET _idtipdok PICT "@!"
 
-   ++ nX
+   ++nX
 
    @ m_x + nX, m_y + 2 SAY PadL( "Vrsta", nBoxLen ) GET _vrsta PICT "@!"
 
 
    IF ugov->( FieldPos( "F_NIVO" ) ) <> 0
 
-      ++ nX
+      ++nX
 
       @ m_x + nX, m_y + 2 SAY PadL( "Nivo fakt.", nBoxLen ) GET _f_nivo PICT "@!" VALID _f_nivo $ "MPG"
 
-      ++ nX
+      ++nX
 
       @ m_x + nX, m_y + 2 SAY PadL( "Pr.nivo dana", nBoxLen ) GET _f_p_d_nivo PICT "99999" WHEN _f_nivo == "P"
 
-      ++ nX
+      ++nX
 
       // mjesec
       @ m_x + nX, m_y + 2 SAY PadL( "Fakturisano do", nBoxLen ) GET _fakt_do_mj ;
@@ -481,32 +482,32 @@ FUNCTION edit_ugovor( lNovi )
 
    ENDIF
 
-   ++ nX
+   ++nX
 
    @ m_x + nX, m_y + 2 SAY PadL( "Valuta (KM/EUR)", nBoxLen ) GET _dindem PICT "@!"
 
-   ++ nX
+   ++nX
 
    @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 1", nBoxLen ) GET _idtxt VALID P_FTxt( @_IdTxt ) PICT "@!"
 
    IF ugov->( FieldPos( "IDDODTXT" ) ) <> 0
 
-      ++ nX
+      ++nX
 
       @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 2", nBoxLen ) GET _iddodtxt VALID P_FTxt( @_IdDodTxt ) PICT "@!"
    ENDIF
 
    IF ugov->( FieldPos( "TXT2" ) ) <> 0
 
-      ++ nX
+      ++nX
 
       @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 3", nBoxLen ) GET _txt2 VALID P_FTxt( @_Txt2 ) PICT "@!"
 
-      ++ nX
+      ++nX
 
       @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 4", nBoxLen ) GET _txt3 VALID P_FTxt( @_Txt3 ) PICT "@!"
 
-      ++ nX
+      ++nX
 
       @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 5", nBoxLen ) GET _txt4 VALID P_FTxt( @_Txt4 ) PICT "@!"
 
@@ -514,10 +515,10 @@ FUNCTION edit_ugovor( lNovi )
    ENDIF
 
    IF ugov->( FieldPos( "A1" ) ) <> 0
-      ++ nX
+      ++nX
       @ m_x + nX, m_y + 2 SAY PadL( "A1", nBoxLen ) GET _a1
       @ m_x + nX, Col() + 2 SAY PadL( "A2", nBoxLen ) GET _a2
-      ++ nX
+      ++nX
       @ m_x + nX, m_y + 2 SAY PadL( "B1", nBoxLen ) GET _b1
       @ m_x + nX, Col() + 2 SAY PadL( "B2", nBoxLen ) GET _b2
    ENDIF
@@ -660,7 +661,7 @@ FUNCTION P_Ugov2( cIdPartner )
 
    // zaglavlje se edituje kada je kursor u prvoj koloni
    // prvog reda
-   //PRIVATE  TBSkipBlock := {| nSkip| SkipDB( nSkip, @nTBLine ) }
+   // PRIVATE  TBSkipBlock := {| nSkip| SkipDB( nSkip, @nTBLine ) }
    // tekuca linija-kod viselinijskog browsa
    PRIVATE  nTBLine := 1
    // broj linija kod viselinijskog browsa
@@ -950,7 +951,7 @@ FUNCTION OsvjeziPrikUg( lWhen, lNew )
    @ m_x + 1, m_y + 30 SAY "Opis ugovora   :" GET wnaz WHEN lWhen
    @ m_x + 2, m_y + 1 SAY "PARTNER        :" GET widpartner ;
       WHEN lWhen ;
-      VALID !lWhen .OR. p_partner( @widpartner ) .AND. MSAY2( m_x + 2, 30, Ocitaj( F_PARTN, wIdPartner, "NazPartn()" ) ) PICT "@!"
+      VALID !lWhen .OR. p_partner( @widpartner ) .AND. MSAY2( m_x + 2, 30, get_partner_naziv( wIdPartner ) ) PICT "@!"
 
    @ m_x + 3, m_y + 1 SAY "DATUM UGOVORA  :" GET wdatod ;
       WHEN lWhen
@@ -975,7 +976,7 @@ FUNCTION OsvjeziPrikUg( lWhen, lNew )
    READ
 
    IF !lWhen
-      @ m_x + 2, m_y + 24 SAY "---->(" + Ocitaj( F_PARTN, wIdPartner, "NazPartn()" ) + ")"
+      @ m_x + 2, m_y + 24 SAY "---->(" + get_partner_naziv( wIdPartner ) + ")"
    ENDIF
 
    IF lNew .AND. !LastKey() == K_ESC
@@ -1062,7 +1063,7 @@ FUNCTION I_ListaUg()
 
    print_lista_2( aKol, {|| ZaOdgovarajuci() },, gTabela,,, ;
       "PREGLED UGOVORA ZA " + cFiltTrz, ;
-      {|| OdgovaraLi() }, iif( gOstr == "D",, -1 ),, lLin,,, )
+      {|| OdgovaraLi() }, iif( gOstr == "D",, - 1 ),, lLin,,, )
 
    ENDPRINT
 
@@ -1077,7 +1078,7 @@ FUNCTION I_ListaUg()
 
 
 STATIC FUNCTION OdgovaraLi()
-   return &( cFiltTrz )
+   RETURN &( cFiltTrz )
 
 
 STATIC FUNCTION ZaOdgovarajuci()
@@ -1166,7 +1167,7 @@ FUNCTION IzfUgovor()
 
       SELECT ugov
       PRIVATE cFiltP := "Idpartner==" + dbf_quote( partn->id )
-      SET FILTER to &cFilP
+      SET FILTER TO &cFilP
       GO TOP
       IF Eof()
          MsgBeep( "Ne postoje definisani ugovori za korisnika" )

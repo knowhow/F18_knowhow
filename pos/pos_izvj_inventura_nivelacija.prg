@@ -282,7 +282,7 @@ FUNCTION StampaPLI( cBrDok )
    ? PadC ( cPom + AllTrim ( cBrDok ), 40 )
    ?
    IF gvodiodj == "D"
-      ? "Odjeljenje: " + PRIPRZ->IdOdj + "-" + Ocitaj( F_ODJ, IdOdj, "naz" )
+      ? "Odjeljenje: " + PRIPRZ->IdOdj + "-" + ocitaj_izbaci( F_ODJ, IdOdj, "naz" )
    ENDIF
    ?
    ? "Sifra    Naziv robe"

@@ -499,7 +499,7 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
 
          ENDIF
 
-         // ocitaj doprinose, njihove iznose
+  
          nDopr10 := get_dopr( cDopr10, cTipRada )
          nDopr11 := get_dopr( cDopr11, cTipRada )
          nDopr12 := get_dopr( cDopr12, cTipRada )

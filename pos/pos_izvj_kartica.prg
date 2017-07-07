@@ -120,7 +120,7 @@ FUNCTION pos_kartica_artikla()
       IF Empty( cIdPos )
          ? cLM + "PROD.MJESTO: " + cidpos + "-" + "SVE"
       ELSE
-         ? cLM + "PROD.MJESTO: " + cidpos + "-" + Ocitaj( F_KASE, cIdPos, "Naz" )
+         ? cLM + "PROD.MJESTO: " + cidpos + "-" + ocitaj_izbaci( F_KASE, cIdPos, "Naz" )
       ENDIF
    ENDIF
 
@@ -365,7 +365,7 @@ FUNCTION pos_kartica_artikla()
 
             IF cPPar == "D"
                ?? " "
-               ?? Ocitaj( F_POS_DOKS, POS->( IdPos + IdVd + DToS( datum ) + BrDok ), "idgost" )
+               ?? ocitaj_izbaci( F_POS_DOKS, POS->( IdPos + IdVd + DToS( datum ) + BrDok ), "idgost" )
             ENDIF
 
 

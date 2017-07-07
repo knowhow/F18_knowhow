@@ -122,7 +122,7 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos )
    IF Empty( cIdPos )
       ? "PRODAJNO MJESTO: SVA"
    ELSE
-      ? "PRODAJNO MJESTO: " + cIdPos + "-" + Ocitaj( F_KASE, cIdPos, "NAZ" )
+      ? "PRODAJNO MJESTO: " + cIdPos + "-" + ocitaj_izbaci( F_KASE, cIdPos, "NAZ" )
    ENDIF
 
    ? "PERIOD     : " + FormDat1( dDat0 ) + " - " + FormDat1( dDat1 )

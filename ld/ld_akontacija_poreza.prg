@@ -241,7 +241,7 @@ STATIC FUNCTION fill_data( nGodina, nMjesec, cDopr1X, cDopr2X, cVRada, cObr, cRa
 
          SELECT ld
 
-         // ocitaj doprinose, njihove iznose
+         // ocitaj_izbaci doprinose, njihove iznose
          nDopr1X := get_dopr( cDopr1X, cT_tipRada )
          nDopr2X := get_dopr( cDopr2X, cT_tipRada )
 

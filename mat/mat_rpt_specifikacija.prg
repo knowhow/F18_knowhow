@@ -137,7 +137,7 @@ STATIC FUNCTION FFor1()
 
    cIdPartner := idpartner
    nRoba1 := nRoba2 := nRoba3 := nRoba4 := nRoba5 := nRoba6 := 0
-   cNPartnera := Ocitaj( F_PARTN, idpartner, "TRIM(naz)+' '+TRIM(naz2)" )
+   cNPartnera := ocitaj_izbaci( F_PARTN, idpartner, "TRIM(naz)+' '+TRIM(naz2)" )
    DO WHILE !Eof() .AND. idpartner == cIdPartner
       IF Tacno( aUsl1 ); nRoba1 += kolicina; ENDIF
       IF Tacno( aUsl2 ); nRoba2 += kolicina; ENDIF
@@ -271,7 +271,7 @@ STATIC FUNCTION FFor2()
    IF AScan( aDobav, cIdpartner ) == 0
       lVrati := .T.
       AAdd( aDobav, cIdPartner )
-      cNPartnera := Ocitaj( F_PARTN, idpartner, "TRIM(naz)+' '+TRIM(naz2)" )
+      cNPartnera := ocitaj_izbaci( F_PARTN, idpartner, "TRIM(naz)+' '+TRIM(naz2)" )
    ENDIF
 
    RETURN lVrati

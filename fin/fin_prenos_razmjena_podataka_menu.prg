@@ -27,8 +27,8 @@ FUNCTION fin_razmjena_podataka_meni()
    AAdd( aOpcExe, {|| import_elektronsko_bankarstvo_bbi() } )
    AAdd( aOpc, "4. export dbf (svi nalozi) " )
    AAdd( aOpcExe, {|| st_sv_nal() } )
-   AAdd( aOpc, "6. pos->fin " )
-   AAdd( aOpcExe, {|| PosFin() } )
+  //AAdd( aOpc, "6. pos->fin " )
+   //AAdd( aOpcExe, {|| PosFin() } )
 
    f18_menu( "fraz", .F., nIzbor, aOpc, aOpcExe )
 
@@ -36,18 +36,19 @@ FUNCTION fin_razmjena_podataka_meni()
 
 
 
-/* PosFin()
+/*
  *     Prenos prometa pologa
- */
+
 FUNCTION PosFin()
 
-   PRIVATE aOpc := {}
-   PRIVATE aOpcExe := {}
-   PRIVATE Izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
    AAdd( aOpc, "1. pos polozi                   " )
    AAdd( aOpcExe, {|| PromVP2Fin() } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "pf" )
+   f18_menu( "pofi", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN
+*/

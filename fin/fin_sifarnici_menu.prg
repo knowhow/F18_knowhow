@@ -17,10 +17,10 @@ FUNCTION MnuSifrarnik()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. opšti šifarnici                  " )
+   AAdd( _opc, "1. opći matični podaci (šifarnici)                " )
    AAdd( _opcexe, {|| opci_sifarnici() } )
 
-   AAdd( _opc, "2. finansijsko poslovanje " )
+   AAdd( _opc, "2. matični podaci finansijsko poslovanje " )
    AAdd( _opcexe, {|| _menu_specif() } )
 
 

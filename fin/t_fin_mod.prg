@@ -67,7 +67,7 @@ METHOD programski_modul_osnovni_meni()
    AAdd( _opcexe, {|| fin_udaljena_razmjena_podataka() } )
    AAdd( _opc, cSeparator )
    AAdd( _opcexe, {|| nil } )
-   AAdd( _opc, "S. matični podaci - šifarnici" )
+   AAdd( _opc, "S. matični podaci (šifarnici)" )
    AAdd( _opcexe, {|| MnuSifrarnik() } )
 
    AAdd( _opc, "A. kontrolni izvještaji" )

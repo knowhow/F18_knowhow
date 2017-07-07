@@ -16,7 +16,7 @@ FUNCTION opci_sifarnici()
 
    LOCAL aOpc := {}
    LOCAL aOpcExe := {}
-   LOCAL nIzbor
+   LOCAL nIzbor := 1
 
    AAdd( aOpc, "1. partneri                          " )
 

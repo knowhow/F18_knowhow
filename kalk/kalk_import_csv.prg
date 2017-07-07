@@ -685,7 +685,7 @@ STATIC FUNCTION CheckDok()
       start_print_editor()
 
       IF ( Len( aPomArt ) > 0 )
-         ? "Lista nepostojecih artikala:"
+         ? "Lista nepostojećih artikala:"
          ? "-----------------------------------------"
          ?
          FOR ii := 1 TO Len( aPomArt )

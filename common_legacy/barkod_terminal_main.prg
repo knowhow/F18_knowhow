@@ -111,7 +111,7 @@ STATIC FUNCTION check_barkod_import()
    start_print_editor()
 
    ?
-   ? "Lista nepostojecih artikala:"
+   ?U "Lista nepostojećih artikala:"
    ? "--------------------------------------------------------------"
    nCnt := 0
    FOR i := 1 TO Len( aErr )

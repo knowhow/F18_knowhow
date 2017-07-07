@@ -279,13 +279,13 @@ FUNCTION kalk_imp_partn_exist()
 
    aRet := {}
 
-   IF FieldPos( "idipdok" ) <> 0  .and. kalk_imp_temp->idtipdok == "96" // ovo polje postoji samo kada kalk_imp_temp sadrzi racune; za tip 96 polje partner je prazno
+   IF FieldPos( "idipdok" ) <> 0  .AND. kalk_imp_temp->idtipdok == "96" // ovo polje postoji samo kada kalk_imp_temp sadrzi racune; za tip 96 polje partner je prazno
       RETURN aRet
    ENDIF
 
    Box( "#Sifra partnera provjera", 3, 50 )
 
-   o_partner()
+   SELECT kalk_imp_temp
    GO TOP
    DO WHILE !Eof()
       select_o_partner( kalk_imp_temp->idpartner )

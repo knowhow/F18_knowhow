@@ -822,8 +822,8 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
       start_print_editor()
 
       IF ( Len( aPomPart ) > 0 )
-         ? "Lista nepostojecih partnera:"
-         ? "----------------------------"
+         ?U "Lista nepostojećih partnera:"
+         ? "------------------------------"
          ?
          FOR i := 1 TO Len( aPomPart )
             ? aPomPart[ i, 1 ]

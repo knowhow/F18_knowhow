@@ -17,6 +17,7 @@ if [ -z "$F18_VER" ] ; then
   F18_VER=`git describe --tags`
   echo updating f18_ver.ch
   scripts/update_f18_ver_ch.sh
+  [ $? != 0 ] && echo "error git version BUILD ERROR" && exit 1
 fi
   
 [ -z "$F18_VER" ] && echo "set envar F18_VER argument 2"  && usage && exit 1

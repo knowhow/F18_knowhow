@@ -20,5 +20,7 @@ unset F18_DEBUG_SQL
 
 scripts/update_f18_ver_ch.sh
 
+[ $? != 0 ] && echo "error git version BUILD ERROR" && exit 1
+
 hbmk2 -workdir=.h F18.hbp
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-F18_VER=`git describe --tags | grep "\d\{1,2\}.\d\{1,2\}.\d\{1,3\}$"`
+F18_VER=`git describe --tags | grep "\d\{1,2\}.\d\{1,2\}.\d\{1,3\}"`
 
 if [ -z "$F18_VER" ] ; then
  echo "verzija u git-u `git describe --tags` ne odgovara konvenciji X.Y.ZZZ"

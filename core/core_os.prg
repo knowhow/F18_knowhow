@@ -14,7 +14,6 @@
 
 #ifdef __PLATFORM__LINUX
 
-
 FUNCTION is_linux()
 
    RETURN .T.
@@ -27,7 +26,6 @@ FUNCTION is_mac()
 
    RETURN .F.
 #endif
-
 
 
 #ifdef __PLATFORM__DARWIN
@@ -63,4 +61,16 @@ FUNCTION is_linux()
 
    RETURN .F.
 
+#endif
+
+
+
+
+#ifdef GT_DEFAULT_CONSOLE
+FUNCTION is_terminal()
+   RETURN .T.
+
+#else
+FUNCTION is_terminal()
+   RETURN .F.
 #endif

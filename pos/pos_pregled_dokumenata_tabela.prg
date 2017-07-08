@@ -426,12 +426,12 @@ STATIC FUNCTION _o_pos_prepis_tbl()
 
    SELECT ( F_KASE )
    IF !Used()
-      O_KASE
+      o_pos_kase()
    ENDIF
 
    SELECT ( F_OSOB )
    IF !Used()
-      O_OSOB
+      o_pos_osob()
       SET ORDER TO TAG "NAZ"
    ENDIF
 

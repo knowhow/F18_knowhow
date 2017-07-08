@@ -503,7 +503,7 @@ FUNCTION NenapPop()
 FUNCTION pos_set_user( cKorSif, nSifLen, cLevel )
 
    O_STRAD
-   O_OSOB
+   o_pos_osob()
 
    cKorSif := CryptSC( PadR( Upper( Trim( cKorSif ) ), nSifLen ) )
    SELECT OSOB

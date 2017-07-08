@@ -256,8 +256,8 @@
 #xcommand O_ROBAIZ    => SELECT (F_ROBAIZ); my_use("robaiz"); set order to tag "1"
 #xcommand O_RAZDR     => SELECT (F_RAZDR) ; my_use("razdr")
 #xcommand O_STRAD     => o_pos_strad()
-#xcommand O_OSOB      => o_pos_osob()
-#xcommand O_KASE      => o_pos_kase()
+
+
 #xcommand O_ODJ       => SELECT (F_ODJ); my_use("odj"); set order to tag "ID"
 #xcommand O_DIO       => SELECT (F_DIO); my_use("dio"); set order to tag "ID"
 #xcommand O_UREDJ     => SELECT (F_UREDJ); my_use("uredj"); set order to tag "ID"

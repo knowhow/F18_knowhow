@@ -116,6 +116,8 @@ FUNCTION post_login()
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
    // thread_dbfs( hb_threadStart( @f18_http_server() ) )
 
+   thread_dbfs( hb_threadStart( @thread_f18_backup(), 1 ) ) // auto backup jedne organizacije
+
    IF !check_server_db_version()
       RETURN .F.
    ENDIF

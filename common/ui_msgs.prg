@@ -39,7 +39,7 @@ FUNCTION info_bar( cDoc, cMsg )
 
    hb_default( @cMsg, "" )
 
-   lPrinter   :=  Set( _SET_PRINTER,  .F. )
+   lPrinter :=  Set( _SET_PRINTER,  .F. )
    lConsole := Set( _SET_CONSOLE, .T. )
    @ MaxRow() - 1, 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_INFO_PANEL
 
@@ -49,7 +49,6 @@ FUNCTION info_bar( cDoc, cMsg )
 
    Set( _SET_PRINTER,  lPrinter )
    Set( _SET_CONSOLE, lConsole )
-
 
    IF Len( aInfos ) > INFO_MESSAGES_LENGTH
       ADel( aInfos, 1 )

@@ -39,3 +39,35 @@ FUNCTION f18_gt()
 #endif
 
 #endif
+
+
+
+
+FUNCTION f18_gt_background()
+
+#ifdef __PLATFORM__WINDOWS
+
+#ifdef GT_DEFAULT_CONSOLE
+   RETURN "NUL"
+
+#else
+
+   RETURN "NUL"
+#endif
+
+#else
+
+#ifdef GT_DEFAULT_CONSOLE
+
+   RETURN "NUL"
+#else
+
+#ifdef GT_DEFAULT_QT
+
+   RETURN "NUL"
+#else
+
+   RETURN "NUL"
+#endif
+
+#endif

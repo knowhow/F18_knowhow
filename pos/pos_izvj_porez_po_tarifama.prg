@@ -50,7 +50,7 @@ FUNCTION PorPoTar
    IF fSolo
     //  o_sifk()
     //  o_sifv()
-      O_KASE
+      o_pos_kase()
     //  o_roba()
       O_ODJ
       o_pos_doks()

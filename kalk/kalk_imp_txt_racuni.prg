@@ -716,7 +716,7 @@ STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
 
          error_bar( "kalk_auto_imp", "postoji dokument u pripremi koji je sumnjiv" )
 
-         MsgBeep( "Postoji dokument u kalk_pripremi koji je sumljiv!#Radi se o veznom dokumentu ili nekoj drugoj gresci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !" )
+         MsgBeep( "Postoji dokument u kalk_pripremi koji je sumljiv!#Radi se o veznom dokumentu ili nekoj drugoj grešci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !" )
          IF LastKey() == K_ESC
             IF Pitanje(, "Prekid operacije?", "N" ) == "D"
                RETURN .F.
@@ -952,25 +952,7 @@ STATIC FUNCTION kalk_postoji_faktura_a()
          LOOP
       ENDIF
 
-/*
-      SELECT kalk_doks
 
-      IF nRight > 0
-         SET ORDER TO TAG "V_BRF2"
-      ELSE
-         SET ORDER TO TAG "V_BRF"
-      ENDIF
-
-      GO TOP
-
-      IF nRight > 0
-         SEEK cTDok + cBrFakt
-      ELSE
-         SEEK PadR( cBrFakt, 10 ) + cTDok
-      ENDIF
-*/
-
-      // IF Found()
       IF find_kalk_doks_by_broj_fakture( cTDok,  PadR( cBrFakt, 10 ) )
          AAdd( aRet, { cBrOriginal, kalk_doks->idfirma + "-" + kalk_doks->idvd + "-" + AllTrim( kalk_doks->brdok ) } )
       ENDIF
@@ -983,9 +965,6 @@ STATIC FUNCTION kalk_postoji_faktura_a()
    ENDDO
 
    RETURN aRet
-
-
-
 
 
 

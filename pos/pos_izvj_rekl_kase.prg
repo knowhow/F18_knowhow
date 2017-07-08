@@ -118,7 +118,7 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos )
    ENDIF
    ? PadC( "-------------------------------------", 40 )
 
-   O_KASE
+   o_pos_kase()
    IF Empty( cIdPos )
       ? "PRODAJNO MJESTO: SVA"
    ELSE

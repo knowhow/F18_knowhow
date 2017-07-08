@@ -57,7 +57,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       PRIVATE cSmjena := " "
    ENDIF
 
-   O_KASE
+   o_pos_kase()
    O_ODJ
    O_DIO
   // o_sifk()

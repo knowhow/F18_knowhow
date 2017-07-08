@@ -79,7 +79,7 @@ FUNCTION Stanje2Fakt()
 //   o_sifk()
 //   o_sifv()
 //   o_partner()
-   O_KASE
+   o_pos_kase()
    o_pos_pos()
    o_pos_doks()
 

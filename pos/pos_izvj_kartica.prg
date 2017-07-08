@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR m
 
 FUNCTION pos_kartica_artikla()
 
@@ -24,6 +25,7 @@ FUNCTION pos_kartica_artikla()
    LOCAL nSir := 40
    LOCAL cSiroki := "D"
    LOCAL cPPar
+
    PRIVATE cIdDio := Space( 2 )
    PRIVATE cIdOdj := Space( 2 )
    PRIVATE cDat0 := gDatum
@@ -32,7 +34,7 @@ FUNCTION pos_kartica_artikla()
 
    nMDBrDok := 6
 
-   O_KASE
+   o_pos_kase()
    O_DIO
   // o_sifk()
   // o_sifv()

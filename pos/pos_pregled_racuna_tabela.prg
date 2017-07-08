@@ -24,7 +24,7 @@ FUNCTION pos_pregled_racuna_tabela()
 
   // o_sifk()
   // o_sifv()
-   O_KASE
+   o_pos_kase()
 //   o_roba()
    O__POS_PRIPR
    o_pos_doks()

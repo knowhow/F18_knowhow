@@ -45,7 +45,7 @@ FUNCTION pos_stanje_artikala
       cVrstaRs := "A"
    ENDIF
 
-   O_KASE
+   o_pos_kase()
    O_ODJ
    O_DIO
   // o_sifk()

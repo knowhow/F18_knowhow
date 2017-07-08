@@ -91,7 +91,7 @@ FUNCTION P_Kase( cId, dx, dy )
 
    SELECT ( F_KASE )
    IF !Used()
-      O_KASE
+      o_pos_kase()
    ENDIF
 
    ImeKol := {}

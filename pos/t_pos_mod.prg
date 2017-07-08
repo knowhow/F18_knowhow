@@ -436,7 +436,7 @@ METHOD set_module_gvars()
    PUBLIC glPorNaSvStRKas := .F.
 
    IF ( gVrstaRS <> "S" )
-      O_KASE
+      o_pos_kase()
       SET ORDER TO TAG "ID"
       HSEEK gIdPos
       IF Found()

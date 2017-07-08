@@ -247,7 +247,7 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, 
 
    ? PadC( "-------------------------------------", LEN_TRAKA )
 
-   O_KASE
+   o_pos_kase()
 
    IF Empty( cIdPos )
       IF ( grbReduk < 2 )

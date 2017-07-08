@@ -14,7 +14,7 @@
 
 FUNCTION PrometVPl()
 
-   O_KASE
+   o_pos_kase()
    O_PROMVP
 
    cIdPos := gIdPos

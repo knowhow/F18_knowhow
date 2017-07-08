@@ -142,7 +142,7 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
    ENDIF
 
-   O_OSOB
+   o_pos_osob()
 
    IF ( RECCOUNT2() == 0 )
 
@@ -193,7 +193,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    ENDIF
 
    O_ODJ
-   O_OSOB
+   o_pos_osob()
    SET ORDER TO TAG "NAZ"
 
    O_VRSTEP
@@ -201,7 +201,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    O_DIO
    O_K2C
    O_MJTRUR
-   O_KASE
+   o_pos_kase()
    o_sastavnica()
 //   o_roba()
   // o_tarifa()
@@ -233,7 +233,7 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 
 FUNCTION o_pos_sifre()
 
-   O_KASE
+   o_pos_kase()
    O_UREDJ
    O_ODJ
   // o_roba()
@@ -241,7 +241,7 @@ FUNCTION o_pos_sifre()
    O_VRSTEP
   // o_valute()
   // o_partner()
-   O_OSOB
+   o_pos_osob()
    O_STRAD
   // o_sifk()
   // o_sifv()

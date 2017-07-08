@@ -5,6 +5,7 @@ BRANCH=23100-ld
 if [ -z "$1" ] ; then
    echo "$0 <VER>"
    echo "$0 2.3.502"
+   exit 1
 fi
 
 NEW_VER=$1

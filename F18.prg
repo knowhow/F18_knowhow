@@ -211,7 +211,8 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
    LOCAL nX := 1
    LOCAL hDbParams
    LOCAL _count := 0
-   //LOCAL oBackup := F18Backup():New()
+
+   // LOCAL oBackup := F18Backup():New()
    LOCAL _user_roles := f18_user_roles_info()
    LOCAL cServerDbVersion
    LOCAL _tmp
@@ -243,16 +244,16 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
       @ nX, mnu_left SAY Replicate( "-", 55 )
 
 
-      //IF _count == 1 .OR. __relogin_opt // backup okidamo samo na prvom ulasku ili na opciji relogina
+      // IF _count == 1 .OR. __relogin_opt // backup okidamo samo na prvom ulasku ili na opciji relogina
 
-         //IF oBackup:locked( .F. ) // provjera da li je backup locked ?
-        //    oBackup:unlock()
-        // ENDIF
+      // IF oBackup:locked( .F. ) // provjera da li je backup locked ?
+      // oBackup:unlock()
+      // ENDIF
 
-      //   f18_auto_backup_data( 1 ) // automatski backup podataka preduzeca
-      //   __relogin_opt := .F.
+      // f18_auto_backup_data( 1 ) // automatski backup podataka preduzeca
+      // __relogin_opt := .F.
 
-      //ENDIF
+      // ENDIF
 
       aMeniOpcije := {}
       aMeniExec := {}
@@ -266,11 +267,11 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
       DO CASE
       CASE nMeniIzbor == 0
 
-         //IF !oBackup:locked
+         // IF !oBackup:locked
          EXIT
-         //ELSE
-        //    MsgBeep( oBackup:backup_in_progress_info() )
-         //ENDIF
+         // ELSE
+         // MsgBeep( oBackup:backup_in_progress_info() )
+         // ENDIF
 
       CASE nMeniIzbor > 0
          IF nMeniIzbor <= Len( aMeniExec )

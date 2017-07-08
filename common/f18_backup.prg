@@ -93,10 +93,10 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
 
    oBackup := F18Backup():New()
 
-  // IF is_terminal()
-      s_pGT := hb_gtCreate( f18_gt_background() )
-      s_pMainGT := hb_gtSelect( s_pGT )
-      hb_gtSelect( s_pMainGT )
+   // IF is_terminal()
+   s_pGT := hb_gtCreate( f18_gt_background() )
+   s_pMainGT := hb_gtSelect( s_pGT )
+   hb_gtSelect( s_pMainGT )
 /*
    ELSE
       s_pGT := hb_gtCreate( f18_gt() )
@@ -132,9 +132,9 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
       oBackup:do_backup( lAutoBackup ) // pokreni backup
    ENDIF
 
-   //IF is_terminal()
-      hb_gtSelect( s_pMainGt )
-   //ENDIF
+   // IF is_terminal()
+   hb_gtSelect( s_pMainGt )
+   // ENDIF
 
    info_bar( "backup", "backup END :)" )
    // hb_idleSleep( 0.5 )
@@ -175,7 +175,7 @@ METHOD F18Backup:do_backup( lAuto )
 
    // da li je backup vec pokrenut ?
    IF ::locked( .T. )
-      //IF !is_terminal() .AND.
+      // IF !is_terminal() .AND.
 
       IF Pitanje(, "Napravi unlock backup operacije (D/N)?", "N" ) == "N"
          RETURN .F.
@@ -254,8 +254,8 @@ METHOD F18Backup:backup_organizacija()
 
    FErase( ::backup_path + ::backup_filename )
 
-   //IF is_terminal()
-      info_bar( "back", "backup u toku .. " + Right( ::backup_path + ::backup_filename, 60 ) )
+   // IF is_terminal()
+   info_bar( "back", "backup u toku .. " + Right( ::backup_path + ::backup_filename, 60 ) )
 
 /*
    ELSE
@@ -284,21 +284,21 @@ METHOD F18Backup:backup_organizacija()
 
    hb_run_in_background_gt( cCmd )
 
-//   IF is_terminal()
+// IF is_terminal()
 
-      IF File( ::backup_path + ::backup_filename )
-         info_bar( "backup", ::backup_path + ::backup_filename + " OK" )
+   IF File( ::backup_path + ::backup_filename )
+      info_bar( "backup", ::backup_path + ::backup_filename + " OK" )
 
-         IF !Empty( ::removable_drive )
-            IF ::backup_to_removable()
-               info_bar( "backup", "prenos na " + ::removable_drive + " OK" )
-            ELSE
-               error_bar( "backup", "prenos na " + ::removable_drive + " ERR" )
-            ENDIF
+      IF !Empty( ::removable_drive )
+         IF ::backup_to_removable()
+            info_bar( "backup", "prenos na " + ::removable_drive + " OK" )
+         ELSE
+            error_bar( "backup", "prenos na " + ::removable_drive + " ERR" )
          ENDIF
-      ELSE
-         info_bar( "backup", ::backup_path + ::backup_filename + " ERROR" )
       ENDIF
+   ELSE
+      info_bar( "backup", ::backup_path + ::backup_filename + " ERROR" )
+   ENDIF
 
 /*
    ELSE // gui - prikaz informacija u prozoru
@@ -336,6 +336,7 @@ METHOD F18Backup:backup_organizacija()
 
    ENDIF
 */
+
    RETURN lOk
 
 
@@ -412,21 +413,21 @@ METHOD F18Backup:Backup_server()
 
    hb_run_in_background_gt( cCmd )
 
-//   IF is_terminal()
+// IF is_terminal()
 
-      IF File( ::backup_path + ::backup_filename )
-         info_bar( "backup", ::backup_path + ::backup_filename + " OK" )
+   IF File( ::backup_path + ::backup_filename )
+      info_bar( "backup", ::backup_path + ::backup_filename + " OK" )
 
-         IF !Empty( ::removable_drive )
-            IF ::backup_to_removable()
-               info_bar( "backup", "prenos na " + ::removable_drive + " OK" )
-            ELSE
-               error_bar( "backup", "prenos na " + ::removable_drive + " ERR" )
-            ENDIF
+      IF !Empty( ::removable_drive )
+         IF ::backup_to_removable()
+            info_bar( "backup", "prenos na " + ::removable_drive + " OK" )
+         ELSE
+            error_bar( "backup", "prenos na " + ::removable_drive + " ERR" )
          ENDIF
-      ELSE
-         info_bar( "backup", ::backup_path + ::backup_filename + " ERROR" )
       ENDIF
+   ELSE
+      info_bar( "backup", ::backup_path + ::backup_filename + " ERROR" )
+   ENDIF
 
 /*
    ELSE
@@ -664,6 +665,9 @@ METHOD F18Backup:get_last_backup_date()
 
 
 
+FUNCTION f18_gt_background()
+   RETURN "NUL"
+
 STATIC FUNCTION hb_run_in_background_gt( cCmd )
 
    LOCAL nRet
@@ -679,7 +683,6 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
    ENDIF
 
    RETURN nRet
-
 
 
 STATIC FUNCTION _set_color()

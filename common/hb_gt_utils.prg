@@ -44,7 +44,9 @@ FUNCTION f18_gt()
 
 
 FUNCTION f18_gt_background()
+   RETURN "NUL"
 
+/*
 #ifdef __PLATFORM__WINDOWS
 
 #ifdef GT_DEFAULT_CONSOLE
@@ -71,3 +73,4 @@ FUNCTION f18_gt_background()
 #endif
 
 #endif
+*/

@@ -5,12 +5,12 @@ libs=hbct
 libs=hbmzip minizip
 libs=hbtip
 
-{F18_GT_CONSOLE&unix}gt=gttrm
-{F18_GT_CONSOLE&unix}gt=gtnul
+gt=gtnul
 
+{F18_GT_CONSOLE&unix}gt=gttrm
 {!F18_GT_CONSOLE&unix}gt=gtxwc
-{F18_GT_CONSOLE&allwin}gt=gtwin
-{!F18_GT_CONSOLE&allwin}gt=gtwvt
+
+{allwin}gt=gtwvt
 
 libs=hbpgsql
 {unix}libs=pq

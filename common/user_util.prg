@@ -15,7 +15,7 @@
 FUNCTION GetUserID()
 
    LOCAL cTmpQry
-   LOCAL cTable := "public.usr"
+   LOCAL cTable := "public.usr" // view
    LOCAL oTable
    LOCAL nResult
    LOCAL cUser   := AllTrim( my_user() )
@@ -107,7 +107,7 @@ FUNCTION GetUserName( nUser_id )
 FUNCTION GetFullUserName( nUser_id )
 
    LOCAL cTmpQry
-   LOCAL cTable := "public.usr"
+   LOCAL cTable := "public.usr" // view
    LOCAL oTable
 
    cTmpQry := "SELECT usr_propername FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )

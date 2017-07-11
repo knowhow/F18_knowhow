@@ -167,7 +167,13 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    CASE nCh == K_ENTER
 
-      nRet := print_porezna_faktura( lOpcine )
+      // nRet := print_porezna_faktura( lOpcine )
+      SELECT F_FAKT_DOKS
+      IF !Used()
+         MsgBeep( "ERROR FAKT_DOKS nije otvoren ?!" )
+      ELSE
+         fakt_stamp_txt_dokumenta( fakt_doks->IdFirma, fakt_doks->IdTipdok, fakt_doks->Brdok )
+      ENDIF
       lRefresh := .T.
       lReload := .T.
 
@@ -411,7 +417,7 @@ FUNCTION fakt_pregled_reload_tables( cFilter )
    o_ops()
    o_fakt_doks2()
    o_valute()
-   //o_rj()
+   // o_rj()
    o_fakt_objekti()
    o_fakt()
    // o_partner()

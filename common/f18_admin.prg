@@ -34,7 +34,9 @@ FUNCTION download_version( cUrl )
 
    @ m_x + 1, m_y + 2 SAY Left( cUrl, 67 )
 
-   F18Admin():wget_download( cUrl, "",  cFileName )
+   IF !F18Admin():wget_download( cUrl, "",  cFileName )
+      RETURN ""
+   ENDIF
 
    oFile := TFileRead():New( cFileName )
    oFile:Open()
@@ -55,7 +57,7 @@ FUNCTION download_version( cUrl )
    aMatch := hb_regex( pRegex, cRead )
 
    IF Len( aMatch ) < 4 // aMatch[1]="2.3.500" aMatch[2]="2", aMatch[3]="3", aMatch[4]="500"
-      MsgBeep( "VERSION format error " + cRead )
+      MsgBeep( "VERSION format error (" + cRead + ")"  )
       RETURN ""
    ENDIF
 

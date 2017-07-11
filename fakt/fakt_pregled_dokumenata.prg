@@ -229,21 +229,21 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
 
 
-
+/*
 FUNCTION print_porezna_faktura( lOpcine )
 
-   LOCAL nTrec
+   LOCAL cIdFirma, cIdTipDok, cBrDok
 
    SELECT fakt_doks
-   nTrec := RecNo()
+   //nTrec := RecNo()
 
-   _cIdFirma := idfirma
-   _cIdTipDok := idtipdok
-   _cBrDok := brdok
+   cIdFirma := idfirma
+   cIdTipDok := idtipdok
+   cBrDok := brdok
 
    close_open_fakt_tabele()
 
-   fakt_stamp_txt_dokumenta( _cidfirma, _cIdTipdok, _cBrdok )
+   fakt_stamp_txt_dokumenta( cIdFirma, cIdTipdok, cBrdok )
 
    SELECT ( F_FAKT_DOKS )
    USE
@@ -251,7 +251,7 @@ FUNCTION print_porezna_faktura( lOpcine )
    o_fakt_doks()
 
    RETURN DE_CONT
-
+*/
 
 FUNCTION fakt_print_odt( lOpcine )
 

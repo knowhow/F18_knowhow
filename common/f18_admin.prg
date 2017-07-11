@@ -576,6 +576,7 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
 
    IF f18_run( cCmd, cLocalFileName ) != 0
       MsgBeep( "Error: " + cCmd  + "?!" )
+      RETURN .F.
    ENDIF
    // Sleep( 1 )
 
@@ -583,7 +584,6 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
       error_bar( "upd", "Fajl " + cLocalFileName + " nije download-ovan !" )
       RETURN .F.
    ENDIF
-
 
    nFileHandle := FOpen( cLocalFileName ) // provjeri velicinu fajla
 

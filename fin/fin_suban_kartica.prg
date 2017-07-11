@@ -335,7 +335,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    IF cBrza == "D"
-      IF RTrim( qqPartner ) == ";"
+      IF RTrim( qqPartner ) == ";" // ne kontam kada se ovo desava
          find_suban_by_konto_partner( cIdFirma, qqKonto, NIL, NIL, cOrderBy )
       ELSE
          find_suban_by_konto_partner( cIdFirma, qqKonto, qqPartner, NIL, cOrderBy )
@@ -343,9 +343,14 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    ELSE
       o_sql_suban_kto_partner( cIdFirma )
    ENDIF
-
-   GO TOP
    MsgC()
+
+   IF !Used()
+      MsgBeep( "ERROR SQL podaci ?! " + ;
+         "#konto=" + AllTrim( qqKonto ) + "#partner=" + AllTrim( qqPArtner ) )
+      RETURN .F.
+   ENDIF
+   GO TOP
 
    IF _fakt_params[ "fakt_vrste_placanja" ]
       lVrsteP := .T.
@@ -389,7 +394,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          SET INDEX TO
          INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond TO SUBSUB FOR &cFilter
       ELSE
-         IF cfilter == ".t."
+         IF cFilter == ".t."
             SET FILTER TO
          ELSE
             SET FILTER TO &cFilter

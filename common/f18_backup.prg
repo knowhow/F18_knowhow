@@ -96,7 +96,7 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    // IF is_terminal()
    s_pGT := hb_gtCreate( f18_gt_background() )
    s_pMainGT := hb_gtSelect( s_pGT )
-   hb_gtSelect( s_pMainGT )
+
 /*
    ELSE
       s_pGT := hb_gtCreate( f18_gt() )
@@ -677,6 +677,7 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
    ENDIF
 
    nRet := hb_run( cCmd )
+   ? "RET=", nRet, cCmd
 
    IF is_terminal()
       hb_gtSelect( s_pMainGT )

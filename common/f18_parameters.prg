@@ -26,7 +26,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
    LOCAL _email_to, _email_cc
    LOCAL _proper_name, _params
    LOCAL _log_delete_interval
-   LOCAL _backup_company, _backup_server
+   LOCAL nBackupOrgInterval, nBackupServerInterval
    LOCAL _backup_removable, _backup_ping_time
    LOCAL _rpt_page_len, _bug_report
    LOCAL _log_level
@@ -77,8 +77,8 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
 
    _log_delete_interval := fetch_metric( "log_delete_level", NIL, 30 )
 
-   _backup_company := fetch_metric( "backup_company_interval", my_user(), 0 )
-   _backup_server := fetch_metric( "backup_server_interval", my_user(), 0 )
+   nBackupOrgInterval := fetch_metric( "backup_company_interval", my_user(), 0 )
+   nBackupServerInterval := fetch_metric( "backup_server_interval", my_user(), 0 )
    _backup_removable := PadR( fetch_metric( "backup_removable_drive", my_user(), "" ), 300 )
 
 #ifdef __PLATFORM__WINDOWS
@@ -158,10 +158,10 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       nX += 2
       @ nPosX + nX, _pos_y SAY "Backup parametri ***" COLOR f18_color_i()
       ++nX
-      @ nPosX + nX, _pos_y SAY8 "Automatski backup podataka organizacije (interval dana 0 - ne radi ništa):" GET _backup_company PICT "999"
+      @ nPosX + nX, _pos_y SAY8 "Automatski backup podataka organizacije (interval dana 0 - ne radi ništa):" GET nBackupOrgInterval PICT "999"
 
       ++nX
-      @ nPosX + nX, _pos_y SAY8 "Automatski backup podataka servera (interval 0 - ne radi ništa):" GET _backup_server PICT "999"
+      @ nPosX + nX, _pos_y SAY8 "Automatski backup podataka servera (interval 0 - ne radi ništa):" GET nBackupServerInterval PICT "999"
 
       ++nX
       @ nPosX + nX, _pos_y SAY "Udaljena backup lokacija:" GET _backup_removable PICT "@S60"
@@ -217,8 +217,8 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       set_metric( "email_cc_default", my_user(), AllTrim( _email_cc ) )
       set_metric( "my_proper_name", my_user(), AllTrim( _proper_name ) )
       set_metric( "log_delete_level", NIL, _log_delete_interval )
-      set_metric( "backup_company_interval", my_user(), _backup_company )
-      set_metric( "backup_server_interval", my_user(), _backup_server )
+      set_metric( "backup_company_interval", my_user(), nBackupOrgInterval )
+      set_metric( "backup_server_interval", my_user(), nBackupServerInterval )
       set_metric( "backup_removable_drive", my_user(), AllTrim( _backup_removable ) )
       set_metric( "rpt_duzina_stranice", my_user(), _rpt_page_len )
       set_metric( "bug_report_email", my_user(), _bug_report )

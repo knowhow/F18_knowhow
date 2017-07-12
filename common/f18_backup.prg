@@ -242,7 +242,7 @@ METHOD F18Backup:backup_organizacija()
    cBackupFile := StrTran( cBackupFile, "\", "//" )
 #endif
 
-   cCmd += "pg_dump"
+   cCmd += "pg_dump --ignore-version "
    cCmd += " -h " + AllTrim( _host )
    cCmd += " -p " + AllTrim( Str( _port ) )
    cCmd += " -U " + f18_user()

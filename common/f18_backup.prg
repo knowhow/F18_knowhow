@@ -677,7 +677,7 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
    ENDIF
 
    nRet := hb_run( cCmd )
-   ? "RET=", nRet, cCmd
+   ?E "RET=", nRet, cCmd
 
    IF is_terminal()
       hb_gtSelect( s_pMainGT )

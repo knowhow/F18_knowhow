@@ -12,7 +12,7 @@
 #include "f18.ch"
 #include "f18_color.ch"
 
-STATIC s_pGT, s_pMainGT
+THREAD STATIC s_pGT := NIL, s_pMainGT := NIL
 
 CLASS F18Backup
 
@@ -56,9 +56,11 @@ ENDCLASS
 
 
 
-FUNCTION f18_backup_data()
+FUNCTION f18_backup_now()
 
-   hb_threadStart( @thread_f18_backup(), NIL )
+   LOCAL oBackup := F18Backup():New()
+
+   oBackup:do_backup_now()
 
    RETURN .T.
 
@@ -94,8 +96,11 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    oBackup:nBackupType := nBackupTipOrgIliSve
 
    // IF is_terminal()
+
    s_pGT := hb_gtCreate( f18_gt_background() )
    s_pMainGT := hb_gtSelect( s_pGT )
+
+
 
 /*
    ELSE
@@ -142,7 +147,6 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    ENDIF
    // hb_idleSleep( 0.5 )
    close_thread( "f18_backup" )
-   // QUIT_1
 
    RETURN
 
@@ -156,6 +160,54 @@ METHOD F18Backup:New()
    info_bar( "backup", "backup start" )
 
    RETURN SELF
+
+
+METHOD F18Backup:do_backup_now()
+
+   LOCAL nType := 1
+   LOCAL nX
+   LOCAL nY
+
+   Box( "#Backup NOW", 7, 60 )
+   nX := m_x + 1
+   nY := m_y + 2
+
+   @ nX, nY SAY "*** BACKUP procedura *** " + DToC( Date() )
+
+   @ nX++, nY SAY "Dostupne opcije:"
+   @ nX++, nY SAY8 "   1 - backup trenutne organizacije"
+   @ nX++, nY SAY8 "   0 - backup kompletnog servera"
+   @ nX++, nY SAY8 "Vaš odabir:" GET nType VALID nType == 0 .OR. nType == 1 PICT "9"
+
+   READ
+
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN .F.
+   ENDIF
+
+   // da li je backup vec pokrenut ?
+   IF ::locked( .T. )
+      IF Pitanje(, "Napravi unlock backup operacije (D/N)?", "N" ) == "N"
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   ::get_backup_path()
+   ::get_backup_interval()
+
+   ::nBackupType := nType
+   ::do_backup()
+
+   IF ::nError == 0
+      info_bar( "backup", "backup END :)" )
+      MsgBeep( "kreiran backup:##" + ::backup_path + ::backup_filename )
+   ELSE
+      error_bar( "backup", "backup ERROR" )
+   ENDIF
+
+   RETURN .T.
 
 
 METHOD F18Backup:backup_in_progress_info()
@@ -181,7 +233,7 @@ METHOD F18Backup:do_backup()
    IF ::nBackupType == 1
       ::backup_organizacija()
    ELSE
-      ::Backup_server()
+      ::backup_server()
    ENDIF
 
    IF ::nError == 0
@@ -550,53 +602,6 @@ METHOD F18Backup:get_backup_interval()
    RETURN .T.
 
 
-METHOD F18Backup:do_backup_now()
-
-   LOCAL nType := 1
-   LOCAL nX := 1
-   LOCAL nY := 2
-   LOCAL _s_line := Replicate( "-", 60 )
-   LOCAL _d_line := Replicate( "=", 60 )
-
-   // IF nBackupType == NIL
-
-   @ nX, nY SAY "*** BACKUP procedura *** " + DToC( Date() )
-
-   ++nX
-   @ nX, nY SAY _d_line
-   ++nX
-   @ nX, nY SAY "Dostupne opcije:"
-   ++nX
-   @ nX, nY SAY8 "   1 - backup trenutne organizacije"
-   ++nX
-   @ nX, nY SAY8 "   0 - backup kompletnog servera"
-   ++nX
-   @ nX, nY SAY8 "Vaš odabir:" GET nType VALID nType == 0 .OR. nType == 1 PICT "9"
-
-   ++nX
-   @ nX, nY SAY _s_line
-
-   READ
-
-
-   IF LastKey() == K_ESC
-      RETURN .F.
-   ENDIF
-
-   // da li je backup vec pokrenut ?
-   IF ::locked( .T. )
-      IF Pitanje(, "Napravi unlock backup operacije (D/N)?", "N" ) == "N"
-         RETURN .F.
-      ENDIF
-   ENDIF
-
-   ::get_backup_path()
-   ::get_backup_interval()
-
-   ::nBackupType := nType
-   ::do_backup()
-
-   RETURN .T.
 
 
 METHOD F18Backup:Lock()
@@ -673,7 +678,7 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
 
    LOCAL nError
 
-   IF is_terminal()
+   IF s_pGT != NIL .AND. is_terminal()
       hb_gtSelect( s_pGT )
    ENDIF
 
@@ -682,7 +687,7 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
    IF nError != 0
       error_bar( "backup", cCmd )
    ENDIF
-   IF is_terminal()
+   IF s_pMainGT != NIL .AND. is_terminal()
       hb_gtSelect( s_pMainGT )
    ENDIF
 

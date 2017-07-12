@@ -222,13 +222,13 @@ METHOD F18Backup:backup_organizacija()
    ::get_windows_ping_time()
    ::get_removable_drive()
 
-
-#ifdef __PLATFORM__UNIX
-   cCmd += "export pgusername=admin;export PGPASSWORD=boutpgmin;"
-#endif
+   IF is_windows()
+      cCmd += "set pgusername=" + f18_user() + "&set PGPASSWORD=" + f18_password() + "&"
+   ELSE
+      cCmd += "export pgusername=" + f18_user() + ";export PGPASSWORD=" + f18_password() + ";"
+   ENDIF
 
 #ifdef __PLATFORM__WINDOWS
-   cCmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
 
    IF ::ping_time > 0
       cCmd += "ping -n " + AllTrim( Str( ::ping_time ) ) + " 8.8.8.8&"

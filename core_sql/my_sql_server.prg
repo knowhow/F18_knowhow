@@ -85,13 +85,13 @@ FUNCTION my_server_close( nConnType )
       ENDIF
       IF hb_mutexLock( s_mtxMutex )
          s_nSQLConnections--
-         nPos := AScan( s_aSQLConnections, {| item|  item[ 1 ] == oServer } )
+         nPos := AScan( s_aSQLConnections, {| item |  item[ 1 ] == oServer } )
          IF nPos > 0
 #ifdef F18_DEBUG_SQL
             ?E "CCCCCCCCCCCCCCCCCLOSE TPQSERVER CLOSE CONNECTION port:", s_aSQLConnections[ nPos, 2 ]
 #endif
             ADel( s_aSQLConnections, nPos )
-            ASize( s_aSQLConnections, Len( s_aSQLConnections ) -1 )
+            ASize( s_aSQLConnections, Len( s_aSQLConnections ) - 1 )
          ENDIF
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
@@ -325,6 +325,8 @@ FUNCTION my_server_search_path()
 FUNCTION f18_user()
    RETURN s_psqlServer_params[ "user" ]
 
+FUNCTION f18_password()
+   RETURN s_psqlServer_params[ "password" ]
 
 FUNCTION f18_database()
    RETURN s_psqlServer_params[ "database" ]

@@ -135,7 +135,7 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    hb_gtSelect( s_pMainGt )
    // ENDIF
 
-   IF ::nError == 0
+   IF oBackup:nError == 0
       info_bar( "backup", "backup END :)" )
    ELSE
       error_bar( "backup", "backup ERROR" )

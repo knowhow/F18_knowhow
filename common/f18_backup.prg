@@ -42,10 +42,12 @@ CLASS F18Backup
    METHOD locked()
 
    VAR  nError       INIT 0
+   VAR  nBackupType  INIT 1 // organizacija
+
    DATA backup_path
    DATA backup_filename
    DATA backup_interval
-   DATA nBackupType
+
    DATA last_backup
    DATA removable_drive
    DATA ping_time
@@ -84,13 +86,12 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    // ENDIF
 
 
-   oBackup:nBackupType := nBackupTipOrgIliSve
-
    // init_parameters_cache()
 
    set_global_vars_0()
 
    oBackup := F18Backup():New()
+   oBackup:nBackupType := nBackupTipOrgIliSve
 
    // IF is_terminal()
    s_pGT := hb_gtCreate( f18_gt_background() )
@@ -108,6 +109,7 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
 
    oBackup:get_backup_interval()
    oBackup:get_last_backup_date()
+   oBackup:get_backup_path()
 
    // IF !start_now .AND.
    IF oBackup:backup_interval == 0 // nemam sta raditi ako ovaj interval ne postoji !
@@ -124,9 +126,9 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    ENDIF
 
    // IF oBackup:get_backup_type( nBackupTipOrgIliSve )
-   oBackup:get_backup_path()
-   oBackup:get_backup_interval()
-   oBackup:do_auto_backup() // pokreni backup
+
+
+   oBackup:do_backup()
    // ENDIF
 
    // IF is_terminal()

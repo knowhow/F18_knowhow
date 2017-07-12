@@ -15,8 +15,8 @@ FUNCTION set_a_dbf_sif()
 
    LOCAL hRec
 
-   // tabele sa strukturom sifarnika (id je primarni ključ)
-   set_a_dbf_sifarnik( "adres", "ADRES", F_ADRES      )
+
+   set_a_sql_sifarnik( "adres", "ADRES", F_ADRES      )
 
    set_a_sql_sifarnik( "roba", "ROBA", F_ROBA       )
    set_a_sql_sifarnik( "konto", "KONTO", F_KONTO      )

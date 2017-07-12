@@ -209,11 +209,11 @@ METHOD F18Backup:backup_organizacija()
    LOCAL _server_params := my_server_params()
    LOCAL _host := _server_params[ "host" ]
    LOCAL _port := _server_params[ "port" ]
-   LOCAL _database := _server_params[ "database" ]
+   LOCAL cDataBase := _server_params[ "database" ]
    LOCAL _admin_user := "admin"
    LOCAL nX := 7
    LOCAL nY := 2
-   LOCAL nI, _backup_file
+   LOCAL nI, cBackupFile
    LOCAL _color_ok := F18_COLOR_BACKUP_OK
    LOCAL _color_err := F18_COLOR_BACKUP_ERROR
    LOCAL _line := Replicate( "-", 70 )
@@ -236,21 +236,21 @@ METHOD F18Backup:backup_organizacija()
 
 #endif
 
-   _backup_file := ::backup_path + ::backup_filename
+   cBackupFile := ::backup_path + ::backup_filename
 
 #ifdef __PLATFORM__WINDOWS
-   _backup_file := StrTran( _backup_file, "\", "//" )
+   cBackupFile := StrTran( cBackupFile, "\", "//" )
 #endif
 
    cCmd += "pg_dump"
    cCmd += " -h " + AllTrim( _host )
    cCmd += " -p " + AllTrim( Str( _port ) )
-   cCmd += " -U " + AllTrim( _admin_user )
+   cCmd += " -U " + f18_user()
    cCmd += " -w "
    cCmd += " -F c "
    cCmd += " -b "
-   cCmd += ' -f "' + _backup_file + '"'
-   cCmd += ' "' + _database + '"'
+   cCmd += ' -f "' + cBackupFile + '"'
+   cCmd += ' "' + cDataBase + '"'
 
    FErase( ::backup_path + ::backup_filename )
 
@@ -347,11 +347,11 @@ METHOD F18Backup:Backup_server()
    LOCAL _server_params := my_server_params()
    LOCAL _host := _server_params[ "host" ]
    LOCAL _port := _server_params[ "port" ]
-   LOCAL _database := _server_params[ "database" ]
+   LOCAL cDataBase := _server_params[ "database" ]
    LOCAL _admin_user := "admin"
    LOCAL nX := 7
    LOCAL nY := 2
-   LOCAL nI, _backup_file
+   LOCAL nI, cBackupFile
    LOCAL _line := Replicate( "-", 70 )
    LOCAL _color_ok := "W+/B+"
    LOCAL _color_err := "W+/R+"
@@ -377,10 +377,10 @@ METHOD F18Backup:Backup_server()
 
 #endif
 
-   _backup_file := ::backup_path + ::backup_filename
+   cBackupFile := ::backup_path + ::backup_filename
 
 #ifdef __PLATFORM__WINDOWS
-   _backup_file := StrTran( _backup_file, "\", "//" )
+   cBackupFile := StrTran( cBackupFile, "\", "//" )
 #endif
 
    cCmd += "pg_dumpall"
@@ -388,7 +388,7 @@ METHOD F18Backup:Backup_server()
    cCmd += " -p " + AllTrim( Str( _port ) )
    cCmd += " -U " + AllTrim( _admin_user )
    cCmd += " -w "
-   cCmd += ' -f "' + _backup_file + '"'
+   cCmd += ' -f "' + cBackupFile + '"'
 
 /*
    IF !is_terminal()
@@ -504,14 +504,14 @@ METHOD F18Backup:get_removable_drive()
 METHOD F18Backup:get_backup_path()
 
    LOCAL _path
-   LOCAL _database
+   LOCAL cDataBase
 
    IF ::nBackupType == 0
       set_f18_home_backup()
       ::backup_path := my_home_backup()
    ELSE
-      _database := my_server_params()[ "database" ]
-      set_f18_home_backup( _database )
+      cDataBase := my_server_params()[ "database" ]
+      set_f18_home_backup( cDataBase )
       ::backup_path := my_home_backup()
    ENDIF
 

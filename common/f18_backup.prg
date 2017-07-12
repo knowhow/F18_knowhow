@@ -18,6 +18,7 @@ CLASS F18Backup
 
    METHOD New()
 
+   METHOD do_backup_now()
    METHOD do_backup()
 
    METHOD backup_organizacija()
@@ -29,7 +30,7 @@ CLASS F18Backup
 
    METHOD get_backup_path()
    METHOD get_backup_interval()
-   METHOD get_backup_type()
+   // METHOD get_backup_type()
    METHOD get_backup_filename()
    METHOD get_last_backup_date()
    METHOD set_last_backup_date()
@@ -82,9 +83,8 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    // RETURN
    // ENDIF
 
-   IF nBackupTipOrgIliSve == NIL
-      lAutoBackup := .F.
-   ENDIF
+
+   oBackup:nBackupType := nBackupTipOrgIliSve
 
    // init_parameters_cache()
 
@@ -105,9 +105,7 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    ENDIF
 */
 
-   IF !lAutoBackup
-      oBackup:get_backup_type( nBackupTipOrgIliSve )
-   ENDIF
+
    oBackup:get_backup_interval()
    oBackup:get_last_backup_date()
 
@@ -125,11 +123,11 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
       RETURN
    ENDIF
 
-   IF oBackup:get_backup_type( nBackupTipOrgIliSve )
-      oBackup:get_backup_path()
-      oBackup:get_backup_interval()
-      oBackup:do_backup( lAutoBackup ) // pokreni backup
-   ENDIF
+   // IF oBackup:get_backup_type( nBackupTipOrgIliSve )
+   oBackup:get_backup_path()
+   oBackup:get_backup_interval()
+   oBackup:do_auto_backup() // pokreni backup
+   // ENDIF
 
    // IF is_terminal()
    hb_gtSelect( s_pMainGt )
@@ -168,26 +166,15 @@ METHOD F18Backup:backup_in_progress_info()
 
 
 
-METHOD F18Backup:do_backup( lAuto )
+METHOD F18Backup:do_backup()
 
    LOCAL pMainGT
 
-   IF lAuto == NIL
-      lAuto := .T.
-   ENDIF
+   // IF lAuto == NIL
+   // lAuto := .T.
+   // ENDIF
 
-   // da li je backup vec pokrenut ?
-   IF ::locked( .T. )
-      // IF !is_terminal() .AND.
-
-      IF Pitanje(, "Napravi unlock backup operacije (D/N)?", "N" ) == "N"
-         RETURN .F.
-      ENDIF
-   ELSE
-      ::Lock() // zakljucaj opciju backup-a da je samo jedan korisnik radi
-   ENDIF
-
-
+   ::Lock() // zakljucaj opciju backup-a da je samo jedan korisnik radi
 
    IF ::nBackupType == 1
       ::backup_organizacija()
@@ -195,8 +182,7 @@ METHOD F18Backup:do_backup( lAuto )
       ::Backup_server()
    ENDIF
 
-
-   IF lAuto
+   IF ::nError == 0
       ::set_last_backup_date()   // setuj datum kreiranja backup-a
    ENDIF
 
@@ -562,43 +548,51 @@ METHOD F18Backup:get_backup_interval()
    RETURN .T.
 
 
-METHOD F18Backup:get_backup_type( nBackupType )
+METHOD F18Backup:do_backup_now()
 
-   LOCAL _type := 1
+   LOCAL nType := 1
    LOCAL nX := 1
    LOCAL nY := 2
    LOCAL _s_line := Replicate( "-", 60 )
    LOCAL _d_line := Replicate( "=", 60 )
 
-   IF nBackupType == NIL
+   // IF nBackupType == NIL
 
-      @ nX, nY SAY "*** BACKUP procedura *** " + DToC( Date() )
+   @ nX, nY SAY "*** BACKUP procedura *** " + DToC( Date() )
 
-      ++nX
-      @ nX, nY SAY _d_line
-      ++nX
-      @ nX, nY SAY "Dostupne opcije:"
-      ++nX
-      @ nX, nY SAY8 "   1 - backup tekuće firme"
-      ++nX
-      @ nX, nY SAY "   0 - backup kompletnog servera"
-      ++nX
-      @ nX, nY SAY8 "Vaš odabir:" GET _type VALID _type >= 0 PICT "9"
+   ++nX
+   @ nX, nY SAY _d_line
+   ++nX
+   @ nX, nY SAY "Dostupne opcije:"
+   ++nX
+   @ nX, nY SAY8 "   1 - backup trenutne organizacije"
+   ++nX
+   @ nX, nY SAY8 "   0 - backup kompletnog servera"
+   ++nX
+   @ nX, nY SAY8 "Vaš odabir:" GET nType VALID nType == 0 .OR. nType == 1 PICT "9"
 
-      ++nX
-      @ nX, nY SAY _s_line
+   ++nX
+   @ nX, nY SAY _s_line
 
-      READ
+   READ
 
-      IF LastKey() == K_ESC
-         RETURN .F.
-      ENDIF
 
-   ELSE
-      _type := nBackupType
+   IF LastKey() == K_ESC
+      RETURN .F.
    ENDIF
 
-   ::nBackupType := _type
+   // da li je backup vec pokrenut ?
+   IF ::locked( .T. )
+      IF Pitanje(, "Napravi unlock backup operacije (D/N)?", "N" ) == "N"
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   ::get_backup_path()
+   ::get_backup_interval()
+
+   ::nBackupType := nType
+   ::do_backup()
 
    RETURN .T.
 
@@ -642,28 +636,28 @@ METHOD F18Backup:locked( lInfo )
 
 METHOD F18Backup:set_last_backup_date()
 
-   LOCAL _type := "company"
+   LOCAL nType := "company"
 
    IF ::nBackupType == 0
-      _type := "server"
+      nType := "server"
    ENDIF
 
-   ?E "set", "f18_backup_date_" + _type, my_user(), Date()
-   ?E set_metric( "f18_backup_date_" + _type, my_user(), Date() )
+   ?E "set", "f18_backup_date_" + nType, my_user(), Date()
+   ?E set_metric( "f18_backup_date_" + nType, my_user(), Date() )
 
    RETURN .T.
 
 
 METHOD F18Backup:get_last_backup_date()
 
-   LOCAL _type := "company"
+   LOCAL nType := "company"
 
    IF ::nBackupType == 0
-      _type := "server"
+      nType := "server"
    ENDIF
 
-   ::last_backup := fetch_metric( "f18_backup_date_" + _type, my_user(), CToD( "" ) )
-   ?E "get ", "f18_backup_date_" + _type, my_user(), ::last_backup
+   ::last_backup := fetch_metric( "f18_backup_date_" + nType, my_user(), CToD( "" ) )
+   ?E "get ", "f18_backup_date_" + nType, my_user(), ::last_backup
 
    RETURN .T.
 

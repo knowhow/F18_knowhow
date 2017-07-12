@@ -12,7 +12,7 @@
 #include "f18.ch"
 #include "f18_color.ch"
 
-THREAD STATIC s_pGT := NIL, s_pMainGT := NIL
+// THREAD STATIC s_pGT := NIL, s_pMainGT := NIL
 
 CLASS F18Backup
 
@@ -97,8 +97,8 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
 
    // IF is_terminal()
 
-   s_pGT := hb_gtCreate( f18_gt_background() )
-   s_pMainGT := hb_gtSelect( s_pGT )
+// s_pGT := hb_gtCreate( f18_gt_background() )
+// s_pMainGT := hb_gtSelect( s_pGT )
 
 
 
@@ -118,14 +118,14 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
 
    // IF !start_now .AND.
    IF oBackup:backup_interval == 0 // nemam sta raditi ako ovaj interval ne postoji !
-      hb_gtSelect( s_pMainGt )
+      //hb_gtSelect( s_pMainGt )
       info_bar( "backup", "backup 0" )
       // hb_idleSleep( 0.5 )
       RETURN
    ENDIF
 
    IF ( Date() - oBackup:backup_interval ) <= oBackup:last_backup
-      hb_gtSelect( s_pMainGt )
+      //hb_gtSelect( s_pMainGt )
       info_bar( "backup", "backup <interval" )
       RETURN
    ENDIF
@@ -137,7 +137,7 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    // ENDIF
 
    // IF is_terminal()
-   hb_gtSelect( s_pMainGt )
+   //hb_gtSelect( s_pMainGt )
    // ENDIF
 
    IF oBackup:nError == 0
@@ -325,7 +325,12 @@ METHOD F18Backup:backup_organizacija()
    ENDIF
 */
 
-   ::nError := hb_run_in_background_gt( cCmd )
+// ::nError := hb_run_in_background_gt( cCmd )
+   IF is_windows()
+      ::nError := f18_run( cCmd )
+   ELSE
+      ::nError := hb_run( cCmd )
+   ENDIF
 
 // IF is_terminal()
    IF ::nError == 0
@@ -454,7 +459,9 @@ METHOD F18Backup:Backup_server()
    ENDIF
 */
 
-   ::nError := hb_run_in_background_gt( cCmd )
+   // ::nError := hb_run_in_background_gt( cCmd )
+   ::nError := f18_run( cCmd )
+
 
 // IF is_terminal()
 
@@ -669,7 +676,7 @@ METHOD F18Backup:get_last_backup_date()
    RETURN .T.
 
 
-
+/*
 FUNCTION f18_gt_background()
    RETURN "NUL"
 
@@ -692,7 +699,7 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
    ENDIF
 
    RETURN nError
-
+*/
 
 STATIC FUNCTION _set_color()
 

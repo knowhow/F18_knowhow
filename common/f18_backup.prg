@@ -40,6 +40,7 @@ CLASS F18Backup
    METHOD UNLOCK()
    METHOD locked()
 
+   VAR  nError       INIT 0
    DATA backup_path
    DATA backup_filename
    DATA backup_interval
@@ -49,8 +50,6 @@ CLASS F18Backup
    DATA ping_time
 
 ENDCLASS
-
-
 
 
 
@@ -72,7 +71,7 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
 
    // MsgBeep( "start     ============" )
    // Alert("ok")
-   hb_idleSleep( 0.5 )
+   // hb_idleSleep( 0.5 )
    // info_bar( "b2", "b2 start")
    // hb_idleSleep( 10 )
    // MsgBeep( "-------------------------end" )
@@ -136,7 +135,11 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    hb_gtSelect( s_pMainGt )
    // ENDIF
 
-   info_bar( "backup", "backup END :)" )
+   IF ::nError == 0
+      info_bar( "backup", "backup END :)" )
+   ELSE
+      error_bar( "backup", "backup ERROR" )
+   ENDIF
    // hb_idleSleep( 0.5 )
    close_thread( "f18_backup" )
    // QUIT_1
@@ -670,23 +673,20 @@ FUNCTION f18_gt_background()
 
 STATIC FUNCTION hb_run_in_background_gt( cCmd )
 
-   LOCAL nRet
-
    IF is_terminal()
       hb_gtSelect( s_pGT )
    ENDIF
 
-   nRet := hb_run( cCmd )
-   ?E "RET=", nRet, cCmd
-
-   IF nRet != 0
+   ::nError := hb_run( cCmd )
+   ?E "RET=", ::nError, cCmd
+   IF ::nError != 0
       error_bar( "backup", cCmd )
    ENDIF
    IF is_terminal()
       hb_gtSelect( s_pMainGT )
    ENDIF
 
-   RETURN nRet
+   RETURN ::nError
 
 
 STATIC FUNCTION _set_color()

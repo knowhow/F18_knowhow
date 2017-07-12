@@ -285,11 +285,11 @@ METHOD F18Backup:backup_organizacija()
    ENDIF
 */
 
-   hb_run_in_background_gt( cCmd )
+   ::nError := hb_run_in_background_gt( cCmd )
 
 // IF is_terminal()
-
-   IF File( ::backup_path + ::backup_filename )
+   IF ::nError == 0
+      // IF File( ::backup_path + ::backup_filename )
       info_bar( "backup", ::backup_path + ::backup_filename + " OK" )
 
       IF !Empty( ::removable_drive )
@@ -300,7 +300,7 @@ METHOD F18Backup:backup_organizacija()
          ENDIF
       ENDIF
    ELSE
-      info_bar( "backup", ::backup_path + ::backup_filename + " ERROR" )
+      error_bar( "backup", ::backup_path + ::backup_filename + " ERROR" )
    ENDIF
 
 /*
@@ -414,11 +414,12 @@ METHOD F18Backup:Backup_server()
    ENDIF
 */
 
-   hb_run_in_background_gt( cCmd )
+   ::nError := hb_run_in_background_gt( cCmd )
 
 // IF is_terminal()
 
-   IF File( ::backup_path + ::backup_filename )
+   // IF File( ::backup_path + ::backup_filename )
+   IF ::nError == 0
       info_bar( "backup", ::backup_path + ::backup_filename + " OK" )
 
       IF !Empty( ::removable_drive )
@@ -671,22 +672,25 @@ METHOD F18Backup:get_last_backup_date()
 FUNCTION f18_gt_background()
    RETURN "NUL"
 
+
 STATIC FUNCTION hb_run_in_background_gt( cCmd )
+
+   LOCAL nError
 
    IF is_terminal()
       hb_gtSelect( s_pGT )
    ENDIF
 
-   ::nError := hb_run( cCmd )
-   ?E "RET=", ::nError, cCmd
-   IF ::nError != 0
+   nError := hb_run( cCmd )
+   ?E "RET=", nError, cCmd
+   IF nError != 0
       error_bar( "backup", cCmd )
    ENDIF
    IF is_terminal()
       hb_gtSelect( s_pMainGT )
    ENDIF
 
-   RETURN ::nError
+   RETURN nError
 
 
 STATIC FUNCTION _set_color()

@@ -238,13 +238,13 @@ FUNCTION set_screen_dimensions()
       IF is_mac()
          font_size( 24 )
          font_width( 12 )
-         //f18_max_rows( 35 )
-         //f18_max_cols( 119 )
+         // f18_max_rows( 35 )
+         // f18_max_cols( 119 )
       ELSE
          font_size( 24 )
          font_width( 12 )
-         //f18_max_rows( 35 )
-         //f18_max_cols( 119 )
+         // f18_max_rows( 35 )
+         // f18_max_cols( 119 )
       ENDIF
       ?E cMsg + "1"
 
@@ -253,15 +253,15 @@ FUNCTION set_screen_dimensions()
       IF is_mac()
          font_size( 20 )
          font_width( 12 )
-         //f18_max_rows( 33 )
-         //f18_max_cols( 110 )
+         // f18_max_rows( 33 )
+         // f18_max_cols( 110 )
          ?E cMsg + "2longMac"
       ELSE
 
          font_size( 24 )
          font_width( 12 )
-         //f18_max_rows( 33 )
-         //f18_max_cols( 105 )
+         // f18_max_rows( 33 )
+         // f18_max_cols( 105 )
          ?E cMsg + "2long"
       ENDIF
 
@@ -269,16 +269,16 @@ FUNCTION set_screen_dimensions()
 
       font_size( 22 )
       font_width( 11 )
-      //f18_max_rows( 35 )
-      //f18_max_cols( 115 )
+      // f18_max_rows( 35 )
+      // f18_max_cols( 115 )
       ?E cMsg + "2"
 
    CASE  nPixWidth >= 1024 .AND. nPixHeight >= 768
 
       font_size( 22 )
       font_width( 11 )
-      //f18_max_rows( 35 )
-      //f18_max_cols( 100 )
+      // f18_max_rows( 35 )
+      // f18_max_cols( 100 )
 
       ?E cMsg + "3"
 
@@ -286,8 +286,8 @@ FUNCTION set_screen_dimensions()
 
       font_size( 22 )
       font_width( 11 )
-      //f18_max_rows( 35 )
-      //f18_max_cols( 100 )
+      // f18_max_rows( 35 )
+      // f18_max_cols( 100 )
 
       ?E "init",  cMsg + "4"
 
@@ -433,6 +433,10 @@ FUNCTION font_name( cFontName )
 
 FUNCTION font_width( nWidth )
 
+   IF is_windws() // windows ignores font width
+      RETURN -1
+   ENDIF
+
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N" .AND. nWidth > 0
       s_nFontWidth := nWidth
@@ -461,9 +465,9 @@ FUNCTION font_weight_bold()
       RETURN .F.
    ENDIF
 
-   IF is_mac() .OR. is_linux()
+   //IF is_mac() .OR. is_linux()
       ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
-   ENDIF
+   //ENDIF
 
    RETURN .T.
 

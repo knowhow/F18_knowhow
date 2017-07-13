@@ -215,7 +215,7 @@ FUNCTION set_screen_dimensions()
    ELSEIF is_windows()
       // font_name( "Lucida Console" )
       // font_name( "Hack" )
-      font_name( "Courier New" )
+      font_name( "Consolas" )
       font_weight_bold()
    ELSE
       font_name( "terminus" )

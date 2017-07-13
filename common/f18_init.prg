@@ -320,7 +320,7 @@ FUNCTION set_screen_dimensions()
    ELSE
       // linux nece od prve!?
       SetMode( f18_max_rows( desktop_rows() - 2 ) + INFO_BAR_ROWS,  ;
-         f18_max_cols( hb_gtInfo( desktop_cols() - 5 ) )
+         f18_max_cols( desktop_cols() - 5 ) )
       ?E " set font_width/2: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
       ?E "setovanje ekrana/2 "
    ENDIF

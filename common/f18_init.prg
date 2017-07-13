@@ -211,12 +211,15 @@ FUNCTION set_screen_dimensions()
 
    IF is_mac()
       font_name( "Courier" )
+      font_weight_bold()
    ELSEIF is_windows()
-      //font_name( "Lucida Console" )
-     font_name( "Hack" )
-
+      // font_name( "Lucida Console" )
+      // font_name( "Hack" )
+      font_name( "Courier" )
+      font_weight_bold()
    ELSE
       font_name( "terminus" )
+      font_weight_bold()
    ENDIF
 
    DO CASE
@@ -423,9 +426,9 @@ FUNCTION font_name( cFontName )
 
 FUNCTION font_width( nWidth )
 
-   //IF is_windows() // windows ignores font width
-   //    RETURN -1
-   //ENDIF
+   // IF is_windows() // windows ignores font width
+   // RETURN -1
+   // ENDIF
 
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N" .AND. nWidth > 0
@@ -456,9 +459,7 @@ FUNCTION font_weight_bold()
       RETURN .F.
    ENDIF
 
-   IF is_mac() .OR. is_linux()
-      ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
-   ENDIF
+   ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
 
    RETURN .T.
 

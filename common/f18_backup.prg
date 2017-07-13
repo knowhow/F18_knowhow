@@ -367,7 +367,7 @@ METHOD F18Backup:backup_organizacija()
    RETURN lOk
 
 
-METHOD F18Backup:Backup_server()
+METHOD F18Backup:backup_server()
 
    LOCAL lOk := .F.
    LOCAL cCmd := ""
@@ -455,7 +455,7 @@ METHOD F18Backup:Backup_server()
          ENDIF
       ENDIF
    ELSE
-      info_bar( "backup", ::backup_path + ::backup_filename + " ERROR" )
+      error_bar( "backup", ::backup_path + ::backup_filename + " ERROR" )
    ENDIF
 
 /*
@@ -664,7 +664,7 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
    LOCAL pGT := NIL, pMainGT := NIL
 
    IF is_windows()
-      RETURN f18_run( cCmd ) // run_invisible.vbs
+      RETURN windows_run_invisible( cCmd, "", NIL, NIL, .F. )
    ENDIF
 
    // IF is_terminal()

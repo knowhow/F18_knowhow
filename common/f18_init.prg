@@ -473,7 +473,7 @@ FUNCTION font_weight_bold()
 
    RETURN .T.
 
-FUNCTION destkop_rows()
+FUNCTION desktop_rows()
    RETURN hb_gtInfo( HB_GTI_DESKTOPROWS )
 
 FUNCTION desktop_cols()

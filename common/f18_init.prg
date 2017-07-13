@@ -34,26 +34,12 @@ STATIC __no_sql_mode := .F.
 STATIC s_nMaxRows := 0
 STATIC s_nMaxCols := 0
 
-#ifdef  __PLATFORM__WINDOWS
 STATIC s_cFontName
 STATIC s_nFontSize := 20
 STATIC s_nFontWidth := 10
-#else
 
-#ifdef  __PLATFORM__LINUX
-STATIC s_cFontName
-
-STATIC s_nFontSize  := 20
-STATIC s_nFontWidth := 10
-
-#else
-STATIC s_cFontName
-STATIC s_nFontSize  := 20
-STATIC s_nFontWidth := 10
-
-#endif
-
-#endif
+STATIC s_nDesktopRows := NIL
+STATIC s_nDesktopCols := NIL
 
 #ifdef F18_DEBUG
 STATIC __log_level := F18_DEFAULT_LOG_LEVEL_DEBUG
@@ -474,11 +460,21 @@ FUNCTION font_weight_bold()
    RETURN .T.
 
 FUNCTION desktop_rows()
-   RETURN hb_gtInfo( HB_GTI_DESKTOPROWS )
+
+   IF s_nDesktopRows == NIL
+      s_nDesktopRows := hb_gtInfo( HB_GTI_DESKTOPROWS )
+   ENDIF
+
+   RETURN s_nDesktopRows
+
 
 FUNCTION desktop_cols()
-   RETURN hb_gtInfo( HB_GTI_DESKTOPCOLS )
 
+   IF s_nDesktopCols == NIL
+      s_nDesktopCols := hb_gtInfo( HB_GTI_DESKTOPCOLS )
+   ENDIF
+
+   RETURN s_nDesktopCols
 
 
 FUNCTION log_level( x )

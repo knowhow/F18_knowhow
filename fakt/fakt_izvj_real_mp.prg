@@ -189,7 +189,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
    //o_roba()
    //o_sifk()
    //o_sifv()
-   O_VRSTEP
+   o_vrstep()
    //o_tarifa()
    //o_partner()
 

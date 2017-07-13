@@ -83,7 +83,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
    nStr := 0
 
    IF my_get_from_ini( "FAKT", "VrstePlacanja", "N", SIFPATH ) == "D"
-      O_VRSTEP
+      o_vrstep()
    ENDIF
 
    // o_suban() ; SET ORDER TO TAG "3"

@@ -26,6 +26,7 @@ FUNCTION set_a_dbf_pos()
    set_a_dbf_sifarnik( "pos_kase", "KASE", F_KASE  )
    set_a_dbf_sifarnik( "pos_odj", "ODJ", F_ODJ  )
 
+
    // temp fakt tabele - ne idu na server
    set_a_dbf_temp( "_pos_pos",   "_POS", F__POS  )
    set_a_dbf_temp( "_pos_posp",   "_POSP", F__POSP  )
@@ -37,7 +38,7 @@ FUNCTION set_a_dbf_pos()
    set_a_dbf_temp( "pos_robaiz",   "ROBAIZ", F_ROBAIZ  )
    set_a_dbf_temp( "pos_razdr",   "RAZDR", F_RAZDR  )
    set_a_dbf_temp( "pos_uredj",   "UREDJ", F_UREDJ  )
-   set_a_dbf_temp( "pos_dio",   "DIO", F_DIO  )
+   //set_a_dbf_temp( "pos_dio",   "DIO", F_DIO  )
    set_a_dbf_temp( "pos_mars",   "MARS", F_MARS  )
 
 

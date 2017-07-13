@@ -29,7 +29,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
 
    LOCAL cRet, cIdBK
    LOCAL nI
-   LOCAL aOpcije := { "<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str( "<c-T> Briši" ), "<c-P> Print", IIF( is_mac(), "<X> Export", "<a-E> Export"), ;
+   LOCAL aOpcije := { "<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str( "<c-T> Briši" ), "<c-P> Print", iif( is_mac(), "<X> Export", "<a-E> Export" ), ;
       "<F4>  Dupliciraj", _to_str( "<c-F9> Briši SVE" ), _to_str( "<c-F> Traži" ), "<a-S> Popuni kol.", ;
       "<a-R> Zamjena vrij.", "<c-A> Cirk.ispravka" }
    LOCAL cUslovSrch :=  ""
@@ -237,10 +237,10 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
 
 #ifdef F18_POS
       IF !tezinski_barkod( @cId, @_tezina, .F. )
-         barkod( @cId )
+         barkod_or_roba_id( @cId )
       ENDIF
 #else
-      barkod( @cId )
+      barkod_or_roba_id( @cId )
 #endif
       // ordSetFocus( _order )
       // RETURN "barkod"
@@ -296,7 +296,11 @@ FUNCTION find_field_by_id( cTable, cId, cField )
    cSqlQuery += " WHERE id=" + sql_quote( cId )
 
    IF !use_sql( cTable, cSqlQuery )
-      RETURN .F.
+      IF !Used()
+         RETURN NIL
+      ELSE
+         RETURN &cField
+      ENDIF
    ENDIF
 
    RETURN &cField
@@ -645,9 +649,9 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE Ch == k_ctrl_f9()
       RETURN sifarnik_brisi_sve()
 
-//   CASE Ch == K_F10
-  //    Popup( cOrderTag )
-//      RETURN DE_CONT
+// CASE Ch == K_F10
+      // Popup( cOrderTag )
+// RETURN DE_CONT
 
    OTHERWISE
       IF nRet > -1

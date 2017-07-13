@@ -413,7 +413,7 @@ FUNCTION fakt_pregled_reload_tables( cFilter )
 
    my_close_all_dbf()
 
-   O_VRSTEP
+   o_vrstep()
    o_ops()
    o_fakt_doks2()
    o_valute()

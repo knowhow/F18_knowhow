@@ -14,31 +14,31 @@
 
 FUNCTION pos_main_menu_prodavac()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. priprema računa                        " )
-   AAdd( _opcexe, {|| _pos_prodavac_racun() } )
+   AAdd( aOpc, "1. priprema računa                        " )
+   AAdd( aOpcExe, {|| _pos_prodavac_racun() } )
 
-   AAdd( _opc, "2. pregled ažuriranih racuna  " )
-   AAdd( _opcexe, {|| pos_pregled_racuna( .F. ) } )
+   AAdd( aOpc, "2. pregled ažuriranih racuna  " )
+   AAdd( aOpcExe, {|| pos_pregled_racuna( .F. ) } )
 
-   AAdd( _opc, "R. trenutna realizacija radnika" )
-   AAdd( _opcexe, {|| realizacija_radnik( .T., "P", .F. ) } )
+   AAdd( aOpc, "R. trenutna realizacija radnika" )
+   AAdd( aOpcExe, {|| pos_realizacija_radnik( .T., "P", .F. ) } )
 
-   AAdd( _opc, "A. trenutna realizacija po artiklima" )
-   AAdd( _opcexe, {|| realizacija_radnik( .T., "R", .F. ) } )
+   AAdd( aOpc, "A. trenutna realizacija po artiklima" )
+   AAdd( aOpcExe, {|| pos_realizacija_radnik( .T., "R", .F. ) } )
 
 
    IF fiscal_opt_active()
 
-      AAdd( _opc, "F. fiskalne funkcije - prodavac" )
-      AAdd( _opcexe, {|| fiskalni_izvjestaji_komande( .T., .T. ) } )
+      AAdd( aOpc, "F. fiskalne funkcije - prodavac" )
+      AAdd( aOpcExe, {|| fiskalni_izvjestaji_komande( .T., .T. ) } )
 
    ENDIF
 
-   f18_menu( "prod", .F., _izbor, _opc, _opcexe )
+   f18_menu( "prod", .F., _izbor, aOpc, aOpcExe )
 
    CLOSE ALL
 

@@ -186,7 +186,7 @@ METHOD set_module_gvars()
    // (da li se radnicima dodjeljuju pocetna sredstva)
    PUBLIC gIdPos           // id prodajnog mjesta
 
-   PUBLIC gIdDio           // id dijela objekta u kome je kasa locirana
+   // PUBLIC gIdDio           // id dijela objekta u kome je kasa locirana
    // (ima smisla samo za HOPS)
 
    PUBLIC nFeedLines       // broj linija potrebnih da se racun otcijepi
@@ -271,7 +271,7 @@ METHOD set_module_gvars()
    PUBLIC gPratiStanje := "N"
    PUBLIC gIdPos := "1 "
    PUBLIC gPostDO := "N"
-   PUBLIC gIdDio := "  "
+   // PUBLIC gIdDio := "  "
    PUBLIC nFeedLines := 6
    PUBLIC gPocStaSmjene := "N"
    PUBLIC gStamPazSmj := "D"
@@ -311,28 +311,28 @@ METHOD set_module_gvars()
    gDisplay := "N"
 
    // citaj parametre iz metric tabele
-   gFirNaziv := fetch_metric( "pos_header_org_naziv", nil, gFirNaziv )
-   gFirAdres := fetch_metric( "pos_header_org_adresa", nil, gFirAdres )
-   gFirIdBroj := fetch_metric( "pos_header_org_id_broj", nil, gFirIdBroj )
-   gFirPM := fetch_metric( "pos_header_pm", nil, gFirPM )
-   gRnMjesto := fetch_metric( "pos_header_mjesto", nil, gRnMjesto )
-   gFirTel := fetch_metric( "pos_header_telefon", nil, gFirTel )
-   gRnPTxt1 := fetch_metric( "pos_header_txt_1", nil, gRnPTxt1 )
-   gRnPTxt2 := fetch_metric( "pos_header_txt_2", nil, gRnPTxt2 )
-   gRnPTxt3 := fetch_metric( "pos_header_txt_3", nil, gRnPTxt3 )
-   gPorFakt := fetch_metric( "StampatiPoreskeFakture", nil, gPorFakt )
-   gVrstaRS := fetch_metric( "VrstaRadneStanice", nil, gVrstaRS )
+   gFirNaziv := fetch_metric( "pos_header_org_naziv", NIL, gFirNaziv )
+   gFirAdres := fetch_metric( "pos_header_org_adresa", NIL, gFirAdres )
+   gFirIdBroj := fetch_metric( "pos_header_org_id_broj", NIL, gFirIdBroj )
+   gFirPM := fetch_metric( "pos_header_pm", NIL, gFirPM )
+   gRnMjesto := fetch_metric( "pos_header_mjesto", NIL, gRnMjesto )
+   gFirTel := fetch_metric( "pos_header_telefon", NIL, gFirTel )
+   gRnPTxt1 := fetch_metric( "pos_header_txt_1", NIL, gRnPTxt1 )
+   gRnPTxt2 := fetch_metric( "pos_header_txt_2", NIL, gRnPTxt2 )
+   gRnPTxt3 := fetch_metric( "pos_header_txt_3", NIL, gRnPTxt3 )
+   gPorFakt := fetch_metric( "StampatiPoreskeFakture", NIL, gPorFakt )
+   gVrstaRS := fetch_metric( "VrstaRadneStanice", NIL, gVrstaRS )
    gIdPos := fetch_metric( "IDPos", my_user(), gIdPos )
-   gPostDO := fetch_metric( "ZasebneCjelineObjekta", nil, gPostDO )
-   gIdDio := fetch_metric( "OznakaDijelaObjekta", nil, gIdDio )
-   gServerPath := fetch_metric( "PutanjaServera", nil, gServerPath )
+   gPostDO := fetch_metric( "ZasebneCjelineObjekta", NIL, gPostDO )
+   // gIdDio := fetch_metric( "OznakaDijelaObjekta", nil, gIdDio )
+   gServerPath := fetch_metric( "PutanjaServera", NIL, gServerPath )
    gKalkDest := fetch_metric( "KalkDestinacija", my_user(), gKalkDest )
    gUseChkDir := fetch_metric( "KoristitiDirektorijProvjere", my_user(), gUseChkDir )
-   gStrValuta := fetch_metric( "StranaValuta", nil, gStrValuta )
+   gStrValuta := fetch_metric( "StranaValuta", NIL, gStrValuta )
    gLocPort := fetch_metric( "OznakaLokalnogPorta", my_user(), gLocPort )
-   gGotPlac := fetch_metric( "OznakaGotovinskogPlacanja", nil, gGotPlac )
-   gDugPlac := fetch_metric( "OznakaDugPlacanja", nil, gDugPlac )
-   gRnInfo := fetch_metric( "RacunInfo", nil, gRnInfo )
+   gGotPlac := fetch_metric( "OznakaGotovinskogPlacanja", NIL, gGotPlac )
+   gDugPlac := fetch_metric( "OznakaDugPlacanja", NIL, gDugPlac )
+   gRnInfo := fetch_metric( "RacunInfo", NIL, gRnInfo )
 
    gServerPath := AllTrim( gServerPath )
    IF ( Right( gServerPath, 1 ) <> SLASH )
@@ -342,73 +342,73 @@ METHOD set_module_gvars()
    // principi rada kase
    cPrevPSS := gPocStaSmjene
 
-   gZadCij := fetch_metric( "AzuriranjeCijena", nil, gZadCij )
-   gVodiOdj := fetch_metric( "VodiOdjeljenja", nil, gVodiOdj )
-   gRadniRac := fetch_metric( "RadniRacuni", nil, gRadniRac )
-   gDirZaklj := fetch_metric( "DirektnoZakljucivanjeRacuna", nil, gDirZaklj )
-   gRnSpecOpc := fetch_metric( "RacunSpecifOpcije", nil, gRnSpecOpc )
-   gDupliArt := fetch_metric( "DupliArtikli", nil, gDupliArt )
-   gDupliUpoz := fetch_metric( "DupliUnosUpozorenje", nil, gDupliUpoz )
-   gPratiStanje := fetch_metric( "PratiStanjeRobe", nil, gPratiStanje )
-   gPocStaSmjene := fetch_metric( "PratiPocetnoStanjeSmjene", nil, gPocStaSmjene )
-   gStamPazSmj := fetch_metric( "StampanjePazara", nil, gStamPazSmj )
-   gStamStaPun := fetch_metric( "StampanjePunktova", nil, gStamStaPun )
-   gVSmjene := fetch_metric( "VoditiPoSmjenama", nil, gVsmjene )
-   gSezonaTip := fetch_metric( "TipSezone", nil, gSezonaTip )
-   gSifUpravn := fetch_metric( "UpravnikIspravljaCijene", nil, gSifUpravn )
-   gDisplay := fetch_metric( "DisplejOpcije", nil, gDisplay )
+   gZadCij := fetch_metric( "AzuriranjeCijena", NIL, gZadCij )
+   gVodiOdj := fetch_metric( "VodiOdjeljenja", NIL, gVodiOdj )
+   gRadniRac := fetch_metric( "RadniRacuni", NIL, gRadniRac )
+   gDirZaklj := fetch_metric( "DirektnoZakljucivanjeRacuna", NIL, gDirZaklj )
+   gRnSpecOpc := fetch_metric( "RacunSpecifOpcije", NIL, gRnSpecOpc )
+   gDupliArt := fetch_metric( "DupliArtikli", NIL, gDupliArt )
+   gDupliUpoz := fetch_metric( "DupliUnosUpozorenje", NIL, gDupliUpoz )
+   gPratiStanje := fetch_metric( "PratiStanjeRobe", NIL, gPratiStanje )
+   gPocStaSmjene := fetch_metric( "PratiPocetnoStanjeSmjene", NIL, gPocStaSmjene )
+   gStamPazSmj := fetch_metric( "StampanjePazara", NIL, gStamPazSmj )
+   gStamStaPun := fetch_metric( "StampanjePunktova", NIL, gStamStaPun )
+   gVSmjene := fetch_metric( "VoditiPoSmjenama", NIL, gVsmjene )
+   gSezonaTip := fetch_metric( "TipSezone", NIL, gSezonaTip )
+   gSifUpravn := fetch_metric( "UpravnikIspravljaCijene", NIL, gSifUpravn )
+   gDisplay := fetch_metric( "DisplejOpcije", NIL, gDisplay )
    gEntBarCod := fetch_metric( "BarkodEnter", my_user(), gEntBarCod )
-   gEvidPl := fetch_metric( "EvidentiranjeVrstaPlacanja", nil, gEvidPl )
-   gSifUvPoNaz := fetch_metric( "PretragaArtiklaPoNazivu", nil, gSifUvPoNaz )
-   gDiskFree := fetch_metric( "SlobodniProstorDiska", nil, gDiskFree )
+   gEvidPl := fetch_metric( "EvidentiranjeVrstaPlacanja", NIL, gEvidPl )
+   gSifUvPoNaz := fetch_metric( "PretragaArtiklaPoNazivu", NIL, gSifUvPoNaz )
+   gDiskFree := fetch_metric( "SlobodniProstorDiska", NIL, gDiskFree )
 
    // izgled racuna
    gSjecistr := PadR( GETPStr( gSjeciStr ), 20 )
    gOtvorstr := PadR( GETPStr( gOtvorStr ), 20 )
 
-   gPoreziRaster := fetch_metric( "PorezniRaster", nil, gPoreziRaster )
-   nFeedLines := fetch_metric( "BrojLinijaZaKrajRacuna", nil, nFeedLines )
-   gSjeciStr := fetch_metric( "SekvencaSjeciTraku", nil, gSjeciStr )
-   gOtvorStr := fetch_metric( "SekvencaOtvoriLadicu", nil, gOtvorStr )
+   gPoreziRaster := fetch_metric( "PorezniRaster", NIL, gPoreziRaster )
+   nFeedLines := fetch_metric( "BrojLinijaZaKrajRacuna", NIL, nFeedLines )
+   gSjeciStr := fetch_metric( "SekvencaSjeciTraku", NIL, gSjeciStr )
+   gOtvorStr := fetch_metric( "SekvencaOtvoriLadicu", NIL, gOtvorStr )
 
    gSjeciStr := Odsj( @gSjeciStr )
    gOtvorStr := Odsj( @gOtvorStr )
 
-   gZagIz := fetch_metric( "IzgledZaglavlja", nil, gZagIz )
-   gRnHeader := fetch_metric( "RacunHeader", nil, gRnHeder )
-   gRnFuter := fetch_metric( "RacunFooter", nil, gRnFuter )
+   gZagIz := fetch_metric( "IzgledZaglavlja", NIL, gZagIz )
+   gRnHeader := fetch_metric( "RacunHeader", NIL, gRnHeder )
+   gRnFuter := fetch_metric( "RacunFooter", NIL, gRnFuter )
 
    // izgled racuna
-   grbCjen := fetch_metric( "RacunCijenaSaPDV", nil, grbCjen )
-   grbStId := fetch_metric( "RacunStampaIDArtikla", nil, grbStId )
-   grbReduk := fetch_metric( "RacunRedukcijaTrake", nil, grbReduk )
+   grbCjen := fetch_metric( "RacunCijenaSaPDV", NIL, grbCjen )
+   grbStId := fetch_metric( "RacunStampaIDArtikla", NIL, grbStId )
+   grbReduk := fetch_metric( "RacunRedukcijaTrake", NIL, grbReduk )
 
    // cijene
-   gSetMPCijena := fetch_metric( "pos_set_cijena", nil, gSetMPCijena )
-   gIdCijena := fetch_metric( "SetCijena", nil, gIdCijena )
-   gPopust := fetch_metric( "Popust", nil, gPopust )
-   gPopDec := fetch_metric( "PopustDecimale", nil, gPopDec )
-   gPopVar := fetch_metric( "PopustVarijanta", nil, gPopVar )
-   gPopZCj := fetch_metric( "PopustZadavanjemCijene", nil, gPopZCj )
-   gPopProc := fetch_metric( "PopustProcenat", nil, gPopProc )
-   gPopIzn := fetch_metric( "PopustIznos", nil, gPopIzn )
-   gPopIznP := fetch_metric( "PopustVrijednostProcenta", nil, gPopIznP )
+   gSetMPCijena := fetch_metric( "pos_set_cijena", NIL, gSetMPCijena )
+   gIdCijena := fetch_metric( "SetCijena", NIL, gIdCijena )
+   gPopust := fetch_metric( "Popust", NIL, gPopust )
+   gPopDec := fetch_metric( "PopustDecimale", NIL, gPopDec )
+   gPopVar := fetch_metric( "PopustVarijanta", NIL, gPopVar )
+   gPopZCj := fetch_metric( "PopustZadavanjemCijene", NIL, gPopZCj )
+   gPopProc := fetch_metric( "PopustProcenat", NIL, gPopProc )
+   gPopIzn := fetch_metric( "PopustIznos", NIL, gPopIzn )
+   gPopIznP := fetch_metric( "PopustVrijednostProcenta", NIL, gPopIznP )
 
-   gColleg := fetch_metric( "PodesenjeNonsense", nil, gColleg )
-   gDuplo := fetch_metric( "AzurirajUPomocnuBazu", nil, gDuplo )
-   gDuploKum := fetch_metric( "KumulativPomocneBaze", nil, gDuploKum )
-   gDuploSif := fetch_metric( "SifrarnikPomocneBaze", nil, gDuploSif )
-   gFMKSif := fetch_metric( "FMKSifrarnik", nil, gFmkSif )
-   gRNALSif := fetch_metric( "RNALSifrarnik", nil, gRNALSif )
-   gRNALKum := fetch_metric( "RNALKumulativ", nil, gRNALKum )
+   gColleg := fetch_metric( "PodesenjeNonsense", NIL, gColleg )
+   gDuplo := fetch_metric( "AzurirajUPomocnuBazu", NIL, gDuplo )
+   gDuploKum := fetch_metric( "KumulativPomocneBaze", NIL, gDuploKum )
+   gDuploSif := fetch_metric( "SifrarnikPomocneBaze", NIL, gDuploSif )
+   gFMKSif := fetch_metric( "FMKSifrarnik", NIL, gFmkSif )
+   gRNALSif := fetch_metric( "RNALSifrarnik", NIL, gRNALSif )
+   gRNALKum := fetch_metric( "RNALKumulativ", NIL, gRNALKum )
 
    gDuzSifre := fetch_metric( "DuzinaSifre", my_user(), gDuzSifre )
 
-   gUpitNp := fetch_metric( "UpitZaNacinPlacanja", nil, gUpitNp )
+   gUpitNp := fetch_metric( "UpitZaNacinPlacanja", NIL, gUpitNp )
 
    PUBLIC gStela := CryptSC( "STELA" )
    PUBLIC gPVrsteP := .F.
-   gPVrsteP := fetch_metric( "AzuriranjePrometaPoVP", nil, gPVrsteP )
+   gPVrsteP := fetch_metric( "AzuriranjePrometaPoVP", NIL, gPVrsteP )
 
    IF ( gVrstaRS == "S" )
       gIdPos := Space( Len( gIdPos ) )
@@ -417,7 +417,7 @@ METHOD set_module_gvars()
    PUBLIC gSQLKom
    gSQLLogBase := my_get_from_ini( "SQL", "SQLLogBase", "c:" + SLASH + "sigma", EXEPATH )
 
-   gSamoProdaja := fetch_metric( "SamoProdaja", nil, gSamoProdaja )
+   gSamoProdaja := fetch_metric( "SamoProdaja", NIL, gSamoProdaja )
 
    PUBLIC gPosSirovine
    PUBLIC gPosKalk
@@ -444,14 +444,14 @@ METHOD set_module_gvars()
       ELSE
          gPosNaz := "SERVER"
       ENDIF
-      O_DIO
-      SET ORDER TO TAG "ID"
-      HSEEK gIdDio
-      IF Found()
-         gDioNaz := AllTrim ( DIO->Naz )
-      ELSE
-         gDioNaz := ""
-      ENDIF
+      // O_DIO
+      // SET ORDER TO TAG "ID"
+      // HSEEK gIdDio
+      // IF Found()
+      // gDioNaz := AllTrim ( DIO->Naz )
+      // ELSE
+      gDioNaz := ""
+      // ENDIF
       CLOSE ALL
    ENDIF
 
@@ -461,6 +461,6 @@ METHOD set_module_gvars()
    kalk_konto_za_stanje_pos( .T. ) // kalk konto za stanje pos artikla
    fiscal_opt_active() // koristenje fiskalnih opcija
 
-   gRobaBlock := {| Ch| pos_roba_block( Ch ) }
+   gRobaBlock := {| Ch | pos_roba_block( Ch ) }
 
    RETURN .T.

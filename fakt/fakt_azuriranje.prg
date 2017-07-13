@@ -565,7 +565,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
       ENDIF
    ENDIF
 
-   O_VRSTEP
+   o_vrstep()
    o_ops()
    //select_o_konto()
    o_sastavnica()

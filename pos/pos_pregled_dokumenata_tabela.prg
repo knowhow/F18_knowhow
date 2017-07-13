@@ -21,7 +21,7 @@ FUNCTION pos_lista_azuriranih_dokumenata()
    PRIVATE Kol := {}
 
    cVrste := "  "
-   dDatOd := Date() -1
+   dDatOd := Date() - 1
    dDatDo := Date()
 
    Box(, 3, 60 )
@@ -72,7 +72,7 @@ FUNCTION pos_lista_azuriranih_dokumenata()
       cFilter += ".and. IdVd=" + dbf_quote( cVrste )
    ENDIF
    IF !( cFilter == ".t." )
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
 
    GO TOP
@@ -84,9 +84,9 @@ FUNCTION pos_lista_azuriranih_dokumenata()
    ENDIF
 
 
-   my_db_edit_sql( "pos_doks", f18_max_rows() -10, f18_max_cols() -15, ;  // params cImeBoxa, xw, yw
-   {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), "POS", ; // bUserF, cMessTop, cMessBot
-   .F., aOpc ) // lInvert, aMessage
+   my_db_edit_sql( "pos_doks", f18_max_rows() - 10, f18_max_cols() - 15, ;  // params cImeBoxa, xw, yw
+      {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), "POS", ; // bUserF, cMessTop, cMessBot
+      .F., aOpc ) // lInvert, aMessage
 
    CLOSE ALL
 
@@ -162,7 +162,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
          _o_pos_prepis_tbl()
 
          SELECT ( nDbfArea )
-         SET FILTER to &_tbl_filter
+         SET FILTER TO &_tbl_filter
          GO ( _rec_no )
 
          RETURN DE_REFRESH
@@ -231,7 +231,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
    CASE Ch == Asc( "F" ) .OR. Ch == Asc( "f" )
 
       aVezani := { { IdPos, BrDok, IdVd, datum } }
-      StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., nil, .T. )
+      StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., NIL, .T. )
 
       SELECT pos_doks
 
@@ -282,7 +282,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
 
          _o_pos_prepis_tbl()
          SELECT pos_doks
-         SET FILTER to &_tbl_filter
+         SET FILTER TO &_tbl_filter
          GO TOP
 
          MsgBeep( "Dokument je vraćen u pripremu inventure ..." )
@@ -298,7 +298,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
 
    _o_pos_prepis_tbl()
    SELECT pos_doks
-   SET FILTER to &( _tbl_filter )
+   SET FILTER TO &( _tbl_filter )
    GO ( _rec_no )
 
    RETURN ( DE_CONT )
@@ -311,8 +311,8 @@ FUNCTION pos_pregled_stavki_racuna()
    LOCAL oBrowse
    LOCAL cPrevCol
    LOCAL hRec
-   LOCAL nMaxRow := f18_max_rows() -15
-   LOCAL nMaxCol := f18_max_cols() -35
+   LOCAL nMaxRow := f18_max_rows() - 15
+   LOCAL nMaxCol := f18_max_cols() - 35
 
 
    PRIVATE ImeKol
@@ -364,8 +364,10 @@ FUNCTION pos_pregled_stavki_racuna()
 
    @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR f18_color_invert()
 
-   oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + nMaxRow, m_y + nMaxCol, ImeKol, Kol, ;
-      { hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), hb_UTF8ToStrBox( BROWSE_PODVUCI ), hb_UTF8ToStrBox( BROWSE_COL_SEP ) }, 0 )
+   oBrowse := pos_form_browse( m_x + 2, m_y + 1, m_x + nMaxRow, m_y + nMaxCol, ImeKol, Kol, ;
+      { hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ;
+      hb_UTF8ToStrBox( BROWSE_PODVUCI ), ;
+      hb_UTF8ToStrBox( BROWSE_COL_SEP ) }, 0 )
    ShowBrowse( oBrowse, {}, {} )
    SELECT _pos_pripr
    my_dbf_zap()
@@ -387,9 +389,9 @@ STATIC FUNCTION browse_kolone( aImeKol, aKol )
    aImeKol := {}
    aKol := {}
 
-   AAdd( aImeKol, { "Sifra", {|| idroba } } )
+   AAdd( aImeKol, { _u( "Šifra" ), {|| idroba } } )
    AAdd( aImeKol, { "Naziv", {|| Left( robanaz, 30 ) } } )
-   AAdd( aImeKol, { "Kolicina", {|| Str( kolicina, 7, 3 ) } } )
+   AAdd( aImeKol, { _u( "Količina" ), {|| Str( kolicina, 7, 3 ) } } )
    AAdd( aImeKol, { "Cijena", {|| Str( cijena, 7, 2 ) } } )
    AAdd( aImeKol, { "Ukupno", {|| Str( kolicina * cijena, 11, 2 ) } } )
    AAdd( aImeKol, { "Tarifa", {|| idtarifa } } )
@@ -404,14 +406,14 @@ STATIC FUNCTION browse_kolone( aImeKol, aKol )
 
 STATIC FUNCTION _o_pos_prepis_tbl()
 
-//   SELECT ( F_PARTN )
-//   IF !Used()
-//      o_partner()
-//   ENDIF
+// SELECT ( F_PARTN )
+// IF !Used()
+// o_partner()
+// ENDIF
 
    SELECT ( F_VRSTEP )
    IF !Used()
-      O_VRSTEP
+      o_vrstep()
    ENDIF
 
    SELECT ( F_DIO )
@@ -435,30 +437,30 @@ STATIC FUNCTION _o_pos_prepis_tbl()
       SET ORDER TO TAG "NAZ"
    ENDIF
 
-//   SELECT ( F_TARIFA )
-//   IF !Used()
-//      o_tarifa()
-//   ENDIF
+// SELECT ( F_TARIFA )
+// IF !Used()
+// o_tarifa()
+// ENDIF
 
    SELECT ( F_VALUTE )
    IF !Used()
       o_valute()
    ENDIF
 
-//   SELECT ( F_SIFK )
-  // IF !Used()
-//      o_sifk()
-//   ENDIF
+// SELECT ( F_SIFK )
+   // IF !Used()
+// o_sifk()
+// ENDIF
 
-//   SELECT ( F_SIFV )
-//   IF !Used()
-//      o_sifv()
-//   ENDIF
+// SELECT ( F_SIFV )
+// IF !Used()
+// o_sifv()
+// ENDIF
 
-//   SELECT ( F_ROBA )
-  // IF !Used()
-  //    o_roba()
-//   ENDIF
+// SELECT ( F_ROBA )
+   // IF !Used()
+   // o_roba()
+// ENDIF
 
    SELECT ( F_POS_DOKS )
    IF !Used()

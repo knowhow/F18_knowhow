@@ -347,7 +347,7 @@ STATIC FUNCTION Podvuci( cVrstaRs )
    ?
    ?? REPL( "-", 5 ), REPL ( "-", 9 ), REPL ( "-", 9 ), REPL ( "-", 9 ), REPL ( "-", 10 ), REPL( "-", 10 ), REPL( "-", 10 )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -365,7 +365,7 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
    ? PadC( "STANJE ODJELJENJA NA DAN " + FormDat1( dDat ), nSir )
    ? PadC( "-----------------------------------", nSir )
 
-   ? cLM + "Prod. mjesto:" + iif ( Empty( cIdPos ), "SVE", ocitaj_izbaci( F_KASE, cIdPos, "Naz" ) )
+   ? cLM + "Prod. mjesto:" + iif ( Empty( cIdPos ), "SVE", find_pos_kasa_naz( cIdPos ) )
 
    IF gvodiodj == "D"
       ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( ocitaj_izbaci( F_ODJ, cIdOdj, "naz" ) )

@@ -131,33 +131,58 @@ FUNCTION KEAN13( cKod )
     provjerava i pozicionira sifranik artikala na polje barkod po trazeno uslovu
 */
 
-FUNCTION barkod( cId )
+FUNCTION barkod_or_roba_id( cId )
 
    LOCAL cIdRoba := ""
-   LOCAL _barkod := ""
+   LOCAL cBarkod := ""
 
    gOcitBarCod := .F.
 
-   SELECT roba
+   // SELECT roba
 
    IF !Empty( cId )
 
-      SET ORDER TO TAG "BARKOD"
-      GO TOP
-      SEEK cId
-
-      IF Found() .AND. PadR( cId, 13, "" ) == field->barkod
-         cId := field->id
-         gOcitBarCod := .T.
-         _barkod := AllTrim( field->barkod )
+      // SET ORDER TO TAG "BARKOD"
+      // GO TOP
+      // SEEK cId
+      IF find_roba_by_barkod( cID )
+         IF PadR( cId, 13 ) == field->barkod
+            cId := field->id
+            gOcitBarCod := .T.
+            cBarkod := AllTrim( field->barkod )
+         ENDIF
       ENDIF
 
    ENDIF
 
    cId := PadR( cId, 10 )
 
-   RETURN _barkod
+   RETURN cBarkod
 
+
+FUNCTION find_roba_by_barkod( cBarkod, cOrderBy, cWhere )
+
+   LOCAL hParams := hb_Hash()
+
+   hb_default( @cOrderBy, "id,naz" )
+
+
+   IF cBarkod <> NIL
+      hParams[ "barkod" ] := cBarkod
+   ENDIF
+   hParams[ "order_by" ] := cOrderBy
+
+   hParams[ "indeks" ] := .F.
+
+   IF cWhere != NIL
+      hParams[ "where" ] := cWhere
+   ENDIF
+   IF !use_sql_roba( hParams )
+      RETURN .F.
+   ENDIF
+   GO TOP
+
+   RETURN ! Eof()
 
 
 #ifdef F18_POS
@@ -165,11 +190,11 @@ FUNCTION barkod( cId )
 FUNCTION tezinski_barkod_get_tezina( barkod, tezina )
 
    LOCAL _tb := param_tezinski_barkod()
-   LOCAL _tb_prefix := AllTrim( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, "" ) )
+   LOCAL _tb_prefix := AllTrim( fetch_metric( "barkod_prefiks_tezinskog_barkoda", NIL, "" ) )
    LOCAL _tb_barkod, _tb_tezina
-   LOCAL _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
-   LOCAL _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
-   LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
+   LOCAL _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", NIL, 0 )
+   LOCAL _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", NIL, 0 )
+   LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", NIL, 10000 )
    LOCAL _val_tezina := 0
    LOCAL _a_prefix
    LOCAL nI
@@ -184,7 +209,7 @@ FUNCTION tezinski_barkod_get_tezina( barkod, tezina )
    // itd...
    _a_prefix := TokToNiz( _tb_prefix, ";" )
 
-   IF AScan( _a_prefix, {| var| var == PadR( barkod, Len( var ) ) } ) == 0
+   IF AScan( _a_prefix, {| var | VAR == PadR( barkod, Len( VAR ) ) } ) == 0
       RETURN .F.
    ENDIF
 
@@ -212,11 +237,11 @@ FUNCTION tezinski_barkod( id, tezina, pop_push )
 
    LOCAL _ocitao := .F.
    LOCAL _tb := param_tezinski_barkod()
-   LOCAL _tb_prefix := AllTrim( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, "" ) )
+   LOCAL _tb_prefix := AllTrim( fetch_metric( "barkod_prefiks_tezinskog_barkoda", NIL, "" ) )
    LOCAL _tb_barkod, _tb_tezina
-   LOCAL _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
-   LOCAL _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
-   LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
+   LOCAL _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", NIL, 0 )
+   LOCAL _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", NIL, 0 )
+   LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", NIL, 10000 )
    LOCAL _val_tezina := 0
    LOCAL _a_prefix
    LOCAL nI
@@ -241,7 +266,7 @@ FUNCTION tezinski_barkod( id, tezina, pop_push )
    // itd...
    _a_prefix := TokToNiz( _tb_prefix, ";" )
 
-   IF AScan( _a_prefix, {| var| var == PadR( id, Len( var ) ) } ) <> 0
+   IF AScan( _a_prefix, {| var | VAR == PadR( id, Len( VAR ) ) } ) <> 0
       // ovo je ok...
    ELSE
       RETURN _ocitao

@@ -81,6 +81,7 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX( "ID", "ID", _alias )
    AFTER_CREATE_INDEX
 
+/*
    aDbf := {}
    AAdd ( aDbf, { "ID",      "C",  2, 0 } )
    AAdd ( aDbf, { "NAZ",      "C", 25, 0 } )
@@ -91,7 +92,7 @@ FUNCTION cre_all_pos( ver )
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX ( "ID", "ID", _alias )
-
+*/
 
    // --------------------- uredj -------
    aDbf := {}

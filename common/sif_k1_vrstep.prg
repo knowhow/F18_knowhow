@@ -35,7 +35,7 @@ FUNCTION P_VrsteP( cId, dx, dy )
 
    PRIVATE ImeKol, Kol := {}
 
-   O_VRSTEP
+   o_vrstep()
 
    ImeKol := { { "ID ",             {|| id },  "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) }      }, ;
       { PadC( "Naziv", 20 ), {|| PadR( ToStrU( naz ), 20 ) },  "naz" };

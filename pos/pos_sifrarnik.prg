@@ -11,20 +11,7 @@
 
 #include "f18.ch"
 
-
-FUNCTION pos_roba_block( ch )
-
-   DO CASE
-
-   CASE Upper( Chr( ch ) ) == "P"
-      IF gen_all_plu()
-         RETURN DE_REFRESH
-      ENDIF
-
-   ENDCASE
-
-   RETURN DE_CONT
-
+MEMVAR ImeKol, Kol
 
 
 
@@ -49,8 +36,8 @@ FUNCTION pos_get_mpc()
    IF !is_var_objekat_tpqquery( oData )
       MsgBeep( "Problem sa SQL upitom !" )
    ELSE
-      IF oData:LastRec() > 0 .AND. VALTYPE( oData:FieldGet(1) ) == "N"
-         nCijena := oData:FieldGet(1)
+      IF oData:LastRec() > 0 .AND. ValType( oData:FieldGet( 1 ) ) == "N"
+         nCijena := oData:FieldGet( 1 )
       ENDIF
    ENDIF
 
@@ -64,7 +51,7 @@ STATIC FUNCTION pos_get_mpc_field()
    LOCAL cSet := AllTrim( gSetMPCijena )
 
    IF cSet <> "1"
-       cField := cField + cSet
+      cField := cField + cSet
    ENDIF
 
    RETURN cField
@@ -76,7 +63,7 @@ STATIC FUNCTION pos_get_mpc_valid()
    LOCAL lOk := .T.
    LOCAL cSet := AllTrim( gSetMPCijena )
 
-   IF EMPTY( cSet ) .OR. cSet == "0"
+   IF Empty( cSet ) .OR. cSet == "0"
       lOk := .F.
    ENDIF
 
@@ -170,23 +157,29 @@ FUNCTION P_StRad( cId, dx, dy )
 
 FUNCTION P_Osob( cId, dx, dy )
 
+   LOCAL xRet, i
+
    PRIVATE ImeKol
    PRIVATE Kol := {}
+
+   SELECT F_OSOB
+   IF !Used()
+      o_pos_osob()
+   ENDIF
 
    ImeKol := { { "ID ",          {|| id },    "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) } }, ;
       { PadC( "Naziv", 40 ), {|| naz },  "naz"    }, ;
       { "Korisn.sifra", {|| korsif }, "korsif" }, ;
-      { "Status",       {|| status }, "status" };
+      { "Status",       {|| STATUS }, "status" };
       }
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
    NEXT
 
-   RETURN p_sifra( F_OSOB, 2, 10, 55, "Sifrarnik osoblja", @cid, dx, dy, {|| EdOsob() } )
+   xRet := p_sifra( F_OSOB, 2, 10, 55, "Šifarnik osoblja", @cid, dx, dy, {|| EdOsob() } )
 
-   RETURN .T.
-
+   RETURN xRet
 
 
 
@@ -389,7 +382,7 @@ FUNCTION PomMenu1( aNiz )
    LOCAL dP := Len( aNiz ) + 1
    LOCAL sP := 0
 
-   AEval( aNiz, {| x| IF( Len( x[ 1 ] + x[ 2 ] ) > sP, sP := Len( x[ 1 ] + x[ 2 ] ), ) } )
+   AEval( aNiz, {| x | IF( Len( x[ 1 ] + x[ 2 ] ) > sP, sP := Len( x[ 1 ] + x[ 2 ] ), ) } )
    sP += 3
    xN := IF( xP > 11, xP - dP, xP + 1 )
    yN := IF( yP > 39, yP - sP, yP + 1 )
@@ -435,3 +428,17 @@ FUNCTION P_Barkod( cBK )
    PopWa()
 
    RETURN .T.
+
+
+FUNCTION pos_roba_block( cCh )
+
+   DO CASE
+
+   CASE Upper( Chr( cCh ) ) == "P"
+      IF gen_all_plu()
+         RETURN DE_REFRESH
+      ENDIF
+
+   ENDCASE
+
+   RETURN DE_CONT

@@ -375,7 +375,7 @@ STATIC FUNCTION ObSif()
       O_FADE
    ENDIF
 
-   O_VRSTEP
+   o_vrstep()
    o_ops()
 
    RETURN .T.

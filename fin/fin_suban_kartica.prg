@@ -354,7 +354,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    IF _fakt_params[ "fakt_vrste_placanja" ]
       lVrsteP := .T.
-      O_VRSTEP
+      o_vrstep()
    ENDIF
 
    SELECT SUBAN

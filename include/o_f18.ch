@@ -21,7 +21,7 @@
 
 #xcommand O_LOKAL    => select (F_LOKAL)   ;  use_sql_lokalizacija()
 
-#xcommand O_VRSTEP   => o_vrste_placanja()
+#xcommand o_vrstep()   => o_vrste_placanja()
 #xcommand O_PKONTO   => select (F_PKONTO); use_sql_pkonto()  ; set order to tag "ID"
 #xcommand O_KS       => select (F_KS);     use_sql_ks() ; set order to tag "ID"
 

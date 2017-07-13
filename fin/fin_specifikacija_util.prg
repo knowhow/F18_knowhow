@@ -258,7 +258,7 @@ FUNCTION prikaz_k1_k4_rj( lK )
    IF lVrsteP
       SELECT ( F_VRSTEP )
       IF !Used()
-         O_VRSTEP
+         o_vrstep()
       ENDIF
       SELECT ( nArr )
    ENDIF

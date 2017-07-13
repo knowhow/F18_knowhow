@@ -261,15 +261,12 @@ FUNCTION StampaInv( fLista, lAzurirana )
 
    ENDPRINT
 
-   RETURN
-// }
+   RETURN .T.
 
-/* StampaPLI(cBrDok)
- */
 
 FUNCTION StampaPLI( cBrDok )
 
-   // {
+
    LOCAL cPom
    SELECT PRIPRZ                // invent
    GO TOP
@@ -281,7 +278,7 @@ FUNCTION StampaPLI( cBrDok )
    ? PadC ( cPom + AllTrim ( cBrDok ), 40 )
    ?
    IF gvodiodj == "D"
-      ? "Odjeljenje: " + PRIPRZ->IdOdj + "-" + ocitaj_izbaci( F_ODJ, IdOdj, "naz" )
+      ? "Odjeljenje: " + PRIPRZ->IdOdj + "-" + find_pos_odj_naziv( IdOdj )
    ENDIF
    ?
    ? "Sifra    Naziv robe"

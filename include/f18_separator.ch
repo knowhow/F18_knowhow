@@ -15,4 +15,4 @@
 #define BROWSE_COL_SEP  "│"
 
 #define BROWSE_PODVUCI    "─"
-#define BROWSE_PODVUCI_2  "━"
+#define BROWSE_PODVUCI_2  "="

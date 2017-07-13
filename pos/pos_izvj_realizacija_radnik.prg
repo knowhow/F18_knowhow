@@ -12,30 +12,11 @@
 #include "f18.ch"
 
 
-// -------------------------------------------
-// otvaranje tabela potrebnih za report
-// -------------------------------------------
-STATIC FUNCTION o_tables()
-
-//   o_sifk()
-//   o_sifv()
-   O_DIO
-   o_pos_kase()
-   O_ODJ
-  // o_roba()
-   o_pos_osob()
-   SET ORDER TO TAG "NAZ"
-   O_VRSTEP
-   o_pos_pos()
-   o_pos_doks()
-
-   RETURN .T.
-
 
 // ------------------------------------------------
 // realizacija radnika
 // ------------------------------------------------
-FUNCTION realizacija_radnik
+FUNCTION pos_realizacija_radnik
 
    PARAMETERS lTekuci, fPrik, fZaklj
 
@@ -44,7 +25,8 @@ FUNCTION realizacija_radnik
    PRIVATE aUsl1 := ".t."
    PRIVATE cSmjena := Space( 1 )
    PRIVATE cIdPos := gIdPos
-   PRIVATE cIdDio := gIdDio
+
+   // PRIVATE cIdDio := gIdDio
    PRIVATE dDatOd := gDatum
    PRIVATE dDatDo := gDatum
    PRIVATE aNiz
@@ -57,9 +39,7 @@ FUNCTION realizacija_radnik
 
    PRIVATE fPrikPrem := "N"
 
-   IF roba->( FieldPos( "K7" ) ) <> 0
-      fPrikPrem := "D"
-   ENDIF
+   fPrikPrem := "D"
 
 
    IF lTekuci
@@ -124,8 +104,8 @@ FUNCTION realizacija_radnik
 
    my_use_temp( "POM", my_home() + "pom", .F., .T. )
 
-   INDEX on ( idradnik + idvrstep + idroba + idcijena ) TAG "1"
-   INDEX on ( idroba + idcijena ) TAG "2"
+   INDEX ON ( idradnik + idvrstep + idroba + idcijena ) TAG "1"
+   INDEX ON ( idroba + idcijena ) TAG "2"
 
    SET ORDER TO TAG "1"
 
@@ -147,13 +127,12 @@ FUNCTION realizacija_radnik
          ?? PadC ( "REALIZACIJA RADNIKA PO ROBAMA", 40 )
       ENDIF
       ? PadC ( gPosNaz )
-      IF !Empty ( gIdDio )
-         ? PadC ( gDioNaz, 40 )
-      ENDIF
+      //IF !Empty ( gIdDio )
+      //   ? PadC ( gDioNaz, 40 )
+      //ENDIF
       ?
-      SELECT OSOB
-      HSEEK gIdRadnik
-      ? gIdRadnik, "-", PadC ( AllTrim ( OSOB->Naz ), 40 )
+
+      ? gIdRadnik, "-", PadC ( AllTrim ( find_pos_osob_naziv( gIdRadnik ) ), 40 )
       cTxt := "Na dan: " + FormDat1 ( gDatum )
       IF gRadniRac == "N"
          cTxt += " u smjeni " + gSmjena
@@ -171,15 +150,18 @@ FUNCTION realizacija_radnik
          ? PadC( "REALIZACIJA NA DAN " + FormDat1( gDatum ), 40 )
       ENDIF
       ? PadC( "-------------------------------------", 40 )
-      ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", ocitaj_izbaci ( F_KASE, cIdPos, "Naz" ) )
-      ? "RADNIK     : " + IF( Empty( cIdRadnik ), "svi", cIdRadnik + "-" + RTrim( ocitaj_izbaci( F_OSOB, cIdRadnik, "naz" ) ) )
+      ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", find_pos_kasa_naz( cIdPos ) )
+      ? "RADNIK     : " + IF( Empty( cIdRadnik ), "svi", cIdRadnik + "-" + RTrim( find_pos_osob_naziv( cIdRadnik ) ) )
       ? "VR.PLACANJA: " + IF( Empty( cVrsteP ), "sve", RTrim( cVrsteP ) )
       IF ! Empty ( cSmjena )
          ? "SMJENA     : " + RTrim( cSmjena )
       ENDIF
+      /*
       IF ! Empty ( gIdDio )
-         ? "DIO OBJEKTA: " + IF( Empty( cIdDio ), "SVI", ocitaj_izbaci ( F_DIO, cIdDio, "Naz" ) )
+         ? "DIO OBJEKTA: " + IF( Empty( cIdDio ), "SVI", find_pos_dio_naziv( cIdDio ) )
       ENDIF
+      */
+
       ? "PERIOD     : " + FormDat1( dDatOd ) + " - " + FormDat1( dDatDo )
       ?
       ? "SIFRA PREZIME I IME RADNIKA"
@@ -212,9 +194,7 @@ FUNCTION realizacija_radnik
          nTotRadn2 := 0
          nTotRadn3 := 0
          IF ! lTekuci
-            SELECT OSOB
-            HSEEK _IdRadnik
-            ? OSOB->ID + "  " + PadR ( OSOB->Naz, 30 )
+            ? OSOB->ID + "  " + PadR ( find_pos_osob_naziv( _IdRadnik ), 30 )
             ? Replicate ( "-", 40 )
             SELECT POM
          ELSE
@@ -247,8 +227,8 @@ FUNCTION realizacija_radnik
                ENDIF // fPrikPrem=="D"
                SKIP
             ENDDO
-            SELECT VRSTEP
-            HSEEK _IdVrsteP
+
+            select_o_vrstep( _IdVrsteP )
             ? Space ( 5 ) + PadR ( VRSTEP->Naz, 24 ), Str ( nTotVP, 10, 2 )
 
             nTotRadn += nTotVP
@@ -384,10 +364,10 @@ FUNCTION C_RealRadn()
 
    SELECT DIO
    USE
-   SELECT KASE
-   USE
-   SELECT roba
-   USE
+   // SELECT KASE
+   // USE
+   // SELECT roba
+   // USE
    SELECT VRSTEP
    USE
    SELECT pos_doks
@@ -406,7 +386,6 @@ FUNCTION C_RealRadn()
 
 FUNCTION RadnIzvuci( cIdVd )
 
-
    SEEK cIdVd + DToS ( dDatOd )
    DO WHILE ! Eof() .AND. IdVd == cIdVd .AND. pos_doks->Datum <= dDatDo
 
@@ -420,10 +399,10 @@ FUNCTION RadnIzvuci( cIdVd )
       SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-         IF ( !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio )
-            SKIP
-            LOOP
-         ENDIF
+         // IF ( !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio )
+         // SKIP
+         // LOOP
+         // ENDIF
 
          select_o_roba( pos->idroba )
 
@@ -465,5 +444,23 @@ FUNCTION RadnIzvuci( cIdVd )
       SELECT pos_doks
       SKIP
    ENDDO
+
+   RETURN .T.
+
+
+
+STATIC FUNCTION o_tables()
+
+   // o_sifk()
+   // o_sifv()
+   O_DIO
+   // o_pos_kase()
+   O_ODJ
+   // o_roba()
+   // o_pos_osob()
+   SET ORDER TO TAG "NAZ"
+   o_vrstep()
+   o_pos_pos()
+   o_pos_doks()
 
    RETURN .T.

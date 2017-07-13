@@ -18,7 +18,7 @@ STATIC __tezinski_barkod := NIL
 FUNCTION param_tezinski_barkod( read_par )
 
    IF read_par != NIL
-      __tezinski_barkod := fetch_metric( "barkod_tezinski_barkod", nil, "N" )
+      __tezinski_barkod := fetch_metric( "barkod_tezinski_barkod", NIL, "N" )
    ENDIF
 
    RETURN __tezinski_barkod
@@ -28,13 +28,24 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    LOCAL _zabrane
    LOCAL nI
-   LOCAL _barkod := ""
+   LOCAL cBarkod := ""
    LOCAL lSveJeOk := .F.
    LOCAL _tezina := 0
    LOCAL _order
-   LOCAL _area := Select()
+
+   // LOCAL _area := Select()
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
+
+   AltD()
+
+   PushWA()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_roba( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_roba()
+   ENDIF
 
    sif_uv_naziv( @cId )
 
@@ -44,12 +55,12 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
       PrevId := GetList[ 1 ]:original
    ENDIF
 
-   AAdd( ImeKol, { "Sifra", {|| id }, "" } )
+   AAdd( ImeKol, { _u( "Šifra" ), {|| id }, "" } )
    AAdd( ImeKol, { PadC( "Naziv", 40 ), {|| PadR( naz, 40 ) }, "" } )
    AAdd( ImeKol, { PadC( "JMJ", 5 ), {|| PadC( jmj, 5 ) }, "" } )
    AAdd( ImeKol, { "Cijena set: " + gSetMPCijena, {|| PadL( AllTrim( Str( pos_get_mpc(), 12, 3 ) ), 12 ) }, "" } )
    AAdd( ImeKol, { "BARKOD", {|| roba->barkod }, "" } )
-   AAdd( ImeKol, { "K7", {|| roba->k7 }, "" } )
+   //AAdd( ImeKol, { "K7", {|| roba->k7 }, "" } )
 
    FOR nI := 1 TO Len( ImeKol )
       AAdd( Kol, nI )
@@ -62,14 +73,14 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
    ENDIF
 
    IF !tezinski_barkod( @cId, @_tezina )
-      _barkod := barkod( @cId )
+      cBarkod := barkod_or_roba_id( @cId )
    ELSE
-      _barkod := PadR( "T", 13 )
+      cBarkod := PadR( "T", 13 )
    ENDIF
 
-   SELECT ( _area )
+   // SELECT ( _area )
 
-   lSveJeOk := p_sifra( F_ROBA, "ID", f18_max_rows() - 20, f18_max_cols() - 3, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
+   lSveJeOk := p_sifra( F_ROBA, "ID", f18_max_rows() - 15, f18_max_cols() - 7, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
 
    IF LastKey() == K_ESC
       cId := PrevID
@@ -88,7 +99,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    ENDIF
 
-   IF fetch_metric( "pos_kontrola_cijene_pri_unosu_stavke", nil, "N" ) == "D"
+   IF fetch_metric( "pos_kontrola_cijene_pri_unosu_stavke", NIL, "N" ) == "D"
       IF Round( _cijena, 5 ) == 0
          MsgBeep( "Cijena 0.00, ne mogu napraviti račun !##STOP!" )
          lSveJeOk := .F.
@@ -97,12 +108,14 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    pos_set_key_handler_ispravka_racuna()
 
-   barkod := _barkod
+   barkod := cBarkod
 
-   SELECT roba
-   SET ORDER TO TAG "ID"
+   PopWA()
 
-   SELECT ( _area )
+   // SELECT roba
+   // SET ORDER TO TAG "ID"
+
+   // SELECT ( _area )
 
    RETURN lSveJeOk
 

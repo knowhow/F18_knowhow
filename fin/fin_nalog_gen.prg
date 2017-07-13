@@ -150,7 +150,7 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 */
 FUNCTION fin_open_psuban_and_ostalo()
 
-   O_VRSTEP
+   o_vrstep()
    o_konto()
    //o_partner()
    o_tnal()

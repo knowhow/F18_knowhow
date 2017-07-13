@@ -120,9 +120,9 @@ FUNCTION pos_kartica_artikla()
 
    IF gVrstaRS <> "K"
       IF Empty( cIdPos )
-         ? cLM + "PROD.MJESTO: " + cidpos + "-" + "SVE"
+         ? cLM + "PROD.MJESTO: " + cIdpos + "-" + "SVE"
       ELSE
-         ? cLM + "PROD.MJESTO: " + cidpos + "-" + ocitaj_izbaci( F_KASE, cIdPos, "Naz" )
+         ? cLM + "PROD.MJESTO: " + cIdpos + "-" + find_pos_kasa_naz( cIdPos )
       ENDIF
    ENDIF
 

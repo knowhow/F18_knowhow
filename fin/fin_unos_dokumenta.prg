@@ -650,7 +650,7 @@ FUNCTION o_fin_edit()
 
    my_close_all_dbf()
 
-   O_VRSTEP
+   o_vrstep()
   // O_ULIMIT
 
    IF ( IsRamaGlas() )

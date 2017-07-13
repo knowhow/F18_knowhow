@@ -23,7 +23,7 @@ FUNCTION pos_menu_realizacija()
    AAdd( opc, "2. odjeljenja" )
    AAdd( opcexe, {|| realizacija_odjeljenja() } )
    AAdd( opc, "3. radnici" )
-   AAdd( opcexe, {|| realizacija_radnik( .F. ) } )
+   AAdd( opcexe, {|| pos_realizacija_radnik( .F. ) } )
 
 #ifdef DEPR
    AAdd( opc, "4. dijelovi objekta " )

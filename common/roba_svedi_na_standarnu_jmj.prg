@@ -108,7 +108,7 @@ FUNCTION svedi_na_jedinicu_mjere( nKol, cIdRoba, cJMJ )
    RETURN nVrati
 
 
-FUNCTION find_roba_jmj( cIdroba )
+FUNCTION find_roba_jmj( cIdRoba )
 
    LOCAL cRet
 

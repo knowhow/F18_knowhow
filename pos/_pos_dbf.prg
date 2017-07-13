@@ -196,7 +196,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    o_pos_osob()
    SET ORDER TO TAG "NAZ"
 
-   O_VRSTEP
+   o_vrstep()
 //   o_partner()
    O_DIO
    O_K2C
@@ -238,7 +238,7 @@ FUNCTION o_pos_sifre()
    O_ODJ
   // o_roba()
   // o_tarifa()
-   O_VRSTEP
+   o_vrstep()
   // o_valute()
   // o_partner()
    o_pos_osob()

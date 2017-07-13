@@ -300,7 +300,7 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
    // realizacija radnika, pojedinacno, i kase (finansijski)
    FOR n := 1 TO Len( aRadnici )
       gIdRadnik := aRadnici[ n ]
-      realizacija_radnik( .T., "P", .T. )
+      pos_realizacija_radnik( .T., "P", .T. )
    NEXT
    gIdRadnik := SavegIdRadnik
    realizacija_kase( .T. )
@@ -343,7 +343,7 @@ FUNCTION ZakljRadnik( Ch )
       ENDIF
       cIdSave := gIdRadnik
       gIdRadnik := ZAKSM->IdRadnik
-      IF !realizacija_radnik( .T., "P", .T. )
+      IF !pos_realizacija_radnik( .T., "P", .T. )
          // nije uspio stampati pazar radnika, pa ga sad ne mogu ni zakljuciti
          MsgBeep( "Nije uspjelo stampanje pazara!#Radnik nije zakljucen!" )
          gIdRadnik := cIdSave

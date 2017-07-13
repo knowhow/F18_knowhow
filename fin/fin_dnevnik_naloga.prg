@@ -49,7 +49,7 @@ FUNCTION fin_dnevnik_naloga()
 
    SET KEY K_F5 TO
 
-   O_VRSTEP
+   o_vrstep()
    // o_tnal()
    // o_tdok()
    // o_partner()

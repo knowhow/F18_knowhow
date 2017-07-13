@@ -192,7 +192,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
 
    IF _fakt_params[ "fakt_vrste_placanja" ]
       lVrsteP := .T.
-      O_VRSTEP
+      o_vrstep()
    ENDIF
 
 

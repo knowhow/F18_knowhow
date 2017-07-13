@@ -118,7 +118,7 @@ FUNCTION PorPoTar
             IF ( Empty( cIdPos ) )
                ?? "SVA"
             ELSE
-               ?? cIdPos + "-" + AllTrim ( ocitaj_izbaci ( F_KASE, cIdPos, "Naz" ) )
+               ?? cIdPos + "-" + AllTrim ( find_pos_kasa_naz( cIdPos ) )
             ENDIF
          ELSE
             ?? gPosNaz

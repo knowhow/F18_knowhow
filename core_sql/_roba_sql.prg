@@ -266,6 +266,10 @@ STATIC FUNCTION use_sql_roba_where( hParams )
       cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "trim(sifradob)", hParams[ "sifradob" ] )
    ENDIF
 
+   IF hb_HHasKey( hParams, "barkod" )
+      cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "barkod", hParams[ "barkod" ] )
+   ENDIF
+
    IF hb_HHasKey( hParams, "where" )
       cWhere += iif( Empty( cWhere ), "", " AND " ) +  hParams[ "where" ]
    ENDIF

@@ -406,7 +406,7 @@ STATIC FUNCTION pos_get_vr_plac( id_vr_pl )
       RETURN _ret
    ENDIF
 
-   O_VRSTEP
+   o_vrstep()
    SELECT vrstep
    SET ORDER TO TAG "ID"
    SEEK id_vr_pl

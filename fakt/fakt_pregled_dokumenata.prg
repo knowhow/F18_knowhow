@@ -30,7 +30,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    LOCAL cSamoRobaDN := "N"
    PRIVATE cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
 
-   O_VRSTEP
+   o_vrstep()
    o_ops()
    o_valute()
    // o_rj()
@@ -436,7 +436,7 @@ FUNCTION fakt_pregled_reopen_fakt_tabele( cFilter )
 
    my_close_all_dbf()
 
-   O_VRSTEP
+   o_vrstep()
    o_ops()
    o_fakt_doks2()
    o_valute()

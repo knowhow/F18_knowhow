@@ -41,8 +41,7 @@ FUNCTION PrepisKumPr()
    ?
    ? PadC( FormDat1( pos_doks->Datum ), nSir )
    ?
-   SELECT VRSTEP
-   HSEEK pos_doks->IdVrsteP
+   select_o_vrstep( pos_doks->IdVrsteP )
 
    IF gVrstaRS == "S"
       cPom := VRSTEP->Naz
@@ -85,7 +84,7 @@ FUNCTION PrepisKumPr()
    SELECT POS
 
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-      IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici()
+      IF gVrstaRS == "S" .AND. PRow() > 63 - dodatni_redovi_po_stranici()
          FF
       ENDIF
       ? cLM
@@ -101,7 +100,7 @@ FUNCTION PrepisKumPr()
       SKIP
    ENDDO
 
-   IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() -7
+   IF gVrstaRS == "S" .AND. PRow() > 63 - dodatni_redovi_po_stranici() - 7
       FF
    ENDIF
 

@@ -26,7 +26,7 @@ FUNCTION form_x_koord( nSet )
    ENDIF
 
    RETURN m_x
-   
+
 
 FUNCTION form_y_koord( nSet )
 
@@ -1131,7 +1131,7 @@ FUNCTION IzreziPath( cPath, cTekst )
 
 
 
-FUNCTION FormBrowse( nT, nL, nB, nR, aImeKol, aKol, aHFCS, nFreeze, bIstakni )
+FUNCTION pos_form_browse( nT, nL, nB, nR, aImeKol, aKol, aHFCS, nFreeze, bIstakni )
 
    LOCAL oBrowse     // browse object
    LOCAL oColumn     // column object

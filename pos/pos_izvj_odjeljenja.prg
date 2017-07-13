@@ -18,7 +18,7 @@ FUNCTION realizacija_odjeljenja()
 
    LOCAL   nSir := iif ( gVrstaRS == "S", 80, 40 )
    PRIVATE cIdOdj := Space( 2 ), cPrikRobe := "D"
-   PRIVATE cSmjena := Space( 1 ), cIdPos := gIdPos, cIdDio := gIdDio
+   PRIVATE cSmjena := Space( 1 ), cIdPos := gIdPos //, cIdDio := gIdDio
    PRIVATE dDat0 := gDatum, dDat1 := gDatum, aNiz, cRoba := Space ( 60 )
 
    aDbf := {}
@@ -37,8 +37,8 @@ FUNCTION realizacija_odjeljenja()
    SELECT ( F_POM )
    my_use_temp( "POM", my_home() + "pom", .F., .F. )
 
-   INDEX on ( "idodj+iddio+idpos+idroba+idcijena" ) TAG "1"
-   INDEX on ( "idodj+iddio+idroba+idcijena" ) TAG "2"
+   INDEX ON ( "idodj+iddio+idpos+idroba+idcijena" ) TAG "1"
+   INDEX ON ( "idodj+iddio+idroba+idcijena" ) TAG "2"
 
    SET ORDER TO TAG "1"
 
@@ -51,7 +51,7 @@ FUNCTION realizacija_odjeljenja()
       AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.P_Kase(@cIdPos)", "@!", } )
    ELSE
       cIdPos := gIdPos
-      cIdDio := gIdDio
+      //cIdDio := gIdDio
    ENDIF
    IF gvodiodj == "D"
       AAdd ( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "empty(cIdOdj) .or. P_Odj(@cIdOdj)", "@!", } )
@@ -86,9 +86,9 @@ FUNCTION realizacija_odjeljenja()
    ? PadC( "REALIZACIJA ODJELJENJA", nSir )
    ? PadC ( "NA DAN " + FormDat1( Date() ), nSir )
    ? PadC( "-------------------------------------", nSir )
-   ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", ocitaj_izbaci ( F_KASE, cIdPos, "Naz" ) )
+   ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", find_pos_kasa_naz( cIdPos ) )
    IF gvodiodj == "D"
-      ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", ocitaj_izbaci ( F_ODJ, cIdOdj, "Naz" ) )
+      ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", find_pos_odj_naziv( cIdOdj ) )
    ENDIF
    ? "PERIOD     : " + FormDat1( dDat0 ) + " - " + FormDat1( dDat1 )
 
@@ -140,8 +140,7 @@ FUNCTION realizacija_odjeljenja()
          nTotDio3 := 0
          DO WHILE !Eof() .AND. POM->( IdOdj + IdDio ) == ( _IdOdj + _IdDio )
             _IdPos := POM->IdPos
-            SELECT KASE
-            HSEEK _IdPos
+            select_o_kase( _IdPos )
             ? Space( 1 ) + _idpos + ":", + KASE->Naz
             SELECT POM
             nTotPos := 0
@@ -266,7 +265,8 @@ FUNCTION realizacija_odjeljenja()
          nTotal2 += nTotOdj2
          nTotal3 += nTotOdj3
       END
-      IF Empty ( cIdDio )
+
+      //IF Empty ( cIdDio )
          ? REPL ( "=", 40 )
          ? PadC ( "SVA ODJELJENJA", 25 ) + Str ( nTotal, 15, 2 )
          IF nTotal2 <> 0
@@ -277,7 +277,7 @@ FUNCTION realizacija_odjeljenja()
             ? PadL ( "UKUPNO NAPLATA:", 20 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
          ENDIF
          ? REPL ( "=", 40 )
-      ENDIF
+      //ENDIF
    ENDIF
    ENDPRINT
 
@@ -307,9 +307,7 @@ FUNCTION DioIzvuci( cIdVd )
       SELECT POS
       SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
       DO WHILE ! Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-         IF ( !Empty ( cIdOdj ) .AND. POS->IdOdj <> cIdOdj ) .OR. ;
-               ( !Empty ( cIdDio ) .AND. POS->IdDio <> cIdDio ) .OR. ;
-               !Tacno ( aUsl1 )
+         IF ( !Empty ( cIdOdj ) .AND. POS->IdOdj <> cIdOdj ) .OR. !Tacno ( aUsl1 )
             Skip; LOOP
          ENDIF
 
@@ -338,13 +336,13 @@ FUNCTION DioIzvuci( cIdVd )
       SKIP
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION realizacija_dio_objekta
 
    PARAMETERS cPrikRobe
-   PRIVATE cIdDio := Space( 2 )
+   //PRIVATE cIdDio := Space( 2 )
    PRIVATE cSmjena := Space( 1 ), cIdPos := gIdPos, cIdOdj := Space ( 2 )
    PRIVATE dDat0 := gDatum, dDat1 := gDatum, aNiz, cRoba := Space ( 60 )
    PRIVATE cIdRadnik := Space ( 4 ), cIdVrsteP := Space ( 2 ), cGotZir := " "
@@ -354,12 +352,12 @@ FUNCTION realizacija_dio_objekta
    O_DIO
    O_ODJ
    o_pos_osob()
-   SET ORDER TO tag ( "NAZ" )
-   O_VRSTEP
+   SET ORDER TO TAG ( "NAZ" )
+   o_vrstep()
    o_pos_kase()
-  // o_sifk()
-  // o_sifv()
-  // o_roba()
+   // o_sifk()
+   // o_sifv()
+   // o_roba()
    o_pos_pos()
    o_pos_doks()
 
@@ -391,7 +389,7 @@ FUNCTION realizacija_dio_objekta
    ELSE
       cIdPos := gIdPos
    ENDIF
-   AAdd ( aNiz, { "Dio objekta (prazno-svi)", "cIdDio", "Empty (cIdDio).or.P_Dio(@cIdDio)", "@!", } )
+   //AAdd ( aNiz, { "Dio objekta (prazno-svi)", "cIdDio", "Empty (cIdDio).or.P_Dio(@cIdDio)", "@!", } )
    IF gvodiodj == "D"
       AAdd ( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "Empty (cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )
    ENDIF
@@ -430,12 +428,12 @@ FUNCTION realizacija_dio_objekta
    ? PadC( "REALIZACIJA DIJELA OBJEKTA", 40 )
    ? PadC ( "NA DAN " + FormDat1( Date() ), 40 )
    ? PadC( "-------------------------------------", 40 )
-   ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", ocitaj_izbaci ( F_KASE, cIdPos, "Naz" ) )
+   ? "PROD.MJESTO: " + cidpos + "-" + IF( Empty( cIdPos ), "SVA", find_pos_kasa_naz( cIdPos ) )
    IF gvodiodj == "D"
-      ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", ocitaj_izbaci ( F_ODJ, cIdOdj, "Naz" ) )
+      ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", find_pos_odj_naziv( cIdOdj ) )
    ENDIF
    ? "RADNIK     : " + IF( Empty( cIdRadnik ), "svi", ;
-      cIdRadnik + "-" + RTrim( ocitaj_izbaci( F_OSOB, cIdRadnik, "naz" ) ) )
+      cIdRadnik + "-" + RTrim( find_pos_osob_naziv( cIdRadnik ) ) )
    ? "VR.PLACANJA: " + IF( Empty( cIdVrsteP ), "sve", RTrim( cIdVrsteP ) )
    ? "PERIOD     : " + FormDat1( dDat0 ) + " - " + FormDat1( dDat1 )
 
@@ -457,6 +455,7 @@ FUNCTION realizacija_dio_objekta
    GO TOP
    DO WHILE !Eof()
       _IdDio := POM->IdDio
+      /*
       IF Empty ( cIdDio )
          SELECT DIO
          HSEEK ( _IdDio )
@@ -465,13 +464,13 @@ FUNCTION realizacija_dio_objekta
          ? REPL ( "-", 40 )
          SELECT POM
       ENDIF
+      */
       nTotDio := 0
       nTotDio2 := 0
       nTotDio3 := 0
       DO WHILE !Eof() .AND. POM->IdDio == _IdDio
          _IdPos := POM->IdPos
-         SELECT KASE
-         HSEEK _IdPos
+         select_o_kase( _IdPos )
          ? Space( 1 ) + _idpos + ":", + KASE->Naz
          ? Space ( 5 ) + REPL ( "-", 35 )
          SELECT POM
@@ -483,8 +482,7 @@ FUNCTION realizacija_dio_objekta
             nTotVP2 := 0
             nTotVP3 := 0
             _IdVrsteP := POM->IdVrsteP
-            SELECT VRSTEP
-            HSEEK _IdVrsteP
+            select_o_vrstep( _IdVrsteP )
             ? Space ( 5 ) + PadR ( VRSTEP->Naz, 20 )
             SELECT POM
             DO WHILE !Eof() .AND. POM->( IdDio + IdPos + IdVrsteP ) == ( _IdDio + _IdPos + _IdVrsteP )
@@ -520,7 +518,7 @@ FUNCTION realizacija_dio_objekta
       nTotal2 += nTotDio2
       nTotal2 += nTotDio3
    ENDDO
-   IF Empty ( cIdDio )
+   //IF Empty ( cIdDio )
       ? REPL ( "=", 40 )
       ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
       IF nTotal2 <> 0
@@ -531,7 +529,7 @@ FUNCTION realizacija_dio_objekta
          ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
       ENDIF
       ? REPL ( "=", 40 )
-   ENDIF
+   //ENDIF
 
    // 2) Rekapitulacija po radnicima i vrstama placanja
    ?
@@ -546,7 +544,8 @@ FUNCTION realizacija_dio_objekta
    GO TOP
    DO WHILE !Eof()
       _IdDio := POM->IdDio
-      IF Empty ( cIdDio )
+      /*
+      //IF Empty ( cIdDio )
          SELECT DIO
          HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
@@ -554,6 +553,7 @@ FUNCTION realizacija_dio_objekta
          ? REPL ( "-", 40 )
          SELECT POM
       ENDIF
+      */
       nTotDio := 0
       nTotDio2 := 0
       nTotDio3 := 0
@@ -572,8 +572,7 @@ FUNCTION realizacija_dio_objekta
             nTotVP2 := 0
             nTotVP3 := 0
             _IdVrsteP := POM->IdVrsteP
-            SELECT VRSTEP
-            HSEEK _IdVrsteP
+            select_o_vrstep( _IdVrsteP )
             ? Space ( 5 ) + PadR ( VRSTEP->Naz, 20 )
             SELECT POM
             DO WHILE !Eof() .AND. ;
@@ -602,7 +601,7 @@ FUNCTION realizacija_dio_objekta
       nTotal2 += nTotDio2
       nTotal3 += nTotDio3
    ENDDO
-   IF Empty ( cIdDio )
+   //IF Empty ( cIdDio )
       ? REPL ( "=", 40 )
       ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
       IF nTotal2 <> 0
@@ -613,7 +612,7 @@ FUNCTION realizacija_dio_objekta
          ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
       ENDIF
       ? REPL ( "=", 40 )
-   ENDIF
+   //ENDIF
 
    // 3) Rekapitulacija po vrstama placanja
    ?
@@ -628,6 +627,7 @@ FUNCTION realizacija_dio_objekta
    GO TOP
    DO WHILE !Eof()
       _IdDio := POM->IdDio
+      /*
       IF Empty ( cIdDio )
          SELECT DIO
          HSEEK ( _IdDio )
@@ -636,13 +636,13 @@ FUNCTION realizacija_dio_objekta
          ? REPL ( "-", 40 )
          SELECT POM
       ENDIF
+      */
       nTotDio := 0
       nTotDio2 := 0
       nTotDio3 := 0
       DO WHILE !Eof() .AND. POM->IdDio == _IdDio
          _IdVrsteP := POM->IdVrsteP
-         SELECT VRSTEP
-         HSEEK _IdVrsteP
+         select_o_vrstep( _IdVrsteP )
          ? Space ( 5 ) + PadR ( VrsteP->Naz, 20 )
          SELECT POM
          nTotVrsteP := 0
@@ -666,7 +666,7 @@ FUNCTION realizacija_dio_objekta
       nTotal2 += nTotDio2
       nTotal3 += nTotDio3
    ENDDO
-   IF Empty ( cIdDio )
+   //IF Empty ( cIdDio )
       ? REPL ( "=", 40 )
       ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
       IF nTotal2 <> 0
@@ -677,7 +677,7 @@ FUNCTION realizacija_dio_objekta
          ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
       ENDIF
       ? REPL ( "=", 40 )
-   ENDIF
+   //ENDIF
 
    // 4) Rekapitulacija po odjeljenjima
    ?
@@ -690,7 +690,7 @@ FUNCTION realizacija_dio_objekta
    GO TOP
    DO WHILE !Eof()
       _IdDio := POM->IdDio
-      IF Empty ( cIdDio )
+      /* IF Empty ( cIdDio )
          SELECT DIO
          HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
@@ -698,11 +698,11 @@ FUNCTION realizacija_dio_objekta
          ? REPL ( "-", 40 )
          SELECT POM
       ENDIF
+      */
       nTotDio := 0
       DO WHILE !Eof() .AND. POM->IdDio == _IdDio
          _IdOdj := POM->IdOdj
-         SELECT ODJ
-         HSEEK _IdOdj
+         select_o_pos_odj( _IdOdj )
          ? Space ( 5 ) + PadR ( ODJ->Naz, 20 )
          SELECT POM
          nTotOdj := 0
@@ -718,7 +718,7 @@ FUNCTION realizacija_dio_objekta
       ? REPL ( "-", 40 )
       nTotal += nTotDio
    ENDDO
-   IF Empty ( cIdDio )
+   //IF Empty ( cIdDio )
       ? REPL ( "=", 40 )
       ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
       IF nTotal2 <> 0
@@ -729,7 +729,7 @@ FUNCTION realizacija_dio_objekta
          ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
       ENDIF
       ? REPL ( "=", 40 )
-   ENDIF
+   //ENDIF
 
    // 5) Rekapitulacija po robama
    IF cPrikRobe == "D"
@@ -742,6 +742,7 @@ FUNCTION realizacija_dio_objekta
       GO TOP
       WHILE ! Eof()
          _IdDio := POM->IdDio
+         /*
          IF Empty ( cIdDio )
             SELECT DIO
             HSEEK _IdDio
@@ -749,6 +750,7 @@ FUNCTION realizacija_dio_objekta
             ? REPL ( "-", 40 )
             SELECT POM
          ENDIF
+         */
          nTotDio := 0
          nTotDio2 := 0
          nTotDio3 := 0
@@ -797,7 +799,7 @@ FUNCTION realizacija_dio_objekta
          nTotal2 += nTotDio2
          nTotal3 += nTotDio3
       END
-      IF Empty ( cIdDio )
+      //IF Empty ( cIdDio )
          ? REPL ( "*", 40 )
          ? PadC ( "UKUPNO OBJEKAT", 24 ), Str ( nTotDio, 15, 2 )
          IF nTotDio2 <> 0
@@ -808,7 +810,7 @@ FUNCTION realizacija_dio_objekta
             ? PadL ( "UKUPNO NAPLATA:", 29 ), Str ( nTotDio - nTotDio3 + nTotDio2, 10, 2 )
          ENDIF
          ? REPL ( "*", 40 )
-      ENDIF
+      //ENDIF
    ENDIF
    ENDPRINT
    CLOSERET
@@ -836,7 +838,6 @@ FUNCTION OdjIzvuci( cIdVd )
       SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
          IF ( !Empty ( cIdOdj ) .AND. POS->IdOdj <> cIdOdj ) .OR. ;
-               ( !Empty ( cIdDio ) .AND. POS->IdDio <> cIdDio ) .OR. ;
                !Tacno ( aUsl1 )
             SKIP
             LOOP
@@ -845,8 +846,7 @@ FUNCTION OdjIzvuci( cIdVd )
          select_o_roba( pos->idroba )
 
          IF roba->( FieldPos( "idodj" ) ) <> 0
-            SELECT odj
-            HSEEK roba->idodj
+            select_o_pos_odj( roba->idodj )
          ENDIF
 
          nNeplaca := 0
@@ -899,10 +899,10 @@ STATIC FUNCTION _o_tables()
 
    O_DIO
    O_ODJ
-//   o_sifk()
-//   o_sifv()
-   o_pos_kase()
-//   o_roba()
+// o_sifk()
+// o_sifv()
+   // o_pos_kase()
+// o_roba()
    o_pos_pos()
    o_pos_doks()
 

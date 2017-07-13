@@ -22,8 +22,7 @@ FUNCTION o_pos_osob()
    RETURN o_dbf_table( F_OSOB, "osob", "ID" )
 
 
+
+
 FUNCTION o_pos_strad()
    RETURN o_dbf_table( F_STRAD, "strad", "ID" )
-
-FUNCTION o_pos_kase()
-   RETURN o_dbf_table( F_KASE, "kase", "ID" )

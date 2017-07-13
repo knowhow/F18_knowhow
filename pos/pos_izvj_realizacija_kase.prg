@@ -26,7 +26,7 @@ FUNCTION realizacija_kase
    PRIVATE cSmjena := Space( 1 )
    PRIVATE cIdPos := gIdPos
    PRIVATE cRD
-   PRIVATE cIdDio := gIdDio
+   //PRIVATE cIdDio := gIdDio
    PRIVATE aNiz
    PRIVATE aUsl1 := {}
    PRIVATE aUsl2 := {}
@@ -94,11 +94,11 @@ FUNCTION realizacija_kase
    IF fZaklj
       STARTPRINTPORT CRET gLocPort, .F.
       ZagFirma()
-      ZaglZ( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj )
+      ZaglZ( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj )
    ELSE
       STARTPRINT CRET
       ZagFirma()
-      Zagl( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj, cGotZir )
+      Zagl( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj, cGotZir )
    ENDIF // fZaklj
 
    o_pos_tables()
@@ -235,7 +235,7 @@ FUNCTION FrmRptVars( cK1, cIdPos, dDat0, dDat1, cSmjena, cRD, cVrijOd, cVrijDo, 
    RETURN 1
 
 
-STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj, cGotZir )
+STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj, cGotZir )
 
    ?? gP12CPI
 
@@ -254,23 +254,25 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, 
          ? "PRODAJNO MJESTO: SVA"
       ENDIF
    ELSE
-      ? "PRODAJNO MJESTO: " + cIdPos + "-" + ocitaj_izbaci( F_KASE, cIdPos, "NAZ" )
+      ? "PRODAJNO MJESTO: " + cIdPos + "-" + find_pos_kasa_naz( cIdPos )
    ENDIF
 
+/*
    IF Empty( cIdDio )
       IF ( grbReduk < 2 )
          ? "DIO OBJEKTA:  SVI"
       ENDIF
    ELSE
-      ? "DIO OBJEKTA: " + ocitaj_izbaci( F_DIO, cIdDio, "NAZ" )
+      ? "DIO OBJEKTA: " + find_pos_dio_naziv( cIdDio )
    ENDIF
+*/
 
    IF Empty( cRadnici )
       IF ( grbReduk < 2 )
          ? "RADNIK     :  SVI"
       ENDIF
    ELSE
-      ? "RADNIK     : " + cRadnici + "-" + RTrim( ocitaj_izbaci( F_OSOB, cRadnici, "NAZ" ) )
+      ? "RADNIK     : " + cRadnici + "-" + RTrim( find_pos_osob_naziv( cRadnici ) )
    ENDIF
 
    IF Empty( cVrsteP )
@@ -295,7 +297,7 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, 
             ? "ODJELJENJE : SVA"
          ENDIF
       ELSE
-         ? "ODJELJENJE : " + ocitaj_izbaci( F_ODJ, cIdOdj, "NAZ" )
+         ? "ODJELJENJE : " + find_pos_odj_naziv( cIdOdj )
       ENDIF
    ENDIF
 
@@ -348,12 +350,11 @@ STATIC FUNCTION SetFilter( cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPa
       SET FILTER TO &cFilter
    ENDIF
 
-   RETURN
-// }
+   RETURN .T.
 
-STATIC FUNCTION ZaglZ( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj )
+STATIC FUNCTION ZaglZ( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj )
 
-   // {
+
    ?
    ?? PadC( "ZAKLJUCENJE KASE", LEN_TRAKA )
    ? PadC( gPosNaz )
@@ -411,8 +412,7 @@ FUNCTION RekVrstePl()
       _IdPos := pom->IdPos
 
       IF Empty( cIdPos )
-         SELECT kase
-         HSEEK _IdPos
+         select_o_kase( _IdPos )
          ?
          ? Replicate( "-", LEN_TRAKA )
          ? Space( 1 ) + _IdPos + ":", + kase->Naz
@@ -428,8 +428,7 @@ FUNCTION RekVrstePl()
          nTotVP2 := 0
          nTotVP3 := 0
          _IdVrsteP := pom->IdVrsteP
-         SELECT vrstep
-         HSEEK _IdVrsteP
+         select_o_vrstep( _IdVrsteP )
          ? Space( 5 ) + vrstep->Naz
          SELECT pom
          DO WHILE !Eof() .AND. pom->( IdPos + IdVrsteP ) == ( _IdPos + _IdVrsteP )
@@ -543,8 +542,7 @@ STATIC FUNCTION RealPoRadn()
             nTotVP2 := 0
             nTotVP3 := 0
             _IdVrsteP := pom->IdVrsteP
-            SELECT vrstep
-            HSEEK _IdVrsteP
+            select_o_vrstep( _IdVrsteP )
             SELECT pom
             ? Space( 6 ) + PadR( vrstep->Naz, 20 )
             DO WHILE !Eof() .AND. pom->( IdPos + IdRadnik + IdVrsteP ) == ( _IdPos + _IdRadnik + _IdVrsteP )
@@ -615,8 +613,7 @@ STATIC FUNCTION RealPoRadn()
          nTotPos3 := 0
          _IdPos := POM->IdPos
          IF Empty( cIdPos )
-            SELECT KASE
-            HSEEK _IdPos
+            select_o_kase( _IdPos )
             ? REPL ( "-", LEN_TRAKA )
             ? Space( 1 ) + _idpos + ":", + KASE->Naz
             ? REPL ( "-", LEN_TRAKA )
@@ -780,8 +777,7 @@ STATIC FUNCTION RealPoOdj( fPrik, nTotal2, nTotal3 )
       WHILE !Eof()
          _IdPos := pom->IdPos
          IF Empty( cIdPos )
-            SELECT kase
-            HSEEK _IdPos
+            select_o_kase( _IdPos )
             ? REPL( "-", LEN_TRAKA )
             ? Space( 1 ) + _idpos + ":", KASE->Naz
             ? REPL( "-", LEN_TRAKA )
@@ -835,8 +831,7 @@ STATIC FUNCTION RealPoOdj( fPrik, nTotal2, nTotal3 )
       DO WHILE !Eof()
          _IdPos := POM->IdPos
          IF Empty( cIdPos )
-            SELECT KASE
-            HSEEK _IdPos
+            select_o_kase( _IdPos )
             ? REPL( "-", LEN_TRAKA )
             ? Space( 1 ) + _idpos + ":", KASE->Naz
             ? REPL( "-", LEN_TRAKA )

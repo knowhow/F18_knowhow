@@ -173,7 +173,7 @@ FUNCTION Zaduzenje
          AllTrim( ODJ->Naz ) + iif( !Empty( cIdDio ), ;
          "-" + DIO->Naz, "" ), 70 ) COLOR f18_color_invert()
 
-      oBrowse := FormBrowse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, ;
+      oBrowse := pos_form_browse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, ;
          { hb_UTF8ToStrBox(BROWSE_PODVUCI_2), hb_UTF8ToStrBox(BROWSE_PODVUCI), hb_UTF8ToStrBox(BROWSE_COL_SEP) }, 0 )
       oBrowse:autolite := .F.
 

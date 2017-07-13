@@ -105,8 +105,8 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
 
       CLEAR SCREEN
       ?
-      nPosX := 2
-      nPosY := 1
+      nPosX := 1
+      nPosY := 2
 
       @ nPosX, nPosY SAY "Odabir modula za glavni meni ***" COLOR f18_color_i()
       @ nPosX + nX, nPosY SAY Space( 2 ) + "FIN:" GET _fin PICT "@!"

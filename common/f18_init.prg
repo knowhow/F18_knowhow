@@ -253,8 +253,8 @@ FUNCTION set_screen_dimensions()
 
    CASE nPixWidth >= 1280 .AND. nPixHeight >= 800
 
-      font_size( 22 )
-      font_width( 11 )
+      font_size( 24 )
+      font_width( 12 )
       // f18_max_rows( 35 )
       // f18_max_cols( 115 )
       ?E cMsg + "2"
@@ -299,14 +299,14 @@ FUNCTION set_screen_dimensions()
    // hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
 
 
-   IF SetMode( f18_max_rows( desktop_rows() - 2 ) + INFO_BAR_ROWS,  ;
-         f18_max_cols( desktop_cols() - 5 ) )
+   IF SetMode( f18_max_rows( desktop_rows() - 1 ) + INFO_BAR_ROWS,  ;
+         f18_max_cols( desktop_cols() - 2 ) )
 
       ?E "setovanje ekrana: setovan ekran po rezoluciji", f18_max_rows(), f18_max_cols()
    ELSE
       // linux nece od prve!?
-      SetMode( f18_max_rows( desktop_rows() - 2 ) + INFO_BAR_ROWS,  ;
-         f18_max_cols( desktop_cols() - 5 ) )
+      SetMode( f18_max_rows( desktop_rows() - 1 ) + INFO_BAR_ROWS,  ;
+         f18_max_cols( desktop_cols() - 2 ) )
       ?E " set font_width/2: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
       ?E "setovanje ekrana/2 "
    ENDIF

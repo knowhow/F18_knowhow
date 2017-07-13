@@ -451,8 +451,9 @@ FUNCTION font_size( nSize )
 
    ?E " s_font_size:", s_nFontSize
    IF ValType( nSize ) == "N" .AND. nSize > 0
+      s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize ) // iz nekog razloga od prve ne setuje zeljenu velicinu
+      s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize )
       s_nFontSize := nSize
-      s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, s_nFontSize )
       ?E " get font_size: ", s_nFontSize
    ENDIF
 

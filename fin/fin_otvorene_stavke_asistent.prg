@@ -19,8 +19,8 @@ FUNCTION fin_asistent_otv_st()
    LOCAL nSljRec
    LOCAL nOdem
    LOCAL _rec, _rec_suban
-   LOCAL _max_rows := MAXROWS() - 5
-   LOCAL _max_cols := MAXCOLS() - 5
+   LOCAL _max_rows := f18_max_rows() - 5
+   LOCAL _max_cols := f18_max_cols() - 5
    LOCAL nRecBrDok
    PRIVATE cIdKonto
    PRIVATE cIdFirma
@@ -513,7 +513,7 @@ FUNCTION fin_asistent_otv_st()
    SET CURSOR ON
 
    @ m_x + ( _max_rows - 5 ), m_y + 1 SAY "****************  REZULTATI ASISTENTA ************"
-   @ m_x + ( _max_rows - 4 ), m_y + 1 SAY REPL( "=", MAXCOLS() - 2 )
+   @ m_x + ( _max_rows - 4 ), m_y + 1 SAY REPL( "=", f18_max_cols() - 2 )
    @ m_x + ( _max_rows - 3 ), m_y + 1 SAY " <F2> Ispravka broja dok.       <c-P> Print      <a-P> Print Br.Dok           "
    @ m_x + ( _max_rows - 2 ), m_y + 1 SAY8 " <K> Uključi/isključi račun za kamate "
    @ m_x + ( _max_rows - 1 ), m_y + 1 SAY8 ' < F6 > Štampanje izvršenih promjena  '
@@ -782,14 +782,14 @@ FUNCTION opcije_browse_pregleda()
 
    LOCAL _x, _y
 
-   _x := m_x + MAXROWS() - 15
+   _x := m_x + f18_max_rows() - 15
    _y := m_y + 1
 
    @ _x,     _y SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
    @ _x + 1, _y SAY8 " <K>    Uključi/isključi račun za kamate         <F5> uzmi broj dok.        "
    @ _x + 2, _y SAY '<ENTER> Postavi/ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
 
-   @ _x + 3, _y SAY REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI), MAXCOLS() - 12 )
+   @ _x + 3, _y SAY REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI), f18_max_cols() - 12 )
 
    @ _x + 4, _y SAY ""
 

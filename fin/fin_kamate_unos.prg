@@ -48,8 +48,8 @@ FUNCTION fin_kamate_menu()
 FUNCTION kamate_unos()
 
    LOCAL nI
-   LOCAL _x := MAXROWS() - 15
-   LOCAL _y := MAXCOLS() - 5
+   LOCAL _x := f18_max_rows() - 15
+   LOCAL _y := f18_max_cols() - 5
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 

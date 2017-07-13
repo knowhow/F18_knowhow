@@ -20,10 +20,10 @@ STATIC s_nFinNalogCount := 0
 
 FUNCTION add_global_idle_handlers()
 
-   AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
+   AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
    // AAdd( aIdleHandlers, hb_idleAdd( {||  calc_on_idle_handler() } ) )
 
-   // hb_idleAdd( aIdleHandlers, hb_idleAdd( {|| hb_DispOutAt( maxrows(), 1, "< PAUSE >", F18_COLOR_INFO_PANEL ), kalk_asistent_pause() } ) )
+   // hb_idleAdd( aIdleHandlers, hb_idleAdd( {|| hb_DispOutAt( f18_max_rows(), 1, "< PAUSE >", F18_COLOR_INFO_PANEL ), kalk_asistent_pause() } ) )
 
    RETURN .T.
 
@@ -44,7 +44,7 @@ PROCEDURE on_idle_dbf_refresh()
             QUIT
          ENDIF
          s_nFinNalogCount := oQry:FieldGet( 1 )
-         hb_DispOutAt( maxrows(),  maxcols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
+         hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
    ENDIF
 
    IF s_nIdleRefresh > 0

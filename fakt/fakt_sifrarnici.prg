@@ -35,7 +35,7 @@ FUNCTION p_fakt_objekti( cId, dx, dy )
 
    SELECT ( nDbfArea )
 
-   RETURN p_sifra( F_FAKT_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20,"Lista objekata", @cId, dx, dy )
+   RETURN p_sifra( F_FAKT_OBJEKTI, 1, f18_max_rows() - 15, f18_max_cols() - 20,"Lista objekata", @cId, dx, dy )
 
 
 
@@ -279,8 +279,8 @@ FUNCTION P_FTxt( cId, dx, dy )
    LOCAL _p_top
    LOCAL _p_left
    LOCAL _p_right
-   LOCAL _box_h := MAXROWS() - 20
-   LOCAL _box_w := MAXCOLS() - 3
+   LOCAL _box_h := f18_max_rows() - 20
+   LOCAL _box_w := f18_max_cols() - 3
    PRIVATE ImeKol
    PRIVATE Kol
 
@@ -301,7 +301,7 @@ FUNCTION P_FTxt( cId, dx, dy )
    _p_bottom := 15
    _p_top := 3
    _p_left := 1
-   _p_right := maxcols() -3
+   _p_right := f18_max_cols() -3
 
    box_crno_na_zuto( _p_top, _p_left, _p_bottom, _p_right, "PREGLED TEKSTA" )
 

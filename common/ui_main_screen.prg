@@ -17,8 +17,8 @@ FUNCTION TDesktopNew()
 
    oObj := TDesktop():new()
 
-   oObj:nRowLen := MAXROWS()
-   oObj:nColLen := MAXCOLS()
+   oObj:nRowLen := f18_max_rows()
+   oObj:nColLen := f18_max_cols()
 
    oObj:cColTitle := "GR+/N"
    oObj:cColBorder := "GR+/N"
@@ -67,9 +67,9 @@ METHOD showLine( cTekst, cRow )
       IF Len( cTekst ) > 80
          nCol := 0
       ELSE
-         nCol := Int( ( MAXCOLS() -Len( cTekst ) ) / 2 )
+         nCol := Int( ( f18_max_cols() -Len( cTekst ) ) / 2 )
       ENDIF
-      @ nRow, 0 SAY Replicate( Chr( 32 ), MAXCOLS() )
+      @ nRow, 0 SAY Replicate( Chr( 32 ), f18_max_cols() )
       @ nRow, nCol SAY cTekst
    ENDIF
 
@@ -79,7 +79,7 @@ METHOD showLine( cTekst, cRow )
 
 METHOD showSezona( cSezona )
 
-   @ 3, MAXCOLS() -10 SAY "Sez: " + cSezona COLOR f18_color_invert()
+   @ 3, f18_max_cols() -10 SAY "Sez: " + cSezona COLOR f18_color_invert()
 
    RETURN .T.
 
@@ -99,13 +99,13 @@ METHOD showMainScreen( lClear )
    @ 0, 2 SAY '<ESC> Izlaz' COLOR f18_color_invert()
    @ 0, Col() + 2 SAY danasnji_datum() COLOR f18_color_invert()
 
-   DispBox( 2, 0, 4, MAXCOLS() - 1, B_DOUBLE + ' ', f18_color_normal() )
+   DispBox( 2, 0, 4, f18_max_cols() - 1, B_DOUBLE + ' ', f18_color_normal() )
 
    IF lClear
-      DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, f18_color_invert()  )
+      DispBox( 5, 0, f18_max_rows() - 1, f18_max_cols() - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, f18_color_invert()  )
    ENDIF
 
-   @ _ver_pos, 1 SAY PadC( gNaslov + ' Ver.' + f18_ver(), MAXCOLS() - 8 ) COLOR f18_color_normal()
+   @ _ver_pos, 1 SAY PadC( gNaslov + ' Ver.' + f18_ver(), f18_max_cols() - 8 ) COLOR f18_color_normal()
 
    f18_ispisi_status_log_levela()
    f18_ispisi_status_podrucja( _ver_pos )

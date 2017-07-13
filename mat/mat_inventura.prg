@@ -221,12 +221,12 @@ FUNCTION mat_inv_tabela()
 
    _header := "<c-T> Brisi stavku <ENT> Ispravka <c-A> Ispravka svih stavki <c-N> Nova stavka <c-Z> Brisi"
 
-   my_db_edit_sql( "USKSP", MaxRow() - 4, MaxCol() - 3, {|| _ed_pop_list_khandler() }, _header, ;
+   my_db_edit_sql( "USKSP", f18_max_rows() - 4, f18_max_cols() - 3, {|| _ed_pop_list_khandler() }, _header, ;
       "Pregled popisne liste..." )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // prikaz naziva robe u tabeli pregleda inventure

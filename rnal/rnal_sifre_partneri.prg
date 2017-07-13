@@ -51,7 +51,7 @@ FUNCTION s_customers( cId, cCustDesc, dx, dy )
 
    set_f_kol( cCustDesc, @cId )
 
-   cRet := p_sifra( F_CUSTOMS, cTag, maxrows() - 15, maxcols() - 5, _u( cHeader ), @cId, dx, dy, {|| key_handler( Ch ) } )
+   cRet := p_sifra( F_CUSTOMS, cTag, f18_max_rows() - 15, f18_max_cols() - 5, _u( cHeader ), @cId, dx, dy, {|| key_handler( Ch ) } )
 
    IF !Empty( cCustDesc )
       SET FILTER TO

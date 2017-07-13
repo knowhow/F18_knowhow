@@ -39,8 +39,8 @@ FUNCTION pos_unos_racuna()
 
    PARAMETERS cBrojRn, cSto
 
-   LOCAL _max_cols := MAXCOLS()
-   LOCAL _max_rows := MAXROWS()
+   LOCAL _max_cols := f18_max_cols()
+   LOCAL _max_rows := f18_max_rows()
    LOCAL _read_barkod
    LOCAL _stanje_robe := 0
    LOCAL _stanje_art_id, _stanje_art_jmj
@@ -305,7 +305,7 @@ STATIC FUNCTION _refresh_total()
    nIznNar := _iznos
    nPopust := _popust
 
-   ispisi_iznos_veliki_brojevi( ( _iznos - _popust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
+   ispisi_iznos_veliki_brojevi( ( _iznos - _popust ), m_x + ( f18_max_rows() - 12 ), f18_max_cols() - 2 )
 
    _show_total( _iznos, _popust, m_x + 2 )
 
@@ -524,9 +524,9 @@ FUNCTION pos_ispravi_racun()
 
 STATIC FUNCTION _show_total( iznos, popust, row )
 
-   @ m_x + row + 0, m_y + ( MAXCOLS() - 12 ) SAY iznos PICT "99999.99" COLOR f18_color_invert()
-   @ m_x + row + 1, m_y + ( MAXCOLS() - 12 ) SAY popust PICT "99999.99" COLOR f18_color_invert()
-   @ m_x + row + 2, m_y + ( MAXCOLS() - 12 ) SAY iznos - popust PICT "99999.99" COLOR f18_color_invert()
+   @ m_x + row + 0, m_y + ( f18_max_cols() - 12 ) SAY iznos PICT "99999.99" COLOR f18_color_invert()
+   @ m_x + row + 1, m_y + ( f18_max_cols() - 12 ) SAY popust PICT "99999.99" COLOR f18_color_invert()
+   @ m_x + row + 2, m_y + ( f18_max_cols() - 12 ) SAY iznos - popust PICT "99999.99" COLOR f18_color_invert()
 
    RETURN
 
@@ -547,7 +547,7 @@ FUNCTION pos_brisi_stavku_racuna( oBrowse )
    nPopust -= _pos_pripr->( kolicina * ncijena )
 
    _show_total( nIznNar, nPopust, m_x + 2 )
-   ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
+   ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( f18_max_rows() - 12 ), f18_max_cols() - 2 )
 
    my_delete()
 
@@ -622,7 +622,7 @@ FUNCTION pos_ispravi_stavku_racuna()
    BoxC()
 
    _show_total( nIznNar, nPopust, m_x + 2 )
-   ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
+   ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( f18_max_rows() - 12 ), f18_max_cols() - 2 )
 
    oBrowse:refreshCurrent()
 

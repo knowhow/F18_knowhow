@@ -93,7 +93,7 @@ FUNCTION P_KonCij( cId, dx, dy )
 
    SELECT ( nTArea )
 
-   lRet := p_sifra( F_KONCIJ, 1, MAXROWS() - 10, MAXCOLS() - 15, "Lista: Konta - tipovi cijena", @cId, dx, dy )
+   lRet := p_sifra( F_KONCIJ, 1, f18_max_rows() - 10, f18_max_cols() - 15, "Lista: Konta - tipovi cijena", @cId, dx, dy )
 
    RETURN lRet
 

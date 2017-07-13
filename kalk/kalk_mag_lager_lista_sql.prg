@@ -140,7 +140,7 @@ FUNCTION kalk_mag_lager_lista_vars( hParams, lPocetnoStanje )
       dDatPocStanje := CToD( "01.01." + AllTrim( Str( Year( Date() ) ) ) )
    ENDIF
 
-   Box( "# LAGER LISTA MAGACINA" + iif( lPocetnoStanje, " / POČETNO STANJE", "" ), 15, MAXCOLS() -5 )
+   Box( "# LAGER LISTA MAGACINA" + iif( lPocetnoStanje, " / POČETNO STANJE", "" ), 15, f18_max_cols() -5 )
 
    @ m_x + nX, m_y + 2 SAY "Firma "
 

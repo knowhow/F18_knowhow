@@ -68,7 +68,7 @@ FUNCTION s_objects( cId, nCust_id, cObjDesc, dx, dy )
    SET FILTER TO
    obj_filter( nCust_id, cObjDesc )
 
-   cRet := p_sifra( F_OBJECTS, cTag, MAXROWS() -15, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
+   cRet := p_sifra( F_OBJECTS, cTag, f18_max_rows() -15, f18_max_cols() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
    IF LastKey() == K_ESC
       cId := 0

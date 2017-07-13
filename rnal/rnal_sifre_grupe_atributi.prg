@@ -57,7 +57,7 @@ FUNCTION s_e_gr_att( cId, nGr_id, cE_gr_at_desc, lwoID, dx, dy )
    SELECT e_gr_att
    GO TOP
 
-   cRet := p_sifra( F_E_GR_ATT, 1, MAXROWS() -10, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler() } )
+   cRet := p_sifra( F_E_GR_ATT, 1, f18_max_rows() -10, f18_max_cols() -5, cHeader, @cId, dx, dy, {|| key_handler() } )
 
    IF ValType( cE_gr_at_desc ) == "N"
       cE_gr_at_desc := Str( cE_gr_at_desc, 10 )

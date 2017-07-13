@@ -47,20 +47,20 @@ FUNCTION Calc_xy( m_x, m_y, N, nSirina )
    y := Col()
 
    // Odredi x koordinatu
-   IF ( MAXROWS() - 2 - x ) >=  ( N + 2 )
+   IF ( f18_max_rows() - 2 - x ) >=  ( N + 2 )
       m_x := x + 1
 
-      IF nSirina + y + 3 <= MAXCOLS() - 4
+      IF nSirina + y + 3 <= f18_max_cols() - 4
          m_y := y + 3
-      ELSEIF ( y + 5 ) < ( MAXCOLS() - 2 ) .AND.  ( y - nSirina > 0 )
+      ELSEIF ( y + 5 ) < ( f18_max_cols() - 2 ) .AND.  ( y - nSirina > 0 )
          m_y := y - nSirina + 5
       ELSE
-         m_y := Int( ( MAXCOLS() - 2 - nSirina ) / 2 )
+         m_y := Int( ( f18_max_cols() - 2 - nSirina ) / 2 )
       END IF
 
    ELSE
-      m_x := Int( ( MAXROWS() - 3 - N ) / 2 + 1 )
-      m_y := Int( ( MAXCOLS() - nSirina - 2 ) / 2 )
+      m_x := Int( ( f18_max_rows() - 3 - N ) / 2 + 1 )
+      m_y := Int( ( f18_max_cols() - nSirina - 2 ) / 2 )
    END IF
 
    RETURN .T.
@@ -127,8 +127,8 @@ FUNCTION Msg( uText, sec, xPos )
       msg_x2 := xPos + 5 + nBrRed
    ENDIF
 
-   msg_y1 := ( MAXCOLS() - l - 7 ) / 2
-   msg_y2 := MAXCOLS() - msg_y1
+   msg_y1 := ( f18_max_cols() - l - 7 ) / 2
+   msg_y2 := f18_max_cols() - msg_y1
    StackPush( aMsgStack, { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( f18_color_invert()  ), l, ;
       SaveScreen( msg_x1, msg_y1, msg_x2, msg_y2 ) } )
 
@@ -173,8 +173,8 @@ FUNCTION MsgO( cText, sec, lUtf )
    msg_x1 := 8
    msg_x2 := 14
 
-   msg_y1 := ( MAXCOLS()  - nLen - 7 ) / 2
-   msg_y2 := MAXCOLS() - msg_y1
+   msg_y1 := ( f18_max_cols()  - nLen - 7 ) / 2
+   msg_y2 := f18_max_cols() - msg_y1
 
 
    StackPush( aMsgStack, ;
@@ -202,7 +202,7 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
 
       IF msg_x1 == NIL
          nLen := aMsgPar[ 3 ]
-         RestScreen( 8, ( MAXCOLS() - nLen - 7 ) / 2, 14, MAXCOLS() - ( MAXCOLS() - nLen - 7 ) / 2, aMsgPar[ 4 ] )
+         RestScreen( 8, ( f18_max_cols() - nLen - 7 ) / 2, 14, f18_max_cols() - ( f18_max_cols() - nLen - 7 ) / 2, aMsgPar[ 4 ] )
       ELSE
          RestScreen ( msg_x1, msg_y1, msg_x2, msg_y2, aMsgPar[ 4 ] )
       ENDIF
@@ -249,12 +249,12 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, aOpcijeIliCPoruka, cHelpT )
 
       cBoxId := prikaz_dostupnih_opcija( aOpcijeIliCPoruka )
 
-      IF _m_x + _NA1 > MAXROWS() - 3 - cBoxId
+      IF _m_x + _NA1 > f18_max_rows() - 3 - cBoxId
 
-         _m_x := MAXROWS() - 4 - cBoxId - _nA1
+         _m_x := f18_max_rows() - 4 - cBoxId - _nA1
 
          IF _m_x < 1
-            _nA1 := MAXROWS() - 5 - cBoxId
+            _nA1 := f18_max_rows() - 5 - cBoxId
             _m_x := 1
          ENDIF
 
@@ -359,11 +359,11 @@ FUNCTION prikaz_dostupnih_opcija( aNiz )
 
       AEval( aNiz, {| x | iif( Len( x ) > nOmax, nOmax := Len( x ), ) } )
 
-      nBrKol := Int( MAXCOLS() / ( nOmax + 1 ) )
+      nBrKol := Int( f18_max_cols() / ( nOmax + 1 ) )
       nBrRed := Int( Len( aNiz ) / nBrKol ) + iif( Mod( Len( aNiz ), nBrKol ) != 0, 1, 0 )
       nOduz := iif( nOmax < 10, 10, iif( nOmax < 16, 16, iif( nOmax < 20, 20, iif( nOmax < 27, 27, 40 ) ) ) )
 
-      box_crno_na_zuto( MAXROWS() - 3 - nBrRed, 0,  MAXROWS() - 2, MAXCOLS(),,, Space( 9 ), , F18_COLOR_TEKST )
+      box_crno_na_zuto( f18_max_rows() - 3 - nBrRed, 0,  f18_max_rows() - 2, f18_max_cols(),,, Space( 9 ), , F18_COLOR_TEKST )
 
       FOR i := 1 TO nBrRed * nBrKol
 
@@ -376,12 +376,12 @@ FUNCTION prikaz_dostupnih_opcija( aNiz )
          IF aNiz[ i ] == NIL
             aNiz[ i ] := ""
          ENDIF
-         @ MAXROWS() - 3 - nBrRed + j, k SAY PadR( aNiz[ i ], nOduz - 1 ) + iif( Mod( i - 1, nBrKol ) == nBrKol - 1, "", hb_UTF8ToStrBox( BROWSE_COL_SEP ) )
+         @ f18_max_rows() - 3 - nBrRed + j, k SAY PadR( aNiz[ i ], nOduz - 1 ) + iif( Mod( i - 1, nBrKol ) == nBrKol - 1, "", hb_UTF8ToStrBox( BROWSE_COL_SEP ) )
 
       NEXT
 
       // FOR i := 1 TO nBrKol
-      // @ MAXROWS() - 3 - nBrRed, ( i - 1 ) * nOduz SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ;
+      // @ f18_max_rows() - 3 - nBrRed, ( i - 1 ) * nOduz SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ;
       // nOduz - iif( i == nBrKol, 0, 1 ) ) + iif( i == nBrKol, "", hb_UTF8ToStrBox(BROWSE_COL_SEP) )
       // NEXT
 
@@ -433,12 +433,12 @@ FUNCTION CentrTxt( tekst, lin )
    LOCAL kol
 
    IF tekst <> NIL
-      IF Len( tekst ) > MAXCOLS()
+      IF Len( tekst ) > f18_max_cols()
          kol := 0
       ELSE
-         kol := Int( ( MAXCOLS() - Len( tekst ) ) / 2 )
+         kol := Int( ( f18_max_cols() - Len( tekst ) ) / 2 )
       ENDIF
-      @ lin, 0 SAY Replicate( Chr( 32 ), MAXCOLS() )
+      @ lin, 0 SAY Replicate( Chr( 32 ), f18_max_cols() )
       @ lin, kol SAY tekst
    ENDIF
 
@@ -550,7 +550,7 @@ FUNCTION Postotak( nIndik, nUkupno, cTekst, cBNasl, cBOkv, lZvuk )
 
    CASE nIndik <= 0
 
-      @ 10, ( MAXCOLS() - 2 - Len( cKraj ) ) / 2 SAY " " + cKraj + " " COLOR cNas
+      @ 10, ( f18_max_cols() - 2 - Len( cKraj ) ) / 2 SAY " " + cKraj + " " COLOR cNas
       IF lZvuk
          f18_tone( 2000, 0 )
       ENDIF
@@ -637,7 +637,7 @@ FUNCTION KudaDalje( cTekst, aOpc, cPom )
       AAdd( aTxt, { cPom1, cPom2 } )
    NEXT
    nRedova := Int( ( nOpc - 1 ) / 3 + 1 )
-   nXp := Int( ( MAXROWS() - nRedova * 4 - 2 ) / 2 ) + 2
+   nXp := Int( ( f18_max_rows() - nRedova * 4 - 2 ) / 2 ) + 2
    box_crno_na_zuto( nXp - 2, 4, nXp + 1 + 4 * nRedova, 75,, "N/W", "²ß²²²Ü²² ", "N/W", "W/W", 0 )
    @ nXp - 1, 5 SAY PadC( cTekst, 70 ) COLOR "N/W"
    DO WHILE .T.
@@ -936,8 +936,8 @@ INKEY_MOVE          Mouse motion events are allowed
 
    _set := Set( _SET_EVENTMASK, INKEY_KEYBOARD )
    // poruke koje su duze od 70 znakova
-   IF Len( cMsg ) > MAXCOLS() - 11 .AND.  ( At( cMsg, "#" ) == 0 )
-      cMsg := SubStr( cMsg, 1, MAXCOLS() - 11 ) + "#" + SubStr( cMsg, MAXCOLS() - 10, MAXCOLS() - 11 ) + "#..."
+   IF Len( cMsg ) > f18_max_cols() - 11 .AND.  ( At( cMsg, "#" ) == 0 )
+      cMsg := SubStr( cMsg, 1, f18_max_cols() - 11 ) + "#" + SubStr( cMsg, f18_max_cols() - 10, f18_max_cols() - 11 ) + "#..."
    ENDIF
 
 #ifdef TEST
@@ -1065,7 +1065,7 @@ FUNCTION TxtUNiz( cTxt, nKol )
 
 FUNCTION MsgBeep2( cTXT )
 
-   @ MAXROWS() - 1, 0 SAY PadL( cTXT, MAXCOLS() ) COLOR "R/W"
+   @ f18_max_rows() - 1, 0 SAY PadL( cTXT, f18_max_cols() ) COLOR "R/W"
    f18_tone( 900, 0.3 )
 
    RETURN .T.
@@ -1106,7 +1106,7 @@ FUNCTION ShowKorner( nS, nStep, nDelta )
    IF i % nStep == 0
       cPom := Set( _SET_DEVICE )
       SET DEVICE TO SCREEN
-      @ MAXROWS() - 1, ( MAXCOLS() - 7 - nDelta ) SAY  i PICT "999999"
+      @ f18_max_rows() - 1, ( f18_max_cols() - 7 - nDelta ) SAY  i PICT "999999"
       Set( _SET_DEVICE, cPom )
    ENDIF
 

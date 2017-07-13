@@ -428,7 +428,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
          AAdd( aTBGets, GET )
       NEXT
 
-      IF nY + nSirina > MAXCOLS() - 2
+      IF nY + nSirina > f18_max_cols() - 2
 
          FOR i := 1 TO Len( aTBGets )
             aTBGets[ i ]:Col := aTBGets[ i ]:Col  - ( nY + nSirina - 78 ) // smanji col koordinate

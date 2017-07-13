@@ -47,7 +47,7 @@ FUNCTION unos_virmana()
 
    @ 12, 0 SAY ""
 
-   my_db_edit_sql( "PripVir", MAXROWS() - 10, MAXCOLS() - 12, {|| virm_browse_key_handler() }, "", "Priprema virmana", ;
+   my_db_edit_sql( "PripVir", f18_max_rows() - 10, f18_max_cols() - 12, {|| virm_browse_key_handler() }, "", "Priprema virmana", ;
       .F., { "<c-N>   Nova uplatnica", "<c-T>   Brisi ", ;
       "<Enter> Ispravi uplatnicu", "<c-F9>  Brisi sve", ;
       "<c-P>   Stampanje", ;
@@ -283,13 +283,13 @@ STATIC FUNCTION virm_browse_key_handler()
 
       GO BOTTOM
 
-      Box( "c-N", MAXROWS() - 11, MAXCOLS() - 5, .F., "Unos novih stavki" )
+      Box( "c-N", f18_max_rows() - 11, f18_max_cols() - 5, .F., "Unos novih stavki" )
 
       DO WHILE .T.
 
          Scatter()
          _rbr := _rbr + 1
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + ( MAXROWS() - 12 ), m_y + ( MAXCOLS() - 5 )
+         @ m_x + 1, m_y + 1 CLEAR TO m_x + ( f18_max_rows() - 12 ), m_y + ( f18_max_cols() - 5 )
          IF virm_edit_pripr( .T. ) == 0
             EXIT
          ENDIF
@@ -306,7 +306,7 @@ STATIC FUNCTION virm_browse_key_handler()
 
    CASE Ch == K_ENTER
 
-      Box( "ent", MAXROWS() - 11, MAXCOLS() - 5, .F. )
+      Box( "ent", f18_max_rows() - 11, f18_max_cols() - 5, .F. )
 
       Scatter()
       IF virm_edit_pripr( .F. ) == 0

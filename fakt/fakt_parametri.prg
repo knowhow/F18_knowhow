@@ -156,7 +156,7 @@ FUNCTION fakt_par_razno()
 
    gKomLin := PadR( gKomLin, 70 )
 
-   Box(, MAXROWS() - 5, MAXCOLS() - 15, .F., "OSTALI PARAMETRI (RAZNO)" )
+   Box(, f18_max_rows() - 5, f18_max_cols() - 15, .F., "OSTALI PARAMETRI (RAZNO)" )
 
    _x := 2
    @ m_x + _x, m_y + 2 SAY8 "Fakt tekući dokument (1-9)" GET gIMenu VALID gIMenu $ "123456789" PICT "@!"

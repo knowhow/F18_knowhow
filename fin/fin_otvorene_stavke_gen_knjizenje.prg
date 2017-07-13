@@ -241,8 +241,8 @@ FUNCTION knjizenje_gen_otvorene_stavke()
       AAdd( Kol, nI )
    NEXT
 
-   _row := MAXROWS() - 10
-   _col := MAXCOLS() - 8
+   _row := f18_max_rows() - 10
+   _col := f18_max_cols() - 8
 
    Box(, _row, _col, .T. ) // rucni asistent
 

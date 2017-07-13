@@ -35,7 +35,7 @@ FUNCTION browse_tnal( cId, dx, dy )
 
    SELECT ( nTArea )
 
-   RETURN p_sifra( F_TNAL, 1, Max( maxrows() - 20, 10 ), Max( maxcols() - 30, 50 ), "OsnPod: Vrste naloga", @cId, dx, dy )
+   RETURN p_sifra( F_TNAL, 1, Max( f18_max_rows() - 20, 10 ), Max( f18_max_cols() - 30, 50 ), "OsnPod: Vrste naloga", @cId, dx, dy )
 
 
 

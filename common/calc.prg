@@ -25,8 +25,8 @@ FUNCTION in_calc( lSet )
 
 PROCEDURE calc_on_idle_handler()
 
-   hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >", F18_COLOR_INFO_PANEL )
-   IF !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1, .F. )
+   hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 8 - 8 - 1, "< CALC >", F18_COLOR_INFO_PANEL )
+   IF !in_calc() .AND. MINRECT( f18_max_rows(), f18_max_cols() - 8 - 8 - 1, f18_max_rows(), f18_max_cols() - 8 - 1, .F. )
       in_calc( .T. )
       SET CURSOR OFF
       SET CONSOLE OFF

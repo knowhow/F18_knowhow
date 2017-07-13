@@ -38,4 +38,4 @@ FUNCTION P_RJ( cId, nDeltaX, nDeltaY )
 
    SELECT ( nTArea )
 
-   RETURN p_sifra( F_RJ, 1, MAXROWS() - 15, MAXCOLS() - 30,"MatPod: Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
+   RETURN p_sifra( F_RJ, 1, f18_max_rows() - 15, f18_max_cols() - 30,"MatPod: Lista radnih jedinica", @cId, nDeltaX, nDeltaY )

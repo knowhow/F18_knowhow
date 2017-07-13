@@ -42,7 +42,7 @@ FUNCTION P_Konto( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   lRet := p_sifra( F_KONTO, 1, MAXROWS() -15, MAXCOLS() -20, "LKT: Lista: Konta", @cId, dx, dy )
+   lRet := p_sifra( F_KONTO, 1, f18_max_rows() -15, f18_max_cols() -20, "LKT: Lista: Konta", @cId, dx, dy )
 
    PopWa()
 
@@ -96,7 +96,7 @@ FUNCTION P_Konto( cId, dx, dy )
 --   SELECT KONTO
    SET ORDER TO TAG "ID"
 
-   p_sifra( F_KONTO, 1, MAXROWS() -17, MAXCOLS() -10, "LKTF Lista: Konta ", @cId, dx, dy, {| Ch| KontoBlok( Ch ) },,,,, { "ID" } )
+   p_sifra( F_KONTO, 1, f18_max_rows() -17, f18_max_cols() -10, "LKTF Lista: Konta ", @cId, dx, dy, {| Ch| KontoBlok( Ch ) },,,,, { "ID" } )
 
    SELECT ( nDbfArea )
 

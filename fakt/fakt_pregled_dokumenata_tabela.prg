@@ -62,8 +62,8 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
       AAdd( Kol, i )
    NEXT
 
-   _x := MAXROWS() - 4
-   _y := MAXCOLS() - 3
+   _x := f18_max_rows() - 4
+   _y := f18_max_cols() - 3
 
    Box( , _x, _y )
 

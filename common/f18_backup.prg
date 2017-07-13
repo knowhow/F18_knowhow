@@ -12,7 +12,6 @@
 #include "f18.ch"
 #include "f18_color.ch"
 
-// THREAD STATIC s_pGT := NIL, s_pMainGT := NIL
 
 CLASS F18Backup
 
@@ -95,21 +94,6 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    oBackup := F18Backup():New()
    oBackup:nBackupType := nBackupTipOrgIliSve
 
-   // IF is_terminal()
-
-// s_pGT := hb_gtCreate( f18_gt_background() )
-// s_pMainGT := hb_gtSelect( s_pGT )
-
-
-
-/*
-   ELSE
-      s_pGT := hb_gtCreate( f18_gt() )
-      s_pMainGT := hb_gtSelect( s_pGT )
-      hb_gtReload( s_pGT )
-      _set_color()
-   ENDIF
-*/
 
 
    oBackup:get_backup_interval()
@@ -118,14 +102,14 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
 
    // IF !start_now .AND.
    IF oBackup:backup_interval == 0 // nemam sta raditi ako ovaj interval ne postoji !
-      //hb_gtSelect( s_pMainGt )
+      // hb_gtSelect( s_pMainGt )
       info_bar( "backup", "backup 0" )
       // hb_idleSleep( 0.5 )
       RETURN
    ENDIF
 
    IF ( Date() - oBackup:backup_interval ) <= oBackup:last_backup
-      //hb_gtSelect( s_pMainGt )
+      // hb_gtSelect( s_pMainGt )
       info_bar( "backup", "backup <interval" )
       RETURN
    ENDIF
@@ -137,7 +121,7 @@ PROCEDURE thread_f18_backup( nBackupTipOrgIliSve )
    // ENDIF
 
    // IF is_terminal()
-   //hb_gtSelect( s_pMainGt )
+   // hb_gtSelect( s_pMainGt )
    // ENDIF
 
    IF oBackup:nError == 0
@@ -325,12 +309,7 @@ METHOD F18Backup:backup_organizacija()
    ENDIF
 */
 
-// ::nError := hb_run_in_background_gt( cCmd )
-   IF is_windows()
-      ::nError := f18_run( cCmd )
-   ELSE
-      ::nError := hb_run( cCmd )
-   ENDIF
+   ::nError := hb_run_in_background_gt( cCmd )
 
 // IF is_terminal()
    IF ::nError == 0
@@ -459,8 +438,7 @@ METHOD F18Backup:Backup_server()
    ENDIF
 */
 
-   // ::nError := hb_run_in_background_gt( cCmd )
-   ::nError := f18_run( cCmd )
+   ::nError := hb_run_in_background_gt( cCmd )
 
 
 // IF is_terminal()
@@ -676,7 +654,6 @@ METHOD F18Backup:get_last_backup_date()
    RETURN .T.
 
 
-/*
 FUNCTION f18_gt_background()
    RETURN "NUL"
 
@@ -684,22 +661,41 @@ FUNCTION f18_gt_background()
 STATIC FUNCTION hb_run_in_background_gt( cCmd )
 
    LOCAL nError
+   LOCAL pGT := NIL, pMainGT := NIL
 
-   IF s_pGT != NIL .AND. is_terminal()
-      hb_gtSelect( s_pGT )
+   IF is_windows()
+      RETURN f18_run( cCmd ) // run_invisible.vbs
    ENDIF
+
+   // IF is_terminal()
+
+   pGT := hb_gtCreate( f18_gt_background() )
+   pMainGT := hb_gtSelect( pGT )
+
+   /*
+      ELSE
+         s_pGT := hb_gtCreate( f18_gt() )
+         s_pMainGT := hb_gtSelect( s_pGT )
+         hb_gtReload( s_pGT )
+         _set_color()
+      ENDIF
+   */
+
+   // IF s_pGT != NIL .AND. is_terminal()
+   // hb_gtSelect( s_pGT )
+   // ENDIF
 
    nError := hb_run( cCmd )
    ?E "RET=", nError, cCmd
-   IF nError != 0
-      error_bar( "backup", cCmd )
-   ENDIF
-   IF s_pMainGT != NIL .AND. is_terminal()
-      hb_gtSelect( s_pMainGT )
-   ENDIF
+   //IF nError != 0
+    //  error_bar( "backup", cCmd )
+   //ENDIF
+   // IF s_pMainGT != NIL .AND. is_terminal()
+   hb_gtSelect( pMainGT )
+   // ENDIF
 
    RETURN nError
-*/
+
 
 STATIC FUNCTION _set_color()
 

@@ -183,7 +183,7 @@ FUNCTION ParPrBase()
    AAdd ( aNiz, { "Unos racuna bez izlaska iz pripreme (D/N) ", "_konstantni_unos", "_konstantni_unos$'DN'", "@!", } )
    AAdd ( aNiz, { "Za stanje artikla gledaj KALK konto", "_kalk_konto",, "@S7", } )
 
-   VarEdit( aNiz, 2, 2, MAXROWS() - 10, MAXCOLS() - 5, "PARAMETRI RADA PROGRAMA - PRINCIPI RADA", "B1" )
+   VarEdit( aNiz, 2, 2, f18_max_rows() - 10, f18_max_cols() - 5, "PARAMETRI RADA PROGRAMA - PRINCIPI RADA", "B1" )
 
    IF LastKey() <> K_ESC
 

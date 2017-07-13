@@ -36,8 +36,8 @@ STATIC FUNCTION rnal_browse_azurirani_nalozi()
    LOCAL cFooter
    LOCAL cHeader
    LOCAL nSort := 3
-   LOCAL nBoxX := maxrows() - 10
-   LOCAL nBoxY := maxcols() - 10
+   LOCAL nBoxX := f18_max_rows() - 10
+   LOCAL nBoxY := f18_max_cols() - 10
 
    IF lst_args( @nSort ) == 0
       RETURN 0
@@ -725,13 +725,13 @@ STATIC FUNCTION s_ol_status( aArr )
    ENDIF
 
    cOpt := "A-dodaj Y-brisi: "
-   aStr := SjeciStr( cOpt + cStr, maxcols() - 20 )
+   aStr := SjeciStr( cOpt + cStr, f18_max_cols() - 20 )
 
-   @ maxrows() - 7, 5 SAY PadR( "", maxcols() -10 ) COLOR "W/G+"
-   @ maxrows() - 6, 5 SAY PadR( "", maxcols() -10 ) COLOR "W/G+"
+   @ f18_max_rows() - 7, 5 SAY PadR( "", f18_max_cols() -10 ) COLOR "W/G+"
+   @ f18_max_rows() - 6, 5 SAY PadR( "", f18_max_cols() -10 ) COLOR "W/G+"
 
    FOR n := 1 TO Len( aStr )
-      @ maxrows() - 8  + n, 5 SAY aStr[ n ] COLOR "W/G+"
+      @ f18_max_rows() - 8  + n, 5 SAY aStr[ n ] COLOR "W/G+"
    NEXT
 
    RETURN .T.
@@ -1134,11 +1134,11 @@ STATIC FUNCTION _sh_doc_info( nX, nY )
 
    LOCAL cTmp
    LOCAL aTmp
-   LOCAL nTxtLen := maxcols() - 12
+   LOCAL nTxtLen := f18_max_cols() - 12
    LOCAL cColor := "GR+/B"
 
    IF nX == nil
-      nX := maxrows() - 11
+      nX := f18_max_rows() - 11
    ENDIF
 
    IF nY == nil

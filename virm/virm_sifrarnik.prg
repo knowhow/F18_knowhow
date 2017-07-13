@@ -68,7 +68,7 @@ FUNCTION P_LDVIRM( cId, dx, dy )
       }
    Kol := { 1, 2, 3 }
 
-   vrati := p_sifra( F_LDVIRM, 1, maxrows()-10, maxcols()-20, "LISTA LD->VIRM:", @cId, dx, dy )
+   vrati := p_sifra( F_LDVIRM, 1, f18_max_rows()-10, f18_max_cols()-20, "LISTA LD->VIRM:", @cId, dx, dy )
 
    RETURN vrati
 
@@ -93,6 +93,6 @@ FUNCTION P_JPrih( cId, dx, dy )
    AAdd( Imekol, { "BudzOrg", {|| BudzOrg }, "BudzOrg" } )
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-   vrati := p_sifra( F_JPRIH, 1, MAXROWS() - 10, maxcols() - 20, "Lista Javnih prihoda", @cId, dx, dy )
+   vrati := p_sifra( F_JPRIH, 1, f18_max_rows() - 10, f18_max_cols() - 20, "Lista Javnih prihoda", @cId, dx, dy )
 
    RETURN vrati

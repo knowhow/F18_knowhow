@@ -150,7 +150,7 @@ FUNCTION P_Objekti()
    NEXT
 
    SELECT ( nTArea )
-   p_sifra( F_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20, "Objekti" )
+   p_sifra( F_OBJEKTI, 1, f18_max_rows() - 15, f18_max_cols() - 20, "Objekti" )
 
    RETURN .T.
 

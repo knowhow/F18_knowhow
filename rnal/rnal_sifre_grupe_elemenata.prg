@@ -42,7 +42,7 @@ FUNCTION s_e_groups( cId, lwo_ID, dx, dy )
 
    set_a_kol( @ImeKol, @Kol )
 
-   cRet := p_sifra( F_E_GROUPS, 1, MAXROWS() -10, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
+   cRet := p_sifra( F_E_GROUPS, 1, f18_max_rows() -10, f18_max_cols() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
    SELECT ( nTArea )
 

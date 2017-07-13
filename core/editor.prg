@@ -18,7 +18,7 @@ FUNCTION editor( cFile )
    LOCAL oEditor, cScr
 
    SAVE SCREEN TO cScr
-   oEditor := HBEditor():New( "editor", 1, 1, MAXROWS() -1, maxcols() -1, .F., 120, ;
+   oEditor := HBEditor():New( "editor", 1, 1, f18_max_rows() -1, f18_max_cols() -1, .F., 120, ;
       4, 1, 1, 1, 1 )
 
    oEditor:LoadFile( cFile )

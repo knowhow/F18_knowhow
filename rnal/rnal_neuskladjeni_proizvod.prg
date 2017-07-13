@@ -219,8 +219,8 @@ METHOD RNALDamageDocument:multiglass_configurator()
 
 METHOD RNALDamageDocument:configurator_box()
 
-   LOCAL _x_pos := MAXROWS() - 15
-   LOCAL _y_pos := MAXCOLS() - 10
+   LOCAL _x_pos := f18_max_rows() - 15
+   LOCAL _y_pos := f18_max_cols() - 10
    LOCAL _opts := "<ENTER> definisi novi artikal  <ESC> izlaz/snimanje"
    LOCAL _head, _foot
    PRIVATE Kol, ImeKol

@@ -29,8 +29,8 @@ FUNCTION V_Rugov( cId )
    PRIVATE ImeKol
    PRIVATE Kol
 
-   _x_pos := MIN( 20, MAXROWS() - 10 )
-   _y_pos := MAXCOLS() - 15
+   _x_pos := MIN( 20, f18_max_rows() - 10 )
+   _y_pos := f18_max_cols() - 15
 
    cIdUgov := cId
 

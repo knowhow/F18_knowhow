@@ -62,7 +62,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
       SET FILTER TO IDRJ == cIdRj
    ENDIF
 
-   Box(, MAXROWS() - 5, MAXCOLS() - 10 )
+   Box(, f18_max_rows() - 5, f18_max_cols() - 10 )
 
    ImeKol := {}
    AAdd( ImeKol, { "O",          {|| OtvSt }             } )
@@ -126,7 +126,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    opcije_browse_pregleda()
 
-   my_db_edit_sql( "Ost", MAXROWS() - 10, MAXCOLS() - 10, {|| rucno_zatvaranje_otv_stavki_key_handler() }, ;
+   my_db_edit_sql( "Ost", f18_max_rows() - 10, f18_max_cols() - 10, {|| rucno_zatvaranje_otv_stavki_key_handler() }, ;
       "", "", .F., NIL, 1, {|| otvst == "9" }, 6, 0, NIL, NIL )
    // {| nSkip| fin_otvorene_stavke_browse_skip( nSkip ) } )
 

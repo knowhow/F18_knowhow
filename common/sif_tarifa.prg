@@ -37,7 +37,7 @@ FUNCTION P_Tarifa( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   lRet := p_sifra( F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy )
+   lRet := p_sifra( F_TARIFA, 1, f18_max_rows() - 15, f18_max_cols() - 25, "Tarifne grupe", @cid, dx, dy )
 
    PopWa()
 

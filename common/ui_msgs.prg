@@ -41,7 +41,7 @@ FUNCTION info_bar( cDoc, cMsg )
 
    lPrinter :=  Set( _SET_PRINTER,  .F. )
    lConsole := Set( _SET_CONSOLE, .T. )
-   @ MaxRow() - 1, 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_INFO_PANEL
+   @ f18_max_rows() , 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_INFO_PANEL
 
    IF Empty( cMsg ) .OR. cMsg == "info_bar"
       RETURN .T.
@@ -82,7 +82,7 @@ FUNCTION error_bar( cDoc, cMsg )
 
    lPrinter   :=  Set( _SET_PRINTER,  .F. )
    lConsole := Set( _SET_CONSOLE, .T. )
-   @ MaxRow(), 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_ERROR_PANEL
+   @ f18_max_rows() + 1, 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_ERROR_PANEL
    Set( _SET_PRINTER,  lPrinter )
    Set( _SET_CONSOLE, lConsole )
 
@@ -149,5 +149,5 @@ STATIC FUNCTION a_struct()
    RETURN { ;
       { "TIME", "C", 8, 0 }, ;
       { "DOC", "C", 18, 0 }, ;
-      { "MESSAGE", "C", maxcols() - 4 - 9 - 19, 0 } ;
+      { "MESSAGE", "C", f18_max_cols() - 4 - 9 - 19, 0 } ;
       }

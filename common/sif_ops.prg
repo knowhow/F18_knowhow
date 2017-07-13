@@ -41,7 +41,7 @@ FUNCTION P_Ops( cId, dx, dy )
       AAdd( Kol, nI )
    NEXT
 
-   xRet := p_sifra( F_OPS, 1, MAXROWS() - 15, MAXCOLS() - 10, "MP: Lista općina", @cId, dx, dy )
+   xRet := p_sifra( F_OPS, 1, f18_max_rows() - 15, f18_max_cols() - 10, "MP: Lista općina", @cId, dx, dy )
 
    hWorkArea := PopWA()
 
@@ -75,4 +75,4 @@ FUNCTION P_Banke( cId, dx, dy )
 
    SELECT ( _arr )
 
-   RETURN p_sifra( F_BANKE, 1, MAXROWS() -15, MAXCOLS() -10, "MatPod: Lista banaka", @cId, dx, dy )
+   RETURN p_sifra( F_BANKE, 1, f18_max_rows() -15, f18_max_cols() -10, "MatPod: Lista banaka", @cId, dx, dy )

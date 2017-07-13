@@ -15,8 +15,8 @@
 
 STATIC FUNCTION epdv_kif_tbl_priprema()
 
-   LOCAL _row := maxrows() - 4
-   LOCAL _col := maxcols() - 3
+   LOCAL _row := f18_max_rows() - 4
+   LOCAL _col := f18_max_cols() - 3
 
    Box(, _row, _col )
    @ m_x + _row - 2, m_y + 2 SAY8 "<c-N>  Nove stavke    | <ENT> Ispravi stavku   | <c-T> Briši stavku         "
@@ -68,7 +68,7 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
    LOCAL nXPart := 0
    LOCAL nYPart := 22
 
-   Box(, MAXROWS() - 10, MAXCOLS() - 12 )
+   Box(, f18_max_rows() - 10, f18_max_cols() - 12 )
    IF lNova
       _br_dok := 0
       _r_br := next_r_br( "P_KIF" )

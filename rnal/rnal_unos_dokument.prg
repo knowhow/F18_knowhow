@@ -59,8 +59,8 @@ STATIC FUNCTION _document()
    // x: 22
    // y: 77
 
-   __dok_x := MAXROWS() - 5
-   __dok_y := MAXCOLS() - 5
+   __dok_x := f18_max_rows() - 5
+   __dok_y := f18_max_cols() - 5
 
    Box(, __dok_x, __dok_y )
 

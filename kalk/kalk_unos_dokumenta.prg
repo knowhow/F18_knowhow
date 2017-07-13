@@ -13,8 +13,8 @@
 #include "f18_color.ch"
 
 
-#define BOX_HEIGHT (MAXROWS() - 8)
-#define BOX_WIDTH  (MAXCOLS() - 6)
+#define BOX_HEIGHT (f18_max_rows() - 8)
+#define BOX_WIDTH  (f18_max_cols() - 6)
 
 THREAD STATIC pIdlePause
 THREAD STATIC s_lAsistentStart := .F. // asistent pokrenut
@@ -44,8 +44,8 @@ FUNCTION kalk_pripr_obrada_stavki_sa_asistentom()
 
 FUNCTION kalk_pripr_obrada( lAsistentObrada )
 
-   LOCAL nMaxCol := MAXCOLS() - 3
-   LOCAL nMaxRow := MAXROWS() - 4
+   LOCAL nMaxCol := f18_max_cols() - 3
+   LOCAL nMaxRow := f18_max_rows() - 4
    LOCAL nI
    LOCAL _opt_row, _opt_d
    LOCAL _sep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
@@ -143,7 +143,7 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
 
    BoxC()
 
-   @ maxrows(), 1 SAY Space( 12 ) // standardni handleri, pausa out
+   @ f18_max_rows(), 1 SAY Space( 12 ) // standardni handleri, pausa out
    hb_idleDel( pIdlePause )
 
    IF lAsistentObrada .AND. !kalk_asistent_pause()
@@ -848,9 +848,9 @@ PROCEDURE kalk_asistent_pause_handler( lAsistentObrada )
       cButton := "< As Cont  >"
    ENDIF
 
-   hb_DispOutAt( maxrows(), 1, cButton, F18_COLOR_INFO_PANEL )
+   hb_DispOutAt( f18_max_rows(), 1, cButton, F18_COLOR_INFO_PANEL )
 
-   IF  MINRECT( maxrows(), 1, maxrows(), 12 ) .OR. ;
+   IF  MINRECT( f18_max_rows(), 1, f18_max_rows(), 12 ) .OR. ;
          ( kalk_asistent_pause() .AND. Upper( Chr( kalk_edit_last_key() ) ) == "C" )
 
       IF kalk_asistent_pause() // switch pause

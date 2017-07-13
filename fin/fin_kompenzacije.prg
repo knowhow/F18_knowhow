@@ -119,8 +119,8 @@ FUNCTION kompenzacija()
    LOCAL _is_gen := .F.
    LOCAL _vars := hb_Hash()
    LOCAL nI, _n
-   LOCAL _row := MAXROWS() - 10
-   LOCAL _col := MAXCOLS() - 6
+   LOCAL _row := f18_max_rows() - 10
+   LOCAL _col := f18_max_cols() - 6
    LOCAL cIdKonto, cIdKonto2
 
    picBHD := FormPicL( gPicBHD, 16 )

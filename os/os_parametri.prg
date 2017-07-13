@@ -61,13 +61,13 @@ FUNCTION os_set_datum_obrade()
 // -----------------------------------------
 FUNCTION set_os_info()
 
-   LOCAL _mod_name := PadC( "O S N O V N A    S R E D S T V A", MAXCOLS() )
+   LOCAL _mod_name := PadC( "O S N O V N A    S R E D S T V A", f18_max_cols() )
 
    IF gOsSii == "S"
-      _mod_name := PadC( "S I T A N    I N V E N T A R", MAXCOLS() )
+      _mod_name := PadC( "S I T A N    I N V E N T A R", f18_max_cols() )
    ENDIF
 
-   @ MAXROWS() - 2, 1 SAY _mod_name COLOR f18_color_i()
+   @ f18_max_rows() - 2, 1 SAY _mod_name COLOR f18_color_i()
 
    RETURN
 

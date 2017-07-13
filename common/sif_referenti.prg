@@ -41,7 +41,7 @@ FUNCTION p_refer( cId, dx, dy )
       AAdd( Kol, nI )
    NEXT
 
-   xRet := p_sifra( F_REFER, 1, MAXROWS() - 15, 60, "Lista referenata", @cId, dx, dy )
+   xRet := p_sifra( F_REFER, 1, f18_max_rows() - 15, 60, "Lista referenata", @cId, dx, dy )
 
    hWorkArea := PopWA()
 

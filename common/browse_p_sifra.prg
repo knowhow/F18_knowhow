@@ -736,7 +736,7 @@ STATIC FUNCTION edit_sql_sif_item( nCh, cOrderTag, aZabIsp, lNovi )
       FOR nForJg := 1 TO 3
 
          IF nForJg == 1
-            Box( NIL, Min( MAXROWS() - 7, nTrebaRedova ) + 1, MAXCOLS() - 20, .F. )
+            Box( NIL, Min( f18_max_rows() - 7, nTrebaRedova ) + 1, f18_max_cols() - 20, .F. )
          ELSE
             BoxCLS()
          ENDIF
@@ -783,7 +783,7 @@ STATIC FUNCTION edit_sql_sif_item( nCh, cOrderTag, aZabIsp, lNovi )
             ENDIF
 
             nI++
-            IF ( Len( ImeKol ) < nI ) .OR. ( nTekRed > Min( MAXROWS() - 7, nTrebaRedova ) .AND. !( Len( ImeKol[ nI ] ) >= 10 .AND. ImeKol[ nI, 10 ] <> NIL )  )
+            IF ( Len( ImeKol ) < nI ) .OR. ( nTekRed > Min( f18_max_rows() - 7, nTrebaRedova ) .AND. !( Len( ImeKol[ nI ] ) >= 10 .AND. ImeKol[ nI, 10 ] <> NIL )  )
                EXIT
             ENDIF
 

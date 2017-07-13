@@ -31,8 +31,8 @@ THREAD STATIC __log_handle := NIL
 STATIC __test_mode := .F.
 STATIC __no_sql_mode := .F.
 
-STATIC __max_rows := 35
-STATIC __max_cols := 120
+STATIC s_nMaxRows := 0
+STATIC s_nMaxCols := 0
 
 #ifdef  __PLATFORM__WINDOWS
 STATIC s_cFontName := "Lucida Console"
@@ -96,6 +96,9 @@ FUNCTION post_login()
    LOCAL cDatabase := my_database()
 
    init_parameters_cache()
+   IF is_in_main_thread()
+      set_screen_dimensions()
+   ENDIF
    set_sql_search_path()
    server_log_enable()
 
@@ -113,10 +116,12 @@ FUNCTION post_login()
    ENDIF
    set_vars_za_specificne_slucajeve()
 
-   thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
-   // thread_dbfs( hb_threadStart( @f18_http_server() ) )
+   IF is_in_main_thread()
+      thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
+      // thread_dbfs( hb_threadStart( @f18_http_server() ) )
 
-   thread_dbfs( hb_threadStart( @thread_f18_backup(), 1 ) ) // auto backup jedne organizacije
+      thread_dbfs( hb_threadStart( @thread_f18_backup(), 1 ) ) // auto backup jedne organizacije
+   ENDIF
 
    IF !check_server_db_version()
       RETURN .F.
@@ -125,15 +130,19 @@ FUNCTION post_login()
    server_log_enable()
    set_init_fiscal_params()
 
-   run_on_start()
+   IF is_in_main_thread()
+      run_on_start()
+   ENDIF
 
    IF !set_parametre_f18_aplikacije( .T. )
       RETURN .F.
    ENDIF
-   set_hot_keys()
-
    get_log_level_from_params()
-   crtaj_naslovni_ekran()
+
+   IF is_in_main_thread()
+      set_hot_keys()
+      crtaj_naslovni_ekran()
+   ENDIF
 
    RETURN .T.
 
@@ -193,19 +202,19 @@ STATIC FUNCTION get_log_level_from_params()
 
 FUNCTION set_screen_dimensions()
 
-   LOCAL _msg
+   LOCAL cMsg
 
-   LOCAL _pix_width  := hb_gtInfo( HB_GTI_DESKTOPWIDTH )
-   LOCAL _pix_height := hb_gtInfo( HB_GTI_DESKTOPHEIGHT )
+   LOCAL nPixWidth  := hb_gtInfo( HB_GTI_DESKTOPWIDTH )
+   LOCAL nPixHeight := hb_gtInfo( HB_GTI_DESKTOPHEIGHT )
 
-   _msg := "screen res: " + AllTrim( to_str( _pix_width ) ) + " " + AllTrim( to_str( _pix_height ) ) + " varijanta: "
+   cMsg := "screen res: " + AllTrim( to_str( nPixWidth ) ) + " " + AllTrim( to_str( nPixHeight ) ) + " varijanta: "
 
-   IF _pix_width == NIL
+   IF is_terminal() .OR. nPixWidth == NIL
 
-      maxrows( 40 - INFO_BAR_ROWS )
-      maxcols( 150 )
+      f18_max_rows( MaxRow() )
+      f18_max_cols( MaxCol() )
 
-      IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
+      IF SetMode( f18_max_rows() + INFO_BAR_ROWS,  f18_max_cols() )
          ?E "setovanje ekrana: setovan ekran po rezoluciji"
       ELSE
          ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
@@ -217,69 +226,67 @@ FUNCTION set_screen_dimensions()
 
    DO CASE
 
-   CASE _pix_width >= 1440 .AND. _pix_height >= 900
+   CASE nPixWidth >= 1440 .AND. nPixHeight >= 900
 
-#ifdef  __PLATFORM__DARWIN
-      font_name( "Courier" )
-      font_size( 24 )
-      font_width( 12 )
-      maxrows( 35 - INFO_BAR_ROWS )
-      maxcols( 119 )
-#else
-      font_size( 24 )
-      font_width( 12 )
-      maxrows( 35 - INFO_BAR_ROWS )
-      maxcols( 119 )
-#endif
-      ?E _msg + "1"
+      IF is_mac()
+         font_name( "Courier" )
+         font_size( 24 )
+         font_width( 12 )
+         f18_max_rows( 35 )
+         f18_max_cols( 119 )
+      ELSE
+         font_size( 24 )
+         font_width( 12 )
+         f18_max_rows( 35 )
+         f18_max_cols( 119 )
+      ENDIF
+      ?E cMsg + "1"
 
-   CASE _pix_width >= 1280 .AND. _pix_height >= 820
+   CASE nPixWidth >= 1280 .AND. nPixHeight >= 820
 
-#ifdef  __PLATFORM__DARWIN
+      IF is_mac()
+         font_size( 20 )
+         font_width( 12 )
+         f18_max_rows( 33 )
+         f18_max_cols( 110 )
+         ?E cMsg + "2longMac"
+      ELSE
 
-      font_size( 20 )
-      font_width( 12 )
-      maxrows( 33 - INFO_BAR_ROWS )
-      maxcols( 110 )
-      ?E _msg + "2longMac"
-#else
+         font_size( 24 )
+         font_width( 12 )
+         f18_max_rows( 33 )
+         f18_max_cols( 105 )
+         ?E cMsg + "2long"
+      ENDIF
 
-      font_size( 24 )
-      font_width( 12 )
-      maxrows( 33 - INFO_BAR_ROWS )
-      maxcols( 105 )
-      ?E _msg + "2long"
-#endif
-
-   CASE _pix_width >= 1280 .AND. _pix_height >= 800
-
-      font_size( 22 )
-      font_width( 11 )
-      maxrows( 35 - INFO_BAR_ROWS )
-      maxcols( 115 )
-      ?E _msg + "2"
-
-   CASE  _pix_width >= 1024 .AND. _pix_height >= 768
+   CASE nPixWidth >= 1280 .AND. nPixHeight >= 800
 
       font_size( 22 )
       font_width( 11 )
-      maxrows( 35 - INFO_BAR_ROWS )
-      maxcols( 100 )
+      f18_max_rows( 35 )
+      f18_max_cols( 115 )
+      ?E cMsg + "2"
 
-      ?E _msg + "3"
+   CASE  nPixWidth >= 1024 .AND. nPixHeight >= 768
+
+      font_size( 22 )
+      font_width( 11 )
+      f18_max_rows( 35 )
+      f18_max_cols( 100 )
+
+      ?E cMsg + "3"
 
    OTHERWISE
 
       font_size( 22 )
       font_width( 11 )
 
-      maxrows( 35 - INFO_BAR_ROWS )
-      maxcols( 100 )
+      f18_max_rows( 35 )
+      f18_max_cols( 100 )
 
-      ?E "init",  _msg + "4"
+      ?E "init",  cMsg + "4"
 
    ENDCASE
-
 
 
    get_screen_resolution_from_config()
@@ -302,16 +309,14 @@ FUNCTION set_screen_dimensions()
 
    // hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
 
+   IF SetMode( f18_max_rows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 ) + INFO_BAR_ROWS,  ;
+         f18_max_cols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 ) )
 
-   IF SetMode( maxrows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 - INFO_BAR_ROWS ) + INFO_BAR_ROWS,  ;
-         maxcols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 ) )
-
-      // IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
-      ?E "setovanje ekrana: setovan ekran po rezoluciji", maxrows(), maxcols()
+      ?E "setovanje ekrana: setovan ekran po rezoluciji", f18_max_rows(), f18_max_cols()
    ELSE
       // linux nece od prve!?
-      SetMode( maxrows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 - INFO_BAR_ROWS ) + INFO_BAR_ROWS,  ;
-         maxcols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 ) )
+      SetMode( f18_max_rows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 ) + INFO_BAR_ROWS,  ;
+         f18_max_cols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 ) )
       ?E " set font_width/2: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
       ?E "setovanje ekrana/2 "
    ENDIF
@@ -331,65 +336,85 @@ STATIC FUNCTION get_screen_resolution_from_config()
 
    LOCAL _var_name
 
-   LOCAL _ini_params := hb_Hash()
+   LOCAL hIniParams := hb_Hash()
 
-   _ini_params[ "max_rows" ] := nil
-   _ini_params[ "max_cols" ] := nil
-   _ini_params[ "font_name" ] := nil
-   _ini_params[ "font_width" ] := nil
-   _ini_params[ "font_size" ] := nil
+   hIniParams[ "max_rows" ] := nil
+   hIniParams[ "max_cols" ] := nil
+   hIniParams[ "font_name" ] := nil
+   hIniParams[ "font_width" ] := nil
+   hIniParams[ "font_size" ] := nil
 
-   IF !f18_ini_config_read( F18_SCREEN_INI_SECTION, @_ini_params, .T. )
+   IF !f18_ini_config_read( F18_SCREEN_INI_SECTION, @hIniParams, .T. )
       ?E "screen resolution: problem sa ini read"
       RETURN .F.
    ENDIF
 
    // setuj varijable iz inija
-   IF _ini_params[ "max_rows" ] != nil
-      __max_rows := Val( _ini_params[ "max_rows" ] )
+   IF hIniParams[ "max_rows" ] != nil
+      s_nMaxRows := Val( hIniParams[ "max_rows" ] )
    ENDIF
 
-   IF _ini_params[ "max_cols" ] != nil
-      __max_cols := Val( _ini_params[ "max_cols" ] )
+   IF hIniParams[ "max_cols" ] != nil
+      s_nMaxCols := Val( hIniParams[ "max_cols" ] )
    ENDIF
 
-   IF _ini_params[ "font_name" ] != nil
-      s_cFontName := _ini_params[ "font_name" ]
+   IF hIniParams[ "font_name" ] != nil
+      s_cFontName := hIniParams[ "font_name" ]
    ENDIF
 
    _var_name := "font_width"
-   IF _ini_params[ _var_name ] != nil
-      s_nFontWidth := Val( _ini_params[ _var_name ] )
+   IF hIniParams[ _var_name ] != nil
+      s_nFontWidth := Val( hIniParams[ _var_name ] )
    ENDIF
 
    _var_name := "font_size"
-   IF _ini_params[ _var_name ] != nil
-      s_nFontSize := Val( _ini_params[ _var_name ] )
+   IF hIniParams[ _var_name ] != nil
+      s_nFontSize := Val( hIniParams[ _var_name ] )
    ENDIF
 
    RETURN .T.
 
 /*
- vraca maksimalni broj redova, kolona
+
+MaxRow() - daje max rows - 1, MaxCol() - max cols - 1
+Ako je MaxRow() = 35, MaxCols() = 132,
+tada treba setovati ekran sa: SetMode( 35 + 1, 132 + 1)
+
+
+f18_max_rows() daje broj redova za ispis dostupan aplikaciji.
+
+Zadnja dva reda su rezervisana za info bar i error bar:
+
+Kada je f18_max_rows() = 34, tada je MaxRow() = 34 + 2 - 1 = 35
+Kada je f18_max_cols() = 133, tada je MaxCol() = 133 - 1 = 132
+
 */
 
-FUNCTION maxrows( x )
+FUNCTION f18_max_rows( nX )
 
-   IF ValType( x ) == "N"
-      __max_rows := x
+   // LOCAL nGTH := hb_gtInfo( HB_GTI_VIEWMAXHEIGHT )
+
+   IF ValType( nX ) == "N"
+      s_nMaxRows := nX - INFO_BAR_ROWS + 1
    ENDIF
 
-   RETURN  Max( hb_gtInfo( HB_GTI_VIEWMAXHEIGHT ) - INFO_BAR_ROWS, __max_rows )
+   // RETURN  Max( nGTH - INFO_BAR_ROWS + 1, s_nMaxRows )
+
+   RETURN s_nMaxRows
 
 
 
-FUNCTION maxcols( x )
+FUNCTION f18_max_cols( nY )
 
-   IF ValType( x ) == "N"
-      __max_cols := x
+   // LOCAL nGTW := hb_gtInfo( HB_GTI_VIEWMAXWIDTH )
+
+   IF ValType( nY ) == "N"
+      s_nMaxCols := nY + 1
    ENDIF
 
-   RETURN Max( hb_gtInfo( HB_GTI_VIEWMAXWIDTH ), __max_cols )
+   // RETURN Max( nGTW + 1, s_nMaxCols )
+
+   RETURN s_nMaxCols
 
 
 

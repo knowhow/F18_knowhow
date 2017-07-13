@@ -55,7 +55,7 @@
 #define F18_DEFAULT_LOG_LEVEL_DEBUG 9
 #define F18_DEFAULT_LOG_LEVEL       3
 
-#define INFO_BAR_ROWS               3
+#define INFO_BAR_ROWS               2
 
 
 #define D_ZELITE_LI_IZBRISATI_PRIPREMU "Želite li izbrisati pripremu !?"

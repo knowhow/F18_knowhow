@@ -90,7 +90,7 @@ FUNCTION Get1_80( atrib )
 
    kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + nX, m_y + 2, @aPorezi )
 
-   @ m_x + nX, m_y + ( MAXCOLS() -20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ m_x + nX, m_y + ( f18_max_cols() -20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    set_pdv_public_vars()
 
@@ -217,7 +217,7 @@ FUNCTION kalk_get_1_80_protustavka()
 
 
 
-   @ m_x + nX, m_y + ( MAXCOLS() -20 ) SAY "Tarifa:" ;
+   @ m_x + nX, m_y + ( f18_max_cols() -20 ) SAY "Tarifa:" ;
       GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ

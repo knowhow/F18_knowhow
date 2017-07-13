@@ -42,8 +42,8 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
    _o_tables()
 
-   __box_x := MAXROWS() -5
-   __box_y := MAXCOLS() -5
+   __box_x := f18_max_rows() -5
+   __box_y := f18_max_cols() -5
 
    IF lNew == nil
       lNew := .F.

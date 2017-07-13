@@ -39,7 +39,7 @@ FUNCTION kalk_get_1_ip()
    kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + _x, m_y + 2, @aPorezi )
 
 
-   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
+   @ m_x + _x, m_y + ( f18_max_cols() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
 
    READ
 

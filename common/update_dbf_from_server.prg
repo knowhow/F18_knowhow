@@ -52,8 +52,8 @@ FUNCTION update_dbf_from_server( table, algoritam )
    _dbf_alias  := _a_dbf_rec[ "alias" ]
    _sql_tbl    := F18_PSQL_SCHEMA_DOT + table
 
-   _x := maxrows() - 15
-   _y := maxcols() - 20
+   _x := f18_max_rows() - 15
+   _y := f18_max_cols() - 20
 
    IF algoritam == NIL
       algoritam := "FULL"

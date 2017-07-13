@@ -124,7 +124,7 @@ FUNCTION ispisi_donji_dio_forme_unosa( txt, row )
       row := 1
    ENDIF
 
-   @ m_x + ( MAXROWS() - 12 ) + row, 2 SAY PadR( txt, MAXCOLS() / 2 )
+   @ m_x + ( f18_max_rows() - 12 ) + row, 2 SAY PadR( txt, f18_max_cols() / 2 )
 
    RETURN
 
@@ -141,11 +141,11 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
    _iznos := AllTrim( Transform( iznos, "9999999.99" ) )
    _next_y := m_y + col
 
-   @ m_x + row + 0, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
-   @ m_x + row + 1, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
-   @ m_x + row + 2, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
-   @ m_x + row + 3, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
-   @ m_x + row + 4, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
+   @ m_x + row + 0, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
+   @ m_x + row + 1, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
+   @ m_x + row + 2, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
+   @ m_x + row + 3, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
+   @ m_x + row + 4, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
 
    FOR _cnt := Len( _iznos ) TO 1 STEP -1
 
@@ -534,17 +534,17 @@ FUNCTION pos_set_user( cKorSif, nSifLen, cLevel )
 
 FUNCTION pos_status_traka()
 
-   LOCAL _x := MAXROWS() - 3
+   LOCAL _x := f18_max_rows() - 3
    LOCAL _y := 0
 
    @ 1, _y + 1 SAY8 "RADI:" + PadR( LTrim( gKorIme ), 31 ) + " SMJENA:" + gSmjena + " CIJENE:" + gIdCijena + " DATUM:" + DToC( gDatum ) + IF( gVrstaRS == "S", "   SERVER  ", " KASA-PM:" + gIdPos )
 
    IF gIdPos == "X "
-      @ _x, _y + 1 SAY8 PadC( "$$$ --- PRODAJNO MJESTO X ! --- $$$", MAXCOLS() - 2, "█" )
+      @ _x, _y + 1 SAY8 PadC( "$$$ --- PRODAJNO MJESTO X ! --- $$$", f18_max_cols() - 2, "█" )
    ELSE
-      @ _x, _y + 1 SAY8 Replicate( "█", MAXCOLS() - 2 )
+      @ _x, _y + 1 SAY8 Replicate( "█", f18_max_cols() - 2 )
    ENDIF
 
-   @ _x - 1, _y + 1 SAY PadC ( Razrijedi ( gKorIme ), MAXCOLS() - 2 ) COLOR f18_color_invert()
+   @ _x - 1, _y + 1 SAY PadC ( Razrijedi ( gKorIme ), f18_max_cols() - 2 ) COLOR f18_color_invert()
 
    RETURN .T.

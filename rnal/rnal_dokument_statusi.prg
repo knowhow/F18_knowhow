@@ -176,8 +176,8 @@ FUNCTION rnal_pregled_statusa_operacija( r_doc_no )
    LOCAL _ok := .T.
    LOCAL _footer
    LOCAL _header
-   LOCAL _box_x := maxrows() - 10
-   LOCAL _box_y := maxcols() - 10
+   LOCAL _box_x := f18_max_rows() - 10
+   LOCAL _box_y := f18_max_cols() - 10
 
    PRIVATE imekol
    PRIVATE kol

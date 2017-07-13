@@ -149,7 +149,7 @@ FUNCTION P_Radn( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := p_sifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, ;
+   lRet := p_sifra( F_RADN, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, nDeltaX, nDeltaY, ;
       {| Ch | browse_edit_radnik( Ch ) },,,,, { "ID" } )
 
    PopWa( F_RADN )
@@ -549,7 +549,7 @@ FUNCTION P_ParObr( cId, nDeltaX, nDeltaY )
       AAdd( kol, nI )
    NEXT
 
-   RETURN p_sifra( F_PAROBR, 1, MAXROWS() - 15, MAXCOLS() - 20, _u( "Parametri obračuna" ), @cId, nDeltaX, nDeltaY )
+   RETURN p_sifra( F_PAROBR, 1, f18_max_rows() - 15, f18_max_cols() - 20, _u( "Parametri obračuna" ), @cId, nDeltaX, nDeltaY )
 
 
 FUNCTION g_tp_naz( cId )
@@ -595,7 +595,7 @@ FUNCTION P_TipPr( cId, nDeltaX, nDeltaY )
 
    select_o_tippr()
 
-   lRet := p_sifra( F_TIPPR, 1, MAXROWS() - 15, MAXCOLS() - 25, "LD Tipovi primanja", @cId, nDeltaX, nDeltaY, {| Ch | TprBl( Ch ) },,,,, { "ID" } )
+   lRet := p_sifra( F_TIPPR, 1, f18_max_rows() - 15, f18_max_cols() - 25, "LD Tipovi primanja", @cId, nDeltaX, nDeltaY, {| Ch | TprBl( Ch ) },,,,, { "ID" } )
 
    RETURN lRet
 
@@ -649,7 +649,7 @@ FUNCTION P_TipPr2( cId, nDeltaX, nDeltaY )
       }
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
-   RETURN p_sifra( F_TIPPR2, 1, MAXROWS() - 15, MAXCOLS() - 20, _l( "Tipovi primanja za obracun 2" ),  @cId, nDeltaX, nDeltaY, ;
+   RETURN p_sifra( F_TIPPR2, 1, f18_max_rows() - 15, f18_max_cols() - 20, _l( "Tipovi primanja za obracun 2" ),  @cId, nDeltaX, nDeltaY, ;
       {| Ch | Tpr2Bl( Ch ) },,,,, { "ID" } )
 
 
@@ -683,7 +683,7 @@ FUNCTION P_LD_RJ( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := p_sifra( F_LD_RJ, 1, MAXROWS() - 15, 60, "Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
+   lRet := p_sifra( F_LD_RJ, 1, f18_max_rows() - 15, 60, "Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
 
    PopWa( F_LD_RJ )
 
@@ -730,7 +730,7 @@ FUNCTION P_Kred( cId, nDeltaX, nDeltaY )
 
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
-   lRet := p_sifra( F_KRED, 1, MAXROWS() - 15, MAXCOLS() - 20, _u( "Lista kreditora" ), @cId, nDeltaX, nDeltaY )
+   lRet := p_sifra( F_KRED, 1, f18_max_rows() - 15, f18_max_cols() - 20, _u( "Lista kreditora" ), @cId, nDeltaX, nDeltaY )
 
    PopWa( F_KRED )
 
@@ -918,7 +918,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
    ENDDO
 
 
-   lRet := p_sifra( F_POR, 1, MAXROWS() - 15, MAXCOLS() - 20, "Lista poreza na platu", ;
+   lRet := p_sifra( F_POR, 1, f18_max_rows() - 15, f18_max_cols() - 20, "Lista poreza na platu", ;
       @cId, nDeltaX, nDeltaY, {| Ch | PorBl( Ch ) } )
 
 
@@ -1012,7 +1012,7 @@ FUNCTION P_Dopr( cId, nDeltaX, nDeltaY )
 
    select_o_dopr()
 
-   lRet := p_sifra( F_DOPR, 1, MAXROWS() - 15, MAXCOLS() - 20, ;
+   lRet := p_sifra( F_DOPR, 1, f18_max_rows() - 15, f18_max_cols() - 20, ;
       _u( "Lista doprinosa na platu" ), @cId, nDeltaX, nDeltaY, {| Ch | DoprBl( Ch ) } )
 
    PopWa( F_DOPR )
@@ -1037,7 +1037,7 @@ FUNCTION P_KBenef( cId, nDeltaX, nDeltaY )
 
    Kol := { 1, 2, 3 }
 
-   xRet := p_sifra( F_KBENEF, 1, MAXROWS() - 15, MAXCOLS() - 20,  "Lista koef.beneficiranog radnog staza", @cId, nDeltaX, nDeltaY )
+   xRet := p_sifra( F_KBENEF, 1, f18_max_rows() - 15, f18_max_cols() - 20,  "Lista koef.beneficiranog radnog staza", @cId, nDeltaX, nDeltaY )
 
    PopWa( F_KBENEF )
 
@@ -1059,7 +1059,7 @@ FUNCTION P_StrSpr( cId, nDeltaX, nDeltaY )
    PushWa()
 
    select_o_str_spr()
-   xRet := p_sifra( F_STRSPR, 1, MAXROWS() - 15, MAXCOLS() - 15,  _u( "Lista: stručne spreme" ), @cId, nDeltaX, nDeltaY )
+   xRet := p_sifra( F_STRSPR, 1, f18_max_rows() - 15, f18_max_cols() - 15,  _u( "Lista: stručne spreme" ), @cId, nDeltaX, nDeltaY )
 
    PopWa( F_STRSPR )
 
@@ -1106,7 +1106,7 @@ FUNCTION P_NorSiht( cId, nDeltaX, nDeltaY )
    Kol := { 1, 2, 3, 4 }
 
    PushWa()
-   lRet := p_sifra( F_NORSIHT, 1, MAXROWS() - 15, MAXCOLS() - 20, "Lista: Norme u sihtarici", @cId, nDeltaX, nDeltaY )
+   lRet := p_sifra( F_NORSIHT, 1, f18_max_rows() - 15, f18_max_cols() - 20, "Lista: Norme u sihtarici", @cId, nDeltaX, nDeltaY )
    PopWa()
 
    RETURN lRet

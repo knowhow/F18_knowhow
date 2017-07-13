@@ -50,8 +50,8 @@ FUNCTION fin_knjizenje_naloga()
 
    LOCAL _sep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    LOCAL _w := 25
-   LOCAL _d := MAXCOLS() - 6
-   LOCAL _x_row := MAXROWS() - 5
+   LOCAL _d := f18_max_cols() - 6
+   LOCAL _x_row := f18_max_rows() - 5
    LOCAL _y_row := _d
    LOCAL _opt_row
    LOCAL _help_columns := 4
@@ -207,7 +207,7 @@ FUNCTION edit_fin_priprema()
       @ m_x + 8, Col() + 2 SAY "Valuta: " GET _DatVal
    ENDIF
 
-   @ m_x + 11, m_y + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| .T. } PICT "@S" + AllTrim( Str( maxcols() - 8 ) )
+   @ m_x + 11, m_y + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| .T. } PICT "@S" + AllTrim( Str( f18_max_cols() - 8 ) )
 
    IF hFinParams[ "fin_k1" ]
       @ m_x + 11, Col() + 2 SAY "K1" GET _k1 PICT "@!"
@@ -391,7 +391,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 
    CASE nCh == K_ENTER
 
-      Box( "ist", MAXROWS() - 5, MAXCOLS() - 8, .F. )
+      Box( "ist", f18_max_rows() - 5, f18_max_cols() - 8, .F. )
       set_global_vars_from_dbf( "_" )
 
       fin_pripr_redni_broj( _Rbr )
@@ -411,7 +411,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
       PushWA()
       SELECT fin_pripr
 
-      Box( "anal", MAXROWS() - 7, MAXCOLS() - 10, .F., "Ispravka naloga" )
+      Box( "anal", f18_max_rows() - 7, f18_max_cols() - 10, .F., "Ispravka naloga" )
 
       nDug := 0
       nPot := 0
@@ -424,7 +424,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
          set_global_vars_from_dbf()
          fin_pripr_redni_broj( _Rbr )
 
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + MAXROWS() - 8, m_y + MAXCOLS() - 10
+         @ m_x + 1, m_y + 1 CLEAR TO m_x + f18_max_rows() - 8, m_y + f18_max_cols() - 10
          IF edit_fin_priprema( .F. ) == 0
             EXIT
          ELSE
@@ -468,7 +468,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
       ENDDO
       GO BOTTOM
 
-      Box( "knjn", MAXROWS() - 5, MAXCOLS() - 7,  .F., "Knjizenje naloga - nove stavke" )
+      Box( "knjn", f18_max_rows() - 5, f18_max_cols() - 7,  .F., "Knjizenje naloga - nove stavke" )
 
 
       DO WHILE .T.
@@ -483,7 +483,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 
          fin_pripr_redni_broj( _Rbr + 1 )
 
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + MAXROWS() - 5, m_y + MAXCOLS() - 8
+         @ m_x + 1, m_y + 1 CLEAR TO m_x + f18_max_rows() - 5, m_y + f18_max_cols() - 8
 
          IF edit_fin_priprema( .T. ) == 0
             EXIT
@@ -496,10 +496,10 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
          ELSE
             nPot += _IznosBHD
          ENDIF
-         @ m_x + MAXROWS() - 6, m_y + 1 SAY "ZBIR NALOGA:"
-         @ m_x + MAXROWS() - 6, m_y + 14 SAY nDug PICTURE '9 999 999 999.99'
-         @ m_x + MAXROWS() - 6, m_y + 35 SAY nPot PICTURE '9 999 999 999.99'
-         @ m_x + MAXROWS() - 6, m_y + 56 SAY nDug - nPot PICTURE '9 999 999 999.99'
+         @ m_x + f18_max_rows() - 6, m_y + 1 SAY "ZBIR NALOGA:"
+         @ m_x + f18_max_rows() - 6, m_y + 14 SAY nDug PICTURE '9 999 999 999.99'
+         @ m_x + f18_max_rows() - 6, m_y + 35 SAY nPot PICTURE '9 999 999 999.99'
+         @ m_x + f18_max_rows() - 6, m_y + 56 SAY nDug - nPot PICTURE '9 999 999 999.99'
 
          Inkey( 10 )
 

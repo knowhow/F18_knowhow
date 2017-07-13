@@ -34,7 +34,7 @@ FUNCTION browse_tdok( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
-   xRet := p_sifra( F_TDOK, 1, Max( maxrows() - 20, 10 ), Max( maxcols() - 30, 35 ), "OsnPod: Vrste dokumenata", @cId, nDeltaX, nDeltaY )
+   xRet := p_sifra( F_TDOK, 1, Max( f18_max_rows() - 20, 10 ), Max( f18_max_cols() - 30, 35 ), "OsnPod: Vrste dokumenata", @cId, nDeltaX, nDeltaY )
 
    PopWa()
 

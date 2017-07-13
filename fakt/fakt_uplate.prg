@@ -12,8 +12,8 @@
 #include "f18.ch"
 
 
-#define X_POS_STANJE MAXROWS() - 7
-#define Y_POS_STANJE MAXCOLS() - 45
+#define X_POS_STANJE f18_max_rows() - 7
+#define Y_POS_STANJE f18_max_cols() - 45
 
 
 FUNCTION fakt_uplate()
@@ -46,7 +46,7 @@ FUNCTION fakt_uplate()
    PRIVATE bBkTrazi := {|| cIdPartner }
    // Brows ekey uslova
 
-   Box(, MAXROWS() -5, MAXCOLS() -10 )
+   Box(, f18_max_rows() -5, f18_max_cols() -10 )
    DO WHILE .T.
 
       @ m_x + 0, m_y + 20 SAY PadC( " EVIDENCIJA UPLATA - KUPCI ", 35, Chr( 205 ) )
@@ -85,7 +85,7 @@ FUNCTION fakt_uplate()
       @ m_x + 4, m_y + 1 SAY REPL( "=", 70 )
 
       SEEK cIdPartner
-      my_db_edit_sql( "EvUpl", MAXROWS() -5, MAXCOLS() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
+      my_db_edit_sql( "EvUpl", f18_max_rows() -5, f18_max_cols() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
          .F., NIL, 1, NIL, 4, 3, NIL, {| nSkip| fakt_uplate_skip_block( nSkip ) } )
 
    ENDDO

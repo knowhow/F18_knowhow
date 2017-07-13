@@ -47,8 +47,8 @@ FUNCTION mat_knjizenje_naloga()
 // -----------------------------------------
 FUNCTION mat_unos_naloga()
 
-   __unos_x := MAXROWS() - 5
-   __unos_y := MAXCOLS() - 5
+   __unos_x := f18_max_rows() - 5
+   __unos_y := f18_max_cols() - 5
 
    mat_o_edit()
 

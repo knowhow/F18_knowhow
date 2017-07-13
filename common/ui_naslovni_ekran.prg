@@ -38,8 +38,8 @@ FUNCTION pripremi_naslovni_ekran( oApp )
 FUNCTION crtaj_naslovni_ekran()
 
    LOCAL cColorNormal
-   LOCAL nMaxCols := MAXCOLS()
-   LOCAL nMaxRows := MAXROWS()
+   LOCAL nMaxCols := f18_max_cols()
+   LOCAL nMaxRows := f18_max_rows()
 
    cColorNormal := f18_color_normal( .T. )
    SetColor( cColorNormal )
@@ -63,7 +63,7 @@ FUNCTION crtaj_naslovni_ekran()
    show_dbf_prefix()
    show_insert_over_stanje()
 
-   @ 0, MAXCOLS() - 14 SAY "bring.out" COLOR cColorNormal
+   @ 0, f18_max_cols() - 14 SAY "bring.out" COLOR cColorNormal
 
    cColorNormal := f18_color_normal( .F. )
    SetColor( cColorNormal )
@@ -72,7 +72,7 @@ FUNCTION crtaj_naslovni_ekran()
    DispBox( 5, 0, nMaxRows - 1, nMaxCols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, f18_color_invert()  )
 
    IF !in_tekuca_godina()
-      ispisi_velikim_slovima( AllTrim( Str( tekuca_sezona() ) ), 20, MAXCOLS() - 5, ;
+      ispisi_velikim_slovima( AllTrim( Str( tekuca_sezona() ) ), 20, f18_max_cols() - 5, ;
          iif( in_tekuca_godina(), F18_COLOR_NAGLASENO, F18_COLOR_NAGLASENO_STARA_SEZONA ) )
    ENDIF
 
@@ -98,7 +98,7 @@ FUNCTION show_dbf_prefix()
 
    IF !Empty( my_dbf_prefix() )
       cPrefix := "[" + StrTran( my_dbf_prefix(), "/", "" ) + "]"
-      @ 0, MAXCOLS() - 4 SAY cPrefix COLOR F18_COLOR_NAGLASENO
+      @ 0, f18_max_cols() - 4 SAY cPrefix COLOR F18_COLOR_NAGLASENO
    ENDIF
 
    RETURN .T.
@@ -126,7 +126,7 @@ FUNCTION show_insert_over_stanje( lSWap )
       cState := '< OVER >'
    ENDIF
 
-   @ 0, MAXCOLS() - 23 SAY cState COLOR f18_color_invert( .T. )
+   @ 0, f18_max_cols() - 23 SAY cState COLOR f18_color_invert( .T. )
 
    SetPos( nX, nY )
 
@@ -144,7 +144,7 @@ FUNCTION set_global_screen_vars()
 
 FUNCTION f18_ispisi_status_log_levela()
 
-   @ MAXROWS(), 1 SAY "log level: " + AllTrim( Str( log_level() ) )
+   @ f18_max_rows(), 1 SAY "log level: " + AllTrim( Str( log_level() ) )
 
    RETURN .T.
 
@@ -164,7 +164,7 @@ FUNCTION f18_ispisi_status_podrucja( position )
    ENDIF
 
    IF _show
-      @ position, MAXCOLS() - 35 SAY8 PadC( _txt, 30 ) COLOR _color
+      @ position, f18_max_cols() - 35 SAY8 PadC( _txt, 30 ) COLOR _color
    ENDIF
 
    RETURN .T.
@@ -179,9 +179,9 @@ FUNCTION f18_ispisi_status_modula()
 
    IF !_in_use
       _color := F18_COLOR_POSEBAN_STATUS
-      @ MAXROWS() -1, 25 SAY "!" COLOR _color
+      @ f18_max_rows() -1, 25 SAY "!" COLOR _color
    ELSE
-      @ MAXROWS() -1, 25 SAY " " COLOR _color
+      @ f18_max_rows() -1, 25 SAY " " COLOR _color
    ENDIF
 
    RETURN .T.

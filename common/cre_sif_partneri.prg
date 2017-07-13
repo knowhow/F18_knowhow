@@ -142,7 +142,7 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    SELECT PARTN
    sifk_fill_ImeKol( "PARTN", @ImeKol, @Kol )
 
-   lRet := p_sifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
+   lRet := p_sifra( F_PARTN, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
 
    PopWa()
 

@@ -281,7 +281,7 @@ FUNCTION pos_inventura_nivelacija()
 
          SET CURSOR ON
 
-         my_db_edit_sql( "PripInv", MAXROWS() -15, MAXCOLS() -3, {|| EditInvNiv( dDatRada ) }, ;
+         my_db_edit_sql( "PripInv", f18_max_rows() -15, f18_max_cols() -3, {|| EditInvNiv( dDatRada ) }, ;
             "Broj dokumenta: " + AllTrim( cBrDok ) + " datum: " + DToC( dDatRada ), ;
             "PRIPREMA " + cNazDok + "E", nil, ;
             { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka", "<D> ispravi datum" }, 2, , , )
@@ -542,7 +542,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
       SET CONFIRM ON
 
-      Box(, 7, maxcols() -5, .T. )
+      Box(, 7, f18_max_cols() -5, .T. )
 
       @ m_x + 0, m_y + 1 SAY " " + IF( nInd == 0, "NOVA STAVKA", "ISPRAVKA STAVKE" ) + " "
 

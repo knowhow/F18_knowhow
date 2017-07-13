@@ -28,7 +28,7 @@ FUNCTION ShowIznRac( nIznos )
    @ m_x, m_y + 28 SAY8 "  IZNOS RAČUNA JE  " COLOR f18_color_invert()
 
 
-   ispisi_velikim_slovima( cIzn, 0, MAXCOLS() -7 )
+   ispisi_velikim_slovima( cIzn, 0, f18_max_cols() -7 )
 
    SetPos ( nPrevRow, nPrevCol )
 

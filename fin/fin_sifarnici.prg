@@ -101,7 +101,7 @@ FUNCTION P_KS( cId, dx, dy )
       AAdd( kol, nI )
    NEXT
 
-   RETURN p_sifra( F_KS, 1, MAXROWS() -10, MAXCOLS() -5, "Lista kamatni stopa", @cId, dx, dy )
+   RETURN p_sifra( F_KS, 1, f18_max_rows() -10, f18_max_cols() -5, "Lista kamatni stopa", @cId, dx, dy )
 
 
 

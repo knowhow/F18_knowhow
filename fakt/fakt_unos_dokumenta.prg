@@ -79,8 +79,8 @@ FUNCTION fakt_unos_dokumenta()
    //__br_dok  := field->brdok
    //__r_br := field->rbr
 
-   _x := MAXROWS() - 4
-   _y := MAXCOLS() - 3
+   _x := f18_max_rows() - 4
+   _y := f18_max_cols() - 3
 
    Box( , _x, _y )
 
@@ -489,7 +489,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
 
    select_fakt_pripr()
 
-   Box( "pst", MAXROWS() - 5, MAXCOLS() - 10, .F. )
+   Box( "pst", f18_max_rows() - 5, f18_max_cols() - 10, .F. )
 
    _dug := 0
 
@@ -605,7 +605,7 @@ STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
    LOCAL _items_atrib := hb_Hash()
    LOCAL _item_before, _item_after
 
-   Box( "ist", MAXROWS() - 5, MAXCOLS() - 10, .F. )
+   Box( "ist", f18_max_rows() - 5, f18_max_cols() - 10, .F. )
 
    set_global_vars_from_dbf( "_" )
 
@@ -664,7 +664,7 @@ STATIC FUNCTION fakt_unos_nove_stavke()
 
    GO BOTTOM
 
-   Box( "knjn", MAXROWS() - 5, MAXCOLS() - 10, .F., "Unos nove stavke" )
+   Box( "knjn", f18_max_rows() - 5, f18_max_cols() - 10, .F., "Unos nove stavke" )
 
    DO WHILE .T.
 
@@ -700,8 +700,8 @@ STATIC FUNCTION fakt_unos_nove_stavke()
 
       _total += Round( _cijena * _kolicina * PrerCij() * ( 1 - _rabat / 100 ) * ( 1 + _porez / 100 ), ZAOKRUZENJE )
 
-      @ m_x + MAXROWS() - 11, m_y + 2 SAY "ZBIR DOKUMENTA:"
-      @ m_x + MAXROWS() - 11, Col() + 2 SAY _total PICT "9 999 999 999.99"
+      @ m_x + f18_max_rows() - 11, m_y + 2 SAY "ZBIR DOKUMENTA:"
+      @ m_x + f18_max_rows() - 11, Col() + 2 SAY _total PICT "9 999 999 999.99"
 
       InkeySc( 10 )
 
@@ -1866,8 +1866,8 @@ STATIC FUNCTION _total_dokumenta()
       RETURN .F.
    ENDIF
 
-   _x := MAXROWS() - 20
-   _y := MAXCOLS() - 30
+   _x := f18_max_rows() - 20
+   _y := f18_max_cols() - 30
 
    // valuta ?
    _din_dem := fakt_pripr->dindem
@@ -1971,14 +1971,14 @@ STATIC FUNCTION fakt_kzb( id_firma, tip_dok, br_dok )
    LOCAL _din_dem := field->dindem
    LOCAL _tmp := 1
 
-   Box(, 12, MAXCOLS() - 5 )
+   Box(, 12, f18_max_cols() - 5 )
 
    IF _tmp > 9
 
       WHILE Inkey( 0.1 ) != K_ESC
       END
 
-      @ m_x + 1, m_y + 2 CLEAR TO m_x + 12, MAXCOLS() - 5
+      @ m_x + 1, m_y + 2 CLEAR TO m_x + 12, f18_max_cols() - 5
 
       _tmp := 1
 
@@ -1986,7 +1986,7 @@ STATIC FUNCTION fakt_kzb( id_firma, tip_dok, br_dok )
 
    ENDIF
 
-   @ m_x + _tmp, m_y + 2 SAY Replicate( "-", MAXCOLS() - 10 )
+   @ m_x + _tmp, m_y + 2 SAY Replicate( "-", f18_max_cols() - 10 )
 
    @ m_x + _tmp + 1, m_y + 2 SAY PadR( "Ukupno   ", 30 )
 

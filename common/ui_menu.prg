@@ -179,7 +179,7 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    SetColor( f18_color_invert() )
 
    IF nItemNo == 0
-      CentrTxt( h[ 1 ], MAXROWS() -1 )
+      CentrTxt( h[ 1 ], f18_max_rows() -1 )
    END IF
 
    SetColor( cLocalColor )

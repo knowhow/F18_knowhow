@@ -30,8 +30,8 @@ FUNCTION p_destinacije( cId, cPartId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol
 
-   _x_pos := MAXROWS() - 15
-   _y_pos := MAXCOLS() - 5
+   _x_pos := f18_max_rows() - 15
+   _y_pos := f18_max_cols() - 5
 
    cHeader += "Destinacije za: "
    cHeader += cPartId

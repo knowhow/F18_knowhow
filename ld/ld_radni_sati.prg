@@ -178,8 +178,8 @@ FUNCTION edRadniSati()
       AAdd( Kol, i )
    NEXT
 
-   Box(, MAXROWS() - 16, MAXCOLS() - 5 )
-   my_db_edit_sql( "RadSat", MAXROWS() - 16, MAXCOLS() - 5, {|| key_handler() }, "Pregled radnih sati za radnike", "", , , , )
+   Box(, f18_max_rows() - 16, f18_max_cols() - 5 )
+   my_db_edit_sql( "RadSat", f18_max_rows() - 16, f18_max_cols() - 5, {|| key_handler() }, "Pregled radnih sati za radnike", "", , , , )
    Boxc()
 
    PopwA()

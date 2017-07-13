@@ -91,7 +91,7 @@ FUNCTION f18_login_loop( lAutoConnect, hProgramParametri )
 
          oLogin:disconnect_user_database()
          IF oLogin:connect_user_database()
-            odaberi_programski_modul( hProgramParametri )
+            f18_programski_moduli_meni( hProgramParametri )
          ELSE
             MsgBeep( "Spajanje na bazu traženog preduzeća/organizacije neuspješno !?" )
          ENDIF
@@ -199,7 +199,7 @@ STATIC FUNCTION cre_arg_v_hash( hash )
 
 
 
-FUNCTION odaberi_programski_modul( hProgramArgumenti )
+FUNCTION f18_programski_moduli_meni( hProgramArgumenti )
 
    LOCAL aMeniOpcije := {}
    LOCAL aMeniExec := {}
@@ -218,10 +218,7 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
    LOCAL _tmp
    LOCAL cOldColors
 
-   // info_bar( "init", "gen odaberi_programski_modul start" )
-
-   init_parameters_cache()
-   set_screen_dimensions()
+   // info_bar( "init", "gen f18_programski_moduli_meni start" )
 
    IF hProgramArgumenti == NIL
       cre_arg_v_hash( @hProgramArgumenti ) // napravi NIL parametre
@@ -259,7 +256,7 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
       aMeniExec := {}
 
       set_program_module_menu( @aMeniOpcije, @aMeniExec, hProgramArgumenti[ "p3" ], hProgramArgumenti[ "p4" ], hProgramArgumenti[ "p5" ], hProgramArgumenti[ "p6" ], hProgramArgumenti[ "p7" ] )
-      // info_bar( "init", "gen odaberi_programski_modul end" )
+      // info_bar( "init", "gen f18_programski_moduli_meni end" )
 
       nMeniIzbor := meni_0_inkey( mnu_top, mnu_left, mnu_bottom, mnu_right, aMeniOpcije, 1 )
       SetColor( cOldColors )
@@ -283,7 +280,7 @@ FUNCTION odaberi_programski_modul( hProgramArgumenti )
 
    ENDDO
 
-   // info_bar( hDbParams[ "database" ], "odaberi_programski_modul end" )
+   // info_bar( hDbParams[ "database" ], "f18_programski_moduli_meni end" )
 
    RETURN .T.
 

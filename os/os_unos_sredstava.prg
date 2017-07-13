@@ -21,7 +21,7 @@ FUNCTION unos_osnovnih_sredstava()
    PRIVATE cId := Space( 10 )
    PRIVATE cIdRj := Space( 4 )
 
-   Box( "#UNOS PROMJENA NAD STALNIM SREDSTVIMA", maxrows() -5, maxcols() -5 )
+   Box( "#UNOS PROMJENA NAD STALNIM SREDSTVIMA", f18_max_rows() -5, f18_max_cols() -5 )
 
    DO WHILE .T.
 
@@ -158,7 +158,7 @@ FUNCTION unos_osnovnih_sredstava()
       ShowSadVr()
 
       DO WHILE .T.
-         BrowseKey( m_x + 8, m_y + 1, m_x + maxrows() - 5, m_y + maxcols() -5, ImeKol, {| Ch| unos_os_key_handler( Ch ) }, "id==cid", cId, 2, NIL, NIL, {|| PSadVr() < 0 } )
+         BrowseKey( m_x + 8, m_y + 1, m_x + f18_max_rows() - 5, m_y + f18_max_cols() -5, ImeKol, {| Ch| unos_os_key_handler( Ch ) }, "id==cid", cId, 2, NIL, NIL, {|| PSadVr() < 0 } )
          IF ( aVr[ 1 ] -aVr[ 2 ] >= 0 )
             IF aVr[ 3 ] < 0
                MsgBeep( "Greska: sadasnja vrijednost sa uracunatom amortizacijom manja od nule! #Ispravite gresku!" )

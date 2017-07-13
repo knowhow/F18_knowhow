@@ -138,7 +138,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    lNovi := .F.
 
-   Box( , MAXROWS() - 3, MAXCOLS() - 10 )
+   Box( , f18_max_rows() - 3, f18_max_cols() - 10 )
 
    @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: "
    QQOutC( cIdRJ, "GR+/N" )

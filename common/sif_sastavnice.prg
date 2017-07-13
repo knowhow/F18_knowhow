@@ -28,7 +28,7 @@ FUNCTION p_sast( cId, dx, dy )
 
    GO TOP
 
-   RETURN p_sifra( F_ROBA, "IDP", MAXROWS() - 15, MAXCOLS() - 3, ;
+   RETURN p_sifra( F_ROBA, "IDP", f18_max_rows() - 15, f18_max_cols() - 3, ;
       "Gotovi proizvodi: <ENTER> Unos norme, <Ctrl-F4> Kopiraj normu, <F7>-lista norm.", ;
       @cId, dx, dy, {| Ch | sast_key_handler( Ch ) } )
 
@@ -52,7 +52,7 @@ FUNCTION show_sast()
    // setuj kolone sastavnice tabele
    sast_a_kol( @ImeKol, @Kol )
 
-   p_sifra( F_SAST, "IDRBR", MAXROWS() - 18, 80, cIdTek + "-" + Left( roba->naz, 40 ),,,, {| Char | EdSastBlok( Char ) },,,, .F. )
+   p_sifra( F_SAST, "IDRBR", f18_max_rows() - 18, 80, cIdTek + "-" + Left( roba->naz, 40 ),,,, {| Char | EdSastBlok( Char ) },,,, .F. )
 
    PopWa()
 

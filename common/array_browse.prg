@@ -386,8 +386,8 @@ FUNCTION MABrowse( aArray, nT, nL, nB, nR )
    // Handle omitted parameters
    nT := IF( nT == NIL, 0, nT )
    nL := IF( nL == NIL, 0, nL )
-   nB := IF( nB == NIL, MaxRow(), nB )
-   nR := IF( nR == NIL, MaxCol(), nR )
+   nB := IF( nB == NIL, f18_max_rows(), nB )
+   nR := IF( nR == NIL, f18_max_cols(), nR )
 
    // Create the TBrowse object
    o := TBrowseNew( nT + 1, nL + 1, nB -1, nR -1 )

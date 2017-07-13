@@ -107,7 +107,7 @@ FUNCTION kalk_unos_dok_81( hParams )
 
 
 
-   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N"  VALID P_Tarifa( @_IdTarifa )
+   @ m_x + _x, m_y + ( f18_max_cols() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N"  VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC

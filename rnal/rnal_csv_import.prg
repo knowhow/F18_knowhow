@@ -190,8 +190,8 @@ METHOD RnalCsvImport:get_shape_type( shape )
 
 METHOD RnalCsvImport:csv_browse()
 
-   LOCAL _box_x := MAXROWS() - 10
-   LOCAL _box_y := MAXCOLS() - 10
+   LOCAL _box_x := f18_max_rows() - 10
+   LOCAL _box_y := f18_max_cols() - 10
    LOCAL nDbfArea := Select()
    LOCAL _ret := 0
    LOCAL _header := "Pregled importovanih podataka CSV fajla..."

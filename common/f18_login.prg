@@ -729,7 +729,7 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
    LOCAL aMeniOpcije, _menuexec, _mnu_choice
 
    nX := x_pos
-   _y := ( MAXCOLS() / 2 ) - 5
+   _y := ( f18_max_cols() / 2 ) - 5
 
 
    aMeniOpcije := {} // resetuj
@@ -827,7 +827,7 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
    LOCAL _pos_left := 3
    LOCAL _pos_top := 5
    LOCAL _pos_bottom := _pos_top + 12
-   LOCAL _pos_right := MAXCOLS() - 12
+   LOCAL _pos_right := f18_max_cols() - 12
    LOCAL _company_count
 
    IF table_type == NIL
@@ -949,7 +949,7 @@ METHOD F18Login:show_info_bar( database, x_pos )
    LOCAL _y := 3
    LOCAL _info := ""
    LOCAL aOrganizacijeZaBrowse := ::get_database_sessions( DATABASE )
-   LOCAL _max_len := MAXCOLS() - 2
+   LOCAL _max_len := f18_max_cols() - 2
    LOCAL _descr := ""
 
    IF !aOrganizacijeZaBrowse == NIL .AND. Len( aOrganizacijeZaBrowse ) > 0

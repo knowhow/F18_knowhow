@@ -14,8 +14,8 @@
 
 STATIC FUNCTION epdv_kuf_tbl_priprema()
 
-   LOCAL _row := maxrows() - 4
-   LOCAL _col := maxcols() - 3
+   LOCAL _row := f18_max_rows() - 4
+   LOCAL _col := f18_max_cols() - 3
 
    Box(, _row, _col )
 
@@ -69,7 +69,7 @@ STATIC FUNCTION epdv_kuf_edit_item( lNova )
    LOCAL nXPart := 0
    LOCAL nYPart := 22
 
-   Box(, MAXROWS() - 10, MAXCOLS() - 12 )
+   Box(, f18_max_rows() - 10, f18_max_cols() - 12 )
    IF lNova
       _br_dok := 0
       _r_br := next_r_br( "P_KUF" )

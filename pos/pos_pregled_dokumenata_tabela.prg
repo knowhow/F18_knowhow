@@ -84,7 +84,7 @@ FUNCTION pos_lista_azuriranih_dokumenata()
    ENDIF
 
 
-   my_db_edit_sql( "pos_doks", MAXROWS() -10, MAXCOLS() -15, ;  // params cImeBoxa, xw, yw
+   my_db_edit_sql( "pos_doks", f18_max_rows() -10, f18_max_cols() -15, ;  // params cImeBoxa, xw, yw
    {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), "POS", ; // bUserF, cMessTop, cMessBot
    .F., aOpc ) // lInvert, aMessage
 
@@ -311,8 +311,8 @@ FUNCTION pos_pregled_stavki_racuna()
    LOCAL oBrowse
    LOCAL cPrevCol
    LOCAL hRec
-   LOCAL nMaxRow := maxrows() -15
-   LOCAL nMaxCol := maxcols() -35
+   LOCAL nMaxRow := f18_max_rows() -15
+   LOCAL nMaxCol := f18_max_cols() -35
 
 
    PRIVATE ImeKol

@@ -208,7 +208,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       SET FILTER TO &cFilter
    ENDIF
 
-   @ MaxRow() - 4, MaxCol() - 3 SAY Str( rloptlevel(), 2 )
+   @ f18_max_rows() - 4, f18_max_cols() - 3 SAY Str( rloptlevel(), 2 )
 
    qqTipDok := Trim( qqTipDok )
 

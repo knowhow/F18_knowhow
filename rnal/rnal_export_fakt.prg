@@ -768,7 +768,7 @@ STATIC FUNCTION fnd_partn( xPartn, nCustId, cDesc  )
 
    xPartn := Space( 6 )
 
-   Box(, 5, MAXCOLS() -15 )
+   Box(, 5, f18_max_cols() -15 )
    @ m_x + 1, m_y + 2 SAY8 "Naručioc: "
    @ m_x + 1, Col() + 1 SAY AllTrim( Str( nCustId ) ) COLOR f18_color_i()
    @ m_x + 1, Col() + 1 SAY " -> "

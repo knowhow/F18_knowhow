@@ -28,8 +28,8 @@ STATIC __aop_sep
 // ------------------------------------------------
 FUNCTION s_articles( cId, lAutoFind, lQuickFind )
 
-   LOCAL nBoxX := maxrows() - 4
-   LOCAL nBoxY := maxcols() - 4
+   LOCAL nBoxX := f18_max_rows() - 4
+   LOCAL nBoxY := f18_max_cols() - 4
    LOCAL nTArea
    LOCAL cHeader
    LOCAL cFooter
@@ -158,7 +158,7 @@ STATIC FUNCTION key_handler()
    LOCAL nTRec := RecNo()
    LOCAL nRet
 
-   box_preview( maxrows() - 9, 2, maxcols() - 3 )
+   box_preview( f18_max_rows() - 9, 2, f18_max_cols() - 3 )
 
    DO CASE
 
@@ -173,7 +173,7 @@ STATIC FUNCTION key_handler()
       WHILE !TB:stabilize()
       END
 
-      box_preview( maxrows() - 9, 2, maxcols() - 3 )
+      box_preview( f18_max_rows() - 9, 2, f18_max_cols() - 3 )
 
       RETURN DE_CONT
 

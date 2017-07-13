@@ -209,6 +209,7 @@ FUNCTION set_screen_dimensions()
 
    cMsg := "screen res: " + AllTrim( to_str( nPixWidth ) ) + " " + AllTrim( to_str( nPixHeight ) ) + " varijanta: "
 
+altd()
    IF is_terminal() .OR. nPixWidth == NIL
 
       f18_max_rows( MaxRow() )
@@ -438,10 +439,10 @@ FUNCTION font_width( x )
    RETURN s_nFontWidth
 
 
-FUNCTION font_size( x )
+FUNCTION font_size( nSize )
 
-   IF ValType( x ) == "N"
-      s_nFontSize := x
+   IF ValType( nSize ) == "N"
+      s_nFontSize := nSize
    ENDIF
 
    ?E " s_font_size:", s_nFontSize

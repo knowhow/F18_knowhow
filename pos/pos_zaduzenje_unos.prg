@@ -72,7 +72,7 @@ FUNCTION Zaduzenje
    Box(, 6, 60 )
 
    cIdOdj := Space( 2 )
-   cIdDio := Space( 2 )
+   // cIdDio := Space( 2 )
    cRazlog := Space( 40 )
    cIdOdj2 := Space( 2 )
    cIdPos := gIdPos
@@ -97,7 +97,7 @@ FUNCTION Zaduzenje
 
    BoxC()
 
-   bRSblok := {| x, y| pos_postoji_roba( @_idroba, x, y ), pos_set_key_handler_ispravka_zaduzenja() }
+   bRSblok := {| x, y | pos_postoji_roba( @_idroba, x, y ), pos_set_key_handler_ispravka_zaduzenja() }
    cUI_I := R_I
    cUI_U := R_U
 
@@ -111,7 +111,7 @@ FUNCTION Zaduzenje
    SELECT priprz
    my_dbf_zap()
 
-   IF !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
+   IF !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj ) // , cIdDio )
       my_close_all_dbf()
       RETURN .F.
    ENDIF
@@ -168,13 +168,12 @@ FUNCTION Zaduzenje
       SET ORDER TO
       GO  TOP
 
-      Box (, 20, 77,, { "<*> - Ispravka stavke ", "Storno - negativna kolicina" } )
+      BOX (, 20, 77,, { "<*> - Ispravka stavke ", "Storno - negativna kolicina" } )
       @ m_x, m_y + 4 SAY8 PadC( "PRIPREMA " + NaslovDok( cIdVd ) + " NA ODJELJENJE " + ;
-         AllTrim( ODJ->Naz ) + iif( !Empty( cIdDio ), ;
-         "-" + DIO->Naz, "" ), 70 ) COLOR f18_color_invert()
+         AllTrim( ODJ->Naz ), 60 ) COLOR f18_color_invert()
 
       oBrowse := pos_form_browse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, ;
-         { hb_UTF8ToStrBox(BROWSE_PODVUCI_2), hb_UTF8ToStrBox(BROWSE_PODVUCI), hb_UTF8ToStrBox(BROWSE_COL_SEP) }, 0 )
+         { hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), hb_UTF8ToStrBox( BROWSE_PODVUCI ), hb_UTF8ToStrBox( BROWSE_COL_SEP ) }, 0 )
       oBrowse:autolite := .F.
 
       pos_set_key_handler_ispravka_zaduzenja()
@@ -186,7 +185,7 @@ FUNCTION Zaduzenje
       _IdPos := cIdPos
       _IdVrsteP := cIdOdj2
       _IdOdj := cIdOdj
-      _IdDio := cIdDio
+      // _IdDio := cIdDio
       _IdVd := cIdVd
       _BrDok := Space( Len( pos_doks->BrDok ) )
       _Datum := dDatRada
@@ -233,7 +232,7 @@ FUNCTION Zaduzenje
             @ m_x + 3, m_y + 56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
             @ m_x + 3, Col() + 2 GET _Marza2 PICTURE "9999.99"
             @ m_x + 3, Col() + 1 GET fMarza PICT "@!" VALID {|| _marza2 := iif( _cijena <> 0 .AND. Empty( fMarza ), 0, _marza2 ), marza2( fmarza ), _cijena := iif( _cijena == 0, _cijena := _nCijena * ( tarifa->zpp / 100 + ( 1 + TARIFA->Opp / 100 ) * ( 1 + TARIFA->PPP / 100 ) ), _cijena ), fMarza := " ", .T. }
-            @ m_x + 4, m_y + 35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" valid {|| _marza2 := 0, marza2(), ShowGets(), .T. }
+            @ m_x + 4, m_y + 35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" VALID {|| _marza2 := 0, marza2(), ShowGets(), .T. }
          ENDIF
 
          READ
@@ -422,7 +421,7 @@ FUNCTION IspraviZaduzenje()
 
    oBrowse:autolite := .T.
    oBrowse:configure()
-   aConds := { {| Ch| Ch == Asc ( "b" ) .OR. Ch == Asc ( "B" ) }, {| Ch| Ch == K_ENTER } }
+   aConds := { {| Ch | Ch == Asc ( "b" ) .OR. Ch == Asc ( "B" ) }, {| Ch | Ch == K_ENTER } }
    aProcs := { {|| BrisStavZaduz () }, {|| EditStavZaduz () } }
    ShowBrowse( oBrowse, aConds, aProcs )
    oBrowse:autolite := .F.

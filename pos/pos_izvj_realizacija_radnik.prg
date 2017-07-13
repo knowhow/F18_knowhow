@@ -153,11 +153,7 @@ FUNCTION pos_realizacija_radnik
       IF ! Empty ( cSmjena )
          ? "SMJENA     : " + RTrim( cSmjena )
       ENDIF
-      /*
-      IF ! Empty ( gIdDio )
-         ? "DIO OBJEKTA: " + IF( Empty( cIdDio ), "SVI", find_pos_dio_naziv( cIdDio ) )
-      ENDIF
-      */
+
 
       ? "PERIOD     : " + FormDat1( dDatOd ) + " - " + FormDat1( dDatDo )
       ?
@@ -191,7 +187,7 @@ FUNCTION pos_realizacija_radnik
          nTotRadn2 := 0
          nTotRadn3 := 0
          IF ! lTekuci
-            ? OSOB->ID + "  " + PadR ( find_pos_osob_naziv( _IdRadnik ), 30 )
+            ? _IdRadnik + "  " + PadR ( find_pos_osob_naziv( _IdRadnik ), 30 )
             ? Replicate ( "-", 40 )
             SELECT POM
          ELSE

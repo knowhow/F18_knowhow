@@ -26,7 +26,7 @@ FUNCTION pos_kartica_artikla()
    LOCAL cSiroki := "D"
    LOCAL cPPar
 
-   PRIVATE cIdDio := Space( 2 )
+   //PRIVATE cIdDio := Space( 2 )
    PRIVATE cIdOdj := Space( 2 )
    PRIVATE cDat0 := gDatum
    PRIVATE cDat1 := gDatum
@@ -195,10 +195,10 @@ FUNCTION pos_kartica_artikla()
             SEEK cIdOdj + cIdRoba + DToS( cDat0 )
          ELSE
             DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum < cDat0
-               IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
-                  SKIP
-                  LOOP
-               ENDIF
+               //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
+                //  SKIP
+                //  LOOP
+               //ENDIF
                IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                   SKIP
                   LOOP
@@ -259,10 +259,10 @@ FUNCTION pos_kartica_artikla()
 
          DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum <= cDat1
 
-            IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
-               SKIP
-               LOOP
-            ENDIF
+            //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
+              // SKIP
+              // LOOP
+            //ENDIF
 
             IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                // (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS

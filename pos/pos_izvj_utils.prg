@@ -89,7 +89,7 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
 
       DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-         IF ( !Empty( cIdOdj ) .AND. pos->IdOdj <> cIdOdj ) .OR. ( !Empty( cIdDio ) .AND. pos->IdDio <> cIdDio )
+         IF ( !Empty( cIdOdj ) .AND. pos->IdOdj <> cIdOdj )
             SKIP
             LOOP
          ENDIF

@@ -453,9 +453,9 @@ FUNCTION realizacija_dio_objekta
    SET ORDER TO TAG "1"
    GO TOP
    DO WHILE !Eof()
-      _IdDio := POM->IdDio
+      //_IdDio := POM->IdDio
       /*
-      IF Empty ( cIdDio )
+    --  IF Empty ( cIdDio )
          SELECT DIO
          HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
@@ -627,7 +627,7 @@ FUNCTION realizacija_dio_objekta
    DO WHILE !Eof()
       _IdDio := POM->IdDio
       /*
-      IF Empty ( cIdDio )
+    --  IF Empty ( cIdDio )
          SELECT DIO
          HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
@@ -742,7 +742,7 @@ FUNCTION realizacija_dio_objekta
       WHILE ! Eof()
          _IdDio := POM->IdDio
          /*
-         IF Empty ( cIdDio )
+      --   IF Empty ( cIdDio )
             SELECT DIO
             HSEEK _IdDio
             ? DIO->Naz

@@ -71,7 +71,7 @@ FUNCTION pos_inventura_nivelacija()
    IF fIzZad
    ELSE
       PRIVATE cIdOdj := Space( 2 )
-      PRIVATE cIdDio := Space( 2 )
+      //PRIVATE cIdDio := Space( 2 )
    ENDIF
 
    o_pos_tables()
@@ -86,9 +86,9 @@ FUNCTION pos_inventura_nivelacija()
          AAdd( aNiz, { "Sifra odjeljenja", "cIdOdj", "P_Odj(@cIdOdj)",, } )
       ENDIF
 
-      IF gPostDO == "D" .AND. fInvent
-         AAdd( aNiz, { "Sifra dijela objekta", "cIdDio", "P_Dio(@cIdDio)",, } )
-      ENDIF
+      //IF gPostDO == "D" .AND. fInvent
+      //   AAdd( aNiz, { "Sifra dijela objekta", "cIdDio", "P_Dio(@cIdDio)",, } )
+      //ENDIF
 
       AAdd( aNiz, { "Datum rada", "dDatRada", "dDatRada <= DATE()",, } )
 
@@ -110,7 +110,7 @@ FUNCTION pos_inventura_nivelacija()
    cUI_U := R_U
    cUI_I := R_I
 
-   IF !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
+   IF !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj )
       my_close_all_dbf()
       RETURN .F.
    ENDIF
@@ -161,10 +161,10 @@ FUNCTION pos_inventura_nivelacija()
 
             DO WHILE !Eof() .AND. pos->( idodj + idroba ) == ( cIdOdj + _idroba ) .AND. pos->datum <= dDatRada
 
-               IF !Empty( cIdDio ) .AND. pos->iddio <> cIdDio
-                  SKIP
-                  LOOP
-               ENDIF
+               //IF !Empty( cIdDio ) .AND. pos->iddio <> cIdDio
+                //  SKIP
+                  //LOOP
+               //ENDIF
 
                IF cZaduzuje == "S" .AND. pos->idvd $ "42#01"
                   SKIP
@@ -204,7 +204,7 @@ FUNCTION pos_inventura_nivelacija()
                SELECT priprz
 
                _IdOdj := cIdOdj
-               _IdDio := cIdDio
+               //_IdDio := cIdDio
                _BrDok := cBrDok
                _IdVd := cIdVd
                _Prebacen := OBR_NIJE
@@ -564,7 +564,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
       IF nInd == 0
 
          _idodj := cIdOdj
-         _iddio := cIdDio
+        // _iddio := cIdDio
          _idroba := Space( 10 )
          nKolicina := 0
          _kol2 := 0
@@ -747,10 +747,10 @@ STATIC FUNCTION update_ip_razlika()
 
       DO WHILE !Eof() .AND. pos->( idodj + idroba ) == ( _id_odj + ip_roba ) .AND. pos->datum <= dDatRada
 
-         IF !Empty( cIdDio ) .AND. pos->iddio <> cIdDio
-            SKIP
-            LOOP
-         ENDIF
+         //IF !Empty( cIdDio ) .AND. pos->iddio <> cIdDio
+          //  SKIP
+        //    LOOP
+         //ENDIF
 
          IF pos->idvd $ "16#00"
             nKolicinaZaInventuru += pos->kolicina

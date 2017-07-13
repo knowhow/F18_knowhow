@@ -441,37 +441,6 @@ FUNCTION PromIdCijena()
    RETURN .T.
 
 
-/* PortZaMT(cIdDio,cIdOdj)
- *
- *   param: cIdDio
- *   param: cIdOdj
- */
-
-FUNCTION PortZaMT( cIdDio, cIdOdj )
-
-   LOCAL nObl := Select(), cVrati := gLocPort    // default port je gLocPort
-
-   SELECT F_UREDJ; PushWA()
-   IF ! Used()
-      O_UREDJ
-   ENDIF
-   SELECT F_MJTRUR; PushWA()
-   IF ! Used()
-      O_MJTRUR
-   ENDIF
-   GO TOP; HSEEK cIdDio + cIdOdj
-   IF Found()
-      SELECT F_UREDJ
-      GO TOP; HSEEK MJTRUR->iduredjaj
-      cVrati := AllTrim( port )
-   ENDIF
-   SELECT F_MJTRUR; PopWA()
-   SELECT F_UREDJ; PopWA()
-   SELECT ( nObl )
-
-   RETURN cVrati
-
-
 
 
 FUNCTION NazivRobe( cIdRoba )

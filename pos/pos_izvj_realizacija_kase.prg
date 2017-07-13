@@ -258,12 +258,12 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj, 
    ENDIF
 
 /*
-   IF Empty( cIdDio )
+--   IF Empty( cIdDio )
       IF ( grbReduk < 2 )
          ? "DIO OBJEKTA:  SVI"
       ENDIF
    ELSE
-      ? "DIO OBJEKTA: " + find_pos_dio_naziv( cIdDio )
+  --    ? "DIO OBJEKTA: " + find_pos_dio_naziv( cIdDio )
    ENDIF
 */
 

@@ -24,7 +24,7 @@ FUNCTION pos_stanje_artikala
    LOCAL cRSdbf
    LOCAL cVrstaRs
 
-   PRIVATE cIdDio := Space ( 2 )
+  // PRIVATE cIdDio := Space ( 2 )
    PRIVATE cIdOdj := Space ( 2 )
    PRIVATE cRoba := Space( 60 )
    PRIVATE cLM := ""
@@ -93,8 +93,7 @@ FUNCTION pos_stanje_artikala
    PRIVATE cZaduzuje := "R"
 
    IF !Empty ( cIdOdj )
-      SELECT ODJ
-      HSEEK cIdOdj
+      select_o_pos_odj( cIdOdj )
       IF Zaduzuje == "S"
          cU := S_U
          cI := S_I
@@ -188,10 +187,10 @@ FUNCTION pos_stanje_artikala
                pos->idRoba == cIdRoba .AND. ;
                ( pos->datum < cDat .OR. ( !Empty ( cSmjena ) .AND. pos->datum == cDat .AND. pos->smjena < cSmjena ) )
 
-            IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
-               SKIP
-               LOOP
-            ENDIF
+            //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
+            //   SKIP
+            //   LOOP
+            //ENDIF
 
             IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                // (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;   // ?MS
@@ -234,10 +233,10 @@ FUNCTION pos_stanje_artikala
                pos->idroba == cIdRoba .AND. ;
                ( pos->datum == cDat .OR. ( !Empty( cSmjena ) .AND. POS->Datum == cDat .AND. POS->Smjena < cSmjena ) )
 
-            IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
-               SKIP
-               LOOP
-            ENDIF
+            //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
+            //   SKIP
+            //   LOOP
+            //ENDIF
             IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                // (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS
                SKIP

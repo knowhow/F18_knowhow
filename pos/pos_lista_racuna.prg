@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-STATIC s_lInitBrowse := .F.
-
 FUNCTION pos_pregled_racuna( lAdmin )
 
    LOCAL dDatum := NIL
@@ -143,7 +141,8 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, cPrefixFilter, qIdRoba )
       bMarkF := NIL
    ENDIF
 
-   s_lInitBrowse := .T.
+
+   KEYBOARD '\'
    my_db_edit_sql( "pos_rn", f18_max_rows() - 12, f18_max_cols() - 25, {| nCh | lista_racuna_key_handler( nCh ) }, _u( " POS RAČUNI " ), "", NIL, cFnc,, bMarkF )
 
    SET FILTER TO
@@ -187,15 +186,11 @@ STATIC FUNCTION lista_racuna_key_handler( nCh )
    // altd()
    // SELECT pos_doks
 
-   IF s_lInitBrowse
-      s_lInitBrowse := .F.
-
+   IF Chr( nCh ) == '\'
       DO WHILE !( Tb:hitTop .OR. TB:hitBottom )
          Tb:down()
          TB:Stabilize()
       ENDDO
-      //DO WHILE !Tb:Stabilize()
-      //ENDDO
    ENDIF
 
    IF Upper( Chr( nCh ) ) == "P"

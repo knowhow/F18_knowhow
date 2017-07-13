@@ -33,7 +33,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
    // ovo su ulazni parametri
    PRIVATE cDat := cD
    PRIVATE cSmjena := cS
-   PRIVATE cIdDio := Space( 2 )
+  // PRIVATE cIdDio := Space( 2 )
    PRIVATE cIdOdj := Space( 2 )
    PRIVATE cRoba := Space( 60 )
    PRIVATE cLM := ""
@@ -213,10 +213,10 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
          ENDIF
          SELECT POS
 
-         IF !Empty ( cIdDio ) .AND. POS->IdDio <> cIdDio
-            SKIP
-            LOOP
-         ENDIF
+         //IF !Empty ( cIdDio ) .AND. POS->IdDio <> cIdDio
+          //  SKIP
+          //  LOOP
+         //ENDIF
          IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. pos->IdPos <> cIdPos )
             // (POS->IdPos="X".and.AllTrim(cIdPos)<>"X").or.;// ?MS
             SKIP
@@ -265,10 +265,10 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
          ENDIF
          SELECT POS
 
-         IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
-            SKIP
-            LOOP
-         ENDIF
+         //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
+        //    SKIP
+          //  LOOP
+         //ENDIF
          IF cZaduzuje == "S" .AND. pos->idvd $ "42#01"
             SKIP
             LOOP

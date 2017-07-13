@@ -433,7 +433,7 @@ FUNCTION font_name( cFontName )
 
 FUNCTION font_width( nWidth )
 
-   IF is_windws() // windows ignores font width
+   IF is_windows() // windows ignores font width
       RETURN -1
    ENDIF
 

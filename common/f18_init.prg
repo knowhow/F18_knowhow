@@ -212,7 +212,9 @@ FUNCTION set_screen_dimensions()
    IF is_mac()
       font_name( "Courier" )
    ELSEIF is_windows()
-      font_name( "Lucida Console" )
+      //font_name( "Lucida Console" )
+     font_name( "Hack" )
+
    ELSE
       font_name( "terminus" )
    ENDIF

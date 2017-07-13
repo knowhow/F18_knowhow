@@ -418,11 +418,12 @@ FUNCTION font_name( cFontName )
 
    RETURN s_cFontName
 
+
 FUNCTION font_width( nWidth )
 
-   IF is_windows() // windows ignores font width
-      RETURN -1
-   ENDIF
+   //IF is_windows() // windows ignores font width
+   //    RETURN -1
+   //ENDIF
 
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N" .AND. nWidth > 0

@@ -52,8 +52,7 @@ FUNCTION PrepisKumPr()
 
    ? cLM + "Vrsta placanja:", cPom
 
-   SELECT partn
-   HSEEK pos_doks->IdGost
+   select_o_partner( pos_doks->IdGost )
 
    IF gVrstaRS == "S"
       cPom := partn->Naz

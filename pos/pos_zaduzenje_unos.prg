@@ -226,8 +226,7 @@ FUNCTION Zaduzenje
             WHEN {|| _idroba := PadR( _idroba, Val( cDSFINI ) ), .T. } ;
             VALID Eval ( bRSblok, 2, 25 ) .AND. ( gDupliArt == "D" .OR. ZadProvDuple( _idroba ) )
          @ m_x + 4, m_y + 5 SAY8 "Količina:" GET _Kolicina PICT "999999.999" ;
-            WHEN{|| ShowGets(), .T. } ;
-            VALID ZadKolOK( _Kolicina )
+            WHEN{|| ShowGets(), .T. } VALID ZadKolOK( _Kolicina )
 
          IF gZadCij == "D"
             @ m_x + 3, m_y + 35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"

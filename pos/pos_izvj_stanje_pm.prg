@@ -204,8 +204,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
 
       DO WHILE !Eof() .AND. POS->IdRoba == cIdRoba .AND. ( POS->Datum < cDat .OR. ( !Empty( cSmjena ) .AND. POS->Datum == cDat .AND. POS->Smjena < cSmjena ) )
 
-         SELECT ( cRSdbf )
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
          IF ( FieldPos( "K9" ) ) <> 0 .AND. !Empty( cK9 )
             IF ( field->k9 <> cK9 )
                SELECT pos
@@ -257,8 +256,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       //
       DO WHILE !Eof() .AND. POS->IdRoba == cIdRoba .AND. ( POS->Datum == cDat .OR. ( !Empty( cSmjena ) .AND. POS->Datum == cDat .AND. POS->Smjena < cSmjena ) )
 
-         SELECT ( cRSdbf )
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
          IF ( FieldPos( "K9" ) ) <> 0 .AND. !Empty( cK9 )
             IF ( field->k9 <> cK9 )
                SELECT pos
@@ -311,8 +309,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       nStanje := nPstanje + ( nUlaz - nIzlaz )
 
       IF Round( nStanje, 4 ) <> 0 .OR. cNule == "D" .AND. !( nPstanje == 0 .AND. nUlaz == 0 .AND. nIzlaz == 0 )
-         SELECT ( cRSdbf )
-         HSEEK cIdRoba
+         select_o_roba( cIdRoba )
          IF ( FieldPos( "K9" ) ) <> 0 .AND. !Empty( cK9 )
             IF ( field->k9 <> cK9 )
                SELECT pos
@@ -452,39 +449,5 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
    ? cLM
    ?? "R.broj", "P.stanje ", PadC ( "Ulaz", 9 ), PadC ( "Izlaz", 9 ), PadC ( "Stanje", 10 ), PadC( "Cijena", 10 ), PadC( "Total", 10 )
    ? cLM
-
-   RETURN
-
-
-// -------------------------------------------------------------------
-// -------------------------------------------------------------------
-STATIC FUNCTION AnalizirajKontrolnuTabelu( cIdRoba, nStanje, nMpv )
-
-   LOCAL nArea
-
-   SELECT ( F_KONTROLA )
-
-   cKontrolnaTabela := "c:/sigma/kontrola.dbf"
-
-   IF !Used()
-      USE ( cKontrolnaTabela )
-      SET ORDER TO TAG "ID"
-   ENDIF
-
-   nArea := Select()
-   SEEK cIdRoba
-
-   IF Found()
-      IF lCekaj
-         IF ( nMpv <> kontrola->mpv ) .OR. ( nStanje <> kontrola->kolicina )
-            MsgBeep( cIdRoba + "#kontrola (stanje, mpv):" + Str( kontrola->kolicina, 10, 2 ) + "/" + Str( kontrola->mpv, 10, 2 ) + "#pos (stanje, mpv):" + Str( nStanje, 10, 2 ) + "/" + Str( nMpv, 10, 2 ) )
-            IF ( LastKey() == K_ESC )
-               lCekaj := .F.
-            ENDIF
-         ENDIF
-      ENDIF
-   ENDIF
-
-   Select( nArea )
 
    RETURN

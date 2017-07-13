@@ -193,8 +193,7 @@ FUNCTION pos_inventura_nivelacija()
 
             IF Round( nKolicina, 3 ) <> 0
 
-               SELECT ( cRSdbf )
-               HSEEK _idroba
+               select_o_roba( _idroba )
 
                _cijena := pos_get_mpc()
                _ncijena := pos_get_mpc()
@@ -554,8 +553,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
       @ m_x + 7, m_y + 2 SAY "stanje unosa - kol: " + AllTrim( Str( _saldo_kol, 12, 2 ) ) + ;
          " total: " + AllTrim( Str( _saldo_izn, 12, 2 ) )
 
-      SELECT ( cRSdbf )
-      HSEEK _idroba
+      select_o_roba( _idroba )
 
       IF nInd == 1
          @ m_x + 0, m_y + 1 SAY _idroba + " : " + AllTrim( naz ) + " (" + AllTrim( idtarifa ) + ")"
@@ -654,9 +652,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
       ENDIF
 
-      SELECT ( cRSdbf )
-      SET ORDER TO TAG "ID"
-      HSEEK _idroba
+      select_o_roba( _idroba )
 
       _r_tar := field->idtarifa
       _r_barkod := field->barkod

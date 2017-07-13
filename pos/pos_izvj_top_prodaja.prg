@@ -119,8 +119,7 @@ FUNCTION pos_top_narudzbe()
       SET ORDER TO TAG "2"
       GO BOTTOM
       DO WHILE !Bof() .AND. nCnt <= nTop
-         SELECT roba
-         HSEEK POM->IdRoba
+         select_o_roba( POM->IdRoba )
          ? roba->Id, Left ( roba->Naz, 20 ), Str ( POM->Iznos, 19, 2 )
          SELECT POM
          nCnt ++
@@ -143,8 +142,7 @@ FUNCTION pos_top_narudzbe()
       GO BOTTOM
 
       DO WHILE !Bof() .AND. nCnt <= nTop
-         SELECT roba
-         HSEEK POM->IdRoba
+         select_o_roba( POM->IdRoba )
          ? roba->Id, Left ( roba->Naz, 20 ), Str ( POM->Kolicina, 15, 3 )
          SELECT POM
          nCnt ++
@@ -190,8 +188,7 @@ FUNCTION TopNizvuci( cIdVd, dDat0 )
 
       WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-         SELECT roba
-         HSEEK pos->idroba
+         select_o_roba( pos->idroba )
          IF roba->( FieldPos( "idodj" ) ) <> 0
             SELECT odj
             HSEEK roba->idodj

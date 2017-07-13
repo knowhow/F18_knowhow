@@ -110,10 +110,10 @@ FUNCTION realizacija_kase
 
    // fZaklj - zakljucenje smjene
    IF !fZaklj
-      KasaIzvuci( "01", cSifraDob )
+      pos_kasa_izvuci( "01", cSifraDob )
    ENDIF
 
-   KasaIzvuci( "42", cSifraDob )
+   pos_kasa_izvuci( "42", cSifraDob )
 
    PRIVATE nTotal := 0
 

@@ -64,7 +64,7 @@ FUNCTION RealNaDan( dDatum )
 // ----------------------------------------------------------------------
 // kasa izvuci - funkcija koja izvlaci iznose po tipovima dokumenata
 // ----------------------------------------------------------------------
-FUNCTION KasaIzvuci( cIdVd, cDobId )
+FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
 
    // cIdVD - Id vrsta dokumenta
    // Opis: priprema pomoce baze POM.DBF za realizaciju
@@ -94,8 +94,7 @@ FUNCTION KasaIzvuci( cIdVd, cDobId )
             LOOP
          ENDIF
 
-         SELECT roba
-         HSEEK pos->IdRoba
+         select_o_roba( pos->IdRoba )
 
          IF roba->( FieldPos( "sifdob" ) ) <> 0
             IF !Empty( cDobId )
@@ -173,4 +172,4 @@ FUNCTION KasaIzvuci( cIdVd, cDobId )
 
    MsgC()
 
-   RETURN
+   RETURN .T.

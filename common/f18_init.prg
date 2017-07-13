@@ -210,7 +210,7 @@ FUNCTION set_screen_dimensions()
    cMsg := "screen res: " + AllTrim( to_str( nPixWidth ) ) + " " + AllTrim( to_str( nPixHeight ) ) + " varijanta: "
 
 
-altd()
+   AltD()
    IF is_terminal() .OR. nPixWidth == NIL
 
       f18_max_rows( MaxRow() )
@@ -293,16 +293,17 @@ altd()
 
    get_screen_resolution_from_config()
 
-   ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
 
-#if defined( __PLATFORM__LINUX ) .OR. defined( __PLATFORM__DARWIN )
-   ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
-#endif
+
+   font_weight_bold()
+   // ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
+
+
 
    // #if  defined( __PLATFORM__WINDOWS ) .OR. defined( __PLATFORM__LINUX )
-   ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
+   // ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
    // #endif
-   ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
+   // ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
 
 
 
@@ -323,7 +324,6 @@ altd()
       ?E "setovanje ekrana/2 "
    ENDIF
 
-
    ?E " get font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
    ?E " get font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
    ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
@@ -336,7 +336,7 @@ altd()
 
 STATIC FUNCTION get_screen_resolution_from_config()
 
-   LOCAL _var_name
+   LOCAL cParamName
 
    LOCAL hIniParams := hb_Hash()
 
@@ -361,17 +361,17 @@ STATIC FUNCTION get_screen_resolution_from_config()
    ENDIF
 
    IF hIniParams[ "font_name" ] != nil
-      s_cFontName := hIniParams[ "font_name" ]
+      font_name( hIniParams[ "font_name" ] )
    ENDIF
 
-   _var_name := "font_width"
-   IF hIniParams[ _var_name ] != nil
-      s_nFontWidth := Val( hIniParams[ _var_name ] )
+   cParamName := "font_width"
+   IF hIniParams[ cParamName ] != nil
+      font_width( Val( hIniParams[ cParamName ] ) )
    ENDIF
 
-   _var_name := "font_size"
-   IF hIniParams[ _var_name ] != nil
-      s_nFontSize := Val( hIniParams[ _var_name ] )
+   cParamName := "font_size"
+   IF hIniParams[ cParamName ] != nil
+      font_size( Val( hIniParams[ cParamName ] ) )
    ENDIF
 
    RETURN .T.
@@ -420,35 +420,53 @@ FUNCTION f18_max_cols( nY )
 
 
 
-FUNCTION font_name( x )
+FUNCTION font_name( cFontName )
 
-   IF ValType( x ) == "C"
-      s_cFontName := x
-   ENDIF
    ?E " s_font_name:", s_cFontName
+   IF ValType( cFontName ) == "C"
+      s_cFontName := cFontName
+      s_cFontName := hb_gtInfo( HB_GTI_FONTNAME, s_cFontName )
+      ?E " get font_name: ", s_cFontName
+
+   ENDIF
 
    RETURN s_cFontName
 
-FUNCTION font_width( x )
-
-   IF ValType( x ) == "N"
-      s_nFontWidth := x
-   ENDIF
+FUNCTION font_width( nWidth )
 
    ?E " s_font_width:", s_nFontWidth
+   IF ValType( nWidth ) == "N" .AND. nWidth > 0
+      s_nFontWidth := nWidth
+      s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth )
+      ?E " get font_width: ", s_nFontWidth
+   ENDIF
 
    RETURN s_nFontWidth
 
 
 FUNCTION font_size( nSize )
 
-   IF ValType( nSize ) == "N"
+   ?E " s_font_size:", s_nFontSize
+   IF ValType( nSize ) == "N" .AND. nSize > 0
       s_nFontSize := nSize
+      s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, s_nFontSize )
+      ?E " get font_size: ", s_nFontSize
    ENDIF
 
-   ?E " s_font_size:", s_nFontSize
-
    RETURN s_nFontSize
+
+
+FUNCTION font_weight_bold()
+
+   IF is_terminal()
+      RETURN .F.
+   ENDIF
+
+   IF is_mac() .OR. is_linux()
+      ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
+   ENDIF
+
+   RETURN .T.
 
 
 FUNCTION log_level( x )

@@ -18,7 +18,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
 
    LOCAL nX := 1
    LOCAL nPosX
-   LOCAL _pos_y
+   LOCAL nPosY
    LOCAL _left := 20
    LOCAL _fin, _kalk, _fakt, _epdv, _virm, _ld, _os, _rnal, _mat  // , _reports, _kadev
    LOCAL _pos
@@ -106,19 +106,16 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       CLEAR SCREEN
       ?
       nPosX := 2
-      _pos_y := 3
+      nPosY := 1
 
-      @ nPosX, _pos_y SAY "Odabir modula za glavni meni ***" COLOR f18_color_i()
-
-      @ nPosX + nX, _pos_y SAY Space( 2 ) + "FIN:" GET _fin PICT "@!"
+      @ nPosX, nPosY SAY "Odabir modula za glavni meni ***" COLOR f18_color_i()
+      @ nPosX + nX, nPosY SAY Space( 2 ) + "FIN:" GET _fin PICT "@!"
       @ nPosX + nX, Col() + 1 SAY "KALK:" GET _kalk PICT "@!"
       @ nPosX + nX, Col() + 1 SAY "FAKT:" GET _fakt PICT "@!"
       @ nPosX + nX, Col() + 1 SAY "ePDV:" GET _epdv PICT "@!"
       @ nPosX + nX, Col() + 1 SAY "LD:" GET _ld PICT "@!"
       @ nPosX + nX, Col() + 1 SAY "VIRM:" GET _virm PICT "@!"
-
-      ++nX
-      @ nPosX + nX, _pos_y SAY Space( 2 ) + "OS/SII:" GET _os PICT "@!"
+      @ nPosX + nX, Col() + 1 SAY "OS/SII:" GET _os PICT "@!"
       @ nPosX + nX, Col() + 1 SAY "POS:" GET _pos PICT "@!"
       @ nPosX + nX, Col() + 1 SAY "MAT:" GET _mat PICT "@!"
       @ nPosX + nX, Col() + 1 SAY "RNAL:" GET _rnal PICT "@!"
@@ -126,65 +123,60 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       // @ nPosX + nX, Col() + 1 SAY "REPORTS:" GET _reports PICT "@!"
 
       nX += 2
-      @ nPosX + nX, _pos_y SAY "Maticni podaci korisnika ***" COLOR f18_color_i()
+      @ nPosX + nX, nPosY SAY8 "Matični podaci korisnika ***" COLOR f18_color_i()
+      nX++
+      @ nPosX + nX, nPosY SAY PadL( "Puno ime i prezime:", _left ) GET _proper_name PICT "@S30"
 
       nX += 2
-      @ nPosX + nX, _pos_y SAY PadL( "Puno ime i prezime:", _left ) GET _proper_name PICT "@S30"
-
-      nX += 2
-      @ nPosX + nX, _pos_y SAY "Email parametri ***" COLOR f18_color_i()
-
+      @ nPosX + nX, nPosY SAY "Email parametri ***" COLOR f18_color_i()
       ++nX
-      @ nPosX + nX, _pos_y SAY PadL( "email server:", _left ) GET _email_server PICT "@S30"
+      @ nPosX + nX, nPosY SAY PadL( "email server:", _left ) GET _email_server PICT "@S30"
       @ nPosX + nX, Col() + 1 SAY "port:" GET _email_port PICT "9999"
       ++nX
-      @ nPosX + nX, _pos_y SAY PadL( "username:", _left ) GET _email_username PICT "@S30"
+      @ nPosX + nX, nPosY SAY PadL( "username:", _left ) GET _email_username PICT "@S30"
       @ nPosX + nX, Col() + 1 SAY "password:" GET _email_userpass PICT "@S30" COLOR F18_COLOR_PASSWORD
       ++nX
-      @ nPosX + nX, _pos_y SAY PadL( "moja email adresa:", _left ) GET _email_from PICT "@S40"
+      @ nPosX + nX, nPosY SAY PadL( "moja email adresa:", _left ) GET _email_from PICT "@S40"
       ++nX
-      @ nPosX + nX, _pos_y SAY8 PadL( "slati poštu na adrese:", _left ) GET _email_to PICT "@S70"
+      @ nPosX + nX, nPosY SAY8 PadL( "slati poštu na adrese:", _left ) GET _email_to PICT "@S70"
 
       ++nX
-      @ nPosX + nX, _pos_y SAY PadL( "cc adrese:", _left ) GET _email_cc PICT "@S70"
+      @ nPosX + nX, nPosY SAY PadL( "cc adrese:", _left ) GET _email_cc PICT "@S70"
 
       nX += 2
-      @ nPosX + nX, _pos_y SAY "Parametri log-a ***" COLOR f18_color_i()
-
+      @ nPosX + nX, nPosY SAY "Parametri log-a ***" COLOR f18_color_i()
       ++nX
-      @ nPosX + nX, _pos_y SAY8 "Briši stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
-
+      @ nPosX + nX, nPosY SAY8 "Briši stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
 
       nX += 2
-      @ nPosX + nX, _pos_y SAY "Backup parametri ***" COLOR f18_color_i()
+      @ nPosX + nX, nPosY SAY "Backup parametri ***" COLOR f18_color_i()
       ++nX
-      @ nPosX + nX, _pos_y SAY8 "Automatski backup podataka organizacije (interval dana 0 - ne radi ništa):" GET nBackupOrgInterval PICT "999"
+      @ nPosX + nX, nPosY SAY8 "Automatski backup podataka organizacije (interval dana 0 - ne radi ništa):" GET nBackupOrgInterval PICT "999"
+      ++nX
+      @ nPosX + nX, nPosY SAY8 "Automatski backup podataka servera (interval 0 - ne radi ništa):" GET nBackupServerInterval PICT "999"
 
       ++nX
-      @ nPosX + nX, _pos_y SAY8 "Automatski backup podataka servera (interval 0 - ne radi ništa):" GET nBackupServerInterval PICT "999"
-
-      ++nX
-      @ nPosX + nX, _pos_y SAY "Udaljena backup lokacija:" GET _backup_removable PICT "@S60"
+      @ nPosX + nX, nPosY SAY "Udaljena backup lokacija:" GET _backup_removable PICT "@S60"
 
 #ifdef __PLATFORM__WINDOWS
       ++nX
-      @ nPosX + nX, _pos_y SAY "Ping time kod backup komande:" GET _backup_ping_time PICT "99"
+      @ nPosX + nX, nPosY SAY "Ping time kod backup komande:" GET _backup_ping_time PICT "99"
 #endif
 
       nX += 2
-      @ nPosX + nX, _pos_y SAY "Ostali parametri ***" COLOR f18_color_i()
+      @ nPosX + nX, nPosY SAY "Ostali parametri ***" COLOR f18_color_i()
       ++nX
-      @ nPosX + nX, _pos_y SAY8 "Dužina stranice za izvještaje ( def: 60 ):" GET _rpt_page_len PICT "999"
+      @ nPosX + nX, nPosY SAY8 "Dužina stranice za izvještaje ( def: 60 ):" GET _rpt_page_len PICT "999"
 
       ++nX
-      @ nPosX + nX, _pos_y SAY "BUG report na email (D/N/A/0):" GET _bug_report PICT "!@" VALID _bug_report $ "DNA0"
+      @ nPosX + nX, nPosY SAY "BUG report na email (D/N/A/0):" GET _bug_report PICT "!@" VALID _bug_report $ "DNA0"
 
       @ nPosX + nX, Col() + 2 SAY "Nivo logiranja (0..9)" GET _log_level PICT "9" VALID _log_level >= 0 .AND. _log_level < 10
 
       nX += 2
-      @ nPosX + nX, _pos_y SAY "Kompatibilnost ***" COLOR f18_color_i()
+      @ nPosX + nX, nPosY SAY "Kompatibilnost ***" COLOR f18_color_i()
       ++nX
-      // @ nPosX + nX, _pos_y SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
+      // @ nPosX + nX, nPosY SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
       @ nPosX + nX, Col() + 2 SAY "KALK PR:" GET cLegacyKalkPr PICT "!@" VALID cLegacyKalkPr $ "DN"
       @ nPosX + nX, Col() + 2 SAY "PTXT:" GET cLegacyPTxt PICT "!@" VALID cLegacyPTxt $ "DN"
       @ nPosX + nX, Col() + 2 SAY "F18 LO (D/N/0):" GET cDownloadF18LO PICT "!@" VALID cDownloadF18LO $ "DN0"
@@ -312,7 +304,7 @@ FUNCTION f18_set_active_modules()
 
    LOCAL _ok := .F.
    LOCAL _fin, _kalk, _fakt, _ld, _epdv, _virm, _os, _rnal, _pos, _mat, _reports, _kadev
-   LOCAL nPosX, _pos_y
+   LOCAL nPosX, nPosY
    LOCAL nX := 1
    LOCAL _len := 8
    LOCAL _corr := "D"

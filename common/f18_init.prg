@@ -35,19 +35,19 @@ STATIC s_nMaxRows := 0
 STATIC s_nMaxCols := 0
 
 #ifdef  __PLATFORM__WINDOWS
-STATIC s_cFontName := "Lucida Console"
+STATIC s_cFontName
 STATIC s_nFontSize := 20
 STATIC s_nFontWidth := 10
 #else
 
 #ifdef  __PLATFORM__LINUX
-STATIC s_cFontName := "terminus"
+STATIC s_cFontName
 
 STATIC s_nFontSize  := 20
 STATIC s_nFontWidth := 10
 
 #else
-STATIC s_cFontName  := "Courier"
+STATIC s_cFontName
 STATIC s_nFontSize  := 20
 STATIC s_nFontWidth := 10
 
@@ -61,9 +61,6 @@ STATIC __log_level := F18_DEFAULT_LOG_LEVEL_DEBUG
 STATIC __log_level := F18_DEFAULT_LOG_LEVEL
 #endif
 
-
-
-
 FUNCTION f18_error_block()
 
    ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
@@ -73,8 +70,8 @@ FUNCTION f18_error_block()
 
 FUNCTION f18_init_app_opts()
 
-   LOCAL _opt := {}
-   LOCAL _optexe := {}
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
    AAdd( _opc, hb_UTF8ToStr( "1. vpn konekcija                         " ) )
@@ -226,12 +223,19 @@ FUNCTION set_screen_dimensions()
    ENDIF
 
 
+   IF is_mac()
+      font_name( "Courier" )
+   ELSEIF is_windows()
+      font_name( "Lucida Console" )
+   ELSE
+      font_name( "terminus" )
+   ENDIF
+
    DO CASE
 
    CASE nPixWidth >= 1440 .AND. nPixHeight >= 900
 
       IF is_mac()
-         font_name( "Courier" )
          font_size( 24 )
          font_width( 12 )
          f18_max_rows( 35 )
@@ -282,7 +286,6 @@ FUNCTION set_screen_dimensions()
 
       font_size( 22 )
       font_width( 11 )
-
       f18_max_rows( 35 )
       f18_max_cols( 100 )
 
@@ -294,7 +297,6 @@ FUNCTION set_screen_dimensions()
    get_screen_resolution_from_config()
 
 
-
    font_weight_bold()
    // ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
 
@@ -304,7 +306,6 @@ FUNCTION set_screen_dimensions()
    // ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
    // #endif
    // ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
-
 
 
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
@@ -427,7 +428,6 @@ FUNCTION font_name( cFontName )
       s_cFontName := cFontName
       s_cFontName := hb_gtInfo( HB_GTI_FONTNAME, s_cFontName )
       ?E " get font_name: ", s_cFontName
-
    ENDIF
 
    RETURN s_cFontName

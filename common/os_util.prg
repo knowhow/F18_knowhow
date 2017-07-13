@@ -554,7 +554,6 @@ FUNCTION f18_open_mime_document( cDocument )
    ELSE
       cPrefixCmd := get_run_prefix_cmd()
       cCmd += cPrefixCmd
-      AltD()
       nError := f18_run( cCmd, cDocument, NIL, .T. ) // async
    ENDIF
 

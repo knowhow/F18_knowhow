@@ -95,7 +95,6 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
       bZaRed := {|| .T. }
    ENDIF
 
-altd()
    IF bFor == nil; bFor := {|| .T. }; ENDIF
    IF lCTab == nil; lCTab := .T. ; ENDIF
    IF lA4papir == nil; lA4papir := "4"; ENDIF

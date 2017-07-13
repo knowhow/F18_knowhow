@@ -143,7 +143,6 @@ FUNCTION fin_specif_suban_proizv_sort()
    INDEX ON &cSort1 TAG "TELSORT"
    SET ORDER TO TAG "TELSORT"
    GO TOP
-   AltD()
 
    BoxC()
 

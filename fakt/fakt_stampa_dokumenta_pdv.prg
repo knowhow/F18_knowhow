@@ -1126,7 +1126,7 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
 
       cIdBroj := firma_id_broj( cId )
       cPdvBroj := firma_pdv_broj( cId )
-      AltD()
+
       // cPorBroj := get_partn_sifk_sifv( "PORB", cId, .F. )
 
 /*

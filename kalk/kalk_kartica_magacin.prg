@@ -215,7 +215,6 @@ FUNCTION kalk_kartica_magacin()
 
    zagl_mag_kart()
 
-altd()
    DO WHILE !Eof() .AND. iif( lRobaTackaZarez, idfirma + mkonto + field->idroba >= cIdFirma + cIdKonto + cIdRobaTackaZarez, idfirma + mkonto + field->idroba == cIdFirma + cIdKonto + cIdRobaTackaZarez )
 
       IF field->mkonto <> cIdKonto .OR. field->idfirma <> cIdFirma

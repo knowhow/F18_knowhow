@@ -156,7 +156,6 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    /*
    SELECT ops
 
-   altD()
    IF ( FieldPos( "DNE" ) <> 0 )
       GO TOP
       DO WHILE !Eof()

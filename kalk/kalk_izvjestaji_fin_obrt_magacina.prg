@@ -141,7 +141,6 @@ FUNCTION kalk_finansijski_obrt()
       lPrDatumOd := .T.
    ENDIF
 
-altd()
    GenRekap2( .T., cCijena, lPrDatumOd, lVpRabat, fSMark )
 
    // setuj liniju za izvjestaj

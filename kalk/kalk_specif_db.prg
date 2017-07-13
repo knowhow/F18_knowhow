@@ -262,7 +262,6 @@ FUNCTION GenRekap2( lK2X, cC, lPrDatOd, lVpRab, lMarkiranaRoba )
       lMarkiranaRoba := .F.
    ENDIF
 
-altd()
    find_kalk_by_mkonto_idroba_idvd( self_organizacija_id(), NIL, NIL, qqRoba, "idkonto,idroba" )
 
 

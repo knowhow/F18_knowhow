@@ -55,7 +55,6 @@ FUNCTION fin_dnevnik_naloga()
    // o_partner()
    // o_konto()
    // o_nalog()
-   AltD()
 
    find_nalog_za_period( cIdFirma, cIdVN, dOd, dDo, NIL, "NALOG_DNEVNIK" )
    // o_suban()

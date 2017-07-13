@@ -178,7 +178,6 @@ STATIC FUNCTION r_export_fill( aKol, aDbfStruct )
 
    LOCAL hRec, nArea, nKol, hField, xValue
 
-   AltD()
    PushWa()
 
    create_dbf_r_export( aDbfStruct )

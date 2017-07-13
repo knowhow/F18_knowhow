@@ -665,7 +665,6 @@ STATIC FUNCTION use_sql_kalk_where( hParams )
    ENDIF
 
    IF hb_HHasKey( hParams, "idroba" )
-   altd()
       cWhere += "AND " + parsiraj_sql( "idroba", hParams[ "idroba" ] )
    ENDIF
 

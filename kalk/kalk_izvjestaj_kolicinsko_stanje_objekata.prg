@@ -95,7 +95,6 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    otvori_tabele()
 
-   AltD()
    kalk_gen_rekap1( s_cUslovPKonto, s_cUslovMKonto, s_cUslovIdRoba, "N", "1", "N", lMarkiranaRoba, NIL, cK9 )
 
    set_linije_razdvajanja()
@@ -114,7 +113,6 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    nStr := 0
 
-   AltD()
    zaglavlje_izvjestaja( @nStr )
 
    nCol1 := 43
@@ -142,7 +140,6 @@ FUNCTION kalk_izvj_stanje_po_objektima()
       ENDDO
 
       SELECT rekap1
-      AltD()
       fFilGr := .F.
       fFilovo := .F.
 
@@ -315,7 +312,6 @@ FUNCTION kalk_gen_rekap1( aUsl1, aUsl2, s_cUslovIdRoba, cKartica, cVarijanta, cK
 
    nSec := Seconds()
 
-   AltD()
    find_kalk_by_mkonto_idroba_idvd( self_organizacija_id(), NIL, NIL, s_cUslovIdRoba, "idkonto,idroba" )
 
    PRIVATE cFilt1 := ""
@@ -335,7 +331,6 @@ FUNCTION kalk_gen_rekap1( aUsl1, aUsl2, s_cUslovIdRoba, cKartica, cVarijanta, cK
 
    showkorner( rloptlevel() + 100, 1, 66 )
 
-   AltD()
    GO TOP
 
    nStavki := 0
@@ -1116,7 +1111,6 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
 
    MsgC()
 
-   altd()
    SELECT POBJEKTI
    INDEX ON field->id TAG "1"
 

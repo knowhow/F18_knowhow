@@ -395,7 +395,6 @@ FUNCTION sifarnik_izbor_polja( Kol, cImef )
    // matrice kao karakterne memorijske varijable
    SAVE  ALL LIKE cKolona TO &cImeF
 
-   altd()
    ACopy( Kl, Kol )
 
    RETURN .T.

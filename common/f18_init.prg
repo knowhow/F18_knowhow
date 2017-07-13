@@ -465,9 +465,9 @@ FUNCTION font_weight_bold()
       RETURN .F.
    ENDIF
 
-   //IF is_mac() .OR. is_linux()
+   IF is_mac() .OR. is_linux()
       ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
-   //ENDIF
+   ENDIF
 
    RETURN .T.
 

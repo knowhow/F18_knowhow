@@ -238,13 +238,13 @@ FUNCTION set_screen_dimensions()
       IF is_mac()
          font_size( 24 )
          font_width( 12 )
-         f18_max_rows( 35 )
-         f18_max_cols( 119 )
+         //f18_max_rows( 35 )
+         //f18_max_cols( 119 )
       ELSE
          font_size( 24 )
          font_width( 12 )
-         f18_max_rows( 35 )
-         f18_max_cols( 119 )
+         //f18_max_rows( 35 )
+         //f18_max_cols( 119 )
       ENDIF
       ?E cMsg + "1"
 
@@ -253,15 +253,15 @@ FUNCTION set_screen_dimensions()
       IF is_mac()
          font_size( 20 )
          font_width( 12 )
-         f18_max_rows( 33 )
-         f18_max_cols( 110 )
+         //f18_max_rows( 33 )
+         //f18_max_cols( 110 )
          ?E cMsg + "2longMac"
       ELSE
 
          font_size( 24 )
          font_width( 12 )
-         f18_max_rows( 33 )
-         f18_max_cols( 105 )
+         //f18_max_rows( 33 )
+         //f18_max_cols( 105 )
          ?E cMsg + "2long"
       ENDIF
 
@@ -269,16 +269,16 @@ FUNCTION set_screen_dimensions()
 
       font_size( 22 )
       font_width( 11 )
-      f18_max_rows( 35 )
-      f18_max_cols( 115 )
+      //f18_max_rows( 35 )
+      //f18_max_cols( 115 )
       ?E cMsg + "2"
 
    CASE  nPixWidth >= 1024 .AND. nPixHeight >= 768
 
       font_size( 22 )
       font_width( 11 )
-      f18_max_rows( 35 )
-      f18_max_cols( 100 )
+      //f18_max_rows( 35 )
+      //f18_max_cols( 100 )
 
       ?E cMsg + "3"
 
@@ -286,8 +286,8 @@ FUNCTION set_screen_dimensions()
 
       font_size( 22 )
       font_width( 11 )
-      f18_max_rows( 35 )
-      f18_max_cols( 100 )
+      //f18_max_rows( 35 )
+      //f18_max_cols( 100 )
 
       ?E "init",  cMsg + "4"
 
@@ -295,7 +295,6 @@ FUNCTION set_screen_dimensions()
 
 
    get_screen_resolution_from_config()
-
 
    font_weight_bold()
    // ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )

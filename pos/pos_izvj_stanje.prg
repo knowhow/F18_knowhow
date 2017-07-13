@@ -46,11 +46,10 @@ FUNCTION pos_stanje_artikala
    ENDIF
 
    o_pos_kase()
-   O_ODJ
-   O_DIO
-  // o_sifk()
-  // o_sifv()
-  // o_roba()
+   o_pos_odj()
+   // o_sifk()
+   // o_sifv()
+   // o_roba()
    o_pos_pos()
 
    cIdPos := gIdPos
@@ -153,7 +152,7 @@ FUNCTION pos_stanje_artikala
       IF Empty( cIdOdj ) .AND. _IdOdj <> xIdOdj
 
          IF fZaklj
-            Zagl( _IdOdj, nil, cVrstaRs )
+            Zagl( _IdOdj, NIL, cVrstaRs )
          ENDIF
 
          Podvuci( cVrstaRs )
@@ -353,7 +352,7 @@ STATIC FUNCTION Podvuci( cVrstaRs )
 
 STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
 
-   IF ( dDat == nil )
+   IF ( dDat == NIL )
       dDat := gDatum
    ENDIF
 
@@ -368,7 +367,7 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
    ? cLM + "Prod. mjesto:" + iif ( Empty( cIdPos ), "SVE", find_pos_kasa_naz( cIdPos ) )
 
    IF gvodiodj == "D"
-      ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( ocitaj_izbaci( F_ODJ, cIdOdj, "naz" ) )
+      ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( find_pos_odj_naziv( cIdOdj ) )
    ENDIF
 
    ? cLM + "Artikal    : " + IF( Empty( cRoba ), "SVI", RTrim( cRoba ) )

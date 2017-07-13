@@ -17,12 +17,3 @@ FUNCTION o_pos_doks()
 
 FUNCTION o_pos_pos()
    RETURN o_dbf_table( F_POS_POS, "pos_pos", "1" )
-
-FUNCTION o_pos_osob()
-   RETURN o_dbf_table( F_OSOB, "osob", "ID" )
-
-
-
-
-FUNCTION o_pos_strad()
-   RETURN o_dbf_table( F_STRAD, "strad", "ID" )

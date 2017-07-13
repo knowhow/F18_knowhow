@@ -11,15 +11,16 @@
 
 #include "f18.ch"
 
+STATIC s_lInitBrowse := .F.
 
-FUNCTION pos_pregled_racuna( admin )
+FUNCTION pos_pregled_racuna( lAdmin )
 
-   LOCAL _datum := NIL
+   LOCAL dDatum := NIL
    LOCAL _danas := "D"
    PRIVATE aVezani := {}
 
-   IF admin == NIL
-      admin := .F.
+   IF lAdmin == NIL
+      lAdmin := .F.
    ENDIF
 
    o_pos_tables()
@@ -30,18 +31,18 @@ FUNCTION pos_pregled_racuna( admin )
    BoxC()
 
    IF _danas == "D"
-      _datum := Date()
+      dDatum := Date()
    ENDIF
 
-   pos_lista_racuna( _datum )
+   pos_lista_racuna( dDatum )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
-FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
+FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, cPrefixFilter, qIdRoba )
 
    LOCAL i
    PRIVATE fMark := .F.
@@ -67,7 +68,7 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
       cRacun := AllTrim( cBroj )
    ENDIF
 
-   cIdPos := Left( cRacun, At( "-", cRacun ) -1 )
+   cIdPos := Left( cRacun, At( "-", cRacun ) - 1 )
    cIdPos := PadR( cIdPOS, Len( gIdPos ) )
 
    IF gVrstaRS <> "S" .AND. !Empty( cIdPos ) .AND. cIdPOS <> gIdPos
@@ -75,10 +76,10 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
       RETURN ( .F. )
    ENDIF
 
-   cBroj := Right( cRacun, Len( cRacun ) -At( "-", cRacun ) )
+   cBroj := Right( cRacun, Len( cRacun ) - At( "-", cRacun ) )
    cBroj := PadL( cBroj, 6 )
 
-   AAdd( ImeKol, { "Broj racuna", {|| PadR( Trim( IdPos ) + "-" + AllTrim( BrDok ), 9 ) } } )
+   AAdd( ImeKol, { _u( "Broj računa" ), {|| PadR( Trim( pos_doks->IdPos ) + "-" + AllTrim( pos_doks->BrDok ), 9 ) } } )
    AAdd( ImeKol, { "Fisk.rn", {|| fisc_rn } } )
    AAdd( ImeKol, { "Iznos", {|| Str ( pos_iznos_racuna( field->idpos, field->idvd, field->datum, field->brdok ), 13, 2 ) } } )
    AAdd( ImeKol, { "Smj", {||  smjena } } )
@@ -88,19 +89,20 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
    AAdd( ImeKol, { "Vrijeme", {|| vrijeme } } )
    AAdd( ImeKol, { "Placen",     {|| iif ( Placen == PLAC_NIJE, "  NE", "  DA" ) } } )
 
+
    FOR i := 1 TO Len( ImeKol )
       AAdd( kol, i )
    NEXT
 
    SELECT pos_doks
 
-   IF fScope = nil
-      fScope := .T.
-   ENDIF
+   // IF fScope = nil
+   // fScope := .T.
+   // ENDIF
 
-   IF fScope
-      SET SCOPEBOTTOM TO "W"
-   ENDIF
+   // IF fScope
+   // SET SCOPEBOTTOM TO "W"
+   // ENDIF
 
    IF gVrstaRS == "S" .OR. pos_admin()
       AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
@@ -119,6 +121,7 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
    ENDIF
 
    SET FILTER TO &cFilter
+   GO TOP
 
    IF !Empty( cBroj )
       SEEK2( cIdPos + "42" + DToS( dDat ) + cBroj )
@@ -127,8 +130,8 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
          dDat := pos_doks->datum
          RETURN( .T. )
       ENDIF
-   ELSE
-      GO BOTTOM
+      // ELSE
+      // GO BOTTOM
    ENDIF
 
    IF fPrep
@@ -140,7 +143,8 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
       bMarkF := NIL
    ENDIF
 
-   my_db_edit_sql( "racun", f18_max_rows() - 12, f18_max_cols() - 25, {|| lista_racuna_key_handler( fMark ) }, _u(" POS RAČUNI "), "", nil, cFnc,, bMarkF )
+   s_lInitBrowse := .T.
+   my_db_edit_sql( "pos_rn", f18_max_rows() - 12, f18_max_cols() - 25, {| nCh | lista_racuna_key_handler( nCh ) }, _u( " POS RAČUNI " ), "", NIL, cFnc,, bMarkF )
 
    SET FILTER TO
 
@@ -160,40 +164,48 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
 
 
 
-STATIC FUNCTION lista_racuna_key_handler()
+STATIC FUNCTION lista_racuna_key_handler( nCh )
 
-   LOCAL cLevel
-   LOCAL ii
+   // LOCAL cLevel
+   // LOCAL ii
    LOCAL nTrec
    LOCAL nTrec2
    LOCAL hRec
 
-   IF M->Ch == 0
-      RETURN ( DE_CONT )
+   // IF nCh == 0
+   // RETURN ( DE_CONT )
+   // ENDIF
+
+
+   // o_pos_odj()
+   // o_pos_strad()
+
+   // select_o_pos_strad( gStrad )
+   // cLevel := field->prioritet
+   // USE
+
+   // altd()
+   // SELECT pos_doks
+
+   IF s_lInitBrowse
+      s_lInitBrowse := .F.
+
+      DO WHILE !( Tb:hitTop .OR. TB:hitBottom )
+         Tb:down()
+         TB:Stabilize()
+      ENDDO
+      //DO WHILE !Tb:Stabilize()
+      //ENDDO
    ENDIF
 
-   IF ( LastKey() == K_ESC ) .OR. ( LastKey() == K_ENTER )
-      RETURN ( DE_ABORT )
-   ENDIF
-
-   O_DIO
-   O_ODJ
-   O_STRAD
-
-   SELECT strad
-   HSEEK gStrad
-   cLevel := prioritet
-   USE
-   SELECT pos_doks
-
-   IF Upper( Chr( LastKey() ) ) == "P"
+   IF Upper( Chr( nCh ) ) == "P"
       pos_pregled_stavki_racuna( pos_doks->IdPos, pos_doks->datum, pos_doks->BrDok )
       RETURN DE_REFRESH
    ENDIF
 
-   IF Upper( Chr( LastKey() ) ) == "F"
+   IF Upper( Chr( nCh ) ) == "F"
       aVezani := { { IdPos, BrDok, IdVd, datum } }
-      StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., nil, .T. )
+      StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., NIL, .T. )
       SELECT pos_doks
       f7_pf_traka( .T. )
       SELECT pos_doks
@@ -201,10 +213,9 @@ STATIC FUNCTION lista_racuna_key_handler()
       RETURN DE_REFRESH
    ENDIF
 
-   IF Upper( Chr( LastKey() ) ) == "S"
+   IF Upper( Chr( nCh ) ) == "S"
 
       pos_storno_rn( .T., pos_doks->brdok, pos_doks->datum, PadR( AllTrim( Str( pos_doks->fisc_rn ) ), 10 ) )
-
       MsgBeep( "Storno račun se nalazi u pripremi !" )
 
       SELECT pos_doks
@@ -212,8 +223,7 @@ STATIC FUNCTION lista_racuna_key_handler()
 
    ENDIF
 
-
-   IF ch == K_CTRL_V
+   IF nCh == K_CTRL_V
 
       IF pos_doks->idvd <> "42"
          RETURN DE_CONT
@@ -238,5 +248,11 @@ STATIC FUNCTION lista_racuna_key_handler()
       ENDIF
 
    ENDIF
+
+/*
+   IF ( LastKey() == K_ESC ) .OR. ( LastKey() == K_ENTER )
+      RETURN ( DE_ABORT )
+   ENDIF
+*/
 
    RETURN ( DE_CONT )

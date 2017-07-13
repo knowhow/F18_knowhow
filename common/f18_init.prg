@@ -192,8 +192,6 @@ FUNCTION set_screen_dimensions()
 
    cMsg := "screen res: " + AllTrim( to_str( nPixWidth ) ) + " " + AllTrim( to_str( nPixHeight ) ) + " varijanta: "
 
-
-   AltD()
    IF is_terminal() .OR. nPixWidth == NIL
 
       f18_max_rows( MaxRow() )

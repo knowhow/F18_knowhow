@@ -15,7 +15,7 @@
 
 STATIC FUNCTION _o_tables()
 
-   O_ODJ
+   o_pos_odj()
    o_pos_kase()
 //   o_sifk()
 //   o_sifv()

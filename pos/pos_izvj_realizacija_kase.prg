@@ -359,9 +359,6 @@ STATIC FUNCTION ZaglZ( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj 
    ?? PadC( "ZAKLJUCENJE KASE", LEN_TRAKA )
    ? PadC( gPosNaz )
 
-   IF !Empty( gIdDio )
-      ? PadC( gDioNaz, LEN_TRAKA )
-   ENDIF
 
    IF gVSmjene == "D"
       ? PadC( FormDat1( gDatum ) + " Smjena: " + gSmjena, LEN_TRAKA )
@@ -412,7 +409,7 @@ FUNCTION RekVrstePl()
       _IdPos := pom->IdPos
 
       IF Empty( cIdPos )
-         select_o_kase( _IdPos )
+         select_o_pos_kase( _IdPos )
          ?
          ? Replicate( "-", LEN_TRAKA )
          ? Space( 1 ) + _IdPos + ":", + kase->Naz
@@ -613,7 +610,7 @@ STATIC FUNCTION RealPoRadn()
          nTotPos3 := 0
          _IdPos := POM->IdPos
          IF Empty( cIdPos )
-            select_o_kase( _IdPos )
+            select_o_pos_kase( _IdPos )
             ? REPL ( "-", LEN_TRAKA )
             ? Space( 1 ) + _idpos + ":", + KASE->Naz
             ? REPL ( "-", LEN_TRAKA )
@@ -777,7 +774,7 @@ STATIC FUNCTION RealPoOdj( fPrik, nTotal2, nTotal3 )
       WHILE !Eof()
          _IdPos := pom->IdPos
          IF Empty( cIdPos )
-            select_o_kase( _IdPos )
+            select_o_pos_kase( _IdPos )
             ? REPL( "-", LEN_TRAKA )
             ? Space( 1 ) + _idpos + ":", KASE->Naz
             ? REPL( "-", LEN_TRAKA )
@@ -831,7 +828,7 @@ STATIC FUNCTION RealPoOdj( fPrik, nTotal2, nTotal3 )
       DO WHILE !Eof()
          _IdPos := POM->IdPos
          IF Empty( cIdPos )
-            select_o_kase( _IdPos )
+            select_o_pos_kase( _IdPos )
             ? REPL( "-", LEN_TRAKA )
             ? Space( 1 ) + _idpos + ":", KASE->Naz
             ? REPL( "-", LEN_TRAKA )

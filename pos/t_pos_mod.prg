@@ -219,7 +219,6 @@ METHOD set_module_gvars()
    PUBLIC gSifUvPoNaz := "N" // sifra uvijek po nazivu
 
    PUBLIC gPosNaz
-   PUBLIC gDioNaz
    PUBLIC gRnHeder := "RacHeder.TXT"
    PUBLIC gRnFuter := "RacPodn.TXT "
    PUBLIC gZagIz := "1;2;"
@@ -436,22 +435,11 @@ METHOD set_module_gvars()
    PUBLIC glPorNaSvStRKas := .F.
 
    IF ( gVrstaRS <> "S" )
-      o_pos_kase()
-      SET ORDER TO TAG "ID"
-      HSEEK gIdPos
-      IF Found()
+      IF select_o_pos_kase( gIdPos )
          gPosNaz := AllTrim( KASE->Naz )
       ELSE
          gPosNaz := "SERVER"
       ENDIF
-      // O_DIO
-      // SET ORDER TO TAG "ID"
-      // HSEEK gIdDio
-      // IF Found()
-      // gDioNaz := AllTrim ( DIO->Naz )
-      // ELSE
-      gDioNaz := ""
-      // ENDIF
       CLOSE ALL
    ENDIF
 

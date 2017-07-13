@@ -35,7 +35,6 @@ FUNCTION pos_kartica_artikla()
    nMDBrDok := 6
 
    o_pos_kase()
-   O_DIO
   // o_sifk()
   // o_sifv()
   // o_roba()

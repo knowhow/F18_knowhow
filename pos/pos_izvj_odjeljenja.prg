@@ -140,7 +140,7 @@ FUNCTION realizacija_odjeljenja()
          nTotDio3 := 0
          DO WHILE !Eof() .AND. POM->( IdOdj + IdDio ) == ( _IdOdj + _IdDio )
             _IdPos := POM->IdPos
-            select_o_kase( _IdPos )
+            select_o_pos_kase( _IdPos )
             ? Space( 1 ) + _idpos + ":", + KASE->Naz
             SELECT POM
             nTotPos := 0
@@ -349,8 +349,7 @@ FUNCTION realizacija_dio_objekta
 
    cPrikRobe := iif ( cPrikRobe == NIL, "N", cPrikRobe )
 
-   O_DIO
-   O_ODJ
+   o_pos_odj()
    o_pos_osob()
    SET ORDER TO TAG ( "NAZ" )
    o_vrstep()
@@ -470,7 +469,7 @@ FUNCTION realizacija_dio_objekta
       nTotDio3 := 0
       DO WHILE !Eof() .AND. POM->IdDio == _IdDio
          _IdPos := POM->IdPos
-         select_o_kase( _IdPos )
+         select_o_pos_kase( _IdPos )
          ? Space( 1 ) + _idpos + ":", + KASE->Naz
          ? Space ( 5 ) + REPL ( "-", 35 )
          SELECT POM
@@ -897,8 +896,7 @@ FUNCTION OdjIzvuci( cIdVd )
 
 STATIC FUNCTION _o_tables()
 
-   O_DIO
-   O_ODJ
+   o_pos_odj()
 // o_sifk()
 // o_sifv()
    // o_pos_kase()

@@ -127,9 +127,6 @@ FUNCTION pos_realizacija_radnik
          ?? PadC ( "REALIZACIJA RADNIKA PO ROBAMA", 40 )
       ENDIF
       ? PadC ( gPosNaz )
-      //IF !Empty ( gIdDio )
-      //   ? PadC ( gDioNaz, 40 )
-      //ENDIF
       ?
 
       ? gIdRadnik, "-", PadC ( AllTrim ( find_pos_osob_naziv( gIdRadnik ) ), 40 )
@@ -453,9 +450,8 @@ STATIC FUNCTION o_tables()
 
    // o_sifk()
    // o_sifv()
-   O_DIO
    // o_pos_kase()
-   O_ODJ
+   o_pos_odj()
    // o_roba()
    // o_pos_osob()
    SET ORDER TO TAG "NAZ"

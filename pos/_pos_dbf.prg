@@ -107,7 +107,7 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
    LOCAL lOk := .T., hParams
 
-   O_STRAD
+   o_pos_strad()
 
    IF ( RECCOUNT2() == 0 )
 
@@ -192,21 +192,20 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
       o_pos_kumulativne_tabele()
    ENDIF
 
-   O_ODJ
+   o_pos_odj()
    o_pos_osob()
    SET ORDER TO TAG "NAZ"
 
    o_vrstep()
-//   o_partner()
-   O_DIO
+// o_partner()
    O_K2C
    O_MJTRUR
    o_pos_kase()
    o_sastavnica()
-//   o_roba()
-  // o_tarifa()
-  // o_sifk()
-  // o_sifv()
+// o_roba()
+   // o_tarifa()
+   // o_sifk()
+   // o_sifv()
    O_PRIPRZ
    O_PRIPRG
    O__POS
@@ -235,16 +234,16 @@ FUNCTION o_pos_sifre()
 
    o_pos_kase()
    O_UREDJ
-   O_ODJ
-  // o_roba()
-  // o_tarifa()
+   o_pos_odj()
+   // o_roba()
+   // o_tarifa()
    o_vrstep()
-  // o_valute()
-  // o_partner()
+   // o_valute()
+   // o_partner()
    o_pos_osob()
-   O_STRAD
-  // o_sifk()
-  // o_sifv()
+   o_pos_strad()
+   // o_sifk()
+   // o_sifv()
 
    RETURN .T.
 
@@ -254,6 +253,8 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
 
    LOCAL cSql, oData, oRow
    LOCAL nTotal := 0
+
+   PushWA()
 
    IF PCount() == 0
       cIdPos := pos_doks->IdPos
@@ -272,6 +273,8 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
    cSql += " AND datum = " + sql_quote( dDatum )
 
    oData := run_sql_query( cSql )
+
+   PopWa()
 
    IF !is_var_objekat_tpqquery( oData )
       RETURN nTotal
@@ -449,7 +452,7 @@ FUNCTION pos_import_fmk_roba()
    ENDIF
 
    my_use_temp( "TOPS_ROBA", AllTrim( _location ), .F., .T. )
-   INDEX on ( "id" ) TAG "ID"
+   INDEX ON ( "id" ) TAG "ID"
 
    SELECT tops_roba
    SET ORDER TO TAG "ID"

@@ -36,7 +36,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
    SELECT ( F_ODJ )
 
    IF !Used()
-      O_ODJ
+      o_pos_odj()
    ENDIF
 
    IF lPrepis

@@ -416,14 +416,10 @@ STATIC FUNCTION _o_pos_prepis_tbl()
       o_vrstep()
    ENDIF
 
-   SELECT ( F_DIO )
-   IF !Used()
-      O_DIO
-   ENDIF
 
    SELECT ( F_ODJ )
    IF !Used()
-      O_ODJ
+      o_pos_odj()
    ENDIF
 
    SELECT ( F_KASE )

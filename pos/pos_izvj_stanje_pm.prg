@@ -58,8 +58,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
    ENDIF
 
    o_pos_kase()
-   O_ODJ
-   O_DIO
+   o_pos_odj()
    // o_sifk()
    // o_sifv()
    // o_roba()

@@ -46,7 +46,7 @@ FUNCTION pos_pregled_racuna_tabela()
 
    IF LastKey() == K_ESC
       CLOSE ALL
-      RETURN
+      RETURN .F.
    ENDIF
 
    cFil0 := ""
@@ -55,10 +55,10 @@ FUNCTION pos_pregled_racuna_tabela()
       cFil0 := "datum >= " + _filter_quote( dDatOD ) + " .and. datum <= " + _filter_quote( dDatDo ) + " .and. "
    ENDIF
 
-   pos_lista_racuna(,,, fScope, cFil0, qIdRoba )
+   pos_lista_racuna(,,, cFil0, qIdRoba )
 
    my_close_all_dbf()
 
    gIdPos := cTekIdPos
 
-   RETURN
+   RETURN .T.

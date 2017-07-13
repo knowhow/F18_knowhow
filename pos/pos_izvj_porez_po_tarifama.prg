@@ -52,7 +52,7 @@ FUNCTION PorPoTar
     //  o_sifv()
       o_pos_kase()
     //  o_roba()
-      O_ODJ
+      o_pos_odj()
       o_pos_doks()
       o_pos_pos()
    ENDIF

@@ -664,10 +664,8 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
    LOCAL pGT := NIL, pMainGT := NIL
 
 #ifdef __PLATFORM__WINDOWS
-
    // RETURN windows_run_invisible( cCmd, "", NIL, NIL, .F. )
-
-   RETURN __WIN32_SYSTEM( cCmd )
+   RETURN __WIN32_SYSTEM( "cmd /c notepad" )
 #endif
 
 // IF is_terminal()

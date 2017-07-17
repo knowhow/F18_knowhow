@@ -43,8 +43,8 @@ CLASS F18Backup
    VAR  nError       INIT 0
    VAR  nBackupType  INIT 1 // organizacija
 
-   DATA backup_path
-   DATA backup_filename
+   DATA cPath
+   DATA cFileName
    DATA backup_interval
 
    DATA last_backup
@@ -186,7 +186,7 @@ METHOD F18Backup:do_backup_now()
 
    IF ::nError == 0
       info_bar( "backup", "backup END :)" )
-      MsgBeep( "kreiran backup:##" + ::backup_path + ::backup_filename )
+      MsgBeep( "kreiran backup:##" + ::cPath + ::cFileName )
    ELSE
       error_bar( "backup", "backup ERROR" )
    ENDIF
@@ -263,13 +263,13 @@ METHOD F18Backup:backup_organizacija()
 
 #endif
 
-   cBackupFile := ::backup_path + ::backup_filename
+   cBackupFile := ::cPath + ::cFileName
 
 #ifdef __PLATFORM__WINDOWS
    cBackupFile := StrTran( cBackupFile, "\", "//" )
 #endif
 
-   cCmd += "pg_dump "
+   cCmd += pg_dump_cmd() + " "
    cCmd += " -h " + AllTrim( _host )
    cCmd += " -p " + AllTrim( Str( _port ) )
    cCmd += " -U " + f18_user()
@@ -279,10 +279,10 @@ METHOD F18Backup:backup_organizacija()
    cCmd += ' -f "' + cBackupFile + '"'
    cCmd += ' "' + cDataBase + '"'
 
-   FErase( ::backup_path + ::backup_filename )
+   FErase( ::cPath + ::cFileName )
 
    // IF is_terminal()
-   info_bar( "back", "backup u toku .. " + Right( ::backup_path + ::backup_filename, 60 ) )
+   info_bar( "back", "backup u toku .. " + Right( ::cPath + ::cFileName, 60 ) )
 
 /*
    ELSE
@@ -298,9 +298,9 @@ METHOD F18Backup:backup_organizacija()
       ++nX
       @ nX, nY SAY _line
       ++nX
-      @ nX, nY SAY "   Lokacija backup-a: " + ::backup_path
+      @ nX, nY SAY "   Lokacija backup-a: " + ::cPath
       ++nX
-      @ nX, nY SAY "Naziv fajla backup-a: " + ::backup_filename
+      @ nX, nY SAY "Naziv fajla backup-a: " + ::cFileName
 
       ++nX
       ++nX
@@ -313,8 +313,8 @@ METHOD F18Backup:backup_organizacija()
 
 // IF is_terminal()
    IF ::nError == 0
-      // IF File( ::backup_path + ::backup_filename )
-      info_bar( "backup", ::backup_path + ::backup_filename + " OK" )
+      // IF File( ::cPath + ::cFileName )
+      info_bar( "backup", ::cPath + ::cFileName + " OK" )
 
       IF !Empty( ::removable_drive )
          IF ::backup_to_removable()
@@ -324,13 +324,13 @@ METHOD F18Backup:backup_organizacija()
          ENDIF
       ENDIF
    ELSE
-      error_bar( "backup", ::backup_path + ::backup_filename + " ERROR" )
+      error_bar( "backup", ::cPath + ::cFileName + " ERROR" )
    ENDIF
 
 /*
    ELSE // gui - prikaz informacija u prozoru
 
-      IF File( ::backup_path + ::backup_filename )
+      IF File( ::cPath + ::cFileName )
          @ nX, Col() + 1 SAY "OK" COLOR _color_ok
          lOk := .T.
       ELSE
@@ -339,7 +339,7 @@ METHOD F18Backup:backup_organizacija()
 
       IF lOk
 
-         log_write( "backup company kreiran uspjesno: " + ::backup_path + ::backup_filename, 6 )
+         log_write( "backup company kreiran uspjesno: " + ::cPath + ::cFileName, 6 )
 
          IF !Empty( ::removable_drive )
             ++nX
@@ -387,7 +387,7 @@ METHOD F18Backup:backup_server()
    ::get_windows_ping_time()
    ::get_removable_drive()
 
-   FErase( ::backup_path + ::backup_filename )
+   FErase( ::cPath + ::cFileName )
    Sleep( 1 )
 
 #ifdef __PLATFORM__UNIX
@@ -404,7 +404,7 @@ METHOD F18Backup:backup_server()
 
 #endif
 
-   cBackupFile := ::backup_path + ::backup_filename
+   cBackupFile := ::cPath + ::cFileName
 
 #ifdef __PLATFORM__WINDOWS
    cBackupFile := StrTran( cBackupFile, "\", "//" )
@@ -429,9 +429,9 @@ METHOD F18Backup:backup_server()
       ++nX
       @ nX, nY SAY Replicate( "=", 70 )
       ++nX
-      @ nX, nY SAY "   Lokacija backup-a: " + ::backup_path
+      @ nX, nY SAY "   Lokacija backup-a: " + ::cPath
       ++nX
-      @ nX, nY SAY "Naziv fajla backup-a: " + ::backup_filename
+      @ nX, nY SAY "Naziv fajla backup-a: " + ::cFileName
       ++nX
       ++nX
       @ nX, nY SAY8 "očekujem rezulat operacije... "
@@ -443,9 +443,9 @@ METHOD F18Backup:backup_server()
 
 // IF is_terminal()
 
-   // IF File( ::backup_path + ::backup_filename )
+   // IF File( ::cPath + ::cFileName )
    IF ::nError == 0
-      info_bar( "backup", ::backup_path + ::backup_filename + " OK" )
+      info_bar( "backup", ::cPath + ::cFileName + " OK" )
 
       IF !Empty( ::removable_drive )
          IF ::backup_to_removable()
@@ -455,12 +455,12 @@ METHOD F18Backup:backup_server()
          ENDIF
       ENDIF
    ELSE
-      error_bar( "backup", ::backup_path + ::backup_filename + " ERROR" )
+      error_bar( "backup", ::cPath + ::cFileName + " ERROR" )
    ENDIF
 
 /*
    ELSE
-      IF File( ::backup_path + ::backup_filename )
+      IF File( ::cPath + ::cFileName )
          @ nX, Col() + 1 SAY "OK" COLOR _color_ok
          lOk := .T.
       ELSE
@@ -468,7 +468,7 @@ METHOD F18Backup:backup_server()
       ENDIF
 
       IF lOk
-         log_write( "backup kreiran uspjesno: " + ::backup_path + ::backup_filename, 6 )
+         log_write( "backup kreiran uspjesno: " + ::cPath + ::cFileName, 6 )
 
          IF !Empty( ::removable_drive )
             ++nX
@@ -505,10 +505,10 @@ METHOD F18Backup:backup_to_removable()
       RETURN lOk
    ENDIF
 
-   _res := FileCopy( ::backup_path + ::backup_filename, ::removable_drive + ::backup_filename )
+   _res := FileCopy( ::cPath + ::cFileName, ::removable_drive + ::cFileName )
    Sleep( 1 )
 
-   IF !File( ::removable_drive + ::backup_filename )
+   IF !File( ::removable_drive + ::cFileName )
    ELSE
       log_write( "backup to removable drive ok", 6 )
       lOk := .T.
@@ -537,11 +537,11 @@ METHOD F18Backup:get_backup_path()
 
    IF ::nBackupType == 0
       set_f18_home_backup()
-      ::backup_path := my_home_backup()
+      ::cPath := my_home_backup()
    ELSE
       cDataBase := my_server_params()[ "database" ]
       set_f18_home_backup( cDataBase )
-      ::backup_path := my_home_backup()
+      ::cPath := my_home_backup()
    ENDIF
 
    RETURN .T.
@@ -561,15 +561,15 @@ METHOD F18Backup:get_backup_filename()
    ENDIF
 
    FOR nI := 1 TO 99
-      _name := _tmp + "_" + DToC( Date() ) + "_" + PadL( AllTrim( Str( nI ) ), 2, "0" ) + ".backup"
+      _name := _tmp + "_" + DToS( Date() ) + "_" + PadL( AllTrim( Str( nI ) ), 2, "0" ) + ".backup"
 
-      IF !File( ::backup_path + _name )
+      IF !File( ::cPath + _name )
          EXIT
       ENDIF
 
    NEXT
 
-   ::backup_filename := _name
+   ::cFileName := _name
 
    RETURN _name
 

@@ -16,7 +16,7 @@ STATIC s_cDirF18Util  // e.g. /home/hernad/F18/F18_util/f18_editor/
 STATIC s_cProg // windows: run.cmd
 
 #ifdef __PLATFORM__WINDOWS
-STATIC s_cSHA256sum := "281cb3b12f1e261d38d22a6a4cf8838574373133b59cc3aab8b9d78e20b4b5df"  #psql/run.cmd
+STATIC s_cSHA256sum := "281cb3b12f1e261d38d22a6a4cf8838574373133b59cc3aab8b9d78e20b4b5df"  // psql/run.cmd
 #else
 STATIC s_cSHA256sum := "XX"
 #endif

@@ -250,7 +250,7 @@ METHOD F18Backup:backup_organizacija()
    ::get_removable_drive()
 
    IF is_windows()
-      cCmd += "set pgusername=" + f18_user() + "&set PGPASSWORD=" + f18_password() + "&"
+      cCmd += "sleep 20&set pgusername=" + f18_user() + "&set PGPASSWORD=" + f18_password() + "&"
    ELSE
       cCmd += "export pgusername=" + f18_user() + ";export PGPASSWORD=" + f18_password() + ";"
    ENDIF

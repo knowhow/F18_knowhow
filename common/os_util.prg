@@ -312,8 +312,10 @@ HB_FUNC( __WIN32_SYSTEM )
 
     //CreateProcess(null,"notepad.exe",null,null,false,CREATE_NEW__CONSOLE,null,null,&si,&pi);
 
-      CreateProcess(NULL, pszCommand, NULL, NULL, FALSE,
-              CREATE_NO_WINDOW, NULL, &si, &pi);
+    // CreateProcess(NULL, pszCommand, NULL, NULL, FALSE,
+      //        CREATE_NO_WINDOW, NULL, &si, &pi);
+
+CreateProcess(null,"my.exe",null,null,false,CREATE_NEW__CONSOLE,null,null,&si,&pi);
 
       HWND console_name = FindWindow(null,"my_process_console");
       if(console_name){

@@ -283,9 +283,9 @@ HB_FUNC( __WIN32_SYSTEM )
    {
       char * pszFree = NULL;
 
-     // https://msdn.microsoft.com/en-us/library/bb762153(VS.85).aspx SW_HIDE = 0, SW_SHOWNORMAL (1)
+     // https://msdn.microsoft.com/en-us/library/bb762153(VS.85).aspx SW_HIDE = 0, SW_SHOWNORMAL (1), SW_SHOWMINNOACTIVE (7)
 
-      iResult =  ShellExecute(NULL, "open", pszCommand, pszArguments, NULL, 0);
+      iResult =  ShellExecute(NULL, "open", pszCommand, pszArguments, NULL, 7);
 
       if ( iResult > 32 ) iResult = 0;
 

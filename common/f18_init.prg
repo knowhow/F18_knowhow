@@ -303,7 +303,7 @@ FUNCTION set_screen_dimensions()
       font_size( 0 )
       font_width( 0 )
    ENDIF
-   
+
    ?E " get0 font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
    ?E " get0 font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
    ?E " get0 font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
@@ -491,6 +491,10 @@ FUNCTION desktop_rows()
 
    IF s_nDesktopRows == NIL
       s_nDesktopRows := hb_gtInfo( HB_GTI_DESKTOPROWS )
+
+      if is_linux() // linux moram spustiti da bi info_bar i error_bar bile vidljive
+        s_nDesktopRows -= 2
+        endif
    ENDIF
 
    RETURN s_nDesktopRows

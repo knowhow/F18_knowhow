@@ -260,6 +260,50 @@ HB_FUNC( __RUN_SYSTEM )
 #pragma ENDDUMP
 
 
+#ifdef __PLATFORM__WINDOWS
+#pragma BEGINDUMP
+
+#include "hbapi.h"
+#include "hbapierr.h"
+#include "hbapigt.h"
+#include "hbapiitm.h"
+#include "hbapifs.h"
+#include "windows.h"
+
+/* TOFIX: The screen buffer handling is not right for all platforms (Windows)
+          The output of the launched (MS-DOS?) app is not visible. */
+
+HB_FUNC( __WIN32_SYSTEM )
+{
+   const char * pszCommand = hb_parc( 1 );
+   int iResult;
+
+   if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
+   {
+      char * pszFree = NULL;
+
+     // https://msdn.microsoft.com/en-us/library/bb762153(VS.85).aspx SW_HIDE = 0
+
+      iResult =  ShellExecute(NULL, "open", hb_osEncodeCP( pszCommand, &pszFree, NULL ), NULL, NULL, 0);
+
+      hb_retni(iResult);
+
+      if( pszFree )
+         hb_xfree( pszFree );
+
+      if( hb_gtResume() != HB_SUCCESS )
+      {
+         /* an error should be generated here !! Something like */
+         /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
+      }
+
+
+   }
+}
+
+#pragma ENDDUMP
+#endif
+
 /*
   f18_run( "lo.cmd", "c:\temp\test.odt")
   f18_run( "lo_dbf_xlsx.cmd", "c:\temp\test.dbf;c:\temp")

@@ -269,7 +269,7 @@ METHOD F18Backup:backup_organizacija()
    cBackupFile := StrTran( cBackupFile, "\", "//" )
 #endif
 
-   cCmd += pg_dump_cmd() + "xxxxx "
+   cCmd += pg_dump_cmd() + " "
    cCmd += " -h " + AllTrim( _host )
    cCmd += " -p " + AllTrim( Str( _port ) )
    cCmd += " -U " + f18_user()

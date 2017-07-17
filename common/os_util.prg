@@ -283,9 +283,19 @@ HB_FUNC( __WIN32_SYSTEM )
    {
       char * pszFree = NULL;
 
+
+     // CreateProcess https://msdn.microsoft.com/en-us/library/windows/desktop/ms682512(v=vs.85).aspx
+    // https://stackoverflow.com/questions/780465/winapi-createprocess-but-hide-the-process-window
+    // create no window 0x08000000
+
      // https://msdn.microsoft.com/en-us/library/bb762153(VS.85).aspx SW_HIDE = 0, SW_SHOWNORMAL (1), SW_SHOWMINNOACTIVE (7)
 
-      iResult =  ShellExecute(NULL, "open", pszCommand, pszArguments, NULL, 7);
+      //iResult =  ShellExecute(NULL, "open", pszCommand, pszArguments, NULL, 7);
+
+      // https://msdn.microsoft.com/en-us/library/windows/desktop/ms684863(v=vs.85).aspx
+
+      iResult = CreateProcess(NULL, pszCommand, NULL, NULL, FALSE,
+              0x08000000, NULL, NULL, &si, &pi);
 
       if ( iResult > 32 ) iResult = 0;
 

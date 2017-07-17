@@ -104,15 +104,20 @@ FUNCTION download_file( cUrl, cDestFile )
    LOCAL hFile
    LOCAL cFileName, lRet := .F.
 
-   Box( "#Download: " + AllTrim( Right( cUrl, 60 ) ), 2, 75 )
+   IF is_in_main_thread()
+      Box( "#Download: " + AllTrim( Right( cUrl, 60 ) ), 2, 75 )
+      @ m_x + 1, m_y + 2 SAY Left( cUrl, 72 )
+   ELSE
+      ?E "Download", cURL
+   ENDIF
    hFile := hb_vfTempFile( @cFileName, my_home_root(), "wget_", ".tmp" )
    hb_vfClose( hFile )
 
-   @ m_x + 1, m_y + 2 SAY Left( cUrl, 72 )
-
    lRet := F18Admin():wget_download( cUrl, "", cFileName )
 
-   BoxC()
+   IF is_in_main_thread()
+      BoxC()
+   ENDIF
 
    IF lRet
       IF cDestFile != NIL
@@ -141,7 +146,7 @@ FUNCTION get_platform()
    ENDCASE
 
    RETURN cPlatform
-   
+
 
 FUNCTION f18_exe_path()
 

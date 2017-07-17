@@ -216,7 +216,7 @@ FUNCTION set_screen_dimensions()
       font_name( "Lucida Console" )
       // font_name( "Hack" )
       // font_name( "Consolas" )
-      // font_weight_bold()
+      font_weight_bold()
    ELSE
       font_name( "terminus" )
       font_weight_bold()

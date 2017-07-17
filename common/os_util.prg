@@ -276,6 +276,7 @@ HB_FUNC( __RUN_SYSTEM )
 HB_FUNC( __WIN32_SYSTEM )
 {
    const char * pszCommand = hb_parc( 1 );
+   const char * pszArguments = hb_parc( 2 );
    int iResult;
 
    if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
@@ -284,7 +285,7 @@ HB_FUNC( __WIN32_SYSTEM )
 
      // https://msdn.microsoft.com/en-us/library/bb762153(VS.85).aspx SW_HIDE = 0, SW_SHOWNORMAL (1)
 
-      iResult =  ShellExecute(NULL, "open", pszCommand, NULL, NULL, 0);
+      iResult =  ShellExecute(NULL, "open", pszCommand, pszArguments, NULL, 0);
 
       if ( iResult > 32 ) iResult = 0;
 

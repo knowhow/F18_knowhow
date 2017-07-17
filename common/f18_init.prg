@@ -438,6 +438,7 @@ FUNCTION font_size( nSize )
    IF ValType( nSize ) == "N"
       IF nSize > 0
          s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize )
+         s_nFontSize := nSize
       ELSE
          s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, s_nFontSize )
       ENDIF
@@ -457,6 +458,7 @@ FUNCTION font_width( nWidth )
    IF ValType( nWidth ) == "N"
       IF nWidth > 0
          s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
+         s_nFontWidth := nWidth
       ELSE
          s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth )
       ENDIF

@@ -216,7 +216,7 @@ FUNCTION set_screen_dimensions()
       font_name( "Lucida Console" )
       // font_name( "Hack" )
       // font_name( "Consolas" )
-      //font_weight_bold() ruzno
+      // font_weight_bold() ruzno
    ELSE
       font_name( "terminus" )
       font_weight_bold()
@@ -434,13 +434,18 @@ FUNCTION font_name( cFontName )
 
 FUNCTION font_size( nSize )
 
+   LOCAL nDodaj := 0
+
+   IF is_windows()
+      nDodaj := 2 // iz nekog razloga ovo ne pije vode ako ne dodam
+   ENDIF
    ?E " s_font_size:", s_nFontSize
    IF ValType( nSize ) == "N"
       IF nSize > 0
-         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize + 2 ) // iz nekog razloga ovo ne pije vode ako ne dodam
+         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize + nDodaj )
          s_nFontSize := nSize
       ELSE
-         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, s_nFontSize + 2 )
+         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, s_nFontSize + nDodaj )
       ENDIF
       ?E " get font_size: ", s_nFontSize
    ENDIF
@@ -457,10 +462,10 @@ FUNCTION font_width( nWidth )
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N"
       IF nWidth > 0
-         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth)
+         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
          s_nFontWidth := nWidth
       ELSE
-         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth)
+         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth )
       ENDIF
       ?E " get font_width: ", s_nFontWidth
    ENDIF

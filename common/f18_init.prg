@@ -258,8 +258,8 @@ FUNCTION set_screen_dimensions()
 
    CASE nPixWidth >= 1280 .AND. nPixHeight >= 800
 
-      font_size( 25 )
-      font_width( 13 )
+      font_size( 24 )
+      font_width( 12 )
       // f18_max_rows( 35 )
       // f18_max_cols( 115 )
       ?E cMsg + "2"
@@ -437,10 +437,10 @@ FUNCTION font_size( nSize )
    ?E " s_font_size:", s_nFontSize
    IF ValType( nSize ) == "N"
       IF nSize > 0
-         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize )
+         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize + 2 ) // iz nekog razloga ovo ne pije vode ako ne dodam
          s_nFontSize := nSize
       ELSE
-         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, s_nFontSize )
+         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, s_nFontSize + 2 )
       ENDIF
       ?E " get font_size: ", s_nFontSize
    ENDIF
@@ -457,10 +457,10 @@ FUNCTION font_width( nWidth )
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N"
       IF nWidth > 0
-         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
+         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth + 2)
          s_nFontWidth := nWidth
       ELSE
-         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth )
+         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth + 2)
       ENDIF
       ?E " get font_width: ", s_nFontWidth
    ENDIF

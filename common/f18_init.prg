@@ -457,10 +457,10 @@ FUNCTION font_width( nWidth )
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N"
       IF nWidth > 0
-         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth + 2)
+         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth + 1)
          s_nFontWidth := nWidth
       ELSE
-         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth + 2)
+         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth + 1)
       ENDIF
       ?E " get font_width: ", s_nFontWidth
    ENDIF

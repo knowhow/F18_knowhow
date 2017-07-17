@@ -199,9 +199,9 @@ FUNCTION set_screen_dimensions()
       f18_max_cols( MaxCol() )
 
       IF SetMode( f18_max_rows() + INFO_BAR_ROWS,  f18_max_cols() )
-         ?E "setovanje ekrana: setovan ekran po rezoluciji"
+         ?E "TERM setovanje ekrana: setovan ekran po rezoluciji"
       ELSE
-         ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
+         ?E "TERM setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
       ENDIF
 
       RETURN .T.
@@ -304,13 +304,12 @@ FUNCTION set_screen_dimensions()
    IF SetMode( f18_max_rows( desktop_rows() - 1 ) + INFO_BAR_ROWS,  ;
          f18_max_cols( desktop_cols() - 2 ) )
 
-      ?E "setovanje ekrana: setovan ekran po rezoluciji", f18_max_rows(), f18_max_cols()
+      ?E "GUI1 setovanje ekrana: setovan ekran po rezoluciji", f18_max_rows(), f18_max_cols()
    ELSE
       // linux nece od prve!?
       SetMode( f18_max_rows( desktop_rows() - 1 ) + INFO_BAR_ROWS,  ;
          f18_max_cols( desktop_cols() - 2 ) )
-      ?E " set font_width/2: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
-      ?E "setovanje ekrana/2 "
+      ?E "GUI2 set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
    ENDIF
 
    ?E " get font_name: ", hb_gtInfo( HB_GTI_FONTNAME )

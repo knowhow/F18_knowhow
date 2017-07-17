@@ -432,9 +432,8 @@ FUNCTION font_width( nWidth )
 
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N" .AND. nWidth > 0
-      s_nFontWidth := nWidth
-      s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth )
-      s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth )
+      s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
+      s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
       ?E " get font_width: ", s_nFontWidth
    ENDIF
 
@@ -447,7 +446,6 @@ FUNCTION font_size( nSize )
    IF ValType( nSize ) == "N" .AND. nSize > 0
       s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize ) // iz nekog razloga od prve ne setuje zeljenu velicinu
       s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize )
-      s_nFontSize := nSize
       ?E " get font_size: ", s_nFontSize
    ENDIF
 

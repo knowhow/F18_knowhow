@@ -258,7 +258,7 @@ FUNCTION set_screen_dimensions()
 
    CASE nPixWidth >= 1280 .AND. nPixHeight >= 800
 
-      font_size( 24 )
+      font_size( 28 )
       font_width( 12 )
       // f18_max_rows( 35 )
       // f18_max_cols( 115 )

@@ -440,14 +440,14 @@ FUNCTION font_size( nSize )
 
 FUNCTION font_width( nWidth )
 
-   IF is_windows() // windows ignores font width
-     RETURN hb_gtInfo( HB_GTI_FONTWIDTH )
-   ENDIF
+   //IF is_windows() // windows ignores font width
+    // RETURN hb_gtInfo( HB_GTI_FONTWIDTH )
+   //ENDIF
 
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N" .AND. nWidth > 0
       s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
-      // s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
+      s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
       ?E " get font_width: ", s_nFontWidth
    ENDIF
 

@@ -663,10 +663,10 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
    LOCAL nError
    LOCAL pGT := NIL, pMainGT := NIL
 
-   IF is_windows()
+   //IF is_windows()
       // RETURN windows_run_invisible( cCmd, "", NIL, NIL, .F. )
-      RETURN hb_run( cCmd )
-   ENDIF
+  //    RETURN hb_run( cCmd )
+   //ENDIF
 
 // IF is_terminal()
 

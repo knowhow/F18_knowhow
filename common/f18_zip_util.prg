@@ -150,10 +150,13 @@ STATIC FUNCTION __unzip( cZipFileDir, cZipFileName, cZipFileDestination, aFiles,
 
    IF !Empty( cZipFileHandle )
 
-      Box(, 2, 75 )
-
-      @ m_x + 1, m_y + 8 SAY Space( 50 )
-      @ m_x + 1, m_y + 2 SAY "unzip: " + PadR( AllTrim( cZipFileFullName ), 50 )
+      IF is_main_thread()
+         Box(, 2, 75 )
+         @ m_x + 1, m_y + 8 SAY Space( 50 )
+         @ m_x + 1, m_y + 2 SAY "unzip: " + PadR( AllTrim( cZipFileFullName ), 50 )
+      ELSE
+         ?E "unzip",  cZipFileFullName
+      ENDIF
 
       IF !Empty( cZipFileDestination )
          DirChange( cZipFileDestination )
@@ -199,8 +202,12 @@ STATIC FUNCTION __unzip( cZipFileDir, cZipFileName, cZipFileDestination, aFiles,
          IF nSize > 0 .AND. lExtract
 
             ++nCount
-            @ m_x + 2, m_y + 5 SAY Space( 60 )
-            @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( nCount ) ), 3 ) + ") " + Left( AllTrim( cFile ), 60 )
+            IF is_main_thread()
+               @ m_x + 2, m_y + 5 SAY Space( 60 )
+               @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( nCount ) ), 3 ) + ") " + Left( AllTrim( cFile ), 60 )
+            ELSE
+               ?E  PadL( AllTrim( Str( nCount ) ), 3 ) + ") ", cFile
+            ENDIF
 
             nError := hb_unzipExtractCurrentFile( cZipFileHandle, NIL, NIL )
 
@@ -218,7 +225,9 @@ STATIC FUNCTION __unzip( cZipFileDir, cZipFileName, cZipFileDestination, aFiles,
 
       nError := hb_unzipClose( cZipFileHandle, "" )
 
-      BoxC()
+      IF is_in_main_thread()
+         BoxC()
+      ENDIF
 
    ENDIF
 

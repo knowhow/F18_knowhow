@@ -299,9 +299,11 @@ FUNCTION set_screen_dimensions()
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
    // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
 
-   font_size( 0 )
-   font_width( 0 )
-
+   IF is_windows()
+      font_size( 0 )
+      font_width( 0 )
+   ENDIF
+   
    ?E " get0 font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
    ?E " get0 font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
    ?E " get0 font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )

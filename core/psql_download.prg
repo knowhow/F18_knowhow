@@ -32,10 +32,10 @@ FUNCTION pg_dump_cmd( cTxt )
    IF !is_windows()
       cCmd := "pg_dump"
    ELSE
-      cCmd := s_cDirF18Util + s_cUtilName + SLASH + s_cProg
+      cCmd := s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " pg_dump"
       IF ! File( s_cDirF18Util + s_cUtilName + SLASH + s_cProg )
-         MsgBeep( "Error NO CMD: " + s_cDirF18Util + s_cUtilName + SLASH + s_cProg + "!? STOP" )
-         RETURN s_cDirF18Util + s_cUtilName + SLASH + s_cProg + " pg_dump"
+         ?E "Error NO CMD: " + s_cDirF18Util + s_cUtilName + SLASH + s_cProg + "!? STOP"
+         RETURN "psql_no_run_cmd"
       ENDIF
    ENDIF
 

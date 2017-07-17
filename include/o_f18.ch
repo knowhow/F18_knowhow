@@ -198,8 +198,7 @@
 
 #xcommand O_KIF     => select (F_KIF);   my_use ("kif") ; set order to tag "datum"
 #xcommand O_PDV     => select (F_PDV);   my_use ("pdv") ; set order to tag "datum"
-#xcommand o_sg_kif()   => select(F_SG_KIF);  my_usex  ("sg_kif")  ; set order to tag "ID"
-#xcommand O_SG_KUF   => select(F_SG_KUF);  my_usex  ("sg_kuf")  ; set order to tag "ID"
+
 #xcommand O_R_KUF   => select(F_R_KUF);  my_usex  ("r_kuf")
 #xcommand O_R_KIF   => select(F_R_KIF);  my_usex  ("r_kif")
 #xcommand O_R_PDV   => select(F_R_PDV);  my_usex  ("r_pdv")

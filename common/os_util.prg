@@ -286,6 +286,9 @@ HB_FUNC( __WIN32_SYSTEM )
 
       iResult =  ShellExecute(NULL, "open", pszCommand, NULL, NULL, 1);
 
+      if ( iResult > 32 ) iResult = 0;
+
+
       hb_retni(iResult);
 
       if( pszFree )

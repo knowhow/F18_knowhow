@@ -207,7 +207,7 @@ FUNCTION set_screen_dimensions()
       RETURN .T.
    ENDIF
 
-  //  hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
+   // hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
 
    IF is_mac()
       font_name( "Courier" )
@@ -299,8 +299,9 @@ FUNCTION set_screen_dimensions()
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
    // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
 
-   font_size( 24 )
-   font_width( 12 )
+   font_size( 0 )
+   font_width( 0 )
+
    ?E " get0 font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
    ?E " get0 font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
    ?E " get0 font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
@@ -426,12 +427,20 @@ FUNCTION font_name( cFontName )
 
 
 
+/*
+   font_size( 24 ) -> prvi pokusaj
+   font_size( 0 ) ->  ponovi zadnji pokusaj
+*/
 
 FUNCTION font_size( nSize )
 
    ?E " s_font_size:", s_nFontSize
-   IF ValType( nSize ) == "N" .AND. nSize > 0
-      s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize )
+   IF ValType( nSize ) == "N"
+      IF nSize > 0
+         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize )
+      ELSE
+         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, s_nFontSize )
+      ENDIF
       ?E " get font_size: ", s_nFontSize
    ENDIF
 
@@ -440,13 +449,17 @@ FUNCTION font_size( nSize )
 
 FUNCTION font_width( nWidth )
 
-   //IF is_windows() // windows ignores font width
-    // RETURN hb_gtInfo( HB_GTI_FONTWIDTH )
-   //ENDIF
+   // IF is_windows() // windows ignores font width
+   // RETURN hb_gtInfo( HB_GTI_FONTWIDTH )
+   // ENDIF
 
    ?E " s_font_width:", s_nFontWidth
-   IF ValType( nWidth ) == "N" .AND. nWidth > 0
-      s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
+   IF ValType( nWidth ) == "N"
+      IF nWidth > 0
+         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
+      ELSE
+         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth )
+      ENDIF
       ?E " get font_width: ", s_nFontWidth
    ENDIF
 

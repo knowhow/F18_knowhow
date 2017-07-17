@@ -299,7 +299,7 @@ FUNCTION set_screen_dimensions()
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
    // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
 
-   IF is_windows()
+   IF is_windows() // windowsi traze ovo ponavljanje setovanja da bi se settings "primili"
       font_size( 0 )
       font_width( 0 )
    ENDIF
@@ -493,7 +493,7 @@ FUNCTION desktop_rows()
       s_nDesktopRows := hb_gtInfo( HB_GTI_DESKTOPROWS )
 
       if is_linux() // linux moram spustiti da bi info_bar i error_bar bile vidljive
-        s_nDesktopRows -= 2
+        s_nDesktopRows -= 3
         endif
    ENDIF
 

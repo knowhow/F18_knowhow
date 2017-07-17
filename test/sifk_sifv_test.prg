@@ -71,7 +71,7 @@ FUNCTION sifk_sifv_test()
    SET ORDER TO TAG "ID2"
    SEEK _id_sif + _karakteristika
 
-   TEST_LINE( Len( _id_sif ) <= SIFK_LEN_DBF .AND. Len( _karakteristika ) < SIFK_LEN_OZNAKA,  .T. )
+   TEST_LINE( Len( _id_sif ) <= FIELD_LEN_SIFK_ID .AND. Len( _karakteristika ) < FIELD_LEN_SIFK_OZNAKA,  .T. )
 
    _id_sif := PadR( _id_sif, 8 )
    _karakteristika   := PadR( _karakteristika, 4 )
@@ -152,7 +152,7 @@ STATIC FUNCTION append_sifk( id_sif, karakteristika, tip, duzina, veza, fields, 
 
    SELECT sifk
    SET ORDER TO TAG "ID2"
-   SEEK PadR( id_sif, SIFK_LEN_DBF ) + PadR( karakteristika, SIFK_LEN_OZNAKA )
+   SEEK PadR( id_sif, FIELD_LEN_SIFK_ID ) + PadR( karakteristika, FIELD_LEN_SIFK_OZNAKA )
 
    IF !Found()
 

@@ -52,7 +52,7 @@ FUNCTION os_sifarnici()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

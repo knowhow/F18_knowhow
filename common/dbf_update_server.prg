@@ -22,12 +22,12 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
 
    LOCAL _ids := {}
    LOCAL _pos
-   LOCAL _full_id_dbf, _full_id_mem
+   LOCAL cFullIdDbf, cFullIdMem
    LOCAL _dbf_pkey_search
    LOCAL _field
    LOCAL cWhereString, cWhereStringDbf
    LOCAL _t_field, _t_field_dec
-   LOCAL hDbfRec, _alg
+   LOCAL hDbfRec, hAlgoritam
    LOCAL cMsg
    LOCAL hRecDbf
    LOCAL _alg_tag := ""
@@ -45,7 +45,7 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
 
 
    // trebamo where str za hRecord rec
-   set_table_values_algoritam_vars( @cTabela, @hRecord, @nAlgoritam, @cTransaction, @hDbfRec, @_alg, @cWhereString, @_alg_tag )
+   set_table_values_algoritam_vars( @cTabela, @hRecord, @nAlgoritam, @cTransaction, @hDbfRec, @hAlgoritam, @cWhereString, @_alg_tag )
 
    IF Alias() <> hDbfRec[ "alias" ]
       cMsg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + hDbfRec[ "alias" ]
@@ -59,7 +59,7 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
    hRecDbf := dbf_get_rec()
 
    // trebamo where str za stanje dbf-a
-   set_table_values_algoritam_vars( @cTabela, @hRecDbf, @nAlgoritam, @cTransaction, @hDbfRec, @_alg, @cWhereStringDbf, @_alg_tag )
+   set_table_values_algoritam_vars( @cTabela, @hRecDbf, @nAlgoritam, @cTransaction, @hDbfRec, @hAlgoritam, @cWhereStringDbf, @_alg_tag )
 
    IF cTransaction $ "FULL#BEGIN"
       run_sql_query( "BEGIN" )
@@ -125,14 +125,13 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
 
    ENDIF
 
+   cFullIdDbf := get_dbf_rec_primary_key( hAlgoritam[ "dbf_key_fields" ], hRecDbf ) // stanje u dbf-u (hRecDbf)
+   cFullIdMem := get_dbf_rec_primary_key( hAlgoritam[ "dbf_key_fields" ], hRecord ) // stanje podataka u mem rec varijabli hRecord
 
-   _full_id_dbf := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], hRecDbf ) // stanje u dbf-u (hRecDbf)
-   _full_id_mem := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], hRecord ) // stanje podataka u mem rec varijabli hRecord
 
-
-   AAdd( _ids, _alg_tag + _full_id_mem ) // stavi id-ove na server
-   IF ( _full_id_dbf <> _full_id_mem ) .AND. !Empty( _full_id_dbf )
-      AAdd( _ids, _alg_tag + _full_id_dbf )
+   AAdd( _ids, _alg_tag + cFullIdMem ) // stavi id-ove na server
+   IF ( cFullIdDbf <> cFullIdMem ) .AND. !Empty( cFullIdDbf )
+      AAdd( _ids, _alg_tag + cFullIdDbf )
    ENDIF
 
    IF !push_ids_to_semaphore( cTabela, _ids )
@@ -193,7 +192,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
    LOCAL _field, nCount
    LOCAL cWhereString
    LOCAL _t_field, _t_field_dec
-   LOCAL hDbfRec, _alg
+   LOCAL hDbfRec, hAlgoritam
    LOCAL cMsg
    LOCAL _alg_tag := ""
    LOCAL lRet
@@ -209,7 +208,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
 
    lRet := .T.
 
-   set_table_values_algoritam_vars( @cTabela, @hRecord, @nAlgoritam, @cTransaction, @hDbfRec, @_alg, @cWhereString, @_alg_tag )
+   set_table_values_algoritam_vars( @cTabela, @hRecord, @nAlgoritam, @cTransaction, @hDbfRec, @hAlgoritam, @cWhereString, @_alg_tag )
 
    IF Alias() <> hDbfRec[ "alias" ]
       cMsg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + hDbfRec[ "alias" ]
@@ -233,7 +232,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
          DELETE
          RETURN .T.
       ELSE
-         _full_id := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], hRecord )
+         _full_id := get_dbf_rec_primary_key( hAlgoritam[ "dbf_key_fields" ], hRecord )
          AAdd( _ids, _alg_tag + _full_id )
          push_ids_to_semaphore( cTabela, _ids )
 
@@ -244,7 +243,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
       ENDIF
 
 
-      IF index_tag_num( _alg[ "dbf_tag" ] ) < 1
+      IF index_tag_num( hAlgoritam[ "dbf_tag" ] ) < 1
          IF !hDbfRec[ "sql" ]
 
             IF cTransaction == "FULL"
@@ -252,7 +251,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
                // unlock_semaphore( cTabela )
             ENDIF
 
-            cMsg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + cTabela + " DBF_TAG " + _alg[ "dbf_tag" ]
+            cMsg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + cTabela + " DBF_TAG " + hAlgoritam[ "dbf_tag" ]
             error_bar( "del_rec", cMsg )
             ?E cMsg
             RaiseError( cMsg )
@@ -262,7 +261,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
          ENDIF
       ELSE
          lIndex := .T.
-         SET ORDER TO TAG ( _alg[ "dbf_tag" ] )
+         SET ORDER TO TAG ( hAlgoritam[ "dbf_tag" ] )
       ENDIF
 
       IF my_flock()

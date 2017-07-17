@@ -267,9 +267,9 @@ FUNCTION get_sifk_sifv( cDbfName, cOznaka, cIdSif, return_nil )
       cIdSif := ( cDbfName )->ID
    ENDIF
 
-   cDbfName := PadR( cDbfName, SIFK_LEN_DBF )
-   cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
-   cIdSif2 := PadR( cIdSif, SIFK_LEN_IDSIF )
+   cDbfName := PadR( cDbfName, FIELD_LEN_SIFK_ID )
+   cOznaka := PadR( cOznaka, FIELD_LEN_SIFK_OZNAKA )
+   cIdSif2 := PadR( cIdSif, FIELD_LEN_SIFK_IDSIF )
 
    IF !use_sql_sifk( cDbfName, cOznaka )
       ?E "ERROR 2 GET SIFK ?!", cDbfName, cOznaka
@@ -357,8 +357,8 @@ FUNCTION get_sifk_naz( cDBF, cOznaka )
 
    PushWA()
 
-   cDBF := PadR( cDBF, SIFK_LEN_DBF )
-   cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
+   cDBF := PadR( cDBF, FIELD_LEN_SIFK_ID )
+   cOznaka := PadR( cOznaka, FIELD_LEN_SIFK_OZNAKA )
 
    IF !use_sql_sifk( cDBF, cOznaka )
       PopWa()
@@ -376,8 +376,8 @@ FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
 
    PushWA()
 
-   cDBF := PadR( cDBF, SIFK_LEN_DBF )
-   cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
+   cDBF := PadR( cDBF, FIELD_LEN_SIFK_ID )
+   cOznaka := PadR( cOznaka, FIELD_LEN_SIFK_OZNAKA )
    SELECT F_SIFK
    IF !use_sql_sifk( cDBF, cOznaka )
       ?E "ERROR 3 GET SIFK:", cDbf, cOznaka
@@ -429,9 +429,9 @@ FUNCTION USifk( cDbfName, cOznaka, cIdSif, xValue, cTransaction )
    // cIdSif := ( Unicode():New( cIdSif ) ):getString()
    PushWA()
 
-   cDbfName := PadR( cDbfName, SIFK_LEN_DBF )
-   cOznaka  := PadR( cOznaka, SIFK_LEN_OZNAKA )
-   cIdSif   := PadR( cIdSif, SIFK_LEN_IDSIF )
+   cDbfName := PadR( cDbfName, FIELD_LEN_SIFK_ID )
+   cOznaka  := PadR( cOznaka, FIELD_LEN_SIFK_OZNAKA )
+   cIdSif   := PadR( cIdSif, FIELD_LEN_SIFK_IDSIF )
 
    SELECT F_SIFK
    IF !use_sql_sifk( cDbfName, cOznaka )
@@ -582,8 +582,8 @@ FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
    LOCAL lRet := .F.
    PRIVATE cPom := ""
 
-   cDBF    := PadR( cDBF, SIFK_LEN_DBF )
-   cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
+   cDBF    := PadR( cDBF, FIELD_LEN_SIFK_ID )
+   cOznaka := PadR( cOznaka, FIELD_LEN_SIFK_OZNAKA )
 
    xVal := NIL
 

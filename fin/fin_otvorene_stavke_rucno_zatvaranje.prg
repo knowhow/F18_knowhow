@@ -40,7 +40,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    IF gFinRj == "D"
       cIdRj := Space( Len( RJ->id ) )
-      @ m_x + 7, m_y + 2 SAY "RJ" GET cidrj PICT "@!" VALID Empty( cidrj ) .OR. P_Rj( @cidrj )
+      @ m_x + 7, m_y + 2 SAY "RJ" GET cIdrj PICT "@!" VALID Empty( cIdrj ) .OR. P_Rj( @cidrj )
    ENDIF
 
 

@@ -60,7 +60,7 @@ FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
    ENDIF
    //use_sql_sifv()
 
-   cDbf := PadR( cDbf, SIFK_LEN_DBF )
+   cDbf := PadR( cDbf, FIELD_LEN_SIFK_ID )
 
    SELECT sifk
    aRecords := {}

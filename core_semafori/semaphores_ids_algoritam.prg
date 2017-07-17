@@ -558,30 +558,30 @@ FUNCTION delete_ids_in_dbf( cTable, ids, nAlgoritam )
 // za brisanje zapisa koje su drugi mijenjali
 //
 // dbf_fields - {"id", {"iznos", 12, 2} }
-// rec - { "01", 15.5 }
+// hRec - { "01", 15.5 }
 //
 // => "01       15.50"
 // ----------------------------------------------------------
-FUNCTION get_dbf_rec_primary_key( dbf_key_fields, rec )
+FUNCTION get_dbf_rec_primary_key( hDbfKeyFields, hRec )
 
-   LOCAL _field, _t_field, _t_field_dec
-   LOCAL _full_id := ""
+   LOCAL xField, cFieldName, nFieldDecimalnihMjesta
+   LOCAL cKljuc := ""
 
-   FOR EACH _field in dbf_key_fields
+   FOR EACH xField in hDbfKeyFields
 
-      IF ValType( _field ) == "A"
-         _t_field := _field[ 1 ]
-         _t_field_dec := _field[ 2 ]
-         _full_id += Str( rec[ _t_field ], _t_field_dec )
+      IF ValType( xField ) == "A"
+         cFieldName := xField[ 1 ]
+         nFieldDecimalnihMjesta := xField[ 2 ]
+         cKljuc += Str( hRec[ cFieldName ], nFieldDecimalnihMjesta )
       ELSE
-         _t_field := _field
-         IF ValType( rec[ _t_field ] ) == "D"
-            _full_id += DToS( rec[ _t_field ] )
+         cFieldName := xField
+         IF ValType( hRec[ cFieldName ] ) == "D"
+            cKljuc += DToS( hRec[ cFieldName ] )
          ELSE
-            _full_id += rec[ _t_field ]
+            cKljuc += hRec[ cFieldName ] // hRec[ "id" ]
          ENDIF
       ENDIF
 
    NEXT
 
-   RETURN _full_id
+   RETURN cKljuc

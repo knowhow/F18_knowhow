@@ -98,6 +98,12 @@
 #define FIELD_LEN_KONTO_ID 7
 #define FIELD_LEN_FIN_RJ_ID 6
 
+#define FIELD_LEN_SIFK_ID 8
+#define FIELD_LEN_SIFK_NAZ 25
+#define FIELD_LEN_SIFK_OZNAKA  4
+#define FIELD_LEN_SIFK_IDSIF   15
+
+
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED
       #include "f18_release.ch"
@@ -161,9 +167,6 @@
 #define SEMAPHORE_LOCK_RETRY_NUM 100
 #define SEMAPHORE_LOCK_TIME 10
 
-#define SIFK_LEN_DBF     8
-#define SIFK_LEN_OZNAKA  4
-#define SIFK_LEN_IDSIF   15
 
 
 #define RPT_PAGE_LEN fetch_metric( "rpt_duzina_stranice", my_user(), 60 )

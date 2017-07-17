@@ -100,6 +100,7 @@ FUNCTION post_login()
    set_vars_za_specificne_slucajeve()
 
    IF is_in_main_thread()
+
       thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
       // thread_dbfs( hb_threadStart( @f18_http_server() ) )
 
@@ -429,6 +430,7 @@ FUNCTION font_width( nWidth )
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N" .AND. nWidth > 0
       s_nFontWidth := nWidth
+      s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth )
       s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth )
       ?E " get font_width: ", s_nFontWidth
    ENDIF

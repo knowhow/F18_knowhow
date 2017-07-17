@@ -397,7 +397,7 @@ FUNCTION set_sifk_partn_bank()
    SET ORDER TO TAG "ID"
    // id + SORT + naz
 
-   cId := PadR( "PARTN", SIFK_LEN_DBF )
+   cId := PadR( "PARTN", FIELD_LEN_SIFK_ID )
    cNaz := PadR( "Banke", Len( field->naz ) )
    cSeek :=  cId + "05" + cNaz
 

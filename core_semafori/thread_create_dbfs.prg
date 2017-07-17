@@ -32,7 +32,8 @@ PROCEDURE thread_create_dbfs()
       RETURN
    ENDIF
 
-   kreiraj_pa_napuni_partn_idbr_pdvb ()
+   kreiraj_pa_napuni_partn_idbr_pdvb() // upgrade SIFK PARTN REGB -> IDBR, PDVB
+
    // idle_add_for_eval( "kreiraj_pa_napuni_partn_idbr_pdvb", {||  kreiraj_pa_napuni_partn_idbr_pdvb () } )
 
    set_a_dbfs_key_fields() // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici

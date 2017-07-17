@@ -513,4 +513,4 @@ STATIC FUNCTION _o_tables()
    o_os_sii()
    o_os_sii_promj()
 
-   RETURN
+   RETURN .T.

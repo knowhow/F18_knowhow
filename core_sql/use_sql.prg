@@ -429,12 +429,12 @@ STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
 
 
 
-FUNCTION o_sifk()
+FUNCTION o_sifk( cDbf )
 
    Select( F_SIFK )
    USE
 
-   RETURN use_sql_sifk()
+   RETURN use_sql_sifk( cDbf )
 
 /*
    use_sql_sifk() => otvori citavu tabelu

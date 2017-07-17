@@ -42,7 +42,6 @@ FUNCTION fill_all_partneri_idbr_pdvb()
 
    o_partner()
 
-
    ?E  "Podešavam identifikacijski i PDV broj za sve partnere  /",  partn->( RecCount() )
 
    DO WHILE !Eof()
@@ -128,6 +127,22 @@ FUNCTION update_idbr_pdvb_from_regb()
    RETURN .T.
 
 
+FUNCTION find_sifk_by_id_naz_sort( cId, cOznaka, cNaz, cSort )
+
+   LOCAL cSql := "select * from fmk.sifk"
+
+   cSql += " WHERE id=" + sql_quote( PadR( cId, FIELD_LEN_SIFK_ID ) )
+   cSql += " AND oznaka=" + sql_quote( PadR( cOznaka, FIELD_LEN_SIFK_OZNAKA ) )
+   cSql += " AND sort=" + sql_quote( cSort )
+   cSql += " AND naz=" + sql_quote( PadR( cNaz, FIELD_LEN_SIFK_NAZ ) )
+
+   IF !use_sql( "sifk", cSql )
+      ?E "ERRRRRRRRR find_sifk_by_id_naz_sort", cSql
+   ENDIF
+
+   RETURN !Eof()
+
+
 FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
 
    LOCAL lFound
@@ -136,25 +151,16 @@ FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
    LOCAL cId
    LOCAL hRec
 
-   o_sifk()
 
-   // id + SORT + naz
-   SET ORDER TO TAG "ID"
+   IF !find_sifk_by_id_naz_sort( "PARTN", cIdSifk, cNazSifk, cSort )
 
-   cId := PadR( "PARTN", SIFK_LEN_DBF )
-   cNaz := PadR( cNazSifk, Len( field->naz ) )
-   cSeek :=  cId + cSort + cNaz
-
-   SEEK cSeek
-
-   IF !Found()
-
+      o_sifk( "XXXX" )
       APPEND BLANK
       ?E "fill_sifk_partn - not fonud", cIdSifk, cNazSifk, cSort, nLen
 
       hRec := dbf_get_rec()
-      hRec[ "id" ] := cId
-      hRec[ "naz" ] := cNaz
+      hRec[ "id" ] := PadR( "PARTN", FIELD_LEN_SIFK_ID )
+      hRec[ "naz" ] := PadR( cNazSifk, FIELD_LEN_SIFK_NAZ )
       hRec[ "oznaka" ] := cIdSifk
       hRec[ "sort" ] := cSort
       hRec[ "tip" ] := "C"

@@ -302,7 +302,7 @@ FUNCTION set_screen_dimensions()
 
 
    IF SetMode( f18_max_rows( desktop_rows() - 1 ) + INFO_BAR_ROWS,  ;
-         f18_max_cols( desktop_cols() - 2 ) )
+         f18_max_cols( desktop_cols() - 5 ) )
 
       ?E "GUI1 setovanje ekrana: setovan ekran po rezoluciji", f18_max_rows(), f18_max_cols()
    ELSE

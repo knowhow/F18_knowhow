@@ -284,7 +284,7 @@ HB_FUNC( __WIN32_SYSTEM )
 
      // https://msdn.microsoft.com/en-us/library/bb762153(VS.85).aspx SW_HIDE = 0, SW_SHOWNORMAL (1)
 
-      iResult =  ShellExecute(NULL, "open", pszCommand, NULL, NULL, 1);
+      iResult =  ShellExecute(NULL, "open", pszCommand, NULL, NULL, 0);
 
       if ( iResult > 32 ) iResult = 0;
 

@@ -216,7 +216,7 @@ FUNCTION set_screen_dimensions()
       font_name( "Lucida Console" )
       // font_name( "Hack" )
       // font_name( "Consolas" )
-      font_weight_bold()
+      //font_weight_bold() ruzno
    ELSE
       font_name( "terminus" )
       font_weight_bold()
@@ -457,10 +457,10 @@ FUNCTION font_width( nWidth )
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N"
       IF nWidth > 0
-         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth + 1)
+         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth)
          s_nFontWidth := nWidth
       ELSE
-         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth + 1)
+         s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, s_nFontWidth)
       ENDIF
       ?E " get font_width: ", s_nFontWidth
    ENDIF

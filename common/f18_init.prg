@@ -306,13 +306,13 @@ FUNCTION set_screen_dimensions()
 
 
    IF SetMode( f18_max_rows( desktop_rows() - 1 ) + INFO_BAR_ROWS,  ;
-         f18_max_cols( desktop_cols() - 2 ) )
+         f18_max_cols( desktop_cols() - 5 ) )
 
       ?E "GUI1 setovanje ekrana: setovan ekran po rezoluciji", f18_max_rows(), f18_max_cols()
    ELSE
       // linux nece od prve!?
       SetMode( f18_max_rows( desktop_rows() - 1 ) + INFO_BAR_ROWS,  ;
-         f18_max_cols( desktop_cols() - 2 ) )
+         f18_max_cols( desktop_cols() - 5 ) )
       ?E "GUI2 set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
    ENDIF
 
@@ -424,6 +424,20 @@ FUNCTION font_name( cFontName )
    RETURN s_cFontName
 
 
+
+
+   FUNCTION font_size( nSize )
+
+      ?E " s_font_size:", s_nFontSize
+      IF ValType( nSize ) == "N" .AND. nSize > 0
+         s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize )
+         //s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize )
+         ?E " get font_size: ", s_nFontSize
+      ENDIF
+
+      RETURN s_nFontSize
+
+
 FUNCTION font_width( nWidth )
 
    // IF is_windows() // windows ignores font width
@@ -433,23 +447,13 @@ FUNCTION font_width( nWidth )
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N" .AND. nWidth > 0
       s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
-      s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
+      //s_nFontWidth := hb_gtInfo( HB_GTI_FONTWIDTH, nWidth )
       ?E " get font_width: ", s_nFontWidth
    ENDIF
 
    RETURN s_nFontWidth
 
 
-FUNCTION font_size( nSize )
-
-   ?E " s_font_size:", s_nFontSize
-   IF ValType( nSize ) == "N" .AND. nSize > 0
-      s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize ) // iz nekog razloga od prve ne setuje zeljenu velicinu
-      s_nFontSize := hb_gtInfo( HB_GTI_FONTSIZE, nSize )
-      ?E " get font_size: ", s_nFontSize
-   ENDIF
-
-   RETURN s_nFontSize
 
 
 FUNCTION font_weight_bold()

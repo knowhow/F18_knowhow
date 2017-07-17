@@ -309,7 +309,7 @@ HB_FUNC( __WIN32_SYSTEM )
       si.lpTitle = "my_process_console";
 
       CreateProcess(NULL, pszCommand, NULL, NULL, FALSE,
-              0x08000000, NULL, NULL, &si, &pi);
+              CREATE_NO_WINODOW, NULL, NULL, &si, &pi);
 
       HWND console_name = FindWindow(null,"my_process_console");
       if(console_name){

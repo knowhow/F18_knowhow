@@ -54,7 +54,7 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
 
    SELECT F_SG_KIF
    IF !Used()
-      O_SG_KIF
+      o_sg_kif()
    ENDIF
 
 

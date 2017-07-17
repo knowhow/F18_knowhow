@@ -20,9 +20,9 @@ FUNCTION set_a_dbf_epdv()
    set_a_dbf_epdv_kuf_kif( "epdv_kuf", "KUF", F_KUF )
    set_a_dbf_epdv_kuf_kif( "epdv_kif", "KIF", F_KIF )
 
-   // tabele sa strukturom sifarnika (id je primarni ključ)
-   set_a_dbf_sifarnik( "epdv_sg_kif", "SG_KIF", F_SG_KIF )
-   set_a_dbf_sifarnik( "epdv_sg_kuf", "SG_KUF", F_SG_KUF )
+
+   set_a_sql_sifarnik( "epdv_sg_kif", "SG_KIF", F_SG_KIF )
+   set_a_sql_sifarnik( "epdv_sg_kuf", "SG_KUF", F_SG_KUF )
 
    // temp epdv tabele - ne idu na server
    set_a_dbf_temp( "epdv_p_kif", "P_KIF", F_P_KIF )

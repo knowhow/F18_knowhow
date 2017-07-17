@@ -85,7 +85,7 @@ FUNCTION cre_all_epdv( ver )
    CREATE_INDEX( "br_dok", "STR(br_dok,6,0)+STR(r_br,6,0)", _alias )
 
 
-
+/*
    // SG_KIF, SG_KUF
    // --------------------------------------
 
@@ -107,6 +107,7 @@ FUNCTION cre_all_epdv( ver )
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "id", _alias )
    AFTER_CREATE_INDEX
+*/
 
    RETURN .T.
 

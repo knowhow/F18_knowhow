@@ -42,9 +42,9 @@ FUNCTION p_epdv_sheme_generacije( cTabela, cId, dx, dy )
 
    IF !Used()
       IF ( cTabela == "SG_KIF" )
-         O_SG_KIF
+         o_sg_kif()
       ELSE
-         O_SG_KUF
+         o_sg_kuf()
       ENDIF
    ENDIF
 

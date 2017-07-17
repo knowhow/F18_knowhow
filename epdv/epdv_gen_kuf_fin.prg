@@ -53,10 +53,8 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
    dDatDo := dD2
    epdv_otvori_kuf_tabele( .T. )
 
-   SELECT F_SG_KUF
-   IF !Used()
-      O_SG_KUF
-   ENDIF
+
+   select_o_sg_kuf()
 
 
    SELECT sg_kuf

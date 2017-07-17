@@ -457,10 +457,6 @@ FUNCTION font_size( nSize )
 
 FUNCTION font_width( nWidth )
 
-   // IF is_windows() // windows ignores font width
-   // RETURN hb_gtInfo( HB_GTI_FONTWIDTH )
-   // ENDIF
-
    ?E " s_font_width:", s_nFontWidth
    IF ValType( nWidth ) == "N"
       IF nWidth > 0
@@ -498,6 +494,7 @@ FUNCTION desktop_rows()
    ENDIF
 
    RETURN s_nDesktopRows
+
 
 
 FUNCTION desktop_cols()

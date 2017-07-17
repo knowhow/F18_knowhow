@@ -54,7 +54,7 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
 
    SELECT F_SG_KUF
    IF !Used()
-      O_SG_KUF
+      o_sg_kuf()
    ENDIF
 
 

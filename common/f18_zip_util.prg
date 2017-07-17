@@ -150,7 +150,7 @@ STATIC FUNCTION __unzip( cZipFileDir, cZipFileName, cZipFileDestination, aFiles,
 
    IF !Empty( cZipFileHandle )
 
-      IF is_main_thread()
+      IF is_in_main_thread()
          Box(, 2, 75 )
          @ m_x + 1, m_y + 8 SAY Space( 50 )
          @ m_x + 1, m_y + 2 SAY "unzip: " + PadR( AllTrim( cZipFileFullName ), 50 )
@@ -202,7 +202,7 @@ STATIC FUNCTION __unzip( cZipFileDir, cZipFileName, cZipFileDestination, aFiles,
          IF nSize > 0 .AND. lExtract
 
             ++nCount
-            IF is_main_thread()
+            IF is_in_main_thread()
                @ m_x + 2, m_y + 5 SAY Space( 60 )
                @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( nCount ) ), 3 ) + ") " + Left( AllTrim( cFile ), 60 )
             ELSE

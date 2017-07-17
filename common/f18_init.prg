@@ -299,16 +299,20 @@ FUNCTION set_screen_dimensions()
    // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
 
    // hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
+   ?E " get0 font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
+   ?E " get0 font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
+   ?E " get0 font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
+   ?E " get0 font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
 
    IF SetMode( f18_max_rows( desktop_rows() - 1 ) + INFO_BAR_ROWS,  ;
-         f18_max_cols( desktop_cols() - 10 ) )
+         f18_max_cols( desktop_cols() - 2 ) )
 
       ?E "GUI1 setovanje ekrana: setovan ekran po rezoluciji", f18_max_rows(), f18_max_cols()
    ELSE
       // linux nece od prve!?
       SetMode( f18_max_rows( desktop_rows() - 1 ) + INFO_BAR_ROWS,  ;
-         f18_max_cols( desktop_cols() - 10 ) )
+         f18_max_cols( desktop_cols() - 2 ) )
       ?E "GUI2 set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
    ENDIF
 

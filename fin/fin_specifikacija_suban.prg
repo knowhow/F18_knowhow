@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR gPicBHD, picBHD, qqKonto, qqPartner, qqBrDok
-MEMVAR gDUFRJ
+//MEMVAR gDugiUslovFirmaRJFinSpecif
 MEMVAR cIdFirma, cIdRj, dDatOd, dDatDo, cFunk, cFond, cNula
 MEMVAR cSkVar, cRasclaniti, cRascFunkFond, cN2Fin
 MEMVAR cFilter
@@ -89,23 +89,23 @@ FUNCTION fin_specifikacija_suban()
    // o_partner()
 
    cTipDomacaStranaObje := "1"
-   Box( "", 20, 77 )
+   Box( "", 21, 77 )
    SET CURSOR ON
    PRIVATE cK1 := cK2 := "9"
    PRIVATE cK3 := cK4 := "99"
 
 
-   // IF gDUFRJ == "D"
+   // IF gDugiUslovFirmaRJFinSpecif == "D"
    // cIdRj := Space( 60 )
    // ELSE
-   cIdRj := "999999"
+   cIdRj := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
    // ENDIF
    cFunk := "99999"
    cFond := "9999"
    cNula := "N"
    DO WHILE .T.
       @ m_x + 1, m_y + 6 SAY8 "SPECIFIKACIJA SUBANALITIČKIH KONTA"
-      // IF gDUFRJ == "D"
+      // IF gDugiUslovFirmaRJFinSpecif == "D"
       // cIdFirma := PadR( self_organizacija_id() + ";", 30 )
       // @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
       // ELSE
@@ -141,9 +141,9 @@ FUNCTION fin_specifikacija_suban()
       @ m_x + 15, m_y + 2 SAY8 " PARTNER: Općina (prazno-sve):" GET cOpcine
       @ m_x + 16, m_y + 2 SAY8 " Telefon (prazno-svi, uslov: '033;032;'):" GET cUslovPartnerTelefon PICT "@!S30"
 
-      UpitK1k4( 16 )
+      @ m_x + 18, m_y + 2 SAY "Export u XLSX (D/N)?" GET cExpRptDN PICT "@!" VALID cExpRptDN $ "DN"
 
-      @ m_x + 19, m_y + 2 SAY "Export u XLSX (D/N)?" GET cExpRptDN PICT "@!" VALID cExpRptDN $ "DN"
+      fin_get_k1_k4_funk_fond( 17 )
 
       READ
       ESC_BCR
@@ -161,14 +161,14 @@ FUNCTION fin_specifikacija_suban()
       cSqlWhere := parsiraj_sql( "idkonto", qqKonto )
       cSqlWhere += " AND " + parsiraj_sql( "idpartner", Trim( qqPartner ) )
 
-      // IF gDUFRJ == "D"
+      // IF gDugiUslovFirmaRJFinSpecif == "D"
       // aUsl3 := Parsiraj( cIdFirma, "IdFirma" )
       // aUsl4 := Parsiraj( cIdRJ, "IdRj" )
       // ENDIF
       aBV := Parsiraj( qqBrDok, "UPPER(BRDOK)", "C" )
       aVN := Parsiraj( cVN, "IDVN", "C" )
       cFilterPartnerTelefon := Parsiraj( cUslovPartnerTelefon, "telefon" )
-      IF aBV <> NIL .AND. aVN <> NIL  // .AND. iif( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
+      IF aBV <> NIL .AND. aVN <> NIL  // .AND. iif( gDugiUslovFirmaRJFinSpecif == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
          EXIT
       ENDIF
    ENDDO
@@ -181,9 +181,9 @@ FUNCTION fin_specifikacija_suban()
       create_dbf_r_export( aSSFields )
    ENDIF
 
-   IF gDUFRJ != "D"
-      cIdFirma := Left( cIdFirma, 2 )
-   ENDIF
+   //IF gDugiUslovFirmaRJFinSpecif != "D"
+  //    cIdFirma := Left( cIdFirma, 2 )
+  // ENDIF
 
    IF cRasclaniti == "D"
       // o_rj()
@@ -198,7 +198,7 @@ FUNCTION fin_specifikacija_suban()
    CistiK1k4()
 
    SELECT SUBAN
-   // IF !Empty( cIdFirma ) .AND. gDUFRJ != "D"
+   // IF !Empty( cIdFirma ) .AND. gDugiUslovFirmaRJFinSpecif != "D"
    IF cRasclaniti == "D"
       INDEX ON idfirma + idkonto + idpartner + idrj + DToS( datdok ) TO SUBSUB
       SET ORDER TO TAG "SUBSUB"
@@ -223,7 +223,7 @@ FUNCTION fin_specifikacija_suban()
    // ENDIF
    // ENDIF
 
-   // IF gDUFRJ == "D"
+   // IF gDugiUslovFirmaRJFinSpecif == "D"
    // cFilter := aUsl3
    // ELSE
    cFilter := "IdFirma=" + dbf_quote( cIdfirma )
@@ -258,19 +258,20 @@ FUNCTION fin_specifikacija_suban()
       cFilter += ( ".and. k4='" + ck4 + "'" )
    ENDIF
 
+altd()
    IF gFinRj == "D" .AND. Len( cIdrj ) <> 0
-      IF gDUFRJ == "D"
-         cFilter += ( ".and." + aUsl4 )
-      ELSE
-         cFilter += ( ".and. idrj='" + cidrj + "'" )
-      ENDIF
+      //IF gDugiUslovFirmaRJFinSpecif == "D"
+      //   cFilter += ( ".and." + aUsl4 )
+      //ELSE
+         cFilter += ( ".and. idrj='" + cIdrj + "'" )
+      //ENDIF
    ENDIF
 
-   IF gTroskovi == "D" .AND. Len( cFunk ) <> 0
+   IF gFinFunkFond == "D" .AND. Len( cFunk ) <> 0
       cFilter += ( ".and. Funk='" + cFunk + "'" )
    ENDIF
 
-   IF gTroskovi == "D" .AND. Len( cFond ) <> 0
+   IF gFinFunkFond == "D" .AND. Len( cFond ) <> 0
       cFilter += ( ".and. Fond='" + cFond + "'" )
    ENDIF
 

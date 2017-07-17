@@ -49,18 +49,18 @@ FUNCTION specifikacija_po_analitickim_kontima()
       @ m_x + 9, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
       cIdRJ := ""
       IF gFinRj == "D" .AND. gSAKrIz == "D"
-         cIdRJ := "999999"
+         cIdRJ := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
          @ m_x + 10, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       READ
       ESC_BCR
       aUsl1 := Parsiraj( qqKonto, "IdKonto" )
-      IF ausl1 <> NIL; exit; ENDIF
+      IF aUsl1 <> NIL; exit; ENDIF
    ENDDO
 
    BoxC()
 
-   IF cIdRj == "999999"; cIdrj := ""; ENDIF
+   IF cIdRj == REPLICATE("9", FIELD_LEN_FIN_RJ_ID ); cIdrj := ""; ENDIF
 
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
       cidrj := Trim( StrTran( cidrj, ".", "" ) )
@@ -114,7 +114,7 @@ FUNCTION specifikacija_po_analitickim_kontima()
 
          cIdKonto := IdKonto
          nd := np := 0
-         
+
          IF PRow() == 0; zagl_spec_anal(); ENDIF
 
          DO WHILE !Eof() .AND. cIdKonto == IdKonto

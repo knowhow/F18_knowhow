@@ -38,7 +38,7 @@ FUNCTION SpecSubPro()
 
    cK1 := cK2 := "9"
    cK3 := cK4 := "99"
-   cIdRj := "999999"
+  // cIdRj := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
    cFunk := "99999"
    cFond := "9999"
 

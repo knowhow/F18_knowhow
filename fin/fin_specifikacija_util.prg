@@ -148,12 +148,13 @@ STATIC FUNCTION TekRec()
 
 
 
-/* UpitK1K4(mxplus,lK)
+/* fin_get_k1_k4_funk_fond(mxplus,lK)
  *     Pita za polja od K1 do K4
  *   param: mxplus
  *   param: lK
  */
-FUNCTION UpitK1K4( mxplus, lK )
+
+FUNCTION fin_get_k1_k4_funk_fond( mxplus, lK )
 
    LOCAL _k1, _k2, _k3, _k4
    LOCAL _params := fin_params()
@@ -183,16 +184,16 @@ FUNCTION UpitK1K4( mxplus, lK )
    ENDIF
 
    IF gFinRj == "D"
-      IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER("fin_suban_kartica") )
-         @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
-      ELSE
+      //IF gDugiUslovFirmaRJFinSpecif == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER("fin_suban_kartica") )
+      //   @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
+      //ELSE
          @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj
-      ENDIF
+      //ENDIF
    ENDIF
 
-   IF gTroskovi == "D"
-      @ m_x + mxplus + 3, m_y + 2 SAY "Funk    :" GET cFunk
-      @ m_x + mxplus + 4, m_y + 2 SAY "Fond    :" GET cFond
+   IF gFinFunkFond == "D"
+      @ m_x + mxplus + 3, m_y + 2 SAY "Funk:" GET cFunk
+      @ m_x + mxplus + 3, Col() + 2 SAY "Fond: " GET cFond
    ENDIF
 
    RETURN .T.
@@ -216,14 +217,14 @@ FUNCTION CistiK1K4( lK )
       ENDIF
       IF ck4 == "99"; ck4 := ""; ENDIF
    ENDIF
-   IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER( "fin_suban_kartica" ) )
-      cIdRj := Trim( cIdRj )
-   ELSE
-      IF cIdRj == "999999"; cidrj := ""; ENDIF
+   //IF gDugiUslovFirmaRJFinSpecif == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER( "fin_suban_kartica" ) )
+  //    cIdRj := Trim( cIdRj )
+   //ELSE
+      IF cIdRj == REPLICATE("9", FIELD_LEN_FIN_RJ_ID ) ; cIdrj := ""; ENDIF
       IF "." $ cidrj
-         cidrj := Trim( StrTran( cidrj, ".", "" ) )  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
+         cIdrj := Trim( StrTran( cidrj, ".", "" ) )  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
       ENDIF
-   ENDIF
+   //ENDIF
    IF cFunk == "99999"; cFunk := ""; ENDIF
    IF "." $ cfunk
       cfunk := Trim( StrTran( cfunk, ".", "" ) )
@@ -326,7 +327,7 @@ FUNCTION prikaz_k1_k4_rj( lK )
       ENDIF
    ENDIF
 
-   IF gTroskovi == "D" .AND. Len( cFunk ) <> 0
+   IF gFinFunkFond == "D" .AND. Len( cFunk ) <> 0
       IF !lProsao
          ? cM
          ? cStr
@@ -335,7 +336,7 @@ FUNCTION prikaz_k1_k4_rj( lK )
       ? "Funkcionalna klasif. ='" + cFunk + "'"
    ENDIF
 
-   IF gTroskovi == "D" .AND. Len( cFond ) <> 0
+   IF gFinFunkFond == "D" .AND. Len( cFond ) <> 0
       IF !lProsao
          ? cM
          ? cStr

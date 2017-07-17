@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
+
 STATIC s_cTipOroganizacije
 
 FUNCTION tip_organizacije( cTip )
@@ -79,7 +81,7 @@ FUNCTION parametri_organizacije( set_params )
       @ m_x + nX, m_y + 2 SAY PadL( "Bazna valuta (D/P):", _left ) GET gBaznaV PICT "@!" VALID gBaznaV $ "DPO"
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Zaokruzenje:", _left ) GET gZaokr
+      @ m_x + nX, m_y + 2 SAY8 PadL( "Zaokruženje:", _left ) GET gZaokr
 
       READ
 

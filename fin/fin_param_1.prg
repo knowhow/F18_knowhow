@@ -61,7 +61,7 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    @ m_x + nX, Col() + 1 SAY "Unos tipa dokumenta ? (D/N)" GET _tip_dok VALID _tip_dok $ "DN" PICT "@!"
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "Unos ekonomskih kategorija? (D/N)" GET gTroskovi VALID gTroskovi $ "DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY "Unos ekonomskih kategorija? (D/N)" GET gFinFunkFond VALID gFinFunkFond $ "DN" PICT "@!"
    ++nX
 
    @ m_x + nX, m_y + 2 SAY "Unos polja K1 - K4 ? (D/N)"
@@ -173,7 +173,7 @@ STATIC FUNCTION fin_parametri_izgleda()
 
 
    //++nX
-   //@ m_x + nX, m_y + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ VALID gDUFRJ $ "DN" PICT "@!"
+   //@ m_x + nX, m_y + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDugiUslovFirmaRJFinSpecif VALID gDugiUslovFirmaRJFinSpecif $ "DN" PICT "@!"
 
    READ
    BoxC()
@@ -193,11 +193,11 @@ FUNCTION fin_read_params()
    gDatval := fetch_metric( "fin_evidencija_datum_valute", NIL, gDatVal )
    gDatnal := fetch_metric( "fin_evidencija_datum_naloga", NIL, gDatNal )
    gFinRj := fetch_metric( "fin_evidencija_radne_jedinice", NIL, gFinRj )
-   gTroskovi := fetch_metric( "fin_evidencija_ekonomske_kategorije", NIL, gTroskovi )
+   gFinFunkFond := fetch_metric( "fin_evidencija_ekonomske_kategorije", NIL, gFinFunkFond )
    gRavnot := fetch_metric( "fin_unos_ravnoteza_naloga", NIL, gRavnot )
    gBrojacFinNaloga := fetch_metric( "fin_vrsta_brojaca_naloga", NIL, gBrojacFinNaloga )
    gnLOst := fetch_metric( "fin_limit_otvorene_stavke", NIL, gnLOst )
-   //gDUFRJ := fetch_metric( "fin_dugi_uslov_za_rj", NIL, gDUFRJ )
+   //gDugiUslovFirmaRJFinSpecif := fetch_metric( "fin_dugi_uslov_za_rj", NIL, gDugiUslovFirmaRJFinSpecif )
    gBezVracanja := fetch_metric( "fin_zabrana_povrata_naloga", NIL, gBezVracanja )
    // gBuIz := fetch_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
 
@@ -233,11 +233,11 @@ FUNCTION fin_write_params()
    set_metric( "fin_evidencija_datum_valute", NIL, gDatVal )
    set_metric( "fin_evidencija_datum_naloga", NIL, gDatNal )
    set_metric( "fin_evidencija_radne_jedinice", NIL, gFinRj )
-   set_metric( "fin_evidencija_ekonomske_kategorije", NIL, gTroskovi )
+   set_metric( "fin_evidencija_ekonomske_kategorije", NIL, gFinFunkFond )
    set_metric( "fin_unos_ravnoteza_naloga", NIL, gRavnot )
    set_metric( "fin_vrsta_brojaca_naloga", NIL, gBrojacFinNaloga )
    set_metric( "fin_limit_otvorene_stavke", NIL, gnLOst )
-   //set_metric( "fin_dugi_uslov_za_rj", NIL, gDUFRJ )
+   //set_metric( "fin_dugi_uslov_za_rj", NIL, gDugiUslovFirmaRJFinSpecif )
    set_metric( "fin_zabrana_povrata_naloga", NIL, gBezVracanja )
    // set_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
 

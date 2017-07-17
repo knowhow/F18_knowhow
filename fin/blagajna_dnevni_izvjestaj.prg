@@ -72,7 +72,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
                _rec[ "idrj" ] := Space( Len( _rec[ "idrj" ] ) )
             ENDIF
 
-            IF gTroskovi == "D"
+            IF gFinFunkFond == "D"
             //   _rec[ "funk" ] := Space( Len( _rec[ "funk" ] ) )
             //   _rec[ "fond" ] := Space( Len( _rec[ "fond" ] ) )
             ENDIF

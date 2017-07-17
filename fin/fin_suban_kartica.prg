@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR m, GetList, m_x, m_y
-MEMVAR gDUFRJ, gTroskovi
+MEMVAR gFinFunkFond
 MEMVAR cIdFirma, cIdKonto, fk1, fk2, fk3, fk4, cK1, cK2, cK3, cK4
 MEMVAR qqKonto, qqPartner
 MEMVAR nStr
@@ -114,11 +114,11 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    cK3 := "99"
    cK4 := "99"
 
-   IF gDUFRJ == "D"
-      cIdRj := Space( 60 )
-   ELSE
-      cIdRj := "999999"
-   ENDIF
+   // IF gDugiUslovFirmaRJFinSpecif == "D"
+   // cIdRj := Space( 60 )
+   // ELSE
+   cIdRj := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
+   // ENDIF
 
    cFunk := "99999"
    cFond := "9999"
@@ -154,14 +154,14 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    DO WHILE .T.
 
-      IF gDUFRJ == "D"
-         cIdFirma := PadR( self_organizacija_id() + ";", 30 )
-         @ m_x + ( ++nX ), m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
-      ELSE
+      // IF gDugiUslovFirmaRJFinSpecif == "D"
+      // cIdFirma := PadR( self_organizacija_id() + ";", 30 )
+      // @ m_x + ( ++nX ), m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
+      // ELSE
 
-         @ m_x + ( ++nX ), m_y + 2 SAY "Firma "
-         ?? self_organizacija_id(), "-", self_organizacija_naziv()
-      ENDIF
+      @ m_x + ( ++nX ), m_y + 2 SAY "Firma "
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      // ENDIF
 
       IF cBrza == "D"
          qqKonto := PadR( qqKonto, 7 )
@@ -193,7 +193,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          @ m_x + ( ++nX ), m_y + 2 SAY8 "Raščlaniti po RJ/FUNK/FOND; "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
       ENDIF
 
-      UpitK1K4( 14 )
+      fin_get_k1_k4_funk_fond( 14 )
 
       @ Row() + 1, m_y + 2 SAY8 "Uslov za broj veze: " GET qqBrDok PICT "@!S30"
       @ Row() + 1, m_y + 2 SAY8 "(prazno-svi; 61_SP_2-spoji uplate za naloge tipa 61;"
@@ -241,15 +241,15 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
       aUsl3 := parsiraj( cIdVN, "IDVN", "C" )
 
-      IF gDUFRJ == "D"
-         aUsl4 := Parsiraj( cIdFirma, "IdFirma" )
-         aUsl5 := Parsiraj( cIdRJ, "IdRj" )
-      ENDIF
+      // IF gDugiUslovFirmaRJFinSpecif == "D"
+      // aUsl4 := Parsiraj( cIdFirma, "IdFirma" )
+      // aUsl5 := Parsiraj( cIdRJ, "IdRj" )
+      // ENDIF
 
       aNK := Parsiraj( qqNazKonta, "UPPER(naz)", "C" )
 
       IF cBrza == "D"
-         IF aUsl3 <> NIL .AND. iif( gDUFRJ == "D", aUsl4 <> NIL .AND. aUsl5 <> NIL, .T. )
+         IF aUsl3 <> NIL // .AND. iif( gDugiUslovFirmaRJFinSpecif == "D", aUsl4 <> NIL .AND. aUsl5 <> NIL, .T. )
             EXIT
          ENDIF
       ELSE
@@ -258,7 +258,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          aUsl1 := parsiraj( qqKonto, "IdKonto", "C" )
          aUsl2 := parsiraj( qqPartner, "IdPartner", "C" )
 
-         IF  aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. aUsl3 <> NIL .AND. iif( gDUFRJ == "D", aUsl4 <> NIL .AND. aUsl5 <> NIL, .T. )
+         IF  aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. aUsl3 <> NIL // .AND. iif( gDugiUslovFirmaRJFinSpecif == "D", aUsl4 <> NIL .AND. aUsl5 <> NIL, .T. )
             EXIT
          ENDIF
       ENDIF
@@ -369,10 +369,11 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       iif( fk2 .AND. Len( ck2 ) <> 0, ".and.k2=" + dbf_quote( ck2 ), "" ) + ;
       iif( fk3 .AND. Len( ck3 ) <> 0, ".and.k3=ck3", "" ) + ;
       iif( fk4 .AND. Len( ck4 ) <> 0, ".and.k4=" + dbf_quote( ck4 ), "" ) + ;
-      iif( gFinRj == "D" .AND. Len( cIdrj ) <> 0, iif( gDUFRJ == "D", ".and." + aUsl5, ".and.idrj=" + dbf_quote( cIdRJ ) ), "" ) + ;
-      iif( gTroskovi == "D" .AND. Len( cFunk ) <> 0, ".and.funk=" + dbf_quote( cFunk ), "" ) + ;
-      iif( gTroskovi == "D" .AND. Len( cFond ) <> 0, ".and.fond=" + dbf_quote( cFond ), "" ) // + ;
+      iif( gFinRj == "D" .AND. Len( cIdrj ) <> 0, ".and.idrj=" + dbf_quote( cIdRJ ), "" ) + ;
+      iif( gFinFunkFond == "D" .AND. Len( cFunk ) <> 0, ".and.funk=" + dbf_quote( cFunk ), "" ) + ;
+      iif( gFinFunkFond == "D" .AND. Len( cFond ) <> 0, ".and.fond=" + dbf_quote( cFond ), "" ) // + ;
 
+   // iif( gFinRj == "D" .AND. Len( cIdrj ) <> 0, iif( gDugiUslovFirmaRJFinSpecif == "D", ".and." + aUsl5, ".and.idrj=" + dbf_quote( cIdRJ ) ), "" ) + ;
 
    IF !lSpojiUplate .AND. !Empty( qqBrDok )
       cFilter += ( ".and." + cBrDokFilter )
@@ -380,7 +381,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    cFilter := StrTran( cFilter, ".t..and.", "" )
 
-   IF Len( cIdFirma ) < 2 .OR. gDUFRJ == "D"
+   IF Len( cIdFirma ) < 2  // .OR. gDugiUslovFirmaRJFinSpecif == "D"
       SET INDEX TO
       IF cRasclaniti == "D"
          INDEX ON idkonto + idpartner + idrj + funk + fond TO SUBSUB FOR &cFilter
@@ -432,11 +433,18 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    cIdKonto := field->IdKonto
 
-   bEvalSubanKartFirma := {|| !Eof() .AND. iif( gDUFRJ != "D", field->IdFirma == cIdFirma, .T. ) }
-   bEvalSubanKartKonto := {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. iif( gDUFRJ != "D", field->IdFirma == cIdFirma, .T. ) }
+   // bEvalSubanKartFirma := {|| !Eof() .AND. iif( gDugiUslovFirmaRJFinSpecif != "D", field->IdFirma == cIdFirma, .T. ) }
+   // bEvalSubanKartKonto := {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. iif( gDugiUslovFirmaRJFinSpecif != "D", field->IdFirma == cIdFirma, .T. ) }
+   // bEvalSubanKartPartner :=  {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. ( cIdPartner == field->IdPartner ;
+   // .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ;
+   // .AND. Rasclan() .AND. iif( gDugiUslovFirmaRJFinSpecif != "D", IdFirma == cIdFirma, .T. ) }
+
+
+   bEvalSubanKartFirma := {|| !Eof() .AND. field->IdFirma == cIdFirma }
+   bEvalSubanKartKonto := {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. field->IdFirma == cIdFirma }
    bEvalSubanKartPartner :=  {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. ( cIdPartner == field->IdPartner ;
       .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ;
-      .AND. Rasclan() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. ) }
+      .AND. Rasclan() .AND. IdFirma == cIdFirma }
 
 
    Eval( bZagl )
@@ -836,7 +844,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   IF gFinRj == "D"
                      @ PRow(), PCol() + 1 SAY "RJ:" + hRec[ "idrj" ]
                   ENDIF
-                  IF gTroskovi == "D"
+                  IF gFinFunkFond == "D"
                      @ PRow(), PCol() + 1 SAY "Funk.:" + hRec[ "funk" ]
                      @ PRow(), PCol() + 1 SAY "Fond.:" + hRec[ "fond" ]
                   ENDIF

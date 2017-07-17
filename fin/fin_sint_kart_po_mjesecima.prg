@@ -49,7 +49,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
       @ m_x + 4, Col() + 2 SAY "do:" GET dDatDo
       cIdRJ := ""
       IF gFinRj == "D" .AND. gSAKrIz == "D"
-         cIdRJ := "999999"
+         cIdRJ := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
          @ m_x + 5, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       READ;  ESC_BCR
@@ -59,7 +59,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
    ENDDO
    BoxC()
 
-   IF cIdRj == "999999"; cidrj := ""; ENDIF
+   IF cIdRj == REPLICATE("9", FIELD_LEN_FIN_RJ_ID ); cIdrj := ""; ENDIF
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
       cidrj := Trim( StrTran( cidrj, ".", "" ) )
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"

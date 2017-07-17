@@ -65,7 +65,7 @@ FUNCTION fin_sint_kartica()
       @ m_x + 8, Col() + 2 SAY "do:" GET dDatDo
       cIdRJ := ""
       IF gFinRj == "D" .AND. gSAKrIz == "D"
-         cIdRJ := "999999"
+         cIdRJ := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
          @ m_x + 9, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       read; ESC_BCR
@@ -88,9 +88,9 @@ FUNCTION fin_sint_kartica()
 
    BoxC()
 
-   IF cIdRj == "999999"; cidrj := ""; ENDIF
+   IF cIdRj == REPLICATE("9", FIELD_LEN_FIN_RJ_ID ); cIdrj := ""; ENDIF
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
-      cidrj := Trim( StrTran( cidrj, ".", "" ) )
+      cIdrj := Trim( StrTran( cidrj, ".", "" ) )
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
    ENDIF
 

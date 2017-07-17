@@ -24,7 +24,7 @@ FUNCTION MnuSifrarnik()
    AAdd( _opcexe, {|| _menu_specif() } )
 
 
-   IF ( gFinRj == "D" .OR. gTroskovi == "D" )
+   IF ( gFinRj == "D" .OR. gFinFunkFond == "D" )
       AAdd( _opc, "3. budžet" )
       AAdd( _opcexe, {|| _menu_budzet() } )
    ENDIF
@@ -78,14 +78,16 @@ STATIC FUNCTION _menu_budzet()
 
    AAdd( _opc, "1. radne jedinice              " )
    AAdd( _opcexe, {|| P_Rj() } )
-   //AAdd( _opc, "2. funkc.kval       " )
-   //AAdd( _opcexe, {|| P_FunK() } )
+   
+   AAdd( _opc, "2. funkc.kval       " )
+   AAdd( _opcexe, {|| P_FunK() } )
+
    //AAdd( _opc, "3. plan budzeta" )
    //AAdd( _opcexe, {|| P_Budzet() } )
    //AAdd( _opc, "4. partije->konta " )
    //AAdd( _opcexe, {|| P_ParEK() } )
-   //AAdd( _opc, "5. fond   " )
-   //AAdd( _opcexe, {|| P_Fond() } )
+   AAdd( _opc, "5. fond   " )
+   AAdd( _opcexe, {|| P_Fond() } )
 
   // AAdd( _opc, "6. konta-izuzeci" )
   // AAdd( _opcexe, {|| P_BuIZ() } )

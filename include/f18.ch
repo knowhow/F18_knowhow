@@ -96,6 +96,7 @@
 #define FIELD_LEN_PARTNER_ID 6
 
 #define FIELD_LEN_KONTO_ID 7
+#define FIELD_LEN_FIN_RJ_ID 6
 
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED

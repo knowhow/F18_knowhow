@@ -243,10 +243,10 @@ FUNCTION edit_fin_priprema()
       @ m_x + 11, Col() + 2 SAY "RJ" GET _idrj VALID Empty( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
    ENDIF
 
-   //IF gTroskovi == "D"
-    //  @ m_x + 12, m_y + 22 SAY "      Funk." GET _Funk VALID Empty( _Funk ) .OR. P_Funk( @_Funk ) PICT "@!"
-    //  @ m_x + 12, m_y + 44 SAY "      Fond." GET _Fond VALID Empty( _Fond ) .OR. P_Fond( @_Fond ) PICT "@!"
-   //ENDIF
+   IF gFinFunkFond == "D"
+      @ m_x + 12, m_y + 22 SAY "      Funk." GET _Funk VALID Empty( _Funk ) .OR. P_Funk( @_Funk ) PICT "@!"
+      @ m_x + 12, m_y + 44 SAY "      Fond." GET _Fond VALID Empty( _Fond ) .OR. P_Fond( @_Fond ) PICT "@!"
+   ENDIF
 
    @ m_x + 13, m_y + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
       VALID P_Konto( @_IdKonto, 13, 20 ) .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
@@ -659,7 +659,7 @@ FUNCTION o_fin_edit()
 
    //o_rj()
 
-   //IF gTroskovi == "D"
+   //IF gFinFunkFond == "D"
     //  o_fond()
     //  o_funk()
   // ENDIF

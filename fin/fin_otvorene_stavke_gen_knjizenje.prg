@@ -73,7 +73,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
       cIdRj := _idrj
    ENDIF
 
-   IF gTroskovi == "D"
+   IF gFinFunkFond == "D"
       cFunk := _Funk
       cFond := _Fond
    ENDIF
@@ -340,7 +340,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
             wIdrj := cIdRj
          ENDIF
 
-         IF gTroskovi == "D"
+         IF gFinFunkFond == "D"
             wFunk := cFunk
             wFond := cFond
          ENDIF

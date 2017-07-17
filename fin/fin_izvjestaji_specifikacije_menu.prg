@@ -85,7 +85,7 @@ STATIC FUNCTION fin_specifikacije_meni()
    AAdd( aOpc, "P. subanalitička specifikacija proizvoljno sortiranje" )
    AAdd( aOpcExe, {|| fin_specif_suban_proizv_sort() } )
 
-   //IF gFinRj == "D" .OR. gTroskovi == "D"
+   //IF gFinRj == "D" .OR. gFinFunkFond == "D"
       // AAdd( aOpc, "A. izvrsenje budzeta/pregled rashoda" )
       // AAdd( aOpcExe, {|| IzvrsBudz() } )
 

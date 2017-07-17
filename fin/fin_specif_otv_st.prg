@@ -23,7 +23,7 @@ FUNCTION fin_specif_otvorene_stavke()
    picBHD := FormPicL( "9 " + gPicBHD, 21 )
    picDEM := FormPicL( "9 " + pic_iznos_eur(), 21 )
 
-   cIdRj := "999999"
+   cIdRj := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
    cFunk := "99999"
    cFond := "999"
 
@@ -51,7 +51,7 @@ FUNCTION fin_specif_otvorene_stavke()
       @ m_x + 7, m_y + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
       @ m_x + 8, m_y + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
 
-      UpitK1k4( 9, .F. )
+      fin_get_k1_k4_funk_fond( 9, .F. )
 
       READ
       ESC_BCR
@@ -97,11 +97,11 @@ FUNCTION fin_specif_otvorene_stavke()
       cFilt1 += ( ".and. idrj='" + cidrj + "'" )
    ENDIF
 
-   IF gTroskovi == "D" .AND. Len( cFunk ) <> 0
+   IF gFinFunkFond == "D" .AND. Len( cFunk ) <> 0
       cFilt1 += ( ".and. Funk='" + cFunk + "'" )
    ENDIF
 
-   IF gTroskovi == "D" .AND. Len( cFond ) <> 0
+   IF gFinFunkFond == "D" .AND. Len( cFond ) <> 0
       cFilt1 += ( ".and. Fond='" + cFond + "'" )
    ENDIF
 
@@ -133,8 +133,7 @@ FUNCTION fin_specif_otvorene_stavke()
 
          cBrDok := BrDok
          nIznD := 0; nIznP := 0
-         DO WHILE  !Eof() .AND. cIdKonto = IdKonto .AND. cIdPartner = IdPartner ;
-               .AND. cBrDok == BrDok
+         DO WHILE  !Eof() .AND. cIdKonto = IdKonto .AND. cIdPartner = IdPartner .AND. cBrDok == BrDok
             IF D_P == "1"; nIznD += IznosBHD; else; nIznP += IznosBHD; ENDIF
             SKIP
          ENDDO
@@ -207,7 +206,7 @@ FUNCTION fin_specif_otvorene_stavke()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

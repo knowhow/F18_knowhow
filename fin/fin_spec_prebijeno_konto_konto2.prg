@@ -97,7 +97,7 @@ FUNCTION fin_spec_prebijeno_konto_konto2( lOtvSt )
    cUslovKonta := PadR( cIdKonto + ";" + cIdKonto2 + ";", 100 )
    find_suban_by_konto_partner( cIdFirma, cUslovKonta, cUslovPartneri, NIL, "IdFirma,IdPartner,IdKonto,brdok", .T. )
 
-   cIdRj := "999999"  // samo da program ne ispada u f-ji CistiK1K4()
+   cIdRj := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )  // samo da program ne ispada u f-ji CistiK1K4()
    cFunk := "99999"
    cFond := "9999"
    CistiK1K4()

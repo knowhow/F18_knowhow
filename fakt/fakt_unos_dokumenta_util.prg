@@ -1844,26 +1844,23 @@ FUNCTION fakt_brisi_stavku_pripreme()
    RETURN 1
 
 
-// -------------------------------------------------------
-// matrica sa tipovima dokumenata
-// -------------------------------------------------------
 FUNCTION fakt_tip_dok_arr()
 
-   LOCAL _arr := {}
+   LOCAL aOpcije := {}
 
-   AAdd( _arr, "00 - Pocetno stanje                " )
-   AAdd( _arr, "01 - Ulaz / Radni nalog " )
-   AAdd( _arr, "10 - Porezna faktura" )
-   AAdd( _arr, "11 - Porezna faktura gotovina" )
-   AAdd( _arr, "12 - Otpremnica" )
-   AAdd( _arr, "13 - Otpremnica u maloprodaju" )
-   AAdd( _arr, "19 - Izlaz po ostalim osnovama" )
-   AAdd( _arr, "20 - Ponuda/Avansna faktura" )
-   AAdd( _arr, "21 - Revers" )
-   AAdd( _arr, "22 - Realizovane otpremnice   " )
-   AAdd( _arr, "23 - Realizovane otpremnice MP" )
-   AAdd( _arr, "25 - Knjizna obavijest " )
-   AAdd( _arr, "26 - Narudzbenica " )
-   AAdd( _arr, "27 - Ponuda/Avansna faktura gotovina" )
+   AAdd( aOpcije, "00 - Početno stanje                " )
+   AAdd( aOpcije, "01 - Ulaz / Radni nalog " )
+   AAdd( aOpcije, "10 - Porezna faktura" )
+   AAdd( aOpcije, "11 - Porezna faktura gotovina" )
+   AAdd( aOpcije, "12 - Otpremnica" )
+   AAdd( aOpcije, "13 - Otpremnica u maloprodaju" )
+   AAdd( aOpcije, "19 - Izlaz po ostalim osnovama" )
+   AAdd( aOpcije, "20 - Ponuda/Avansna faktura" )
+   AAdd( aOpcije, "21 - Revers" )
+   AAdd( aOpcije, "22 - Realizovane otpremnice   " )
+   AAdd( aOpcije, "23 - Realizovane otpremnice MP" )
+   AAdd( aOpcije, "25 - Knjižna obavijest " )
+   AAdd( aOpcije, "26 - Narudžbenica " )
+   AAdd( aOpcije, "27 - Ponuda/Avansna faktura gotovina" )
 
-   RETURN _arr
+   RETURN aOpcije

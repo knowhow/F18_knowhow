@@ -85,12 +85,12 @@ PROCEDURE set_global_vars_0()
    PUBLIC gBezVracanja := "N"
    //PUBLIC gBuIz := "N"
    PUBLIC gFinRj := "N"
-   PUBLIC gTroskovi := "N"
+   PUBLIC gFinFunkFond := "N"
    PUBLIC gVSubOp := "N"
    PUBLIC gnLMONI := 120
    PUBLIC gKtoLimit := "N"
    PUBLIC gnKtoLimit := 3
-   PUBLIC gDUFRJ := "N"
+   //PUBLIC gDugiUslovFirmaRJFinSpecif := "N"
    PUBLIC gBrojacFinNaloga := "1"
    PUBLIC gDatVal := "D"
    PUBLIC gnLOSt := 0

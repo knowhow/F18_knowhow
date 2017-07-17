@@ -57,24 +57,61 @@ FUNCTION TipPKonto( cTip )
       RETURN "??????????????"
    ENDIF
 
-
-/* P_Funk(cId,dx,dy)
- *     Otvara sifranik funkcionalnih klasifikacija
- *   param: cId
- *   param: dx
- *   param: dy
- */
-
 FUNCTION P_Funk( cId, dx, dy )
 
    PRIVATE imekol, kol
 
+   o_funk()
    ImeKol := { { PadR( "Id", 5 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 50 ), {||  naz }, "naz" } ;
       }
    Kol := { 1, 2 }
 
    RETURN p_sifra( F_FUNK, 1, 10, 70, "Lista funkcionalne klasifikacije", @cId, dx, dy )
+
+
+
+FUNCTION o_funk( cId )
+
+   SELECT ( F_FUNK )
+   use_sql_funk( cId )
+   SET ORDER TO TAG "ID"
+
+   RETURN !Eof()
+
+
+FUNCTION select_o_funk( cId )
+
+   SELECT ( F_FUNK )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_funk( cId )
+
+
+
+FUNCTION use_sql_funk( cId )
+
+   LOCAL cSql
+   LOCAL cTable := "fin_funk"
+
+   SELECT ( F_FUNK )
+   IF !use_sql_sif( cTable, .T., "FUNK", cId )
+      RETURN .F.
+   ENDIF
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN !Eof()
+
+
 
 
 // -------------------------------------------
@@ -101,29 +138,65 @@ FUNCTION P_KS( cId, dx, dy )
       AAdd( kol, nI )
    NEXT
 
-   RETURN p_sifra( F_KS, 1, f18_max_rows() -10, f18_max_cols() -5, "Lista kamatni stopa", @cId, dx, dy )
+   RETURN p_sifra( F_KS, 1, f18_max_rows() - 10, f18_max_cols() - 5, "Lista kamatni stopa", @cId, dx, dy )
 
 
-
-
-/* P_Fond(cId,dx,dy)
- *     Otvara sifrarnik fondova
- *   param: cId
- *   param: dx
- *   param: dy
 
 
 FUNCTION P_Fond( cId, dx, dy )
 
    PRIVATE imekol, kol
 
+   o_fond()
    ImeKol := { { PadR( "Id", 3 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
       { PadR( "Naziv", 50 ), {||  naz }, "naz" } ;
       }
    Kol := { 1, 2 }
 
    RETURN p_sifra( F_FOND, 1, 10, 70, "Lista: Fondovi", @cId, dx, dy )
- */
+
+
+
+FUNCTION o_fond( cId )
+
+   SELECT ( F_FOND )
+   use_sql_fond( cId )
+   SET ORDER TO TAG "ID"
+
+   RETURN !Eof()
+
+
+FUNCTION select_o_fond( cId )
+
+   SELECT ( F_FOND )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_fond( cId )
+
+
+
+FUNCTION use_sql_fond( cId )
+
+   LOCAL cSql
+   LOCAL cTable := "fin_fond"
+
+   SELECT ( F_FOND )
+   IF !use_sql_sif( cTable, .T., "FOND", cId )
+      RETURN .F.
+   ENDIF
+
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN !Eof()
+
 
 
 /* P_BuIz(cId,dx,dy)

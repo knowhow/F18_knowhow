@@ -784,7 +784,9 @@ FUNCTION we_need_dbf_refresh( cTable )
 
 
    IF !is_sifarnik( cTable ) .AND. imaju_nesinhronizovani_sifarnici() // tabela nije sifarnik, a postoje prazni sifarnici
+      ?E "add_to_refresh_queue", cTable
       add_to_dbf_refresh_queue( cTable ) // neka saceka
+      hb_idleSleep( 1 )
       RETURN .F.
    ENDIF
 

@@ -471,7 +471,7 @@ FUNCTION imaju_nesinhronizovani_sifarnici()
 
       IF !lSQl .AND. !lChk0 .AND. lSif
 // #ifdef F18_DEBUG_SYNC
-         ?E "UUUUUUUUUUU unchecked sif", cDatabase, cKey, "chk0", lChk0, "sif", lSif, "sql", lSql
+         ?E "U unchecked sif", cDatabase, cKey, "chk0", lChk0, "sif", lSif, "sql", lSql
 // #endif
          info_bar( "sync", "nesinhroniziran šifarnik:" + cDatabase + " / " + cKey )
          RETURN .T.

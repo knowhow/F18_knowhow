@@ -284,6 +284,13 @@ HB_FUNC( __WIN32_SYSTEM )
       char * pszFree = NULL;
 
 
+      STARTUPINFO si;
+      PROCESS_INFORMATION pi;
+
+      ZeroMemory( &si, sizeof(si) );
+      si.cb = sizeof(si);
+      ZeroMemory( &pi, sizeof(pi) );
+
      // CreateProcess https://msdn.microsoft.com/en-us/library/windows/desktop/ms682512(v=vs.85).aspx
     // https://stackoverflow.com/questions/780465/winapi-createprocess-but-hide-the-process-window
     // create no window 0x08000000
@@ -294,10 +301,22 @@ HB_FUNC( __WIN32_SYSTEM )
 
       // https://msdn.microsoft.com/en-us/library/windows/desktop/ms684863(v=vs.85).aspx
 
-      iResult = CreateProcess(NULL, pszCommand, NULL, NULL, FALSE,
+      // https://msdn.microsoft.com/en-us/library/windows/desktop/ms684863(v=vs.85).aspx
+      // Process Creation Flags 0x080000 - CREATE_NO_WINODOW
+
+      si.wShowWindow = SW_SHOW;
+      si.dwFlags = STARTF_USESHOWWINDOW;
+      si.lpTitle = "my_process_console";
+
+      CreateProcess(NULL, pszCommand, NULL, NULL, FALSE,
               0x08000000, NULL, NULL, &si, &pi);
 
-      if ( iResult > 32 ) iResult = 0;
+      HWND console_name = FindWindow(null,"my_process_console");
+      if(console_name){
+                ShowWindow(console_name, SW_SHOW);
+      }
+
+      iResult = 1;
 
 
       hb_retni(iResult);

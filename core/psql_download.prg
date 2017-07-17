@@ -23,7 +23,7 @@ STATIC s_cSHA256sum := "XX"
 
 
 
-FUNCTION psql_dump_cmd( cTxt )
+FUNCTION pg_dump_cmd( cTxt )
 
    LOCAL cCmd
 
@@ -81,18 +81,18 @@ STATIC FUNCTION check_prog_download()
    ENDIF
 
    IF lDownload
-      IF cDownloadRazlog == "SUM" .AND. Pitanje(, "Downloadovati " + s_cProg + " novu verzija?", "D" ) == "N"
-         lDownload := .F.
-      ENDIF
+      //IF cDownloadRazlog == "SUM" .AND. Pitanje(, "Downloadovati " + s_cProg + " novu verzija?", "D" ) == "N"
+      //   lDownload := .F.
+      //ENDIF
 
-      IF lDownload
+      //IF lDownload
          cZip := download_file( cUrl, NIL )
          IF !Empty( cZip )
             unzip_files( cZip, "", s_cDirF18Util, {}, .T. )
          ELSE
             MsgBeep( "Error download " + s_cProg + "##" + cUrl )
          ENDIF
-      ENDIF
+      //ENDIF
    ENDIF
 
    IF lDownload .AND. sha256sum( s_cDirF18Util + s_cUtilName + SLASH + s_cProg ) != s_cSHA256sum

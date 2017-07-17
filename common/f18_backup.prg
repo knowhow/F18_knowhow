@@ -664,10 +664,11 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
    LOCAL pGT := NIL, pMainGT := NIL
 
    IF is_windows()
-      RETURN windows_run_invisible( cCmd, "", NIL, NIL, .F. )
+      // RETURN windows_run_invisible( cCmd, "", NIL, NIL, .F. )
+      RETURN hb_run( cCmd )
    ENDIF
 
-   // IF is_terminal()
+// IF is_terminal()
 
    pGT := hb_gtCreate( f18_gt_background() )
    pMainGT := hb_gtSelect( pGT )
@@ -681,18 +682,18 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
       ENDIF
    */
 
-   // IF s_pGT != NIL .AND. is_terminal()
-   // hb_gtSelect( s_pGT )
-   // ENDIF
+// IF s_pGT != NIL .AND. is_terminal()
+// hb_gtSelect( s_pGT )
+// ENDIF
 
    nError := hb_run( cCmd )
    ?E "RET=", nError, cCmd
-   //IF nError != 0
-    //  error_bar( "backup", cCmd )
-   //ENDIF
-   // IF s_pMainGT != NIL .AND. is_terminal()
+// IF nError != 0
+// error_bar( "backup", cCmd )
+// ENDIF
+// IF s_pMainGT != NIL .AND. is_terminal()
    hb_gtSelect( pMainGT )
-   // ENDIF
+// ENDIF
 
    RETURN nError
 

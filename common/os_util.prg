@@ -284,8 +284,8 @@ HB_FUNC( __WIN32_SYSTEM )
       char * pszFree = NULL;
 
 
-      STARTUPINFO si;
-      PROCESS_INFORMATION pi;
+      STARTUPINFOA si;
+      PROCESS_INFORMATIONA pi;
 
       ZeroMemory( &si, sizeof(si) );
       si.cb = sizeof(si);

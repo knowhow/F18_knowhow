@@ -127,7 +127,7 @@ FUNCTION update_idbr_pdvb_from_regb()
    RETURN .T.
 
 
-FUNCTION find_sifk_by_id_naz_sort( cId, cOznaka, cNaz, cSort )
+FUNCTION find_sifk_by_id_oznaka_naz_sort( cId, cOznaka, cNaz, cSort )
 
    LOCAL cSql := "select * from fmk.sifk"
 
@@ -137,7 +137,7 @@ FUNCTION find_sifk_by_id_naz_sort( cId, cOznaka, cNaz, cSort )
    cSql += " AND naz=" + sql_quote( PadR( cNaz, FIELD_LEN_SIFK_NAZ ) )
 
    IF !use_sql( "sifk", cSql )
-      ?E "ERRRRRRRRR find_sifk_by_id_naz_sort", cSql
+      ?E "ERRRRRRRRR find_sifk_by_id_oznaka_naz_sort", cSql
    ENDIF
 
    RETURN !Eof()
@@ -152,7 +152,7 @@ FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
    LOCAL hRec
 
 
-   IF !find_sifk_by_id_naz_sort( "PARTN", cIdSifk, cNazSifk, cSort )
+   IF !find_sifk_by_id_oznaka_naz_sort( "PARTN", cIdSifk, cNazSifk, cSort )
 
       o_sifk( "XXXX" )
       APPEND BLANK

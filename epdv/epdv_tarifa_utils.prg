@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION epdv_set_sif_tarifa()
+FUNCTION epdv_update_sif_tarifa()
 
    LOCAL cPom
 
@@ -21,37 +21,37 @@ FUNCTION epdv_set_sif_tarifa()
    run_sql_query( "BEGIN" )
 
    cPom := PadR( "PDV17", 6 )
-   _append_tarifa( cPom, "PDV 17%", 17 )
+   epdv_dodati_tarifu( cPom, "PDV 17%", 17 )
 
    cPom := PadR( "PDV17Z", 6 )
-   _append_tarifa( cPom, "PDV 17% ZASTICENA CIJENA", 17 )
+   epdv_dodati_tarifu( cPom, "PDV 17% ZASTICENA CIJENA", 17 )
 
    cPom := PadR( "PDV0", 6 )
-   _append_tarifa( cPom, "PDV 0%", 0 )
+   epdv_dodati_tarifu( cPom, "PDV 0%", 0 )
 
    cPom := PadR ( "PDV7PO", 6 )
-   _append_tarifa( cPom, "POLJOPR., OPOR. DIO PDV 17%", 17 )
+   epdv_dodati_tarifu( cPom, "POLJOPR., OPOR. DIO PDV 17%", 17 )
 
    cPom := PadR( "PDV0PO", 6 )
-   _append_tarifa( cPom, "POLJOPR., NEOPOR. DIO PDV 0%", 0 )
+   epdv_dodati_tarifu( cPom, "POLJOPR., NEOPOR. DIO PDV 0%", 0 )
 
    cPom := PadR( "PDV7UV", 6 )
-   _append_tarifa( cPom, "UVOZ OPOREZIVO, PDV 17%", 17 )
+   epdv_dodati_tarifu( cPom, "UVOZ OPOREZIVO, PDV 17%", 17 )
 
    cPom := PadR( "PDV0UV", 6 )
-   _append_tarifa( cPom, "UVOZ NEOPOREZIVO, PDV 0%", 0 )
+   epdv_dodati_tarifu( cPom, "UVOZ NEOPOREZIVO, PDV 0%", 0 )
 
    cPom := PadR( "PDV7NP", 6 )
-   _append_tarifa( cPom, "NEPOSLOVNE SVRHE, NAB/ISP", 17 )
+   epdv_dodati_tarifu( cPom, "NEPOSLOVNE SVRHE, NAB/ISP", 17 )
 
    cPom := PadR( "PDV7AV", 6 )
-   _append_tarifa( cPom, "AVANSNE FAKTURE, PDV 17%", 17 )
+   epdv_dodati_tarifu( cPom, "AVANSNE FAKTURE, PDV 17%", 17 )
 
    cPom := PadR( "PDV0AV", 6 )
-   _append_tarifa( cPom, "AVANSNE FAKTURE, PDV 0%", 0 )
+   epdv_dodati_tarifu( cPom, "AVANSNE FAKTURE, PDV 0%", 0 )
 
    cPom := PadR( "PDV0IZ", 6 )
-   _append_tarifa( cPom, "IZVOZ, PDV 0%", 0 )
+   epdv_dodati_tarifu( cPom, "IZVOZ, PDV 0%", 0 )
 
    run_sql_query( "COMMIT" )
 
@@ -59,17 +59,17 @@ FUNCTION epdv_set_sif_tarifa()
 
 
 
-STATIC FUNCTION _append_tarifa( tar_id, naziv, iznos )
+STATIC FUNCTION epdv_dodati_tarifu( cTarifaId, cNaziv, nIznos )
 
    LOCAL _rec
 
-   IF select_o_tarifa( tar_id )
+   IF !select_o_tarifa( cTarifaId )
 
       APPEND BLANK
       _rec := dbf_get_rec()
-      _rec[ "id" ] := tar_id
-      _rec[ "naz" ] := naziv
-      _rec[ "opp" ] := iznos
+      _rec[ "id" ] := cTarifaId
+      _rec[ "naz" ] := cNaziv
+      _rec[ "opp" ] := nIznos
       update_rec_server_and_dbf( "tarifa", _rec, 1, "CONT" )
 
    ENDIF

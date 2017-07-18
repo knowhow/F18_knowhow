@@ -20,40 +20,31 @@
 // 2 - rs
 // 3 - distrikt brcko
 // ---------------------------------------------
-FUNCTION epdv_set_sif_partneri()
+FUNCTION epdv_update_sif_partneri()
 
-   LOCAL lFound
-   LOCAL cSeek
-   LOCAL cNaz
-   LOCAL cId
-   LOCAL _rec
+   LOCAL cId := "PARTN"
+   LOCAL cNaz := "1-FED,2-RS 3-DB"
+   LOCAL cOznaka := "REJO"
+   LOCAL cSort := "09"
 
-   IF !o_sifk()
-      RETURN .F.
-   ENDIF
+   LOCAL hRec
 
+   IF !find_sifk_by_id_oznaka_naz_sort( cId,  cOznaka, cNaz, cSort )
 
-   SET ORDER TO TAG "ID"
-   // id + SORT + naz
-
-   cId := PadR( "PARTN", 8 )
-   cNaz := PadR( "1-FED,2-RS 3-DB", Len( field->naz ) )
-   cSeek :=  cId + "09" + cNaz
-
-   SEEK cSeek
-
-   IF !Found()
+      o_sifk( "XXXX" )
       APPEND BLANK
-      _rec := dbf_get_rec()
-      _rec[ "id" ] := cId
-      _rec[ "naz" ] := cNaz
-      _rec[ "oznaka" ] := "REJO"
-      _rec[ "sort" ] := "09"
-      _rec[ "tip" ] := "C"
-      _rec[ "duzina" ] := 1
-      _rec[ "veza" ] := "1"
+      ?E "fill_sifk_partn - not fonud", cOznaka, cNaz, cSort
 
-      IF !update_rec_server_and_dbf( "sifk", _rec, 1, "FULL" )
+      hRec := dbf_get_rec()
+      hRec[ "id" ] := cId
+      hRec[ "oznaka" ] := cOznaka
+      hRec[ "naz" ] := cNaz
+      hRec[ "sort" ] := cSort
+      hRec[ "tip" ] := "C"
+      hRec[ "duzina" ] := 1
+      hRec[ "veza" ] := "1"
+
+      IF !update_rec_server_and_dbf( "sifk", hRec, 1, "FULL" )
          delete_with_rlock()
       ENDIF
    ENDIF

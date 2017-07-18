@@ -58,8 +58,8 @@ FUNCTION epdv_parametri()
 FUNCTION epdv_set_params()
 
    read_epdv_gl_params()  // procitaj globalne - kparams
-   epdv_set_sif_tarifa() // napuni sifarnik tarifa
-   epdv_set_sif_partneri() // napuni sifk radi unosa partnera - rejon
+   epdv_update_sif_tarifa()
+   epdv_update_sif_partneri() // napuni sifk radi unosa partnera - rejon
 
    RETURN .T.
 

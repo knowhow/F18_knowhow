@@ -349,21 +349,12 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
 
           hb_retni( iResult );
 
-          if( pszFree )
-                   hb_xfree( pszFree );
-
-          if( hb_gtResume() != HB_SUCCESS )
-          {
-                   /* an error should be generated here !! Something like */
-                   /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
-          }
+          if( pszFree ) hb_xfree( pszFree );
 
 
 }
 
 #pragma ENDDUMP
-
-
 #endif
 
 

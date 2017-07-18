@@ -292,7 +292,7 @@ HB_FUNC( __WIN32_SYSTEM )
       si.cb = sizeof(si);
       ZeroMemory( &pi, sizeof(pi) );
 
-      si.wShowWindow = SW_MINIMIZE; // SW_HIDE, SW_SHOW
+      si.wShowWindow = SW_HIDE; // SW_HIDE, SW_SHOW
       si.dwFlags = STARTF_USESHOWWINDOW;
       si.lpTitle = "F18 run";
 

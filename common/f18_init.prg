@@ -152,6 +152,8 @@ PROCEDURE post_login_cleanup()
       brisi_stare_fajlove( my_home(), cFiles, 1 )
    NEXT
 
+   brisi_stare_fajlove( my_home_root(), "wget_*.tmp", 1 )
+
    RETURN
 
 

@@ -35,7 +35,6 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    naslovni_ekran_splash_screen( "F18", f18_ver() )
 
-   brisi_stare_fajlove( my_home_root(), "wget_*.tmp", 1 )
 
    IF no_sql_mode()
       set_f18_home( "f18_test" )

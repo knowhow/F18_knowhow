@@ -275,15 +275,15 @@ HB_FUNC( __RUN_SYSTEM )
 HB_FUNC( __WIN32_SYSTEM )
 {
 
-const char * pszTitle = hb_parc( 1 );
-const char * pszCommand = hb_parc( 2 );
+    const char * pszTitle = hb_parc( 1 );
+    const char * pszCommand = hb_parc( 2 );
 
-int iResult;
-DWORD exitCode;
+    int iResult;
+    DWORD exitCode;
 
 
-if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
-{
+   if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
+   {
       char * pszFree = NULL;
 
       STARTUPINFO si;
@@ -351,7 +351,7 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
 
           if( pszFree ) hb_xfree( pszFree );
 
-
+   }
 }
 
 #pragma ENDDUMP

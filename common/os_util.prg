@@ -275,7 +275,7 @@ HB_FUNC( __RUN_SYSTEM )
 HB_FUNC( __WIN32_SYSTEM )
 {
 
-    const char * pszTitle = hb_parc( 1 );
+    //const char * pszTitle = hb_parc( 1 );
     const char * pszCommand = hb_parc( 2 );
 
     int iResult;
@@ -295,7 +295,7 @@ HB_FUNC( __WIN32_SYSTEM )
 
       si.wShowWindow = SW_MINIMIZE; // SW_HIDE, SW_SHOW
       si.dwFlags = STARTF_USESHOWWINDOW;
-      si.lpTitle = pszTitle;
+      //si.lpTitle = pszTitle;
 
        // Start the child process.
        CreateProcess( NULL,   // No module name (use command line)

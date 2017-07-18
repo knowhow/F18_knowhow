@@ -157,8 +157,8 @@ FUNCTION brisi_stare_fajlove( cDir, cFilesMatch, nDana )
       nDana := 30
    ENDIF
 
-   cDir :=  ToUnix( Trim( cDir ) )
-   cFile := FileSeek( file_path_quote( Trim( cDir ) + cFilesMatch ) )
+   cDir := ToUnix( Trim( cDir ) )
+   cFile := FileSeek( cDir + cFilesMatch ) )
 
    nCnt := 0
    nCntNew := 0
@@ -172,7 +172,7 @@ FUNCTION brisi_stare_fajlove( cDir, cFilesMatch, nDana )
       cFile := FileSeek()
    ENDDO
 
-   ?E file_path_quote( Trim( cDir ) + cFilesMatch ), "COUNT OLD DEL:", nCnt, " NEW:", nCntNew
+   ?E  cDir + cFilesMatch,  "COUNT OLD DEL:", nCnt, " NEW:", nCntNew
 
    RETURN NIL
 

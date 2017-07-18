@@ -469,10 +469,8 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutOdtFile, lOverwrite_file )
       lOverwrite_file := .T.
    ENDIF
 
-
    s_cOutOdtFile := file_path_quote( s_cOutOdtFile )
    s_cOutputPdf := file_path_quote( s_cOutputPdf )
-#endif
 
    _ret := naziv_izlaznog_pdf_fajla( @s_cOutputPdf, lOverwrite_file )
 

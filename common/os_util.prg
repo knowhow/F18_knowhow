@@ -297,7 +297,7 @@ HB_FUNC( __WIN32_SYSTEM )
       //si.lpTitle = pszTitle;
 
        // Start the child process.
-       if ( !( CreateProcess( NULL,   // No module name (use command line)
+       if ( !CreateProcess( NULL,   // No module name (use command line)
                   pszCommand,        // Command line
                   NULL,           // Process handle not inheritable
                   NULL,           // Thread handle not inheritable

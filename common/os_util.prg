@@ -596,7 +596,7 @@ FUNCTION f18_open_document( cDocument )
    cPrefixCmd := get_run_prefix_cmd()
    cDocument := file_path_quote( cDocument )
 
-   RETURN f18_run( cPrefixCmd + file_path_quote( cDocument ), NIL, .T. )
+   RETURN f18_run( cPrefixCmd + " " + file_path_quote( cDocument ), NIL, .T. )
 
 
 
@@ -637,11 +637,11 @@ FUNCTION f18_open_mime_document( cDocument )
    // cDocument := file_path_quote( cDocument )
 
    IF is_windows()
-      nError := f18_run( cCmd + file_path_quote( cDocument ), NIL, .T. )
+      nError := f18_run( cCmd + " " + file_path_quote( cDocument ), NIL, .T. )
    ELSE
       cPrefixCmd := get_run_prefix_cmd()
       cCmd += cPrefixCmd
-      nError := f18_run( cCmd + file_path_quote( cDocument ), NIL, .T. ) // async
+      nError := f18_run( cCmd + " " + file_path_quote( cDocument ), NIL, .T. ) // async
    ENDIF
 
    IF nError <> 0

@@ -39,10 +39,9 @@ FUNCTION f18_editor( cTxt )
          RETURN -1
       ENDIF
    ENDIF
-   // DirChange( s_cDirF18Util + s_cUtilName )
-   // f18_run( cCmd, @hOutput )
 
-   RETURN f18_run( cCmd + file_path_quote( cTxt ) )
+
+   RETURN f18_run( cCmd + " " + file_path_quote( cTxt ) )
 
 
 STATIC FUNCTION check_prog_download()

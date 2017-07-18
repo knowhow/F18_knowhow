@@ -569,13 +569,7 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
 
    cCmd += " -O "
 
-// f18_run - ( run_invisible.vbs ) radi quoting cLocalFileName
-// IF is_windows()
-// cLocalFileName := '"' + cLocalFileName + '"'
-// ENDIF
-// cCmd += cLocalFileName
-
-   IF f18_run( cCmd + file_path_quote( cLocalFileName ) ) != 0
+   IF f18_run( cCmd + " " + file_path_quote( cLocalFileName ) ) != 0
       MsgBeep( "Error: " + cCmd  + "?!" )
       RETURN .F.
    ENDIF

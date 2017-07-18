@@ -370,7 +370,7 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
 
    nNumArgs := NumToken( cArgumenti, ";" ) // "c:\temp\test.dbf;c:\temp" => "c:\temp\test.dbf c:\temp"
    FOR nI := 1 TO nNumArgs
-      cArg += iif( nI > 1, " ", "" ) + Token( cArgumenti, ";", nI )
+      cArg += iif( nI > 1, " ", "" ) + file_path_quote( qToken( cArgumenti, ";", nI ) )
    NEXT
 
 #ifdef __PLATFORM__WINDOWS

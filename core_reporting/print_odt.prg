@@ -42,7 +42,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutOdtFile, lBezPitanja )
 
    LOCAL lRet := .F.
    LOCAL lOk := .F.
-   LOCAL cTemplate
+   //LOCAL cTemplate
    LOCAL cScreen
    LOCAL cCommand
    LOCAL nError
@@ -99,14 +99,6 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutOdtFile, lBezPitanja )
       RETURN lRet
    ENDIF
 
-/* run_invisible.vbs pretvara sve u shortpath
-#ifdef __PLATFORM__WINDOWS
-   cTemplate := '"' + cTemplate + '"'
-   s_cXmlFile := '"' + s_cXmlFile + '"'
-   s_cOutOdtFile := '"' + s_cOutOdtFile + '"'
-   cJodReportsFullPath := '"' + cJodReportsFullPath + '"'
-#endif
-*/
 
    __template := cTemplate
    __template_filename := cTemplate
@@ -480,7 +472,7 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutOdtFile, lOverwrite_file )
 
    s_cOutOdtFile := file_path_quote( s_cOutOdtFile )
    s_cOutputPdf := file_path_quote( s_cOutputPdf )
-
+#endif
 
    _ret := naziv_izlaznog_pdf_fajla( @s_cOutputPdf, lOverwrite_file )
 

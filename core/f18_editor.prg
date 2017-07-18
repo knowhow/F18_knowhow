@@ -40,8 +40,11 @@ FUNCTION f18_editor( cTxt )
       ENDIF
    ENDIF
 
+   IF is_windows()
+      RETURN windows_run_invisible( cCmd, cTxt )
+   ENDIF
 
-   RETURN f18_run( cCmd + " " + file_path_quote( cTxt ) )
+   RETURN f18_run( cCmd, file_path_quote( cTxt ) )
 
 
 STATIC FUNCTION check_prog_download()

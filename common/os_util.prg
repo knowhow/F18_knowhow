@@ -440,7 +440,6 @@ FUNCTION f18_run( cCommand, hOutput, lAsync )
 
    RETURN nRet
 
-/*
 
 FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
 
@@ -523,7 +522,6 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
 
    RETURN hb_processRun( cCmd, NIL, @cStdOut, @cStdErr, lAsync )
 
-*/
 
 FUNCTION get_run_prefix_cmd( cCommand, lAsync )
 

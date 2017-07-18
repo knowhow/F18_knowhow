@@ -87,7 +87,7 @@ METHOD set_module_gvars()
    PUBLIC gKt_updv := PadR( "260;", 100 )
    PUBLIC gKt_ipdv := PadR( "560;", 100 )
 
-   epdv_set_params()
+   epdv_update_sifre_params()
 
    o_params()
    Rpar( "p1", @gPicVrijednost )

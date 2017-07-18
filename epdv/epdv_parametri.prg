@@ -52,10 +52,8 @@ FUNCTION epdv_parametri()
    RETURN .T.
 
 
-// -------------------------------------
-// set parametre pri pokretanju modula
-// ------------------------------------
-FUNCTION epdv_set_params()
+
+FUNCTION epdv_update_sifre_params()
 
    read_epdv_gl_params()  // procitaj globalne - kparams
    epdv_update_sif_tarifa()

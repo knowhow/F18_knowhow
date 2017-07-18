@@ -309,7 +309,7 @@ HB_FUNC( __WIN32_SYSTEM )
                   &pi )           // Pointer to PROCESS_INFORMATION structure
 
         {
-            printf( "CreateProcess [%s] %s failed (%d).\n", pszTitle, pszCommand, GetLastError() );
+            printf( "CreateProcess %s failed (%d).\n", pszCommand, GetLastError() );
 
             iResult = 100;
             hb_retni(iResult);

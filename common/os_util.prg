@@ -165,7 +165,7 @@ FUNCTION brisi_stare_fajlove( cDir, cFilesMatch, nDana )
    DO WHILE !Empty( cFile )
       IF Date() - FileDate() > nDana
          nCnt++
-         FileDelete( file_path_quote( cDir + cFile ) )
+         FileDelete( cDir + cFile )
       ELSE
          nCntNew++
       ENDIF

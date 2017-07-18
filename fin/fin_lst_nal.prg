@@ -11,9 +11,8 @@
 
 #include "f18.ch"
 
-// -----------------------------------------
-// stampa svih naloga - export u DBF
-// -----------------------------------------
+/*
+
 FUNCTION st_sv_nal()
 
    aFields := get_exp_fields()
@@ -121,3 +120,5 @@ STATIC FUNCTION fill_export( cIdF, cIdVn, cBrNal, cRbr, cIdKto, ;
    SELECT ( nArr )
 
    RETURN
+
+*/

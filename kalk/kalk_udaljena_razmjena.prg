@@ -263,40 +263,33 @@ STATIC FUNCTION _vars_import( hParams )
 
    Box(, 15, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** Uslovi importa dokumenata"
-
+   @ m_x + _x, m_y + 2 SAY8 "*** Uslovi importa dokumenata"
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
-
+   @ m_x + _x, m_y + 2 SAY8 "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
-
+   @ m_x + _x, m_y + 2 SAY8 "Datumski period od" GET _dat_od
+   @ m_x + _x, Col() + 1 SAY8 "do" GET _dat_do
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
-
+   @ m_x + _x, m_y + 2 SAY8 "Uzeti u obzir sljedeća konta:" GET _konta PICT "@S30"
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+   @ m_x + _x, m_y + 2 SAY8 "Zamijeniti postojeće dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece sifre novim (D/N):" GET lZamijenitiSifre PICT "@!" VALID lZamijenitiSifre $ "DN"
+   @ m_x + _x, m_y + 2 SAY8 "Zamijeniti postojeće šifre novim (D/N):" GET lZamijenitiSifre PICT "@!" VALID lZamijenitiSifre $ "DN"
 
+//   ++ _x
+//   ++ _x
+//   @ m_x + _x, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
-
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
+   @ m_x + _x, m_y + 2 SAY "Lokacija importa:" GET _imp_path PICT "@S50"
 
    _x += 2
-
    @ m_x + _x, m_y + 2 SAY "pript->obrada->kalk:" GET cPript PICT "@!" VALID cPript $ "DN"
-
 
    READ
 
@@ -306,7 +299,6 @@ STATIC FUNCTION _vars_import( hParams )
    IF LastKey() <> K_ESC
 
       _ret := .T.
-
       set_metric( "kalk_import_datum_od", my_user(), _dat_od )
       set_metric( "kalk_import_datum_do", my_user(), _dat_do )
       set_metric( "kalk_import_lista_konta", my_user(), _konta )

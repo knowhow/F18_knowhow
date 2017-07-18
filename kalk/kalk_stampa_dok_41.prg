@@ -67,8 +67,8 @@ FUNCTION kalk_stampa_dok_41()
 
       kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
-      // izracunaj nMarza2
-      MarzaMPR()
+  
+      kalk_marza_realizacija_prodavnica()
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
       set_pdv_array_by_koncij_region_roba_idtarifa_2_3( pkonto, idRoba, @aPorezi, _idtarifa )

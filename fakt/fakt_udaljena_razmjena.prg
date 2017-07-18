@@ -301,12 +301,12 @@ STATIC FUNCTION _vars_export( vars )
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY8 "Eksportovati šifarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
+   @ m_x + _x, m_y + 2 SAY8 "Export šifarnika (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
 
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
+   @ m_x + _x, m_y + 2 SAY "Lokacija exporta:" GET _exp_path PICT "@S50"
 
    READ
 

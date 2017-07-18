@@ -25,8 +25,9 @@ FUNCTION fin_razmjena_podataka_meni()
    //AAdd( aOpcExe, {|| LdFin() } )
    AAdd( aOpc, "3. import txt elektronsko bankarstvo bbi" )
    AAdd( aOpcExe, {|| import_elektronsko_bankarstvo_bbi() } )
-   AAdd( aOpc, "4. export dbf (svi nalozi) " )
-   AAdd( aOpcExe, {|| st_sv_nal() } )
+
+   //AAdd( aOpc, "4. export dbf (svi nalozi) " )
+   //AAdd( aOpcExe, {|| st_sv_nal() } )
   //AAdd( aOpc, "6. pos->fin " )
    //AAdd( aOpcExe, {|| PosFin() } )
 

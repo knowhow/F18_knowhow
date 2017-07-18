@@ -82,7 +82,8 @@ FUNCTION error_bar( cDoc, cMsg )
 
    lPrinter   :=  Set( _SET_PRINTER,  .F. )
    lConsole := Set( _SET_CONSOLE, .T. )
-   @ f18_max_rows() + 1, 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_ERROR_PANEL
+   @ f18_max_rows() + 1, 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" ;
+       COLOR IIF( Empty( cMsg ), F18_COLOR_INFO_PANEL, F18_COLOR_ERROR_PANEL)
    Set( _SET_PRINTER,  lPrinter )
    Set( _SET_CONSOLE, lConsole )
 

@@ -20,7 +20,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
    LOCAL pConn
    LOCAL nI, cMsg, cLogMsg := ""
-   LOCAL cQuery
+   LOCAL cQuery, oError
 
    IF Used()
       USE
@@ -57,7 +57,16 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
    ENDIF
 
 
-   dbUseArea( .F., "SQLMIX", cQuery,  cAlias, NIL, NIL )
+   BEGIN SEQUENCE WITH {| err | Break( err ) }
+
+      dbUseArea( .F., "SQLMIX", cQuery,  cAlias, NIL, NIL )
+
+   RECOVER USING oError
+
+      MsgBeep( "SQL ERRROR: " + cTable + "##" + Right( cQuery, f18_max_cols() - 10 ) + "##" + oError:description  )
+      QUIT_1
+   END SEQUENCE
+
 
    IF lMakeIndex
 

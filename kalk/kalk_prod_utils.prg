@@ -73,7 +73,7 @@ FUNCTION MarzaMP( cIdVd, lNaprijed, aPorezi )
       nMarza2 := _MPC - _VPC - nPrevMP
    ENDIF
 
-   AEval( GetList, {| o| o:display() } )
+   AEval( GetList, {| o | o:display() } )
 
    RETURN
 
@@ -149,14 +149,13 @@ FUNCTION Marza2( fMarza )
       nMarza2 := _MPC - _VPC - nPrevMP
    ENDIF
 
-   AEval( GetList, {| o| o:display() } )
+   AEval( GetList, {| o | o:display() } )
 
    RETURN
 
 
 
 FUNCTION Marza2O( fMarza )
-
 
    LOCAL nPrevMP, nPPP
 
@@ -185,7 +184,7 @@ FUNCTION Marza2O( fMarza )
       nMarza2 := _MPC - _VPC * nPPP - nPrevMP
       IF _TMarza2 == "%"
          IF Round( _vpc, 5 ) <> 0
-            _Marza2 := 100 * ( _MPC / ( _VPC * nPPP + nPrevMP ) -1 )
+            _Marza2 := 100 * ( _MPC / ( _VPC * nPPP + nPrevMP ) - 1 )
          ELSE
             _Marza2 := 0
          ENDIF
@@ -218,7 +217,7 @@ FUNCTION Marza2O( fMarza )
       nMarza2 := _MPC - _VPC * nPPP - nPrevMP
    ENDIF
 
-   AEval( GetList, {| o| o:display() } )
+   AEval( GetList, {| o | o:display() } )
 
    RETURN
 // }
@@ -266,19 +265,16 @@ FUNCTION Marza2R()
    ELSE
       nMarza2 := _MPC - _NC
    ENDIF
-   AEval( GetList, {| o| o:display() } )
+   AEval( GetList, {| o | o:display() } )
 
-   RETURN
-// }
+   RETURN .T.
 
 
-/* Marza2R()
- *     Marza pri realizaciji prodavnice
- */
 
-FUNCTION MarzaMpR()
 
-   // {
+
+FUNCTION kalk_marza_realizacija_prodavnica()
+
    LOCAL nPPP
 
    nPPP := 1 / ( 1 + tarifa->opp / 100 )
@@ -293,7 +289,12 @@ FUNCTION MarzaMpR()
       nMarza2 := nMpcSaPop - _NC
 
       IF _TMarza2 == "%"
-         _Marza2 := 100 * ( nMpcSaPop / _NC - 1 )
+         IF Round( _nc - 1, 4 ) != 0
+            _Marza2 := 100 * ( nMpcSaPop / _NC - 1 )
+         ELSE
+            _Marza2 := 999
+            error_bar( "kalk", "dijeljenje sa 0: nc - 1" )
+         ENDIF
       ELSEIF _TMarza2 == "A"
          _Marza2 := nMarza2
       ELSEIF _TMarza2 == "U"
@@ -305,7 +306,12 @@ FUNCTION MarzaMpR()
       ELSEIF _TMarza2 == "A"
          nMarza2 := _Marza2
       ELSEIF _TMarza2 == "U"
-         nMarza2 := _Marza2 / ( _Kolicina )
+         IF Round( _kolicina, 4 ) != 0
+            nMarza2 := _Marza2 / ( _Kolicina )
+         ELSE
+            error_bar( "kalk", "dijeljenje sa 0: kolicina" )
+            nMarza2 := 999
+         ENDIF
       ENDIF
 
       _MPC := nMarza2 + _NC + _RabatV
@@ -313,9 +319,9 @@ FUNCTION MarzaMpR()
    ELSE
       nMarza2 := nMpcSaPop - _NC
    ENDIF
-   AEval( GetList, {| o| o:display() } )
+   AEval( GetList, {| o | o:display() } )
 
-   RETURN
+   RETURN .T.
 
 
 

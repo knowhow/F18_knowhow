@@ -24,7 +24,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    LOCAL cDirFakt, cDirKalk
    LOCAL cViseKonta
    PRIVATE dDatOd, dDatDo
-   PRIVATE gDirKalk := ""
+   //PRIVATE gDirKalk := ""
    PRIVATE cOpis1 := PadR( "F A K T", 12 )
    PRIVATE cOpis2 := "FAKT 2.FIRMA"
 

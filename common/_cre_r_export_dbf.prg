@@ -57,7 +57,6 @@ FUNCTION open_r_export_table( cExportDbf )
    LOCAL cXlsx
    LOCAL hFile, cOutFile
 
-
    my_close_all_dbf()
 
    // cCommand := get_run_prefix_cmd() + file_path_quote( my_home() + my_dbf_prefix() + s_cExportDbf + ".dbf" )
@@ -84,6 +83,11 @@ FUNCTION open_r_export_table( cExportDbf )
    f18_run( LO_convert_xlsx_cmd(), cExportDbf + ";" + cPath ) // libreoffice --convert-to xlsx:"Calc MS Excel 2007 XML" --infilter=dBase:25 r_export.dbf
    Msgc()
    cXlsx := StrTran( cExportDbf, ".dbf", ".xlsx" )
+
+   IF !File( cXlsx )
+      MsgBeep( "Greška! XLSX nije kreiran:#" + cXlsx )
+      RETURN .F.
+   ENDIF
 
    IF ( hFile := hb_vfTempFile( @cOutFile, my_home(), "r_export_", ".xlsx" ) ) != NIL // hb_vfTempFile( @<cFileName>, [ <cDir> ], [ <cPrefix> ], [ <cExt> ], [ <nAttr> ] )
       hb_vfClose( hFile )

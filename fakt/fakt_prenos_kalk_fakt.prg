@@ -23,17 +23,16 @@ FUNCTION kalk_fakt()
    AAdd( aOpcExe, {|| kalk_2_fakt() } )
    AAdd( aOpc, "2. prenos kalk->fakt za partnera  " )
    AAdd( aOpcExe, {|| kalkp_2_fakt() } )
-   AAdd( aOpc, "3. parametri prenosa" )
-   AAdd( aOpcExe, {|| _params() } )
+   //AAdd( aOpc, "3. parametri prenosa" )
+   //AAdd( aOpcExe, {|| _params() } )
 
    f18_menu( "pfakt", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.
 
 
-// ---------------------------------------
-// parametri prenosa
-// ---------------------------------------
+
+/*
 STATIC FUNCTION _params()
 
    o_params()
@@ -43,21 +42,21 @@ STATIC FUNCTION _params()
    PRIVATE aHistory := {}
 
    Box(, 3, 70 )
-   @ m_x + 1, m_y + 2 SAY "Radni direktorij KALK (KALK.DBF):" GET gDirKalk PICT "@S30"
+  -- @ m_x + 1, m_y + 2 SAY "Radni direktorij KALK (KALK.DBF):" GET gDirKalk PICT "@S30"
    READ
    BoxC()
 
-   gDirKalk := Trim( gDirKalk )
+  -- gDirKalk := Trim( gDirKalk )
 
    IF LastKey() <> K_ESC
-      WPar( "dk", gDirKalk )
+  --    WPar( "dk", gDirKalk )
    ENDIF
 
    SELECT params
    USE
 
    RETURN .T.
-
+*/
 
 // -----------------------------------------
 // prenos kalk u fakt

@@ -272,7 +272,6 @@ HB_FUNC( __RUN_SYSTEM )
 #include "windows.h"
 
 
-
 HB_FUNC( __WIN32_SYSTEM )
 {
 
@@ -298,7 +297,6 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
       si.dwFlags = STARTF_USESHOWWINDOW;
       si.lpTitle = pszTitle;
 
-
        // Start the child process.
        if( !CreateProcess( NULL,   // No module name (use command line)
                   pszCommand,        // Command line
@@ -312,7 +310,7 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
                   &pi )           // Pointer to PROCESS_INFORMATION structure
         )
         {
-              printf( "CreateProcess failed (%d).\n", GetLastError() );
+              printf( "CreateProcess [%s] %s failed (%d).\n", pszTitle, pszCommand, GetLastError() );
 
                iResult = 100;
                hb_retni(iResult);
@@ -326,7 +324,7 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
                    /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
                 }
                   return;
-               }
+          }
 
                 HWND console_name = FindWindow( NULL, pszTitle);
                 if(console_name) {
@@ -393,7 +391,7 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
       cArg += iif( nI > 1, " ", "" ) + Token( cArgumenti, ";", nI )
    NEXT
 
-   IF is_windows()
+#ifdef __PLATFORM__WINDOWS
       IF Left( cCommand, 4 ) == "copy"
          RETURN hb_run( cCommand + " " + cArg )
       ENDIF
@@ -410,6 +408,8 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
       ENDIF
       RETURN nRet
    ENDIF
+   
+#endif
 
    IF lAsync
       nRet := __run_system( cCommand + " " + cArg + "&" ) // .AND. ( is_linux() .OR. is_mac()

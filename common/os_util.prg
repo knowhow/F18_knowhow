@@ -406,7 +406,7 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
          IF lAsync
             cCommand := "start " + cCommand
          ENDIF
-         nRet := __WIN32_SYSTEM( cCommand + " " + cArgumenti )
+         nRet := __WIN32_SYSTEM( "F18_run", cCommand + " " + cArgumenti )
       ENDIF
       RETURN nRet
    ENDIF

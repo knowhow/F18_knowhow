@@ -335,33 +335,31 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
                 //}
 
 
-              // Wait until child process exits.
-              WaitForSingleObject( pi.hProcess, INFINITE );
+          // Wait until child process exits.
+          WaitForSingleObject( pi.hProcess, INFINITE );
 
-              GetExitCodeProcess( pi.hProcess, &exitCode );
-              printf( "exitcode =%d", exitCode );
+          GetExitCodeProcess( pi.hProcess, &exitCode );
+          printf( "exitcode =%d", exitCode );
 
-              iResult = exitCode;
+          iResult = exitCode;
 
-              // Close process and thread handles.
-              CloseHandle( pi.hProcess );
-              CloseHandle( pi.hThread );
+          // Close process and thread handles.
+          CloseHandle( pi.hProcess );
+          CloseHandle( pi.hThread );
 
-              hb_retni( iResult );
+          hb_retni( iResult );
 
-              if( pszFree )
+          if( pszFree )
                    hb_xfree( pszFree );
 
-              if( hb_gtResume() != HB_SUCCESS )
-              {
+          if( hb_gtResume() != HB_SUCCESS )
+          {
                    /* an error should be generated here !! Something like */
                    /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
-              }
-
-              return;
-
-
           }
+
+          return;
+
 }
 
 #pragma ENDDUMP

@@ -358,7 +358,6 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
                    /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
           }
 
-          return;
 
 }
 

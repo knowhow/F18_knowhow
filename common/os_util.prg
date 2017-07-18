@@ -307,8 +307,8 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
                   NULL,           // Use parent's environment block
                   NULL,           // Use parent's starting directory
                   &si,            // Pointer to STARTUPINFO structure
-                  &pi )           // Pointer to PROCESS_INFORMATION structure
-        );
+                  &pi );           // Pointer to PROCESS_INFORMATION structure
+
 
 /*
         {

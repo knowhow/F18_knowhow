@@ -42,7 +42,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutOdtFile, lBezPitanja )
 
    LOCAL lRet := .F.
    LOCAL lOk := .F.
-   LOCAL _template
+   LOCAL cTemplate
    LOCAL cScreen
    LOCAL cCommand
    LOCAL nError
@@ -88,7 +88,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutOdtFile, lBezPitanja )
 
    ?E "ODT report gen: pobrisao fajl " + s_cOutOdtFile
 
-   _template := my_home() + cTemplate
+   cTemplate := my_home() + cTemplate
 
    cKnowhowUtilPath := get_knowhow_util_path()
    cJodReportsFullPath := jodreports_cli()
@@ -101,20 +101,20 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutOdtFile, lBezPitanja )
 
 /* run_invisible.vbs pretvara sve u shortpath
 #ifdef __PLATFORM__WINDOWS
-   _template := '"' + _template + '"'
+   cTemplate := '"' + cTemplate + '"'
    s_cXmlFile := '"' + s_cXmlFile + '"'
    s_cOutOdtFile := '"' + s_cOutOdtFile + '"'
    cJodReportsFullPath := '"' + cJodReportsFullPath + '"'
 #endif
 */
 
-   __template := _template
+   __template := cTemplate
    __template_filename := cTemplate
 
-   cCommand := java_cmd() + " -jar " + cJodReportsFullPath + " "
-   cCommand += _template + " "
-   cCommand += s_cXmlFile + " "
-   cCommand += s_cOutOdtFile
+   cCommand := java_cmd() + " -jar " + file_path_quote( cJodReportsFullPath ) + " "
+   cCommand += file_path_quote( cTemplate ) + " "
+   cCommand += file_path_quote( s_cXmlFile ) + " "
+   cCommand += file_path_quote( s_cOutOdtFile )
 
    log_write( "JOD report gen, cmd: " + cCommand, 7 )
 
@@ -477,10 +477,10 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutOdtFile, lOverwrite_file )
       lOverwrite_file := .T.
    ENDIF
 
-#ifdef __PLATFORM__WINDOWS
-   s_cOutOdtFile := '"' + s_cOutOdtFile + '"'
-   s_cOutputPdf := '"' + s_cOutputPdf + '"'
-#endif
+
+   s_cOutOdtFile := file_path_quote( s_cOutOdtFile )
+   s_cOutputPdf := file_path_quote( s_cOutputPdf )
+
 
    _ret := naziv_izlaznog_pdf_fajla( @s_cOutputPdf, lOverwrite_file )
 
@@ -503,7 +503,7 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutOdtFile, lOverwrite_file )
 // cJodReportsFullPath := '"' + cJodReportsFullPath + '"'
 // #endif
 
-   cCommand := java_cmd() + " -jar " + cJodReportsFullPath + " "
+   cCommand := java_cmd() + " -jar " + file_path_quote( cJodReportsFullPath ) + " "
    cCommand += s_cOutOdtFile + " "
    cCommand += s_cOutputPdf
 

@@ -559,11 +559,11 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
    // Sleep( 1 )
    // ENDIF
 
-   cCmd := "wget "
+  cCmd := "wget "
 
-#ifdef __PLATFORM__WINDOWS
+// #ifdef __PLATFORM__WINDOWS
    cCmd += " -q  --tries=4 --timeout=4  --no-cache --no-check-certificate "
-#endif
+// #endif
 
    cCmd += cUrl + cFileName // http://test.com/FILE
 

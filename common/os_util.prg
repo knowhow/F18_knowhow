@@ -293,7 +293,7 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
       si.cb = sizeof(si);
       ZeroMemory( &pi, sizeof(pi) );
 
-      si.wShowWindow = SW_HIDE; // SW_SHOW
+      si.wShowWindow = SW_MINIMIZE; // SW_HIDE, SW_SHOW
       si.dwFlags = STARTF_USESHOWWINDOW;
       si.lpTitle = pszTitle;
 
@@ -309,6 +309,8 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
                   &si,            // Pointer to STARTUPINFO structure
                   &pi )           // Pointer to PROCESS_INFORMATION structure
         )
+
+/*
         {
               printf( "CreateProcess [%s] %s failed (%d).\n", pszTitle, pszCommand, GetLastError() );
 
@@ -325,12 +327,12 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
                 }
                   return;
           }
-
-                HWND console_name = FindWindow( NULL, pszTitle);
-                if(console_name) {
-                     printf( "nasao console name%s\n", pszTitle);
-                     ShowWindow(console_name, SW_MINIMIZE);
-                }
+*/
+                //HWND console_name = FindWindow( NULL, pszTitle);
+                //if(console_name) {
+                //     printf( "nasao console name%s\n", pszTitle);
+                //     ShowWindow(console_name, SW_MINIMIZE);
+                //}
 
 
               // Wait until child process exits.

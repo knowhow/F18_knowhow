@@ -294,7 +294,7 @@ HB_FUNC( __WIN32_SYSTEM )
 
       si.wShowWindow = SW_HIDE; // SW_HIDE, SW_SHOW
       si.dwFlags = STARTF_USESHOWWINDOW;
-      si.lpTitle = "F18 run";
+      //si.lpTitle = "F18 run";
 
        // Start the child process.
        if ( !CreateProcess( NULL,   // No module name (use command line)

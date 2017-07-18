@@ -375,20 +375,22 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
 
    #ifdef __PLATFORM__WINDOWS
       IF Left( cCommand, 4 ) == "copy"
-         RETURN hb_run( cCommand + " " + cArg )
+         RETURN hb_run( cCommand + " " + cArgQoute )
       ENDIF
 
       IF ValType( hOutput ) == "H"
-         nRet := hb_processRun( cCommand + " " + cArg, NIL, @cStdOut, @cStdErr )
+         nRet := hb_processRun( cCommand + " " + cArgQuote, NIL, @cStdOut, @cStdErr )
          hOutput[ "stdout" ] := cStdOut
          hOutput[ "stderr" ] := cStdErr
       ELSE
-         cCommand := "cmd /c " + cCommand
-         IF lAsync
-            cCommand := "start " + cCommand
+         IF LEFT( cCommand, 4 ) != "cmd " .AND. LEFT( cCommand, 5 ) != "start"
+            cCommand := "cmd /c " + cCommand
+            IF lAsync
+               cCommand := "start " + cCommand
+            ENDIF
          ENDIF
-         ?E "win32_run:", cCommand + " " + cArgQuote
          nRet := __WIN32_SYSTEM( cCommand + " " + cArgQoute )
+         ?E "win32_run:", nRet, cCommand + " " + cArgQuote
       ENDIF
 
       RETURN nRet

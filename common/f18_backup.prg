@@ -664,7 +664,7 @@ STATIC FUNCTION hb_run_in_background_gt( cCmd )
    LOCAL pGT := NIL, pMainGT := NIL
 
    IF is_windows()
-      RETURN f18_run( cCmd )
+      RETURN f18_run( "cmd /c " + cCmd )
    ENDIF
 
 // IF is_terminal()

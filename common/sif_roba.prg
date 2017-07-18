@@ -90,11 +90,9 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
    // AUTOMATSKI TROSKOVI ROBE, samo za KALK
    IF programski_modul() == "KALK"   // .AND. roba->( FieldPos( "TROSK1" ) ) <> 0
       AAdd ( ImeKol, { PadR( c10T1, 8 ), {|| trosk1 }, "trosk1", {|| .T. }, {|| .T. } } )
-      AAdd ( ImeKol, { PadR( c10T2, 8 ), {|| trosk2 }, "trosk2", ;
-         {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 30 } )
+      AAdd ( ImeKol, { PadR( c10T2, 8 ), {|| trosk2 }, "trosk2", {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 30 } )
       AAdd ( ImeKol, { PadR( c10T3, 8 ), {|| trosk3 }, "trosk3", {|| .T. }, {|| .T. } } )
-      AAdd ( ImeKol, { PadR( c10T4, 8 ), {|| trosk4 }, "trosk4", ;
-         {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 30 } )
+      AAdd ( ImeKol, { PadR( c10T4, 8 ), {|| trosk4 }, "trosk4", {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 30 } )
       AAdd ( ImeKol, { PadR( c10T5, 8 ), {|| trosk5 }, "trosk5"   } )
    ENDIF
 

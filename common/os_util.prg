@@ -391,7 +391,7 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
             ENDIF
          ENDIF
           ?E "win32_run:", cCommand + " " + cArgQuote
-          nRet := __WIN32_SYSTEM( cCommand + " " + cArgQoute )
+          nRet := __WIN32_SYSTEM( cCommand + " " + cArgumenti )
           ?E "win32_run exit:", nRet
       ENDIF
 

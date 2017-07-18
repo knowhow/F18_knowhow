@@ -575,7 +575,7 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
 // ENDIF
 // cCmd += cLocalFileName
 
-   IF f18_run( cCmd, cLocalFileName ) != 0
+   IF f18_run( cCmd + file_path_quote( cLocalFileName ) ) != 0
       MsgBeep( "Error: " + cCmd  + "?!" )
       RETURN .F.
    ENDIF

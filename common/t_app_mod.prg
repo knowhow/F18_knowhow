@@ -294,7 +294,7 @@ METHOD gParams()
       ENDIF
 
       Box(, 25, 80 )
-      f18_run( ckom )
+      f18_run( cKom )
       BoxC()
       IniRefresh() // izbrisi iz cache-a
    ENDIF

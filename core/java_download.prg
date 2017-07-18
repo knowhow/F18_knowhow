@@ -33,7 +33,7 @@ FUNCTION java_version()
    LOCAL hOutput := hb_Hash(), pRegex, aMatch
    LOCAL hRet := hb_Hash()
 
-   f18_run( java_cmd(), "-version", @hOutput )
+   f18_run( java_cmd() + " -version", @hOutput )
 
    hRet[ "version" ] := "-1"
    hRet[ "name" ] := "JAVAERR"

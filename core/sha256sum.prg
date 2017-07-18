@@ -29,7 +29,7 @@ FUNCTION sha256sum( cFile )
       RETURN ""
    ENDIF
 
-   nRet := f18_run( cCmd, "", @hOutput )
+   nRet := f18_run( cCmd, @hOutput )
 
    RETURN hOutput[ "stdout" ]
 

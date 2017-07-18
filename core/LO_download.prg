@@ -77,7 +77,7 @@ FUNCTION LO_open_dokument( cFile )
       lAsync := .T.
    ENDIF
 
-   RETURN f18_run( cCmd, cFile, NIL, lAsync )
+   RETURN f18_run( cCmd + file_path_quote( cFile ), NIL, lAsync )
 
 
 

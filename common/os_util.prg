@@ -310,24 +310,24 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
                   &pi );           // Pointer to PROCESS_INFORMATION structure
 
 
-/*
-        {
-              printf( "CreateProcess [%s] %s failed (%d).\n", pszTitle, pszCommand, GetLastError() );
 
-               iResult = 100;
-               hb_retni(iResult);
+      //  {
+      //        printf( "CreateProcess [%s] %s failed (%d).\n", pszTitle, pszCommand, GetLastError() );
+     //
+      //         iResult = 100;
+      //         hb_retni(iResult);
+     //
+      //          if( pszFree )
+      //             hb_xfree( pszFree );
+      //
+      //          if( hb_gtResume() != HB_SUCCESS )
+      //          {
+      //             /* an error should be generated here !! Something like */
+      //             /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
+      //          }
+      //            return;
+      //    }
 
-                if( pszFree )
-                   hb_xfree( pszFree );
-
-                if( hb_gtResume() != HB_SUCCESS )
-                {
-                   /* an error should be generated here !! Something like */
-                   /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
-                }
-                  return;
-          }
-*/
                 //HWND console_name = FindWindow( NULL, pszTitle);
                 //if(console_name) {
                 //     printf( "nasao console name%s\n", pszTitle);

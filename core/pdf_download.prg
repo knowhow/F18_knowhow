@@ -26,7 +26,7 @@ FUNCTION PDF_open_dokument( cFile )
 
    IF is_windows()
       cCmd := PDF_cmd()
-      nRet := f18_run( cCmd, cFile )
+      nRet := windows_run_invisible( cCmd, cFile )
    ELSE
       nRet := f18_open_mime_document( cFile )
    ENDIF

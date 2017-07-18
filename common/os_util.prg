@@ -373,7 +373,8 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
       cArgQuote += iif( nI > 1, " ", "" ) + file_path_quote( Token( cArgumenti, ";", nI ) )
    NEXT
 
-   #ifdef __PLATFORM__WINDOWS
+#ifdef __PLATFORM__WINDOWS
+
       IF Left( cCommand, 4 ) == "copy"
          RETURN hb_run( cCommand + " " + cArgQoute )
       ENDIF
@@ -389,8 +390,9 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
                cCommand := "start " + cCommand
             ENDIF
          ENDIF
+          ?E "win32_run:", cCommand + " " + cArgQuote
          nRet := __WIN32_SYSTEM( cCommand + " " + cArgQoute )
-         ?E "win32_run:", nRet, cCommand + " " + cArgQuote
+          ?E "win32_run exit:", nRet
       ENDIF
 
       RETURN nRet

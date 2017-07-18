@@ -328,11 +328,11 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
                   return;
                }
 
-                //HWND console_name = FindWindow( NULL, pszTitle);
-                //if(console_name) {
-                //     printf( "nasao console name%s\n", pszTitle);
-                //     ShowWindow(console_name, SW_MINIMIZE);
-                //}
+                HWND console_name = FindWindow( NULL, pszTitle);
+                if(console_name) {
+                     printf( "nasao console name%s\n", pszTitle);
+                     ShowWindow(console_name, SW_MINIMIZE);
+                }
 
 
               // Wait until child process exits.

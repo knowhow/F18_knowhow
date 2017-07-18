@@ -358,7 +358,7 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
    LOCAL nRet := -1
    LOCAL cStdOut := "", cStdErr := ""
    LOCAL cPrefixCmd
-   LOCAL cMsg, nI, nNumArgs, cArg := ""
+   LOCAL cMsg, nI, nNumArgs, cArgQuote := ""
 
    IF lAsync == NIL
       lAsync := .F. // default sync execute
@@ -370,82 +370,82 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
 
    nNumArgs := NumToken( cArgumenti, ";" ) // "c:\temp\test.dbf;c:\temp" => "c:\temp\test.dbf c:\temp"
    FOR nI := 1 TO nNumArgs
-      cArg += iif( nI > 1, " ", "" ) + file_path_quote( Token( cArgumenti, ";", nI ) )
+      cArgQuote += iif( nI > 1, " ", "" ) + file_path_quote( Token( cArgumenti, ";", nI ) )
    NEXT
 
-#ifdef __PLATFORM__WINDOWS
-   IF Left( cCommand, 4 ) == "copy"
-      RETURN hb_run( cCommand + " " + cArg )
-   ENDIF
-
-   IF ValType( hOutput ) == "H"
-      nRet := hb_processRun( cCommand + " " + cArg, NIL, @cStdOut, @cStdErr )
-      hOutput[ "stdout" ] := cStdOut
-      hOutput[ "stderr" ] := cStdErr
-   ELSE
-      cCommand := "cmd /c " + cCommand
-      IF lAsync
-         cCommand := "start " + cCommand
+   #ifdef __PLATFORM__WINDOWS
+      IF Left( cCommand, 4 ) == "copy"
+         RETURN hb_run( cCommand + " " + cArg )
       ENDIF
-      ?E "win32_run:", cCommand + " " + cArgumenti
-      nRet := __WIN32_SYSTEM( cCommand + " " + cArgumenti )
+
+      IF ValType( hOutput ) == "H"
+         nRet := hb_processRun( cCommand + " " + cArg, NIL, @cStdOut, @cStdErr )
+         hOutput[ "stdout" ] := cStdOut
+         hOutput[ "stderr" ] := cStdErr
+      ELSE
+         cCommand := "cmd /c " + cCommand
+         IF lAsync
+            cCommand := "start " + cCommand
+         ENDIF
+         ?E "win32_run:", cCommand + " " + cArgQuote
+         nRet := __WIN32_SYSTEM( cCommand + " " + cArgQoute )
+      ENDIF
+
+      RETURN nRet
+   #endif
+
+   IF lAsync
+      nRet := __run_system( cCommand + " " + cArgQuote + "&" ) // .AND. ( is_linux() .OR. is_mac()
+   ELSE
+// cCommand := get_run_cmd_with_prefix( cCommand, lAsync )
+      nRet := hb_processRun( cCommand + " " + cArgQuote, NIL, @cStdOut, @cStdErr, lAsync )
    ENDIF
 
-   RETURN nRet
-#endif
+   ?E cCommand + " " + cArgQuote, nRet, "stdout:", cStdOut, "stderr:", cStdErr
 
-IF lAsync
-nRet := __run_system( cCommand + " " + cArg + "&" ) // .AND. ( is_linux() .OR. is_mac()
-ELSE
-// cCommand := get_run_cmd_with_prefix( cCommand, lAsync )
-nRet := hb_processRun( cCommand + " " + cArg, NIL, @cStdOut, @cStdErr, lAsync )
-ENDIF
-
-?E cCommand + " " + cArg, nRet, "stdout:", cStdOut, "stderr:", cStdErr
-
-IF nRet == 0
-info_bar( "run1", cCommand  + " " + cArg + " : " + cStdOut + " : " + cStdErr )
-ELSE
-error_bar( "run1", cCommand  + " " + cArg + " : " + cStdOut + " : " + cStdErr )
-cPrefixCmd := get_run_prefix_cmd( cCommand  + " " + cArg )
+   IF nRet == 0
+      info_bar( "run1", cCommand  + " " + cArgQuote + " : " + cStdOut + " : " + cStdErr )
+   ELSE
+      error_bar( "run1", cCommand  + " " + cArgQuote + " : " + cStdOut + " : " + cStdErr )
+      cPrefixCmd := get_run_prefix_cmd( cCommand  + " " +  cArgQuote )
 
 // #ifdef __PLATFORM__UNIX
-IF lAsync
-nRet := __run_system( cPrefixCmd + cCommand +  " " + cArg + "&" )
-ELSE
-nRet := hb_processRun( cPrefixCmd + cCommand  + " " + cArg, NIL, @cStdOut, @cStdErr )
-ENDIF
+      IF lAsync
+         nRet := __run_system( cPrefixCmd + cCommand +  " " + cArgQuote + "&" )
+      ELSE
+         nRet := hb_processRun( cPrefixCmd + cCommand  + " " + cArgQuote, NIL, @cStdOut, @cStdErr )
+      ENDIF
 // # else
 // nRet := hb_processRun( cPrefixCmd + cCommand, NIL, @cStdOut, @cStdErr, lAsync )
 // #endif
-?E cCommand  + " " + cArg, nRet, "stdout:", cStdOut, "stderr:", cStdErr
+      ?E cCommand  + " " + cArgQuote, nRet, "stdout:", cStdOut, "stderr:", cStdErr
 
 
-IF nRet == 0
-info_bar( "run2", cPrefixCmd + cCommand + " " + cArg + " : " + cStdOut + " : " + cStdErr )
-ELSE
-error_bar( "run2", cPrefixCmd + cCommand  + " " + cArg + " : " + cStdOut + " : " + cStdErr )
+      IF nRet == 0
+         info_bar( "run2", cPrefixCmd + cCommand + " " + cArgQuote + " : " + cStdOut + " : " + cStdErr )
+      ELSE
+         error_bar( "run2", cPrefixCmd + cCommand  + " " + cArgQuote + " : " + cStdOut + " : " + cStdErr )
 
-nRet := __run_system( cCommand  + " " + cArg )  // npr. copy komanda trazi system run a ne hbprocess run
-?E cCommand  + " " + cArg, nRet, "stdout:", cStdOut, "stderr:", cStdErr
-IF nRet <> 0
-error_bar( "run3", cCommand +  " " + cArg + " : " + cStdOut + " : " + cStdErr )
-cMsg := "ERR run cmd: " + cCommand  + " " + cArg + " : " + cStdOut + " : " + cStdErr
-log_write( cMsg, 2 )
-ENDIF
+         nRet := __run_system( cCommand  + " " + cArgQuote )  // npr. copy komanda trazi system run a ne hbprocess run
+         ?E cCommand  + " " + cArgQuote, nRet, "stdout:", cStdOut, "stderr:", cStdErr
+         IF nRet <> 0
+            error_bar( "run3", cCommand +  " " + cArgQuote + " : " + cStdOut + " : " + cStdErr )
+            cMsg := "ERR run cmd: " + cCommand  + " " + cArgQuote + " : " + cStdOut + " : " + cStdErr
+            log_write( cMsg, 2 )
+         ENDIF
 
-ENDIF
+      ENDIF
 
-ENDIF
+   ENDIF
 
-IF ValType( hOutput ) == "H"
-hOutput[ "stdout" ] := cStdOut // hash matrica
-hOutput[ "stderr" ] := cStdErr
-ENDIF
+   IF ValType( hOutput ) == "H"
+      hOutput[ "stdout" ] := cStdOut // hash matrica
+      hOutput[ "stderr" ] := cStdErr
+   ENDIF
 
    RETURN nRet
 
-
+/*
 
 FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
 
@@ -528,6 +528,7 @@ FUNCTION windows_run_invisible( cProg, cArgumenti, cStdOut, cStdErr, lAsync )
 
    RETURN hb_processRun( cCmd, NIL, @cStdOut, @cStdErr, lAsync )
 
+*/
 
 FUNCTION get_run_prefix_cmd( cCommand, lAsync )
 
@@ -598,10 +599,7 @@ FUNCTION f18_open_document( cDocument )
    LOCAL cMsg
 
    cPrefixCmd := get_run_prefix_cmd()
-
-#ifdef __PLATFORM__WINDOWS
-   cDocument := '"' + cDocument + '"'
-#endif
+   cDocument := file_path_quote( cDocument )
 
    RETURN f18_run( cPrefixCmd, cDocument, NIL, .T. )
 
@@ -624,6 +622,7 @@ FUNCTION f18_open_mime_document( cDocument )
    // IF Pitanje(, "Otvoriti " + AllTrim( cDocument ) + " ?", "D" ) == "N"
    // RETURN .F.
    // ENDIF
+
 /*
 #ifdef __PLATFORM__UNIX
 
@@ -641,7 +640,6 @@ FUNCTION f18_open_mime_document( cDocument )
 */
 
    // cDocument := file_path_quote( cDocument )
-
 
    IF is_windows()
       nError := f18_run( cCmd, cDocument, NIL, .T. )

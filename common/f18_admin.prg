@@ -35,6 +35,7 @@ FUNCTION download_version( cUrl )
    @ m_x + 1, m_y + 2 SAY Left( cUrl, 67 )
 
    IF !F18Admin():wget_download( cUrl, "",  cFileName )
+      BoxC()
       RETURN ""
    ENDIF
 
@@ -564,7 +565,7 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
    cCmd += " -q  --tries=4 --timeout=4  --no-cache --no-check-certificate "
 #endif
 
-   cCmd += cUrl + cFileName
+   cCmd += cUrl + cFileName // http://test.com/FILE
 
    cCmd += " -O "
 

@@ -298,7 +298,7 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
       si.lpTitle = pszTitle;
 
        // Start the child process.
-       if( !CreateProcess( NULL,   // No module name (use command line)
+       CreateProcess( NULL,   // No module name (use command line)
                   pszCommand,        // Command line
                   NULL,           // Process handle not inheritable
                   NULL,           // Thread handle not inheritable
@@ -308,7 +308,7 @@ if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
                   NULL,           // Use parent's starting directory
                   &si,            // Pointer to STARTUPINFO structure
                   &pi )           // Pointer to PROCESS_INFORMATION structure
-        )
+        );
 
 /*
         {

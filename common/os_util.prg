@@ -297,7 +297,7 @@ HB_FUNC( __WIN32_SYSTEM )
       //si.lpTitle = pszTitle;
 
        // Start the child process.
-       if !( CreateProcess( NULL,   // No module name (use command line)
+       if ( !( CreateProcess( NULL,   // No module name (use command line)
                   pszCommand,        // Command line
                   NULL,           // Process handle not inheritable
                   NULL,           // Thread handle not inheritable
@@ -307,8 +307,8 @@ HB_FUNC( __WIN32_SYSTEM )
                   NULL,           // Use parent's starting directory
                   &si,            // Pointer to STARTUPINFO structure
                   &pi )           // Pointer to PROCESS_INFORMATION structure
-
-        {
+       )
+       {
             printf( "CreateProcess %s failed (%d).\n", pszCommand, GetLastError() );
 
             iResult = 100;

@@ -61,7 +61,7 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
       cPom := "mpc" + AllTrim( Str( nI ) )
       cPom2 := '{|| transform(' + cPom + ',"999999.999")}'
 
-      IF roba->( FieldPos( cPom ) )  <>  0
+      //IF roba->( FieldPos( cPom ) )  <>  0
 
          cPrikazi := fetch_metric( "roba_prikaz_" + cPom, NIL, "D" )
 
@@ -69,7 +69,7 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
             AAdd( ImeKol, { PadC( Upper( cPom ), 10 ), &( cPom2 ), cPom, NIL, NIL, NIL, kalk_pic_cijena_bilo_gpiccdem() } )
          ENDIF
 
-      ENDIF
+      //ENDIF
    NEXT
 
    AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( field->NC, kalk_pic_cijena_bilo_gpiccdem() ) }, "NC", NIL, NIL, NIL, kalk_pic_cijena_bilo_gpiccdem()  } )
@@ -88,7 +88,7 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
 
 
    // AUTOMATSKI TROSKOVI ROBE, samo za KALK
-   IF programski_modul() == "KALK" .AND. roba->( FieldPos( "TROSK1" ) ) <> 0
+   IF programski_modul() == "KALK"   // .AND. roba->( FieldPos( "TROSK1" ) ) <> 0
       AAdd ( ImeKol, { PadR( c10T1, 8 ), {|| trosk1 }, "trosk1", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { PadR( c10T2, 8 ), {|| trosk2 }, "trosk2", ;
          {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 30 } )

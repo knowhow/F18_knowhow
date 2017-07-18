@@ -260,6 +260,7 @@ HB_FUNC( __RUN_SYSTEM )
 #pragma ENDDUMP
 
 
+
 #ifdef __PLATFORM__WINDOWS
 #pragma BEGINDUMP
 
@@ -270,19 +271,21 @@ HB_FUNC( __RUN_SYSTEM )
 #include "hbapifs.h"
 #include "windows.h"
 
-/* TOFIX: The screen buffer handling is not right for all platforms (Windows)
-          The output of the launched (MS-DOS?) app is not visible. */
+
 
 HB_FUNC( __WIN32_SYSTEM )
 {
-   const char * pszCommand = hb_parc( 1 );
-   const char * pszArguments = hb_parc( 2 );
-   int iResult;
 
-   if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
-   {
+const char * pszTitle = hb_parc( 1 );
+const char * pszCommand = hb_parc( 2 );
+
+int iResult;
+DWORD exitCode;
+
+
+if( pszCommand && hb_gtSuspend() == HB_SUCCESS )
+{
       char * pszFree = NULL;
-
 
       STARTUPINFO si;
       PROCESS_INFORMATION pi;
@@ -291,57 +294,79 @@ HB_FUNC( __WIN32_SYSTEM )
       si.cb = sizeof(si);
       ZeroMemory( &pi, sizeof(pi) );
 
-     // CreateProcess https://msdn.microsoft.com/en-us/library/windows/desktop/ms682512(v=vs.85).aspx
-    // https://stackoverflow.com/questions/780465/winapi-createprocess-but-hide-the-process-window
-    // create no window 0x08000000
-
-     // https://msdn.microsoft.com/en-us/library/bb762153(VS.85).aspx SW_HIDE = 0, SW_SHOWNORMAL (1), SW_SHOWMINNOACTIVE (7)
-
-      //iResult =  ShellExecute(NULL, "open", pszCommand, pszArguments, NULL, 7);
-
-      // https://msdn.microsoft.com/en-us/library/windows/desktop/ms684863(v=vs.85).aspx
-
-      // https://msdn.microsoft.com/en-us/library/windows/desktop/ms684863(v=vs.85).aspx
-      // Process Creation Flags 0x080000 - CREATE_NO_WINODOW
-
-      si.wShowWindow = SW_SHOW;
+      si.wShowWindow = SW_HIDE; // SW_SHOW
       si.dwFlags = STARTF_USESHOWWINDOW;
-      si.lpTitle = "my_process_console";
-
-      //CreateProcess(NULL, pszCommand, NULL, null,null,false,CREATE_NEW__CONSOLE,null,null,&si,&pi);
-
-    //CreateProcess(null,"notepad.exe",null,null,false,CREATE_NEW__CONSOLE,null,null,&si,&pi);
-
-    // CreateProcess(NULL, pszCommand, NULL, NULL, FALSE,
-      //        CREATE_NO_WINDOW, NULL, &si, &pi);
-
-CreateProcess(null,"my.exe",null,null,false,CREATE_NEW__CONSOLE,null,null,&si,&pi);
-
-      HWND console_name = FindWindow(null,"my_process_console");
-      if(console_name){
-                ShowWindow(console_name, SW_SHOW);
-      }
-
-      iResult = 1;
+      si.lpTitle = pszTitle;
 
 
-      hb_retni(iResult);
+       // Start the child process.
+       if( !CreateProcess( NULL,   // No module name (use command line)
+                  pszCommand,        // Command line
+                  NULL,           // Process handle not inheritable
+                  NULL,           // Thread handle not inheritable
+                  FALSE,          // Set handle inheritance to FALSE
+                  0,              // No creation flags
+                  NULL,           // Use parent's environment block
+                  NULL,           // Use parent's starting directory
+                  &si,            // Pointer to STARTUPINFO structure
+                  &pi )           // Pointer to PROCESS_INFORMATION structure
+        )
+        {
+              printf( "CreateProcess failed (%d).\n", GetLastError() );
 
-      if( pszFree )
-         hb_xfree( pszFree );
+               iResult = 100;
+               hb_retni(iResult);
 
-      if( hb_gtResume() != HB_SUCCESS )
-      {
-         /* an error should be generated here !! Something like */
-         /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
-      }
+                if( pszFree )
+                   hb_xfree( pszFree );
+
+                if( hb_gtResume() != HB_SUCCESS )
+                {
+                   /* an error should be generated here !! Something like */
+                   /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
+                }
+                  return;
+               }
+
+                //HWND console_name = FindWindow( NULL, pszTitle);
+                //if(console_name) {
+                //     printf( "nasao console name%s\n", pszTitle);
+                //     ShowWindow(console_name, SW_MINIMIZE);
+                //}
 
 
-   }
+              // Wait until child process exits.
+              WaitForSingleObject( pi.hProcess, INFINITE );
+
+              GetExitCodeProcess( pi.hProcess, &exitCode );
+              printf( "exitcode =%d", exitCode );
+
+              iResult = exitCode;
+
+              // Close process and thread handles.
+              CloseHandle( pi.hProcess );
+              CloseHandle( pi.hThread );
+
+              hb_retni(iResult);
+
+              if( pszFree )
+                   hb_xfree( pszFree );
+
+              if( hb_gtResume() != HB_SUCCESS )
+              {
+                   /* an error should be generated here !! Something like */
+                   /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
+              }
+
+
+          }
 }
 
 #pragma ENDDUMP
+
+
 #endif
+
 
 /*
   f18_run( "lo.cmd", "c:\temp\test.odt")
@@ -378,7 +403,10 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
          hOutput[ "stdout" ] := cStdOut
          hOutput[ "stderr" ] := cStdErr
       ELSE
-         nRet := windows_run_invisible( cCommand, cArgumenti, @cStdOut, @cStdErr, lAsync )
+         IF lAsync
+            cCommand := "start " + cCommand
+         ENDIF
+         nRet := __WIN32_SYSTEM( cCommand + " " + cArgumenti )
       ENDIF
       RETURN nRet
    ENDIF

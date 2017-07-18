@@ -15,67 +15,6 @@ FIELD id, naz
 
 
 
-FUNCTION o_roba( cId )
-
-   LOCAL cTabela := "roba"
-
-   SELECT ( F_ROBA )
-   IF !use_sql_sif  ( cTabela, .T., "ROBA", cId  )
-      error_bar( "o_sql", "open sql " + cTabela )
-      RETURN .F.
-   ENDIF
-   SET ORDER TO TAG "ID"
-   IF cId != NIL
-      SEEK cId
-   ENDIF
-
-   RETURN !Eof()
-
-
-
-
-FUNCTION find_roba_by_naz_or_id( cId )
-
-   LOCAL cAlias := "ROBA"
-   LOCAL cSqlQuery := "select * from fmk.roba"
-   LOCAL cIdSql
-
-   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
-   cSqlQuery += " WHERE id ilike " + cIdSql
-   cSqlQuery += " OR naz ilike " + cIdSql
-   cSqlQuery += " OR sifradob ilike " + cIdSql
-
-   IF !use_sql( "roba", cSqlQuery, cAlias )
-      RETURN .F.
-   ENDIF
-   INDEX ON ID TAG ID TO ( cAlias )
-   INDEX ON NAZ TAG NAZ TO ( cAlias )
-   INDEX ON SIFRADOB TAG SIFRADOB TO ( cAlias )
-   SET ORDER TO TAG "ID"
-
-   SEEK cId
-   IF !Found()
-      GO TOP
-   ENDIF
-
-   RETURN !Eof()
-
-
-
-FUNCTION select_o_roba( cId )
-
-   SELECT ( F_ROBA )
-   IF Used()
-      IF RecCount() > 1 .AND. cId == NIL
-         RETURN .T.
-      ELSE
-         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
-      ENDIF
-   ENDIF
-
-   RETURN o_roba( cId )
-
-
 FUNCTION o_sastavnica()
 
    SELECT ( F_SAST )

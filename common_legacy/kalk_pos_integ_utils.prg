@@ -336,10 +336,10 @@ FUNCTION SetGenSif2()
    ENDIF
 
    RETURN .F.
-// }
 
 
-// provjera tabele robe
+
+/*
 FUNCTION roba_integ( cPKonto, cFmkSifPath, cPosSifPath, cPosKumPath )
 
    LOCAL cRobaName := "ROBA"
@@ -437,3 +437,5 @@ STATIC FUNCTION fmk_pos_roba( cSifra )
    ENDIF
 
    RETURN
+
+*/

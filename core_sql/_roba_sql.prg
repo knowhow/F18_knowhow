@@ -11,6 +11,68 @@
 
 #include "f18.ch"
 
+
+FUNCTION o_roba( cId )
+
+   LOCAL cTabela := "roba"
+
+   SELECT ( F_ROBA )
+   IF !use_sql_sif  ( cTabela, .T., "ROBA", cId  )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN !Eof()
+
+
+
+
+FUNCTION find_roba_by_naz_or_id( cId )
+
+   LOCAL cAlias := "ROBA"
+   LOCAL cSqlQuery := "select * from fmk.roba"
+   LOCAL cIdSql
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+   cSqlQuery += " OR naz ilike " + cIdSql
+   cSqlQuery += " OR sifradob ilike " + cIdSql
+
+   IF !use_sql( "roba", cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   INDEX ON SIFRADOB TAG SIFRADOB TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN !Eof()
+
+
+
+FUNCTION select_o_roba( cId )
+
+   SELECT ( F_ROBA )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_roba( cId )
+
+
 FUNCTION find_roba_by_sifradob( cIdSifraDob, cOrderBy, cWhere )
 
    LOCAL hParams := hb_Hash()
@@ -165,14 +227,16 @@ FUNCTION use_sql_roba( hParams )
    LOCAL cWhere, cOrder
    LOCAL cSql, lCheckOnly := .F.
 
+altd()
    default_if_nil( @hParams, hb_Hash() )
 
    IF hb_HHasKey( hParams, "check_only" ) .AND. hParams[ "check_only" ] == .T.
       lCheckOnly := .T.
    ENDIF
 
-   cSql := "SELECT "
+   cSql := "SELECT *"
 
+/*
    IF lCheckOnly
       cSql += coalesce_char( "id", 10 )
    ELSE
@@ -199,6 +263,7 @@ FUNCTION use_sql_roba( hParams )
       cSql += coalesce_num_num_zarez( "mpc4", 18, 8 )
       cSql += coalesce_num_num( "mpc5", 18, 8 )
    ENDIF
+*/
 
    cSql += " FROM fmk.roba"
 
@@ -219,7 +284,8 @@ FUNCTION use_sql_roba( hParams )
       cTable := hParams[ "alias" ]
    ENDIF
 
-   SELECT ( F_SUBAN )
+
+   SELECT ( F_ROBA )
    IF !use_sql( cTable, cSql )
       RETURN .F.
    ENDIF
@@ -227,7 +293,6 @@ FUNCTION use_sql_roba( hParams )
    IF is_sql_rdd_treba_indeks( hParams )
       INDEX ON id  TAG "ID" TO cTable
       INDEX ON naz  TAG "NAZ" TO cTable
-
       SET ORDER TO TAG "ID"
    ENDIF
 

@@ -18,7 +18,7 @@ FUNCTION form_get_roba_id( cIdRoba, nX, nY )
 
    LOCAL bWhen, bValid
 
-   // empty, "5;" - klasa sifri 5,  
+   // empty, "5;" - klasa sifri 5,
    IF roba_barkod_pri_unosu()
       bWhen := {|| cIdRoba := PadR( cIdRoba, roba_duzina_sifre() ), .T. }
       bValid := {|| cIdRoba := iif( Len( Trim( cIdRoba ) ) <= 10, Left( cIdRoba, 10 ), cIdRoba ), ;
@@ -100,7 +100,6 @@ STATIC FUNCTION valid_roba( cIdRoba, cIdTarifa, lNoviDokument, aPorezi )
    IF tezinski_barkod_get_tezina( _ocitani_barkod, @_tezina ) .AND. _tezina <> 0 // momenat kada mozemo ocitati tezinu iz barkod-a ako se koristi
 
       _kolicina := _tezina // ako je ocitan tezinski barkod
-
 
       IF _idvd == "80" .AND. ( !Empty( _idkonto2 ) .AND. _idkonto2 <> "XXX" ) // kod predispozicije kolicina treba biti negativna kod prvog ocitanja
          _kolicina := -_kolicina

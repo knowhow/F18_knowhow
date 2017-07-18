@@ -309,8 +309,6 @@ HB_FUNC( __WIN32_SYSTEM )
                   &si,            // Pointer to STARTUPINFO structure
                   &pi );           // Pointer to PROCESS_INFORMATION structure
 
-
-
       //  {
       //        printf( "CreateProcess [%s] %s failed (%d).\n", pszTitle, pszCommand, GetLastError() );
      //

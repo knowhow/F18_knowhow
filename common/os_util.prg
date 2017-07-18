@@ -294,7 +294,7 @@ HB_FUNC( __WIN32_SYSTEM )
 
       si.wShowWindow = SW_HIDE; // SW_HIDE, SW_SHOW
       si.dwFlags = STARTF_USESHOWWINDOW;
-      //si.lpTitle = "F18 run";
+      si.lpTitle = pszCommand;
 
        // Start the child process.
        if ( !CreateProcess( NULL,   // No module name (use command line)
@@ -391,7 +391,7 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
             ENDIF
          ENDIF
           ?E "win32_run:", cCommand + " " + cArgQuote
-         nRet := __WIN32_SYSTEM( cCommand + " " + cArgQoute )
+          nRet := __WIN32_SYSTEM( cCommand + " " + cArgQoute )
           ?E "win32_run exit:", nRet
       ENDIF
 

@@ -275,8 +275,7 @@ HB_FUNC( __RUN_SYSTEM )
 HB_FUNC( __WIN32_SYSTEM )
 {
 
-    //const char * pszTitle = hb_parc( 1 );
-    const char * pszCommand = hb_parc( 2 );
+    const char * pszCommand = hb_parc( 1 );
 
     int iResult;
     DWORD exitCode;
@@ -298,7 +297,7 @@ HB_FUNC( __WIN32_SYSTEM )
       //si.lpTitle = pszTitle;
 
        // Start the child process.
-       CreateProcess( NULL,   // No module name (use command line)
+       if !( CreateProcess( NULL,   // No module name (use command line)
                   pszCommand,        // Command line
                   NULL,           // Process handle not inheritable
                   NULL,           // Thread handle not inheritable
@@ -307,47 +306,40 @@ HB_FUNC( __WIN32_SYSTEM )
                   NULL,           // Use parent's environment block
                   NULL,           // Use parent's starting directory
                   &si,            // Pointer to STARTUPINFO structure
-                  &pi );           // Pointer to PROCESS_INFORMATION structure
+                  &pi )           // Pointer to PROCESS_INFORMATION structure
 
-      //  {
-      //        printf( "CreateProcess [%s] %s failed (%d).\n", pszTitle, pszCommand, GetLastError() );
-     //
-      //         iResult = 100;
-      //         hb_retni(iResult);
-     //
-      //          if( pszFree )
-      //             hb_xfree( pszFree );
-      //
-      //          if( hb_gtResume() != HB_SUCCESS )
-      //          {
-      //             /* an error should be generated here !! Something like */
-      //             /* hb_errRT_BASE_Ext1( EG_GTRESUME, 6002, NULL, HB_ERR_FUNCNAME, 0, EF_CANDEFAULT ); */
-      //          }
-      //            return;
-      //    }
+        {
+            printf( "CreateProcess [%s] %s failed (%d).\n", pszTitle, pszCommand, GetLastError() );
 
-                //HWND console_name = FindWindow( NULL, pszTitle);
+            iResult = 100;
+            hb_retni(iResult);
+            if( pszFree )  hb_xfree( pszFree );
+
+            return;
+        }
+
+          //HWND console_name = FindWindow( NULL, pszTitle);
                 //if(console_name) {
                 //     printf( "nasao console name%s\n", pszTitle);
                 //     ShowWindow(console_name, SW_MINIMIZE);
-                //}
+          //}
 
+        // Wait until child process exits.
+        WaitForSingleObject( pi.hProcess, INFINITE );
 
-          // Wait until child process exits.
-          WaitForSingleObject( pi.hProcess, INFINITE );
+        GetExitCodeProcess( pi.hProcess, &exitCode );
+        printf( "exitcode =%d", exitCode );
 
-          GetExitCodeProcess( pi.hProcess, &exitCode );
-          printf( "exitcode =%d", exitCode );
+        iResult = exitCode;
 
-          iResult = exitCode;
+        // Close process and thread handles.
+        CloseHandle( pi.hProcess );
+        CloseHandle( pi.hThread );
 
-          // Close process and thread handles.
-          CloseHandle( pi.hProcess );
-          CloseHandle( pi.hThread );
+        hb_retni( iResult );
 
-          hb_retni( iResult );
-
-          if( pszFree ) hb_xfree( pszFree );
+        if( pszFree ) hb_xfree( pszFree );
+        return;
 
    }
 }
@@ -391,11 +383,12 @@ FUNCTION f18_run( cCommand, cArgumenti, hOutput, lAsync )
       hOutput[ "stdout" ] := cStdOut
       hOutput[ "stderr" ] := cStdErr
    ELSE
+      cCommand := "cmd /c " + cCommand
       IF lAsync
          cCommand := "start " + cCommand
       ENDIF
       ?E "win32_run:", cCommand + " " + cArgumenti
-      nRet := __WIN32_SYSTEM( "F18_run", cCommand + " " + cArgumenti )
+      nRet := __WIN32_SYSTEM( cCommand + " " + cArgumenti )
    ENDIF
 
    RETURN nRet

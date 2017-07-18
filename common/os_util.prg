@@ -158,7 +158,7 @@ FUNCTION brisi_stare_fajlove( cDir, cFilesMatch, nDana )
    ENDIF
 
    cDir := ToUnix( Trim( cDir ) )
-   cFile := FileSeek( cDir + cFilesMatch ) )
+   cFile := FileSeek( cDir + cFilesMatch )
 
    nCnt := 0
    nCntNew := 0

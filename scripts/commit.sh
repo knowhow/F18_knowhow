@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BRANCH=3-std
+BRANCH=3-vindi
 
 if [ -z "$1" ] ; then
    echo "$0 <VER>"

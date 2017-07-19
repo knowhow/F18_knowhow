@@ -225,7 +225,7 @@ ENDIF
 // ------------------------------------------------
 STATIC FUNCTION _vpn_start_stop( status, conn_name )
 
-   LOCAL _cmd
+   LOCAL cCmd
    LOCAL _err
    LOCAL _up_dn := "up"
 
@@ -233,9 +233,9 @@ STATIC FUNCTION _vpn_start_stop( status, conn_name )
       _up_dn := "down"
    ENDIF
 
-   _cmd := 'nmcli con ' + _up_dn + ' id "' + AllTrim( conn_name ) + '"'
+   cCmd := 'nmcli con ' + _up_dn + ' id "' + AllTrim( conn_name ) + '"'
 
-   _err := f18_run( _cmd )
+   _err := f18_run( cCmd )
 
    IF _err <> 0
       MsgBeep( "Problem sa vpn konekcijom:#" + AllTrim( conn_name ) + " !???" )

@@ -284,7 +284,7 @@ METHOD YargReport:run()
 
    IF nError <> 0 // 2. run - diag mode - catch stdout, stderr
       MsgO( "YARG 2. run diag - catch stdout/stderr" )
-      nError := f18_run( ::cRunScript, "", @hOutput )
+      nError := f18_run( ::cRunScript, @hOutput )
       MsgC()
    ENDIF
    IF nError <> 0

@@ -41,10 +41,10 @@ FUNCTION f18_editor( cTxt )
    ENDIF
 
    IF is_windows()
-      RETURN windows_run_invisible( cCmd, cTxt )
+      RETURN windows_run_invisible( cCmd, cTxt ) // ovaj poziv trebamo radi windows xp, run invisible vbs konvertuje pathove sa spaceovima u short name
    ENDIF
 
-   RETURN f18_run( cCmd, file_path_quote( cTxt ) )
+   RETURN f18_run( cCmd + " " + file_path_quote( cTxt ) )
 
 
 STATIC FUNCTION check_prog_download()

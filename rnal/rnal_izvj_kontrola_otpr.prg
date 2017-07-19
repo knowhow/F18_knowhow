@@ -49,7 +49,7 @@ FUNCTION m_rpt_check()
       f18_run( _rpt_file )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

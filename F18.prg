@@ -294,7 +294,7 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
 #ifndef F18_DEBUG
 
    IF check_updates()
-      cVersion := download_version( f18_download_url() + "VERSION" )
+      cVersion := download_version( f18_download_url() + "/VERSION" )
 
       IF !Empty( cVersion ) .AND. cVersion != f18_ver()
          AAdd( aMeniOpcije,  " U. F18 upgrade -> " + cVersion  )

@@ -3,6 +3,12 @@
 [![Build
 Status](https://secure.travis-ci.org/knowhow/F18_knowhow.png?branch=master)](https://travis-ci.org/knowhow/F18_knowhow)
 
+
+## delete tag
+
+   scripts/delete_tag.sh 3.0.0
+
+
 ## dev environment
 
 

@@ -34,7 +34,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
    LOCAL cErrMsg
    LOCAL cCheckUpdates := fetch_metric( "F18_check_updates", my_user(), "D" )
    LOCAL cF18Verzija := Padr( fetch_metric( "F18_verzija", NIL, F18_VERZIJA ), 4)
-   LOCAL cF18Verzija := Padr( fetch_metric( "F18_varijanta", NIL, F18_VARIJANTA ), 5 )
+   LOCAL cF18Varijanta := Padr( fetch_metric( "F18_varijanta", NIL, F18_VARIJANTA ), 5 )
 
    info_bar( "init", "set_parametre_f18_aplikacije - start" )
 
@@ -179,7 +179,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       @ nPosX + nX, nPosY SAY "Kompatibilnost ***" COLOR f18_color_i()
       ++nX
       // @ nPosX + nX, nPosY SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
-      @ nPosX + nX, Col() + 2 SAY "KALK PR:" GET cLegacyKalkPr PICT "!@" VALID cLegacyKalkPr $ "DN"
+      @ nPosX + nX, nPosY SAY "KALK PR:" GET cLegacyKalkPr PICT "!@" VALID cLegacyKalkPr $ "DN"
       @ nPosX + nX, Col() + 2 SAY "PTXT:" GET cLegacyPTxt PICT "!@" VALID cLegacyPTxt $ "DN"
       @ nPosX + nX, Col() + 2 SAY "F18 LO (D/N/0):" GET cDownloadF18LO PICT "!@" VALID cDownloadF18LO $ "DN0"
       @ nPosX + nX, Col() + 2 SAY "F18 updates (D/N):" GET cCheckUpdates PICT "!@" VALID cCheckUpdates $ "DN"

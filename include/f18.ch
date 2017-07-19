@@ -610,7 +610,7 @@
 
 
 #define F18_DOWNLOAD_BASE_URL "https://raw.github.com/knowhow/F18_knowhow"
-#define F18_BRANCH "3"
+#define F18_VERZIJA "3"
 #define F18_VARIJANTA "std"
 
 

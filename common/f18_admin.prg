@@ -319,11 +319,11 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    LOCAL _t_ver_third := Space( 10 )
    LOCAL nX := 1
    LOCAL _col_app, _col_temp, cLine
-   LOCAL _upd_f, _upd_t, nPos
+   LOCAL cUpdateF18, _upd_t, nPos
    LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
    LOCAL aMatch
 
-   _upd_f := "D"
+   cUpdateF18 := "D"
    _upd_t := "N"
    _col_app := "W/G+"
    _col_temp := "W/G+"
@@ -346,17 +346,13 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    Box(, 14, 65 )
 
    @ m_x + nX, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR f18_color_i()
-
    ++nX
    ++nX
    @ m_x + nX, m_y + 2 SAY cLine := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
-
    ++nX
    @ m_x + nX, m_y + 2 SAY PadR( "[INFO]", 10 ) + "/" + PadC( "Trenutna", 20 ) + "/" + PadC( "Dostupna", 20 )
-
    ++nX
    @ m_x + nX, m_y + 2 SAY cLine
-
    ++nX
    @ m_x + nX, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( f18_ver(), 20 )
    @ m_x + nX, Col() SAY " "
@@ -375,13 +371,13 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    ++nX
    nPos := nX
 
-   @ m_x + nX, m_y + 2 SAY "       Update F18 ?" GET _upd_f PICT "@!" VALID _upd_f $ "DN"
+   @ m_x + nX, m_y + 2 SAY "       Update F18 ?" GET cUpdateF18 PICT "@!" VALID cUpdateF18 $ "DN"
 
    READ
 
-   IF _upd_f == "D"
+   IF cUpdateF18 == "D"
       @ m_x + nX, m_y + 25 SAY "VERZIJA:" GET nVerzijaMajor PICT "999" VALID nVerzijaMajor > 0
-      @ m_x + nX, Col() + 1 SAY "." GET nVerzijaMinor PICT "999" VALID nVerzijaMinor > 0
+      @ m_x + nX, Col() + 1 SAY "." GET nVerzijaMinor PICT "999" VALID nVerzijaMinor >= 0
       @ m_x + nX, Col() + 1 SAY "." GET nVerzijaPatch PICT "9999"
 
    ENDIF
@@ -411,7 +407,7 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    ENDIF
 
 
-   ::update_app_f18 := ( _upd_f == "D" ) // setuj postavke
+   ::update_app_f18 := ( cUpdateF18 == "D" ) // setuj postavke
    ::update_app_templates := ( _upd_t == "D" )
 
    IF ::update_app_f18

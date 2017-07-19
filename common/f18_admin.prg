@@ -502,7 +502,7 @@ METHOD F18Admin:f18_upd_download()
    ENDIF
 
    info_bar( "upd", "download " +  ::update_app_script_file )
-   cUrl := F18_DOWNLOAD_BASE_URL + "/" + f18_verzija() + "/scripts/"
+   cUrl := f18_download_url() + "/scripts/"
    IF !::wget_download( cUrl, ::update_app_script_file, cPath + ::update_app_script_file, _always_erase, _silent )
       MsgC()
       RETURN .F.

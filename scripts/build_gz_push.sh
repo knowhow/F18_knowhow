@@ -14,7 +14,7 @@ F18_VER=$2
 git pull
 
 if [ -z "$F18_VER" ] ; then
-  F18_VER=`git describe --tags`
+  F18_VER=`cat VERSION | grep "[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,3\}$"`
   echo updating f18_ver.ch
   scripts/update_f18_ver_ch.sh
   [ $? != 0 ] && echo "error git version BUILD ERROR" && exit 1

@@ -37,18 +37,8 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
       lKontrolaZaDatumskiPeriod := .T.
    ENDIF
 
-   IF ( lKontrolaZaDatumskiPeriod )
-      dDatOd := CToD( "01.01." + Str( tekuca_sezona(), 4, 0 ) )
-      dDatDo := CToD( "31.12." + Str( tekuca_sezona(), 4, 0 ) )
-      Box(, 1, 45 )
-      @ 1 + m_x, 2 + m_y SAY "Kontrola za period: " GET dDatOd
-      @ 1 + m_x, Col() + 2 SAY "-" GET dDatDo
-      READ
-      BoxC()
-   ENDIF
 
    my_close_all_dbf()
-
 
    Box( "#Promet bez datumskog ograničenja", 11, 77, .F. )
 
@@ -73,7 +63,7 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
 
    @ m_x + 10, m_y + 1 SAY _line
 
-   @ m_x + 11, m_y + 1 SAY "ESC - izlaz"
+   @ m_x + 11, m_y + 1 SAY "<ANYKEY> - kontrola"
 
    FOR i := 11 TO 65 STEP 17
       FOR j := 3 TO 9
@@ -127,7 +117,7 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
 
    fin_kontrola_zbira_subanalitika()
 
-   ESC_BCR
+   // ESC_BCR
 
    @ m_x + 3, m_y + 63 SAY duguje PICTURE picBHD
    @ m_x + 4, m_y + 63 SAY potrazuje PICTURE picBHD
@@ -142,6 +132,19 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
 
    BoxC()
 
+   IF ( lKontrolaZaDatumskiPeriod )
+      dDatOd := CToD( "01.01." + Str( tekuca_sezona(), 4, 0 ) )
+      dDatDo := CToD( "31.12." + Str( tekuca_sezona(), 4, 0 ) )
+      Box(, 1, 45 )
+      @ 1 + m_x, 2 + m_y SAY "Kontrola za period: " GET dDatOd
+      @ 1 + m_x, Col() + 2 SAY "-" GET dDatDo
+      READ
+      BoxC()
+
+      IF LastKey() == K_ESC
+         RETURN .F.
+      ENDIF
+   ENDIF
 
    // provjeri da li su podaci tacni !
    IF ( Round( nSaldo, 2 ) > 0 ) .OR. ( Round( nSubD + nNalD + nAnalD + nSintD, 2 ) <> Round( nSubP + nNalP + nAnalP + nSintP, 2 ) )
@@ -153,7 +156,7 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
       set_metric( "fin_kontrola_zbira_datum", NIL, Date() )
    ENDIF
 
-
+   info_bar( "fin", "kontrola neuravnoteženih naloga ..." )
    IF fin_kontrola_ima_li_neuravnotezenih_naloga()
       SELECT SUBAN_KONTROLA
       DO WHILE !Eof()
@@ -167,6 +170,7 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
       USE
    ENDIF
 
+   info_bar( "fin", "kontrola stavke van zadatog perioda ..." )
    IF lKontrolaZaDatumskiPeriod .AND. fin_kontrola_stavke_van_perioda( dDatOd, dDatDo )
       SELECT SUBAN_KONTROLA
       DO WHILE !Eof()

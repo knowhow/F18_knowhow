@@ -47,7 +47,7 @@ METHOD programski_modul_osnovni_meni()
      LOCAL cSeparator := Replicate( "-", 50)
 
 
-   AAdd( _opc, "1. unos/ispravka dokumenta                   " )
+   AAdd( _opc, "1. unos/ispravka dokumenta                         " )
    AAdd( _opcexe, {|| fin_unos_naloga() } )
    AAdd( _opc, "2. izvještaji" )
    AAdd( _opcexe, {|| fin_izvjestaji() } )

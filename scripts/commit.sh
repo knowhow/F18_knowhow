@@ -1,10 +1,10 @@
 #!/bin/bash
 
-BRANCH=23100-ld
+BRANCH=3-std
 
 if [ -z "$1" ] ; then
    echo "$0 <VER>"
-   echo "$0 2.3.502"
+   echo "$0 3.0.0"
    exit 1
 fi
 

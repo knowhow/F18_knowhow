@@ -280,26 +280,26 @@ METHOD F18Admin:update_app_run_app_update( params )
 
 METHOD F18Admin:update_app_run_script( update_file )
 
-   LOCAL _url := my_home_root() + ::update_app_script_file
+   LOCAL cUrl := my_home_root() + ::update_app_script_file
 
 #ifdef __PLATFORM__WINDOWS
 
-   _url := 'start cmd /C ""' + _url
-   _url += '" "' + update_file + '""'
+   cUrl := 'start cmd /C ""' + cUrl
+   cUrl += '" "' + update_file + '""'
 #else
 #ifdef __PLATFORM__LINUX
-   _url := "bash " + _url
+   cUrl := "bash " + cUrl
 #endif
-   _url += " " + update_file
+   cUrl += " " + update_file
 #endif
 
 #ifdef __PLATFORM__UNIX
-   _url := _url + " &"
+   cUrl := cUrl + " &"
 #endif
 
    Msg( "F18 ce se sada zatvoriti#Nakon update procesa ponovo otvorite F18", 4 )
 
-   hb_run( _url )
+   hb_run( cUrl )
 
    QUIT_1
 
@@ -489,26 +489,25 @@ METHOD F18Admin:update_app_get_versions()
 METHOD F18Admin:f18_upd_download()
 
    LOCAL lOk := .F.
-   LOCAL _path := my_home_root()
-   LOCAL _url
+   LOCAL cPath := my_home_root()
+   LOCAL cUrl
    LOCAL _script
    LOCAL _ver_params
    LOCAL _silent := .T.
    LOCAL _always_erase := .T.
-   LOCAL cBranch := "23100-ld"
 
    info_bar( "upd", "download " +  ::update_app_info_file )
 
    MsgO( "preuzimanje podataka o aktuelnoj verziji ..." )
-   _url := "https://raw.github.com/knowhow/F18_knowhow/" + cBranch + "/"
-   IF !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, _always_erase, _silent )
+   cUrl := f18_download_url() + "/"
+   IF !::wget_download( cUrl, ::update_app_info_file, cPath + ::update_app_info_file, _always_erase, _silent )
       MsgC()
       RETURN .F.
    ENDIF
 
    info_bar( "upd", "download " +  ::update_app_script_file )
-   _url := "https://raw.github.com/knowhow/F18_knowhow/" + cBranch + "/scripts/"
-   IF !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, _always_erase, _silent )
+   cUrl := F18_DOWNLOAD_BASE_URL + "/" + f18_verzija() + "/scripts/"
+   IF !::wget_download( cUrl, ::update_app_script_file, cPath + ::update_app_script_file, _always_erase, _silent )
       MsgC()
       RETURN .F.
    ENDIF
@@ -673,25 +672,25 @@ METHOD F18Admin:update_db_download()
    LOCAL lOk := .F.
    LOCAL _ver := ::_update_params[ "version" ]
    LOCAL cCmd := ""
-   LOCAL _path := my_home_root()
+   LOCAL cPath := my_home_root()
    LOCAL _file := "f18_db_migrate_package_" + AllTrim( _ver ) + ".gz"
-   LOCAL _url := "http://download.bring.out.ba/"
+   LOCAL cUrl := "http://download.bring.out.ba/"
 
-   IF File( AllTrim( _path ) + AllTrim( _file ) )
+   IF File( AllTrim( cPath ) + AllTrim( _file ) )
 
       IF Pitanje(, "Izbrisati postojeći download fajl ?", "N" ) == "D"
-         FErase( AllTrim( _path ) + AllTrim( _file ) )
+         FErase( AllTrim( cPath ) + AllTrim( _file ) )
          Sleep( 1 )
       ELSE
-         ::_update_params[ "file" ] := AllTrim( _path ) + AllTrim( _file )
+         ::_update_params[ "file" ] := AllTrim( cPath ) + AllTrim( _file )
          RETURN .T.
       ENDIF
 
    ENDIF
 
 
-   IF ::wget_download( _url, _file, _path + _file )  // download fajla
-      ::_update_params[ "file" ] := AllTrim( _path ) + AllTrim( _file )
+   IF ::wget_download( cUrl, _file, cPath + _file )  // download fajla
+      ::_update_params[ "file" ] := AllTrim( cPath ) + AllTrim( _file )
       lOk := .T.
    ENDIF
 

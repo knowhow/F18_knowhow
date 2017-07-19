@@ -33,6 +33,8 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
    LOCAL cLdRekapDbf, cLegacyKalkPr, cLegacyPTxt, cDownloadF18LO
    LOCAL cErrMsg
    LOCAL cCheckUpdates := fetch_metric( "F18_check_updates", my_user(), "D" )
+   LOCAL cF18Verzija := Padr( fetch_metric( "F18_verzija", NIL, F18_VERZIJA ), 4)
+   LOCAL cF18Verzija := Padr( fetch_metric( "F18_varijanta", NIL, F18_VARIJANTA ), 5 )
 
    info_bar( "init", "set_parametre_f18_aplikacije - start" )
 
@@ -181,6 +183,8 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       @ nPosX + nX, Col() + 2 SAY "PTXT:" GET cLegacyPTxt PICT "!@" VALID cLegacyPTxt $ "DN"
       @ nPosX + nX, Col() + 2 SAY "F18 LO (D/N/0):" GET cDownloadF18LO PICT "!@" VALID cDownloadF18LO $ "DN0"
       @ nPosX + nX, Col() + 2 SAY "F18 updates (D/N):" GET cCheckUpdates PICT "!@" VALID cCheckUpdates $ "DN"
+      @ nPosX + nX, Col() + 2 SAY "F18 verzija:" GET cF18Verzija VALID AllTrim( cF18Verzija ) $ "3#4#5#6"
+      @ nPosX + nX, Col() + 2 SAY "-" GET cF18Varijanta VALID AllTrim( cF18Varijanta ) $ "std#vindi#pos#rnal"
 
       READ
 
@@ -227,6 +231,8 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       set_metric( "legacy_ptxt", NIL, cLegacyPTxt )
       set_metric( "F18_LO", NIL, cDownloadF18LO )
       set_metric( "F18_check_updates", my_user(), cCheckUpdates )
+      set_metric( "F18_verzija", NIL, cF18Verzija )
+      set_metric( "F18_varijanta", NIL, cF18Varijanta )
 
       info_bar( "init", "set_parametre_f18_aplikacije - end" )
 

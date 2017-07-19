@@ -608,15 +608,10 @@
 //#define PICT_POS_ARTIKAL "@K"
 #define PICT_POS_ARTIKAL "@!S10"
 
-// ----------rnal -------------------
-#define D_RNAL_VERZIJA "0.2.0"
-#define D_RNAL_PERIOD "06.08-08.11.11"
 
-// -------- kalk --------------------
-#define D_KALK_VERZIJA "0.7.0"
-#define D_KALK_PERIOD "11.94-24.11.11"
-
-// -----------------------------
+#define F18_DOWNLOAD_BASE_URL "https://raw.github.com/knowhow/F18_knowhow"
+#define F18_BRANCH "3"
+#define F18_VARIJANTA "std"
 
 
 #define FIELD_LENGTH_LD_RADKR_NA_OSNOVU 20

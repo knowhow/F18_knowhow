@@ -178,10 +178,9 @@ FUNCTION kalk_kontiranje_gen_finmat()
       cIdKonto2 := IdKonto2
 
 
-      SELECT KONTO
-      HSEEK cIdKonto
+      //select_o_konto( cIdKonto )
 
-      HSEEK cIdKonto2
+      select_o_konto( cIdKonto2 )
       SELECT KALK_PRIPR
 
 

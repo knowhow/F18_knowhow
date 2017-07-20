@@ -210,10 +210,7 @@ FUNCTION os_pregled_po_kontima()
       cIdSK := Left( idkonto, nKontoLen )
       cNazSKonto := ""
 
-      SELECT konto
-      HSEEK cIdSK
-
-      IF Found()
+      IF select_o_konto( cIdSK )
          cNazSKonto := AllTrim( konto->naz )
       ENDIF
 
@@ -227,8 +224,7 @@ FUNCTION os_pregled_po_kontima()
          cIdKonto := idkonto
          cNazKonto := ""
 
-         SELECT konto
-         HSEEK cIdKonto
+         select_o_konto( cIdKonto )
 
          IF Found()
             cNazKonto := AllTrim( konto->naz )

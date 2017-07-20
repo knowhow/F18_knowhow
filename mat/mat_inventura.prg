@@ -958,8 +958,7 @@ FUNCTION mat_popisna_lista()
 
          IF !Empty( _konto )
 
-            SELECT konto
-            HSEEK _konto
+            select_o_konto( _konto )
 
             xml_node( "kid", to_xml_encoding( _konto ) )
             xml_node( "knaz", to_xml_encoding( AllTrim( field->naz ) ) )

@@ -182,13 +182,11 @@ STATIC FUNCTION ZaglKSintK()
    ?? "MAT.P: SINTETICKA KARTICA   NA DAN "
    @ PRow(), PCol() + 1 SAY Date()
 
-   SELECT PARTN
-   HSEEK cIdFirma
+   select_o_partner( cIdFirma )
 
    ? "FIRMA:", cIdFirma, PadR( partn->naz, 25 ), PadR( partn->naz2, 25 )
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    ? KonSeks( "KONTO" ) + ":", cIdkonto, AllTrim( konto->naz )
 
@@ -887,8 +885,7 @@ STATIC FUNCTION ZaglKSif( id_firma, id_roba, id_konto, line )
    ? "ARTIKAL:"
    @ PRow(), PCol() + 1 SAY id_roba
 
-   SELECT ROBA
-   HSEEK id_roba
+   select_o_roba( id_roba )
 
    @ PRow(), PCol() + 1 SAY naz
    @ PRow(), PCol() + 2 SAY jmj
@@ -896,8 +893,7 @@ STATIC FUNCTION ZaglKSif( id_firma, id_roba, id_konto, line )
    ? KonSeks( "KONTO" ) + ":"
    @ PRow(), PCol() + 1 SAY id_konto
 
-   SELECT KONTO
-   HSEEK id_konto
+   select_o_konto( id_konto )
 
    @ PRow(), PCol() + 1 SAY konto->naz
 

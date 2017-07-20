@@ -206,7 +206,7 @@ STATIC FUNCTION _g_kt_naz( cId )
    LOCAL nTArea := Select()
 
    o_konto()
-   SELECT konto
+--   SELECT konto
    SEEK cId
 
    IF Found()

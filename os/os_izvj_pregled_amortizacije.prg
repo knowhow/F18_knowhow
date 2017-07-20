@@ -309,8 +309,7 @@ FUNCTION os_pregled_amortizacije()
          ENDIF
 
          nTArea := Select()
-         SELECT konto
-         HSEEK cIdKonto
+         select_o_konto( cIdKonto )
          SELECT ( nTArea )
          ? m
          ? " ukupno ", cIdKonto, PadR( konto->naz, 50 )
@@ -331,8 +330,8 @@ FUNCTION os_pregled_amortizacije()
       IF PRow() > RPT_PAGE_LEN; FF; os_zagl_amort(); ENDIF
       ? m
       nTArea := Select()
-      SELECT konto
-      HSEEK cIdSK
+      select_o_konto( cIdSK )
+      
       SELECT ( nTArea )
       ? " UKUPNO ", cIdSK, PadR( konto->naz, 50 )
       @ PRow(), ncol1    SAY ndug2 * nBBK PICT gpici

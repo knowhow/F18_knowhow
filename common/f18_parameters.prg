@@ -34,6 +34,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
    LOCAL cErrMsg
    LOCAL cCheckUpdates := fetch_metric( "F18_check_updates", my_user(), "D" )
    LOCAL cF18Verzija := Padr( fetch_metric( "F18_verzija", NIL, F18_VERZIJA ), 4)
+   LOCAL cF18VerzijaKanal := Padr( fetch_metric( "F18_verzija_kanal", my_user(), "S" ), 1)
    LOCAL cF18Varijanta := Padr( fetch_metric( "F18_varijanta", NIL, F18_VARIJANTA ), 5 )
 
    info_bar( "init", "set_parametre_f18_aplikacije - start" )
@@ -185,6 +186,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       @ nPosX + nX, Col() + 2 SAY "F18 updates (D/N):" GET cCheckUpdates PICT "!@" VALID cCheckUpdates $ "DN"
       @ nPosX + nX, Col() + 2 SAY "F18 verzija:" GET cF18Verzija VALID AllTrim( cF18Verzija ) $ "3#4#5#6"
       @ nPosX + nX, Col() + 2 SAY "-" GET cF18Varijanta VALID AllTrim( cF18Varijanta ) $ "std#vindi#pos#rnal"
+      @ nPosX + nX, Col() + 2 SAY "/" GET cF18VerzijaKanal VALID AllTrim( cVerzijaKanal ) $ "SEX"
 
       READ
 
@@ -233,7 +235,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       set_metric( "F18_check_updates", my_user(), cCheckUpdates )
       set_metric( "F18_verzija", NIL, cF18Verzija )
       set_metric( "F18_varijanta", NIL, cF18Varijanta )
-
+      set_metric( "F18_verzija_kanal", my_user(), cF18VerzijaKanal )
       info_bar( "init", "set_parametre_f18_aplikacije - end" )
 
    ENDIF

@@ -126,7 +126,7 @@ FUNCTION kalk_ukalkulisani_porez_prodavnice()
 /*
       ? "Prodavnica: "
       aUsl2 := Parsiraj( qqKonto, "id" )
-      SELECT KONTO
+  --    SELECT KONTO
       GO TOP
       SEEK "132"
       DO WHILE id = "132"

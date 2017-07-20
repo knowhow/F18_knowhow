@@ -90,12 +90,11 @@ FUNCTION krpt_export()
 
 
    // o_roba()
-   o_konto()
+   //o_konto()
    o_koncij()
    o_tarifa()
 
-   SELECT KONTO
-   SEEK kalk->PKonto
+   select_o_konto( kalk->PKonto )
 
    fill_exp( cIdFirma, cIdVd, cBrDok, ( cVpcCij == "D" ), ( cMpcCij == "D" ) )
 

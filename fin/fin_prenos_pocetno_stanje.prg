@@ -427,7 +427,7 @@ STATIC FUNCTION append_sif_konto( cIdKonto, oKontoDataset )
    LOCAL hRecord
 
    select_o_konto()
-   SELECT konto
+--   SELECT konto
    GO TOP
    SEEK PadR( cIdKonto, 7 )
 

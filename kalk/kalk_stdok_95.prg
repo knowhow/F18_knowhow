@@ -54,8 +54,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
       cKto2 := cIdKonto2
    ENDIF
 
-   SELECT konto
-   hseek cKto1
+   select_o_konto( cKto1 )
 
    ? PadL( cPom, 14 ), AllTrim( cKto1 ) + " - " + PadR( konto->naz, 60 )
 
@@ -67,8 +66,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
          cPom := "Razduzuje:"
       ENDIF
 
-      SELECT konto
-      hseek cKto2
+      select_o_konto( cKto2 )
 
       ? PadL( cPom, 14 ), AllTrim( cKto2 ) + " - " + PadR( konto->naz, 60 )
 

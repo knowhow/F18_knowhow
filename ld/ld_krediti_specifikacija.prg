@@ -112,22 +112,22 @@ STATIC FUNCTION _get_vars( hParams )
 
    Box(, 15, 60 )
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Godina" GET _godina PICT "9999"
-   @ form_x_koord() + nX, Col() + 1 SAY "mjesec" GET _mjesec PICT "99"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Godina" GET _godina PICT "9999"
+   @ get_x_koord() + nX, Col() + 1 SAY "mjesec" GET _mjesec PICT "99"
 
    ++nX
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Radnik (prazno-svi):" GET cIdRadnik VALID Empty( cIdRadnik ) .OR. P_Radn( @cIdRadnik )
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Radnik (prazno-svi):" GET cIdRadnik VALID Empty( cIdRadnik ) .OR. P_Radn( @cIdRadnik )
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Kreditor (prazno-svi):" GET cIdKreditor VALID Empty( cIdKreditor ) .OR. P_Kred( @cIdKreditor )
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Kreditor (prazno-svi):" GET cIdKreditor VALID Empty( cIdKreditor ) .OR. P_Kred( @cIdKreditor )
 
    ++nX
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "   Filter po osnovi kredita:" GET _osnova PICT "@S30"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "   Filter po osnovi kredita:" GET _osnova PICT "@S30"
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Filter po radnim jedinicama:" GET _rj PICT "@S30"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Filter po radnim jedinicama:" GET _rj PICT "@S30"
 
    READ
 

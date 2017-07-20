@@ -47,15 +47,15 @@ FUNCTION ld_pregled_odredjenog_primanja()
    RPar( "VS", @cVarSort )
 
    Box(, 7, 45 )
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
    IF ld_vise_obracuna()
-      @ form_x_koord() + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ get_x_koord() + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Tip primanja: "  GET  cTip
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Prikaz dodatnu kolonu: "  GET  cDod PICT "@!" VALID cdod $ "DN"
-   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Sortirati po (1-sifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Tip primanja: "  GET  cTip
+   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Prikaz dodatnu kolonu: "  GET  cDod PICT "@!" VALID cdod $ "DN"
+   @ get_x_koord() + 6, get_y_koord() + 2 SAY "Sortirati po (1-sifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
    READ
 
    clvbox()
@@ -63,7 +63,7 @@ FUNCTION ld_pregled_odredjenog_primanja()
    ESC_BCR
 
    IF cDod == "D"
-      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Naziv kolone:" GET cKolona
+      @ get_x_koord() + 7, get_y_koord() + 2 SAY "Naziv kolone:" GET cKolona
       READ
    ENDIF
    cKolona := "radn->" + cKolona
@@ -87,9 +87,9 @@ FUNCTION ld_pregled_odredjenog_primanja()
       lKredit := .T.
       cSifKred := Space( 6 )
       Box(, 6, 75 )
-      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Izabrani tip primanja je kredit ili se tretira na isti nacin kao i kredit."
-      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Ako zelite mozete dobiti spisak samo za jednog kreditora."
-      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Kreditor (prazno-svi zajedno)" GET cSifKred  VALID Empty( cSifKred ) .OR. P_Kred( @cSifKred ) PICT "@!"
+      @ get_x_koord() + 2, get_y_koord() + 2 SAY "Izabrani tip primanja je kredit ili se tretira na isti nacin kao i kredit."
+      @ get_x_koord() + 3, get_y_koord() + 2 SAY "Ako zelite mozete dobiti spisak samo za jednog kreditora."
+      @ get_x_koord() + 5, get_y_koord() + 2 SAY "Kreditor (prazno-svi zajedno)" GET cSifKred  VALID Empty( cSifKred ) .OR. P_Kred( @cSifKred ) PICT "@!"
       READ
       BoxC()
    ENDIF

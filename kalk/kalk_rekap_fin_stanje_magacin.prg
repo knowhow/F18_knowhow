@@ -188,8 +188,7 @@ FUNCTION rekap_finansijsko_stanje_magacin()
 
       NovaStrana( bZagl )
 
-      SELECT konto
-      SEEK cBroj
+      select_o_konto( cBroj )
       cNaz := KONTO->naz
       SELECT kalk
 

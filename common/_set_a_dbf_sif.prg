@@ -15,7 +15,6 @@ FUNCTION set_a_dbf_sif()
 
    LOCAL hRec
 
-
    set_a_sql_sifarnik( "adres", "ADRES", F_ADRES      )
 
    set_a_sql_sifarnik( "roba", "ROBA", F_ROBA       )

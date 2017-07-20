@@ -148,20 +148,20 @@ METHOD LDExportTxt:params()
 
    Box(, 16, 70 )
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Datumski period / mjesec:" GET _mjesec PICT "99"
-   @ form_x_koord() + nX, Col() + 1 SAY "godina:" GET _godina PICT "9999"
-   @ form_x_koord() + nX, Col() + 1 SAY "obracun:" GET _obr WHEN HelpObr( .T., _obr ) VALID ValObr( .T., _obr )
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Datumski period / mjesec:" GET _mjesec PICT "99"
+   @ get_x_koord() + nX, Col() + 1 SAY "godina:" GET _godina PICT "9999"
+   @ get_x_koord() + nX, Col() + 1 SAY "obracun:" GET _obr WHEN HelpObr( .T., _obr ) VALID ValObr( .T., _obr )
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve):" GET _rj PICT "@S35"
-
-   ++nX
-   ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Dodatna eksport polja (Sx, Ix):" GET _dod_polja PICT "@S32"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Radna jedinica (prazno-sve):" GET _rj PICT "@S35"
 
    ++nX
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Dodatna eksport polja (Sx, Ix):" GET _dod_polja PICT "@S32"
+
+   ++nX
+   ++nX
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
 
    READ
 
@@ -176,20 +176,20 @@ METHOD LDExportTxt:params()
 
    ++nX
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY Replicate( "-", 60 )
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY Replicate( "-", 60 )
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "  Odabrana varijanta: " + PadR( _name, 30 )
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "  Odabrana varijanta: " + PadR( _name, 30 )
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "         Sifra banke: " + ::formula_params[ "banka" ]
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "         Sifra banke: " + ::formula_params[ "banka" ]
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Naziv izlaznog fajla: " + PadR( _file_name, 20 )
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Naziv izlaznog fajla: " + PadR( _file_name, 20 )
 
    ++nX
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
 
    READ
 
@@ -575,9 +575,9 @@ METHOD LDExportTxt:export_setup_duplicate()
 
    Box(, 3, 60 )
 
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "*** DUPLICIRANJE POSTAVKI EKSPORTA"
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Koristiti postojece podesenje broj:" GET _existing PICT "999"
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "      Kreirati novo podesenje broj:" GET _new PICT "999"
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "*** DUPLICIRANJE POSTAVKI EKSPORTA"
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Koristiti postojece podesenje broj:" GET _existing PICT "999"
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "      Kreirati novo podesenje broj:" GET _new PICT "999"
 
    READ
 
@@ -615,7 +615,7 @@ METHOD LDExportTxt:export_setup()
 
    Box(, 15, 70 )
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
 
    READ
 
@@ -658,33 +658,33 @@ METHOD LDExportTxt:export_setup()
 
    ++nX
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "(*)   Naziv:" GET _name PICT "@S50" VALID !Empty( _name )
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "(*)   Naziv:" GET _name PICT "@S50" VALID !Empty( _name )
 
    ++nX
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "(*)   Banka:" GET _banka PICT "@S50" VALID !Empty( _banka ) .AND. P_Kred( @_banka )
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "(*)   Banka:" GET _banka PICT "@S50" VALID !Empty( _banka ) .AND. P_Kred( @_banka )
 
    ++nX
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "(*) Formula:" GET _formula PICT "@S50" VALID {|| !Empty( _formula ) .AND. ::copy_existing_formula( @_formula ) }
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "(*) Formula:" GET _formula PICT "@S50" VALID {|| !Empty( _formula ) .AND. ::copy_existing_formula( @_formula ) }
 
    ++nX
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S40"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S40"
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Separator u izl.fajlu [ ; , . t ]:" GET cSeparator
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Separator u izl.fajlu [ ; , . t ]:" GET cSeparator
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "    Separator formule [ ; , . ]:" GET cSeparatorFormula
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "    Separator formule [ ; , . ]:" GET cSeparatorFormula
 
    ++nX
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Eksport kredita (D/N) ?" GET _kred_exp PICT "!@" VALID _kred_exp $ "DN"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Eksport kredita (D/N) ?" GET _kred_exp PICT "!@" VALID _kred_exp $ "DN"
 
    ++nX
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Lista kreditora za kredite:" GET _kreditori PICT "@S30"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Lista kreditora za kredite:" GET _kreditori PICT "@S30"
 
    READ
 
@@ -796,8 +796,8 @@ METHOD LDExportTxt:get_export_list()
    LOCAL nI
    LOCAL _param_name := "ld_export_"
    LOCAL _opc, _opcexe, _izbor := 1
-   LOCAL _m_x := form_x_koord()
-   LOCAL _m_y := form_y_koord()
+   LOCAL _m_x := get_x_koord()
+   LOCAL _m_y := get_y_koord()
 
    _opc := {}
    _opcexe := {}
@@ -829,8 +829,8 @@ METHOD LDExportTxt:get_export_list()
       ENDIF
    ENDDO
 
-   form_x_koord( _m_x )
-   form_y_koord( _m_y )
+   get_x_koord( _m_x )
+   get_y_koord( _m_y )
 
    RETURN _id
 

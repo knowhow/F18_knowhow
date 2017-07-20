@@ -49,24 +49,24 @@ FUNCTION ld_asd_aug_obrazac()
 
    Box( "#RPT: AKONTACIJA POREZA PO ODBITKU", 13, 75 )
 
-   // @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@S25"
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Za mjesec:" GET nMjesec PICT "99"
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
-   @ form_x_koord() + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "   Radnik (prazno-svi):" GET cIdRadn VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
+   // @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@S25"
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Za mjesec:" GET nMjesec PICT "99"
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
+   @ get_x_koord() + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY "   Radnik (prazno-svi):" GET cIdRadn VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
 
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "   Doprinos zdr: " GET cDopr1X
-   @ form_x_koord() + 6, form_y_koord() + 2 SAY "   Doprinos pio: " GET cDopr2X
-   @ form_x_koord() + 8, form_y_koord() + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
-   @ form_x_koord() + 8, Col() + 1 SAY "JID: " GET cPredJMB
-   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Adresa: " GET cPredAdr PICT "@S30"
+   @ get_x_koord() + 5, get_y_koord() + 2 SAY "   Doprinos zdr: " GET cDopr1X
+   @ get_x_koord() + 6, get_y_koord() + 2 SAY "   Doprinos pio: " GET cDopr2X
+   @ get_x_koord() + 8, get_y_koord() + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
+   @ get_x_koord() + 8, Col() + 1 SAY "JID: " GET cPredJMB
+   @ get_x_koord() + 9, get_y_koord() + 2 SAY "Adresa: " GET cPredAdr PICT "@S30"
 
-   @ form_x_koord() + 11, form_y_koord() + 2 SAY "(1) AUG-1031 (2) ASD-1032 (3) PDN-1033" ;
+   @ get_x_koord() + 11, get_y_koord() + 2 SAY "(1) AUG-1031 (2) ASD-1032 (3) PDN-1033" ;
       GET cTipRada ;
       VALID cTipRada $ "1#2#3"
 
-   @ form_x_koord() + 12, form_y_koord() + 2 SAY "Varijanta stampe (txt/drb):" GET cVarPrn PICT "@!" VALID cVarPrn $ "12"
+   @ get_x_koord() + 12, get_y_koord() + 2 SAY "Varijanta stampe (txt/drb):" GET cVarPrn PICT "@!" VALID cVarPrn $ "12"
 
    READ
 

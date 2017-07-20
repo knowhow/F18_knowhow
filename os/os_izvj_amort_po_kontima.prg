@@ -281,12 +281,10 @@ STATIC FUNCTION FFor1()
 
    nTArea := Select()
 
-   SELECT konto
-
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    cST2 := "UK.ANALIT.KONTO '" + cIdKonto + "'" + PadR( konto->naz, 30 ) + "..."
 
-   HSEEK cIdSK
+   select_o_konto( cIdSK )
    cST3 := "UK.SINT.KONTO '" + cIdSK + "'" + PadR( konto->naz, 30 ) + "..."
 
    SELECT ( nTArea )
@@ -398,11 +396,10 @@ STATIC FUNCTION FFor1s()
    cIdAm    := IDAM
 
    nTArea := Select()
-   SELECT konto
 
    cST1 := "                    UK.GRUPA AMORTIZACIJE '" + cIdAM + "'"
 
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
 
    cST2 := "          UK.ANALITICKI KONTO '" + cIdKonto + "'" + PadR( konto->naz, 30 ) + "..."
 

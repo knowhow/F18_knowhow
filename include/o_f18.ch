@@ -19,8 +19,6 @@
 #xcommand O_TRMP     => select (F_TRMP)    ;  use_sql_sif  ("trmp")      ; set order to tag "ID"
 
 
-#xcommand O_LOKAL    => select (F_LOKAL)   ;  use_sql_lokalizacija()
-
 #xcommand o_vrstep()   => o_vrste_placanja()
 #xcommand O_PKONTO   => select (F_PKONTO); use_sql_pkonto()  ; set order to tag "ID"
 #xcommand O_KS       => select (F_KS);     use_sql_ks() ; set order to tag "ID"

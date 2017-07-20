@@ -28,7 +28,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    LOCAL cFilter := ".t."
    LOCAL cFilterOpcina
    LOCAL cSamoRobaDN := "N"
-   PRIVATE cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
+   PRIVATE cImekup, cIdFirma, cUslovTipDok, cBrFakDok, cUslovIdPartner
 
    o_vrstep()
    o_ops()
@@ -42,11 +42,11 @@ FUNCTION fakt_pregled_liste_dokumenata()
    qqVrsteP := Space( 20 )
    dDatVal0 := dDatVal1 := CToD( "" )
 
-   cIdfirma := self_organizacija_id()
+   cIdFirma := self_organizacija_id()
    dDatOd := CToD( "" )
    dDatDo := Date()
-   qqTipDok := ""
-   qqPartn := Space( 20 )
+   cUslovTipDok := ""
+   cUslovIdPartner := Space( 20 )
    cTabela := "N"
    cBrFakDok := Space( 40 )
    cImeKup := Space( 20 )
@@ -59,85 +59,87 @@ FUNCTION fakt_pregled_liste_dokumenata()
    Box( , 13 + iif( _vrste_pl .OR. lOpcine .OR. _objekti, 6, 0 ), 77 )
 
    cIdFirma := fetch_metric( "fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
-   qqTipDok := fetch_metric( "fakt_stampa_liste_dokumenti", _curr_user, qqTipDok )
+   cUslovTipDok := fetch_metric( "fakt_stampa_liste_dokumenti", _curr_user, cUslovTipDok )
    dDatOd := fetch_metric( "fakt_stampa_liste_datum_od", _curr_user, dDatOd )
    dDatDo := fetch_metric( "fakt_stampa_liste_datum_do", _curr_user, dDatDo )
    cTabela := fetch_metric( "fakt_stampa_liste_tabelarni_pregled", _curr_user, cTabela )
    cImeKup := fetch_metric( "fakt_stampa_liste_ime_kupca", _curr_user, cImeKup )
-   qqPartn := fetch_metric( "fakt_stampa_liste_partner", _curr_user, qqPartn )
+   cUslovIdPartner := fetch_metric( "fakt_stampa_liste_partner", _curr_user, cUslovIdPartner )
    cBrFakDok := fetch_metric( "fakt_stampa_liste_broj_dokumenta", _curr_user, cBrFakDok )
 
    cImeKup := PadR( cImeKup, 20 )
-   qqPartn := PadR( qqPartn, 20 )
-   qqTipDok := PadR( qqTipDok, 2 )
+   cUslovIdPartner := PadR( cUslovIdPartner, 20 )
+   cUslovTipDok := PadR( cUslovTipDok, 2 )
 
    DO WHILE .T.
 
       // IF gNW $ "DR"
-      cIdFirma := PadR( cIdfirma, 2 )
-      @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma VALID {|| Empty( cidfirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      cIdFirma := PadR( cIdFirma, 2 )
+
+      fakt_getlist_rj_read( get_x_koord() + 1, get_y_koord() + 2, @cIdFirma )
+
       READ
       // ELSE
-      // @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      // @ get_x_koord() + 1, get_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       // ENDIF
 
-      @ m_x + 2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok PICT "@!"
-      @ m_x + 3, m_y + 2 SAY "Od datuma " GET dDatOd
-      @ m_x + 3, Col() + 1 SAY "do" GET dDatDo
-      @ m_x + 5, m_y + 2 SAY8 "Ime kupca počinje sa (prazno svi)" GET cImeKup PICT "@!"
-      @ m_x + 6, m_y + 2 SAY8 "Uslov po šifri kupca (prazno svi)" GET qqPartn PICT "@!" ;
-         VALID {|| aUslovSifraKupca := Parsiraj( qqPartn, "IDPARTNER", "C", NIL, F_PARTN ), .T. }
-      @ m_x + 7, m_y + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok PICT "@!"
+      @ get_x_koord() + 2, get_y_koord() + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET cUslovTipDok PICT "@!"
+      @ get_x_koord() + 3, get_y_koord() + 2 SAY "Od datuma " GET dDatOd
+      @ get_x_koord() + 3, Col() + 1 SAY "do" GET dDatDo
+      @ get_x_koord() + 5, get_y_koord() + 2 SAY8 "Ime kupca počinje sa (prazno svi)" GET cImeKup PICT "@!"
+      @ get_x_koord() + 6, get_y_koord() + 2 SAY8 "Uslov po šifri kupca (prazno svi)" GET cUslovIdPartner PICT "@!" ;
+         VALID {|| cFilterSifraKupca := Parsiraj( cUslovIdPartner, "IDPARTNER", "C", NIL, F_PARTN ), .T. }
+      @ get_x_koord() + 7, get_y_koord() + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok PICT "@!"
 
-      @ m_x + 9, m_y + 2 SAY "Tabelarni pregled" GET cTabela VALID cTabela $ "DN" PICT "@!"
+      @ get_x_koord() + 9, get_y_koord() + 2 SAY "Tabelarni pregled" GET cTabela VALID cTabela $ "DN" PICT "@!"
 
       cRTarifa := "N"
 
-      @ m_x + 11, m_y + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa VALID cRtarifa $ "DN" PICT "@!"
+      @ get_x_koord() + 11, get_y_koord() + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa VALID cRtarifa $ "DN" PICT "@!"
 
       IF _vrste_pl
-         @ m_x + 12, m_y + 2 SAY "----------------------------------------"
-         @ m_x + 13, m_y + 2 SAY "Za fakture (Tip dok.10):"
-         @ m_x + 14, m_y + 2 SAY8 "Način placanja:" GET qqVrsteP
-         @ m_x + 15, m_y + 2 SAY8 "Datum valutiranja od" GET dDatVal0
-         @ m_x + 15, Col() + 2 SAY "do" GET dDatVal1
-         @ m_x + 16, m_y + 2 SAY "----------------------------------------"
+         @ get_x_koord() + 12, get_y_koord() + 2 SAY "----------------------------------------"
+         @ get_x_koord() + 13, get_y_koord() + 2 SAY "Za fakture (Tip dok.10):"
+         @ get_x_koord() + 14, get_y_koord() + 2 SAY8 "Način placanja:" GET qqVrsteP
+         @ get_x_koord() + 15, get_y_koord() + 2 SAY8 "Datum valutiranja od" GET dDatVal0
+         @ get_x_koord() + 15, Col() + 2 SAY "do" GET dDatVal1
+         @ get_x_koord() + 16, get_y_koord() + 2 SAY "----------------------------------------"
       ENDIF
 
-      @ m_x + 17, m_y + 2 SAY8 "Općina (prazno-sve): "  GET cOpcina
+      @ get_x_koord() + 17, get_y_koord() + 2 SAY8 "Općina (prazno-sve): "  GET cOpcina
 
       IF _objekti
-         @ m_x + 18, m_y + 2 SAY "Objekat (prazno-svi): "  GET _objekat_id VALID Empty( _objekat_id ) .OR. P_fakt_objekti( @_objekat_id )
+         @ get_x_koord() + 18, get_y_koord() + 2 SAY "Objekat (prazno-svi): "  GET _objekat_id VALID Empty( _objekat_id ) .OR. P_fakt_objekti( @_objekat_id )
       ENDIF
 
-      @ m_x + 19, m_y + 2 SAY "Valute ( /KM/EUR)"  GET valute
-      @ m_x + 19, Col() + 2 SAY8 " samo dokumenti koji sadrže robu D/N"  GET cSamoRobaDN PICT "@!" VALID cSamoRobaDN $ "DN"
+      @ get_x_koord() + 19, get_y_koord() + 2 SAY "Valute ( /KM/EUR)"  GET valute
+      @ get_x_koord() + 19, Col() + 2 SAY8 " samo dokumenti koji sadrže robu D/N"  GET cSamoRobaDN PICT "@!" VALID cSamoRobaDN $ "DN"
 
       READ
 
       ESC_BCR
 
-      aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
-      aUslovSifraKupca := Parsiraj( qqPartn, "IDPARTNER", "C" )
+      cFilterBrFaktDok := Parsiraj( cBrFakDok, "BRDOK", "C" )
+      cFilterSifraKupca := Parsiraj( cUslovIdPartner, "IDPARTNER", "C" )
       aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
       cFilterOpcina := Parsiraj( cOpcina, "flt_fakt_part_opc()", "C" )
 
-      IF ( !lOpcine .OR. cFilterOpcina <> NIL ) .AND. aUslBFD <> NIL .AND. aUslovSifraKupca <> NIL .AND. ( !_vrste_pl .OR. aUslVrsteP <> NIL )
+      IF ( !lOpcine .OR. cFilterOpcina <> NIL ) .AND. cFilterBrFaktDok <> NIL .AND. cFilterSifraKupca <> NIL .AND. ( !_vrste_pl .OR. aUslVrsteP <> NIL )
          EXIT
       ENDIF
 
    ENDDO
 
-   qqTipDok := Trim( qqTipDok )
-   qqPartn := Trim( qqPartn )
+   cUslovTipDok := Trim( cUslovTipDok )
+   cUslovIdPartner := Trim( cUslovIdPartner )
 
    set_metric( "fakt_stampa_liste_id_firma", f18_user(), cIdFirma )
-   set_metric( "fakt_stampa_liste_dokumenti", f18_user(), qqTipDok )
+   set_metric( "fakt_stampa_liste_dokumenti", f18_user(), cUslovTipDok )
    set_metric( "fakt_stampa_liste_datum_od", f18_user(), dDatOd )
    set_metric( "fakt_stampa_liste_datum_do", f18_user(), dDatDo )
    set_metric( "fakt_stampa_liste_tabelarni_pregled", f18_user(), cTabela )
    set_metric( "fakt_stampa_liste_ime_kupca", f18_user(), cImeKup )
-   set_metric( "fakt_stampa_liste_partner", f18_user(), qqPartn )
+   set_metric( "fakt_stampa_liste_partner", f18_user(), cUslovIdPartner )
    set_metric( "fakt_stampa_liste_broj_dokumenta", f18_user(), cBrFakDok )
 
    BoxC()
@@ -158,8 +160,8 @@ FUNCTION fakt_pregled_liste_dokumenata()
       cFilter += ".and. (!idtipdok='10' .or. " + aUslVrsteP + ")"
    ENDIF
 
-   IF !Empty( qqTipDok )
-      cFilter += ".and. idtipdok==" + _filter_quote( qqTipDok )
+   IF !Empty( cUslovTipDok )
+      cFilter += ".and. idtipdok==" + _filter_quote( cUslovTipDok )
    ENDIF
 
    IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
@@ -183,11 +185,11 @@ FUNCTION fakt_pregled_liste_dokumenata()
    ENDIF
 
    IF !Empty( cBrFakDok )
-      cFilter += ".and." + aUslBFD
+      cFilter += ".and." + cFilterBrFaktDok
    ENDIF
 
-   IF !Empty( qqPartn )
-      cFilter += ".and." + aUslovSifraKupca
+   IF !Empty( cUslovIdPartner )
+      cFilter += ".and." + cFilterSifraKupca
    ENDIF
 
    IF !Empty( valute )
@@ -210,9 +212,9 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    @ f18_max_rows() - 4, f18_max_cols() - 3 SAY Str( rloptlevel(), 2 )
 
-   qqTipDok := Trim( qqTipDok )
+   cUslovTipDok := Trim( cUslovTipDok )
 
-   SEEK cIdFirma + qqTipDok
+   SEEK cIdFirma + cUslovTipDok
 
    EOF CRET
 
@@ -220,7 +222,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
    ELSE
       gaZagFix := { 3, 3 }
-      stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, cFilterOpcina, valute )
+      stampa_liste_dokumenata( dDatOd, dDatDo, cUslovTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, cFilterOpcina, valute )
    ENDIF
 
    my_close_all_dbf()
@@ -327,11 +329,11 @@ FUNCTION generisi_fakturu( is_opcine )
 
    Box(, 5, 55 )
 
-   @ m_x + 1, m_y + 2 SAY "*** Parametri fakture "
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "*** Parametri fakture "
 
-   @ m_x + 3, m_y + 2 SAY "  Datum fakture: " GET dDatFakt VALID !Empty( dDatFakt )
-   @ m_x + 4, m_y + 2 SAY "   Datum valute: " GET dDatVal VALID !Empty( dDatVal )
-   @ m_x + 5, m_y + 2 SAY " Datum isporuke: " GET dDatIsp VALID !Empty( dDatIsp )
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "  Datum fakture: " GET dDatFakt VALID !Empty( dDatFakt )
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY "   Datum valute: " GET dDatVal VALID !Empty( dDatVal )
+   @ get_x_koord() + 5, get_y_koord() + 2 SAY " Datum isporuke: " GET dDatIsp VALID !Empty( dDatIsp )
 
    READ
 
@@ -459,16 +461,20 @@ FUNCTION fakt_pregled_reopen_fakt_tabele( cFilter )
 
 FUNCTION fakt_real_partnera()
 
+   LOCAL cFilter
+   LOCAL cFilterBrFaktDok, cFilterSifraKupca, cFilterTipDok
+   LOCAL cUslovTipDok, cUslovIdPartner, cUslovOpcina
+
    o_fakt_doks()
    // o_partner()
    o_valute()
    // o_rj()
 
-   cIdfirma := self_organizacija_id()
+   cIdFirma := self_organizacija_id()
    dDatOd := CToD( "" )
    dDatDo := Date()
 
-   qqTipDok := "10;"
+   cUslovTipDok := "10;"
 
    Box(, 11, 77 )
 
@@ -476,46 +482,50 @@ FUNCTION fakt_real_partnera()
    cBrFakDok := Space( 40 )
    cImeKup := Space( 20 )
 
-   qqPartn := Space( 20 )
-   qqOpc := Space( 20 )
+   cUslovIdPartner := Space( 20 )
+   cUslovOpcina := Space( 20 )
 
    cTabela := fetch_metric( "fakt_real_tabela", my_user(), cTabela )
    cImeKup := fetch_metric( "fakt_real_ime_kupca", my_user(), cImeKup )
-   qqPartn := fetch_metric( "fakt_real_partner", my_user(), qqPartn )
+   cUslovIdPartner := fetch_metric( "fakt_real_partner", my_user(), cUslovIdPartner )
    cBrFakDok := fetch_metric( "fakt_real_broj_dok", my_user(), cBrFakDok )
    cIdFirma := fetch_metric( "fakt_real_id_firma", my_user(), cIdFirma )
    dDatOd := fetch_metric( "fakt_real_datum_od", my_user(), dDatOd )
    dDatDo := fetch_metric( "fakt_real_datum_do", my_user(), dDatDo )
 
-   qqPartn := PadR( qqPartn, 20 )
-   qqTipDok := PadR( qqTipDok, 40 )
-   qqOpc := PadR( qqOpc, 20 )
+   cUslovIdPartner := PadR( cUslovIdPartner, 20 )
+   cUslovTipDok := PadR( cUslovTipDok, 40 )
+   cUslovOpcina := PadR( cUslovOpcina, 20 )
 
    DO WHILE .T.
-      cIdFirma := PadR( cidfirma, 2 )
-      @ m_x + 1, m_y + 2 SAY "RJ            " GET cIdFirma VALID {|| Empty( cidfirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
-      @ m_x + 2, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
-      @ m_x + 3, m_y + 2 SAY "Od datuma "  GET dDatOd
-      @ m_x + 3, Col() + 1 SAY "do"  GET dDatDo
-      @ m_x + 6, m_y + 2 SAY "Uslov po nazivu kupca (prazno svi)"  GET qqPartn PICT "@!"
-      @ m_x + 7, m_y + 2 SAY "Broj dokumenta (prazno svi)"  GET cBrFakDok PICT "@!"
-      @ m_x + 9, m_y + 2 SAY "Opcina (prazno sve)" GET qqOpc PICT "@!"
+      cIdFirma := PadR( cIdFirma, 2 )
+
+      fakt_getlist_rj_read( get_x_koord() + 1, get_y_koord() + 2, @cIdFirma )
+
+      @ get_x_koord() + 2, get_y_koord() + 2 SAY "Tip dokumenta " GET cUslovTipDok PICT "@!S20"
+      @ get_x_koord() + 3, get_y_koord() + 2 SAY "Od datuma "  GET dDatOd
+      @ get_x_koord() + 3, Col() + 1 SAY "do"  GET dDatDo
+      @ get_x_koord() + 6, get_y_koord() + 2 SAY "Uslov po nazivu kupca (prazno svi)"  GET cUslovIdPartner PICT "@!"
+      @ get_x_koord() + 7, get_y_koord() + 2 SAY "Broj dokumenta (prazno svi)"  GET cBrFakDok PICT "@!"
+      @ get_x_koord() + 9, get_y_koord() + 2 SAY8 "Općina (prazno sve)" GET cUslovOpcina PICT "@!"
       READ
       ESC_BCR
-      aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
-      aUslovSifraKupca := Parsiraj( qqPartn, "IDPARTNER" )
-      aUslTD := Parsiraj( qqTipdok, "IdTipdok", "C" )
-      IF aUslBFD <> NIL .AND. aUslTD <> NIL
+
+      cFilterBrFaktDok := Parsiraj( cBrFakDok, "BRDOK", "C" )
+      cFilterSifraKupca := Parsiraj( cUslovIdPartner, "IDPARTNER" )
+      cFilterTipDok := Parsiraj( cUslovTipDok, "IdTipdok", "C" )
+      IF cFilterBrFaktDok <> NIL .AND. cFilterTipDok <> NIL
          EXIT
       ENDIF
    ENDDO
 
-   qqTipDok := Trim( qqTipDok )
-   qqPartn := Trim( qqPartn )
+
+   cUslovTipDok := Trim( cUslovTipDok )
+   cUslovIdPartner := Trim( cUslovIdPartner )
 
    set_metric( "fakt_real_tabela", my_user(), cTabela )
    set_metric( "fakt_real_ime_kupca", my_user(), cImeKup )
-   set_metric( "fakt_real_partner", my_user(), qqPartn )
+   set_metric( "fakt_real_partner", my_user(), cUslovIdPartner )
    set_metric( "fakt_real_broj_dok", my_user(), cBrFakDok )
    set_metric( "fakt_real_id_firma", my_user(), cIdFirma )
    set_metric( "fakt_real_datum_od", my_user(), dDatOd )
@@ -525,26 +535,26 @@ FUNCTION fakt_real_partnera()
 
    SELECT fakt_doks
 
-   PRIVATE cFilter := ".t."
+   cFilter := ".t."
 
    IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
       cFilter += ".and.  datdok>=" + dbf_quote( dDatOd ) + ".and. datdok<=" + dbf_quote( dDatDo )
    ENDIF
 
-   IF cTabela == "D"  // tabel prikaz
+   IF cTabela == "D"  // prikazu unutar browse-a
       cFilter += ".and. IdFirma=" + dbf_quote( cIdFirma )
    ENDIF
 
    IF !Empty( cBrFakDok )
-      cFilter += ".and." + aUslBFD
+      cFilter += ".and." + cFilterBrFaktDok
    ENDIF
 
-   IF !Empty( qqPartn )
-      cFilter += ".and." + aUslovSifraKupca
+   IF !Empty( cUslovIdPartner )
+      cFilter += ".and." + cFilterSifraKupca
    ENDIF
 
-   IF !Empty( qqTipDok )
-      cFilter += ".and." + aUslTD
+   IF !Empty( cUslovTipDok )
+      cFilter += ".and." + cFilterTipDok
    ENDIF
 
    IF cFilter = ".t..and."
@@ -576,8 +586,8 @@ FUNCTION fakt_real_partnera()
    PRIVATE cRezerv := " "
    DO WHILE !Eof() .AND. IdFirma = cIdFirma
       // uslov po partneru
-      IF !Empty( qqPartn )
-         IF !( fakt_doks->partner = qqPartn )
+      IF !Empty( cUslovIdPartner )
+         IF !( fakt_doks->partner = cUslovIdPartner )
             SKIP
             LOOP
          ENDIF
@@ -589,10 +599,9 @@ FUNCTION fakt_real_partnera()
       select_o_partner( cIdPartner )
       SELECT fakt_doks
 
-
       // uslov po opcini
-      IF !Empty( qqOpc )
-         IF At( partn->idops, qqOpc ) == 0
+      IF !Empty( cUslovOpcina )
+         IF At( partn->idops, cUslovOpcina ) == 0
             SKIP
             LOOP
          ENDIF
@@ -644,7 +653,7 @@ FUNCTION fakt_real_partnera()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------------
@@ -656,14 +665,14 @@ FUNCTION fakt_zagl_real_partnera()
    ?
    P_12CPI
    ?? Space( gnLMarg )
-   IspisFirme( cidfirma )
+   IspisFirme( cIdFirma )
    ?
    SET CENTURY ON
    P_12CPI
    ? Space( gnLMarg ); ?? "FAKT: Stampa prometa partnera na dan:", Date(), Space( 8 ), "Strana:", Str( ++nStrana, 3 )
    ? Space( gnLMarg ); ?? "      period:", dDatOd, "-", dDatDo
-   IF qqTipDok <> "10;"
-      ? Space( gnLMarg ); ?? "-izvjestaj za tipove dokumenata :", Trim( qqTipDok )
+   IF cUslovTipDok <> "10;"
+      ? Space( gnLMarg ); ?? "-izvjestaj za tipove dokumenata :", Trim( cUslovTipDok )
    ENDIF
 
    SET CENTURY OFF

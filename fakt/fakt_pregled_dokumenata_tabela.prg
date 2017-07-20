@@ -67,16 +67,16 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    Box( , _x, _y )
 
-   @ m_x + _x - 4, m_y + 2 SAY8 _upadr( " <ENTER> Štampa TXT", nWidthMeni ) + ;
+   @ get_x_koord() + _x - 4, get_y_koord() + 2 SAY8 _upadr( " <ENTER> Štampa TXT", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < P > Povrat dokumenta", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < I > Informacije", nWidthMeni )
-   @ m_x + _x - 3, m_y + 2 SAY8 _upadr( " <a+P> ili <L> Štampa ODT", nWidthMeni ) + ;
+   @ get_x_koord() + _x - 3, get_y_koord() + 2 SAY8 _upadr( " <a+P> ili <L> Štampa ODT", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < S > Storno dokument", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < c+V > Postavi vezu fisk.", nWidthMeni )
-   @ m_x + _x - 2, m_y + 2 SAY8 _upadr( " < R > Štampa fisk.računa", nWidthMeni ) + ;
+   @ get_x_koord() + _x - 2, get_y_koord() + 2 SAY8 _upadr( " < R > Štampa fisk.računa", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < F > ponuda->račun", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < F5 > osvježi ", nWidthMeni )
-   @ m_x + _x - 1, m_y + 2 SAY8 _upadr( " < W > Dupliciraj", nWidthMeni ) + ;
+   @ get_x_koord() + _x - 1, get_y_koord() + 2 SAY8 _upadr( " < W > Dupliciraj", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < K > Ispravka podataka", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < T > Duplikat fiskalnog rn.", nWidthMeni )
 
@@ -139,11 +139,11 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel )
 
    LOCAL nRet := DE_CONT
-   LOCAL _rec
-   LOCAL _filter
-   LOCAL _dev_id, _dev_params
+   LOCAL hRec
+   LOCAL cFilter
+   LOCAL _dev_id, hFiskalniParams
    LOCAL lRefresh
-   LOCAL _t_rec := RecNo()
+   LOCAL nFaktDokTekuciZapis := RecNo()
 
    // LOCAL nDbfArea := Select()
    LOCAL hFiskRacunParams
@@ -153,10 +153,11 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
    LOCAL cFiscal_time
    LOCAL lReload
    LOCAL nPovrat
+   LOCAL GetList := {}
 
    s_lBrowseInitialized := .T.
 
-   _filter := dbFilter()
+   cFilter := fakt_doks->( dbFilter() )
 
    // prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
@@ -201,7 +202,6 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, cFiskalniUredjajModel )
 
          MsgBeep( "veza: fiskalni račun već setovana !" )
-
          IF Pitanje( "FAKT_PROM_VEZU", "Promjeniti postojeću vezu (D/N)?", "N" ) == "N"
             RETURN DE_CONT
          ENDIF
@@ -218,22 +218,22 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       cFiscal_time := PadR( field->fisc_time, 10 )
 
       Box(, 4, 40 )
-      @ m_x + 1, m_y + 2 SAY8 "   fiskalni račun:" GET nFiscal PICT "9999999999"
-      @ m_x + 2, m_y + 2 SAY8 "reklamirani račun:" GET nRekl PICT "9999999999"
-      @ m_x + 3, m_y + 2 SAY8 "            datum:" GET dFiscal_date
-      @ m_x + 4, m_y + 2 SAY8 "          vrijeme:" GET cFiscal_time PICT "@S10"
+      @ get_x_koord() + 1, get_y_koord() + 2 SAY8 "   fiskalni račun:" GET nFiscal PICT "9999999999"
+      @ get_x_koord() + 2, get_y_koord() + 2 SAY8 "reklamirani račun:" GET nRekl PICT "9999999999"
+      @ get_x_koord() + 3, get_y_koord() + 2 SAY8 "            datum:" GET dFiscal_date
+      @ get_x_koord() + 4, get_y_koord() + 2 SAY8 "          vrijeme:" GET cFiscal_time PICT "@S10"
       READ
       BoxC()
 
       IF nFiscal <> field->fisc_rn .OR. nRekl <> field->fisc_st
 
-         _rec := dbf_get_rec()
-         _rec[ "fisc_rn" ] := nFiscal
-         _rec[ "fisc_st" ] := nRekl
-         _rec[ "fisc_time" ] := cFiscal_time
-         _rec[ "fisc_date" ] := dFiscal_date
+         hRec := dbf_get_rec()
+         hRec[ "fisc_rn" ] := nFiscal
+         hRec[ "fisc_st" ] := nRekl
+         hRec[ "fisc_time" ] := cFiscal_time
+         hRec[ "fisc_date" ] := dFiscal_date
 
-         update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
+         update_rec_server_and_dbf( "fakt_doks", hRec, 1, "FULL" )
 
          nRet := DE_REFRESH
          lRefresh := .T.
@@ -245,7 +245,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       IF fakt_ispravka_podataka_azuriranog_dokumenta( field->idfirma, field->idtipdok, field->brdok )
          nRet := DE_REFRESH
          lRefresh := .T.
-         lReload := .F.
+         lReload := .T.
       ENDIF
 
    CASE Upper( Chr( nCh ) ) == "T"
@@ -262,8 +262,8 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       _dev_id := odaberi_fiskalni_uredjaj( field->idtipdok, .F., .F. )
 
       IF _dev_id > 0
-         _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-         IF _dev_params == NIL
+         hFiskalniParams := get_fiscal_device_params( _dev_id, my_user() )
+         IF hFiskalniParams == NIL
             RETURN DE_CONT
          ENDIF
       ELSE
@@ -271,7 +271,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
          RETURN DE_CONT
       ENDIF
 
-      IF _dev_params[ "drv" ] <> "FPRINT"
+      IF hFiskalniParams[ "drv" ] <> "FPRINT"
          MsgBeep( "Opcija moguća samo za FPRINT/DATECS uređaje !" )
          RETURN DE_CONT
       ENDIF
@@ -287,11 +287,11 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       hFiskRacunParams[ "datum" ] := field->fisc_date
       hFiskRacunParams[ "vrijeme" ] := field->fisc_time
 
-      fprint_dupliciraj_racun( _dev_params, hFiskRacunParams )
+      fprint_dupliciraj_racun( hFiskalniParams, hFiskRacunParams )
 
       MsgBeep( "Duplikat računa za datum: " + DToC( field->fisc_date ) + ", vrijeme: " + AllTrim( field->fisc_time ) )
       lRefresh := .T.
-      lReload := .F.
+      lReload := .T.
 
 
    CASE Upper( Chr( nCh ) ) == "R"
@@ -315,26 +315,24 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
             _dev_id := odaberi_fiskalni_uredjaj( field->idtipdok, .F., .F. )
 
             IF _dev_id > 0
-               _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-
-               IF _dev_params == NIL
+               hFiskalniParams := get_fiscal_device_params( _dev_id, my_user() )
+               IF hFiskalniParams == NIL
                   RETURN DE_CONT
                ENDIF
             ELSE
                RETURN DE_CONT
             ENDIF
-
-            IF _dev_params[ "print_fiscal" ] == "N"
+            IF hFiskalniParams[ "print_fiscal" ] == "N"
                MsgBeep( "Nije Vam dozvoljena opcija za štampu fiskalnih računa !" )
                RETURN DE_CONT
             ENDIF
 
-            fakt_fiskalni_racun( field->idfirma, field->idtipdok, field->brdok, .F., _dev_params )
+            fakt_fiskalni_racun( field->idfirma, field->idtipdok, field->brdok, .F., hFiskalniParams )
 
             // SELECT ( nDbfArea )
             // nRet := DE_REFRESH
             lRefresh := .T.
-            lReload := .F.
+            lReload := .T.
 
          ENDIF
 
@@ -356,7 +354,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       ELSE
          nRet := DE_REFRESH
          lRefresh := .T.
-         lReload := .F.
+         lReload := .T.
       ENDIF
 
    CASE Upper( Chr( nCh ) ) == "N"
@@ -371,7 +369,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       IF idtipdok $ "20"
          nRet := generisi_fakturu( lOpcine )
          lRefresh := .T.
-         lReload := .F.
+         lReload := .T.
       ENDIF
 
    CASE Upper( Chr( nCh ) ) = "P"
@@ -379,7 +377,6 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       nPovrat := povrat_fakt_dokumenta( .F., field->idfirma, field->idtipdok, field->brdok )
 
       o_fakt_doks()
-
       IF nPovrat <> 0 .AND. Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.
          lRefresh := .F.
@@ -388,7 +385,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       ELSE
          nRet := DE_REFRESH
          lRefresh := .T.
-         lReload := .F.
+         lReload := .T.
       ENDIF
 
    ENDCASE
@@ -398,9 +395,10 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       // SELECT ( nDbfArea )
       // SET ORDER TO TAG "1"
       IF lReload
-         fakt_pregled_reload_tables( _filter )
+         fakt_pregled_reload_tables( cFilter )
       ENDIF
-      GO ( _t_rec )
+      SELECT FAKT_DOKS
+      GO ( nFaktDokTekuciZapis )
       nRet := DE_REFRESH
 
    ENDIF
@@ -411,16 +409,24 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
 FUNCTION fakt_pregled_reload_tables( cFilter )
 
+   LOCAL nRec
+
+   IF Select( "FAKT_DOKS" ) > 0
+      SELECT FAKT_DOKS
+      nRec := RecNo()
+   ENDIF
+
    my_close_all_dbf()
 
-   o_vrstep()
-   o_ops()
-   o_fakt_doks2()
-   o_valute()
+   // o_vrstep()
+   // o_ops()
+
+   // o_valute()
    // o_rj()
    o_fakt_objekti()
    o_fakt()
    // o_partner()
+   o_fakt_doks2()
    o_fakt_doks()
 
    SELECT fakt_doks
@@ -428,6 +434,10 @@ FUNCTION fakt_pregled_reload_tables( cFilter )
    GO TOP
 
    SET FILTER TO &( cFilter )
+   GO TOP
+   IF nRec != NIL
+      GO nRec
+   ENDIF
 
    RETURN .T.
 
@@ -484,7 +494,7 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
    IF fakt_doks->idtipdok $ "10#11"
       IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, cFiskalniUredjajModel )
          _txt := "nema fiskalnog računa !"
-         @ m_x + 1, m_y + 2 SAY8 PadR( _txt, 60 ) COLOR "W/R+"
+         @ get_x_koord() + 1, get_y_koord() + 2 SAY8 PadR( _txt, 60 ) COLOR "W/R+"
       ELSE
          cFiskalniRacun := AllTrim( Str( fakt_doks->fisc_rn ) )
          cReklamiraniRacun := AllTrim( Str( fakt_doks->fisc_st ) )
@@ -493,10 +503,10 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
             _txt += "reklamirani račun: " + cReklamiraniRacun + ", "
          ENDIF
          _txt += "fiskalni račun: " + cFiskalniRacun
-         @ m_x + 1, m_y + 2 SAY8 PadR( _txt, 60 ) COLOR "GR+/B"
+         @ get_x_koord() + 1, get_y_koord() + 2 SAY8 PadR( _txt, 60 ) COLOR "GR+/B"
       ENDIF
    ELSE
-      @ m_x + 1, m_y + 2 SAY PadR( "", 60 )
+      @ get_x_koord() + 1, get_y_koord() + 2 SAY PadR( "", 60 )
    ENDIF
 
    RETURN .T.

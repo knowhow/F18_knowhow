@@ -62,25 +62,25 @@ FUNCTION ld_utrosak_po_sihtaricama()
 
    Box( "#PREGLED TROŠKOVA PO ŠIHTARICAMA", 11, 75 )
 
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Period od:" GET nMjesecOd PICT "99"
-   @ form_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
-   @ form_x_koord() + 2, Col() + 1 SAY "do:" GET nMjesecDo PICT "99"
-   @ form_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
-   @ form_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik VALID Empty( cRadnik ) .OR. p_radn( @cRadnik )
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Period od:" GET nMjesecOd PICT "99"
+   @ get_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
+   @ get_x_koord() + 2, Col() + 1 SAY "do:" GET nMjesecDo PICT "99"
+   @ get_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
+   @ get_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik VALID Empty( cRadnik ) .OR. p_radn( @cRadnik )
 
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Grupa (prazno-sve): " GET cGroup  VALID Empty( cGroup ) .OR. p_konto( @cGroup )
+   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Grupa (prazno-sve): " GET cGroup  VALID Empty( cGroup ) .OR. p_konto( @cGroup )
 
-   @ form_x_koord() + 7, form_y_koord() + 2 SAY "Dodatna primanja za prikaz (1): " GET cDodPr1 ;
+   @ get_x_koord() + 7, get_y_koord() + 2 SAY "Dodatna primanja za prikaz (1): " GET cDodPr1 ;
       VALID {|| _show_get_item_value( g_tp_naz( cDodPr1 ), 20 ), .T. }
-   @ form_x_koord() + 8, form_y_koord() + 2 SAY "Dodatna primanja za prikaz (2): " GET cDodPr2 ;
+   @ get_x_koord() + 8, get_y_koord() + 2 SAY "Dodatna primanja za prikaz (2): " GET cDodPr2 ;
       VALID {|| _show_get_item_value( g_tp_naz( cDodPr2 ), 20 ), .T. }
-   @ form_x_koord() + 9, form_y_koord() + 2 SAY "Dodatna primanja za prikaz (3): " GET cDodPr3 ;
+   @ get_x_koord() + 9, get_y_koord() + 2 SAY "Dodatna primanja za prikaz (3): " GET cDodPr3 ;
       VALID {|| _show_get_item_value( g_tp_naz( cDodPr3 ), 20 ), .T. }
-   @ form_x_koord() + 10, form_y_koord() + 2 SAY "Dodatna primanja za prikaz (4): " GET cDodPr4 ;
+   @ get_x_koord() + 10, get_y_koord() + 2 SAY "Dodatna primanja za prikaz (4): " GET cDodPr4 ;
       VALID {|| _show_get_item_value( g_tp_naz( cDodPr4 ), 20 ), .T. }
-   @ form_x_koord() + 11, form_y_koord() + 2 SAY "Dodatna primanja za prikaz (5): " GET cDodPr5 ;
+   @ get_x_koord() + 11, get_y_koord() + 2 SAY "Dodatna primanja za prikaz (5): " GET cDodPr5 ;
       VALID {|| _show_get_item_value( g_tp_naz( cDodPr5 ), 20 ), .T. }
 
    READ

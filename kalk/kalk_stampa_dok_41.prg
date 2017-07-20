@@ -67,7 +67,7 @@ FUNCTION kalk_stampa_dok_41()
 
       kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
-  
+
       kalk_marza_realizacija_prodavnica()
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
@@ -540,8 +540,7 @@ FUNCTION Naslov4x()
       ?  "DOBAVLJAC KOMIS.ROBE:", cIdPartner, "-", PadR( naz, 20 )
    ENDIF
 
-   SELECT KONTO
-   HSEEK cIdKonto
+   select_o_konto( cIdKonto )
    ?  "Prodavnicki konto razduzuje:", cIdKonto, "-", PadR( naz, 60 )
 
    RETURN NIL

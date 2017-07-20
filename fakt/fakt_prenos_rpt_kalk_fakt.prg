@@ -91,11 +91,10 @@ FUNCTION usporedna_lista_fakt_kalk()
 
       cIdFirma := Left( cIdFirma, 2 )
 
-      @ m_x + 1, m_y + 2 SAY "RJ" GET cIdFirma VALID {|| cIdfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      fakt_getlist_rj_read( m_x + 1, m_y + 2, @cIdFirma )
 
       IF lViseKonta
-         @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto ;
-            WHEN  {|| qqKonto := iif ( !Empty( cIdKonto ), cIdKonto + " ;", qqKonto ), .T. } PICT "@!S20"
+         @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto  WHEN  {|| qqKonto := iif ( !Empty( cIdKonto ), cIdKonto + " ;", qqKonto ), .T. } PICT "@!S20"
       ELSE
          @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto ;
             WHEN  {|| qqKonto := iif ( !Empty( cIdKonto ), cIdKonto, qqKonto ), .T. } ;

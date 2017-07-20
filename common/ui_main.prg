@@ -19,7 +19,7 @@ THREAD STATIC aPrStek := {}
 THREAD STATIC aMsgStack := {}
 
 
-FUNCTION form_x_koord( nSet )
+FUNCTION get_x_koord( nSet )
 
    IF nSet != NIL
       m_x := nSet
@@ -28,7 +28,7 @@ FUNCTION form_x_koord( nSet )
    RETURN m_x
 
 
-FUNCTION form_y_koord( nSet )
+FUNCTION get_y_koord( nSet )
 
    IF nSet != NIL
       m_y := nSet

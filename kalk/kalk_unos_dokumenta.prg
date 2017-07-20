@@ -1329,8 +1329,7 @@ STATIC FUNCTION NazProdObj()
 
    LOCAL cVrati := ""
 
-   SELECT KONTO
-   SEEK kalk_pripr->pkonto
+   select_o_konto( kalk_pripr->pkonto )
    cVrati := naz
    SELECT kalk_pripr
 

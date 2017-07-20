@@ -162,8 +162,7 @@ FUNCTION fin_bb_sintetika_b( params )
             @ PRow() + 1, 1 SAY B PICTURE '9999'
             ?? "."
             @ PRow(), 10 SAY cIdKonto
-            SELECT KONTO
-            HSEEK cIdKonto
+            select_o_konto( cIdKonto )
             @ PRow(), 19 SAY naz
             nCol1 := PCol() + 1
             @ PRow(), PCol() + 1 SAY D1PS PICTURE PicD

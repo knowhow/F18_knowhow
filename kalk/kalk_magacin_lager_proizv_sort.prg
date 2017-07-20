@@ -365,7 +365,7 @@ METHOD getVars
 
    BoxC()
 
-   SELECT konto
+  -- SELECT konto
    USE
 
    IF ( LastKey() == K_ESC )
@@ -556,7 +556,7 @@ METHOD printHeader
    ?
    PushWA()
 
-   SELECT konto
+  -- SELECT konto
 --   SEEK ::cIdKonto
    ? "Magacinski konto:", ::cIdKonto, konto->naz
    PopWa()

@@ -310,31 +310,6 @@ FUNCTION use_sql_pkonto()
    RETURN .T.
 
 
-/*
-   use_sql__l() => otvori šifarnik lokalizacije sa prilagođenim poljima
-*/
-
-FUNCTION use_sql_lokalizacija()
-
-   LOCAL cSql
-   LOCAL cTable := "lokal"
-
-   cSql := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "lokal ORDER BY id"
-
-   SELECT F_LOKAL
-   IF !use_sql( cTable, cSql )
-      RETURN .F.
-   ENDIF
-
-   INDEX ON ID + Str( ID_STR, 6 ) + NAZ TAG ID TO ( cTable )
-   INDEX ON ID + NAZ TAG IDNAZ TO ( cTable )
-   INDEX ON Str( ID_STR, 6 ) + NAZ + ID TAG ID_STR TO ( cTable )
-   INDEX ON NAZ + Str( ID_STR, 6 ) TAG NAZ TO ( cTable )
-
-   SET ORDER TO TAG ID
-
-   RETURN .T.
-
 
 
 

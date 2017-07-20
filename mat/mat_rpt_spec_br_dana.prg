@@ -121,8 +121,7 @@ STATIC FUNCTION _fill_rpt_data( param )
 
       _id_konto := field->idkonto
 
-      SELECT konto
-      HSEEK _id_konto
+      select_o_konto( _id_konto )
 
       SELECT mat_suban
 

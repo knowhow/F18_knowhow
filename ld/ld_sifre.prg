@@ -259,9 +259,9 @@ FUNCTION browse_edit_radnik( Ch )
    IF ( Ch == K_ALT_M )
 
       Box(, 4, 60 )
-      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Postavljenje koef. minulog rada:"
-      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Pazite da ovu opciju ne izvrsite vise puta za isti mjesec !"
-      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Mjesec:" GET nMjesec PICT "99"
+      @ get_x_koord() + 1, get_y_koord() + 2 SAY "Postavljenje koef. minulog rada:"
+      @ get_x_koord() + 2, get_y_koord() + 2 SAY "Pazite da ovu opciju ne izvrsite vise puta za isti mjesec !"
+      @ get_x_koord() + 4, get_y_koord() + 2 SAY "Mjesec:" GET nMjesec PICT "99"
       READ
       BoxC()
 
@@ -425,19 +425,19 @@ STATIC FUNCTION _filter_radn()
 
    Box(, 6, 70 )
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "*** FILTER ŠIFARNIKA RADNIKA"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 "*** FILTER ŠIFARNIKA RADNIKA"
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "     IME:" GET _ime PICT "@S40"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 "     IME:" GET _ime PICT "@S40"
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY " PREZIME:" GET _prezime PICT "@S40"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY " PREZIME:" GET _prezime PICT "@S40"
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "RODITELJ:" GET _imerod PICT "@S40"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "RODITELJ:" GET _imerod PICT "@S40"
 
    nX += 2
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Sortiranje: 1 - sifra, 2 - prezime:" GET _sort PICT "9" VALID _sort >= 1 .AND. _sort <= 2
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Sortiranje: 1 - sifra, 2 - prezime:" GET _sort PICT "9" VALID _sort >= 1 .AND. _sort <= 2
 
    READ
 
@@ -506,9 +506,9 @@ STATIC FUNCTION _filter_radn()
 FUNCTION MsgIspl()
 
    Box(, 3, 50 )
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY8 "Vazeće šifre su: TR - tekući racun   "
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY8 "                 SK - štedna knjizica"
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY8 "                 BL - blagajna"
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY8 "Vazeće šifre su: TR - tekući racun   "
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY8 "                 SK - štedna knjizica"
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY8 "                 BL - blagajna"
    Inkey( 0 )
    BoxC()
 
@@ -683,7 +683,7 @@ FUNCTION P_LD_RJ( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := p_sifra( F_LD_RJ, 1, f18_max_rows() - 15, 60, "Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
+   lRet := p_sifra( F_LD_RJ, 1, f18_max_rows() - 15, 60, "LD radne jedinice", @cId, nDeltaX, nDeltaY )
 
    PopWa( F_LD_RJ )
 
@@ -1131,8 +1131,8 @@ FUNCTION TotBrisRadn()
    O_LDSM         // idradn, "RADN"
 
    Box(, 7, 75 )
-   @ form_x_koord() + 0, form_y_koord() + 5 SAY _l( "TOTALNO BRISANJE RADNIKA IZ EVIDENCIJE" )
-   @ form_x_koord() + 8, form_y_koord() + 20 SAY _l( "<F5> - trazenje radnika pomocu sifrarnika" )
+   @ get_x_koord() + 0, get_y_koord() + 5 SAY _l( "TOTALNO BRISANJE RADNIKA IZ EVIDENCIJE" )
+   @ get_x_koord() + 8, get_y_koord() + 20 SAY _l( "<F5> - trazenje radnika pomocu sifrarnika" )
    SET KEY K_F5 TO TRUSif()
    DO WHILE .T.
       BoxCLS()
@@ -1141,8 +1141,8 @@ FUNCTION TotBrisRadn()
          cSigurno := "N"
       ENDIF
 
-      @ form_x_koord() + 2, form_y_koord() + 2 SAY _l( "Radnik" ) GET cIdRadn PICT "@!"
-      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Sigurno ga zelite obrisati (D/N) ?" GET cSigurno WHEN PrTotBR( cIdRadn ) VALID cSigurno $ "DN" PICT "@!"
+      @ get_x_koord() + 2, get_y_koord() + 2 SAY _l( "Radnik" ) GET cIdRadn PICT "@!"
+      @ get_x_koord() + 6, get_y_koord() + 2 SAY "Sigurno ga zelite obrisati (D/N) ?" GET cSigurno WHEN PrTotBR( cIdRadn ) VALID cSigurno $ "DN" PICT "@!"
 
       READ
 
@@ -1261,15 +1261,15 @@ FUNCTION PrTotBr( cIdRadn )
    ENDDO
    SKIP -1
 
-   @ form_x_koord() + 3, form_y_koord() + 1 CLEAR TO form_x_koord() + 5, form_y_koord() + 75
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "PREZIME I IME:"
-   @ form_x_koord() + 3, form_y_koord() + 17 SAY IF( RADN->id == cIdRadn, RADN->( Trim( naz ) + " (" + Trim( imerod ) + ") " + Trim( ime ) ), "nema podatka" ) COLOR cBI
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "POSLJEDNJI OBRACUN:"
-   @ form_x_koord() + 4, form_y_koord() + 22 SAY IF( LD->idradn == cIdRadn, Str( LD->mjesec, 2 ) + "/" + Str( LD->godina, 4 ), "nema podatka" ) COLOR cBI
-   @ form_x_koord() + 4, form_y_koord() + 35 SAY "RJ:"
-   @ form_x_koord() + 4, form_y_koord() + 39 SAY IF( LD->idradn == cIdRadn, LD->idrj, "nema podatka" ) COLOR cBI
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "POSLJEDNJA RATA KREDITA:"
-   @ form_x_koord() + 5, form_y_koord() + 27 SAY IF( RADKR->idradn == cIdRadn, Str( RADKR->mjesec, 2 ) + "/" + Str( RADKR->godina, 4 ), "nema podatka" ) COLOR cBI
+   @ get_x_koord() + 3, get_y_koord() + 1 CLEAR TO get_x_koord() + 5, get_y_koord() + 75
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "PREZIME I IME:"
+   @ get_x_koord() + 3, get_y_koord() + 17 SAY IF( RADN->id == cIdRadn, RADN->( Trim( naz ) + " (" + Trim( imerod ) + ") " + Trim( ime ) ), "nema podatka" ) COLOR cBI
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY "POSLJEDNJI OBRACUN:"
+   @ get_x_koord() + 4, get_y_koord() + 22 SAY IF( LD->idradn == cIdRadn, Str( LD->mjesec, 2 ) + "/" + Str( LD->godina, 4 ), "nema podatka" ) COLOR cBI
+   @ get_x_koord() + 4, get_y_koord() + 35 SAY "RJ:"
+   @ get_x_koord() + 4, get_y_koord() + 39 SAY IF( LD->idradn == cIdRadn, LD->idrj, "nema podatka" ) COLOR cBI
+   @ get_x_koord() + 5, get_y_koord() + 2 SAY "POSLJEDNJA RATA KREDITA:"
+   @ get_x_koord() + 5, get_y_koord() + 27 SAY IF( RADKR->idradn == cIdRadn, Str( RADKR->mjesec, 2 ) + "/" + Str( RADKR->godina, 4 ), "nema podatka" ) COLOR cBI
 
    RETURN iif( RADN->id == cIdRadn .OR. LD->idradn == cIdRadn .OR.  LDSM->idradn == cIdRadn .OR. RADKR->idradn == cIdRadn, .T., .F. )
 

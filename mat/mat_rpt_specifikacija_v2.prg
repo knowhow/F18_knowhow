@@ -147,14 +147,14 @@ FUNCTION mat_specifikacija()
          ENDIF
          @ PRow() + 1, 0 SAY "FIRMA:"
          @ PRow(), PCol() + 1 SAY cIdFirma
-         SELECT PARTN
-         HSEEK cIdFirma
+
+         select_o_partner( cIdFirma )
          @ PRow(), PCol() + 1 SAY AllTrim( naz )
          @ PRow(), PCol() + 1 SAY AllTrim( naz2 )
          @ PRow() + 1, 0 SAY KonSeks( "KONTO" ) + ":"
          @ PRow(), PCol() + 1 SAY cIdKonto
-         SELECT konto
-         HSEEK cidkonto
+
+         select_o_konto( cIdkonto )
          @ PRow(), PCol() + 1 SAY AllTrim( naz )
          SELECT mat_suban
          ?  m

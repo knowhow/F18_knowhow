@@ -13,11 +13,11 @@
 
 MEMVAR m_x, m_y
 
-//STATIC __fiscal_marker := .F.
-//STATIC __id_firma
-//STATIC __tip_dok
-//STATIC __br_dok
-//STATIC __r_br
+// STATIC __fiscal_marker := .F.
+// STATIC __id_firma
+// STATIC __tip_dok
+// STATIC __br_dok
+// STATIC __r_br
 STATIC __enter_seq := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
 STATIC __redni_broj
 
@@ -71,13 +71,13 @@ FUNCTION fakt_unos_dokumenta()
    NEXT
 
    // marker fiskalnih racuna
-   //__fiscal_marker := .F.
+   // __fiscal_marker := .F.
 
    // podaci dokumenta
-   //__id_firma  := field->idfirma
-   //__tip_dok := field->idtipdok
-   //__br_dok  := field->brdok
-   //__r_br := field->rbr
+   // __id_firma  := field->idfirma
+   // __tip_dok := field->idtipdok
+   // __br_dok  := field->brdok
+   // __r_br := field->rbr
 
    _x := f18_max_rows() - 4
    _y := f18_max_cols() - 3
@@ -142,14 +142,14 @@ STATIC FUNCTION fakt_unos_prikaz_nab_cj()
 
 STATIC FUNCTION fakt_pripr_keyhandler()
 
-   LOCAL _rec
+   LOCAL hFaktPriprRec
    LOCAL _ret
    LOCAL cPom
    LOCAL aFaktAzuriraniDokumenti := {}
    LOCAL _dev_id := 0
    LOCAL _dev_params
    LOCAL lFiskalniStampati := fiscal_opt_active()
-   LOCAL _params := fakt_params()
+   LOCAL hFaktParams := fakt_params()
    LOCAL _dok := hb_Hash()
    LOCAL oAttr
    LOCAL _hAttrId
@@ -244,7 +244,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
          RETURN DE_CONT
       ENDIF
 
-      IF fakt_ispravi_dokument( _params )
+      IF fakt_ispravi_dokument( hFaktParams )
          RETURN DE_REFRESH
       ELSE
          RETURN DE_CONT
@@ -252,7 +252,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
    CASE Ch == K_CTRL_A
 
-      fakt_prodji_kroz_stavke( _params )
+      fakt_prodji_kroz_stavke( hFaktParams )
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_N
@@ -329,62 +329,62 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       IF lFiskalniStampati .AND. cIdTipDok $ "10#11" .AND. aFaktAzuriraniDokumenti <> NIL .AND. Len( aFaktAzuriraniDokumenti ) == 1
 
-            //cIdFirma := aFaktAzuriraniDokumenti[ 1, 1 ]
-            //cIdTipDok := aFaktAzuriraniDokumenti[ 1, 2 ]
-            //cBrDok := aFaktAzuriraniDokumenti[ 1, 3 ]
+         // cIdFirma := aFaktAzuriraniDokumenti[ 1, 1 ]
+         // cIdTipDok := aFaktAzuriraniDokumenti[ 1, 2 ]
+         // cBrDok := aFaktAzuriraniDokumenti[ 1, 3 ]
 
-            //__fiscal_marker := .T.
+         // __fiscal_marker := .T.
 
-            // IF fakt_pripr->( RecCount() ) <> 0
-            // MsgBeep( "Priprema nije prazna, štampa fisk.racuna nije moguca!" )
-            // RETURN DE_CONT
-            // ENDIF
+         // IF fakt_pripr->( RecCount() ) <> 0
+         // MsgBeep( "Priprema nije prazna, štampa fisk.racuna nije moguca!" )
+         // RETURN DE_CONT
+         // ENDIF
 
-            IF Pitanje(, "Odštampati račun " + cIdFirma + "-" + cIdTipDok + "-" + Alltrim( cBrDok ) +  " na fiskalni printer ?", "D" ) == "N"
-               RETURN DE_REFRESH
-            ENDIF
-
-            _dev_id := odaberi_fiskalni_uredjaj( cIdTipDok, .F., .F. )
-
-            IF _dev_id > 0
-               _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-               IF _dev_params == NIL
-                  RETURN DE_REFRESH
-               ENDIF
-            ELSE
-               RETURN DE_REFRESH
-            ENDIF
-
-            IF _dev_params[ "print_fiscal" ] == "N"
-               MsgBeep( "Nije Vam dozvoljena opcija za štampu fiskalnih računa !" )
-               RETURN DE_REFRESH
-            ENDIF
-
-            MsgO( "Štampa " + cIdFirma + "-" + cIdTipDok + "-" + Alltrim( cBrDok ) + " na fiskalni printer u toku..." )
-            fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, .F., _dev_params )
-            MsgC()
-
-            select_fakt_pripr()
-
-            IF _dev_params[ "print_a4" ] $ "D#G#X"
-
-               IF _dev_params[ "print_a4" ] $ "D#X" .AND. Pitanje(, "Štampati fakturu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + " ?", "N" ) == "D"
-                  fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
-                  close_open_fakt_tabele()
-                  select_fakt_pripr()
-               ENDIF
-
-               IF _dev_params[ "print_a4" ] $ "G#X" .AND. Pitanje(, "Štampati LibreOffice fakturu "+ cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "?", "N" ) == "D"
-                  fakt_stampa_dok_odt( cIdFirma, cIdTipDok, cBrDok )
-                  close_open_fakt_tabele()
-                  select_fakt_pripr()
-               ENDIF
-
-            ENDIF
-
+         IF Pitanje(, "Odštampati račun " + cIdFirma + "-" + cIdTipDok + "-" + AllTrim( cBrDok ) +  " na fiskalni printer ?", "D" ) == "N"
             RETURN DE_REFRESH
+         ENDIF
+
+         _dev_id := odaberi_fiskalni_uredjaj( cIdTipDok, .F., .F. )
+
+         IF _dev_id > 0
+            _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+            IF _dev_params == NIL
+               RETURN DE_REFRESH
+            ENDIF
+         ELSE
+            RETURN DE_REFRESH
+         ENDIF
+
+         IF _dev_params[ "print_fiscal" ] == "N"
+            MsgBeep( "Nije Vam dozvoljena opcija za štampu fiskalnih računa !" )
+            RETURN DE_REFRESH
+         ENDIF
+
+         MsgO( "Štampa " + cIdFirma + "-" + cIdTipDok + "-" + AllTrim( cBrDok ) + " na fiskalni printer u toku..." )
+         fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, .F., _dev_params )
+         MsgC()
+
+         select_fakt_pripr()
+
+         IF _dev_params[ "print_a4" ] $ "D#G#X"
+
+            IF _dev_params[ "print_a4" ] $ "D#X" .AND. Pitanje(, "Štampati fakturu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + " ?", "N" ) == "D"
+               fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
+               close_open_fakt_tabele()
+               select_fakt_pripr()
+            ENDIF
+
+            IF _dev_params[ "print_a4" ] $ "G#X" .AND. Pitanje(, "Štampati LibreOffice fakturu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "?", "N" ) == "D"
+               fakt_stampa_dok_odt( cIdFirma, cIdTipDok, cBrDok )
+               close_open_fakt_tabele()
+               select_fakt_pripr()
+            ENDIF
 
          ENDIF
+
+         RETURN DE_REFRESH
+
+      ENDIF
 
       RETURN DE_REFRESH
 
@@ -481,7 +481,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
 
    LOCAL _dug
-   LOCAL _rec_no, _rec
+   LOCAL _rec_no, hFaktPriprRec
    LOCAL _items_atrib
    LOCAL _item_before
 
@@ -553,46 +553,45 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
 
 // -------------------------------------------------------------------------------------------------------
 // dodaje ili ispravlja stavku u tabeli FAKT_PRIPR
-// novi - logički uslov nova stavka .T. ili .F.
-// item_hash - hash matrica sa podacima stavke ( idfirma, idtipdok, brdok, rbr ) prije upisivanja u DBF
-// items_atrib - hash matrica sa atributima definisanim na stavci kod unosa
+// lNovi - logički uslov nova stavka .T. ili .F.
+// hFaktStavkaAttribut - hash matrica sa podacima stavke ( idfirma, idtipdok, brdok, rbr ) prije upisivanja u DBF
+// hFaktItemsAttributi - hash matrica sa atributima definisanim na stavci kod unosa
 // -------------------------------------------------------------------------------------------------------
-STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
+STATIC FUNCTION fakt_dodaj_ispravi_stavku( lNovi, hFaktStavkaAttribut, hFaktItemsAttributi )
 
-   LOCAL oAttr, _rec, _item_after_hash
-   LOCAL new_hash := hb_Hash()
+   LOCAL oAttr, hFaktPriprRec, _item_after_hash
+   LOCAL hFaktStavkaAttributNovi := hb_Hash()
 
-   IF novi == .T.
+   IF lNovi == .T.
       APPEND BLANK
    ENDIF
 
-   // dodaj zapis u tabelu FAKT_PRIPR
-   _rec := get_hash_record_from_global_vars( "_" )
-   dbf_update_rec( _rec, .F. )
+   hFaktPriprRec := get_hash_record_from_global_vars( "_" ) // dodaj zapis u tabelu FAKT_PRIPR
+   dbf_update_rec( hFaktPriprRec, .F. )
 
    // hash matrica koja sadrži update-ovan zapis
-   new_hash[ "idfirma" ] := fakt_pripr->idfirma
-   new_hash[ "idtipdok" ] := fakt_pripr->idtipdok
-   new_hash[ "brdok" ] := fakt_pripr->brdok
-   new_hash[ "rbr" ] := fakt_pripr->rbr
+   hFaktStavkaAttributNovi[ "idfirma" ] := fakt_pripr->idfirma
+   hFaktStavkaAttributNovi[ "idtipdok" ] := fakt_pripr->idtipdok
+   hFaktStavkaAttributNovi[ "brdok" ] := fakt_pripr->brdok
+   hFaktStavkaAttributNovi[ "rbr" ] := fakt_pripr->rbr
 
    // ažuriraj atribute u FAKT_FAKT_ATTRUTI
    oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
-   oAttr:hAttrId := new_hash
+   oAttr:hAttrId := hFaktStavkaAttributNovi
 
-   IF !novi .AND. ( item_hash[ "rbr" ] <> new_hash[ "rbr" ] )
-      oAttr:hAttrId[ "update_rbr" ] := item_hash[ "rbr" ]
+   IF !lNovi .AND. ( hFaktStavkaAttribut[ "rbr" ] <> hFaktStavkaAttributNovi[ "rbr" ] )
+      oAttr:hAttrId[ "update_rbr" ] := hFaktStavkaAttribut[ "rbr" ]
       oAttr:update_attr_rbr()
    ENDIF
 
-   oAttr:push_attr_from_mem_to_dbf( items_atrib )
+   oAttr:push_attr_from_mem_to_dbf( hFaktItemsAttributi )
 
    fakt_promjena_cijene_u_sif()
 
    // nešto što mjenja sve stavke dokumenta u pripremi ako se promjeni prva stavka
    // promjena broja dokumenta i slično
-   IF __redni_broj == 1 .AND. !novi
-      izmjeni_sve_stavke_dokumenta( item_hash, new_hash )
+   IF __redni_broj == 1 .AND. !lNovi
+      izmjeni_sve_stavke_dokumenta( hFaktStavkaAttribut, hFaktStavkaAttributNovi )
    ENDIF
 
    RETURN .T.
@@ -650,7 +649,7 @@ STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
 STATIC FUNCTION fakt_unos_nove_stavke()
 
    LOCAL _items_atrib
-   LOCAL _rec
+   LOCAL hFaktPriprRec
    LOCAL _total := 0
    LOCAL oAttr, _hAttrId
 
@@ -750,7 +749,7 @@ STATIC FUNCTION fakt_print_dokument()
 // ----------------------------------------------------
 STATIC FUNCTION _init_vars_from_txt_memo()
 
-   LOCAL _params := fakt_params()
+   LOCAL hFaktParams := fakt_params()
    LOCAL _memo := ParsMemo( _txt )
    LOCAL _len := Len( _memo )
 
@@ -801,15 +800,15 @@ STATIC FUNCTION _init_vars_from_txt_memo()
       d2n2 := _memo[ 17 ]
    ENDIF
 
-   IF _params[ "destinacije" ] .AND. _len >= 18
+   IF hFaktParams[ "destinacije" ] .AND. _len >= 18
       _destinacija := PadR( AllTrim( _memo[ 18 ] ), 500 )
    ENDIF
 
-   IF _params[ "fakt_dok_veze" ] .AND. _len >= 19
+   IF hFaktParams[ "fakt_dok_veze" ] .AND. _len >= 19
       _dokument_veza := PadR( AllTrim( _memo[ 19 ] ), 500 )
    ENDIF
 
-   IF _params[ "fakt_objekti" ] .AND. _len >= 20
+   IF hFaktParams[ "fakt_objekti" ] .AND. _len >= 20
       _objekti := PadR( _memo[ 20 ], 10 )
    ENDIF
 
@@ -823,7 +822,7 @@ STATIC FUNCTION _init_vars_from_txt_memo()
 STATIC FUNCTION _set_memo_txt_from_vars()
 
    LOCAL _tmp
-   LOCAL _params := fakt_params()
+   LOCAL hFaktParams := fakt_params()
 
    // odsjeci na kraju prazne linije
    _txt2 := OdsjPLK( _txt2 )
@@ -863,7 +862,7 @@ STATIC FUNCTION _set_memo_txt_from_vars()
    // 17
    _txt += Chr( 16 ) + d2n2 + Chr( 17 )
 
-   IF _params[ "destinacije" ]
+   IF hFaktParams[ "destinacije" ]
       _tmp := _destinacija
    ELSE
       _tmp := ""
@@ -873,7 +872,7 @@ STATIC FUNCTION _set_memo_txt_from_vars()
    _txt += Chr( 16 ) + AllTrim( _tmp ) + Chr( 17 )
 
    // 19 - vezni dokumenti
-   IF _params[ "fakt_dok_veze" ]
+   IF hFaktParams[ "fakt_dok_veze" ]
       _tmp := _dokument_veza
    ELSE
       _tmp := ""
@@ -882,7 +881,7 @@ STATIC FUNCTION _set_memo_txt_from_vars()
    _txt += Chr( 16 ) + AllTrim( _dokument_veza ) + Chr( 17 )
 
    // 20 - objekti
-   IF _params[ "fakt_objekti" ]
+   IF hFaktParams[ "fakt_objekti" ]
       _tmp := _objekti
    ELSE
       _tmp := ""
@@ -893,45 +892,45 @@ STATIC FUNCTION _set_memo_txt_from_vars()
    RETURN .T.
 
 
-STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
+STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
 
-   LOCAL _a_tipdok := {}
+   LOCAL aTipoviDokumenata := {}
    LOCAL _h
    LOCAL _rok_placanja := 0
    LOCAL _avansni_racun
    LOCAL _opis := ""
-   LOCAL _n_menu := fakt_tip_dokumenta_default_menu()
+   LOCAL nMenu := fakt_tip_dokumenta_default_menu()
    LOCAL _convert := "N"
    LOCAL _x := 1
    LOCAL _odabir_txt := .F.
    LOCAL _lista_uzoraka
    LOCAL _x2, _part_x, _part_y, _tip_cijene
    LOCAL _ref_broj, _lot_broj
-   LOCAL _params := fakt_params()
+   LOCAL hFaktParams := fakt_params()
 
-   _a_tipdok := fakt_tip_dok_arr()
+   aTipoviDokumenata := fakt_tip_dok_arr()
    _h := {}
-   ASize( _h, Len( _a_tipdok ) )
+   ASize( _h, Len( aTipoviDokumenata ) )
    AFill( _h, "" )
 
-   IF items_atrib <> NIL
+   IF hFaktItemsAttributi <> NIL
 
-      IF _params[ "fakt_opis_stavke" ]
+      IF hFaktParams[ "fakt_opis_stavke" ]
          IF fNovi
             _opis := PadR( "", 300 )
          ELSE
-            _opis := PadR( items_atrib[ "opis" ], 300 )
+            _opis := PadR( hFaktItemsAttributi[ "opis" ], 300 )
          ENDIF
       ENDIF
 
-      IF _params[ "ref_lot" ]
+      IF hFaktParams[ "ref_lot" ]
 
          IF fNovi
             _ref_broj := PadR( "", 50 )
             _lot_broj := PadR( "", 50 )
          ELSE
-            _ref_broj := PadR( items_atrib[ "ref" ], 50 )
-            _lot_broj := PadR( items_atrib[ "lot" ], 50 )
+            _ref_broj := PadR( hFaktItemsAttributi[ "ref" ], 50 )
+            _lot_broj := PadR( hFaktItemsAttributi[ "lot" ], 50 )
          ENDIF
       ENDIF
 
@@ -963,15 +962,15 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       _convert := "D"
       _serbr := Space( Len( field->serbr ) )
 
-      IF _params[ "destinacije" ]
+      IF hFaktParams[ "destinacije" ]
          _destinacija := PadR( "", 500 )
       ENDIF
 
-      IF _params[ "fakt_dok_veze" ]
+      IF hFaktParams[ "fakt_dok_veze" ]
          _dokument_veza := PadR( "", 500 )
       ENDIF
 
-      IF _params[ "fakt_objekti" ]
+      IF hFaktParams[ "fakt_objekti" ]
          _objekti := Space( 10 )
       ENDIF
 
@@ -984,11 +983,11 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       IF __redni_broj == 1
 
-         _n_menu := iif( Val( gIMenu ) < 1, Asc( gIMenu ) - 55, Val( gIMenu ) )
+         nMenu := iif( Val( gIMenu ) < 1, Asc( gIMenu ) - 55, Val( gIMenu ) )
          _idfirma := self_organizacija_id()
 
-         IF !Empty( _params[ "def_rj" ] )
-            _idfirma := _params[ "def_rj" ]
+         IF !Empty( hFaktParams[ "def_rj" ] )
+            _idfirma := hFaktParams[ "def_rj" ]
          ENDIF
 
          _idtipdok := "10"
@@ -1002,7 +1001,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    ELSE
       _init_vars_from_txt_memo()
-      _n_menu := AScan( _a_tipdok, {| x | _idtipdok == Left( x, 2 ) } )
+      nMenu := AScan( aTipoviDokumenata, {| x | _idtipdok == Left( x, 2 ) } )
    ENDIF
 
    _podbr := Space( 2 )
@@ -1014,14 +1013,15 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          _idFirma := self_organizacija_id()
       ENDIF
 
-      IF !Empty( _params[ "def_rj" ] )
-         _idfirma := _params[ "def_rj" ]
+      IF !Empty( hFaktParams[ "def_rj" ] )
+         _idfirma := hFaktParams[ "def_rj" ]
       ENDIF
 
       @ m_x + _x, m_y + 2 SAY PadR( self_organizacija_naziv(), 20 )
 
-      @ m_x + _x, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == self_organizacija_id() ;
-         .OR. P_RJ( @_idfirma ) .AND. V_Rj(), _idfirma := Left( _idfirma, 2 ), .T. }
+      fakt_getlist_rj_read( m_x + _x, Col() + 2, @_idFirma, .F. )
+      // @ m_x + _x, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == self_organizacija_id() ;
+      // .OR. P_RJ( @_idfirma ) .AND. V_Rj(), _idfirma := Left( _idfirma, 2 ), .T. }
 
       READ
 
@@ -1030,27 +1030,27 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       _old_tip_dok := field->idtipdok
 
-      _n_menu := meni_fiksna_lokacija( 5, 30, _a_tipdok, _n_menu )
+      nMenu := meni_fiksna_lokacija( 5, 30, aTipoviDokumenata, nMenu )
 
       m_x := __mx
       m_y := __my
 
       ESC_RETURN 0
 
-      IF _a_tipdok == NIL .OR. Len( _a_tipdok ) == 0
+      IF aTipoviDokumenata == NIL .OR. Len( aTipoviDokumenata ) == 0
          MsgBeep( "Odabir vrste dokumenta se vrši sa ENTER !" )
          RETURN 0
       ENDIF
 
-      IF _n_menu == NIL .OR. _n_menu > Len( _a_tipdok ) .OR. _n_menu < 0
+      IF nMenu == NIL .OR. nMenu > Len( aTipoviDokumenata ) .OR. nMenu < 0
          MsgBeep( "Nepostojeća opcija !" )
          RETURN 0
       ENDIF
 
-      _idtipdok := Left( _a_tipdok[ _n_menu ], 2 )
+      _idtipdok := Left( aTipoviDokumenata[ nMenu ], 2 )
 
       ++_x
-      @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @_a_tipdok, _idtipdok ), 40 )
+      @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 40 )
 
       IF !fNovi .AND. __redni_broj == 1
          IF _idtipdok <> _old_tip_dok .AND. !Empty( field->brdok ) .AND. AllTrim( field->brdok ) <> "00000"
@@ -1076,18 +1076,18 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
          _x += 2
 
-         IF _params[ "fakt_dok_veze" ]
+         IF hFaktParams[ "fakt_dok_veze" ]
             @ m_x + _x, m_y + 2 SAY "Vezni dok.:" GET _dokument_veza ;
                PICT "@S20"
          ENDIF
 
          ++_x
-         IF _params[ "destinacije" ]
+         IF hFaktParams[ "destinacije" ]
             @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija ;
                PICT "@S20"
          ENDIF
 
-         IF ( _params[ "fakt_objekti" ] .AND. _idtipdok $ "10#11#12#13" )
+         IF ( hFaktParams[ "fakt_objekti" ] .AND. _idtipdok $ "10#11#12#13" )
             @ m_x + _x, Col() + 1 SAY "Objekat:" GET _objekti ;
                VALID p_fakt_objekti( @_objekti ) ;
                PICT "@!"
@@ -1116,7 +1116,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
             ++_x2
             @ m_x + _x2, m_y + 51 SAY8 "Datum plaćanja :" GET _datpl VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
 
-            IF _params[ "fakt_vrste_placanja" ]
+            IF hFaktParams[ "fakt_vrste_placanja" ]
 
                ++_x
                @ m_x + _x, m_y + 2 SAY8 "Način plaćanja" GET _idvrstep PICT "@!" VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
@@ -1128,9 +1128,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
             ++_x2
             @ m_x + _x2, m_y + 51 SAY "Po ul.fakt.broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
-
             ++_x2
-
             @ m_x + _x2, m_y + 51 SAY "       i UCD-u :" GET _brnar PICT "@S20"
 
          ELSE
@@ -1186,7 +1184,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       ?? "  RJ:", _idfirma
 
       _x += 2
-      @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @_a_tipdok, _idtipdok ), 35 )
+      @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 35 )
 
       @ m_x + _x, m_y + 45 SAY "Datum: "
       ?? _datdok
@@ -1227,13 +1225,13 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       @ m_x + _x, m_y + 59 SAY "Cijena (1/2/3):" GET _tip_cijene
    ENDIF
 
-   IF _params[ "fakt_opis_stavke" ]
+   IF hFaktParams[ "fakt_opis_stavke" ]
       ++_x
       @ m_x + _x, m_y + 2 SAY "Opis:" GET _opis PICT "@S50"
    ENDIF
 
 
-   IF _params[ "ref_lot" ]
+   IF hFaktParams[ "ref_lot" ]
       ++_x
       @ m_x + _x, m_y + 2 SAY "REF:" GET _ref_broj PICT "@S10"
       @ m_x + _x, m_y + 2 SAY "/ LOT:" GET _lot_broj PICT "@S10"
@@ -1307,12 +1305,12 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    _rbr := RedniBroj( __redni_broj )
 
-   IF _params[ "fakt_opis_stavke" ]
-      items_atrib[ "opis" ] := _opis
+   IF hFaktParams[ "fakt_opis_stavke" ]
+      hFaktItemsAttributi[ "opis" ] := _opis
    ENDIF
-   IF _params[ "ref_lot" ]
-      items_atrib[ "ref" ] := _ref_broj
-      items_atrib[ "lot" ] := _lot_broj
+   IF hFaktParams[ "ref_lot" ]
+      hFaktItemsAttributi[ "ref" ] := _ref_broj
+      hFaktItemsAttributi[ "lot" ] := _lot_broj
    ENDIF
 
 #ifdef F18_EXPERIMENT
@@ -1320,6 +1318,8 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       show_last_racun( _idpartner, _destinacija, _idroba )
    ENDIF
 #endif
+
+   AltD()
 
    RETURN 1
 
@@ -1452,7 +1452,7 @@ FUNCTION g_txt_tipdok( cIdTd )
 // -------------------------------------------------
 // validacija roka placanja
 // -------------------------------------------------
-FUNCTION valid_rok_placanja( rok_pl, VAR, novi )
+FUNCTION valid_rok_placanja( rok_pl, VAR, lNovi )
 
    LOCAL _rok_pl_nula := .T.
 
@@ -1467,7 +1467,7 @@ FUNCTION valid_rok_placanja( rok_pl, VAR, novi )
          RETURN .T.
       ENDIF
 
-      IF !novi
+      IF !lNovi
          IF Empty( _datpl )
             rok_pl := 0
          ELSE
@@ -1764,7 +1764,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    LOCAL _old_firma := old_dok[ "idfirma" ]
    LOCAL _old_brdok := old_dok[ "brdok" ]
    LOCAL _old_tipdok := old_dok[ "idtipdok" ]
-   LOCAL _rec, _tek_dok, _t_rec
+   LOCAL hFaktPriprRec, _tek_dok, _t_rec
    LOCAL _new_firma := new_dok[ "idfirma" ]
    LOCAL _new_brdok := new_dok[ "brdok" ]
    LOCAL _new_tipdok := new_dok[ "idtipdok" ]
@@ -1802,15 +1802,15 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       SKIP -1
 
       // napravi zamjenu podataka
-      _rec := dbf_get_rec()
-      _rec[ "idfirma" ] := _tek_dok[ "idfirma" ]
-      _rec[ "idtipdok" ] := _tek_dok[ "idtipdok" ]
-      _rec[ "brdok" ] := _tek_dok[ "brdok" ]
-      _rec[ "datdok" ] := _tek_dok[ "datdok" ]
-      _rec[ "idpartner" ] := _tek_dok[ "idpartner" ]
-      _rec[ "dindem" ] := _tek_dok[ "dindem" ]
+      hFaktPriprRec := dbf_get_rec()
+      hFaktPriprRec[ "idfirma" ] := _tek_dok[ "idfirma" ]
+      hFaktPriprRec[ "idtipdok" ] := _tek_dok[ "idtipdok" ]
+      hFaktPriprRec[ "brdok" ] := _tek_dok[ "brdok" ]
+      hFaktPriprRec[ "datdok" ] := _tek_dok[ "datdok" ]
+      hFaktPriprRec[ "idpartner" ] := _tek_dok[ "idpartner" ]
+      hFaktPriprRec[ "dindem" ] := _tek_dok[ "dindem" ]
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hFaktPriprRec )
 
       GO ( _t_rec )
 
@@ -1828,13 +1828,13 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       _t_rec := RecNo()
       SKIP -1
 
-      _rec := dbf_get_rec()
+      hFaktPriprRec := dbf_get_rec()
 
-      _rec[ "idfirma" ] := _tek_dok[ "idfirma" ]
-      _rec[ "idtipdok" ] := _tek_dok[ "idtipdok" ]
-      _rec[ "brdok" ] := _tek_dok[ "brdok" ]
+      hFaktPriprRec[ "idfirma" ] := _tek_dok[ "idfirma" ]
+      hFaktPriprRec[ "idtipdok" ] := _tek_dok[ "idtipdok" ]
+      hFaktPriprRec[ "brdok" ] := _tek_dok[ "brdok" ]
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hFaktPriprRec )
 
       GO ( _t_rec )
 

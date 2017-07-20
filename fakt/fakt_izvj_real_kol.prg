@@ -74,32 +74,24 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
       cIdFirma := PadR( cIdFirma, 2 )
 
-      @ m_x + nX, m_y + 2 SAY "RJ            " GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      fakt_getlist_rj_read( m_x + nX, m_y + 2, @cIdFirma )
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY "Od datuma "  GET dDatOd
-
       @ m_x + nX, Col() + 1 SAY "do"  GET dDatDo
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY "gledati dat. (D)dok. (O)otpr. (V)valute:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
 
       nX := nX + 3
-
       @ m_x + nX, m_y + 2 SAY "Uslov po sifri partnera (prazno svi) "  GET qqPartn PICT "@!" VALID {|| Empty( qqPartn ) .OR. p_partner( @qqPartn ) }
-
       ++nX
-
       @ m_x + nX, m_y + 2 SAY "Uslov po artiklu (prazno svi) "  GET qqIdRoba PICT "@S30"
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY "Uslov po opcini (prazno sve) "  GET cOpcina PICT "@S30"
 
 
@@ -109,7 +101,6 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       ENDIF
 
       IF lGroup
-
          PRIVATE cPGroup := Space( 3 )
          ++nX
          @ m_x + nX, m_y + 2 SAY "Grupa partnera (prazno sve):" GET cPGroup VALID Empty( cPGroup ) .OR. cPGroup $ "VP #AMB#SIS#OST"

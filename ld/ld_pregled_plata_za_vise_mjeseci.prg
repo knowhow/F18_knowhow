@@ -48,32 +48,32 @@ FUNCTION ld_pregled_plata_za_period()
 
    Box( "#PREGLED PLATA ZA PERIOD", 20, 75 )
 
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Za mjesece od:" GET nMjesec PICT "99"
-   @ form_x_koord() + 2, Col() + 2 SAY "do:" GET cMjesecDo PICT "99" VALID cMjesecDo >= nMjesec
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Za mjesece od:" GET nMjesec PICT "99"
+   @ get_x_koord() + 2, Col() + 2 SAY "do:" GET cMjesecDo PICT "99" VALID cMjesecDo >= nMjesec
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
 
    IF ld_vise_obracuna()
-      @ form_x_koord() + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ get_x_koord() + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
 
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
       VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
 
-   @ form_x_koord() + 6, form_y_koord() + 2 SAY8 "Općina stanovanja (prazno-sve):" GET cIdOpcinaStanUslov PICT "@S30" WHEN Empty( cRadnik )
-   @ form_x_koord() + 7, form_y_koord() + 2 SAY8 "           Kanton (prazno-sve):" GET cKanton PICT "@S30" WHEN Empty( cRadnik )
+   @ get_x_koord() + 6, get_y_koord() + 2 SAY8 "Općina stanovanja (prazno-sve):" GET cIdOpcinaStanUslov PICT "@S30" WHEN Empty( cRadnik )
+   @ get_x_koord() + 7, get_y_koord() + 2 SAY8 "           Kanton (prazno-sve):" GET cKanton PICT "@S30" WHEN Empty( cRadnik )
 
-   @ form_x_koord() + 9, form_y_koord() + 2 SAY8 "Dodatni doprinosi za prikaz na izvještaju: "
-   @ form_x_koord() + 10, form_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 1 : " GET cDoprPio
-   @ form_x_koord() + 11, form_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 2 : " GET cDoprZdr
-   @ form_x_koord() + 12, form_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 3 : " GET cDoprNez
-   @ form_x_koord() + 13, form_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 4 : " GET cDoprD4
-   @ form_x_koord() + 14, form_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 5 : " GET cDoprD5
-   @ form_x_koord() + 15, form_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 6 : " GET cDoprD6
+   @ get_x_koord() + 9, get_y_koord() + 2 SAY8 "Dodatni doprinosi za prikaz na izvještaju: "
+   @ get_x_koord() + 10, get_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 1 : " GET cDoprPio
+   @ get_x_koord() + 11, get_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 2 : " GET cDoprZdr
+   @ get_x_koord() + 12, get_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 3 : " GET cDoprNez
+   @ get_x_koord() + 13, get_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 4 : " GET cDoprD4
+   @ get_x_koord() + 14, get_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 5 : " GET cDoprD5
+   @ get_x_koord() + 15, get_y_koord() + 2 SAY8 " Šifra dodatnog doprinosa 6 : " GET cDoprD6
 
-   @ form_x_koord() + 17, form_y_koord() + 2 SAY8 "Izdvojena primanja (bolovanje, neplaceno):" GET cM4TipoviIzdvojitiPrimanja PICT "@S20"
+   @ get_x_koord() + 17, get_y_koord() + 2 SAY8 "Izdvojena primanja (bolovanje, neplaceno):" GET cM4TipoviIzdvojitiPrimanja PICT "@S20"
 
-   // @ form_x_koord() + 19, form_y_koord() + 2 SAY8 "Prikazati ukupno za sve mjesece (D/N)" GET cTotal PICT "@!" VALID cTotal $ "DN"
+   // @ get_x_koord() + 19, get_y_koord() + 2 SAY8 "Prikazati ukupno za sve mjesece (D/N)" GET cTotal PICT "@!" VALID cTotal $ "DN"
 
    READ
 

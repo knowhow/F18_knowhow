@@ -26,7 +26,7 @@ FUNCTION kalk_lager_lista_prodavnica()
 
    // indikator gresaka
    LOCAL lImaGresaka := .F.
-   LOCAL cKontrolnaTabela
+   //LOCAL cKontrolnaTabela
    LOCAL cPicKol := kalk_pic_kolicina_bilo_gpickol()
    LOCAL cPicCDEm := kalk_prosiri_pic_cjena_za_2()
    LOCAL cPicDem := kalk_pic_iznos_bilo_gpicdem()
@@ -48,7 +48,7 @@ FUNCTION kalk_lager_lista_prodavnica()
    // o_konto()
    // o_partner()
 
-   cKontrolnaTabela := "N"
+   //cKontrolnaTabela := "N"
 
    IF ( lPocStanje == NIL )
       lPocStanje := .F.
@@ -117,7 +117,7 @@ FUNCTION kalk_lager_lista_prodavnica()
       ENDIF
 
       @ m_x + 12, m_y + 2 SAY "Prikaz robe tipa T/U  (D/N)" GET cTU VALID cTU $ "DN" PICT "@!"
-      @ m_x + 12, Col() + 2 SAY " generisati kontrolnu tabelu ? " GET cKontrolnaTabela VALID cKontrolnaTabela $ "DN" PICT "@!"
+      //@ m_x + 12, Col() + 2 SAY " generisati kontrolnu tabelu ? " GET cKontrolnaTabela VALID cKontrolnaTabela $ "DN" PICT "@!"
       @ m_x + 13, m_y + 2 SAY "Odabir grupacije (prazno-svi) GET" GET cGrupacija PICT "@!"
       @ m_x + 14, m_y + 2 SAY "Prikaz prethodnog stanja" GET cPredhStanje PICT "@!" VALID cPredhStanje $ "DN"
       @ m_x + 14, Col() + 2 SAY "Prik. samo kriticnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
@@ -155,9 +155,9 @@ FUNCTION kalk_lager_lista_prodavnica()
 
    my_close_all_dbf()
 
-   IF ( cKontrolnaTabela == "D" )
-      CreTblKontrola()
-   ENDIF
+   //IF ( cKontrolnaTabela == "D" )
+  //    CreTblKontrola()
+  // ENDIF
 
    IF lPocStanje
       o_kalk_pripr()
@@ -581,9 +581,9 @@ FUNCTION kalk_lager_lista_prodavnica()
             @ PRow(), nCol0 - 1 SAY ""
          ENDIF
 
-         IF ( cKontrolnaTabela == "D" )
-            AzurKontrolnaTabela( cIdRoba, nUlaz - nIzlaz + nPkol, nMpvU - nMpvI + nPMpv )
-         ENDIF
+        // IF ( cKontrolnaTabela == "D" )
+        //    AzurKontrolnaTabela( cIdRoba, nUlaz - nIzlaz + nPkol, nMpvU - nMpvI + nPMpv )
+        // ENDIF
 
          IF cPredhStanje == "D"
             @ PRow(), PCol() + 1 SAY nPMPV PICT kalk_pic_iznos_bilo_gpicdem()
@@ -875,7 +875,7 @@ STATIC FUNCTION CreTblKontrola()
 
    RETURN .T.
 
-
+/*
 // azuriranje kontrolne tabele
 STATIC FUNCTION AzurKontrolnaTabela( cIdRoba, nStanje, nMpv )
 
@@ -898,7 +898,7 @@ STATIC FUNCTION AzurKontrolnaTabela( cIdRoba, nStanje, nMpv )
    Select( nArea )
 
    RETURN .T.
-
+*/
 
 
 STATIC FUNCTION kalk_prodavnica_llp_odt( params )

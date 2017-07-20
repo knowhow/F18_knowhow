@@ -150,10 +150,10 @@ FUNCTION ld_set_firma()
 
    Box(, 4, 60 )
 
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica :" GET _rj VALID P_LD_Rj( @_rj ) PICT "@!"
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Mjesec         :" GET _mjesec PICT "99"
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina         :" GET _godina PICT "9999"
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Obracun        :" GET _obracun WHEN HelpObr( .F., _obracun ) VALID ValObr( .F., _obracun )
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica :" GET _rj VALID P_LD_Rj( @_rj ) PICT "@!"
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Mjesec         :" GET _mjesec PICT "99"
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina         :" GET _godina PICT "9999"
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Obracun        :" GET _obracun WHEN HelpObr( .F., _obracun ) VALID ValObr( .F., _obracun )
 
    READ
 
@@ -189,11 +189,11 @@ FUNCTION ld_set_forma()
    gPicS := PadR( gPicS, 15 )
 
    Box(, 5, 60 )
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Zaokruzenje primanja          :" GET gZaok PICT "99"
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Zaokruzenje poreza i doprinosa:" GET gZaok2 PICT "99"
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Valuta                        :" GET gValuta PICT "XXX"
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Prikaz iznosa                 :" GET gPicI
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Prikaz sati                   :" GET gPicS
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Zaokruzenje primanja          :" GET gZaok PICT "99"
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Zaokruzenje poreza i doprinosa:" GET gZaok2 PICT "99"
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Valuta                        :" GET gValuta PICT "XXX"
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Prikaz iznosa                 :" GET gPicI
+   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Prikaz sati                   :" GET gPicS
    READ
    BoxC()
 
@@ -224,23 +224,23 @@ FUNCTION ld_set_formule()
    gFURSati := PadR( gFURSati, 100 )
    gBFForm := PadR( gBFForm, 100 )
 
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Formula za ukupna primanja:" GET gFUPrim  PICT "@!S30"
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Formula za ukupno sati    :" GET gFUSati  PICT "@!S30"
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Formula za godisnji       :" GET gFUGod PICT "@!S30"
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Formula za uk.prim.-razno :" GET gFURaz PICT "@!S30"
-   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Formula za uk.sati -razno :" GET gFURSati PICT "@!S30"
-   @ form_x_koord() + 8, form_y_koord() + 2 SAY "God. promjena koef.min.rada - ZENE:" GET gMRZ   PICT "9999.99"
-   @ form_x_koord() + 9, form_y_koord() + 2 SAY "God. promjena koef.min.rada - MUSK:" GET gMRM   PICT "9999.99"
-   @ form_x_koord() + 11, form_y_koord() + 2 SAY "% prosjecne plate kao donji limit neta za obracun poreza i doprinosa" GET gPDLimit PICT "999.99"
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Formula za ukupna primanja:" GET gFUPrim  PICT "@!S30"
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Formula za ukupno sati    :" GET gFUSati  PICT "@!S30"
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Formula za godisnji       :" GET gFUGod PICT "@!S30"
+   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Formula za uk.prim.-razno :" GET gFURaz PICT "@!S30"
+   @ get_x_koord() + 6, get_y_koord() + 2 SAY "Formula za uk.sati -razno :" GET gFURSati PICT "@!S30"
+   @ get_x_koord() + 8, get_y_koord() + 2 SAY "God. promjena koef.min.rada - ZENE:" GET gMRZ   PICT "9999.99"
+   @ get_x_koord() + 9, get_y_koord() + 2 SAY "God. promjena koef.min.rada - MUSK:" GET gMRM   PICT "9999.99"
+   @ get_x_koord() + 11, get_y_koord() + 2 SAY "% prosjecne plate kao donji limit neta za obracun poreza i doprinosa" GET gPDLimit PICT "999.99"
 
-   @ form_x_koord() + 13, form_y_koord() + 2 SAY "Osnovni licni odbitak" GET gOsnLOdb VALID gOsnLOdb > 0 PICT "9999.99"
+   @ get_x_koord() + 13, get_y_koord() + 2 SAY "Osnovni licni odbitak" GET gOsnLOdb VALID gOsnLOdb > 0 PICT "9999.99"
 
-   @ form_x_koord() + 15, form_y_koord() + 2 SAY "  Trosak - ugovor o djelu (%):" GET gUgTrosk PICT "999.99"
+   @ get_x_koord() + 15, get_y_koord() + 2 SAY "  Trosak - ugovor o djelu (%):" GET gUgTrosk PICT "999.99"
 
-   @ form_x_koord() + 16, form_y_koord() + 2 SAY "Trosak - autorski honorar (%):" GET gAhTrosk PICT "999.99"
+   @ get_x_koord() + 16, get_y_koord() + 2 SAY "Trosak - autorski honorar (%):" GET gAhTrosk PICT "999.99"
 
-   @ form_x_koord() + 18, form_y_koord() + 2 SAY "Kod benef.gledaj formulu:" GET gBFForm PICT "@!S30"
-   @ form_x_koord() + 19, form_y_koord() + 2 SAY "Sati benef. (1 - ukupni, 2 - po obracunu):" GET hParams[ "benef_tip" ] PICT "9"
+   @ get_x_koord() + 18, get_y_koord() + 2 SAY "Kod benef.gledaj formulu:" GET gBFForm PICT "@!S30"
+   @ get_x_koord() + 19, get_y_koord() + 2 SAY "Sati benef. (1 - ukupni, 2 - po obracunu):" GET hParams[ "benef_tip" ] PICT "9"
 
    READ
 
@@ -279,47 +279,47 @@ FUNCTION ld_set_obracun()
 
    Box(, 20, 77 )
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "  ' ' - (prazno) stara varijanta obracuna"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "  ' ' - (prazno) stara varijanta obracuna"
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "  '2' - nova varijanta obracuna, zak.pr.2009"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "  '2' - nova varijanta obracuna, zak.pr.2009"
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Odabir broja obracuna na unosu (D/N) ?" GET _v_obr_unos VALID _v_obr_unos $ "DN" PICT "@!"
-
-   nX += 2
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Tip obracuna (legacy)" GET gTipObr
-   //@ form_x_koord() + nX, Col() + 1 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  PICT "@!" VALID gUnMjesec $ "DN"
-
-   ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm PICT "9"
-
-   ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Minuli rad  %/B:" GET gMinR  VALID gMinR $ "%B"   PICT "@!"
-
-   ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Pri obracunu napraviti poreske olaksice D/N:" GET gDaPorOl  VALID gDaPorOl $ "DN"   PICT "@!"
-
-   ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Ako se prave por.ol.pri obracunu, koja varijanta se koristi:"
-   ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 "
-   ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ->" GET cVarPorOl WHEN gDaPorOl == "D"   PICT "99"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Odabir broja obracuna na unosu (D/N) ?" GET _v_obr_unos VALID _v_obr_unos $ "DN" PICT "@!"
 
    nX += 2
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definiše):" GET gcLdSpec2001GrupePoslovaAutoRucno  VALID gcLdSpec2001GrupePoslovaAutoRucno $ "12" PICT "9"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Tip obracuna (legacy)" GET gTipObr
+   //@ get_x_koord() + nX, Col() + 1 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  PICT "@!" VALID gUnMjesec $ "DN"
+
+   ++nX
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm PICT "9"
+
+   ++nX
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Minuli rad  %/B:" GET gMinR  VALID gMinR $ "%B"   PICT "@!"
+
+   ++nX
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Pri obracunu napraviti poreske olaksice D/N:" GET gDaPorOl  VALID gDaPorOl $ "DN"   PICT "@!"
+
+   ++nX
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Ako se prave por.ol.pri obracunu, koja varijanta se koristi:"
+   ++nX
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 "
+   ++nX
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ->" GET cVarPorOl WHEN gDaPorOl == "D"   PICT "99"
+
+   nX += 2
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definiše):" GET gcLdSpec2001GrupePoslovaAutoRucno  VALID gcLdSpec2001GrupePoslovaAutoRucno $ "12" PICT "9"
 
    nX  += 2
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Obrada sihtarice ?" GET gSihtarica VALID gSihtarica $ "DN" PICT "@!"
-   @ form_x_koord() + nX, Col() + 1 SAY "Sihtarice po grupama ?" GET gSihtGroup VALID gSihtGroup $ "DN" PICT "@!"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Obrada sihtarice ?" GET gSihtarica VALID gSihtarica $ "DN" PICT "@!"
+   @ get_x_koord() + nX, Col() + 1 SAY "Sihtarice po grupama ?" GET gSihtGroup VALID gSihtGroup $ "DN" PICT "@!"
 
    nX += 2
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Filter 'aktivan' u sifaniku radnika ?" GET gRadnFilter VALID gRadnFilter $ "DN" PICT "@!"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Filter 'aktivan' u sifaniku radnika ?" GET gRadnFilter VALID gRadnFilter $ "DN" PICT "@!"
 
    ++nX
-   @ form_x_koord() + nX++, form_y_koord() + 2 SAY "Unos i obrada radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
+   @ get_x_koord() + nX++, get_y_koord() + 2 SAY "Unos i obrada radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY "Porezi - stepenaste stope ? (D/N)" GET _st_stopa VALID _st_stopa $ "DN" PICT "@!"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Porezi - stepenaste stope ? (D/N)" GET _st_stopa VALID _st_stopa $ "DN" PICT "@!"
 
    READ
 
@@ -362,23 +362,23 @@ FUNCTION ld_set_prikaz()
    gPotp2 := PadR( gPotp2, 150 )
 
    Box(, 15, 77 )
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Krediti-rekap.po 'na osnovu' (D/N/X)?" GET gReKrOs VALID gReKrOs $ "DNX" PICT "@!"
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Na kraju obrade odstampati listic D/N:" GET _pr_kart_pl  PICT "@!" VALID _pr_kart_pl $ "DN"
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Prikaz bruto iznosa na kartici radnika (D/N/X) " GET gPrBruto PICT "@!" VALID gPrBruto $ "DNX"
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY "Potpis na kartici radnika D/N:" GET gPotp  VALID gPotp $ "DN"   PICT "@!"
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Varijanta kartice plate za kredite (1/2) ?" GET gReKrKP VALID gReKrKP $ "12"
-   @ form_x_koord() + 6, form_y_koord() + 2 SAY "Opis osnovnih podataka za obracun (1-bodovi/2-koeficijenti) ?" GET gBodK VALID gBodK $ "12"
-   @ form_x_koord() + 7, form_y_koord() + 2 SAY "Pregled plata: varijanta izvjestaja (1/2)" GET gVarPP VALID gVarPP $ "12"
-   @ form_x_koord() + 8, form_y_koord() + 2 SAY "Potpisi na svim izvjestajima (D/N)" GET gPotpRpt VALID gPotpRpt $ "DN" PICT "@!"
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Krediti-rekap.po 'na osnovu' (D/N/X)?" GET gReKrOs VALID gReKrOs $ "DNX" PICT "@!"
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Na kraju obrade odstampati listic D/N:" GET _pr_kart_pl  PICT "@!" VALID _pr_kart_pl $ "DN"
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Prikaz bruto iznosa na kartici radnika (D/N/X) " GET gPrBruto PICT "@!" VALID gPrBruto $ "DNX"
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Potpis na kartici radnika D/N:" GET gPotp  VALID gPotp $ "DN"   PICT "@!"
+   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Varijanta kartice plate za kredite (1/2) ?" GET gReKrKP VALID gReKrKP $ "12"
+   @ get_x_koord() + 6, get_y_koord() + 2 SAY "Opis osnovnih podataka za obracun (1-bodovi/2-koeficijenti) ?" GET gBodK VALID gBodK $ "12"
+   @ get_x_koord() + 7, get_y_koord() + 2 SAY "Pregled plata: varijanta izvjestaja (1/2)" GET gVarPP VALID gVarPP $ "12"
+   @ get_x_koord() + 8, get_y_koord() + 2 SAY "Potpisi na svim izvjestajima (D/N)" GET gPotpRpt VALID gPotpRpt $ "DN" PICT "@!"
    READ
 
    IF gPotpRpt == "D"
-      @ form_x_koord() + 10, form_y_koord() + 2 SAY "red 1:" GET gPotp1 PICT "@S25"
-      @ form_x_koord() + 10, Col() + 1 SAY "red 2:" GET gPotp2 PICT "@S25"
+      @ get_x_koord() + 10, get_y_koord() + 2 SAY "red 1:" GET gPotp1 PICT "@S25"
+      @ get_x_koord() + 10, Col() + 1 SAY "red 2:" GET gPotp2 PICT "@S25"
       READ
    ENDIF
 
-   @ form_x_koord() + 11, form_y_koord() + 2 SAY "Kartica plate - svi doprinosi (D/N)" GET gKarSDop VALID gKarSDop $ "DN" PICT "@!"
+   @ get_x_koord() + 11, get_y_koord() + 2 SAY "Kartica plate - svi doprinosi (D/N)" GET gKarSDop VALID gKarSDop $ "DN" PICT "@!"
 
    READ
 
@@ -420,12 +420,12 @@ FUNCTION helpobr( lIzv, cObracun )
 
    IF gNHelpObr = 0
       Box(, 3 + IF( lIzv, 1, 0 ), 40 )
-      @ form_x_koord() + 0, form_y_koord() + 2 SAY PadC( " POMOC: ", 36, "�" )
+      @ get_x_koord() + 0, get_y_koord() + 2 SAY PadC( " POMOC: ", 36, "�" )
       IF lIzv
-         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Ukucajte broj obracuna (1/2/.../9)"
-         @ form_x_koord() + 3, form_y_koord() + 2 SAY "ili prazno ako zelite sve obracune"
+         @ get_x_koord() + 2, get_y_koord() + 2 SAY "Ukucajte broj obracuna (1/2/.../9)"
+         @ get_x_koord() + 3, get_y_koord() + 2 SAY "ili prazno ako zelite sve obracune"
       ELSE
-         @ form_x_koord() + 2, form_y_koord() + 2 SAY "Ukucajte broj obracuna (1/2/.../9)"
+         @ get_x_koord() + 2, get_y_koord() + 2 SAY "Ukucajte broj obracuna (1/2/.../9)"
       ENDIF
       ++gnHelpObr
    ENDIF

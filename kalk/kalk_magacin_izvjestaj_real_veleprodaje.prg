@@ -33,6 +33,7 @@ FUNCTION kalk_real_partnera()
    cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "1320", 7 )
 
+
    //IF IsVindija()
       cOpcine := Space( 50 )
    //ENDIF
@@ -353,8 +354,6 @@ FUNCTION kalk_real_partnera()
    closeret
 
    RETURN .T.
-
-
 
 
 

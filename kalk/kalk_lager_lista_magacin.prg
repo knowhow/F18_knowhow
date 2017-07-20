@@ -72,9 +72,11 @@ FUNCTION kalk_lager_lista_magacin()
    PRIVATE qqRGr := Space( 40 )
    PRIVATE qqRGr2 := Space( 40 )
 
+/*
    // IF IsVindija()
    cOpcine := Space( 50 )
    // ENDIF
+*/
 
    kalk_llm_open_tables()
 
@@ -161,6 +163,7 @@ FUNCTION kalk_lager_lista_magacin()
 
       @ m_x + 14, m_y + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
 
+/*
       // IF IsVindija()
       cGr := Space( 10 )
       cPSPDN := "N"
@@ -168,12 +171,13 @@ FUNCTION kalk_lager_lista_magacin()
       @ m_x + 16, m_y + 2 SAY8 "Pregled samo prodaje (D/N)" GET cPSPDN VALID cPSPDN $ "DN" PICT "@!"
       @ m_x + 17, m_y + 2 SAY8 "Uslov po opcinama:" GET cOpcine PICT "@!S40"
       // ENDIF
+*/
 
       // ako je roba - grupacija
       @ m_x + 17, m_y + 2 SAY "Grupa artikla:" GET qqRGr PICT "@S10"
       @ m_x + 17, m_y + 30 SAY "Podgrupa artikla:" GET qqRGr2 PICT "@S10"
 
-      @ m_x + 18, m_y + 2 SAY "Naziv artikla sadrzi"  GET cArtikalNaz
+      @ m_x + 18, m_y + 2 SAY8 "Naziv artikla sadrži"  GET cArtikalNaz
 
       IF !Empty( cRNT1 )
          @ m_x + 19, m_y + 2 SAY "Broj radnog naloga:"  GET cRNalBroj PICT "@S20"
@@ -428,6 +432,7 @@ FUNCTION kalk_lager_lista_magacin()
          SELECT roba
       ENDIF
 
+/*
       // po vindija GRUPA
       // IF IsVindija()
       IF !Empty( cGr )
@@ -452,7 +457,7 @@ FUNCTION kalk_lager_lista_magacin()
          SELECT roba
       ENDIF
       // ENDIF
-
+*/
 
       IF ( FieldPos( "MINK" ) ) <> 0
          nMink := roba->mink

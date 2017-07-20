@@ -120,15 +120,16 @@ FUNCTION kalk_lager_lista_prodavnica()
       //@ m_x + 12, Col() + 2 SAY " generisati kontrolnu tabelu ? " GET cKontrolnaTabela VALID cKontrolnaTabela $ "DN" PICT "@!"
       @ m_x + 13, m_y + 2 SAY "Odabir grupacije (prazno-svi) GET" GET cGrupacija PICT "@!"
       @ m_x + 14, m_y + 2 SAY "Prikaz prethodnog stanja" GET cPredhStanje PICT "@!" VALID cPredhStanje $ "DN"
-      @ m_x + 14, Col() + 2 SAY "Prik. samo kriticnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
+      @ m_x + 14, Col() + 2 SAY8 "Prik. samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
 
+/*
       //IF IsVindija()
          cGr := Space( 10 )
          cPSPDN := "N"
          @ m_x + 16, m_y + 2 SAY "Grupa " GET cGr
          @ m_x + 17, m_y + 2 SAY "Pregled samo prodaje (D/N) " GET cPSPDN VALID !Empty( cPSPDN ) .AND. cPSPDN $ "DN"  PICT "@!"
       //ENDIF
-
+*/
       READ
       ESC_BCR
       PRIVATE cUslovRoba := Parsiraj( qqRoba, "IdRoba" )
@@ -280,6 +281,7 @@ FUNCTION kalk_lager_lista_prodavnica()
 
       nMink := roba->mink
 
+/*
       //IF IsVindija()
          IF !Empty( cGr )
             IF AllTrim( cGr ) <> AllTrim( IzSifKRoba( "GR1", cIdRoba, .F. ) )
@@ -298,7 +300,7 @@ FUNCTION kalk_lager_lista_prodavnica()
             SELECT roba
          ENDIF
       //ENDIF
-
+*/
       SELECT KALK
 
       nPKol := 0

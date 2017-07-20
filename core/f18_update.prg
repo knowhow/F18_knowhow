@@ -23,6 +23,11 @@ FUNCTION f18_varijanta()
    RETURN s_cF18Varijanta
 
 
+FUNCTION f18_varijanta_builtin()
+
+   RETURN F18_VARIJANTA
+
+
 /*
     za Verzija=3 => "https://raw.github.com/knowhow/F18_knowhow/3"
 */

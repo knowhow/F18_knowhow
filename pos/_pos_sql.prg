@@ -141,8 +141,6 @@ FUNCTION use_sql_pos_odj( cId )
 
 
 
-// set_a_dbf_sifarnik( "pos_strad", "STRAD", F_STRAD   )
-
 FUNCTION o_pos_strad()
    RETURN o_dbf_table( F_STRAD, "strad", "ID" )
 

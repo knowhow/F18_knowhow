@@ -96,13 +96,16 @@
 #define FIELD_LEN_PARTNER_ID 6
 
 #define FIELD_LEN_KONTO_ID 7
-#define FIELD_LEN_FIN_RJ_ID 6
+
 
 #define FIELD_LEN_SIFK_ID 8
 #define FIELD_LEN_SIFK_NAZ 25
 #define FIELD_LEN_SIFK_OZNAKA  4
 #define FIELD_LEN_SIFK_IDSIF   15
 
+#define FIELD_LEN_RJ_ID 7  // sifarnik radnih jedinica id c(7)
+#define FIELD_LEN_FIN_RJ_ID 6 // fin_suban.idrj c(6)
+#define FIELD_LEN_FAKT_RJ_ID 2 // fakt_fakt.idfirma, unutar aplikacije se koristi kao RJ c(2)
 
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED

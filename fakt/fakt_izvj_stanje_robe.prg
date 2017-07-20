@@ -71,17 +71,18 @@ FUNCTION fakt_stanje_robe()
    PRIVATE cMink := "N"
 
    DO WHILE .T.
-      IF gNW $ "DR"
-         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
-      ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      ENDIF
+      //IF gNW $ "DR"
+      //   @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      //ELSE
+      //   @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      //ENDIF
+      fakt_getlist_rj_read( m_x +1, m_y + 2, @cIdFirma )
+
 
       @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
       @ m_x + 3, m_y + 2 SAY "Od datuma "  GET dDatOd
       @ m_x + 3, Col() + 1 SAY "do"  GET dDatDo
-      @ m_x + 4, m_y + 2 SAY "gledati datum (D)dok. (O)otpr. (V)value:" GET cDDokOtpr ;
-         VALID cDDokOtpr $ "DOV" PICT "@!"
+      @ m_x + 4, m_y + 2 SAY "gledati datum (D)dok. (O)otpr. (V)value:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
 
       cRR := "N"
       xPos := 5
@@ -143,8 +144,7 @@ FUNCTION fakt_stanje_robe()
       fSMark := .T.
    ENDIF
 
-   // ako ne postoji polje datuma isporuke
-   // uvijek gledaj dokumente
+   // ako ne postoji polje datuma isporuke uvijek gledaj dokumente
    IF fakt_doks->( FieldPos( "DAT_ISP" ) ) = 0
       cDDokOtpr := "D"
    ENDIF
@@ -162,8 +162,7 @@ FUNCTION fakt_stanje_robe()
 
       // sort po datumu dokumenta
       IF cDDokOtpr == "D"
-         cFilt += ".and. DatDok>=" + _filter_quote( dDatOd ) + ;
-            ".and. DatDok<=" + _filter_quote( dDatDo )
+         cFilt += ".and. DatDok>=" + _filter_quote( dDatOd ) + ".and. DatDok<=" + _filter_quote( dDatDo )
       ENDIF
 
    ENDIF
@@ -426,7 +425,7 @@ FUNCTION fakt_stanje_robe()
 
 FUNCTION ZaglSRobe()
 
-   
+
 
    IF nStr > 0
       FF

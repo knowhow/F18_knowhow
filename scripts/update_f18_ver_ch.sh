@@ -16,3 +16,5 @@ sed -e "s/___F18_DATE___/$F18_DATE/" \
      f18_ver.template > include/f18_ver.ch
 
 echo include/f18_ver.ch updated
+echo ============================
+cat  include/f18_ver.ch

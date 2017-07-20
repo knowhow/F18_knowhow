@@ -18,8 +18,9 @@ unset F18_DEBUG_THREAD
 unset F18_DEBUG_SYNC
 unset F18_DEBUG_SQL
 
-scripts/update_f18_ver_ch.sh $F18_VER
-
-[ $? != 0 ] && echo "error git version BUILD ERROR" && exit 1
+if [ -n "$F18_VER" ] ; then
+ scripts/update_f18_ver_ch.sh $F18_VER
+ [ $? != 0 ] && echo "error git version BUILD ERROR" && exit 1
+fi
 
 hbmk2 -workdir=.h F18.hbp

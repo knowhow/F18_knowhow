@@ -10,3 +10,12 @@
 ### run funkcije pri pokretanju klijenta
 
     ./F18 --run-on-start kalk_gen_uskladjenje_nc_95\(\)
+
+## Update
+
+
+### Update kanal
+
+* S - stabilne
+* E - edge, posljednje verzije
+* X - eksperimentalne - razvoj

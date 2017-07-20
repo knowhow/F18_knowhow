@@ -186,7 +186,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       @ nPosX + nX, Col() + 2 SAY "F18 updates (D/N):" GET cCheckUpdates PICT "!@" VALID cCheckUpdates $ "DN"
       @ nPosX + nX, Col() + 2 SAY "F18 verzija:" GET cF18Verzija VALID AllTrim( cF18Verzija ) $ "3#4#5#6"
       @ nPosX + nX, Col() + 2 SAY "-" GET cF18Varijanta VALID AllTrim( cF18Varijanta ) $ "std#vindi#pos#rnal"
-      @ nPosX + nX, Col() + 2 SAY "/" GET cF18VerzijaKanal VALID AllTrim( cVerzijaKanal ) $ "SEX"
+      @ nPosX + nX, Col() + 2 SAY "/" GET cF18VerzijaKanal PICT "!@" VALID AllTrim( cF18VerzijaKanal ) $ "SEX"
 
       READ
 

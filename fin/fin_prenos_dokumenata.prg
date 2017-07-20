@@ -308,8 +308,8 @@ FUNCTION PrenosFin()
 
                            // konto kupaca
                            IF ( Left( IdKonto, 1 ) == cKlDuguje ) .AND. ( d_p == "1" )
-                              IF IsVindija()
-                                 IF Empty( DatVal ) .AND. !( IsVindija() .AND. idvn == "09" )
+                        --      IF IsVindija()
+                      --           IF Empty( DatVal ) .AND. !( IsVindija() .AND. idvn == "09" )
                                     dDatVal := datdok
                                  ELSE
                                     dDatVal := fix_dat_var( datval, .T. )

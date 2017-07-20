@@ -33,9 +33,9 @@ FUNCTION kalk_real_partnera()
    cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "1320", 7 )
 
-   IF IsVindija()
+   //IF IsVindija()
       cOpcine := Space( 50 )
-   ENDIF
+   //ENDIF
 
    qqPartn := Space( 60 )
 
@@ -52,9 +52,9 @@ FUNCTION kalk_real_partnera()
 
       @ m_x + 6, m_y + 2 SAY "Partneri:" GET qqPartn PICT "@!S40"
 
-      IF IsVindija()
-         @ m_x + 8, m_y + 2 SAY "Opcine:" GET cOpcine PICT "@!S40"
-      ENDIF
+      //IF IsVindija()
+         @ m_x + 8, m_y + 2 SAY8 "Općine:" GET cOpcine PICT "@!S40"
+      //ENDIF
 
       READ
 
@@ -118,8 +118,8 @@ FUNCTION kalk_real_partnera()
       nPaNV := nPaVPV := nPaPruc := nPaRuc := nPaPP := nPaZarada := nPaRabat := 0
       cIdPartner := idpartner
 
-      // Vindija - ispitaj opcine za partnera
-      IF IsVindija() .AND. !Empty( cOpcine )
+
+      IF !Empty( cOpcine )
          select_o_partner( cIdPartner )
          IF At( AllTrim( partn->idops ), cOpcine ) == 0
             SELECT kalk
@@ -221,7 +221,6 @@ FUNCTION kalk_real_partnera()
 
       @ PRow(), nCol1    SAY nPaNV   PICT kalk_pic_iznos_bilo_gpicdem()
       @ PRow(), PCol() + 1 SAY nPaRUC  PICT kalk_pic_iznos_bilo_gpicdem()
-
 
 
       @ PRow(), PCol() + 1 SAY nPaZarada PICT kalk_pic_iznos_bilo_gpicdem()

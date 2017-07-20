@@ -96,7 +96,7 @@ FUNCTION svedi_na_jedinicu_mjere( nKol, cIdRoba, cJMJ )
    ELSE
 
       cJmjRoba := find_roba_jmj( cIdRoba )
-      IF IsVindija() .AND. cJmjRoba == "KOM" // nema definisano svodjenje na jednicu mjere
+      IF cJmjRoba == "KOM" // nema definisano svodjenje na jednicu mjere
          error_bar( "sjmj_" + AllTrim( cIdRoba ), cIdRoba + " nema definisanu težinu !?" )
       ENDIF
 

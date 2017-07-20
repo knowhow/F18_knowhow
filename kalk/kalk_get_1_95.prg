@@ -13,6 +13,7 @@
 
 STATIC aPorezi := {}
 
+
 FUNCTION kalk_get_1_95()
 
    pIzgSt := .F. // izgenerisane stavke jos ne postoje
@@ -46,8 +47,7 @@ FUNCTION kalk_get_1_95()
 
          @ m_x + 9, m_y + 2   SAY "Konto zaduzuje            " GET _IdKonto VALID  Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
 
-         IF ( _idvd == "95" .AND. IsVindija() )
-
+         IF ( _idvd == "95" ) // .AND. IsVindija()
             @ m_x + 9, m_y + 40 SAY "Šifra veze otpisa:" GET _IdPartner  VALID Empty( _idPartner ) .OR. p_partner( @_IdPartner, 21, 5 ) PICT "@!"
 
          ELSEIF gMagacin == "1"

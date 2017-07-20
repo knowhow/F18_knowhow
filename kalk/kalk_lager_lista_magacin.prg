@@ -72,9 +72,9 @@ FUNCTION kalk_lager_lista_magacin()
    PRIVATE qqRGr := Space( 40 )
    PRIVATE qqRGr2 := Space( 40 )
 
-   IF IsVindija()
-      cOpcine := Space( 50 )
-   ENDIF
+   // IF IsVindija()
+   cOpcine := Space( 50 )
+   // ENDIF
 
    kalk_llm_open_tables()
 
@@ -128,7 +128,6 @@ FUNCTION kalk_lager_lista_magacin()
 
    Box(, 21, 80 )
 
-
    DO WHILE .T.
 
       @ m_x + 1, m_y + 2 SAY "Firma "
@@ -162,13 +161,13 @@ FUNCTION kalk_lager_lista_magacin()
 
       @ m_x + 14, m_y + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
 
-      IF IsVindija()
-         cGr := Space( 10 )
-         cPSPDN := "N"
-         @ m_x + 15, m_y + 2 SAY "Grupa:" GET cGr
-         @ m_x + 16, m_y + 2 SAY "Pregled samo prodaje (D/N)" GET cPSPDN VALID cPSPDN $ "DN" PICT "@!"
-         @ m_x + 17, m_y + 2 SAY "Uslov po opcinama:" GET cOpcine PICT "@!S40"
-      ENDIF
+      // IF IsVindija()
+      cGr := Space( 10 )
+      cPSPDN := "N"
+      @ m_x + 15, m_y + 2 SAY8 "Grupa:" GET cGr
+      @ m_x + 16, m_y + 2 SAY8 "Pregled samo prodaje (D/N)" GET cPSPDN VALID cPSPDN $ "DN" PICT "@!"
+      @ m_x + 17, m_y + 2 SAY8 "Uslov po opcinama:" GET cOpcine PICT "@!S40"
+      // ENDIF
 
       // ako je roba - grupacija
       @ m_x + 17, m_y + 2 SAY "Grupa artikla:" GET qqRGr PICT "@S10"
@@ -306,7 +305,7 @@ FUNCTION kalk_lager_lista_magacin()
    select_o_koncij( cIdKonto )
 
    SELECT kalk
-   //?E "trace-kalk-llm-11"
+   // ?E "trace-kalk-llm-11"
 
    IF _print == "2"
       // stampa dokumenta u odt formatu
@@ -418,8 +417,8 @@ FUNCTION kalk_lager_lista_magacin()
          ENDIF
       ENDIF
 
-      // Vindija - uslov po opcinama
-      IF ( IsVindija() .AND. !Empty( cOpcine ) )
+
+      IF  !Empty( cOpcine )
          select_o_partner( kalk->idpartner )
          IF At( AllTrim( partn->idops ), cOpcine ) == 0
             SELECT kalk
@@ -430,29 +429,29 @@ FUNCTION kalk_lager_lista_magacin()
       ENDIF
 
       // po vindija GRUPA
-      IF IsVindija()
-         IF !Empty( cGr )
-            IF AllTrim( cGr ) <> IzSifKRoba( "GR1", cIdRoba, .F. )
+      // IF IsVindija()
+      IF !Empty( cGr )
+         IF AllTrim( cGr ) <> IzSifKRoba( "GR1", cIdRoba, .F. )
+            SELECT kalk
+            SKIP
+            LOOP
+         ELSE
+            IF Empty( IzSifKRoba( "GR2", cIdRoba, .F. ) )
                SELECT kalk
                SKIP
                LOOP
-            ELSE
-               IF Empty( IzSifKRoba( "GR2", cIdRoba, .F. ) )
-                  SELECT kalk
-                  SKIP
-                  LOOP
-               ENDIF
             ENDIF
-         ENDIF
-         IF ( cPSPDN == "D" )
-            SELECT kalk
-            IF ( kalk->mu_i <> "5" ) .AND. ( kalk->mkonto <> cIdKonto )
-               SKIP
-               LOOP
-            ENDIF
-            SELECT roba
          ENDIF
       ENDIF
+      IF ( cPSPDN == "D" )
+         SELECT kalk
+         IF ( kalk->mu_i <> "5" ) .AND. ( kalk->mkonto <> cIdKonto )
+            SKIP
+            LOOP
+         ENDIF
+         SELECT roba
+      ENDIF
+      // ENDIF
 
 
       IF ( FieldPos( "MINK" ) ) <> 0
@@ -1141,25 +1140,25 @@ FUNCTION IsInGroup( cGr, cPodGr, cIdRoba )
 
 STATIC FUNCTION kalk_llm_open_tables()
 
-   //o_sifk()
-   //o_sifv()
+   // o_sifk()
+   // o_sifv()
 
-   //o_roba()
+   // o_roba()
    IF o_koncij()
       ?E "open koncij ok"
    ELSE
       ?E "open koncij ERROR?!"
    ENDIF
 
-   //IF o_konto()
-  //    ?E "open konto"
-   //ELSE
-  //    ?E "open konto ERROR"
-  // ENDIF
-  // IF o_partner()
-  //    ?E "open partn ok"
-  // ELSE
-//      ?E "open partn error"
-//   ENDIF
+   // IF o_konto()
+   // ?E "open konto"
+   // ELSE
+   // ?E "open konto ERROR"
+   // ENDIF
+   // IF o_partner()
+   // ?E "open partn ok"
+   // ELSE
+// ?E "open partn error"
+// ENDIF
 
    RETURN .T.

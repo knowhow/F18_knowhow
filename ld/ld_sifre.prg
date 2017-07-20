@@ -683,7 +683,7 @@ FUNCTION P_LD_RJ( cId, nDeltaX, nDeltaY )
       AAdd( Kol, nI )
    NEXT
 
-   lRet := p_sifra( F_LD_RJ, 1, f18_max_rows() - 15, 60, "Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
+   lRet := p_sifra( F_LD_RJ, 1, f18_max_rows() - 15, 60, "LD radne jedinice", @cId, nDeltaX, nDeltaY )
 
    PopWa( F_LD_RJ )
 

@@ -645,11 +645,6 @@ FUNCTION fakt_lager_lista()
 FUNCTION fakt_zagl_lager_lista()
 
    LOCAL cPomZK
-   LOCAL _rj_tip := ""
-
-   IF rj->( FieldPos( "tip" ) ) <> 0 .AND. rj->tip <> NIL
-      _rj_tip := rj->tip
-   ENDIF
 
    IF is_legacy_ptxt()
       ?
@@ -717,11 +712,11 @@ FUNCTION fakt_zagl_lager_lista()
          IF( cUI $ "S", PadC( "Stanje", 12 ), "" )
       IF cRR $ "NF"
 
-         ?? "R.br  Sifra       Naziv                                  " + cPomZK + "jmj     " + iif( _rj_tip $ "N1#M1#M2" .AND. !Empty( cIdFirma ), "Cij.", iif( cRealizacija == "D", "PR.C", " PC " ) ) + ;
+         ?? "R.br  Sifra       Naziv                                  " + cPomZK + "jmj     " + "Cij." + ;
             iif( cREalizacija == "N", "      Iznos", "       PV        Rabat      Realizovano" )
 
       ELSE
-         ?? "R.br  Sifra       Naziv                                  " + "  Stanje       Revers    Rezervac.   Ostalo     jmj     " + IF( RJ->tip $ "N1#M1#M2" .AND. !Empty( cIdFirma ), "Cij.  Cij.", "VPC    VPC" ) + "*Stanje"
+         ?? "R.br  Sifra       Naziv                                  " + "  Stanje       Revers    Rezervac.   Ostalo     jmj     " +  "Cij.  Cij." + "*Stanje"
       ENDIF
       IF gVarC == "4"
          ?? PadC( "MPV", 13 )

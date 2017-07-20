@@ -314,6 +314,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
    LOCAL lLogUnos := .F.
    LOCAL lLogBrisanje := .F.
    LOCAL _log_info
+   LOCAL nBoxVisina := f18_max_rows() - 5
 
    IF Select( "fin_pripr" ) == 0
       o_fin_pripr()
@@ -391,7 +392,8 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 
    CASE nCh == K_ENTER
 
-      Box( "ist", f18_max_rows() - 5, f18_max_cols() - 8, .F. )
+
+      Box( "ist", nBoxVisina, f18_max_cols() - 8, .F. )
       set_global_vars_from_dbf( "_" )
 
       fin_pripr_redni_broj( _Rbr )
@@ -411,7 +413,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
       PushWA()
       SELECT fin_pripr
 
-      Box( "anal", f18_max_rows() - 7, f18_max_cols() - 10, .F., "Ispravka naloga" )
+      Box( "anal", nBoxVisina, f18_max_cols() - 10, .F., "Ispravka naloga" )
 
       nDug := 0
       nPot := 0
@@ -436,10 +438,10 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
             nPot += _IznosBHD
          ENDIF
 
-         @ get_x_koord() + 19, get_y_koord() + 1 SAY "ZBIR NALOGA:"
-         @ get_x_koord() + 19, get_y_koord() + 14 SAY nDug PICTURE '9 999 999 999.99'
-         @ get_x_koord() + 19, get_y_koord() + 35 SAY nPot PICTURE '9 999 999 999.99'
-         @ get_x_koord() + 19, get_y_koord() + 56 SAY nDug - nPot PICTURE '9 999 999 999.99'
+         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 2 SAY "ZBIR NALOGA:"
+         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 15 SAY nDug PICTURE '9 999 999 999.99'
+         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 36 SAY nPot PICTURE '9 999 999 999.99'
+         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 57 SAY nDug - nPot PICTURE '9 999 999 999.99'
          Inkey( 10 )
 
          SELECT fin_pripr
@@ -468,8 +470,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
       ENDDO
       GO BOTTOM
 
-      Box( "knjn", f18_max_rows() - 5, f18_max_cols() - 7,  .F., "Knjizenje naloga - nove stavke" )
-
+      Box( "knjn", nBoxVisina, f18_max_cols() - 7,  .F., "Knjizenje naloga - nove stavke" )
 
       DO WHILE .T.
 
@@ -496,18 +497,16 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
          ELSE
             nPot += _IznosBHD
          ENDIF
-         @ get_x_koord() + f18_max_rows() - 2, get_y_koord() + 1 SAY "ZBIR NALOGA:"
-         @ get_x_koord() + f18_max_rows() - 2, get_y_koord() + 14 SAY nDug PICTURE '9 999 999 999.99'
-         @ get_x_koord() + f18_max_rows() - 2, get_y_koord() + 35 SAY nPot PICTURE '9 999 999 999.99'
-         @ get_x_koord() + f18_max_rows() - 2, get_y_koord() + 56 SAY nDug - nPot PICTURE '9 999 999 999.99'
+         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 2 SAY "ZBIR NALOGA:"
+         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 15 SAY nDug PICTURE '9 999 999 999.99'
+         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 36 SAY nPot PICTURE '9 999 999 999.99'
+         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 57 SAY nDug - nPot PICTURE '9 999 999 999.99'
 
          Inkey( 10 )
 
          SELECT fin_pripr
          APPEND BLANK
          dbf_update_rec( get_hash_record_from_global_vars(), .F. )
-
-
 
       ENDDO
       BoxC()
@@ -522,7 +521,6 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
          fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
 
          my_dbf_zap()
-
          BrisiPBaze()
 
          log_write( "F18_DOK_OPER: fin, brisanje pripreme: " + _log_info, 2  )
@@ -562,7 +560,6 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
       fin_set_broj_dokumenta()
       my_close_all_dbf()
       fin_blagajna_dnevni_izvjestaj()
-
       o_fin_edit()
 
       RETURN DE_REFRESH

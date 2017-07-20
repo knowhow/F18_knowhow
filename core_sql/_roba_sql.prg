@@ -227,7 +227,6 @@ FUNCTION use_sql_roba( hParams )
    LOCAL cWhere, cOrder
    LOCAL cSql, lCheckOnly := .F.
 
-altd()
    default_if_nil( @hParams, hb_Hash() )
 
    IF hb_HHasKey( hParams, "check_only" ) .AND. hParams[ "check_only" ] == .T.

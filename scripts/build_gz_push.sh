@@ -26,7 +26,6 @@ date +%d.%m.%Y
 
 
 echo F18_TYPE=$F18_TYPE, F18_VER=$F18_VER
-cat include/f18_ver.ch
 
 echo "NAPOMENA: envars su bitne, npr:"
 echo "--------------------------------------"
@@ -37,5 +36,5 @@ echo "export F18_POS=1"
 echo "export POS_PRENOS_POS_KALK=1"
 
 
-./build.sh --no-rm && scripts/build_gz.sh $F18_VER && scripts/push_to_downloads.sh F18_${F18_TYPE}_${F18_VER}.gz 
+./build.sh --no-rm $F18_VER && scripts/build_gz.sh $F18_VER && scripts/push_to_downloads.sh F18_${F18_TYPE}_${F18_VER}.gz 
 

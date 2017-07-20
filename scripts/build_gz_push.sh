@@ -15,17 +15,18 @@ git pull
 
 if [ -z "$F18_VER" ] ; then
   F18_VER=`cat VERSION | grep "[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,3\}$"`
-  echo updating f18_ver.ch
-  scripts/update_f18_ver_ch.sh
-  [ $? != 0 ] && echo "error git version BUILD ERROR" && exit 1
+
 fi
+
+scripts/update_f18_ver_ch.sh $F18_VER
+[ $? != 0 ] && echo "error git version BUILD ERROR" && exit 1
   
 [ -z "$F18_VER" ] && echo "set envar F18_VER argument 2"  && usage && exit 1
 date +%d.%m.%Y
 
 
 echo F18_TYPE=$F18_TYPE, F18_VER=$F18_VER
-#cat include/f18_ver.ch
+cat include/f18_ver.ch
 
 echo "NAPOMENA: envars su bitne, npr:"
 echo "--------------------------------------"

@@ -1019,7 +1019,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
 
       @ m_x + _x, m_y + 2 SAY PadR( self_organizacija_naziv(), 20 )
 
-      fakt_getlist_rj_read( m_x + _x, Col() + 2, @_idFirma )
+      fakt_getlist_rj_read( m_x + _x, Col() + 2, @_idFirma, .F. )
       // @ m_x + _x, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == self_organizacija_id() ;
       // .OR. P_RJ( @_idfirma ) .AND. V_Rj(), _idfirma := Left( _idfirma, 2 ), .T. }
 

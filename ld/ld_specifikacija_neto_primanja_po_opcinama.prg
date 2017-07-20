@@ -31,13 +31,13 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
    otvori_tabele()
 
    Box(, 8, 50 )
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
-   @ form_x_koord() + 2, Col() + 2 SAY8 "Obračun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
-   @ form_x_koord() + 5, form_y_koord() + 2 SAY "Vrsta posla (prazno-svi): "  GET  cVPosla
-   @ form_x_koord() + 8, form_y_koord() + 2 SAY8 "Sortirati po(1-šifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
+   @ get_x_koord() + 2, Col() + 2 SAY8 "Obračun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
+   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Vrsta posla (prazno-svi): "  GET  cVPosla
+   @ get_x_koord() + 8, get_y_koord() + 2 SAY8 "Sortirati po(1-šifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
    READ
    clvbox()
    ESC_BCR

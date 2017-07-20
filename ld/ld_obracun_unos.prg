@@ -140,30 +140,30 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    Box( , f18_max_rows() - 3, f18_max_cols() - 10 )
 
-   @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: "
+   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica: "
    QQOutC( cIdRJ, "GR+/N" )
 
    // IF gUNMjesec == "D"
-   // @ form_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )  GET nMjesec PICT "99"
+   // @ get_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )  GET nMjesec PICT "99"
    // ELSE
-   @ form_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )
+   @ get_x_koord() + 1, Col() + 2 SAY _l( "Mjesec: " )
    QQOutC( Str( nMjesec, 2 ), "GR+/N" )
    // ENDIF
 
    IF ld_vise_obracuna()
       // IF gUNMjesec == "D"
-      // @ form_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+      // @ get_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
       // ELSE
-      @ form_x_koord() + 1, Col() + 2 SAY8  "Obračun: "
+      @ get_x_koord() + 1, Col() + 2 SAY8  "Obračun: "
       QQOutC( cObracun, "GR+/N" )
       // ENDIF
    ENDIF
 
-   @ form_x_koord() + 1, Col() + 2 SAY _l( "Godina: " )
+   @ get_x_koord() + 1, Col() + 2 SAY _l( "Godina: " )
 
    QQOutC( Str( nGodina, 4 ), "GR+/N" )
 
-   @ form_x_koord() + 2, form_y_koord() + 2 SAY  "Radnik:" GET cIdRadn VALID {|| P_Radn( @cIdRadn ), SetPos( form_x_koord() + 2, form_y_koord() + 17 ), ;
+   @ get_x_koord() + 2, get_y_koord() + 2 SAY  "Radnik:" GET cIdRadn VALID {|| P_Radn( @cIdRadn ), SetPos( get_x_koord() + 2, get_y_koord() + 17 ), ;
       QQOut( PadR( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + Trim( radn->ime ), 28 ) ), .T. }
 
    READ
@@ -241,14 +241,14 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    ld_pozicija_parobr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ), cIdRj )
 
    IF gTipObr == "1"
-      @ form_x_koord() + 3, form_y_koord() + 2   SAY IF( gBodK == "1", _l( "Broj bodova" ), _l( "Koeficijent" ) ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
+      @ get_x_koord() + 3, get_y_koord() + 2   SAY IF( gBodK == "1", _l( "Broj bodova" ), _l( "Koeficijent" ) ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
    ELSE
-      @ form_x_koord() + 3, form_y_koord() + 2   SAY _l( "Plan.osnov ld" ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
+      @ get_x_koord() + 3, get_y_koord() + 2   SAY _l( "Plan.osnov ld" ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
    ENDIF
 
    SELECT ld
 
-   @ form_x_koord() + 3, Col() + 2 SAY IF( gBodK == "1", _l( "Vrijednost boda" ), _l( "Vr.koeficijenta" ) ); @ Row(), Col() + 1 SAY parobr->vrbod  PICT "99999.99999"
+   @ get_x_koord() + 3, Col() + 2 SAY IF( gBodK == "1", _l( "Vrijednost boda" ), _l( "Vr.koeficijenta" ) ); @ Row(), Col() + 1 SAY parobr->vrbod  PICT "99999.99999"
 
    IF gMinR == "B"
       cMinRadOpis := "Minuli rad (bod)"
@@ -258,15 +258,15 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       cMinRadOpis := "Koef.minulog rada"
    ENDIF
 
-   @ form_x_koord() + 3, Col() + 2 SAY cMinRadOpis GET _kminrad PICT cMinRadPict VALID set_koeficijent_minulog_rada( _kminrad )
+   @ get_x_koord() + 3, Col() + 2 SAY cMinRadOpis GET _kminrad PICT cMinRadPict VALID set_koeficijent_minulog_rada( _kminrad )
 
-   @ form_x_koord() + 4, form_y_koord() + 2 SAY8 "Lič.odb:" GET _ulicodb PICT "9999.99"
-   @ form_x_koord() + 4, Col() + 1 SAY _l( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla VALID ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
+   @ get_x_koord() + 4, get_y_koord() + 2 SAY8 "Lič.odb:" GET _ulicodb PICT "9999.99"
+   @ get_x_koord() + 4, Col() + 1 SAY _l( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla VALID ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
 
    READ
 
    IF _radni_sati == "D"
-      @ form_x_koord() + 4, form_y_koord() + 85 SAY "R.sati:" GET _radSat
+      @ get_x_koord() + 4, get_y_koord() + 85 SAY "R.sati:" GET _radSat
    ENDIF
 
    READ
@@ -466,20 +466,20 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
 
    // direktno se unose globalne vars iz tabele ld: ld->usati, ld->lucodb, ... ld->uiznos
 
-   @ form_x_koord() + 19, form_y_koord() + 2 SAY "Ukupno sati:"
+   @ get_x_koord() + 19, get_y_koord() + 2 SAY "Ukupno sati:"
    @ Row(), Col() + 1 SAY _usati PICT gPics
-   @ form_x_koord() + 19, Col() + 2 SAY "Uk.lic.odb.:"
+   @ get_x_koord() + 19, Col() + 2 SAY "Uk.lic.odb.:"
    @ Row(), Col() + 1 SAY _ulicodb PICT gPici
-   @ form_x_koord() + 20, form_y_koord() + 2 SAY "Primanja:"
+   @ get_x_koord() + 20, get_y_koord() + 2 SAY "Primanja:"
    @ Row(), Col() + 1 SAY _uneto PICT gPici
-   @ form_x_koord() + 20, Col() + 2 SAY "Odbici:"
+   @ get_x_koord() + 20, Col() + 2 SAY "Odbici:"
    @ Row(), Col() + 1 SAY _uodbici PICT gPici
-   @ form_x_koord() + 20, Col() + 2 SAY "UKUPNO ZA ISPLATU:"
+   @ get_x_koord() + 20, Col() + 2 SAY "UKUPNO ZA ISPLATU:"
    @ Row(), Col() + 1 SAY _uiznos PICT gPici
 
-   @ form_x_koord() + 21, form_y_koord() + 2 SAY "Vrsta isplate (1 - 17):" GET _v_ispl // globalna field varijabla ld->v_ispl
+   @ get_x_koord() + 21, get_y_koord() + 2 SAY "Vrsta isplate (1 - 17):" GET _v_ispl // globalna field varijabla ld->v_ispl
 
-   @ form_x_koord() + 22, form_y_koord() + 10 SAY "Pritisni <ENTER> za snimanje, <ESC> napustanje"
+   @ get_x_koord() + 22, get_y_koord() + 10 SAY "Pritisni <ENTER> za snimanje, <ESC> napustanje"
    READ
 
    Inkey( 0 )
@@ -536,25 +536,25 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
       IF ( tippr->( Found() ) .AND. tippr->aktivan == "D" )
          IF ( tippr->fiksan $ "DN" )
-            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + " (SATI) " ;
+            @ get_x_koord() + nRedTP, get_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + " (SATI) " ;
                GET &cVarTP PICT gPics WHEN &cWhenLDUnos VALID &cValidLDUnos
          ELSEIF ( tippr->fiksan == "P" )
-            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + " (%)    " ;
+            @ get_x_koord() + nRedTP, get_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + " (%)    " ;
                GET &cVarTP. PICT "999.99" WHEN &cWhenLDUnos VALID &cValidLDUnos
          ELSEIF tippr->fiksan == "B"
-            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + "(BODOVA)" ;
+            @ get_x_koord() + nRedTP, get_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + "(BODOVA)" ;
                GET &cVarTP. PICT gPici WHEN &cWhenLDUnos VALID &cValidLDUnos
          ELSEIF tippr->fiksan == "C"
-            @ form_x_koord() + nRedTP, form_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + "        " ;
+            @ get_x_koord() + nRedTP, get_y_koord() + 2 SAY tippr->id + "-" + tippr->naz + "        " ;
                GET cTipPrC WHEN &cWhenLDUnos VALID &cValidLDUnos
          ENDIF
 
-         @ form_x_koord() + nRedTP, form_y_koord() + 50 SAY "IZNOS" GET &cIznosTP PICT gPici
+         @ get_x_koord() + nRedTP, get_y_koord() + 50 SAY "IZNOS" GET &cIznosTP PICT gPici
       ENDIF
 
       IF ( nI % 17 == 0 )
          READ
-         @ form_x_koord() + 5, form_y_koord() + 2 CLEAR TO form_x_koord() + 21, form_y_koord() + 69
+         @ get_x_koord() + 5, get_y_koord() + 2 CLEAR TO get_x_koord() + 21, get_y_koord() + 69
          nRedTP := 4
       ENDIF
 

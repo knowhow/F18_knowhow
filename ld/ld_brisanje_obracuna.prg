@@ -59,16 +59,16 @@ FUNCTION ld_brisi_radnika()
       cObracun := ld_broj_obracuna()
 
       Box(, 4, 60 )
-      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: "
+      @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica: "
       QQOUTC( cIdRJ, "N/W" )
-      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Mjesec: "
+      @ get_x_koord() + 2, get_y_koord() + 2 SAY "Mjesec: "
       QQOUTC( Str( nMjesec, 2, 0 ), "N/W" )
-      @ form_x_koord() + 2, Col() + 2 SAY "Obracun: "
+      @ get_x_koord() + 2, Col() + 2 SAY "Obracun: "
       QQOUTC( cObracun, "N/W" )
-      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: "
+      @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: "
       QQOUTC( Str( nGodina, 4, 0 ), "N/W" )
 
-      @ form_x_koord() + 4, form_y_koord() + 2 SAY "Radnik" GET cIdRadn VALID {|| cIdRadn $ "XXXXXX" .OR. P_Radn( @cIdRadn ), SetPos( form_x_koord() + 2, form_y_koord() + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), .T. }
+      @ get_x_koord() + 4, get_y_koord() + 2 SAY "Radnik" GET cIdRadn VALID {|| cIdRadn $ "XXXXXX" .OR. P_Radn( @cIdRadn ), SetPos( get_x_koord() + 2, get_y_koord() + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), .T. }
 
       READ
       ESC_BCR
@@ -179,10 +179,10 @@ FUNCTION BrisiMjesec()
       cObracun := gObracun
 
       Box(, 4, 60 )
-      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica: " GET cIdRJ
-      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Mjesec: "  GET nMjesec PICT "99"
-      @ form_x_koord() + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
-      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Godina: "  GET nGodina PICT "9999"
+      @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica: " GET cIdRJ
+      @ get_x_koord() + 2, get_y_koord() + 2 SAY "Mjesec: "  GET nMjesec PICT "99"
+      @ get_x_koord() + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+      @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: "  GET nGodina PICT "9999"
       READ
       ClvBox()
       ESC_BCR

@@ -182,64 +182,64 @@ FUNCTION ld_specifikacija_plate_2001_stari()
    DO WHILE .T.
       Box(, 22 + IF( gcLdSpec2001GrupePoslovaAutoRucno == "1", 0, 1 ), 75 )
 
-      @ form_x_koord() + 1, form_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " ;
+      @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " ;
          GET qqIdRJ PICT "@!S15"
-      @ form_x_koord() + 1, Col() + 1 SAY "Djelatnost" GET cRTipRada ;
+      @ get_x_koord() + 1, Col() + 1 SAY "Djelatnost" GET cRTipRada ;
          VALID val_tiprada( cRTipRada ) PICT "@!"
-      @ form_x_koord() + 1, Col() + 1 SAY "Spec.za RS" GET cRepSr ;
+      @ get_x_koord() + 1, Col() + 1 SAY "Spec.za RS" GET cRepSr ;
          VALID cRepSr $ "DN" PICT "@!"
 
-      @ form_x_koord() + 2, form_y_koord() + 2 SAY "Opstina stanov.(prazno-sve): " ;
+      @ get_x_koord() + 2, get_y_koord() + 2 SAY "Opstina stanov.(prazno-sve): " ;
          GET qqOpSt PICT "@!S20"
 
       IF ld_vise_obracuna()
-         @ form_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun ;
+         @ get_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun ;
             WHEN HelpObr( .T., cObracun ) ;
             VALID ValObr( .T., cObracun )
       ENDIF
 
-      @ form_x_koord() + 3, form_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
-      @ form_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecOd PICT "99"
-      @ form_x_koord() + 3, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
-      @ form_x_koord() + 3, Col() + 1 SAY "do:" GET nDanDo PICT "99"
-      @ form_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecDo PICT "99"
-      @ form_x_koord() + 3, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
+      @ get_x_koord() + 3, get_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
+      @ get_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecOd PICT "99"
+      @ get_x_koord() + 3, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
+      @ get_x_koord() + 3, Col() + 1 SAY "do:" GET nDanDo PICT "99"
+      @ get_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecDo PICT "99"
+      @ get_x_koord() + 3, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
 
-      @ form_x_koord() + 4, form_y_koord() + 2 SAY " Naziv: " GET cFirmNaz
-      @ form_x_koord() + 5, form_y_koord() + 2 SAY "Adresa: " GET cFirmAdresa
-      @ form_x_koord() + 6, form_y_koord() + 2 SAY "Opcina: " GET cFirmOpc
-      @ form_x_koord() + 7, form_y_koord() + 2 SAY "Vrsta djelatnosti: " GET cFirmVD
+      @ get_x_koord() + 4, get_y_koord() + 2 SAY " Naziv: " GET cFirmNaz
+      @ get_x_koord() + 5, get_y_koord() + 2 SAY "Adresa: " GET cFirmAdresa
+      @ get_x_koord() + 6, get_y_koord() + 2 SAY "Opcina: " GET cFirmOpc
+      @ get_x_koord() + 7, get_y_koord() + 2 SAY "Vrsta djelatnosti: " GET cFirmVD
 
-      @ form_x_koord() + 4, form_y_koord() + 52 SAY "ID.broj :" GET cMatBR
-      @ form_x_koord() + 5, form_y_koord() + 52 SAY "Dat.ispl:" GET dDatIspl
+      @ get_x_koord() + 4, get_y_koord() + 52 SAY "ID.broj :" GET cMatBR
+      @ get_x_koord() + 5, get_y_koord() + 52 SAY "Dat.ispl:" GET dDatIspl
 
 
-      @ form_x_koord() + 9, form_y_koord() + 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" ;
+      @ get_x_koord() + 9, get_y_koord() + 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" ;
          GET cPrimDobra  PICT "@!S20"
 
-      @ form_x_koord() + 10, form_y_koord() + 2 SAY "Dopr.pio (iz)" GET cDopr1
-      @ form_x_koord() + 10, Col() + 2 SAY "Dopr.pio (na)" GET cDopr5
-      @ form_x_koord() + 11, form_y_koord() + 2 SAY "Dopr.zdr (iz)" GET cDopr2
-      @ form_x_koord() + 11, Col() + 2 SAY "Dopr.zdr (na)" GET cDopr6
-      @ form_x_koord() + 11, Col() + 1 SAY "Omjer dopr.zdr (%):" GET _omjer_zdravstvo PICT "999.99999"
-      @ form_x_koord() + 12, form_y_koord() + 2 SAY "Dopr.nez (iz)" GET cDopr3
-      @ form_x_koord() + 12, Col() + 2 SAY "Dopr.nez (na)" GET cDopr7
-      @ form_x_koord() + 12, Col() + 1 SAY "Omjer dopr.nez (%):" GET _omjer_nezap PICT "999.99999"
+      @ get_x_koord() + 10, get_y_koord() + 2 SAY "Dopr.pio (iz)" GET cDopr1
+      @ get_x_koord() + 10, Col() + 2 SAY "Dopr.pio (na)" GET cDopr5
+      @ get_x_koord() + 11, get_y_koord() + 2 SAY "Dopr.zdr (iz)" GET cDopr2
+      @ get_x_koord() + 11, Col() + 2 SAY "Dopr.zdr (na)" GET cDopr6
+      @ get_x_koord() + 11, Col() + 1 SAY "Omjer dopr.zdr (%):" GET _omjer_zdravstvo PICT "999.99999"
+      @ get_x_koord() + 12, get_y_koord() + 2 SAY "Dopr.nez (iz)" GET cDopr3
+      @ get_x_koord() + 12, Col() + 2 SAY "Dopr.nez (na)" GET cDopr7
+      @ get_x_koord() + 12, Col() + 1 SAY "Omjer dopr.nez (%):" GET _omjer_nezap PICT "999.99999"
 
-      @ form_x_koord() + 13, form_y_koord() + 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
-      @ form_x_koord() + 14, form_y_koord() + 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"
+      @ get_x_koord() + 13, get_y_koord() + 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
+      @ get_x_koord() + 14, get_y_koord() + 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"
 
-      @ form_x_koord() + 15, form_y_koord() + 2 SAY "Ost.obaveze: NAZIV                  USLOV"
-      @ form_x_koord() + 16, form_y_koord() + 2 SAY " 1." GET ccOO1
-      @ form_x_koord() + 16, form_y_koord() + 30 GET cnOO1
-      @ form_x_koord() + 17, form_y_koord() + 2 SAY " 2." GET ccOO2
-      @ form_x_koord() + 17, form_y_koord() + 30 GET cnOO2
-      @ form_x_koord() + 18, form_y_koord() + 2 SAY " 3." GET ccOO3
-      @ form_x_koord() + 18, form_y_koord() + 30 GET cnOO3
-      @ form_x_koord() + 19, form_y_koord() + 2 SAY " 4." GET ccOO4
-      @ form_x_koord() + 19, form_y_koord() + 30 GET cnOO4
+      @ get_x_koord() + 15, get_y_koord() + 2 SAY "Ost.obaveze: NAZIV                  USLOV"
+      @ get_x_koord() + 16, get_y_koord() + 2 SAY " 1." GET ccOO1
+      @ get_x_koord() + 16, get_y_koord() + 30 GET cnOO1
+      @ get_x_koord() + 17, get_y_koord() + 2 SAY " 2." GET ccOO2
+      @ get_x_koord() + 17, get_y_koord() + 30 GET cnOO2
+      @ get_x_koord() + 18, get_y_koord() + 2 SAY " 3." GET ccOO3
+      @ get_x_koord() + 18, get_y_koord() + 30 GET cnOO3
+      @ get_x_koord() + 19, get_y_koord() + 2 SAY " 4." GET ccOO4
+      @ get_x_koord() + 19, get_y_koord() + 30 GET cnOO4
 
-      @ form_x_koord() + 21, form_y_koord() + 2 SAY "Isplata: 'A' doprinosi+porez, 'B' samo doprinosi, 'C' samo porez" GET cIsplata VALID cIsplata $ "ABC" PICT "@!"
+      @ get_x_koord() + 21, get_y_koord() + 2 SAY "Isplata: 'A' doprinosi+porez, 'B' samo doprinosi, 'C' samo porez" GET cIsplata VALID cIsplata $ "ABC" PICT "@!"
 
       READ
       clvbox()

@@ -27,20 +27,20 @@ FUNCTION ld_postavi_parametre_obracuna()
 
    SET CURSOR ON
 
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 PadC( "*** PRISTUPNI PODACI ZA OBRAČUN ***", 50 )
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 PadC( "*** PRISTUPNI PODACI ZA OBRAČUN ***", 50 )
 
    nX += 2
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 PadL( "Radna jedinica", _pad_l ) GET gLDRadnaJedinica VALID P_LD_Rj( @gLDRadnaJedinica ) PICT "@!"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 PadL( "Radna jedinica", _pad_l ) GET gLDRadnaJedinica VALID P_LD_Rj( @gLDRadnaJedinica ) PICT "@!"
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY8 PadL( "Mjesec", _pad_l ) GET nMjesec PICT "99"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 PadL( "Mjesec", _pad_l ) GET nMjesec PICT "99"
 
    ++nX
-   @ form_x_koord() + nX, form_y_koord() + 2 SAY PadL( "Godina", _pad_l ) GET nGodina PICT "9999"
+   @ get_x_koord() + nX, get_y_koord() + 2 SAY PadL( "Godina", _pad_l ) GET nGodina PICT "9999"
 
    IF _v_obr_unos
       ++nX
-      @ form_x_koord() + nX, form_y_koord() + 2 SAY8 PadL( "Obračun broj", _pad_l ) GET gObracun WHEN HelpObr( .F., gObracun ) VALID ValObr( .F., gObracun )
+      @ get_x_koord() + nX, get_y_koord() + 2 SAY8 PadL( "Obračun broj", _pad_l ) GET gObracun WHEN HelpObr( .F., gObracun ) VALID ValObr( .F., gObracun )
 
    ENDIF
 

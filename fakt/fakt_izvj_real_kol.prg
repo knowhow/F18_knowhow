@@ -424,10 +424,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             nKolicina += kolicina
 
             IF cSvediJmj == "D"
-
                cJmj := ""
                nKolJmj += svedi_na_jedinicu_mjere( kolicina, idroba, @cJmj )
-
             ENDIF
 
             // pojedinacna osnova

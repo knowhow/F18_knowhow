@@ -40,8 +40,8 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
       RETURN .F.
    ENDIF
 
-   PRIVATE qqTar := ""
-   PRIVATE aUslTar := ""
+   //PRIVATE qqTar := ""
+   //PRIVATE aUslTar := ""
 
    IF cSet == NIL
       nSetEnd := 1
@@ -79,15 +79,15 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
    select_o_koncij( kalk_pripr->mkonto )
    SELECT kalk_pripr
 
-   IF IsVindija()
-      PushWA()
-      IF !Empty( qqTar )
-         aUslTar := Parsiraj( qqTar, "idTarifa" )
-         IF aUslTar <> NIL .AND. !aUslTar == ".t."
-            SET FILTER TO &aUslTar
-         ENDIF
-      ENDIF
-   ENDIF
+//   IF IsVindija()
+//      PushWA()
+  //    IF !Empty( qqTar )
+  //       aUslTar := Parsiraj( qqTar, "idTarifa" )
+  //       IF aUslTar <> NIL .AND. !aUslTar == ".t."
+  //          SET FILTER TO &aUslTar
+  //       ENDIF
+  //    ENDIF
+  // ENDIF
 
    DO WHILE !Eof()
       nUkupanIznosFakture := 0
@@ -522,10 +522,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
       ENDIF // cIdVd $ "11#12#13"
    ENDDO  // eof()
 
-   IF IsVindija()
-      SELECT kalk_pripr
-      PopWA()
-   ENDIF
+//   IF IsVindija()
+//      SELECT kalk_pripr
+//      PopWA()
+//   ENDIF
 
    GO TOP
 

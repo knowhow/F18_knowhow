@@ -191,9 +191,9 @@ FUNCTION kalk_prenos_fakt()
                ENDIF
             ENDIF
 
-         ELSEIF ( kalk_pripr->idvd == "16" .AND. IsVindija() )
-            APPEND BLANK
-            REPLACE kolicina WITH nKolicina
+    //     ELSEIF ( kalk_pripr->idvd == "16" ) // .AND. IsVindija() )
+    //        APPEND BLANK
+    //        REPLACE kolicina WITH nKolicina
 
          ELSE
 

@@ -91,7 +91,6 @@ FUNCTION roba_pregled_prodaje_po_grupama()
       nKJMJ := svedi_na_jedinicu_mjere( 1, cIdRoba, @cJMJ )
       SELECT KALK
 
-
       // ako roba nije obuhvacena izvjestajnim uslovima, preskoci je
       // -----------------------------------------------------------
       IF !&aUslG .OR. !&aUslPG  // .or. !(&aUslMKonta .or. &aUslPKonta)

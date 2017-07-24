@@ -20,3 +20,10 @@
 ### Developer
 
 - "trijebljenje" do iznemoglosti select_o_partner(), select_o_konto()
+
+
+## Legenda
+
+Korisnik - promjene značajne za korisnike
+
+Developer - tehničke bilješke, promjene bitne za podršku i razvoj

@@ -1,5 +1,12 @@
 # F18 klijent, lista promjena
 
+## 3.1.X, 2017-07-25
+
+### Developer
+
+- OUT: f18_admin.prg upgrade_db
+
+
 ## 3.1.5-vindi, 2017-07-24
 
 ### Korisnik

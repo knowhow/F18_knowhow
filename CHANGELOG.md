@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.6, 2017-07-25
+## 3.1.6-std, 2017-07-24
 
 ### Korisnik
 

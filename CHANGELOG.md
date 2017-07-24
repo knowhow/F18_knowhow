@@ -5,13 +5,14 @@
 ### Korisnik
 
 #### CORE
-- F18 upgrade različiti kanali, izbačen F18 template
+- BUGFIX: F18 upgrade za različite kanale
+- OUT: izbačen F18 template update iz priče
 
 ### Developer
 - f18_admin.prg cleanup:
-** iz upotrebe izbačen UPDATE_INFO
-** f18_templates nije u upgrade shemi
-** http://download.bring.out.ba/ hardkodiran
+  - iz upotrebe izbačen UPDATE_INFO
+  - f18_templates nije u upgrade shemi
+  - http://download.bring.out.ba/ hardkodiran
 
 
 ## 3.0.11-std, 2017-07-24
@@ -28,8 +29,8 @@
 ### Korisnik
 
 #### FIN
-- BUGFIX run sintetički, analitički bruto bilans
-- BUGFIX lista naloga sa provjerom integriteta
+- BUGFIX: run sintetički, analitički bruto bilans
+- BUGFIX: lista naloga sa provjerom integriteta
 
 ### Developer
 

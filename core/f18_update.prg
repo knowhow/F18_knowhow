@@ -9,14 +9,16 @@ STATIC s_cCheckUpdates := NIL
 
 MEMVAR m_x, m_y, GetList
 
-FUNCTION download_version( cUrl )
+FUNCTION download_version( cUrl, lForceRefresh )
 
    LOCAL hFile
    LOCAL cFileName, oFile, cRead := ""
    LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
    LOCAL aMatch
 
-   IF s_cDownloadVersion != NIL
+   hb_default( @lForceRefresh, .T. )
+
+   IF !lForceRefresh .AND. s_cDownloadVersion != NIL
       RETURN s_cDownloadVersion
    ENDIF
 
@@ -60,6 +62,12 @@ FUNCTION download_version( cUrl )
 
    RETURN cRead
 
+
+PROCEDURE f18_update_available_version()
+
+   download_version( f18_download_url() + "/" + f18_version_file(), .T. )  // .T. - force refresh
+
+   RETURN
 
 FUNCTION f18_available_version()
 
@@ -129,6 +137,8 @@ FUNCTION f18_preporuci_upgrade( cVersion )
    ENDIF
 
    RETURN .T.
+
+
 
 
 FUNCTION check_updates()

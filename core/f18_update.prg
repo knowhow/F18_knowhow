@@ -69,6 +69,69 @@ FUNCTION f18_available_version()
 
    RETURN s_cDownloadVersion
 
+
+FUNCTION f18_available_version_h()
+   RETURN f18_version_h( f18_ver() )
+
+FUNCTION f18_available_version_h()
+   RETURN f18_version_h( f18_available_version() )
+
+FUNCTION f18_version_h( cVersion )
+
+   LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
+   LOCAL aMatch
+   LOCAL hVer := hb_Hash()
+
+   aMatch := hb_regex( pRegex, cVersion )
+
+   IF Len( aMatch ) > 0 // aMatch[1]="2.3.500" aMatch[2]="2", aMatch[3]="3", aMatch[4]="500"
+      hVer[ "major" ] := Val( aMatch[ 2 ] )
+      hVer[ "minor" ] := Val( aMatch[ 3 ] )
+      hVer[ "patch" ] := Val( aMatch[ 4 ] )
+   ENDIF
+
+   RETURN hVer
+
+
+
+FUNCTION f18_preporuci_upgrade( cVersion )
+
+   LOCAL hVersion, hAvailableVersion
+
+   IF !check_updates()
+      cVersion := "0.0.0"
+      RETURN .F.
+   ENDIF
+
+   cVersion := download_version( f18_download_url() + "/" + f18_version_file() )
+
+   IF Empty( cVersion )
+      cVersion := "0.0.0"
+      RETURN .F.
+   ENDIF
+
+   IF cVersion == f18_ver()
+      RETURN .F.
+   ENDIF
+
+   hVersion := f18_builtin_version_h()
+
+   hAvailableVersion := f18_available_version_h()
+
+   IF hVersion[ "major" ] != hAvailableVersion[ "major" ]
+      RETURN .T.
+   ENDIF
+   IF hVersion[ "minor" ] != hAvailableVersion[ "minor" ]
+      RETURN .T.
+   ENDIF
+
+   IF hVersion[ "patch" ] > hAvailableVersion[ "patch" ]
+      RETURN .F. // ne raditi downgrade"
+   ENDIF
+
+   RETURN .T.
+
+
 FUNCTION check_updates()
 
    IF s_cCheckUpdates == NIL

@@ -293,17 +293,15 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
 
 #ifndef F18_DEBUG
 
-   IF check_updates()
-      cVersion := download_version( f18_download_url() + "/" + f18_version_file() )
+   IF f18_preporuci_upgrade( @cVersion )
 
-      IF !Empty( cVersion ) .AND. cVersion != f18_ver()
-         AAdd( aMeniOpcije,  " U. F18 upgrade -> " + cVersion  )
-         AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
+      AAdd( aMeniOpcije,  " U. F18 upgrade -> " + cVersion  )
+      AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
 
-         AAdd( aMeniOpcije, "---------------------------------------------" )
-         AAdd( aMeniExec, {|| NIL } )
-      ENDIF
+      AAdd( aMeniOpcije, "---------------------------------------------" )
+      AAdd( aMeniExec, {|| NIL } )
    ENDIF
+
 #endif
 
    IF f18_use_module( "fin" )
@@ -387,8 +385,8 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    AAdd( aMeniOpcije, " W. pregled log-a" )
    AAdd( aMeniExec, {|| f18_view_log() } )
 
-//   AAdd( aMeniOpcije, " V. vpn podrška" )
-//   AAdd( aMeniExec, {|| vpn_support() } )
+// AAdd( aMeniOpcije, " V. vpn podrška" )
+// AAdd( aMeniExec, {|| vpn_support() } )
 
 
    AAdd( aMeniOpcije, " X. diag info" )

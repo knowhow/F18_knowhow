@@ -319,7 +319,7 @@ FUNCTION RaiseError( cErrMsg )
 STATIC FUNCTION send_email( err_obj, lNotify )
 
    LOCAL _mail_params
-   LOCAL _body, _subject
+   LOCAL cBody, cSubject
    LOCAL _attachment
    LOCAL _answ := fetch_metric( "bug_report_email", my_user(), "A" )
    LOCAL cDatabase
@@ -342,9 +342,9 @@ STATIC FUNCTION send_email( err_obj, lNotify )
 
    // BUG F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07, variable does not exist
    IF lNotify
-      _subject := "NOTIFY F18 "
+      cSubject := "NOTIFY F18 "
    ELSE
-      _subject := "BUG F18 "
+      cSubject := "BUG F18 "
    ENDIF
 
    IF hb_HHasKey( my_server_params(), "database" )
@@ -353,17 +353,17 @@ STATIC FUNCTION send_email( err_obj, lNotify )
       cDatabase := "DBNOTDEFINED"
    ENDIF
 
-   _subject += f18_ver()
-   _subject += ", " + cDatabase + "/" + AllTrim( f18_user() )
-   _subject += ", " + DToC( Date() ) + " " + PadR( Time(), 8 )
+   cSubject += f18_ver()
+   cSubject += ", " + cDatabase + "/" + AllTrim( f18_user() )
+   cSubject += ", " + DToC( Date() ) + " " + PadR( Time(), 8 )
 
    IF err_obj != NIL
-      _subject += ", " + AllTrim( err_obj:description ) + "/" + AllTrim( err_obj:operation )
+      cSubject += ", " + AllTrim( err_obj:description ) + "/" + AllTrim( err_obj:operation )
    ENDIF
 
-   _body := "U prilogu zip fajl sa sadržajem trenutne greške i log fajlom servera"
+   cBody := "U prilogu zip fajl sa sadrzajem trenutne greske i log fajlom servera"
 
-   _mail_params := email_hash_za_podrska_bring_out( _subject, _body )
+   _mail_params := email_hash_za_podrska_bring_out( cSubject, cBody )
 
    _attachment := send_email_attachment()
 

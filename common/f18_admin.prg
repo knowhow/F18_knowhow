@@ -244,7 +244,6 @@ METHOD F18Admin:update_app_run_script( update_file )
 
 
 
-
 METHOD F18Admin:update_app_form( hF18UpdateParams )
 
    LOCAL lOk := .F.
@@ -255,15 +254,15 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    LOCAL _t_ver_sec := 5
    LOCAL _t_ver_third := Space( 10 )
    LOCAL nX := 1
-   LOCAL _col_app, _col_temp, cLine
-   LOCAL cUpdateF18, _upd_t, nPos
+   LOCAL cColorApp, cColorTemplate, cLine
+   LOCAL cUpdateF18, cUpdateTemplate, nPos
    LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
    LOCAL aMatch
 
    cUpdateF18 := "D"
-   _upd_t := "N"
-   _col_app := "W/G+"
-   _col_temp := "W/G+"
+   //cUpdateTemplate := "N"
+   cColorApp := "W/G+"
+   cColorTemplate := "W/G+"
 
    aMatch := hb_regex( pRegex, hF18UpdateParams[ "f18" ] )
 
@@ -274,10 +273,10 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    ENDIF
 
    // IF f18_ver() < hF18UpdateParams[ "f18" ]
-   _col_app := "W/R+"
+   cColorApp := "W/R+"
    // ENDIF
    // IF f18_template_ver() < hF18UpdateParams[ "templates" ]
-   _col_temp := "W/R+"
+   //cColorTemplate := "W/R+"
    // ENDIF
 
    Box(, 10, 65 )
@@ -293,17 +292,16 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    ++nX
    @ m_x + nX, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( f18_ver(), 20 )
    @ m_x + nX, Col() SAY " "
-   @ m_x + nX, Col() SAY PadC( hF18UpdateParams[ "f18" ], 20 ) COLOR _col_app
+   @ m_x + nX, Col() SAY PadC( hF18UpdateParams[ "f18" ], 20 ) COLOR cColorApp
 
 /*
    ++nX
    @ m_x + nX, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( f18_template_ver(), 20 )
    @ m_x + nX, Col() SAY " "
-   @ m_x + nX, Col() SAY PadC( hF18UpdateParams[ "templates" ], 20 ) COLOR _col_temp
+   @ m_x + nX, Col() SAY PadC( hF18UpdateParams[ "templates" ], 20 ) COLOR cColorTemplate
 */
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY cLine
 
    ++nX
@@ -325,18 +323,16 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    ++nX
    nPos := nX
 
-   @ m_x + nX, m_y + 2 SAY "  Update template ?" GET _upd_t PICT "@!" VALID _upd_t $ "DN"
+   @ m_x + nX, m_y + 2 SAY "  Update template ?" GET cUpdateTemplate PICT "@!" VALID cUpdateTemplate $ "DN"
 */
 
    READ
 
 /*
-   IF _upd_t == "D"
-
+   IF cUpdateTemplate == "D"
       @ m_x + nX, m_y + 25 SAY "VERZIJA:" GET _t_ver_prim PICT "99" VALID _t_ver_prim > 0
       @ m_x + nX, Col() + 1 SAY "." GET _t_ver_sec PICT "99" VALID _t_ver_sec > 0
       @ m_x + nX, Col() + 1 SAY "." GET _t_ver_third PICT "@S10"
-
       READ
 
    ENDIF
@@ -349,7 +345,7 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    ENDIF
 
    ::update_app_f18 := ( cUpdateF18 == "D" ) // setuj postavke
-   //::update_app_templates := ( _upd_t == "D" )
+   //::update_app_templates := ( cUpdateTemplate == "D" )
 
    IF ::update_app_f18
       IF !Empty( nVerzijaPatch )

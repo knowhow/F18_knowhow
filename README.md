@@ -2,7 +2,7 @@
 
 ## F18 log promjena
 
-[F18 CHANGELOG](CHANGELOG.md)
+[F18 CHANGELOG.md](CHANGELOG.md)
 
 
 ## F18 klijent korištenje

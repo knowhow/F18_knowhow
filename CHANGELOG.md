@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.5-vindi, 2017-07-24
+## 3.1.7-vindi, 2017-07-24
 
 ### Korisnik
 

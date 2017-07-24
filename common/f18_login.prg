@@ -766,10 +766,10 @@ STATIC FUNCTION _set_menu_choices( menuop, menuexec )
    AAdd( menuop, hb_UTF8ToStr( "2. update F18" ) )
    AAdd( menuexec, {|| F18Admin():update_app(), .T. } )
 
-   AAdd( menuop, hb_UTF8ToStr( "3. update baze" ) )
-   AAdd( menuexec, {|| F18Admin():New():update_db(), .T. } )
+   //AAdd( menuop, hb_UTF8ToStr( "3. update baze" ) )
+   //AAdd( menuexec, {|| F18Admin():New():update_db(), .T. } )
 
-   AAdd( menuop, hb_UTF8ToStr( "4. nova baza" ) )
+   AAdd( menuop, hb_UTF8ToStr( "3. nova baza" ) )
    AAdd( menuexec, {|| F18Admin():New():create_new_pg_db(), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "5. brisanje baze" ) )

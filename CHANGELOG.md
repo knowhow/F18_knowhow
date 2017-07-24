@@ -28,7 +28,7 @@ Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana 
   - iz upotrebe izbačen UPDATE_INFO
   - templates.zip se više ne koristi, nema ga u formi za upgrade
   - lokacija F18 verzija http://download.bring.out.ba/ hardkodirana
-
+  - OUT: update_db
 
 ## 3.0.10-vindi, 2017-07-24
 

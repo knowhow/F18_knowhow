@@ -4,7 +4,7 @@
 
 ### Korisnik
 #### KALK 
-- BUGFIX import vindija varazdin tipdok 96, ignorisi partnera
+- BUGFIX import vindija varaždin kalk_imp_txt.tipdok 96, ignorisati partnera
 
 ### Developer
 - iz std verzije izbacena opcija import vindija varazdin

@@ -4,6 +4,80 @@
 STATIC s_cF18Verzija
 STATIC s_cF18Varijanta
 STATIC s_cF18VerzijaKanal
+STATIC s_cDownloadVersion := NIL
+STATIC s_cCheckUpdates := NIL
+
+MEMVAR m_x, m_y, GetList
+
+FUNCTION download_version( cUrl )
+
+   LOCAL hFile
+   LOCAL cFileName, oFile, cRead := ""
+   LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
+   LOCAL aMatch
+
+   IF s_cDownloadVersion != NIL
+      RETURN s_cDownloadVersion
+   ENDIF
+
+   Box( "#Download VERSION", 2, 70 )
+   hFile := hb_vfTempFile( @cFileName, my_home_root(), "wget_", ".txt" )
+   hb_vfClose( hFile )
+
+   @ m_x + 1, m_y + 2 SAY Left( cUrl, 67 )
+
+   IF !F18Admin():wget_download( cUrl, "",  cFileName )
+      BoxC()
+      RETURN ""
+   ENDIF
+
+   oFile := TFileRead():New( cFileName )
+   oFile:Open()
+
+   IF oFile:Error()
+      BoxC()
+      MsgBeep( oFile:ErrorMsg( "Problem sa otvaranjem fajla: " + cFileName ) )
+      RETURN ""
+   ENDIF
+
+   cRead := oFile:ReadLine()
+
+   oFile:Close()
+   FErase( cFileName )
+
+   BoxC()
+
+   aMatch := hb_regex( pRegex, cRead )
+
+   IF Len( aMatch ) < 4 // aMatch[1]="2.3.500" aMatch[2]="2", aMatch[3]="3", aMatch[4]="500"
+      MsgBeep( "VERSION format error (" + cRead + ")"  )
+      RETURN ""
+   ENDIF
+
+   IF !Empty( cRead )
+      s_cDownloadVersion := cRead
+   ENDIF
+
+   RETURN cRead
+
+
+FUNCTION f18_available_version()
+
+   IF s_cDownloadVersion == NIL
+      RETURN "0.0.0"
+   ENDIF
+
+   RETURN s_cDownloadVersion
+
+FUNCTION check_updates()
+
+   IF s_cCheckUpdates == NIL
+      s_cCheckUpdates := fetch_metric( "F18_check_updates", my_user(), "D" )
+   ENDIF
+
+   RETURN s_cCheckUpdates == "D"
+
+
 
 FUNCTION f18_verzija()
 
@@ -12,6 +86,7 @@ FUNCTION f18_verzija()
    ENDIF
 
    RETURN s_cF18Verzija
+
 
 /*
    S - standard

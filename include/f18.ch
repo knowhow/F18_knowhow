@@ -69,6 +69,7 @@
 
 #define F18_UTIL_VER  "1.0.0"
 #define F18_UTIL_URL_BASE "https://github.com/hernad/F18_util/releases/download/"
+#define F18_DOWNLOAD_URL_BASE "http://download.bring.out.ba/"
 
 
 #define INFO_MESSAGES_LENGTH       40

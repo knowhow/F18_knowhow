@@ -11,79 +11,11 @@
 
 #include "f18.ch"
 
-STATIC s_cDownloadVersion := NIL
-STATIC s_cCheckUpdates := NIL
-
-MEMVAR m_x, m_y, GetList
-
-
-FUNCTION download_version( cUrl )
-
-   LOCAL hFile
-   LOCAL cFileName, oFile, cRead := ""
-   LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
-   LOCAL aMatch
-
-   IF s_cDownloadVersion != NIL
-      RETURN s_cDownloadVersion
-   ENDIF
-
-   Box( "#Download VERSION", 2, 70 )
-   hFile := hb_vfTempFile( @cFileName, my_home_root(), "wget_", ".txt" )
-   hb_vfClose( hFile )
-
-   @ m_x + 1, m_y + 2 SAY Left( cUrl, 67 )
-
-   IF !F18Admin():wget_download( cUrl, "",  cFileName )
-      BoxC()
-      RETURN ""
-   ENDIF
-
-   oFile := TFileRead():New( cFileName )
-   oFile:Open()
-
-   IF oFile:Error()
-      BoxC()
-      MsgBeep( oFile:ErrorMsg( "Problem sa otvaranjem fajla: " + cFileName ) )
-      RETURN ""
-   ENDIF
-
-   cRead := oFile:ReadLine()
-
-   oFile:Close()
-   FErase( cFileName )
-
-   BoxC()
-
-   aMatch := hb_regex( pRegex, cRead )
-
-   IF Len( aMatch ) < 4 // aMatch[1]="2.3.500" aMatch[2]="2", aMatch[3]="3", aMatch[4]="500"
-      MsgBeep( "VERSION format error (" + cRead + ")"  )
-      RETURN ""
-   ENDIF
-
-   IF !Empty( cRead )
-      s_cDownloadVersion := cRead
-   ENDIF
-
-   RETURN cRead
-
-
-
-FUNCTION check_updates()
-
-   IF s_cCheckUpdates == NIL
-      s_cCheckUpdates := fetch_metric( "F18_check_updates", my_user(), "D" )
-   ENDIF
-
-   RETURN s_cCheckUpdates == "D"
-
-
 
 CLASS F18Admin
 
    VAR update_app_f18
-   VAR update_app_f18_version
+   VAR cUpdateF18Version
    VAR update_app_templates
    VAR update_app_templates_version
    VAR update_app_info_file
@@ -121,10 +53,10 @@ CLASS F18Admin
 
    METHOD update_app_form()
    METHOD f18_upd_download()
-   METHOD update_app_get_versions()
+   //METHOD update_app_get_versions()
    METHOD update_app_run_script()
    METHOD update_app_run_app_update()
-   METHOD update_app_run_templates_update()
+   //METHOD update_app_run_templates_update()
    METHOD update_app_unzip_templates()
 
    DATA _new_db_params
@@ -150,12 +82,12 @@ METHOD F18Admin:New()
 
 METHOD F18Admin:update_app()
 
-   LOCAL _ver_params := hb_Hash()
-   LOCAL _hF18UpdateParams := hb_Hash()
+   LOCAL hF18UpdateParams := hb_Hash()
+   //LOCAL _hF18UpdateParams := hb_Hash()
    LOCAL cUpdateFile := ""
    LOCAL lOk := .F.
 
-   ::update_app_info_file := "UPDATE_INFO"
+   //::update_app_info_file := "UPDATE_INFO"
    ::update_app_script_file := "f18_upd.sh"
 
 #ifdef __PLATFORM__WINDOWS
@@ -167,22 +99,27 @@ METHOD F18Admin:update_app()
       RETURN SELF
    ENDIF
 
-   _ver_params := ::update_app_get_versions()
+   //hF18UpdateParams := ::update_app_get_versions()
 
-   IF _ver_params == NIL
+   hF18UpdateParams[ "f18" ] := f18_available_version()
+   hF18UpdateParams[ "url" ] := F18_DOWNLOAD_URL_BASE
+
+   IF hF18UpdateParams == NIL
       RETURN SELF
    ENDIF
 
-   IF !::update_app_form( _ver_params )
+   IF !::update_app_form( hF18UpdateParams )
       RETURN SELF
    ENDIF
 
+/*
    IF ::update_app_templates
-      ::update_app_run_templates_update( _ver_params )
+      ::update_app_run_templates_update( hF18UpdateParams )
    ENDIF
+*/
 
    IF ::update_app_f18
-      ::update_app_run_app_update( _ver_params )
+      ::update_app_run_app_update( hF18UpdateParams )
    ENDIF
 
    s_cDownloadVersion := NIL
@@ -190,7 +127,7 @@ METHOD F18Admin:update_app()
    RETURN SELF
 
 
-
+/*
 METHOD F18Admin:update_app_run_templates_update( params )
 
    LOCAL cUpdateFile := "F18_template_#VER#.tar.bz2"
@@ -214,7 +151,7 @@ METHOD F18Admin:update_app_run_templates_update( params )
    ::update_app_unzip_templates( _dest, _dest, cUpdateFile )
 
    RETURN SELF
-
+*/
 
 
 METHOD F18Admin:update_app_unzip_templates( destination_path, location_path, cFileName )
@@ -247,12 +184,12 @@ METHOD F18Admin:update_app_unzip_templates( destination_path, location_path, cFi
 
 
 
-METHOD F18Admin:update_app_run_app_update( params )
+METHOD F18Admin:update_app_run_app_update( hF18Params )
 
    LOCAL cUpdateFile := "F18_#OS#_#VER#.gz"
 
-   IF ::update_app_f18_version == "#LAST#"
-      ::update_app_f18_version := params[ "f18" ]
+   IF ::cUpdateF18Version == "#LAST#"
+      ::cUpdateF18Version := hF18Params[ "f18" ]
    ENDIF
 
 #ifdef __PLATFORM__LINUX
@@ -261,14 +198,14 @@ METHOD F18Admin:update_app_run_app_update( params )
    cUpdateFile := StrTran( cUpdateFile, "#OS#", ::get_os_name() )
 #endif
 
-   cUpdateFile := StrTran( cUpdateFile, "#VER#", ::update_app_f18_version )
+   cUpdateFile := StrTran( cUpdateFile, "#VER#", ::cUpdateF18Version )
 
-// IF ::update_app_f18_version == f18_ver()
+// IF ::cUpdateF18Version == f18_ver()
 // MsgBeep( "Verzija aplikacije " + f18_ver() + " je vec instalirana !" )
 // RETURN SELF
 // ENDIF
 
-   IF !::wget_download( params[ "url" ], cUpdateFile, my_home_root() + cUpdateFile, .T., .T. )
+   IF !::wget_download( hF18Params[ "url" ], cUpdateFile, my_home_root() + cUpdateFile, .T., .T. )
       RETURN SELF
    ENDIF
 
@@ -343,7 +280,7 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    _col_temp := "W/R+"
    // ENDIF
 
-   Box(, 14, 65 )
+   Box(, 10, 65 )
 
    @ m_x + nX, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR f18_color_i()
    ++nX
@@ -358,10 +295,12 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    @ m_x + nX, Col() SAY " "
    @ m_x + nX, Col() SAY PadC( hF18UpdateParams[ "f18" ], 20 ) COLOR _col_app
 
+/*
    ++nX
    @ m_x + nX, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( f18_template_ver(), 20 )
    @ m_x + nX, Col() SAY " "
    @ m_x + nX, Col() SAY PadC( hF18UpdateParams[ "templates" ], 20 ) COLOR _col_temp
+*/
 
    ++nX
 
@@ -379,17 +318,19 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
       @ m_x + nX, m_y + 25 SAY "VERZIJA:" GET nVerzijaMajor PICT "999" VALID nVerzijaMajor > 0
       @ m_x + nX, Col() + 1 SAY "." GET nVerzijaMinor PICT "999" VALID nVerzijaMinor >= 0
       @ m_x + nX, Col() + 1 SAY "." GET nVerzijaPatch PICT "9999"
-
    ENDIF
 
+/*
    ++nX
    ++nX
    nPos := nX
 
    @ m_x + nX, m_y + 2 SAY "  Update template ?" GET _upd_t PICT "@!" VALID _upd_t $ "DN"
+*/
 
    READ
 
+/*
    IF _upd_t == "D"
 
       @ m_x + nX, m_y + 25 SAY "VERZIJA:" GET _t_ver_prim PICT "99" VALID _t_ver_prim > 0
@@ -399,6 +340,7 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
       READ
 
    ENDIF
+*/
 
    BoxC()
 
@@ -406,58 +348,56 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
       RETURN lOk
    ENDIF
 
-
    ::update_app_f18 := ( cUpdateF18 == "D" ) // setuj postavke
-   ::update_app_templates := ( _upd_t == "D" )
+   //::update_app_templates := ( _upd_t == "D" )
 
    IF ::update_app_f18
-      // sastavi mi verziju
       IF !Empty( nVerzijaPatch )
          // zadana verzija
-         ::update_app_f18_version := AllTrim( Str( nVerzijaMajor ) ) + ;
+         ::cUpdateF18Version := AllTrim( Str( nVerzijaMajor ) ) + ;
             "." + ;
             AllTrim( Str( nVerzijaMinor ) ) + ;
             "." + ;
             AllTrim( Str( nVerzijaPatch ) )
       ELSE
-         ::update_app_f18_version := "#LAST#"
+         ::cUpdateF18Version := "#LAST#"
       ENDIF
 
       lOk := .T.
 
    ENDIF
 
+/*
    IF ::update_app_templates  // sastavi mi verziju
       IF !Empty( _t_ver_third ) // zadana verzija
          ::update_app_templates_version := AllTrim( Str( _t_ver_prim ) ) + "." +  AllTrim( Str( _t_ver_sec ) ) + "." +  AllTrim( _t_ver_third )
       ELSE
          ::update_app_templates_version := "#LAST#"
       ENDIF
-
       lOk := .T.
-
    ENDIF
+*/
 
    RETURN lOk
 
 
 
 
-
+/*
 METHOD F18Admin:update_app_get_versions()
 
    LOCAL _urls := hb_Hash()
    LOCAL _o_file, cTmp, _a_tmp
-   LOCAL _file := my_home_root() + ::update_app_info_file
+   //LOCAL _file := my_home_root() + ::update_app_info_file
    LOCAL _count := 0
 
-   _o_file := TFileRead():New( _file )
-   _o_file:Open()
+   //_o_file := TFileRead():New( _file )
+   //_o_file:Open()
 
-   IF _o_file:Error()
-      MSGBEEP( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
-      RETURN SELF
-   ENDIF
+   //IF _o_file:Error()
+  //    MSGBEEP( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+  //    RETURN SELF
+   //ENDIF
 
    cTmp := ""
 
@@ -480,7 +420,7 @@ METHOD F18Admin:update_app_get_versions()
 
    RETURN _urls
 
-
+*/
 
 METHOD F18Admin:f18_upd_download()
 
@@ -488,10 +428,11 @@ METHOD F18Admin:f18_upd_download()
    LOCAL cPath := my_home_root()
    LOCAL cUrl
    LOCAL _script
-   LOCAL _ver_params
+   LOCAL hF18UpdateParams
    LOCAL _silent := .T.
    LOCAL _always_erase := .T.
 
+/*
    info_bar( "upd", "download " +  ::update_app_info_file )
 
    MsgO( "preuzimanje podataka o aktuelnoj verziji ..." )
@@ -500,6 +441,7 @@ METHOD F18Admin:f18_upd_download()
       MsgC()
       RETURN .F.
    ENDIF
+*/
 
    info_bar( "upd", "download " +  ::update_app_script_file )
    cUrl := f18_download_url() + "/scripts/"
@@ -844,7 +786,7 @@ METHOD F18Admin:razdvajanje_sezona()
    LOCAL _dbs := {}
    LOCAL nI
    LOCAL hDbServerParams, cTekuciUser, cTekucaPassword, cTekucaDb
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL nFromSezona, nToSezona
    LOCAL cDatabaseFrom, cDatabaseTo
    LOCAL _db := Space( 100 )
@@ -906,17 +848,17 @@ METHOD F18Admin:razdvajanje_sezona()
       RETURN .F.
    ENDIF
 
-   _qry := "SELECT datname FROM pg_database "
+   cQuery := "SELECT datname FROM pg_database "
 
    IF Empty( _db )
-      _qry += "WHERE datname LIKE '%_" + AllTrim( Str( nFromSezona ) ) + "' "
+      cQuery += "WHERE datname LIKE '%_" + AllTrim( Str( nFromSezona ) ) + "' "
    ELSE
-      _qry += "WHERE datname = " + sql_quote( AllTrim( _db ) + "_" + AllTrim( Str( nFromSezona ) ) )
+      cQuery += "WHERE datname = " + sql_quote( AllTrim( _db ) + "_" + AllTrim( Str( nFromSezona ) ) )
    ENDIF
-   _qry += "ORDER BY datname;"
+   cQuery += "ORDER BY datname;"
 
 
-   _dbs := postgres_sql_query( _qry )
+   _dbs := postgres_sql_query( cQuery )
    _dbs:GoTo( 1 )
 
    // treba da imamo listu baza,  uzmemo sa select-om sve sto ima npr. 2013, i onda cemo provrtiti te baze i napraviti 2014
@@ -972,94 +914,93 @@ METHOD F18Admin:razdvajanje_sezona()
 
 
 
-METHOD F18Admin:create_new_pg_db( params )
+METHOD F18Admin:create_new_pg_db( hDb )
 
-   LOCAL cDatabaseName, _db_template, _db_drop, _db_type, _db_comment
-   LOCAL _qry
+   LOCAL cDatabaseName, cDatabaseTemplate, lDbDrop, nDatabaseType, cDatabaseComment
+   LOCAL cQuery
    LOCAL oQuery, aRezultati
    LOCAL _db_params, cTekuciUser, cTekucaPassword, cTekucaDb
 
-   // 1) params read
+   // 1) hF18Params read
    // ===============================================================
-   IF params == NIL
+   IF hDb == NIL
 
       IF !spec_funkcije_sifra( "ADMIN" )
          MsgBeep( "Opcija zasticena !" )
          RETURN .F.
       ENDIF
 
-      params := hb_Hash()
+      hDb := hb_Hash()
 
-      IF !::create_new_pg_db_params( @params ) // CREATE DATABASE name OWNER admin TEMPLATE templ;
+      IF !::create_new_pg_db_params( @hDb ) // CREATE DATABASE name OWNER admin TEMPLATE templ;
          RETURN .F.
       ENDIF
 
    ENDIF
 
-   cDatabaseName := params[ "cDatabaseName" ]
-   _db_template := params[ "db_template" ]
-   _db_drop := params[ "db_drop" ] == "D"
-   _db_type := params[ "db_type" ]
-   _db_comment := params[ "db_comment" ]
+   cDatabaseName := hDb[ "database_name" ]
+   cDatabaseTemplate := hDb[ "db_template" ]
+   lDbDrop := hDb[ "db_drop" ] == "D"
+   nDatabaseType := hDb[ "db_type" ]
+   cDatabaseComment := hDb[ "db_comment" ]
 
-   IF Empty( _db_template ) .OR. Left( _db_template, 5 ) == "empty"
-      _db_type := 0 // ovo ce biti prazna baza uvijek
+   IF Empty( cDatabaseTemplate ) .OR. Left( cDatabaseTemplate, 5 ) == "empty"
+      nDatabaseType := 0 // ovo ce biti prazna baza uvijek
    ENDIF
 
    IF ! ::relogin_as_admin( "postgres" )
       RETURN .F.
    ENDIF
 
-   IF _db_drop
+   IF lDbDrop
       IF !::drop_pg_db( cDatabaseName )
          RETURN .F.
       ENDIF
    ELSE
 
-      _qry := "SELECT COUNT(*) FROM pg_database "
-      _qry += "WHERE datname = " + sql_quote( cDatabaseName )
-      oQuery := postgres_sql_query( _qry )
+      cQuery := "SELECT COUNT(*) FROM pg_database "
+      cQuery += "WHERE datname = " + sql_quote( cDatabaseName )
+      oQuery := postgres_sql_query( cQuery )
       IF oQuery:GetRow( 1 ):FieldGet( 1 ) > 0
          error_bar( "nova_sezona", "baza " + cDatabaseName + " vec postoji" )
          RETURN .F. // baza vec postoji
       ENDIF
    ENDIF
 
-   _qry := "CREATE DATABASE " + cDatabaseName + " OWNER admin"
-   IF !Empty( _db_template )
-      _qry += " TEMPLATE " + _db_template
+   cQuery := "CREATE DATABASE " + cDatabaseName + " OWNER admin"
+   IF !Empty( cDatabaseTemplate )
+      cQuery += " TEMPLATE " + cDatabaseTemplate
    ENDIF
-   _qry += ";"
+   cQuery += ";"
 
    info_bar( "nova_sezona", "db create: " + cDatabaseName  )
-   oQuery := postgres_sql_query( _qry )
+   oQuery := postgres_sql_query( cQuery )
    IF sql_error_in_query( oQuery, "CREATE", sql_postgres_conn() )
       RETURN .F.
    ENDIF
 
-
-   _qry := "GRANT ALL ON DATABASE " + cDatabaseName + " TO admin;"
-   _qry += "GRANT ALL ON DATABASE " + cDatabaseName + " TO xtrole WITH GRANT OPTION;"
+   cQuery := "GRANT ALL ON DATABASE " + cDatabaseName + " TO admin;"
+   cQuery += "GRANT ALL ON DATABASE " + cDatabaseName + " TO xtrole WITH GRANT OPTION;"
 
    info_bar( "nova_sezona", "grant admin, xtrole: " + cDatabaseName )
-   oQuery := postgres_sql_query( _qry )
+   oQuery := postgres_sql_query( cQuery )
    IF sql_error_in_query( oQuery, "GRANT", sql_postgres_conn() )
       RETURN .F.
    ENDIF
 
-   IF !Empty( _db_comment )
-      _qry := "COMMENT ON DATABASE " + cDatabaseName + " IS " + sql_quote( hb_StrToUTF8( _db_comment ) ) + ";"
+   IF !Empty( cDatabaseComment )
+      cQuery := "COMMENT ON DATABASE " + cDatabaseName + " IS " + sql_quote( hb_StrToUTF8( cDatabaseComment ) ) + ";"
       info_bar( "nova_sezona", "Postavljam opis baze..." )
-      run_sql_query( _qry )
+      run_sql_query( cQuery )
    ENDIF
 
-
-   IF _db_type > 0
+   IF nDatabaseType > 0
       info_bar( "nova_sezona", "brisanje podataka " + cDatabaseName )
-      ::delete_db_data_all( cDatabaseName, _db_type )
+      ::delete_db_data_all( cDatabaseName, nDatabaseType )
    ENDIF
 
    RETURN .T.
+
 
 
 METHOD F18Admin:relogin_as_admin( cDatabase )
@@ -1159,7 +1100,7 @@ METHOD F18Admin:drop_pg_db( cDatabaseName )
 METHOD F18Admin:delete_db_data_all( cDatabaseName, data_type )
 
    LOCAL _ret
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _pg_srv
 
    IF cDatabaseName == NIL
@@ -1181,74 +1122,74 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, data_type )
 
 
    // bitne tabele za reset podataka baze
-   _qry := ""
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "kalk_doks;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "kalk_doks2;"
+   cQuery := ""
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "kalk_doks;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "kalk_doks2;"
 
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "pos_doks;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "pos_dokspf;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "pos_doks;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "pos_dokspf;"
 
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks2;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks2;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt;"
 
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fin_anal;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fin_sint;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fin_nalog;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fin_anal;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fin_sint;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fin_nalog;"
 
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_suban;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_anal;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_sint;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_nalog;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_suban;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_anal;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_sint;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "mat_nalog;"
 
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_docs;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_it;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_it2;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_ops;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_log;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_lit;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_docs;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_it;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_it2;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_ops;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_log;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_lit;"
 
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "epdv_kuf;"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "epdv_kif;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "epdv_kuf;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "epdv_kif;"
 
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'fin/%';"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'kalk/%';"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'fakt/%';"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'pos/%';"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'epdv/%';"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'rnal_doc_no';"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE '%auto_plu%';"
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE '%lock%';"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'fin/%';"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'kalk/%';"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'fakt/%';"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'pos/%';"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'epdv/%';"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE 'rnal_doc_no';"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE '%auto_plu%';"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "metric WHERE metric_name LIKE '%lock%';"
 
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "log;"
+   cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "log;"
 
    // ako je potrebno brisati sve onda dodaj i sljedece...
    IF data_type > 1
 
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_os;"
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_promj;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_os;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_promj;"
 
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "sii_sii;"
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "sii_promj;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "sii_sii;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "sii_promj;"
 
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld;"
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "ld_radkr;"
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "ld_radn;"
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "ld_pk_data;"
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "ld_pk_radn;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "ld_radkr;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "ld_radn;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "ld_pk_data;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "ld_pk_radn;"
 
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "roba;"
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "partn;"
-      _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "sifv;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "roba;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "partn;"
+      cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "sifv;"
 
    ENDIF
 
    info_bar( "nova_sezona", "brisanje podataka " + cDatabaseName )
-   _ret := run_sql_query( _qry )
+   _ret := run_sql_query( cQuery )
    IF sql_error_in_query( _ret, "DELETE" )
       RETURN .F.
    ENDIF
@@ -1265,11 +1206,11 @@ METHOD F18Admin:create_new_pg_db_params( params )
    LOCAL lOk := .F.
    LOCAL nX := 1
    LOCAL cDatabaseName := Space( 50 )
-   LOCAL _db_template := Space( 50 )
+   LOCAL cDatabaseTemplate := Space( 50 )
    LOCAL _db_year := AllTrim( Str( Year( Date() ) ) )
-   LOCAL _db_comment := Space( 100 )
-   LOCAL _db_drop := "N"
-   LOCAL _db_type := 1
+   LOCAL cDatabaseComment := Space( 100 )
+   LOCAL lDbDrop := "N"
+   LOCAL nDatabaseType := 1
    LOCAL _db_str
 
    Box(, 12, 70 )
@@ -1282,21 +1223,21 @@ METHOD F18Admin:create_new_pg_db_params( params )
    @ m_x + nX, Col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !Empty( _db_year )
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Opis baze (*):" GET _db_comment PICT "@S50"
+   @ m_x + nX, m_y + 2 SAY "Opis baze (*):" GET cDatabaseComment PICT "@S50"
 
    ++nX
    ++nX
    @ m_x + nX, m_y + 2 SAY "Koristiti kao uzorak postojeću bazu (*):"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Naziv:" GET _db_template PICT "@S40"
+   @ m_x + nX, m_y + 2 SAY "Naziv:" GET cDatabaseTemplate PICT "@S40"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET _db_drop VALID _db_drop $ "DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET lDbDrop VALID lDbDrop $ "DN" PICT "@!"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Pražnjenje podataka (1) pocetno stanje (2) sve" GET _db_type PICT "9"
+   @ m_x + nX, m_y + 2 SAY "Pražnjenje podataka (1) pocetno stanje (2) sve" GET nDatabaseType PICT "9"
 
    ++nX
    ++nX
@@ -1315,20 +1256,20 @@ METHOD F18Admin:create_new_pg_db_params( params )
 
 
    // template empty
-   IF Empty( _db_template )
-      _db_template := "empty"
+   IF Empty( cDatabaseTemplate )
+      cDatabaseTemplate := "empty"
    ENDIF
 
    // - zaista nema template !
-   IF AllTrim( _db_template ) == "!"
-      _db_template := ""
+   IF AllTrim( cDatabaseTemplate ) == "!"
+      cDatabaseTemplate := ""
    ENDIF
 
    params[ "cDatabaseName" ] := AllTrim( _db_str )
-   params[ "db_template" ] := AllTrim( _db_template )
-   params[ "db_drop" ] := _db_drop
-   params[ "db_type" ] := _db_type
-   params[ "db_comment" ] := AllTrim( _db_comment )
+   params[ "db_template" ] := AllTrim( cDatabaseTemplate )
+   params[ "db_drop" ] := lDbDrop
+   params[ "db_type" ] := nDatabaseType
+   params[ "db_comment" ] := AllTrim( cDatabaseComment )
 
    lOk := .T.
 

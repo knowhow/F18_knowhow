@@ -9,6 +9,10 @@ STATIC s_cCheckUpdates := NIL
 
 MEMVAR m_x, m_y, GetList
 
+/*
+   lForceRefresh - force refresh verzije sa interneta
+*/
+
 FUNCTION download_version( cUrl, lForceRefresh )
 
    LOCAL hFile
@@ -16,7 +20,7 @@ FUNCTION download_version( cUrl, lForceRefresh )
    LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
    LOCAL aMatch
 
-   hb_default( @lForceRefresh, .T. )
+   hb_default( @lForceRefresh, .F. )
 
    IF !lForceRefresh .AND. s_cDownloadVersion != NIL
       RETURN s_cDownloadVersion

@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.3-std, 2017-07-24
+## 3.1.4-vindi, 2017-07-24
 
 ### Korisnik
 
@@ -15,22 +15,22 @@
   - lokacija F18 verzija http://download.bring.out.ba/ hardkodirana
 
 
-## 3.0.11-std, 2017-07-24
+## 3.0.10-vindi, 2017-07-24
 
 ### Korisnik
-#### KALK
-- specifična opcija import vindija varazdin izbačeno iz standardne verzije
+#### KALK 
+- BUGFIX import vindija varaždin kalk_imp_txt.tipdok 96, ignorisati partnera
 
 ### Developer
 - iz std verzije izbacena opcija import vindija varazdin
 
-## 3.0.8-std, 2017-07-24
+## 3.0.9-vindi, 2017-07-24
 
 ### Korisnik
 
 #### FIN
-- BUGFIX: run sintetički, analitički bruto bilans
-- BUGFIX: lista naloga sa provjerom integriteta
+- BUGFIX run sintetički, analitički bruto bilans
+- BUGFIX lista naloga sa provjerom integriteta
 
 ### Developer
 

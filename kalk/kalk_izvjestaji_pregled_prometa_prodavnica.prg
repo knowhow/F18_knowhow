@@ -450,21 +450,21 @@ STATIC FUNCTION ScanPos( dDatumOd, dDatumDo, cTKumP )
 // }
 
 
-/* AFPos(cIdKonto, cVisaNiza, nCijena, nCijenaBp, nKolicina)
- *     (A)ppend (F)rom Table (Pos)
- *   param: cIdKonto - konto prodavnice
- *   param: cVisaNiza - "1" - niza tarifa ostala obuca; "2" - visa tarifa - djecija obuca
- *   param: nCijena
- *   param: nCijenaBp
- *   param: nKolicina - kolicina pari
- *  \note  Pripadnost tarifi odredjena je sadrzajem polja tbl_tarifa_naz
- *  \sa tbl_tarifa_naz
- *
- */
+//* AFPos(cIdKonto, cVisaNiza, nCijena, nCijenaBp, nKolicina)
+// *     (A)ppend (F)rom Table (Pos)
+// *   param: cIdKonto - konto prodavnice
+// *   param: cVisaNiza - "1" - niza tarifa ostala obuca; "2" - visa tarifa - djecija obuca
+// *   param: nCijena
+// *   param: nCijenaBp
+// *   param: nKolicina - kolicina pari
+// *  note  Pripadnost tarifi odredjena je sadrzajem polja tbl_tarifa_naz
+// *  sa tbl_tarifa_naz
+// *
+
 
 STATIC FUNCTION AFPos( cIdKonto, cVisaNiza, nCijena, nCijenaBp, nKolicina )
 
-   // {
+
    LOCAL nPari
 
    SELECT ppprod
@@ -529,18 +529,16 @@ STATIC FUNCTION ScanPromVp( dDatumOd, dDatumDo, cTKumPath )
    USE
 
    RETURN 1
-// }
 
-/* ARFPromVp(cIdKonto, nPolog01, nPolog02, nPolog03, nPolog04, nPolog05, nPolog06, nPolog07, nPolog08, nPolog09, nPolog10, nPolog11, nPolog12)
- *     (A)ppend (R)ow (F)rom Table (PromVp)
- *   param: cIdKonto - prodavnicki konto
- *   param: nPolog01 - polog pazara vrste 01 (.. do nPolog12)
- *
- */
+// ARFPromVp(cIdKonto, nPolog01, nPolog02, nPolog03, nPolog04, nPolog05, nPolog06, nPolog07, nPolog08, nPolog09, nPolog10, nPolog11, nPolog12)
+//      (A)ppend (R)ow (F)rom Table (PromVp)
+//    param: cIdKonto - prodavnicki konto
+//    param: nPolog01 - polog pazara vrste 01 (.. do nPolog12)
+
+
 
 STATIC FUNCTION ARFPromVp( cIdKonto, nPolog01, nPolog02, nPolog03, nPolog04, nPolog05, nPolog06, nPolog07, nPolog08, nPolog09, nPolog10, nPolog11, nPolog12 )
 
-   // {
 
    SELECT ppprod
    -- SEEK cIdKonto
@@ -568,6 +566,6 @@ STATIC FUNCTION ARFPromVp( cIdKonto, nPolog01, nPolog02, nPolog03, nPolog04, nPo
    my_unlock()
 
    RETURN
-// }
+
 
 */

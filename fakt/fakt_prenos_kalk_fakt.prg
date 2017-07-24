@@ -487,7 +487,7 @@ FUNCTION kalkp_2_fakt()
          IF lToRacun == .T.
             select_o_partner( cFaktPartn )
          ELSE
-            select_o_parter( cIdPartner )
+            select_o_partner( cIdPartner )
          ENDIF
 
          nRokPl := 0

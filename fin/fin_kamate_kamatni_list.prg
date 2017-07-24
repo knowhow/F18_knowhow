@@ -83,7 +83,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
    ENDIF
 
    SELECT kam_pripr
-   SEEK cIdPartner
+   SEEK cIdPartner // kam_pripr
 
    IF lPrintKamatniList
 

@@ -84,7 +84,7 @@ FUNCTION fakt_uplate()
 
       @ m_x + 4, m_y + 1 SAY REPL( "=", 70 )
 
-      SEEK cIdPartner
+      SEEK cIdPartner // uplate
       my_db_edit_sql( "EvUpl", f18_max_rows() -5, f18_max_cols() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
          .F., NIL, 1, NIL, 4, 3, NIL, {| nSkip| fakt_uplate_skip_block( nSkip ) } )
 
@@ -205,7 +205,7 @@ FUNCTION UkUplata( lPushWA )
       SET ORDER TO TAG "2"
    ENDIF
 
-   SEEK cIdPartner
+   SEEK cIdPartner // uplate
 
    DO WHILE !Eof() .AND. idpartner == cIdPartner
       IF datupl >= dDatOd .AND. datupl <= dDatDo
@@ -289,10 +289,10 @@ STATIC FUNCTION StKartKup()
    ? "DAT.UPL.³" + PadC( "OPIS", Len( opis ) ) + "³" + PadC( "IZNOS", 10 )
    ? "-------- " + REPL( "-", Len( opis ) ) + " " + REPL( "-", 10 )
 
-   SEEK cIdPartner
+   SEEK cIdPartner // uplate
    DO WHILE !Eof() .AND. idpartner == cIdPartner
       ? datupl
-      ?? "³" + opis + "³"
+      ?? "|" + opis + "|"
       ?? TRANS( iznos, "9999999.99" )
       SKIP 1
    ENDDO

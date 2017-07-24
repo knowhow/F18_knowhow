@@ -56,6 +56,12 @@ FUNCTION select_o_kam_pripr()
    RETURN select_o_dbf( "KAM_PRIPR", F_KAMPRIPR, "kam_pripr", "1" )
 
 
+FUNCTION o_bruto_bilans_klase()
+
+   RETURN o_dbf_table( F_BBKLAS, "bbklas", "1" )
+
+
+
 FUNCTION o_nalog( lSql, cIdVN )
 
    hb_default( @lSql, .F. )

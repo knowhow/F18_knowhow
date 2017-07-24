@@ -400,7 +400,7 @@ STATIC FUNCTION fin_export_impl( hVars, a_details )
             hRec := dbf_get_rec()
             SELECT e_konto
             SET ORDER TO TAG "ID"
-            SEEK _id_konto
+            SEEK _id_konto // e_konto
             IF !Found()
                APPEND BLANK
                dbf_update_rec( hRec )
@@ -415,7 +415,7 @@ STATIC FUNCTION fin_export_impl( hVars, a_details )
             hRec := dbf_get_rec()
             SELECT e_partn
             SET ORDER TO TAG "ID"
-            SEEK cIdPartner
+            SEEK cIdPartner // e_partn
             IF !Found()
                APPEND BLANK
                dbf_update_rec( hRec )

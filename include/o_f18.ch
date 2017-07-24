@@ -87,7 +87,6 @@
 //#xcommand o_sint()SUB   => select (F_SUBAN);    my_use("suban")     ; set order to tag "1"
 //#xcommand O_BUDZET    => select (F_BUDZET);   my_use("budzet")    ; set order to tag "1"
 //#xcommand O_PAREK     => select (F_PAREK);    my_use("parek")     ; set order to tag "1"
-#xcommand O_BBKLAS    => select (F_BBKLAS);   my_use("bbklas")    ; set order to tag "1"
 
 
 //#xcommand OX_KONTO    => select (F_KONTO);  my_usex ("konto")  ;  set order to tag "ID"

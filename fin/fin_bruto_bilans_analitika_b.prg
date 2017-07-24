@@ -56,9 +56,9 @@ FUNCTION fin_bb_analitika_b( hParams )
 
    fin_bb_txt_header()
 
-   o_konto()
+   //o_konto()
    //o_partner()
-   O_BBKLAS
+   o_bruto_bilans_klase()
 
    IF gFinRj == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
@@ -161,8 +161,7 @@ FUNCTION fin_bb_analitika_b( hParams )
             ?? "."
             @ PRow(), 10 SAY cIdKonto
 
-            SELECT KONTO
-            HSEEK cIdKonto
+            select_o_konto( cIdKonto )
 
             IF cFormat == "1"
                @ PRow(), 19 SAY naz

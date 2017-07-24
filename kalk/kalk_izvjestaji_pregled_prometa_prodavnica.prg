@@ -468,7 +468,7 @@ STATIC FUNCTION AFPos( cIdKonto, cVisaNiza, nCijena, nCijenaBp, nKolicina )
    LOCAL nPari
 
    SELECT ppprod
-   SEEK cIdKonto
+  -- SEEK cIdKonto
 
    my_flock()
 
@@ -543,7 +543,7 @@ STATIC FUNCTION ARFPromVp( cIdKonto, nPolog01, nPolog02, nPolog03, nPolog04, nPo
    // {
 
    SELECT ppprod
-   SEEK cIdKonto
+   -- SEEK cIdKonto
 
    my_flock()
 

@@ -26,7 +26,7 @@ FUNCTION PrintParovno( nKolUlaz, nKolIzlaz )
    @ PRow(), PCol() + 1  SAY  nKolUlaz - nKolIzlaz PICT "9,999,999"
    ? Replicate( "=", 80 )
 
-   RETURN
+   RETURN .T.
 
 // -------------------------------------------
 // vraca naziv prodavnice iz tabele OBJEKTI
@@ -40,7 +40,7 @@ FUNCTION get_prod_naz( cIdKonto )
    SELECT objekti
    SET ORDER TO TAG "idobj"
    GO TOP
-   SEEK cIdKonto
+   SEEK cIdKonto // objekti
 
    IF Found()
       cNaz := AllTrim( field->naz )

@@ -174,7 +174,7 @@ FUNCTION prenos_fin_kam()
 
       SELECT kam_pripr
       nTekuciRec := RecNo()
-      SEEK cIdPartner
+      SEEK cIdPartner // kam_pripr
 
       my_flock()
 

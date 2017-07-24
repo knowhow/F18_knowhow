@@ -90,7 +90,7 @@ FUNCTION fin_kamate_print()
       ENDIF
 
       SELECT kam_pripr
-      SEEK cIdPartner + Chr( 250 )
+      SEEK cIdPartner + Chr( 250 ) // kam_pripr
 
    ENDDO
 

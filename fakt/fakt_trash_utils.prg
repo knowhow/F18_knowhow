@@ -132,7 +132,7 @@ STATIC FUNCTION P9SetFilter( aUslFirma, aUslDok, dDat1, dDat2 )
 
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _get_partner( cIdPartner )
@@ -141,11 +141,7 @@ STATIC FUNCTION _get_partner( cIdPartner )
    LOCAL cPartner
 
    nTArea := Select()
-   SELECT partn
-   GO TOP
-   SEEK cIdPartner
-
-   IF Found()
+   IF select_o_partner( cIdPartner )
       cPartner := field->naz
    ELSE
       cPartner := "????????"

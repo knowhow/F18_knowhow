@@ -123,7 +123,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
    cIdFirma := self_organizacija_id()
 
 --   SELECT koncij
-   SEEK Trim( cPKonto )
+--   SEEK Trim( cPKonto )
 
    SELECT roba
    SET ORDER TO TAG "ID"

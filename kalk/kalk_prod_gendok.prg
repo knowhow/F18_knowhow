@@ -296,7 +296,7 @@ FUNCTION NivPoProc()
   -- SELECT koncij
    SEEK Trim( cidkonto )
    SELECT kalk
-   HSEEK cidfirma + cidkonto
+  -- HSEEK cidfirma + cidkonto
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == idFirma + pKonto
 

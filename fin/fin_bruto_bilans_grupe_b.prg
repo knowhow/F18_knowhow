@@ -51,7 +51,7 @@ FUNCTION fin_bb_grupe_b( params )
 
    //o_partner()
    o_konto()
-   O_BBKLAS
+   o_bruto_bilans_klase()
 
    SELECT BBKLAS
    my_dbf_zap()

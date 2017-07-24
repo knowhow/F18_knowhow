@@ -294,11 +294,7 @@ FUNCTION g_part_fax( cIdPartner )
 
    PushWA()
 
-   SELECT F_PARTN
-   IF !Used()
-      o_partner()
-   ENDIF
-   SEEK cIdPartner
+   select_o_partner( cIdPartner )
    IF !Found()
       cFax := "!NOFAX!"
    ELSE

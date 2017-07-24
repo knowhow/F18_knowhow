@@ -1,15 +1,15 @@
 # F18 klijent, lista promjena
 
-## 3.0.10-vindi, 2017-07-24
+## 3.0.11-std, 2017-07-24
 
 ### Korisnik
 #### KALK 
-- BUGFIX import vindija varazdin tipdok 96, ignorisi partnera
+- specifična opcija import vindija varazdin izbačeno iz standardne verzije
 
 ### Developer
 - iz std verzije izbacena opcija import vindija varazdin
 
-## 3.0.9-vindi, 2017-07-24
+## 3.0.8-std, 2017-07-24
 
 ### Korisnik
 

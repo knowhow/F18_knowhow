@@ -86,7 +86,7 @@ FUNCTION os_pregled_revalorizacije()
    ELSE
       SET ORDER TO TAG "3"
       // "OSi3","idrj+idkonto+id"
-      SEEK cidrj + qidkonto
+      SEEK cIdrj + qIdkonto
    ENDIF
 
    PRIVATE nrbr := 0

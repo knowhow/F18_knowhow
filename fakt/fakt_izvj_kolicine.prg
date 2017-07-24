@@ -309,8 +309,7 @@ FUNCTION spec_kol_partn()
 
       IF lUbaci == .T.
 
-         SELECT partn
-         SEEK cPartner
+         select_o_partner( cPartner )
          SELECT fakt
 
          fill_exp_tbl( ;

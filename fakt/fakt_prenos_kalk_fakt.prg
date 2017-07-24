@@ -181,12 +181,9 @@ FUNCTION kalk_2_fakt()
 
          IF lFirst == .T.
 
-            SELECT PARTN
-
             IF lToRacun == .T.
 
-               HSEEK cFaktPartn
-
+               select_o_partner( cFaktPartn )
                nRokPl := get_partn_sifk_sifv( "ROKP", cFaktPartn, .F. )
                IF ValType( nRokPl ) == "N" .AND. nRokPl > 0
                   dDatPl := dDatDok + nRokPl
@@ -195,7 +192,7 @@ FUNCTION kalk_2_fakt()
                ENDIF
 
             ELSE
-               HSEEK KALK->idpartner
+               select_o_partner( KALK->idpartner )
             ENDIF
 
             cTxta := PadR( partn->naz, 30 )
@@ -486,13 +483,11 @@ FUNCTION kalkp_2_fakt()
          LOOP
       ELSE
 
-         // nasteli partnera
-         SELECT partn
 
          IF lToRacun == .T.
-            HSEEK cFaktPartn
+            select_o_partner( cFaktPartn )
          ELSE
-            HSEEK cIdPartner
+            select_o_parter( cIdPartner )
          ENDIF
 
          nRokPl := 0
@@ -550,12 +545,12 @@ FUNCTION kalkp_2_fakt()
             IF lFirst
 
                nRBr := 1
-               SELECT PARTN
+
 
                IF lToRacun == .T.
-                  HSEEK cFaktPartn
+                  select_o_partner( cFaktPartn )
                ELSE
-                  HSEEK cIdPartner
+                  select_o_partner( cIdPartner )
                ENDIF
 
                _Txt3a := PadR( cIdPartner + ".", 30 )

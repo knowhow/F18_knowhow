@@ -118,7 +118,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
    ENDIF
 
   -- SELECT koncij
-   SEEK Trim( cidkonto )
+  -- SEEK Trim( cidkonto )
    SELECT kalk
 
    EOF CRET

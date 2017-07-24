@@ -307,7 +307,7 @@ FUNCTION knjizno_stanje_prodavnica()
   -- SELECT roba
 --   HSEEK cIdRoba
 --   SELECT koncij
-   HSEEK cIdKonto
+--   HSEEK cIdKonto
 
    SELECT kalk
 
@@ -1124,7 +1124,7 @@ STATIC FUNCTION rpt_dok_na_stanju( aDoks )
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 /*
@@ -1146,7 +1146,7 @@ STATIC FUNCTION tops_dok_na_stanju( cFirma, cIdVd, cBrDok, cKonto )
 
 --   SELECT koncij
    SET ORDER TO TAG "ID"
-   HSEEK cKonto
+--   HSEEK cKonto
 
    IF Found()
       cTKPath := AllTrim( field->kumtops )

@@ -55,8 +55,8 @@ FUNCTION fin_bb_sintetika_b( params )
 
    fin_bb_txt_header()
 
-   o_konto()
-   O_BBKLAS
+   //o_konto()
+   o_bruto_bilans_klase()
 
 
    IF gFinRj == "D" .AND. Len( cIdRJ ) <> 0
@@ -189,8 +189,7 @@ FUNCTION fin_bb_sintetika_b( params )
 
             @ PRow() + 1, 1 SAY cIdKonto
 
-            SELECT KONTO
-            HSEEK cIdKonto
+            select_o_konto( cIdKonto )
 
             aNaziv := SjeciStr( naz, 30 )
             nColNaz := PCol() + 1

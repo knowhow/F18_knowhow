@@ -1,10 +1,11 @@
+# F18 klijent, lista promjena
 
-## 3.0.8-std, 3.0.9-vindi 24.07.17
+## 3.0.8-std, 3.0.9-vindi, 2017-07-24
 
 ## Korisnik
 
-Fix sintetički, analitički bruto bilans
-
+- Fix run sintetički, analitički bruto bilans
+- Fix lista naloga sa provjerom integriteta
 
 ## Developer
 

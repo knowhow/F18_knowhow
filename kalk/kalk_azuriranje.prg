@@ -26,7 +26,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
       lAuto := .F.
    ENDIF
 
-   IF !lAuto .AND. Pitanje(, "Želite li izvrsiti ažuriranje KALK dokumenta (D/N) ?", "N" ) == "N"
+   IF !lAuto .AND. Pitanje(, "Želite li izvršiti ažuriranje KALK dokumenta (D/N) ?", "N" ) == "N"
       RETURN .F.
    ENDIF
 

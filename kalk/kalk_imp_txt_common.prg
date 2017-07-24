@@ -425,10 +425,11 @@ FUNCTION kalk_imp_partn_exist()
    LOCAL aRet, nCount := 0
 
    select_o_kalk_imp_temp()
+   GO TOP
 
    aRet := {}
 
-   IF FieldPos( "idipdok" ) <> 0  .AND. kalk_imp_temp->idtipdok == "96" // ovo polje postoji samo kada kalk_imp_temp sadrzi racune; za tip 96 polje partner je prazno
+   IF FieldPos( "idtipdok" ) <> 0  .AND. kalk_imp_temp->idtipdok == "96" // ovo polje idtipdok postoji samo kada kalk_imp_temp sadrzi racune; za tip 96 polje partner je prazno
       RETURN aRet
    ENDIF
 

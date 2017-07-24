@@ -92,7 +92,6 @@ FUNCTION kalk_auto_import_racuni()
    PRIVATE lFtSkip := .F.
    PRIVATE lNegative := .F.
 
-
    kalk_imp_txt_set_a_dbf_temp( @aDbf ) // setuj polja temp tabele u matricu aDbf
    kalk_imp_set_rule_dok( @aRules ) // setuj pravila upisa podataka u temp tabelu
    kalk_imp_txt_to_temp( aDbf, aRules, cImpFile ) // prebaci iz txt => temp tbl
@@ -578,21 +577,21 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
       start_print_editor()
 
       IF ( Len( aPomPart ) > 0 )
-         ?U "Lista nepostojećih partnera:"
+         ?U "P) Lista nepostojećih partnera:"
          ? "------------------------------"
          ?
          FOR i := 1 TO Len( aPomPart )
-            ? aPomPart[ i, 1 ]
+            ? Str( i, 4 ), aPomPart[ i, 1 ]
          NEXT
          ?
       ENDIF
 
       IF ( Len( aPomRoba ) > 0 )
-         ?U "Lista nepostojećih artikala (sifradob):"
+         ?U "R) Lista nepostojećih artikala (sifradob):"
          ? "-------------------------------------------"
          ?
          FOR i := 1 TO Len( aPomRoba )
-            ? aPomRoba[ i, 1 ]
+            ? Str( i, 4), aPomRoba[ i, 1 ]
          NEXT
          ?
       ENDIF

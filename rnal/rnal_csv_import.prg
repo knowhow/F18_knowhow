@@ -195,8 +195,8 @@ METHOD RnalCsvImport:csv_browse()
    LOCAL nDbfArea := Select()
    LOCAL _ret := 0
    LOCAL _header := "Pregled importovanih podataka CSV fajla..."
-   LOCAL _x := m_x
-   LOCAL _y := m_y
+   LOCAL nX := m_x
+   LOCAL nY := m_y
    LOCAL nI
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
@@ -230,8 +230,8 @@ METHOD RnalCsvImport:csv_browse()
 
    BoxC()
 
-   m_x := _x
-   m_y := _y
+   m_x := nX
+   m_y := nY
 
    SELECT ( nDbfArea )
 
@@ -261,7 +261,7 @@ METHOD RnalCsvImport:csv_browse_key_handler()
 METHOD RnalCsvImport:get_vars()
 
    LOCAL _ok := .F.
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _import_path := PadR( fetch_metric( "rnal_csv_import_path", my_user(), "" ), 200 )
    LOCAL _imp_ok := "D"
    LOCAL _csv_file := ""
@@ -270,15 +270,15 @@ METHOD RnalCsvImport:get_vars()
 
    Box(, 5, 60 )
 
-   @ m_x + _x, m_y + 2 SAY "*** import CSV fajla"
+   @ m_x + nX, m_y + 2 SAY "*** import CSV fajla"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Lokacija fajla:" GET _import_path PICT "@S35"
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Lokacija fajla:" GET _import_path PICT "@S35"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Izvrsiti import fajla (D/N) ?" GET _imp_ok VALID _imp_ok $ "DN" PICT "@!"
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY8 "Izvršiti import fajla (D/N) ?" GET _imp_ok VALID _imp_ok $ "DN" PICT "@!"
 
    READ
 

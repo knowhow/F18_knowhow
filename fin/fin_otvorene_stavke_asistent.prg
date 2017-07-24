@@ -557,7 +557,7 @@ FUNCTION fin_asistent_otv_st()
 
    MsgBeep( "U slucaju da ažurirate rezultate asistenta#program će izmijeniti sadržaj subanalitičkih podataka !" )
 
-   IF Pitanje(, "Želite li izvrsiti ažuriranje rezultata asistenta u kumulativ (D/N) ?", "N" ) == "D"
+--   IF Pitanje(, "Želite li izvrsiti ažuriranje rezultata asistenta u kumulativ (D/N) ?", "N" ) == "D"
 
       SELECT ( F_OSUBAN )
       my_use_temp( "OSUBAN", my_home() + my_dbf_prefix() + "osuban", .F., .T. )

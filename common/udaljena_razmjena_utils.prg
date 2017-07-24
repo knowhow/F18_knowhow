@@ -81,6 +81,59 @@ FUNCTION get_import_file( modul, import_dbf_path )
    RETURN _file
 
 
+// ------------------------------------------------------
+// Pregled liste exportovanih dokumenata te odabir
+// zeljenog fajla z import
+// - param cFilter - filter naziva dokumenta
+// - param cPath - putanja do exportovanih dokumenata
+// ------------------------------------------------------
+FUNCTION get_file_list( cFilter, cPath, cImpFile )
+
+   OpcF := {}
+
+
+   aFiles := Directory( cPath + cFilter )  // cFilter := "*.txt"
+
+
+   IF Len( aFiles ) == 0 // da li postoje fajlovi
+      MsgBeep( "U direktoriju za prenos nema podataka!##" + cPath + cFilter )
+      RETURN 0
+   ENDIF
+
+   // sortiraj po datumu
+   ASort( aFiles,,, {| x, y | x[ 3 ] > y[ 3 ] } )
+   AEval( aFiles, {| elem | AAdd( OpcF, PadR( elem[ 1 ], 15 ) + " " + DToC( elem[ 3 ] ) ) }, 1 )
+   // sortiraj listu po datumu
+   ASort( OpcF,,, {| x, y | Right( x, 10 ) > Right( y, 10 ) } )
+
+   h := Array( Len( OpcF ) )
+   FOR i := 1 TO Len( h )
+      h[ i ] := ""
+   NEXT
+
+   // selekcija fajla
+   IzbF := 1
+   lRet := .F.
+   DO WHILE .T. .AND. LastKey() != K_ESC
+      IzbF := meni_0( "imp", OpcF, IzbF, .F. )
+      IF IzbF == 0
+         EXIT
+      ELSE
+         cImpFile := Trim( cPath ) + Trim( Left( OpcF[ IzbF ], 15 ) )
+         IF Pitanje( , "Želite li izvršiti import fajla ?", "D" ) == "D"
+            IzbF := 0
+            lRet := .T.
+         ENDIF
+      ENDIF
+   ENDDO
+   IF lRet
+      RETURN 1
+   ELSE
+      RETURN 0
+   ENDIF
+
+   RETURN 1
+
 /*
  update tabele konto na osnovu pomocne tabele
 */

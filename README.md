@@ -1,5 +1,10 @@
 # F18
 
+## F18 log promjena
+
+[F18 CHANGELOG][CHANGELOG.md]
+
+
 ## F18 klijent korištenje
 
 ### vise instanci F18

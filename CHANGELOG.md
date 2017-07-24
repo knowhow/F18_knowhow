@@ -1,9 +1,23 @@
 # F18 klijent, lista promjena
 
+## 3.1.3-std, 2017-07-24
+
+### Korisnik
+
+#### CORE
+- F18 upgrade različiti kanali, izbačen F18 template
+
+### Developer
+- f18_admin.prg cleanup:
+** iz upotrebe izbačen UPDATE_INFO
+** f18_templates nije u upgrade shemi
+** http://download.bring.out.ba/ hardkodiran
+
+
 ## 3.0.11-std, 2017-07-24
 
 ### Korisnik
-#### KALK 
+#### KALK
 - specifična opcija import vindija varazdin izbačeno iz standardne verzije
 
 ### Developer

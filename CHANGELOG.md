@@ -1,13 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.X, 2017-07-25
-
-### Developer
-
-- OUT: f18_admin.prg upgrade_db
-
-
-## 3.1.5-vindi, 2017-07-24
+## 3.1.6, 2017-07-25
 
 ### Korisnik
 
@@ -18,9 +11,10 @@ Primjer:
 
 Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana verzija je 3.1.10, tada se ne predlaže downgrade na 3.1.5.
 
+
 ### Developer
 - f18_update.prg - nove funkcije f18_builtin_version_h, f18_available_version_h,  f18_preporuci_upgrade( cVersion )
-
+- OUT: f18_admin.prg upgrade_db
 
 ## 3.1.4-vindi, 2017-07-24
 

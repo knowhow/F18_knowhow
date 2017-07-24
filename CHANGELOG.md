@@ -13,7 +13,7 @@
   - iz upotrebe izbačen UPDATE_INFO
   - templates.zip se više ne koristi, nema ga u formi za upgrade
   - lokacija F18 verzija http://download.bring.out.ba/ hardkodirana
-
+  - OUT: update_db
 
 ## 3.0.11-std, 2017-07-24
 

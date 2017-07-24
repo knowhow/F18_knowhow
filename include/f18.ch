@@ -615,7 +615,7 @@
 
 #define F18_DOWNLOAD_BASE_URL "https://raw.github.com/knowhow/F18_knowhow"
 #define F18_VERZIJA "3"
-#define F18_VARIJANTA "vindi"
+#define F18_VARIJANTA "std"
 
 
 #define FIELD_LENGTH_LD_RADKR_NA_OSNOVU 20

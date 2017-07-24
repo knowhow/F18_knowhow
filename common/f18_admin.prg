@@ -23,8 +23,8 @@ CLASS F18Admin
 
    METHOD new()
 
-   METHOD update_db()
-   DATA update_db_result
+   //METHOD update_db()
+   //DATA update_db_result
 
    METHOD create_new_pg_db()
    METHOD drop_pg_db()
@@ -45,10 +45,10 @@ CLASS F18Admin
 
    PROTECTED:
 
-   METHOD update_db_download()
-   METHOD update_db_all()
-   METHOD update_db_company()
-   METHOD update_db_command()
+   //METHOD update_db_download()
+   //METHOD update_db_all()
+   //METHOD update_db_company()
+   //METHOD update_db_command()
    METHOD create_new_pg_db_params()
 
    METHOD update_app_form()
@@ -68,7 +68,7 @@ ENDCLASS
 
 METHOD F18Admin:New()
 
-   ::update_db_result := {}
+   //::update_db_result := {}
    ::create_db_result := {}
 
    IF ! ::relogin_as_admin( "postgres" )
@@ -533,7 +533,7 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
 
 
 
-
+/*
 
 METHOD F18Admin:update_db()
 
@@ -777,7 +777,7 @@ METHOD F18Admin:update_db_company( cOrganizacija )
 
    RETURN lOk
 
-
+*/
 
 
 METHOD F18Admin:razdvajanje_sezona()
@@ -910,7 +910,6 @@ METHOD F18Admin:razdvajanje_sezona()
    start_refresh_operations()
 
    RETURN .T.
-
 
 
 

@@ -518,45 +518,19 @@
 #command ??E [ <xList,...> ] => OutErr( <xList> )
 
 // ----- fin.ch ------------
-#define D_FI_VERZIJA "0.9.0"
-#define D_FI_PERIOD "11.94-25.11.11"
 #define DABLAGAS lBlagAsis .and. _IDVN == cBlagIDVN
-
-// ------- ld.ch -----------
-#define D_LD_VERZIJA "0.2.0"
-#define D_LD_PERIOD "06.96-10.11.11"
 
 #define RADNIK          radn->(PADR(TRIM(naz)+" ("+TRIM(imerod)+") "+ime,35))
 #define RADNIK_PREZ_IME radn->(PADR(TRIM(naz) +" ("+TRIM(imerod)+") "+ime,35))
 
 #define RADNZABNK radn->(PADR(TRIM(naz)+" ("+TRIM(imerod)+") "+TRIM(ime), 40))
 
-// ------ epdv ---------
-#define D_EPDV_VERZIJA "0.2.0"
-#define D_EPDV_PERIOD "06.04-10.11.11"
-
-
-// ------- fakt --------------
-#define D_FAKT_VERZIJA "0.3.0"
-#define D_FAKT_PERIOD "11.94-19.11.11"
 
 #define __g10Str2T g10Str2T
 #define __g10Str g10Str
 
 #define FAKT_DOKS_PARTNER_LENGTH 100
 
-// --------- os --------------
-#define D_OS_VERZIJA "0.2.0"
-#define D_OS_PERIOD "06.98-10.11.11"
-
-// -------- mat ------------------
-#define D_MAT_VERZIJA "0.2.0"
-#define D_MAT_PERIOD "06.98-10.11.11"
-
-
-// ------ POS ---------
-#define D_POS_VERZIJA "0.2.0"
-#define D_POS_PERIOD "06.95-10.11.11"
 
 // definicija korisnickih nivoa
 #define L_SYSTEM           "0"
@@ -620,5 +594,3 @@
 
 #define FIELD_LENGTH_LD_RADKR_NA_OSNOVU 20
 #define FIELD_LD_RADN_IDBANKA 6
-
-#define DRVPATH ":\"

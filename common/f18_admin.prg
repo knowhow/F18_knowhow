@@ -281,7 +281,7 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
 
    Box(, 10, 65 )
 
-   @ m_x + nX, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR f18_color_i()
+   @ m_x + nX, m_y + 2 SAY PadR( "## UGRADE F18 aplikacije ##", 64 ) COLOR f18_color_i()
    ++nX
    ++nX
    @ m_x + nX, m_y + 2 SAY cLine := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )

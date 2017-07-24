@@ -378,6 +378,8 @@ STATIC FUNCTION set_program_module_menu( aMeniOpcije, aMeniExec, p3, p4, p5, p6,
    AAdd( aMeniExec, {|| f18_promjena_sezone() } )
    AAdd( aMeniOpcije, " B. backup podataka" )
    AAdd( aMeniExec, {|| f18_backup_now() } )
+   AAdd( aMeniOpcije, " U. nadogradnja (upgrade) verzije" )
+   AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
 
 
    AAdd( aMeniOpcije, " P. parametri aplikacije" )

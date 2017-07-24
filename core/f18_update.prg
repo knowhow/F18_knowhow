@@ -70,7 +70,7 @@ FUNCTION f18_available_version()
    RETURN s_cDownloadVersion
 
 
-FUNCTION f18_available_version_h()
+FUNCTION f18_builtin_version_h()
    RETURN f18_version_h( f18_ver() )
 
 FUNCTION f18_available_version_h()
@@ -115,7 +115,6 @@ FUNCTION f18_preporuci_upgrade( cVersion )
    ENDIF
 
    hVersion := f18_builtin_version_h()
-
    hAvailableVersion := f18_available_version_h()
 
    IF hVersion[ "major" ] != hAvailableVersion[ "major" ]

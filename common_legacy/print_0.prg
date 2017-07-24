@@ -36,7 +36,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
       cFName := cF
    ENDIF
 
-   IF ( cDocumentName == nil )
+   IF ( cDocumentName == NIL )
       cDocumentName :=  gModul + '_' + DToC( Date() )
    ENDIF
 
@@ -88,7 +88,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
          IF InRange( Val( gPPort ), 5, 7 )  .OR. ;
                ( Val( gPPort ) = 8 ) .OR. ;
                ( Val( gPPort ) = 9 ) .OR. ;
-               ( Val( gPPort ) < 4 .AND. printready( Val( gPPort ) ) )
+               ( Val( gPPort ) < 4 .AND. PrintReady( Val( gPPort ) ) )
 
             // 8 - copy lpt1
             EXIT
@@ -133,29 +133,24 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
    IF cKom = "LPT1" .AND. gPPort <> "8"
       SET PRINTER TO
 
-   ELSEIF ckom == "LPT2" .AND. gPPort <> "9"
+   ELSEIF cKom == "LPT2" .AND. gPPort <> "9"
       Set( 24, "lpt2", .F. )
    ELSE
-      // radi se o fajlu
-      IF DRVPATH $ cKom
+
+      IF SLASH $ cKom   // radi se o fajlu
 
          BEGIN SEQUENCE
-            SET PRINTER to ( ckom )
+            SET PRINTER TO ( cKom )
          recover
-            bErr := ErrorBlock( bErr )
-            cKom := ToUnix( "C" + DRVPATH + "sigma" + SLASH + cFName )
-            IF gnDebug >= 5
-               MsgBeep( "Radi se o fajlu !##set printer to (cKom)##var cKom=" + AllTrim( cKom ) )
-            ENDIF
-
-            SET PRINTER to ( cKom )
+            Alert( "ERROR: SET PRINTER TO " + AllTrim( cKom ) )
+            QUIT_1
          END SEQUENCE
 
       ELSE
          IF gnDebug >= 5
             MsgBeep( "set printer to (cKom)##var cKom=" + AllTrim( cKom ) )
          ENDIF
-         SET PRINTER to ( ckom )
+         SET PRINTER TO ( ckom )
       ENDIF
 
    ENDIF
@@ -239,7 +234,7 @@ FUNCTION EndPrint()
          // direktno na printer, ali preko outf.txt
          cKom := ckom + " LPT" + gPPort
          cPom := cKom
-         !copy &cPom
+         !COPY &cPom
 
       ELSEIF gPPort $ "89" .AND. cPrinter = "D"
          cKom := ckom + " LPT"
@@ -249,7 +244,7 @@ FUNCTION EndPrint()
             cKom += "2"
          ENDIF
          cPom := cKom
-         !copy &cPom
+         !COPY &cPom
          IF gnDebug >= 5
             MsgBeep( "LPT port 8 ili 9##!copy " + AllTrim( cKom ) )
          ENDIF
@@ -351,7 +346,7 @@ FUNCTION SPrint2( cKom )
       IF ( SLASH $  cKom ) .OR. InRange( nNPort, 5, 7 )  .OR. ;
             ( nNPort = 8 ) .OR.  ;
             ( nNPort = 9 ) .OR.  ;
-            ( nNPort < 4 .AND. printready( Val( gPPort ) ) )
+            ( nNPort < 4 .AND. PrintReady( Val( gPPort ) ) )
          EXIT
       ELSE
          Beep( 2 )
@@ -395,7 +390,7 @@ FUNCTION SPrint2( cKom )
       IF gnDebug >= 5
          MsgBeep( "set printer to (cKom) " + AllTrim( cKom ) )
       ENDIF
-      SET PRINTER to ( cKom )
+      SET PRINTER TO ( cKom )
    ENDIF
    IF gnDebug >= 5
       MsgBeep( "SPrint2(), set printer to (cKom)##var cKom=" + AllTrim( cKom ) + "##var cDDir=" + AllTrim( cDDir ) )
@@ -440,7 +435,7 @@ FUNCTION EPrint2( xPos )
             MsgBeep( "Pocni stampu" )
          ENDIF
 
-         !copy &cPom
+         !COPY &cPom
 
          IF gnDebug >= 5
             MsgBeep( "Zavrsio stampu! Vracam screen!" )
@@ -455,14 +450,14 @@ FUNCTION EPrint2( xPos )
    IF gOpSist $ "W2000WXP"
       SAVE SCREEN TO cS
       cPom := EXEPATH + "dummy.txt"
-      !copy &cPom
+      !COPY &cPom
       RESTORE SCREEN FROM cS
    ENDIF
 
    IF gnDebug >= 5
       cPom := EXEPATH + "dummy.txt"
       MsgBeep( AllTrim( cPom ) )
-      !copy &cPom
+      !COPY &cPom
    ENDIF
 
    f18_tone( 440, 2 )
@@ -488,7 +483,7 @@ FUNCTION PPrint()
    SET CURSOR ON
 
    SetKey( K_SH_F2, NIL )
-   SetKey( K_ALT_R, {|| UzmiPPr(), AEval( GetList, {| o| o:display() } ) } )
+   SetKey( K_ALT_R, {|| UzmiPPr(), AEval( GetList, {| o | o:display() } ) } )
    PRIVATE GetList := {}
 
    O_GPARAMS
@@ -532,7 +527,7 @@ FUNCTION PPrint()
          AAdd( aHistory, { ch } )
       ENDDO
       IF Len( aHistory ) > 0
-         gPrinter := ( ABrowse( aHistory, 10, 1, {| ch|  HistUser( ch ) } ) )[ 1 ]
+         gPrinter := ( ABrowse( aHistory, 10, 1, {| ch |  HistUser( ch ) } ) )[ 1 ]
       ELSE
          gPrinter := " "
       ENDIF
@@ -677,7 +672,7 @@ FUNCTION GetPStr( cStr, nDuzina )
       // slova
       IF Asc( cNum ) >= 33 .AND. Asc( cNum ) <= 126
          IF fSl  // proslo je bilo slovo
-            cPom := Left( cPom, Len( cPom ) -1 ) + cNum + SLASH
+            cPom := Left( cPom, Len( cPom ) - 1 ) + cNum + SLASH
          ELSE
             cPom += "'" + cNum + SLASH
          ENDIF
@@ -701,7 +696,7 @@ FUNCTION GuSt( nZnak, cPapir )
       RETURN gP12cpi
    ENDIF
 
-   nZnak = IF( cPapir == "4", nZnak * 2 -1, nZnak )
+   nZnak = IF( cPapir == "4", nZnak * 2 - 1, nZnak )
 
    RETURN iif( nZnak < 161, gP10cpi, iif( nZnak < 193, gP12cpi, iif( nZnak < 275, gPCOND, gPCond2 ) ) )
 
@@ -717,10 +712,10 @@ FUNCTION GuSt2( nZnak, cPapir )
    ENDIF
 
    IF cPapir == "4"
-      nZnak := nZnak * 2 -1
+      nZnak := nZnak * 2 - 1
    ELSE
       IF  cPapir == "L4"
-         nZnak := nZnak * 1.4545 -1
+         nZnak := nZnak * 1.4545 - 1
       ENDIF
    ENDIF
 

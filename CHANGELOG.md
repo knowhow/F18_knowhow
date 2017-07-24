@@ -1,5 +1,20 @@
 # F18 klijent, lista promjena
 
+## 3.1.5-vindi, 2017-07-24
+
+### Korisnik
+
+#### CORE
+- F18 upgrade - ako je F18 patch broj instalirana > F18 aktuelna ne predlagati downgrade. 
+
+Primjer:
+
+Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana verzija je 3.1.10, tada se ne predlaže downgrade na 3.1.5.
+
+### Developer
+- f18_update.prg - nove funkcije f18_builtin_version_h, f18_available_version_h,  f18_preporuci_upgrade( cVersion )
+
+
 ## 3.1.4-vindi, 2017-07-24
 
 ### Korisnik

@@ -1,13 +1,22 @@
 # F18 klijent, lista promjena
 
+## 3.0.10-vindi, 2017-07-24
+
+### Korisnik
+#### KALK 
+- BUGFIX import vindija varazdin tipdok 96, ignorisi partnera
+
+### Developer
+- iz std verzije izbacena opcija import vindija varazdin
+
 ## 3.0.9-vindi, 2017-07-24
 
-## Korisnik
+### Korisnik
 
-## FIN
+#### FIN
 - BUGFIX run sintetički, analitički bruto bilans
 - BUGFIX lista naloga sa provjerom integriteta
 
-## Developer
+### Developer
 
-"trijebljenje" do iznemoglosti select_o_partner(), select_o_konto()
+- "trijebljenje" do iznemoglosti select_o_partner(), select_o_konto()

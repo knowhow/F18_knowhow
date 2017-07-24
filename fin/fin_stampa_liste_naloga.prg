@@ -155,10 +155,10 @@ FUNCTION fin_stampa_liste_naloga()
       IF FieldPos( "SIFRA" ) <> 0
          @ PRow(), PCol() + 1 SAY iif( Empty( sifra ), Space( 2 ), Left( Crypt( sifra ), 2 ) )
       ENDIF
+
       IF cInteg == "D"
 
-         SELECT SUBAN
-         SEEK NALOG->( IDFirma + Idvn + Brnal )
+         find_suban_by_broj_dokumenta( nalog->IdFirma, nalog->IdVN, nalog->BrNal )
          nDug := 0.00
          nPot := 0.00
          DO WHILE ( IDFirma + Idvn + Brnal ) == NALOG->( IDFirma + Idvn + Brnal )  .AND. !Eof()
@@ -176,9 +176,7 @@ FUNCTION fin_stampa_liste_naloga()
             ?? " ERR "
          ENDIF
 
-         SELECT ANAL
-         SEEK NALOG->( IDFirma + Idvn + Brnal )
-
+         find_anal_by_broj_dokumenta( nalog->IdFirma, nalog->IdVN, nalog->BrNal )
          nDug := 0.00
          nPot := 0.00
          DO WHILE ( IDFirma + Idvn + Brnal ) == NALOG->( IDFirma + Idvn + Brnal ) .AND. !Eof()
@@ -194,8 +192,7 @@ FUNCTION fin_stampa_liste_naloga()
             ?? " ERR "
          ENDIF
 
-         SELECT SINT
-         SEEK NALOG->( IDFirma + Idvn + Brnal )
+         find_sint_by_broj_dokumenta( nalog->IdFirma, nalog->IdVN, nalog->BrNal )
          nDug := 0.00
          nPot := 0.00
          DO WHILE ( IDFirma + Idvn + Brnal ) == NALOG->( IDFirma + Idvn + Brnal ) .AND. !Eof()

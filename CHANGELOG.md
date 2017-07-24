@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.0.8-std, 2017-07-24
+## 3.0.9-vindi, 2017-07-24
 
 ## Korisnik
 

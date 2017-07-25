@@ -107,3 +107,13 @@ FUNCTION o_r_export()
    my_usex ( "r_export" )
 
    RETURN .T.
+
+
+FUNCTION select_o_r_export()
+
+   SELECT ( F_R_EXP )
+   IF !Used()
+      my_usex ( "r_export" )
+   ENDIF
+
+   RETURN .T.

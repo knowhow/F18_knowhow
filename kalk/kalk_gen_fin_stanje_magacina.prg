@@ -147,7 +147,7 @@ FUNCTION kalk_gen_fin_stanje_magacina_za_tkv( hParams )
       hKalkParams[ "dat_do" ] := dDatumDo
    ENDIF
 
-   hParams[ "order_by" ] := "idFirma,datdok,mkonto,idvd,brdok,rbr"
+   hKalkParams[ "order_by" ] := "idFirma,datdok,mkonto,idvd,brdok,rbr"
    MsgO( "Preuzimanje podataka sa servera " + DToC( dDatumOd ) + "-" + DToC( dDatumDo ) + " ..." )
    find_kalk_za_period( hKalkParams )
    MsgC()

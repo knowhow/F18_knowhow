@@ -17,12 +17,13 @@
 FUNCTION finansijsko_stanje_magacin()
 
    LOCAL cTipDok, cDokNaz
-   LOCAL nDbfArea, _a_exp
-   LOCAL _export := .F.
-   LOCAL _exp_dn := "N"
+   LOCAL  _a_exp
+   LOCAL lExport := .F.
+   LOCAL cExportDN := "N"
    LOCAL _launch
    LOCAL cPartnNaz, cPartnMj, cPartnPtt
    LOCAL hParams
+   LOCAL nVPC
 
    _o_tbl()
 
@@ -45,12 +46,8 @@ FUNCTION finansijsko_stanje_magacin()
 
    DO WHILE .T.
 
-      IF gNW $ "DX"
-         @ m_x + 1, m_y + 2 SAY "Firma "
-         ?? self_organizacija_id(), "-", self_organizacija_naziv()
-      ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      ENDIF
+      @ m_x + 1, m_y + 2 SAY "Firma "
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
       @ m_x + 3, m_y + 2 SAY "Varijanta (1/2)" GET cPapir VALID cPapir $ "12"
 
@@ -62,7 +59,7 @@ FUNCTION finansijsko_stanje_magacin()
 
       PRIVATE cViseKonta := "N"
 
-      @ m_x + 4, m_y + 2 SAY "Vise konta (D/N)" GET cViseKonta VALID cViseKonta $ "DN" PICT "@!"
+      @ m_x + 4, m_y + 2 SAY8 "Više konta (D/N)" GET cViseKonta VALID cViseKonta $ "DN" PICT "@!"
 
       READ
 
@@ -76,28 +73,28 @@ FUNCTION finansijsko_stanje_magacin()
       @ m_x + 8, m_y + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
       @ m_x + 9, m_y + 2 SAY "Datum od " GET dDatOd
       @ m_x + 9, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 11, m_y + 2 SAY "Export podataka (D/N) ?" GET _exp_dn VALID _exp_dn $ "DN" PICT "@!"
+      @ m_x + 11, m_y + 2 SAY "Export podataka XLSX (D/N) ?" GET cExportDN VALID cExportDN $ "DN" PICT "@!"
 
       READ
 
       ESC_BCR
 
-      PRIVATE aUsl2 := Parsiraj( qqTarifa, "IdTarifa" )
-      PRIVATE aUsl3 := Parsiraj( qqIDVD, "idvd" )
+      PRIVATE cUslovTarifa := Parsiraj( qqTarifa, "IdTarifa" )
+      PRIVATE cUslovIdVD := Parsiraj( qqIDVD, "idvd" )
 
       IF cViseKonta == "D"
-         PRIVATE aUsl4 := Parsiraj( qqMKonta, "mkonto" )
+         PRIVATE cUslovKonta := Parsiraj( qqMKonta, "mkonto" )
       ENDIF
 
-      IF aUsl2 <> NIL
+      IF cUslovTarifa <> NIL
          EXIT
       ENDIF
 
-      IF aUsl3 <> NIL
+      IF cUslovIdVD <> NIL
          EXIT
       ENDIF
 
-      IF cViseKonta == "D" .AND. aUsl4 <> NIL
+      IF cViseKonta == "D" .AND. cUslovKonta <> NIL
          EXIT
       ENDIF
 
@@ -106,12 +103,11 @@ FUNCTION finansijsko_stanje_magacin()
    BoxC()
 
    // treba li exportovati podatke
-   IF _exp_dn == "D"
-      _export := .T.
+   IF cExportDN == "D"
+      lExport := .T.
    ENDIF
 
-   IF _export
-
+   IF lExport
       _cre_tmp_tbl()
       _o_tbl()
 
@@ -142,7 +138,6 @@ FUNCTION finansijsko_stanje_magacin()
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    find_kalk_za_period( hParams )
    MsgC()
-
 
    select_o_koncij( cIdkonto )
 
@@ -189,7 +184,7 @@ FUNCTION finansijsko_stanje_magacin()
    ENDIF
 
    PRIVATE nTStrana := 0
-   PRIVATE bZagl := {|| Zaglfinansijsko_stanje_magacin() }
+   PRIVATE bZagl := {|| kalk_zagl_fin_stanje_magacin() }
 
    Eval( bZagl )
    nTUlaz := nTIzlaz := 0
@@ -202,8 +197,8 @@ FUNCTION finansijsko_stanje_magacin()
       ntDod1 := ntDod2 := ntDod3 := ntDod4 := ntDod5 := ntDod6 := ntDod7 := ntDod8 := 0
    ENDIF
 
-
-   DO WHILE !Eof() .AND. cidfirma == idfirma .AND.  IspitajPrekid()
+   AltD()
+   DO WHILE !Eof() .AND. cIdfirma == idfirma
       nUlaz := 0
       nIzlaz := 0
       nVPVU := 0
@@ -215,11 +210,9 @@ FUNCTION finansijsko_stanje_magacin()
          nDod1 := nDod2 := nDod3 := nDod4 := nDod5 := nDod6 := nDod7 := nDod8 := 0
       ENDIF
 
-      IF cViseKonta == "N" .AND. mkonto <> cidkonto
+      IF cViseKonta == "N" .AND. mkonto <> cIdkonto
          SKIP
          LOOP
-      ELSE
-
       ENDIF
 
       cBrFaktP := brfaktp
@@ -228,7 +221,6 @@ FUNCTION finansijsko_stanje_magacin()
       cBroj := idvd + "-" + brdok
       cTipDok := idvd
 
-      nDbfArea := Select()
 
       SELECT tdok
       HSEEK cTipDok
@@ -241,47 +233,55 @@ FUNCTION finansijsko_stanje_magacin()
       cPartnMj := field->mjesto
       cPartnAdr := field->adresa
 
-      SELECT ( nDbfArea )
+      SELECT KALK
 
-      DO WHILE !Eof() .AND. cIdFirma + DToS( dDatDok ) + cBroj == idFirma + DToS( datdok ) + idvd + "-" + brdok .AND.  IspitajPrekid()
+      info_bar( "kalk_mag", DToC( dDatDok ) +  " " + mkonto + " : " + cBroj )
+
+      DO WHILE !Eof() .AND. cIdFirma + DToS( dDatDok ) + cBroj == idFirma + DToS( datdok ) + idvd + "-" + brdok
+
          IF cViseKonta == "N" .AND. ( datdok < dDatOd .OR. datdok > dDatDo .OR. mkonto <> cidkonto )
             SKIP
             LOOP
          ENDIF
-         IF Len( aUsl2 ) <> 0          // premjesteno odozgo
-            IF !Tacno( aUsl2 )    //
-               SKIP        //
-               LOOP        //
-            ENDIF               //
-         ENDIF                     //
 
-         IF Len( aUsl3 ) <> 0
-            IF !Tacno( aUsl3 )
+         IF Len( cUslovTarifa ) <> 0
+            IF !Tacno( cUslovTarifa )
                SKIP
                LOOP
             ENDIF
          ENDIF
 
-         IF cViseKonta == "D" .AND. Len( aUsl4 ) <> 0
-            IF !Tacno( aUsl4 )
+         IF Len( cUslovIdVD ) <> 0
+            IF !Tacno( cUslovIdVD )
                SKIP
                LOOP
             ENDIF
          ENDIF
+
+         IF cViseKonta == "D" .AND. Len( cUslovKonta ) <> 0
+            IF !Tacno( cUslovKonta )
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
+
+         select_o_roba( kalk->idroba )
+         SELECT KALK
+         nVPC := vpc_magacin_rs()
 
          IF mu_i == "1" .AND. !( idvd $ "12#22#94" )
-            nVPVU += Round( vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+            nVPVU += Round( nVPC * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             nNVU += Round( nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
          ELSEIF mu_i == "5"
-            nVPVI += Round( vpc * kolicina, gZaokr )
+            nVPVI += Round( nVPC * kolicina, gZaokr )
             nRabat += Round( rabatv / 100 * vpc * kolicina, gZaokr )
             nNVI += Round( nc * kolicina, gZaokr )
          ELSEIF mu_i == "1" .AND. ( idvd $ "12#22#94" )    // povrat
-            nVPVI -= Round( vpc * kolicina, gZaokr )
+            nVPVI -= Round( nVPC * kolicina, gZaokr )
             nRabat -= Round( rabatv / 100 * vpc * kolicina, gZaokr )
             nNVI -= Round( nc * kolicina, gZaokr )
          ELSEIF mu_i == "3"    // nivelacija
-            nVPVU += Round( vpc * kolicina, gZaokr )
+            nVPVU += Round( nVPC * kolicina, gZaokr )
          ENDIF
 
          IF cPapir != "4"
@@ -303,7 +303,7 @@ FUNCTION finansijsko_stanje_magacin()
          Eval( bZagl )
       ENDIF
 
-      ? Str( ++nrbr, 4 ) + ".", dDatDok, cBroj
+      ? Str( ++nRbr, 4 ) + ".", dDatDok, cBroj
       nCol1 := PCol() + 1
 
       nTVPVU += nVPVU; nTVPVI += nVPVI
@@ -332,8 +332,7 @@ FUNCTION finansijsko_stanje_magacin()
          @ PRow(), PCol() + 1 SAY nRabat PICT picdem
       ENDIF
 
-      // dodaj u r_export
-      IF _export
+      IF lExport
 
          _add_to_exp( cBroj, dDatDok, cDokNaz, cIdPartner, ;
             cPartnNaz, cPartnMj, cPartnPtt, cPartnAdr, cBrFaktP, ;
@@ -369,7 +368,7 @@ FUNCTION finansijsko_stanje_magacin()
 
    ? cLine
 
-   IF _export
+   IF lExport
       // dodaj stavku ukupno
       _add_to_exp( "UKUPNO:", CToD( "" ), "", "", ;
          "", "", "", "", "", ;
@@ -382,7 +381,7 @@ FUNCTION finansijsko_stanje_magacin()
    ENDPRINT
 
    // pregled izvjestaja nakon generisanja u spreadsheet aplikaciji
-   IF _export
+   IF lExport
       open_r_export_table()
    ENDIF
 
@@ -392,7 +391,7 @@ FUNCTION finansijsko_stanje_magacin()
 
 
 
-STATIC FUNCTION Zaglfinansijsko_stanje_magacin()
+STATIC FUNCTION kalk_zagl_fin_stanje_magacin()
 
    Preduzece()
 
@@ -453,21 +452,15 @@ STATIC FUNCTION _cre_tmp_tbl()
    RETURN _dbf
 
 
-// ---------------------------------------
-// dodaj podatke u r_export tabelu
-// ---------------------------------------
 STATIC FUNCTION _add_to_exp( broj_dok, datum_dok, vrsta_dok, id_partner, ;
       part_naz, part_mjesto, part_ptt, part_adr, broj_fakture, ;
       n_v_dug, n_v_pot, n_v_saldo, ;
       v_p_dug, v_p_pot, v_p_saldo, ;
       v_p_rabat )
 
-   LOCAL nDbfArea := Select()
-
-   o_r_export()
+   select_o_r_export()
 
    APPEND BLANK
-
    REPLACE field->broj WITH broj_dok
    REPLACE field->datum WITH datum_dok
    REPLACE field->vr_dok WITH vrsta_dok
@@ -485,7 +478,7 @@ STATIC FUNCTION _add_to_exp( broj_dok, datum_dok, vrsta_dok, id_partner, ;
    REPLACE field->vp_saldo WITH v_p_saldo
    REPLACE field->vp_rabat WITH v_p_rabat
 
-   SELECT ( nDbfArea )
+   SELECT KALK
 
    RETURN .T.
 
@@ -497,12 +490,12 @@ STATIC FUNCTION _add_to_exp( broj_dok, datum_dok, vrsta_dok, id_partner, ;
 // -----------------------------------
 STATIC FUNCTION _o_tbl()
 
-  // o_sifk()
-  // o_sifv()
+   // o_sifk()
+   // o_sifv()
    o_tdok()
-  // o_roba()
+   // o_roba()
    o_koncij()
-  // o_konto()
-  // o_partner()
+   // o_konto()
+   // o_partner()
 
    RETURN .T.

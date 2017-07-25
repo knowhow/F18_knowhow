@@ -37,7 +37,7 @@ FUNCTION kalk_tkv()
 // -----------------------------------------
 STATIC FUNCTION gethParams( hParams )
 
-   LOCAL _ret := .F.
+   LOCAL lRet := .F.
    LOCAL nX := 1
    LOCAL cUslovKonta := fetch_metric( "kalk_tkv_konto", my_user(), Space( 200 ) )
    LOCAL _d_od := fetch_metric( "kalk_tkv_datum_od", my_user(), Date() -30 )
@@ -59,10 +59,8 @@ STATIC FUNCTION gethParams( hParams )
    ++ nX
    ++ nX
    @ m_x + nX, m_y + 2 SAY "     Konto (prazno-svi):" GET cUslovKonta PICT "@S35"
-
    ++ nX
    @ m_x + nX, m_y + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
-
    ++ nX
    ++ nX
    @ m_x + nX, m_y + 2 SAY "Gledati [N] nabavne cijene [P] prodajne cijene ?" GET _tip PICT "@!" VALID _tip $ "PN"
@@ -76,11 +74,10 @@ STATIC FUNCTION gethParams( hParams )
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN _ret
+      RETURN lRet
    ENDIF
 
-   _ret := .T.
-
+   lRet := .T.
 
    hParams := hb_Hash()
    hParams[ "datum_od" ] := _d_od
@@ -90,7 +87,6 @@ STATIC FUNCTION gethParams( hParams )
    hParams[ "gledati_usluge" ] := _usluge
    hParams[ "tip_obrasca" ] := _tip
 
-altd()
    // ako postoji tacka u kontu onda gledaj
    IF Right( AllTrim( cUslovKonta ), 1 ) == "."
       cViseKontaDN := "N"
@@ -106,7 +102,7 @@ altd()
    set_metric( "kalk_tkv_gledati_usluge", my_user(), _usluge )
    set_metric( "kalk_tkv_tip_obrasca", my_user(), _tip )
 
-   RETURN _ret
+   RETURN lRet
 
 
 STATIC FUNCTION stampaj_tkv( hParams )
@@ -281,9 +277,7 @@ STATIC FUNCTION tkv_zaglavlje( hParams )
    RETURN .T.
 
 
-// -----------------------------------------
-// header izvjestaja
-// -----------------------------------------
+
 STATIC FUNCTION tkv_header()
 
    LOCAL _row_1, _row_2

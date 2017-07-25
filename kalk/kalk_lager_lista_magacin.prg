@@ -478,6 +478,7 @@ FUNCTION kalk_lager_lista_magacin()
          IF mu_i == "1"
 
             IF !( idvd $ "12#22#94" )
+            
                nKolicina := field->kolicina - field->gkolicina - field->gkolicin2
                nUlaz += nKolicina
                kalk_sumiraj_kolicinu( nKolicina, 0, @nTUlazP, @nTIzlazP )
@@ -547,7 +548,7 @@ FUNCTION kalk_lager_lista_magacin()
                nVPVRU += Round( - roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             ELSE
                nVPVU += Round( - roba->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
-               nVPVRU += Round( - field->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+               nVPVRU += Round( - nVPC * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             ENDIF
 
             nNVU += Round( - nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )

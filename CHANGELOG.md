@@ -1,5 +1,11 @@
 # F18 klijent, lista promjena
 
+## 2017-07-25-2
+
+### Developer
+- CLEANUP: fin_bruto_bilans_subanalitika_b.prg
+
+
 ## 2017-07-25
 
 ### Developer

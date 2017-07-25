@@ -58,6 +58,8 @@ FUNCTION select_o_kam_pripr()
 
 FUNCTION o_bruto_bilans_klase()
 
+   SELECT F_BBKLAS
+   USE
    RETURN o_dbf_table( F_BBKLAS, "bbklas", "1" )
 
 

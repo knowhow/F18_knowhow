@@ -68,7 +68,10 @@ FUNCTION fin_bb_subanalitika_b( params )
    //o_partner()
    o_sql_suban_kto_partner( cIdFirma )
    //o_konto()
-   o_bruto_bilans_klase()
+   IF !o_bruto_bilans_klase()
+      MsgBeep( "ERROR otvaranje pomoćne tabele BBKLAS !?")
+      RETURN .F.
+   ENDIF
 
    SELECT BBKLAS
    my_dbf_zap()

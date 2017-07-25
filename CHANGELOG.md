@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.12-std, 2017-07-25
+## 3.1.13-std, 2017-07-25
 
 ### Developer
 

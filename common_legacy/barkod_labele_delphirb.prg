@@ -315,8 +315,7 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
          LOOP
       ENDIF
 
-      SELECT ROBA
-      HSEEK FAKT_PRIPR->idroba
+      select_o_roba( FAKT_PRIPR->idroba )
 
       IF Empty( field->barkod ) .AND. fetch_metric( "labeliranje_barkod_automatsko_generisanje", NIL, "N" )
 
@@ -394,4 +393,4 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
 
    f18_rtm_print( "barkod", "barkod", "1" )
 
-   RETURN
+   RETURN .T.

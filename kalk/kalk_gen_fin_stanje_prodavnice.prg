@@ -29,7 +29,7 @@ koristi TKM
 
 */
 
-FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
+FUNCTION kalk_gen_fin_stanje_prodavnice( hParamsIn )
 
    LOCAL _konto := ""
    LOCAL _tarifa, _opp
@@ -37,7 +37,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
    LOCAL _datum_do := Date()
    LOCAL _tarife := ""
    LOCAL _vrste_dok := ""
-   LOCAL _id_firma := self_organizacija_id()
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL _vise_konta := .F.
    LOCAL nDbfArea, _t_rec
    LOCAL _ulaz, _izlaz, _rabatv, _rabatm
@@ -61,39 +61,39 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
 
    hParams := hb_Hash()
-   hParams[ "idfirma" ] := _id_firma
+   hParams[ "idfirma" ] := cIdFirma
 
 
-   IF hb_HHasKey( vars, "datum_od" )
-      hParams[ "dat_od" ] := vars[ "datum_od" ]
+   IF hb_HHasKey( hParamsIn, "datum_od" )
+      hParams[ "dat_od" ] := hParamsIn[ "datum_od" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "datum_do" )
-      hParams[ "dat_do" ] := vars[ "datum_do" ]
+   IF hb_HHasKey( hParamsIn, "datum_do" )
+      hParams[ "dat_do" ] := hParamsIn[ "datum_do" ]
    ENDIF
 
    hParams[ "order_by" ] := "idFirma,datdok,idvd,brdok,rbr"
 
 
-   IF hb_HHasKey( vars, "vise_konta" )
-      _v_konta := vars[ "vise_konta" ]
+   IF hb_HHasKey( hParamsIn, "vise_konta" )
+      _v_konta := hParamsIn[ "vise_konta" ]
    ENDIF
 
 
-   IF hb_HHasKey( vars, "tarife" )
-      _tarife := vars[ "tarife" ]
+   IF hb_HHasKey( hParamsIn, "tarife" )
+      _tarife := hParamsIn[ "tarife" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "vrste_dok" )
-      _vrste_dok := vars[ "vrste_dok" ]
+   IF hb_HHasKey( hParamsIn, "vrste_dok" )
+      _vrste_dok := hParamsIn[ "vrste_dok" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "gledati_usluge" )
-      _gledati_usluge := vars[ "gledati_usluge" ]
+   IF hb_HHasKey( hParamsIn, "gledati_usluge" )
+      _gledati_usluge := hParamsIn[ "gledati_usluge" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "konto" )
-      _konto :=  vars[ "konto" ]
+   IF hb_HHasKey( hParamsIn, "konto" )
+      _konto :=  hParamsIn[ "konto" ]
    ENDIF
 
    _cre_tmp_tbl()
@@ -133,7 +133,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 /*
    SELECT kalk
    SET ORDER TO TAG "5"  CREATE_INDEX( "5", "idFirma+dtos(datdok)+podbr+idvd+brdok", _alias )
-   HSEEK _id_firma
+   HSEEK cIdFirma
   */
 
 
@@ -145,7 +145,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
    @ m_x + 1, m_y + 2 SAY8 PadR( "Generisanje pomoćne tabele u toku...", 58 ) COLOR f18_color_i()
 
-   DO WHILE !Eof() .AND. _id_firma == field->idfirma .AND. IspitajPrekid()
+   DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. IspitajPrekid()
 
 
       IF _vise_konta .AND. !Empty( _usl_konto )
@@ -227,7 +227,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
 
       SELECT KALK
-      DO WHILE !Eof() .AND. _id_firma + DToS( _dat_dok ) + _broj_dok == field->idfirma + DToS( field->datdok ) + field->idvd + "-" + field->brdok .AND. IspitajPrekid()
+      DO WHILE !Eof() .AND. cIdFirma + DToS( _dat_dok ) + _broj_dok == field->idfirma + DToS( field->datdok ) + field->idvd + "-" + field->brdok .AND. IspitajPrekid()
 
          IF _vise_konta .AND. !Empty( _usl_konto )
             IF !Tacno( _usl_konto )

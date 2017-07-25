@@ -15,7 +15,7 @@
 // ------------------------------------------------------------
 // prijem prodavnica, predispozicija
 // ------------------------------------------------------------
-FUNCTION Get1_80( atrib )
+FUNCTION kalk_get1_80( atrib )
 
    LOCAL nX := 5
    LOCAL _kord_x := 0
@@ -92,13 +92,13 @@ FUNCTION Get1_80( atrib )
 
    @ m_x + nX, m_y + ( f18_max_cols() -20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   set_pdv_public_vars()
-
    ++nX
    @ m_x + nX, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
    READ
    ESC_RETURN K_ESC
+
+   set_pdv_public_vars()
 
    IF roba_barkod_pri_unosu()
       _idRoba := Left( _idRoba, 10 )

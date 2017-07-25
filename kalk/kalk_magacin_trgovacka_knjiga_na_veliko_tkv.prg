@@ -23,14 +23,12 @@ FUNCTION kalk_tkv()
    LOCAL _vars
    LOCAL _calc_rec := 0
 
-   // skeleton ::
-
    // uslovi izvjestaja...
    IF !get_vars( @_vars )
       RETURN .F.
    ENDIF
 
-   // generisanje izvjestaja
+
    _calc_rec := kalk_gen_fin_stanje_magacina( _vars )
 
    IF _calc_rec > 0
@@ -44,10 +42,10 @@ FUNCTION kalk_tkv()
 // -----------------------------------------
 // uslovi izvjestaja
 // -----------------------------------------
-STATIC FUNCTION get_vars( vars )
+STATIC FUNCTION get_vars( hParams )
 
    LOCAL _ret := .F.
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _konta := fetch_metric( "kalk_tkv_konto", my_user(), Space( 200 ) )
    LOCAL _d_od := fetch_metric( "kalk_tkv_datum_od", my_user(), Date() -30 )
    LOCAL _d_do := fetch_metric( "kalk_tkv_datum_do", my_user(), Date() )
@@ -55,30 +53,30 @@ STATIC FUNCTION get_vars( vars )
    LOCAL _usluge := fetch_metric( "kalk_tkv_gledati_usluge", my_user(), "N" )
    LOCAL _tip := fetch_metric( "kalk_tkv_tip_obrasca", my_user(), "P" )
    LOCAL _vise_konta := "D"
+   LOCAL cXlsxDN := "D"
 
-   Box(, 12, 70 )
+   Box(, 15, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** magacin - izvjestaj TKV"
+   @ m_x + nX, m_y + 2 SAY8 "*** magacin - izvještaj TKV"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datum od" GET _d_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _d_do
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Datum od" GET _d_od
+   @ m_x + nX, Col() + 1 SAY "do" GET _d_do
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "     Konto (prazno-svi):" GET _konta PICT "@S35"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "     Konto (prazno-svi):" GET _konta PICT "@S35"
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
-
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Gledati [N] nabavne cijene [P] prodajne cijene ?" GET _tip PICT "@!" ;
-      VALID _tip $ "PN"
-
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
+   ++ nX
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Gledati [N] nabavne cijene [P] prodajne cijene ?" GET _tip PICT "@!" VALID _tip $ "PN"
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY "Export XLSX (D/N) ?" GET cXlsxDN PICT "@!" VALID cXlsXDN $ "DN"
 
    READ
 
@@ -90,19 +88,21 @@ STATIC FUNCTION get_vars( vars )
 
    _ret := .T.
 
-   // snimi hash matricu...
-   vars := hb_Hash()
-   vars[ "datum_od" ] := _d_od
-   vars[ "datum_do" ] := _d_do
-   vars[ "konto" ] := _konta
-   vars[ "vrste_dok" ] := _vr_dok
-   vars[ "gledati_usluge" ] := _usluge
-   vars[ "tip_obrasca" ] := _tip
+
+   hParams := hb_Hash()
+   hParams[ "datum_od" ] := _d_od
+   hParams[ "datum_do" ] := _d_do
+   hParams[ "konto" ] := _konta
+   hParams[ "vrste_dok" ] := _vr_dok
+   hParams[ "gledati_usluge" ] := _usluge
+   hParams[ "tip_obrasca" ] := _tip
+
    // ako postoji tacka u kontu onda gledaj
    IF Right( AllTrim( _konta ), 1 ) == "."
       _vise_konta := "N"
    ENDIF
-   vars[ "vise_konta" ] := _vise_konta
+   hParams[ "vise_konta" ] := _vise_konta
+   hParams[ "xlsx" ] := iif( cXlsXDN == "D", .T., .F. )
 
    // snimi sql/db parametre
    set_metric( "kalk_tkv_konto", my_user(), _konta )
@@ -119,7 +119,7 @@ STATIC FUNCTION get_vars( vars )
 // ------------------------------------------
 // stampa izvjestaja TKV
 // ------------------------------------------
-STATIC FUNCTION stampaj_tkv( vars )
+STATIC FUNCTION stampaj_tkv( hParams )
 
    LOCAL _red_br := 0
    LOCAL _line, _opis_knjizenja
@@ -127,7 +127,7 @@ STATIC FUNCTION stampaj_tkv( vars )
    LOCAL _t_dug, _t_pot, _t_rabat
    LOCAL _a_opis := {}
    LOCAL nI
-   LOCAL _tip_obrasca := vars[ "tip_obrasca" ]
+   LOCAL _tip_obrasca := hParams[ "tip_obrasca" ]
 
    // daj mi liniju za report...
    _line := _get_line()
@@ -138,7 +138,7 @@ STATIC FUNCTION stampaj_tkv( vars )
    P_COND
 
    // ispisi zaglavlje izvjestaja
-   tkv_zaglavlje( vars )
+   tkv_zaglavlje( hParams )
 
    // stampaj header izvjestaja
    ? _line
@@ -160,9 +160,7 @@ STATIC FUNCTION stampaj_tkv( vars )
          LOOP
       ENDIF
 
-      // 1. red izvjestaja...
 
-      // redni broj...
       ? PadL( AllTrim( Str( ++_red_br ) ), 6 ) + "."
 
       // datum dokumenta
@@ -232,13 +230,12 @@ STATIC FUNCTION stampaj_tkv( vars )
 
    ? _line
 
-   // stampaj ukupno
    ? "UKUPNO:"
    @ PRow(), _n_iznosi SAY Str( _t_dug, 12, 2 )
    @ PRow(), PCol() + 1 SAY Str( _t_pot, 12, 2 )
    @ PRow(), PCol() + 1 SAY Str( _t_rabat, 12, 2 )
 
-   ? "SALDO TRGOVACKE KNJIGE:"
+   ?U "SALDO TRGOVAČKE KNJIGE:"
    @ PRow(), _n_iznosi SAY Str( _t_dug - _t_pot, 12, 2 )
 
    ? _line
@@ -246,7 +243,11 @@ STATIC FUNCTION stampaj_tkv( vars )
    FF
    ENDPRINT
 
-   RETURN
+   IF hParams[ "xlsx" ]
+      open_r_export_table()
+   ENDIF
+
+   RETURN .T.
 
 
 
@@ -276,16 +277,16 @@ STATIC FUNCTION _get_line()
 // -----------------------------------------
 // zaglavlje izvjestaja
 // -----------------------------------------
-STATIC FUNCTION tkv_zaglavlje( vars )
+STATIC FUNCTION tkv_zaglavlje( hParams )
 
    ? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
    ?
-   ? Space( 10 ), "TRGOVACKA KNJIGA NA VELIKO (TKV) za period od:", vars[ "datum_od" ], "do:", vars[ "datum_do" ]
+   ? Space( 10 ), "TRGOVACKA KNJIGA NA VELIKO (TKV) za period od:", hParams[ "datum_od" ], "do:", hParams[ "datum_do" ]
    ?
    ? "Uslov za skladista: "
 
-   IF !Empty( AllTrim( vars[ "konto" ] ) )
-      ?? AllTrim( vars[ "konto" ] )
+   IF !Empty( AllTrim( hParams[ "konto" ] ) )
+      ?? AllTrim( hParams[ "konto" ] )
    ELSE
       ?? " sva skladista"
    ENDIF
@@ -294,7 +295,7 @@ STATIC FUNCTION tkv_zaglavlje( vars )
 
    ?
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------

@@ -1,5 +1,15 @@
 # F18 klijent, lista promjena
 
+## 3.1.9-std, 2017-07-25
+
+### Korisnik
+
+#### KALK
+- Trgovačka knjig na veliko i malo (TKV, TKM)  export u XLSX
+
+### Developer
+- BUGFIX: Dokument 80 unos tarifa alias not found
+
 ## 3.1.6-std, 2017-07-24
 
 ### Korisnik
@@ -34,6 +44,14 @@ Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana 
 ## 3.0.8-std, 2017-07-24
 
 ### Korisnik
+<<<<<<< HEAD
+=======
+#### KALK
+- BUGFIX import vindija varaždin kalk_imp_txt.tipdok 96, ignorisati partnera
+
+### Developer
+- iz std verzije izbacena opcija import vindija varazdin
+>>>>>>> 3
 
 #### KALK
 - specifična opcija import vindija varazdin izbačeno iz standardne verzije

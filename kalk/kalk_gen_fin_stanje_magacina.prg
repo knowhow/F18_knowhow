@@ -27,14 +27,14 @@
 koristi TKV
 
 */
-FUNCTION kalk_gen_fin_stanje_magacina( vars )
+FUNCTION kalk_gen_fin_stanje_magacina( hParams )
 
    LOCAL _konto := ""
-   LOCAL _datum_od := Date()
-   LOCAL _datum_do := Date()
+   LOCAL dDatumOd := Date()
+   LOCAL dDatumDo := Date()
    LOCAL _tarife := ""
    LOCAL _vrste_dok := ""
-   LOCAL _id_firma := self_organizacija_id()
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL _vise_konta := .F.
    LOCAL nDbfArea, _t_rec
    LOCAL _ulaz, _izlaz, _rabat
@@ -44,47 +44,44 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
    LOCAL _br_fakt, _tip_dok, _tip_dok_naz, _id_partner
    LOCAL _partn_naziv, _partn_ptt, _partn_mjesto, _partn_adresa
    LOCAL _broj_dok, _dat_dok
-   LOCAL _usl_konto := ""
-   LOCAL _usl_vrste_dok := ""
-   LOCAL _usl_tarife := ""
-   LOCAL _gledati_usluge := "N"
+   LOCAL cFilterKonto := ""
+   LOCAL cFilterVrsteDok := ""
+   LOCAL cFilterTarife := ""
+   LOCAL cGledatiUslugeDN := "N"
    LOCAL _v_konta := "N"
    LOCAL _cnt := 0
 
    // uslovi generisanja se uzimaju iz hash matrice
    // moguce vrijednosti su:
-   IF hb_HHasKey( vars, "vise_konta" )
-      _v_konta := vars[ "vise_konta" ]
+   IF hb_HHasKey( hParams, "vise_konta" )
+      _v_konta := hParams[ "vise_konta" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "konto" )
-      _konto := vars[ "konto" ]
+   IF hb_HHasKey( hParams, "konto" )
+      _konto := hParams[ "konto" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "datum_od" )
-      _datum_od := vars[ "datum_od" ]
+   IF hb_HHasKey( hParams, "datum_od" )
+      dDatumOd := hParams[ "datum_od" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "datum_do" )
-      _datum_do := vars[ "datum_do" ]
+   IF hb_HHasKey( hParams, "datum_do" )
+      dDatumDo := hParams[ "datum_do" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "tarife" )
-      _tarife := vars[ "tarife" ]
+   IF hb_HHasKey( hParams, "tarife" )
+      _tarife := hParams[ "tarife" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "vrste_dok" )
-      _vrste_dok := vars[ "vrste_dok" ]
+   IF hb_HHasKey( hParams, "vrste_dok" )
+      _vrste_dok := hParams[ "vrste_dok" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "gledati_usluge" )
-      _gledati_usluge := vars[ "gledati_usluge" ]
+   IF hb_HHasKey( hParams, "gledati_usluge" )
+      cGledatiUslugeDN := hParams[ "gledati_usluge" ]
    ENDIF
 
-
-
-   _cre_tmp_tbl()  // napravi pomocnu tabelu
-
+   kalk_tkv_cre_r_export()  // napravi pomocnu tabelu
 
    _o_tbl() // otvori ponovo tabele izvjestaja
 
@@ -94,19 +91,19 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
 
    // parsirani uslovi...
    IF _vise_konta .AND. !Empty( _konto )
-      _usl_konto := Parsiraj( _konto, "mkonto" )
+      cFilterKonto := Parsiraj( _konto, "mkonto" )
    ENDIF
 
    IF !Empty( _tarife )
-      _usl_tarife := Parsiraj( _tarife, "idtarifa" )
+      cFilterTarife := Parsiraj( _tarife, "idtarifa" )
    ENDIF
 
    IF !Empty( _vrste_dok )
-      _usl_vrste_dok := Parsiraj( _vrste_dok, "idvd" )
+      cFilterVrsteDok := Parsiraj( _vrste_dok, "idvd" )
    ENDIF
 
-   // sinteticki konto
-   IF !_vise_konta
+
+   IF !_vise_konta  // sinteticki konto
       IF Len( Trim( _konto ) ) <= 3 .OR. "." $ _konto
          IF "." $ _konto
             _konto := StrTran( _konto, ".", "" )
@@ -119,8 +116,11 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
    SELECT kalk
    SET ORDER TO TAG "5"
    // "idFirma+dtos(datdok)+idvd+brdok+rbr"
+   find_kalk_za_period( xIdFirma, cIdVd, cIdPartner, cIdRoba, dDatOd, dDatDo, cOrderBy )
    */
-   find_kalk_za_period( _id_firma, NIL, NIL, NIL, NIL, NIL, "idFirma,datdok,idvd,brdok,rbr" )
+   MsgO( "Preuzimanje podataka sa servera " + DToC( dDatumDo ) + "-" + DToC( dDatumDo ) + " ..." )
+   find_kalk_za_period( cIdFirma, NIL, NIL, NIL, dDatumOd, dDatumDo, "idFirma,datdok,idvd,brdok,rbr" )
+   MsgC()
 
    select_o_koncij( _konto )
 
@@ -128,9 +128,9 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY PadR( "Generisanje pomocne tabele u toku...", 58 ) COLOR f18_color_i()
+   @ m_x + 1, m_y + 2 SAY8 PadR( "Generisanje pomoćne tabele u toku...", 58 ) COLOR f18_color_i()
 
-   DO WHILE !Eof() .AND. _id_firma == field->idfirma .AND. IspitajPrekid()
+   DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. IspitajPrekid()
 
       IF !_vise_konta .AND. field->mkonto <> _konto
          SKIP
@@ -138,30 +138,30 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
       ENDIF
 
       // ispitivanje konta u varijanti jednog konta i datuma
-      IF ( field->datdok < _datum_od .OR. field->datdok > _datum_do )
+      IF ( field->datdok < dDatumOd .OR. field->datdok > dDatumDo )
          SKIP
          LOOP
       ENDIF
 
       // ispitivanje konta u varijanti vise konta
-      IF _vise_konta .AND. !Empty( _usl_konto )
-         IF !Tacno( _usl_konto )
+      IF _vise_konta .AND. !Empty( cFilterKonto )
+         IF !Tacno( cFilterKonto )
             SKIP
             LOOP
          ENDIF
       ENDIF
 
       // vrste dokumenata
-      IF !Empty( _usl_vrste_dok )
-         IF !Tacno( _usl_vrste_dok )
+      IF !Empty( cFilterVrsteDok )
+         IF !Tacno( cFilterVrsteDok )
             SKIP
             LOOP
          ENDIF
       ENDIF
 
-      // tarife...
-      IF !Empty( _usl_tarife )
-         IF !Tacno( _usl_tarife )
+
+      IF !Empty( cFilterTarife )
+         IF !Tacno( cFilterTarife )
             SKIP
             LOOP
          ENDIF
@@ -209,33 +209,33 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
 
       SELECT ( nDbfArea )
 
-      DO WHILE !Eof() .AND. _id_firma + DToS( _dat_dok ) + _broj_dok == field->idfirma + DToS( field->datdok ) + field->idvd + "-" + field->brdok .AND. IspitajPrekid()
+      DO WHILE !Eof() .AND. cIdFirma + DToS( _dat_dok ) + _broj_dok == field->idfirma + DToS( field->datdok ) + field->idvd + "-" + field->brdok .AND. IspitajPrekid()
 
          // ispitivanje konta u varijanti jednog konta i datuma
-         IF !_vise_konta .AND. ( field->datdok < _datum_od .OR. field->datdok > _datum_do .OR. field->mkonto <> _konto )
+         IF !_vise_konta .AND. ( field->datdok < dDatumOd .OR. field->datdok > dDatumDo .OR. field->mkonto <> _konto )
             SKIP
             LOOP
          ENDIF
 
          // ispitivanje konta u varijanti vise konta
-         IF _vise_konta .AND. !Empty( _usl_konto )
-            IF !Tacno( _usl_konto )
+         IF _vise_konta .AND. !Empty( cFilterKonto )
+            IF !Tacno( cFilterKonto )
                SKIP
                LOOP
             ENDIF
          ENDIF
 
          // vrste dokumenata
-         IF !Empty( _usl_vrste_dok )
-            IF !Tacno( _usl_vrste_dok )
+         IF !Empty( cFilterVrsteDok )
+            IF !Tacno( cFilterVrsteDok )
                SKIP
                LOOP
             ENDIF
          ENDIF
 
-         // tarife...
-         IF !Empty( _usl_tarife )
-            IF !Tacno( _usl_tarife )
+
+         IF !Empty( cFilterTarife )
+            IF !Tacno( cFilterTarife )
                SKIP
                LOOP
             ENDIF
@@ -244,7 +244,7 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
          select_o_roba( kalk->idroba )
 
          // treba li gledati usluge ??
-         IF _gledati_usluge == "N" .AND. roba->tip $ "U"
+         IF cGledatiUslugeDN == "N" .AND. roba->tip $ "U"
             SELECT kalk
             SKIP
             LOOP
@@ -294,7 +294,7 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
          _rabat, _marza, _marza_2, ;
          _tr_prevoz, _tr_prevoz_2, _tr_bank, _tr_sped, _tr_carina, _tr_zavisni )
 
-      ++ _cnt
+      ++_cnt
 
    ENDDO
 
@@ -303,10 +303,8 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
    RETURN _cnt
 
 
-// ----------------------------------------------
-// kreiranje pomocne tabele izvjestaja
-// ----------------------------------------------
-STATIC FUNCTION _cre_tmp_tbl()
+
+STATIC FUNCTION kalk_tkv_cre_r_export()
 
    LOCAL _dbf := {}
 
@@ -397,12 +395,12 @@ STATIC FUNCTION kalk_fin_stanje_add_to_r_export( id_firma, id_tip_dok, broj_dok,
 STATIC FUNCTION _o_tbl()
 
    // o_kalk()
-  // o_sifk()
-  // o_sifv()
+   // o_sifk()
+   // o_sifv()
    o_tdok()
-  // o_roba()
-  // o_koncij()
-//   o_konto()
-//   o_partner()
+   // o_roba()
+   // o_koncij()
+// o_konto()
+// o_partner()
 
    RETURN .T.

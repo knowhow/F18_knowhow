@@ -11,10 +11,6 @@
 
 
 
-#xcommand O_BARKOD   => select (F_BARKOD)  ;  my_use  ("barkod")    ; set order to tag "1"
-
-
-
 //#xcommand O_TRFP3    => select (F_TRFP3)   ;  use_sql_sif  ("trfp3")     ; set order to tag "ID"
 #xcommand O_TRMP     => select (F_TRMP)    ;  use_sql_sif  ("trmp")      ; set order to tag "ID"
 

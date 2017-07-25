@@ -72,10 +72,10 @@ FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDevicePa
 
    __DRV_CURRENT := _dev_drv
 
-   SELECT fakt_doks
+   select_o_fakt_doks()
    SET FILTER TO
 
-   SELECT fakt
+   select_o_fakt_fakt()
    SET FILTER TO
 
    // SELECT partn

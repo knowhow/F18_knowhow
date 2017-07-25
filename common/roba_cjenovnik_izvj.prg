@@ -26,7 +26,7 @@ FUNCTION CjenR()
    SELECT ( F_BARKOD )
 
    IF !Used()
-      O_BARKOD
+      o_barkod()
    ENDIF
    SELECT BARKOD
    zapp()

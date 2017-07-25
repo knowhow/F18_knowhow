@@ -4,6 +4,9 @@
 
 ### Developer
 
+#### CORE
+- FIX info_bar u toku start_print() ... end_print()
+
 #### KALK
 - NAKUKURIKATI: vpc_magacin_rs(), TKV po prodajnim RS, lager lista magacin 
 

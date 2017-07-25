@@ -1,5 +1,13 @@
 # F18 klijent, lista promjena
 
+## 3.1.8-vindi, 2017-07-25
+
+### Korisnik
+
+#### KALK
+- Trgovačka knjig na veliko i malo (TKV, TKM)  export u XLSX
+
+
 ## 3.1.7-vindi, 2017-07-24
 
 ### Korisnik

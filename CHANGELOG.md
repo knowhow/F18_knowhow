@@ -1,5 +1,15 @@
 # F18 klijent, lista promjena
 
+## 3.1.8-vindi, 2017-07-25
+
+### Korisnik
+
+#### KALK
+- Trgovačka knjig na veliko i malo (TKV, TKM)  export u XLSX
+
+### Developer
+- BUGFIX: Dokument 80 unos tarifa alias not found
+
 ## 3.1.X, 2017-07-25
 
 ### Developer
@@ -11,7 +21,7 @@
 ### Korisnik
 
 #### CORE
-- F18 upgrade - ako je F18 patch broj instalirana > F18 aktuelna ne predlagati downgrade. 
+- F18 upgrade - ako je F18 patch broj instalirana > F18 aktuelna ne predlagati downgrade.
 
 Primjer:
 
@@ -39,7 +49,7 @@ Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana 
 ## 3.0.10-vindi, 2017-07-24
 
 ### Korisnik
-#### KALK 
+#### KALK
 - BUGFIX import vindija varaždin kalk_imp_txt.tipdok 96, ignorisati partnera
 
 ### Developer

@@ -6,12 +6,12 @@ FUNCTION p_fakt_ftxt( cId, dx, dy )
 
    LOCAL xRet
    LOCAL nDbfArea := Select()
-   LOCAL _p_bottom
-   LOCAL _p_top
-   LOCAL _p_left
-   LOCAL _p_right
-   LOCAL _box_h := f18_max_rows() - 20
-   LOCAL _box_w := f18_max_cols() - 3
+   LOCAL nBottom
+   LOCAL nTop
+   LOCAL nLeft
+   LOCAL nRight
+   LOCAL nBoxHeight := f18_max_rows() - 20
+   LOCAL nBoxWidth := f18_max_cols() - 3
    LOCAL i
    PRIVATE ImeKol
    PRIVATE Kol
@@ -36,16 +36,16 @@ FUNCTION p_fakt_ftxt( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   _p_bottom := 15
-   _p_top := 3
-   _p_left := 1
-   _p_right := f18_max_cols() - 3
+   nBottom := 15
+   nTop := 3
+   nLeft := 1
+   nRight := f18_max_cols() - 3
 
-   box_crno_na_zuto( _p_top, _p_left, _p_bottom, _p_right, "PREGLED TEKSTA" )
+   box_crno_na_zuto( nTop, nLeft, nBottom, nRight, "PREGLED TEKSTA" )
 
-   @ _p_bottom, 0 SAY ""
+   @ nBottom, 0 SAY ""
 
-   xRet := p_sifra( F_FTXT, 1, _box_h, _box_w, "Faktura - tekst na kraju fakture", @cId, , , {|| fakt_ftxt_keyboard_handler( _p_top, _p_left, 8, _p_right ) } )
+   xRet := p_sifra( F_FTXT, 1, nBoxHeight, nBoxWidth, "Faktura - tekst na kraju fakture", @cId, , , {|| fakt_ftxt_keyboard_handler( nTop, nLeft, 8, nRight ) } )
 
    Prozor0()
 

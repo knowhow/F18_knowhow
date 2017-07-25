@@ -1,5 +1,11 @@
 # F18 klijent, lista promjena
 
+## 2017-07-25
+
+### Developer
+- BUGFIX KALK lager lista cOpcine
+
+
 ## 3.1.8-vindi, 2017-07-25
 
 ### Korisnik

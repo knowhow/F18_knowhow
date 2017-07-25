@@ -35,10 +35,18 @@ if [[ $reflog_message =~ "pull" ]]; then
 fi
 
 check_branch="3-std"
+<<<<<<< HEAD
 
 if [[ $branch_name == $check_branch ]]; then
 
     for f $ VERSION VERSION_E VERSION_X script/commit.sh
+=======
+#to_merge_brach="3"
+
+if [[ $branch_name == $check_branch ]]; then
+
+    for f $ VERSION VERSION_E VERSION_X
+>>>>>>> 3
       echo "git checkout $f"
       git checkout $f
     done

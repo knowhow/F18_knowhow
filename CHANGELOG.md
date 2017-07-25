@@ -14,6 +14,7 @@ Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana 
 ### Developer
 - f18_update.prg - nove funkcije f18_builtin_version_h, f18_available_version_h,  f18_preporuci_upgrade( cVersion )
 - OUT: f18_admin.prg upgrade_db
+- razvoj prebačen u zajednički branch `3`
 
 ## 3.0.11-std, 2017-07-24
 

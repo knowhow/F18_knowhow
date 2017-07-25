@@ -61,8 +61,7 @@ FUNCTION fakt_pocetno_stanje()
       _izlaz := _row:FieldGet( _row:FieldPos( "izlaz" ) )
       _stanje := ( _ulaz - _izlaz )
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       IF roba->tip == "U" .OR. Round( _stanje, 2 ) == 0
          _data:Skip()
@@ -77,7 +76,7 @@ FUNCTION fakt_pocetno_stanje()
 
       _rec := dbf_get_rec()
 
-      _memo := ParsMemo( _rec[ "txt" ] )
+      aMemo := fakt_ftxt_decode( _rec[ "txt" ] )
 
       _rec[ "idfirma" ] := _param[ "id_firma" ]
       _rec[ "idtipdok" ] := "00"
@@ -86,9 +85,9 @@ FUNCTION fakt_pocetno_stanje()
       _rec[ "datdok" ] := _param[ "datum_ps" ]
       _rec[ "dindem" ] := "KM "
       _rec[ "idpartner" ] := _partn_id
-      _memo[ 2 ] := AllTrim( partn->naz ) + ", " + AllTrim( partn->mjesto )
-      _memo[ 3 ] := "Početno stanje"
-      _rec[ "txt" ] := fakt_memo_field_to_txt( _memo )
+      aMemo[ 2 ] := AllTrim( partn->naz ) + ", " + AllTrim( partn->mjesto )
+      aMemo[ 3 ] := "Početno stanje"
+      _rec[ "txt" ] := fakt_memo_field_to_txt( aMemo )
       _rec[ "idroba" ] := cIdRoba
       _rec[ "kolicina" ] := _stanje
       _rec[ "cijena" ] := roba->vpc

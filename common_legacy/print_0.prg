@@ -50,7 +50,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
 
    cTekPrinter := gPrinter
 
-   cOutfTXT := my_get_from_ini( 'Printeri', 'DirektnoOUTFTXT', 'N' )
+   cOutfTXT := 'N' //my_get_from_ini( 'Printeri', 'DirektnoOUTFTXT', 'N' )
 
    IF !( lUFajl )
       cDirekt := print_dialog_box( cDirekt )

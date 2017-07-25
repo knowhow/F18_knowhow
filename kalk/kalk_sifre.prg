@@ -164,13 +164,3 @@ FUNCTION kalk_o_objekti()
    SET ORDER TO TAG "1"
 
    RETURN .T.
-
-
-
-FUNCTION o_fakt_objekti()
-
-   SELECT ( F_FAKT_OBJEKTI )
-   use_sql_sif ( "fakt_objekti" )
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.

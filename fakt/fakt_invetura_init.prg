@@ -224,7 +224,7 @@ METHOD loadFromTbl()
          PushWA()
          GO TOP
       ENDIF
-      aMemo := ParsMemo( field->txt )
+      aMemo := fakt_ftxt_decode( field->txt )
       ::cPartner := ""
       ::cMjesto := ""
       ::cAdresa := ""

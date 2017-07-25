@@ -55,8 +55,8 @@ FUNCTION DFTParUg( lIni )
       @ m_x + 4, m_y + 2 SAY PadL( "Tip ug.(1/2/G)", 20 ) GET DFTvrsta VALID DFTvrsta $ "12G"
       @ m_x + 5, m_y + 2 SAY PadL( "Tip dokumenta", 20 ) GET DFTidtipdok
       @ m_x + 6, m_y + 2 SAY PadL( "Valuta", 20 ) GET DFTdindem PICT "@!"
-      @ m_x + 7, m_y + 2 SAY PadL( "Napomena 1", 20 ) GET DFTidtxt VALID P_FTXT( @DFTidtxt )
-      @ m_x + 8, m_y + 2 SAY PadL( "Napomena 2", 20 ) GET DFTiddodtxt VALID P_FTXT( @DFTiddodtxt )
+      @ m_x + 7, m_y + 2 SAY PadL( "Napomena 1", 20 ) GET DFTidtxt VALID p_fakt_ftxt( @DFTidtxt )
+      @ m_x + 8, m_y + 2 SAY PadL( "Napomena 2", 20 ) GET DFTiddodtxt VALID p_fakt_ftxt( @DFTiddodtxt )
       @ m_x + 9, m_y + 2 SAY PadL( "Zaokruzenje", 20 ) GET DFTzaokr PICT "9"
       @ m_x + 10, m_y + 2 SAY PadL( "gen.ug. ver 1/2", 20 ) GET gGenUgV2 PICT "@!" VALID gGenUgV2 $ "12"
       READ

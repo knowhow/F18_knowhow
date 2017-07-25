@@ -367,7 +367,7 @@ FUNCTION prikaz_dostupnih_opcija( aNiz )
 
       FOR i := 1 TO nBrRed * nBrKol
 
-         iif( Mod( i - 1, nBrKol ) == 0, Eval( {|| ++j, k := 0 } ), k += nOduz )
+         iif( Mod( i - 1, nBrKol ) == 0, Eval( {||++j, k := 0 } ), k += nOduz )
 
          IF i > Len( aNiz )
             AAdd( aNiz, "" )
@@ -1017,48 +1017,6 @@ FUNCTION TokUNiz( cTok, cSN, cSE )
 
    RETURN ( aNiz )
 
-
-/*
- *  Pretvara TXT u niz
- *  param cTxt   - tekst
- *  param nKol   - broj kolona
- */
-
-FUNCTION TxtUNiz( cTxt, nKol )
-
-   LOCAL aVrati := {}, nPoz := 0, lNastavi := .T., cPom := "", aPom := {}, nI := 0
-
-   cTxt := Trim( cTxt )
-   DO WHILE lNastavi
-      nPoz := At( Chr( 13 ) + Chr( 10 ), cTxt )
-      IF nPoz > 0
-         cPom := Left( cTxt, nPoz - 1 )
-         IF nPoz - 1 > nKol
-            cPom := Trim( LomiGa( cPom, 1, 5, nKol ) )
-            FOR  nI := 1  TO  Int( ( Len( cPom ) - 1 ) / nKol ) + 1
-               AAdd( aVrati, SubStr( cPom, ( nI - 1 ) * nKol + 1, nKol ) )
-            NEXT
-         ELSE
-            AAdd( aVrati, cPom )
-         ENDIF
-         cTxt := SubStr( cTxt, nPoz + 2 )
-      ELSEIF !Empty( cTxt )
-         cPom := Trim( cTxt )
-         IF Len( cPom ) > nKol
-            cPom := Trim( LomiGa( cPom, 1, 5, nKol ) )
-            FOR  nI := 1  TO  Int( ( Len( cPom ) - 1 ) / nKol ) + 1
-               AAdd( aVrati, SubStr( cPom, ( nI - 1 ) * nKol + 1, nKol ) )
-            NEXT
-         ELSE
-            AAdd( aVrati, cPom )
-         ENDIF
-         lNastavi := .F.
-      ELSE
-         lNastavi := .F.
-      ENDIF
-   ENDDO
-
-   RETURN aVrati
 
 
 

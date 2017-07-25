@@ -349,7 +349,7 @@ FUNCTION generisi_fakturu( is_opcine )
       ++nCnt
 
       _rec := dbf_get_rec()
-      aMemo := ParsMemo( _rec[ "txt" ] )
+      aMemo := fakt_ftxt_decode( _rec[ "txt" ] )
 
       _rec[ "idtipdok" ] := "10"
       _rec[ "brdok" ] := cNBrFakt

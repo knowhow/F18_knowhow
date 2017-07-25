@@ -1,13 +1,28 @@
 # F18 klijent, lista promjena
 
-## 3.1.13-std, 2017-07-25
+## 3.1.17-std, 2017-07-25
 
 ### Developer
 
-#### FAKT
+#### CORE
+- RENAME_FUN_VARS: num_to_str( nNumber, nLen, nDec )
+- define NRED_DOS
 
+#### FAKT
 - Debug štampa fiskalnog iz liste !OK #36677
 - Debug #36676 štampa barkod labela, FAKT priprema ALT+L ne radi
+- NEW_PRG_FILE: _fakt_sql.prg, fakt_ftxt.prg
+- select_o_fakt_txt()
+- RENAME_FUN_NAME to fakt_a_to_public_var_txt(), p_fakt_ftxt()
+- fakt_txt_fill_djokeri( nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dLUplata, cPartner )
+- fakt_ftxt_encode( cFTxtNaz, cTxt1, cTxt3a, cTxt3b, cTxt3c, cVezaUgovor, cDodTxt )
+- RENAME_FUN_NAME: ParsMemo -> fakt_ftxt_decode( cTxt ) => aMemo
+- RENAME_VAR: _memo -> aMemo
+- FUN_ADD: find_fakt_ftxt_by_id
+
+#### FIN
+- CLEANUP: fin_bruto_bilans_subanalitika_b.prg
+
 
 ## 3.1.10-std, 2017-07-25
 
@@ -58,14 +73,6 @@ Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana 
 ## 3.0.8-std, 2017-07-24
 
 ### Korisnik
-<<<<<<< HEAD
-=======
-#### KALK
-- BUGFIX import vindija varaždin kalk_imp_txt.tipdok 96, ignorisati partnera
-
-### Developer
-- iz std verzije izbacena opcija import vindija varazdin
->>>>>>> 3
 
 #### KALK
 - specifična opcija import vindija varazdin izbačeno iz standardne verzije
@@ -77,7 +84,6 @@ Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana 
 ### Developer
 - OUT: kalk/kalk_imp_txt_racuni.prg, kalk/kalk_imp_txt_roba_partn.prg
 - "trijebljenje" do iznemoglosti select_o_partner(), select_o_konto()
-
 
 ## Legenda
 

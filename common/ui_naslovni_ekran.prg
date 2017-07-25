@@ -149,22 +149,22 @@ FUNCTION f18_ispisi_status_log_levela()
    RETURN .T.
 
 
-FUNCTION f18_ispisi_status_podrucja( position )
+FUNCTION f18_ispisi_status_podrucja( nPosX )
 
    LOCAL _database := my_server_params()[ "database" ]
-   LOCAL _color := F18_COLOR_STATUS
-   LOCAL _txt := ""
-   LOCAL _c_tek_year := AllTrim( Str( Year( Date() ) ) )
-   LOCAL _show := .F.
+   LOCAL cColor := F18_COLOR_STATUS
+   LOCAL cTxt := ""
+   LOCAL cTekucaGodina := AllTrim( Str( Year( Date() ) ) )
+   LOCAL lShow := .F.
 
-   IF !( _c_tek_year $ _database )
-      _show := .T.
-      _txt := "! SEZONSKO PODRUČJE: " + Right( AllTrim( _database ), 4 ) + " !"
-      _color := F18_COLOR_POSEBAN_STATUS
+   IF !( cTekucaGodina $ _database )
+      lShow := .T.
+      cTxt := "! SEZONSKO PODRUČJE: " + Right( AllTrim( _database ), 4 ) + " !"
+      cColor := F18_COLOR_POSEBAN_STATUS
    ENDIF
 
-   IF _show
-      @ position, f18_max_cols() - 35 SAY8 PadC( _txt, 30 ) COLOR _color
+   IF lShow
+      @ nPosX, f18_max_cols() - 35 SAY8 PadC( cTxt, 30 ) COLOR cColor
    ENDIF
 
    RETURN .T.
@@ -175,13 +175,13 @@ FUNCTION f18_ispisi_status_modula()
 
    LOCAL _module := Lower( goModul:cName )
    LOCAL _in_use := f18_use_module( iif( _module == "pos", "pos", _module ) )
-   LOCAL _color := F18_COLOR_STATUS
+   LOCAL cColor := F18_COLOR_STATUS
 
    IF !_in_use
-      _color := F18_COLOR_POSEBAN_STATUS
-      @ f18_max_rows() -1, 25 SAY "!" COLOR _color
+      cColor := F18_COLOR_POSEBAN_STATUS
+      @ f18_max_rows() -1, 25 SAY "!" COLOR cColor
    ELSE
-      @ f18_max_rows() -1, 25 SAY " " COLOR _color
+      @ f18_max_rows() -1, 25 SAY " " COLOR cColor
    ENDIF
 
    RETURN .T.

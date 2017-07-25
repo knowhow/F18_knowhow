@@ -52,14 +52,6 @@ FUNCTION o_fakt_doks2()
    RETURN o_dbf_table( F_FAKT_DOKS2, "fakt_doks2", "1" )
 
 
-/*
-   ftxt uzorci teksta fakture
-*/
-
-FUNCTION o_fakt_txt()
-
-   RETURN o_dbf_table( F_FTXT, "ftxt", "ID" )
-
 
 
 FUNCTION o_dest()

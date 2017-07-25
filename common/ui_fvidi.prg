@@ -21,7 +21,7 @@ FUNCTION SljedLin( cFajl, nPocetak )
    LOCAL cPom, nPom
 
    cPom := FileStr( cFajl, 400, nPocetak )
-   nPom := At( NRED, cPom )
+   nPom := At( NRED_DOS, cPom )
    IF nPom == 0; nPom := Len( cPom ) + 1; ENDIF
 
    RETURN { Left( cPom, nPom - 1 ), nPocetak + nPom + 1 }  // {cLinija,nPocetakSljedece}
@@ -36,7 +36,7 @@ FUNCTION PrethLin( cFajl, nKraj )
    ENDIF
 
    cPom := FileStr( cFajl, nKor, nKraj - nKor - 2 )
-   nPom := RAt( NRED, cPom )
+   nPom := RAt( NRED_DOS, cPom )
 
    RETURN IF( nPom == 0, { cPom, 0 }, { SubStr( cPom, nPom + 2 ), nKraj - nKor + nPom - 1 } )
 // {cLinija,nNjenPocetak}
@@ -51,14 +51,14 @@ FUNCTION fajl_get_broj_linija( cImeF )
    LOCAL cPom := ""
    LOCAL nVrati := 0
 
-   IF FileStr( cImeF, 2, VelFajla( cImeF ) -2 ) != NRED
+   IF FileStr( cImeF, 2, VelFajla( cImeF ) -2 ) != NRED_DOS
       nVrati := 1
    ENDIF
    DO WHILE Len( cPom ) >= nSlobMem
       nSlobMem := Memory( 1 ) * 1024 -100
       cPom := FileStr( cImeF, nSlobMem, nOfset )
       nOfset = nOfset + nSlobMem - 1
-      nVrati = nVrati + NumAt( NRED, cPom )
+      nVrati = nVrati + NumAt( NRED_DOS, cPom )
    ENDDO
 
    RETURN nVrati

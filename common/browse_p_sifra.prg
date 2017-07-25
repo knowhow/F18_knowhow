@@ -219,6 +219,10 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
       find_tarifa_by_id( cId )
    ELSEIF Alias() == "KONCIJ"
       find_koncij_by_id( cId )
+   ELSEIF Alias() == "RJ"
+      find_rj_by_id( cId )
+   ELSEIF Alias() == "FTXT"
+      find_fakt_ftxt_by_id( cId )
    ELSE
       SEEK cId
    ENDIF
@@ -285,6 +289,7 @@ FUNCTION find_sifra_by_naz( cTable, cIdPart, cDjoker )
    GO TOP
 
    RETURN !Eof()
+
 
 /*
    find_field_by_id( "dopr", "01, "iznos" )
@@ -1550,10 +1555,8 @@ FUNCTION UslovSif()
 
 
 
-
 FUNCTION validacija_postoji_sifra( wId, cTag )
    RETURN valid_sifarnik_id_postoji( wId, cTag )
-
 
 
 
@@ -1623,7 +1626,6 @@ FUNCTION valid_sifarnik_id_postoji( wId, cTag )
 
    RETURN nRet
 */
-
 
 
 

@@ -543,7 +543,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
       RETURN lRet
    ENDIF
 
-   _t_txt := parsmemo( field->txt )
+   _t_txt := fakt_ftxt_decode( field->txt )
 
    __br_otpr := _t_txt[ 6 ]
    __br_nar := _t_txt[ 8 ]

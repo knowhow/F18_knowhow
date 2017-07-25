@@ -1,5 +1,12 @@
 # F18 klijent, lista promjena
 
+## 3.1.14-vindi, 2017-07-25
+
+### Developer
+
+#### KALK
+- NAKUKURIKATI: TKV po prodajnim RS
+
 ## 3.1.11-vindi, 2017-07-25
 
 ### Developer
@@ -14,9 +21,6 @@
 
 ### Developer
 - BUGFIX: Dokument 80 unos tarifa alias not found
-
-## 3.1.X, 2017-07-25
->>>>>>> 3
 
 ### Korisnik
 

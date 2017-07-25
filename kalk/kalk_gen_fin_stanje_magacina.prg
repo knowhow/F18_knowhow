@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR gZaokr
+
 
 /* -----------------------------------------------
  pomocna tabela finansijskog stanja magacina
@@ -27,19 +29,19 @@
 koristi TKV
 
 */
-FUNCTION kalk_gen_fin_stanje_magacina( hParams )
+FUNCTION kalk_gen_fin_stanje_magacina_za_tkv( hParams )
 
-   LOCAL _konto := ""
+   LOCAL cUslovKonto := ""
    LOCAL dDatumOd := Date()
    LOCAL dDatumDo := Date()
    LOCAL _tarife := ""
    LOCAL _vrste_dok := ""
    LOCAL cIdFirma := self_organizacija_id()
-   LOCAL _vise_konta := .F.
+   LOCAL lViseKonta := .F.
    LOCAL nDbfArea, _t_rec
-   LOCAL _ulaz, _izlaz, _rabat
-   LOCAL _nv_ulaz, _nv_izlaz, _vp_ulaz, _vp_izlaz
-   LOCAL _marza, _marza_2, _tr_prevoz, _tr_prevoz_2
+   LOCAL _ulaz, _izlaz, nRabat
+   LOCAL nNvUlaz, nNvIzlaz, nVPVUlaz, nVPVIzlaz
+   LOCAL nMarzaVP, nMarzaMP, _tr_prevoz, _tr_prevoz_2
    LOCAL _tr_bank, _tr_zavisni, _tr_carina, _tr_sped
    LOCAL _br_fakt, _tip_dok, _tip_dok_naz, _id_partner
    LOCAL _partn_naziv, _partn_ptt, _partn_mjesto, _partn_adresa
@@ -48,17 +50,20 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
    LOCAL cFilterVrsteDok := ""
    LOCAL cFilterTarife := ""
    LOCAL cGledatiUslugeDN := "N"
-   LOCAL _v_konta := "N"
+   LOCAL cViseKontaDN := "N"
    LOCAL _cnt := 0
+   LOCAL hKalkParams
+   LOCAL cIdKonto
+   LOCAL nVPC
 
    // uslovi generisanja se uzimaju iz hash matrice
    // moguce vrijednosti su:
    IF hb_HHasKey( hParams, "vise_konta" )
-      _v_konta := hParams[ "vise_konta" ]
+      cViseKontaDN := hParams[ "vise_konta" ]
    ENDIF
 
    IF hb_HHasKey( hParams, "konto" )
-      _konto := hParams[ "konto" ]
+      cUslovKonto := hParams[ "konto" ]
    ENDIF
 
    IF hb_HHasKey( hParams, "datum_od" )
@@ -85,13 +90,12 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
 
    _o_tbl() // otvori ponovo tabele izvjestaja
 
-   IF _v_konta == "D"
-      _vise_konta := .T.
+   IF cViseKontaDN == "D"
+      lViseKonta := .T.
    ENDIF
 
-   // parsirani uslovi...
-   IF _vise_konta .AND. !Empty( _konto )
-      cFilterKonto := Parsiraj( _konto, "mkonto" )
+   IF lViseKonta .AND. !Empty( cUslovKonto )
+      cFilterKonto := Parsiraj( cUslovKonto, "mkonto" )
    ENDIF
 
    IF !Empty( _tarife )
@@ -103,12 +107,12 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
    ENDIF
 
 
-   IF !_vise_konta  // sinteticki konto
-      IF Len( Trim( _konto ) ) <= 3 .OR. "." $ _konto
-         IF "." $ _konto
-            _konto := StrTran( _konto, ".", "" )
+   IF !lViseKonta  // sinteticki konto
+      IF Len( Trim( cUslovKonto ) ) <= 3 .OR. "." $ cUslovKonto
+         IF "." $ cUslovKonto
+            cUslovKonto := StrTran( cUslovKonto, ".", "" )
          ENDIF
-         _konto := Trim( _konto )
+         cUslovKonto := Trim( cUslovKonto )
       ENDIF
    ENDIF
 
@@ -118,11 +122,37 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
    // "idFirma+dtos(datdok)+idvd+brdok+rbr"
    find_kalk_za_period( xIdFirma, cIdVd, cIdPartner, cIdRoba, dDatOd, dDatDo, cOrderBy )
    */
-   MsgO( "Preuzimanje podataka sa servera " + DToC( dDatumDo ) + "-" + DToC( dDatumDo ) + " ..." )
+
+/*
+   MsgO( "Preuzimanje podataka sa servera " + DToC( dDatumOd ) + "-" + DToC( dDatumDo ) + " ..." )
    find_kalk_za_period( cIdFirma, NIL, NIL, NIL, dDatumOd, dDatumDo, "idFirma,datdok,idvd,brdok,rbr" )
    MsgC()
+*/
 
-   select_o_koncij( _konto )
+   hKalkParams := hb_Hash()
+   hKalkParams[ "idfirma" ] := cIdFirma
+
+   IF Len( Trim( cUslovKonto ) ) == 3  // sinteticki konto
+      cIdkonto := Trim( cUslovKonto )
+      hKalkParams[ "mkonto_sint" ] := cIdKonto
+   ELSE
+      hKalkParams[ "mkonto" ] := cUslovKonto
+   ENDIF
+
+   IF !Empty( dDatumOd )
+      hKalkParams[ "dat_od" ] := dDatumOd
+   ENDIF
+
+   IF !Empty( dDatumDo )
+      hKalkParams[ "dat_do" ] := dDatumDo
+   ENDIF
+
+   hKalkParams[ "order_by" ] := "idFirma,datdok,mkonto,idvd,brdok,rbr"
+   MsgO( "Preuzimanje podataka sa servera " + DToC( dDatumOd ) + "-" + DToC( dDatumDo ) + " ..." )
+   find_kalk_za_period( hKalkParams )
+   MsgC()
+
+   select_o_koncij( cUslovKonto )
 
    SELECT kalk
 
@@ -132,33 +162,30 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. IspitajPrekid()
 
-      IF !_vise_konta .AND. field->mkonto <> _konto
+      IF !lViseKonta .AND. field->mkonto <> cUslovKonto
          SKIP
          LOOP
       ENDIF
 
-      // ispitivanje konta u varijanti jednog konta i datuma
       IF ( field->datdok < dDatumOd .OR. field->datdok > dDatumDo )
          SKIP
          LOOP
       ENDIF
 
-      // ispitivanje konta u varijanti vise konta
-      IF _vise_konta .AND. !Empty( cFilterKonto )
+
+      IF lViseKonta .AND. !Empty( cFilterKonto )
          IF !Tacno( cFilterKonto )
             SKIP
             LOOP
          ENDIF
       ENDIF
 
-      // vrste dokumenata
       IF !Empty( cFilterVrsteDok )
          IF !Tacno( cFilterVrsteDok )
             SKIP
             LOOP
          ENDIF
       ENDIF
-
 
       IF !Empty( cFilterTarife )
          IF !Tacno( cFilterTarife )
@@ -167,16 +194,15 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
          ENDIF
       ENDIF
 
-      // resetuj varijable...
       _ulaz := 0
       _izlaz := 0
-      _vp_ulaz := 0
-      _vp_izlaz := 0
-      _nv_ulaz := 0
-      _nv_izlaz := 0
-      _rabat := 0
-      _marza := 0
-      _marza_2 := 0
+      nVPVUlaz := 0
+      nVPVIzlaz := 0
+      nNvUlaz := 0
+      nNvIzlaz := 0
+      nRabat := 0
+      nMarzaVP := 0
+      nMarzaMP := 0
       _tr_bank := 0
       _tr_zavisni := 0
       _tr_carina := 0
@@ -184,8 +210,6 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
       _tr_prevoz_2 := 0
       _tr_sped := 0
 
-
-      // pokupi mi varijable bitne za azuriranje u export tabelu...
       _id_d_firma := field->idfirma
       _d_br_dok := field->brdok
       _br_fakt := field->brfaktp
@@ -212,20 +236,18 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
       DO WHILE !Eof() .AND. cIdFirma + DToS( _dat_dok ) + _broj_dok == field->idfirma + DToS( field->datdok ) + field->idvd + "-" + field->brdok .AND. IspitajPrekid()
 
          // ispitivanje konta u varijanti jednog konta i datuma
-         IF !_vise_konta .AND. ( field->datdok < dDatumOd .OR. field->datdok > dDatumDo .OR. field->mkonto <> _konto )
+         IF !lViseKonta .AND. ( field->datdok < dDatumOd .OR. field->datdok > dDatumDo .OR. field->mkonto <> cUslovKonto )
             SKIP
             LOOP
          ENDIF
 
-         // ispitivanje konta u varijanti vise konta
-         IF _vise_konta .AND. !Empty( cFilterKonto )
+         IF lViseKonta .AND. !Empty( cFilterKonto )
             IF !Tacno( cFilterKonto )
                SKIP
                LOOP
             ENDIF
          ENDIF
 
-         // vrste dokumenata
          IF !Empty( cFilterVrsteDok )
             IF !Tacno( cFilterVrsteDok )
                SKIP
@@ -241,9 +263,14 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
             ENDIF
          ENDIF
 
+
+         IF kalk->idvd == "IM" // inventura magacin ne treba
+            SKIP
+            LOOP
+         ENDIF
+
          select_o_roba( kalk->idroba )
 
-         // treba li gledati usluge ??
          IF cGledatiUslugeDN == "N" .AND. roba->tip $ "U"
             SELECT kalk
             SKIP
@@ -252,28 +279,28 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
 
          SELECT kalk
 
-         // saberi vrijednosti...
-         IF field->mu_i == "1" .AND. !( field->idvd $ "12#22#94" )
-            // ulazne kalkulacije
-            _vp_ulaz += Round( field->vpc * ( field->kolicina - field->gkolicina - field->gkolicin2 ), gZaokr )
-            _nv_ulaz += Round( field->nc * ( field->kolicina - field->gkolicina - field->gkolicin2 ), gZaokr )
-         ELSEIF field->mu_i == "5"
-            // izlazne kalkulacije
-            _vp_izlaz += Round( field->vpc * field->kolicina, gZaokr )
-            _rabat += Round( ( field->rabatv / 100 ) * field->vpc * field->kolicina, gZaokr )
-            _nv_izlaz += Round( field->nc * field->kolicina, gZaokr )
-         ELSEIF field->mu_i == "1" .AND. ( field->idvd $ "12#22#94" )
-            // povrati
-            _vp_izlaz -= Round( field->vpc * field->kolicina, gZaokr )
-            _rabat -= Round( ( field->rabatv / 100 ) * field->vpc * field->kolicina, gZaokr )
-            _nv_izlaz -= Round( field->nc * field->kolicina, gZaokr )
-         ELSEIF field->mu_i == "3"
-            // nivelacija
-            _vp_ulaz += Round( field->vpc * field->kolicina, gZaokr )
+         nVPC := vpc_magacin_rs()
+
+         IF field->mu_i == "1" .AND. !( field->idvd $ "12#22#94" )  // ulazne kalkulacije
+            nVPVUlaz += Round(  nVpc * ( field->kolicina - field->gkolicina - field->gkolicin2 ), gZaokr )
+            nNvUlaz += Round( field->nc * ( field->kolicina - field->gkolicina - field->gkolicin2 ), gZaokr )
+
+         ELSEIF field->mu_i == "5"  // izlazne kalkulacije
+            nVPVIzlaz += Round( nVpc * field->kolicina, gZaokr )
+            nRabat += Round( ( field->rabatv / 100 ) * nVPC * field->kolicina, gZaokr )
+            nNvIzlaz += Round( field->nc * field->kolicina, gZaokr )
+
+         ELSEIF field->mu_i == "1" .AND. ( field->idvd $ "12#22#94" )  // povrati
+            nVPVIzlaz -= Round( nVPC * field->kolicina, gZaokr )
+            nRabat -= Round( ( field->rabatv / 100 ) * field->vpc * field->kolicina, gZaokr )
+            nNvIzlaz -= Round( field->nc * field->kolicina, gZaokr )
+
+         ELSEIF field->mu_i == "3"  // nivelacija
+            nVPVUlaz += Round( nVPC * field->kolicina, gZaokr )
          ENDIF
 
-         _marza += MMarza()
-         _marza_2 += MMarza2()
+         nMarzaVP += kalk_marza_veleprodaja()
+         nMarzaMP += kalk_marza_maloprodaja()
          _tr_prevoz += field->prevoz
          _tr_prevoz_2 += field->prevoz2
          _tr_bank += field->banktr
@@ -289,9 +316,9 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
 
       kalk_fin_stanje_add_to_r_export( _id_d_firma, _tip_dok, _d_br_dok, _dat_dok, _tip_dok_naz, _id_partner, ;
          _partn_naziv, _partn_mjesto, _partn_ptt, _partn_adresa, _br_fakt, ;
-         _nv_ulaz, _nv_izlaz, _nv_ulaz - _nv_izlaz, ;
-         _vp_ulaz, _vp_izlaz, _vp_ulaz - _vp_izlaz, ;
-         _rabat, _marza, _marza_2, ;
+         nNvUlaz, nNvIzlaz, nNvUlaz - nNvIzlaz, ;
+         nVPVUlaz, nVPVIzlaz, nVPVUlaz - nVPVIzlaz, ;
+         nRabat, nMarzaVP, nMarzaMP, ;
          _tr_prevoz, _tr_prevoz_2, _tr_bank, _tr_sped, _tr_carina, _tr_zavisni )
 
       ++_cnt
@@ -303,6 +330,22 @@ FUNCTION kalk_gen_fin_stanje_magacina( hParams )
    RETURN _cnt
 
 
+FUNCTION vpc_magacin_rs()
+
+   LOCAL nVPC
+
+   IF kalk->IdVd $ "14#10"
+      nVPC := kalk->vpc
+   ELSE
+      //select_o_roba( kalk->idroba ) ne treba ovo je vec uradjeno u nadfunkciji
+      IF kalk->idpartner == PadR( "118169", 7 ) // majop
+         nVPC := roba->vpc2
+      ELSE
+         nVPC := roba->vpc
+      ENDIF
+   ENDIF
+
+   RETURN nVPC
 
 STATIC FUNCTION kalk_tkv_cre_r_export()
 

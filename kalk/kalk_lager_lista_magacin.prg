@@ -17,7 +17,6 @@ STATIC __txt2
 STATIC __txt3
 
 
-
 FUNCTION kalk_lager_lista_magacin()
 
    PARAMETERS fPocStanje
@@ -421,7 +420,7 @@ FUNCTION kalk_lager_lista_magacin()
          ENDIF
       ENDIF
 
-
+/*
       IF  !Empty( cOpcine )
          select_o_partner( kalk->idpartner )
          IF At( AllTrim( partn->idops ), cOpcine ) == 0
@@ -431,6 +430,7 @@ FUNCTION kalk_lager_lista_magacin()
          ENDIF
          SELECT roba
       ENDIF
+*/
 
 /*
       // po vindija GRUPA

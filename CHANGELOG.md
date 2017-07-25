@@ -3,6 +3,13 @@
 ## 2017-07-25-2
 
 ### Developer
+
+#### FAKT
+- NEW_PRG_FILE: _fakt_sql.prg
+- select_o_fakt_txt()
+- RENAME to fakt_a_to_public_var_txt()
+
+#### FIN
 - CLEANUP: fin_bruto_bilans_subanalitika_b.prg
 
 

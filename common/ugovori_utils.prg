@@ -132,9 +132,8 @@ FUNCTION f_ftxt( cId )
 
    LOCAL xRet := ""
 
-   SELECT ftxt
-   HSEEK cId
-   xRet := Trim( naz )
+   select_o_ftxt( cId )
+   xRet := Trim( ftxt->naz )
 
    RETURN xRet
 
@@ -143,7 +142,7 @@ FUNCTION f_ftxt( cId )
 // dodaj u polje txt tekst
 // lVise - vise tekstova
 // -----------------------------------
-FUNCTION a_to_txt( cVal, lEmpty )
+FUNCTION fakt_a_to_public_var_txt( cVal, lEmpty )
 
    LOCAL nTArr
 
@@ -154,13 +153,13 @@ FUNCTION a_to_txt( cVal, lEmpty )
    ENDIF
    // ako je prazno nemoj dodavati
    IF !lEmpty .AND. Empty( cVal )
-      RETURN
+      RETURN .F.
    ENDIF
    _txt += Chr( 16 ) + cVal + Chr( 17 )
 
    SELECT ( nTArr )
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------

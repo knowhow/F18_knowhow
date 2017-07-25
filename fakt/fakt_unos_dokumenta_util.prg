@@ -585,8 +585,7 @@ FUNCTION UzorTxt()
 
          P_Ftxt( @cId )
 
-         SELECT ftxt
-         SEEK cId
+         select_o_ftxt( cId )
 
          SELECT fakt_pripr
 
@@ -746,8 +745,7 @@ FUNCTION _add_to_txt( cId_txt, nCount, lAppend )
       RETURN
    ENDIF
 
-   SELECT ftxt
-   SEEK cId_txt
+   select_o_ftxt( cId_txt )
    SELECT fakt_pripr
 
    IF lAppend == .F.
@@ -783,11 +781,7 @@ FUNCTION InoKlauzula()
 
    PushWA()
 
-   SELECT FTXT
-   SEEK "IN"
-
-   IF !Found()
-
+   IF !select_o_ftxt( "IN" )
 
       APPEND BLANK
       _rec := dbf_get_rec()
@@ -801,7 +795,7 @@ FUNCTION InoKlauzula()
 
    PopWa()
 
-   RETURN
+   RETURN .T.
 
 
 

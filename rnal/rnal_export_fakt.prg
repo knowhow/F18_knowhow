@@ -287,49 +287,49 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
       _txt := ""
 
       // roba tip U - nista
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // dodatni tekst otpremnice - nista
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // naziv partnera
-      a_to_txt( _g_pfmk_desc( cPartn ), .T. )
+      rnal_a_to_txt( _g_pfmk_desc( cPartn ), .T. )
       // adresa
-      a_to_txt( _g_pfmk_addr( cPartn ), .T. )
+      rnal_a_to_txt( _g_pfmk_addr( cPartn ), .T. )
       // ptt i mjesto
-      a_to_txt( _g_pfmk_place( cPartn ), .T. )
+      rnal_a_to_txt( _g_pfmk_place( cPartn ), .T. )
       // broj otpremnice
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // datum  otpremnice
-      a_to_txt( DToC( dDatDok ), .T. )
+      rnal_a_to_txt( DToC( dDatDok ), .T. )
 
       // broj ugovora - nista
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
 
       // datum isporuke - nista
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
 
       // 10. datum valute - nista
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
 
       // 11.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 12.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 13.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 14.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 15.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 16.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 17.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 18.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 19.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 20.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
 
       gather()
 
@@ -455,49 +455,49 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
       _txt := ""
 
       // roba tip U - nista
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // dodatni tekst otpremnice - nista
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // naziv partnera
-      a_to_txt( _g_pfmk_desc( cPartn ), .T. )
+      rnal_a_to_txt( _g_pfmk_desc( cPartn ), .T. )
       // adresa
-      a_to_txt( _g_pfmk_addr( cPartn ), .T. )
+      rnal_a_to_txt( _g_pfmk_addr( cPartn ), .T. )
       // ptt i mjesto
-      a_to_txt( _g_pfmk_place( cPartn ), .T. )
+      rnal_a_to_txt( _g_pfmk_place( cPartn ), .T. )
       // broj otpremnice
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // datum  otpremnice
-      a_to_txt( DToC( dDatDok ), .T. )
+      rnal_a_to_txt( DToC( dDatDok ), .T. )
 
       // broj ugovora - nista
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
 
       // datum isporuke - nista
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
 
       // 10. datum valute - nista
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
 
       // 11.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 12.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 13.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 14.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 15.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 16.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 17.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 18.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 19.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
       // 20.
-      a_to_txt( "", .T. )
+      rnal_a_to_txt( "", .T. )
 
       gather()
 
@@ -887,7 +887,7 @@ STATIC FUNCTION _g_pfmk_place( cPart )
 // dodaj u polje txt tekst
 // lVise - vise tekstova
 // -----------------------------------
-STATIC FUNCTION a_to_txt( cVal, lEmpty )
+STATIC FUNCTION rnal_a_to_txt( cVal, lEmpty )
 
    LOCAL nTArr
 
@@ -899,7 +899,7 @@ STATIC FUNCTION a_to_txt( cVal, lEmpty )
 
    // ako je prazno nemoj dodavati
    IF !lEmpty .AND. Empty( cVal )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _txt += Chr( 16 ) + cVal + Chr( 17 )

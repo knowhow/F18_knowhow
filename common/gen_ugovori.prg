@@ -297,10 +297,9 @@ FUNCTION gen_ug()
 
             IzSifre( .T. )
 
-            SELECT ftxt
-            HSEEK ugov->iddodtxt
+            select_o_ftxt( ugov->iddodtxt )
             cDodTxt := Trim( naz )
-            HSEEK ugov->idtxt
+            select_o_ftxt( ugov->idtxt )
             PRIVATE _Txt1 := ""
 
             select_o_roba( rugov->idroba )

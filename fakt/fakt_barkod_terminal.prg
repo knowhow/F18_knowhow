@@ -120,25 +120,25 @@ STATIC FUNCTION bterm_to_pripr()
       SELECT fakt_pripr
 
       // 1 roba tip U - nista
-      a_to_txt( "", .T. )
+      fakt_a_to_public_var_txt( "", .T. )
       // 2 dodatni tekst otpremnice - nista
-      a_to_txt( "", .T. )
+      fakt_a_to_public_var_txt( "", .T. )
       // 3 naziv partnera
-      a_to_txt( aParams[ 9 ], .T. )
+      fakt_a_to_public_var_txt( aParams[ 9 ], .T. )
       // 4 adresa
-      a_to_txt( aParams[ 10 ], .T. )
+      fakt_a_to_public_var_txt( aParams[ 10 ], .T. )
       // 5 ptt i mjesto
-      a_to_txt( aParams[ 11 ], .T. )
+      fakt_a_to_public_var_txt( aParams[ 11 ], .T. )
       // 6 broj otpremnice
-      a_to_txt( "", .T. )
+      fakt_a_to_public_var_txt( "", .T. )
       // 7 datum  otpremnice
-      a_to_txt( DToC( aParams[ 6 ] ), .T. )
+      fakt_a_to_public_var_txt( DToC( aParams[ 6 ] ), .T. )
       // 8 broj ugovora - nista
-      a_to_txt( "", .T. )
+      fakt_a_to_public_var_txt( "", .T. )
       // 9 datum isporuke - nista
-      a_to_txt( DToC( aParams[ 7 ] ), .T. )
+      fakt_a_to_public_var_txt( DToC( aParams[ 7 ] ), .T. )
       // 10 datum valute - nista
-      a_to_txt( "", .T. )
+      fakt_a_to_public_var_txt( "", .T. )
 
       gather()
 

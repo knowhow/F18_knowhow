@@ -744,10 +744,10 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
          cPom := str_za_mj( roba->naz, nMjesec, nGodina )
 
          // dodaj ovo u _txt
-         a_to_txt( cPom )
+         fakt_a_to_public_var_txt( cPom )
       ELSE
          // aMemo[1]
-         a_to_txt( "", .T. )
+         fakt_a_to_public_var_txt( "", .T. )
       ENDIF
 
       // samo na prvoj stavci generisi txt
@@ -765,46 +765,46 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
          // aMemo[2]
          cPom := cTxt1 + cTxt2 + cTxt3 + cTxt4 + cTxt5
          // dodaj u polje _txt
-         a_to_txt( cPom )
+         fakt_a_to_public_var_txt( cPom )
 
          // dodaj podatke o partneru
 
          // aMemo[3]
          // naziv partnera
          cPom := AllTrim( partn->naz )
-         a_to_txt( cPom )
+         fakt_a_to_public_var_txt( cPom )
 
          // adresa
          // aMemo[4]
          cPom := AllTrim( partn->adresa )
-         a_to_txt( cPom )
+         fakt_a_to_public_var_txt( cPom )
 
          // ptt i mjesto
          // aMemo[5]
          cPom := AllTrim( partn->ptt )
          cPom += " "
          cPom += AllTrim( partn->mjesto )
-         a_to_txt( cPom )
+         fakt_a_to_public_var_txt( cPom )
 
          // br.otpremnice i datum
          // aMemo[6,7]
-         a_to_txt( "", .T. )
-         a_to_txt( "", .T. )
+         fakt_a_to_public_var_txt( "", .T. )
+         fakt_a_to_public_var_txt( "", .T. )
 
          // br. ugov
          // aMemo[8]
-         a_to_txt( ugov->id, .T. )
+         fakt_a_to_public_var_txt( ugov->id, .T. )
 
          cPom := DToC( dDatGen )
 
          // datum isporuke
          // aMemo[9]
          cPom := DToC( dDatVal )
-         a_to_txt( cPom )
+         fakt_a_to_public_var_txt( cPom )
 
          // datum valute
          // aMemo[10]
-         a_to_txt( cPom )
+         fakt_a_to_public_var_txt( cPom )
 
          __destinacija := ""
 
@@ -813,7 +813,7 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
             // dodaj prazne zapise
             cPom := " "
             FOR i := 11 TO 17
-               a_to_txt( cPom, .T. )
+               fakt_a_to_public_var_txt( cPom, .T. )
             NEXT
 
             // uzmi iz destinacije
@@ -852,7 +852,7 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
 
             __destinacija := cPom
 
-            a_to_txt( cPom, .T. )
+            fakt_a_to_public_var_txt( cPom, .T. )
 
          ENDIF
 

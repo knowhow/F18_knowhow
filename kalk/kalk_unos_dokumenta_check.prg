@@ -271,11 +271,11 @@ FUNCTION DuplRoba()
 
 
 
-/* MMarza2()
+/* kalk_marza_maloprodaja()
  *     Daje iznos maloprodajne marze
  */
 
-FUNCTION MMarza2()
+FUNCTION kalk_marza_maloprodaja()
 
    IF TMarza2 == "%" .OR. Empty( tmarza2 )
       nMarza2 := kolicina * Marza2 / 100 * VPC

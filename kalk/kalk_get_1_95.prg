@@ -186,14 +186,12 @@ FUNCTION kalk_get_1_95()
          IF brdok == _brdok .AND. idvd == _idvd .AND. Val( Rbr ) == nRbr
 
             nMarza := 0
-            REPLACE vpc WITH kalk_pripr->nc, ;
-               vpcsap WITH  kalk_pripr->nc, ;
-               rabatv WITH  0, ;
+            REPLACE vpc WITH kalk_pripr->nc, vpcsap WITH  kalk_pripr->nc, rabatv WITH  0, ;
                marza WITH  0
 
             REPLACE  mkonto WITH _mkonto, ;
                tmarza  WITH _tmarza, ;
-               mpc     WITH  _MPC, ;
+               mpc WITH  _MPC, ;
                mu_i WITH  _mu_i, ;
                pkonto WITH _pkonto, ;
                pu_i WITH  _pu_i, ;

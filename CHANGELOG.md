@@ -1,5 +1,6 @@
 # F18 klijent, lista promjena
 
+<<<<<<< HEAD
 ## 2017-07-25-2
 
 ### Developer
@@ -24,10 +25,22 @@
 
 
 ## 2017-07-25
+=======
+## 3.1.15-vindi, 2017-07-25
+>>>>>>> origin/3-vindi
+
+### Developer
+
+#### CORE
+- FIX info_bar u toku start_print() ... end_print()
+
+#### KALK
+- NAKUKURIKATI: vpc_magacin_rs(), TKV po prodajnim RS, lager lista magacin 
+
+## 3.1.11-vindi, 2017-07-25
 
 ### Developer
 - BUGFIX KALK lager lista cOpcine
-
 
 ## 3.1.8-vindi, 2017-07-25
 
@@ -39,13 +52,15 @@
 ### Developer
 - BUGFIX: Dokument 80 unos tarifa alias not found
 
-## 3.1.X, 2017-07-25
+### Korisnik
+
+#### KALK
+- Trgovačka knjig na veliko i malo (TKV, TKM)  export u XLSX
 
 ### Developer
+- BUGFIX: Dokument 80 unos tarifa alias not found
 
-- OUT: f18_admin.prg upgrade_db
-
-## 3.1.5-vindi, 2017-07-24
+## 3.1.7-vindi, 2017-07-24
 
 ### Korisnik
 
@@ -58,7 +73,7 @@ Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana 
 
 ### Developer
 - f18_update.prg - nove funkcije f18_builtin_version_h, f18_available_version_h,  f18_preporuci_upgrade( cVersion )
-
+- OUT: f18_admin.prg upgrade_db
 
 ## 3.1.4-vindi, 2017-07-24
 

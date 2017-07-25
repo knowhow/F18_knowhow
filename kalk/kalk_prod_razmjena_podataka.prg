@@ -339,7 +339,7 @@ FUNCTION fakt_13_kalk_11()
          @ m_x + 14, m_y + 2 SAY Space( 30 )
          LOOP
       ELSE
-         aMemo := parsmemo( txt )
+         aMemo := fakt_ftxt_decode( txt )
 
          SELECT kalk_pripr
          LOCATE FOR BrFaktP == cBrDok // faktura je vec prenesena
@@ -494,7 +494,7 @@ FUNCTION fakt_11_kalk_41()
             LOOP
          ELSE
 
-            aMemo := parsmemo( txt )
+            aMemo := fakt_ftxt_decode( txt )
 
             IF Len( aMemo ) >= 5
                @ m_x + 10, m_y + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
@@ -734,7 +734,7 @@ FUNCTION fakt_01_kalk_81()
          @ m_x + 14, m_y + 2 SAY Space( 30 )
          LOOP
       ELSE
-         aMemo := parsmemo( txt )
+         aMemo := fakt_ftxt_decode( txt )
          IF Len( aMemo ) >= 5
             @ m_x + 10, m_y + 2 SAY PadR( Trim( amemo[ 3 ] ), 30 )
             @ m_x + 11, m_y + 2 SAY PadR( Trim( amemo[ 4 ] ), 30 )
@@ -871,7 +871,7 @@ FUNCTION fakt_13_kalk_80()
          @ m_x + 14, m_y + 2 SAY Space( 30 )
          LOOP
       ELSE
-         aMemo := parsmemo( txt )
+         aMemo := fakt_ftxt_decode( txt )
 
 
          SELECT kalk_pripr
@@ -1036,7 +1036,7 @@ FUNCTION fakt_15_kalk_15()
          @ m_x + 14, m_y + 2 SAY Space( 30 )
          LOOP
       ELSE
-         aMemo := parsmemo( txt )
+         aMemo := fakt_ftxt_decode( txt )
          IF Len( aMemo ) >= 5
             @ m_x + 10, m_y + 2 SAY PadR( Trim( amemo[ 3 ] ), 30 )
             @ m_x + 11, m_y + 2 SAY PadR( Trim( amemo[ 4 ] ), 30 )
@@ -1254,7 +1254,7 @@ FUNCTION fakt_11_kalk_42()
             LOOP
          ELSE
 
-            aMemo := parsmemo( txt )
+            aMemo := fakt_ftxt_decode( txt )
 
             IF Len( aMemo ) >= 5
                @ m_x + _x_dok_info, m_y + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )

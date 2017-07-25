@@ -25,7 +25,7 @@ FUNCTION fakt_sifrarnik()
    AAdd( aOpcExe, {|| sif_roba_tarife_koncij_sast() } )
 
    AAdd( aOpc, "3. fakt->txt" )
-   AAdd( aOpcExe, {|| OSifFtxt(), P_FTxt() } )
+   AAdd( aOpcExe, {|| OSifFtxt(), p_fakt_ftxt() } )
 
    AAdd( aOpc, "U. ugovori" )
    AAdd( aOpcExe, {|| o_ugov(), ugov_sif_meni() } )

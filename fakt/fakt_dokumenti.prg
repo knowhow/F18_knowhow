@@ -452,7 +452,7 @@ FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
       veza_otpremnica := ""
    ENDIF
 
-   aMemo := ParsMemo( _txt )
+   aMemo := fakt_ftxt_decode( _txt )
    IF Len( aMemo ) > 0
       _txt1 := aMemo[ 1 ]
    ENDIF

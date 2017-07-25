@@ -691,7 +691,7 @@ STATIC FUNCTION _ins_x_veza( nArea )
 STATIC FUNCTION set_fakt_vezni_dokumenti( value )
 
    LOCAL _ok := .T.
-   LOCAL _memo, _rec
+   LOCAL aMemo, _rec
    LOCAL nDbfArea := Select()
 
    IF value == NIL
@@ -703,14 +703,14 @@ STATIC FUNCTION set_fakt_vezni_dokumenti( value )
 
    _rec := dbf_get_rec()
 
-   _memo := ParsMemo( _rec[ "txt" ] )
+   aMemo := fakt_ftxt_decode( _rec[ "txt" ] )
 
    // setuj 19-ti clan matrice
-   _memo[ 19 ] := value
+   aMemo[ 19 ] := value
 
    // konvertuj mi memo field u txt
    // zatim setuj za novu vrijednost polja
-   _rec[ "txt" ] := fakt_memo_field_to_txt( _memo )
+   _rec[ "txt" ] := fakt_memo_field_to_txt( aMemo )
 
    dbf_update_rec( _rec )
 

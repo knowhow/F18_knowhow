@@ -248,7 +248,7 @@ FUNCTION cre_all_fakt( ver )
    AAdd( aDBf, { 'ID','C',  2,0 } )
    AAdd( aDBf, { 'NAZ','C', 340,0 } )
 
-   _alias := "FTXT"
+--   _alias := "FTXT"
    _table_name := "fakt_ftxt"
 
    IF_NOT_FILE_DBF_CREATE

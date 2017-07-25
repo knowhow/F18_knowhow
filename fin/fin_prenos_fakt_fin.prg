@@ -136,7 +136,7 @@ FUNCTION fakt_fin_prenos()
       cIdPartner := idpartner
       IF Empty( IdPartner )
          Box(, 6, 66 )
-         aMemo := parsmemo( txt )
+         aMemo := fakt_ftxt_decode( txt )
          IF Len( aMemo ) >= 5
             @ m_x + 1, m_y + 2 SAY "FAKT broj:" + BrDOK
             @ m_x + 2, m_y + 2 SAY PadR( Trim( amemo[ 3 ] ), 30 )

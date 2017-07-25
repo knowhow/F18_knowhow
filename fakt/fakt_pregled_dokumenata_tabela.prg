@@ -21,8 +21,8 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    LOCAL i
    LOCAL nWidthMeni := 30
-   LOCAL _x, _y
-   LOCAL _params := fakt_params()
+   LOCAL nX, nY
+   LOCAL hFaktParams := fakt_params()
    LOCAL cFiskalniUredjajModel := fiskalni_uredjaj_model()
 
    ImeKol := {}
@@ -53,7 +53,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    AAdd( ImeKol, { "Operater",       {|| GetUserName( oper_id ) } } )
 
    // veza sa dokumentima
-   IF _params[ "fakt_dok_veze" ]
+   IF hFaktParams[ "fakt_dok_veze" ]
       AAdd( ImeKol, { "Vezni dokumenti", {|| PadR( get_fakt_vezni_dokumenti( idfirma, idtipdok, brdok ), 50 ) } } )
    ENDIF
 
@@ -62,21 +62,21 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
       AAdd( Kol, i )
    NEXT
 
-   _x := f18_max_rows() - 4
-   _y := f18_max_cols() - 3
+   nX := f18_max_rows() - 4
+   nY := f18_max_cols() - 3
 
-   Box( , _x, _y )
+   Box( , nX, nY )
 
-   @ get_x_koord() + _x - 4, get_y_koord() + 2 SAY8 _upadr( " <ENTER> Štampa TXT", nWidthMeni ) + ;
+   @ get_x_koord() + nX - 4, get_y_koord() + 2 SAY8 _upadr( " <ENTER> Štampa TXT", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < P > Povrat dokumenta", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < I > Informacije", nWidthMeni )
-   @ get_x_koord() + _x - 3, get_y_koord() + 2 SAY8 _upadr( " <a+P> ili <L> Štampa ODT", nWidthMeni ) + ;
+   @ get_x_koord() + nX - 3, get_y_koord() + 2 SAY8 _upadr( " <a+P> ili <L> Štampa ODT", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < S > Storno dokument", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < c+V > Postavi vezu fisk.", nWidthMeni )
-   @ get_x_koord() + _x - 2, get_y_koord() + 2 SAY8 _upadr( " < R > Štampa fisk.računa", nWidthMeni ) + ;
+   @ get_x_koord() + nX - 2, get_y_koord() + 2 SAY8 _upadr( " < R > Štampa fisk.računa", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < F > ponuda->račun", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < F5 > osvježi ", nWidthMeni )
-   @ get_x_koord() + _x - 1, get_y_koord() + 2 SAY8 _upadr( " < W > Dupliciraj", nWidthMeni ) + ;
+   @ get_x_koord() + nX - 1, get_y_koord() + 2 SAY8 _upadr( " < W > Dupliciraj", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < K > Ispravka podataka", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < T > Duplikat fiskalnog rn.", nWidthMeni )
 
@@ -117,7 +117,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    NEXT
 
 
-   my_db_edit_sql( "", _x - 3, _y, {| nCh | fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
+   my_db_edit_sql( "", nX - 3, nY, {| nCh | fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
       NIL, NIL, NIL, 2,  NIL, NIL, {| nSkip | fakt_pregled_dokumenata_skip_block( nSkip ) } ) // aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock
 
 
@@ -131,8 +131,6 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    my_close_all_dbf()
 
    RETURN .T.
-
-
 
 
 
@@ -205,7 +203,6 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
          IF Pitanje( "FAKT_PROM_VEZU", "Promjeniti postojeću vezu (D/N)?", "N" ) == "N"
             RETURN DE_CONT
          ENDIF
-
       ENDIF
 
       IF Pitanje( "FISC_NVEZA_SET", "Setovati novu vezu sa fiskalnim računom (D/N)?", "D" ) == "N"
@@ -407,41 +404,6 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
 
 
-FUNCTION fakt_pregled_reload_tables( cFilter )
-
-   LOCAL nRec
-
-   IF Select( "FAKT_DOKS" ) > 0
-      SELECT FAKT_DOKS
-      nRec := RecNo()
-   ENDIF
-
-   my_close_all_dbf()
-
-   // o_vrstep()
-   // o_ops()
-
-   // o_valute()
-   // o_rj()
-   o_fakt_objekti()
-   o_fakt()
-   // o_partner()
-   o_fakt_doks2()
-   o_fakt_doks()
-
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
-
-   SET FILTER TO &( cFilter )
-   GO TOP
-   IF nRec != NIL
-      GO nRec
-   ENDIF
-
-   RETURN .T.
-
-
 STATIC FUNCTION fakt_pregled_dokumenata_skip_block( nRecs, cFiskalniUredjajModel )
 
    LOCAL nSkipped := 0
@@ -483,7 +445,6 @@ STATIC FUNCTION fakt_pregled_dokumenata_skip_block( nRecs, cFiskalniUredjajModel
 
 
 
-
 STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
    LOCAL cFiskalniRacun
@@ -513,7 +474,6 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
 
 
-
 STATIC FUNCTION get_fiscal_info( cFiskalniUredjajModel )
 
    LOCAL cInfo := " "
@@ -540,3 +500,39 @@ STATIC FUNCTION prikazi_brojeve_fiskalnog_racuna( _f_rn, _s_rn )
    ENDIF
 
    RETURN _txt
+
+
+
+FUNCTION fakt_pregled_reload_tables( cFilter )
+
+   LOCAL nRec
+
+   IF Select( "FAKT_DOKS" ) > 0
+      SELECT FAKT_DOKS
+      nRec := RecNo()
+   ENDIF
+
+   my_close_all_dbf()
+
+   // o_vrstep()
+   // o_ops()
+
+   // o_valute()
+   // o_rj()
+   o_fakt_objekti()
+   o_fakt()
+   // o_partner()
+   o_fakt_doks2()
+   o_fakt_doks()
+
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   SET FILTER TO &( cFilter )
+   GO TOP
+   IF nRec != NIL
+      GO nRec
+   ENDIF
+
+   RETURN .T.

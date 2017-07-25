@@ -750,66 +750,66 @@ STATIC FUNCTION fakt_print_dokument()
 STATIC FUNCTION _init_vars_from_txt_memo()
 
    LOCAL hFaktParams := fakt_params()
-   LOCAL _memo := ParsMemo( _txt )
-   LOCAL _len := Len( _memo )
+   LOCAL aMemo := fakt_ftxt_decode( _txt )
+   LOCAL _len := Len( aMemo )
 
    IF _len > 0
-      _txt1 := _memo[ 1 ]
+      _txt1 := aMemo[ 1 ]
    ENDIF
 
    IF _len >= 2
-      _txt2 := _memo[ 2 ]
+      _txt2 := aMemo[ 2 ]
    ENDIF
 
    IF _len >= 9
-      _brotp := _memo[ 6 ]
-      _datotp := CToD( _memo[ 7 ] )
-      _brnar := _memo[ 8 ]
-      _datpl := CToD( _memo[ 9 ] )
+      _brotp := aMemo[ 6 ]
+      _datotp := CToD( aMemo[ 7 ] )
+      _brnar := aMemo[ 8 ]
+      _datpl := CToD( aMemo[ 9 ] )
    ENDIF
 
-   IF _len >= 10 .AND. !Empty( _memo[ 10 ] )
-      _vezotpr := _memo[ 10 ]
+   IF _len >= 10 .AND. !Empty( aMemo[ 10 ] )
+      _vezotpr := aMemo[ 10 ]
    ENDIF
 
    IF _len >= 11
-      d2k1 := _memo[ 11 ]
+      d2k1 := aMemo[ 11 ]
    ENDIF
 
    IF _len >= 12
-      d2k2 := _memo[ 12 ]
+      d2k2 := aMemo[ 12 ]
    ENDIF
 
    IF _len >= 13
-      d2k3 := _memo[ 13 ]
+      d2k3 := aMemo[ 13 ]
    ENDIF
 
    IF _len >= 14
-      d2k4 := _memo[ 14 ]
+      d2k4 := aMemo[ 14 ]
    ENDIF
 
    IF _len >= 15
-      d2k5 := _memo[ 15 ]
+      d2k5 := aMemo[ 15 ]
    ENDIF
 
    IF _len >= 16
-      d2n1 := _memo[ 16 ]
+      d2n1 := aMemo[ 16 ]
    ENDIF
 
    IF _len >= 17
-      d2n2 := _memo[ 17 ]
+      d2n2 := aMemo[ 17 ]
    ENDIF
 
    IF hFaktParams[ "destinacije" ] .AND. _len >= 18
-      _destinacija := PadR( AllTrim( _memo[ 18 ] ), 500 )
+      _destinacija := PadR( AllTrim( aMemo[ 18 ] ), 500 )
    ENDIF
 
    IF hFaktParams[ "fakt_dok_veze" ] .AND. _len >= 19
-      _dokument_veza := PadR( AllTrim( _memo[ 19 ] ), 500 )
+      _dokument_veza := PadR( AllTrim( aMemo[ 19 ] ), 500 )
    ENDIF
 
    IF hFaktParams[ "fakt_objekti" ] .AND. _len >= 20
-      _objekti := PadR( _memo[ 20 ], 10 )
+      _objekti := PadR( aMemo[ 20 ], 10 )
    ENDIF
 
    RETURN .T.
@@ -1294,7 +1294,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
 
    IF _odabir_txt
       _lista_uzoraka := g_txt_tipdok( _idtipdok )
-      UzorTxt2( _lista_uzoraka, __redni_broj )
+      fakt_unos_set_ftxt2( _lista_uzoraka, __redni_broj )
    ENDIF
 
    IF ( _podbr == " ." .OR. roba->tip = "U" .OR. ( __redni_broj == 1 .AND. Val( _podbr ) < 1 ) )
@@ -1622,8 +1622,7 @@ FUNCTION RabPor10()
    ENDIF
    SELECT ( nArr )
 
-   RETURN
-
+   RETURN .T.
 
 
 
@@ -1666,15 +1665,16 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
       CASE izbor == 2
          fakt_sredi_redni_broj_u_pripremi()
       CASE izbor == 3
+
          O_FAKT_S_PRIPR
          o_fakt_txt()
          select_fakt_pripr()
          GO TOP
-         lDoks2 := ( my_get_from_ini( "FAKT", "Doks2", "N", KUMPATH ) == "D" )
+         lDoks2 := .F. //( my_get_from_ini( "FAKT", "Doks2", "N", KUMPATH ) == "D" )
          IF Val( rbr ) <> 1
             MsgBeep( "U pripremi se ne nalazi dokument" )
          ELSE
-            IsprUzorTxt()
+            fakt_ispravka_ftxt()
          ENDIF
          my_close_all_dbf()
       CASE izbor == 4

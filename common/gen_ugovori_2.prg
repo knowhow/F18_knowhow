@@ -948,8 +948,8 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
 
    Scatter()
 
-   // obradi djokere
-   txt_djokeri( nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dDatLUpl, cUPartn )
+
+   fakt_txt_fill_djokeri( nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dDatLUpl, cUPartn )
 
    my_rlock()
    Gather()

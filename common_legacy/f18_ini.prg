@@ -137,7 +137,7 @@ FUNCTION R_IniRead ( cSection, cEntry, cDefault, cFName, lAppend )
 
          // nPos points to start of section
 
-         // Skip [section] + NRED
+         // Skip [section] + NRED_DOS
          nPos = nPos + 4 + Len ( cSection )
 
          // nPos points to start of first entry
@@ -146,13 +146,13 @@ FUNCTION R_IniRead ( cSection, cEntry, cDefault, cFName, lAppend )
             nEnd    := I_At ( '=', .F., nPos )
             cEntry  := SubStr ( cCache, nPos, nEnd - nPos )
             nPos    := nEnd + 1
-            nEnd    := I_At ( NRED, .F., nPos )
+            nEnd    := I_At ( NRED_DOS, .F., nPos )
             cString := SubStr ( cCache, nPos, nEnd - nPos )
             AAdd ( aEntries, { cEntry, cString } )
             nPos    := nEnd + 2
 
-            DO WHILE SubStr( cCache, nPos, 2 ) = NRED
-               // Skip NRED's, if any
+            DO WHILE SubStr( cCache, nPos, 2 ) = NRED_DOS
+               // Skip NRED_DOS's, if any
                nPos += 2
             ENDDO
 
@@ -172,7 +172,7 @@ FUNCTION R_IniRead ( cSection, cEntry, cDefault, cFName, lAppend )
 
             // Return value
             RETURN SubStr ( cCache, nPos + 1, ;
-               I_At ( NRED, .F., nPos + 1 ) - nPos - 1 )
+               I_At ( NRED_DOS, .F., nPos + 1 ) - nPos - 1 )
 
          ENDIF
 
@@ -297,7 +297,7 @@ FUNCTION R_IniWrite( cSection, cEntry, cString, cFName )
       FSeek( nHandle, 0, FS_END )
 
       // APPEND NEW SECTION (separated with an empty line)
-      FWrite ( nHandle, NRED, 2 )
+      FWrite ( nHandle, NRED_DOS, 2 )
       PutSection ( nHandle, cSection )
 
       PutEntry( nHandle, cEntry, cString )
@@ -326,7 +326,7 @@ FUNCTION R_IniWrite( cSection, cEntry, cString, cFName )
 
       ENDIF
 
-      // Skip section + NRED
+      // Skip section + NRED_DOS
       nPos = nPos + 4 + Len ( cSection )
 
       IF ( nEntry := I_At ( Upper ( cEntry ) + '=', .T., nPos ) ) = 0
@@ -352,15 +352,15 @@ FUNCTION R_IniWrite( cSection, cEntry, cString, cFName )
                // -- Next section present at : nEntry - 2
 
                // -- INSERT ENTRY AT END OF SECTION
-               DO WHILE SubStr ( cCache, nEntry - 2, 2 ) = NRED
-                  // -- Skip NRED's, if any ...
+               DO WHILE SubStr ( cCache, nEntry - 2, 2 ) = NRED_DOS
+                  // -- Skip NRED_DOS's, if any ...
                   nEntry -= 2
                ENDDO
 
-               // -- Keep 1 NRED string ...
+               // -- Keep 1 NRED_DOS string ...
                nEntry += 2
 
-               cCache := Stuff( cCache, nEntry, 0, cEntry + '=' + cString + NRED )
+               cCache := Stuff( cCache, nEntry, 0, cEntry + '=' + cString + NRED_DOS )
 
                ReWrite( nHandle, cFName )
 
@@ -378,7 +378,7 @@ FUNCTION R_IniWrite( cSection, cEntry, cString, cFName )
             // -- DELETE ENTRY !
 
             // nEntry points to first pos of entry name
-            nPos := I_At( NRED, .F., nEntry ) + 2
+            nPos := I_At( NRED_DOS, .F., nEntry ) + 2
 
             // Delete bytes from string
             cCache := Stuff ( cCache, nEntry, nPos - nEntry, '' )
@@ -389,7 +389,7 @@ FUNCTION R_IniWrite( cSection, cEntry, cString, cFName )
 
             nEntry  := nEntry + Len ( cEntry ) + 1
             cCache := Stuff ( cCache, nEntry, ;
-               At ( NRED, SubStr ( cCache, nEntry ) ) - 1, cString )
+               At ( NRED_DOS, SubStr ( cCache, nEntry ) ) - 1, cString )
 
          ENDIF
 
@@ -536,7 +536,7 @@ STATIC FUNCTION ReadFile( hnd )
 STATIC FUNCTION PutSection( hnd, sect )
 
    IF !Empty( sect )
-      RETURN FWrite ( hnd, '[' + sect + ']' + NRED )
+      RETURN FWrite ( hnd, '[' + sect + ']' + NRED_DOS )
    ELSE
       RETURN NIL
    ENDIF
@@ -548,7 +548,7 @@ STATIC FUNCTION PutSection( hnd, sect )
 STATIC FUNCTION PutEntry( hnd, entry, val )
 
    IF !Empty ( entry ) .AND. !Empty ( val )
-      RETURN FWrite ( hnd, entry + '=' + val + NRED )
+      RETURN FWrite ( hnd, entry + '=' + val + NRED_DOS )
    ELSE
       RETURN NIL
    ENDIF

@@ -346,6 +346,30 @@ FUNCTION use_sql_rj( cId )
    RETURN !Eof()
 
 
+FUNCTION find_rj_by_id( cId )
+
+   LOCAL cAlias := "RJ"
+   LOCAL cTable := "rj"
+   LOCAL cSqlQuery := "select * from fmk." + cTable
+   LOCAL cIdSql
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+
+   IF !use_sql( cTable, cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN !Eof()
+
 
 
 FUNCTION o_trfp()

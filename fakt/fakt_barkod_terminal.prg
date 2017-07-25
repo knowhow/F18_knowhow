@@ -113,7 +113,7 @@ STATIC FUNCTION bterm_to_pripr()
       _idpartner := aParams[ 8 ]
       _dindem := "KM "
       _zaokr := 2
-      _txt := ""
+      _txt := "" // fakt_txt
 
       // ovo setuje cijenu
       v_kolicina( "1" )

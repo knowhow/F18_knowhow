@@ -1,5 +1,14 @@
 # F18 klijent, lista promjena
 
+## 3.1.12-std, 2017-07-25
+
+### Developer
+
+#### FAKT
+
+- Debug štampa fiskalnog iz liste !OK #36677
+- Debug #36676 štampa barkod labela, FAKT priprema ALT+L ne radi
+
 ## 3.1.10-std, 2017-07-25
 
 ### Developer

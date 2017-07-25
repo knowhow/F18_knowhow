@@ -70,7 +70,7 @@ FUNCTION info_bar( cDoc, cMsg )
 
 FUNCTION error_bar( cDoc, cMsg )
 
-   LOCAL lPrinter, lConsole
+   LOCAL lPrinter, lConsole, cDevice
 
    // Beep( 2 )
    /* TODO:  : Object destructor failure ;
@@ -90,10 +90,14 @@ FUNCTION error_bar( cDoc, cMsg )
 
    lPrinter   :=  Set( _SET_PRINTER,  .F. )
    lConsole := Set( _SET_CONSOLE, .T. )
+   cDevice := Set( _SET_DEVICE, "SCREEN" )
+
    @ f18_max_rows() + 1, 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" ;
       COLOR iif( Empty( cMsg ), F18_COLOR_INFO_PANEL, F18_COLOR_ERROR_PANEL )
+
    Set( _SET_PRINTER,  lPrinter )
    Set( _SET_CONSOLE, lConsole )
+   Set( _SET_DEVICE, cDevice )
 
    IF Empty( cMsg ) .OR. cMsg == "error_bar"
       RETURN .T.

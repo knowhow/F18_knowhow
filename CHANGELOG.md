@@ -7,6 +7,8 @@
 #### KALK
 - Trgovačka knjig na veliko i malo (TKV, TKM)  export u XLSX
 
+### Developer
+- BUGFIX: Dokument 80 unos tarifa alias not found
 
 ## 3.1.7-vindi, 2017-07-24
 

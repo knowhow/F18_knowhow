@@ -11,9 +11,9 @@
 
 #include "f18.ch"
 
-STATIC __line
-STATIC __txt1
-STATIC __txt2
+STATIC s_cLinija
+STATIC s_cTxt1
+STATIC s_cTxt2
 
 FUNCTION kalk_kartica_magacin()
 
@@ -126,7 +126,7 @@ FUNCTION kalk_kartica_magacin()
       BoxC()
 
       IF Empty( cIdRoba )
-         IF pitanje(, "Niste zadali sifru artikla, izlistati sve kartice ?", "N" ) == "N"
+         IF pitanje(, "Niste zadali šifru artikla, izlistati sve kartice ?", "N" ) == "N"
             my_close_all_dbf()
             RETURN .F.
          ELSE
@@ -207,9 +207,9 @@ FUNCTION kalk_kartica_magacin()
    nLen := 1
 
    _set_zagl( @cLine, @cTxt1, @cTxt2, cPvSS )
-   __line := cLine
-   __txt1 := cTxt1
-   __txt2 := cTxt2
+   s_cLinija := cLine
+   s_cTxt1 := cTxt1
+   s_cTxt2 := cTxt2
 
    PRIVATE nTStrana := 0
 
@@ -225,10 +225,10 @@ FUNCTION kalk_kartica_magacin()
       select_o_roba( cIdRoba )
 
       select_o_tarifa( roba->idtarifa )
-      ? __line
+      ? s_cLinija
       ? "Artikal:", cIdRoba, "-", Trim( Left( roba->naz, 40 ) ) + iif( roba_barkod_pri_unosu(), " BK:" + roba->barkod, "" ) + " (" + roba->jmj + ")"
 
-      ? __line
+      ? s_cLinija
       SELECT kalk
 
       nCol1 := 10
@@ -265,7 +265,6 @@ FUNCTION kalk_kartica_magacin()
 
          IF cPredh == "D" .AND. datdok >= dDatod .AND. fPrviProl
 
-
             fPrviprol := .F. // ispis predhodnog stanja
 
             ? "Stanje do ", dDatOd
@@ -288,7 +287,6 @@ FUNCTION kalk_kartica_magacin()
 
 
             @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNV ) // NV
-
             @ PRow(), PCol() + 1 SAY say_kolicina( nRabat ) // RABAT
 
 
@@ -311,8 +309,8 @@ FUNCTION kalk_kartica_magacin()
                ?? "", idpartner
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY say_kolicina( kolicina - gkolicina - gkolicin2 )
-               @ PRow(), PCol() + 1 SAY say_kolicina( 0    )
-               @ PRow(), PCol() + 1 SAY say_kolicina( nUlaz - nIzlaz    )
+               @ PRow(), PCol() + 1 SAY say_kolicina( 0  )
+               @ PRow(), PCol() + 1 SAY say_kolicina( nUlaz - nIzlaz )
 
                nNc := field->nc
                cTransakcija := "   U"
@@ -344,9 +342,7 @@ FUNCTION kalk_kartica_magacin()
                   @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVp   )
                ENDIF
 
-
                @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNV   )
-
 
                @ PRow(), PCol() + 1 SAY say_cijena( 0 ) // RABAT
 
@@ -355,7 +351,6 @@ FUNCTION kalk_kartica_magacin()
                ELSE
                   @ PRow(), PCol() + 1 SAY say_cijena( vpc )
                ENDIF
-
 
                IF cBrFDa == "D"
                   @ PRow() + 1, nColDok SAY field->brfaktp
@@ -441,7 +436,6 @@ FUNCTION kalk_kartica_magacin()
                @ PRow(), PCol() + 1 SAY say_kolicina( - kolicina  )
                @ PRow(), PCol() + 1 SAY say_kolicina( nUlaz - nIzlaz    )
 
-
                nNc := field->nc
                @ PRow(), PCol() + 1 SAY say_cijena( nNc )
 
@@ -466,10 +460,10 @@ FUNCTION kalk_kartica_magacin()
                tnVPVp += nVPVp
                nVPV += vpc * ( kolicina )
             ENDIF
+
             IF datdok >= dDatod
 
                @ PRow(), PCol() + 1 SAY say_cijena( 0  ) // RABAT
-
                IF koncij->naz == "P2"
                   @ PRow(), PCol() + 1 SAY say_cijena( roba->plc )  // planska cijena
                ELSE
@@ -605,7 +599,7 @@ FUNCTION kalk_kartica_magacin()
             hParams[ "nc" ] := nNc
             hParams[ "nv" ] := nNV
             hParams[ "rabatv" ] := field->rabatv
-            hParams[ "vpc" ] := field->vpc
+            hParams[ "vpc" ] := vpc_magacin_rs()
             hParams[ "stanje" ] := nUlaz - nIzlaz
 
             kalk_kartica_magacin_add_item_to_r_export( hParams )
@@ -614,17 +608,14 @@ FUNCTION kalk_kartica_magacin()
 
       ENDDO
 
-
-
-
-      ? __line
+      ? s_cLinija
       ? "Ukupno:"
       @ PRow(), nCol1    SAY say_kolicina( nUlaz )
       @ PRow(), PCol() + 1 SAY say_kolicina( nIzlaz )
       @ PRow(), PCol() + 1 SAY say_kolicina( nUlaz - nIzlaz )
 
 
-      IF Round( nulaz - nizlaz, 4 ) <> 0
+      IF Round( nUlaz - nIzlaz, 4 ) <> 0
          @ PRow(), PCol() + 1 SAY say_kolicina( nNV / ( nUlaz - nIzlaz ) )
       ELSE
          @ PRow(), PCol() + 1 SAY say_kolicina( 0 )
@@ -637,8 +628,7 @@ FUNCTION kalk_kartica_magacin()
       @ PRow(), PCol() + 1 SAY say_kolicina( nRabat  )
 
 
-
-      ? __line
+      ? s_cLinija
       ?
       ?
 
@@ -794,10 +784,10 @@ STATIC FUNCTION zagl_mag_kart()
       P_COND
    ENDIF
 
-   ? __line
-   ? __txt1
-   ? __txt2
-   ? __line
+   ? s_cLinija
+   ? s_cTxt1
+   ? s_cTxt2
+   ? s_cLinija
 
    RETURN ( NIL )
 

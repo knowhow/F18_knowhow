@@ -1,11 +1,11 @@
 # F18 klijent, lista promjena
 
-## 3.1.14-vindi, 2017-07-25
+## 3.1.15-vindi, 2017-07-25
 
 ### Developer
 
 #### KALK
-- NAKUKURIKATI: TKV po prodajnim RS
+- NAKUKURIKATI: vpc_magacin_rs(), TKV po prodajnim RS, lager lista magacin 
 
 ## 3.1.11-vindi, 2017-07-25
 

@@ -330,11 +330,11 @@ FUNCTION kalk_gen_fin_stanje_magacina_za_tkv( hParams )
    RETURN _cnt
 
 
-STATIC FUNCTION vpc_magacin_rs()
+FUNCTION vpc_magacin_rs()
 
    LOCAL nVPC
 
-   IF kalk->IdVd $ "14#10" 
+   IF kalk->IdVd $ "14#10"
       nVPC := kalk->vpc
    ELSE
       //select_o_roba( kalk->idroba ) ne treba ovo je vec uradjeno u nadfunkciji

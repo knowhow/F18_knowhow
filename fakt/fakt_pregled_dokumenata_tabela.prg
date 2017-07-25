@@ -26,7 +26,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    LOCAL cFiskalniUredjajModel := fiskalni_uredjaj_model()
 
    ImeKol := {}
-   AAdd( ImeKol, { " ",            {|| select_fakt_doks(), get_fiscal_info( cFiskalniUredjajModel ) } } )
+   //AAdd( ImeKol, { " ",            {|| select_fakt_doks(), get_fiscal_info( cFiskalniUredjajModel ) } } )
    AAdd( ImeKol, { "RJ",           {|| fakt_doks->idfirma }  } )
    AAdd( ImeKol, { "VD",           {|| fakt_doks->idtipdok } } )
    AAdd( ImeKol, { "Brdok",        {|| fakt_doks->brdok + fakt_doks->rezerv } } )
@@ -46,11 +46,11 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    AAdd( ImeKol, { "Dat.otpr",       {|| fakt_doks->dat_otpr } } )
    AAdd( ImeKol, { "Dat.val.",       {|| fakt_doks->dat_val } } )
 
-   AAdd( ImeKol, { "Fisk.rn",        {|| PadR( prikazi_brojeve_fiskalnog_racuna( fisc_rn, fisc_st ), 20 ) } } )
+   //AAdd( ImeKol, { "Fisk.rn",        {|| PadR( prikazi_brojeve_fiskalnog_racuna( fisc_rn, fisc_st ), 20 ) } } )
    AAdd( ImeKol, { "Fisk.vr",        {|| PadR( DToC( fisc_date ) + " " + AllTrim( fisc_time ), 20 ) } } )
 
    // prikaz operatera
-   AAdd( ImeKol, { "Operater",       {|| GetUserName( oper_id ) } } )
+   AAdd( ImeKol, { "Operater",       {|| GetUserName( field->oper_id ) } } )
 
    // veza sa dokumentima
    IF hFaktParams[ "fakt_dok_veze" ]
@@ -403,7 +403,6 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
    RETURN nRet
 
 
-
 STATIC FUNCTION fakt_pregled_dokumenata_skip_block( nRecs, cFiskalniUredjajModel )
 
    LOCAL nSkipped := 0
@@ -473,7 +472,7 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
    RETURN .T.
 
 
-
+/*
 STATIC FUNCTION get_fiscal_info( cFiskalniUredjajModel )
 
    LOCAL cInfo := " "
@@ -484,8 +483,10 @@ STATIC FUNCTION get_fiscal_info( cFiskalniUredjajModel )
       cInfo := "F"
    ENDIF
 
-   RETURN cInfo
+   prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
+   RETURN cInfo
+*/
 
 
 STATIC FUNCTION prikazi_brojeve_fiskalnog_racuna( _f_rn, _s_rn )
@@ -519,7 +520,8 @@ FUNCTION fakt_pregled_reload_tables( cFilter )
 
    // o_valute()
    // o_rj()
-   o_fakt_objekti()
+   select_o_fakt_objekti()
+
    o_fakt()
    // o_partner()
    o_fakt_doks2()
@@ -529,6 +531,7 @@ FUNCTION fakt_pregled_reload_tables( cFilter )
    SET ORDER TO TAG "1"
    GO TOP
 
+   ?E time(), "fakt_pregled_reload_tables"
    SET FILTER TO &( cFilter )
    GO TOP
    IF nRec != NIL

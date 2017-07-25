@@ -551,10 +551,9 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
       lOpenFaktAsPripr := .F.
    ENDIF
 
-   SELECT ( F_FAKT_OBJEKTI )
-   IF !Used()
-      o_fakt_objekti()
-   ENDIF
+
+  select_o_fakt_objekti()
+
 
    IF glDistrib = .T.
       //SELECT F_RELAC

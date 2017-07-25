@@ -883,9 +883,7 @@ FUNCTION fakt_set_cijena_sif_roba( cIdTipDok, cIdRoba, nCijena, nRabat )
 
 
 
-/* IniVars()
- *     Ini varijable
- */
+/*
 
 FUNCTION IniVars()
 
@@ -918,9 +916,6 @@ FUNCTION IniVars()
 
 
 
-/* SetVars()
- *     Setuj varijable
- */
 
 FUNCTION SetVars()
 
@@ -943,9 +938,9 @@ FUNCTION SetVars()
    ENDIF
 
    RETURN
-// }
 
 
+*/
 
 
 FUNCTION Tb_V_RBr()

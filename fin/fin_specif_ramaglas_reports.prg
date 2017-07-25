@@ -58,8 +58,8 @@ FUNCTION SpecTrosRN()
 
    cIdFirma := Left( cIdFirma, 2 )
 
-   o_fakt_objekti()
-   o_konto()
+   select_o_fakt_objekti()
+   //o_konto()
    o_suban()
 
 // 1) utvrditi ukupne troskove (nUkTros)

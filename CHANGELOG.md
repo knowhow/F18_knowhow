@@ -1,5 +1,13 @@
 # F18 klijent, lista promjena
 
+## 3.1.18-vindi, 2017-07-26
+
+### Korisnik
+#### KALK
+
+- koncij.region za konto npr 13202 = "RS" => vpc stampa dokumenta
+- dokumenti 95, 96, 16, 11
+
 ## 3.1.17-vindi, 2017-07-26
 
 ### Developer

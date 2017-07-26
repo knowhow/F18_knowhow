@@ -101,16 +101,16 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
       AAdd( aImeKol, { "Poslj.faktur.", {|| dat_l_fakt }, "dat_l_fakt"  } )
    ENDIF
 
-   AAdd( aImeKol, { "TXT 1", {|| IdTxt }, "IdTxt", {|| .T. }, {|| P_FTxt( @wIdTxt ) } } )
+   AAdd( aImeKol, { "TXT 1", {|| IdTxt }, "IdTxt", {|| .T. }, {|| p_fakt_ftxt( @wIdTxt ) } } )
 
    IF ugov->( FieldPos( "IDDODTXT" ) ) <> 0
-      AAdd( aImeKol, { "TXT 2", {|| IdDodTxt }, "IdDodTxt", {|| .T. }, {|| P_FTxt( @wIdDodTxt ) } } )
+      AAdd( aImeKol, { "TXT 2", {|| IdDodTxt }, "IdDodTxt", {|| .T. }, {|| p_fakt_ftxt( @wIdDodTxt ) } } )
    ENDIF
 
    IF ugov->( FieldPos( "TXT2" ) ) <> 0
-      AAdd( aImeKol, { "TXT 3", {|| txt2 }, "txt2", {|| .T. }, {|| P_FTxt( @wTxt2 ) } } )
-      AAdd( aImeKol, { "TXT 4", {|| txt3 }, "txt3", {|| .T. }, {|| P_FTxt( @wTxt3 ) } } )
-      AAdd( aImeKol, { "TXT 5", {|| txt4 }, "txt4", {|| .T. }, {|| P_FTxt( @wTxt4 ) } } )
+      AAdd( aImeKol, { "TXT 3", {|| txt2 }, "txt2", {|| .T. }, {|| p_fakt_ftxt( @wTxt2 ) } } )
+      AAdd( aImeKol, { "TXT 4", {|| txt3 }, "txt3", {|| .T. }, {|| p_fakt_ftxt( @wTxt3 ) } } )
+      AAdd( aImeKol, { "TXT 5", {|| txt4 }, "txt4", {|| .T. }, {|| p_fakt_ftxt( @wTxt4 ) } } )
    ENDIF
 
    AAdd( aImeKol, { "KM/EUR", {|| DINDEM }, "DINDEM" } )
@@ -479,28 +479,28 @@ FUNCTION edit_ugovor( lNovi )
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 1", nBoxLen ) GET _idtxt VALID P_FTxt( @_IdTxt ) PICT "@!"
+   @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 1", nBoxLen ) GET _idtxt VALID p_fakt_ftxt( @_IdTxt ) PICT "@!"
 
    IF ugov->( FieldPos( "IDDODTXT" ) ) <> 0
 
       ++nX
 
-      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 2", nBoxLen ) GET _iddodtxt VALID P_FTxt( @_IdDodTxt ) PICT "@!"
+      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 2", nBoxLen ) GET _iddodtxt VALID p_fakt_ftxt( @_IdDodTxt ) PICT "@!"
    ENDIF
 
    IF ugov->( FieldPos( "TXT2" ) ) <> 0
 
       ++nX
 
-      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 3", nBoxLen ) GET _txt2 VALID P_FTxt( @_Txt2 ) PICT "@!"
+      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 3", nBoxLen ) GET _txt2 VALID p_fakt_ftxt( @_Txt2 ) PICT "@!"
 
       ++nX
 
-      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 4", nBoxLen ) GET _txt3 VALID P_FTxt( @_Txt3 ) PICT "@!"
+      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 4", nBoxLen ) GET _txt3 VALID p_fakt_ftxt( @_Txt3 ) PICT "@!"
 
       ++nX
 
-      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 5", nBoxLen ) GET _txt4 VALID P_FTxt( @_Txt4 ) PICT "@!"
+      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 5", nBoxLen ) GET _txt4 VALID p_fakt_ftxt( @_Txt4 ) PICT "@!"
 
 
    ENDIF

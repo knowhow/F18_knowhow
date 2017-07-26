@@ -561,7 +561,7 @@ FUNCTION UzorTxt()
    LOCAL _user_name
 
    IF _IdTipDok $ "10#20" .AND. partner_is_ino( _IdPartner )
-      InoKlauzula()
+      fakt_ftxt_ino_klauzula()
       IF Empty( AllTrim( _txt2 ) )
          cId := "IN"
       ENDIF
@@ -583,10 +583,9 @@ FUNCTION UzorTxt()
 
       IF LastKey() <> K_ESC .AND. !Empty( cId )
 
-         P_Ftxt( @cId )
+         p_fakt_ftxt( @cId )
 
-         SELECT ftxt
-         SEEK cId
+         select_o_fakt_txt( cId )
 
          SELECT fakt_pripr
 
@@ -627,181 +626,6 @@ FUNCTION UzorTxt()
    RETURN .T.
 
 
-
-// -------------------------------------------------
-// uzorak teksta na kraju fakture
-// verzija sa listom...
-// -------------------------------------------------
-FUNCTION UzorTxt2( cList, redni_broj )
-
-   LOCAL cId := "  "
-   LOCAL cU_txt
-   LOCAL aList := {}
-   LOCAL i
-   LOCAL nCount := 1
-
-   IF cList == nil
-      cList := ""
-   ENDIF
-
-   cList := AllTrim( cList )
-
-   IF !Empty( cList )
-      IF Empty( _txt2 )
-         IF Pitanje(, "Dokument sadrži txt listu, koristiti je ?", "D" ) == "N"
-            cList := ""
-         ENDIF
-         aList := TokToNiz( cList, ";" )
-      ENDIF
-   ENDIF
-
-   IF  _IdTipDok $ "10#20" .AND. partner_is_ino( _IdPartner )
-      InoKlauzula()
-      IF Empty( AllTrim( _txt2 ) )
-         cId := "IN"
-         AAdd( aList, cId )
-      ENDIF
-   ENDIF
-
-
-
-   IF !Empty( cList )
-      FOR i := 1 TO Len( aList )
-         cU_txt := aList[ i ]
-         _add_to_txt( cU_txt, nCount, .T. )
-         cId := "MX"
-         ++nCount
-      NEXT
-   ENDIF
-
-   IF ( redni_broj == 1 .AND. Val( _podbr ) < 1 )
-
-      Box(, 11, 75 )
-
-      DO WHILE .T.
-
-         @ m_x + 1, m_y + 1 SAY8 "Odaberi uzorak teksta iz šifarnika:" ;
-            GET cId PICT "@!"
-
-         @ m_x + 11, m_y + 1 SAY8 "<c+W> dodaj novi ili snimi i izađi <ESC> poništi"
-
-         READ
-
-         IF LastKey() == K_ESC
-            EXIT
-         ENDIF
-
-         IF LastKey() <> K_ESC .AND. !Empty( cId )
-            IF cId <> "MX"
-               P_Ftxt( @cId )
-               _add_to_txt( cId, nCount, .T. )
-               ++nCount
-               cId := "  "
-            ENDIF
-         ENDIF
-
-         SetColor( f18_color_invert()  )
-         PRIVATE fUMemu := .T.
-
-         _txt2 := MemoEdit( _txt2, m_x + 3, m_y + 1, m_x + 9, m_y + 76 )
-
-         fUMemu := NIL
-         SetColor( f18_color_normal() )
-
-         IF LastKey() == K_ESC
-            EXIT
-         ENDIF
-
-         IF LastKey() == K_CTRL_W
-            IF Pitanje(, "Nastaviti sa unosom teksta ? (D/N)", "N" ) == "N"
-               EXIT
-            ENDIF
-         ENDIF
-
-      ENDDO
-      BoxC()
-   ENDIF
-
-   RETURN
-
-
-
-// ---------------------------------------------------------
-// dodaj tekst u _txt2
-// ---------------------------------------------------------
-FUNCTION _add_to_txt( cId_txt, nCount, lAppend )
-
-   LOCAL cTmp
-   LOCAL _user_name
-
-   IF lAppend == nil
-      lAppend := .F.
-   ENDIF
-   IF nCount == nil
-      nCount := 1
-   ENDIF
-
-   // prazan tekst - ne radi nista
-   IF Empty( cId_Txt )
-      RETURN
-   ENDIF
-
-   SELECT ftxt
-   SEEK cId_txt
-   SELECT fakt_pripr
-
-   IF lAppend == .F.
-      _txt2 := Trim( ftxt->naz )
-   ELSE
-      cTmp := ""
-
-      IF nCount > 1
-         cTmp += Chr( 13 ) + Chr( 10 )
-      ENDIF
-
-      cTmp += Trim( ftxt->naz )
-
-      _txt2 := _txt2 + cTmp
-   ENDIF
-
-   IF nCount = 1
-      _user_name := AllTrim( GetFullUserName( GetUserID() ) )
-      IF !Empty( _user_name ) .AND. _user_name <> "?user?"
-         _txt2 += " Dokument izradio: " + _user_name
-      ENDIF
-   ENDIF
-
-   RETURN
-
-
-// ----------------------------
-// ino klauzula
-// ----------------------------
-FUNCTION InoKlauzula()
-
-   LOCAL _rec
-
-   PushWA()
-
-   SELECT FTXT
-   SEEK "IN"
-
-   IF !Found()
-
-
-      APPEND BLANK
-      _rec := dbf_get_rec()
-
-      _rec[ "id" ] := "IN"
-      _rec[ "naz" ] := "Porezno oslobadjanje na osnovu (nulta stopa) na osnovu clana 27. stav 1. tacka 1. ZPDV - izvoz dobara iz BIH"
-
-      update_rec_server_and_dbf( "ftxt", _rec, 1, "FULL" )
-
-   ENDIF
-
-   PopWa()
-
-   RETURN
 
 
 
@@ -1059,9 +883,7 @@ FUNCTION fakt_set_cijena_sif_roba( cIdTipDok, cIdRoba, nCijena, nRabat )
 
 
 
-/* IniVars()
- *     Ini varijable
- */
+/*
 
 FUNCTION IniVars()
 
@@ -1075,7 +897,7 @@ FUNCTION IniVars()
    _DatPl := CToD( "" )
    _VezOtpr := ""
 
-   aMemo := ParsMemo( _txt )
+   aMemo := fakt_ftxt_decode( _txt )
    IF Len( aMemo ) > 0
       _txt1 := aMemo[ 1 ]
    ENDIF
@@ -1094,9 +916,6 @@ FUNCTION IniVars()
 
 
 
-/* SetVars()
- *     Setuj varijable
- */
 
 FUNCTION SetVars()
 
@@ -1119,9 +938,9 @@ FUNCTION SetVars()
    ENDIF
 
    RETURN
-// }
 
 
+*/
 
 
 FUNCTION Tb_V_RBr()
@@ -1336,121 +1155,6 @@ FUNCTION SljBrDok13( cBrD, nBrM, cKon )
    RETURN cPom2 + cPom + "/" + PadL( AllTrim( Str( nBrM ) ), 2, "0" )
 
 
-/* IsprUzorTxt(fSilent,bFunc)
- *     Ispravka teksta ispod fakture
- *   param: fSilent
- *   param: bFunc
- */
-
-FUNCTION IsprUzorTxt( fSilent, bFunc )
-
-   LOCAL cListaTxt := ""
-
-   IF fSilent == nil
-      fSilent := .F.
-   ENDIF
-
-   lDoks2 := .T.
-
-   IF !fSilent
-      Scatter()
-   ENDIF
-
-   _BrOtp := Space( 50 )
-   _DatOtp := CToD( "" )
-   _BrNar := Space( 50 )
-   _DatPl := CToD( "" )
-   _VezOtpr := ""
-   _txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""
-   // txt1  -  naziv robe,usluge
-   nRbr := RbrUNum( RBr )
-
-   IF lDoks2
-      d2k1 := Space( 15 )
-      d2k2 := Space( 15 )
-      d2k3 := Space( 15 )
-      d2k4 := Space( 20 )
-      d2k5 := Space( 20 )
-      d2n1 := Space( 12 )
-      d2n2 := Space( 12 )
-   ENDIF
-
-   aMemo := ParsMemo( _txt )
-   IF Len( aMemo ) > 0
-      _txt1 := aMemo[ 1 ]
-   ENDIF
-   IF Len( aMemo ) >= 2
-      _txt2 := aMemo[ 2 ]
-   ENDIF
-   IF Len( aMemo ) >= 5
-      _txt3a := aMemo[ 3 ]; _txt3b := aMemo[ 4 ]; _txt3c := aMemo[ 5 ]
-   ENDIF
-
-   IF Len( aMemo ) >= 9
-      _BrOtp := aMemo[ 6 ]; _DatOtp := CToD( aMemo[ 7 ] ); _BrNar := amemo[ 8 ]; _DatPl := CToD( aMemo[ 9 ] )
-   ENDIF
-   IF Len ( aMemo ) >= 10 .AND. !Empty( aMemo[ 10 ] )
-      _VezOtpr := aMemo[ 10 ]
-   ENDIF
-
-   IF lDoks2
-      IF Len ( aMemo ) >= 11
-         d2k1 := aMemo[ 11 ]
-      ENDIF
-      IF Len ( aMemo ) >= 12
-         d2k2 := aMemo[ 12 ]
-      ENDIF
-      IF Len ( aMemo ) >= 13
-         d2k3 := aMemo[ 13 ]
-      ENDIF
-      IF Len ( aMemo ) >= 14
-         d2k4 := aMemo[ 14 ]
-      ENDIF
-      IF Len ( aMemo ) >= 15
-         d2k5 := aMemo[ 15 ]
-      ENDIF
-      IF Len ( aMemo ) >= 16
-         d2n1 := aMemo[ 16 ]
-      ENDIF
-      IF Len ( aMemo ) >= 17
-         d2n2 := aMemo[ 17 ]
-      ENDIF
-   ENDIF
-
-   IF !fSilent
-      cListaTxt := g_txt_tipdok( _idtipdok )
-      UzorTxt2( cListaTxt, nRbr )
-   ENDIF
-
-   IF bFunc <> nil
-      Eval( bFunc )
-   ENDIF
-
-   _txt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 ) + Chr( 16 ) + _txt2 + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
-      Chr( 16 ) + _BrOtp + Chr( 17 ) + ;
-      Chr( 16 ) + DToC( _DatOtp ) + Chr( 17 ) + ;
-      Chr( 16 ) + _BrNar + Chr( 17 ) + ;
-      Chr( 16 ) + DToC( _DatPl ) + Chr( 17 ) + ;
-      iif ( Empty ( _VezOtpr ), Chr( 16 ) + "" + Chr( 17 ), Chr( 16 ) + _VezOtpr + Chr( 17 ) ) + ;
-      IF( lDoks2, Chr( 16 ) + d2k1 + Chr( 17 ), "" ) + ;
-      IF( lDoks2, Chr( 16 ) + d2k2 + Chr( 17 ), "" ) + ;
-      IF( lDoks2, Chr( 16 ) + d2k3 + Chr( 17 ), "" ) + ;
-      IF( lDoks2, Chr( 16 ) + d2k4 + Chr( 17 ), "" ) + ;
-      IF( lDoks2, Chr( 16 ) + d2k5 + Chr( 17 ), "" ) + ;
-      IF( lDoks2, Chr( 16 ) + d2n1 + Chr( 17 ), "" ) + ;
-      IF( lDoks2, Chr( 16 ) + d2n2 + Chr( 17 ), "" )
-
-   IF !fSilent
-      my_rlock()
-      Gather()
-      my_unlock()
-   ENDIF
-
-   RETURN
-
-
 
 
 FUNCTION edit_fakt_doks2()
@@ -1638,7 +1342,7 @@ FUNCTION TekDokument()
    IF RecCount2() <> 0
       nRec := RecNo()
       GO TOP
-      aMemo := ParsMemo( txt )
+      aMemo := fakt_ftxt_decode( txt )
       IF Len( aMemo ) >= 5
          cTxt := Trim( amemo[ 3 ] ) + " " + Trim( amemo[ 4 ] ) + "," + Trim( amemo[ 5 ] )
       ELSE
@@ -1732,7 +1436,7 @@ FUNCTION fakt_prikazi_Roba()
    CASE Eof()
       cRet := ""
    CASE  AllTrim( podbr ) == "."
-      aMemo := ParsMemo( txt )
+      aMemo := fakt_ftxt_decode( txt )
       cRet += aMemo[ 1 ]
    OTHERWISE
 

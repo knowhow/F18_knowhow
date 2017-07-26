@@ -244,38 +244,6 @@ FUNCTION OdsjPLK( cTxt )
    RETURN Left( cTxt, i )
 
 
-FUNCTION ParsMemo( cTxt )
-
-   // Struktura cTxt-a je: Chr(16) txt1 Chr(17)  Chr(16) txt2 Chr(17) ...
-   LOCAL aMemo := {}
-   LOCAL i, cPom, fPoc, _len
-
-   fPoc := .F.
-   cPom := ""
-
-   FOR i := 1 TO Len( cTxt )
-
-      IF  SubStr( cTxt, i, 1 ) == Chr( 16 )
-         fPoc := .T.
-      ELSEIF  SubStr( cTxt, i, 1 ) == Chr( 17 )
-         fPoc := .F.
-         AAdd( aMemo, cPom )
-         cPom := ""
-      ELSEIF fPoc
-         cPom := cPom + SubStr( cTxt, i, 1 )
-      ENDIF
-   NEXT
-
-   _len := Len( aMemo )
-
-   // uvijek neka vrati polje od 20 elemenata
-
-   FOR i := 1 TO ( 20 - _len )
-      AAdd( aMemo, "" )
-   NEXT
-
-   RETURN aMemo
-
 
 FUNCTION StrLinija( cTxt2 )
 
@@ -607,7 +575,7 @@ FUNCTION show_number( nNumber, cPicture, nExtra )
    ELSE
       // 99999.999"
       // AT(".") = 6
-      // LEN 9
+      // nLen 9
 
       nDec := At( ".", cPicture )
 
@@ -748,12 +716,12 @@ FUNCTION _upadr( cUtf, nNum )
    RETURN hb_StrToUTF8( PadR( hb_UTF8ToStr( cUtf ), nNum ) )
 
 
-FUNCTION num_to_str( num, len, dec )
+FUNCTION num_to_str( nNumber, nLen, nDec )
 
-   LOCAL _txt := Str( num, len, dec )
+   LOCAL cTxt := Str( nNumber, nLen, nDec )
 
-   _txt := AllTrim( _txt )
-   _txt := StrTran( _txt, ".", "" )
-   _txt := PadL( _txt, len, "0" )
+   cTxt := AllTrim( cTxt )
+   cTxt := StrTran( cTxt, ".", "" )
+   cTxt := PadL( cTxt, nLen, "0" )
 
-   RETURN _txt
+   RETURN cTxt

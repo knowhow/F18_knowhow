@@ -286,7 +286,7 @@ FUNCTION my_server_login( hSqlParams, nConnType )
 STATIC FUNCTION show_sacekaj()
 
    LOCAL _x, _y
-   LOCAL _txt
+--   LOCAL _txt
 
    _x := ( f18_max_rows() / 2 ) -12
    _y := f18_max_cols()

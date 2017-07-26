@@ -432,7 +432,7 @@ FUNCTION fakt_kartica()
             ENDIF
 
             IF roba->tip = "U"
-               aMemo := ParsMemo( txt )
+               aMemo := fakt_ftxt_decode( txt )
                aTxtR := SjeciStr( aMemo[ 1 ], 60 )   // duzina naziva + serijski broj
                FOR ui = 1 TO Len( aTxtR )
                   ? Space( gNLMarg )

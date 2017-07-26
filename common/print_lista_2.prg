@@ -637,7 +637,7 @@ STATIC FUNCTION StStavku( aKol, xPom, i, nKol, cOk )
    ENDIF
    QQOut( IF( i < nKol, cOk[ 5 ], cOk[ 12 ] ) )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION DajRed( tekst, kljuc )
@@ -645,8 +645,8 @@ FUNCTION DajRed( tekst, kljuc )
    LOCAL cVrati := "", nPom := 0, nPoc := 0
 
    nPom := At( kljuc, tekst )
-   nPoc := RAt( NRED, Left( tekst, nPom ) )
-   nKraj := At(  NRED, SubStr( tekst, nPom ) )
+   nPoc := RAt( NRED_DOS, Left( tekst, nPom ) )
+   nKraj := At(  NRED_DOS, SubStr( tekst, nPom ) )
    nPoc := IF( nPoc == 0, 1, nPoc + 2 )
    nKraj := IF( nKraj == 0, Len( tekst ), nPom - 1 + nKraj + 1 )
    cVrati := SubStr( tekst, nPoc, nKraj - nPoc + 1 )

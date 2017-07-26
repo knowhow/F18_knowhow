@@ -387,9 +387,10 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
 */
 
 
-FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
+FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, datum_max )
 
    LOCAL dDatDok
+   LOCAL aMemo
    LOCAL lSetujDatum := .F.
    PRIVATE nRokPl := 0
    PRIVATE cSetPor := "N"
@@ -448,11 +449,11 @@ FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
    _BrNar := Space( 8 )
    _DatPl := CToD( "" )
 
-   IF veza_otpremnica == nil
-      veza_otpremnica := ""
+   IF cVezaOtpremnica == nil
+      cVezaOtpremnica := ""
    ENDIF
 
-   aMemo := ParsMemo( _txt )
+   aMemo := fakt_ftxt_decode( _txt )
    IF Len( aMemo ) > 0
       _txt1 := aMemo[ 1 ]
    ENDIF
@@ -520,27 +521,16 @@ FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
 
    UzorTxt()
 
-   IF !Empty ( veza_otpremnica )
-      _txt2 += Chr( 13 ) + Chr( 10 ) + veza_otpremnica
+   IF !Empty ( cVezaOtpremnica )
+      _txt2 += Chr( 13 ) + Chr( 10 ) + cVezaOtpremnica
    ENDIF
 
-   _txt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 ) + Chr( 16 ) + _txt2 + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
-      Chr( 16 ) + _BrOtp + Chr( 17 ) + ;
-      Chr( 16 ) + DToC( _DatOtp ) + Chr( 17 ) + ;
-      Chr( 16 ) + _BrNar + Chr( 17 ) + ;
-      Chr( 16 ) + DToC( _DatPl ) + Chr( 17 ) + ;
-      iif( Empty ( veza_otpremnica ), "", Chr( 16 ) + veza_otpremnica + Chr( 17 ) ) + ;
-      Chr( 16 ) + Chr( 17 ) + ;
-      Chr( 16 ) + Chr( 17 ) + ;
-      Chr( 16 ) + Chr( 17 ) + ;
-      Chr( 16 ) + Chr( 17 ) + ;
-      Chr( 16 ) + Chr( 17 ) + ;
-      Chr( 16 ) + Chr( 17 ) + ;
-      Chr( 16 ) + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _dest ) + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _m_dveza ) + Chr( 17 )
+
+   _txt := fakt_ftxt_encode_3( _txt1, _txt2, _txt3a, _txt3b, _txt3c, ;
+       _BrOtp, _BrNar, _DatOtp, _DatPl, cVezaOtpremnica, ;
+       _dest, _m_dveza )
+
+
 
    IF datDok <> dDatDok
       lSetujDatum := .T.

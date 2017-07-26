@@ -8,6 +8,26 @@
 - koncij.region za konto npr 13202 = "RS" => vpc stampa dokumenta
 - dokumenti 95, 96, 16, 11
 
+### Developer
+
+Merge from 3-std fix barkod, ftxt
+
+#### CORE
+- RENAME_FUN_VARS: num_to_str( nNumber, nLen, nDec )
+- define NRED_DOS
+
+#### FAKT
+- Debug štampa fiskalnog iz liste !OK #36677
+- Debug #36676 štampa barkod labela, FAKT priprema ALT+L ne radi
+- NEW_PRG_FILE: _fakt_sql.prg, fakt_ftxt.prg
+- select_o_fakt_txt()
+- RENAME_FUN_NAME to fakt_a_to_public_var_txt(), p_fakt_ftxt()
+- fakt_txt_fill_djokeri( nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dLUplata, cPartner )
+- fakt_ftxt_encode( cFTxtNaz, cTxt1, cTxt3a, cTxt3b, cTxt3c, cVezaUgovor, cDodTxt )
+- RENAME_FUN_NAME: ParsMemo -> fakt_ftxt_decode( cTxt ) => aMemo
+- RENAME_VAR: _memo -> aMemo
+- FUN_ADD: find_fakt_ftxt_by_id
+
 ## 3.1.17-vindi, 2017-07-26
 
 ### Developer
@@ -23,7 +43,7 @@
 - FIX info_bar u toku start_print() ... end_print()
 
 #### KALK
-- NAKUKURIKATI: vpc_magacin_rs(), TKV po prodajnim RS, lager lista magacin 
+- NAKUKURIKATI: vpc_magacin_rs(), TKV po prodajnim RS, lager lista magacin
 
 ## 3.1.11-vindi, 2017-07-25
 

@@ -207,7 +207,7 @@ FUNCTION chk_dok_11()
       cFaktDok := AllTrim( field->brdok )
 
       // uzmi memo polje
-      aMemo := ParsMemo( field->txt )
+      aMemo := fakt_ftxt_decode( field->txt )
 
       IF Len( aMemo ) > 18
          // ovo je polje koje sadrzi brojeve veza...
@@ -347,7 +347,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
          ENDIF
 
          // uzmi memo polje
-         aMemo := ParsMemo( field->txt )
+         aMemo := fakt_ftxt_decode( field->txt )
 
          IF Len( aMemo ) >= 19
             cMemo := aMemo[ 19 ]

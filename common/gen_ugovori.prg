@@ -231,7 +231,7 @@ FUNCTION gen_ug()
       IF cidtipdok <> idtipdok
          cBrDok := UBrojDok( 1, gNumDio, "" )
       ELSE
-         cBrDok := UBrojDok( Val( Left( brdok, gNumDio ) ) + 1, gNumDio, Right( brdok, Len( brdok ) -gNumDio ) )
+         cBrDok := UBrojDok( Val( Left( brdok, gNumDio ) ) + 1, gNumDio, Right( brdok, Len( brdok ) - gNumDio ) )
       ENDIF
 
 
@@ -279,13 +279,14 @@ FUNCTION gen_ug()
 
          SELECT fakt_pripr
 
-         IF my_get_from_ini( 'FAKT_Ugovori', "SumirajIstuSifru", 'D' ) == "D" .AND. ;
-               IdFirma + idtipdok + brdok + idroba == self_organizacija_id() + cIDTipDok + PadR( cBrDok, Len( brdok ) ) + RUGOV->idroba
+         IF IdFirma + idtipdok + brdok + idroba == self_organizacija_id() + cIDTipDok + PadR( cBrDok, Len( brdok ) ) + RUGOV->idroba
             Scatter()
             _kolicina += RUGOV->kolicina
             // tag "1": "IdFirma+idtipdok+brdok+rbr+podbr"
             Gather()
-            SELECT RUGOV; SKIP 1; LOOP
+            SELECT RUGOV
+            SKIP 1
+            LOOP
          ELSE
             APPEND blank; Scatter()
          ENDIF
@@ -297,10 +298,9 @@ FUNCTION gen_ug()
 
             IzSifre( .T. )
 
-            SELECT ftxt
-            HSEEK ugov->iddodtxt
+            select_o_fakt_txt( ugov->iddodtxt )
             cDodTxt := Trim( naz )
-            HSEEK ugov->idtxt
+            select_o_fakt_txt( ugov->idtxt )
             PRIVATE _Txt1 := ""
 
             select_o_roba( rugov->idroba )
@@ -312,17 +312,12 @@ FUNCTION gen_ug()
 
             cVezaUgovor := "Veza: " + Trim( ugov->id )
 
-            _txt := Chr( 16 ) + _txt1 + Chr( 17 ) + ;
-               Chr( 16 ) + Trim( ftxt->naz ) + Chr( 13 ) + Chr( 10 ) + ;
-               cVezaUgovor + Chr( 13 ) + Chr( 10 ) + ;
-               cDodTxt + Chr( 17 ) + Chr( 16 ) + _Txt3a + Chr( 17 ) + Chr( 16 ) + _Txt3b + Chr( 17 ) + ;
-               Chr( 16 ) + _Txt3c + Chr( 17 )
+            _txt := fakt_ftxt_encode( ftxt->naz, _Txt1, _Txt3a, _Txt3b, _Txt3c, cVezaUgovor, cDodTxt )
+
 
          ENDIF
 
-
          SELECT fakt_pripr
-
          PRIVATE nKolicina := rugov->kolicina
 
 
@@ -407,4 +402,4 @@ FUNCTION gen_ug()
 
    closeret
 
-   RETURN
+   RETURN .T.

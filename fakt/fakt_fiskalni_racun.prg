@@ -72,10 +72,10 @@ FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDevicePa
 
    __DRV_CURRENT := _dev_drv
 
-   SELECT fakt_doks
+   select_o_fakt_doks()
    SET FILTER TO
 
-   SELECT fakt
+   select_o_fakt_fakt()
    SET FILTER TO
 
    // SELECT partn
@@ -459,7 +459,7 @@ STATIC FUNCTION fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTip
    LOCAL _n_rn_broj, _rn_iznos, _rn_rabat, _rn_datum, _rekl_rn_broj
    LOCAL _vrsta_pl, _partn_id, _rn_total, nRacunFaktTotal
    LOCAL _art_id, _art_plu, cNazivArtikla, _art_jmj, cVrstaPlacanja
-   LOCAL cArtikalBarkod, _rn_rbr, _memo
+   LOCAL cArtikalBarkod, _rn_rbr, aMemo
    LOCAL _pop_na_teret_prod := .F.
    LOCAL _partn_ino := .F.
    LOCAL _partn_pdv := .T.
@@ -546,14 +546,14 @@ STATIC FUNCTION fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTip
       cRacunBroj := fakt->brdok
       _rn_rbr := fakt->rbr
 
-      _memo := ParsMemo( fakt->txt )
+      aMemo := fakt_ftxt_decode( fakt->txt )
 
       _art_id := fakt->idroba
       cArtikalBarkod := AllTrim( roba->barkod )
 
       IF roba->tip == "U" .AND. Empty( AllTrim( roba->naz ) )
 
-         cMemoOpis := AllTrim( _memo[ 1 ] )
+         cMemoOpis := AllTrim( aMemo[ 1 ] )
 
          IF Empty( cMemoOpis )
             cMemoOpis := "artikal bez naziva"

@@ -152,7 +152,7 @@ FUNCTION fill_part()
 
 STATIC FUNCTION add_n_found( cId, cNaz, cRbr, cOznaka, nDuzina )
 
-   LOCAL cSeek, _rec
+   LOCAL cSeek, hRec
 
    cSeek :=  cId + cRbr + cNaz
    SEEK cSeek
@@ -167,8 +167,8 @@ STATIC FUNCTION add_n_found( cId, cNaz, cRbr, cOznaka, nDuzina )
          tip WITH "C", ;
          duzina WITH nDuzina, ;
          f_decimal WITH 0
-      _rec := dbf_get_rec()
-      update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+      hRec := dbf_get_rec()
+      update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
       RETURN .T.
    ENDIF
 
@@ -509,16 +509,17 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    LOCAL _x := 1
    LOCAL _cnt
    LOCAL __idpartn
-   LOCAL __br_otpr
-   LOCAL __br_nar
-   LOCAL __dat_otpr
-   LOCAL __dat_pl
-   LOCAL __txt
+   LOCAL cBrOtpr
+   LOCAL cBrNar
+   LOCAL dDatOtpr
+   LOCAL dDatPl
+   LOCAL cFaktTxtNovi
    LOCAL __id_vrsta_p
    LOCAL __p_tmp
-   LOCAL _t_txt
+   LOCAL aFaktTxt
    LOCAL lOk := .T.
    LOCAL hParams
+   LOCAL hRec
 
    __idpartn := field->idpartner
    __id_vrsta_p := field->idvrstep
@@ -529,9 +530,9 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    ENDIF
 
    SELECT ( F_PARTN )
-   IF !Used()
-      o_partner()
-   ENDIF
+   //IF !Used()
+  //    o_partner()
+   //ENDIF
 
    SELECT fakt
    SET ORDER TO TAG "1"
@@ -543,12 +544,12 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
       RETURN lRet
    ENDIF
 
-   _t_txt := parsmemo( field->txt )
+   aFaktTxt := fakt_ftxt_decode( field->txt )
 
-   __br_otpr := _t_txt[ 6 ]
-   __br_nar := _t_txt[ 8 ]
-   __dat_otpr := CToD( _t_txt[ 7 ] )
-   __dat_pl := CToD( _t_txt[ 9 ] )
+   cBrOtpr := aFaktTxt[ 6 ]
+   cBrNar := aFaktTxt[ 8 ]
+   dDatOtpr := CToD( aFaktTxt[ 7 ] )
+   dDatPl := CToD( aFaktTxt[ 9 ] )
 
    Box(, 12, 65 )
 
@@ -557,19 +558,14 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    ++ _x
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Partner:" GET __idpartn VALID p_partner( @__idpartn )
-
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datum otpremnice:" GET __dat_otpr
-
+   @ m_x + _x, m_y + 2 SAY "Datum otpremnice:" GET dDatOtpr
    ++ _x
-   @ m_x + _x, m_y + 2 SAY " Broj otpremnice:" GET __br_otpr PICT "@S40"
-
+   @ m_x + _x, m_y + 2 SAY " Broj otpremnice:" GET cBrOtpr PICT "@S40"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "  Datum plaćanja:" GET __dat_pl
-
+   @ m_x + _x, m_y + 2 SAY8 "  Datum plaćanja:" GET dDatPl
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "        Narudžba:" GET __br_nar PICT "@S40"
-
+   @ m_x + _x, m_y + 2 SAY8 "        Narudžba:" GET cBrNar PICT "@S40"
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "  Vrsta plaćanja:" GET __id_vrsta_p VALID Empty( __id_vrsta_p ) .OR. P_VRSTEP( @__id_vrsta_p )
 
@@ -597,8 +593,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
       RETURN lRet
    ENDIF
 
-   SELECT partn
-   SEEK __idpartn
+   select_o_partner( __idpartn )
 
    __p_tmp := AllTrim( field->naz ) + ;
       "," + AllTrim( field->ptt ) + ;
@@ -617,12 +612,12 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
       RETURN lRet
    ENDIF
 
-   _rec := dbf_get_rec()
-   _rec[ "idpartner" ] := __idpartn
-   _rec[ "partner" ] := __p_tmp
-   _rec[ "idvrstep" ] := __id_vrsta_p
+   hRec := dbf_get_rec()
+   hRec[ "idpartner" ] := __idpartn
+   hRec[ "partner" ] := __p_tmp
+   hRec[ "idvrstep" ] := __id_vrsta_p
 
-   lOk := update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( "fakt_doks", hRec, 1, "CONT" )
 
    IF !lOk
       run_sql_query( "ROLLBACK" )
@@ -640,42 +635,16 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
          .AND. field->idtipdok == tip_dok ;
          .AND. field->brdok == br_dok
 
-      _rec := dbf_get_rec()
-      _rec[ "idpartner" ] := __idpartn
-      _rec[ "idvrstep" ] := __id_vrsta_p
+      hRec := dbf_get_rec()
+      hRec[ "idpartner" ] := __idpartn
+      hRec[ "idvrstep" ] := __id_vrsta_p
 
       IF _cnt == 1
-
-         // roba tip U
-         __txt := Chr( 16 ) + _t_txt[ 1 ] + Chr( 17 )
-         // dodatni tekst fakture
-         __txt += Chr( 16 ) + _t_txt[ 2 ] + Chr( 17 )
-         // naziv partnera
-         __txt += Chr( 16 ) + AllTrim( partn->naz ) + Chr( 17 )
-         // partner 2 podaci
-         __txt += Chr( 16 ) + AllTrim( partn->adresa ) + ", Tel:" + AllTrim( partn->telefon ) + Chr( 17 )
-         // partner 3 podaci
-         __txt += Chr( 16 ) + AllTrim( partn->ptt ) + " " + AllTrim( partn->mjesto ) + Chr( 17 )
-         // broj otpremnice
-         __txt += Chr( 16 ) + __br_otpr + Chr( 17 )
-         // datum otpremnice
-         __txt += Chr( 16 ) + DToC( __dat_otpr ) + Chr( 17 )
-         // broj narudzbenice
-         __txt += Chr( 16 ) + __br_nar + Chr( 17 )
-         // datum placanja
-         __txt += Chr( 16 ) + DToC( __dat_pl ) + Chr( 17 )
-
-         IF Len( _t_txt ) > 9
-            FOR nI := 10 TO Len( _t_txt )
-               __txt += Chr( 16 ) + _t_txt[ nI ] + Chr( 17 )
-            NEXT
-         ENDIF
-
-         _rec[ "txt" ] := __txt
-
+         cFaktTxtNovi := fakt_ftxt_encode_2( aFaktTxt, cBrNar, cBrOtpr, dDatOtpr, dDatPl )
+         hRec[ "txt" ] := cFaktTxtNovi
       ENDIF
 
-      lOk := update_rec_server_and_dbf( "fakt_fakt", _rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "fakt_fakt", hRec, 1, "CONT" )
 
       IF !lOk
          EXIT
@@ -684,7 +653,6 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
       ++ _cnt
 
       SKIP
-
    ENDDO
 
    IF lOk

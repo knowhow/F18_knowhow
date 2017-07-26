@@ -10,5 +10,8 @@ do
       git checkout $MY_BRANCH -- $f
 done
 
+rm scripts/merge_from_3-vindi.sh
+
 git status
+
 

@@ -1,5 +1,12 @@
 # F18 klijent, lista promjena
 
+## 3.1.17-vindi, 2017-07-26
+
+### Developer
+
+### KALK
+- kalk finansijsko stanje magacin Rbr C(6), vpc_magacin_rs()
+
 ## 3.1.15-vindi, 2017-07-25
 
 ### Developer

@@ -6,8 +6,8 @@ git merge --no-ff --no-commit 3
 
 for f in VERSION VERSION_E VERSION_X script/commit.sh include/f18.ch kalk/kalk_import_racuni.prg kalk/kalk_import_partn_roba.prg kalk/kalk_mnu_razmjena_podataka.prg
 do
-      echo "git checkout $MY_BRACH -- $f"
-      git checkout $MY_BRACH -- $f
+      echo "git checkout $MY_BRANCH -- $f"
+      git checkout $MY_BRANCH -- $f
 done
 
 git status

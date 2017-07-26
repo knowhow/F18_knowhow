@@ -10,14 +10,13 @@
 - dokumenti 95, 96, 16, 11
 
 #### CORE
-info_bar izvjestaji export, kalk stampa liste dokumenata
+- info_bar izvjestaji export, kalk stampa liste dokumenata
 
 
 ## 2017-07-25 ----
 
 ### Developer
-
-Merge from 3-std fix barkod, ftxt
+- Merge from 3-std fix barkod, ftxt
 
 #### CORE
 - RENAME_FUN_VARS: num_to_str( nNumber, nLen, nDec )

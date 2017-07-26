@@ -16,12 +16,27 @@
 FUNCTION o_fakt()
    RETURN o_dbf_table( F_FAKT, "fakt", "1" )
 
+
+// "fakt_fakt", "FAKT", F_FAKT
+
+
+FUNCTION select_o_fakt_fakt()
+
+   select_o_dbf( "FAKT", F_FAKT, "fakt_fakt", "1" )
+   IF Alias() != "FAKT"
+      Alert( "Nije FAKT ?!" )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+
+
 FUNCTION o_fakt_doks()
    RETURN o_dbf_table( F_FAKT_DOKS, "fakt_doks", "1" )
 
 
 
-FUNCTION select_fakt_doks()
+FUNCTION select_o_fakt_doks()
 
    select_o_dbf( "FAKT_DOKS", F_FAKT_DOKS, "fakt_doks", "1" )
    IF Alias() != "FAKT_DOKS"
@@ -36,14 +51,6 @@ FUNCTION o_fakt_doks2()
 
    RETURN o_dbf_table( F_FAKT_DOKS2, "fakt_doks2", "1" )
 
-
-/*
-   ftxt uzorci teksta fakture
-*/
-
-FUNCTION o_fakt_txt()
-
-   RETURN o_dbf_table( F_FTXT, "ftxt", "ID" )
 
 
 

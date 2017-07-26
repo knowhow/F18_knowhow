@@ -369,7 +369,7 @@ STATIC FUNCTION naziv_partnera_za_tabelu_doks( cId_partner )
 FUNCTION get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 
    LOCAL _fakt_data := hb_Hash()
-   LOCAL _memo
+   LOCAL aMemo
 
    o_fakt_pripr()
    SELECT fakt_pripr
@@ -380,15 +380,15 @@ FUNCTION get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
    _fakt_data[ "brdok" ]    := field->brdok
    _fakt_data[ "idtipdok" ] := field->idtipdok
 
-   _memo := ParsMemo( field->txt )
+   aMemo := fakt_ftxt_decode( field->txt )
 
-   _fakt_data[ "k1" ] := if( Len( _memo ) >= 11, _memo[ 11 ], "" )
-   _fakt_data[ "k2" ] := if( Len( _memo ) >= 12, _memo[ 12 ], "" )
-   _fakt_data[ "k3" ] := if( Len( _memo ) >= 13, _memo[ 13 ], "" )
-   _fakt_data[ "k4" ] := if( Len( _memo ) >= 14, _memo[ 14 ], "" )
-   _fakt_data[ "k5" ] := if( Len( _memo ) >= 15, _memo[ 15 ], "" )
-   _fakt_data[ "n1" ] := if( Len( _memo ) >= 16, Val( AllTrim( _memo[ 16 ] ) ), 0 )
-   _fakt_data[ "n2" ] := if( Len( _memo ) >= 17, Val( AllTrim( _memo[ 17 ] ) ), 0 )
+   _fakt_data[ "k1" ] := if( Len( aMemo ) >= 11, aMemo[ 11 ], "" )
+   _fakt_data[ "k2" ] := if( Len( aMemo ) >= 12, aMemo[ 12 ], "" )
+   _fakt_data[ "k3" ] := if( Len( aMemo ) >= 13, aMemo[ 13 ], "" )
+   _fakt_data[ "k4" ] := if( Len( aMemo ) >= 14, aMemo[ 14 ], "" )
+   _fakt_data[ "k5" ] := if( Len( aMemo ) >= 15, aMemo[ 15 ], "" )
+   _fakt_data[ "n1" ] := if( Len( aMemo ) >= 16, Val( AllTrim( aMemo[ 16 ] ) ), 0 )
+   _fakt_data[ "n2" ] := if( Len( aMemo ) >= 17, Val( AllTrim( aMemo[ 17 ] ) ), 0 )
 
    RETURN _fakt_data
 
@@ -401,7 +401,7 @@ FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
    LOCAL _fakt_totals
    LOCAL _fakt_data
-   LOCAL _memo
+   LOCAL aMemo
 
    _fakt_data := hb_Hash()
    _fakt_data[ "idfirma" ]  := id_firma
@@ -412,7 +412,7 @@ FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
    SELECT fakt_pripr
    HSEEK id_firma + id_tip_dok + br_dok
 
-   _memo := ParsMemo( field->txt )
+   aMemo := fakt_ftxt_decode( field->txt )
 
    _fakt_data[ "datdok" ]  := field->datdok
    _fakt_data[ "dindem" ]  := field->dindem
@@ -426,9 +426,9 @@ FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
    _fakt_data[ "idvrstep" ] := field->idvrstep
    _fakt_data[ "datpl" ] := field->datdok
    _fakt_data[ "idpm" ] := field->idpm
-   _fakt_data[ "dat_isp" ]  := iif( Len( _memo ) >= 7, CToD( _memo[ 7 ] ), CToD( "" ) )
-   _fakt_data[ "dat_otpr" ] := iif( Len( _memo ) >= 7, CToD( _memo[ 7 ] ), CToD( "" ) )
-   _fakt_data[ "dat_val" ]  := iif( Len( _memo ) >= 9, CToD( _memo[ 9 ] ), CToD( "" ) )
+   _fakt_data[ "dat_isp" ]  := iif( Len( aMemo ) >= 7, CToD( aMemo[ 7 ] ), CToD( "" ) )
+   _fakt_data[ "dat_otpr" ] := iif( Len( aMemo ) >= 7, CToD( aMemo[ 7 ] ), CToD( "" ) )
+   _fakt_data[ "dat_val" ]  := iif( Len( aMemo ) >= 9, CToD( aMemo[ 9 ] ), CToD( "" ) )
    _fakt_data[ "fisc_rn" ] := field->fisc_rn
    _fakt_data[ "fisc_st" ] := 0
    _fakt_data[ "fisc_date" ] := CToD( "" )
@@ -551,10 +551,9 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
       lOpenFaktAsPripr := .F.
    ENDIF
 
-   SELECT ( F_FAKT_OBJEKTI )
-   IF !Used()
-      o_fakt_objekti()
-   ENDIF
+
+  select_o_fakt_objekti()
+
 
    IF glDistrib = .T.
       //SELECT F_RELAC

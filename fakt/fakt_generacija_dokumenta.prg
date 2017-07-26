@@ -351,6 +351,6 @@ FUNCTION fakt_generisi_racun_iz_pripreme()
 
    BoxC()
 
-   IsprUzorTxt()
+   fakt_ispravka_ftxt()
 
    RETURN .T.

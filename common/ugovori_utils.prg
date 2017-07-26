@@ -60,7 +60,7 @@ FUNCTION MSAY2( x, y, c, nDuzina )
    IF nDuzina == NIL
       cSay := c
    ELSE
-      cSay := LEFT( c, nDuzina )
+      cSay := Left( c, nDuzina )
    ENDIF
 
    @ x, y SAY cSay
@@ -95,10 +95,7 @@ FUNCTION str_za_mj( cStr, nMjesec, nGodina )
 // ----------------------------------------
 // _txt djokeri, obrada
 // ----------------------------------------
-FUNCTION txt_djokeri( nSaldoKup, nSaldoDob, ;
-      dPUplKup, dPPromKup, ;
-      dPPromDob, dLUplata, ;
-      cPartner )
+FUNCTION fakt_txt_fill_djokeri( nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dLUplata, cPartner )
 
    LOCAL cPom
 
@@ -122,7 +119,7 @@ FUNCTION txt_djokeri( nSaldoKup, nSaldoDob, ;
    cPom := cPartner
    _txt := StrTran( _txt, "#U_PARTNER#", cPom )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------
@@ -132,35 +129,11 @@ FUNCTION f_ftxt( cId )
 
    LOCAL xRet := ""
 
-   SELECT ftxt
-   HSEEK cId
-   xRet := Trim( naz )
+   select_o_fakt_txt( cId )
+   xRet := Trim( ftxt->naz )
 
    RETURN xRet
 
-
-// -----------------------------------
-// dodaj u polje txt tekst
-// lVise - vise tekstova
-// -----------------------------------
-FUNCTION a_to_txt( cVal, lEmpty )
-
-   LOCAL nTArr
-
-   nTArr := Select()
-
-   IF lEmpty == nil
-      lEmpty := .F.
-   ENDIF
-   // ako je prazno nemoj dodavati
-   IF !lEmpty .AND. Empty( cVal )
-      RETURN
-   ENDIF
-   _txt += Chr( 16 ) + cVal + Chr( 17 )
-
-   SELECT ( nTArr )
-
-   RETURN
 
 
 // ---------------------------------------------

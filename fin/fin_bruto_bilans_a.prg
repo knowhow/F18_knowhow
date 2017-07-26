@@ -519,7 +519,7 @@ METHOD FinBrutoBilans:gen_xml()
    LOCAL _sint_len := 3
    LOCAL _kl_len := 1
    LOCAL _a_klase := {}
-   LOCAL _klasa, nI, _count
+   LOCAL _klasa, nI, nCount
    LOCAL _u_ps_dug := _u_ps_pot := _u_kum_dug := _u_kum_pot := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
    LOCAL _t_ps_dug := _t_ps_pot := _t_kum_dug := _t_kum_pot := _t_tek_dug := _t_tek_pot := _t_sld_dug := _t_sld_pot := 0
    LOCAL _tt_ps_dug := _tt_ps_pot := _tt_kum_dug := _tt_kum_pot := _tt_tek_dug := _tt_tek_pot := _tt_sld_dug := _tt_sld_pot := 0
@@ -553,7 +553,7 @@ METHOD FinBrutoBilans:gen_xml()
    SET ORDER TO TAG "1"
    GO TOP
 
-   _count := 0
+   nCount := 0
 
    DO WHILE !Eof()
 
@@ -594,7 +594,7 @@ METHOD FinBrutoBilans:gen_xml()
 
             xml_subnode( "item", .F. )
 
-            xml_node( "rb", AllTrim( Str( ++_count ) ) )
+            xml_node( "rb", AllTrim( Str( ++nCount ) ) )
             xml_node( "kto", to_xml_encoding( field->idkonto ) )
 
             IF ::tip == 1
@@ -816,13 +816,11 @@ METHOD FinBrutoBilans:print_odt()
 
 
 
-// -----------------------------------------------------------
-// -----------------------------------------------------------
 METHOD FinBrutoBilans:print_txt()
 
    LOCAL _line, _i_col
    LOCAL _a_klase := {}
-   LOCAL _klasa, nI, _count, _sint, _id_konto, _id_partner, __partn, __klasa, __sint, __konto
+   LOCAL _klasa, nI, nCount, _sint, _id_konto, _id_partner, __partn, __klasa, __sint, __konto
    LOCAL _u_ps_dug := _u_ps_pot := _u_kum_dug := _u_kum_pot := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
    LOCAL _t_ps_dug := _t_ps_pot := _t_kum_dug := _t_kum_pot := _t_tek_dug := _t_tek_pot := _t_sld_dug := _t_sld_pot := 0
    LOCAL _tt_ps_dug := _tt_ps_pot := _tt_kum_dug := _tt_kum_pot := _tt_tek_dug := _tt_tek_pot := _tt_sld_dug := _tt_sld_pot := 0
@@ -1176,8 +1174,8 @@ METHOD FinBrutoBilans:rekapitulacija_klasa()
 
 METHOD FinBrutoBilans:fill_r_export()
 
-   LOCAL _count := 0
-   LOCAL oRow, _rec
+   LOCAL nCount := 0
+   LOCAL oRow, hRec
    LOCAL __konto, __partn
    LOCAL _id_konto, _id_partn
 
@@ -1186,7 +1184,7 @@ METHOD FinBrutoBilans:fill_r_export()
 
    ::data:goTo( 1 )
 
-   MsgO( "Punim pomocnu tabelu izvjestaja ..." )
+   MsgO( "Formiranje tabele r_export ..." )
 
    DO WHILE !::data:Eof()
 
@@ -1202,51 +1200,51 @@ METHOD FinBrutoBilans:fill_r_export()
 
       SELECT r_export
       APPEND BLANK
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       IF __konto <> NIL .AND. !Empty( __konto[ "naz" ] )
-         _rec[ "konto" ] := PadR( __konto[ "naz" ], 60 )
+         hRec[ "konto" ] := PadR( __konto[ "naz" ], 60 )
       ELSE
-         _rec[ "konto" ] := "?????????????"
+         hRec[ "konto" ] := "?????????????"
       ENDIF
 
-      _rec[ "idkonto" ] := _id_konto
+      hRec[ "idkonto" ] := _id_konto
 
       IF ::tip == 1
-         _rec[ "idpartner" ] := _id_partn
+         hRec[ "idpartner" ] := _id_partn
          IF !Empty( _id_partn ) .AND. __partn <> NIL
-            _rec[ "partner" ] := PadR( __partn[ "naz" ], 100 )
+            hRec[ "partner" ] := PadR( __partn[ "naz" ], 100 )
          ELSE
-            _rec[ "partner" ] := ""
+            hRec[ "partner" ] := ""
          ENDIF
       ENDIF
 
-      _rec[ "ps_dug" ] := query_row( oRow, "ps_dug" )
-      _rec[ "ps_pot" ] := query_row( oRow, "ps_pot" )
+      hRec[ "ps_dug" ] := query_row( oRow, "ps_dug" )
+      hRec[ "ps_pot" ] := query_row( oRow, "ps_pot" )
 
       IF ::hParams[ "kolona_tek_prom" ]
-         _rec[ "tek_dug" ] := query_row( oRow, "tek_dug" )
-         _rec[ "tek_pot" ] := query_row( oRow, "tek_pot" )
+         hRec[ "tek_dug" ] := query_row( oRow, "tek_dug" )
+         hRec[ "tek_pot" ] := query_row( oRow, "tek_pot" )
       ELSE
-         _rec[ "tek_dug" ] := 0
-         _rec[ "tek_pot" ] := 0
+         hRec[ "tek_dug" ] := 0
+         hRec[ "tek_pot" ] := 0
       ENDIF
 
-      _rec[ "kum_dug" ] := query_row( oRow, "kum_dug" )
-      _rec[ "kum_pot" ] := query_row( oRow, "kum_pot" )
+      hRec[ "kum_dug" ] := query_row( oRow, "kum_dug" )
+      hRec[ "kum_pot" ] := query_row( oRow, "kum_pot" )
 
-      _rec[ "sld_dug" ] := _rec[ "kum_dug" ] - _rec[ "kum_pot" ]
+      hRec[ "sld_dug" ] := hRec[ "kum_dug" ] - hRec[ "kum_pot" ]
 
-      IF _rec[ "sld_dug" ] >= 0
-         _rec[ "sld_pot" ] := 0
+      IF hRec[ "sld_dug" ] >= 0
+         hRec[ "sld_pot" ] := 0
       ELSE
-         _rec[ "sld_pot" ] := - _rec[ "sld_dug" ]
-         _rec[ "sld_dug" ] := 0
+         hRec[ "sld_pot" ] := - hRec[ "sld_dug" ]
+         hRec[ "sld_dug" ] := 0
       ENDIF
 
-      ++_count
+      ++nCount
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       ::data:SKIP()
 
@@ -1256,7 +1254,7 @@ METHOD FinBrutoBilans:fill_r_export()
 
    my_close_all_dbf()
 
-   RETURN _count
+   RETURN nCount
 
 
 

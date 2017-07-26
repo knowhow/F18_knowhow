@@ -125,7 +125,7 @@ STATIC FUNCTION o_ld_sif_tables()
    o_tippr2()
 
    IF ( IsRamaGlas() )
-      o_fakt_objekti()
+      select_o_fakt_objekti()
    ENDIF
 
    RETURN .T.

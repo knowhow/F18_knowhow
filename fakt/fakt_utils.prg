@@ -103,7 +103,7 @@ FUNCTION fakt_objekat_naz( id_obj )
 FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
 
    LOCAL _ret := ""
-   LOCAL _memo
+   LOCAL aMemo
 
    PushWA()
    IF id_firma == NIL
@@ -126,9 +126,9 @@ FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
    IF !Found()
       _ret := Space( 10 )
    ELSE
-      _memo := ParsMemo( fakt->txt )
-      IF Len( _memo ) >= 20
-         _ret := PadR( _memo[ 20 ], 10 )
+      aMemo := fakt_ftxt_decode( fakt->txt )
+      IF Len( aMemo ) >= 20
+         _ret := PadR( aMemo[ 20 ], 10 )
       ENDIF
    ENDIF
 
@@ -168,7 +168,7 @@ FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
 
    LOCAL _t_arr := Select()
    LOCAL _ret := ""
-   LOCAL _memo
+   LOCAL aMemo
 
    SELECT ( F_FAKT )
    IF !Used()
@@ -184,10 +184,10 @@ FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
       RETURN _ret
    ENDIF
 
-   _memo := ParsMemo( fakt->txt )
+   aMemo := fakt_ftxt_decode( fakt->txt )
 
-   IF Len( _memo ) >= 19
-      _ret := _memo[ 19 ]
+   IF Len( aMemo ) >= 19
+      _ret := aMemo[ 19 ]
    ENDIF
 
    SELECT ( _t_arr )

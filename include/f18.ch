@@ -408,7 +408,7 @@
 
 
 
-#define NRED chr(13)+chr(10)
+#define NRED_DOS Chr(13)+Chr(10)
 
 #define P_NRED QOUT()
 

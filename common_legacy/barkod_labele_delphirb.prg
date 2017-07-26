@@ -27,12 +27,12 @@ FUNCTION label_bkod()
    PRIVATE Kol
    PRIVATE ImeKol
 
-   //o_sifk()
-   //o_sifv()
-   //o_partner()
-   //o_roba()
-   SET ORDER TO TAG "ID"
-   O_BARKOD
+   // o_sifk()
+   // o_sifv()
+   // o_partner()
+   // o_roba()
+   // SET ORDER TO TAG "ID"
+   o_barkod()
    o_fakt_pripr()
 
    SELECT FAKT_PRIPR
@@ -98,7 +98,18 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
       AAdd( aKol, nI )
    NEXT
 
-   RETURN
+   RETURN .T.
+
+// temp tabela koja se puni na osnovu fakt pripr
+// set_a_dbf_temp     ( "barkod",  "BARKOD", F_BARKOD  )
+
+FUNCTION o_barkod()
+
+   SELECT ( F_BARKOD )
+   my_use  ( "barkod" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
 
 
 // --------------------------------
@@ -148,17 +159,17 @@ FUNCTION label_params()
 
    LOCAL _box_x, _box_y
    LOCAL _x := 1
-   LOCAL _br_dok := fetch_metric( "labeliranje_ispis_brdok", nil, "N" )
-   LOCAL _jmj := fetch_metric( "labeliranje_ispis_jmj", nil, "N" )
-   LOCAL _prefix := fetch_metric( "labeliranje_barkod_prefix", nil, Space( 10 ) )
-   LOCAL _auto_gen := fetch_metric( "labeliranje_barkod_automatsko_generisanje", nil, "N" )
-   LOCAL _auto_formula := fetch_metric( "labeliranje_barkod_auto_formula", nil, Space( 10 ) )
-   LOCAL _ean_code := fetch_metric( "labeliranje_barkod_auto_ean_kod", nil, Space( 10 ) )
-   LOCAL _tb := fetch_metric( "barkod_tezinski_barkod", nil, "N" )
-   LOCAL _tb_prefix := PadR( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, Space( 100 ) ), 100 )
-   LOCAL _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
-   LOCAL _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
-   LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
+   LOCAL _br_dok := fetch_metric( "labeliranje_ispis_brdok", NIL, "N" )
+   LOCAL _jmj := fetch_metric( "labeliranje_ispis_jmj", NIL, "N" )
+   LOCAL _prefix := fetch_metric( "labeliranje_barkod_prefix", NIL, Space( 10 ) )
+   LOCAL _auto_gen := fetch_metric( "labeliranje_barkod_automatsko_generisanje", NIL, "N" )
+   LOCAL _auto_formula := fetch_metric( "labeliranje_barkod_auto_formula", NIL, Space( 10 ) )
+   LOCAL _ean_code := fetch_metric( "labeliranje_barkod_auto_ean_kod", NIL, Space( 10 ) )
+   LOCAL _tb := fetch_metric( "barkod_tezinski_barkod", NIL, "N" )
+   LOCAL _tb_prefix := PadR( fetch_metric( "barkod_prefiks_tezinskog_barkoda", NIL, Space( 100 ) ), 100 )
+   LOCAL _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", NIL, 0 )
+   LOCAL _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", NIL, 0 )
+   LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", NIL, 10000 )
 
    _box_x := 20
    _box_y := 70
@@ -167,38 +178,35 @@ FUNCTION label_params()
 
    @ m_x + _x, m_y + 2 SAY "*** Barkod stampa, podesenja"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Prikaz broja dokumenta na naljepnici    (D/N)" GET _br_dok VALID _br_dok $ "DN" PICT "@!"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Prikaz jedinice mjere kod opisa artikla (D/N)" GET _jmj VALID _jmj $ "DN" PICT "@!"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Barkod prefix" GET _prefix
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Automatsko generisanje barkod-a (D/N)" GET _auto_gen VALID _auto_gen $ "DN" PICT "@!"
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY "Automatsko generisanje, auto formula:" GET _auto_formula
    @ m_x + _x, Col() + 1 SAY "EAN:" GET _ean_code
 
-   ++ _x
-
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Koristenje tezinskog barkod-a (D/N)" GET _tb VALID _tb $ "DN" PICT "@!"
 
-   ++ _x
-
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Prefiks tezinskog barkod-a" GET _tb_prefix PICT "@S30"
 
-   ++ _x
-
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Tezinski: duzina barkod-a" GET _bk_len PICT "99"
    @ m_x + _x, Col() + 2 SAY "duzina tezine:" GET _tez_len PICT "99"
    @ m_x + _x, Col() + 2 SAY "djelitelj:" GET _tez_div PICT "99999999"
@@ -210,21 +218,21 @@ FUNCTION label_params()
    IF LastKey() <> K_ESC
 
       // save params
-      set_metric( "labeliranje_ispis_brdok", nil, _br_dok )
-      set_metric( "labeliranje_ispis_jmj", nil, _jmj )
-      set_metric( "labeliranje_barkod_prefix", nil, _prefix )
-      set_metric( "labeliranje_barkod_automatsko_generisanje", nil, _auto_gen )
-      set_metric( "labeliranje_barkod_auto_formula", nil, _auto_formula )
-      set_metric( "labeliranje_barkod_auto_ean_kod", nil, _ean_code )
-      set_metric( "barkod_tezinski_barkod", nil, _tb )
-      set_metric( "barkod_prefiks_tezinskog_barkoda", nil, AllTrim( _tb_prefix ) )
-      set_metric( "barkod_tezinski_duzina_barkoda", nil, _bk_len )
-      set_metric( "barkod_tezinski_duzina_tezina", nil, _tez_len )
-      set_metric( "barkod_tezinski_djelitelj", nil, _tez_div )
+      set_metric( "labeliranje_ispis_brdok", NIL, _br_dok )
+      set_metric( "labeliranje_ispis_jmj", NIL, _jmj )
+      set_metric( "labeliranje_barkod_prefix", NIL, _prefix )
+      set_metric( "labeliranje_barkod_automatsko_generisanje", NIL, _auto_gen )
+      set_metric( "labeliranje_barkod_auto_formula", NIL, _auto_formula )
+      set_metric( "labeliranje_barkod_auto_ean_kod", NIL, _ean_code )
+      set_metric( "barkod_tezinski_barkod", NIL, _tb )
+      set_metric( "barkod_prefiks_tezinskog_barkoda", NIL, AllTrim( _tb_prefix ) )
+      set_metric( "barkod_tezinski_duzina_barkoda", NIL, _bk_len )
+      set_metric( "barkod_tezinski_duzina_tezina", NIL, _tez_len )
+      set_metric( "barkod_tezinski_djelitelj", NIL, _tez_div )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -250,11 +258,11 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
       modul := "FAKT"
    ENDIF
 
-   IF fetch_metric( "labeliranje_ispis_jmj", nil, "N" ) == "D"
+   IF fetch_metric( "labeliranje_ispis_jmj", NIL, "N" ) == "D"
       lBKJmj := .T.
    ENDIF
 
-   IF fetch_metric( "labeliranje_ispis_brdok", nil, "N" ) == "D"
+   IF fetch_metric( "labeliranje_ispis_brdok", NIL, "N" ) == "D"
       lBKBrDok := .T.
    ENDIF
 
@@ -287,11 +295,11 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
 
    BoxC()
 
-   cPrefix := AllTrim( fetch_metric( "labeliranje_barkod_prefix", nil, "" ) )
+   cPrefix := AllTrim( fetch_metric( "labeliranje_barkod_prefix", NIL, "" ) )
    cSPrefix := "N"
 
    IF !Empty( cPrefix )
-      cSPrefix := Pitanje(, "Stampati barkodove koji NE pocinju sa +'" + cPrefix + "' ?", "N" )
+      cSPrefix := Pitanje(, "Štampati barkodove koji NE počinju sa +'" + cPrefix + "' ?", "N" )
    ENDIF
 
    SELECT BARKOD
@@ -307,17 +315,16 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
          LOOP
       ENDIF
 
-      SELECT ROBA
-      HSEEK FAKT_PRIPR->idroba
+      select_o_roba( FAKT_PRIPR->idroba )
 
-      IF Empty( field->barkod ) .AND. fetch_metric( "labeliranje_barkod_automatsko_generisanje", nil, "N" )
+      IF Empty( field->barkod ) .AND. fetch_metric( "labeliranje_barkod_automatsko_generisanje", NIL, "N" )
 
-         PRIVATE cPom := AllTrim( fetch_metric( "labeliranje_barkod_auto_formula", nil, "" ) )
+         PRIVATE cPom := AllTrim( fetch_metric( "labeliranje_barkod_auto_formula", NIL, "" ) )
 
          // kada je barkod prazan, onda formiraj sam interni barkod
-         cIBK := AllTrim( fetch_metric( "labeliranje_barkod_prefix", nil, "" ) ) + &cPom
+         cIBK := AllTrim( fetch_metric( "labeliranje_barkod_prefix", NIL, "" ) ) + &cPom
 
-         IF AllTrim( fetch_metric( "labeliranje_barkod_auto_ean_kod", nil, "" ) ) == "13"
+         IF AllTrim( fetch_metric( "labeliranje_barkod_auto_ean_kod", NIL, "" ) ) == "13"
             cIBK := NoviBK_A()
          ENDIF
 
@@ -386,4 +393,4 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
 
    f18_rtm_print( "barkod", "barkod", "1" )
 
-   RETURN
+   RETURN .T.

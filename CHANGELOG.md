@@ -1,8 +1,16 @@
 # F18 klijent, lista promjena
 
-## 3.1.18-std, 2017-07-25
+## 3.1.18-vindi, 2017-07-26
+
+### Korisnik
+#### KALK
+
+- koncij.region za konto npr 13202 = "RS" => vpc stampa dokumenta
+- dokumenti 95, 96, 16, 11
 
 ### Developer
+
+Merge from 3-std fix barkod, ftxt
 
 #### CORE
 - RENAME_FUN_VARS: num_to_str( nNumber, nLen, nDec )
@@ -20,16 +28,29 @@
 - RENAME_VAR: _memo -> aMemo
 - FUN_ADD: find_fakt_ftxt_by_id
 
-#### FIN
-- CLEANUP: fin_bruto_bilans_subanalitika_b.prg
+## 3.1.17-vindi, 2017-07-26
 
+### Developer
 
-## 3.1.10-std, 2017-07-25
+#### KALK
+- kalk finansijsko stanje magacin Rbr C(6), vpc_magacin_rs()
+
+## 3.1.15-vindi, 2017-07-25
+
+### Developer
+
+#### CORE
+- FIX info_bar u toku start_print() ... end_print()
+
+#### KALK
+- NAKUKURIKATI: vpc_magacin_rs(), TKV po prodajnim RS, lager lista magacin
+
+## 3.1.11-vindi, 2017-07-25
 
 ### Developer
 - BUGFIX KALK lager lista cOpcine
 
-## 3.1.9-std, 2017-07-25
+## 3.1.8-vindi, 2017-07-25
 
 ### Korisnik
 
@@ -39,7 +60,15 @@
 ### Developer
 - BUGFIX: Dokument 80 unos tarifa alias not found
 
-## 3.1.6-std, 2017-07-24
+### Korisnik
+
+#### KALK
+- Trgovačka knjig na veliko i malo (TKV, TKM)  export u XLSX
+
+### Developer
+- BUGFIX: Dokument 80 unos tarifa alias not found
+
+## 3.1.7-vindi, 2017-07-24
 
 ### Korisnik
 
@@ -53,9 +82,8 @@ Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana 
 ### Developer
 - f18_update.prg - nove funkcije f18_builtin_version_h, f18_available_version_h,  f18_preporuci_upgrade( cVersion )
 - OUT: f18_admin.prg upgrade_db
-- razvoj prebačen u zajednički branch `3`
 
-## 3.0.11-std, 2017-07-24
+## 3.1.4-vindi, 2017-07-24
 
 ### Korisnik
 
@@ -70,20 +98,27 @@ Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana 
   - lokacija F18 verzija http://download.bring.out.ba/ hardkodirana
   - OUT: update_db
 
-## 3.0.8-std, 2017-07-24
+## 3.0.10-vindi, 2017-07-24
 
 ### Korisnik
-
 #### KALK
-- specifična opcija import vindija varazdin izbačeno iz standardne verzije
+- BUGFIX import vindija varaždin kalk_imp_txt.tipdok 96, ignorisati partnera
+
+### Developer
+- iz std verzije izbacena opcija import vindija varazdin
+
+## 3.0.9-vindi, 2017-07-24
+
+### Korisnik
 
 #### FIN
 - BUGFIX run sintetički, analitički bruto bilans
 - BUGFIX lista naloga sa provjerom integriteta
 
 ### Developer
-- OUT: kalk/kalk_imp_txt_racuni.prg, kalk/kalk_imp_txt_roba_partn.prg
+
 - "trijebljenje" do iznemoglosti select_o_partner(), select_o_konto()
+
 
 ## Legenda
 

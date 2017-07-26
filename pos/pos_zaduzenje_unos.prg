@@ -231,8 +231,8 @@ FUNCTION Zaduzenje
             @ m_x + 3, m_y + 35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"
             @ m_x + 3, m_y + 56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
             @ m_x + 3, Col() + 2 GET _Marza2 PICTURE "9999.99"
-            @ m_x + 3, Col() + 1 GET fMarza PICT "@!" VALID {|| _marza2 := iif( _cijena <> 0 .AND. Empty( fMarza ), 0, _marza2 ), marza2( fmarza ), _cijena := iif( _cijena == 0, _cijena := _nCijena * ( tarifa->zpp / 100 + ( 1 + TARIFA->Opp / 100 ) * ( 1 + TARIFA->PPP / 100 ) ), _cijena ), fMarza := " ", .T. }
-            @ m_x + 4, m_y + 35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" VALID {|| _marza2 := 0, marza2(), ShowGets(), .T. }
+            @ m_x + 3, Col() + 1 GET fMarza PICT "@!" VALID {|| _marza2 := iif( _cijena <> 0 .AND. Empty( fMarza ), 0, _marza2 ), kalk_marza_11( fmarza ), _cijena := iif( _cijena == 0, _cijena := _nCijena * ( tarifa->zpp / 100 + ( 1 + TARIFA->Opp / 100 ) * ( 1 + TARIFA->PPP / 100 ) ), _cijena ), fMarza := " ", .T. }
+            @ m_x + 4, m_y + 35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" VALID {|| _marza2 := 0, kalk_marza_11(), ShowGets(), .T. }
          ENDIF
 
          READ

@@ -330,18 +330,34 @@ FUNCTION kalk_gen_fin_stanje_magacina_za_tkv( hParams )
    RETURN _cnt
 
 
-FUNCTION vpc_magacin_rs()
+FUNCTION vpc_magacin_rs( lKalkPriprema )
 
-   LOCAL nVPC
+   LOCAL nVPC, nAlias
 
-   IF kalk->IdVd $ "14#10"
-      nVPC := kalk->vpc
-   ELSE
-      //select_o_roba( kalk->idroba ) ne treba ovo je vec uradjeno u nadfunkciji
-      IF kalk->idpartner == PadR( "118169", 7 ) // majop
-         nVPC := roba->vpc2
+   hb_default( @lKalkPriprema, .F. )
+
+   IF lKalkPriprema
+      IF kalk_pripr->IdVd $ "14#10"
+         nVPC := kalk_pripr->vpc
       ELSE
-         nVPC := roba->vpc
+         // select_o_roba( kalk->idroba ) ne treba ovo je vec uradjeno u nadfunkciji
+         IF kalk_pripr->idpartner == PadR( "118169", 7 ) // majop
+            nVPC := roba->vpc2
+         ELSE
+            nVPC := roba->vpc
+         ENDIF
+      ENDIF
+
+   ELSE
+      IF kalk->IdVd $ "14#10"
+         nVPC := kalk->vpc
+      ELSE
+         // select_o_roba( kalk->idroba ) ne treba ovo je vec uradjeno u nadfunkciji
+         IF kalk->idpartner == PadR( "118169", 7 ) // majop
+            nVPC := roba->vpc2
+         ELSE
+            nVPC := roba->vpc
+         ENDIF
       ENDIF
    ENDIF
 

@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.18-vindi, 2017-07-26
+## 3.1.20-vindi, 2017-07-26
 
 ### Korisnik
 #### KALK

@@ -147,7 +147,7 @@ FUNCTION finansijsko_stanje_magacin()
    nLen := 1
 
    aFLLM := {}
-   AAdd( aFLLM, { 5, " R.br" } )
+   AAdd( aFLLM, { 6, " R.br" } )
    AAdd( aFLLM, { 8, " Datum" } )
    AAdd( aFLLM, { 11, " Broj dok." } )
    IF cPapir == "2"
@@ -303,7 +303,7 @@ FUNCTION finansijsko_stanje_magacin()
          Eval( bZagl )
       ENDIF
 
-      ? Str( ++nRbr, 4 ) + ".", dDatDok, cBroj
+      ? Str( ++nRbr, 5 ) + ".", dDatDok, cBroj
       nCol1 := PCol() + 1
 
       nTVPVU += nVPVU; nTVPVI += nVPVI
@@ -405,7 +405,7 @@ STATIC FUNCTION kalk_zagl_fin_stanje_magacin()
       select_o_konto( cIdkonto )
    ENDIF
 
-   ?? "KALK:MAG Finansijsko stanje za period", dDatOd, "-", dDatDo, " NA DAN "
+   ??U "KALK:MAG Finansijsko stanje za period", dDatOd, "-", dDatDo, " NA DAN "
    ?? Date(), Space( 10 ), "Str:", Str( ++nTStrana, 3 )
 
    IF cViseKonta == "N"

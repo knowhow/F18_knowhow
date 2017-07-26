@@ -14,7 +14,8 @@ do
       git checkout $MY_BRANCH -- $f
 done
 
-rm scripts/merge_from_3-vindi.sh
+FILE=scripts/merge_from_3-vindi.sh
+[ -f $FILE ] && echo "suvisan $FILE && rm $FILE
 
 git status
 

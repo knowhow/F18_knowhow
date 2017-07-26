@@ -511,7 +511,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
             select_o_roba( _idroba )
             select_o_tarifa( _idtarifa )
             SELECT kalk_pripr
-            Marza2()
+            kalk_Marza_11()
             _TMarza2 := "A"
             _Marza2 := nMarza2
             my_rlock()

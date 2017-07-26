@@ -76,22 +76,22 @@ FUNCTION set_pdv_array_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aP
          cPolje := "IdTarifa"
       ELSE
 
-         IF ( koncij->region == "1" .OR. koncij->region == " " )
+         //IF ( koncij->region == "1" .OR. koncij->region == " " )
             cPolje := "IdTarifa"
-         ELSEIF koncij->region == "2"
-            cPolje := "IdTarifa2"
-         ELSEIF koncij->region == "3"
-            cPolje := "IdTarifa3"
-         ELSE
-            cPolje := "IdTarifa"
-         ENDIF
+         //ELSEIF koncij->region == "2"
+          //  cPolje := "IdTarifa2"
+         //ELSEIF koncij->region == "3"
+          //  cPolje := "IdTarifa3"
+         //ELSE
+        //    cPolje := "IdTarifa"
+         //ENDIF
 
       ENDIF
    ENDIF
 
    IF cIdTar == nil
       select_o_roba( cIdRoba )
-      cTarifa := &cPolje
+      cTarifa := &cPolje  // F18 roba ima samo idtarifa
       select_o_tarifa( cTarifa )
       cIdTarifa := tarifa->id
    ELSE

@@ -69,7 +69,7 @@ FUNCTION VMpc( fRealizacija, fMarza )
       fMarza := " "
    ENDIF
 
-   Marza2( fMarza )
+   kalk_marza_11( fMarza )
 
    IF _mpcsapp == 0
       _MPCSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
@@ -113,7 +113,7 @@ FUNCTION VMpcSaPP( fRealizacija, fMarza )
       IF fRealizacija
          Marza2R()
       ELSE
-         Marza2()
+         kalk_Marza_11()
       ENDIF
       ShowGets()
 
@@ -286,7 +286,7 @@ FUNCTION VMpc_lv( fRealizacija, fMarza, aPorezi )
       fMarza := " "
    ENDIF
 
-   Marza2( fMarza )
+   kalk_marza_11( fMarza )
    IF ( _mpcsapp == 0 )
       _MPCSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
    ENDIF
@@ -352,7 +352,7 @@ FUNCTION VMpcSaPP_lv( fRealizacija, fMarza, aPorezi, lShowGets )
       IF fRealizacija
          Marza2R()
       ELSE
-         Marza2()
+         kalk_marza_11()
       ENDIF
       IF lShowGets
          ShowGets()

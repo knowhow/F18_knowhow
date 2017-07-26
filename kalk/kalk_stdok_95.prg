@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR picdem, piccdem, pickol
 
 FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
@@ -21,6 +22,9 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
    LOCAL _naslov
    LOCAL nCol1 := nCol2 := 0, nPom := 0
    LOCAL _page_len := RPT_PAGE_LEN
+   LOCAL lVPC := .F.
+   LOCAL nVPC, nUVPV, nTVPV, nTotVPV
+
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
    nStr := 0
@@ -37,7 +41,6 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
    @ PRow(), 76 SAY "Str:" + Str( ++nStr, 3 )
 
-   // ispis naslov dokumenta
    _naslov := _get_naslov_dokumenta( cIdVd )
 
    ?
@@ -54,7 +57,10 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
       cKto2 := cIdKonto2
    ENDIF
 
+   lVPC := is_magacin_evidencija_vpc( cKto1 )
+
    select_o_konto( cKto1 )
+
 
    ? PadL( cPom, 14 ), AllTrim( cKto1 ) + " - " + PadR( konto->naz, 60 )
 
@@ -74,11 +80,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
    IF !Empty( cIdZaduz2 )
 
-      SELECT ( F_FAKT_OBJEKTI )
-      IF !Used()
-         o_fakt_objekti()
-      ENDIF
-
+      select_o_fakt_objekti()
       GO TOP
       hseek cIdZaduz2
 
@@ -93,25 +95,30 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
    P_10CPI
    P_COND
 
-   m := _get_line()
+   m := _get_line( lVPC )
+
 
    ? m
    ?U "*Rbr.* Konto * ARTIKAL  (šifra-naziv-jmj)                                 * Količina *   NC     *    NV     *"
+   IF lVPC
+      ??U "   PC    *    PV     *"
+   ENDIF
+
    ? m
 
    nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := nTotc := nTotd := 0
+   nTotVPV := 0
 
    PRIVATE cIdd := field->idpartner + field->brfaktp + field->idkonto + field->idkonto2
 
    DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cBrDok == field->BrDok .AND. cIdVD == field->IdVD
 
-      nT4 := nT5 := nT8 := 0
+      nT4 := nT5 := nT8 := nTVPV := 0
       cBrFaktP := field->brfaktp
       dDatFaktP := field->datfaktp
       cIdpartner := field->idpartner
 
       select_o_partner( cIdPartner )
-
       SELECT kalk_pripr
 
       DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cBrDok == field->BrDok .AND. cIdVD == field->IdVD ;
@@ -131,7 +138,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
          print_nova_strana( 125, @nStr, 5 )
 
-         skol := field->kolicina
+         sKol := field->kolicina
 
          // NV
          nT4 += ( nU4 := field->nc * field->kolicina )
@@ -153,14 +160,24 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
          @ PRow(), PCol() + 1 SAY field->nc PICT piccdem
          @ PRow(), PCol() + 1 SAY nU4 PICT picdem
 
+         IF lVPC
+            nVPC := vpc_magacin_rs( .T. )
+            SELECT kalk_pripr
+            nTVPV += ( nUVPV := nVPC * field->kolicina )
+            @ PRow(), PCol() + 1 SAY nVPC PICT piccdem
+            @ PRow(), PCol() + 1 SAY nUVPV PICT picdem
+         ENDIF
+
          SKIP
 
       ENDDO
 
       nTot4 += nT4
-      nTot5 += nT5
-      nTot8 += nT8
-
+      // nTot5 += nT5
+      // nTot8 += nT8
+      IF lVPC
+         nTotVPV += nTVPV
+      ENDIF
       ? m
 
       print_nova_strana( 125, @nStr, 5 )
@@ -171,9 +188,13 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
       print_nova_strana( 125, @nStr, 5 )
 
       ? "Broj fakture:", AllTrim( cBrFaktP ), "/", dDatFaktp
-      @ PRow(), nC1 SAY 0 PICT "@Z " + picdem
+      @ PRow(), nC1 SAY 0 PICT "@Z " + piccdem
       @ PRow(), PCol() + 1 SAY nT4 PICT picdem
 
+      IF lVPC
+         @ PRow(), PCol() + 1 SAY 0 PICT "@Z " + piccdem
+         @ PRow(), PCol() + 1 SAY nTotVPV PICT picdem
+      ENDIF
       ? m
 
    ENDDO
@@ -183,14 +204,29 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
    ? m
 
    @ PRow() + 1, 0 SAY "Ukupno:"
-   @ PRow(), nC1 SAY 0 PICT "@Z " + picdem
+   @ PRow(), nC1 SAY 0 PICT "@Z " + piccdem
    @ PRow(), PCol() + 1 SAY nTot4 PICT picdem
+
+   IF lVPC
+      @ PRow(), PCol() + 1 SAY 0 PICT "@Z " + piccdem
+      @ PRow(), PCol() + 1 SAY nTotVPV PICT picdem
+   ENDIF
 
    ? m
 
    RETURN .T.
 
 
+FUNCTION is_magacin_evidencija_vpc( cIdKonto )
+
+   LOCAL lVPC := .F.
+
+   select_o_koncij( cIdKonto )
+   IF koncij->region == "RS"
+      lVPC := .T.
+   ENDIF
+
+   RETURN lVpc
 
 
 STATIC FUNCTION _get_naslov_dokumenta( id_vd )
@@ -211,20 +247,29 @@ STATIC FUNCTION _get_naslov_dokumenta( id_vd )
 
 
 
-STATIC FUNCTION _get_line()
+STATIC FUNCTION _get_line( lVPC )
 
-   LOCAL _line := ""
+   LOCAL cLine := ""
 
-   _line += Replicate( "-", 5 )
-   _line += Space( 1 )
-   _line += Replicate( "-", 7 )
-   _line += Space( 1 )
-   _line += Replicate( "-", 60 )
-   _line += Space( 1 )
-   _line += Replicate( "-", 10 )
-   _line += Space( 1 )
-   _line += Replicate( "-", 10 )
-   _line += Space( 1 )
-   _line += Replicate( "-", 11 )
+   hb_default( @lVPC, .F. )
 
-   RETURN _line
+   cLine += Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 7 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 60 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 10 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 10 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 11 )
+
+   IF lVPC
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 10 )
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 11 )
+   ENDIF
+
+   RETURN cLine

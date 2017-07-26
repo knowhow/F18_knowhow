@@ -11,10 +11,12 @@
 
 #include "f18.ch"
 
-STATIC __line
-STATIC __txt1
-STATIC __txt2
-STATIC __txt3
+MEMVAR gZaokr, m_x, m_y, GetList
+
+STATIC s_cLinija
+STATIC s_cTxt1
+STATIC s_cTxt2
+STATIC s_cTxt3
 
 
 FUNCTION kalk_lager_lista_magacin()
@@ -26,9 +28,8 @@ FUNCTION kalk_lager_lista_magacin()
    LOCAL lExpDbf := .F.
    LOCAL cExpDbf := "N"
    LOCAL cMoreInfo := "N"
-   LOCAL _vpc_iz_sif := "D"
+   LOCAL cVpcIzSifarnikaDN := "D"
    LOCAL _print := "1"
-
 
    LOCAL nTUlazP  // ulaz, izlaz parovno
    LOCAL nTIzlazP
@@ -48,6 +49,7 @@ FUNCTION kalk_lager_lista_magacin()
    LOCAL dL_ulaz := CToD( "" )
    LOCAL dL_izlaz := CToD( "" )
    LOCAL hParams
+   LOCAL nVPC
 
    // pPicDem := kalk_prosiri_pic_iznos_za_2()
    // pPicCDem := kalk_prosiri_pic_cjena_za_2()
@@ -114,14 +116,13 @@ FUNCTION kalk_lager_lista_magacin()
    ENDIF
 
    IF !fPocStanje
-
       cIdKonto := fetch_metric( "kalk_lager_lista_id_konto", _curr_user, cIdKonto )
       cPNab := fetch_metric( "kalk_lager_lista_po_nabavnoj", _curr_user, cPNab )
       cNulaDN := fetch_metric( "kalk_lager_lista_prikaz_nula", _curr_user, cNulaDN )
       dDatOd := fetch_metric( "kalk_lager_lista_datum_od", _curr_user, dDatOd )
       dDatDo := fetch_metric( "kalk_lager_lista_datum_do", _curr_user, dDatDo )
       cDoNab := fetch_metric( "kalk_lager_Lista_prikaz_do_nabavne", _curr_user, cDoNab )
-      _vpc_iz_sif := fetch_metric( "kalk_lager_Lista_vpc_iz_sif", _curr_user, _vpc_iz_sif )
+      cVpcIzSifarnikaDN := fetch_metric( "kalk_lager_Lista_vpc_iz_sif", _curr_user, cVpcIzSifarnikaDN )
       _print := fetch_metric( "kalk_lager_print_varijanta", _curr_user, _print )
    ENDIF
 
@@ -146,8 +147,7 @@ FUNCTION kalk_lager_lista_magacin()
 
       @ m_x + 8, m_y + 2 SAY8 "Pr.stavki kojima je NV 0 D/N" GET cNulaDN  VALID cNulaDN $ "DN" PICT "@!"
       @ m_x + 9, m_y + 2 SAY8 "Prikaz 'ERR' ako je NV/Kolicina<>NC " GET cErr PICT "@!" VALID cErr $ "DN"
-      @ m_x + 9, Col() + 1 SAY8 "VPC iz sifrarnika robe (D/N)?" GET _vpc_iz_sif PICT "@!" VALID _vpc_iz_sif $ "DN"
-
+      @ m_x + 9, Col() + 1 SAY8 "VPC iz sifrarnika robe (D/N)?" GET cVpcIzSifarnikaDN PICT "@!" VALID cVpcIzSifarnikaDN $ "DN"
 
       @ m_x + 10, m_y + 2 SAY8 "Datum od " GET dDatOd
       @ m_x + 10, Col() + 2 SAY8 "do" GET dDatDo
@@ -209,16 +209,14 @@ FUNCTION kalk_lager_lista_magacin()
    BoxC()
 
    IF !fPocStanje
-
       set_metric( "kalk_lager_lista_id_konto", f18_user(), cIdKonto )
       set_metric( "kalk_lager_lista_po_nabavnoj", f18_user(), cPNab )
       set_metric( "kalk_lager_lista_prikaz_nula", f18_user(), cNulaDN )
       set_metric( "kalk_lager_lista_datum_od", f18_user(), dDatOd )
       set_metric( "kalk_lager_lista_datum_do", f18_user(), dDatDo )
       set_metric( "kalk_lager_lista_prikaz_do_nabavne", f18_user(), cDoNab )
-      set_metric( "kalk_lager_Lista_vpc_iz_sif", _curr_user, _vpc_iz_sif )
+      set_metric( "kalk_lager_Lista_vpc_iz_sif", _curr_user, cVpcIzSifarnikaDN )
       set_metric( "kalk_lager_print_varijanta", _curr_user, _print )
-
    ENDIF
 
    // export u dbf ?
@@ -228,9 +226,9 @@ FUNCTION kalk_lager_lista_magacin()
 
    lSvodi := .F.
 
-   IF my_get_from_ini( "KALK_LLM", "SvodiNaJMJ", "N", KUMPATH ) == "D"
-      lSvodi := ( Pitanje(, "Svesti kolicine na osnovne jedinice mjere? (D/N)", "N" ) == "D" )
-   ENDIF
+   //IF my_get_from_ini( "KALK_LLM", "SvodiNaJMJ", "N", KUMPATH ) == "D"
+  //    lSvodi := ( Pitanje(, "Svesti količine na osnovne jedinice mjere? (D/N)", "N" ) == "D" )
+   //ENDIF
 
    // sinteticki konto
    fSint := .F.
@@ -241,7 +239,7 @@ FUNCTION kalk_lager_lista_magacin()
       cIdkonto := Trim( cIdKonto )
       cSintK := cIdKonto
       fSint := .T.
-      lSaberiStanjeZaSvaKonta := ( Pitanje(, "Racunati stanje robe kao zbir stanja na svim obuhvacenim kontima? (D/N)", "N" ) == "D" )
+      lSaberiStanjeZaSvaKonta := ( Pitanje(, "Računati stanje robe kao zbir stanja na svim obuhvacenim kontima? (D/N)", "N" ) == "D" )
    ENDIF
 
    IF lExpDbf == .T.
@@ -250,7 +248,6 @@ FUNCTION kalk_lager_lista_magacin()
    ENDIF
 
    kalk_llm_open_tables()
-
 
    PRIVATE cFilt := ".t."
 
@@ -282,7 +279,6 @@ FUNCTION kalk_lager_lista_magacin()
    IF !Empty( cRNT1 ) .AND. !Empty( cRNalBroj )
       cFilt += ".and." + aUslRn
    ENDIF
-
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    IF fSint .AND. lSaberiStanjeZaSvaKonta
@@ -320,7 +316,7 @@ FUNCTION kalk_lager_lista_magacin()
       hParams[ "group_2" ] := qqRGr2
       hParams[ "nule" ] := ( cNulaDN == "D" )
       hParams[ "svodi_jmj" ] := lSvodi
-      hParams[ "vpc_sif" ] := ( _vpc_iz_sif == "D" )
+      hParams[ "vpc_sif" ] := ( cVpcIzSifarnikaDN == "D" )
       hParams[ "datum_od" ] := dDatOd
       hParams[ "datum_do" ] := dDatDo
       kalk_magacin_llm_odt( hParams )
@@ -331,21 +327,18 @@ FUNCTION kalk_lager_lista_magacin()
 
    nLen := 1
 
-
-
    _set_zagl( @cLine, @cTxt1, @cTxt2, @cTxt3, cSredCij )
 
-   __line := cLine
-   __txt1 := cTxt1
-   __txt2 := cTxt2
-   __txt3 := cTxt3
+   s_cLinija := cLine
+   s_cTxt1 := cTxt1
+   s_cTxt2 := cTxt2
+   s_cTxt3 := cTxt3
 
    IF koncij->naz $ "P1#P2"
       cPNab := "D"
    ENDIF
 
    gaZagFix := { 7, 5 }
-
 
    IF !start_print()
       RETURN .F.
@@ -411,7 +404,6 @@ FUNCTION kalk_lager_lista_magacin()
          LOOP
       ENDIF
 
-
       IF !Empty( qqRGr ) .OR. !Empty( qqRGr2 ) // uslov za roba - grupacija
          IF !IsInGroup( qqRGr, qqRGr2, roba->id )
             SELECT kalk
@@ -474,7 +466,6 @@ FUNCTION kalk_lager_lista_magacin()
       cIdkonto := kalk->mkonto
 
 
-
       DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, cIdFirma + cIdRoba == idFirma + field->idroba, cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + field->idroba ) .AND. IspitajPrekid()
 
          IF roba->tip $ "TU"
@@ -482,8 +473,12 @@ FUNCTION kalk_lager_lista_magacin()
             LOOP
          ENDIF
 
+         nVPC := vpc_magacin_rs()
+
          IF mu_i == "1"
+
             IF !( idvd $ "12#22#94" )
+            
                nKolicina := field->kolicina - field->gkolicina - field->gkolicin2
                nUlaz += nKolicina
                kalk_sumiraj_kolicinu( nKolicina, 0, @nTUlazP, @nTIzlazP )
@@ -493,7 +488,7 @@ FUNCTION kalk_lager_lista_magacin()
                   nVPVRU += Round( roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
                ELSE
                   nVPVU += Round( roba->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
-                  nVPVRU += Round( field->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+                  nVPVRU += Round( nVPC * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
                ENDIF
 
                nNVU += Round( nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
@@ -506,7 +501,7 @@ FUNCTION kalk_lager_lista_magacin()
                   nVPVRI -= Round( roba->plc * kolicina, gZaokr )
                ELSE
                   nVPVI -= Round( roba->vpc * kolicina, gZaokr )
-                  nVPVRI -= Round( field->vpc * kolicina, gZaokr )
+                  nVPVRI -= Round( nVPC * kolicina, gZaokr )
                ENDIF
                nNVI -= Round( nc * kolicina, gZaokr )
             ENDIF
@@ -523,7 +518,7 @@ FUNCTION kalk_lager_lista_magacin()
                nVPVRI += Round( roba->plc * kolicina, gZaokr )
             ELSE
                nVPVI += Round( roba->vpc * kolicina, gZaokr )
-               nVPVRI += Round( field->vpc * kolicina, gZaokr )
+               nVPVRI += Round( nVPC * kolicina, gZaokr )
             ENDIF
             nRabat += Round(  rabatv / 100 * vpc * kolicina, gZaokr )
             nNVI += Round( nc * kolicina, gZaokr )
@@ -540,7 +535,7 @@ FUNCTION kalk_lager_lista_magacin()
                nVPVRI += Round( roba->plc * ( - kolicina ), gZaokr )
             ELSE
                nVPVI += Round( roba->vpc * ( - kolicina ), gZaokr )
-               nVPVRI += Round( field->vpc * ( - kolicina ), gZaokr )
+               nVPVRI += Round( nVPC * ( - kolicina ), gZaokr )
             ENDIF
             nRabat += Round(  rabatv / 100 * vpc * ( - kolicina ), gZaokr )
             nNVI += Round( nc * ( - kolicina ), gZaokr )
@@ -553,7 +548,7 @@ FUNCTION kalk_lager_lista_magacin()
                nVPVRU += Round( - roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             ELSE
                nVPVU += Round( - roba->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
-               nVPVRU += Round( - field->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
+               nVPVRU += Round( - nVPC * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             ENDIF
 
             nNVU += Round( - nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
@@ -575,8 +570,6 @@ FUNCTION kalk_lager_lista_magacin()
 
          aNaz := Sjecistr( roba->naz, 20 )
          NovaStrana( bZagl )
-
-         // rbr, idroba, naziv
 
          ? Str( ++nRbr, 6 ) + ".", cIdRoba
          nCr := PCol() + 1
@@ -608,7 +601,6 @@ FUNCTION kalk_lager_lista_magacin()
             IF Round( nUlaz - nIzlaz, 4 ) <> 0 .AND. cSrKolNula $ "01"
 
                APPEND BLANK
-
                REPLACE idfirma WITH cIdfirma, ;
                   idroba WITH cIdRoba, ;
                   idkonto WITH cIdKonto, ;
@@ -621,9 +613,7 @@ FUNCTION kalk_lager_lista_magacin()
 
                REPLACE nc WITH ( nNVU - nNVI ) / ( nUlaz - nIzlaz )
                REPLACE vpc WITH ( nVPVU - nVPVI ) / ( nUlaz - nIzlaz )
-
                REPLACE vpc WITH nc
-
 
             ELSEIF cSrKolNula $ "12" .AND. Round( nUlaz - nIzlaz, 4 ) = 0
 
@@ -648,7 +638,6 @@ FUNCTION kalk_lager_lista_magacin()
                   REPLACE vpc WITH 0
 
                   REPLACE vpc WITH nc
-
 
                   // 2 stavka (plus i nv)
                   APPEND BLANK
@@ -680,8 +669,6 @@ FUNCTION kalk_lager_lista_magacin()
          nCol1 := PCol() + 1
 
 
-
-
          // NV
          @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVU )
          @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNVI  )
@@ -689,8 +676,7 @@ FUNCTION kalk_lager_lista_magacin()
 
          IF cDoNab == "N"
 
-
-            IF _vpc_iz_sif == "D"
+            IF cVpcIzSifarnikaDN == "D"
                // sa vpc iz sifrarnika robe
                @ PRow(), PCol() + 1 SAY kalk_say_iznos( nVPVU )
                @ PRow(), PCol() + 1 SAY kalk_say_iznos( nRabat )
@@ -722,7 +708,6 @@ FUNCTION kalk_lager_lista_magacin()
             ENDIF
          ENDIF
 
-
          IF cSredCij == "D"
             @ PRow(), PCol() + 1 SAY ( nNVU - nNVI + nVPVU - nVPVI ) / ( nUlaz - nIzlaz ) / 2 PICT "9999999.99"
          ENDIF
@@ -732,7 +717,6 @@ FUNCTION kalk_lager_lista_magacin()
          IF Len( aNaz ) > 1
             @ PRow(), nCR  SAY aNaz[ 2 ]
          ENDIF
-
 
 
          IF cMink <> "N" .AND. nMink > 0
@@ -799,7 +783,7 @@ FUNCTION kalk_lager_lista_magacin()
                cTmp := ""
                cTmp := roba->sifradob
 
-               IF cNulaDN == "D" .AND. Round( nUlaz - nIzlaz, 4 ) = 0
+               IF cNulaDN == "D" .AND. Round( nUlaz - nIzlaz, 4 ) == 0
                   fill_exp_tbl( 0, roba->id, cTmp, ;
                      roba->naz, roba->idtarifa, cJmj, ;
                      nUlaz, nIzlaz, ( nUlaz - nIzlaz ), ;
@@ -815,8 +799,7 @@ FUNCTION kalk_lager_lista_magacin()
                      nNVU, nNVI, ( nNVU - nNVI ), ;
                      ( nNVU - nNVI ) / ( nUlaz - nIzlaz ), ;
                      nVPVU, nVPVI, ( nVPVU - nVPVI ), ;
-                     nVPCIzSif, ;
-                     nVPVRU, nVPVRI, ;
+                     nVPCIzSif, nVPVRU, nVPVRI, ;
                      dL_ulaz, dL_izlaz )
                ENDIF
             ENDIF
@@ -833,10 +816,9 @@ FUNCTION kalk_lager_lista_magacin()
          ?? ", p.cij: " + Str( IzSifKRoba( "PCIJ", roba->id, .F. ) )
       ENDIF
 
-
    ENDDO
 
-   ? __line
+   ? s_cLinija
    ? "UKUPNO:"
 
    @ PRow(), nCol0 SAY say_kolicina( ntUlaz )
@@ -845,15 +827,13 @@ FUNCTION kalk_lager_lista_magacin()
 
    nCol1 := PCol() + 1
 
-
    // NV
    @ PRow(), PCol() + 1 SAY say_kolicina( ntNVU )
    @ PRow(), PCol() + 1 SAY say_kolicina( ntNVI )
    @ PRow(), PCol() + 1 SAY say_kolicina( ntNV )
 
    IF cDoNab == "N"
-      IF _vpc_iz_sif == "D"
-         // PV - samo u pdv rezimu
+      IF cVpcIzSifarnikaDN == "D"
          @ PRow(), PCol() + 1 SAY say_kolicina( ntVPVU )
          @ PRow(), PCol() + 1 SAY say_kolicina( ntRabat )
          @ PRow(), PCol() + 1 SAY say_kolicina( ntVPVI )
@@ -867,8 +847,7 @@ FUNCTION kalk_lager_lista_magacin()
       ENDIF
    ENDIF
 
-
-   ? __line
+   ? s_cLinija
 
    FF
    end_print()
@@ -888,7 +867,6 @@ FUNCTION kalk_lager_lista_magacin()
          renumeracija_kalk_pripr( cBrPst, "16" )
       ENDIF
    ENDIF
-
 
    IF lExpDbf == .T.
       open_r_export_table() // lansiraj report
@@ -917,10 +895,13 @@ STATIC FUNCTION g_exp_fields()
    AAdd( aDbf, { "NVPOT", "N", 20, 3 } )
    AAdd( aDbf, { "NV", "N", 15, 4 } )
    AAdd( aDbf, { "NC", "N", 15, 4 } )
+
    AAdd( aDbf, { "PVDUG", "N", 20, 3 } )
    AAdd( aDbf, { "PVPOT", "N", 20, 3 } )
+
    AAdd( aDbf, { "PVRDUG", "N", 20, 3 } )
    AAdd( aDbf, { "PVRPOT", "N", 20, 3 } )
+
    AAdd( aDbf, { "PV", "N", 15, 3 } )
    AAdd( aDbf, { "PC", "N", 15, 3 } )
    AAdd( aDbf, { "D_ULAZ", "D", 8, 0 } )
@@ -1083,11 +1064,11 @@ FUNCTION Zagllager_lista_magacin()
       ?? ", uslov radni nalog: " + AllTrim( cRNalBroj )
    ENDIF
 
-   ? __line
-   ? __txt1
-   ? __txt2
-   ? __txt3
-   ? __line
+   ? s_cLinija
+   ? s_cTxt1
+   ? s_cTxt2
+   ? s_cTxt3
+   ? s_cLinija
 
    SELECT ( nTArea )
 

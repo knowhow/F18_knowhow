@@ -35,13 +35,20 @@ FUNCTION empty_error_bar()
 
 FUNCTION info_bar( cDoc, cMsg )
 
-   LOCAL lPrinter, lConsole
+   LOCAL lPrinter, lConsole, cDevice
 
    hb_default( @cMsg, "" )
 
    lPrinter :=  Set( _SET_PRINTER,  .F. )
    lConsole := Set( _SET_CONSOLE, .T. )
-   @ f18_max_rows() , 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_INFO_PANEL
+   cDevice := Set( _SET_DEVICE, "SCREEN" )
+
+   // SET DEVICE TO PRINTER
+
+   // SET PRINTER TO ( cFileName )
+   // SET PRINTER ON
+
+   @ f18_max_rows(), 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_INFO_PANEL
 
    IF Empty( cMsg ) .OR. cMsg == "info_bar"
       RETURN .T.
@@ -49,6 +56,7 @@ FUNCTION info_bar( cDoc, cMsg )
 
    Set( _SET_PRINTER,  lPrinter )
    Set( _SET_CONSOLE, lConsole )
+   Set( _SET_DEVICE, cDevice )
 
    IF Len( aInfos ) > INFO_MESSAGES_LENGTH
       ADel( aInfos, 1 )
@@ -62,7 +70,7 @@ FUNCTION info_bar( cDoc, cMsg )
 
 FUNCTION error_bar( cDoc, cMsg )
 
-   LOCAL lPrinter, lConsole
+   LOCAL lPrinter, lConsole, cDevice
 
    // Beep( 2 )
    /* TODO:  : Object destructor failure ;
@@ -82,10 +90,14 @@ FUNCTION error_bar( cDoc, cMsg )
 
    lPrinter   :=  Set( _SET_PRINTER,  .F. )
    lConsole := Set( _SET_CONSOLE, .T. )
+   cDevice := Set( _SET_DEVICE, "SCREEN" )
+
    @ f18_max_rows() + 1, 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" ;
-       COLOR IIF( Empty( cMsg ), F18_COLOR_INFO_PANEL, F18_COLOR_ERROR_PANEL)
+      COLOR iif( Empty( cMsg ), F18_COLOR_INFO_PANEL, F18_COLOR_ERROR_PANEL )
+
    Set( _SET_PRINTER,  lPrinter )
    Set( _SET_CONSOLE, lConsole )
+   Set( _SET_DEVICE, cDevice )
 
    IF Empty( cMsg ) .OR. cMsg == "error_bar"
       RETURN .T.
@@ -107,7 +119,7 @@ FUNCTION show_infos()
    PushWA()
 
    dbCreate( "a_infos.dbf", a_struct(), "ARRAYRDD", .T., "a_infos" ) // Create it and leave opened
-   AEval( aInfos, {| item |  dbAppend(), field->time := item[ 1 ], field->doc := item[ 2 ], field->message := _u( item[ 3 ] ) } )
+   AEval( aInfos, {| item |  dbAppend(), field->TIME := item[ 1 ], field->doc := item[ 2 ], field->MESSAGE := _u( item[ 3 ] ) } )
    SAVE SCREEN TO cScr
    IF Used()
       dbEdit()
@@ -128,7 +140,7 @@ FUNCTION show_errors()
    PushWa()
 
    dbCreate( "a_errors.dbf", a_struct(), "ARRAYRDD", .T., "a_errors" )
-   AEval( aErrors, {| item |  dbAppend(), field->time := item[ 1 ], field->doc := item[ 2 ], field->message := _u( item[ 3 ] ) } )
+   AEval( aErrors, {| item |  dbAppend(), field->TIME := item[ 1 ], field->doc := item[ 2 ], field->MESSAGE := _u( item[ 3 ] ) } )
    SAVE SCREEN TO cScr
    IF Used()
       dbEdit()

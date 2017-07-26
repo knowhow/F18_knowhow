@@ -1,5 +1,6 @@
 #include "f18.ch"
 
+
 FUNCTION o_fakt_txt( cId )
 
    SELECT ( F_FTXT )
@@ -14,7 +15,6 @@ FUNCTION o_fakt_txt( cId )
 
    RETURN .T.
 
-
 /*
     FTXT, fakt_ftxt
 */
@@ -22,17 +22,15 @@ FUNCTION o_fakt_txt( cId )
 FUNCTION select_o_fakt_txt( cId )
 
    SELECT ( F_FTXT )
-   IF !use_sql_sif  ( "fakt_ftxt", .T., "FTXT", cId )
-      RETURN .F.
-   ENDIF
-   SET ORDER TO TAG "ID"
-
-   IF cId != NIL
-      SEEK cId
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
    ENDIF
 
    RETURN o_fakt_txt( cId )
-
 
 
 FUNCTION find_fakt_ftxt_by_id( cId )
@@ -60,6 +58,7 @@ FUNCTION find_fakt_ftxt_by_id( cId )
    RETURN !Eof()
 
 
+
 FUNCTION o_fakt_objekti( cId )
 
    SELECT ( F_FAKT_OBJEKTI )
@@ -73,3 +72,18 @@ FUNCTION o_fakt_objekti( cId )
    ENDIF
 
    RETURN .T.
+
+
+
+FUNCTION select_o_fakt_objekti( cId )
+
+   SELECT ( F_FAKT_OBJEKTI )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_fakt_objekti( cId )

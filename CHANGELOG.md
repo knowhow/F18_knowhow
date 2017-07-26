@@ -1,5 +1,14 @@
 # F18 klijent, lista promjena
 
+
+## 3.1.19-std, 2017-07-25
+
+### Developer
+#### KALK
+
+- MERGE_BRANCH 3-vindi: koncij.region za konto npr 13202 = "RS" => vpc stampa dokumenta
+- MERGE_BRANCH 3-vindi: dokumenti 95, 96, 16, 11
+
 ## 3.1.17-std, 2017-07-25
 
 ### Developer

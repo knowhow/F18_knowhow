@@ -180,7 +180,7 @@ FUNCTION kalk_get_1_11()
       VALID {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), ;
       _Tmarza := "A", ;
       _marza := _vpc / ( 1 + _PORVT ) - _fcj, .T. }
-   @ m_x + 16, Col() + 1 GET fMarza PICT "@!"   VALID {|| Marza2( fMarza ), fMarza := " ", .T. }
+   @ m_x + 16, Col() + 1 GET fMarza PICT "@!"   VALID {|| kalk_Marza_11( fMarza ), fMarza := " ", .T. }
 
 
    @ m_x + 18, m_y + 2  SAY "PRODAJNA CJENA       :"

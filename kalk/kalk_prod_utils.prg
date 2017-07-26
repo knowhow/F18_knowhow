@@ -79,27 +79,31 @@ FUNCTION MarzaMP( cIdVd, lNaprijed, aPorezi )
 
 
 
-/* Marza2(fMarza)
+/*
  *     Postavi _Marza2, _mpc, _mpcsapp
  */
 
-FUNCTION Marza2( fMarza )
+FUNCTION kalk_Marza_11( fMarza, lSvediVPCNaNC )
 
    LOCAL nPrevMP, nPPP
 
+   hb_default( @lSvediVPCNaNC, .T. )
+
    // za svaki slucaj setujemo ovo ako slucajno u dokumentu nije ispranvo
-   IF _IdVD $ "11#12#13"
+//   IF _IdVD $ "11#12#13" .and. lSvediVPCNaNC
       // inace je _fcj kod ovih dokumenata  = nabavnoj cijeni
       // _nc u ovim dokumentima moze biti uvecana za troskove prevoza
-      _VPC := _FCJ
-   ENDIF
+//      _VPC := _FCJ
+//   ENDIF
 
 
    IF fMarza == nil
       fMarza := " "
    ENDIF
 
-   _VPC := _FCJ
+   IF lSvediVPCNaNC
+      _VPC := _FCJ
+   ENDIF
 
 
    // ako je prevoz u MP rasporedjen uzmi ga u obzir
@@ -151,7 +155,7 @@ FUNCTION Marza2( fMarza )
 
    AEval( GetList, {| o | o:display() } )
 
-   RETURN
+   RETURN .T.
 
 
 

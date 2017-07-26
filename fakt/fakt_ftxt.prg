@@ -255,10 +255,68 @@ FUNCTION fakt_ispravka_ftxt( lSilent, bFunc )
 
 
 
+
+FUNCTION fakt_ftxt_encode_2( aFaktTxtIn, cBrNar, cBrOtpr, dDatOtpr, dDatPl )
+
+   LOCAL cFaktTxtNovi, nI
+
+   // roba tip U
+   cFaktTxtNovi := Chr( 16 ) + aFaktTxtIn[ 1 ] + Chr( 17 )
+   // dodatni tekst fakture
+   cFaktTxtNovi += Chr( 16 ) + aFaktTxtIn[ 2 ] + Chr( 17 )
+   // naziv partnera
+   cFaktTxtNovi += Chr( 16 ) + AllTrim( partn->naz ) + Chr( 17 )
+   // partner 2 podaci
+   cFaktTxtNovi += Chr( 16 ) + AllTrim( partn->adresa ) + ", Tel:" + AllTrim( partn->telefon ) + Chr( 17 )
+   // partner 3 podaci
+   cFaktTxtNovi += Chr( 16 ) + AllTrim( partn->ptt ) + " " + AllTrim( partn->mjesto ) + Chr( 17 )
+   // broj otpremnice
+   cFaktTxtNovi += Chr( 16 ) + cBrOtpr + Chr( 17 )
+   // datum otpremnice
+   cFaktTxtNovi += Chr( 16 ) + DToC( dDatOtpr ) + Chr( 17 )
+   // broj narudzbenice
+   cFaktTxtNovi += Chr( 16 ) + cBrNar + Chr( 17 )
+   // datum placanja
+   cFaktTxtNovi += Chr( 16 ) + DToC( dDatPl ) + Chr( 17 )
+
+   IF Len( aFaktTxtIn ) > 9
+      FOR nI := 10 TO Len( aFaktTxtIn )
+         cFaktTxtNovi += Chr( 16 ) + aFaktTxtIn[ nI ] + Chr( 17 )
+      NEXT
+   ENDIF
+
+   RETURN cFaktTxtNovi
+
+
+
+FUNCTION fakt_ftxt_encode_3( _txt1, _txt2, _txt3a, _txt3b, _txt3c, ;
+      _BrOtp, _BrNar, _DatOtp, _DatPl, cVezaOtpremnica, ;
+      _dest, _m_dveza )
+
+   RETURN Chr( 16 ) + Trim( _txt1 ) + Chr( 17 ) + Chr( 16 ) + _txt2 + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
+      Chr( 16 ) + _BrOtp + Chr( 17 ) + ;
+      Chr( 16 ) + DToC( _DatOtp ) + Chr( 17 ) + ;
+      Chr( 16 ) + _BrNar + Chr( 17 ) + ;
+      Chr( 16 ) + DToC( _DatPl ) + Chr( 17 ) + ;
+      iif( Empty ( cVezaOtpremnica ), "", Chr( 16 ) + cVezaOtpremnica + Chr( 17 ) ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( _dest ) + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( _m_dveza ) + Chr( 17 )
+
+
 // -------------------------------------------------
 // uzorak teksta na kraju fakture
 // verzija sa listom...
 // -------------------------------------------------
+
 FUNCTION fakt_unos_set_ftxt2( cList, nRedBr )
 
    LOCAL cId := "  "
@@ -312,7 +370,7 @@ FUNCTION fakt_unos_ftxt_box( cId, nCount )
    LOCAL lRet := .T.
    LOCAL GetList := {}
 
-   Box(, 11, 75 )
+   Box(, 11, f18_max_cols() - 8 )
 
    DO WHILE .T.
 
@@ -338,7 +396,7 @@ FUNCTION fakt_unos_ftxt_box( cId, nCount )
 
       PRIVATE fUMemu := .T.
 
-      _txt2 := MemoEdit( _txt2, m_x + 3, m_y + 1, m_x + 9, m_y + 76 )
+      _txt2 := MemoEdit( _txt2, m_x + 3, m_y + 1, m_x + 9, m_y + f18_max_cols() - 8 )
 
       fUMemu := NIL
       SetColor( f18_color_normal() )

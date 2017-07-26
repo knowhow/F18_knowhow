@@ -564,21 +564,17 @@ FUNCTION KoncijVPC()
 
 
 
-/* MMarz
- *     Preracunava iznos veleprodajne marze
- */
+FUNCTION kalk_marza_veleprodaja()
 
-FUNCTION MMarza()
+   LOCAL nStvarnaKolicina := 0, nMarza
 
-   LOCAL nStvarnaKolicina := 0
-
-   nStvarnaKolicina := Kolicina - GKolicina - GKolicin2
-   IF TMarza == "%" .OR. Empty( tmarza )
-      nMarza := nStvarnaKolicina * Marza / 100 * NC
-   ELSEIF TMarza == "A"
-      nMarza := Marza * nStvarnaKolicina
-   ELSEIF TMarza == "U"
-      nMarza := Marza
+   nStvarnaKolicina := field->Kolicina - field->GKolicina - field->GKolicin2
+   IF field->TMarza == "%" .OR. Empty( field->tmarza )
+      nMarza := nStvarnaKolicina * field->Marza / 100 * field->NC
+   ELSEIF field->TMarza == "A"
+      nMarza := field->Marza * nStvarnaKolicina
+   ELSEIF field->TMarza == "U"
+      nMarza := field->Marza
    ENDIF
 
    RETURN nMarza

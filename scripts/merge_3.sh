@@ -15,7 +15,7 @@ do
 done
 
 FILE=scripts/merge_from_3-vindi.sh
-[ -f $FILE ] && echo "suvisan $FILE && rm $FILE
+[ -f $FILE ] && echo "suvisan $FILE" && rm $FILE
 
 git status
 

@@ -94,7 +94,7 @@ FUNCTION fakt_unos_dokumenta()
 
    _opt_row := _upadr( "<c+A> Ispravka dok.", _opt_d ) + _sep
    _opt_row += _upadr( "<c+P> Štampa (txt)", _opt_d ) + _sep
-   _opt_row += _upadr( "<A> Asistent", _opt_d ) + _sep
+   _opt_row += _upadr( IIF( is_mac(), "<P>", "<a+P>" ) + " Štampa (LO)", _opt_d ) + _sep
 
    @ m_x + _x - 3, m_y + 2 SAY8 _opt_row
 
@@ -107,8 +107,9 @@ FUNCTION fakt_unos_dokumenta()
 
    _opt_row := _upadr( "", _opt_d ) + _sep
    _opt_row += _upadr( "", _opt_d ) + _sep
-   _opt_row += _upadr( "<F10> Ostale opcije", _opt_d ) + _sep
+   _opt_row += _upadr( iif( is_mac(), "<0>", "<F10>" ) + " Ostale opcije", _opt_d ) + _sep
    _opt_row += "<O> Konverzije"
+   _opt_row += "<A> Asistent"
 
    @ m_x + _x - 1, m_y + 2 SAY8 _opt_row
 
@@ -270,7 +271,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       RETURN DE_REFRESH
 
-   CASE Ch == K_ALT_P
+   CASE Ch == iif( is_mac(), Asc( "P" ), K_ALT_P )
 
       fakt_set_broj_dokumenta()
 
@@ -429,13 +430,9 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       RETURN DE_REFRESH
 
-
       // ostale opcije nad dokumentom
-#ifdef __PLATFORM__DARWIN
-   CASE Ch == Asc( "0" )
-#else
-   CASE Ch == K_F10
-#endif
+
+   CASE Ch == iif( is_mac(), Asc( "0" ), K_F10 )
 
       popup_fakt_unos_dokumenta()
       SetLastKey( K_CTRL_PGDN )
@@ -1670,7 +1667,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          o_fakt_txt()
          select_fakt_pripr()
          GO TOP
-         lDoks2 := .F. //( my_get_from_ini( "FAKT", "Doks2", "N", KUMPATH ) == "D" )
+         lDoks2 := .F. // ( my_get_from_ini( "FAKT", "Doks2", "N", KUMPATH ) == "D" )
          IF Val( rbr ) <> 1
             MsgBeep( "U pripremi se ne nalazi dokument" )
          ELSE

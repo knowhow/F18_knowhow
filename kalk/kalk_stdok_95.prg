@@ -74,11 +74,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
    IF !Empty( cIdZaduz2 )
 
-      SELECT ( F_FAKT_OBJEKTI )
-      IF !Used()
-         o_fakt_objekti()
-      ENDIF
-
+      select_o_fakt_objekti()
       GO TOP
       hseek cIdZaduz2
 

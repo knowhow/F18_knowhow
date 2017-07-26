@@ -13,7 +13,7 @@
 
 MEMVAR ImeKol
 MEMVAR Ch  // , fID_J
-MEMVAR aAstruct
+//MEMVAR aAstruct
 
 THREAD STATIC __PSIF_NIVO__ := 0
 THREAD STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
@@ -512,11 +512,12 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    LOCAL nTrebaRedova
    LOCAL cUslovSrch
    LOCAL lNovi
+   LOCAL aStruct
 
    PRIVATE cPom
    PRIVATE aQQ
    PRIVATE aUsl
-   PRIVATE aStruct
+   //PRIVATE aStruct
 
    IF aZabrane = nil
       aZabrane := {}
@@ -699,7 +700,7 @@ STATIC FUNCTION edit_sql_sif_item( nCh, cOrderTag, aZabIsp, lNovi )
    PRIVATE cPom
    PRIVATE aQQ
    PRIVATE aUsl
-   PRIVATE aStruct
+   //PRIVATE aStruct
 
    nPrevRecNo := RecNo()
    cTekuciZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )

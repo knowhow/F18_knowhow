@@ -110,7 +110,7 @@ STATIC FUNCTION prenos()
          @ m_x + 14, m_y + 2 SAY Space( 30 )
          LOOP
       ELSE
-         aMemo := parsmemo( txt )
+         aMemo := fakt_ftxt_decode( txt )
          IF Len( aMemo ) >= 5
             @ m_x + 10, m_y + 2 SAY Trim( amemo[ 3 ] )
             @ m_x + 11, m_y + 2 SAY Trim( amemo[ 4 ] )

@@ -122,7 +122,7 @@ FUNCTION fakt_kalk_prenos_10_14()
          // cIdVrsteP := idvrstep
          // ENDIF
 
-         aMemo := ParsMemo( fakt->txt )
+         aMemo := fakt_ftxt_decode( fakt->txt )
 
          IF Len( aMemo ) >= 5
             @ m_x + 10, m_y + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
@@ -373,7 +373,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
       ELSE
 
 
-         aMemo := ParsMemo( fakt->txt )  // iscupaj podatke iz memo polja
+         aMemo := fakt_ftxt_decode( fakt->txt )  // iscupaj podatke iz memo polja
 
          IF Len( aMemo ) >= 5
             @ m_x + 10, m_y + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )

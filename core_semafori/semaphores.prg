@@ -28,7 +28,7 @@ STATIC s_nBug1 := 1
 
 FUNCTION lock_semaphore( cTable )
 
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _ret
    LOCAL _err_msg
    LOCAL _user   := f18_user()
@@ -80,9 +80,9 @@ FUNCTION lock_semaphore( cTable )
    ENDDO
 
    // free, lockovati
-   _qry := "UPDATE sem." + cTable + " SET algorithm='lock', last_trans_user_code=" + sql_quote( _user ) + "; "
-   _qry += "UPDATE sem." + cTable + " SET algorithm='locked_by_me' WHERE user_code=" + sql_quote( _user ) + ";"
-   _ret := run_sql_query( _qry )
+   cQuery := "UPDATE sem." + cTable + " SET algorithm='lock', last_trans_user_code=" + sql_quote( _user ) + "; "
+   cQuery += "UPDATE sem." + cTable + " SET algorithm='locked_by_me' WHERE user_code=" + sql_quote( _user ) + ";"
+   _ret := run_sql_query( cQuery )
 
    IF sql_error_in_query( _ret, "UPDATE" )
       RETURN .F.
@@ -95,7 +95,7 @@ FUNCTION lock_semaphore( cTable )
 
 FUNCTION unlock_semaphore( cTable  )
 
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _ret
    LOCAL nI
    LOCAL _err_msg
@@ -109,9 +109,9 @@ FUNCTION unlock_semaphore( cTable  )
       RETURN .T.
    ENDIF
 
-   _qry := "UPDATE sem." + cTable + " SET algorithm='free', last_trans_user_code=" + sql_quote( _user ) + "; "
+   cQuery := "UPDATE sem." + cTable + " SET algorithm='free', last_trans_user_code=" + sql_quote( _user ) + "; "
    hParams[ "retry" ] := 1
-   _ret := run_sql_query( _qry, hParams )
+   _ret := run_sql_query( cQuery, hParams )
 
    IF sql_error_in_query( _ret, "UPDATE" )
       RETURN .F.
@@ -122,11 +122,11 @@ FUNCTION unlock_semaphore( cTable  )
 
 FUNCTION get_semaphore_locked_by_me_status_user( cTable )
 
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _ret
 
-   _qry := "SELECT user_code FROM sem." + cTable + " WHERE algorithm = 'locked_by_me'"
-   _ret := run_sql_query( _qry )
+   cQuery := "SELECT user_code FROM sem." + cTable + " WHERE algorithm = 'locked_by_me'"
+   _ret := run_sql_query( cQuery )
 
    RETURN AllTrim( _ret:FieldGet( 1 ) )
 
@@ -142,7 +142,7 @@ FUNCTION get_semaphore_locked_by_me_status_user( cTable )
 
 FUNCTION get_semaphore_status( cTable )
 
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _ret
    LOCAL _user := f18_user()
 
@@ -150,8 +150,8 @@ FUNCTION get_semaphore_status( cTable )
       RETURN "free"
    ENDIF
 
-   _qry := "SELECT algorithm FROM sem." + cTable + " WHERE user_code=" + sql_quote( _user )
-   _ret := run_sql_query( _qry )
+   cQuery := "SELECT algorithm FROM sem." + cTable + " WHERE user_code=" + sql_quote( _user )
+   _ret := run_sql_query( cQuery )
 
    IF sql_error_in_query( _ret, "SELECT" )
       RETURN "unknown"
@@ -168,11 +168,11 @@ FUNCTION is_table_locked( cTable )
 
 FUNCTION last_semaphore_version( cTable )
 
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _ret
 
-   _qry := "SELECT last_trans_version FROM  sem." + cTable + " WHERE user_code=" + sql_quote( f18_user() )
-   _ret := run_sql_query( _qry )
+   cQuery := "SELECT last_trans_version FROM  sem." + cTable + " WHERE user_code=" + sql_quote( f18_user() )
+   _ret := run_sql_query( cQuery )
 
    IF sql_query_bez_zapisa( _ret )
       RETURN -1
@@ -189,8 +189,8 @@ FUNCTION last_semaphore_version( cTable )
 FUNCTION get_semaphore_version( cTable, last )
 
    LOCAL _tbl_obj
-   LOCAL _result
-   LOCAL _qry
+   LOCAL nResult
+   LOCAL cQuery
    LOCAL _tbl
    LOCAL _user := f18_user()
    LOCAL _msg
@@ -204,28 +204,28 @@ FUNCTION get_semaphore_version( cTable, last )
 
    _tbl := "sem." + Lower( cTable )
 
-   _qry := "SELECT "
+   cQuery := "SELECT "
    IF last
-      _qry +=  "MAX(last_trans_version) AS ver"
+      cQuery +=  "MAX(last_trans_version) AS ver"
    ELSE
-      _qry += "version as ver"
+      cQuery += "version as ver"
    ENDIF
-   _qry += " FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
+   cQuery += " FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
 
-   _qry += " UNION SELECT -1 ORDER BY ver DESC LIMIT 1"
+   cQuery += " UNION SELECT -1 ORDER BY ver DESC LIMIT 1"
 
-   _tbl_obj := run_sql_query( _qry )
+   _tbl_obj := run_sql_query( cQuery )
 
    IF sql_query_bez_zapisa( _tbl_obj )
-      _msg = "problem sa:" + _qry
+      _msg = "problem sa:" + cQuery
       log_write( _msg, 2 )
       MsgBeep( 2 )
       QUIT_1
    ENDIF
 
-   _result := _tbl_obj:FieldGet( 1 )
+   nResult := _tbl_obj:FieldGet( 1 )
 
-   RETURN _result
+   RETURN nResult
 
 
 /*
@@ -235,7 +235,7 @@ FUNCTION get_semaphore_version( cTable, last )
 FUNCTION get_semaphore_version_h( cTable )
 
    LOCAL _tbl_obj
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _tbl
    LOCAL _user := f18_user()
    LOCAL _ret := hb_Hash()
@@ -251,14 +251,14 @@ FUNCTION get_semaphore_version_h( cTable )
 
    _tbl := "sem." + Lower( cTable )
 
-   _qry := "SELECT version, last_trans_version AS last_version"
-   _qry += " FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
-   _qry += " UNION SELECT -1, -1 ORDER BY version DESC LIMIT 1"
+   cQuery := "SELECT version, last_trans_version AS last_version"
+   cQuery += " FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
+   cQuery += " UNION SELECT -1, -1 ORDER BY version DESC LIMIT 1"
 
-   _tbl_obj := run_sql_query( _qry )
+   _tbl_obj := run_sql_query( cQuery )
 
    IF sql_error_in_query( _tbl_obj )
-      _msg = "problem sa:" + _qry
+      _msg = "problem sa:" + cQuery
       // log_write( _msg, 2 )
       // MsgBeep( _msg )
       // QUIT_1
@@ -280,7 +280,7 @@ FUNCTION get_semaphore_version_h( cTable )
 FUNCTION reset_semaphore_version( cTable )
 
    LOCAL _ret
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _tbl
    LOCAL _user := f18_user()
 
@@ -293,11 +293,11 @@ FUNCTION reset_semaphore_version( cTable )
    //insert_semaphore_if_not_exists( cTable )
 
    // log_write( "reset semaphore " + _tbl + " update ", 1 )
-   _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + sql_quote( _user )
-   run_sql_query( _qry )
+   cQuery := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + sql_quote( _user )
+   run_sql_query( cQuery )
 
-   _qry := "SELECT version from " + _tbl + " WHERE user_code =" + sql_quote( _user )
-   _ret := run_sql_query( _qry )
+   cQuery := "SELECT version from " + _tbl + " WHERE user_code =" + sql_quote( _user )
+   _ret := run_sql_query( cQuery )
 
    log_write( "reset semaphore, select version" + Str( _ret:FieldGet( 1 ) ), 7 )
 
@@ -305,23 +305,23 @@ FUNCTION reset_semaphore_version( cTable )
 
 
 
-FUNCTION table_count( cTable, condition )
+FUNCTION table_count( cTable, cCondition )
 
    LOCAL oQuery
-   LOCAL _result
-   LOCAL _qry
+   LOCAL nResult
+   LOCAL cQuery
    LOCAL cMsg
 
-   _qry := "SELECT COUNT(*) FROM " + cTable // provjeri prvo da li postoji uopšte ovaj site zapis
+   cQuery := "SELECT COUNT(*) FROM " + cTable // provjeri prvo da li postoji uopšte ovaj site zapis
 
-   IF condition != NIL
-      _qry += " WHERE " + condition
+   IF cCondition != NIL
+      cQuery += " WHERE " + cCondition
    ENDIF
 
-   oQuery := run_sql_query( _qry )
+   oQuery := run_sql_query( cQuery )
 
    IF sql_query_bez_zapisa( oQuery )
-      cMsg := "ERR table_count : " + _qry + " msg: "
+      cMsg := "ERR table_count : " + cQuery + " msg: "
       IF is_var_objekat_tpqquery( oQuery )
          cMsg += oQuery:ErrorMsg()
       ENDIF
@@ -332,9 +332,9 @@ FUNCTION table_count( cTable, condition )
 
    // log_write( "table: " + cTable + " count = " + AllTrim( Str( oQuery:FieldGet( 1 ) ) ), 8 )
 
-   _result := oQuery:FieldGet( 1 )
+   nResult := oQuery:FieldGet( 1 )
 
-   RETURN _result
+   RETURN nResult
 
 
 /*
@@ -499,7 +499,7 @@ FUNCTION field_in_blacklist( field_name, blacklist )
 */
 FUNCTION update_semaphore_version_after_push( cTable, to_myself )
 
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _tbl
    LOCAL _user := f18_user()
    LOCAL _ver_user, _last_ver
@@ -533,18 +533,18 @@ FUNCTION update_semaphore_version_after_push( cTable, to_myself )
    //IF !insert_semaphore_if_not_exists( cTable )
   //    RETURN .F.
    //ENDIF
-   _qry := ""
+   cQuery := ""
 
    IF !to_myself
       // setuj moju verziju ako ne zelim sebe refreshirati
-      _qry := "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE user_code=" + sql_quote( _user ) + "; "
+      cQuery := "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE user_code=" + sql_quote( _user ) + "; "
    ENDIF
 
    // svim userima setuj last_trans_version
-   _qry += "UPDATE " + _tbl + " SET last_trans_version=" + cVerUser + "; "
+   cQuery += "UPDATE " + _tbl + " SET last_trans_version=" + cVerUser + "; "
    // kod svih usera verzija ne moze biti veca od posljednje
-   _qry += "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE version > " + cVerUser + ";"
-   oQry := run_sql_query( _qry )
+   cQuery += "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE version > " + cVerUser + ";"
+   oQry := run_sql_query( cQuery )
    IF sql_error_in_query( oQry, "UPDATE" )
       error_bar( "syn_ids", "update sem after push " + cTable )
       RETURN .F.
@@ -564,7 +564,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( cTable )
    LOCAL _tbl
    LOCAL _ret
    LOCAL _user := f18_user()
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL hParams := hb_Hash()
 
    //IF !insert_semaphore_if_not_exists( cTable )
@@ -574,13 +574,13 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( cTable )
    // log_write( "START: nuliraj ids-ove - user: " + _user, 7 )
 
    _tbl := "sem." + Lower( cTable )
-   _qry := "UPDATE " + _tbl + " SET " + ;
+   cQuery := "UPDATE " + _tbl + " SET " + ;
       " ids=NULL , dat=NULL," + ;
       " version=last_trans_version" + ;
       " WHERE user_code =" + sql_quote( _user )
 
    hParams[ "retry" ] := 1
-   _ret := run_sql_query( _qry, hParams )
+   _ret := run_sql_query( cQuery, hParams )
 
    // log_write( "END: nuliraj ids-ove - user: " + _user, 7 )
    IF sql_error_in_query( _ret, "UPDATE" )
@@ -593,15 +593,15 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( cTable )
 
 /*
    TODO: ukloniti ovo ako ne trebamo _id_full
-   IF ( _result == 0 )
+   IF ( nResult == 0 )
 
       // user po prvi put radi sa tabelom semafora, iniciraj full sync
       _id_full := "ARRAY[" + sql_quote( "#F" ) + "]"
 
-      _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
+      cQuery := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
          "VALUES(" + sql_quote( _user )  + ", " + cVerUser + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
 
-      _ret := run_sql_query( _qry )
+      _ret := run_sql_query( cQuery )
 
       log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + cVerUser, 7 )
 
@@ -612,7 +612,7 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
 
    LOCAL nCnt
    LOCAL _user := f18_user()
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _ret
    LOCAL cSqlTbl
    LOCAL lRet
@@ -637,9 +637,9 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
    #endif
 
    IF ( nCnt == 0 )
-      _qry := "INSERT INTO " + cSqlTbl + "(user_code, last_trans_version, version, algorithm) " + ;
+      cQuery := "INSERT INTO " + cSqlTbl + "(user_code, last_trans_version, version, algorithm) " + ;
          "VALUES(" + sql_quote( _user )  + ", 0, -1, 'free')"
-      _ret := run_sql_query( _qry )
+      _ret := run_sql_query( cQuery )
 
       IF sql_error_in_query( _ret, "INSERT" )
          error_bar( "syn_ids", "ERR insert SEM " + cTable )

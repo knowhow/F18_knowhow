@@ -35,7 +35,7 @@ FUNCTION p_fakt_objekti( cId, dx, dy )
 
    SELECT ( nDbfArea )
 
-   RETURN p_sifra( F_FAKT_OBJEKTI, 1, f18_max_rows() - 15, f18_max_cols() - 20,"Lista objekata", @cId, dx, dy )
+   RETURN p_sifra( F_FAKT_OBJEKTI, 1, f18_max_rows() - 15, f18_max_cols() - 20, "Lista objekata", @cId, dx, dy )
 
 
 
@@ -126,7 +126,7 @@ FUNCTION FaktStanje( cIdRoba )
    // {idfirma, nUl,nIzl,nRevers,nRezerv }
    nUl := nIzl := nRezerv := nRevers := 0
    DO WHILE !Eof()  .AND. cIdRoba == IdRoba
-      nPos := AScan ( aStanje, {| x| x[ 1 ] == FAKT->IdFirma } )
+      nPos := AScan ( aStanje, {| x | x[ 1 ] == FAKT->IdFirma } )
       IF nPos == 0
          AAdd ( aStanje, { IdFirma, 0, 0, 0, 0 } )
          nPos := Len ( aStanje )
@@ -204,29 +204,29 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    FOR nC := 1 TO nLen
       // {idfirma, nUl,nIzl,nRevers,nRezerv }
       @ nR, m_y + 2 SAY cDiv
-      @ nR, Col() SAY aStanje[nC ][ 1 ]
+      @ nR, Col() SAY aStanje[ nC ][ 1 ]
       @ nR, Col() SAY cDiv
-      nPom := aStanje[nC ][ 2 ] -aStanje[nC ][ 3 ]
+      nPom := aStanje[ nC ][ 2 ] - aStanje[ nC ][ 3 ]
       @ nR, Col() SAY nPom PICT fakt_pic_iznos()
       @ nR, Col() SAY cDiv
       nTSta += nPom
-      @ nR, Col() SAY aStanje[nC ][ 4 ] PICT fakt_pic_iznos()
+      @ nR, Col() SAY aStanje[ nC ][ 4 ] PICT fakt_pic_iznos()
       @ nR, Col() SAY cDiv
-      nTRev += aStanje[nC ][ 4 ]
-      nPom -= aStanje[nC ][ 4 ]
-      @ nR, Col() SAY aStanje[nC ][ 5 ] PICT fakt_pic_iznos()
+      nTRev += aStanje[ nC ][ 4 ]
+      nPom -= aStanje[ nC ][ 4 ]
+      @ nR, Col() SAY aStanje[ nC ][ 5 ] PICT fakt_pic_iznos()
       @ nR, Col() SAY cDiv
-      nTRez += aStanje[nC ][ 5 ]
-      nPom -= aStanje[nC ][ 5 ]
+      nTRez += aStanje[ nC ][ 5 ]
+      nPom -= aStanje[ nC ][ 5 ]
       @ nR, Col() SAY nPom PICT fakt_pic_iznos()
       @ nR, Col() SAY cDiv
       nTOst += nPom
-      nR ++
+      nR++
    NEXT
    @ nR, m_y + 2 SAY cDiv + "--" + cDiv + REPL ( "-", npd ) + cDiv + ;
       REPL ( "-", npd ) + cDiv + ;
       REPL ( "-", npd ) + cDiv + REPL ( "-", npd ) + cDiv
-   nR ++
+   nR++
    @ nR, m_y + 2 SAY " ³ UK.³ "
    @ nR, Col() SAY nTSta PICT fakt_pic_iznos()
    @ nR, Col() SAY cDiv
@@ -269,99 +269,27 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    RETURN .T.
 
 
-
-
-FUNCTION P_FTxt( cId, dx, dy )
-
-   LOCAL _vrati
-   LOCAL nDbfArea := Select()
-   LOCAL _p_bottom
-   LOCAL _p_top
-   LOCAL _p_left
-   LOCAL _p_right
-   LOCAL _box_h := f18_max_rows() - 20
-   LOCAL _box_w := f18_max_cols() - 3
-   PRIVATE ImeKol
-   PRIVATE Kol
-
-   o_fakt_txt()
-
-   ImeKol := {}
-   Kol := {}
-
-   AAdd( ImeKol, { PadR( "ID", 2 ),   {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    } )
-   add_mcode( @ImeKol )
-   AAdd( ImeKol, { "Naziv",  {|| naz },  "naz", {|| .T. }, ;
-      {|| wnaz := StrTran( wnaz, "##", hb_eol() ), .T. }, NIL, "@S50" } )
-
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
-   NEXT
-
-   _p_bottom := 15
-   _p_top := 3
-   _p_left := 1
-   _p_right := f18_max_cols() -3
-
-   box_crno_na_zuto( _p_top, _p_left, _p_bottom, _p_right, "PREGLED TEKSTA" )
-
-   @ _p_bottom, 0 SAY ""
-
-   _vrati := p_sifra( F_FTXT, 1, _box_h, _box_w, "Faktura - tekst na kraju fakture", @cId, , , {|| PrikFTXT( _p_top, _p_left, 8, _p_right ) } )
-
-   Prozor0()
-
-   SELECT ( nDbfArea )
-
-   RETURN _vrati
-
-
-
-/* PrikFTxt()
- *     Prikazuje uzorak teksta
- */
-
-FUNCTION PrikFTxt( top_pos, left_pos, bott_pos, text_length )
-
-   LOCAL nI := 0
-   LOCAL _arr := {}
-
-   @ top_pos, 6 SAY "uzorak teksta id: " + field->id
-
-   _arr := TXTuNIZ( field->naz, text_length - 1 - left_pos )
-
-   FOR nI := 1 TO bott_pos
-      IF nI > Len( _arr )
-         @ top_pos + nI, left_pos + 1 SAY Space( text_length - 1 - left_pos )
-      ELSE
-         @ top_pos + nI, left_pos + 1 SAY PadR( _arr[ nI ], text_length - 1 - left_pos )
-      ENDIF
-   NEXT
-
-   RETURN -1
-
-
 /* fn ObSif()
  *
  */
 
 STATIC FUNCTION ObSif()
 
-   //IF glDistrib
-      //o_relac()
-      //O_VOZILA
-    //  O_KALPOS
-   //ENDIF
+   // IF glDistrib
+   // o_relac()
+   // O_VOZILA
+   // O_KALPOS
+   // ENDIF
 
-  // o_sifk()
-  // o_sifv()
-   //select_o_konto()
-  // select_o_partner()
-  // select_o_roba()
+   // o_sifk()
+   // o_sifv()
+   // select_o_konto()
+   // select_o_partner()
+   // select_o_roba()
    o_fakt_txt()
-  // o_tarifa()
+   // o_tarifa()
    o_valute()
-   //o_rj()
+   // o_rj()
    o_sastavnica()
    o_ugov()
    o_rugov()
@@ -370,10 +298,10 @@ STATIC FUNCTION ObSif()
       o_dest()
    ENDIF
 
-   IF gNW == "T"
-      O_FADO
-      O_FADE
-   ENDIF
+//   IF gNW == "T"
+//      O_FADO
+//      O_FADE
+//   ENDIF
 
    o_vrstep()
    o_ops()

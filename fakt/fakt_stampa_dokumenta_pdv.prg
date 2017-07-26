@@ -296,7 +296,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
       SELECT fakt_pripr
 
-      aMemo := ParsMemo( field->txt )
+      aMemo := fakt_ftxt_decode( field->txt )
       cIdRoba := field->idroba
 
       IF roba->tip == "U"
@@ -514,7 +514,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    GO ( nRec )
 
    // nafiluj ostale podatke vazne za sam dokument
-   aMemo := ParsMemo( txt )
+   aMemo := fakt_ftxt_decode( txt )
    dDatDok := datdok
 
    IF Len( aMemo ) <= 5
@@ -1116,7 +1116,7 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
 
    IF Empty( AllTrim( cID ) )
       // ako je prazan partner uzmi iz memo polja
-      aMemo := ParsMemo( txt )
+      aMemo := fakt_ftxt_decode( txt )
       lFromMemo := .T.
    ELSE
       select_o_partner( cId )

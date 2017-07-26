@@ -58,7 +58,7 @@ FUNCTION cre_all_fakt( ver )
       f18_delete_dbf( "fakt_fakt" )
       f18_delete_dbf( "fakt_pripr" )
    ENDIF
-   
+
    IF_NOT_FILE_DBF_CREATE
 
    // 0.8.3
@@ -242,21 +242,19 @@ FUNCTION cre_all_fakt( ver )
    AFTER_CREATE_INDEX
 
 
-   // ---------------------------------------------------
-   // FAKT_FTXT
-   // ---------------------------------------------------
+   /*
 
    aDbf := {}
    AAdd( aDBf, { 'ID','C',  2,0 } )
    AAdd( aDBf, { 'NAZ','C', 340,0 } )
 
-   _alias := "FTXT"
+--   _alias := "FTXT"
    _table_name := "fakt_ftxt"
 
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "ID", "ID", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    // ------------------------------------------------
    // FAKT_PRIPR_ATRIB

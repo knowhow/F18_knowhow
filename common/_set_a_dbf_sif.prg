@@ -57,7 +57,7 @@ FUNCTION set_a_dbf_sif()
    // kolizija sa fakt_roba
    // set_a_dbf_temp     ( "cIdRoba"      ,  "cIdRoba"       , F__ROBA      )
 
-   set_a_dbf_temp     ( "barkod",  "BARKOD", F_BARKOD     )
+   set_a_dbf_temp     ( "barkod",  "BARKOD", F_BARKOD  )
    //set_a_dbf_temp     ( "strings",  "STRINGS", F_STRINGS    )
 
    RETURN .T.

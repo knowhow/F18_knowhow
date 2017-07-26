@@ -296,9 +296,9 @@ FUNCTION UkloniRet( xTekst, lPrazno )
       cTekst := StrTran( &xTekst, Chr( 13 ) + Chr( 10 ), "" )
    ENDIF
    IF lPrazno
-      cTekst := StrTran( cTekst, NRED, NRED + Space( 7 ) )
+      cTekst := StrTran( cTekst, NRED_DOS, NRED_DOS + Space( 7 ) )
    ELSE
-      cTekst := StrTran( cTekst, NRED, " " )
+      cTekst := StrTran( cTekst, NRED_DOS, " " )
    ENDIF
 
    RETURN cTekst

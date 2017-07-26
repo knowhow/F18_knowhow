@@ -40,7 +40,7 @@ STATIC FUNCTION uslovi_pregleda_loga( hParams )
    LOCAL _limit := 0
    LOCAL _datum_od := Date()
    LOCAL _datum_do := Date()
-   LOCAL _user := PadR( f18_user(), 200 )
+   LOCAL cUser := PadR( f18_user(), 200 )
    LOCAL _x := 1
    LOCAL _conds_true := Space( 600 )
    LOCAL _conds_false := Space( 600 )
@@ -56,7 +56,7 @@ STATIC FUNCTION uslovi_pregleda_loga( hParams )
    @ m_x + _x, Col() + 1 SAY "do" GET _datum_do
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Korisnik (prazno svi):" GET _user PICT "@S40"
+   @ m_x + _x, m_y + 2 SAY "Korisnik (prazno svi):" GET cUser PICT "@S40"
 
    ++ _x
    ++ _x
@@ -100,7 +100,7 @@ STATIC FUNCTION uslovi_pregleda_loga( hParams )
    hParams := hb_Hash()
    hParams[ "date_from" ] := _datum_od
    hParams[ "date_to" ] := _datum_do
-   hParams[ "user" ] := AllTrim( _user )
+   hParams[ "user" ] := AllTrim( cUser )
    hParams[ "limit" ] := _limit
    hParams[ "conds_true" ] := _conds_true
    hParams[ "conds_false" ] := _conds_false
@@ -111,7 +111,7 @@ STATIC FUNCTION uslovi_pregleda_loga( hParams )
 
 STATIC FUNCTION query_log_data( hParams )
 
-   LOCAL _user := ""
+   LOCAL cUser := ""
    LOCAL _dat_from := hParams[ "date_from" ]
    LOCAL _dat_to := hParams[ "date_to" ]
    LOCAL _limit := hParams[ "limit" ]
@@ -123,13 +123,13 @@ STATIC FUNCTION query_log_data( hParams )
    LOCAL _data
 
    IF hb_HHasKey( hParams, "user" )
-      _user := hParams[ "user" ]
+      cUser := hParams[ "user" ]
    ENDIF
 
    _where := _sql_date_parse( "l_time", _dat_from, _dat_to )
 
-   IF !Empty( _user )
-      _where += " AND " + _sql_cond_parse( "user_code", _user )
+   IF !Empty( cUser )
+      _where += " AND " + _sql_cond_parse( "user_code", cUser )
    ENDIF
 
    IF !Empty( _conds_true )
@@ -165,7 +165,7 @@ STATIC FUNCTION query_log_data( hParams )
 STATIC FUNCTION print_log_data( data, hParams, print_to_file )
 
    LOCAL oRow
-   LOCAL _user, _txt, _date
+   LOCAL cUser, cTxt, dDatum
    LOCAL _a_txt, _tmp, nI, _pos_y
    LOCAL _txt_len := 100
    LOCAL _log_file := DToS( Date() ) + "_" + StrTran( Time(), ":", "" ) + "_log.txt"
@@ -198,15 +198,15 @@ STATIC FUNCTION print_log_data( data, hParams, print_to_file )
 
       oRow := data:GetRow()
 
-      _date := data:FieldGet( data:FieldPos( "l_time" ) )
-      _user := hb_UTF8ToStr( data:FieldGet( data:FieldPos( "user_code" ) ) )
-      _txt := hb_UTF8ToStr( data:FieldGet( data:FieldPos( "msg" ) ) )
+      dDatum := data:FieldGet( data:FieldPos( "l_time" ) )
+      cUser := hb_UTF8ToStr( data:FieldGet( data:FieldPos( "user_code" ) ) )
+      cTxt := hb_UTF8ToStr( data:FieldGet( data:FieldPos( "msg" ) ) )
 
       ?
-      @ PRow(), PCol() + 1 SAY PadR( _date, 19 )
-      @ PRow(), _pos_y := PCol() + 1 SAY PadR( _user, 10 )
+      @ PRow(), PCol() + 1 SAY PadR( dDatum, 19 )
+      @ PRow(), _pos_y := PCol() + 1 SAY PadR( cUser, 10 )
 
-      _a_txt := SjeciStr( _txt, _txt_len )
+      _a_txt := SjeciStr( cTxt, _txt_len )
 
       FOR nI := 1 TO Len( _a_txt )
          IF nI > 1

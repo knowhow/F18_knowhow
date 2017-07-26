@@ -1,12 +1,19 @@
 # F18 klijent, lista promjena
 
-## 3.1.18-vindi, 2017-07-26
+## 2017-07-26 ----
 
 ### Korisnik
+
 #### KALK
 
 - koncij.region za konto npr 13202 = "RS" => vpc stampa dokumenta
 - dokumenti 95, 96, 16, 11
+
+#### CORE
+info_bar izvjestaji export, kalk stampa liste dokumenata
+
+
+## 2017-07-25 ----
 
 ### Developer
 
@@ -28,47 +35,7 @@ Merge from 3-std fix barkod, ftxt
 - RENAME_VAR: _memo -> aMemo
 - FUN_ADD: find_fakt_ftxt_by_id
 
-## 3.1.17-vindi, 2017-07-26
-
-### Developer
-
-#### KALK
-- kalk finansijsko stanje magacin Rbr C(6), vpc_magacin_rs()
-
-## 3.1.15-vindi, 2017-07-25
-
-### Developer
-
-#### CORE
-- FIX info_bar u toku start_print() ... end_print()
-
-#### KALK
-- NAKUKURIKATI: vpc_magacin_rs(), TKV po prodajnim RS, lager lista magacin
-
-## 3.1.11-vindi, 2017-07-25
-
-### Developer
-- BUGFIX KALK lager lista cOpcine
-
-## 3.1.8-vindi, 2017-07-25
-
-### Korisnik
-
-#### KALK
-- Trgovačka knjig na veliko i malo (TKV, TKM)  export u XLSX
-
-### Developer
-- BUGFIX: Dokument 80 unos tarifa alias not found
-
-### Korisnik
-
-#### KALK
-- Trgovačka knjig na veliko i malo (TKV, TKM)  export u XLSX
-
-### Developer
-- BUGFIX: Dokument 80 unos tarifa alias not found
-
-## 3.1.7-vindi, 2017-07-24
+## 2017-07-24 ----
 
 ### Korisnik
 
@@ -80,43 +47,45 @@ Primjer:
 Ako je aktuelna verzija za tekući kanal (npr. S) 3.1.5, a trenutno instalirana verzija je 3.1.10, tada se ne predlaže downgrade na 3.1.5.
 
 ### Developer
-- f18_update.prg - nove funkcije f18_builtin_version_h, f18_available_version_h,  f18_preporuci_upgrade( cVersion )
-- OUT: f18_admin.prg upgrade_db
 
-## 3.1.4-vindi, 2017-07-24
+#### KALK
+- kalk finansijsko stanje magacin Rbr C(6), vpc_magacin_rs()
+- BUGFIX: Dokument 80 unos tarifa alias not found
+
+#### CORE
+- FIX info_bar u toku start_print() ... end_print()
+
+#### KALK
+- NAKUKURIKATI: vpc_magacin_rs(), TKV po prodajnim RS, lager lista magacin
+- BUGFIX KALK lager lista cOpcine
 
 ### Korisnik
+
+#### KALK
+- Trgovačka knjig na veliko i malo (TKV, TKM)  export u XLSX
+- BUGFIX import vindija varaždin kalk_imp_txt.tipdok 96, ignorisati partnera
+- iz std verzije izbacena opcija import vindija varazdin
+- BUGFIX: Dokument 80 unos tarifa alias not found
+
 
 #### CORE
 - BUGFIX: F18 upgrade za različite kanale
 - OUT: izbačen F18 template update iz priče
 
 ### Developer
-- f18_admin.prg cleanup:
-  - iz upotrebe izbačen UPDATE_INFO
-  - templates.zip se više ne koristi, nema ga u formi za upgrade
-  - lokacija F18 verzija http://download.bring.out.ba/ hardkodirana
-  - OUT: update_db
-
-## 3.0.10-vindi, 2017-07-24
-
-### Korisnik
-#### KALK
-- BUGFIX import vindija varaždin kalk_imp_txt.tipdok 96, ignorisati partnera
-
-### Developer
-- iz std verzije izbacena opcija import vindija varazdin
-
-## 3.0.9-vindi, 2017-07-24
-
-### Korisnik
 
 #### FIN
 - BUGFIX run sintetički, analitički bruto bilans
 - BUGFIX lista naloga sa provjerom integriteta
 
-### Developer
-
+#### CORE
+- f18_update.prg - nove funkcije f18_builtin_version_h, f18_available_version_h,  f18_preporuci_upgrade( cVersion )
+- OUT: f18_admin.prg upgrade_db
+- f18_admin.prg cleanup:
+  - iz upotrebe izbačen UPDATE_INFO
+  - templates.zip se više ne koristi, nema ga u formi za upgrade
+  - lokacija F18 verzija http://download.bring.out.ba/ hardkodirana
+  - OUT: update_db
 - "trijebljenje" do iznemoglosti select_o_partner(), select_o_konto()
 
 

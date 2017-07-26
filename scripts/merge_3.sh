@@ -1,11 +1,13 @@
 #!/bin/bash
 
+MY_BRANCH=origin/3-vindi
+
 git merge --no-ff --no-commit 3
 
-for f in VERSION VERSION_E VERSION_X script/commit.sh
+for f in VERSION VERSION_E VERSION_X script/commit.sh include/f18.ch kalk/kalk_import_racuni.prg kalk/kalk_import_partn_roba.prg kalk/kalk_mnu_razmjena_podataka.prg
 do
-      echo "git checkout $f"
-      git checkout $f
+      echo "git checkout $MY_BRACH -- $f"
+      git checkout $MY_BRACH -- $f
 done
 
 git status

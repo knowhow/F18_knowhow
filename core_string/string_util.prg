@@ -68,11 +68,14 @@ FUNCTION ToStr( xVal )
       RETURN "_?_"
    ENDCASE
 
+
 FUNCTION SjeciStr( cStr, nLen, aRez )
+
+   LOCAL lProsao, i
 
    IF aRez == nil
       aRez := {}
-   ELSE
+   //ELSE
       // prosljedjena je matrica da se dodaju elementi
       // sa SjeciStr(cStr, nLen, @aRez)
    ENDIF
@@ -81,7 +84,7 @@ FUNCTION SjeciStr( cStr, nLen, aRez )
 
    DO WHILE  !Empty( cStr )
 
-      fProsao := .F.
+      lProsao := .F.
       IF Len( cStr ) > nLen
          FOR i := nLen TO Int( nLen / 2 ) STEP -1
 
@@ -89,7 +92,7 @@ FUNCTION SjeciStr( cStr, nLen, aRez )
                AAdd( aRez, PadR( Left( cStr, i ), nLen ) )
                cStr := SubStr( cStr, i + 1 )
                i := 1
-               fProsao := .T.
+               lProsao := .T.
             ENDIF
 
          NEXT
@@ -97,12 +100,12 @@ FUNCTION SjeciStr( cStr, nLen, aRez )
       ELSE
 
          AAdd( aRez, PadR( cStr, nLen ) )
-         fProsao := .T.
+         lProsao := .T.
          cStr := ""
 
       ENDIF
 
-      IF !fProsao
+      IF !lProsao
          AAdd( aRez, PadR( Left( cStr, nLen - 1 ) + iif( Len( cStr ) > nLen, "-", "" ), nLen ) )
          cStr := SubStr( cStr, nLen )
       ENDIF
@@ -115,6 +118,7 @@ FUNCTION SjeciStr( cStr, nLen, aRez )
    RETURN aRez
 
 
+
 FUNCTION CryptSC( cStr )
 
    LOCAL nLen, cC, cPom, i
@@ -122,11 +126,11 @@ FUNCTION CryptSC( cStr )
    cPom := ""
    nLen := Len( cStr )
    FOR i = 1 TO Int( nLen / 2 )
-      cC := SubStr( cStr, nLen + 1 -i, 1 )
+      cC := SubStr( cStr, nLen + 1 - i, 1 )
       IF cC < ''
          cPom += Chr( Asc( cC ) + 128 )
       ELSE
-         cPom += Chr( Asc( cC ) -128 )
+         cPom += Chr( Asc( cC ) - 128 )
       ENDIF
    NEXT
 
@@ -135,7 +139,7 @@ FUNCTION CryptSC( cStr )
       IF cC < ''
          cPom += Chr( Asc( cC ) + 128 )
       ELSE
-         cPom += Chr( Asc( cC ) -128 )
+         cPom += Chr( Asc( cC ) - 128 )
       ENDIF
    ENDIF
    FOR i = Int( nLen / 2 ) TO 1 STEP -1
@@ -143,7 +147,7 @@ FUNCTION CryptSC( cStr )
       IF cC < ''
          cPom += Chr( Asc( cC ) + 128 )
       ELSE
-         cPom += Chr( Asc( cC ) -128 )
+         cPom += Chr( Asc( cC ) - 128 )
       ENDIF
    NEXT
 
@@ -164,7 +168,7 @@ FUNCTION ChSub( cC, cC2 )
 
    // poziv ChSub("C","A") -> 2
 
-   RETURN Asc( cC ) -Asc( cC2 )
+   RETURN Asc( cC ) - Asc( cC2 )
 
 
 FUNCTION Crypt2( cStr, cModul )
@@ -178,20 +182,20 @@ FUNCTION Crypt2( cStr, cModul )
    cPom := ""
    nLen := Len( cStr )
    FOR i = 1 TO Int( nLen / 2 )
-      cC := SubStr( cStr, nLen + 1 -i, 1 )
+      cC := SubStr( cStr, nLen + 1 - i, 1 )
       IF cC < ''
          cPom += Chr( Asc( cC ) + Asc( SubStr( PadR( cModul, 8 ), i, 1 ) ) )
       ELSE
-         cPom += Chr( Asc( cC ) -Asc( SubStr( PadR( cModul, 8 ), i, 1 ) ) )
+         cPom += Chr( Asc( cC ) - Asc( SubStr( PadR( cModul, 8 ), i, 1 ) ) )
       ENDIF
 
    NEXT
    FOR i = Int( nLen / 2 ) TO 1 STEP -1
       cC := SubStr( cStr, i, 1 )
       IF cC < ''
-         cPom += Chr( Asc( cC ) + Asc( SubStr( PadR( cModul, 8 ), nLen + 1 -i, 1 ) ) )
+         cPom += Chr( Asc( cC ) + Asc( SubStr( PadR( cModul, 8 ), nLen + 1 - i, 1 ) ) )
       ELSE
-         cPom += Chr( Asc( cC ) -Asc( SubStr( PadR( cModul, 8 ), nLen + 1 -i, 1 ) ) )
+         cPom += Chr( Asc( cC ) - Asc( SubStr( PadR( cModul, 8 ), nLen + 1 - i, 1 ) ) )
       ENDIF
    NEXT
 
@@ -231,18 +235,6 @@ FUNCTION KPAD( n, l )
    RETURN PadL( LTrim( TRANS( Round( n, gZaokr ), PicDEM ) ), l, "." )
 
 
-FUNCTION OdsjPLK( cTxt )
-
-   LOCAL i
-
-   FOR i := Len( cTxt ) TO 1 STEP -1
-      IF !( SubStr( cTxt, i, 1 ) $ Chr( 13 ) + Chr( 10 ) + " " )
-         EXIT
-      ENDIF
-   NEXT
-
-   RETURN Left( cTxt, i )
-
 
 
 FUNCTION StrLinija( cTxt2 )
@@ -260,28 +252,28 @@ FUNCTION StrLinija( cTxt2 )
 
 
 
-/* TokToNiz(cTok, cSE)
+/* TokToNiz(cTok, cSeparator)
  *  brief Token pretvori u niz
  *  param cTok - token
- *  param cSE - separator niza
+ *  param cSeparator - separator niza
  */
-FUNCTION TokToNiz( cTok, cSE )
+FUNCTION TokToNiz( cTok, cSeparator )
 
    LOCAL aNiz := {}
    LOCAL nI := 0
    LOCAL cE := ""
 
-   IF cSE == NIL
-      cSE := "."
+   IF cSeparator == NIL
+      cSeparator := "."
    ENDIF
 
-
-   FOR nI := 1 TO NUMTOKEN( cTok, cSE )
-      cE := TOKEN( cTok, cSE, nI )
+altd()
+   FOR nI := 1 TO NumToken( cTok, cSeparator )
+      cE := Token( cTok, cSeparator, nI )
       AAdd( aNiz, cE )
    NEXT
 
-   RETURN ( aNiz )
+   RETURN aNiz
 
 
 FUNCTION BrDecimala( cFormat )
@@ -405,7 +397,7 @@ STATIC FUNCTION Stotice( nIzn, cRez, fDecimale, fMnozina, cDinDem )
             aSl := { "jedanaest", "dvanaest", "trinaest", "četrnaest", ;
                "petnaest", "šesnaest", "sedamnaest", "osamnaest", "devetnaest" }
 
-            cRez += hb_UTF8ToStr( aSl[ Int( nIzn ) -10 ] )
+            cRez += hb_UTF8ToStr( aSl[ Int( nIzn ) - 10 ] )
             nIzn := nIzn - Int( nIzn )
          ENDIF
          IF ( nPom := Int( nIzn / 10 ) ) >= 1
@@ -594,7 +586,7 @@ FUNCTION show_number( nNumber, cPicture, nExtra )
    // 0  -> 3
    FOR i := 0 TO nDec
       // nNum 177 000  < 10**5 -1 = 100 000 - 1 = 99 999
-      IF nNumber / ( 10 ** i ) < ( 10 ** ( nExp ) -1 )
+      IF nNumber / ( 10 ** i ) < ( 10 ** ( nExp ) - 1 )
          IF i = 0
             IF cPicture == nil
                RETURN Str( nNumber, nLen, nDec )

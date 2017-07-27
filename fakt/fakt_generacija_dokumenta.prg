@@ -278,8 +278,7 @@ STATIC FUNCTION dodaj_stavku_inventure_viska( cIdRj, cIdRoba, cBrDok, nKolicina,
    REPLACE dinDem WITH ValDomaca()
    REPLACE cijena WITH roba->vpc
 
-   RETURN
-
+   RETURN .T.
 
 
 
@@ -287,7 +286,7 @@ STATIC FUNCTION dodaj_stavku_inventure_viska( cIdRj, cIdRoba, cBrDok, nKolicina,
 FUNCTION fakt_generisi_racun_iz_pripreme()
 
    LOCAL _novi_tip, _tip_dok, _br_dok
-   LOCAL _t_rec
+   LOCAL nTekRec
 
    IF !( field->idtipdok $ "12#20#13#01#27" )
       Msg( "Ova opcija je za promjenu 20,12,13 -> 10 i 27 -> 11 " )
@@ -315,14 +314,14 @@ FUNCTION fakt_generisi_racun_iz_pripreme()
    PushWA()
 
    GO TOP
-   _t_rec := 0
+   nTekRec := 0
 
    my_flock()
 
    DO WHILE !Eof()
 
       SKIP
-      _t_rec := RecNo()
+      nTekRec := RecNo()
       SKIP -1
 
       REPLACE field->brdok WITH _br_dok
@@ -338,7 +337,7 @@ FUNCTION fakt_generisi_racun_iz_pripreme()
          REPLACE kolicina WITH -kolicina
       ENDIF
 
-      GO ( _t_rec )
+      GO ( nTekRec )
 
    ENDDO
 
@@ -348,6 +347,6 @@ FUNCTION fakt_generisi_racun_iz_pripreme()
 
    BoxC()
 
-   fakt_ispravka_ftxt( .T. )
+   fakt_ispravka_ftxt()
 
    RETURN .T.

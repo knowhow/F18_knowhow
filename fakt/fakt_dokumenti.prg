@@ -268,7 +268,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    LOCAL _sumirati := .F.
    LOCAL _vp_mp := 1
    LOCAL _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
-   LOCAL _veza_otpremnice, _broj_dokumenta
+   LOCAL cVezaOtpremnice, _broj_dokumenta
    LOCAL _id_partner, _rec
    LOCAL _ok := .T.
    LOCAL _item, _msg
@@ -307,7 +307,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    _sql += "idfirma=" + sql_quote( ::p_idfirma ) + " AND  idtipdok=" + sql_quote( ::p_idtipdok )
    _sql += " AND brdok IN ("
 
-   _veza_otpremnice := ""
+   cVezaOtpremnice := ""
    _first := .T.
    FOR EACH _item IN ::aItems
       IF _item:mark
@@ -315,10 +315,10 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
             _first := .F.
          ELSE
             _sql += ","
-            _veza_otpremnice += ","
+            cVezaOtpremnice += ","
          ENDIF
          _sql += sql_quote( _item:brdok )
-         _veza_otpremnice += Trim( _item:brdok )
+         cVezaOtpremnice += Trim( _item:brdok )
       ENDIF
    NEXT
 
@@ -369,9 +369,9 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
 
    ENDDO
 
-   _veza_otpremnice := "Racun formiran na osnovu otpremnica: " + _veza_otpremnice
+   cVezaOtpremnice := "Račun formiran na osnovu otpremnica: " + cVezaOtpremnice
 
-   renumeracija_fakt_pripr( _veza_otpremnice, _datum_max )
+   renumeracija_fakt_pripr( cVezaOtpremnice, _datum_max )
 
    RETURN _ok
 
@@ -503,7 +503,7 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, datum_max )
 
    IF gDodPar == "1" .OR. gDatVal == "D"
 
-      nRokPl := gRokPl
+      nRokPl := fakt_rok_placanja_dana()
 
       @  m_x + 6, m_y + 2 SAY "Datum fakture  :" GET _DatDok
 
@@ -511,9 +511,9 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, datum_max )
          @  m_x + 6, m_y + 35 SAY "Datum posljednje otpremnice:" GET datum_max WHEN .F. COLOR "GR+/B"
       ENDIF
 
-      @ m_x + 7, m_y + 2 SAY8 "Rok plać.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, "0", .T. ) ;
+      @ m_x + 7, m_y + 2 SAY8 "Rok plać.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, @_datdok, @_datpl, "0", .T. ) ;
          VALID valid_rok_placanja( nRokPl, "1", .T. )
-      @ m_x + 8, m_y + 2 SAY8 "Datum plaćanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, "2", .T. )
+      @ m_x + 8, m_y + 2 SAY8 "Datum plaćanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, @_datdok, @_datpl, "2", .T. )
 
       READ
    ENDIF
@@ -534,7 +534,6 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, datum_max )
    _txt := fakt_ftxt_encode_3( _txt1, _txt2, _txt3a, _txt3b, _txt3c, ;
        _BrOtp, _BrNar, _DatOtp, _DatPl, cVezaOtpremnica, ;
        _dest, _m_dveza )
-
 
 
    IF datDok <> dDatDok

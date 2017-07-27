@@ -2,6 +2,7 @@
 
 MEMVAR Kol, ImeKol
 
+
 FUNCTION p_fakt_ftxt( cId, dx, dy )
 
    LOCAL xRet
@@ -12,7 +13,7 @@ FUNCTION p_fakt_ftxt( cId, dx, dy )
    LOCAL nRight
    LOCAL nBoxHeight := f18_max_rows() - 20
    LOCAL nBoxWidth := f18_max_cols() - 3
-   LOCAL i
+   LOCAL nI
    PRIVATE ImeKol
    PRIVATE Kol
 
@@ -32,8 +33,8 @@ FUNCTION p_fakt_ftxt( cId, dx, dy )
    // AAdd( ImeKol, { "Naziv",  {|| naz },  "naz", {|| .T. }, {|| wNaz := StrTran( wnaz, "##", hb_eol() ), .T. }, NIL, "@S50" } )
    AAdd( ImeKol, { "Naziv",  {|| naz },  "naz", {|| fakt_ftxt_naz_tarabiraj( @wNaz ) }, {|| .T. }, NIL, "@S50" } )
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    nBottom := 15
@@ -53,6 +54,7 @@ FUNCTION p_fakt_ftxt( cId, dx, dy )
    PopWa()
 
    RETURN xRet
+
 
 
 FUNCTION fakt_ftxt_naz_tarabiraj( cNaz )
@@ -138,72 +140,109 @@ FUNCTION decode_string_to_array( cTxt, nKol, cSeparator )
 
 
 
-FUNCTION fakt_ftxt_decode_memo()
+FUNCTION fakt_ftxt_decode_string( cFaktTxt )
 
    LOCAL hFaktParams := fakt_params()
-   LOCAL aMemo := fakt_ftxt_decode( _txt )
-   LOCAL _len := Len( aMemo )
+   LOCAL aMemo := fakt_ftxt_decode( cFaktTxt )
+   LOCAL nLen := Len( aMemo )
+   LOCAL hFaktTxt := hb_Hash()
 
-   IF _len > 0
-      _txt1 := aMemo[ 1 ]
+   IF hFaktParams[ "destinacije" ]
+      hFaktTxt[ "destinacija" ] := PadR( "", 500 )
    ENDIF
 
-   IF _len >= 2
-      cTxtIn := aMemo[ 2 ]
+   IF hFaktParams[ "fakt_dok_veze" ]
+      hFaktTxt[ "dokument_veza" ] := PadR( "", 500 )
    ENDIF
 
-   IF _len >= 9
-      _brotp := aMemo[ 6 ]
-      _datotp := CToD( aMemo[ 7 ] )
-      _brnar := aMemo[ 8 ]
-      _datpl := CToD( aMemo[ 9 ] )
+   IF hFaktParams[ "fakt_objekti" ]
+      hFaktTxt[ "objekti" ] := Space( 10 )
    ENDIF
 
-   IF _len >= 10 .AND. !Empty( aMemo[ 10 ] )
-      _vezotpr := aMemo[ 10 ]
+   hFaktTxt[ "txt1" ] := ""
+   hFaktTxt[ "txt2" ] := ""
+   hFaktTxt[ "brotp" ] := Space( 50 )
+   hFaktTxt[ "datotp" ] := CToD( "" )
+   hFaktTxt[ "brnar" ] := Space( 50 )
+   hFaktTxt[ "datpl" ] := CToD( "" )
+   hFaktTxt[ "veza_otpremnice" ] := ""
+   hFaktTxt[ "destinacija" ] := ""
+   hFaktTxt[ "dokument_veza" ] := ""
+   hFaktTxt[ "objekti" ] := ""
+
+   hFaktTxt[ "d2k1" ] := Space( 15 )
+   hFaktTxt[ "d2k2" ] := Space( 15 )
+   hFaktTxt[ "d2k3" ] := Space( 15 )
+   hFaktTxt[ "d2k4" ] := Space( 20 )
+   hFaktTxt[ "d2k5" ] := Space( 20 )
+   hFaktTxt[ "d2n1" ] := Space( 12 )
+   hFaktTxt[ "d2n2" ] := Space( 12 )
+
+   IF cFaktTxt == NIL .OR. Empty( cFaktTxt )
+      RETURN hFaktTxt
    ENDIF
 
-   IF _len >= 11
-      d2k1 := aMemo[ 11 ]
+
+   IF nLen > 0
+      hFaktTxt[ "txt1" ] := aMemo[ 1 ]
    ENDIF
 
-   IF _len >= 12
-      d2k2 := aMemo[ 12 ]
+   IF nLen >= 2
+      hFaktTxt[ "txt2" ] := aMemo[ 2 ]
    ENDIF
 
-   IF _len >= 13
-      d2k3 := aMemo[ 13 ]
+   IF nLen >= 9
+      hFaktTxt[ "brotp" ] := aMemo[ 6 ]
+      hFaktTxt[ "datotp" ] := CToD( aMemo[ 7 ] )
+      hFaktTxt[ "brnar" ] := aMemo[ 8 ]
+      hFaktTxt[ "datpl" ] := CToD( aMemo[ 9 ] )
    ENDIF
 
-   IF _len >= 14
-      d2k4 := aMemo[ 14 ]
+   IF nLen >= 10 .AND. !Empty( aMemo[ 10 ] )
+      hFaktTxt[ "veza_otpremnice" ] := aMemo[ 10 ]
    ENDIF
 
-   IF _len >= 15
-      d2k5 := aMemo[ 15 ]
+   IF nLen >= 11
+      hFaktTxt[ "d2k1" ] := aMemo[ 11 ]
    ENDIF
 
-   IF _len >= 16
-      d2n1 := aMemo[ 16 ]
+   IF nLen >= 12
+      hFaktTxt[ "d2k2" ] := aMemo[ 12 ]
    ENDIF
 
-   IF _len >= 17
-      d2n2 := aMemo[ 17 ]
+   IF nLen >= 13
+      hFaktTxt[ "d2k3" ] := aMemo[ 13 ]
    ENDIF
 
-   IF hFaktParams[ "destinacije" ] .AND. _len >= 18
-      _destinacija := PadR( AllTrim( aMemo[ 18 ] ), 500 )
+   IF nLen >= 14
+      hFaktTxt[ "d2k4" ] := aMemo[ 14 ]
    ENDIF
 
-   IF hFaktParams[ "fakt_dok_veze" ] .AND. _len >= 19
-      _dokument_veza := PadR( AllTrim( aMemo[ 19 ] ), 500 )
+   IF nLen >= 15
+      hFaktTxt[ "d2k5" ] := aMemo[ 15 ]
    ENDIF
 
-   IF hFaktParams[ "fakt_objekti" ] .AND. _len >= 20
-      _objekti := PadR( aMemo[ 20 ], 10 )
+   IF nLen >= 16
+      hFaktTxt[ "d2n1" ] := aMemo[ 16 ]
    ENDIF
 
-   RETURN .T.
+   IF nLen >= 17
+      hFaktTxt[ "d2n2" ] := aMemo[ 17 ]
+   ENDIF
+
+   IF hFaktParams[ "destinacije" ] .AND. nLen >= 18
+      hFaktTxt[ "destinacija" ] := PadR( AllTrim( aMemo[ 18 ] ), 500 )
+   ENDIF
+
+   IF hFaktParams[ "fakt_dok_veze" ] .AND. nLen >= 19
+      hFaktTxt[ "dokument_veza" ] := PadR( AllTrim( aMemo[ 19 ] ), 500 )
+   ENDIF
+
+   IF hFaktParams[ "fakt_objekti" ] .AND. nLen >= 20
+      hFaktTxt[ "objekti" ] := PadR( aMemo[ 20 ], 10 )
+   ENDIF
+
+   RETURN hFaktTxt
 
 
 
@@ -324,7 +363,7 @@ FUNCTION fakt_ftxt_sub_renumeracija_pripreme( cTxt2 )
          cUserName := f18_user_name()
 
          IF !Empty( cUserName ) .AND. cUserName <> "?user?"
-            cTxt2 += " Dokument izradio: " + cUserName
+            cTxt2 += "Dokument izradio: " + cUserName
          ENDIF
 
          SELECT fakt_pripr
@@ -360,19 +399,19 @@ FUNCTION fakt_ftxt_sub_renumeracija_pripreme( cTxt2 )
 
 FUNCTION fakt_ftxt_ino_klauzula()
 
-   LOCAL _rec
+   LOCAL hRec
 
    PushWA()
 
    IF !select_o_fakt_txt( "IN" )
 
       APPEND BLANK
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "id" ] := "IN"
-      _rec[ "naz" ] := "Porezno oslobadjanje na osnovu (nulta stopa) na osnovu clana 27. stav 1. tacka 1. ZPDV - izvoz dobara iz BIH"
+      hRec[ "id" ] := "IN"
+      hRec[ "naz" ] := "Porezno oslobadjanje na osnovu (nulta stopa) na osnovu clana 27. stav 1. tacka 1. ZPDV - izvoz dobara iz BIH"
 
-      update_rec_server_and_dbf( "ftxt", _rec, 1, "FULL" )
+      update_rec_server_and_dbf( "ftxt", hRec, 1, "FULL" )
 
    ENDIF
 
@@ -404,17 +443,17 @@ FUNCTION fakt_a_to_public_var_txt( cVal, lEmpty )
 
 
 
-FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt, nCount, lAppend )
+FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt )
 
-   LOCAL cTmp
+   // LOCAL cTmp
    LOCAL cUserName
 
-   IF lAppend == nil
-      lAppend := .F.
-   ENDIF
-   IF nCount == nil
-      nCount := 1
-   ENDIF
+   // IF lAppend == nil
+   // lAppend := .F.
+   // ENDIF
+   // IF nCount == nil
+   // nCount := 1
+   // ENDIF
 
    // prazan tekst - ne radi nista
    IF Empty( cIdFaktTxt )
@@ -424,28 +463,28 @@ FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt, nCount, lAppend )
    select_o_fakt_txt( cIdFaktTxt )
    SELECT fakt_pripr
 
-   IF lAppend == .F.
-      cTxt := Trim( ftxt->naz )
-   ELSE
-
-      cTmp := ""
-      IF nCount > 1
-         cTmp += NRED_DOS
-      ENDIF
-      cTmp += Trim( ftxt->naz )
-
-      cTxt +=  cTmp
-   ENDIF
-
-   IF nCount == 1
-
+   IF cIdFaktTxt == "DI" // poseban tip dokument izradio
       cUserName := f18_user_name()
-
       IF !Empty( cUserName ) .AND. cUserName <> "?user?"
-         cTxt2 += " Dokument izradio: " + cUserName
+         IF !( "Dokument izradio:" $ cTxt )
+            cTxt += NRED_DOS + "Dokument izradio: " + cUserName
+            RETURN .T.
+         ENDIF
       ENDIF
-
    ENDIF
+
+   // IF lAppend == .F.
+   // cTxt := Trim( ftxt->naz )
+   // ELSE
+   IF !Empty( cTxt )
+      // cTmp := ""
+      // IF nCount > 1
+      cTxt += NRED_DOS
+   ENDIF
+
+   // ENDIF
+   cTxt += Trim( ftxt->naz )
+   // cTxt +=  cTmp
 
    RETURN .T.
 
@@ -453,6 +492,7 @@ FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt, nCount, lAppend )
 FUNCTION f18_user_name()
 
    RETURN AllTrim( GetFullUserName( GetUserID() ) )
+
 
 FUNCTION fakt_ftxt_encode( cFTxtNaz, cTxt1, cTxt3a, cTxt3b, cTxt3c, cVezaUgovor, cDodTxt )
 
@@ -467,109 +507,377 @@ FUNCTION fakt_ftxt_encode( cFTxtNaz, cTxt1, cTxt3a, cTxt3b, cTxt3c, cVezaUgovor,
 
 
 
-FUNCTION fakt_ftxt_encode_5( cTxtIn )
+FUNCTION fakt_ftxt_encode_5( hFaktTxt )
 
    LOCAL _tmp
    LOCAL hFaktParams := fakt_params()
    LOCAL cTxt
+   LOCAL cDestinacija, cDokumentVeze, cObjekti
 
-altd()
+   AltD()
    // odsjeci na kraju prazne linije
-   cTxtIn := OdsjPLK( cTxtIn )
+   // hFaktTxt[ "txt2" ] := OdsjPLK( hFaktTxt[ "txt2" ] )
 
-   IF ! "Racun formiran na osnovu" $ cTxtIn
-      cTxtIn += Chr( 13 ) + Chr( 10 ) + _vezotpr
+   IF !Empty( hFaktTxt[ "veza_otpremnice" ] ) .AND. ( ! "Račun formiran na osnovu:" $ hFaktTxt[ "txt2" ] )
+      hFaktTxt[ "txt2" ] := hFaktTxt[ "txt2" ] + NRED_DOS + hFaktTxt[ "veza_otpremnice" ]
    ENDIF
 
-   cTxt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 )
-   cTxt += Chr( 16 ) + cTxtIn + Chr( 17 )
+   cTxt := Chr( 16 ) + Trim( hFaktTxt[ "txt1" ] ) + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "txt2" ] + Chr( 17 )
    cTxt += Chr( 16 ) + "" + Chr( 17 )
    cTxt += Chr( 16 ) + "" + Chr( 17 )
    cTxt += Chr( 16 ) + "" + Chr( 17 )
 
    // 6 - br otpr
-   cTxt += Chr( 16 ) + _brotp + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "brotp" ] + Chr( 17 )
    // 7 - dat otpr
-   cTxt += Chr( 16 ) + DToC( _datotp ) + Chr( 17 )
+   cTxt += Chr( 16 ) + DToC( hFaktTxt[ "datotp" ] ) + Chr( 17 )
    // 8 - br nar
-   cTxt += Chr( 16 ) + _brnar + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "brnar" ] + Chr( 17 )
    // 9 - dat nar
-   cTxt += Chr( 16 ) + DToC( _datpl ) + Chr( 17 )
+   cTxt += Chr( 16 ) + DToC( hFaktTxt[ "datpl" ] ) + Chr( 17 )
    // 10
-   cTxt += Chr( 16 ) + _vezotpr + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "veza_otpremnice" ] + Chr( 17 )
    // 11
-   cTxt += Chr( 16 ) + d2k1 + Chr( 17 )
-   // 12
-   cTxt += Chr( 16 ) + d2k2 + Chr( 17 )
-   // 13
-   cTxt += Chr( 16 ) + d2k3 + Chr( 17 )
-   // 14
-   cTxt += Chr( 16 ) + d2k4 + Chr( 17 )
-   // 15
-   cTxt += Chr( 16 ) + d2k5 + Chr( 17 )
-   // 16
-   cTxt += Chr( 16 ) + d2n1 + Chr( 17 )
-   // 17
-   cTxt += Chr( 16 ) + d2n2 + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2k1" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2k2" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2k3" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2k4" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2k5" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2n1" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2n2" ] + Chr( 17 )
 
    IF hFaktParams[ "destinacije" ]
-      _tmp := _destinacija
+      cDestinacija := hFaktTxt[ "destinacija" ]
    ELSE
-      _tmp := ""
+      cDestinacija := ""
    ENDIF
 
    // 18 - Destinacija
-   cTxt += Chr( 16 ) + AllTrim( _tmp ) + Chr( 17 )
+   cTxt += Chr( 16 ) + AllTrim( cDestinacija ) + Chr( 17 )
 
    // 19 - vezni dokumenti
    IF hFaktParams[ "fakt_dok_veze" ]
-      _tmp := _dokument_veza
+      cDokumentVeze := AllTrim( hFaktTxt[ "dokument_veza" ] )
    ELSE
-      _tmp := ""
+      cDokumentVeze := ""
    ENDIF
-
-   cTxt += Chr( 16 ) + AllTrim( _dokument_veza ) + Chr( 17 )
+   cTxt += Chr( 16 ) + cDokumentVeze + Chr( 17 )
 
    // 20 - objekti
    IF hFaktParams[ "fakt_objekti" ]
-      _tmp := _objekti
+      cObjekti := hFaktTxt[ "objekti" ]
    ELSE
-      _tmp := ""
+      cObjekti := ""
    ENDIF
-
-   cTxt += Chr( 16 ) + _tmp + Chr( 17 )
+   cTxt += Chr( 16 ) + cObjekti + Chr( 17 )
 
    RETURN cTxt
+
+
+/*
+   FUNCTION OdsjPLK( cTxt )
+
+      LOCAL i
+
+      FOR i := Len( cTxt ) TO 1 STEP -1
+         IF !( SubStr( cTxt, i, 1 ) $ Chr( 13 ) + Chr( 10 ) + " " )
+            EXIT
+         ENDIF
+      NEXT
+
+      RETURN Left( cTxt, i )
+*/
 
 
 FUNCTION fakt_ftxt_decode( cTxt )
 
    // Struktura cTxt-a je: Chr(16) txt1 Chr(17)  Chr(16) txt2 Chr(17) ...
    LOCAL aMemo := {}
-   LOCAL i, cPom, fPoc, _len
+   LOCAL nI, cPom, fPoc, nLen
 
    fPoc := .F.
    cPom := ""
 
-   FOR i := 1 TO Len( cTxt )
+   FOR nI := 1 TO Len( cTxt )
 
-      IF  SubStr( cTxt, i, 1 ) == Chr( 16 )
+      IF  SubStr( cTxt, nI, 1 ) == Chr( 16 )
          fPoc := .T.
-      ELSEIF  SubStr( cTxt, i, 1 ) == Chr( 17 )
+      ELSEIF  SubStr( cTxt, nI, 1 ) == Chr( 17 )
          fPoc := .F.
          AAdd( aMemo, cPom )
          cPom := ""
       ELSEIF fPoc
-         cPom := cPom + SubStr( cTxt, i, 1 )
+         cPom := cPom + SubStr( cTxt, nI, 1 )
       ENDIF
    NEXT
 
-   _len := Len( aMemo )
+   nLen := Len( aMemo )
 
    // uvijek neka vrati polje od 20 elemenata
 
-   FOR i := 1 TO ( 20 - _len )
+   FOR nI := 1 TO ( 20 - nLen )
       AAdd( aMemo, "" )
    NEXT
 
    RETURN aMemo
+
+
+
+
+// -----------------------------------------------
+// filovanje dodatnog teksta
+// cTxt - dodatni tekst
+// cPartn - id partner
+// -----------------------------------------------
+FUNCTION porezna_faktura_dodatni_tekst( cTxt, cPartn )
+
+   LOCAL aLines // matrica sa linijama teksta
+   LOCAL nFId // polje Fnn counter od 20 pa nadalje
+   LOCAL nCnt // counter upisa u DRNTEXT
+   LOCAL aTxt, n, i
+
+   porezna_faktura_fakt_txt_djokeri( @cTxt, cPartn )
+
+
+   // slobodni tekst se upisuje u DRNTEXT od F20 -- F50
+
+   // DRNTEXT.F20 = "Linija1"
+   // DRNTEXT.F21 = "Linija2"
+   // DRNTEXT.222 = "Zadnja linija - 3. kraj."
+
+   // cTxt := StrTran( cTxt, "" + Chr( 10 ), "" )
+
+
+   aLines := fakt_txt_clean_array( cTxt )
+
+   nFId := 20
+   nCnt := 0
+   FOR i := 1 TO Len( aLines )
+      aTxt := SjeciStr( aLines[ i ], 250 )
+      FOR n := 1 TO Len( aTxt )
+         add_drntext( "F" + AllTrim( Str( nFId ) ), aTxt[ n ] )
+         ++nFId
+         ++nCnt
+      NEXT
+   NEXT
+
+   // dodaj i parametar koliko ima linija texta
+   add_drntext( "P02", AllTrim( Str( nCnt ) ) )
+
+   RETURN .T.
+
+STATIC FUNCTION fakt_txt_clean_array( cTxt )
+
+   LOCAL aLines, nLen, nI
+
+   cTxt := StrTran( cTxt, Chr( 13 ), "" )   // Chr(13) = \r ibrisati, Chr(10) = \n ce se koristit kao markeri novog reda
+   cTxt := StrTran( cTxt, Chr( 141 ) + Chr( 10 ), ""  )  // Ž\n izvrnuto
+   cTxt := StrTran( cTxt, Chr( 141 ), ""  )  // Ž izvrnuto
+   
+   cTxt := StrTran( cTxt, "##", "#]"  )  // ## -> EOL znak #]
+
+   cTxt := StrTran( cTxt, Chr( 10 ), "#]" )  // Chr(10) marker novog reda -> #]
+
+   cTxt := StrTran( cTxt, "#]#]", "#] #]" ) // ubaciti space-ove da se ne "gutaju" prazne linije unutar texta
+   // aLines := TokToNiz( cTxt, NRED_DOS ) // matrica sa tekstom line1, line2
+   aLines := TokToNiz( cTxt, "#]" )
+
+
+   nLen := Len( aLines )
+
+   AltD()
+   FOR nI := 1 TO nLen - 1
+      IF Empty( ATail( aLines ) )
+         aLines := ASize( aLines, Len( aLines ) - 1 )
+      ENDIF
+   NEXT
+
+   RETURN aLines
+
+
+STATIC FUNCTION porezna_faktura_fakt_txt_djokeri( cTxt, cPartn )
+
+   LOCAL cPom
+   LOCAL cPom2
+   LOCAL nSaldoKup
+   LOCAL nSaldoDob
+   LOCAL dPUplKup
+   LOCAL dPPromKup
+   LOCAL dPPromDob
+   LOCAL cStrSlKup := "#SALDO_KUP#"
+   LOCAL cStrSlDob := "#SALDO_DOB#"
+   LOCAL cStrSlKD := "#SALDO_KUP_DOB#"
+   LOCAL cStrDUpKup := "#D_P_UPLATA_KUP#"
+   LOCAL cStrDPrKup := "#D_P_PROMJENA_KUP#"
+   LOCAL cStrDPrDob := "#D_P_PROMJENA_DOB#"
+
+   IF gShSld == "N"
+      RETURN .F.
+   ENDIF
+
+   IF gFinKtoDug <> nil
+
+      __KTO_DUG := gFinKtoDug
+      __KTO_POT := gFinKtoPot
+
+   ENDIF
+
+   // varijanta prikaza salda... 1 ili 2
+   __SH_SLD_VAR := gShSldVar
+
+   // saldo kupca
+   nSaldoKup := get_fin_partner_saldo( cPartn, __KTO_DUG, self_organizacija_id() )
+
+   // saldo dobavljaca
+   nSaldoDob := get_fin_partner_saldo( cPartn, __KTO_POT, self_organizacija_id() )
+
+   // datum zadnje uplate kupca
+   dPUplKup := g_dpupl_part( cPartn, __KTO_DUG, self_organizacija_id() )
+
+   // datum zadnje promjene kupac
+   dPPromKup := datum_posljednje_promjene_kupac_dobavljac( cPartn, __KTO_DUG, self_organizacija_id() )
+
+   // datum zadnje promjene dobavljac
+   dPPromDob := datum_posljednje_promjene_kupac_dobavljac( cPartn, __KTO_POT, self_organizacija_id() )
+
+
+   // -------------------------------------------------------
+   // SALDO KUPCA
+   // -------------------------------------------------------
+   IF At( cStrSlKup, cTxt ) <> 0
+
+      IF gShSld == "D"
+         cPom := AllTrim( Str( Round( nSaldoKup, 2 ) ) ) + " KM"
+         cPom2 := ""
+
+         IF __SH_SLD_VAR == 2
+            cPom2 := "Vas posljednji saldo iznosi: "
+         ENDIF
+      ELSE
+
+         cPom := ""
+         cPom2 := ""
+
+      ENDIF
+
+      cTxt := StrTran( cTxt, cStrSlKup, cPom2 + " " + cPom )
+   ENDIF
+
+
+   // -------------------------------------------------------
+   // SALDO DOBAVLJACA
+   // -------------------------------------------------------
+   IF At( cStrSlDob, cTxt ) <> 0
+
+      IF gShSld == "D"
+
+         cPom := AllTrim( Str( Round( nSaldoDob, 2 ) ) ) + " KM"
+         cPom2 := ""
+
+         IF __SH_SLD_VAR == 2
+            cPom2 := "Nas posljednji saldo iznosi: "
+         ENDIF
+      ELSE
+
+         cPom := ""
+         cPom2 := ""
+
+      ENDIF
+
+      cTxt := StrTran( cTxt, cStrSlDob, cPom2 + " " + cPom )
+   ENDIF
+
+   // -------------------------------------------------------
+   // SALDO KUPCA/DOBAVLJACA prebijeno
+   // -------------------------------------------------------
+   IF At( cStrSlKD, cTxt ) <> 0
+
+      IF gShSld == "D"
+
+         cPom := AllTrim( Str( Round( nSaldoKup, 2 ) - Round( nSaldoDob, 2 ) ) ) + " KM"
+         cPom2 := ""
+
+         IF __SH_SLD_VAR == 2
+            cPom2 := "Prebijeno stanje kupac/dobavljac : "
+         ENDIF
+      ELSE
+
+         cPom := ""
+         cPom2 := ""
+
+      ENDIF
+
+      cTxt := StrTran( cTxt, cStrSlKD, cPom2 + " " + cPom )
+   ENDIF
+
+
+   // -------------------------------------------------------
+   // DATUM POSLJEDNJE UPLATE KUPCA/DOBAVLJACA
+   // -------------------------------------------------------
+   IF At( cStrDUpKup, cTxt ) <> 0
+
+      IF gShSld == "D"
+
+
+         // datum posljednje uplate kupca
+         cPom := DToC( dPUplKup )
+         cPom2 := ""
+         IF __SH_SLD_VAR == 2
+            cPom2 := "Datum posljednje uplate: "
+         ENDIF
+      ELSE
+         cPom := ""
+         cPom2 := ""
+      ENDIF
+
+      cTxt := StrTran( cTxt, cStrDUpKup, cPom2 + " " + cPom )
+   ENDIF
+
+   // -------------------------------------------------------
+   // DATUM POSLJEDNJE PROMJENE NA KONTU KUPCA
+   // -------------------------------------------------------
+   IF At( cStrDPrKup, cTxt ) <> 0
+
+      IF gShSld == "D"
+
+         // datum posljednje promjene kupac
+         cPom := DToC( dPPromKup )
+         cPom2 := ""
+         IF __SH_SLD_VAR == 2
+            cPom2 := "Datum posljednje promjene na kontu kupca: "
+         ENDIF
+
+      ELSE
+         cPom := ""
+         cPom2 := ""
+
+      ENDIF
+
+      cTxt := StrTran( cTxt, cStrDPrKup, cPom2 + " " + cPom )
+
+   ENDIF
+
+   // -------------------------------------------------------
+   // DATUM POSLJEDNJE PROMJENE NA KONTU DOBAVLJACA
+   // -------------------------------------------------------
+   IF At( cStrDPrDob, cTxt ) <> 0
+
+      IF gShSld == "D"
+         cPom := DToC( dPPromDob ) // datum posljednje promjene dobavljac
+         cPom2 := ""
+         IF __SH_SLD_VAR == 2
+            cPom2 := "Datum posljednje promjene na kontu dobavljaca: "
+         ENDIF
+
+      ELSE
+         cPom := ""
+         cPom2 := ""
+
+      ENDIF
+
+      cTxt := StrTran( cTxt, cStrDPrDob, cPom2 + " " + cPom )
+
+   ENDIF
+
+   RETURN .T.

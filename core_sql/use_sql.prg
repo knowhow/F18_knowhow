@@ -62,9 +62,10 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
       dbUseArea( .F., "SQLMIX", cQuery,  cAlias, NIL, NIL )
 
    RECOVER USING oError
-
-      MsgBeep( "SQL ERRROR: " + cTable + "##" + Right( cQuery, f18_max_cols() - 10 ) + "##" + oError:description  )
-      QUIT_1
+      ?E cTable, cQuery, oError:description
+      RaiseError( "use_sql_sif:" + cTable + " qry=" + cQuery )
+      // MsgBeep( "SQL ERROR: " + cTable + "##" + Right( cQuery, f18_max_cols() - 10 ) + "##" + oError:description  )
+      // QUIT_1
    END SEQUENCE
 
 

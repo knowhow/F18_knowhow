@@ -53,10 +53,10 @@ FUNCTION f7_pf_traka( lSilent )
    st_pf_traka()
 
    IF !lPfTraka
-      AzurKupData( gIdPos )
+      porezna_faktura_azur_podataka_o_kupcu( gIdPos )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION read_kup_data()

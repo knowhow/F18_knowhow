@@ -18,13 +18,13 @@ MEMVAR m_x, m_y
 // STATIC __tip_dok
 // STATIC __br_dok
 // STATIC __r_br
-STATIC __enter_seq := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
-STATIC __redni_broj
+STATIC s_cKeyboardEnterSequence := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
+STATIC s_nFaktUnosRedniBroj
 
 
 FUNCTION fakt_unos_dokumenta()
 
-   LOCAL nI, _x_pos, _y_pos, _x, _y
+   LOCAL nI, _x_pos, _y_pos, nX, nY
    LOCAL _opt_d, _opt_row
    LOCAL _sep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    PRIVATE ImeKol, Kol
@@ -79,31 +79,31 @@ FUNCTION fakt_unos_dokumenta()
    // __br_dok  := field->brdok
    // __r_br := field->rbr
 
-   _x := f18_max_rows() - 4
-   _y := f18_max_cols() - 3
+   nX := f18_max_rows() - 4
+   nY := f18_max_cols() - 3
 
-   Box( , _x, _y )
+   Box( , nX, nY )
 
-   _opt_d := ( _y / 4 )
+   _opt_d := ( nY / 4 )
 
    _opt_row := _upadr(  "<c+N> Nova stavka", _opt_d ) + _sep
    _opt_row += _upadr( "<ENT> Ispravka", _opt_d ) + _sep
    _opt_row += _upadr( "<c+T> Briši stavku", _opt_d ) + _sep
 
-   @ m_x + _x - 4, m_y + 2 SAY8 _opt_row
+   @ m_x + nX - 4, m_y + 2 SAY8 _opt_row
 
    _opt_row := _upadr( "<c+A> Ispravka dok.", _opt_d ) + _sep
    _opt_row += _upadr( "<c+P> Štampa (txt)", _opt_d ) + _sep
    _opt_row += _upadr( IIF( is_mac(), "<P>", "<a+P>" ) + " Štampa (LO)", _opt_d ) + _sep
 
-   @ m_x + _x - 3, m_y + 2 SAY8 _opt_row
+   @ m_x + nX - 3, m_y + 2 SAY8 _opt_row
 
    _opt_row := _upadr( "<a+A> Ažuriranje", _opt_d ) + _sep
    _opt_row += _upadr( "<c+F9> Briši sve", _opt_d ) + _sep
    _opt_row += _upadr( "<F5> Kontrola zbira", _opt_d ) + _sep
    _opt_row += "<T> total dokumenta"
 
-   @ m_x + _x - 2, m_y + 2 SAY8 _opt_row
+   @ m_x + nX - 2, m_y + 2 SAY8 _opt_row
 
    _opt_row := _upadr( "", _opt_d ) + _sep
    _opt_row += _upadr( "", _opt_d ) + _sep
@@ -111,9 +111,9 @@ FUNCTION fakt_unos_dokumenta()
    _opt_row += "<O> Konverzije"
    _opt_row += "<A> Asistent"
 
-   @ m_x + _x - 1, m_y + 2 SAY8 _opt_row
+   @ m_x + nX - 1, m_y + 2 SAY8 _opt_row
 
-   my_db_edit_sql( "PNal", _x, _y, {|| fakt_pripr_keyhandler() }, "", "FAKT Priprema...", , , , , 4 )
+   my_browse( "PNal", nX, nY, {|| fakt_pripr_keyhandler() }, "", "FAKT Priprema...", , , , , 4 )
 
    BoxC()
 
@@ -423,7 +423,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
       FOR nI := 1 TO Int( RecCount2() / 15 ) + 1
          _sekv := Chr( K_CTRL_A )
          FOR _n := 1 TO Min( RecCount2(), 15 ) * 20
-            _sekv += __enter_seq
+            _sekv += s_cKeyboardEnterSequence
          NEXT
          KEYBOARD _sekv
       NEXT
@@ -516,7 +516,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
       ENDIF
 
       _podbr := Space( 2 )
-      __redni_broj := RbrUnum( _rbr )
+      s_nFaktUnosRedniBroj := RbrUnum( _rbr )
 
       BoxCLS()
 
@@ -587,7 +587,7 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( lNovi, hFaktStavkaAttribut, hFaktItem
 
    // nešto što mjenja sve stavke dokumenta u pripremi ako se promjeni prva stavka
    // promjena broja dokumenta i slično
-   IF __redni_broj == 1 .AND. !lNovi
+   IF s_nFaktUnosRedniBroj == 1 .AND. !lNovi
       izmjeni_sve_stavke_dokumenta( hFaktStavkaAttribut, hFaktStavkaAttributNovi )
    ENDIF
 
@@ -611,7 +611,7 @@ STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
    _item_before[ "brdok" ] := _brdok
    _item_before[ "rbr" ] := _rbr
 
-   __redni_broj := RbrUnum( _rbr )
+   s_nFaktUnosRedniBroj := RbrUnum( _rbr )
    IF fakt_params[ "fakt_opis_stavke" ]
       _items_atrib[ "opis" ] := get_fakt_attr_opis( _item_before, .F. )
    ENDIF
@@ -671,17 +671,17 @@ STATIC FUNCTION fakt_unos_nove_stavke()
 
       IF AllTrim( _podbr ) == "." .AND. Empty( _idroba )
 
-         __redni_broj := RbrUnum( _rbr )
+         s_nFaktUnosRedniBroj := RbrUnum( _rbr )
          _podbr := " 1"
 
       ELSEIF _podbr >= " 1"
 
-         __redni_broj := RbrUnum( _rbr )
+         s_nFaktUnosRedniBroj := RbrUnum( _rbr )
          _podbr := Str( Val( _podbr ) + 1, 2, 0 )
 
       ELSE
 
-         __redni_broj := RbrUnum( _rbr ) + 1
+         s_nFaktUnosRedniBroj := RbrUnum( _rbr ) + 1
          _podbr := "  "
 
       ENDIF
@@ -741,182 +741,37 @@ STATIC FUNCTION fakt_print_dokument()
    RETURN .T.
 
 
-// ----------------------------------------------------
-// inicijalizuj varijable iz memo polja txt
-// ----------------------------------------------------
-STATIC FUNCTION _init_vars_from_txt_memo()
 
-   LOCAL hFaktParams := fakt_params()
-   LOCAL aMemo := fakt_ftxt_decode( _txt )
-   LOCAL _len := Len( aMemo )
-
-   IF _len > 0
-      _txt1 := aMemo[ 1 ]
-   ENDIF
-
-   IF _len >= 2
-      _txt2 := aMemo[ 2 ]
-   ENDIF
-
-   IF _len >= 9
-      _brotp := aMemo[ 6 ]
-      _datotp := CToD( aMemo[ 7 ] )
-      _brnar := aMemo[ 8 ]
-      _datpl := CToD( aMemo[ 9 ] )
-   ENDIF
-
-   IF _len >= 10 .AND. !Empty( aMemo[ 10 ] )
-      _vezotpr := aMemo[ 10 ]
-   ENDIF
-
-   IF _len >= 11
-      d2k1 := aMemo[ 11 ]
-   ENDIF
-
-   IF _len >= 12
-      d2k2 := aMemo[ 12 ]
-   ENDIF
-
-   IF _len >= 13
-      d2k3 := aMemo[ 13 ]
-   ENDIF
-
-   IF _len >= 14
-      d2k4 := aMemo[ 14 ]
-   ENDIF
-
-   IF _len >= 15
-      d2k5 := aMemo[ 15 ]
-   ENDIF
-
-   IF _len >= 16
-      d2n1 := aMemo[ 16 ]
-   ENDIF
-
-   IF _len >= 17
-      d2n2 := aMemo[ 17 ]
-   ENDIF
-
-   IF hFaktParams[ "destinacije" ] .AND. _len >= 18
-      _destinacija := PadR( AllTrim( aMemo[ 18 ] ), 500 )
-   ENDIF
-
-   IF hFaktParams[ "fakt_dok_veze" ] .AND. _len >= 19
-      _dokument_veza := PadR( AllTrim( aMemo[ 19 ] ), 500 )
-   ENDIF
-
-   IF hFaktParams[ "fakt_objekti" ] .AND. _len >= 20
-      _objekti := PadR( aMemo[ 20 ], 10 )
-   ENDIF
-
-   RETURN .T.
-
-
-
-// ---------------------------------------------------
-// sredji memo txt na osnovnu varijabli
-// ---------------------------------------------------
-STATIC FUNCTION _set_memo_txt_from_vars()
-
-   LOCAL _tmp
-   LOCAL hFaktParams := fakt_params()
-
-   // odsjeci na kraju prazne linije
-   _txt2 := OdsjPLK( _txt2 )
-
-   IF ! "Racun formiran na osnovu" $ _txt2
-      _txt2 += Chr( 13 ) + Chr( 10 ) + _vezotpr
-   ENDIF
-
-   _txt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 )
-   _txt += Chr( 16 ) + _txt2 + Chr( 17 )
-   _txt += Chr( 16 ) + "" + Chr( 17 )
-   _txt += Chr( 16 ) + "" + Chr( 17 )
-   _txt += Chr( 16 ) + "" + Chr( 17 )
-
-   // 6 - br otpr
-   _txt += Chr( 16 ) + _brotp + Chr( 17 )
-   // 7 - dat otpr
-   _txt += Chr( 16 ) + DToC( _datotp ) + Chr( 17 )
-   // 8 - br nar
-   _txt += Chr( 16 ) + _brnar + Chr( 17 )
-   // 9 - dat nar
-   _txt += Chr( 16 ) + DToC( _datpl ) + Chr( 17 )
-   // 10
-   _txt += Chr( 16 ) + _vezotpr + Chr( 17 )
-   // 11
-   _txt += Chr( 16 ) + d2k1 + Chr( 17 )
-   // 12
-   _txt += Chr( 16 ) + d2k2 + Chr( 17 )
-   // 13
-   _txt += Chr( 16 ) + d2k3 + Chr( 17 )
-   // 14
-   _txt += Chr( 16 ) + d2k4 + Chr( 17 )
-   // 15
-   _txt += Chr( 16 ) + d2k5 + Chr( 17 )
-   // 16
-   _txt += Chr( 16 ) + d2n1 + Chr( 17 )
-   // 17
-   _txt += Chr( 16 ) + d2n2 + Chr( 17 )
-
-   IF hFaktParams[ "destinacije" ]
-      _tmp := _destinacija
-   ELSE
-      _tmp := ""
-   ENDIF
-
-   // 18 - Destinacija
-   _txt += Chr( 16 ) + AllTrim( _tmp ) + Chr( 17 )
-
-   // 19 - vezni dokumenti
-   IF hFaktParams[ "fakt_dok_veze" ]
-      _tmp := _dokument_veza
-   ELSE
-      _tmp := ""
-   ENDIF
-
-   _txt += Chr( 16 ) + AllTrim( _dokument_veza ) + Chr( 17 )
-
-   // 20 - objekti
-   IF hFaktParams[ "fakt_objekti" ]
-      _tmp := _objekti
-   ELSE
-      _tmp := ""
-   ENDIF
-
-   _txt += Chr( 16 ) + _tmp + Chr( 17 )
-
-   RETURN .T.
 
 
 STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
 
    LOCAL aTipoviDokumenata := {}
-   LOCAL _h
-   LOCAL _rok_placanja := 0
-   LOCAL _avansni_racun
-   LOCAL _opis := ""
+   LOCAL aH
+   LOCAL nRokPlacanja := 0
+   LOCAL lAvansniRacun
+   LOCAL cOpis := ""
    LOCAL nMenu := fakt_tip_dokumenta_default_menu()
    LOCAL _convert := "N"
-   LOCAL _x := 1
-   LOCAL _odabir_txt := .F.
-   LOCAL _lista_uzoraka
+   LOCAL nX := 1
+   LOCAL lOdabirFaktTxt := .F.
+   LOCAL cFaktTxtListaUzoraka
    LOCAL _x2, _part_x, _part_y, _tip_cijene
    LOCAL _ref_broj, _lot_broj
    LOCAL hFaktParams := fakt_params()
 
    aTipoviDokumenata := fakt_tip_dok_arr()
-   _h := {}
-   ASize( _h, Len( aTipoviDokumenata ) )
-   AFill( _h, "" )
+   aH := {}
+   ASize( aH, Len( aTipoviDokumenata ) )
+   AFill( aH, "" )
 
    IF hFaktItemsAttributi <> NIL
 
       IF hFaktParams[ "fakt_opis_stavke" ]
          IF fNovi
-            _opis := PadR( "", 300 )
+            cOpis := PadR( "", 300 )
          ELSE
-            _opis := PadR( hFaktItemsAttributi[ "opis" ], 300 )
+            cOpis := PadR( hFaktItemsAttributi[ "opis" ], 300 )
          ENDIF
       ENDIF
 
@@ -978,7 +833,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
          _idRoba := Space( 10 )
       ENDIF
 
-      IF __redni_broj == 1
+      IF s_nFaktUnosRedniBroj == 1
 
          nMenu := iif( Val( gIMenu ) < 1, Asc( gIMenu ) - 55, Val( gIMenu ) )
          _idfirma := self_organizacija_id()
@@ -997,14 +852,14 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
       ENDIF
 
    ELSE
-      _init_vars_from_txt_memo()
+      fakt_ftxt_decode_memo()
       nMenu := AScan( aTipoviDokumenata, {| x | _idtipdok == Left( x, 2 ) } )
    ENDIF
 
    _podbr := Space( 2 )
    _tip_rabat := "%"
 
-   IF ( __redni_broj == 1 .AND. Val( _podbr ) < 1 )
+   IF ( s_nFaktUnosRedniBroj == 1 .AND. Val( _podbr ) < 1 )
 
       IF RecCount() == 0
          _idFirma := self_organizacija_id()
@@ -1014,10 +869,10 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
          _idfirma := hFaktParams[ "def_rj" ]
       ENDIF
 
-      @ m_x + _x, m_y + 2 SAY PadR( self_organizacija_naziv(), 20 )
+      @ m_x + nX, m_y + 2 SAY PadR( self_organizacija_naziv(), 20 )
 
-      fakt_getlist_rj_read( m_x + _x, Col() + 2, @_idFirma, .F. )
-      // @ m_x + _x, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == self_organizacija_id() ;
+      fakt_getlist_rj_read( m_x + nX, Col() + 2, @_idFirma, .F. )
+      // @ m_x + nX, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == self_organizacija_id() ;
       // .OR. P_RJ( @_idfirma ) .AND. V_Rj(), _idfirma := Left( _idfirma, 2 ), .T. }
 
       READ
@@ -1046,10 +901,10 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
 
       _idtipdok := Left( aTipoviDokumenata[ nMenu ], 2 )
 
-      ++_x
-      @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 40 )
+      ++nX
+      @ m_x + nX, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 40 )
 
-      IF !fNovi .AND. __redni_broj == 1
+      IF !fNovi .AND. s_nFaktUnosRedniBroj == 1
          IF _idtipdok <> _old_tip_dok .AND. !Empty( field->brdok ) .AND. AllTrim( field->brdok ) <> "00000"
             MsgBeep( "Vršite promjenu vrste dokumenta. Obratiti pažnju na broj !" )
             IF Pitanje(, "Resetovati broj dokumenta na 00000 (D/N) ?", "D" ) == "D"
@@ -1060,32 +915,32 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
 
       DO WHILE .T.
 
-         _x := 2
+         nX := 2
 
-         @  m_x + _x, m_y + 45 SAY "Datum:" GET _datdok
-         @  m_x + _x, Col() + 1 SAY "Broj:" GET _brdok VALID !Empty( _brdok )
+         @  m_x + nX, m_y + 45 SAY "Datum:" GET _datdok
+         @  m_x + nX, Col() + 1 SAY "Broj:" GET _brdok VALID !Empty( _brdok )
 
-         _x += 2
-         @ _part_x := m_x + _x, _part_y := m_y + 2 SAY "Partner:" GET _idpartner ;
+         nX += 2
+         @ _part_x := m_x + nX, _part_y := m_y + 2 SAY "Partner:" GET _idpartner ;
             PICT "@!" ;
             VALID {|| p_partner( @_idpartner ), ;
             IzSifre(), !Empty( _idpartner ) .AND. ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
 
-         _x += 2
+         nX += 2
 
          IF hFaktParams[ "fakt_dok_veze" ]
-            @ m_x + _x, m_y + 2 SAY "Vezni dok.:" GET _dokument_veza ;
+            @ m_x + nX, m_y + 2 SAY "Vezni dok.:" GET _dokument_veza ;
                PICT "@S20"
          ENDIF
 
-         ++_x
+         ++nX
          IF hFaktParams[ "destinacije" ]
-            @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija ;
+            @ m_x + nX, m_y + 2 SAY "Dest:" GET _destinacija ;
                PICT "@S20"
          ENDIF
 
          IF ( hFaktParams[ "fakt_objekti" ] .AND. _idtipdok $ "10#11#12#13" )
-            @ m_x + _x, Col() + 1 SAY "Objekat:" GET _objekti ;
+            @ m_x + nX, Col() + 1 SAY "Objekat:" GET _objekti ;
                VALID p_fakt_objekti( @_objekti ) ;
                PICT "@!"
          ENDIF
@@ -1103,20 +958,20 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
             @ m_x + _x2, m_y + 51 SAY8 "Ugovor/narudžba:" GET _brnar PICT "@S20"
 
             IF fNovi .AND. gRokPl > 0
-               _rok_placanja := gRokPl
+               nRokPlacanja := gRokPl
             ENDIF
 
             ++_x2
-            @ m_x + _x2, m_y + 51 SAY8 "Rok plać.(dana):" GET _rok_placanja PICT "999" ;
-               WHEN valid_rok_placanja( @_rok_placanja, "0", fNovi ) VALID valid_rok_placanja( _rok_placanja, "1", fNovi )
+            @ m_x + _x2, m_y + 51 SAY8 "Rok plać.(dana):" GET nRokPlacanja PICT "999" ;
+               WHEN valid_rok_placanja( @nRokPlacanja, "0", fNovi ) VALID valid_rok_placanja( nRokPlacanja, "1", fNovi )
 
             ++_x2
-            @ m_x + _x2, m_y + 51 SAY8 "Datum plaćanja :" GET _datpl VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
+            @ m_x + _x2, m_y + 51 SAY8 "Datum plaćanja :" GET _datpl VALID valid_rok_placanja( nRokPlacanja, "2", fNovi )
 
             IF hFaktParams[ "fakt_vrste_placanja" ]
 
-               ++_x
-               @ m_x + _x, m_y + 2 SAY8 "Način plaćanja" GET _idvrstep PICT "@!" VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
+               ++nX
+               @ m_x + nX, m_y + 2 SAY8 "Način plaćanja" GET _idvrstep PICT "@!" VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
 
             ENDIF
 
@@ -1141,24 +996,24 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
             @ m_x + _x2, m_y + 51  SAY "       Relacija:" GET _idrelac PICT "@S10"
          ENDIF
 
-         _x += 3
+         nX += 3
 
          IF _idTipDok $ "10#11#12#19#20#25#26#27"
-            @ m_x + _x, m_y + 2 SAY "Valuta ?" GET _dindem PICT "@!"
+            @ m_x + nX, m_y + 2 SAY "Valuta ?" GET _dindem PICT "@!"
          ELSE
-            @ m_x + _x, m_y + 2 SAY " "
+            @ m_x + nX, m_y + 2 SAY " "
          ENDIF
 
          IF _idtipdok $ "10"
 
-            _avansni_racun := "N"
+            lAvansniRacun := "N"
 
             IF _idvrstep == "AV"
-               _avansni_racun := "D"
+               lAvansniRacun := "D"
             ENDIF
 
-            @ m_x + _x, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET _avansni_racun PICT "@!" ;
-               VALID _avansni_racun $ "DN"
+            @ m_x + nX, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET lAvansniRacun PICT "@!" ;
+               VALID lAvansniRacun $ "DN"
 
          ENDIF
 
@@ -1176,17 +1031,17 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
 
    ELSE
 
-      @ m_x + _x, m_y + 2 SAY PadR( self_organizacija_naziv(), 20 )
+      @ m_x + nX, m_y + 2 SAY PadR( self_organizacija_naziv(), 20 )
 
       ?? "  RJ:", _idfirma
 
-      _x += 2
-      @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 35 )
+      nX += 2
+      @ m_x + nX, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 35 )
 
-      @ m_x + _x, m_y + 45 SAY "Datum: "
+      @ m_x + nX, m_y + 45 SAY "Datum: "
       ?? _datdok
 
-      @ m_x + _x, Col() + 1 SAY "Broj: "
+      @ m_x + nX, Col() + 1 SAY "Broj: "
       ?? _brdok
 
       _txt2 := ""
@@ -1194,12 +1049,12 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
    ENDIF
 
 
-   _x := 13
+   nX := 13
 
-   @ m_x + _x, m_y + 2 SAY "R.br: " GET __redni_broj PICT "9999"
+   @ m_x + nX, m_y + 2 SAY "R.br: " GET s_nFaktUnosRedniBroj PICT "9999"
 
-   _x += 2
-   @ m_x + _x, m_y + 2  SAY "Artikal: " GET _IdRoba PICT "@!S10" ;
+   nX += 2
+   @ m_x + nX, m_y + 2  SAY "Artikal: " GET _IdRoba PICT "@!S10" ;
       WHEN {|| _idroba := PadR( _idroba, Val( gDuzSifIni ) ), W_Roba() } ;
       VALID {|| _idroba := iif( Len( Trim( _idroba ) ) < Val( gDuzSifIni ), ;
       Left( _idroba, Val( gDuzSifIni ) ), _idroba ), ;
@@ -1211,36 +1066,36 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
       }
 
 
-   ++_x
+   ++nX
    IF ( gSamokol != "D" .AND. !glDistrib )
-      @ m_x + _x, m_y + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
+      @ m_x + nX, m_y + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
    ENDIF
 
    _tip_cijene := "1"
 
    IF ( gVarC $ "123" .AND. _idtipdok $ "10#12#20#21#25" )
-      @ m_x + _x, m_y + 59 SAY "Cijena (1/2/3):" GET _tip_cijene
+      @ m_x + nX, m_y + 59 SAY "Cijena (1/2/3):" GET _tip_cijene
    ENDIF
 
    IF hFaktParams[ "fakt_opis_stavke" ]
-      ++_x
-      @ m_x + _x, m_y + 2 SAY "Opis:" GET _opis PICT "@S50"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Opis:" GET cOpis PICT "@S50"
    ENDIF
 
 
    IF hFaktParams[ "ref_lot" ]
-      ++_x
-      @ m_x + _x, m_y + 2 SAY "REF:" GET _ref_broj PICT "@S10"
-      @ m_x + _x, m_y + 2 SAY "/ LOT:" GET _lot_broj PICT "@S10"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "REF:" GET _ref_broj PICT "@S10"
+      @ m_x + nX, m_y + 2 SAY "/ LOT:" GET _lot_broj PICT "@S10"
    ENDIF
 
-   _x += 3
-   @ m_x + _x, m_y + 2 SAY8 "Količina: "  GET _kolicina PICT fakt_pic_kolicina() VALID V_Kolicina( _tip_cijene )
+   nX += 3
+   @ m_x + nX, m_y + 2 SAY8 "Količina: "  GET _kolicina PICT fakt_pic_kolicina() VALID V_Kolicina( _tip_cijene )
 
 
    IF gSamokol != "D"
 
-      @ m_x + _x, Col() + 2 SAY IF( _idtipdok $ "13#23" .AND. ( gVar13 == "2" .OR. glCij13Mpc ), ;
+      @ m_x + nX, Col() + 2 SAY IF( _idtipdok $ "13#23" .AND. ( gVar13 == "2" .OR. glCij13Mpc ), ;
          "MPC.s.PDV", "Cijena (" + AllTrim( ValDomaca() ) + ")" ) GET _cijena ;
          PICT fakt_pic_cijena() ;
          WHEN  _podbr <> " ." ;
@@ -1248,17 +1103,17 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
 
 
       IF ( PadR( _dindem, 3 ) <> PadR( ValDomaca(), 3 ) )
-         @ m_x + _x, Col() + 2 SAY "Pr"  GET _convert ;
+         @ m_x + nX, Col() + 2 SAY "Pr"  GET _convert ;
             PICT "@!" ;
             VALID v_pretvori( @_convert, _dindem, _datdok, @_cijena )
       ENDIF
 
       IF !( _idtipdok $ "12#13" ) .OR. ( _idtipdok == "12" .AND. gV12Por == "D" )
 
-         @ m_x + _x, Col() + 2 SAY "Rabat:" GET _rabat PICT fakt_pic_cijena() ;
+         @ m_x + nX, Col() + 2 SAY "Rabat:" GET _rabat PICT fakt_pic_cijena() ;
             WHEN _podbr <> " ." .AND. ! _idtipdok $ "15"
 
-         @ m_x + _x, Col() + 1 GET _tip_rabat PICT "@!" ;
+         @ m_x + nX, Col() + 1 GET _tip_rabat PICT "@!" ;
             WHEN {|| _tip_rabat := "%", ! _idtipdok $ "11#27#15" .AND. _podbr <> " ." } ;
             VALID _tip_rabat $ "% AUCI" .AND. V_Rabat( _tip_rabat )
 
@@ -1268,42 +1123,43 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, hFaktItemsAttributi )
 
    READ
 
-   IF _avansni_racun == "D"
+   IF lAvansniRacun == "D"
       _idvrstep := "AV"
    ENDIF
 
 
    ESC_RETURN 0
 
-   _odabir_txt := .T.
+   lOdabirFaktTxt := .T.
 
    IF _IdTipDok $ "13" .OR. gSamoKol == "D"
-      _odabir_txt := .F.
+      lOdabirFaktTxt := .F.
    ENDIF
 
    IF _idtipdok == "12"
-      IF IsKomision( _idpartner )
-         _odabir_txt := .T.
-      ELSE
-         _odabir_txt := .F.
-      ENDIF
+      //IF IsKomision( _idpartner )
+        // lOdabirFaktTxt := .T.
+      //ELSE
+         lOdabirFaktTxt := .F.
+      //ENDIF
    ENDIF
 
-   IF _odabir_txt
-      _lista_uzoraka := g_txt_tipdok( _idtipdok )
-      fakt_unos_set_ftxt2( _lista_uzoraka, __redni_broj )
+   IF lOdabirFaktTxt
+   altd()
+      fakt_unos_set_ftxt2( @_txt2, s_nFaktUnosRedniBroj )
    ENDIF
 
-   IF ( _podbr == " ." .OR. roba->tip = "U" .OR. ( __redni_broj == 1 .AND. Val( _podbr ) < 1 ) )
-      _set_memo_txt_from_vars()
+   IF ( _podbr == " ." .OR. roba->tip = "U" .OR. ( s_nFaktUnosRedniBroj == 1 .AND. Val( _podbr ) < 1 ) )
+      _txt := fakt_ftxt_encode_5( _txt2 )
    ELSE
       _txt := ""
    ENDIF
 
-   _rbr := RedniBroj( __redni_broj )
+
+   _rbr := RedniBroj( s_nFaktUnosRedniBroj )
 
    IF hFaktParams[ "fakt_opis_stavke" ]
-      hFaktItemsAttributi[ "opis" ] := _opis
+      hFaktItemsAttributi[ "opis" ] := cOpis
    ENDIF
    IF hFaktParams[ "ref_lot" ]
       hFaktItemsAttributi[ "ref" ] := _ref_broj
@@ -1421,28 +1277,6 @@ STATIC FUNCTION _f_idpm( cIdPm )
 
 
 
-
-// ---------------------------------------------
-// vraca listu za odredjeni tip dok
-// ---------------------------------------------
-FUNCTION g_txt_tipdok( cIdTd )
-
-   LOCAL cList := ""
-   LOCAL cVal
-   PRIVATE cTmptxt
-
-   IF !Empty( cIdTd ) .AND. cIdTD $ "10#11#12#13#15#16#20#21#22#23#25#26#27"
-
-      cTmptxt := "g" + cIdTd + "ftxt"
-      cVal := &cTmptxt
-
-      IF !Empty( cVal )
-         cList := AllTrim( cVal )
-      ENDIF
-
-   ENDIF
-
-   RETURN cList
 
 
 
@@ -1623,9 +1457,7 @@ FUNCTION RabPor10()
 
 
 
-// ---------------------------------------------------------------
-// ostale opcije u pripremi dokumenta
-// ---------------------------------------------------------------
+
 STATIC FUNCTION popup_fakt_unos_dokumenta()
 
    PRIVATE opc[ 6 ]
@@ -1659,11 +1491,13 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          EXIT
       CASE izbor == 1
          m_gen_ug()
+
       CASE izbor == 2
          fakt_sredi_redni_broj_u_pripremi()
+
       CASE izbor == 3
 
-         O_FAKT_S_PRIPR
+         //o_fakt_pripr()
          o_fakt_txt()
          select_fakt_pripr()
          GO TOP
@@ -1671,14 +1505,15 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          IF Val( rbr ) <> 1
             MsgBeep( "U pripremi se ne nalazi dokument" )
          ELSE
-            fakt_ispravka_ftxt()
+            fakt_ispravka_ftxt( .T. )
          ENDIF
          my_close_all_dbf()
+
       CASE izbor == 4
 
          select_o_roba()
          o_tarifa()
-         O_FAKT_S_PRIPR
+         o_fakt_pripr()
          GO TOP
          nDug := 0
          DO WHILE !Eof()
@@ -1727,6 +1562,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          APPEND BLANK
          Gather()
          BoxC()
+
       CASE izbor == 5
 
          azuriraj_smece()
@@ -1734,7 +1570,6 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
       CASE izbor == 6
 
          povrat_smece()
-
 
       ENDCASE
 
@@ -1851,7 +1686,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
 // -----------------------------------------------
 STATIC FUNCTION _total_dokumenta()
 
-   LOCAL _x, _y
+   LOCAL nX, nY
    LOCAL __x := 1
    LOCAL _left := 20
    LOCAL _doc_total := hb_Hash()
@@ -1863,8 +1698,8 @@ STATIC FUNCTION _total_dokumenta()
       RETURN .F.
    ENDIF
 
-   _x := f18_max_rows() - 20
-   _y := f18_max_cols() - 30
+   nX := f18_max_rows() - 20
+   nY := f18_max_cols() - 30
 
    // valuta ?
    _din_dem := fakt_pripr->dindem
@@ -1876,9 +1711,9 @@ STATIC FUNCTION _total_dokumenta()
    _calc_totals( @_doc_total, _din_dem )
 
    // prikazi box
-   Box(, _x, _y )
+   Box(, nX, nY )
 
-   @ m_x + __x, m_y + 2 SAY PadR( "TOTAL DOKUMENTA:", _y - 2 ) COLOR f18_color_i()
+   @ m_x + __x, m_y + 2 SAY PadR( "TOTAL DOKUMENTA:", nY - 2 ) COLOR f18_color_i()
 
    ++__x
    ++__x

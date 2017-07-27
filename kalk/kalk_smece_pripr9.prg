@@ -67,7 +67,7 @@ FUNCTION kalk_pregled_smece_pripr9()
 
    //PRIVATE lKalkAsistentAuto := .F.
 
-   my_db_edit_sql( "KALK_PRIPR9", 20, 77, {|| ka_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
+   my_browse( "KALK_PRIPR9", 20, 77, {|| ka_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
    BoxC()
 
    RETURN .T.

@@ -373,7 +373,7 @@ STATIC FUNCTION o_tbl_roba( lTest, cSezSif )
 
    ELSE
     //  o_roba()
-      o_sastavnica()
+      o_sastavnice()
    ENDIF
 
    RETURN
@@ -528,7 +528,7 @@ FUNCTION PrenosNo2()
    o_konto()
    o_partner()
    o_tarifa()
-   o_sastavnica()
+   o_sastavnice()
    o_fakt()
 
    dDatKalk := Date()

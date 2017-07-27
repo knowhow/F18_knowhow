@@ -190,7 +190,7 @@ FUNCTION VidiNaloge()
    NEXT
 
    Box(, 20, 45 )
-   my_db_edit_sql( "Nal", f18_max_rows() - 10, 50, {|| EdNal() }, "<Enter> - ispravka", "Nalozi...", , , , , )
+   my_browse( "Nal", f18_max_rows() - 10, 50, {|| EdNal() }, "<Enter> - ispravka", "Nalozi...", , , , , )
    BoxC()
 
    CLOSERET

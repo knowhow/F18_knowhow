@@ -14,21 +14,6 @@
 FIELD id, naz
 
 
-
-FUNCTION o_sastavnica()
-
-   SELECT ( F_SAST )
-   my_use  ( "sast" )
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
-
-FUNCTION select_o_sastavnica()
-   RETURN select_o_dbf( "SAST", F_SAST, "sast", "ID" )
-
-
-
-
 FUNCTION find_partner_by_naz_or_id( cId )
 
    LOCAL cAlias := "PARTN"

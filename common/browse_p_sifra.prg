@@ -13,7 +13,7 @@
 
 MEMVAR ImeKol
 MEMVAR Ch  // , fID_J
-//MEMVAR aAstruct
+// MEMVAR aAstruct
 
 THREAD STATIC __PSIF_NIVO__ := 0
 THREAD STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
@@ -110,7 +110,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
          GO TOP // bez parametara
       ENDIF
 
-      lRet := my_db_edit_sql( NIL, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
+      lRet := my_browse( NIL, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
          ToStrU( cNaslov ), "", lInvert, aOpcije, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
@@ -211,6 +211,8 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
       find_partner_by_naz_or_id( cId )
    ELSEIF Alias() == "ROBA"
       find_roba_by_naz_or_id( cId )
+   ELSEIF Alias() == "ROBA_P"
+      find_roba_p_by_naz_or_id( cId )
    ELSEIF Alias() == "KONTO"
       find_konto_by_naz_or_id( cId )
    ELSEIF Alias() == "RADN"
@@ -517,7 +519,8 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    PRIVATE cPom
    PRIVATE aQQ
    PRIVATE aUsl
-   //PRIVATE aStruct
+
+   // PRIVATE aStruct
 
    IF aZabrane = nil
       aZabrane := {}
@@ -585,6 +588,10 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 #endif
    CASE ( Ch == K_CTRL_N .OR. Ch == K_F4 )
 
+      IF Alias() == "ROBA_P"
+         sastavnica_copy()
+         RETURN DE_REFRESH
+      ENDIF
       Tb:RefreshCurrent()
 
       IF edit_sql_sif_item( Ch, cOrderTag, aZabIsp, .T. ) == 1
@@ -700,7 +707,8 @@ STATIC FUNCTION edit_sql_sif_item( nCh, cOrderTag, aZabIsp, lNovi )
    PRIVATE cPom
    PRIVATE aQQ
    PRIVATE aUsl
-   //PRIVATE aStruct
+
+   // PRIVATE aStruct
 
    nPrevRecNo := RecNo()
    cTekuciZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )

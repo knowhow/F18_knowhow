@@ -126,7 +126,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    opcije_browse_pregleda()
 
-   my_db_edit_sql( "Ost", f18_max_rows() - 10, f18_max_cols() - 10, {|| rucno_zatvaranje_otv_stavki_key_handler() }, ;
+   my_browse( "Ost", f18_max_rows() - 10, f18_max_cols() - 10, {|| rucno_zatvaranje_otv_stavki_key_handler() }, ;
       "", "", .F., NIL, 1, {|| otvst == "9" }, 6, 0, NIL, NIL )
    // {| nSkip| fin_otvorene_stavke_browse_skip( nSkip ) } )
 

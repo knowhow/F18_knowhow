@@ -284,9 +284,6 @@ STATIC FUNCTION dodaj_stavku_inventure_viska( cIdRj, cIdRoba, cBrDok, nKolicina,
 
 
 
-// -----------------------------------------------------------
-// generise racun na osnovu podataka iz pripreme
-// -----------------------------------------------------------
 FUNCTION fakt_generisi_racun_iz_pripreme()
 
    LOCAL _novi_tip, _tip_dok, _br_dok
@@ -351,6 +348,6 @@ FUNCTION fakt_generisi_racun_iz_pripreme()
 
    BoxC()
 
-   fakt_ispravka_ftxt()
+   fakt_ispravka_ftxt( .T. )
 
    RETURN .T.

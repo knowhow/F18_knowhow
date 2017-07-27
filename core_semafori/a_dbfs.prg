@@ -17,7 +17,7 @@ STATIC s_mtxMutex
 FUNCTION set_a_dbfs()
 
    LOCAL _dbf_fields, _sql_order
-   LOCAL _alg
+   LOCAL hAlgoritam
    LOCAL cDatabase := my_database()
 
    IF s_hF18Dbfs == NIL
@@ -132,35 +132,35 @@ FUNCTION f18_dbfs()
 
 
 
-FUNCTION set_a_dbf_temp( table, ALIAS, wa )
+FUNCTION set_a_dbf_temp( cTabela, cAlias, nWorkarea )
 
    LOCAL hItem
 
    hItem := hb_Hash()
 
-   hItem[ "alias" ] := alias
-   hItem[ "table" ] := table
-   hItem[ "wa" ]    := wa
+   hItem[ "alias" ] := cAlias
+   hItem[ "table" ] := cTabela
+   hItem[ "wa" ]    := nWorkarea
    hItem[ "temp" ]  := .T.
    hItem[ "chk0" ]  := .T.
    hItem[ "sql" ] := .F.
    hItem[ "sif" ]  := .F.
 
-   f18_dbfs_add( table, @hItem )
+   f18_dbfs_add( cTabela, @hItem )
 
    RETURN .T.
 
 
-FUNCTION set_a_sql_sifarnik( dbf_table, ALIAS, wa, hRec )
+FUNCTION set_a_sql_sifarnik( cTabela, cAlias, nWorkarea, hRec )
 
-   set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, .T. )
+   set_a_dbf_sifarnik( cTabela, cAlias, nWorkarea, hRec, .T. )
 
    RETURN .T.
 
 
-FUNCTION set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, lSql )
+FUNCTION set_a_dbf_sifarnik( cTabela, cAlias, nWorkarea, hRec, lSql )
 
-   LOCAL _alg, hItem
+   LOCAL hAlgoritam, hItem
 
    IF lSql == NIL
       lSql := .F.
@@ -168,9 +168,9 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, lSql )
 
    hItem := hb_Hash()
 
-   hItem[ "alias" ] := alias
-   hItem[ "table" ] := dbf_table
-   hItem[ "wa" ]    := wa
+   hItem[ "alias" ] := cAlias
+   hItem[ "table" ] := cTabela
+   hItem[ "wa" ]    := nWorkarea
 
    hItem[ "temp" ]  := .F.
    hItem[ "sql" ]   :=  lSql
@@ -178,25 +178,24 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, ALIAS, wa, hRec, lSql )
    hItem[ "sif" ] := .T.
    hItem[ "algoritam" ] := {}
 
-
-   _alg := hb_Hash()
+   hAlgoritam := hb_Hash()
 
    IF hRec == NIL
-      _alg[ "dbf_key_fields" ] := { "id" }
-      _alg[ "dbf_tag" ]        := "ID"
-      _alg[ "sql_in" ]        := "id"
-      _alg[ "dbf_key_block" ] := {|| field->id }
+      hAlgoritam[ "dbf_key_fields" ] := { "id" }
+      hAlgoritam[ "dbf_tag" ]        := "ID"
+      hAlgoritam[ "sql_in" ]        := "id"
+      hAlgoritam[ "dbf_key_block" ] := {|| field->id }
 
    ELSE
-      _alg[ "dbf_key_fields" ] := hRec[ "dbf_key_fields" ]
-      _alg[ "dbf_tag" ]        := hRec[ "dbf_tag" ]
-      _alg[ "sql_in" ]        := hRec[ "sql_in" ]
-      _alg[ "dbf_key_block" ] := hRec[ "dbf_key_block" ]
+      hAlgoritam[ "dbf_key_fields" ] := hRec[ "dbf_key_fields" ]
+      hAlgoritam[ "dbf_tag" ]        := hRec[ "dbf_tag" ]
+      hAlgoritam[ "sql_in" ]        := hRec[ "sql_in" ]
+      hAlgoritam[ "dbf_key_block" ] := hRec[ "dbf_key_block" ]
    ENDIF
 
-   AAdd( hItem[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   f18_dbfs_add( dbf_table, @hItem )
+   f18_dbfs_add( cTabela, @hItem )
 
    RETURN .T.
 
@@ -215,7 +214,7 @@ FUNCTION get_a_dbf_rec_by_wa( nWa )
 
 
 /*
-  tbl - dbf_table ili alias
+  tbl - cTabela ili alias
   _only_basic_params - samo table, alias, wa
 */
 
@@ -394,32 +393,32 @@ FUNCTION is_sifarnik( cTable )
    RETURN s_hF18Dbfs[ cDatabase ][ cTable ][ "sif" ]
 
 
-FUNCTION dbf_alias_has_semaphore( ALIAS )
+FUNCTION dbf_alias_has_semaphore( cAlias )
 
    LOCAL _ret := .F.
    LOCAL hDbfRecord, cDbfTable, _key
    LOCAL cDatabase := my_database()
 
    // ako nema parametra uzmi tekuci alias na kome se nalazimo
-   IF ( ALIAS == NIL )
-      ALIAS := Alias()
+   IF ( cAlias == NIL )
+      cAlias := Alias()
    ENDIF
 
    IF cDatabase == "?undefined?"
-      error_bar( "a_dbfs", "dbf_alias_has_semaphore: " + ALIAS )
+      error_bar( "a_dbfs", "dbf_alias_has_semaphore: " + cAlias )
       RETURN .F.
    ENDIF
 
    cDbfTable := "x"
 
    FOR EACH _key IN s_hF18Dbfs[ cDatabase ]:Keys
-      IF ValType( ALIAS ) == "N"
-         IF s_hF18Dbfs[ cDatabase ][ _key ][ "wa" ] == ALIAS // zadana je workarea
+      IF ValType( cAlias ) == "N"
+         IF s_hF18Dbfs[ cDatabase ][ _key ][ "wa" ] == cAlias // zadana je workarea
             cDbfTable := _key
             EXIT
          ENDIF
       ELSE
-         IF s_hF18Dbfs[ cDatabase ][ _key ][ "alias" ] == Upper( ALIAS )
+         IF s_hF18Dbfs[ cDatabase ][ _key ][ "alias" ] == Upper( cAlias )
             cDbfTable := _key
             EXIT
          ENDIF
@@ -494,7 +493,7 @@ FUNCTION print_a_dbfs()
 
    ?E Replicate( "A", 60 )
    FOR EACH cKey IN s_hF18Dbfs[ cDatabase ]:Keys
-      ?E++nCount, s_hF18Dbfs[ cDatabase ][ cKey ][ "table" ]
+      ?E ++nCount, s_hF18Dbfs[ cDatabase ][ cKey ][ "table" ]
       IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "chk0" )
          ??E " chk0", s_hF18Dbfs[ cDatabase ][ cKey ][ "chk0" ]
       ELSE
@@ -531,22 +530,22 @@ FUNCTION print_a_dbfs()
 
 
 
-FUNCTION sql_order_from_key_fields( dbf_key_fields ) // "sql_order" hash na osnovu hRec["dbf_fields"]
+FUNCTION sql_order_from_key_fields( hTabelaKeyFields ) // "sql_order" hash na osnovu hRec["dbf_fields"]
 
    LOCAL nI, _len
    LOCAL _sql_order
 
-   // primjer: dbf_key_fields = {{"godina", 4}, "idrj", {"mjesec", 2}
+   // primjer: hTabelaKeyFields = {{"godina", 4}, "idrj", {"mjesec", 2}
 
-   _len := Len( dbf_key_fields )
+   _len := Len( hTabelaKeyFields )
 
    _sql_order := ""
    FOR nI := 1 TO _len
 
-      IF ValType( dbf_key_fields[ nI ] ) == "A"
-         _sql_order += dbf_key_fields[ nI, 1 ]
+      IF ValType( hTabelaKeyFields[ nI ] ) == "A"
+         _sql_order += hTabelaKeyFields[ nI, 1 ]
       ELSE
-         _sql_order += dbf_key_fields[ nI ]
+         _sql_order += hTabelaKeyFields[ nI ]
       ENDIF
 
       IF nI < _len
@@ -741,9 +740,9 @@ FUNCTION is_sql_table( cDbf )
 
 
 
-STATIC FUNCTION zatvori_dbf( value )
+STATIC FUNCTION zatvori_dbf( hValue )
 
-   Select( value[ 'wa' ] )
+   Select( hValue[ 'wa' ] )
 
    IF Used()
       // ostalo je još otvorenih DBF-ova

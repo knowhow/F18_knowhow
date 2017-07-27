@@ -18,7 +18,7 @@ FUNCTION legacy_get_1_pr()
    SELECT F_SAST
 
 
-   select_o_sastavnica()
+   select_o_sastavnice()
    select_o_roba()
    select_o_tarifa()
 

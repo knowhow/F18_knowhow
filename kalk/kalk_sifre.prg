@@ -122,7 +122,7 @@ FUNCTION OSifBaze()
    o_valute()
    o_tarifa()
    // o_roba()
-   o_sastavnica()
+   o_sastavnice()
 
    RETURN .T.
 

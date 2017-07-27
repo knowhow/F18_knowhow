@@ -88,6 +88,7 @@ FUNCTION fakt_ftxt_keyboard_handler( nTopPos, nLeftPos, nBottomPos, nTxtLenght )
 
 
 
+
 /*
     *  "prvi red" + hb_eol() + "drugi red" => { "prvi red", "drugi red" }
     *  param cTxt   - tekst
@@ -136,119 +137,70 @@ FUNCTION decode_string_to_array( cTxt, nKol, cSeparator )
    RETURN aVrati
 
 
-// =========================================================
 
-/*
- *   Ispravka teksta ispod fakture (poziv iz menija)
- *   param: lSilent
- *   param: bFunc
- */
+FUNCTION fakt_ftxt_decode_memo()
 
-FUNCTION fakt_ispravka_ftxt( lSilent, bFunc )
+   LOCAL hFaktParams := fakt_params()
+   LOCAL aMemo := fakt_ftxt_decode( _txt )
+   LOCAL _len := Len( aMemo )
 
-   LOCAL cListaTxt := ""
-   LOCAL aMemo
-
-   IF lSilent == nil
-      lSilent := .F.
-   ENDIF
-
-   // lDoks2 := .T.
-
-   IF !lSilent
-      Scatter()
-   ENDIF
-
-   _BrOtp := Space( 50 )
-   _DatOtp := CToD( "" )
-   _BrNar := Space( 50 )
-   _DatPl := CToD( "" )
-   _VezOtpr := ""
-   _txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""
-   // txt1  -  naziv robe,usluge
-   nRbr := RbrUNum( RBr )
-
-   // IF lDoks2
-   d2k1 := Space( 15 )
-   d2k2 := Space( 15 )
-   d2k3 := Space( 15 )
-   d2k4 := Space( 20 )
-   d2k5 := Space( 20 )
-   d2n1 := Space( 12 )
-   d2n2 := Space( 12 )
-   // ENDIF
-
-   aMemo := fakt_ftxt_decode( _txt )
-   IF Len( aMemo ) > 0
+   IF _len > 0
       _txt1 := aMemo[ 1 ]
    ENDIF
-   IF Len( aMemo ) >= 2
-      _txt2 := aMemo[ 2 ]
-   ENDIF
-   IF Len( aMemo ) >= 5
-      _txt3a := aMemo[ 3 ]; _txt3b := aMemo[ 4 ]; _txt3c := aMemo[ 5 ]
+
+   IF _len >= 2
+      cTxtIn := aMemo[ 2 ]
    ENDIF
 
-   IF Len( aMemo ) >= 9
-      _BrOtp := aMemo[ 6 ]; _DatOtp := CToD( aMemo[ 7 ] ); _BrNar := amemo[ 8 ]; _DatPl := CToD( aMemo[ 9 ] )
-   ENDIF
-   IF Len ( aMemo ) >= 10 .AND. !Empty( aMemo[ 10 ] )
-      _VezOtpr := aMemo[ 10 ]
+   IF _len >= 9
+      _brotp := aMemo[ 6 ]
+      _datotp := CToD( aMemo[ 7 ] )
+      _brnar := aMemo[ 8 ]
+      _datpl := CToD( aMemo[ 9 ] )
    ENDIF
 
-   // IF lDoks2
-   IF Len ( aMemo ) >= 11
+   IF _len >= 10 .AND. !Empty( aMemo[ 10 ] )
+      _vezotpr := aMemo[ 10 ]
+   ENDIF
+
+   IF _len >= 11
       d2k1 := aMemo[ 11 ]
    ENDIF
-   IF Len ( aMemo ) >= 12
+
+   IF _len >= 12
       d2k2 := aMemo[ 12 ]
    ENDIF
-   IF Len ( aMemo ) >= 13
+
+   IF _len >= 13
       d2k3 := aMemo[ 13 ]
    ENDIF
-   IF Len ( aMemo ) >= 14
+
+   IF _len >= 14
       d2k4 := aMemo[ 14 ]
    ENDIF
-   IF Len ( aMemo ) >= 15
+
+   IF _len >= 15
       d2k5 := aMemo[ 15 ]
    ENDIF
-   IF Len ( aMemo ) >= 16
+
+   IF _len >= 16
       d2n1 := aMemo[ 16 ]
    ENDIF
-   IF Len ( aMemo ) >= 17
+
+   IF _len >= 17
       d2n2 := aMemo[ 17 ]
    ENDIF
-   // ENDIF
 
-   IF !lSilent
-      cListaTxt := g_txt_tipdok( _idtipdok )
-      fakt_unos_set_ftxt2( cListaTxt, nRbr )
+   IF hFaktParams[ "destinacije" ] .AND. _len >= 18
+      _destinacija := PadR( AllTrim( aMemo[ 18 ] ), 500 )
    ENDIF
 
-   IF bFunc <> nil
-      Eval( bFunc )
+   IF hFaktParams[ "fakt_dok_veze" ] .AND. _len >= 19
+      _dokument_veza := PadR( AllTrim( aMemo[ 19 ] ), 500 )
    ENDIF
 
-   _txt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 ) + Chr( 16 ) + _txt2 + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
-      Chr( 16 ) + _BrOtp + Chr( 17 ) + ;
-      Chr( 16 ) + DToC( _DatOtp ) + Chr( 17 ) + ;
-      Chr( 16 ) + _BrNar + Chr( 17 ) + ;
-      Chr( 16 ) + DToC( _DatPl ) + Chr( 17 ) + ;
-      iif ( Empty ( _VezOtpr ), Chr( 16 ) + "" + Chr( 17 ), Chr( 16 ) + _VezOtpr + Chr( 17 ) ) + ;
-      Chr( 16 ) + d2k1 + Chr( 17 ) + ;
-      Chr( 16 ) + d2k2 + Chr( 17 ) + ;
-      Chr( 16 ) + d2k3 + Chr( 17 ) + ;
-      Chr( 16 ) + d2k4 + Chr( 17 ) + ;
-      Chr( 16 ) + d2k5 + Chr( 17 ) + ;
-      Chr( 16 ) + d2n1 + Chr( 17 ) + ;
-      Chr( 16 ) + d2n2 + Chr( 17 )
-
-   IF !lSilent
-      my_rlock()
-      Gather()
-      my_unlock()
+   IF hFaktParams[ "fakt_objekti" ] .AND. _len >= 20
+      _objekti := PadR( aMemo[ 20 ], 10 )
    ENDIF
 
    RETURN .T.
@@ -289,11 +241,11 @@ FUNCTION fakt_ftxt_encode_2( aFaktTxtIn, cBrNar, cBrOtpr, dDatOtpr, dDatPl )
 
 
 
-FUNCTION fakt_ftxt_encode_3( _txt1, _txt2, _txt3a, _txt3b, _txt3c, ;
+FUNCTION fakt_ftxt_encode_3( cTxt1, cTxt2, _txt3a, _txt3b, _txt3c, ;
       _BrOtp, _BrNar, _DatOtp, _DatPl, cVezaOtpremnica, ;
       _dest, _m_dveza )
 
-   RETURN Chr( 16 ) + Trim( _txt1 ) + Chr( 17 ) + Chr( 16 ) + _txt2 + Chr( 17 ) + ;
+   RETURN Chr( 16 ) + Trim( cTxt1 ) + Chr( 17 ) + Chr( 16 ) + cTxt2 + Chr( 17 ) + ;
       Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
       Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
       Chr( 16 ) + _BrOtp + Chr( 17 ) + ;
@@ -312,110 +264,97 @@ FUNCTION fakt_ftxt_encode_3( _txt1, _txt2, _txt3a, _txt3b, _txt3c, ;
       Chr( 16 ) + Trim( _m_dveza ) + Chr( 17 )
 
 
-// -------------------------------------------------
-// uzorak teksta na kraju fakture
-// verzija sa listom...
-// -------------------------------------------------
+FUNCTION fakt_ftxt_encode_4( cTxt1, cTxt2, _txt3a, _txt3b, _txt3c, _BrOtp, _DatOtp, ;
+      _BrNar, _DatPl, _VezOtpr, d2k1, d2k2, d2k3, d2k4, d2k5, d2n1, d2n2 )
 
-FUNCTION fakt_unos_set_ftxt2( cList, nRedBr )
+   RETURN Chr( 16 ) + Trim( cTxt1 ) + Chr( 17 ) + Chr( 16 ) + cTxt2 + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
+      Chr( 16 ) + _BrOtp + Chr( 17 ) + ;
+      Chr( 16 ) + DToC( _DatOtp ) + Chr( 17 ) + ;
+      Chr( 16 ) + _BrNar + Chr( 17 ) + ;
+      Chr( 16 ) + DToC( _DatPl ) + Chr( 17 ) + ;
+      iif ( Empty ( _VezOtpr ), Chr( 16 ) + "" + Chr( 17 ), Chr( 16 ) + _VezOtpr + Chr( 17 ) ) + ;
+      Chr( 16 ) + d2k1 + Chr( 17 ) + ;
+      Chr( 16 ) + d2k2 + Chr( 17 ) + ;
+      Chr( 16 ) + d2k3 + Chr( 17 ) + ;
+      Chr( 16 ) + d2k4 + Chr( 17 ) + ;
+      Chr( 16 ) + d2k5 + Chr( 17 ) + ;
+      Chr( 16 ) + d2n1 + Chr( 17 ) + ;
+      Chr( 16 ) + d2n2 + Chr( 17 )
+
+
+
+
+FUNCTION fakt_ftxt_sub_renumeracija_pripreme( cTxt2 )
 
    LOCAL cId := "  "
-   LOCAL cU_txt
-   LOCAL aList := {}
-   LOCAL i
-   LOCAL nCount := 1
-
-   IF cList == nil
-      cList := ""
-   ENDIF
-
-   cList := AllTrim( cList )
-
-   IF !Empty( cList )
-      IF Empty( _txt2 )
-         IF Pitanje(, "Dokument sadrži txt listu, koristiti je ?", "D" ) == "N"
-            cList := ""
-         ENDIF
-         aList := TokToNiz( cList, ";" )
-      ENDIF
-   ENDIF
+   LOCAL cUserName
 
    IF _IdTipDok $ "10#20" .AND. partner_is_ino( _IdPartner )
       fakt_ftxt_ino_klauzula()
-      IF Empty( AllTrim( _txt2 ) )
+      IF Empty( AllTrim( cTxt2 ) )
          cId := "IN"
-         AAdd( aList, cId )
       ENDIF
    ENDIF
 
-   IF !Empty( cList )
-      FOR i := 1 TO Len( aList )
-         cU_txt := aList[ i ]
-         fakt_a_to_public_var_txt2( cU_txt, nCount, .T. )
-         cId := "MX"
-         ++nCount
-      NEXT
+
+   IF Empty( AllTrim( cTxt2 ) )
+      cId := "KS"
    ENDIF
 
-   IF ( nRedBr == 1 .AND. Val( _podbr ) < 1 )
-      fakt_unos_ftxt_box( @cId, nCount )
+
+   IF ( nRbr == 1 .AND. Val( _podbr ) < 1 )
+
+      Box(, 9, 75 )
+
+      @ m_x + 1, m_Y + 1  SAY "Uzorak teksta (<c-W> za kraj unosa teksta):"  GET cId PICT "@!"
+      READ
+
+      IF LastKey() <> K_ESC .AND. !Empty( cId )
+
+         p_fakt_ftxt( @cId )
+
+         select_o_fakt_txt( cId )
+
+         SELECT fakt_pripr
+
+         cTxt2 := Trim( ftxt->naz )
+
+         cUserName := f18_user_name()
+
+         IF !Empty( cUserName ) .AND. cUserName <> "?user?"
+            cTxt2 += " Dokument izradio: " + cUserName
+         ENDIF
+
+         SELECT fakt_pripr
+
+         IF glDistrib .AND. _IdTipdok == "26"
+            IF cId $ ";"
+               _k2 := "OPOR"
+            ELSE
+               _k2 := ""
+            ENDIF
+         ENDIF
+
+      ENDIF
+
+      SetColor( f18_color_invert()  )
+
+      PRIVATE fUMemu := .T.
+      cTxt2 := MemoEdit( cTxt2, m_x + 3, m_y + 1, m_x + 9, m_y + 76 )
+
+      fUMemu := NIL
+
+      SetColor( f18_color_normal() )
+
+      BoxC()
+
    ENDIF
 
    RETURN .T.
 
 
-
-FUNCTION fakt_unos_ftxt_box( cId, nCount )
-
-   LOCAL lRet := .T.
-   LOCAL GetList := {}
-
-   Box(, 11, f18_max_cols() - 8 )
-
-   DO WHILE .T.
-
-      @ m_x + 1, m_y + 1 SAY8 "Odaberi uzorak teksta iz šifarnika:"  GET cId PICT "@!"
-      @ m_x + 11, m_y + 1 SAY8 "<c+W> dodaj novi ili snimi i izađi <ESC> poništi"
-
-      READ
-
-      IF LastKey() == K_ESC
-         EXIT
-      ENDIF
-
-      IF LastKey() <> K_ESC .AND. !Empty( cId )
-         IF cId <> "MX"
-            p_fakt_ftxt( @cId )
-            fakt_a_to_public_var_txt2( cId, nCount, .T. )
-            ++nCount
-            cId := "  "
-         ENDIF
-      ENDIF
-
-      SetColor( f18_color_invert() )
-
-      PRIVATE fUMemu := .T.
-
-      _txt2 := MemoEdit( _txt2, m_x + 3, m_y + 1, m_x + 9, m_y + f18_max_cols() - 8 )
-
-      fUMemu := NIL
-      SetColor( f18_color_normal() )
-
-      IF LastKey() == K_ESC
-         EXIT
-      ENDIF
-
-      IF LastKey() == K_CTRL_W
-         IF Pitanje(, "Nastaviti sa unosom teksta ? (D/N)", "N" ) == "N"
-            lRet := .F.
-            EXIT
-         ENDIF
-      ENDIF
-
-   ENDDO
-   BoxC()
-
-   RETURN lRet
 
 
 
@@ -465,10 +404,10 @@ FUNCTION fakt_a_to_public_var_txt( cVal, lEmpty )
 
 
 
-FUNCTION fakt_a_to_public_var_txt2( cId_txt, nCount, lAppend )
+FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt, nCount, lAppend )
 
    LOCAL cTmp
-   LOCAL _user_name
+   LOCAL cUserName
 
    IF lAppend == nil
       lAppend := .F.
@@ -478,41 +417,46 @@ FUNCTION fakt_a_to_public_var_txt2( cId_txt, nCount, lAppend )
    ENDIF
 
    // prazan tekst - ne radi nista
-   IF Empty( cId_Txt )
+   IF Empty( cIdFaktTxt )
       RETURN .F.
    ENDIF
 
-   select_o_fakt_txt( cId_txt )
+   select_o_fakt_txt( cIdFaktTxt )
    SELECT fakt_pripr
 
    IF lAppend == .F.
-      _txt2 := Trim( ftxt->naz )
+      cTxt := Trim( ftxt->naz )
    ELSE
-      cTmp := ""
 
+      cTmp := ""
       IF nCount > 1
          cTmp += NRED_DOS
       ENDIF
-
       cTmp += Trim( ftxt->naz )
 
-      _txt2 := _txt2 + cTmp
+      cTxt +=  cTmp
    ENDIF
 
    IF nCount == 1
-      _user_name := AllTrim( GetFullUserName( GetUserID() ) )
-      IF !Empty( _user_name ) .AND. _user_name <> "?user?"
-         _txt2 += " Dokument izradio: " + _user_name
+
+      cUserName := f18_user_name()
+
+      IF !Empty( cUserName ) .AND. cUserName <> "?user?"
+         cTxt2 += " Dokument izradio: " + cUserName
       ENDIF
+
    ENDIF
 
    RETURN .T.
 
 
+FUNCTION f18_user_name()
+
+   RETURN AllTrim( GetFullUserName( GetUserID() ) )
 
 FUNCTION fakt_ftxt_encode( cFTxtNaz, cTxt1, cTxt3a, cTxt3b, cTxt3c, cVezaUgovor, cDodTxt )
 
-   RETURN Chr( 16 ) + _txt1 + Chr( 17 ) + ;
+   RETURN Chr( 16 ) + cTxt1 + Chr( 17 ) + ;
       Chr( 16 ) + Trim( ftxt->naz ) + Chr( 13 ) + Chr( 10 ) + ;
       cVezaUgovor + Chr( 13 ) + Chr( 10 ) + ;
       cDodTxt + Chr( 17 ) + Chr( 16 ) + ;
@@ -520,6 +464,82 @@ FUNCTION fakt_ftxt_encode( cFTxtNaz, cTxt1, cTxt3a, cTxt3b, cTxt3c, cVezaUgovor,
       Chr( 16 ) + _Txt3c + Chr( 17 )
 
 
+
+
+
+FUNCTION fakt_ftxt_encode_5( cTxtIn )
+
+   LOCAL _tmp
+   LOCAL hFaktParams := fakt_params()
+   LOCAL cTxt
+
+altd()
+   // odsjeci na kraju prazne linije
+   cTxtIn := OdsjPLK( cTxtIn )
+
+   IF ! "Racun formiran na osnovu" $ cTxtIn
+      cTxtIn += Chr( 13 ) + Chr( 10 ) + _vezotpr
+   ENDIF
+
+   cTxt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 )
+   cTxt += Chr( 16 ) + cTxtIn + Chr( 17 )
+   cTxt += Chr( 16 ) + "" + Chr( 17 )
+   cTxt += Chr( 16 ) + "" + Chr( 17 )
+   cTxt += Chr( 16 ) + "" + Chr( 17 )
+
+   // 6 - br otpr
+   cTxt += Chr( 16 ) + _brotp + Chr( 17 )
+   // 7 - dat otpr
+   cTxt += Chr( 16 ) + DToC( _datotp ) + Chr( 17 )
+   // 8 - br nar
+   cTxt += Chr( 16 ) + _brnar + Chr( 17 )
+   // 9 - dat nar
+   cTxt += Chr( 16 ) + DToC( _datpl ) + Chr( 17 )
+   // 10
+   cTxt += Chr( 16 ) + _vezotpr + Chr( 17 )
+   // 11
+   cTxt += Chr( 16 ) + d2k1 + Chr( 17 )
+   // 12
+   cTxt += Chr( 16 ) + d2k2 + Chr( 17 )
+   // 13
+   cTxt += Chr( 16 ) + d2k3 + Chr( 17 )
+   // 14
+   cTxt += Chr( 16 ) + d2k4 + Chr( 17 )
+   // 15
+   cTxt += Chr( 16 ) + d2k5 + Chr( 17 )
+   // 16
+   cTxt += Chr( 16 ) + d2n1 + Chr( 17 )
+   // 17
+   cTxt += Chr( 16 ) + d2n2 + Chr( 17 )
+
+   IF hFaktParams[ "destinacije" ]
+      _tmp := _destinacija
+   ELSE
+      _tmp := ""
+   ENDIF
+
+   // 18 - Destinacija
+   cTxt += Chr( 16 ) + AllTrim( _tmp ) + Chr( 17 )
+
+   // 19 - vezni dokumenti
+   IF hFaktParams[ "fakt_dok_veze" ]
+      _tmp := _dokument_veza
+   ELSE
+      _tmp := ""
+   ENDIF
+
+   cTxt += Chr( 16 ) + AllTrim( _dokument_veza ) + Chr( 17 )
+
+   // 20 - objekti
+   IF hFaktParams[ "fakt_objekti" ]
+      _tmp := _objekti
+   ELSE
+      _tmp := ""
+   ENDIF
+
+   cTxt += Chr( 16 ) + _tmp + Chr( 17 )
+
+   RETURN cTxt
 
 
 FUNCTION fakt_ftxt_decode( cTxt )

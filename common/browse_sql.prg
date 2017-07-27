@@ -12,6 +12,8 @@
 #include "f18.ch"
 #include "f18_color.ch"
 
+STATIC s_lExitBrowseOnEnter := .F.
+
 MEMVAR TB, Ch, GetList, goModul
 MEMVAR m_x, m_y
 MEMVAR bGoreREd, bDoleRed, bDodajRed, fTBNoviRed, TBCanClose, bZaglavlje, TBScatter, nTBLine, nTBLastLine, TBPomjerise
@@ -46,7 +48,7 @@ MEMVAR cKolona
  param - [10] NIL - prikazi u sljedecem redu,  15 - prikazi u koloni my+15  broj kolone pri editu sa <F2>
 */
 
-FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, ;
+FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, ;
       aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock )
 
    LOCAL hParams := hb_Hash()
@@ -76,7 +78,6 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInv
    // ovo se moze setovati u when/valid fjama
 
    PRIVATE  TBSkipBlock // := {| nSkip | SkipDB( nSkip, @nTBLine ) }
-
 
 
    PRIVATE bTekCol
@@ -161,7 +162,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInv
       IF !TBInitialized
          TBInitialized := .T.
          Eval( TB:SkipBlock, 1 )
-         Eval( TB:SkipBlock, -1 )
+         Eval( TB:SkipBlock, - 1 )
       ENDIF
 
       Ch := Inkey( 0 )
@@ -197,7 +198,12 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInv
       CASE Ch == K_PGDN
          TB:PageDown()
 
-      CASE  Ch == K_CTRL_END .OR. Ch == K_ESC
+      CASE Ch == K_CTRL_END .OR. Ch == K_ESC
+         lExitBrowse := .T.
+         nKeyHandlerRetEvent := DE_ABORT
+
+      CASE Ch == K_ENTER .AND. browse_exit_on_enter()
+      altd()
          lExitBrowse := .T.
          nKeyHandlerRetEvent := DE_ABORT
 
@@ -228,6 +234,15 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInv
    ENDDO
 
    RETURN .T.
+
+
+FUNCTION browse_exit_on_enter( lSet )
+
+   IF lSet != NIL
+      s_lExitBrowseOnEnter := lSet
+   ENDIF
+
+   RETURN s_lExitBrowseOnEnter
 
 
 STATIC FUNCTION browse_only( hParams, lIzOBJDB )

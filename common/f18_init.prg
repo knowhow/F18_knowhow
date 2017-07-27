@@ -490,9 +490,9 @@ FUNCTION desktop_rows()
    IF s_nDesktopRows == NIL
       s_nDesktopRows := hb_gtInfo( HB_GTI_DESKTOPROWS )
 
-      if is_linux() // linux moram spustiti da bi info_bar i error_bar bile vidljive
-        s_nDesktopRows -= 3
-        endif
+      IF is_linux() // linux moram spustiti da bi info_bar i error_bar bile vidljive
+         s_nDesktopRows -= 3
+      ENDIF
    ENDIF
 
    RETURN s_nDesktopRows
@@ -749,8 +749,8 @@ FUNCTION set_hot_keys()
    SetKey( K_SH_F1, {|| f18_kalkulator() } )
    SetKey( K_SH_F6, {|| f18_promjena_sezone() } )
 
-   hb_setKey( K_CTRL_C, { || set_clipboard() } )
-   hb_setKey( K_CTRL_V, { || get_clipboard() } )
+   hb_SetKey( K_CTRL_C, {|| set_clipboard() } )
+   hb_SetKey( K_CTRL_V, {|| get_clipboard() } )
    info_bar( "init", "setting up hot keys - end" )
 
    RETURN .T.
@@ -801,6 +801,8 @@ FUNCTION run_on_start()
       cModul := "FAKT"
    ELSEIF Left( cRun, 4 ) == "fin_"
       cModul := "FIN"
+   ELSE
+      cModul := "KALK"
    ENDIF
 
    SWITCH cModul

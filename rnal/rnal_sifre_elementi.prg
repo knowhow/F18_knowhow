@@ -149,7 +149,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
       ENDIF
 
-      my_db_edit_sql( "elem", nX, nY, {| Ch| elem_hand( Ch ) }, "", "",,,,, 1 )
+      my_browse( "elem", nX, nY, {| Ch| elem_hand( Ch ) }, "", "",,,,, 1 )
 
       aTmp := {}
       nTmpArea := Select()

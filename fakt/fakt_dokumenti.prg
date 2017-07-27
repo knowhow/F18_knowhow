@@ -436,14 +436,15 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, datum_max )
    Scatter()
 
    _txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""
+
    _dest := Space( 150 )
    _m_dveza := Space( 500 )
 
-   IF my_get_from_ini( 'FAKT', 'ProsiriPoljeOtpremniceNa50', 'N', KUMPATH ) == 'D'
-      _BrOtp := Space( 50 )
-   ELSE
+   //IF my_get_from_ini( 'FAKT', 'ProsiriPoljeOtpremniceNa50', 'N', KUMPATH ) == 'D'
+  //    _BrOtp := Space( 50 )
+   //ELSE
       _BrOtp := Space( 8 )
-   ENDIF
+   //ENDIF
 
    _DatOtp := CToD( "" )
    _BrNar := Space( 8 )
@@ -454,17 +455,21 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, datum_max )
    ENDIF
 
    aMemo := fakt_ftxt_decode( _txt )
+   altd()
    IF Len( aMemo ) > 0
       _txt1 := aMemo[ 1 ]
    ENDIF
+
    IF Len( aMemo ) >= 2
       _txt2 := aMemo[ 2 ]
    ENDIF
+
    IF Len( aMemo ) >= 5
       _txt3a := aMemo[ 3 ]
       _txt3b := aMemo[ 4 ]
       _txt3c := aMemo[ 5 ]
    ENDIF
+
    IF Len( aMemo ) >= 9
       _BrOtp := aMemo[ 6 ]
       _DatOtp := CToD( aMemo[ 7 ] )
@@ -519,10 +524,10 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, datum_max )
 
    dDatDok := _Datdok
 
-   UzorTxt()
+   fakt_ftxt_sub_renumeracija_pripreme( @_txt2 )
 
    IF !Empty ( cVezaOtpremnica )
-      _txt2 += Chr( 13 ) + Chr( 10 ) + cVezaOtpremnica
+      _txt2 += NRED_DOS + cVezaOtpremnica
    ENDIF
 
 

@@ -128,7 +128,6 @@
 // fakt pripr
 
 #xcommand O_FAKT_PRIPRRP   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to tag  "1"
-#xcommand O_FAKT_S_PRIPR   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to "1"
 
 // fakt tmp
 #xcommand O__FAKT          => select(F__FAKT)      ; my_use ("_fakt")
@@ -245,7 +244,7 @@
 #xcommand O__POS_DOKSP  => select(F__DOKSP) ; my_use("_pos_doksp")
 #xcommand O_K2C       => SELECT (F_K2C)   ; my_use("k2c")   ; set order to tag "1"
 #xcommand O_MJTRUR    => SELECT (F_MJTRUR); my_use("mjtrur"); set order to tag "1"
-#xcommand O_ROBAIZ    => SELECT (F_ROBAIZ); my_use("robaiz"); set order to tag "1"
+//#xcommand O_ROBAIZ    => SELECT (F_ROBAIZ); my_use("robaiz"); set order to tag "1"
 #xcommand O_RAZDR     => SELECT (F_RAZDR) ; my_use("razdr")
 #xcommand O_STRAD     => o_pos_strad()
 

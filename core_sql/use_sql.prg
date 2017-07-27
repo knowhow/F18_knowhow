@@ -89,11 +89,11 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
       ELSEIF cTable == "ops"
 
-         INDEX ON ID TAG ID TO ( cAlias )
-         INDEX ON NAZ TAG NAZ TO ( cAlias )
-         INDEX ON IDJ TAG IDJ TO ( cAlias )
-         INDEX ON IDKAN TAG IDKAN TO ( cAlias )
-         INDEX ON IDN0 TAG IDN0 TO ( cAlias )
+         INDEX ON ID TAG "ID" TO ( cAlias )
+         INDEX ON NAZ TAG "NAZ" TO ( cAlias )
+         INDEX ON IDJ TAG "IDJ" TO ( cAlias )
+         INDEX ON IDKAN TAG "IDKAN" TO ( cAlias )
+         INDEX ON IDN0 TAG "IDN0" TO ( cAlias )
          SET ORDER TO TAG "ID"
 
       ELSEIF cTable == "dest"
@@ -117,6 +117,9 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
          INDEX ON id + tip TAG "IDP" TO ( cAlias ) FOR tip = "P"
          SET ORDER TO TAG "ID"
 
+      ELSEIF cTable == "sast"
+         INDEX ON field->ID + Str( field->R_BR, 4, 0 ) + field->ID2 TAG "ID" TO ( cAlias )
+         SET ORDER TO TAG "ID"
 
       ELSE
          INDEX ON ID TAG ID TO ( cAlias )

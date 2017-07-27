@@ -117,7 +117,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    NEXT
 
 
-   my_db_edit_sql( "", nX - 3, nY, {| nCh | fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
+   my_browse( "", nX - 3, nY, {| nCh | fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
       NIL, NIL, NIL, 2,  NIL, NIL, {| nSkip | fakt_pregled_dokumenata_skip_block( nSkip ) } ) // aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock
 
 
@@ -436,7 +436,7 @@ STATIC FUNCTION fakt_pregled_dokumenata_skip_block( nRecs, cFiskalniUredjajModel
       ENDCASE
    ENDIF
 
-   IF TBInitialized .AND. nSkipped != 0  // TBInitialized se postavlja unutar my_db_edit_sql, znaci da je zavrseno inicijalno renderisanje browse objekta
+   IF TBInitialized .AND. nSkipped != 0  // TBInitialized se postavlja unutar my_browse, znaci da je zavrseno inicijalno renderisanje browse objekta
       prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
    ENDIF
 

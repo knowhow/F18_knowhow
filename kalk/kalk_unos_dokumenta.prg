@@ -139,7 +139,7 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    IF lAsistentObrada
       KEYBOARD Chr( K_LEFT )
    ENDIF
-   my_db_edit_sql( "PNal", nMaxRow, nMaxCol, {| lPrviPoziv | kalk_pripr_key_handler( lAsistentObrada ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
+   my_browse( "PNal", nMaxRow, nMaxCol, {| lPrviPoziv | kalk_pripr_key_handler( lAsistentObrada ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
 
    BoxC()
 

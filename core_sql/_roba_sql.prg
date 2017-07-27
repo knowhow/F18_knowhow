@@ -17,7 +17,7 @@ FUNCTION o_roba( cId )
    LOCAL cTabela := "roba"
 
    SELECT ( F_ROBA )
-   IF !use_sql_sif  ( cTabela, .T., "ROBA", cId  )
+   IF !use_sql_sif( cTabela, .T., "ROBA", cId  )
       error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.
    ENDIF
@@ -29,6 +29,21 @@ FUNCTION o_roba( cId )
    RETURN !Eof()
 
 
+FUNCTION o_adres( cId )
+
+   LOCAL cTabela := "adres", cAlias := "ADRES"
+
+   SELECT ( F_ADRES )
+   IF !use_sql_sif  ( cTabela, .T., cAlias, cId  )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN !Eof()
 
 
 FUNCTION find_roba_by_naz_or_id( cId )
@@ -57,6 +72,34 @@ FUNCTION find_roba_by_naz_or_id( cId )
 
    RETURN !Eof()
 
+
+FUNCTION find_roba_p_by_naz_or_id( cId )
+
+   LOCAL cAlias := "ROBA_P"
+   LOCAL cSqlQuery := "select * from fmk.roba"
+   LOCAL cIdSql
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE tip='P' "
+   cSqlQuery += " AND ("
+   cSqlQuery += " id ilike " + cIdSql
+   cSqlQuery += " OR naz ilike " + cIdSql
+   cSqlQuery += " OR sifradob ilike " + cIdSql
+   cSqlQuery += ")"
+
+   IF !use_sql( "roba_p", cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN !Eof()
 
 
 FUNCTION select_o_roba( cId )
@@ -319,7 +362,7 @@ STATIC FUNCTION use_sql_roba_where( hParams )
    LOCAL dDatOd
 
    IF hb_HHasKey( hParams, "id" )
-      IF hb_HHasKey( hParams, "sintetika" ) .AND. hParams[ "sintetika" ]  //   npr: id like '100%'
+      IF hb_HHasKey( hParams, "sintetika" ) .AND. hParams[ "sintetika" ]  // npr: id like '100%'
          cWhere := "id LIKE " + sql_quote( Trim( hParams[ "id" ] ) + "%" )
       ELSE
          cWhere := parsiraj_sql( "id", hParams[ "id" ] )
@@ -332,6 +375,10 @@ STATIC FUNCTION use_sql_roba_where( hParams )
 
    IF hb_HHasKey( hParams, "barkod" )
       cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "barkod", hParams[ "barkod" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "tip" )
+      cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "tip", hParams[ "tip" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "where" )

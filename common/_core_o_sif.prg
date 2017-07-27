@@ -178,19 +178,35 @@ FUNCTION o_vrnal()
 */
 
 
-FUNCTION o_tdok()
+FUNCTION o_tdok( cId )
 
    LOCAL cTabela := "tdok"
 
    SELECT ( F_TDOK )
-   IF !use_sql_sif  ( cTabela )
+   IF !use_sql_sif  ( cTabela, .T., "TDOK", cId  )
       error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.
    ENDIF
-
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN !Eof()
+
+
+FUNCTION select_o_tdok( cId )
+
+   SELECT ( F_TDOK )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_tdok( cId )
 
 
 

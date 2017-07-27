@@ -218,8 +218,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
       ?? dDatNal
    ENDIF
 
-   SELECT TNAL
-   HSEEK cIdVN
+   select_o_tnal( cIdVN )
    SELECT PANAL
 
    @ PRow(), PCol() + 4 SAY tnal->naz
@@ -260,7 +259,7 @@ STATIC FUNCTION close_open_panal()
 
    // o_konto()
    // o_partner()
-   o_tnal()
+   //o_tnal()
    o_nalog()
 
    RETURN .T.

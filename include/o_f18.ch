@@ -68,11 +68,6 @@
 
 // modul FIN
 
-#xcommand O_PNALOG       => o_fin_pnalog()
-#xcommand O_PSUBAN       => o_fin_psuban()
-#xcommand O_PANAL        => o_fin_panal()
-#xcommand O_PSINT        => o_fin_psint()
-
 
 #xcommand O_KOMP_DUG    => select (F_FIN_KOMP_DUG);  my_use ("komp_dug")
 #xcommand O_KOMP_POT    => select (F_FIN_KOMP_POT);  my_use ("komp_pot")

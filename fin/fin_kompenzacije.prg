@@ -251,7 +251,7 @@ STATIC FUNCTION _gen_kompen( vars )
    zap_tabele_kompenzacije()
 
    // o_suban()
-   o_tdok()
+   //o_tdok()
 
    // SELECT SUBAN
 

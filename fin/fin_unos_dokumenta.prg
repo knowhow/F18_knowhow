@@ -661,18 +661,29 @@ FUNCTION o_fin_edit()
    // o_funk()
    // ENDIF
 
-   O_PSUBAN
-   O_PANAL
-   O_PSINT
-   O_PNALOG
+   IF !o_fin_psuban()
+      RETURN .F.
+   ENDIF
+   IF !o_fin_panal()
+      RETURN .F.
+   ENDIF
+   IF !o_fin_psint()
+      RETURN .F.
+   ENDIF
+   IF !o_fin_pnalog()
+      RETURN .F.
+   ENDIF
+
    // O_PAREK
    // o_konto()
    // o_partner()
-   o_tnal()
-   o_tdok()
-   o_nalog()
-   o_fin_pripr()
-
+   // o_tnal()
+   // o_tdok()
+   // o_nalog()
+   IF !o_fin_pripr()
+      RETURN .F.
+   ENDIF
+   
    SELECT fin_pripr
    SET ORDER TO TAG "1"
    GO TOP

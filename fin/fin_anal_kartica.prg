@@ -114,7 +114,7 @@ FUNCTION fin_anal_kartica()
       m := Stuff( m, 30, 0, " -- ------------- ---------- --------------------" )
       o_sql_suban_kto_partner( cIdFirma )
       SET ORDER TO TAG 4
-      o_tdok()
+      //o_tdok()
    ENDIF
 
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
@@ -130,7 +130,7 @@ FUNCTION fin_anal_kartica()
 
    ENDIF
 
-   o_konto()
+   //o_konto()
 
    SELECT ANAL
 
@@ -247,8 +247,7 @@ FUNCTION fin_anal_kartica()
                SKIP 1
             ENDDO
             IF lPom
-               SELECT TDOK
-               HSEEK SUBAN->idtipdok
+               select_o_tdok( SUBAN->idtipdok )
             ENDIF
             SELECT ANAL
             @ PRow(), 31 + IF( cBrza == "S", 8, 0 ) SAY IF( lPom, SUBAN->idtipdok, "??"      )

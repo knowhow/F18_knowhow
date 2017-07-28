@@ -16,15 +16,15 @@ MEMVAR ImeKol, Kol
 
 FUNCTION P_Roba_select( cId )
 
-   LOCAL lExit, xRet
+   LOCAL xRet
 
-   lExit := browse_exit_on_enter()
-
-   browse_exit_on_enter( .T. )
+   //lExit := browse_exit_on_enter()
+   //browse_exit_on_enter( .T. )
    xRet := p_roba( @cId )
-   browse_exit_on_enter( lExit )
+   //browse_exit_on_enter( lExit )
 
    RETURN xRet
+
 
 /*
    P_Roba( @cId )

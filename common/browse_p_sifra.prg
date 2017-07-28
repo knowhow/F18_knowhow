@@ -35,10 +35,19 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    LOCAL cUslovSrch :=  ""
    LOCAL cNazSrch
    LOCAL cOrderTag
+   LOCAL lExit
+   LOCAL lExitOnEnter := .F.
 
    // LOCAL cSeekRet
    LOCAL lOtvoriBrowse := .F.
    LOCAL lRet := .T.
+
+   IF cId != NIL
+      lExit := browse_exit_on_enter()
+      browse_exit_on_enter( .T. )
+      lExitOnEnter := .T.
+   ENDIF
+
 
    // PRIVATE fID_J := .F.
 
@@ -60,6 +69,9 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    SELECT ( nDbf )
    IF !Used()
       MsgBeep( "Tabela nije otvorena u radnom području !#Prekid operacije!" )
+      IF lExitOnEnter
+         browse_exit_on_enter( lExit )
+      ENDIF
       RETURN .F.
    ENDIF
 
@@ -77,6 +89,9 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
       PopSifV()
       PopWa( nDbf )
 
+      IF lExitOnEnter
+         browse_exit_on_enter( lExit )
+      ENDIF
       RETURN cRet
 
    ENDIF
@@ -92,7 +107,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
       lOtvoriBrowse := .T.
    ENDIF
 
-
    lRet := .T.
 
    // IF ( lOtvoriBrowse .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( field->naz ) ) ) ;
@@ -101,7 +115,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
       // .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )
 
       s_lPrviPoziv := .T.
-
       IF Eof()
          SKIP -1
       ENDIF
@@ -120,7 +133,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
          IF !( nDBf )->( Used() )
             Alert( "not used ?!" )
          ENDIF
-
          cID := ( nDbf )->id
          // IF fID_J
          // __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
@@ -149,6 +161,10 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
 
    PopSifV()
    PopWa( nDbf )
+
+   IF lExitOnEnter
+      browse_exit_on_enter( lExit )
+   ENDIF
 
    RETURN lRet
 
@@ -530,7 +546,7 @@ STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nDbf, cNaslov, bBlok, aZabran
       aZabIsp := {}
    ENDIF
 
-   //Ch := LastKey()
+   // Ch := LastKey()
 
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )
@@ -570,12 +586,13 @@ STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nDbf, cNaslov, bBlok, aZabran
 
    CASE Ch == K_ENTER
 
-      IF gPregledSifriIzMenija
-         RETURN DE_CONT
-      ELSE
-         s_lPrviPoziv := .F.
-         RETURN DE_ABORT
-      ENDIF
+      // IF gPregledSifriIzMenija
+      RETURN DE_CONT
+      // ELSE
+      // s_lPrviPoziv := .F.
+      // s_lPrviPoziv := .F.
+      // RETURN DE_ABORT
+      // ENDIF
 
 #ifdef F18_USE_MATCH_CODE
    CASE Upper( Chr( Ch ) ) == "F"

@@ -197,7 +197,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
          // oTCol := TBColumnNew( ImeKol[ i, 1 ], bShowField )
          oTCol := TBColumnNew( ImeKol[ i, 1 ], ImeKol[ i, 2 ] ) // "Rb.br", { || field->rbr }
          IF hParams[ "podvuci_b" ] <> NIL
-            TCol:colorBlock := {|| iif( Eval( hParams[ "podvuci_b" ] ), { 5, 2 }, { 1, 2 } ) }
+            oTCol:colorBlock := {|| iif( Eval( hParams[ "podvuci_b" ] ), { 5, 2 }, { 1, 2 } ) }
          ENDIF
          oBrowse:addColumn( oTCol )
       END IF

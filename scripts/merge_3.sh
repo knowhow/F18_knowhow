@@ -4,7 +4,8 @@ echo "merge from origin/3 (no commit)"
 
 git merge --no-ff --no-commit origin/3
 
-echo "CHANGELOG.md -> CHANGELOG_MERGE.md"
+git checkout origin/3 CHANGELOG.md
+echo "CHANGELOG.md -> CHANGELOG_MERGE.md (from origin/3 branch)"
 
 cp CHANGELOG.md CHANGELOG_MERGE.md
 

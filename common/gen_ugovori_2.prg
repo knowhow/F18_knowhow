@@ -570,16 +570,13 @@ STATIC FUNCTION n_partner( cId )
    RETURN .T.
 
 
-// ------------------------------------
-// nastimaj roba u ROBI
-// ------------------------------------
-STATIC FUNCTION n_roba( cId )
+
+STATIC FUNCTION nastimaj_se_na_roba_by_id( cId )
 
    LOCAL nTArr
 
    nTArr := Select()
-   SELECT roba
-   SEEK cId
+   select_o_roba( cId )
    SELECT ( nTArr )
 
    RETURN .T.
@@ -724,7 +721,7 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
       ENDIF
 
       // nastimaj roba na rugov-idroba
-      n_roba( rugov->idroba )
+      nastimaj_se_na_roba_by_id( rugov->idroba )
 
       select_o_tarifa( roba->idtarifa )
       nPorez := tarifa->opp

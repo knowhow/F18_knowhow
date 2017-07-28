@@ -134,176 +134,176 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
    AltD()
    browse_only( hParams, .T. )
 
-   //lKeyPressed := .F.
+   // lKeyPressed := .F.
 
-   //TB:ForceStable()
+   // TB:ForceStable()
 
-   //DispEnd()
-   //IF LastRec() == 0
-  //    Ch := hb_keyNew( HB_KX_DOWN )
-  //    lKeyPressed := .T.
-   //ENDIF
+   // DispEnd()
+   // IF LastRec() == 0
+   // Ch := hb_keyNew( HB_KX_DOWN )
+   // lKeyPressed := .T.
+   // ENDIF
 
    DO WHILE .T.
-      //FOR nCiklus := 1 TO 1
-         // IF in_calc()
-         // hb_idleSleep( 0.5 )
-         // LOOP
-         // ENDIF
+      // FOR nCiklus := 1 TO 1
+      // IF in_calc()
+      // hb_idleSleep( 0.5 )
+      // LOOP
+      // ENDIF
 
-         nKeyHandlerRetEvent := -99
-         lKeyHandlerStarted := .F.
+      nKeyHandlerRetEvent := -99
+      lKeyHandlerStarted := .F.
 
-         IF Deleted()
-            SKIP
-            IF Eof()
-               Tb:Down()
-            ELSE
-               Tb:Up()
-            ENDIF
-            Tb:RefreshCurrent()
+      IF Deleted()
+         SKIP
+         IF Eof()
+            Tb:Down()
+         ELSE
+            Tb:Up()
          ENDIF
+         Tb:RefreshCurrent()
+      ENDIF
 
-         DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
-            Tb:stabilize()
-         ENDDO
+      DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
+         Tb:stabilize()
+      ENDDO
 
-         // DO WHILE !lKeyPressed .AND. !TB:Stabilize()
-         // lKeyPressed := ( nKey := Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) ) != 0
-         // hb_idleSleep( 0.5 )
-         // altd()
-         // ENDDO
+      // DO WHILE !lKeyPressed .AND. !TB:Stabilize()
+      // lKeyPressed := ( nKey := Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) ) != 0
+      // hb_idleSleep( 0.5 )
+      // altd()
+      // ENDDO
 
-         // IF lKeyPressed
-         // lKeyPressed := .F.
-         // Ch := hb_keyStd( nKey )
-         // ENDIF
+      // IF lKeyPressed
+      // lKeyPressed := .F.
+      // Ch := hb_keyStd( nKey )
+      // ENDIF
 
-         IF in_calc()
-            hb_idleSleep( 0.5 )
-            LOOP
-         ENDIF
+      IF in_calc()
+         hb_idleSleep( 0.5 )
+         LOOP
+      ENDIF
 
-         IF !TBInitialized
-            TBInitialized := .T.
-            Eval( TB:SkipBlock, 1 )
-            Eval( TB:SkipBlock, - 1 )
-         ENDIF
+      IF !TBInitialized
+         TBInitialized := .T.
+         Eval( TB:SkipBlock, 1 )
+         Eval( TB:SkipBlock, - 1 )
+      ENDIF
 
-         //IF nCiklus == 2
-          //  Ch := 0
-         //ELSE
-            Ch := Inkey( 0 )
-         //ENDIF
-         // hb_idleSleep( 0.2 )
+      // IF nCiklus == 2
+      // Ch := 0
+      // ELSE
+      Ch := Inkey( 0 )
+      // ENDIF
+      // hb_idleSleep( 0.2 )
 
 
-         IF !in_calc()
+      IF !in_calc()
 #ifdef F18_DEBUG
-            cTest := ""
-            IF Alias() $ "FTXT#PARTN"
-               cTest := AllTrim( id )
-            ENDIF
-            error_bar( "debug", "browse key: " +  Str( Asc( Chr( Ch ) ), 4 ) + " " + cTest )
-#endif
-            nKeyHandlerRetEvent := Eval( bKeyHandler, Ch )
+         cTest := ""
+         IF Alias() $ "FTXT#PARTN"
+            cTest := AllTrim( id )
          ENDIF
-
-         DO CASE
-
-         CASE Ch == K_UP
-#ifdef F18_DEBUG
-            cTest := ""
-            IF Alias() == "FTXT"
-               cTest := AllTrim( id )
-            ENDIF
-            info_bar( "debug", "tb:up" )
+         error_bar( "debug", "browse key: " +  Str( Asc( Chr( Ch ) ), 4 ) + " " + cTest )
 #endif
-            TB:up()
+         nKeyHandlerRetEvent := Eval( bKeyHandler, Ch )
+      ENDIF
 
-         CASE Ch == K_DOWN
-            TB:down()
+      DO CASE
 
+      CASE Ch == K_UP
 #ifdef F18_DEBUG
-            AltD()
-            cTest := ""
-            IF Alias() == "FTXT"
-               cTest := AllTrim( id )
-            ENDIF
-            info_bar( "debug", "tb:down" )
-#endif
-         CASE Ch == K_LEFT
-            TB:Left()
-#ifdef F18_DEBUG
-            cTest := ""
-            IF Alias() == "FTXT"
-               cTest := AllTrim( id )
-            ENDIF
-            info_bar( "debug", "tb:left" )
-#endif
-         CASE Ch == K_RIGHT
-            TB:Right()
-
-         CASE Ch == K_PGUP
-            TB:PageUp()
-
-         CASE Ch == K_CTRL_PGUP
-            Tb:GoTop()
-            Tb:Refreshall()
-
-         CASE Ch == K_CTRL_PGDN
-            Tb:GoBottom()
-
-         CASE Ch == K_PGDN
-            TB:PageDown()
-
-         CASE Ch == K_CTRL_END .OR. Ch == K_ESC
-            lExitBrowse := .T.
-            nKeyHandlerRetEvent := DE_ABORT
-
-         CASE Ch == K_ENTER .AND. browse_exit_on_enter()
-            AltD()
-            lExitBrowse := .T.
-            nKeyHandlerRetEvent := DE_ABORT
-
-         OTHERWISE
-
-            TB:applyKey( Ch )
-            IF !lExitBrowse
-               nKeyHandlerRetEvent := my_db_edit_standardne_komande( Tb, Ch, @nKeyHandlerRetEvent, nPored, aPoredak )
-            ENDIF
-         ENDCASE
-
-
-         SWITCH nKeyHandlerRetEvent
-         CASE DE_REFRESH
-            TB:RefreshAll()
-            // TB:ForceStable()
-            @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
-            EXIT
-
-         CASE DE_ABORT
-            IF nPrazno == 0
-               BoxC()
-            ENDIF
-            lExitBrowse := .T.
-            EXIT
-
-         OTHERWISE
-            // Tb:RefreshCurrent()
-            // TB:ForceStable()
-         ENDSWITCH
-
-         IF lExitBrowse
-            EXIT
+         cTest := ""
+         IF Alias() == "FTXT"
+            cTest := AllTrim( id )
          ENDIF
+         info_bar( "debug", "tb:up" )
+#endif
+         TB:up()
 
-         // DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
-         // Tb:stabilize()
-         // ENDDO
-         // KEYBOARD "X"
+      CASE Ch == K_DOWN
+         TB:down()
 
-      //NEXT
+#ifdef F18_DEBUG
+         AltD()
+         cTest := ""
+         IF Alias() == "FTXT"
+            cTest := AllTrim( id )
+         ENDIF
+         info_bar( "debug", "tb:down" )
+#endif
+      CASE Ch == K_LEFT
+         TB:Left()
+#ifdef F18_DEBUG
+         cTest := ""
+         IF Alias() == "FTXT"
+            cTest := AllTrim( id )
+         ENDIF
+         info_bar( "debug", "tb:left" )
+#endif
+      CASE Ch == K_RIGHT
+         TB:Right()
+
+      CASE Ch == K_PGUP
+         TB:PageUp()
+
+      CASE Ch == K_CTRL_PGUP
+         Tb:GoTop()
+         Tb:Refreshall()
+
+      CASE Ch == K_CTRL_PGDN
+         Tb:GoBottom()
+
+      CASE Ch == K_PGDN
+         TB:PageDown()
+
+      CASE Ch == K_CTRL_END .OR. Ch == K_ESC
+         lExitBrowse := .T.
+         nKeyHandlerRetEvent := DE_ABORT
+
+      CASE Ch == K_ENTER .AND. browse_exit_on_enter()
+         AltD()
+         lExitBrowse := .T.
+         nKeyHandlerRetEvent := DE_ABORT
+
+      OTHERWISE
+
+         TB:applyKey( Ch )
+         IF !lExitBrowse
+            nKeyHandlerRetEvent := my_db_edit_standardne_komande( Tb, Ch, @nKeyHandlerRetEvent, nPored, aPoredak )
+         ENDIF
+      ENDCASE
+
+
+      SWITCH nKeyHandlerRetEvent
+      CASE DE_REFRESH
+         TB:RefreshAll()
+         // TB:ForceStable()
+         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
+         EXIT
+
+      CASE DE_ABORT
+         IF nPrazno == 0
+            BoxC()
+         ENDIF
+         lExitBrowse := .T.
+         EXIT
+
+      OTHERWISE
+         // Tb:RefreshCurrent()
+         // TB:ForceStable()
+      ENDSWITCH
+
+      IF lExitBrowse
+         EXIT
+      ENDIF
+
+      // DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
+      // Tb:stabilize()
+      // ENDDO
+      // KEYBOARD "X"
+
+      // NEXT
 
    ENDDO
 
@@ -684,14 +684,18 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
          ENDIF
       ENDIF
 
-      IF Alias() == "ROBA"
-         Box( "#Unijeti dio šifre ili sifredob ili naziva", 1, 70 )
+      IF Alias() == "ROBA" .OR. Alias() == "ROBA_P"
+         Box( "#Unijeti dio šifre / sifredob / naziva", 1, 70 )
          SET CURSOR ON
          @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
          READ
          BoxC()
          IF LastKey() != K_ESC
-            find_roba_by_naz_or_id( cIdOrNaz )
+            IF Alias() == "ROBA_P"
+               find_roba_p_by_naz_or_id( cIdOrNaz )
+            ELSE
+               find_roba_by_naz_or_id( cIdOrNaz )
+            ENDIF
             TB:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
@@ -718,6 +722,19 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
          BoxC()
          IF LastKey() != K_ESC
             find_radn_by_naz_or_id( cIdOrNaz )
+            TB:RefreshAll()
+            RETURN DE_REFRESH
+         ENDIF
+      ENDIF
+
+      IF Alias() == "FTXT"
+         Box( "#Unijeti dio šifre ili sadržaja uzorka", 1, 70 )
+         SET CURSOR ON
+         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         READ
+         BoxC()
+         IF LastKey() != K_ESC
+            find_fakt_txt_by_naz_or_id( cIdOrNaz )
             TB:RefreshAll()
             RETURN DE_REFRESH
          ENDIF

@@ -222,6 +222,7 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
    // // RETURN "naz"
    // RETURN .F.
    // ENDIF
+   AltD()
 
    IF Alias() == "PARTN"
       find_partner_by_naz_or_id( cId )
@@ -241,8 +242,12 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
       find_rj_by_id( cId )
    ELSEIF Alias() == "FTXT"
       find_fakt_ftxt_by_id( cId )
-   ELSE
-      SEEK cId
+      // ELSE
+      // SEEK cId
+   ENDIF
+
+   IF !Used() .OR. FieldPos( "id" ) == 0
+      RETURN .F.
    ENDIF
 
    IF field->id == cId
@@ -279,10 +284,15 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
 
 FUNCTION find_sifra_by_naz( cTable, cIdPart, cDjoker )
 
-   LOCAL cSqlQuery := "select * from fmk." + cTable
+   LOCAL cSqlQuery := "select * from fmk."
    LOCAL cIdSql
    LOCAL cField
 
+   IF cTable == "ftxt"
+      cTable := "fakt_ftxt"
+   ENDIF
+   
+   cSqlQuery += cTable
    cIdSql := sql_quote( Upper( AllTrim( cIdPart ) ) + "%" )
 
    IF cDjoker $ ".>" // "." - pocetni dio naziva, ">" pocetni dio sifre

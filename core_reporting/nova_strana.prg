@@ -15,8 +15,16 @@
 FUNCTION zagl_organizacija( nLeft )
 
    ? " "
-   ? Space( nLeft ) + AllTrim( tip_organizacije() ) + " :", AllTrim( self_organizacija_naziv() ) + ", baza (" + my_server_params()[ "database" ] + ")"
+   ? Space( nLeft ) + AllTrim( tip_organizacije() ) + " :", AllTrim( self_organizacija_naziv() ) + ;
+      ", baza (" + my_server_params()[ "database" ] + ")" + my_server_params()[ "host" ] + ":" + AllTrim( Str( my_server_params()[ "port" ] ), 5 )
    ? " "
+
+   oServer := TPQServer():New( hSqlParams[ "host" ], ;
+      hSqlParams[ "database" ], ;
+      hSqlParams[ "user" ], ;
+      hSqlParams[ "password" ], ;
+      hSqlParams[ "port" ], ;
+      hSqlParams[ "schema" ] )
 
    RETURN .T.
 
@@ -37,12 +45,12 @@ FUNCTION check_nova_strana( bZagl, oPDF, lForceBreakPage, nOduzmi, nPraznihRedov
    ENDIF
 
    FOR nTmp := 1 TO nPraznihRedovaIliNovaStrana // dodaj prazne redove
-      IF PRow() <= (nMaxRow - nOduzmi)
+      IF PRow() <= ( nMaxRow - nOduzmi )
          ?
       ENDIF
    NEXT
 
-   IF lForceBreakPage .OR. ( PRow() > (nMaxRow - nOduzmi) )
+   IF lForceBreakPage .OR. ( PRow() > ( nMaxRow - nOduzmi ) )
       IF ValType( oPDF ) == "O"
          oPDF:DrawText( oPDF:MaxRow() + 1, 0, "" )
          oPDF:PageHeader()

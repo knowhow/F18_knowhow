@@ -184,6 +184,10 @@ FUNCTION my_server_params( hSqlParams )
    RETURN s_psqlServer_params
 
 
+FUNCTION f18_baza_server_host()
+   RETURN    "[" + my_server_params()[ "database" ] + "] " + my_server_params()[ "host" ] + ":" + AllTrim( Str( my_server_params()[ "port" ] ), 5 )
+
+
 FUNCTION tekuca_sezona()
 
    LOCAL hDbServerParams

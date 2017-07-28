@@ -736,22 +736,19 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
 
       Scatter()
 
-      // ako je roba tip U
-      IF roba->tip == "U"
 
+      IF roba->tip == "U"
          // aMemo[1]
          // pronadji djoker #ZA_MJ#
          cPom := str_za_mj( roba->naz, nMjesec, nGodina )
-
-         // dodaj ovo u _txt
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
       ELSE
          // aMemo[1]
-         fakt_a_to_public_var_txt( "", .T. )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
       ENDIF
 
-      // samo na prvoj stavci generisi txt
-      IF nRbr == 0
+
+      IF nRbr == 0   // samo na prvoj stavci generisi txt
 
          // nadji tekstove
          cTxt1 := f_ftxt( ugov->idtxt )
@@ -765,46 +762,46 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
          // aMemo[2]
          cPom := cTxt1 + cTxt2 + cTxt3 + cTxt4 + cTxt5
          // dodaj u polje _txt
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          // dodaj podatke o partneru
 
          // aMemo[3]
          // naziv partnera
          cPom := AllTrim( partn->naz )
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          // adresa
          // aMemo[4]
          cPom := AllTrim( partn->adresa )
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          // ptt i mjesto
          // aMemo[5]
          cPom := AllTrim( partn->ptt )
          cPom += " "
          cPom += AllTrim( partn->mjesto )
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          // br.otpremnice i datum
          // aMemo[6,7]
-         fakt_a_to_public_var_txt( "", .T. )
-         fakt_a_to_public_var_txt( "", .T. )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
 
          // br. ugov
          // aMemo[8]
-         fakt_a_to_public_var_txt( ugov->id, .T. )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( ugov->id, .T. )
 
          cPom := DToC( dDatGen )
 
          // datum isporuke
          // aMemo[9]
          cPom := DToC( dDatVal )
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          // datum valute
          // aMemo[10]
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          __destinacija := ""
 
@@ -813,7 +810,7 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
             // dodaj prazne zapise
             cPom := " "
             FOR i := 11 TO 17
-               fakt_a_to_public_var_txt( cPom, .T. )
+               fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom, .T. )
             NEXT
 
             // uzmi iz destinacije
@@ -852,7 +849,7 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
 
             __destinacija := cPom
 
-            fakt_a_to_public_var_txt( cPom, .T. )
+            fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom, .T. )
 
          ENDIF
 

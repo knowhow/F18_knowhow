@@ -110,7 +110,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
          GO TOP // bez parametara
       ENDIF
 
-      lRet := my_browse( NIL, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
+      lRet := my_browse( NIL, nVisina, nSirina,  {| nCh | my_browse_p_sifra_key_handler( nCh, nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
          ToStrU( cNaslov ), "", lInvert, aOpcije, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
@@ -498,7 +498,7 @@ FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
    */
 
 
-STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
+STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    LOCAL nI
    LOCAL j
@@ -530,7 +530,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       aZabIsp := {}
    ENDIF
 
-   Ch := LastKey()
+   //Ch := LastKey()
 
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )
@@ -594,7 +594,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       ENDIF
       Tb:RefreshCurrent()
 
-      IF edit_sql_sif_item( Ch, cOrderTag, aZabIsp, .T. ) == 1
+      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .T. ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -603,8 +603,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE ( Ch == K_F2 .OR. Ch == K_CTRL_A )
 
       Tb:RefreshCurrent()
-
-      IF edit_sql_sif_item( Ch, cOrderTag, aZabIsp, .F. ) == 1
+      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .F. ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -679,7 +678,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
 
 
-STATIC FUNCTION edit_sql_sif_item( nCh, cOrderTag, aZabIsp, lNovi )
+STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
 
    LOCAL nI
    LOCAL j
@@ -1122,11 +1121,11 @@ STATIC FUNCTION Popup( cOrderTag )
    LOCAL Izbor
 
    AAdd( Opc, "1. novi                  " )
-   AAdd( opcexe, {|| edit_sql_sif_item( K_CTRL_N, cOrderTag, NIL, .T. ) } )
+   AAdd( opcexe, {|| my_browse_edit_red( K_CTRL_N, cOrderTag, NIL, .T. ) } )
    AAdd( Opc, "2. edit  " )
-   AAdd( opcexe, {|| edit_sql_sif_item( K_F2, cOrderTag, NIL, .F. ) } )
+   AAdd( opcexe, {|| my_browse_edit_red( K_F2, cOrderTag, NIL, .F. ) } )
    AAdd( Opc, "3. dupliciraj  " )
-   AAdd( opcexe, {|| edit_sql_sif_item( K_F4, cOrderTag, NIL, .T. ) } )
+   AAdd( opcexe, {|| my_browse_edit_red( K_F4, cOrderTag, NIL, .T. ) } )
    AAdd( Opc, "4. <a+R> za sifk polja  " )
    AAdd( opcexe, {|| repl_sifk_item() } )
    AAdd( Opc, "5. copy polje -> sifk polje  " )

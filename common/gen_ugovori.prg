@@ -312,7 +312,7 @@ FUNCTION gen_ug()
 
             cVezaUgovor := "Veza: " + Trim( ugov->id )
 
-            _txt := fakt_ftxt_encode( ftxt->naz, _Txt1, _Txt3a, _Txt3b, _Txt3c, cVezaUgovor, cDodTxt )
+            _txt := fakt_ftxt_encode_gen_ugovori( ftxt->naz, _Txt1, _Txt3a, _Txt3b, _Txt3c, cVezaUgovor, cDodTxt )
 
 
          ENDIF

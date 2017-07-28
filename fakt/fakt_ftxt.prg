@@ -2,6 +2,8 @@
 
 MEMVAR Kol, ImeKol
 
+STATIC s_cLastFtxtIdShow := "  "
+
 
 FUNCTION p_fakt_ftxt( cId, dx, dy )
 
@@ -56,8 +58,7 @@ FUNCTION p_fakt_ftxt( cId, dx, dy )
    RETURN xRet
 
 
-
-FUNCTION fakt_ftxt_naz_tarabiraj( cNaz )
+STATIC FUNCTION fakt_ftxt_naz_tarabiraj( cNaz )
 
    cNaz := StrTran( cNaz, NRED_DOS, "##" )
    cNaz := StrTran( cNaz, hb_eol(), "##" )
@@ -74,7 +75,13 @@ FUNCTION fakt_ftxt_keyboard_handler( nTopPos, nLeftPos, nBottomPos, nTxtLenght )
    LOCAL nI := 0
    LOCAL aFtxt := {}
 
+   IF s_cLastFtxtIdShow == field->id
+      RETURN DE_CONT
+   ENDIF
+
+   // Tb:RefreshCurrent()
    @ nTopPos, 6 SAY "uzorak teksta id: " + field->id
+   s_cLastFtxtIdShow := field->id
 
    aFtxt := decode_string_to_array( field->naz, nTxtLenght - 1 - nLeftPos, "##" )
 
@@ -86,9 +93,7 @@ FUNCTION fakt_ftxt_keyboard_handler( nTopPos, nLeftPos, nBottomPos, nTxtLenght )
       ENDIF
    NEXT
 
-   RETURN DE_REFRESH
-
-
+   RETURN DE_CONT
 
 
 /*
@@ -161,6 +166,11 @@ FUNCTION fakt_ftxt_decode_string( cFaktTxt )
 
    hFaktTxt[ "txt1" ] := ""
    hFaktTxt[ "txt2" ] := ""
+
+   hFaktTxt[ "partner_txt_a" ] := ""
+   hFaktTxt[ "partner_txt_b" ] := ""
+   hFaktTxt[ "partner_txt_c" ] := ""
+
    hFaktTxt[ "brotp" ] := Space( 50 )
    hFaktTxt[ "datotp" ] := CToD( "" )
    hFaktTxt[ "brnar" ] := Space( 50 )
@@ -190,6 +200,10 @@ FUNCTION fakt_ftxt_decode_string( cFaktTxt )
    IF nLen >= 2
       hFaktTxt[ "txt2" ] := aMemo[ 2 ]
    ENDIF
+
+   hFaktTxt[ "partner_txt_a" ] := aMemo[ 3 ]
+   hFaktTxt[ "partner_txt_b" ] := aMemo[ 4 ]
+   hFaktTxt[ "partner_txt_c" ] := aMemo[ 5 ]
 
    IF nLen >= 9
       hFaktTxt[ "brotp" ] := aMemo[ 6 ]
@@ -230,8 +244,8 @@ FUNCTION fakt_ftxt_decode_string( cFaktTxt )
       hFaktTxt[ "d2n2" ] := aMemo[ 17 ]
    ENDIF
 
-   IF hFaktParams[ "destinacije" ] .AND. nLen >= 18
-      hFaktTxt[ "destinacija" ] := PadR( AllTrim( aMemo[ 18 ] ), 500 )
+   IF hFaktParams[ "destinacije" ] .AND. nLen >= 18 // parametri - mnozina - desinacijE
+      hFaktTxt[ "destinacija" ] := PadR( AllTrim( aMemo[ 18 ] ), 500 ) // hFaktTxt - jednina - destinacijA
    ENDIF
 
    IF hFaktParams[ "fakt_dok_veze" ] .AND. nLen >= 19
@@ -246,7 +260,75 @@ FUNCTION fakt_ftxt_decode_string( cFaktTxt )
 
 
 
+FUNCTION fakt_ftxt_encode_5( hFaktTxt )
 
+   LOCAL _tmp
+   LOCAL hFaktParams := fakt_params()
+   LOCAL cTxt
+   LOCAL cDestinacija, cDokumentVeze, cObjekti
+
+   AltD()
+   // odsjeci na kraju prazne linije
+   // hFaktTxt[ "txt2" ] := OdsjPLK( hFaktTxt[ "txt2" ] )
+
+   IF !Empty( hFaktTxt[ "veza_otpremnice" ] ) .AND. ( ! "Račun formiran na osnovu:" $ hFaktTxt[ "txt2" ] )
+      hFaktTxt[ "txt2" ] := hFaktTxt[ "txt2" ] + NRED_DOS + hFaktTxt[ "veza_otpremnice" ]
+   ENDIF
+
+   cTxt := Chr( 16 ) + Trim( hFaktTxt[ "txt1" ] ) + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "txt2" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "partner_txt_a" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "partner_txt_b" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "partner_txt_c" ] + Chr( 17 )
+
+   // 6 - br otpr
+   cTxt += Chr( 16 ) + hFaktTxt[ "brotp" ] + Chr( 17 )
+   // 7 - dat otpr
+   cTxt += Chr( 16 ) + DToC( hFaktTxt[ "datotp" ] ) + Chr( 17 )
+   // 8 - br nar
+   cTxt += Chr( 16 ) + hFaktTxt[ "brnar" ] + Chr( 17 )
+   // 9 - dat nar
+   cTxt += Chr( 16 ) + DToC( hFaktTxt[ "datpl" ] ) + Chr( 17 )
+   // 10
+   cTxt += Chr( 16 ) + hFaktTxt[ "veza_otpremnice" ] + Chr( 17 )
+   // 11
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2k1" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2k2" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2k3" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2k4" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2k5" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2n1" ] + Chr( 17 )
+   cTxt += Chr( 16 ) + hFaktTxt[ "d2n2" ] + Chr( 17 )
+
+   IF hFaktParams[ "destinacije" ]
+      cDestinacija := hFaktTxt[ "destinacija" ]
+   ELSE
+      cDestinacija := ""
+   ENDIF
+
+   // 18 - Destinacija
+   cTxt += Chr( 16 ) + AllTrim( cDestinacija ) + Chr( 17 )
+
+   // 19 - vezni dokumenti
+   IF hFaktParams[ "fakt_dok_veze" ]
+      cDokumentVeze := AllTrim( hFaktTxt[ "dokument_veza" ] )
+   ELSE
+      cDokumentVeze := ""
+   ENDIF
+   cTxt += Chr( 16 ) + cDokumentVeze + Chr( 17 )
+
+   // 20 - objekti
+   IF hFaktParams[ "fakt_objekti" ]
+      cObjekti := hFaktTxt[ "objekti" ]
+   ELSE
+      cObjekti := ""
+   ENDIF
+   cTxt += Chr( 16 ) + cObjekti + Chr( 17 )
+
+   RETURN cTxt
+
+
+/*
 FUNCTION fakt_ftxt_encode_2( aFaktTxtIn, cBrNar, cBrOtpr, dDatOtpr, dDatPl )
 
    LOCAL cFaktTxtNovi, nI
@@ -277,16 +359,16 @@ FUNCTION fakt_ftxt_encode_2( aFaktTxtIn, cBrNar, cBrOtpr, dDatOtpr, dDatPl )
    ENDIF
 
    RETURN cFaktTxtNovi
+*/
 
-
-
-FUNCTION fakt_ftxt_encode_3( cTxt1, cTxt2, _txt3a, _txt3b, _txt3c, ;
+/*
+FUNCTION fakt_ftxt_encode_3( cTxt1, cTxt2, cPartner_txt_a, cPartner_txt_b, cPartner_txt_c, ;
       _BrOtp, _BrNar, _DatOtp, _DatPl, cVezaOtpremnica, ;
       _dest, _m_dveza )
 
    RETURN Chr( 16 ) + Trim( cTxt1 ) + Chr( 17 ) + Chr( 16 ) + cTxt2 + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( cPartner_txt_a ) + Chr( 17 ) + Chr( 16 ) + cPartner_txt_b + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( cPartner_txt_c ) + Chr( 17 ) + ;
       Chr( 16 ) + _BrOtp + Chr( 17 ) + ;
       Chr( 16 ) + DToC( _DatOtp ) + Chr( 17 ) + ;
       Chr( 16 ) + _BrNar + Chr( 17 ) + ;
@@ -301,14 +383,15 @@ FUNCTION fakt_ftxt_encode_3( cTxt1, cTxt2, _txt3a, _txt3b, _txt3c, ;
       Chr( 16 ) + Chr( 17 ) + ;
       Chr( 16 ) + Trim( _dest ) + Chr( 17 ) + ;
       Chr( 16 ) + Trim( _m_dveza ) + Chr( 17 )
+*/
 
-
-FUNCTION fakt_ftxt_encode_4( cTxt1, cTxt2, _txt3a, _txt3b, _txt3c, _BrOtp, _DatOtp, ;
+/*
+FUNCTION fakt_ftxt_encode_4( cTxt1, cTxt2, cPartner_txt_a, cPartner_txt_b, cPartner_txt_c, _BrOtp, _DatOtp, ;
       _BrNar, _DatPl, _VezOtpr, d2k1, d2k2, d2k3, d2k4, d2k5, d2n1, d2n2 )
 
    RETURN Chr( 16 ) + Trim( cTxt1 ) + Chr( 17 ) + Chr( 16 ) + cTxt2 + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( cPartner_txt_a ) + Chr( 17 ) + Chr( 16 ) + cPartner_txt_b + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( cPartner_txt_c ) + Chr( 17 ) + ;
       Chr( 16 ) + _BrOtp + Chr( 17 ) + ;
       Chr( 16 ) + DToC( _DatOtp ) + Chr( 17 ) + ;
       Chr( 16 ) + _BrNar + Chr( 17 ) + ;
@@ -321,7 +404,7 @@ FUNCTION fakt_ftxt_encode_4( cTxt1, cTxt2, _txt3a, _txt3b, _txt3c, _BrOtp, _DatO
       Chr( 16 ) + d2k5 + Chr( 17 ) + ;
       Chr( 16 ) + d2n1 + Chr( 17 ) + ;
       Chr( 16 ) + d2n2 + Chr( 17 )
-
+*/
 
 
 
@@ -396,7 +479,6 @@ FUNCTION fakt_ftxt_sub_renumeracija_pripreme( cTxt2 )
 
 
 
-
 FUNCTION fakt_ftxt_ino_klauzula()
 
    LOCAL hRec
@@ -421,8 +503,11 @@ FUNCTION fakt_ftxt_ino_klauzula()
 
 
 
+/*
+   koristi se u gen_ugovori_2.prg, fakt_barkod_terminal.prg
+*/
 
-FUNCTION fakt_a_to_public_var_txt( cVal, lEmpty )
+FUNCTION fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cVal, lEmpty )
 
    LOCAL nTArr
 
@@ -431,8 +516,8 @@ FUNCTION fakt_a_to_public_var_txt( cVal, lEmpty )
    IF lEmpty == nil
       lEmpty := .F.
    ENDIF
-   // ako je prazno nemoj dodavati
-   IF !lEmpty .AND. Empty( cVal )
+
+   IF !lEmpty .AND. Empty( cVal )  // ako je prazno nemoj dodavati
       RETURN .F.
    ENDIF
    _txt += Chr( 16 ) + cVal + Chr( 17 )
@@ -445,15 +530,7 @@ FUNCTION fakt_a_to_public_var_txt( cVal, lEmpty )
 
 FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt )
 
-   // LOCAL cTmp
    LOCAL cUserName
-
-   // IF lAppend == nil
-   // lAppend := .F.
-   // ENDIF
-   // IF nCount == nil
-   // nCount := 1
-   // ENDIF
 
    // prazan tekst - ne radi nista
    IF Empty( cIdFaktTxt )
@@ -473,18 +550,11 @@ FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt )
       ENDIF
    ENDIF
 
-   // IF lAppend == .F.
-   // cTxt := Trim( ftxt->naz )
-   // ELSE
    IF !Empty( cTxt )
-      // cTmp := ""
-      // IF nCount > 1
       cTxt += NRED_DOS
    ENDIF
 
-   // ENDIF
    cTxt += Trim( ftxt->naz )
-   // cTxt +=  cTmp
 
    RETURN .T.
 
@@ -494,85 +564,16 @@ FUNCTION f18_user_name()
    RETURN AllTrim( GetFullUserName( GetUserID() ) )
 
 
-FUNCTION fakt_ftxt_encode( cFTxtNaz, cTxt1, cTxt3a, cTxt3b, cTxt3c, cVezaUgovor, cDodTxt )
+
+FUNCTION fakt_ftxt_encode_gen_ugovori( cFTxtNaz, cTxt1, cPartner_txt_a, cPartner_txt_b, cPartner_txt_c, cVezaUgovor, cDodTxt )
 
    RETURN Chr( 16 ) + cTxt1 + Chr( 17 ) + ;
-      Chr( 16 ) + Trim( ftxt->naz ) + Chr( 13 ) + Chr( 10 ) + ;
+      Chr( 16 ) + Trim( cFTxtNaz ) + Chr( 13 ) + Chr( 10 ) + ;
       cVezaUgovor + Chr( 13 ) + Chr( 10 ) + ;
       cDodTxt + Chr( 17 ) + Chr( 16 ) + ;
-      _Txt3a + Chr( 17 ) + Chr( 16 ) + _Txt3b + Chr( 17 ) + ;
-      Chr( 16 ) + _Txt3c + Chr( 17 )
+      cPartner_txt_a + Chr( 17 ) + Chr( 16 ) + cPartner_txt_b + Chr( 17 ) + ;
+      Chr( 16 ) + cPartner_txt_c + Chr( 17 )
 
-
-
-
-
-FUNCTION fakt_ftxt_encode_5( hFaktTxt )
-
-   LOCAL _tmp
-   LOCAL hFaktParams := fakt_params()
-   LOCAL cTxt
-   LOCAL cDestinacija, cDokumentVeze, cObjekti
-
-   AltD()
-   // odsjeci na kraju prazne linije
-   // hFaktTxt[ "txt2" ] := OdsjPLK( hFaktTxt[ "txt2" ] )
-
-   IF !Empty( hFaktTxt[ "veza_otpremnice" ] ) .AND. ( ! "Račun formiran na osnovu:" $ hFaktTxt[ "txt2" ] )
-      hFaktTxt[ "txt2" ] := hFaktTxt[ "txt2" ] + NRED_DOS + hFaktTxt[ "veza_otpremnice" ]
-   ENDIF
-
-   cTxt := Chr( 16 ) + Trim( hFaktTxt[ "txt1" ] ) + Chr( 17 )
-   cTxt += Chr( 16 ) + hFaktTxt[ "txt2" ] + Chr( 17 )
-   cTxt += Chr( 16 ) + "" + Chr( 17 )
-   cTxt += Chr( 16 ) + "" + Chr( 17 )
-   cTxt += Chr( 16 ) + "" + Chr( 17 )
-
-   // 6 - br otpr
-   cTxt += Chr( 16 ) + hFaktTxt[ "brotp" ] + Chr( 17 )
-   // 7 - dat otpr
-   cTxt += Chr( 16 ) + DToC( hFaktTxt[ "datotp" ] ) + Chr( 17 )
-   // 8 - br nar
-   cTxt += Chr( 16 ) + hFaktTxt[ "brnar" ] + Chr( 17 )
-   // 9 - dat nar
-   cTxt += Chr( 16 ) + DToC( hFaktTxt[ "datpl" ] ) + Chr( 17 )
-   // 10
-   cTxt += Chr( 16 ) + hFaktTxt[ "veza_otpremnice" ] + Chr( 17 )
-   // 11
-   cTxt += Chr( 16 ) + hFaktTxt[ "d2k1" ] + Chr( 17 )
-   cTxt += Chr( 16 ) + hFaktTxt[ "d2k2" ] + Chr( 17 )
-   cTxt += Chr( 16 ) + hFaktTxt[ "d2k3" ] + Chr( 17 )
-   cTxt += Chr( 16 ) + hFaktTxt[ "d2k4" ] + Chr( 17 )
-   cTxt += Chr( 16 ) + hFaktTxt[ "d2k5" ] + Chr( 17 )
-   cTxt += Chr( 16 ) + hFaktTxt[ "d2n1" ] + Chr( 17 )
-   cTxt += Chr( 16 ) + hFaktTxt[ "d2n2" ] + Chr( 17 )
-
-   IF hFaktParams[ "destinacije" ]
-      cDestinacija := hFaktTxt[ "destinacija" ]
-   ELSE
-      cDestinacija := ""
-   ENDIF
-
-   // 18 - Destinacija
-   cTxt += Chr( 16 ) + AllTrim( cDestinacija ) + Chr( 17 )
-
-   // 19 - vezni dokumenti
-   IF hFaktParams[ "fakt_dok_veze" ]
-      cDokumentVeze := AllTrim( hFaktTxt[ "dokument_veza" ] )
-   ELSE
-      cDokumentVeze := ""
-   ENDIF
-   cTxt += Chr( 16 ) + cDokumentVeze + Chr( 17 )
-
-   // 20 - objekti
-   IF hFaktParams[ "fakt_objekti" ]
-      cObjekti := hFaktTxt[ "objekti" ]
-   ELSE
-      cObjekti := ""
-   ENDIF
-   cTxt += Chr( 16 ) + cObjekti + Chr( 17 )
-
-   RETURN cTxt
 
 
 /*
@@ -662,8 +663,8 @@ FUNCTION porezna_faktura_dodatni_tekst( cTxt, cPartn )
       NEXT
    NEXT
 
-   // dodaj i parametar koliko ima linija texta
-   add_drntext( "P02", AllTrim( Str( nCnt ) ) )
+
+   add_drntext( "P02", AllTrim( Str( nCnt ) ) )  // dodaj i parametar koliko ima linija dodatnog teksta
 
    RETURN .T.
 
@@ -674,7 +675,7 @@ STATIC FUNCTION fakt_txt_clean_array( cTxt )
    cTxt := StrTran( cTxt, Chr( 13 ), "" )   // Chr(13) = \r ibrisati, Chr(10) = \n ce se koristit kao markeri novog reda
    cTxt := StrTran( cTxt, Chr( 141 ) + Chr( 10 ), ""  )  // Ž\n izvrnuto
    cTxt := StrTran( cTxt, Chr( 141 ), ""  )  // Ž izvrnuto
-   
+
    cTxt := StrTran( cTxt, "##", "#]"  )  // ## -> EOL znak #]
 
    cTxt := StrTran( cTxt, Chr( 10 ), "#]" )  // Chr(10) marker novog reda -> #]

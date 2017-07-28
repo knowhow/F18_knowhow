@@ -4,16 +4,20 @@
 FUNCTION o_fakt_txt( cId )
 
    SELECT ( F_FTXT )
-   IF !use_sql_sif  ( "fakt_ftxt", .T., "FTXT", cId )
+   IF !use_sql_sif( "fakt_ftxt", .T., "FTXT", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
 
+   GO TOP
    IF cId != NIL
       SEEK cId
+      IF !Found()
+         GO TOP
+      ENDIF
    ENDIF
 
-   RETURN .T.
+   RETURN !Eof()
 
 /*
     FTXT, fakt_ftxt

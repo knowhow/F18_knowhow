@@ -862,9 +862,9 @@ FUNCTION o_fin_za_azuriranje()
    o_nalog()
 
    o_fin_psuban()
-   O_PANAL
-   O_PSINT
-   O_PNALOG
+   o_fin_panal()
+   o_fin_psint()
+   o_fin_pnalog()
 
    o_fin_pripr()
 

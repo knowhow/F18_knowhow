@@ -171,8 +171,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
             @ PRow(), PCol() + 1 SAY IdTipDok
 
-            SELECT TDOK
-            HSEEK ( nArr )->idtipdok
+            select_o_tdok( ( nArr )->idtipdok )
             @ PRow(), PCol() + 1 SAY PadR( naz, 13 )
 
             SELECT ( nArr )
@@ -460,11 +459,11 @@ FUNCTION fin_gen_psuban_stavke_auto_import()
    my_close_all_dbf()
 
    o_fin_pripr()
-   o_konto()
+   //o_konto()
    //o_partner()
-   o_tnal()
-   o_tdok()
-   O_PSUBAN
+   //o_tnal()
+   //o_tdok()
+   o_fin_psuban()
 
    SELECT PSUBAN
    my_dbf_zap()

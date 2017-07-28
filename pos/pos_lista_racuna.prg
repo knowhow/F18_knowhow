@@ -143,7 +143,7 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, cPrefixFilter, qIdRoba )
 
 
    KEYBOARD '\'
-   my_db_edit_sql( "pos_rn", f18_max_rows() - 12, f18_max_cols() - 25, {| nCh | lista_racuna_key_handler( nCh ) }, _u( " POS RAČUNI " ), "", NIL, cFnc,, bMarkF )
+   my_browse( "pos_rn", f18_max_rows() - 12, f18_max_cols() - 25, {| nCh | lista_racuna_key_handler( nCh ) }, _u( " POS RAČUNI " ), "", NIL, cFnc,, bMarkF )
 
    SET FILTER TO
 

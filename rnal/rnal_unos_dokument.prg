@@ -128,7 +128,7 @@ STATIC FUNCTION _document()
 
       ENDIF
 
-      my_db_edit_sql( "docum", nX, nY, {| Ch| key_handler( Ch ) }, "", "",,,,, 1 )
+      my_browse( "docum", nX, nY, {| Ch| key_handler( Ch ) }, "", "",,,,, 1 )
 
       IF LastKey() == K_ESC
 

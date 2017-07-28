@@ -328,16 +328,17 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX ( "1", "IdDio+IdOdj", _alias )
 
 
+/*
    aDbf := {}
    AAdd ( aDbf, { "IDROBA",     "C", 10, 0 } )
    AAdd ( aDbf, { "IDDIO",      "C",  2, 0 } )
 
-   _alias := "ROBAIZ"
+  -- _alias := "ROBAIZ"
    _table_name := "robaiz"
 
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX ( "1", "IdRoba", _alias )
-
+*/
 
    // kreiraj tabele dok_src : DOK_SRC
    // cre_doksrc( ver )

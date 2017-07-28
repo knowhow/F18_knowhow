@@ -12,26 +12,31 @@
 #include "f18.ch"
 
 
-FUNCTION ISast()
+FUNCTION sastavnice_lista()
 
-   LOCAL nArr := Select()
+   LOCAL nArr := Select(), hRec, lOk, nTRec
+   LOCAL cIdSastavnica
 
    qqProiz := Space( 60 )
-   cBrisi := "N"
+   cBrisiPrekinuteSastavniceDN := "N"
    cSamoBezSast := "N"
    cNCVPC := "D"
+
+   MsgO( "sast brisanje prazne šifre" )
+   sastavnice_delete_empty_id()
+   MsgC()
 
    DO WHILE .T.
       Box(, 7, 60 )
       @ m_x + 1, m_y + 2 SAY "Proizvodi :" GET qqProiz  PICT "@!S30"
-      @ m_x + 3, m_y + 2 SAY "Brisanje prekinutih sastavnica ? (D/N)" GET cBrisi  PICT "@!" VALID cBrisi $ "DN"
+      @ m_x + 3, m_y + 2 SAY "Brisanje prekinutih sastavnica ? (D/N)" GET cBrisiPrekinuteSastavniceDN  PICT "@!" VALID cBrisiPrekinuteSastavniceDN $ "DN"
       @ m_x + 5, m_y + 2 SAY "Prikazati samo proizvode bez sastavnica ? (D/N)" GET cSamoBezSast  PICT "@!" VALID cSamoBezSast $ "DN"
       @ m_x + 7, m_y + 2 SAY "Prikazati NC i VPC ? (D/N)" GET cNCVPC VALID cNCVPC $ "DN" PICT "@!"
       READ
       BoxC()
 
       IF LastKey() == K_ESC
-         RETURN
+         RETURN .F.
       ENDIF
 
       PRIVATE aUsl1 := Parsiraj( qqProiz, "Id" )
@@ -44,21 +49,19 @@ FUNCTION ISast()
    SELECT ( nArr )
    PushWA()
 
-//   SELECT ( F_ROBA )
-//   IF !Used()
-//      o_roba()
-//   ENDIF
-//   SET ORDER TO TAG "ID"
+// SELECT ( F_ROBA )
+// IF !Used()
+// o_roba()
+// ENDIF
+// SET ORDER TO TAG "ID"
 
-   SELECT ( F_SAST )
-   IF !Used()
-      o_sastavnica()
-   ELSE
-      USE
-      o_sastavnica()
-   ENDIF
+   o_sastavnice()
 
-   IF cBrisi == "D"
+
+   IF cBrisiPrekinuteSastavniceDN == "D"
+
+      run_sql_query( "BEGIN" )
+
       SELECT sast
       SET ORDER TO
       GO TOP
@@ -66,10 +69,13 @@ FUNCTION ISast()
          SKIP
          nTrec := RecNo()
          SKIP -1
-         select_o_roba( sast->id )  // nema "svog proizvoda"
-         IF !Found()
+         IF !select_o_roba( sast->id )  // nema "svog proizvoda"
             SELECT sast
-            DELETE
+            hRec := dbf_get_rec()
+            lOk := delete_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
+            IF !lOk
+              error_bar( "sast", "DELETE SAST id:" + hRec[ "id" ] + " / id2: " + hRec[ "id2" ] )
+            endif
          ENDIF
          SELECT sast
          GO nTRec
@@ -77,17 +83,19 @@ FUNCTION ISast()
       SELECT sast
       SET ORDER TO TAG "ID"
       GO TOP
+
+      run_sql_query( "COMMIT" )
    ENDIF
 
    START PRINT CRET
 
    IF cSamoBezSast == "D"
 
-      SELECT ROBA
+      o_roba_tip_p()
 
       IF Len( aUsl1 ) <> 0
          aUsl1 += ".and. tip=='P'"
-         SET FILTER to &( aUsl1 )
+         SET FILTER TO &( aUsl1 )
       ELSE
          SET FILTER TO tip == "P"
       ENDIF
@@ -103,48 +111,46 @@ FUNCTION ISast()
       ?
       nRBr := 0
       DO WHILE !Eof()
-         cId := id
-         SELECT SAST
-         HSEEK ROBA->ID
-         IF !Found()
+         cIdSastavnica := id
+         IF !select_o_sastavnice( ROBA_P->ID )
             IF PRow() > 62 + dodatni_redovi_po_stranici()
                FF
             ENDIF
-            ? Str( ++nRBr, 3 ) + ".", ;
-               roba->id, ;
-               Left( roba->naz, 40 ), ;
-               roba->jmj
+            ?U Str( ++nRBr, 3 ) + ".", roba_p->id, Left( roba_p->naz, 40 ),  roba_p->jmj
          ENDIF
-         SELECT ROBA
+         SELECT ROBA_P
          SKIP 1
       ENDDO
-      ? m
+      ?U m
 
    ELSE
 
-      SELECT sast
 
+      SELECT sast
       IF Len( aUsl1 ) <> 0
-         SET FILTER to &( aUsl1 )
+         SET FILTER TO &( aUsl1 )
       ELSE
          SET FILTER TO
       ENDIF
 
       IF cNCVPC == "D"
          m := "----------------------------------------------------------------------------------------------"
-         z := "                                                              Kolicina         NV        VPV"
+         z := "                                                              Količina         NV        VPV"
       ELSE
          m := "------------------------------------------------------------------------"
-         z := "                                                              Kolicina"
+         z := "                                                              Količina"
       ENDIF
 
-      nCol1 := 20 + Len( ROBA->( id + naz ) )
+      //nCol1 := 20 + Len( ROBA_P->( id + naz ) )
+      nCol1 := 70
+
       P_10CPI
 
       ? "Pregled sastavnica-normativa za proizvode"
       ?
       ? self_organizacija_naziv(), Space( 20 ), "na dan", Date()
 
+      SELECT SAST
       GO TOP
 
       P_COND
@@ -152,18 +158,15 @@ FUNCTION ISast()
       DO WHILE !Eof()
 
          aPom := {}
-         cId := field->id
+         cIdSastavnica := sast->id
 
-         SELECT roba
-         GO TOP
-         SEEK cId
+         select_o_roba( cIdSastavnica )
 
          SELECT sast
 
          AAdd( aPom, "" )
          AAdd( aPom, m )
-         AAdd( aPom, roba->id + " " + ;
-            PadR( AllTrim( roba->naz ), 40 ) + " " + roba->jmj )
+         AAdd( aPom, cIdSastavnica + " " + PadR( AllTrim( roba->naz ), 40 ) + " " + roba->jmj )
          AAdd( aPom, m )
          AAdd( aPom, z )
          AAdd( aPom, m )
@@ -172,21 +175,18 @@ FUNCTION ISast()
          nNC := 0
          nVPC := 0
 
-         DO WHILE !Eof() .AND. sast->id == cId
+         DO WHILE !Eof() .AND. sast->id == cIdSastavnica
 
             cIdSast := field->id2
 
-            SELECT roba
-            GO TOP
-            SEEK cIdSast
-
+            select_o_roba( cIdSast )
             SELECT sast
 
-            AAdd( aPom, Str( ++nrbr, 5 ) + ". " + ;
-               roba->id + " " + ;
+            AAdd( aPom, Str( ++nRbr, 5 ) + ". " + ;
+               cIdSast + " " + ;
                PadR( AllTrim( roba->naz ), 40 ) + " " + ;
                Transform( sast->kolicina, "999999.9999" ) + " " + ;
-               IF( cNCVPC == "D", Transform( roba->nc * sast->kolicina,fakt_pic_iznos() ) + " " + ;
+               IF( cNCVPC == "D", Transform( roba->nc * sast->kolicina, fakt_pic_iznos() ) + " " + ;
                Transform( roba->vpc * sast->kolicina, fakt_pic_iznos() ), "" );
                )
 
@@ -207,15 +207,16 @@ FUNCTION ISast()
             FF
          ENDIF
          FOR i := 1 TO Len( aPom )
-            ? aPom[ i ]
+            ?U aPom[ i ]
          NEXT
       ENDDO
 
    ENDIF
 
    FF
+
    ENDPRINT
    SELECT ( nArr )
    PopWA()
 
-   RETURN
+   RETURN .T.

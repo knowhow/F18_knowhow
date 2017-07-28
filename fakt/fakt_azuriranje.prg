@@ -474,17 +474,17 @@ FUNCTION izracunaj_ukupni_iznos_dokumenta_iz_pripreme( id_firma, id_tipdok, br_d
 
       IF _din_dem == Left( ValBazna(), 3 )
 
-         _cij_sa_por := Round( field->kolicina * field->cijena * PrerCij() * ( 1 - field->rabat / 100 ), ZAOKRUZENJE )
-         _rabat := Round( field->kolicina * field->cijena * PrerCij() * field->rabat / 100, ZAOKRUZENJE )
+         _cij_sa_por := Round( field->kolicina * field->cijena * fakt_preracun_cijene() * ( 1 - field->rabat / 100 ), ZAOKRUZENJE )
+         _rabat := Round( field->kolicina * field->cijena * fakt_preracun_cijene() * field->rabat / 100, ZAOKRUZENJE )
          _dod_por := Round( _cij_sa_por * field->porez / 100, ZAOKRUZENJE )
 
       ELSE
 
          _cij_sa_por := Round( field->kolicina * field->cijena * ;
-            PrerCij() * ( 1 - field->Rabat / 100 ), ZAOKRUZENJE )
+            fakt_preracun_cijene() * ( 1 - field->Rabat / 100 ), ZAOKRUZENJE )
 
          _rabat := Round( field->kolicina * field->cijena * ;
-            PrerCij() * field->rabat / 100, ZAOKRUZENJE )
+            fakt_preracun_cijene() * field->rabat / 100, ZAOKRUZENJE )
 
          _dod_por := Round( _cij_sa_por * field->porez / 100, ZAOKRUZENJE )
 
@@ -567,7 +567,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
    o_vrstep()
    o_ops()
    //select_o_konto()
-   o_sastavnica()
+   o_sastavnice()
    //select_o_partner()
    //select_o_roba()
    o_fakt_txt()

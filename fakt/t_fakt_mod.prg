@@ -76,19 +76,19 @@ METHOD programski_modul_osnovni_meni
    AAdd( _opc, "7. ostale operacije nad dokumentima" )
    AAdd( _opcexe, {|| fakt_ostale_operacije_doks() } )
    AAdd( _opc, "------------------------------------" )
-   AAdd( _opcexe, {|| nil } )
+   AAdd( _opcexe, {|| NIL } )
    AAdd( _opc, "8. šifarnici" )
    AAdd( _opcexe, {|| fakt_sifrarnik() } )
    AAdd( _opc, "9. uplate" )
    AAdd( _opcexe, {|| mnu_fakt_uplate() } )
    AAdd( _opc, "------------------------------------" )
-   AAdd( _opcexe, {|| nil } )
+   AAdd( _opcexe, {|| NIL } )
    AAdd( _opc, "A. štampa ažuriranog dokumenta" )
    AAdd( _opcexe, {|| fakt_stampa_azuriranog() } )
    AAdd( _opc, "P. povrat dokumenta u pripremu" )
    AAdd( _opcexe, {|| Povrat_fakt_dokumenta() } )
    AAdd( _opc, "------------------------------------" )
-   AAdd( _opcexe, {|| nil } )
+   AAdd( _opcexe, {|| NIL } )
    AAdd( _opc, "X. parametri" )
    AAdd( _opcexe, {|| mnu_fakt_params() } )
 
@@ -134,11 +134,11 @@ METHOD set_module_gvars()
    PUBLIC g10Str := hb_UTF8ToStr( "POREZNA FAKTURA br." )
    PUBLIC g10Str2T := "              Predao                  Odobrio                  Preuzeo"
 
-   PUBLIC g16Str := hb_UTF8ToStr( "KONSIGNAC.RAČUN br." )
-   PUBLIC g16Str2T := "              Predao                  Odobrio                  Preuzeo"
+   //PUBLIC g16Str := hb_UTF8ToStr( "KONSIGNAC.RAČUN br." )
+   //PUBLIC g16Str2T := "              Predao                  Odobrio                  Preuzeo"
 
-   PUBLIC g06Str := hb_UTF8ToStr( "ZADUŽ.KONS.SKLAD.br." )
-   PUBLIC g06Str2T := "              Predao                  Odobrio                  Preuzeo"
+   //PUBLIC g06Str := hb_UTF8ToStr( "ZADUŽ.KONS.SKLAD.br." )
+   //PUBLIC g06Str2T := "              Predao                  Odobrio                  Preuzeo"
 
    PUBLIC g20Str := hb_UTF8ToStr( "PREDRAČUN br." )
    PUBLIC g20Str2T := "                                                               Direktor"
@@ -180,7 +180,7 @@ METHOD set_module_gvars()
    PUBLIC g12ftxt := PadR( "", 100 )
    PUBLIC g13ftxt := PadR( "", 100 )
    PUBLIC g15ftxt := PadR( "", 100 )
-   PUBLIC g16ftxt := PadR( "", 100 )
+   //PUBLIC g16ftxt := PadR( "", 100 )
    PUBLIC g20ftxt := PadR( "", 100 )
    PUBLIC g21ftxt := PadR( "", 100 )
    PUBLIC g22ftxt := PadR( "", 100 )
@@ -238,8 +238,8 @@ METHOD set_module_gvars()
    PUBLIC gFNar := PadR( "NAR.TXT", 12 )
    PUBLIC gFUgRab := PadR( "UGRAB.TXT", 12 )
 
-   PUBLIC gSamokol := "N"
-   PUBLIC gRokPl := 15
+   // PUBLIC gSamokol := "N"
+
    PUBLIC gRabIzRobe := "N"
 
    PUBLIC gKarC1 := "N"
@@ -323,69 +323,69 @@ METHOD set_module_gvars()
    // citaj parametre sa db servera
 
    // parametri zaglavlja
-   gFNaziv := fetch_metric( "org_naziv", nil, gFNaziv )
-   gFPNaziv := fetch_metric( "org_naziv_dodatno", nil, gFPNaziv )
-   gFAdresa := fetch_metric( "org_adresa", nil, gFAdresa )
-   gFIdBroj := fetch_metric( "org_pdv_broj", nil, gFIdBroj )
-   gFBanka1 := fetch_metric( "fakt_zagl_banka_1", nil, gFBanka1 )
-   gFBanka2 := fetch_metric( "fakt_zagl_banka_2", nil, gFBanka2 )
-   gFBanka3 := fetch_metric( "fakt_zagl_banka_3", nil, gFBanka3 )
-   gFBanka4 := fetch_metric( "fakt_zagl_banka_4", nil, gFBanka4 )
-   gFBanka5 := fetch_metric( "fakt_zagl_banka_5", nil, gFBanka5 )
-   gFTelefon := fetch_metric( "fakt_zagl_telefon", nil, gFTelefon )
-   gFEmailWeb := fetch_metric( "fakt_zagl_email", nil, gFEmailWeb )
-   gFText1 := fetch_metric( "fakt_zagl_dtxt_1", nil, gFText1 )
-   gFText2 := fetch_metric( "fakt_zagl_dtxt_2", nil, gFText2 )
-   gFText3 := fetch_metric( "fakt_zagl_dtxt_3", nil, gFText3 )
-   gStZagl := fetch_metric( "fakt_zagl_koristiti_txt", nil, gStZagl )
-   gFPicHRow := fetch_metric( "fakt_zagl_pic_header", nil, gFPicHRow )
-   gFPicFRow := fetch_metric( "fakt_zagl_pic_footer", nil, gFPicFRow )
+   gFNaziv := fetch_metric( "org_naziv", NIL, gFNaziv )
+   gFPNaziv := fetch_metric( "org_naziv_dodatno", NIL, gFPNaziv )
+   gFAdresa := fetch_metric( "org_adresa", NIL, gFAdresa )
+   gFIdBroj := fetch_metric( "org_pdv_broj", NIL, gFIdBroj )
+   gFBanka1 := fetch_metric( "fakt_zagl_banka_1", NIL, gFBanka1 )
+   gFBanka2 := fetch_metric( "fakt_zagl_banka_2", NIL, gFBanka2 )
+   gFBanka3 := fetch_metric( "fakt_zagl_banka_3", NIL, gFBanka3 )
+   gFBanka4 := fetch_metric( "fakt_zagl_banka_4", NIL, gFBanka4 )
+   gFBanka5 := fetch_metric( "fakt_zagl_banka_5", NIL, gFBanka5 )
+   gFTelefon := fetch_metric( "fakt_zagl_telefon", NIL, gFTelefon )
+   gFEmailWeb := fetch_metric( "fakt_zagl_email", NIL, gFEmailWeb )
+   gFText1 := fetch_metric( "fakt_zagl_dtxt_1", NIL, gFText1 )
+   gFText2 := fetch_metric( "fakt_zagl_dtxt_2", NIL, gFText2 )
+   gFText3 := fetch_metric( "fakt_zagl_dtxt_3", NIL, gFText3 )
+   gStZagl := fetch_metric( "fakt_zagl_koristiti_txt", NIL, gStZagl )
+   gFPicHRow := fetch_metric( "fakt_zagl_pic_header", NIL, gFPicHRow )
+   gFPicFRow := fetch_metric( "fakt_zagl_pic_footer", NIL, gFPicFRow )
 
    // izgled dokumenta
-   gDodPar := fetch_metric( "fakt_datum_placanja_otpremnica", nil, gDoDPar )
-   gDatVal := fetch_metric( "fakt_datum_placanja_svi_dokumenti", nil, gDatVal )
-   gNumDio := fetch_metric( "fakt_numericki_dio_dokumenta", nil, gNumDio )
-   gPSamoKol := fetch_metric( "fakt_prikaz_samo_kolicine", nil, gPSamoKol )
-   gcF9usmece := fetch_metric( "fakt_povrat_u_smece", nil, gcF9usmece )
-   gERedova := fetch_metric( "fakt_dokument_dodati_redovi_po_listu", nil, gERedova )
-   gnLMarg := fetch_metric( "fakt_dokument_lijeva_margina", nil, gnLMarg )
-   gnTMarg := fetch_metric( "fakt_dokument_top_margina", nil, gnTMarg )
-   gPDVDrb := fetch_metric( "fakt_dokument_delphirb_prikaz", nil, gPDVDrb )
-   gPDVDokVar := fetch_metric( "fakt_dokument_txt_prikaz_varijanta", nil, gPDVDokVar )
+   gDodPar := fetch_metric( "fakt_datum_placanja_otpremnica", NIL, gDoDPar )
+   gDatVal := fetch_metric( "fakt_datum_placanja_svi_dokumenti", NIL, gDatVal )
+   gNumDio := fetch_metric( "fakt_numericki_dio_dokumenta", NIL, gNumDio )
+   gPSamoKol := fetch_metric( "fakt_prikaz_samo_kolicine", NIL, gPSamoKol )
+   gcF9usmece := fetch_metric( "fakt_povrat_u_smece", NIL, gcF9usmece )
+   gERedova := fetch_metric( "fakt_dokument_dodati_redovi_po_listu", NIL, gERedova )
+   gnLMarg := fetch_metric( "fakt_dokument_lijeva_margina", NIL, gnLMarg )
+   gnTMarg := fetch_metric( "fakt_dokument_top_margina", NIL, gnTMarg )
+   gPDVDrb := fetch_metric( "fakt_dokument_delphirb_prikaz", NIL, gPDVDrb )
+   gPDVDokVar := fetch_metric( "fakt_dokument_txt_prikaz_varijanta", NIL, gPDVDokVar )
 
    // obrada dokumenta
-   glRGrPrn := fetch_metric( "fakt_ispis_grupacije_na_dokumentu", nil, glRGrPrn )
-   gShSld := fetch_metric( "fakt_ispis_salda_kupca_dobavljaca", nil, gShSld )
-   gShSldVar := fetch_metric( "fakt_ispis_salda_kupca_dobavljaca_varijanta", nil, gShSldVar )
-   gFinKtoDug := fetch_metric( "konto_duguje", nil, gFinKtoDug )
-   gFinKtoPot := fetch_metric( "konto_potrazuje", nil, gFinKtoPot )
-   gSamoKol := fetch_metric( "fakt_voditi_samo_kolicine", nil, gSamoKol )
-   gRokPl := fetch_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), gRokPl )
+   glRGrPrn := fetch_metric( "fakt_ispis_grupacije_na_dokumentu", NIL, glRGrPrn )
+   gShSld := fetch_metric( "fakt_ispis_salda_kupca_dobavljaca", NIL, gShSld )
+   gShSldVar := fetch_metric( "fakt_ispis_salda_kupca_dobavljaca_varijanta", NIL, gShSldVar )
+   gFinKtoDug := fetch_metric( "konto_duguje", NIL, gFinKtoDug )
+   gFinKtoPot := fetch_metric( "konto_potrazuje", NIL, gFinKtoPot )
+   // gSamoKol := fetch_metric( "fakt_voditi_samo_kolicine", nil, gSamoKol )
+
    gResetRoba := fetch_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
    gIMenu := fetch_metric( "fakt_meni_tekuci", my_user(), gIMenu )
 
    // potpisi
-   g10Str := fetch_metric( "fakt_dokument_dok_10_naziv", nil, g10Str )
-   g10Str2T := fetch_metric( "fakt_dokument_dok_10_potpis", nil, g10Str2T )
-   g10ftxt := fetch_metric( "fakt_dokument_dok_10_txt_lista", nil, g10ftxt )
-   g11Str := fetch_metric( "fakt_dokument_dok_11_naziv", nil, g11Str )
-   g11Str2T := fetch_metric( "fakt_dokument_dok_11_potpis", nil, g11Str2T )
-   g11ftxt := fetch_metric( "fakt_dokument_dok_11_txt_lista", nil, g11ftxt )
-   g12Str := fetch_metric( "fakt_dokument_dok_12_naziv", nil, g12Str )
-   g12Str2T := fetch_metric( "fakt_dokument_dok_12_potpis", nil, g12Str2T )
-   g12ftxt := fetch_metric( "fakt_dokument_dok_12_txt_lista", nil, g12ftxt )
-   g13Str := fetch_metric( "fakt_dokument_dok_13_naziv", nil, g13Str )
-   g13Str2T := fetch_metric( "fakt_dokument_dok_13_potpis", nil, g13Str2T )
-   g13ftxt := fetch_metric( "fakt_dokument_dok_13_txt_lista", nil, g13ftxt )
-   g16Str := fetch_metric( "fakt_dokument_dok_16_naziv", nil, g16Str )
-   g16Str2T := fetch_metric( "fakt_dokument_dok_16_potpis", nil, g16Str2T )
-   g16ftxt := fetch_metric( "fakt_dokument_dok_16_txt_lista", nil, g16ftxt )
-   g20Str := fetch_metric( "fakt_dokument_dok_20_naziv", nil, g20Str )
-   g20Str2T := fetch_metric( "fakt_dokument_dok_20_potpis", nil, g20Str2T )
-   g20ftxt := fetch_metric( "fakt_dokument_dok_20_txt_lista", nil, g20ftxt )
-   g22Str := fetch_metric( "fakt_dokument_dok_22_naziv", nil, g22Str )
-   g22Str2T := fetch_metric( "fakt_dokument_dok_22_potpis", nil, g22Str2T )
-   g22ftxt := fetch_metric( "fakt_dokument_dok_22_txt_lista", nil, g22ftxt )
+   g10Str := fetch_metric( "fakt_dokument_dok_10_naziv", NIL, g10Str )
+   g10Str2T := fetch_metric( "fakt_dokument_dok_10_potpis", NIL, g10Str2T )
+   g10ftxt := fetch_metric( "fakt_dokument_dok_10_txt_lista", NIL, g10ftxt )
+   g11Str := fetch_metric( "fakt_dokument_dok_11_naziv", NIL, g11Str )
+   g11Str2T := fetch_metric( "fakt_dokument_dok_11_potpis", NIL, g11Str2T )
+   g11ftxt := fetch_metric( "fakt_dokument_dok_11_txt_lista", NIL, g11ftxt )
+   g12Str := fetch_metric( "fakt_dokument_dok_12_naziv", NIL, g12Str )
+   g12Str2T := fetch_metric( "fakt_dokument_dok_12_potpis", NIL, g12Str2T )
+   g12ftxt := fetch_metric( "fakt_dokument_dok_12_txt_lista", NIL, g12ftxt )
+   g13Str := fetch_metric( "fakt_dokument_dok_13_naziv", NIL, g13Str )
+   g13Str2T := fetch_metric( "fakt_dokument_dok_13_potpis", NIL, g13Str2T )
+   g13ftxt := fetch_metric( "fakt_dokument_dok_13_txt_lista", NIL, g13ftxt )
+   //g16Str := fetch_metric( "fakt_dokument_dok_16_naziv", NIL, g16Str )
+   //g16Str2T := fetch_metric( "fakt_dokument_dok_16_potpis", NIL, g16Str2T )
+   //g16ftxt := fetch_metric( "fakt_dokument_dok_16_txt_lista", NIL, g16ftxt )
+   g20Str := fetch_metric( "fakt_dokument_dok_20_naziv", NIL, g20Str )
+   g20Str2T := fetch_metric( "fakt_dokument_dok_20_potpis", NIL, g20Str2T )
+   g20ftxt := fetch_metric( "fakt_dokument_dok_20_txt_lista", NIL, g20ftxt )
+   g22Str := fetch_metric( "fakt_dokument_dok_22_naziv", NIL, g22Str )
+   g22Str2T := fetch_metric( "fakt_dokument_dok_22_potpis", NIL, g22Str2T )
+   g22ftxt := fetch_metric( "fakt_dokument_dok_22_txt_lista", NIL, g22ftxt )
 
 
    gFZaok := fetch_metric( "fakt_zaokruzenje", NIL, gFZaok )
@@ -426,9 +426,9 @@ METHOD set_module_gvars()
    RPar( "pk", @gPratik )
    RPar( "pc", @gPratiC )
    RPar( "56", @gnLMargA5 )
-   RPar( "r3", @g06Str )
+   //RPar( "r3", @g06Str )
    RPar( "xl", @g15Str )
-   RPar( "r4", @g06Str2T )
+   //RPar( "r4", @g06Str2T )
    RPar( "xm", @g15Str2T )
    RPar( "uc", @gNazPotStr )
    RPar( "tb", @gTabela )
@@ -531,7 +531,7 @@ METHOD set_module_gvars()
 
    gModul := "FAKT"
 
-   gRobaBlock := {| Ch| FaRobaBlock( Ch ) }
+   gRobaBlock := {| Ch | FaRobaBlock( Ch ) }
    gPartnBlock := NIL
 
    PUBLIC glCij13Mpc := ( my_get_from_ini( "FAKT", "Cijena13MPC", "D", KUMPATH ) == "D" )
@@ -564,11 +564,16 @@ METHOD set_module_gvars()
 
    fiscal_opt_active()
 
-   info_bar( "FAKT", "params in cache: " + Alltrim( Str( params_in_cache() ) ) )
+   info_bar( "FAKT", "params in cache: " + AllTrim( Str( params_in_cache() ) ) )
 
    RETURN .T.
 
 
-function is_modul_fakt()
+FUNCTION is_modul_fakt()
 
-return gModul == "FAKT"
+   RETURN gModul == "FAKT"
+
+
+FUNCTION fakt_rok_placanja_dana()
+
+   RETURN fetch_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), 15 )

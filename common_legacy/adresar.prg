@@ -16,22 +16,19 @@ FUNCTION Adresar()
 
    PushWA()
 
-   SELECT ( F_ADRES )
-   IF !Used()
-      O_ADRES
-   ENDIF
 
-   //Select( F_SIFK )
-   //IF !Used()
-    //  o_sifk()
-   //ENDIF
+   //o_adresar()
+   // Select( F_SIFK )
+   // IF !Used()
+   // o_sifk()
+   // ENDIF
 
-   //Select( F_SIFV )
-   //IF !Used()
-  //    use_sql_sifv( PadR( "ADRES", 8 ) )
-   //ENDIF
+   // Select( F_SIFV )
+   // IF !Used()
+   // use_sql_sifv( PadR( "ADRES", 8 ) )
+   // ENDIF
 
-   P_Adres()
+   p_adresar()
 
    USE
 
@@ -40,11 +37,13 @@ FUNCTION Adresar()
    RETURN NIL
 
 
-FUNCTION P_Adres( cId, dx, dy )
+FUNCTION p_adresar( cId, dx, dy )
 
    LOCAL fkontakt := .F.
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
+
+   o_adres()
 
    IF FieldPos( "Kontakt" ) <> 0
       fKontakt := .T.
@@ -83,7 +82,7 @@ FUNCTION P_Adres( cId, dx, dy )
 
    PopWa()
 
-   RETURN p_sifra( F_ADRES, 1, f18_max_rows() -15, f18_max_cols() -3, "Adresar:", @cId, dx, dy, {| Ch| AdresBlok( Ch ) } )
+   RETURN p_sifra( F_ADRES, 1, f18_max_rows() - 10, f18_max_cols() - 5, "Adresar:", @cId, dx, dy, {| Ch | AdresBlok( Ch ) } )
 
 
 

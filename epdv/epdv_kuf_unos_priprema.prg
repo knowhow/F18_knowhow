@@ -31,7 +31,7 @@ STATIC FUNCTION epdv_kuf_tbl_priprema()
    GO TOP
 
    set_a_kol_kuf( @Kol, @ImeKol )
-   my_db_edit_sql( "ekuf", _row, _col, {|| epdv_kuf_key_handler() }, "", "KUF Priprema...", , , , , 3 )
+   my_browse( "ekuf", _row, _col, {|| epdv_kuf_key_handler() }, "", "KUF Priprema...", , , , , 3 )
    BoxC()
    my_close_all_dbf()
 

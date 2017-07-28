@@ -482,24 +482,17 @@ FUNCTION edit_ugovor( lNovi )
    @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 1", nBoxLen ) GET _idtxt VALID p_fakt_ftxt( @_IdTxt ) PICT "@!"
 
    IF ugov->( FieldPos( "IDDODTXT" ) ) <> 0
-
       ++nX
-
       @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 2", nBoxLen ) GET _iddodtxt VALID p_fakt_ftxt( @_IdDodTxt ) PICT "@!"
    ENDIF
 
    IF ugov->( FieldPos( "TXT2" ) ) <> 0
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 3", nBoxLen ) GET _txt2 VALID p_fakt_ftxt( @_Txt2 ) PICT "@!"
-
       ++nX
-
       @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 4", nBoxLen ) GET _txt3 VALID p_fakt_ftxt( @_Txt3 ) PICT "@!"
-
       ++nX
-
       @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 5", nBoxLen ) GET _txt4 VALID p_fakt_ftxt( @_Txt4 ) PICT "@!"
 
 
@@ -675,7 +668,7 @@ FUNCTION P_Ugov2( cIdPartner )
       EdUgov2()
    ELSE
       TempIni( 'Fakt_Ugovori_Novi', 'Partner', '_NIL_', "WRITE" )
-      my_db_edit_sql( "", 20, 72, {|| EdUgov2() }, "", "Stavke ugovora...", , , , , 2, 6 )
+      my_browse( "", 20, 72, {|| EdUgov2() }, "", "Stavke ugovora...", , , , , 2, 6 )
    ENDIF
 
    BoxC()

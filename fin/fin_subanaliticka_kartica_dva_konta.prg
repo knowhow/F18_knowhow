@@ -192,11 +192,11 @@ FUNCTION fin_suban_kartica2( lOtvSt )
 
    IF _fakt_params[ "fakt_vrste_placanja" ]
       lVrsteP := .T.
-      o_vrstep()
+      //o_vrstep()
    ENDIF
 
 
-   o_tdok()
+   //o_tdok()
 
    // SELECT SUBAN
 
@@ -326,8 +326,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
                @ PRow(), PCol() + 1 SAY RBr PICT '9999'
                IF gNW == "N"
                   @ PRow(), PCol() + 1 SAY IdTipDok
-                  SELECT TDOK
-                  HSEEK SUBAN->IdTipDok
+                  select_o_tdok( SUBAN->IdTipDok )
                   @ PRow(), PCol() + 1 SAY naz
                ENDIF
             ENDIF

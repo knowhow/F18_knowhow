@@ -118,7 +118,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
 
    my_browse( "", nX - 3, nY, {| nCh | fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
-      NIL, NIL, NIL, 2,  NIL, NIL, {| nSkip | fakt_pregled_dokumenata_skip_block( nSkip ) } ) // aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock
+      NIL, NIL, NIL, 2,  NIL, NIL ) //, {| nSkip | fakt_pregled_dokumenata_skip_block( nSkip ) } ) // aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock
 
 
    BoxC()
@@ -157,7 +157,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    cFilter := fakt_doks->( dbFilter() )
 
-   // prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
+   prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
    lRefresh := .F.
    lReload := .F.
@@ -402,7 +402,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    RETURN nRet
 
-
+/*
 STATIC FUNCTION fakt_pregled_dokumenata_skip_block( nRecs, cFiskalniUredjajModel )
 
    LOCAL nSkipped := 0
@@ -441,7 +441,7 @@ STATIC FUNCTION fakt_pregled_dokumenata_skip_block( nRecs, cFiskalniUredjajModel
    ENDIF
 
    RETURN nSkipped
-
+*/
 
 
 STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
@@ -449,21 +449,22 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
    LOCAL cFiskalniRacun
    LOCAL cReklamiraniRacun
    LOCAL _total
-   LOCAL _txt := ""
+   LOCAL cTxt := "", cRn
 
    IF fakt_doks->idtipdok $ "10#11"
+      cRN := fakt_doks->idfirma + "-" + fakt_doks->idtipdok + "-" + Trim( fakt_doks->brdok )
       IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, cFiskalniUredjajModel )
-         _txt := "nema fiskalnog računa !"
-         @ get_x_koord() + 1, get_y_koord() + 2 SAY8 PadR( _txt, 60 ) COLOR "W/R+"
+         cTxt := cRn + ": nema fiskalnog računa !"
+         @ get_x_koord() + 1, get_y_koord() + 2 SAY8 PadR( cTxt, 60 ) COLOR "W/R+"
       ELSE
          cFiskalniRacun := AllTrim( Str( fakt_doks->fisc_rn ) )
          cReklamiraniRacun := AllTrim( Str( fakt_doks->fisc_st ) )
-         _txt := ""
+         cTxt := cRn + ": "
          IF cReklamiraniRacun <> "0"
-            _txt += "reklamirani račun: " + cReklamiraniRacun + ", "
+            cTxt += "reklamirani račun: " + cReklamiraniRacun + ", "
          ENDIF
-         _txt += "fiskalni račun: " + cFiskalniRacun
-         @ get_x_koord() + 1, get_y_koord() + 2 SAY8 PadR( _txt, 60 ) COLOR "GR+/B"
+         cTxt += "fiskalni račun: " + cFiskalniRacun
+         @ get_x_koord() + 1, get_y_koord() + 2 SAY8 PadR( cTxt, 60 ) COLOR "GR+/B"
       ENDIF
    ELSE
       @ get_x_koord() + 1, get_y_koord() + 2 SAY PadR( "", 60 )
@@ -491,16 +492,16 @@ STATIC FUNCTION get_fiscal_info( cFiskalniUredjajModel )
 
 STATIC FUNCTION prikazi_brojeve_fiskalnog_racuna( _f_rn, _s_rn )
 
-   LOCAL _txt := ""
+   LOCAL cTxt := ""
 
-   _txt += AllTrim( Str( _f_rn ) )
+   cTxt += AllTrim( Str( _f_rn ) )
 
    IF _s_rn > 0
-      _txt += " / "
-      _txt += AllTrim( Str( _s_rn ) )
+      cTxt += " / "
+      cTxt += AllTrim( Str( _s_rn ) )
    ENDIF
 
-   RETURN _txt
+   RETURN cTxt
 
 
 

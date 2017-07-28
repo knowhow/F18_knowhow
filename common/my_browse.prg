@@ -48,7 +48,7 @@ MEMVAR cKolona
  param - [10] NIL - prikazi u sljedecem redu,  15 - prikazi u koloni my+15  broj kolone pri editu sa <F2>
 */
 
-FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, ;
+FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert, ;
       aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock )
 
    LOCAL hParams := hb_Hash()
@@ -60,14 +60,16 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
    LOCAL nKeyHandlerRetEvent
    LOCAL lKeyHandlerStarted := .F.
    LOCAL azImeKol, azKol
-   LOCAL lKeyPressed, nKey, nCiklus
+   LOCAL lDoIdleCall, lContinue, oBrowse, nKey // extended key
+   LOCAL oTCol
+   LOCAL nHeight, nWidth, nBrojRedovaZaPoruke
 
 
    PRIVATE  bGoreRed := NIL
    PRIVATE  bDoleRed := NIL
    PRIVATE  bDodajRed := NIL
 
-   PRIVATE  TBInitialized := .F.
+   // PRIVATE  TBInitialized := .F.
    PRIVATE  fTBNoviRed := .F.  // trenutno smo u novom redu ?
    PRIVATE  TBCanClose := .T. // da li se moze zavrsiti unos podataka ?
 
@@ -81,7 +83,6 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
    // ovo se moze setovati u when/valid fjama
 
    PRIVATE  TBSkipBlock // := {| nSkip | SkipDB( nSkip, @nTBLine ) }
-
 
    PRIVATE bTekCol
    PRIVATE Ch := 0
@@ -123,16 +124,17 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
    hParams[ "gprazno" ]       := nGPrazno
    hParams[ "podvuci_b" ]     := bPodvuci
 
-   IF bSkipBlock <> NIL
+   //IF bSkipBlock <> NIL
       // ovo je zadavanje skip bloka kroz parametar
-      TBSkipBlock := bSkipBlock
+      //TBSkipBlock := bSkipBlock
       // ELSE
       // TBSkipBlock := {| nSkip | SkipDB( nSkip, @nTBLine ) }
       // TBSkipBlock     := {| nRecs | __my_dbSkipper( nRecs ) }
-   ENDIF
+   //ENDIF
 
-   AltD()
-   browse_only( hParams, .T. )
+   // harbour-core src/rtl/dbedit.prg
+
+
 
    // lKeyPressed := .F.
 
@@ -143,30 +145,132 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
    // Ch := hb_keyNew( HB_KX_DOWN )
    // lKeyPressed := .T.
    // ENDIF
+   lDoIdleCall := .T.
+   lContinue := .T.
 
-   DO WHILE .T.
-      // FOR nCiklus := 1 TO 1
-      // IF in_calc()
-      // hb_idleSleep( 0.5 )
-      // LOOP
+   // browse_only( oBrowse, hParams, .T. )
+
+
+   // LOCAL i, j, k
+
+   // LOCAL lSql := ( my_rddName() == "SQLMIX" )
+   // LOCAL bShowField
+
+   // IF lIzOBJDB == NIL
+   // lIzOBJDB := .F.
+   // ENDIF
+
+   nHeight        :=  hParams[ "xw" ]
+   nBrojRedovaZaPoruke :=  hParams[ "prazno" ] + iif( hParams[ "prazno" ] <> 0, 1, 0 )
+   nWidth       :=  hParams[ "yw" ]
+
+   IF hParams[ "prazno" ] == 0
+      // IF !lIzOBJDB
+      // BoxC()
       // ENDIF
+      Box( hParams[ "ime" ], nHeight, nWidth, hParams[ "invert" ], hParams[ "msgs" ] )
+   ELSE
+      @ m_x + hParams[ "xw" ] - hParams[ "prazno" ], m_y + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI ), hParams[ "yw" ] )
+   ENDIF
+
+   // IF !lIzOBJDB
+   // ImeKol := azImeKol
+   // Kol := azKol
+   // ENDIF
+
+   @ m_x, m_y + 2     SAY hParams[ "msg_top" ]   //+  REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ),  42 )
+   @ m_x + hParams[ "xw" ] + 1,  m_y + 2   SAY hParams[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
+
+   //@ m_x + hParams[ "xw" ] + 1,  Col() + 1 SAY REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), 42 )
+   @ m_x + 1, m_y + hParams[ "yw" ] - 6    SAY Str( RecCount(), 5 )
+
+   oBrowse := TBrowseDB( m_x + 2 + hParams[ "prazno" ], m_y + 1, m_x + nHeight - nBrojRedovaZaPoruke, m_y + nWidth )
+
+   IF bSkipBlock <> NIL
+      oBrowse:SkipBlock := bSkipBlock
+   ENDIF
+
+   FOR k := 1 TO Len( Kol ) // Dodavanje kolona za prikaz
+      i := AScan( Kol, k )
+      IF i <> 0
+         // bShowField := ImeKol[ i, 2 ]
+         // oTCol := TBColumnNew( ImeKol[ i, 1 ], bShowField )
+         oTCol := TBColumnNew( ImeKol[ i, 1 ], ImeKol[ i, 2 ] ) // "Rb.br", { || field->rbr }
+         IF hParams[ "podvuci_b" ] <> NIL
+            TCol:colorBlock := {|| iif( Eval( hParams[ "podvuci_b" ] ), { 5, 2 }, { 1, 2 } ) }
+         ENDIF
+         oBrowse:addColumn( oTCol )
+      END IF
+   NEXT
+
+   oBrowse:headSep := hb_UTF8ToStrBox( BROWSE_HEAD_SEP )
+   oBrowse:colsep :=  hb_UTF8ToStrBox( BROWSE_COL_SEP )
+
+   IF hParams[ "freeze" ] == NIL
+      oBrowse:Freeze := 1
+   ELSE
+      oBrowse:Freeze := hParams[ "freeze" ]
+   ENDIF
+
+   TB := oBrowse
+
+
+   DO WHILE lContinue
+
+
+      DO WHILE .T.
+         Ch := hb_keyStd( Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) )
+         IF oBrowse:stabilize()
+            EXIT // browse renderiran
+         ENDIF
+         IF Ch != 0 // tipka u toku renderiranja pritisnuta
+            EXIT
+         ENDIF
+      ENDDO
+
+      IF Ch == 0 // nije bilo nikakvog keyboard eventa
+
+
+         IF lDoIdleCall //
+
+            nKeyHandlerRetEvent := my_browse_f18_komande_with_my_key_handler( oBrowse, Ch, @nKeyHandlerRetEvent, nPored, aPoredak, bMyKeyHandler )
+            IF nKeyHandlerRetEvent == DE_ABORT
+               lContinue := .F.
+            ENDIF
+            oBrowse:forceStable()
+         ENDIF
+
+         IF lContinue   // .AND. lFlag
+            oBrowse:hiLite()
+            Ch := hb_keyStd( nKey := Inkey( 0, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) )
+            oBrowse:deHilite()
+            // ELSE
+            // lFlag := .T.
+         ENDIF
+      ENDIF
 
       nKeyHandlerRetEvent := -99
       lKeyHandlerStarted := .F.
 
+      lDoIdleCall := .T.
+
+      IF Ch == 0
+         LOOP
+      ENDIF
+
       IF Deleted()
          SKIP
          IF Eof()
-            Tb:Down()
+            oBrowse:Down()
          ELSE
-            Tb:Up()
+            oBrowse:Up()
          ENDIF
-         Tb:RefreshCurrent()
+         oBrowse:RefreshCurrent()
       ENDIF
 
-      DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
-         Tb:stabilize()
-      ENDDO
+      // DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
+      // Tb:stabilize()
+      // ENDDO
 
       // DO WHILE !lKeyPressed .AND. !TB:Stabilize()
       // lKeyPressed := ( nKey := Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) ) != 0
@@ -179,105 +283,97 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
       // Ch := hb_keyStd( nKey )
       // ENDIF
 
-      IF in_calc()
-         hb_idleSleep( 0.5 )
-         LOOP
-      ENDIF
 
+
+/*
       IF !TBInitialized
          TBInitialized := .T.
          Eval( TB:SkipBlock, 1 )
          Eval( TB:SkipBlock, - 1 )
       ENDIF
+*/
 
       // IF nCiklus == 2
       // Ch := 0
       // ELSE
-      Ch := Inkey( 0 )
+
+      // Ch := Inkey( 0 )
+
       // ENDIF
       // hb_idleSleep( 0.2 )
 
 
-      IF !in_calc()
-#ifdef F18_DEBUG
-         cTest := ""
-         IF Alias() $ "FTXT#PARTN"
-            cTest := AllTrim( id )
-         ENDIF
-         error_bar( "debug", "browse key: " +  Str( Asc( Chr( Ch ) ), 4 ) + " " + cTest )
-#endif
-         nKeyHandlerRetEvent := Eval( bKeyHandler, Ch )
-      ENDIF
+
 
       DO CASE
 
       CASE Ch == K_UP
 #ifdef F18_DEBUG
          cTest := ""
-         IF Alias() == "FTXT"
+         IF Alias() == "FAKT_FTXT"
             cTest := AllTrim( id )
          ENDIF
          info_bar( "debug", "tb:up" )
 #endif
-         TB:up()
+         oBrowse:up()
 
       CASE Ch == K_DOWN
-         TB:down()
+         oBrowse:down()
 
 #ifdef F18_DEBUG
-         AltD()
          cTest := ""
-         IF Alias() == "FTXT"
+         IF Alias() == "FAKT_FTXT"
             cTest := AllTrim( id )
          ENDIF
          info_bar( "debug", "tb:down" )
 #endif
       CASE Ch == K_LEFT
-         TB:Left()
+         oBrowse:Left()
 #ifdef F18_DEBUG
          cTest := ""
-         IF Alias() == "FTXT"
+         IF Alias() == "FAKT_FTXT"
             cTest := AllTrim( id )
          ENDIF
          info_bar( "debug", "tb:left" )
 #endif
       CASE Ch == K_RIGHT
-         TB:Right()
+         oBrowse:Right()
 
       CASE Ch == K_PGUP
-         TB:PageUp()
+         oBrowse:PageUp()
 
       CASE Ch == K_CTRL_PGUP
-         Tb:GoTop()
-         Tb:Refreshall()
+         oBrowse:GoTop()
+         oBrowse:Refreshall()
 
       CASE Ch == K_CTRL_PGDN
-         Tb:GoBottom()
+         oBrowse:GoBottom()
 
       CASE Ch == K_PGDN
-         TB:PageDown()
+         oBrowse:PageDown()
 
       CASE Ch == K_CTRL_END .OR. Ch == K_ESC
          lExitBrowse := .T.
          nKeyHandlerRetEvent := DE_ABORT
 
       CASE Ch == K_ENTER .AND. browse_exit_on_enter()
-         AltD()
          lExitBrowse := .T.
          nKeyHandlerRetEvent := DE_ABORT
 
       OTHERWISE
 
-         TB:applyKey( Ch )
-         IF !lExitBrowse
-            nKeyHandlerRetEvent := my_db_edit_standardne_komande( Tb, Ch, @nKeyHandlerRetEvent, nPored, aPoredak )
+         nKeyHandlerRetEvent := my_browse_f18_komande_with_my_key_handler( Tb, Ch, @nKeyHandlerRetEvent, nPored, aPoredak, bMyKeyHandler )
+         IF nKeyHandlerRetEvent == DE_ABORT
+            lContinue := .F.
          ENDIF
+         lDoIdleCall := .F.
       ENDCASE
 
 
       SWITCH nKeyHandlerRetEvent
+
       CASE DE_REFRESH
-         TB:RefreshAll()
+         oBrowse:RefreshAll()
          // TB:ForceStable()
          @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
          EXIT
@@ -289,21 +385,12 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
          lExitBrowse := .T.
          EXIT
 
-      OTHERWISE
-         // Tb:RefreshCurrent()
-         // TB:ForceStable()
       ENDSWITCH
 
       IF lExitBrowse
-         EXIT
+         lContinue := .F.
       ENDIF
 
-      // DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
-      // Tb:stabilize()
-      // ENDDO
-      // KEYBOARD "X"
-
-      // NEXT
 
    ENDDO
 
@@ -319,114 +406,7 @@ FUNCTION browse_exit_on_enter( lSet )
    RETURN s_lExitBrowseOnEnter
 
 
-STATIC FUNCTION browse_only( hParams, lIzOBJDB )
 
-   LOCAL i, j, k
-   LOCAL _rows, _width
-   LOCAL lSql := ( my_rddName() == "SQLMIX" )
-   LOCAL bShowField
-
-   IF lIzOBJDB == NIL
-      lIzOBJDB := .F.
-   ENDIF
-
-   _rows        :=  hParams[ "xw" ]
-   _rows_poruke :=  hParams[ "prazno" ] + iif( hParams[ "prazno" ] <> 0, 1, 0 )
-   _width       :=  hParams[ "yw" ]
-
-   IF hParams[ "prazno" ] == 0
-
-      IF !lIzOBJDB
-         BoxC()
-      ENDIF
-      Box( hParams[ "ime" ], _rows, _width, hParams[ "invert" ], hParams[ "msgs" ] )
-   ELSE
-      @ m_x + hParams[ "xw" ] - hParams[ "prazno" ], m_y + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI ), hParams[ "yw" ] )
-
-   ENDIF
-
-   IF !lIzOBJDB
-      ImeKol := azImeKol
-      Kol := azKol
-   ENDIF
-
-   @ m_x, m_y + 2                          SAY hParams[ "msg_top" ] + iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ),  42 ), "" )
-   @ m_x + hParams[ "xw" ] + 1,  m_y + 2   SAY hParams[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
-
-
-   @ m_x + hParams[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), 42 ), "" )
-   @ m_x + 1, m_y + hParams[ "yw" ] - 6    SAY Str( RecCount(), 5 )
-
-
-   TB := TBrowseDB( m_x + 2 + hParams[ "prazno" ], m_y + 1, m_x + _rows - _rows_poruke, m_y + _width )
-
-
-   IF TBSkipBlock <> NIL
-      AltD()
-      Tb:SkipBlock := TBSkipBlock
-   ENDIF
-
-   FOR k := 1 TO Len( Kol ) // Dodavanje kolona  za stampanje
-
-      i := AScan( Kol, k )
-      IF i <> 0
-
-         bShowField := ImeKol[ i, 2 ]
-         TCol := TBColumnNew( ImeKol[ i, 1 ], bShowField )
-
-
-         IF hParams[ "podvuci_b" ] <> NIL
-            TCol:colorBlock := {|| iif( Eval( hParams[ "podvuci_b" ] ), { 5, 2 }, { 1, 2 } ) }
-         ENDIF
-
-         TB:addColumn( TCol )
-      END IF
-
-   NEXT
-
-   TB:headSep := hb_UTF8ToStrBox( BROWSE_HEAD_SEP )
-   TB:colsep :=  hb_UTF8ToStrBox( BROWSE_COL_SEP )
-
-   IF hParams[ "freeze" ] == NIL
-      TB:Freeze := 1
-   ELSE
-      Tb:Freeze := hParams[ "freeze" ]
-   ENDIF
-
-   RETURN .T.
-
-
-/*
-FUNCTION __my_dbSkipper( nRecs )
-
-   LOCAL nSkipped := 0
-
-   IF LastRec() != 0
-      DO CASE
-      CASE nRecs == 0
-         dbSkip( 0 )
-      CASE nRecs > 0 .AND. RecNo() != LastRec() + 1
-         DO WHILE nSkipped < nRecs
-            dbSkip()
-            IF Eof()
-               dbSkip( - 1 )
-               EXIT
-            ENDIF
-            ++nSkipped
-         ENDDO
-      CASE nRecs < 0
-         DO WHILE nSkipped > nRecs
-            dbSkip( - 1 )
-            IF Bof()
-               EXIT
-            ENDIF
-            --nSkipped
-         ENDDO
-      ENDCASE
-   ENDIF
-
-   RETURN nSkipped
-*/
 
 
 STATIC FUNCTION ForceStable()
@@ -480,7 +460,7 @@ STATIC FUNCTION tb_editabilna_kolona( oTb, aImeKol )
    RETURN Len( aImeKol[ TB:colPos ] ) > 2
 
 
-
+/*
 
 STATIC FUNCTION StandTBTipke()
 
@@ -491,10 +471,10 @@ STATIC FUNCTION StandTBTipke()
    ENDIF
 
    RETURN .F.
+*/
 
 
-
-
+/*
 STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
 
    LOCAL i
@@ -552,7 +532,6 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
 
          FOR i := 1 TO Len( aTBGets )
             aTBGets[ i ]:Col := aTBGets[ i ]:Col  - ( nY + nSirina - 78 ) // smanji col koordinate
-
          NEXT
       ENDIF
 
@@ -575,12 +554,13 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
 
    RETURN .T.
 
+*/
 
 /* function TBPomjeranje(TB, cPomjeranje)
  *     Opcije pomjeranja tbrowsea u direkt rezimu
  *   param: TB          -  TBrowseObjekt
  *   param: cPomjeranje - ">", ">2", "V0"
- */
+
 
 STATIC FUNCTION TBPomjeranje( TB, cPomjeranje )
 
@@ -614,7 +594,7 @@ STATIC FUNCTION TBPomjeranje( TB, cPomjeranje )
    ENDIF
 
    RETURN .T.
-
+*/
 
 FUNCTION browse_brisi_stavku( lPack )
 
@@ -650,10 +630,7 @@ FUNCTION browse_brisi_pripremu()
 
 
 
-
-
-
-FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, aPoredak )
+FUNCTION my_browse_f18_komande_with_my_key_handler( TB, nKey, nKeyHandlerRetEvent, nPored, aPoredak, bMyKeyHandler )
 
    LOCAL _tr := hb_UTF8ToStr( "Traži:" ), _zam := "Zamijeni sa:"
    LOCAL _last_srch := "N"
@@ -679,7 +656,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
          BoxC()
          IF LastKey() != K_ESC
             find_partner_by_naz_or_id( cIdOrNaz )
-            TB:RefreshAll()
+            oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
       ENDIF
@@ -696,7 +673,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
             ELSE
                find_roba_by_naz_or_id( cIdOrNaz )
             ENDIF
-            TB:RefreshAll()
+            oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
       ENDIF
@@ -709,7 +686,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
          BoxC()
          IF LastKey() != K_ESC
             find_konto_by_naz_or_id( cIdOrNaz )
-            TB:RefreshAll()
+            oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
       ENDIF
@@ -722,12 +699,12 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
          BoxC()
          IF LastKey() != K_ESC
             find_radn_by_naz_or_id( cIdOrNaz )
-            TB:RefreshAll()
+            oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
       ENDIF
 
-      IF Alias() == "FTXT"
+      IF Alias() == "FAKT_FTXT"
          Box( "#Unijeti dio šifre ili sadržaja uzorka", 1, 70 )
          SET CURSOR ON
          @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
@@ -735,7 +712,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
          BoxC()
          IF LastKey() != K_ESC
             find_fakt_txt_by_naz_or_id( cIdOrNaz )
-            TB:RefreshAll()
+            oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
       ENDIF
@@ -743,7 +720,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
 
    CASE nKey == K_CTRL_F
 
-      bTekCol := ( TB:getColumn( TB:colPos ) ):Block
+      bTekCol := ( oBrowse:getColumn( oBrowse:colPos ) ):Block
 
       IF ValType( Eval( bTekCol ) ) != "C"
          RETURN DE_CONT
@@ -768,10 +745,10 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
          Beep( 1 )
          cIzraz := parsiraj( cLoc, "Eval(xVar)" )
       ENDIF
-      Tb:hitTop := TB:hitBottom := .F.
-      DO WHILE !( Tb:hitTop .OR. TB:hitBottom )
+      oBrowse:hitTop := oBrowse:hitBottom := .F.
+      DO WHILE !( oBrowse:hitTop .OR. oBrowse:hitBottom )
          IF cIzraz <> NIL
-            IF Tacno( cIzraz, TB:getColumn( Tb:colPos ):block() )
+            IF Tacno( cIzraz, oBrowse:getColumn( oBrowse:colPos ):block() )
                EXIT
             ENDIF
          ELSE
@@ -780,15 +757,15 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
             ENDIF
          ENDIF
          IF cSmj == "+"
-            Tb:down()
-            Tb:Stabilize()
+            oBrowse:down()
+            oBrowse:Stabilize()
          ELSE
-            Tb:Up()
-            Tb:Stabilize()
+            oBrowse:Up()
+            oBrowse:Stabilize()
          ENDIF
 
       ENDDO
-      Tb:hitTop := TB:hitBottom := .F.
+      oBrowse:hitTop := oBrowse:hitBottom := .F.
       RETURN DE_REFRESH
 
 
@@ -797,16 +774,16 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
 
       PRIVATE cKolona
 
-      IF !tb_editabilna_kolona( TB, ImeKol )
+      IF !tb_editabilna_kolona( oBrowse, ImeKol )
          RETURN DE_CONT
       ENDIF
 
 
-      IF Empty( ImeKol[ TB:colPos, 3 ] )
+      IF Empty( ImeKol[ oBrowse:colPos, 3 ] )
          RETURN DE_CONT
       ENDIF
 
-      cKolona := ImeKol[ TB:ColPos, 3 ]
+      cKolona := ImeKol[ oBrowse:ColPos, 3 ]
 
       IF ValType( &cKolona ) $ "CD"
 
@@ -851,7 +828,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
          ENDIF
 
          IF replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
-            TB:RefreshAll()
+            oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
 
@@ -866,15 +843,15 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
 
       PRIVATE cKolona
 
-      IF !tb_editabilna_kolona( TB, ImeKol )
+      IF !tb_editabilna_kolona( oBrowse, ImeKol )
          RETURN DE_CONT
       ENDIF
 
-      IF Empty( ImeKol[ TB:colPos, 3 ] )
+      IF Empty( ImeKol[ oBrowse:colPos, 3 ] )
          RETURN DE_CONT
       ENDIF
 
-      cKolona := ImeKol[ TB:ColPos, 3 ]
+      cKolona := ImeKol[ oBrowse:ColPos, 3 ]
 
       IF ValType( &cKolona ) == "N"
 
@@ -910,7 +887,6 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
       RETURN DE_CONT
 
 
-
    CASE nKey == K_CTRL_U .AND. nPored > 1
 
       PRIVATE GetList := {}
@@ -931,7 +907,13 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
       RETURN DE_CONT
 
    OTHERWISE
+
       nKeyHandlerRetEvent := goModul:gProc( nKey, nKeyHandlerRetEvent )
+      IF nKeyHandlerRetEvent == DE_ABORT
+         RETURN DE_ABORT
+      ENDIF
+
+      nKeyHandlerRetEvent := Eval( bMyKeyHandler, Ch )
 
    ENDCASE
 

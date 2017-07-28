@@ -122,10 +122,14 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
          INDEX ON field->ID + Str( field->R_BR, 4, 0 ) + field->ID2 TAG "ID" TO ( cAlias )
          SET ORDER TO TAG "ID"
 
+      ELSEIF cTable == "pos_osob"
+         INDEX ON KorSif TAG "ID" TO ( cAlias )
+         INDEX ON NAZ TAG "NAZ" TO ( cAlias )
+
       ELSE
-         INDEX ON ID TAG ID TO ( cAlias )
+         INDEX ON ID TAG "ID" TO ( cAlias )
          IF FieldPos( "NAZ" ) > 0
-            INDEX ON NAZ TAG NAZ TO ( cAlias )
+            INDEX ON NAZ TAG "NAZ" TO ( cAlias )
          ENDIF
          SET ORDER TO TAG "ID"
       ENDIF

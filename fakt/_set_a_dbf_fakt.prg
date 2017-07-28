@@ -26,7 +26,7 @@ FUNCTION set_a_dbf_fakt()
    set_a_dbf_fakt_gen_ug()
    set_a_dbf_fakt_gen_ug_p()
 
-   set_a_sql_sifarnik( "fakt_ftxt", "FTXT", F_FTXT   )
+   set_a_sql_sifarnik( "fakt_ftxt", "FAKT_FTXT", F_FAKT_FTXT   )
 
    //set_a_dbf_temp( "fakt_relac",   "RELAC", F_RELAC   )
    //set_a_dbf_temp( "fakt_vozila",   "VOZILA", F_VOZILA  )

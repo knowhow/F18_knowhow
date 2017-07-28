@@ -39,16 +39,16 @@ FUNCTION p_fakt_ftxt( cId, dx, dy )
       AAdd( Kol, nI )
    NEXT
 
-   nBottom := 15
+   nBottom := 12
    nTop := 3
    nLeft := 1
    nRight := f18_max_cols() - 3
 
-   box_crno_na_zuto( nTop, nLeft, nBottom, nRight, "PREGLED TEKSTA" )
+   Box_crno_na_zuto( nTop, nLeft, nBottom, nRight, "Pregled uzoraka teksta na kraju fakture:" )
 
    @ nBottom, 0 SAY ""
 
-   xRet := p_sifra( F_FTXT, 1, nBoxHeight, nBoxWidth, "Faktura - tekst na kraju fakture", @cId, , , {|| fakt_ftxt_keyboard_handler( nTop, nLeft, 8, nRight ) } )
+   xRet := p_sifra( F_FAKT_FTXT, 1, nBoxHeight, nBoxWidth, "Faktura - tekst na kraju fakture", @cId, , , {|| fakt_ftxt_keyboard_handler( nTop, nLeft, 8, nRight ) } )
 
    Prozor0()
 
@@ -73,6 +73,7 @@ STATIC FUNCTION fakt_ftxt_naz_tarabiraj( cNaz )
 FUNCTION fakt_ftxt_keyboard_handler( nTopPos, nLeftPos, nBottomPos, nTxtLenght )
 
    LOCAL nI := 0
+   //LOCAL cFaktTxt
    LOCAL aFtxt := {}
 
    IF s_cLastFtxtIdShow == field->id
@@ -83,7 +84,9 @@ FUNCTION fakt_ftxt_keyboard_handler( nTopPos, nLeftPos, nBottomPos, nTxtLenght )
    @ nTopPos, 6 SAY "uzorak teksta id: " + field->id
    s_cLastFtxtIdShow := field->id
 
-   aFtxt := decode_string_to_array( field->naz, nTxtLenght - 1 - nLeftPos, "##" )
+   aFtxt := fakt_txt_clean_array( field->naz )
+   //altd()
+   //aFtxt := decode_string_to_array( cFaktTxt, nTxtLenght - 1 - nLeftPos, "##" )
 
    FOR nI := 1 TO nBottomPos
       IF nI > Len( aFtxt )
@@ -100,7 +103,7 @@ FUNCTION fakt_ftxt_keyboard_handler( nTopPos, nLeftPos, nBottomPos, nTxtLenght )
     *  "prvi red" + hb_eol() + "drugi red" => { "prvi red", "drugi red" }
     *  param cTxt   - tekst
     *  param nKol   - broj kolona
-*/
+
 
 FUNCTION decode_string_to_array( cTxt, nKol, cSeparator )
 
@@ -142,7 +145,7 @@ FUNCTION decode_string_to_array( cTxt, nKol, cSeparator )
    ENDDO
 
    RETURN aVrati
-
+*/
 
 
 FUNCTION fakt_ftxt_decode_string( cFaktTxt )
@@ -267,7 +270,6 @@ FUNCTION fakt_ftxt_encode_5( hFaktTxt )
    LOCAL cTxt
    LOCAL cDestinacija, cDokumentVeze, cObjekti
 
-   AltD()
    // odsjeci na kraju prazne linije
    // hFaktTxt[ "txt2" ] := OdsjPLK( hFaktTxt[ "txt2" ] )
 
@@ -649,7 +651,6 @@ FUNCTION porezna_faktura_dodatni_tekst( cTxt, cPartn )
 
    // cTxt := StrTran( cTxt, "" + Chr( 10 ), "" )
 
-
    aLines := fakt_txt_clean_array( cTxt )
 
    nFId := 20
@@ -680,14 +681,13 @@ STATIC FUNCTION fakt_txt_clean_array( cTxt )
 
    cTxt := StrTran( cTxt, Chr( 10 ), "#]" )  // Chr(10) marker novog reda -> #]
 
-   cTxt := StrTran( cTxt, "#]#]", "#] #]" ) // ubaciti space-ove da se ne "gutaju" prazne linije unutar texta
+   cTxt := StrTran( cTxt, "#]#]", Chr(200) + " " + Chr( 200 ) ) // ubaciti space-ove da se ne "gutaju" prazne linije unutar texta
+   cTxt := StrTran( cTxt, "#]", Chr(200) )
    // aLines := TokToNiz( cTxt, NRED_DOS ) // matrica sa tekstom line1, line2
-   aLines := TokToNiz( cTxt, "#]" )
-
+   aLines := TokToNiz( cTxt, Chr(200) )
 
    nLen := Len( aLines )
 
-   AltD()
    FOR nI := 1 TO nLen - 1
       IF Empty( ATail( aLines ) )
          aLines := ASize( aLines, Len( aLines ) - 1 )

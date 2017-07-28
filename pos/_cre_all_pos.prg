@@ -17,11 +17,13 @@ FUNCTION cre_all_pos( ver )
    LOCAL _alias, _table_name
    LOCAL _created
 
+/*
    // --------------- strad - statusi radnika -----------
    aDbf := {}
    AAdd( aDbf, { "ID",        "C",  2, 0 } )
    AAdd( aDbf, { "NAZ",       "C", 15, 0 } )
    AAdd( aDbf, { "PRIORITET", "C",  1, 0 } )
+
 
    _alias := "STRAD"
    _table_name := "pos_strad"
@@ -31,7 +33,9 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX( "ID", "ID",  _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
    AFTER_CREATE_INDEX
+*/
 
+/*
 
    // ------------ osob - osoblje ------------------------
    aDbf := {}
@@ -48,9 +52,9 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX( "ID", "KorSif", _alias )
    CREATE_INDEX( "NAZ", "ID", _alias )
    AFTER_CREATE_INDEX
+*/
 
-
-   // --------- kase ------------------------
+   /* --------- kase ------------------------
 
    aDbf := {}
    AAdd( aDbf, { "ID",     "C",  2, 0 } )
@@ -65,7 +69,9 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX( "ID", "ID", _alias )
    AFTER_CREATE_INDEX
 
-   // ----------- pos_odj
+   */
+
+   /* ----------- pos_odj
 
    aDbf := {}
    AAdd( aDbf, { "ID",      "C",  2, 0 } )
@@ -80,6 +86,7 @@ FUNCTION cre_all_pos( ver )
 
    CREATE_INDEX( "ID", "ID", _alias )
    AFTER_CREATE_INDEX
+*/
 
 /*
    aDbf := {}

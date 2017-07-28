@@ -1,8 +1,9 @@
 # F18 klijent, lista promjena
 
-## 3.1.28-vindi, 2017-07-28
+## 3.1.30-vindi, 2017-07-28
 
 ### Developer
+- fix tcol var not found
 - my_browse - fakt pregled tabela - ok
 - my_browse - sinhronizacija ftxt - inkey(0) vs inkey()
 - pos prebačeni svi šifarnici na sql set_a_sql_sifarnik( ... )

@@ -13,7 +13,7 @@
 
 MEMVAR ImeKol
 MEMVAR Ch  // , fID_J
-MEMVAR aAstruct
+// MEMVAR aAstruct
 
 THREAD STATIC __PSIF_NIVO__ := 0
 THREAD STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
@@ -35,10 +35,19 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    LOCAL cUslovSrch :=  ""
    LOCAL cNazSrch
    LOCAL cOrderTag
+   LOCAL lExit
+   LOCAL lExitOnEnter := .F.
 
    // LOCAL cSeekRet
    LOCAL lOtvoriBrowse := .F.
    LOCAL lRet := .T.
+
+   IF cId != NIL
+      lExit := browse_exit_on_enter()
+      browse_exit_on_enter( .T. )
+      lExitOnEnter := .T.
+   ENDIF
+
 
    // PRIVATE fID_J := .F.
 
@@ -60,6 +69,9 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    SELECT ( nDbf )
    IF !Used()
       MsgBeep( "Tabela nije otvorena u radnom području !#Prekid operacije!" )
+      IF lExitOnEnter
+         browse_exit_on_enter( lExit )
+      ENDIF
       RETURN .F.
    ENDIF
 
@@ -77,6 +89,9 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
       PopSifV()
       PopWa( nDbf )
 
+      IF lExitOnEnter
+         browse_exit_on_enter( lExit )
+      ENDIF
       RETURN cRet
 
    ENDIF
@@ -92,7 +107,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
       lOtvoriBrowse := .T.
    ENDIF
 
-
    lRet := .T.
 
    // IF ( lOtvoriBrowse .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( field->naz ) ) ) ;
@@ -101,7 +115,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
       // .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )
 
       s_lPrviPoziv := .T.
-
       IF Eof()
          SKIP -1
       ENDIF
@@ -110,7 +123,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
          GO TOP // bez parametara
       ENDIF
 
-      lRet := my_db_edit_sql( NIL, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
+      lRet := my_browse( NIL, nVisina, nSirina,  {| nCh | my_browse_p_sifra_key_handler( nCh, nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
          ToStrU( cNaslov ), "", lInvert, aOpcije, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
@@ -120,7 +133,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
          IF !( nDBf )->( Used() )
             Alert( "not used ?!" )
          ENDIF
-
          cID := ( nDbf )->id
          // IF fID_J
          // __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
@@ -149,6 +161,10 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
 
    PopSifV()
    PopWa( nDbf )
+
+   IF lExitOnEnter
+      browse_exit_on_enter( lExit )
+   ENDIF
 
    RETURN lRet
 
@@ -211,6 +227,8 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
       find_partner_by_naz_or_id( cId )
    ELSEIF Alias() == "ROBA"
       find_roba_by_naz_or_id( cId )
+   ELSEIF Alias() == "ROBA_P"
+      find_roba_p_by_naz_or_id( cId )
    ELSEIF Alias() == "KONTO"
       find_konto_by_naz_or_id( cId )
    ELSEIF Alias() == "RADN"
@@ -221,10 +239,14 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
       find_koncij_by_id( cId )
    ELSEIF Alias() == "RJ"
       find_rj_by_id( cId )
-   ELSEIF Alias() == "FTXT"
+   ELSEIF Alias() == "FAKT_FTXT"
       find_fakt_ftxt_by_id( cId )
-   ELSE
-      SEEK cId
+      // ELSE
+      // SEEK cId
+   ENDIF
+
+   IF !Used() .OR. FieldPos( "id" ) == 0
+      RETURN .F.
    ENDIF
 
    IF field->id == cId
@@ -261,10 +283,15 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
 
 FUNCTION find_sifra_by_naz( cTable, cIdPart, cDjoker )
 
-   LOCAL cSqlQuery := "select * from fmk." + cTable
+   LOCAL cSqlQuery := "select * from fmk."
    LOCAL cIdSql
    LOCAL cField
 
+   IF cTable == "ftxt"
+      cTable := "fakt_ftxt"
+   ENDIF
+
+   cSqlQuery += cTable
    cIdSql := sql_quote( Upper( AllTrim( cIdPart ) ) + "%" )
 
    IF cDjoker $ ".>" // "." - pocetni dio naziva, ">" pocetni dio sifre
@@ -496,7 +523,7 @@ FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
    */
 
 
-STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
+STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    LOCAL nI
    LOCAL j
@@ -512,11 +539,13 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    LOCAL nTrebaRedova
    LOCAL cUslovSrch
    LOCAL lNovi
+   LOCAL aStruct
 
    PRIVATE cPom
    PRIVATE aQQ
    PRIVATE aUsl
-   PRIVATE aStruct
+
+   // PRIVATE aStruct
 
    IF aZabrane = nil
       aZabrane := {}
@@ -526,7 +555,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       aZabIsp := {}
    ENDIF
 
-   Ch := LastKey()
+   // Ch := LastKey()
 
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )
@@ -566,12 +595,13 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    CASE Ch == K_ENTER
 
-      IF gPregledSifriIzMenija
-         RETURN DE_CONT
-      ELSE
-         s_lPrviPoziv := .F.
-         RETURN DE_ABORT
-      ENDIF
+      // IF gPregledSifriIzMenija
+      RETURN DE_CONT
+      // ELSE
+      // s_lPrviPoziv := .F.
+      // s_lPrviPoziv := .F.
+      // RETURN DE_ABORT
+      // ENDIF
 
 #ifdef F18_USE_MATCH_CODE
    CASE Upper( Chr( Ch ) ) == "F"
@@ -584,9 +614,13 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 #endif
    CASE ( Ch == K_CTRL_N .OR. Ch == K_F4 )
 
+      IF Alias() == "ROBA_P"
+         sastavnica_copy()
+         RETURN DE_REFRESH
+      ENDIF
       Tb:RefreshCurrent()
 
-      IF edit_sql_sif_item( Ch, cOrderTag, aZabIsp, .T. ) == 1
+      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .T. ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -595,8 +629,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE ( Ch == K_F2 .OR. Ch == K_CTRL_A )
 
       Tb:RefreshCurrent()
-
-      IF edit_sql_sif_item( Ch, cOrderTag, aZabIsp, .F. ) == 1
+      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .F. ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -671,7 +704,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
 
 
-STATIC FUNCTION edit_sql_sif_item( nCh, cOrderTag, aZabIsp, lNovi )
+STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
 
    LOCAL nI
    LOCAL j
@@ -699,7 +732,8 @@ STATIC FUNCTION edit_sql_sif_item( nCh, cOrderTag, aZabIsp, lNovi )
    PRIVATE cPom
    PRIVATE aQQ
    PRIVATE aUsl
-   PRIVATE aStruct
+
+   // PRIVATE aStruct
 
    nPrevRecNo := RecNo()
    cTekuciZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
@@ -1113,11 +1147,11 @@ STATIC FUNCTION Popup( cOrderTag )
    LOCAL Izbor
 
    AAdd( Opc, "1. novi                  " )
-   AAdd( opcexe, {|| edit_sql_sif_item( K_CTRL_N, cOrderTag, NIL, .T. ) } )
+   AAdd( opcexe, {|| my_browse_edit_red( K_CTRL_N, cOrderTag, NIL, .T. ) } )
    AAdd( Opc, "2. edit  " )
-   AAdd( opcexe, {|| edit_sql_sif_item( K_F2, cOrderTag, NIL, .F. ) } )
+   AAdd( opcexe, {|| my_browse_edit_red( K_F2, cOrderTag, NIL, .F. ) } )
    AAdd( Opc, "3. dupliciraj  " )
-   AAdd( opcexe, {|| edit_sql_sif_item( K_F4, cOrderTag, NIL, .T. ) } )
+   AAdd( opcexe, {|| my_browse_edit_red( K_F4, cOrderTag, NIL, .T. ) } )
    AAdd( Opc, "4. <a+R> za sifk polja  " )
    AAdd( opcexe, {|| repl_sifk_item() } )
    AAdd( Opc, "5. copy polje -> sifk polje  " )

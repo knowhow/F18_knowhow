@@ -25,7 +25,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
 
    lSumiraj := .F.
 
-   o_konto()
+   //o_konto()
    o_anal()
    o_fin_pripr()
 

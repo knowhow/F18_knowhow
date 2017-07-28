@@ -163,10 +163,10 @@ METHOD gProc( nKey, nKeyHandlerRetEvent )
    CASE ( nKey == K_SH_F2 .OR. nKey == K_CTRL_F2 )
       PPrint()
 
-   CASE nKey == K_SH_F10
+   CASE nKey == iif( is_mac(), K_F10 , K_SH_F10 )
       ::gParams()
 
-   CASE nKey == K_SH_F9
+   CASE nKey == iif( is_mac(), K_F9 , K_SH_F9 )
       Adresar()
 
    OTHERWISE

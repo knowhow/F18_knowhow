@@ -570,16 +570,13 @@ STATIC FUNCTION n_partner( cId )
    RETURN .T.
 
 
-// ------------------------------------
-// nastimaj roba u ROBI
-// ------------------------------------
-STATIC FUNCTION n_roba( cId )
+
+STATIC FUNCTION nastimaj_se_na_roba_by_id( cId )
 
    LOCAL nTArr
 
    nTArr := Select()
-   SELECT roba
-   SEEK cId
+   select_o_roba( cId )
    SELECT ( nTArr )
 
    RETURN .T.
@@ -724,7 +721,7 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
       ENDIF
 
       // nastimaj roba na rugov-idroba
-      n_roba( rugov->idroba )
+      nastimaj_se_na_roba_by_id( rugov->idroba )
 
       select_o_tarifa( roba->idtarifa )
       nPorez := tarifa->opp
@@ -736,22 +733,19 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
 
       Scatter()
 
-      // ako je roba tip U
-      IF roba->tip == "U"
 
+      IF roba->tip == "U"
          // aMemo[1]
          // pronadji djoker #ZA_MJ#
          cPom := str_za_mj( roba->naz, nMjesec, nGodina )
-
-         // dodaj ovo u _txt
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
       ELSE
          // aMemo[1]
-         fakt_a_to_public_var_txt( "", .T. )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
       ENDIF
 
-      // samo na prvoj stavci generisi txt
-      IF nRbr == 0
+
+      IF nRbr == 0   // samo na prvoj stavci generisi txt
 
          // nadji tekstove
          cTxt1 := f_ftxt( ugov->idtxt )
@@ -765,46 +759,46 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
          // aMemo[2]
          cPom := cTxt1 + cTxt2 + cTxt3 + cTxt4 + cTxt5
          // dodaj u polje _txt
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          // dodaj podatke o partneru
 
          // aMemo[3]
          // naziv partnera
          cPom := AllTrim( partn->naz )
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          // adresa
          // aMemo[4]
          cPom := AllTrim( partn->adresa )
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          // ptt i mjesto
          // aMemo[5]
          cPom := AllTrim( partn->ptt )
          cPom += " "
          cPom += AllTrim( partn->mjesto )
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          // br.otpremnice i datum
          // aMemo[6,7]
-         fakt_a_to_public_var_txt( "", .T. )
-         fakt_a_to_public_var_txt( "", .T. )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
 
          // br. ugov
          // aMemo[8]
-         fakt_a_to_public_var_txt( ugov->id, .T. )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( ugov->id, .T. )
 
          cPom := DToC( dDatGen )
 
          // datum isporuke
          // aMemo[9]
          cPom := DToC( dDatVal )
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          // datum valute
          // aMemo[10]
-         fakt_a_to_public_var_txt( cPom )
+         fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom )
 
          __destinacija := ""
 
@@ -813,7 +807,7 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
             // dodaj prazne zapise
             cPom := " "
             FOR i := 11 TO 17
-               fakt_a_to_public_var_txt( cPom, .T. )
+               fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom, .T. )
             NEXT
 
             // uzmi iz destinacije
@@ -852,7 +846,7 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
 
             __destinacija := cPom
 
-            fakt_a_to_public_var_txt( cPom, .T. )
+            fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( cPom, .T. )
 
          ENDIF
 
@@ -1063,28 +1057,25 @@ STATIC FUNCTION vrati_nazad( dDatObr, cIdArt )
    SEEK DToS( dDatObr )
 
    IF !Found()
-      MsgBeep( "Obracun " + fakt_do( dDatObr ) + " ne postoji" )
-      RETURN
+      MsgBeep( "Obračun " + fakt_do( dDatObr ) + " ne postoji" )
+      RETURN .F.
    ENDIF
 
    IF !Empty( cIdArt )
       cFirma := g_idfirma( cIdArt )
    ENDIF
 
-   IF fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_od ) .AND. ;
-         fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do )
+   IF fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_od ) .AND. fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do )
 
       cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
-      Povrat_fakt_po_kriteriju( cBrDokOdDo, NIL, NIL, cFirma )
+      fakt_povrat_po_kriteriju( cBrDokOdDo, NIL, NIL, cFirma )
 
    ENDIF
 
-   // izbrisi pripremu
    o_fakt_pripr()
-
    fakt_brisanje_pripreme()
 
-   RETURN
+   RETURN .T.
 
 
 

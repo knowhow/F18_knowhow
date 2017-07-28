@@ -290,7 +290,7 @@ STATIC FUNCTION ObSif()
    // o_tarifa()
    o_valute()
    // o_rj()
-   o_sastavnica()
+   o_sastavnice()
    o_ugov()
    o_rugov()
 

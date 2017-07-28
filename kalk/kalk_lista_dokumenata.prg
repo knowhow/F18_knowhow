@@ -12,12 +12,12 @@
 #include "f18.ch"
 
 
-
 FUNCTION kalk_stampa_liste_dokumenata()
 
    LOCAL nCol1 := 0, cImeKup
-   LOCAL nul, nizl, nRbr
+   LOCAL nUl, nIzl, nRbr
    LOCAL m
+   LOCAL nC
 
    // LOCAL lImaUkSt := .F.
    LOCAL cIdVd
@@ -33,7 +33,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
    my_close_all_dbf()
 
-   o_partner()
+   //o_partner()
 
    dDatOd := CToD( "" )
    dDatDo := Date()
@@ -81,7 +81,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
       @ m_x + 3, m_y + 2 SAY8 "Od datuma "  GET dDatOd
       @ m_x + 3, Col() + 1 SAY8 "do"  GET dDatDo
-      @ m_x + 5, m_y + 2 SAY8 "Partner" GET cIdPartner PICT "@!" VALID Empty( cidpartner ) .OR. p_partner( @cIdPartner )
+      @ m_x + 5, m_y + 2 SAY8 "Partner" GET cIdPartner PICT "@!" VALID Empty( cIdpartner ) .OR. p_partner( @cIdPartner )
       @ m_x + 6, m_y + 2 SAY8 " Magacinska konta:" GET _mkonto PICT "@S30"
       @ m_x + 7, m_y + 2 SAY8 "Prodavnička konta:" GET _pkonto PICT "@S30"
       @ m_x + 8, m_y + 2 SAY8 "Brojevi dokumenata (prazno-svi)" GET qqBrDok PICT "@!S40"
@@ -204,6 +204,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
       SELECT kalk_doks
 
       ? Str( ++nC, 6 ) + "."
+      info_bar( "k_lista", "kalk_stampa_liste_dok " + DToc( kalk_doks->datdok ) + Str( nC, 6) )
 
       @ PRow(), PCol() + 1 SAY field->datdok
       @ PRow(), PCol() + 1 SAY PadR( field->idfirma + "-" + field->idVd + "-" + field->brdok, 16 )

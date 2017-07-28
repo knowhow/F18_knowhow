@@ -222,7 +222,7 @@ METHOD RnalCsvImport:csv_browse()
 
    @ m_x + _box_x, m_x + 2 SAY "<SPACE> markiranje stavki za prenos  <ESC> izlaz"
 
-   my_db_edit_sql( "csvimp", _box_x, _box_y, {|| ::csv_browse_key_handler() }, _header, "foot",,,,, 1 )
+   my_browse( "csvimp", _box_x, _box_y, {|| ::csv_browse_key_handler() }, _header, "foot",,,,, 1 )
 
    IF LastKey() == K_ESC .AND. Pitanje(, "Importovati sadržaj fajla (D/N) ?", "D" ) == "D"
       _ret := 1

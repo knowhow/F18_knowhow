@@ -87,15 +87,14 @@ FUNCTION fakt_fin_prenos()
 
 
    O_FINMAT
-   o_konto()
+   //o_konto()
    //o_partner()
-   o_tdok()
-   o_roba()
-   o_tarifa()
+   //o_tdok()
+   //o_roba()
+   //o_tarifa()
 
    IF lNCPoSast
-      o_sastavnica()
-
+      o_sastavnice()
       SET ORDER TO TAG "1"
    ENDIF
 
@@ -103,7 +102,6 @@ FUNCTION fakt_fin_prenos()
    IF !Used()
       o_fakt()
    ENDIF
-
 
    SET ORDER TO TAG "1"  // "1","IdFirma+idtipdok+brdok+rbr+podbr""FAKT"
 

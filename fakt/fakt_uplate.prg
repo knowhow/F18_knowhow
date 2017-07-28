@@ -85,7 +85,7 @@ FUNCTION fakt_uplate()
       @ m_x + 4, m_y + 1 SAY REPL( "=", 70 )
 
       SEEK cIdPartner // uplate
-      my_db_edit_sql( "EvUpl", f18_max_rows() -5, f18_max_cols() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
+      my_browse( "EvUpl", f18_max_rows() -5, f18_max_cols() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
          .F., NIL, 1, NIL, 4, 3, NIL, {| nSkip| fakt_uplate_skip_block( nSkip ) } )
 
    ENDDO

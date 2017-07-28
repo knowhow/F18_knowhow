@@ -470,7 +470,7 @@ FUNCTION pr_dupl_sast()
    o_r_export()
    INDEX ON sast TAG "1"
 
-   o_sastavnica()
+   o_sastavnice()
    o_roba()
    SELECT roba
    SET ORDER TO TAG "ID"
@@ -657,9 +657,7 @@ FUNCTION pr_dupl_sast()
 
    RETURN .T.
 
-// -----------------------------------------------
-// eksport sastavnica u dbf fajl
-// -----------------------------------------------
+/*
 FUNCTION _exp_sast_dbf()
 
    LOCAL aDbf := {}
@@ -680,7 +678,7 @@ FUNCTION _exp_sast_dbf()
    ENDIF
 
    o_r_export()
-   o_sastavnica()
+   o_sastavnice()
    o_roba()
 
    SELECT sast
@@ -748,3 +746,4 @@ FUNCTION _exp_sast_dbf()
    USE
 
    RETURN .T.
+*/

@@ -137,7 +137,7 @@ FUNCTION fakt_par_razno()
    LOCAL _def_vp_template := PadR( fetch_metric( "fakt_default_odt_template", my_user(), "" ), 20 )
    LOCAL _def_mp_template := PadR( fetch_metric( "fakt_default_odt_mp_template", my_user(), "" ), 20 )
    LOCAL _def_kol_template := PadR( fetch_metric( "fakt_default_odt_kol_template", my_user(), "" ), 20 )
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _unos_ref_lot := ref_lot()
    LOCAL _unos_opisa := fakt_opis_stavke()
    LOCAL _unos_objekta := fakt_objekti()
@@ -147,6 +147,7 @@ FUNCTION fakt_par_razno()
    LOCAL _otpr_brojac_22 := fakt_otpr_22_brojac()
    LOCAL _otpr_gen := fakt_otpr_gen()
    LOCAL _kontrola_brojaca := fakt_kontrola_brojaca_par()
+   LOCAL nRokPlDana := fakt_rok_placanja_dana()
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
@@ -158,81 +159,79 @@ FUNCTION fakt_par_razno()
 
    Box(, f18_max_rows() - 5, f18_max_cols() - 15, .F., "OSTALI PARAMETRI (RAZNO)" )
 
-   _x := 2
-   @ m_x + _x, m_y + 2 SAY8 "Fakt tekući dokument (1-9)" GET gIMenu VALID gIMenu $ "123456789" PICT "@!"
-   _x += 2
-   @ m_x + _x, m_y + 2 SAY8 "Tekuća radna jedinica kod unosa dokumenta:" GET _def_rj
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Unos dokumenata pomoću barkod-a (D/N) ?" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Pregled zadnjih izlaza kod unosa dokumenta (D/N) ?" GET _rabat VALID _rabat $ "DN" PICT "@!"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Dužina sifre artikla sintetički " GET gnDS VALID gnDS > 0 PICT "9"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Voditi samo količine " GET gSamoKol PICT "@!" VALID gSamoKol $ "DN"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Tekuća vrijednost za rok placanja  " GET gRokPl PICT "999"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Prikaz barkod-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
+   nX := 2
+   @ m_x + nX, m_y + 2 SAY8 "Fakt tekući dokument (1-9)" GET gIMenu VALID gIMenu $ "123456789" PICT "@!"
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY8 "Tekuća radna jedinica kod unosa dokumenta:" GET _def_rj
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Unos dokumenata pomoću barkod-a (D/N) ?" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Pregled zadnjih izlaza kod unosa dokumenta (D/N) ?" GET _rabat VALID _rabat $ "DN" PICT "@!"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Dužina sifre artikla sintetički " GET gnDS VALID gnDS > 0 PICT "9"
+   //++nX
+   //@ m_x + nX, m_y + 2 SAY8 "Voditi samo količine " GET gSamoKol PICT "@!" VALID gSamoKol $ "DN"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Tekuća vrijednost za rok placanja  " GET nRokPlDana PICT "999"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Prikaz barkod-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Račun na email:" GET _racun_na_email PICT "@S50"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "LibreOffice fakturu konvertuj u PDF na lokaciju:" GET _ext_pdf PICT "@S35"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY8 "Račun na email:" GET _racun_na_email PICT "@S50"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "LibreOffice fakturu konvertuj u PDF na lokaciju:" GET _ext_pdf PICT "@S35"
 
-   _x += 2
-   @ m_x + _x, m_y + 2 SAY "   Uzorak fakture (VP):" GET _def_vp_template PICT "@S35"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "   Uzorak fakture (MP):" GET _def_mp_template PICT "@S35"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "     Uzorak otpremince:" GET _def_kol_template PICT "@S35"
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY "   Uzorak fakture (VP):" GET _def_vp_template PICT "@S35"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "   Uzorak fakture (MP):" GET _def_mp_template PICT "@S35"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "     Uzorak otpremince:" GET _def_kol_template PICT "@S35"
 
-   _x += 2
-   read_dn_parametar( "Praćenje po destinacijama", m_x + _x, m_y + 2, @_unos_dest )
-   ++_x
-   read_dn_parametar( "Unos brojeva veze", m_x + _x, m_y + 2, @_unos_br_veza )
-   ++_x
-   read_dn_parametar( "Fakturisanje po prodajnim mjestima", m_x + _x, m_y + 2, @_pm )
-   ++_x
-   read_dn_parametar( "Fakturisanje po objektima", m_x + _x, m_y + 2, @_unos_objekta )
-   ++_x
-   read_dn_parametar( "Fakturisanje po vrstama placanja", m_x + _x, m_y + 2, @_vr_pl )
-   ++_x
-   read_dn_parametar( "Fakt dodatni opis po stavkama", m_x + _x, m_y + 2, @_unos_opisa )
-   ++_x
-   read_dn_parametar( "REF/LOT brojevi", m_x + _x, m_y + 2, @_unos_ref_lot )
-   ++_x
-   read_dn_parametar( "Brojač otpremnica po dokumentu 22 (D/N)", m_x + _x, m_y + 2, @_otpr_brojac_22 )
-   ++_x
+   nX += 2
+   read_dn_parametar( "Praćenje po destinacijama", m_x + nX, m_y + 2, @_unos_dest )
+   ++nX
+   read_dn_parametar( "Unos brojeva veze", m_x + nX, m_y + 2, @_unos_br_veza )
+   ++nX
+   read_dn_parametar( "Fakturisanje po prodajnim mjestima", m_x + nX, m_y + 2, @_pm )
+   ++nX
+   read_dn_parametar( "Fakturisanje po objektima", m_x + nX, m_y + 2, @_unos_objekta )
+   ++nX
+   read_dn_parametar( "Fakturisanje po vrstama placanja", m_x + nX, m_y + 2, @_vr_pl )
+   ++nX
+   read_dn_parametar( "Fakt dodatni opis po stavkama", m_x + nX, m_y + 2, @_unos_opisa )
+   ++nX
+   read_dn_parametar( "REF/LOT brojevi", m_x + nX, m_y + 2, @_unos_ref_lot )
+   ++nX
+   read_dn_parametar( "Brojač otpremnica po dokumentu 22 (D/N)", m_x + nX, m_y + 2, @_otpr_brojac_22 )
+   ++nX
 
-   read_dn_parametar( "Generacija otpremnica ver.2 (D/N)", m_x + _x, m_y + 2, @_otpr_gen )
-   ++_x
+   read_dn_parametar( "Generacija otpremnica ver.2 (D/N)", m_x + nX, m_y + 2, @_otpr_gen )
+   ++nX
 
-   read_dn_parametar( "Kontrola brojača dokumenta (D/N)", m_x + _x, m_y + 2, @_kontrola_brojaca )
-   ++_x
+   read_dn_parametar( "Kontrola brojača dokumenta (D/N)", m_x + nX, m_y + 2, @_kontrola_brojaca )
+   ++nX
 
-   @ m_x + _x, m_y + 2 SAY8 "Ispis računa MP na traku (D/N/X)" GET gMPPrint  PICT "@!"   VALID gMPPrint $ "DNXT"
+   @ m_x + nX, m_y + 2 SAY8 "Ispis računa MP na traku (D/N/X)" GET gMPPrint  PICT "@!"   VALID gMPPrint $ "DNXT"
 
    READ
 
    IF gMPPrint $ "DXT"
 
-      ++_x
-      @ m_x + _x, m_y + 2 SAY "Oznaka lokalnog porta za stampu: LPT" GET gMPLocPort VALID gMPLocPort $ "1234567" PICT "@!"
-      ++_x
-      @ m_x + _x, m_y + 2 SAY "Redukcija trake (0/1/2):" ;
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Oznaka lokalnog porta za stampu: LPT" GET gMPLocPort VALID gMPLocPort $ "1234567" PICT "@!"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Redukcija trake (0/1/2):" ;
          GET gMPRedTraka ;
          VALID gMPRedTraka $ "012"
-      ++_x
-      @ m_x + _x, m_y + 2 SAY "Ispis id artikla na racunu (D/N):" ;
-         GET gMPArtikal ;
-         VALID gMPArtikal $ "DN" PICT "@!"
-      ++_x
-      @ m_x + _x, m_y + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" ;
-         GET gMPCjenPDV ;
-         VALID gMPCjenPDV $ "12"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Ispis id artikla na racunu (D/N):" ;
+         GET gMPArtikal VALID gMPArtikal $ "DN" PICT "@!"
+      ++nX
+      @ m_x + nX, m_y + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" ;
+         GET gMPCjenPDV  VALID gMPCjenPDV $ "12"
 
 
       READ
@@ -245,8 +244,8 @@ FUNCTION fakt_par_razno()
 
    IF LastKey() <> K_ESC
 
-      set_metric( "fakt_voditi_samo_kolicine", NIL, gSamoKol )
-      set_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), gRokPl )
+      //set_metric( "fakt_voditi_samo_kolicine", NIL, gSamoKol )
+      set_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), nRokPlDana )
       set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
       set_metric( "fakt_meni_tekuci", my_user(), gIMenu )
       set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
@@ -717,8 +716,8 @@ FUNCTION fakt_par_nazivi_dokumenata()
    o_params()
 
    g10Str := PadR( g10Str, 20 )
-   g16Str := PadR( g16Str, 20 )
-   g06Str := PadR( g06Str, 20 )
+   //g16Str := PadR( g16Str, 20 )
+   //g06Str := PadR( g06Str, 20 )
    g11Str := PadR( g11Str, 20 )
    g12Str := PadR( g12Str, 20 )
    g13Str := PadR( g13Str, 20 )
@@ -736,7 +735,7 @@ FUNCTION fakt_par_nazivi_dokumenata()
    g12ftxt := PadR( g12ftxt, 100 )
    g13ftxt := PadR( g13ftxt, 100 )
    g15ftxt := PadR( g15ftxt, 100 )
-   g16ftxt := PadR( g16ftxt, 100 )
+   //g16ftxt := PadR( g16ftxt, 100 )
    g20ftxt := PadR( g20ftxt, 100 )
    g21ftxt := PadR( g21ftxt, 100 )
    g22ftxt := PadR( g22ftxt, 100 )
@@ -746,8 +745,8 @@ FUNCTION fakt_par_nazivi_dokumenata()
    g27ftxt := PadR( g27ftxt, 100 )
 
    g10Str2T := PadR( g10Str2T, 132 )
-   g16Str2T := PadR( g16Str2T, 132 )
-   g06Str2T := PadR( g06Str2T, 132 )
+   //g16Str2T := PadR( g16Str2T, 132 )
+   //g06Str2T := PadR( g06Str2T, 132 )
    g11Str2T := PadR( g11Str2T, 132 )
    g15Str2T := PadR( g15Str2T, 132 )
    g12Str2T := PadR( g12Str2T, 132 )
@@ -762,8 +761,8 @@ FUNCTION fakt_par_nazivi_dokumenata()
    gNazPotStr := PadR( gNazPotStr, 132 )
 
    Box(, 22, 76, .F., "Naziv dokumenata, potpis na kraju, str. 1" )
-   @ m_x + 1, m_y + 2 SAY "06 - Tekst"      GET g06Str
-   @ m_x + 2, m_y + 2 SAY "06 - Potpis TXT" GET g06Str2T PICT"@S50"
+   //@ m_x + 1, m_y + 2 SAY "06 - Tekst"      GET g06Str
+   //@ m_x + 2, m_y + 2 SAY "06 - Potpis TXT" GET g06Str2T PICT"@S50"
    @ m_x + 4, m_y + 2 SAY "10 - Tekst"      GET g10Str
    @ m_x + 4, Col() + 1 SAY "d.txt lista:" GET g10ftxt PICT "@S25"
    @ m_x + 5, m_y + 2 SAY "10 - Potpis TXT" GET g10Str2T PICT"@S50"
@@ -779,9 +778,9 @@ FUNCTION fakt_par_nazivi_dokumenata()
    @ m_x + 16, m_y + 2 SAY "15 - Tekst"      GET g15Str
    @ m_x + 16, Col() + 1 SAY "d.txt lista:" GET g15ftxt PICT "@S25"
    @ m_x + 17, m_y + 2 SAY "15 - Potpis TXT" GET g15Str2T PICT "@S50"
-   @ m_x + 19, m_y + 2 SAY "16 - Tekst"      GET g16Str
-   @ m_x + 19, Col() + 1 SAY "d.txt lista:" GET g16ftxt PICT "@S25"
-   @ m_x + 20, m_y + 2 SAY "16 - Potpis TXT" GET g16Str2T PICT"@S50"
+   //@ m_x + 19, m_y + 2 SAY "16 - Tekst"      GET g16Str
+   //@ m_x + 19, Col() + 1 SAY "d.txt lista:" GET g16ftxt PICT "@S25"
+   //@ m_x + 20, m_y + 2 SAY "16 - Potpis TXT" GET g16Str2T PICT"@S50"
    READ
    BoxC()
 
@@ -828,9 +827,9 @@ FUNCTION fakt_par_nazivi_dokumenata()
       set_metric( "fakt_dokument_dok_13_naziv", NIL, g13Str )
       set_metric( "fakt_dokument_dok_13_potpis", NIL, g13Str2T )
       set_metric( "fakt_dokument_dok_13_txt_lista", NIL, g13ftxt )
-      set_metric( "fakt_dokument_dok_16_naziv", NIL, g16Str )
-      set_metric( "fakt_dokument_dok_16_potpis", NIL, g16Str2T )
-      set_metric( "fakt_dokument_dok_16_txt_lista", NIL, g16ftxt )
+      //set_metric( "fakt_dokument_dok_16_naziv", NIL, g16Str )
+      //set_metric( "fakt_dokument_dok_16_potpis", NIL, g16Str2T )
+      //set_metric( "fakt_dokument_dok_16_txt_lista", NIL, g16ftxt )
       set_metric( "fakt_dokument_dok_20_naziv", NIL, g20Str )
       set_metric( "fakt_dokument_dok_20_potpis", NIL, g20Str2T )
       set_metric( "fakt_dokument_dok_20_txt_lista", NIL, g20ftxt )
@@ -839,7 +838,7 @@ FUNCTION fakt_par_nazivi_dokumenata()
       set_metric( "fakt_dokument_dok_22_txt_lista", NIL, g22ftxt )
 
 
-      WPar( "r3", g06Str )
+      //WPar( "r3", g06Str )
       WPar( "xl", @g15Str )
       WPar( "x9", @g21Str )
       WPar( "xC", @g23Str )
@@ -847,7 +846,7 @@ FUNCTION fakt_par_nazivi_dokumenata()
       WPar( "xi", @g26Str )
       WPar( "xo", @g27Str )
 
-      WPar( "r4", @g06Str2T )
+      //WPar( "r4", @g06Str2T )
       WPar( "xm", @g15Str2T )
       WPar( "xa", @g21Str2T )
       WPar( "xD", @g23Str2T )

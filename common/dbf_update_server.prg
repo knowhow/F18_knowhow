@@ -43,6 +43,9 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
       lLock := .F.
    ENDIF
 
+   IF "roba_p" $ cTabela
+      AltD()
+   ENDIF
 
    // trebamo where str za hRecord rec
    set_table_values_algoritam_vars( @cTabela, @hRecord, @nAlgoritam, @cTransaction, @hDbfRec, @hAlgoritam, @cWhereString, @_alg_tag )
@@ -67,7 +70,7 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
       lock_semaphore( cTabela )
    ENDIF
 
-   IF !sql_table_update( cTabela, "del", nil, cWhereString ) // izbrisi sa servera stare vrijednosti za hRecord
+   IF !sql_table_update( cTabela, "del", NIL, cWhereString ) // izbrisi sa servera stare vrijednosti za hRecord
 
       IF cTransaction == "FULL"
          run_sql_query( "ROLLBACK" )
@@ -94,7 +97,7 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
       // trebamo uraditi i delete id=id_stari
       // to radimo upravo u sljedecoj sekvenci
       //
-      IF !sql_table_update( cTabela, "del", nil, cWhereStringDbf )
+      IF !sql_table_update( cTabela, "del", NIL, cWhereStringDbf )
 
          IF cTransaction == "FULL"
             run_sql_query( "ROLLBACK" )
@@ -226,7 +229,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
    ENDIF
 
 
-   IF sql_table_update( cTabela, "del", nil, cWhereString )
+   IF sql_table_update( cTabela, "del", NIL, cWhereString )
 
       IF hDbfRec[ "sql" ]
          DELETE
@@ -271,7 +274,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
             SEEK _full_id
 
             WHILE Found()
-               ++ nCount
+               ++nCount
                DELETE
                // sve dok budes nalazio pod ovim kljucem brisi
                SEEK _full_id
@@ -375,7 +378,7 @@ FUNCTION delete_all_dbf_and_server( cTabela )
 // --------------------------------------------------------------------------------------------------------------
 // inicijalizacija varijabli koje koriste update and delete_from_server_and_dbf  funkcije
 // ---------------------------------------------------------------------------------------------------------------
-STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, nAlgoritam, cTransaction, hDbfRec, alg, where_str, alg_tag )
+STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, nAlgoritam, cTransaction, hDbfRec, hAlgoritam, where_str, alg_tag )
 
    LOCAL cKey
    LOCAL nCount := 0
@@ -392,6 +395,9 @@ STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, nAlgoritam, c
 
    cTabela := hDbfRec[ "table" ]    // ako je alias proslijedjen kao ulazni parametar, prebaci se na dbf_table
 
+   IF " _p" $ cTabela  // HACK "roba _p"
+      cTabela := StrTran( cTabela, " _p", "" )
+   ENDIF
 
    IF hRecord == NIL
       cAlias := Alias()
@@ -413,16 +419,16 @@ STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, nAlgoritam, c
    ENDIF
 
 
-   alg := hDbfRec[ "algoritam" ][ nAlgoritam ]
+   hAlgoritam := hDbfRec[ "algoritam" ][ nAlgoritam ]
    lSqlTable := hDbfRec[ "sql" ]
 
-   FOR EACH cKey in alg[ "dbf_key_fields" ]
+   FOR EACH cKey in hAlgoritam[ "dbf_key_fields" ]
 
-      ++ nCount
+      ++nCount
       IF ValType( cKey ) == "C"
 
          IF !hb_HHasKey( hRecord, cKey )  // ne gledati numericke kljuceve, koji su array stavke
-            altd() // nepostojeci kljuc
+            AltD() // nepostojeci kljuc
             cMsg := RECI_GDJE_SAM + "# tabela:" + cTabela + "#bug - nepostojeći kljuc:" + cKey +  "#hRecord:" + pp( hRecord )
             log_write( cMsg, 1 )
             MsgBeep( cMsg )
@@ -462,8 +468,8 @@ STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, nAlgoritam, c
 
    NEXT
 
-   BEGIN SEQUENCE WITH {| err| err:cargo := { "var",  "hRecord", hRecord }, GlobalErrorHandler( err ) }
-      where_str := sql_where_from_dbf_key_fields( alg[ "dbf_key_fields" ], hRecord, lSqlTable )
+   BEGIN SEQUENCE WITH {| err | err:cargo := { "var",  "hRecord", hRecord }, GlobalErrorHandler( err ) }
+      where_str := sql_where_from_dbf_key_fields( hAlgoritam[ "dbf_key_fields" ], hRecord, lSqlTable )
    END SEQUENCE
 
    IF nAlgoritam > 1 .OR. _use_tag == .T.

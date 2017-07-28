@@ -428,9 +428,9 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
       SELECT fakt
 
       IF field->dindem == Left( ValBazna(), 3 )
-         _iznos := Round( _kol * nCijena * PrerCij() * ( 1 - _rab / 100 ), ZAOKRUZENJE )
+         _iznos := Round( _kol * nCijena * fakt_preracun_cijene() * ( 1 - _rab / 100 ), ZAOKRUZENJE )
       ELSE
-         _iznos := Round( _kol * nCijena * PrerCij() * ( 1 - _rab / 100 ), ZAOKRUZENJE )
+         _iznos := Round( _kol * nCijena * fakt_preracun_cijene() * ( 1 - _rab / 100 ), ZAOKRUZENJE )
       ENDIF
 
       IF RobaZastCijena( cIdTarifa )
@@ -612,9 +612,9 @@ STATIC FUNCTION fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTip
       ENDIF
 
       IF field->dindem == Left( ValBazna(), 3 )
-         nRacunFaktTotal += Round( nKolicina * nCijena * PrerCij() * ( 1 - _rn_rabat / 100 ), ZAOKRUZENJE )
+         nRacunFaktTotal += Round( nKolicina * nCijena * fakt_preracun_cijene() * ( 1 - _rn_rabat / 100 ), ZAOKRUZENJE )
       ELSE
-         nRacunFaktTotal += Round( nKolicina * nCijena * PrerCij() * ( 1 - _rn_rabat / 100 ), ZAOKRUZENJE )
+         nRacunFaktTotal += Round( nKolicina * nCijena * fakt_preracun_cijene() * ( 1 - _rn_rabat / 100 ), ZAOKRUZENJE )
       ENDIF
 
       // 1 - broj racuna

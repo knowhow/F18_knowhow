@@ -151,10 +151,10 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 FUNCTION fin_open_psuban_and_ostalo()
 
    o_vrstep()
-   o_konto()
+   //o_konto()
    //o_partner()
-   o_tnal()
-   o_tdok()
+   //o_tnal()
+   //o_tdok()
    o_fin_psuban()
    o_fin_pripr()
 
@@ -165,14 +165,14 @@ FUNCTION fin_open_psuban_and_ostalo()
 */
 FUNCTION fin_open_lock_panal( lZap )
 
-   O_PSUBAN
-   O_PANAL
-   O_PSINT
-   O_PNALOG
+   o_fin_psuban()
+   o_fin_panal()
+   o_fin_psint()
+   o_fin_pnalog()
 
    //o_partner()
-   o_konto()
-   o_tnal()
+   //o_konto()
+   //o_tnal()
 
    IF !lock_fin_priprema( lZap )
       Alert( "lock fin priprema error ?" )
@@ -257,12 +257,12 @@ STATIC FUNCTION lock_fin_priprema( lZap )
 
 FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
 
-   O_PANAL
-   O_PSINT
-   O_PNALOG
-   O_PSUBAN
-   o_konto()
-   o_tnal()
+   o_fin_panal()
+   o_fin_psint()
+   o_fin_pnalog()
+   o_fin_psuban()
+   //o_konto()
+   //o_tnal()
 
    IF lAuto == NIL
       lAuto := .F.

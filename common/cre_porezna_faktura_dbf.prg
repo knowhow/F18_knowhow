@@ -51,7 +51,7 @@ FUNCTION create_porezna_faktura_temp_dbfs()
    CREATE_INDEX( "IDROBA", "idroba", "rn" )
    CREATE_INDEX( "1", "tip", "drntext" )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION get_drn_fields( aArr )
@@ -71,7 +71,7 @@ FUNCTION get_drn_fields( aArr )
    AAdd( aArr, { "UKKOL",   "N", 14, 2 } )
    AAdd( aArr, { "CSUMRN",  "N",  6, 0 } )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION get_rn_fields( aArr )
@@ -98,7 +98,7 @@ FUNCTION get_rn_fields( aArr )
    AAdd( aArr, { "C3",   "C", 100, 0 } )
    AAdd( aArr, { "OPIS",   "C", 200, 0 } )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -138,9 +138,9 @@ FUNCTION add_drntext( cTip, cOpis )
    RETURN .T.
 
 
-FUNCTION add_drn( cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp, nZaokr, nUkkol )
+FUNCTION add_drn( cBrDok, dDatDok, dDatVal, dDatumIsporuke, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp, nZaokr, nUkkol )
 
-   LOCAL cnt1
+   LOCAL cNt1
 
    IF !Used( F_DRN )
       O_DRN
@@ -154,8 +154,8 @@ FUNCTION add_drn( cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nU
    IF ( dDatVal <> NIL )
       REPLACE datval WITH dDatVal
    ENDIF
-   IF ( dDatIsp <> NIL )
-      REPLACE datisp WITH dDatIsp
+   IF ( dDatumIsporuke <> NIL )
+      REPLACE datisp WITH dDatumIsporuke
    ENDIF
    REPLACE vrijeme WITH cTime
    REPLACE ukbezpdv WITH nUBPDV
@@ -170,9 +170,10 @@ FUNCTION add_drn( cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nU
    // popust na teret prodavca
    REPLACE ukpoptp WITH nUPopTp
 
-   RETURN
+   RETURN .T.
 
-FUNCTION add_drn_datum_isporuke( dDatIsp )
+
+FUNCTION add_drn_datum_isporuke( dDatumIsporuke )
 
    IF !Used( F_DRN )
       O_DRN
@@ -184,10 +185,10 @@ FUNCTION add_drn_datum_isporuke( dDatIsp )
    ENDIF
 
    IF FieldPos( "datisp" ) <> 0
-      REPLACE datisp WITH dDatIsp
+      REPLACE datisp WITH dDatumIsporuke
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION get_drn_datum_isporuke()
@@ -267,7 +268,7 @@ FUNCTION dodaj_stavku_racuna( cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKo
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // isprazni drn tabele
@@ -282,7 +283,7 @@ FUNCTION zap_racun_tbl()
    SELECT drntext
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.
 
 
 // otvori rn tabele
@@ -342,18 +343,17 @@ FUNCTION get_dtxt_opis( cTip )
 
    RETURN cRet
 
-// ---------------------------------------------
-// azuriranje podataka o kupcu
-// ---------------------------------------------
-FUNCTION AzurKupData( cIdPos )
+
+FUNCTION porezna_faktura_azur_podataka_o_kupcu( cIdPos )
 
    LOCAL cKNaziv
    LOCAL cKAdres
    LOCAL cKIdBroj
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _ok
-   LOCAL _tbl := "pos_dokspf"
+   LOCAL cTabela := "pos_dokspf"
    LOCAL hParams
+   LOCAL dDatumIsporuke
 
    O_DRN
    O_DRNTEXT
@@ -361,7 +361,7 @@ FUNCTION AzurKupData( cIdPos )
    cKNaziv := get_dtxt_opis( "K01" )
    cKAdres := get_dtxt_opis( "K02" )
    cKIdBroj := get_dtxt_opis( "K03" )
-   dDatIsp := get_drn_datum_isporuke()
+   dDatumIsporuke := get_drn_datum_isporuke()
 
    // nema porezne fakture
    IF cKNaziv == "???"
@@ -370,7 +370,7 @@ FUNCTION AzurKupData( cIdPos )
 
    O_DOKSPF
 
-   IF !begin_sql_tran_lock_tables( { _tbl }  )
+   IF !begin_sql_tran_lock_tables( { cTabela }  )
       RETURN .F.
    ENDIF
 
@@ -385,29 +385,30 @@ FUNCTION AzurKupData( cIdPos )
       APPEND BLANK
    ENDIF
 
-   _rec := dbf_get_rec()
-   _rec[ "idpos" ] := cIdPos
-   _rec[ "idvd" ] := "42"
-   _rec[ "brdok" ] := drn->brdok
-   _rec[ "datum" ] := drn->datdok
+   hRec := dbf_get_rec()
+   hRec[ "idpos" ] := cIdPos
+   hRec[ "idvd" ] := "42"
+   hRec[ "brdok" ] := drn->brdok
+   hRec[ "datum" ] := drn->datdok
 
-   IF hb_HHasKey( _rec, "datisp" )
-      IF dDatIsp <> nil
-         _rec[ "datisp" ] := dDatIsp
+   IF hb_HHasKey( hRec, "datisp" )
+      IF dDatumIsporuke <> nil
+         hRec[ "datisp" ] := dDatumIsporuke
       ENDIF
    ENDIF
 
-   _rec[ "knaz" ] := cKNaziv
-   _rec[ "kadr" ] := cKAdres
-   _rec[ "kidbr" ] := cKIdBroj
+   hRec[ "knaz" ] := cKNaziv
+   hRec[ "kadr" ] := cKAdres
+   hRec[ "kidbr" ] := cKIdBroj
 
-   update_rec_server_and_dbf( _tbl, _rec, 1, "CONT" )
+   update_rec_server_and_dbf( cTabela, hRec, 1, "CONT" )
 
    hParams := hb_Hash()
-   hParams[ "unlock" ] :=  { _tbl }
+   hParams[ "unlock" ] :=  { cTabela }
    run_sql_query( "COMMIT", hParams )
 
    RETURN .T.
+
 
 
 FUNCTION fnd_kup_data( cKupac ) // pretrazi tabelu kupaca i napuni matricu
@@ -442,7 +443,6 @@ FUNCTION fnd_kup_data( cKupac ) // pretrazi tabelu kupaca i napuni matricu
       DO WHILE !Eof()
 
          cPartData := field->knaz + field->kadr + field->kidbr
-
          IF cPartData == cTmp
             SKIP
             LOOP

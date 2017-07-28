@@ -1094,7 +1094,7 @@ METHOD F18Admin:drop_pg_db( cDatabaseName )
 
 METHOD F18Admin:delete_db_data_all( cDatabaseName, data_type )
 
-   LOCAL _ret
+   LOCAL oRet
    LOCAL cQuery
    LOCAL _pg_srv
 
@@ -1184,8 +1184,8 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, data_type )
    ENDIF
 
    info_bar( "nova_sezona", "brisanje podataka " + cDatabaseName )
-   _ret := run_sql_query( cQuery )
-   IF sql_error_in_query( _ret, "DELETE" )
+   oRet := run_sql_query( cQuery )
+   IF sql_error_in_query( oRet, "DELETE" )
       RETURN .F.
    ENDIF
 

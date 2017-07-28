@@ -13,6 +13,19 @@
 
 MEMVAR ImeKol, Kol
 
+
+FUNCTION P_Roba_select( cId )
+
+   LOCAL xRet
+
+   //lExit := browse_exit_on_enter()
+   //browse_exit_on_enter( .T. )
+   xRet := p_roba( @cId )
+   //browse_exit_on_enter( lExit )
+
+   RETURN xRet
+
+
 /*
    P_Roba( @cId )
    P_Roba( @cId, NIL, NIL, "IDP") - tag IDP - proizvodi
@@ -61,15 +74,14 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
       cPom := "mpc" + AllTrim( Str( nI ) )
       cPom2 := '{|| transform(' + cPom + ',"999999.999")}'
 
-      //IF roba->( FieldPos( cPom ) )  <>  0
+      // IF roba->( FieldPos( cPom ) )  <>  0
+      cPrikazi := fetch_metric( "roba_prikaz_" + cPom, NIL, "D" )
 
-         cPrikazi := fetch_metric( "roba_prikaz_" + cPom, NIL, "D" )
+      IF cPrikazi == "D"
+         AAdd( ImeKol, { PadC( Upper( cPom ), 10 ), &( cPom2 ), cPom, NIL, NIL, NIL, kalk_pic_cijena_bilo_gpiccdem() } )
+      ENDIF
 
-         IF cPrikazi == "D"
-            AAdd( ImeKol, { PadC( Upper( cPom ), 10 ), &( cPom2 ), cPom, NIL, NIL, NIL, kalk_pic_cijena_bilo_gpiccdem() } )
-         ENDIF
-
-      //ENDIF
+      // ENDIF
    NEXT
 
    AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( field->NC, kalk_pic_cijena_bilo_gpiccdem() ) }, "NC", NIL, NIL, NIL, kalk_pic_cijena_bilo_gpiccdem()  } )
@@ -80,11 +92,9 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
    AAdd ( ImeKol, { PadC( "MINK", 10 ), {|| Transform( field->MINK, "999999.99" ) }, "MINK"   } )
 
    AAdd ( ImeKol, { PadC( "K1", 4 ), {|| field->k1 }, "k1"   } )
-   AAdd ( ImeKol, { PadC( "K2", 4 ), {|| field->k2 }, "k2", ;
-      {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 35   } )
+   AAdd ( ImeKol, { PadC( "K2", 4 ), {|| field->k2 }, "k2", {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 35   } )
    AAdd ( ImeKol, { PadC( "N1", 12 ), {|| field->N1 }, "N1"   } )
-   AAdd ( ImeKol, { PadC( "N2", 12 ), {|| field->N2 }, "N2", ;
-      {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 35   } )
+   AAdd ( ImeKol, { PadC( "N2", 12 ), {|| field->N2 }, "N2", {|| .T. }, {|| .T. }, NIL, NIL, NIL, NIL, 35   } )
 
 
    // AUTOMATSKI TROSKOVI ROBE, samo za KALK
@@ -109,10 +119,10 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
       AAdd ( ImeKol, { "Id konto", {|| idkonto }, "idkonto", {|| .T. }, {|| Empty( widkonto ) .OR. P_Konto( @widkonto ) }   } )
    ENDIF
 
-   IF roba->( FieldPos( "IDTARIFA2" ) ) <> 0
-      AAdd ( ImeKol, { "Tarifa R2", {|| IdTarifa2 }, "IdTarifa2", {|| .T. }, {|| set_tar_rs( @wIdTarifa2, wIdTarifa ) .OR. P_Tarifa( @wIdTarifa2 ) }   } )
-      AAdd ( ImeKol, { "Tarifa R3", {|| IdTarifa3 }, "IdTarifa3", {|| .T. }, {|| set_tar_rs( @wIdTarifa3, wIdTarifa ) .OR. P_Tarifa( @wIdTarifa3 ) }   } )
-   ENDIF
+   // IF roba->( FieldPos( "IDTARIFA2" ) ) <> 0
+   // AAdd ( ImeKol, { "Tarifa R2", {|| IdTarifa2 }, "IdTarifa2", {|| .T. }, {|| set_tar_rs( @wIdTarifa2, wIdTarifa ) .OR. P_Tarifa( @wIdTarifa2 ) }   } )
+   // AAdd ( ImeKol, { "Tarifa R3", {|| IdTarifa3 }, "IdTarifa3", {|| .T. }, {|| set_tar_rs( @wIdTarifa3, wIdTarifa ) .OR. P_Tarifa( @wIdTarifa3 ) }   } )
+   // ENDIF
 
    Kol := {}
 
@@ -293,14 +303,14 @@ FUNCTION RobaZastCijena( cIdTarifa )
 
 FUNCTION OFmkRoba()
 
-   //o_sifk()
-   //o_sifv()
-   //o_konto()
-   //o_koncij()
+   // o_sifk()
+   // o_sifv()
+   // o_konto()
+   // o_koncij()
    o_trfp()
-   //o_tarifa()
-   //o_roba()
-   o_sastavnica()
+   // o_tarifa()
+   // o_roba()
+   o_sastavnice()
 
    RETURN .T.
 

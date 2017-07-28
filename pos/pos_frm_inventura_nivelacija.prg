@@ -281,7 +281,7 @@ FUNCTION pos_inventura_nivelacija()
 
          SET CURSOR ON
 
-         my_db_edit_sql( "PripInv", f18_max_rows() -15, f18_max_cols() -3, {|| EditInvNiv( dDatRada ) }, ;
+         my_browse( "PripInv", f18_max_rows() -15, f18_max_cols() -3, {|| EditInvNiv( dDatRada ) }, ;
             "Broj dokumenta: " + AllTrim( cBrDok ) + " datum: " + DToC( dDatRada ), ;
             "PRIPREMA " + cNazDok + "E", nil, ;
             { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka", "<D> ispravi datum" }, 2, , , )

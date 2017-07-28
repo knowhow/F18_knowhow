@@ -84,7 +84,7 @@ FUNCTION pos_lista_azuriranih_dokumenata()
    ENDIF
 
 
-   my_db_edit_sql( "pos_doks", f18_max_rows() - 10, f18_max_cols() - 15, ;  // params cImeBoxa, xw, yw
+   my_browse( "pos_doks", f18_max_rows() - 10, f18_max_cols() - 15, ;  // params cImeBoxa, xw, yw
       {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), "POS", ; // bUserF, cMessTop, cMessBot
       .F., aOpc ) // lInvert, aMessage
 

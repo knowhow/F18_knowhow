@@ -123,7 +123,7 @@ FUNCTION fakt_txt_fill_djokeri( nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPro
 
 
 // ----------------------------------------
-// pronadji i vrati tekst iz FTXT
+// pronadji i vrati tekst iz FAKT_FTXT
 // ----------------------------------------
 FUNCTION f_ftxt( cId )
 

@@ -131,7 +131,6 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
       DO WHILE .T.
 
-
          IF ( cSeek == 'IZDOKS' )
             IF ( PRow() > 42 ) // stampati sve odjednom
                ++nStr

@@ -16,7 +16,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 
    LOCAL _vars := hb_Hash()
    LOCAL lBrisatiKumulativ := .T.
-   LOCAL _rec, _del_rec
+   LOCAL hRec, _del_rec
    LOCAL _field_ids, _where_block
    LOCAL _t_rec
    LOCAL oFaktAttr, _hAttrId
@@ -146,7 +146,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
       IF _ok
 
          nRet := 1
-         hParams := hb_hash()
+         hParams := hb_Hash()
          hParams[ "unlock" ] := { "fakt_fakt", "fakt_doks", "fakt_doks2" }
          run_sql_query( "COMMIT", hParams )
 
@@ -174,7 +174,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 
 STATIC FUNCTION resetuj_markere_generisanog_dokumenta( cIdFirma, cIdTipDok, cBrDok )
 
-   LOCAL _rec
+   LOCAL hRec
 
    SELECT fakt_pripr
    SET ORDER TO TAG "1"
@@ -182,14 +182,14 @@ STATIC FUNCTION resetuj_markere_generisanog_dokumenta( cIdFirma, cIdTipDok, cBrD
 
    DO WHILE !Eof() .AND. fakt_pripr->( field->idfirma + field->idtipdok + field->brdok ) ==  cIdFirma + cIdTipDok + cBrDok
       IF fakt_pripr->m1 == "X"
-         _rec := dbf_get_rec()
-         _rec[ "m1" ] := Space( 1 )
-         dbf_update_rec( _rec )
+         hRec := dbf_get_rec()
+         hRec[ "m1" ] := Space( 1 )
+         dbf_update_rec( hRec )
       ENDIF
       SKIP
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -197,64 +197,33 @@ STATIC FUNCTION resetuj_markere_generisanog_dokumenta( cIdFirma, cIdTipDok, cBrD
 
 STATIC FUNCTION kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cBrDok )
 
+   LOCAL hRec
+
    SELECT fakt
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdTipDok == field->idtipdok .AND. cBrDok == field->brdok
 
       SELECT fakt
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       SELECT fakt_pripr
       APPEND BLANK
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       SELECT fakt
       SKIP
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
 
-STATIC FUNCTION uslovi_za_povrat_prema_kriteriju( vars )
 
-   LOCAL _tip_dok := vars[ "tip_dok" ]
-   LOCAL _br_dok := vars[ "br_dok" ]
-   LOCAL _datumi := vars[ "datumi" ]
-   LOCAL _rj := vars[ "rj" ]
-   LOCAL _ret := .T.
-
-   Box(, 4, 60 )
-   @ m_x + 1, m_y + 2 SAY "Rj               "  GET _rj PICT "@!"
-   @ m_x + 2, m_y + 2 SAY "Vrste dokumenata "  GET _tip_dok PICT "@S40"
-   @ m_x + 3, m_y + 2 SAY "Broj dokumenata  "  GET _br_dok PICT "@S40"
-   @ m_x + 4, m_y + 2 SAY "Datumi           "  GET _datumi PICT "@S40"
-   READ
-   Boxc()
-
-   IF Pitanje( "FAKT_POV_KRITER", "Dokumente sa zadanim kriterijumom vratiti u pripremu (D/N) ?", "N" ) == "N"
-      _ret := .F.
-      RETURN _ret
-   ENDIF
-
-   vars[ "rj" ] := _rj
-   vars[ "tip_dok" ] := _tip_dok
-   vars[ "br_dok" ] := _br_dok
-   vars[ "datumi" ] := _datumi
-   vars[ "uslov_dokumenti" ] := Parsiraj( _br_dok, "brdok", "C" )
-   vars[ "uslov_datumi" ] := Parsiraj( _datumi, "datdok", "D" )
-   vars[ "uslov_tipovi" ] := Parsiraj( _tip_dok, "idtipdok", "C" )
-
-   RETURN _ret
-
-
-
-
-FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
+FUNCTION fakt_povrat_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    LOCAL nRec
    LOCAL _t_rec
@@ -310,7 +279,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    IF Pitanje( "", "Da li ste sigurni da želite vratiti sve dokumente prema kriteriju (D/N) ?", "N" ) == "N"
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    _filter := _vars[ "uslov_dokumenti" ]
@@ -330,7 +299,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    IF _filter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &_filter
+      SET FILTER TO &_filter
    ENDIF
 
    GO TOP
@@ -415,7 +384,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    ENDDO
 
    IF _ok
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "fakt_doks", "fakt_doks2", "fakt_fakt" }
       run_sql_query( "COMMIT", hParams )
 
@@ -430,12 +399,46 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
 
 
-STATIC FUNCTION dokument_se_moze_vratiti_u_pripremu( vars )
+STATIC FUNCTION uslovi_za_povrat_prema_kriteriju( hVars )
+
+   LOCAL _tip_dok := hVars[ "tip_dok" ]
+   LOCAL _br_dok := hVars[ "br_dok" ]
+   LOCAL _datumi := hVars[ "datumi" ]
+   LOCAL _rj := hVars[ "rj" ]
+   LOCAL _ret := .T.
+
+   Box(, 4, 60 )
+   @ m_x + 1, m_y + 2 SAY "Rj               "  GET _rj PICT "@!"
+   @ m_x + 2, m_y + 2 SAY "Vrste dokumenata "  GET _tip_dok PICT "@S40"
+   @ m_x + 3, m_y + 2 SAY "Broj dokumenata  "  GET _br_dok PICT "@S40"
+   @ m_x + 4, m_y + 2 SAY "Datumi           "  GET _datumi PICT "@S40"
+   READ
+   Boxc()
+
+   IF Pitanje( "FAKT_POV_KRITER", "Dokumente sa zadanim kriterijumom vratiti u pripremu (D/N) ?", "N" ) == "N"
+      _ret := .F.
+      RETURN _ret
+   ENDIF
+
+   hVars[ "rj" ] := _rj
+   hVars[ "tip_dok" ] := _tip_dok
+   hVars[ "br_dok" ] := _br_dok
+   hVars[ "datumi" ] := _datumi
+   hVars[ "uslov_dokumenti" ] := Parsiraj( _br_dok, "brdok", "C" )
+   hVars[ "uslov_datumi" ] := Parsiraj( _datumi, "datdok", "D" )
+   hVars[ "uslov_tipovi" ] := Parsiraj( _tip_dok, "idtipdok", "C" )
+
+   RETURN _ret
+
+
+
+
+STATIC FUNCTION dokument_se_moze_vratiti_u_pripremu( hVars )
 
    LOCAL _ret := .T.
 
-   IF vars[ "idtipdok" ] $ "10#11"
-      IF postoji_fiskalni_racun( vars[ "idfirma" ], vars[ "idtipdok" ], vars[ "brdok" ], fiskalni_uredjaj_model() )
+   IF hVars[ "idtipdok" ] $ "10#11"
+      IF postoji_fiskalni_racun( hVars[ "idfirma" ], hVars[ "idtipdok" ], hVars[ "brdok" ], fiskalni_uredjaj_model() )
          MsgBeep( "Za ovaj dokument je izdat fiskalni račun.#Opcija povrata je onemogućena !!!" )
          _ret := .F.
          RETURN _ret
@@ -445,11 +448,11 @@ STATIC FUNCTION dokument_se_moze_vratiti_u_pripremu( vars )
    RETURN _ret
 
 
-STATIC FUNCTION uslovi_za_povrat_dokumenta( vars )
+STATIC FUNCTION uslovi_za_povrat_dokumenta( hVars )
 
-   LOCAL _firma   := vars[ "idfirma" ]
-   LOCAL _tip_dok := vars[ "idtipdok" ]
-   LOCAL _br_dok  := vars[ "brdok" ]
+   LOCAL _firma   := hVars[ "idfirma" ]
+   LOCAL _tip_dok := hVars[ "idtipdok" ]
+   LOCAL _br_dok  := hVars[ "brdok" ]
    LOCAL _ret     := .T.
 
    Box( "", 1, 35 )
@@ -471,9 +474,9 @@ STATIC FUNCTION uslovi_za_povrat_dokumenta( vars )
       RETURN _ret
    ENDIF
 
-   vars[ "idfirma" ]  := _firma
-   vars[ "idtipdok" ] := _tip_dok
-   vars[ "brdok" ]    := _br_dok
+   hVars[ "idfirma" ]  := _firma
+   hVars[ "idtipdok" ] := _tip_dok
+   hVars[ "brdok" ]    := _br_dok
 
    RETURN _ret
 
@@ -514,23 +517,23 @@ FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
 
       SELECT fakt_pripr
       APPEND BLANK
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      FOR EACH _field in _rec:keys
-         _rec[ _field ] := oRow:FieldGet( oRow:FieldPos( _field ) )
-         IF ValType( _rec[ _field ] ) == "C"
-            _rec[ _field ] := hb_UTF8ToStr( _rec[ _field ] )
+      FOR EACH _field in hRec:keys
+         hRec[ _field ] := oRow:FieldGet( oRow:FieldPos( _field ) )
+         IF ValType( hRec[ _field ] ) == "C"
+            hRec[ _field ] := hb_UTF8ToStr( hRec[ _field ] )
          ENDIF
       NEXT
 
-      _rec[ "brdok" ] := fakt_prazan_broj_dokumenta()
-      _rec[ "datdok" ] := Date()
+      hRec[ "brdok" ] := fakt_prazan_broj_dokumenta()
+      hRec[ "datdok" ] := Date()
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       _table:skip()
 
-      ++ _count
+      ++_count
 
    ENDDO
 

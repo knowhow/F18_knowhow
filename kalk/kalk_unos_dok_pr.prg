@@ -33,7 +33,7 @@ FUNCTION kalk_unos_dok_pr()
 
    SELECT F_SAST
    IF !Used()
-      o_sastavnica()
+      o_sastavnice()
    ENDIF
 
    SELECT kalk_pripr

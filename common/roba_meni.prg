@@ -39,7 +39,7 @@ FUNCTION sif_roba_tarife_koncij_sast()
    AAdd( _opcexe, {|| P_TrFP() } )
 
    AAdd( _opc, "6. sastavnice" )
-   AAdd( _opcexe, {|| P_Sast() } )
+   AAdd( _opcexe, {|| p_roba_sastavnice() } )
 
 
    AAdd( _opc, "8. sifk - karakteristike" )

@@ -44,7 +44,7 @@ ENDCLASS
 METHOD FaktDokumenti:New()
 
    ::aItems := {}
-   ::count := 0
+   ::COUNT := 0
 
    RETURN self
 
@@ -61,7 +61,7 @@ METHOD FaktDokumenti:Lock()
       ::p_locked := .F.
    ENDIF
 
-   return ::p_locked
+   RETURN ::p_locked
 
 
 
@@ -94,11 +94,11 @@ METHOD FaktDokumenti:za_partnera( idfirma, idtipdok, idpartner )
       _item := FaktDokument():New( ::p_idfirma, ::p_idtipdok, _brdok )
       _item:refresh_info()
       AAdd( ::aItems, _item )
-      _cnt ++
+      _cnt++
       _qry:skip()
    ENDDO
 
-   ::count := _cnt
+   ::COUNT := _cnt
 
    RETURN _cnt
 
@@ -137,25 +137,25 @@ METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
    @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET  _idfirma PICT "@!"
    @ m_x + 3, Col() + 1 SAY " - " + _idtipdok + " / " PICT "@!"
    @ m_x + 3, Col() + 1 SAY "Partner ID:" GET _idpartner PICT "@!" ;
-      VALID {|| p_partner( @_idpartner ),  ispisi_partn( _idpartner, m_x + f18_max_rows() -12, m_y + 18 ) }
+      VALID {|| p_partner( @_idpartner ),  ispisi_partn( _idpartner, m_x + f18_max_rows() - 12, m_y + 18 ) }
 
    READ
 
-   @ m_x + f18_max_rows() -12, m_y + 2 SAY "Partner:"
-   @ m_x + f18_max_rows() -10, m_y + 2 SAY "Komande: <SPACE> markiraj otpremnicu"
+   @ m_x + f18_max_rows() - 12, m_y + 2 SAY "Partner:"
+   @ m_x + f18_max_rows() - 10, m_y + 2 SAY "Komande: <SPACE> markiraj otpremnicu"
 
 
    ::za_partnera( _idfirma, _idtipdok, _idpartner )
 
-   _fakt_browse := BrowseFaktDokumenti():New( m_x + 5, m_y + 1, m_x + f18_max_rows() - 13, f18_max_cols() -11, self )
+   _fakt_browse := BrowseFaktDokumenti():New( m_x + 5, m_y + 1, m_x + f18_max_rows() - 13, f18_max_cols() - 11, self )
    _fakt_browse:set_kolone_markiraj_otpremnice()
    _fakt_browse:Browse()
 
 
    BoxC()
 
-   if ::count_markirani > 0
-      if ::change_idtipdok_markirani( "22" )
+   IF ::count_markirani > 0
+      IF ::change_idtipdok_markirani( "22" )
          ::generisi_fakt_pripr()
       ENDIF
    ELSE
@@ -210,7 +210,7 @@ METHOD FaktDokumenti:count_markirani()
    _cnt := 0
    FOR EACH _item IN ::aItems
       IF _item:mark
-         _cnt ++
+         _cnt++
       ENDIF
    NEXT
 
@@ -231,7 +231,7 @@ METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
       RETURN .F.
    ENDIF
 
-   BEGIN SEQUENCE WITH {| err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+   BEGIN SEQUENCE WITH {| err | err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
 
       FOR EACH _item IN ::aItems
          IF _item:mark
@@ -268,7 +268,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    LOCAL _sumirati := .F.
    LOCAL _vp_mp := 1
    LOCAL _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
-   LOCAL _veza_otpremnice, _broj_dokumenta
+   LOCAL cVezaOtpremnice, _broj_dokumenta
    LOCAL _id_partner, _rec
    LOCAL _ok := .T.
    LOCAL _item, _msg
@@ -307,7 +307,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    _sql += "idfirma=" + sql_quote( ::p_idfirma ) + " AND  idtipdok=" + sql_quote( ::p_idtipdok )
    _sql += " AND brdok IN ("
 
-   _veza_otpremnice := ""
+   cVezaOtpremnice := ""
    _first := .T.
    FOR EACH _item IN ::aItems
       IF _item:mark
@@ -315,10 +315,10 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
             _first := .F.
          ELSE
             _sql += ","
-            _veza_otpremnice += ","
+            cVezaOtpremnice += ","
          ENDIF
          _sql += sql_quote( _item:brdok )
-         _veza_otpremnice += Trim( _item:brdok )
+         cVezaOtpremnice += Trim( _item:brdok )
       ENDIF
    NEXT
 
@@ -369,9 +369,9 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
 
    ENDDO
 
-   _veza_otpremnice := "Racun formiran na osnovu otpremnica: " + _veza_otpremnice
+   cVezaOtpremnice := "Račun formiran na osnovu otpremnica: " + cVezaOtpremnice
 
-   renumeracija_fakt_pripr( _veza_otpremnice, _datum_max )
+   renumeracija_fakt_pripr( cVezaOtpremnice, _datum_max )
 
    RETURN _ok
 
@@ -387,12 +387,16 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
 */
 
 
-FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, datum_max )
+FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, dDatumPosljednjeOtpr )
 
+   LOCAL hFaktTxt
    LOCAL dDatDok
    LOCAL aMemo
    LOCAL lSetujDatum := .F.
-   PRIVATE nRokPl := 0
+   LOCAL GetList := {}
+   LOCAL nRokPl := 0
+
+   // PRIVATE nRokPl := 0
    PRIVATE cSetPor := "N"
 
    SELECT fakt_pripr
@@ -435,80 +439,54 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, datum_max )
 
    Scatter()
 
-   _txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""
-   _dest := Space( 150 )
-   _m_dveza := Space( 500 )
+   // _txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""
 
-   IF my_get_from_ini( 'FAKT', 'ProsiriPoljeOtpremniceNa50', 'N', KUMPATH ) == 'D'
-      _BrOtp := Space( 50 )
-   ELSE
-      _BrOtp := Space( 8 )
-   ENDIF
+   // _dest := Space( 150 )
+   // _m_dveza := Space( 500 )
 
-   _DatOtp := CToD( "" )
-   _BrNar := Space( 8 )
-   _DatPl := CToD( "" )
+   // IF my_get_from_ini( 'FAKT', 'ProsiriPoljeOtpremniceNa50', 'N', KUMPATH ) == 'D'
+   // _BrOtp := Space( 50 )
+   // ELSE
+   // _BrOtp := Space( 8 )
+   // ENDIF
+
+   // _DatOtp := CToD( "" )
+   // _BrNar := Space( 8 )
+   // _DatPl := CToD( "" )
 
    IF cVezaOtpremnica == nil
       cVezaOtpremnica := ""
    ENDIF
 
-   aMemo := fakt_ftxt_decode( _txt )
-   IF Len( aMemo ) > 0
-      _txt1 := aMemo[ 1 ]
-   ENDIF
-   IF Len( aMemo ) >= 2
-      _txt2 := aMemo[ 2 ]
-   ENDIF
-   IF Len( aMemo ) >= 5
-      _txt3a := aMemo[ 3 ]
-      _txt3b := aMemo[ 4 ]
-      _txt3c := aMemo[ 5 ]
-   ENDIF
-   IF Len( aMemo ) >= 9
-      _BrOtp := aMemo[ 6 ]
-      _DatOtp := CToD( aMemo[ 7 ] )
-      _BrNar := amemo[ 8 ]
-      _DatPl := CToD( aMemo[ 9 ] )
-   ENDIF
-   IF Len( aMemo ) >= 10 .AND. !Empty( aMemo[ 10 ] )
-      cVezOtpr := aMemo[ 10 ]
-   ENDIF
+   hFaktTxt := fakt_ftxt_decode_string( _txt )
 
-   // destinacija
-   IF Len( aMemo ) >= 18
-      _dest := PadR( aMemo[ 18 ], 150 )
-   ENDIF
-
-   IF Len( aMemo ) >= 19
-      _m_dveza := PadR( aMemo[ 19 ], 500 )
-   ENDIF
+   AltD()
 
    nRbr := 1
 
    Box( "#PARAMETRI DOKUMENTA:", 10, 75 )
 
    IF gDodPar == "1"
-      @  m_x + 1, m_y + 2 SAY "Otpremnica broj:" GET _brotp
-      @  m_x + 2, m_y + 2 SAY "          datum:" GET _Datotp
-      @  m_x + 3, m_y + 2 SAY8 "Ugovor/narudžba:" GET _brNar
-      @  m_x + 4, m_y + 2 SAY "    Destinacija:" GET _dest PICT "@S45"
-      @  m_x + 5, m_y + 2 SAY "Vezni dokumenti:" GET _m_dveza PICT "@S45"
+      @  m_x + 1, m_y + 2 SAY8 "Otpremnica broj:" GET hFaktTxt[ "brotp" ]
+      @  m_x + 2, m_y + 2 SAY8 "          datum:" GET hFaktTxt[ "datotp" ]
+      @  m_x + 3, m_y + 2 SAY8 "Ugovor/narudžba:" GET hFaktTxt[ "brnar" ]
+      @  m_x + 4, m_y + 2 SAY8 "    Destinacija:" GET hFaktTxt[ "destinacija" ] PICT "@S45"
+      @  m_x + 5, m_y + 2 SAY8 "Vezni dokumenti:" GET hFaktTxt[ "dokument_veza" ] PICT "@S45"
    ENDIF
 
    IF gDodPar == "1" .OR. gDatVal == "D"
 
-      nRokPl := gRokPl
+      nRokPl := fakt_rok_placanja_dana()
 
       @  m_x + 6, m_y + 2 SAY "Datum fakture  :" GET _DatDok
 
-      IF datum_max <> NIL
-         @  m_x + 6, m_y + 35 SAY "Datum posljednje otpremnice:" GET datum_max WHEN .F. COLOR "GR+/B"
+      IF dDatumPosljednjeOtpr <> NIL
+         @  m_x + 6, m_y + 35 SAY "Datum posljednje otpremnice:" GET dDatumPosljednjeOtpr WHEN .F. COLOR "GR+/B"
       ENDIF
 
-      @ m_x + 7, m_y + 2 SAY8 "Rok plać.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, "0", .T. ) ;
+      @ m_x + 7, m_y + 2 SAY8 "Rok plać.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, @_datdok, @hFaktTxt[ "datpl" ], "0", .T. ) ;
          VALID valid_rok_placanja( nRokPl, "1", .T. )
-      @ m_x + 8, m_y + 2 SAY8 "Datum plaćanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, "2", .T. )
+      @ m_x + 8, m_y + 2 SAY8 "Datum plaćanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, @_datdok, @hFaktTxt[ "datpl" ], "2", .T. )
 
       READ
    ENDIF
@@ -519,18 +497,19 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, datum_max )
 
    dDatDok := _Datdok
 
-   UzorTxt()
+   fakt_ftxt_sub_renumeracija_pripreme( @_txt2 )
 
-   IF !Empty ( cVezaOtpremnica )
-      _txt2 += Chr( 13 ) + Chr( 10 ) + cVezaOtpremnica
+   IF !Empty( cVezaOtpremnica )
+      IF !( "Veza otpremnice:" $ hFaktTxt[ "txt2" ] )
+         hFaktTxt[ "txt2" ] += NRED_DOS + "Veza otpremnice: " + cVezaOtpremnica
+      ENDIF
    ENDIF
 
+   // _txt := fakt_ftxt_encode_3( _txt1, _txt2, _txt3a, _txt3b, _txt3c, ;
+   // _BrOtp, _BrNar, _DatOtp, _DatPl, cVezaOtpremnica, ;
+   // _dest, _m_dveza )
 
-   _txt := fakt_ftxt_encode_3( _txt1, _txt2, _txt3a, _txt3b, _txt3c, ;
-       _BrOtp, _BrNar, _DatOtp, _DatPl, cVezaOtpremnica, ;
-       _dest, _m_dveza )
-
-
+   _txt := fakt_ftxt_encode_5( hFaktTxt )
 
    IF datDok <> dDatDok
       lSetujDatum := .T.

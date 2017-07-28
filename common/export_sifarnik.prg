@@ -177,6 +177,7 @@ FUNCTION export_sifarnik()
 STATIC FUNCTION r_export_fill( aKol, aDbfStruct )
 
    LOCAL hRec, nArea, nKol, hField, xValue
+   LOCAL nCnt
 
    PushWa()
 
@@ -186,6 +187,7 @@ STATIC FUNCTION r_export_fill( aKol, aDbfStruct )
    PopWA()
 
    GO TOP
+   nCnt := 0
    DO WHILE !Eof()
 
       nArea := Select()
@@ -209,6 +211,7 @@ STATIC FUNCTION r_export_fill( aKol, aDbfStruct )
 
       SELECT r_export
       dbf_update_rec( hRec )
+      info_bar( "exp_sif", (nArea)->( Alias() ) + Str( ++nCnt, 5, 0 ) )
 
       Select( nArea )
       SKIP

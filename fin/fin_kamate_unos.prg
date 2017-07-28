@@ -73,7 +73,7 @@ FUNCTION kamate_unos()
    @ m_x + ( _x - 2 ), m_y + 2 SAY " <c-N>  Nove Stavke      | <ENT> Ispravi stavku   | <c-T> Brisi Stavku"
    @ m_x + ( _x - 1 ), m_y + 2 SAY " <c-A>  Ispravka Dokum.  | <c-P> Stampa svi KL    | <c-U> Lista uk.dug"
    @ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   | <a-P> Stampa pojedinac.³                   "
-   my_db_edit_sql( "PNal", _x, _y, {|| fin_kamate_key_handler() }, "", "KAMATE Priprema.....", , , , , 3 )
+   my_browse( "PNal", _x, _y, {|| fin_kamate_key_handler() }, "", "KAMATE Priprema.....", , , , , 3 )
    BoxC()
 
    my_close_all_dbf()

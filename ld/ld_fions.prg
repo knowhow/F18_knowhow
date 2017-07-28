@@ -119,26 +119,41 @@ FUNCTION ld_pozicija_parobr( nMjesec, nGodina, cObr, cIdRj )
  *   param: fPrikaz - prikazi .t.
  */
 
-FUNCTION ld_eval_formula( nInputF ) //, fPrikaz )
+FUNCTION ld_eval_formula( nInputF ) // , fPrikaz )
+
+   LOCAL oErr
 
    PRIVATE cFormula
 
-   //IF PCount() == 1
-  //    fPrikaz := .T.
-   //ENDIF
+   // IF PCount() == 1
+   // fPrikaz := .T.
+   // ENDIF
+   BEGIN SEQUENCE WITH {| err | Break( err ) }
 
-   cFormula := Trim( tippr->formula )
+      cFormula := Trim( tippr->formula )
 
-   IF ( tippr->fiksan <> "D" )
+      IF ( tippr->fiksan <> "D" )
 
-      IF Empty( cFormula ) // ako je fiksan iznos nista ne izracunavaj!
-         nInputF := 0
-      ELSE
-         ?E "ld_eval_formula:", cFormula
-         nInputF := &cFormula
+         IF Empty( cFormula ) // ako je fiksan iznos nista ne izracunavaj!
+            nInputF := 0
+         ELSE
+            ?E "ld_eval_formula:", cFormula
+            nInputF := &cFormula
+         ENDIF
+         nInputF := Round( nInputF, gZaok )
       ENDIF
-      nInputF := Round( nInputF, gZaok )
-   ENDIF
+
+
+   RECOVER USING oErr
+
+      cMsg := RECI_GDJE_SAM + " " + oErr:description + " LD FORMULA: " + cFormula
+      ?E cMsg
+
+      // log_write( cMsg, 1 )
+      Alert( cMsg )
+      RaiseError( cMsg )
+
+   END SEQUENCE
 
    RETURN .T.
 

@@ -1057,28 +1057,25 @@ STATIC FUNCTION vrati_nazad( dDatObr, cIdArt )
    SEEK DToS( dDatObr )
 
    IF !Found()
-      MsgBeep( "Obracun " + fakt_do( dDatObr ) + " ne postoji" )
-      RETURN
+      MsgBeep( "Obračun " + fakt_do( dDatObr ) + " ne postoji" )
+      RETURN .F.
    ENDIF
 
    IF !Empty( cIdArt )
       cFirma := g_idfirma( cIdArt )
    ENDIF
 
-   IF fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_od ) .AND. ;
-         fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do )
+   IF fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_od ) .AND. fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do )
 
       cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
-      Povrat_fakt_po_kriteriju( cBrDokOdDo, NIL, NIL, cFirma )
+      fakt_povrat_po_kriteriju( cBrDokOdDo, NIL, NIL, cFirma )
 
    ENDIF
 
-   // izbrisi pripremu
    o_fakt_pripr()
-
    fakt_brisanje_pripreme()
 
-   RETURN
+   RETURN .T.
 
 
 

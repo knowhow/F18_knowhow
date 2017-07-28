@@ -12,10 +12,8 @@
 #include "f18.ch"
 
 
-// -----------------------------------------
-// funkcija za labeliranje barkodova
-// -----------------------------------------
-FUNCTION label_bkod()
+
+FUNCTION fakt_labeliranje_barkodova()
 
    LOCAL cIBK
    LOCAL cPrefix
@@ -23,6 +21,8 @@ FUNCTION label_bkod()
    LOCAL cBoxHead
    LOCAL cBoxFoot
    LOCAL lDelphi := .T.
+   
+   LOCAL i
    PRIVATE cKomLin
    PRIVATE Kol
    PRIVATE ImeKol
@@ -45,7 +45,7 @@ FUNCTION label_bkod()
       aStampati[ i ] := "D"
    NEXT
 
-   // setuj kolone za pripremu...
+
    set_a_kol( @ImeKol, @Kol )
 
    cBoxHead := "<SPACE> markiranje    |    <ESC> kraj"
@@ -54,12 +54,11 @@ FUNCTION label_bkod()
    Box(, 20, 50 )
 
    my_browse( "PLBK", 20, 50, {|| key_handler() }, cBoxHead, cBoxFoot, .T., , , , 0 )
-
    BoxC()
 
    IF lDelphi
       print_delphi_label( aStampati )
-   ELSE
+   //ELSE
       // stampanje deklaracija...
       // label_2_deklar(aStampati)
    ENDIF

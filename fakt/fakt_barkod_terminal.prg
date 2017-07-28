@@ -23,12 +23,12 @@ FUNCTION fakt_import_bterm()
    // importuj podatke u pomocnu tabelu TEMP.DBF
    nRet := import_BTerm_data( @cFile )
 
-   IF nRet = 0
-      RETURN
+   IF nRet == 0
+      RETURN .F.
    ENDIF
 
-   // prebaci podatke u pripremu FAKT
-   bterm_to_pripr()
+
+   bterm_to_fakt_priprema()    // prebaci podatke u pripremu FAKT
 
    // pobrisi txt fajl
    kalk_imp_brisi_txt( cFile, .T. )
@@ -51,7 +51,7 @@ FUNCTION fakt_export_bterm()
 // -----------------------------------------------
 // kopira TEMP.DBF -> PRIPR.DBF
 // -----------------------------------------------
-STATIC FUNCTION bterm_to_pripr()
+STATIC FUNCTION bterm_to_fakt_priprema()
 
    LOCAL aParams := {}
    LOCAL nCnt := 0
@@ -120,25 +120,25 @@ STATIC FUNCTION bterm_to_pripr()
       SELECT fakt_pripr
 
       // 1 roba tip U - nista
-      fakt_a_to_public_var_txt( "", .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
       // 2 dodatni tekst otpremnice - nista
-      fakt_a_to_public_var_txt( "", .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
       // 3 naziv partnera
-      fakt_a_to_public_var_txt( aParams[ 9 ], .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( aParams[ 9 ], .T. )
       // 4 adresa
-      fakt_a_to_public_var_txt( aParams[ 10 ], .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( aParams[ 10 ], .T. )
       // 5 ptt i mjesto
-      fakt_a_to_public_var_txt( aParams[ 11 ], .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( aParams[ 11 ], .T. )
       // 6 broj otpremnice
-      fakt_a_to_public_var_txt( "", .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
       // 7 datum  otpremnice
-      fakt_a_to_public_var_txt( DToC( aParams[ 6 ] ), .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( DToC( aParams[ 6 ] ), .T. )
       // 8 broj ugovora - nista
-      fakt_a_to_public_var_txt( "", .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
       // 9 datum isporuke - nista
-      fakt_a_to_public_var_txt( DToC( aParams[ 7 ] ), .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( DToC( aParams[ 7 ] ), .T. )
       // 10 datum valute - nista
-      fakt_a_to_public_var_txt( "", .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
 
       gather()
 

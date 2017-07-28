@@ -27,7 +27,7 @@
 - Debug #36676 štampa barkod labela, FAKT priprema ALT+L ne radi
 - NEW_PRG_FILE: _fakt_sql.prg, fakt_ftxt.prg
 - select_o_fakt_txt()
-- RENAME_FUN_NAME to fakt_a_to_public_var_txt(), p_fakt_ftxt()
+- RENAME_FUN_NAME to fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17(), p_fakt_ftxt()
 - fakt_txt_fill_djokeri( nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dLUplata, cPartner )
 - fakt_ftxt_encode( cFTxtNaz, cTxt1, cTxt3a, cTxt3b, cTxt3c, cVezaUgovor, cDodTxt )
 - RENAME_FUN_NAME: ParsMemo -> fakt_ftxt_decode( cTxt ) => aMemo

@@ -20,7 +20,7 @@ MEMVAR bGoreREd, bDoleRed, bDodajRed, fTBNoviRed, TBCanClose, bZaglavlje, TBScat
 MEMVAR TBSkipBlock
 
 MEMVAR  ImeKol, Kol
-MEMVAR  azImeKol, azKol  // snimaju stanje ImeKol, Kol
+// MEMVAR  azImeKol, azKol  // snimaju stanje ImeKol, Kol
 
 MEMVAR cKolona
 
@@ -59,6 +59,9 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
    LOCAL lExitBrowse := .F.
    LOCAL nKeyHandlerRetEvent
    LOCAL lKeyHandlerStarted := .F.
+   LOCAL azImeKol, azKol
+   LOCAL lKeyPressed, nKey, nCiklus
+
 
    PRIVATE  bGoreRed := NIL
    PRIVATE  bDoleRed := NIL
@@ -83,8 +86,8 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
    PRIVATE bTekCol
    PRIVATE Ch := 0
 
-   PRIVATE azImeKol := ImeKol
-   PRIVATE azKol := Kol
+   azImeKol := ImeKol
+   azKol := Kol
 
    IF nPrazno == NIL
       nPrazno := 0
@@ -102,7 +105,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
       AAdd( aOpcije, "<c+U> - Uredi" )
    ENDIF
 
-   PRIVATE TB
+   PRIVATE Tb
 
    IF lInvert == NIL
       lInvert := .F.
@@ -125,112 +128,183 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, 
       TBSkipBlock := bSkipBlock
       // ELSE
       // TBSkipBlock := {| nSkip | SkipDB( nSkip, @nTBLine ) }
+      // TBSkipBlock     := {| nRecs | __my_dbSkipper( nRecs ) }
    ENDIF
 
+   AltD()
    browse_only( hParams, .T. )
 
+   //lKeyPressed := .F.
+
+   //TB:ForceStable()
+
+   //DispEnd()
+   //IF LastRec() == 0
+  //    Ch := hb_keyNew( HB_KX_DOWN )
+  //    lKeyPressed := .T.
+   //ENDIF
+
    DO WHILE .T.
+      //FOR nCiklus := 1 TO 1
+         // IF in_calc()
+         // hb_idleSleep( 0.5 )
+         // LOOP
+         // ENDIF
 
-      IF in_calc()
-         hb_idleSleep( 0.5 )
-         LOOP
-      ENDIF
+         nKeyHandlerRetEvent := -99
+         lKeyHandlerStarted := .F.
 
-      nKeyHandlerRetEvent := -99
-
-      IF Deleted()
-         SKIP
-         IF Eof()
-            Tb:Down()
-         ELSE
-            Tb:Up()
+         IF Deleted()
+            SKIP
+            IF Eof()
+               Tb:Down()
+            ELSE
+               Tb:Up()
+            ENDIF
+            Tb:RefreshCurrent()
          ENDIF
-         Tb:RefreshCurrent()
-      ENDIF
 
-      lKeyHandlerStarted := .F.
-      DO WHILE !TB:stabilize() .AND. ( Ch := NextKey() ) == 0
-         Tb:stabilize()
-      ENDDO
+         DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
+            Tb:stabilize()
+         ENDDO
 
+         // DO WHILE !lKeyPressed .AND. !TB:Stabilize()
+         // lKeyPressed := ( nKey := Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) ) != 0
+         // hb_idleSleep( 0.5 )
+         // altd()
+         // ENDDO
 
-      IF in_calc()
-         hb_idleSleep( 0.5 )
-         LOOP
-      ENDIF
+         // IF lKeyPressed
+         // lKeyPressed := .F.
+         // Ch := hb_keyStd( nKey )
+         // ENDIF
 
-      IF !TBInitialized
-         TBInitialized := .T.
-         Eval( TB:SkipBlock, 1 )
-         Eval( TB:SkipBlock, - 1 )
-      ENDIF
-
-      Ch := Inkey( 0 )
-
-      IF !in_calc()
-         nKeyHandlerRetEvent := Eval( bKeyHandler, Ch )
-      ENDIF
-
-      DO CASE
-
-      CASE Ch == K_UP
-         TB:up()
-
-      CASE Ch == K_DOWN
-         TB:down()
-
-      CASE Ch == K_LEFT
-         TB:Left()
-
-      CASE Ch == K_RIGHT
-         TB:Right()
-
-      CASE Ch == K_PGUP
-         TB:PageUp()
-
-      CASE Ch == K_CTRL_PGUP
-         Tb:GoTop()
-         Tb:Refreshall()
-
-      CASE Ch == K_CTRL_PGDN
-         Tb:GoBottom()
-
-      CASE Ch == K_PGDN
-         TB:PageDown()
-
-      CASE Ch == K_CTRL_END .OR. Ch == K_ESC
-         lExitBrowse := .T.
-         nKeyHandlerRetEvent := DE_ABORT
-
-      CASE Ch == K_ENTER .AND. browse_exit_on_enter()
-      altd()
-         lExitBrowse := .T.
-         nKeyHandlerRetEvent := DE_ABORT
-
-      OTHERWISE
-         IF !lExitBrowse
-            nKeyHandlerRetEvent := my_db_edit_standardne_komande( Tb, Ch, @nKeyHandlerRetEvent, nPored, aPoredak )
+         IF in_calc()
+            hb_idleSleep( 0.5 )
+            LOOP
          ENDIF
-      ENDCASE
 
-
-      SWITCH nKeyHandlerRetEvent
-      CASE DE_REFRESH
-         TB:RefreshAll()
-         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
-         EXIT
-
-      CASE DE_ABORT
-         IF nPrazno == 0
-            BoxC()
+         IF !TBInitialized
+            TBInitialized := .T.
+            Eval( TB:SkipBlock, 1 )
+            Eval( TB:SkipBlock, - 1 )
          ENDIF
-         lExitBrowse := .T.
-         EXIT
-      ENDSWITCH
 
-      IF lExitBrowse
-         EXIT
-      ENDIF
+         //IF nCiklus == 2
+          //  Ch := 0
+         //ELSE
+            Ch := Inkey( 0 )
+         //ENDIF
+         // hb_idleSleep( 0.2 )
+
+
+         IF !in_calc()
+#ifdef F18_DEBUG
+            cTest := ""
+            IF Alias() $ "FTXT#PARTN"
+               cTest := AllTrim( id )
+            ENDIF
+            error_bar( "debug", "browse key: " +  Str( Asc( Chr( Ch ) ), 4 ) + " " + cTest )
+#endif
+            nKeyHandlerRetEvent := Eval( bKeyHandler, Ch )
+         ENDIF
+
+         DO CASE
+
+         CASE Ch == K_UP
+#ifdef F18_DEBUG
+            cTest := ""
+            IF Alias() == "FTXT"
+               cTest := AllTrim( id )
+            ENDIF
+            info_bar( "debug", "tb:up" )
+#endif
+            TB:up()
+
+         CASE Ch == K_DOWN
+            TB:down()
+
+#ifdef F18_DEBUG
+            AltD()
+            cTest := ""
+            IF Alias() == "FTXT"
+               cTest := AllTrim( id )
+            ENDIF
+            info_bar( "debug", "tb:down" )
+#endif
+         CASE Ch == K_LEFT
+            TB:Left()
+#ifdef F18_DEBUG
+            cTest := ""
+            IF Alias() == "FTXT"
+               cTest := AllTrim( id )
+            ENDIF
+            info_bar( "debug", "tb:left" )
+#endif
+         CASE Ch == K_RIGHT
+            TB:Right()
+
+         CASE Ch == K_PGUP
+            TB:PageUp()
+
+         CASE Ch == K_CTRL_PGUP
+            Tb:GoTop()
+            Tb:Refreshall()
+
+         CASE Ch == K_CTRL_PGDN
+            Tb:GoBottom()
+
+         CASE Ch == K_PGDN
+            TB:PageDown()
+
+         CASE Ch == K_CTRL_END .OR. Ch == K_ESC
+            lExitBrowse := .T.
+            nKeyHandlerRetEvent := DE_ABORT
+
+         CASE Ch == K_ENTER .AND. browse_exit_on_enter()
+            AltD()
+            lExitBrowse := .T.
+            nKeyHandlerRetEvent := DE_ABORT
+
+         OTHERWISE
+
+            TB:applyKey( Ch )
+            IF !lExitBrowse
+               nKeyHandlerRetEvent := my_db_edit_standardne_komande( Tb, Ch, @nKeyHandlerRetEvent, nPored, aPoredak )
+            ENDIF
+         ENDCASE
+
+
+         SWITCH nKeyHandlerRetEvent
+         CASE DE_REFRESH
+            TB:RefreshAll()
+            // TB:ForceStable()
+            @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
+            EXIT
+
+         CASE DE_ABORT
+            IF nPrazno == 0
+               BoxC()
+            ENDIF
+            lExitBrowse := .T.
+            EXIT
+
+         OTHERWISE
+            // Tb:RefreshCurrent()
+            // TB:ForceStable()
+         ENDSWITCH
+
+         IF lExitBrowse
+            EXIT
+         ENDIF
+
+         // DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
+         // Tb:stabilize()
+         // ENDDO
+         // KEYBOARD "X"
+
+      //NEXT
+
    ENDDO
 
    RETURN .T.
@@ -288,6 +362,7 @@ STATIC FUNCTION browse_only( hParams, lIzOBJDB )
 
 
    IF TBSkipBlock <> NIL
+      AltD()
       Tb:SkipBlock := TBSkipBlock
    ENDIF
 
@@ -321,7 +396,37 @@ STATIC FUNCTION browse_only( hParams, lIzOBJDB )
    RETURN .T.
 
 
+/*
+FUNCTION __my_dbSkipper( nRecs )
 
+   LOCAL nSkipped := 0
+
+   IF LastRec() != 0
+      DO CASE
+      CASE nRecs == 0
+         dbSkip( 0 )
+      CASE nRecs > 0 .AND. RecNo() != LastRec() + 1
+         DO WHILE nSkipped < nRecs
+            dbSkip()
+            IF Eof()
+               dbSkip( - 1 )
+               EXIT
+            ENDIF
+            ++nSkipped
+         ENDDO
+      CASE nRecs < 0
+         DO WHILE nSkipped > nRecs
+            dbSkip( - 1 )
+            IF Bof()
+               EXIT
+            ENDIF
+            --nSkipped
+         ENDDO
+      ENDCASE
+   ENDIF
+
+   RETURN nSkipped
+*/
 
 
 STATIC FUNCTION ForceStable()
@@ -1003,7 +1108,6 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
    RETURN lRet
 
-
 /*
 STATIC FUNCTION SkipDB( nRequest, nTBLine )   // nTBLine is a reference
 
@@ -1013,12 +1117,12 @@ STATIC FUNCTION SkipDB( nRequest, nTBLine )   // nTBLine is a reference
       dbSkip( 0 )
 
    ELSEIF nRequest > 0 .AND. !Eof()
+
       WHILE nActually < nRequest
          IF nTBLine < nTBLastLine
             ++nTBLine // This will print up to nTBLastLine of text; Some of them (or even all) might be empty
-
          ELSE
-            dbSkip( + 1 )  // Go to the next record
+            dbSkip( +1 )  // Go to the next record
             nTBLine := 1
 
          ENDIF

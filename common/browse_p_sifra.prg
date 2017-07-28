@@ -222,7 +222,6 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
    // // RETURN "naz"
    // RETURN .F.
    // ENDIF
-   AltD()
 
    IF Alias() == "PARTN"
       find_partner_by_naz_or_id( cId )
@@ -240,7 +239,7 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
       find_koncij_by_id( cId )
    ELSEIF Alias() == "RJ"
       find_rj_by_id( cId )
-   ELSEIF Alias() == "FTXT"
+   ELSEIF Alias() == "FAKT_FTXT"
       find_fakt_ftxt_by_id( cId )
       // ELSE
       // SEEK cId
@@ -291,7 +290,7 @@ FUNCTION find_sifra_by_naz( cTable, cIdPart, cDjoker )
    IF cTable == "ftxt"
       cTable := "fakt_ftxt"
    ENDIF
-   
+
    cSqlQuery += cTable
    cIdSql := sql_quote( Upper( AllTrim( cIdPart ) ) + "%" )
 

@@ -3,8 +3,8 @@
 
 FUNCTION o_fakt_txt( cId )
 
-   SELECT ( F_FTXT )
-   IF !use_sql_sif( "fakt_ftxt", .T., "FTXT", cId )
+   SELECT ( F_FAKT_FTXT )
+   IF !use_sql_sif( "fakt_ftxt", .T., "FAKT_FTXT", cId )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"
@@ -20,12 +20,12 @@ FUNCTION o_fakt_txt( cId )
    RETURN !Eof()
 
 /*
-    FTXT, fakt_ftxt
+    FAKT_FTXT, fakt_ftxt
 */
 
 FUNCTION select_o_fakt_txt( cId )
 
-   SELECT ( F_FTXT )
+   SELECT ( F_FAKT_FTXT )
    IF Used()
       IF RecCount() > 1 .AND. cId == NIL
          RETURN .T.
@@ -39,7 +39,7 @@ FUNCTION select_o_fakt_txt( cId )
 
 FUNCTION find_fakt_ftxt_by_id( cId )
 
-   LOCAL cAlias := "FTXT"
+   LOCAL cAlias := "FAKT_FTXT"
    LOCAL cTable := "fakt_ftxt"
    LOCAL cSqlQuery := "select * from fmk." + cTable
    LOCAL cIdSql
@@ -64,7 +64,7 @@ FUNCTION find_fakt_ftxt_by_id( cId )
 
    FUNCTION find_fakt_txt_by_naz_or_id( cId )
 
-      LOCAL cAlias := "FTXT"
+      LOCAL cAlias := "FAKT_FTXT"
       LOCAL cSqlQuery := "select * from fmk.fakt_ftxt"
       LOCAL cIdSql
 

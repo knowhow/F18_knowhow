@@ -252,12 +252,12 @@ FUNCTION StrLinija( cTxt2 )
 
 
 
-/* TokToNiz(cTok, cSeparator)
+/*
  *  brief Token pretvori u niz
- *  param cTok - token
+ *  param cInputTekst - token
  *  param cSeparator - separator niza
  */
-FUNCTION TokToNiz( cTok, cSeparator )
+FUNCTION TokToNiz( cInputTekst, cSeparator )
 
    LOCAL aNiz := {}
    LOCAL nI := 0
@@ -267,9 +267,8 @@ FUNCTION TokToNiz( cTok, cSeparator )
       cSeparator := "."
    ENDIF
 
-altd()
-   FOR nI := 1 TO NumToken( cTok, cSeparator )
-      cE := Token( cTok, cSeparator, nI )
+   FOR nI := 1 TO NumToken( cInputTekst, cSeparator )
+      cE := Token( cInputTekst, cSeparator, nI )
       AAdd( aNiz, cE )
    NEXT
 
@@ -295,7 +294,7 @@ FUNCTION BrDecimala( cFormat )
    RETURN nVrati
 
 
-/*  Slovima(nIzn,cDinDem)
+/* 
  *  brief Ispisuje iznos slovima
  *  param nIzn       - iznos
  *  param cDinDem    -

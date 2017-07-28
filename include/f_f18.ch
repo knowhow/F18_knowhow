@@ -105,7 +105,7 @@
 #define F_FAKT_DOKS     111
 #define F_FAKT_DOKS2    112
 #define F_FAKT      113
-#define F_FTXT      114
+#define F_FAKT_FTXT      114
 #define F__FAKT     115
 #define F_UPL       116
 #define F_DEST      117

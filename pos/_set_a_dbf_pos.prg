@@ -21,10 +21,11 @@ FUNCTION set_a_dbf_pos()
    set_a_dbf_pos_dokspf()
 
    // tabele sa strukturom sifarnika (id je primarni ključ)
-   set_a_dbf_sifarnik( "pos_strad", "STRAD", F_STRAD   )
-   set_a_dbf_sifarnik( "pos_osob", "OSOB", F_OSOB   )
-   set_a_dbf_sifarnik( "pos_kase", "KASE", F_KASE  )
-   set_a_dbf_sifarnik( "pos_odj", "ODJ", F_ODJ  )
+   set_a_sql_sifarnik( "pos_strad", "STRAD", F_STRAD   )
+   set_a_sql_sifarnik( "pos_osob", "OSOB", F_OSOB   )
+   set_a_sql_sifarnik( "pos_kase", "KASE", F_KASE  )
+   
+   set_a_sql_sifarnik( "pos_odj", "ODJ", F_ODJ  )
 
 
    // temp fakt tabele - ne idu na server

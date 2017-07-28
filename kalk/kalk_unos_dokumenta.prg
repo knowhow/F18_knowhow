@@ -203,7 +203,7 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
    CASE Ch == K_ALT_L
 
       my_close_all_dbf()
-      label_bkod()
+      fakt_labeliranje_barkodova()
       o_kalk_edit()
 
       RETURN DE_REFRESH

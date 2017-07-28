@@ -12,6 +12,7 @@
 #include "f18.ch"
 
 MEMVAR m_x, m_y
+MEMVAR _datdok, _idtipdok, _idfirma, _podbr, _tip_rabat
 
 // STATIC __fiscal_marker := .F.
 // STATIC __id_firma
@@ -356,7 +357,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
    CASE Ch == K_ALT_L
 
       my_close_all_dbf()
-      label_bkod()
+      fakt_labeliranje_barkodova()
       close_open_fakt_tabele()
 
 #ifdef TEST
@@ -533,9 +534,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
 
 
-// --------------------------------------------------
-// prolazak kroz stavke pripreme
-// --------------------------------------------------
+
 STATIC FUNCTION fakt_prodji_kroz_stavke( hFaktParams )
 
    LOCAL nDug
@@ -701,9 +700,7 @@ STATIC FUNCTION fakt_ispravi_dokument( hFaktParams )
 
 
 
-// -----------------------------------------------------------
-// unos novih stavki fakture
-// -----------------------------------------------------------
+
 STATIC FUNCTION fakt_unos_nove_stavke()
 
    LOCAL _items_atrib
@@ -786,10 +783,12 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
    LOCAL lOdabirFaktTxt := .F.
    LOCAL cFaktTxtListaUzoraka
    LOCAL nX2, nXPartner, nYPartner, _tip_cijene
-   LOCAL _ref_broj, _lot_broj
+   LOCAL cRefBroj, cLotBroj
    LOCAL hFaktParams := fakt_params()
    LOCAL hFaktTxt
    LOCAL nRokPlacanjaDefault := fakt_rok_placanja_dana()
+   LOCAL GetList := {}
+   LOCAL nSnimi_m_x, nSnimi_m_y
 
    aTipoviDokumenata := fakt_tip_dok_arr()
    aH := {}
@@ -809,11 +808,11 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
       IF hFaktParams[ "ref_lot" ]
 
          IF lFaktNoviRec
-            _ref_broj := PadR( "", 50 )
-            _lot_broj := PadR( "", 50 )
+            cRefBroj := PadR( "", 50 )
+            cLotBroj := PadR( "", 50 )
          ELSE
-            _ref_broj := PadR( hFaktItemsAttributi[ "ref" ], 50 )
-            _lot_broj := PadR( hFaktItemsAttributi[ "lot" ], 50 )
+            cRefBroj := PadR( hFaktItemsAttributi[ "ref" ], 50 )
+            cLotBroj := PadR( hFaktItemsAttributi[ "lot" ], 50 )
          ENDIF
       ENDIF
 
@@ -821,7 +820,6 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
 
 
    SET CURSOR ON
-
 
    IF lFaktNoviRec  // nova stavka
 
@@ -936,7 +934,7 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
 
          ++nX
          IF hFaktParams[ "destinacije" ]
-            @ m_x + nX, m_y + 2 SAY "Dest:" GET hFatTxt[ "destinacija" ] PICT "@S20"
+            @ m_x + nX, m_y + 2 SAY "Dest:" GET hFaktTxt[ "destinacija" ] PICT "@S20"
          ENDIF
 
          IF ( hFaktParams[ "fakt_objekti" ] .AND. _idtipdok $ "10#11#12#13" )
@@ -951,7 +949,6 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
             @ m_x + nX2, m_y + 51 SAY8 "Otpremnica broj:" GET hFaktTxt[ "brotp" ] PICT "@S20" WHEN W_BrOtp( lFaktNoviRec )
             ++nX2
             @ m_x + nX2, m_y + 51 SAY8 "          datum:" GET hFaktTxt[ "datotp" ]
-
             ++nX2
             @ m_x + nX2, m_y + 51 SAY8 "Ugovor/narudžba:" GET hFaktTxt[ "brnar" ] PICT "@S20"
 
@@ -1082,8 +1079,8 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
 
    IF hFaktParams[ "ref_lot" ]
       ++nX
-      @ m_x + nX, m_y + 2 SAY "REF:" GET _ref_broj PICT "@S10"
-      @ m_x + nX, m_y + 2 SAY "/ LOT:" GET _lot_broj PICT "@S10"
+      @ m_x + nX, m_y + 2 SAY "REF:" GET cRefBroj PICT "@S10"
+      @ m_x + nX, m_y + 2 SAY "/ LOT:" GET cLotBroj PICT "@S10"
    ENDIF
 
    nX += 3
@@ -1156,8 +1153,8 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
       hFaktItemsAttributi[ "opis" ] := cOpis
    ENDIF
    IF hFaktParams[ "ref_lot" ]
-      hFaktItemsAttributi[ "ref" ] := _ref_broj
-      hFaktItemsAttributi[ "lot" ] := _lot_broj
+      hFaktItemsAttributi[ "ref" ] := cRefBroj
+      hFaktItemsAttributi[ "lot" ] := cLotBroj
    ENDIF
 
 #ifdef F18_EXPERIMENT

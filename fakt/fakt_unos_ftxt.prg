@@ -77,7 +77,6 @@ FUNCTION fakt_unos_set_fakt_txt_opis( cTxtOpis, nRedBr, cIdTipDok, cIdPartner )
          // ++nCount
       NEXT
       fakt_ftxt_add_text_by_id( @cTxtOpis, "DI" ) // dokument izradio
-
    ENDIF
 
 

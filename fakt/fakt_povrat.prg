@@ -18,7 +18,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
    LOCAL lBrisatiKumulativ := .T.
    LOCAL hRec, _del_rec
    LOCAL _field_ids, _where_block
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL oFaktAttr, _hAttrId
    LOCAL _ok := .T.
    LOCAL nRet := 0
@@ -38,10 +38,10 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
       _vars[ "brdok" ]    := br_dok
    ENDIF
 
-   o_fakt()
+   o_fakt_dbf()
    o_fakt_pripr()
-   o_fakt_doks2()
-   o_fakt_doks()
+   o_fakt_doks2_dbf()
+   o_fakt_doks_dbf()
 
    SELECT fakt
    SET FILTER TO
@@ -226,7 +226,7 @@ STATIC FUNCTION kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cBrDok 
 FUNCTION fakt_povrat_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    LOCAL nRec
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _vars := hb_Hash()
    LOCAL _filter
    LOCAL _id_firma
@@ -262,10 +262,10 @@ FUNCTION fakt_povrat_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    ENDIF
 
-   o_fakt()
+   o_fakt_dbf()
    o_fakt_pripr()
-   o_fakt_doks()
-   o_fakt_doks2()
+   o_fakt_doks_dbf()
+   o_fakt_doks2_dbf()
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
@@ -315,7 +315,7 @@ FUNCTION fakt_povrat_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    DO WHILE !Eof()
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       _id_firma := field->idfirma
@@ -379,7 +379,7 @@ FUNCTION fakt_povrat_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
       MsgC()
 
       SELECT fakt_doks
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 

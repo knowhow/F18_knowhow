@@ -116,6 +116,21 @@ FUNCTION select_o_roba( cId )
    RETURN o_roba( cId )
 
 
+FUNCTION roba_update_vpc( cId, nVpc )
+
+   LOCAL oQry, cSql := "update fmk.roba set vpc=" + sql_quote( nVpc )
+
+   cSql := " WHERE id=" + sql_quote( cId )
+
+   oQry := run_sql_query( cSql  )
+
+   IF sql_error_in_query( oQry, "UPDATE" )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+
+
 FUNCTION find_roba_by_sifradob( cIdSifraDob, cOrderBy, cWhere )
 
    LOCAL hParams := hb_Hash()

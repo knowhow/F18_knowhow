@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION fakt_kartica()
 
    LOCAL cIdfirma, nRezerv, nRevers
@@ -33,18 +32,18 @@ FUNCTION fakt_kartica()
    // o_rj()
 
    IF _params[ "fakt_objekti" ]
-      o_fakt_objekti()
+      //o_fakt_objekti()
    ENDIF
 
-   o_fakt_doks()
-   o_fakt()
+   // o_fakt_doks_dbf()
+   // o_fakt_dbf()
 
-   SELECT fakt
+   // SELECT fakt
    // IF fId_J
    // SET ORDER TO TAG "3J"
    // idroba_J+Idroba+dtos(datDok)
    // ELSE
-   SET ORDER TO TAG "3"
+   // SET ORDER TO TAG "3"
    // idroba+dtos(datDok)
    // ENDIF
 
@@ -121,7 +120,7 @@ FUNCTION fakt_kartica()
       ENDIF
 
       @ m_x + 8, m_y + 2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   PICT "@!"
-      IF fakt->( FieldPos( "K1" ) ) <> 0 .AND. gDK1 == "D"
+      IF gDK1 == "D"
          @ m_x + 9, m_y + 2 SAY "K1" GET  cK1 PICT "@!"
          @ m_x + 10, m_y + 2 SAY "K2" GET  cK2 PICT "@!"
       ENDIF
@@ -153,7 +152,8 @@ FUNCTION fakt_kartica()
       ELSE
          cSintetika := "N"
       ENDIF
-      read;ESC_BCR
+      READ
+      ESC_BCR
 
       IF cBrza == "N"
          // IF fID_J
@@ -196,17 +196,12 @@ FUNCTION fakt_kartica()
 
    BoxC()
 
-   IF cPPArtn == "D"
-      o_fakt_doks()
-   ENDIF
-
-   SELECT FAKT
 
    PRIVATE cFilt1 := ""
 
-   cFilt1 := IF( cBrza == "N", aUsl1, ".t." )
-   cFilt1 += IF( Empty( dDatOd ), "", ".and. DATDOK >= " + _filter_quote( dDatOd ) )
-   cFilt1 += IF( Empty( dDatDo ), "", ".and. DATDOK <= " + _filter_quote( dDatDo ) )
+   cFilt1 := iif( cBrza == "N", aUsl1, ".t." )
+   // cFilt1 += IIF( Empty( dDatOd ), "", ".and. DATDOK >= " + _filter_quote( dDatOd ) )
+   // cFilt1 += IIF( Empty( dDatDo ), "", ".and. DATDOK <= " + _filter_quote( dDatDo ) )
 
    // hendliranje objekata
    IF _params[ "fakt_objekti" ] .AND. !Empty( _objekat_id )
@@ -215,18 +210,21 @@ FUNCTION fakt_kartica()
 
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
+
+   IF cBrza == "N"
+      find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "3" )
+   ELSE
+      seek_fakt_3( cIdFirma, qqRoba )
+   ENDIF
+
    IF cFilt1 == ".t."
       SET FILTER TO
    ELSE
       SET FILTER TO &cFilt1
    ENDIF
+   GO TOP
 
-   IF cBrza == "N"
-      GO TOP
-      EOF CRET
-   ELSE
-      SEEK qqRoba
-   ENDIF
+   EOF CRET
 
    START PRINT CRET
    ?
@@ -323,7 +321,7 @@ FUNCTION fakt_kartica()
          // // TODO : pogledati
          // SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
          // ELSE
-         SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
+         SEEK cIdFirma + IIF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
          // ENDIF
          // DO-WHILE za cPredh=2
          DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", ;
@@ -360,7 +358,7 @@ FUNCTION fakt_kartica()
             SKIP 1
          ENDDO  // za do-while za cPredh="2"
          ? Space( gnLMarg ); ?? Str( nRbr, 3 ) + ".   " + idfirma + PadR( "  PRETHODNO STANJE", 23 )
-         IF cppartn == "D"
+         IF cPpartn == "D"
             @ PRow(), PCol() + 1 SAY Space( 20 )
          ENDIF
          @ PRow(), PCol() + 1 SAY nUl PICT lpickol
@@ -369,17 +367,20 @@ FUNCTION fakt_kartica()
          PopWA()
       ENDIF
 
-      DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", ;
-            Left( cIdRoba, gnDS ) == Left( IdRoba, gnDS ), cIdRoba == IdRoba )
+      DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S",  Left( cIdRoba, gnDS ) == Left( IdRoba, gnDS ), cIdRoba == IdRoba )
          cKolona := "N"
 
-         IF !Empty( cidfirma ); IF idfirma <> cidfirma; skip; loop; end; END
-         IF !Empty( cK1 ); IF ck1 <> K1 ; skip; loop; end; END // uslov ck1
-         IF !Empty( cK2 ); IF ck2 <> K2; skip; loop; end; END // uslov ck2
+         IF !Empty( cIdfirma ); IF idfirma <> cIdfirma; skip; loop; end; END
+         IF !Empty( cK1 ); IF cK1 <> K1 ; skip; loop; end; END // uslov ck1
+         IF !Empty( cK2 ); IF cK2 <> K2; skip; loop; end; END // uslov ck2
 
          IF !Empty( qqPartn )
-            SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok )
-            SELECT fakt; IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
+
+            //SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok )
+            seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
+
+            SELECT fakt
+            IF !( fakt_doks->partner == qqPartn ); skip; loop; ENDIF
          ENDIF
 
          IF !Empty( cIdRoba )
@@ -408,8 +409,9 @@ FUNCTION fakt_kartica()
                ? Space( gnLMarg ); ?? Str( ++nRbr, 3 ) + ".   " + idfirma + "-" + idtipdok + "-" + brdok + Left( serbr, 1 ) + "  " + DToC( datdok )
 
                IF cPPartn == "D"
-                  SELECT fakt_doks
-                  HSEEK fakt->( IdFirma + idtipdok + brdok )
+                  //SELECT fakt_doks
+                  seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
+
                   SELECT fakt
                   @ PRow(), PCol() + 1 SAY PadR( fakt_doks->Partner, 20 )
                ENDIF
@@ -476,7 +478,7 @@ FUNCTION fakt_kartica()
    ENDPRINT
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION ZaglKart( lIniStrana )
@@ -493,7 +495,7 @@ STATIC FUNCTION ZaglKart( lIniStrana )
    ? Space( gnLMarg )
    ?? m
    ? Space( gnLMarg )
-   ?? "ŠIFRA:"
+   ??U "ŠIFRA:"
    // IF fID_J
    // ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->ID_J, Left( cidroba, 10 ) ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
    // ELSE
@@ -502,16 +504,18 @@ STATIC FUNCTION ZaglKart( lIniStrana )
    ? Space( gnLMarg ); ?? m
    B_OFF
    ? Space( gnLMarg )
-   ?? "R.br  RJ Br.dokumenta   Dat.dok."
+   ??U "R.br  RJ Br.dokumenta   Dat.dok."
    IF cPPartn == "D"
       ?? PadC( "Partner", 21 )
    ENDIF
-   ?? "     Ulaz       Izlaz      Stanje  "
+   ??U "     Ulaz       Izlaz      Stanje  "
    IF cPPC == "D"
       ?? "     Cijena   Rab%   C-Rab"
    ENDIF
 
-   ? Space( gnLMarg ); ?? m
-   nZStrana = nStrana
+   ?U Space( gnLMarg )
+   ?? m
 
-   RETURN
+   nZStrana := nStrana
+
+   RETURN .T.

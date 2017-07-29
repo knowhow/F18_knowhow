@@ -61,7 +61,7 @@ FUNCTION rnal_print_odabir_stavki( lPriprema )
 
 STATIC FUNCTION rnal_odabir_key_handler( lPriprema )
 
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _ret := DE_CONT
    LOCAL _rec
 

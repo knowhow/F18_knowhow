@@ -20,7 +20,7 @@ FUNCTION fin_povrat_naloga( lStorno )
    LOCAL nRec
    LOCAL _del_rec, _ok := .T.
    LOCAL _field_ids, _where_block
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _tbl
    LOCAL lBrisiKumulativ := .T.
    LOCAL lOk := .T.

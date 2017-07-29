@@ -337,7 +337,7 @@ STATIC FUNCTION o_tables()
    o_konto()
    o_partner()
    o_tarifa()
-   o_fakt()
+   o_fakt_dbf()
 
    RETURN .T.
 
@@ -529,7 +529,7 @@ FUNCTION PrenosNo2()
    o_partner()
    o_tarifa()
    o_sastavnice()
-   o_fakt()
+   o_fakt_dbf()
 
    dDatKalk := Date()
    cIdKonto := PadR( "5100", 7 )

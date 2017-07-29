@@ -100,7 +100,7 @@ FUNCTION fakt_fin_prenos()
 
    SELECT ( F_FAKT )
    IF !Used()
-      o_fakt()
+      o_fakt_dbf()
    ENDIF
 
    SET ORDER TO TAG "1"  // "1","IdFirma+idtipdok+brdok+rbr+podbr""FAKT"

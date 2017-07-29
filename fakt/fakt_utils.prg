@@ -79,13 +79,7 @@ FUNCTION fakt_objekat_naz( id_obj )
 
    PushWA()
 
-   o_fakt_objekti()
-
-   SELECT fakt_objekti
-   SET ORDER TO TAG "ID"
-   SEEK id_obj
-
-   IF Found()
+   IF select_o_fakt_objekti( id_obj )
       _ret := AllTrim( field->naz )
    ENDIF
 
@@ -115,7 +109,7 @@ FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
    SELECT ( F_FAKT )
 
    IF !Used()
-      o_fakt()
+      o_fakt_dbf()
    ENDIF
 
    SELECT fakt
@@ -172,7 +166,7 @@ FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
 
    SELECT ( F_FAKT )
    IF !Used()
-      o_fakt()
+      o_fakt_dbf()
    ENDIF
 
    SELECT fakt

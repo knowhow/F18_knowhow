@@ -353,7 +353,7 @@ STATIC FUNCTION fin_kamate_key_handler()
 FUNCTION fin_kamate_rekalkulisi_osnovni_dug()
 
    LOCAL _date := Date()
-   LOCAL _t_rec, _id_partner
+   LOCAL nTrec, _id_partner
    LOCAL _osn_dug, _br_dok, _racun
    LOCAL _predhodni
    LOCAL _l_prvi
@@ -374,7 +374,7 @@ FUNCTION fin_kamate_rekalkulisi_osnovni_dug()
 
       SELECT kam_pripr
 
-      _t_rec := RecNo()
+      nTrec := RecNo()
       _osn_dug := 0
 
       DO WHILE !Eof() .AND. _id_partner == field->idpartner
@@ -401,7 +401,7 @@ FUNCTION fin_kamate_rekalkulisi_osnovni_dug()
          _osn_dug += _racun
       ENDDO
 
-      GO _t_rec
+      GO nTrec
 
       DO WHILE !Eof() .AND. _id_partner == field->idpartner
          my_rlock()

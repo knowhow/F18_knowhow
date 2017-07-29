@@ -166,7 +166,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
    LOCAL _table, _table_promj
    LOCAL _count := 0
    LOCAL _count_promj := 0
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _pos_x, _pos_y
    LOCAL hParams
 
@@ -193,7 +193,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
    DO WHILE !Eof()
 
       SKIP
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       _rec := dbf_get_rec()
@@ -201,7 +201,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
 
       ++ _count
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 
@@ -212,7 +212,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
    DO WHILE !Eof()
 
       SKIP
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       _rec := dbf_get_rec()
@@ -221,7 +221,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
 
       ++ _count_promj
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 
@@ -428,7 +428,7 @@ STATIC FUNCTION _insert_into_promj( data )
 // ------------------------------------------------------
 STATIC FUNCTION _os_generacija_nakon_ps( info )
 
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _rec, _r_br
    LOCAL _sr_id
    LOCAL _table
@@ -467,7 +467,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
       _r_br := 0
 
       SKIP
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       // uzmi zapis...
@@ -487,7 +487,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
 
          delete_rec_server_and_dbf( __table_os, _rec, 1, "CONT" )
 
-         GO _t_rec
+         GO nTrec
          LOOP
 
       ENDIF
@@ -513,7 +513,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
       // update zapisa...
       update_rec_server_and_dbf( __table_os, _rec, 1, "CONT" )
 
-      GO _t_rec
+      GO nTrec
 
    ENDDO
 
@@ -531,13 +531,13 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
    DO WHILE !Eof()
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       _rec := dbf_get_rec()
       delete_rec_server_and_dbf( __table_promj,  _rec, 1, "CONT" )
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 

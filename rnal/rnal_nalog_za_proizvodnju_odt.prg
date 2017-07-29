@@ -403,7 +403,7 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
 FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
 
    LOCAL nDbfArea := Select()
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _doc_no, _doc_it_no, nI
 
    SELECT t_docit2
@@ -462,7 +462,7 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
 
    SELECT ( nDbfArea )
    SET ORDER TO TAG "2"
-   GO ( _t_rec )
+   GO ( nTrec )
 
    RETURN
 

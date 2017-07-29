@@ -212,7 +212,7 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC glZabraniVisakIP
    PUBLIC glBrojacPoKontima := .F.
    //PUBLIC gcSLObrazac
-   PUBLIC ZAOKRUZENJE := 2
+   //PUBLIC ZAOKRUZENJE := 2
 
    // inicijalizujem ovu varijablu uvijek pri startu
    // ona sluzi za automatsku obradu kalkulacija
@@ -262,7 +262,7 @@ METHOD TKalkMod:set_module_gvars()
    gDefNiv := fetch_metric( "kalk_promjena_cijena_odgovor", nil, gDefNiv )
    gVarEv := fetch_metric( "kalk_varijanta_evidencije", nil, gVarEv )
 
-      
+
    gPicProc := fetch_metric( "kalk_format_prikaza_procenta", nil, gPicProc )
 
 

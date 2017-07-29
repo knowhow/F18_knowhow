@@ -181,7 +181,7 @@ FUNCTION gen_ug()
          cUPartner := ugov->( naz )
       ENDIF
 
-      o_fakt()
+      o_fakt_dbf()
       o_fakt_pripr()
       IF reccount2() <> 0 .AND. nTekug = 1
          Msg( "Neki dokument vec postoji u pripremi" )
@@ -296,7 +296,7 @@ FUNCTION gen_ug()
             _txt3b := _txt3c := ""
             _txt3a := PadR( ugov->idpartner + ".", 30 )
 
-            IzSifre( .T. )
+            //IzSifre( .T. )
 
             select_o_fakt_txt( ugov->iddodtxt )
             cDodTxt := Trim( naz )

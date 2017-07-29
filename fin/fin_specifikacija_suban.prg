@@ -258,7 +258,6 @@ FUNCTION fin_specifikacija_suban()
       cFilter += ( ".and. k4='" + ck4 + "'" )
    ENDIF
 
-altd()
    IF gFinRj == "D" .AND. Len( cIdrj ) <> 0
       //IF gDugiUslovFirmaRJFinSpecif == "D"
       //   cFilter += ( ".and." + aUsl4 )

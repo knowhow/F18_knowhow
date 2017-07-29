@@ -330,8 +330,6 @@ FUNCTION fakt_stanje_robe()
 
          fakt_set_pozicija_sif_roba( cIdRoba, cSintetika == "D" )
 
-         SELECT ROBA
-
          IF ( FieldPos( "MINK" ) ) <> 0
             nMink := roba->mink
          ELSE
@@ -487,14 +485,14 @@ FUNCTION ZaglSRobe()
 
 STATIC FUNCTION _o_tables()
 
-   o_fakt_doks()
+   o_fakt_doks_dbf()
    //o_tarifa()
    //o_partner()
    //o_sifk()
    //o_sifv()
    //o_roba()
    //o_rj()
-   o_fakt()
+   o_fakt_dbf()
    SET ORDER TO TAG "3"
 
    RETURN .T.

@@ -372,9 +372,9 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
          my_rlock()
          DELETE
          my_unlock()
-         _t_rec := RecNo()
+         nTrec := RecNo()
          my_dbf_pack()
-         GO ( _t_rec )
+         GO ( nTrec )
 
          BrisiPBaze()
 
@@ -647,11 +647,11 @@ FUNCTION o_fin_edit()
 
    my_close_all_dbf()
 
-   o_vrstep()
+   //o_vrstep()
    // O_ULIMIT
 
    IF ( IsRamaGlas() )
-      select_o_fakt_objekti()
+    //  select_o_fakt_objekti()
    ENDIF
 
    // o_rj()
@@ -683,7 +683,7 @@ FUNCTION o_fin_edit()
    IF !o_fin_pripr()
       RETURN .F.
    ENDIF
-   
+
    SELECT fin_pripr
    SET ORDER TO TAG "1"
    GO TOP

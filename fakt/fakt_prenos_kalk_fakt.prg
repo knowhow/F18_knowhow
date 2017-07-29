@@ -23,8 +23,8 @@ FUNCTION kalk_fakt()
    AAdd( aOpcExe, {|| kalk_2_fakt() } )
    AAdd( aOpc, "2. prenos kalk->fakt za partnera  " )
    AAdd( aOpcExe, {|| kalkp_2_fakt() } )
-   //AAdd( aOpc, "3. parametri prenosa" )
-   //AAdd( aOpcExe, {|| _params() } )
+   // AAdd( aOpc, "3. parametri prenosa" )
+   // AAdd( aOpcExe, {|| _params() } )
 
    f18_menu( "pfakt", .F., nIzbor, aOpc, aOpcExe )
 
@@ -173,9 +173,7 @@ FUNCTION kalk_2_fakt()
 
       DO WHILE !Eof() .AND. cIdFirma + cIdTipDok + cBrDok == IdFirma + IdVD + BrDok
 
-         // nastimaj robu....
-         SELECT roba
-         HSEEK kalk->idroba
+         select_o_roba( kalk->idroba )
 
          SELECT kalk
 
@@ -282,26 +280,6 @@ FUNCTION kalk_2_fakt()
    my_close_all_dbf()
 
    RETURN .T.
-
-
-
-// --------------------------------
-// otvara tabele prenosa
-// --------------------------------
-STATIC FUNCTION _o_tables()
-
-   o_fakt_doks()
-   // o_roba()
-   // o_rj()
-   // o_kalk()
-   o_fakt()
-   o_fakt_pripr()
-   // o_sifk()
-   // o_sifv()
-   // o_partner()
-
-   RETURN .T.
-
 
 
 // -------------------------------------
@@ -411,7 +389,7 @@ FUNCTION kalkp_2_fakt()
       @ m_x + 6, m_y + 2 SAY "Broj dokumenta u modulu FAKT: "
       @ m_x + 6, Col() + 1 GET cIdRJ PICT "@!"
       @ m_x + 6, Col() + 2 SAY "-" GET cTipFakt
-      @ m_x + 6, Col() + 2 SAY "-" GET cBrFakt WHEN SljedBrFakt()
+      @ m_x + 6, Col() + 2 SAY "-" GET cBrFakt WHEN fakt_naredni_broj_dokumenta()
 
       READ
 
@@ -555,7 +533,7 @@ FUNCTION kalkp_2_fakt()
 
                _Txt3a := PadR( cIdPartner + ".", 30 )
                _txt3b := _txt3c := ""
-               IzSifre( .T. )
+               // IzSifre( .T. )
 
                cTxta := _txt3a
                cTxtb := _txt3b
@@ -593,7 +571,6 @@ FUNCTION kalkp_2_fakt()
             ELSE
 
                SELECT fakt_pripr
-
                HSEEK cIdFirma + KALK->idroba
                IF Found() .AND. Round( nKalkCijena - cijena, 5 ) == 0 .AND. ( cTipFakt = "0" .OR. Round( nKalkRabat - rabat, 5 ) == 0 )
                   Scatter()
@@ -608,6 +585,7 @@ FUNCTION kalkp_2_fakt()
                   ++nRBr
                   APPEND BLANK
                ENDIF
+
             ENDIF
 
             REPLACE idfirma WITH cIdRj
@@ -657,14 +635,11 @@ FUNCTION kalkp_2_fakt()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
-// -----------------------------------------
-// naredni broj fakture
-// -----------------------------------------
-STATIC FUNCTION SljedBrFakt()
+STATIC FUNCTION fakt_naredni_broj_dokumenta()
 
    LOCAL nArr := Select()
 
@@ -674,5 +649,21 @@ STATIC FUNCTION SljedBrFakt()
       cBrFakt := fakt_novi_broj_dokumenta( cIdRJ, cTipFakt )
       SELECT ( nArr )
    ENDIF
+
+   RETURN .T.
+
+
+
+STATIC FUNCTION _o_tables()
+
+   o_fakt_doks_dbf()
+   // o_roba()
+   // o_rj()
+   // o_kalk()
+   o_fakt_dbf()
+   o_fakt_pripr()
+   // o_sifk()
+   // o_sifv()
+   // o_partner()
 
    RETURN .T.

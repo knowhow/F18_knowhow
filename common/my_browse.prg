@@ -308,34 +308,14 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
       DO CASE
 
       CASE Ch == K_UP
-#ifdef F18_DEBUG
-         cTest := ""
-         IF Alias() == "FAKT_FTXT"
-            cTest := AllTrim( id )
-         ENDIF
-         info_bar( "debug", "tb:up" )
-#endif
          oBrowse:up()
 
       CASE Ch == K_DOWN
          oBrowse:down()
 
-#ifdef F18_DEBUG
-         cTest := ""
-         IF Alias() == "FAKT_FTXT"
-            cTest := AllTrim( id )
-         ENDIF
-         info_bar( "debug", "tb:down" )
-#endif
       CASE Ch == K_LEFT
          oBrowse:Left()
-#ifdef F18_DEBUG
-         cTest := ""
-         IF Alias() == "FAKT_FTXT"
-            cTest := AllTrim( id )
-         ENDIF
-         info_bar( "debug", "tb:left" )
-#endif
+
       CASE Ch == K_RIGHT
          oBrowse:Right()
 

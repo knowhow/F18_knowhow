@@ -184,8 +184,8 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
    LOCAL cRoba_id, cPart_id
 
-   o_fakt_doks()
-   o_fakt()
+   o_fakt_doks_dbf()
+   o_fakt_dbf()
    //o_roba()
    //o_sifk()
    //o_sifv()

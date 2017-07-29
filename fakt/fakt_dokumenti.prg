@@ -267,7 +267,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
 
    LOCAL _sumirati := .F.
    LOCAL _vp_mp := 1
-   LOCAL _n_tip_dok, _dat_max, _t_rec, _t_fakt_rec
+   LOCAL _n_tip_dok, _dat_max, nTrec, _t_fakt_rec
    LOCAL cVezaOtpremnice, _broj_dokumenta
    LOCAL _id_partner, _rec
    LOCAL _ok := .T.
@@ -459,8 +459,6 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, dDatumPosljednjeOtpr )
    ENDIF
 
    hFaktTxt := fakt_ftxt_decode_string( _txt )
-
-   AltD()
 
    nRbr := 1
 

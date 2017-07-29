@@ -192,7 +192,7 @@ STATIC FUNCTION stampaj_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
 STATIC FUNCTION koliko_treba_povrata_kupcu( param )
 
    LOCAL nDbfArea := Select()
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _id_pos := PARAM[ "idpos" ]
    LOCAL _id_vd := PARAM[ "idvd" ]
    LOCAL _br_dok := PARAM[ "brdok" ]
@@ -213,7 +213,7 @@ STATIC FUNCTION koliko_treba_povrata_kupcu( param )
    _total := ( _iznos - _popust )
 
    SELECT ( nDbfArea )
-   GO ( _t_rec )
+   GO ( nTrec )
 
    RETURN _total
 

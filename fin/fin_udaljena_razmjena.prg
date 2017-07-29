@@ -755,7 +755,7 @@ STATIC FUNCTION fin_import_impl( hVars, a_details )
 STATIC FUNCTION brisi_dokument_iz_kumulativa( cIdFirma, cIdVN, cBrNal )
 
    LOCAL nDbfArea := Select()
-   LOCAL _del_rec, _t_rec
+   LOCAL _del_rec, nTrec
    LOCAL lOk := .T.
 
    IF find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )

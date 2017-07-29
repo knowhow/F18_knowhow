@@ -64,7 +64,7 @@ FUNCTION fakt_lager_lista()
     //  ENDIF
    ENDIF
 
-   o_fakt_doks()
+   o_fakt_doks_dbf()
    //o_tarifa()
   // select_o_partner()
    //o_sifk()
@@ -73,11 +73,11 @@ FUNCTION fakt_lager_lista()
    //o_rj()
 
   // IF fId_J
-  //    o_fakt()
+  //    o_fakt_dbf()
       // idroba+dtos(datDok)
     //  SET ORDER TO TAG "3J"
    //ELSE
-      o_fakt()
+      o_fakt_dbf()
       // idroba+dtos(datDok)
       SET ORDER TO TAG "3"
    //ENDIF
@@ -370,8 +370,8 @@ FUNCTION fakt_lager_lista()
                ELSEIF idtipdok = "1"
                   IF !( serbr = "*" .AND. idtipdok == "10" ) // za fakture na osnovu otpremnice ne racunaj izlaz
                      nIzl += kolicina
-                     nReal1 += Round( kolicina * Cijena, ZAOKRUZENJE )
-                     nReal2 += Round( kolicina * Cijena * ( Rabat / 100 ), ZAOKRUZENJE )
+                     nReal1 += Round( kolicina * Cijena, fakt_zaokruzenje() )
+                     nReal2 += Round( kolicina * Cijena * ( Rabat / 100 ), fakt_zaokruzenje() )
                      IF lSaberikol .AND. !( roba->K2 = 'X' )
                         nKI += kolicina
                      ENDIF
@@ -391,8 +391,8 @@ FUNCTION fakt_lager_lista()
                IF ( serbr = "*" .AND. idtipdok == "10" )
                   nIzl += kolicina
                   // finansijski da !
-                  nReal1 += Round( kolicina * Cijena, ZAOKRUZENJE )
-                  nReal2 += Round( kolicina * Cijena * ( Rabat / 100 ), ZAOKRUZENJE )
+                  nReal1 += Round( kolicina * Cijena, fakt_zaokruzenje() )
+                  nReal2 += Round( kolicina * Cijena * ( Rabat / 100 ), fakt_zaokruzenje() )
                   IF lSaberikol .AND. !( roba->K2 = 'X' )
                      nKI += kolicina
                   ENDIF
@@ -414,9 +414,9 @@ FUNCTION fakt_lager_lista()
           //  ENDIF
 
             IF nGrZn <> 99 .AND. ( Empty( cLastIdRoba ) .OR. Left( cLastIdRoba, nGrZn ) <> Left( cIdRoba, nGrZn ) )
-               SELECT ROBA
+
                PushWA()
-               SEEK Left( cIdRoba, nGrZn )
+               select_o_roba( Left( cIdRoba, nGrZn ) )
                IF Found() .AND. Right( Trim( id ), 1 ) == "."
                   cNazivGrupacije := Left( cIdRoba, nGrZn ) + " " + naz
                ELSE
@@ -618,10 +618,10 @@ FUNCTION fakt_lager_lista()
          select_o_tarifa( aPorezi[ i, 1 ] )
          fakt_vt_porezi()
          nMPV := aPorezi[ i, 2 ]
-         nMPV0 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ), ZAOKRUZENJE )
-         nPor1 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ) * _OPP, ZAOKRUZENJE )
-         nPor2 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) * ( 1 + _OPP ) ) * _PPP, ZAOKRUZENJE )
-         nPor3 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ) * _ZPP, ZAOKRUZENJE )
+         nMPV0 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ), fakt_zaokruzenje() )
+         nPor1 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ) * _OPP, fakt_zaokruzenje() )
+         nPor2 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) * ( 1 + _OPP ) ) * _PPP, fakt_zaokruzenje() )
+         nPor3 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ) * _ZPP, fakt_zaokruzenje() )
          ? aPorezi[ i, 1 ], TRANS( 100 * _OPP, gPicProc ), TRANS( 100 * _PPP, gPicProc ), TRANS( 100 * _ZPP, gPicProc ), TRANS( nMPV0, fakt_pic_iznos() ), TRANS( nPor1, fakt_pic_iznos() ), TRANS( nPor2, fakt_pic_iznos() ), TRANS( nPor3, fakt_pic_iznos() ), TRANS( nMPV, fakt_pic_iznos() )
          nUMPV += nMPV
          nUMPV0 += nMPV0
@@ -836,8 +836,8 @@ STATIC FUNCTION lager_lista_xml( table, params )
    LOCAL _t_izlaz := 0
    LOCAL _t_stanje := 0
 
-   o_roba()
-   o_partner()
+   //o_roba()
+   //o_partner()
 
    // ima li zapisa...
    IF table:LastRec() == 0
@@ -875,8 +875,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
       _t_ulaz += _ulaz
       _t_izlaz += _izlaz
 
-      SELECT roba
-      HSEEK cIdRoba
+      select_o_roba( cIdRoba )
 
       _cijena := roba->vpc
 

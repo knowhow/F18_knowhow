@@ -628,19 +628,19 @@ FUNCTION par_fakt_izgled_dokumenta()
    nX += 2
 
    // parametri fin.stanje na dod.txt...
-   @ m_x + nX, m_y + 2 SAY "Prikaz fin.salda kupca/dobavljaca na dodatnom tekstu (D/N)" GET gShSld PICT "@!" VALID gShSld $ "DN"
+   @ m_x + nX, m_y + 2 SAY "Prikaz fin.salda kupca/dobavljaca na dodatnom tekstu (D/N)" GET gFaktPrikazFinSaldaKupacDobavljac PICT "@!" VALID gFaktPrikazFinSaldaKupacDobavljac $ "DN"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Konto duguje:", 20 ) GET gFinKtoDug VALID !Empty( gFinKtoDug ) .AND. P_Konto( @gFinKtoDug ) WHEN gShSld == "D"
+   @ m_x + nX, m_y + 2 SAY PadL( "Konto duguje:", 20 ) GET gFinKtoDug VALID !Empty( gFinKtoDug ) .AND. P_Konto( @gFinKtoDug ) WHEN gFaktPrikazFinSaldaKupacDobavljac == "D"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Konto potrazuje:", 20 ) GET gFinKtoPot VALID !Empty( gFinKtoPot ) .AND. P_Konto( @gFinKtoPot ) WHEN gShSld == "D"
+   @ m_x + nX, m_y + 2 SAY PadL( "Konto potrazuje:", 20 ) GET gFinKtoPot VALID !Empty( gFinKtoPot ) .AND. P_Konto( @gFinKtoPot ) WHEN gFaktPrikazFinSaldaKupacDobavljac == "D"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "Varijanta prikaza podataka (1/2)" GET gShSldVar PICT "9" VALID gShSldVar > 0 .AND. gShSldVar < 3 WHEN gShSld == "D"
+   @ m_x + nX, m_y + 2 SAY "Varijanta prikaza podataka (1/2)" GET gFaktPrikazFinSaldaKupacDobavljacVar PICT "9" VALID gFaktPrikazFinSaldaKupacDobavljacVar > 0 .AND. gFaktPrikazFinSaldaKupacDobavljacVar < 3 WHEN gFaktPrikazFinSaldaKupacDobavljac == "D"
 
 
    READ
@@ -691,8 +691,8 @@ FUNCTION par_fakt_izgled_dokumenta()
       set_metric( "fakt_odt_template_auto", NIL, _auto_odt )
 
       set_metric( "fakt_ispis_grupacije_na_dokumentu", NIL, glRGrPrn )
-      set_metric( "fakt_ispis_salda_kupca_dobavljaca", NIL, gShSld )
-      set_metric( "fakt_ispis_salda_kupca_dobavljaca_varijanta", NIL, gShSldVar )
+      set_metric( "fakt_ispis_salda_kupca_dobavljaca", NIL, gFaktPrikazFinSaldaKupacDobavljac )
+      set_metric( "fakt_ispis_salda_kupca_dobavljaca_varijanta", NIL, gFaktPrikazFinSaldaKupacDobavljacVar )
       set_metric( "konto_duguje", NIL, gFinKtoDug )
       set_metric( "konto_potrazuje", NIL, gFinKtoPot )
 

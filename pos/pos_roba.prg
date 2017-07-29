@@ -37,7 +37,6 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
-   AltD()
 
    PushWA()
 

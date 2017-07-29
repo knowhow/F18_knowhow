@@ -11,6 +11,12 @@
 
 #include "f18.ch"
 
+/*
+
+   o_dbf_table( F_KUF, { "KUF", "epdv_kuf" }, "DATUM" )
+
+*/
+
 FUNCTION o_dbf_table( nArea, xTable, cTag )
 
    LOCAL lUsed := .F.
@@ -39,7 +45,6 @@ FUNCTION o_dbf_table( nArea, xTable, cTag )
 
       IF lMyUse
          lUsed := .T.
-
          IF cTag != NIL
             ordSetFocus( cTag )
             IF Empty( ordKey() )

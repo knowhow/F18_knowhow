@@ -178,7 +178,7 @@ FUNCTION gen_ug_2()
    ENDIF
 
    // otvori i fakt
-   o_fakt()
+   o_fakt_dbf()
    o_fakt_pripr()
 
    IF RecCount2() <> 0
@@ -1032,7 +1032,7 @@ STATIC FUNCTION postoji_generacija( dDatObr, cIdArt )
 
       my_close_all_dbf()
       o_ugov_tabele()
-      o_fakt()
+      o_fakt_dbf()
       o_fakt_pripr()
       SELECT gen_ug
       SET ORDER TO TAG "dat_obr"

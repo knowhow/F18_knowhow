@@ -34,7 +34,7 @@ FUNCTION fakt_stanje_artikla( cIdRj, cIdroba, nUl, nIzl, nRezerv, nRevers, lSile
       MsgO( "Izračunavam trenutno stanje artikla ..." )
    ENDIF
 
-   SEEK cIdRoba
+   seek_fakt_3( NIL, cIdRoba )
 
    nUl := 0
    nIzl := 0
@@ -187,13 +187,13 @@ FUNCTION fakt_brdok_numdio()
 // ------------------------------------------------------------
 // resetuje brojač dokumenta ako smo pobrisali dokument
 // ------------------------------------------------------------
-FUNCTION fakt_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta )
+FUNCTION fakt_reset_broj_dokumenta( cIdFirma, cIdTipDok, broj_dokumenta )
 
    LOCAL _param
    LOCAL _broj := 0
 
    // param: fakt/10/10
-   _param := "fakt" + "/" + firma + "/" + tip_dokumenta
+   _param := "fakt" + "/" + cIdFirma + "/" + cIdTipDok
    _broj := fetch_metric( _param, NIL, _broj )
 
    IF Val( PadR( broj_dokumenta, fakt_brdok_numdio() ) ) == _broj
@@ -217,66 +217,65 @@ FUNCTION fakt_prazan_broj_dokumenta()
 // ------------------------------------------------------------------
 // fakt, uzimanje novog broja za fakt dokument
 // ------------------------------------------------------------------
-FUNCTION fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
+FUNCTION fakt_novi_broj_dokumenta( cIdFirma, cIdTipDok, cSufix )
 
    LOCAL _broj := 0
    LOCAL _broj_doks := 0
    LOCAL _param
    LOCAL _tmp, _rest
-   LOCAL _ret := ""
+   LOCAL cRet := ""
    LOCAL nDbfArea := Select()
    LOCAL _num_dio := fakt_brdok_numdio()
 
-   IF sufiks == nil
-      sufiks := ""
+   IF cSufix == nil
+      cSufix := ""
    ENDIF
 
    // param: fakt/10/10
-   _param := "fakt" + "/" + firma + "/" + tip_dokumenta
+   _param := "fakt" + "/" + cIdFirma + "/" + cIdTipDok
    _broj := fetch_metric( _param, NIL, _broj )
 
    // konsultuj i doks uporedo
-   o_fakt_doks()
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK firma + tip_dokumenta + "Ž"
-   SKIP -1
+   // o_fakt_doks_dbf()
+   // SET ORDER TO TAG "1"
+   // GO TOP
+   // SEEK cIdFirma + cIdTipDok + "Ž"
+   // SKIP -1
+   seek_fakt_doks( cIdFirma, cIdTipDok )
 
-   IF field->idfirma == firma .AND. field->idtipdok == tip_dokumenta
+   IF field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok
       _broj_doks := Val( PadR( field->brdok, _num_dio ) )
    ELSE
       _broj_doks := 0
    ENDIF
 
-
    _broj := Max( _broj, _broj_doks ) // uzmi sta je vece, doks broj ili globalni brojac
    ++_broj // uvecaj broj
 
    // ovo ce napraviti string prave duzine...
-   _ret := PadL( AllTrim( Str( _broj ) ), _num_dio, "0" )
+   cRet := PadL( AllTrim( Str( _broj ) ), _num_dio, "0" )
 
-   IF !Empty( sufiks )
-      _ret := _ret + sufiks
+   IF !Empty( cSufix )
+      cRet := cRet + cSufix
    ENDIF
 
-   _ret := PadR( _ret, 8 )
+   cRet := PadR( cRet, 8 )
    set_metric( _param, NIL, _broj ) // upisi ga u globalni parametar
 
    SELECT ( nDbfArea )
 
-   RETURN _ret
+   RETURN cRet
 
 
-// ------------------------------------------------------------
-// setuj broj dokumenta u pripremi ako treba !
-// ------------------------------------------------------------
-FUNCTION fakt_set_broj_dokumenta()
 
-   LOCAL _broj_dokumenta
-   LOCAL _t_rec
+FUNCTION fakt_unos_set_broj_dokumenta()
+
+   LOCAL cNoviBrojDokumenta
+   LOCAL nTrec
    LOCAL _firma, _td, _null_brdok
    LOCAL _fakt_params := fakt_params()
    LOCAL oAttr
+   LOCAL cIdTipDokTrazi
 
    PushWA()
 
@@ -289,9 +288,9 @@ FUNCTION fakt_set_broj_dokumenta()
 
    // brojaci otpremnica po tip-u "22"
    IF _td == "12" .AND. _fakt_params[ "fakt_otpr_22_brojac" ]
-      _tip_srch := "22"
+      cIdTipDokTrazi := "22"
    ELSE
-      _tip_srch := _td
+      cIdTipDokTrazi := _td
    ENDIF
 
    IF field->brdok <> _null_brdok
@@ -300,8 +299,7 @@ FUNCTION fakt_set_broj_dokumenta()
       RETURN .F.
    ENDIF
 
-   // daj mi novi broj dokumenta
-   _broj_dokumenta := fakt_novi_broj_dokumenta( _firma, _tip_srch )
+   cNoviBrojDokumenta := fakt_novi_broj_dokumenta( _firma, cIdTipDokTrazi )
 
    SELECT fakt_pripr
    SET ORDER TO TAG "1"
@@ -311,14 +309,12 @@ FUNCTION fakt_set_broj_dokumenta()
    DO WHILE !Eof()
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
-
       IF field->idfirma == _firma .AND. field->idtipdok == _td .AND. field->brdok == _null_brdok
-         REPLACE field->brdok WITH _broj_dokumenta
+         REPLACE field->brdok WITH cNoviBrojDokumenta
       ENDIF
-
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
    my_unlock()
@@ -331,16 +327,14 @@ FUNCTION fakt_set_broj_dokumenta()
 
    my_flock()
    DO WHILE !Eof()
-
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       IF field->idfirma == _firma .AND. field->idtipdok == _td .AND. field->brdok == _null_brdok
-         REPLACE field->brdok WITH _broj_dokumenta
+         REPLACE field->brdok WITH cNoviBrojDokumenta
       ENDIF
-
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
    my_unlock()
@@ -357,28 +351,28 @@ FUNCTION fakt_set_broj_dokumenta()
 // -----------------------------------------------------------
 FUNCTION fakt_postoji_li_rupa_u_brojacu( cIdFirma, id_tip_dok, priprema_broj )
 
-   LOCAL _ret := 0
+   LOCAL nRet := 0
    LOCAL _qry, _table
    LOCAL _max_dok, _par_dok, _param
    LOCAL _params := fakt_params()
-   LOCAL _tip_srch, _tmp
+   LOCAL cIdTipDokTrazi, _tmp
    LOCAL _inc_error
 
    // .... parametar ako treba
    IF !_params[ "kontrola_brojaca" ]
-      RETURN _ret
+      RETURN nRet
    ENDIF
 
    // brojaci otpremnica po tip-u "22"
    IF id_tip_dok == "12" .AND. _params[ "fakt_otpr_22_brojac" ]
-      _tip_srch := "22"
+      cIdTipDokTrazi := "22"
    ELSE
-      _tip_srch := id_tip_dok
+      cIdTipDokTrazi := id_tip_dok
    ENDIF
 
    _qry := " SELECT MAX( brdok ) FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks " + ;
       " WHERE idfirma = " + sql_quote( cIdFirma ) + ;
-      " AND idtipdok = " + sql_quote( _tip_srch )
+      " AND idtipdok = " + sql_quote( cIdTipDokTrazi )
 
 
    _table := run_sql_query( _qry )
@@ -388,7 +382,7 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( cIdFirma, id_tip_dok, priprema_broj )
 
    // ovo je iz parametara...
    // param: fakt/10/10
-   _param := "fakt" + "/" + cIdFirma + "/" + _tip_srch
+   _param := "fakt" + "/" + cIdFirma + "/" + cIdTipDokTrazi
    _par_dok := fetch_metric( _param, NIL, 0 )
 
    // provjera brojaca server dokument <> server param
@@ -400,8 +394,8 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( cIdFirma, id_tip_dok, priprema_broj )
       MsgBeep( "Postoji greska sa brojacem dokumenta#Dokumenti: " + AllTrim( Str( _max_dok ) ) + ;
          ", parametri: " + AllTrim( Str( _par_dok ) ) + "#" + ;
          "Provjerite brojac" )
-      _ret := 1
-      RETURN _ret
+      nRet := 1
+      RETURN nRet
 
    ENDIF
 
@@ -414,12 +408,12 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( cIdFirma, id_tip_dok, priprema_broj )
       MsgBeep( "Postoji greška sa brojačem dokumenta#Priprema: " + AllTrim( priprema_broj ) + ;
          ", server dokument: " + AllTrim( Str( _max_dok ) ) + "#" + ;
          "Provjerite brojač" )
-      _ret := 1
-      RETURN _ret
+      nRet := 1
+      RETURN nRet
 
    ENDIF
 
-   RETURN _ret
+   RETURN nRet
 
 
 
@@ -527,21 +521,22 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( cIdFirma, cIdTipDok, cBrDo
    cIdPartner := field->idpartner
    cIdVrstaPlacanja := field->idvrstep
 
-   SELECT ( F_FAKT )
-   IF !Used()
-      o_fakt()
-   ENDIF
+   // SELECT ( F_FAKT )
+   // IF !Used()
+   // o_fakt_dbf()
+   // ENDIF
 
    // SELECT ( F_PARTN )
    // IF !Used()
    // o_partner()
    // ENDIF
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   // SELECT fakt
+   // SET ORDER TO TAG "1"
+   // GO TOP
+   // SEEK cIdFirma + cIdTipDok + cBrDok
 
+   seek_fakt( cIdFirma, cIdTdok,  cBrDok )
    IF !Found()
       SELECT ( nDbfArea )
       RETURN lRet
@@ -599,8 +594,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( cIdFirma, cIdTipDok, cBrDo
 
    cTmp := AllTrim( field->naz ) + "," + AllTrim( field->ptt ) + " " + AllTrim( field->mjesto )
 
-   SELECT fakt_doks
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok )
 
    IF !Found()
 
@@ -625,9 +619,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( cIdFirma, cIdTipDok, cBrDo
       RETURN lRet
    ENDIF
 
-   SELECT fakt
-   GO TOP
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   seek_fakt( cIdFirma, cIdTipDok, cBrDok )
 
    nCounter := 1
 
@@ -638,7 +630,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( cIdFirma, cIdTipDok, cBrDo
       hRec[ "idvrstep" ] := cIdVrstaPlacanja
 
       IF nCounter == 1
-      
+
          // cFaktTxtNovi := fakt_ftxt_encode_2( aFaktTxt, cBrNar, cBrOtpr, dDatOtpr, dDatPl )
          hFaktTxt[ "partner_txt_a" ] := AllTrim( partn->naz )
          hFaktTxt[ "partner_txt_b" ] := AllTrim( partn->adresa ) + ", Tel:" + AllTrim( partn->telefon )

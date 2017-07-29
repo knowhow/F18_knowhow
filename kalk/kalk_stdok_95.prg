@@ -80,10 +80,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
    IF !Empty( cIdZaduz2 )
 
-      select_o_fakt_objekti()
-      GO TOP
-      hseek cIdZaduz2
-
+      select_o_fakt_objekti( cIdZaduz2 )
       ? PadL( "Rad.nalog:", 14 ), AllTrim( cIdZaduz2 ) + " - " + AllTrim( fakt_objekti->naz )
 
    ENDIF

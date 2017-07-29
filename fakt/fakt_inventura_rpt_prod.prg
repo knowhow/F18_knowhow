@@ -32,8 +32,7 @@ FUNCTION RptInvObrPopisa()
 
    GO TOP
    DO WHILE !Eof()
-      SELECT roba
-      HSEEK fakt_pripr->idRoba
+      select_o_roba( fakt_pripr->idRoba )
       SELECT fakt_pripr
 
       print_nova_strana( 125, @nStr, 1 )
@@ -62,9 +61,10 @@ FUNCTION RptInvObrPopisa()
    SELECT fakt_pripr
    GO nRecNo
 
-   RETURN
+   RETURN .T.
 
-FUNCTION ZInvp( cLinija )
+
+STATIC FUNCTION ZInvp( cLinija )
 
    ?
    P_10CPI
@@ -80,4 +80,4 @@ FUNCTION ZInvp( cLinija )
    ? "*BR*                                             *  Kolicina  *     VP     *"
    ? cLinija
 
-   RETURN
+   RETURN .T.

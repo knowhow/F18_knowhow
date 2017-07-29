@@ -16,9 +16,7 @@ THREAD STATIC __KTO_DUG
 THREAD STATIC __KTO_POT
 THREAD STATIC __SH_SLD_VAR
 
-// ----------------------------------------------------
-// lJFill - samo se pune rn, drn pomocne tabele
-// ----------------------------------------------------
+
 FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    LOCAL cFax
@@ -37,6 +35,7 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
       lPrepisDok := .T.
       _fill_params[ "from_server" ] := .T.
       close_open_fakt_tabele( .T. )
+      seek_fakt( cIdFirma, cIdTipDok, cBrDok, NIL, NIL, NIL, NIL, "FAKT_PRIPR" )
    ELSE
       _fill_params[ "from_server" ] := .F.
       close_open_fakt_tabele()
@@ -871,7 +870,6 @@ STATIC FUNCTION porezna_faktura_fill_partner_data( cId, lPdvObveznik )
    LOCAL lFromMemo := .F.
    LOCAL nDbfArea := Select()
 
-altd()
    IF Empty( AllTrim( cId ) )
       // ako je prazan partner uzmi iz memo polja
       aMemo := fakt_ftxt_decode( fakt_pripr->txt )

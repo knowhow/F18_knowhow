@@ -150,7 +150,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    LOCAL lRet := .F.
    LOCAL nTotalCount
    LOCAL nCount := 0
-   LOCAL hRec, _t_rec
+   LOCAL hRec, nTrec
    LOCAL cTipDok, cDokument
    LOCAL hParams
 
@@ -201,7 +201,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
 
       DO WHILE !Eof()
 
-         _t_rec := RecNo()
+         nTrec := RecNo()
 
          SELECT POS
          APPEND BLANK
@@ -245,7 +245,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
          ENDIF
 
          SELECT PRIPRZ
-         GO ( _t_rec )
+         GO ( nTrec )
          SKIP
 
       ENDDO

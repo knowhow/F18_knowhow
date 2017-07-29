@@ -67,7 +67,7 @@ STATIC FUNCTION prenos()
 //   o_konto()
 //   o_partner()
    o_valute()
-   o_fakt()
+   o_fakt_dbf()
 
    dDatMat := Date()
    cIdKonto := cIdKonto2 := Space( 7 )

@@ -103,11 +103,11 @@ FUNCTION stampa_virmana()
 
 STATIC FUNCTION stampaj_virman_drb()
 
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _rtm_file := "nalplac"
 
    SELECT virm_pripr
-   _t_rec := RecNo()
+   nTrec := RecNo()
 
    USE
 
@@ -123,6 +123,6 @@ STATIC FUNCTION stampaj_virman_drb()
 
    o_virm_tabele_unos_print()
    SELECT virm_pripr
-   GO ( _t_rec )
+   GO ( nTrec )
 
    RETURN .T.

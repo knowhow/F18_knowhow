@@ -188,7 +188,7 @@ FUNCTION unos_os_key_handler( Ch )
    LOCAL nRet := DE_CONT
    LOCAL nRec0 := RecNo()
    LOCAL _rec
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _novi
    LOCAL _prom_dat, _prom_opis, _prom_nv, _prom_ov
 
@@ -359,16 +359,16 @@ FUNCTION unos_os_key_handler( Ch )
          select_promj()
          SEEK cId
 
-         _t_rec := 0
+         nTrec := 0
 
          DO WHILE !Eof() .AND. cId == field->id
             SKIP
-            _t_rec := RecNo()
+            nTrec := RecNo()
             SKIP -1
             _rec := dbf_get_rec()
             _rec[ "id" ] := _novi
             update_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
-            GO ( _t_rec )
+            GO ( nTrec )
          ENDDO
          SEEK _novi
 
@@ -398,7 +398,7 @@ FUNCTION unos_os_key_handler( Ch )
 FUNCTION ShowSadVr()
 
    LOCAL _arr := Select()
-   LOCAL _t_rec := 0
+   LOCAL nTrec := 0
    LOCAL nI := 0
 
    // polja os/sii
@@ -407,7 +407,7 @@ FUNCTION ShowSadVr()
 
    select_promj()
 
-   _t_rec := RecNo()
+   nTrec := RecNo()
 
    SEEK cId
 
@@ -456,7 +456,7 @@ FUNCTION ShowSadVr()
    @ m_x + 7, m_y + 1 SAY "           Sadasnja vrijednost sa uracunatom amortizacijom=" COLOR "W+/B"
    @ Row(), Col()  SAY TRANS( aVr[ 3 ], "9999999.99" )        COLOR IF( aVr[ 3 ] < 0, "GR+/R", "GR+/B" )
 
-   GO ( _t_rec )
+   GO ( nTrec )
    SELECT ( _arr )
 
    RETURN .T.

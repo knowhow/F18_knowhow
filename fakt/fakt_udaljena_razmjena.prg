@@ -952,7 +952,7 @@ STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
 STATIC FUNCTION del_fakt_doc( id_firma, id_vd, br_dok )
 
    LOCAL nDbfArea := Select()
-   LOCAL _del_rec, _t_rec
+   LOCAL _del_rec, nTrec
    LOCAL _ret := .F.
 
    SELECT fakt
@@ -1008,31 +1008,31 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    direktorij_kreiraj_ako_ne_postoji( use_path )
 
    // tabela fakt
-   o_fakt()
+   o_fakt_dbf()
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_fakt" ) FROM ( my_home() + "struct" )
 
    // tabela doks
-   o_fakt_doks()
+   o_fakt_doks_dbf()
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_doks" ) FROM ( my_home() + "struct" )
 
    // tabela doks
-   o_fakt_doks2()
+   o_fakt_doks2_dbf()
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_doks2" ) FROM ( my_home() + "struct" )
 
    // tabela roba
-   o_roba()
+   o_roba( "XXXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_roba" ) FROM ( my_home() + "struct" )
 
    // tabela partn
-   o_partner()
+   o_partner( "XXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_partn" ) FROM ( my_home() + "struct" )
@@ -1057,9 +1057,9 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
 // ----------------------------------------------------
 STATIC FUNCTION _o_tables()
 
-   o_fakt()
-   o_fakt_doks()
-   o_fakt_doks2()
+   o_fakt_dbf()
+   o_fakt_doks_dbf()
+   o_fakt_doks2_dbf()
    //o_sifk()
    //o_sifv()
    //o_partner()

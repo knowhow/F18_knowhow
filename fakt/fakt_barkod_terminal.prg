@@ -59,9 +59,9 @@ STATIC FUNCTION bterm_to_fakt_priprema()
 
    PRIVATE cTipVPC := "1"
 
-   o_fakt_doks()
+   o_fakt_doks_dbf()
    o_fakt_pripr()
-   o_fakt()
+   o_fakt_dbf()
    //o_roba()
    //o_rj()
    //o_partner()
@@ -116,7 +116,7 @@ STATIC FUNCTION bterm_to_fakt_priprema()
       _txt := "" // fakt_txt
 
       // ovo setuje cijenu
-      v_kolicina( "1" )
+      fakt_v_kolicina( "1" )
       SELECT fakt_pripr
 
       // 1 roba tip U - nista

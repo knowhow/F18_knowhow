@@ -12,9 +12,7 @@
 #include "f18.ch"
 
 
-// -----------------------------------------------
-// otvaranje tabele fakt_objekti
-// -----------------------------------------------
+
 FUNCTION p_fakt_objekti( cId, dx, dy )
 
    LOCAL nDbfArea := Select()
@@ -108,22 +106,12 @@ FUNCTION FaRobaBlock( Ch )
 
 FUNCTION FaktStanje( cIdRoba )
 
-   LOCAL nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
+   LOCAL nPos, nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
 
-   SELECT roba
-   SELECT ( F_FAKT )
-   IF !Used()
-      o_fakt(); fOtv := .T.
-   ELSE
-      nIOrd := IndexOrd()
-      nFRec := RecNo()
-   ENDIF
-   // "3","Idroba+dtos(datDok)","FAKT")  // za karticu, specifikaciju
-   SET ORDER TO TAG "3"
-   SEEK cIdRoba
 
-   aStanje := {}
-   // {idfirma, nUl,nIzl,nRevers,nRezerv }
+   seek_fakt_3( cIdRoba )
+
+   aStanje := {}  // {idfirma, nUl,nIzl,nRevers,nRezerv }
    nUl := nIzl := nRezerv := nRevers := 0
    DO WHILE !Eof()  .AND. cIdRoba == IdRoba
       nPos := AScan ( aStanje, {| x | x[ 1 ] == FAKT->IdFirma } )
@@ -131,9 +119,9 @@ FUNCTION FaktStanje( cIdRoba )
          AAdd ( aStanje, { IdFirma, 0, 0, 0, 0 } )
          nPos := Len ( aStanje )
       ENDIF
-      IF idtipdok = "0"  // ulaz
+      IF LEFT( field->idtipdok, 1 ) == "0"  // ulaz
          aStanje[ nPos ][ 2 ] += kolicina
-      ELSEIF idtipdok = "1"   // izlaz faktura
+      ELSEIF LEFT( idtipdok, 1 ) == "1"   // izlazni dokument
          IF !( Left( serbr, 1 ) == "*" .AND. idtipdok == "10" )  // za fakture na osnovu optpremince ne ra~unaj izlaz
             aStanje[ nPos ][ 3 ] += kolicina
          ENDIF
@@ -147,21 +135,13 @@ FUNCTION FaktStanje( cIdRoba )
       SKIP
    ENDDO
 
-   IF fotv
-      SELEC fakt; USE
-   ELSE
-      // set order to (nIOrd)
-      dbSetOrder( nIOrd )
-      GO nFRec
-   ENDIF
-   SELECT roba
    fakt_box_stanje( aStanje, cIdRoba )      // nUl,nIzl,nRevers,nRezerv)
 
    RETURN .T.
 
 
 
-/* fakt_box_stanje(aStanje,cIdRoba)
+/*
  *
  *   param: aStanje
  *   param: cIdRoba
@@ -169,7 +149,7 @@ FUNCTION FaktStanje( cIdRoba )
 
 FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
-   LOCAL nR, nC, nTSta := 0, nTRev := 0, nTRez := 0, ;
+   LOCAL i, nR, nC, nTSta := 0, nTRev := 0, nTRez := 0, ;
       nTOst := 0, npd, cDiv := " ³ ", nLen
 
    nPd := Len ( fakt_pic_iznos() )
@@ -188,10 +168,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    NEXT
    nLenDP := IF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
-   SELECT roba
-   // PushWA()
-   SET ORDER TO TAG "ID"
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
    Box(, 6 + nLen + Int( ( nLenDP ) / 2 ), 75 )
    Beep( 1 )
    @ m_x + 1, m_y + 2 SAY "ARTIKAL: "
@@ -248,7 +225,6 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
          IF "TARIFA->" $ Upper( cPom777 )
             select_o_tarifa( ROBA->idtarifa )
-            SELECT ROBA
          ENDIF
 
          IF i % 2 != 0
@@ -324,7 +300,7 @@ FUNCTION ima_u_fakt_kumulativ( cKljuc, cTag )
 
    IF !Used()
       lUsed := .F.
-      o_fakt()
+      o_fakt_dbf()
    ELSE
       PushWA()
    ENDIF

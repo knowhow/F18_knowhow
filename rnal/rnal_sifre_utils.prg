@@ -202,7 +202,6 @@ STATIC FUNCTION rnal_last_id( cFieldName )
 // --------------------------------------
 FUNCTION rnal_chk_id( wId, cFieldName, cIndexTag  )
 
-   LOCAL nTRec
    LOCAL nTrec := RecNo()
    LOCAL cTBFilter := dbFilter()
    LOCAL lSeek := .T.

@@ -1,8 +1,20 @@
 # F18 klijent, lista promjena
 
+## 2017-07-29 ----
+
+### Developer
+
+#### FAKT
+- commit "FAKT sql big-bang-01" [3 91e2c85a7 , 99 files changed, 2147 insertions(+), 1527 deletions(-)
+- Ažuriranje i dalje radi sa semaforima
+- uvedene funkcije seek_fakt, seek_fakt_3 ( tag "3" ), seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok )
+- Kartica - SQL
+- Pregled tabelarni sql FAKT_DOKS_PREGLED alias
+- COOL fazon u fakt_pregled_reload_tables( cFilter ) - kodni blok Eval( s_bFaktDoksPeriod )
+
 ## 2017-07-28 ----
 
-#### Developer
+### Developer
 - my_browse - fakt pregled tabela - ok
 - my_browse - sinhronizacija ftxt - inkey(0) vs inkey()
 - pos prebačeni svi šifarnici na sql set_a_sql_sifarnik( ... )

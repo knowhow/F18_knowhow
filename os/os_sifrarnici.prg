@@ -226,7 +226,7 @@ FUNCTION P_REVAL( cId, dx, dy )
 
 STATIC FUNCTION validacija_postoji_sifra( wid )
 
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _ret
 
    SEEK wId
@@ -237,7 +237,7 @@ STATIC FUNCTION validacija_postoji_sifra( wid )
    ELSE
       _ret := .T.
    ENDIF
-   GO _t_rec
+   GO nTrec
 
    RETURN _ret
 

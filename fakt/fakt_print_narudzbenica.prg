@@ -23,10 +23,10 @@ FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )
 
    print_narudzbenica()
 
-   o_partner()
+   //o_partner()
    SELECT ( F_FAKT_DOKS )
    USE
-   o_fakt_doks()
+   o_fakt_doks_dbf()
    PopWa()
 
    RETURN NIL
@@ -42,5 +42,3 @@ FUNCTION fakt_print_narudzbenica_priprema()
       select_fakt_pripr()
 
     RETURN NIL
-
-

@@ -430,7 +430,7 @@ FUNCTION del_siht()
    LOCAL cIdRadn := Space( 6 )
    LOCAL nTArea := Select()
    LOCAL cFilter := ""
-   LOCAL _rec, _t_rec
+   LOCAL _rec, nTrec
 
    IF g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
       RETURN .F.
@@ -451,13 +451,13 @@ FUNCTION del_siht()
       ++nCnt
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       _rec := dbf_get_rec()
       delete_rec_server_and_dbf( "ld_radsiht", _rec )
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 

@@ -117,7 +117,6 @@ FUNCTION fakt_unos_ftxt_box( cTxt, cIdFaktTxt, nCount )
    LOCAL lRet := .T.
    LOCAL GetList := {}
 
-   AltD()
    Box(, 11, f18_max_cols() - 9 )
 
    DO WHILE .T.

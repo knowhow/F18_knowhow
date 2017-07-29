@@ -197,7 +197,6 @@ FUNCTION finansijsko_stanje_magacin()
       ntDod1 := ntDod2 := ntDod3 := ntDod4 := ntDod5 := ntDod6 := ntDod7 := ntDod8 := 0
    ENDIF
 
-   AltD()
    DO WHILE !Eof() .AND. cIdfirma == idfirma
       nUlaz := 0
       nIzlaz := 0

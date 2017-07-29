@@ -102,8 +102,11 @@
 
 // modul FAKT (wa 110-130)
 #define F_FAKT_PRIPR     110
+
 #define F_FAKT_DOKS     111
 #define F_FAKT_DOKS2    112
+
+
 #define F_FAKT      113
 #define F_FAKT_FTXT      114
 #define F__FAKT     115
@@ -385,3 +388,6 @@
 #define POR_I_MPC4  6
 
 #define F_NALOG_REFRESH 501
+
+#define F_FAKT_DOKS_PREGLED  510
+#define F_FAKT_DOKS_X        511

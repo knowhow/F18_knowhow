@@ -29,7 +29,7 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
 
    SELECT F_FAKT_DOKS
    IF !Used()
-      o_fakt_doks()
+      o_fakt_doks_dbf()
    ENDIF
 
    START PRINT CRET

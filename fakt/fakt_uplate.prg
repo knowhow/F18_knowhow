@@ -18,12 +18,12 @@
 
 FUNCTION fakt_uplate()
 
-   o_fakt_doks()
+   o_fakt_doks_dbf()
 
    // "6","IdFirma+idpartner+idtipdok", "DOKS"
    SET ORDER TO TAG "6"
 
-   o_partner()
+   //o_partner()
    O_UPL
 
    cIdPartner := Space( 6 )
@@ -175,7 +175,7 @@ FUNCTION UkZaduz()
 
    DO WHILE !Eof() .AND. idpartner == cIdPartner
       IF datdok >= dDatOd .AND. datdok <= dDatDo .AND. &aUslTD
-         nVrati += Round( iznos, ZAOKRUZENJE )
+         nVrati += Round( iznos, fakt_zaokruzenje() )
       ENDIF
       SKIP 1
    ENDDO
@@ -338,11 +338,11 @@ FUNCTION SaldaKupaca( lPocStanje )
 
    nStrana := 1
 
-   o_fakt_doks()
+   o_fakt_doks_dbf()
 
    // "6","IdFirma+idpartner+idtipdok", "DOKS"
    SET ORDER TO TAG "6"
-   o_partner()
+--   o_partner()
    O_UPL
    SET ORDER TO TAG "2"
 

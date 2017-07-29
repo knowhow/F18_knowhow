@@ -41,9 +41,9 @@ FUNCTION TopsFakt()
    ENDIF
    BoxC()
 
-   o_roba()
-   o_partner()
-   o_fakt_doks()
+   //o_roba()
+   //o_partner()
+   o_fakt_doks_dbf()
    o_fakt_pripr()
 
    USE ( Trim( cLokacija ) + "TOPSFAKT.DBF" ) new
@@ -58,7 +58,7 @@ FUNCTION TopsFakt()
       cIdPartner := idPartner
       nRBr := 1
       IF Empty( cBrFakt ) .OR. cIdVdLast <> cIdVd
-         cBrFakt := SljedBrFakt( cIdRj, cIdVd, datum, cIdPartner )
+         cBrFakt := fakt_naredni_broj_dokumenta( cIdRj, cIdVd, datum, cIdPartner )
       ELSE
          cBrFakt := UBrojDok( Val( Left( cBrFakt, gNumDio ) ) + 1, gNumDio, Right( cBrFakt, Len( cBrFakt ) -gNumDio ) )
       ENDIF
@@ -66,8 +66,7 @@ FUNCTION TopsFakt()
       DO WHILE !Eof() .AND. idVd == cIdVd .AND. idPartner == cIdPartner
 
          IF cCijeneIzSif == "D"
-            SELECT roba
-            HSEEK topsfakt->idRoba
+            select_o_roba( topsfakt->idRoba )
          ENDIF
 
          SELECT fakt_pripr
@@ -80,7 +79,7 @@ FUNCTION TopsFakt()
             select_o_partner( cIdPartner )
             _Txt3a := PadR( cIdPartner + ".", 30 )
             _txt3b := _txt3c := ""
-            IzSifre( .T. )
+            //IzSifre( .T. )
             cTxta := _txt3a
             cTxtb := _txt3b
             cTxtc := _txt3c
@@ -123,10 +122,10 @@ FUNCTION TopsFakt()
 
    CLOSERET
 
-   RETURN
+   RETURN .T.
 
 
-STATIC FUNCTION SljedBrFakt( cIdRj, cIdVd, dDo, cIdPartner )
+STATIC FUNCTION fakt_naredni_broj_dokumenta( cIdRj, cIdVd, dDo, cIdPartner )
 
    LOCAL nArr := Select()
    LOCAL cBrFakt

@@ -144,7 +144,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
    LOCAL cDn  := "N"
    LOCAL nRet := DE_CONT
    LOCAL _otv_st := " "
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _tb_filter := dbFilter()
    LOCAL nDbfArea := Select()
 
@@ -256,7 +256,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
          open_otv_stavke_tabele( l_osuban )
          SELECT ( nDbfArea )
          SET FILTER TO &( _tb_filter )
-         GO ( _t_rec )
+         GO ( nTrec )
 
 
       ELSE
@@ -279,7 +279,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
       open_otv_stavke_tabele( l_osuban )
       SELECT ( nDbfArea )
       SET FILTER TO &( _tb_filter )
-      GO ( _t_rec )
+      GO ( nTrec )
 
 
       nRet := DE_REFRESH
@@ -291,7 +291,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
       open_otv_stavke_tabele( l_osuban )
       SELECT ( nDbfArea )
       SET FILTER TO &( _tb_filter )
-      GO ( _t_rec )
+      GO ( nTrec )
 
       nRet := DE_REFRESH
 

@@ -376,7 +376,7 @@ STATIC FUNCTION _box_cont( nCust, nCont, cContdesc, cDesc )
 
 FUNCTION _ch_description()
 
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _add_desc
    LOCAL _ch_desc := Space( 200 )
    LOCAL _sh_desc
@@ -414,7 +414,7 @@ FUNCTION _ch_description()
    ENDIF
 
    SELECT docs
-   GO ( _t_rec )
+   GO ( nTrec )
 
    RETURN
 

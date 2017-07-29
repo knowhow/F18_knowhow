@@ -314,7 +314,7 @@ FUNCTION br_ugovor()
 
    LOCAL lOk := .T.
    LOCAL _id_ugov
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _rec
    LOCAL _ret := 0
    LOCAL hParams
@@ -341,7 +341,7 @@ FUNCTION br_ugovor()
    DO WHILE !Eof() .AND. _id_ugov == field->id
 
       SKIP
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       _rec := dbf_get_rec()
@@ -351,7 +351,7 @@ FUNCTION br_ugovor()
          EXIT
       ENDIF
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 
@@ -686,7 +686,7 @@ FUNCTION EdUgov2()
 
    LOCAL _ret := -77
    LOCAL GetList := {}
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _t_arr := Select()
    LOCAL _rec
 
@@ -841,7 +841,7 @@ FUNCTION EdUgov2()
 
          lTrebaOsvUg := .T.
       ELSE
-         GO ( _t_rec )
+         GO ( nTrec )
          RETURN DE_CONT
       ENDIF
 

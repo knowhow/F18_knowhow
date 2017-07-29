@@ -115,7 +115,7 @@ FUNCTION sif_idmc( nFieldId, lOnlyMc, nRpad )
 FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
 
    LOCAL nTRec
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL cTBFilter := dbFilter()
    LOCAL _alias := AllTrim( Lower( Alias() ) )
    LOCAL _param := "rnal_" + _alias + "_no"
@@ -153,7 +153,7 @@ FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
 
       SET FILTER to &cTBFilter
       SET ORDER TO TAG "1"
-      GO ( _t_rec )
+      GO ( nTrec )
 
       AEval( GetList, {| o| o:display() } )
 
@@ -204,7 +204,7 @@ STATIC FUNCTION rnal_last_id( cFieldName )
 FUNCTION rnal_chk_id( wId, cFieldName, cIndexTag  )
 
    LOCAL nTRec
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL cTBFilter := dbFilter()
    LOCAL lSeek := .T.
    LOCAL nIndexOrd := IndexOrd()
@@ -228,7 +228,7 @@ FUNCTION rnal_chk_id( wId, cFieldName, cIndexTag  )
 
    SET FILTER to &cTBFilter
    SET ORDER TO TAG cTag
-   GO ( _t_rec )
+   GO ( nTrec )
 
    IF lSeek == .F.
       lSeek := rnal_uvecaj_id( @wId, cFieldName )

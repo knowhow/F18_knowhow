@@ -338,7 +338,7 @@ FUNCTION kalk_ispravka_postojeca_stavka()
    LOCAL _dok
    LOCAL _rok, _opis, _hAttrId
    LOCAL _old_dok, _new_dok
-   LOCAL oAttr, _t_rec
+   LOCAL oAttr, nTrec
 
    _old_dok := hb_Hash()
 
@@ -416,11 +416,11 @@ FUNCTION kalk_ispravka_postojeca_stavka()
       SELECT kalk_pripr
 
       IF nRbr == 1
-         _t_rec := RecNo()
+         nTrec := RecNo()
          _new_dok := dbf_get_rec()
          kalk_izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
          SELECT kalk_pripr
-         GO ( _t_rec )
+         GO ( nTrec )
       ENDIF
 
       IF _idvd $ "16#80" .AND. !Empty( _idkonto2 )
@@ -614,11 +614,11 @@ FUNCTION kalk_unos_nova_stavka()
 
       IF nRbr == 1
          SELECT kalk_pripr
-         _t_rec := RecNo()
+         nTrec := RecNo()
          _new_dok := dbf_get_rec()
          kalk_izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
          SELECT kalk_pripr
-         GO ( _t_rec )
+         GO ( nTrec )
       ENDIF
 
       IF _idvd $ "16#80" .AND. !Empty( _idkonto2 )
@@ -672,7 +672,7 @@ FUNCTION kalk_edit_sve_stavke( lAsistentObrada, lStartPocetak )
    LOCAL oAttr, _hAttrId, _old_dok, _new_dok
    LOCAL _rok, _opis
    LOCAL nTr2
-   LOCAL nDug, nPot, _t_rec
+   LOCAL nDug, nPot, nTrec
 
    PushWA()
 
@@ -765,11 +765,11 @@ FUNCTION kalk_edit_sve_stavke( lAsistentObrada, lStartPocetak )
       SELECT kalk_pripr
 
       IF nRbr == 1
-         _t_rec := RecNo()
+         nTrec := RecNo()
          _new_dok := dbf_get_rec()
          kalk_izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
          SELECT kalk_pripr
-         GO ( _t_rec )
+         GO ( nTrec )
       ENDIF
 
       IF _idvd $ "16#80" .AND. !Empty( _idkonto2 )
@@ -1175,7 +1175,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    LOCAL _old_firma := old_dok[ "idfirma" ]
    LOCAL _old_brdok := old_dok[ "brdok" ]
    LOCAL _old_tipdok := old_dok[ "idvd" ]
-   LOCAL hRec, _tek_dok, _t_rec
+   LOCAL hRec, _tek_dok, nTrec
    LOCAL _new_firma := new_dok[ "idfirma" ]
    LOCAL _new_brdok := new_dok[ "brdok" ]
    LOCAL _new_tipdok := new_dok[ "idvd" ]
@@ -1204,7 +1204,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
          _old_firma + _old_tipdok + _old_brdok
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       hRec := dbf_get_rec()
@@ -1226,7 +1226,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
 
       dbf_update_rec( hRec )
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
    GO TOP
@@ -1239,7 +1239,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    DO WHILE !Eof()
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       hRec := dbf_get_rec()
@@ -1249,7 +1249,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       hRec[ "brdok" ] := _tek_dok[ "brdok" ]
 
       dbf_update_rec( hRec )
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 
@@ -1540,7 +1540,7 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
    LOCAL cOk := ""
    LOCAL _area := Select()
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
 
    DO WHILE !Eof() .AND. field->idfirma + field->idvd + field->brdok == firma + tip_dok + br_dok
 
@@ -1563,7 +1563,7 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
    ENDDO
 
    SELECT ( _area )
-   GO ( _t_rec )
+   GO ( nTrec )
 
    RETURN cOk
 

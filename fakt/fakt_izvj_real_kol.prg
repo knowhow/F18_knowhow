@@ -32,7 +32,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    PRIVATE cSvediJmj := "N"
 
    // da li se koriste relacije
-   o_fakt()
+   o_fakt_dbf()
    SELECT fakt
 
    IF fakt->( FieldPos( "idrelac" ) ) <> 0
@@ -429,7 +429,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             ENDIF
 
             // pojedinacna osnova
-            nPojOsn := Round( kolicina * Cijena * ( 1 - Rabat / 100 ) * ( 1 + Porez / 100 ), ZAOKRUZENJE )
+            nPojOsn := Round( kolicina * Cijena * ( 1 - Rabat / 100 ) * ( 1 + Porez / 100 ), fakt_zaokruzenje() )
 
 
             nPojUk := nPojOsn // ukupni iznos sa PDV
@@ -627,8 +627,8 @@ STATIC FUNCTION zagl_sp_prod()
 // ---------------------------------
 STATIC FUNCTION _o_tables()
 
-   o_fakt()
-   o_fakt_doks()
+   o_fakt_dbf()
+   o_fakt_doks_dbf()
   // o_partner()
    o_valute()
    //o_rj()

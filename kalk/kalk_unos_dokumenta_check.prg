@@ -77,7 +77,7 @@ FUNCTION Gen9999()
 FUNCTION KalkNaF( cidroba, nKols )
 
    SELECT ( F_FAKT )
-   IF !Used(); o_fakt(); ENDIF
+   IF !Used(); o_fakt_dbf(); ENDIF
 
    SELECT fakt
    SET ORDER TO TAG "3" // fakt idroba

@@ -65,7 +65,7 @@ FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
 FUNCTION fin_set_broj_dokumenta()
 
    LOCAL _broj_dokumenta
-   LOCAL _t_rec, _rec
+   LOCAL nTrec, _rec
    LOCAL _firma, _td, _null_brdok
    LOCAL nBrojNalogDuzina := 8
 
@@ -95,7 +95,7 @@ FUNCTION fin_set_broj_dokumenta()
    DO WHILE !Eof()
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       IF field->idfirma == _firma .AND. field->idvn == _td .AND. field->brnal == _null_brdok
@@ -104,7 +104,7 @@ FUNCTION fin_set_broj_dokumenta()
          dbf_update_rec( _rec )
       ENDIF
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 

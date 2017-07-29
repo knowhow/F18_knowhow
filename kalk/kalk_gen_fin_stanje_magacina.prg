@@ -38,7 +38,7 @@ FUNCTION kalk_gen_fin_stanje_magacina_za_tkv( hParams )
    LOCAL _vrste_dok := ""
    LOCAL cIdFirma := self_organizacija_id()
    LOCAL lViseKonta := .F.
-   LOCAL nDbfArea, _t_rec
+   LOCAL nDbfArea, nTrec
    LOCAL _ulaz, _izlaz, nRabat
    LOCAL nNvUlaz, nNvIzlaz, nVPVUlaz, nVPVIzlaz
    LOCAL nMarzaVP, nMarzaMP, _tr_prevoz, _tr_prevoz_2

@@ -713,7 +713,7 @@ STATIC FUNCTION porezna_faktura_fakt_txt_djokeri( cTxt, cPartn )
    LOCAL cStrDPrKup := "#D_P_PROMJENA_KUP#"
    LOCAL cStrDPrDob := "#D_P_PROMJENA_DOB#"
 
-   IF gShSld == "N"
+   IF gFaktPrikazFinSaldaKupacDobavljac == "N"
       RETURN .F.
    ENDIF
 
@@ -725,7 +725,7 @@ STATIC FUNCTION porezna_faktura_fakt_txt_djokeri( cTxt, cPartn )
    ENDIF
 
    // varijanta prikaza salda... 1 ili 2
-   __SH_SLD_VAR := gShSldVar
+   __SH_SLD_VAR := gFaktPrikazFinSaldaKupacDobavljacVar
 
    // saldo kupca
    nSaldoKup := get_fin_partner_saldo( cPartn, __KTO_DUG, self_organizacija_id() )
@@ -748,7 +748,7 @@ STATIC FUNCTION porezna_faktura_fakt_txt_djokeri( cTxt, cPartn )
    // -------------------------------------------------------
    IF At( cStrSlKup, cTxt ) <> 0
 
-      IF gShSld == "D"
+      IF gFaktPrikazFinSaldaKupacDobavljac == "D"
          cPom := AllTrim( Str( Round( nSaldoKup, 2 ) ) ) + " KM"
          cPom2 := ""
 
@@ -771,7 +771,7 @@ STATIC FUNCTION porezna_faktura_fakt_txt_djokeri( cTxt, cPartn )
    // -------------------------------------------------------
    IF At( cStrSlDob, cTxt ) <> 0
 
-      IF gShSld == "D"
+      IF gFaktPrikazFinSaldaKupacDobavljac == "D"
 
          cPom := AllTrim( Str( Round( nSaldoDob, 2 ) ) ) + " KM"
          cPom2 := ""
@@ -794,7 +794,7 @@ STATIC FUNCTION porezna_faktura_fakt_txt_djokeri( cTxt, cPartn )
    // -------------------------------------------------------
    IF At( cStrSlKD, cTxt ) <> 0
 
-      IF gShSld == "D"
+      IF gFaktPrikazFinSaldaKupacDobavljac == "D"
 
          cPom := AllTrim( Str( Round( nSaldoKup, 2 ) - Round( nSaldoDob, 2 ) ) ) + " KM"
          cPom2 := ""
@@ -818,7 +818,7 @@ STATIC FUNCTION porezna_faktura_fakt_txt_djokeri( cTxt, cPartn )
    // -------------------------------------------------------
    IF At( cStrDUpKup, cTxt ) <> 0
 
-      IF gShSld == "D"
+      IF gFaktPrikazFinSaldaKupacDobavljac == "D"
 
 
          // datum posljednje uplate kupca
@@ -840,7 +840,7 @@ STATIC FUNCTION porezna_faktura_fakt_txt_djokeri( cTxt, cPartn )
    // -------------------------------------------------------
    IF At( cStrDPrKup, cTxt ) <> 0
 
-      IF gShSld == "D"
+      IF gFaktPrikazFinSaldaKupacDobavljac == "D"
 
          // datum posljednje promjene kupac
          cPom := DToC( dPPromKup )
@@ -864,7 +864,7 @@ STATIC FUNCTION porezna_faktura_fakt_txt_djokeri( cTxt, cPartn )
    // -------------------------------------------------------
    IF At( cStrDPrDob, cTxt ) <> 0
 
-      IF gShSld == "D"
+      IF gFaktPrikazFinSaldaKupacDobavljac == "D"
          cPom := DToC( dPPromDob ) // datum posljednje promjene dobavljac
          cPom2 := ""
          IF __SH_SLD_VAR == 2

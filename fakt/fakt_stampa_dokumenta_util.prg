@@ -24,6 +24,7 @@ FUNCTION KatBr()
    RETURN ""
 */
 
+/*
 FUNCTION GetRegion()
 
    LOCAL cRegion := " "
@@ -41,6 +42,7 @@ FUNCTION GetRegion()
    SELECT ( nArr )
 
    RETURN cRegion
+*/
 
 /* GetRtmFile(cDefRtm)
  *     Vraca naziv rtm fajla za stampu

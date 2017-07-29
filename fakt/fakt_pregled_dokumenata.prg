@@ -11,11 +11,13 @@
 
 #include "f18.ch"
 
+STATIC s_bFaktDoksPeriod
+
 FUNCTION fakt_pregled_liste_dokumenata()
 
    LOCAL _curr_user := "<>"
    LOCAL nCol1 := 0
-   LOCAL nul, nizl, nRbr
+   LOCAL nUl, nIzl, nRbr
    LOCAL m
    LOCAL _objekat_id
    LOCAL dDatod, dDatdo
@@ -30,14 +32,15 @@ FUNCTION fakt_pregled_liste_dokumenata()
    LOCAL cSamoRobaDN := "N"
    PRIVATE cImekup, cIdFirma, cUslovTipDok, cBrFakDok, cUslovIdPartner
 
-   o_vrstep()
-   o_ops()
-   o_valute()
+   // o_vrstep()
+   // o_ops()
+   // o_valute()
    // o_rj()
-   o_fakt_objekti()
-   o_fakt()
+   // o_fakt_objekti()
+
+   // o_fakt_dbf()
    // o_partner()
-   o_fakt_doks()
+   // o_fakt_doks_dbf()
 
    qqVrsteP := Space( 20 )
    dDatVal0 := dDatVal1 := CToD( "" )
@@ -147,10 +150,11 @@ FUNCTION fakt_pregled_liste_dokumenata()
    // SELECT partn
    // radi filtera cFilterOpcina partneri trebaju biti na ID-u indeksirani
    // SET ORDER TO TAG "ID"
+   s_bFaktDoksPeriod := {|| find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, "FAKT_DOKS_PREGLED", "idfirma,datdok,idtipdok,brdok" ) }
+   Eval( s_bFaktDoksPeriod )
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
+   // SET ORDER TO TAG "1"
+   // GO TOP
 
    IF !Empty( dDatVal0 ) .OR. !Empty( dDatVal1 )
       cFilter += ".and. ( !idtipdok='10' .or. datpl>=" + _filter_quote( dDatVal0 ) + ".and. datpl<=" + _filter_quote( dDatVal1 ) + ")"
@@ -214,7 +218,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    cUslovTipDok := Trim( cUslovTipDok )
 
-   SEEK cIdFirma + cUslovTipDok
+   // SEEK cIdFirma + cUslovTipDok
 
    EOF CRET
 
@@ -250,28 +254,27 @@ FUNCTION print_porezna_faktura( lOpcine )
    SELECT ( F_FAKT_DOKS )
    USE
 
-   o_fakt_doks()
+   o_fakt_doks_dbf()
 
    RETURN DE_CONT
 */
 
 FUNCTION fakt_print_odt( lOpcine )
 
-   SELECT fakt_doks
+   LOCAL cIdFirma := fakt_doks_pregled->idfirma
+   LOCAL cIdTipDok := fakt_doks_pregled->idtipdok
+   LOCAL cBrDok := fakt_doks_pregled->brdok
+   //LOCAL nTrec := RecNo()
 
-   nTrec := RecNo()
-   _cIdFirma := idfirma
-   _cIdTipDok := idtipdok
-   _cBrDok := brdok
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
-   fakt_stampa_dok_odt( _cidfirma, _cIdTipdok, _cbrdok )
+   fakt_stampa_dok_odt( cIdFirma, cIdTipDok, cBrDok )
 
 /*
    close_open_fakt_tabele()
    SELECT ( F_FAKT_DOKS )
    USE
-   o_fakt_doks()
+   o_fakt_doks_dbf()
    //o_partner()
    SELECT fakt_doks
    IF cFilter == ".t."
@@ -306,7 +309,7 @@ FUNCTION generisi_fakturu( is_opcine )
    ENDIF
 
    o_fakt_pripr()
-   o_fakt()
+   o_fakt_dbf()
 
    IF fakt_pripr->( RecCount() ) <> 0
       MsgBeep( "Priprema mora biti prazna !" )
@@ -434,28 +437,6 @@ FUNCTION generisi_fakturu( is_opcine )
 
 
 
-FUNCTION fakt_pregled_reopen_fakt_tabele( cFilter )
-
-   my_close_all_dbf()
-
-   o_vrstep()
-   o_ops()
-   o_fakt_doks2()
-   o_valute()
-   // o_rj()
-   o_fakt_objekti()
-   o_fakt()
-   // o_partner()
-   o_fakt_doks()
-
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
-
-   SET FILTER TO &( cFilter )
-
-   RETURN .T.
-
 
 
 
@@ -465,9 +446,9 @@ FUNCTION fakt_real_partnera()
    LOCAL cFilterBrFaktDok, cFilterSifraKupca, cFilterTipDok
    LOCAL cUslovTipDok, cUslovIdPartner, cUslovOpcina
 
-   o_fakt_doks()
+   o_fakt_doks_dbf()
    // o_partner()
-   o_valute()
+   // o_valute()
    // o_rj()
 
    cIdFirma := self_organizacija_id()
@@ -609,11 +590,11 @@ FUNCTION fakt_real_partnera()
 
       DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. idpartner == cIdpartner
          IF DinDem == Left( ValBazna(), 3 )
-            nIznos += Round( iznos, ZAOKRUZENJE )
-            nRabat += Round( Rabat, ZAOKRUZENJE )
+            nIznos += Round( iznos, fakt_zaokruzenje() )
+            nRabat += Round( Rabat, fakt_zaokruzenje() )
          ELSE
-            nIznos += Round( iznos * UBaznuValutu( datdok ), ZAOKRUZENJE )
-            nRabat += Round( Rabat * UBaznuValutu( datdok ), ZAOKRUZENJE )
+            nIznos += Round( iznos * UBaznuValutu( datdok ), fakt_zaokruzenje() )
+            nRabat += Round( Rabat * UBaznuValutu( datdok ), fakt_zaokruzenje() )
          ENDIF
          SKIP
       ENDDO
@@ -696,9 +677,9 @@ FUNCTION flt_fakt_part_opc()
 
    LOCAL cRet
 
-   select_o_partner( fakt_doks->idpartner )
+   select_o_partner( fakt_doks_pregled->idpartner )
    cRet := partn->idops
-   SELECT fakt_doks
+   SELECT fakt_doks_pregled
 
    RETURN cRet
 
@@ -710,9 +691,9 @@ FUNCTION fakt_dokument_sadrzi_robu()
    cQuery := "SELECT count(fakt_fakt.idroba) AS CNT FROM fmk.fakt_fakt"
    cQuery += " LEFT JOIN fmk.roba ON fakt_fakt.idroba = roba.id"
    cQuery += " WHERE roba.tip <> 'U'"
-   cQuery += " AND fmk.fakt_fakt.idfirma=" + sql_quote( fakt_doks->idfirma )
-   cQuery += " AND fmk.fakt_fakt.idtipdok=" + sql_quote( fakt_doks->idtipdok )
-   cQuery += " AND fmk.fakt_fakt.brdok=" + sql_quote( fakt_doks->brdok )
+   cQuery += " AND fmk.fakt_fakt.idfirma=" + sql_quote( fakt_doks_pregled->idfirma )
+   cQuery += " AND fmk.fakt_fakt.idtipdok=" + sql_quote( fakt_doks_pregled->idtipdok )
+   cQuery += " AND fmk.fakt_fakt.brdok=" + sql_quote( fakt_doks_pregled->brdok )
 
    SELECT F_FAKT
    use_sql( "fakt_cnt", cQuery )
@@ -721,6 +702,55 @@ FUNCTION fakt_dokument_sadrzi_robu()
       lRet := .T. // ima robe unutar fakture
    ENDIF
    USE
-   SELECT fakt_doks
+   SELECT fakt_doks_pregled
 
    RETURN lRet
+
+
+
+
+
+
+FUNCTION fakt_pregled_reopen_fakt_tabele( cFilter )
+
+   my_close_all_dbf()
+
+   // o_vrstep()
+   // o_ops()
+   // o_fakt_doks2_dbf()
+   // o_valute()
+   // o_rj()
+   // o_fakt_objekti()
+   o_fakt_dbf()
+   // o_partner()
+   o_fakt_doks_dbf()
+
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   SET FILTER TO &( cFilter )
+
+   RETURN .T.
+
+FUNCTION fakt_pregled_reload_tables( cFilter )
+
+   LOCAL nRec
+
+   IF Select( "FAKT_DOKS_PREGLED" ) > 0
+      SELECT FAKT_DOKS_PREGLED
+      nRec := RecNo()
+   ENDIF
+
+   my_close_all_dbf()
+
+   Eval( s_bFaktDoksPeriod )
+
+   ?E Time(), "fakt_pregled_reload_tables"
+   SET FILTER TO &( cFilter )
+   GO TOP
+   IF nRec != NIL
+      GO nRec
+   ENDIF
+
+   RETURN .T.

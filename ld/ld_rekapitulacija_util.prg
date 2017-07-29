@@ -953,7 +953,7 @@ STATIC FUNCTION IspisKred( lSvi )
    LOCAL _kr_partija
    LOCAL lFoundKreditI30 := .F.
    LOCAL nMjesecFor, nMjesecRadKr
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL cIdKred, cNaOsnovu, nUkKred, nUkKrRad, cOpis2
    LOCAL cFilter
 
@@ -1007,7 +1007,7 @@ STATIC FUNCTION IspisKred( lSvi )
                         GO TOP
                      ENDIF
 
-                     _t_rec := RecNo()
+                     nTrec := RecNo()
                      DO WHILE !Eof() .AND. ld->godina == nGodina .AND. ld->mjesec == nMjesec .AND. ld->obr == cObracun .AND. ld->idradn == radkr->idradn
                         IF ld->i30 <> 0
                            lFoundKreditI30 := .T.
@@ -1015,7 +1015,7 @@ STATIC FUNCTION IspisKred( lSvi )
                         ENDIF
                         SKIP
                      ENDDO
-                     GO ( _t_rec )
+                     GO ( nTrec )
 
                   ELSE
                      // rekap za jednu rj

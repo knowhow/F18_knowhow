@@ -21,7 +21,7 @@ FUNCTION kalk_povrat_dokumenta()
    LOCAL _id_vd
    LOCAL _br_dok
    LOCAL _del_rec
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _hAttrId, oAttr
    LOCAL lOk := .T.
    LOCAL hParams
@@ -242,7 +242,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
    LOCAL lOk := .T.
    LOCAL lRet := .F.
    LOCAL hParams
-   LOCAL _t_rec
+   LOCAL nTrec
 
    IF !spec_funkcije_sifra()
       my_close_all_dbf()
@@ -351,7 +351,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
             SKIP
          ENDDO
 
-         _t_rec := RecNo()
+         nTrec := RecNo()
 
          _ok := .T.
 
@@ -386,7 +386,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
          ENDIF
 
          SELECT kalk
-         GO ( _t_rec )
+         GO ( nTrec )
 
       ENDDO
 

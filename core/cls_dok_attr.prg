@@ -179,7 +179,7 @@ METHOD get_attr( hId, cAttr )  CLASS DokAttr
 
 
 
-METHOD get_attr_from_dbf( cAttr )  CLASS DokAttr
+METHOD get_attr_from_dbf( cAttr ) CLASS DokAttr
 
    LOCAL cRet := ""
 
@@ -219,7 +219,7 @@ METHOD get_attr_from_server( cAttr )  CLASS DokAttr
    RETURN cVal
 
 
-METHOD get_attr_from_server_to_dbf()  CLASS DokAttr
+METHOD get_attr_from_server_to_dbf() CLASS DokAttr
 
    LOCAL aAttribs
    LOCAL nI, hRec
@@ -264,7 +264,7 @@ METHOD get_attr_from_server_to_dbf()  CLASS DokAttr
 //
 // vraca se matrica { "rbr", "value", "atribut" }
 // ----------------------------------------------------------------------------
-METHOD get_attrs_from_server_for_document()  CLASS DokAttr
+METHOD get_attrs_from_server_for_document() CLASS DokAttr
 
    LOCAL aAttr := {}
    LOCAL _table, oItem
@@ -325,7 +325,7 @@ METHOD get_attrs_from_server_for_document()  CLASS DokAttr
 
 
 
-METHOD set_attr( cAttr, cValue )  CLASS DokAttr
+METHOD set_attr( cAttr, cValue ) CLASS DokAttr
 
    LOCAL _ok := .T.
    LOCAL hRec
@@ -373,7 +373,7 @@ METHOD set_attr( cAttr, cValue )  CLASS DokAttr
 
 
 
-METHOD push_attr_from_mem_to_dbf( hAttribs )  CLASS DokAttr
+METHOD push_attr_from_mem_to_dbf( hAttribs ) CLASS DokAttr
 
    LOCAL cKey
 
@@ -386,7 +386,7 @@ METHOD push_attr_from_mem_to_dbf( hAttribs )  CLASS DokAttr
 
 
 
-METHOD zap_attr_dbf()  CLASS DokAttr
+METHOD zap_attr_dbf() CLASS DokAttr
 
    PushWA()
 
@@ -491,8 +491,8 @@ METHOD update_attr_rbr()  CLASS DokAttr
 
 METHOD update_attr_on_server( hParams )
 
-   LOCAL _ret
-   LOCAL _qry
+   LOCAL oRet
+   LOCAL cQuery
    LOCAL _old_firma := hParams[ "old_firma" ]
    LOCAL _old_tipdok := hParams[ "old_tipdok" ]
    LOCAL _old_brdok := hParams[ "old_brdok" ]
@@ -501,18 +501,18 @@ METHOD update_attr_on_server( hParams )
    LOCAL _new_brdok := hParams[ "new_brdok" ]
 
    // prvo pobrisi sa servera
-   _qry := "UPDATE " + ::cTableNameServer + " "
-   _qry += "SET "
-   _qry += "idfirma = " + sql_quote( _new_firma )
-   _qry += ", idtipdok = " + sql_quote( _new_tipdok )
-   _qry += ", brdok = " + sql_quote( _new_brdok )
-   _qry += " WHERE "
-   _qry += " idfirma = " + sql_quote( _old_firma )
-   _qry += " AND idtipdok = " + sql_quote( _old_tipdok )
-   _qry += " AND brdok = " + sql_quote( _old_brdok )
+   cQuery := "UPDATE " + ::cTableNameServer + " "
+   cQuery += "SET "
+   cQuery += "idfirma = " + sql_quote( _new_firma )
+   cQuery += ", idtipdok = " + sql_quote( _new_tipdok )
+   cQuery += ", brdok = " + sql_quote( _new_brdok )
+   cQuery += " WHERE "
+   cQuery += " idfirma = " + sql_quote( _old_firma )
+   cQuery += " AND idtipdok = " + sql_quote( _old_tipdok )
+   cQuery += " AND brdok = " + sql_quote( _old_brdok )
 
-   _ret := run_sql_query( _qry )
-   IF sql_error_in_query( _ret, "UPDATE" )
+   oRet := run_sql_query( cQuery )
+   IF sql_error_in_query( oRet, "UPDATE" )
       RETURN .F.
    ENDIF
 
@@ -523,15 +523,15 @@ METHOD update_attr_on_server( hParams )
 
 METHOD delete_attr_from_server()  CLASS DokAttr
 
-   LOCAL _qry, _ret
+   LOCAL cQuery, _ret
 
-   _qry := "DELETE FROM " + ::cTableNameServer
-   _qry += " WHERE "
-   _qry += "idfirma = " + sql_quote( ::hAttrId[ "idfirma" ] )
-   _qry += " AND idtipdok = " + sql_quote( ::hAttrId[ "idtipdok" ] )
-   _qry += " AND brdok = " + sql_quote( ::hAttrId[ "brdok" ] )
+   cQuery := "DELETE FROM " + ::cTableNameServer
+   cQuery += " WHERE "
+   cQuery += "idfirma = " + sql_quote( ::hAttrId[ "idfirma" ] )
+   cQuery += " AND idtipdok = " + sql_quote( ::hAttrId[ "idtipdok" ] )
+   cQuery += " AND brdok = " + sql_quote( ::hAttrId[ "brdok" ] )
 
-   _ret := run_sql_query( _qry )
+   _ret := run_sql_query( cQuery )
 
    IF sql_error_in_query( _ret )
       RETURN .F.
@@ -545,7 +545,7 @@ METHOD delete_attr_from_server()  CLASS DokAttr
 METHOD push_attr_from_dbf_to_server()  CLASS DokAttr
 
    LOCAL _ok := .T.
-   LOCAL _qry
+   LOCAL cQuery
    LOCAL _res
 
    PushWA()
@@ -580,18 +580,18 @@ METHOD push_attr_from_dbf_to_server()  CLASS DokAttr
          LOOP
       ENDIF
 
-      _qry := "INSERT INTO " + ::cTableNameServer + " "
-      _qry += "( idfirma, idtipdok, brdok, rbr, atribut, value ) "
-      _qry += "VALUES ("
-      _qry += sql_quote( ::hAttrId[ "idfirma" ] ) + ", "
-      _qry += sql_quote( ::hAttrId[ "idtipdok" ] ) + ", "
-      _qry += sql_quote( ::hAttrId[ "brdok" ] ) + ", "
-      _qry += sql_quote( field->rbr ) + ", "
-      _qry += sql_quote( field->atribut ) + ", "
-      _qry += sql_quote( field->value )
-      _qry += ")"
+      cQuery := "INSERT INTO " + ::cTableNameServer + " "
+      cQuery += "( idfirma, idtipdok, brdok, rbr, atribut, value ) "
+      cQuery += "VALUES ("
+      cQuery += sql_quote( ::hAttrId[ "idfirma" ] ) + ", "
+      cQuery += sql_quote( ::hAttrId[ "idtipdok" ] ) + ", "
+      cQuery += sql_quote( ::hAttrId[ "brdok" ] ) + ", "
+      cQuery += sql_quote( field->rbr ) + ", "
+      cQuery += sql_quote( field->atribut ) + ", "
+      cQuery += sql_quote( field->value )
+      cQuery += ")"
 
-      _res := run_sql_query( _qry )
+      _res := run_sql_query( cQuery )
       IF sql_error_in_query( _res, "INSERT" )
          _ok := .F.
          EXIT

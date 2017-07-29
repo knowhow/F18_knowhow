@@ -13,9 +13,6 @@
 
 
 
-// ----------------------------------
-// export tabele fakt
-// ----------------------------------
 FUNCTION fakt_export_tbl_fakt()
 
    LOCAL dD_f
@@ -37,74 +34,6 @@ FUNCTION fakt_export_tbl_fakt()
    RETURN .T.
 
 
-// ---------------------------------
-// kreiranje tabele
-// ---------------------------------
-STATIC FUNCTION cre_export_table()
-
-   LOCAL aDbf
-
-   aDbf := get_export_fields()
-   IF !create_dbf_r_export( aDbf )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
-
-
-
-// ----------------------------------
-// vraca potrebna polja tabele
-// ----------------------------------
-STATIC FUNCTION get_export_fields()
-
-   LOCAL aRet := {}
-
-   AAdd( aRet, { "IDFIRMA", "C", 2, 0 } )
-   AAdd( aRet, { "IDTIPDOK", "C", 2, 0 } )
-   AAdd( aRet, { "BRDOK", "C", 8, 0 } )
-   AAdd( aRet, { "DATDOK", "D", 8, 0 } )
-   AAdd( aRet, { "IDPARTNER", "C", 6, 0 } )
-   AAdd( aRet, { "IDROBA", "C", 10, 0 } )
-   AAdd( aRet, { "KOLICINA", "N", 20, 5 } )
-   AAdd( aRet, { "CIJENA", "N", 20, 5 } )
-   AAdd( aRet, { "RABAT", "N", 20, 5 } )
-   AAdd( aRet, { "IDREL", "C", 5, 0 } )
-
-   RETURN aRet
-
-
-// -----------------------------------
-// uslovi povlacenja
-// -----------------------------------
-STATIC FUNCTION get_vars( dD_f, dD_t, cId_f, cId_td )
-
-   LOCAL nRet := 1
-   LOCAL GetList := {}
-
-   dD_f := Date() - 60
-   dD_t := Date()
-   cId_f := PadR( self_organizacija_id() + ";", 100 )
-   cId_td := PadR( "10;", 100 )
-
-   Box(, 5, 65 )
-   @ m_x + 1, m_y + 2 SAY "Datum od" GET dD_f
-   @ m_x + 1, Col() + 1 SAY "do" GET dD_t
-   @ m_x + 2, m_y + 2 SAY "Firma (prazno-sve):" GET cId_f  PICT "@S20"
-   @ m_x + 3, m_y + 2 SAY "Tip dokumenta (prazno-svi:)" GET cId_td  PICT "@S20"
-   READ
-   BoxC()
-
-   IF LastKey() == K_ESC
-      nRet := 0
-   ENDIF
-
-   RETURN nRet
-
-
-// ----------------------------------
-// napuni export tabelu
-// ----------------------------------
 STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
 
    LOCAL cFilt := ""
@@ -115,9 +44,9 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
    LOCAL nCount := 0
 
    o_r_export()
-   o_roba()
-   o_fakt_doks()
-   o_fakt()
+   // o_roba()
+   o_fakt_doks_dbf()
+   o_fakt_dbf()
 
    IF !Empty( cId_f )
       cFilt += Parsiraj( AllTrim( cId_f ), "idfirma", "C" )
@@ -130,10 +59,7 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
       cFilt += Parsiraj( AllTrim( cId_td ), "idtipdok", "C" )
    ENDIF
 
-
-
-   SELECT fakt
-   SET ORDER TO TAG "1"
+   seek_fakt()
 
    IF !Empty( cFilt )
       SET FILTER TO &cFilt
@@ -185,3 +111,60 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
    ENDIF
 
    RETURN .T.
+
+
+STATIC FUNCTION cre_export_table()
+
+   LOCAL aDbf
+
+   aDbf := get_export_fields()
+   IF !create_dbf_r_export( aDbf )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+
+
+
+STATIC FUNCTION get_export_fields()
+
+   LOCAL aRet := {}
+
+   AAdd( aRet, { "IDFIRMA", "C", 2, 0 } )
+   AAdd( aRet, { "IDTIPDOK", "C", 2, 0 } )
+   AAdd( aRet, { "BRDOK", "C", 8, 0 } )
+   AAdd( aRet, { "DATDOK", "D", 8, 0 } )
+   AAdd( aRet, { "IDPARTNER", "C", 6, 0 } )
+   AAdd( aRet, { "IDROBA", "C", 10, 0 } )
+   AAdd( aRet, { "KOLICINA", "N", 20, 5 } )
+   AAdd( aRet, { "CIJENA", "N", 20, 5 } )
+   AAdd( aRet, { "RABAT", "N", 20, 5 } )
+   AAdd( aRet, { "IDREL", "C", 5, 0 } )
+
+   RETURN aRet
+
+
+
+STATIC FUNCTION get_vars( dD_f, dD_t, cId_f, cId_td )
+
+   LOCAL nRet := 1
+   LOCAL GetList := {}
+
+   dD_f := Date() - 60
+   dD_t := Date()
+   cId_f := PadR( self_organizacija_id() + ";", 100 )
+   cId_td := PadR( "10;", 100 )
+
+   Box(, 5, 65 )
+   @ m_x + 1, m_y + 2 SAY "Datum od" GET dD_f
+   @ m_x + 1, Col() + 1 SAY "do" GET dD_t
+   @ m_x + 2, m_y + 2 SAY "Firma (prazno-sve):" GET cId_f  PICT "@S20"
+   @ m_x + 3, m_y + 2 SAY "Tip dokumenta (prazno-svi:)" GET cId_td  PICT "@S20"
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      nRet := 0
+   ENDIF
+
+   RETURN nRet

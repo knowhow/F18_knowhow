@@ -765,7 +765,7 @@ STATIC FUNCTION key_handler()
 STATIC FUNCTION _reset_to_zero()
 
    LOCAL nDbfArea := Select()
-   LOCAL _rec, _t_rec
+   LOCAL _rec, nTrec
 
    IF Pitanje(, "Resetovati broj dokumenta na 0 (D/N) ?", "N" ) == "N"
       RETURN .F.
@@ -777,12 +777,12 @@ STATIC FUNCTION _reset_to_zero()
    GO TOP
    DO WHILE !Eof()
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
       _rec := dbf_get_rec()
       _rec[ "doc_no" ] := 0
       dbf_update_rec( _rec )
-      GO ( _t_rec )
+      GO ( nTrec )
    ENDDO
    GO TOP
 
@@ -792,12 +792,12 @@ STATIC FUNCTION _reset_to_zero()
    GO TOP
    DO WHILE !Eof()
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
       _rec := dbf_get_rec()
       _rec[ "doc_no" ] := 0
       dbf_update_rec( _rec )
-      GO ( _t_rec )
+      GO ( nTrec )
    ENDDO
    GO TOP
 
@@ -807,12 +807,12 @@ STATIC FUNCTION _reset_to_zero()
    GO TOP
    DO WHILE !Eof()
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
       _rec := dbf_get_rec()
       _rec[ "doc_no" ] := 0
       dbf_update_rec( _rec )
-      GO ( _t_rec )
+      GO ( nTrec )
    ENDDO
    GO TOP
 
@@ -839,7 +839,7 @@ STATIC FUNCTION _check_orphaned_items()
    LOCAL _ok := .T.
    LOCAL _orph := {}
    LOCAL nDbfArea := Select()
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _it_no, _doc_no
 
    // 1) provjera operacija
@@ -900,7 +900,7 @@ STATIC FUNCTION _check_orphaned_items()
    GO TOP
 
    SELECT ( nDbfArea )
-   GO ( _t_rec )
+   GO ( nTrec )
 
    IF Len( _orph ) > 0
       _show_orphaned_items( _orph )
@@ -958,7 +958,7 @@ STATIC FUNCTION _change_item_no( docno, docitno )
 
    LOCAL _ok := .F.
    LOCAL _new_it_no := 0
-   LOCAL _rec, _t_rec
+   LOCAL _rec, nTrec
    LOCAL _m_x, _m_y
    LOCAL _op_count := 0
    LOCAL _it2_count := 0
@@ -993,7 +993,7 @@ STATIC FUNCTION _change_item_no( docno, docitno )
 
    DO WHILE !Eof()
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
       IF field->doc_it_no == docitno
          ++ _op_count
@@ -1001,7 +1001,7 @@ STATIC FUNCTION _change_item_no( docno, docitno )
          _rec[ "doc_it_no" ] := _new_it_no
          dbf_update_rec( _rec )
       ENDIF
-      GO ( _t_rec )
+      GO ( nTrec )
    ENDDO
 
    SET ORDER TO TAG "1"
@@ -1014,7 +1014,7 @@ STATIC FUNCTION _change_item_no( docno, docitno )
 
    DO WHILE !Eof()
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
       IF field->doc_it_no == docitno
          ++ _it2_count
@@ -1022,7 +1022,7 @@ STATIC FUNCTION _change_item_no( docno, docitno )
          _rec[ "doc_it_no" ] := _new_it_no
          dbf_update_rec( _rec )
       ENDIF
-      GO ( _t_rec )
+      GO ( nTrec )
    ENDDO
 
    SET ORDER TO TAG "1"
@@ -1045,7 +1045,7 @@ STATIC FUNCTION _change_item_no( docno, docitno )
 STATIC FUNCTION _change_item_no_valid( it_no, it_old, doc_no )
 
    LOCAL _ok := .F.
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
 
    IF it_no < 1
       MsgBeep( "Redni broj mora biti > 0 !!!" )
@@ -1065,13 +1065,13 @@ STATIC FUNCTION _change_item_no_valid( it_no, it_old, doc_no )
 
       IF Found()
          MsgBeep( "Redni broj " + AllTrim( Str( it_no ) ) + " vec postoji !!!" )
-         GO ( _t_rec )
+         GO ( nTrec )
          RETURN _ok
       ENDIF
 
    ENDIF
 
-   GO ( _t_rec )
+   GO ( nTrec )
    _ok := .T.
 
    RETURN _ok

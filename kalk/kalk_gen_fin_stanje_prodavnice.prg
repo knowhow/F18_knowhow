@@ -39,7 +39,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( hParamsIn )
    LOCAL _vrste_dok := ""
    LOCAL cIdFirma := self_organizacija_id()
    LOCAL _vise_konta := .F.
-   LOCAL nDbfArea, _t_rec
+   LOCAL nDbfArea, nTrec
    LOCAL _ulaz, _izlaz, _rabatv, _rabatm
    LOCAL _nv_ulaz, _nv_izlaz, _mp_ulaz, _mp_izlaz, _mp_ulaz_p, _mp_izlaz_p
    LOCAL _tr_prevoz, _tr_prevoz_2

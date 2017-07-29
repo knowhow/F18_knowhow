@@ -378,10 +378,10 @@ STATIC FUNCTION _item_range( nItemNo )
 
    LOCAL lRet := .T.
    LOCAL nTArea := Select()
-   LOCAL nDocItRec, _t_rec
+   LOCAL nDocItRec, nTrec
 
    SELECT _doc_it
-   _t_rec := RecNo()
+   nTrec := RecNo()
    GO TOP
    SEEK docno_str( _doc ) + docit_str( nItemNo )
 
@@ -389,7 +389,7 @@ STATIC FUNCTION _item_range( nItemNo )
       lRet := .F.
    ENDIF
 
-   GO ( _t_rec )
+   GO ( nTrec )
 
    SELECT ( nTArea )
 

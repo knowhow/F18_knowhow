@@ -300,7 +300,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
 STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, aListaNaloga )
 
-   LOCAL nSelectArea, nI, _t_rec
+   LOCAL nSelectArea, nI, nTrec
    LOCAL cIdFirma, cIdVn, cBrNal
    LOCAL _vise_naloga := .F.
    LOCAL lOkAzuriranje := .F.
@@ -346,7 +346,7 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, aListaNaloga )
       GO TOP
       SEEK cIdFirma + cIdVn + cBrNal
 
-      _t_rec := RecNo()
+      nTrec := RecNo()
 
       IF Len( AllTrim( field->brnal ) ) < 8
          MsgBeep( "Broj naloga mora biti sa vodećim nulama !" )
@@ -803,7 +803,7 @@ FUNCTION psuban_suban( cNalogId )
 
 FUNCTION fin_pripr_delete( cNalogId )
 
-   LOCAL _t_rec
+   LOCAL nTrec
 
    SELECT fin_pripr
    SEEK cNalogId
@@ -815,10 +815,10 @@ FUNCTION fin_pripr_delete( cNalogId )
    DO WHILE !Eof() .AND. cNalogId == IdFirma + IdVn + BrNal
 
       SKIP
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
       DELETE
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 

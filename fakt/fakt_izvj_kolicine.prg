@@ -366,7 +366,7 @@ STATIC FUNCTION _reset_aroba( arr )
 
 STATIC FUNCTION _o_tables()
 
-   o_fakt()
+   o_fakt_dbf()
    //o_partner()
    o_valute()
    //o_rj()

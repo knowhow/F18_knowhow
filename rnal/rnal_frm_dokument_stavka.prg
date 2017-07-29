@@ -302,7 +302,7 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY, cGetDOper )
 STATIC FUNCTION _check_rbr( docno, docitno )
 
    LOCAL _ok := .T.
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
 
    IF docitno == 0
       MsgBeep( "Redni broj ne moze biti 0 !!!" )
@@ -319,7 +319,7 @@ STATIC FUNCTION _check_rbr( docno, docitno )
       _ok := .F.
    ENDIF
 
-   GO ( _t_rec )
+   GO ( nTrec )
 
    RETURN _ok
 

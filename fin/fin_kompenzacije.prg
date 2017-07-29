@@ -500,12 +500,12 @@ STATIC FUNCTION _gen_kompen( vars )
       IF nprolaz == 2
          DO WHILE .T.
             SEEK _id_firma + cIdKonto2 + _id_partner + Chr( 255 )
-            _t_rec := RecNo()
+            nTrec := RecNo()
             IF field->idkonto == cIdKonto2
                _id_partner := field->idpartner
                HSEEK _id_firma + cIdKonto + _id_partner
                IF !Found()
-                  GO ( _t_rec )
+                  GO ( nTrec )
                   EXIT
                ELSE
                   LOOP

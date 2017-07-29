@@ -252,10 +252,10 @@ METHOD set_module_gvars()
    PUBLIC gcRabIDef := "1"
    PUBLIC gcRabDok := Space( 30 )
 
-   PUBLIC gShSld := "N"
+   PUBLIC gFaktPrikazFinSaldaKupacDobavljac := "N"
    PUBLIC gFinKtoDug := PadR( "2110", 7 )
    PUBLIC gFinKtoPot := PadR( "4320", 7 )
-   PUBLIC gShSldVar := 1
+   PUBLIC gFaktPrikazFinSaldaKupacDobavljacVar := 1
 
    // roba group na fakturi
    PUBLIC glRGrPrn := "N"
@@ -355,8 +355,8 @@ METHOD set_module_gvars()
 
    // obrada dokumenta
    glRGrPrn := fetch_metric( "fakt_ispis_grupacije_na_dokumentu", NIL, glRGrPrn )
-   gShSld := fetch_metric( "fakt_ispis_salda_kupca_dobavljaca", NIL, gShSld )
-   gShSldVar := fetch_metric( "fakt_ispis_salda_kupca_dobavljaca_varijanta", NIL, gShSldVar )
+   gFaktPrikazFinSaldaKupacDobavljac := fetch_metric( "fakt_ispis_salda_kupca_dobavljaca", NIL, gFaktPrikazFinSaldaKupacDobavljac )
+   gFaktPrikazFinSaldaKupacDobavljacVar := fetch_metric( "fakt_ispis_salda_kupca_dobavljaca_varijanta", NIL, gFaktPrikazFinSaldaKupacDobavljacVar )
    gFinKtoDug := fetch_metric( "konto_duguje", NIL, gFinKtoDug )
    gFinKtoPot := fetch_metric( "konto_potrazuje", NIL, gFinKtoPot )
    // gSamoKol := fetch_metric( "fakt_voditi_samo_kolicine", nil, gSamoKol )

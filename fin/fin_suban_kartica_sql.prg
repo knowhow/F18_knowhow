@@ -337,7 +337,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
    LOCAL _u_saldo2 := 0
    LOCAL _val
    LOCAL _id_konto, _id_partner
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _saldo_nula := rpt_vars[ "saldo_nula" ]
 
    IF table:LastRec() == 0
@@ -369,7 +369,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
    DO WHILE !table:Eof()
 
       oItem := table:GetRow()
-      _t_rec := table:RecNo()
+      nTrec := table:RecNo()
 
       _id_konto := oItem:FieldGet( oItem:FieldPos( "idkonto" ) )
       _id_partner := oItem:FieldGet( oItem:FieldPos( "idpartner" ) )
@@ -378,7 +378,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
          IF _fin_kartica_saldo_nula( table, _id_konto, _id_partner )
             LOOP
          ELSE
-            table:GoTo( _t_rec )
+            table:GoTo( nTrec )
          ENDIF
       ENDIF
 

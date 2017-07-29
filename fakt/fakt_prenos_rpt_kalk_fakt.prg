@@ -28,7 +28,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    PRIVATE cOpis1 := PadR( "F A K T", 12 )
    PRIVATE cOpis2 := "FAKT 2.FIRMA"
 
-   o_fakt_doks()
+   o_fakt_doks_dbf()
    o_kalk() // usporedna lista fakt kalk
    //o_konto()
    //o_tarifa()
@@ -36,7 +36,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    //o_sifv()
    //o_roba()
    //o_rj()
-   o_fakt()
+   o_fakt_dbf()
 
    SELECT fakt
    SET ORDER TO TAG "3"
@@ -289,8 +289,8 @@ FUNCTION usporedna_lista_fakt_kalk()
       ENDDO
 
       IF !Empty( cIdRoba )
+      
          fakt_set_pozicija_sif_roba( cIdRoba, cSintetika == "D" )
-         SELECT ROBA
          IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
             _cijena := roba->vpc2
          ELSE
@@ -347,10 +347,10 @@ FUNCTION usporedna_lista_fakt_kalk()
             // prodavnica
             IF pu_i == "1"
                nSt += kolicina - GKolicina - GKolicin2
-               nVr += Round( mpcsapp * kolicina, ZAOKRUZENJE )
+               nVr += Round( mpcsapp * kolicina, fakt_zaokruzenje() )
             ELSEIF pu_i == "5"  .AND. !( idvd $ "12#13#22" )
                nSt -= kolicina
-               nVr -= Round( mpcsapp * kolicina, ZAOKRUZENJE )
+               nVr -= Round( mpcsapp * kolicina, fakt_zaokruzenje() )
 
             ELSEIF pu_i == "I"
                nSt += gkolicin2
@@ -358,9 +358,9 @@ FUNCTION usporedna_lista_fakt_kalk()
 
             ELSEIF pu_i == "5"  .AND. ( idvd $ "12#13#22" )    // povrat
                nSt -= kolicina
-               nVr -= Round( mpcsapp * kolicina, ZAOKRUZENJE )
+               nVr -= Round( mpcsapp * kolicina, fakt_zaokruzenje() )
             ELSEIF pu_i == "3"    // nivelacija
-               nVr += Round( mpcsapp * kolicina, ZAOKRUZENJE )
+               nVr += Round( mpcsapp * kolicina, fakt_zaokruzenje() )
             ENDIF
          ENDIF // cTipC=="V"
          SKIP
@@ -416,10 +416,8 @@ FUNCTION usporedna_lista_fakt_kalk()
    SELECT POM
    GO TOP
    WHILE !Eof()
-      IF ( cRazlKol == "D" .AND. Round ( FST, 4 ) <> Round ( KST, 4 ) ) .OR. ;
-            ( cRazlVr == "D" .AND. Round ( FVR, 4 ) <> Round ( KVR, 4 ) )
-         SELECT ROBA
-         HSEEK POM->IdRoba
+      IF ( cRazlKol == "D" .AND. Round ( FST, 4 ) <> Round ( KST, 4 ) ) .OR. ( cRazlVr == "D" .AND. Round ( FVR, 4 ) <> Round ( KVR, 4 ) )
+         select_o_roba( POM->IdRoba )
          SELECT POM
          ? Space ( gnLMarg )
          ?? ROBA->Id, Left ( ROBA->Naz, 30 ), ROBA->Jmj, ;

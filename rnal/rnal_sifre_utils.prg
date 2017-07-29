@@ -114,7 +114,6 @@ FUNCTION sif_idmc( nFieldId, lOnlyMc, nRpad )
 
 FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
 
-   LOCAL nTRec
    LOCAL nTrec := RecNo()
    LOCAL cTBFilter := dbFilter()
    LOCAL _alias := AllTrim( Lower( Alias() ) )

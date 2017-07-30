@@ -1,5 +1,11 @@
 # F18 klijent, lista promjena
 
+## 2017-07-30 ----
+
+- commit x 2 "FAKT sql big-bang-02" trijebljenje svih seek-ova fakt, fakt_doks, fakt_doks2 
+ - 74 files +1861 -1862
+ - 16 files +255 - 347 
+
 ## 2017-07-29 ----
 
 ### Developer

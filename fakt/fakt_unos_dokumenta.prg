@@ -1054,9 +1054,9 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
 
    ++nX
    // IF ( gSamokol != "D" .AND. !glDistrib )
-   IF !glDistrib
+   //IF !glDistrib
       @ m_x + nX, m_y + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
-   ENDIF
+   //ENDIF
 
    _tip_cijene := "1"
 
@@ -1411,7 +1411,7 @@ FUNCTION IspisBankeNar( cBanke )
    SELECT banke
    SET ORDER TO TAG "ID"
    FOR i := 1 TO Len( aOpc )
-      HSEEK SubStr( aOpc[ i ], 1, 3 )
+  --    HSEEK SubStr( aOpc[ i ], 1, 3 )
       IF Found()
          cVrati += AllTrim( banke->naz ) + ", " + AllTrim( banke->adresa ) + ", " + AllTrim( banke->mjesto ) + ", " + AllTrim( aOpc[ i ] ) + "; "
       ELSE
@@ -1427,27 +1427,22 @@ FUNCTION IspisBankeNar( cBanke )
 
 /* JeStorno10()
  *     True je distribucija i TipDokumenta=10  i krajnji desni dio broja dokumenta="S"
- */
+
 FUNCTION JeStorno10()
-   RETURN glDistrib .AND. _idtipdok == "10" .AND. Upper( Right( Trim( _BrDok ), 1 ) ) == "S"
+--   RETURN glDistrib .AND. _idtipdok == "10" .AND. Upper( Right( Trim( _BrDok ), 1 ) ) == "S"
 
-
+*/
 
 /* RabPor10()
- *
- */
+
 
 FUNCTION RabPor10()
 
    LOCAL nArr := Select()
 
-   SELECT FAKT
-   SET ORDER TO TAG "1"
-   SEEK _idfirma + "10" + Left( _brdok, gNumDio )
+   seek_fakt( _idfirma, "10", Left( _brdok, gNumDio ) )
 
-   DO WHILE !Eof() .AND. ;
-         _idfirma + "10" + Left( _brdok, gNumDio ) == idfirma + idtipdok + Left( brdok, gNumDio ) .AND. ;
-         _idroba <> idroba
+   DO WHILE !Eof() .AND.  _idfirma + "10" + Left( _brdok, gNumDio ) == idfirma + idtipdok + Left( brdok, gNumDio ) .AND. _idroba <> idroba
       SKIP 1
    ENDDO
 
@@ -1463,7 +1458,7 @@ FUNCTION RabPor10()
 
    RETURN .T.
 
-
+*/
 
 
 STATIC FUNCTION popup_fakt_unos_dokumenta()
@@ -1626,7 +1621,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( hOldDok, hNewDok )
    GO TOP
 
    // uzmi podatke sa izmjenjene stavke
-   SEEK _new_firma + _new_tipdok + _new_brdok
+   SEEK _new_firma + _new_tipdok + _new_brdok // fakt_pripr
 
    IF !Found()
       RETURN .F.
@@ -1634,9 +1629,9 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( hOldDok, hNewDok )
 
    hRec := dbf_get_rec()
 
-   // zatim mi pronadji ostale stavke bivseg dokumenta
+   // zatim pronadji ostale stavke bivseg dokumenta
    GO TOP
-   SEEK _old_firma + _old_tipdok + _old_brdok
+   SEEK _old_firma + _old_tipdok + _old_brdok // fakt_pripr
 
    IF !Found()
       RETURN .F.

@@ -242,7 +242,8 @@ FUNCTION fakt_stanje_robe()
 
          IF !Empty( qqTipDok )
             IF idtipdok <> qqTipDok
-               skip; LOOP
+               skip
+               LOOP
             ENDIF
          ENDIF
 
@@ -251,8 +252,7 @@ FUNCTION fakt_stanje_robe()
          ENDIF
 
          IF !Empty( qqPartn )
-            SELECT fakt_doks
-            HSEEK fakt->( IdFirma + idtipdok + brdok )
+            seek_fakt_doks( fakt->IdFirma, fakt->idtipdok, fakt->brdok )
             SELECT fakt
             IF !( fakt_doks->partner = qqPartn )
                SKIP
@@ -445,10 +445,10 @@ FUNCTION ZaglSRobe()
       ? Space( gnlmarg ), "- Roba sa osobinom K2:", ck2
    ENDIF
 
-   IF glDistrib .AND. !Empty( cIdDist )
-      ?
-      ? Space( gnlmarg ), "- kontrola distributera:", cIdDist
-   ENDIF
+   //IF glDistrib .AND. !Empty( cIdDist )
+    //  ?
+  //    ? Space( gnlmarg ), "- kontrola distributera:", cIdDist
+   //ENDIF
 
    ?
    IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )

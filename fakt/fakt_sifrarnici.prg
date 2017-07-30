@@ -70,13 +70,13 @@ FUNCTION FaRobaBlock( Ch )
       // provjerimo da li je sifra dupla
       PushWA()
       SET ORDER TO TAG "ID"
-      SEEK cSif
+  --    SEEK cSif
       SKIP 1
       cSif2 := ROBA->id
       PopWA()
       IF !( cSif == cSif2 )
          // ako nije dupla provjerimo da li postoji u kumulativu
-         IF ima_u_fakt_kumulativ( cSif, "3" )
+    --     IF ima_u_fakt_kumulativ( cSif, "3" )
             Beep( 1 )
             Msg( "Stavka artikla/robe se ne moze brisati jer se vec nalazi u dokumentima!" )
             RETURN 7
@@ -84,7 +84,7 @@ FUNCTION FaRobaBlock( Ch )
       ENDIF
 
    ELSEIF Ch == K_F2 .AND. gSKSif == "D"
-      IF ima_u_fakt_kumulativ( cSif, "3" )
+    --  IF ima_u_fakt_kumulativ( cSif, "3" )
          RETURN 99
       ENDIF
 
@@ -137,39 +137,3 @@ STATIC FUNCTION ObSif()
    o_ops()
 
    RETURN .T.
-
-
-
-/* ima_u_fakt_kumulativ(cKljuc,cTag)
- *
- *   param: cKljuc
- *   param: cTag
- */
-
-FUNCTION ima_u_fakt_kumulativ( cKljuc, cTag )
-
-   LOCAL lVrati := .F., lUsed := .T., nArr := Select()
-
-   SELECT ( F_FAKT )
-
-   IF !Used()
-      lUsed := .F.
-      o_fakt_dbf()
-   ELSE
-      PushWA()
-   ENDIF
-
-   IF !Empty( IndexKey( Val( cTag ) + 1 ) )
-      SET ORDER TO TAG ( cTag )
-      SEEK cKljuc
-      lVrati := Found()
-   ENDIF
-
-   IF !lUsed
-      USE
-   ELSE
-      PopWA()
-   ENDIF
-   SELECT ( nArr )
-
-   RETURN lVrati

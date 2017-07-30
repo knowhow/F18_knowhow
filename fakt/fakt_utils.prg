@@ -106,18 +106,14 @@ FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
       br_dok = fakt->brdok
    ENDIF
 
-   SELECT ( F_FAKT )
+   //SELECT ( F_FAKT )
 
-   IF !Used()
-      o_fakt_dbf()
-   ENDIF
+   //IF !Used()
+    //  o_fakt_dbf()
+   //ENDIF
 
-   SELECT fakt
-   SET FILTER TO
-   SET ORDER TO TAG "1"
-   SEEK id_firma + id_tipdok + br_dok + "  1"
-
-   IF !Found()
+   seek_fakt( id_firma, id_tipdok, br_dok ) // + "  1"
+   IF Eof()
       _ret := Space( 10 )
    ELSE
       aMemo := fakt_ftxt_decode( fakt->txt )
@@ -164,15 +160,9 @@ FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
    LOCAL _ret := ""
    LOCAL aMemo
 
-   SELECT ( F_FAKT )
-   IF !Used()
-      o_fakt_dbf()
-   ENDIF
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + tip_dok + br_dok
+
+   seek_fakt( id_firma + tip_dok + br_dok
 
    IF !Found()
       RETURN _ret

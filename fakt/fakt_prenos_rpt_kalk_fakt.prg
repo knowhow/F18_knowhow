@@ -96,9 +96,7 @@ FUNCTION usporedna_lista_fakt_kalk()
       IF lViseKonta
          @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto  WHEN  {|| qqKonto := iif ( !Empty( cIdKonto ), cIdKonto + " ;", qqKonto ), .T. } PICT "@!S20"
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto ;
-            WHEN  {|| qqKonto := iif ( !Empty( cIdKonto ), cIdKonto, qqKonto ), .T. } ;
-            VALID P_Konto ( @qqKonto )
+         @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto  WHEN  {|| qqKonto := iif ( !Empty( cIdKonto ), cIdKonto, qqKonto ), .T. }   VALID P_Konto ( @qqKonto )
       ENDIF
       @ m_x + 3, m_y + 2 SAY "Oznaka firme u KALK"  GET cKalkFirma PICT "@!S40"
       @ m_x + 4, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
@@ -367,8 +365,7 @@ FUNCTION usporedna_lista_fakt_kalk()
       ENDDO
 
       SELECT POM
-      HSEEK cIdRoba
-      
+      HSEEK cIdRoba // pom
       IF ! Found()
          APPEND BLANK
          REPLACE IdRoba WITH cIdRoba

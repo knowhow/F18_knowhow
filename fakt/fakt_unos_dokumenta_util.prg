@@ -246,9 +246,9 @@ FUNCTION fakt_v_kolicina( tip_vpc )
       RETURN .F.
    ENDIF
 
-   IF JeStorno10()
-      _kolicina := - Abs( _kolicina )
-   ENDIF
+   //IF JeStorno10()
+  //    _kolicina := - Abs( _kolicina )
+  // ENDIF
 
    IF _podbr <> " ."
 
@@ -390,9 +390,9 @@ FUNCTION fakt_v_kolicina( tip_vpc )
 
    SELECT fakt_pripr
 
-   IF _idtipdok == "26" .AND. glDistrib .AND. !UGenNar()
-      RETURN .F.
-   ENDIF
+  // IF _idtipdok == "26" .AND. glDistrib .AND. !UGenNar()
+  //    RETURN .F.
+  // ENDIF
 
    RETURN .T.
 
@@ -594,7 +594,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    RETURN .T.
 
 
-
+/*
 FUNCTION V_Porez()
 
    LOCAL nPor
@@ -612,7 +612,7 @@ FUNCTION V_Porez()
    ENDIF
 
    RETURN .T.
-
+*/
 
 FUNCTION fakt_unos_w_brotp( lNovi )
 
@@ -728,9 +728,9 @@ FUNCTION fakt_unos_provjera_dupla_stavka( fNovi )
    LOCAL nPrevRec
 
    // ako se radi o stornu fakture -> preuzimamo rabat i porez iz fakture
-   IF JeStorno10()
-      RabPor10()
-   ENDIF
+   //IF JeStorno10()
+    //  RabPor10()
+   //ENDIF
 
    SELECT fakt_pripr
 
@@ -768,7 +768,7 @@ FUNCTION Prepak( cIdRoba, cPako, nPak, nKom, nKol, lKolUPak )
    IF lKOLuPAK == NIL; lKOLuPAK := .T. ; ENDIF
    SELECT SIFV
    SET ORDER TO TAG "ID"
-   HSEEK "ROBA    " + cKar + PadR( cIdRoba, 15 )
+--   HSEEK "ROBA    " + cKar + PadR( cIdRoba, 15 )
    DO WHILE !Eof() .AND. id + oznaka + idsif == "ROBA    " + cKar + PadR( cIdRoba, 15 )
 
       IF !Empty( naz )
@@ -804,7 +804,7 @@ FUNCTION Prepak( cIdRoba, cPako, nPak, nKom, nKol, lKolUPak )
 
 /* UGenNar()
  *     U Generalnoj Narudzbi
- */
+
 
 FUNCTION UGenNar()
 
@@ -815,7 +815,7 @@ FUNCTION UGenNar()
       o_ugov()
    ENDIF
    SET ORDER TO TAG "1"
-   HSEEK "D" + "G" + _idpartner
+  -- HSEEK "D" + "G" + _idpartner
    IF Found()
       SELECT ( F_RUGOV )
       IF !Used()
@@ -879,7 +879,7 @@ FUNCTION v_pretvori( cPretvori, cDinDem, dDatDok, nCijena )
 
    RETURN .T.
 
-
+*/
 
 
 
@@ -1077,7 +1077,7 @@ FUNCTION TarifaR( cRegion, cIdRoba, aPorezi )
 
    select_o_roba()
 
-   SEEK cIdRoba
+  -- SEEK cIdRoba
    cTarifa := &cPolje
 
    select_o_tarifa( cTarifa )
@@ -1551,7 +1551,7 @@ STATIC FUNCTION fakt_unos_is_jedina_stavka()
    nBrStavki := 0
 
 
-   SELECT FAKT_PRIPR
+   select_o_fakt_pripr()
 
    nTekRec   := RecNo()
    cIdFirma  := fakt_pripr->IdFirma
@@ -1559,7 +1559,7 @@ STATIC FUNCTION fakt_unos_is_jedina_stavka()
    cBrDok    := fakt_pripr->BrDok
 
    GO TOP
-   HSEEK cIdFirma + cIdTipDok + cBrDok
+   HSEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr
    DO WHILE ! Eof () .AND. ( IdFirma == cIdFirma ) .AND. ( IdTipDok == cIdTipDok ) .AND. ( BrDok == cBrDok )
       nBrStavki++
       SKIP

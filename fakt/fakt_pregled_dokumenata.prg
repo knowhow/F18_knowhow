@@ -398,7 +398,7 @@ FUNCTION fakt_generisi_fakturu_10_iz_20( cIdFirma, cIdTipDok, cBrDok)
          SELECT ugov
          SET ORDER TO TAG "PARTNER"
          GO TOP
-         SEEK cPart
+         SEEK cPart // ugov
 
          IF Found() .AND. field->idpartner == cPart
             hRec := dbf_get_rec()

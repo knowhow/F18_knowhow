@@ -550,10 +550,7 @@ STATIC FUNCTION __export( vars, a_details )
       ++_cnt
       @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
 
-      SELECT fakt
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      seek_fakt( _id_firma, _id_vd, _br_dok )
 
       nRbr := 0
 
@@ -582,7 +579,7 @@ STATIC FUNCTION __export( vars, a_details )
          IF _prim_sif > 0
 
             GO TOP
-            SEEK _id_firma + _id_vd + _br_dok + cIdRoba
+            SEEK _id_firma + _id_vd + _br_dok + cIdRoba // e_fakt
 
             IF !Found()
                APPEND BLANK
@@ -592,7 +589,6 @@ STATIC FUNCTION __export( vars, a_details )
             ENDIF
 
          ELSE
-
             APPEND BLANK
             dbf_update_rec( hAppendRec )
 
@@ -604,7 +600,7 @@ STATIC FUNCTION __export( vars, a_details )
             hAppendRec := dbf_get_rec()
             SELECT e_roba
             SET ORDER TO TAG "ID"
-            SEEK cIdRoba
+            SEEK cIdRoba // e_roba
             IF !Found()
                APPEND BLANK
                dbf_update_rec( hAppendRec )
@@ -617,10 +613,7 @@ STATIC FUNCTION __export( vars, a_details )
 
       ENDDO
 
-      SELECT fakt_doks2
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      seek_fakt_doks2( _id_firma, _id_vd, _br_dok )
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
 
@@ -640,7 +633,7 @@ STATIC FUNCTION __export( vars, a_details )
          hAppendRec := dbf_get_rec()
          SELECT e_partn
          SET ORDER TO TAG "ID"
-         SEEK _id_partn
+         SEEK _id_partn // e_partn
          IF !Found()
             APPEND BLANK
             dbf_update_rec( hAppendRec )
@@ -834,7 +827,7 @@ STATIC FUNCTION __import( vars, a_details )
       SELECT e_fakt
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      SEEK _id_firma + _id_vd + _br_dok // e_fakt
 
       _redni_broj := 0
 
@@ -868,7 +861,7 @@ STATIC FUNCTION __import( vars, a_details )
       SELECT e_doks2
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      SEEK _id_firma + _id_vd + _br_dok // e_doks2
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
 
@@ -929,19 +922,17 @@ STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
 
    LOCAL cWhere
    LOCAL nDbfArea := Select()
-   LOCAL _ret := .T.
+   LOCAL lRet := .T.
 
-   SELECT fakt_doks
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
+   seek_fakt_doks( id_firma, id_vd, br_dok )
 
-   IF !Found()
-      _ret := .F.
+   IF Eof()
+      lRet := .F.
    ENDIF
 
    SELECT ( nDbfArea )
 
-   RETURN _ret
+   RETURN lRet
 
 
 
@@ -949,18 +940,16 @@ STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
 // ----------------------------------------------------------
 // brisi dokument iz fakt-a
 // ----------------------------------------------------------
+
 STATIC FUNCTION del_fakt_doc( id_firma, id_vd, br_dok )
 
    LOCAL nDbfArea := Select()
    LOCAL _del_rec, nTrec
    LOCAL _ret := .F.
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
+   seek_fakt( id_firma, id_vd, br_dok )
 
-   IF Found()
+   IF !Eof()
       _ret := .T.
       // brisi fakt_fakt
       _del_rec := dbf_get_rec()
@@ -968,21 +957,15 @@ STATIC FUNCTION del_fakt_doc( id_firma, id_vd, br_dok )
    ENDIF
 
    // brisi fakt_doks
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-   IF Found()
+   seek_fakt_doks( id_firma, id_vd, br_dok )
+   IF !Eof()
       _del_rec := dbf_get_rec()
       delete_rec_server_and_dbf( "fakt_doks", _del_rec, 1, "CONT" )
    ENDIF
 
    // doks2
-   SELECT fakt_doks2
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-   IF Found()
+   seek_fakt_doks2( id_firma, id_vd, br_dok )
+   IF !Eof()
       _del_rec := dbf_get_rec()
       delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
    ENDIF
@@ -1007,20 +990,20 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    // provjeri da li postoji direktorij, pa ako ne - kreiraj
    direktorij_kreiraj_ako_ne_postoji( use_path )
 
-   // tabela fakt
-   o_fakt_dbf()
+
+   seek_fakt( "XXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_fakt" ) FROM ( my_home() + "struct" )
 
-   // tabela doks
+   seek_fakt_doks( "XXXX" )
    o_fakt_doks_dbf()
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_doks" ) FROM ( my_home() + "struct" )
 
-   // tabela doks
-   o_fakt_doks2_dbf()
+
+   seek_fakt_doks2( "XXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_doks2" ) FROM ( my_home() + "struct" )
@@ -1057,9 +1040,9 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
 // ----------------------------------------------------
 STATIC FUNCTION _o_tables()
 
-   o_fakt_dbf()
-   o_fakt_doks_dbf()
-   o_fakt_doks2_dbf()
+   //o_fakt_dbf()
+   //o_fakt_doks_dbf()
+   //o_fakt_doks2_dbf()
    //o_sifk()
    //o_sifv()
    //o_partner()

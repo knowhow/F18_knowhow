@@ -21,7 +21,7 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    LOCAL cFax
    LOCAL lPrepisDok := .F.
-   LOCAL _dok := hb_Hash(), _fill_params := hb_Hash()
+   LOCAL hDok := hb_Hash(), _fill_params := hb_Hash()
    LOCAL hFaktParams := fakt_params()
 
    // samo kolicine
@@ -59,7 +59,7 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
       cBrDok := field->BrDok
    ENDIF
 
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   SEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr
    NFOUND CRET
 
    IF PCount() <= 1 .OR. ( cIdTipDok == NIL .AND. lJFill == .T. )
@@ -67,12 +67,12 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
    ENDIF
 
    // napuni podatke za stampu
-   _dok[ "idfirma" ] := field->IdFirma
-   _dok[ "idtipdok" ] := field->IdTipDok
-   _dok[ "brdok" ] := field->BrDok
-   _dok[ "datdok" ] := field->DatDok
+   hDok[ "idfirma" ] := field->IdFirma
+   hDok[ "idtipdok" ] := field->IdTipDok
+   hDok[ "brdok" ] := field->BrDok
+   hDok[ "datdok" ] := field->DatDok
 
-   cDocumentName := doc_name( _dok, fakt_pripr->IdPartner )
+   cDocumentName := doc_name( hDok, fakt_pripr->IdPartner )
 
    // prikaz samo kolicine
    IF cIdTipDok $ "01#00#12#13#19#21#22#23#26"
@@ -91,7 +91,7 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
    _fill_params[ "barkod" ] := lPBarkod
    _fill_params[ "samo_kolicine" ] := lSamoKol
 
-   IF !fill_porfakt_data( _dok, _fill_params )
+   IF !fill_porfakt_data( hDok, _fill_params )
       RETURN .F.
    ENDIF
 

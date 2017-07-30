@@ -51,7 +51,7 @@ FUNCTION sastavnica_copy()
          AltD()
          // SELECT sast
          // SET ORDER TO TAG "idrbr"
-         select_o_sastavnice( cIdTek )
+         o_sastavnice( cIdTek, "IDRBR" )
          nCnt := 0
 
          DO WHILE !Eof() .AND. ( id == cIdTek )
@@ -62,7 +62,6 @@ FUNCTION sastavnica_copy()
             APPEND BLANK
 
             lOk := update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
-
             IF !lOk
                EXIT
             ENDIF

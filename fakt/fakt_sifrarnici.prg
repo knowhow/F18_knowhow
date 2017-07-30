@@ -116,11 +116,11 @@ STATIC FUNCTION ObSif()
    // select_o_konto()
    // select_o_partner()
    // select_o_roba()
-   o_fakt_txt()
+   //o_fakt_txt()
    // o_tarifa()
-   o_valute()
+   //o_valute()
    // o_rj()
-   o_sastavnice()
+   //o_sastavnice()
    o_ugov()
    o_rugov()
 
@@ -133,7 +133,7 @@ STATIC FUNCTION ObSif()
 //      O_FADE
 //   ENDIF
 
-   o_vrstep()
-   o_ops()
+   //o_vrstep()
+   //o_ops()
 
    RETURN .T.

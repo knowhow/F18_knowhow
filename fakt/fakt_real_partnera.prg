@@ -41,7 +41,7 @@ FUNCTION fakt_real_partnera()
    DO WHILE .T.
       cIdFirma := PadR( cIdFirma, 2 )
 
-      fakt_getlist_rj_read( box_x_koord() + 1, box_y_koord() + 2, @cIdFirma )
+      fakt_getlist_rj_read( box_x_koord() + 1, box_y_koord() + 2, @GetList, @cIdFirma )
 
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Tip dokumenta " GET cUslovTipDok PICT "@!S20"
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Od datuma "  GET dDatOd

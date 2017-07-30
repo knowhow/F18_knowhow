@@ -18,6 +18,7 @@ FUNCTION fakt_lager_lista()
    PARAMETERS lPocStanje, cIdFirma, qqRoba, dDatOd, dDatDo
 
    LOCAL nKU, nKI, lSaberiKol
+   LOCAL GetList := {}
    LOCAL aPorezi := {}, cPoTar := "N"
    LOCAL oPdf, xPrintOpt, bZagl
 
@@ -94,12 +95,7 @@ FUNCTION fakt_lager_lista()
    RPar( "d1", @dDatOd )
    RPar( "d2", @dDatDo )
 
-   SELECT fakt
 
-
-   IF gNW $ "DR"
-      // cIdfirma:=self_organizacija_id()
-   ENDIF
    qqRoba := PadR( qqRoba, 60 )
    qqPartn := PadR( qqPartn, 20 )
    qqTipDok := PadR( qqTipDok, 2 )
@@ -112,7 +108,8 @@ FUNCTION fakt_lager_lista()
    cK1 := cK2 := Space( 4 )
 
    DO WHILE .T.
-      fakt_getlist_rj_read( box_x_koord() + 1, box_y_koord() + 2, @cIdFirma )
+
+      fakt_getlist_rj_read( box_x_koord() + 1, box_y_koord() + 2, @GetList, @cIdFirma )
 
       // IF gNW $ "DR"
       // @ box_x_koord() + 1, box_y_koord() + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
@@ -142,7 +139,7 @@ FUNCTION fakt_lager_lista()
          @ box_x_koord() + 13, box_y_koord() + 2 SAY "Prikaz grupacija, grupa ima (99-ne prikazivati)" GET nGrZn PICT "99"
          @ box_x_koord() + 13, box_y_koord() + 53 SAY "znakova"
       ENDIF
-      IF fakt->( FieldPos( "K1" ) ) <> 0 .AND. gDK1 == "D"
+      IF gDK1 == "D"
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "K1" GET  cK1 PICT "@!"
          @ box_x_koord() + 14, box_y_koord() + 15 SAY "K2" GET  cK2 PICT "@!"
       ENDIF
@@ -217,7 +214,6 @@ FUNCTION fakt_lager_lista()
    WPar( "d1", dDatOd )
    WPar( "d2", dDatDo )
 
-
    USE
 
    BoxC()
@@ -288,7 +284,8 @@ FUNCTION fakt_lager_lista()
       // ENDIF
 
       IF cSintetika == "D"
-         fakt_set_pozicija_sif_roba( cIdRoba, .T. ); SELECT FAKT
+         fakt_set_pozicija_sif_roba( cIdRoba, .T. )
+         SELECT FAKT
       ENDIF
 
       nUl := nIzl := 0

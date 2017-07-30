@@ -17,6 +17,7 @@ F18
 rnal/*.c
 pos/*.c
 fin/*.c
+fakt/*.bak
 common/*.c
 *.o
 F18.exe

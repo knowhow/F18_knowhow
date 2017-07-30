@@ -135,10 +135,9 @@ FUNCTION kalk_2_fakt()
          ENDIF
       ENDIF
 
-      SELECT FAKT
-      SEEK cIdRj + cTipFakt + cBrFakt
+      seek_fakt( cIdRj, cTipFakt, cBrFakt )
 
-      IF Found()
+      IF !Eof()
          Beep( 4 )
          @ m_x + 14, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !!"
          Inkey( 4 )
@@ -146,10 +145,12 @@ FUNCTION kalk_2_fakt()
          LOOP
       ENDIF
 
-      SELECT KALK
-      SEEK cIdFirma + cIdTipDok + cBrDok
+      //SELECT KALK
+      //SEEK cIdFirma + cIdTipDok + cBrDok
 
-      IF !Found()
+      IF !find_kalk_by_broj_dokumenta( cIdFirma, cIdTipDok, cBrDok )
+
+      //IF !Found()
 
          Beep( 4 )
          @ m_x + 14, m_y + 2 SAY "Ne postoji ovaj dokument !"
@@ -415,10 +416,9 @@ FUNCTION kalkp_2_fakt()
          LOOP
       ENDIF
 
-      SELECT FAKT
-      SEEK cIdRj + cTipFakt + cBrFakt
+      seek_fakt( cIdRj, cTipFakt, cBrFakt )
 
-      IF Found()
+      IF !Eof()
          Beep( 4 )
          @ m_x + 14, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !"
          Inkey( 4 )
@@ -571,7 +571,7 @@ FUNCTION kalkp_2_fakt()
             ELSE
 
                SELECT fakt_pripr
-               HSEEK cIdFirma + KALK->idroba
+               HSEEK cIdFirma + KALK->idroba // fakt_pripr
                IF Found() .AND. Round( nKalkCijena - cijena, 5 ) == 0 .AND. ( cTipFakt = "0" .OR. Round( nKalkRabat - rabat, 5 ) == 0 )
                   Scatter()
                   _kolicina += nKolicina
@@ -656,11 +656,11 @@ STATIC FUNCTION fakt_naredni_broj_dokumenta()
 
 STATIC FUNCTION _o_tables()
 
-   o_fakt_doks_dbf()
+   //o_fakt_doks_dbf()
    // o_roba()
    // o_rj()
    // o_kalk()
-   o_fakt_dbf()
+   //o_fakt_dbf()
    o_fakt_pripr()
    // o_sifk()
    // o_sifv()

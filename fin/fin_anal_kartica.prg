@@ -99,12 +99,12 @@ FUNCTION fin_anal_kartica()
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
    ENDIF
 
-   IF Params2()
+   //IF Params2()
       WPar( "c1", PadR( cIdFirma, 2 ) ); WPar( "c2", @qqKonto ); WPar( "d1", @dDatOd ); WPar( "d2", @dDatdo )
       WPar( "c3", cBrza )
       WPar( "c4", cPredh )
       WPar( "c8", cPTD )
-   ENDIF
+   //ENDIF
    SELECT params
    USE
 

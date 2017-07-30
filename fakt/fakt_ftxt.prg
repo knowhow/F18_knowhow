@@ -453,13 +453,13 @@ FUNCTION fakt_ftxt_sub_renumeracija_pripreme( cTxt2 )
 
          SELECT fakt_pripr
 
-         IF glDistrib .AND. _IdTipdok == "26"
-            IF cId $ ";"
-               _k2 := "OPOR"
-            ELSE
-               _k2 := ""
-            ENDIF
-         ENDIF
+         //IF glDistrib .AND. _IdTipdok == "26"
+          //  IF cId $ ";"
+          //     _k2 := "OPOR"
+        //    ELSE
+          //     _k2 := ""
+        //    ENDIF
+         //ENDIF
 
       ENDIF
 

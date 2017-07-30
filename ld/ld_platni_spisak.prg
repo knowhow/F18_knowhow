@@ -52,18 +52,18 @@ FUNCTION ld_platni_spisak()
 
    Box(, 13, 60 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
-   @ get_x_koord() + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
-   @ get_x_koord() + 6, get_y_koord() + 2 SAY "Prikaz u procentu %:" GET nprocenat PICT "999.99"
-   @ get_x_koord() + 7, get_y_koord() + 2 SAY "Sortirati po (1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
-   @ get_x_koord() + 8, get_y_koord() + 2 SAY "Naslov izvjestaja"  GET cNaslov PICT "@S30"
-   @ get_x_koord() + 9, get_y_koord() + 2 SAY "Naslov za topl.obrok"  GET cNaslovTO PICT "@S30"
-   @ get_x_koord() + 10, get_y_koord() + 2 SAY "Iznos (samo za topli obrok)"  GET nIznosTO PICT gPicI
-   @ get_x_koord() + 11, get_y_koord() + 2 SAY "Izlistati sve radnike (D/N)"  GET cSviRadn PICT "@!" VALID cSviRadn $ "DN"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
+   @ box_x_koord() + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prikaz u procentu %:" GET nprocenat PICT "999.99"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Sortirati po (1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Naslov izvjestaja"  GET cNaslov PICT "@S30"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Naslov za topl.obrok"  GET cNaslovTO PICT "@S30"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Iznos (samo za topli obrok)"  GET nIznosTO PICT gPicI
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Izlistati sve radnike (D/N)"  GET cSviRadn PICT "@!" VALID cSviRadn $ "DN"
 
    READ
 
@@ -71,8 +71,8 @@ FUNCTION ld_platni_spisak()
    ESC_BCR
    IF nProcenat <> 100
 
-      @ get_x_koord() + 12, get_y_koord() + 2 SAY "zaokruzenje" GET nZkk PICT "99"
-      @ get_x_koord() + 13, get_y_koord() + 2 SAY "Prikazati i drugi spisak (za " + LTrim( Str( 100 - nProcenat, 6, 2 ) ) + "%-tni dio)" GET cDrugiDio VALID cDrugiDio $ "DN" PICT "@!"
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY "zaokruzenje" GET nZkk PICT "99"
+      @ box_x_koord() + 13, box_y_koord() + 2 SAY "Prikazati i drugi spisak (za " + LTrim( Str( 100 - nProcenat, 6, 2 ) ) + "%-tni dio)" GET cDrugiDio VALID cDrugiDio $ "DN" PICT "@!"
 
       READ
    ELSE
@@ -306,16 +306,16 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
    Box(, 11, 50 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
-   @ get_x_koord() + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
-   @ get_x_koord() + 6, get_y_koord() + 2 SAY "Prikaz u procentu %:" GET nprocenat PICT "999.99"
-   @ get_x_koord() + 7, get_y_koord() + 2 SAY "Banka        :" GET cIdBanka VALID P_Kred( @cIdBanka )
-   @ get_x_koord() + 8, get_y_koord() + 2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
-   @ get_x_koord() + 11, get_y_koord() + 2 SAY "Spremiti izvjestaj za banku (D/N)" GET cZaBanku PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
+   @ box_x_koord() + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prikaz u procentu %:" GET nprocenat PICT "999.99"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Banka        :" GET cIdBanka VALID P_Kred( @cIdBanka )
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Spremiti izvjestaj za banku (D/N)" GET cZaBanku PICT "@!"
 
    READ
 
@@ -324,8 +324,8 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    ESC_BCR
 
    IF nProcenat <> 100
-      @ get_x_koord() + 9, get_y_koord() + 2 SAY "zaokruzenje" GET nZkk PICT "99"
-      @ get_x_koord() + 10, get_y_koord() + 2 SAY "Prikazati i drugi spisak (za " + LTrim( Str( 100 - nProcenat, 6, 2 ) ) + "%-tni dio)" GET cDrugiDio VALID cDrugiDio $ "DN" PICT "@!"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "zaokruzenje" GET nZkk PICT "99"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Prikazati i drugi spisak (za " + LTrim( Str( 100 - nProcenat, 6, 2 ) ) + "%-tni dio)" GET cDrugiDio VALID cDrugiDio $ "DN" PICT "@!"
       READ
    ELSE
       cDrugiDio := "N"
@@ -697,15 +697,15 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    cVarSort := fetch_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
 
    Box(, 10, 50 )
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
-   @ get_x_koord() + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
-   @ get_x_koord() + 6, get_y_koord() + 2 SAY "Primanje (prazno-sve ukupno):" GET cIdTipPr VALID Empty( cIdTipPr ) .OR. P_TipPr( @cIdTipPr )
-   @ get_x_koord() + 7, get_y_koord() + 2 SAY "Banka (prazno-sve) :" GET cIdBanka VALID Empty( cIdBanka ) .OR. P_Kred( @cIdBanka )
-   @ get_x_koord() + 8, get_y_koord() + 2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
+   @ box_x_koord() + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Primanje (prazno-sve ukupno):" GET cIdTipPr VALID Empty( cIdTipPr ) .OR. P_TipPr( @cIdTipPr )
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Banka (prazno-sve) :" GET cIdBanka VALID Empty( cIdBanka ) .OR. P_Kred( @cIdBanka )
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
 
 
 
@@ -950,10 +950,10 @@ FUNCTION CreateFileBanka( banka )
    cConstBrojTR := "56480 "
    cParKonv := "5"
 
-   @ 1 + get_x_koord(), 2 + get_y_koord() SAY "PARAMETRI ***"
-   @ 3 + get_x_koord(), 2 + get_y_koord() SAY "Sifra isplatioca tek.rac:" GET cConstBrojTR
-   @ 4 + get_x_koord(), 2 + get_y_koord() SAY "Naziv fajla prenosa:" GET cLokacija PICT "@S30"
-   @ 5 + get_x_koord(), 2 + get_y_koord() SAY "Konverzija znakova:" GET cParKonv
+   @ 1 + box_x_koord(), 2 + box_y_koord() SAY "PARAMETRI ***"
+   @ 3 + box_x_koord(), 2 + box_y_koord() SAY "Sifra isplatioca tek.rac:" GET cConstBrojTR
+   @ 4 + box_x_koord(), 2 + box_y_koord() SAY "Naziv fajla prenosa:" GET cLokacija PICT "@S30"
+   @ 5 + box_x_koord(), 2 + box_y_koord() SAY "Konverzija znakova:" GET cParKonv
 
    READ
 

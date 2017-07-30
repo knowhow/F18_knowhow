@@ -14,7 +14,7 @@
 
 FUNCTION fakt_kartica()
 
-   LOCAL cIdfirma, nRezerv, nRevers
+   LOCAL cIdFirma, nRezerv, nRevers
    LOCAL nul, nizl, nRbr, cRR, nCol1 := 0, cKolona, cBrza := "D"
    LOCAL cPredh := "2"
    LOCAL lpickol := "@Z " + fakt_pic_kolicina()
@@ -47,7 +47,7 @@ FUNCTION fakt_kartica()
    // idroba+dtos(datDok)
    // ENDIF
 
-   cIdfirma := self_organizacija_id()
+   cIdFirma := self_organizacija_id()
    PRIVATE qqRoba := ""
    PRIVATE dDatOd := CToD( "" )
    PRIVATE dDatDo := Date()
@@ -179,7 +179,7 @@ FUNCTION fakt_kartica()
       m += " ----------- ----- -----------"
    ENDIF
 
-   Params2()
+
    WPar( "c1", cIdFirma )
    WPar( "d1", dDatOd )
    WPar( "d2", dDatDo )
@@ -230,7 +230,7 @@ FUNCTION fakt_kartica()
    ?
    P_12CPI
    ?? Space( gnLMarg ); ?? "FAKT: Kartice artikala na dan", Date(), "      za period od", dDatOd, "-", dDatDo
-   ? Space( gnLMarg ); IspisFirme( cidfirma )
+   ? Space( gnLMarg ); IspisFirme( cIdFirma )
    IF !Empty( qqRoba )
       ? Space( gnLMarg )
       IF !Empty( qqRoba ) .AND. cBrza = "N"
@@ -317,15 +317,11 @@ FUNCTION fakt_kartica()
          PushWA()
          SELECT fakt
          SET FILTER TO
-         // IF fID_J
-         // // TODO : pogledati
-         // SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
-         // ELSE
-         SEEK cIdFirma + IIF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
-         // ENDIF
+
+         SEEK cIdFirma + IIF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba ) // fakt - ranije otvoreno
+
          // DO-WHILE za cPredh=2
-         DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", ;
-               Left( cIdRoba, gnDS ) == Left( IdROba, gnDS ), ;
+         DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", Left( cIdRoba, gnDS ) == Left( IdROba, gnDS ), ;
                cIdRoba == IdRoba ) .AND. dDatOd > datdok
 
             IF !Empty( cK1 )
@@ -334,10 +330,15 @@ FUNCTION fakt_kartica()
             IF !Empty( cK2 )
                IF ck2 <> K2; skip; loop; ENDIF
             ENDIF
-            IF !Empty( cidfirma ); IF idfirma <> cidfirma; skip; loop; end; END
+            IF !Empty( cIdFirma ); IF idfirma <> cIdFirma; skip; loop; end; END
+
             IF !Empty( qqPartn )
-               SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok )
-               SELECT fakt; IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
+
+               seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
+
+               SELECT fakt
+               IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
+
             ENDIF
 
             IF !Empty( cIdRoba )
@@ -370,13 +371,12 @@ FUNCTION fakt_kartica()
       DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S",  Left( cIdRoba, gnDS ) == Left( IdRoba, gnDS ), cIdRoba == IdRoba )
          cKolona := "N"
 
-         IF !Empty( cIdfirma ); IF idfirma <> cIdfirma; skip; loop; end; END
+         IF !Empty( cIdFirma ); IF idfirma <> cIdFirma; skip; loop; end; END
          IF !Empty( cK1 ); IF cK1 <> K1 ; skip; loop; end; END // uslov ck1
          IF !Empty( cK2 ); IF cK2 <> K2; skip; loop; end; END // uslov ck2
 
          IF !Empty( qqPartn )
 
-            //SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok )
             seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
 
             SELECT fakt
@@ -409,7 +409,6 @@ FUNCTION fakt_kartica()
                ? Space( gnLMarg ); ?? Str( ++nRbr, 3 ) + ".   " + idfirma + "-" + idtipdok + "-" + brdok + Left( serbr, 1 ) + "  " + DToC( datdok )
 
                IF cPPartn == "D"
-                  //SELECT fakt_doks
                   seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
 
                   SELECT fakt

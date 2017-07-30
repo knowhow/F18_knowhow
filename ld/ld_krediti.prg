@@ -60,17 +60,17 @@ FUNCTION ld_novi_kredit()
       ld_otvori_tabele_kredita()
 
       Box(, 10, 70 )
-      @ get_x_koord() + 1, get_y_koord() + 2   SAY "Mjesec:" GET nMjesec PICT "99"
-      @ get_x_koord() + 1, Col() + 2 SAY "Godina:" GET nGodina PICT "9999"
-      @ get_x_koord() + 2, get_y_koord() + 2   SAY "Radnik  :" GET cIdRadn  VALID {|| P_Radn( @cIdRadn ), SetPos( get_x_koord() + 2, get_y_koord() + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), .T. }
-      @ get_x_koord() + 3, get_y_koord() + 2   SAY "Kreditor:" GET cIdKred PICT "@!" VALID P_Kred( @cIdKred, 3, 21 )
-      @ get_x_koord() + 4, get_y_koord() + 2   SAY "Kredit po osnovu:" GET cOsnov PICT "@!"
-      @ get_x_koord() + 5, get_y_koord() + 2   SAY "Ukupan iznos kredita:" GET nIznKred PICT "99" + gPicI
+      @ box_x_koord() + 1, box_y_koord() + 2   SAY "Mjesec:" GET nMjesec PICT "99"
+      @ box_x_koord() + 1, Col() + 2 SAY "Godina:" GET nGodina PICT "9999"
+      @ box_x_koord() + 2, box_y_koord() + 2   SAY "Radnik  :" GET cIdRadn  VALID {|| P_Radn( @cIdRadn ), SetPos( box_x_koord() + 2, box_y_koord() + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), .T. }
+      @ box_x_koord() + 3, box_y_koord() + 2   SAY "Kreditor:" GET cIdKred PICT "@!" VALID P_Kred( @cIdKred, 3, 21 )
+      @ box_x_koord() + 4, box_y_koord() + 2   SAY "Kredit po osnovu:" GET cOsnov PICT "@!"
+      @ box_x_koord() + 5, box_y_koord() + 2   SAY "Ukupan iznos kredita:" GET nIznKred PICT "99" + gPicI
 
       IF lBrojRata
-         @ get_x_koord() + 7, get_y_koord() + 2 SAY "Broj rata   :" GET nRata2 PICT "9999" VALID nRata2 > 0
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Broj rata   :" GET nRata2 PICT "9999" VALID nRata2 > 0
       ELSE
-         @ get_x_koord() + 7, get_y_koord() + 2 SAY "Rata kredita:" GET nRata PICT gpici VALID nRata > 0
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Rata kredita:" GET nRata PICT gpici VALID nRata > 0
       ENDIF
 
       READ
@@ -179,8 +179,8 @@ FUNCTION ld_novi_kredit()
 #ifndef TEST
       SET CONFIRM OFF
 #endif
-      @ get_x_koord() + 1, get_y_koord() + 2 SAY "Za radnika " + cIdRadn + " kredit je formiran na " + Str( i, 3 ) + " rata"
-      @ get_x_koord() + 3, get_y_koord() + 2 SAY "Prikazati pregled kamata:" GET cDN PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Za radnika " + cIdRadn + " kredit je formiran na " + Str( i, 3 ) + " rata"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Prikazati pregled kamata:" GET cDN PICT "@!"
       READ
       BoxC()
 
@@ -214,9 +214,9 @@ FUNCTION ld_krediti_redefinisanje_rata()
 
    Box(, 6, 60 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "*** podaci o kreditu" COLOR f18_color_i()
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "*** podaci o kreditu" COLOR f18_color_i()
 
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "kredit na osnovu" GET cNaOsnovu
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "kredit na osnovu" GET cNaOsnovu
 
    READ
 
@@ -231,9 +231,9 @@ FUNCTION ld_krediti_redefinisanje_rata()
    nTRata := field->iznos
    nNRata := nTRata
 
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY8 "tekuća rata kredita = " + ;
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "tekuća rata kredita = " + ;
       AllTrim( Str( nTRata ) ) + " KM"
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "rata kredita za obracun" GET nNRata VALID nNRata <> 0
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "rata kredita za obracun" GET nNRata VALID nNRata <> 0
    READ
 
    BoxC()
@@ -485,23 +485,23 @@ FUNCTION ld_lista_kredita()
 
    Box(, 13, 60 )
    IF lRjRadn
-      @ get_x_koord() + 1, get_y_koord() + 2 SAY "RJ (prazno=sve): " GET cIdRj  VALID {|| Empty( cIdRj ) .OR. P_LD_Rj( @cIdRj ) } PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "RJ (prazno=sve): " GET cIdRj  VALID {|| Empty( cIdRj ) .OR. P_LD_Rj( @cIdRj ) } PICT "@!"
    ENDIF
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Kreditor ('.' svi): " GET cIdKred  VALID {|| cIdkred = '.' .OR. P_Kred( @cIdKred ) } PICT "@!"
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Na osnovu ('.' po svim osnovama):" GET cNaOsnovu PICT "@!"
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Prikazati rate kredita D/N/J/R/T:"
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "D - prikazati sve rate"
-   @ get_x_koord() + 6, get_y_koord() + 2 SAY "N - prikazati samo broj rata i ukupan iznos"
-   @ get_x_koord() + 7, get_y_koord() + 2 SAY "J - samo jedna rata"
-   @ get_x_koord() + 8, get_y_koord() + 2 SAY "R - partija,br.rata,iznos,rata,ostalo"
-   @ get_x_koord() + 9, get_y_koord() + 2 SAY "T - trenutno stanje" GET cRateDN PICT "@!" VALID cRateDN $ "DNJRT"
-   @ get_x_koord() + 10, get_y_koord() + 2 SAY "Prikazi samo aktivne-neotplacene kredite D/N" GET cAktivni PICT "@!" VALID cAktivni $ "DN"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Kreditor ('.' svi): " GET cIdKred  VALID {|| cIdkred = '.' .OR. P_Kred( @cIdKred ) } PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Na osnovu ('.' po svim osnovama):" GET cNaOsnovu PICT "@!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prikazati rate kredita D/N/J/R/T:"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "D - prikazati sve rate"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "N - prikazati samo broj rata i ukupan iznos"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "J - samo jedna rata"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "R - partija,br.rata,iznos,rata,ostalo"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "T - trenutno stanje" GET cRateDN PICT "@!" VALID cRateDN $ "DNJRT"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Prikazi samo aktivne-neotplacene kredite D/N" GET cAktivni PICT "@!" VALID cAktivni $ "DN"
    READ
    ESC_BCR
 
    IF cRateDN $ "JR"
-      @ get_x_koord() + 12, get_y_koord() + 2 SAY "Prikazati ratu od godina/mjesec:" GET nGodina PICT "9999"
-      @ get_x_koord() + 12, Col() + 1 SAY "/" GET nMjesec PICT "99"
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY "Prikazati ratu od godina/mjesec:" GET nGodina PICT "9999"
+      @ box_x_koord() + 12, Col() + 1 SAY "/" GET nMjesec PICT "99"
       READ
       ESC_BCR
    ENDIF
@@ -1005,14 +1005,14 @@ FUNCTION ld_brisanje_kredita()
    SET ORDER TO TAG "2"
 
    Box( "#BRISANJE NEOTPLACENIH RATA KREDITA", 9, 77 )
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Radnik:   " GET cIdRadn  VALID {|| P_Radn( @cIdRadn ), SetPos( get_x_koord() + 2, get_y_koord() + 20 ), ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Radnik:   " GET cIdRadn  VALID {|| P_Radn( @cIdRadn ), SetPos( box_x_koord() + 2, box_y_koord() + 20 ), ;
       QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), ;
       P_Krediti( cIdRadn, @cIdKred, @cNaOsnovu ), .T. }
 
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Kreditor: " GET cIdKred  VALID P_Kred( @cIdKred, 3, 21 ) PICT "@!"
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Na osnovu:" GET cNaOsnovu PICT "@!"
-   @ get_x_koord() + 6, get_y_koord() + 2, get_x_koord() + 8, get_y_koord() + 76 BOX "         " COLOR "GR+/R"
-   @ get_x_koord() + 7, get_y_koord() + 8 SAY "Jeste li 100% sigurni da zelite izbrisati ovaj kredit ? (D/N)" COLOR "GR+/R"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Kreditor: " GET cIdKred  VALID P_Kred( @cIdKred, 3, 21 ) PICT "@!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Na osnovu:" GET cNaOsnovu PICT "@!"
+   @ box_x_koord() + 6, box_y_koord() + 2, box_x_koord() + 8, box_y_koord() + 76 BOX "         " COLOR "GR+/R"
+   @ box_x_koord() + 7, box_y_koord() + 8 SAY "Jeste li 100% sigurni da zelite izbrisati ovaj kredit ? (D/N)" COLOR "GR+/R"
    @ Row(), Col() + 1 GET cBrisi VALID cBrisi $ "DN" PICT "@!" COLOR "N/W"
    READ
    ESC_BCR

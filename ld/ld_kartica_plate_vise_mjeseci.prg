@@ -32,20 +32,20 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    cSatiVO := "S"
 
    Box(, 6, 77 )
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "od mjeseca: "  GET  nMjesec  PICT "99"
-   @ get_x_koord() + 2, Col() + 2 SAY "do"  GET  cMjesec2  PICT "99"
-   @ get_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Radnik (prazno-svi radnici):" GET cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Razdvojiti za radnika po RJ:" GET cRazdvoji PICT "@!";
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "od mjeseca: "  GET  nMjesec  PICT "99"
+   @ box_x_koord() + 2, Col() + 2 SAY "do"  GET  cMjesec2  PICT "99"
+   @ box_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Radnik (prazno-svi radnici):" GET cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Razdvojiti za radnika po RJ:" GET cRazdvoji PICT "@!";
       WHEN Empty ( cIdRj ) VALID cRazdvoji $ "DN"
    READ
    clvbox()
    ESC_BCR
    
    IF Empty( cObracun )
-      @ get_x_koord() + 6, get_y_koord() + 2 SAY8 "Prikaz sati (S-sabrati sve obračune , 1-obračun 1 , 2-obračun 2, ... )" GET cSatiVO VALID cSatiVO $ "S123456789" PICT "@!"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Prikaz sati (S-sabrati sve obračune , 1-obračun 1 , 2-obračun 2, ... )" GET cSatiVO VALID cSatiVO $ "S123456789" PICT "@!"
       READ
       ESC_BCR
    ENDIF

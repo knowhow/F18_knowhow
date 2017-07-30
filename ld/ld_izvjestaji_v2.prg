@@ -30,18 +30,18 @@ FUNCTION ld_pregled_primanja_za_period()
    cKolona := Space( 20 )
    Box(, 6, 75 )
    cMjesecOd := cMjesecDo := ld_tekuci_mjesec()
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Mjesec od: "  GET  cMjesecOd  PICT "99"
-   @ get_x_koord() + 2, Col() + 2 SAY "do" GET cMjesecDO  PICT "99"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Mjesec od: "  GET  cMjesecOd  PICT "99"
+   @ box_x_koord() + 2, Col() + 2 SAY "do" GET cMjesecDO  PICT "99"
    IF ld_vise_obracuna()
-      @ get_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Tip primanja: "  GET  cTip
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Prikaz dodatnu kolonu: "  GET  cDod PICT "@!" VALID cdod $ "DN"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Tip primanja: "  GET  cTip
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz dodatnu kolonu: "  GET  cDod PICT "@!" VALID cdod $ "DN"
    read; clvbox(); ESC_BCR
    IF cDod == "D"
-      @ get_x_koord() + 6, get_y_koord() + 2 SAY "Naziv kolone:" GET cKolona
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Naziv kolone:" GET cKolona
       READ
    ENDIF
    fRacunaj := .F.
@@ -174,7 +174,7 @@ FUNCTION ld_pregled_primanja_za_period()
 
 FUNCTION TekRec()
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY RecNo()
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY RecNo()
 
    RETURN NIL
 

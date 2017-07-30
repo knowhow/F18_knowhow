@@ -54,8 +54,8 @@ FUNCTION ld_naziv_mjeseca( nMjesec, nGodina, lShort, lGodina )
 STATIC FUNCTION TekRec2()
 
    nSlog++
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Obuhvaceno: " + Str( 0 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Obuhvaceno: " + Str( 0 )
 
    RETURN ( NIL )
 
@@ -138,13 +138,13 @@ FUNCTION ld_specifikacija_po_mjesecima()
 
    Box(, 7, 77 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ VALID Empty( cIdRj ) .OR. P_LD_RJ( @cIdRj )
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Radnik (prazno-svi radnici): "  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Prikazati primanja (N-neto,V-van neta,S-sva primanja,0-nista)" GET cSvaPrim PICT "@!" VALID cSvaPrim $ "NVS0"
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Ostala primanja za prikaz (navesti sifre npr. 25;26;27;):" GET qqOstPrim PICT "@S15"
-   @ get_x_koord() + 6, get_y_koord() + 2 SAY "Prikazati samo aktivna primanja ? (D/N)" GET cSamoAktivna PICT "@!" VALID cSamoAktivna $ "DN"
-   @ get_x_koord() + 7, get_y_koord() + 2 SAY "Prikazati kolonu 'ukupno' ? (D/N)" GET cPrikKolUk PICT "@!" VALID cPrikKolUk $ "DN"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ VALID Empty( cIdRj ) .OR. P_LD_RJ( @cIdRj )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Radnik (prazno-svi radnici): "  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prikazati primanja (N-neto,V-van neta,S-sva primanja,0-nista)" GET cSvaPrim PICT "@!" VALID cSvaPrim $ "NVS0"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Ostala primanja za prikaz (navesti sifre npr. 25;26;27;):" GET qqOstPrim PICT "@S15"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prikazati samo aktivna primanja ? (D/N)" GET cSamoAktivna PICT "@!" VALID cSamoAktivna $ "DN"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prikazati kolonu 'ukupno' ? (D/N)" GET cPrikKolUk PICT "@!" VALID cPrikKolUk $ "DN"
 
    READ
    ESC_BCR

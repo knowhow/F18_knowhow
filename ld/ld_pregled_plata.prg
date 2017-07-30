@@ -66,25 +66,25 @@ FUNCTION ld_pregled_plata()
    cKontrola := "N"
 
    Box(, 17, 75 )
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY8 "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY8 "Mjesec: "  GET  nMjesec  PICT "99"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Radna jedinica (prazno-sve): "  GET cIdRJ
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Mjesec: "  GET  nMjesec  PICT "99"
    IF ld_vise_obracuna()
-      @ get_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY8 "Vrsta posla (prazno-svi): "  GET  cVPosla
-   @ get_x_koord() + 7, get_y_koord() + 2 SAY8 "Šifra primanja minuli: "  GET  cIdMinuli PICT "@!"
-   @ get_x_koord() + 8, get_y_koord() + 2 SAY8 "Sortirati po (1-šifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
-   @ get_x_koord() + 9, get_y_koord() + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto VALID cPrBruto $ "DN" PICT "@!"
-   @ get_x_koord() + 11, get_y_koord() + 2 SAY8 "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Vrsta posla (prazno-svi): "  GET  cVPosla
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Šifra primanja minuli: "  GET  cIdMinuli PICT "@!"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Sortirati po (1-šifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto VALID cPrBruto $ "DN" PICT "@!"
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY8 "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
 
 
-   @ get_x_koord() + 13, get_y_koord() + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
-   @ get_x_koord() + 14, get_y_koord() + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
+   @ box_x_koord() + 13, box_y_koord() + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
+   @ box_x_koord() + 14, box_y_koord() + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
 
-   @ get_x_koord() + 16, get_y_koord() + 2 SAY8 "Iz pregleda izbaciti slijedeća primanja :" GET hParams[ "primanja_out" ] PICT  "@S20"
+   @ box_x_koord() + 16, box_y_koord() + 2 SAY8 "Iz pregleda izbaciti slijedeća primanja :" GET hParams[ "primanja_out" ] PICT  "@S20"
    READ
 
    clvbox()

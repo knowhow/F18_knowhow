@@ -18,10 +18,7 @@
 
 FUNCTION fakt_uplate()
 
-   o_fakt_doks_dbf()
 
-   // "6","IdFirma+idpartner+idtipdok", "DOKS"
-   SET ORDER TO TAG "6"
 
    //o_partner()
    O_UPL
@@ -85,7 +82,7 @@ FUNCTION fakt_uplate()
       @ m_x + 4, m_y + 1 SAY REPL( "=", 70 )
 
       SEEK cIdPartner // uplate
-      my_browse( "EvUpl", f18_max_rows() -5, f18_max_cols() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
+      my_browse( "EvUpl", f18_max_rows() -5, f18_max_cols() -10, {|| fakt_ed_uplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
          .F., NIL, 1, NIL, 4, 3, NIL, {| nSkip| fakt_uplate_skip_block( nSkip ) } )
 
    ENDDO
@@ -97,7 +94,7 @@ FUNCTION fakt_uplate()
 
 
 
-FUNCTION EdUplata()
+STATIC FUNCTION fakt_ed_uplata()
 
    LOCAL fK1 := .F.
    LOCAL nRet := DE_CONT
@@ -170,8 +167,7 @@ FUNCTION UkZaduz()
 
    LOCAL nArr := Select(), nVrati := 0
 
-   SELECT ( F_FAKT_DOKS )
-   SEEK self_organizacija_id() + cIdPartner
+   seek_fakt_doks_6( self_organizacija_id(), cIdPartner )  // "6","IdFirma+idpartner+idtipdok"
 
    DO WHILE !Eof() .AND. idpartner == cIdPartner
       IF datdok >= dDatOd .AND. datdok <= dDatDo .AND. &aUslTD

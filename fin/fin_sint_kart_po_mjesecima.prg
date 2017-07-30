@@ -68,9 +68,9 @@ FUNCTION fin_sint_kart_po_mjesecima()
    cIdFirma := Left( cIdFirma, 2 )
    qqKonto := Trim( qqKonto )
 
-   IF Params2()
+   //IF Params2()
       WPar( "c1", @cIdFirma ); WPar( "c2", @qqKonto ); WPar( "d1", @dDatOd ); WPar( "d2", @dDatDo )
-   ENDIF
+   //ENDIF
    SELECT params
    USE
 

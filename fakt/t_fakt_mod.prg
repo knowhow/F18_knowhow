@@ -524,14 +524,14 @@ METHOD set_module_gvars()
    cSekcija := "BarKod"; cVar := "NazRTM"
    my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, 'barkod' ), SIFPATH )
 
-   PUBLIC glDistrib := .F.
+   //PUBLIC glDistrib := .F.
    PUBLIC gPovDob := "0"
 
    PUBLIC gUVarPP := "M"
 
    gModul := "FAKT"
 
-   gRobaBlock := {| Ch | FaRobaBlock( Ch ) }
+   //gRobaBlock := {| Ch | FaRobaBlock( Ch ) }
    gPartnBlock := NIL
 
    PUBLIC glCij13Mpc := ( my_get_from_ini( "FAKT", "Cijena13MPC", "D", KUMPATH ) == "D" )

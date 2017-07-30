@@ -72,7 +72,7 @@ FUNCTION fa_pripr9_key_handler()
    DO CASE
    CASE Ch == K_CTRL_T
       // brisanje dokumenta iz pripr9
-      bris_smece( idfirma, idtipdok, brdok )
+      fakt_brisi_smece( idfirma, idtipdok, brdok )
       RETURN DE_REFRESH
    CASE Ch == k_ctrl_f9()
       // brisanje kompletnog pripr9
@@ -156,14 +156,14 @@ STATIC FUNCTION _get_partner( cIdPartner )
 // -------------------------------------------------
 // brisi dokument iz smeca
 // -------------------------------------------------
-FUNCTION bris_smece( cIdF, cIdTipDok, cBrDok )
+FUNCTION fakt_brisi_smece( cIdF, cIdTipDok, cBrDok )
 
    IF Pitanje(, "Sigurno zelite izbrisati dokument?", "N" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT fakt_pripr9
-   SEEK cIdF + cIdTipDok + cBrDok
+   SEEK cIdF + cIdTipDok + cBrDok // fakt_pripr9
    my_flock()
    DO WHILE !Eof() .AND. cIdF == IdFirma .AND. cIdTipDok == Idtipdok .AND. cBrDok == BrDok
       SKIP 1
@@ -175,7 +175,7 @@ FUNCTION bris_smece( cIdF, cIdTipDok, cBrDok )
    my_unlock()
    my_dbf_pack()
 
-   RETURN
+   RETURN .T.
 
 // -------------------------------------------
 // brisi sve iz smeca
@@ -223,14 +223,12 @@ FUNCTION azuriraj_smece( lSilent )
       cIdTipDok := idtipdok
       cBrDok := brdok
 
-      DO WHILE !Eof() .AND. idfirma == cIdFirma ;
-            .AND. idtipdok == cIdtipdok ;
-            .AND. brdok == cBrDok
+      DO WHILE !Eof() .AND. idfirma == cIdFirma .AND. idtipdok == cIdtipdok  .AND. brdok == cBrDok
          SKIP
       ENDDO
 
       SELECT fakt_pripr9
-      SEEK cIdFirma + cIdtipdok + cBrDok
+      SEEK cIdFirma + cIdtipdok + cBrDok // fakt_pripr9
 
       IF Found()
          // ima vec u smecu !
@@ -333,16 +331,15 @@ FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
 
       IF !lSilent
          my_close_all_dbf()
-         RETURN
+         RETURN .T.
       ELSE
-         RETURN
+         RETURN .T.
       ENDIF
 
    ENDIF
 
    SELECT fakt_pripr9
-
-   HSEEK cIdFirma + cIdtipdok + cBrDok
+   HSEEK cIdFirma + cIdtipdok + cBrDok // fakt_pripr9
 
    MsgO( "PRIPREMA" )
 
@@ -358,7 +355,7 @@ FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
    ENDDO
 
    SELECT fakt_pripr9
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   SEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr9
    my_flock()
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdtipdok == Idtipdok .AND. cBrDok == BrDok
       SKIP 1
@@ -375,10 +372,10 @@ FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
 
    IF !lSilent
       my_close_all_dbf()
-      RETURN
+      RETURN .T.
    ENDIF
 
    O_FAKT_PRIPR9
    SELECT fakt_pripr9
 
-   RETURN
+   RETURN .T.

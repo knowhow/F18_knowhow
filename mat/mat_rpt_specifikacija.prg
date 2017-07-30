@@ -79,7 +79,7 @@ FUNCTION PoMjeTros()
    ENDDO
    BoxC()
 
-   Params2()
+
    qqRoba1 := Trim( qqRoba1 ); qqRoba2 := Trim( qqRoba2 ); qqRoba3 := Trim( qqRoba3 )
    qqRoba4 := Trim( qqRoba4 ); qqRoba5 := Trim( qqRoba5 ); qqRoba6 := Trim( qqRoba6 )
    qqIDVN := Trim( qqIDVN )
@@ -204,7 +204,7 @@ FUNCTION CArDob()
    ENDDO
    BoxC()
 
-   Params2()
+
    qqIDVN := Trim( qqIDVN )
 
    WPar( "d1", dDatOd ) ; WPar( "d2", dDatDo )

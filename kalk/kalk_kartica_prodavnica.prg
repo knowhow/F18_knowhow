@@ -41,12 +41,12 @@ FUNCTION kalk_kartica_prodavnica()
 
    _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
-   //o_tarifa()
-//   o_sifk()
-//   o_sifv()
-  // o_roba()
-   //o_konto()
-   //o_partner()
+   // o_tarifa()
+// o_sifk()
+// o_sifv()
+   // o_roba()
+   // o_konto()
+   // o_partner()
 
    cPredh := "N"
    dDatOd := Date()
@@ -134,7 +134,7 @@ FUNCTION kalk_kartica_prodavnica()
    PRIVATE cFilt := ".t."
 
    IF !( cFilt == ".t." )
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
    ENDIF
 
    GO TOP
@@ -340,7 +340,7 @@ FUNCTION kalk_kartica_prodavnica()
             IF field->datdok >= dDatod
                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
                nCol1 := PCol() + 1
-               @ PRow(), PCol() + 1 SAY say_kolicina( -( field->kolicina ) )
+               @ PRow(), PCol() + 1 SAY say_kolicina( - ( field->kolicina ) )
                @ PRow(), PCol() + 1 SAY say_kolicina( 0 )
                @ PRow(), PCol() + 1 SAY say_kolicina( nUlaz - nIzlaz )
                nNc := field->nc
@@ -584,17 +584,16 @@ FUNCTION naprometniji_artikli_prodavnica()
       ENDIF
    ENDDO
 
-   IF Params2()
-      WPar( "c2", qqKonto )
-      WPar( "c5", qqRoba )
-      WPar( "d1", dDat0 )
-      WPar( "d2", dDat1 )
-   ENDIF
+
+   WPar( "c2", qqKonto )
+   WPar( "c5", qqRoba )
+   WPar( "d1", dDat0 )
+   WPar( "d2", dDat1 )
 
    SELECT params
    USE
 
-  // o_roba()
+   // o_roba()
 
    find_kalk_za_period( self_organizacija_id(), NIL, NIL, NIL, dDat0, dDat1, "idroba,idvd" )
 
@@ -624,32 +623,32 @@ FUNCTION naprometniji_artikli_prodavnica()
          AAdd( aTopI, { cIdRoba, nIznos } )
          nMinI := Min( nIznos, nMinI )
       ELSEIF nIznos > nMinI
-         nPom := AScan( aTopI, {| x| x[ 2 ] <= nMinI } )
+         nPom := AScan( aTopI, {| x | x[ 2 ] <= nMinI } )
          IF nPom < 1 .OR. nPom > Len( aTopI )
             MsgBeep( "nPom=" + Str( nPom ) + " ?!" )
          ENDIF
          aTopI[ nPom ] := { cIdRoba, nIznos }
          nMinI := nIznos
-         AEval( aTopI, {| x| nMinI := Min( nMinI, x[ 2 ] ) } )
+         AEval( aTopI, {| x | nMinI := Min( nMinI, x[ 2 ] ) } )
       ENDIF
       IF Len( aTopK ) < nTop
          AAdd( aTopK, { cIdRoba, nKolicina } )
          nMinK := Min( nKolicina, nMinK )
       ELSEIF nKolicina > nMinK
-         nPom := AScan( aTopK, {| x| x[ 2 ] <= nMinK } )
+         nPom := AScan( aTopK, {| x | x[ 2 ] <= nMinK } )
          IF nPom < 1 .OR. nPom > Len( aTopK )
             MsgBeep( "nPom=" + Str( nPom ) + " ?!" )
          ENDIF
          aTopK[ nPom ] := { cIdRoba, nKolicina }
          nMinK := nKolicina
-         AEval( aTopK, {| x| nMinK := Min( nMinK, x[ 2 ] ) } )
+         AEval( aTopK, {| x | nMinK := Min( nMinK, x[ 2 ] ) } )
       ENDIF
    ENDDO
 
    MsgC()
 
-   ASort( aTopI,,, {| x, y| x[ 2 ] > y[ 2 ] } )
-   ASort( aTopK,,, {| x, y| x[ 2 ] > y[ 2 ] } )
+   ASort( aTopI,,, {| x, y | x[ 2 ] > y[ 2 ] } )
+   ASort( aTopK,,, {| x, y | x[ 2 ] > y[ 2 ] } )
 
 
 

@@ -52,35 +52,18 @@ FUNCTION fakt_lager_lista()
       nRbrPst := 0
       cBrPSt := "00001   "
       Box(, 2, 60 )
-      @ m_x + 1, m_y + 2 SAY "Generacija poc. stanja  - broj dokumenta 00 -" GET cBrPSt
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Generacija poc. stanja  - broj dokumenta 00 -" GET cBrPSt
       READ
       BoxC()
    ENDIF
 
    IF lPocStanje
-    //  PRIVATE fId_J := .F.
-      //IF my_get_from_ini( "SifRoba", "ID_J", "N" ) == "D"
-      //   fId_J := .T.
-    //  ENDIF
+      // PRIVATE fId_J := .F.
+      // IF my_get_from_ini( "SifRoba", "ID_J", "N" ) == "D"
+      // fId_J := .T.
+      // ENDIF
    ENDIF
 
-   o_fakt_doks_dbf()
-   //o_tarifa()
-  // select_o_partner()
-   //o_sifk()
-   //o_sifv()
-   //select_o_roba()
-   //o_rj()
-
-  // IF fId_J
-  //    o_fakt_dbf()
-      // idroba+dtos(datDok)
-    //  SET ORDER TO TAG "3J"
-   //ELSE
-      o_fakt_dbf()
-      // idroba+dtos(datDok)
-      SET ORDER TO TAG "3"
-   //ENDIF
 
    lSaberikol := .F.
    nKU := nKI := 0
@@ -96,7 +79,6 @@ FUNCTION fakt_lager_lista()
    PRIVATE qqTipdok := "  "
 
    Box(, 20, 66 )
-
 
    o_params()
    PRIVATE cSection := "5"
@@ -130,73 +112,73 @@ FUNCTION fakt_lager_lista()
    cK1 := cK2 := Space( 4 )
 
    DO WHILE .T.
-      fakt_getlist_rj_read( m_x + 1, m_y + 2, @cIdFirma )
+      fakt_getlist_rj_read( box_x_koord() + 1, box_y_koord() + 2, @cIdFirma )
 
-      //IF gNW $ "DR"
-      //   @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
-      //ELSE
-      //   @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      //ENDIF
-      @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
-      @ m_x + 3, m_y + 2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   PICT "@!"
-      @ m_x + 4, m_y + 2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
-      @ m_x + 5, m_y + 2 SAY "Od datuma "  GET dDatOd
-      @ m_x + 5, Col() + 1 SAY "do"  GET dDatDo
+      // IF gNW $ "DR"
+      // @ box_x_koord() + 1, box_y_koord() + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      // ELSE
+      // @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      // ENDIF
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   PICT "@!"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Od datuma "  GET dDatOd
+      @ box_x_koord() + 5, Col() + 1 SAY "do"  GET dDatDo
 
       IF lBezUlaza
          cRR := "N"
       ELSE
-         @ m_x + 6, m_y + 2 SAY "Prikaz rezervacija, reversa (D)"
-         @ m_x + 7, m_y + 2 SAY "Prikaz bez rezervacija, reversa (N)"
-         @ m_x + 8, m_y + 2 SAY "Prikaz fakturisanog na osnovu otpremnica (F) "  GET cRR   PICT "@!" VALID cRR $ "DNF"
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prikaz rezervacija, reversa (D)"
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prikaz bez rezervacija, reversa (N)"
+         @ box_x_koord() + 8, box_y_koord() + 2 SAY "Prikaz fakturisanog na osnovu otpremnica (F) "  GET cRR   PICT "@!" VALID cRR $ "DNF"
       ENDIF
 
-      @ m_x + 10, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    "  GET cSaldo0 PICT "@!" VALID cSaldo0 $ "DN"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    "  GET cSaldo0 PICT "@!" VALID cSaldo0 $ "DN"
       IF gVarC $ "12"
-         @ m_x + 11, m_y + 2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
+         @ box_x_koord() + 11, box_y_koord() + 2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
       ENDIF
-      @ m_x + 12, m_y + 2 SAY "Napraviti prored (D/N)    "  GET cProred PICT "@!" VALID cProred $ "DN"
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY "Napraviti prored (D/N)    "  GET cProred PICT "@!" VALID cProred $ "DN"
       IF !lPocStanje
-         @ m_x + 13, m_y + 2 SAY "Prikaz grupacija, grupa ima (99-ne prikazivati)" GET nGrZn PICT "99"
-         @ m_x + 13, m_y + 53 SAY "znakova"
+         @ box_x_koord() + 13, box_y_koord() + 2 SAY "Prikaz grupacija, grupa ima (99-ne prikazivati)" GET nGrZn PICT "99"
+         @ box_x_koord() + 13, box_y_koord() + 53 SAY "znakova"
       ENDIF
       IF fakt->( FieldPos( "K1" ) ) <> 0 .AND. gDK1 == "D"
-         @ m_x + 14, m_y + 2 SAY "K1" GET  cK1 PICT "@!"
-         @ m_x + 14, m_y + 15 SAY "K2" GET  cK2 PICT "@!"
+         @ box_x_koord() + 14, box_y_koord() + 2 SAY "K1" GET  cK1 PICT "@!"
+         @ box_x_koord() + 14, box_y_koord() + 15 SAY "K2" GET  cK2 PICT "@!"
       ENDIF
 
       cPopis := "N"
-      @ m_x + 15, m_y + 2 SAY "Prikazati obrazac za popis D/N" GET  cPopis PICT "@!" VALID cPopis $ "DN"
+      @ box_x_koord() + 15, box_y_koord() + 2 SAY "Prikazati obrazac za popis D/N" GET  cPopis PICT "@!" VALID cPopis $ "DN"
 
       cRealizacija := "N"
       IF !lBezUlaza
-         @ Row() + 1, m_y + 2 SAY "Prikazati realizaciju " GET  cRealizacija PICT "@!" VALID cRealizacija $ "DN"
+         @ Row() + 1, box_y_koord() + 2 SAY "Prikazati realizaciju " GET  cRealizacija PICT "@!" VALID cRealizacija $ "DN"
       ENDIF
 
       cSintetika := "N"
 
       IF !lPocStanje .AND. cSintetika == "D"
-         @ Row() + 1, m_y + 2 SAY "Sinteticki prikaz? (D/N) " GET  cSintetika PICT "@!" VALID cSintetika $ "DN"
+         @ Row() + 1, box_y_koord() + 2 SAY "Sinteticki prikaz? (D/N) " GET  cSintetika PICT "@!" VALID cSintetika $ "DN"
       ELSE
          cSintetika := "N"
       ENDIF
 
       IF !lBezUlaza
-         @ Row() + 1, m_y + 2 SAY "Prikaz kolicina (U-samo ulaz, I-samo izlaz, S-sve)" GET cUI VALID cUI $ "UIS" PICT "@!"
+         @ Row() + 1, box_y_koord() + 2 SAY "Prikaz kolicina (U-samo ulaz, I-samo izlaz, S-sve)" GET cUI VALID cUI $ "UIS" PICT "@!"
       ELSE
          cUI := "S"
       ENDIF
 
-      @ Row() + 1, m_y + 2 SAY "Prikaz stanja po tarifama? (D/N)" GET cPoTar VALID cPoTar $ "DN" PICT "@!"
+      @ Row() + 1, box_y_koord() + 2 SAY "Prikaz stanja po tarifama? (D/N)" GET cPoTar VALID cPoTar $ "DN" PICT "@!"
 
       READ
 
       ESC_BCR
-    //  IF fID_J
-      //   aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
-    //  ELSE
-         aUsl1 := Parsiraj( qqRoba, "IdRoba" )
-    //  ENDIF
+      // IF fID_J
+      // aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
+      // ELSE
+      aUsl1 := Parsiraj( qqRoba, "IdRoba" )
+      // ENDIF
 
       IF aUsl1 <> NIL
          EXIT
@@ -246,7 +228,6 @@ FUNCTION fakt_lager_lista()
       fSMark := .T.
    ENDIF
 
-   SELECT FAKT
 
    PRIVATE cFilt := ".t."
 
@@ -258,12 +239,13 @@ FUNCTION fakt_lager_lista()
       cFilt += ".and. DatDok>=" + dbf_quote( dDatOd ) + ".and. DatDok<=" + dbf_quote( dDatDo )
    ENDIF
 
+   find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "3" )
+
    IF cFilt == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
    ENDIF
-
    GO TOP
    EOF CRET
 
@@ -291,19 +273,19 @@ FUNCTION fakt_lager_lista()
    IF cSintetika == "D"
       bWhile1 := {|| !Eof() .AND. Left( cIdroba, gnDS ) == Left( IdRoba, gnDS )  }
    ELSE
-    //  IF fId_J
-      //   bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba_J + IdRoba }
-    //  ELSE
-         bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba }
-    //  ENDIF
+      // IF fId_J
+      // bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba_J + IdRoba }
+      // ELSE
+      bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba }
+      // ENDIF
    ENDIF
 
    DO WHILE !Eof()
-      //IF fID_J
-        // cIdRoba := IdRoba_J + IdRoba
-      //ELSE
-         cIdRoba := IdRoba
-      //ENDIF
+      // IF fID_J
+      // cIdRoba := IdRoba_J + IdRoba
+      // ELSE
+      cIdRoba := IdRoba
+      // ENDIF
 
       IF cSintetika == "D"
          fakt_set_pozicija_sif_roba( cIdRoba, .T. ); SELECT FAKT
@@ -319,11 +301,11 @@ FUNCTION fakt_lager_lista()
          bWhile1 := {|| !Eof() .AND. ;
             Left( cIdroba, gnDS ) == Left( IdRoba, gnDS ) }
       ELSE
-         //IF fId_J
-        //    bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba_J + IdRoba  }
-        // ELSE
-            bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba }
-        // ENDIF
+         // IF fId_J
+         // bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba_J + IdRoba  }
+         // ELSE
+         bWhile1 := {|| !Eof() .AND. cIdRoba == IdRoba }
+         // ENDIF
       ENDIF
 
       DO WHILE Eval( bWhile1 )
@@ -343,8 +325,7 @@ FUNCTION fakt_lager_lista()
          ENDIF
 
          IF !Empty( qqPartn )
-            SELECT fakt_doks
-            HSEEK fakt->( IdFirma + idtipdok + brdok )
+            seek_fakt_doks( fakt->IdFirma, fakt->idtipdok, fakt->brdok )
             SELECT fakt
 
             IF !( fakt_doks->partner = qqPartn )
@@ -406,12 +387,12 @@ FUNCTION fakt_lager_lista()
 
       IF !Empty( cIdRoba )
          IF !( cSaldo0 == "N" .AND. ( nUl - nIzl ) == 0 )
-            //IF fID_J
-              // fakt_set_pozicija_sif_roba( SubStr( cIdRoba, 11 ), ( cSintetika == "D" ) )
-               // desni dio sifre je interna sifra
-          //  ELSE
-               fakt_set_pozicija_sif_roba( cIdRoba, ( cSintetika == "D" ) )
-          //  ENDIF
+            // IF fID_J
+            // fakt_set_pozicija_sif_roba( SubStr( cIdRoba, 11 ), ( cSintetika == "D" ) )
+            // desni dio sifre je interna sifra
+            // ELSE
+            fakt_set_pozicija_sif_roba( cIdRoba, ( cSintetika == "D" ) )
+            // ENDIF
 
             IF nGrZn <> 99 .AND. ( Empty( cLastIdRoba ) .OR. Left( cLastIdRoba, nGrZn ) <> Left( cIdRoba, nGrZn ) )
 
@@ -464,7 +445,7 @@ FUNCTION fakt_lager_lista()
             IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
                _cijena := roba->vpc2
             ELSE
-               _cijena := if ( !Empty( cIdFirma ), fakt_mpc_iz_sifrarnika(), roba->vpc )
+               _cijena := IF ( !Empty( cIdFirma ), fakt_mpc_iz_sifrarnika(), roba->vpc )
             ENDIF
             IF gVarC == "4"
                _cijena2 := roba->mpc
@@ -487,10 +468,10 @@ FUNCTION fakt_lager_lista()
                      Rbr WITH Rednibroj( ++nRbrPst ), ;
                      kolicina WITH nPrenesi
 
-                //  IF fId_J
-                  //   REPLACE idroba_J WITH Left( cIdRoba, 10 ), ;
-                  //      idroba WITH SubStr( cIdroba, 11 )
-                  //ENDIF
+                  // IF fId_J
+                  // REPLACE idroba_J WITH Left( cIdRoba, 10 ), ;
+                  // idroba WITH SubStr( cIdroba, 11 )
+                  // ENDIF
                   REPLACE txt   WITH Chr( 16 ) + "" + Chr( 17 ) + ;
                      Chr( 16 ) + "" + Chr( 17 ) + Chr( 16 ) + "POCETNO STANJE" + Chr( 17 ) + ;
                      Chr( 16 ) + "" + Chr( 17 ) + Chr( 16 ) + "" + Chr( 17 )
@@ -501,7 +482,7 @@ FUNCTION fakt_lager_lista()
 
             IF cPoTar == "D"
                nMpv := ( nUl - nIzl ) * roba->mpc
-               nPom := AScan( aPorezi, {| x| x[ 1 ] == roba->idTarifa } )
+               nPom := AScan( aPorezi, {| x | x[ 1 ] == roba->idTarifa } )
                IF nPom > 0
                   aPorezi[ nPom, 2 ] := aPorezi[ nPom, 2 ] + nMpv
                ELSE
@@ -576,11 +557,11 @@ FUNCTION fakt_lager_lista()
          @ PRow(), nCol1 SAY nKU - nKI PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
       ELSE
          IF cUI $ "US"
-            @ PRow(), nCol1 - ( Len( fakt_pic_iznos() ) + 1 ) * 4 -2  SAY nKU  PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
+            @ PRow(), nCol1 - ( Len( fakt_pic_iznos() ) + 1 ) * 4 - 2  SAY nKU  PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
          ENDIF
          IF cUI $ "IS"
             IF cUI == "I"
-               @ PRow(), nCol1 - ( Len( fakt_pic_iznos() ) + 1 ) * 4 -2 SAY nKI  PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
+               @ PRow(), nCol1 - ( Len( fakt_pic_iznos() ) + 1 ) * 4 - 2 SAY nKI  PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
             ELSE
                @ PRow(), PCol() + 1 SAY nKI  PICTURE iif( cPopis == "N", fakt_pic_kolicina(), Replicate( "_", Len( fakt_pic_kolicina() ) ) )
             ENDIF
@@ -605,7 +586,7 @@ FUNCTION fakt_lager_lista()
       z1 := "Tarifa" + PadC( "PPP%", Len( gPicProc ) + 1 ) + PadC( "PPU%", Len( gPicProc ) + 1 ) + PadC( "PP%", Len( gPicProc ) + 1 ) + PadC( "MPV", Len( fakt_pic_iznos() ) + 1 ) + PadC( "PPP", Len( fakt_pic_iznos() ) + 1 ) + PadC( "PPU", Len( fakt_pic_iznos() ) + 1 ) + PadC( "PP", Len( fakt_pic_iznos() ) + 1 ) + PadC( "MPV+por", Len( fakt_pic_iznos() ) + 1 )
       ? z1
       ? m
-      ASort( aPorezi, {| x, y| x[ 1 ] < y[ 1 ] } )
+      ASort( aPorezi, {| x, y | x[ 1 ] < y[ 1 ] } )
       nUMPV := nUMPV0 := nUPor1 := nUPor2 := nUPor3 := 0
       FOR i := 1 TO Len( aPorezi )
          IF check_nova_strana( bZagl, oPDF )
@@ -736,14 +717,15 @@ FUNCTION fakt_zagl_lager_lista()
 // -----------------------------------------------------------------
 // uslovi izvjestaja lager lista
 // -----------------------------------------------------------------
-FUNCTION fakt_lager_lista_vars( param, lPocetnoStanje )
+FUNCTION fakt_lager_lista_vars( hParams, lPocetnoStanje )
 
    LOCAL _ret := 1
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _id_firma, _usl_roba, _usl_partn, _usl_tip_dok
    LOCAL _date_from, _date_to
    LOCAL _stavke_nula, _tip_prikaza
    LOCAL _date_ps
+   LOCAL GetList := {}
 
    IF lPocetnoStanje == NIL
       // nije pocetno stanje
@@ -754,8 +736,8 @@ FUNCTION fakt_lager_lista_vars( param, lPocetnoStanje )
    ELSE
       // pocetno stanje je u pitanju
       _date_ps := CToD( "01.01." + AllTrim( Str( Year( Date() ) ) ) )
-      _date_from := CToD( "01.01." + AllTrim( Str( Year( Date() ) -1 ) ) )
-      _date_to := CToD( "31.12." + AllTrim( Str( Year( Date() ) -1 ) ) )
+      _date_from := CToD( "01.01." + AllTrim( Str( Year( Date() ) - 1 ) ) )
+      _date_to := CToD( "31.12." + AllTrim( Str( Year( Date() ) - 1 ) ) )
    ENDIF
 
    _stavke_nula := "N"
@@ -767,31 +749,26 @@ FUNCTION fakt_lager_lista_vars( param, lPocetnoStanje )
 
    Box(, 10, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "RJ (prazno-sve): " GET _id_firma VALID {|| Empty( _id_firma ), P_RJ( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "RJ (prazno-sve): " GET _id_firma VALID {|| Empty( _id_firma ), P_RJ( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Datum od:" GET _date_from
-   @ m_x + _x, Col() + 1 SAY "do:" GET _date_to
-
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Roba   " GET _usl_roba PICT "@S40"
-
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Naziv partnera (prazno - svi)" GET _usl_partn PICT "@S40"
-
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Tip dokumenta (prazno - svi)" GET _usl_tip_dok PICT "@S40"
-
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    " GET _stavke_nula PICT "@!" VALID _stavke_nula $ "DN"
-
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Prikaz količina ( U-samo ulaz, I-samo izlaz, S-sve )" GET _tip_prikaza VALID _tip_prikaza $ "UIS" PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datum od:" GET _date_from
+   @ box_x_koord() + nX, Col() + 1 SAY "do:" GET _date_to
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Roba   " GET _usl_roba PICT "@S40"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Naziv partnera (prazno - svi)" GET _usl_partn PICT "@S40"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Tip dokumenta (prazno - svi)" GET _usl_tip_dok PICT "@S40"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    " GET _stavke_nula PICT "@!" VALID _stavke_nula $ "DN"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz količina ( U-samo ulaz, I-samo izlaz, S-sve )" GET _tip_prikaza VALID _tip_prikaza $ "UIS" PICT "@!"
 
    IF lPocetnoStanje
-      ++_x
-      ++_x
-      @ m_x + _x, m_y + 2 SAY8 "Datum početnog stanja:" GET _date_ps
+      ++nX
+      ++nX
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Datum početnog stanja:" GET _date_ps
    ENDIF
 
    READ
@@ -810,15 +787,15 @@ FUNCTION fakt_lager_lista_vars( param, lPocetnoStanje )
    ENDIF
 
    // snimi parametre
-   PARAM[ "datum_od" ] := _date_from
-   PARAM[ "datum_do" ] := _date_to
-   PARAM[ "datum_ps" ] := _date_ps
-   PARAM[ "artikli" ] := _usl_roba
-   PARAM[ "partneri" ] := _usl_partn
-   PARAM[ "dokumenti" ] := _usl_tip_dok
-   PARAM[ "stavke_nula" ] := _stavke_nula
-   PARAM[ "tip_prikaza" ] := _tip_prikaza
-   PARAM[ "id_firma" ] := _id_firma
+   hParams[ "datum_od" ] := _date_from
+   hParams[ "datum_do" ] := _date_to
+   hParams[ "datum_ps" ] := _date_ps
+   hParams[ "artikli" ] := _usl_roba
+   hParams[ "partneri" ] := _usl_partn
+   hParams[ "dokumenti" ] := _usl_tip_dok
+   hParams[ "stavke_nula" ] := _stavke_nula
+   hParams[ "tip_prikaza" ] := _tip_prikaza
+   hParams[ "id_firma" ] := _id_firma
 
    RETURN _ret
 
@@ -826,7 +803,7 @@ FUNCTION fakt_lager_lista_vars( param, lPocetnoStanje )
 // -----------------------------------------------------------------
 // generisanje xml fajla za lager listu
 // -----------------------------------------------------------------
-STATIC FUNCTION lager_lista_xml( table, params )
+STATIC FUNCTION lager_lista_xml( table, hParams )
 
    LOCAL _ret := .T.
    LOCAL _row
@@ -836,8 +813,8 @@ STATIC FUNCTION lager_lista_xml( table, params )
    LOCAL _t_izlaz := 0
    LOCAL _t_stanje := 0
 
-   //o_roba()
-   //o_partner()
+   // o_roba()
+   // o_partner()
 
    // ima li zapisa...
    IF table:LastRec() == 0
@@ -863,9 +840,9 @@ STATIC FUNCTION lager_lista_xml( table, params )
       _ulaz := _row:FieldGet( _row:FieldPos( "ulaz" ) )
       _izlaz := _row:FieldGet( _row:FieldPos( "izlaz" ) )
 
-      IF params[ "tip_prikaza" ] == "U"
+      IF hParams[ "tip_prikaza" ] == "U"
          _izlaz := 0
-      ELSEIF params[ "tip_prikaza" ] == "I"
+      ELSEIF hParams[ "tip_prikaza" ] == "I"
          _ulaz := 0
       ENDIF
 
@@ -883,7 +860,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
       IF roba->tip == "U"
       ENDIF
 
-      IF params[ "stavke_nula" ] == "N" .AND. Round( _stanje, 2 ) == 0
+      IF hParams[ "stavke_nula" ] == "N" .AND. Round( _stanje, 2 ) == 0
          table:Skip()
          LOOP
       ENDIF
@@ -917,14 +894,14 @@ STATIC FUNCTION lager_lista_xml( table, params )
 
 
 
-FUNCTION fakt_lager_lista_sql( param, lPocetnoStanje )
+FUNCTION fakt_lager_lista_sql( hParams, lPocetnoStanje )
 
    LOCAL _table
    LOCAL _tek_database := my_server_params()[ "database" ]
    LOCAL _db_params := my_server_params()
 
-   IF param == NIL
-      IF fakt_lager_lista_vars( @param ) == 0
+   IF hParams == NIL
+      IF fakt_lager_lista_vars( @hParams ) == 0
          RETURN .F.
       ENDIF
    ENDIF
@@ -933,13 +910,13 @@ FUNCTION fakt_lager_lista_sql( param, lPocetnoStanje )
       lPocetnoStanje := .F.
    ENDIF
 
-   _table := fakt_lager_lista_get_data( param, lPocetnoStanje )
+   _table := fakt_lager_lista_get_data( hParams, lPocetnoStanje )
 
    RETURN _table
 
 
 
-STATIC FUNCTION fakt_lager_lista_get_data( params, lPocetnoStanje )
+STATIC FUNCTION fakt_lager_lista_get_data( hParams, lPocetnoStanje )
 
    LOCAL _tek_database := my_server_params()[ "database" ]
    LOCAL _db_params := my_server_params()
@@ -947,13 +924,13 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, lPocetnoStanje )
    LOCAL _date_from, _date_to, _data_ps
    LOCAL _id_firma, _usl_roba, _usl_partn, _usl_tip_dok
 
-   _date_from := params[ "datum_od" ]
-   _date_to := params[ "datum_do" ]
-   _id_firma := params[ "id_firma" ]
-   _usl_roba := params[ "artikli" ]
-   _usl_partn := params[ "partneri" ]
-   _usl_tip_dok := params[ "dokumenti" ]
-   _date_ps := params[ "datum_ps" ]
+   _date_from := hParams[ "datum_od" ]
+   _date_to := hParams[ "datum_do" ]
+   _id_firma := hParams[ "id_firma" ]
+   _usl_roba := hParams[ "artikli" ]
+   _usl_partn := hParams[ "partneri" ]
+   _usl_tip_dok := hParams[ "dokumenti" ]
+   _date_ps := hParams[ "datum_ps" ]
 
    IF lPocetnoStanje == NIL
       lPocetnoStanje := .F.
@@ -961,7 +938,7 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, lPocetnoStanje )
 
    IF lPocetnoStanje
       my_server_logout()
-      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) -4 ) + AllTrim( Str( Year( _date_from ) ) )
+      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_from ) ) )
       my_server_params( _db_params )
       my_server_login( _db_params )
       set_sql_search_path()
@@ -1008,7 +985,7 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, lPocetnoStanje )
 
    IF lPocetnoStanje
       my_server_logout()
-      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) -4 ) + AllTrim( Str( Year( _date_ps ) ) )
+      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )
       my_server_params( _db_params )
       my_server_login( _db_params )
       set_sql_search_path()

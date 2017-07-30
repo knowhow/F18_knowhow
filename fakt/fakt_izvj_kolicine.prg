@@ -204,17 +204,14 @@ FUNCTION spec_kol_partn()
       cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
    ++_x
-
    @ m_x + _x, m_y + 2 SAY "Od datuma " GET dDatOd
    @ m_x + _x, Col() + 1 SAY "do" GET dDatDo
 
    ++_x
-
    @ m_x + _x, m_y + 2 SAY "Distributer   " GET cDistrib VALID p_partner( @cDistrib )
 
    ++_x
    ++_x
-
    @ m_x + _x, m_y + 2 SAY "Definisi artikle za izvjestaj (D/N) ?" GET _define VALID _define $ "DN" PICT "@!"
 
    READ
@@ -243,13 +240,12 @@ FUNCTION spec_kol_partn()
 
    _o_tables()
 
-   SELECT partn
-   SEEK cDistrib
+   select_o_partner( cDistrib )
    cDistNaz := field->naz
 
-   SELECT fakt
-   SET ORDER TO TAG "6"
-   // idfirma + idpartner + idroba + idtipdok + dtos(datum)
+
+
+   find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "6" ) // idfirma + idpartner + idroba + idtipdok + dtos(datum)
 
    // postavi filter
    cFilter := "idtipdok == '10' "
@@ -318,8 +314,7 @@ FUNCTION spec_kol_partn()
             partn->mjesto, ;
             partn->ptt, ;
             partn->adresa, ;
-            _k_br( cPartner ), ;
-            aRoba )
+            _k_br( cPartner ), aRoba )
 
       ENDIF
 
@@ -329,7 +324,7 @@ FUNCTION spec_kol_partn()
 
    open_r_export_table()
 
-   RETURN
+   RETURN .T.
 
 // ----------------------------------------
 // vraca broj kuce partnera
@@ -366,13 +361,13 @@ STATIC FUNCTION _reset_aroba( arr )
 
 STATIC FUNCTION _o_tables()
 
-   o_fakt_dbf()
+   //o_fakt_dbf()
    //o_partner()
-   o_valute()
+   //o_valute()
    //o_rj()
    //o_sifk()
    //o_sifv()
    //o_roba()
-   o_ops()
+   //o_ops()
 
    RETURN .T.

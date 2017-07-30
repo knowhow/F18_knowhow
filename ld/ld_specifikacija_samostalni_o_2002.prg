@@ -112,32 +112,32 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
       Box(, 13, 75 )
 
-      @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " GET qqIdRJ PICT "@!S15"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " GET qqIdRJ PICT "@!S15"
 
-      @ get_x_koord() + 2, get_y_koord() + 2 SAY "Opstina stanov.(prazno-sve): "  GET qqOpSt PICT "@!S20"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Opstina stanov.(prazno-sve): "  GET qqOpSt PICT "@!S20"
 
-      @ get_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun   WHEN HelpObr( .T., cObracun )  VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun   WHEN HelpObr( .T., cObracun )  VALID ValObr( .T., cObracun )
 
-      @ get_x_koord() + 3, get_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
-      @ get_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecOd PICT "99"
-      @ get_x_koord() + 3, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
-      @ get_x_koord() + 3, Col() + 1 SAY "do:" GET nDanDo PICT "99"
-      @ get_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecDo PICT "99"
-      @ get_x_koord() + 3, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
+      @ box_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecOd PICT "99"
+      @ box_x_koord() + 3, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
+      @ box_x_koord() + 3, Col() + 1 SAY "do:" GET nDanDo PICT "99"
+      @ box_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecDo PICT "99"
+      @ box_x_koord() + 3, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
 
-      @ get_x_koord() + 4, get_y_koord() + 2 SAY " Naziv: " GET cFirmNaz
-      @ get_x_koord() + 5, get_y_koord() + 2 SAY "Adresa: " GET cFirmAdresa
-      @ get_x_koord() + 6, get_y_koord() + 2 SAY "Opcina: " GET cFirmOpc
-      @ get_x_koord() + 7, get_y_koord() + 2 SAY "Vrsta djelatnosti: " GET cFirmVD
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY " Naziv: " GET cFirmNaz
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Adresa: " GET cFirmAdresa
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Opcina: " GET cFirmOpc
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Vrsta djelatnosti: " GET cFirmVD
 
-      @ get_x_koord() + 4, get_y_koord() + 52 SAY "ID.broj :" GET cMatBR
-      @ get_x_koord() + 5, get_y_koord() + 52 SAY "Dat.ispl:" GET dDatIspl
+      @ box_x_koord() + 4, box_y_koord() + 52 SAY "ID.broj :" GET cMatBR
+      @ box_x_koord() + 5, box_y_koord() + 52 SAY "Dat.ispl:" GET dDatIspl
 
-      @ get_x_koord() + 8, get_y_koord() + 2 SAY "Poduzetnik:" GET cRadn  VALID P_RADN( @cRadn )
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Poduzetnik:" GET cRadn  VALID P_RADN( @cRadn )
 
-      @ get_x_koord() + 10, get_y_koord() + 2 SAY "          Doprinos pio (iz+na):" GET cDopr1
-      @ get_x_koord() + 11, get_y_koord() + 2 SAY "    Doprinos zdravstvo (iz+na):" GET cDopr2
-      @ get_x_koord() + 12, get_y_koord() + 2 SAY "Doprinos nezaposlenost (iz+na):" GET cDopr3
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "          Doprinos pio (iz+na):" GET cDopr1
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "    Doprinos zdravstvo (iz+na):" GET cDopr2
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY "Doprinos nezaposlenost (iz+na):" GET cDopr3
 
       READ
 

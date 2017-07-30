@@ -38,7 +38,7 @@ FUNCTION fakt_stanje_robe()
 
    _o_tables()
 
-   cIdfirma := self_organizacija_id()
+   cIdFirma := self_organizacija_id()
    qqRoba := ""
    dDatOd := CToD( "" )
    dDatDo := Date()
@@ -71,12 +71,12 @@ FUNCTION fakt_stanje_robe()
    PRIVATE cMink := "N"
 
    DO WHILE .T.
-      //IF gNW $ "DR"
-      //   @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
-      //ELSE
-      //   @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      //ENDIF
-      fakt_getlist_rj_read( m_x +1, m_y + 2, @cIdFirma )
+      // IF gNW $ "DR"
+      // @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      // ELSE
+      // @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      // ENDIF
+      fakt_getlist_rj_read( m_x + 1, m_y + 2, @cIdFirma )
 
 
       @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
@@ -123,8 +123,8 @@ FUNCTION fakt_stanje_robe()
    ENDIF
    // endif
 
-   SELECT PARAMS
-   Params2()
+   o_params()
+
    qqRoba := Trim( qqRoba )
    WPar( "c1", cIdFirma )
    WPar( "c2", qqRoba )
@@ -140,16 +140,9 @@ FUNCTION fakt_stanje_robe()
 
    fSMark := .F.
    IF ( Right( qqRoba, 1 ) == "*" )
-      // izvrsena je markacija robe ..
-      fSMark := .T.
+      fSMark := .T. // izvrsena je markacija robe
    ENDIF
 
-   // ako ne postoji polje datuma isporuke uvijek gledaj dokumente
-   IF fakt_doks->( FieldPos( "DAT_ISP" ) ) = 0
-      cDDokOtpr := "D"
-   ENDIF
-
-   SELECT FAKT
 
    PRIVATE cFilt := ".t."
 
@@ -167,10 +160,12 @@ FUNCTION fakt_stanje_robe()
 
    ENDIF
 
+   seek_fakt( cIdFirma )
+
    IF cFilt == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
    ENDIF
 
    GO TOP
@@ -190,7 +185,7 @@ FUNCTION fakt_stanje_robe()
    nIzn := 0
    nRezerv := nRevers := 0
    qqPartn := Trim( qqPartn )
-   cidfirma := Trim( cidfirma )
+   cIdFirma := Trim( cIdFirma )
 
    nH := 0
 
@@ -198,8 +193,7 @@ FUNCTION fakt_stanje_robe()
 
       // provjeri datumski valutu, otpremnicu
       IF cDDokOtpr == "O"
-         SELECT fakt_doks
-         SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+         seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
          IF fakt_doks->dat_otpr < dDatOd .OR. fakt_doks->dat_otpr > dDatDo
             SELECT fakt
             SKIP
@@ -209,8 +203,7 @@ FUNCTION fakt_stanje_robe()
       ENDIF
 
       IF cDDokOtpr == "V"
-         SELECT fakt_doks
-         SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+         seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
          IF fakt_doks->dat_val < dDatOd .OR. fakt_doks->dat_val > dDatDo
             SELECT fakt
             SKIP
@@ -228,8 +221,7 @@ FUNCTION fakt_stanje_robe()
 
          // provjeri datumski valutu, otpremnicu
          IF cDDokOtpr == "O"
-            SELECT fakt_doks
-            SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+            seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
             IF fakt_doks->dat_otpr < dDatOd .OR. fakt_doks->dat_otpr > dDatDo
                SELECT fakt
                SKIP
@@ -239,8 +231,7 @@ FUNCTION fakt_stanje_robe()
          ENDIF
 
          IF cDDokOtpr == "V"
-            SELECT fakt_doks
-            SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+            seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
             IF fakt_doks->dat_val < dDatOd .OR. fakt_doks->dat_val > dDatDo
                SELECT fakt
                SKIP
@@ -251,17 +242,17 @@ FUNCTION fakt_stanje_robe()
 
          IF !Empty( qqTipDok )
             IF idtipdok <> qqTipDok
-               skip; LOOP
+               skip
+               LOOP
             ENDIF
          ENDIF
 
-         IF !Empty( cidfirma )
-            IF idfirma <> cidfirma; skip; loop; ENDIF
+         IF !Empty( cIdFirma )
+            IF idfirma <> cIdFirma; skip; loop; ENDIF
          ENDIF
 
          IF !Empty( qqPartn )
-            SELECT fakt_doks
-            HSEEK fakt->( IdFirma + idtipdok + brdok )
+            seek_fakt_doks( fakt->IdFirma, fakt->idtipdok, fakt->brdok )
             SELECT fakt
             IF !( fakt_doks->partner = qqPartn )
                SKIP
@@ -343,7 +334,7 @@ FUNCTION fakt_stanje_robe()
          ENDIF
 
          IF ( cMink <> "D" .AND. ( cSaldo0 == "D" .OR. Round( nUl - nIzl, 4 ) <> 0 ) ) .OR. ; // ne prikazuj stavke 0
-            ( cMink == "D" .AND. nMink <> 0 .AND. ( nUl - nIzl - nMink ) < 0 )
+               ( cMink == "D" .AND. nMink <> 0 .AND. ( nUl - nIzl - nMink ) < 0 )
 
             IF cMink == "O" .AND. nMink == 0 .AND. Round( nUl - nIzl, 4 ) == 0
                LOOP
@@ -360,7 +351,7 @@ FUNCTION fakt_stanje_robe()
 
             ? Space( gnLMarg ); ?? Str( ++nRbr, 4 ), cidroba, PadR( ROBA->naz, 40 )
 
-            nCol0 := PCol() -11
+            nCol0 := PCol() - 11
 
             IF fSaberiKol .AND. lBezUlaza
                nCol1 := PCol() + 1
@@ -372,7 +363,7 @@ FUNCTION fakt_stanje_robe()
             IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
                _cijena := roba->vpc2
             ELSE
-               _cijena := if ( !Empty( cIdFirma ), fakt_mpc_iz_sifrarnika(), roba->vpc )
+               _cijena := IF ( !Empty( cIdFirma ), fakt_mpc_iz_sifrarnika(), roba->vpc )
             ENDIF
 
             IF !lBezUlaza
@@ -423,8 +414,6 @@ FUNCTION fakt_stanje_robe()
 
 FUNCTION ZaglSRobe()
 
-
-
    IF nStr > 0
       FF
    ENDIF
@@ -441,7 +430,7 @@ FUNCTION ZaglSRobe()
       P_COND
    ENDIF
 
-   ? Space( gnLMarg ); IspisFirme( cidfirma )
+   ? Space( gnLMarg ); IspisFirme( cIdFirma )
    IF !Empty( qqRoba )
       ? Space( gnLMarg )
       ?? "Roba:", qqRoba
@@ -456,10 +445,10 @@ FUNCTION ZaglSRobe()
       ? Space( gnlmarg ), "- Roba sa osobinom K2:", ck2
    ENDIF
 
-   IF glDistrib .AND. !Empty( cIdDist )
-      ?
-      ? Space( gnlmarg ), "- kontrola distributera:", cIdDist
-   ENDIF
+   //IF glDistrib .AND. !Empty( cIdDist )
+    //  ?
+  //    ? Space( gnlmarg ), "- kontrola distributera:", cIdDist
+   //ENDIF
 
    ?
    IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
@@ -485,14 +474,14 @@ FUNCTION ZaglSRobe()
 
 STATIC FUNCTION _o_tables()
 
-   o_fakt_doks_dbf()
-   //o_tarifa()
-   //o_partner()
-   //o_sifk()
-   //o_sifv()
-   //o_roba()
-   //o_rj()
-   o_fakt_dbf()
-   SET ORDER TO TAG "3"
+   // o_fakt_doks_dbf()
+   // o_tarifa()
+   // o_partner()
+   // o_sifk()
+   // o_sifv()
+   // o_roba()
+   // o_rj()
+   // o_fakt_dbf()
+   //SET ORDER TO TAG "3"
 
    RETURN .T.

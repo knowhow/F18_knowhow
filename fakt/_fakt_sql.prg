@@ -278,6 +278,15 @@ FUNCTION seek_fakt_doks_idpartner( cIdPartner )
    RETURN seek_fakt_doks( NIL, NIL, NIL, cIdPartner, "3" )
 
 
+/*
+   seek_fakt_doks_6( self_organizacija_id(), cIdPartner )
+*/
+
+FUNCTION seek_fakt_doks_6( cIdFirma, cIdPartner, cIdTipDok )
+
+   RETURN seek_fakt_doks( cIdFirma, cIdTipDok, NIL, cIdPartner, "6" )
+   
+
 // ---------------------------------------------------------------------------------------
 
 FUNCTION seek_fakt( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cIdRoba, dDatDokOd, cTag, cAlias )
@@ -481,6 +490,9 @@ FUNCTION h_fakt_doks2_indexes()
 // ----------------------------- fakt_fakt ------------------------------------------
 
 
+/*
+   find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "3" )
+*/
 FUNCTION find_fakt_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy, cWhere, cTag )
 
    LOCAL hParams := hb_Hash()
@@ -647,6 +659,10 @@ FUNCTION fakt_doks_update_fisk_parametri_by_id( cIdFirma, cIdTipDok, cBrDok, hRe
    ENDIF
 
    RETURN .T.
+
+/*
+   find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, "FAKT_DOKS_PREGLED", "idfirma,datdok,idtipdok,brdok" )
+*/
 
 FUNCTION find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, cAlias, cOrderBy, cWhere )
 

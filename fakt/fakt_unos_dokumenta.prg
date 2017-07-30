@@ -1090,7 +1090,7 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
 
    IF ( PadR( _dindem, 3 ) <> PadR( ValDomaca(), 3 ) )
       @ m_x + nX, Col() + 2 SAY "Pr"  GET _convert ;
-         PICT "@!"  VALID v_pretvori( @_convert, _dindem, _datdok, @_cijena )
+         PICT "@!"  VALID fakt_valid_preracun_cijene_u_valutu_dokumenta( @_convert, _dindem, _datdok, @_cijena )
    ENDIF
 
    IF !( _idtipdok $ "12#13" ) .OR. ( _idtipdok == "12" .AND. gV12Por == "D" )

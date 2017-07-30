@@ -94,16 +94,16 @@ FUNCTION fakt_objekat_naz( id_obj )
 // ako se zadaje bez parametara pretpostavlja se da je
 // napravljena tabela relacije fakt_doks->fakt
 // --------------------------------------------------
-FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
+FUNCTION fakt_objekat_id( cIdFirma, id_tipdok, cBrDok )
 
    LOCAL _ret := ""
    LOCAL aMemo
 
    PushWA()
-   IF id_firma == NIL
-      id_firma = fakt->idfirma
+   IF cIdFirma == NIL
+      cIdFirma = fakt->idfirma
       id_tipdok = fakt->idtipdok
-      br_dok = fakt->brdok
+      cBrDok = fakt->brdok
    ENDIF
 
    //SELECT ( F_FAKT )
@@ -112,7 +112,7 @@ FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
     //  o_fakt_dbf()
    //ENDIF
 
-   seek_fakt( id_firma, id_tipdok, br_dok ) // + "  1"
+   seek_fakt( cIdFirma, id_tipdok, cBrDok ) // + "  1"
    IF Eof()
       _ret := Space( 10 )
    ELSE
@@ -154,7 +154,7 @@ FUNCTION fakt_memo_field_to_txt( memo_field )
 
 
 
-FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
+FUNCTION get_fakt_vezni_dokumenti( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL _t_arr := Select()
    LOCAL _ret := ""
@@ -162,9 +162,8 @@ FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
 
 
 
-   seek_fakt( id_firma + tip_dok + br_dok
-
-   IF !Found()
+   seek_fakt( cIdFirma, cIdTipDok, cBrDok )
+   IF Eof()
       RETURN _ret
    ENDIF
 

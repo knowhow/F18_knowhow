@@ -863,7 +863,12 @@ FUNCTION UGenNar()
 
 
 
-FUNCTION v_pretvori( cPretvori, cDinDem, dDatDok, nCijena )
+
+*/
+
+
+
+FUNCTION fakt_valid_preracun_cijene_u_valutu_dokumenta( cPretvori, cDinDem, dDatDok, nCijena )
 
    IF !( cPretvori $ "DN" )
       MsgBeep( "preračunati cijenu u valutu dokumenta " + cDinDem + " ##(D)a ili (N)e ?" )
@@ -879,9 +884,7 @@ FUNCTION v_pretvori( cPretvori, cDinDem, dDatDok, nCijena )
 
    RETURN .T.
 
-*/
-
-
+   
 
 FUNCTION fakt_set_cijena_sif_roba( cIdTipDok, cIdRoba, nCijena, nRabat )
 

@@ -425,7 +425,6 @@ FUNCTION kalk_scan_magacinski_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVar
    LOCAL cSeek
    LOCAL hRec
 
-
    IF Empty( kalk->mKonto ) // nije stavka magacin
       RETURN 0
    ENDIF
@@ -911,13 +910,12 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
    // USE
 
    SELECT params
-   IF Params2()
-      WPar( "c2", s_cUslovIdKonto )
-      WPar( "c3", cPrSort )
-      WPar( "d1", dDatOd )
-      WPar( "d2", dDatDo )
-      WPar( "cR", @s_cUslovIdRoba )
-   ENDIF
+
+   WPar( "c2", s_cUslovIdKonto )
+   WPar( "c3", cPrSort )
+   WPar( "d1", dDatOd )
+   WPar( "d2", dDatDo )
+   WPar( "cR", @s_cUslovIdRoba )
    SELECT params
    USE
 
@@ -1113,7 +1111,6 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
 
    SELECT POBJEKTI
    INDEX ON field->id TAG "1"
-
 
    RETURN .T.
 

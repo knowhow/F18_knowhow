@@ -163,63 +163,63 @@ STATIC FUNCTION _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 
    Box(, nBoxX, nBoxY )
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY PadL( "**** uslovi izvjestaja", ( nBoxY - 1 ) ) COLOR cColor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "**** uslovi izvjestaja", ( nBoxY - 1 ) ) COLOR cColor
 
    nX += 1
 
    // radna jedinica....
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "RJ (prazno-sve):" GET cRj VALID Empty( cRj ) .OR. p_ld_rj( @cRj )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "RJ (prazno-sve):" GET cRj VALID Empty( cRj ) .OR. p_ld_rj( @cRj )
 
    nX += 1
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Mjesec od:" GET cMonthFrom PICT "99" VALID cMonthFrom <= cMonthTo
-   @ get_x_koord() + nX, Col() + 1 SAY "do:" GET cMonthTo PICT "99"  VALID cMonthTo >= cMonthFrom
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Mjesec od:" GET cMonthFrom PICT "99" VALID cMonthFrom <= cMonthTo
+   @ box_x_koord() + nX, Col() + 1 SAY "do:" GET cMonthTo PICT "99"  VALID cMonthTo >= cMonthFrom
 
    nX += 1
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Godina:" GET cYear PICT "9999" VALID !Empty( cYear )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Godina:" GET cYear PICT "9999" VALID !Empty( cYear )
 
-   @ get_x_koord() + nX, Col() + 1 SAY "Banka (prazno-sve):" GET cKred VALID Empty( cKred ) .OR. P_Kred( @cKred )
+   @ box_x_koord() + nX, Col() + 1 SAY "Banka (prazno-sve):" GET cKred VALID Empty( cKred ) .OR. P_Kred( @cKred )
 
    nX += 2
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 "Sati primanja koja utiču na isplatu:" GET cHours PICT "@S30" VALID !Empty( cHours )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Sati primanja koja utiču na isplatu:" GET cHours PICT "@S30" VALID !Empty( cHours )
 
    nX += 2
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Koeficijent:" GET nKoef PICT "99999.99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koeficijent:" GET nKoef PICT "99999.99"
 
    nX += 1
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Broj dana sa kojim se dijeli:" GET nDays PICT "99999.99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Broj dana sa kojim se dijeli:" GET nDays PICT "99999.99"
 
    nX += 2
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Iznos akontacije:" GET nAcontAmount PICT "99999.99"
-   @ get_x_koord() + nX, Col() + 1 SAY "KM"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Iznos akontacije:" GET nAcontAmount PICT "99999.99"
+   @ box_x_koord() + nX, Col() + 1 SAY "KM"
 
    nX += 1
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Minimalni limit za sate:" GET nMinHrLimit PICT "999999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Minimalni limit za sate:" GET nMinHrLimit PICT "999999"
 
    nX += 1
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Maksimalni limit za sate:" GET nHourLimit PICT "999999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Maksimalni limit za sate:" GET nHourLimit PICT "999999"
 
    nX += 2
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 "Varijanta izvještaja:" GET nRptVar1 PICT "9" VALID nRptVar1 > 0 .AND. nRptVar1 < 3
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Varijanta izvještaja:" GET nRptVar1 PICT "9" VALID nRptVar1 > 0 .AND. nRptVar1 < 3
 
    nX += 1
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "(1) kompletan obraćun" COLOR cColor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "(1) kompletan obraćun" COLOR cColor
 
    nX += 1
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "(2) samo lista sa radnicima za potpis" COLOR cColor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "(2) samo lista sa radnicima za potpis" COLOR cColor
 
    nX += 1
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY Space( 3 ) + "Varijanta prikaza:" GET nRptVar2 PICT "9" VALID nRptVar2 > 0 .AND. nRptVar2 < 3 WHEN nRptVar1 == 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY Space( 3 ) + "Varijanta prikaza:" GET nRptVar2 PICT "9" VALID nRptVar2 > 0 .AND. nRptVar2 < 3 WHEN nRptVar1 == 2
 
    nX += 1
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY Space( 3 ) + "(1) isplata akontacije" COLOR cColor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY Space( 3 ) + "(1) isplata akontacije" COLOR cColor
 
    nX += 1
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY Space( 3 ) + "(2) isplata razlike" COLOR cColor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY Space( 3 ) + "(2) isplata razlike" COLOR cColor
 
    nX += 1
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 Space( 3 ) + "Export izvještaja ?" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 Space( 3 ) + "Export izvještaja ?" ;
       GET cExport VALID cExport $ "DN" PICT "@!"
 
    READ
@@ -283,7 +283,7 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 
    Box(, 1, 60 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY8 "generacija izvještaja u toku...."
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "generacija izvještaja u toku...."
 
    DO WHILE !Eof() .AND. field->godina == cYear .AND. field->mjesec >= cMonthFrom .AND. field->mjesec <= cMonthTo
 
@@ -357,7 +357,7 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 
          ++ nCount
 
-         @ get_x_koord() + 1, get_y_koord() + 2 SAY PadR( PadL( Str( nCount ), 5 ) + " " + AllTrim( radn->naz ) + ", " + AllTrim( Str( nUSati ) ), 60 )
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( PadL( Str( nCount ), 5 ) + " " + AllTrim( radn->naz ) + ", " + AllTrim( Str( nUSati ) ), 60 )
 
       ENDIF
 

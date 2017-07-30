@@ -65,36 +65,36 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
 
    Box(, 19, 77 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
-   @ get_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
+   @ box_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
 
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Naziv raspona primanja: "  GET cNaziv
-   @ get_x_koord() + 6, get_y_koord() + 2 SAY "Formula primanja      : "  GET cFormula PICT "@S20"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Naziv raspona primanja: "  GET cNaziv
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Formula primanja      : "  GET cFormula PICT "@S20"
 
-   @ get_x_koord() + 8, get_y_koord() + 2 SAY "             (0 - raspon se ne prikazuje)"
-   @ get_x_koord() + 9, get_y_koord() + 2 SAY " 1. raspon do " GET nDo1 PICT "99999"
-   @ get_x_koord() + 10, get_y_koord() + 2 SAY " 2. raspon do " GET nDo2 PICT "99999"
-   @ get_x_koord() + 11, get_y_koord() + 2 SAY " 3. raspon do " GET nDo3 PICT "99999"
-   @ get_x_koord() + 12, get_y_koord() + 2 SAY " 4. raspon do " GET nDo4 PICT "99999"
-   @ get_x_koord() + 13, get_y_koord() + 2 SAY " 5. raspon do " GET nDo5 PICT "99999"
-   @ get_x_koord() + 14, get_y_koord() + 2 SAY " 6. raspon do " GET nDo6 PICT "99999"
-   @ get_x_koord() + 15, get_y_koord() + 2 SAY " 7. raspon do " GET nDo7 PICT "99999"
-   @ get_x_koord() + 16, get_y_koord() + 2 SAY " 8. raspon do " GET nDo8 PICT "99999"
-   @ get_x_koord() + 17, get_y_koord() + 2 SAY " 9. raspon do " GET nDo9 PICT "99999"
-   @ get_x_koord() + 18, get_y_koord() + 2 SAY "10. raspon do " GET nDo10 PICT "99999"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "             (0 - raspon se ne prikazuje)"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY " 1. raspon do " GET nDo1 PICT "99999"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY " 2. raspon do " GET nDo2 PICT "99999"
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY " 3. raspon do " GET nDo3 PICT "99999"
+   @ box_x_koord() + 12, box_y_koord() + 2 SAY " 4. raspon do " GET nDo4 PICT "99999"
+   @ box_x_koord() + 13, box_y_koord() + 2 SAY " 5. raspon do " GET nDo5 PICT "99999"
+   @ box_x_koord() + 14, box_y_koord() + 2 SAY " 6. raspon do " GET nDo6 PICT "99999"
+   @ box_x_koord() + 15, box_y_koord() + 2 SAY " 7. raspon do " GET nDo7 PICT "99999"
+   @ box_x_koord() + 16, box_y_koord() + 2 SAY " 8. raspon do " GET nDo8 PICT "99999"
+   @ box_x_koord() + 17, box_y_koord() + 2 SAY " 9. raspon do " GET nDo9 PICT "99999"
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY "10. raspon do " GET nDo10 PICT "99999"
 
-   @ get_x_koord() + 9, get_y_koord() + 25 SAY "11. raspon do " GET nDo11 PICT "99999"
-   @ get_x_koord() + 10, get_y_koord() + 25 SAY "12. raspon do " GET nDo12 PICT "99999"
-   @ get_x_koord() + 11, get_y_koord() + 25 SAY "13. raspon do " GET nDo13 PICT "99999"
-   @ get_x_koord() + 12, get_y_koord() + 25 SAY "14. raspon do " GET nDo14 PICT "99999"
-   @ get_x_koord() + 13, get_y_koord() + 25 SAY "15. raspon do " GET nDo15 PICT "99999"
-   @ get_x_koord() + 14, get_y_koord() + 25 SAY "16. raspon do " GET nDo16 PICT "99999"
-   @ get_x_koord() + 15, get_y_koord() + 25 SAY "17. raspon do " GET nDo17 PICT "99999"
-   @ get_x_koord() + 16, get_y_koord() + 25 SAY "18. raspon do " GET nDo18 PICT "99999"
-   @ get_x_koord() + 17, get_y_koord() + 25 SAY "19. raspon do " GET nDo19 PICT "99999"
-   @ get_x_koord() + 18, get_y_koord() + 25 SAY "20. raspon do " GET nDo20 PICT "99999"
+   @ box_x_koord() + 9, box_y_koord() + 25 SAY "11. raspon do " GET nDo11 PICT "99999"
+   @ box_x_koord() + 10, box_y_koord() + 25 SAY "12. raspon do " GET nDo12 PICT "99999"
+   @ box_x_koord() + 11, box_y_koord() + 25 SAY "13. raspon do " GET nDo13 PICT "99999"
+   @ box_x_koord() + 12, box_y_koord() + 25 SAY "14. raspon do " GET nDo14 PICT "99999"
+   @ box_x_koord() + 13, box_y_koord() + 25 SAY "15. raspon do " GET nDo15 PICT "99999"
+   @ box_x_koord() + 14, box_y_koord() + 25 SAY "16. raspon do " GET nDo16 PICT "99999"
+   @ box_x_koord() + 15, box_y_koord() + 25 SAY "17. raspon do " GET nDo17 PICT "99999"
+   @ box_x_koord() + 16, box_y_koord() + 25 SAY "18. raspon do " GET nDo18 PICT "99999"
+   @ box_x_koord() + 17, box_y_koord() + 25 SAY "19. raspon do " GET nDo19 PICT "99999"
+   @ box_x_koord() + 18, box_y_koord() + 25 SAY "20. raspon do " GET nDo20 PICT "99999"
 
    READ
    clvbox()

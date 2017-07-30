@@ -72,7 +72,7 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
       cIdRoba := fakt->idRoba
       SEEK cIdRj + cIdRoba // vidi imali ovo u pripremi; ako ima stavka je obradjena
       lFoundUPripremi := Found()
-      SELECT fakt
+
       PushWA()
       IF !( lFoundUPripremi )
          fakt_stanje_artikla( cIdRj, cIdroba, @nUl, @nIzl, @nRezerv, @nRevers, .T. )
@@ -85,6 +85,7 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
          ENDIF
       ENDIF
       PopWa()
+
       SKIP
    ENDDO
    MsgC()
@@ -145,7 +146,6 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
 
    nRBr := 0
 
-   o_fakt_dbf()
    o_fakt_pripr()
    //o_roba()
 
@@ -173,7 +173,7 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -215,7 +215,6 @@ FUNCTION fakt_inventura_visak( cIdRj, cBrDok )
 
    nRBr := 0
 
-   o_fakt_dbf()
    o_fakt_pripr()
    //o_roba()
 

@@ -122,7 +122,7 @@ STATIC FUNCTION fakt_seek_pripr_dokument( cIdFirma, cIdTipDok, cBrDok )
    SELECT fakt_pripr
    SET ORDER TO TAG "1"
    GO TOP
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   SEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr
 
    IF Found()
       lRet := .T.
@@ -356,7 +356,7 @@ FUNCTION get_fakt_doks2_data( cIdFirma, cIdTipDok, cBrDok )
 
    select_o_fakt_pripr()
    GO TOP
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   SEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr
 
    hFaktData[ "idfirma" ]  := field->idfirma
    hFaktData[ "brdok" ]    := field->brdok
@@ -391,7 +391,7 @@ FUNCTION get_fakt_doks_data( cIdFirma, cIdTipDok, cBrDok )
    hFaktData[ "brdok" ]    := cBrDok
 
    select_o_fakt_pripr()
-   HSEEK cIdFirma + cIdTipDok + cBrDok
+   HSEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr
 
    aMemo := fakt_ftxt_decode( field->txt )
 
@@ -435,7 +435,7 @@ FUNCTION get_fakt_doks_data( cIdFirma, cIdTipDok, cBrDok )
               _fakt_total["rabat"]
 */
 
-FUNCTION izracunaj_ukupni_iznos_dokumenta_iz_pripreme( cIdFirma, id_tipdok, cBrDok )
+FUNCTION izracunaj_ukupni_iznos_dokumenta_iz_pripreme( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL _fakt_total := hb_Hash()
    LOCAL _cij_sa_por := 0
@@ -447,11 +447,11 @@ FUNCTION izracunaj_ukupni_iznos_dokumenta_iz_pripreme( cIdFirma, id_tipdok, cBrD
 
    SELECT fakt_pripr
    GO TOP
-   SEEK cIdFirma + id_tipdok + cBrDok
+   SEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr
 
    _din_dem := field->dindem
 
-   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == id_tipdok .AND. field->brdok == cBrDok
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
 
       IF _din_dem == Left( ValBazna(), 3 )
 

@@ -47,9 +47,9 @@ FUNCTION kalk_finansijski_obrt()
    PRIVATE cPrDatOd := "N"
    PRIVATE PREDOVA2 := 62
 
-  // o_sifk()
-//   o_sifv()
-//   o_roba()
+   // o_sifk()
+// o_sifv()
+// o_roba()
 
    cLegenda := "D"
 
@@ -85,7 +85,7 @@ FUNCTION kalk_finansijski_obrt()
       @ m_x + 10, m_y + 2 SAY "VP sa uracunatim rabatom (D/N)?" GET cVpRab PICT "@!" VALID cVpRab $ "DN"
       @ m_x + 11, m_y + 2 SAY "Prodaja pocinje od 'Datum od' (D/N)?" GET cPrDatOd PICT "@!" VALID cPrDatOd $ "DN"
       READ
-      nKorekcija := 12 / ( Month( dDatDo ) -Month( dDatOd ) + 1 )
+      nKorekcija := 12 / ( Month( dDatDo ) - Month( dDatOd ) + 1 )
       @ m_x + 12, m_y + 2 SAY "Korekcija (12/broj radnih mjeseci):" GET nKorekcija PICT "999.99"
       @ m_x + 13, m_y + 2 SAY "Ostampati legendu za kolone " GET cLegenda PICT "@!" VALID cLegenda $ "DN"
       @ m_x + 14, m_y + 2 SAY "Uslov po pl.vrsta " GET cPlVrsta PICT "@!"
@@ -103,15 +103,14 @@ FUNCTION kalk_finansijski_obrt()
    ENDDO
    BoxC()
 
-   IF Params2()
-      WPar( "c1", cidKPovrata )
-      WPar( "c2", qqKonto )
-      WPar( "c4", cCijena )
-      WPar( "d1", dDatOd )
-      WPar( "d2", dDatDo )
-      WPar( "d3", cVpRab )
-      WPar( "d4", cPrDatOd )
-   ENDIF
+   WPar( "c1", cidKPovrata )
+   WPar( "c2", qqKonto )
+   WPar( "c4", cCijena )
+   WPar( "d1", dDatOd )
+   WPar( "d2", dDatDo )
+   WPar( "d3", cVpRab )
+   WPar( "d4", cPrDatOd )
+
    SELECT params
    USE
 
@@ -125,10 +124,10 @@ FUNCTION kalk_finansijski_obrt()
    O_REKAP2
    O_REKA22
    o_koncij()
-  // o_roba()
+   // o_roba()
    o_konto()
    o_tarifa()
-   //o_kalk()
+   // o_kalk()
    o_k1()
    kalk_o_objekti()
 
@@ -615,7 +614,7 @@ FUNCTION ZagOPoMF()
       ?  "Obracun prometa utvrdjen po nabavnim cijenama"
    ENDIF
    ?
-   IF ( qqRoba == nil )
+   IF ( qqRoba == NIL )
       qqRoba := ""
    ENDIF
    ? "Kriterij za Objekat:", Trim( qqKonto ), "Robu:", Trim( qqRoba )

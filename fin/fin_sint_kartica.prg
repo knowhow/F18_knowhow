@@ -28,7 +28,7 @@ FUNCTION fin_sint_kartica()
 
    cPredh := "2"
 
-   //o_partner()
+   // o_partner()
    o_params()
 
    PRIVATE cSection := "1"; cHistory := " ";aHistory := {}
@@ -49,7 +49,7 @@ FUNCTION fin_sint_kartica()
       IF gNW == "D"
          @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 3, m_y + 2 SAY "Brza kartica (D/N)               " GET cBrza PICT "@!" VALID cBrza $ "DN"
       @ m_x + 4, m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
@@ -65,7 +65,7 @@ FUNCTION fin_sint_kartica()
       @ m_x + 8, Col() + 2 SAY "do:" GET dDatDo
       cIdRJ := ""
       IF gFinRj == "D" .AND. gSAKrIz == "D"
-         cIdRJ := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
+         cIdRJ := Replicate( "9", FIELD_LEN_FIN_RJ_ID )
          @ m_x + 9, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       read; ESC_BCR
@@ -79,16 +79,16 @@ FUNCTION fin_sint_kartica()
 
    ENDDO
 
-   IF Params2()
-      WPar( "c1", @cIdFirma );WPar( "c2", @qqKonto );WPar( "d1", @dDatOD ); WPar( "d2", @dDatDo )
-      WPAr( "c3", @cBrza )
-      WPar( "c4", cPredh )
-   ENDIF
-   SELECT params; USE
+
+   WPar( "c1", @cIdFirma );WPar( "c2", @qqKonto );WPar( "d1", @dDatOD ); WPar( "d2", @dDatDo )
+   WPAr( "c3", @cBrza )
+   WPar( "c4", cPredh )
+
+   SELECT params
 
    BoxC()
 
-   IF cIdRj == REPLICATE("9", FIELD_LEN_FIN_RJ_ID ); cIdrj := ""; ENDIF
+   IF cIdRj == Replicate( "9", FIELD_LEN_FIN_RJ_ID ); cIdrj := ""; ENDIF
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
       cIdrj := Trim( StrTran( cidrj, ".", "" ) )
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"

@@ -481,6 +481,9 @@ FUNCTION h_fakt_doks2_indexes()
 // ----------------------------- fakt_fakt ------------------------------------------
 
 
+/*
+   find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "3" )
+*/
 FUNCTION find_fakt_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy, cWhere, cTag )
 
    LOCAL hParams := hb_Hash()
@@ -647,6 +650,10 @@ FUNCTION fakt_doks_update_fisk_parametri_by_id( cIdFirma, cIdTipDok, cBrDok, hRe
    ENDIF
 
    RETURN .T.
+
+/*
+   find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, "FAKT_DOKS_PREGLED", "idfirma,datdok,idtipdok,brdok" )
+*/
 
 FUNCTION find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, cAlias, cOrderBy, cWhere )
 

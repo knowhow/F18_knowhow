@@ -100,21 +100,21 @@ FUNCTION fin_knjizenje_naloga()
    _opt_row += _upadr( " <c+T> Briši stavku", _opt_d ) + _sep
    _opt_row += _upadr( " <P> Povrat naloga", _opt_d )
 
-   @ get_x_koord() + _x_row - 3, get_y_koord() + 2 SAY8 _opt_row
+   @ box_x_koord() + _x_row - 3, box_y_koord() + 2 SAY8 _opt_row
 
    _opt_row := _upadr( " <c+A> Ispravka stavki", _opt_d ) + _sep
    _opt_row += _upadr( " <c+P> Štampa naloga", _opt_d ) + _sep
    _opt_row += _upadr( " <a+A> Ažuriranje", _opt_d ) + _sep
    _opt_row += _upadr( " <X> Ažur.bez štampe", _opt_d )
 
-   @ get_x_koord() + _x_row - 2, get_y_koord() + 2 SAY8 _opt_row
+   @ box_x_koord() + _x_row - 2, box_y_koord() + 2 SAY8 _opt_row
 
    _opt_row := _upadr( " <c+F9> Briši sve", _opt_d ) + _sep
    _opt_row += _upadr( " <F5> Kontrola zbira", _opt_d ) + _sep
    _opt_row += _upadr( " <a+F5> Pr.dat", _opt_d ) + _sep
    _opt_row += _upadr( " <a+B> Blagajna", _opt_d )
 
-   @ get_x_koord() + _x_row - 1, get_y_koord() + 2 SAY8 _opt_row
+   @ box_x_koord() + _x_row - 1, box_y_koord() + 2 SAY8 _opt_row
 
    _opt_row := _upadr( " <a+T> Briši po uslovu", _opt_d ) + _sep
    _opt_row += _upadr( " <B> odredi broj dokumenta", _opt_d ) + _sep
@@ -122,7 +122,7 @@ FUNCTION fin_knjizenje_naloga()
    _opt_row += _upadr( " <F10> Ostale opcije", _opt_d ) + _sep
 
 
-   @ get_x_koord() + _x_row, get_y_koord() + 2 SAY8 _opt_row
+   @ box_x_koord() + _x_row, box_y_koord() + 2 SAY8 _opt_row
 
    my_browse( "PN2", _x_row, _y_row, {| nCh | edit_fin_pripr_key_handler( nCh ) }, "", "FIN Priprema", , , , , _help_columns )
 
@@ -164,10 +164,10 @@ FUNCTION edit_fin_priprema()
    lDugmeOtvoreneStavke := .T.
 
 
-   @  get_x_koord() + 1, get_y_koord() + 2 SAY8 "Firma: "
+   @  box_x_koord() + 1, box_y_koord() + 2 SAY8 "Firma: "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
-   @  get_x_koord() + 3, get_y_koord() + 2 SAY "NALOG: "
-   @  get_x_koord() + 3, get_y_koord() + 14 SAY "Vrsta:" GET _idvn VALID browse_tnal( @_IdVN, 3, 26 ) PICT "@!"
+   @  box_x_koord() + 3, box_y_koord() + 2 SAY "NALOG: "
+   @  box_x_koord() + 3, box_y_koord() + 14 SAY "Vrsta:" GET _idvn VALID browse_tnal( @_IdVN, 3, 26 ) PICT "@!"
 
    READ
 
@@ -185,36 +185,36 @@ FUNCTION edit_fin_priprema()
    SET KEY K_ALT_K TO konverzija_valute()
    SET KEY K_ALT_O TO knjizenje_gen_otvorene_stavke()
 
-   @ get_x_koord() + 3, get_y_koord() + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "Redni broj stavke naloga:" GET nFinRbr PICTURE "99999" ;
+   @ box_x_koord() + 3, box_y_koord() + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Redni broj stavke naloga:" GET nFinRbr PICTURE "99999" ;
       WHEN {|| fin_pripr_redni_broj( nFinRbr ), .T. } VALID {|| lDugmeOtvoreneStavke := .T., fin_pripr_redni_broj( nFinRbr ), .T. }
 
-   @ get_x_koord() + 7, get_y_koord() + 2 SAY "DOKUMENT: "
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "DOKUMENT: "
 
    IF hFinParams[ "fin_tip_dokumenta" ]
-      @ get_x_koord() + 7, get_y_koord() + 14  SAY "Tip:" GET _IdTipDok VALID browse_tdok( @_IdTipDok, 7, 26 )
+      @ box_x_koord() + 7, box_y_koord() + 14  SAY "Tip:" GET _IdTipDok VALID browse_tdok( @_IdTipDok, 7, 26 )
    ENDIF
 
    IF ( IsRamaGlas() )
-      @ get_x_koord() + 8, get_y_koord() + 2 SAY8 "Vezni broj (račun/r.nalog):"  GET _BrDok VALID BrDokOK()
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Vezni broj (račun/r.nalog):"  GET _BrDok VALID BrDokOK()
    ELSE
-      @ get_x_koord() + 8, get_y_koord() + 2 SAY "Vezni broj:" GET _brdok
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Vezni broj:" GET _brdok
    ENDIF
 
-   @ get_x_koord() + 8, get_y_koord() + Col() + 2  SAY "Datum:" GET _DatDok VALID {||  datum_not_empty_upozori_godina( _datDok, "Datum FIN dokumenta" ) }
+   @ box_x_koord() + 8, box_y_koord() + Col() + 2  SAY "Datum:" GET _DatDok VALID {||  datum_not_empty_upozori_godina( _datDok, "Datum FIN dokumenta" ) }
 
    IF gDatVal == "D"
-      @ get_x_koord() + 8, Col() + 2 SAY "Valuta: " GET _DatVal
+      @ box_x_koord() + 8, Col() + 2 SAY "Valuta: " GET _DatVal
    ENDIF
 
-   @ get_x_koord() + 11, get_y_koord() + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| .T. } PICT "@S" + AllTrim( Str( f18_max_cols() - 8 ) )
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| .T. } PICT "@S" + AllTrim( Str( f18_max_cols() - 8 ) )
 
    IF hFinParams[ "fin_k1" ]
-      @ get_x_koord() + 11, Col() + 2 SAY "K1" GET _k1 PICT "@!"
+      @ box_x_koord() + 11, Col() + 2 SAY "K1" GET _k1 PICT "@!"
    ENDIF
 
    IF hFinParams[ "fin_k2" ]
-      @ get_x_koord() + 11, Col() + 2 SAY "K2" GET _k2 PICT "@!"
+      @ box_x_koord() + 11, Col() + 2 SAY "K2" GET _k2 PICT "@!"
    ENDIF
 
 
@@ -222,37 +222,37 @@ FUNCTION edit_fin_priprema()
 /*
       IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
          _k3 := K3Iz256( _k3 )
-         @ get_x_koord() + 11, Col() + 2 SAY "K3" GET _k3 VALID Empty( _k3 ) .OR. P_ULIMIT( @_k3 ) PICT "999"
+         @ box_x_koord() + 11, Col() + 2 SAY "K3" GET _k3 VALID Empty( _k3 ) .OR. P_ULIMIT( @_k3 ) PICT "999"
       ELSE
 */
 
-      @ get_x_koord() + 11, Col() + 2 SAY "K3" GET _k3 PICT "@!"
+      @ box_x_koord() + 11, Col() + 2 SAY "K3" GET _k3 PICT "@!"
 // ENDIF
    ENDIF
 
 
    IF hFinParams[ "fin_k4" ]
       IF _fakt_params[ "fakt_vrste_placanja" ]
-         @ get_x_koord() + 11, Col() + 2 SAY "K4" GET _k4 VALID Empty( _k4 ) .OR. P_VRSTEP( @_k4 ) PICT "@!"
+         @ box_x_koord() + 11, Col() + 2 SAY "K4" GET _k4 VALID Empty( _k4 ) .OR. P_VRSTEP( @_k4 ) PICT "@!"
       ELSE
-         @ get_x_koord() + 11, Col() + 2 SAY "K4" GET _k4 PICT "@!"
+         @ box_x_koord() + 11, Col() + 2 SAY "K4" GET _k4 PICT "@!"
       ENDIF
    ENDIF
 
    IF gFinRj == "D"
-      @ get_x_koord() + 11, Col() + 2 SAY "RJ" GET _idrj VALID Empty( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
+      @ box_x_koord() + 11, Col() + 2 SAY "RJ" GET _idrj VALID Empty( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
    ENDIF
 
    IF gFinFunkFond == "D"
-      @ get_x_koord() + 12, get_y_koord() + 22 SAY "      Funk." GET _Funk VALID Empty( _Funk ) .OR. P_Funk( @_Funk ) PICT "@!"
-      @ get_x_koord() + 12, get_y_koord() + 44 SAY "      Fond." GET _Fond VALID Empty( _Fond ) .OR. P_Fond( @_Fond ) PICT "@!"
+      @ box_x_koord() + 12, box_y_koord() + 22 SAY "      Funk." GET _Funk VALID Empty( _Funk ) .OR. P_Funk( @_Funk ) PICT "@!"
+      @ box_x_koord() + 12, box_y_koord() + 44 SAY "      Fond." GET _Fond VALID Empty( _Fond ) .OR. P_Fond( @_Fond ) PICT "@!"
    ENDIF
 
-   @ get_x_koord() + 13, get_y_koord() + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
+   @ box_x_koord() + 13, box_y_koord() + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
       VALID P_Konto( @_IdKonto, 13, 20 ) .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
 
 
-   @ get_x_koord() + 14, get_y_koord() + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
+   @ box_x_koord() + 14, box_y_koord() + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
       VALID ;
       {|| iif( Empty( _idpartner ), say_from_valid( 14, 20, Space( 25 ) ), ), ;
       ( p_partner( @_IdPartner, 14, 20 ) ) .AND. fin_pravilo_partner() .AND. ;
@@ -260,15 +260,15 @@ FUNCTION edit_fin_priprema()
       WHEN {|| iif( ChkKtoMark( _idkonto ), .T., .F. ) }
 
 
-   @ get_x_koord() + 16, get_y_koord() + 2  SAY8 "Duguje/Potražuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
+   @ box_x_koord() + 16, box_y_koord() + 2  SAY8 "Duguje/Potražuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
 
-   @ get_x_koord() + 16, get_y_koord() + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| .T. } VALID {|| lDugmeOtvoreneStavke := .T., .T. }
+   @ box_x_koord() + 16, box_y_koord() + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| .T. } VALID {|| lDugmeOtvoreneStavke := .T., .T. }
 
-   @ get_x_koord() + 17, get_y_koord() + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| konverzija_valute( , , "_IZNOSBHD" ),  .T. } ;
+   @ box_x_koord() + 17, box_y_koord() + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| konverzija_valute( , , "_IZNOSBHD" ),  .T. } ;
       VALID {|| lDugmeOtvoreneStavke := .F., .T. }
 
 
-   @ get_x_koord() + 16, get_y_koord() + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "(Alt-O) Otvorene stavke"   ;
+   @ box_x_koord() + 16, box_y_koord() + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "(Alt-O) Otvorene stavke"   ;
       WHEN {|| lDugmeOtvoreneStavke } ;
       SIZE X 20 Y 2 FOCUS {|| lDugmeOtvoreneStavke := .T., knjizenje_gen_otvorene_stavke(), lDugmeOtvoreneStavke := .F. }
 
@@ -426,7 +426,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
          set_global_vars_from_dbf()
          fin_pripr_redni_broj( _Rbr )
 
-         @ get_x_koord() + 1, get_y_koord() + 1 CLEAR TO get_x_koord() + f18_max_rows() - 8, get_y_koord() + f18_max_cols() - 10
+         @ box_x_koord() + 1, box_y_koord() + 1 CLEAR TO box_x_koord() + f18_max_rows() - 8, box_y_koord() + f18_max_cols() - 10
          IF edit_fin_priprema( .F. ) == 0
             EXIT
          ELSE
@@ -438,10 +438,10 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
             nPot += _IznosBHD
          ENDIF
 
-         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 2 SAY "ZBIR NALOGA:"
-         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 15 SAY nDug PICTURE '9 999 999 999.99'
-         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 36 SAY nPot PICTURE '9 999 999 999.99'
-         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 57 SAY nDug - nPot PICTURE '9 999 999 999.99'
+         @ box_x_koord() + nBoxVisina - 2, box_y_koord() + 2 SAY "ZBIR NALOGA:"
+         @ box_x_koord() + nBoxVisina - 2, box_y_koord() + 15 SAY nDug PICTURE '9 999 999 999.99'
+         @ box_x_koord() + nBoxVisina - 2, box_y_koord() + 36 SAY nPot PICTURE '9 999 999 999.99'
+         @ box_x_koord() + nBoxVisina - 2, box_y_koord() + 57 SAY nDug - nPot PICTURE '9 999 999 999.99'
          Inkey( 10 )
 
          SELECT fin_pripr
@@ -484,7 +484,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 
          fin_pripr_redni_broj( _Rbr + 1 )
 
-         @ get_x_koord() + 1, get_y_koord() + 1 CLEAR TO get_x_koord() + f18_max_rows() - 5, get_y_koord() + f18_max_cols() - 8
+         @ box_x_koord() + 1, box_y_koord() + 1 CLEAR TO box_x_koord() + f18_max_rows() - 5, box_y_koord() + f18_max_cols() - 8
 
          IF edit_fin_priprema( .T. ) == 0
             EXIT
@@ -497,10 +497,10 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
          ELSE
             nPot += _IznosBHD
          ENDIF
-         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 2 SAY "ZBIR NALOGA:"
-         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 15 SAY nDug PICTURE '9 999 999 999.99'
-         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 36 SAY nPot PICTURE '9 999 999 999.99'
-         @ get_x_koord() + nBoxVisina - 2, get_y_koord() + 57 SAY nDug - nPot PICTURE '9 999 999 999.99'
+         @ box_x_koord() + nBoxVisina - 2, box_y_koord() + 2 SAY "ZBIR NALOGA:"
+         @ box_x_koord() + nBoxVisina - 2, box_y_koord() + 15 SAY nDug PICTURE '9 999 999 999.99'
+         @ box_x_koord() + nBoxVisina - 2, box_y_koord() + 36 SAY nPot PICTURE '9 999 999 999.99'
+         @ box_x_koord() + nBoxVisina - 2, box_y_koord() + 57 SAY nDug - nPot PICTURE '9 999 999 999.99'
 
          Inkey( 10 )
 
@@ -620,8 +620,8 @@ FUNCTION WRbr()
    _rec := dbf_get_rec()
 
    IF _rec[ "rbr" ]  < 2
-      @ get_x_koord() + 1, get_y_koord() + 2 SAY8 "Dokument:" GET _rec[ "idvn" ]
-      @ get_x_koord() + 1, Col() + 2  GET _rec[ "brnal" ]
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Dokument:" GET _rec[ "idvn" ]
+      @ box_x_koord() + 1, Col() + 2  GET _rec[ "brnal" ]
       READ
    ENDIF
 
@@ -754,7 +754,7 @@ FUNCTION Partija( cIdKonto )
 // -----------------------------------------------------
 FUNCTION V_DP()
 
-   SetPos( get_x_koord() + 16, get_y_koord() + 30 )
+   SetPos( box_x_koord() + 16, box_y_koord() + 30 )
 
    IF _d_p == "1"
       ?? "   DUGUJE"
@@ -764,7 +764,7 @@ FUNCTION V_DP()
 
    ?? " " + ValDomaca()
 
-   SetPos( get_x_koord() + 17, get_y_koord() + 30 )
+   SetPos( box_x_koord() + 17, box_y_koord() + 30 )
 
    IF _d_p == "1"
       ?? "   DUGUJE"
@@ -868,9 +868,9 @@ STATIC FUNCTION set_datval_datdok()
 
    Box(, 5, 60 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Promjena za konto  " GET _id_konto
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Novi datum dok " GET _dat_dok
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "uvecati stari datdok za (dana) " GET _dana PICT "99"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Promjena za konto  " GET _id_konto
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Novi datum dok " GET _dat_dok
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "uvecati stari datdok za (dana) " GET _dana PICT "99"
 
    READ
 
@@ -918,8 +918,8 @@ STATIC FUNCTION fin_pripr_brisi_stavke_od_do()
    LOCAL nRbr
 
    Box(, 1, 31 )
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Brisi stavke od:" GET nOd VALID _rbr_fix( @nOd )
-   @ get_x_koord() + 1, Col() + 1 SAY "do:" GET nDo VALID _rbr_fix( @nDo )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Brisi stavke od:" GET nOd VALID _rbr_fix( @nOd )
+   @ box_x_koord() + 1, Col() + 1 SAY "do:" GET nDo VALID _rbr_fix( @nDo )
    READ
    BoxC()
 
@@ -1008,8 +1008,8 @@ FUNCTION BrisiPBaze()
 FUNCTION fin_tek_rec_2()
 
    nSlog++
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Obuhvaceno: " + Str( 0 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Obuhvaceno: " + Str( 0 )
 
    RETURN ( NIL )
 
@@ -1028,7 +1028,7 @@ FUNCTION fin_knjizenje_ostale_opcije()
 
    h[ 1 ] := h[ 2 ] := ""
    PRIVATE Izbor := 1
-   PRIVATE am_x := get_x_koord(), am_y := get_y_koord()
+   PRIVATE am_x := box_x_koord(), am_y := box_y_koord()
    my_close_all_dbf()
    DO WHILE .T.
       Izbor := meni_0( "prip", opc, Izbor, .F. )
@@ -1041,8 +1041,8 @@ FUNCTION fin_knjizenje_ostale_opcije()
          // PodijeliN()
       ENDCASE
    ENDDO
-   get_x_koord( am_x )
-   get_y_koord( am_y )
+   box_x_koord( am_x )
+   box_y_koord( am_y )
    o_fin_edit()
 
    RETURN .T.
@@ -1229,32 +1229,32 @@ STATIC FUNCTION _brisi_pripr_uslovi( PARAM )
 
    Box(, 13, 70 )
 
-   @ get_x_koord() + _x, get_y_koord() + 2 SAY "Brisanje pripreme po zadatom uslovu ***"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Brisanje pripreme po zadatom uslovu ***"
 
    ++_x
    ++_x
-   @ get_x_koord() + _x, get_y_koord() + 2 SAY "brisi od rednog broja:" GET _od_broja PICT "9999999"
-   @ get_x_koord() + _x, Col() + 1 SAY "do:" GET _do_broja PICT "9999999"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "brisi od rednog broja:" GET _od_broja PICT "9999999"
+   @ box_x_koord() + _x, Col() + 1 SAY "do:" GET _do_broja PICT "9999999"
 
    ++_x
    ++_x
-   @ get_x_koord() + _x, get_y_koord() + 2 SAY "               vrste naloga:" GET _vn PICT "@S30"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "               vrste naloga:" GET _vn PICT "@S30"
 
    ++_x
-   @ get_x_koord() + _x, get_y_koord() + 2 SAY "             brojeve naloga:" GET _br_nal PICT "@S30"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "             brojeve naloga:" GET _br_nal PICT "@S30"
 
    ++_x
    ++_x
-   @ get_x_koord() + _x, get_y_koord() + 2 SAY "stavke koje sadrze partnere:" GET _partn PICT "@S30"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "stavke koje sadrze partnere:" GET _partn PICT "@S30"
 
    ++_x
-   @ get_x_koord() + _x, get_y_koord() + 2 SAY "   stavke koje sadrze konta:" GET _konto PICT "@S30"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "   stavke koje sadrze konta:" GET _konto PICT "@S30"
 
    ++_x
-   @ get_x_koord() + _x, get_y_koord() + 2 SAY "    stavke koje sadrze opis:" GET _opis PICT "@S30"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "    stavke koje sadrze opis:" GET _opis PICT "@S30"
 
    ++_x
-   @ get_x_koord() + _x, get_y_koord() + 2 SAY " stavke koje sadrze br.veze:" GET _br_veze PICT "@S30"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY " stavke koje sadrze br.veze:" GET _br_veze PICT "@S30"
 
    READ
 

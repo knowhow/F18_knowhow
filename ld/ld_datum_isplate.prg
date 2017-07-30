@@ -81,19 +81,19 @@ FUNCTION unos_datuma_isplate_place()
 
    Box(, 20, 65 )
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "*** Unos datuma isplata placa" COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** Unos datuma isplata placa" COLOR f18_color_i()
 
    ++nX
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 "Tekuća godina:" GET nGod PICT "9999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Tekuća godina:" GET nGod PICT "9999"
 
-   @ get_x_koord() + nX, Col() + 2 SAY "Radna jedinica:" GET cRJ PICT "99" ;
+   @ box_x_koord() + nX, Col() + 2 SAY "Radna jedinica:" GET cRJ PICT "99" ;
       VALID Empty( cRJ ) .OR. P_LD_RJ( @cRJ )
 
-   @ get_x_koord() + nX, Col() + 2 SAY8 "Obračun:" GET cObr VALID cObr $ " 123456789"
+   @ box_x_koord() + nX, Col() + 2 SAY8 "Obračun:" GET cObr VALID cObr $ " 123456789"
 
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "----------------------------------------"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "----------------------------------------"
    ++nX
 
    READ
@@ -114,111 +114,111 @@ FUNCTION unos_datuma_isplate_place()
    dDat11 := ld_get_datum_isplate_plate( cRj, nGod, 11, cObr, @nMj11, @cIsZa11, @cVrIs11 )
    dDat12 := ld_get_datum_isplate_plate( cRj, nGod, 12, cObr, @nMj12, @cIsZa12, @cVrIs12 )
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY PadL( "datum", 7 ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "datum", 7 ) + ;
       PadL( "mj.ispl.", 18 ) + ;
       PadL( "isplata za", 18 ) + ;
       PadL( "vrsta ispl.", 18 )
 
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "12." + AllTrim( Str( nGod - 1 ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "12." + AllTrim( Str( nGod - 1 ) ) + ;
       " => " GET dDatPr
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMjPr PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZaPr PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIsPr PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMjPr PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZaPr PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIsPr PICT "@S15"
 
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "01." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "01." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat1
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj1 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa1 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs1 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj1 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa1 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs1 PICT "@S15"
 
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "02." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "02." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat2
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj2 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa2 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs2 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj2 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa2 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs2 PICT "@S15"
 
    ++nX
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "03." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "03." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat3
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj3 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa3 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs3 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj3 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa3 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs3 PICT "@S15"
 
    ++nX
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "04." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "04." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat4
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj4 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa4 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs4 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj4 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa4 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs4 PICT "@S15"
 
    ++nX
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "05." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "05." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat5
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj5 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa5 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs5 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj5 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa5 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs5 PICT "@S15"
 
    ++nX
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "06." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "06." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat6
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj6 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa6 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs6 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj6 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa6 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs6 PICT "@S15"
 
    ++nX
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "07." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "07." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat7
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj7 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa7 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs7 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj7 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa7 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs7 PICT "@S15"
 
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "08." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "08." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat8
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj8 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa8 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs8 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj8 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa8 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs8 PICT "@S15"
 
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "09." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "09." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat9
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj9 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa9 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs9 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj9 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa9 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs9 PICT "@S15"
 
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "10." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "10." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat10
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj10 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa10 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs10 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj10 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa10 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs10 PICT "@S15"
 
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "11." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "11." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat11
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj11 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa11 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs11 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj11 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa11 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs11 PICT "@S15"
 
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "12." + AllTrim( Str( nGod ) ) + ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "12." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat12
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET nMj12 PICT "99"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cIsZa12 PICT "@S15"
-   @ get_x_koord() + nX, Col() + 2 SAY "" GET cVrIs12 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET nMj12 PICT "99"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cIsZa12 PICT "@S15"
+   @ box_x_koord() + nX, Col() + 2 SAY "" GET cVrIs12 PICT "@S15"
 
 
    ++nX
    ++nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Unos ispravan (D/N)" GET cOk ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Unos ispravan (D/N)" GET cOk ;
       VALID cOK $ "DN" ;
       PICT "@!"
 

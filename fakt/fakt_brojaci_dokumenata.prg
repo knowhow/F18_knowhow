@@ -19,13 +19,11 @@ FUNCTION fakt_stanje_artikla( cIdRj, cIdroba, nUl, nIzl, nRezerv, nRevers, lSile
       lSilent := .F.
    ENDIF
 
-   SELECT fakt
-   SET ORDER TO TAG "3"
-
    IF ( !lSilent )
       lBezMinusa := .F.
    ENDIF
 
+   select_o_roba( cIdRoba )
    IF ( roba->tip == "U" )
       RETURN 0
    ENDIF
@@ -68,7 +66,7 @@ FUNCTION fakt_stanje_artikla( cIdRj, cIdroba, nUl, nIzl, nRezerv, nRevers, lSile
       MsgC()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION fakt_mpc_iz_sifrarnika()
@@ -130,51 +128,14 @@ FUNCTION fill_part()
    LOCAL cId
    LOCAL cOznaka
 
-   SELECT ( F_SIFK )
-   o_sifk()
-   SET ORDER TO TAG "ID"
-   cId := PadR( "PARTN", 8 )
-   cNaz := PadR( "PDV oslob. ZPDV", Len( naz ) )
-   cRbr := "08"
-   cOznaka := "PDVO"
-   add_n_found( cId, cNaz, cRbr, cOznaka, 3 )
+   fill_sifk_partn( "PDVO", "PDV oslob. ZPDV", "08", 3 )
+   fill_sifk_partn( "PROF", "Profil partn.", "09", 25 )
 
-   SELECT ( F_SIFK )
-   o_sifk()
-   SET ORDER TO TAG "ID"
-   cId := PadR( "PARTN", 8 )
-   cNaz := PadR( "Profil partn.", Len( naz ) )
-   cRbr := "09"
-   cOznaka := "PROF"
-   add_n_found( cId, cNaz, cRbr, cOznaka, 25 )
 
-   RETURN
+   RETURN .T.
 
 
 
-STATIC FUNCTION add_n_found( cId, cNaz, cRbr, cOznaka, nDuzina )
-
-   LOCAL cSeek, hRec
-
-   cSeek :=  cId + cRbr + cNaz
-   SEEK cSeek
-
-   IF !Found()
-      APPEND BLANK
-      REPLACE id WITH cId, ;
-         naz WITH cNaz, ;
-         oznaka WITH cOznaka, ;
-         SORT WITH  cRbr, ;
-         veza WITH "1", ;
-         tip WITH "C", ;
-         duzina WITH nDuzina, ;
-         f_decimal WITH 0
-      hRec := dbf_get_rec()
-      update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
-      RETURN .T.
-   ENDIF
-
-   RETURN .F.
 
 
 // ----------------------------------------------------------

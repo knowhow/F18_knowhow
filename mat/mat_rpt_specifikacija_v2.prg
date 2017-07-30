@@ -20,13 +20,13 @@ STATIC PicKol := "999999.999"
 
 FUNCTION mat_specifikacija()
 
-  // o_roba()
-//   o_sifk()
-//   o_sifv()
-  // o_tarifa()
+   // o_roba()
+// o_sifk()
+// o_sifv()
+   // o_tarifa()
    O_MAT_SUBAN
-  // o_partner()
-  // o_konto()
+   // o_partner()
+   // o_konto()
 
    cIdFirma := self_organizacija_id()
    qqKonto := qqPartn := Space( 55 )
@@ -55,7 +55,7 @@ FUNCTION mat_specifikacija()
    IF gNW $ "DR"
       @ m_x + 4, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 4, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ m_x + 4, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
 
    @ m_x + 5, m_y + 2 SAY KonSeks( "Konta  " ) + " : " GET qqKonto  PICTURE "@S50"
@@ -311,10 +311,10 @@ FUNCTION KonSekS( cNaz )
 
 FUNCTION IArtPoPogonima()
 
-  // o_partner()         // pogoni
-  // o_roba()          // artikli
-  // o_sifk()
-//   o_sifv()
+   // o_partner()         // pogoni
+   // o_roba()          // artikli
+   // o_sifk()
+// o_sifv()
    O_MAT_SUBAN         // dokumenti
 
    cIdRoba := Space( Len( ROBA->id ) )
@@ -351,13 +351,11 @@ FUNCTION IArtPoPogonima()
 
    qqPartner := Trim( qqPartner )
 
-   IF Params2()
-      WPar( "c1", cIdRoba )
-      WPar( "c2", dOd )
-      WPar( "c3", dDo )
-      WPar( "c4", cSaIznosima )
-      WPar( "c5", qqPartner )
-   ENDIF
+   WPar( "c1", cIdRoba )
+   WPar( "c2", dOd )
+   WPar( "c3", dDo )
+   WPar( "c4", cSaIznosima )
+   WPar( "c5", qqPartner )
    SELECT params; USE
 
    SELECT mat_suban
@@ -373,7 +371,7 @@ FUNCTION IArtPoPogonima()
          cFilt += ( ".and." + aUsl1 )
       ENDIF
 
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
       GO TOP
 
       IF Eof()
@@ -408,7 +406,7 @@ FUNCTION IArtPoPogonima()
 
       print_lista_2( aKol, {|| FSvaki2s() },, gTabela,, ;
          , "Specifikacija svih artikala - pregled za period od " + DToC( dod ) + " do " + DToC( ddo ), ;
-         {|| FFor2s() }, IF( gOstr == "D",, -1 ),,,,, )
+         {|| FFor2s() }, IF( gOstr == "D",, - 1 ),,,,, )
       FF
       ENDPRINT
 
@@ -421,7 +419,7 @@ FUNCTION IArtPoPogonima()
       IF !Empty( qqPartner )
          cFilt += ( ".and." + aUsl1 )
       ENDIF
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
       GO TOP
 
       IF Eof()
@@ -456,7 +454,7 @@ FUNCTION IArtPoPogonima()
 
       print_lista_2( aKol, {|| FSvaki1s() },, gTabela,, ;
          , "Specifikacija artikla - pregled po pogonima za period od " + DToC( dod ) + " do " + DToC( ddo ), ;
-         {|| FFor1s() }, IF( gOstr == "D",, -1 ),,,,, )
+         {|| FFor1s() }, IF( gOstr == "D",, - 1 ),,,,, )
       FF
       ENDPRINT
    ENDIF

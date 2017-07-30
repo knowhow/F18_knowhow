@@ -23,10 +23,10 @@ FUNCTION fakt_pocetno_stanje()
    LOCAL _count := 0
    LOCAL _ulaz, _izlaz, _stanje
    LOCAL _txt := ""
-   LOCAL _partn_id := PadR( "10", 6 )
+   LOCAL cIdPartner := PadR( "10", 6 )
 
    IF fakt_lager_lista_vars( @_param, _ps ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    MsgO( "Formiranje lager liste sql query u toku..." )
@@ -37,7 +37,7 @@ FUNCTION fakt_pocetno_stanje()
 
    IF _data == NIL
       MsgBeep( "Ne postoje traženi podaci !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    MsgC()
@@ -68,8 +68,7 @@ FUNCTION fakt_pocetno_stanje()
          LOOP
       ENDIF
 
-      SELECT partn
-      HSEEK _partn_id
+      select_o_partner( cIdPartner )
 
       SELECT fakt_pripr
       APPEND BLANK
@@ -84,7 +83,7 @@ FUNCTION fakt_pocetno_stanje()
       _rec[ "rbr" ] := RedniBroj( ++_count )
       _rec[ "datdok" ] := _param[ "datum_ps" ]
       _rec[ "dindem" ] := "KM "
-      _rec[ "idpartner" ] := _partn_id
+      _rec[ "idpartner" ] := cIdPartner
       aMemo[ 2 ] := AllTrim( partn->naz ) + ", " + AllTrim( partn->mjesto )
       aMemo[ 3 ] := "Početno stanje"
       _rec[ "txt" ] := fakt_memo_field_to_txt( aMemo )
@@ -104,4 +103,4 @@ FUNCTION fakt_pocetno_stanje()
       MsgBeep( "Formiran dokument početnog stanja i nalazi se u pripremi !!!" )
    ENDIF
 
-   RETURN
+   RETURN .T.

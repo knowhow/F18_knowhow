@@ -531,7 +531,7 @@ METHOD set_module_gvars()
 
    gModul := "FAKT"
 
-   gRobaBlock := {| Ch | FaRobaBlock( Ch ) }
+   //gRobaBlock := {| Ch | FaRobaBlock( Ch ) }
    gPartnBlock := NIL
 
    PUBLIC glCij13Mpc := ( my_get_from_ini( "FAKT", "Cijena13MPC", "D", KUMPATH ) == "D" )

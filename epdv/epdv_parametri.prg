@@ -65,6 +65,9 @@ FUNCTION epdv_update_sifre_params()
 
 FUNCTION ed_g_params()
 
+   LOCAL nX
+   LOCAL GetList := {}
+
    gPIC_IZN := PadR( gPIC_IZN, 20 )
    gPIC_CIJ := PadR( gPIC_CIJ, 20 )
 
@@ -75,51 +78,45 @@ FUNCTION ed_g_params()
 
    SET CURSOR ON
 
-   @ m_x + nX, m_y + 2 SAY "1. Zaokruzenje ***"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "1. Zaokruzenje ***"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "iznos ", 30 )   GET gZAO_IZN PICT "9"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "iznos ", 30 )   GET gZAO_IZN PICT "9"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "cijena ", 30 )   GET gZAO_CIJ PICT "9"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "cijena ", 30 )   GET gZAO_CIJ PICT "9"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " podaci na pdv prijavi ", 30 )   GET gZAO_PDV PICT "9"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( " podaci na pdv prijavi ", 30 )   GET gZAO_PDV PICT "9"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "2. Prikaz ***"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "2. Prikaz ***"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " iznos ", 30 )   GET gPIC_IZN
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( " iznos ", 30 )   GET gPIC_IZN
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " cijena ", 30 )   GET gPIC_CIJ
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( " cijena ", 30 )   GET gPIC_CIJ
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "3. Obracun ***"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "3. Obracun ***"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " ul. pdv kr.potr-stat fed-1, rs-2, bd-3", 55 )   GET gUlPdvKp ;
-      VALID gUlPdvKp $ " 123"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( " ul. pdv kr.potr-stat fed-1, rs-2, bd-3", 55 )   GET gUlPdvKp VALID gUlPdvKp $ " 123"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "4. Ostalo ***"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "4. Ostalo ***"
+   nX ++
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( " konta dobavljaci:", 30 ) GET gL_kto_dob  PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " konta dobavljaci:", 30 ) GET gL_kto_dob ;
-      PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "      konta kupci:", 30 ) GET gL_kto_kup  PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "      konta kupci:", 30 ) GET gL_kto_kup ;
-      PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "ulazni pdv:", 30 ) GET gKt_updv  PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "ulazni pdv:", 30 ) GET gKt_updv ;
-      PICT "@S30"
-   nX ++
-
-   @ m_x + nX, m_y + 2 SAY PadL( "izlazni pdv:", 30 ) GET gKt_ipdv ;
-      PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "izlazni pdv:", 30 ) GET gKt_ipdv  PICT "@S30"
 
    READ
 
@@ -132,11 +129,10 @@ FUNCTION ed_g_params()
       epdv_write_gparams()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
-// --------------------------------------
-// --------------------------------------
+
 FUNCTION read_epdv_gl_params()
 
    gZAO_IZN := 2
@@ -160,7 +156,7 @@ FUNCTION read_epdv_gl_params()
    gkt_updv := fetch_metric( "epdv_konto_ulazni_pdv", nil, gkt_updv )
    gkt_ipdv := fetch_metric( "epdv_konto_izlazni_pdv", nil, gkt_ipdv )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -183,8 +179,7 @@ FUNCTION epdv_write_gparams()
    RETURN .T.
 
 
-// ---------------------------------------------------------------
-// ---------------------------------------------------------------
+
 FUNCTION read_pdv_pars( dPotDatum, cPotMjesto, cPotOb, cPdvPovrat )
 
    dPotDatum := fetch_metric( "epdv_prijava_datum", nil, dPotDatum )
@@ -192,10 +187,9 @@ FUNCTION read_pdv_pars( dPotDatum, cPotMjesto, cPotOb, cPdvPovrat )
    cPotOb := fetch_metric( "epdv_prijava_obveznik", nil, cPotOb )
    cPdvPovrat := fetch_metric( "epdv_prijava_povrat", nil, cPdvPovrat )
 
-   RETURN
+   RETURN .T.
 
-// ---------------------------------------------------------------
-// ---------------------------------------------------------------
+
 FUNCTION save_pdv_pars( dPotDatum, cPotMjesto, cPotOb, cPdvPovrat )
 
    set_metric( "epdv_prijava_datum", nil, dPotDatum )
@@ -203,12 +197,12 @@ FUNCTION save_pdv_pars( dPotDatum, cPotMjesto, cPotOb, cPdvPovrat )
    set_metric( "epdv_prijava_obveznik", nil, cPotOb )
    set_metric( "epdv_prijava_povrat", nil, cPdvPovrat )
 
-   RETURN
+   RETURN .T.
+
 
 // SET - GET sekcija  za PIC i ZAO vrijednostai
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION ZAO_IZN( xVal )
 
    IF xVal <> nil
@@ -217,8 +211,7 @@ FUNCTION ZAO_IZN( xVal )
 
    RETURN gZAO_IZN
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION ZAO_CIJ( xVal )
 
    IF xVal <> nil
@@ -227,8 +220,7 @@ FUNCTION ZAO_CIJ( xVal )
 
    RETURN gZAO_CIJ
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION ZAO_PDV( xVal )
 
    IF xVal <> nil
@@ -238,8 +230,7 @@ FUNCTION ZAO_PDV( xVal )
    RETURN gZAO_PDV
 
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION PIC_IZN( xVal )
 
    IF xVal <> nil
@@ -248,8 +239,7 @@ FUNCTION PIC_IZN( xVal )
 
    RETURN gPIC_IZN
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION PIC_CIJ( xVal )
 
    IF xVal <> nil
@@ -259,8 +249,7 @@ FUNCTION PIC_CIJ( xVal )
    RETURN gPIC_CIJ
 
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION gUlPdvKp( xVal )
 
    IF xVal <> nil

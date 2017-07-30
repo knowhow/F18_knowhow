@@ -49,14 +49,14 @@ FUNCTION UnosSiht()
       ENDIF
 
       Box(, 6, 68 )
-      @ get_x_koord() + 0, get_y_koord() + 2 SAY "SIHTARICA:"
+      @ box_x_koord() + 0, box_y_koord() + 2 SAY "SIHTARICA:"
 
       nDan := 1
       DO WHILE .T.
 
-         @ get_x_koord() + 1, get_y_koord() + 2 SAY "Dan" GET _dan PICT "99"
-         @ get_x_koord() + 1, Col() + 2 SAY "Dio dana" GET _dandio VALID _dandio $ " 12345678" PICT "@!"
-         @ get_x_koord() + 1, Col() + 2 SAY "Broj bodova" GET _BrBod PICT "99999.999"  ;
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Dan" GET _dan PICT "99"
+         @ box_x_koord() + 1, Col() + 2 SAY "Dio dana" GET _dandio VALID _dandio $ " 12345678" PICT "@!"
+         @ box_x_koord() + 1, Col() + 2 SAY "Broj bodova" GET _BrBod PICT "99999.999"  ;
             WHEN {|| _BrBod := BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, _dan, _dandio ), ;
             _Brbod := iif( _BrBod = 0, radn->brbod, _BrBod ), .T. }
          READ
@@ -68,7 +68,7 @@ FUNCTION UnosSiht()
          SELECT TPRSiht; GO top; _idtippr := ID
          DO WHILE .T.
 
-            @ get_x_koord() + 2, get_y_koord() + 2 SAY "   Primanje" GET _idtippr ;
+            @ box_x_koord() + 2, box_y_koord() + 2 SAY "   Primanje" GET _idtippr ;
                VALID  Empty( _idtippr ) .OR. P_TPRSiht( @_idtippr, 2, 25 ) PICT "@!"
 
             READ
@@ -90,18 +90,18 @@ FUNCTION UnosSiht()
             HSEEK _idtippr
 
             IF tprSiht->k1 = "F"
-               @ get_x_koord() + 3, get_y_koord() + 2 SAY "Sifra Norme" GET _IdNorSiht  VALID  P_NorSiht( @_idNorSiht )
+               @ box_x_koord() + 3, box_y_koord() + 2 SAY "Sifra Norme" GET _IdNorSiht  VALID  P_NorSiht( @_idNorSiht )
 
             ELSE
                _IdNorSiht := Space( 4 )
-               @ get_x_koord() + 3, get_y_koord() + 2 SAY Space( 25 )
+               @ box_x_koord() + 3, box_y_koord() + 2 SAY Space( 25 )
             ENDIF
 
 
-            @ get_x_koord() + 3, get_y_koord() + 40 SAY "    Izvrseno" GET _Izvrseno  PICT "999999.999" ;
+            @ box_x_koord() + 3, box_y_koord() + 40 SAY "    Izvrseno" GET _Izvrseno  PICT "999999.999" ;
                WHEN !Empty( _idtippr )
 
-            @ get_x_koord() + 5, get_y_koord() + 40 SAY "Ukupno bodova" GET _Bodova PICT "99999999.99" ;
+            @ box_x_koord() + 5, box_y_koord() + 40 SAY "Ukupno bodova" GET _Bodova PICT "99999999.99" ;
                WHEN   {|| _Bodova := _BrBod * _izvrseno / iif( TPRSiht->k1 = "F", NorSiht->Iznos, 1 ), .F. }
 
             READ

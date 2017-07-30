@@ -306,12 +306,9 @@ STATIC FUNCTION fakt_is_storno_dok( cIdFirma, cIdTipDok, cBrDok )
    LOCAL nStorno := 0 // 0 - nije storno, 1 - storno, -1 = error
    LOCAL nTrec
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK ( cIdFirma + cIdTipDok + cBrDok )
+   seek_fakt( cIdFirma, cIdTipDok, cBrDok )
 
-   IF !Found()
+   IF !Eof()
       MsgBeep( "Ne mogu locirati dokument " + cIdFirma + "-" + cIdTipDok + "-" + AllTrim( cBrDok ) + "  (is storno) ?!"  )
       RETURN -1
    ENDIF
@@ -336,8 +333,8 @@ STATIC FUNCTION fakt_is_storno_dok( cIdFirma, cIdTipDok, cBrDok )
 STATIC FUNCTION fakt_fiscal_o_tables()
 
    // o_tarifa()
-   o_fakt_doks_dbf()
-   o_fakt_dbf()
+   //o_fakt_doks_dbf()
+   //o_fakt_dbf()
    // o_roba()
    // o_sifk()
    // o_sifv()
@@ -349,52 +346,52 @@ STATIC FUNCTION fakt_fiscal_o_tables()
 // ----------------------------------------------------------
 // kalkulise iznose na osnovu datih parametara
 // ----------------------------------------------------------
-STATIC FUNCTION fakt_izracunaj_total( arr, partner, cIdTipDok )
+STATIC FUNCTION fakt_izracunaj_total( aTarifaIznos, cIdPartner, cIdTipDok )
 
-   LOCAL _calc := hb_Hash()
+   LOCAL hTotal := hb_Hash()
    LOCAL cIdTarifa, nI, nIznos
    LOCAL nDbfArea := Select()
 
-   _calc[ "ukupno" ] := 0
-   _calc[ "pdv" ] := 0
-   _calc[ "osnovica" ] := 0
+   hTotal[ "ukupno" ] := 0
+   hTotal[ "pdv" ] := 0
+   hTotal[ "osnovica" ] := 0
 
-   FOR nI := 1 TO Len( arr )
+   FOR nI := 1 TO Len( aTarifaIznos )
 
-      cIdTarifa := PadR( arr[ nI, 1 ], 6 )
-      nIznos := arr[ nI, 2 ]
+      cIdTarifa := PadR( aTarifaIznos[ nI, 1 ], 6 )
+      nIznos := aTarifaIznos[ nI, 2 ]
 
       select_o_tarifa( cIdTarifa )
 
       IF cIdTipDok $ "11#13#23"
-         IF !partner_is_ino( partner ) .AND. !is_part_pdv_oslob_po_clanu( partner ) .AND. tarifa->opp > 0
-            _calc[ "ukupno" ] := _calc[ "ukupno" ] + nIznos
-            _calc[ "osnovica" ] := _calc[ "osnovica" ] + ( nIznos / ( 1 + tarifa->opp / 100 ) )
-            _calc[ "pdv" ] := _calc[ "pdv" ] + ( ( nIznos / ( 1 + tarifa->opp / 100 ) ) * ( tarifa->opp / 100 ) )
+         IF !partner_is_ino( cIdPartner ) .AND. !is_part_pdv_oslob_po_clanu( cIdPartner ) .AND. tarifa->opp > 0
+            hTotal[ "ukupno" ] := hTotal[ "ukupno" ] + nIznos
+            hTotal[ "osnovica" ] := hTotal[ "osnovica" ] + ( nIznos / ( 1 + tarifa->opp / 100 ) )
+            hTotal[ "pdv" ] := hTotal[ "pdv" ] + ( ( nIznos / ( 1 + tarifa->opp / 100 ) ) * ( tarifa->opp / 100 ) )
          ELSE
-            _calc[ "ukupno" ] := _calc[ "ukupno" ] + nIznos
-            _calc[ "osnovica" ] := _calc[ "osnovica" ] + nIznos
+            hTotal[ "ukupno" ] := hTotal[ "ukupno" ] + nIznos
+            hTotal[ "osnovica" ] := hTotal[ "osnovica" ] + nIznos
          ENDIF
       ELSE
-         IF !partner_is_ino( partner ) .AND. !is_part_pdv_oslob_po_clanu( partner ) .AND. tarifa->opp > 0
-            _calc[ "ukupno" ] := _calc[ "ukupno" ] + ( nIznos * ( 1 + tarifa->opp / 100 ) )
-            _calc[ "osnovica" ] := _calc[ "osnovica" ] + nIznos
-            _calc[ "pdv" ] := _calc[ "pdv" ] + ( nIznos * ( tarifa->opp / 100 ) )
+         IF !partner_is_ino( cIdPartner ) .AND. !is_part_pdv_oslob_po_clanu( cIdPartner ) .AND. tarifa->opp > 0
+            hTotal[ "ukupno" ] := hTotal[ "ukupno" ] + ( nIznos * ( 1 + tarifa->opp / 100 ) )
+            hTotal[ "osnovica" ] := hTotal[ "osnovica" ] + nIznos
+            hTotal[ "pdv" ] := hTotal[ "pdv" ] + ( nIznos * ( tarifa->opp / 100 ) )
          ELSE
-            _calc[ "ukupno" ] := _calc[ "ukupno" ] + nIznos
-            _calc[ "osnovica" ] := _calc[ "osnovica" ] + nIznos
+            hTotal[ "ukupno" ] := hTotal[ "ukupno" ] + nIznos
+            hTotal[ "osnovica" ] := hTotal[ "osnovica" ] + nIznos
          ENDIF
       ENDIF
    NEXT
 
-   // svesti na dvije decimale
-   _calc[ "ukupno" ] := Round( _calc[ "ukupno" ], 2 )
-   _calc[ "osnovica" ] := Round( _calc[ "osnovica" ], 2 )
-   _calc[ "pdv" ] := Round( _calc[ "pdv" ], 2 )
+
+   hTotal[ "ukupno" ] := Round( hTotal[ "ukupno" ], 2 ) // svesti na dvije decimale
+   hTotal[ "osnovica" ] := Round( hTotal[ "osnovica" ], 2 )
+   hTotal[ "pdv" ] := Round( hTotal[ "pdv" ], 2 )
 
    SELECT ( nDbfArea )
 
-   RETURN _calc
+   RETURN hTotal
 
 
 
@@ -724,11 +721,11 @@ STATIC FUNCTION dokument_se_moze_fiskalizovati( cIdTipDok )
    Opis: da li su podaci partnera za ispis na fiskalni račun kompletni
          naziv, adresa, ptt, telefon
 */
-STATIC FUNCTION is_podaci_partnera_kompletirani( sifra, id_broj )
+STATIC FUNCTION is_podaci_partnera_kompletirani( cIdPartner, id_broj )
 
    LOCAL lRet := .T.
 
-   select_o_partner( sifra )
+   select_o_partner( cIdPartner )
 
    IF !Found()
       lRet := .F.
@@ -988,9 +985,6 @@ STATIC FUNCTION obrada_greske_na_liniji_55_reklamirani_racun( cIdFirma, cIdTipDo
 
 
 
-// -----------------------------------------------------------------------
-// vrati partnera za email
-// -----------------------------------------------------------------------
 STATIC FUNCTION _get_partner_for_email( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL cRet := ""
@@ -1235,8 +1229,8 @@ FUNCTION fisc_isjecak( cFirma, cTipDok, cBrDok )
    LOCAL nFisc_no := 0
 
    seek_fakt_doks( cFirma, cTipDok, cBrDok )
-   IF Found()
-      // ako postoji broj reklamnog racuna, onda uzmi taj
+
+   IF !Eof() // ako postoji broj reklamiranog racuna, onda uzmi taj
       IF field->fisc_st <> 0
          nFisc_no := field->fisc_st
       ELSE

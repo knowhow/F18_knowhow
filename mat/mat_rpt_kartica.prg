@@ -595,16 +595,15 @@ FUNCTION KSuban()
 
    BoxC()
 
-   IF Params2()
-      WPar( "c1", _brza_k )
-      WPar( "c2", PadR( _id_firma, 2 ) )
-      WPar( "c3", _konto )
-      WPar( "c4", _partner )
-      WPar( "c5", cIdRoba )
-      WPar( "c6", _preth_p )
-      WPar( "d1", _dat_od )
-      WPar( "d2", _dat_do )
-   ENDIF
+
+   WPar( "c1", _brza_k )
+   WPar( "c2", PadR( _id_firma, 2 ) )
+   WPar( "c3", _konto )
+   WPar( "c4", _partner )
+   WPar( "c5", cIdRoba )
+   WPar( "c6", _preth_p )
+   WPar( "d1", _dat_od )
+   WPar( "d2", _dat_do )
    SELECT params
    USE
 

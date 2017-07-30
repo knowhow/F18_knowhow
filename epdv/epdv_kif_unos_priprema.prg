@@ -19,9 +19,9 @@ STATIC FUNCTION epdv_kif_tbl_priprema()
    LOCAL _col := f18_max_cols() - 3
 
    Box(, _row, _col )
-   @ m_x + _row - 2, m_y + 2 SAY8 "<c-N>  Nove stavke    | <ENT> Ispravi stavku   | <c-T> Briši stavku         "
-   @ m_x + _row - 1, m_y + 2 SAY8 "<c-A>  Ispravka naloga| <c-P> Štampa dokumenta | <a-A> Ažuriranje           "
-   @ m_x + _row, m_y + 2 SAY8 "<a-P>  Povrat dok.    | <a-X> Renumeracija"
+   @ box_x_koord() + _row - 2, box_y_koord() + 2 SAY8 "<c-N>  Nove stavke    | <ENT> Ispravi stavku   | <c-T> Briši stavku         "
+   @ box_x_koord() + _row - 1, box_y_koord() + 2 SAY8 "<c-A>  Ispravka naloga| <c-P> Štampa dokumenta | <a-A> Ažuriranje           "
+   @ box_x_koord() + _row, box_y_koord() + 2 SAY8 "<a-P>  Povrat dok.    | <a-X> Renumeracija"
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -31,10 +31,9 @@ STATIC FUNCTION epdv_kif_tbl_priprema()
    GO TOP
 
    set_a_kol_kif( @Kol, @ImeKol )
-   my_browse( "ekif", _row, _col, {|| epdv_kif_key_handler() }, "", "KIF Priprema...", , , , , 3 )
+   my_browse( "ekif", _row, _col, {| Ch | epdv_kif_key_handler( Ch ) }, "", "KIF Priprema...", , , , , 3 )
    BoxC()
    closeret
-
 
 STATIC FUNCTION set_a_kol_kif( aKol, aImeKol )
 
@@ -67,6 +66,7 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
    LOCAL nX := 2
    LOCAL nXPart := 0
    LOCAL nYPart := 22
+   LOCAL GetList := {}
 
    Box(, f18_max_rows() - 10, f18_max_cols() - 12 )
    IF lNova
@@ -81,53 +81,48 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
       _src_br_2 := Space( Len( src_br_2 ) )
    ENDIF
 
-   @ m_x + nX, m_y + 2 SAY "R.br: " GET _r_br ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "R.br: " GET _r_br ;
       PICT "999999"
 
-   @ m_x + nX, Col() + 2 SAY "datum: " GET _datum
+   @ box_x_koord() + nX, Col() + 2 SAY "datum: " GET _datum
    nX += 2
 
    nXPart := nX
-   @ m_x + nX, m_y + 2 SAY "Kupac: " GET _id_part ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kupac: " GET _id_part ;
       VALID v_part( @_id_part, @_id_tar, "KIF", .T. ) ;
       PICT "@!"
 
    nX += 2
 
 
-   @ m_x + nX, m_y + 2 SAY8 "Broj računa (externi broj) " GET _src_br_2
-   nX ++
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Broj računa (externi broj) " GET _src_br_2
+   nX++
 
-   @ m_x + nX, m_y + 2 SAY "Opis stavke: " GET _opis ;
-      WHEN {|| SetPos( m_x + nXPart, m_y + nYPart ), QQOut( s_partner( _id_part ) ), .T. } ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Opis stavke: " GET _opis ;
+      WHEN {|| SetPos( box_x_koord() + nXPart, box_y_koord() + nYPart ), QQOut( s_partner( _id_part ) ), .T. } ;
       PICT "@S50"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Iznos bez PDV (osnovica): " GET _i_b_pdv ;
-      PICT PIC_IZN()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Iznos bez PDV (osnovica): " GET _i_b_pdv  PICT PIC_IZN()
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "tarifa: " GET _id_tar ;
-      VALID v_id_tar( @_id_tar, @_i_b_pdv, @_i_pdv,  Col(), lNova )  ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "tarifa: " GET _id_tar  VALID v_id_tar( @_id_tar, @_i_b_pdv, @_i_pdv,  Col(), lNova )  ;
       PICT "@!"
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "   Iznos PDV: " GET _i_pdv ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "   Iznos PDV: " GET _i_pdv ;
       WHEN {||  .T. } ;
       VALID {|| nI_s_pdv := _i_b_pdv + _i_pdv, .T. } ;
       PICT PIC_IZN()
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "Iznos sa PDV: " GET nI_s_pdv ;
-      when {|| .F. } ;
-      PICT PIC_IZN()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Iznos sa PDV: " GET nI_s_pdv WHEN {|| .F. } PICT PIC_IZN()
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Ispravno (D/N) ?" GET cIspravno ;
-      valid {|| cIspravno == "D" } ;
-      PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispravno (D/N) ?" GET cIspravno ;
+      VALID {|| cIspravno == "D" }   PICT "@!"
    ++nX
 
    READ
@@ -143,7 +138,8 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
       RETURN .F.
    ENDIF
 
-STATIC FUNCTION epdv_kif_key_handler()
+
+STATIC FUNCTION epdv_kif_key_handler( Ch )
 
    LOCAL nTekRec
    LOCAL nBrDokP
@@ -221,7 +217,7 @@ STATIC FUNCTION epdv_kif_key_handler()
 
       nBrDokP := 0
       Box( , 2, 60 )
-      @ m_x + 1, m_y + 2 SAY8 "Dokument (0-štampaj pripremu) " GET nBrDokP PICT "999999"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Dokument (0-štampaj pripremu) " GET nBrDokP PICT "999999"
       READ
       BoxC()
       IF LastKey() <> K_ESC
@@ -249,7 +245,7 @@ STATIC FUNCTION epdv_kif_key_handler()
       IF Pitanje( , "Povrat KIF dokumenta u pripremu (D/N) ?", "N" ) == "D"
          nBrDokP := 0
          Box(, 1, 40 )
-         @ m_x + 1, m_y + 2 SAY "KIF dokument br:" GET nBrDokP  PICT "999999"
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "KIF dokument br:" GET nBrDokP  PICT "999999"
 
          READ
          BoxC()

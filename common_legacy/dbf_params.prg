@@ -163,15 +163,7 @@ FUNCTION Params1()
    RETURN NIL
 
 
-FUNCTION Params2()
 
-   LOCAL ncx, ncy, nOldC
-
-   // TODO: skloni
-   // f18_tone( 320, 1 )
-   // f18_tone( 320, 1 )
-
-   RETURN .T.
 
 FUNCTION HistUser( Ch )
 

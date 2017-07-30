@@ -19,7 +19,7 @@ THREAD STATIC aPrStek := {}
 THREAD STATIC aMsgStack := {}
 
 
-FUNCTION get_x_koord( nSet )
+FUNCTION box_x_koord( nSet )
 
    IF nSet != NIL
       m_x := nSet
@@ -28,7 +28,7 @@ FUNCTION get_x_koord( nSet )
    RETURN m_x
 
 
-FUNCTION get_y_koord( nSet )
+FUNCTION box_y_koord( nSet )
 
    IF nSet != NIL
       m_y := nSet

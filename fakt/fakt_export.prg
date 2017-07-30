@@ -45,8 +45,7 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
 
    o_r_export()
    // o_roba()
-   o_fakt_doks_dbf()
-   o_fakt_dbf()
+
 
    IF !Empty( cId_f )
       cFilt += Parsiraj( AllTrim( cId_f ), "idfirma", "C" )
@@ -80,8 +79,7 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
       cIdRoba := field->idroba
 
       // pozicioniraj se na doks
-      SELECT fakt_doks
-      SEEK cIdFirma + cIdTipdok + cBrDok
+      seek_fakt_doks( cIdFirma, cIdTipdok, cBrDok )
 
       SELECT r_export
       APPEND BLANK

@@ -289,7 +289,7 @@ FUNCTION usporedna_lista_fakt_kalk()
       ENDDO
 
       IF !Empty( cIdRoba )
-      
+
          fakt_set_pozicija_sif_roba( cIdRoba, cSintetika == "D" )
          IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
             _cijena := roba->vpc2
@@ -368,6 +368,7 @@ FUNCTION usporedna_lista_fakt_kalk()
 
       SELECT POM
       HSEEK cIdRoba
+      
       IF ! Found()
          APPEND BLANK
          REPLACE IdRoba WITH cIdRoba

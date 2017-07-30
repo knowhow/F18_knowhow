@@ -167,16 +167,16 @@ FUNCTION V_Podbr()
 
 FUNCTION fakt_setuj_cijenu( cTipCijene )
 
-   //LOCAL _rj := .F.
+   // LOCAL _rj := .F.
    LOCAL _tmp
 
    // SELECT ( F_RJ )
    // IF Used()
-   //_rj := .T.
+   // _rj := .T.
    select_o_rj( _idfirma )
    // ENDIF
 
-  //-- SELECT roba
+   // -- SELECT roba
 
    IF _idtipdok == "13" .AND. ( gVar13 == "2" .OR. glCij13Mpc ) .OR. _idtipdok == "19"
 
@@ -456,6 +456,143 @@ FUNCTION V_Roba( lPrikTar )
    SELECT fakt_pripr
 
    RETURN .T.
+
+
+
+
+FUNCTION FaktStanje( cIdRoba )
+
+   LOCAL nPos, nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
+
+   seek_fakt_3( cIdRoba )
+
+   aStanje := {}  // {idfirma, nUl,nIzl,nRevers,nRezerv }
+   nUl := nIzl := nRezerv := nRevers := 0
+   DO WHILE !Eof()  .AND. cIdRoba == IdRoba
+      nPos := AScan ( aStanje, {| x | x[ 1 ] == FAKT->IdFirma } )
+      IF nPos == 0
+         AAdd ( aStanje, { IdFirma, 0, 0, 0, 0 } )
+         nPos := Len ( aStanje )
+      ENDIF
+      IF Left( field->idtipdok, 1 ) == "0"  // ulaz
+         aStanje[ nPos ][ 2 ] += kolicina
+      ELSEIF Left( idtipdok, 1 ) == "1"   // izlazni dokument
+         IF !( Left( serbr, 1 ) == "*" .AND. idtipdok == "10" )  // za fakture na osnovu optpremince ne ra~unaj izlaz
+            aStanje[ nPos ][ 3 ] += kolicina
+         ENDIF
+      ELSEIF idtipdok $ "20#27"
+         IF serbr = "*"
+            aStanje[ nPos ][ 5 ] += kolicina
+         ENDIF
+      ELSEIF idtipdok == "21"
+         aStanje[ nPos ][ 4 ] += kolicina
+      ENDIF
+      SKIP
+   ENDDO
+
+   fakt_box_stanje( aStanje, cIdRoba )      // nUl,nIzl,nRevers,nRezerv)
+
+   RETURN .T.
+
+
+
+FUNCTION fakt_box_stanje( aStanje, cIdroba )
+
+   LOCAL i, nR, nC, nTSta := 0, nTRev := 0, nTRez := 0, ;
+      nTOst := 0, npd, cDiv := " ³ ", nLen
+
+   nPd := Len ( fakt_pic_iznos() )
+   nLen := Len ( aStanje )
+
+   // ucitajmo dodatne parametre stanja iz FMK.INI u aDodPar
+
+   aDodPar := {}
+   FOR i := 1 TO 6
+      cI := AllTrim( Str( i ) )
+      cPomZ := my_get_from_ini( "BoxStanje", "ZaglavljeStanje" + cI, "", KUMPATH )
+      cPomF := my_get_from_ini( "BoxStanje", "FormulaStanje" + cI, "", KUMPATH )
+      IF !Empty( cPomF )
+         AAdd( aDodPar, { cPomZ, cPomF } )
+      ENDIF
+   NEXT
+   nLenDP := IF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
+
+   select_o_roba( cIdRoba )
+   Box(, 6 + nLen + Int( ( nLenDP ) / 2 ), 75 )
+   Beep( 1 )
+   @ m_x + 1, m_y + 2 SAY "ARTIKAL: "
+   @ m_x + 1, Col() SAY PadR( AllTrim( cIdRoba ) + " - " + Left( roba->naz, 40 ), 51 ) COLOR "GR+/B"
+   @ m_x + 3, m_y + 2 SAY cDiv + "RJ" + cDiv + PadC ( "Stanje", npd ) + cDiv + ;
+      PadC ( "Na reversu", npd ) + cDiv + ;
+      PadC ( "Rezervisano", npd ) + cDiv + PadC ( "Ostalo", npd ) ;
+      + cDiv
+   nR := m_x + 4
+   FOR nC := 1 TO nLen
+      // {idfirma, nUl,nIzl,nRevers,nRezerv }
+      @ nR, m_y + 2 SAY cDiv
+      @ nR, Col() SAY aStanje[ nC ][ 1 ]
+      @ nR, Col() SAY cDiv
+      nPom := aStanje[ nC ][ 2 ] - aStanje[ nC ][ 3 ]
+      @ nR, Col() SAY nPom PICT fakt_pic_iznos()
+      @ nR, Col() SAY cDiv
+      nTSta += nPom
+      @ nR, Col() SAY aStanje[ nC ][ 4 ] PICT fakt_pic_iznos()
+      @ nR, Col() SAY cDiv
+      nTRev += aStanje[ nC ][ 4 ]
+      nPom -= aStanje[ nC ][ 4 ]
+      @ nR, Col() SAY aStanje[ nC ][ 5 ] PICT fakt_pic_iznos()
+      @ nR, Col() SAY cDiv
+      nTRez += aStanje[ nC ][ 5 ]
+      nPom -= aStanje[ nC ][ 5 ]
+      @ nR, Col() SAY nPom PICT fakt_pic_iznos()
+      @ nR, Col() SAY cDiv
+      nTOst += nPom
+      nR++
+   NEXT
+   @ nR, m_y + 2 SAY cDiv + "--" + cDiv + REPL ( "-", npd ) + cDiv + ;
+      REPL ( "-", npd ) + cDiv + ;
+      REPL ( "-", npd ) + cDiv + REPL ( "-", npd ) + cDiv
+   nR++
+   @ nR, m_y + 2 SAY " | UK.| "
+   @ nR, Col() SAY nTSta PICT fakt_pic_iznos()
+   @ nR, Col() SAY cDiv
+   @ nR, Col() SAY nTRev PICT fakt_pic_iznos()
+   @ nR, Col() SAY cDiv
+   @ nR, Col() SAY nTRez PICT fakt_pic_iznos()
+   @ nR, Col() SAY cDiv
+   @ nR, Col() SAY nTOst PICT fakt_pic_iznos()
+   @ nR, Col() SAY cDiv
+
+   // ispis dodatnih parametara stanja
+
+   IF nLenDP > 0
+      ++nR
+      @ nR, m_y + 2 SAY REPL( "-", 74 )
+      FOR i := 1 TO nLenDP - 1
+
+         cPom777 := aDodPar[ i, 2 ]
+
+         IF "TARIFA->" $ Upper( cPom777 )
+            select_o_tarifa( ROBA->idtarifa )
+         ENDIF
+
+         IF i % 2 != 0
+            ++nR
+            @ nR, m_y + 2 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
+            @ nR, Col() + 2 SAY &cPom777 COLOR "R/W"
+         ELSE
+            @ nR, m_y + 37 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
+            @ nR, Col() + 2 SAY &cPom777 COLOR "R/W"
+         ENDIF
+
+      NEXT
+   ENDIF
+
+   Inkey( 0 )
+   BoxC()
+
+   RETURN .T.
+
 
 
 FUNCTION V_Porez()
@@ -1410,6 +1547,7 @@ FUNCTION fakt_brisi_stavku_pripreme()
 STATIC FUNCTION fakt_unos_is_jedina_stavka()
 
    LOCAL nTekRec, cIdFirma, nBrStavki, cIdTipDok, cBrDok
+
    nBrStavki := 0
 
 

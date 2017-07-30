@@ -143,6 +143,10 @@ FUNCTION find_sifk_by_id_oznaka_naz_sort( cId, cOznaka, cNaz, cSort )
    RETURN !Eof()
 
 
+/*
+   fill_sifk_partn( "IDBR", "IDENT br:", "07", 13 )
+*/
+
 FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
 
    LOCAL lFound

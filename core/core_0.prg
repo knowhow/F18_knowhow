@@ -132,6 +132,7 @@ FUNCTION download_file( cUrl, cDestFile )
 
    RETURN ""
 
+
 FUNCTION get_platform()
 
    LOCAL cPlatform
@@ -151,3 +152,18 @@ FUNCTION get_platform()
 FUNCTION f18_exe_path()
 
    RETURN hb_FNameDir( hb_ProgName() )
+
+
+
+
+/*
+   my_rddname() -> "DBFCDX" ili "SQLMIX", IF default area used()
+                   "unused", if !used()
+*/
+FUNCTION my_rddName()
+
+   IF Used()
+      RETURN rddName()
+   ENDIF
+
+   RETURN "unused"

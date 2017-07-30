@@ -198,11 +198,7 @@ FUNCTION get_partn_sifk_sifv( cDbfName, cOznaka, cIdSif, return_nil )
 
    LOCAL xSif
 
-   // IF ValType( cIdSif ) != "O"
-   // xSif := Unicode():New( cIdSif, is_partn_sql() )
-   // ELSE
    xSif := cIdSif
-   // ENDIF
 
    RETURN  get_sifk_sifv( "PARTN", cDbfName, cOznaka, xSif, return_nil )
 
@@ -211,11 +207,7 @@ FUNCTION IzSifkKonto( cDbfName, cOznaka, cIdSif, return_nil )
 
    LOCAL xSif
 
-   // IF ValType( cIdSif ) != "O"
-   // xSif := Unicode():New( cIdSif, is_konto_sql() )
-   // ELSE
    xSif := cIdSif
-   // ENDIF
 
    RETURN  get_sifk_sifv( "KONTO", cDbfName, cOznaka, xSif, return_nil )
 
@@ -224,11 +216,8 @@ FUNCTION IzSifkRoba( cDbfName, cOznaka, cIdSif, return_nil )
 
    LOCAL xSif
 
-   // IF ValType( cIdSif ) != "O"
-   // xSif := Unicode():New( cIdSif, is_roba_sql() )
-   // ELSE
+
    xSif := cIdSif
-   // ENDIF
 
    RETURN  get_sifk_sifv( "ROBA", cDbfName, cOznaka, xSif, return_nil )
 

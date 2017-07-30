@@ -84,7 +84,6 @@ FUNCTION update_idbr_pdvb_from_regb()
 
    SELECT PARTN
 
-   // oPartnId := Unicode():New( partn->id, is_partn_sql() )
    cPartnId := partn->id
 
    cRegB := get_partn_regb( cPartnId )

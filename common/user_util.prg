@@ -35,13 +35,13 @@ FUNCTION GetUserID()
 FUNCTION GetUserRoles( user_name )
 
    LOCAL _roles
-   LOCAL _qry
+   LOCAL cQuery
 
    IF user_name == NIL
       _user := "CURRENT_USER"
    ENDIF
 
-   _qry := "SELECT " + ;
+   cQuery := "SELECT " + ;
       " rolname " + ;
       "FROM pg_user " + ;
       "JOIN pg_auth_members ON pg_user.usesysid = pg_auth_members.member " + ;
@@ -49,7 +49,7 @@ FUNCTION GetUserRoles( user_name )
       "WHERE pg_user.usename = " + _user + " " + ;
       "ORDER BY rolname ;"
 
-   _roles := run_sql_query( _qry )
+   _roles := run_sql_query( cQuery )
 
    IF sql_error_in_query( _roles, "SELECT" )
       RETURN NIL
@@ -176,25 +176,25 @@ STATIC FUNCTION izaberi_f18_korisnika( arr )
 
 FUNCTION get_list_f18_users()
 
-   LOCAL _qry, _table
+   LOCAL cQuery, oTable
    LOCAL _list := {}
    LOCAL _row, nI
 
-   _qry := "SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
+   cQuery := "SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
       "FROM public.usr " + ;
       "WHERE usr_username NOT IN ( 'postgres', 'admin' ) " + ;
       "ORDER BY usr_username;"
 
-   _table := run_sql_query( _qry )
-   IF sql_error_in_query( _table, "SELECT" )
+   oTable := run_sql_query( cQuery )
+   IF sql_error_in_query( oTable, "SELECT" )
       RETURN NIL
    ENDIF
 
-   _table:GoTo( 1 )
+   oTable:GoTo( 1 )
 
-   FOR nI := 1 TO _table:LastRec()
+   FOR nI := 1 TO oTable:LastRec()
 
-      _row := _table:GetRow( nI )
+      _row := oTable:GetRow( nI )
 
       AAdd( _list, { _row:FieldGet( _row:FieldPos( "id" ) ), ;
          _row:FieldGet( _row:FieldPos( "name" ) ), ;

@@ -131,6 +131,21 @@ FUNCTION roba_update_vpc( cId, nVpc )
    RETURN .T.
 
 
+
+FUNCTION roba_max_fiskalni_plu()
+
+   LOCAL nPlu := 0
+   LOCAL cSql, oQuery
+
+   cSql := "SELECT MAX( fisc_plu ) AS max_plu FROM " + F18_PSQL_SCHEMA_DOT + "roba"
+   oQuery := run_sql_query( cSql )
+
+   nPlu := query_row( oQuery, "max_plu" )
+
+   RETURN nPlu
+
+
+
 FUNCTION find_roba_by_sifradob( cIdSifraDob, cOrderBy, cWhere )
 
    LOCAL hParams := hb_Hash()

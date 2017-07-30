@@ -14,34 +14,34 @@
 
 FUNCTION kalk_izvjestaji_prodavnice_menu()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _Opc, "1. kartica - prodavnica                          " )
-   AAdd( _opcexe, {|| kalk_kartica_prodavnica() } )
-   AAdd( _Opc, "2. lager lista prodavnica" )
-   AAdd( _opcexe, {|| kalk_lager_lista_prodavnica() } )
-   AAdd( _Opc, "3. finansijsko stanje prodavnice" )
-   AAdd( _opcexe, {|| finansijsko_stanje_prodavnica() } )
-   AAdd( _Opc, "4. trgovačka knjiga na malo" )
-   AAdd( _opcexe, {|| kalk_tkm() } )
-   AAdd( _Opc, "5. pregled asortimana za dobavljača" )
-   AAdd( _opcexe, {|| asortiman_dobavljac_mp() } )
+   AAdd( aOpc, "1. kartica - prodavnica                          " )
+   AAdd( aOpcExe, {|| kalk_kartica_prodavnica() } )
+   AAdd( aOpc, "2. lager lista prodavnica" )
+   AAdd( aOpcExe, {|| kalk_lager_lista_prodavnica() } )
+   AAdd( aOpc, "3. finansijsko stanje prodavnice" )
+   AAdd( aOpcExe, {|| finansijsko_stanje_prodavnica() } )
+   AAdd( aOpc, "4. trgovačka knjiga na malo" )
+   AAdd( aOpcExe, {|| kalk_tkm() } )
+   AAdd( aOpc, "5. pregled asortimana za dobavljača" )
+   AAdd( aOpcExe, {|| asortiman_dobavljac_mp() } )
 
-   AAdd( _opc, "N. najprometniji artikli u prodavnicama" )
-   AAdd( _opcexe, {|| naprometniji_artikli_prodavnica() } )
+   AAdd( aOpc, "N. najprometniji artikli u prodavnicama" )
+   AAdd( aOpcExe, {|| naprometniji_artikli_prodavnica() } )
 
-   AAdd( _opc,  "V. pregled za više objekata" )
-   AAdd( _opcexe, {|| kalk_prodavnica_pregled_vise_objekata() } )
+   AAdd( aOpc,  "V. pregled za više objekata" )
+   AAdd( aOpcExe, {|| kalk_prodavnica_pregled_vise_objekata() } )
 
-   AAdd( _opc,  "K. ukalkulisani porez prodavnice" )
-   AAdd( _opcexe, {|| kalk_ukalkulisani_porez_prodavnice() } )
+   AAdd( aOpc,  "K. ukalkulisani porez prodavnice" )
+   AAdd( aOpcExe, {|| kalk_ukalkulisani_porez_prodavnice() } )
 
-   AAdd( _opc,  "R. realizovani porez prodavnice" )
-   AAdd( _opcexe, {|| kalk_realizovani_porez_prodavnice() } )
+   AAdd( aOpc,  "R. realizovani porez prodavnice" )
+   AAdd( aOpcExe, {|| kalk_realizovani_porez_prodavnice() } )
 
-   f18_menu( "izp", .F., _izbor, _opc, _opcexe )
+   f18_menu( "izp", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN NIL
 
@@ -55,30 +55,30 @@ FUNCTION kalk_izvjestaji_prodavnice_menu()
 
 FUNCTION kalk_prodavnica_pregled_vise_objekata()
 
-   LOCAL _izbor := 1
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL nIzbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
 
-   AAdd( _opc, "1. sintetička lager lista                  " )
-   AAdd( _opcexe, {|| sint_lager_lista_prodavnice() } )
-   AAdd( _opc, "2. rekapitulacija fin stanja po objektima" )
-   AAdd( _opcexe, {|| Rfinansijsko_stanje_prodavnica() } )
+   AAdd( aOpc, "1. sintetička lager lista                  " )
+   AAdd( aOpcExe, {|| sint_lager_lista_prodavnice() } )
+   AAdd( aOpc, "2. rekapitulacija fin stanja po objektima" )
+   AAdd( aOpcExe, {|| Rfinansijsko_stanje_prodavnica() } )
 
 /*
-   AAdd( _opc, "3. dnevni promet za sve objekte" )
-   AAdd( _opcexe, {|| kalk_dnevni_promet_prodavnice() } )
+   AAdd( aOpc, "3. dnevni promet za sve objekte" )
+   AAdd( aOpcExe, {|| kalk_dnevni_promet_prodavnice() } )
   */
 
 /*
-   AAdd( _opc, "4. pregled prometa prodavnica za period" )
-   AAdd( _opcexe, {|| PPProd() } )
+   AAdd( aOpc, "4. pregled prometa prodavnica za period" )
+   AAdd( aOpcExe, {|| PPProd() } )
 */
 
 /*
-   AAdd( _opc, "5. (vise)dnevni promet za sve objekte" )
-   AAdd( _opcexe, {|| PromPeriod() } )
+   AAdd( aOpc, "5. (vise)dnevni promet za sve objekte" )
+   AAdd( aOpcExe, {|| PromPeriod() } )
 */
 
-   f18_menu( "prsi", .F., _izbor, _opc, _opcexe )
+   f18_menu( "prsi", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN NIL

@@ -119,7 +119,9 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
          SET ORDER TO TAG "ID"
 
       ELSEIF cTable == "sast"
-         INDEX ON field->ID + Str( field->R_BR, 4, 0 ) + field->ID2 TAG "ID" TO ( cAlias )
+         INDEX ON field->ID + field->ID2 TAG "ID" TO ( cAlias )
+         INDEX ON field->ID + Str( field->R_BR, 4, 0 ) + field->ID2 TAG "IDRBR" TO ( cAlias )
+         INDEX ON field->ID2 + field->ID TAG "NAZ" TO ( cAlias )         
          SET ORDER TO TAG "ID"
 
       ELSEIF cTable == "pos_osob"

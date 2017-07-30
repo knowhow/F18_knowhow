@@ -16,7 +16,7 @@ FUNCTION fakt_fin_prenos()
    o_params()
    PRIVATE cSection := "(", cHistory := " "; aHistory := {}
 
-   lNCPoSast := ( my_get_from_ini( "FAKTFIN", "NCPoSastavnici", "N", KUMPATH ) == "D" )
+   //lNCPoSast := ( my_get_from_ini( "FAKTFIN", "NCPoSastavnici", "N", KUMPATH ) == "D" )
    cKonSir   := PadR( my_get_from_ini( "FAKTFIN", "KontoSirovinaIzSastavnice", "1010", KUMPATH ), 7 )
 
    gFaktKum := ""
@@ -93,10 +93,10 @@ FUNCTION fakt_fin_prenos()
    //o_roba()
    //o_tarifa()
 
-   IF lNCPoSast
-      o_sastavnice()
-      SET ORDER TO TAG "1"
-   ENDIF
+   //IF lNCPoSast
+      //o_sastavnice()
+      //SET ORDER TO TAG "1"
+   //ENDIF
 
    SELECT ( F_FAKT )
    IF !Used()
@@ -157,6 +157,7 @@ FUNCTION fakt_fin_prenos()
          select_o_tarifa( roba->idtarifa )
          SELECT fakt
 
+/*
          nNV := 0
          IF lNCPoSast .AND. ROBA->tip == "P"
             SELECT SAST
@@ -166,7 +167,7 @@ FUNCTION fakt_fin_prenos()
                SKIP 1
             ENDDO
          ENDIF
-
+*/
          SELECT FINMAT
          APPEND BLANK
          cIdVD := fakt->IdTipdok
@@ -194,9 +195,11 @@ FUNCTION fakt_fin_prenos()
             RREPLACE IdRj WITH cIdRjFakt
          ENDIF
 
+/*
          IF cIDVD == "11" .AND. lNCPoSast .AND. TARIFA->mpp <> 0 .AND. FieldPos( "POREZ3" ) > 0
             RREPLACE porez3 WITH PorezMP( "MPP" )
          ENDIF
+  */
          SELECT fakt
          SKIP
       ENDDO // brdok

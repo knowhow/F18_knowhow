@@ -56,6 +56,12 @@ CREATE INDEX sast_id1
 */
 
 
+/*
+  CREATE_INDEX( "ID", "ID+ID2", sast )
+  CREATE_INDEX( "IDRBR", "ID+STR(R_BR,4,0)+ID2", sast )
+  CREATE_INDEX( "NAZ", "ID2+ID", _sast )
+*/
+
 FUNCTION p_roba_sastavnice( cId, dx, dy )
 
    PRIVATE ImeKol
@@ -71,7 +77,7 @@ FUNCTION p_roba_sastavnice( cId, dx, dy )
 
 
 
-FUNCTION show_sast()
+STATIC FUNCTION show_sast()
 
    PRIVATE cIdProizvodTekuci
    PRIVATE ImeKol
@@ -86,12 +92,15 @@ FUNCTION show_sast()
    // SET ORDER TO TAG "idrbr"
    // SET FILTER TO field->id == cIdProizvodTekuci
    // GO TOP
-   select_o_sastavnice( cIdProizvodTekuci )
+   altd()
+
+   o_sastavnice( cIdProizvodTekuci, "IDRBR" )
+
 
    // setuj kolone sastavnice tabele
    sast_a_kol( @ImeKol, @Kol )
 
-   p_sifra( F_SAST, "ID", f18_max_rows() - 18, 80, cIdProizvodTekuci + "-" + Left( roba_p->naz, 40 ),,,, {| nCh | EdSastBlok( nCh ) },,,, .F. )
+   p_sifra( F_SAST, "IDRBR", f18_max_rows() - 18, 80, cIdProizvodTekuci + "-" + Left( roba_p->naz, 40 ),,,, {| nCh | EdSastBlok( nCh ) },,,, .F. )
 
    PopWa()
 
@@ -160,8 +169,8 @@ FUNCTION o_roba_tip_p( cId )
    IF !use_sql( NIL, cSqlQuery, cAlias )
       RETURN .F.
    ENDIF
-   INDEX ON ID TAG "ID" TO ( cAlias )
-   INDEX ON NAZ TAG "NAZ" TO ( cAlias )
+   INDEX ON field->ID TAG "ID" TO ( cAlias )
+   INDEX ON field->NAZ TAG "NAZ" TO ( cAlias )
    SET ORDER TO TAG "ID"
    GO TOP
 
@@ -192,10 +201,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    AAdd( aImeKol, { PadC( "Naziv", 20 ), {|| PadR( field->naz, 20 ) }, "naz" } )
    AAdd( aImeKol, { PadC( "JMJ", 3 ), {|| field->jmj }, "jmj" } )
    AAdd( aImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc" } )
-
-
    AAdd( aImeKol, { PadC( "VPC2", 10 ), {|| Transform( field->VPC2, "999999.999" ) }, "vpc2" } )
-
    AAdd( aImeKol, { PadC( "MPC", 10 ), {|| Transform( field->MPC, "999999.999" ) }, "mpc" } )
 
    FOR nI := 2 TO 3
@@ -240,8 +246,8 @@ STATIC FUNCTION ost_opc_sast() // ostale opcije nad sastavnicama
    AAdd( hOpcExe, {|| pr_pr_sast() } )
    AAdd( hOpc, "M. lista sastavnica koje (ne)sadrze sirovinu x" )
    AAdd( hOpcExe, {|| pr_ned_sast() } )
-   AAdd( hOpc, "D. sifre sa duplim sastavnicama" )
-   AAdd( hOpcExe, {|| pr_dupl_sast() } )
+   AAdd( hOpc, "D. šifre sa duplim sastavnicama" )
+   AAdd( hOpcExe, {|| sastavnice_duple() } )
    AAdd( hOpc, "P. pregled brojnog stanja sastavnica" )
    AAdd( hOpcExe, {|| pr_br_sast() } )
 
@@ -283,9 +289,9 @@ STATIC FUNCTION sast_a_kol( aImeKol, aKol )
    aKol := {}
 
 
-   AAdd( aImeKol, { "R.Br", {|| Str( field->r_br, 4) }, "r_br", {|| .T. }, {|| .T. } } )
-   AAdd( aImeKol, { PadC( "Sifra sirovine", 20 ), {|| field->id2 }, "id2", {|| .T. }, {|| wId := cIdProizvodTekuci, p_roba( @wId2 ) } } )
-   AAdd( aImeKol, { "Kolicina", {|| field->kolicina }, "kolicina" } )
+   AAdd( aImeKol, { "R.Br", {|| Str( field->r_br, 4 ) }, "r_br", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { _u( "Šifra sirovine" ), {|| field->id2 }, "id2", {|| .T. }, {|| wId := cIdProizvodTekuci, p_roba( @wId2 ) } } )
+   AAdd( aImeKol, { _u( "Količina" ), {|| field->kolicina }, "kolicina" } )
 
    FOR nI := 1 TO Len( aImeKol )
       AAdd( aKol, nI )
@@ -295,7 +301,7 @@ STATIC FUNCTION sast_a_kol( aImeKol, aKol )
 
 
 
-FUNCTION o_sastavnice( cId )
+FUNCTION o_sastavnice( cId, cTag )
 
    LOCAL cTabela := "sast", cAlias := "SAST"
 
@@ -304,7 +310,11 @@ FUNCTION o_sastavnice( cId )
       error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.
    ENDIF
-   SET ORDER TO TAG "ID"
+   // SET ORDER TO TAG "ID"
+   IF cTag == NIL
+      cTag := "ID"
+   ENDIF
+   ordSetFocus( cTag )
    IF cId != NIL
       SEEK cId
    ENDIF
@@ -313,7 +323,7 @@ FUNCTION o_sastavnice( cId )
 
 
 
-FUNCTION select_o_sastavnice( cId )
+FUNCTION select_o_sastavnice( cId, cTag )
 
    SELECT ( F_SAST )
    IF Used()
@@ -324,7 +334,7 @@ FUNCTION select_o_sastavnice( cId )
       ENDIF
    ENDIF
 
-   RETURN o_sastavnice( cId )
+   RETURN o_sastavnice( cId, cTag )
 
 /*
 FUNCTION exp_roba_dbf() // export robe u dbf

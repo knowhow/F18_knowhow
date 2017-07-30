@@ -24,14 +24,13 @@ FUNCTION pr_pr_sast() // lista sastavnica sa pretpostavljenim sirovinama
    LOCAL aArt := {}
 
    BOX(, 2, 65 )
-   @ m_x + 1, m_y + 2 SAY "pr.sirovine:" GET cSirovine PICT "@S40" ;
-      VALID !Empty( cSirovine )
+   @ m_x + 1, m_y + 2 SAY "pr.sirovine:" GET cSirovine PICT "@S40"  VALID !Empty( cSirovine )
    @ m_x + 2, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
    READ
    BOXC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    // sastavnice u matricu...
@@ -41,16 +40,10 @@ FUNCTION pr_pr_sast() // lista sastavnica sa pretpostavljenim sirovinama
       bUsl := Parsiraj( AllTrim( cArtikli ), "ID" )
    ENDIF
 
-   SELECT roba
-   SET ORDER TO TAG "ID"
-   GO TOP
+   o_roba_tip_p()
 
    DO WHILE !Eof()
 
-      IF field->tip <> "P"
-         SKIP
-         LOOP
-      ENDIF
 
       IF !Empty( cArtikli )
          IF &bUsl
@@ -64,17 +57,11 @@ FUNCTION pr_pr_sast() // lista sastavnica sa pretpostavljenim sirovinama
       cIdRoba := field->id
       cRobaNaz := ( field->naz )
 
-      SELECT sast
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdRoba
+      IF !select_o_sastavnice( cIdRoba )
 
-      IF !Found()
+         AAdd( aError, { 1, cIdRoba, cRobaNaz,  "ne postoji sastavnica !" } )
 
-         AAdd( aError, { 1, cIdRoba, cRobaNaz, ;
-            "ne postoji sastavnica !" } )
-
-         SELECT roba
+         SELECT roba_p
          SKIP
          LOOP
 
@@ -104,8 +91,7 @@ FUNCTION pr_pr_sast() // lista sastavnica sa pretpostavljenim sirovinama
          NEXT
 
          IF lPostoji == .F.
-            AAdd( aError, { 2, cIdRoba, roba->naz, "uzorak " + ;
-               "se ne poklapa !"  } )
+            AAdd( aError, { 2, cIdRoba, roba_p->naz, "uzorak " + "se ne poklapa !"  } )
          ENDIF
 
          SKIP
@@ -171,7 +157,7 @@ FUNCTION pr_pr_sast() // lista sastavnica sa pretpostavljenim sirovinama
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------------
@@ -194,23 +180,17 @@ FUNCTION pr_br_sast()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !Empty( cArtikli )
       bUsl := Parsiraj( AllTrim( cArtikli ), "ID" )
    ENDIF
 
-   SELECT roba
-   SET ORDER TO TAG "ID"
-   GO TOP
+   o_roba_tip_p()
+
 
    DO WHILE !Eof()
-
-      IF field->tip <> "P"
-         SKIP
-         LOOP
-      ENDIF
 
       IF !Empty( cArtikli )
          IF &bUsl
@@ -223,13 +203,8 @@ FUNCTION pr_br_sast()
 
       cIdRoba := field->id
 
-      SELECT sast
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdRoba
-
-      IF !Found()
-         SELECT roba
+      IF !select_o_sastavnice( cIdRoba )
+         SELECT roba_p
          SKIP
          LOOP
       ENDIF
@@ -244,11 +219,10 @@ FUNCTION pr_br_sast()
 
       IF ( nTmp < nMin ) .OR. ( nTmp > nMax )
 
-         AAdd( aError, {  AllTrim( cIdRoba ) + " - " + ;
-            AllTrim( roba->naz ), nTmp  } )
+         AAdd( aError, {  AllTrim( cIdRoba ) + " - " +  AllTrim( roba_p->naz ), nTmp  } )
       ENDIF
 
-      SELECT roba
+      SELECT roba_p
       SKIP
 
    ENDDO
@@ -309,18 +283,15 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
    LOCAL aError := {}
 
    Box(, 3, 65 )
-   @ m_x + 1, m_y + 2 SAY "tr.sirovine:" GET cSirovine PICT "@S40" ;
-      VALID !Empty( cSirovine )
-   @ m_x + 2, m_y + 2 SAY "[P]ostoji / [N]epostoji" GET cPostoji ;
-      PICT "@!" ;
-      VALID cPostoji $ "PN"
+   @ m_x + 1, m_y + 2 SAY "tr.sirovine:" GET cSirovine PICT "@S40" VALID !Empty( cSirovine )
+   @ m_x + 2, m_y + 2 SAY "[P]ostoji / [N]epostoji" GET cPostoji PICT "@!" VALID cPostoji $ "PN"
    @ m_x + 3, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
 
    READ
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    // sastavnice u matricu...
@@ -330,16 +301,9 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
       bUsl := Parsiraj( AllTrim( cArtikli ), "ID" )
    ENDIF
 
-   SELECT roba
-   SET ORDER TO TAG "ID"
-   GO TOP
+   o_roba_tip_p()
 
    DO WHILE !Eof()
-
-      IF field->tip <> "P"
-         SKIP
-         LOOP
-      ENDIF
 
       IF !Empty( cArtikli )
          IF &bUsl
@@ -351,17 +315,10 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
 
       cIdRoba := field->id
 
-      SELECT sast
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdRoba
-
-      IF !Found()
-
-         SELECT roba
+      IF !select_o_sastavnice( cIdRoba )
+         SELECT roba_p
          SKIP
          LOOP
-
       ENDIF
 
       i := 0
@@ -384,24 +341,21 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
       ENDDO
 
       IF cPostoji == "N" .AND. lPostoji == .F.
-         AAdd( aError, {  AllTrim( cIdRoba ) + " - " + ;
-            AllTrim( roba->naz )  } )
+         AAdd( aError, {  AllTrim( cIdRoba ) + " - " +  AllTrim( roba_p->naz )  } )
       ENDIF
 
       IF cPostoji == "P" .AND. lPostoji == .T.
-         AAdd( aError, {  AllTrim( cIdRoba ) + " - " + ;
-            AllTrim( roba->naz )  } )
+         AAdd( aError, {  AllTrim( cIdRoba ) + " - " +  AllTrim( roba_p->naz )  } )
       ENDIF
 
-
-      SELECT roba
+      SELECT roba_p
       SKIP
 
    ENDDO
 
    IF Len( aError ) == 0
       MsgBeep( "sve ok :)" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    START PRINT CRET
@@ -439,7 +393,7 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
 
 
 
-FUNCTION pr_dupl_sast()
+FUNCTION sastavnice_duple()
 
    LOCAL cIdRoba
    LOCAL cArtikli := Space( 200 )
@@ -448,6 +402,7 @@ FUNCTION pr_dupl_sast()
    LOCAL nScan
    LOCAL aError := {}
    LOCAL aDbf := {}
+   LOCAL cUzorak
 
    Box(, 1, 65 )
    @ m_x + 1, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
@@ -470,11 +425,8 @@ FUNCTION pr_dupl_sast()
    o_r_export()
    INDEX ON sast TAG "1"
 
-   o_sastavnice()
-   o_roba()
-   SELECT roba
-   SET ORDER TO TAG "ID"
-   GO TOP
+
+   o_roba_tip_p() // sva roba
 
    IF !Empty( cArtikli )
       bUsl := Parsiraj( AllTrim( cArtikli ), "ID" )
@@ -483,13 +435,9 @@ FUNCTION pr_dupl_sast()
 
    Box(, 1, 50 )
 
-   // prvo mi daj svu robu u p.tabelu sa sastavnicama
+   // prvo sva robu  sa sastavnicama
    DO WHILE !Eof()
 
-      IF field->tip <> "P"
-         SKIP
-         LOOP
-      ENDIF
 
       IF !Empty( cArtikli )
          IF &bUsl
@@ -504,23 +452,16 @@ FUNCTION pr_dupl_sast()
 
       @ m_x + 1, m_y + 2 SAY "generisem uzorak: " + cIdRoba
 
-      SELECT sast
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdRoba
-
-      IF !Found()
-         SELECT roba
+      IF !select_o_sastavnice( cIdRoba )
+         SELECT roba_p
          SKIP
          LOOP
       ENDIF
 
+      // === SAST ===
       cUzorak := ""
-
       DO WHILE !Eof() .AND. field->id == cIdRoba
-
          cUzorak += AllTrim( field->id2 )
-
          SKIP
       ENDDO
 
@@ -531,14 +472,14 @@ FUNCTION pr_dupl_sast()
       REPLACE field->robanaz WITH cRobaNaz
       REPLACE field->sast WITH cUzorak
 
-      SELECT roba
+      SELECT roba_p
       SKIP
 
    ENDDO
 
    // sada provjera na osnovu uzoraka
 
-   SELECT roba
+   SELECT roba_p
    GO TOP
 
    DO WHILE !Eof()
@@ -561,13 +502,8 @@ FUNCTION pr_dupl_sast()
 
       @ m_x + 1, m_y + 2 SAY "provjeravam uzorke: " + cTmpRoba
 
-      SELECT sast
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cTmpRoba
-
-      IF !Found()
-         SELECT roba
+      IF !select_o_sastavnice( cTmpRoba )
+         SELECT roba_p
          SKIP
          LOOP
       ENDIF
@@ -608,7 +544,7 @@ FUNCTION pr_dupl_sast()
       ENDDO
 
 
-      SELECT roba
+      SELECT roba_p
       SKIP
    ENDDO
 
@@ -616,7 +552,7 @@ FUNCTION pr_dupl_sast()
 
    IF Len( aError ) == 0
       MsgBeep( "sve ok :)" )
-      RETURN
+      RETURN .T.
    ENDIF
 
    START PRINT CRET

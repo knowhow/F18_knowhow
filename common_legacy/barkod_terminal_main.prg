@@ -165,7 +165,6 @@ FUNCTION export_BTerm_data()
    DO WHILE !Eof()
 
       cBK := PadR( field->barkod, 20 )
-
       IF Empty( cBK )
          SKIP
          LOOP
@@ -176,13 +175,11 @@ FUNCTION export_BTerm_data()
       SEEK cBK
 
       IF !Found()
-
          APPEND BLANK
          REPLACE field->barkod WITH roba->barkod
          REPLACE field->naz WITH roba->naz
          REPLACE field->tk WITH 0
          REPLACE field->tc WITH roba->vpc
-
          ++nCnt
       ENDIF
 

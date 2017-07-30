@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 3.1.33-std, 2017-07-32
+
+- cleanup sastavnice - sastavnice_print.prg, tag "IDRBR"
+- cleanup fiskalne funkcije
+
 ## 3.1.32-std, 2017-07-32
 
 - fix stanje, lager, uporedna kalk - fakt

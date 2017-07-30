@@ -223,19 +223,17 @@ FUNCTION Marza2O( fMarza )
 
    AEval( GetList, {| o | o:display() } )
 
-   RETURN
-// }
+   RETURN .T.
 
 
 
 
-/* Marza2R()
+/*
  *     Marza2 pri realizaciji prodavnice je MPC-NC
  */
 
 FUNCTION Marza2R()
 
-   // {
    LOCAL nPPP
 
    nPPP := 1 / ( 1 + tarifa->opp / 100 )
@@ -512,7 +510,7 @@ FUNCTION kalk_valid_kolicina_prod()
  *
  */
 
-FUNCTION StanjeProd( cKljuc, ddatdok )
+FUNCTION StanjeProd( cKljuc, dDatdok )
 
    LOCAL nUlaz := 0, nIzlaz := 0
 

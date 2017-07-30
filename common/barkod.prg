@@ -166,7 +166,6 @@ FUNCTION find_roba_by_barkod( cBarkod, cOrderBy, cWhere )
 
    hb_default( @cOrderBy, "id,naz" )
 
-
    IF cBarkod <> NIL
       hParams[ "barkod" ] := cBarkod
    ENDIF

@@ -81,7 +81,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       // IF gNW $ "DR"
       cIdFirma := PadR( cIdFirma, 2 )
 
-      fakt_getlist_rj_read( box_x_koord() + 1, box_y_koord() + 2, @cIdFirma )
+      fakt_getlist_rj_read( box_x_koord() + 1, box_y_koord() + 2, @GetList, @cIdFirma )
 
       READ
       // ELSE

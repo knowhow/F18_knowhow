@@ -76,7 +76,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
       cIdFirma := PadR( cIdFirma, 2 )
 
-      fakt_getlist_rj_read( box_x_koord() + nX, box_y_koord() + 2, @cIdFirma )
+      fakt_getlist_rj_read( box_x_koord() + nX, box_y_koord() + 2, @GetList, @cIdFirma )
 
       ++nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"

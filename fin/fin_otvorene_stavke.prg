@@ -30,7 +30,7 @@ FUNCTION fin_otvorene_stavke_meni()
    AAdd( aOpc, "3. kartica otvorenih stavki" )
    AAdd( aOpcExe, {|| fin_suban_kartica( .T. ) } )
 
-   AAdd( aOpc, "4. usporedna kartica dva konta" )
+   AAdd( aOpc, "4. uporedna kartica dva konta" )
    AAdd( aOpcExe, {|| fin_suban_kartica2( .T. ) } )
 
    AAdd( aOpc, "5. specifikacija otvorenih stavki" )

@@ -2,6 +2,7 @@
 
 ## 2017-07-30 ----
 
+- cleanup fiskalne funkcije
 - fix stanje, lager, uporedna kalk - fakt
 - commit x 2 "FAKT sql big-bang-02" trijebljenje svih seek-ova fakt, fakt_doks, fakt_doks2 
  - 74 files +1861 -1862

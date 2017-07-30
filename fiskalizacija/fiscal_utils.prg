@@ -25,52 +25,52 @@ STATIC __MIN_PERC := -99.99
  fajl za fiskalni stampac
 */
 
-FUNCTION fiscal_out_filename( file_name, rn_broj, trig )
+FUNCTION fiscal_out_filename( cFiskalniFileName, cFiskalniRacunBroj, cTrigerPLUiliCLIiliRCP )
 
-   LOCAL _ret, _rn
-   LOCAL _f_name := AllTrim( file_name )
+   LOCAL cRet, _rn
+   LOCAL _f_name := AllTrim( cFiskalniFileName )
 
-   IF trig == nil
-      trig := ""
+   IF cTrigerPLUiliCLIiliRCP == nil
+      cTrigerPLUiliCLIiliRCP := ""
    ENDIF
 
-   trig := AllTrim( trig )
+   cTrigerPLUiliCLIiliRCP := AllTrim( cTrigerPLUiliCLIiliRCP )
 
    DO CASE
 
 
    CASE "$rn" $ _f_name // po broju racuna ( TREMOL )
 
-      IF Empty( rn_broj )
-         _ret := StrTran( _f_name, "$rn", "0000" )
+      IF Empty( cFiskalniRacunBroj )
+         cRet := StrTran( _f_name, "$rn", "0000" )
       ELSE
          // broj racuna.xml
-         _rn := PadL( AllTrim( rn_broj ), 8, "0" )
+         _rn := PadL( AllTrim( cFiskalniRacunBroj ), 8, "0" )
          // ukini znak "/" ako postoji
          _rn := StrTran( _rn, "/", "" )
-         _ret := StrTran( _f_name, "$rn", _rn )
+         cRet := StrTran( _f_name, "$rn", _rn )
       ENDIF
 
-      _ret := Upper( _ret )
+      cRet := Upper( cRet )
 
 
    CASE "TR$" $ _f_name // po trigeru ( HCP, TRING )
 
       // odredjuje PLU ili CLI ili RCP na osnovu trigera
-      _ret := StrTran( _f_name, "TR$", trig )
-      _ret := Upper( _ret )
+      cRet := StrTran( _f_name, "TR$", cTrigerPLUiliCLIiliRCP )
+      cRet := Upper( cRet )
 
-      IF ".XML" $ Upper( trig )
-         _ret := trig
+      IF ".XML" $ Upper( cTrigerPLUiliCLIiliRCP )
+         cRet := cTrigerPLUiliCLIiliRCP
       ENDIF
 
 
    OTHERWISE  // ostale verijante
-      _ret := _f_name
+      cRet := _f_name
 
    ENDCASE
 
-   RETURN _ret
+   RETURN cRet
 
 
 // ---------------------------------------------------
@@ -78,30 +78,17 @@ FUNCTION fiscal_out_filename( file_name, rn_broj, trig )
 // ---------------------------------------------------
 FUNCTION fiscal_art_naz_fix( naz, cDriver )
 
-   LOCAL _ret := ""
+   LOCAL cRet := ""
 
    DO CASE
    CASE cDriver == "FPRINT"
-      _ret := StrTran( naz, ";", "" )
+      cRet := StrTran( naz, ";", "" )
    OTHERWISE
-      _ret := naz
+      cRet := naz
    ENDCASE
 
-   RETURN _ret
+   RETURN cRet
 
-
-
-FUNCTION posljednji_plu_artikla()
-
-   LOCAL nPlu := 0
-   LOCAL cSql, oQuery
-
-   cSql := "SELECT MAX( fisc_plu ) AS last_plu FROM " + F18_PSQL_SCHEMA_DOT + "roba"
-   oQuery := run_sql_query( cSql )
-
-   nPlu := query_row( oQuery, "last_plu" )
-
-   RETURN nPlu
 
 
 
@@ -118,7 +105,7 @@ FUNCTION gen_plu( nVal )
          RETURN .F.
       ENDIF
 
-      nVal := posljednji_plu_artikla() + 1
+      nVal := roba_max_fiskalni_plu() + 1
 
    ENDIF
 
@@ -163,9 +150,11 @@ FUNCTION gen_all_plu( lSilent )
       RETURN lRet
    ENDIF
 
+   /*
    o_roba()
    SELECT ROBA
    GO TOP
+
 
    // prvo mi nadji zadnji PLU kod
    SELECT roba
@@ -174,12 +163,13 @@ FUNCTION gen_all_plu( lSilent )
    SEEK Str( 9999999999, 10 )
    SKIP -1
    nP_PLU := field->fisc_plu
+   */
+
+   nP_PLU := roba_max_fiskalni_plu()
+
    nCnt := 0
 
-   SELECT roba
-   SET ORDER TO TAG "ID"
-   GO TOP
-
+   o_roba()
    Box(, 1, 50 )
    DO WHILE !Eof()
 
@@ -204,8 +194,7 @@ FUNCTION gen_all_plu( lSilent )
          EXIT
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY PadR( "idroba: " + field->id + ;
-         " -> PLU: " + AllTrim( Str( nP_PLU ) ), 30 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "idroba: " + field->id + " -> PLU: " + AllTrim( Str( nP_PLU ) ), 30 )
 
       SKIP
 
@@ -224,7 +213,7 @@ FUNCTION gen_all_plu( lSilent )
 
    IF nCnt > 0
       IF !lSilent
-         MsgBeep( "Generisao " + AllTrim( Str( nCnt ) ) + " PLU kodova." )
+         MsgBeep( "Generisano " + AllTrim( Str( nCnt ) ) + " PLU kodova." )
       ENDIF
    ENDIF
 
@@ -232,18 +221,14 @@ FUNCTION gen_all_plu( lSilent )
 
 
 
+FUNCTION fiskalni_get_last_plu( nFiskDeviceId )
 
-// --------------------------------------------------
-// vraca iz parametara zadnji PLU broj
-// --------------------------------------------------
-FUNCTION last_plu( device_id )
+   LOCAL nFiskPLU := 0
+   LOCAL _param_name := _get_auto_plu_param_name( nFiskDeviceId )
 
-   LOCAL _plu := 0
-   LOCAL _param_name := _get_auto_plu_param_name( device_id )
+   nFiskPLU := fetch_metric( _param_name, nil, nFiskPLU )
 
-   _plu := fetch_metric( _param_name, nil, _plu )
-
-   RETURN _plu
+   RETURN nFiskPLU
 
 
 
@@ -251,65 +236,65 @@ FUNCTION last_plu( device_id )
 // --------------------------------------------------
 // generisanje novog plug kod-a inkrementalno
 // --------------------------------------------------
-FUNCTION auto_plu( reset_plu, silent_mode, hFiskalniParams )
+FUNCTION auto_plu( lResetPLU, lSilentMode, hFiskalniParams )
 
-   LOCAL _plu := 0
+   LOCAL nFiskPLU := 0
    LOCAL nDbfArea := Select()
    LOCAL _param_name := _get_auto_plu_param_name( hFiskalniParams[ "id" ] )
 
-   IF reset_plu == nil
-      reset_plu := .F.
+   IF lResetPLU == nil
+      lResetPLU := .F.
    ENDIF
 
-   IF silent_mode == nil
-      silent_mode := .F.
+   IF lSilentMode == nil
+      lSilentMode := .F.
    ENDIF
 
-   IF reset_plu = .T.
+   IF lResetPLU = .T.
       // uzmi inicijalni plu iz parametara
-      _plu := hFiskalniParams[ "plu_init" ]
+      nFiskPLU := hFiskalniParams[ "plu_init" ]
    ELSE
-      _plu := fetch_metric( _param_name, nil, _plu )
+      nFiskPLU := fetch_metric( _param_name, nil, nFiskPLU )
       // prvi put pokrecemo opciju, uzmi init vrijednost !
-      IF _plu == 0
-         _plu := hFiskalniParams[ "plu_init" ]
+      IF nFiskPLU == 0
+         nFiskPLU := hFiskalniParams[ "plu_init" ]
       ENDIF
       // uvecaj za 1
-      ++ _plu
+      ++ nFiskPLU
    ENDIF
 
-   IF reset_plu = .T. .AND. !silent_mode
+   IF lResetPLU .AND. !lSilentMode
       IF !spec_funkcije_sifra( "RESET" )
          MsgBeep( "Unesena pogrešna šifra !" )
          SELECT ( nDbfArea )
-         RETURN _plu
+         RETURN nFiskPLU
       ENDIF
    ENDIF
 
    // upisi u sql/db
-   set_metric( _param_name, nil, _plu )
+   set_metric( _param_name, nil, nFiskPLU )
 
-   IF reset_plu = .T. .AND. !silent_mode
-      MsgBeep( "Setovan početni PLU na: " + AllTrim( Str( _plu ) ) )
+   IF lResetPLU = .T. .AND. !lSilentMode
+      MsgBeep( "Setovan početni PLU na: " + AllTrim( Str( nFiskPLU ) ) )
    ENDIF
 
    SELECT ( nDbfArea )
 
-   RETURN _plu
+   RETURN nFiskPLU
 
 
 // -----------------------------------------------------------------
 // "auto_plu_dev_1" - auto plu device 1
 // "auto_plu_dev_2" - auto plu device 2
 // -----------------------------------------------------------------
-STATIC FUNCTION _get_auto_plu_param_name( device_id )
+STATIC FUNCTION _get_auto_plu_param_name( nFiskDeviceId )
 
    LOCAL _tmp := "auto_plu"
-   LOCAL _ret
+   LOCAL cRet
 
-   _ret := _tmp + "_dev_" + AllTrim( Str( device_id ) )
+   cRet := _tmp + "_dev_" + AllTrim( Str( nFiskDeviceId ) )
 
-   RETURN _ret
+   RETURN cRet
 
 
 
@@ -378,61 +363,61 @@ FUNCTION fiscal_txt_get_tarifa( cIdTarifa, cPDVDN, cDriver )
 
 FUNCTION fiscal_txt_get_vr_plac( id_plac, cDriver )
 
-   LOCAL _ret := ""
+   LOCAL cRet := ""
 
    DO CASE
 
    CASE id_plac == "0"
 
       IF cDriver == "TRING"
-         _ret := "Gotovina"
+         cRet := "Gotovina"
       ELSEIF cDriver $ "#HCP#FPRINT#"
-         _ret := id_plac
+         cRet := id_plac
       ELSEIF cDriver == "TREMOL"
-         _ret := "Gotovina"
+         cRet := "Gotovina"
       ENDIF
 
    CASE id_plac == "1"
 
       IF cDriver == "TRING"
-         _ret := "Cek"
+         cRet := "Cek"
       ELSEIF cDriver $ "#HCP#FPRINT#"
-         _ret := id_plac
+         cRet := id_plac
       ELSEIF cDriver == "TREMOL"
-         _ret := "Cek"
+         cRet := "Cek"
       ENDIF
 
    CASE id_plac == "2"
 
       IF cDriver == "TRING"
-         _ret := "Virman"
+         cRet := "Virman"
       ELSEIF cDriver $ "#HCP#FPRINT#"
-         _ret := id_plac
+         cRet := id_plac
       ELSEIF cDriver == "TREMOL"
-         _ret := "Kartica"
+         cRet := "Kartica"
       ENDIF
 
    CASE id_plac == "3"
 
       IF cDriver == "TRING"
-         _ret := "Kartica"
+         cRet := "Kartica"
       ELSEIF cDriver $ "#HCP#FPRINT#"
-         _ret := id_plac
+         cRet := id_plac
       ELSEIF cDriver == "TREMOL"
-         _ret := "Virman"
+         cRet := "Virman"
       ENDIF
 
    ENDCASE
 
-   RETURN _ret
+   RETURN cRet
 
 
 
-FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, cDriver )
+FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( aRacunStavke, lStorno, nLevel, cDriver )
 
    LOCAL nI, _cijena, _plu_cijena, _kolicina, _naziv
    LOCAL _fix := 0
-   LOCAL _ret := 0
+   LOCAL nRet := 0
    LOCAL lImaGreska := .F.
 
    IF cDriver == NIL
@@ -445,18 +430,18 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, cDr
 
    set_min_max_values( cDriver )
 
-   IF storno == NIL
-      storno := .F.
+   IF lStorno == NIL
+      lStorno := .F.
    ENDIF
 
-   FOR nI := 1 TO Len( items )
+   FOR nI := 1 TO Len( aRacunStavke )
 
       lImaGreska := .F.
 
-      _cijena := Round( items[ nI, 5 ], 4 )
-      _plu_cijena := Round( items[ nI, 10 ], 4 )
-      _kolicina := Round( items[ nI, 6 ], 4 )
-      _naziv := items[ nI, 4 ]
+      _cijena := Round( aRacunStavke[ nI, 5 ], 4 )
+      _plu_cijena := Round( aRacunStavke[ nI, 10 ], 4 )
+      _kolicina := Round( aRacunStavke[ nI, 6 ], 4 )
+      _naziv := aRacunStavke[ nI, 4 ]
 
       IF ( !is_ispravna_kolicina( _naziv, _kolicina ) .OR. !is_ispravna_cijena( _naziv, _cijena ) ) .OR. !is_ispravna_cijena( _naziv, _plu_cijena )
 
@@ -466,10 +451,10 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, cDr
 
             prepakuj_vrijednosti_na_100_komada( @_kolicina, @_cijena, @_plu_cijena, @_naziv )
 
-            items[ nI, 5 ] := _cijena
-            items[ nI, 10 ] := _plu_cijena
-            items[ nI, 6 ] := _kolicina
-            items[ nI, 4 ] := _naziv
+            aRacunStavke[ nI, 5 ] := _cijena
+            aRacunStavke[ nI, 10 ] := _plu_cijena
+            aRacunStavke[ nI, 6 ] := _kolicina
+            aRacunStavke[ nI, 4 ] := _naziv
 
             lImaGreska := .F.
             ++ _fix
@@ -490,17 +475,17 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, cDr
 
    ELSEIF ( _fix > 0 .AND. nLevel == 1 ) .OR. lImaGreska
 
-      _ret := -99
+      nRet := -99
 
       MsgBeep ( "Pojedinim artiklima je količina/cijena van dozvoljenog ranga#Prekidam operaciju !" )
 
-      IF storno
-         _ret := 0
+      IF lStorno
+         nRet := 0
       ENDIF
 
    ENDIF
 
-   RETURN _ret
+   RETURN nRet
 
 
 
@@ -576,7 +561,7 @@ STATIC FUNCTION prepakuj_vrijednosti_na_100_komada( nQtty, nPrice, nPPrice, cNam
 
 
 
-FUNCTION zadnji_fiscal_z_report_info( cre_rpt )
+FUNCTION zadnji_fiscal_z_report_info( lFiskalniDnevniIzvjestaj )
 
    LOCAL _param_date := "zadnji_Z_izvjestaj_datum"
    LOCAL _param_time := "zadnji_Z_izvjestaj_vrijeme"
@@ -585,16 +570,16 @@ FUNCTION zadnji_fiscal_z_report_info( cre_rpt )
    LOCAL _warr := fetch_metric( "fiscal_opt_usr_daily_warrning", my_user(), "N" )
    LOCAL _fiscal_use := fiscal_opt_active()
 
-   IF cre_rpt == NIL
-      cre_rpt := .F.
+   IF lFiskalniDnevniIzvjestaj == NIL
+      lFiskalniDnevniIzvjestaj := .F.
    ENDIF
 
    IF !_fiscal_use
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF _warr == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF DToC( Date() ) + AllTrim( Time() ) > DToC( _z_date ) + AllTrim( _z_time )
@@ -603,11 +588,11 @@ FUNCTION zadnji_fiscal_z_report_info( cre_rpt )
          "Potrebno napraviti dnevni izvještaj#" + ;
          "prije izdavanja novih računa !" )
 
-      IF cre_rpt
+      IF lFiskalniDnevniIzvjestaj
          IF Pitanje(, "Napraviti dnevni izvještaj (D/N) ?", "N" ) == "D"
          ENDIF
       ENDIF
 
    ENDIF
 
-   RETURN
+   RETURN .T.

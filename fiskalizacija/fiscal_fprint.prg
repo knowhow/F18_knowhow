@@ -922,7 +922,7 @@ STATIC FUNCTION _fp_del_plu( nMaxPlu, hFiskalniParams )
       nLastPlu := nMaxPlu
    ELSE
       // uzmi zadnji PLU iz parametara
-      nLastPlu := last_plu( hFiskalniParams[ "id" ] )
+      nLastPlu := fiskalni_get_last_plu( hFiskalniParams[ "id" ] )
    ENDIF
 
    SELECT ( nTArea )

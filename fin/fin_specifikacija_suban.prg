@@ -17,7 +17,6 @@ MEMVAR cIdFirma, cIdRj, dDatOd, dDatDo, cFunk, cFond, cNula
 MEMVAR cSpecifSkracenaVarijantaDN, cRasclaniti, cRascFunkFond, cN2Fin
 MEMVAR cFilter
 MEMVAR fK1, fK2, fK3, fK4, cK1, cK2, cSection, cHistory, aHistory
-MEMVAR box_x_koord(), box_y_koord()
 
 FIELD idkonto, idpartner, idrj
 

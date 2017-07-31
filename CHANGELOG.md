@@ -1,5 +1,12 @@
 # F18 klijent, lista promjena
 
+## 3.1.34-std, 2017-07-33
+
+### Korisnik
+
+#### FIN
+- fix fin proizv sort, zaglavlje (cTipDomacaStranaObje, "1" - jednovalutni prikaz - KM)
+
 ## 3.1.33-std, 2017-07-32
 
 - cleanup sastavnice - sastavnice_print.prg, tag "IDRBR"

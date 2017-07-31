@@ -122,7 +122,7 @@ STATIC FUNCTION ispravka_unosa( l_novi )
 
 
 // postoji li zapis vec
-STATIC FUNCTION PostojiLi( idp, brd, dod, fNovi )
+STATIC FUNCTION PostojiLi( idp, brd, dod, lNovi )
 
    LOCAL _vrati := .T.
    LOCAL _rec_no
@@ -134,7 +134,7 @@ STATIC FUNCTION PostojiLi( idp, brd, dod, fNovi )
    GO TOP
 
    DO WHILE !Eof()
-      IF idpartner == idp .AND. brdok == brd .AND. DToC( datod ) == DToC( dod ) .AND. ( RecNo() != _rec_no .OR. fNovi )
+      IF idpartner == idp .AND. brdok == brd .AND. DToC( datod ) == DToC( dod ) .AND. ( RecNo() != _rec_no .OR. lNovi )
          _vrati := .F.
          Msg( "Greska! Vec ste unijeli ovaj podatak!", 3 )
          EXIT

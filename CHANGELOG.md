@@ -1,5 +1,16 @@
 # F18 klijent, lista promjena
 
+## 3.1.35-std, 2017-07-31
+
+### Korisnik
+#### FIN
+- Unos novog naloga zabrana unosa praznog naloga
+
+### Developer
+#### FIN
+- FIN nalog unos !prazan konto
+- FIN priprema cleanup, OUT_PRIV_VAR: fNovi 
+
 ## 3.1.34-std, 2017-07-31
 
 ### Korisnik

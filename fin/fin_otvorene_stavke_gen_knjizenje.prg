@@ -16,6 +16,7 @@ MEMVAR Ch
 MEMVAR m_x, m_y
 MEMVAR _idfirma, _opis, _d_p, _iznosbhd, _idrj, _idpartner, _idkonto
 
+STATIC s_lFinNalogNovaStavka := .F.
 
 FUNCTION knjizenje_gen_otvorene_stavke()
 
@@ -420,9 +421,14 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    RETURN .T.
 
 
-FUNCTION fin_pripr_nova_stavka()
 
-   RETURN fNovi
+FUNCTION fin_pripr_nova_stavka( lSet )
+
+   IF lSet != NIL
+      s_lFinNalogNovaStavka := lSet
+   ENDIF
+
+   RETURN s_lFinNalogNovaStavka
 
 
 

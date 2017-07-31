@@ -17,7 +17,7 @@ STATIC s_nFinPriprRedniBroj
 MEMVAR Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
 MEMVAR Kol, ImeKol
 
-MEMVAR _idkonto, _idpartner, _funk, _fond, _idfirma, _brnal, _datval, _datdok
+MEMVAR _idkonto, _idpartner, _funk, _fond, _idfirma, _brnal, _datval, _datdok, _otvst, _idrj, _idvn, _brdok, _k1, _k2, _k3, _k4, _rbr
 
 
 STATIC cTekucaRj := ""
@@ -25,7 +25,7 @@ STATIC __rj_len := 6
 
 FUNCTION fin_unos_naloga()
 
-   LOCAL _params := fin_params()
+   LOCAL hFinParams := fin_params()
    PRIVATE KursLis := "1"
    PRIVATE gnLOst := 0
    PRIVATE gPotpis := "N"
@@ -138,7 +138,7 @@ FUNCTION fin_knjizenje_naloga()
 
 
 
-FUNCTION edit_fin_priprema()
+FUNCTION edit_fin_priprema( lNovaStavka )
 
    LOCAL _fakt_params := fakt_params()
    LOCAL hFinParams := fin_params()
@@ -148,7 +148,9 @@ FUNCTION edit_fin_priprema()
    LOCAL lConfirmEnter
    LOCAL GetList := {}
 
-   PARAMETERS fNovi
+   hb_default( @lNovaStavka, .F. )
+
+   fin_pripr_nova_stavka( lNovaStavka )
 
    IF fin_pripr_nova_stavka() .AND. fin_pripr_redni_broj() == 1
       _IdFirma := self_organizacija_id()
@@ -158,7 +160,7 @@ FUNCTION edit_fin_priprema()
       _OtvSt := " "
    ENDIF
 
-   IF ( ( gFinRj == "D" ) .AND. fNovi )
+   IF ( ( gFinRj == "D" ) .AND. fin_pripr_nova_stavka() )
       _idrj := cTekucaRj
    ENDIF
 
@@ -177,10 +179,9 @@ FUNCTION edit_fin_priprema()
 
    ESC_RETURN 0
 
-   IF fNovi .AND. ( _idfirma <> idfirma .OR. _idvn <> idvn )
+   IF fin_pripr_nova_stavka() .AND. ( _idfirma <> idfirma .OR. _idvn <> idvn )
 
       _brnal := fin_prazan_broj_naloga()
-
       SELECT  fin_pripr
 
    ENDIF
@@ -229,7 +230,6 @@ FUNCTION edit_fin_priprema()
          @ box_x_koord() + 11, Col() + 2 SAY "K3" GET _k3 VALID Empty( _k3 ) .OR. P_ULIMIT( @_k3 ) PICT "999"
       ELSE
 */
-
       @ box_x_koord() + 11, Col() + 2 SAY "K3" GET _k3 PICT "@!"
 // ENDIF
    ENDIF
@@ -252,7 +252,7 @@ FUNCTION edit_fin_priprema()
    ENDIF
 
    @ box_x_koord() + 13, box_y_koord() + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
-      VALID !Empt(_IdKonto) .AND. P_Konto( @_IdKonto, 13, 20 ) .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
+      VALID  P_Konto( @_IdKonto, 13, 20 ) .AND. !Empty( _IdKonto ) .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
 
 
    @ box_x_koord() + 14, box_y_koord() + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
@@ -394,7 +394,6 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
       RETURN DE_REFRESH
 
    CASE nCh == K_ENTER
-
 
       Box( "ist", nBoxVisina, f18_max_cols() - 8, .F. )
       set_global_vars_from_dbf( "_" )
@@ -1098,13 +1097,13 @@ FUNCTION GetTekucaRJ()
 // --------------------------------------------------------
 STATIC FUNCTION brisi_fin_pripr_po_uslovu()
 
-   LOCAL _params
+   LOCAL hFinParams
    LOCAL _od_broj, _do_broj, _partn, _konto, _opis, _br_veze, _br_nal, _tip_nal
    LOCAL _deleted := .F.
    LOCAL _delete_rec := .F.
    LOCAL _ok := .F.
 
-   IF !_brisi_pripr_uslovi( @_params )
+   IF !_brisi_pripr_uslovi( @hFinParams )
       RETURN _ok
    ENDIF
 
@@ -1113,14 +1112,14 @@ STATIC FUNCTION brisi_fin_pripr_po_uslovu()
    ENDIF
 
    // ovo su dati parametri...
-   _od_broj := _params[ "rbr_od" ]
-   _do_broj := _params[ "rbr_do" ]
-   _partn := _params[ "partn" ]
-   _konto := _params[ "konto" ]
-   _opis := _params[ "opis" ]
-   _br_veze := _params[ "veza" ]
-   _br_nal := _params[ "broj" ]
-   _tip_nal := _params[ "vn" ]
+   _od_broj := hFinParams[ "rbr_od" ]
+   _do_broj := hFinParams[ "rbr_do" ]
+   _partn := hFinParams[ "partn" ]
+   _konto := hFinParams[ "konto" ]
+   _opis := hFinParams[ "opis" ]
+   _br_veze := hFinParams[ "veza" ]
+   _br_nal := hFinParams[ "broj" ]
+   _tip_nal := hFinParams[ "vn" ]
 
    SELECT fin_pripr
    // skini order

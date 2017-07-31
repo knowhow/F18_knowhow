@@ -5,7 +5,7 @@
 FUNCTION fin_specif_suban_proizv_sort()
 
    LOCAL cSqlWhere
-   LOCAL bZagl :=  {|| zagl_fin_specif( cSkVar ) }
+   LOCAL bZagl :=  {|| zagl_fin_specif( cSpecifSkracenaVarijantaDN ) }
    LOCAL oPDF, xPrintOpt
 
    LOCAL _fin_params := fin_params()
@@ -17,7 +17,7 @@ FUNCTION fin_specif_suban_proizv_sort()
    PRIVATE fK4 := _fin_params[ "fin_k4" ]
 
    PRIVATE cSk := "N"
-   PRIVATE cSkVar := "N"
+   PRIVATE cSpecifSkracenaVarijantaDN := "N"
 
    cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
@@ -44,32 +44,32 @@ FUNCTION fin_specif_suban_proizv_sort()
    PRIVATE nC := 65
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA SUBANALITIKA - PROIZV.SORT."
+      @ box_x_koord() + 1, box_y_koord() + 6 SAY "SPECIFIKACIJA SUBANALITIKA - PROIZV.SORT."
 
-      @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
-      @ m_x + 4, m_y + 2 SAY "Konto   " GET qqkonto  PICT "@!" VALID P_Konto( @qqkonto )
-      @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
-      @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
-      @ m_x + 6, Col() + 2 SAY "do" GET dDatDo
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto   " GET qqkonto  PICT "@!" VALID P_Konto( @qqkonto )
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Partner " GET qqPartner PICT "@!S50"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Datum dokumenta od" GET dDatOd
+      @ box_x_koord() + 6, Col() + 2 SAY "do" GET dDatDo
 
 
-      @ m_x + 9, m_y + 2 SAY "Kriterij za telefon" GET qqTel PICT "@!S30"
-      @ m_x + 11, m_y + 2 SAY "Sortirati po: konto+telefon+partn (1)" GET cSort VALID csort $ "12"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Kriterij za telefon" GET qqTel PICT "@!S30"
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Sortirati po: konto+telefon+partn (1)" GET cSort VALID csort $ "12"
 
-      @ m_x + 15, m_y + 2 SAY ""
+      @ box_x_koord() + 15, box_y_koord() + 2 SAY ""
 
       IF fk1
-         @ m_x + 15, m_y + 2 SAY "K1 (9 svi) :" GET cK1
+         @ box_x_koord() + 15, box_y_koord() + 2 SAY "K1 (9 svi) :" GET cK1
       ENDIF
       IF fk2
-         @ m_x + 15, Col() + 2 SAY "K2 (9 svi) :" GET cK2
+         @ box_x_koord() + 15, Col() + 2 SAY "K2 (9 svi) :" GET cK2
       ENDIF
       IF fk3
-         @ m_x + 15, Col() + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
+         @ box_x_koord() + 15, Col() + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
       ENDIF
       IF fk4
-         @ m_x + 15, Col() + 2 SAY "K4 (99 svi):" GET cK4
+         @ box_x_koord() + 15, Col() + 2 SAY "K4 (99 svi):" GET cK4
       ENDIF
 
       READ

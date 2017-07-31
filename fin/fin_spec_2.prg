@@ -15,7 +15,7 @@ FUNCTION SpecSubPro()
    PRIVATE fK4 := _fin_params[ "fin_k4" ]
 
    PRIVATE cSk := "N"
-   PRIVATE cSkVar := "N"
+   PRIVATE cSpecifSkracenaVarijantaDN := "N"
 
    cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
@@ -178,7 +178,7 @@ FUNCTION SpecSubPro()
 
       DO WHILE !Eof() .AND. idfirma == cidfirma .AND. idkonto == cidkonto .AND. Eval( bUslov )
          nd := np := 0;nd2 := np2 := 0
-         IF PRow() == 0; zagl_fin_specif( cSkVar ); ENDIF
+    --     IF PRow() == 0; zagl_fin_specif( cSpecifSkracenaVarijantaDN ); ENDIF
          cIdPartner := IdPartner
          cNazPartn := PadR( partn->naz, 25 )
          DO WHILE !Eof() .AND. idfirma == cidfirma .AND. idkonto == cidkonto .AND. Eval( bUslov ) .AND. IdPartner == cIdPartner
@@ -191,7 +191,7 @@ FUNCTION SpecSubPro()
             SKIP
          ENDDO
 
-         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSkVar ); ENDIF
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSpecifSkracenaVarijantaDN ); ENDIF
          ? cidkonto, cIdPartner, ""
          IF !Empty( cIdPartner )
             ?? PadR( cNazPARTN, 50 -DifIdp( cIdPartner ) )
@@ -217,7 +217,7 @@ FUNCTION SpecSubPro()
          nkd2 += nd2; nkp2 += np2  // ukupno  za klasu
             ENDDO  // csort
 
-         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSkVar ); ENDIF
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSpecifSkracenaVarijantaDN ); ENDIF
          ? m
          IF cSort == "1"
             ?  "Ukupno za:", cNaslov, ":"
@@ -238,7 +238,7 @@ FUNCTION SpecSubPro()
          nUd += nKd; nUp += nKp   // ukupno za sve
             nUd2 += nKd2; nUp2 += nKp2   // ukupno za sve
             enddo
-         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSkVar ); ENDIF
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl_fin_specif( cSpecifSkracenaVarijantaDN ); ENDIF
          ? m
          ? " UKUPNO:"
          IF cTip == "1"

@@ -4,6 +4,7 @@
 
 - FIN nalog unos !prazan konto
 - FIN priprema cleanup, PRIV_VAR fNovi out 
+- p_sifra fix SEEK cId
 
 ## 2017-07-30 ----
 

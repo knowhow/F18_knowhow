@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 2017-07-31 ----
+
+- FIN nalog unos !prazan konto
+
 ## 2017-07-30 ----
 
 - cleanup sastavnice - sastavnice_print.prg, tag "IDRBR"

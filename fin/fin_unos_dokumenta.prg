@@ -17,6 +17,9 @@ STATIC s_nFinPriprRedniBroj
 MEMVAR Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
 MEMVAR Kol, ImeKol
 
+MEMVAR _idkonto, _idpartner, _funk, _fond, _idfirma, _brnal, _datval, _datdok
+
+
 STATIC cTekucaRj := ""
 STATIC __rj_len := 6
 
@@ -53,7 +56,7 @@ FUNCTION fin_knjizenje_naloga()
    LOCAL _d := f18_max_cols() - 6
    LOCAL _x_row := f18_max_rows() - 5
    LOCAL _y_row := _d
-   LOCAL _opt_row
+   LOCAL aFinUnosOpcije
    LOCAL _help_columns := 4
    LOCAL _opts := {}, _opt_d
    LOCAL i
@@ -95,34 +98,34 @@ FUNCTION fin_knjizenje_naloga()
 
    _opt_d := ( _d / 4 ) - 1
 
-   _opt_row := _upadr( " <c+N> Nova stavka", _opt_d ) + _sep
-   _opt_row += _upadr( " <ENT> Ispravka", _opt_d ) + _sep
-   _opt_row += _upadr( " <c+T> Briši stavku", _opt_d ) + _sep
-   _opt_row += _upadr( " <P> Povrat naloga", _opt_d )
+   aFinUnosOpcije := _upadr( " <c+N> Nova stavka", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <ENT> Ispravka", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <c+T> Briši stavku", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <P> Povrat naloga", _opt_d )
 
-   @ box_x_koord() + _x_row - 3, box_y_koord() + 2 SAY8 _opt_row
+   @ box_x_koord() + _x_row - 3, box_y_koord() + 2 SAY8 aFinUnosOpcije
 
-   _opt_row := _upadr( " <c+A> Ispravka stavki", _opt_d ) + _sep
-   _opt_row += _upadr( " <c+P> Štampa naloga", _opt_d ) + _sep
-   _opt_row += _upadr( " <a+A> Ažuriranje", _opt_d ) + _sep
-   _opt_row += _upadr( " <X> Ažur.bez štampe", _opt_d )
+   aFinUnosOpcije := _upadr( " <c+A> Ispravka stavki", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <c+P> Štampa naloga", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <a+A> Ažuriranje", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <X> Ažur.bez štampe", _opt_d )
 
-   @ box_x_koord() + _x_row - 2, box_y_koord() + 2 SAY8 _opt_row
+   @ box_x_koord() + _x_row - 2, box_y_koord() + 2 SAY8 aFinUnosOpcije
 
-   _opt_row := _upadr( " <c+F9> Briši sve", _opt_d ) + _sep
-   _opt_row += _upadr( " <F5> Kontrola zbira", _opt_d ) + _sep
-   _opt_row += _upadr( " <a+F5> Pr.dat", _opt_d ) + _sep
-   _opt_row += _upadr( " <a+B> Blagajna", _opt_d )
+   aFinUnosOpcije := _upadr( " <c+F9> Briši sve", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <F5> Kontrola zbira", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <a+F5> Pr.dat", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <a+B> Blagajna", _opt_d )
 
-   @ box_x_koord() + _x_row - 1, box_y_koord() + 2 SAY8 _opt_row
+   @ box_x_koord() + _x_row - 1, box_y_koord() + 2 SAY8 aFinUnosOpcije
 
-   _opt_row := _upadr( " <a+T> Briši po uslovu", _opt_d ) + _sep
-   _opt_row += _upadr( " <B> odredi broj dokumenta", _opt_d ) + _sep
-   _opt_row += _upadr( " <F9> sredi Rbr.", _opt_d ) + _sep
-   _opt_row += _upadr( " <F10> Ostale opcije", _opt_d ) + _sep
+   aFinUnosOpcije := _upadr( " <a+T> Briši po uslovu", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <B> odredi broj dokumenta", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <F9> sredi Rbr.", _opt_d ) + _sep
+   aFinUnosOpcije += _upadr( " <F10> Ostale opcije", _opt_d ) + _sep
 
 
-   @ box_x_koord() + _x_row, box_y_koord() + 2 SAY8 _opt_row
+   @ box_x_koord() + _x_row, box_y_koord() + 2 SAY8 aFinUnosOpcije
 
    my_browse( "PN2", _x_row, _y_row, {| nCh | edit_fin_pripr_key_handler( nCh ) }, "", "FIN Priprema", , , , , _help_columns )
 
@@ -143,6 +146,7 @@ FUNCTION edit_fin_priprema()
    LOCAL lDugmeOtvoreneStavke
    LOCAL nFinRbr := fin_pripr_redni_broj()
    LOCAL lConfirmEnter
+   LOCAL GetList := {}
 
    PARAMETERS fNovi
 
@@ -230,7 +234,6 @@ FUNCTION edit_fin_priprema()
 // ENDIF
    ENDIF
 
-
    IF hFinParams[ "fin_k4" ]
       IF _fakt_params[ "fakt_vrste_placanja" ]
          @ box_x_koord() + 11, Col() + 2 SAY "K4" GET _k4 VALID Empty( _k4 ) .OR. P_VRSTEP( @_k4 ) PICT "@!"
@@ -249,12 +252,11 @@ FUNCTION edit_fin_priprema()
    ENDIF
 
    @ box_x_koord() + 13, box_y_koord() + 2 SAY "Konto  :" GET _IdKonto PICT "@!" ;
-      VALID P_Konto( @_IdKonto, 13, 20 ) .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
+      VALID !Empt(_IdKonto) .AND. P_Konto( @_IdKonto, 13, 20 ) .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
 
 
    @ box_x_koord() + 14, box_y_koord() + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
-      VALID ;
-      {|| iif( Empty( _idpartner ), say_from_valid( 14, 20, Space( 25 ) ), ), ;
+      VALID  {|| iif( Empty( _idpartner ), say_from_valid( 14, 20, Space( 25 ) ), ), ;
       ( p_partner( @_IdPartner, 14, 20 ) ) .AND. fin_pravilo_partner() .AND. ;
       iif( g_knjiz_help == "D" .AND. !Empty( _idpartner ), fin_partner_prikaz_stanja_ekran( _idpartner, _idkonto, NIL ), .T. ) } ;
       WHEN {|| iif( ChkKtoMark( _idkonto ), .T., .F. ) }
@@ -315,6 +317,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
    LOCAL lLogBrisanje := .F.
    LOCAL _log_info
    LOCAL nBoxVisina := f18_max_rows() - 5
+   LOCAL cFinBrojDokumenta
 
    IF Select( "fin_pripr" ) == 0
       o_fin_pripr()
@@ -362,7 +365,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 
       IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "D"
 
-         cBDok := field->idfirma + "-" + field->idvn + "-" + field->brnal
+         cFinBrojDokumenta := field->idfirma + "-" + field->idvn + "-" + field->brnal
          cStavka := Str( field->rbr, 5 )
          cBKonto := field->idkonto
          cBDP := field->d_p
@@ -378,7 +381,7 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
 
          BrisiPBaze()
 
-         log_write( "F18_DOK_OPER: fin, brisanje stavke u pripremi: " + AllTrim( cBDok ) + " stavka br: " + cStavka, 2 )
+         log_write( "F18_DOK_OPER: fin, brisanje stavke u pripremi: " + AllTrim( cFinBrojDokumenta ) + " stavka br: " + cStavka, 2 )
 
          RETURN DE_REFRESH
       ENDIF
@@ -569,13 +572,10 @@ FUNCTION edit_fin_pripr_key_handler( nCh )
       // fin_set_broj_dokumenta()
       // OiNIsplate()
 
-      RETURN DE_CONT
+      // RETURN DE_CONT
 
-#ifdef __PLATFORM__DARWIN
-   CASE nCh == Asc( "0" )
-#else
-   CASE nCh == K_F10
-#endif
+   CASE nCh == iif( is_mac(), Asc( "0" ), K_F10 )
+
       fin_knjizenje_ostale_opcije()
       RETURN DE_REFRESH
 
@@ -647,11 +647,11 @@ FUNCTION o_fin_edit()
 
    my_close_all_dbf()
 
-   //o_vrstep()
+   // o_vrstep()
    // O_ULIMIT
 
    IF ( IsRamaGlas() )
-    //  select_o_fakt_objekti()
+      // select_o_fakt_objekti()
    ENDIF
 
    // o_rj()

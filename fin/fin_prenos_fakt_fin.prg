@@ -207,7 +207,6 @@ FUNCTION fakt_fin_prenos()
       MsgBeep( "Nema dokumenata za prenos ..." )
    ENDIF
 
-
    RETURN .T.
 
 /* PorezMp(cVar)
@@ -282,7 +281,7 @@ FUNCTION PorezMp( cVar )
 
 
 
-/* fin_kontiranje_naloga(dDatNal)
+/*
  *     Kontiranje naloga
  *   param: dDatNal  - datum naloga
  */
@@ -291,7 +290,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
    LOCAL cidfirma, cidvd, cbrdok, lafin, lafin2
 
-   //o_roba()
+   // o_roba()
    O_FINMAT
    o_trfp2()
    o_koncij()
@@ -360,7 +359,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
             cStavka := Id
 
             SELECT finmat
-            nIz := &cStavka
+            nIz := &cStavka // evaluacija fakt->fin formule
 
             SELECT trfp2
             IF !Empty( trfp2->idtarifa ) .AND. trfp2->idtarifa <> finmat->idtarifa
@@ -376,7 +375,6 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                   nIz := -nIz
                ENDIF
 
-  
                nIz := round7( nIz, Right( TRFP2->naz, 2 ) )
 
                // DEM - pomocna valuta
@@ -476,14 +474,18 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
       my_flock()
       DO WHILE !Eof()
-         cPom := Right( Trim( opis ), 1 )
+
+         cPom := Right( Trim( fin_pripr->opis ), 1 )
+
          // na desnu stranu opisa stavim npr "ZADUZ MAGACIN          0"
          // onda ce izvrsiti zaokruzenje na 0 decimalnih mjesta
          IF cPom $ "0125"
+            info_bar( "fin_kont", "Fin kontiranje HACK Zaokr : " + Trim( fin_pripr->opis ) + " ZAOKR: " + cPom )
             nLen := Len( Trim( opis ) )
             REPLACE opis WITH Left( Trim( opis ), nLen - 1 )
-            REPLACE iznosbhd WITH Round( iznosbhd, IF( Val( cPom ) == 0 .AND. cPom != "0", 2, Val( cPom ) ) )
-            REPLACE iznosdem WITH Round( iznosdem, IF( Val( cPom ) == 0 .AND. cPom != "0", 2, Val( cPom ) ) )
+            REPLACE iznosbhd WITH Round( iznosbhd, iif( Val( cPom ) == 0 .AND. cPom != "0", 2, Val( cPom ) ) )
+            REPLACE iznosdem WITH Round( iznosdem, iif( Val( cPom ) == 0 .AND. cPom != "0", 2, Val( cPom ) ) )
+
             IF cPom = "5"
                REPLACE iznosbhd WITH round2( iznosbhd, 2 )
                REPLACE iznosdem WITH round2( iznosdem, 2 )
@@ -502,6 +504,12 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    RETURN .T.
 
 
+
+FUNCTION Altd0()
+
+   //AltD()
+
+   RETURN 0
 
 /* RasKon(cRoba,aSifre,aKonta)
  *     Trazi poziciju cRoba u aSifre i ako nadje vraca element iz aKonta koji je na nadjenoj poziciji

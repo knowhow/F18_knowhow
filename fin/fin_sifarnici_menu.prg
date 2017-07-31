@@ -47,9 +47,9 @@ STATIC FUNCTION _menu_specif()
    O_PKONTO
    //O_ULIMIT
 
-   AAdd( _opc, "1. kontni plan                          " )
+   AAdd( _opc, "1. kontni plan                             " )
    AAdd( _opcexe, {|| p_konto() } )
-   AAdd( _opc, "2. sheme kontiranja                     " )
+   AAdd( _opc, "2. sheme kontiranja fakt->fin (trfp2)  " )
    AAdd( _opcexe, {|| P_Trfp2() } )
    AAdd( _opc, "3. prenos konta u ng" )
    AAdd( _opcexe, {|| P_PKonto() } )
@@ -78,7 +78,7 @@ STATIC FUNCTION _menu_budzet()
 
    AAdd( _opc, "1. radne jedinice              " )
    AAdd( _opcexe, {|| P_Rj() } )
-   
+
    AAdd( _opc, "2. funkc.kval       " )
    AAdd( _opcexe, {|| P_FunK() } )
 

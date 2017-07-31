@@ -121,7 +121,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
       ELSEIF cTable == "sast"
          INDEX ON field->ID + field->ID2 TAG "ID" TO ( cAlias )
          INDEX ON field->ID + Str( field->R_BR, 4, 0 ) + field->ID2 TAG "IDRBR" TO ( cAlias )
-         INDEX ON field->ID2 + field->ID TAG "NAZ" TO ( cAlias )         
+         INDEX ON field->ID2 + field->ID TAG "NAZ" TO ( cAlias )
          SET ORDER TO TAG "ID"
 
       ELSEIF cTable == "pos_osob"
@@ -579,33 +579,3 @@ FUNCTION use_sql_rules()
    INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3  TAG OBJC3 TO ( _table_name )
 
    RETURN .T.
-
-
-
-
-/*
-  da li je roba sql tabela
-*/
-
-FUNCTION is_roba_sql()
-
-   RETURN .F.
-
-
-FUNCTION is_partn_sql()
-
-   RETURN .F.
-
-
-FUNCTION is_konto_sql()
-
-   RETURN .F.
-
-
-FUNCTION my_rddName()
-
-   IF Used()
-      RETURN rddName()
-   ENDIF
-
-   RETURN "unused"

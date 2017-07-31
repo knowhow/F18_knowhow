@@ -1,5 +1,19 @@
 # F18 klijent, lista promjena
 
+## 3.1.37-std, 2017-07-31
+
+### Korisnik
+#### FIN
+- FIX browse <c+F> oBrowse
+- Obračun bring.out 07/2017 realizovan sa ovom verzijom
+
+
+### Developer
+#### FIN, FAKT-FIN kontiranje
+- Skontao HACK: trfp2 zbog kojeg je zaokruzivao fakt-fin na jednu decimalu. 
+  - Ako se na kraju opisa trfp2, odnosno fin_pripr stavi jedan od znakova "0125", izvrsice se zaokruzenje round 0,1,2 ili round5. Uh.
+ 
+
 ## 3.1.36-std, 2017-07-31
 
 ### Korisnik

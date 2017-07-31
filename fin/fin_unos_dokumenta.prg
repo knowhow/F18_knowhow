@@ -112,7 +112,7 @@ FUNCTION fin_knjizenje_naloga()
 
    @ box_x_koord() + _x_row - 2, box_y_koord() + 2 SAY8 aFinUnosOpcije
 
-   aFinUnosOpcije := _upadr( " <c+F9> Briši sve", _opt_d ) + _sep
+   aFinUnosOpcije := _upadr( IIF( is_mac(), " <9>", " <c+F9>" ) + " Briši sve", _opt_d ) + _sep
    aFinUnosOpcije += _upadr( " <F5> Kontrola zbira", _opt_d ) + _sep
    aFinUnosOpcije += _upadr( " <a+F5> Pr.dat", _opt_d ) + _sep
    aFinUnosOpcije += _upadr( " <a+B> Blagajna", _opt_d )
@@ -173,7 +173,7 @@ FUNCTION edit_fin_priprema( lNovaStavka )
    @  box_x_koord() + 1, box_y_koord() + 2 SAY8 "Firma: "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
    @  box_x_koord() + 3, box_y_koord() + 2 SAY "NALOG: "
-   @  box_x_koord() + 3, box_y_koord() + 14 SAY "Vrsta:" GET _idvn VALID browse_tnal( @_IdVN, 3, 26 ) PICT "@!"
+   @  box_x_koord() + 3, box_y_koord() + 14 SAY "Vrsta:" GET _idvn VALID p_fin_vrsta_naloga( @_IdVN, 3, 26 ) PICT "@!"
 
    READ
 

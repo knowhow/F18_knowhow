@@ -32,7 +32,7 @@ FUNCTION opci_sifarnici()
    ENDIF
 
    AAdd( aOpc, "3. tipovi naloga" )
-   AAdd( aOpcExe, {|| browse_tnal() } )
+   AAdd( aOpcExe, {|| p_fin_vrsta_naloga() } )
 
 
    AAdd( aOpc, "4. tipovi dokumenata" )

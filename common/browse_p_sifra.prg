@@ -241,8 +241,12 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
       find_rj_by_id( cId )
    ELSEIF Alias() == "FAKT_FTXT"
       find_fakt_ftxt_by_id( cId )
-      // ELSE
-      // SEEK cId
+   ELSEIF Alias() == "TNAL"
+      select_o_tnal( cId )
+   ELSE
+      IF Used() .AND. !Empty( ordKey() )
+         SEEK cId
+      ENDIF
    ENDIF
 
    IF !Used() .OR. FieldPos( "id" ) == 0

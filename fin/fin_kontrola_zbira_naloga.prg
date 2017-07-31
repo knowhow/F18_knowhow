@@ -29,7 +29,7 @@ FUNCTION kontrola_zbira_naloga_u_pripremi()
    cBrNal := BrNal
 
    @ m_x + 1, m_y + 1 SAY "       Firma: " + cIDFirma
-   @ m_x + 2, m_y + 1 SAY "Vrsta naloga:" GET cIdVn VALID browse_tnal( @cIdVN, 2, 20 )
+   @ m_x + 2, m_y + 1 SAY "Vrsta naloga:" GET cIdVn VALID p_fin_vrsta_naloga( @cIdVN, 2, 20 )
    @ m_x + 3, m_y + 1 SAY " Broj naloga:" GET cBrNal
 
    READ

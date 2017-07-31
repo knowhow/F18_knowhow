@@ -610,7 +610,7 @@ FUNCTION browse_brisi_pripremu()
 
 
 
-FUNCTION my_browse_f18_komande_with_my_key_handler( TB, nKey, nKeyHandlerRetEvent, nPored, aPoredak, bMyKeyHandler )
+FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRetEvent, nPored, aPoredak, bMyKeyHandler )
 
    LOCAL _tr := hb_UTF8ToStr( "Traži:" ), _zam := "Zamijeni sa:"
    LOCAL _last_srch := "N"

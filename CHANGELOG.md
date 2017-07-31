@@ -1,18 +1,21 @@
 # F18 klijent, lista promjena
 
-## 3.1.34-std, 2017-07-33
+## 3.1.34-std, 2017-07-31
 
 ### Korisnik
-
 #### FIN
-- fix fin proizv sort, zaglavlje (cTipDomacaStranaObje, "1" - jednovalutni prikaz - KM)
+- Fix fin_specif_proizv_sort
 
-## 3.1.33-std, 2017-07-32
+### Developer
+#### FIN
+- fix hb_default( @cTipDomacaStranaObje, 1 ) // jednovalutni prikaz - KM
+
+## 3.1.33-std, 2017-07-30
 
 - cleanup sastavnice - sastavnice_print.prg, tag "IDRBR"
 - cleanup fiskalne funkcije
 
-## 3.1.32-std, 2017-07-32
+## 3.1.32-std, 2017-07-30
 
 - fix stanje, lager, uporedna kalk - fakt
 - commit x 2 "FAKT sql big-bang-02" trijebljenje svih seek-ova fakt, fakt_doks, fakt_doks2 

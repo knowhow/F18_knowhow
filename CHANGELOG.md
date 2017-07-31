@@ -1,5 +1,15 @@
 # F18 klijent, lista promjena
 
+## 3.1.36-std, 2017-07-31
+
+### Korisnik
+#### FIN
+- FIX p_fin_vrsta_naloga 
+
+### Developer
+#### Korisnik
+- p_sifra fix SEEK cId
+
 ## 3.1.35-std, 2017-07-31
 
 ### Korisnik

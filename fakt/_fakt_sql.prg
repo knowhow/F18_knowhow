@@ -285,7 +285,7 @@ FUNCTION seek_fakt_doks_idpartner( cIdPartner )
 FUNCTION seek_fakt_doks_6( cIdFirma, cIdPartner, cIdTipDok )
 
    RETURN seek_fakt_doks( cIdFirma, cIdTipDok, NIL, cIdPartner, "6" )
-   
+
 
 // ---------------------------------------------------------------------------------------
 
@@ -631,6 +631,7 @@ STATIC FUNCTION use_sql_fakt_where( hParams )
       cWhere += iif( Empty( cWhere ), "", " AND " ) +  hParams[ "where" ]
    ENDIF
 
+altd()
    RETURN cWhere
 
 

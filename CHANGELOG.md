@@ -3,6 +3,7 @@
 ## 2017-07-31 ----
 
 - FIN nalog unos !prazan konto
+- FIN priprema cleanup, PRIV_VAR fNovi out 
 
 ## 2017-07-30 ----
 

@@ -92,7 +92,12 @@
 
 ### Poznati problemi
 
-- oBrowse VAR_NOT_FOUND
+- Variable does not exist/oBrowse
+
+## 3.1.24-std, 2017-07-28
+
+### Poznati problemi
+- Variable does not exist/HFATTXT
 
 ## 3.1.20-std, 2017-07-26
 

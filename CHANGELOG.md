@@ -91,7 +91,7 @@
 - NEW_ALIAS: F_FAKT_TXT, fakt_txt, FAKT_TXT
 
 
-## 3.1.19-std, 2017-07-25
+## 3.1.10-std, 2017-07-26
 
 ### Developer
 #### KALK

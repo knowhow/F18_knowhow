@@ -73,7 +73,8 @@ STATIC FUNCTION fakt_ftxt_naz_tarabiraj( cNaz )
 FUNCTION fakt_ftxt_keyboard_handler( nTopPos, nLeftPos, nBottomPos, nTxtLenght )
 
    LOCAL nI := 0
-   //LOCAL cFaktTxt
+
+   // LOCAL cFaktTxt
    LOCAL aFtxt := {}
 
    IF s_cLastFtxtIdShow == field->id
@@ -85,8 +86,8 @@ FUNCTION fakt_ftxt_keyboard_handler( nTopPos, nLeftPos, nBottomPos, nTxtLenght )
    s_cLastFtxtIdShow := field->id
 
    aFtxt := fakt_txt_clean_array( field->naz )
-   //altd()
-   //aFtxt := decode_string_to_array( cFaktTxt, nTxtLenght - 1 - nLeftPos, "##" )
+   // altd()
+   // aFtxt := decode_string_to_array( cFaktTxt, nTxtLenght - 1 - nLeftPos, "##" )
 
    FOR nI := 1 TO nBottomPos
       IF nI > Len( aFtxt )
@@ -167,7 +168,7 @@ FUNCTION fakt_ftxt_decode_string( cFaktTxt )
       hFaktTxt[ "objekti" ] := Space( 10 )
    ENDIF
 
-   hFaktTxt[ "txt1" ] := ""
+   hFaktTxt[ "opis_usluga" ] := ""
    hFaktTxt[ "txt2" ] := ""
 
    hFaktTxt[ "partner_txt_a" ] := ""
@@ -197,7 +198,7 @@ FUNCTION fakt_ftxt_decode_string( cFaktTxt )
 
 
    IF nLen > 0
-      hFaktTxt[ "txt1" ] := aMemo[ 1 ]
+      hFaktTxt[ "opis_usluga" ] := aMemo[ 1 ]
    ENDIF
 
    IF nLen >= 2
@@ -277,7 +278,7 @@ FUNCTION fakt_ftxt_encode_5( hFaktTxt )
       hFaktTxt[ "txt2" ] := hFaktTxt[ "txt2" ] + NRED_DOS + hFaktTxt[ "veza_otpremnice" ]
    ENDIF
 
-   cTxt := Chr( 16 ) + Trim( hFaktTxt[ "txt1" ] ) + Chr( 17 )
+   cTxt := Chr( 16 ) + Trim( hFaktTxt[ "opis_usluga" ] ) + Chr( 17 )
    cTxt += Chr( 16 ) + hFaktTxt[ "txt2" ] + Chr( 17 )
    cTxt += Chr( 16 ) + hFaktTxt[ "partner_txt_a" ] + Chr( 17 )
    cTxt += Chr( 16 ) + hFaktTxt[ "partner_txt_b" ] + Chr( 17 )
@@ -443,7 +444,7 @@ FUNCTION fakt_ftxt_sub_renumeracija_pripreme( cTxt2 )
 
          SELECT fakt_pripr
 
-         cTxt2 := Trim( ftxt->naz )
+         cTxt2 := Trim( FAKT_FTXT->naz )
 
          cUserName := f18_user_name()
 
@@ -453,13 +454,13 @@ FUNCTION fakt_ftxt_sub_renumeracija_pripreme( cTxt2 )
 
          SELECT fakt_pripr
 
-         //IF glDistrib .AND. _IdTipdok == "26"
-          //  IF cId $ ";"
-          //     _k2 := "OPOR"
-        //    ELSE
-          //     _k2 := ""
-        //    ENDIF
-         //ENDIF
+         // IF glDistrib .AND. _IdTipdok == "26"
+         // IF cId $ ";"
+         // _k2 := "OPOR"
+         // ELSE
+         // _k2 := ""
+         // ENDIF
+         // ENDIF
 
       ENDIF
 
@@ -534,15 +535,11 @@ FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt )
 
    LOCAL cUserName
 
-   // prazan tekst - ne radi nista
    IF Empty( cIdFaktTxt )
       RETURN .F.
    ENDIF
 
-   select_o_fakt_txt( cIdFaktTxt )
-   SELECT fakt_pripr
-
-   IF cIdFaktTxt == "DI" // poseban tip dokument izradio
+   IF cIdFaktTxt == "DI" // poseban tip DI: dokument izradio
       cUserName := f18_user_name()
       IF !Empty( cUserName ) .AND. cUserName <> "?user?"
          IF !( "Dokument izradio:" $ cTxt )
@@ -552,11 +549,16 @@ FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt )
       ENDIF
    ENDIF
 
+   IF !select_o_fakt_txt( cIdFaktTxt )
+      SELECT fakt_pripr
+      RETURN .F.
+   ENDIF
+
+   SELECT fakt_pripr
    IF !Empty( cTxt )
       cTxt += NRED_DOS
    ENDIF
-
-   cTxt += Trim( ftxt->naz )
+   cTxt += Trim( FAKT_FTXT->naz )
 
    RETURN .T.
 
@@ -681,10 +683,10 @@ STATIC FUNCTION fakt_txt_clean_array( cTxt )
 
    cTxt := StrTran( cTxt, Chr( 10 ), "#]" )  // Chr(10) marker novog reda -> #]
 
-   cTxt := StrTran( cTxt, "#]#]", Chr(200) + " " + Chr( 200 ) ) // ubaciti space-ove da se ne "gutaju" prazne linije unutar texta
-   cTxt := StrTran( cTxt, "#]", Chr(200) )
+   cTxt := StrTran( cTxt, "#]#]", Chr( 200 ) + " " + Chr( 200 ) ) // ubaciti space-ove da se ne "gutaju" prazne linije unutar texta
+   cTxt := StrTran( cTxt, "#]", Chr( 200 ) )
    // aLines := TokToNiz( cTxt, NRED_DOS ) // matrica sa tekstom line1, line2
-   aLines := TokToNiz( cTxt, Chr(200) )
+   aLines := TokToNiz( cTxt, Chr( 200 ) )
 
    nLen := Len( aLines )
 

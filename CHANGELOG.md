@@ -5,7 +5,7 @@
 ### Developer
 #### FAKT
 - FIX FAKT_FTXT->naz
-- fakt_valid_roba
+- fakt_valid_roba()
 - fakt cleanup usluge hFaktTtxt[ 'opis_usluga' ]
 
 ## 3.1.37-std, 2017-07-31

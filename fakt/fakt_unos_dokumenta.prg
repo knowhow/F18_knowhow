@@ -1024,39 +1024,29 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
       ?? "  RJ:", _idfirma
       nX += 2
       @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 35 )
-
       @ box_x_koord() + nX, box_y_koord() + 45 SAY "Datum: "
       ?? _datdok
 
       @ box_x_koord() + nX, Col() + 1 SAY "Broj: "
       ?? _brdok
-      _txt2 := ""
+      hFaktTxt[ "txt2" ] := ""
 
    ENDIF
 
-
    nX := 13
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "R.br: " GET s_nFaktUnosRedniBroj PICT "9999"
 
-   nX += 2
+   nX := 15
    @ box_x_koord() + nX, box_y_koord() + 2  SAY "Artikal: " GET _IdRoba PICT "@!S10" ;
       WHEN {|| _idroba := PadR( _idroba, Val( gDuzSifIni ) ), W_Roba() } ;
-      VALID {|| _idroba := iif( Len( Trim( _idroba ) ) < Val( gDuzSifIni ), ;
-      Left( _idroba, Val( gDuzSifIni ) ), _idroba ), ;
-      V_Roba(), ;
-      fakt_unos_stavka_usluga( lFaktNoviRec ), ;
-      fakt_unos_provjera_dupla_stavka( lFaktNoviRec ), ;
-      zadnji_izlazi_info( _idpartner, _idroba, "F" ), ;
-      fakt_trenutno_na_stanju_kalk( _idfirma, _idtipdok, _idroba ) ;
-      }
+      VALID {|| fakt_valid_roba( _IdFirma, _IdTipDok, @_IdRoba, @hFaktTxt[ "opis_usluga"], _IdPartner, lFaktNoviRec, 15 ) }
 
 
    ++nX
    // IF ( gSamokol != "D" .AND. !glDistrib )
-   //IF !glDistrib
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
-   //ENDIF
+   // IF !glDistrib
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
+   // ENDIF
 
    _tip_cijene := "1"
 
@@ -1068,7 +1058,6 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
       ++nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Opis:" GET cOpis PICT "@S50"
    ENDIF
-
 
    IF hFaktParams[ "ref_lot" ]
       ++nX
@@ -1095,7 +1084,7 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
 
    IF !( _idtipdok $ "12#13" ) .OR. ( _idtipdok == "12" .AND. gV12Por == "D" )
 
-      @ box_x_koord() + nX, Col() + 2 SAY "Rabat:" GET _rabat PICT fakt_pic_cijena() ;
+      @ box_x_koord() + nX, Col() + 2 SAY "Rabat:" GET _rabat PICT fakt_pic_cijena()  ;
          WHEN _podbr <> " ." .AND. ! _idtipdok $ "15"
 
       @ box_x_koord() + nX, Col() + 1 GET _tip_rabat PICT "@!" ;
@@ -1111,7 +1100,6 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
    IF lAvansniRacun == "D"
       _idvrstep := "AV"
    ENDIF
-
 
    ESC_RETURN 0
 
@@ -1155,9 +1143,7 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
    ENDIF
 #endif
 
-
    RETURN 1
-
 
 
 
@@ -1244,46 +1230,6 @@ STATIC FUNCTION fakt_print_dokument()
 
    RETURN .T.
 
-
-
-STATIC FUNCTION fakt_trenutno_na_stanju_kalk( cIdRj, cIdTipDok, cIdRoba )
-
-   LOCAL _stanje := NIL
-   LOCAL cIdKonto := ""
-   LOCAL nDbfArea := Select()
-   LOCAL _color := "W/N+"
-
-   select_o_rj( cIdRj )
-
-   select_fakt_pripr()
-
-   IF Empty( rj->konto )
-      RETURN .T.
-   ENDIF
-
-   cIdKonto := rj->konto
-
-   SELECT ( nDbfArea )
-
-   IF cIdTipDok $ "10#12"
-      _stanje := kalk_kol_stanje_artikla_magacin( cIdKonto, cIdRoba, Date() )
-   ELSEIF cIdTipDok $ "11#13"
-      _stanje := kalk_kol_stanje_artikla_prodavnica( cIdKonto, cIdRoba, Date() )
-   ENDIF
-
-   IF _stanje <> NIL
-
-      IF _stanje <= 0
-         _color := "W/R+"
-      ENDIF
-
-      @ box_x_koord() + 17, box_y_koord() + 28 SAY PadR( "", 60 )
-      @ box_x_koord() + 17, box_y_koord() + 28 SAY "Na stanju konta " + ;
-         AllTrim( cIdKonto ) + " : "
-      @ box_x_koord() + 17, Col() + 1 SAY AllTrim( Str( _stanje, 12, 3 ) ) + " " + PadR( roba->jmj, 3 ) COLOR _color
-   ENDIF
-
-   RETURN .T.
 
 
 

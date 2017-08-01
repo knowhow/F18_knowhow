@@ -289,7 +289,7 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
       ENDIF
 
       IF !select_o_tarifa( roba->idtarifa )
-         MsgBeep( "Tarifa " + roba->idtarifa + " ne postoji u šifraniku !?" )
+         MsgBeep( "Tarifa " + roba->idtarifa + " ne postoji u šifaniku !?" )
          RETURN .F.
       ENDIF
 
@@ -299,7 +299,7 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
       cIdRoba := field->idroba
 
       IF roba->tip == "U" // usluge su pohranjene u fakt->txt sekcija txt1
-         cRobaNaz := hFaktTxt[ "txt1" ]
+         cRobaNaz := hFaktTxt[ "opis_usluga" ]
       ELSE
          cRobaNaz := AllTrim( roba->naz )
          IF hFillParams[ "barkod" ]

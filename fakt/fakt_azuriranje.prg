@@ -272,13 +272,12 @@ STATIC FUNCTION fakt_azur_dbf( cIdFirma, cIdTipDok, cBrDok, lSilent )
 
    @ m_x + 2, m_y + 2 SAY "fakt_doks " + cIdFirma + cIdTipDok + cBrDok
 
-altd()
    seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok )
    IF !Eof()
       hRec := get_fakt_doks_data( cIdFirma, cIdTipDok, cBrDok )
       hb_HDel( hRec, "brisano" )
       hb_HDel( hRec, "sifra" )
-altd()
+
       select_o_fakt_doks_dbf()
       APPEND BLANK
       dbf_update_rec( hRec, .T. )
@@ -567,8 +566,6 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
       SET ORDER TO TAG "1"
       GO TOP
    ENDIF
-
-altd()
 
 
    RETURN NIL

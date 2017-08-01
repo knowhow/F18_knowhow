@@ -81,7 +81,7 @@
 
 ## 3.1.29-std, 2017-07-28
 
-#### Developer
+### Developer
 - my_browse - fakt pregled tabela - ok
 - my_browse - sinhronizacija ftxt - inkey(0) vs inkey()
 - pos prebačeni svi šifarnici na sql set_a_sql_sifarnik( ... )
@@ -90,8 +90,11 @@
 - adresar
 - NEW_ALIAS: F_FAKT_TXT, fakt_txt, FAKT_TXT
 
+### Poznati problemi
 
-## 3.1.10-std, 2017-07-26
+- oBrowse VAR_NOT_FOUND
+
+## 3.1.20-std, 2017-07-26
 
 ### Developer
 #### KALK
@@ -127,6 +130,10 @@
 
 ### Developer
 - BUGFIX KALK lager lista cOpcine
+
+### Poznati problemi
+- specif proizvoljni sort: Argument error/$
+
 
 ## 3.1.9-std, 2017-07-25
 

@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 2017-08-31 ----
+
+- fakt_valid_roba
+- fakt cleanup usluge hFaktTtxt[ 'opis_usluga' ]
+
 ## 2017-07-31 ----
 
 - FIX browse <c+F> oBrowse

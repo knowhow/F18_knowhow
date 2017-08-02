@@ -160,7 +160,7 @@ FUNCTION Get1_RN()
 
    read
    ESC_RETURN K_ESC
-   
+
    select_o_koncij( _idkonto )
    SELECT kalk_pripr
 
@@ -263,7 +263,7 @@ FUNCTION Get2_RN()
          @ m_x + 12, m_y + 2    SAY "VELEPRODAJNA CJENA  (VPC)   :"
       ENDIF
       @ m_x + 12, m_y + 50 GET _VPC    PICTURE PicDEM;
-         VALID {|| kalk_marza( fMarza ), .T. }
+         VALID {|| kalk_10_pr_rn_valid_vpc_set_marza( @fMarza ) }
 
       READ
       IF koncij->naz == "P2"

@@ -49,13 +49,13 @@ FUNCTION kalk_stampa_dok_10_txt()
 
    m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
 
-   IF ( gMpcPomoc == "D" )
+   IF ( gcMpcKalk10 == "D" )
       m += " ---------- ----------"
    ENDIF
 
    ? m
 
-   IF gMpcPomoc == "D"
+   IF gcMpcKalk10 == "D"
       // prikazi mpc
       ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
       ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
@@ -100,7 +100,7 @@ FUNCTION kalk_stampa_dok_10_txt()
       nTot +=  ( nU := Round( hRec[ "fcj" ] * hRec[ "kolicina" ], gZaokr ) )
       nTot1 += ( nU1 := Round( hRec[ "fcj2" ] * ( GKolicina + GKolicin2 ), gZaokr ) )
 
-      nTot2 += ( nU2 := Round( - Rabat / 100 * FCJ * hRec[ "kolicina" ], gZaokr ) )
+      nTot2 += ( nU2 := Round( - hRec[ "rabat" ] / 100 * FCJ * hRec[ "kolicina" ], gZaokr ) )
       nTot3 += ( nU3 := Round( nPrevoz * SKol, gZaokr ) )
       nTot4 += ( nU4 := Round( nBankTr * SKol, gZaokr ) )
       nTot5 += ( nU5 := Round( nSpedTr * SKol, gZaokr ) )
@@ -151,7 +151,7 @@ FUNCTION kalk_stampa_dok_10_txt()
       nCol1 := PCol() + 1
       @ PRow(), PCol() + 1 SAY hRec[ "fcj" ]                   PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY kalk_pripr->GKolicina             PICTURE PicKol
-      @ PRow(), PCol() + 1 SAY -kalk_pripr->Rabat                PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY - hRec[ "rabat" ]                PICTURE PicProc
 
       @ PRow(), PCol() + 1 SAY nPrevoz / hRec[ "fcj2" ] * 100      PICTURE PicProc
       @ PRow(), PCol() + 1 SAY nBankTr / hRec[ "fcj2" ] * 100      PICTURE PicProc
@@ -163,7 +163,7 @@ FUNCTION kalk_stampa_dok_10_txt()
       @ PRow(), PCol() + 1 SAY nMarza / hRec[ "nc" ]  * 100         PICTURE PicProc
       @ PRow(), PCol() + 1 SAY kalk_pripr->VPC                   PICTURE PicCDEM
 
-      IF gMpcPomoc == "D"
+      IF gcMpcKalk10 == "D"
          @ PRow(), PCol() + 1 SAY nPDVStopa         PICTURE PicProc
          @ PRow(), PCol() + 1 SAY kalk_pripr->MPCsaPP           PICTURE PicCDEM
       ENDIF
@@ -172,7 +172,7 @@ FUNCTION kalk_stampa_dok_10_txt()
       @ PRow() + 1, 4 SAY kalk_pripr->IdTarifa
       @ PRow(), nCol1    SAY kalk_pripr->Kolicina             PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY kalk_pripr->GKolicin2            PICTURE PicKol
-      @ PRow(), PCol() + 1 SAY -kalk_pripr->Rabat / 100 * kalk_pripr->FCJ       PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY -hRec[ "rabat" ] / 100 * kalk_pripr->FCJ       PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY nPrevoz              PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY nBankTr              PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY nSpedTr              PICTURE PicCDEM
@@ -180,7 +180,7 @@ FUNCTION kalk_stampa_dok_10_txt()
       @ PRow(), PCol() + 1 SAY nZavTr               PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY 0                    PICTURE PicDEM
       @ PRow(), PCol() + 1 SAY nMarza               PICTURE PicCDEM
-      IF gMpcPomoc == "D"
+      IF gcMpcKalk10 == "D"
          @ PRow(), PCol() + 1 SAY 0          PICTURE PicCDEM
          @ PRow(), PCol() + 1 SAY nPDV           PICTURE PicCDEM
       ENDIF
@@ -197,7 +197,7 @@ FUNCTION kalk_stampa_dok_10_txt()
       @ PRow(), PCol() + 1  SAY nU8         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nU9         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
-      IF gMpcPomoc == "D"
+      IF gcMpcKalk10 == "D"
          @ PRow(), PCol() + 1  SAY nUP         PICTURE         PICDEM
          @ PRow(), PCol() + 1  SAY nUM         PICTURE         PICDEM
       ENDIF
@@ -221,7 +221,7 @@ FUNCTION kalk_stampa_dok_10_txt()
    @ PRow(), PCol() + 1  SAY nTot9         PICTURE         PICDEM
    @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
 
-   IF ( gMpcPomoc == "D" )
+   IF ( gcMpcKalk10 == "D" )
       @ PRow(), PCol() + 1  SAY nTotP         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nTotM         PICTURE         PICDEM
    ENDIF

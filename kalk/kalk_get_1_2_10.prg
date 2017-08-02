@@ -289,9 +289,9 @@ STATIC FUNCTION kalk_get_2_10( x_kord, cIdPartner )
    PRIVATE fMarza := " "
 
    ++ nX
-   @ m_x + nX, m_y + 2    SAY8 "Magacin. Marža           :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
+   @ m_x + nX, m_y + 2    SAY8 "Magacin. Marža     :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
    @ m_x + nX, Col() + 2 GET _Marza PICT PicDEM
-   @ m_x + nX, Col() + 1 GET fMarza PICT "@!" VALID {|| kalk_marza( fMarza ), fMarza := " ", .T. }
+   @ m_x + nX, Col() + 1 GET fMarza PICT "@!" VALID {|| kalk_10_pr_rn_valid_vpc_set_marza( @fMarza ) }
 
    // PRODAJNA CIJENA / PLANSKA CIJENA
    ++ nX
@@ -301,15 +301,14 @@ STATIC FUNCTION kalk_get_2_10( x_kord, cIdPartner )
       @ m_x + nX, m_y + 2    SAY "PROD.CJENA BEZ PDV   :"
    ENDIF
 
-   @ m_x + nX, m_y + _unos_left GET _vpc PICT PicDEM VALID {|| MarzaVP( _Idvd, ( fMarza == "F" ) ), .T. }
+   @ m_x + nX, m_y + _unos_left GET _vpc PICT PicDEM VALID {|| kalk_10_vaild_Marza_VP( _Idvd, ( fMarza == "F" ) ), .T. }
 
 
-   IF ( gMpcPomoc == "D" )   // VPC se izracunava pomocu MPC cijene
+   IF ( gcMpcKalk10 == "D" )   // VPC se izracunava pomocu MPC cijene
 
       _mpcsapp := roba->mpc
 
       ++ nX
-
       @ m_x + nX, m_y + 2 SAY "PROD.CJENA SA PDV:"
       @ m_x + nX, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
          valid {|| _mpcsapp := iif( _mpcsapp = 0, Round( _vpc * ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), 2 ), _mpcsapp ), _mpc := _mpcsapp / ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), ;
@@ -319,15 +318,14 @@ STATIC FUNCTION kalk_get_2_10( x_kord, cIdPartner )
 
    READ
 
-   IF ( gMpcPomoc == "D" )
+   IF ( gcMpcKalk10 == "D" )
 
-      IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcsapp, 2 ) ) .AND. Pitanje(, "Staviti MPC u sifrarnik" ) == "D"
+      IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcsapp, 2 ) ) .AND. Pitanje(, "Staviti MPC u šifarnik" ) == "D"
 
          SELECT roba
          hRec := dbf_get_rec()
          hRec[ "mpc" ] := _mpcsapp
          update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
-
          SELECT kalk_pripr
 
       ENDIF

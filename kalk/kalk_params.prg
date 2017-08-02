@@ -140,7 +140,7 @@ FUNCTION kalk_par_varijante_prikaza()
    @ m_x + nX, m_y + 2 SAY "Varijanta KALK 11 bez prikaza NC i storna RUC-a (D/N)" GET  g11bezNC  PICT "@!" VALID g11bezNC $ "DN"
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY "Pri ulaznoj kalkulaciji pomoc sa C.sa PDV (D/N)" GET  gMPCPomoc PICT "@!" VALID gMPCPomoc $ "DN"
+   @ m_x + nX, m_y + 2 SAY "Pri ulaznoj kalkulaciji pomoc sa C.sa PDV (D/N)" GET  gcMpcKalk10 PICT "@!" VALID gcMpcKalk10 $ "DN"
 
    nX += 1
 
@@ -176,7 +176,7 @@ FUNCTION kalk_par_varijante_prikaza()
       set_metric( "kalk_dokument_80_rekap_po_tar", NIL, g80VRT )
       set_metric( "kalk_tip_nivelacije_14", NIL, gNiv14 )
       set_metric( "kalk_varijanta_fakt_13_kalk_11_cijena", NIL, gVar13u11 )
-      set_metric( "kalk_pomoc_sa_mpc", NIL, gMPCPomoc )
+      set_metric( "kalk_pomoc_sa_mpc", NIL, gcMpcKalk10 )
       set_metric( "kalk_kolicina_kod_nivelacije_fakt", NIL, gKolicFakt )
 
       kalk_preuzimanje_troskova_iz_sif_roba( cRobaTrosk )

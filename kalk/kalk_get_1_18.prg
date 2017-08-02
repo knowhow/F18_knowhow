@@ -85,10 +85,10 @@ FUNCTION kalk_get_1_18()
    IF gmagacin == "1"
       cNaziv := "NC"
    ENDIF
-   @ m_x + 17, m_y + 2    SAY "STARA CIJENA  (" + cnaziv + ") :"  GET nStCj  PICTURE PicDEM
-   @ m_x + 18, m_y + 2    SAY "NOVA CIJENA   (" + cnaziv + ") :"  GET nNCj   PICTURE PicDEM
+   @ m_x + 17, m_y + 2    SAY "STARA CIJENA  (" + cNaziv + ") :"  GET nStCj  PICTURE PicDEM
+   @ m_x + 18, m_y + 2    SAY "NOVA CIJENA   (" + cNaziv + ") :"  GET nNCj   PICTURE PicDEM
 
-   IF gMPCPomoc == "D"
+   IF gcMpcKalk10 == "D"
       PRIVATE _MPCPom := 0
       @ m_x + 18, m_y + 42    SAY "NOVA CIJENA  MPC :"  GET _mpcpom   PICTURE PicDEM ;
          valid {|| nNcj := iif( nNcj = 0, Round( _mpcpom / ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), 2 ), nNcj ), .T. }
@@ -106,7 +106,7 @@ FUNCTION kalk_get_1_18()
    ENDIF
 
 
-   IF gMPCPomoc == "D"
+   IF gcMpcKalk10 == "D"
       IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcpom, 2 ) ) .AND. Round( _mpcpom, 2 ) <> 0 .AND. Pitanje(, "Staviti MPC u sifrarnik" ) == "D"
          SELECT roba
          hRec := dbf_get_rec()

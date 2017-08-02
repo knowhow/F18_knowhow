@@ -1,6 +1,7 @@
 # F18 klijent, lista promjena
 
 ## 2017-08-02 ----
+- KALK 10, validacija - 'ERROR Marza > 100 000 x veća od NC:'
 - FAKT tabelarni pregled dokumenata, prva kolona 'F' - is_fiskaliziran()
 
 ## 2017-08-01 ----
@@ -12,7 +13,7 @@
 
 - FIX browse <c+F> oBrowse
 - FIN nalog unos !prazan konto
-- FIN priprema cleanup, PRIV_VAR fNovi out 
+- FIN priprema cleanup, PRIV_VAR fNovi out
 - p_sifra fix SEEK cId
 
 ## 2017-07-30 ----
@@ -20,9 +21,9 @@
 - cleanup sastavnice - sastavnice_print.prg, tag "IDRBR"
 - cleanup fiskalne funkcije
 - fix stanje, lager, uporedna kalk - fakt
-- commit x 2 "FAKT sql big-bang-02" trijebljenje svih seek-ova fakt, fakt_doks, fakt_doks2 
+- commit x 2 "FAKT sql big-bang-02" trijebljenje svih seek-ova fakt, fakt_doks, fakt_doks2
  - 74 files +1861 -1862
- - 16 files +255 - 347 
+ - 16 files +255 - 347
 
 ## 2017-07-29 ----
 

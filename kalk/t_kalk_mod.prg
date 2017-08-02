@@ -171,7 +171,7 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gFunKon1 := PadR( "SUBSTR(FINMAT->IDKONTO,4,2)", 80 )
    PUBLIC gFunKon2 := PadR( "SUBSTR(FINMAT->IDKONTO2,4,2)", 80 )
    PUBLIC g11bezNC := "N"
-   PUBLIC gMpcPomoc := "N"
+   PUBLIC gcMpcKalk10 := "N"
    PUBLIC gKolicFakt := "N"
 
    PUBLIC gRobaTr1Tip := "%"
@@ -293,7 +293,7 @@ METHOD TKalkMod:set_module_gvars()
    gTops := fetch_metric( "kalk_prenos_pos", f18_user(), gTops )
    gFakt := fetch_metric( "kalk_prenos_fakt", f18_user(), gFakt )
 
-   gMPCPomoc := fetch_metric( "kalk_pomoc_sa_mpc", nil, gMPCPomoc )
+   gcMpcKalk10 := fetch_metric( "kalk_pomoc_sa_mpc", nil, gcMpcKalk10 )
    gKolicFakt := fetch_metric( "kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt )
    gPromTar := fetch_metric( "kalk_zabrana_promjene_tarifa", nil, gPromTar )
    gFunKon1 := fetch_metric( "kalk_djoker_f1_kod_kontiranja", nil, gFunKon1 )

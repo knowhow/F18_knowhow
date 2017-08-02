@@ -42,7 +42,7 @@ FUNCTION Gather( cZn )
 
    RECOVER USING oErr
 
-      cMsg := RECI_GDJE_SAM + " ne postoji MEMVAR " + cVar + " trenutna tabela: " + Alias()
+      cMsg := RECI_GDJE_SAM + " ne postoji/neispravna MEMVAR " + cVar + " trenutna tabela: " + Alias()
       ?E cMsg
       log_write( cMsg, 1 )
       Alert( cMsg )

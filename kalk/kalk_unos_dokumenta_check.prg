@@ -125,9 +125,9 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj, lSilent )
 
 
 
-/* VVT()
+/* VVT
  *     Prikaz PPP i proracun marze za visokotarifnu robu
- */
+
 
 FUNCTION VVT()
 
@@ -143,7 +143,7 @@ FUNCTION VVT()
    _tmarza := "A"
 
    RETURN .T.
-
+*/
 
 /*
  *     Obrada slucaja pojavljivanja duplog unosa robe u dokumentu

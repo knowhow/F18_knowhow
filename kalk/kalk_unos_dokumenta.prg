@@ -399,6 +399,7 @@ FUNCTION kalk_ispravka_postojeca_stavka()
 
       _oldvaln := _nc * _kolicina
 
+altd()
       my_rlock()
       Gather()
       my_unlock()
@@ -600,6 +601,7 @@ FUNCTION kalk_unos_nova_stavka()
 
       _oldvaln := _nc * _kolicina
 
+altd()
       Gather()
 
       _hAttrId := hb_Hash()

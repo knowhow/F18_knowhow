@@ -20,6 +20,7 @@ FUNCTION kalk_stampa_dok_10_txt()
    LOCAL nCol2 := 0
    LOCAL nPom := 0
    LOCAL nTot, nTot1, nTot2, nTot3, nTot4, nTot5, nTot6, nTot7, nTot8, nTot9, nTotA, nTotB, nTotP, nTotM
+   LOCAL hRec
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
@@ -32,7 +33,7 @@ FUNCTION kalk_stampa_dok_10_txt()
 
    P_COND2
 
-   ?? "KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
+   ?? "KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
 
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
@@ -79,31 +80,35 @@ FUNCTION kalk_stampa_dok_10_txt()
    PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
 
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
+
+      hRec := dbf_get_rec()
+
       vise_kalk_dok_u_pripremi( cIdd )
       kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
       print_nova_strana( 125, @nStr, 2 )
+
       IF gKalo == "1"
-         SKol := field->Kolicina - field->GKolicina - field->GKolicin2
+         SKol := hRec[ "kolicina" ] - field->GKolicina - field->GKolicin2
       ELSE
-         SKol := field->Kolicina
+         SKol := hRec[ "kolicina" ]
       ENDIF
 
       nPDVStopa := tarifa->opp
-      nPDV := MPCsaPP / ( 1 + ( tarifa->opp / 100 ) ) * ( tarifa->opp / 100 )
+      nPDV := hRec[ "mpcsapp" ] / ( 1 + ( tarifa->opp / 100 ) ) * ( tarifa->opp / 100 )
 
-      nTot +=  ( nU := Round( FCj * Kolicina, gZaokr ) )
-      nTot1 += ( nU1 := Round( FCj2 * ( GKolicina + GKolicin2 ), gZaokr ) )
+      nTot +=  ( nU := Round( hRec[ "fcj" ] * hRec[ "kolicina" ], gZaokr ) )
+      nTot1 += ( nU1 := Round( hRec[ "fcj2" ] * ( GKolicina + GKolicin2 ), gZaokr ) )
 
-      nTot2 += ( nU2 := Round( -Rabat / 100 * FCJ * Kolicina, gZaokr ) )
+      nTot2 += ( nU2 := Round( - Rabat / 100 * FCJ * hRec[ "kolicina" ], gZaokr ) )
       nTot3 += ( nU3 := Round( nPrevoz * SKol, gZaokr ) )
       nTot4 += ( nU4 := Round( nBankTr * SKol, gZaokr ) )
       nTot5 += ( nU5 := Round( nSpedTr * SKol, gZaokr ) )
       nTot6 += ( nU6 := Round( nCarDaz * SKol, gZaokr ) )
       nTot7 += ( nU7 := Round( nZavTr * SKol, gZaokr ) )
-      nTot8 += ( nU8 := Round( NC *    ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
-      nTot9 += ( nU9 := Round( nMarza * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
-      nTotA += ( nUA := Round( VPC   * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+      nTot8 += ( nU8 := Round( NC *    ( hRec[ "kolicina" ] - Gkolicina - GKolicin2 ), gZaokr ) )
+      nTot9 += ( nU9 := Round( nMarza * ( hRec[ "kolicina" ] - Gkolicina - GKolicin2 ), gZaokr ) )
+      nTotA += ( nUA := Round( VPC   * ( hRec[ "kolicina" ] - Gkolicina - GKolicin2 ), gZaokr ) )
 
       IF gVarVP == "1"
          nTotB += Round( nU9 * tarifa->vpp / 100, gZaokr ) // porez na razliku u cijeni
@@ -112,9 +117,9 @@ FUNCTION kalk_stampa_dok_10_txt()
          nTotB += Round( cistaMar * tarifa->vpp / 100, gZaokr )  // porez na razliku u cijeni
       ENDIF
       // total porez
-      nTotP += ( nUP := nPDV * kolicina )
+      nTotP += ( nUP := nPDV * hRec[ "kolicina" ] )
       // total mpcsapp
-      nTotM += ( nUM := MPCsaPP * kolicina )
+      nTotM += ( nUM := MPCsaPP * hRec[ "kolicina" ] )
 
       // 1. PRVI RED
       @ PRow() + 1, 0 SAY rbr PICTURE "999"
@@ -132,30 +137,42 @@ FUNCTION kalk_stampa_dok_10_txt()
          ?? ", BK: " + roba->barkod
       ENDIF
 
+      IF Round( hRec[ "fcj2" ], 5 ) == 0
+         error_bar( "kalk_10", "KALK " + cIdFirma + "-" + cIdVD + "-" + cBrDok + " FCJ2=0" )
+         hRec[ "fcj2" ] :=  0.000001 // da ne ispadne sa ZERO DIVISOR
+      ENDIF
+
+      IF Round( hRec[ "nc" ], 5 ) == 0
+         error_bar( "kalk_10", "KALK " + cIdFirma + "-" + cIdVD + "-" + cBrDok + " NC=0" )
+         hRec[ "nc" ] :=  0.000001 // da ne ispadne sa ZERO DIVISOR
+      ENDIF
+
       @ PRow() + 1, 4 SAY IdRoba
       nCol1 := PCol() + 1
-      @ PRow(), PCol() + 1 SAY FCJ                   PICTURE PicCDEM
-      @ PRow(), PCol() + 1 SAY GKolicina             PICTURE PicKol
-      @ PRow(), PCol() + 1 SAY -Rabat                PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY nPrevoz / FCJ2 * 100      PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY nBankTr / FCJ2 * 100      PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY nSpedTr / FCJ2 * 100      PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY nCarDaz / FCJ2 * 100      PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY nZavTr / FCJ2 * 100       PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY NC                    PICTURE PicCDEM
-      @ PRow(), PCol() + 1 SAY nMarza / NC * 100         PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY VPC                   PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY hRec[ "fcj" ]                   PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY kalk_pripr->GKolicina             PICTURE PicKol
+      @ PRow(), PCol() + 1 SAY -kalk_pripr->Rabat                PICTURE PicProc
+
+      @ PRow(), PCol() + 1 SAY nPrevoz / hRec[ "fcj2" ] * 100      PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nBankTr / hRec[ "fcj2" ] * 100      PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nSpedTr / hRec[ "fcj2" ] * 100      PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nCarDaz / hRec[ "fcj2" ] * 100      PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nZavTr / hRec[ "fcj2" ] * 100       PICTURE PicProc
+
+      @ PRow(), PCol() + 1 SAY hRec[ "nc" ]                    PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY nMarza / hRec[ "nc" ]  * 100         PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY kalk_pripr->VPC                   PICTURE PicCDEM
 
       IF gMpcPomoc == "D"
          @ PRow(), PCol() + 1 SAY nPDVStopa         PICTURE PicProc
-         @ PRow(), PCol() + 1 SAY MPCsaPP           PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY kalk_pripr->MPCsaPP           PICTURE PicCDEM
       ENDIF
 
       // 2. DRUGI RED
-      @ PRow() + 1, 4 SAY IdTarifa
-      @ PRow(), nCol1    SAY Kolicina             PICTURE PicCDEM
-      @ PRow(), PCol() + 1 SAY GKolicin2            PICTURE PicKol
-      @ PRow(), PCol() + 1 SAY -Rabat / 100 * FCJ       PICTURE PicCDEM
+      @ PRow() + 1, 4 SAY kalk_pripr->IdTarifa
+      @ PRow(), nCol1    SAY kalk_pripr->Kolicina             PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY kalk_pripr->GKolicin2            PICTURE PicKol
+      @ PRow(), PCol() + 1 SAY -kalk_pripr->Rabat / 100 * kalk_pripr->FCJ       PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY nPrevoz              PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY nBankTr              PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY nSpedTr              PICTURE PicCDEM
@@ -211,7 +228,6 @@ FUNCTION kalk_stampa_dok_10_txt()
 
    ? m
    ?U "Magacin se zadužuje po nabavnoj vrijednosti " + AllTrim( Transform( nTot8, picdem ) )
-
    ? m
 
    RETURN .T.

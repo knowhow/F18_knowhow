@@ -15,12 +15,12 @@
 - koncij.region za konto npr 13202 = "RS" => vpc stampa dokumenta
 - dokumenti 95, 96, 16, 11
 
-### Developer
-
+### Poznati problemi
 - BUG: Variable does not exist/PTT, (b)P_PARTNER / 118, TBROWSE:DOCONFIGURE / 0, TBROWSE:_FREEZE / 0,BROWSE_ONLY / 303,MY_DB_EDIT_SQL / 129,P_SIFRA / 114, P_PARTNER / 145,(b)FIN_SUBAN_KARTICA / 170
- - trenutno radno područje PARTN, dok struktura kaže da se radi o SIFK tabeli( ID=PARTN, SORT=05, NAZ=Banke, OZNAKA=BANK, VEZA=N )
-- Merge from 3-std fix barkod, ftxt
+   - trenutno radno područje PARTN, dok struktura kaže da se radi o SIFK tabeli( ID=PARTN, SORT=05, NAZ=Banke, OZNAKA=BANK, VEZA=N )
 
+### Developer
+- Merge from 3-std fix barkod, ftxt
 #### CORE
 - RENAME_FUN_VARS: num_to_str( nNumber, nLen, nDec )
 - define NRED_DOS
@@ -36,6 +36,7 @@
 - RENAME_FUN_NAME: ParsMemo -> fakt_ftxt_decode( cTxt ) => aMemo
 - RENAME_VAR: _memo -> aMemo
 - FUN_ADD: find_fakt_ftxt_by_id
+
 
 ## 3.1.17-vindi, 2017-07-26
 

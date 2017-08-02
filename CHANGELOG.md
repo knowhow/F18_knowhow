@@ -7,7 +7,7 @@
 ### Developer
 - git reset --hard 3.1.21 ; git push origin 3-vindi -f
 
-## 3.1.20-vindi, 2017-07-26
+## 3.1.21-vindi, 2017-07-26
 
 ### Korisnik
 #### KALK
@@ -17,7 +17,9 @@
 
 ### Developer
 
-Merge from 3-std fix barkod, ftxt
+- BUG: Variable does not exist/PTT, (b)P_PARTNER / 118, TBROWSE:DOCONFIGURE / 0, TBROWSE:_FREEZE / 0,BROWSE_ONLY / 303,MY_DB_EDIT_SQL / 129,P_SIFRA / 114, P_PARTNER / 145,(b)FIN_SUBAN_KARTICA / 170
+ - trenutno radno područje PARTN, dok struktura kaže da se radi o SIFK tabeli( ID=PARTN, SORT=05, NAZ=Banke, OZNAKA=BANK, VEZA=N )
+- Merge from 3-std fix barkod, ftxt
 
 #### CORE
 - RENAME_FUN_VARS: num_to_str( nNumber, nLen, nDec )

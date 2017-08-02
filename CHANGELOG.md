@@ -16,7 +16,8 @@
 - dokumenti 95, 96, 16, 11
 
 ### Poznati problemi
-- BUG: Variable does not exist/PTT, (b)P_PARTNER / 118, TBROWSE:DOCONFIGURE / 0, TBROWSE:_FREEZE / 0,BROWSE_ONLY / 303,MY_DB_EDIT_SQL / 129,P_SIFRA / 114, P_PARTNER / 145,(b)FIN_SUBAN_KARTICA / 170
+- BUG: Variable does not exist/PTT
+   - (b)P_PARTNER / 118, TBROWSE:DOCONFIGURE / 0, TBROWSE:_FREEZE / 0,BROWSE_ONLY / 303,MY_DB_EDIT_SQL / 129,P_SIFRA / 114, P_PARTNER / 145,(b)FIN_SUBAN_KARTICA / 170
    - trenutno radno područje PARTN, dok struktura kaže da se radi o SIFK tabeli( ID=PARTN, SORT=05, NAZ=Banke, OZNAKA=BANK, VEZA=N )
 
 ### Developer

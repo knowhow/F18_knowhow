@@ -1,6 +1,9 @@
 # F18 klijent, lista promjena
 
-## 2017-08-31 ----
+## 2017-08-02 ----
+- FAKT tabelarni pregled dokumenata, prva kolona 'F' - is_fiskaliziran()
+
+## 2017-08-01 ----
 
 - fakt_valid_roba
 - fakt cleanup usluge hFaktTtxt[ 'opis_usluga' ]

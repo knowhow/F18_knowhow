@@ -5,7 +5,7 @@
 #### FAKT
 - F kolona u tabelarnom pregledu dokumenata (F - račun fiskaliziran)
 ### Developer
-- git reset --hard 3.1.21
+- git reset --hard 3.1.21 ; git push origin 3-vindi -f
 
 ## 3.1.20-vindi, 2017-07-26
 

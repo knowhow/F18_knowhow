@@ -5,6 +5,7 @@ FUNCTION fakt_real_partnera()
    LOCAL cFilter
    LOCAL cFilterBrFaktDok, cFilterSifraKupca, cFilterTipDok
    LOCAL cUslovTipDok, cUslovIdPartner, cUslovOpcina
+   LOCAL bZagl
 
    //o_fakt_doks_dbf()
    // o_partner()
@@ -117,7 +118,9 @@ FUNCTION fakt_real_partnera()
    PRIVATE nStrana := 0
    PRIVATE m := "---- ------ -------------------------- ------------ ------------ ------------"
 
-   fakt_zagl_real_partnera()
+   bZagl := { || fakt_zagl_real_partnera( cIdFirma, @nStrana, dDatOd, dDatDo, cUslovTipDok ) }
+
+   EVAL( bZagl )
 
 
    find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "6" ) // "6","IdFirma+idpartner+idtipdok"
@@ -161,7 +164,7 @@ FUNCTION fakt_real_partnera()
       ENDDO
       IF PRow() > 61
          FF
-         fakt_zagl_real_partnera()
+         Eval( bZagl )
       ENDIF
 
       ? Space( gnLMarg )
@@ -177,7 +180,7 @@ FUNCTION fakt_real_partnera()
 
    IF PRow() > 59
       FF
-      fakt_zagl_real_partnera()
+      Eval( bZagl )
    ENDIF
 
    ? Space( gnLMarg )
@@ -198,7 +201,7 @@ FUNCTION fakt_real_partnera()
    RETURN .T.
 
 
-FUNCTION fakt_zagl_real_partnera()
+FUNCTION fakt_zagl_real_partnera( cIdFirma, nStrana, dDatOd, dDatDo, cUslovTipDok)
 
    ?
    P_12CPI
@@ -207,10 +210,10 @@ FUNCTION fakt_zagl_real_partnera()
    ?
    SET CENTURY ON
    P_12CPI
-   ?U Space( gnLMarg ); ?? "FAKT: Štampa prometa partnera na dan:", Date(), Space( 8 ), "Strana:", Str( ++nStrana, 3 )
+   ?U Space( gnLMarg ); ??U "FAKT: Štampa prometa partnera na dan:", Date(), Space( 8 ), "Strana:", Str( ++nStrana, 3 )
    ?U Space( gnLMarg ); ?? "      period:", dDatOd, "-", dDatDo
    IF cUslovTipDok <> "10;"
-      ? Space( gnLMarg ); ?? "-izvjestaj za tipove dokumenata :", Trim( cUslovTipDok )
+      ? Space( gnLMarg ); ??U "-izvještaj za tipove dokumenata :", Trim( cUslovTipDok )
    ENDIF
 
    SET CENTURY OFF

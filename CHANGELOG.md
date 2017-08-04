@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 2017-08-04 ----
+
+- BUFGFIX: FAKT realizacija kumulativno po partnerima
+
+
 ## 2017-08-02 ----
 - KALK 10, validacija - 'ERROR Marza > 100 000 x veća od NC:'
 - FAKT tabelarni pregled dokumenata, prva kolona 'F' - is_fiskaliziran()

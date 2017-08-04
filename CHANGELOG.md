@@ -138,6 +138,7 @@
 
 ### Poznati problemi
 - specif proizvoljni sort: Argument error/$
+- Variable does not exist/CUSLOVTIPDOK
 - sastavnice, adresar ne rade
 
 ## 3.1.9-std, 2017-07-25

@@ -35,7 +35,7 @@ FUNCTION fakt_mnu_generacija_dokumenta()
    RETURN .T.
 
 
-
+/*
 FUNCTION fakt_generisi_inventuru( cIdRj )
 
    LOCAL cIdRoba
@@ -128,6 +128,7 @@ STATIC FUNCTION fakt_dodaj_stavku_inventura( cIdRj, cIdRoba, cBrDok, nKolicina, 
 
    RETURN .T.
 
+*/
 
 STATIC FUNCTION AddTxt( cTxt, cStr )
 

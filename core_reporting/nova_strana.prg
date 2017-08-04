@@ -20,13 +20,6 @@ FUNCTION zagl_organizacija( nLeft )
 
    ? " "
 
-   oServer := TPQServer():New( hSqlParams[ "host" ], ;
-      hSqlParams[ "database" ], ;
-      hSqlParams[ "user" ], ;
-      hSqlParams[ "password" ], ;
-      hSqlParams[ "port" ], ;
-      hSqlParams[ "schema" ] )
-
    RETURN .T.
 
 

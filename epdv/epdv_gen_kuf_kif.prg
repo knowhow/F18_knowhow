@@ -69,17 +69,20 @@ FUNCTION gen_kif()
    LOCAL dDatOd
    LOCAL dDatDo
    LOCAL cSezona
+   LOCAL cIdRj := self_organizacija_id()
 
    dDatOd := Date()
    dDatDo := Date()
    cSezona := Space( 4 )
 
-   Box(, 3, 40 )
-   @ m_x + 1, m_y + 2 SAY "Datum do " GET dDatOd
-   @ m_x + 2, m_y + 2 SAY "      do " GET dDatDo
-   @ m_x + 3, m_y + 2 SAY "sezona" GET cSezona
+   Box(, 4, 40 )
+   @ m_x + 1, m_y + 2 SAY "FAKT RJ " GET cIdRj
+   @ m_x + 2, m_y + 2 SAY "Datum od: " GET dDatOd
+   @ m_x + 2, Col() + 2 SAY "do:" GET dDatDo
+   @ m_x + 4, m_y + 2 SAY "sezona" GET cSezona
 
    READ
+
    BoxC()
 
    IF LastKey() == K_ESC
@@ -100,7 +103,7 @@ FUNCTION gen_kif()
    ENDIF
 
    Box(, 5, 60 )
-   fakt_kif( dDatOd, dDatDo, cSezona )
+   epdv_fakt_kif( cIdRj, dDatOd, dDatDo, cSezona )
 
    kalk_kif( dDatOd, dDatDo, cSezona )
 

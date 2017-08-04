@@ -2,6 +2,7 @@
 
 ## 2017-08-04 ----
 
+- EPDV: fakt_gen_kif() fakt sql
 - zagl_organizacija() FIX marsovac varijabla oServer, hSqlParams
 - BUFGFIX: FAKT realizacija kumulativno po partnerima
 

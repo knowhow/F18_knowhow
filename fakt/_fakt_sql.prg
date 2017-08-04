@@ -631,7 +631,6 @@ STATIC FUNCTION use_sql_fakt_where( hParams )
       cWhere += iif( Empty( cWhere ), "", " AND " ) +  hParams[ "where" ]
    ENDIF
 
-altd()
    RETURN cWhere
 
 
@@ -678,7 +677,6 @@ FUNCTION find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, cAlias, cOrderBy, c
    ENDIF
 
    IF dDatOd != NIL
-      AltD()
       IF !Empty( dDatOd )
          hParams[ "dat_od" ] := dDatOd
       ENDIF
@@ -692,7 +690,6 @@ FUNCTION find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, cAlias, cOrderBy, c
    hParams[ "indeks" ] := .F.
 
    IF cAlias != NIL
-      AltD()
       IF cAlias == "FAKT_DOKS_PREGLED"
          hParams[ "area" ] := F_FAKT_DOKS_PREGLED
       ELSE

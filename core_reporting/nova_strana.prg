@@ -15,17 +15,9 @@
 FUNCTION zagl_organizacija( nLeft )
 
    ? " "
-   ? Space( nLeft ) + AllTrim( tip_organizacije() ) + " :", AllTrim( self_organizacija_naziv() ) + ;
-      " " + f18_baza_server_host()
-
+   ? Space( nLeft ) + AllTrim( tip_organizacije() ) + " :", AllTrim( self_organizacija_naziv() )
+      //+ " " + f18_baza_server_host()
    ? " "
-
-   oServer := TPQServer():New( hSqlParams[ "host" ], ;
-      hSqlParams[ "database" ], ;
-      hSqlParams[ "user" ], ;
-      hSqlParams[ "password" ], ;
-      hSqlParams[ "port" ], ;
-      hSqlParams[ "schema" ] )
 
    RETURN .T.
 

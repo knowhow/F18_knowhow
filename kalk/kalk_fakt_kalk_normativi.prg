@@ -185,7 +185,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
 
                // radi se o proizvodu
 
-               select_o_sastavnica( fakt->idroba )
+               select_o_sastavnice( fakt->idroba )
                DO WHILE !Eof() .AND. id == fakt->idroba // prolaz kroz stavke sastavnice
 
                   IF !Empty( cSirovina )

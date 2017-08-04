@@ -2,6 +2,8 @@
 
 ## 2017-08-04 ----
 
+- OUT: fakt_generisi_inventuru()
+- KALK: KALK_FAKT normiativi prenos, fakt sql, nije testirano
 - FAKT: realizacija MP fakt sql
 - EPDV: fakt_gen_kif() fakt sql
 - zagl_organizacija() FIX marsovac varijabla oServer, hSqlParams

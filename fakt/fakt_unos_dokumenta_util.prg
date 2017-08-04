@@ -110,7 +110,7 @@ FUNCTION V_Podbr()
 
          cPRoba := _idroba
          cPtxt1 := _txt1
-         select_o_sastavnica( cPRoba )
+      --   select_o_sastavnice( cPRoba )
          nPbr := 0
          DO WHILE !Eof() .AND. cPRoba == id
 

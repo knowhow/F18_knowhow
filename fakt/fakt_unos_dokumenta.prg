@@ -1212,7 +1212,7 @@ STATIC FUNCTION fakt_print_dokument()
    aFaktDokumenti := fakt_dokumenti_pripreme_u_matricu()
 
    IF Len( aFaktDokumenti ) == 0
-      MsgBeep( "Postojeći dokumenti u pripremi vec postoje !" )
+      MsgBeep( "Dokument u pripremi već ažuriran!" )
    ENDIF
 
    DokAttr():New( "fakt", F_FAKT_ATTR ):cleanup_attrs( F_FAKT_PRIPR, aFaktDokumenti )

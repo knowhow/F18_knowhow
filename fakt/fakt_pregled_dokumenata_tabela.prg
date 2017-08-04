@@ -17,7 +17,7 @@ FIELD idfirma, idtipdok, brdok, rezerv, idvrstep, datdok, partner, iznos, rabat
 
 STATIC s_lBrowseInitialized  := .F.
 
-FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
+FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine )
 
    LOCAL i
    LOCAL nWidthMeni := 30
@@ -138,7 +138,8 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    LOCAL nRet := DE_CONT
    LOCAL hRec
-   LOCAL cFilter
+
+   // LOCAL cFilter
    LOCAL nFiskDeviceId, hFiskalniParams
    LOCAL lRefresh
    LOCAL nFaktDokTekuciZapis := RecNo()
@@ -155,7 +156,11 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    s_lBrowseInitialized := .T.
 
-   cFilter := fakt_doks_pregled->( dbFilter() )
+   // cFilter := fakt_doks_pregled->( dbFilter() )
+   SELECT F_FAKT_DOKS_PREGLED
+   IF !Used()
+      fakt_pregled_reload_tables()
+   ENDIF
 
    prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
@@ -167,12 +172,8 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
    CASE nCh == K_ENTER
 
       // nRet := print_porezna_faktura( lOpcine )
-      SELECT F_FAKT_DOKS_PREGLED
-      IF !Used()
-         MsgBeep( "ERROR fakt_doks_pregled nije otvoren ?!" )
-      ELSE
-         fakt_stamp_txt_dokumenta( fakt_doks_pregled->IdFirma, fakt_doks_pregled->IdTipdok, fakt_doks_pregled->Brdok )
-      ENDIF
+
+      fakt_stamp_txt_dokumenta( fakt_doks_pregled->IdFirma, fakt_doks_pregled->IdTipdok, fakt_doks_pregled->Brdok )
       lRefresh := .T.
       lReload := .T.
 
@@ -235,7 +236,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       ENDIF
 
 
-   CASE Upper( Chr( nCh ) ) $ "K"
+   CASE Upper( Chr( nCh ) ) == "K"
 
       IF fakt_ispravka_podataka_azuriranog_dokumenta( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
          nRet := DE_REFRESH
@@ -360,10 +361,12 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    CASE Upper( Chr( nCh ) ) == "F"
 
-      IF idtipdok $ "20"
+      IF fakt_doks_pregled->idtipdok == "20"
          nRet := fakt_generisi_fakturu_10_iz_20( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
          lRefresh := .T.
          lReload := .T.
+      ELSE
+         MsgBeep( "Dokument mora biti tip 20!" )
       ENDIF
 
    CASE Upper( Chr( nCh ) ) == "P"
@@ -389,7 +392,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       // SELECT ( nDbfArea )
       // SET ORDER TO TAG "1"
       IF lReload
-         fakt_pregled_reload_tables( cFilter )
+         fakt_pregled_reload_tables()
       ENDIF
       SELECT FAKT_DOKS_PREGLED
       GO ( nFaktDokTekuciZapis )
@@ -481,7 +484,7 @@ STATIC FUNCTION is_fiskaliziran( cFiskalniUredjajModel )
       cInfo := "F"
    ENDIF
 
-   //prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
+   // prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
    RETURN cInfo
 

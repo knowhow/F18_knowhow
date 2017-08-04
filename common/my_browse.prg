@@ -124,13 +124,13 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
    hParams[ "gprazno" ]       := nGPrazno
    hParams[ "podvuci_b" ]     := bPodvuci
 
-   //IF bSkipBlock <> NIL
-      // ovo je zadavanje skip bloka kroz parametar
-      //TBSkipBlock := bSkipBlock
-      // ELSE
-      // TBSkipBlock := {| nSkip | SkipDB( nSkip, @nTBLine ) }
-      // TBSkipBlock     := {| nRecs | __my_dbSkipper( nRecs ) }
-   //ENDIF
+   // IF bSkipBlock <> NIL
+   // ovo je zadavanje skip bloka kroz parametar
+   // TBSkipBlock := bSkipBlock
+   // ELSE
+   // TBSkipBlock := {| nSkip | SkipDB( nSkip, @nTBLine ) }
+   // TBSkipBlock     := {| nRecs | __my_dbSkipper( nRecs ) }
+   // ENDIF
 
    // harbour-core src/rtl/dbedit.prg
 
@@ -178,10 +178,10 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
    // Kol := azKol
    // ENDIF
 
-   @ m_x, m_y + 2     SAY hParams[ "msg_top" ]   //+  REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ),  42 )
+   @ m_x, m_y + 2     SAY hParams[ "msg_top" ]   // +  REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ),  42 )
    @ m_x + hParams[ "xw" ] + 1,  m_y + 2   SAY hParams[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
 
-   //@ m_x + hParams[ "xw" ] + 1,  Col() + 1 SAY REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), 42 )
+   // @ m_x + hParams[ "xw" ] + 1,  Col() + 1 SAY REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), 42 )
    @ m_x + 1, m_y + hParams[ "yw" ] - 6    SAY Str( RecCount(), 5 )
 
    oBrowse := TBrowseDB( m_x + 2 + hParams[ "prazno" ], m_y + 1, m_x + nHeight - nBrojRedovaZaPoruke, m_y + nWidth )
@@ -622,8 +622,16 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
    LOCAL cSmj
    LOCAL nRez
    LOCAL cIdOrNaz := Space( 100 )
-   PRIVATE GetList := {}
+   LOCAL GetList := {}
+   LOCAL lKeyHendliran := .F.
 
+   IF bMyKeyHandler != NIL
+      nKeyHandlerRetEvent := Eval( bMyKeyHandler, Ch )
+      IF nKeyHandlerRetEvent == DE_ABORT
+         RETURN DE_ABORT
+      ENDIF
+   ENDIF
+   
    DO CASE
 
    CASE Upper( Chr( nKey ) ) == "F"
@@ -639,6 +647,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
             oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
+         lKeyHendliran := .T.
       ENDIF
 
       IF Alias() == "ROBA" .OR. Alias() == "ROBA_P"
@@ -656,6 +665,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
             oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
+         lKeyHendliran := .T.
       ENDIF
 
       IF Alias() == "KONTO"
@@ -669,6 +679,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
             oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
+         lKeyHendliran := .T.
       ENDIF
 
       IF Alias() == "RADN"
@@ -682,6 +693,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
             oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
+         lKeyHendliran := .T.
       ENDIF
 
       IF Alias() == "FAKT_FTXT"
@@ -695,6 +707,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
             oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
+         lKeyHendliran := .T.
       ENDIF
 
 
@@ -714,6 +727,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       @ m_x + 2, m_y + 2 SAY "Prema dolje (+), gore (-)" GET cSmj VALID cSmj $ "+-"
       READ
       BoxC()
+      lKeyHendliran := .T.
 
       IF LastKey() == K_ESC
          RETURN DE_CONT
@@ -769,12 +783,11 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
 
          Box(, 3, 60, .F. )
 
-         PRIVATE GetList := {}
          SET CURSOR ON
-
          @ m_x + 1, m_y + 2 SAY "Uzmi podatke posljednje pretrage ?" GET _last_srch VALID _last_srch $ "DN" PICT "@!"
 
          READ
+         lKeyHendliran := .T.
 
          _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
          _trazi_val := &cKolona
@@ -837,9 +850,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
 
          Box(, 3, 66, .F. )
 
-         PRIVATE GetList := {}
          SET CURSOR ON
-
          _trazi_val := &cKolona
          _trazi_usl := Space( 80 )
 
@@ -850,6 +861,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
          READ
 
          BoxC()
+         lKeyHendliran := .T.
 
          IF LastKey() == K_ESC
             RETURN DE_CONT
@@ -869,7 +881,6 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
 
    CASE nKey == K_CTRL_U .AND. nPored > 1
 
-      PRIVATE GetList := {}
       nRez := IndexOrd()
       box_crno_na_zuto( 12, 20, 17 + nPored, 59, "UTVRĐIVANJE PORETKA", F18_COLOR_NASLOV, F18_COLOR_OKVIR, F18_COLOR_TEKST, 2 )
       FOR i := 1 TO nPored
@@ -883,7 +894,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
          dbSetOrder( nRez + 1 )
          RETURN DE_REFRESH
       ENDIF
-
+      lKeyHendliran := .T.
       RETURN DE_CONT
 
    OTHERWISE
@@ -893,7 +904,6 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
          RETURN DE_ABORT
       ENDIF
 
-      nKeyHandlerRetEvent := Eval( bMyKeyHandler, Ch )
 
    ENDCASE
 

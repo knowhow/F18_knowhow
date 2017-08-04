@@ -137,7 +137,7 @@ FUNCTION kalk_stampa_dok_10()
       @ PRow(), PCol() + 1 SAY nMarza / NC * 100         PICTURE PicProc
       @ PRow(), PCol() + 1 SAY VPC                   PICTURE PicCDEM
 
-      IF gMpcPomoc == "D"
+      IF gcMpcKalk10 == "D"
          @ PRow(), PCol() + 1 SAY nPDVStopa         PICTURE PicProc
          @ PRow(), PCol() + 1 SAY MPCsaPP           PICTURE PicCDEM
       ENDIF
@@ -154,7 +154,7 @@ FUNCTION kalk_stampa_dok_10()
       @ PRow(), PCol() + 1 SAY nZavTr               PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY 0                    PICTURE PicDEM
       @ PRow(), PCol() + 1 SAY nMarza               PICTURE PicCDEM
-      IF gMpcPomoc == "D"
+      IF gcMpcKalk10 == "D"
          @ PRow(), PCol() + 1 SAY 0              PICTURE PicCDEM
          @ PRow(), PCol() + 1 SAY nPDV           PICTURE PicCDEM
       ENDIF
@@ -172,7 +172,7 @@ FUNCTION kalk_stampa_dok_10()
       @ PRow(), PCol() + 1  SAY nU9         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
 
-      IF gMpcPomoc == "D"
+      IF gcMpcKalk10 == "D"
          @ PRow(), PCol() + 1  SAY nUP         PICTURE         PICDEM
          @ PRow(), PCol() + 1  SAY nUM         PICTURE         PICDEM
       ENDIF
@@ -199,7 +199,7 @@ FUNCTION kalk_stampa_dok_10()
    @ PRow(), PCol() + 1  SAY nTot9         PICTURE         PICDEM
    @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
 
-   IF ( gMpcPomoc == "D" )
+   IF ( gcMpcKalk10 == "D" )
       @ PRow(), PCol() + 1  SAY nTotP         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nTotM         PICTURE         PICDEM
    ENDIF
@@ -229,13 +229,13 @@ STATIC FUNCTION zagl()
 
    M := Space( PRINT_LEFT_SPACE )  + "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
 
-   IF ( gMpcPomoc == "D" )
+   IF ( gcMpcKalk10 == "D" )
       m += " ---------- ----------"
    ENDIF
 
    ? m
 
-   IF gMpcPomoc == "D" // prikazi mpc
+   IF gcMpcKalk10 == "D" // prikazi mpc
       ?U Space( PRINT_LEFT_SPACE )  + "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
       ?U Space( PRINT_LEFT_SPACE )  + "*BR* TARIFA   *  KOLIČINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
       ?U Space( PRINT_LEFT_SPACE )  + "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *   sum    *    sum   *"

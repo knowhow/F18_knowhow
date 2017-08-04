@@ -401,10 +401,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                ENDIF
                IF _idvd == "RN"
                   IF Val( _rbr ) < 900
-                     kalk_marza()
+                     kalk_10_pr_rn_valid_vpc_set_marza()
                   ENDIF
                ELSE
-                  kalk_marza()
+                  kalk_10_pr_rn_valid_vpc_set_marza()
                ENDIF
 
                IF nSetEnd == 1

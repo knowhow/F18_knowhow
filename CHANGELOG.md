@@ -1,5 +1,14 @@
 # F18 klijent, lista promjena
 
+## 3.1.39-std, 2017-08-04
+
+### Developer
+
+- FIN BUGFIX: stampa naloga: zagl_organizacija() FIX marsovac varijabla oServer, hSqlParams
+- FAKT BUFGFIX: realizacija kumulativno po partnerima
+- KALK 10, validacija - 'ERROR Marza > 100 000 x veća od NC:'
+- FAKT tabelarni pregled dokumenata, prva kolona 'F' - is_fiskaliziran()
+
 ## 3.1.38-std, 2017-08-01
 
 ### Developer
@@ -7,6 +16,10 @@
 - FIX FAKT_FTXT->naz
 - fakt_valid_roba()
 - fakt cleanup usluge hFaktTtxt[ 'opis_usluga' ]
+
+### Poznati problemi
+
+- Variable does not exist/HSQLPARAMS (BUGFIX: 3.1.39)
 
 ## 3.1.37-std, 2017-07-31
 

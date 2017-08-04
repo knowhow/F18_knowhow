@@ -110,7 +110,7 @@ FUNCTION kalk_unos_dok_pr()
 
    select_o_tarifa( _IdTarifa )
    select_o_koncij( _idkonto )
-   
+
    SELECT kalk_pripr
 
    _MKonto := _Idkonto
@@ -202,7 +202,7 @@ FUNCTION Get2_PR()
       @ m_x + 10, m_y + 40 GET _Marza PICTURE PicDEM
       @ m_x + 10, Col() + 1 GET fMarza PICT "@!"
       @ m_x + 12, m_y + 2 SAY8 "VELEPRODAJNA CJENA  (VPC)   :"
-      @ m_x + 12, m_y + 50 GET _VPC PICT PicDEM VALID {|| kalk_marza( fMarza ), .T. }
+      @ m_x + 12, m_y + 50 GET _VPC PICT PicDEM VALID {|| kalk_10_pr_rn_valid_vpc_set_marza( @fMarza ) }
 
       READ
       SetujVPC( _vpc )

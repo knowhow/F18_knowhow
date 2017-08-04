@@ -15,9 +15,8 @@
 FUNCTION zagl_organizacija( nLeft )
 
    ? " "
-   ? Space( nLeft ) + AllTrim( tip_organizacije() ) + " :", AllTrim( self_organizacija_naziv() ) + ;
-      " " + f18_baza_server_host()
-
+   ? Space( nLeft ) + AllTrim( tip_organizacije() ) + " :", AllTrim( self_organizacija_naziv() )
+      //+ " " + f18_baza_server_host()
    ? " "
 
    RETURN .T.

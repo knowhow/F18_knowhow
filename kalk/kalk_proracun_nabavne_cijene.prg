@@ -136,9 +136,10 @@ FUNCTION korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )
 
 
 
-FUNCTION MarzaVP( cIdVd, lNaprijed )
+FUNCTION kalk_10_vaild_Marza_VP( cIdVd, lNaprijed )
 
    LOCAL nStvarnaKolicina := 0
+   LOCAL nMarza
 
    IF ( _nc == 0 )
       _nc := 9999
@@ -150,9 +151,9 @@ FUNCTION MarzaVP( cIdVd, lNaprijed )
       nStvarnaKolicina := _Kolicina
    ENDIF
 
-   IF  _Marza == 0 .OR. _VPC <> 0 .AND. !lNaprijed
-      // unazad formiraj marzu
-      nMarza := _VPC - _NC
+   IF _Marza == 0 .OR. _VPC <> 0 .AND. !lNaprijed
+
+      nMarza := _VPC - _NC // unazad formiraj marzu
       IF _TMarza == "%"
          _Marza := 100 * ( _VPC / _NC - 1 )
       ELSEIF _TMarza == "A"
@@ -188,10 +189,11 @@ FUNCTION MarzaVP( cIdVd, lNaprijed )
  *     Proracun veleprodajne marze
  */
 
-FUNCTION kalk_Marza( fMarza )
+FUNCTION kalk_10_pr_rn_valid_vpc_set_marza( fMarza )
 
-   LOCAL nStvarnaKolicina := 0, nPPP
+   LOCAL nStvarnaKolicina := 0, nMarza
 
+   AltD()
    IF fMarza == NIL
       fMarza := " "
    ENDIF
@@ -200,7 +202,6 @@ FUNCTION kalk_Marza( fMarza )
       _nc := 9999
    ENDIF
 
-   nPPP := 1
 
    IF gKalo == "1" .AND. _idvd == "10"
       nStvarnaKolicina := _Kolicina - _GKolicina - _GKolicin2
@@ -209,9 +210,10 @@ FUNCTION kalk_Marza( fMarza )
    ENDIF
 
    IF  _Marza == 0 .OR. _VPC <> 0 .AND. Empty( fMarza )
-      nMarza := _VPC * nPPP - _NC
+
+      nMarza := _VPC - _NC
       IF _TMarza == "%"
-         _Marza := 100 * ( _VPC * nPPP / _NC - 1 )
+         _Marza := 100 * ( _VPC / _NC - 1 )
       ELSEIF _TMarza == "A"
          _Marza := nMarza
       ELSEIF _TMarza == "U"
@@ -226,15 +228,33 @@ FUNCTION kalk_Marza( fMarza )
       ELSEIF _TMarza == "U"
          nMarza := _Marza / nStvarnaKolicina
       ENDIF
-      _VPC := Round( ( nMarza + _NC ) / nPPP, 2 )
+      _VPC := Round( nMarza + _NC, 2 )
    ELSE
       IF _idvd $ "14#94"
-         nMarza := _VPC * nPPP * ( 1 - _Rabatv / 100 ) - _NC
+         nMarza := _VPC * ( 1 - _Rabatv / 100 ) - _NC
       ELSE
-         nMarza := _VPC * nPPP - _NC
+         nMarza := _VPC - _NC
       ENDIF
    ENDIF
+
+   fMarza := " "
    AEval( GetList, {| o | o:display() } )
+
+   AltD()
+   IF Round( _VPC, 5 ) == 0
+      error_bar( "kalk", "VPC=0" )
+      RETURN .F.
+   ENDIF
+
+   IF Round( _NC, 9 ) == 0
+      error_bar( "kalk", "NC=0" )
+      RETURN .F.
+   ENDIF
+
+   IF ( nMarza / _NC ) > 100000
+      error_bar( "kalk", "ERROR Marza > 100 000 x veća od NC: " + AllTrim( Str( nMarza, 14, 2 ) ) )
+      RETURN .F.
+   ENDIF
 
    RETURN .T.
 
@@ -384,12 +404,12 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
 
    LOCAL nCV := 0, nArr := Select()
 
-   //IF lKoncij = NIL; lKoncij := .F. ; ENDIF
+   // IF lKoncij = NIL; lKoncij := .F. ; ENDIF
    select_o_koncij( cMKonto )
    nCV := KoncijVPC()
-   //IF !lKoncij
-    //  GO ( nRec )
-   //ENDIF
+   // IF !lKoncij
+   // GO ( nRec )
+   // ENDIF
    SELECT ( nArr )
 
    RETURN nCV

@@ -284,7 +284,8 @@ FUNCTION finansijsko_stanje_magacin()
          ENDIF
 
          IF cPapir != "4"
-            nDod1 += kalk_marza_veleprodaja(); nDod2 += kalk_marza_maloprodaja()
+            nDod1 += kalk_marza_veleprodaja()
+            nDod2 += kalk_marza_maloprodaja()
             nDod3 += prevoz; nDod4 += prevoz2; nDod5 += banktr
             nDod6 += spedtr; nDod7 += cardaz; nDod8 += zavtr
          ENDIF

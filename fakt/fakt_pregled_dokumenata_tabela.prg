@@ -26,7 +26,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    LOCAL cFiskalniUredjajModel := fiskalni_uredjaj_model()
 
    ImeKol := {}
-   // AAdd( ImeKol, { " ",            {|| select_fakt_doks(), get_fiscal_info( cFiskalniUredjajModel ) } } )
+   AAdd( ImeKol, { "F",            {|| is_fiskaliziran( cFiskalniUredjajModel ) } } )
    AAdd( ImeKol, { "RJ",           {|| fakt_doks_pregled->idfirma }  } )
    AAdd( ImeKol, { "VD",           {|| fakt_doks_pregled->idtipdok } } )
    AAdd( ImeKol, { "Brdok",        {|| fakt_doks_pregled->brdok + fakt_doks_pregled->rezerv } } )
@@ -470,8 +470,8 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
    RETURN .T.
 
 
-/*
-STATIC FUNCTION get_fiscal_info( cFiskalniUredjajModel )
+
+STATIC FUNCTION is_fiskaliziran( cFiskalniUredjajModel )
 
    LOCAL cInfo := " "
 
@@ -481,10 +481,10 @@ STATIC FUNCTION get_fiscal_info( cFiskalniUredjajModel )
       cInfo := "F"
    ENDIF
 
-   prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
+   //prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
    RETURN cInfo
-*/
+
 
 
 STATIC FUNCTION prikazi_brojeve_fiskalnog_racuna( _f_rn, _s_rn )

@@ -229,7 +229,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    EOF CRET
 
    IF cTabela == "D"
-      fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
+      fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine )
    ELSE
       gaZagFix := { 3, 3 }
       stampa_liste_dokumenata( dDatOd, dDatDo, cUslovTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, cFilterOpcina, cValute )
@@ -461,7 +461,7 @@ FUNCTION fakt_dokument_sadrzi_robu()
 
 
 
-FUNCTION fakt_pregled_reload_tables( cFilter )
+FUNCTION fakt_pregled_reload_tables()
 
    LOCAL nRec
 

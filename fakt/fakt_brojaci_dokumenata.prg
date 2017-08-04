@@ -497,8 +497,8 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( cIdFirma, cIdTipDok, cBrDo
    // GO TOP
    // SEEK cIdFirma + cIdTipDok + cBrDok
 
-   seek_fakt( cIdFirma, cIdTdok,  cBrDok )
-   IF !Found()
+   seek_fakt( cIdFirma, cIdTipDok,  cBrDok )
+   IF Eof()
       SELECT ( nDbfArea )
       RETURN lRet
    ENDIF
@@ -556,13 +556,10 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( cIdFirma, cIdTipDok, cBrDo
    cTmp := AllTrim( field->naz ) + "," + AllTrim( field->ptt ) + " " + AllTrim( field->mjesto )
 
    seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok )
-
-   IF !Found()
-
+   IF Eof()
       hParams := hb_Hash()
       hParams[ "unlock" ] := { "fakt_fakt", "fakt_doks" }
       run_sql_query( "COMMIT", hParams )
-
       MsgBeep( "Dokument ne postoji, nije ništa zamjenjeno !" )
       RETURN lRet
    ENDIF
@@ -583,7 +580,6 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( cIdFirma, cIdTipDok, cBrDo
    seek_fakt( cIdFirma, cIdTipDok, cBrDok )
 
    nCounter := 1
-
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
 
       hRec := dbf_get_rec()

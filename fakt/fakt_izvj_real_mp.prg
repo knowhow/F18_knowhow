@@ -95,13 +95,14 @@ FUNCTION fakt_real_maloprodaje()
    RETURN .T.
 
 
-STATIC FUNCTION fakt_mp_uzmi_parametre_izvjestaja( params )
+STATIC FUNCTION fakt_mp_uzmi_parametre_izvjestaja( hParams )
 
-   LOCAL _x := 1
-   LOCAL _tip_partnera, _id_firma, _d_from, _d_to, _dok_tip, _operater, _varijanta
+   LOCAL nX := 1
+   LOCAL _tip_partnera, cIdFirma, _d_from, _d_to, _dok_tip, _operater, _varijanta
    LOCAL _partner, _vrsta_p
+   LOCAL GetList := {}
 
-   _id_firma := PadR( fetch_metric( "fakt_real_mp_firma", my_user(), "" ), 100 )
+   cIdFirma := PadR( fetch_metric( "fakt_real_mp_firma", my_user(), "" ), 100 )
    _d_from := fetch_metric( "fakt_real_mp_datum_od", my_user(), Date() )
    _d_to := fetch_metric( "fakt_real_mp_datum_do", my_user(), Date() )
    _dok_tip := PadR( fetch_metric( "fakt_real_mp_tip_dok", my_user(), "11;" ), 100 )
@@ -113,27 +114,27 @@ STATIC FUNCTION fakt_mp_uzmi_parametre_izvjestaja( params )
 
    Box( , 14, 66 )
 
-   @ m_x + _x, m_y + 2 SAY "**** REALIZACIJA PRODAJE ****"
-   _x += 2
-   @ m_x + _x, m_y + 2 SAY "Firma (prazno-sve):" GET _id_firma PICT "@S20"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Obuhvatiti period od:" GET _d_from
-   @ m_x + _x, Col() + 1 SAY "do:" GET _d_to
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Vrste dokumenata:" GET _dok_tip PICT "@S30"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Partner (prazno-svi):" GET _partner PICT "@S40"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Vrsta plaćanja (prazno-svi):" GET _vrsta_p VALID Empty( _vrsta_p ) .OR. P_VRSTEP( @_vrsta_p )
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "Operater (0-svi):" GET _operater PICT "9999999999" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "**** REALIZACIJA PRODAJE ****"
+   nX += 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Firma (prazno-sve):" GET cIdFirma PICT "@S20"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Obuhvatiti period od:" GET _d_from
+   @ box_x_koord() + nX, Col() + 1 SAY "do:" GET _d_to
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Vrste dokumenata:" GET _dok_tip PICT "@S30"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Partner (prazno-svi):" GET _partner PICT "@S40"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Vrsta plaćanja (prazno-svi):" GET _vrsta_p VALID Empty( _vrsta_p ) .OR. P_VRSTEP( @_vrsta_p )
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Operater (0-svi):" GET _operater PICT "9999999999" ;
       VALID {|| _operater == 0, iif( _operater == -99, choose_f18_user_from_list( @_operater ), .T. ) }
-   _x += 2
-   @ m_x + _x, m_y + 2 SAY8 "Razvrstati po tipu partnera (D/N)?" GET _tip_partnera VALID _tip_partnera $ "DN" PICT "@!"
-   _x += 2
-   @ m_x + _x, m_y + 2 SAY8 "Varijanta prikaza 1-po robi 2-po dokumentima"
-   ++_x
-   @ m_x + _x, m_y + 2 SAY8 "                  3-samo total" GET _varijanta PICT "9"
+   nX += 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Razvrstati po tipu partnera (D/N)?" GET _tip_partnera VALID _tip_partnera $ "DN" PICT "@!"
+   nX += 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Varijanta prikaza 1-po robi 2-po dokumentima"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "                  3-samo total" GET _varijanta PICT "9"
 
    READ
    BoxC()
@@ -142,7 +143,7 @@ STATIC FUNCTION fakt_mp_uzmi_parametre_izvjestaja( params )
       RETURN .F.
    ENDIF
 
-   set_metric( "fakt_real_mp_firma", my_user(), AllTrim( _id_firma ) )
+   set_metric( "fakt_real_mp_firma", my_user(), AllTrim( cIdFirma ) )
    set_metric( "fakt_real_mp_datum_od", my_user(), _d_from )
    set_metric( "fakt_real_mp_datum_do", my_user(), _d_to )
    set_metric( "fakt_real_mp_tip_dok", my_user(), AllTrim( _dok_tip ) )
@@ -153,128 +154,116 @@ STATIC FUNCTION fakt_mp_uzmi_parametre_izvjestaja( params )
    set_metric( "fakt_real_mp_partner", my_user(), AllTrim( _partner ) )
 
    // snimi parametre i matricu
-   params := hb_Hash()
-   params[ "datum_od" ] := _d_from
-   params[ "datum_do" ] := _d_to
-   params[ "varijanta" ] := _varijanta
-   params[ "tip_dok" ] := AllTrim( _dok_tip )
-   params[ "operater" ] := _operater
-   params[ "firma" ] := AllTrim( _id_firma )
-   params[ "tip_partnera" ] := _tip_partnera
-   params[ "partner" ] := _partner
-   params[ "vrstap" ] := _vrsta_p
+   hParams := hb_Hash()
+   hParams[ "datum_od" ] := _d_from
+   hParams[ "datum_do" ] := _d_to
+   hParams[ "varijanta" ] := _varijanta
+   hParams[ "cIdTipDok" ] := AllTrim( _dok_tip )
+   hParams[ "operater" ] := _operater
+   hParams[ "firma" ] := AllTrim( cIdFirma )
+   hParams[ "tip_partnera" ] := _tip_partnera
+   hParams[ "partner" ] := _partner
+   hParams[ "vrstap" ] := _vrsta_p
 
    RETURN .T.
 
 
-STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
+STATIC FUNCTION fakt_gen_rekapitulacija_mp( hParams )
 
-   LOCAL _filter
-   LOCAL cF_firma
-   LOCAL cF_tipdok
-   LOCAL cF_brdok
+   LOCAL cFaktDoksFilter
+   LOCAL cIdFirmaTekuci
+   LOCAL cIdTipDokTekuci
+   LOCAL cBrDokTekuci
    LOCAL nUkupno
    LOCAL _tip_partnera := "1"
    LOCAL _pdv_broj := ""
    LOCAL lOslobodjenPDV
-   LOCAL _d_do, _d_od, _varijanta, _tip_dok, _operater, _id_firma, lPoTipovimaPartnera
+   LOCAL dDatDo, dDatOd, _varijanta, _tip_dok, _operater, cIdFirma, lPoTipovimaPartnera
    LOCAL _vrsta_p, _partner, _oper_id
    LOCAL nCjPDV, nCj2PDV, nCjBPDV, nCj2BPDV, nVPopust, nPPDV
    LOCAL  nKol, nRCijen, nPopust, nVPDV
 
    LOCAL cRoba_id, cPart_id
 
-   o_fakt_doks_dbf()
-   o_fakt_dbf()
+   //o_fakt_doks_dbf()
+   //o_fakt_dbf()
    //o_roba()
    //o_sifk()
    //o_sifv()
-   o_vrstep()
+   //o_vrstep()
    //o_tarifa()
    //o_partner()
 
    // parametri
-   _d_od := params[ "datum_od" ]
-   _d_do := params[ "datum_do" ]
-   _varijanta := params[ "varijanta" ]
-   _tip_dok := params[ "tip_dok" ]
-   _operater := params[ "operater" ]
-   _id_firma := params[ "firma" ]
-   lPoTipovimaPartnera := params[ "tip_partnera" ] == "D"
-   _partner := params[ "partner" ]
-   _vrsta_p := params[ "vrstap" ]
+   dDatOd := hParams[ "datum_od" ]
+   dDatDo := hParams[ "datum_do" ]
+   _varijanta := hParams[ "varijanta" ]
+   _tip_dok := hParams[ "cIdTipDok" ]
+   _operater := hParams[ "operater" ]
+   cIdFirma := hParams[ "firma" ]
+   lPoTipovimaPartnera := hParams[ "tip_partnera" ] == "D"
+   _partner := hParams[ "partner" ]
+   _vrsta_p := hParams[ "vrstap" ]
 
-   _filter := ""
+   cFaktDoksFilter := ""
 
-   IF !Empty( _id_firma )
-      _filter += Parsiraj( AllTrim( _id_firma ), "idfirma" )
+   IF !Empty( cIdFirma )
+      cFaktDoksFilter += Parsiraj( AllTrim( cIdFirma ), "idfirma" )
    ENDIF
 
    IF !Empty( _vrsta_p )
-      IF !Empty( _filter )
-         _filter += ".and."
+      IF !Empty( cFaktDoksFilter )
+         cFaktDoksFilter += ".and."
       ENDIF
-      _filter += "idvrstep = " + _filter_quote( _vrsta_p )
+      cFaktDoksFilter += "idvrstep = " + _filter_quote( _vrsta_p )
    ENDIF
 
    IF _operater <> 0
-      IF !Empty( _filter )
-         _filter += ".and."
+      IF !Empty( cFaktDoksFilter )
+         cFaktDoksFilter += ".and."
       ENDIF
-      _filter += "oper_id = " + _filter_quote( _operater )
+      cFaktDoksFilter += "oper_id = " + _filter_quote( _operater )
    ENDIF
 
    IF !Empty( _tip_dok )
-      IF !Empty( _filter )
-         _filter += ".and."
+      IF !Empty( cFaktDoksFilter )
+         cFaktDoksFilter += ".and."
       ENDIF
-      _filter += Parsiraj( AllTrim( _tip_dok ), "idtipdok" )
+      cFaktDoksFilter += Parsiraj( AllTrim( _tip_dok ), "idtipdok" )
    ENDIF
 
    // partner
    IF !Empty( _partner )
-      IF !Empty( _filter )
-         _filter += ".and."
+      IF !Empty( cFaktDoksFilter )
+         cFaktDoksFilter += ".and."
       ENDIF
-      _filter += Parsiraj( AllTrim( _partner ), "idpartner" )
+      cFaktDoksFilter += Parsiraj( AllTrim( _partner ), "idpartner" )
    ENDIF
 
-   // datumi od-do
-   IF !Empty( DToS( _d_od ) )
-      IF !Empty( _filter )
-         _filter += ".and."
-      ENDIF
-      _filter += "datdok >=" + _filter_quote( _d_od )
-   ENDIF
 
-   IF !Empty( DToS( _d_do ) )
-      IF !Empty( _filter )
-         _filter += ".and."
-      ENDIF
-      _filter += "datdok <=" + _filter_quote( _d_do )
-   ENDIF
 
    MsgO( "Generacija podataka ..." )
 
-   SELECT fakt_doks
-   SET FILTER TO &_filter
+  // SELECT fakt_doks
+  // SET FILTER TO &cFaktDoksFilter
+  // GO TOP
+  altd()
+
+   find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, "FAKT_DOKS", "idfirma,datdok,idtipdok,brdok" )
+   SET FILTER TO &cFaktDoksFilter
    GO TOP
 
    DO WHILE !Eof()
 
-      cF_firma := field->idfirma
-      cF_tipdok := field->idtipdok
-      cF_brdok := field->brdok
+      cIdFirmaTekuci := field->idfirma
+      cIdTipDokTekuci := field->idtipdok
+      cBrDokTekuci := field->brdok
       nUkupno := field->iznos
       _oper_id := field->oper_id
 
-      SELECT fakt
-      GO TOP
-      SEEK cF_firma + cF_tipdok + cF_brdok
-
-      DO WHILE !Eof() .AND. field->idfirma == cF_firma ;
-            .AND. field->idtipdok == cF_tipdok ;
-            .AND. field->brdok == cF_brdok
+      seek_fakt( cIdFirmaTekuci, cIdTipDokTekuci, cBrDokTekuci )
+      info_bar( "gen_r_exp", "GEN FAKT " + cIdFirmaTekuci + "-" + cIdTipDokTekuci + "-" + cBrDokTekuci )
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirmaTekuci .AND. field->idtipdok == cIdTipDokTekuci .AND. field->brdok == cBrDokTekuci
 
          cRoba_id := field->idroba
          cPart_id := field->idpartner
@@ -282,12 +271,9 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          _tip_partnera := "1" // fizicka lica
          lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id ) .OR. partner_is_ino( cPart_id )
 
-
-
          IF lPoTipovimaPartnera
 
             _pdv_broj := firma_pdv_broj( cPart_id )
-
             IF !Empty( _pdv_broj )
                _tip_partnera := "2"
             ENDIF
@@ -296,9 +282,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
          select_o_roba( cRoba_id )
          select_o_tarifa( roba->idtarifa )
-
-         SELECT partn
-         SEEK cPart_id
+         select_o_partner( cPart_id )
 
          SELECT fakt
 
@@ -316,7 +300,6 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
          nKol := field->kolicina
          nRCijen := field->cijena
-
 
          IF Left( field->dindem, 3 ) <> Left( ValBazna(), 3 )
             // preracunaj u EUR
@@ -383,32 +366,32 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
    RETURN .T.
 
 
-STATIC FUNCTION get_naziv_vrsta_placanja( tip_dok, vrsta_p )
+STATIC FUNCTION get_naziv_vrsta_placanja( cIdTipDok, cIdVrstaPlacanja )
 
    LOCAL _ret := "MP GOTOVINA"
 
    DO CASE
 
-   CASE tip_dok == "11"
+   CASE cIdTipDok == "11"
 
-      IF !Empty( vrsta_p )
-         IF vrsta_p == "KT"
+      IF !Empty( cIdVrstaPlacanja )
+         IF cIdVrstaPlacanja == "KT"
             _ret := "MP KARTICA"
-         ELSEIF vrsta_p == "AV"
+         ELSEIF cIdVrstaPlacanja == "AV"
             _ret := "MP AVANSNA FAKTURA"
-         ELSEIF vrsta_p == "VR"
+         ELSEIF cIdVrstaPlacanja == "VR"
             _ret := "MP VIRMANSKO PLACANJE"
          ENDIF
       ENDIF
 
-   CASE tip_dok == "10"
+   CASE cIdTipDok == "10"
       _ret := "VP VIRMANSKO PLACANJE"
-      IF !Empty( vrsta_p )
-         IF vrsta_p == "G "
+      IF !Empty( cIdVrstaPlacanja )
+         IF cIdVrstaPlacanja == "G "
             _ret := "VP GOTOVINA"
-         ELSEIF vrsta_p == "KT"
+         ELSEIF cIdVrstaPlacanja == "KT"
             _ret := "VP KARTICA"
-         ELSEIF vrsta_p == "AV"
+         ELSEIF cIdVrstaPlacanja == "AV"
             _ret := "VP AVANSNA FAKTURA"
          ENDIF
       ENDIF
@@ -588,12 +571,12 @@ STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
    LOCAL nRbr := 0
    LOCAL nRow := 35
    LOCAL cLine := ""
-   LOCAL cF_tipdok
-   LOCAL cF_firma
-   LOCAL cF_brdok
+   LOCAL cIdTipDokTekuci
+   LOCAL cIdFirmaTekuci
+   LOCAL cBrDokTekuci
    LOCAL _tip_partnera, _opis
    LOCAL __osn, __pdv, __total
-   LOCAL _id_firma, _tip_dok, _br_dok
+   LOCAL cIdFirma, _tip_dok, _br_dok
    LOCAL nS_pdv, nUk_fakt
 
    // tip partnera: 1 - nepdv, 2 - pdv, 3 - ino
@@ -621,7 +604,7 @@ STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
 
          _tip_partnera := field->tip
 
-         _id_firma := field->idfirma
+         cIdFirma := field->idfirma
          _tip_dok := field->idtipdok
          _br_dok := field->brdok
 
@@ -631,11 +614,10 @@ STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
          nS_pdv := 0
          nUk_fakt := 0
 
-         DO WHILE !Eof() .AND. _tip_partnera == field->tip .AND. field->idfirma + field->idtipdok + field->brdok == _id_firma + _tip_dok + _br_dok
+         DO WHILE !Eof() .AND. _tip_partnera == field->tip .AND. field->idfirma + field->idtipdok + field->brdok == cIdFirma + _tip_dok + _br_dok
 
             nS_pdv := field->s_pdv
             nUk_fakt := field->uk_fakt
-
             SKIP
 
          ENDDO
@@ -699,9 +681,9 @@ STATIC FUNCTION fakt_mp_po_vrstama_placanja( nT_osnovica, nT_pdv, nT_ukupno )
    LOCAL nRbr := 0
    LOCAL nRow := 35
    LOCAL cLine := ""
-   LOCAL cF_tipdok
-   LOCAL cF_firma
-   LOCAL cF_brdok
+   LOCAL cIdTipDokTekuci
+   LOCAL cIdFirmaTekuci
+   LOCAL cBrDokTekuci
    LOCAL _vrsta_p, _vrsta_p_naz
    LOCAL nS_pdv, nU_fakt, nUU_fakt
 
@@ -728,11 +710,11 @@ STATIC FUNCTION fakt_mp_po_vrstama_placanja( nT_osnovica, nT_pdv, nT_ukupno )
 
       DO WHILE !Eof() .AND. field->vrstap == _vrsta_p
 
-         cF_brdok := field->brdok
-         cF_tipdok := field->idtipdok
-         cF_firma := field->idfirma
+         cBrDokTekuci := field->brdok
+         cIdTipDokTekuci := field->idtipdok
+         cIdFirmaTekuci := field->idfirma
 
-         DO WHILE !Eof() .AND. field->vrstap == _vrsta_p .AND. cF_firma + cF_tipdok + cF_brdok == field->idfirma +  field->idtipdok + field->brdok
+         DO WHILE !Eof() .AND. field->vrstap == _vrsta_p .AND. cIdFirmaTekuci + cIdTipDokTekuci + cBrDokTekuci == field->idfirma +  field->idtipdok + field->brdok
 
             nU_fakt := field->uk_fakt
             nS_pdv := field->s_pdv
@@ -787,9 +769,9 @@ STATIC FUNCTION fakt_mp_po_operaterima( nT_osnovica, nT_pdv, nT_ukupno )
    LOCAL nRbr := 0
    LOCAL nRow := 35
    LOCAL cLine := ""
-   LOCAL cF_tipdok
-   LOCAL cF_firma
-   LOCAL cF_brdok
+   LOCAL cIdTipDokTekuci
+   LOCAL cIdFirmaTekuci
+   LOCAL cBrDokTekuci
    LOCAL nS_pdv, nU_fakt, nUU_fakt
 
    nT_osnovica := 0
@@ -825,11 +807,11 @@ STATIC FUNCTION fakt_mp_po_operaterima( nT_osnovica, nT_pdv, nT_ukupno )
 
       DO WHILE !Eof() .AND. field->operater == nOperater
 
-         cF_brdok := field->brdok
-         cF_tipdok := field->idtipdok
-         cF_firma := field->idfirma
+         cBrDokTekuci := field->brdok
+         cIdTipDokTekuci := field->idtipdok
+         cIdFirmaTekuci := field->idfirma
 
-         DO WHILE !Eof() .AND. field->operater == nOperater .AND. cF_firma + cF_tipdok + cF_brdok == field->idfirma + field->idtipdok + field->brdok
+         DO WHILE !Eof() .AND. field->operater == nOperater .AND. cIdFirmaTekuci + cIdTipDokTekuci + cBrDokTekuci == field->idfirma + field->idtipdok + field->brdok
 
             nU_fakt := field->uk_fakt
             nS_pdv := field->s_pdv

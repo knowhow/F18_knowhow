@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION menu_fakt_kalk_prenos_normativi()
 
    LOCAL _opc := {}
@@ -84,10 +83,10 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
          //ENDIF
          @ m_x + 4, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
-         cFaktFirma := cIdFirma
+         cIdRjFakt := cIdFirma
          dDatFOd := CToD( "" )
          dDatFDo := Date()
-         @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
+         @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cIdRjFakt
          @ m_x + 7, m_Y + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
          @ m_x + 8, m_y + 2 SAY "period od" GET dDAtFOd
          @ m_x + 8, Col() + 2 SAY "do" GET dDAtFDo
@@ -106,22 +105,21 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
       IF lTest == .T.
          dDatFOd := dD_from
          dDatFDo := dD_to
-         cFaktFirma := "10"
+         cIdRjFakt := "10"
       ENDIF
 
-      SELECT fakt
-      SEEK cFaktFirma
+      seek_fakt( cIdRjFakt )
 
-      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok", lTest )
+      //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cIdRjFakt + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok", lTest )
 
-         MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-         LOOP
+      //   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+      //   LOOP
 
-      ENDIF
+      //ENDIF
 
       aNotIncl := {}
 
-      DO WHILE !Eof() .AND. cFaktFirma == IdFirma
+      DO WHILE !Eof() .AND. cIdRjFakt == IdFirma
 
          IF idtipdok $ cIdTipdok .AND. dDatFOd <= datdok .AND. dDatFDo >= datdok
             // pripada odabranom intervalu
@@ -187,10 +185,8 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
 
                // radi se o proizvodu
 
-               SELECT sast
-               HSEEK  fakt->idroba
-
-               DO WHILE !Eof() .AND. id == fakt->idroba // setaj kroz sast
+               select_o_sastavnice( fakt->idroba )
+               DO WHILE !Eof() .AND. id == fakt->idroba // prolaz kroz stavke sastavnice
 
                   IF !Empty( cSirovina )
                      IF cSirovina <> sast->id2
@@ -333,11 +329,11 @@ STATIC FUNCTION o_tables()
 
    o_kalk_pripr()
    // o_kalk()
-   o_kalk_doks()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_fakt_dbf()
+   //o_kalk_doks()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
+   //o_fakt_dbf()
 
    RETURN .T.
 
@@ -347,36 +343,36 @@ STATIC FUNCTION o_tables()
 // -------------------------------------------
 STATIC FUNCTION o_tbl_roba( lTest, cSezSif )
 
-   LOCAL cSifPath
+   //LOCAL cSifPath
 
    IF lTest == .T.
       my_close_all_dbf()
 
-      cSifPath := PadR( SIFPATH, 14 )
+      //cSifPath := PadR( SIFPATH, 14 )
       // "c:\sigma\sif1\"
 
-      IF !Empty( cSezSif ) .AND. cSezSif <> "RADP"
-         cSifPath += cSezSif + SLASH
-      ENDIF
+      //IF !Empty( cSezSif ) .AND. cSezSif <> "RADP"
+      //   cSifPath += cSezSif + SLASH
+      //ENDIF
 
-      SELECT ( F_ROBA )
-      USE
-      SELECT ( F_ROBA )
-      USE ( cSifPath + "ROBA" ) ALIAS "ROBA"
-      SET ORDER TO TAG "ID"
+      //SELECT ( F_ROBA )
+      //USE
+      //SELECT ( F_ROBA )
+      //USE ( cSifPath + "ROBA" ) ALIAS "ROBA"
+      //SET ORDER TO TAG "ID"
 
-      SELECT ( F_SAST )
-      USE
-      SELECT ( F_SAST )
-      USE ( cSifPath + "SAST" ) ALIAS "SAST"
-      SET ORDER TO TAG "ID"
+      //SELECT ( F_SAST )
+      //USE
+      //SELECT ( F_SAST )
+      //USE ( cSifPath + "SAST" ) ALIAS "SAST"
+      //SET ORDER TO TAG "ID"
 
    ELSE
     //  o_roba()
-      o_sastavnice()
+      //o_sastavnice()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -420,9 +416,9 @@ FUNCTION PrenosNoFakt()
 
       @ m_x + 4, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
-      cFaktFirma := cIdFirma
+      cIdRjFakt := cIdFirma
 
-      @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
+      @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cIdRjFakt
       @ m_x + 7, m_Y + 2 SAY "Dokument tipa u fakt:" GET cIdTipDok
 
       @ m_x + 8, m_Y + 2 SAY "Broj dokumenta u fakt:" GET cFaBrDok
@@ -434,16 +430,15 @@ FUNCTION PrenosNoFakt()
          EXIT
       ENDIF
 
-      SELECT fakt
-      SEEK cFaktFirma
+      seek_fakt( cIdRjFakt )
 
-      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok = '" + cIdTipdok + "' .and. brdok = '" + cFaBrDok + "'" )
+      //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cIdRjFakt + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok = '" + cIdTipdok + "' .and. brdok = '" + cFaBrDok + "'" )
 
-         MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-         LOOP
-      ENDIF
+      //   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+      //   LOOP
+      //ENDIF
 
-      DO WHILE !Eof() .AND. cFaktFirma == IdFirma
+      DO WHILE !Eof() .AND. cIdRjFakt == IdFirma
 
          IF idtipdok = cIdTipdok .AND. cFaBrDok = brdok
 
@@ -550,10 +545,10 @@ FUNCTION PrenosNo2()
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 4, m_y + 2   SAY "Konto got. proizvoda zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
-      cFaktFirma := cIdFirma
+      cIdRjFakt := cIdFirma
       dDatFOd := CToD( "" )
       dDatFDo := Date()
-      @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
+      @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cIdRjFakt
       @ m_x + 7, m_Y + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
       @ m_x + 8, m_y + 2 SAY "period od" GET dDAtFOd
       @ m_x + 8, Col() + 2 SAY "do" GET dDAtFDo
@@ -563,14 +558,13 @@ FUNCTION PrenosNo2()
          EXIT
       ENDIF
 
-      SELECT fakt
-      SEEK cFaktFirma
-      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok" )
-         MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-         LOOP
-      ENDIF
+      seek_fakt( cIdRjFakt )
+      //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cIdRjFakt + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok" )
+      //   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+      //   LOOP
+      //ENDIF
 
-      DO WHILE !Eof() .AND. cFaktFirma == IdFirma
+      DO WHILE !Eof() .AND. cIdRjFakt == IdFirma
 
          IF idtipdok $ cIdTipdok .AND. dDatFOd <= datdok .AND. dDatFDo >= datdok // pripada odabranom intervalu
 

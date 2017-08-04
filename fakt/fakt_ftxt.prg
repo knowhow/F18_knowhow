@@ -86,7 +86,6 @@ FUNCTION fakt_ftxt_keyboard_handler( nTopPos, nLeftPos, nBottomPos, nTxtLenght )
    s_cLastFtxtIdShow := field->id
 
    aFtxt := fakt_txt_clean_array( field->naz )
-   // altd()
    // aFtxt := decode_string_to_array( cFaktTxt, nTxtLenght - 1 - nLeftPos, "##" )
 
    FOR nI := 1 TO nBottomPos

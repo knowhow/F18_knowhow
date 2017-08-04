@@ -1,5 +1,20 @@
 # F18 klijent, lista promjena
 
+## 3.1.40-std, 2017-08-04
+
+### Korisnik
+#### FAKT
+- BUGFIX: Alias does not exist/FAKT_DOKS_PREGLED
+- BUGFIX: FAKT tabelarni pregled tipka 'F' - pretvori 20->10, 'K' - ispravka podataka
+
+### Developer
+- FAKT: pregled dokumenata 'F' - pretvori 20->10
+- CORE: my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRetEvent, nPored, aPoredak, bMyKeyHandler ) - bMyKeyHandler se prvi (uvijek) obrađuje
+- OUT: fakt_generisi_inventuru()
+- KALK: KALK_FAKT normativi prenos, fakt sql, nije testirano
+- FAKT: realizacija MP fakt sql
+- EPDV: fakt_gen_kif() fakt sql
+
 ## 3.1.39-std, 2017-08-04
 
 ### Developer

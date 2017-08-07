@@ -100,10 +100,8 @@ STATIC FUNCTION pos_dok_is_storno( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
    GO TOP
    SEEK cIdPos + cIdTipDok + DToS( dDatDok ) + cBrojRacuna
 
-   DO WHILE !Eof() .AND. field->idpos == cIdPos ;
-         .AND. field->idvd == cIdTipDok ;
-         .AND. DToS( field->dDatDok ) == DToS( dDatDok ) ;
-         .AND. field->brdok == cBrojRacuna
+   DO WHILE !Eof() .AND. field->idpos == cIdPos  .AND. field->idvd == cIdTipDok ;
+         .AND. DToS( field->DatDok ) == DToS( dDatDok ) .AND. field->brdok == cBrojRacuna
 
       IF !Empty( AllTrim( field->c_1 ) )
          _storno := .T.
@@ -118,11 +116,11 @@ STATIC FUNCTION pos_dok_is_storno( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
 
 
 
-STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, storno, nUplaceniIznos )
+STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, lStorno, nUplaceniIznos )
 
    LOCAL _items := {}
    LOCAL _plu
-   LOCAL _reklamni_racun
+   LOCAL cReklamiraniRacun
    LOCAL _rabat, _cijena
    LOCAL _art_barkod, _art_id, _art_naz, _art_jmj
    LOCAL _rbr := 0
@@ -165,15 +163,15 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacun
    ENDIF
 
    DO WHILE !Eof() .AND. field->idpos == cIdPos .AND. field->idvd == cIdTipDok  ;
-      .AND. DToS( field->dDatDok ) == DToS( dDatDok ) .AND. field->brdok == cBrojRacuna
+      .AND. DToS( field->DatDok ) == DToS( dDatDok ) .AND. field->brdok == cBrojRacuna
 
-      _reklamni_racun := ""
+      cReklamiraniRacun := ""
       _rabat := 0
       _plu := 0
       _cijena := 0
       _art_barkod := ""
 
-      _reklamni_racun := field->c_1
+      cReklamiraniRacun := field->c_1
 
       _art_id := field->idroba
 
@@ -209,7 +207,7 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacun
          field->cijena, ;
          Abs( field->kolicina ), ;
          field->idtarifa, ;
-         _reklamni_racun, ;
+         cReklamiraniRacun, ;
          _plu, ;
          field->cijena, ;
          _rabat, ;
@@ -230,7 +228,7 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacun
 
    _level := 1
 
-   IF provjeri_kolicine_i_cijene_fiskalnog_racuna( @_items, storno, _level, __device_params[ "drv" ] ) < 0
+   IF provjeri_kolicine_i_cijene_fiskalnog_racuna( @_items, lStorno, _level, __device_params[ "drv" ] ) < 0
       RETURN NIL
    ENDIF
 
@@ -238,14 +236,14 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacun
 
 
 
-STATIC FUNCTION pos_to_fprint( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, storno )
+STATIC FUNCTION pos_to_fprint( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, lStorno )
 
    LOCAL _err_level := 0
    LOCAL _fiscal_no := 0
 
    fprint_delete_answer( __device_params )
 
-   fiskalni_fprint_racun( __device_params, items, NIL, storno )
+   fiskalni_fprint_racun( __device_params, items, NIL, lStorno )
 
    _err_level := fprint_read_error( __device_params, @_fiscal_no )
 
@@ -284,12 +282,12 @@ STATIC FUNCTION pos_to_fprint( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, s
 
 
 
-STATIC FUNCTION pos_to_flink( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, storno )
+STATIC FUNCTION pos_to_flink( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, lStorno )
 
    LOCAL _err_level := 0
 
    // idemo sada na upis rn u fiskalni fajl
-   _err_level := fc_pos_rn( __device_params, items, storno )
+   _err_level := fc_pos_rn( __device_params, items, lStorno )
 
    RETURN _err_level
 
@@ -297,7 +295,7 @@ STATIC FUNCTION pos_to_flink( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, st
 
 
 
-STATIC FUNCTION pos_to_tremol( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, storno, cont )
+STATIC FUNCTION pos_to_tremol( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, lStorno, cont )
 
    LOCAL _err_level := 0
    LOCAL _f_name
@@ -308,7 +306,7 @@ STATIC FUNCTION pos_to_tremol( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, s
    ENDIF
 
    // idemo sada na upis rn u fiskalni fajl
-   _err_level := tremol_rn( __device_params, items, NIL, storno, cont )
+   _err_level := tremol_rn( __device_params, items, NIL, lStorno, cont )
 
    IF cont <> "2"
 
@@ -320,7 +318,7 @@ STATIC FUNCTION pos_to_tremol( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, s
          // procitaj poruku greske
          _err_level := tremol_read_error( __device_params, _f_name, @_fiscal_no )
 
-         IF _err_level = 0 .AND. !storno .AND. _fiscal_no > 0
+         IF _err_level = 0 .AND. !lStorno .AND. _fiscal_no > 0
 
             pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, _fiscal_no )
 
@@ -341,7 +339,7 @@ STATIC FUNCTION pos_to_tremol( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, s
 
 
 
-STATIC FUNCTION pos_to_hcp( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, storno, nUplaceniIznos )
+STATIC FUNCTION pos_to_hcp( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, lStorno, nUplaceniIznos )
 
    LOCAL _err_level := 0
    LOCAL _fiscal_no := 0
@@ -350,12 +348,12 @@ STATIC FUNCTION pos_to_hcp( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, stor
       nUplaceniIznos := 0
    ENDIF
 
-   _err_level := hcp_rn( __device_params, items, NIL, storno, nUplaceniIznos )
+   _err_level := hcp_rn( __device_params, items, NIL, lStorno, nUplaceniIznos )
 
    IF _err_level = 0
 
       // vrati broj racuna
-      _fiscal_no := hcp_fisc_no( __device_params, storno )
+      _fiscal_no := hcp_fisc_no( __device_params, lStorno )
 
       IF _fiscal_no > 0
          pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, _fiscal_no )
@@ -433,9 +431,9 @@ STATIC FUNCTION pos_get_vr_plac( id_vr_pl )
 // --------------------------------------------
 // stampa fiskalnog racuna TRING (www.kase.ba)
 // --------------------------------------------
-STATIC FUNCTION pos_to_tring( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, storno )
+STATIC FUNCTION pos_to_tring( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, items, lStorno )
    LOCAL _err_level := 0
-   _err_level := tring_rn( __device_params, items, NIL, storno )
+   _err_level := tring_rn( __device_params, items, NIL, lStorno )
    RETURN _err_level
 
 

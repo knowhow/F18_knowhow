@@ -103,13 +103,13 @@ FUNCTION zakljuci_pos_racun()
 
 
 
-STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( params )
+STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( hParams )
 
-   LOCAL _br_dok := params[ "brdok" ]
-   LOCAL _id_pos := params[ "idpos" ]
-   LOCAL _id_vrsta_p := params[ "idvrstap" ]
-   LOCAL _id_partner := params[ "idpartner" ]
-   LOCAL _uplaceno := params[ "uplaceno" ]
+   LOCAL _br_dok := hParams[ "brdok" ]
+   LOCAL _id_pos := hParams[ "idpos" ]
+   LOCAL _id_vrsta_p := hParams[ "idvrstap" ]
+   LOCAL _id_partner := hParams[ "idpartner" ]
+   LOCAL _uplaceno := hParams[ "uplaceno" ]
    LOCAL lOk := .T.
    LOCAL lRet := .F.
    LOCAL cVrijemeRacuna
@@ -140,7 +140,7 @@ STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( params )
    ENDIF
 
    IF fiscal_opt_active()
-      stampaj_fiskalni_racun( _id_pos, gDatum, cBrojRacuna, _uplaceno )
+      pos_stampa_fiskalni_racun( _id_pos, gDatum, cBrojRacuna, _uplaceno )
    ENDIF
 
    my_close_all_dbf()
@@ -150,7 +150,7 @@ STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( params )
 
 
 
-STATIC FUNCTION stampaj_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
+STATIC FUNCTION pos_stampa_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
 
    LOCAL nDeviceId
    LOCAL hDeviceParams
@@ -189,14 +189,14 @@ STATIC FUNCTION stampaj_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
 // ------------------------------------------------------
 // ova funkcija treba da izracuna kusur
 // ------------------------------------------------------
-STATIC FUNCTION koliko_treba_povrata_kupcu( param )
+STATIC FUNCTION koliko_treba_povrata_kupcu( hParams )
 
    LOCAL nDbfArea := Select()
    LOCAL nTrec := RecNo()
-   LOCAL _id_pos := PARAM[ "idpos" ]
-   LOCAL _id_vd := PARAM[ "idvd" ]
-   LOCAL _br_dok := PARAM[ "brdok" ]
-   LOCAL _dat_dok := PARAM[ "datum" ]
+   LOCAL _id_pos := hParams[ "idpos" ]
+   LOCAL _id_vd := hParams[ "idvd" ]
+   LOCAL _br_dok := hParams[ "brdok" ]
+   LOCAL _dat_dok := hParams[ "datum" ]
    LOCAL _total := 0
    LOCAL _iznos := 0
    LOCAL _popust := 0
@@ -232,21 +232,21 @@ STATIC FUNCTION ispisi_iznos_i_kusur_za_kupca( uplaceno, iznos_rn, pos_x, pos_y 
 
 
 
-STATIC FUNCTION form_zakljuci_racun( params )
+STATIC FUNCTION form_zakljuci_racun( hParams )
 
    LOCAL _def_partner := .F.
-   LOCAL _id_vd := params[ "idvd" ]
-   LOCAL _id_pos := params[ "idpos" ]
-   LOCAL _br_dok := params[ "brdok" ]
-   LOCAL _dat_dok := params[ "datum" ]
-   LOCAL _ok := params[ "zakljuci" ]
-   LOCAL _id_vrsta_p := params[ "idvrstap" ]
-   LOCAL _id_partner := params[ "idpartner" ]
-   LOCAL _uplaceno := params[ "uplaceno" ]
+   LOCAL _id_vd := hParams[ "idvd" ]
+   LOCAL _id_pos := hParams[ "idpos" ]
+   LOCAL _br_dok := hParams[ "brdok" ]
+   LOCAL _dat_dok := hParams[ "datum" ]
+   LOCAL _ok := hParams[ "zakljuci" ]
+   LOCAL _id_vrsta_p := hParams[ "idvrstap" ]
+   LOCAL _id_partner := hParams[ "idpartner" ]
+   LOCAL _uplaceno := hParams[ "uplaceno" ]
 
 
       _id_vrsta_p := gGotPlac
-   
+
 
    Box(, 8, 67 )
 
@@ -274,7 +274,7 @@ STATIC FUNCTION form_zakljuci_racun( params )
    ENDIF
 
    @ _x_pos := m_x + 5, _y_pos := m_y + 2 SAY8 "Kupac uplatio:" GET _uplaceno PICT "9999999.99" ;
-      VALID {|| if ( _uplaceno <> 0, ispisi_iznos_i_kusur_za_kupca( _uplaceno, koliko_treba_povrata_kupcu( params ), _x_pos, _y_pos ), .T. ), .T. }
+      VALID {|| if ( _uplaceno <> 0, ispisi_iznos_i_kusur_za_kupca( _uplaceno, koliko_treba_povrata_kupcu( hParams ), _x_pos, _y_pos ), .T. ), .T. }
 
 
    @ m_x + 8, m_y + 2 SAY8 "Ažurirati račun (D/N) ?" GET _ok PICT "@!" VALID _ok $ "DN"
@@ -287,10 +287,10 @@ STATIC FUNCTION form_zakljuci_racun( params )
       _ok := "D"
    ENDIF
 
-   params[ "zakljuci" ] := _ok
-   params[ "idpartner" ] := _id_partner
-   params[ "idvrstap" ] := _id_vrsta_p
-   params[ "uplaceno" ] := _uplaceno
+   hParams[ "zakljuci" ] := _ok
+   hParams[ "idpartner" ] := _id_partner
+   hParams[ "idvrstap" ] := _id_vrsta_p
+   hParams[ "uplaceno" ] := _uplaceno
 
    RETURN
 

@@ -1,5 +1,11 @@
 # F18 klijent, lista promjena
 
+## 3.1.41-std, 2017-08-07
+
+### Developer
+- POS vars cleanup
+- POS fix dDatDok variable not found
+
 ## 3.1.40-std, 2017-08-04
 
 ### Korisnik

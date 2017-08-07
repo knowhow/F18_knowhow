@@ -11,6 +11,96 @@
 
 #include "f18.ch"
 
+/*
+-- Table: fmk.pos_pos
+
+-- DROP TABLE fmk.pos_pos;
+
+CREATE TABLE fmk.pos_pos
+(
+  idpos character varying(2),
+  idvd character varying(2),
+  brdok character varying(6),
+  datum date,
+  idcijena character varying(1),
+  iddio character varying(2),
+  idodj character(2),
+  idradnik character varying(4),
+  idroba character(10),
+  idtarifa character(6),
+  m1 character varying(1),
+  mu_i character varying(1),
+  prebacen character varying(1),
+  smjena character varying(1),
+  c_1 character varying(6),
+  c_2 character varying(10),
+  c_3 character varying(50),
+  kolicina numeric(18,3),
+  kol2 numeric(18,3),
+  cijena numeric(10,3),
+  ncijena numeric(10,3),
+  rbr character varying(5)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE fmk.pos_pos
+  OWNER TO hernad;
+
+-- Index: fmk.pos_pos_id1
+
+-- DROP INDEX fmk.pos_pos_id1;
+
+CREATE INDEX pos_pos_id1
+  ON fmk.pos_pos
+  USING btree
+  (idpos COLLATE pg_catalog."default", idvd COLLATE pg_catalog."default", datum, brdok COLLATE pg_catalog."default", idroba COLLATE pg_catalog."default", idcijena COLLATE pg_catalog."default");
+
+-- Index: fmk.pos_pos_id2
+
+-- DROP INDEX fmk.pos_pos_id2;
+
+CREATE INDEX pos_pos_id2
+  ON fmk.pos_pos
+  USING btree
+  (idodj COLLATE pg_catalog."default", idroba COLLATE pg_catalog."default", datum);
+
+-- Index: fmk.pos_pos_id3
+
+-- DROP INDEX fmk.pos_pos_id3;
+
+CREATE INDEX pos_pos_id3
+  ON fmk.pos_pos
+  USING btree
+  (prebacen COLLATE pg_catalog."default");
+
+-- Index: fmk.pos_pos_id4
+
+-- DROP INDEX fmk.pos_pos_id4;
+
+CREATE INDEX pos_pos_id4
+  ON fmk.pos_pos
+  USING btree
+  (datum);
+
+-- Index: fmk.pos_pos_id5
+
+-- DROP INDEX fmk.pos_pos_id5;
+
+CREATE INDEX pos_pos_id5
+  ON fmk.pos_pos
+  USING btree
+  (idpos COLLATE pg_catalog."default", idroba COLLATE pg_catalog."default", datum);
+
+-- Index: fmk.pos_pos_id6
+
+-- DROP INDEX fmk.pos_pos_id6;
+
+CREATE INDEX pos_pos_id6
+  ON fmk.pos_pos
+  USING btree
+  (idroba COLLATE pg_catalog."default");
+*/
 
 STATIC __device_id := 0
 STATIC __device_params
@@ -100,8 +190,8 @@ STATIC FUNCTION pos_dok_is_storno( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
    GO TOP
    SEEK cIdPos + cIdTipDok + DToS( dDatDok ) + cBrojRacuna
 
-   DO WHILE !Eof() .AND. field->idpos == cIdPos  .AND. field->idvd == cIdTipDok ;
-         .AND. DToS( field->DatDok ) == DToS( dDatDok ) .AND. field->brdok == cBrojRacuna
+   DO WHILE !Eof() .AND. pos->idpos == cIdPos  .AND. pos->idvd == cIdTipDok ;
+         .AND. DToS( pos->Datum ) == DToS( dDatDok ) .AND. pos->brdok == cBrojRacuna
 
       IF !Empty( AllTrim( field->c_1 ) )
          _storno := .T.
@@ -162,8 +252,8 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacun
       RETURN NIL
    ENDIF
 
-   DO WHILE !Eof() .AND. field->idpos == cIdPos .AND. field->idvd == cIdTipDok  ;
-      .AND. DToS( field->DatDok ) == DToS( dDatDok ) .AND. field->brdok == cBrojRacuna
+   DO WHILE !Eof() .AND. pos->idpos == cIdPos .AND. pos->idvd == cIdTipDok  ;
+      .AND. DToS( pos->Datum ) == DToS( dDatDok ) .AND. pos->brdok == cBrojRacuna
 
       cReklamiraniRacun := ""
       _rabat := 0

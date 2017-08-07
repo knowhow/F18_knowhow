@@ -1,8 +1,9 @@
 # F18 klijent, lista promjena
 
-## 3.1.41-std, 2017-08-07
+## 3.1.42-std, 2017-08-07
 
 ### Developer
+- pos.datum, ne pos.datdok
 - POS vars cleanup
 - POS fix dDatDok variable not found
 

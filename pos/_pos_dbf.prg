@@ -12,6 +12,33 @@
 #include "f18.ch"
 
 
+FUNCTION o_pos_priprz()
+
+   SELECT ( F_PRIPRZ )
+   my_use( "priprz" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+
+FUNCTION o_pos_priprg()
+
+   SELECT ( F_PRIPRG )
+   my_use( "priprg" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+FUNCTION o_pos_uredj()
+
+   SELECT ( F_UREDJ )
+   my_use( "uredj" )
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
 FUNCTION pos_init_dbfs()
 
    my_close_all_dbf()
@@ -31,7 +58,7 @@ STATIC FUNCTION cre_priprz()
       lCreate := .T.
    ELSE
       CLOSE ALL
-      O_PRIPRZ
+      o_pos_priprz()
       IF reccount2() > 0
          RETURN .F.
       ENDIF
@@ -201,13 +228,13 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    O_K2C
    O_MJTRUR
    o_pos_kase()
-//   o_sastavnice()
+// o_sastavnice()
 // o_roba()
    // o_tarifa()
    // o_sifk()
    // o_sifv()
-   O_PRIPRZ
-   O_PRIPRG
+   o_pos_priprz()
+   o_pos_priprg()
    O__POS
    O__POS_PRIPR
 
@@ -233,7 +260,7 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 FUNCTION o_pos_sifre()
 
    o_pos_kase()
-   O_UREDJ
+   o_pos_uredj()
    o_pos_odj()
    // o_roba()
    // o_tarifa()

@@ -199,7 +199,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
    LOCAL _oper := "1"
    LOCAL _exist, _rec2
 
-   O_PRIPRZ
+   o_pos_priprz()
    SELECT priprz
 
    IF RecCount() <> 0

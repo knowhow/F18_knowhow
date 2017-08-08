@@ -35,7 +35,7 @@ FUNCTION pos_preuzmi_iz_kalk( cIdTipDok, cBrDok )
    _destination := AllTrim( gKalkDest )
 
    SET CURSOR ON
-   O_PRIPRZ
+   o_pos_priprz()
 
    _br_dok := Space( Len( field->brdok ) )
 

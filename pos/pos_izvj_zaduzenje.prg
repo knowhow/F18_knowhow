@@ -124,7 +124,7 @@ FUNCTION StampZaduz( cIdVd, cBrDok )
 
       ENDPRINT
 
-      O_PRIPRZ
+      o_pos_priprz()
       GO nPrevRec
 
    ELSE

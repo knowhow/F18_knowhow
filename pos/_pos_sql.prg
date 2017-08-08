@@ -242,6 +242,7 @@ FUNCTION find_pos_odj_naziv( cIdOdj )
 
 
 
+
 FUNCTION find_pos_osob_naziv( cId )
 
    LOCAL cRet, nSelect := Select()

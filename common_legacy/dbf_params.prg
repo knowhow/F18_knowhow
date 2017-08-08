@@ -197,10 +197,19 @@ FUNCTION HistUser( Ch )
    RETURN NIL
 
 
-FUNCTION  o_params()
+FUNCTION o_params()
 
    SELECT ( F_PARAMS )
    my_use ( "params" )
+   SET ORDER TO TAG  "ID"
+
+   RETURN .T.
+
+
+FUNCTION o_gparams()
+
+   SELECT ( F_GPARAMS )
+   my_use ( "gparams" )
    SET ORDER TO TAG  "ID"
 
    RETURN .T.

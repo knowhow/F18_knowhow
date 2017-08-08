@@ -184,7 +184,7 @@ FUNCTION gvim_print( cOut_Name )
    // uzmi parametre iz printera "G"
    SELECT F_GPARAMS
    IF !Used()
-      O_GPARAMS
+      o_gparams()
    ENDIF
 
    gPrinter := "G"
@@ -219,7 +219,7 @@ FUNCTION gvim_end()
 
    SELECT F_GPARAMS
    IF !Used()
-      O_GPARAMS
+      o_gparams()
    ENDIF
 
    PRIVATE cSection := "P"

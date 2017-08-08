@@ -181,7 +181,7 @@ FUNCTION epl2_start()
    // uzmi parametre iz printera "L"
    SELECT F_GPARAMS
    IF !Used()
-      O_GPARAMS
+      o_gparams()
    ENDIF
 
    // gcDirekt := "D"
@@ -218,7 +218,7 @@ FUNCTION epl2_end()
 
    SELECT F_GPARAMS
    IF !Used()
-      O_GPARAMS
+      o_gparams()
    ENDIF
 
    PRIVATE cSection := "P"

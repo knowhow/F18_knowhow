@@ -394,13 +394,14 @@ FUNCTION fakt_generisi_fakturu_10_iz_20( cIdFirma, cIdTipDok, cBrDok)
    IF isugovori()
 
       IF pitanje(, "Setovati datum uplate za partnera ?", "N" ) == "D"
-         o_ugov()
-         SELECT ugov
-         SET ORDER TO TAG "PARTNER"
-         GO TOP
-         SEEK cPart // ugov
 
-         IF Found() .AND. field->idpartner == cPart
+         IF o_ugov_partner( cPart )
+         //SELECT ugov
+         //SET ORDER TO TAG "PARTNER"
+         //GO TOP
+         //SEEK cPart // ugov
+
+         //IF Found() .AND. field->idpartner == cPart
             hRec := dbf_get_rec()
             hRec[ "dat_l_fakt" ] := Date()
             update_rec_server_and_dbf( "fakt_ugov", hRec, 1, "FULL" )
@@ -409,7 +410,6 @@ FUNCTION fakt_generisi_fakturu_10_iz_20( cIdFirma, cIdTipDok, cBrDok)
       ENDIF
 
    ENDIF
-
 
 
    RETURN DE_REFRESH

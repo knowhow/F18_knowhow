@@ -83,8 +83,8 @@ FUNCTION ugov_stampa_naljenica()
    _create_labelu_dbf()
 
    //IF is_dest()
-      SELECT dest
-      SET FILTER TO
+    //  SELECT dest
+    //  SET FILTER TO
    //ENDIF
 
    SELECT ugov
@@ -187,13 +187,7 @@ FUNCTION ugov_stampa_naljenica()
 
       IF !Empty( rugov->dest )
 
-         SELECT dest
-
-         SET ORDER TO TAG "ID"
-         GO TOP
-         SEEK ( ugov->idpartner + rugov->dest )
-
-         IF Found()
+         IF find_dest_by_iddest_idpartn(  rugov->dest, ugov->idpartner)
             lImaDestinacija := .T.
          ENDIF
 
@@ -325,7 +319,7 @@ STATIC FUNCTION stampa_pregleda_naljepnica( index_sort )
 
 STATIC FUNCTION _open_tables()
 
-   o_ugov()
+   //o_ugov()
    //o_rugov()
    o_dest()
    //o_partner()

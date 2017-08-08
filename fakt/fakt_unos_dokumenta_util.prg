@@ -874,7 +874,7 @@ FUNCTION UGenNar()
    IF Found()
       SELECT ( F_RUGOV )
       IF !Used()
-         o_rugov()
+    --     o_rugov()
       ENDIF
       SET ORDER TO TAG "ID"
       SELECT UGOV

@@ -233,6 +233,22 @@ FUNCTION o_ugov( cUgovId, cIdPartner )
    RETURN !Eof()
 
 
+FUNCTION o_ugov_partner( cIdPartner )
+
+   LOCAL cTable := "fakt_ugov", cAlias := "UGOV"
+   LOCAL cSql := "select * from fmk." + cTable
+
+   cSql += " WHERE idpartner=" + sql_quote( cIdPartner )
+
+   SELECT F_UGOV
+   use_sql( cTable, cSql, cAlias )
+
+   INDEX ON field->idpartner TAG "PARTNER" TO ( cAlias )
+   SET ORDER TO TAG "PARTNER"
+   GO TOP
+
+   RETURN !Eof()
+
 
 FUNCTION o_aktivni_ugovori()
 
@@ -380,9 +396,44 @@ FUNCTION o_dest()
       RETURN .F.
    ENDIF
 
-   SET ORDER TO TAG "ID"
+   // "ID", "IDPARTNER + ID"
+   // "IDDEST", "ID"
 
-   RETURN .T.
+   SET ORDER TO TAG "IDDEST"
+   GO TOP
+
+   RETURN !Eof()
+
+
+FUNCTION find_zadnja_destinacija()
+
+   LOCAL cMaxId
+   LOCAL cTable := "dest", cAlias := "POM"
+   LOCAL cSql := "select max(id) as max_id from fmk." + cTable
+
+   SELECT F_POM
+   use_sql( cTable, cSql, cAlias )
+
+   cMaxId := field->max_id
+   USE
+
+   RETURN cMaxId
+
+
+FUNCTION o_dest_partner( cIdPartner )
+
+   LOCAL cTable := "dest", cAlias := "DEST"
+   LOCAL cSql := "select * from fmk." + cTable
+
+   cSql += " WHERE idpartner=" + sql_quote( cIdPartner )
+
+   SELECT F_DEST
+   use_sql( cTable, cSql, cAlias )
+
+   INDEX ON  field->IDPARTNER + field->ID  TAG "ID" TO ( cAlias )
+   INDEX ON  field->ID  TAG "IDDEST" TO ( cAlias )
+
+   RETURN !Eof()
 
 
 

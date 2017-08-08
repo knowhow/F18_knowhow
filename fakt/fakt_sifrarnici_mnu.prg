@@ -28,7 +28,7 @@ FUNCTION fakt_sifrarnik()
    AAdd( aOpcExe, {|| OSifFtxt(), p_fakt_ftxt() } )
 
    AAdd( aOpc, "U. ugovori" )
-   AAdd( aOpcExe, {|| o_ugov(), ugov_sif_meni() } )
+   AAdd( aOpcExe, {|| ugov_sif_meni() } )
 
 
    f18_menu( "fasi", .F., nIzbor, aOpc, aOpcExe )

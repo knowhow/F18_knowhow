@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 3.1.43-std, 2017-08-08
+
+### Developer
+- UGOV sql big-bang 01: ugov, rugov, dest, fakt_gen_ug, fakt_gen_ug_p prebačeni na sql, cleanup
+
 ## 3.1.42-std, 2017-08-07
 
 ### Developer

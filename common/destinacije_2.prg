@@ -12,10 +12,11 @@
 #include "f18.ch"
 
 
+#define DEST_LEN 6
+
 // id partner
-STATIC __partn
-STATIC __ugov
-STATIC __dest_len
+STATIC s_cIdPartnerDest
+STATIC s_cIdUgov
 STATIC _x_pos
 STATIC _y_pos
 
@@ -38,23 +39,22 @@ FUNCTION p_destinacije( cId, cPartId, dx, dy )
    cHeader += "-"
    cHeader += PadR( get_partner_naziv( cPartId ), 20 ) + ".."
 
-   SELECT dest
-   SET ORDER TO TAG "IDDEST"
 
    IF !Empty( cPartId )
-      __partn := cPartId
+      s_cIdPartnerDest := cPartId
    ELSE
-      __partn := Space( 6 )
+      s_cIdPartnerDest := Space( 6 )
    ENDIF
 
-   __ugov := ugov->id
-   __dest_len := 6
+   o_dest_partner( cPartId )
 
+   s_cIdUgov := ugov->id
 
-   set_f_tbl( cPartId )    // postavi filter
+   //set_f_tbl( cPartId )    // postavi filter
+
    set_a_kol( @ImeKol, @Kol )    // setuj kolone
 
-   xRet := p_sifra( F_DEST, "IDDEST", _x_pos, _y_pos, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
+   xRet := p_sifra( F_DEST, "IDDEST", _x_pos, _y_pos, cHeader, @cId, dx, dy, {| Ch | key_handler( Ch ) } )
 
    SET FILTER TO
 
@@ -62,7 +62,7 @@ FUNCTION p_destinacije( cId, cPartId, dx, dy )
 
    RETURN xRet
 
-
+/*
 // setovanje filtera na tabeli destinacija
 STATIC FUNCTION set_f_tbl( cPart )
 
@@ -77,7 +77,7 @@ STATIC FUNCTION set_f_tbl( cPart )
    ENDIF
 
    IF !Empty( cFilt )
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
    ELSE
       SET FILTER TO
    ENDIF
@@ -85,7 +85,7 @@ STATIC FUNCTION set_f_tbl( cPart )
    GO TOP
 
    RETURN .T.
-
+*/
 
 // ----------------------------------------------------
 // setovanje kolona tabele
@@ -107,7 +107,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -116,7 +116,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
 // --------------------------------
 STATIC FUNCTION key_handler( Ch )
 
-   @ m_x + 17, 6 SAY "<S> setuj kao def.destin.za fakturisanje"
+   @ box_x_koord() + 17, 6 SAY "<S> setuj kao def.destin.za fakturisanje"
 
    DO CASE
    CASE Ch == K_CTRL_N
@@ -131,36 +131,35 @@ STATIC FUNCTION key_handler( Ch )
 
    CASE Upper( Chr( Ch ) ) == "S"
 
-      // set as default...
-      set_as_default( __ugov, id )
+      destinacija_set_as_default_za_ugovor( s_cIdUgov, id )
 
    ENDCASE
 
    RETURN DE_CONT
 
 
-// ----------------------------------------------------
-// vraca novi broj destinacije
-// ----------------------------------------------------
-STATIC FUNCTION n_dest_id()
+
+STATIC FUNCTION destinacija_get_novi_id()
 
    LOCAL xRet := "  1"
    LOCAL nTArea := Select()
    LOCAL nTRec := RecNo()
    LOCAL cTBFilter := dbFilter()
+   LOCAL cIdDest
 
-   SELECT dest
-   SET FILTER TO
-   SET ORDER TO TAG "IDDEST"
-   GO BOTTOM
+   //SELECT dest
+   //SET FILTER TO
+   //SET ORDER TO TAG "IDDEST"
+   //GO BOTTOM
+   cIdDest := find_zadnja_destinacija()
 
-   xRet := PadL( AllTrim( Str( Val( field->id ) + 1 ) ), __dest_len, "0" )
+   xRet := PadL( AllTrim( Str( Val( cIdDest ) + 1 ) ), DEST_LEN, "0" )
 
-   SET ORDER TO TAG "ID"
+   //SET ORDER TO TAG "ID"
 
-   SELECT ( nTArea )
-   SET FILTER to &cTbFilter
-   GO ( nTRec )
+   //SELECT ( nTArea )
+   //SET FILTER TO &cTbFilter
+   //GO ( nTRec )
 
    RETURN xRet
 
@@ -174,8 +173,8 @@ STATIC FUNCTION edit_dest( lNova )
    LOCAL nRec
    LOCAL nBoxLen := 20
    LOCAL nX := 1
-   LOCAL _rec
-   PRIVATE GetList := {}
+   LOCAL hRec
+   LOCAL GetList := {}
 
    IF lNova
       nRec := RecNo()
@@ -188,9 +187,8 @@ STATIC FUNCTION edit_dest( lNova )
 
    IF lNova
 
-      _idpartner := __partn
-      // uvecaj id automatski
-      _id := n_dest_id()
+      _idpartner := s_cIdPartnerDest
+      _id := destinacija_get_novi_id()
       _mjesto := Space( Len( _mjesto ) )
       _adresa := Space( Len( _adresa ) )
       _naziv := Space( Len( _naziv ) )
@@ -202,50 +200,41 @@ STATIC FUNCTION edit_dest( lNova )
 
    ENDIF
 
-   Box(, 16, 75 )
+   Box(, 16, 85 )
 
    IF lNova
-      @ m_x + nX, m_y + 2 SAY PadL( "*** Unos nove destinacije", 65 )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "*** Unos nove destinacije", 65 )
    ELSE
 
-      @ m_x + nX, m_y + 2 SAY PadL( "*** Ispravka destinacije", 65 )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "*** Ispravka destinacije", 65 )
    ENDIF
 
    ++nX
-
-   @ m_x + nX, m_y + 2 SAY PadR( "Partner: " + AllTrim( _idpartner ) + " , dest.rbr: " + AllTrim( _id ), 70 )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "Partner: " + AllTrim( _idpartner ) + " , dest.rbr: " + AllTrim( _id ), 70 )
 
    nX += 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Naziv:", nBoxLen ) GET _naziv
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Naziv:", nBoxLen ) GET _naziv
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Naziv 2:", nBoxLen ) GET _naziv2
 
-   ++ nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Mjesto:", nBoxLen ) GET _mjesto
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Naziv 2:", nBoxLen ) GET _naziv2
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Adresa:", nBoxLen ) GET _adresa
 
-   ++ nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "PTT:", nBoxLen ) GET _ptt
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Mjesto:", nBoxLen ) GET _mjesto
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Telefon:", nBoxLen ) GET _telefon
 
-   ++ nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Fax:", nBoxLen ) GET _fax
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Adresa:", nBoxLen ) GET _adresa
-
-   ++ nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "PTT:", nBoxLen ) GET _ptt
-
-   ++ nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Telefon:", nBoxLen ) GET _telefon
-
-   ++ nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Fax:", nBoxLen ) GET _fax
-
-   ++ nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Mobitel:", nBoxLen ) GET _mobitel
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Mobitel:", nBoxLen ) GET _mobitel
 
    READ
 
@@ -255,13 +244,15 @@ STATIC FUNCTION edit_dest( lNova )
       RETURN DE_CONT
    ENDIF
 
+   o_dest_partner( s_cIdPartnerDest )
+
    IF lNova
       APPEND BLANK
    ENDIF
 
    // bivsi gather()
-   _rec := get_hash_record_from_global_vars()
-   update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+   hRec := get_hash_record_from_global_vars()
+   update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
    IF lNova
       GO ( nRec )
@@ -282,14 +273,15 @@ FUNCTION get_dest_info( cPartn, cDest, nLen )
       nLen := 15
    ENDIF
 
-   SELECT dest
-   SET ORDER TO TAG "ID"
-   HSEEK cPartn + cDest
+   // SELECT dest
+   // SET ORDER TO TAG "ID"
+   // HSEEK cPartn + cDest
 
-   IF Found()
-      IF cPartn == field->idpartner .AND. cDest == field->id
-         xRet := AllTrim( field->naziv ) + ":" + AllTrim( field->naziv2 ) + ":" + AllTrim( field->adresa )
-      ENDIF
+   // IF Found()
+   IF find_dest_by_iddest_idpartn( cDest, cPartn )
+      // IF cPartn == field->idpartner .AND. cDest == field->id
+      xRet := AllTrim( field->naziv ) + ":" + AllTrim( field->naziv2 ) + ":" + AllTrim( field->adresa )
+      // ENDIF
    ENDIF
 
    xRet := PadR( xRet, nLen )
@@ -309,54 +301,55 @@ FUNCTION get_dest_binfo( nX, nY, cPartn, cDest )
    LOCAL _len := 65
 
    nX := nX + 3
-   SELECT dest
-   SET ORDER TO TAG "ID"
-   GO TOP
-   HSEEK cPartn + cDest
+   // SELECT dest
+   // SET ORDER TO TAG "ID"
+   // GO TOP
+   // HSEEK cPartn + cDest
+   IF find_dest_by_iddest_idpartn( cDest, cPartn )
+      // IF Found()
+      // IF cPartn == field->idpartner .AND. cDest == field->id
 
-   IF Found()
-      IF cPartn == field->idpartner .AND. cDest == field->id
+      cPom := AllTrim( field->naziv ) + ", " + AllTrim( field->naziv2 )
 
-         cPom := AllTrim( field->naziv ) + ", " + AllTrim( field->naziv2 )
+      @ nX, 2 SAY Space( _len ) COLOR f18_color_i()
+      @ nX, 2 SAY PadR( cPom, _len ) COLOR f18_color_i()
 
-         @ nX, 2 SAY Space( _len ) COLOR f18_color_i()
-         @ nX, 2 SAY PadR( cPom, _len ) COLOR f18_color_i()
+      cPom := AllTrim( field->adresa ) + ", " + AllTrim( field->telefon )
 
-         cPom := AllTrim( field->adresa ) + ", " + AllTrim( field->telefon )
+      @ nX + 1, 2 SAY Space( _len ) COLOR f18_color_i()
+      @ nX + 1, 2 SAY PadR( cPom, _len ) COLOR f18_color_i()
 
-         @ nX + 1, 2 SAY Space( _len ) COLOR f18_color_i()
-         @ nX + 1, 2 SAY PadR( cPom, _len ) COLOR f18_color_i()
-
-      ENDIF
+      // ENDIF
    ENDIF
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------
 // set default destinacija
 // ----------------------------------------
-FUNCTION set_as_default( cUgovId, cDest )
+FUNCTION destinacija_set_as_default_za_ugovor( cUgovId, cDest )
 
    LOCAL nTArea := Select()
    LOCAL nRec
-   LOCAL _rec
+   LOCAL hRec
 
    IF Pitanje(, "Setovati kao glavnu destinaciju fakturisanja (D/N)?", "D" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
-   SELECT ugov
-   SET ORDER TO TAG "ID"
-   nRec := RecNo()
-   SEEK cUgovId
+   //SELECT ugov
+   //SET ORDER TO TAG "ID"
+   //nRec := RecNo()
+   //SEEK
 
-   IF Found()
-      _rec := dbf_get_rec()
-      _rec[ "def_dest" ] := cDest
-      update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+   IF o_ugov( cUgovId )
+   //IF Found()
+      hRec := dbf_get_rec()
+      hRec[ "def_dest" ] := cDest
+      update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
       MsgBeep( "Destinacija '" + AllTrim( cDest ) + "' setovana#za ugovor " + cUgovId + " !!!" )
    ENDIF
 

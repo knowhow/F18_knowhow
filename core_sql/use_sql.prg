@@ -99,7 +99,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
       ELSEIF cTable == "dest"
 
-         INDEX ON IDPARTNER + ID TAG "ID" TO ( cAlias )
+         INDEX ON field->IDPARTNER + field->ID TAG "ID" TO ( cAlias )
          INDEX ON ID TAG "IDDEST" TO ( cAlias )
          SET ORDER TO TAG "ID"
 

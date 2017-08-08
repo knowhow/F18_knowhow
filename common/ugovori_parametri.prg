@@ -32,7 +32,7 @@ FUNCTION DFTParUg( lIni )
       PRIVATE DFTidtxt := "10"
       PRIVATE DFTzaokr := 2
       PRIVATE DFTiddodtxt := "  "
-      PRIVATE gGenUgV2 := "2"
+      //PRIVATE gGenUgV2 := "2"
       PRIVATE gFinKPath := Space( 50 )
    ENDIF
 
@@ -44,7 +44,7 @@ FUNCTION DFTParUg( lIni )
    DFTidtxt := fetch_metric( "ugovori_napomena_1", nil, DFTidtxt )
    DFTzaokr := fetch_metric( "ugovori_zaokruzenje", nil, DFTzaokr )
    DFTiddodtxt := fetch_metric( "ugovori_napomena_2", nil, DFTiddodtxt )
-   gGenUgV2 := fetch_metric( "ugovori_varijanta_2", nil, gGenUgV2 )
+   //gGenUgV2 := fetch_metric( "ugovori_varijanta_2", nil, gGenUgV2 )
 
    IF !lIni
 
@@ -58,7 +58,7 @@ FUNCTION DFTParUg( lIni )
       @ m_x + 7, m_y + 2 SAY PadL( "Napomena 1", 20 ) GET DFTidtxt VALID p_fakt_ftxt( @DFTidtxt )
       @ m_x + 8, m_y + 2 SAY PadL( "Napomena 2", 20 ) GET DFTiddodtxt VALID p_fakt_ftxt( @DFTiddodtxt )
       @ m_x + 9, m_y + 2 SAY PadL( "Zaokruzenje", 20 ) GET DFTzaokr PICT "9"
-      @ m_x + 10, m_y + 2 SAY PadL( "gen.ug. ver 1/2", 20 ) GET gGenUgV2 PICT "@!" VALID gGenUgV2 $ "12"
+      //@ m_x + 10, m_y + 2 SAY PadL( "gen.ug. ver 1/2", 20 ) GET gGenUgV2 PICT "@!" VALID gGenUgV2 $ "12"
       READ
       BoxC()
 
@@ -72,10 +72,10 @@ FUNCTION DFTParUg( lIni )
          set_metric( "ugovori_napomena_1", nil, DFTidtxt )
          set_metric( "ugovori_zaokruzenje", nil, DFTzaokr )
          set_metric( "ugovori_napomena_2", nil, DFTiddodtxt )
-         set_metric( "ugovori_varijanta_2", nil, gGenUgV2 )
+         //set_metric( "ugovori_varijanta_2", nil, gGenUgV2 )
 
       ENDIF
 
    ENDIF
 
-   RETURN
+   RETURN .T.

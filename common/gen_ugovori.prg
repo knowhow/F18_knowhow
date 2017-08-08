@@ -79,24 +79,24 @@ FUNCTION m_gen_ug()
    PRIVATE DFTidtxt := "10"
    PRIVATE DFTzaokr := 2
    PRIVATE DFTiddodtxt := "  "
-   PRIVATE gGenUgV2 := "1"
+   //PRIVATE gGenUgV2 := "1"
    PRIVATE gFinKPath := Space( 50 )
 
    DFTParUg( .T. )
 
-   IF gGenUgV2 == "1"
-      gen_ug()
-   ELSE
+   //IF gGenUgV2 == "1"
+  //    gen_ug()
+  // ELSE
       // nova varijanta generisanja ugovora
-      gen_ug_2()
-   ENDIF
+      ugov_generacija()
+  // ENDIF
 
    RETURN .T.
 
 
-// -----------------------------------------
+/*
 // generacija ugovora varijanta 1
-// -----------------------------------------
+
 FUNCTION gen_ug()
 
    o_ugov_tabele()
@@ -403,3 +403,5 @@ FUNCTION gen_ug()
    closeret
 
    RETURN .T.
+
+*/

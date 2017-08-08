@@ -45,10 +45,11 @@ FUNCTION OSifFtxt()
    RETURN .T.
 
 
+/*
 FUNCTION OSifUgov()
 
-   o_ugov()
-   o_rugov()
+--   o_ugov()
+   //o_rugov()
    o_dest()
    //o_partner()
    //o_roba()
@@ -56,7 +57,7 @@ FUNCTION OSifUgov()
    //o_sifv()
 
    RETURN .T.
-
+*/
 
 // ---------------------------
 // dodaje polje match_code

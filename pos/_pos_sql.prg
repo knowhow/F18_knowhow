@@ -87,6 +87,7 @@ FUNCTION use_sql_pos_strad( cId )
 
 
 // set_a_sql_sifarnik( "pos_osob", "OSOB", F_OSOB   )
+
 FUNCTION o_pos_osob( cId )
 
    SELECT ( F_OSOB )
@@ -237,7 +238,6 @@ FUNCTION find_pos_odj_naziv( cIdOdj )
    SELECT ( nSelect )
 
    RETURN cRet
-
 
 
 

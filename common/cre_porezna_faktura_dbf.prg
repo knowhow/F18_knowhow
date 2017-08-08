@@ -368,7 +368,7 @@ FUNCTION porezna_faktura_azur_podataka_o_kupcu( cIdPos )
       RETURN .F.
    ENDIF
 
-   O_DOKSPF
+   o_doks_pf()
 
    IF !begin_sql_tran_lock_tables( { cTabela }  )
       RETURN .F.
@@ -428,7 +428,7 @@ FUNCTION fnd_kup_data( cKupac ) // pretrazi tabelu kupaca i napuni matricu
 
    nArr := Select()
 
-   O_DOKSPF
+   o_doks_pf()
    SELECT dokspf
 
    cFilter := Parsiraj( Lower( cKupac ), "lower(knaz)" )

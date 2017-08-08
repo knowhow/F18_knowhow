@@ -63,19 +63,6 @@ FUNCTION select_o_fakt_doks2_dbf()
    RETURN .T.
 
 
-FUNCTION o_dest()
-
-   LOCAL cTabela := "dest"
-
-   SELECT ( F_DEST )
-   IF !use_sql_sif  ( cTabela )
-      error_bar( "o_sql", "open sql " + cTabela )
-      RETURN .F.
-   ENDIF
-
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
 
 
 FUNCTION o_fakt_pripr()

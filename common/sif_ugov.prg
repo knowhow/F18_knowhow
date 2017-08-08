@@ -27,7 +27,7 @@ FUNCTION p_ugov( cId, dx, dy )
    PRIVATE DFTidtxt := "10"
    PRIVATE DFTzaokr := 2
    PRIVATE DFTiddodtxt := Space( 2 )
-   PRIVATE gGenUgV2 := "1"
+  // PRIVATE gGenUgV2 := "1"
    PRIVATE gFinKPath := Space( 50 )
 
    PRIVATE ImeKol
@@ -196,7 +196,7 @@ STATIC FUNCTION ug_key_handler( Ch )
 
    CASE ( Ch == K_F5 )
 
-      V_RUgov( ugov->id )
+      browse_rugov( ugov->id )
       RETURN 6 // DE_CONT2
 
    CASE ( Ch == K_F6 )
@@ -207,7 +207,7 @@ STATIC FUNCTION ug_key_handler( Ch )
       nRec := RecNo()
 
       ugov_stampa_naljenica()
-      o_rugov()
+      //o_rugov()
       o_dest()
       o_ugov()
 
@@ -1119,7 +1119,7 @@ FUNCTION IzfUgovor()
 
       SELECT ( F_RUGOV )
       IF !Used()
-         o_rugov()
+  --       o_rugov()
       ENDIF
 
       SELECT ( F_DEST )

@@ -20,11 +20,11 @@ FUNCTION set_a_dbf_fakt()
    set_a_fakt_doks_doks2( "fakt_doks", "FAKT_DOKS", F_FAKT_DOKS )
    set_a_fakt_doks_doks2( "fakt_doks2", "FAKT_DOKS2", F_FAKT_DOKS2 )
 
-   set_a_dbf_fakt_ugov()
-   set_a_dbf_fakt_rugov()
-   set_a_dbf_fakt_dest()
-   set_a_dbf_fakt_gen_ug()
-   set_a_dbf_fakt_gen_ug_p()
+   set_a_sql_fakt_ugov()
+   set_a_sql_fakt_rugov()
+   set_a_sql_fakt_dest()
+   set_a_sql_fakt_gen_ug()
+   set_a_sql_fakt_gen_ug_p()
 
    set_a_sql_sifarnik( "fakt_ftxt", "FAKT_FTXT", F_FAKT_FTXT   )
 
@@ -67,227 +67,220 @@ FUNCTION set_a_dbf_fakt()
 
 
 
-FUNCTION set_a_dbf_fakt_ugov()
+FUNCTION set_a_sql_fakt_ugov()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTable
 
-   _tbl := "fakt_ugov"
+   cTable := "fakt_ugov"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "UGOV"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_UGOV
+   hItem[ "alias" ] := "UGOV"
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := F_UGOV
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
 
-   // temporary tabela - nema semafora
-   _item[ "temp" ]  := .F.
-
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
+   hAlgoritam := hb_Hash()
 
-   _alg[ "dbf_key_block" ]  := {|| field->id + field->idpartner }
-   _alg[ "dbf_key_fields" ] := { "id", "idpartner" }
-   _alg[ "sql_in" ]         := "rpad(id,10) || rpad(idpartner,6)"
-   _alg[ "dbf_tag" ]        := "ID"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->id + field->idpartner }
+   hAlgoritam[ "dbf_key_fields" ] := { "id", "idpartner" }
+   hAlgoritam[ "sql_in" ]         := "rpad(id,10) || rpad(idpartner,6)"
+   hAlgoritam[ "dbf_tag" ]        := "ID"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "id, idpartner"
+   hItem[ "sql_order" ] := "id, idpartner"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
 
 
-FUNCTION set_a_dbf_fakt_rugov()
+FUNCTION set_a_sql_fakt_rugov()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTable
 
-   _tbl := "fakt_rugov"
+   cTable := "fakt_rugov"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "RUGOV"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_RUGOV
+   hItem[ "alias" ] := "RUGOV"
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := F_RUGOV
+   hItem[ "sql" ] := .T.
+   hItem[ "temp" ]  := .F.
 
-   // temporary tabela - nema semafora
-   _item[ "temp" ]  := .F.
-
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
+   hAlgoritam := hb_Hash()
 
    // funkcija a_rugov() definise dbf polja
-   _alg[ "dbf_key_block" ]  := {|| field->id + field->idroba + field->dest }
-   _alg[ "dbf_key_fields" ] := { "id", "idroba", "dest" }
-   _alg[ "sql_in" ]         := "rpad(id,10) || rpad(idroba,10) || rpad(dest,6)"
-   _alg[ "dbf_tag" ]        := "ID"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->id + field->idroba + field->dest }
+   hAlgoritam[ "dbf_key_fields" ] := { "id", "idroba", "dest" }
+   hAlgoritam[ "sql_in" ]         := "rpad(id,10) || rpad(idroba,10) || rpad(dest,6)"
+   hAlgoritam[ "dbf_tag" ]        := "ID"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "id, idroba, dest"
+   hItem[ "sql_order" ] := "id, idroba, dest"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
 
 
-FUNCTION set_a_dbf_fakt_dest()
+FUNCTION set_a_sql_fakt_dest()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTable
 
-   _tbl := "dest"
-   _item := hb_Hash()
+   cTable := "dest"
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "DEST"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_DEST
-   _item[ "sql" ] := .T.
-   _item[ "temp" ]  := .F.
+   hItem[ "alias" ] := "DEST"
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := F_DEST
+   hItem[ "sql" ] := .T.
+   hItem[ "temp" ]  := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
+   hAlgoritam := hb_Hash()
 
    // funkcija a_dest() definise dbf polja
-   _alg[ "dbf_key_block" ]  := {|| field->id + field->idpartner }
-   _alg[ "dbf_key_fields" ] := { "id", "idpartner" }
-   _alg[ "sql_in" ]         := "rpad(id,6) || rpad(idpartner,6)"
-   _alg[ "dbf_tag" ]        := "ID"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->id + field->idpartner }
+   hAlgoritam[ "dbf_key_fields" ] := { "id", "idpartner" }
+   hAlgoritam[ "sql_in" ]         := "rpad(id,6) || rpad(idpartner,6)"
+   hAlgoritam[ "dbf_tag" ]        := "ID"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "id, idpartner"
+   hItem[ "sql_order" ] := "id, idpartner"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
 
+FUNCTION set_a_sql_fakt_gen_ug()
 
+   LOCAL hItem, hAlgoritam, cTable
 
+   cTable := "fakt_gen_ug"
 
+   hItem := hb_Hash()
 
-FUNCTION set_a_dbf_fakt_gen_ug()
+   hItem[ "alias" ] := "GEN_UG"
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := F_GEN_UG
+   hItem[ "sql" ] := .T.
+   hItem[ "temp" ]  := .F.
 
-   LOCAL _item, _alg, _tbl
-
-   _tbl := "fakt_gen_ug"
-
-   _item := hb_Hash()
-
-   _item[ "alias" ] := "GEN_UG"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_GEN_UG
-
-   // temporary tabela - nema semafora
-   _item[ "temp" ]  := .F.
-
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
+   hAlgoritam := hb_Hash()
 
    // funkcija a_genug() definise dbf polja
 
-   _alg[ "dbf_key_block" ]  := {|| DToS( field->dat_obr ) }
-   _alg[ "dbf_key_fields" ] := { "dat_obr" }
-   _alg[ "sql_in" ]         := "to_char(dat_obr, 'YYYYMMDD')"
-   _alg[ "dbf_tag" ]        := "DAT_OBR"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam[ "dbf_key_block" ]  := {|| DToS( field->dat_obr ) }
+   hAlgoritam[ "dbf_key_fields" ] := { "dat_obr" }
+   hAlgoritam[ "sql_in" ]         := "to_char(dat_obr, 'YYYYMMDD')"
+   hAlgoritam[ "dbf_tag" ]        := "DAT_OBR"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "dat_obr"
+   hItem[ "sql_order" ] := "dat_obr"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
 
 
-FUNCTION set_a_dbf_fakt_gen_ug_p()
+FUNCTION set_a_sql_fakt_gen_ug_p()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTable
 
-   _tbl := "fakt_gen_ug_p"
+   cTable := "fakt_gen_ug_p"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "GEN_UG_P"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_G_UG_P
+   hItem[ "alias" ] := "GEN_UG_P"
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := F_G_UG_P
+   hItem[ "sql" ] := .T.
+   hItem[ "temp" ]  := .F.
 
-   // temporary tabela - nema semafora
-   _item[ "temp" ]  := .F.
-
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| DToS( field->dat_obr ) + id_ugov + idpartner }
-   _alg[ "dbf_key_fields" ] := { "dat_obr", "id_ugov", "idpartner" }
-   _alg[ "sql_in" ]         := "to_char(dat_obr, 'YYYYMMDD') || rpad(id_ugov,10) || rpad(idpartner,6)"
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| DToS( field->dat_obr ) + id_ugov + idpartner }
+   hAlgoritam[ "dbf_key_fields" ] := { "dat_obr", "id_ugov", "idpartner" }
+   hAlgoritam[ "sql_in" ]         := "to_char(dat_obr, 'YYYYMMDD') || rpad(id_ugov,10) || rpad(idpartner,6)"
 
    // CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)+ID_UGOV+IDPARTNER", "GEN_UG_P")
-   _alg[ "dbf_tag" ]        := "DAT_OBR"
+   hAlgoritam[ "dbf_tag" ]        := "DAT_OBR"
 
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "dat_obr, id_ugov, idpartner"
+   hItem[ "sql_order" ] := "dat_obr, id_ugov, idpartner"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
+
 
 
 
 FUNCTION set_a_dbf_fakt_fakt()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTable
 
-   _tbl := "fakt_fakt"
+   cTable := "fakt_fakt"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "FAKT"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_FAKT
+   hItem[ "alias" ] := "FAKT"
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := F_FAKT
 
    // temporary tabela - nema semafora
-   _item[ "temp" ]  := .F.
+   hItem[ "temp" ]  := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idfirma + field->idtipdok + field->brdok + field->rbr }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idtipdok", "brdok", "rbr" }
-   _alg[ "sql_in" ]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8) || lpad(rbr,3)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idfirma + field->idtipdok + field->brdok + field->rbr }
+   hAlgoritam[ "dbf_key_fields" ] := { "idfirma", "idtipdok", "brdok", "rbr" }
+   hAlgoritam[ "sql_in" ]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8) || lpad(rbr,3)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    // algoritam 2 - nivo dokumenta
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idfirma + field->idtipdok + field->brdok }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idtipdok", "brdok" }
-   _alg[ "sql_in" ]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idfirma + field->idtipdok + field->brdok }
+   hAlgoritam[ "dbf_key_fields" ] := { "idfirma", "idtipdok", "brdok" }
+   hAlgoritam[ "sql_in" ]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "idfirma, idtipdok, brdok, rbr"
-   _item[ "blacklisted" ] := { "fisc_rn", "dok_veza", "opis" }
+   hItem[ "sql_order" ] := "idfirma, idtipdok, brdok, rbr"
+   hItem[ "blacklisted" ] := { "fisc_rn", "dok_veza", "opis" }
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
@@ -295,32 +288,32 @@ FUNCTION set_a_dbf_fakt_fakt()
 
 FUNCTION set_a_fakt_doks_doks2( tbl, alias, wa )
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTable
 
-   _tbl := tbl
-   _item := hb_Hash()
+   cTable := tbl
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := alias
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := wa
+   hItem[ "alias" ] := alias
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := wa
 
    // temporary tabela - nema semafora
-   _item[ "temp" ]  := .F.
+   hItem[ "temp" ]  := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idfirma + field->idtipdok + field->brdok }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idtipdok", "brdok" }
-   _alg[ "sql_in" ]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idfirma + field->idtipdok + field->brdok }
+   hAlgoritam[ "dbf_key_fields" ] := { "idfirma", "idtipdok", "brdok" }
+   hAlgoritam[ "sql_in" ]         := "rpad( idfirma,2) || rpad( idtipdok,2)  || rpad(brdok,8)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "idfirma, idtipdok, brdok"
-   _item[ "blacklisted" ] := { "dok_veza" }
+   hItem[ "sql_order" ] := "idfirma, idtipdok, brdok"
+   hItem[ "blacklisted" ] := { "dok_veza" }
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.

@@ -20,7 +20,7 @@ FUNCTION ugov_stampa_naljenica()
    LOCAL _index_sort := ""
    LOCAL hRec, cFiltUslovPartner, _usl_mjesto, _usl_ptt
    LOCAL lImaDestinacija
-   LOCAL _count := 0
+   LOCAL nCount := 0
    LOCAL _total_kolicina := 0
 
    PushWA()
@@ -40,20 +40,20 @@ FUNCTION ugov_stampa_naljenica()
 
    DO WHILE .T.
 
-      @ m_x + 0, m_y + 5 SAY "POSTAVLJENJE USLOVA ZA PRAVLJENJE LABELA"
-      @ m_x + 2, m_y + 2 SAY "Artikal  :" GET cIdRoba VALID P_Roba( @cIdRoba ) PICT "@!"
-      @ m_x + 3, m_y + 2 SAY "Partner  :" GET _partner PICT "@S50!"
-      @ m_x + 4, m_y + 2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
-      @ m_x + 5, m_y + 2 SAY "PTT      :" GET _ptt PICT "@S50!"
-      @ m_x + 6, m_y + 2 SAY8 "Gledati tekući datum (D/N):" GET _g_dat VALID _g_dat $ "DN" PICT "@!"
-      @ m_x + 7, m_y + 2 SAY8 "**** Način sortiranja podataka u pregledu: "
-      @ m_x + 8, m_y + 2 SAY8 " 1 - količina + mjesto + naziv"
-      @ m_x + 9, m_y + 2 SAY8 " 2 - mjesto + naziv + količina"
-      @ m_x + 10, m_y + 2 SAY8 " 3 - PTT + mjesto + naziv + kolicina"
-      @ m_x + 11, m_y + 2 SAY8 " 4 - količina + PTT + mjesto + naziv"
-      @ m_x + 12, m_y + 2 SAY8 " 5 - idpartner"
-      @ m_x + 13, m_y + 2 SAY8 " 6 - količina"
-      @ m_x + 14, m_y + 2 SAY8 "odabrana vrijednost:" GET _n_sort VALID _n_sort $ "1234567" PICT "9"
+      @ box_x_koord() + 0, box_y_koord() + 5 SAY "POSTAVLJENJE USLOVA ZA PRAVLJENJE LABELA"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Artikal  :" GET cIdRoba VALID P_Roba( @cIdRoba ) PICT "@!"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Partner  :" GET _partner PICT "@S50!"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "PTT      :" GET _ptt PICT "@S50!"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Gledati tekući datum (D/N):" GET _g_dat VALID _g_dat $ "DN" PICT "@!"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "**** Način sortiranja podataka u pregledu: "
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY8 " 1 - količina + mjesto + naziv"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 " 2 - mjesto + naziv + količina"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY8 " 3 - PTT + mjesto + naziv + kolicina"
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY8 " 4 - količina + PTT + mjesto + naziv"
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY8 " 5 - idpartner"
+      @ box_x_koord() + 13, box_y_koord() + 2 SAY8 " 6 - količina"
+      @ box_x_koord() + 14, box_y_koord() + 2 SAY8 "odabrana vrijednost:" GET _n_sort VALID _n_sort $ "1234567" PICT "9"
       READ
 
       IF LastKey() == K_ESC
@@ -107,17 +107,18 @@ FUNCTION ugov_stampa_naljenica()
       SET ORDER TO TAG "ID"
       GO TOP
       SEEK rugov->id
-
-      @ m_x + 1, m_y + 2 SAY "Ugovor ID: " + PadR( rugov->id, 10 )
-      @ m_x + 2, m_y + 2 SAY PadR( "", 60 )
-      @ m_x + 3, m_y + 2 SAY PadR( "", 60 )
-
       IF !Found()
-         MsgBeep( "Ugovor " + rugov->id + " ne postoji ! Preskačemo ..." )
+         error_bar( "label", "Ugovor rugov.id: " + rugov->id + " ne postoji" )
          SELECT rugov
          SKIP
          LOOP
       ENDIF
+
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ugovor ID: " + PadR( rugov->id, 10 )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR( "", 60 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "", 60 )
+
+
 
       IF field->aktivan == "N"
          SELECT rugov
@@ -145,10 +146,8 @@ FUNCTION ugov_stampa_naljenica()
          ENDIF
       ENDIF
 
-      select_o_partner( ugov->idpartner )
-
-      IF !Found()
-         Msgbeep( "Partner " + ugov->idpartner + " ne postoji, preskacem !!!" )
+      IF !select_o_partner( ugov->idpartner )
+         error_bar( "label", "Partner ugov.partner: " + ugov->idpartner + " ne postoji" )
          SELECT rugov
          SKIP
          LOOP
@@ -182,7 +181,7 @@ FUNCTION ugov_stampa_naljenica()
 
       _total_kolicina += rugov->kolicina
 
-      @ m_x + 2, m_y + 2 SAY "Partner: " + ugov->idpartner
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Partner: " + ugov->idpartner
 
       lImaDestinacija := .F.
 
@@ -228,7 +227,7 @@ FUNCTION ugov_stampa_naljenica()
 
       dbf_update_rec( hRec )
 
-      @ m_x + 3, m_y + 2 SAY "Ukupno prebaceno: " + AllTrim( Str( ++_count ) )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Ukupno prebaceno: " + AllTrim( Str( ++nCount ) )
 
       SELECT rugov
       SKIP
@@ -237,7 +236,7 @@ FUNCTION ugov_stampa_naljenica()
 
    BoxC()
 
-   IF _count == 0
+   IF nCount == 0
       MsgBeep( "Nema generisanih adresa !" )
       SELECT ugov
       RETURN .F.
@@ -245,7 +244,7 @@ FUNCTION ugov_stampa_naljenica()
 
    label_to_lab2( _index_sort )
 
-   MsgBeep( "Ukupno generisano " + AllTrim( Str( _count ) ) +  " naljepnica, količina: " + AllTrim( Str( _total_kolicina, 12, 0 ) ) )
+   MsgBeep( "Ukupno generisano " + AllTrim( Str( nCount ) ) +  " naljepnica, količina: " + AllTrim( Str( _total_kolicina, 12, 0 ) ) )
 
    stampa_pregleda_naljepnica( _index_sort )
 
@@ -262,7 +261,7 @@ FUNCTION ugov_stampa_naljenica()
 STATIC FUNCTION label_to_lab2( index_sort )
 
    LOCAL hRec
-   LOCAL _count := 0
+   LOCAL nCount := 0
 
    SELECT labelu
    SET ORDER TO tag &index_sort
@@ -275,7 +274,7 @@ STATIC FUNCTION label_to_lab2( index_sort )
       SELECT lab2
       APPEND BLANK
 
-      hRec[ "idx" ] := ++_count
+      hRec[ "idx" ] := ++nCount
 
       dbf_update_rec( hRec )
 
@@ -327,7 +326,7 @@ STATIC FUNCTION stampa_pregleda_naljepnica( index_sort )
 STATIC FUNCTION _open_tables()
 
    o_ugov()
-   o_rugov()
+   //o_rugov()
    o_dest()
    //o_partner()
    //o_roba()

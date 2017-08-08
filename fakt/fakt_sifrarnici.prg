@@ -99,9 +99,7 @@ FUNCTION FaRobaBlock( Ch )
 
 
 
-/* fn ObSif()
- *
- */
+/*
 
 STATIC FUNCTION ObSif()
 
@@ -122,11 +120,11 @@ STATIC FUNCTION ObSif()
    // o_rj()
    //o_sastavnice()
    o_ugov()
-   o_rugov()
+   //o_rugov()
 
-   IF RUGOV->( FieldPos( "DEST" ) ) <> 0
+   //IF RUGOV->( FieldPos( "DEST" ) ) <> 0
       o_dest()
-   ENDIF
+   //ENDIF
 
 //   IF gNW == "T"
 //      O_FADO
@@ -137,3 +135,5 @@ STATIC FUNCTION ObSif()
    //o_ops()
 
    RETURN .T.
+
+*/

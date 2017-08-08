@@ -27,7 +27,7 @@ FUNCTION ugov_sif_meni()
    AAdd( aOpc, "3. parametri ugovora" )
    AAdd( aOpcExe, {|| DFTParUg( .F. ) } )
    AAdd( aOpc, "4. grupna zamjena cijene artikla u ugovoru" )
-   AAdd( aOpcExe, {|| ug_ch_price() } )
+   AAdd( aOpcExe, {|| ugov_promjena_cijene_artikla() } )
 
    f18_menu( "mugo", .F., nIzbor, aOpc, aOpcExe )
 
@@ -36,6 +36,7 @@ FUNCTION ugov_sif_meni()
    RETURN .T.
 
 
+/*
 FUNCTION o_ugov()
 
    Select( F_UGOV )
@@ -44,13 +45,14 @@ FUNCTION o_ugov()
 
    RETURN .T.
 
-FUNCTION o_rugov()
+--FUNCTION o_rugov()
 
    Select( F_RUGOV )
    my_use  ( "rugov" )
    SET ORDER TO TAG "ID"
 
    RETURN .T.
+*/
 
 
 FUNCTION MSAY2( x, y, c, nDuzina )
@@ -150,13 +152,14 @@ FUNCTION ug_st_od_do( cBrOd, cBrDo )
    @ m_x + 2, m_y + 2 SAY "DATUM GENERACIJE" GET dDatGen
    READ
 
-   O_GEN_UG
-   SELECT gen_ug
-   SET ORDER TO TAG "dat_gen"
-   SEEK DToS( dDatGen )
+   IF !o_gen_ug( NIL, dDatGen )
+   //SELECT gen_ug
+   //SET ORDER TO TAG "dat_gen"
+   //SEEK DToS( dDatGen )
 
-   IF !Found()
-      GO BOTTOM
+   //IF !Found()
+      //GO BOTTOM
+      o_gen_ug_zadnji()
    ENDIF
 
    cBrOd := field->brdok_od
@@ -179,7 +182,7 @@ FUNCTION ug_st_od_do( cBrOd, cBrDo )
 // ----------------------------------------------------------
 // promjena cijene na artiklu unutar ugovora - grupno
 // ----------------------------------------------------------
-FUNCTION ug_ch_price()
+FUNCTION ugov_promjena_cijene_artikla()
 
    LOCAL cArtikal := Space( 10 )
    LOCAL nCijena := 0
@@ -193,12 +196,12 @@ FUNCTION ug_ch_price()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    // ako je sve ok
-   o_rugov()
-   SELECT rugov
+   o_rugov() // promjena cijene za artikal za sve ugovore
+   //SELECT rugov
    GO TOP
 
    nCnt := 0
@@ -208,7 +211,6 @@ FUNCTION ug_ch_price()
 
       IF field->idroba == cArtikal
          REPLACE field->cijena WITH nCijena
-
          ++nCnt
          @ m_x + 1, m_y + 2 SAY "zamjenjeno ukupno: " + AllTrim( Str( nCnt ) )
       ENDIF

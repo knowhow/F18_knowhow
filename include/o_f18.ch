@@ -32,10 +32,6 @@
 #xcommand O_TIPBL    => SELECT (F_TIPBL)   ;  my_use ("tipbl")      ; set order to tag "1"
 
 
-// ugovori
-
-#xcommand O_GEN_UG   => select(F_GEN_UG)   ;  my_use  ("gen_ug")    ; set order to tag "DAT_GEN"
-#xcommand O_G_UG_P   => select(F_G_UG_P)   ;  my_use  ("gen_ug_p")  ; set order to tag "DAT_GEN"
 
 // grupe i karakteristike
 // #xcommand O_STRINGS  => select(F_STRINGS)  ;  my_use ("strings")   ; set order to tag "1"

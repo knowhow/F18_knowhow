@@ -17,7 +17,7 @@ STATIC LEN_TRAKA := 40
 
 FUNCTION PDVPorPoTar
 
-   PARAMETERS cDat0, cDat1, cIdPos, cNaplaceno, cIdOdj
+   PARAMETERS dDatum0, dDatum1, cIdPos, cNaplaceno, cIdOdj
 
    LOCAL aNiz := {}
    LOCAL fSolo
@@ -37,8 +37,8 @@ FUNCTION PDVPorPoTar
    ENDIF
 
    IF fSolo
-      PRIVATE cDat0 := gDatum
-      PRIVATE cDat1 := gDatum
+      PRIVATE dDatum0 := gDatum
+      PRIVATE dDatum1 := gDatum
       PRIVATE cIdPos := Space( 2 )
       PRIVATE cNaplaceno := "1"
    ENDIF
@@ -73,15 +73,15 @@ FUNCTION PDVPorPoTar
       ENDIF
 
       AAdd ( aNiz, { "Tarife (prazno sve)", "cTarife",, "@S10", } )
-      AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "cDat0",,, } )
-      AAdd ( aNiz, { "                   do datuma", "cDat1",,, } )
+      AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
+      AAdd ( aNiz, { "                   do datuma", "dDatum1",,, } )
 
       DO WHILE .T.
          IF !VarEdit( aNiz, 10, 5, 17, 74, 'USLOVI ZA IZVJESTAJ "POREZI PO TARIFAMA"', "B1" )
             CLOSERET
          ENDIF
          aUsl := Parsiraj( cTarife, "IdTarifa" )
-         IF aUsl <> NIL .AND. cDat0 <= cDat1
+         IF aUsl <> NIL .AND. dDatum0 <= dDatum1
             EXIT
          ELSEIF aUsl == nil
             MsgBeep ( "Kriterij za tarife nije korektno postavljen!" )
@@ -129,7 +129,7 @@ FUNCTION PDVPorPoTar
          ENDIF
 
          ? "     Tarife:", iif ( Empty ( cTarife ), "SVE", cTarife )
-         ? "PERIOD: " + FormDat1( cDat0 ) + " - " + FormDat1( cDat1 )
+         ? "PERIOD: " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
          ?
 
       ELSE // fsolo
@@ -172,8 +172,8 @@ FUNCTION PDVPorPoTar
 
       // matrica je lok var : aTarife:={}
       // filuj za poreze, VD_PRR - realizacija iz predhodnih sezona
-      aTarife := Porezi( VD_RN, cDat0, aTarife, cNaplaceno )
-      aTarife := Porezi( VD_PRR, cDat0, aTarife, cNaplaceno )
+      aTarife := Porezi( VD_RN, dDatum0, aTarife, cNaplaceno )
+      aTarife := Porezi( VD_PRR, dDatum0, aTarife, cNaplaceno )
 
       ASort ( aTarife,,, {| x, y| x[ 1 ] < y[ 1 ] } )
 

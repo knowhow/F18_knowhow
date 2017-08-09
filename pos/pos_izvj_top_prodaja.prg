@@ -30,9 +30,9 @@ STATIC FUNCTION _o_tables()
 FUNCTION pos_top_narudzbe()
 
    LOCAL aNiz := {}, cPor, cZaduz, aVrsteP
-   PRIVATE cIdPos, cRoba := Space( 60 ), dDat0, dDat1, nTop := 10, cSta := "I"
+   PRIVATE cIdPos, cRoba := Space( 60 ), dDatum0, dDatum1, nTop := 10, cSta := "I"
 
-   dDat0 := dDat1 := Date ()
+   dDatum0 := dDatum1 := Date ()
 
    aDbf := {}
    AAdd ( aDbf, { "IdRoba",   "C", 10, 0 } )
@@ -63,8 +63,8 @@ FUNCTION pos_top_narudzbe()
    ENDIF
    AAdd ( aNiz, { "Roba (prazno-sve)", "cRoba",, "@!S30", } )
    AAdd ( aNiz, { "Pregled po Iznosu/Kolicini/Oboje (I/K/O)", "cSta", "cSta$'IKO'", "@!", } )
-   AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDat0",,, } )
-   AAdd ( aNiz, { "                   do datuma", "dDat1",,, } )
+   AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
+   AAdd ( aNiz, { "                   do datuma", "dDatum1",,, } )
    AAdd ( aNiz, { "Koliko artikala ispisati?", "nTop", "nTop > 0",, } )
    DO WHILE .T.
       IF !VarEdit( aNiz, 10, 5, 19, 74, ;
@@ -73,7 +73,7 @@ FUNCTION pos_top_narudzbe()
          CLOSERET
       ENDIF
       aUsl1 := Parsiraj( cRoba, "IdRoba", "C" )
-      IF aUsl1 <> NIL .AND. dDat0 <= dDat1
+      IF aUsl1 <> NIL .AND. dDatum0 <= dDatum1
          EXIT
       ELSEIF aUsl1 == NIL
          Msg( "Kriterij za robu nije korektno postavljen!" )
@@ -101,11 +101,11 @@ FUNCTION pos_top_narudzbe()
    ? PadC ( "-----------------------", 40 )
    ? PadC ( "NA DAN: " + FormDat1 ( gDatum ), 40 )
    ?
-   ? PadC ( "Za period od " + FormDat1 ( dDat0 ) + " do " + FormDat1 ( dDat1 ), 40 )
+   ? PadC ( "Za period od " + FormDat1 ( dDatum0 ) + " do " + FormDat1 ( dDatum1 ), 40 )
    ?
 
-   TopNizvuci ( VD_RN, dDat0 )
-   TopNizvuci ( VD_PRR, dDat0 )
+   TopNizvuci ( VD_RN, dDatum0 )
+   TopNizvuci ( VD_PRR, dDatum0 )
 
    // stampa izvjestaja
    SELECT POM
@@ -165,16 +165,16 @@ FUNCTION pos_top_narudzbe()
 
 
 
-/* TopNizvuci(cIdVd,dDat0)
+/* TopNizvuci(cIdVd,dDatum0)
  *     Punjenje pomocne baze realizacijom po robama
  */
 
-FUNCTION TopNizvuci( cIdVd, dDat0 )
+FUNCTION TopNizvuci( cIdVd, dDatum0 )
 
    SELECT pos_doks
-   SEEK cIdVd + DToS ( dDat0 )
+   SEEK cIdVd + DToS ( dDatum0 )
 
-   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDat1
+   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
 
       IF ( !pos_admin() .AND. pos_doks->idpos = "X" ) .OR. ;
             ( pos_doks->IdPos = "X" .AND. AllTrim( cIdPos ) <> "X" ) .OR. ;

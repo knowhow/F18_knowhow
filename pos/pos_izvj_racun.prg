@@ -125,6 +125,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
    aRekPor := {}
 
    DO WHILE !Eof() .AND. ( IdPos + IdVd + DToS( datum ) ) == ( cIdPos + VD_RN + DToS( dDatumRn ) )
+
       IF AScan( aVezani, {| aVal| aVal[ 2 ] == &cPosDB->brdok } ) == 0
          SKIP
          LOOP
@@ -393,13 +394,13 @@ FUNCTION RacFuter( cIdRadnik, cSmjena )
    PaperFeed ()
    gOtvorStr()
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFill )
 
-   // {
+
    LOCAL cDbf
    LOCAL cIdRadnik
    LOCAL nCnt
@@ -498,7 +499,7 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
 
       pos_stampa_racuna_pdv( cIdPos, pos_doks->brdok, .T., pos_doks->idvrstep, pos_doks->datum, aVezani, lViseOdjednom, lOnlyFill )
 
-      RETURN
+      RETURN .T.
    ENDIF
 
    // TODO: ovu funkciju izbaciti, napraviti sve kroz StampaRac() kao sto je slucaj sa novim obracunom poreza, Ostavljeno trenutno samo u ovoj varijanti (Ugostiteljstvo)
@@ -674,7 +675,7 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
 
    SELECT pos_doks
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------------
@@ -746,18 +747,17 @@ FUNCTION StampaRekap( cIdRadnik, cBrojStola, dDatumOd, dDatumDo )
 
    IF nCnt == 0
       MsgBeep( "Ne postoje otvoreni racuni za stol br." + cBrojStola )
-      RETURN
+      RETURN .F.
    ENDIF
 
    StampaPrep( gIdPos, DToS( aGrupni[ 1, 4 ] ) + aGrupni[ 1, 2 ], aGrupni, .F., .F. )
 
-   RETURN
-// }
+   RETURN .T.
 
 
 FUNCTION StampaNezakljRN( cIdRadnik, dDatumOd, dDatumDo )
 
-   // {
+
 
    START PRINT CRET
 

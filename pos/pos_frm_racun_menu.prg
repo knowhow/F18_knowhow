@@ -350,7 +350,7 @@ FUNCTION RekapViseRacuna()
       StampaRekap( gIdRadnik, cBrojStola, dDatOd, dDatDo, .T. )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -363,7 +363,7 @@ FUNCTION StrValuta( cNaz2, dDat )
    SELECT valute
    SET ORDER TO TAG "NAZ2"
    cNaz2 := PadR( cNaz2, 4 )
-   SEEK PadR( cnaz2, 4 ) + DToS( dDat )
+   SEEK PadR( cNaz2, 4 ) + DToS( dDat ) // valute
    IF valute->naz2 <> cnaz2
       SKIP -1
    ENDIF

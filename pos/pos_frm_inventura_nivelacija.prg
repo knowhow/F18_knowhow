@@ -883,13 +883,13 @@ FUNCTION _pop_kol( kol )
 
 
 
-FUNCTION _set_cijena_artikla( id_vd, id_roba )
+FUNCTION _set_cijena_artikla( id_vd, cIdRoba )
 
    PushWa()
 
    IF id_vd == VD_INV
 
-      select_o_roba( id_roba )
+      select_o_roba( cIdRoba )
       _cijena := pos_get_mpc()
 
    ENDIF
@@ -899,7 +899,7 @@ FUNCTION _set_cijena_artikla( id_vd, id_roba )
    RETURN .T.
 
 
-FUNCTION _postoji_artikal_u_pripremi( id_roba )
+FUNCTION _postoji_artikal_u_pripremi( cIdRoba )
 
    LOCAL _ok := .T.
 
@@ -908,11 +908,11 @@ FUNCTION _postoji_artikal_u_pripremi( id_roba )
    SELECT priprz
    SET ORDER TO TAG "1"
    GO TOP
-   SEEK id_roba
+   SEEK cIdRoba // PRIPRZ
 
    IF Found()
       _ok := .F.
-      MsgBeep( "Artikal " + AllTrim( id_roba ) + " se već nalazi u pripremi! Ako nastavite sa unosom #dodat će se vrijednost na postojeću stavku..." )
+      MsgBeep( "Artikal " + AllTrim( cIdRoba ) + " se već nalazi u pripremi! Ako nastavite sa unosom #dodat će se vrijednost na postojeću stavku..." )
    ENDIF
 
    PopWa()
@@ -925,13 +925,13 @@ FUNCTION RacKol( cIdOdj, cIdRoba, nKol )
 
    MsgO( "Računam količinu artikla ..." )
 
-   SELECT pos
-   SET ORDER TO TAG "2"
+   //SELECT pos
+   //SET ORDER TO TAG "2"
    nKol := 0
 
-   SEEK cIdOdj + cIdRoba
+   seek_pos_2( cIdOdj, cIdRoba )
 
-   WHILE !Eof() .AND. pos->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. pos->Datum <= dDatRada
+   DO WHILE !Eof() .AND. pos->IdOdj + pos->IdRoba  == ( cIdOdj + cIdRoba ) .AND. pos->Datum <= dDatRada
 
       IF AllTrim( POS->IdPos ) == "X"
          SKIP

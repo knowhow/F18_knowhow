@@ -22,7 +22,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    LOCAL _objekat_id
    LOCAL dDatod, dDatdo
    LOCAL _params := fakt_params()
-   LOCAL _vrste_pl := _params[ "fakt_vrste_placanja" ]
+   LOCAL cVrstePlacanja := _params[ "fakt_vrste_placanja" ]
    LOCAL _objekti := _params[ "fakt_objekti" ]
    LOCAL _vezni_dokumenti := _params[ "fakt_dok_veze" ]
    LOCAL lOpcine := .T.
@@ -61,7 +61,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       _objekat_id := Space( 10 )
    ENDIF
 
-   Box( , 13 + iif( _vrste_pl .OR. lOpcine .OR. _objekti, 6, 0 ), 77 )
+   Box( , 13 + iif( cVrstePlacanja .OR. lOpcine .OR. _objekti, 6, 0 ), 77 )
 
    cIdFirma := fetch_metric( "fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
    cUslovTipDok := fetch_metric( "fakt_stampa_liste_dokumenti", _curr_user, cUslovTipDok )
@@ -102,7 +102,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
       @ box_x_koord() + 11, box_y_koord() + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa VALID cRtarifa $ "DN" PICT "@!"
 
-      IF _vrste_pl
+      IF cVrstePlacanja
          @ box_x_koord() + 12, box_y_koord() + 2 SAY "----------------------------------------"
          @ box_x_koord() + 13, box_y_koord() + 2 SAY "Za fakture (Tip dok.10):"
          @ box_x_koord() + 14, box_y_koord() + 2 SAY8 "Način placanja:" GET qqVrsteP
@@ -129,7 +129,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
       cFilterOpcina := Parsiraj( cOpcina, "flt_fakt_part_opc()", "C" )
 
-      IF ( !lOpcine .OR. cFilterOpcina <> NIL ) .AND. cFilterBrFaktDok <> NIL .AND. cFilterSifraKupca <> NIL .AND. ( !_vrste_pl .OR. aUslVrsteP <> NIL )
+      IF ( !lOpcine .OR. cFilterOpcina <> NIL ) .AND. cFilterBrFaktDok <> NIL .AND. cFilterSifraKupca <> NIL .AND. ( !cVrstePlacanja .OR. aUslVrsteP <> NIL )
          EXIT
       ENDIF
 
@@ -219,7 +219,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       dbSetFilter( bFilter, cFilter ), dbGoTop() }
 
    Eval( s_bFaktDoksPeriod )
-
+altd()
 
    @ f18_max_rows() - 4, f18_max_cols() - 3 SAY Str( rloptlevel(), 2 )
 
@@ -229,10 +229,10 @@ FUNCTION fakt_pregled_liste_dokumenata()
    EOF CRET
 
    IF cTabela == "D"
-      fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine )
+      fakt_lista_dokumenata_tabelarni_pregled( cVrstePlacanja, lOpcine )
    ELSE
       gaZagFix := { 3, 3 }
-      stampa_liste_dokumenata( dDatOd, dDatDo, cUslovTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, cFilterOpcina, cValute )
+      fakt_stampa_liste_dokumenata( dDatOd, dDatDo, cUslovTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, cFilterOpcina, cValute )
    ENDIF
 
    my_close_all_dbf()

@@ -128,7 +128,7 @@ METHOD F18Admin:update_app()
 
 
 /*
-METHOD F18Admin:update_app_run_templates_update( params )
+METHOD F18Admin:update_app_run_templates_update( hParams )
 
    LOCAL cUpdateFile := "F18_template_#VER#.tar.bz2"
    LOCAL _dest := SLASH + "opt" + SLASH + "knowhowERP" + SLASH
@@ -139,12 +139,12 @@ METHOD F18Admin:update_app_run_templates_update( params )
 #endif
 
    IF ::update_app_templates_version == "#LAST#"
-      ::update_app_templates_version := params[ "templates" ]
+      ::update_app_templates_version := hParams[ "templates" ]
    ENDIF
 
    cUpdateFile := StrTran( cUpdateFile, "#VER#", ::update_app_templates_version )
 
-   IF !::wget_download( params[ "url" ], cUpdateFile, _dest + cUpdateFile, .T., .T. )
+   IF !::wget_download( hParams[ "url" ], cUpdateFile, _dest + cUpdateFile, .T., .T. )
       RETURN SELF
    ENDIF
 
@@ -778,8 +778,8 @@ METHOD F18Admin:update_db_company( cOrganizacija )
 
 METHOD F18Admin:razdvajanje_sezona()
 
-   LOCAL _params
-   LOCAL _dbs := {}
+   LOCAL hParams
+   LOCAL oTableDatabases := {}
    LOCAL nI
    LOCAL hDbServerParams, cTekuciUser, cTekucaPassword, cTekucaDb
    LOCAL cQuery
@@ -791,6 +791,7 @@ METHOD F18Admin:razdvajanje_sezona()
    LOCAL aRezultati := {}
    LOCAL oRow
    LOCAL lConfirmEnter
+   LOCAL GetList := {}
 
 #ifndef F18_DEBUG
 
@@ -854,15 +855,15 @@ METHOD F18Admin:razdvajanje_sezona()
    cQuery += "ORDER BY datname;"
 
 
-   _dbs := postgres_sql_query( cQuery )
-   _dbs:GoTo( 1 )
+   oTableDatabases := postgres_sql_query( cQuery )
+   oTableDatabases:GoTo( 1 )
 
    // treba da imamo listu baza,  uzmemo sa select-om sve sto ima npr. 2013, i onda cemo provrtiti te baze i napraviti 2014
    Box(, 3, 65 )
 
-   DO WHILE !_dbs:Eof()
+   DO WHILE !oTableDatabases:Eof()
 
-      oRow := _dbs:GetRow()
+      oRow := oTableDatabases:GetRow()
 
       // test_2013
       cDatabaseFrom := AllTrim( oRow:FieldGet( 1 ) )
@@ -873,21 +874,21 @@ METHOD F18Admin:razdvajanje_sezona()
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Kreiranje baze: " +  cDatabaseFrom + " > " + cDatabaseTo
 
 
-      _params := hb_Hash()
-      _params[ "db_type" ] := 1 // init parametri za razdvajanje, pocetno stanje je 1
-      _params[ "cDatabaseName" ] := cDatabaseTo
-      _params[ "db_template" ] := cDatabaseFrom
-      _params[ "db_drop" ] := cDeletePostojecaDbDN
-      _params[ "db_comment" ] := ""
+      hParams := hb_Hash()
+      hParams[ "db_type" ] := 1 // init parametri za razdvajanje, pocetno stanje je 1
+      hParams[ "db_name" ] := cDatabaseTo
+      hParams[ "db_template" ] := cDatabaseFrom
+      hParams[ "db_drop" ] := cDeletePostojecaDbDN
+      hParams[ "db_comment" ] := ""
 
-      IF ! ::create_new_pg_db( _params )
+      IF ! ::create_new_pg_db( hParams )
          AAdd( aRezultati, { cDatabaseTo, cDatabaseFrom, "ERR" } )
          error_bar( "nova_sezona", cDatabaseFrom + " -> " + cDatabaseTo )
       ELSE
          ++_count
       ENDIF
 
-      _dbs:Skip()
+      oTableDatabases:Skip()
 
    ENDDO
 
@@ -1092,7 +1093,7 @@ METHOD F18Admin:drop_pg_db( cDatabaseName )
    RETURN .T.
 
 
-METHOD F18Admin:delete_db_data_all( cDatabaseName, data_type )
+METHOD F18Admin:delete_db_data_all( cDatabaseName, nDataType )
 
    LOCAL oRet
    LOCAL cQuery
@@ -1103,11 +1104,11 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, data_type )
       RETURN .F.
    ENDIF
 
-   // data_type
+   // nDataType
    // 1 - pocetno stanje
    // 2 - brisi sve podatke
-   IF data_type == NIL
-      data_type := 1
+   IF nDataType == NIL
+      nDataType := 1
    ENDIF
 
 
@@ -1163,7 +1164,7 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, data_type )
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "log;"
 
    // ako je potrebno brisati sve onda dodaj i sljedece...
-   IF data_type > 1
+   IF nDataType > 1
 
       cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_os;"
       cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_promj;"
@@ -1196,17 +1197,18 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, data_type )
 // -------------------------------------------------------------------
 // kreiranje baze, parametri
 // -------------------------------------------------------------------
-METHOD F18Admin:create_new_pg_db_params( params )
+METHOD F18Admin:create_new_pg_db_params( hParams )
 
    LOCAL lOk := .F.
    LOCAL nX := 1
    LOCAL cDatabaseName := Space( 50 )
    LOCAL cDatabaseTemplate := Space( 50 )
-   LOCAL _db_year := AllTrim( Str( Year( Date() ) ) )
+   LOCAL cDatabaseSezona := AllTrim( Str( Year( Date() ) ) )
    LOCAL cDatabaseComment := Space( 100 )
    LOCAL lDbDrop := "N"
    LOCAL nDatabaseType := 1
-   LOCAL _db_str
+  // LOCAL cDatabaseName
+   LOCAL GetList := {}
 
    Box(, 12, 70 )
 
@@ -1215,7 +1217,7 @@ METHOD F18Admin:create_new_pg_db_params( params )
    ++nX
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Naziv nove baze:" GET cDatabaseName VALID _new_db_valid( cDatabaseName ) PICT "@S30"
-   @ box_x_koord() + nX, Col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !Empty( _db_year )
+   @ box_x_koord() + nX, Col() + 1 SAY "godina:" GET cDatabaseSezona PICT "@S4" VALID !Empty( cDatabaseSezona )
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Opis baze (*):" GET cDatabaseComment PICT "@S50"
@@ -1246,8 +1248,8 @@ METHOD F18Admin:create_new_pg_db_params( params )
       RETURN lOk
    ENDIF
 
-   // formiranje strina naziva baze...
-   _db_str := AllTrim( cDatabaseName ) + "_" + AllTrim( _db_year )
+
+   cDatabaseName := AllTrim( cDatabaseName ) + "_" + AllTrim( cDatabaseSezona )    // formiranje strina naziva baze
 
 
    // template empty
@@ -1260,11 +1262,11 @@ METHOD F18Admin:create_new_pg_db_params( params )
       cDatabaseTemplate := ""
    ENDIF
 
-   params[ "cDatabaseName" ] := AllTrim( _db_str )
-   params[ "db_template" ] := AllTrim( cDatabaseTemplate )
-   params[ "db_drop" ] := lDbDrop
-   params[ "db_type" ] := nDatabaseType
-   params[ "db_comment" ] := AllTrim( cDatabaseComment )
+   hParams[ "db_name" ] := AllTrim( cDatabaseName )
+   hParams[ "db_template" ] := AllTrim( cDatabaseTemplate )
+   hParams[ "db_drop" ] := lDbDrop
+   hParams[ "db_type" ] := nDatabaseType
+   hParams[ "db_comment" ] := AllTrim( cDatabaseComment )
 
    lOk := .T.
 

@@ -91,7 +91,7 @@ CREATE INDEX fakt_fakt_id1
 FUNCTION fakt_unos_dokumenta()
 
    LOCAL nI, _x_pos, _y_pos, nX, nY
-   LOCAL _opt_d, cFaktOpcije
+   LOCAL _opt_d, cFaktaOpcije
    LOCAL _sep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    PRIVATE ImeKol, Kol
 
@@ -152,32 +152,32 @@ FUNCTION fakt_unos_dokumenta()
 
    _opt_d := ( nY / 4 )
 
-   cFaktOpcije := _upadr(  "<c+N> Nova stavka", _opt_d ) + _sep
-   cFaktOpcije += _upadr( "<ENT> Ispravka", _opt_d ) + _sep
-   cFaktOpcije += _upadr( "<c+T> Briši stavku", _opt_d ) + _sep
+   cFaktaOpcije := _upadr(  "<c+N> Nova stavka", _opt_d ) + _sep
+   cFaktaOpcije += _upadr( "<ENT> Ispravka", _opt_d ) + _sep
+   cFaktaOpcije += _upadr( "<c+T> Briši stavku", _opt_d ) + _sep
 
-   @ box_x_koord() + nX - 4, box_y_koord() + 2 SAY8 cFaktOpcije
+   @ box_x_koord() + nX - 4, box_y_koord() + 2 SAY8 cFaktaOpcije
 
-   cFaktOpcije := _upadr( "<c+A> Ispravka dok.", _opt_d ) + _sep
-   cFaktOpcije += _upadr( "<c+P> Štampa (txt)", _opt_d ) + _sep
-   cFaktOpcije += _upadr( iif( is_mac(), "<P>", "<a+P>" ) + " Štampa (LO)", _opt_d ) + _sep
+   cFaktaOpcije := _upadr( "<c+A> Ispravka dok.", _opt_d ) + _sep
+   cFaktaOpcije += _upadr( "<c+P> Štampa (txt)", _opt_d ) + _sep
+   cFaktaOpcije += _upadr( iif( is_mac(), "<P>", "<a+P>" ) + " Štampa (LO)", _opt_d ) + _sep
 
-   @ box_x_koord() + nX - 3, box_y_koord() + 2 SAY8 cFaktOpcije
+   @ box_x_koord() + nX - 3, box_y_koord() + 2 SAY8 cFaktaOpcije
 
-   cFaktOpcije := _upadr( "<a+A> Ažuriranje", _opt_d ) + _sep
-   cFaktOpcije += _upadr( "<c+F9> Briši sve", _opt_d ) + _sep
-   cFaktOpcije += _upadr( "<F5> Kontrola zbira", _opt_d ) + _sep
-   cFaktOpcije += "<T> total dokumenta"
+   cFaktaOpcije := _upadr( "<a+A> Ažuriranje", _opt_d ) + _sep
+   cFaktaOpcije += _upadr( "<c+F9> Briši sve", _opt_d ) + _sep
+   cFaktaOpcije += _upadr( "<F5> Kontrola zbira", _opt_d ) + _sep
+   cFaktaOpcije += "<T> total dokumenta"
 
-   @ box_x_koord() + nX - 2, box_y_koord() + 2 SAY8 cFaktOpcije
+   @ box_x_koord() + nX - 2, box_y_koord() + 2 SAY8 cFaktaOpcije
 
-   cFaktOpcije := _upadr( "", _opt_d ) + _sep
-   cFaktOpcije += _upadr( "", _opt_d ) + _sep
-   cFaktOpcije += _upadr( iif( is_mac(), "<0>", "<F10>" ) + " Ostale opcije", _opt_d ) + _sep
-   cFaktOpcije += "<O> Konverzije"
-   cFaktOpcije += "<A> Asistent"
+   cFaktaOpcije := _upadr( "", _opt_d ) + _sep
+   cFaktaOpcije += _upadr( "", _opt_d ) + _sep
+   cFaktaOpcije += _upadr( iif( is_mac(), "<0>", "<F10>" ) + " Ostale aOpcije", _opt_d ) + _sep
+   cFaktaOpcije += "<O> Konverzije"
+   cFaktaOpcije += "<A> Asistent"
 
-   @ box_x_koord() + nX - 1, box_y_koord() + 2 SAY8 cFaktOpcije
+   @ box_x_koord() + nX - 1, box_y_koord() + 2 SAY8 cFaktaOpcije
 
    my_browse( "PNal", nX, nY, {| nCh | fakt_pripr_keyhandler( nCh ) }, "", "FAKT Priprema...", , , , , 4 )
 
@@ -318,7 +318,7 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
       ENDIF
 
       IF nMenu == NIL .OR. nMenu > Len( aTipoviDokumenata ) .OR. nMenu < 0
-         MsgBeep( "Nepostojeća opcija !" )
+         MsgBeep( "Nepostojeća aOpcija !" )
          RETURN 0
       ENDIF
 
@@ -647,7 +647,7 @@ STATIC FUNCTION fakt_pripr_keyhandler( Ch )
       ENDIF
 
       IF hFiskalDevParams[ "print_fiscal" ] == "N"
-         MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih računa !" )
+         MsgBeep( "Nije Vam dozvoljena aOpcija za stampu fiskalnih računa !" )
          RETURN DE_CONT
       ENDIF
 
@@ -812,7 +812,7 @@ STATIC FUNCTION fakt_pripr_keyhandler( Ch )
          ENDIF
 
          IF hFiskalDevParams[ "print_fiscal" ] == "N"
-            MsgBeep( "Nije Vam dozvoljena opcija za štampu fiskalnih računa !" )
+            MsgBeep( "Nije Vam dozvoljena aOpcija za štampu fiskalnih računa !" )
             RETURN DE_REFRESH
          ENDIF
 
@@ -885,7 +885,7 @@ STATIC FUNCTION fakt_pripr_keyhandler( Ch )
 
       RETURN DE_REFRESH
 
-      // ostale opcije nad dokumentom
+      // ostale aOpcije nad dokumentom
 
    CASE Ch == iif( is_mac(), Asc( "0" ), K_F10 )
 
@@ -1354,18 +1354,18 @@ FUNCTION StUgRabKup()
 /*
 FUNCTION IspisBankeNar( cBanke )
 
-   LOCAL aOpc
+   LOCAL aaOpc
 
    o_banke()
-   aOpc := TokToNiz( cBanke, "," )
+   aaOpc := TokToNiz( cBanke, "," )
    cVrati := ""
 
    SELECT banke
    SET ORDER TO TAG "ID"
-   FOR i := 1 TO Len( aOpc )
-  --    HSEEK SubStr( aOpc[ i ], 1, 3 )
+   FOR i := 1 TO Len( aaOpc )
+  --    HSEEK SubStr( aaOpc[ i ], 1, 3 )
       IF Found()
-         cVrati += AllTrim( banke->naz ) + ", " + AllTrim( banke->adresa ) + ", " + AllTrim( banke->mjesto ) + ", " + AllTrim( aOpc[ i ] ) + "; "
+         cVrati += AllTrim( banke->naz ) + ", " + AllTrim( banke->adresa ) + ", " + AllTrim( banke->mjesto ) + ", " + AllTrim( aaOpc[ i ] ) + "; "
       ELSE
          cVrati += ""
       ENDIF
@@ -1415,37 +1415,45 @@ FUNCTION RabPor10()
 
 STATIC FUNCTION popup_fakt_unos_dokumenta()
 
-   PRIVATE opc[ 6 ]
+   LOCAL aOpc[ 6 ]
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
+   LOCAL am_x := box_x_koord(), am_y := box_y_koord()
 
-   opc[ 1 ] := "1. generacija faktura na osnovu ugovora            "
-   opc[ 2 ] := "2. sredjivanje rednih br.stavki dokumenta"
-   opc[ 3 ] := "3. ispravka teksta na kraju fakture"
-   opc[ 4 ] := "4. svedi protustavkom vrijednost dokumenta na 0"
-   opc[ 5 ] := "5. priprema => smece"
-   opc[ 6 ] := "6. smece    => priprema"
+   aOpc[ 1 ] := "1. generacija faktura na osnovu ugovora            "
+   AAdd( aOpcExe, {||  fakt_meni_gen_ugov() } )
 
-/*
-   TODO: ovo je mrtvo?
-   AAdd( opc, "A. kompletiranje iznosa fakture pomocu usluga" )
-   AAdd( opc, "-----------------------------------------------" )
-   AAdd( opc, "C. import txt-a" )
-   AAdd( opc, "U. stampa ugovora od do " )
-*/
-   h[ 1 ] := h[ 2 ] := ""
+   aOpc[ 2 ] := "2. sredjivanje rednih br.stavki dokumenta"
+   AAdd( aOpcExe, {||  fakt_sredi_redni_broj_u_pripremi() } )
+
+   aOpc[ 3 ] := "3. ispravka teksta na kraju fakture"
+   AAdd( aOpcExe, {||  fakt_ispravka_ftxt() } )
+
+   aOpc[ 4 ] := "4. svedi protustavkom vrijednost dokumenta na 0"
+   AAdd( aOpcExe, {||  fakt_svedi_prostavkom_vrijednost_dokumenta_na_0() } )
+   aOpc[ 5 ] := "5. priprema => smece"
+   AAdd( aOpcExe, {||   azuriraj_smece() } )
+   aOpc[ 6 ] := "6. smece    => priprema"
+   AAdd( aOpcExe, {||  povrat_smece() } )
+
 
    my_close_all_dbf()
-   PRIVATE am_x := box_x_koord(), am_y := box_y_koord()
-   PRIVATE nIzbor := 1
 
+
+   f18_menu( "fakt0", .F., nIzbor, aOpc, aOpcExe )
+
+   // PRIVATE nIzbor := 1
+
+/*
    DO WHILE .T.
 
-      nIzbor := meni_0( "prip", opc, nIzbor, .F. )
+      nIzbor := meni_0( "prip", aOpc, nIzbor, .F. )
 
       DO CASE
       CASE nIzbor == 0
          EXIT
       CASE nIzbor == 1
-         m_gen_ug()
+         fakt_meni_gen_ugov()
 
       CASE nIzbor == 2
          fakt_sredi_redni_broj_u_pripremi()
@@ -1538,6 +1546,8 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
    ENDDO
 
+*/
+
    box_x_koord( am_x )
    box_y_koord( am_y )
 
@@ -1550,10 +1560,91 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
 
 
+
+STATIC FUNCTION fakt_ispravka_ftxt()
+
+   select_fakt_pripr()
+   GO TOP
+   // lDoks2 := .F. // ( my_get_from_ini( "FAKT", "Doks2", "N", KUMPATH ) == "D" )
+   IF Val( fakt_pripr->rbr ) <> 1
+      MsgBeep( "U pripremi se ne nalazi dokument" )
+   ELSE
+      fakt_ispravka_ftxt()
+   ENDIF
+
+   RETURN .T.
+
+
+STATIC FUNCTION fakt_svedi_prostavkom_vrijednost_dokumenta_na_0()
+
+   LOCAL nDug, cDN
+   LOCAL GetList := {}
+
+   o_fakt_pripr()
+   GO TOP
+   nDug := 0
+   DO WHILE !Eof()
+      scatter()
+      nDug += Round( _Cijena * _kolicina * ( 1 - _Rabat / 100 ), fakt_zaokruzenje() )
+      SKIP
+   ENDDO
+
+
+   _idroba := Space( 10 )
+   _kolicina := 1
+   _rbr := Str( RbrUnum( _Rbr ) + 1, 3, 0 )
+   _rabat := 0
+
+   cDN := "D"
+   Box(, 4, 60 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Artikal koji se stvara:" GET _idroba  PICT "@!" VALID P_Roba( @_idroba )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Kolicina" GET _kolicina VALID {|| _kolicina <> 0 } PICT fakt_pic_kolicina()
+   READ
+
+   IF LastKey() == K_ESC
+      BoxC()
+      my_close_all_dbf()
+      RETURN DE_CONT
+   ENDIF
+
+
+   _cijena := nDug / _kolicina
+   IF _cijena < 0
+      _Cijena := -_cijena
+   ELSE
+      _kolicina := -_kolicina
+   ENDIF
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Cijena" GET _cijena  PICT fakt_pic_cijena()
+   cDN := "D"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Staviti cijenu u šifarnik ?" GET cDN VALID cDN $ "DN" PICT "@!"
+   READ
+
+   IF cDN == "D"
+      IF roba_update_vpc( _idroba, _cijena )
+         info_bar( "roba", "ROBA: " + _idroba + " update vpc=" + AllTrim( Str( nCijena, 10, 2 ) ) )
+      ELSE
+         error_bar( "roba", "ROBA: " + _idroba + " update vpc ERROR?!" )
+      ENDIF
+      SELECT fakt_pripr
+   ENDIF
+
+   IF LastKey() = K_ESC
+      BoxC()
+      my_close_all_dbf()
+      RETURN DE_CONT
+   ENDIF
+   APPEND BLANK
+   Gather()
+   BoxC()
+
+   RETURN .T.
+
+
 // --------------------------------------------------------------------
 // izmjeni sve stavke dokumenta prema tekucoj stavci
 // ovo treba da radi samo na stavci broj 1
 // --------------------------------------------------------------------
+
 STATIC FUNCTION izmjeni_sve_stavke_dokumenta( hOldDok, hNewDok )
 
    LOCAL _old_firma := hOldDok[ "idfirma" ]

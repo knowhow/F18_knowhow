@@ -118,8 +118,7 @@ FUNCTION i_zaglavlje_fakture()
    RETURN
 
 
-// / --------------------------------------
-// / --------------------------------------
+
 FUNCTION i_povrat_fakture()
 
    LOCAL _tmp, _a_polja, _stavka_dok

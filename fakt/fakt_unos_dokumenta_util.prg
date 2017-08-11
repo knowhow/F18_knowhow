@@ -867,7 +867,7 @@ FUNCTION UGenNar()
 
    SELECT ( F_UGOV )
    IF !Used()
-      o_ugov()
+  --    o_ugov()
    ENDIF
    SET ORDER TO TAG "1"
   -- HSEEK "D" + "G" + _idpartner

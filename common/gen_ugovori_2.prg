@@ -12,6 +12,30 @@
 
 #include "f18.ch"
 
+
+FUNCTION fakt_meni_gen_ugov()
+
+   PRIVATE DFTkolicina := 1
+   PRIVATE DFTidroba := PadR( "", 10 )
+   PRIVATE DFTvrsta := "1"
+   PRIVATE DFTidtipdok := "10"
+   PRIVATE DFTdindem := "KM "
+   PRIVATE DFTidtxt := "10"
+   PRIVATE DFTzaokr := 2
+   PRIVATE DFTiddodtxt := "  "
+
+   // PRIVATE gGenUgV2 := "1"
+   PRIVATE gFinKPath := Space( 50 )
+
+   DFTParUg( .T. )
+
+   ugov_generacija()
+
+   RETURN .T.
+
+
+
+
 FUNCTION ugov_generacija()
 
    LOCAL dDatObr
@@ -57,38 +81,36 @@ FUNCTION ugov_generacija()
 
    o_fakt_pripr()
 
+   AltD()
+
    IF RecCount2() <> 0
       MsgBeep( "U pripremi postoje dokumenti#Prekidam generaciju!" )
       my_close_all_dbf()
       RETURN .F.
    ENDIF
 
-   IF !Empty( cIdArt )
-      ?E "ugovori za ", cIdArt, "se generisu"
-   ELSE
-
-      IF postoji_generacija_u_gen_ug( dDatObr )
-         RETURN .F.
-      ENDIF
-
-      IF !o_gen_ug( dDatObr )
-         APPEND BLANK
-      ENDIF
-      hRec := dbf_get_rec()
-      hRec[ "dat_obr" ] := dDatObr
-      hRec[ "dat_gen" ] := dDatGen
-      hRec[ "dat_u_fin" ] := dDatLUpl
-      hRec[ "kto_kup" ] := cKtoDug
-      hRec[ "kto_dob" ] := cKtoPot
-      hRec[ "opis" ] := cOpis
-      update_rec_server_and_dbf( "fakt_gen_ug", hRec, 1, "FULL" )
+   IF postoji_generacija_u_gen_ug( dDatObr, cIdArt )
+      RETURN .F.
    ENDIF
 
+   IF !o_gen_ug( dDatObr )
+      APPEND BLANK
+   ENDIF
+   hRec := dbf_get_rec()
+   hRec[ "dat_obr" ] := dDatObr
+   hRec[ "dat_gen" ] := dDatGen
+   hRec[ "dat_u_fin" ] := dDatLUpl
+   hRec[ "kto_kup" ] := cKtoDug
+   hRec[ "kto_dob" ] := cKtoPot
+   hRec[ "opis" ] := cOpis
+   update_rec_server_and_dbf( "fakt_gen_ug", hRec, 1, "FULL" )
+
+   AltD()
    o_aktivni_ugovori()
 
    nSaldo := 0
    nSaldoPDV := 0
-   nNBrDok := ""
+   // nNBrDok := ""
 
    nUkupnoFaktura := 0
 
@@ -111,13 +133,14 @@ FUNCTION ugov_generacija()
    DO WHILE !Eof()
 
       IF !da_li_ima_u_rugov( ugov->id, cIdArt )
+         SELECT ugov
          SKIP
          LOOP
       ENDIF
 
-      SELECT ugov
 
-      IF !treba_generisati( ugov->id, dDatObr, cDatLFakt, dLFakt )
+      IF !ugov_treba_generisati( ugov->id, dDatObr, cDatLFakt, dLFakt )
+         SELECT ugov
          SKIP
          LOOP
       ENDIF
@@ -131,7 +154,13 @@ FUNCTION ugov_generacija()
       ++nCount
       IF Empty( cGenTipDok )
          cGenTipDok := ugov->idtipdok
+         IF Empty( ugov->idtipdok )
+            MsgBeep( "ugov tipdok nije popunjen ?! " + ugov->id )
+         ENDIF
+         SELECT ugov
+         SKIP
       ENDIF
+
 
       cNBrDok := fakt_novi_broj_dokumenta( cIdFirma, cGenTipDok )
 
@@ -150,7 +179,8 @@ FUNCTION ugov_generacija()
 
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Ug / Partner -> " + cUId + " / " + cUPartner
 
-      generacija_ugovora_za_partnera( cUId, cUPartner, dDatObr, dDatVal, @nSaldo, @nSaldoPDV, @nUkupnoFaktura, @cNBrDok, cIdArt, cIdFirma, cDefDest, cGenTipDok, @aDokumentiGenerisani )
+      generacija_ugovora_za_partnera( cUId, cUPartner, dDatObr, dDatVal, @nSaldo, @nSaldoPDV, @nUkupnoFaktura, @cNBrDok, ;
+         cIdArt, cIdFirma, cDefDest, cGenTipDok, @aDokumentiGenerisani )
 
       SELECT ugov
       SKIP
@@ -213,8 +243,8 @@ STATIC FUNCTION ugov_generacija_parametri( dDatObr, dDatGen, dDatVal, dDatLUpl, 
    // opis
    cOpis := PadR( "", 100 )
 
-   // artikal
-   cIdArt := PadR( "", 10 )
+
+   cIdArt := PadR( "", 10 ) // artikal
 
    // destinacije
    cDestin := "N"
@@ -267,7 +297,6 @@ STATIC FUNCTION ugov_generacija_parametri( dDatObr, dDatGen, dDatVal, dDatLUpl, 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Opis", nBoxLen ) GET cOpis ;
       WHEN  {|| cOpis := iif( Empty( cOpis ), PadR( "Obracun " + fakt_do( dDatObr ), 100 ), cOpis ), .T. }  PICT "@S40"
 
-
    nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Uzeti u obzir destinacije ?", nBoxLen + 10 ) GET cDestin VALID cDestin $ "DN" PICT "@!"
 
@@ -276,7 +305,6 @@ STATIC FUNCTION ugov_generacija_parametri( dDatObr, dDatGen, dDatVal, dDatLUpl, 
 
    nX += 1
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Datum zadnjeg fakturisanja ?", nBoxLen + 16 ) GET dLFakt
-
 
 
    nX += 1
@@ -319,7 +347,7 @@ STATIC FUNCTION get_id_firma_by_roba_k2( cIdRoba )
 
 
 
-STATIC FUNCTION treba_generisati( cUgovId, dDatObr, cDatLFakt, dLFakt )
+STATIC FUNCTION ugov_treba_generisati( cUgovId, dDatObr, cDatLFakt, dLFakt )
 
    LOCAL nPMonth
    LOCAL nPYear
@@ -338,32 +366,33 @@ STATIC FUNCTION treba_generisati( cUgovId, dDatObr, cDatLFakt, dLFakt )
 
    dPom := dDatObr
 
-   o_ugov( cUgovId )
-
+   o_ugov( cUgovId, NIL, F_POM, "POM" )
 
    IF cDatLFakt == "D" // datum zadnjeg fakturisanja
-      IF !Empty( ugov->dat_l_fakt ) .AND. ugov->dat_l_fakt < dLFakt
+      IF !Empty( pom->dat_l_fakt ) .AND. pom->dat_l_fakt < dLFakt
+         USE
          PopWa()
          RETURN .F.
       ENDIF
    ENDIF
 
-
-   IF ugov->datdo < dDatObr  // istekao je krajnji rok trajanja ugovora
+   IF pom->datdo < dDatObr  // istekao je krajnji rok trajanja ugovora
+      USE
       PopWa()
       RETURN .F.
    ENDIF
 
 
-   cFNivo := ugov->f_nivo    // nivo fakturisanja G - godisnji
+   cFNivo := pom->f_nivo    // nivo fakturisanja G - godisnji
 
    // SELECT gen_ug_p
    // SET ORDER TO TAG "DAT_OBR"
 
 
-   IF ugov->f_nivo == "G"  // GODISNJI NIVO
+   IF pom->f_nivo == "G"  // GODISNJI NIVO
 
-      dPObr := ugov->dat_l_fakt
+      dPObr := pom->dat_l_fakt
+      USE
       PopWa()
 
       IF dDatObr - 365 >= dPObr
@@ -386,7 +415,7 @@ STATIC FUNCTION treba_generisati( cUgovId, dDatObr, cDatLFakt, dLFakt )
          // SEEK DToS( dPObr ) + cUgovId + ugov->IdPartner
 
          // IF Found()
-         IF o_gen_ug_p( dPObr, cUgovId, ugov->idPartner )
+         IF o_gen_ug_p( dPObr, cUgovId, pom->idPartner )
             lNasaoObracun := .T.
             EXIT
          ELSE
@@ -397,14 +426,15 @@ STATIC FUNCTION treba_generisati( cUgovId, dDatObr, cDatLFakt, dLFakt )
 
       IF !lNasaoObracun
          // nisam nasao obracun, ovo je prva generacija pa je u ugov upisan datum posljednjeg obracuna
-         dPObr := ugov->dat_l_fakt
+         dPObr := pom->dat_l_fakt
       ELSE
          // ako su rucno pravljene fakture (unaprijed) u ugov se upisuje do kada je to pravljeno
-         IF ugov->dat_l_fakt >= dDatObr
-            dPObr := ugov->dat_l_fakt
+         IF pom->dat_l_fakt >= dDatObr
+            dPObr := pom->dat_l_fakt
          ENDIF
       ENDIF
 
+      USE
       PopWa()
 
       IF dDatObr > dPObr
@@ -904,7 +934,7 @@ STATIC FUNCTION info_generated_data( aData )
 
 
 
-STATIC FUNCTION postoji_generacija_u_gen_ug( dDatObr )
+STATIC FUNCTION postoji_generacija_u_gen_ug( dDatObr, cIdArt )
 
    // SELECT gen_ug
    // SET ORDER TO TAG "dat_obr"
@@ -917,8 +947,7 @@ STATIC FUNCTION postoji_generacija_u_gen_ug( dDatObr )
 
    IF Pitanje(, "Obračun " + fakt_do( dDatObr ) + " postoji, ponoviti (D/N)?", "D" ) == "D"
 
-      vrati_obracun_nazad( dDatObr, cIdArt )
-
+      ugov_vrati_obracun_nazad( dDatObr, cIdArt )
       my_close_all_dbf()
       // o_ugov_tabele()
       // o_fakt_dbf()
@@ -936,7 +965,7 @@ STATIC FUNCTION postoji_generacija_u_gen_ug( dDatObr )
 
 
 
-STATIC FUNCTION vrati_obracun_nazad( dDatObr, cIdArt )
+STATIC FUNCTION ugov_vrati_obracun_nazad( dDatObr, cIdArt )
 
    LOCAL cBrDokOdDo
    LOCAL cFirma := self_organizacija_id()
@@ -956,12 +985,14 @@ STATIC FUNCTION vrati_obracun_nazad( dDatObr, cIdArt )
       cFirma := get_id_firma_by_roba_k2( cIdArt )
    ENDIF
 
+/*
    IF fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_od ) .AND. fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do )
 
       cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
       fakt_povrat_po_kriteriju( cBrDokOdDo, NIL, NIL, cFirma )
 
    ENDIF
+*/
 
    o_fakt_pripr()
    fakt_brisanje_pripreme()

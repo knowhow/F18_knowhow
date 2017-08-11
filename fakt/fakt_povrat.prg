@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION povrat_fakt_dokumenta( rezerv, cIdFirma, cIdTipDok, cBrDok, test )
+FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL hParams := hb_Hash()
    LOCAL lBrisatiKumulativ := .T.
@@ -25,9 +25,6 @@ FUNCTION povrat_fakt_dokumenta( rezerv, cIdFirma, cIdTipDok, cBrDok, test )
    LOCAL GetList := {}
    LOCAL cTabela
 
-   IF test == nil
-      test := .F.
-   ENDIF
 
    IF ( PCount() == 0 )
       hParams[ "idfirma" ]  := self_organizacija_id()

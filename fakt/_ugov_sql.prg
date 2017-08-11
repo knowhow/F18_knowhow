@@ -207,10 +207,18 @@ CREATE INDEX dest_id1
 
 
 
-FUNCTION o_ugov( cUgovId, cIdPartner )
+FUNCTION o_ugov( cUgovId, cIdPartner, nArea, cAlias )
 
-   LOCAL cTable := "fakt_ugov", cAlias := "UGOV"
+   LOCAL cTable := "fakt_ugov"
    LOCAL cSql := "select * from fmk." + cTable
+
+   IF nArea == NIL
+      nArea := F_UGOV
+   ENDIF
+
+   IF cAlias == NIL
+      cAlias := "UGOV"
+   ENDIF
 
    IF cUgovId != NIL
       cSql += " WHERE id=" + sql_quote( cUgovId )
@@ -219,7 +227,7 @@ FUNCTION o_ugov( cUgovId, cIdPartner )
       ENDIF
    ENDIF
 
-   SELECT F_UGOV
+   Select( nArea )
    use_sql( cTable, cSql, cAlias )
 
    INDEX ON field->Id + field->idpartner TAG "ID" TO ( cAlias )
@@ -314,7 +322,7 @@ FUNCTION o_rugov_roba( cIdRoba )
    GO TOP
 
    RETURN !Eof()
-   
+
 
 FUNCTION o_gen_ug( dDatObr, dDatGen )
 

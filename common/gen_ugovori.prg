@@ -66,32 +66,6 @@
 // string FmkIni_ExePath_Fakt_Ugovori_UNapomenuSamoBrUgovora;
 
 
-// ----------------------------------------------
-// funkcija za poziv generacije ugovora
-// ----------------------------------------------
-FUNCTION m_gen_ug()
-
-   PRIVATE DFTkolicina := 1
-   PRIVATE DFTidroba := PadR( "", 10 )
-   PRIVATE DFTvrsta := "1"
-   PRIVATE DFTidtipdok := "10"
-   PRIVATE DFTdindem := "KM "
-   PRIVATE DFTidtxt := "10"
-   PRIVATE DFTzaokr := 2
-   PRIVATE DFTiddodtxt := "  "
-   //PRIVATE gGenUgV2 := "1"
-   PRIVATE gFinKPath := Space( 50 )
-
-   DFTParUg( .T. )
-
-   //IF gGenUgV2 == "1"
-  //    gen_ug()
-  // ELSE
-      // nova varijanta generisanja ugovora
-      ugov_generacija()
-  // ENDIF
-
-   RETURN .T.
 
 
 /*
@@ -312,7 +286,7 @@ FUNCTION gen_ug()
 
             cVezaUgovor := "Veza: " + Trim( ugov->id )
 
-            _txt := fakt_ftxt_encode_gen_ugovori( ftxt->naz, _Txt1, _Txt3a, _Txt3b, _Txt3c, cVezaUgovor, cDodTxt )
+          --  _txt := fakt_ftxt_encode_gen_ugovori( ftxt->naz, _Txt1, _Txt3a, _Txt3b, _Txt3c, cVezaUgovor, cDodTxt )
 
 
          ENDIF

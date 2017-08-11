@@ -371,7 +371,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    CASE Upper( Chr( nCh ) ) == "P"
 
-      nPovrat := povrat_fakt_dokumenta( .F., fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
+      nPovrat := povrat_fakt_dokumenta( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
 
       // o_fakt_doks_dbf()
       IF nPovrat <> 0 .AND. Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"

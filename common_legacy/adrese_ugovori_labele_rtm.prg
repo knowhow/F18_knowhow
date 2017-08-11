@@ -14,14 +14,15 @@
 
 FUNCTION ugov_stampa_naljenica()
 
-   LOCAL cIdRoba, cIdPartner, _ptt, _mjesto
-   LOCAL _n_sort, _dat_do, _g_dat
+   LOCAL cIdRoba, cIdPartner, cPTT, cMjesto
+   LOCAL cSortiranje, dDatDo, cGledatiTekuciDatumDN
    LOCAL _filter := ""
    LOCAL _index_sort := ""
    LOCAL hRec, cFiltUslovPartner, _usl_mjesto, _usl_ptt
    LOCAL lImaDestinacija
    LOCAL nCount := 0
    LOCAL _total_kolicina := 0
+   LOCAL GetList := {}
 
    PushWA()
 
@@ -29,12 +30,12 @@ FUNCTION ugov_stampa_naljenica()
 
    cIdRoba := PadR( fetch_metric( "ugovori_naljepnice_idroba", my_user(), Space( 10 ) ), 10 )
    cIdPartner := PadR( fetch_metric( "ugovori_naljepnice_partner", my_user(), Space( 300 ) ), 300 )
-   _ptt := PadR( fetch_metric( "ugovori_naljepnice_ptt", my_user(), Space( 300 ) ), 300 )
-   _mjesto := PadR( fetch_metric( "ugovori_naljepnice_mjesto", my_user(), Space( 300 ) ), 300 )
-   _n_sort := fetch_metric( "ugovori_naljepnice_sort", my_user(), "4" )
+   cPTT := PadR( fetch_metric( "ugovori_naljepnice_ptt", my_user(), Space( 300 ) ), 300 )
+   cMjesto := PadR( fetch_metric( "ugovori_naljepnice_mjesto", my_user(), Space( 300 ) ), 300 )
+   cSortiranje := fetch_metric( "ugovori_naljepnice_sort", my_user(), "4" )
 
-   _dat_do := Date()
-   _g_dat := "N"
+   dDatDo := Date()
+   cGledatiTekuciDatumDN := "N"
 
    Box(, 15, 77 )
 
@@ -43,9 +44,9 @@ FUNCTION ugov_stampa_naljenica()
       @ box_x_koord() + 0, box_y_koord() + 5 SAY "POSTAVLJENJE USLOVA ZA PRAVLJENJE LABELA"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Artikal  :" GET cIdRoba VALID P_Roba( @cIdRoba ) PICT "@!"
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Partner  :" GET cIdPartner PICT "@S50!"
-      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
-      @ box_x_koord() + 5, box_y_koord() + 2 SAY "PTT      :" GET _ptt PICT "@S50!"
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Gledati tekući datum (D/N):" GET _g_dat VALID _g_dat $ "DN" PICT "@!"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Mjesto   :" GET cMjesto PICT "@S50!"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "PTT      :" GET cPTT PICT "@S50!"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Gledati tekući datum (D/N):" GET cGledatiTekuciDatumDN VALID cGledatiTekuciDatumDN $ "DN" PICT "@!"
       @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "**** Način sortiranja podataka u pregledu: "
       @ box_x_koord() + 8, box_y_koord() + 2 SAY8 " 1 - količina + mjesto + naziv"
       @ box_x_koord() + 9, box_y_koord() + 2 SAY8 " 2 - mjesto + naziv + količina"
@@ -53,7 +54,7 @@ FUNCTION ugov_stampa_naljenica()
       @ box_x_koord() + 11, box_y_koord() + 2 SAY8 " 4 - količina + PTT + mjesto + naziv"
       @ box_x_koord() + 12, box_y_koord() + 2 SAY8 " 5 - idpartner"
       @ box_x_koord() + 13, box_y_koord() + 2 SAY8 " 6 - količina"
-      @ box_x_koord() + 14, box_y_koord() + 2 SAY8 "odabrana vrijednost:" GET _n_sort VALID _n_sort $ "1234567" PICT "9"
+      @ box_x_koord() + 14, box_y_koord() + 2 SAY8 "odabrana vrijednost:" GET cSortiranje VALID cSortiranje $ "1234567" PICT "9"
       READ
 
       IF LastKey() == K_ESC
@@ -62,8 +63,8 @@ FUNCTION ugov_stampa_naljenica()
       ENDIF
 
       cFiltUslovPartner := Parsiraj( cIdPartner, "IDPARTNER" )
-      _usl_ptt  := Parsiraj( _ptt, "PTT"       )
-      _usl_mjesto := Parsiraj( _mjesto, "MJESTO" )
+      _usl_ptt  := Parsiraj( cPTT, "PTT"       )
+      _usl_mjesto := Parsiraj( cMjesto, "MJESTO" )
 
       IF cFiltUslovPartner <> NIL .AND. _usl_mjesto <> NIL .AND. _usl_ptt <> NIL
          EXIT
@@ -75,11 +76,11 @@ FUNCTION ugov_stampa_naljenica()
 
    set_metric( "ugovori_naljepnice_idroba", my_user(), cIdRoba )
    set_metric( "ugovori_naljepnice_partner", my_user(), AllTrim( cIdPartner ) )
-   set_metric( "ugovori_naljepnice_ptt", my_user(), AllTrim( _ptt ) )
-   set_metric( "ugovori_naljepnice_mjesto", my_user(), AllTrim( _mjesto ) )
-   set_metric( "ugovori_naljepnice_sort", my_user(), _n_sort )
+   set_metric( "ugovori_naljepnice_ptt", my_user(), AllTrim( cPTT ) )
+   set_metric( "ugovori_naljepnice_mjesto", my_user(), AllTrim( cMjesto ) )
+   set_metric( "ugovori_naljepnice_sort", my_user(), cSortiranje )
 
-   _index_sort := _index_sort + AllTrim( _n_sort )
+   _index_sort := _index_sort + AllTrim( cSortiranje )
    _create_labelu_dbf()
 
    //IF is_dest()
@@ -133,7 +134,7 @@ FUNCTION ugov_stampa_naljenica()
          LOOP
       ENDIF
 
-      IF _g_dat == "D" .AND. ( _dat_do > ugov->datdo )
+      IF cGledatiTekuciDatumDN == "D" .AND. ( dDatDo > ugov->datdo )
          SELECT rugov
          SKIP
          LOOP
@@ -154,7 +155,7 @@ FUNCTION ugov_stampa_naljenica()
          LOOP
       ENDIF
 
-      IF !Empty( _ptt )
+      IF !Empty( cPTT )
          IF !( &_usl_ptt )
             SELECT rugov
             SKIP
@@ -162,7 +163,7 @@ FUNCTION ugov_stampa_naljenica()
          ENDIF
       ENDIF
 
-      IF !Empty( _mjesto )
+      IF !Empty( cMjesto )
          IF !( &_usl_mjesto )
             SELECT rugov
             SKIP
@@ -335,35 +336,35 @@ STATIC FUNCTION _open_tables()
 
 STATIC FUNCTION _create_labelu_dbf()
 
-   LOCAL _dbf := {}
-   LOCAL _table_label := "labelu"
-   LOCAL _table_label_2 := "lab2"
+   LOCAL aDbf := {}
+   LOCAL cDbfLabel := "labelu"
+   LOCAL cDbfLabel2 := "lab2"
 
-   AAdd ( _dbf, { "idroba",    "C",     10, 0 } )
-   AAdd ( _dbf, { "idpartner", "C",      6, 0 } )
-   AAdd ( _dbf, { "destin",  "C",      6, 0 } )
-   AAdd ( _dbf, { "kol_c",     "C",      5, 0 } )
-   AAdd ( _dbf, { "naz",      "C",     50, 0 } )
-   AAdd ( _dbf, { "naz2",      "C",     50, 0 } )
-   AAdd ( _dbf, { "ptt",      "C",    10, 0 } )
-   AAdd ( _dbf, { "mjesto",   "C",    20, 0 } )
-   AAdd ( _dbf, { "adresa",   "C",    50, 0 } )
-   AAdd ( _dbf, { "telefon",   "C",    20, 0 } )
-   AAdd ( _dbf, { "fax",   "C",    20, 0 } )
-   AAdd ( _dbf, { "kolicina",  "N",     12, 0 } )
-   AAdd ( _dbf, { "idx",       "N",     12, 0 } )
-
-   SELECT ( F_LABELU )
-   USE
-
-   FErase( my_home() + my_dbf_prefix() + _table_label + ".dbf" )
-   FErase( my_home() + my_dbf_prefix() + _table_label + ".cdx" )
-
-   dbCreate( my_home() + my_dbf_prefix() + _table_label + ".dbf", _dbf )
+   AAdd ( aDbf, { "idroba",    "C",     10, 0 } )
+   AAdd ( aDbf, { "idpartner", "C",      6, 0 } )
+   AAdd ( aDbf, { "destin",  "C",      6, 0 } )
+   AAdd ( aDbf, { "kol_c",     "C",      5, 0 } )
+   AAdd ( aDbf, { "naz",      "C",     50, 0 } )
+   AAdd ( aDbf, { "naz2",      "C",     50, 0 } )
+   AAdd ( aDbf, { "ptt",      "C",    10, 0 } )
+   AAdd ( aDbf, { "mjesto",   "C",    20, 0 } )
+   AAdd ( aDbf, { "adresa",   "C",    50, 0 } )
+   AAdd ( aDbf, { "telefon",   "C",    20, 0 } )
+   AAdd ( aDbf, { "fax",   "C",    20, 0 } )
+   AAdd ( aDbf, { "kolicina",  "N",     12, 0 } )
+   AAdd ( aDbf, { "idx",       "N",     12, 0 } )
 
    SELECT ( F_LABELU )
    USE
-   my_use_temp( "labelu", my_home() + my_dbf_prefix() + _table_label + ".dbf", .F., .F. )
+
+   FErase( my_home() + my_dbf_prefix() + cDbfLabel + ".dbf" )
+   FErase( my_home() + my_dbf_prefix() + cDbfLabel + ".cdx" )
+
+   dbCreate( my_home() + my_dbf_prefix() + cDbfLabel + ".dbf", aDbf )
+
+   SELECT ( F_LABELU )
+   USE
+   my_use_temp( "labelu", my_home() + my_dbf_prefix() + cDbfLabel + ".dbf", .F., .F. )
 
    INDEX on ( kol_c + mjesto + naz ) TAG "1"
    INDEX on ( mjesto + naz + kol_c ) TAG "2"
@@ -372,17 +373,17 @@ STATIC FUNCTION _create_labelu_dbf()
    INDEX on ( idpartner ) TAG "5"
    INDEX on ( kol_c ) TAG "6"
 
-   FErase( my_home() + my_dbf_prefix() + _table_label_2 + ".dbf" )
-   FErase( my_home() + my_dbf_prefix() + _table_label_2 + ".cdx" )
+   FErase( my_home() + my_dbf_prefix() + cDbfLabel2 + ".dbf" )
+   FErase( my_home() + my_dbf_prefix() + cDbfLabel2 + ".cdx" )
 
    SELECT ( F_LABELU2 )
    USE
 
-   dbCreate( my_home() + my_dbf_prefix() + _table_label_2 + ".dbf", _dbf )
+   dbCreate( my_home() + my_dbf_prefix() + cDbfLabel2 + ".dbf", aDbf )
 
    SELECT ( F_LABELU2 )
    USE
-   my_use_temp( "lab2", my_home()+ my_dbf_prefix() + _table_label_2 + ".dbf", .F., .F. )
+   my_use_temp( "lab2", my_home()+ my_dbf_prefix() + cDbfLabel2 + ".dbf", .F., .F. )
 
    INDEX on ( Str( idx, 12, 0 ) ) TAG "1"
 

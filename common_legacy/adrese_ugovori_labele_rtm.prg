@@ -14,7 +14,7 @@
 
 FUNCTION ugov_stampa_naljenica()
 
-   LOCAL cIdRoba, _partner, _ptt, _mjesto
+   LOCAL cIdRoba, cIdPartner, _ptt, _mjesto
    LOCAL _n_sort, _dat_do, _g_dat
    LOCAL _filter := ""
    LOCAL _index_sort := ""
@@ -28,7 +28,7 @@ FUNCTION ugov_stampa_naljenica()
    _open_tables()
 
    cIdRoba := PadR( fetch_metric( "ugovori_naljepnice_idroba", my_user(), Space( 10 ) ), 10 )
-   _partner := PadR( fetch_metric( "ugovori_naljepnice_partner", my_user(), Space( 300 ) ), 300 )
+   cIdPartner := PadR( fetch_metric( "ugovori_naljepnice_partner", my_user(), Space( 300 ) ), 300 )
    _ptt := PadR( fetch_metric( "ugovori_naljepnice_ptt", my_user(), Space( 300 ) ), 300 )
    _mjesto := PadR( fetch_metric( "ugovori_naljepnice_mjesto", my_user(), Space( 300 ) ), 300 )
    _n_sort := fetch_metric( "ugovori_naljepnice_sort", my_user(), "4" )
@@ -42,7 +42,7 @@ FUNCTION ugov_stampa_naljenica()
 
       @ box_x_koord() + 0, box_y_koord() + 5 SAY "POSTAVLJENJE USLOVA ZA PRAVLJENJE LABELA"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Artikal  :" GET cIdRoba VALID P_Roba( @cIdRoba ) PICT "@!"
-      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Partner  :" GET _partner PICT "@S50!"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Partner  :" GET cIdPartner PICT "@S50!"
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "PTT      :" GET _ptt PICT "@S50!"
       @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Gledati tekući datum (D/N):" GET _g_dat VALID _g_dat $ "DN" PICT "@!"
@@ -61,7 +61,7 @@ FUNCTION ugov_stampa_naljenica()
          RETURN .F.
       ENDIF
 
-      cFiltUslovPartner := Parsiraj( _partner, "IDPARTNER" )
+      cFiltUslovPartner := Parsiraj( cIdPartner, "IDPARTNER" )
       _usl_ptt  := Parsiraj( _ptt, "PTT"       )
       _usl_mjesto := Parsiraj( _mjesto, "MJESTO" )
 
@@ -74,7 +74,7 @@ FUNCTION ugov_stampa_naljenica()
    BoxC()
 
    set_metric( "ugovori_naljepnice_idroba", my_user(), cIdRoba )
-   set_metric( "ugovori_naljepnice_partner", my_user(), AllTrim( _partner ) )
+   set_metric( "ugovori_naljepnice_partner", my_user(), AllTrim( cIdPartner ) )
    set_metric( "ugovori_naljepnice_ptt", my_user(), AllTrim( _ptt ) )
    set_metric( "ugovori_naljepnice_mjesto", my_user(), AllTrim( _mjesto ) )
    set_metric( "ugovori_naljepnice_sort", my_user(), _n_sort )
@@ -87,27 +87,29 @@ FUNCTION ugov_stampa_naljenica()
     //  SET FILTER TO
    //ENDIF
 
-   SELECT ugov
-   SET FILTER TO
+   //SELECT ugov
+   //SET FILTER TO
 
-   SELECT rugov
-   SET FILTER TO
+   //SELECT rugov
+   //SET FILTER TO
 
-   IF !Empty( cIdRoba )
-      SET FILTER TO idroba == cIdRoba
-   ENDIF
+   //IF !Empty( cIdRoba )
+  //    SET FILTER TO idroba == cIdRoba
+   //ENDIF
+   o_rugov_roba( cIdRoba )
 
    GO TOP
 
    Box(, 3, 60 )
 
-   DO WHILE !Eof()
+   DO WHILE !Eof() // RUGOV
 
-      SELECT ugov
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK rugov->id
-      IF !Found()
+      //SELECT ugov
+      //SET ORDER TO TAG "ID"
+      //GO TOP
+      //SEEK rugov->id
+      //IF !Found()
+      IF !o_ugov( rugov->id )
          error_bar( "label", "Ugovor rugov.id: " + rugov->id + " ne postoji" )
          SELECT rugov
          SKIP
@@ -117,7 +119,6 @@ FUNCTION ugov_stampa_naljenica()
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ugovor ID: " + PadR( rugov->id, 10 )
       @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR( "", 60 )
       @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "", 60 )
-
 
 
       IF field->aktivan == "N"
@@ -138,7 +139,7 @@ FUNCTION ugov_stampa_naljenica()
          LOOP
       ENDIF
 
-      IF !Empty( _partner )
+      IF !Empty( cIdPartner )
          IF !( &cFiltUslovPartner )
             SELECT rugov
             SKIP
@@ -194,7 +195,6 @@ FUNCTION ugov_stampa_naljenica()
       ENDIF
 
       SELECT labelu
-
       IF lImaDestinacija
 
          hRec[ "destin" ] := dest->id
@@ -252,13 +252,13 @@ FUNCTION ugov_stampa_naljenica()
 
 
 
-STATIC FUNCTION label_to_lab2( index_sort )
+STATIC FUNCTION label_to_lab2( cIndexSort )
 
    LOCAL hRec
    LOCAL nCount := 0
 
    SELECT labelu
-   SET ORDER TO tag &index_sort
+   SET ORDER TO tag &cIndexSort
    GO TOP
 
    DO WHILE !Eof()
@@ -284,10 +284,10 @@ STATIC FUNCTION label_to_lab2( index_sort )
 
 
 
-STATIC FUNCTION stampa_pregleda_naljepnica( index_sort )
+STATIC FUNCTION stampa_pregleda_naljepnica( cIndexSort )
 
    LOCAL _table_type := 1
-   PRIVATE _index := index_sort
+   PRIVATE _index := cIndexSort
 
    SELECT labelu
    SET ORDER TO tag &_index
@@ -321,13 +321,13 @@ STATIC FUNCTION _open_tables()
 
    //o_ugov()
    //o_rugov()
-   o_dest()
+   //o_dest()
    //o_partner()
    //o_roba()
    //o_sifk()
    //o_sifv()
 
-   SELECT ugov
+  // SELECT ugov
 
    RETURN .T.
 

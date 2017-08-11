@@ -297,6 +297,25 @@ FUNCTION o_rugov( cIdUgov, cIdRoba, cDest )
    RETURN !Eof()
 
 
+
+FUNCTION o_rugov_roba( cIdRoba )
+
+   LOCAL cTable := "fakt_rugov", cAlias := "RUGOV"
+   LOCAL cSql := "select * from fmk." + cTable
+
+   cSql += " WHERE idroba=" + sql_quote( cIdRoba )
+
+   SELECT F_RUGOV
+   use_sql( cTable, cSql, cAlias )
+   INDEX ON field->Id + field->idroba + field->dest TAG "ID" TO ( cAlias )
+   INDEX ON field->IdRoba TAG "IDROBA" TO ( cAlias )
+
+   SET ORDER TO TAG "IDROBA"
+   GO TOP
+
+   RETURN !Eof()
+   
+
 FUNCTION o_gen_ug( dDatObr, dDatGen )
 
    LOCAL cTable := "fakt_gen_ug", cAlias := "GEN_UG"
@@ -324,12 +343,12 @@ FUNCTION o_gen_ug( dDatObr, dDatGen )
 
 FUNCTION get_zadnje_fakturisanje_po_ugovoru()
 
-   LOCAL nTArea := Select(), dGen
+   LOCAL nTArea := Select(), dGen, cTable := "fakt_gen_ug", cAlias := "POM"
 
-   LOCAL cSql := "select max(dat_gen) AS MAX_DAT_GEN from fmk.gen_ug"
+   LOCAL cSql := "select max(dat_gen) AS MAX_DAT_GEN from fmk." + cTable
 
-   SELECT F_GEN_UG
-   use_sql( "GEN_UG", cSql )
+   SELECT F_POM
+   use_sql( "GEN_UG", cSql, cAlias )
    dGen := field->max_dat_gen
    // LOCAL dGen
 

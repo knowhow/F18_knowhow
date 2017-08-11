@@ -19,9 +19,9 @@ THREAD STATIC __export_zip_name
 
 FUNCTION fakt_udaljena_razmjena_podataka()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
    __import_dbf_path := ""
    __export_dbf_path := my_home() + "export_dbf" + SLASH
@@ -30,12 +30,12 @@ FUNCTION fakt_udaljena_razmjena_podataka()
 
    direktorij_kreiraj_ako_ne_postoji( __export_dbf_path )
 
-   AAdd( _opc, "1. => export podataka               " )
-   AAdd( _opcexe, {|| _fakt_export() } )
-   AAdd( _opc, "2. <= import podataka    " )
-   AAdd( _opcexe, {|| _fakt_import() } )
+   AAdd( aOpc, "1. => export podataka               " )
+   AAdd( aOpcExe, {|| _fakt_export() } )
+   AAdd( aOpc, "2. <= import podataka    " )
+   AAdd( aOpcExe, {|| _fakt_import() } )
 
-   f18_menu( "razmjena", .F., _izbor, _opc, _opcexe )
+   f18_menu( "razmjena", .F., nIzbor, aOpc, aOpcExe )
 
    my_close_all_dbf()
 
@@ -55,7 +55,7 @@ STATIC FUNCTION _fakt_export()
 
    delete_exp_files( __export_dbf_path, "fakt" )
 
-   _exported_rec := __export( _vars, @_a_data )
+   _exported_rec := fakt_export_impl( _vars, @_a_data )
 
    my_close_all_dbf()
 
@@ -247,14 +247,14 @@ FUNCTION print_imp_exp_report( DATA )
 
 
 
-STATIC FUNCTION _vars_export( vars )
+STATIC FUNCTION _vars_export( hParams )
 
    LOCAL _ret := .F.
-   LOCAL _dat_od := fetch_metric( "fakt_export_datum_od", my_user(), Date() - 30 )
-   LOCAL _dat_do := fetch_metric( "fakt_export_datum_do", my_user(), Date() )
-   LOCAL _rj := fetch_metric( "fakt_export_lista_rj", my_user(), PadR( "10;", 200 ) )
-   LOCAL _vrste_dok := fetch_metric( "fakt_export_vrste_dokumenata", my_user(), PadR( "10;11;", 200 ) )
-   LOCAL _br_dok := fetch_metric( "fakt_export_brojevi_dokumenata", my_user(), PadR( "", 300 ) )
+   LOCAL dDatOd := fetch_metric( "fakt_export_datum_od", my_user(), Date() - 30 )
+   LOCAL dDatDo := fetch_metric( "fakt_export_datum_do", my_user(), Date() )
+   LOCAL cIdRj := fetch_metric( "fakt_export_lista_rj", my_user(), PadR( "10;", 200 ) )
+   LOCAL cVrsteDok := fetch_metric( "fakt_export_vrste_dokumenata", my_user(), PadR( "10;11;", 200 ) )
+   LOCAL cBrDok := fetch_metric( "fakt_export_brojevi_dokumenata", my_user(), PadR( "", 300 ) )
    LOCAL _exp_sif := fetch_metric( "fakt_export_sifrarnik", my_user(), "D" )
    LOCAL _prim_sif := fetch_metric( "fakt_export_duzina_primarne_sifre", my_user(), 0 )
    LOCAL _exp_path := fetch_metric( "fakt_export_path", my_user(), PadR( "", 300 ) )
@@ -273,21 +273,21 @@ STATIC FUNCTION _vars_export( vars )
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
+   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET cVrsteDok PICT "@S40"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata:" GET _br_dok PICT "@S40"
+   @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata:" GET cBrDok PICT "@S40"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
+   @ m_x + _x, m_y + 2 SAY "Datumski period od" GET dDatOd
+   @ m_x + _x, Col() + 1 SAY "do" GET dDatDo
 
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY8 "Uzeti u obzir sljedeće rj:" GET _rj PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY8 "Uzeti u obzir sljedeće rj:" GET cIdRj PICT "@S30"
 
    ++_x
 
@@ -316,26 +316,26 @@ STATIC FUNCTION _vars_export( vars )
 
       _ret := .T.
 
-      set_metric( "fakt_export_datum_od", my_user(), _dat_od )
-      set_metric( "fakt_export_datum_do", my_user(), _dat_do )
-      set_metric( "fakt_export_lista_rj", my_user(), _rj )
-      set_metric( "fakt_export_vrste_dokumenata", my_user(), _vrste_dok )
+      set_metric( "fakt_export_datum_od", my_user(), dDatOd )
+      set_metric( "fakt_export_datum_do", my_user(), dDatDo )
+      set_metric( "fakt_export_lista_rj", my_user(), cIdRj )
+      set_metric( "fakt_export_vrste_dokumenata", my_user(), cVrsteDok )
       set_metric( "fakt_export_sifrarnik", my_user(), _exp_sif )
       set_metric( "fakt_export_duzina_primarne_sifre", my_user(), _prim_sif )
       set_metric( "fakt_export_path", my_user(), _exp_path )
-      set_metric( "fakt_export_brojevi_dokumenata", my_user(), _br_dok )
+      set_metric( "fakt_export_brojevi_dokumenata", my_user(), cBrDok )
 
       __export_dbf_path := AllTrim( _exp_path )
 
-      vars[ "datum_od" ] := _dat_od
-      vars[ "datum_do" ] := _dat_do
-      vars[ "rj" ] := _rj
-      vars[ "vrste_dok" ] := _vrste_dok
-      vars[ "export_sif" ] := _exp_sif
-      vars[ "prim_sif" ] := _prim_sif
-      vars[ "rj_src" ] := _prom_rj_src
-      vars[ "rj_dest" ] := _prom_rj_dest
-      vars[ "brojevi_dok" ] := _br_dok
+      hParams[ "datum_od" ] := dDatOd
+      hParams[ "datum_do" ] := dDatDo
+      hParams[ "rj" ] := cIdRj
+      hParams[ "vrste_dok" ] := cVrsteDok
+      hParams[ "export_sif" ] := _exp_sif
+      hParams[ "prim_sif" ] := _prim_sif
+      hParams[ "rj_src" ] := _prom_rj_src
+      hParams[ "rj_dest" ] := _prom_rj_dest
+      hParams[ "brojevi_dok" ] := cBrDok
 
    ENDIF
 
@@ -343,15 +343,15 @@ STATIC FUNCTION _vars_export( vars )
 
 
 
-STATIC FUNCTION _vars_import( vars )
+STATIC FUNCTION _vars_import( hParams )
 
    LOCAL _ret := .F.
-   LOCAL _dat_od := fetch_metric( "fakt_import_datum_od", my_user(), CToD( "" ) )
-   LOCAL _dat_do := fetch_metric( "fakt_import_datum_do", my_user(), CToD( "" ) )
-   LOCAL _rj := fetch_metric( "fakt_import_lista_rj", my_user(), PadR( "", 200 ) )
-   LOCAL _vrste_dok := fetch_metric( "fakt_import_vrste_dokumenata", my_user(), PadR( "", 200 ) )
-   LOCAL _br_dok := fetch_metric( "fakt_import_brojevi_dokumenata", my_user(), PadR( "", 300 ) )
-   LOCAL _zamjeniti_dok := fetch_metric( "fakt_import_zamjeniti_dokumente", my_user(), "N" )
+   LOCAL dDatOd := fetch_metric( "fakt_import_datum_od", my_user(), CToD( "" ) )
+   LOCAL dDatDo := fetch_metric( "fakt_import_datum_do", my_user(), CToD( "" ) )
+   LOCAL cIdRj := fetch_metric( "fakt_import_lista_rj", my_user(), PadR( "", 200 ) )
+   LOCAL cVrsteDok := fetch_metric( "fakt_import_vrste_dokumenata", my_user(), PadR( "", 200 ) )
+   LOCAL cBrDok := fetch_metric( "fakt_import_brojevi_dokumenata", my_user(), PadR( "", 300 ) )
+   LOCAL cZamijenitiDokumenteDN := fetch_metric( "fakt_importcZamijenitiDokumenteDNumente", my_user(), "N" )
    LOCAL _zamjeniti_sif := fetch_metric( "fakt_import_zamjeniti_sifre", my_user(), "N" )
    LOCAL _iz_fmk := fetch_metric( "fakt_import_iz_fmk", my_user(), "N" )
    LOCAL _imp_path := fetch_metric( "fakt_import_path", my_user(), PadR( "", 300 ) )
@@ -368,26 +368,26 @@ STATIC FUNCTION _vars_import( vars )
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata (prazno-sve):" GET cVrsteDok PICT "@S30"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata (prazno-sve):" GET _br_dok PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata (prazno-sve):" GET cBrDok PICT "@S30"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
-
-   ++_x
-   ++_x
-
-   @ m_x + _x, m_y + 2 SAY8 "Uzeti u obzir sljedeće radne jedinice:" GET _rj PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY "Datumski period od" GET dDatOd
+   @ m_x + _x, Col() + 1 SAY "do" GET dDatDo
 
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY8 "Zamjeniti postojeće dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+   @ m_x + _x, m_y + 2 SAY8 "Uzeti u obzir sljedeće radne jedinice:" GET cIdRj PICT "@S30"
+
+   ++_x
+   ++_x
+
+   @ m_x + _x, m_y + 2 SAY8 "Zamjeniti postojeće dokumente novim (D/N):" GET cZamijenitiDokumenteDN PICT "@!" VALID cZamijenitiDokumenteDN $ "DN"
 
    ++_x
 
@@ -411,26 +411,26 @@ STATIC FUNCTION _vars_import( vars )
 
       _ret := .T.
 
-      set_metric( "fakt_import_datum_od", my_user(), _dat_od )
-      set_metric( "fakt_import_datum_do", my_user(), _dat_do )
-      set_metric( "fakt_import_lista_rj", my_user(), _rj )
-      set_metric( "fakt_import_vrste_dokumenata", my_user(), _vrste_dok )
-      set_metric( "fakt_import_zamjeniti_dokumente", my_user(), _zamjeniti_dok )
+      set_metric( "fakt_import_datum_od", my_user(), dDatOd )
+      set_metric( "fakt_import_datum_do", my_user(), dDatDo )
+      set_metric( "fakt_import_lista_rj", my_user(), cIdRj )
+      set_metric( "fakt_import_vrste_dokumenata", my_user(), cVrsteDok )
+      set_metric( "fakt_importcZamijenitiDokumenteDNumente", my_user(), cZamijenitiDokumenteDN )
       set_metric( "fakt_import_zamjeniti_sifre", my_user(), _zamjeniti_sif )
       set_metric( "fakt_import_iz_fmk", my_user(), _iz_fmk )
       set_metric( "fakt_import_path", my_user(), _imp_path )
-      set_metric( "fakt_import_brojevi_dokumenata", my_user(), _br_dok )
+      set_metric( "fakt_import_brojevi_dokumenata", my_user(), cBrDok )
 
       __import_dbf_path := AllTrim( _imp_path )
 
-      vars[ "datum_od" ] := _dat_od
-      vars[ "datum_do" ] := _dat_do
-      vars[ "rj" ] := _rj
-      vars[ "vrste_dok" ] := _vrste_dok
-      vars[ "zamjeniti_dokumente" ] := _zamjeniti_dok
-      vars[ "zamjeniti_sifre" ] := _zamjeniti_sif
-      vars[ "import_iz_fmk" ] := _iz_fmk
-      vars[ "brojevi_dok" ] := _br_dok
+      hParams[ "datum_od" ] := dDatOd
+      hParams[ "datum_do" ] := dDatDo
+      hParams[ "rj" ] := cIdRj
+      hParams[ "vrste_dok" ] := cVrsteDok
+      hParams[ "zamjeniti_dokumente" ] := cZamijenitiDokumenteDN
+      hParams[ "zamjeniti_sifre" ] := _zamjeniti_sif
+      hParams[ "import_iz_fmk" ] := _iz_fmk
+      hParams[ "brojevi_dok" ] := cBrDok
 
    ENDIF
 
@@ -438,15 +438,15 @@ STATIC FUNCTION _vars_import( vars )
 
 
 
-STATIC FUNCTION __export( vars, a_details )
+STATIC FUNCTION fakt_export_impl( hParams, a_details )
 
    LOCAL _ret := 0
-   LOCAL _id_firma, _id_vd, _br_dok
+   LOCAL cIdFirma, cIdTipDok, cBrDok
    LOCAL hAppendRec
    LOCAL _cnt := 0
-   LOCAL _dat_od, _dat_do, _rj, _vrste_dok, _export_sif
-   LOCAL _usl_rj, _usl_br_dok
-   LOCAL _id_partn
+   LOCAL dDatOd, dDatDo, cIdRj, cVrsteDok, _export_sif
+   LOCAL cUslovRj, _usl_br_dok
+   LOCAL cIdPartner
    LOCAL cIdRoba
    LOCAL _prim_sif
    LOCAL _rj_src, _rj_dest, _brojevi_dok
@@ -454,15 +454,15 @@ STATIC FUNCTION __export( vars, a_details )
    LOCAL _detail_rec
    LOCAL nRbr
 
-   _dat_od := vars[ "datum_od" ]
-   _dat_do := vars[ "datum_do" ]
-   _rj := AllTrim( vars[ "rj" ] )
-   _vrste_dok := AllTrim( vars[ "vrste_dok" ] )
-   _export_sif := AllTrim( vars[ "export_sif" ] )
-   _prim_sif := vars[ "prim_sif" ]
-   _rj_src := vars[ "rj_src" ]
-   _rj_dest := vars[ "rj_dest" ]
-   _brojevi_dok := vars[ "brojevi_dok" ]
+   dDatOd := hParams[ "datum_od" ]
+   dDatDo := hParams[ "datum_do" ]
+   cIdRj := AllTrim( hParams[ "rj" ] )
+   cVrsteDok := AllTrim( hParams[ "vrste_dok" ] )
+   _export_sif := AllTrim( hParams[ "export_sif" ] )
+   _prim_sif := hParams[ "prim_sif" ]
+   _rj_src := hParams[ "rj_src" ]
+   _rj_dest := hParams[ "rj_dest" ]
+   _brojevi_dok := hParams[ "brojevi_dok" ]
 
    IF !Empty( _rj_src ) .AND. !Empty( _rj_dest )
       _change_rj := .T.
@@ -476,20 +476,21 @@ STATIC FUNCTION __export( vars, a_details )
 
    @ m_x + 1, m_y + 2 SAY "... export fakt dokumenata u toku"
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
+   //SELECT fakt_doks
+   //SET ORDER TO TAG "1"
+   //GO TOP
+   find_fakt_doks_za_period( NIL, dDatOd, dDatDo, "FAKT_DOKS" )
 
    DO WHILE !Eof()
 
-      _id_firma := field->idfirma
-      _id_vd := field->idtipdok
-      _br_dok := field->brdok
-      _id_partn := field->idpartner
+      cIdFirma := field->idfirma
+      cIdTipDok := field->idtipdok
+      cBrDok := field->brdok
+      cIdPartner := field->idpartner
 
-      IF !Empty( _rj )
-         _usl_rj := Parsiraj( AllTrim( _rj ), "idfirma" )
-         IF !( &_usl_rj )
+      IF !Empty( cIdRj )
+         cUslovRj := Parsiraj( AllTrim( cIdRj ), "idfirma" )
+         IF !( &cUslovRj )
             SKIP
             LOOP
          ENDIF
@@ -503,22 +504,22 @@ STATIC FUNCTION __export( vars, a_details )
          ENDIF
       ENDIF
 
-      IF !Empty( _vrste_dok )
-         IF !( field->idtipdok $ _vrste_dok )
+      IF !Empty( cVrsteDok )
+         IF !( field->idtipdok $ cVrsteDok )
             SKIP
             LOOP
          ENDIF
       ENDIF
 
-      IF _dat_od <> CToD( "" )
-         IF ( field->datdok < _dat_od )
+      IF dDatOd <> CToD( "" )
+         IF ( field->datdok < dDatOd )
             SKIP
             LOOP
          ENDIF
       ENDIF
 
-      IF _dat_do <> CToD( "" )
-         IF ( field->datdok > _dat_do )
+      IF dDatDo <> CToD( "" )
+         IF ( field->datdok > dDatDo )
             SKIP
             LOOP
          ENDIF
@@ -548,13 +549,12 @@ STATIC FUNCTION __export( vars, a_details )
       dbf_update_rec( hAppendRec )
 
       ++_cnt
-      @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
+      @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + cIdFirma + "-" + cIdTipDok + "-" + AllTrim( cBrDok ), 50 )
 
-      seek_fakt( _id_firma, _id_vd, _br_dok )
-
+      seek_fakt( cIdFirma, cIdTipDok, cBrDok )
       nRbr := 0
 
-      DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
 
          cIdRoba := field->idroba
          IF _prim_sif > 0
@@ -579,7 +579,7 @@ STATIC FUNCTION __export( vars, a_details )
          IF _prim_sif > 0
 
             GO TOP
-            SEEK _id_firma + _id_vd + _br_dok + cIdRoba // e_fakt
+            SEEK cIdFirma + cIdTipDok + cBrDok + cIdRoba // e_fakt
 
             IF !Found()
                APPEND BLANK
@@ -613,9 +613,9 @@ STATIC FUNCTION __export( vars, a_details )
 
       ENDDO
 
-      seek_fakt_doks2( _id_firma, _id_vd, _br_dok )
+      seek_fakt_doks2( cIdFirma, cIdTipDok, cBrDok )
 
-      DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
 
          hAppendRec := dbf_get_rec()
 
@@ -628,16 +628,16 @@ STATIC FUNCTION __export( vars, a_details )
 
       ENDDO
 
-      select_o_partner( _id_partn )
+      select_o_partner( cIdPartner )
       IF Found() .AND. _export_sif == "D"
          hAppendRec := dbf_get_rec()
          SELECT e_partn
          SET ORDER TO TAG "ID"
-         SEEK _id_partn // e_partn
+         SEEK cIdPartner // e_partn
          IF !Found()
             APPEND BLANK
             dbf_update_rec( hAppendRec )
-            razmjena_fill_sifk_sifv( "PARTN", _id_partn )
+            razmjena_fill_sifk_sifv( "PARTN", cIdPartner )
          ENDIF
       ENDIF
 
@@ -668,25 +668,25 @@ FUNCTION export_import_add_to_details( aDetails, hRec )
    RETURN .T.
 
 
-STATIC FUNCTION __import( vars, a_details )
+STATIC FUNCTION __import( hParams, a_details )
 
    LOCAL _ret := 0
-   LOCAL _id_firma, _id_vd, _br_dok
+   LOCAL cIdFirma, cIdTipDok, cBrDok
    LOCAL hAppendRec
    LOCAL _cnt := 0
-   LOCAL _dat_od, _dat_do, _rj, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif, _iz_fmk
+   LOCAL dDatOd, dDatDo, cIdRj, cVrsteDok, cZamijenitiDokumenteDN, _zamjeniti_sif, _iz_fmk
    LOCAL _roba_id, _partn_id
-   LOCAL _usl_rj, _usl_br_dok
+   LOCAL cUslovRj, _usl_br_dok
    LOCAL _sif_exist
-   LOCAL _fmk_import := .F.
+   LOCAL lFmkImport := .F.
    LOCAL _redni_broj := 0
-   LOCAL _total_doks := 0
-   LOCAL _total_fakt := 0
+   LOCAL nTotalFaktDoks := 0
+   LOCAL nTotalFakt := 0
    LOCAL _gl_brojac := 0
    LOCAL _brojevi_dok
    LOCAL _detail_rec
    LOCAL lOk := .T.
-   LOCAL hParams
+   //LOCAL hParams
 
    run_sql_query( "BEGIN" )
 
@@ -696,27 +696,27 @@ STATIC FUNCTION __import( vars, a_details )
       RETURN _cnt
    ENDIF
 
-   _dat_od := vars[ "datum_od" ]
-   _dat_do := vars[ "datum_do" ]
-   _rj := vars[ "rj" ]
-   _vrste_dok := vars[ "vrste_dok" ]
-   _zamjeniti_dok := vars[ "zamjeniti_dokumente" ]
-   _zamjeniti_sif := vars[ "zamjeniti_sifre" ]
-   _iz_fmk := vars[ "import_iz_fmk" ]
-   _brojevi_dok := vars[ "brojevi_dok" ]
+   dDatOd := hParams[ "datum_od" ]
+   dDatDo := hParams[ "datum_do" ]
+   cIdRj := hParams[ "rj" ]
+   cVrsteDok := hParams[ "vrste_dok" ]
+   cZamijenitiDokumenteDN := hParams[ "zamjeniti_dokumente" ]
+   _zamjeniti_sif := hParams[ "zamjeniti_sifre" ]
 
-   IF _iz_fmk == "D"
-      _fmk_import := .T.
+   _brojevi_dok := hParams[ "brojevi_dok" ]
+
+   IF hParams[ "import_iz_fmk" ] == "D"
+      lFmkImport := .T.
    ENDIF
 
    _o_exp_tables( __import_dbf_path, NIL )
    _o_tables()
 
    SELECT e_doks
-   _total_doks := RECCOUNT2()
+   nTotalFaktDoks := RECCOUNT2()
 
    SELECT e_fakt
-   _total_fakt := RECCOUNT2()
+   nTotalFakt := RECCOUNT2()
 
    SELECT e_doks
    SET ORDER TO TAG "1"
@@ -725,32 +725,32 @@ STATIC FUNCTION __import( vars, a_details )
    Box(, 3, 70 )
 
    @ m_x + 1, m_y + 2 SAY PadR( "... import fakt dokumenata u toku ", 69 ) COLOR f18_color_i()
-   @ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + AllTrim( Str( _total_doks ) ) + ", fakt/" + AllTrim( Str( _total_fakt ) )
+   @ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + AllTrim( Str( nTotalFaktDoks ) ) + ", fakt/" + AllTrim( Str( nTotalFakt ) )
 
 
    DO WHILE !Eof()
 
-      _id_firma := field->idfirma
-      _id_vd := field->idtipdok
-      _br_dok := field->brdok
+      cIdFirma := field->idfirma
+      cIdTipDok := field->idtipdok
+      cBrDok := field->brdok
 
-      IF _dat_od <> CToD( "" )
-         IF field->datdok < _dat_od
+      IF dDatOd <> CToD( "" )
+         IF field->datdok < dDatOd
             SKIP
             LOOP
          ENDIF
       ENDIF
 
-      IF _dat_do <> CToD( "" )
-         IF field->datdok > _dat_do
+      IF dDatDo <> CToD( "" )
+         IF field->datdok > dDatDo
             SKIP
             LOOP
          ENDIF
       ENDIF
 
-      IF !Empty( _rj )
-         _usl_rj := Parsiraj( AllTrim( _rj ), "idfirma" )
-         IF !( &_usl_rj )
+      IF !Empty( cIdRj )
+         cUslovRj := Parsiraj( AllTrim( cIdRj ), "idfirma" )
+         IF !( &cUslovRj )
             SKIP
             LOOP
          ENDIF
@@ -764,14 +764,14 @@ STATIC FUNCTION __import( vars, a_details )
          ENDIF
       ENDIF
 
-      IF !Empty( _vrste_dok )
-         IF !( field->idtipdok $ _vrste_dok )
+      IF !Empty( cVrsteDok )
+         IF !( field->idtipdok $ cVrsteDok )
             SKIP
             LOOP
          ENDIF
       ENDIF
 
-      IF _vec_postoji_u_prometu( _id_firma, _id_vd, _br_dok )
+      IF _vec_postoji_u_prometu( cIdFirma, cIdTipDok, cBrDok )
 
          SELECT e_doks
          hAppendRec := dbf_get_rec()
@@ -784,11 +784,11 @@ STATIC FUNCTION __import( vars, a_details )
          _detail_rec[ "iznos" ] := hAppendRec[ "iznos" ]
          _detail_rec[ "datum" ] := hAppendRec[ "datdok" ]
 
-         IF _zamjeniti_dok == "D"
+         IF cZamijenitiDokumenteDN == "D"
             _detail_rec[ "tip" ] := "delete"
             export_import_add_to_details( @a_details, _detail_rec )
-            _ok := .T.
-            _ok := del_fakt_doc( _id_firma, _id_vd, _br_dok )
+            lOk := .T.
+            lOk := del_fakt_doc( cIdFirma, cIdTipDok, cBrDok )
          ELSE
             _detail_rec[ "tip" ] := "x"
             export_import_add_to_details( @a_details, _detail_rec )
@@ -822,16 +822,16 @@ STATIC FUNCTION __import( vars, a_details )
       ENDIF
 
       ++_cnt
-      @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
+      @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok, 60 )
 
       SELECT e_fakt
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK _id_firma + _id_vd + _br_dok // e_fakt
+      SEEK cIdFirma + cIdTipDok + cBrDok // e_fakt
 
       _redni_broj := 0
 
-      DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
 
          hAppendRec := dbf_get_rec()
 
@@ -861,9 +861,9 @@ STATIC FUNCTION __import( vars, a_details )
       SELECT e_doks2
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK _id_firma + _id_vd + _br_dok // e_doks2
+      SEEK cIdFirma + cIdTipDok + cBrDok // e_doks2
 
-      DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
 
          hAppendRec := dbf_get_rec()
 

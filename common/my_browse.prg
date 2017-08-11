@@ -230,10 +230,10 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       IF Ch == 0 // nije bilo nikakvog keyboard eventa
 
-
          IF lDoIdleCall //
 
             nKeyHandlerRetEvent := my_browse_f18_komande_with_my_key_handler( oBrowse, Ch, @nKeyHandlerRetEvent, nPored, aPoredak, bMyKeyHandler )
+
             IF nKeyHandlerRetEvent == DE_ABORT
                lContinue := .F.
             ENDIF
@@ -254,19 +254,12 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       lDoIdleCall := .T.
 
+
       IF Ch == 0
          LOOP
       ENDIF
 
-      IF Deleted()
-         SKIP
-         IF Eof()
-            oBrowse:Down()
-         ELSE
-            oBrowse:Up()
-         ENDIF
-         oBrowse:RefreshCurrent()
-      ENDIF
+
 
       // DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
       // Tb:stabilize()
@@ -353,8 +346,20 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
       SWITCH nKeyHandlerRetEvent
 
       CASE DE_REFRESH
+
+
+         IF Deleted()
+            SKIP
+            IF Eof()
+               oBrowse:Down()
+            ELSE
+               oBrowse:Up()
+            ENDIF
+            oBrowse:RefreshCurrent()
+         ENDIF
          oBrowse:RefreshAll()
          // TB:ForceStable()
+
          @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
          EXIT
 
@@ -612,11 +617,11 @@ FUNCTION browse_brisi_pripremu()
 
 FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRetEvent, nPored, aPoredak, bMyKeyHandler )
 
-   LOCAL _tr := hb_UTF8ToStr( "Traži:" ), _zam := "Zamijeni sa:"
-   LOCAL _last_srch := "N"
+   LOCAL _tr := hb_UTF8ToStr( "Traži:" ), cZamijeni := "Zamijeni sa:"
+   LOCAL cLastSearchDN := "N"
    LOCAL i, cIzraz
    LOCAL cLoc := Space( 40 )
-   LOCAL _trazi_val, _zamijeni_val, _trazi_usl
+   LOCAL cTraziVrijednost, cZamijeniVrijednost, cTraziUslov
    LOCAL _sect, _pict
    LOCAL bTekCol
    LOCAL cSmj
@@ -625,14 +630,20 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
    LOCAL GetList := {}
    LOCAL lKeyHendliran := .F.
 
+   AltD()
    IF bMyKeyHandler != NIL
       nKeyHandlerRetEvent := Eval( bMyKeyHandler, Ch )
-      IF nKeyHandlerRetEvent == DE_ABORT
-         RETURN DE_ABORT
+      IF nKeyHandlerRetEvent != DE_CONT // samo ako je DE_CONT nastavi procesiranje
+         RETURN nKeyHandlerRetEvent
       ENDIF
    ENDIF
-   
+
    DO CASE
+
+   CASE  nKey == K_F5
+      oBrowse:RefreshAll()
+      lKeyHendliran := .T.
+      RETURN DE_REFRESH
 
    CASE Upper( Chr( nKey ) ) == "F"
 
@@ -763,7 +774,6 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       RETURN DE_REFRESH
 
 
-
    CASE nKey == K_ALT_R
 
       PRIVATE cKolona
@@ -784,33 +794,33 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
          Box(, 3, 60, .F. )
 
          SET CURSOR ON
-         @ m_x + 1, m_y + 2 SAY "Uzmi podatke posljednje pretrage ?" GET _last_srch VALID _last_srch $ "DN" PICT "@!"
+         @ m_x + 1, m_y + 2 SAY "Uzmi podatke posljednje pretrage ?" GET cLastSearchDN VALID cLastSearchDN $ "DN" PICT "@!"
 
          READ
          lKeyHendliran := .T.
 
          _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
-         _trazi_val := &cKolona
+         cTraziVrijednost := &cKolona
 
-         IF _last_srch == "D"
-            _trazi_val := fetch_metric( _sect, "<>", _trazi_val )
+         IF cLastSearchDN == "D"
+            cTraziVrijednost := fetch_metric( _sect, "<>", cTraziVrijednost )
          ENDIF
 
-         _zamijeni_val := _trazi_val
+         cZamijeniVrijednost := cTraziVrijednost
          _sect := "_brow_fld_repl_" + AllTrim( Lower( cKolona ) )
 
-         IF _last_srch == "D"
-            _zamijeni_val := fetch_metric( _sect, "<>", _zamijeni_val )
+         IF cLastSearchDN == "D"
+            cZamijeniVrijednost := fetch_metric( _sect, "<>", cZamijeniVrijednost )
          ENDIF
 
          _pict := ""
 
-         IF ValType( _trazi_val ) == "C" .AND. Len( _trazi_val ) > 45
+         IF ValType( cTraziVrijednost ) == "C" .AND. Len( cTraziVrijednost ) > 45
             _pict := "@S45"
          ENDIF
 
-         @ m_x + 2, m_y + 2 SAY PadR( _tr, 12 ) GET _trazi_val PICT _pict
-         @ m_x + 3, m_y + 2 SAY PadR( _zam, 12 ) GET _zamijeni_val PICT _pict
+         @ m_x + 2, m_y + 2 SAY PadR( _tr, 12 ) GET cTraziVrijednost PICT _pict
+         @ m_x + 3, m_y + 2 SAY PadR( cZamijeni, 12 ) GET cZamijeniVrijednost PICT _pict
 
          READ
 
@@ -820,7 +830,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
             RETURN DE_CONT
          ENDIF
 
-         IF replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
+         IF replace_kolona_in_table( cKolona, cTraziVrijednost, cZamijeniVrijednost, cLastSearchDN )
             oBrowse:RefreshAll()
             RETURN DE_REFRESH
          ENDIF
@@ -851,13 +861,12 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
          Box(, 3, 66, .F. )
 
          SET CURSOR ON
-         _trazi_val := &cKolona
-         _trazi_usl := Space( 80 )
+         cTraziVrijednost := &cKolona
+         cTraziUslov := Space( 80 )
 
-         @ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
-         @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
-            PICT "@S20" ;
-            VALID Empty( _trazi_usl ) .OR. alt_s_provjeri_tip_uslova( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
+         @ m_x + 1, m_y + 2 SAY "Postavi na:" GET cTraziVrijednost
+         @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET cTraziUslov PICT "@S20" ;
+            VALID Empty( cTraziUslov ) .OR. alt_s_provjeri_tip_uslova( cTraziUslov, "Greška! Neispravno postavljen uslov!" )
          READ
 
          BoxC()
@@ -867,7 +876,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
             RETURN DE_CONT
          ENDIF
 
-         IF zamjeni_numericka_polja_u_tabeli( cKolona, _trazi_val, _trazi_usl )
+         IF zamjeni_numericka_polja_u_tabeli( cKolona, cTraziVrijednost, cTraziUslov )
             TB:RefreshAll()
             RETURN DE_REFRESH
          ELSE

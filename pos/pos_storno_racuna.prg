@@ -13,52 +13,53 @@
 
 
 
-FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( fisc_rn, broj_racuna, datum_racuna )
+FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( cFiskalniBroj, cBrojRacuna, dDatumRacuna )
 
-   LOCAL _qry, _qry_ret, _table
+   LOCAL cQuery, _qry_ret, oTable
    LOCAL nI, oRow
-   LOCAL _id_pos := gIdPos
+   LOCAL cIdPos := gIdPos
+   LOCAL aPosStavke
    LOCAL _rn_broj := ""
    LOCAL _ok := .F.
 
-   _qry := " SELECT pd.datum, pd.brdok, pd.fisc_rn, " + ;
+   cQuery := " SELECT pd.datum, pd.brdok, pd.fisc_rn, " + ;
       " SUM( pp.kolicina * pp.cijena ) as iznos, " + ;
       " SUM( pp.kolicina * pp.ncijena ) as popust " + ;
       " FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos pp " + ;
       " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " pos_doks pd " + ;
       " ON pd.idpos = pp.idpos AND pd.idvd = pp.idvd AND pd.brdok = pp.brdok AND pd.datum = pp.datum " + ;
-      " WHERE pd.idpos = " + sql_quote( _id_pos ) + ;
-      " AND pd.idvd = '42' AND pd.fisc_rn = " + AllTrim( Str( fisc_rn ) ) + ;
+      " WHERE pd.idpos = " + sql_quote( cIdPos ) + ;
+      " AND pd.idvd = '42' AND pd.fisc_rn = " + AllTrim( Str( cFiskalniBroj ) ) + ;
       " GROUP BY pd.datum, pd.brdok, pd.fisc_rn " + ;
       " ORDER BY pd.datum, pd.brdok, pd.fisc_rn "
 
-   _table := run_sql_query( _qry )
-   _table:GoTo( 1 )
+   oTable := run_sql_query( cQuery )
+   oTable:GoTo( 1 )
 
-   IF _table:LastRec() > 1
+   IF oTable:LastRec() > 1
 
-      _arr := {}
+      aPosStavke := {}
 
-      DO WHILE !_table:Eof()
-         oRow := _table:GetRow()
-         AAdd( _arr, { oRow:FieldGet( 1 ), oRow:FieldGet( 2 ), oRow:FieldGet( 3 ), oRow:FieldGet( 4 ), oRow:FieldGet( 5 ) } )
-         _table:Skip()
+      DO WHILE !oTable:Eof()
+         oRow := oTable:GetRow()
+         AAdd( aPosStavke, { oRow:FieldGet( 1 ), oRow:FieldGet( 2 ), oRow:FieldGet( 3 ), oRow:FieldGet( 4 ), oRow:FieldGet( 5 ) } )
+         oTable:Skip()
       ENDDO
 
-      izaberi_racun_iz_liste( _arr, @broj_racuna, @datum_racuna )
+      izaberi_racun_iz_liste( aPosStavke, @cBrojRacuna, @dDatumRacuna )
 
       _ok := .T.
 
    ELSE
 
-      IF _table:LastRec() == 0
+      IF oTable:LastRec() == 0
          RETURN _ok
       ENDIF
 
       _ok := .T.
-      oRow := _table:GetRow()
-      broj_racuna := oRow:FieldGet( oRow:FieldPos( "brdok" ) )
-      datum_racuna := oRow:FieldGet( oRow:FieldPos( "datum" ) )
+      oRow := oTable:GetRow()
+      cBrojRacuna := oRow:FieldGet( oRow:FieldPos( "brdok" ) )
+      dDatumRacuna := oRow:FieldGet( oRow:FieldPos( "datum" ) )
 
    ENDIF
 
@@ -67,7 +68,7 @@ FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( fisc_rn, broj_racuna, datum_racuna 
 
 
 
-STATIC FUNCTION izaberi_racun_iz_liste( arr, broj_racuna, datum_racuna )
+STATIC FUNCTION izaberi_racun_iz_liste( arr, cBrojRacuna, dDatumRacuna )
 
    LOCAL _ret := 0
    LOCAL nI, _n
@@ -82,7 +83,7 @@ STATIC FUNCTION izaberi_racun_iz_liste( arr, broj_racuna, datum_racuna )
 
       _tmp := ""
       _tmp += DToC( arr[ nI, 1 ] )
-      _tmp += " racun: "
+      _tmp += " cBrRacuna: "
       _tmp += PadR( PadL( AllTrim( gIdPos ), 2 ) + "-" + AllTrim( arr[ nI, 2 ]  ), 10 )
       _tmp += PadL( AllTrim( Str( arr[ nI, 4 ] - arr[ nI, 5 ], 12, 2 ) ), 10 )
 
@@ -96,8 +97,8 @@ STATIC FUNCTION izaberi_racun_iz_liste( arr, broj_racuna, datum_racuna )
       IF _izbor == 0
          EXIT
       ELSE
-         broj_racuna := arr[ _izbor, 2 ]
-         datum_racuna := arr[ _izbor, 1 ]
+         cBrojRacuna := arr[ _izbor, 2 ]
+         dDatumRacuna := arr[ _izbor, 1 ]
          _izbor := 0
       ENDIF
    ENDDO
@@ -112,16 +113,16 @@ STATIC FUNCTION izaberi_racun_iz_liste( arr, broj_racuna, datum_racuna )
 // ---------------------------------------------------------------
 // koriguje broj racuna
 // ---------------------------------------------------------------
-STATIC FUNCTION _fix_rn_no( racun )
+STATIC FUNCTION _fix_rn_no( cBrRacuna )
 
    LOCAL _a_rn := {}
 
-   IF !Empty( racun ) .AND. ( "-" $ racun )
+   IF !Empty( cBrRacuna ) .AND. ( "-" $ cBrRacuna )
 
-      _a_rn := TokToNiz( racun, "-" )
+      _a_rn := TokToNiz( cBrRacuna, "-" )
 
       IF !Empty( _a_rn[ 2 ] )
-         racun := PadR( AllTrim( _a_rn[ 2 ] ), 6 )
+         cBrRacuna := PadR( AllTrim( _a_rn[ 2 ] ), 6 )
       ENDIF
 
    ENDIF

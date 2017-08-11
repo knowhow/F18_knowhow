@@ -370,7 +370,6 @@ FUNCTION select_o_pos_strad( cId )
 
 FUNCTION use_sql_pos_strad( cId )
 
-   LOCAL cSql
    LOCAL cTable := "pos_strad"
    LOCAL cAlias := "STRAD"
 
@@ -385,6 +384,19 @@ FUNCTION use_sql_pos_strad( cId )
 
    RETURN !Eof()
 
+
+
+
+FUNCTION find_pos_osob_by_naz( cNaz )
+
+   LOCAL cTable := "pos_osob", cAlias := "OSOB"
+   LOCAL cSqlQuery := "select * from fmk." + cTable
+
+   cSqlQuery += " WHERE naz=" + sql_quote( cNaz )
+
+   use_sql( cTable, cSqlQuery, cAlias )
+
+   RETURN !Eof()
 
 
 // set_a_sql_sifarnik( "pos_osob", "OSOB", F_OSOB   )

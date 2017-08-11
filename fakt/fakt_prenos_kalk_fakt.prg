@@ -135,9 +135,8 @@ FUNCTION kalk_2_fakt()
          ENDIF
       ENDIF
 
-      seek_fakt( cIdRj, cTipFakt, cBrFakt )
-
-      IF !Eof()
+      IF seek_fakt( cIdRj, cTipFakt, cBrFakt )
+      //IF !Eof()
          Beep( 4 )
          @ m_x + 14, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !!"
          Inkey( 4 )

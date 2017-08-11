@@ -112,8 +112,8 @@ FUNCTION fakt_objekat_id( cIdFirma, id_tipdok, cBrDok )
     //  o_fakt_dbf()
    //ENDIF
 
-   seek_fakt( cIdFirma, id_tipdok, cBrDok ) // + "  1"
-   IF Eof()
+   IF !seek_fakt( cIdFirma, id_tipdok, cBrDok ) // + "  1"
+   //IF Eof()
       _ret := Space( 10 )
    ELSE
       aMemo := fakt_ftxt_decode( fakt->txt )
@@ -162,8 +162,8 @@ FUNCTION get_fakt_vezni_dokumenti( cIdFirma, cIdTipDok, cBrDok )
 
 
 
-   seek_fakt( cIdFirma, cIdTipDok, cBrDok )
-   IF Eof()
+   IF !seek_fakt( cIdFirma, cIdTipDok, cBrDok )
+   //IF Eof()
       RETURN _ret
    ENDIF
 

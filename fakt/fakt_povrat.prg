@@ -70,8 +70,8 @@ FUNCTION povrat_fakt_dokumenta( rezerv, cIdFirma, cIdTipDok, cBrDok, test )
       RETURN nRet
    ENDIF
 
-   seek_fakt( cIdFirma, cIdTipDok, cBrDok )
-   IF Eof()
+   IF !seek_fakt( cIdFirma, cIdTipDok, cBrDok )
+   //IF Eof()
       MsgBeep( "Traženi dokument ne postoji ažuriran u bazi !" )
    ENDIF
 
@@ -313,8 +313,8 @@ FUNCTION fakt_povrat_po_kriteriju( cBrDok, dDatdok, cIdTipDok, cIdFirma )
       cIdTipDokTekuci := field->idtipdok
       cBrDokTekuci := field->brdok
 
-      seek_fakt( cIdFirmaTekuci, cIdTipDokTekuci, cBrDokTekuci )
-      IF Eof()
+      IF !seek_fakt( cIdFirmaTekuci, cIdTipDokTekuci, cBrDokTekuci )
+      //IF Eof()
          SELECT fakt_doks // nema stavki, sljedeci fakt dokument
          SKIP
          LOOP
@@ -329,8 +329,8 @@ FUNCTION fakt_povrat_po_kriteriju( cBrDok, dDatdok, cIdTipDok, cIdFirma )
       hRec := dbf_get_rec()
       lOk := delete_rec_server_and_dbf( "fakt_doks", hRec, 1, "CONT" )
 
-      seek_fakt( cIdFirmaTekuci, cIdTipDokTekuci, cBrDokTekuci )
-      IF !Found()
+      IF !seek_fakt( cIdFirmaTekuci, cIdTipDokTekuci, cBrDokTekuci )
+      //IF !Found()
 
          hRec := dbf_get_rec()
          lOk := delete_rec_server_and_dbf( "fakt_fakt", hRec, 2, "CONT" )

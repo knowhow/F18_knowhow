@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.51-std, 2017-08-11
+### Developer
+- FAKT: fakt_fakt, fakt_doks, fakt_doks2 sql
+
 ## 3.1.50-std, 2017-08-11
 ### Developer
 - BUGFIX: svašta

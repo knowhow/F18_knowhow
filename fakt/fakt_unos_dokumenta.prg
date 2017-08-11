@@ -1392,7 +1392,7 @@ FUNCTION RabPor10()
 
    LOCAL nArr := Select()
 
-   seek_fakt( _idfirma, "10", Left( _brdok, gNumDio ) )
+  -- seek_fakt( _idfirma, "10", Left( _brdok, gNumDio ) )
 
    DO WHILE !Eof() .AND.  _idfirma + "10" + Left( _brdok, gNumDio ) == idfirma + idtipdok + Left( brdok, gNumDio ) .AND. _idroba <> idroba
       SKIP 1

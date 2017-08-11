@@ -947,9 +947,8 @@ STATIC FUNCTION del_fakt_doc( id_firma, id_vd, br_dok )
    LOCAL _del_rec, nTrec
    LOCAL _ret := .F.
 
-   seek_fakt( id_firma, id_vd, br_dok )
-
-   IF !Eof()
+   IF seek_fakt( id_firma, id_vd, br_dok )
+   //IF !Eof()
       _ret := .T.
       // brisi fakt_fakt
       _del_rec := dbf_get_rec()
@@ -957,8 +956,8 @@ STATIC FUNCTION del_fakt_doc( id_firma, id_vd, br_dok )
    ENDIF
 
    // brisi fakt_doks
-   seek_fakt_doks( id_firma, id_vd, br_dok )
-   IF !Eof()
+   IF seek_fakt_doks( id_firma, id_vd, br_dok )
+   //IF !Eof()
       _del_rec := dbf_get_rec()
       delete_rec_server_and_dbf( "fakt_doks", _del_rec, 1, "CONT" )
    ENDIF

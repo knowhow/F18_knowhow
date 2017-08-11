@@ -84,11 +84,11 @@ FUNCTION set_a_dbfs()
    ENDIF
 #endif
 
-#ifdef F18_KADEV
-   IF f18_use_module( "kadev" )
-      set_a_dbf_kadev()
-   ENDIF
-#endif
+//#ifdef F18_KADEV
+//   IF f18_use_module( "kadev" )
+//      set_a_dbf_kadev()
+//   ENDIF
+//#endif
 
    RETURN .T.
 

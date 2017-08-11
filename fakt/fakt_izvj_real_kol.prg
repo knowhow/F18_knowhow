@@ -225,7 +225,6 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    IF cPrikaz == "1"
 
-
       seek_fakt( cIdFirma )
       nC := 0
       nCol1 := 10

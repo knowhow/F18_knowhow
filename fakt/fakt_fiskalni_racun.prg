@@ -444,7 +444,7 @@ STATIC FUNCTION fakt_get_iznos_za_dokument( cIdFirma, cIdTipDok, cBrDok )
 STATIC FUNCTION fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTipDok, cBrDok, lStorno, aPartner )
 
    LOCAL aRacunData := {}
-   LOCAL _n_rn_broj, _rn_iznos, _rn_rabat, _rn_datum, _rekl_rn_broj
+   LOCAL _n_rn_broj, _rn_iznos, _rn_rabat, _rn_datum, cFiskalniReklamiraniRnBroj
    LOCAL _vrsta_pl, _partn_id, nTotalRacuna, nRacunFaktTotal
    LOCAL _art_id, nRobaPLU_kod, cNazivArtikla, cRobaJmj, cVrstaPlacanja
    LOCAL cArtikalBarkod, _rn_rbr, aMemo
@@ -480,7 +480,7 @@ STATIC FUNCTION fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTip
    seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok )
 
    _n_rn_broj := Val( AllTrim( field->brdok ) )
-   _rekl_rn_broj := field->fisc_rn
+   cFiskalniReklamiraniRnBroj := field->fisc_rn
 
    _rn_iznos := field->iznos
    _rn_rabat := field->rabat
@@ -490,17 +490,16 @@ STATIC FUNCTION fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTip
    _a_iznosi := fakt_get_iznos_za_dokument( cIdFirma, cIdTipDok, cBrDok )
    _data_total := fakt_izracunaj_total( _a_iznosi, _partn_id, cIdTipDok )
 
-   seek_fakt( cIdFirma, cIdTipDok, cBrDok )
-   IF !Found()
+   IF !seek_fakt( cIdFirma, cIdTipDok, cBrDok )
       MsgBeep( "Račun ne posjeduje niti jednu stavku#Štampanje onemogućeno !" )
       RETURN NIL
    ENDIF
 
    IF lStorno
-      _rekl_rn_broj := fakt_reklamirani_racun_box( _rekl_rn_broj )
+      cFiskalniReklamiraniRnBroj := fakt_reklamirani_racun_box( cFiskalniReklamiraniRnBroj )
    ENDIF
 
-   IF _rekl_rn_broj == -1
+   IF cFiskalniReklamiraniRnBroj == -1
       MsgBeep( "Broj veze računa mora biti setovan" )
       RETURN NIL
    ENDIF
@@ -590,8 +589,8 @@ STATIC FUNCTION fakt_gen_array_racun_stavke_from_fakt_dokument( cIdFirma, cIdTip
 
       cStornoRacunOpis := ""
 
-      IF _rekl_rn_broj > 0
-         cStornoRacunOpis := AllTrim( Str( _rekl_rn_broj ) )
+      IF cFiskalniReklamiraniRnBroj > 0
+         cStornoRacunOpis := AllTrim( Str( cFiskalniReklamiraniRnBroj ) )
       ENDIF
 
       IF field->dindem == Left( ValBazna(), 3 )

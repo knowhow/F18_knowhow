@@ -1,8 +1,9 @@
 # F18 klijent, lista promjena
 
-## 3.1.48-std, 2017-08-11
+## 3.1.49-std, 2017-08-11
 ### Developer
 - BUGFIX: svašta
+  - FAKT pregled dokumenata txt
   - my_browse - refresh prva stavka
   - nova baza "db_name"
   - ugov, rugov

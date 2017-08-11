@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.46-std, 2017-08-11
+### Developer
+- FAKT BUGFIX: seek_fakt ne mogu locirati dokument is_storno
+
 ## 3.1.45-std, 2017-08-11
 ### Developer
 - THREAD STATIC self_organizacija_id( cId )

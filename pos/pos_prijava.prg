@@ -48,7 +48,7 @@ FUNCTION pos_prijava( Fx, Fy )
       ENDIF
 
 
-      HSpecSifre( cKorSif ) // obradi specijalne sifre
+      pos_spec_sifre( cKorSif ) // obradi specijalne sifre
 
       IF ( goModul:lTerminate )
          RETURN "X"
@@ -74,12 +74,12 @@ FUNCTION pos_prijava( Fx, Fy )
 
 
 // obrada specijalnih sifara...
-FUNCTION HSpecSifre( sifra )
+FUNCTION pos_spec_sifre( cSifra )
 
-   IF Trim( Upper( sifra ) ) $ "X"
+   IF Trim( Upper( cSifra ) ) $ "X"
       goModul:lTerminate := .T.
-   ELSEIF Trim( Upper( sifra ) ) = "M"
+   ELSEIF Trim( Upper( cSifra ) ) = "M"
       goModul:quit()
    ENDIF
 
-   RETURN
+   RETURN .T.

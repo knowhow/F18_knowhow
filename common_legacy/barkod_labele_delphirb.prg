@@ -21,7 +21,7 @@ FUNCTION fakt_labeliranje_barkodova()
    LOCAL cBoxHead
    LOCAL cBoxFoot
    LOCAL lDelphi := .T.
-   
+
    LOCAL i
    PRIVATE cKomLin
    PRIVATE Kol
@@ -68,9 +68,7 @@ FUNCTION fakt_labeliranje_barkodova()
    RETURN .T.
 
 
-// --------------------------------
-// nastimaj pointer na partnera...
-// --------------------------------
+
 FUNCTION seek_partner( cPartner )
 
    select_o_partner( cPartner )

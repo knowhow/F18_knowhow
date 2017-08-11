@@ -281,41 +281,41 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
 
    Box(, 10, 65 )
 
-   @ m_x + nX, m_y + 2 SAY PadR( "## UPGRADE F18 aplikacije ##", 64 ) COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "## UPGRADE F18 aplikacije ##", 64 ) COLOR f18_color_i()
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY cLine := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY cLine := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
    ++nX
-   @ m_x + nX, m_y + 2 SAY PadR( "[INFO]", 10 ) + "/" + PadC( "Trenutna", 20 ) + "/" + PadC( "Dostupna", 20 )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "[INFO]", 10 ) + "/" + PadC( "Trenutna", 20 ) + "/" + PadC( "Dostupna", 20 )
    ++nX
-   @ m_x + nX, m_y + 2 SAY cLine
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY cLine
    ++nX
-   @ m_x + nX, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( f18_ver(), 20 )
-   @ m_x + nX, Col() SAY " "
-   @ m_x + nX, Col() SAY PadC( hF18UpdateParams[ "f18" ], 20 ) COLOR cColorApp
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "F18", 10 ) + " " + PadC( f18_ver(), 20 )
+   @ box_x_koord() + nX, Col() SAY " "
+   @ box_x_koord() + nX, Col() SAY PadC( hF18UpdateParams[ "f18" ], 20 ) COLOR cColorApp
 
 /*
    ++nX
-   @ m_x + nX, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( f18_template_ver(), 20 )
-   @ m_x + nX, Col() SAY " "
-   @ m_x + nX, Col() SAY PadC( hF18UpdateParams[ "templates" ], 20 ) COLOR cColorTemplate
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "template", 10 ) + " " + PadC( f18_template_ver(), 20 )
+   @ box_x_koord() + nX, Col() SAY " "
+   @ box_x_koord() + nX, Col() SAY PadC( hF18UpdateParams[ "templates" ], 20 ) COLOR cColorTemplate
 */
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY cLine
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY cLine
 
    ++nX
    ++nX
    nPos := nX
 
-   @ m_x + nX, m_y + 2 SAY "       Update F18 ?" GET cUpdateF18 PICT "@!" VALID cUpdateF18 $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "       Update F18 ?" GET cUpdateF18 PICT "@!" VALID cUpdateF18 $ "DN"
 
    READ
 
    IF cUpdateF18 == "D"
-      @ m_x + nX, m_y + 25 SAY "VERZIJA:" GET nVerzijaMajor PICT "999" VALID nVerzijaMajor > 0
-      @ m_x + nX, Col() + 1 SAY "." GET nVerzijaMinor PICT "999" VALID nVerzijaMinor >= 0
-      @ m_x + nX, Col() + 1 SAY "." GET nVerzijaPatch PICT "9999"
+      @ box_x_koord() + nX, box_y_koord() + 25 SAY "VERZIJA:" GET nVerzijaMajor PICT "999" VALID nVerzijaMajor > 0
+      @ box_x_koord() + nX, Col() + 1 SAY "." GET nVerzijaMinor PICT "999" VALID nVerzijaMinor >= 0
+      @ box_x_koord() + nX, Col() + 1 SAY "." GET nVerzijaPatch PICT "9999"
    ENDIF
 
 /*
@@ -323,16 +323,16 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    ++nX
    nPos := nX
 
-   @ m_x + nX, m_y + 2 SAY "  Update template ?" GET cUpdateTemplate PICT "@!" VALID cUpdateTemplate $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "  Update template ?" GET cUpdateTemplate PICT "@!" VALID cUpdateTemplate $ "DN"
 */
 
    READ
 
 /*
    IF cUpdateTemplate == "D"
-      @ m_x + nX, m_y + 25 SAY "VERZIJA:" GET _t_ver_prim PICT "99" VALID _t_ver_prim > 0
-      @ m_x + nX, Col() + 1 SAY "." GET _t_ver_sec PICT "99" VALID _t_ver_sec > 0
-      @ m_x + nX, Col() + 1 SAY "." GET _t_ver_third PICT "@S10"
+      @ box_x_koord() + nX, box_y_koord() + 25 SAY "VERZIJA:" GET _t_ver_prim PICT "99" VALID _t_ver_prim > 0
+      @ box_x_koord() + nX, Col() + 1 SAY "." GET _t_ver_sec PICT "99" VALID _t_ver_sec > 0
+      @ box_x_koord() + nX, Col() + 1 SAY "." GET _t_ver_third PICT "@S10"
       READ
 
    ENDIF
@@ -546,16 +546,16 @@ METHOD F18Admin:update_db()
 
    Box(, 10, 70 )
 
-   @ m_x + nX, m_y + 2 SAY "**** upgrade db-a / unesite verziju ..."
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "**** upgrade db-a / unesite verziju ..."
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "     verzija db-a (npr. 4.6.1):" GET _version PICT "@S30" VALID !Empty( _version )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "     verzija db-a (npr. 4.6.1):" GET _version PICT "@S30" VALID !Empty( _version )
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "naziv baze / prazno update-sve:" GET cDatabase PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "naziv baze / prazno update-sve:" GET cDatabase PICT "@S30"
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Update template [empty] baza (D/N) ?" GET _upd_empty VALID _upd_empty $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Update template [empty] baza (D/N) ?" GET _upd_empty VALID _upd_empty $ "DN" PICT "@!"
 
    READ
 
@@ -810,11 +810,11 @@ METHOD F18Admin:razdvajanje_sezona()
 
 
    Box(, 7, 60 )
-   @ m_x + 1, m_y + 2 SAY8 "Otvaranje baze za novu sezonu ***" COLOR f18_color_i()
-   @ m_x + 3, m_y + 2 SAY8 "Vrši se prenos sa godine:" GET nFromSezona PICT "9999"
-   @ m_x + 3, Col() + 1 SAY8 "na godinu:" GET nToSezona PICT "9999" VALID ( nToSezona > nFromSezona .AND. nToSezona - nFromSezona == 1 )
-   @ m_x + 5, m_y + 2 SAY8 "Baza (prazno-sve):" GET _db PICT "@S30"
-   @ m_x + 6, m_y + 2 SAY8 "Ako baza postoji, pobriši je ? (D/N)" GET cDeletePostojecaDbDN VALID cDeletePostojecaDbDN $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Otvaranje baze za novu sezonu ***" COLOR f18_color_i()
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Vrši se prenos sa godine:" GET nFromSezona PICT "9999"
+   @ box_x_koord() + 3, Col() + 1 SAY8 "na godinu:" GET nToSezona PICT "9999" VALID ( nToSezona > nFromSezona .AND. nToSezona - nFromSezona == 1 )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Baza (prazno-sve):" GET _db PICT "@S30"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Ako baza postoji, pobriši je ? (D/N)" GET cDeletePostojecaDbDN VALID cDeletePostojecaDbDN $ "DN" PICT "@!"
    READ
    BoxC()
 
@@ -869,8 +869,8 @@ METHOD F18Admin:razdvajanje_sezona()
       // test_2014
       cDatabaseTo := StrTran( cDatabaseFrom, "_" + AllTrim( Str( nFromSezona ) ), "_" + AllTrim( Str( nToSezona ) ) )
 
-      @ m_x + 1, m_y + 2 SAY Space( 60 )
-      @ m_x + 1, m_y + 2 SAY "Kreiranje baze: " +  cDatabaseFrom + " > " + cDatabaseTo
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY Space( 60 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Kreiranje baze: " +  cDatabaseFrom + " > " + cDatabaseTo
 
 
       _params := hb_Hash()
@@ -933,7 +933,7 @@ METHOD F18Admin:create_new_pg_db( hDb )
 
    ENDIF
 
-   cDatabaseName := hDb[ "database_name" ]
+   cDatabaseName := hDb[ "db_name" ]
    cDatabaseTemplate := hDb[ "db_template" ]
    lDbDrop := hDb[ "db_drop" ] == "D"
    nDatabaseType := hDb[ "db_type" ]
@@ -1060,7 +1060,7 @@ METHOD F18Admin:drop_pg_db( cDatabaseName )
       cDatabaseName := Space( 30 )
 
       Box(, 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Naziv baze:" GET cDatabaseName VALID !Empty( cDatabaseName )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Naziv baze:" GET cDatabaseName VALID !Empty( cDatabaseName )
       READ
       BoxC()
 
@@ -1210,33 +1210,33 @@ METHOD F18Admin:create_new_pg_db_params( params )
 
    Box(, 12, 70 )
 
-   @ m_x + nX, m_y + 2 SAY "*** KREIRANJE NOVE BAZE PODATAKA ***"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** KREIRANJE NOVE BAZE PODATAKA ***"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Naziv nove baze:" GET cDatabaseName VALID _new_db_valid( cDatabaseName ) PICT "@S30"
-   @ m_x + nX, Col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !Empty( _db_year )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Naziv nove baze:" GET cDatabaseName VALID _new_db_valid( cDatabaseName ) PICT "@S30"
+   @ box_x_koord() + nX, Col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !Empty( _db_year )
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Opis baze (*):" GET cDatabaseComment PICT "@S50"
-
-   ++nX
-   ++nX
-   @ m_x + nX, m_y + 2 SAY "Koristiti kao uzorak postojeću bazu (*):"
-
-   ++nX
-   @ m_x + nX, m_y + 2 SAY "Naziv:" GET cDatabaseTemplate PICT "@S40"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Opis baze (*):" GET cDatabaseComment PICT "@S50"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET lDbDrop VALID lDbDrop $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koristiti kao uzorak postojeću bazu (*):"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Pražnjenje podataka (1) pocetno stanje (2) sve" GET nDatabaseType PICT "9"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Naziv:" GET cDatabaseTemplate PICT "@S40"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "*** opcije markirane kao (*) nisu obavezne"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET lDbDrop VALID lDbDrop $ "DN" PICT "@!"
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Pražnjenje podataka (1) pocetno stanje (2) sve" GET nDatabaseType PICT "9"
+
+   ++nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** opcije markirane kao (*) nisu obavezne"
 
    READ
 

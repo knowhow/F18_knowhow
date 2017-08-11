@@ -1,5 +1,12 @@
 # F18 klijent, lista promjena
 
+## 3.1.48-std, 2017-08-11
+### Developer
+- BUGFIX: svašta
+  - my_browse - refresh prva stavka
+  - nova baza "db_name"
+  - ugov, rugov
+
 ## 3.1.46-std, 2017-08-11
 ### Developer
 - FAKT BUGFIX: seek_fakt ne mogu locirati dokument is_storno

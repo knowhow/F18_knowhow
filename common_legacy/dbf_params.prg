@@ -172,11 +172,13 @@ FUNCTION HistUser( Ch )
    DO CASE
    CASE Ch == K_ENTER
       RETURN DE_ABORT
+      
    CASE Ch = K_CTRL_T
       IF Len( aHistory ) > 1
          cHi := aHistory[ aBrowRow(), 1 ]
          ADel( aHistory, aBrowRow() )
          ASize( aHistory, Len( aHistory ) - 1 )
+
          SEEK cSection + cHi
          DO WHILE !Eof() .AND. cSection + cHi == Fsec + Fh
             SKIP

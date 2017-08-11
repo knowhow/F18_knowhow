@@ -1221,7 +1221,6 @@ FUNCTION sifarnik_brisi_stavku()
       hRec[ "id" ]    := PadR( cAlias, 8 )
       hRec[ "idsif" ] := PadR( hRecDbf[ "id" ], 15 )
       lOk := delete_rec_server_and_dbf( "sifv", hRec, 3, "CONT" )
-
    ENDIF
 
    IF lOk

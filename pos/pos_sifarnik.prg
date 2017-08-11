@@ -14,30 +14,6 @@
 MEMVAR ImeKol, Kol
 
 
-STATIC FUNCTION pos_get_mpc_field()
-
-   LOCAL cField := "mpc"
-   LOCAL cSet := AllTrim( gSetMPCijena )
-
-   IF cSet <> "1"
-      cField := cField + cSet
-   ENDIF
-
-   RETURN cField
-
-
-
-STATIC FUNCTION pos_get_mpc_valid()
-
-   LOCAL lOk := .T.
-   LOCAL cSet := AllTrim( gSetMPCijena )
-
-   IF Empty( cSet ) .OR. cSet == "0"
-      lOk := .F.
-   ENDIF
-
-   RETURN lOk
-
 
 
 FUNCTION P_Kase( cId, dx, dy )

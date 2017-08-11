@@ -255,7 +255,7 @@ FUNCTION seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cTag, aWorkare
    SET ORDER TO TAG ( cTag )
    GO TOP
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 
@@ -473,7 +473,7 @@ FUNCTION seek_fakt_doks2( cIdFirma, cIdTipDok, cBrDok, cTag )
    SET ORDER TO TAG ( cTag )
    GO TOP
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 

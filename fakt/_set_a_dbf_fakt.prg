@@ -253,9 +253,8 @@ FUNCTION set_a_dbf_fakt_fakt()
    hItem[ "alias" ] := "FAKT"
    hItem[ "table" ] := cTable
    hItem[ "wa" ]    := F_FAKT
-
-   // temporary tabela - nema semafora
    hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
 
    hItem[ "algoritam" ] := {}
 
@@ -278,7 +277,7 @@ FUNCTION set_a_dbf_fakt_fakt()
    AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    hItem[ "sql_order" ] := "idfirma, idtipdok, brdok, rbr"
-   hItem[ "blacklisted" ] := { "fisc_rn", "dok_veza", "opis" }
+   hItem[ "blacklisted" ] := { "fisc_rn", "dok_veza", "opis", "brisano" } // fisc_rn se ne nalazi u fakt, nego u fakt_doks
 
    f18_dbfs_add( cTable, @hItem )
 
@@ -286,19 +285,18 @@ FUNCTION set_a_dbf_fakt_fakt()
 
 
 
-FUNCTION set_a_fakt_doks_doks2( tbl, alias, wa )
+FUNCTION set_a_fakt_doks_doks2( cTabela, cAlias, nWa )
 
    LOCAL hItem, hAlgoritam, cTable
 
-   cTable := tbl
+   cTable := cTabela
    hItem := hb_Hash()
 
-   hItem[ "alias" ] := alias
+   hItem[ "alias" ] := cAlias
    hItem[ "table" ] := cTable
-   hItem[ "wa" ]    := wa
-
-   // temporary tabela - nema semafora
+   hItem[ "wa" ]    := nWa
    hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
 
    hItem[ "algoritam" ] := {}
 
@@ -312,7 +310,7 @@ FUNCTION set_a_fakt_doks_doks2( tbl, alias, wa )
    AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    hItem[ "sql_order" ] := "idfirma, idtipdok, brdok"
-   hItem[ "blacklisted" ] := { "dok_veza" }
+   hItem[ "blacklisted" ] := { "dok_veza", "brisano", "obradjeno", "korisnik" } // polja obradjen i korisnik su autogenerisana na serverskoj strani
 
    f18_dbfs_add( cTable, @hItem )
 

@@ -108,10 +108,6 @@
 #define FIELD_LEN_FIN_RJ_ID 6 // fin_suban.idrj c(6)
 #define FIELD_LEN_FAKT_RJ_ID 2 // fakt_fakt.idfirma, unutar aplikacije se koristi kao RJ c(2)
 
-
-#define FIELD_LENGTH_LD_RADKR_NA_OSNOVU 20
-#define FIELD_LD_RADN_IDBANKA 6
-
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED
       #include "f18_release.ch"
@@ -152,6 +148,8 @@
 
 #define GSV_COUNT  9
 
+
+
 // CDX
 #define CDX_INDICES
 #undef NTX_INDICES
@@ -167,9 +165,12 @@
 #define DBFENGINE "DBFCDX"
 // CDX end
 
+
+
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 1
 #define SEMAPHORE_LOCK_RETRY_NUM 100
 #define SEMAPHORE_LOCK_TIME 10
+
 
 
 #define RPT_PAGE_LEN fetch_metric( "rpt_duzina_stranice", my_user(), 60 )
@@ -211,6 +212,8 @@
 
 #define EXEPATH   my_home_root()
 #define SIFPATH   my_home()
+
+
 #define KUMPATH   my_home()
 #define CURDIR    my_home()
 
@@ -286,6 +289,7 @@
 #xcommand RPL_G            =>  gRPL_Gusto()
 
 
+
 #xcommand CLOSERET2      => RETURN my_close_all_dbf()
 #xcommand CLOSERET       => RETURN my_close_all_dbf()
 
@@ -320,6 +324,8 @@
                                   ;    my_close_all_dbf()             ;
                                   ;    return .F.                     ;
                                   ;endif
+
+
 
 
 
@@ -365,6 +371,7 @@
 
 #command ENDPRINT => f18_end_print(NIL, __print_opt)
 
+
 #command EOF CRET <x> =>  if EofFndret(.T., .T.)       ;
                           ;return <x>                  ;
                           ;endif
@@ -396,8 +403,9 @@
 #command NFOUND RET     =>  if EofFndret(.F., .F.)       ;
                             ;   return  .F.              ;
                             ;endif
-                            
+
 #define SLASH  HB_OSPATHSEPARATOR()
+
 
 
 #define NRED_DOS Chr(13)+Chr(10)
@@ -582,3 +590,7 @@
 #define F18_DOWNLOAD_BASE_URL "https://raw.github.com/knowhow/F18_knowhow"
 #define F18_VERZIJA "3"
 #define F18_VARIJANTA "std"
+
+
+#define FIELD_LENGTH_LD_RADKR_NA_OSNOVU 20
+#define FIELD_LD_RADN_IDBANKA 6

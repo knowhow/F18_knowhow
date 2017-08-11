@@ -54,7 +54,7 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
    o_fakt_pripr()
    SET ORDER TO TAG "3"
 
-   o_fakt_dbf()
+  -- o_fakt_dbf()
 
    MsgO( "scaniram tabelu fakt" )
    nRbr := 0

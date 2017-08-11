@@ -13,7 +13,6 @@
 
 #ifdef F18_FMK
 
-// -----------------------------------------
 // provjera podataka za migraciju f18
 // -----------------------------------------
 FUNCTION fmk_provjera_za_migraciju_f18()
@@ -135,7 +134,7 @@ STATIC FUNCTION f18_fin_data( data, checksum )
 
 
 
-// -----------------------------------------
+
 // provjera fakt
 // -----------------------------------------
 STATIC FUNCTION f18_fakt_data( data, checksum )
@@ -143,7 +142,7 @@ STATIC FUNCTION f18_fakt_data( data, checksum )
    LOCAL _n_c_iznos := 0
    LOCAL _n_c_stavke := 0
 
-   o_fakt_dbf()
+   o_fakt_dbf() // fmk
 
    Box(, 2, 60 )
 

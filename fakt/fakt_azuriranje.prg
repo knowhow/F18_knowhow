@@ -74,6 +74,7 @@ FUNCTION fakt_azuriraj_dokumente_u_pripremi( lSilent )
 
       IF lOk .AND. fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok  )
 
+/*
          IF lOk .AND. !fakt_azur_dbf( cIdFirma, cIdTipDok, cBrDok )
             cMsg := "Neuspješno DBF ažuriranje dokumenta: " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
             log_write( cMsg, 1 )
@@ -82,6 +83,7 @@ FUNCTION fakt_azuriraj_dokumente_u_pripremi( lSilent )
          ELSE
             log_write( "F18_DOK_OPER: azuriranje fakt dokumenta: " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok, 2 )
          ENDIF
+*/
 
       ELSE
          cMsg := "Neuspješno SQL ažuriranje dokumenta: " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
@@ -181,6 +183,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
       hRec := dbf_get_rec()
+      seek_fakt( "XXX" )
       IF !sql_table_update( "fakt_fakt", "ins", hRec )
          lOk := .F.
          EXIT
@@ -193,6 +196,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
       AAdd( aIdsFaktDoks, cTempFaktId )
       SELECT fakt_pripr
       hRec := get_fakt_doks_data( cIdFirma, cIdTipDok, cBrDok )
+      seek_fakt_doks( "XXX" )
       IF !sql_table_update( "fakt_doks", "ins", hRec )
          lOk := .F.
       ENDIF
@@ -203,6 +207,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
       AAdd( aIdsFaktDoks2, cTempFaktId )
       hRec := get_fakt_doks2_data( cIdFirma, cIdTipDok, cBrDok )
       SELECT fakt_pripr
+      seek_fakt_doks2( "XXX" )
       IF !sql_table_update( "fakt_doks2", "ins", hRec )
          lOk := .F.
       ENDIF
@@ -239,7 +244,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
    RETURN lOk
 
 
-
+/*
 STATIC FUNCTION fakt_azur_dbf( cIdFirma, cIdTipDok, cBrDok, lSilent )
 
    LOCAL _a_memo
@@ -272,8 +277,8 @@ STATIC FUNCTION fakt_azur_dbf( cIdFirma, cIdTipDok, cBrDok, lSilent )
 
    @ m_x + 2, m_y + 2 SAY "fakt_doks " + cIdFirma + cIdTipDok + cBrDok
 
-   seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok )
-   IF !Eof()
+   IF seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok )
+   //IF !Eof()
       hRec := get_fakt_doks_data( cIdFirma, cIdTipDok, cBrDok )
       hb_HDel( hRec, "brisano" )
       hb_HDel( hRec, "sifra" )
@@ -293,8 +298,8 @@ STATIC FUNCTION fakt_azur_dbf( cIdFirma, cIdTipDok, cBrDok, lSilent )
 
    @ m_x + 3, m_y + 2 SAY "fakt_doks2 " + cIdFirma + cIdTipDok + cBrDok
 
-   seek_fakt_doks2( cIdFirma, cIdTipDok, cBrDok )
-   IF !Eof()
+   IF seek_fakt_doks2( cIdFirma, cIdTipDok, cBrDok )
+   //IF !Eof()
       hRec := get_fakt_doks2_data( cIdFirma, cIdTipDok, cBrDok )
       select_o_fakt_doks2_dbf()
       APPEND BLANK
@@ -311,7 +316,7 @@ STATIC FUNCTION fakt_azur_dbf( cIdFirma, cIdTipDok, cBrDok, lSilent )
    fakt_seek_pripr_dokument( cIdFirma, cIdTipDok, cBrDok )
 
    RETURN .T.
-
+*/
 
 /*
    Opis: formira string naziva partnera za tabelu FAKT_DOKS polje "partner"
@@ -553,22 +558,24 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
 //   o_fakt_txt()
    //o_tarifa()
    //o_valute()
-   o_fakt_doks2_dbf()
-   o_fakt_doks_dbf()
+
+   //o_fakt_doks2_dbf()
+   //o_fakt_doks_dbf()
+
    //o_rj()
    //o_sifk()
    //o_sifv()
 
    IF !lOpenFaktAsPripr
       o_fakt_pripr()
-      o_fakt_dbf()
+      //o_fakt_dbf()
       SELECT fakt_pripr
       SET ORDER TO TAG "1"
       GO TOP
    ENDIF
 
 
-   RETURN NIL
+   RETURN
 
 
 
@@ -613,7 +620,7 @@ FUNCTION fakt_sredi_redni_broj_u_pripremi()
 
 FUNCTION fakt_brisanje_pripreme()
 
-   LOCAL cIdFirma, _tip_dok, cBrDok
+   LOCAL cIdFirma, cIdTipDok, cBrDok
    LOCAL oAttr
 
    IF Pitanje(, D_ZELITE_LI_IZBRISATI_PRIPREMU, "N" ) == "D"
@@ -622,24 +629,24 @@ FUNCTION fakt_brisanje_pripreme()
       GO TOP
 
       cIdFirma := field->idfirma
-      _tip_dok := field->idtipdok
+      cIdTipDok := field->idtipdok
       cBrDok := field->brdok
 
       oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
       oAttr:hAttrId[ "idfirma" ] := cIdFirma
-      oAttr:hAttrId[ "idtipdok" ] := _tip_dok
+      oAttr:hAttrId[ "idtipdok" ] := cIdTipDok
       oAttr:hAttrId[ "brdok" ] := cBrDok
 
       IF gcF9usmece == "D"
          oAttr:delete_attr_from_dbf()
          azuriraj_smece( .T. )
-         log_write( "F18_DOK_OPER: fakt, prenosa dokumenta iz pripreme u smece: " + cIdFirma + "-" + _tip_dok + "-" + cBrDok, 2 )
+         log_write( "F18_DOK_OPER: fakt, prenosa dokumenta iz pripreme u smece: " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok, 2 )
          SELECT fakt_pripr
       ELSE
          my_dbf_zap()
          oAttr:zap_attr_dbf()
-         log_write( "F18_DOK_OPER: fakt, brisanje dokumenta iz pripreme: " + cIdFirma + "-" + _tip_dok + "-" + cBrDok, 2 )
-         fakt_reset_broj_dokumenta( cIdFirma, _tip_dok, cBrDok )
+         log_write( "F18_DOK_OPER: fakt, brisanje dokumenta iz pripreme: " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok, 2 )
+         fakt_reset_broj_dokumenta( cIdFirma, cIdTipDok, cBrDok )
       ENDIF
 
    ENDIF
@@ -649,11 +656,11 @@ FUNCTION fakt_brisanje_pripreme()
 
 FUNCTION fakt_generisi_storno_dokument( cIdFirma, cIdTipDok, cBrDok )
 
-   LOCAL _novi_br_dok
+   LOCAL cFaktNoviBrDok
    LOCAL hRec
    LOCAL nCount
-   LOCAL _fiscal_no
-   LOCAL _fiscal_use := fiscal_opt_active()
+   LOCAL nFiskalniRn
+   LOCAL lFiskalni := fiscal_opt_active()
 
    IF Pitanje( "FORM_STORNO", "Formirati storno dokument (D/N) ?", "D" ) == "N"
       RETURN .F.
@@ -667,25 +674,25 @@ FUNCTION fakt_generisi_storno_dokument( cIdFirma, cIdTipDok, cBrDok )
       RETURN .F.
    ENDIF
 
-   o_fakt_dbf()
-   o_fakt_doks_dbf()
+   //o_fakt_dbf()
+   //o_fakt_doks_dbf()
    //o_roba()
    //o_partner()
 
-   _novi_br_dok := AllTrim( cBrDok ) + "/S"
+   cFaktNoviBrDok := AllTrim( cBrDok ) + "/S"
 
-   IF Len( AllTrim( _novi_br_dok ) ) > 8
-      _novi_br_dok := Right( AllTrim( cBrDok ), 6 ) + "/S"
+   IF Len( AllTrim( cFaktNoviBrDok ) ) > 8
+      cFaktNoviBrDok := Right( AllTrim( cBrDok ), 6 ) + "/S"
    ENDIF
 
    nCount := 0
 
    seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok)
 
-   _fiscal_no := 0
+   nFiskalniRn := 0
 
-   IF _fiscal_use
-      _fiscal_no := field->fisc_rn
+   IF lFiskalni
+      nFiskalniRn := field->fisc_rn
    ENDIF
 
    seek_fakt( cIdFirma, cIdTipDok, cBrDok )
@@ -697,12 +704,12 @@ FUNCTION fakt_generisi_storno_dokument( cIdFirma, cIdTipDok, cBrDok )
       APPEND BLANK
 
       hRec[ "kolicina" ] := ( hRec[ "kolicina" ] * -1 )
-      hRec[ "brdok" ] := _novi_br_dok
+      hRec[ "brdok" ] := cFaktNoviBrDok
       hRec[ "datdok" ] := Date()
       hRec[ "idvrstep" ] := ""
 
-      IF _fiscal_use
-         hRec[ "fisc_rn" ] := _fiscal_no
+      IF lFiskalni
+         hRec[ "fisc_rn" ] := nFiskalniRn
       ENDIF
 
       dbf_update_rec( hRec )
@@ -715,7 +722,7 @@ FUNCTION fakt_generisi_storno_dokument( cIdFirma, cIdTipDok, cBrDok )
 
    IF nCount > 0
       MsgBeep( "Formiran je dokument " + cIdFirma + "-" + ;
-         cIdTipDok + "-" + AllTrim( _novi_br_dok ) + ;
+         cIdTipDok + "-" + AllTrim( cFaktNoviBrDok ) + ;
          " u pripremi !" )
    ENDIF
 

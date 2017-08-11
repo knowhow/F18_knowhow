@@ -188,6 +188,393 @@ FUNCTION fakt_unos_dokumenta()
    RETURN .T.
 
 
+
+
+
+STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
+
+   LOCAL aTipoviDokumenata := {}
+   LOCAL aH
+   LOCAL nRokPlacanja := 0
+   LOCAL lAvansniRacun
+   LOCAL cOpis := ""
+   LOCAL nMenu := fakt_tip_dokumenta_default_menu()
+   LOCAL cConvertDN := "N"
+   LOCAL nX := 1
+   LOCAL lOdabirFaktTxt := .F.
+   LOCAL cFaktTxtListaUzoraka
+   LOCAL nX2, nXPartner, nYPartner, _tip_cijene
+   LOCAL cRefBroj, cLotBroj
+   LOCAL hFaktParams := fakt_params()
+   LOCAL hFaktTxt
+   LOCAL nRokPlacanjaDefault := fakt_rok_placanja_dana()
+   LOCAL GetList := {}
+   LOCAL nSnimi_m_x, nSnimi_m_y
+   LOCAL cIdTipDokStari
+
+   aTipoviDokumenata := fakt_tip_dok_arr()
+   aH := {}
+   ASize( aH, Len( aTipoviDokumenata ) )
+   AFill( aH, "" )
+
+   IF hFaktItemsAttributi <> NIL
+
+      IF hFaktParams[ "fakt_opis_stavke" ]
+         IF lFaktNoviRec
+            cOpis := PadR( "", 300 )
+         ELSE
+            cOpis := PadR( hFaktItemsAttributi[ "opis" ], 300 )
+         ENDIF
+      ENDIF
+
+      IF hFaktParams[ "ref_lot" ]
+
+         IF lFaktNoviRec
+            cRefBroj := PadR( "", 50 )
+            cLotBroj := PadR( "", 50 )
+         ELSE
+            cRefBroj := PadR( hFaktItemsAttributi[ "ref" ], 50 )
+            cLotBroj := PadR( hFaktItemsAttributi[ "lot" ], 50 )
+         ENDIF
+      ENDIF
+
+   ENDIF
+
+
+   SET CURSOR ON
+
+   IF lFaktNoviRec  // nova stavka
+
+      cConvertDN := "D"
+      _serbr := Space( Len( field->serbr ) )
+      _cijena := 0
+      _kolicina := 0
+
+      //IF gResetRoba == "D"
+         _idRoba := Space( 10 )
+      //ENDIF
+
+      IF s_nFaktUnosRedniBroj == 1
+
+         nMenu := iif( Val( gIMenu ) < 1, Asc( gIMenu ) - 55, Val( gIMenu ) )
+         _idfirma := self_organizacija_id()
+         IF !Empty( hFaktParams[ "def_rj" ] )
+            _idfirma := hFaktParams[ "def_rj" ]
+         ENDIF
+         _idtipdok := "10"
+         _datdok := Date()
+         _zaokr := 2
+         _dindem := Left( ValBazna(), 3 )
+         _m1 := " "
+         _brdok := PadR( Replicate( "0", gNumDio ), 8 )
+      ENDIF
+
+      hFaktTxt := fakt_ftxt_decode_string( "" )
+      hFaktTxt[ "datpl" ] := _datDok
+      hFaktTxt[ "datotp" ] := _datdok // inicijalizirati dat isporuke = "datotp"  = fakt.datdok
+
+   ELSE
+      hFaktTxt := fakt_ftxt_decode_string( _txt )
+      nMenu := AScan( aTipoviDokumenata, {| x | _idtipdok == Left( x, 2 ) } )
+   ENDIF
+
+
+   _podbr := Space( 2 )
+   _tip_rabat := "%"
+
+   IF ( s_nFaktUnosRedniBroj == 1 .AND. Val( _podbr ) < 1 )
+
+      IF RecCount() == 0
+         _idFirma := self_organizacija_id()
+      ENDIF
+
+      IF !Empty( hFaktParams[ "def_rj" ] )
+         _idfirma := hFaktParams[ "def_rj" ]
+      ENDIF
+
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( self_organizacija_naziv(), 20 )
+
+      fakt_getlist_rj_read( box_x_koord() + nX, Col() + 2, @GetList, @_idFirma, .F. )
+      // @ box_x_koord() + nX, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == self_organizacija_id() ;
+      // .OR. P_RJ( @_idfirma ) .AND. V_Rj(), _idfirma := Left( _idfirma, 2 ), .T. }
+
+      READ
+
+      nSnimi_m_x := box_x_koord()
+      nSnimi_m_y := box_y_koord()
+
+      cIdTipDokStari := field->idtipdok
+
+      nMenu := meni_fiksna_lokacija( 5, 30, aTipoviDokumenata, nMenu )
+
+      box_x_koord( nSnimi_m_x )
+      box_y_koord( nSnimi_m_y )
+
+      ESC_RETURN 0
+
+      IF aTipoviDokumenata == NIL .OR. Len( aTipoviDokumenata ) == 0
+         MsgBeep( "Odabir vrste dokumenta se vrši sa ENTER !" )
+         RETURN 0
+      ENDIF
+
+      IF nMenu == NIL .OR. nMenu > Len( aTipoviDokumenata ) .OR. nMenu < 0
+         MsgBeep( "Nepostojeća opcija !" )
+         RETURN 0
+      ENDIF
+
+      _idtipdok := Left( aTipoviDokumenata[ nMenu ], 2 )
+
+      ++nX
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 40 )
+
+      IF !lFaktNoviRec .AND. s_nFaktUnosRedniBroj == 1
+         IF _idtipdok <> cIdTipDokStari .AND. !Empty( field->brdok ) .AND. AllTrim( field->brdok ) <> "00000"
+            MsgBeep( "Vršite promjenu vrste dokumenta. Obratiti pažnju na broj !" )
+            IF Pitanje(, "Resetovati broj dokumenta na 00000 (D/N) ?", "D" ) == "D"
+               _brdok := PadR( Replicate( "0", gNumDio ), 8 )
+            ENDIF
+         ENDIF
+      ENDIF
+
+      DO WHILE .T.
+
+         nX := 2
+
+         @  box_x_koord() + nX, box_y_koord() + 45 SAY "Datum:" GET _datdok
+         @  box_x_koord() + nX, Col() + 1 SAY "Broj:" GET _brdok VALID !Empty( _brdok )
+
+         nX += 2
+         @ nXPartner := box_x_koord() + nX, nYPartner := box_y_koord() + 2 SAY "Partner:" GET _idpartner ;
+            PICT "@!"   VALID {|| p_partner( @_idpartner ), ;
+            !Empty( _idpartner ) .AND. ispisi_partn( _idpartner, nXPartner, nYPartner + 18 ) } // izsifre izbačeno
+
+         nX += 2
+
+         IF hFaktParams[ "fakt_dok_veze" ]
+            @ box_x_koord() + nX, box_y_koord() + 2 SAY "Vezni dok.:" GET hFaktTxt[ "dokument_veza" ]  PICT "@S20"
+         ENDIF
+
+         ++nX
+         IF hFaktParams[ "destinacije" ]
+            @ box_x_koord() + nX, box_y_koord() + 2 SAY "Dest:" GET hFaktTxt[ "destinacija" ] PICT "@S20"
+         ENDIF
+
+         IF ( hFaktParams[ "fakt_objekti" ] .AND. _idtipdok $ "10#11#12#13" )
+            @ box_x_koord() + nX, Col() + 1 SAY "Objekat:" GET hFaktTxt[ "objekti" ] ;
+               VALID p_fakt_objekti( @hFaktTxt[ "objekti" ] ) PICT "@!"
+         ENDIF
+
+         nX2 := 4
+
+         IF _idtipdok $ "10#11"
+
+            @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "Otpremnica broj:" GET hFaktTxt[ "brotp" ] PICT "@S20" WHEN fakt_unos_w_brotp( lFaktNoviRec )
+            ++nX2
+            @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "          datum:" GET hFaktTxt[ "datotp" ]
+            ++nX2
+            @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "Ugovor/narudžba:" GET hFaktTxt[ "brnar" ] PICT "@S20"
+
+            IF lFaktNoviRec .AND. nRokPlacanjaDefault > 0
+               nRokPlacanja := nRokPlacanjaDefault
+            ENDIF
+
+            ++nX2
+            @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "Rok plać.(dana):" GET nRokPlacanja PICT "999" ;
+               WHEN valid_rok_placanja( @nRokPlacanja, @_datDok, @hFaktTxt[ "datpl" ], "0", lFaktNoviRec ) ;
+               VALID valid_rok_placanja( nRokPlacanja, @_datDok, @hFaktTxt[ "datpl" ], "1", lFaktNoviRec )
+            ++nX2
+            @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "Datum plaćanja :" GET hFaktTxt[ "datpl" ] ;
+               VALID valid_rok_placanja( nRokPlacanja, @_datDok, @hFaktTxt[ "datpl" ], "2", lFaktNoviRec )
+
+            IF hFaktParams[ "fakt_vrste_placanja" ] // fakt.idvrstep
+               ++nX
+               @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Način plaćanja" GET _idvrstep PICT "@!" VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
+            ENDIF
+
+
+         ELSEIF ( _idtipdok == "06" )
+
+            ++nX2
+            @ box_x_koord() + nX2, box_y_koord() + 51 SAY "Po ul.fakt.broj:" GET hFaktTxt[ "brotp" ] PICT "@S20" WHEN fakt_unos_w_brotp( lFaktNoviRec )
+            ++nX2
+            @ box_x_koord() + nX2, box_y_koord() + 51 SAY "       i UCD-u :" GET hFaktTxt[ "brnar" ] PICT "@S20"
+
+         ELSE
+            ++nX2
+            @ box_x_koord() + nX2, box_y_koord() + 51 SAY " datum isporuke:" GET hFaktTxt[ "datotp" ]
+
+         ENDIF
+
+         // IF ( fakt_pripr->( FieldPos( "idrelac" ) ) <> 0 .AND.
+         IF _idtipdok $ "#11#"
+            ++nX2
+            @ box_x_koord() + nX2, box_y_koord() + 51  SAY "       Relacija:" GET _idrelac PICT "@S10" // fakt.idrelac
+         ENDIF
+
+         nX += 3
+
+         IF _idTipDok $ "10#11#12#19#20#25#26#27"
+            @ box_x_koord() + nX, box_y_koord() + 2 SAY "Valuta ?" GET _dindem PICT "@!"
+         ELSE
+            @ box_x_koord() + nX, box_y_koord() + 2 SAY " "
+         ENDIF
+
+         IF _idtipdok $ "10"
+
+            lAvansniRacun := "N"
+
+            IF _idvrstep == "AV"
+               lAvansniRacun := "D"
+            ENDIF
+
+            @ box_x_koord() + nX, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET lAvansniRacun PICT "@!" ;
+               VALID lAvansniRacun $ "DN"
+
+         ENDIF
+
+         IF ( gIspPart == "N" )
+            READ
+         ENDIF
+
+         ESC_RETURN 0
+
+         select_fakt_pripr()
+
+         EXIT
+
+      ENDDO
+
+   ELSE
+
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( self_organizacija_naziv(), 20 )
+
+      ?? "  RJ:", _idfirma
+      nX += 2
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 35 )
+      @ box_x_koord() + nX, box_y_koord() + 45 SAY "Datum: "
+      ?? _datdok
+
+      @ box_x_koord() + nX, Col() + 1 SAY "Broj: "
+      ?? _brdok
+      hFaktTxt[ "txt2" ] := ""
+
+   ENDIF
+
+   nX := 13
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "R.br: " GET s_nFaktUnosRedniBroj PICT "9999"
+
+   nX := 15
+   @ box_x_koord() + nX, box_y_koord() + 2  SAY "Artikal: " GET _IdRoba PICT "@!S10" ;
+      WHEN {|| _idroba := PadR( _idroba, Val( gDuzSifIni ) ), W_Roba() } ;
+      VALID {|| fakt_valid_roba( _IdFirma, _IdTipDok, @_IdRoba, @hFaktTxt[ "opis_usluga" ], _IdPartner, lFaktNoviRec, 15 ) }
+
+
+   ++nX
+   // IF ( gSamokol != "D" .AND. !glDistrib )
+   // IF !glDistrib
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
+   // ENDIF
+
+   _tip_cijene := "1"
+
+   IF ( gVarC $ "123" .AND. _idtipdok $ "10#12#20#21#25" )
+      @ box_x_koord() + nX, box_y_koord() + 59 SAY "Cijena (1/2/3):" GET _tip_cijene
+   ENDIF
+
+   IF hFaktParams[ "fakt_opis_stavke" ]
+      ++nX
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Opis:" GET cOpis PICT "@S50"
+   ENDIF
+
+   IF hFaktParams[ "ref_lot" ]
+      ++nX
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "REF:" GET cRefBroj PICT "@S10"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "/ LOT:" GET cLotBroj PICT "@S10"
+   ENDIF
+
+   nX += 3
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Količina: "  GET _kolicina PICT fakt_pic_kolicina() VALID fakt_v_kolicina( _tip_cijene )
+
+
+   // IF gSamokol != "D"
+
+   @ box_x_koord() + nX, Col() + 2 SAY IF( _idtipdok $ "13#23" .AND. ( gVar13 == "2" .OR. glCij13Mpc ), ;
+      "MPC.s.PDV", "Cijena (" + AllTrim( ValDomaca() ) + ")" ) GET _cijena PICT fakt_pic_cijena() ;
+      WHEN  _podbr <> " ." ;
+      VALID fakt_valid_cijena( _cijena, _idtipdok, lFaktNoviRec )
+
+
+   IF ( PadR( _dindem, 3 ) <> PadR( ValDomaca(), 3 ) )
+      @ box_x_koord() + nX, Col() + 2 SAY "Pr"  GET cConvertDN ;
+         PICT "@!"  VALID fakt_valid_preracun_cijene_u_valutu_dokumenta( @cConvertDN, _dindem, _datdok, @_cijena )
+   ENDIF
+
+   IF !( _idtipdok $ "12#13" ) .OR. ( _idtipdok == "12" .AND. gV12Por == "D" )
+
+      @ box_x_koord() + nX, Col() + 2 SAY "Rabat:" GET _rabat PICT fakt_pic_cijena()  ;
+         WHEN _podbr <> " ." .AND. ! _idtipdok $ "15"
+
+      @ box_x_koord() + nX, Col() + 1 GET _tip_rabat PICT "@!" ;
+         WHEN {|| _tip_rabat := "%", ! _idtipdok $ "11#27#15" .AND. _podbr <> " ." } ;
+         VALID _tip_rabat $ "% AUCI" .AND. fakt_unos_v_rabat( _tip_rabat )
+
+   ENDIF
+
+   // ENDIF
+
+   READ
+
+   IF lAvansniRacun == "D"
+      _idvrstep := "AV"
+   ENDIF
+
+   ESC_RETURN 0
+
+   lOdabirFaktTxt := .T.
+
+   // IF _IdTipDok $ "13" .OR. gSamoKol == "D"
+   // lOdabirFaktTxt := .F.
+   // ENDIF
+
+   IF _idtipdok == "12"
+      // IF IsKomision( _idpartner )
+      // lOdabirFaktTxt := .T.
+      // ELSE
+      lOdabirFaktTxt := .F.
+      // ENDIF
+   ENDIF
+
+   IF lOdabirFaktTxt
+      fakt_unos_set_fakt_txt_opis( @hFaktTxt[ "txt2" ], s_nFaktUnosRedniBroj, _idtipdok, _idpartner )
+   ENDIF
+
+   IF ( _podbr == " ." .OR. roba->tip = "U" .OR. ( s_nFaktUnosRedniBroj == 1 .AND. Val( _podbr ) < 1 ) )
+      _txt := fakt_ftxt_encode_5( hFaktTxt )
+   ELSE
+      _txt := ""
+   ENDIF
+
+   _rbr := RedniBroj( s_nFaktUnosRedniBroj )
+
+   IF hFaktParams[ "fakt_opis_stavke" ]
+      hFaktItemsAttributi[ "opis" ] := cOpis
+   ENDIF
+   IF hFaktParams[ "ref_lot" ]
+      hFaktItemsAttributi[ "ref" ] := cRefBroj
+      hFaktItemsAttributi[ "lot" ] := cLotBroj
+   ENDIF
+
+#ifdef F18_EXPERIMENT
+   IF AllTrim( _rbr ) == "1"
+      show_last_racun( _idpartner, _destinacija, _idroba )
+   ENDIF
+#endif
+
+   RETURN 1
+
+
+
+
 STATIC FUNCTION fakt_unos_prikaz_marza()
 
    IF field->IdTipDok == "10" .OR. field->IdTipDok == "20"
@@ -542,7 +929,7 @@ STATIC FUNCTION fakt_pripr_keyhandler( Ch )
 STATIC FUNCTION fakt_prodji_kroz_stavke( hFaktParams )
 
    LOCAL nDug
-   LOCAL _rec_no, hFaktPriprRec
+   LOCAL nRecNo, hFaktPriprRec
    LOCAL _items_atrib
    LOCAL hPostojeciFaktRec
 
@@ -557,7 +944,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( hFaktParams )
    DO WHILE !Eof()
 
       SKIP
-      _rec_no := RecNo()
+      nRecNo := RecNo()
       SKIP - 1
 
       set_global_vars_from_dbf( "_" )
@@ -600,7 +987,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( hFaktParams )
       fakt_dodaj_ispravi_stavku( .F., hPostojeciFaktRec, _items_atrib )
       fakt_promjena_cijene_u_sif()
 
-      GO _rec_no
+      GO nRecNo
 
    ENDDO
 
@@ -763,387 +1150,6 @@ STATIC FUNCTION fakt_unos_nove_stavke()
 FUNCTION fakt_zaokruzenje()
    RETURN 2
 
-
-STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
-
-   LOCAL aTipoviDokumenata := {}
-   LOCAL aH
-   LOCAL nRokPlacanja := 0
-   LOCAL lAvansniRacun
-   LOCAL cOpis := ""
-   LOCAL nMenu := fakt_tip_dokumenta_default_menu()
-   LOCAL _convert := "N"
-   LOCAL nX := 1
-   LOCAL lOdabirFaktTxt := .F.
-   LOCAL cFaktTxtListaUzoraka
-   LOCAL nX2, nXPartner, nYPartner, _tip_cijene
-   LOCAL cRefBroj, cLotBroj
-   LOCAL hFaktParams := fakt_params()
-   LOCAL hFaktTxt
-   LOCAL nRokPlacanjaDefault := fakt_rok_placanja_dana()
-   LOCAL GetList := {}
-   LOCAL nSnimi_m_x, nSnimi_m_y
-   LOCAL _old_tip_dok
-
-   aTipoviDokumenata := fakt_tip_dok_arr()
-   aH := {}
-   ASize( aH, Len( aTipoviDokumenata ) )
-   AFill( aH, "" )
-
-   IF hFaktItemsAttributi <> NIL
-
-      IF hFaktParams[ "fakt_opis_stavke" ]
-         IF lFaktNoviRec
-            cOpis := PadR( "", 300 )
-         ELSE
-            cOpis := PadR( hFaktItemsAttributi[ "opis" ], 300 )
-         ENDIF
-      ENDIF
-
-      IF hFaktParams[ "ref_lot" ]
-
-         IF lFaktNoviRec
-            cRefBroj := PadR( "", 50 )
-            cLotBroj := PadR( "", 50 )
-         ELSE
-            cRefBroj := PadR( hFaktItemsAttributi[ "ref" ], 50 )
-            cLotBroj := PadR( hFaktItemsAttributi[ "lot" ], 50 )
-         ENDIF
-      ENDIF
-
-   ENDIF
-
-
-   SET CURSOR ON
-
-   IF lFaktNoviRec  // nova stavka
-
-      _convert := "D"
-      _serbr := Space( Len( field->serbr ) )
-      _cijena := 0
-      _kolicina := 0
-
-      IF gResetRoba == "D"
-         _idRoba := Space( 10 )
-      ENDIF
-
-      IF s_nFaktUnosRedniBroj == 1
-
-         nMenu := iif( Val( gIMenu ) < 1, Asc( gIMenu ) - 55, Val( gIMenu ) )
-         _idfirma := self_organizacija_id()
-         IF !Empty( hFaktParams[ "def_rj" ] )
-            _idfirma := hFaktParams[ "def_rj" ]
-         ENDIF
-         _idtipdok := "10"
-         _datdok := Date()
-         _zaokr := 2
-         _dindem := Left( ValBazna(), 3 )
-         _m1 := " "
-         _brdok := PadR( Replicate( "0", gNumDio ), 8 )
-      ENDIF
-
-      hFaktTxt := fakt_ftxt_decode_string( "" )
-      hFaktTxt[ "datpl" ] := _datDok
-      hFaktTxt[ "datotp" ] := _datdok // inicijalizirati dat isporuke = "datotp"  = fakt.datdok
-
-   ELSE
-      hFaktTxt := fakt_ftxt_decode_string( _txt )
-      nMenu := AScan( aTipoviDokumenata, {| x | _idtipdok == Left( x, 2 ) } )
-   ENDIF
-
-
-   _podbr := Space( 2 )
-   _tip_rabat := "%"
-
-   IF ( s_nFaktUnosRedniBroj == 1 .AND. Val( _podbr ) < 1 )
-
-      IF RecCount() == 0
-         _idFirma := self_organizacija_id()
-      ENDIF
-
-      IF !Empty( hFaktParams[ "def_rj" ] )
-         _idfirma := hFaktParams[ "def_rj" ]
-      ENDIF
-
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( self_organizacija_naziv(), 20 )
-
-      fakt_getlist_rj_read( box_x_koord() + nX, Col() + 2, @GetList, @_idFirma, .F. )
-      // @ box_x_koord() + nX, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == self_organizacija_id() ;
-      // .OR. P_RJ( @_idfirma ) .AND. V_Rj(), _idfirma := Left( _idfirma, 2 ), .T. }
-
-      READ
-
-      nSnimi_m_x := box_x_koord()
-      nSnimi_m_y := box_y_koord()
-
-      _old_tip_dok := field->idtipdok
-
-      nMenu := meni_fiksna_lokacija( 5, 30, aTipoviDokumenata, nMenu )
-
-      box_x_koord( nSnimi_m_x )
-      box_y_koord( nSnimi_m_y )
-
-      ESC_RETURN 0
-
-      IF aTipoviDokumenata == NIL .OR. Len( aTipoviDokumenata ) == 0
-         MsgBeep( "Odabir vrste dokumenta se vrši sa ENTER !" )
-         RETURN 0
-      ENDIF
-
-      IF nMenu == NIL .OR. nMenu > Len( aTipoviDokumenata ) .OR. nMenu < 0
-         MsgBeep( "Nepostojeća opcija !" )
-         RETURN 0
-      ENDIF
-
-      _idtipdok := Left( aTipoviDokumenata[ nMenu ], 2 )
-
-      ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 40 )
-
-      IF !lFaktNoviRec .AND. s_nFaktUnosRedniBroj == 1
-         IF _idtipdok <> _old_tip_dok .AND. !Empty( field->brdok ) .AND. AllTrim( field->brdok ) <> "00000"
-            MsgBeep( "Vršite promjenu vrste dokumenta. Obratiti pažnju na broj !" )
-            IF Pitanje(, "Resetovati broj dokumenta na 00000 (D/N) ?", "D" ) == "D"
-               _brdok := PadR( Replicate( "0", gNumDio ), 8 )
-            ENDIF
-         ENDIF
-      ENDIF
-
-      DO WHILE .T.
-
-         nX := 2
-
-         @  box_x_koord() + nX, box_y_koord() + 45 SAY "Datum:" GET _datdok
-         @  box_x_koord() + nX, Col() + 1 SAY "Broj:" GET _brdok VALID !Empty( _brdok )
-
-         nX += 2
-         @ nXPartner := box_x_koord() + nX, nYPartner := box_y_koord() + 2 SAY "Partner:" GET _idpartner ;
-            PICT "@!"   VALID {|| p_partner( @_idpartner ), ;
-            !Empty( _idpartner ) .AND. ispisi_partn( _idpartner, nXPartner, nYPartner + 18 ) } // izsifre izbačeno
-
-         nX += 2
-
-         IF hFaktParams[ "fakt_dok_veze" ]
-            @ box_x_koord() + nX, box_y_koord() + 2 SAY "Vezni dok.:" GET hFaktTxt[ "dokument_veza" ]  PICT "@S20"
-         ENDIF
-
-         ++nX
-         IF hFaktParams[ "destinacije" ]
-            @ box_x_koord() + nX, box_y_koord() + 2 SAY "Dest:" GET hFaktTxt[ "destinacija" ] PICT "@S20"
-         ENDIF
-
-         IF ( hFaktParams[ "fakt_objekti" ] .AND. _idtipdok $ "10#11#12#13" )
-            @ box_x_koord() + nX, Col() + 1 SAY "Objekat:" GET hFaktTxt[ "objekti" ] ;
-               VALID p_fakt_objekti( @hFaktTxt[ "objekti" ] ) PICT "@!"
-         ENDIF
-
-         nX2 := 4
-
-         IF _idtipdok $ "10#11"
-
-            @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "Otpremnica broj:" GET hFaktTxt[ "brotp" ] PICT "@S20" WHEN fakt_unos_w_brotp( lFaktNoviRec )
-            ++nX2
-            @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "          datum:" GET hFaktTxt[ "datotp" ]
-            ++nX2
-            @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "Ugovor/narudžba:" GET hFaktTxt[ "brnar" ] PICT "@S20"
-
-            IF lFaktNoviRec .AND. nRokPlacanjaDefault > 0
-               nRokPlacanja := nRokPlacanjaDefault
-            ENDIF
-
-            ++nX2
-            @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "Rok plać.(dana):" GET nRokPlacanja PICT "999" ;
-               WHEN valid_rok_placanja( @nRokPlacanja, @_datDok, @hFaktTxt[ "datpl" ], "0", lFaktNoviRec ) ;
-               VALID valid_rok_placanja( nRokPlacanja, @_datDok, @hFaktTxt[ "datpl" ], "1", lFaktNoviRec )
-            ++nX2
-            @ box_x_koord() + nX2, box_y_koord() + 51 SAY8 "Datum plaćanja :" GET hFaktTxt[ "datpl" ] ;
-               VALID valid_rok_placanja( nRokPlacanja, @_datDok, @hFaktTxt[ "datpl" ], "2", lFaktNoviRec )
-
-            IF hFaktParams[ "fakt_vrste_placanja" ] // fakt.idvrstep
-               ++nX
-               @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Način plaćanja" GET _idvrstep PICT "@!" VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
-            ENDIF
-
-
-         ELSEIF ( _idtipdok == "06" )
-
-            ++nX2
-            @ box_x_koord() + nX2, box_y_koord() + 51 SAY "Po ul.fakt.broj:" GET hFaktTxt[ "brotp" ] PICT "@S20" WHEN fakt_unos_w_brotp( lFaktNoviRec )
-            ++nX2
-            @ box_x_koord() + nX2, box_y_koord() + 51 SAY "       i UCD-u :" GET hFaktTxt[ "brnar" ] PICT "@S20"
-
-         ELSE
-            ++nX2
-            @ box_x_koord() + nX2, box_y_koord() + 51 SAY " datum isporuke:" GET hFaktTxt[ "datotp" ]
-
-         ENDIF
-
-         // IF ( fakt_pripr->( FieldPos( "idrelac" ) ) <> 0 .AND.
-         IF _idtipdok $ "#11#"
-            ++nX2
-            @ box_x_koord() + nX2, box_y_koord() + 51  SAY "       Relacija:" GET _idrelac PICT "@S10" // fakt.idrelac
-         ENDIF
-
-         nX += 3
-
-         IF _idTipDok $ "10#11#12#19#20#25#26#27"
-            @ box_x_koord() + nX, box_y_koord() + 2 SAY "Valuta ?" GET _dindem PICT "@!"
-         ELSE
-            @ box_x_koord() + nX, box_y_koord() + 2 SAY " "
-         ENDIF
-
-         IF _idtipdok $ "10"
-
-            lAvansniRacun := "N"
-
-            IF _idvrstep == "AV"
-               lAvansniRacun := "D"
-            ENDIF
-
-            @ box_x_koord() + nX, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET lAvansniRacun PICT "@!" ;
-               VALID lAvansniRacun $ "DN"
-
-         ENDIF
-
-         IF ( gIspPart == "N" )
-            READ
-         ENDIF
-
-         ESC_RETURN 0
-
-         select_fakt_pripr()
-
-         EXIT
-
-      ENDDO
-
-   ELSE
-
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( self_organizacija_naziv(), 20 )
-
-      ?? "  RJ:", _idfirma
-      nX += 2
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( fakt_naziv_dokumenta( @aTipoviDokumenata, _idtipdok ), 35 )
-      @ box_x_koord() + nX, box_y_koord() + 45 SAY "Datum: "
-      ?? _datdok
-
-      @ box_x_koord() + nX, Col() + 1 SAY "Broj: "
-      ?? _brdok
-      hFaktTxt[ "txt2" ] := ""
-
-   ENDIF
-
-   nX := 13
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "R.br: " GET s_nFaktUnosRedniBroj PICT "9999"
-
-   nX := 15
-   @ box_x_koord() + nX, box_y_koord() + 2  SAY "Artikal: " GET _IdRoba PICT "@!S10" ;
-      WHEN {|| _idroba := PadR( _idroba, Val( gDuzSifIni ) ), W_Roba() } ;
-      VALID {|| fakt_valid_roba( _IdFirma, _IdTipDok, @_IdRoba, @hFaktTxt[ "opis_usluga"], _IdPartner, lFaktNoviRec, 15 ) }
-
-
-   ++nX
-   // IF ( gSamokol != "D" .AND. !glDistrib )
-   // IF !glDistrib
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
-   // ENDIF
-
-   _tip_cijene := "1"
-
-   IF ( gVarC $ "123" .AND. _idtipdok $ "10#12#20#21#25" )
-      @ box_x_koord() + nX, box_y_koord() + 59 SAY "Cijena (1/2/3):" GET _tip_cijene
-   ENDIF
-
-   IF hFaktParams[ "fakt_opis_stavke" ]
-      ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Opis:" GET cOpis PICT "@S50"
-   ENDIF
-
-   IF hFaktParams[ "ref_lot" ]
-      ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "REF:" GET cRefBroj PICT "@S10"
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "/ LOT:" GET cLotBroj PICT "@S10"
-   ENDIF
-
-   nX += 3
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Količina: "  GET _kolicina PICT fakt_pic_kolicina() VALID fakt_v_kolicina( _tip_cijene )
-
-
-// IF gSamokol != "D"
-
-   @ box_x_koord() + nX, Col() + 2 SAY IF( _idtipdok $ "13#23" .AND. ( gVar13 == "2" .OR. glCij13Mpc ), ;
-      "MPC.s.PDV", "Cijena (" + AllTrim( ValDomaca() ) + ")" ) GET _cijena PICT fakt_pic_cijena() ;
-      WHEN  _podbr <> " ." ;
-      VALID fakt_valid_cijena( _cijena, _idtipdok, lFaktNoviRec )
-
-
-   IF ( PadR( _dindem, 3 ) <> PadR( ValDomaca(), 3 ) )
-      @ box_x_koord() + nX, Col() + 2 SAY "Pr"  GET _convert ;
-         PICT "@!"  VALID fakt_valid_preracun_cijene_u_valutu_dokumenta( @_convert, _dindem, _datdok, @_cijena )
-   ENDIF
-
-   IF !( _idtipdok $ "12#13" ) .OR. ( _idtipdok == "12" .AND. gV12Por == "D" )
-
-      @ box_x_koord() + nX, Col() + 2 SAY "Rabat:" GET _rabat PICT fakt_pic_cijena()  ;
-         WHEN _podbr <> " ." .AND. ! _idtipdok $ "15"
-
-      @ box_x_koord() + nX, Col() + 1 GET _tip_rabat PICT "@!" ;
-         WHEN {|| _tip_rabat := "%", ! _idtipdok $ "11#27#15" .AND. _podbr <> " ." } ;
-         VALID _tip_rabat $ "% AUCI" .AND. fakt_unos_v_rabat( _tip_rabat )
-
-   ENDIF
-
-// ENDIF
-
-   READ
-
-   IF lAvansniRacun == "D"
-      _idvrstep := "AV"
-   ENDIF
-
-   ESC_RETURN 0
-
-   lOdabirFaktTxt := .T.
-
-   // IF _IdTipDok $ "13" .OR. gSamoKol == "D"
-   // lOdabirFaktTxt := .F.
-   // ENDIF
-
-   IF _idtipdok == "12"
-      // IF IsKomision( _idpartner )
-      // lOdabirFaktTxt := .T.
-      // ELSE
-      lOdabirFaktTxt := .F.
-      // ENDIF
-   ENDIF
-
-   IF lOdabirFaktTxt
-      fakt_unos_set_fakt_txt_opis( @hFaktTxt[ "txt2" ], s_nFaktUnosRedniBroj, _idtipdok, _idpartner )
-   ENDIF
-
-   IF ( _podbr == " ." .OR. roba->tip = "U" .OR. ( s_nFaktUnosRedniBroj == 1 .AND. Val( _podbr ) < 1 ) )
-      _txt := fakt_ftxt_encode_5( hFaktTxt )
-   ELSE
-      _txt := ""
-   ENDIF
-
-   _rbr := RedniBroj( s_nFaktUnosRedniBroj )
-
-   IF hFaktParams[ "fakt_opis_stavke" ]
-      hFaktItemsAttributi[ "opis" ] := cOpis
-   ENDIF
-   IF hFaktParams[ "ref_lot" ]
-      hFaktItemsAttributi[ "ref" ] := cRefBroj
-      hFaktItemsAttributi[ "lot" ] := cLotBroj
-   ENDIF
-
-#ifdef F18_EXPERIMENT
-   IF AllTrim( _rbr ) == "1"
-      show_last_racun( _idpartner, _destinacija, _idroba )
-   ENDIF
-#endif
-
-   RETURN 1
 
 
 

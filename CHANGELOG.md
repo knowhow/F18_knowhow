@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 3.1.45-std, 2017-08-11
+### Developer
+- THREAD STATIC self_organizacija_id( cId )
+- FAKT OUT_VAR: gResetRoba 
+
 ## 3.1.44-std, 2017-08-11
 ### Developer
 - POS sql big-bang 01

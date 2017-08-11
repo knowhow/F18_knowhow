@@ -417,7 +417,7 @@ FUNCTION fakt_set_param_broj_dokumenta()
 
    IF LastKey() == K_ESC
       BoxC()
-      RETURN
+      RETURN .F.
    ENDIF
 
    // param: fakt/10/10
@@ -444,16 +444,16 @@ FUNCTION fakt_set_param_broj_dokumenta()
 
 FUNCTION fakt_admin_menu()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. podešavanje brojača dokumenta " )
-   AAdd( _opcexe, {|| fakt_set_param_broj_dokumenta() } )
-   AAdd( _opc, "2. fakt export (r_exp) " )
-   AAdd( _opcexe, {|| fakt_export_tbl_fakt() } )
+   AAdd( aOpc, "1. podešavanje brojača dokumenta " )
+   AAdd( aOpcExe, {|| fakt_set_param_broj_dokumenta() } )
+   AAdd( aOpc, "2. fakt export (r_exp) " )
+   AAdd( aOpcExe, {|| fakt_export_tbl_fakt() } )
 
-   f18_menu( "fain", .F., _izbor, _opc, _opcexe )
+   f18_menu( "fain", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.
 

@@ -129,7 +129,7 @@ METHOD set_module_gvars()
    PUBLIC gnTMarg3 := 0 // vertik.pomj. totala fakture var.9
    PUBLIC gnTMarg4 := 0 // vertik.pomj. za donji dio fakture var.9
    PUBLIC gIspPart := "N" // ispravka partnera u unosu novog dokumenta
-   PUBLIC gResetRoba := "D" // resetuj uvijek artikal, pri unosu stavki dokumenta
+  // PUBLIC gResetRoba := "D" // resetuj uvijek artikal, pri unosu stavki dokumenta
 
    PUBLIC g10Str := hb_UTF8ToStr( "POREZNA FAKTURA br." )
    PUBLIC g10Str2T := "              Predao                  Odobrio                  Preuzeo"
@@ -361,7 +361,7 @@ METHOD set_module_gvars()
    gFinKtoPot := fetch_metric( "konto_potrazuje", NIL, gFinKtoPot )
    // gSamoKol := fetch_metric( "fakt_voditi_samo_kolicine", nil, gSamoKol )
 
-   gResetRoba := fetch_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
+   //gResetRoba := fetch_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
    gIMenu := fetch_metric( "fakt_meni_tekuci", my_user(), gIMenu )
 
    // potpisi

@@ -209,14 +209,14 @@ FUNCTION gen_ug()
       ENDIF
 
       SELECT fakt_pripr
-      SEEK self_organizacija_id() + cidtipdok + "È"
+  --    SEEK self_organizacija_id() + cidtipdok + "È"
       SKIP -1
       IF idtipdok <> cIdTipdok
          SEEK "È" // idi na kraj, nema zeljenih dokumenata
       ENDIF
 
       SELECT fakt
-      SEEK self_organizacija_id() + cidtipdok + "È"
+    --  SEEK self_organizacija_id() + cidtipdok + "È"
       SKIP -1
 
       IF idtipdok <> cIdTipdok
@@ -369,7 +369,7 @@ FUNCTION gen_ug()
             _txt := Chr( 16 ) + _txt1 + Chr( 17 )
          ENDIF
 
-         _idfirma := self_organizacija_id()
+    --     _idfirma := self_organizacija_id()
          _zaokr := ugov->zaokr
          _rbr := Str( ++nRbr, 3 )
          _idtipdok := cidtipdok

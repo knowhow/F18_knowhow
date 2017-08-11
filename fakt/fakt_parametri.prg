@@ -174,8 +174,8 @@ FUNCTION fakt_par_razno()
    ++nX
    @ m_x + nX, m_y + 2 SAY8 "Tekuća vrijednost za rok placanja  " GET nRokPlDana PICT "999"
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
-   ++nX
+   //@ m_x + nX, m_y + 2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
+   //++nX
    @ m_x + nX, m_y + 2 SAY "Prikaz barkod-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
 
    ++nX
@@ -246,7 +246,7 @@ FUNCTION fakt_par_razno()
 
       //set_metric( "fakt_voditi_samo_kolicine", NIL, gSamoKol )
       set_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), nRokPlDana )
-      set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
+      //set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
       set_metric( "fakt_meni_tekuci", my_user(), gIMenu )
       set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
       set_metric( "fakt_prikaz_barkod", my_user(), _prik_bk )

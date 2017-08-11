@@ -23,7 +23,7 @@ FUNCTION menu_fakt_kalk_prenos_normativi()
    AAdd( _opc, "2. fakt->kalk 96 po normativima po fakturama" )
    AAdd( _opcexe, {||          PrenosNoFakt()  } )
    AAdd( _opc, "3. fakt->kalk 10 got.proizv po normativima za period" )
-   AAdd( _opcexe, {||          PrenosNo2() } )
+   AAdd( _opcexe, {||          fakt_kalk_prenos_normativi() } )
 
    f18_menu( "fkno", .F., _izbor, _opc, _opcexe )
 
@@ -510,7 +510,7 @@ FUNCTION PrenosNoFakt()
 // ----------------------------------------------------------------------
 // Prenos FAKT -> KALK 10 po normativima
 // ----------------------------------------------------------------------
-FUNCTION PrenosNo2()
+FUNCTION fakt_kalk_prenos_normativi()
 
    LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdTipDok := "10;11;12;      "
@@ -520,11 +520,11 @@ FUNCTION PrenosNo2()
    o_kalk_pripr()
    // o_kalk()
   // o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_sastavnice()
-   o_fakt_dbf()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
+  // o_sastavnice()
+   //o_fakt_dbf()
 
    dDatKalk := Date()
    cIdKonto := PadR( "5100", 7 )

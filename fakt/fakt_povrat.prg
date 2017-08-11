@@ -25,7 +25,6 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
    LOCAL GetList := {}
    LOCAL cTabela
 
-
    IF ( PCount() == 0 )
       hParams[ "idfirma" ]  := self_organizacija_id()
       hParams[ "idtipdok" ] := Space( 2 )
@@ -68,7 +67,7 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
    ENDIF
 
    IF !seek_fakt( cIdFirma, cIdTipDok, cBrDok )
-   //IF Eof()
+      // IF Eof()
       MsgBeep( "Traženi dokument ne postoji ažuriran u bazi !" )
    ENDIF
 
@@ -91,11 +90,11 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
    oFaktAttr:hAttrId := hAttrId
    oFaktAttr:get_attr_from_server_to_dbf()
 
-   IF test == .T.
-      lBrisatiKumulativ := .T.
-   ELSE
-      lBrisatiKumulativ := Pitanje( "FAKT_POV_KUM", "Želite li izbrisati dokument iz datoteke kumulativa (D/N) ?", "N" ) == "D"
-   ENDIF
+   // IF test == .T.
+   // lBrisatiKumulativ := .T.
+   // ELSE
+   lBrisatiKumulativ := Pitanje( "FAKT_POV_KUM", "Želite li izbrisati dokument iz datoteke kumulativa (D/N) ?", "N" ) == "D"
+   // ENDIF
 
    IF !lBrisatiKumulativ
       resetuj_markere_generisanog_dokumenta( cIdFirma, cIdTipDok, cBrDok )
@@ -118,21 +117,24 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
       IF lOk
          cTabela := "fakt_fakt"
          @ box_x_koord() + 1, box_y_koord() + 2 SAY "brisanje : " + cTabela
-         select_o_fakt_dbf()
+         // select_o_fakt_dbf()
+         seek_fakt( "XX" )
          lOk := delete_rec_server_and_dbf( cTabela, hParams, 2, "CONT" )
       ENDIF
 
       IF lOk
          cTabela := "fakt_doks"
          @ box_x_koord() + 2, box_y_koord() + 2 SAY "brisanje : " + cTabela
-         select_o_fakt_doks_dbf()
+         // select_o_fakt_doks_dbf()
+         seek_fakt_doks( "XX" )
          lOk := delete_rec_server_and_dbf( cTabela, hParams, 1, "CONT" )
       ENDIF
 
       IF lOk
          cTabela := "fakt_doks2"
          @ box_x_koord() + 3, box_y_koord() + 2 SAY "brisanje : " + cTabela
-         select_o_fakt_doks2_dbf()
+         // select_o_fakt_doks2_dbf()
+         seek_fakt_doks2( "XX" )
          lOk := delete_rec_server_and_dbf( cTabela, hParams, 1, "CONT" )
       ENDIF
 
@@ -223,7 +225,6 @@ FUNCTION fakt_povrat_po_kriteriju( cBrDok, dDatdok, cIdTipDok, cIdFirma )
    LOCAL hRec
    LOCAL lOk := .T.
 
-
    IF PCount() <> 0
 
       hParams[ "brdok" ] := PadR( cBrDok, 200 )
@@ -311,7 +312,7 @@ FUNCTION fakt_povrat_po_kriteriju( cBrDok, dDatdok, cIdTipDok, cIdFirma )
       cBrDokTekuci := field->brdok
 
       IF !seek_fakt( cIdFirmaTekuci, cIdTipDokTekuci, cBrDokTekuci )
-      //IF Eof()
+         // IF Eof()
          SELECT fakt_doks // nema stavki, sljedeci fakt dokument
          SKIP
          LOOP
@@ -327,7 +328,7 @@ FUNCTION fakt_povrat_po_kriteriju( cBrDok, dDatdok, cIdTipDok, cIdFirma )
       lOk := delete_rec_server_and_dbf( "fakt_doks", hRec, 1, "CONT" )
 
       IF !seek_fakt( cIdFirmaTekuci, cIdTipDokTekuci, cBrDokTekuci )
-      //IF !Found()
+         // IF !Found()
 
          hRec := dbf_get_rec()
          lOk := delete_rec_server_and_dbf( "fakt_fakt", hRec, 2, "CONT" )

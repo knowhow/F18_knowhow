@@ -59,9 +59,9 @@ STATIC FUNCTION bterm_to_fakt_priprema()
 
    PRIVATE cTipVPC := "1"
 
-   o_fakt_doks_dbf()
+   //o_fakt_doks_dbf()
    o_fakt_pripr()
-   o_fakt_dbf()
+   //o_fakt_dbf()
    //o_roba()
    //o_rj()
    //o_partner()
@@ -180,14 +180,11 @@ STATIC FUNCTION _gForm( aParam )
 
    ++nX
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "(1) Veleprodaja"
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "(2) Maloprodaja" GET cVpMp ;
-      VALID cVpMp $ "12"
-
+   @ m_x + nX, m_y + 2 SAY "(2) Maloprodaja" GET cVpMp VALID cVpMp $ "12"
    READ
 
    ++ nX
@@ -225,17 +222,14 @@ STATIC FUNCTION _gForm( aParam )
    IF cVpMp == "2"
 
       // tip cijena
-      @ m_x + nX, m_y + 2 SAY "Koristiti MPC ( /1/2/3...)" ;
-         GET cMPCSet ;
-         VALID cMPCSet $ " 123456"
+      @ m_x + nX, m_y + 2 SAY "Koristiti MPC ( /1/2/3...)"  GET cMPCSet VALID cMPCSet $ " 123456"
 
       ++ nX
       ++ nX
 
    ENDIF
 
-   @ m_x + nX, m_y + 2 SAY "Izvrsiti transfer (D/N)?" GET cGen ;
-      VALID cGen $ "DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY "Izvrsiti transfer (D/N)?" GET cGen  VALID cGen $ "DN" PICT "@!"
 
    READ
    BoxC()

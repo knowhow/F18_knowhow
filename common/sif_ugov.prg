@@ -47,12 +47,12 @@ FUNCTION p_ugov( cId, dx, dy )
 
    DFTParUg( .T. )
 
-   o_ugov()
+   o_ugov() // browse svi ugovori
 
    set_a_kol( @ImeKol, @Kol )
 
-   // setuj polje pri otvaranju za sortiranje
-   set_fld_id( @cFieldId, cId )
+
+   set_fld_id( @cFieldId, cId )  // setuj polje pri otvaranju za sortiranje
 
    xRet := p_sifra( F_UGOV, cFieldId, f18_max_rows() - 10, f18_max_cols() - 3, cHeader, @cId, dx, dy, {| Ch | ugov_key_handler( Ch ) } )
 
@@ -1089,7 +1089,7 @@ FUNCTION IzfUgovor()
 
       SELECT ( F_UGOV )
       IF !Used()
-         o_ugov()
+  --       o_ugov()
       ENDIF
 
       SELECT ( F_RUGOV )

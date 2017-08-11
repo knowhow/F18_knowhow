@@ -37,7 +37,7 @@ FUNCTION ugov_sif_meni()
 
 
 /*
-FUNCTION o_ugov()
+--FUNCTION o_ugov()
 
    Select( F_UGOV )
    my_use  ( "ugov" )
@@ -132,7 +132,7 @@ FUNCTION f_ftxt( cId )
    LOCAL xRet := ""
 
    select_o_fakt_txt( cId )
-   xRet := Trim( ftxt->naz )
+   xRet := Trim( fakt_ftxt->naz )
 
    RETURN xRet
 

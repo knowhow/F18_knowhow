@@ -630,7 +630,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
    LOCAL GetList := {}
    LOCAL lKeyHendliran := .F.
 
-   AltD()
+
    IF bMyKeyHandler != NIL
       nKeyHandlerRetEvent := Eval( bMyKeyHandler, Ch )
       IF nKeyHandlerRetEvent != DE_CONT // samo ako je DE_CONT nastavi procesiranje

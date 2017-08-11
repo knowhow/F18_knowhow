@@ -219,7 +219,6 @@ FUNCTION fakt_pregled_liste_dokumenata()
       dbSetFilter( bFilter, cFilter ), dbGoTop() }
 
    Eval( s_bFaktDoksPeriod )
-altd()
 
    @ f18_max_rows() - 4, f18_max_cols() - 3 SAY Str( rloptlevel(), 2 )
 

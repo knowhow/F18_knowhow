@@ -119,7 +119,7 @@ STATIC FUNCTION ObSif()
    //o_valute()
    // o_rj()
    //o_sastavnice()
-   o_ugov()
+--   o_ugov()
    //o_rugov()
 
    //IF RUGOV->( FieldPos( "DEST" ) ) <> 0

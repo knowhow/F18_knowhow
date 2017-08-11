@@ -46,8 +46,6 @@ FUNCTION fakt_ostale_operacije_doks()
    AAdd( aOpc, "2. povrat dokumenata prema kriteriju " )
    AAdd( aOpcExe, {|| IIF( spec_funkcije_sifra(), fakt_povrat_po_kriteriju(), nil ) } )
 
-   AAdd( aOpc, "3. prekid rezervacije" )
-   AAdd( aOpcExe, {|| Povrat_fakt_dokumenta( .T. ) } )
 
    AAdd( aOpc, "A. administrativne opcije " )
    AAdd( aOpcExe, {|| fakt_admin_menu() } )

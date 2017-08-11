@@ -13,9 +13,7 @@
 
 
 
-// ----------------------------------
-// pregled destinacije
-// ----------------------------------
+
 FUNCTION P_Destin( cId, cPartId, dx, dy )
 
    LOCAL GetList := {}
@@ -25,12 +23,14 @@ FUNCTION P_Destin( cId, cPartId, dx, dy )
    PRIVATE cIdTek := cPartId
    PRIVATE nArr := Select()
 
-   SELECT DEST
-   SET ORDER TO TAG "ID"
 
-   HSEEK cIdTek + cId
+   o_dest_partner( cIdTek )
+   //SELECT DEST
+   //SET ORDER TO TAG "ID"
 
-   SET SCOPE TO cIdTek
+   //HSEEK cIdTek + cId
+
+   //SET SCOPE TO cIdTek
 
    ImeKol := { ;
       { "OZNAKA", {|| OZNAKA },  "OZNAKA"  }, ;
@@ -48,7 +48,7 @@ FUNCTION P_Destin( cId, cPartId, dx, dy )
    p_sifra( F_DEST, "ID", 10, 70, "Destinacije za:" + cIdTek + "-" + get_partner_naziv( cIdTek ), , , , {| Ch | EdDestBlok( Ch ) },,,, .F. )
 
    cId := cLastOznaka
-   SET SCOPE TO
+   //SET SCOPE TO
    SELECT ( nArr )
 
    RETURN .T.

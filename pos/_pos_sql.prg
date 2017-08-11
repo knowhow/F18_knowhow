@@ -302,6 +302,35 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
 
 
 
+FUNCTION pos_get_mpc()
+
+   LOCAL nCijena := 0
+   LOCAL cField
+   LOCAL oData, cQry
+
+   IF !pos_get_mpc_valid()
+      MsgBeep( "Set cijena nije podesen ispravno !" )
+      RETURN 0
+   ENDIF
+
+   cField := pos_get_mpc_field()
+
+   cQry := "SELECT " + cField + " FROM " + F18_PSQL_SCHEMA_DOT + "roba "
+   cQry += "WHERE id = " + sql_quote( roba->id )
+
+   oData := run_sql_query( cQry )
+
+   IF !is_var_objekat_tpqquery( oData )
+      MsgBeep( "Problem sa SQL upitom !" )
+   ELSE
+      IF oData:LastRec() > 0 .AND. ValType( oData:FieldGet( 1 ) ) == "N"
+         nCijena := oData:FieldGet( 1 )
+      ENDIF
+   ENDIF
+
+   RETURN nCijena
+
+
 FUNCTION o_vrstep( cId )
 
    SELECT ( F_VRSTEP )

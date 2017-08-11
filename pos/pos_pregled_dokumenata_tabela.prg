@@ -15,7 +15,7 @@
 FUNCTION pos_lista_azuriranih_dokumenata()
 
    LOCAL aOpc
-   LOCAL _prikaz_partnera := .F.
+   //LOCAL _prikaz_partnera := .F.
    PRIVATE cFilter := ".t."
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
@@ -41,11 +41,11 @@ FUNCTION pos_lista_azuriranih_dokumenata()
    AAdd( ImeKol, { "Broj ", {|| PadR( IF( !Empty( IdPos ), Trim( IdPos ) + "-", "" ) + AllTrim( BrDok ), 9 ) } } )
    AAdd( ImeKol, { "Fisk.rn", {|| fisc_rn } } )
 
-   IF _prikaz_partnera
-      SELECT pos_doks
-      SET RELATION TO idgost INTO partn
-      AAdd( ImeKol, { PadR( "Partner", 25 ), {|| PadR( Trim( idgost ) + "-" + Trim( partn->naz ), 25 ) } } )
-   ENDIF
+   //IF _prikaz_partnera
+  //    SELECT pos_doks
+  //    SET RELATION TO idgost INTO partn
+  //    AAdd( ImeKol, { PadR( "Partner", 25 ), {|| PadR( Trim( idgost ) + "-" + Trim( partn->naz ), 25 ) } } )
+  // ENDIF
 
    AAdd( ImeKol, { "VP", {|| IdVrsteP } } )
    AAdd( ImeKol, { "Datum", {|| datum } } )
@@ -94,7 +94,7 @@ FUNCTION pos_lista_azuriranih_dokumenata()
 
 
 
-FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
+FUNCTION pos_stampa_dokumenta_key_handler( dDatum0, dDatum1 )
 
    LOCAL cLevel
    LOCAL cOdg
@@ -113,7 +113,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
    STATIC dDatum
    STATIC cIdRadnik
 
-   IF M->Ch == 0
+   IF Ch == 0
       RETURN ( DE_CONT )
    ENDIF
 
@@ -145,6 +145,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
       ENDIF
 
       RETURN DE_CONT
+
 
    CASE Ch == k_ctrl_f9()
 
@@ -191,7 +192,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
             START PRINT CRET
 
             DO WHILE !Eof() .AND. IdPos + IdVd == ctIdPos + VD_RN
-               IF ( datum <= dDat1 )
+               IF ( datum <= dDatum1 )
                   aVezani := { { IdPos, BrDok, IdVd, datum } }
                   StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .F., glRetroakt )
                ENDIF
@@ -240,7 +241,6 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
       SELECT pos_doks
 
       RETURN ( DE_REFRESH )
-
 
 
    CASE Ch == K_CTRL_P
@@ -332,8 +332,9 @@ FUNCTION pos_pregled_stavki_racuna()
 
    Scatter()
 
-   SELECT POS
-   SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+   //SELECT POS
+   //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+   seek_pos( pos_doks->IdPos, pos_doks->IdVd,  pos_doks->datum, pos_doks->BrDok )
 
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 

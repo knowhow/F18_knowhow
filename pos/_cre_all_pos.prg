@@ -101,6 +101,7 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX ( "ID", "ID", _alias )
 */
 
+
    // --------------------- uredj -------
    aDbf := {}
    AAdd ( aDbf, { "ID", "C",  2, 0 } )

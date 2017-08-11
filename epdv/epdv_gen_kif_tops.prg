@@ -210,7 +210,6 @@ STATIC FUNCTION  gen_sg_item( cSezona )
    ENDIF
 
 
-
    // "1", "IdPos+IdVd+dtos(datum)+BrDok+IdRoba+IdCijena"
    SET ORDER TO TAG "1"
    SET FILTER TO &cFilter

@@ -15,18 +15,18 @@
 FUNCTION ReklKase( dDOd, dDDo, cVarijanta )
 
    PRIVATE cIdPos := gIdPos
-   PRIVATE dDat0
-   PRIVATE dDat1
+   PRIVATE dDatum0
+   PRIVATE dDatum1
    PRIVATE cFilter := ".t."
 
    SET CURSOR ON
 
    IF ( dDOd == nil )
-      dDat0 := gDatum
-      dDat1 := gDatum
+      dDatum0 := gDatum
+      dDatum1 := gDatum
    ELSE
-      dDat0 := dDOd
-      dDat1 := dDDo
+      dDatum0 := dDOd
+      dDatum1 := dDDo
    ENDIF
 
    IF ( cVarijanta == nil )
@@ -38,19 +38,19 @@ FUNCTION ReklKase( dDOd, dDDo, cVarijanta )
    IF ( cVarijanta == "0" )
       cIdPos := gIdPos
    ELSE
-      IF FrmRptVars( @cIdPos, @dDat0, @dDat1 ) == 0
+      IF FrmRptVars( @cIdPos, @dDatum0, @dDatum1 ) == 0
          RETURN 0
       ENDIF
    ENDIF
 
    START PRINT CRET
-   Zagl( dDat0, dDat1, cIdPos )
+   Zagl( dDatum0, dDatum1, cIdPos )
 
    SELECT ( F_POS_DOKS )
    IF !Used()
       o_pos_doks()
    ENDIF
-   SetFilter( @cFilter, cIdPos, dDat0, dDat1 )
+   SetFilter( @cFilter, cIdPos, dDatum0, dDatum1 )
 
    nCnt := 0
    ? "----------------------------------------"
@@ -74,11 +74,11 @@ FUNCTION ReklKase( dDOd, dDDo, cVarijanta )
    RETURN .T.
 
 
-/* FrmRptVars(cIdPos, dDat0, dDat1)
+/* FrmRptVars(cIdPos, dDatum0, dDatum1)
  *     Uzmi varijable potrebne za izvjestaj
  *  \return 0 - nije uzeo, 1 - uzeo uspjesno
  */
-STATIC FUNCTION FrmRptVars( cIdPos, dDat0, dDat1 )
+STATIC FUNCTION FrmRptVars( cIdPos, dDatum0, dDatum1 )
 
 
    LOCAL aNiz
@@ -90,8 +90,8 @@ STATIC FUNCTION FrmRptVars( cIdPos, dDat0, dDat1 )
       AAdd( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X'.or.EMPTY(cIdPos) .or. P_Kase(@cIdPos)", "@!", } )
    ENDIF
 
-   AAdd( aNiz, { "Izvjestaj se pravi od datuma", "dDat0",,, } )
-   AAdd( aNiz, { "                   do datuma", "dDat1",,, } )
+   AAdd( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
+   AAdd( aNiz, { "                   do datuma", "dDatum1",,, } )
 
    DO WHILE .T.
       IF cVarijanta <> "1"  // onda nema read-a
@@ -106,13 +106,13 @@ STATIC FUNCTION FrmRptVars( cIdPos, dDat0, dDat1 )
 
 
 
-STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos )
+STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos )
 
    // {
 
    ?? gP12CPI
    IF glRetroakt
-      ? PadC( "REKLAMACIJE NA DAN " + FormDat1( dDat1 ), 40 )
+      ? PadC( "REKLAMACIJE NA DAN " + FormDat1( dDatum1 ), 40 )
    ELSE
       ? PadC( "REKLAMACIJE NA DAN " + FormDat1( gDatum ), 40 )
    ENDIF
@@ -125,13 +125,13 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos )
       ? "PRODAJNO MJESTO: " + cIdPos + "-" + find_pos_kasa_naz( cIdPos )
    ENDIF
 
-   ? "PERIOD     : " + FormDat1( dDat0 ) + " - " + FormDat1( dDat1 )
+   ? "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
 
    RETURN
 // }
 
 
-STATIC FUNCTION SetFilter( cFilter, cIdPos, dDat0, dDat1 )
+STATIC FUNCTION SetFilter( cFilter, cIdPos, dDatum0, dDatum1 )
 
    // {
 
@@ -140,11 +140,11 @@ STATIC FUNCTION SetFilter( cFilter, cIdPos, dDat0, dDat1 )
 
    cFilter += " .and. idvd == '98' .and. sto <> 'P   ' "
    cFilter += " .and. idpos == '" + cIdPos + "'"
-   IF ( dDat0 <> nil )
-      cFilter += " .and. datum >= " + dbf_quote( dDat0 )
+   IF ( dDatum0 <> nil )
+      cFilter += " .and. datum >= " + dbf_quote( dDatum0 )
    ENDIF
-   IF ( dDat1 <> nil )
-      cFilter += " .and. datum <= " + dbf_quote( dDat1 )
+   IF ( dDatum1 <> nil )
+      cFilter += " .and. datum <= " + dbf_quote( dDatum1 )
    ENDIF
 
    IF !( cFilter == ".t." )

@@ -169,9 +169,9 @@ FUNCTION pos_realizacija_radnik
 
    // formiram pomocnu datoteku sa podacima o realizaciji
    IF !lTekuci
-      RadnIzvuci ( VD_PRR )
+      pos_radnik_izvuci ( VD_PRR )
    ENDIF
-   RadnIzvuci ( VD_RN )
+   pos_radnik_izvuci ( VD_RN )
 
    // ispis izvjestaja
    IF fPrik $ "PO"
@@ -373,23 +373,28 @@ FUNCTION C_RealRadn()
    RETURN .T.
 
 
-/* RadnIzvuci(cIdVd)
+/* pos_radnik_izvuci(cIdVd)
  *     Punjenje pomocne baze realizacijom po radnicima
  */
 
-FUNCTION RadnIzvuci( cIdVd )
+FUNCTION pos_radnik_izvuci( cIdVd )
 
-   SEEK cIdVd + DToS ( dDatOd )
+   //SEEK cIdVd + DToS ( dDatOd )
+   seek_pos_doks_2( cIdVd, dDatOd )
    DO WHILE ! Eof() .AND. IdVd == cIdVd .AND. pos_doks->Datum <= dDatDo
 
       IF ( !pos_admin() .AND. pos_doks->idpos = "X" ) .OR. ( pos_doks->IdPos = "X" .AND. AllTrim ( cIdPos ) <> "X" ) .OR. ( !Empty( cIdPos ) .AND. pos_doks->IdPos <> cIdPos ) .OR. ( !Empty( cSmjena ) .AND. pos_doks->Smjena <> cSmjena ) .OR. ( !Empty( cIdRadnik ) .AND. pos_doks->IdRadnik <> cIdRadnik )
          SKIP
          LOOP
       ENDIF
+
       _IdVrsteP := pos_doks->IdVrsteP
       _IdRadnik := pos_doks->IdRadnik
-      SELECT POS
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
+      //SELECT POS
+      //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
          // IF ( !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio )
@@ -400,8 +405,8 @@ FUNCTION RadnIzvuci( cIdVd )
          select_o_roba( pos->idroba )
 
          IF roba->( FieldPos( "idodj" ) ) <> 0
-            SELECT odj
-            HSEEK roba->idodj
+            //SELECT odj
+            select_o_pos_odj( roba->idodj )
          ENDIF
 
          nNeplaca := 0
@@ -417,7 +422,7 @@ FUNCTION RadnIzvuci( cIdVd )
 
          SELECT POM
          GO TOP
-         HSEEK _IdRadnik + _IdVrsteP + POS->IdRoba + POS->IdCijena
+         HSEEK _IdRadnik + _IdVrsteP + POS->IdRoba + POS->IdCijena // POM
 
          IF !Found()
             APPEND BLANK

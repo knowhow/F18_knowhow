@@ -18,7 +18,7 @@ STATIC PIC_UKUPNO := "9999999.99"
 
 FUNCTION realizacija_kase
 
-   PARAMETERS fZaklj, dDat0, dDat1, cVarijanta
+   PARAMETERS fZaklj, dDatum0, dDatum1, cVarijanta
 
    PRIVATE cIdOdj := Space( 2 )
    PRIVATE cRadnici := Space( 60 )
@@ -47,9 +47,9 @@ FUNCTION realizacija_kase
       cPVrstePl := "D"
    ENDIF
 
-   IF ( dDat0 == NIL )
-      dDat0 := gDatum
-      dDat1 := gDatum
+   IF ( dDatum0 == NIL )
+      dDatum0 := gDatum
+      dDatum1 := gDatum
    ENDIF
 
    IF ( cVarijanta == NIL )
@@ -76,7 +76,7 @@ FUNCTION realizacija_kase
    IF fZaklj
       cK1 := "N"
       cIdPos := gIdPos
-      dDat0 := dDat1 := gDatum
+      dDatum0 := dDatum1 := gDatum
       cSmjena := gSmjena
       cRD := "R"
       cVrijOd := "00:00"
@@ -85,7 +85,7 @@ FUNCTION realizacija_kase
       aUsl2 := ".t."
    ELSE
 
-      IF FrmRptVars( @cK1, @cIdPos, @dDat0, @dDat1, @cSmjena, @cRD, @cVrijOd, @cVrijDo, @aUsl1, @aUsl2, @cVrsteP, @cAPrometa, @cGotZir, @cSifraDob, @cPartId ) == 0
+      IF FrmRptVars( @cK1, @cIdPos, @dDatum0, @dDatum1, @cSmjena, @cRD, @cVrijOd, @cVrijDo, @aUsl1, @aUsl2, @cVrsteP, @cAPrometa, @cGotZir, @cSifraDob, @cPartId ) == 0
          RETURN 0
       ENDIF
 
@@ -94,11 +94,11 @@ FUNCTION realizacija_kase
    IF fZaklj
       STARTPRINTPORT CRET gLocPort, .F.
       ZagFirma()
-      ZaglZ( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj )
+      ZaglZ( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj )
    ELSE
       STARTPRINT CRET
       ZagFirma()
-      Zagl( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj, cGotZir )
+      Zagl( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj, cGotZir )
    ENDIF // fZaklj
 
    o_pos_tables()
@@ -143,13 +143,13 @@ FUNCTION realizacija_kase
 
       // Porezi po tarifama
 
-      PDVPorPoTar( dDat0, dDat1, cIdPos, NIL, cIdodj )
+      PDVPorPoTar( dDatum0, dDatum1, cIdPos, NIL, cIdodj )
 
 
       IF Round( Abs( nTotal2 ) + Abs( nTotal3 ), 4 ) <> 0
          o_pos_tables()
 
-         PDVPorPoTar( dDat0, dDat1, cIdPos, "3" )  // STA JE OVO? => APOTEKE!!
+         PDVPorPoTar( dDatum0, dDatum1, cIdPos, "3" )  // STA JE OVO? => APOTEKE!!
 
       ENDIF
 
@@ -167,7 +167,7 @@ FUNCTION realizacija_kase
    RETURN .T.
 
 
-FUNCTION FrmRptVars( cK1, cIdPos, dDat0, dDat1, cSmjena, cRD, cVrijOd, cVrijDo, aUsl1, aUsl2, cVrsteP, cAPrometa, cGotZir, cSifraDob, cPartId )
+FUNCTION FrmRptVars( cK1, cIdPos, dDatum0, dDatum1, cSmjena, cRD, cVrijOd, cVrijDo, aUsl1, aUsl2, cVrsteP, cAPrometa, cGotZir, cSifraDob, cPartId )
 
    LOCAL aNiz
 
@@ -187,8 +187,8 @@ FUNCTION FrmRptVars( cK1, cIdPos, dDat0, dDat1, cSmjena, cRD, cVrijOd, cVrijDo, 
    ENDIF
 
 
-   AAdd( aNiz, { "Izvjestaj se pravi od datuma", "dDat0",,, } )
-   AAdd( aNiz, { "                   do datuma", "dDat1",,, } )
+   AAdd( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
+   AAdd( aNiz, { "                   do datuma", "dDatum1",,, } )
    AAdd( aNiz, { "Smjena (prazno-sve)", "cSmjena",,, } )
    fPrik := "O"
    AAdd( aNiz, { "Prikazati Pazar/Robe/Oboje (P/R/O)?", "fPrik", "fPrik$'PRO'", "@!", } )
@@ -220,7 +220,7 @@ FUNCTION FrmRptVars( cK1, cIdPos, dDat0, dDat1, cSmjena, cRD, cVrijOd, cVrijDo, 
       ENDIF
       aUsl1 := Parsiraj( cRadnici, "IdRadnik" )
       aUsl2 := Parsiraj( cVrsteP, "IdVrsteP" )
-      IF aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. dDat0 <= dDat1
+      IF aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. dDatum0 <= dDatum1
          EXIT
       ELSEIF aUsl1 == nil
          Msg( "Kriterij za radnike nije korektno postavljen!" )
@@ -235,12 +235,12 @@ FUNCTION FrmRptVars( cK1, cIdPos, dDat0, dDat1, cSmjena, cRD, cVrijOd, cVrijDo, 
    RETURN 1
 
 
-STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj, cGotZir )
+STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj, cGotZir )
 
    ?? gP12CPI
 
    IF glRetroakt
-      ? PadC( "REALIZACIJA NA DAN " + FormDat1( dDat1 ), LEN_TRAKA )
+      ? PadC( "REALIZACIJA NA DAN " + FormDat1( dDatum1 ), LEN_TRAKA )
    ELSE
       ? PadC( "REALIZACIJA NA DAN " + FormDat1( gDatum ), LEN_TRAKA )
    ENDIF
@@ -301,7 +301,7 @@ STATIC FUNCTION Zagl( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj, 
       ENDIF
    ENDIF
 
-   ? "PERIOD     : " + FormDat1( dDat0 ) + " - " + FormDat1( dDat1 )
+   ? "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
 
    IF Empty( cSmjena )
       IF ( grbReduk < 2 )
@@ -352,7 +352,7 @@ STATIC FUNCTION SetFilter( cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPa
 
    RETURN .T.
 
-STATIC FUNCTION ZaglZ( dDat0, dDat1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj )
+STATIC FUNCTION ZaglZ( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj )
 
 
    ?

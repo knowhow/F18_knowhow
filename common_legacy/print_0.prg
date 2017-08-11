@@ -310,7 +310,7 @@ FUNCTION EndPrint()
    IF gPrinter <> cTekPrinter
       gPrinter := cTekPrinter
       PushWA()
-      O_GPARAMS
+      o_gparams()
       PRIVATE cSection := "P"
       PRIVATE cHistory := gPrinter
       PRIVATE aHistory := {}
@@ -486,7 +486,7 @@ FUNCTION PPrint()
    SetKey( K_ALT_R, {|| UzmiPPr(), AEval( GetList, {| o | o:display() } ) } )
    PRIVATE GetList := {}
 
-   O_GPARAMS
+   o_gparams()
    SELECT 99
    IF Used()
       fUsed := .T.

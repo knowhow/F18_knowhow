@@ -75,9 +75,9 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
 
    MsgO( "formiram pomocnu tabelu izvjestaja..." )
 
-   SEEK cIdVd + DToS( dDat0 )
+   SEEK cIdVd + DToS( dDatum0 )
 
-   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDat1
+   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
 
       IF ( !Empty( cIdPos ) .AND. pos_doks->IdPos <> cIdPos ) .OR. ( !Empty( cSmjena ) .AND. pos_doks->Smjena <> cSmjena )
          SKIP

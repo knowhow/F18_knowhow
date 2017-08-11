@@ -25,11 +25,12 @@ FUNCTION pos_kartica_artikla()
    LOCAL nSir := 40
    LOCAL cSiroki := "D"
    LOCAL cPPar
+   LOCAL GetList := {}
 
    //PRIVATE cIdDio := Space( 2 )
    PRIVATE cIdOdj := Space( 2 )
-   PRIVATE cDat0 := gDatum
-   PRIVATE cDat1 := gDatum
+   PRIVATE dDatum0 := gDatum
+   PRIVATE dDatum1 := gDatum
    PRIVATE cPocSt := "D"
 
    nMDBrDok := 6
@@ -43,8 +44,8 @@ FUNCTION pos_kartica_artikla()
    cRoba := Space( 10 )
    cIdPos := gIdPos
 
-   cDat0 := fetch_metric( "pos_kartica_datum_od", my_user(), cDat0 )
-   cDat1 := fetch_metric( "pos_kartica_datum_do", my_user(), cDat1 )
+   dDatum0 := fetch_metric( "pos_kartica_datum_od", my_user(), dDatum0 )
+   dDatum1 := fetch_metric( "pos_kartica_datum_do", my_user(), dDatum1 )
    cRoba := fetch_metric( "pos_kartica_artikal", my_user(), cRoba )
    cPPar := fetch_metric( "pos_kartica_prikaz_partnera", my_user(), "N" )
 
@@ -61,8 +62,8 @@ FUNCTION pos_kartica_artikla()
    READ
 
    @ m_x + 5, m_y + 6 SAY "Sifra artikla (prazno-svi)" GET cRoba VALID Empty( cRoba ) .OR. P_Roba( @cRoba ) PICT "@!"
-   @ m_x + 7, m_y + 2 SAY "za period " GET cDat0
-   @ m_x + 7, Col() + 2 SAY "do " GET cDat1
+   @ m_x + 7, m_y + 2 SAY "za period " GET dDatum0
+   @ m_x + 7, Col() + 2 SAY "do " GET dDatum1
    @ m_x + 9, m_y + 2 SAY "sa pocetnim stanjem D/N ?" GET cPocSt VALID cpocst $ "DN" PICT "@!"
    @ m_x + 10, m_y + 2 SAY "Prikaz partnera D/N ?" GET cPPar VALID cPPar $ "DN" PICT "@!"
    @ m_x + 11, m_y + 2 SAY "Siroki papir    D/N ?" GET cSiroki VALID cSiroki $ "DN" PICT "@!"
@@ -71,8 +72,8 @@ FUNCTION pos_kartica_artikla()
 
    ESC_BCR
 
-   set_metric( "pos_kartica_datum_od", my_user(), cDat0 )
-   set_metric( "pos_kartica_datum_do", my_user(), cDat1 )
+   set_metric( "pos_kartica_datum_od", my_user(), dDatum0 )
+   set_metric( "pos_kartica_datum_do", my_user(), dDatum1 )
    set_metric( "pos_kartica_artikal", my_user(), cRoba )
    set_metric( "pos_kartica_prikaz_partnera", my_user(), "N" )
 
@@ -126,7 +127,7 @@ FUNCTION pos_kartica_artikla()
    ENDIF
 
    ? cLM + "ARTIKAL    : " + IF( Empty( cRoba ), "SVI", RTrim( cRoba ) )
-   ? cLM + "PERIOD     : " + FormDat1( cDat0 ) + " - " + FormDat1( cDat1 )
+   ? cLM + "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
    ?
 
    IF gVrstaRS == "S"
@@ -178,6 +179,7 @@ FUNCTION pos_kartica_artikla()
       fSt := .T.
       cIdRoba := POS->IdRoba
       nUlaz := nIzlaz := 0
+
       SELECT POS
 
       DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba )
@@ -189,12 +191,15 @@ FUNCTION pos_kartica_artikla()
          IF cPocSt == "N"
             select_o_roba( cIdRoba )
             nCijena1 := pos_get_mpc()
-            SELECT POS
+            //SELECT POS
             nStanje := 0
             nVrijednost := 0
-            SEEK cIdOdj + cIdRoba + DToS( cDat0 )
+
+            //SEEK cIdOdj + cIdRoba + DToS( dDatum0 )
+            seek_pos_2( cIdOdj, cIdRoba, dDatum0 )
+
          ELSE
-            DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum < cDat0
+            DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum < dDatum0
                //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
                 //  SKIP
                 //  LOOP
@@ -247,7 +252,7 @@ FUNCTION pos_kartica_artikla()
                ELSE
                   ?
                ENDIF
-               ?? PadL ( "Stanje do " + FormDat1 ( cDat0 ), 29 ), ""
+               ?? PadL ( "Stanje do " + FormDat1 ( dDatum0 ), 29 ), ""
                ?? Str ( nStanje, 10, 3 )
                IF gVrstaRS == "S"
                   ?? " " + Str ( nCijena1 * nStanje, 12, 3 )
@@ -257,7 +262,7 @@ FUNCTION pos_kartica_artikla()
             SELECT POS
          ENDIF // cPocSt
 
-         DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum <= cDat1
+         DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum <= dDatum1
 
             //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
               // SKIP
@@ -393,7 +398,7 @@ FUNCTION pos_kartica_artikla()
          ? m
          ?
 
-         DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum > cDat1
+         DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum > dDatum1
             SKIP
          ENDDO
 

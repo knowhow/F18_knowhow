@@ -381,7 +381,7 @@ FUNCTION seek_fakt( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cIdRoba, dDatDokOd,
    SET ORDER TO TAG ( cTag )
    GO TOP
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 FUNCTION h_fakt_fakt_indexes()

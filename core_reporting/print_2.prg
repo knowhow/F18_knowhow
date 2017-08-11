@@ -706,15 +706,15 @@ FUNCTION SetGParams( cs, ch, cid, cvar, cval )
    SELECT params
    USE
 
-   IF cPosebno == "D"
-      SELECT ( F_GPARAMSP )
-      USE
-      O_GPARAMSP
-   ELSE
-      SELECT ( F_GPARAMS )
-      USE
-      O_GPARAMS
-   ENDIF
+   // IF cPosebno == "D"
+   // SELECT ( F_GPARAMSP )
+   // USE
+// O_GPARAMSP
+// ELSE
+   SELECT ( F_GPARAMS )
+   USE
+   o_gparams()
+// ENDIF
 
    &cVar := cVal
    Wpar( cId, &cVar )

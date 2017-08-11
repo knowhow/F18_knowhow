@@ -165,7 +165,7 @@ FUNCTION PromPeriod()
 
 /* ScanTops(dDan, aR, dDatDo, cPKto)
  *     Skenira tabele kasa i kupi promet
- */
+
 STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
 
 
@@ -269,13 +269,13 @@ STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
 
    RETURN 1
 
+*/
 
 
 /* ScanKalk(dDan, aR, dDatDo, cPKto)
  *     Skenira tabelu kalk i kupi promet prodavnica
 
 STATIC FUNCTION ScanKalk( dDan, aR, dDatDo, cPKto )
-
 
 
 //   o_roba()

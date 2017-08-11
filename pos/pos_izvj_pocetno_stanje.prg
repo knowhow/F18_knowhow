@@ -74,6 +74,7 @@ Sifra    Naziv              JMJ Kolicina
 ****/
 
    nFin := 0
+   
    SELECT POS
    WHILE ! Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == DOKS->( IdPos + IdVd + DToS( datum ) + BrDok )
       IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici()

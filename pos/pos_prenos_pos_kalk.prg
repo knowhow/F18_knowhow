@@ -35,7 +35,7 @@ FUNCTION pos_preuzmi_iz_kalk( cIdTipDok, cBrDok )
    _destination := AllTrim( gKalkDest )
 
    SET CURSOR ON
-   O_PRIPRZ
+   o_pos_priprz()
 
    _br_dok := Space( Len( field->brdok ) )
 
@@ -267,7 +267,7 @@ STATIC FUNCTION _o_real_table()
 
 
 
-FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dat_dok, cBrDok )
+FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dDatDok, cBrDok )
 
    LOCAL _r_br, hRec
    LOCAL _kol
@@ -284,7 +284,7 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dat_dok, cBrDok )
 
    _o_real_table()
 
-   IF !pos_dokument_postoji( cIdPos, cIdTipDk, dat_dok, cBrDok )
+   IF !pos_dokument_postoji( cIdPos, cIdTipDk, dDatDok, cBrDok )
       MsgBeep( "Dokument: " + cIdPos + "-" + cIdTipDk + "-" + PadL( cBrDok, 6 ) + " ne postoji !" )
       RETURN .F.
    ENDIF
@@ -293,12 +293,13 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dat_dok, cBrDok )
    _kol := 0
    _iznos := 0
 
-   SELECT pos
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK cIdPos + cIdTipDk + DToS( dat_dok ) + cBrDok
+   //SELECT pos
+   //SET ORDER TO TAG "1"
+   //GO TOP
+   //SEEK cIdPos + cIdTipDk + DToS( dDatDok ) + cBrDok
 
-   IF !Found()
+   IF !seek_pos( cIdPos, cIdTipDk, dDatDok, cBrDok )
+   //IF !Found()
       MsgBeep( "POS tabela nema stavki !" )
       SELECT ( nDbfArea )
       RETURN .F.
@@ -307,7 +308,7 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dat_dok, cBrDok )
    MsgO( "Eksport dokumenta u toku ..." )
 
    DO WHILE !Eof() .AND. field->idpos == cIdPos .AND. field->idvd == cIdTipDk .AND. ;
-         field->datum == dat_dok .AND. field->brdok == cBrDok
+         field->datum == dDatDok .AND. field->brdok == cBrDok
 
       cIdRoba := field->idroba
 
@@ -352,7 +353,7 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dat_dok, cBrDok )
    SELECT pom
    USE
 
-   _file := tops_kalk_create_topska( cIdPos, dat_dok, dat_dok, cIdTipDk, "tk_p" )
+   _file := tops_kalk_create_topska( cIdPos, dDatDok, dDatDok, cIdTipDk, "tk_p" )
    MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
 
 

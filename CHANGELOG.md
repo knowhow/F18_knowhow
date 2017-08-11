@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.44-std, 2017-08-11
+### Developer
+- POS sql big-bang 01
+
 ## 3.1.43-std, 2017-08-08
 
 ### Developer

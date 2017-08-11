@@ -184,7 +184,7 @@ FUNCTION set_global_vars_1()
    PUBLIC g50f := " "
    // PUBLIC gFKolor := "D"
 
-   O_GPARAMS
+   o_gparams()
    PRIVATE cSection := "1", cHistory := " "; aHistory := {}
 
    Rpar( "pt", @gPTKonv )

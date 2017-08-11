@@ -12,6 +12,33 @@
 #include "f18.ch"
 
 
+FUNCTION o_pos_priprz()
+
+   SELECT ( F_PRIPRZ )
+   my_use( "priprz" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+
+FUNCTION o_pos_priprg()
+
+   SELECT ( F_PRIPRG )
+   my_use( "priprg" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+FUNCTION o_pos_uredj()
+
+   SELECT ( F_UREDJ )
+   my_use( "uredj" )
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
 FUNCTION pos_init_dbfs()
 
    my_close_all_dbf()
@@ -31,7 +58,7 @@ STATIC FUNCTION cre_priprz()
       lCreate := .T.
    ELSE
       CLOSE ALL
-      O_PRIPRZ
+      o_pos_priprz()
       IF reccount2() > 0
          RETURN .F.
       ENDIF
@@ -201,13 +228,13 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    O_K2C
    O_MJTRUR
    o_pos_kase()
-//   o_sastavnice()
+// o_sastavnice()
 // o_roba()
    // o_tarifa()
    // o_sifk()
    // o_sifv()
-   O_PRIPRZ
-   O_PRIPRG
+   o_pos_priprz()
+   o_pos_priprg()
    O__POS
    O__POS_PRIPR
 
@@ -224,7 +251,7 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 
    o_pos_pos()
    o_pos_doks()
-   O_DOKSPF
+   o_doks_pf()
 
    RETURN .T.
 
@@ -233,7 +260,7 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 FUNCTION o_pos_sifre()
 
    o_pos_kase()
-   O_UREDJ
+   o_pos_uredj()
    o_pos_odj()
    // o_roba()
    // o_tarifa()
@@ -249,63 +276,6 @@ FUNCTION o_pos_sifre()
 
 
 
-FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
-
-   LOCAL cSql, oData, oRow
-   LOCAL nTotal := 0
-
-   PushWA()
-
-   IF PCount() == 0
-      cIdPos := pos_doks->IdPos
-      cIdVD := pos_doks->IdVD
-      dDatum := pos_doks->Datum
-      cBrDok := pos_doks->BrDok
-   ENDIF
-
-   cSql := "SELECT "
-   cSql += " SUM( ( kolicina * cijena ) - ( kolicina * ncijena ) ) AS total "
-   cSql += "FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos "
-   cSql += "WHERE "
-   cSql += " idpos = " + sql_quote( cIdPos )
-   cSql += " AND idvd = " + sql_quote( cIdVd )
-   cSql += " AND brdok = " + sql_quote( cBrDok )
-   cSql += " AND datum = " + sql_quote( dDatum )
-
-   oData := run_sql_query( cSql )
-
-   PopWa()
-
-   IF !is_var_objekat_tpqquery( oData )
-      RETURN nTotal
-   ENDIF
-
-   nTotal := oData:FieldGet( 1 )
-
-   RETURN nTotal
-
-
-
-FUNCTION pos_stanje_artikla( cIdPos, cIdRoba )
-
-   LOCAL _qry, _qry_ret, _table
-   LOCAL _data := {}
-   LOCAL nI, oRow
-   LOCAL _stanje := 0
-
-   _qry := "SELECT SUM( CASE WHEN idvd IN ('16') THEN kolicina WHEN idvd IN ('42') THEN -kolicina WHEN idvd IN ('IN') THEN -(kolicina - kol2) ELSE 0 END ) AS stanje FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos " + ;
-      " WHERE idpos = " + sql_quote( cIdPos ) + ;
-      " AND idroba = " + sql_quote( cIdRoba )
-
-   _table := run_sql_query( _qry )
-   oRow := _table:GetRow( 1 )
-   _stanje := oRow:FieldGet( oRow:FieldPos( "stanje" ) )
-
-   IF ValType( _stanje ) == "L"
-      _stanje := 0
-   ENDIF
-
-   RETURN _stanje
 
 
 
@@ -327,10 +297,12 @@ FUNCTION pos_iznos_dokumenta( lUI )
    IF ( ( lUI == NIL ) .OR. lUI )
       // ovo su ulazi ...
       IF pos_doks->IdVd $ VD_ZAD + "#" + VD_PCS + "#" + VD_REK
-         SELECT pos
-         SET ORDER TO TAG "1"
-         GO TOP
-         SEEK cIdPos + cIdVd + DToS( dDatum ) + cBrDok
+
+         seek_pos( cIdPos, cIdVd, dDatum, cBrDok )
+         //SELECT pos
+         //SET ORDER TO TAG "1"
+         //GO TOP
+         //SEEK cIdPos + cIdVd + DToS( dDatum ) + cBrDok
          DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == cIdPos + cIdVd + DToS( dDatum ) + cBrDok
             nIznos += pos->kolicina * pos->cijena
             SKIP
@@ -344,10 +316,13 @@ FUNCTION pos_iznos_dokumenta( lUI )
    IF ( ( lUI == NIL ) .OR. !lUI )
       // ovo su, pak, izlazi ...
       IF pos_doks->idvd $ VD_RN + "#" + VD_OTP + "#" + VD_RZS + "#" + VD_PRR + "#" + "IN" + "#" + VD_NIV
-         SELECT pos
-         SET ORDER TO TAG "1"
-         GO TOP
-         SEEK cIdPos + cIdVd + DToS( dDatum ) + cBrDok
+
+         //SELECT pos
+         //SET ORDER TO TAG "1"
+         //GO TOP
+         //SEEK cIdPos + cIdVd + DToS( dDatum ) + cBrDok
+         seek_pos( cIdPos, cIdVd, dDatum, cBrDok )
+
          DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == cIdPos + cIdVd + DToS( dDatum ) + cBrDok
             DO CASE
             CASE pos_doks->idvd == "IN"

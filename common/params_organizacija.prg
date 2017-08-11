@@ -11,9 +11,46 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
+THREAD STATIC s_cTipOroganizacije
 
-STATIC s_cTipOroganizacije
+THREAD STATIC s_cFirma, s_cFirmaNaz
+
+FUNCTION organizacija_params_init()
+
+   s_cFirma := NIL
+   s_cFirmaNaz := NIL
+
+   RETURN .T.
+
+
+FUNCTION self_organizacija_id( cId )
+
+   IF cId != NIL
+      s_cFirma := cId
+      set_metric( "org_id", NIL, cId )
+   ENDIF
+
+   IF s_cFirma == NIL
+      s_cFirma := fetch_metric( "org_id", NIL, "10" )
+   ENDIF
+
+   RETURN s_cFirma
+
+
+FUNCTION self_organizacija_naziv( cNaz )
+
+   IF cNaz != NIL
+      s_cFirmaNaz := cNaz
+      set_metric( "org_naziv", NIL, cNaz )
+   ENDIF
+
+   IF s_cFirmaNaz == NIL
+      s_cFirmaNaz :=  PadR( fetch_metric( "org_naziv", NIL, "" ), 50 )
+   ENDIF
+
+   RETURN s_cFirmaNaz
+
+
 
 FUNCTION tip_organizacije( cTip )
 
@@ -30,17 +67,18 @@ FUNCTION tip_organizacije( cTip )
 
 
 
-FUNCTION parametri_organizacije( set_params )
+FUNCTION parametri_organizacije( lSetParams )
 
    LOCAL nX := 1
    LOCAL _left := 20
    LOCAL cTipOrganizacije := tip_organizacije()
    LOCAL cOrganizacijaId := self_organizacija_id()
    LOCAL cOrganizacijaNaz := self_organizacija_naziv()
+   LOCAL GetList := {}
 
    info_bar( "init", "parametri organizacije - start" )
-   IF ( set_params == nil )
-      set_params := .T.
+   IF ( lSetParams == nil )
+      lSetParams := .T.
    ENDIF
 
    PUBLIC gZaokr := fetch_metric( "zaokruzenje", nil, gZaokr )
@@ -56,32 +94,32 @@ FUNCTION parametri_organizacije( set_params )
 
 
    IF Empty( self_organizacija_naziv() )
-      set_params := .T.
+      lSetParams := .T.
    ENDIF
 
-   IF set_params == .T.  // setovati parametre org.jedinice
+   IF lSetParams == .T.  // setovati parametre org.jedinice
 
       Box(, 10, 70 )
 
-      @ m_x + nX, m_y + 2 SAY8 "Inicijalna podešenja organizacije ***" COLOR f18_color_i()
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Inicijalna podešenja organizacije ***" COLOR f18_color_i()
       ++nX
       ++nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Oznaka firme:", _left ) GET cOrganizacijaId
-      @ m_x + nX, Col() + 2 SAY "naziv:" GET cOrganizacijaNaz PICT "@S35"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Oznaka firme:", _left ) GET cOrganizacijaId
+      @ box_x_koord() + nX, Col() + 2 SAY "naziv:" GET cOrganizacijaNaz PICT "@S35"
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Grad:", _left ) GET gMjStr PICT "@S20"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Grad:", _left ) GET gMjStr PICT "@S20"
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Tip subjekta/organizacije:", _left ) GET cTipOrganizacije PICT "@S10"
-      @ m_x + nX, Col() + 1 SAY "U sistemu pdv-a (D/N) ?" GET gPDV VALID gPDV $ "DN" PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Tip subjekta/organizacije:", _left ) GET cTipOrganizacije PICT "@S10"
+      @ box_x_koord() + nX, Col() + 1 SAY "U sistemu pdv-a (D/N) ?" GET gPDV VALID gPDV $ "DN" PICT "@!"
 
       ++nX
       ++nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Bazna valuta (D/P):", _left ) GET gBaznaV PICT "@!" VALID gBaznaV $ "DPO"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Bazna valuta (D/P):", _left ) GET gBaznaV PICT "@!" VALID gBaznaV $ "DPO"
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY8 PadL( "Zaokruženje:", _left ) GET gZaokr
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Zaokruženje:", _left ) GET gZaokr
 
       READ
 

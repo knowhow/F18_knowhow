@@ -13,45 +13,10 @@
 
 MEMVAR gModul, goModul
 
-STATIC s_cFirma, s_cFirmaNaz
 
 FUNCTION programski_modul()
    RETURN gModul
 
-
-FUNCTION organizacija_params_init()
-
-   s_cFirma := NIL
-   s_cFirmaNaz := NIL
-
-   RETURN .T.
-
-FUNCTION self_organizacija_id( cId )
-
-   IF cId != NIL
-      s_cFirma := cId
-      set_metric( "org_id", cId, "10" )
-   ENDIF
-
-   IF s_cFirma == NIL
-      s_cFirma := fetch_metric( "org_id", NIL, "10" )
-   ENDIF
-
-   RETURN s_cFirma
-
-
-FUNCTION self_organizacija_naziv( cNaz )
-
-   IF cNaz != NIL
-      s_cFirmaNaz := cNaz
-      set_metric( "org_naziv", NIL, cNaz )
-   ENDIF
-
-   IF s_cFirmaNaz == NIL
-      s_cFirmaNaz :=  PadR( fetch_metric( "org_naziv", NIL, "" ), 50 )
-   ENDIF
-
-   RETURN s_cFirmaNaz
 
 
 FUNCTION start_f18_program_module( oApp, lSezone )

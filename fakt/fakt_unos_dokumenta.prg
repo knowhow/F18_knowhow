@@ -250,9 +250,9 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
       _cijena := 0
       _kolicina := 0
 
-      //IF gResetRoba == "D"
-         _idRoba := Space( 10 )
-      //ENDIF
+      // IF gResetRoba == "D"
+      _idRoba := Space( 10 )
+      // ENDIF
 
       IF s_nFaktUnosRedniBroj == 1
 

@@ -306,10 +306,8 @@ STATIC FUNCTION fakt_is_storno_dok( cIdFirma, cIdTipDok, cBrDok )
    LOCAL nStorno := 0 // 0 - nije storno, 1 - storno, -1 = error
    LOCAL nTrec
 
-   seek_fakt( cIdFirma, cIdTipDok, cBrDok )
-
-   IF !Eof()
-      MsgBeep( "Ne mogu locirati dokument " + cIdFirma + "-" + cIdTipDok + "-" + AllTrim( cBrDok ) + "  (is storno) ?!"  )
+   IF !seek_fakt( cIdFirma, cIdTipDok, cBrDok )
+      MsgBeep( "NE Može se locirati dokument: " + cIdFirma + "-" + cIdTipDok + "-" + AllTrim( cBrDok ) + "  (is storno) ?!"  )
       RETURN -1
    ENDIF
 

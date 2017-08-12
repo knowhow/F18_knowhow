@@ -12,391 +12,391 @@
 
 #include "f18.ch"
 
-static aHeader:={}
-static aZaglLen:={}
+STATIC aHeader := {}
+STATIC aZaglLen := {}
 
-static aZagl:={}
-static lSvakaHeader := .f.
+STATIC aZagl := {}
+STATIC lSvakaHeader := .F.
 
 // datumski opseg
-static dDatOd
-static dDatDo
+STATIC dDatOd
+STATIC dDatDo
 
 // report area
-static nRArea
+STATIC nRArea
 
 // kumulativ area
-static nKArea
+STATIC nKArea
 
 // bez path-a npr: R_KUF
-static cTbl
+STATIC cTbl
 
 // tekuca linija reporta
-static nCurrLine:=0
+STATIC nCurrLine := 0
 
-static cRptNaziv := "Lista dokumenata na dan "
-
-// -------------------------------------------
-// Lista KUF/KIF
-// -------------------------------------------
-function r_lista(cTName)
-local aDInt
-
-aZaglLen:={8, 8, 8, 8, LEN(PIC_IZN()), LEN(PIC_IZN()), LEN(PIC_IZN()) }
-
-if cTName == "KUF"
-	nRArea := F_R_KUF
-	nKArea := F_KUF
-	cTbl := "epdv_r_kuf"
-else
-	nRArea := F_R_KIF
-	nKArea := F_KIF
-	cTbl := "epdv_r_kif"
-endif
-
-aDInt := rpt_d_interval (DATE())
-
-dDate := DATE()
-
-dDatOd := aDInt[1]
-dDatDo := DATE()
+STATIC cRptNaziv := "Lista dokumenata na dan "
 
 
-nX:=1
-Box(, 8, 60)
-  @ m_x+nX, m_y+2 SAY "Period"
-  nX++
+FUNCTION epdv_r_lista( cTName )
 
-  @ m_x+nX, m_y+2 SAY "od " GET dDatOd
-  @ m_x+nX, col()+2 SAY "do " GET dDatDo
+   LOCAL aDInt
 
-  nX += 2
+   aZaglLen := { 8, 8, 8, 8, Len( PIC_IZN() ), Len( PIC_IZN() ), Len( PIC_IZN() ) }
 
-  @ m_x+nX, m_y+2 SAY REPLICATE("-", 30)
-  nX++
+   IF cTName == "KUF"
+      nRArea := F_R_KUF
+      nKArea := F_KUF
+      cTbl := "epdv_r_kuf"
+   ELSE
+      nRArea := F_R_KIF
+      nKArea := F_KIF
+      cTbl := "epdv_r_kif"
+   ENDIF
 
-  READ
-BoxC()
+   aDInt := rpt_d_interval ( Date() )
 
-if LastKey()==K_ESC
-	my_close_all_dbf()
-    return
-endif
+   dDate := Date()
 
-
-aHeader := {}
-AADD(aHeader, "Preduzece: " + self_organizacija_naziv())
-AADD(aHeader, cTName + " : " + cRptNaziv +  DTOC(dDate) + ", za period :" + DTOC(dDatOd) + "-" + DTOC(dDatDo) )
-
-aZagl:={}
-AADD(aZagl, { "Broj" ,  "Datum",  "Dat.d", "Dat.d",    "iznos" , "iznos",    "iznos" })
-AADD(aZagl, { "dok.",  "azur.",    "min",  "max",  "bez PDV", "PDV", "sa PDV"})
-AADD(aZagl, { "(1)",     "(2)",      "(3)",  "(4)",  "(5)",  "(6)", "(7)" })
+   dDatOd := aDInt[ 1 ]
+   dDatDo := Date()
 
 
-fill_rpt()
-show_rpt(  .f.,  .f.)
+   nX := 1
+   Box(, 8, 60 )
+   @ m_x + nX, m_y + 2 SAY "Period"
+   nX++
 
-my_close_all_dbf()
-*}
+   @ m_x + nX, m_y + 2 SAY "od " GET dDatOd
+   @ m_x + nX, Col() + 2 SAY "do " GET dDatDo
 
-// ----------------------------------------------
-// ----------------------------------------------
-static function get_r_fields(aArr)
-AADD(aArr, {"br_dok",   "N",  6, 0})
-AADD(aArr, {"dat_az",   "D",  8, 0})
+   nX += 2
+
+   @ m_x + nX, m_y + 2 SAY Replicate( "-", 30 )
+   nX++
+
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      my_close_all_dbf()
+      RETURN
+   ENDIF
+
+
+   aHeader := {}
+   AAdd( aHeader, "Preduzece: " + self_organizacija_naziv() )
+   AAdd( aHeader, cTName + " : " + cRptNaziv +  DToC( dDate ) + ", za period :" + DToC( dDatOd ) + "-" + DToC( dDatDo ) )
+
+   aZagl := {}
+   AAdd( aZagl, { "Broj",  "Datum",  "Dat.d", "Dat.d",    "iznos", "iznos",    "iznos" } )
+   AAdd( aZagl, { "dok.",  "azur.",    "min",  "max",  "bez PDV", "PDV", "sa PDV" } )
+   AAdd( aZagl, { "(1)",     "(2)",      "(3)",  "(4)",  "(5)",  "(6)", "(7)" } )
+
+
+   epdv_fill_rpt()
+   show_rpt(  .F.,  .F. )
+
+   my_close_all_dbf()
+
+
+STATIC FUNCTION get_r_fields( aArr )
+
+   AAdd( aArr, { "br_dok",   "N",  6, 0 } )
+   AAdd( aArr, { "dat_az",   "D",  8, 0 } )
 // datum dokumenta min - max
-AADD(aArr, {"d_d_min",   "D",  8, 0})
-AADD(aArr, {"d_d_max",   "D",  8, 0})
-AADD(aArr, {"i_b_pdv",   "N",  18, 2})
-AADD(aArr, {"i_pdv",   "N",  18, 2})
+   AAdd( aArr, { "d_d_min",   "D",  8, 0 } )
+   AAdd( aArr, { "d_d_max",   "D",  8, 0 } )
+   AAdd( aArr, { "i_b_pdv",   "N",  18, 2 } )
+   AAdd( aArr, { "i_pdv",   "N",  18, 2 } )
 
-return
+   RETURN
 
-// ----------------------------------------
-// ----------------------------------------
-static function cre_r_tbl()
 
-local aArr:={}
+STATIC FUNCTION cre_r_tbl()
 
-my_close_all_dbf()
+   LOCAL aArr := {}
 
-ferase_dbf (cTbl)
+   my_close_all_dbf()
 
-get_r_fields(@aArr)
+   ferase_dbf ( cTbl )
+
+   get_r_fields( @aArr )
 
 // kreiraj tabelu
-dbcreate2(cTbl, aArr)
+   dbcreate2( cTbl, aArr )
 
 // kreiraj indexe
-CREATE_INDEX("br_dok", "br_dok", cTbl, .t.)
+   CREATE_INDEX( "br_dok", "br_dok", cTbl, .T. )
 
-return
-*}
+   RETURN
+
 
 // --------------------------------------------------------
 // napuni r_kuf
 // --------------------------------------------------------
-static function fill_rpt()
-*{
+STATIC FUNCTION epdv_fill_rpt()
+
+// {
 
 // + stavka preknjizenja = pdv
 // - stavka = ppp
 
-cre_r_tbl()
+   cre_r_tbl()
 
 
-if (nRArea == F_R_KUF)
-	O_R_KUF
+   IF ( nRArea == F_R_KUF )
+      O_R_KUF
 
 
-	select_o_epdv_kuf()
-	SET ORDER TO TAG "br_dok"
+      select_o_epdv_kuf()
+      SET ORDER TO TAG "br_dok"
 
-else
-	O_R_KIF
+   ELSE
+      O_R_KIF
 
-	SELECT (F_KIF)
-	if !used()
-		O_KIF
-	endif
-	SET ORDER TO TAG "br_dok"
+      SELECT ( F_KIF )
+      IF !Used()
+         O_KIF
+      ENDIF
+      SET ORDER TO TAG "br_dok"
 
-endif
+   ENDIF
 
 
 
-SELECT (nKArea)
+   SELECT ( nKArea )
 // datum azuriranja
 
-PRIVATE cFilter := dbf_quote(dDatOd) + " <= datum_2 .and. " + dbf_quote(dDatDo) + ">= datum_2"
+   PRIVATE cFilter := dbf_quote( dDatOd ) + " <= datum_2 .and. " + dbf_quote( dDatDo ) + ">= datum_2"
 
-SET FILTER TO &cFilter
+   SET FILTER TO &cFilter
 
-GO TOP
-
-
-Box(,3, 60)
-
-nCount := 0
-
-do while !eof()
-
-++nCount
+   GO TOP
 
 
-@ m_x+2, m_y+2 SAY STR(nCount, 6, 0)
+   Box(, 3, 60 )
 
-cBrDok := br_dok
-nBPdv := 0
-nPdv := 0
-dDatAz := CTOD("")
-dDMin := DATE() + 100
-dDMax := CTOD("")
+   nCount := 0
 
-do while !eof() .and. br_dok == cBrDok
+   DO WHILE !Eof()
 
-	// datum je manji od trenutnog min datuma
-	if dDMin > datum
-		dDmin := datum
-	endif
+      ++nCount
 
-	// datum veci od trenutnog max datuma
-	if dDMax < datum
-		dDMax := datum
-	endif
 
-	nBPdv += i_b_pdv
-	nPdv += i_pdv
-	dDatAz := datum_2
+      @ m_x + 2, m_y + 2 SAY Str( nCount, 6, 0 )
 
-	skip
-enddo
+      cBrDok := br_dok
+      nBPdv := 0
+      nPdv := 0
+      dDatAz := CToD( "" )
+      dDMin := Date() + 100
+      dDMax := CToD( "" )
 
-SELECT (nRArea)
-APPEND BLANK
-replace br_dok with cBrDok
+      DO WHILE !Eof() .AND. br_dok == cBrDok
 
-replace dat_az with dDatAz
-replace d_d_min with dDMin
-replace d_d_max with dDMax
+// datum je manji od trenutnog min datuma
+         IF dDMin > datum
+            dDmin := datum
+         ENDIF
 
-replace i_b_pdv with nBPdv
-replace i_pdv with nPdv
+// datum veci od trenutnog max datuma
+         IF dDMax < datum
+            dDMax := datum
+         ENDIF
 
-SELECT (nKArea)
+         nBPdv += i_b_pdv
+         nPdv += i_pdv
+         dDatAz := datum_2
 
-enddo
+         SKIP
+      ENDDO
 
-BoxC()
+      SELECT ( nRArea )
+      APPEND BLANK
+      REPLACE br_dok WITH cBrDok
+
+      REPLACE dat_az WITH dDatAz
+      REPLACE d_d_min WITH dDMin
+      REPLACE d_d_max WITH dDMax
+
+      REPLACE i_b_pdv WITH nBPdv
+      REPLACE i_pdv WITH nPdv
+
+      SELECT ( nKArea )
+
+   ENDDO
+
+   BoxC()
 
 // skini filter
-SELECT (nKArea)
-SET FILTER TO
+   SELECT ( nKArea )
+   SET FILTER TO
+
+   RETURN
+// }
 
 
-return
-*}
+STATIC FUNCTION show_rpt()
+
+// {
+
+   nCurrLine := 0
 
 
-static function show_rpt()
-*{
-
-nCurrLine := 0
-
-
-START PRINT CRET
-?
-
-nPageLimit := 65
-nRow := 0
-
-r_zagl()
-
-SELECT (nRArea)
-SET ORDER TO TAG "1"
-go top
-nRbr := 0
-
-nBPdv := 0
-nPdv :=  0
-do while !eof()
-
-   ++ nCurrLine
-
+   START PRINT CRET
    ?
-   // broj dokumenta
-   ?? PADL( br_dok, aZaglLen[1])
-   ?? " "
 
-   // datum azuriranja
-   ?? PADL( dat_az, aZaglLen[2])
-   ?? " "
+   nPageLimit := 65
+   nRow := 0
 
-   // datum dokumenta min
-   ?? PADL( d_d_min, aZaglLen[3])
-   ?? " "
+   r_zagl()
 
-   // datum dokumenta max
-   ?? PADL( d_d_max, aZaglLen[3])
-   ?? " "
+   SELECT ( nRArea )
+   SET ORDER TO TAG "1"
+   GO TOP
+   nRbr := 0
 
-   // bez pdv
-   ?? TRANSFORM( i_b_pdv,  PIC_IZN() )
-   ?? " "
+   nBPdv := 0
+   nPdv :=  0
+   DO WHILE !Eof()
 
-   // pdv
-   ?? TRANSFORM( i_pdv,  PIC_IZN() )
-   ?? " "
+      ++nCurrLine
 
-   // sa pdv
-   ?? TRANSFORM( i_b_pdv + i_pdv,  PIC_IZN() )
-   ?? " "
+      ?
+      // broj dokumenta
+      ?? PadL( br_dok, aZaglLen[ 1 ] )
+      ?? " "
+
+      // datum azuriranja
+      ?? PadL( dat_az, aZaglLen[ 2 ] )
+      ?? " "
+
+      // datum dokumenta min
+      ?? PadL( d_d_min, aZaglLen[ 3 ] )
+      ?? " "
+
+      // datum dokumenta max
+      ?? PadL( d_d_max, aZaglLen[ 3 ] )
+      ?? " "
+
+      // bez pdv
+      ?? Transform( i_b_pdv,  PIC_IZN() )
+      ?? " "
+
+      // pdv
+      ?? Transform( i_pdv,  PIC_IZN() )
+      ?? " "
+
+      // sa pdv
+      ?? Transform( i_b_pdv + i_pdv,  PIC_IZN() )
+      ?? " "
 
 
-   nBPdv += i_b_pdv
-   nPdv += i_pdv
+      nBPdv += i_b_pdv
+      nPdv += i_pdv
 
-   if nCurrLine > nPageLimit
-   	FF
-	nCurrLine:=0
-	if lSvakaHeader
-		r_zagl()
-	endif
+      IF nCurrLine > nPageLimit
+         FF
+         nCurrLine := 0
+         IF lSvakaHeader
+            r_zagl()
+         ENDIF
 
-   endif
+      ENDIF
 
-   SKIP
+      SKIP
 
-enddo
+   ENDDO
 
-if (nCurrLine+3) > nPageLimit
-  FF
-  nCurrLine:=0
-  if lSvakaHeader
-	r_zagl()
-  endif
-endif
+   IF ( nCurrLine + 3 ) > nPageLimit
+      FF
+      nCurrLine := 0
+      IF lSvakaHeader
+         r_zagl()
+      ENDIF
+   ENDIF
 
 
 // ukupno izvjestaj
-r_linija()
-?
-cPom := "U K U P N O :"
-?? PADR( cPom , aZaglLen[1] + 3*8 + 3 )
-?? " "
-?? TRANSFORM( nBPdv  , PIC_IZN() )
-?? " "
+   r_linija()
+   ?
+   cPom := "U K U P N O :"
+   ?? PadR( cPom, aZaglLen[ 1 ] + 3 * 8 + 3 )
+   ?? " "
+   ?? Transform( nBPdv, PIC_IZN() )
+   ?? " "
 
-?? TRANSFORM( nPdv  , PIC_IZN() )
-?? " "
+   ?? Transform( nPdv, PIC_IZN() )
+   ?? " "
 
-?? TRANSFORM( nBPdv + nPdv  , PIC_IZN() )
+   ?? Transform( nBPdv + nPdv, PIC_IZN() )
 
-r_linija()
+   r_linija()
 
 
-FF
-ENDPRINT
-return
-*}
+   FF
+   ENDPRINT
+
+   RETURN
+// }
 
 // ----------------------------
 // ----------------------------
-static function r_zagl()
+STATIC FUNCTION r_zagl()
 
 // header
-P_12CPI
-B_ON
-for i:=1 to LEN(aHeader)
- ? aHeader[i]
- ++nCurrLine
-next
-B_OFF
+   P_12CPI
+   B_ON
+   FOR i := 1 TO Len( aHeader )
+      ? aHeader[ i ]
+      ++nCurrLine
+   NEXT
+   B_OFF
 
-P_12CPI
+   P_12CPI
 
-r_linija()
+   r_linija()
 
-for i:=1 to LEN(aZagl)
- ++nCurrLine
- ?
- for nCol:=1 to LEN(aZaglLen)
-  	// mergirana kolona ovako izgleda
-	// "#3 Zauzimam tri kolone"
- 	if LEFT(aZagl[i, nCol],1) = "#"
+   FOR i := 1 TO Len( aZagl )
+      ++nCurrLine
+      ?
+      FOR nCol := 1 TO Len( aZaglLen )
+         // mergirana kolona ovako izgleda
+// "#3 Zauzimam tri kolone"
+         IF Left( aZagl[ i, nCol ], 1 ) = "#"
 
-	  nMergirano := VAL( SUBSTR(aZagl[i, nCol], 2, 1 ) )
-	  cPom := SUBSTR(aZagl[i,nCol], 3, LEN(aZagl[i,nCol])-2)
-	  nMrgWidth := 0
-	  for nMrg:=1 to nMergirano
-	  	nMrgWidth += aZaglLen[nCol+nMrg-1]
-		nMrgWidth ++
-	  next
-	  ?? PADC(cPom, nMrgWidth)
-	  ?? " "
-	  nCol += (nMergirano - 1)
-	 else
- 	  ?? PADC(aZagl[i, nCol], aZaglLen[nCol])
-	  ?? " "
-	 endif
- next
-next
-r_linija()
+            nMergirano := Val( SubStr( aZagl[ i, nCol ], 2, 1 ) )
+            cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) - 2 )
+            nMrgWidth := 0
+            FOR nMrg := 1 TO nMergirano
+               nMrgWidth += aZaglLen[ nCol + nMrg - 1 ]
+               nMrgWidth++
+            NEXT
+            ?? PadC( cPom, nMrgWidth )
+            ?? " "
+            nCol += ( nMergirano - 1 )
+         ELSE
+            ?? PadC( aZagl[ i, nCol ], aZaglLen[ nCol ] )
+            ?? " "
+         ENDIF
+      NEXT
+   NEXT
+   r_linija()
 
-return
+   RETURN
 
 
 // -------------------------------
 // --------------------------------
-static function r_linija()
-*{
-++nCurrLine
-?
-for i=1 to LEN(aZaglLen)
-   ?? PADR("-", aZaglLen[i], "-" )
-   ?? " "
-next
+STATIC FUNCTION r_linija()
 
-return
-*}
+// {
+   ++nCurrLine
+   ?
+   FOR i = 1 TO Len( aZaglLen )
+      ?? PadR( "-", aZaglLen[ i ], "-" )
+      ?? " "
+   NEXT
+
+   RETURN
+// }

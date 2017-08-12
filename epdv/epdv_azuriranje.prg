@@ -20,10 +20,10 @@ FUNCTION epdv_azur_kuf()
 
 
 FUNCTION pov_kuf( nBrDok )
-   RETURN pov_ku_ki( "KUF", nBrDok )
+   RETURN epdv_povrat_kuf_kif( "KUF", nBrDok )
 
 FUNCTION pov_kif( nBrDok )
-   RETURN pov_ku_ki( "KIF", nBrDok )
+   RETURN epdv_povrat_kuf_kif( "KIF", nBrDok )
 
 
 FUNCTION epdv_azur_kuf_kif( cTbl )
@@ -200,7 +200,7 @@ FUNCTION kuf_kif_azur_sql( cTable, nNextRbrGlobalno, nNextBrDok )
 
 
 
-FUNCTION pov_ku_ki( cTbl, nBrDok )
+FUNCTION epdv_povrat_kuf_kif( cTbl, nBrDok )
 
    LOCAL _del_rec, _ok
    LOCAL hRec

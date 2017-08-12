@@ -82,7 +82,7 @@ FUNCTION rpt_p_pdv()
       RETURN
    ENDIF
 
-   fill_rpt()
+   epdv_fill_rpt()
    show_rpt(  .F.,  .F. )
 
    save_pdv_obracun( dDatOd, dDatDo )
@@ -109,7 +109,7 @@ STATIC FUNCTION cre_r_tbl()
 
 
 
-STATIC FUNCTION fill_rpt()
+STATIC FUNCTION epdv_fill_rpt()
 
    cre_r_tbl()
 

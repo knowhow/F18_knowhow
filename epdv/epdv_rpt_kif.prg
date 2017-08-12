@@ -174,7 +174,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)", "(10) = (8+9)" } )
 
 
-   fill_rpt( nBrDok )
+   epdv_fill_rpt( nBrDok )
 
    my_close_all_dbf()
 
@@ -227,7 +227,7 @@ STATIC FUNCTION cre_r_tbl()
 
    RETURN .T.
 
-STATIC FUNCTION fill_rpt( nBrDok )
+STATIC FUNCTION epdv_fill_rpt( nBrDok )
 
    LOCAL nIzArea
    LOCAL nBPdv

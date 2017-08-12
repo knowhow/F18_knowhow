@@ -175,7 +175,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
    AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, PDV / identifikacijski broj)",      "RN",     "",    "bez PDV", "PDV", "PDV NP", "sa PDV" } )
    AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)",  "(10)",  "(11) = (8+9+10)" } )
 
-   fill_rpt( nBrDok )
+   epdv_fill_rpt( nBrDok )
 
    my_close_all_dbf()
 
@@ -231,7 +231,7 @@ STATIC FUNCTION cre_r_tbl()
 
 
 
-STATIC FUNCTION fill_rpt( nBrDok )
+STATIC FUNCTION epdv_fill_rpt( nBrDok )
 
    LOCAL nIzArea
    LOCAL nBPdv

@@ -119,7 +119,7 @@ STATIC FUNCTION epdv_fill_rpt()
       f_iz_pdv()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -129,10 +129,11 @@ STATIC FUNCTION f_iz_kuf_kif()
    LOCAL nUkIzPdv := 0
    LOCAL nUkUlPdv := 0
    LOCAL nUlPdvKp := 0
+   LOCAL nCount
 
    aMyFirma := my_firma( .T. )
 
-   O_R_PDV
+   select_o_epdv_r_pdv()
    APPEND BLANK
 
    Scatter()
@@ -210,11 +211,11 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    Beep( 1 )
 
-   O_KIF
+   select_o_epdv_kif()
 
    cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
 
-   O_KIF
+   //select_o_epdv_kif()
    SET FILTER TO &cFilter
    GO TOP
 
@@ -258,7 +259,6 @@ STATIC FUNCTION f_iz_kuf_kif()
          nUkIzPdv += nPdv
 
          IF partner_is_pdv_obveznik( id_part )
-
             _i_pdv_r += nPdv
 
          ELSE
@@ -380,11 +380,9 @@ STATIC FUNCTION zaok_p_pdv()
 
 STATIC FUNCTION f_iz_pdv()
 
-   SELECT F_PDV
 
-   IF !Used()
-      O_PDV
-   ENDIF
+      select_o_epdv_pdv()
+
 
    SET ORDER TO TAG "period"
 
@@ -397,7 +395,7 @@ STATIC FUNCTION f_iz_pdv()
       RETURN .F.
    ENDIF
 
-   O_R_PDV
+   select_o_epdv_r_pdv()
    APPEND BLANK
 
    SELECT ( F_PDV )

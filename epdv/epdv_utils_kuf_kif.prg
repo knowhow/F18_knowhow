@@ -24,11 +24,9 @@ FUNCTION epdv_otvori_kuf_tabele( lPriprema )
    select_o_epdv_kuf()
 
    IF lPriprema == .T.
-      SELECT ( F_P_KUF )
 
-      IF !Used()
-         O_P_KUF
-      ENDIF
+         select_o_epdv_p_kuf()
+
    ENDIF
 
    RETURN .T.
@@ -40,23 +38,19 @@ FUNCTION epdv_otvori_kif_tabele( lPriprema )
       lPriprema := .F.
    ENDIF
 
-   SELECT F_TARIFA
-   IF !Used()
-      o_tarifa()
-   ENDIF
+   //SELECT F_TARIFA
+   //IF !Used()
+  //    o_tarifa()
+   //ENDIF
 
 
-   SELECT F_KIF
-   IF !Used()
-      O_KIF
-   ENDIF
+   select_o_epdv_kif()
+
 
    IF lPriprema == .T.
-      SELECT ( F_P_KIF )
 
-      IF !Used()
-         O_P_KIF
-      ENDIF
+         select_o_epdv_p_kif()
+
    ENDIF
 
    RETURN .T.
@@ -147,7 +141,7 @@ FUNCTION epdv_renumeracija_g_r_br( cTblName )
       select_o_epdv_kuf()
       _table := "epdv_kuf"
    CASE cTblName == "KIF"
-      O_KIF
+      select_o_epdv_kuf()
       _table := "epdv_kif"
    ENDCASE
 

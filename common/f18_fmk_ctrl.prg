@@ -278,8 +278,8 @@ STATIC FUNCTION f18_epdv_data( data, checksum )
    LOCAL _n_c_iznos := 0
    LOCAL _n_c_stavke := 0
 
-   O_KIF
    select_o_epdv_kuf()
+   select_o_epdv_kif()
 
    Box(, 2, 60 )
 

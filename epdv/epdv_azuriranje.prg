@@ -309,18 +309,14 @@ FUNCTION epdv_renumeracija_rbr( cTbl, lShow )
    ENDIF
 
    IF cTbl == "P_KUF"
-      SELECT F_P_KUF
-      IF !Used()
-         O_P_KUF
-      ENDIF
+
+         select_o_epdv_p_kuf()
+
 
    ELSEIF cTbl == "P_KIF"
-      SELECT F_P_KIF
 
-      SELECT F_P_KIF
-      IF !Used()
-         O_P_KIF
-      ENDIF
+         select_o_epdv_p_kif()
+
    ENDIF
 
    SET ORDER TO TAG "datum"
@@ -355,12 +351,8 @@ FUNCTION renm_g_rbr( cTbl, lShow )
       select_o_epdv_kuf()
 
    ELSEIF cTbl == "P_KIF"
-      SELECT F_KIF
+      select_o_epdv_kif()
 
-      SELECT F_KIF
-      IF !Used()
-         O_KIF
-      ENDIF
    ENDIF
 
    SET ORDER TO TAG "l_datum"

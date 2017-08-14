@@ -20,7 +20,7 @@ FUNCTION epdv_generisanje()
    LOCAL _Izbor := 1
 
    AAdd( _opc, "1. generiši kuf               " )
-   AAdd( _opcexe, {|| gen_kuf() } )
+   AAdd( _opcexe, {|| epdv_gen_kuf() } )
    AAdd( _opc, "2. generiši kif" )
    AAdd( _opcexe, {|| gen_kif() } )
 

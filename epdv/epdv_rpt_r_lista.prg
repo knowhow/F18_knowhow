@@ -18,7 +18,6 @@ STATIC aZaglLen := {}
 STATIC aZagl := {}
 STATIC lSvakaHeader := .F.
 
-// datumski opseg
 STATIC dDatOd
 STATIC dDatDo
 
@@ -39,7 +38,8 @@ STATIC cRptNaziv := "Lista dokumenata na dan "
 
 FUNCTION epdv_r_lista( cTName )
 
-   LOCAL aDInt
+   LOCAL aDInt, nX
+   LOCAL GetList := {}
 
    aZaglLen := { 8, 8, 8, 8, Len( PIC_IZN() ), Len( PIC_IZN() ), Len( PIC_IZN() ) }
 
@@ -63,15 +63,15 @@ FUNCTION epdv_r_lista( cTName )
 
    nX := 1
    Box(, 8, 60 )
-   @ m_x + nX, m_y + 2 SAY "Period"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Period"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY "od " GET dDatOd
-   @ m_x + nX, Col() + 2 SAY "do " GET dDatDo
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "od " GET dDatOd
+   @ box_x_koord() + nX, Col() + 2 SAY "do " GET dDatDo
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY Replicate( "-", 30 )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY Replicate( "-", 30 )
    nX++
 
    READ
@@ -79,7 +79,7 @@ FUNCTION epdv_r_lista( cTName )
 
    IF LastKey() == K_ESC
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
 
@@ -98,7 +98,6 @@ FUNCTION epdv_r_lista( cTName )
 
    my_close_all_dbf()
 
-
 STATIC FUNCTION get_r_fields( aArr )
 
    AAdd( aArr, { "br_dok",   "N",  6, 0 } )
@@ -109,7 +108,7 @@ STATIC FUNCTION get_r_fields( aArr )
    AAdd( aArr, { "i_b_pdv",   "N",  18, 2 } )
    AAdd( aArr, { "i_pdv",   "N",  18, 2 } )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION cre_r_tbl()
@@ -122,42 +121,28 @@ STATIC FUNCTION cre_r_tbl()
 
    get_r_fields( @aArr )
 
-// kreiraj tabelu
    dbcreate2( cTbl, aArr )
-
-// kreiraj indexe
    CREATE_INDEX( "br_dok", "br_dok", cTbl, .T. )
 
-   RETURN
+   RETURN .T.
 
 
-// --------------------------------------------------------
-// napuni r_kuf
-// --------------------------------------------------------
+
 STATIC FUNCTION epdv_fill_rpt()
-
-// {
 
 // + stavka preknjizenja = pdv
 // - stavka = ppp
 
    cre_r_tbl()
 
-
    IF ( nRArea == F_R_KUF )
-      O_R_KUF
-
-
+      select_o_epdv_r_kuf()
       select_o_epdv_kuf()
       SET ORDER TO TAG "br_dok"
 
    ELSE
-      O_R_KIF
-
-      SELECT ( F_KIF )
-      IF !Used()
-         O_KIF
-      ENDIF
+      select_o_epdv_r_kif()
+      select_o_epdv_kif()
       SET ORDER TO TAG "br_dok"
 
    ENDIF
@@ -183,7 +168,7 @@ STATIC FUNCTION epdv_fill_rpt()
       ++nCount
 
 
-      @ m_x + 2, m_y + 2 SAY Str( nCount, 6, 0 )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY Str( nCount, 6, 0 )
 
       cBrDok := br_dok
       nBPdv := 0

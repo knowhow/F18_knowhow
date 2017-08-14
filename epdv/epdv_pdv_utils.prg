@@ -17,20 +17,14 @@ FUNCTION save_pdv_obracun( dDatOd, dDatDo )
 
    LOCAL _rec
 
-   SELECT ( F_R_PDV )
-
-   IF !Used()
-      O_R_PDV
-   ENDIF
+   select_o_epdv_r_pdv()
 
    set_global_vars_from_dbf()
 
    IF Pitanje( , "Želite li obračun pohraniti u bazu PDV prijava ?", " " ) == "D"
 
-      SELECT F_PDV
-      IF !Used()
-         O_PDV
-      ENDIF
+
+      select_o_epdv_pdv()
 
       SET ORDER TO TAG "period"
       SEEK DToS( dDatOd ) + DToS( dDatDo )

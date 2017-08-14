@@ -179,17 +179,6 @@
 #xcommand O_E_ATT => select_o_dbf_e_att()
 #xcommand O_RAL => use_sql_rnal_ral()
 
-// modul EPDV
-#xcommand O_P_KUF     => select (F_P_KUF);   my_usex ("p_kuf") ; set order to tag "r_br"
-#xcommand O_P_KIF     => select (F_P_KIF);   my_usex ("p_kif") ; set order to tag "r_br"
-
-#xcommand O_KIF     => select (F_KIF);   my_use ("kif") ; set order to tag "datum"
-#xcommand O_PDV     => select (F_PDV);   my_use ("pdv") ; set order to tag "datum"
-
-#xcommand O_R_KUF   => select(F_R_KUF);  my_usex  ("r_kuf")
-#xcommand O_R_KIF   => select(F_R_KIF);  my_usex  ("r_kif")
-#xcommand O_R_PDV   => select(F_R_PDV);  my_usex  ("r_pdv")
-
 
 #xcommand O__RADN   => select (F__RADN)   ;  my_use ("_radn")
 

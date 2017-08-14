@@ -221,7 +221,7 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
       READ
       BoxC()
       IF LastKey() <> K_ESC
-         rpt_kif( nBrDokP )
+         epdv_rpt_kif( nBrDokP )
       ENDIF
 
       my_close_all_dbf()

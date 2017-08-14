@@ -12,8 +12,7 @@
 #include "f18.ch"
 
 
-
-FUNCTION gen_kuf()
+FUNCTION epdv_gen_kuf()
 
    LOCAL dDatOd
    LOCAL dDatDo
@@ -37,11 +36,7 @@ FUNCTION gen_kuf()
    ENDIF
 
 
-   // ima li nesto u kif pripremi ?
-   SELECT F_P_KUF
-   IF !Used()
-      O_P_KUF
-   ENDIF
+   select_o_epdv_p_kuf()
 
    IF RECCOUNT2() <> 0
       MsgBeep( "KUF Priprema nije prazna !" )
@@ -91,7 +86,7 @@ FUNCTION gen_kif()
 
    SELECT F_P_KIF
    IF !Used()
-      O_P_KIF
+      select_o_epdv_p_kif()
    ENDIF
 
    IF RECCOUNT2() <> 0

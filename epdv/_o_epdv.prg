@@ -12,10 +12,37 @@
 #include "f18.ch"
 
 
-FUNCTION o_epdv_kuf()
-
-   RETURN o_dbf_table( F_KUF, { "KUF", "epdv_kuf" }, "DATUM" )
-
+// KUF
 
 FUNCTION select_o_epdv_kuf()
    RETURN select_o_dbf( "KUF", F_KUF, "epdv_kuf", "DATUM" )
+
+
+FUNCTION select_o_epdv_p_kuf()
+   RETURN select_o_dbf( "P_KUF", F_P_KUF, "epdv_p_kuf", "r_br" )
+
+FUNCTION select_o_epdv_r_kuf()
+   RETURN select_o_dbf( "R_KUF", F_R_KUF, "epdv_r_kuf", "br_dok" )
+
+
+
+// KIF
+
+FUNCTION select_o_epdv_kif()
+   RETURN select_o_dbf( "KIF", F_KIF, "epdv_kif", "DATUM" )
+
+FUNCTION select_o_epdv_r_kif()
+   RETURN select_o_dbf( "R_KIF", F_R_KIF, "epdv_r_kif", "br_dok" )
+
+FUNCTION select_o_epdv_p_kif()
+   RETURN select_o_dbf( "P_KIF", F_P_KIF, "epdv_p_kif", "r_br" )
+
+
+
+// PDV
+
+FUNCTION select_o_epdv_pdv()
+   RETURN select_o_dbf( "PDV", F_PDV, "epdv_pdv", "datum" )
+
+FUNCTION select_o_epdv_r_pdv()
+   RETURN select_o_dbf( "R_PDV", F_R_PDV, "epdv_r_pdv", "br_dok" )

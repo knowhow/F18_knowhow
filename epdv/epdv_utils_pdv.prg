@@ -92,7 +92,7 @@ FUNCTION t_u_polj( cIdTar )
 // nabavke neoporezive,
 // neoporezivi dio nabavke od poljprovrednika
 // -------------------------------
-FUNCTION t_u_polj_0( cIdTar )
+FUNCTION epdv_tarifa_nabavke_od_poljoprivrednika( cIdTar )
 
    LOCAL lRet
 
@@ -107,10 +107,8 @@ FUNCTION t_u_polj_0( cIdTar )
 
 
 
-// -------------------------------
-// nabavke uvoz
-// --------------------------------
-FUNCTION t_u_uvoz( cIdTar )
+
+FUNCTION epdv_tarifa_nabavke_uvoz( cIdTar )
 
    LOCAL lRet
 
@@ -121,10 +119,9 @@ FUNCTION t_u_uvoz( cIdTar )
 
    RETURN lRet
 
-// ------------------------------------------
-// nabavke neoporezivo - ne pdv obveznici
-// ------------------------------------------
-FUNCTION t_u_neop( cIdTar )
+
+
+FUNCTION epdv_tarifa_nabavke_nepdv_obveznici( cIdTar )
 
    LOCAL lRet
 
@@ -136,10 +133,8 @@ FUNCTION t_u_neop( cIdTar )
 
    RETURN lRet
 
-// -------------------------------
-// isporuke neoporezivo, osim izvoza
-// --------------------------------
-FUNCTION t_i_neop( cIdTar )
+
+FUNCTION epdv_tarifa_isporuke_neoporezivo_osim_izvoza( cIdTar )
 
    LOCAL lRet
 
@@ -151,9 +146,7 @@ FUNCTION t_i_neop( cIdTar )
    RETURN lRet
 
 
-// -------------------------------
-// isporuke izvoz
-// --------------------------------
+
 FUNCTION epdv_tarifa_isporuke_izvoz( cIdTar )
 
    LOCAL lRet

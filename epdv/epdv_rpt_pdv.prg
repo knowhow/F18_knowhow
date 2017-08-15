@@ -173,7 +173,7 @@ STATIC FUNCTION f_iz_kuf_kif()
          _u_pdv_41 += nPdv
          nUkUlPdv += nPdv
 
-      CASE t_u_uvoz( cIdTar )
+      CASE epdv_tarifa_nabavke_uvoz( cIdTar )
          _u_uvoz += nBPdv
          _u_pdv_uv += nPdv
          nUkUlPdv += nPdv
@@ -183,7 +183,7 @@ STATIC FUNCTION f_iz_kuf_kif()
          _u_pdv_43 += nPdv
          nUkUlPdv += nPdv
 
-      CASE t_u_polj_0( cIdTar )
+      CASE epdv_tarifa_nabavke_od_poljoprivrednika( cIdTar )
          _u_nab_23 += nBPdv
 
       CASE t_u_n_poup( cIdTar )
@@ -248,7 +248,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
       CASE epdv_tarifa_isporuke_izvoz( cIdTar )
          _i_izvoz += nBPdv
-      CASE t_i_neop( cIdTar )
+      CASE epdv_tarifa_isporuke_neoporezivo_osim_izvoza( cIdTar )
          _i_neop += nBPdv
 
       ENDCASE

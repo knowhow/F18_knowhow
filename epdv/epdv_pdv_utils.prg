@@ -25,7 +25,6 @@ FUNCTION save_pdv_obracun( dDatOd, dDatDo )
 
 
       select_o_epdv_pdv()
-
       SET ORDER TO TAG "period"
       SEEK DToS( dDatOd ) + DToS( dDatDo )
       IF !Found()

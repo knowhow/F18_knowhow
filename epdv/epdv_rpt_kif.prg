@@ -208,7 +208,7 @@ STATIC FUNCTION epdv_fill_rpt_kif( nBrDok )
       nIzArea := F_P_KIF
       select_o_epdv_p_kif()
       SET ORDER TO TAG "br_dok"
-   ELSE
+   ELSE // kumulativ
       nIzArea := F_KIF
       select_o_epdv_kif()
       SET ORDER TO TAG "g_r_br"
@@ -216,7 +216,6 @@ STATIC FUNCTION epdv_fill_rpt_kif( nBrDok )
    ENDIF
 
    SELECT ( nIzArea )
-
 
    IF ( nBrdok == -999 )
       cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"

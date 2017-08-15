@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 2017-08-15 ----
+
+- ePDV sql big-bang 01
+- ePDV cleanup 1-2-3
+
 ## 2017-08-08 ----
 
 - UGOV sql big-bang 01

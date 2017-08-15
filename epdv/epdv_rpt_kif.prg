@@ -208,10 +208,12 @@ STATIC FUNCTION epdv_fill_rpt_kif( nBrDok )
       nIzArea := F_P_KIF
       select_o_epdv_p_kif()
       SET ORDER TO TAG "br_dok"
+
    ELSE // kumulativ
       nIzArea := F_KIF
-      select_o_epdv_kif()
-      SET ORDER TO TAG "g_r_br"
+      // select_o_epdv_kif()
+      // SET ORDER TO TAG "g_r_br"
+      find_epdv_kif_za_period( dDatOd, dDatDo )
 
    ENDIF
 

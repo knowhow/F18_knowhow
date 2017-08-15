@@ -42,6 +42,8 @@ FUNCTION epdv_rpt_kuf( nBrDok, cIdTarifa )
    LOCAL nLenIzn
    LOCAL cExportDN := "N"
    LOCAL cExportDbf
+   LOCAL GetList := {}
+   LOCAL nX
 
    // 1 - red.br / ili br.dok
    // 2 - br.dok / ili r.br
@@ -89,30 +91,25 @@ FUNCTION epdv_rpt_kuf( nBrDok, cIdTarifa )
 
       Box(, 11, 60 )
 
-      @ m_x + nX, m_y + 2 SAY "Period"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Period"
+
       nX++
-
-      @ m_x + nX, m_y + 2 SAY "od " GET dDatOd
-      @ m_x + nX, Col() + 2 SAY "do " GET dDatDo
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "od " GET dDatOd
+      @ box_x_koord() + nX, Col() + 2 SAY "do " GET dDatDo
 
       nX += 2
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Tarifa (prazno svi) ?  " GET cTar ;
+         VALID {|| Empty( cTar ) .OR. P_Tarifa( @cTar ) } PICT "@!"
 
-      @ m_x + nX, m_y + 2 SAY "Tarifa (prazno svi) ?  " GET cTar ;
-         VALID {|| Empty( cTar ) .OR. P_Tarifa( @cTar ) } ;
-         PICT "@!"
       nX += 1
-
-      @ m_x + nX, m_y + 2 SAY "Partner (prazno svi) ? " GET cPart ;
-         VALID {|| Empty( cPart ) .OR. p_partner( @cPart ) } ;
-         PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Partner (prazno svi) ? " GET cPart ;
+         VALID {|| Empty( cPart ) .OR. p_partner( @cPart ) } PICT "@!"
 
       nX += 2
-
-      @ m_x + nX, m_y + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET cExportDN  VALID cExportDN $ "DN" PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET cExportDN  VALID cExportDN $ "DN" PICT "@!"
 
       nX += 2
-
-      @ m_x + nX, m_y + 2 SAY Replicate( "-", 30 )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY Replicate( "-", 30 )
 
       nX++
 
@@ -241,6 +238,7 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
    LOCAL cIdTar
    LOCAL cOpis
    LOCAL cIdPart
+   LOCAL nCount
 
    cre_r_tbl()
 
@@ -254,8 +252,9 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
    ELSE
 
       nIzArea := F_KUF
-      select_o_epdv_kuf()
-      SET ORDER TO TAG "g_r_br"
+      // select_o_epdv_kuf()
+      // SET ORDER TO TAG "g_r_br"
+      find_epdv_kuf_za_period( dDatOd, dDatDo )
 
    ENDIF
 
@@ -294,8 +293,7 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
 
       ++nCount
 
-
-      @ m_x + 2, m_y + 2 SAY Str( nCount, 6, 0 )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY Str( nCount, 6, 0 )
 
       nBrDok := br_dok
       nBPdv := i_b_pdv

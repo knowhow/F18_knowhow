@@ -192,11 +192,10 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
    ENDIF
 
    SET ORDER TO TAG "1"
-   SET FILTER TO &cFilter
+   SET FILTER TO &cFilter // kalk_kalk
 
    GO TOP
 
-   // prosetajmo kroz kalk tabelu
    nCount := 0
    DO WHILE !Eof()
 

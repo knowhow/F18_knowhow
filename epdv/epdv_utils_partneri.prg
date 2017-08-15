@@ -84,7 +84,7 @@ FUNCTION my_firma( lRetArray )
       lRetArray := .F.
    ENDIF
 
-   IF select_o_partner( self_organizacija_id() )
+   IF !select_o_partner( self_organizacija_id() )
       APPEND BLANK
       hRec := dbf_get_rec()
       hRec[ "id" ] := self_organizacija_id()
@@ -111,7 +111,7 @@ FUNCTION my_firma( lRetArray )
          hRec[ "adresa" ] := cAdresa
          hRec[ "ptt" ]    := cPTT
 
-         update_rec_server_and_dbf( NIL, hRec, 1, "FULL" )
+         update_rec_server_and_dbf( "partn", hRec, 1, "FULL" )
          // USifK( "PARTN", "REGB", self_organizacija_id(), Unicode():New( cIdBroj, .F. ) )
          // USifK( "PARTN", "REGB", self_organizacija_id(), cIdBroj )
 
@@ -139,7 +139,7 @@ FUNCTION get_my_firma( cNaziv, cIdBroj, cMjesto, cAdresa, cPtt )
 
    BOX (, 7, 60 )
 
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Podaci o maticnooj firmi: "
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Podaci o matičnoj firmi: "
    @ box_x_koord() + 2, box_y_koord() + 2 SAY Replicate( "-", 40 )
    @ box_x_koord() + 3, box_y_koord() + 2 SAY "Naziv   " GET cNaziv PICT "@S40"
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Id.broj " GET cIdBroj

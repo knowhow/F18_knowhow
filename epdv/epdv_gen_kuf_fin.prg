@@ -195,10 +195,9 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
 
    SELECT SUBAN
    //SET ORDER TO TAG "4"
-   SET FILTER TO &cFilter
+   SET FILTER TO &cFilter // fin_suban
    GO TOP
 
-   // prosetajmo kroz suban tabelu
    nCount := 0
    DO WHILE !Eof()
 

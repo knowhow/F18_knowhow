@@ -103,12 +103,12 @@ METHOD open()
       ::loadFromTbl()
    endif
 
-   @ m_x + 1, Col() + 2   SAY " RJ:" GET ::cIdRj  PICT "@!" VALID ::vldRj()
+   @ box_x_koord() + 1, Col() + 2   SAY " RJ:" GET ::cIdRj  PICT "@!" VALID ::vldRj()
    READ
 
    DO WHILE .T.
-      @  m_x + 3, m_y + 40  SAY "Datum:"   GET ::dDatDok
-      @  m_x + 3, m_y + Col() + 2  SAY "Broj:" GET ::cBrDok WHEN ::wheBrDok() VALID ::vldBrDok()
+      @  box_x_koord() + 3, box_y_koord() + 40  SAY "Datum:"   GET ::dDatDok
+      @  box_x_koord() + 3, box_y_koord() + Col() + 2  SAY "Broj:" GET ::cBrDok WHEN ::wheBrDok() VALID ::vldBrDok()
 
       if ::nRbr > 1
          ::sayPartner( 5 )
@@ -116,7 +116,7 @@ METHOD open()
          ::getPartner( 5 )
       ENDIF
 
-      @ m_x + 9, m_y + 2  SAY Valdomaca() + "/" + VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ ValDomaca() + "#" + ValPomocna()
+      @ box_x_koord() + 9, box_y_koord() + 2  SAY Valdomaca() + "/" + VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ ValDomaca() + "#" + ValPomocna()
 
       READ
       ESC_RETURN 0
@@ -128,10 +128,10 @@ METHOD open()
 
    ENDDO
 
-   @  m_x + 11, m_y + 2  SAY "R.br:" get ::nRbr PICTURE "9999"
-   @  m_x + 11, Col() + 2  SAY "Artikal  " get ::cIdRoba PICT "@!S10" WHEN ::wheIdRoba() VALID ::vldIdRoba()
-   @  m_x + 13, m_y + 2 SAY "Knjizna kolicina " GET ::nKKolicina PICT fakt_pic_kolicina() WHEN ::wheKKolicina() VALID ::vldKKolicina()
-   @  m_x + 13, Col() + 2 SAY "popisana kolicina " GET ::nPKolicina PICT fakt_pic_kolicina() VALID ::vldPKolicina()
+   @  box_x_koord() + 11, box_y_koord() + 2  SAY "R.br:" get ::nRbr PICTURE "9999"
+   @  box_x_koord() + 11, Col() + 2  SAY "Artikal  " get ::cIdRoba PICT "@!S10" WHEN ::wheIdRoba() VALID ::vldIdRoba()
+   @  box_x_koord() + 13, box_y_koord() + 2 SAY "Knjizna kolicina " GET ::nKKolicina PICT fakt_pic_kolicina() WHEN ::wheKKolicina() VALID ::vldKKolicina()
+   @  box_x_koord() + 13, Col() + 2 SAY "popisana kolicina " GET ::nPKolicina PICT fakt_pic_kolicina() VALID ::vldPKolicina()
 
    READ
 
@@ -328,7 +328,7 @@ METHOD vldIdRoba()
    ::cIdRoba := cPom
 
    if ::lSilent
-      @ m_x + 14, m_y + 28 SAY "TBr: "
+      @ box_x_koord() + 14, box_y_koord() + 28 SAY "TBr: "
       ?? roba->idtarifa, "PPP", Str( tarifa->opp, 7, 2 ) + "%", "PPU", Str( tarifa->ppp, 7, 2 )
    ENDIF
 
@@ -355,9 +355,9 @@ METHOD wheIdRoba()
  */
 METHOD getPartner( nRow )
 
-   @  m_x + nRow, m_y + 2  SAY "Partner " get ::cPartner  PICTURE "@S30" WHEN ::whePartner() VALID ::vldPartner()
-   @  m_x + nRow + 1, m_y + 2  SAY "        " get ::cAdresa  PICTURE "@"
-   @  m_x + nRow + 2, m_y + 2  SAY "Mjesto  " get ::cMjesto  PICTURE "@"
+   @  box_x_koord() + nRow, box_y_koord() + 2  SAY "Partner " get ::cPartner  PICTURE "@S30" WHEN ::whePartner() VALID ::vldPartner()
+   @  box_x_koord() + nRow + 1, box_y_koord() + 2  SAY "        " get ::cAdresa  PICTURE "@"
+   @  box_x_koord() + nRow + 2, box_y_koord() + 2  SAY "Mjesto  " get ::cMjesto  PICTURE "@"
 
    RETURN
 
@@ -369,11 +369,11 @@ METHOD getPartner( nRow )
 // {
 METHOD sayPartner( nRow )
 
-   @  m_x + nRow, m_y + 2  SAY "Partner "
+   @  box_x_koord() + nRow, box_y_koord() + 2  SAY "Partner "
    ??::cPartner
-   @  m_x + nRow + 1, m_y + 2  SAY "        "
+   @  box_x_koord() + nRow + 1, box_y_koord() + 2  SAY "        "
    ?? ::cAdresa
-   @  m_x + nRow + 2, m_y + 2  SAY "Mjesto  "
+   @  box_x_koord() + nRow + 2, box_y_koord() + 2  SAY "Mjesto  "
    ?? ::cMjesto
 
    RETURN
@@ -469,14 +469,14 @@ METHOD wheKKolicina()
 
 METHOD showArtikal()
 
-   @ m_x + 17, m_y + 1   SAY "Artikal: "
+   @ box_x_koord() + 17, box_y_koord() + 1   SAY "Artikal: "
    ?? ::cIdRoba
    ?? "(" + roba->jmj + ")"
 
-   @ m_x + 18, m_y + 1   SAY "Stanje :"
-   @ m_x + 18, Col() + 1 SAY ::nNaStanju PICTURE fakt_pic_kolicina()
+   @ box_x_koord() + 18, box_y_koord() + 1   SAY "Stanje :"
+   @ box_x_koord() + 18, Col() + 1 SAY ::nNaStanju PICTURE fakt_pic_kolicina()
 
-   @ m_x + 19, m_y + 1   SAY "Tarifa : "
+   @ box_x_koord() + 19, box_y_koord() + 1   SAY "Tarifa : "
    ?? roba->idtarifa
 
    RETURN

@@ -25,9 +25,9 @@ FUNCTION TopsFakt()
    LOCAL nIznosR := 0
 
    Box( "#PREUZIMANJE TOPS->FAKT", 6, 70 )
-   @ m_x + 2, m_y + 2 SAY "Lokacija datoteke TOPSFAKT je:" GET cLokacija
-   @ m_x + 4, m_y + 2 SAY "Uzeti cijene iz sifrarnika ? (D/N)" GET cCijeneIzSif VALID cCijeneIzSif $ "DN" PICT "@!"
-   @ m_x + 5, m_y + 2 SAY "Ostaviti rabat (ako ga je bilo)? (D/N)" GET cRabatDN VALID cRabatDN $ "DN" PICT "@!"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Lokacija datoteke TOPSFAKT je:" GET cLokacija
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Uzeti cijene iz sifrarnika ? (D/N)" GET cCijeneIzSif VALID cCijeneIzSif $ "DN" PICT "@!"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Ostaviti rabat (ako ga je bilo)? (D/N)" GET cRabatDN VALID cRabatDN $ "DN" PICT "@!"
    READ
    IF LastKey() == K_ESC
       BoxC()

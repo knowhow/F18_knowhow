@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
 
 FUNCTION fakt_stanje_artikla( cIdRj, cIdroba, nUl, nIzl, nRezerv, nRevers, lSilent )
 
@@ -410,8 +409,8 @@ FUNCTION fakt_set_param_broj_dokumenta()
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Dokument:" GET _firma
-   @ m_x + 1, Col() + 1 SAY "-" GET _tip_dok
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Dokument:" GET _firma
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET _tip_dok
 
    READ
 
@@ -425,7 +424,7 @@ FUNCTION fakt_set_param_broj_dokumenta()
    _broj := fetch_metric( _param, NIL, _broj )
    _broj_old := _broj
 
-   @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "999999"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "999999"
 
    READ
 
@@ -512,21 +511,21 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( cIdFirma, cIdTipDok, cBrDo
 
    Box(, 12, 65 )
 
-   @ m_x + nX, m_y + 2 SAY "*** korekcija podataka dokumenta"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** korekcija podataka dokumenta"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Partner:" GET cIdPartner VALID p_partner( @cIdPartner )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Partner:" GET cIdPartner VALID p_partner( @cIdPartner )
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Datum otpremnice:" GET dDatOtpr
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datum otpremnice:" GET dDatOtpr
    ++nX
-   @ m_x + nX, m_y + 2 SAY " Broj otpremnice:" GET hFaktTxt[ "brotp" ] PICT "@S40"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " Broj otpremnice:" GET hFaktTxt[ "brotp" ] PICT "@S40"
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "  Datum plaćanja:" GET hFaktTxt[ "datpl" ]
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "  Datum plaćanja:" GET hFaktTxt[ "datpl" ]
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "        Narudžba:" GET hFaktTxt[ "brnar" ] PICT "@S40"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "        Narudžba:" GET hFaktTxt[ "brnar" ] PICT "@S40"
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "  Vrsta plaćanja:" GET cIdVrstaPlacanja VALID Empty( cIdVrstaPlacanja ) .OR. P_VRSTEP( @cIdVrstaPlacanja )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "  Vrsta plaćanja:" GET cIdVrstaPlacanja VALID Empty( cIdVrstaPlacanja ) .OR. P_VRSTEP( @cIdVrstaPlacanja )
 
    READ
 

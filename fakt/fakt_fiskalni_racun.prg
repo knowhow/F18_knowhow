@@ -165,7 +165,7 @@ FUNCTION fakt_fiskalni_racun( cIdFirma, cIdTipDok, cBrDok, lAutoPrint, hDevicePa
 FUNCTION fakt_reklamirani_racun_box( nBrReklamiraniRacun )
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY8 "Reklamiramo fiskalni račun broj:" ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Reklamiramo fiskalni račun broj:" ;
       GET nBrReklamiraniRacun PICT "999999999" VALID ( nBrReklamiraniRacun > 0 )
    READ
    BoxC()

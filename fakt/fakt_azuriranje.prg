@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y, gcF9usmece
+MEMVAR gcF9usmece
 
 FUNCTION fakt_azuriraj_dokumente_u_pripremi( lSilent )
 
@@ -179,7 +179,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
    cTempFaktId := hRec[ "idfirma" ] + hRec[ "idtipdok" ] + hRec[ "brdok" ]
    AAdd( aIdsFakt, "#2" + cTempFaktId )
 
-   @ m_x + 1, m_y + 2 SAY "fakt_fakt -> server: " + cTempFaktId
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "fakt_fakt -> server: " + cTempFaktId
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
       hRec := dbf_get_rec()
@@ -192,7 +192,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
    ENDDO
 
    IF lOk == .T.
-      @ m_x + 2, m_y + 2 SAY "fakt_doks -> server: " + cTempFaktId
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "fakt_doks -> server: " + cTempFaktId
       AAdd( aIdsFaktDoks, cTempFaktId )
       SELECT fakt_pripr
       hRec := get_fakt_doks_data( cIdFirma, cIdTipDok, cBrDok )
@@ -203,7 +203,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
    ENDIF
 
    IF lOk == .T.
-      @ m_x + 3, m_y + 2 SAY "fakt_doks2 -> server: " + cTempFaktId
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "fakt_doks2 -> server: " + cTempFaktId
       AAdd( aIdsFaktDoks2, cTempFaktId )
       hRec := get_fakt_doks2_data( cIdFirma, cIdTipDok, cBrDok )
       SELECT fakt_pripr
@@ -215,7 +215,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
 
 
    IF lOk == .T.
-      @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "fakt_atributi -> server "
       oAttr := DokAttr():New( "fakt", F_FAKT_ATTR )
       oAttr:hAttrId[ "idfirma" ] := cIdFirma
       oAttr:hAttrId[ "idtipdok" ] := cIdTipDok
@@ -227,7 +227,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
       run_sql_query( "ROLLBACK" )
    ELSE
 
-      @ m_x + 4, m_y + 2 SAY "push ids to semaphore: " + cTempFaktId
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "push ids to semaphore: " + cTempFaktId
       push_ids_to_semaphore( _tbl_fakt, aIdsFakt   )
       push_ids_to_semaphore( _tbl_doks, aIdsFaktDoks   )
       push_ids_to_semaphore( _tbl_doks2, aIdsFaktDoks2  )
@@ -258,7 +258,7 @@ STATIC FUNCTION fakt_azur_dbf( cIdFirma, cIdTipDok, cBrDok, lSilent )
 
    Box( "#Proces ažuriranja dbf-a u toku", 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "fakt_pripr -> fakt_fakt"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "fakt_pripr -> fakt_fakt"
    fakt_seek_pripr_dokument( cIdFirma, cIdTipDok, cBrDok )
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
@@ -275,7 +275,7 @@ STATIC FUNCTION fakt_azur_dbf( cIdFirma, cIdTipDok, cBrDok, lSilent )
 
    ENDDO
 
-   @ m_x + 2, m_y + 2 SAY "fakt_doks " + cIdFirma + cIdTipDok + cBrDok
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "fakt_doks " + cIdFirma + cIdTipDok + cBrDok
 
    IF seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok )
    //IF !Eof()
@@ -296,7 +296,7 @@ STATIC FUNCTION fakt_azur_dbf( cIdFirma, cIdTipDok, cBrDok, lSilent )
    ENDIF
 
 
-   @ m_x + 3, m_y + 2 SAY "fakt_doks2 " + cIdFirma + cIdTipDok + cBrDok
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "fakt_doks2 " + cIdFirma + cIdTipDok + cBrDok
 
    IF seek_fakt_doks2( cIdFirma, cIdTipDok, cBrDok )
    //IF !Eof()

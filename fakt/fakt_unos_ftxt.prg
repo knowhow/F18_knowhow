@@ -1,6 +1,5 @@
 #include "f18.ch"
 
-MEMVAR m_x, m_y
 
 // =========================================================
 
@@ -121,8 +120,8 @@ FUNCTION fakt_unos_ftxt_box( cTxt, cIdFaktTxt, nCount )
 
    DO WHILE .T.
 
-      @ m_x + 1, m_y + 1 SAY8 "Odaberi uzorak teksta iz šifarnika:"  GET cIdFaktTxt PICT "@!"
-      @ m_x + 11, m_y + 1 SAY8 "<c+W> dodaj novi ili snimi i izađi <ESC> poništi"
+      @ box_x_koord() + 1, box_y_koord() + 1 SAY8 "Odaberi uzorak teksta iz šifarnika:"  GET cIdFaktTxt PICT "@!"
+      @ box_x_koord() + 11, box_y_koord() + 1 SAY8 "<c+W> dodaj novi ili snimi i izađi <ESC> poništi"
 
       READ
 
@@ -143,7 +142,7 @@ FUNCTION fakt_unos_ftxt_box( cTxt, cIdFaktTxt, nCount )
 
       PRIVATE fUMemu := .T.
 
-      cTxt := MemoEdit( cTxt, m_x + 3, m_y + 1, m_x + 9, m_y + f18_max_cols() - 9 )
+      cTxt := MemoEdit( cTxt, box_x_koord() + 3, box_y_koord() + 1, box_x_koord() + 9, box_y_koord() + f18_max_cols() - 9 )
 
       fUMemu := NIL
       SetColor( f18_color_normal() )

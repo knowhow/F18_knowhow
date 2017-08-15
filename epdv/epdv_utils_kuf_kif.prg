@@ -20,15 +20,11 @@ FUNCTION epdv_otvori_kuf_tabele( lPriprema )
       lPriprema := .F.
    ENDIF
 
-   select_o_tarifa()
+   //select_o_tarifa()
    select_o_epdv_kuf()
 
    IF lPriprema == .T.
-      SELECT ( F_P_KUF )
-
-      IF !Used()
-         O_P_KUF
-      ENDIF
+      select_o_epdv_p_kuf()
    ENDIF
 
    RETURN .T.
@@ -40,30 +36,22 @@ FUNCTION epdv_otvori_kif_tabele( lPriprema )
       lPriprema := .F.
    ENDIF
 
-   SELECT F_TARIFA
-   IF !Used()
-      o_tarifa()
-   ENDIF
+   // SELECT F_TARIFA
+   // IF !Used()
+   // o_tarifa()
+   // ENDIF
 
-
-   SELECT F_KIF
-   IF !Used()
-      O_KIF
-   ENDIF
+   select_o_epdv_kif()
 
    IF lPriprema == .T.
-      SELECT ( F_P_KIF )
-
-      IF !Used()
-         O_P_KIF
-      ENDIF
+      select_o_epdv_p_kif()
    ENDIF
 
    RETURN .T.
 
 
 
-FUNCTION next_r_br( cTblName )
+FUNCTION epdv_next_r_br( cTblName )
 
    LOCAL nLastBr
 
@@ -134,7 +122,7 @@ FUNCTION next_br_dok( cTblName )
 
 FUNCTION epdv_renumeracija_g_r_br( cTblName )
 
-   LOCAL nRbr, _rec
+   LOCAL nRbr, hRec
    LOCAL _table := "epdv_kuf"
    LOCAL hParams
 
@@ -147,7 +135,7 @@ FUNCTION epdv_renumeracija_g_r_br( cTblName )
       select_o_epdv_kuf()
       _table := "epdv_kuf"
    CASE cTblName == "KIF"
-      O_KIF
+      select_o_epdv_kuf()
       _table := "epdv_kif"
    ENDCASE
 
@@ -157,8 +145,7 @@ FUNCTION epdv_renumeracija_g_r_br( cTblName )
    GO TOP
 
    IF !FLock()
-      MsgBeep( "Ne mogu zakljucati bazu " + cTblName + ;
-         "## renumeracije nije izvrsena !" )
+      MsgBeep( "Ne mogu zaključati bazu " + cTblName + "## renumeracije nije izvrsena !" )
       my_close_all_dbf()
    ENDIF
 
@@ -175,13 +162,13 @@ FUNCTION epdv_renumeracija_g_r_br( cTblName )
 
    DO WHILE !Eof()
 
-      @ m_x + 1, m_y + 2 SAY "Renumeracija: G_R_BR " + Str( nRbr, 4, 0 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Renumeracija: G_R_BR " + Str( nRbr, 4, 0 )
 
-      _rec := dbf_get_rec()
-      _rec[ "g_r_br" ] := nRbr
-      update_rec_server_and_dbf( _table, _rec, 1, "CONT" )
+      hRec := dbf_get_rec()
+      hRec[ "g_r_br" ] := nRbr
+      update_rec_server_and_dbf( _table, hRec, 1, "CONT" )
 
-      nRbr ++
+      nRbr++
 
       SKIP
 

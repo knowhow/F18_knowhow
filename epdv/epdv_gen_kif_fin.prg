@@ -56,9 +56,8 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
    IF !Used()
       o_sg_kif()
    ENDIF
-
-
    SELECT sg_kif
+
    GO TOP
    nCount := 0
 
@@ -71,7 +70,7 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "SG_KIF : " + Str( nCount )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "SG_KIF : " + Str( nCount )
 
       IF g_src_modul( src ) == "FIN"
 
@@ -327,11 +326,10 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
          nCount ++
 
          cPom := "SUBAN : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-         @ m_x + 3, m_y + 2 SAY cPom
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY cPom
 
          cPom := "SUBAN cnt : " + Str( nCount, 6 )
-         @ m_x + 4, m_y + 2 SAY cPom
-
+         @ box_x_koord() + 4, box_y_koord() + 2 SAY cPom
 
 
          // tarifa koja se nalazi unutar dokumenta

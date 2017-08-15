@@ -20,24 +20,24 @@ FUNCTION epdv_izvjestaji()
    LOCAL nIzbor := 1
 
    AAdd( aOpc, "1. kuf lista dokumenata " )
-   AAdd( aOpcExe, {|| r_lista( "KUF" ) } )
+   AAdd( aOpcExe, {|| epdv_r_lista( "KUF" ) } )
    AAdd( aOpc, "2. kuf" )
-   AAdd( aOpcExe, {|| rpt_kuf() } )
+   AAdd( aOpcExe, {|| epdv_rpt_kuf() } )
 
    AAdd( aOpc, "-------------------------" )
    AAdd( aOpcExe, {|| NIL } )
 
 
    AAdd( aOpc, "3. kif lista dokumenata " )
-   AAdd( aOpcExe, {|| r_lista( "KIF" ) } )
+   AAdd( aOpcExe, {|| epdv_r_lista( "KIF" ) } )
    AAdd( aOpc, "4. kif" )
-   AAdd( aOpcExe, {|| rpt_kif() } )
+   AAdd( aOpcExe, {|| epdv_rpt_kif() } )
 
    AAdd( aOpc, "-------------------------" )
    AAdd( aOpcExe, {|| NIL } )
 
    AAdd( aOpc, "5. prijava pdv-a" )
-   AAdd( aOpcExe, {|| rpt_p_pdv() } )
+   AAdd( aOpcExe, {|| epdv_pdv_prijava() } )
 
    AAdd( aOpc, "-------------------------" )
    AAdd( aOpcExe, {|| NIL } )

@@ -71,7 +71,7 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "SG_KUF : " + Str( nCount )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "SG_KUF : " + Str( nCount )
 
       IF g_src_modul( src ) == "KALK"
 
@@ -192,11 +192,10 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
    ENDIF
 
    SET ORDER TO TAG "1"
-   SET FILTER TO &cFilter
+   SET FILTER TO &cFilter // kalk_kalk
 
    GO TOP
 
-   // prosetajmo kroz kalk tabelu
    nCount := 0
    DO WHILE !Eof()
 
@@ -302,10 +301,10 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
          nCount ++
 
          cPom := "KALK : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-         @ m_x + 3, m_y + 2 SAY cPom
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY cPom
 
          cPom := "KALK cnt : " + Str( nCount, 6 )
-         @ m_x + 4, m_y + 2 SAY cPom
+         @ box_x_koord() + 4, box_y_koord() + 2 SAY cPom
 
 
 
@@ -428,7 +427,7 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
          _src_br_2 := cBrDok
       ENDIF
 
-      PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa( _id_tar ) / 100 )
+      PRIVATE _uk_pdv :=  _uk_b_pdv * (  get_stopa_pdv_za_tarifu( _id_tar ) / 100 )
 
       IF !Empty( cFormBPDV )
          _i_b_pdv := &cFormBPdv

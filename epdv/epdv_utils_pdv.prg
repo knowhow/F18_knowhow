@@ -1,15 +1,3 @@
-/*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
- * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
- * root directory of this source code archive.
- * By using this software, you agree to be bound by its terms.
- */
-
-
 
 // -------------------------------
 // nabavke koje su oporezive
@@ -92,7 +80,7 @@ FUNCTION t_u_polj( cIdTar )
 // nabavke neoporezive,
 // neoporezivi dio nabavke od poljprovrednika
 // -------------------------------
-FUNCTION t_u_polj_0( cIdTar )
+FUNCTION epdv_tarifa_nabavke_od_poljoprivrednika( cIdTar )
 
    LOCAL lRet
 
@@ -107,10 +95,8 @@ FUNCTION t_u_polj_0( cIdTar )
 
 
 
-// -------------------------------
-// nabavke uvoz
-// --------------------------------
-FUNCTION t_u_uvoz( cIdTar )
+
+FUNCTION epdv_tarifa_nabavke_uvoz( cIdTar )
 
    LOCAL lRet
 
@@ -121,10 +107,9 @@ FUNCTION t_u_uvoz( cIdTar )
 
    RETURN lRet
 
-// ------------------------------------------
-// nabavke neoporezivo - ne pdv obveznici
-// ------------------------------------------
-FUNCTION t_u_neop( cIdTar )
+
+
+FUNCTION epdv_tarifa_nabavke_nepdv_obveznici( cIdTar )
 
    LOCAL lRet
 
@@ -136,10 +121,8 @@ FUNCTION t_u_neop( cIdTar )
 
    RETURN lRet
 
-// -------------------------------
-// isporuke neoporezivo, osim izvoza
-// --------------------------------
-FUNCTION t_i_neop( cIdTar )
+
+FUNCTION epdv_tarifa_isporuke_neoporezivo_osim_izvoza( cIdTar )
 
    LOCAL lRet
 
@@ -151,10 +134,8 @@ FUNCTION t_i_neop( cIdTar )
    RETURN lRet
 
 
-// -------------------------------
-// isporuke izvoz
-// --------------------------------
-FUNCTION t_i_izvoz( cIdTar )
+
+FUNCTION epdv_tarifa_isporuke_izvoz( cIdTar )
 
    LOCAL lRet
 

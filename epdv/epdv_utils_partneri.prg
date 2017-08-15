@@ -18,6 +18,7 @@ FUNCTION s_partner( cIdPartn )
    LOCAL cPom
    LOCAL cIdBroj
    LOCAL cPdvBroj
+   LOCAL cMjesto
 
    PushWA()
 
@@ -25,14 +26,14 @@ FUNCTION s_partner( cIdPartn )
 
    cPom := ""
 
-   cPom += AllTrim( naz )
-   cMjesto := AllTrim( mjesto )
+   cPom += AllTrim( field->naz )
+   cMjesto := AllTrim( field->mjesto )
    IF Empty( cMjesto )
       cMjesto := "-NEP.MJ-"
    ENDIF
 
-   IF !Empty( ptt )
-      cMjesto := AllTrim( ptt ) + " " + cMjesto
+   IF !Empty( field->ptt )
+      cMjesto := AllTrim( field->ptt ) + " " + cMjesto
    ENDIF
 
    cPom += ", " + cMjesto
@@ -72,9 +73,10 @@ FUNCTION my_firma( lRetArray )
    LOCAL cNaziv
    LOCAL cMjesto
    LOCAL cIdBroj
+   LOCAL cAdresa
    LOCAL cPtt
    LOCAL cPom := self_organizacija_naziv()
-   LOCAL _fields
+   LOCAL hRec
 
    PushWA()
 
@@ -82,20 +84,18 @@ FUNCTION my_firma( lRetArray )
       lRetArray := .F.
    ENDIF
 
-   select_o_partner( self_organizacija_id() )
-
-   IF !Found()
+   IF !select_o_partner( self_organizacija_id() )
       APPEND BLANK
-      _fields := dbf_get_rec()
-      _fields[ "id" ] := self_organizacija_id()
-      update_rec_server_and_dbf( "partn", _fields, 1, "FULL" )
+      hRec := dbf_get_rec()
+      hRec[ "id" ] := self_organizacija_id()
+      update_rec_server_and_dbf( "partn", hRec, 1, "FULL" )
    ENDIF
 
-   cNaziv := naz
-   cMjesto := mjesto
+   cNaziv := field->naz
+   cMjesto := field->mjesto
    cIdBroj := firma_pdv_broj( self_organizacija_id() )
-   cAdresa := adresa
-   cPtt := ptt
+   cAdresa := field->adresa
+   cPtt := field->ptt
 
    IF  Empty( cNaziv ) .OR. Empty( cMjesto ) .OR. Empty( cIdBroj ) .OR. Empty( cPTT ) .OR. Empty( cAdresa )
       lNepopunjeno := .T.
@@ -105,16 +105,15 @@ FUNCTION my_firma( lRetArray )
    IF lNepopunjeno
       IF get_my_firma( @cNaziv, @cIdBroj, @cMjesto, @cAdresa, @cPtt )
 
-         _fields           := dbf_get_rec()
-         _fields[ "naz" ]    := cNaziv
-         _fields[ "mjesto" ] := cMjesto
-         _fields[ "adresa" ] := cAdresa
-         _fields[ "ptt" ]    := cPTT
+         hRec           := dbf_get_rec()
+         hRec[ "naz" ]    := cNaziv
+         hRec[ "mjesto" ] := cMjesto
+         hRec[ "adresa" ] := cAdresa
+         hRec[ "ptt" ]    := cPTT
 
-         update_rec_server_and_dbf( nil, _fields, 1, "FULL" )
-
-         //USifK( "PARTN", "REGB", self_organizacija_id(), Unicode():New( cIdBroj, .F. ) )
-         //USifK( "PARTN", "REGB", self_organizacija_id(), cIdBroj )
+         update_rec_server_and_dbf( "partn", hRec, 1, "FULL" )
+         // USifK( "PARTN", "REGB", self_organizacija_id(), Unicode():New( cIdBroj, .F. ) )
+         // USifK( "PARTN", "REGB", self_organizacija_id(), cIdBroj )
 
       ELSE
          MsgBeep( "Nepopunjeni podaci o matičnoj firmi !" )
@@ -129,25 +128,24 @@ FUNCTION my_firma( lRetArray )
 
    IF lRetArray
       RETURN { cNaziv, cIdBroj, cPtt, cMjesto, cAdresa }
-   ELSE
-      RETURN cPom
    ENDIF
 
+   RETURN cPom
 
-   // --------------------------------
-   // --------------------------------
 
 FUNCTION get_my_firma( cNaziv, cIdBroj, cMjesto, cAdresa, cPtt )
 
-   Box (, 7, 60 )
+   LOCAL GetList := {}
 
-   @ m_x + 1, m_y + 2 SAY "Podaci o maticnooj firmi: "
-   @ m_x + 2, m_y + 2 SAY Replicate( "-", 40 )
-   @ m_x + 3, m_y + 2 SAY "Naziv   " GET cNaziv PICT "@S40"
-   @ m_x + 4, m_y + 2 SAY "Id.broj " GET cIdBroj
-   @ m_x + 5, m_y + 2 SAY "Mjesto  " GET cMjesto
-   @ m_x + 6, m_y + 2 SAY "Adresa  " GET cAdresa
-   @ m_x + 7, m_y + 2 SAY "PTT     " GET cPtt
+   BOX (, 7, 60 )
+
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Podaci o matičnoj firmi: "
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY Replicate( "-", 40 )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Naziv   " GET cNaziv PICT "@S40"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Id.broj " GET cIdBroj
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Mjesto  " GET cMjesto
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Adresa  " GET cAdresa
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "PTT     " GET cPtt
 
    READ
 
@@ -155,16 +153,17 @@ FUNCTION get_my_firma( cNaziv, cIdBroj, cMjesto, cAdresa, cPtt )
 
    IF LastKey() == K_ESC
       RETURN .F.
-   ELSE
-      RETURN .T.
    ENDIF
 
-   // -----------------------------------------------
-   // ger rejon partnera
-   // - 1 ili " " federacija
-   // - 2 - rs
-   // - 3 - brcko district
-   // -----------------------------------------------
+   RETURN .T.
+
+
+// -----------------------------------------------
+// ger rejon partnera
+// - 1 ili " " federacija
+// - 2 - rs
+// - 3 - brcko district
+// -----------------------------------------------
 
 FUNCTION part_rejon( cIdPart )
 
@@ -174,7 +173,7 @@ FUNCTION part_rejon( cIdPart )
 
    select_o_partner( self_organizacija_id() )
 
-   //cRejon := get_partn_sifk_sifv( "REJO", Unicode():New( cIdPart, .F. ), .F. )
+   // cRejon := get_partn_sifk_sifv( "REJO", Unicode():New( cIdPart, .F. ), .F. )
    cRejon := get_partn_sifk_sifv( "REJO", cIdPart, .F. )
 
    PopWa()

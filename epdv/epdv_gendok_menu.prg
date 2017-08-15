@@ -15,15 +15,15 @@
 
 FUNCTION epdv_generisanje()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _Izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. generiši kuf               " )
-   AAdd( _opcexe, {|| gen_kuf() } )
-   AAdd( _opc, "2. generiši kif" )
-   AAdd( _opcexe, {|| gen_kif() } )
+   AAdd( aOpc, "1. generiši kuf               " )
+   AAdd( aOpcExe, {|| epdv_gen_kuf() } )
+   AAdd( aOpc, "2. generiši kif" )
+   AAdd( aOpcExe, {|| epdv_gen_kif() } )
 
-   f18_menu( "gen", .F., _izbor, _opc, _opcexe )
+   f18_menu( "gen", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.

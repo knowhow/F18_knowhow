@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION g_src_modul( cSrc, lShow )
 
    LOCAL cPom := ""
@@ -44,8 +43,7 @@ FUNCTION g_src_modul( cSrc, lShow )
 
    OTHERWISE
       IF lShow
-         MsgBeep( "odaberite: 1-FIN, 2-KALK,#" + ;
-            "3-FAKT, 4-OS, 5-SII, 6-TOPS" )
+         MsgBeep( "odaberite: 1-FIN, 2-KALK,#3-FAKT, 4-OS, 5-SII, 6-TOPS" )
       ENDIF
    ENDCASE
 

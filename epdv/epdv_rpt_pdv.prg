@@ -31,9 +31,11 @@ STATIC dDatDo
 
 
 
-FUNCTION rpt_p_pdv()
+FUNCTION epdv_pdv_prijava()
 
    LOCAL cAzurirati
+   LOCAL nX
+   LOCAL GetList := {}
 
    aDInt := rpt_d_interval ( Date() )
 
@@ -47,30 +49,27 @@ FUNCTION rpt_p_pdv()
    nX := 1
    Box(, 12, 60 )
 
-   @ m_x + nX, m_y + 2 SAY "Period"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Period"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY "od " GET dDatOd
-   @ m_x + nX, Col() + 2 SAY "do " GET dDatDo
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "od " GET dDatOd
+   @ box_x_koord() + nX, Col() + 2 SAY "do " GET dDatDo
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "obrazac se pravi na osnovu :"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "obrazac se pravi na osnovu :"
    nX++
-   @ m_x + nX, m_y + 2 SAY " 1 - kuf/kif"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " 1 - kuf/kif"
    nX++
-   @ m_x + nX, m_y + 2 SAY " 2 - pdv baze"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " 2 - pdv baze"
    nX++
-   @ m_x + nX, m_y + 2 SAY " izbor ?" GET cSource ;
-      PICT "@!" ;
-      VALID cSource $ "12"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " izbor ?" GET cSource PICT "@!" VALID cSource $ "12"
 
    READ
-   nX ++
+   nX++
 
    IF cSource == "1"
-      @ m_x + nX, m_y + 2 SAY8 " Ažurirati podatke u PDV bazu (D/N) ?" GET cAzurirati ;
-         PICT "@!" ;
-         VALID cAzurirati $ "DN"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 " Ažurirati podatke u PDV bazu (D/N) ?" GET cAzurirati ;
+         PICT "@!" VALID cAzurirati $ "DN"
       READ
 
    ENDIF
@@ -79,15 +78,15 @@ FUNCTION rpt_p_pdv()
 
    IF LastKey() == K_ESC
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
-   fill_rpt()
+   epdv_fill_rpt()
    show_rpt(  .F.,  .F. )
 
    save_pdv_obracun( dDatOd, dDatDo )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -105,11 +104,11 @@ STATIC FUNCTION cre_r_tbl()
 
    dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr )
 
-   RETURN
+   RETURN .T.
 
 
 
-STATIC FUNCTION fill_rpt()
+STATIC FUNCTION epdv_fill_rpt()
 
    cre_r_tbl()
 
@@ -119,7 +118,7 @@ STATIC FUNCTION fill_rpt()
       f_iz_pdv()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -129,10 +128,12 @@ STATIC FUNCTION f_iz_kuf_kif()
    LOCAL nUkIzPdv := 0
    LOCAL nUkUlPdv := 0
    LOCAL nUlPdvKp := 0
+   LOCAL nCount
+   LOCAL GetList := {}
 
    aMyFirma := my_firma( .T. )
 
-   O_R_PDV
+   select_o_epdv_r_pdv()
    APPEND BLANK
 
    Scatter()
@@ -159,7 +160,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
       ++nCount
 
-      @ m_x + 2, m_y + 2 SAY "KUF" + Str( nCount, 6, 0 )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "KUF" + Str( nCount, 6, 0 )
 
       cIdTar := id_tar
       nBPdv := i_b_pdv
@@ -172,7 +173,7 @@ STATIC FUNCTION f_iz_kuf_kif()
          _u_pdv_41 += nPdv
          nUkUlPdv += nPdv
 
-      CASE t_u_uvoz( cIdTar )
+      CASE epdv_tarifa_nabavke_uvoz( cIdTar )
          _u_uvoz += nBPdv
          _u_pdv_uv += nPdv
          nUkUlPdv += nPdv
@@ -182,7 +183,7 @@ STATIC FUNCTION f_iz_kuf_kif()
          _u_pdv_43 += nPdv
          nUkUlPdv += nPdv
 
-      CASE t_u_polj_0( cIdTar )
+      CASE epdv_tarifa_nabavke_od_poljoprivrednika( cIdTar )
          _u_nab_23 += nBPdv
 
       CASE t_u_n_poup( cIdTar )
@@ -210,11 +211,11 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    Beep( 1 )
 
-   O_KIF
+   select_o_epdv_kif()
 
    cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
 
-   O_KIF
+   // select_o_epdv_kif()
    SET FILTER TO &cFilter
    GO TOP
 
@@ -233,7 +234,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
       ++nCount
 
-      @ m_x + 2, m_y + 2 SAY "KIF" + Str( nCount, 6, 0 )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "KIF" + Str( nCount, 6, 0 )
 
 
       cIdTar := id_tar
@@ -245,20 +246,19 @@ STATIC FUNCTION f_iz_kuf_kif()
       CASE t_i_opor( cIdTar )
          _i_opor += nBPdv
 
-      CASE t_i_izvoz( cIdTar )
+      CASE epdv_tarifa_isporuke_izvoz( cIdTar )
          _i_izvoz += nBPdv
-      CASE t_i_neop( cIdTar )
+      CASE epdv_tarifa_isporuke_neoporezivo_osim_izvoza( cIdTar )
          _i_neop += nBPdv
 
       ENDCASE
 
 
-      IF Round( g_pdv_stopa( cIdTar ), 2 ) > 0
+      IF Round( get_stopa_pdv_za_tarifu( cIdTar ), 2 ) > 0
 
          nUkIzPdv += nPdv
 
          IF partner_is_pdv_obveznik( id_part )
-
             _i_pdv_r += nPdv
 
          ELSE
@@ -295,22 +295,17 @@ STATIC FUNCTION f_iz_kuf_kif()
    _pot_datum := Date()
 
    Box(, 8, 65 )
-   @ m_x + 1, m_y + 2 SAY "Prenos PDV-a iz predhodnog perioda (KM) ?" GET _u_pdv_pp ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prenos PDV-a iz predhodnog perioda (KM) ?" GET _u_pdv_pp ;
       PICT PIC_IZN()
 
-   @ m_x + 3, m_y + 2 SAY "- Potpis -----------------"
-   @ m_x + 4, m_y + 2 SAY "Datum :" GET _pot_datum ;
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "- Potpis -----------------"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Datum :" GET _pot_datum ;
       VALID {|| _pot_mjesto := PadR( _po_mjesto, Len( _pot_mjesto ) ), .T. }
-   @ m_x + 5, m_y + 2 SAY "Mjesto :" GET _pot_mjesto  ;
-      VALID {|| _pot_datum := Date(), .T. }
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Mjesto :" GET _pot_mjesto  VALID {|| _pot_datum := Date(), .T. }
 
-   @ m_x + 6, m_y + 2 SAY "Ime i prezime ? " GET _pot_ob ;
-      PICT "@S30" ;
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Ime i prezime ? " GET _pot_ob  PICT "@S30"
 
-
-      @ m_x + 8, m_y + 2 SAY "Zahtjev za povrat ako je preplata (D/N) ? " GET _pdv_povrat ;
-      VALID _pdv_povrat $ "DN" ;
-      PICT "@!"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Zahtjev za povrat ako je preplata (D/N) ? " GET _pdv_povrat VALID _pdv_povrat $ "DN" PICT "@!"
 
    READ
 
@@ -376,15 +371,13 @@ STATIC FUNCTION zaok_p_pdv()
    _u_pdv_uk := Round( _u_pdv_uk, ZAO_PDV() )
    _i_pdv_uk := Round( _i_pdv_uk, ZAO_PDV() )
 
-   RETURN
+   RETURN .T.
+
 
 STATIC FUNCTION f_iz_pdv()
 
-   SELECT F_PDV
+   select_o_epdv_pdv()
 
-   IF !Used()
-      O_PDV
-   ENDIF
 
    SET ORDER TO TAG "period"
 
@@ -397,7 +390,7 @@ STATIC FUNCTION f_iz_pdv()
       RETURN .F.
    ENDIF
 
-   O_R_PDV
+   select_o_epdv_r_pdv()
    APPEND BLANK
 
    SELECT ( F_PDV )
@@ -411,7 +404,7 @@ STATIC FUNCTION f_iz_pdv()
    SELECT ( F_PDV )
    USE
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -739,7 +732,8 @@ STATIC FUNCTION show_raz_1()
    ?
    ?
 
-   RETURN
+   RETURN .T.
+
 
 STATIC FUNCTION r_zagl()
 
@@ -760,11 +754,11 @@ STATIC FUNCTION r_zagl()
          IF Left( aZagl[ i, nCol ], 1 ) = "#"
 
             nMergirano := Val( SubStr( aZagl[ i, nCol ], 2, 1 ) )
-            cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) -2 )
+            cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) - 2 )
             nMrgWidth := 0
             FOR nMrg := 1 TO nMergirano
                nMrgWidth += aZaglLen[ nCol + nMrg - 1 ]
-               nMrgWidth ++
+               nMrgWidth++
             NEXT
             ?? PadC( cPom, nMrgWidth )
             ?? " "
@@ -776,7 +770,8 @@ STATIC FUNCTION r_zagl()
       NEXT
    NEXT
 
-   RETURN
+   RETURN .T.
+
 
 STATIC FUNCTION rpt_lm()
    RETURN Space( RPT_LM )

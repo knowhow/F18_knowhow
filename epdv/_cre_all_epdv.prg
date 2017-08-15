@@ -73,12 +73,9 @@ FUNCTION cre_all_epdv( ver )
    CREATE_INDEX( "br_dok", "STR(br_dok,6,0)+STR(r_br,6,0)", _alias )
 
 
-
    aDbf := get_kif_fields()
-
    _alias := "P_KIF"
    _table_name := "epdv_p_kif"
-
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "datum", "dtos(datum)+src_br_2", _alias )
    CREATE_INDEX( "l_datum", "lock+dtos(datum)+src_br_2", _alias )

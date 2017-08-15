@@ -26,7 +26,7 @@ STATIC FUNCTION epdv_kif_tbl_priprema()
    PRIVATE ImeKol
    PRIVATE Kol
 
-   SELECT ( F_P_KIF )
+   select_o_epdv_p_kif()
    SET ORDER TO TAG "br_dok"
    GO TOP
 
@@ -71,7 +71,7 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
    Box(, f18_max_rows() - 10, f18_max_cols() - 12 )
    IF lNova
       _br_dok := 0
-      _r_br := next_r_br( "P_KIF" )
+      _r_br := epdv_next_r_br( "P_KIF" )
       _id_part := Space( Len( id_part ) )
       _id_tar := PadR( "PDV17", Len( id_tar ) )
       _datum := Date()
@@ -89,32 +89,28 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
 
    nXPart := nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kupac: " GET _id_part ;
-      VALID v_part( @_id_part, @_id_tar, "KIF", .T. ) ;
-      PICT "@!"
+      VALID epdv_valid_partner( @_id_part, @_id_tar, "KIF", .T. ) PICT "@!"
 
    nX += 2
-
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Broj računa (externi broj) " GET _src_br_2
    nX++
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Opis stavke: " GET _opis ;
-      WHEN {|| SetPos( box_x_koord() + nXPart, box_y_koord() + nYPart ), QQOut( s_partner( _id_part ) ), .T. } ;
-      PICT "@S50"
+      WHEN {|| SetPos( box_x_koord() + nXPart, box_y_koord() + nYPart ), QQOut( s_partner( _id_part ) ), .T. } PICT "@S50"
 
    nX += 2
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Iznos bez PDV (osnovica): " GET _i_b_pdv  PICT PIC_IZN()
    ++nX
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "tarifa: " GET _id_tar  VALID v_id_tar( @_id_tar, @_i_b_pdv, @_i_pdv,  Col(), lNova )  ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "tarifa: " GET _id_tar  VALID epdv_valid_id_tar( @_id_tar, @_i_b_pdv, @_i_pdv,  Col(), lNova )  ;
       PICT "@!"
 
    ++nX
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "   Iznos PDV: " GET _i_pdv ;
-      WHEN {||  .T. } ;
-      VALID {|| nI_s_pdv := _i_b_pdv + _i_pdv, .T. } ;
+      WHEN {||  .T. } VALID {|| nI_s_pdv := _i_b_pdv + _i_pdv, .T. } ;
       PICT PIC_IZN()
    ++nX
 
@@ -134,9 +130,9 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
 
    IF cIspravno == "D"
       RETURN .T.
-   ELSE
-      RETURN .F.
    ENDIF
+
+   RETURN .F.
 
 
 STATIC FUNCTION epdv_kif_key_handler( Ch )
@@ -144,6 +140,7 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
    LOCAL nTekRec
    LOCAL nBrDokP
    LOCAL lDelete := .F.
+   LOCAL GetList := {}
 
    IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0
       RETURN DE_CONT
@@ -221,7 +218,7 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
       READ
       BoxC()
       IF LastKey() <> K_ESC
-         rpt_kif( nBrDokP )
+         epdv_rpt_kif( nBrDokP )
       ENDIF
 
       my_close_all_dbf()
@@ -236,11 +233,11 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
       IF Pitanje( , "Ažurirati pripremu KIF-a (D/N) ?", "N" ) == "D"
          epdv_azur_kif()
          RETURN DE_REFRESH
-      ELSE
-         RETURN DE_CONT
       ENDIF
+      RETURN DE_CONT
 
-   CASE Ch == K_ALT_P
+
+   CASE is_key_alt_p( Ch )
 
       IF Pitanje( , "Povrat KIF dokumenta u pripremu (D/N) ?", "N" ) == "D"
          nBrDokP := 0
@@ -251,15 +248,21 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
          BoxC()
 
          IF LastKey() <> K_ESC
-            pov_kif( nBrDokP )
+         
+            epdv_povrat_kif( nBrDokP )
+            my_close_all_dbf()
+            epdv_otvori_kif_tabele( .T. )
+            SELECT P_KIF
+            SET ORDER TO TAG "br_dok"
+
             RETURN DE_REFRESH
          ENDIF
       ENDIF
 
       SELECT P_KIF
-      RETURN DE_REFRESH
+      RETURN DE_CONT
 
-   CASE Ch == K_ALT_X
+   CASE is_key_alt_x( Ch )
 
       IF Pitanje (, "Izvršiti renumeraciju pripreme (D/N) ?", "N" ) == "D"
          epdv_renumeracija_rbr( "P_KIF", .F. )
@@ -281,6 +284,7 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
 
 FUNCTION epdv_edit_kif()
 
+   AltD()
    epdv_otvori_kif_tabele( .T. )
    epdv_kif_tbl_priprema()
 

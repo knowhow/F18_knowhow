@@ -16,8 +16,8 @@ MEMVAR _id_part, _datum, _opis
 
 STATIC s_dDatOd
 STATIC s_dDatDo
-//STATIC cFaktPath
-//STATIC cSifPath
+// STATIC cFaktPath
+// STATIC cSifPath
 STATIC s_cTDSrc
 STATIC s_nZaok
 STATIC s_nZaok2
@@ -75,7 +75,7 @@ FUNCTION epdv_fakt_kif( cIdRj, dD1, dD2, cSezona )
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "SG_KIF : " + Str( nCount )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "SG_KIF : " + Str( nCount )
 
       IF g_src_modul( src ) == "FAKT"
 
@@ -128,15 +128,6 @@ FUNCTION epdv_fakt_kif( cIdRj, dD1, dD2, cSezona )
 
    ENDDO
 
-STATIC FUNCTION close_open_fakt_epdv_tables()
-
-   // o_fakt_dbf()
-   close_open_kuf_kif_sif()
-
-   RETURN .T.
-
-
-
 STATIC FUNCTION gen_fakt_kif_item( cIdRj, dDatOd, dDatDo, cSezona )
 
    LOCAL cPomPath
@@ -165,10 +156,10 @@ STATIC FUNCTION gen_fakt_kif_item( cIdRj, dDatOd, dDatDo, cSezona )
    find_fakt_za_period( cIdRj, dDatOd, dDatDo, NIL, "idtipdok=" + sql_quote( s_cTDSrc ), "1" )
 
 
-   //SET ORDER TO TAG "1" // "1","IdFirma+idtipdok+brdok+rbr+podbr"
-   //SET FILTER TO &cFilter
+   // SET ORDER TO TAG "1" // "1","IdFirma+idtipdok+brdok+rbr+podbr"
+   // SET FILTER TO &cFilter
 
-   //GO TOP
+   // GO TOP
 
 
    nCount := 0
@@ -285,10 +276,10 @@ STATIC FUNCTION gen_fakt_kif_item( cIdRj, dDatOd, dDatDo, cSezona )
          nCount++
 
          cPom := "FAKT : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-         @ m_x + 3, m_y + 2 SAY cPom
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY cPom
 
          cPom := "FAKT cnt : " + Str( nCount, 6 )
-         @ m_x + 4, m_y + 2 SAY cPom
+         @ box_x_koord() + 4, box_y_koord() + 2 SAY cPom
 
          cDokTar := ""
 
@@ -360,12 +351,11 @@ STATIC FUNCTION gen_fakt_kif_item( cIdRj, dDatOd, dDatDo, cSezona )
             ENDIF
 
             IF s_cTDSrc == "11"
-               nCijena := cijena / ( 1 + g_pdv_stopa( cDokTar ) / 100 )
+               nCijena := cijena / ( 1 + get_stopa_pdv_za_tarifu( cDokTar ) / 100 )
             ELSE
                nCijena := cijena
             ENDIF
 
-            // rabat
             nF_rabat := field->rabat
 
             // da li je roba zasticena cijena
@@ -408,7 +398,6 @@ STATIC FUNCTION gen_fakt_kif_item( cIdRj, dDatOd, dDatDo, cSezona )
       _datum := dDMax // za datum uzmi ovaj veci
 
       IF !lProcesirano
-         // vrati se gore
          SELECT FAKT
          LOOP
       ENDIF
@@ -436,7 +425,7 @@ STATIC FUNCTION gen_fakt_kif_item( cIdRj, dDatOd, dDatDo, cSezona )
          _id_tar := s_cIdTar
       ENDIF
 
-      PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa( _id_tar ) / 100 )
+      PRIVATE _uk_pdv :=  _uk_b_pdv * (  get_stopa_pdv_za_tarifu( _id_tar ) / 100 )
 
       IF !Empty( cFormBPDV )
          _i_b_pdv := &cFormBPdv
@@ -463,5 +452,14 @@ STATIC FUNCTION gen_fakt_kif_item( cIdRj, dDatOd, dDatDo, cSezona )
       SELECT fakt
 
    ENDDO
+
+   RETURN .T.
+
+
+
+STATIC FUNCTION close_open_fakt_epdv_tables()
+
+   // o_fakt_dbf()
+   close_open_kuf_kif_sif()
 
    RETURN .T.

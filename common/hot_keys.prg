@@ -14,3 +14,13 @@
 FUNCTION is_key_alt_a( nCh )
 
    RETURN ( nCh == K_ALT_A ) .OR. ( is_mac_osx() .AND. Chr( nCh ) == 'A' )
+
+
+FUNCTION is_key_alt_p( nCh )
+
+   RETURN ( nCh == K_ALT_P ) .OR. ( is_mac_osx() .AND. Chr( nCh ) == 'P' )
+
+
+FUNCTION is_key_alt_x( nCh )
+
+  RETURN ( nCh == K_ALT_X ) .OR. ( is_mac_osx() .AND. Chr( nCh ) == 'X' )

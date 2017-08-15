@@ -123,7 +123,7 @@ STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( hParams )
 
    SELECT pos_doks
 
-   cBrojRacuna := pos_novi_broj_dokumenta( _id_pos, VD_RN )
+   cBrojRacuna := pos_novi_broj_dokumenta( _id_pos, POS_VD_RACUN )
 
    cVrijemeRacuna := PADR( TIME(), 5 )
    gDatum := Date()
@@ -257,9 +257,9 @@ STATIC FUNCTION form_zakljuci_racun( hParams )
    // VR - virman
    // CK - cek
 
-   @ m_x + 1, m_y + 2 SAY8 "FORMA ZAKLJUČENJA RAČUNA" COLOR "BG+/B"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "FORMA ZAKLJUČENJA RAČUNA" COLOR "BG+/B"
 
-   @ m_x + 3, m_y + 2 SAY8 "Način plaćanja (01/KT/VR...):" GET _id_vrsta_p PICT "@!" VALID p_vrstep( @_id_vrsta_p )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Način plaćanja (01/KT/VR...):" GET _id_vrsta_p PICT "@!" VALID p_vrstep( @_id_vrsta_p )
 
    READ
 
@@ -268,16 +268,16 @@ STATIC FUNCTION form_zakljuci_racun( hParams )
    ENDIF
 
    IF _def_partner
-      @ m_x + 4, m_y + 2 SAY "Kupac:" GET _id_partner PICT "@!" VALID p_partner( @_id_partner )
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Kupac:" GET _id_partner PICT "@!" VALID p_partner( @_id_partner )
    ELSE
       _id_partner := Space( 6 )
    ENDIF
 
-   @ _x_pos := m_x + 5, _y_pos := m_y + 2 SAY8 "Kupac uplatio:" GET _uplaceno PICT "9999999.99" ;
+   @ _x_pos := box_x_koord() + 5, _y_pos := box_y_koord() + 2 SAY8 "Kupac uplatio:" GET _uplaceno PICT "9999999.99" ;
       VALID {|| if ( _uplaceno <> 0, ispisi_iznos_i_kusur_za_kupca( _uplaceno, koliko_treba_povrata_kupcu( hParams ), _x_pos, _y_pos ), .T. ), .T. }
 
 
-   @ m_x + 8, m_y + 2 SAY8 "Ažurirati račun (D/N) ?" GET _ok PICT "@!" VALID _ok $ "DN"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Ažurirati račun (D/N) ?" GET _ok PICT "@!" VALID _ok $ "DN"
 
    READ
 
@@ -305,6 +305,7 @@ FUNCTION RacObilj()
    RETURN .F.
 
 
+/*
 FUNCTION PreglNezakljRN()
 
    o_pos_tables()
@@ -314,8 +315,8 @@ FUNCTION PreglNezakljRN()
 
    Box (, 1, 60 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "Od datuma:" GET dDatOd
-   @ m_x + 1, m_y + 22 SAY "Do datuma:" GET dDatDo
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Od datuma:" GET dDatOd
+   @ box_x_koord() + 1, box_y_koord() + 22 SAY "Do datuma:" GET dDatDo
    READ
    ESC_BCR
    BoxC()
@@ -324,10 +325,11 @@ FUNCTION PreglNezakljRN()
       StampaNezakljRN( gIdRadnik, dDatOd, dDatDo )
    ENDIF
 
-   RETURN
+   RETURN .T.
+*/
 
 
-
+/*
 FUNCTION RekapViseRacuna()
 
    cBrojStola := Space( 3 )
@@ -339,20 +341,20 @@ FUNCTION RekapViseRacuna()
 
    Box (, 2, 60 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "Od datuma:" GET dDatOd
-   @ m_x + 1, m_y + 22 SAY "Do datuma:" GET dDatDo
-   @ m_x + 2, m_y + 2 SAY "Broj stola:" GET cBrojStola VALID !Empty( cBrojStola )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Od datuma:" GET dDatOd
+   @ box_x_koord() + 1, box_y_koord() + 22 SAY "Do datuma:" GET dDatDo
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Broj stola:" GET cBrojStola VALID !Empty( cBrojStola )
    READ
    ESC_BCR
    BoxC()
 
    IF Pitanje(, "Štampati zbirni račun (D/N) ?", "D" ) == "D"
-      StampaRekap( gIdRadnik, cBrojStola, dDatOd, dDatDo, .T. )
+  --    StampaRekap( gIdRadnik, cBrojStola, dDatOd, dDatDo, .T. )
    ENDIF
 
    RETURN .T.
 
-
+*/
 
 
 FUNCTION StrValuta( cNaz2, dDat )

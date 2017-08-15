@@ -66,9 +66,9 @@ FUNCTION pos_unos_racuna()
 
    Box(, _max_rows - 3, _max_cols - 3, , aUnosMsg )
 
-   @ m_x, m_y + 23 SAY8 PadC ( "RAČUN BR: " + AllTrim( cBrojRn ), 40 ) COLOR f18_color_invert()
+   @ box_x_koord(), box_y_koord() + 23 SAY8 PadC ( "RAČUN BR: " + AllTrim( cBrojRn ), 40 ) COLOR f18_color_invert()
 
-   oBrowse := pos_form_browse( m_x + 7, m_y + 1, m_x + _max_rows - 12, m_y + _max_cols - 2, ;
+   oBrowse := pos_form_browse( box_x_koord() + 7, box_y_koord() + 1, box_x_koord() + _max_rows - 12, box_y_koord() + _max_cols - 2, ;
       ImeKol, Kol, ;
         { hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ;
           hb_UTF8ToStrBox( BROWSE_PODVUCI ), ;
@@ -84,11 +84,11 @@ FUNCTION pos_unos_racuna()
 
    pos_set_key_handler_ispravka_racuna()
 
-   @ m_x + 3, m_y + ( _max_cols - 30 ) SAY "UKUPNO:"
-   @ m_x + 4, m_y + ( _max_cols - 30 ) SAY "POPUST:"
-   @ m_x + 5, m_y + ( _max_cols - 30 ) SAY " TOTAL:"
+   @ box_x_koord() + 3, box_y_koord() + ( _max_cols - 30 ) SAY "UKUPNO:"
+   @ box_x_koord() + 4, box_y_koord() + ( _max_cols - 30 ) SAY "POPUST:"
+   @ box_x_koord() + 5, box_y_koord() + ( _max_cols - 30 ) SAY " TOTAL:"
 
-   ispisi_iznos_veliki_brojevi( 0, m_x + ( _max_rows - 12 ), _max_cols - 2 )
+   ispisi_iznos_veliki_brojevi( 0, box_x_koord() + ( _max_rows - 12 ), _max_cols - 2 )
 
    nIznNar := 0
    nPopust := 0
@@ -103,7 +103,7 @@ FUNCTION pos_unos_racuna()
 
    gDatum := Date()
    _idpos := gIdPos
-   _idvd  := VD_RN
+   _idvd  := POS_VD_RACUN
    _brdok := cBrojRn
    _datum := gDatum
    _sto   := cSto
@@ -117,11 +117,11 @@ FUNCTION pos_unos_racuna()
    DO WHILE .T.
 
       SET CONFIRM ON
-      pos_unos_show_total( nIznNar, nPopust, m_x + 2 )
+      pos_unos_show_total( nIznNar, nPopust, box_x_koord() + 2 )
 
-      @ m_x + 3, m_y + 15 SAY Space( 10 )
+      @ box_x_koord() + 3, box_y_koord() + 15 SAY Space( 10 )
 
-      ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( _max_rows - 12 ), _max_cols - 2 )
+      ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), box_x_koord() + ( _max_rows - 12 ), _max_cols - 2 )
 
       DO WHILE !oBrowse:stable
          oBrowse:Stabilize()
@@ -133,7 +133,7 @@ FUNCTION pos_unos_racuna()
       _idroba := Space( Len( _idroba ) )
       _kolicina := 0
 
-      @ m_x + 2, m_y + 25 SAY Space ( 40 )
+      @ box_x_koord() + 2, box_y_koord() + 25 SAY Space ( 40 )
       SET CURSOR ON
 
       IF gDuzSifre > 0
@@ -142,15 +142,15 @@ FUNCTION pos_unos_racuna()
          cDSFINI := "10"
       ENDIF
 
-      @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba ;
+      @ box_x_koord() + 2, box_y_koord() + 5 SAY " Artikal:" GET _idroba ;
          PICT PICT_POS_ARTIKAL ;
          WHEN {|| _idroba := PadR( _idroba, Val( cDSFINI ) ), .T. } ;
          VALID valid_pos_racun_artikal( @_kolicina )
 
-      @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena PICT "99999.999"  ;
+      @ box_x_koord() + 3, box_y_koord() + 5 SAY "  Cijena:" GET _Cijena PICT "99999.999"  ;
          WHEN ( roba->tip == "T" .OR. gPopZcj == "D" )
 
-      @ m_x + 4, m_y + 5 SAY8 "Količina:" GET _kolicina ;
+      @ box_x_koord() + 4, box_y_koord() + 5 SAY8 "Količina:" GET _kolicina ;
          PICT "999999.999" WHEN when_pos_kolicina( @_kolicina ) ;
          VALID valid_pos_kolicina( @_kolicina, _cijena )
 
@@ -159,7 +159,7 @@ FUNCTION pos_unos_racuna()
 
       READ
 
-      @ m_x + 4, m_y + 25 SAY Space ( 11 )
+      @ box_x_koord() + 4, box_y_koord() + 25 SAY Space ( 11 )
 
       IF LastKey() == K_ESC
 
@@ -277,7 +277,7 @@ STATIC FUNCTION valid_pos_racun_artikal( kolicina )
 
 STATIC FUNCTION when_pos_kolicina( kolicina )
 
-   Popust( m_x + 4, m_y + 28 )
+   Popust( box_x_koord() + 4, box_y_koord() + 28 )
 
    IF gOcitBarCod
       IF param_tezinski_barkod() == "D" .AND. kolicina <> 0
@@ -306,9 +306,9 @@ STATIC FUNCTION _refresh_total()
    nIznNar := _iznos
    nPopust := _popust
 
-   ispisi_iznos_veliki_brojevi( ( _iznos - _popust ), m_x + ( f18_max_rows() - 12 ), f18_max_cols() - 2 )
+   ispisi_iznos_veliki_brojevi( ( _iznos - _popust ), box_x_koord() + ( f18_max_rows() - 12 ), f18_max_cols() - 2 )
 
-   pos_unos_show_total( _iznos, _popust, m_x + 2 )
+   pos_unos_show_total( _iznos, _popust, box_x_koord() + 2 )
 
    SELECT _pos_pripr
    GO TOP
@@ -525,9 +525,9 @@ FUNCTION pos_ispravi_racun()
 
 STATIC FUNCTION pos_unos_show_total( iznos, popust, row )
 
-   @ m_x + row + 0, m_y + ( f18_max_cols() - 12 ) SAY iznos PICT "99999.99" COLOR f18_color_invert()
-   @ m_x + row + 1, m_y + ( f18_max_cols() - 12 ) SAY popust PICT "99999.99" COLOR f18_color_invert()
-   @ m_x + row + 2, m_y + ( f18_max_cols() - 12 ) SAY iznos - popust PICT "99999.99" COLOR f18_color_invert()
+   @ box_x_koord() + row + 0, box_y_koord() + ( f18_max_cols() - 12 ) SAY iznos PICT "99999.99" COLOR f18_color_invert()
+   @ box_x_koord() + row + 1, box_y_koord() + ( f18_max_cols() - 12 ) SAY popust PICT "99999.99" COLOR f18_color_invert()
+   @ box_x_koord() + row + 2, box_y_koord() + ( f18_max_cols() - 12 ) SAY iznos - popust PICT "99999.99" COLOR f18_color_invert()
 
    RETURN .T.
 
@@ -547,8 +547,8 @@ FUNCTION pos_brisi_stavku_racuna( oBrowse )
    nIznNar -= _pos_pripr->( kolicina * cijena )
    nPopust -= _pos_pripr->( kolicina * ncijena )
 
-   pos_unos_show_total( nIznNar, nPopust, m_x + 2 )
-   ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( f18_max_rows() - 12 ), f18_max_cols() - 2 )
+   pos_unos_show_total( nIznNar, nPopust, box_x_koord() + 2 )
+   ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), box_x_koord() + ( f18_max_rows() - 12 ), f18_max_cols() - 2 )
 
    my_delete()
 
@@ -580,14 +580,14 @@ FUNCTION pos_ispravi_stavku_racuna()
 
    BOX (, 3, 75 )
 
-   @ m_x + 1, m_y + 4 SAY8 "    Artikal:" GET _idroba PICTURE PICT_POS_ARTIKAL VALID pos_postoji_roba( @_idroba, 1, 27 ) .AND. ( _IdRoba == _pos_pripr->IdRoba .OR. NarProvDuple () )
-   @ m_x + 2, m_y + 3 SAY8 "     Cijena:" GET _Cijena  PICTURE "99999.999" WHEN roba->tip == "T"
-   @ m_x + 3, m_y + 3 SAY8 "   količina:" GET _Kolicina VALID KolicinaOK ( _Kolicina )
+   @ box_x_koord() + 1, box_y_koord() + 4 SAY8 "    Artikal:" GET _idroba PICTURE PICT_POS_ARTIKAL VALID pos_postoji_roba( @_idroba, 1, 27 ) .AND. ( _IdRoba == _pos_pripr->IdRoba .OR. NarProvDuple () )
+   @ box_x_koord() + 2, box_y_koord() + 3 SAY8 "     Cijena:" GET _Cijena  PICTURE "99999.999" WHEN roba->tip == "T"
+   @ box_x_koord() + 3, box_y_koord() + 3 SAY8 "   količina:" GET _Kolicina VALID KolicinaOK ( _Kolicina )
 
    READ
 
    SELECT _pos_pripr
-   @ m_x + 3, m_Y + 25 SAY Space( 11 )
+   @ box_x_koord() + 3, box_y_koord() + 25 SAY Space( 11 )
 
    IF LastKey() <> K_ESC
 
@@ -622,8 +622,8 @@ FUNCTION pos_ispravi_stavku_racuna()
 
    BoxC()
 
-   pos_unos_show_total( nIznNar, nPopust, m_x + 2 )
-   ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( f18_max_rows() - 12 ), f18_max_cols() - 2 )
+   pos_unos_show_total( nIznNar, nPopust, box_x_koord() + 2 )
+   ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), box_x_koord() + ( f18_max_rows() - 12 ), f18_max_cols() - 2 )
 
    oBrowse:refreshCurrent()
 

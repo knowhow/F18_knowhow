@@ -15,8 +15,8 @@
 
 STATIC FUNCTION _o_tables()
 
-   o_pos_odj()
-   o_pos_kase()
+   //o_pos_odj()
+   //o_pos_kase()
 //   o_sifk()
 //   o_sifv()
 //   o_roba()
@@ -72,10 +72,10 @@ FUNCTION pos_top_narudzbe()
             "B1" )
          CLOSERET
       ENDIF
-      aUsl1 := Parsiraj( cRoba, "IdRoba", "C" )
-      IF aUsl1 <> NIL .AND. dDatum0 <= dDatum1
+      cFilterRoba := Parsiraj( cRoba, "IdRoba", "C" )
+      IF cFilterRoba <> NIL .AND. dDatum0 <= dDatum1
          EXIT
-      ELSEIF aUsl1 == NIL
+      ELSEIF cFilterRoba == NIL
          Msg( "Kriterij za robu nije korektno postavljen!" )
       ELSE
          Msg( "'Datum do' ne smije biti stariji nego 'datum od'!" )
@@ -84,18 +84,11 @@ FUNCTION pos_top_narudzbe()
 
    nTotal := 0
 
-   SELECT POS
-   IF !( aUsl1 == ".t." )
-      SET FILTER to &aUsl1
-   ENDIF
 
-   SELECT pos_doks
-   SET ORDER TO TAG "2"
-   // IdVd+DTOS (Datum)+Smjena
 
    START PRINT CRET
    ?
-   ZagFirma()
+   //ZagFirma()
 
    ? PadC ( "NAJPROMETNIJI ARTIKLI", 40 )
    ? PadC ( "-----------------------", 40 )
@@ -104,8 +97,8 @@ FUNCTION pos_top_narudzbe()
    ? PadC ( "Za period od " + FormDat1 ( dDatum0 ) + " do " + FormDat1 ( dDatum1 ), 40 )
    ?
 
-   TopNizvuci ( VD_RN, dDatum0 )
-   TopNizvuci ( VD_PRR, dDatum0 )
+   pos_top_n_izvuci ( POS_VD_RACUN, dDatum0, cFilterRoba )
+   pos_top_n_izvuci ( VD_PRR, dDatum0, cFilterRoba )
 
    // stampa izvjestaja
    SELECT POM
@@ -161,18 +154,22 @@ FUNCTION pos_top_narudzbe()
 
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
 
 
 
-/* TopNizvuci(cIdVd,dDatum0)
+/*
  *     Punjenje pomocne baze realizacijom po robama
  */
 
-FUNCTION TopNizvuci( cIdVd, dDatum0 )
+FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
 
-   SELECT pos_doks
-   SEEK cIdVd + DToS ( dDatum0 )
+  LOCAL nNeplaca
+
+  seek_pos_doks_2( cIdVd, dDatum0 )
+
+  //SELECT pos_doks
+   //SEEK cIdVd + DToS ( dDatum0 )
 
    DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
 
@@ -183,15 +180,18 @@ FUNCTION TopNizvuci( cIdVd, dDatum0 )
          LOOP
       ENDIF
 
-      SELECT POS
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+      IF !( cFilterRoba == ".t." )
+         SET FILTER to &cFilterRoba
+      ENDIF
+      GO TOP
 
-      WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
+      DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
          select_o_roba( pos->idroba )
          IF roba->( FieldPos( "idodj" ) ) <> 0
-            SELECT odj
-            HSEEK roba->idodj
+            select_o_pos_odj( roba->idodj )
          ENDIF
          nNeplaca := 0
          IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
@@ -206,7 +206,7 @@ FUNCTION TopNizvuci( cIdVd, dDatum0 )
 
          SELECT POM
          GO TOP
-         HSEEK POS->IdRoba
+         HSEEK POS->IdRoba // POM
 
          IF !Found ()
             APPEND BLANK
@@ -235,5 +235,4 @@ FUNCTION TopNizvuci( cIdVd, dDatum0 )
 
    ENDDO
 
-   RETURN
-// }
+   RETURN .T.

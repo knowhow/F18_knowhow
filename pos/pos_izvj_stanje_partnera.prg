@@ -26,7 +26,7 @@ FUNCTION pos_rpt_stanje_partnera()
    PRIVATE cGotZir := Space( 1 )
    PRIVATE cSifraDob := Space( 8 )
 
-   o_partner()
+   //o_partner()
 
    DO WHILE .T.
       IF !VarEdit( { ;
@@ -44,15 +44,15 @@ FUNCTION pos_rpt_stanje_partnera()
       ENDIF
    ENDDO
 
-   o_roba()
+   //o_roba()
    o_pos_pos()
    o_pos_doks()
-   o_partner()
+   //o_partner()
 
    START PRINT CRET
    ?? gP12cpi
 
-   ZagFirma()
+  // ZagFirma()
 
    ? PadC( "STANJE RACUNA PARTNERA NA DAN " + FormDat1( dDat ), 80 )
    ? PadC( "----------------------------------------", 80 )
@@ -132,8 +132,9 @@ FUNCTION pos_rpt_stanje_partnera()
             ENDIF
          ENDIF
 
-         SELECT POS
-         HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+         //SELECT POS
+         //HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+         seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
          nIznos := 0
          nDuguje := 0
          nPotrazuje := 0
@@ -175,8 +176,7 @@ FUNCTION pos_rpt_stanje_partnera()
 
       IF Round( nStanje, 4 ) <> 0 .OR. cNula == "D"
 
-         SELECT partn
-         HSEEK cIdGost
+         select_o_partner( cIdGost )
          ? REPL( "-", 80 )
          ? AllTrim( Str( nBrojacPartnera ) ) + ") " + PadR( AllTrim( cIdGost ) + " " + partn->Naz, 35 ) + " "
          IF gVrstaRS == "K"
@@ -209,8 +209,9 @@ FUNCTION pos_rpt_stanje_partnera()
                ENDIF
             ENDIF
 
-            SELECT POS
-            SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+            //SELECT POS
+            //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+            seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
             nDuguje := 0
             nPotrazuje := 0
             DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )

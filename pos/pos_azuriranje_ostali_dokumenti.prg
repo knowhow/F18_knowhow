@@ -190,8 +190,8 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    cTipDok := hRec[ "idvd" ]
    cDokument := AllTrim( hRec[ "idpos" ] ) + "-" + hRec[ "idvd" ] + "-" + AllTrim( hRec[ "brdok" ] ) + " " + DToC( hRec[ "datum" ] )
 
-   @ m_x + 1, m_y + 2 SAY8 "    AŽURIRANJE DOKUMENTA U TOKU ..."
-   @ m_x + 2, m_y + 2 SAY "Formiran dokument: " + cDokument +  " / zap: " + AllTrim( Str( nTotalCount ) )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "    AŽURIRANJE DOKUMENTA U TOKU ..."
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Formiran dokument: " + cDokument +  " / zap: " + AllTrim( Str( nTotalCount ) )
 
    lOk := update_rec_server_and_dbf( "pos_doks", hRec, 1, "CONT" )
 
@@ -230,7 +230,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
          hRec[ "c_3" ] := priprz->c_3
          hRec[ "rbr" ] := PadL( AllTrim( Str( ++nCount ) ), 5 )
 
-         @ m_x + 3, m_y + 2 SAY "Stavka " + AllTrim( Str( nCount ) ) + " roba: " + hRec[ "idroba" ]
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Stavka " + AllTrim( Str( nCount ) ) + " roba: " + hRec[ "idroba" ]
 
          lOk := update_rec_server_and_dbf( "pos_pos", hRec, 1, "CONT" )
 

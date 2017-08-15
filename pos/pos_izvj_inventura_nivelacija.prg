@@ -76,8 +76,7 @@ FUNCTION StampaInv( fLista, lAzurirana )
 
    ? PadC ( cPom + AllTrim ( PRIPRZ->BrDok ), nSir )
    ?
-   SELECT ODJ
-   HSEEK PRIPRZ->IdOdj
+   select_o_pos_odj( PRIPRZ->IdOdj )
    IF gvodiodj == "D"
       ? PadC ( "Odjeljenje: " + AllTrim ( ODJ->Naz ), nSir )
    ENDIF
@@ -323,10 +322,10 @@ FUNCTION PrepisInvNiv( fInvent )
    SET ORDER TO TAG "1"
    HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
+
    cIdOdj := priprz->idodj
 
-   SELECT ODJ
-   HSEEK cidodj
+   select_o_pos_odj( cIdodj )
 
    IF ODJ->Zaduzuje == "S"
       cRSdbf := "SIROV"
@@ -346,8 +345,8 @@ FUNCTION PrepisInvNiv( fInvent )
    o_pos_pos()
 
    PopWa()
-   // vrati pos gdje je bio
+
 
    SELECT pos_doks
 
-   RETURN
+   RETURN .T.

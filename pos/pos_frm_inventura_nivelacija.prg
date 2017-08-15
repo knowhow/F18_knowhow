@@ -145,9 +145,10 @@ FUNCTION pos_inventura_nivelacija()
 
          Scatter()
 
-         SELECT pos
-         SET ORDER TO TAG "2"
-         SEEK cIdOdj
+         //SELECT pos
+         //SET ORDER TO TAG "2"
+         //SEEK cIdOdj
+         seek_pos_2( cIdOdj )
 
          DO WHILE !Eof() .AND. field->idodj == cIdOdj
 
@@ -407,7 +408,7 @@ FUNCTION EditInvNiv( dat_inv_niv )
       _dat := Date()
 
       Box(, 1, 50 )
-      @ m_x + 1, m_y + 2 SAY "Postavi datum na:" GET _dat
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Postavi datum na:" GET _dat
       READ
       BoxC()
 
@@ -544,19 +545,19 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
       Box(, 7, f18_max_cols() -5, .T. )
 
-      @ m_x + 0, m_y + 1 SAY " " + IF( nInd == 0, "NOVA STAVKA", "ISPRAVKA STAVKE" ) + " "
+      @ box_x_koord() + 0, box_y_koord() + 1 SAY " " + IF( nInd == 0, "NOVA STAVKA", "ISPRAVKA STAVKE" ) + " "
 
       Scatter()
 
-      @ m_x + 1, m_y + 31 SAY PadR( "", 35 )
-      @ m_x + 6, m_y + 2 SAY "... zadnji artikal: " + AllTrim( _idroba ) + " - " + PadR( _robanaz, 25 ) + "..."
-      @ m_x + 7, m_y + 2 SAY "stanje unosa - kol: " + AllTrim( Str( _saldo_kol, 12, 2 ) ) + ;
+      @ box_x_koord() + 1, box_y_koord() + 31 SAY PadR( "", 35 )
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "... zadnji artikal: " + AllTrim( _idroba ) + " - " + PadR( _robanaz, 25 ) + "..."
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "stanje unosa - kol: " + AllTrim( Str( _saldo_kol, 12, 2 ) ) + ;
          " total: " + AllTrim( Str( _saldo_izn, 12, 2 ) )
 
       select_o_roba( _idroba )
 
       IF nInd == 1
-         @ m_x + 0, m_y + 1 SAY _idroba + " : " + AllTrim( naz ) + " (" + AllTrim( idtarifa ) + ")"
+         @ box_x_koord() + 0, box_y_koord() + 1 SAY _idroba + " : " + AllTrim( naz ) + " (" + AllTrim( idtarifa ) + ")"
       ENDIF
 
       SELECT priprz
@@ -582,9 +583,9 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
       ENDIF
 
-      nLX := m_x + 1
+      nLX := box_x_koord() + 1
 
-      @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
+      @ nLX, box_y_koord() + 3 SAY "      Artikal:" GET _idroba ;
          PICT PICT_POS_ARTIKAL ;
          WHEN {|| _idroba := PadR( _idroba, Val( _duz_sif ) ), .T. } ;
          VALID valid_pos_inv_niv( cIdVd, nInd )
@@ -593,10 +594,10 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
       nLX++
 
       IF cIdVd == VD_INV
-         @ nLX, m_y + 3 SAY8 "Knj. količina:" GET nKolicina PICT _pict ;
+         @ nLX, box_y_koord() + 3 SAY8 "Knj. količina:" GET nKolicina PICT _pict ;
             WHEN {|| .F. }
       ELSE
-         @ nLX, m_y + 3 SAY8 "     Količina:" GET nKolicina PICT _pict ;
+         @ nLX, box_y_koord() + 3 SAY8 "     Količina:" GET nKolicina PICT _pict ;
             WHEN {|| .T. }
       ENDIF
 
@@ -604,7 +605,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
       IF cIdVd == VD_INV
 
-         @ nLX, m_y + 3 SAY8 "Pop. količina:" GET _kol2 PICT _pict ;
+         @ nLX, box_y_koord() + 3 SAY8 "Pop. količina:" GET _kol2 PICT _pict ;
             VALID _pop_kol( _kol2 ) ;
             WHEN {|| .T. }
 
@@ -612,7 +613,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
       ENDIF
 
-      @ nLX, m_y + 3 SAY "       Cijena:" GET _cijena PICT _pict ;
+      @ nLX, box_y_koord() + 3 SAY "       Cijena:" GET _cijena PICT _pict ;
          WHEN {|| .T. } ;
          VALID {|| _cijena < 999999.99 }
 
@@ -620,7 +621,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
          nLX++
 
-         @ nLX, m_y + 3 SAY "  Nova cijena:" GET _ncijena PICT _pict ;
+         @ nLX, box_y_koord() + 3 SAY "  Nova cijena:" GET _ncijena PICT _pict ;
             WHEN {|| .T. }
 
       ENDIF
@@ -644,7 +645,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
          SELECT priprz
          GO TOP
-         SEEK _idroba
+         SEEK _idroba // PRIPRZ
 
          IF !Found()
             APPEND BLANK
@@ -703,7 +704,7 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
 
 STATIC FUNCTION update_ip_razlika()
 
-   LOCAL _id_odj := Space( 2 )
+   LOCAL cIdOdj := Space( 2 )
    LOCAL nKolicinaZaInventuru, ip_roba
    LOCAL _rec2, hRec
 
@@ -717,12 +718,13 @@ STATIC FUNCTION update_ip_razlika()
    GO TOP
    _rec2 := dbf_get_rec()
 
-   SELECT pos
-   SET ORDER TO TAG "2"
+   //SELECT pos
+   //SET ORDER TO TAG "2"
    // "2", "IdOdj + idroba + DTOS(Datum)
-   SEEK _id_odj
+   //SEEK cIdOdj
+   seek_pos_2( cIdOdj )
 
-   DO WHILE !Eof() .AND. field->idodj == _id_odj
+   DO WHILE !Eof() .AND. field->idodj == cIdOdj
 
       IF pos->datum > dDatRada
          SKIP
@@ -735,7 +737,7 @@ STATIC FUNCTION update_ip_razlika()
       SELECT priprz
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK PadR( ip_roba, 10 )
+      SEEK PadR( ip_roba, 10 ) // PRIPRZ
 
       IF Found() .AND. field->idroba == PadR( ip_roba, 10 )
          SELECT pos
@@ -745,7 +747,7 @@ STATIC FUNCTION update_ip_razlika()
 
       SELECT pos
 
-      DO WHILE !Eof() .AND. pos->( idodj + idroba ) == ( _id_odj + ip_roba ) .AND. pos->datum <= dDatRada
+      DO WHILE !Eof() .AND. pos->( idodj + idroba ) == ( cIdOdj + ip_roba ) .AND. pos->datum <= dDatRada
 
          //IF !Empty( cIdDio ) .AND. pos->iddio <> cIdDio
           //  SKIP

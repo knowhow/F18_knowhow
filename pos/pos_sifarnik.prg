@@ -270,12 +270,12 @@ FUNCTION GetOsob( fNovi )
    SET CURSOR ON
 
    IF fNovi .OR. pos_admin()
-      @ m_x + 1, m_y + 2 SAY "Sifra radnika (ID)." GET _id VALID validacija_postoji_sifra( _id )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sifra radnika (ID)." GET _id VALID validacija_postoji_sifra( _id )
    ELSE
-      @ m_x + 1, m_y + 2 SAY "Sifra radnika (ID). " + _id
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sifra radnika (ID). " + _id
    ENDIF
 
-   @ m_x + 2, m_y + 2 SAY "Ime radnika........" GET _naz
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Ime radnika........" GET _naz
 
    READ
 
@@ -291,8 +291,8 @@ FUNCTION GetOsob( fNovi )
    IF ( cLevel > strad->prioritet )
       MsgBeep( "Ne mozete mjenjati sifru" )
    ELSE
-      @ m_x + 3, m_y + 2 SAY "Sifra.............." GET _korsif PICTURE "@!" VALID vpsifra2( _korsif, _id )
-      @ m_x + 4, m_y + 2 SAY "Status............." GET _status VALID P_STRAD( @_status )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Sifra.............." GET _korsif PICTURE "@!" VALID vpsifra2( _korsif, _id )
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Status............." GET _status VALID P_STRAD( @_status )
    ENDIF
 
    READ

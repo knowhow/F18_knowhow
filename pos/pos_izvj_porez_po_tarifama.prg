@@ -92,7 +92,7 @@ FUNCTION PorPoTar
 
       // pravljenje izvjestaja
       START PRINT CRET
-      ZagFirma()
+      //ZagFirma()
 
    ENDIF // fsolo
 
@@ -176,7 +176,7 @@ FUNCTION PorPoTar
 
       // matrica je lok var : aTarife:={}
       // filuj za poreze, VD_PRR - realizacija iz predhodnih sezona
-      aTarife := Porezi( VD_RN, dDatum0, aTarife, cNaplaceno )
+      aTarife := Porezi( POS_VD_RACUN, dDatum0, aTarife, cNaplaceno )
       aTarife := Porezi( VD_PRR, dDatum0, aTarife, cNaplaceno )
 
       ASort ( aTarife,,, {| x, y | x[ 1 ] < y[ 1 ] } )
@@ -299,7 +299,7 @@ FUNCTION Porezi( cIdVd, dDatum0, aTarife, cNaplaceno )
       //SELECT POS
       //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
       seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
-      
+
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
          select_o_tarifa( POS->IdTarifa )
@@ -313,8 +313,7 @@ FUNCTION Porezi( cIdVd, dDatum0, aTarife, cNaplaceno )
             select_o_roba( pos->idroba )
 
             IF roba->( FieldPos( "idodj" ) ) <> 0
-               SELECT odj
-               HSEEK roba->idodj
+               select_o_pos_odj( roba->idodj )
             ENDIF
 
             nNeplaca := 0

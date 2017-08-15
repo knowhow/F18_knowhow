@@ -124,7 +124,7 @@ FUNCTION ispisi_donji_dio_forme_unosa( txt, row )
       row := 1
    ENDIF
 
-   @ m_x + ( f18_max_rows() - 12 ) + row, 2 SAY PadR( txt, f18_max_cols() / 2 )
+   @ box_x_koord() + ( f18_max_rows() - 12 ) + row, 2 SAY PadR( txt, f18_max_cols() / 2 )
 
    RETURN
 
@@ -139,13 +139,13 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
    ENDIF
 
    _iznos := AllTrim( Transform( iznos, "9999999.99" ) )
-   _next_y := m_y + col
+   _next_y := box_y_koord() + col
 
-   @ m_x + row + 0, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
-   @ m_x + row + 1, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
-   @ m_x + row + 2, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
-   @ m_x + row + 3, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
-   @ m_x + row + 4, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
+   @ box_x_koord() + row + 0, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
+   @ box_x_koord() + row + 1, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
+   @ box_x_koord() + row + 2, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
+   @ box_x_koord() + row + 3, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
+   @ box_x_koord() + row + 4, f18_max_cols() / 2 SAY PadR( "", f18_max_cols() / 2 )
 
    FOR _cnt := Len( _iznos ) TO 1 STEP -1
 
@@ -158,113 +158,113 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY8 " ██"
-         @ m_x + row + 1, _Next_Y SAY8 "  █"
-         @ m_x + row + 2, _Next_Y SAY8 "  █"
-         @ m_x + row + 3, _Next_Y SAY8 "  █"
-         @ m_x + row + 4, _Next_Y SAY8 " ██"
+         @ box_x_koord() + row + 0, _Next_Y SAY8 " ██"
+         @ box_x_koord() + row + 1, _Next_Y SAY8 "  █"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 "  █"
+         @ box_x_koord() + row + 3, _Next_Y SAY8 "  █"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 " ██"
 
       CASE _char = "2"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY8 "████"
-         @ m_x + row + 1, _Next_Y SAY8 "   █"
-         @ m_x + row + 2, _Next_Y SAY8 "████"
-         @ m_x + row + 3, _Next_Y SAY8 "█"
-         @ m_x + row + 4, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 0, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 1, _Next_Y SAY8 "   █"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 3, _Next_Y SAY8 "█"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 "████"
 
       CASE _char = "3"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY8 "████"
-         @ m_x + row + 1, _Next_Y SAY8 "   █"
-         @ m_x + row + 2, _Next_Y SAY8 " ███"
-         @ m_x + row + 3, _Next_Y SAY8 "   █"
-         @ m_x + row + 4, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 0, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 1, _Next_Y SAY8 "   █"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 " ███"
+         @ box_x_koord() + row + 3, _Next_Y SAY8 "   █"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 "████"
 
       CASE _char = "4"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY8 "█"
-         @ m_x + row + 1, _Next_Y SAY8 "█  █"
-         @ m_x + row + 2, _Next_Y SAY8 "████"
-         @ m_x + row + 3, _Next_Y SAY8 "   █"
-         @ m_x + row + 4, _Next_Y SAY8 "   █"
+         @ box_x_koord() + row + 0, _Next_Y SAY8 "█"
+         @ box_x_koord() + row + 1, _Next_Y SAY8 "█  █"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 3, _Next_Y SAY8 "   █"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 "   █"
 
       CASE _char = "5"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY8 "████"
-         @ m_x + row + 1, _Next_Y SAY8 "█"
-         @ m_x + row + 2, _Next_Y SAY8 "████"
-         @ m_x + row + 3, _Next_Y SAY8 "   █"
-         @ m_x + row + 4, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 0, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 1, _Next_Y SAY8 "█"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 3, _Next_Y SAY8 "   █"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 "████"
 
       CASE _char = "6"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY8 "████"
-         @ m_x + row + 1, _Next_Y SAY8 "█"
-         @ m_x + row + 2, _Next_Y SAY8 "████"
-         @ m_x + row + 3, _Next_Y SAY8 "█  █"
-         @ m_x + row + 4, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 0, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 1, _Next_Y SAY8 "█"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 3, _Next_Y SAY8 "█  █"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 "████"
 
       CASE _char = "7"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY8 "████"
-         @ m_x + row + 1, _Next_Y SAY8 "   █"
-         @ m_x + row + 2, _Next_Y SAY8 "  █"
-         @ m_x + row + 3, _Next_Y SAY8 " █"
-         @ m_x + row + 4, _Next_Y SAY8 "█"
+         @ box_x_koord() + row + 0, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 1, _Next_Y SAY8 "   █"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 "  █"
+         @ box_x_koord() + row + 3, _Next_Y SAY8 " █"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 "█"
 
       CASE _char = "8"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY8 "████"
-         @ m_x + row + 1, _Next_Y SAY8 "█  █"
-         @ m_x + row + 2, _Next_Y SAY8 " ██ "
-         @ m_x + row + 3, _Next_Y SAY8 "█  █"
-         @ m_x + row + 4, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 0, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 1, _Next_Y SAY8 "█  █"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 " ██ "
+         @ box_x_koord() + row + 3, _Next_Y SAY8 "█  █"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 "████"
 
       CASE _char = "9"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY8 "████"
-         @ m_x + row + 1, _Next_Y SAY8 "█  █"
-         @ m_x + row + 2, _Next_Y SAY8 "████"
-         @ m_x + row + 3, _Next_Y SAY8 "   █"
-         @ m_x + row + 4, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 0, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 1, _Next_Y SAY8 "█  █"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 3, _Next_Y SAY8 "   █"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 "████"
 
       CASE _char = "0"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY8 "████"
-         @ m_x + row + 1, _Next_Y SAY8 "█  █"
-         @ m_x + row + 2, _Next_Y SAY8 "█  █"
-         @ m_x + row + 3, _Next_Y SAY8 "█  █"
-         @ m_x + row + 4, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 0, _Next_Y SAY8 "████"
+         @ box_x_koord() + row + 1, _Next_Y SAY8 "█  █"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 "█  █"
+         @ box_x_koord() + row + 3, _Next_Y SAY8 "█  █"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 "████"
 
       CASE _char = "."
 
          _next_y -= 2
 
-         @ m_x + row + 4, _Next_Y SAY8 "█"
+         @ box_x_koord() + row + 4, _Next_Y SAY8 "█"
 
       CASE _char = "-"
 
          _next_y -= 4
 
-         @ m_x + row + 2, _Next_Y SAY8 "███"
+         @ box_x_koord() + row + 2, _Next_Y SAY8 "███"
 
       ENDCASE
    NEXT
@@ -286,119 +286,119 @@ FUNCTION ispisi_iznos_racuna_box( iznos )
 
    cIzn := AllTrim ( Transform ( iznos, "9999999.99" ) )
 
-   @ m_x, m_y + 28 SAY8 "  IZNOS RAČUNA JE  " COLOR f18_color_invert()
+   @ box_x_koord(), box_y_koord() + 28 SAY8 "  IZNOS RAČUNA JE  " COLOR f18_color_invert()
 
-   NextY := m_y + 76
+   NextY := box_y_koord() + 76
 
    FOR nCnt := Len ( cIzn ) TO 1 STEP -1
       Char := SubStr ( cIzn, nCnt, 1 )
       DO CASE
       CASE Char = "1"
          NextY -= 6
-         @ m_x + 2, NextY SAY8 " ██"
-         @ m_x + 3, NextY SAY8 "  █"
-         @ m_x + 4, NextY SAY8 "  █"
-         @ m_x + 5, NextY SAY8 "  █"
-         @ m_x + 6, NextY SAY8 "  █"
-         @ m_x + 7, NextY SAY8 "  █"
-         @ m_x + 8, NextY SAY8 "  █"
-         @ m_x + 9, NextY SAY8 "█████"
+         @ box_x_koord() + 2, NextY SAY8 " ██"
+         @ box_x_koord() + 3, NextY SAY8 "  █"
+         @ box_x_koord() + 4, NextY SAY8 "  █"
+         @ box_x_koord() + 5, NextY SAY8 "  █"
+         @ box_x_koord() + 6, NextY SAY8 "  █"
+         @ box_x_koord() + 7, NextY SAY8 "  █"
+         @ box_x_koord() + 8, NextY SAY8 "  █"
+         @ box_x_koord() + 9, NextY SAY8 "█████"
       CASE Char = "2"
          NextY -= 8
-         @ m_x + 2, NextY SAY8 "███████"
-         @ m_x + 3, NextY SAY8 "      █"
-         @ m_x + 4, NextY SAY8 "      █"
-         @ m_x + 5, NextY SAY8 "███████"
-         @ m_x + 6, NextY SAY8 "█"
-         @ m_x + 7, NextY SAY8 "█"
-         @ m_x + 8, NextY SAY8 "█     █"
-         @ m_x + 9, NextY SAY8 "███████"
+         @ box_x_koord() + 2, NextY SAY8 "███████"
+         @ box_x_koord() + 3, NextY SAY8 "      █"
+         @ box_x_koord() + 4, NextY SAY8 "      █"
+         @ box_x_koord() + 5, NextY SAY8 "███████"
+         @ box_x_koord() + 6, NextY SAY8 "█"
+         @ box_x_koord() + 7, NextY SAY8 "█"
+         @ box_x_koord() + 8, NextY SAY8 "█     █"
+         @ box_x_koord() + 9, NextY SAY8 "███████"
       CASE Char = "3"
          NextY -= 8
-         @ m_x + 2, NextY SAY8 " ██████"
-         @ m_x + 3, NextY SAY8 "      █"
-         @ m_x + 4, NextY SAY8 "      █"
-         @ m_x + 5, NextY SAY8 "  ████"
-         @ m_x + 6, NextY SAY8 "      █"
-         @ m_x + 7, NextY SAY8 "      █"
-         @ m_x + 8, NextY SAY8 "      █"
-         @ m_x + 9, NextY SAY8 "███████"
+         @ box_x_koord() + 2, NextY SAY8 " ██████"
+         @ box_x_koord() + 3, NextY SAY8 "      █"
+         @ box_x_koord() + 4, NextY SAY8 "      █"
+         @ box_x_koord() + 5, NextY SAY8 "  ████"
+         @ box_x_koord() + 6, NextY SAY8 "      █"
+         @ box_x_koord() + 7, NextY SAY8 "      █"
+         @ box_x_koord() + 8, NextY SAY8 "      █"
+         @ box_x_koord() + 9, NextY SAY8 "███████"
       CASE Char = "4"
          NextY -= 8
-         @ m_x + 2, NextY SAY8 "█"
-         @ m_x + 3, NextY SAY8 "█"
-         @ m_x + 4, NextY SAY8 "█     █"
-         @ m_x + 5, NextY SAY8 "█     █"
-         @ m_x + 6, NextY SAY8 "███████"
-         @ m_x + 7, NextY SAY8 "      █"
-         @ m_x + 8, NextY SAY8 "      █"
-         @ m_x + 9, NextY SAY8 "      █"
+         @ box_x_koord() + 2, NextY SAY8 "█"
+         @ box_x_koord() + 3, NextY SAY8 "█"
+         @ box_x_koord() + 4, NextY SAY8 "█     █"
+         @ box_x_koord() + 5, NextY SAY8 "█     █"
+         @ box_x_koord() + 6, NextY SAY8 "███████"
+         @ box_x_koord() + 7, NextY SAY8 "      █"
+         @ box_x_koord() + 8, NextY SAY8 "      █"
+         @ box_x_koord() + 9, NextY SAY8 "      █"
       CASE Char = "5"
          NextY -= 8
-         @ m_x + 2, NextY SAY8 "███████"
-         @ m_x + 3, NextY SAY8 "█"
-         @ m_x + 4, NextY SAY8 "█"
-         @ m_x + 5, NextY SAY8 "███████"
-         @ m_x + 6, NextY SAY8 "      █"
-         @ m_x + 7, NextY SAY8 "      █"
-         @ m_x + 8, NextY SAY8 "█     █"
-         @ m_x + 9, NextY SAY8 "███████"
+         @ box_x_koord() + 2, NextY SAY8 "███████"
+         @ box_x_koord() + 3, NextY SAY8 "█"
+         @ box_x_koord() + 4, NextY SAY8 "█"
+         @ box_x_koord() + 5, NextY SAY8 "███████"
+         @ box_x_koord() + 6, NextY SAY8 "      █"
+         @ box_x_koord() + 7, NextY SAY8 "      █"
+         @ box_x_koord() + 8, NextY SAY8 "█     █"
+         @ box_x_koord() + 9, NextY SAY8 "███████"
       CASE Char = "6"
          NextY -= 8
-         @ m_x + 2, NextY SAY8 "███████"
-         @ m_x + 3, NextY SAY8 "█"
-         @ m_x + 4, NextY SAY8 "█"
-         @ m_x + 5, NextY SAY8 "███████"
-         @ m_x + 6, NextY SAY8 "█     █"
-         @ m_x + 7, NextY SAY8 "█     █"
-         @ m_x + 8, NextY SAY8 "█     █"
-         @ m_x + 9, NextY SAY8 "███████"
+         @ box_x_koord() + 2, NextY SAY8 "███████"
+         @ box_x_koord() + 3, NextY SAY8 "█"
+         @ box_x_koord() + 4, NextY SAY8 "█"
+         @ box_x_koord() + 5, NextY SAY8 "███████"
+         @ box_x_koord() + 6, NextY SAY8 "█     █"
+         @ box_x_koord() + 7, NextY SAY8 "█     █"
+         @ box_x_koord() + 8, NextY SAY8 "█     █"
+         @ box_x_koord() + 9, NextY SAY8 "███████"
       CASE Char = "7"
          NextY -= 8
-         @ m_x + 2, NextY SAY8 "███████"
-         @ m_x + 3, NextY SAY8 "      █"
-         @ m_x + 4, NextY SAY8 "     █"
-         @ m_x + 5, NextY SAY8 "    █"
-         @ m_x + 6, NextY SAY8 "   █"
-         @ m_x + 7, NextY SAY8 "  █"
-         @ m_x + 8, NextY SAY8 " █"
-         @ m_x + 9, NextY SAY8 "█"
+         @ box_x_koord() + 2, NextY SAY8 "███████"
+         @ box_x_koord() + 3, NextY SAY8 "      █"
+         @ box_x_koord() + 4, NextY SAY8 "     █"
+         @ box_x_koord() + 5, NextY SAY8 "    █"
+         @ box_x_koord() + 6, NextY SAY8 "   █"
+         @ box_x_koord() + 7, NextY SAY8 "  █"
+         @ box_x_koord() + 8, NextY SAY8 " █"
+         @ box_x_koord() + 9, NextY SAY8 "█"
       CASE Char = "8"
          NextY -= 8
-         @ m_x + 2, NextY SAY8 "███████"
-         @ m_x + 3, NextY SAY8 "█     █"
-         @ m_x + 4, NextY SAY8 "█     █"
-         @ m_x + 5, NextY SAY8 " █████ "
-         @ m_x + 6, NextY SAY8 "█     █"
-         @ m_x + 7, NextY SAY8 "█     █"
-         @ m_x + 8, NextY SAY8 "█     █"
-         @ m_x + 9, NextY SAY8 "███████"
+         @ box_x_koord() + 2, NextY SAY8 "███████"
+         @ box_x_koord() + 3, NextY SAY8 "█     █"
+         @ box_x_koord() + 4, NextY SAY8 "█     █"
+         @ box_x_koord() + 5, NextY SAY8 " █████ "
+         @ box_x_koord() + 6, NextY SAY8 "█     █"
+         @ box_x_koord() + 7, NextY SAY8 "█     █"
+         @ box_x_koord() + 8, NextY SAY8 "█     █"
+         @ box_x_koord() + 9, NextY SAY8 "███████"
       CASE Char = "9"
          NextY -= 8
-         @ m_x + 2, NextY SAY8 "███████"
-         @ m_x + 3, NextY SAY8 "█     █"
-         @ m_x + 4, NextY SAY8 "█     █"
-         @ m_x + 5, NextY SAY8 "███████"
-         @ m_x + 6, NextY SAY8 "      █"
-         @ m_x + 7, NextY SAY8 "      █"
-         @ m_x + 8, NextY SAY8 "█     █"
-         @ m_x + 9, NextY SAY8 "███████"
+         @ box_x_koord() + 2, NextY SAY8 "███████"
+         @ box_x_koord() + 3, NextY SAY8 "█     █"
+         @ box_x_koord() + 4, NextY SAY8 "█     █"
+         @ box_x_koord() + 5, NextY SAY8 "███████"
+         @ box_x_koord() + 6, NextY SAY8 "      █"
+         @ box_x_koord() + 7, NextY SAY8 "      █"
+         @ box_x_koord() + 8, NextY SAY8 "█     █"
+         @ box_x_koord() + 9, NextY SAY8 "███████"
       CASE Char = "0"
          NextY -= 8
-         @ m_x + 2, NextY SAY8 " █████ "
-         @ m_x + 3, NextY SAY8 "█     █"
-         @ m_x + 4, NextY SAY8 "█     █"
-         @ m_x + 5, NextY SAY8 "█     █"
-         @ m_x + 6, NextY SAY8 "█     █"
-         @ m_x + 7, NextY SAY8 "█     █"
-         @ m_x + 8, NextY SAY8 "█     █"
-         @ m_x + 9, NextY SAY8 " █████"
+         @ box_x_koord() + 2, NextY SAY8 " █████ "
+         @ box_x_koord() + 3, NextY SAY8 "█     █"
+         @ box_x_koord() + 4, NextY SAY8 "█     █"
+         @ box_x_koord() + 5, NextY SAY8 "█     █"
+         @ box_x_koord() + 6, NextY SAY8 "█     █"
+         @ box_x_koord() + 7, NextY SAY8 "█     █"
+         @ box_x_koord() + 8, NextY SAY8 "█     █"
+         @ box_x_koord() + 9, NextY SAY8 " █████"
       CASE Char = "."
          NextY -= 4
-         @ m_x + 9, NextY SAY8 "███"
+         @ box_x_koord() + 9, NextY SAY8 "███"
       CASE Char = "-"
          NextY -= 6
-         @ m_x + 5, NextY SAY8 "█████"
+         @ box_x_koord() + 5, NextY SAY8 "█████"
       ENDCASE
    NEXT
 

@@ -357,7 +357,7 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
 
    START PRINT CRET
 
-   ZagFirma()
+   //ZagFirma()
 
    P_10CPI
    ? PadC( "STANJE ODJELJENJA NA DAN " + FormDat1( dDat ), nSir )

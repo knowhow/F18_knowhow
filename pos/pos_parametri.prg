@@ -15,28 +15,28 @@
 
 FUNCTION pos_parametri()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. podaci kase                    " )
-   AAdd( _opcexe, {|| pos_param_podaci_kase() } )
-   AAdd( _opc, "2. principi rada" )
-   AAdd( _opcexe, {|| parprbase() } )
-   AAdd( _opc, "3. izgled racuna" )
-   AAdd( _opcexe, {|| pos_param_izgled_racuna() } )
-   AAdd( _opc, "4. cijene" )
-   AAdd( _opcexe, {|| pos_param_cijene() } )
-   AAdd( _opc, "5. podaci firme" )
-   AAdd( _opcexe, {|| pos_param_firma() } )
-   AAdd( _opc, "6. fiskalni parametri" )
-   AAdd( _opcexe, {|| fiskalni_parametri_za_korisnika() } )
-   AAdd( _opc, "7. podešenja organizacije" )
-   AAdd( _opcexe, {|| parametri_organizacije() } )
-   AAdd( _opc, "8. podešenja barkod-a" )
-   AAdd( _opcexe, {|| label_params() } )
+   AAdd( aOpc, "1. podaci kase                    " )
+   AAdd( aOpcExe, {|| pos_param_podaci_kase() } )
+   AAdd( aOpc, "2. principi rada" )
+   AAdd( aOpcExe, {|| parprbase() } )
+   AAdd( aOpc, "3. izgled racuna" )
+   AAdd( aOpcExe, {|| pos_param_izgled_racuna() } )
+   AAdd( aOpc, "4. cijene" )
+   AAdd( aOpcExe, {|| pos_param_cijene() } )
+   AAdd( aOpc, "5. podaci firme" )
+   AAdd( aOpcExe, {|| pos_param_firma() } )
+   AAdd( aOpc, "6. fiskalni parametri" )
+   AAdd( aOpcExe, {|| fiskalni_parametri_za_korisnika() } )
+   AAdd( aOpc, "7. podešenja organizacije" )
+   AAdd( aOpcExe, {|| parametri_organizacije() } )
+   AAdd( aOpc, "8. podešenja barkod-a" )
+   AAdd( aOpcExe, {|| label_params() } )
 
-   f18_menu( "par", .F., _izbor, _opc, _opcexe )
+   f18_menu( "par", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .F.
 

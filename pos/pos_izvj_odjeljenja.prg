@@ -79,7 +79,7 @@ FUNCTION realizacija_odjeljenja()
    // pravljenje izvjestaja
    START PRINT CRET
 
-   ZagFirma()
+   //ZagFirma()
 
    P_10CPI
    ?
@@ -97,7 +97,7 @@ FUNCTION realizacija_odjeljenja()
    // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
 
    pos_odj_izvuci ( VD_PRR )
-   pos_odj_izvuci ( VD_RN )
+   pos_odj_izvuci ( POS_VD_RACUN )
 
    // stampa izvjestaja
    SELECT POM
@@ -128,13 +128,13 @@ FUNCTION realizacija_odjeljenja()
       nTotOdj3 := 0
       DO WHILE !Eof() .AND. POM->IdOdj == _IdOdj
          _IdDio := POM->IdDio
-         IF ! Empty ( _IdDio )
-            SELECT DIO
-            HSEEK _IdDio
-            ? Space ( 5 ) + DIO->Naz
-            ? Space ( 5 ) + REPL ( "-", 35 )
-            SELECT POM
-         ENDIF
+         //IF ! Empty ( _IdDio )
+        //    SELECT DIO
+          //  HSEEK _IdDio
+        //    ? Space ( 5 ) + DIO->Naz
+          //  ? Space ( 5 ) + REPL ( "-", 35 )
+        //    SELECT POM
+        // ENDIF
          nTotDio := 0
          nTotDio2 := 0
          nTotDio3 := 0
@@ -200,8 +200,7 @@ FUNCTION realizacija_odjeljenja()
       GO TOP
       DO WHILE !Eof()
          _IdOdj := POM->IdOdj
-         SELECT ODJ
-         HSEEK _IdOdj
+         select_o_pos_odj( _IdOdj )
          ? ODJ->Naz
          ? REPL ( "-", 40 )
          SELECT POM
@@ -210,12 +209,12 @@ FUNCTION realizacija_odjeljenja()
          nTotOdj3 := 0
          DO WHILE !Eof() .AND. POM->IdOdj == _IdOdj
             _IdDio := POM->IdDio
-            IF !Empty ( _IdDio )
-               SELECT DIO; HSEEK ( _IdDio )
-               ? Space ( 5 ) + DIO->Naz
-               ? Space ( 5 ) + REPL ( "-", 35 )
-               SELECT POM
-            ENDIF
+            //IF !Empty ( _IdDio )
+            //   SELECT DIO; HSEEK ( _IdDio )
+            //   ? Space ( 5 ) + DIO->Naz
+            //   ? Space ( 5 ) + REPL ( "-", 35 )
+            //   SELECT POM
+            //ENDIF
             nTotDio := 0
             nTotDio2 := 0
             nTotDio3 := 0
@@ -312,8 +311,7 @@ FUNCTION pos_dio_izvuci( cIdVd )
          ENDIF
 
          select_o_roba( pos->idroba )
-         SELECT odj
-         HSEEK roba->idodj
+         select_o_pos_odj( roba->idodj )
 
          nNeplaca := 0
          IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
@@ -426,7 +424,7 @@ FUNCTION realizacija_dio_objekta
    EOF CRET
 
    START PRINT CRET
-   ZagFirma()
+   //ZagFirma()
    ?
    ? PadC( "REALIZACIJA DIJELA OBJEKTA", 40 )
    ? PadC ( "NA DAN " + FormDat1( Date() ), 40 )
@@ -441,7 +439,7 @@ FUNCTION realizacija_dio_objekta
    ? "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
 
    pos_dio_izvuci ( VD_PRR )
-   pos_dio_izvuci ( VD_RN )
+   pos_dio_izvuci ( POS_VD_RACUN )
 
    // stampa izvjestaja
    // ////////////////////
@@ -461,7 +459,7 @@ FUNCTION realizacija_dio_objekta
       /*
     --  IF Empty ( cIdDio )
          SELECT DIO
-         HSEEK ( _IdDio )
+  --       HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
          ? DIO->Naz
          ? REPL ( "-", 40 )
@@ -551,7 +549,7 @@ FUNCTION realizacija_dio_objekta
       /*
       //IF Empty ( cIdDio )
          SELECT DIO
-         HSEEK ( _IdDio )
+    --     HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
          ? DIO->Naz
          ? REPL ( "-", 40 )
@@ -563,8 +561,7 @@ FUNCTION realizacija_dio_objekta
       nTotDio3 := 0
       DO WHILE !Eof() .AND. POM->IdDio == _IdDio
          _IdRadnik := POM->IdRadnik
-         SELECT OSOB
-         HSEEK _IdRadnik
+         select_o_pos_osob( _IdRadnik )
          ? Space ( 5 ) + OSOB->Naz
          ? Space ( 5 ) + REPL ( "-", 35 )
          SELECT POM
@@ -635,7 +632,7 @@ FUNCTION realizacija_dio_objekta
       /*
     --  IF Empty ( cIdDio )
          SELECT DIO
-         HSEEK ( _IdDio )
+    --     HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
          ? DIO->Naz
          ? REPL ( "-", 40 )
@@ -697,7 +694,7 @@ FUNCTION realizacija_dio_objekta
       _IdDio := POM->IdDio
       /* IF Empty ( cIdDio )
          SELECT DIO
-         HSEEK ( _IdDio )
+    --     HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
          ? DIO->Naz
          ? REPL ( "-", 40 )
@@ -750,7 +747,7 @@ FUNCTION realizacija_dio_objekta
          /*
       --   IF Empty ( cIdDio )
             SELECT DIO
-            HSEEK _IdDio
+        --    HSEEK _IdDio
             ? DIO->Naz
             ? REPL ( "-", 40 )
             SELECT POM
@@ -868,7 +865,7 @@ FUNCTION pos_odj_izvuci( cIdVd )
          ENDIF
 
          SELECT POM
-         Hseek POS->( IdOdj + IdDio + IdPos + IdRoba + IdCijena )
+         Hseek POS->( IdOdj + IdDio + IdPos + IdRoba + IdCijena ) // POM
 
          IF Found()
             REPLACE Kolicina WITH Kolicina + POS->Kolicina, ;

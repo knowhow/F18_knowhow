@@ -93,11 +93,11 @@ FUNCTION realizacija_kase
 
    IF fZaklj
       STARTPRINTPORT CRET gLocPort, .F.
-      ZagFirma()
+      //ZagFirma()
       ZaglZ( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj )
    ELSE
       STARTPRINT CRET
-      ZagFirma()
+      //ZagFirma()
       Zagl( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdOdj, cGotZir )
    ENDIF // fZaklj
 

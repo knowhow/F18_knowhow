@@ -86,7 +86,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
       lSveJeOk := .F.
    ELSE
 
-      @ m_x + dx, m_y + dy SAY PadR( AllTrim( roba->naz ) + " (" + AllTrim( roba->jmj ) + ")", 50 )
+      @ box_x_koord() + dx, box_y_koord() + dy SAY PadR( AllTrim( roba->naz ) + " (" + AllTrim( roba->jmj ) + ")", 50 )
 
       IF _tezina <> 0
          _kolicina := _tezina

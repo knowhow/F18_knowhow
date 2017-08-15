@@ -35,7 +35,6 @@ STATIC FUNCTION epdv_kif_tbl_priprema()
    BoxC()
    closeret
 
-
 STATIC FUNCTION set_a_kol_kif( aKol, aImeKol )
 
    aImeKol := {}
@@ -98,8 +97,7 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
    nX++
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Opis stavke: " GET _opis ;
-      WHEN {|| SetPos( box_x_koord() + nXPart, box_y_koord() + nYPart ), QQOut( s_partner( _id_part ) ), .T. } ;
-      PICT "@S50"
+      WHEN {|| SetPos( box_x_koord() + nXPart, box_y_koord() + nYPart ), QQOut( s_partner( _id_part ) ), .T. } PICT "@S50"
 
    nX += 2
 
@@ -134,7 +132,7 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
       RETURN .T.
    ENDIF
 
-  RETURN .F.
+   RETURN .F.
 
 
 STATIC FUNCTION epdv_kif_key_handler( Ch )
@@ -235,11 +233,11 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
       IF Pitanje( , "Ažurirati pripremu KIF-a (D/N) ?", "N" ) == "D"
          epdv_azur_kif()
          RETURN DE_REFRESH
-      ELSE
-         RETURN DE_CONT
       ENDIF
+      RETURN DE_CONT
 
-   CASE Ch == K_ALT_P
+
+   CASE is_key_alt_p( Ch )
 
       IF Pitanje( , "Povrat KIF dokumenta u pripremu (D/N) ?", "N" ) == "D"
          nBrDokP := 0
@@ -250,15 +248,21 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
          BoxC()
 
          IF LastKey() <> K_ESC
-            pov_kif( nBrDokP )
+         
+            epdv_povrat_kif( nBrDokP )
+            my_close_all_dbf()
+            epdv_otvori_kif_tabele( .T. )
+            SELECT P_KIF
+            SET ORDER TO TAG "br_dok"
+
             RETURN DE_REFRESH
          ENDIF
       ENDIF
 
       SELECT P_KIF
-      RETURN DE_REFRESH
+      RETURN DE_CONT
 
-   CASE Ch == K_ALT_X
+   CASE is_key_alt_x( Ch )
 
       IF Pitanje (, "Izvršiti renumeraciju pripreme (D/N) ?", "N" ) == "D"
          epdv_renumeracija_rbr( "P_KIF", .F. )
@@ -280,7 +284,7 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
 
 FUNCTION epdv_edit_kif()
 
-altd()
+   AltD()
    epdv_otvori_kif_tabele( .T. )
    epdv_kif_tbl_priprema()
 

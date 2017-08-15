@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION g_src_modul( cSrc, lShow )
 
    LOCAL cPom := ""

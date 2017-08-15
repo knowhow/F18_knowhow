@@ -1,15 +1,3 @@
-/*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
- * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
- * root directory of this source code archive.
- * By using this software, you agree to be bound by its terms.
- */
-
-
 #include "f18.ch"
 
 STATIC aHeader := {}
@@ -168,7 +156,7 @@ FUNCTION epdv_rpt_kuf( nBrDok, cIdTarifa )
 
    AAdd( aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Dobavljač", "Broj",  "Opis",  "iznos", "izn.",    "izn. 2", "iznos" } )
    AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, PDV / identifikacijski broj)",      "RN",     "",    "bez PDV", "PDV", "PDV NP", "sa PDV" } )
-   AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)",  "(10)",  "(11) = (8+9+10)" } )
+   AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)",  "(10)",  "(11)=8+9+10" } )
 
    epdv_fill_rpt( nBrDok )
 
@@ -295,24 +283,24 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
 
       @ box_x_koord() + 2, box_y_koord() + 2 SAY Str( nCount, 6, 0 )
 
-      nBrDok := br_dok
-      nBPdv := i_b_pdv
-      nPdv := i_pdv
+      nBrDok := field->br_dok
+      nBPdv := field->i_b_pdv
+      nPdv := field->i_pdv
 
       IF ( nRptBrDok == -999 )
          // za vise dokumenata
-         nRbr := g_r_br
+         nRbr := field->g_r_br
       ELSE
          // za jedan dokument
-         nRbr := r_br
+         nRbr := field->r_br
       ENDIF
 
-      dDatum := datum
-      cDobRn := src_br_2
-      cDobNaz := s_partner( id_part )
-      cIdTar := id_tar
-      cIdPart := id_part
-      cOpis := opis
+      dDatum := field->datum
+      cDobRn := field->src_br_2
+      cDobNaz := s_partner( field->id_part )
+      cIdTar := field->id_tar
+      cIdPart := field->id_part
+      cOpis := field->opis
 
       SELECT r_kuf
       APPEND BLANK
@@ -337,7 +325,7 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
          REPLACE i_pdv2 WITH 0
       ENDIF
 
-      REPLACE i_uk WITH ( i_b_pdv + i_pdv + i_pdv2 )
+      REPLACE i_uk WITH ( field->i_b_pdv + field->i_pdv + field->i_pdv2 )
 
       SELECT ( nIzArea )
 
@@ -347,7 +335,6 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
 
    BoxC()
 
-   // skini filter
    SELECT ( nIzArea )
    SET FILTER TO
 
@@ -363,6 +350,7 @@ STATIC FUNCTION show_rpt()
    LOCAL nPdv
    LOCAL nPdv2
    LOCAL aDobavljacNaziv
+   LOCAL cPom
 
    nCurrLine := 0
 
@@ -420,11 +408,11 @@ STATIC FUNCTION show_rpt()
 
 
       // 3. datum
-      ?? PadR( datum, aZaglLen[ 3 ] )
+      ?? PadR( field->datum, aZaglLen[ 3 ] )
       ?? " "
 
       // 4. tarifa
-      ?? PadR( id_tar, aZaglLen[ 4 ] )
+      ?? PadR( field->id_tar, aZaglLen[ 4 ] )
       ?? " "
 
       nPos := PCol()
@@ -434,22 +422,22 @@ STATIC FUNCTION show_rpt()
       ?? " "
 
       // 6. dobavljac rn
-      ?? PadR( dob_rn, aZaglLen[ 6 ] )
+      ?? PadR( field->dob_rn, aZaglLen[ 6 ] )
       ?? " "
 
       // 7. opis
-      ?? PadR( opis, aZaglLen[ 7 ] )
+      ?? PadR( field->opis, aZaglLen[ 7 ] )
       ?? " "
 
       // 8. bez pdv
-      ?? Transform( i_b_pdv,  PIC_IZN() )
+      ?? Transform( field->i_b_pdv,  PIC_IZN() )
       ?? " "
 
-      IF t_u_n_poup( id_tar )
+      IF t_u_n_poup( field->id_tar )
          nPdv := 0
-         nPdv2 := i_pdv2
+         nPdv2 := field->i_pdv2
       ELSE
-         nPdv := i_pdv
+         nPdv := field->i_pdv
          nPdv2 := 0
       ENDIF
 
@@ -463,7 +451,7 @@ STATIC FUNCTION show_rpt()
       ?? " "
 
       // 10. sa pdv
-      ?? Transform( i_b_pdv + ( i_pdv + i_pdv2 ),  PIC_IZN() )
+      ?? Transform( field->i_b_pdv + ( field->i_pdv + field->i_pdv2 ),  PIC_IZN() )
       ?? " "
 
       IF Len( aDobavljacNaziv ) > 1
@@ -477,7 +465,7 @@ STATIC FUNCTION show_rpt()
 
       ENDIF
 
-      nUBPdv += i_b_pdv
+      nUBPdv += field->i_b_pdv
       nUPdv += nPdv
       nUPdv2 += nPdv2
 
@@ -519,7 +507,7 @@ STATIC FUNCTION show_rpt()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION kuf_nova_stranica( nCurrLine, nPageLimit, lSvakaHeader )
@@ -579,6 +567,8 @@ STATIC FUNCTION zaglavlje_kuf()
 
 
 STATIC FUNCTION kuf_linija()
+
+   LOCAL i
 
    ++nCurrLine
    ?

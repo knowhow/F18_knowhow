@@ -19,10 +19,10 @@ FUNCTION epdv_azur_kuf()
    RETURN epdv_azur_kuf_kif( "KUF" )
 
 
-FUNCTION pov_kuf( nBrDok )
+FUNCTION epdv_povrat_kuf( nBrDok )
    RETURN epdv_povrat_kuf_kif( "KUF", nBrDok )
 
-FUNCTION pov_kif( nBrDok )
+FUNCTION epdv_povrat_kif( nBrDok )
    RETURN epdv_povrat_kuf_kif( "KIF", nBrDok )
 
 
@@ -82,8 +82,8 @@ FUNCTION epdv_azur_kuf_kif( cTbl )
          nLastBrDok := _br_dok
 
          ++nCount
-         @ m_x + 1, m_y + 2 SAY PadR( "Dodajem P_KIF -> KUF " + Transform( nCount, "9999" ), 40 )
-         @ m_x + 2, m_y + 2 SAY PadR( "   " + cTbl + " G.R.BR: " + Transform( nNextGRbr, "99999" ), 40 )
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "Dodajem P_KIF -> KUF " + Transform( nCount, "9999" ), 40 )
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR( "   " + cTbl + " G.R.BR: " + Transform( nNextGRbr, "99999" ), 40 )
 
          nNextGRbr++
 
@@ -107,7 +107,7 @@ FUNCTION epdv_azur_kuf_kif( cTbl )
    SELECT ( nKArea )
    USE
 
-   @ m_x + 1, m_y + 2 SAY8 PadR( "Brišem pripremu ...", 40 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 PadR( "Brišem pripremu ...", 40 )
 
    SELECT ( nPArea )
    my_dbf_zap()
@@ -202,98 +202,109 @@ FUNCTION kuf_kif_azur_sql( cTable, nNextRbrGlobalno, nNextBrDok )
 
 FUNCTION epdv_povrat_kuf_kif( cTbl, nBrDok )
 
-   LOCAL _del_rec, _ok
+   LOCAL hRecDelete, lOk
    LOCAL hRec
-   LOCAL _p_area
-   LOCAL _k_area
-   LOCAL _cnt
-   LOCAL _table
+   LOCAL nPrivateWA
+   LOCAL nKumulativWA
+   LOCAL nCnt
+   LOCAL cTable
+   LOCAL hParams := hb_Hash()
 
+   hParams[ "brdok" ] := nBrDok
+
+   AltD()
    IF ( cTbl == "KUF" )
-      epdv_otvori_kuf_tabele( .T. )
-      _p_area := F_P_KUF
-      _k_area := F_KUF
-      _table := "epdv_kuf"
+      // epdv_otvori_kuf_tabele( .T. )
+      select_o_epdv_p_kuf()
+      nPrivateWA := F_P_KUF
+      nKumulativWA := F_KUF
+      cTable := "epdv_kuf"
+      find_epdv_kuf_za_period( NIL, NIL, hParams, "br_dok" )
    ELSE
-      epdv_otvori_kif_tabele( .T. )
-      _p_area := F_P_KIF
-      _k_area := F_KIF
-      _table := "epdv_kif"
+      // epdv_otvori_kif_tabele( .T. )
+      select_o_epdv_p_kif()
+
+      nPrivateWA := F_P_KIF
+      nKumulativWA := F_KIF
+      cTable := "epdv_kif"
+      find_epdv_kif_za_period( NIL, NIL, hParams, "br_dok" )
    ENDIF
 
-   _cnt := 0
+   nCnt := 0
 
-   SELECT ( _k_area )
-   SET ORDER TO TAG "BR_DOK"
-   SEEK Str( nBrdok, 6, 0 )
+   // SELECT ( nKumulativWA )
+   // SET ORDER TO TAG "BR_DOK"
+   // SEEK Str( nBrdok, 6, 0 )
 
-
-   IF !Found()
-      SELECT ( _p_area )
+   IF Eof()
+      MsgBeep( "KUF dokument " + Str( nBrDok, 6, 0 ) + " ne postoji?!" )
+      SELECT ( nPrivateWA )
       RETURN 0
    ENDIF
 
-   SELECT ( _p_area )
+   SELECT ( nPrivateWA )
    IF RECCOUNT2() > 0
       MsgBeep( "U pripremi postoji dokument#Ne može se izvršiti povrat#operacija prekinuta !" )
       RETURN -1
    ENDIF
 
    Box(, 2, 60 )
-   SELECT ( _k_area )
 
-   DO WHILE !Eof() .AND. ( br_dok == nBrDok )
+   SELECT ( nKumulativWA )
+   DO WHILE !Eof() .AND. ( field->br_dok == nBrDok )
 
-      ++_cnt
-      @ m_x + 1, m_y + 2 SAY PadR( "P_" + cTbl +  " -> " + cTbl + " :" + Transform( _cnt, "9999" ), 40 )
+      ++nCnt
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "P_" + cTbl +  " -> " + cTbl + " :" + Transform( nCnt, "9999" ), 40 )
 
-      SELECT ( _k_area )
+      SELECT ( nKumulativWA )
       hRec := dbf_get_rec()
 
-      SELECT ( _p_area )
+      SELECT ( nPrivateWA )
       APPEND BLANK
       dbf_update_rec( hRec )
 
-      SELECT ( _k_area )
+      SELECT ( nKumulativWA )
       SKIP
    ENDDO
 
+
+   my_close_all_dbf()
    IF ( cTbl == "KUF" )
       epdv_otvori_kuf_tabele( .T. )
    ELSE
       epdv_otvori_kif_tabele( .T. )
    ENDIF
 
-   SELECT ( _k_area )
+   SELECT ( nKumulativWA )
    SET ORDER TO TAG "BR_DOK"
    SEEK Str( nBrdok, 6, 0 )
+   GO TOP
 
-   _del_rec := dbf_get_rec()
+   hRecDelete := dbf_get_rec()
 
-   _ok := .T.
+   lOk := .T.
 
    MsgO( "del " + cTbl )
-
-   _ok := delete_rec_server_and_dbf( _table, _del_rec, 2, "FULL" )
+   lOk := delete_rec_server_and_dbf( cTable, hRecDelete, 2, "FULL" )
 
    MsgC()
 
-   IF !_ok
+   IF !lOk
       MsgBeep( "Operacija brisanja dokumenta nije uspješna, dokument: " + AllTrim( Str( nBrDok ) ) )
    ENDIF
 
-   SELECT ( _k_area )
+   SELECT ( nKumulativWA )
    USE
 
-   IF ( cTbl == "KUF" )
-      epdv_otvori_kuf_tabele( .T. )
-   ELSE
-      epdv_otvori_kif_tabele( .T. )
-   ENDIF
+   // IF ( cTbl == "KUF" )
+   // epdv_otvori_kuf_tabele( .T. )
+   // ELSE
+   // epdv_otvori_kif_tabele( .T. )
+   // ENDIF
 
    BoxC()
 
-   IF _ok
+   IF lOk
       MsgBeep( "Izvršen je povrat dokumenta " + Str( nBrDok, 6, 0 ) + " u pripremu" )
    ENDIF
 
@@ -373,7 +384,7 @@ FUNCTION renm_g_rbr( cTbl, lShow )
    DO WHILE !Eof()
 
       ++nRbr
-      @ m_x + 1, m_y + 2 SAY cTbl + ":" + Str( nRbr, 8, 0 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY cTbl + ":" + Str( nRbr, 8, 0 )
       hRec := dbf_get_rec()
       hRec[ "g_r_br" ] := nRbr
       dbf_update_rec( hRec )

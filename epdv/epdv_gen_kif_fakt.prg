@@ -75,7 +75,7 @@ FUNCTION epdv_fakt_kif( cIdRj, dD1, dD2, cSezona )
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "SG_KIF : " + Str( nCount )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "SG_KIF : " + Str( nCount )
 
       IF g_src_modul( src ) == "FAKT"
 
@@ -276,10 +276,10 @@ STATIC FUNCTION gen_fakt_kif_item( cIdRj, dDatOd, dDatDo, cSezona )
          nCount++
 
          cPom := "FAKT : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-         @ m_x + 3, m_y + 2 SAY cPom
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY cPom
 
          cPom := "FAKT cnt : " + Str( nCount, 6 )
-         @ m_x + 4, m_y + 2 SAY cPom
+         @ box_x_koord() + 4, box_y_koord() + 2 SAY cPom
 
          cDokTar := ""
 

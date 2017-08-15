@@ -189,39 +189,30 @@ CREATE INDEX epdv_pdv_id1
 
 */
 
-FUNCTION find_epdv_kuf_za_period( dDatOd, dDatDo, cIdTarifa, cIdPartner, cOrderBy, cWhere, cTag )
-   RETURN find_epdv_kuf_kif_za_period( "kuf", dDatOd, dDatDo, cIdTarifa, cIdPartner, cOrderBy, cWhere, cTag )
+FUNCTION find_epdv_kuf_za_period( dDatOd, dDatDo, hParams, cTag )
+   RETURN find_epdv_kuf_kif_za_period( "kuf", dDatOd, dDatDo, hParams, cTag )
 
 
 /*
-   find_epdv_kif_za_period( dDatOd, dDatDo )  // g_r_br
-   find_epdv_kif_za_period( dDatOd, dDatDo, NIL, NIL, NIL, NIL, "datum" )
+   - find_epdv_kif_za_period( dDatOd, dDatDo )  // g_r_br
+   - find_epdv_kif_za_period( dDatOd, dDatDo, NIL, "datum" )
+   - hParams[ "brdok" ] := 5  ; find_epdv_kif_za_period( dDatOd, dDatDo, hParams, "br_dok" )
+   - hParams[ "datum_2" ] := .T. ; find_epdv_kif_za_period( dDatOd, dDatDo, hParams, "br_dok" )
+
 */
 
-FUNCTION find_epdv_kif_za_period( dDatOd, dDatDo, cIdTarifa, cIdPartner, cOrderBy, cWhere, cTag )
-   RETURN find_epdv_kuf_kif_za_period( "kif", dDatOd, dDatDo, cIdTarifa, cIdPartner, cOrderBy, cWhere, cTag )
+FUNCTION find_epdv_kif_za_period( dDatOd, dDatDo, hParams, cTag )
+   RETURN find_epdv_kuf_kif_za_period( "kif", dDatOd, dDatDo, hParams, cTag )
 
 
 
-FUNCTION find_epdv_kuf_kif_za_period( cKufKif, dDatOd, dDatDo, cIdTarifa, cIdPartner, cOrderBy, cWhere, cTag )
+FUNCTION find_epdv_kuf_kif_za_period( cKufKif, dDatOd, dDatDo, hParams, cTag )
 
-   LOCAL hParams := hb_Hash()
-
-   hb_default( @cOrderBy, "g_r_br,datum" )
+   IF hParams == NIL
+      hParams := hb_Hash()
+   ENDIF
 
    hParams[ "kuf_kif" ] := cKufKif
-
-   IF cIdTarifa <> NIL
-      IF !Empty( cIdTarifa )
-         hParams[ "idtarifa" ] := cIdTarifa
-      ENDIF
-   ENDIF
-
-   IF cIdPartner <> NIL
-      IF !Empty( cIdPartner )
-         hParams[ "idpartner" ] := cIdPartner
-      ENDIF
-   ENDIF
 
    IF dDatOd != NIL
       hParams[ "dat_od" ] := dDatOd
@@ -231,7 +222,9 @@ FUNCTION find_epdv_kuf_kif_za_period( cKufKif, dDatOd, dDatDo, cIdTarifa, cIdPar
       hParams[ "dat_do" ] := dDatDo
    ENDIF
 
-   hParams[ "order_by" ] := cOrderBy
+   IF !hb_HHasKey( hParams, "order_by" )
+      hParams[ "order_by" ] := "g_r_br,datum"
+   ENDIF
 
    hParams[ "indeks" ] := .T.
 
@@ -240,9 +233,6 @@ FUNCTION find_epdv_kuf_kif_za_period( cKufKif, dDatOd, dDatDo, cIdTarifa, cIdPar
    ENDIF
    hParams[ "tag" ] := cTag
 
-   IF cWhere != NIL
-      hParams[ "where" ] := cWhere
-   ENDIF
 
    IF !use_sql_epdv_kuf_kif( hParams )
       RETURN .F.
@@ -291,6 +281,7 @@ FUNCTION use_sql_epdv_kuf_kif( hParams )
       cTag := hParams[ "tag" ]
    ENDIF
 
+   AltD()
    SELECT ( nArea )
    IF !use_sql( cTable, cSql, cAlias )
       RETURN .F.
@@ -313,7 +304,7 @@ STATIC FUNCTION use_sql_epdv_kuf_kif_order( hParams )
 
    LOCAL cOrder := ""
 
-      cOrder += " ORDER BY " + hParams[ "order_by" ]
+   cOrder += " ORDER BY " + hParams[ "order_by" ]
 
    RETURN cOrder
 
@@ -322,6 +313,7 @@ STATIC FUNCTION use_sql_epdv_kuf_kif_where( hParams )
 
    LOCAL cWhere := ""
    LOCAL dDatOd
+   LOCAL cDatumField
 
    IF hb_HHasKey( hParams, "idtarifa" )
       cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "id_tar", hParams[ "idtarifa" ] )
@@ -331,13 +323,24 @@ STATIC FUNCTION use_sql_epdv_kuf_kif_where( hParams )
       cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "id_part", hParams[ "idpartner" ] )
    ENDIF
 
+   IF hb_HHasKey( hParams, "brdok" )
+      AltD()
+      cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "br_dok", hParams[ "brdok" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "datum_2" )
+      cDatumField := "datum_2"
+   ELSE
+      cDatumField := "datum"
+   ENDIF
+
    IF hb_HHasKey( hParams, "dat_do" )
       IF !hb_HHasKey( hParams, "dat_od" )
          dDatOd := CToD( "" )
       ELSE
          dDatOd := hParams[ "dat_od" ]
       ENDIF
-      cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql_date_interval( "datum", dDatOd, hParams[ "dat_do" ] )
+      cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql_date_interval( cDatumField, dDatOd, hParams[ "dat_do" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "where" )

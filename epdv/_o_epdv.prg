@@ -19,7 +19,7 @@ FUNCTION select_o_epdv_kuf()
 
 
 FUNCTION select_o_epdv_p_kuf()
-   RETURN select_o_dbf( "P_KUF", F_P_KUF, "epdv_p_kuf", "r_br" )
+   RETURN select_o_dbf( "P_KUF", F_P_KUF, "epdv_p_kuf", "DATUM" )
 
 FUNCTION select_o_epdv_r_kuf()
    RETURN select_o_dbf( "R_KUF", F_R_KUF, "epdv_r_kuf", "br_dok" )
@@ -31,11 +31,16 @@ FUNCTION select_o_epdv_r_kuf()
 FUNCTION select_o_epdv_kif()
    RETURN select_o_dbf( "KIF", F_KIF, "epdv_kif", "DATUM" )
 
+
+// set_a_dbf_temp( "epdv_p_kif", "P_KIF", F_P_KIF )
+
+FUNCTION select_o_epdv_p_kif()
+   RETURN select_o_dbf( "P_KIF", F_P_KIF, "epdv_p_kif", "DATUM" )
+
 FUNCTION select_o_epdv_r_kif()
    RETURN select_o_dbf( "R_KIF", F_R_KIF, "epdv_r_kif", "br_dok" )
 
-FUNCTION select_o_epdv_p_kif()
-   RETURN select_o_dbf( "P_KIF", F_P_KIF, "epdv_p_kif", "r_br" )
+
 
 
 

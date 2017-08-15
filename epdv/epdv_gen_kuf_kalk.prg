@@ -428,7 +428,7 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
          _src_br_2 := cBrDok
       ENDIF
 
-      PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa( _id_tar ) / 100 )
+      PRIVATE _uk_pdv :=  _uk_b_pdv * (  get_stopa_pdv_za_tarifu( _id_tar ) / 100 )
 
       IF !Empty( cFormBPDV )
          _i_b_pdv := &cFormBPdv

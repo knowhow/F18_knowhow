@@ -37,7 +37,7 @@ FUNCTION epdv_izvjestaji()
    AAdd( aOpcExe, {|| NIL } )
 
    AAdd( aOpc, "5. prijava pdv-a" )
-   AAdd( aOpcExe, {|| rpt_p_pdv() } )
+   AAdd( aOpcExe, {|| epdv_pdv_prijava() } )
 
    AAdd( aOpc, "-------------------------" )
    AAdd( aOpcExe, {|| NIL } )

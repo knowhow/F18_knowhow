@@ -16,7 +16,6 @@ FUNCTION epdv_update_sif_tarifa()
 
    LOCAL cPom
 
-   o_tarifa()
 
    run_sql_query( "BEGIN" )
 
@@ -61,16 +60,16 @@ FUNCTION epdv_update_sif_tarifa()
 
 STATIC FUNCTION epdv_dodati_tarifu( cTarifaId, cNaziv, nIznos )
 
-   LOCAL _rec
+   LOCAL hRec
 
    IF !select_o_tarifa( cTarifaId )
 
       APPEND BLANK
-      _rec := dbf_get_rec()
-      _rec[ "id" ] := cTarifaId
-      _rec[ "naz" ] := cNaziv
-      _rec[ "opp" ] := nIznos
-      update_rec_server_and_dbf( "tarifa", _rec, 1, "CONT" )
+      hRec := dbf_get_rec()
+      hRec[ "id" ] := cTarifaId
+      hRec[ "naz" ] := cNaziv
+      hRec[ "opp" ] := nIznos
+      update_rec_server_and_dbf( "tarifa", hRec, 1, "CONT" )
 
    ENDIF
 

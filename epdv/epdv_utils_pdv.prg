@@ -154,7 +154,7 @@ FUNCTION t_i_neop( cIdTar )
 // -------------------------------
 // isporuke izvoz
 // --------------------------------
-FUNCTION t_i_izvoz( cIdTar )
+FUNCTION epdv_tarifa_isporuke_izvoz( cIdTar )
 
    LOCAL lRet
 

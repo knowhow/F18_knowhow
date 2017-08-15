@@ -342,7 +342,7 @@ STATIC FUNCTION  gen_sg_item( cSezona )
             cDokTar := pos->idTarifa
             _id_tar := pos->idTarifa
 
-            nCijena := cijena / ( 1 + g_pdv_stopa( cDokTar ) / 100 )
+            nCijena := cijena / ( 1 + get_stopa_pdv_za_tarifu( cDokTar ) / 100 )
             // u posu se pohranjuje vrijednost u KM popusta
             // u odnosu na cijenu
 
@@ -350,7 +350,7 @@ STATIC FUNCTION  gen_sg_item( cSezona )
             nCPopust := tops_popust()
 
             // izracuna koliko je to bez pdv-a
-            nCPopust := nCPopust / ( 1 + g_pdv_stopa( cDokTar ) / 100 )
+            nCPopust := nCPopust / ( 1 + get_stopa_pdv_za_tarifu( cDokTar ) / 100 )
 
             _uk_b_pdv += Round( kolicina * ( nCijena - nCPopust ), nZaok )
             _popust +=  Round( kolicina * ( nCPopust ), nZaok )
@@ -411,7 +411,7 @@ STATIC FUNCTION  gen_sg_item( cSezona )
 
 
 
-      PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa( _id_tar ) / 100 )
+      PRIVATE _uk_pdv :=  _uk_b_pdv * (  get_stopa_pdv_za_tarifu( _id_tar ) / 100 )
 
       IF !Empty( cFormBPDV )
          _i_b_pdv := &cFormBPdv

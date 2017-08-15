@@ -20,13 +20,7 @@ FUNCTION s_tarifa( cIdTar )
 
    SELECT ( F_TARIFA )
 
-   IF !Used()
-      o_tarifa()
-   ENDIF
-   SET ORDER TO TAG "ID"
-   SEEK cIdTar
-
-   IF !Found()
+   IF !select_o_tarifa( cIdTar )
       cPom := "-NEP.TAR- ?!"
    ELSE
       cPom := AllTrim( naz )
@@ -37,24 +31,14 @@ FUNCTION s_tarifa( cIdTar )
    RETURN cPom
 
 
-// -----------------------------
-// get stopu za tarifu
-// -----------------------------
-FUNCTION g_pdv_stopa( cIdTar )
+
+FUNCTION get_stopa_pdv_za_tarifu( cIdTar )
 
    LOCAL nStopa
 
    PushWA()
 
-   SELECT ( F_TARIFA )
-
-   IF !Used()
-      o_tarifa()
-   ENDIF
-   SET ORDER TO TAG "ID"
-   SEEK PadR( cIdTar, 6 )
-
-   IF !Found()
+   IF !select_o_tarifa( PadR( cIdTar, 6 ) )
       nStopa := -999
    ELSE
       nStopa := tarifa->opp

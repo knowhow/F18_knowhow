@@ -17,17 +17,18 @@ FUNCTION epdv_gen_kuf()
    LOCAL dDatOd
    LOCAL dDatDo
    LOCAL cSezona := Space( 4 )
+   LOCAL GetList := {}
 
    dDatOd := Date()
    dDatDo := Date()
 
    Box(, 6, 40 )
-   @ m_x + 1, m_y + 2 SAY "Generacija KUF"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Generacija KUF"
 
-   @ m_x + 3, m_y + 2 SAY "Datum do " GET dDatOd
-   @ m_x + 4, m_y + 2 SAY "      do " GET dDatDo
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Datum do " GET dDatOd
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "      do " GET dDatDo
 
-   @ m_x + 6, m_y + 2 SAY "sezona" GET cSezona
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "sezona" GET cSezona
    READ
    BoxC()
 
@@ -59,22 +60,23 @@ FUNCTION epdv_gen_kuf()
 
 
 
-FUNCTION gen_kif()
+FUNCTION epdv_gen_kif()
 
    LOCAL dDatOd
    LOCAL dDatDo
    LOCAL cSezona
    LOCAL cIdRj := self_organizacija_id()
+   LOCAL GetList := {}
 
    dDatOd := Date()
    dDatDo := Date()
    cSezona := Space( 4 )
 
    Box(, 4, 40 )
-   @ m_x + 1, m_y + 2 SAY "FAKT RJ " GET cIdRj
-   @ m_x + 2, m_y + 2 SAY "Datum od: " GET dDatOd
-   @ m_x + 2, Col() + 2 SAY "do:" GET dDatDo
-   @ m_x + 4, m_y + 2 SAY "sezona" GET cSezona
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "FAKT RJ " GET cIdRj
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datum od: " GET dDatOd
+   @ box_x_koord() + 2, Col() + 2 SAY "do:" GET dDatDo
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "sezona" GET cSezona
 
    READ
 
@@ -84,10 +86,8 @@ FUNCTION gen_kif()
       RETURN .F.
    ENDIF
 
-   SELECT F_P_KIF
-   IF !Used()
-      select_o_epdv_p_kif()
-   ENDIF
+
+   select_o_epdv_p_kif()
 
    IF RECCOUNT2() <> 0
       MsgBeep( "KIF Priprema nije prazna !" )

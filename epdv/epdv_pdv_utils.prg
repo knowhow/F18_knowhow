@@ -32,8 +32,7 @@ FUNCTION save_pdv_obracun( dDatOd, dDatDo )
          APPEND BLANK
       ELSE
          IF lock == "D"
-            MsgBeep( "Vec postoji obracun koji je zakljucan #" + ;
-               "promjena NIJE snimljena !" )
+            MsgBeep( "Vec postoji obracun koji je zakljucan #promjena NIJE snimljena !" )
             SELECT ( F_PDV )
             USE
             SELECT ( F_R_PDV )

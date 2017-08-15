@@ -130,6 +130,8 @@ STATIC FUNCTION cre_r_tbl()
 
 STATIC FUNCTION epdv_fill_rpt()
 
+   LOCAL nCount
+
 // + stavka preknjizenja = pdv
 // - stavka = ppp
 
@@ -166,7 +168,6 @@ STATIC FUNCTION epdv_fill_rpt()
    DO WHILE !Eof()
 
       ++nCount
-
 
       @ box_x_koord() + 2, box_y_koord() + 2 SAY Str( nCount, 6, 0 )
 
@@ -213,17 +214,14 @@ STATIC FUNCTION epdv_fill_rpt()
 
    BoxC()
 
-// skini filter
    SELECT ( nKArea )
    SET FILTER TO
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 STATIC FUNCTION show_rpt()
-
-// {
 
    nCurrLine := 0
 
@@ -322,11 +320,9 @@ STATIC FUNCTION show_rpt()
    FF
    ENDPRINT
 
-   RETURN
-// }
+   RETURN .T.
 
-// ----------------------------
-// ----------------------------
+
 STATIC FUNCTION r_zagl()
 
 // header
@@ -368,14 +364,13 @@ STATIC FUNCTION r_zagl()
    NEXT
    r_linija()
 
-   RETURN
+   RETURN .T.
 
 
-// -------------------------------
-// --------------------------------
+
 STATIC FUNCTION r_linija()
 
-// {
+
    ++nCurrLine
    ?
    FOR i = 1 TO Len( aZaglLen )
@@ -383,5 +378,4 @@ STATIC FUNCTION r_linija()
       ?? " "
    NEXT
 
-   RETURN
-// }
+   RETURN .T.

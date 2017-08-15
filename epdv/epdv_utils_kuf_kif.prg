@@ -25,7 +25,7 @@ FUNCTION epdv_otvori_kuf_tabele( lPriprema )
 
    IF lPriprema == .T.
 
-         select_o_epdv_p_kuf()
+      select_o_epdv_p_kuf()
 
    ENDIF
 
@@ -38,26 +38,24 @@ FUNCTION epdv_otvori_kif_tabele( lPriprema )
       lPriprema := .F.
    ENDIF
 
-   //SELECT F_TARIFA
-   //IF !Used()
-  //    o_tarifa()
-   //ENDIF
+   // SELECT F_TARIFA
+   // IF !Used()
+   // o_tarifa()
+   // ENDIF
 
 
    select_o_epdv_kif()
 
 
    IF lPriprema == .T.
-
-         select_o_epdv_p_kif()
-
+      select_o_epdv_p_kif()
    ENDIF
 
    RETURN .T.
 
 
 
-FUNCTION next_r_br( cTblName )
+FUNCTION epdv_next_r_br( cTblName )
 
    LOCAL nLastBr
 
@@ -175,7 +173,7 @@ FUNCTION epdv_renumeracija_g_r_br( cTblName )
       _rec[ "g_r_br" ] := nRbr
       update_rec_server_and_dbf( _table, _rec, 1, "CONT" )
 
-      nRbr ++
+      nRbr++
 
       SKIP
 

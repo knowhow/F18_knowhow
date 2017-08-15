@@ -56,9 +56,8 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
    IF !Used()
       o_sg_kif()
    ENDIF
-
-
    SELECT sg_kif
+
    GO TOP
    nCount := 0
 
@@ -331,7 +330,6 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
 
          cPom := "SUBAN cnt : " + Str( nCount, 6 )
          @ m_x + 4, m_y + 2 SAY cPom
-
 
 
          // tarifa koja se nalazi unutar dokumenta

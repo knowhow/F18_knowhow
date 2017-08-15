@@ -300,22 +300,20 @@ FUNCTION epdv_povrat_kuf_kif( cTbl, nBrDok )
    RETURN nBrDok
 
 
+
 FUNCTION epdv_renumeracija_rbr( cTbl, lShow )
 
-   LOCAL hRec
+   LOCAL hRec, nRbr
 
    IF lShow == nil
       lShow := .T.
    ENDIF
 
    IF cTbl == "P_KUF"
-
-         select_o_epdv_p_kuf()
-
+      select_o_epdv_p_kuf()
 
    ELSEIF cTbl == "P_KIF"
-
-         select_o_epdv_p_kif()
+      select_o_epdv_p_kif()
 
    ENDIF
 

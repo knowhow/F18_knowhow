@@ -1,9 +1,10 @@
 # F18 klijent, lista promjena
 
-## 3.1.54-std, 2017-08-17
-### Developer
-- FAKT: BUGFIX: fakt import fix
-- build bug .53 fix
+## 3.1.55-std, 2017-08-17
+### FAKT
+- BUGFIX: udaljena razmjena, fakt import
+  - build bug .53 fix
+  - fix: .54 Alias does not exist/fakt
 
 ## 3.1.52-std, 2017-08-15
 ### Developer

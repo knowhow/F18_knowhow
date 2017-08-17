@@ -1,5 +1,8 @@
 # F18 klijent, lista promjena
 
+## 2017-08-17 ----
+- FAKT: fakt import fix
+
 ## 2017-08-15 ----
 
 - ePDV sql big-bang 01

@@ -92,7 +92,7 @@ STATIC FUNCTION _fakt_import()
    LOCAL _imp_file
    LOCAL _imp_path := fetch_metric( "fakt_import_path", my_user(), PadR( "", 300 ) )
    LOCAL _a_data := {}
-     LOCAL GetList := {}
+   LOCAL GetList := {}
 
    Box(, 1, 70 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "import path:" GET _imp_path PICT "@S50"
@@ -462,16 +462,16 @@ STATIC FUNCTION fakt_export_impl( hParams, aDetails )
    ENDIF
 
    _cre_exp_tbls( s_cExportDbfPath )
-   _o_exp_tables( s_cExportDbfPath )
-   //_o_tables()
+   fakt_open_rexport_tabele( s_cExportDbfPath )
+   // _o_tables()
 
    Box(, 2, 65 )
 
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "... export fakt dokumenata u toku"
 
-   //SELECT fakt_doks
-   //SET ORDER TO TAG "1"
-   //GO TOP
+   // SELECT fakt_doks
+   // SET ORDER TO TAG "1"
+   // GO TOP
    find_fakt_doks_za_period( NIL, dDatOd, dDatDo, "FAKT_DOKS" )
 
    DO WHILE !Eof()
@@ -679,7 +679,8 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
    LOCAL _brojevi_dok
    LOCAL hRecDetaljiDokument
    LOCAL lOk := .T.
-   //LOCAL hParams
+
+   // LOCAL hParams
 
    run_sql_query( "BEGIN" )
 
@@ -702,8 +703,12 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
       lFmkImport := .T.
    ENDIF
 
-   _o_exp_tables( s_cImportDbfPath, NIL )
-   //_o_tables()
+   fakt_open_rexport_tabele( s_cImportDbfPath, NIL )
+   // _o_tables()
+
+   seek_fakt( "XXX" )
+   seek_fakt_doks( "XXX" )
+   seek_fakt_doks2( "XXX" )
 
    SELECT e_doks
    nTotalFaktDoks := RECCOUNT2()
@@ -725,7 +730,7 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
 
       cIdFirma := field->idfirma
       cIdTipDok := field->idtipdok
-      cBrDok := LEFT( field->brdok, FIELD_LEN_FAKT_BRDOK )
+      cBrDok := Left( field->brdok, FIELD_LEN_FAKT_BRDOK )
 
       IF dDatOd <> CToD( "" )
          IF field->datdok < dDatOd
@@ -764,7 +769,7 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
          ENDIF
       ENDIF
 
-      IF _vec_postoji_u_prometu( cIdFirma, cIdTipDok, cBrDok )
+      IF fakt_dokument_vec_postoji( cIdFirma, cIdTipDok, cBrDok )
 
          SELECT e_doks
          hAppendRec := dbf_get_rec()
@@ -781,7 +786,7 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
             hRecDetaljiDokument[ "tip" ] := "delete"
             export_import_add_to_details( @aDetails, hRecDetaljiDokument )
             lOk := .T.
-            lOk := del_fakt_doc( cIdFirma, cIdTipDok, cBrDok )
+            lOk := fakt_delete_dokument( cIdFirma, cIdTipDok, cBrDok )
          ELSE
             hRecDetaljiDokument[ "tip" ] := "x"
             export_import_add_to_details( @aDetails, hRecDetaljiDokument )
@@ -816,20 +821,20 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
       ++nCount
       @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( PadL( AllTrim( Str( nCount ) ), 5 ) + ". dokument: " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok, 60 )
 
-altd()
+
       SELECT e_fakt
       SET ORDER TO TAG "1"
       GO TOP
       SEEK cIdFirma + cIdTipDok + cBrDok // e_fakt
 
       nRedniBroj := 0
-      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. LEFT( field->brdok, FIELD_LEN_FAKT_BRDOK ) == cBrDok
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. Left( field->brdok, FIELD_LEN_FAKT_BRDOK ) == cBrDok
 
          hAppendRec := dbf_get_rec()
 
          hAppendRec[ "rbr" ] := PadL( AllTrim( Str( ++nRedniBroj ) ), 3 )
          hAppendRec[ "podbr" ] := ""
-         hAppendRec[ "brdok" ] :=  LEFT( hAppendRec[ "brdok" ], FIELD_LEN_FAKT_BRDOK ) // fix bringout database fakt.brdok C(12)
+         hAppendRec[ "brdok" ] :=  Left( hAppendRec[ "brdok" ], FIELD_LEN_FAKT_BRDOK ) // fix bringout database fakt.brdok C(12)
          nGlobalniBrojac += nRedniBroj
 
          @ box_x_koord() + 3, box_y_koord() + 40 SAY "stavka: " + AllTrim( Str( nGlobalniBrojac ) ) + " / " + hAppendRec[ "rbr" ]
@@ -909,15 +914,14 @@ altd()
 
 
 
-STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
+STATIC FUNCTION fakt_dokument_vec_postoji( cIdFirma, cIdVD, cBrDok )
 
    LOCAL cWhere
    LOCAL nDbfArea := Select()
    LOCAL lRet := .T.
 
-   seek_fakt_doks( id_firma, id_vd, br_dok )
-
-   IF Eof()
+   IF !seek_fakt_doks( cIdFirma, cIdVD, cBrDok )
+   //IF Eof()
       lRet := .F.
    ENDIF
 
@@ -927,37 +931,32 @@ STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
 
 
 
-
-// ----------------------------------------------------------
-// brisi dokument iz fakt-a
-// ----------------------------------------------------------
-
-STATIC FUNCTION del_fakt_doc( id_firma, id_vd, br_dok )
+STATIC FUNCTION fakt_delete_dokument( cIdFirma, cIdVD, cBrDok )
 
    LOCAL nDbfArea := Select()
-   LOCAL _del_rec, nTrec
+   LOCAL hRecDelete, nTrec
    LOCAL _ret := .F.
 
-   IF seek_fakt( id_firma, id_vd, br_dok )
-   //IF !Eof()
+   IF seek_fakt( cIdFirma, cIdVD, cBrDok )
+      // IF !Eof()
       _ret := .T.
       // brisi fakt_fakt
-      _del_rec := dbf_get_rec()
-      delete_rec_server_and_dbf( "fakt_fakt", _del_rec, 2, "CONT" )
+      hRecDelete := dbf_get_rec()
+      delete_rec_server_and_dbf( "fakt_fakt", hRecDelete, 2, "CONT" )
    ENDIF
 
    // brisi fakt_doks
-   IF seek_fakt_doks( id_firma, id_vd, br_dok )
-   //IF !Eof()
-      _del_rec := dbf_get_rec()
-      delete_rec_server_and_dbf( "fakt_doks", _del_rec, 1, "CONT" )
+   IF seek_fakt_doks( cIdFirma, cIdVD, cBrDok )
+      // IF !Eof()
+      hRecDelete := dbf_get_rec()
+      delete_rec_server_and_dbf( "fakt_doks", hRecDelete, 1, "CONT" )
    ENDIF
 
    // doks2
-   seek_fakt_doks2( id_firma, id_vd, br_dok )
+   seek_fakt_doks2( cIdFirma, cIdVD, cBrDok )
    IF !Eof()
-      _del_rec := dbf_get_rec()
-      delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
+      hRecDelete := dbf_get_rec()
+      delete_rec_server_and_dbf( "fakt_doks2", hRecDelete, 1, "CONT" )
    ENDIF
 
    SELECT ( nDbfArea )
@@ -969,58 +968,58 @@ STATIC FUNCTION del_fakt_doc( id_firma, id_vd, br_dok )
 // ----------------------------------------
 // kreiranje tabela razmjene
 // ----------------------------------------
-STATIC FUNCTION _cre_exp_tbls( use_path )
+STATIC FUNCTION _cre_exp_tbls( cDbfPath )
 
    LOCAL _cre
 
-   IF use_path == NIL
-      use_path := my_home()
+   IF cDbfPath == NIL
+      cDbfPath := my_home()
    ENDIF
 
    // provjeri da li postoji direktorij, pa ako ne - kreiraj
-   direktorij_kreiraj_ako_ne_postoji( use_path )
+   direktorij_kreiraj_ako_ne_postoji( cDbfPath )
 
 
    seek_fakt( "XXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
-   CREATE ( use_path + "e_fakt" ) FROM ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_fakt" ) FROM ( my_home() + "struct" )
 
    seek_fakt_doks( "XXXX" )
    o_fakt_doks_dbf()
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
-   CREATE ( use_path + "e_doks" ) FROM ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_doks" ) FROM ( my_home() + "struct" )
 
 
    seek_fakt_doks2( "XXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
-   CREATE ( use_path + "e_doks2" ) FROM ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_doks2" ) FROM ( my_home() + "struct" )
 
    // tabela roba
    o_roba( "XXXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
-   CREATE ( use_path + "e_roba" ) FROM ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_roba" ) FROM ( my_home() + "struct" )
 
    // tabela partn
    o_partner( "XXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
-   CREATE ( use_path + "e_partn" ) FROM ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_partn" ) FROM ( my_home() + "struct" )
 
    // tabela sifk
    o_sifk()
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
-   CREATE ( use_path + "e_sifk" ) FROM ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_sifk" ) FROM ( my_home() + "struct" )
 
    // tabela sifv
    o_sifv()
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
-   CREATE ( use_path + "e_sifv" ) FROM ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_sifv" ) FROM ( my_home() + "struct" )
 
    RETURN .T.
 
@@ -1028,17 +1027,17 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
 // ----------------------------------------------------
 // otvaranje potrebnih tabela za prenos
 // ----------------------------------------------------
-//STATIC FUNCTION _o_tables()
+// STATIC FUNCTION _o_tables()
 
-   //o_fakt_dbf()
-   //o_fakt_doks_dbf()
-   //o_fakt_doks2_dbf()
-   //o_sifk()
-   //o_sifv()
-   //o_partner()
-   //o_roba()
+// o_fakt_dbf()
+// o_fakt_doks_dbf()
+// o_fakt_doks2_dbf()
+// o_sifk()
+// o_sifv()
+// o_partner()
+// o_roba()
 
-   //RETURN .T.
+// RETURN .T.
 
 
 
@@ -1046,59 +1045,59 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
 // ----------------------------------------------------
 // otvranje export tabela
 // ----------------------------------------------------
-STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
+STATIC FUNCTION fakt_open_rexport_tabele( cDbfPath, lFromFmk )
 
-   LOCAL _dbf_name
+   LOCAL cDbfName
 
-   IF ( use_path == NIL )
-      use_path := my_home()
+   IF ( cDbfPath == NIL )
+      cDbfPath := my_home()
    ENDIF
 
-   IF ( from_fmk == NIL )
-      from_fmk := .F.
+   IF ( lFromFmk == NIL )
+      lFromFmk := .F.
    ENDIF
 
    log_write( "otvaram fakt tabele importa i pravim indekse...", 9 )
 
-   // zatvori sve prije otvaranja ovih tabela
+
    my_close_all_dbf()
 
    // setuj ove tabele kao temp tabele
-   _dbf_name := "e_doks2"
+   cDbfName := "e_doks2"
    SELECT ( F_TMP_E_DOKS2 )
-   my_use_temp( "E_DOKS2", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_DOKS2", cDbfPath + cDbfName, .F., .T. )
    INDEX ON ( idfirma + idtipdok + brdok ) TAG "1"
 
-   _dbf_name := "e_fakt"
+   cDbfName := "e_fakt"
    SELECT ( F_TMP_E_FAKT )
-   my_use_temp( "E_FAKT", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_FAKT", cDbfPath + cDbfName, .F., .T. )
    INDEX ON ( idfirma + idtipdok + brdok + rbr ) TAG "1"
    INDEX ON ( idfirma + idtipdok + brdok + idroba ) TAG "2"
 
-   _dbf_name := "e_doks"
+   cDbfName := "e_doks"
    SELECT ( F_TMP_E_DOKS )
-   my_use_temp( "E_DOKS", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_DOKS", cDbfPath + cDbfName, .F., .T. )
    INDEX ON ( idfirma + idtipdok + brdok ) TAG "1"
 
-   _dbf_name := "e_roba"
+   cDbfName := "e_roba"
    SELECT ( F_TMP_E_ROBA )
-   my_use_temp( "E_ROBA", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_ROBA", cDbfPath + cDbfName, .F., .T. )
    INDEX ON ( id ) TAG "ID"
 
-   _dbf_name := "e_partn"
+   cDbfName := "e_partn"
    SELECT ( F_TMP_E_PARTN )
-   my_use_temp( "E_PARTN", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_PARTN", cDbfPath + cDbfName, .F., .T. )
    INDEX ON ( id ) TAG "ID"
 
-   _dbf_name := "e_sifk"
+   cDbfName := "e_sifk"
    SELECT ( F_TMP_E_SIFK )
-   my_use_temp( "E_SIFK", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_SIFK", cDbfPath + cDbfName, .F., .T. )
    INDEX ON ( id + SORT + naz ) TAG "ID"
    INDEX ON ( id + oznaka ) TAG "ID2"
 
-   _dbf_name := "e_sifv"
+   cDbfName := "e_sifv"
    SELECT ( F_TMP_E_SIFV )
-   my_use_temp( "E_SIFV", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_SIFV", cDbfPath + cDbfName, .F., .T. )
    INDEX ON ( id + oznaka + idsif + naz ) TAG "ID"
    INDEX ON ( id + idsif ) TAG "IDIDSIF"
 

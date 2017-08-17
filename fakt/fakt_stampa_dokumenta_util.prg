@@ -96,8 +96,8 @@ FUNCTION zavrsi_stampu()
 
 FUNCTION fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
-   PRIVATE InPicDEM := fakt_pic_iznos()
-   PRIVATE InPicCDEM := fakt_pic_cijena()
+   //PRIVATE InPicDEM := fakt_pic_iznos()
+   //PRIVATE InPicCDEM := fakt_pic_cijena()
 
    IF lJFill == nil
       lJFill := .F.
@@ -127,7 +127,7 @@ FUNCTION fakt_zagl_firma()
    ?? "Subjekt:"; U_ON; ?? PadC( Trim( tip_organizacije() ) + " " + Trim( self_organizacija_naziv() ), 39 ); U_OFF
    ?  "Prodajni objekat:"; U_ON; ?? PadC( AllTrim( NazProdObj() ), 30 ) ; U_OFF
    ?  "(poslovnica-poslovna jedinica)"
-   ?  "Datum:"; U_ON; ?? PadC( SrediDat( DATDOK ), 18 ); U_OFF
+   ?  "Datum:"; U_ON; ?? PadC( SrediDat( field->DATDOK ), 18 ); U_OFF
    ?
    ?
 

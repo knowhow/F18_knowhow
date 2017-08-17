@@ -89,7 +89,6 @@
 
 #define FIELD_LEN_FAKT_BRDOK    8
 
-
 #define FIELD_LEN_KALK_BRDOK    8
 #define FIELD_LEN_KALK_RBR      3
 #define FIELD_PARTNER_ID_LENGTH 6

@@ -1,8 +1,9 @@
 # F18 klijent, lista promjena
 
-## 3.1.53-std, 2017-08-17
+## 3.1.54-std, 2017-08-17
 ### Developer
 - FAKT: BUGFIX: fakt import fix
+- build bug .53 fix
 
 ## 3.1.52-std, 2017-08-15
 ### Developer

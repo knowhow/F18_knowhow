@@ -1,10 +1,12 @@
 # F18 klijent, lista promjena
 
-## 3.1.55-std, 2017-08-17
+## 3.1.56-std, 2017-08-17
 ### FAKT
 - BUGFIX: udaljena razmjena, fakt import
   - build bug .53 fix
   - fix: .54 Alias does not exist/fakt
+### Developer
+- BUGFIX: .55 f18.ch Variable does not exist/POS_VD_RACUN
 
 ## 3.1.52-std, 2017-08-15
 ### Developer

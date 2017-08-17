@@ -24,7 +24,7 @@ FUNCTION m_changes( nDoc_no )
    LOCAL _y := m_y
 
    __doc_no := nDoc_no
-   __oper_id := GetUserID( f18_user() )
+   __oper_id := f18_get_user_id( f18_user() )
 
    AAdd( opc, "promjena, osnovni podaci naloga " )
    AAdd( opcexe, {|| _ch_main() } )

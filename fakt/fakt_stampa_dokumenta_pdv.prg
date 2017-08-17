@@ -21,11 +21,13 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    LOCAL cFax
    LOCAL lPrepisDok := .F.
-   LOCAL hDok := hb_Hash(), _fill_params := hb_Hash()
+   LOCAL hDok := hb_Hash(), hParamsFill := hb_Hash()
    LOCAL hFaktParams := fakt_params()
+   LOCAL lSamoKol := .F.  // samo kolicine
 
-   // samo kolicine
-   LOCAL lSamoKol := .F.
+   AltD()
+   cBrDok := Left( cBrDok, FIELD_LEN_FAKT_BRDOK )
+
 
    IF lJFill == NIL
       lJFill := .F.
@@ -33,11 +35,11 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    IF PCount() == 4 .AND. ( cIdtipDok <> NIL )
       lPrepisDok := .T.
-      _fill_params[ "from_server" ] := .T.
+      hParamsFill[ "from_server" ] := .T.
       close_open_fakt_tabele( .T. )
       seek_fakt( cIdFirma, cIdTipDok, cBrDok, NIL, NIL, NIL, NIL, "FAKT_PRIPR" )
    ELSE
-      _fill_params[ "from_server" ] := .F.
+      hParamsFill[ "from_server" ] := .F.
       close_open_fakt_tabele()
    ENDIF
 
@@ -88,10 +90,10 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
       RETURN .F.
    ENDIF
 
-   _fill_params[ "barkod" ] := lPBarkod
-   _fill_params[ "samo_kolicine" ] := lSamoKol
+   hParamsFill[ "barkod" ] := lPBarkod
+   hParamsFill[ "samo_kolicine" ] := lSamoKol
 
-   IF !fill_porfakt_data( hDok, _fill_params )
+   IF !fill_porfakt_data( hDok, hParamsFill )
       RETURN .F.
    ENDIF
 
@@ -153,10 +155,11 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
    LOCAL cTxt1, cTxt2, cTxt3, cTxt4, cTxt5
    LOCAL cIdPartner
    LOCAL dDatDok
-   //LOCAL cDestinacija
+
+   // LOCAL cDestinacija
    LOCAL dDatVal
    LOCAL dDatumIsporuke
-   //LOCAL aMemo
+   // LOCAL aMemo
 
    LOCAL cIdRoba := ""
    LOCAL cRobaNaz := ""
@@ -245,7 +248,7 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
    fill_firm_data()
 
 
-   select_o_roba()
+   //select_o_roba()
 
    SELECT fakt_pripr
 
@@ -317,8 +320,8 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
          SELECT fakt_pripr
       ENDIF
 
-      // dodaj i vrijednost iz polja SERBR
-      IF !Empty( AllTrim( fakt_pripr->serbr ) )
+
+      IF !Empty( AllTrim( fakt_pripr->serbr ) )   // dodaj i vrijednost iz polja SERBR
          cRobaNaz := cRobaNaz + ", " + AllTrim( fakt_pripr->serbr )
       ENDIF
 
@@ -355,7 +358,6 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
       // rn Veleprodaje
       IF hDokument[ "idtipdok" ] $ "10#11#12#13#20#22#25"
 
-         // ino faktura
          IF partner_is_ino( cIdPartner )
             nPPDV := 0
             lIno := .T.
@@ -370,11 +372,11 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
 
       ENDIF
 
-      //IF hDokument[ "idtipdok" ] == "12"
-      //   IF IsProfil( cIdPartner, "KMS" )  // radi se o komisionaru
-      //      nPPDV := 0
-      //   ENDIF
-      //ENDIF
+      // IF hDokument[ "idtipdok" ] == "12"
+      // IF IsProfil( cIdPartner, "KMS" )  // radi se o komisionaru
+      // nPPDV := 0
+      // ENDIF
+      // ENDIF
 
       // kolicina
       nKol := field->kolicina
@@ -476,7 +478,7 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
       nUkKol += nKol
 
       dodaj_stavku_racuna( hDokument[ "brdok" ], cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, ;
-         nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust,;
+         nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, ;
          nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, "", "", "", cOpis )
 
       SELECT fakt_pripr
@@ -508,12 +510,12 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
    GO ( nRec1zapis )
 
    // nafiluj ostale podatke vazne za sam dokument
-   //aMemo := fakt_ftxt_decode( fakt_pripr->txt )
+   // aMemo := fakt_ftxt_decode( fakt_pripr->txt )
    hFaktTxt := fakt_ftxt_decode_string( fakt_pripr->txt )
 
    dDatDok := fakt_pripr->datdok
-   dDatumIsporuke := hFaktTxt[ "datotp"]
-   dDatVal := hFaktTxt[ "datpl"]
+   dDatumIsporuke := hFaktTxt[ "datotp" ]
+   dDatVal := hFaktTxt[ "datpl" ]
 
 /*
 IF hb_HHasKey( hFaktTxt, "brnar")
@@ -665,8 +667,8 @@ IF hb_HHasKey( hFaktTxt, "brnar")
 
    // dodaj total u DRN
    add_drn( hDokument[ "brdok" ], hDokument[ "datdok" ], dDatVal, dDatumIsporuke, cTime, ;
-        nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, ;
-        nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol )
+      nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, ;
+      nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol )
 
    IF ( hDokument[ "idtipdok" ] $ "10#11" ) .AND. Round( nUkPDV, 2 ) == 0
       IF Pitanje(, "Faktura je bez iznosa PDV-a! Da li je to uredu (D/N)", "D" ) == "N"
@@ -767,7 +769,7 @@ STATIC FUNCTION porezna_faktura_fill_ostali_podaci()
 
    IF gSecurity == "D"
       // naziv operatera
-      cPom := getfullusername( getuserid() )
+      cPom := getfullusername( f18_get_user_id() )
       add_drntext( "R02", cPom )
    ENDIF
 

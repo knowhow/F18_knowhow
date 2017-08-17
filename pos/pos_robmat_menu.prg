@@ -29,9 +29,7 @@ FUNCTION pos_menu_robmat()
 
 
 
-// --------------------------------------------
-// menij generacije dokumenata
-// --------------------------------------------
+
 FUNCTION pos_menu_gendok()
 
    PRIVATE Opc := {}

@@ -296,7 +296,7 @@ FUNCTION pos_iznos_dokumenta( lUI )
 
    IF ( ( lUI == NIL ) .OR. lUI )
       // ovo su ulazi ...
-      IF pos_doks->IdVd $ VD_ZAD + "#" + VD_PCS + "#" + VD_REK
+      IF pos_doks->IdVd $ VD_ZAD + "#" + POS_VD_POCETNO_STANJE + "#" + VD_REK
 
          seek_pos( cIdPos, cIdVd, dDatum, cBrDok )
          //SELECT pos
@@ -315,7 +315,7 @@ FUNCTION pos_iznos_dokumenta( lUI )
 
    IF ( ( lUI == NIL ) .OR. !lUI )
       // ovo su, pak, izlazi ...
-      IF pos_doks->idvd $ VD_RN + "#" + VD_OTP + "#" + VD_RZS + "#" + VD_PRR + "#" + "IN" + "#" + VD_NIV
+      IF pos_doks->idvd $ POS_VD_RACUN + "#" + VD_OTP + "#" + VD_RZS + "#" + VD_PRR + "#" + "IN" + "#" + VD_NIV
 
          //SELECT pos
          //SET ORDER TO TAG "1"
@@ -411,7 +411,7 @@ FUNCTION pos_import_fmk_roba()
    _location := PadR( AllTrim( _location ), 300 )
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY "lokacija:" GET _location PICT "@S50"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "lokacija:" GET _location PICT "@S50"
    READ
    BoxC()
 
@@ -468,7 +468,7 @@ FUNCTION pos_import_fmk_roba()
       ENDIF
 
       ++_cnt
-      @ m_x + 1, m_y + 2 SAY "import roba: " + hRec[ "id" ] + ":" + PadR( hRec[ "naz" ], 20 ) + "..."
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "import roba: " + hRec[ "id" ] + ":" + PadR( hRec[ "naz" ], 20 ) + "..."
       lOk := update_rec_server_and_dbf( "roba", hRec, 1, "CONT" )
 
       IF !lOk
@@ -556,7 +556,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
       cIdVd := query_row( oRow, "idvd" )
       cBrDok := query_row( oRow, "brdok" )
 
-      @ m_x + 1, m_y + 2 SAY8 "Brišem dokument: " + cIdPos + "-" + cIdVd + "-" + cBrDok + " od datuma " + DToC( dDatum )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Brišem dokument: " + cIdPos + "-" + cIdVd + "-" + cBrDok + " od datuma " + DToC( dDatum )
 
       IF !pos_brisi_dokument( cIdPos, cIdVd, dDatum, cBrDok )
          BoxC()

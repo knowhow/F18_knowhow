@@ -429,7 +429,7 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
    ENDIF
 
    ?
-   ZagFirma()
+   //ZagFirma()
 
    P_10CPI
    ? PadC( "STANJE ODJELJENJA NA DAN " + FormDat1( dDat ), nSir )

@@ -57,8 +57,8 @@ METHOD mMenu()
 #ifdef F18_DEBUG
       ?E ">>>>>>>>>>>>>>>>>> pos_prijava while <<<<<<<<<<<<<<<<<<<<<"
 #endif
-      m_x := Fx
-      m_y := Fy
+      box_x_koord( Fx)
+      box_y_koord( Fy )
 
       KLevel := pos_prijava( Fx, Fy )
 
@@ -86,8 +86,8 @@ METHOD mMenu()
 
    DO WHILE ( .T. )
 
-      m_x := Fx
-      m_y := Fy
+      box_x_koord( Fx )
+      box_y_koord( Fy )
 
       // unesi prijavu korisnika
       IF fPRviPut .AND. gVSmjene == "N" // ne vodi vise smjena

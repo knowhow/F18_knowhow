@@ -401,11 +401,11 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
 
       Box(, 4, 70, .F., " PRENOS REALIZACIJE POS->KALK   " )
 
-      @ m_x + 1, m_y + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. P_Kase( @cIdPos, 5, 20 )
-      @ m_x + 2, m_y + 2 SAY "Prenos za period" GET _dat_od
-      @ m_x + 2, Col() + 2 SAY "-" GET _dat_do
-      @ m_x + 3, m_y + 2 SAY "Uslov po artiklima:" GET _usl_roba PICT "@S40"
-      @ m_x + 4, m_y + 2 SAY8 "Artikle (U)ključi / (I)sključi iz prenosa:" GET _usl_mark PICT "@!" VALID _usl_mark $ "UI"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. P_Kase( @cIdPos, 5, 20 )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prenos za period" GET _dat_od
+      @ box_x_koord() + 2, Col() + 2 SAY "-" GET _dat_do
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Uslov po artiklima:" GET _usl_roba PICT "@S40"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Artikle (U)ključi / (I)sključi iz prenosa:" GET _usl_mark PICT "@!" VALID _usl_mark $ "UI"
 
       READ
       ESC_BCR

@@ -49,6 +49,8 @@ FUNCTION GetRegion()
  */
 FUNCTION GetRtmFile( cDefRtm )
 
+   LOCAL GetList := {}
+
    aRtm := {}
    AAdd( aRtm, { my_get_from_ini( "DelphiRb", "Rtm1", "", KUMPATH ) } )
    AAdd( aRtm, { my_get_from_ini( "DelphiRb", "Rtm2", "", KUMPATH ) } )
@@ -59,12 +61,12 @@ FUNCTION GetRtmFile( cDefRtm )
       RETURN cDefRtm
    ENDIF
 
-   PRIVATE GetList := {}
+   //PRIVATE GetList := {}
 
    Box(, 6, 30 )
-   @ 1 + m_x, 2 + m_y GET aRtm[ 1, 1 ]
-   @ 2 + m_x, 2 + m_y GET aRtm[ 1, 2 ]
-   @ 3 + m_x, 2 + m_y GET aRtm[ 1, 3 ]
+   @ 1 + box_x_koord(), 2 + box_y_koord() GET aRtm[ 1, 1 ]
+   @ 2 + box_x_koord(), 2 + box_y_koord() GET aRtm[ 1, 2 ]
+   @ 3 + box_x_koord(), 2 + box_y_koord() GET aRtm[ 1, 3 ]
    READ
    BoxC()
 
@@ -107,7 +109,7 @@ FUNCTION fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok, lJFill )
       fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------------
 // fakt_zagl_firma()
@@ -129,4 +131,4 @@ FUNCTION fakt_zagl_firma()
    ?
    ?
 
-   RETURN
+   RETURN .T.

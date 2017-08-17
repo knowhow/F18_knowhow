@@ -87,8 +87,8 @@ FUNCTION UkloniRadne( cIdRadnik )
 
    SELECT _POS
    SET ORDER TO TAG "1"
-   SEEK gIdPos + VD_RN  // _POS
-   DO WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + VD_RN )
+   SEEK gIdPos + POS_VD_RACUN  // _POS
+   DO WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + POS_VD_RACUN )
       IF _POS->IdRadnik == cIdRadnik .AND. _POS->M1 == "Z"
          Del_Skip ()
       ELSE

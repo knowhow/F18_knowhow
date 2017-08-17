@@ -38,9 +38,9 @@ FUNCTION pos_pregled_racuna_tabela()
    SET CURSOR ON
 
    Box(, 2, 60 )
-   @ m_x + 1, m_y + 2 SAY "Datumski period:" GET dDatOd
-   @ m_x + 1, Col() + 2 SAY "-" GET dDatDo
-   @ m_x + 2, m_y + 2 SAY "Prodajno mjesto:" GET gIdPos VALID P_Kase( @gIdPos )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datumski period:" GET dDatOd
+   @ box_x_koord() + 1, Col() + 2 SAY "-" GET dDatDo
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prodajno mjesto:" GET gIdPos VALID P_Kase( @gIdPos )
    READ
    BoxC()
 

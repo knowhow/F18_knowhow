@@ -190,45 +190,45 @@ STATIC FUNCTION _grupno_params( params )
    // uslov za stampanje
    Box(, _box_x, _box_y )
 
-   @ m_x + _x, m_y + 2 SAY "*** Stampa ODT dokumenata po zadanom uslovu:"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "*** Stampa ODT dokumenata po zadanom uslovu:"
 
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Radna jedinica / vrsta:" GET _id_firma VALID !Empty( _id_firma )
-   @ m_x + _x, Col() + 1 SAY "-" GET _id_tip_dok VALID !Empty( _id_tip_dok )
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Radna jedinica / vrsta:" GET _id_firma VALID !Empty( _id_firma )
+   @ box_x_koord() + _x, Col() + 1 SAY "-" GET _id_tip_dok VALID !Empty( _id_tip_dok )
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Za datum od:" GET _datum_od
-   @ m_x + _x, Col() + 1 SAY "do:" GET _datum_do
-
-   ++_x
-   ++_x
-
-   @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata:" GET _brojevi PICT "@S45"
-
-   ++_x
-
-   @ m_x + _x, m_y + 2 SAY "Obuhvati artikle:" GET cIdRoba PICT "@S45"
-
-   ++_x
-
-   @ m_x + _x, m_y + 2 SAY "Obuhvati partnere:" GET _partneri PICT "@S45"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Za datum od:" GET _datum_od
+   @ box_x_koord() + _x, Col() + 1 SAY "do:" GET _datum_do
 
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Generisati grupno/jedan po jedan (1/2) ?" GET _tip_gen VALID _tip_gen $ "12"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Brojevi dokumenata:" GET _brojevi PICT "@S45"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Formirati PDF dokument (D/N) ?" GET _gen_pdf VALID _gen_pdf $ "DN"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Obuhvati artikle:" GET cIdRoba PICT "@S45"
+
+   ++_x
+
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Obuhvati partnere:" GET _partneri PICT "@S45"
 
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Prebaci na lokaciju:" GET _na_lokaciju PICT "@S40"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Generisati grupno/jedan po jedan (1/2) ?" GET _tip_gen VALID _tip_gen $ "12"
+
+   ++_x
+
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Formirati PDF dokument (D/N) ?" GET _gen_pdf VALID _gen_pdf $ "DN"
+
+   ++_x
+   ++_x
+
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Prebaci na lokaciju:" GET _na_lokaciju PICT "@S40"
 
    READ
 

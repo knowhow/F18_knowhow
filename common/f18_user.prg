@@ -35,7 +35,7 @@ FUNCTION f18_set_user_preferences( params )
    ENDIF
 
    IF !Empty( _user_name )
-      _user_id := GetUserID( _user_name )
+      _user_id := f18_get_user_id( _user_name )
    ENDIF
 
    IF _show_box

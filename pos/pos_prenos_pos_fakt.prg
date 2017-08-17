@@ -30,7 +30,7 @@ STATIC FUNCTION GetPm()
    IF ( gVrstaRs == "S" ) .OR. ( ( cPitanje == "D" ) .OR. Pitanje(, "Postaviti oznaku prodajnog mjesta? (D/N)", "N" ) == "D" )
       Box(, 1, 30 )
       SET CURSOR ON
-      @ m_x + 1, m_Y + 2 SAY "Oznaka prodajnog mjesta:" GET cPm
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Oznaka prodajnog mjesta:" GET cPm
       READ
       BoxC()
    ENDIF
@@ -91,9 +91,9 @@ FUNCTION Stanje2Fakt()
    SET CURSOR ON
 
    Box( "#PRENOS STANJA ROBE POS->FAKT", 5, 70 )
-   @ m_x + 2, m_y + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. P_Kase( @cIdPos, 2, 25 )
-   @ m_x + 3, m_y + 2 SAY "Partner/dost.vozilo " GET cIdPartnG PICT "@!" VALID Empty( cIdPartnG ) .OR. p_partner( @cIdPartnG, 3, 28 )
-   @ m_x + 4, m_y + 2 SAY "Stanje robe na dan" GET dDatDo
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. P_Kase( @cIdPos, 2, 25 )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Partner/dost.vozilo " GET cIdPartnG PICT "@!" VALID Empty( cIdPartnG ) .OR. p_partner( @cIdPartnG, 3, 28 )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Stanje robe na dan" GET dDatDo
    READ
    ESC_BCR
    BoxC()
@@ -204,8 +204,8 @@ FUNCTION Stanje2Fakt()
 
    cLokacija := PadR( "A:\", 40 )
    Box( "#DEFINISANJE LOKACIJE ZA PRENOS DATOTEKE TOPSFAKT", 5, 70 )
-   @ m_x + 2, m_y + 2 SAY "Datoteka TOPSFAKT je izgenerisana. Broj stavki:" + Str( nRbr, 4 )
-   @ m_x + 4, m_y + 2 SAY "Lokacija za prenos je:" GET cLokacija
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datoteka TOPSFAKT je izgenerisana. Broj stavki:" + Str( nRbr, 4 )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Lokacija za prenos je:" GET cLokacija
    READ
    IF LastKey() <> K_ESC
       SAVE SCREEN TO cS

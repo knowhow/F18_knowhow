@@ -23,9 +23,9 @@ FUNCTION PrometVPl()
    SET CURSOR ON
    Box(, 3, 60 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "Prod.mjesto    :  "  GET  cIdPos  VALID Empty( cIdPos ) .OR. P_Kase( @cIdPos ) PICT "@!"
-   @ m_x + 2, m_y + 2 SAY "Datumski period:" GET dDatOd
-   @ m_x + 2, Col() + 2 SAY "-" GET dDatDo
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prod.mjesto    :  "  GET  cIdPos  VALID Empty( cIdPos ) .OR. P_Kase( @cIdPos ) PICT "@!"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datumski period:" GET dDatOd
+   @ box_x_koord() + 2, Col() + 2 SAY "-" GET dDatDo
    READ
    BoxC()
 
@@ -52,7 +52,7 @@ FUNCTION PrometVPl()
    // -- stampaj izvjestaj
    START PRINT CRET
 
-   ZagFirma()
+   //ZagFirma()
 
    IF gVrstaRS == "S"
       P_INI  ; P_10CPI
@@ -80,4 +80,3 @@ FUNCTION PrometVPl()
 
    ENDPRINT
    CLOSERET
-   // }

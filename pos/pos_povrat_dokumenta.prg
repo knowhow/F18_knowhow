@@ -157,10 +157,10 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
 
    IF nCount > 0
       log_write( "F18_DOK_OPER, povrat dokumenta u pripremu: " + ;
-             ALLTRIM( gIdPos ) + "-" + VD_RN + "-" + ALLTRIM( cSt_rn ) + " " + DTOC( dSt_date), 2 )
+             ALLTRIM( gIdPos ) + "-" + POS_VD_RACUN + "-" + ALLTRIM( cSt_rn ) + " " + DTOC( dSt_date), 2 )
    ENDIF
 
-   pos_brisi_dokument( gIdPos, VD_RN, dSt_date, cSt_rn )
+   pos_brisi_dokument( gIdPos, POS_VD_RACUN, dSt_date, cSt_rn )
 
    SELECT ( nTArea )
 
@@ -174,9 +174,9 @@ STATIC FUNCTION odaberi_opciju_povrata_dokumenta()
    LOCAL _ch := "1"
 
    Box(, 3, 50 )
-   @ m_x + 1, m_y + 2 SAY8 "Priprema nije prazna, šta dalje ? "
-   @ m_x + 2, m_y + 2 SAY " (1) brisati pripremu  "
-   @ m_x + 3, m_y + 2 SAY8 " (2) spojiti na postojeći dokument " GET _ch VALID _ch $ "12"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Priprema nije prazna, šta dalje ? "
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY " (1) brisati pripremu  "
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 " (2) spojiti na postojeći dokument " GET _ch VALID _ch $ "12"
    READ
    BoxC()
 

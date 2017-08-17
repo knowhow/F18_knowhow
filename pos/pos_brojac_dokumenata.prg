@@ -63,8 +63,8 @@ FUNCTION pos_set_param_broj_dokumenta()
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Dokument:" GET _id_pos
-   @ m_x + 1, Col() + 1 SAY "-" GET _tip_dok
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Dokument:" GET _id_pos
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET _tip_dok
 
    READ
 
@@ -77,7 +77,7 @@ FUNCTION pos_set_param_broj_dokumenta()
    nBrojDokumenta := fetch_metric( cPosBrojacParam, nil, nBrojDokumenta )
    _broj_old := nBrojDokumenta
 
-   @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET nBrojDokumenta PICT "999999"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Zadnji broj dokumenta:" GET nBrojDokumenta PICT "999999"
 
    READ
 

@@ -24,7 +24,7 @@ FUNCTION pos_pregled_racuna( lAdmin )
    o_pos_tables()
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY8 "Samo današnji ? (D/N)" GET _danas VALID _danas $ "DN" PICT "!@"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Samo današnji ? (D/N)" GET _danas VALID _danas $ "DN" PICT "!@"
    READ
    BoxC()
 
@@ -227,7 +227,7 @@ STATIC FUNCTION lista_racuna_key_handler( nCh )
       nFisc_no := pos_doks->fisc_rn
 
       Box(, 1, 40 )
-      @ m_x + 1, m_y + 2 SAY8 "Broj fiskalnog računa: " GET nFisc_no
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Broj fiskalnog računa: " GET nFisc_no
       READ
       BoxC()
 

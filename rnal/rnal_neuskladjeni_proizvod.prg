@@ -564,7 +564,7 @@ METHOD RNALDamageDocument:generate_rnal_document()
    _rec[ "doc_sh_des" ] := "NP na osnovu: " + AllTrim( docno_str( oRow:FieldGet( oRow:FieldPos( "doc_no" ) ) ) ) ;
       + ", " + hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_sh_des" ) ) )
    _rec[ "doc_desc" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_desc" ) ) )
-   _rec[ "operater_i" ] := GetUserID( f18_user() )
+   _rec[ "operater_i" ] := f18_get_user_id( f18_user() )
    _rec[ "cust_id" ] := oRow:FieldGet( oRow:FieldPos( "cust_id" ) )
    _rec[ "cont_add_d" ] := oRow:FieldGet( oRow:FieldPos( "cont_add_d" ) )
    _rec[ "cont_id" ] := oRow:FieldGet( oRow:FieldPos( "cont_id" ) )

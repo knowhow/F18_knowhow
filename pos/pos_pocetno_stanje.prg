@@ -67,17 +67,17 @@ STATIC FUNCTION _get_vars( params )
 
    SET CURSOR ON
 
-   @ m_x + _x, m_y + 2 SAY "Parametri prenosa u novu godinu" COLOR "BG+/B"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Parametri prenosa u novu godinu" COLOR "BG+/B"
 
    _x += 2
-   @ m_x + _x, m_y + 2 SAY "pos ID" GET _id_pos VALID !Empty( _id_pos )
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "pos ID" GET _id_pos VALID !Empty( _id_pos )
 
    _x += 2
-   @ m_x + _x, m_y + 2 SAY "Datum prenosa od:" GET _dat_od VALID !Empty( _dat_od )
-   @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do VALID !Empty( _dat_do )
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Datum prenosa od:" GET _dat_od VALID !Empty( _dat_od )
+   @ box_x_koord() + _x, Col() + 1 SAY "do:" GET _dat_do VALID !Empty( _dat_do )
 
    _x += 2
-   @ m_x + _x, m_y + 2 SAY "Datum dokumenta pocetnog stanja:" GET _dat_ps VALID !Empty( _dat_ps )
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Datum dokumenta pocetnog stanja:" GET _dat_ps VALID !Empty( _dat_ps )
 
    READ
 

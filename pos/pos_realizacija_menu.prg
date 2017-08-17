@@ -25,13 +25,13 @@ FUNCTION pos_menu_realizacija()
    AAdd( opc, "3. radnici" )
    AAdd( opcexe, {|| pos_realizacija_radnik( .F. ) } )
 
-#ifdef DEPR
-   AAdd( opc, "4. dijelovi objekta " )
-   AAdd( opcexe, {|| realizacija_dio_objekta() } )
-#else
+// #ifdef DEPR
+// AAdd( opc, "4. dijelovi objekta " )
+// AAdd( opcexe, {|| realizacija_dio_objekta() } )
+// #else
    AAdd( opc, "------ " )
-   AAdd( opcexe, nil )
-#endif
+   AAdd( opcexe, NIL )
+// #endif
 
    AAdd( opc, "5. realizacija po K1" )
    AAdd( opcexe, {|| realizacija_kase( .F.,,, "2" ) } )

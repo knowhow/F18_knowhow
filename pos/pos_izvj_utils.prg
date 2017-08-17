@@ -12,11 +12,10 @@
 #include "f18.ch"
 
 
+
 // ----------------------------------------------------
-// zaglavlje firme treba uzeti iz parametara firme
-// ----------------------------------------------------
-FUNCTION ZagFirma()
-   RETURN
+//FUNCTION ZagFirma()
+//   RETURN
 
 
 
@@ -75,7 +74,8 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
 
    MsgO( "formiram pomocnu tabelu izvjestaja..." )
 
-   SEEK cIdVd + DToS( dDatum0 )
+   //SEEK cIdVd + DToS( dDatum0 )
+   seek_pos_doks_2( cIdVd, dDatum0 )
 
    DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
 
@@ -84,8 +84,9 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
          LOOP
       ENDIF
 
-      SELECT pos
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      //SELECT pos
+      //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
       DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
@@ -125,7 +126,7 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
 
          SELECT pom
          GO TOP
-         SEEK pos_doks->IdPos + pos_doks->IdRadnik + pos_doks->IdVrsteP + pos->IdOdj + pos->IdRoba + pos->IdCijena
+         SEEK pos_doks->IdPos + pos_doks->IdRadnik + pos_doks->IdVrsteP + pos->IdOdj + pos->IdRoba + pos->IdCijena // POM
 
          IF !Found()
 

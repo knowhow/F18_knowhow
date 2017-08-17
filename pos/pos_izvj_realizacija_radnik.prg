@@ -118,7 +118,7 @@ FUNCTION pos_realizacija_radnik
          STARTPRINT CRET
       ENDIF
 
-      ZagFirma()
+      //ZagFirma()
 
       ?
       IF fPrik $ "PO"
@@ -138,7 +138,7 @@ FUNCTION pos_realizacija_radnik
       ?
    ELSE
       START PRINT CRET
-      ZagFirma()
+      //ZagFirma()
       ?? gP12cpi
       ?
       IF glRetroakt
@@ -171,7 +171,7 @@ FUNCTION pos_realizacija_radnik
    IF !lTekuci
       pos_radnik_izvuci ( VD_PRR )
    ENDIF
-   pos_radnik_izvuci ( VD_RN )
+   pos_radnik_izvuci ( POS_VD_RACUN )
 
    // ispis izvjestaja
    IF fPrik $ "PO"

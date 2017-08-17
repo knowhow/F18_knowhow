@@ -132,11 +132,12 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
          ENDIF
 
          IF ValType( hRecord[ cTmp ] ) == "N"
-            IF  hDbfRec[ "dbf_fields_len" ][ cTmp ][ 1 ] == "I"
-               cTmp2 := Str( hRecord[ cTmp ], 5, 0 )
-            ELSE
+            //IF  hDbfRec[ "dbf_fields_len" ][ cTmp ][ 1 ] == "I"
+               //altd()
+               //cTmp2 := Str( hRecord[ cTmp ], 5, 0 )
+            //ELSE
                cTmp2 := Str( hRecord[ cTmp ], hDbfRec[ "dbf_fields_len" ][ cTmp ][ 2 ], hDbfRec[ "dbf_fields_len" ][ cTmp ][ 3 ] )
-            ENDIF
+            //ENDIF
 
             IF Left( cTmp2, 1 ) == "*"
                cMsg := "err_num_width - field: " + cTmp + "  value:" + AllTrim( Str( hRecord[ cTmp ] ) ) + " / width: " +  AllTrim( Str( hDbfRec[ "dbf_fields_len" ][ cTmp ][ 2 ] ) ) + " : " +  AllTrim( Str( hDbfRec[ "dbf_fields_len" ][ cTmp ][ 3 ] ) )

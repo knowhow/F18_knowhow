@@ -154,10 +154,10 @@ STATIC FUNCTION get_vars( dD_f, dD_t, cId_f, cId_td )
    cId_td := PadR( "10;", 100 )
 
    Box(, 5, 65 )
-   @ m_x + 1, m_y + 2 SAY "Datum od" GET dD_f
-   @ m_x + 1, Col() + 1 SAY "do" GET dD_t
-   @ m_x + 2, m_y + 2 SAY "Firma (prazno-sve):" GET cId_f  PICT "@S20"
-   @ m_x + 3, m_y + 2 SAY "Tip dokumenta (prazno-svi:)" GET cId_td  PICT "@S20"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum od" GET dD_f
+   @ box_x_koord() + 1, Col() + 1 SAY "do" GET dD_t
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma (prazno-sve):" GET cId_f  PICT "@S20"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Tip dokumenta (prazno-svi:)" GET cId_td  PICT "@S20"
    READ
    BoxC()
 

@@ -733,7 +733,7 @@ STATIC FUNCTION s_nal_izdao()
    cPom += "Nalog izdao: "
    cPom += PadC( cOper, 20 )
    cPom += ", stampao: "
-   cPom += PadC( getfullusername( getUserid( f18_user() ) ), 20 )
+   cPom += PadC( getfullusername( f18_get_user_id( f18_user() ) ), 20 )
    cPom += " "
    cPom += "Vrijeme: "
    cPom += PadR( Time(), 5 )

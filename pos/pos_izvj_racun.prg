@@ -57,7 +57,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
       dDatumRn := aVezani[ i, 4 ]
       cBrDok := aVezani[ i, 2 ]
 
-      Seek2( cIdPos + VD_RN + DToS( dDatumRn ) + cBrDok )
+      Seek2( cIdPos + POS_VD_RACUN + DToS( dDatumRn ) + cBrDok )
 
       IF !lPrepis
          cSto := &cPosDB->Sto
@@ -65,7 +65,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
          cSmjena := &cPosDB->Smjena
       ELSE
          SELECT pos_doks
-         Seek2 ( cIdPos + VD_RN + DToS( dDatumRn ) + cBrDok )
+         Seek2 ( cIdPos + POS_VD_RACUN + DToS( dDatumRn ) + cBrDok )
          cSto      := pos_doks->Sto
          cIdRadnik := pos_doks->IdRadnik
          cSmjena   := pos_doks->Smjena
@@ -77,7 +77,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
          gIsPopust := .F.
       ENDIF
 
-      DO WHILE !Eof() .AND. &cPosDB->( IdPos + IdVd + DToS( Datum ) + BrDok ) == ( cIdPos + VD_RN + DToS( dDatumRn ) + cBrDok )
+      DO WHILE !Eof() .AND. &cPosDB->( IdPos + IdVd + DToS( Datum ) + BrDok ) == ( cIdPos + POS_VD_RACUN + DToS( dDatumRn ) + cBrDok )
 
          nIznos += Kolicina * Cijena
 
@@ -122,7 +122,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
    aPorezi := {}
    aRekPor := {}
 
-   DO WHILE !Eof() .AND. ( IdPos + IdVd + DToS( datum ) ) == ( cIdPos + VD_RN + DToS( dDatumRn ) )
+   DO WHILE !Eof() .AND. ( IdPos + IdVd + DToS( datum ) ) == ( cIdPos + POS_VD_RACUN + DToS( dDatumRn ) )
 
       IF AScan( aVezani, {| aVal | aVal[ 2 ] == &cPosDB->brdok } ) == 0
          SKIP
@@ -229,7 +229,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
    ENDDO
 
    seek_pos_db( cPosDb, cIdPos, "42", dDatumRn, cBrDok )
-   DO WHILE !Eof() .AND. &cPosDB->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( cIdPos + VD_RN + DToS( dDatumRn ) + cBrDok )
+   DO WHILE !Eof() .AND. &cPosDB->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( cIdPos + POS_VD_RACUN + DToS( dDatumRn ) + cBrDok )
       REPLACE m1 WITH "S" // odstampano
       SKIP
    ENDDO
@@ -355,8 +355,8 @@ FUNCTION RacHeder( cIdPos, dDatBrDok, cSto, fPrepis, aVezani )
       ENDIF
       nPrev := SELECT ()
       // SELECT poßs_doks
-      // HSEEK (cIdPos+VD_RN+dDatBrDok)
-      seek_pos_doks( cIdPos, VD_RN, dDatBrDok )
+      // HSEEK (cIdPos+POS_VD_RACUN+dDatBrDok)
+      seek_pos_doks( cIdPos, POS_VD_RACUN, dDatBrDok )
       cTime := pos_doks->Vrijeme
       cDat  := DToC ( pos_doks->Datum )
       SELECT ( nPrev )
@@ -404,7 +404,7 @@ FUNCTION seek_pos_db( cPosDb, cIdPos, cIdVD, dDatumRn, cBrDok )
    IF cPosDB == "_POS"
       SELECT &cPosDB
 
-      SEEK cIdPos + cIdVd + DToS( dDatumRn ) + cBrDok
+      SEEK cIdPos + cIdVd + DToS( dDatumRn ) + cBrDok // _POS
       RETURN Found()
    ENDIF
 
@@ -449,7 +449,7 @@ FUNCTION StampaPrep( cIdPos, dDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
    SELECT pos_doks
    SET ORDER TO TAG "1"
 
-   Seek2( cIdPos + VD_RN + dDatBrDok )
+   Seek2( cIdPos + POS_VD_RACUN + dDatBrDok )
 
    nTRk := RecNo()
 
@@ -464,11 +464,14 @@ FUNCTION StampaPrep( cIdPos, dDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
    nNeplaca := 0
 
    FOR nCnt := 1 TO Len( aVezani )
-      SELECT pos_doks
-      SEEK ( aVezani[ nCnt ][ 1 ] + VD_RN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
-      SELECT pos
-      SEEK ( aVezani[ nCnt ][ 1 ] + VD_RN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
-      DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( aVezani[ nCnt ][ 1 ] + VD_RN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
+      //SELECT pos_doks
+      //SEEK ( aVezani[ nCnt ][ 1 ] + POS_VD_RACUN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
+      seek_pos_doks ( aVezani[ nCnt ][ 1 ], POS_VD_RACUN, aVezani[ nCnt ][ 4 ],  aVezani[ nCnt ][ 2 ] )
+
+      //SELECT pos
+      //SEEK ( aVezani[ nCnt ][ 1 ] + POS_VD_RACUN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
+      seek_pos( aVezani[ nCnt ][ 1 ], POS_VD_RACUN, aVezani[ nCnt ][ 4 ],  aVezani[ nCnt ][ 2 ] )
+      DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( aVezani[ nCnt ][ 1 ] + POS_VD_RACUN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
 
 
          // select pom
@@ -512,7 +515,6 @@ FUNCTION StampaPrep( cIdPos, dDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
    IF !gStariObrPor
 
       pos_stampa_racuna_pdv( cIdPos, pos_doks->brdok, .T., pos_doks->idvrstep, pos_doks->datum, aVezani, lViseOdjednom, lOnlyFill )
-
       RETURN .T.
    ENDIF
 
@@ -699,15 +701,15 @@ FUNCTION _sh_rn_info( cBrRn )
 
    MsgBeep( "Formiran je racun broj: " + cBrRN )
 
-   RETURN
+   RETURN .T.
 
 
 
 /* StampaRekap(cIdRadnik, cBrojStola)
  *     Stampa rekapitulacije racuna
- */
 
-FUNCTION StampaRekap( cIdRadnik, cBrojStola, dDatumOd, dDatumDo )
+
+--FUNCTION StampaRekap( cIdRadnik, cBrojStola, dDatumOd, dDatumDo )
 
    LOCAL nRecNoTrenutni
    LOCAL nRecNoNext
@@ -809,7 +811,7 @@ FUNCTION StampaNezakljRN( cIdRadnik, dDatumOd, dDatumDo )
    SET ORDER TO TAG "1"
 
    RETURN
-// }
+
 
 
 FUNCTION SetujZakljuceno()
@@ -845,8 +847,8 @@ FUNCTION SetujZakljuceno()
    MsgBeep( "Setovano ukupno " + AllTrim( Str( nCounter ) ) + " racuna!!!" )
 
    RETURN
-// }
 
+*/
 
 FUNCTION gvars_fill()
 
@@ -857,7 +859,8 @@ FUNCTION gvars_fill()
    // redukcija trake
    add_drntext( "P22", AllTrim( Str( grbReduk ) ) )
 
-   RETURN
+   RETURN .T.
+
 
 FUNCTION firma_params_fill()
 
@@ -867,7 +870,7 @@ FUNCTION firma_params_fill()
    add_drntext( "I04", gFirPM )
    add_drntext( "I05", gFirTel )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -952,9 +955,9 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
 
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK cIdPos + VD_RN + DToS( dDatRn ) + cBrDok
+      SEEK cIdPos + POS_VD_RACUN + DToS( dDatRn ) + cBrDok
 
-      // MsgBeep( _pos->brdok + "," + cIdPos + "," + VD_RN + "," + cBrDok + "," + DTOS( dDatRn ) )
+      // MsgBeep( _pos->brdok + "," + cIdPos + "," + POS_VD_RACUN + "," + cBrDok + "," + DTOS( dDatRn ) )
 
       IF !lPrepis
          cSto := _pos->sto
@@ -967,10 +970,10 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          // nadji parametre kupca
          SELECT dokspf
          SET ORDER TO TAG "1"
-         HSEEK cIdPos + VD_RN + DToS( dDatRn ) + cBrDok
+         HSEEK cIdPos + POS_VD_RACUN + DToS( dDatRn ) + cBrDok
 
          SELECT pos_doks
-         Seek2( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok )
+         Seek2( cIdPos + POS_VD_RACUN + DToS( dDatRn ) + cBrDok )
          cSto := pos_doks->sto
          cIdRadnik := pos_doks->idRadnik
          cSmjena := pos_doks->smjena
@@ -984,11 +987,9 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
       HSEEK cIdRadnik
       cRdnkNaz := osob->naz
 
-      SELECT vrstep
-      SET ORDER TO TAG "ID"
-      HSEEK cVrstaP
+      IF !select_o_vrstep( cVrstaP )
 
-      IF !Found()
+      //IF !Found()
          cNazVrstaP := "GOTOVINA"
       ELSE
          cNazVrstaP := AllTrim( vrstep->naz )
@@ -1000,8 +1001,8 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          SELECT _pos_pripr
       ENDIF
 
-      DO WHILE !Eof() .AND. iif( lPrepis == .T., pos->( idpos + idvd + DToS( datum ) + brdok ) == ( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok ), ;
-            _pos->( idpos + idvd + DToS( datum ) + brdok ) == ( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok ) )
+      DO WHILE !Eof() .AND. iif( lPrepis == .T., pos->( idpos + idvd + DToS( datum ) + brdok ) == ( cIdPos + POS_VD_RACUN + DToS( dDatRn ) + cBrDok ), ;
+            _pos->( idpos + idvd + DToS( datum ) + brdok ) == ( cIdPos + POS_VD_RACUN + DToS( dDatRn ) + cBrDok ) )
 
          nCjenBPDV := 0
          nCjenPDV := 0
@@ -1137,7 +1138,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
       add_drntext( "D01", "P" )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

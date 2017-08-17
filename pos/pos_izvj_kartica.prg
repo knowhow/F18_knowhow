@@ -56,17 +56,17 @@ FUNCTION pos_kartica_artikla()
    aNiz := {}
 
    IF gVrstaRS <> "K"
-      @ m_x + 1, m_y + 2 SAY "Prod.mjesto (prazno-svi) "  GET  cIdPos  VALID Empty( cIdPos ) .OR. P_Kase( cIdPos ) PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prod.mjesto (prazno-svi) "  GET  cIdPos  VALID Empty( cIdPos ) .OR. P_Kase( cIdPos ) PICT "@!"
    ENDIF
 
    READ
 
-   @ m_x + 5, m_y + 6 SAY "Sifra artikla (prazno-svi)" GET cRoba VALID Empty( cRoba ) .OR. P_Roba( @cRoba ) PICT "@!"
-   @ m_x + 7, m_y + 2 SAY "za period " GET dDatum0
-   @ m_x + 7, Col() + 2 SAY "do " GET dDatum1
-   @ m_x + 9, m_y + 2 SAY "sa pocetnim stanjem D/N ?" GET cPocSt VALID cpocst $ "DN" PICT "@!"
-   @ m_x + 10, m_y + 2 SAY "Prikaz partnera D/N ?" GET cPPar VALID cPPar $ "DN" PICT "@!"
-   @ m_x + 11, m_y + 2 SAY "Siroki papir    D/N ?" GET cSiroki VALID cSiroki $ "DN" PICT "@!"
+   @ box_x_koord() + 5, box_y_koord() + 6 SAY "Sifra artikla (prazno-svi)" GET cRoba VALID Empty( cRoba ) .OR. P_Roba( @cRoba ) PICT "@!"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "za period " GET dDatum0
+   @ box_x_koord() + 7, Col() + 2 SAY "do " GET dDatum1
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "sa pocetnim stanjem D/N ?" GET cPocSt VALID cpocst $ "DN" PICT "@!"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Prikaz partnera D/N ?" GET cPPar VALID cPPar $ "DN" PICT "@!"
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Siroki papir    D/N ?" GET cSiroki VALID cSiroki $ "DN" PICT "@!"
 
    READ
 
@@ -113,7 +113,7 @@ FUNCTION pos_kartica_artikla()
 
    START PRINT CRET
 
-   ZagFirma()
+   //ZagFirma()
 
    ? PadC( "KARTICE ARTIKALA NA DAN " + FormDat1( gDatum ), nSir )
    ? PadC( "-----------------------------------", nSir )

@@ -30,7 +30,7 @@ FUNCTION PrepisKumPr()
       cPicKol := "9999.999"
    ENDIF
 
-   ZagFirma()
+   //ZagFirma()
 
    IF Empty( pos_doks->IdPos )
       ? PadC( "KUMULATIV PROMETA " + AllTrim( pos_doks->BrDok ), nSir )
@@ -67,8 +67,9 @@ FUNCTION PrepisKumPr()
       ? cLM + "       Placeno:", "NE"
    ENDIF
 
-   SELECT POS
-   HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+   //SELECT POS
+   //HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+   seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
    ? cLM
    IF gVrstaRS == "S"

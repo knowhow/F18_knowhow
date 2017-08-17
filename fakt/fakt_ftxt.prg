@@ -432,7 +432,7 @@ FUNCTION fakt_ftxt_sub_renumeracija_pripreme( cTxt2 )
 
       Box(, 9, 75 )
 
-      @ m_x + 1, m_Y + 1  SAY "Uzorak teksta (<c-W> za kraj unosa teksta):"  GET cId PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 1  SAY "Uzorak teksta (<c-W> za kraj unosa teksta):"  GET cId PICT "@!"
       READ
 
       IF LastKey() <> K_ESC .AND. !Empty( cId )
@@ -466,7 +466,7 @@ FUNCTION fakt_ftxt_sub_renumeracija_pripreme( cTxt2 )
       SetColor( f18_color_invert()  )
 
       PRIVATE fUMemu := .T.
-      cTxt2 := MemoEdit( cTxt2, m_x + 3, m_y + 1, m_x + 9, m_y + 76 )
+      cTxt2 := MemoEdit( cTxt2, box_x_koord() + 3, box_y_koord() + 1, box_x_koord() + 9, box_y_koord() + 76 )
 
       fUMemu := NIL
 
@@ -564,7 +564,7 @@ FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt )
 
 FUNCTION f18_user_name()
 
-   RETURN AllTrim( GetFullUserName( GetUserID() ) )
+   RETURN AllTrim( GetFullUserName( f18_get_user_id() ) )
 
 
 

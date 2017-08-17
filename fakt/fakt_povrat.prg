@@ -68,7 +68,8 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
 
    IF !seek_fakt( cIdFirma, cIdTipDok, cBrDok )
       // IF Eof()
-      MsgBeep( "Traženi dokument ne postoji ažuriran u bazi !" )
+      altd()
+      MsgBeep( "Traženi dokument: " + cIdFirma  + "-" + cIdTipDok + "-" + cBrDok + " ne postoji ažuriran u fakt_fakt !?" )
    ENDIF
 
    IF ( fakt->m1 == "X" )
@@ -196,7 +197,6 @@ STATIC FUNCTION kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cBrDok 
       SELECT fakt
 
       hRec := dbf_get_rec()
-
       SELECT fakt_pripr
       APPEND BLANK
 

@@ -72,7 +72,7 @@ STATIC FUNCTION _get_t_pars( params )
    _tmp := g_t_pars_opis( "N13" )
    params[ "spec_operater" ] := _tmp
    // operater koji printa
-   _tmp := getfullusername( getUserid( f18_user() ) )
+   _tmp := getfullusername( f18_get_user_id( f18_user() ) )
    params[ "spec_print_operater" ] := _tmp
    // vrijeme printanja
    _tmp := PadR( Time(), 5 )

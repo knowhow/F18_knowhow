@@ -310,7 +310,8 @@ FUNCTION set_a_fakt_doks_doks2( cTabela, cAlias, nWa )
    AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    hItem[ "sql_order" ] := "idfirma, idtipdok, brdok"
-   hItem[ "blacklisted" ] := { "dok_veza", "brisano", "obradjeno", "korisnik" } // polja obradjen i korisnik su autogenerisana na serverskoj strani
+   hItem[ "blacklisted" ] := { "dok_veza", "brisano", "obradjeno", "korisnik", "sifra" } // polja obradjen i korisnik su autogenerisana na serverskoj strani
+   // polje sifra izbaciti
 
    f18_dbfs_add( cTable, @hItem )
 

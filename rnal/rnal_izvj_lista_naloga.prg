@@ -26,7 +26,7 @@ FUNCTION lst_tek_dan()
    O_CUSTOMS
    O_CONTACTS
 
-   nOperater := GetUserID( f18_user() )
+   nOperater := f18_get_user_id( f18_user() )
 
    Box( , 1, 60 )
    @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
@@ -160,7 +160,7 @@ FUNCTION lst_ch_date()
    LOCAL dDate := danasnji_datum()
    LOCAL nOperater
 
-   nOperater := GetUserID( f18_user() )
+   nOperater := f18_get_user_id( f18_user() )
 
    Box(, 3, 60 )
 
@@ -255,7 +255,7 @@ FUNCTION lst_real_tek_dan()
    O_CUSTOMS
    O_CONTACTS
 
-   nOperater := GetUserID( f18_user() )
+   nOperater := f18_get_user_id( f18_user() )
 
    Box(, 3, 60 )
    @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
@@ -348,7 +348,7 @@ FUNCTION lst_vrok_tek_dan()
    LOCAL aLog
    LOCAL cPrinter
 
-   nOperater := GetUserID( f18_user() )
+   nOperater := f18_get_user_id( f18_user() )
 
    Box(, 5, 65 )
 

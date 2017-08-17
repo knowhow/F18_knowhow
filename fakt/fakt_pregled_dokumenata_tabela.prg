@@ -173,7 +173,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
       // nRet := print_porezna_faktura( lOpcine )
 
-      fakt_stamp_txt_dokumenta( fakt_doks_pregled->IdFirma, fakt_doks_pregled->IdTipdok, fakt_doks_pregled->Brdok )
+      fakt_stamp_txt_dokumenta( fakt_doks_pregled->IdFirma, fakt_doks_pregled->IdTipdok, fakt_doks_pregled->brdok )
       lRefresh := .T.
       lReload := .T.
 

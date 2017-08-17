@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION GetUserID()
+FUNCTION f18_get_user_id()
 
    LOCAL cTmpQry
    LOCAL cTable := "public.usr" // view
@@ -121,14 +121,14 @@ FUNCTION GetFullUserName( nUser_id )
 
 
 
-FUNCTION choose_f18_user_from_list( oper_id )
+FUNCTION choose_f18_user_from_list( nOperaterId )
 
    LOCAL _list
 
-   oper_id := 0
+   nOperaterId := 0
 
    _list := get_list_f18_users()
-   oper_id := izaberi_f18_korisnika( _list )
+   nOperaterId := izaberi_f18_korisnika( _list )
 
    RETURN .T.
 

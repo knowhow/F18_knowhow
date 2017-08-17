@@ -85,7 +85,7 @@ STATIC FUNCTION procitaj_parametre_naloga( params, groups_total )
 
    _tmp := g_t_pars_opis( "N13" )
    params[ "nalog_operater" ] := _tmp
-   _tmp := getfullusername( getUserid( f18_user() ) )
+   _tmp := getfullusername( f18_get_user_id( f18_user() ) )
    params[ "nalog_print_operater" ] := _tmp
    _tmp := PadR( Time(), 5 )
    params[ "nalog_print_vrijeme" ] := _tmp

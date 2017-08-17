@@ -307,7 +307,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
 FUNCTION korisnik_postavke_fiskalni_uredjaj()
 
    LOCAL _cUserName := my_user()
-   LOCAL _user_id := GetUserId( _cUserName )
+   LOCAL _user_id := f18_get_user_id( _cUserName )
    LOCAL nDeviceId := 1
    LOCAL _max_id := 10
    LOCAL _min_id := 1

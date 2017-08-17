@@ -32,7 +32,7 @@ FUNCTION rnal_unos_osnovnih_podataka_naloga( lNew )
 
    l_new_doc := lNew
 
-   _oper_id := GetUserID( f18_user() )
+   _oper_id := f18_get_user_id( f18_user() )
 
    SELECT _docs
 

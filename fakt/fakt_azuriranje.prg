@@ -405,7 +405,7 @@ FUNCTION get_fakt_doks_data( cIdFirma, cIdTipDok, cBrDok )
    hFaktData[ "m1" ] := field->m1
    hFaktData[ "idpartner" ] := field->idpartner
    hFaktData[ "partner" ] := naziv_partnera_za_tabelu_doks( field->idpartner )
-   hFaktData[ "oper_id" ] := getUserId()
+   hFaktData[ "oper_id" ] := f18_get_user_id()
    hFaktData[ "sifra" ] := Space( 6 )
    hFaktData[ "brisano" ] := Space( 1 )
    hFaktData[ "idvrstep" ] := field->idvrstep

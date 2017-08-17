@@ -564,7 +564,7 @@ FUNCTION fakt_ftxt_add_text_by_id( cTxt, cIdFaktTxt )
 
 FUNCTION f18_user_name()
 
-   RETURN AllTrim( GetFullUserName( GetUserID() ) )
+   RETURN AllTrim( GetFullUserName( f18_get_user_id() ) )
 
 
 

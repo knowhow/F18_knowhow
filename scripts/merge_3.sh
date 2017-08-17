@@ -9,7 +9,7 @@ echo "CHANGELOG.md -> CHANGELOG_MERGE.md (from origin/3 branch)"
 
 cp CHANGELOG.md CHANGELOG_MERGE.md
 
-for f in VERSION VERSION_E VERSION_X script/commit.sh include/f18.ch CHANGELOG.md
+for f in VERSION VERSION_E VERSION_X script/commit.sh include/f18_ver.ch CHANGELOG.md
 do
       echo "git checkout origin/3-std -- $f"
       git checkout origin/3-std -- $f

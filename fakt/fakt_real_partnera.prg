@@ -1,11 +1,14 @@
 #include "f18.ch"
 
-FUNCTION fakt_real_partnera()
+MEMVAR m, gnLMarg
+
+FUNCTION fakt_real_kumulativno_po_partnerima()
 
    LOCAL cFilter
    LOCAL cFilterBrFaktDok, cFilterSifraKupca, cFilterTipDok
    LOCAL cUslovTipDok, cUslovIdPartner, cUslovOpcina
    LOCAL bZagl
+   LOCAL GetList := {}
 
    //o_fakt_doks_dbf()
    // o_partner()
@@ -124,12 +127,13 @@ FUNCTION fakt_real_partnera()
 
 
    find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "6" ) // "6","IdFirma+idpartner+idtipdok"
+   altd()
 
    nC := 0
    nCol1 := 10
    nTIznos := nTRabat := 0
    PRIVATE cRezerv := " "
-   DO WHILE !Eof() .AND. IdFirma == cIdFirma
+   DO WHILE !Eof() .AND. field->IdFirma == cIdFirma
 
       IF !Empty( cUslovIdPartner )
          IF !( fakt_doks->partner = cUslovIdPartner )
@@ -140,7 +144,7 @@ FUNCTION fakt_real_partnera()
 
       nIznos := 0
       nRabat := 0
-      cIdPartner := idpartner
+      cIdPartner := field->idpartner
       select_o_partner( cIdPartner )
       SELECT fakt_doks
 
@@ -152,7 +156,7 @@ FUNCTION fakt_real_partnera()
          ENDIF
       ENDIF
 
-      DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. idpartner == cIdpartner
+      DO WHILE !Eof() .AND. IdFirma == cIdFirma .AND. field->idpartner == cIdpartner
          IF DinDem == Left( ValBazna(), 3 )
             nIznos += Round( iznos, fakt_zaokruzenje() )
             nRabat += Round( Rabat, fakt_zaokruzenje() )
@@ -210,7 +214,7 @@ FUNCTION fakt_zagl_real_partnera( cIdFirma, nStrana, dDatOd, dDatDo, cUslovTipDo
    ?
    SET CENTURY ON
    P_12CPI
-   ?U Space( gnLMarg ); ??U "FAKT: Štampa prometa partnera na dan:", Date(), Space( 8 ), "Strana:", Str( ++nStrana, 3 )
+   ?U Space( gnLMarg ); ??U "FAKT: Realizacija kumulativno po partnerima na dan:", Date(), Space( 8 ), "Strana:", Str( ++nStrana, 3 )
    ?U Space( gnLMarg ); ?? "      period:", dDatOd, "-", dDatDo
    IF cUslovTipDok <> "10;"
       ? Space( gnLMarg ); ??U "-izvještaj za tipove dokumenata :", Trim( cUslovTipDok )

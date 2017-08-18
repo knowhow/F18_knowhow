@@ -36,7 +36,7 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
    ENDIF
 
    // o_fakt_dbf()
-   o_fakt_pripr()
+   select_o_fakt_pripr()
    // o_fakt_doks2_dbf()
    // o_fakt_doks_dbf()
 
@@ -171,7 +171,8 @@ STATIC FUNCTION resetuj_markere_generisanog_dokumenta( cIdFirma, cIdTipDok, cBrD
 
    LOCAL hRec
 
-   SELECT fakt_pripr
+   select_o_fakt_pripr()
+   GO TOP
    SET ORDER TO TAG "1"
    HSEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr
 
@@ -192,6 +193,8 @@ STATIC FUNCTION kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cBrDok 
 
    LOCAL hRec
 
+   select_o_fakt_pripr()
+
    SELECT fakt // ranije otvoren sa seek_fakt
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdTipDok == field->idtipdok .AND. cBrDok == field->brdok
 
@@ -200,7 +203,6 @@ STATIC FUNCTION kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cBrDok 
       hRec := dbf_get_rec()
       SELECT fakt_pripr
       APPEND BLANK
-
       dbf_update_rec( hRec )
 
       SELECT fakt

@@ -58,7 +58,7 @@ FUNCTION fakt_labeliranje_barkodova()
 
    IF lDelphi
       print_delphi_label( aStampati )
-   //ELSE
+      // ELSE
       // stampanje deklaracija...
       // label_2_deklar(aStampati)
    ENDIF
@@ -173,40 +173,40 @@ FUNCTION label_params()
 
    Box(, _box_x, _box_y )
 
-   @ m_x + _x, m_y + 2 SAY "*** Barkod stampa, podesenja"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "*** Barkod stampa, podesenja"
 
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Prikaz broja dokumenta na naljepnici    (D/N)" GET _br_dok VALID _br_dok $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Prikaz broja dokumenta na naljepnici    (D/N)" GET _br_dok VALID _br_dok $ "DN" PICT "@!"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Prikaz jedinice mjere kod opisa artikla (D/N)" GET _jmj VALID _jmj $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Prikaz jedinice mjere kod opisa artikla (D/N)" GET _jmj VALID _jmj $ "DN" PICT "@!"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Barkod prefix" GET _prefix
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Barkod prefix" GET _prefix
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Automatsko generisanje barkod-a (D/N)" GET _auto_gen VALID _auto_gen $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Automatsko generisanje barkod-a (D/N)" GET _auto_gen VALID _auto_gen $ "DN" PICT "@!"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Automatsko generisanje, auto formula:" GET _auto_formula
-   @ m_x + _x, Col() + 1 SAY "EAN:" GET _ean_code
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Automatsko generisanje, auto formula:" GET _auto_formula
+   @ box_x_koord() + _x, Col() + 1 SAY "EAN:" GET _ean_code
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Koristenje tezinskog barkod-a (D/N)" GET _tb VALID _tb $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Koristenje tezinskog barkod-a (D/N)" GET _tb VALID _tb $ "DN" PICT "@!"
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Prefiks tezinskog barkod-a" GET _tb_prefix PICT "@S30"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Prefiks tezinskog barkod-a" GET _tb_prefix PICT "@S30"
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Tezinski: duzina barkod-a" GET _bk_len PICT "99"
-   @ m_x + _x, Col() + 2 SAY "duzina tezine:" GET _tez_len PICT "99"
-   @ m_x + _x, Col() + 2 SAY "djelitelj:" GET _tez_div PICT "99999999"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Tezinski: duzina barkod-a" GET _bk_len PICT "99"
+   @ box_x_koord() + _x, Col() + 2 SAY "duzina tezine:" GET _tez_len PICT "99"
+   @ box_x_koord() + _x, Col() + 2 SAY "djelitelj:" GET _tez_div PICT "99999999"
 
    READ
 
@@ -250,6 +250,7 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
    LOCAL lBKBrDok := .F.
    LOCAL lBKJmj := .F.
    LOCAL cBrDok
+   LOCAL GetList := {}
 
    IF modul == NIL
       modul := "FAKT"
@@ -276,15 +277,15 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
 
    Box(, 4, 75 )
 
-   @ m_x + 0, m_y + 25 SAY " LABELIRANJE BAR KODOVA "
+   @ box_x_koord() + 0, box_y_koord() + 25 SAY " LABELIRANJE BAR KODOVA "
 
-   @ m_x + 2, m_y + 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva >= 0 PICT "99"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva >= 0 PICT "99"
 
    IF !lBKBrDok
-      @ m_x + 3, m_y + 2 SAY "Linija 1  :" GET cLinija1
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Linija 1  :" GET cLinija1
    ENDIF
 
-   @ m_x + 4, m_y + 2 SAY "Linija 2  :" GET cLinija2
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Linija 2  :" GET cLinija2
 
    READ
 
@@ -314,7 +315,7 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
 
       select_o_roba( FAKT_PRIPR->idroba )
 
-      IF Empty( field->barkod ) .AND. fetch_metric( "labeliranje_barkod_automatsko_generisanje", NIL, "N" )
+      IF Empty( field->barkod ) .AND. ( fetch_metric( "labeliranje_barkod_automatsko_generisanje", NIL, "N" ) == "D" )
 
          PRIVATE cPom := AllTrim( fetch_metric( "labeliranje_barkod_auto_formula", NIL, "" ) )
 
@@ -327,10 +328,13 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
 
          PushWA()
 
-         SET ORDER TO TAG "BARKOD"
-         SEEK cIBK
 
-         IF Found()
+         IF find_roba_by_barkod( cIBK )
+
+            // SET ORDER TO TAG "BARKOD"
+            // SEEK cIBK
+
+            // IF Found()
             PopWa()
             MsgBeep( "Prilikom formiranja internog barkoda##vec postoji kod: " + cIBK + "??##" + "Moracete za artikal " + fakt_pripr->idroba + " sami zadati jedinstveni barkod !" )
             REPLACE barkod WITH "????"

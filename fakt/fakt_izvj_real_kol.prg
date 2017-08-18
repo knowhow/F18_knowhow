@@ -21,6 +21,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    LOCAL lRelations := .F.
    LOCAL cDDokOtpr := "D"
    LOCAL GetList := {}
+   LOCAL cFilter
+   LOCAL cIdFirma
 
    PRIVATE cPrikaz
    PRIVATE cSection := "N"
@@ -34,15 +36,15 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    PRIVATE cSvediJmj := "N"
 
    // da li se koriste relacije
-   //o_fakt_dbf()
-   //SELECT fakt
+   // o_fakt_dbf()
+   // SELECT fakt
 
-   //IF fakt->( FieldPos( "idrelac" ) ) <> 0
-      lRelations := .T.
-   //ENDIF
+   // IF fakt->( FieldPos( "idrelac" ) ) <> 0
+   lRelations := .T.
+   // ENDIF
 
-   _o_tables()
-   o_ops()
+   // _o_tables()
+   // o_ops()
 
    // partneri po grupama
    lGroup := p_group()
@@ -97,10 +99,10 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Uslov po opcini (prazno sve) "  GET cOpcina PICT "@S30"
 
 
-    //  IF lRelations == .T.
-         ++nX
-         @ box_x_koord() + nX, box_y_koord() + 2 SAY "Relacija (prazno sve):" GET cRelation
-    //  ENDIF
+      // IF lRelations == .T.
+      ++nX
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Relacija (prazno sve):" GET cRelation
+      // ENDIF
 
       IF lGroup
          PRIVATE cPGroup := Space( 3 )
@@ -160,12 +162,12 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       ENDIF
    ENDIF
 
-   _o_tables()
+   // _o_tables()
 
 
-   SELECT fakt
+   // SELECT fakt
 
-   PRIVATE cFilter := ".t."
+   cFilter := ".t."
 
    IF ( !Empty( dDatOd ) .OR. !Empty( dDatDo ) )
 
@@ -174,9 +176,9 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       ENDIF
    ENDIF
 
-   IF ( !Empty( cIdFirma ) )
-      cFilter += " .and. IdFirma=" + dbf_quote( cIdFirma )
-   ENDIF
+   // IF ( !Empty( cIdFirma ) )
+   // cFilter += " .and. IdFirma=" + dbf_quote( cIdFirma )
+   // ENDIF
 
    IF ( !Empty( qqPartn ) )
       cFilter += " .and. IdPartner=" + dbf_quote( qqPartn )
@@ -198,11 +200,19 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       cFilter := SubStr( cFilter, 9 )
    ENDIF
 
+
+   IF cPrikaz == "1"
+      find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "6" ) // hIndexes[ "6" ] := "idfirma+idpartner+idroba+idtipdok+dtos(datdok)"
+   ELSE
+      find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "3" ) // idroba, datdok
+   ENDIF
+
    IF ( cFilter == ".t." )
       SET FILTER TO
    ELSE
       SET FILTER TO &cFilter
    ENDIF
+   GO TOP
 
    EOF CRET
 
@@ -221,7 +231,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    cIdPartner := idPartner
 
-   zagl_sp_prod()
+   fakt_zagl_specif_prodaje()
 
    IF cPrikaz == "1"
 
@@ -255,7 +265,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          nKolicina := 0
          cIdPartner := IdPartner
 
-         DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. idpartner == cIdpartner
+         DO WHILE !Eof() .AND. IdFirma == cIdFirma .AND. idpartner == cIdpartner
 
             IF cDDokOtpr == "O"
                seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
@@ -293,7 +303,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
          IF PRow() > 61
             FF
-            zagl_sp_prod()
+            fakt_zagl_specif_prodaje()
          ENDIF
 
          select_o_partner( cIdPartner )
@@ -313,7 +323,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       ENDDO
    ELSE
 
-      seek_fakt_3( cIdFirma )
+
       nC := 0
       nCol1 := 10
       nTKolicina := 0
@@ -327,7 +337,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       Box(, 3, 60 )
 
       SET DEVICE TO SCREEN
-      @ 1 + box_x_koord(), 2 + box_y_koord() SAY "formiranje izvjestaja u toku..."
+      @ 1 + box_x_koord(), 2 + box_y_koord() SAY8 "formiranje izvještaja u toku..."
       nMX := 3 + box_x_koord()
       nMY := 2 + box_y_koord()
       SET DEVICE TO PRINTER
@@ -447,7 +457,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
          IF PRow() > 61
             FF
-            zagl_sp_prod()
+            fakt_zagl_specif_prodaje()
          ENDIF
 
          select_o_roba( cIdRoba )
@@ -484,7 +494,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    IF PRow() > 59
       FF
-      zagl_sp_prod()
+      fakt_zagl_specif_prodaje()
    ENDIF
 
    ? Space( gnLMarg )
@@ -518,10 +528,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    RETURN .T.
 
 
-// ---------------------------------------------
-// zaglavlje izvjestaja specifikacija prodaje
-// ---------------------------------------------
-STATIC FUNCTION zagl_sp_prod()
+
+STATIC FUNCTION fakt_zagl_specif_prodaje()
 
    ?
    P_12CPI
@@ -600,18 +608,18 @@ STATIC FUNCTION zagl_sp_prod()
 // ---------------------------------
 // otvara potrebne tabele
 // ---------------------------------
-STATIC FUNCTION _o_tables()
+//STATIC FUNCTION _o_tables()
 
-   //o_fakt_dbf()
-   //o_fakt_doks_dbf()
-  // o_partner()
-   //o_valute()
-   //o_rj()
-   //o_sifk()
-   //o_sifv()
-   //o_roba()
+   // o_fakt_dbf()
+   // o_fakt_doks_dbf()
+   // o_partner()
+   // o_valute()
+   // o_rj()
+   // o_sifk()
+   // o_sifv()
+   // o_roba()
 
-   RETURN .T.
+//   RETURN .T.
 
 
 

@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.60-std, 2017-08-18
+### Developer
+- BUGFIX: https://redmine.bring.out.ba/issues/36680
+
 ## 3.1.59-std, 2017-08-18
 ### FAKT
 - BUGFIX: majmune

@@ -68,7 +68,7 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
 
    IF !seek_fakt( cIdFirma, cIdTipDok, cBrDok )
       // IF Eof()
-      altd()
+      AltD()
       MsgBeep( "Traženi dokument: " + cIdFirma  + "-" + cIdTipDok + "-" + cBrDok + " ne postoji ažuriran u fakt_fakt !?" )
    ENDIF
 
@@ -115,27 +115,28 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "brisanje : fakt_fakt_atributi"
       lOk := oFaktAttr:delete_attr_from_server()
 
+      seek_fakt( "XX" )
       IF lOk
          cTabela := "fakt_fakt"
          @ box_x_koord() + 1, box_y_koord() + 2 SAY "brisanje : " + cTabela
          // select_o_fakt_dbf()
-         seek_fakt( "XX" )
          lOk := delete_rec_server_and_dbf( cTabela, hParams, 2, "CONT" )
       ENDIF
 
+      seek_fakt_doks( "XX" )
       IF lOk
          cTabela := "fakt_doks"
          @ box_x_koord() + 2, box_y_koord() + 2 SAY "brisanje : " + cTabela
          // select_o_fakt_doks_dbf()
-         seek_fakt_doks( "XX" )
          lOk := delete_rec_server_and_dbf( cTabela, hParams, 1, "CONT" )
       ENDIF
 
+      seek_fakt_doks2( "XX" )
       IF lOk
          cTabela := "fakt_doks2"
          @ box_x_koord() + 3, box_y_koord() + 2 SAY "brisanje : " + cTabela
          // select_o_fakt_doks2_dbf()
-         seek_fakt_doks2( "XX" )
+
          lOk := delete_rec_server_and_dbf( cTabela, hParams, 1, "CONT" )
       ENDIF
 

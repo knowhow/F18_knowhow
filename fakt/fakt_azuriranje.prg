@@ -23,7 +23,7 @@ FUNCTION fakt_azuriraj_dokumente_u_pripremi( lSilent )
    LOCAL cMsg
    LOCAL nI
 
-   IF ( lSilent == nil )
+   IF ( lSilent == NIL )
       lSilent := .F.
    ENDIF
 
@@ -110,7 +110,7 @@ FUNCTION fakt_azuriraj_dokumente_u_pripremi( lSilent )
 
    MsgC()
 
-   //my_close_all_dbf()
+   // my_close_all_dbf()
 
    RETURN aFaktDoks
 
@@ -146,7 +146,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
    LOCAL oAttr
    LOCAL hParams
 
-   //my_close_all_dbf()
+   // my_close_all_dbf()
 
    _tbl_fakt  := "fakt_fakt"
    _tbl_doks  := "fakt_doks"
@@ -181,9 +181,9 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
 
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "fakt_fakt -> server: " + cTempFaktId
 
+   seek_fakt( "XXX" )
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
       hRec := dbf_get_rec()
-      seek_fakt( "XXX" )
       IF !sql_table_update( "fakt_fakt", "ins", hRec )
          lOk := .F.
          EXIT
@@ -191,23 +191,23 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
       SKIP
    ENDDO
 
+   seek_fakt_doks( "XXX" )
    IF lOk == .T.
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "fakt_doks -> server: " + cTempFaktId
       AAdd( aIdsFaktDoks, cTempFaktId )
       SELECT fakt_pripr
       hRec := get_fakt_doks_data( cIdFirma, cIdTipDok, cBrDok )
-      seek_fakt_doks( "XXX" )
       IF !sql_table_update( "fakt_doks", "ins", hRec )
          lOk := .F.
       ENDIF
    ENDIF
 
+   seek_fakt_doks2( "XXX" )
    IF lOk == .T.
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "fakt_doks2 -> server: " + cTempFaktId
       AAdd( aIdsFaktDoks2, cTempFaktId )
       hRec := get_fakt_doks2_data( cIdFirma, cIdTipDok, cBrDok )
       SELECT fakt_pripr
-      seek_fakt_doks2( "XXX" )
       IF !sql_table_update( "fakt_doks2", "ins", hRec )
          lOk := .F.
       ENDIF
@@ -330,7 +330,6 @@ STATIC FUNCTION naziv_partnera_za_tabelu_doks( cId_partner )
 
    LOCAL cRet := ""
    LOCAL nDbfArea := Select()
-
 
    select_o_partner( cId_partner )
 
@@ -537,43 +536,42 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
    ENDIF
 
 
-  //select_o_fakt_objekti()
+   // select_o_fakt_objekti()
 
 
-  // IF glDistrib = .T.
-      //SELECT F_RELAC
-  //    IF !Used()
-         //o_relac()
-        // O_VOZILA
-         //O_KALPOS
-  //    ENDIF
-  // ENDIF
+   // IF glDistrib = .T.
+   // SELECT F_RELAC
+   // IF !Used()
+   // o_relac()
+   // O_VOZILA
+   // O_KALPOS
+   // ENDIF
+   // ENDIF
 
-  // o_vrstep()
-  // o_ops()
-   //select_o_konto()
-  // o_sastavnice()
-   //select_o_partner()
-   //select_o_roba()
-//   o_fakt_txt()
-   //o_tarifa()
-   //o_valute()
+   // o_vrstep()
+   // o_ops()
+   // select_o_konto()
+   // o_sastavnice()
+   // select_o_partner()
+   // select_o_roba()
+// o_fakt_txt()
+   // o_tarifa()
+   // o_valute()
 
-   //o_fakt_doks2_dbf()
-   //o_fakt_doks_dbf()
+   // o_fakt_doks2_dbf()
+   // o_fakt_doks_dbf()
 
-   //o_rj()
-   //o_sifk()
-   //o_sifv()
+   // o_rj()
+   // o_sifk()
+   // o_sifv()
 
    IF !lOpenFaktAsPripr
       o_fakt_pripr()
-      //o_fakt_dbf()
+      // o_fakt_dbf()
       SELECT fakt_pripr
       SET ORDER TO TAG "1"
       GO TOP
    ENDIF
-
 
    RETURN
 
@@ -674,10 +672,10 @@ FUNCTION fakt_generisi_storno_dokument( cIdFirma, cIdTipDok, cBrDok )
       RETURN .F.
    ENDIF
 
-   //o_fakt_dbf()
-   //o_fakt_doks_dbf()
-   //o_roba()
-   //o_partner()
+   // o_fakt_dbf()
+   // o_fakt_doks_dbf()
+   // o_roba()
+   // o_partner()
 
    cFaktNoviBrDok := AllTrim( cBrDok ) + "/S"
 
@@ -687,7 +685,7 @@ FUNCTION fakt_generisi_storno_dokument( cIdFirma, cIdTipDok, cBrDok )
 
    nCount := 0
 
-   seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok)
+   seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok )
 
    nFiskalniRn := 0
 
@@ -716,7 +714,7 @@ FUNCTION fakt_generisi_storno_dokument( cIdFirma, cIdTipDok, cBrDok )
       SELECT fakt
       SKIP
 
-      ++ nCount
+      ++nCount
 
    ENDDO
 

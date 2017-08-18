@@ -1,7 +1,8 @@
 # F18 klijent, lista promjena
 
-## 3.1.57-std, 2017-08-18
+## 3.1.58-std, 2017-08-18
 ### FAKT
+- BUGFIX: majmune
 - BUGFIX: fakt_stdok_pdv, LEFT( nil, ... ), hernad nauci se programirati :(
 - BUGFIX: udaljena razmjena, fakt import
   - build bug .53 fix

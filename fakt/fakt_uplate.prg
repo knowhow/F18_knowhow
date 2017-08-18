@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+/*
 #define X_POS_STANJE f18_max_rows() - 7
 #define Y_POS_STANJE f18_max_cols() - 45
 
@@ -92,8 +92,9 @@ FUNCTION fakt_uplate()
 
    RETURN NIL
 
+*/
 
-
+/*
 STATIC FUNCTION fakt_ed_uplata()
 
    LOCAL fK1 := .F.
@@ -147,6 +148,9 @@ STATIC FUNCTION fakt_ed_uplata()
 
    RETURN nRet
 
+*/
+
+/*
 // ------------------------------------
 // DajStanjeKupca()
 // Vraca stanje kupca
@@ -180,11 +184,12 @@ FUNCTION UkZaduz()
 
    RETURN nVrati
 
+*/
 
-/* UkUplata(lPushWA)
+/*
  *     Ukupno uplata
  *   param: lPushWA - .t.-skeniraj pa vrati stanje baze uplata, .f.-ne radi to
- */
+
 
 FUNCTION UkUplata( lPushWA )
 
@@ -218,8 +223,9 @@ FUNCTION UkUplata( lPushWA )
 
    RETURN nVrati
 
+*/
 
-
+/*
 STATIC FUNCTION fakt_uplate_skip_block( nRequest )
 
 
@@ -260,10 +266,11 @@ STATIC FUNCTION fakt_uplate_skip_block( nRequest )
 
    RETURN ( nCount )
 
+*/
 
 /* StKartKup()
  *     Stanje na kartici kupca
- */
+
 
 STATIC FUNCTION StKartKup()
 
@@ -308,7 +315,7 @@ STATIC FUNCTION StKartKup()
 
    RETURN NIL
 
-
+*/
 
 // -----------------------------------------------------------------------
 // SaldaKupaca(lPocStanje)

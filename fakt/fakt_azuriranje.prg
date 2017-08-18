@@ -163,6 +163,8 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
       RETURN .F.
    ENDIF
 
+
+
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" }, .T. )
@@ -172,6 +174,10 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
    ENDIF
 
    close_open_fakt_tabele()
+   seek_fakt( "XXX" )
+   seek_fakt_doks( "XXX" )
+   seek_fakt_doks2( "XXX" )
+   
    fakt_seek_pripr_dokument( cIdFirma, cIdTipDok, cBrDok )
 
    hRec := dbf_get_rec()
@@ -181,7 +187,6 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
 
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "fakt_fakt -> server: " + cTempFaktId
 
-   seek_fakt( "XXX" )
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
       hRec := dbf_get_rec()
       IF !sql_table_update( "fakt_fakt", "ins", hRec )
@@ -191,7 +196,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
       SKIP
    ENDDO
 
-   seek_fakt_doks( "XXX" )
+
    IF lOk == .T.
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "fakt_doks -> server: " + cTempFaktId
       AAdd( aIdsFaktDoks, cTempFaktId )
@@ -202,7 +207,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
       ENDIF
    ENDIF
 
-   seek_fakt_doks2( "XXX" )
+
    IF lOk == .T.
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "fakt_doks2 -> server: " + cTempFaktId
       AAdd( aIdsFaktDoks2, cTempFaktId )

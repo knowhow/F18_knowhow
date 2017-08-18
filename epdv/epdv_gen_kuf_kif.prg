@@ -43,7 +43,7 @@ FUNCTION epdv_gen_kuf()
       MsgBeep( "KUF Priprema nije prazna !" )
       IF Pitanje(, "Isprazniti KUF pripremu ?", "N" ) == "D"
          SELECT p_kuf
-         ZAP
+         my_dbf_zap()
       ENDIF
    ENDIF
 
@@ -51,7 +51,7 @@ FUNCTION epdv_gen_kuf()
    Box(, 5, 60 )
 
    kalk_kuf( dDatOd, dDatDo, cSezona )
-   fin_kuf( dDatOd, dDatDo, cSezona )
+   epdv_generacija_fin_kuf( dDatOd, dDatDo, cSezona )
 
    epdv_renumeracija_rbr( "P_KUF", .F. )
    BoxC()
@@ -93,7 +93,7 @@ FUNCTION epdv_gen_kif()
       MsgBeep( "KIF Priprema nije prazna !" )
       IF Pitanje(, "Isprazniti KIF pripremu ?", "N" ) == "D"
          SELECT p_kif
-         ZAP
+         my_dbf_zap()
       ENDIF
    ENDIF
 

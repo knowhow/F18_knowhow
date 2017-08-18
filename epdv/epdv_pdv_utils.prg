@@ -1,7 +1,7 @@
 #include "f18.ch"
 
 
-FUNCTION save_pdv_obracun( dDatOd, dDatDo )
+FUNCTION epdv_pdv_prijava_snimi_obracun( dDatOd, dDatDo )
 
    LOCAL _rec
 
@@ -32,11 +32,10 @@ FUNCTION save_pdv_obracun( dDatOd, dDatDo )
          _datum_1 := Date()
       ENDIF
 
-      // datum azuriranja
-      _datum_2 := Date()
+
+      _datum_2 := Date()   // datum azuriranja
 
       _rec := get_hash_record_from_global_vars()
-
       update_rec_server_and_dbf( "epdv_pdv", _rec, 1, "FULL" )
 
       SELECT ( F_PDV )

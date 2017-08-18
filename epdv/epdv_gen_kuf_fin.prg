@@ -40,7 +40,7 @@ STATIC cKatP2
 STATIC cRazbDan
 
 
-FUNCTION fin_kuf( dD1, dD2, cSezona )
+FUNCTION epdv_generacija_fin_kuf( dD1, dD2, cSezona )
 
    LOCAL nCount
    LOCAL cIdfirma
@@ -61,7 +61,7 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
    nCount := 0
    DO WHILE !Eof()
 
-      nCount ++
+      nCount++
 
       IF Upper( aktivan ) == "N"
          SKIP
@@ -131,9 +131,6 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
 
    ENDDO
 
-
-
-
 STATIC FUNCTION gen_fin_kuf_item( cSezona )
 
    LOCAL cPomPath
@@ -172,7 +169,7 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
 
    PRIVATE cFilter := ".T."
 
-   //cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
+   // cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
 
    // setuj tip dokumenta
    IF !Empty( cTdSrc )
@@ -194,7 +191,7 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
    ENDIF
 
    SELECT SUBAN
-   //SET ORDER TO TAG "4"
+   // SET ORDER TO TAG "4"
    SET FILTER TO &cFilter // fin_suban
    GO TOP
 
@@ -296,7 +293,7 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
             ENDIF
          ENDCASE
 
-         nCount ++
+         nCount++
 
          cPom := "SUBAN : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
          @ box_x_koord() + 3, box_y_koord() + 2 SAY cPom
@@ -539,7 +536,7 @@ STATIC FUNCTION kuf_fin_trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr
    PushWa()
    SELECT SUBAN
    PushWA()
-   //SELECT suban_2
+   // SELECT suban_2
    SELECT suban
    SET FILTER TO
 
@@ -584,7 +581,7 @@ FUNCTION epdv_trazi_pdv_dobav( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cO
    SELECT SUBAN
    PushWA()
 
-   //SELECT suban_2
+   // SELECT suban_2
    SELECT suban
 
    nPdvIznos := 0
@@ -688,7 +685,7 @@ FUNCTION epdv_trazi_konto_unutar_naloga( cIdKonto, nRecNo, cIdFirma, cIdVn, cBrN
    SELECT SUBAN
    PushWA()
 
-   //SELECT suban_2
+   // SELECT suban_2
    SELECT suban
    SET FILTER TO
 
@@ -716,3 +713,9 @@ FUNCTION epdv_trazi_konto_unutar_naloga( cIdKonto, nRecNo, cIdFirma, cIdVn, cBrN
    PopWa()
 
    RETURN nIznos
+
+
+// sg_kuf formile koriste funkciju ovog imena
+
+FUNCTION trazi_kto( cIdKonto, nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOpis )
+   RETURN epdv_trazi_konto_unutar_naloga( cIdKonto, nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOpis )

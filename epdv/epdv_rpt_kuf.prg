@@ -10,7 +10,7 @@ STATIC nCurrLine := 0
 
 STATIC cRptNaziv := "Izvještaj KUF na dan "
 
-STATIC cTbl := "kuf"
+STATIC s_cTabela := "kuf"
 
 STATIC cTar := ""
 STATIC cPart := ""
@@ -62,7 +62,7 @@ FUNCTION epdv_rpt_kuf( nBrDok, cIdTarifa )
 
    cPart := ""
 
-   aDInt := rpt_d_interval ( Date() )
+   aDInt := epdv_rpt_d_interval ( Date() )
 
    dDate := Date()
 
@@ -156,7 +156,7 @@ FUNCTION epdv_rpt_kuf( nBrDok, cIdTarifa )
 
    AAdd( aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Dobavljač", "Broj",  "Opis",  "iznos", "izn.",    "izn. 2", "iznos" } )
    AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, PDV / identifikacijski broj)",      "RN",     "",    "bez PDV", "PDV", "PDV NP", "sa PDV" } )
-   AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)",  "(10)",  "(11)=8+9+10" } )
+   AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)",  "(10)",  "11=8+9+10" } )
 
    epdv_fill_rpt( nBrDok )
 
@@ -195,20 +195,19 @@ STATIC FUNCTION get_r_fields( aArr )
    RETURN .T.
 
 
-STATIC FUNCTION cre_r_tbl()
+STATIC FUNCTION epdv_create_r_kuf()
 
    LOCAL aArr := {}
 
    my_close_all_dbf()
 
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".cdx" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".dbf" )
 
    get_r_fields( @aArr )
 
-   dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr )
-
-   CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  cTbl, .T. )
+   dbcreate2( my_home() + "epdv_r_" + s_cTabela + ".dbf", aArr )
+   CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  s_cTabela, .T. )
 
    RETURN .T.
 
@@ -228,7 +227,7 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
    LOCAL cIdPart
    LOCAL nCount
 
-   cre_r_tbl()
+   epdv_create_r_kuf()
 
    select_o_epdv_r_kuf()
 
@@ -238,7 +237,6 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
       SET ORDER TO TAG "br_dok"
 
    ELSE
-
       nIzArea := F_KUF
       // select_o_epdv_kuf()
       // SET ORDER TO TAG "g_r_br"
@@ -269,7 +267,6 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
    ENDIF
 
    SET FILTER TO &cFilter
-
    GO TOP
 
    Box(, 3, 60 )
@@ -277,7 +274,7 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
    nCount := 0
 
 
-   DO WHILE !Eof()
+   DO WHILE !Eof() // kuf ili p_kuf
 
       ++nCount
 
@@ -288,11 +285,9 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
       nPdv := field->i_pdv
 
       IF ( nRptBrDok == -999 )
-         // za vise dokumenata
-         nRbr := field->g_r_br
+         nRbr := field->g_r_br // za vise dokumenata
       ELSE
-         // za jedan dokument
-         nRbr := field->r_br
+         nRbr := field->r_br // za jedan dokument
       ENDIF
 
       dDatum := field->datum
@@ -328,7 +323,6 @@ STATIC FUNCTION epdv_fill_rpt( nBrDok )
       REPLACE i_uk WITH ( field->i_b_pdv + field->i_pdv + field->i_pdv2 )
 
       SELECT ( nIzArea )
-
       SKIP
 
    ENDDO

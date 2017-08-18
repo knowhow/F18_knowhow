@@ -47,7 +47,7 @@ FUNCTION select_o_epdv_r_kif()
 // PDV
 
 FUNCTION select_o_epdv_pdv()
-   RETURN select_o_dbf( "PDV", F_PDV, "epdv_pdv", "datum" )
+   RETURN select_o_dbf( "PDV", F_PDV, "epdv_pdv", "period" )
 
 FUNCTION select_o_epdv_r_pdv()
-   RETURN select_o_dbf( "R_PDV", F_R_PDV, "epdv_r_pdv", "br_dok" )
+   RETURN select_o_dbf( "R_PDV", F_R_PDV, "epdv_r_pdv", NIL )

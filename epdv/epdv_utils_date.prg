@@ -17,7 +17,7 @@
 // else
 // return { 01.tekuci_mjesec, danasnji dan }
 
-FUNCTION rpt_d_interval ( dToday )
+FUNCTION epdv_rpt_d_interval ( dToday )
 
    LOCAL nDay, nFDOm
    LOCAL dDatOd, dDatDo

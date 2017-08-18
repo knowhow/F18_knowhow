@@ -41,7 +41,7 @@ FUNCTION epdv_r_lista( cTName )
       cTbl := "epdv_r_kif"
    ENDIF
 
-   aDInt := rpt_d_interval ( Date() )
+   aDInt := epdv_rpt_d_interval ( Date() )
 
    dDate := Date()
 

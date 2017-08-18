@@ -1,7 +1,8 @@
 # F18 klijent, lista promjena
 
-## 3.1.56-std, 2017-08-17
+## 3.1.57-std, 2017-08-18
 ### FAKT
+- BUGFIX: fakt_stdok_pdv, LEFT( nil, ... ), hernad nauci se programirati :(
 - BUGFIX: udaljena razmjena, fakt import
   - build bug .53 fix
   - fix: .54 Alias does not exist/fakt

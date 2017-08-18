@@ -22,7 +22,7 @@ STATIC nCurrLine := 0
 
 STATIC cRptNaziv := "Izvještaj KIF na dan "
 
-STATIC cTbl := "kif"
+STATIC s_cTabela := "kif"
 
 STATIC cTar := ""
 STATIC cPart := ""
@@ -74,7 +74,7 @@ FUNCTION epdv_rpt_kif( nBrDok, cIdTarifa )
    cPart := ""
 
 
-   aDInt := rpt_d_interval ( Date() )
+   aDInt := epdv_rpt_d_interval ( Date() )
 
    dDate := Date()
 
@@ -200,7 +200,7 @@ STATIC FUNCTION epdv_fill_rpt_kif( nBrDok )
    LOCAL nCount
    LOCAL cFilter := ""
 
-   cre_r_tbl()
+   epdv_create_r_kif()
 
    select_o_epdv_r_kif()
 
@@ -530,19 +530,19 @@ STATIC FUNCTION kif_linija()
 
 
 
-STATIC FUNCTION cre_r_tbl()
+STATIC FUNCTION epdv_create_r_kif()
 
    LOCAL aArr := {}
 
    my_close_all_dbf()
 
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".cdx" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".dbf" )
 
    get_r_fields( @aArr )
 
-   dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr )
+   dbcreate2( my_home() + "epdv_r_" + s_cTabela + ".dbf", aArr )
 
-   CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  cTbl, .T. )
+   CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  s_cTabela, .T. )
 
    RETURN .T.

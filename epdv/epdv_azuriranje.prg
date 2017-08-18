@@ -26,7 +26,7 @@ FUNCTION epdv_povrat_kif( nBrDok )
    RETURN epdv_povrat_kuf_kif( "KIF", nBrDok )
 
 
-FUNCTION epdv_azur_kuf_kif( cTbl )
+FUNCTION epdv_azur_kuf_kif( cKufKif )
 
    LOCAL nPArea, nKArea, nCount
    LOCAL hRec
@@ -35,7 +35,7 @@ FUNCTION epdv_azur_kuf_kif( cTbl )
    LOCAL nNextBrDok := 0
    LOCAL nBrDok := 0
 
-   IF cTbl == "KUF"
+   IF cKufKif == "KUF"
       epdv_otvori_kuf_tabele( .T. )
       nPArea := F_P_KUF
       nKArea := F_KUF
@@ -54,43 +54,44 @@ FUNCTION epdv_azur_kuf_kif( cTbl )
       RETURN 0
    ENDIF
 
-   nNextGRbr := next_redni_broj_globalno( cTbl )
+   nNextGRbr := epdv_next_globalni_redni_broj( cKufKif )
 
    SELECT ( nPArea )
    GO TOP
 
    IF ( field->br_dok == 0 )
-      nNextBrDok := next_br_dok( cTbl )
+      nNextBrDok := epdv_next_br_dok( cKufKif )
       nBrdok := nNextBrDok
    ELSE
       nBrDok := field->br_dok
    ENDIF
+   AltD()
 
-   IF kuf_kif_azur_sql( cTbl, nNextGRbr, nBrDok )
+   IF epdv_kuf_kif_azur_sql( cKufKif, nNextGRbr, nBrDok )
 
       SELECT ( nPArea )
       GO TOP
 
-      DO WHILE !Eof()
+      DO WHILE !Eof() // p_kuf ili p_kif
 
-         set_global_memvars_from_dbf()
+         // set_global_memvars_from_dbf()
+         hRec := dbf_get_rec()
 
-         _datum_2 := Date()
-         _g_r_br := nNextGRbr
-
-         _br_dok := nBrDok
-         nLastBrDok := _br_dok
+         hRec[ "datum_2" ] := Date()
+         hRec[ "g_r_br" ] := nNextGRbr
+         hRec[ "br_dok" ] := nBrDok
+         nLastBrDok := hRec[ "br_dok" ]
 
          ++nCount
          @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "Dodajem P_KIF -> KUF " + Transform( nCount, "9999" ), 40 )
-         @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR( "   " + cTbl + " G.R.BR: " + Transform( nNextGRbr, "99999" ), 40 )
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR( "   " + cKufKif + " G.R.BR: " + Transform( nNextGRbr, "99999" ), 40 )
 
          nNextGRbr++
 
          SELECT ( nKArea )
          APPEND BLANK
 
-         hRec := get_hash_record_from_global_vars()
+         // hRec := get_hash_record_from_global_vars()
          dbf_update_rec( hRec )
 
          SELECT ( nPArea )
@@ -114,7 +115,7 @@ FUNCTION epdv_azur_kuf_kif( cTbl )
 
    USE
 
-   IF ( cTbl == "KUF" )
+   IF ( cKufKif == "KUF" )
       epdv_otvori_kuf_tabele( .T. )
    ELSE
       epdv_otvori_kif_tabele( .T. )
@@ -122,77 +123,77 @@ FUNCTION epdv_azur_kuf_kif( cTbl )
 
    BoxC()
 
-   MsgBeep( "Ažuriran je " + cTbl + " dokument " + Str( nNextBrDok, 6, 0 ) )
+   MsgBeep( "Ažuriran je " + cKufKif + " dokument " + Str( nNextBrDok, 6, 0 ) )
 
    RETURN nLastBrDok
 
 
 
-FUNCTION kuf_kif_azur_sql( cTable, nNextRbrGlobalno, nNextBrDok )
+FUNCTION epdv_kuf_kif_azur_sql( cKufKif, nNextRbrGlobalno, nNextBrDok )
 
    LOCAL lOk := .T.
    LOCAL hRec := hb_Hash()
-   LOCAL _tbl_epdv
+   LOCAL cTable
    LOCAL nI
    LOCAL _tmp_id
    LOCAL _ids := {}
-   LOCAL __area
+   LOCAL nWA
    LOCAL hParams
 
-   IF cTable == "KIF"
-      __area := F_P_KIF
-   ELSEIF cTable == "KUF"
-      __area := F_P_KUF
+   IF cKufKif == "KIF"
+      nWA := F_P_KIF
+   ELSEIF cKufKif == "KUF"
+      nWA := F_P_KUF
    ENDIF
 
-   _tbl_epdv := "epdv_" + Lower( cTable )
+   cTable := "epdv_" + Lower( cKufKif )
 
-   info_bar( "epdv", "sql " + _tbl_epdv )
+   info_bar( "epdv", "sql " + cTable )
 
    run_sql_query( "BEGIN" )
-   IF !f18_lock_tables( { _tbl_epdv } )
+   IF !f18_lock_tables( { cTable } )
       run_sql_query( "ROLLBACK" )
       RETURN .F.
    ENDIF
 
-   lOk := .T.
+   // lOk := .T.
 
-   IF lOk = .T.
+   // IF lOk = .T.
 
-      SELECT ( __area )
-      GO TOP
-      DO WHILE !Eof()
+   SELECT ( nWA )
+   GO TOP
+   DO WHILE !Eof()
 
-         hRec := dbf_get_rec()
-         hRec[ "datum_2" ] := Date()
-         hRec[ "br_dok" ] := nNextBrDok
-         hRec[ "g_r_br" ] := nNextRbrGlobalno
+      hRec := dbf_get_rec()
+      hRec[ "datum_2" ] := Date()
+      hRec[ "br_dok" ] := nNextBrDok
+      hRec[ "g_r_br" ] := nNextRbrGlobalno++
 
-         IF cTable == "KIF"
-            hRec[ "src_pm" ] := field->src_pm
-         ENDIF
+      IF cKufKif == "KIF"
+         hRec[ "src_pm" ] := field->src_pm
+      ENDIF
 
-         _tmp_id := "#2" + PadL( AllTrim( Str( hRec[ "br_dok" ], 6 ) ), 6 )
+      _tmp_id := "#2" + PadL( AllTrim( Str( hRec[ "br_dok" ], 6 ) ), 6 )
 
-         IF !sql_table_update( _tbl_epdv, "ins", hRec )
-            lOk := .F.
-            EXIT
-         ENDIF
+      IF !sql_table_update( cTable, "ins", hRec )
+         lOk := .F.
+         EXIT
+      ENDIF
 
-         SKIP
+      SKIP
 
-      ENDDO
+   ENDDO
 
-   ENDIF
+   // ENDIF
 
    IF !lOk
       run_sql_query( "ROLLBACK" )
    ELSE
       AAdd( _ids, _tmp_id )
-      push_ids_to_semaphore( _tbl_epdv, _ids )
+      push_ids_to_semaphore( cTable, _ids )
 
       hParams := hb_Hash()
-      hParams[ "unlock" ] :=  { _tbl_epdv }
+      hParams[ "unlock" ] :=  { cTable }
       run_sql_query( "COMMIT", hParams )
    ENDIF
 
@@ -200,7 +201,7 @@ FUNCTION kuf_kif_azur_sql( cTable, nNextRbrGlobalno, nNextBrDok )
 
 
 
-FUNCTION epdv_povrat_kuf_kif( cTbl, nBrDok )
+FUNCTION epdv_povrat_kuf_kif( cKufKif, nBrDok )
 
    LOCAL hRecDelete, lOk
    LOCAL hRec
@@ -213,7 +214,7 @@ FUNCTION epdv_povrat_kuf_kif( cTbl, nBrDok )
    hParams[ "brdok" ] := nBrDok
 
    AltD()
-   IF ( cTbl == "KUF" )
+   IF ( cKufKif == "KUF" )
       // epdv_otvori_kuf_tabele( .T. )
       select_o_epdv_p_kuf()
       nPrivateWA := F_P_KUF
@@ -254,7 +255,7 @@ FUNCTION epdv_povrat_kuf_kif( cTbl, nBrDok )
    DO WHILE !Eof() .AND. ( field->br_dok == nBrDok )
 
       ++nCnt
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "P_" + cTbl +  " -> " + cTbl + " :" + Transform( nCnt, "9999" ), 40 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "P_" + cKufKif +  " -> " + cKufKif + " :" + Transform( nCnt, "9999" ), 40 )
 
       SELECT ( nKumulativWA )
       hRec := dbf_get_rec()
@@ -269,7 +270,7 @@ FUNCTION epdv_povrat_kuf_kif( cTbl, nBrDok )
 
 
    my_close_all_dbf()
-   IF ( cTbl == "KUF" )
+   IF ( cKufKif == "KUF" )
       epdv_otvori_kuf_tabele( .T. )
    ELSE
       epdv_otvori_kif_tabele( .T. )
@@ -284,7 +285,7 @@ FUNCTION epdv_povrat_kuf_kif( cTbl, nBrDok )
 
    lOk := .T.
 
-   MsgO( "del " + cTbl )
+   MsgO( "del " + cKufKif )
    lOk := delete_rec_server_and_dbf( cTable, hRecDelete, 2, "FULL" )
 
    MsgC()
@@ -296,7 +297,7 @@ FUNCTION epdv_povrat_kuf_kif( cTbl, nBrDok )
    SELECT ( nKumulativWA )
    USE
 
-   // IF ( cTbl == "KUF" )
+   // IF ( cKufKif == "KUF" )
    // epdv_otvori_kuf_tabele( .T. )
    // ELSE
    // epdv_otvori_kif_tabele( .T. )
@@ -312,7 +313,7 @@ FUNCTION epdv_povrat_kuf_kif( cTbl, nBrDok )
 
 
 
-FUNCTION epdv_renumeracija_rbr( cTbl, lShow )
+FUNCTION epdv_renumeracija_rbr( cKufKif, lShow )
 
    LOCAL hRec, nRbr
 
@@ -320,10 +321,10 @@ FUNCTION epdv_renumeracija_rbr( cTbl, lShow )
       lShow := .T.
    ENDIF
 
-   IF cTbl == "P_KUF"
+   IF cKufKif == "P_KUF"
       select_o_epdv_p_kuf()
 
-   ELSEIF cTbl == "P_KIF"
+   ELSEIF cKufKif == "P_KIF"
       select_o_epdv_p_kif()
 
    ENDIF
@@ -347,7 +348,7 @@ FUNCTION epdv_renumeracija_rbr( cTbl, lShow )
    RETURN .T.
 
 
-FUNCTION renm_g_rbr( cTbl, lShow )
+FUNCTION renm_g_rbr( cKufKif, lShow )
 
    LOCAL nRbr, hRec
    LOCAL nLRbr
@@ -356,10 +357,10 @@ FUNCTION renm_g_rbr( cTbl, lShow )
       lShow := .T.
    ENDIF
 
-   IF cTbl == "KUF"
+   IF cKufKif == "KUF"
       select_o_epdv_kuf()
 
-   ELSEIF cTbl == "P_KIF"
+   ELSEIF cKufKif == "P_KIF"
       select_o_epdv_kif()
 
    ENDIF
@@ -384,7 +385,7 @@ FUNCTION renm_g_rbr( cTbl, lShow )
    DO WHILE !Eof()
 
       ++nRbr
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY cTbl + ":" + Str( nRbr, 8, 0 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY cKufKif + ":" + Str( nRbr, 8, 0 )
       hRec := dbf_get_rec()
       hRec[ "g_r_br" ] := nRbr
       dbf_update_rec( hRec )
@@ -397,7 +398,7 @@ FUNCTION renm_g_rbr( cTbl, lShow )
    USE
 
    IF lShow
-      MsgBeep( cTbl + " : G.Rbr renumeracija izvršena" )
+      MsgBeep( cKufKif + " : G.Rbr renumeracija izvršena" )
    ENDIF
 
    RETURN .T.

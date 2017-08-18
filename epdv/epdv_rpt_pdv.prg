@@ -24,7 +24,7 @@ STATIC RPT_GAP := 4
 STATIC RPT_BOLD_DELTA := 2
 STATIC nCurrLine := 0
 STATIC cRptNaziv := "PDV prijava"
-STATIC cTbl := "pdv"
+STATIC s_cTabela := "pdv"
 STATIC cSource := "1"
 STATIC dDatOd
 STATIC dDatDo
@@ -37,7 +37,7 @@ FUNCTION epdv_pdv_prijava()
    LOCAL nX
    LOCAL GetList := {}
 
-   aDInt := rpt_d_interval ( Date() )
+   aDInt := epdv_rpt_d_interval ( Date() )
 
    dDate := Date()
 
@@ -68,12 +68,12 @@ FUNCTION epdv_pdv_prijava()
    nX++
 
    IF cSource == "1"
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 " Ažurirati podatke u PDV bazu (D/N) ?" GET cAzurirati ;
-         PICT "@!" VALID cAzurirati $ "DN"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 " Ažurirati podatke u PDV bazu (D/N) ?" GET cAzurirati PICT "@!" VALID cAzurirati $ "DN"
       READ
 
    ENDIF
 
+altd()
    BoxC()
 
    IF LastKey() == K_ESC
@@ -84,25 +84,25 @@ FUNCTION epdv_pdv_prijava()
    epdv_fill_rpt()
    show_rpt(  .F.,  .F. )
 
-   save_pdv_obracun( dDatOd, dDatDo )
+   epdv_pdv_prijava_snimi_obracun( dDatOd, dDatDo )
 
    RETURN .T.
 
 
 
 
-STATIC FUNCTION cre_r_tbl()
+STATIC FUNCTION epdv_create_r_pdv()
 
    LOCAL aArr := {}
 
    my_close_all_dbf()
 
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".cdx" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".dbf" )
 
    aArr := get_pdv_fields()
 
-   dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr )
+   dbcreate2( my_home() + "epdv_r_" + s_cTabela + ".dbf", aArr )
 
    RETURN .T.
 
@@ -110,19 +110,19 @@ STATIC FUNCTION cre_r_tbl()
 
 STATIC FUNCTION epdv_fill_rpt()
 
-   cre_r_tbl()
+   epdv_create_r_pdv()
 
    IF cSource == "1"
-      f_iz_kuf_kif()
+      epdv_prijava_fill_kuf_kif()
    ELSE
-      f_iz_pdv()
+      epdv_prijava_fill_iz_pdv_tabele()
    ENDIF
 
    RETURN .T.
 
 
 
-STATIC FUNCTION f_iz_kuf_kif()
+STATIC FUNCTION epdv_prijava_fill_kuf_kif()
 
    LOCAL nBPdv
    LOCAL nUkIzPdv := 0
@@ -130,6 +130,7 @@ STATIC FUNCTION f_iz_kuf_kif()
    LOCAL nUlPdvKp := 0
    LOCAL nCount
    LOCAL GetList := {}
+     LOCAL hParams
 
    aMyFirma := my_firma( .T. )
 
@@ -146,17 +147,19 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    PRIVATE cFilter := ""
 
-   cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
+   //cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
 
-   select_o_epdv_kuf()
-   SET FILTER TO &cFilter
+   //select_o_epdv_kuf()
+   hParams := hb_hash()
+   find_epdv_kuf_za_period( dDatOd, dDatDo, hParams, "br_dok" )
+   //SET FILTER TO &cFilter
    GO TOP
 
    Box(, 3, 60 )
 
    nCount := 0
 
-   DO WHILE !Eof()
+   DO WHILE !Eof() // kuf
 
       ++nCount
 
@@ -213,10 +216,11 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    select_o_epdv_kif()
 
-   cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
-
+   //cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
+   find_epdv_kif_za_period( dDatOd, dDatDo, hParams, "br_dok" )
    // select_o_epdv_kif()
-   SET FILTER TO &cFilter
+   //SET FILTER TO &cFilter
+
    GO TOP
 
    IF !Empty( gUlPdvKp() )
@@ -230,12 +234,11 @@ STATIC FUNCTION f_iz_kuf_kif()
       ENDCASE
    ENDIF
 
-   DO WHILE !Eof()
+   DO WHILE !Eof() // kif
 
       ++nCount
 
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "KIF" + Str( nCount, 6, 0 )
-
 
       cIdTar := id_tar
       nBPdv := i_b_pdv
@@ -258,11 +261,11 @@ STATIC FUNCTION f_iz_kuf_kif()
 
          nUkIzPdv += nPdv
 
-         IF partner_is_pdv_obveznik( id_part )
+         IF partner_is_pdv_obveznik( kif->id_part )
             _i_pdv_r += nPdv
 
          ELSE
-            cRejon := part_rejon( id_part )
+            cRejon := part_rejon( kif->id_part )
 
             DO CASE
             CASE cRejon == "2"
@@ -283,13 +286,11 @@ STATIC FUNCTION f_iz_kuf_kif()
       ENDIF
 
       SELECT KIF
-
       SKIP
 
    ENDDO
 
    SELECT r_pdv
-
    read_pdv_pars( @_pot_datum, @_pot_mjesto, @_pot_ob, @_pdv_povrat )
 
    _pot_datum := Date()
@@ -325,7 +326,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    _i_pdv_uk := nUkIzPdv
 
-   zaok_p_pdv()
+   epdv_zaokruzenje_pdv_prijava()
 
    nPdvSaldo := _i_pdv_uk -  _u_pdv_uk
    _pdv_uplati := nPdvSaldo
@@ -342,9 +343,11 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
-STATIC FUNCTION zaok_p_pdv()
+
+
+STATIC FUNCTION epdv_zaokruzenje_pdv_prijava()
 
    _u_nab_21 := Round( _u_nab_21, ZAO_PDV() )
    _u_uvoz := Round( _u_uvoz, ZAO_PDV() )
@@ -374,7 +377,7 @@ STATIC FUNCTION zaok_p_pdv()
    RETURN .T.
 
 
-STATIC FUNCTION f_iz_pdv()
+STATIC FUNCTION epdv_prijava_fill_iz_pdv_tabele()
 
    select_o_epdv_pdv()
 
@@ -725,7 +728,9 @@ STATIC FUNCTION show_rpt()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
+
+
 
 STATIC FUNCTION show_raz_1()
 
@@ -736,6 +741,8 @@ STATIC FUNCTION show_raz_1()
 
 
 STATIC FUNCTION r_zagl()
+
+   LOCAL i
 
    P_COND
    B_ON

@@ -189,6 +189,58 @@ CREATE INDEX epdv_pdv_id1
 
 */
 
+
+
+
+FUNCTION epdv_next_br_dok( cKufKif )
+
+   LOCAL cTable, cAlias := "POM"
+   LOCAL cSql
+   LOCAL nRet
+
+   IF cKufKif == "KUF"
+      cTable := "epdv_kuf"
+   ELSE
+      cTable := "epdv_kif"
+   ENDIF
+   cSql := "select max(br_dok) AS MAX_BR_DOK from fmk." + cTable
+
+   PushWa()
+   SELECT F_POM
+   use_sql( "POM", cSql, cAlias )
+   nRet := field->max_br_dok
+   USE
+   PopWa()
+
+   RETURN nRet + 1
+
+
+
+
+FUNCTION epdv_next_globalni_redni_broj( cKufKif )
+
+   LOCAL cTable, cAlias := "POM"
+   LOCAL cSql
+   LOCAL nRet
+
+   IF cKufKif == "KUF"
+      cTable := "epdv_kuf"
+   ELSE
+      cTable := "epdv_kif"
+   ENDIF
+   cSql := "select max(g_r_br) AS MAX_G_R_BR from fmk." + cTable
+    
+   PushWa()
+   SELECT F_POM
+   use_sql( "POM", cSql, cAlias )
+   nRet := field->max_g_r_br
+   USE
+   PopWa()
+
+   RETURN nRet + 1
+
+
+
 FUNCTION find_epdv_kuf_za_period( dDatOd, dDatDo, hParams, cTag )
    RETURN find_epdv_kuf_kif_za_period( "kuf", dDatOd, dDatDo, hParams, cTag )
 

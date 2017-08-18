@@ -74,51 +74,6 @@ FUNCTION epdv_next_r_br( cTblName )
 
 
 
-FUNCTION next_redni_broj_globalno( cTblName )
-
-   LOCAL nLastRbr
-
-   PushWA()
-   DO CASE
-   CASE cTblName == "KUF"
-      SELECT kuf
-   CASE cTblName == "KIF"
-      SELECT kif
-
-   ENDCASE
-
-   SET ORDER TO TAG "G_R_BR"
-
-   GO BOTTOM
-   nLastRbr := field->g_r_br
-   PopWa()
-
-   RETURN nLastRbr + 1
-
-
-
-FUNCTION next_br_dok( cTblName )
-
-   LOCAL nLastBrDok
-
-   PushWA()
-   DO CASE
-   CASE cTblName == "KUF"
-      SELECT kuf
-   CASE cTblName == "KIF"
-      SELECT kif
-
-   ENDCASE
-
-   SET ORDER TO TAG "BR_DOK"
-
-   GO BOTTOM
-   nLastBrDok := field->br_dok
-   PopWa()
-
-   RETURN nLastBrdok + 1
-
-
 
 FUNCTION epdv_renumeracija_g_r_br( cTblName )
 

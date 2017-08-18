@@ -25,9 +25,6 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
    LOCAL hFaktParams := fakt_params()
    LOCAL lSamoKol := .F.  // samo kolicine
 
-   AltD()
-   cBrDok := Left( cBrDok, FIELD_LEN_FAKT_BRDOK )
-
 
    IF lJFill == NIL
       lJFill := .F.

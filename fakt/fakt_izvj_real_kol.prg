@@ -12,6 +12,9 @@
 #include "f18.ch"
 
 
+MEMVAR cLinija, cRelation, gnLMarg, cSvediJmj, cPrikaz, dDatOd, dDatDo, nStrana, lGroup
+
+MEMVAR cSection, cHistory, aHistory
 
 FUNCTION fakt_specif_prodaje_real_kolicina()
 
@@ -123,9 +126,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       ESC_BCR
 
       aUslRB := Parsiraj( qqIdRoba, "IDROBA", "C" )
-
       aUslOpc := Parsiraj( cOpcina, "IDOPS", "C" )
-
       aUslTD := Parsiraj( qqTipdok, "IdTipdok", "C" )
 
       IF ( aUslTD <> NIL )
@@ -231,7 +232,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    cIdPartner := idPartner
 
-   fakt_zagl_specif_prodaje()
+   fakt_zagl_specif_prodaje( cIdFirma )
 
    IF cPrikaz == "1"
 
@@ -303,7 +304,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
          IF PRow() > 61
             FF
-            fakt_zagl_specif_prodaje()
+            fakt_zagl_specif_prodaje( cIdFirma )
          ENDIF
 
          select_o_partner( cIdPartner )
@@ -457,7 +458,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
          IF PRow() > 61
             FF
-            fakt_zagl_specif_prodaje()
+            fakt_zagl_specif_prodaje( cIdFirma )
          ENDIF
 
          select_o_roba( cIdRoba )
@@ -494,7 +495,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    IF PRow() > 59
       FF
-      fakt_zagl_specif_prodaje()
+      fakt_zagl_specif_prodaje( cIdFirma )
    ENDIF
 
    ? Space( gnLMarg )
@@ -529,7 +530,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
 
 
-STATIC FUNCTION fakt_zagl_specif_prodaje()
+STATIC FUNCTION fakt_zagl_specif_prodaje( cIdFirma )
 
    ?
    P_12CPI

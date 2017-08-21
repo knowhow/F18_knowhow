@@ -138,8 +138,8 @@ FUNCTION e_doc_item( nDoc_no, lNew )
 
    SELECT _docs
 
-   box_x_koord() := nX
-   box_y_koord() := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN nRet
 
@@ -192,7 +192,7 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY, cGetDOper )
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "ARTIKAL (*):", nLeft ) GET _art_id ;
       VALID {|| _old_x := box_x_koord(), _old_y := box_y_koord(), ;
       s_articles( @_art_id, .F., .T. ), ;
-      box_x_koord() := _old_x, _old_y := box_y_koord(), ;
+      box_x_koord( _old_x ), _old_y := box_y_koord(), ;
       show_it( g_art_desc( _art_id, nil, .F. ) + "..", 35 ), ;
       check_article_valid( @_art_id ) } ;
       WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik i pretrazi" )
@@ -612,8 +612,7 @@ FUNCTION set_items_article()
 
 
 
-// --------------------------------------------------------
-// --------------------------------------------------------
+
 FUNCTION get_items_article()
 
    LOCAL _art_id := 0
@@ -629,8 +628,8 @@ FUNCTION get_items_article()
    READ
    BoxC()
 
-   box_x_koord() := _x
-   box_y_koord() := _y
+   box_x_koord( _x )
+   box_y_koord( _y )
 
    IF LastKey() == K_ESC
       RETURN NIL

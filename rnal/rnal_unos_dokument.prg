@@ -79,9 +79,9 @@ STATIC FUNCTION _document()
    header_footer()
 
    // bilo: 50
-   box_y_koord() += ( __dok_x * 2 )
+   box_y_koord( box_y_koord() + __dok_x * 2 )
    // bilo: 6
-   box_x_koord() += 6
+   box_x_koord( box_x_koord() + 6 )
 
    DO WHILE .T.
 
@@ -90,8 +90,8 @@ STATIC FUNCTION _document()
          nX := 6
          nY := __dok_y + 1
 
-         box_x_koord() -= 6
-         box_y_koord() -= ( __dok_x * 2 )
+         box_x_koord( box_x_koord() - 6 )
+         box_y_koord( box_y_koord() - __dok_x * 2 )
 
          // prikazi naslov tabele
          _say_tbl_desc( box_x_koord() + 1, box_y_koord() + 1, cCol2,  "*** osnovni podaci", 20 )
@@ -103,7 +103,7 @@ STATIC FUNCTION _document()
          nX := ( __dok_x - 10 )
          nY := ( ( __dok_x * 2 ) - 1 )
 
-         box_x_koord() += 6
+         box_x_koord( box_x_koord() + 6 )
 
          _say_tbl_desc( box_x_koord() + 1, ;
             box_y_koord() + 1, ;
@@ -120,7 +120,7 @@ STATIC FUNCTION _document()
          // bilo: 28
          nY := ( __dok_y - ( ( __dok_x * 2 ) - 1 ) )
          // bilo: 50
-         box_y_koord() += ( __dok_x * 2 )
+         box_y_koord( box_y_koord() + __dok_x * 2 )
 
          _say_tbl_desc( box_x_koord() + 1,  box_y_koord() + 1,  cCol2,   "*** dod.oper.",  20 )
 
@@ -567,8 +567,8 @@ STATIC FUNCTION key_handler()
       IF oCsvImport:import()
          SELECT _doc_it
          GO TOP
-         box_x_koord() := nX
-         box_y_koord() := nY
+         box_x_koord( nX )
+         box_y_koord( nY )
          RETURN DE_REFRESH
       ELSE
          SELECT _doc_it
@@ -584,8 +584,8 @@ STATIC FUNCTION key_handler()
       ENDIF
 
       IF Pitanje(, "Postaviti novi artikal za sve stavke (D/N) ?", "D" ) == "D" .AND. set_items_article()
-         box_x_koord() := nX
-         box_y_koord() := nY
+         box_x_koord( nX )
+         box_y_koord( nY )
          RETURN DE_REFRESH
       ENDIF
 
@@ -620,8 +620,8 @@ STATIC FUNCTION key_handler()
 
       SELECT _doc_it
 
-      box_x_koord() := nX
-      box_y_koord() := nY
+      box_x_koord( nX )
+      box_y_koord( nY )
 
       RETURN nRet
 
@@ -635,8 +635,8 @@ STATIC FUNCTION key_handler()
          // ima li stavki u nalogu
          IF _doc_integ() == 0
             MsgBeep( "!!! Azuriranje naloga onemoguceno !!!" )
-            box_x_koord() := nX
-            box_y_koord() := nY
+            box_x_koord( nX )
+            box_y_koord( nY )
             RETURN DE_CONT
          ENDIF
 
@@ -676,8 +676,8 @@ STATIC FUNCTION key_handler()
 
       // ima li stavki u nalogu
       IF _doc_integ( .T. ) == 0
-         box_x_koord() := nX
-         box_y_koord() := nY
+         box_x_koord( nX )
+         box_y_koord( nY )
          SELECT ( nTArea )
          RETURN DE_CONT
       ENDIF
@@ -710,8 +710,8 @@ STATIC FUNCTION key_handler()
 
       // ima li stavki u nalogu
       IF _doc_integ( .T. ) == 0
-         box_x_koord() := nX
-         box_y_koord() := nY
+         box_x_koord( nX )
+         box_y_koord( nY )
          SELECT ( nTArea )
          RETURN DE_CONT
       ENDIF
@@ -753,8 +753,8 @@ STATIC FUNCTION key_handler()
 
    ENDCASE
 
-   box_x_koord() := nX
-   box_y_koord() := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN nRet
 
@@ -944,8 +944,8 @@ STATIC FUNCTION _show_orphaned_items( orph )
       izbor := 0
    ENDIF
 
-   box_x_koord() := _m_x
-   box_y_koord() := _m_y
+   box_x_koord( _m_x )
+   box_y_koord( _m_y )
 
    RETURN
 
@@ -973,8 +973,8 @@ STATIC FUNCTION _change_item_no( docno, docitno )
    READ
    BoxC()
 
-   box_x_koord() := _m_x
-   box_y_koord() := _m_y
+   box_x_koord( _m_x )
+   box_y_koord( _m_y )
 
    IF LastKey() == K_ESC
       RETURN _ok

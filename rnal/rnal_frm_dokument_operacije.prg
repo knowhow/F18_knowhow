@@ -114,8 +114,8 @@ FUNCTION e_doc_ops( nDoc_no, lNew, nArt_id, nItem_no )
 
    SELECT _docs
 
-   box_x_koord() := nX
-   box_y_koord() := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN nRet
 
@@ -307,8 +307,8 @@ FUNCTION get_it_element( nDoc_it_e_id, nElement )
    // odaberi element
    nDoc_it_e_id := _pick_element( _a_elem, @nElement )
 
-   box_x_koord() := nXX
-   box_y_koord() := nYY
+   box_x_koord( nXX )
+   box_y_koord( nYY )
 
    RETURN .T.
 

@@ -112,8 +112,8 @@ FUNCTION valid_repro_jmj( jmj, jmj_art )
 
    IF !_ok
       MsgBeep( "Ne postoji konverzija [" + AllTrim( jmj )  + "] u [" + AllTrim( jmj_art ) + "] !" )
-      box_x_koord() := _x
-      box_y_koord() := _y
+      box_x_koord( _x )
+      box_y_koord( _y )
    ENDIF
 
    RETURN _ok

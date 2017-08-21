@@ -91,7 +91,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
    SELECT elements
    GO TOP
 
-   box_y_koord() += __box_x
+   box_y_koord( box_y_koord() + __box_x )
 
    DO WHILE .T.
 
@@ -103,7 +103,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
          nY := __box_x -1
 
          // bilo: 21
-         box_y_koord() -= __box_x
+         box_y_koord( box_y_koord() - __box_x )
 
          _say_tbl_desc( box_x_koord() + 1, box_y_koord() + 1, cCol2, "** elementi", 11 )
 
@@ -119,7 +119,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
          nY := ( __box_y - __box_x ) + 1
 
          // bilo: 21
-         box_y_koord() += __box_x
+         box_y_koord( box_y_koord() + __box_x )
 
          _say_tbl_desc( box_x_koord() + 1, box_y_koord() + 1, cCol2, "** atributi", 20 )
 
@@ -136,7 +136,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
          nY := ( __box_y - __box_x ) + 1
 
          // bilo: 10
-         box_x_koord() += (  __box_x / 2 )
+         box_x_koord( box_x_koord() +  __box_x / 2 )
 
          _say_tbl_desc( box_x_koord() + 1, ;
             box_y_koord() + 1, ;
@@ -161,12 +161,12 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
       IF LastKey() <> K_ESC
          nTmpX := box_x_koord()
          lRuleRet := rule_articles( aTmp )
-         box_x_koord() := nTmpX
+         box_x_koord( nTmpX )
          SELECT ( nTmpArea )
       ENDIF
 
       IF Alias() == "ELEMENTS"
-         box_x_koord() -= ( __box_x / 2 )
+         box_x_koord( box_x_koord() - __box_x / 2 )
       ENDIF
 
       IF LastKey() == K_ESC
@@ -663,8 +663,8 @@ STATIC FUNCTION elem_hand()
    ENDIF
 
 
-   box_x_koord() := nX
-   box_y_koord() := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN nRet
 

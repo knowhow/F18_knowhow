@@ -48,8 +48,8 @@ FUNCTION box_it2( nDoc_no, nDoc_it_no )
 
    SELECT ( nTArea )
 
-   box_x_koord() := nX
-   box_y_koord() := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN
 
@@ -204,8 +204,8 @@ FUNCTION e_doc_it2( nDoc_no, nDoc_it_no, lNew )
 
    SELECT _doc_it2
 
-   box_x_koord() := nX
-   box_y_koord() := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN nRet
 

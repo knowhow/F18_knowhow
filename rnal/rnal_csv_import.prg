@@ -230,8 +230,8 @@ METHOD RnalCsvImport:csv_browse()
 
    BoxC()
 
-   box_x_koord() := nX
-   box_y_koord() := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    SELECT ( nDbfArea )
 

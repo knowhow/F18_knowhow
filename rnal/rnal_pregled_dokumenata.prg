@@ -692,8 +692,8 @@ STATIC FUNCTION otpr_edit( cValue )
       update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
    ENDIF
 
-   box_x_koord() := nX
-   box_y_koord() := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN .T.
 
@@ -1278,7 +1278,7 @@ STATIC FUNCTION show_c_list( aArr )
 
    ENDDO
 
-   box_x_koord() := nX
-   box_y_koord() := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN .T.

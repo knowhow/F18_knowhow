@@ -28,7 +28,7 @@ FUNCTION rnal_export_menu( nDoc_no, aDocList, lTemp, lWriteRel )
 
    f18_menu( "export", .f., @_izbor, _opc, _opcexe )
 
-   box_x_koord() := mX
-   box_y_koord() := mY
+   box_x_koord( mX )
+   box_y_koord( mY )
 
    RETURN

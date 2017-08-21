@@ -291,8 +291,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
    o_tmp1()
    INDEX ON Str( doc_no, 10 ) TAG "1"
 
-   // fakt mi otvori
-   o_fakt_dbf()
+   //o_fakt_dbf()
 
    // otvori potrebne tabele
    rnal_o_tables( .F. )
@@ -331,14 +330,14 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
       cF_doc2 := "?"
       cP_doc1 := "?"
 
-      SELECT fakt
-      SEEK cFFirma + cFTipDok
+      //SELECT fakt
+      //SEEK cFFirma + cFTipDok
+      seek_fakt( cFFirma, cFTipDok )
 
       // resetuj memo vrijednost
       aMemo := {}
 
-      DO WHILE !Eof() .AND. field->idfirma + field->idtipdok == ;
-            cFFirma + cFTipDok
+      DO WHILE !Eof() .AND. field->idfirma + field->idtipdok == cFFirma + cFTipDok
 
          // gledaj samo redni broj jedan fakture
          IF AllTrim( field->rbr ) <> "1"

@@ -74,16 +74,18 @@ FUNCTION Gen9999()
  *     Stanje zadanog artikla u FAKT
  */
 
-FUNCTION KalkNaF( cidroba, nKols )
+FUNCTION KalkNaF( cIdroba, nKols )
 
-   SELECT ( F_FAKT )
-   IF !Used(); o_fakt_dbf(); ENDIF
+   //SELECT ( F_FAKT )
+   //IF !Used(); o_fakt_dbf(); ENDIF
 
-   SELECT fakt
-   SET ORDER TO TAG "3" // fakt idroba
+   //SELECT fakt
+   //SET ORDER TO TAG "3" // fakt idroba
    nKols := 0
-   SEEK cidroba
-   DO WHILE !Eof() .AND. cidroba == idroba
+   //SEEK cidroba
+   seek_fakt_3( cIdRoba )
+
+   DO WHILE !Eof() .AND. cIdroba == idroba
       IF idtipdok = "0"  // ulaz
          nKols += kolicina
       ELSEIF idtipdok = "1"   // izlaz faktura

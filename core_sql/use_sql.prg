@@ -455,7 +455,7 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    ENDIF
 
    cSQL += " ORDER BY id,oznaka,sort"
-   SELECT F_SIFK
+   SELECT ( F_SIFK )
    IF !use_sql( cTable, cSql )
       RETURN .F.
    ENDIF

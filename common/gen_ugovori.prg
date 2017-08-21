@@ -155,7 +155,7 @@ FUNCTION gen_ug()
          cUPartner := ugov->( naz )
       ENDIF
 
-      o_fakt_dbf()
+    --  o_fakt_dbf()
       o_fakt_pripr()
       IF reccount2() <> 0 .AND. nTekug = 1
          Msg( "Neki dokument vec postoji u pripremi" )

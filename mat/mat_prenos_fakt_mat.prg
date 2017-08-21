@@ -67,7 +67,7 @@ STATIC FUNCTION prenos()
 //   o_konto()
 //   o_partner()
    o_valute()
-   o_fakt_dbf()
+   //o_fakt_dbf()
 
    dDatMat := Date()
    cIdKonto := cIdKonto2 := Space( 7 )
@@ -101,9 +101,10 @@ STATIC FUNCTION prenos()
       IF LastKey() == K_ESC; exit; ENDIF
 
 
-      SELECT fakt
-      SEEK cIdFirma + cIdTipDok + cBrDok
-      IF !Found()
+      //SELECT fakt
+      //SEEK cIdFirma + cIdTipDok + cBrDok
+      IF !find_fakt_dokument( cIdFirma, cIdTipDok, cBrDok )
+      //IF !Found()
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
          Inkey( 4 )

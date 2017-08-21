@@ -13,8 +13,8 @@
 
 
 
-FUNCTION o_fakt_dbf()
-   RETURN o_dbf_table( F_FAKT, "fakt", "1" )
+//FUNCTION o_fakt_dbf()
+//   RETURN o_dbf_table( F_FAKT, "fakt", "1" )
 
 
 // "fakt_fakt", "FAKT", F_FAKT

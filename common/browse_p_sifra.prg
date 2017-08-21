@@ -25,7 +25,7 @@ STATIC s_lPrviPoziv := .F.
     p_sifra( F_TIPDOK, cIdVD, -2 ) => vrijednost polja "Naz" za ID == cIdVd
 */
 
-FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
+FUNCTION p_sifra( nWa, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
 
    LOCAL cRet, cIdBK
    LOCAL nI
@@ -66,7 +66,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
       lInvert := .T.
    ENDIF
 
-   SELECT ( nDbf )
+   SELECT ( nWa )
    IF !Used()
       MsgBeep( "Tabela nije otvorena u radnom području !#Prekid operacije!" )
       IF lExitOnEnter
@@ -87,7 +87,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
       ENDIF
 
       PopSifV()
-      PopWa( nDbf )
+      PopWa( nWa )
 
       IF lExitOnEnter
          browse_exit_on_enter( lExit )
@@ -123,19 +123,19 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
          GO TOP // bez parametara
       ENDIF
 
-      lRet := my_browse( NIL, nVisina, nSirina,  {| nCh | my_browse_p_sifra_key_handler( nCh, nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
+      lRet := my_browse( NIL, nVisina, nSirina,  {| nCh | my_browse_p_sifra_key_handler( nCh, nWa, cNaslov, bBlok, aZabrane, aZabIsp ) }, ;
          ToStrU( cNaslov ), "", lInvert, aOpcije, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
-         cID := ( nDbf )->( FieldGet( 1 ) )
+         cID := ( nWa )->( FieldGet( 1 ) )
       ELSE
 
-         IF !( nDBf )->( Used() )
+         IF !( nWa )->( Used() )
             Alert( "not used ?!" )
          ENDIF
-         cID := ( nDbf )->id
+         cID := ( nWa )->id
          // IF fID_J
-         // __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
+         // __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nWa )->ID_J
          // ENDIF
       ENDIF
 
@@ -143,24 +143,24 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY
    // ELSE
 
    // IF fID_J
-   // cId := ( nDBF )->id
-   // __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
+   // cId := ( nWa )->id
+   // __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nWa )->ID_J
    // ENDIF
 
    // ENDIF
 
    __A_SIFV__[ __PSIF_NIVO__, 2 ] := RecNo()
 
-   sif_ispisi_naziv( nDbf, nDeltaX, nDeltaY )
+   sif_ispisi_naziv( nWa, nDeltaX, nDeltaY )
 
-   SELECT ( nDbf )
+   SELECT ( nWa )
    IF Used()
       ordSetFocus( cOrderTag )
       SET FILTER TO
    ENDIF
 
    PopSifV()
-   PopWa( nDbf )
+   PopWa( nWa )
 
    IF lExitOnEnter
       browse_exit_on_enter( lExit )
@@ -527,7 +527,7 @@ FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
    */
 
 
-STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
+STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nWa, cNaslov, bBlok, aZabrane, aZabIsp )
 
    LOCAL nI
    LOCAL j
@@ -1218,7 +1218,7 @@ FUNCTION sifarnik_brisi_stavku()
       //o_sifk()
       //o_sifv()
       o_sifk_sifv_empty()
-      
+
       hRec := hb_Hash()
       hRec[ "id" ]    := PadR( cAlias, 8 )
       hRec[ "idsif" ] := PadR( hRecDbf[ "id" ], 15 )

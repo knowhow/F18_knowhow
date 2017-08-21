@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-
+/*
 FUNCTION RobaIdSredi()
 
    cSifOld := Space( 10 )
@@ -24,7 +24,7 @@ FUNCTION RobaIdSredi()
 
 //   o_roba()
    o_kalk()
-   o_fakt_dbf()
+--   o_fakt_dbf()
    fSrediF := .T.
 
    Box(, 10, 60 )
@@ -85,6 +85,8 @@ FUNCTION RobaIdSredi()
 
    BoxC()
    closeret
+
+*/
 
 /*
 FUNCTION kalk_sljedeci( cIdFirma, cVrsta )

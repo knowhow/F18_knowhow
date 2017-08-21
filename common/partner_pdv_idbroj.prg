@@ -135,6 +135,7 @@ FUNCTION find_sifk_by_id_oznaka_naz_sort( cId, cOznaka, cNaz, cSort )
    cSql += " AND sort=" + sql_quote( cSort )
    cSql += " AND naz=" + sql_quote( PadR( cNaz, FIELD_LEN_SIFK_NAZ ) )
 
+   SELECT F_SIFK
    IF !use_sql( "sifk", cSql )
       ?E "ERRRRRRRRR find_sifk_by_id_oznaka_naz_sort", cSql
    ENDIF

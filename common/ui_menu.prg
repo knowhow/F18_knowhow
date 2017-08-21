@@ -19,7 +19,6 @@ FUNCTION f18_menu( cIzp, lOsnovniMeni, nIzbor, aOpc, aOpcExe )
 
    LOCAL cOdgovor
    LOCAL nMenuExeOpcija
-altd()
    IF lOsnovniMeni == NIL
       lOsnovniMeni := .F.
    ENDIF

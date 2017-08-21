@@ -15,24 +15,24 @@
 
 FUNCTION prenos_fakt_kalk_magacin()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. fakt->kalk (10->14) račun veleprodaje               " )
-   AAdd( _opcexe, {||  fakt_kalk_prenos_10_14() } )
-   AAdd( _opc, "2. fakt->kalk (12->96) otpremnica" )
-   AAdd( _opcexe, {||  fakt_kalk_prenos()  } )
-   AAdd( _opc, "3. fakt->kalk (19->96) izlazi po ostalim osnovama" )
-   AAdd( _opcexe, {||  fakt_kalk_prenos( "19" ) } )
-   AAdd( _opc, "4. fakt->kalk (01->10) ulaz od dobavljača" )
-   AAdd( _opcexe, {||  fakt_kalk_prenos( "01_10" ) } )
-   AAdd( _opc, "5. fakt->kalk (0x->16) doprema u magacin" )
-   AAdd( _opcexe, {||  fakt_kalk_prenos( "0x" ) } )
-   AAdd( _opc, "6. fakt->kalk, prenos otpremnica za period" )
-   AAdd( _opcexe, {||  kalk_fakt_prenos_period() } )
+   AAdd( aOpc, "1. fakt->kalk (10->14) račun veleprodaje               " )
+   AAdd( aOpcExe, {||  fakt_kalk_prenos_10_14() } )
+   AAdd( aOpc, "2. fakt->kalk (12->96) otpremnica" )
+   AAdd( aOpcExe, {||  fakt_kalk_prenos()  } )
+   AAdd( aOpc, "3. fakt->kalk (19->96) izlazi po ostalim osnovama" )
+   AAdd( aOpcExe, {||  fakt_kalk_prenos( "19" ) } )
+   AAdd( aOpc, "4. fakt->kalk (01->10) ulaz od dobavljača" )
+   AAdd( aOpcExe, {||  fakt_kalk_prenos( "01_10" ) } )
+   AAdd( aOpc, "5. fakt->kalk (0x->16) doprema u magacin" )
+   AAdd( aOpcExe, {||  fakt_kalk_prenos( "0x" ) } )
+   AAdd( aOpc, "6. fakt->kalk, prenos otpremnica za period" )
+   AAdd( aOpcExe, {||  kalk_fakt_prenos_period() } )
 
-   f18_menu( "fkma", .F., _izbor, _opc, _opcexe )
+   f18_menu( "fkma", .F., nIzbor, aOpc, aOpcExe )
 
    my_close_all_dbf()
 
@@ -54,19 +54,20 @@ FUNCTION fakt_kalk_prenos_10_14()
    LOCAL cFaktFirma := self_organizacija_id()
    LOCAL dDatPl := CToD( "" )
    LOCAL _params := fakt_params()
+   LOCAL GetList := {}
 
    // PRIVATE lVrsteP := _params[ "fakt_vrste_placanja" ]
 
-   o_koncij()
+   // o_koncij()
    o_kalk_pripr()
    // o_kalk()
    // o_kalk_doks()
    // o_kalk_doks2()
-  // o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_fakt_dbf()
+   // o_roba()
+   // o_konto()
+   // o_partner()
+   // o_tarifa()
+   // o_fakt_dbf()
 
    dDatKalk := fetch_metric( "kalk_fakt_prenos_10_14_datum", my_user(), Date() )
    cIdKonto := fetch_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), PadR( "1200", 7 ) )
@@ -107,10 +108,8 @@ FUNCTION fakt_kalk_prenos_10_14()
          EXIT
       ENDIF
 
-      SELECT fakt
-      SEEK cFaktFirma + cIdTipDok + cBrDok
-
-      IF !Found()
+      IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
+         // IF !Found()
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !"
          Inkey( 4 )
@@ -157,7 +156,7 @@ FUNCTION fakt_kalk_prenos_10_14()
 
          IF Found() // faktura je vec prenesena
             Beep( 4 )
-            @ box_x_koord() + 8, box_y_koord() + 2 SAY "Dokument je vec prenesen !"
+            @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Dokument je već prenesen !"
             Inkey( 4 )
             @ box_x_koord() + 8, box_y_koord() + 2 SAY Space( 30 )
             LOOP
@@ -168,18 +167,16 @@ FUNCTION fakt_kalk_prenos_10_14()
             nRbr := Val( Rbr )
          ENDIF
 
-         //SELECT fakt
-         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-        //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u šifarniku!#Prenos nije izvršen!" )
-          //  LOOP
-         //ENDIF
+         // SELECT fakt
+         // IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+         // MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u šifarniku!#Prenos nije izvršen!" )
+         // LOOP
+         // ENDIF
 
-         find_kalk_doks2_by_broj_dokumenta( cIdFirma, "14", cBrKalk )
-
-         // SELECT kalk_doks2
-         // HSEEK cIdfirma + "14" + cBrkalk
-
-         IF !Found()
+         IF !find_kalk_doks2_by_broj_dokumenta( cIdFirma, "14", cBrKalk )
+            // SELECT kalk_doks2
+            // HSEEK cIdfirma + "14" + cBrkalk
+            // IF !Found()
             APPEND BLANK
             hRec := dbf_get_rec()
             hRec[ "idvd" ] := "14"
@@ -223,7 +220,7 @@ FUNCTION fakt_kalk_prenos_10_14()
             REPLACE idfirma WITH cIdFirma, ;
                rbr     WITH Str( ++nRbr, 3 ), ;
                idvd WITH "14", ;   // izlazna faktura
-            brdok WITH cBrKalk, ;
+               brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
                idpartner WITH cIdPartner, ;
                idtarifa WITH ROBA->idtarifa, ;
@@ -688,13 +685,13 @@ FUNCTION kalk_fakt_prenos_period()
 
 STATIC FUNCTION _o_prenos_tbls()
 
-   o_koncij()
+   //o_koncij()
    o_kalk_pripr()
-  // o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_fakt_dbf()
+   // o_roba()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
+   //o_fakt_dbf()
 
    RETURN .T.
 

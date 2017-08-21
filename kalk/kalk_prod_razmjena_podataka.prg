@@ -61,14 +61,14 @@ FUNCTION fakt_11_kalk_prenos_11()
    LOCAL aGetList := {}
 
    o_kalk_pripr()
-   o_koncij()
+  // o_koncij()
    // o_kalk()
    // o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
+   //o_konto()
+  // o_partner()
+  // o_tarifa()
 
-   o_fakt_dbf()
+   //o_fakt_dbf()
 
    SET ORDER TO TAG "7" // idfirma + DTOS(datdok)
 
@@ -124,9 +124,12 @@ FUNCTION fakt_11_kalk_prenos_11()
          EXIT
       ENDIF
 
-      SELECT fakt
-      SET ORDER TO TAG "1"
-      GO TOP
+      //SELECT fakt
+      //SET ORDER TO TAG "1"
+      //GO TOP
+
+      //SEEK cFaktFirma + cIdTipDok
+      seek_fakt( cFaktFirma, cIdTipDok )
 
       cArtPocinju := Trim( cArtPocinju )
       nLeftArt := Len( cArtPocinju )
@@ -139,14 +142,9 @@ FUNCTION fakt_11_kalk_prenos_11()
          cFilterBrDok := ".t."
       ENDIF
 
-
-      SEEK cFaktFirma + cIdTipDok
-
       MsgO( "Generacija podataka: " + cFaktFirma + "-" + cIdTipDok )
 
-
       aDokumenti := {}
-
       DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok == field->IdFirma + field->IdTipDok
 
 
@@ -281,14 +279,14 @@ FUNCTION fakt_13_kalk_11()
    LOCAL cBrKalk := Space( 8 )
 
    o_kalk_pripr()
-   o_koncij()
+//   o_koncij()
    // o_kalk()
 // o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
+//   o_konto()
+//   o_partner()
+//   o_tarifa()
 
-   o_fakt_dbf()
+//   o_fakt_dbf()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320", 7 )
@@ -329,9 +327,11 @@ FUNCTION fakt_13_kalk_11()
       IF LastKey() == K_ESC; exit; ENDIF
 
 
-      SELECT fakt
-      SEEK cFaktFirma + cIdTipDok + cBrDok
-      IF !Found()
+      //SELECT fakt
+      //SEEK cFaktFirma + cIdTipDok + cBrDok
+
+      //IF !Found()
+      IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
          Inkey( 4 )
@@ -437,13 +437,13 @@ FUNCTION fakt_11_kalk_41()
    PRIVATE cFaktFirma
 
    o_kalk_pripr()
-   o_kalk()
+//   o_kalk()
 // o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
+//   o_konto()
+  // o_partner()
+//   o_tarifa()
 
-   o_fakt_dbf()
+  // o_fakt_dbf()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1330", 7 )
@@ -482,12 +482,13 @@ FUNCTION fakt_11_kalk_41()
             EXIT
          ENDIF
 
-         SELECT fakt
-         SEEK cFaktFirma + cIdTipDok + cBrDok
+         //SELECT fakt
+         //SEEK cFaktFirma + cIdTipDok + cBrDok
 
-         IF !Found()
+         //IF !Found()
+         IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
             Beep( 4 )
-            @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
+            @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !"
             Inkey( 4 )
             @ box_x_koord() + 14, box_y_koord() + 2 SAY Space( 30 )
             LOOP
@@ -689,11 +690,11 @@ FUNCTION fakt_01_kalk_81()
    o_kalk_pripr()
    o_kalk()
 // o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
+  // o_konto()
+  // o_partner()
+//   o_tarifa()
 
-   o_fakt_dbf()
+//   o_fakt_dbf()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320", 7 )
@@ -724,9 +725,10 @@ FUNCTION fakt_01_kalk_81()
       IF LastKey() == K_ESC; exit; ENDIF
 
 
-      SELECT fakt
-      SEEK cFaktFirma + cIdTipDok + cBrDok
-      IF !Found()
+      //SELECT fakt
+      //SEEK cFaktFirma + cIdTipDok + cBrDok
+      IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
+      //IF !Found()
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
          Inkey( 4 )
@@ -735,9 +737,9 @@ FUNCTION fakt_01_kalk_81()
       ELSE
          aMemo := fakt_ftxt_decode( txt )
          IF Len( aMemo ) >= 5
-            @ box_x_koord() + 10, box_y_koord() + 2 SAY PadR( Trim( amemo[ 3 ] ), 30 )
-            @ box_x_koord() + 11, box_y_koord() + 2 SAY PadR( Trim( amemo[ 4 ] ), 30 )
-            @ box_x_koord() + 12, box_y_koord() + 2 SAY PadR( Trim( amemo[ 5 ] ), 30 )
+            @ box_x_koord() + 10, box_y_koord() + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
+            @ box_x_koord() + 11, box_y_koord() + 2 SAY PadR( Trim( aMemo[ 4 ] ), 30 )
+            @ box_x_koord() + 12, box_y_koord() + 2 SAY PadR( Trim( aMemo[ 5 ] ), 30 )
          ELSE
             cTxt := ""
          ENDIF
@@ -819,14 +821,14 @@ FUNCTION fakt_13_kalk_80()
    LOCAL cIdFirma := self_organizacija_id(), cIdTipDok := "13", cBrDok := cBrKalk := Space( 8 )
 
    o_kalk_pripr()
-   o_koncij()
-   o_kalk()
+   //o_koncij()
+   //o_kalk()
    // o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
 
-   o_fakt_dbf()
+   //o_fakt_dbf()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320999", 7 )
@@ -861,9 +863,11 @@ FUNCTION fakt_13_kalk_80()
       IF LastKey() == K_ESC; exit; ENDIF
 
 
-      SELECT fakt
-      SEEK cFaktFirma + cIdTipDok + cBrDok
-      IF !Found()
+      //SELECT fakt
+      //SEEK cFaktFirma + cIdTipDok + cBrDok
+      //IF !Found()
+      IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
+
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
          Inkey( 4 )
@@ -901,7 +905,8 @@ FUNCTION fakt_13_kalk_80()
 
             SELECT fakt
             IF AllTrim( podbr ) == "."  .OR. idroba = "U"
-               skip; LOOP
+               skip
+               LOOP
             ENDIF
             cPKonto := cIdKonto
             PRIVATE aPorezi := {}
@@ -991,7 +996,7 @@ FUNCTION fakt_15_kalk_15()
    o_partner()
    o_tarifa()
 
-   o_fakt_dbf()
+--   o_fakt_dbf()
 
    dDatKalk := Date()
    cIdKonto := PadR( "1320", 7 )
@@ -1176,7 +1181,6 @@ FUNCTION fakt_11_kalk_42()
    cIdZaduz := Space( 6 )
    cBrkalk := Space( 8 )
 
-
    _o_prenos_tbls()
 
    Box(, 15, 60 )
@@ -1242,10 +1246,10 @@ FUNCTION fakt_11_kalk_42()
             EXIT
          ENDIF
 
-         SELECT fakt
-         SEEK cFaktFirma + cIdTipDok + cBrDok
-
-         IF !Found()
+         //SELECT fakt
+         //SEEK cFaktFirma + cIdTipDok + cBrDok
+         IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
+         //IF !Found()
             Beep( 4 )
             @ box_x_koord() + 15, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
             Inkey( 4 )
@@ -1473,9 +1477,9 @@ STATIC FUNCTION _o_prenos_tbls()
    o_kalk_pripr()
    o_kalk()
    // o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_fakt_dbf()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
+   //o_fakt_dbf()
 
    RETURN .T.

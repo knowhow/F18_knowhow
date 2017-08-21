@@ -45,8 +45,8 @@ FUNCTION m_changes( nDoc_no )
 
    f18_menu( "changes", .F., izbor, opc, opcexe )
 
-   box_x_koord() := _x
-   box_y_koord() := _y
+   box_x_koord( _x )
+   box_y_koord( _y )
 
    RETURN
 

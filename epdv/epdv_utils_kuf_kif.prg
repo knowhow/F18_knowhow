@@ -14,52 +14,52 @@
 
 
 
-FUNCTION epdv_otvori_kuf_tabele( lPriprema )
+FUNCTION epdv_otvori_kuf_priprema()
 
-   IF lPriprema == nil
-      lPriprema := .F.
-   ENDIF
+   // IF lPriprema == nil
+   // lPriprema := .F.
+   // ENDIF
 
-   //select_o_tarifa()
-   select_o_epdv_kuf()
+   // select_o_tarifa()
+   //select_o_epdv_kuf()
 
-   IF lPriprema == .T.
-      select_o_epdv_p_kuf()
-   ENDIF
+   // IF lPriprema == .T.
+   select_o_epdv_p_kuf()
+   // ENDIF
 
    RETURN .T.
 
 
-FUNCTION epdv_otvori_kif_tabele( lPriprema )
+FUNCTION epdv_otvori_kif_priprema()
 
-   IF lPriprema == nil
-      lPriprema := .F.
-   ENDIF
+   // IF lPriprema == nil
+   // lPriprema := .F.
+   // ENDIF
 
    // SELECT F_TARIFA
    // IF !Used()
    // o_tarifa()
    // ENDIF
 
-   select_o_epdv_kif()
+   //select_o_epdv_kif()
 
-   IF lPriprema == .T.
-      select_o_epdv_p_kif()
-   ENDIF
+   // IF lPriprema == .T.
+   select_o_epdv_p_kif()
+   // ENDIF
 
    RETURN .T.
 
 
 
-FUNCTION epdv_next_r_br( cTblName )
+FUNCTION epdv_priprema_next_r_br( cPKufKif )
 
-   LOCAL nLastBr
+   LOCAL nLastRBr
 
    PushWA()
    DO CASE
-   CASE cTblName == "P_KUF"
+   CASE cPKufKif == "P_KUF"
       SELECT p_kuf
-   CASE cTblName == "P_KIF"
+   CASE cPKufKif == "P_KIF"
       SELECT p_kif
 
    ENDCASE
@@ -75,10 +75,10 @@ FUNCTION epdv_next_r_br( cTblName )
 
 
 
-FUNCTION epdv_renumeracija_g_r_br( cTblName )
+FUNCTION epdv_renumeracija_g_r_br( cKufKif )
 
    LOCAL nRbr, hRec
-   LOCAL _table := "epdv_kuf"
+   LOCAL cTable := "epdv_kuf"
    LOCAL hParams
 
    // TAG: datum : "dtos(datum)+src_br_2"
@@ -86,30 +86,31 @@ FUNCTION epdv_renumeracija_g_r_br( cTblName )
    my_close_all_dbf()
 
    DO CASE
-   CASE cTblName == "KUF"
-      select_o_epdv_kuf()
-      _table := "epdv_kuf"
-   CASE cTblName == "KIF"
-      select_o_epdv_kuf()
-      _table := "epdv_kif"
+   CASE cKufKif == "KUF"
+      //select_o_epdv_kuf()
+      epdv_open_all_kuf( "DATUM" )
+      cTable := "epdv_kuf"
+   CASE cKufKif == "KIF"
+      //select_o_epdv_kuf()
+      epdv_open_all_kif( "DATUM" )
+      cTable := "epdv_kif"
    ENDCASE
 
    nRbr := 1
-   SET ORDER TO TAG "DATUM"
+   //SET ORDER TO TAG "DATUM"
+   //GO TOP
 
-   GO TOP
-
-   IF !FLock()
-      MsgBeep( "Ne mogu zaključati bazu " + cTblName + "## renumeracije nije izvrsena !" )
-      my_close_all_dbf()
-   ENDIF
+   //IF !FLock()
+    //  MsgBeep( "Ne mogu zaključati bazu " + cKufKif + "## renumeracije nije izvrsena !" )
+    //  my_close_all_dbf()
+   //ENDIF
 
    Box( , 2, 35 )
 
 
    run_sql_query( "BEGIN" )
 
-   IF !f18_lock_tables( { _table } )
+   IF !f18_lock_tables( { cTable } )
       run_sql_query( "ROLLBACK" )
       RETURN .F.
    ENDIF
@@ -121,8 +122,7 @@ FUNCTION epdv_renumeracija_g_r_br( cTblName )
 
       hRec := dbf_get_rec()
       hRec[ "g_r_br" ] := nRbr
-      update_rec_server_and_dbf( _table, hRec, 1, "CONT" )
-
+      update_rec_server_and_dbf( cTable, hRec, 1, "CONT" )
       nRbr++
 
       SKIP
@@ -130,7 +130,7 @@ FUNCTION epdv_renumeracija_g_r_br( cTblName )
    ENDDO
 
    hParams := hb_Hash()
-   hParams[ "unlock" ] :=  { _table }
+   hParams[ "unlock" ] :=  { cTable }
    run_sql_query( "COMMIT", hParams )
 
    BoxC()

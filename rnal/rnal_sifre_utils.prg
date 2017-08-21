@@ -248,7 +248,7 @@ FUNCTION rnal_wid_edit( cField )
    nId += 1
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "Ispravi sifru na:" GET nId PICT Replicate( "9", 10 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ispravi sifru na:" GET nId PICT Replicate( "9", 10 )
    READ
    BoxC()
 

@@ -76,8 +76,8 @@ FUNCTION get_ral( nTick )
 
    Box(, 2, 45 )
 
-   @ m_x + 1, m_y + 2 SAY "Valjak [1 - 80] / [2 - 160]:" GET nRoller PICT "9" VALID prikazi_valjak( nRoller )
-   @ m_x + 2, m_y + 2 SAY "             RAL ->" GET nRal PICT "99999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Valjak [1 - 80] / [2 - 160]:" GET nRoller PICT "9" VALID prikazi_valjak( nRoller )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "             RAL ->" GET nRal PICT "99999"
 
    READ
 
@@ -125,7 +125,7 @@ STATIC FUNCTION prikazi_valjak( nValjak )
 
    cValue := "-> " + AllTrim( Str( nValue ) ) + " gr/m2"
 
-   @ m_x + 1, Col() + 2 SAY PadR( cValue, 12 )
+   @ box_x_koord() + 1, Col() + 2 SAY PadR( cValue, 12 )
 
    RETURN .T.
 

@@ -38,9 +38,9 @@ STATIC FUNCTION parametri_prenosa()
 
    gDirFakt := PadR( gDirFakt, 25 )
    Box(, 4, 70 )
-   @ m_x + 1, m_y + 2 SAY "Direktorij u kome se nalazi FAKT.DBF:" GET gDirFakt
-   @ m_x + 3, m_y + 2 SAY "Vrsta mat_naloga u mat   :" GET gVN
-   @ m_x + 4, m_y + 2 SAY "Vrsta dokumenta mat  :" GET gVD
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Direktorij u kome se nalazi FAKT.DBF:" GET gDirFakt
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Vrsta mat_naloga u mat   :" GET gVN
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Vrsta dokumenta mat  :" GET gVD
    READ
    BoxC()
    gDirFakt := Trim( gDirFakt )
@@ -89,14 +89,14 @@ STATIC FUNCTION prenos()
    DO WHILE .T.
 
       nRBr := 0
-      @ m_x + 1, m_y + 2   SAY "Broj mat_naloga mat " + gVN + " -" GET cBrMat PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatMat
-      @ m_x + 3, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
-      @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz )
+      @ box_x_koord() + 1, box_y_koord() + 2   SAY "Broj mat_naloga mat " + gVN + " -" GET cBrMat PICT "@!"
+      @ box_x_koord() + 1, Col() + 2 SAY "Datum:" GET dDatMat
+      @ box_x_koord() + 3, box_y_koord() + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
+      @ box_x_koord() + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz )
 
-      @ m_x + 6, m_y + 2 SAY "Broj fakture: " + cIdFirma
-      @ m_x + 6, Col() + 1 SAY "- " + cidtipdok
-      @ m_x + 6, Col() + 1 SAY "-" GET cBrDok
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj fakture: " + cIdFirma
+      @ box_x_koord() + 6, Col() + 1 SAY "- " + cidtipdok
+      @ box_x_koord() + 6, Col() + 1 SAY "-" GET cBrDok
       READ
       IF LastKey() == K_ESC; exit; ENDIF
 
@@ -105,31 +105,31 @@ STATIC FUNCTION prenos()
       SEEK cIdFirma + cIdTipDok + cBrDok
       IF !Found()
          Beep( 4 )
-         @ m_x + 14, m_y + 2 SAY "Ne postoji ovaj dokument !!"
+         @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
          Inkey( 4 )
-         @ m_x + 14, m_y + 2 SAY Space( 30 )
+         @ box_x_koord() + 14, box_y_koord() + 2 SAY Space( 30 )
          LOOP
       ELSE
          aMemo := fakt_ftxt_decode( txt )
          IF Len( aMemo ) >= 5
-            @ m_x + 10, m_y + 2 SAY Trim( amemo[ 3 ] )
-            @ m_x + 11, m_y + 2 SAY Trim( amemo[ 4 ] )
-            @ m_x + 12, m_y + 2 SAY Trim( amemo[ 5 ] )
+            @ box_x_koord() + 10, box_y_koord() + 2 SAY Trim( amemo[ 3 ] )
+            @ box_x_koord() + 11, box_y_koord() + 2 SAY Trim( amemo[ 4 ] )
+            @ box_x_koord() + 12, box_y_koord() + 2 SAY Trim( amemo[ 5 ] )
          ELSE
             cTxt := ""
          ENDIF
          Inkey( 0 )
          // cIdPartner:=space(6)
-         // @ m_x+14,m_y+2 SAY "Sifra partnera:"  GET cIdpartner pict "@!" valid p_partner(@cIdPartner)
+         // @ box_x_koord()+14,box_y_koord()+2 SAY "Sifra partnera:"  GET cIdpartner pict "@!" valid p_partner(@cIdPartner)
          READ
 
          SELECT mat_pripr
          LOCATE FOR BrDok = cBrDok // faktura je vec prenesena
          IF Found()
             Beep( 4 )
-            @ m_x + 8, m_y + 2 SAY "Dokument je vec prenesen !!"
+            @ box_x_koord() + 8, box_y_koord() + 2 SAY "Dokument je vec prenesen !!"
             Inkey( 4 )
-            @ m_x + 8, m_y + 2 SAY Space( 30 )
+            @ box_x_koord() + 8, box_y_koord() + 2 SAY Space( 30 )
             LOOP
          ENDIF
          GO BOTTOM
@@ -191,9 +191,9 @@ STATIC FUNCTION prenos()
             SELECT fakt
             SKIP
          ENDDO
-         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
+         @ box_x_koord() + 8, box_y_koord() + 2 SAY "Dokument je prenesen !!"
          Inkey( 4 )
-         @ m_x + 8, m_y + 2 SAY Space( 30 )
+         @ box_x_koord() + 8, box_y_koord() + 2 SAY Space( 30 )
       ENDIF
 
    ENDDO

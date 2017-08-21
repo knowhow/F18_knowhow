@@ -23,13 +23,13 @@ FUNCTION BrowseRn()
    Box(, 7, 66, )
    SET CURSOR ON
 
-   @ m_x + 1, m_y + 2 SAY "ISPRAVKA BROJA VEZE - RADNI NALOZI"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "ISPRAVKA BROJA VEZE - RADNI NALOZI"
    IF gNW $ "DX"
-      @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
-   @ m_x + 4, m_y + 2 SAY "Magacin Konto: " GET cMKonto   VALID  P_Konto( @cMKonto )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Magacin Konto: " GET cMKonto   VALID  P_Konto( @cMKonto )
    read
    ESC_BCR
 
@@ -57,10 +57,10 @@ FUNCTION BrowseRn()
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
    SET CURSOR ON
-   @ m_x + 1, m_y + 1 SAY "<F2> Ispravka dokumenta, <c-P> Print, <a-P> Print Br.Dok"
-   @ m_x + 2, m_y + 1 SAY "<ENTER> Postavi/Ukini zatvaranje"
-   @ m_x + 3, m_y + 1 SAY ""; ?? "Konto:", cMKonto
-   BrowseKey( m_x + 4, m_y + 1, m_x + 19, m_y + 77, ImeKol, {| Ch| EdBRN( Ch ) }, "idFirma+mkonto=cidFirma+cmkonto", cidFirma + cmkonto, 2,,, {|| .F. } )
+   @ box_x_koord() + 1, box_y_koord() + 1 SAY "<F2> Ispravka dokumenta, <c-P> Print, <a-P> Print Br.Dok"
+   @ box_x_koord() + 2, box_y_koord() + 1 SAY "<ENTER> Postavi/Ukini zatvaranje"
+   @ box_x_koord() + 3, box_y_koord() + 1 SAY ""; ?? "Konto:", cMKonto
+   BrowseKey( box_x_koord() + 4, box_y_koord() + 1, box_x_koord() + 19, box_y_koord() + 77, ImeKol, {| Ch| EdBRN( Ch ) }, "idFirma+mkonto=cidFirma+cmkonto", cidFirma + cmkonto, 2,,, {|| .F. } )
 
    BoxC()
 
@@ -79,7 +79,7 @@ FUNCTION EdBrn( Ch )
       cIdzaduz2 := Idzaduz2
       dDatDok := datdok
       Box(, 5, 60, .F. )
-      @ m_x + 1, m_y + 2 SAY "Broj RN:" GET cIdzaduz2 PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj RN:" GET cIdzaduz2 PICT "@!"
       READ
       BoxC()
       IF LastKey() <> K_ESC

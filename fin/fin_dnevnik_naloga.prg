@@ -40,9 +40,9 @@ FUNCTION fin_dnevnik_naloga()
    SET KEY K_F5 TO VidiNaloge()
 
    Box(, 3, 77 )
-   @ m_x + 4, m_y + 30   SAY "<F5> - sredjivanje datuma naloga"
-   @ m_x + 2, m_y + 2    SAY "Obuhvatiti naloge u periodu od" GET dOd
-   @ m_x + 2, Col() + 2 SAY "do" GET dDo VALID dDo >= dOd
+   @ box_x_koord() + 4, box_y_koord() + 30   SAY "<F5> - sredjivanje datuma naloga"
+   @ box_x_koord() + 2, box_y_koord() + 2    SAY "Obuhvatiti naloge u periodu od" GET dOd
+   @ box_x_koord() + 2, Col() + 2 SAY "do" GET dDo VALID dDo >= dOd
    READ
    ESC_BCR
    BoxC()
@@ -209,8 +209,8 @@ FUNCTION EdNal()
    IF ( Ch == K_ENTER )
 
       Box(, 4, 77 )
-      @ m_x + 2, m_y + 2 SAY "Stari datum naloga: " + DToC( dDatNal )
-      @ m_x + 3, m_y + 2 SAY "Novi datum naloga :" GET dDatNal
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Stari datum naloga: " + DToC( dDatNal )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Novi datum naloga :" GET dDatNal
       READ
       BoxC()
 

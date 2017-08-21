@@ -168,7 +168,7 @@ FUNCTION update_table_konto( lZamijenitiSifre )
 
       IF !_sif_exist .OR. ( _sif_exist .AND. lZamijenitiSifre == "D" )
 
-         @ m_x + 3, m_y + 2 SAY "import konto id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "import konto id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
          SELECT konto
          IF !_sif_exist
@@ -241,7 +241,7 @@ FUNCTION update_table_partn( lZamijenitiSifre )
 
       IF !_sif_exist .OR. ( _sif_exist .AND. lZamijenitiSifre == "D" )
 
-         @ m_x + 3, m_y + 2 SAY "import partn id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "import partn id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
          SELECT partn
 
@@ -311,7 +311,7 @@ FUNCTION update_table_roba( lZamijenitiSifre )
 
       IF !_sif_exist .OR. ( _sif_exist .AND. lZamijenitiSifre == "D" )
 
-         @ m_x + 3, m_y + 2 SAY "import roba id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "import roba id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
          SELECT roba
 
@@ -516,7 +516,7 @@ FUNCTION update_sifk_sifv( lFullTransaction )
          APPEND BLANK
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY "import sifk id: " + hRec[ "id" ] + ", oznaka: " + hRec[ "oznaka" ]
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "import sifk id: " + hRec[ "id" ] + ", oznaka: " + hRec[ "oznaka" ]
 
       update_rec_server_and_dbf( "sifk", hRec, 1, cTran )
 
@@ -545,7 +545,7 @@ FUNCTION update_sifk_sifv( lFullTransaction )
       GO TOP
       IF Eof()
          APPEND BLANK
-         @ m_x + 3, m_y + 2 SAY "import sifv id: " + hRec[ "id" ] + ", oznaka: " + hRec[ "oznaka" ] + ", sifra: " + hRec[ "idsif" ]
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "import sifv id: " + hRec[ "id" ] + ", oznaka: " + hRec[ "oznaka" ] + ", sifra: " + hRec[ "idsif" ]
          update_rec_server_and_dbf( "sifv", hRec, 1, cTran )
       ENDIF
 

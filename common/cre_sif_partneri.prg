@@ -73,7 +73,7 @@ FUNCTION cre_sif_partn( ver )
 /*
    cId := "00001"
    p_partner( @cId, 10, 5 ) => provjera šifre, ako ne postoji prikaze šifarnik
-                                ako postoji prikaže na m_x + 10, m_y + 5 naziv
+                                ako postoji prikaže na box_x_koord() + 10, box_y_koord() + 5 naziv
 
    lEmptIdOk := .F.  // default je .T.
 
@@ -218,8 +218,8 @@ FUNCTION p_set_group( set_field )
    LOCAL _izbor := 1
    LOCAL _m_x, _m_y
 
-   _m_x := m_x
-   _m_y := m_y
+   _m_x := box_x_koord()
+   _m_y := box_y_koord()
 
    AAdd( _Opc, "VP  - veleprodaja          " )
    AAdd( _opcexe, {|| set_field := "VP ", _izbor := 0 } )
@@ -232,8 +232,8 @@ FUNCTION p_set_group( set_field )
 
    f18_menu( "pgr", .F., @_izbor, _opc, _opcexe )
 
-   m_x := _m_x
-   m_y := _m_y
+   box_x_koord( _m_x )
+   box_y_koord( _m_y )
 
    RETURN .T.
 

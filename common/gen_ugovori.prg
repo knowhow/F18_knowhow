@@ -103,21 +103,21 @@ FUNCTION gen_ug()
 
    Box( "#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA", 7, 70 )
 
-   @ m_X + 1, m_y + 2 SAY "Datum fakture" GET dDAtDok
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum fakture" GET dDAtDok
 
    IF my_get_from_ini( 'Fakt_Ugovori', "N1", 'D' ) == "D"
-      @ m_X + 2, m_y + 2 SAY "Parametar N1 " GET nn1 PICT "999999.999"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Parametar N1 " GET nn1 PICT "999999.999"
    ENDIF
    IF my_get_from_ini( 'Fakt_Ugovori', "N2", 'D' ) == "D"
-      @ m_X + 3, m_y + 2 SAY "Parametar N2 " GET nn2 PICT "999999.999"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Parametar N2 " GET nn2 PICT "999999.999"
    ENDIF
    IF my_get_from_ini( 'Fakt_Ugovori', "N3", 'D' ) == "D"
-      @ m_X + 4, m_y + 2 SAY "Parametar N3 " GET nn3 PICT "999999.999"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Parametar N3 " GET nn3 PICT "999999.999"
    ENDIF
 
-   @ m_x + 5, m_y + 2 SAY "Predracun ili racun (0/1) ? " GET nn3  PICT "@!"
-   @ m_x + 6, m_y + 2 SAY "Artikal (prazno-svi)" GET cFUArtikal VALID Empty( cFUArtikal ) .OR. P_Roba( @cFUArtikal ) PICT "@!"
-   @ m_x + 7, m_y + 2 SAY "Generisati fakture samo na osnovu aktivnih ugovora? (D/N)" GET cSamoAktivni VALID cSamoAktivni $ "DN" PICT "@!"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Predracun ili racun (0/1) ? " GET nn3  PICT "@!"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Artikal (prazno-svi)" GET cFUArtikal VALID Empty( cFUArtikal ) .OR. P_Roba( @cFUArtikal ) PICT "@!"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Generisati fakture samo na osnovu aktivnih ugovora? (D/N)" GET cSamoAktivni VALID cSamoAktivni $ "DN" PICT "@!"
 
    READ
    BoxC()
@@ -298,9 +298,9 @@ FUNCTION gen_ug()
          IF rugov->k1 = "A"  // onda je kolicina= A2-A1  (novo stanje - staro stanje)
             nA2 := 0
             Box(, 5, 60 )
-            @ M_X + 1, M_Y + 2 SAY ugov->naz
-            @ m_x + 3, m_y + 2 SAY "A: Stara vrijednost:"; ?? ugov->A2
-            @ m_x + 5, m_y + 2 SAY "A: Nova vrijednost (0 ne mjenjaj):" GET nA2 PICT "999999.99"
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY ugov->naz
+            @ box_x_koord() + 3, box_y_koord() + 2 SAY "A: Stara vrijednost:"; ?? ugov->A2
+            @ box_x_koord() + 5, box_y_koord() + 2 SAY "A: Nova vrijednost (0 ne mjenjaj):" GET nA2 PICT "999999.99"
             READ
             BoxC()
             IF na2 <> 0
@@ -313,9 +313,9 @@ FUNCTION gen_ug()
          ELSEIF rugov->k1 = "B"
             nB2 := 0
             Box(, 5, 60,, ugov->naz )
-            @ M_X + 1, M_Y + 2 SAY ugov->naz
-            @ m_x + 3, m_y + 2 SAY "B: Stara vrijednost:"; ?? ugov->B2
-            @ m_x + 5, m_y + 2 SAY "B: Nova vrijednost (0 ne mjenjaj):" GET nB2 PICT "999999.99"
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY ugov->naz
+            @ box_x_koord() + 3, box_y_koord() + 2 SAY "B: Stara vrijednost:"; ?? ugov->B2
+            @ box_x_koord() + 5, box_y_koord() + 2 SAY "B: Nova vrijednost (0 ne mjenjaj):" GET nB2 PICT "999999.99"
             READ
             BoxC()
             IF nB2 <> 0

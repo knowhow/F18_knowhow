@@ -60,7 +60,7 @@ FUNCTION export_sifarnik()
             ENDIF
             // ELSE
             // IF aStruct[ i, 2 ] == "M"
-            // @ m_x + 6, m_y + 3 SAY8 "Štampati " + aStruct[ i, 1 ] GET cStMemo PICT "@!" VALID cStMemo $ "DN"
+            // @ box_x_koord() + 6, box_y_koord() + 3 SAY8 "Štampati " + aStruct[ i, 1 ] GET cStMemo PICT "@!" VALID cStMemo $ "DN"
             // READ
             // IF cStMemo == "D"
             // cNazMemo := aStruct[ i, 1 ]

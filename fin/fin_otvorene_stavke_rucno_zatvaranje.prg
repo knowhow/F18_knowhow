@@ -30,17 +30,17 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    SET CURSOR ON
 
-   @ m_x + 1, m_y + 2 SAY "ISPRAVKA BROJA VEZE - OTVORENE STAVKE"
-   @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "ISPRAVKA BROJA VEZE - OTVORENE STAVKE"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
-   @ m_x + 4, m_y + 2 SAY "Konto  " GET cIdKonto  VALID  p_konto( @cIdKonto )
-   @ m_x + 5, m_y + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner ) PICT "@!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto  " GET cIdKonto  VALID  p_konto( @cIdKonto )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner ) PICT "@!"
 
-   @ m_x + 6, m_y + 2 SAY "Sortiranje B/D (broj veze/datum) " GET cSort VALID cSort $ "BD" PICT "@!"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Sortiranje B/D (broj veze/datum) " GET cSort VALID cSort $ "BD" PICT "@!"
 
    IF gFinRj == "D"
       cIdRj := Space( Len( RJ->id ) )
-      @ m_x + 7, m_y + 2 SAY "RJ" GET cIdrj PICT "@!" VALID Empty( cIdrj ) .OR. P_Rj( @cidrj )
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "RJ" GET cIdrj PICT "@!" VALID Empty( cIdrj ) .OR. P_Rj( @cidrj )
    ENDIF
 
 
@@ -169,8 +169,8 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
       cDn := "N"
 
       Box(, 3, 50 )
-      @ m_x + 1, m_y + 2 SAY8 "Ne preporučuje se koristenje ove opcije !"
-      @ m_x + 3, m_y + 2 SAY8 "Želite li ipak nastaviti D/N" GET cDN PICT "@!" VALID cDn $ "DN"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Ne preporučuje se koristenje ove opcije !"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Želite li ipak nastaviti D/N" GET cDN PICT "@!" VALID cDn $ "DN"
       READ
       BoxC()
 
@@ -221,11 +221,11 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
       dDatVal := field->datval
 
       Box( "eddok", 5, 70, .F. )
-      @ m_x + 1, m_y + 2 SAY "Broj Dokumenta (broj veze):" GET cBrDok
-      @ m_x + 2, m_y + 2 SAY "Opis:" GET cOpis PICT "@S50"
-      @ m_x + 4, m_y + 2 SAY "Datum dokumenta: "
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj Dokumenta (broj veze):" GET cBrDok
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Opis:" GET cOpis PICT "@S50"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Datum dokumenta: "
       ?? dDatDok
-      @ m_x + 5, m_y + 2 SAY "Datum valute   :" GET dDatVal
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Datum valute   :" GET dDatVal
       READ
       BoxC()
 

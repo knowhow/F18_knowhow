@@ -79,12 +79,12 @@ FUNCTION kalk_prenos_fakt()
 
             SEEK cFF97 + cIdFakt97 + cBrFakt
 
-            @ m_x + 2, m_y + 2 SAY "Broj dokumenta u modulu FAKT: " + cFF97 + " - " + cIdFakt97 + " - " + cBrFakt
+            @ box_x_koord() + 2, box_y_koord() + 2 SAY "Broj dokumenta u modulu FAKT: " + cFF97 + " - " + cIdFakt97 + " - " + cBrFakt
 
             IF Found()
                Beep( 4 )
                Box(, 1, 50 )
-               @ m_x + 1, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !!"
+               @ box_x_koord() + 1, box_y_koord() + 2 SAY "U FAKT vec postoji ovaj dokument !!"
                Inkey( 0 )
                BoxC()
                EXIT
@@ -94,11 +94,11 @@ FUNCTION kalk_prenos_fakt()
 
          IF lRJKon97_2
             SEEK cFF97_2 + cIdFakt97_2 + cBrFakt
-            @ m_x + 3, m_y + 2 SAY "Broj dokumenta u modulu FAKT: " + cFF97_2 + " - " + cIdFakt97_2 + " - " + cBrFakt
+            @ box_x_koord() + 3, box_y_koord() + 2 SAY "Broj dokumenta u modulu FAKT: " + cFF97_2 + " - " + cIdFakt97_2 + " - " + cBrFakt
             IF Found()
                Beep( 4 )
                Box(, 1, 50 )
-               @ m_x + 1, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !!"
+               @ box_x_koord() + 1, box_y_koord() + 2 SAY "U FAKT vec postoji ovaj dokument !!"
                Inkey( 0 )
                BoxC()
                EXIT
@@ -128,12 +128,12 @@ FUNCTION kalk_prenos_fakt()
 
       IF kalk_pripr->idvd <> "97"
 
-         @ m_x + 2, m_y + 2 SAY "Broj dokumenta u modulu FAKT: " + cFaktFirma + " - " + cIdFakt + " - " + cBrFakt
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Broj dokumenta u modulu FAKT: " + cFaktFirma + " - " + cIdFakt + " - " + cBrFakt
 
          IF Found()
             Beep( 4 )
             Box(, 1, 50 )
-            @ m_x + 1, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !!"
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY "U FAKT vec postoji ovaj dokument !!"
             Inkey( 0 )
             BoxC()
             EXIT

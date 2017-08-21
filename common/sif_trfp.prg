@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-MEMVAR ImeKol, Kol, m_x, m_y, wIdKonto
+MEMVAR ImeKol, Kol, wIdKonto
 
 FUNCTION P_TRFP( cId, dx, dy )
 
@@ -56,8 +56,8 @@ STATIC FUNCTION trfp_filter( cShema, cVd )
 
    IF Pitanje(, "Želite li postaviti filter za odredjenu shemu", "N" ) == "D"
       Box(, 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Odabir sheme:" GET cShema  PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "vrsta dokumenta (prazno sve)" GET cVd PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Odabir sheme:" GET cShema  PICT "@!"
+      @ box_x_koord() + 1, Col() + 2 SAY "vrsta dokumenta (prazno sve)" GET cVd PICT "@!"
       READ
       BoxC()
       IF Empty( cShema )
@@ -124,7 +124,7 @@ FUNCTION TrfpB( Ch )
       cidvd := idvd
       cTekShema := shema
       Box(, 1, 60 )
-      @ m_x + 1, m_y + 1 SAY "Napraviti novu shemu kontiranja za dokumente " + cidvd GET cShema VALID cShema <> shema
+      @ box_x_koord() + 1, box_y_koord() + 1 SAY "Napraviti novu shemu kontiranja za dokumente " + cidvd GET cShema VALID cShema <> shema
       READ
       IF LastKey() == K_ESC; BoxC(); RETURN DE_CONT; ENDIF
       BoxC()
@@ -157,10 +157,10 @@ FUNCTION TrfpB( Ch )
 
 
          Box(, 3, 70 )
-         @ m_x + 1,  m_y + 2 SAY "Preuzeti podatke sa:" GET cDirSa VALID PostTRFP( cDirSa )
-         @ m_x + 2,  m_y + 2 SAY "Odabir sheme:" GET cShema2  PICT "@!"
-         @ m_x + 2, Col() + 2 SAY "vrsta kalkulacije (prazno sve)" GET cIdVd PICT "@!"
-         @ m_x + 3,  m_y + 2 SAY "Pobrisati postojecu shemu za izabrane kalkulacije? (D/N)" GET cPobSt VALID cPobSt $ "DN" PICT "@!"
+         @ box_x_koord() + 1,  box_y_koord() + 2 SAY "Preuzeti podatke sa:" GET cDirSa VALID PostTRFP( cDirSa )
+         @ box_x_koord() + 2,  box_y_koord() + 2 SAY "Odabir sheme:" GET cShema2  PICT "@!"
+         @ box_x_koord() + 2, Col() + 2 SAY "vrsta kalkulacije (prazno sve)" GET cIdVd PICT "@!"
+         @ box_x_koord() + 3,  box_y_koord() + 2 SAY "Pobrisati postojecu shemu za izabrane kalkulacije? (D/N)" GET cPobSt VALID cPobSt $ "DN" PICT "@!"
          READ
          IF LastKey() == K_ESC
             BoxC()

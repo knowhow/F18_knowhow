@@ -50,24 +50,24 @@ STATIC FUNCTION gethParams( hParams )
 
    Box(, 15, 70 )
 
-   @ m_x + nX, m_y + 2 SAY8 "*** magacin - izvještaj TKV"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "*** magacin - izvještaj TKV"
 
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "Datum od" GET _d_od
-   @ m_x + nX, Col() + 1 SAY "do" GET _d_do
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datum od" GET _d_od
+   @ box_x_koord() + nX, Col() + 1 SAY "do" GET _d_do
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "     Konto (prazno-svi):" GET cUslovKonta PICT "@S35"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "     Konto (prazno-svi):" GET cUslovKonta PICT "@S35"
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "Gledati [N] nabavne cijene [P] prodajne cijene ?" GET _tip PICT "@!" VALID _tip $ "PN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Gledati [N] nabavne cijene [P] prodajne cijene ?" GET _tip PICT "@!" VALID _tip $ "PN"
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Export XLSX (D/N) ?" GET cXlsxDN PICT "@!" VALID cXlsXDN $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Export XLSX (D/N) ?" GET cXlsxDN PICT "@!" VALID cXlsXDN $ "DN"
 
    READ
 

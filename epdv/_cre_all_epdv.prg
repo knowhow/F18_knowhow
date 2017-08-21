@@ -20,9 +20,9 @@ FUNCTION cre_all_epdv( ver )
    // KUF, KIF, PDV
    // ----------------------------------
 
-   // daj mi polja za kuf
    aDbf := get_kuf_fields()
 
+/*
    _alias := "KUF"
    _table_name := "epdv_kuf"
    IF_NOT_FILE_DBF_CREATE
@@ -33,11 +33,11 @@ FUNCTION cre_all_epdv( ver )
    CREATE_INDEX( "BR_DOK", "STR(BR_DOK,6,0)+STR(r_br,6,0)", _alias )
    CREATE_INDEX( "BR_DOK2", "STR(BR_DOK,6,0)+dtos(datum)", _alias )
    AFTER_CREATE_INDEX
+*/
 
-
-   // daj mi polja za kif
    aDbf := get_kif_fields()
 
+/*
    _alias := "KIF"
    _table_name := "epdv_kif"
    IF_NOT_FILE_DBF_CREATE
@@ -48,17 +48,18 @@ FUNCTION cre_all_epdv( ver )
    CREATE_INDEX( "BR_DOK", "STR(BR_DOK,6,0)+STR(r_br,6,0)", _alias )
    CREATE_INDEX( "BR_DOK2", "STR(BR_DOK,6,0)+dtos(datum)", _alias )
    AFTER_CREATE_INDEX
+*/
 
+   aDbf := epdv_get_pdv_fields()
 
-   aDbf := get_pdv_fields()
-
+/*
    _alias := "PDV"
    _table_name := "epdv_pdv"
 
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "period", "DTOS(per_od)+DTOS(per_do)", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    // P_KIF, P_KUF
    // ------------------------------
@@ -110,7 +111,7 @@ FUNCTION cre_all_epdv( ver )
 
 
 
-FUNCTION get_pdv_fields()
+FUNCTION epdv_get_pdv_fields()
 
    LOCAL aDbf
 
@@ -149,6 +150,7 @@ FUNCTION get_pdv_fields()
    AAdd( aDBf, { "i_izvoz", "N",   18,  2 } )
    // 13 - ostale neoporezive isporuke
    AAdd( aDBf, { "i_neop", "N",   18,  2 } )
+
 
    // 21 - sve nabavke osim uvoza i poljoprivrede
    AAdd( aDBf, { "u_nab_21", "N",   18,  2 } )
@@ -210,8 +212,8 @@ FUNCTION get_pdv_fields()
    // potpis obveznik pdv-a
    AAdd( aDBf, { "pot_ob",  "C",   80,  0 } )
 
-   // zakljucan obracun
-   AAdd( aDBf, { "lock",  "C",   1,  0 } )
+
+   AAdd( aDBf, { "lock",  "C",   1,  0 } )  // zakljucan obracun
 
    RETURN aDbf
 

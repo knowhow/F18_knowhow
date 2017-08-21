@@ -71,7 +71,7 @@ STATIC FUNCTION box_header_footer()
    cLine1 += cOptSep + " "
    cLine1 += PadR( "<c-P> Stampa liste", nOptLen )
 
-   @ m_x + 20, m_y + 2 SAY cLine1
+   @ box_x_koord() + 20, box_y_koord() + 2 SAY cLine1
 
    RETURN
 
@@ -195,12 +195,12 @@ STATIC FUNCTION prikazi_status_loga_u_dnu( cLogText )
       ENDIF
    ENDIF
 
-   @ m_x + 16, m_y + 2 SAY Space( nLenText )
-   @ m_x + 16, m_y + 2 SAY8 PadR( cRow1, nLenText ) COLOR f18_color_i()
-   @ m_x + 17, m_y + 2 SAY Space( nLenText )
-   @ m_x + 17, m_y + 2 SAY8 PadR( cRow2, nLenText ) COLOR f18_color_i()
-   @ m_x + 18, m_y + 2 SAY Space( nLenText )
-   @ m_x + 18, m_y + 2 SAY8 PadR( cRow3, nLenText ) COLOR f18_color_i()
+   @ box_x_koord() + 16, box_y_koord() + 2 SAY Space( nLenText )
+   @ box_x_koord() + 16, box_y_koord() + 2 SAY8 PadR( cRow1, nLenText ) COLOR f18_color_i()
+   @ box_x_koord() + 17, box_y_koord() + 2 SAY Space( nLenText )
+   @ box_x_koord() + 17, box_y_koord() + 2 SAY8 PadR( cRow2, nLenText ) COLOR f18_color_i()
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY Space( nLenText )
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY8 PadR( cRow3, nLenText ) COLOR f18_color_i()
 
    RETURN
 
@@ -255,13 +255,13 @@ STATIC FUNCTION prikazi_promjene_unutar_boxa( cLogTxt )
 
    Box(, Len( aBoxTxt ) + 2, 70 )
 
-   @ m_x + 1, m_y + 2 SAY "Detaljni prikaz promjene: " COLOR f18_color_i()
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Detaljni prikaz promjene: " COLOR f18_color_i()
 
    FOR i := 1 TO Len( aBoxTxt )
-      @ m_x + ( i + 1 ), m_y + 2 SAY8 PadR( aBoxTxt[ i ], 65 )
+      @ box_x_koord() + ( i + 1 ), box_y_koord() + 2 SAY8 PadR( aBoxTxt[ i ], 65 )
    NEXT
 
-   @ m_x + Len( aBoxTxt ) + 2, m_y + 2 GET cResp
+   @ box_x_koord() + Len( aBoxTxt ) + 2, box_y_koord() + 2 GET cResp
 
    READ
    BoxC()

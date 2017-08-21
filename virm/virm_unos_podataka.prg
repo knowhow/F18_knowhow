@@ -64,7 +64,7 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
 
    SET CURSOR ON
 
-   @ m_x + 1, m_y + 2 SAY8 "Svrha plaćanja :" GET _svrha_pl PICT "@!" VALID P_Vrprim( @_svrha_pl )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Svrha plaćanja :" GET _svrha_pl PICT "@!" VALID P_Vrprim( @_svrha_pl )
 
    READ
 
@@ -84,10 +84,10 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
       _svrha_doz := PadR( vrprim->pom_txt, Len( _svrha_doz ) )
    ENDIF
 
-   @ m_x + 2, m_y + Col() + 2 SAY "R.br:" GET _Rbr PICT "999"
+   @ box_x_koord() + 2, box_y_koord() + Col() + 2 SAY "R.br:" GET _Rbr PICT "999"
 
    _IdBanka := Left( _ko_zr, 3 )
-   @ m_x + 3, m_y + 2 SAY8 "Pošiljaoc (sifra banke):       " GET _IdBanka VALID virm_odredi_ziro_racun( _firma, @_IdBanka )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Pošiljaoc (sifra banke):       " GET _IdBanka VALID virm_odredi_ziro_racun( _firma, @_IdBanka )
    READ
    ESC_RETURN 0
    _ko_zr := _IdBanka
@@ -102,12 +102,12 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
       _bpo := gOrgJed // ova varijabla je iskoristena za broj poreskog obv.
    ELSE
       IF vrprim->dobav == "D" // ako su javni prihodi ovo se zna !
-         @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID p_partner( @_u_korist )  PICT "@!"
-         @ m_x + 5, Col() + 2 GET _IdBanka2 VALID {|| virm_odredi_ziro_racun( _u_korist, @_IdBanka2 ), SetPrimaoc() }
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID p_partner( @_u_korist )  PICT "@!"
+         @ box_x_koord() + 5, Col() + 2 GET _IdBanka2 VALID {|| virm_odredi_ziro_racun( _u_korist, @_IdBanka2 ), SetPrimaoc() }
       ELSE
          _kome_txt := vrprim->naz
          _KOME_ZR := vrprim->racun
-         @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" + Trim( _kome_txt )
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Primaoc (partner/banka):" + Trim( _kome_txt )
       ENDIF
 
    ENDIF
@@ -115,14 +115,14 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
 
    // na osnovu _IdBanka , _IdBanka2 odrediti racune !!
 
-   @ m_x + 8, m_y + 2 SAY "Svrha doznake:" GET _svrha_doz  PICT "@S30"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Svrha doznake:" GET _svrha_doz  PICT "@S30"
 
-   @ m_x + 10, m_y + 2 SAY "Mjesto" GET _mjesto  PICT "@S20"
-   @ m_x + 10, Col() + 2 SAY "Datum uplate :" GET _dat_upl
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Mjesto" GET _mjesto  PICT "@S20"
+   @ box_x_koord() + 10, Col() + 2 SAY "Datum uplate :" GET _dat_upl
 
 
-   @ m_x + 8, m_y + 50 SAY "Iznos" GET _iznos PICT "99999999.99"
-   @ m_x + 8, m_y + Col() + 1 SAY "Hitno" GET _hitno PICT "@!" VALID _hitno $ " X"
+   @ box_x_koord() + 8, box_y_koord() + 50 SAY "Iznos" GET _iznos PICT "99999999.99"
+   @ box_x_koord() + 8, box_y_koord() + Col() + 1 SAY "Hitno" GET _hitno PICT "@!" VALID _hitno $ " X"
 
    READ
 
@@ -141,7 +141,7 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
 
       _kome_txt := vrprim->naz
 
-      @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" + Trim( _kome_txt )
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Primaoc (partner/banka):" + Trim( _kome_txt )
 
       IF fnovi
 
@@ -151,19 +151,19 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
          ENDIF
       ENDIF
 
-      @ m_x + 13, m_y + 20 SAY Replicate( "-", 56 )
+      @ box_x_koord() + 13, box_y_koord() + 20 SAY Replicate( "-", 56 )
 
-      @ m_x + 14, m_y + 20 SAY "Broj por.obveznika" GET _bpo
-      @ m_x + 14, Col() + 2 SAY "V.uplate " GET _VUpl
-      @ m_x + 14, Col() + 2 SAY8 "ŽR: " GET _kome_zr
+      @ box_x_koord() + 14, box_y_koord() + 20 SAY "Broj por.obveznika" GET _bpo
+      @ box_x_koord() + 14, Col() + 2 SAY "V.uplate " GET _VUpl
+      @ box_x_koord() + 14, Col() + 2 SAY8 "ŽR: " GET _kome_zr
 
-      @ m_x + 15, m_y + 20 SAY "Vrsta prihoda     " GET _IdJPrih
+      @ box_x_koord() + 15, box_y_koord() + 20 SAY "Vrsta prihoda     " GET _IdJPrih
 
-      @ m_x + 17, m_y + 20 SAY8 "      Općina      " GET _IdOps
-      @ m_x + 15, m_y + 60 SAY "Od:" GET _POd
-      @ m_x + 16, m_y + 60 SAY "Do:" GET _PDo
-      @ m_x + 17, m_y + 55 SAY "Budz.org" GET _BudzOrg
-      @ m_x + 18, m_y + 20 SAY "Poziv na broj:    " GET _PNaBr
+      @ box_x_koord() + 17, box_y_koord() + 20 SAY8 "      Općina      " GET _IdOps
+      @ box_x_koord() + 15, box_y_koord() + 60 SAY "Od:" GET _POd
+      @ box_x_koord() + 16, box_y_koord() + 60 SAY "Do:" GET _PDo
+      @ box_x_koord() + 17, box_y_koord() + 55 SAY "Budz.org" GET _BudzOrg
+      @ box_x_koord() + 18, box_y_koord() + 20 SAY "Poziv na broj:    " GET _PNaBr
 
       READ
 
@@ -171,7 +171,7 @@ STATIC FUNCTION virm_edit_pripr( fNovi )
 
    ELSE
 
-      @ m_x + 13,  m_y + 20 SAY Replicate( "", 56 )
+      @ box_x_koord() + 13,  box_y_koord() + 20 SAY Replicate( "", 56 )
 
       _BPO := Space( Len( _BPO ) )
       _IdOps := Space( Len( _IdOps ) )
@@ -209,7 +209,7 @@ STATIC FUNCTION virm_browse_key_handler()
    CASE Ch == K_ALT_M
       cDN := " "
       Box(, 2, 70 )
-      @ m_x + 1, m_y + 2 SAY "Zelite sve stavke oznaciti odstampane/neodstampane ( /*) ?" ;
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Zelite sve stavke oznaciti odstampane/neodstampane ( /*) ?" ;
          GET  cDN VALID cdn $ " *" PICT "@!"
       READ
       BoxC()
@@ -256,7 +256,7 @@ STATIC FUNCTION virm_browse_key_handler()
       DO WHILE !Eof()
          skip; nTR2 := RecNo(); SKIP - 1
          Scatter()
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + 19, m_y + 74
+         @ box_x_koord() + 1, box_y_koord() + 1 CLEAR TO box_x_koord() + 19, box_y_koord() + 74
          IF virm_edit_pripr( .F. ) == 0
             EXIT
          ELSE
@@ -289,7 +289,7 @@ STATIC FUNCTION virm_browse_key_handler()
 
          Scatter()
          _rbr := _rbr + 1
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + ( f18_max_rows() - 12 ), m_y + ( f18_max_cols() - 5 )
+         @ box_x_koord() + 1, box_y_koord() + 1 CLEAR TO box_x_koord() + ( f18_max_rows() - 12 ), box_y_koord() + ( f18_max_cols() - 5 )
          IF virm_edit_pripr( .T. ) == 0
             EXIT
          ENDIF
@@ -427,8 +427,8 @@ FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
       fsilent := .T.
    ENDIF
 
-   nX := m_x
-   nY := m_y
+   nX := box_x_koord()
+   nY := box_y_koord()
 
    IF cDefault = NIL
       cDefault := "??FFFX"
@@ -488,8 +488,8 @@ FUNCTION virm_odredi_ziro_racun( cIdPartn, cDefault, fSilent )
 
       izbor := nTIzbor
 
-      m_x := nX
-      m_y := nY
+      box_x_koord( nX )
+      box_y_koord( nY )
 
    ELSEIF Len( aBanke ) == 1
 

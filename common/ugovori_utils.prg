@@ -149,7 +149,7 @@ FUNCTION ug_st_od_do( cBrOd, cBrDo )
 
    Box(, 5, 60 )
 
-   @ m_x + 2, m_y + 2 SAY "DATUM GENERACIJE" GET dDatGen
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "DATUM GENERACIJE" GET dDatGen
    READ
 
    IF !o_gen_ug( NIL, dDatGen )
@@ -165,8 +165,8 @@ FUNCTION ug_st_od_do( cBrOd, cBrDo )
    cBrOd := field->brdok_od
    cBrDo := field->brdok_do
 
-   @ m_x + 4, m_y + 2 SAY "FAKTURE OD BROJA" GET cBrOd
-   @ m_x + 4, Col() + 2 SAY "DO BROJA" GET cBrDo
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "FAKTURE OD BROJA" GET cBrOd
+   @ box_x_koord() + 4, Col() + 2 SAY "DO BROJA" GET cBrDo
 
    READ
 
@@ -190,8 +190,8 @@ FUNCTION ugov_promjena_cijene_artikla()
    LOCAL GetList := {}
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY "Artikal:" GET cArtikal VALID !Empty( cArtikal )
-   @ m_x + 1, Col() + 2 SAY "-> cijena:" GET nCijena PICT "99999.999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Artikal:" GET cArtikal VALID !Empty( cArtikal )
+   @ box_x_koord() + 1, Col() + 2 SAY "-> cijena:" GET nCijena PICT "99999.999"
    READ
    BoxC()
 
@@ -212,7 +212,7 @@ FUNCTION ugov_promjena_cijene_artikla()
       IF field->idroba == cArtikal
          REPLACE field->cijena WITH nCijena
          ++nCnt
-         @ m_x + 1, m_y + 2 SAY "zamjenjeno ukupno: " + AllTrim( Str( nCnt ) )
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "zamjenjeno ukupno: " + AllTrim( Str( nCnt ) )
       ENDIF
 
       SKIP

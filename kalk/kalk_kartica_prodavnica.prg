@@ -70,22 +70,22 @@ FUNCTION kalk_kartica_prodavnica()
 
       DO WHILE .T.
 
-         @ m_x + 1, m_y + 2 SAY "Firma "
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
 
-         @ m_x + 2, m_y + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
 
-         form_get_roba_id( @cIdRoba, m_x + 3, m_y + 2 )
+         form_get_roba_id( @cIdRoba, box_x_koord() + 3, box_y_koord() + 2 )
 
-         @ m_x + 5, m_y + 2 SAY "Datum od " GET dDatOd
-         @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
-         @ m_x + 6, m_y + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"
-         @ m_x + 7, m_y + 2 SAY "Tip dokumenta (;) :"  GET cIdVd PICT "@S20"
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Datum od " GET dDatOd
+         @ box_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Tip dokumenta (;) :"  GET cIdVd PICT "@S20"
 
-         @ m_x + 9, m_y + 2 SAY "Prikaz srednje nabavne cijene ?" GET cPrikSredNc VALID cPrikSredNc $ "DN" PICT "@!"
+         @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prikaz srednje nabavne cijene ?" GET cPrikSredNc VALID cPrikSredNc $ "DN" PICT "@!"
 
-         @ m_x + 11, m_y + 2 SAY "Export XLSX:"  GET cExportDn PICT "@!" VALID cExportDN $ "DN"
+         @ box_x_koord() + 11, box_y_koord() + 2 SAY "Export XLSX:"  GET cExportDn PICT "@!" VALID cExportDN $ "DN"
 
          READ
          ESC_BCR

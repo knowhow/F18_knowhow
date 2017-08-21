@@ -194,10 +194,10 @@ STATIC FUNCTION get_vars( vars )
    LOCAL _ret := .F.
 
    Box(, 1, 40 )
-   @ m_x + 1, m_y + 2 SAY "Broj dokumenta:"
-   @ m_x + 1, Col() + 1 GET _firma
-   @ m_x + 1, Col() + 1 SAY "-" GET _tip VALID !Empty( _tip )
-   @ m_x + 1, Col() + 1 SAY "-" GET _broj VALID !Empty( _broj )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj dokumenta:"
+   @ box_x_koord() + 1, Col() + 1 GET _firma
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET _tip VALID !Empty( _tip )
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET _broj VALID !Empty( _broj )
    READ
    BoxC()
 

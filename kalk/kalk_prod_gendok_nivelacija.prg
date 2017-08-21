@@ -32,9 +32,9 @@ FUNCTION get_nivel_p()
    Box(, 4, 70 )
    cProd := Space( 7 )
    dDatDok := Date()
-   @ m_x + 1, m_Y + 2 SAY "Prodavnica (prazno-sve)" GET cProd VALID Empty( cProd ) .OR. P_Konto( @cProd )
-   @ m_x + 2, m_Y + 2 SAY "Datum" GET dDatDok
-   @ m_x + 3, m_Y + 2 SAY "Nivelisati samo robu na stanju (D/N)?" GET cGlStanje VALID cGlStanje $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prodavnica (prazno-sve)" GET cProd VALID Empty( cProd ) .OR. P_Konto( @cProd )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datum" GET dDatDok
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Nivelisati samo robu na stanju (D/N)?" GET cGlStanje VALID cGlStanje $ "DN" PICT "@!"
    READ
    ESC_BCR
    BoxC()
@@ -69,7 +69,7 @@ FUNCTION get_nivel_p()
 
    // pokreni generisanje nivelacija
    Box(, 2, 65 )
-   @ 1 + m_x, 2 + m_y SAY "Vrsim generisanje nivelacije za " + AllTrim( Str( Len( aProd ) ) ) + " prodavnicu..."
+   @ 1 + box_x_koord(), 2 + box_y_koord() SAY "Vrsim generisanje nivelacije za " + AllTrim( Str( Len( aProd ) ) ) + " prodavnicu..."
 
    o_kalk_doks()
 
@@ -79,7 +79,7 @@ FUNCTION get_nivel_p()
       cBrKalk := kalk_get_next_kalk_doc_uvecaj( self_organizacija_id(), "19", nUvecaj )
       cPKonto := aProd[ nCnt, 1 ]
 
-      @ 2 + m_x, 2 + m_y SAY Str( nCnt, 3 ) + " Prodavnica: " + AllTrim( cPKonto ) + "   dokument: " + self_organizacija_id() + "-19-" + AllTrim( cBrKalk )
+      @ 2 + box_x_koord(), 2 + box_y_koord() SAY Str( nCnt, 3 ) + " Prodavnica: " + AllTrim( cPKonto ) + "   dokument: " + self_organizacija_id() + "-19-" + AllTrim( cBrKalk )
 
       gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGlStanje )
 
@@ -252,11 +252,11 @@ FUNCTION zaniv2_zaniv()
          LOOP
       ENDIF
 
-      @ 1 + m_x, 2 + m_y SAY "ID roba: " + field->id
+      @ 1 + box_x_koord(), 2 + box_y_koord() SAY "ID roba: " + field->id
 
       REPLACE zanivel WITH zaniv2
 
-      @ 2 + m_x, 2 + m_y SAY "Update cijena " + AllTrim( Str( field->zanivel ) )
+      @ 2 + box_x_koord(), 2 + box_y_koord() SAY "Update cijena " + AllTrim( Str( field->zanivel ) )
       SKIP
    ENDDO
 
@@ -286,13 +286,13 @@ FUNCTION set_mpc_2()
 
    Box(, 4, 55 )
 
-   @ m_x + 1, m_y + 2 SAY "        Setuj MPC (1,2,3):" GET cSetCj ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "        Setuj MPC (1,2,3):" GET cSetCj ;
       VALID cSetCj $ "12345"
-   @ m_x + 2, m_y + 2 SAY "    Na osnovu MPC (1,2,3):" GET cUzCJ ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "    Na osnovu MPC (1,2,3):" GET cUzCJ ;
       VALID cUzCj $ "12345"
-   @ m_x + 3, m_y + 2 SAY "                   za (%):" GET nUvecaj ;
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "                   za (%):" GET nUvecaj ;
       PICT "999.999"
-   @ m_x + 4, m_y + 2 SAY "  novu cijenu zaokruzi na:" GET nZaok ;
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "  novu cijenu zaokruzi na:" GET nZaok ;
       PICT "9"
    READ
    BoxC()
@@ -332,7 +332,7 @@ FUNCTION set_mpc_2()
          LOOP
       ENDIF
 
-      @ 1 + m_x, 2 + m_y SAY "ID roba: " + field->id
+      @ 1 + box_x_koord(), 2 + box_y_koord() SAY "ID roba: " + field->id
 
       replace &cSField WITH Round( &cUField * nUvecaj, nZaok )
 
@@ -362,7 +362,7 @@ FUNCTION set_mpc_iz_zanivel()
 
 
    Box(, 1, 55 )
-   @ m_x + 1, m_y + 2 SAY "Setovati MPC(1, 2, 3, 4) ?" GET cSetCj VALID cSetCj $ "12345"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Setovati MPC(1, 2, 3, 4) ?" GET cSetCj VALID cSetCj $ "12345"
 
    READ
    BoxC()
@@ -395,14 +395,14 @@ FUNCTION set_mpc_iz_zanivel()
          LOOP
       ENDIF
 
-      @ 1 + m_x, 2 + m_y SAY "ID roba: " + field->id
+      @ 1 + box_x_koord(), 2 + box_y_koord() SAY "ID roba: " + field->id
 
       // sacuvaj backup u zaniv2
       REPLACE zaniv2 with &cField
       // prebaci iz zanivel u mpc
       replace &cField WITH zanivel
 
-      @ 2 + m_x, 2 + m_y SAY "Update cijena " + AllTrim( Str( field->zanivel ) ) + " -> " + AllTrim( Str( &cField ) )
+      @ 2 + box_x_koord(), 2 + box_y_koord() SAY "Update cijena " + AllTrim( Str( field->zanivel ) ) + " -> " + AllTrim( Str( &cField ) )
 
       SKIP
    ENDDO
@@ -569,10 +569,10 @@ FUNCTION result_nivel_p()
    Box(, 5, 65 )
    cVarijanta := "2"
    cKolNula := "N"
-   @ 1 + m_x, 2 + m_y SAY "Varijanta prikaza:"
-   @ 2 + m_x, 2 + m_y SAY "  - sa detaljima (1)"
-   @ 3 + m_x, 2 + m_y SAY "  - bez detalja  (2)" GET cVarijanta VALID !Empty( cVarijanta ) .AND. cVarijanta $ "12"
-   @ 5 + m_x, 2 + m_y SAY "Prikaz kolicina 0 (D/N)" GET cKolNula VALID !Empty( cKolNula ) .AND. cKolNula $ "DN" PICT "@!"
+   @ 1 + box_x_koord(), 2 + box_y_koord() SAY "Varijanta prikaza:"
+   @ 2 + box_x_koord(), 2 + box_y_koord() SAY "  - sa detaljima (1)"
+   @ 3 + box_x_koord(), 2 + box_y_koord() SAY "  - bez detalja  (2)" GET cVarijanta VALID !Empty( cVarijanta ) .AND. cVarijanta $ "12"
+   @ 5 + box_x_koord(), 2 + box_y_koord() SAY "Prikaz kolicina 0 (D/N)" GET cKolNula VALID !Empty( cKolNula ) .AND. cKolNula $ "DN" PICT "@!"
    READ
    ESC_BCR
    BoxC()
@@ -949,8 +949,8 @@ FUNCTION o_pr_cijena()
    MsgBeep( "Opcija stampa obrasce o promjeni cijena#na osnovu generisane nivelacije!" )
 
    Box(, 2, 60 )
-   @ m_x + 1, m_y + 2 SAY "Prikazati sa proredom:" GET cProred VALID cProred $ "DN" PICT "@!"
-   @ m_x + 2, m_y + 2 SAY "Prikazati podvuceno  :" GET cPodvuceno VALID cPodvuceno $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prikazati sa proredom:" GET cProred VALID cProred $ "DN" PICT "@!"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prikazati podvuceno  :" GET cPodvuceno VALID cPodvuceno $ "DN" PICT "@!"
    READ
    ESC_BCR
    BoxC()
@@ -979,8 +979,8 @@ FUNCTION o_pr_cijena()
       // upit za stampu
       Box(, 5, 60 )
       cOdgovor := "D"
-      @ m_x + 1, m_y + 2 SAY "Stampati obrazac za dokument: 19-" + AllTrim( aDoks[ i, 1 ] )
-      @ m_x + 3, m_y + 2 SAY "D/N (X - prekini)" GET cOdgovor VALID cOdgovor $ "DNX" PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Stampati obrazac za dokument: 19-" + AllTrim( aDoks[ i, 1 ] )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "D/N (X - prekini)" GET cOdgovor VALID cOdgovor $ "DNX" PICT "@!"
       READ
       BoxC()
 

@@ -34,16 +34,16 @@ FUNCTION pornar()
    cNalPr := PadR( gNalPr, 20 )
    Box( "pnar", 8, 60, .F. )
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "OBRACUN POREZA NA REALIZACIJU"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "OBRACUN POREZA NA REALIZACIJU"
       IF gNW $ "DR"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 4, m_y + 2 SAY "Konto:  " GET qqKonto PICTURE "@S50"
-      @ m_x + 6, m_y + 2 SAY "Za period od" GET dDatOd
-      @ m_x + 6, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 8, m_y + 2 SAY "Nalozi realizacije" GET cNalPr
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto:  " GET qqKonto PICTURE "@S50"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Za period od" GET dDatOd
+      @ box_x_koord() + 6, Col() + 2 SAY "do" GET dDatDo
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Nalozi realizacije" GET cNalPr
       READ;  ESC_BCR
       aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" )
       IF aUsl1 <> NIL; exit; ENDIF

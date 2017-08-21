@@ -44,8 +44,9 @@ PROCEDURE set_global_vars_0()
    PUBLIC gSezona := "    "
    PUBLIC gShemaVF := "B5"
 
-   PUBLIC m_x
-   PUBLIC m_y
+   //PUBLIC m_x
+   //PUBLIC m_y
+
    PUBLIC h[ 20 ]
    PUBLIC lInstal := .F.
    PUBLIC aRel := {}

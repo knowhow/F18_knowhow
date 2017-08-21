@@ -229,7 +229,7 @@ FUNCTION epdv_next_globalni_redni_broj( cKufKif )
       cTable := "epdv_kif"
    ENDIF
    cSql := "select max(g_r_br) AS MAX_G_R_BR from fmk." + cTable
-    
+
    PushWa()
    SELECT F_POM
    use_sql( "POM", cSql, cAlias )
@@ -240,6 +240,11 @@ FUNCTION epdv_next_globalni_redni_broj( cKufKif )
    RETURN nRet + 1
 
 
+FUNCTION epdv_open_all_kuf( cTag )
+   RETURN find_epdv_kuf_za_period( NIL, NIL, NIL, cTag )
+
+FUNCTION epdv_open_all_kif( cTag )
+   RETURN find_epdv_kif_za_period( NIL, NIL, NIL, cTag )
 
 FUNCTION find_epdv_kuf_za_period( dDatOd, dDatDo, hParams, cTag )
    RETURN find_epdv_kuf_kif_za_period( "kuf", dDatOd, dDatDo, hParams, cTag )
@@ -321,8 +326,6 @@ FUNCTION use_sql_epdv_kuf_kif( hParams )
       IF !Empty( cOrder )
          cSql += cOrder
       ENDIF
-   ELSE
-      cSql += " OFFSET 0 LIMIT 1"
    ENDIF
 
    IF hb_HHasKey( hParams, "alias" )
@@ -411,6 +414,134 @@ FUNCTION h_epdv_kuf_kif_indexes()
    hIndexes[ "g_r_br" ] := "STR(g_r_br,6,0)+dtos(datum)"
    hIndexes[ "br_dok" ] := "STR(BR_DOK,6,0)+STR(r_br,6,0)"
    hIndexes[ "br_dok2" ] := "STR(BR_DOK,6,0)+dtos(datum)"
+
+   RETURN hIndexes
+
+
+
+// ------------------------------------------------------------------------------------
+
+FUNCTION find_epdv_pdv_za_period( dDatOd, dDatDo, hParams, cTag )
+
+   IF hParams == NIL
+      hParams := hb_Hash()
+   ENDIF
+
+
+   IF dDatOd != NIL
+      hParams[ "dat_od" ] := dDatOd
+   ENDIF
+
+   IF dDatDo != NIL
+      hParams[ "dat_do" ] := dDatDo
+   ENDIF
+
+   IF !hb_HHasKey( hParams, "order_by" )
+      hParams[ "order_by" ] := "per_od,per_do"
+   ENDIF
+
+   hParams[ "indeks" ] := .T.
+
+   IF cTag == NIL
+      cTag := "period"
+   ENDIF
+   hParams[ "tag" ] := cTag
+
+
+   IF !use_sql_epdv_pdv( hParams )
+      RETURN .F.
+   ENDIF
+
+   GO TOP
+
+   RETURN ! Eof()
+
+
+
+FUNCTION use_sql_epdv_pdv( hParams )
+
+   LOCAL cTable := "epdv_pdv", cAlias := "PDV", nArea := F_PDV
+   LOCAL cWhere, cOrder
+   LOCAL cSql
+   LOCAL hIndexes, cKey, cTag
+
+   default_if_nil( @hParams, hb_Hash() )
+
+
+   cSql := "SELECT * from fmk." + cTable
+
+   cWhere := use_sql_epdv_pdv_where( hParams )
+   cOrder := use_sql_epdv_pdv_order( hParams )
+
+   IF !Empty( cWhere )
+      cSql += " WHERE " + cWhere
+      IF !Empty( cOrder )
+         cSql += cOrder
+      ENDIF
+   ENDIF
+
+   IF hb_HHasKey( hParams, "alias" )
+      cTable := hParams[ "alias" ]
+   ENDIF
+
+   IF hb_HHasKey( hParams, "tag" )
+      cTag := hParams[ "tag" ]
+   ENDIF
+
+
+   SELECT ( nArea )
+   IF !use_sql( cTable, cSql, cAlias )
+      RETURN .F.
+   ENDIF
+
+   IF hParams[ "indeks" ]
+      hIndexes := h_epdv_pdv_indexes()
+
+      FOR EACH cKey IN hIndexes:Keys
+         INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cAlias )
+      NEXT
+      SET ORDER TO TAG ( cTag )
+   ENDIF
+   GO TOP
+
+   RETURN .T.
+
+
+STATIC FUNCTION use_sql_epdv_pdv_order( hParams )
+
+   LOCAL cOrder := ""
+
+   cOrder += " ORDER BY " + hParams[ "order_by" ]
+
+   RETURN cOrder
+
+
+STATIC FUNCTION use_sql_epdv_pdv_where( hParams )
+
+   LOCAL cWhere := ""
+   LOCAL dDatOd
+
+   IF hb_HHasKey( hParams, "dat_do" )
+      IF !hb_HHasKey( hParams, "dat_od" )
+         dDatOd := CToD( "" )
+      ELSE
+         dDatOd := hParams[ "dat_od" ]
+      ENDIF
+      cWhere += iif( Empty( cWhere ), "", " AND " ) + "per_od=" + sql_quote( dDatOd ) + " AND per_do=" + sql_quote( hParams[ "dat_do"] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "where" )
+      cWhere += iif( Empty( cWhere ), "", " AND " ) +  hParams[ "where" ]
+   ENDIF
+
+   RETURN cWhere
+
+
+FUNCTION h_epdv_pdv_indexes()
+
+   LOCAL hIndexes := hb_Hash()
+
+   hIndexes[ "period" ] :=  "DTOS(per_od)+DTOS(per_do)"
 
    RETURN hIndexes
 

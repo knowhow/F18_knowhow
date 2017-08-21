@@ -116,7 +116,7 @@ FUNCTION KontoBlok( Ch )
    LOCAL nRec := RecNo(), cId := ""
    LOCAL cSif := KONTO->id, cSif2 := ""
 
-   // @ m_x+11,45 SAY "<a-P> - stampa k.plana"
+   // @ box_x_koord()+11,45 SAY "<a-P> - stampa k.plana"
 
    IF Ch == K_CTRL_T .AND. gSKSif == "D"
 

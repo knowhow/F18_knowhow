@@ -144,8 +144,8 @@ STATIC FUNCTION izaberi_f18_korisnika( arr )
    LOCAL _izbor := 1
    LOCAL _opc := {}
    LOCAL _opcexe := {}
-   LOCAL _m_x := m_x
-   LOCAL _m_y := m_y
+   LOCAL _m_x := box_x_koord()
+   LOCAL _m_y := box_y_koord()
 
    FOR nI := 1 TO Len( arr )
 
@@ -168,8 +168,8 @@ STATIC FUNCTION izaberi_f18_korisnika( arr )
       ENDIF
    ENDDO
 
-   m_x := _m_x
-   m_y := _m_y
+   box_x_koord( _m_x )
+   box_y_koord( _m_y )
 
    RETURN _ret
 

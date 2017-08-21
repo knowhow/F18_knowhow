@@ -30,11 +30,6 @@ FUNCTION fin_kontrolni_izvjestaji_meni()
    AAdd( opc, "R. fmk pravila - rules " )
    AAdd( opcexe, {|| p_rules(,,, aRuleCols, bRuleBlock ) } )
 
-   #ifdef F18_FMK
-      AAdd( opc, "F. kontrola podataka nakon importa iz FMK" )
-      AAdd( opcexe, {|| fmk_provjera_za_migraciju_f18() } )
-   #endif
-
 
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "adm" )
 
@@ -43,15 +38,15 @@ FUNCTION fin_kontrolni_izvjestaji_meni()
 
 
 
-// ----------------------------------------------------------------
+/*
 // vraca naredni redni broj fin naloga
 // ----------------------------------------------------------------
-FUNCTION fin_dok_get_next_rbr( idfirma, idvn, brnal )
+FUNCTION fin_nalog_sljedeci_redni_broj( cIdFirma, cIdVN, cBrNal )
 
    LOCAL _rbr := ""
 
-   // vrati mi zadnji redni broj sa dokumenta
-   _rbr := fin_dok_get_last_rbr( idfirma, idvn, brnal )
+
+   _rbr := fin_nalog_zadnji_redni_broj( cIdFirma, cIdVN, cBrNal )
 
    IF Empty( _rbr )
       RETURN _rbr
@@ -66,16 +61,16 @@ FUNCTION fin_dok_get_next_rbr( idfirma, idvn, brnal )
 // ----------------------------------------------------------------
 // vraca najveci redni broj stavke u nalogu
 // ----------------------------------------------------------------
-FUNCTION fin_dok_get_last_rbr( idfirma, idvn, brnal )
+FUNCTION fin_nalog_zadnji_redni_broj( cIdFirma, cIdVN, cBrNal )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL oRow
    LOCAL _last
 
    _qry := "SELECT MAX(rbr) AS last FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban " + ;
-      " WHERE idfirma = " + sql_quote( idfirma ) + ;
-      " AND idvn = " + sql_quote( idvn ) + ;
-      " AND brnal = " + sql_quote( brnal )
+      " WHERE idfirma = " + sql_quote( cIdFirma ) + ;
+      " AND idvn = " + sql_quote( cIdVN ) + ;
+      " AND brnal = " + sql_quote( cBrNal )
 
    _table := run_sql_query( _qry )
 
@@ -89,7 +84,7 @@ FUNCTION fin_dok_get_last_rbr( idfirma, idvn, brnal )
 
    RETURN _last
 
-
+*/
 
 
 
@@ -98,7 +93,6 @@ FUNCTION fin_dok_get_last_rbr( idfirma, idvn, brnal )
 FUNCTION fin_valid_provjeri_postoji_nalog( cIdFirma, cIdVn, cBrNal )
 
    IF find_nalog_by_broj_dokumenta( cIdFirma, cIdVn, cBrNal )
-
       error_bar( "fin_unos", " Dupli nalog " + cIdFirma + "-" + cIdvn + "-" + cBrNal )
       RETURN .F.
    ENDIF

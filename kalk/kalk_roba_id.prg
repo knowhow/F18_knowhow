@@ -30,10 +30,10 @@ FUNCTION RobaIdSredi()
    Box(, 10, 60 )
 
    DO WHILE .T.
-      @ m_x + 6, m_y + 2 SAY "                 "
-      @ m_x + 1, m_Y + 2 SAY "ISPRAVKA SIFRE ARTIKLA U DOKUMENTIMA"
-      @ m_x + 2, m_Y + 2 SAY "Stara sifra:" GET cSifOld PICT "@!"
-      @ m_x + 3, m_Y + 2 SAY "Nova  sifra:" GET cSifNew PICT "@!" VALID !Empty( cSifNew )
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "                 "
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "ISPRAVKA SIFRE ARTIKLA U DOKUMENTIMA"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Stara sifra:" GET cSifOld PICT "@!"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Nova  sifra:" GET cSifNew PICT "@!" VALID !Empty( cSifNew )
       READ
       ESC_BCR
 
@@ -56,7 +56,7 @@ FUNCTION RobaIdSredi()
 
       DO WHILE Found()
          _field->idroba := cSifNew
-         @ m_X + 5, m_y + 2 SAY ++nRbr PICT "999"
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY ++nRbr PICT "999"
          CONTINUE
       ENDDO
 
@@ -65,7 +65,7 @@ FUNCTION RobaIdSredi()
          LOCATE FOR idroba == cSifOld
          nRbr := 0
          DO WHILE Found()
-            @ m_X + 5, m_y + 2 SAY ++nRbr PICT "999"
+            @ box_x_koord() + 5, box_y_koord() + 2 SAY ++nRbr PICT "999"
             _field->idroba := cSifNew
             CONTINUE
          ENDDO
@@ -75,12 +75,12 @@ FUNCTION RobaIdSredi()
       LOCATE FOR id == cSifOld
       nRbr := 0
       DO WHILE Found()
-         @ m_X + 5, m_y + 2 SAY ++nRbr PICT "999"
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY ++nRbr PICT "999"
          _field->id := cSifNew
          CONTINUE
       ENDDO
       Beep( 2 )
-      @ m_x + 6, m_y + 2 SAY "Sifra promijenjena"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Sifra promijenjena"
    ENDDO  // .t.
 
    BoxC()

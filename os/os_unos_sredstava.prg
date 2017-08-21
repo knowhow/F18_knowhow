@@ -35,7 +35,7 @@ FUNCTION unos_osnovnih_sredstava()
 
       IF gIBJ == "D"
 
-         @ m_x + 1, m_y + 2 SAY "Sredstvo:       " GET cId VALID P_OS( @cId, 1, 35 ) PICT cPicSif
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sredstvo:       " GET cId VALID P_OS( @cId, 1, 35 ) PICT cPicSif
 
          READ
 
@@ -49,7 +49,7 @@ FUNCTION unos_osnovnih_sredstava()
 
          SELECT ( nDbfArea )
 
-         @ m_x + 2, m_y + 2 SAY "Radna jedinica: " GET cIdRj VALID {|| P_RJ( @cIdRj, 2, 35 ), cIdRj := PadR( cIdRj, 4 ), .T. }
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj VALID {|| P_RJ( @cIdRj, 2, 35 ), cIdRj := PadR( cIdRj, 4 ), .T. }
          READ
 
          ESC_BCR
@@ -58,8 +58,8 @@ FUNCTION unos_osnovnih_sredstava()
 
          DO WHILE .T.
 
-            @ m_x + 1, m_y + 2 SAY "Sredstvo:       " GET cId PICT cPicSif
-            @ m_x + 2, m_y + 2 SAY "Radna jedinica: " GET cIdRj
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sredstvo:       " GET cId PICT cPicSif
+            @ box_x_koord() + 2, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
             READ
 
             ESC_BCR
@@ -78,12 +78,12 @@ FUNCTION unos_osnovnih_sredstava()
                select_o_rj( cIdRj )
 
                IF gOsSii == "O"
-                  @ m_x + 1, m_y + 35 SAY os->naz
+                  @ box_x_koord() + 1, box_y_koord() + 35 SAY os->naz
                ELSE
-                  @ m_x + 1, m_y + 35 SAY sii->naz
+                  @ box_x_koord() + 1, box_y_koord() + 35 SAY sii->naz
                ENDIF
 
-               @ m_x + 2, m_y + 35 SAY RJ->naz
+               @ box_x_koord() + 2, box_y_koord() + 35 SAY RJ->naz
 
                EXIT
 
@@ -108,23 +108,23 @@ FUNCTION unos_osnovnih_sredstava()
             cIdRj := field->idrj
             select_o_rj( cIdRj )
             select_os_sii()
-            @ m_x + 2, m_y + 2 SAY "Radna jedinica: " GET cIdRj
-            @ m_x + 2, m_y + 35 SAY RJ->naz
+            @ box_x_koord() + 2, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
+            @ box_x_koord() + 2, box_y_koord() + 35 SAY RJ->naz
             CLEAR GETS
          ENDIF
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY "Datum nabavke: "
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Datum nabavke: "
       ?? field->datum
 
       IF !Empty( field->datotp )
-         @ m_x + 3, m_y + 38 SAY "Datum otpisa: "
+         @ box_x_koord() + 3, box_y_koord() + 38 SAY "Datum otpisa: "
          ?? field->datotp
       ENDIF
 
-      @ m_x + 4, m_y + 2 SAY "Nabavna vr.:"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Nabavna vr.:"
       ?? Transform( field->nabvr, gPicI )
-      @ m_x + 4, Col() + 2 SAY "Ispravka vr.:"
+      @ box_x_koord() + 4, Col() + 2 SAY "Ispravka vr.:"
       ?? Transform( field->otpvr, gPicI )
       aVr := { field->nabvr, field->otpvr, 0 }
 
@@ -153,12 +153,12 @@ FUNCTION unos_osnovnih_sredstava()
 
       SET CURSOR ON
 
-      @ m_x + 20, m_y + 2 SAY "<ENT> Ispravka, <c-T> Brisi, <c-N> Nove prom, <c-O> Otpis, <c-I> Novi ID"
+      @ box_x_koord() + 20, box_y_koord() + 2 SAY "<ENT> Ispravka, <c-T> Brisi, <c-N> Nove prom, <c-O> Otpis, <c-I> Novi ID"
 
       ShowSadVr()
 
       DO WHILE .T.
-         BrowseKey( m_x + 8, m_y + 1, m_x + f18_max_rows() - 5, m_y + f18_max_cols() -5, ImeKol, {| Ch| unos_os_key_handler( Ch ) }, "id==cid", cId, 2, NIL, NIL, {|| PSadVr() < 0 } )
+         BrowseKey( box_x_koord() + 8, box_y_koord() + 1, box_x_koord() + f18_max_rows() - 5, box_y_koord() + f18_max_cols() -5, ImeKol, {| Ch| unos_os_key_handler( Ch ) }, "id==cid", cId, 2, NIL, NIL, {|| PSadVr() < 0 } )
          IF ( aVr[ 1 ] -aVr[ 2 ] >= 0 )
             IF aVr[ 3 ] < 0
                MsgBeep( "Greska: sadasnja vrijednost sa uracunatom amortizacijom manja od nule! #Ispravite gresku!" )
@@ -209,10 +209,10 @@ FUNCTION unos_os_key_handler( Ch )
       _prom_ov := _rec[ "otpvr" ]
 
       Box(, 5, 50 )
-      @ m_x + 1, m_y + 2 SAY "Datum:" GET _prom_dat VALID os_validate_date( @_prom_dat )
-      @ m_x + 2, m_y + 2 SAY "Opis:"  GET _prom_opis
-      @ m_x + 4, m_y + 2 SAY "nab vr" GET _prom_nv PICT "9999999.99"
-      @ m_x + 5, m_y + 2 SAY "OTP vr" GET _prom_ov PICT "9999999.99"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum:" GET _prom_dat VALID os_validate_date( @_prom_dat )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Opis:"  GET _prom_opis
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "nab vr" GET _prom_nv PICT "9999999.99"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "OTP vr" GET _prom_ov PICT "9999999.99"
       READ
       BoxC()
 
@@ -256,12 +256,12 @@ FUNCTION unos_os_key_handler( Ch )
 
       Box(, 5, 50 )
 
-      @ m_x + 1, m_y + 2 SAY "Otpis sredstva"
-      @ m_x + 3, m_y + 2 SAY "Datum: " GET dDatOtp VALID dDatOtp > dDatNab .OR. Empty( dDatOtp )
-      @ m_x + 4, m_y + 2 SAY "Opis : " GET cOpisOtp
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Otpis sredstva"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Datum: " GET dDatOtp VALID dDatOtp > dDatNab .OR. Empty( dDatOtp )
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Opis : " GET cOpisOtp
 
       IF field->kolicina > 1
-         @ m_x + 5, m_y + 2 SAY "Kolicina koja se otpisuje:" GET nKolotp PICT "999999.99" VALID ( nKolotp <= field->kolicina .AND. nKolotp >= 1 )
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Kolicina koja se otpisuje:" GET nKolotp PICT "999999.99" VALID ( nKolotp <= field->kolicina .AND. nKolotp >= 1 )
       ENDIF
 
       READ
@@ -321,7 +321,7 @@ FUNCTION unos_os_key_handler( Ch )
 
       select_promj()
 
-      @ m_x + 5, m_y + 38 SAY "Datum otpisa: "
+      @ box_x_koord() + 5, box_y_koord() + 38 SAY "Datum otpisa: "
 
       IF gOsSii == "O"
          ?? os->datotp
@@ -340,8 +340,8 @@ FUNCTION unos_os_key_handler( Ch )
 
       Box(, 4, 50 )
       _novi := Space( 10 )
-      @ m_x + 1, m_y + 2 SAY "Promjena inventurnog broja:"
-      @ m_x + 3, m_y + 2 SAY "Novi inventurni broj:" GET _novi VALID !Empty( _novi )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Promjena inventurnog broja:"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Novi inventurni broj:" GET _novi VALID !Empty( _novi )
       READ
       BoxC()
 
@@ -447,13 +447,13 @@ FUNCTION ShowSadVr()
       aVr[ 3 ] := PSadVr()
    ENDIF
 
-   @ m_x + 6, m_y + 1 SAY " UKUPNO:   Nab.vr.="         COLOR "W+/B"
+   @ box_x_koord() + 6, box_y_koord() + 1 SAY " UKUPNO:   Nab.vr.="         COLOR "W+/B"
    @ Row(), Col()  SAY TRANS( aVr[ 1 ], "9999999.99" )        COLOR "GR+/B"
    @ Row(), Col()  SAY ",    Otp.vr.="         COLOR "W+/B"
    @ Row(), Col()  SAY TRANS( aVr[ 2 ], "9999999.99" )        COLOR "GR+/B"
    @ Row(), Col()  SAY ",    Sad.vr.="         COLOR "W+/B"
    @ Row(), Col()  SAY TRANS( aVr[ 1 ] - aVr[ 2 ], "9999999.99" ) COLOR IF( aVr[ 1 ] - aVr[ 2 ] < 0, "GR+/R", "GR+/B" )
-   @ m_x + 7, m_y + 1 SAY "           Sadasnja vrijednost sa uracunatom amortizacijom=" COLOR "W+/B"
+   @ box_x_koord() + 7, box_y_koord() + 1 SAY "           Sadasnja vrijednost sa uracunatom amortizacijom=" COLOR "W+/B"
    @ Row(), Col()  SAY TRANS( aVr[ 3 ], "9999999.99" )        COLOR IF( aVr[ 3 ] < 0, "GR+/R", "GR+/B" )
 
    GO ( nTrec )

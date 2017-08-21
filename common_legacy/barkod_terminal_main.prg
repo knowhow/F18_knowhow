@@ -59,8 +59,8 @@ STATIC FUNCTION get_export_path( PATH )
    _path := PadR( fetch_metric( "bterm_imp_exp_path", my_user(), AllTrim( _path ) ), 500 )
 
    Box(, 2, 70 )
-   @ m_x + 1, m_y + 2 SAY "Import / export lokacija:"
-   @ m_x + 2, m_y + 2 SAY "lokacija:" GET _path PICT "@S50"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Import / export lokacija:"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "lokacija:" GET _path PICT "@S50"
    READ
    BoxC()
 

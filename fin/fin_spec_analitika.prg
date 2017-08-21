@@ -33,24 +33,24 @@ FUNCTION specifikacija_po_analitickim_kontima()
    cNula := "N"
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA ANALITICKIH KONTA"
+      @ box_x_koord() + 1, box_y_koord() + 6 SAY "SPECIFIKACIJA ANALITICKIH KONTA"
       IF gNW == "D"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 4, m_y + 2 SAY "Konto " GET qqKonto  PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Datum od" GET dDatOd
-      @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto " GET qqKonto  PICT "@!S50"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Datum od" GET dDatOd
+      @ box_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo
       IF fin_dvovalutno()
-         @ m_x + 6, m_y + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cTip VALID ctip $ "12"
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cTip VALID ctip $ "12"
       ENDIF
-      @ m_x + 7, m_y + 2 SAY "Prikaz sintetickih konta (D/N):" GET cSK PICT "@!" VALID cSK $ "DN"
-      @ m_x + 9, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prikaz sintetickih konta (D/N):" GET cSK PICT "@!" VALID cSK $ "DN"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
       cIdRJ := ""
       IF gFinRj == "D" .AND. gSAKrIz == "D"
          cIdRJ := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
-         @ m_x + 10, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
+         @ box_x_koord() + 10, box_y_koord() + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       READ
       ESC_BCR

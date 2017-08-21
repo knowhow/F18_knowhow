@@ -40,6 +40,7 @@ FUNCTION f18_kalkulator()
 
    LOCAL GetList := {}
    LOCAL cIzraz
+   LOCAL nX := box_x_koord(), nY := box_y_koord()
 
    // IF s_lInCalculator
    // hb_idleSleep( 5 )
@@ -49,7 +50,8 @@ FUNCTION f18_kalkulator()
    // remove_global_idle_handlers()
    // Set( _SET_EVENTMASK, INKEY_KEYBOARD )
 
-   PRIVATE m_x := 10, m_y := 10
+   box_x_koord( 10 )
+   box_y_koord( 10 )
 
    cIzraz := Space( 120 )
 
@@ -71,27 +73,27 @@ FUNCTION f18_kalkulator()
 
    DO WHILE .T.
 
-      @ m_x, m_y + 42 SAY "<a-K> kursiranje"
-      @ m_x + 4, m_y + 30 SAY "<a-V> programiranje kursiranja"
-      @ m_x + 1, m_y + 2 SAY "KALKULATOR: unesite izraz, npr: '(1+33)*1.2' :"
-      @ m_x + 2, m_y + 2 GET cIzraz PICT "@S40"
+      @ box_x_koord(), box_y_koord() + 42 SAY "<a-K> kursiranje"
+      @ box_x_koord() + 4, box_y_koord() + 30 SAY "<a-V> programiranje kursiranja"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "KALKULATOR: unesite izraz, npr: '(1+33)*1.2' :"
+      @ box_x_koord() + 2, box_y_koord() + 2 GET cIzraz PICT "@S40"
 
       READ
 
       cIzraz := StrTran( cIzraz, ",", "." ) // ako je ukucan "," zamjeni sa tackom "."
 
-      @ m_x + 3, m_y + 2 SAY Space( 20 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY Space( 20 )
       IF Type( cIzraz ) <> "N"
 
          IF Upper( Left( cIzraz, 1 ) ) <> "K"
-            @ m_x + 3, m_y + 2 SAY "ERR:" + Trim( cIzraz )
+            @ box_x_koord() + 3, box_y_koord() + 2 SAY "ERR:" + Trim( cIzraz )
             ?E "f18 kalkulator error:", Trim( cIzraz ), Len( Trim( cIzraz ) )
          ELSE
-            @ m_x + 3, m_y + 2 SAY kbroj( SubStr( cizraz, 2 ) )
+            @ box_x_koord() + 3, box_y_koord() + 2 SAY kbroj( SubStr( cizraz, 2 ) )
          ENDIF
 
       ELSE
-         @ m_x + 3, m_y + 2 SAY &cIzraz PICT "99999999.9999"
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY &cIzraz PICT "99999999.9999"
          cIzraz := PadR( AllTrim( Str( &cizraz, 18, 5 ) ), 40 )
       ENDIF
 
@@ -105,6 +107,8 @@ FUNCTION f18_kalkulator()
    BoxC()
 
    in_calc( .F. )
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    IF Type( cIzraz ) <> "N"
       IF Upper( Left( cIzraz, 1 ) ) <> "K"
@@ -131,6 +135,8 @@ FUNCTION f18_kalkulator()
       SetKey( K_ALT_V, bKeyOld2 )
       RETURN &cIzraz
    ENDIF
+
+
 
    RETURN 0
 
@@ -314,10 +320,10 @@ STATIC FUNCTION DefKonv()
 
    Box(, 5, 65 )
    SET CURSOR ON
-   @ m_x, m_y + 19 SAY "PROGRAMIRANJE KURSIRANJA"
-   @ m_x + 2, m_y + 2 SAY "Oznaka valute iz koje se vrsi konverzija:" GET gValIz
-   @ m_x + 3, m_y + 2 SAY "Oznaka valute u koju se vrsi konverzija :" GET gValU
-   @ m_x + 4, m_y + 2 SAY "Kurs po kome se vrsi konverzija (1/2/3) :" GET gKurs VALID gKurs $ "123" PICT "9"
+   @ box_x_koord(), box_y_koord() + 19 SAY "PROGRAMIRANJE KURSIRANJA"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Oznaka valute iz koje se vrsi konverzija:" GET gValIz
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Oznaka valute u koju se vrsi konverzija :" GET gValU
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Kurs po kome se vrsi konverzija (1/2/3) :" GET gKurs VALID gKurs $ "123" PICT "9"
    READ
    IF LastKey() <> K_ESC
       WPAR( "vi", gValIz )

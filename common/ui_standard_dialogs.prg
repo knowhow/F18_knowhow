@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
 
 THREAD STATIC cLDirekt := "0"
 
@@ -55,11 +54,11 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg, cHeader )
    Box( , 3, Len( cPitanje ) + 6, .F. )
 
    IF ValType( cId ) == "C"
-      @ m_x + 0, m_y + 2 SAY cId
+      @ box_x_koord() + 0, box_y_koord() + 2 SAY cId
    ENDIF
 
    SET CURSOR ON
-   @ m_x + 2, m_y + 3 SAY8 cPitanje GET cOdgovor PICTURE "@!"  VALID ValidSamo( cOdgovor, cMogOdg )
+   @ box_x_koord() + 2, box_y_koord() + 3 SAY8 cPitanje GET cOdgovor PICTURE "@!"  VALID ValidSamo( cOdgovor, cMogOdg )
 
    READ
 
@@ -107,7 +106,7 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
    LOCAL cOdg
    LOCAL nDuz := Len( cPitanje ) + 4
    LOCAL cPom := Set( _SET_DEVICE )
-   PRIVATE GetList := {}
+   LOCAL GetList := {}
 
    SET DEVICE TO SCREEN
    IF nDuz < 54; nDuz := 54; ENDIF
@@ -125,9 +124,9 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
 
    Box( "", 5, nDuz + 4, .F. )
    SET CURSOR ON
-   @ m_x + 2, m_y + 3 SAY PadR( cPitanje, nDuz ) GET cOdg PICTURE "@!" VALID cOdg $ 'DNAO'
-   @ m_x + 4, m_y + 3 SAY8 PadC( "Mogući odgovori:  D - DA  ,  A - DA sve do kraja", nDuz )
-   @ m_x + 5, m_y + 3 SAY8 PadC( "                  N - NE  ,  O - NE sve do kraja", nDuz )
+   @ box_x_koord() + 2, box_y_koord() + 3 SAY PadR( cPitanje, nDuz ) GET cOdg PICTURE "@!" VALID cOdg $ 'DNAO'
+   @ box_x_koord() + 4, box_y_koord() + 3 SAY8 PadC( "Mogući odgovori:  D - DA  ,  A - DA sve do kraja", nDuz )
+   @ box_x_koord() + 5, box_y_koord() + 3 SAY8 PadC( "                  N - NE  ,  O - NE sve do kraja", nDuz )
    READ
    BoxC()
 
@@ -159,6 +158,7 @@ FUNCTION print_dialog_box( cDirekt )
 FUNCTION select_print_mode( cDirekt )
 
    LOCAL nWidth
+   LOCAL GetList := {}
 
    nWidth := 40
 
@@ -166,23 +166,23 @@ FUNCTION select_print_mode( cDirekt )
    f18_tone( 350, 2 )
    ?E "trace-print-dialog-3"
 
-   m_x := 8
-   m_y := 38 - Round( nWidth / 2, 0 )
+   box_x_koord(  8 )
+   box_y_koord( 38 - Round( nWidth / 2, 0 ) )
 
-   @ m_x, m_y SAY ""
+   @ box_x_koord(), box_y_koord() SAY ""
 
 
    IF gcDirekt <> "B"
 
       Box(, 7, nWidth )
-      @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt  PICT "@!" VALID cDirekt $ "DEFGRVPX0"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "   Izlaz direktno na printer:" GET cDirekt  PICT "@!" VALID cDirekt $ "DEFGRVPX0"
 
-      @ m_x + 2, m_y + 2 SAY "-------------------------------------"
-      @ m_x + 3, m_y + 2 SAY8 "E - direktna štampa na LPT1 (F,G)"
-      @ m_x + 4, m_y + 2 SAY8 "V - prikaz izvještaja u editoru"
-      @ m_x + 5, m_y + 2 SAY8 "P - pošalji na email podrške"
-      @ m_x + 6, m_y + 2 SAY8 "R - ptxt štampa, 0 - interni editor"
-      @ m_x + 7, m_y + 2 SAY "-----------------( X izlaz )---------"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "-------------------------------------"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "E - direktna štampa na LPT1 (F,G)"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "V - prikaz izvještaja u editoru"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "P - pošalji na email podrške"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "R - ptxt štampa, 0 - interni editor"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "-----------------( X izlaz )---------"
 
       READ
 
@@ -196,7 +196,7 @@ FUNCTION select_print_mode( cDirekt )
    ELSE
 
       Box (, 3, 60 )
-      @ m_x + 1, m_y + 2 SAY8 "Batch printer režim ..."
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Batch printer režim ..."
       Sleep( 14 )
       BoxC()
       RETURN "D"

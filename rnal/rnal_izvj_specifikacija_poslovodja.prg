@@ -61,42 +61,42 @@ STATIC FUNCTION parametri_izvjestaja( params )
 
    Box(, _box_x, _box_y )
 
-   @ m_x + _x, m_y + 2 SAY8 "*** Specifikacija radnih naloga za poslovođe"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY8 "*** Specifikacija radnih naloga za poslovođe"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datum od:" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Datum od:" GET _dat_od
+   @ box_x_koord() + _x, Col() + 1 SAY "do:" GET _dat_do
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Operater (0 - svi op.):" GET _operater VALID {|| _operater == 0  } PICT "9999999999"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Operater (0 - svi op.):" GET _operater VALID {|| _operater == 0  } PICT "9999999999"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "*** Selekcija grupe artikala "
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "*** Selekcija grupe artikala "
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "(1) - rezano          (4) - IZO"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "(1) - rezano          (4) - IZO"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "(2) - kaljeno         (5) - LAMI"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "(2) - kaljeno         (5) - LAMI"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "(3) - brušeno         (6) - emajlirano"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY8 "(3) - brušeno         (6) - emajlirano"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Grupa artikala (0 - sve grupe):" GET _group VALID _group >= 0 .AND. _group < 7 PICT "9"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Grupa artikala (0 - sve grupe):" GET _group VALID _group >= 0 .AND. _group < 7 PICT "9"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Gledati statuse 'realizovano' (D/N) ?" GET _statusi VALID _statusi $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Gledati statuse 'realizovano' (D/N) ?" GET _statusi VALID _statusi $ "DN" PICT "@!"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Gledati datum naloga ili datum isporuke (1/2) ?" GET _tip_datuma PICT "9"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Gledati datum naloga ili datum isporuke (1/2) ?" GET _tip_datuma PICT "9"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Tip izvještaja TXT / LibreOffice (1/2) ?" GET _txt PICT "9" VALID _txt > 0 .AND. _txt < 3
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY8 "Tip izvještaja TXT / LibreOffice (1/2) ?" GET _txt PICT "9" VALID _txt > 0 .AND. _txt < 3
 
    READ
 
@@ -300,7 +300,7 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
       ENDIF
 
       ++ nCount
-      @ m_x + 1, m_y + 2 SAY "datum isp./nalog broj: " + DToC( docs->doc_dvr_da ) + " / " + AllTrim( Str( nDoc_no ) )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "datum isp./nalog broj: " + DToC( docs->doc_dvr_da ) + " / " + AllTrim( Str( nDoc_no ) )
       SELECT docs
       SKIP
 

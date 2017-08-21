@@ -56,7 +56,7 @@ FUNCTION os_generacija_pocetnog_stanja()
 
    Box(, 10, 60 )
 
-   @ _pos_x := m_x + 1, _pos_y := m_y + 2 SAY "... prenos pocetnog stanja u toku" COLOR f18_color_i()
+   @ _pos_x := box_x_koord() + 1, _pos_y := box_y_koord() + 2 SAY "... prenos pocetnog stanja u toku" COLOR f18_color_i()
 
    // 1) pobrisati tekucu godinu
    _ok := _os_brisi_tekucu_godinu( @_info )
@@ -78,12 +78,12 @@ FUNCTION os_generacija_pocetnog_stanja()
    ENDIF
 
    IF _ok
-      @ _pos_x + 8, m_y + 2 SAY "... operacija uspjesna"
+      @ _pos_x + 8, box_y_koord() + 2 SAY "... operacija uspjesna"
    ELSE
-      @ _pos_x + 8, m_y + 2 SAY "... operacija NEUSPJESNA !!!"
+      @ _pos_x + 8, box_y_koord() + 2 SAY "... operacija NEUSPJESNA !!!"
    ENDIF
 
-   @ _pos_x + 9, m_y + 2 SAY "Pritisnite <ESC> za izlazak i pregled rezulatata."
+   @ _pos_x + 9, box_y_koord() + 2 SAY "Pritisnite <ESC> za izlazak i pregled rezulatata."
 
    // cekam ESC
    WHILE Inkey( 0.1 ) != K_ESC
@@ -188,7 +188,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
    SET ORDER TO TAG "1"
    GO TOP
 
-   @ _pos_x := m_x + 2, _pos_y := m_y + 2 SAY PadR( "1) Brisem podatke tekuce godine ", 40, "." )
+   @ _pos_x := box_x_koord() + 2, _pos_y := box_y_koord() + 2 SAY PadR( "1) Brisem podatke tekuce godine ", 40, "." )
 
    DO WHILE !Eof()
 
@@ -272,7 +272,7 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
 
 
 
-   @ _pos_x := m_x + 3, _pos_y := m_y + 2 SAY PadR( "2) vrsim sql upit ", 40, "." )
+   @ _pos_x := box_x_koord() + 3, _pos_y := box_y_koord() + 2 SAY PadR( "2) vrsim sql upit ", 40, "." )
 
    // podaci pocetnog stanja su ovdje....
    _data_os := run_sql_query( _qry_os )
@@ -299,7 +299,7 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
       RETURN _ok
    ENDIF
 
-   @ _pos_x := m_x + 4, _pos_y := m_y + 2 SAY PadR( "3) insert podataka u novoj sezoni ", 40, "." )
+   @ _pos_x := box_x_koord() + 4, _pos_y := box_y_koord() + 2 SAY PadR( "3) insert podataka u novoj sezoni ", 40, "." )
 
    _insert_into_os( _data_os )
    _insert_into_promj( _data_promj )
@@ -375,7 +375,7 @@ STATIC FUNCTION _insert_into_os( data )
 
       update_rec_server_and_dbf( __table_os, _rec, 1, "CONT" )
 
-      @ m_x + 5, m_y + 2 SAY "  " + __table_os + "/ sredstvo: " + _rec[ "id" ]
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "  " + __table_os + "/ sredstvo: " + _rec[ "id" ]
 
       data:Skip()
 
@@ -410,7 +410,7 @@ STATIC FUNCTION _insert_into_promj( data )
 
       update_rec_server_and_dbf( __table_promj, _rec, 1, "CONT" )
 
-      @ m_x + 5, m_y + 2 SAY __table_promj + "/ promjena za sredstvo: " + _rec[ "id" ]
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY __table_promj + "/ promjena za sredstvo: " + _rec[ "id" ]
 
       data:Skip()
 
@@ -459,7 +459,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
 
    _otpis_count := 0
 
-   @ _pos_x := m_x + 6, _pos_y := m_y + 2 SAY PadR( "4) generacija podataka za novu sezonu ", 40, "." )
+   @ _pos_x := box_x_koord() + 6, _pos_y := box_y_koord() + 2 SAY PadR( "4) generacija podataka za novu sezonu ", 40, "." )
 
    DO WHILE !Eof()
 
@@ -526,7 +526,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
    SET ORDER TO TAG "1"
    GO TOP
 
-   @ _pos_x := m_x + 7, _pos_y := m_y + 2 SAY PadR( "5) brisem promjene u novoj sezoni ", 40, "." )
+   @ _pos_x := box_x_koord() + 7, _pos_y := box_y_koord() + 2 SAY PadR( "5) brisem promjene u novoj sezoni ", 40, "." )
 
    DO WHILE !Eof()
 

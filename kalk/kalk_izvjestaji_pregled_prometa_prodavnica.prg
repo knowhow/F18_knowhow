@@ -298,10 +298,10 @@ STATIC FUNCTION GetVars( dDatumOd, dDatumDo, cListaKonta, cPopustDN )
 #endif
 
    Box(, 3, 60 )
-   @ m_x + 1, m_y + 2 SAY "Datum od :" GET dDatumOd
-   @ m_x + 1, Col() + 1 SAY "-" GET dDatumDo
-   @ m_x + 2, m_y + 2 SAY "Konta (prazno-svi)" GET cListaKonta PICT "@!S40"
-   @ m_x + 3, m_y + 2 SAY "Uzeti u obzir popust " GET cPopustDN VALID !Empty( cPopustDN )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum od :" GET dDatumOd
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET dDatumDo
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konta (prazno-svi)" GET cListaKonta PICT "@!S40"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Uzeti u obzir popust " GET cPopustDN VALID !Empty( cPopustDN )
    READ
    IF ( LastKey() == K_ESC )
       BoxC()
@@ -348,7 +348,7 @@ STATIC FUNCTION ScanKoncij( dDatumOd, dDatumDo )
       cTSifPath := Trim( field->siftops )
       cTKumPath := Trim( field->kumtops )
 
-      @ m_x + 1, m_y + 2 SAY "Prolazim kroz tabele......."
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prolazim kroz tabele......."
 
       IF Empty( cTSifPath ) .OR. Empty( cTKumPath )
          SKIP 1
@@ -430,7 +430,7 @@ STATIC FUNCTION ScanPos( dDatumOd, dDatumDo, cTKumP )
       nMpcBp := MpcBezPor( nPosCijena, @aPorezi )
       SELECT pos
 
-      @ m_x + 3, m_y + 2 SAY "POS    :: Prodavnica: " + AllTrim( koncij->id ) + ", PATH: " + cTKumP
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "POS    :: Prodavnica: " + AllTrim( koncij->id ) + ", PATH: " + cTKumP
       IF ( "(N.T.)" $ tarifa->naz )
          // radi se o nizoj tarifi
          AFPos( koncij->id, "2", nPosCijena, nMpcBp, pos->kolicina )
@@ -521,7 +521,7 @@ STATIC FUNCTION ScanPromVp( dDatumOd, dDatumDo, cTKumPath )
    DO WHILE ( !Eof() .AND. ( field->datum <= dDatumDo ) )
       ARFPromVp( koncij->id, field->polog01, field->polog02, field->polog03, field->polog04, field->polog05, field->polog06, field->polog07, field->polog08, field->polog09, field->polog10, field->polog11, field->polog12 )
       SELECT promVp
-      @ m_x + 3, m_y + 2 SAY "PROMVP :: Prodavnica: " + AllTrim( koncij->id ) + ", PATH: " + cTKumPath
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "PROMVP :: Prodavnica: " + AllTrim( koncij->id ) + ", PATH: " + cTKumPath
       SKIP
    ENDDO
 

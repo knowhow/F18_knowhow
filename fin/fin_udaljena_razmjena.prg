@@ -1,6 +1,5 @@
 #include "f18.ch"
 
-MEMVAR m_x, m_y, GetList
 
 STATIC s_cImportDbfPath
 STATIC s_cExportDbfPath
@@ -88,9 +87,10 @@ STATIC FUNCTION fin_import()
    LOCAL _imp_file
    LOCAL _a_data := {}
    LOCAL cFinImportPath := fetch_metric( "fin_import_path", my_user(), PadR( "", 300 ) )
+   LOCAL GetList := {}
 
    Box(, 1, 70 )
-   @ m_x + 1, m_y + 2 SAY "import path:" GET cFinImportPath PICT "@S50"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "import path:" GET cFinImportPath PICT "@S50"
    READ
    BoxC()
 
@@ -167,6 +167,7 @@ STATIC FUNCTION _vars_export( hVars )
    LOCAL nX := 1
    LOCAL bKeyHanlder := { | oGet| info_bar( "get", "ulovio sam: " + oGet:cBuffer) }
    LOCAL bReader
+   LOCAL GetList := {}
 
    IF Empty( AllTrim( _exp_path ) )
       _exp_path := PadR( s_cExportDbfPath, 300 )
@@ -174,22 +175,22 @@ STATIC FUNCTION _vars_export( hVars )
 
    Box(, 15, 70 )
 
-   @ m_x + nX, m_y + 2 SAY "*** Uslovi exporta dokumenata"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** Uslovi exporta dokumenata"
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Datumski period od" GET dDatOd
-   @ m_x + nX, Col() + 1 SAY "do" GET dDatDo
-   ++nX
-   ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Uzeti u obzir sljedeća konta:" GET _konta PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datumski period od" GET dDatOd
+   @ box_x_koord() + nX, Col() + 1 SAY "do" GET dDatDo
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Export šifarnika (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Uzeti u obzir sljedeća konta:" GET _konta PICT "@S30"
+   ++nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Export šifarnika (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Lokacija exporta:" GET _exp_path PICT "@S50"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Lokacija exporta:" GET _exp_path PICT "@S50"
 
 
 
@@ -235,6 +236,7 @@ STATIC FUNCTION _vars_import( hVars )
    LOCAL _iz_fmk := fetch_metric( "fin_import_iz_fmk", my_user(), "N" )
    LOCAL cFinImportPath := fetch_metric( "fin_import_path", my_user(), PadR( "", 300 ) )
    LOCAL nX := 1
+   LOCAL GetList := {}
 
    IF Empty( AllTrim( cFinImportPath ) )
       cFinImportPath := PadR( s_cImportDbfPath, 300 )
@@ -243,30 +245,30 @@ STATIC FUNCTION _vars_import( hVars )
 
    Box(, 15, 70 )
 
-   @ m_x + nX, m_y + 2 SAY8 "*** Uslovi importa dokumenata"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "*** Uslovi importa dokumenata"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Datumski period od" GET dDatOd
-   @ m_x + nX, Col() + 1 SAY "do" GET dDatDo
-   ++nX
-   ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Uzeti u obzir sljedeća konta:" GET _konta PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Datumski period od" GET dDatOd
+   @ box_x_koord() + nX, Col() + 1 SAY "do" GET dDatDo
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Zamijeniti postojeće dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Uzeti u obzir sljedeća konta:" GET _konta PICT "@S30"
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Zamijeniti postojeće šifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Zamijeniti postojeće dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Zamijeniti postojeće šifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
 
 //   ++nX
 //   ++nX
-//   @ m_x + nX, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
+//   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Lokacija importa:" GET cFinImportPath PICT "@S50"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Lokacija importa:" GET cFinImportPath PICT "@S50"
 
 
    READ
@@ -332,7 +334,7 @@ STATIC FUNCTION fin_export_impl( hVars, a_details )
 
    Box(, 2, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "... export fin dokumenata u toku"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "... export fin dokumenata u toku"
 
    find_nalog_za_period( self_organizacija_id(), NIL, dDatOd, dDatDo )
 
@@ -381,7 +383,7 @@ STATIC FUNCTION fin_export_impl( hVars, a_details )
       dbf_update_rec( hRec )
 
       ++nCnt
-      @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( nCnt ) ), 6 ) + ". " + "dokument: " + cIdFirma + "-" + cIdVN + "-" + AllTrim( cBrNal ), 50 )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR(  PadL( AllTrim( Str( nCnt ) ), 6 ) + ". " + "dokument: " + cIdFirma + "-" + cIdVN + "-" + AllTrim( cBrNal ), 50 )
 
       find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
       DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVN .AND. field->brnal == cBrNal
@@ -523,8 +525,8 @@ STATIC FUNCTION fin_import_impl( hVars, a_details )
 
    Box(, 3, 70 )
 
-   @ m_x + 1, m_y + 2 SAY PadR( "... import fin dokumenata u toku ", 69 ) COLOR f18_color_i()
-   @ m_x + 2, m_y + 2 SAY "broj zapisa nalog/" + AllTrim( Str( _total_nalog ) ) + ", suban/" + AllTrim( Str( _total_suban ) )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "... import fin dokumenata u toku ", 69 ) COLOR f18_color_i()
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "broj zapisa nalog/" + AllTrim( Str( _total_nalog ) ) + ", suban/" + AllTrim( Str( _total_suban ) )
 
    DO WHILE !Eof()
 
@@ -611,7 +613,7 @@ STATIC FUNCTION fin_import_impl( hVars, a_details )
       ENDIF
 
       ++nCnt
-      @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( nCnt ) ), 5 ) + ". dokument: " + cIdFirma + "-" + cIdVN + "-" + cBrNal, 60 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( PadL( AllTrim( Str( nCnt ) ), 5 ) + ". dokument: " + cIdFirma + "-" + cIdVN + "-" + cBrNal, 60 )
 
       SELECT e_suban
       SET ORDER TO TAG "1"
@@ -628,7 +630,7 @@ STATIC FUNCTION fin_import_impl( hVars, a_details )
 
          _gl_brojac += _redni_broj
 
-         @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + Str( hRec[ "rbr" ], 5 )
+         @ box_x_koord() + 3, box_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + Str( hRec[ "rbr" ], 5 )
 
          SELECT suban
          APPEND BLANK
@@ -662,7 +664,7 @@ STATIC FUNCTION fin_import_impl( hVars, a_details )
 
          _gl_brojac += _redni_broj
 
-         @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + hRec[ "rbr" ]
+         @ box_x_koord() + 3, box_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + hRec[ "rbr" ]
 
          SELECT anal
          APPEND BLANK
@@ -696,7 +698,7 @@ STATIC FUNCTION fin_import_impl( hVars, a_details )
 
          _gl_brojac += _redni_broj
 
-         @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + hRec[ "rbr" ]
+         @ box_x_koord() + 3, box_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + hRec[ "rbr" ]
 
          SELECT sint
          APPEND BLANK
@@ -730,7 +732,7 @@ STATIC FUNCTION fin_import_impl( hVars, a_details )
 
    IF nCnt > 0 .AND. lOk
 
-      @ m_x + 3, m_y + 2 SAY PadR( "", 69 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "", 69 )
 
       update_table_partn( _zamjeniti_sif )
       update_table_konto( _zamjeniti_sif )

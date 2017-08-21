@@ -14,8 +14,8 @@
 
 // KUF
 
-FUNCTION select_o_epdv_kuf()
-   RETURN select_o_dbf( "KUF", F_KUF, "epdv_kuf", "DATUM" )
+//FUNCTION select_o_epdv_kuf()
+//   RETURN select_o_dbf( "KUF", F_KUF, "epdv_kuf", "DATUM" )
 
 
 FUNCTION select_o_epdv_p_kuf()
@@ -28,8 +28,8 @@ FUNCTION select_o_epdv_r_kuf()
 
 // KIF
 
-FUNCTION select_o_epdv_kif()
-   RETURN select_o_dbf( "KIF", F_KIF, "epdv_kif", "DATUM" )
+//FUNCTION select_o_epdv_kif()
+//   RETURN select_o_dbf( "KIF", F_KIF, "epdv_kif", "DATUM" )
 
 
 // set_a_dbf_temp( "epdv_p_kif", "P_KIF", F_P_KIF )
@@ -46,8 +46,8 @@ FUNCTION select_o_epdv_r_kif()
 
 // PDV
 
-FUNCTION select_o_epdv_pdv()
-   RETURN select_o_dbf( "PDV", F_PDV, "epdv_pdv", "period" )
+//FUNCTION select_o_epdv_pdv()
+//   RETURN select_o_dbf( "PDV", F_PDV, "epdv_pdv", "period" )
 
 FUNCTION select_o_epdv_r_pdv()
    RETURN select_o_dbf( "R_PDV", F_R_PDV, "epdv_r_pdv", NIL )

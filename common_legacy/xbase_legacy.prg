@@ -461,7 +461,7 @@ FUNCTION spec_funkcije_sifra( cSif )
 
    Box(, 2, 70 )
    cSifra := Space( 8 )
-   @ m_x + 1, m_y + 2 SAY8 "Šifra za korištenje specijalnih funkcija:"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Šifra za korištenje specijalnih funkcija:"
    cSifra := Upper( GetSecret( cSifra ) )
    BoxC()
 

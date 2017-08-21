@@ -192,8 +192,8 @@ _status := 0
 ENDIF
 
 Box(, 2, 65 )
-@ m_x + 1, m_y + 2 SAY "Konekcija:" GET _conn_name PICT "@S50" VALID !Empty( _conn_name )
-@ m_x + 2, m_y + 2 SAY "[1] aktivirati [0] prekinuti" GET _status PICT "9"
+@ box_x_koord() + 1, box_y_koord() + 2 SAY "Konekcija:" GET _conn_name PICT "@S50" VALID !Empty( _conn_name )
+@ box_x_koord() + 2, box_y_koord() + 2 SAY "[1] aktivirati [0] prekinuti" GET _status PICT "9"
 READ
 BoxC()
 

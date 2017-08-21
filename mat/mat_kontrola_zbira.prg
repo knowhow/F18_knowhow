@@ -47,7 +47,7 @@ FUNCTION mat_kzb()
 
    SET CURSOR OFF
 
-   @ m_x + 1, m_y + 2 SAY _header
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY _header
 
    SELECT mat_nalog
 
@@ -65,7 +65,7 @@ FUNCTION mat_kzb()
 
    ESC_BCR
 
-   @ m_x + 3, m_y + 2 SAY PadL( "NALOZI", 13 )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY PadL( "NALOZI", 13 )
    @ Row(), Col() + 1 SAY nDug PICT _pict
    @ Row(), Col() + 1 SAY nPot PICT _pict
    @ Row(), Col() + 1 SAY nDug2 PICT _pict
@@ -80,7 +80,7 @@ FUNCTION mat_kzb()
       SKIP
    ENDDO
    ESC_BCR
-   @ m_x + 5, m_y + 2 SAY PadL( "SINTETIKA", 13 )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY PadL( "SINTETIKA", 13 )
    @ Row(), Col() + 1 SAY nDug PICTURE _pict
    @ Row(), Col() + 1 SAY nPot PICTURE _pict
    @ Row(), Col() + 1 SAY nDug2 PICTURE _pict
@@ -96,7 +96,7 @@ FUNCTION mat_kzb()
       SKIP
    ENDDO
    ESC_BCR
-   @ m_x + 7, m_y + 2 SAY PadL( "ANALITIKA", 13 )
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY PadL( "ANALITIKA", 13 )
    @ Row(), Col() + 1 SAY nDug PICTURE _pict
    @ Row(), Col() + 1 SAY nPot PICTURE _pict
    @ Row(), Col() + 1 SAY nDug2 PICTURE _pict
@@ -114,7 +114,7 @@ FUNCTION mat_kzb()
       SKIP
    ENDDO
    ESC_BCR
-   @ m_x + 9, m_y + 2 SAY PadL( "SUBANALITIKA", 13 )
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY PadL( "SUBANALITIKA", 13 )
    @ Row(), Col() + 1 SAY nDug PICTURE _pict
    @ Row(), Col() + 1 SAY nPot PICTURE _pict
    @ Row(), Col() + 1 SAY nDug2 PICTURE _pict

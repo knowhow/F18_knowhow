@@ -195,8 +195,8 @@ METHOD RnalCsvImport:csv_browse()
    LOCAL nDbfArea := Select()
    LOCAL _ret := 0
    LOCAL _header := "Pregled importovanih podataka CSV fajla..."
-   LOCAL nX := m_x
-   LOCAL nY := m_y
+   LOCAL nX := box_x_koord()
+   LOCAL nY := box_y_koord()
    LOCAL nI
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
@@ -220,7 +220,7 @@ METHOD RnalCsvImport:csv_browse()
    // otvori box
    Box(, _box_x, _box_y )
 
-   @ m_x + _box_x, m_x + 2 SAY "<SPACE> markiranje stavki za prenos  <ESC> izlaz"
+   @ box_x_koord() + _box_x, box_x_koord() + 2 SAY "<SPACE> markiranje stavki za prenos  <ESC> izlaz"
 
    my_browse( "csvimp", _box_x, _box_y, {|| ::csv_browse_key_handler() }, _header, "foot",,,,, 1 )
 
@@ -230,8 +230,8 @@ METHOD RnalCsvImport:csv_browse()
 
    BoxC()
 
-   m_x := nX
-   m_y := nY
+   box_x_koord() := nX
+   box_y_koord() := nY
 
    SELECT ( nDbfArea )
 
@@ -270,15 +270,15 @@ METHOD RnalCsvImport:get_vars()
 
    Box(, 5, 60 )
 
-   @ m_x + nX, m_y + 2 SAY "*** import CSV fajla"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** import CSV fajla"
 
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "Lokacija fajla:" GET _import_path PICT "@S35"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Lokacija fajla:" GET _import_path PICT "@S35"
 
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY8 "Izvršiti import fajla (D/N) ?" GET _imp_ok VALID _imp_ok $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Izvršiti import fajla (D/N) ?" GET _imp_ok VALID _imp_ok $ "DN" PICT "@!"
 
    READ
 

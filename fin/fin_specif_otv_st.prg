@@ -39,17 +39,17 @@ FUNCTION fin_specif_otvorene_stavke()
 
    DO WHILE .T.
       SET CURSOR ON
-      @ m_x + 1, m_y + 2 SAY "SPECIFIKACIJA OTVORENIH STAVKI"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "SPECIFIKACIJA OTVORENIH STAVKI"
       IF gNW == "D"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 4, m_y + 2 SAY "Konto    " GET cIdKonto VALID p_konto( @cIDKonto ) PICT "@!"
-      @ m_x + 5, m_y + 2 SAY "Od datuma" GET dDatOd
-      @ m_x + 5, Col() + 2 SAY "do" GET dDatdo
-      @ m_x + 7, m_y + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
-      @ m_x + 8, m_y + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto    " GET cIdKonto VALID p_konto( @cIDKonto ) PICT "@!"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Od datuma" GET dDatOd
+      @ box_x_koord() + 5, Col() + 2 SAY "do" GET dDatdo
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
 
       fin_get_k1_k4_funk_fond( 9, .F. )
 

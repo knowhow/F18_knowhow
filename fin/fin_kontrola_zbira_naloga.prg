@@ -28,9 +28,9 @@ FUNCTION kontrola_zbira_naloga_u_pripremi()
    cIdVN := IdVN
    cBrNal := BrNal
 
-   @ m_x + 1, m_y + 1 SAY "       Firma: " + cIDFirma
-   @ m_x + 2, m_y + 1 SAY "Vrsta naloga:" GET cIdVn VALID p_fin_vrsta_naloga( @cIdVN, 2, 20 )
-   @ m_x + 3, m_y + 1 SAY " Broj naloga:" GET cBrNal
+   @ box_x_koord() + 1, box_y_koord() + 1 SAY "       Firma: " + cIDFirma
+   @ box_x_koord() + 2, box_y_koord() + 1 SAY "Vrsta naloga:" GET cIdVn VALID p_fin_vrsta_naloga( @cIdVN, 2, 20 )
+   @ box_x_koord() + 3, box_y_koord() + 1 SAY " Broj naloga:" GET cBrNal
 
    READ
 
@@ -70,16 +70,16 @@ FUNCTION kontrola_zbira_naloga_u_pripremi()
 
    cPic := FormPicL( "9 " + gPicBHD, 20 )
 
-   @ m_x + 5, m_y + 2 SAY "Zbir naloga:"
-   @ m_x + 6, m_y + 2 SAY "     Duguje:"
-   @ m_x + 6, Col() + 2 SAY nDug PICTURE cPic
-   @ m_x + 6, Col() + 2 SAY nDug2 PICTURE cPic
-   @ m_x + 7, m_y + 2 SAY "  Potrazuje:"
-   @ m_x + 7, Col() + 2 SAY nPot  PICTURE cPic
-   @ m_x + 7, Col() + 2 SAY nPot2  PICTURE cPic
-   @ m_x + 8, m_y + 2 SAY "      Saldo:"
-   @ m_x + 8, Col() + 2 SAY nDug - nPot  PICTURE cPic
-   @ m_x + 8, Col() + 2 SAY nDug2 - nPot2  PICTURE cPic
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Zbir naloga:"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "     Duguje:"
+   @ box_x_koord() + 6, Col() + 2 SAY nDug PICTURE cPic
+   @ box_x_koord() + 6, Col() + 2 SAY nDug2 PICTURE cPic
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "  Potrazuje:"
+   @ box_x_koord() + 7, Col() + 2 SAY nPot  PICTURE cPic
+   @ box_x_koord() + 7, Col() + 2 SAY nPot2  PICTURE cPic
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "      Saldo:"
+   @ box_x_koord() + 8, Col() + 2 SAY nDug - nPot  PICTURE cPic
+   @ box_x_koord() + 8, Col() + 2 SAY nDug2 - nPot2  PICTURE cPic
    Inkey( 0 )
 
 
@@ -87,7 +87,7 @@ FUNCTION kontrola_zbira_naloga_u_pripremi()
 
       cDN := "N"
       SET CURSOR ON
-      @ m_x + 10, m_y + 2 SAY8 "Želite li uravnoteziti nalog (D/N) ?" GET cDN valid ( cDN $ "DN" ) PICT "@!"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Želite li uravnoteziti nalog (D/N) ?" GET cDN valid ( cDN $ "DN" ) PICT "@!"
       READ
 
       IF cDN == "D"
@@ -97,9 +97,9 @@ FUNCTION kontrola_zbira_naloga_u_pripremi()
          _D_P := "2"
          _IdKonto := Space( 7 )
 
-         @ m_x + 11, m_y + 2 SAY "Opis" GET _opis  PICT "@S40"
-         @ m_x + 12, m_y + 2 SAY "Staviti na konto ?" GET _IdKonto VALID P_Konto( @_IdKonto )
-         @ m_x + 12, Col() + 1 SAY "Datum dokumenta:" GET _DatDok
+         @ box_x_koord() + 11, box_y_koord() + 2 SAY "Opis" GET _opis  PICT "@S40"
+         @ box_x_koord() + 12, box_y_koord() + 2 SAY "Staviti na konto ?" GET _IdKonto VALID P_Konto( @_IdKonto )
+         @ box_x_koord() + 12, Col() + 1 SAY "Datum dokumenta:" GET _DatDok
          READ
 
          IF LastKey() <> K_ESC

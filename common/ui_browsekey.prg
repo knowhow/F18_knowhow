@@ -64,7 +64,7 @@ FUNCTION BrowseKey( y1, x1, y2, x2, ImeKol, bfunk, uslov, traz, brkol, dx, dy, b
 
    DO WHILE .T.
       IF dx <> NIL .AND. dy <> NIL
-         @ m_x + dx, m_y + dy SAY Str( nRecCnt, 4 )
+         @ box_x_koord() + dx, box_y_koord() + dy SAY Str( nRecCnt, 4 )
       ENDIF
 
       DO WHILE !Tb:stable .AND. ( ( lk := Inkey() ) == 0 )
@@ -74,7 +74,7 @@ FUNCTION BrowseKey( y1, x1, y2, x2, ImeKol, bfunk, uslov, traz, brkol, dx, dy, b
       IF TB:stable .AND. ( lk := Inkey() ) == 0
 
          IF dx <> NIL .AND. dy <> NIL
-            @ m_x + dx, m_y + dy SAY Str( nRecCnt, 4 )
+            @ box_x_koord() + dx, box_y_koord() + dy SAY Str( nRecCnt, 4 )
          ENDIF
 
          lk := Inkey( 0 )
@@ -174,8 +174,8 @@ STATIC FUNCTION Korisnik( nRequest, traz, dx, dy, nCurRec, nRecCnt )
       ENDIF
    ENDIF
    IF dx <> NIL .AND. dy <> NIL
-      // @ m_x+dx,m_y+dy say STR(nCurRec,4)+"/"+STR(nRecCnt,4)
-      @ m_x + dx, m_y + dy SAY Str( nRecCnt, 4 )
+      // @ box_x_koord()+dx,box_y_koord()+dy say STR(nCurRec,4)+"/"+STR(nRecCnt,4)
+      @ box_x_koord() + dx, box_y_koord() + dy SAY Str( nRecCnt, 4 )
    ENDIF
 
    RETURN ( nCount )

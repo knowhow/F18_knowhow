@@ -437,7 +437,7 @@ FUNCTION fl_polog( cFPath, cFName, nPolog )
    IF nPolog = 0
 
       Box(, 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
          PICT "999999.99"
       READ
       BoxC()
@@ -512,10 +512,10 @@ FUNCTION flink_dnevni_izvjestaj( cFPath, cFName )
 
    Box(, 6, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Dnevni izvjestaji..."
-   @ m_x + 3, m_y + 2 SAY "Z - dnevni izvjestaj"
-   @ m_x + 4, m_y + 2 SAY "X - presjek stanja"
-   @ m_x + 6, m_y + 2 SAY "         ------------>" GET cRpt ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Dnevni izvjestaji..."
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Z - dnevni izvjestaj"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "X - presjek stanja"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "         ------------>" GET cRpt ;
       VALID cRpt $ "ZX" PICT "@!"
 
 
@@ -680,7 +680,7 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
 
    IF nReklRn <> 0
       Box( , 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Broj rekl.fiskalnog racuna:"  GET nNRekRn PICT "99999" VALID ( nNRekRn > 0 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj rekl.fiskalnog racuna:"  GET nNRekRn PICT "99999" VALID ( nNRekRn > 0 )
       READ
       BoxC()
    ENDIF

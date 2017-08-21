@@ -45,7 +45,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
    IF lAuto
       // _print_opt := "D"
       Box(, 3, 75 )
-      @ m_x + 0, m_y + 2 SAY8 "Formiranje sintetičkih i analitičkih stavki"
+      @ box_x_koord() + 0, box_y_koord() + 2 SAY8 "Formiranje sintetičkih i analitičkih stavki"
    ENDIF
 
    DO WHILE !Eof()
@@ -94,7 +94,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
          AAdd( aNalozi, cIdFirma + cIdVN + cBrNal ) // lista naloga koji su otisli
          IF lAuto
-            @ m_x + 2, m_y + 2 SAY "Formirana sintetika i analitika za nalog:" + cIdFirma + "-" + cIdVN + "-" + cBrNal
+            @ box_x_koord() + 2, box_y_koord() + 2 SAY "Formirana sintetika i analitika za nalog:" + cIdFirma + "-" + cIdVN + "-" + cBrNal
          ENDIF
       ENDIF
 
@@ -151,7 +151,7 @@ FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
 
       IF !lAuto
          Box(, 2, 58 )
-         @ m_x + 1, m_y + 2 SAY8 "Štampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN PICT "@!" VALID cDN $ "DN"
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Štampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN PICT "@!" VALID cDN $ "DN"
          READ
          BoxC()
       ENDIF

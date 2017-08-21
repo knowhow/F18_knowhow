@@ -23,10 +23,10 @@ FUNCTION kalk_get_1_ip()
 
    _datfaktp := _datdok
 
-   @ m_x + _x, m_y + 2 SAY "Konto koji zaduzuje" GET _IdKonto  VALID P_Konto( @_IdKonto, _x, 35 ) PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Konto koji zaduzuje" GET _IdKonto  VALID P_Konto( @_IdKonto, _x, 35 ) PICT "@!"
 
    // IF gNW <> "X"
-   // @ m_x + _x, m_y + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
+   // @ box_x_koord() + _x, box_y_koord() + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
    // VALID Empty( _idzaduz ) .OR. p_partner( @_idzaduz, _x, 35 )
    // ENDIF
 
@@ -34,12 +34,12 @@ FUNCTION kalk_get_1_ip()
    ESC_RETURN K_ESC
 
    _x += 2
-   _pos_x := m_x + _x
+   _pos_x := box_x_koord() + _x
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + _x, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + _x, box_y_koord() + 2, @aPorezi )
 
 
-   @ m_x + _x, m_y + ( f18_max_cols() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
+   @ box_x_koord() + _x, box_y_koord() + ( f18_max_cols() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
 
    READ
 
@@ -70,10 +70,10 @@ FUNCTION kalk_get_1_ip()
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY PadL( "KNJIZNA KOLICINA:", _left ) GET _gkolicina PICT PicKol  ;
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY PadL( "KNJIZNA KOLICINA:", _left ) GET _gkolicina PICT PicKol  ;
       WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
 
-   @ m_x + _x, Col() + 2 SAY "POPISANA KOLICINA:" GET _kolicina VALID VKol() PICT PicKol
+   @ box_x_koord() + _x, Col() + 2 SAY "POPISANA KOLICINA:" GET _kolicina VALID VKol() PICT PicKol
 
 
    _tmp := "P.CIJENA (SA PDV):"
@@ -81,11 +81,11 @@ FUNCTION kalk_get_1_ip()
 
    ++_x
    ++_x
-   @ m_x + _x, m_y + 2 SAY PadL( "NABAVNA CIJENA:", _left ) GET _nc PICT picdem
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY PadL( "NABAVNA CIJENA:", _left ) GET _nc PICT picdem
 
    ++_x
    ++_x
-   @ m_x + _x, m_y + 2 SAY PadL( _tmp, _left ) GET _mpcsapp PICT picdem
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY PadL( _tmp, _left ) GET _mpcsapp PICT picdem
 
    READ
 
@@ -124,9 +124,9 @@ FUNCTION kalk_generisi_ip()
    dDatDok := Date()
    cNulirati := "N"
 
-   @ m_x + 1, m_Y + 2 SAY "Prodavnica:" GET  cIdkonto VALID P_Konto( @cIdkonto )
-   @ m_x + 2, m_Y + 2 SAY "Datum     :  " GET  dDatDok
-   @ m_x + 3, m_Y + 2 SAY "Nulirati lager (D/N)" GET cNulirati VALID cNulirati $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prodavnica:" GET  cIdkonto VALID P_Konto( @cIdkonto )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datum     :  " GET  dDatDok
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Nulirati lager (D/N)" GET cNulirati VALID cNulirati $ "DN" PICT "@!"
 
    READ
    ESC_BCR
@@ -273,9 +273,9 @@ FUNCTION gen_ip_razlika()
    cOldBrDok := Space( 8 )
    cIdVd := "IP"
 
-   @ m_x + 1, m_y + 2 SAY "Prodavnica:" GET cIdKonto VALID P_Konto( @cIdKonto )
-   @ m_x + 2, m_y + 2 SAY "Datum do  :" GET dDatDok
-   @ m_x + 3, m_y + 2 SAY "Dokument " + cIdFirma + "-" + cIdVd GET cOldBrDok
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prodavnica:" GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datum do  :" GET dDatDok
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Dokument " + cIdFirma + "-" + cIdVd GET cOldBrDok
 
    READ
    ESC_BCR
@@ -317,7 +317,7 @@ FUNCTION gen_ip_razlika()
 
    Box( , 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "generacija IP-" + AllTrim( cBrDok ) + " u toku..."
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "generacija IP-" + AllTrim( cBrDok ) + " u toku..."
 
    select_o_koncij( cIdKonto )
 
@@ -437,8 +437,8 @@ FUNCTION gen_ip_razlika()
 
          dbf_update_rec( hRec )
 
-         @ m_x + 2, m_y + 2 SAY "Broj stavki: " + PadR( AllTrim( Str( ++_cnt, 12, 0 ) ), 20 )
-         @ m_x + 3, m_y + 2 SAY "    Artikal: " + PadR( AllTrim( cIdroba ), 20 )
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Broj stavki: " + PadR( AllTrim( Str( ++_cnt, 12, 0 ) ), 20 )
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "    Artikal: " + PadR( AllTrim( cIdroba ), 20 )
 
          SELECT kalk
 

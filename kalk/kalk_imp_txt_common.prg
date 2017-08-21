@@ -104,8 +104,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
    cBBTipDok := Space( 30 ) // uzmi parametre koje ces dokumente prenositi
    Box(, 3, 70 )
-   @ 1 + m_x, 2 + m_y SAY "Prenos sljedecih tipova dokumenata ( kalk pript -> pripr) :"
-   @ 3 + m_x, 2 + m_y SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
+   @ 1 + box_x_koord(), 2 + box_y_koord() SAY "Prenos sljedecih tipova dokumenata ( kalk pript -> pripr) :"
+   @ 3 + box_x_koord(), 2 + box_y_koord() SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
    READ
    BoxC()
 
@@ -116,8 +116,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
    // SetKey(K_F3,{|| kalk_imp_set_check_point(nPTRec)})
 
    Box(, 10, 79 )
-   @ 1 + m_x, 2 + m_y SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR f18_color_i()
-   @ 2 + m_x, 2 + m_y SAY8 "======================================="
+   @ 1 + box_x_koord(), 2 + box_y_koord() SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR f18_color_i()
+   @ 2 + box_x_koord(), 2 + box_y_koord() SAY8 "======================================="
 
    DO WHILE !Eof()
 
@@ -148,7 +148,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
       SELECT ( nTekucaWA )
 
-      @ 3 + m_x, 2 + m_y SAY "KALK IMP Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok + " /"  + cNoviKalkBrDok
+      @ 3 + box_x_koord(), 2 + box_y_koord() SAY "KALK IMP Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok + " /"  + cNoviKalkBrDok
 
       nStCnt := 0
       DO WHILE !Eof() .AND. field->brdok == cBrDok .AND. field->idfirma == cFirma .AND. field->idvd == cIdVd
@@ -176,8 +176,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
          nPTRec := RecNo()
 
-         @ 5 + m_x, 13 + m_y SAY Space( 5 )
-         @ 5 + m_x, 2 + m_y SAY "Broj stavki:" + AllTrim( Str( nStCnt ) )
+         @ 5 + box_x_koord(), 13 + box_y_koord() SAY Space( 5 )
+         @ 5 + box_x_koord(), 2 + box_y_koord() SAY "Broj stavki:" + AllTrim( Str( nStCnt ) )
       ENDDO
 
 
@@ -440,7 +440,7 @@ FUNCTION kalk_imp_partn_exist()
    DO WHILE !Eof()
       select_o_partner( kalk_imp_temp->idpartner )
       ++nCount
-      @ m_x + 1, m_y + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
       IF !Found()
          AAdd( aRet, { kalk_imp_temp->idpartner } )
       ENDIF

@@ -166,10 +166,10 @@ FUNCTION chk_dok_11()
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "za datum od" GET dD_from
-   @ m_x + 1, Col() + 1 SAY "do" GET dD_to
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "za datum od" GET dD_from
+   @ box_x_koord() + 1, Col() + 1 SAY "do" GET dD_to
 
-   @ m_x + 2, m_y + 2 SAY "resetuj broj veze u RNAL (D/N)?" ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "resetuj broj veze u RNAL (D/N)?" ;
       GET cReset VALID cReset $ "DN" PICT "@!"
 
    READ
@@ -308,7 +308,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
 
       nDoc_no := field->doc_no
 
-      @ m_x + 1, m_y + 2 SAY "obradjujem nalog: " + AllTrim( Str( nDoc_no ) )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "obradjujem nalog: " + AllTrim( Str( nDoc_no ) )
 
       dDoc_date := field->doc_date
       dDvr_date := field->doc_dvr_da

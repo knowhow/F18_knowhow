@@ -102,16 +102,16 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 
    Box(, 10, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "Broj labela zavisi od kolicine artikla (D/N):" GET cKolicina VALID cKolicina $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj labela zavisi od kolicine artikla (D/N):" GET cKolicina VALID cKolicina $ "DN" PICT "@!"
 
-   @ m_x + 3, m_y + 2 SAY "1 - standardna naljepnica"
-   @ m_x + 4, m_y + 2 SAY "2 - sa prikazom stare cijene (prekrizeno)"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "1 - standardna naljepnica"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "2 - sa prikazom stare cijene (prekrizeno)"
 
-   @ m_x + 6, m_y + 3 SAY "Odaberi zeljenu varijantu "  GET cVarijanta VALID cVarijanta $ "12"
+   @ box_x_koord() + 6, box_y_koord() + 3 SAY "Odaberi zeljenu varijantu "  GET cVarijanta VALID cVarijanta $ "12"
 
-   @ m_x + 7, m_y + 2 SAY "Broj TKM:" GET tkm_no
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Broj TKM:" GET tkm_no
 
-   @ m_x + 8, m_y + 2 SAY "Naziv skrati na broj karaktera:" GET len_naz PICT "999"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Naziv skrati na broj karaktera:" GET len_naz PICT "999"
 
    READ
 

@@ -267,7 +267,7 @@ FUNCTION tremol_polog( hFiskalniParams, auto )
       // box - daj iznos pologa
 
       Box(, 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Unosim polog od:" GET _value PICT "9999999.99"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unosim polog od:" GET _value PICT "9999999.99"
       READ
       BoxC()
 
@@ -522,8 +522,8 @@ FUNCTION tremol_per_rpt( dev_param )
    ENDIF
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY "Od datuma:" GET _date_start
-   @ m_x + 1, Col() + 1 SAY "do datuma:" GET _date_end
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Od datuma:" GET _date_start
+   @ box_x_koord() + 1, Col() + 1 SAY "do datuma:" GET _date_end
    READ
    BoxC()
 
@@ -580,9 +580,9 @@ FUNCTION tremol_rn_copy( hFiskalniParams )
 
    // box - daj broj racuna
    Box(, 2, 50 )
-   @ m_x + 1, m_y + 2 SAY "Broj racuna:" GET _racun_broj ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj racuna:" GET _racun_broj ;
       VALID !Empty( _racun_broj )
-   @ m_x + 2, m_y + 2 SAY "racun je reklamni (D/N)?" GET _refund ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "racun je reklamni (D/N)?" GET _refund ;
       VALID _refund $ "DN" PICT "@!"
    READ
    BoxC()
@@ -637,7 +637,7 @@ FUNCTION tremol_read_out( hFiskalniParams, f_name, time_out )
    Box(, 3, 60 )
 
    // ispisi u vrhu id, naz uredjaja
-   @ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + AllTrim( Str( hFiskalniParams[ "id" ] ) ) + ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Uredjaj ID: " + AllTrim( Str( hFiskalniParams[ "id" ] ) ) + ;
       " : " + PadR( hFiskalniParams[ "name" ], 40 )
 
    DO WHILE _time > 0
@@ -665,7 +665,7 @@ FUNCTION tremol_read_out( hFiskalniParams, f_name, time_out )
          EXIT
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY PadR( "Cekam odgovor... " + ;
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "Cekam odgovor... " + ;
          AllTrim( Str( _time ) ), 48 )
 
       IF _time == 0 .OR. LastKey() == K_ALT_Q

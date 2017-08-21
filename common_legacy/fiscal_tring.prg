@@ -269,7 +269,7 @@ FUNCTION tring_polog( dev_param )
    LOCAL _trig := 6
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "Unesi polog:" GET _cash ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unesi polog:" GET _cash ;
       PICT "999999.99"
    READ
    BoxC()
@@ -333,7 +333,7 @@ FUNCTION tring_double( dev_param )
    LOCAL nTrigg := 8
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "Duplikat racuna:" GET nFisc_no
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Duplikat racuna:" GET nFisc_no
    READ
    BoxC()
 
@@ -384,8 +384,8 @@ FUNCTION tring_per_rpt( dev_param )
    LOCAL nTrigg := 4
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "Od datuma:" GET dD_od
-   @ m_x + 1, Col() + 1 SAY "do:" GET dD_do
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Od datuma:" GET dD_od
+   @ box_x_koord() + 1, Col() + 1 SAY "do:" GET dD_do
    READ
    BoxC()
 
@@ -771,7 +771,7 @@ FUNCTION tring_read_error( dev_param, fisc_no, trig )
 
    Box(, 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + AllTrim( Str( dev_param[ "id" ] ) ) + ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Uredjaj ID: " + AllTrim( Str( dev_param[ "id" ] ) ) + ;
       " : " + PadR( dev_param[ "name" ], 40 )
 
    DO WHILE _time > 0
@@ -783,7 +783,7 @@ FUNCTION tring_read_error( dev_param, fisc_no, trig )
          EXIT
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY PadR( "Cekam na fiskalni uredjaj: " + AllTrim( Str( _time ) ), 48 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "Cekam na fiskalni uredjaj: " + AllTrim( Str( _time ) ), 48 )
 
       sleep( 1 )
 

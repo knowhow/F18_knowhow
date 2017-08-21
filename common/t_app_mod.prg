@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
 
 FUNCTION TAppModNew( oParent, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
@@ -241,7 +240,7 @@ METHOD gParams()
 
    Box(, 20, 70 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "Parametre pohraniti posebno za korisnika "  GET cPosebno VALID cPosebno $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Parametre pohraniti posebno za korisnika "  GET cPosebno VALID cPosebno $ "DN" PICT "@!"
    READ
    WPAr( "p?", cPosebno )
    SELECT params
@@ -258,18 +257,18 @@ METHOD gParams()
 
    gPtkonv := PadR( gPtkonv, 2 )
 
-   @ m_x + 7, m_y + 2 SAY "Stroga kontrola ispravki/brisanja sifara     (D/N)"  GET gSKSif VALID gSKSif $ "DN" PICT "@!"
-   @ m_x + 8, m_y + 2 SAY "Direktorij pomocne kopije podataka" GET gArhDir PICT "@S20"
-   @ m_x + 9, m_y + 2 SAY "Default odgovor na pitanje 'Izlaz direktno na printer?' (D/N/V/E)" GET gcDirekt VALID gcDirekt $ "DNVER" PICT "@!"
-   @ m_x + 10, m_y + 2 SAY "Shema boja za prikaz na ekranu 'V' (B1/B2/.../B7):" GET gShemaVF
-   @ m_x + 12, Col() + 2 SAY "Zaok 50f (5):" GET g50f    VALID g50f    $ " 5" PICT "9"
-   // @ m_x + 14, m_y + 2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor VALID gFKolor $ "DN" PICT "@!"
-   @ m_x + 15, Col() + 2 SAY "SQL log ? (D/N)" GET gSql PICT "@!"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Stroga kontrola ispravki/brisanja sifara     (D/N)"  GET gSKSif VALID gSKSif $ "DN" PICT "@!"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Direktorij pomocne kopije podataka" GET gArhDir PICT "@S20"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Default odgovor na pitanje 'Izlaz direktno na printer?' (D/N/V/E)" GET gcDirekt VALID gcDirekt $ "DNVER" PICT "@!"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Shema boja za prikaz na ekranu 'V' (B1/B2/.../B7):" GET gShemaVF
+   @ box_x_koord() + 12, Col() + 2 SAY "Zaok 50f (5):" GET g50f    VALID g50f    $ " 5" PICT "9"
+   // @ box_x_koord() + 14, box_y_koord() + 2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor VALID gFKolor $ "DN" PICT "@!"
+   @ box_x_koord() + 15, Col() + 2 SAY "SQL log ? (D/N)" GET gSql PICT "@!"
 
-   @ m_x + 18, m_y + 2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .AND. if( gPDFPrint $ "XD", pdf_box(), .T. ) } PICT "@!"
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .AND. if( gPDFPrint $ "XD", pdf_box(), .T. ) } PICT "@!"
 
-   @ m_x + 20, m_y + 2 SAY "Ispravka FMK.INI (D/S/P/K/M/N)" GET cFMKINI VALID cFMKINI $ "DNSPKM" PICT "@!"
-   @ m_x + 20, m_y + 36 SAY "M - FMKMREZ"
+   @ box_x_koord() + 20, box_y_koord() + 2 SAY "Ispravka FMK.INI (D/S/P/K/M/N)" GET cFMKINI VALID cFMKINI $ "DNSPKM" PICT "@!"
+   @ box_x_koord() + 20, box_y_koord() + 36 SAY "M - FMKMREZ"
 
 
    READ
@@ -339,16 +338,16 @@ STATIC FUNCTION pdf_box()
 
    Box(, 10, 75 )
 
-   @ m_x + nX, m_y + 2 SAY "Podesavanje parametara PDF stampe *******"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Podesavanje parametara PDF stampe *******"
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "PDF preglednik:" GET gPDFViewer VALID _g_pdf_viewer( @gPDFViewer ) PICT "@S56"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "PDF preglednik:" GET gPDFViewer VALID _g_pdf_viewer( @gPDFViewer ) PICT "@S56"
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY "Printanje PDF-a bez poziva preglednika (D/N)?" GET gPDFPAuto VALID gPDFPAuto $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Printanje PDF-a bez poziva preglednika (D/N)?" GET gPDFPAuto VALID gPDFPAuto $ "DN" PICT "@!"
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Default printer:" GET gDefPrinter PICT "@S55"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Default printer:" GET gDefPrinter PICT "@S55"
 
 
    READ

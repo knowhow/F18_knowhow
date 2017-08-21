@@ -24,8 +24,8 @@ FUNCTION pr_pr_sast() // lista sastavnica sa pretpostavljenim sirovinama
    LOCAL aArt := {}
 
    BOX(, 2, 65 )
-   @ m_x + 1, m_y + 2 SAY "pr.sirovine:" GET cSirovine PICT "@S40"  VALID !Empty( cSirovine )
-   @ m_x + 2, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "pr.sirovine:" GET cSirovine PICT "@S40"  VALID !Empty( cSirovine )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
    READ
    BOXC()
 
@@ -173,9 +173,9 @@ FUNCTION pr_br_sast()
    LOCAL aError := {}
 
    Box(, 3, 65 )
-   @ m_x + 1, m_y + 2 SAY "min.broj sastavnica:" GET nMin PICT "999"
-   @ m_x + 2, m_y + 2 SAY "max.broj sastavnica:" GET nMax PICT "999"
-   @ m_x + 3, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "min.broj sastavnica:" GET nMin PICT "999"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "max.broj sastavnica:" GET nMax PICT "999"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
    READ
    BoxC()
 
@@ -283,9 +283,9 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
    LOCAL aError := {}
 
    Box(, 3, 65 )
-   @ m_x + 1, m_y + 2 SAY "tr.sirovine:" GET cSirovine PICT "@S40" VALID !Empty( cSirovine )
-   @ m_x + 2, m_y + 2 SAY "[P]ostoji / [N]epostoji" GET cPostoji PICT "@!" VALID cPostoji $ "PN"
-   @ m_x + 3, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "tr.sirovine:" GET cSirovine PICT "@S40" VALID !Empty( cSirovine )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "[P]ostoji / [N]epostoji" GET cPostoji PICT "@!" VALID cPostoji $ "PN"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
 
    READ
    BoxC()
@@ -405,7 +405,7 @@ FUNCTION sastavnice_duple()
    LOCAL cUzorak
 
    Box(, 1, 65 )
-   @ m_x + 1, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
    READ
    BoxC()
 
@@ -450,7 +450,7 @@ FUNCTION sastavnice_duple()
       cIdRoba := field->id
       cRobaNaz := AllTrim( field->naz )
 
-      @ m_x + 1, m_y + 2 SAY "generisem uzorak: " + cIdRoba
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "generisem uzorak: " + cIdRoba
 
       IF !select_o_sastavnice( cIdRoba )
          SELECT roba_p
@@ -500,7 +500,7 @@ FUNCTION sastavnice_duple()
          ENDIF
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "provjeravam uzorke: " + cTmpRoba
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "provjeravam uzorke: " + cTmpRoba
 
       IF !select_o_sastavnice( cTmpRoba )
          SELECT roba_p
@@ -654,7 +654,7 @@ FUNCTION _exp_sast_dbf()
 
          SELECT sast
 
-         @ m_x + 1, m_y + 2 SAY "upisujem: " + cIdRoba
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "upisujem: " + cIdRoba
 
          SELECT r_export
          APPEND BLANK

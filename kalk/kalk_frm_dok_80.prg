@@ -29,25 +29,25 @@ FUNCTION kalk_get1_80( atrib )
 
    IF nRbr == 1 .OR. !kalk_is_novi_dokument()
 
-      _kord_x := m_x + nX
+      _kord_x := box_x_koord() + nX
 
-      @ m_x + nX, m_y + 2 SAY "Temeljnica:" GET _BrFaktP
-      @ m_x + nX, Col() + 1 SAY "Datum:" GET _DatFaktP
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Temeljnica:" GET _BrFaktP
+      @ box_x_koord() + nX, Col() + 1 SAY "Datum:" GET _DatFaktP
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x -1, 40, 20 ) } PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x -1, 40, 20 ) } PICT "@!"
 
       // IF gNW <> "X"
-      // @ m_x + nX, m_y + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
+      // @ box_x_koord() + nX, box_y_koord() + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
       // ENDIF
 
       ++nX
-      _kord_x := m_x + nX
+      _kord_x := box_x_koord() + nX
 
-      @ m_x + nX, m_y + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_sifre( F_KONTO, _idkonto2, _kord_x, 30, 20 )  } PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_sifre( F_KONTO, _idkonto2, _kord_x, 30, 20 )  } PICT "@!"
 
       // IF gNW <> "X"
-      // @ m_x + nX, m_y + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz2 )
+      // @ box_x_koord() + nX, box_y_koord() + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz2 )
       // ENDIF
 
       READ
@@ -57,25 +57,25 @@ FUNCTION kalk_get1_80( atrib )
 
    ELSE
 
-      @ m_x + nX, m_y + 2 SAY "Temeljnica: "
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Temeljnica: "
       ?? _BrFaktP
-      @ m_x + nX, Col() + 2 SAY "Datum: "
+      @ box_x_koord() + nX, Col() + 2 SAY "Datum: "
       ?? _DatFaktP
 
       ++nX
 
-      @ m_x + nX, m_y + 2 SAY "Konto zaduzuje/razduzuje: "
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto zaduzuje/razduzuje: "
       ?? _IdKonto
       // IF gNW <> "X"
-      // @ m_x + nX, Col() + 2  SAY "Partner zaduzuje: "
+      // @ box_x_koord() + nX, Col() + 2  SAY "Partner zaduzuje: "
       // ?? _IdZaduz
       // ENDIF
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Prenos na konto: "
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prenos na konto: "
       ?? _IdKonto2
       // IF gNW <> "X"
-      // @ m_x + nX, Col() + 2 SAY "Partner zaduzuje: "
+      // @ box_x_koord() + nX, Col() + 2 SAY "Partner zaduzuje: "
       // ?? _IdZaduz2
       // ENDIF
 
@@ -88,12 +88,12 @@ FUNCTION kalk_get1_80( atrib )
 
    nX += 2
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + nX, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + nX, box_y_koord() + 2, @aPorezi )
 
-   @ m_x + nX, m_y + ( f18_max_cols() -20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() -20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
    READ
    ESC_RETURN K_ESC
@@ -134,19 +134,19 @@ FUNCTION kalk_get1_80( atrib )
    nX += 2 // NC
 
 
-   _kord_x := m_x + nX
+   _kord_x := box_x_koord() + nX
 
-   @ m_x + nX, m_y + 2 SAY "NABAVNA CJENA:"
-   @ m_x + nX, m_y + _unos_left GET _nc WHEN VKol( _kord_x -2 ) PICT PicDEM
-
-   ++nX
-   @ m_x + nX, m_y + 2 SAY "MARZA:" GET _TMarza2 VALID _Tmarza2 $ "%AU" PICT "@!"
-   @ m_x + nX, m_y + _unos_left GET _Marza2 PICT PicDEM VALID {|| _vpc := _nc, .T. }
-   @ m_x + nX, Col() + 1 GET fMarza PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "NABAVNA CJENA:"
+   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _nc WHEN VKol( _kord_x -2 ) PICT PicDEM
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "MALOPROD. CIJENA (MPC):"
-   @ m_x + nX, m_y + _unos_left GET _mpc ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "MARZA:" GET _TMarza2 VALID _Tmarza2 $ "%AU" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _Marza2 PICT PicDEM VALID {|| _vpc := _nc, .T. }
+   @ box_x_koord() + nX, Col() + 1 GET fMarza PICT "@!"
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "MALOPROD. CIJENA (MPC):"
+   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _mpc ;
       PICT PicDEM;
       WHEN W_MPC_( "80", ( fMarza == "F" ), @aPorezi ) ;
       VALID V_Mpc_( "80", ( fMarza == "F" ), @aPorezi )
@@ -156,10 +156,10 @@ FUNCTION kalk_get1_80( atrib )
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "PC SA PDV:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "PC SA PDV:"
 
 
-   @ m_x + nX, m_y + _unos_left GET _MPCSaPP PICT PicDEM VALID V_MpcSaPP_( "80", .F., @aPorezi, .T. )
+   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _MPCSaPP PICT PicDEM VALID V_MpcSaPP_( "80", .F., @aPorezi, .T. )
 
    READ
    ESC_RETURN K_ESC
@@ -202,8 +202,8 @@ FUNCTION kalk_get_1_80_protustavka()
 
    Beep( 1 )
 
-   @ m_x + nX, m_y + 2 SAY "PROTUSTAVKA   ( S - svedi M - mpc sifr i ' ' - ne diraj ):"
-   @ m_x + nX, Col() + 2 GET cSvedi VALID cSvedi $ " SM" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "PROTUSTAVKA   ( S - svedi M - mpc sifr i ' ' - ne diraj ):"
+   @ box_x_koord() + nX, Col() + 2 GET cSvedi VALID cSvedi $ " SM" PICT "@!"
 
    READ
 
@@ -211,13 +211,13 @@ FUNCTION kalk_get_1_80_protustavka()
    set_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), cSvedi ) // zapamti zadnji unos
 
    nX := 12
-   _kord_x := m_x + nX
+   _kord_x := box_x_koord() + nX
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + nX, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + nX, box_y_koord() + 2, @aPorezi )
 
 
 
-   @ m_x + nX, m_y + ( f18_max_cols() -20 ) SAY "Tarifa:" ;
+   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() -20 ) SAY "Tarifa:" ;
       GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
@@ -235,7 +235,7 @@ FUNCTION kalk_get_1_80_protustavka()
    PRIVATE fMarza := " "
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
    select_o_koncij( _idkonto )
    select_o_roba( _idroba )
@@ -251,23 +251,23 @@ FUNCTION kalk_get_1_80_protustavka()
    // NC
    ++nX
 
-   _kord_x := m_x + nX
+   _kord_x := box_x_koord() + nX
 
-   @ m_x + nX, m_y + 2 SAY "NABAVNA CIJENA:"
-   @ m_x + nX, m_y + _unos_left GET _NC PICT PicDEM WHEN VKol( _kord_x )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "NABAVNA CIJENA:"
+   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _NC PICT PicDEM WHEN VKol( _kord_x )
 
    // MARZA
    ++nX
-   @ m_x + nX, m_y + 2 SAY "MARZA:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICT "@!"
-   @ m_x + nX, m_y + _unos_left  GET _Marza2 PICT PicDEM valid {|| _vpc := _nc, .T. }
-   @ m_x + nX, Col() + 1 GET fMarza PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "MARZA:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + _unos_left  GET _Marza2 PICT PicDEM valid {|| _vpc := _nc, .T. }
+   @ box_x_koord() + nX, Col() + 1 GET fMarza PICT "@!"
 
    ++nX
 
-   @ m_x + nX, m_y + 2  SAY "PROD.CIJENA BEZ PDV:"
+   @ box_x_koord() + nX, box_y_koord() + 2  SAY "PROD.CIJENA BEZ PDV:"
 
 
-   @ m_x + nX, m_y + _unos_left GET _mpc PICT PicDEM ;
+   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _mpc PICT PicDEM ;
       WHEN WMpc_lv( nil, nil, aPorezi ) ;
       VALID VMpc_lv( nil, nil, aPorezi )
 
@@ -277,10 +277,10 @@ FUNCTION kalk_get_1_80_protustavka()
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "P.CIJENA SA PDV:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "P.CIJENA SA PDV:"
 
 
-   @ m_x + nX, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
+   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _mpcsapp PICT PicDEM ;
       valid {|| Svedi( cSvedi ), VMpcSapp_lv( nil, nil, aPorezi ) }
 
    READ
@@ -353,7 +353,7 @@ STATIC FUNCTION VKol( x_kord )
 
       kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
 
-      @ x_kord, m_y + 30 SAY "Ukupno na stanju "
+      @ x_kord, box_y_koord() + 30 SAY "Ukupno na stanju "
       @ x_kord, Col() + 2 SAY nKols PICT pickol
 
 

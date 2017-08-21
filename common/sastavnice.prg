@@ -14,7 +14,6 @@
 
 MEMVAR wId, wTip, wIdTarifa, wId2
 MEMVAR ImeKol, Kol
-MEMVAR m_x, m_y
 MEMVAR cIdProizvodTekuci // show_sast, PRIVATE var cIdProizvodTekuci
 
 /*
@@ -232,8 +231,8 @@ STATIC FUNCTION ost_opc_sast() // ostale opcije nad sastavnicama
    LOCAL hOpc := {}
    LOCAL hOpcExe := {}
    LOCAL _izbor := 1
-   LOCAL _am_x := m_x
-   LOCAL _am_y := m_y
+   LOCAL _am_x := box_x_koord()
+   LOCAL _am_y := box_y_koord()
 
    AAdd( hOpc, "1. zamjena sirovine u svim sastavnicama                 " )
    AAdd( hOpcExe, {|| sast_repl_all() } )
@@ -259,8 +258,8 @@ STATIC FUNCTION ost_opc_sast() // ostale opcije nad sastavnicama
 
    f18_menu( "o_sast", .F., _izbor, hOpc, hOpcExe )
 
-   m_x := _am_x
-   m_y := _am_y
+   box_x_koord( _am_x )
+   box_y_koord( _am_y )
 
    RETURN .T.
 
@@ -361,7 +360,7 @@ FUNCTION exp_roba_dbf() // export robe u dbf
    Box(, 1, 50 )
    DO WHILE !Eof()
 
-      @ m_x + 1, m_y + 2 SAY "upisujem: " + roba->id
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "upisujem: " + roba->id
 
       SELECT r_export
       APPEND BLANK

@@ -41,7 +41,7 @@ FUNCTION rnal_print_odabir_stavki( lPriprema )
    cBoxOpt += " "
    cBoxOpt += "<I> unos isporuke"
 
-   @ m_x + nBoxX, m_y + 2 SAY cBoxOpt
+   @ box_x_koord() + nBoxX, box_y_koord() + 2 SAY cBoxOpt
 
    set_a_kol( @ImeKol, @Kol )
 
@@ -104,7 +104,7 @@ STATIC FUNCTION setuj_broj_komada_za_isporuku( lPriprema )
    LOCAL _rec
 
    Box(, 1, 25 )
-   @ m_x + 1, m_y + 2 SAY8 "isporučeno ?" GET _deliver PICT "9999999.99"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "isporučeno ?" GET _deliver PICT "9999999.99"
    READ
    BoxC()
 

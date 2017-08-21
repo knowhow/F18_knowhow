@@ -28,12 +28,12 @@ FUNCTION m_code_src()
    PRIVATE GetList := {}
    cSrch := Space( 20 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "Match code:" GET cSrch VALID !Empty( cSrch )
-   @ m_x + 3, m_y + 2 SAY "Uslovi za pretragu:" COLOR f18_color_i()
-   @ m_x + 4, m_y + 2 SAY " /ABC = m.code pocinje sa 'ABC'  ('ABC001')"
-   @ m_x + 5, m_y + 2 SAY " ABC/ = m.code zavrsava sa 'ABC' ('001ABC')"
-   @ m_x + 6, m_y + 2 SAY " #ABC = 'ABC' je unutar m.code  ('01ABC11')"
-   @ m_x + 7, m_y + 2 SAY " ABC  = m.code je striktno 'ABC'    ('ABC')"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Match code:" GET cSrch VALID !Empty( cSrch )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Uslovi za pretragu:" COLOR f18_color_i()
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY " /ABC = m.code pocinje sa 'ABC'  ('ABC001')"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY " ABC/ = m.code zavrsava sa 'ABC' ('001ABC')"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY " #ABC = 'ABC' je unutar m.code  ('01ABC11')"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY " ABC  = m.code je striktno 'ABC'    ('ABC')"
    READ
    BoxC()
 

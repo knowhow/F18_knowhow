@@ -51,10 +51,9 @@ FUNCTION epdv_generacija_fin_kuf( dD1, dD2, cSezona )
 
    dDatOd := dD1
    dDatDo := dD2
-   epdv_otvori_kuf_tabele( .T. )
+   epdv_otvori_kuf_priprema()
 
    select_o_sg_kuf()
-
 
    SELECT sg_kuf
    GO TOP
@@ -62,7 +61,6 @@ FUNCTION epdv_generacija_fin_kuf( dD1, dD2, cSezona )
    DO WHILE !Eof()
 
       nCount++
-
       IF Upper( aktivan ) == "N"
          SKIP
          LOOP
@@ -121,7 +119,6 @@ FUNCTION epdv_generacija_fin_kuf( dD1, dD2, cSezona )
          nZaok := zaok
          nZaok2 := zaok2
 
-
          gen_fin_kuf_item( cSezona ) // za jednu shema gen stavku formiraj kuf
 
       ENDIF
@@ -130,6 +127,7 @@ FUNCTION epdv_generacija_fin_kuf( dD1, dD2, cSezona )
       SKIP
 
    ENDDO
+
 
 STATIC FUNCTION gen_fin_kuf_item( cSezona )
 

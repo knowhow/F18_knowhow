@@ -164,25 +164,25 @@ METHOD FinBrutoBilans:get_vars()
 
    Box(, 20, 75 )
 
-   @ m_x + nX, m_y + 2 SAY "***** BRUTO BILANS *****"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "***** BRUTO BILANS *****"
 
    ++nX
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "ODABERI VRSTU BILANSA:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "ODABERI VRSTU BILANSA:"
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY8 "[1] subanalitički [2] analitički [3] sintetički [4] po grupama :" GET _tip PICT "9"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "[1] subanalitički [2] analitički [3] sintetički [4] po grupama :" GET _tip PICT "9"
 
    ++nX
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY8 "VRSTA ŠTAMPE:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "VRSTA ŠTAMPE:"
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY8 "[1] TXT [2] ODT (Libre Office) :" GET _var_txt PICT "@!" VALID _var_txt $ "12"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "[1] TXT [2] ODT (Libre Office) :" GET _var_txt PICT "@!" VALID _var_txt $ "12"
 
    READ
 
@@ -200,46 +200,46 @@ METHOD FinBrutoBilans:get_vars()
    ++nX
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY8 "**** USLOVI IZVJEŠTAJA:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "**** USLOVI IZVJEŠTAJA:"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Firma "
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Konta (prazno-sva):" GET _konto PICT "@!S40"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konta (prazno-sva):" GET _konto PICT "@!S40"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Za period od:" GET _dat_od
-   @ m_x + nX, Col() + 1 SAY "do:" GET _dat_do
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Za period od:" GET _dat_od
+   @ box_x_koord() + nX, Col() + 1 SAY "do:" GET _dat_do
 
    ++nX
 
    IF _var_txt == "1"
       ++nX
-      @ m_x + nX, m_y + 2 SAY8 "Varijanta izvještaja (A/B):" GET _var_ab PICT "@!" VALID _var_ab $ "AB"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Varijanta izvještaja (A/B):" GET _var_ab PICT "@!" VALID _var_ab $ "AB"
    ENDIF
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Prikaz stavki sa saldom 0 (D/N) ?" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz stavki sa saldom 0 (D/N) ?" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Prikaz kolone tekući promet (D/N) ?" GET _tek_prom VALID _tek_prom $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz kolone tekući promet (D/N) ?" GET _tek_prom VALID _tek_prom $ "DN" PICT "@!"
 
-   @ m_x + nX, Col() + 1 SAY8 "Klase unutar izvještaja (D/N) ?" GET _podklase VALID _podklase $ "DN" PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY8 "Klase unutar izvještaja (D/N) ?" GET _podklase VALID _podklase $ "DN" PICT "@!"
 
    IF gFinRj == "D"
       ++nX
       _id_rj := Space( 6 )
-      @ m_x + nX, m_y + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj
    ENDIF
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Format izvještaja (1 - A3, 2 - A4, 3 - A4L) ?" GET _format PICT "@S1" VALID _format $ "123"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Format izvještaja (1 - A3, 2 - A4, 3 - A4L) ?" GET _format PICT "@S1" VALID _format $ "123"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Export u XLSX (D/N)?" GET lExportXLSX VALID lExportXLSX $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Export u XLSX (D/N)?" GET lExportXLSX VALID lExportXLSX $ "DN" PICT "@!"
 
    READ
 

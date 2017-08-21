@@ -51,8 +51,8 @@ STATIC FUNCTION __zip( cZipFileDir, cZipFileName, aFiles )
    IF !Empty( cZipFileHandle )
 
       Box(, 3, 65 )
-      @ m_x + 1, m_y + 2 SAY cZipFileHandle
-      @ m_x + 2, m_y + 2 SAY "Kompresujem fajl: " + PadL( AllTrim( cZipFileFullName ), 40 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY cZipFileHandle
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Kompresujem fajl: " + PadL( AllTrim( cZipFileFullName ), 40 )
 
       FOR EACH _file IN aFiles
          IF !Empty( _file )
@@ -65,7 +65,7 @@ STATIC FUNCTION __zip( cZipFileDir, cZipFileName, aFiles )
                IF !( cFilePath + _a_file[ 1 ] == cZipFileFullName )
 
                   ++nCount
-                  @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( nCount ) ), 3 ) + ") ..." + PadR( AllTrim( _a_file[ 1 ] ), 40 )
+                  @ box_x_koord() + 2, box_y_koord() + 2 SAY PadL( AllTrim( Str( nCount ) ), 3 ) + ") ..." + PadR( AllTrim( _a_file[ 1 ] ), 40 )
 
                   // IF relative_path
                   // nError := hb_zipStoreFile( cZipFileHandle, cFilePath + _a_file[ 1 ], cFilePath + _a_file[ 1 ], nil )
@@ -152,8 +152,8 @@ STATIC FUNCTION __unzip( cZipFileDir, cZipFileName, cZipFileDestination, aFiles,
 
       IF is_in_main_thread()
          Box(, 2, 75 )
-         @ m_x + 1, m_y + 8 SAY Space( 50 )
-         @ m_x + 1, m_y + 2 SAY "unzip: " + PadR( AllTrim( cZipFileFullName ), 50 )
+         @ box_x_koord() + 1, box_y_koord() + 8 SAY Space( 50 )
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "unzip: " + PadR( AllTrim( cZipFileFullName ), 50 )
       ELSE
          ?E "unzip",  cZipFileFullName
       ENDIF
@@ -203,8 +203,8 @@ STATIC FUNCTION __unzip( cZipFileDir, cZipFileName, cZipFileDestination, aFiles,
 
             ++nCount
             IF is_in_main_thread()
-               @ m_x + 2, m_y + 5 SAY Space( 60 )
-               @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( nCount ) ), 3 ) + ") " + Left( AllTrim( cFile ), 60 )
+               @ box_x_koord() + 2, box_y_koord() + 5 SAY Space( 60 )
+               @ box_x_koord() + 2, box_y_koord() + 2 SAY PadL( AllTrim( Str( nCount ) ), 3 ) + ") " + Left( AllTrim( cFile ), 60 )
             ELSE
                ?E  PadL( AllTrim( Str( nCount ) ), 3 ) + ") ", cFile
             ENDIF

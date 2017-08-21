@@ -199,17 +199,17 @@ STATIC FUNCTION _g_vars( dDatFrom, dDatTo, nOperater )
 
    Box(, nBoxX, nBoxY )
 
-   @ m_x + nX, m_y + 2 SAY "*** Pregled naloga po operaterima"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** Pregled naloga po operaterima"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Obuhvatiti period od:" GET dDatFrom
-   @ m_x + nX, Col() + 1 SAY "do:" GET dDatTo
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Obuhvatiti period od:" GET dDatFrom
+   @ box_x_koord() + nX, Col() + 1 SAY "do:" GET dDatTo
 
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0 } PICT "9999999999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0 } PICT "9999999999"
 
    READ
    BoxC()
@@ -250,7 +250,7 @@ STATIC FUNCTION _cre_op( dD_from, dD_to, nOper  )
 
       nDoc_no := field->doc_no
 
-      @ m_x + 1, m_y + 2 SAY "... vrsim odabir stavki ... nalog: " + AllTrim( Str( nDoc_no ) )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "... vrsim odabir stavki ... nalog: " + AllTrim( Str( nDoc_no ) )
 
       nOp_id := field->operater_i
 

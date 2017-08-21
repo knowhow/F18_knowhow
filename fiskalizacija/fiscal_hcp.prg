@@ -743,8 +743,8 @@ FUNCTION hcp_s_rpt( hFiskalniParams )
    LOCAL _txt_date_to := ""
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "Datum od:" GET _date_from
-   @ m_x + 1, Col() + 1 SAY "do:" GET _date_to
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum od:" GET _date_from
+   @ box_x_koord() + 1, Col() + 1 SAY "do:" GET _date_to
    READ
    BoxC()
 
@@ -828,7 +828,7 @@ FUNCTION hcp_polog( dev_param, value )
 
       // box - daj broj racuna
       Box(, 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Unosim polog od:" GET value PICT "99999.99"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unosim polog od:" GET value PICT "99999.99"
       READ
       BoxC()
 
@@ -867,9 +867,9 @@ FUNCTION hcp_rn_copy( dev_param )
 
    // box - daj broj racuna
    Box(, 2, 50 )
-   @ m_x + 1, m_y + 2 SAY "Broj racuna:" GET _broj_rn ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj racuna:" GET _broj_rn ;
       VALID !Empty( _broj_rn )
-   @ m_x + 2, m_y + 2 SAY "racun je reklamni (D/N)?" GET _refund ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "racun je reklamni (D/N)?" GET _refund ;
       VALID _refund $ "DN" PICT "@!"
    READ
    BoxC()
@@ -913,7 +913,7 @@ STATIC FUNCTION hcp_read_ok( dev_param, f_name, time_out )
 
    Box(, 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + AllTrim( Str( dev_param[ "id" ] ) ) + ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Uredjaj ID: " + AllTrim( Str( dev_param[ "id" ] ) ) + ;
       " : " + PadR( dev_param[ "name" ], 40 )
 
    DO WHILE _time > 0
@@ -927,7 +927,7 @@ STATIC FUNCTION hcp_read_ok( dev_param, f_name, time_out )
          EXIT
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY PadR( "Cekam odgovor OK: " + AllTrim( Str( _time ) ), 48 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "Cekam odgovor OK: " + AllTrim( Str( _time ) ), 48 )
 
       IF _time == 0 .OR. LastKey() == K_ALT_Q
          BoxC()
@@ -1032,7 +1032,7 @@ FUNCTION hcp_read_billstate( hFiskalniParams, f_name, storno )
 
    Box(, 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + AllTrim( Str( hFiskalniParams[ "id" ] ) ) + ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Uredjaj ID: " + AllTrim( Str( hFiskalniParams[ "id" ] ) ) + ;
       " : " + PadR( hFiskalniParams[ "name" ], 40 )
    DO WHILE _time > 0
 
@@ -1043,7 +1043,7 @@ FUNCTION hcp_read_billstate( hFiskalniParams, f_name, storno )
          EXIT
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY PadR( "Cekam na fiskalni uredjaj: " + AllTrim( Str( _time ) ), 48 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "Cekam na fiskalni uredjaj: " + AllTrim( Str( _time ) ), 48 )
 
       IF _time == 0 .OR. LastKey() == K_ALT_Q
          BoxC()
@@ -1152,7 +1152,7 @@ FUNCTION hcp_read_error( hFiskalniParams, f_name, trig )
 
    Box(, 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + AllTrim( Str( hFiskalniParams[ "id" ] ) ) + ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Uredjaj ID: " + AllTrim( Str( hFiskalniParams[ "id" ] ) ) + ;
       " : " + PadR( hFiskalniParams[ "name" ], 40 )
 
    DO WHILE _time > 0
@@ -1164,7 +1164,7 @@ FUNCTION hcp_read_error( hFiskalniParams, f_name, trig )
          EXIT
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY PadR( "Cekam na fiskalni uredjaj: " + AllTrim( Str( _time ) ), 48 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "Cekam na fiskalni uredjaj: " + AllTrim( Str( _time ) ), 48 )
 
       IF _time == 0 .OR. LastKey() == K_ESC
          BoxC()

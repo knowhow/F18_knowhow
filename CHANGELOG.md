@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.63-std, 2017-08-21
+### KALK
+- BUGFIX: početno stanje Alias does not exist/roba
+
 ## 3.1.62-std, 2017-08-19
 ### FAKT
 - BUGFIX: FAKT specifikacija prodaje

@@ -211,7 +211,7 @@ FUNCTION NaPrPak2()
    -- o_kalk_doks()
    -- o_kalk()
 --   o_sifk()
-   o_sifv()
+--   o_sifv()
 
    dDatKalk := kalk_pripr->datdok
 

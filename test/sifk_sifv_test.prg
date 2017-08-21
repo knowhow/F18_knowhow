@@ -16,7 +16,7 @@ FUNCTION sifk_sifv_test()
    LOCAL _ime_f := "tsifv_k"
    LOCAL _dbf_struct := {}
    LOCAL nI, _rec
-   LOCAL _id_sif, _karakteristika, _karakteristika_n
+   LOCAL cIdSifK, _karakteristika, _karakteristika_n
    LOCAL _header
    LOCAL _tmp
 
@@ -63,17 +63,17 @@ FUNCTION sifk_sifv_test()
    REPLACE naz WITH "naz 02"
    REPLACE dest WITH "dest 02"
 
-   _id_sif := "tsifv_k"
+   cIdSifK := "tsifv_k"
    _karakteristika := "ka1"
    _karakteristika_n := "kaN"
 
    o_sifk()
    SET ORDER TO TAG "ID2"
-   SEEK _id_sif + _karakteristika
+   SEEK cIdSifK + _karakteristika
 
-   TEST_LINE( Len( _id_sif ) <= FIELD_LEN_SIFK_ID .AND. Len( _karakteristika ) < FIELD_LEN_SIFK_OZNAKA,  .T. )
+   TEST_LINE( Len( cIdSifK ) <= FIELD_LEN_SIFK_ID .AND. Len( _karakteristika ) < FIELD_LEN_SIFK_OZNAKA,  .T. )
 
-   _id_sif := PadR( _id_sif, 8 )
+   cIdSifK := PadR( cIdSifK, 8 )
    _karakteristika   := PadR( _karakteristika, 4 )
    _karakteristika_n := PadR( _karakteristika_n, 4 )
 
@@ -84,8 +84,8 @@ FUNCTION sifk_sifv_test()
 
    TEST_LINE( sifk->( RecCount() ), 0 )
    TEST_LINE( sifv->( RecCount() ), 0 )
-   append_sifk( _id_sif, _karakteristika, "C", K1_LEN, "1" )
-   append_sifk( _id_sif, _karakteristika_n, "C", KN_LEN, "N" )
+   append_sifk( cIdSifK, _karakteristika, "C", K1_LEN, "1" )
+   append_sifk( cIdSifK, _karakteristika_n, "C", KN_LEN, "N" )
 
    // ,  {"id", "oznaka"} , { |x| "ID=" + sql_quote(x["id"]) + "and OZNAKA=" + sql_quote(x["oznaka"]) })
 
@@ -95,11 +95,11 @@ FUNCTION sifk_sifv_test()
 
    my_use( "sifk" )
    SET ORDER TO TAG "ID2"
-   SEEK _id_sif + _karakteristika
-   TEST_LINE( field->id + field->oznaka, _id_sif + _karakteristika )
+   SEEK cIdSifK + _karakteristika
+   TEST_LINE( field->id + field->oznaka, cIdSifK + _karakteristika )
 
-   SEEK _id_sif + _karakteristika_n
-   TEST_LINE( field->id + field->oznaka, _id_sif + _karakteristika_n )
+   SEEK cIdSifK + _karakteristika_n
+   TEST_LINE( field->id + field->oznaka, cIdSifK + _karakteristika_n )
 
    // izbrisacu sada sifk
    TEST_LINE( ferase_dbf( "sifk" ), .T. )
@@ -111,36 +111,36 @@ FUNCTION sifk_sifv_test()
    my_use( "sifk" )
 
    SET ORDER TO TAG "ID2"
-   SEEK _id_sif + _karakteristika
+   SEEK cIdSifK + _karakteristika
    _header := "NAKON FERASE: "
-   TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + Str( sifk->duzina, 2 ), _header + _id_sif + _karakteristika + "C1" + Str( K1_LEN, 2 ) )
+   TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + Str( sifk->duzina, 2 ), _header + cIdSifK + _karakteristika + "C1" + Str( K1_LEN, 2 ) )
 
-   SEEK _id_sif + _karakteristika_n
+   SEEK cIdSifK + _karakteristika_n
    _header := "NAKON FERASE: "
-   TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + Str( sifk->duzina, 2 ), _header + _id_sif + _karakteristika_n + "CN" + Str( KN_LEN, 2 ) )
+   TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + Str( sifk->duzina, 2 ), _header + cIdSifK + _karakteristika_n + "CN" + Str( KN_LEN, 2 ) )
 
    USE
    CLOSE ALL
 
 
-   TEST_LINE( USifK( _id_sif, _karakteristika, "01", "K1VAL1" ), .T. )
-   TEST_LINE( USifK( _id_sif, _karakteristika, "01", "K1VAL2" ), .T. )
-   TEST_LINE( USifK( _id_sif, _karakteristika, "01", "K1VAL3" ), .T. )
+   TEST_LINE( USifK( cIdSifK, _karakteristika, "01", "K1VAL1" ), .T. )
+   TEST_LINE( USifK( cIdSifK, _karakteristika, "01", "K1VAL2" ), .T. )
+   TEST_LINE( USifK( cIdSifK, _karakteristika, "01", "K1VAL3" ), .T. )
 
 
 
-   TEST_LINE( USifK( _id_sif, _karakteristika_n, "01", "K2VAL1,K2VAL3" ), .T. )
-   TEST_LINE( USifK( _id_sif, _karakteristika_n, "01", "K2VAL4,K2VAL1,K2VAL2" ), .T. )
+   TEST_LINE( USifK( cIdSifK, _karakteristika_n, "01", "K2VAL1,K2VAL3" ), .T. )
+   TEST_LINE( USifK( cIdSifK, _karakteristika_n, "01", "K2VAL4,K2VAL1,K2VAL2" ), .T. )
 
 
-   TEST_LINE( get_sifk_sifv( _id_sif, _karakteristika, "01" ), PadR( "K1VAL3", K1_LEN ) )
+   TEST_LINE( get_sifk_sifv( cIdSifK, _karakteristika, "01" ), PadR( "K1VAL3", K1_LEN ) )
 
    _tmp := PadR( "K2VAL1", KN_LEN ) + ","
    _tmp += PadR( "K2VAL2", KN_LEN ) + ","
    _tmp += PadR( "K2VAL4", KN_LEN )
 
    _tmp := PadR( _tmp, 190 )
-   TEST_LINE( get_sifk_sifv( _id_sif, _karakteristika_n, "01" ), _tmp )
+   TEST_LINE( get_sifk_sifv( cIdSifK, _karakteristika_n, "01" ), _tmp )
 
    RETURN
 

@@ -842,6 +842,7 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
 
    LOCAL nI, lRet
    LOCAL _st_stopa := fetch_metric( "ld_porezi_stepenasta_stopa", NIL, "N" )
+   LOCAL nI2
    PRIVATE Imekol := {}
    PRIVATE Kol := {}
 
@@ -882,8 +883,9 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
    PushWA()
 
    select_o_por()
-   o_sifk()
+   o_sifk( "POR" )
    o_sifv()
+
    SELECT sifk
    SET ORDER TO TAG "ID"
    SEEK "POR" // sifk
@@ -894,12 +896,12 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
       AAdd ( ImeKol[ Len( ImeKol ) ], "SIFK->" + SIFK->Oznaka )
 
       IF ( sifk->edkolona > 0 )
-         FOR ii := 4 TO 9
+         FOR nI2 := 4 TO 9
             AAdd( ImeKol[ Len( ImeKol ) ], NIL  )
          NEXT
          AAdd( ImeKol[ Len( ImeKol ) ], sifk->edkolona  )
       ELSE
-         FOR ii := 4 TO 10
+         FOR nI2 := 4 TO 10
             AAdd( ImeKol[ Len( ImeKol ) ], NIL  )
          NEXT
       ENDIF
@@ -977,7 +979,7 @@ FUNCTION P_Dopr( cId, nDeltaX, nDeltaY )
 
    PushWA()
 
-   o_sifk()
+   o_sifk( "DOPR" )
    o_sifv()
 
    SELECT sifk
@@ -989,12 +991,12 @@ FUNCTION P_Dopr( cId, nDeltaX, nDeltaY )
       AAdd( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr(get_sifk_sifv('DOPR','" + sifk->oznaka + "')) }" ) )
       AAdd( ImeKol[ Len( ImeKol ) ], "SIFK->" + SIFK->Oznaka )
       IF ( sifk->edkolona > 0 )
-         FOR ii := 4 TO 9
+         FOR nI2 := 4 TO 9
             AAdd( ImeKol[ Len( ImeKol ) ], NIL  )
          NEXT
          AAdd( ImeKol[ Len( ImeKol ) ], sifk->edkolona  )
       ELSE
-         FOR ii := 4 TO 10
+         FOR nI2 := 4 TO 10
             AAdd( ImeKol[ Len( ImeKol ) ], NIL  )
          NEXT
       ENDIF

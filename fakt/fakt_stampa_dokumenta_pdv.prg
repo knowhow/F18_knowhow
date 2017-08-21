@@ -684,7 +684,7 @@ STATIC FUNCTION roba_sifk_opis_grupe( cId, cSifK )
    LOCAL nTArea := Select()
    LOCAL cRet := ""
 
-   o_sifk()
+   o_sifk( "ROBA" )
    SELECT sifk
    SET ORDER TO TAG "ID2"
    GO TOP

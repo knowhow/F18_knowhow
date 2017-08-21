@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.64-std, 2017-08-21
+### Developer
+- CORE: cleanup sifk-sifv
+
 ## 3.1.63-std, 2017-08-21
 ### KALK
 - BUGFIX: početno stanje Alias does not exist/roba

@@ -112,7 +112,7 @@ FUNCTION kalk_prod_lager_lista_vars( hParams, lPocetnoStanje )
 
    LOCAL _ret := .T.
    LOCAL _p_konto, _dat_od, _dat_do, _nule, _pr_nab, cRobaTipUslugeDN, _dat_ps
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _art_filter := Space( 300 )
    LOCAL _tar_filter := Space( 300 )
    LOCAL _part_filter := Space( 300 )
@@ -141,42 +141,42 @@ FUNCTION kalk_prod_lager_lista_vars( hParams, lPocetnoStanje )
 
    Box( "# LAGER LISTA PRODAVNICE" + if( lPocetnoStanje, " / POČETNO STANJE", "" ), 15, f18_max_cols() -5 )
 
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Firma "
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Firma "
 
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
-   ++_x
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY8 "Prodavnički konto:" GET _p_konto VALID P_Konto( @_p_konto )
+   ++nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prodavnički konto:" GET _p_konto VALID P_Konto( @_p_konto )
 
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Datum od:" GET _dat_od
-   @ box_x_koord() + _x, Col() + 1 SAY "do:" GET _dat_do
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datum od:" GET _dat_od
+   @ box_x_koord() + nX, Col() + 1 SAY "do:" GET _dat_do
 
    IF lPocetnoStanje
-      @ box_x_koord() + _x, Col() + 1 SAY8 "Datum poč.stanja:" GET _dat_ps
+      @ box_x_koord() + nX, Col() + 1 SAY8 "Datum poč.stanja:" GET _dat_ps
    ENDIF
 
-   ++_x
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Filter po artiklima:" GET _art_filter PICT "@S50"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Filter po tarifama:" GET _tar_filter PICT "@S50"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Filter po partnerima:" GET _part_filter PICT "@S50"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Filter po v.dokument:" GET _dok_filter PICT "@S50"
+   ++nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Filter po artiklima:" GET _art_filter PICT "@S50"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Filter po tarifama:" GET _tar_filter PICT "@S50"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Filter po partnerima:" GET _part_filter PICT "@S50"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Filter po v.dokument:" GET _dok_filter PICT "@S50"
 
-   ++_x
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Prikaz nabavne vrijednosti (D/N)" GET _pr_nab VALID _pr_nab $ "DN" PICT "@!"
-   @ box_x_koord() + _x, Col() + 1 SAY "Prikaz stavki kojima je MPV=0 (D/N)" GET _nule VALID _nule $ "DN" PICT "@!"
+   ++nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz nabavne vrijednosti (D/N)" GET _pr_nab VALID _pr_nab $ "DN" PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY "Prikaz stavki kojima je MPV=0 (D/N)" GET _nule VALID _nule $ "DN" PICT "@!"
 
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Prikaz robe tipa T/U (D/N)" GET cRobaTipUslugeDN VALID cRobaTipUslugeDN $ "DN" PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz robe tipa T/U (D/N)" GET cRobaTipUslugeDN VALID cRobaTipUslugeDN $ "DN" PICT "@!"
 
    IF lPocetnoStanje
-      @ box_x_koord() + _x, Col() + 1 SAY8 "MPC uzmi iz šifarnika (D/N) ?" GET _set_roba VALID _set_roba $ "DN" PICT "@!"
+      @ box_x_koord() + nX, Col() + 1 SAY8 "MPC uzmi iz šifarnika (D/N) ?" GET _set_roba VALID _set_roba $ "DN" PICT "@!"
    ENDIF
 
    READ

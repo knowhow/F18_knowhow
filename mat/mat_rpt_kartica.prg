@@ -514,11 +514,11 @@ FUNCTION KSuban()
    LOCAL _dat_od := CToD( "" )
    LOCAL _dat_do := CToD( "" )
 
-   o_partner()
-   o_konto()
+   //o_partner()
+   //o_konto()
    o_sifk()
    o_sifv()
-   o_roba()
+   //o_roba()
 
    Box( "", 10, 70, .F. )
 

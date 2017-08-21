@@ -1,5 +1,8 @@
 # F18 klijent, lista promjena
 
+## 2017-08-21 ----
+- CORE: cleanup sifk-sifv
+
 ## 2017-08-17 ----
 - FAKT: fakt import fix
 

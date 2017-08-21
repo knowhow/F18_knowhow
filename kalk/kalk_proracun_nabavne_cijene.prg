@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-MEMVAR _mkonto, _idroba, _Kolicina, m_x, m_y, GetList
+MEMVAR _mkonto, _idroba, _Kolicina
 
 STATIC s_nPragOdstupanjaNCSumnjiv := NIL
 STATIC s_nStandarnaStopaMarze := NIL
@@ -99,15 +99,15 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjiUlazKol,
          nX := 2
          Box( "#" + "== Odstupanje NC " + AllTrim( _mkonto ) + "/" + AllTrim( _idroba ) + " ===", 12, 70, .T. )
 
-         @ m_x + nX, m_y + 2   SAY     "Artikal: " + AllTrim( _idroba ) + "-" + PadR( roba->naz, 20 )
+         @ box_x_koord() + nX, box_y_koord() + 2   SAY     "Artikal: " + AllTrim( _idroba ) + "-" + PadR( roba->naz, 20 )
          nX += 2
-         @ m_x + nX++, m_y + 2 SAY8 "  količina na stanju: " + AllTrim( say_kolicina( nKolicina ) )
-         @ m_x + nX, m_y + 2 SAY8 "            Srednja NC: " + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + " <"
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "  količina na stanju: " + AllTrim( say_kolicina( nKolicina ) )
+         @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "            Srednja NC: " + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + " <"
          nX  += 2
-         @ m_x + nX++, m_y + 2 SAY8 "količina zadnji ulaz: " + AllTrim( say_kolicina( nZadnjiUlazKol ) )
-         @ m_x + nX++, m_y + 2 SAY8 "      NC Zadnji ulaz: " + AllTrim( say_cijena( nZadnjaUlaznaNC ) ) + " <"
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "količina zadnji ulaz: " + AllTrim( say_kolicina( nZadnjiUlazKol ) )
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "      NC Zadnji ulaz: " + AllTrim( say_cijena( nZadnjaUlaznaNC ) ) + " <"
          nX += 2
-         @ m_x + nX++, m_y + 2 SAY8 " Korigovati NC na zadnju ulaznu: D/N ?"  GET cDn VALID cDn $ "DN" PICT "@!"
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 " Korigovati NC na zadnju ulaznu: D/N ?"  GET cDn VALID cDn $ "DN" PICT "@!"
 
          READ
          BoxC()
@@ -705,8 +705,8 @@ FUNCTION V_RabatV()
       IF nRVPC == 0
          Beep( 1 )
          Box(, 3, 60 )
-         @ m_x + 1, m_Y + 2 SAY "Roba u sifrarniku ima " + cPom + " = 0 !??"
-         @ m_x + 3, m_y + 2 SAY "Unesi " + cPom + " u sifrarnik:" GET _vpc PICT picdem
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Roba u sifrarniku ima " + cPom + " = 0 !??"
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Unesi " + cPom + " u sifrarnik:" GET _vpc PICT picdem
 
          READ
 
@@ -731,15 +731,15 @@ FUNCTION V_RabatV()
    ENDIF
 
 
-   @ m_x + 15, m_y + 41  SAY "PC b.pdv.-RAB:"
+   @ box_x_koord() + 15, box_y_koord() + 41  SAY "PC b.pdv.-RAB:"
 
 
    IF roba->tip == "V"
-      @ m_x + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) - _VPC * _RabatV / 100 PICT picdem
+      @ box_x_koord() + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) - _VPC * _RabatV / 100 PICT picdem
    ELSEIF roba->tip == "X"
-      @ m_x + 15, Col() + 1 SAY _Vpc * ( 1 - _RabatV / 100 ) - _MPCSAPP / ( 1 + _PORVT ) * _PORVT PICT picdem
+      @ box_x_koord() + 15, Col() + 1 SAY _Vpc * ( 1 - _RabatV / 100 ) - _MPCSAPP / ( 1 + _PORVT ) * _PORVT PICT picdem
    ELSE
-      @ m_x + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) * ( 1 - _RabatV / 100 ) PICT picdem
+      @ box_x_koord() + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) * ( 1 - _RabatV / 100 ) PICT picdem
    ENDIF
 
    ShowGets()

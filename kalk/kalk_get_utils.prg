@@ -137,7 +137,7 @@ FUNCTION VMpcSaPP( fRealizacija, fMarza )
 
 FUNCTION SayPorezi( nRow )
 
-   @ m_x + nRow, m_y + 2  SAY "PDV (%):"
+   @ box_x_koord() + nRow, box_y_koord() + 2  SAY "PDV (%):"
    @ Row(), Col() + 2 SAY aPorezi[ POR_PPP ] PICTURE "99.99"
 
 
@@ -416,7 +416,7 @@ FUNCTION V_MpcSaPP_( cIdVd, lNaprijed, aPorezi, lShowGets )
 FUNCTION SayPorezi_lv( nRow, aPorezi )
 
 
-      @ m_x + nRow, m_y + 2  SAY "PDV (%):"
+      @ box_x_koord() + nRow, box_y_koord() + 2  SAY "PDV (%):"
       @ Row(), Col() + 2 SAY  aPorezi[ POR_PPP ] PICTURE "99.99"
 
 

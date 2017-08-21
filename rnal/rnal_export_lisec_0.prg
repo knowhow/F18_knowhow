@@ -107,7 +107,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY PadR( "Upisujem osnovne podatke", 50 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "Upisujem osnovne podatke", 50 )
 
    // upisi <REL>
    aRel := add_rel( "" )
@@ -135,7 +135,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
    // ako su podaci ispravni
    IF field->cust_id <> 0
 
-      @ m_x + 1, m_y + 2 SAY PadR( "Upisujem podatke o partneru ...... ", 50 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "Upisujem podatke o partneru ...... ", 50 )
       // uzmi i upisi osnovne elemente naloga
       aOrd := add_ord( field->doc_no, ;
          field->cust_id, ;
@@ -175,7 +175,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
 
       nTRec := RecNo()
 
-      @ m_x + 1, m_y + 2 SAY PadR( "Upisujem stavke naloga.....", 50 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "Upisujem stavke naloga.....", 50 )
 
       nDoc_it_no := field->doc_it_no
       nArt_id := field->art_id
@@ -236,7 +236,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
          AAdd( aArticles, { nElem, aArtDesc[ i ], AllTrim( Str( ++nCount ) ), ;
             nWidth, nHeight, 0, 0, nWidth, nHeight, 0, 0, cType } )
 
-         @ m_x + 2, m_y + 2 SAY PadR( cArtdesc + " - ok stavka - " + AllTrim( Str( i ) ), 50 )
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR( cArtdesc + " - ok stavka - " + AllTrim( Str( i ) ), 50 )
 
       NEXT
 

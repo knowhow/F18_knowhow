@@ -92,14 +92,14 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
          Box( "", 1, 50 )
          SET CURSOR ON
-         @ m_x + 1, m_y + 2 SAY "Dokument broj:"
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Dokument broj:"
          IF gNW $ "DX"
-            @ m_x + 1, Col() + 2  SAY cIdFirma
+            @ box_x_koord() + 1, Col() + 2  SAY cIdFirma
          ELSE
-            @ m_x + 1, Col() + 2 GET cIdFirma
+            @ box_x_koord() + 1, Col() + 2 GET cIdFirma
          ENDIF
-         @ m_x + 1, Col() + 1 SAY "-" GET cIdVD
-         @ m_x + 1, Col() + 1 SAY "-" GET cBrDok
+         @ box_x_koord() + 1, Col() + 1 SAY "-" GET cIdVD
+         @ box_x_koord() + 1, Col() + 1 SAY "-" GET cBrDok
          READ
          ESC_BCR
          BoxC()
@@ -141,17 +141,17 @@ FUNCTION kalk_kontiranje_gen_finmat()
       cPom := naz
       select_o_konto( KALK_PRIPR->PKONTO )
       SELECT kalk_pripr
-      @ m_x + 2, m_y + 2 SAY "DATUM------------>"             COLOR "W+/B"
-      @ m_x + 2, Col() + 1 SAY DToC( DATDOK )                   COLOR "N/W"
-      @ m_x + 3, m_y + 2 SAY "PARTNER---------->"             COLOR "W+/B"
-      @ m_x + 3, Col() + 1 SAY IDPARTNER + "-" + PadR( partn->naz, 20 ) COLOR "N/W"
-      @ m_x + 4, m_y + 2 SAY "KONTO MAGACINA--->"             COLOR "W+/B"
-      @ m_x + 4, Col() + 1 SAY MKONTO + "-" + PadR( cPom, 49 )       COLOR "N/W"
-      @ m_x + 5, m_y + 2 SAY "KONTO PRODAVNICE->"             COLOR "W+/B"
-      @ m_x + 5, Col() + 1 SAY PKONTO + "-" + PadR( KONTO->naz, 49 ) COLOR "N/W"
-      @ m_x + 7, m_y + 2 SAY "Automatski uravnotezi dokument? (D/N)" GET cAutoRav VALID cAutoRav $ "DN" PICT "@!"
-      @ m_x + 8, m_y + 2 SAY "Zelite li kontirati dokument? (D/N)" GET cDalje VALID cDalje $ "DN" PICT "@!"
-      @ m_x + 9, m_y + 2 SAY "Automatski broj fin.naloga? (D/N)" GET cFinAutoBrojDN VALID cFinAutoBrojDN $ "DN" PICT "@!"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "DATUM------------>"             COLOR "W+/B"
+      @ box_x_koord() + 2, Col() + 1 SAY DToC( DATDOK )                   COLOR "N/W"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "PARTNER---------->"             COLOR "W+/B"
+      @ box_x_koord() + 3, Col() + 1 SAY IDPARTNER + "-" + PadR( partn->naz, 20 ) COLOR "N/W"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "KONTO MAGACINA--->"             COLOR "W+/B"
+      @ box_x_koord() + 4, Col() + 1 SAY MKONTO + "-" + PadR( cPom, 49 )       COLOR "N/W"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "KONTO PRODAVNICE->"             COLOR "W+/B"
+      @ box_x_koord() + 5, Col() + 1 SAY PKONTO + "-" + PadR( KONTO->naz, 49 ) COLOR "N/W"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Automatski uravnotezi dokument? (D/N)" GET cAutoRav VALID cAutoRav $ "DN" PICT "@!"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Zelite li kontirati dokument? (D/N)" GET cDalje VALID cDalje $ "DN" PICT "@!"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Automatski broj fin.naloga? (D/N)" GET cFinAutoBrojDN VALID cFinAutoBrojDN $ "DN" PICT "@!"
 
       READ
 

@@ -21,8 +21,8 @@ STATIC __doc_it_no
 // --------------------------------------------
 FUNCTION box_it2( nDoc_no, nDoc_it_no )
 
-   LOCAL nX := m_x
-   LOCAL nY := m_y
+   LOCAL nX := box_x_koord()
+   LOCAL nY := box_y_koord()
    LOCAL GetList := {}
    LOCAL nTArea := Select()
 
@@ -39,8 +39,8 @@ FUNCTION box_it2( nDoc_no, nDoc_it_no )
    Box(, 17, 70 )
 
    // opcije
-   @ m_x + 16, m_y + 2 SAY "<c+N> nova stavka  <F2> ispravka  <c+T> brisi stavku "
-   @ m_x + 17, m_y + 2 SAY "<c+F9> brisi sve "
+   @ box_x_koord() + 16, box_y_koord() + 2 SAY "<c+N> nova stavka  <F2> ispravka  <c+T> brisi stavku "
+   @ box_x_koord() + 17, box_y_koord() + 2 SAY "<c+F9> brisi sve "
 
    my_browse( "it2", 15, 70, {| Ch| it2_handler() }, "Unos dodatni stavki naloga", "",,,,, 1 )
 
@@ -48,8 +48,8 @@ FUNCTION box_it2( nDoc_no, nDoc_it_no )
 
    SELECT ( nTArea )
 
-   m_x := nX
-   m_y := nY
+   box_x_koord() := nX
+   box_y_koord() := nY
 
    RETURN
 
@@ -136,8 +136,8 @@ STATIC FUNCTION docit2_kol( aImeKol, aKol )
 // ------------------------------------------
 FUNCTION e_doc_it2( nDoc_no, nDoc_it_no, lNew )
 
-   LOCAL nX := m_x
-   LOCAL nY := m_y
+   LOCAL nX := box_x_koord()
+   LOCAL nY := box_y_koord()
    LOCAL nGetBoxX := 18
    LOCAL nGetBoxY := 70
    LOCAL cBoxNaz := "unos nove stavke"
@@ -166,8 +166,8 @@ FUNCTION e_doc_it2( nDoc_no, nDoc_it_no, lNew )
    set_opc_box( nGetBoxX, 50 )
 
    // say top, bottom
-   @ m_x + 1, m_y + 2 SAY PadL( "***** " + cBoxNaz, nGetBoxY - 2 )
-   @ m_x + nGetBoxX, m_y + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadL( "***** " + cBoxNaz, nGetBoxY - 2 )
+   @ box_x_koord() + nGetBoxX, box_y_koord() + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
 
    DO WHILE .T.
 
@@ -204,8 +204,8 @@ FUNCTION e_doc_it2( nDoc_no, nDoc_it_no, lNew )
 
    SELECT _doc_it2
 
-   m_x := nX
-   m_y := nY
+   box_x_koord() := nX
+   box_y_koord() := nY
 
    RETURN nRet
 
@@ -234,16 +234,16 @@ STATIC FUNCTION _e_box_it2( nBoxX, nBoxY )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Stavka naloga (*)", nLeft ) GET _doc_it_no ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Stavka naloga (*)", nLeft ) GET _doc_it_no ;
       VALID {|| if( l_new_it, _it_no := inc_docit2( _doc_no, _doc_it_no ), .T. ), .T. }
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "r.br stavke (*)", nLeft ) GET _it_no PICT "9999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "r.br stavke (*)", nLeft ) GET _it_no PICT "9999"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "F18 ARTIKAL (*):", nLeft ) GET _art_id ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "F18 ARTIKAL (*):", nLeft ) GET _art_id ;
       VALID {|| p_roba( @_art_id ), __roba := g_roba_hash( _art_id ), ;
       _doc_it_pri := get_hash_value( __roba, "vpc", 0 ), ;
       show_it( g_roba_desc( _art_id ) + ".." + "[" + AllTrim( Upper( get_hash_value( __roba, "jmj", "" ) ) ) + "]", 35 ), ;
@@ -252,7 +252,7 @@ STATIC FUNCTION _e_box_it2( nBoxX, nBoxY )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Jedinica mjere (*):", nLeft + 3 ) GET _jmj ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Jedinica mjere (*):", nLeft + 3 ) GET _jmj ;
       PICT "@!S3" ;
       VALID {|| _jmj_art := Upper( get_hash_value( __roba, "jmj", "" ) ), !Empty( _jmj ), valid_repro_jmj( _jmj, _jmj_art ) } ;
       WHEN set_opc_box( nBoxX, 50, "Unositi komadno ili u originalnoj jmj ?" )
@@ -262,7 +262,7 @@ STATIC FUNCTION _e_box_it2( nBoxX, nBoxY )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "kolicina (*):", nLeft + 3 ) GET _doc_it_qtt ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "kolicina (*):", nLeft + 3 ) GET _doc_it_qtt ;
       PICT cPicQtty ;
       WHEN set_opc_box( nBoxX, 50, "koliko komada se isporučuje ?" )
 
@@ -270,27 +270,27 @@ STATIC FUNCTION _e_box_it2( nBoxX, nBoxY )
    // ako jeste otključaj polje za unos dužine
    // u slučaju da je
    IF jmj_is_metric( _jmj_art ) .AND. ( _jmj == "KOM" )
-      @ m_x + nX, Col() + 1 SAY hb_UTF8ToStr( "dužina [mm] (*):" ) GET _doc_it_q2 ;
+      @ box_x_koord() + nX, Col() + 1 SAY hb_UTF8ToStr( "dužina [mm] (*):" ) GET _doc_it_q2 ;
          PICT cPicQtty ;
          WHEN set_opc_box( nBoxX, 50, "repromaterijal je metrički, unesi dužinu u mm" )
    ELSE
-      @ m_x + nX, Col() + 1 SAY PadR( "", 28 )
+      @ box_x_koord() + nX, Col() + 1 SAY PadR( "", 28 )
    ENDIF
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "cijena:", nLeft + 3 ) GET _doc_it_pri ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "cijena:", nLeft + 3 ) GET _doc_it_pri ;
       PICT cPicPrice WHEN set_opc_box( nBoxX, 50, "opciono cijena" )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "opis:", nLeft ) GET _sh_desc ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "opis:", nLeft ) GET _sh_desc ;
       PICT "@S40" ;
       WHEN set_opc_box( nBoxX, 50, "opis vezan za samu stavku" )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "napomena:", nLeft ) GET _descr ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "napomena:", nLeft ) GET _descr ;
       PICT "@S40" ;
       WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku" )
 

@@ -80,9 +80,9 @@ FUNCTION mat_unos_naloga()
 
    Box(, __unos_x, __unos_y )
 
-   @ m_x + __unos_x - 2, m_y + 2 SAY " <c-N>  Nove Stavke       � <ENT> Ispravi stavku   � <c-T> Brisi Stavku "
-   @ m_x + __unos_x - 1, m_y + 2 SAY " <c-A>  Ispravka naloga   � <c-P> Stampa naloga    � <a-A> Azuriranje   "
-   @ m_x + __unos_x, m_y + 2 SAY " <c-F9> Brisi pripremu    � <F5>  Kontrola zbira   �                    "
+   @ box_x_koord() + __unos_x - 2, box_y_koord() + 2 SAY " <c-N>  Nove Stavke       � <ENT> Ispravi stavku   � <c-T> Brisi Stavku "
+   @ box_x_koord() + __unos_x - 1, box_y_koord() + 2 SAY " <c-A>  Ispravka naloga   � <c-P> Stampa naloga    � <a-A> Azuriranje   "
+   @ box_x_koord() + __unos_x, box_y_koord() + 2 SAY " <c-F9> Brisi pripremu    � <F5>  Kontrola zbira   �                    "
 
    my_browse( "PNal", __unos_x, __unos_y, {|| mat_pripr_key_handler() }, "", "Priprema..", , , , , 3 )
 
@@ -130,13 +130,13 @@ STATIC FUNCTION mat_edit_priprema( fNovi )
    ENDIF
 
    IF gNW $ "DR"
-      @  m_x + 1, m_y + 2 SAY "Firma: "
+      @  box_x_koord() + 1, box_y_koord() + 2 SAY "Firma: "
       ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID {|| p_partner( @_IdFirma, 1, 20 ), _idfirma := Left( _idfirma, 2 ), .T. }
+      @  box_x_koord() + 1, box_y_koord() + 2 SAY "Firma:" GET _IdFirma VALID {|| p_partner( @_IdFirma, 1, 20 ), _idfirma := Left( _idfirma, 2 ), .T. }
    ENDIF
 
-   @ m_x + 3, m_y + 2 SAY "NALOG:   Vrsta:"  GET _IdVN    VALID P_VN( @_IdVN, 3, 23 )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "NALOG:   Vrsta:"  GET _IdVN    VALID P_VN( @_IdVN, 3, 23 )
    READ
    ESC_RETURN 0
 
@@ -154,53 +154,53 @@ STATIC FUNCTION mat_edit_priprema( fNovi )
    ENDIF
 
 
-   @  m_x + 3, m_y + 52  SAY "Broj:"   GET _BrNal   VALID mat_dupli_nalog( _BrNal, _IdVN, _IdFirma ) .AND. !Empty( _BrNal )
-   @  m_x + 5, m_y + 2  SAY "Redni broj stavke naloga:" GET nRbr PICTURE "9999"
+   @  box_x_koord() + 3, box_y_koord() + 52  SAY "Broj:"   GET _BrNal   VALID mat_dupli_nalog( _BrNal, _IdVN, _IdFirma ) .AND. !Empty( _BrNal )
+   @  box_x_koord() + 5, box_y_koord() + 2  SAY "Redni broj stavke naloga:" GET nRbr PICTURE "9999"
 
    IF gKupZad == "D"
-      @ m_x + 7, m_y + 2    SAY "Dobavljac/Kupac" GET _IdPartner VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 24 )
-      @ m_x + 7, m_y + 40   SAY "Zaduzuje " GET _IdZaduz PICT "@!" VALID Empty( _IdZaduz ) .OR. p_partner( @_IdZaduz, 24 )
+      @ box_x_koord() + 7, box_y_koord() + 2    SAY "Dobavljac/Kupac" GET _IdPartner VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 24 )
+      @ box_x_koord() + 7, box_y_koord() + 40   SAY "Zaduzuje " GET _IdZaduz PICT "@!" VALID Empty( _IdZaduz ) .OR. p_partner( @_IdZaduz, 24 )
    ENDIF
 
-   @  m_x + 9, m_y + 2  SAY "DOKUMENT:"
+   @  box_x_koord() + 9, box_y_koord() + 2  SAY "DOKUMENT:"
 
    IF gNW == "N"
-      @ m_x + 9, m_y + 12 SAY "Tip :" GET _IdTipDok VALID P_TipDok( @_IdTipDok )
-      @ m_x + 9, m_y + 24 SAY "Broj:"   GET _BrDok
+      @ box_x_koord() + 9, box_y_koord() + 12 SAY "Tip :" GET _IdTipDok VALID P_TipDok( @_IdTipDok )
+      @ box_x_koord() + 9, box_y_koord() + 24 SAY "Broj:"   GET _BrDok
    ELSE
-      @ m_x + 9, m_y + 13 SAY "Broj:"   GET _BrDok
+      @ box_x_koord() + 9, box_y_koord() + 13 SAY "Broj:"   GET _BrDok
    ENDIF
 
-   IF fk1 == "D"; @  m_x + 9, Col() + 2 SAY "K1" GET _k1 PICT "@!" ; ENDIF
-   IF fk2 == "D"; @  m_x + 9, Col() + 2 SAY "K2" GET _k2 PICT "@!" ; ENDIF
-   IF fk3 == "D"; @  m_x + 9, Col() + 2 SAY "K3" GET _k3 PICT "@!" ; ENDIF
-   IF fk4 == "D"; @  m_x + 9, Col() + 2 SAY "K4" GET _k4 PICT "@!" ; ENDIF
+   IF fk1 == "D"; @  box_x_koord() + 9, Col() + 2 SAY "K1" GET _k1 PICT "@!" ; ENDIF
+   IF fk2 == "D"; @  box_x_koord() + 9, Col() + 2 SAY "K2" GET _k2 PICT "@!" ; ENDIF
+   IF fk3 == "D"; @  box_x_koord() + 9, Col() + 2 SAY "K3" GET _k3 PICT "@!" ; ENDIF
+   IF fk4 == "D"; @  box_x_koord() + 9, Col() + 2 SAY "K4" GET _k4 PICT "@!" ; ENDIF
 
-   @  m_x + 11, m_y + 2  SAY "Datum dok.:"   GET  _DatDok valid {|| _datkurs := _DatDok, .T. }
+   @  box_x_koord() + 11, box_y_koord() + 2  SAY "Datum dok.:"   GET  _DatDok valid {|| _datkurs := _DatDok, .T. }
    IF gNW == "N"
-      @  m_x + 11, m_y + 24 SAY "Datum kursa:" GET _DatKurs ;
+      @  box_x_koord() + 11, box_y_koord() + 24 SAY "Datum kursa:" GET _DatKurs ;
          VALID {|| nKurs := Kurs( _DatKurs ), QQOut( " " + ValDomaca() + "/" + ValPomocna(), Transform( nKurs, PicUn ) ), .T. }
    ENDIF
 
    IF gkonto <> "D"
-      @  m_x + 13, m_y + 2  SAY IF( gSeks == "D", "Predmet ", "Konto   " ) GET _IdKonto ;
-         VALID {|| nKurs := Kurs( _DatKurs ), P_Konto( @_IdKonto ), SetPos( m_x + 13, m_y + 25 ), QQOut( Left( konto->naz, 45 ) ), .T. }
+      @  box_x_koord() + 13, box_y_koord() + 2  SAY IF( gSeks == "D", "Predmet ", "Konto   " ) GET _IdKonto ;
+         VALID {|| nKurs := Kurs( _DatKurs ), P_Konto( @_IdKonto ), SetPos( box_x_koord() + 13, box_y_koord() + 25 ), QQOut( Left( konto->naz, 45 ) ), .T. }
    ENDIF
 
-   @  m_x + 14, m_y + 2  SAY "Artikal " GET _IdRoba PICT "@!" ;
+   @  box_x_koord() + 14, box_y_koord() + 2  SAY "Artikal " GET _IdRoba PICT "@!" ;
       VALID  V_Roba( fnovi )
 
-   @  m_x + 16, m_y + 2  SAY "Ulaz/print_lista(1/2):" GET _U_I VALID  V_UI()
+   @  box_x_koord() + 16, box_y_koord() + 2  SAY "Ulaz/print_lista(1/2):" GET _U_I VALID  V_UI()
 
-   @ m_x + 16, m_y + 32 GET _Kolicina PICTURE PicKol VALID V_Kol( fnovi )
+   @ box_x_koord() + 16, box_y_koord() + 32 GET _Kolicina PICTURE PicKol VALID V_Kol( fnovi )
 
    IF gNW != "R"
-      @ m_x + 16, m_y + 50 SAY "CIJENA   :" GET _Cijena PICTURE PicUn + "9" ;
+      @ box_x_koord() + 16, box_y_koord() + 50 SAY "CIJENA   :" GET _Cijena PICTURE PicUn + "9" ;
          when {|| IF( _cijena <> 0, .T., Cijena() ) } ;
          valid {|| _Iznos := iif( _Cijena <> 0, Round( _Cijena * _Kolicina, 2 ), _Iznos ), .T. }
-      @ m_x + 17, m_y + 50 SAY "IZNOS " + ValDomaca() + ":" GET _Iznos PICTURE PicUn ;
+      @ box_x_koord() + 17, box_y_koord() + 50 SAY "IZNOS " + ValDomaca() + ":" GET _Iznos PICTURE PicUn ;
          when {|| iif( gkonto == "D", .F., .T. ) }  valid  {|| _Iznos2 := _Iznos / nKurs, .T. }
-      @ m_x + 18, m_y + 50 SAY "IZNOS " + ValPomocna() + ":" GET _Iznos2 PICTURE PicUn ;
+      @ box_x_koord() + 18, box_y_koord() + 50 SAY "IZNOS " + ValPomocna() + ":" GET _Iznos2 PICTURE PicUn ;
          when {|| _iznos2 := iif( gkonto == "D", _iznos, _iznos2 ), .T. }
 
    ENDIF
@@ -320,12 +320,12 @@ STATIC FUNCTION V_Roba( fnovi )
    IF gKonto == "D"
       _Idkonto := roba->idkonto
       nKurs := Kurs( _DatKurs )
-      @  m_x + 13, m_y + 2  SAY "Konto:   "
+      @  box_x_koord() + 13, box_y_koord() + 2  SAY "Konto:   "
       ?? _IdKonto
    ENDIF
 
-   @  m_x + 15, m_y + 25  SAY "Jed.mjere:"
-   @  m_x + 15, m_y + 36  SAY ROBA->jmj COLOR f18_color_invert()
+   @  box_x_koord() + 15, box_y_koord() + 25  SAY "Jed.mjere:"
+   @  box_x_koord() + 15, box_y_koord() + 36  SAY ROBA->jmj COLOR f18_color_invert()
 
    RETURN .T.
 
@@ -339,9 +339,9 @@ FUNCTION V_UI()
    _D_P := _U_I
 
    IF _U_I == "1"
-      @ m_x + 16, m_y + 25 SAY "ULAZ   "
+      @ box_x_koord() + 16, box_y_koord() + 25 SAY "ULAZ   "
    ELSE
-      @ m_x + 16, m_y + 25 SAY "IZLAZ  "
+      @ box_x_koord() + 16, box_y_koord() + 25 SAY "IZLAZ  "
    ENDIF
 
    RETURN .T.
@@ -388,10 +388,10 @@ FUNCTION mat_pripr_key_handler()
       cIdVN := IdVN
       cBrNal := BrNal
 
-      @ m_x + 1, m_y + 1 SAY "       Firma:" GET cFirma
+      @ box_x_koord() + 1, box_y_koord() + 1 SAY "       Firma:" GET cFirma
       // VALID p_partner(@cFirma,1,20) .and. len(trim(cFirma))<=2
-      @ m_x + 2, m_y + 1 SAY "Vrsta mat_naloga:" GET cIdVn VALID P_VN( @cIdVN, 2, 20 )
-      @ m_x + 3, m_y + 1 SAY " Broj mat_naloga:" GET cBrNal
+      @ box_x_koord() + 2, box_y_koord() + 1 SAY "Vrsta mat_naloga:" GET cIdVn VALID P_VN( @cIdVN, 2, 20 )
+      @ box_x_koord() + 3, box_y_koord() + 1 SAY " Broj mat_naloga:" GET cBrNal
 
       READ
 
@@ -418,13 +418,13 @@ FUNCTION mat_pripr_key_handler()
 
       zbir_mat_naloga( @dug, @pot, cFirma, cIdVn, cBrNal )
 
-      @ m_x + 5, m_y + 2 SAY "Zbir naloga:"
-      @ m_x + 6, m_y + 2 SAY "     Duguje:"
-      @ m_x + 6, Col() + 2 SAY Dug PICTURE g_picdem_mat()
-      @ m_x + 7, m_y + 2 SAY "  Potrazuje:"
-      @ m_x + 7, Col() + 2 SAY Pot  PICTURE g_picdem_mat()
-      @ m_x + 8, m_y + 2 SAY "      Saldo:"
-      @ m_x + 8, Col() + 2 SAY Dug - Pot  PICTURE g_picdem_mat()
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Zbir naloga:"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "     Duguje:"
+      @ box_x_koord() + 6, Col() + 2 SAY Dug PICTURE g_picdem_mat()
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "  Potrazuje:"
+      @ box_x_koord() + 7, Col() + 2 SAY Pot  PICTURE g_picdem_mat()
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "      Saldo:"
+      @ box_x_koord() + 8, Col() + 2 SAY Dug - Pot  PICTURE g_picdem_mat()
 
       Inkey( 0 )
       BoxC()
@@ -471,7 +471,7 @@ FUNCTION mat_pripr_key_handler()
 
          nRbr := Val( _Rbr )
 
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + ( __unos_x - 7 ), m_y + ( __unos_y - 4 )
+         @ box_x_koord() + 1, box_y_koord() + 1 CLEAR TO box_x_koord() + ( __unos_x - 7 ), box_y_koord() + ( __unos_y - 4 )
 
          IF mat_edit_priprema( .F. ) == 0
             EXIT
@@ -485,10 +485,10 @@ FUNCTION mat_pripr_key_handler()
             nPot += _Iznos
          ENDIF
 
-         @ m_x + __unos_x - 5, m_y + 1 SAY "ZBIR NALOGA:"
-         @ m_x + __unos_x - 5, m_y + 14 SAY nDug PICTURE PicDEM
-         @ m_x + __unos_x - 5, m_y + 35 SAY nPot PICTURE PicDEM
-         @ m_x + __unos_x - 5, m_y + 56 SAY nDug - nPot PICTURE PicDEM
+         @ box_x_koord() + __unos_x - 5, box_y_koord() + 1 SAY "ZBIR NALOGA:"
+         @ box_x_koord() + __unos_x - 5, box_y_koord() + 14 SAY nDug PICTURE PicDEM
+         @ box_x_koord() + __unos_x - 5, box_y_koord() + 35 SAY nPot PICTURE PicDEM
+         @ box_x_koord() + __unos_x - 5, box_y_koord() + 56 SAY nDug - nPot PICTURE PicDEM
 
          SELECT mat_pripr
          my_rlock()
@@ -521,7 +521,7 @@ FUNCTION mat_pripr_key_handler()
 
          nRbr := Val( _Rbr ) + 1
 
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + ( __unos_x - 7 ), m_y + ( __unos_y - 4 )
+         @ box_x_koord() + 1, box_y_koord() + 1 CLEAR TO box_x_koord() + ( __unos_x - 7 ), box_y_koord() + ( __unos_y - 4 )
 
          IF mat_edit_priprema( .T. ) == 0
             EXIT
@@ -535,10 +535,10 @@ FUNCTION mat_pripr_key_handler()
             nPot += _Iznos
          ENDIF
 
-         @ m_x + __unos_x - 5, m_y + 1 SAY "ZBIR NALOGA:"
-         @ m_x + __unos_x - 5, m_y + 14 SAY nDug PICTURE PicDEM
-         @ m_x + __unos_x - 5, m_y + 35 SAY nPot PICTURE PicDEM
-         @ m_x + __unos_x - 5, m_y + 56 SAY nDug - nPot PICTURE PicDEM
+         @ box_x_koord() + __unos_x - 5, box_y_koord() + 1 SAY "ZBIR NALOGA:"
+         @ box_x_koord() + __unos_x - 5, box_y_koord() + 14 SAY nDug PICTURE PicDEM
+         @ box_x_koord() + __unos_x - 5, box_y_koord() + 35 SAY nPot PICTURE PicDEM
+         @ box_x_koord() + __unos_x - 5, box_y_koord() + 56 SAY nDug - nPot PICTURE PicDEM
 
          SELECT mat_pripr
          APPEND BLANK
@@ -685,9 +685,9 @@ FUNCTION mat_st_anal_nalog( fnovi )
       Box( "", 1, 50 )
       // set cursor on
       // set confirm off
-      @ m_x + 1, m_y + 2 SAY "Nalog broj:" GET cIdFirma
-      @ m_x + 1, Col() + 1 SAY "-" GET cIdVn
-      @ m_x + 1, Col() + 1 SAY "-" GET cBrNal
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Nalog broj:" GET cIdFirma
+      @ box_x_koord() + 1, Col() + 1 SAY "-" GET cIdVn
+      @ box_x_koord() + 1, Col() + 1 SAY "-" GET cBrNal
       READ
       ESC_BCR
       // set confirm on

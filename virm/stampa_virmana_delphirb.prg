@@ -30,8 +30,8 @@ FUNCTION stampa_virmana()
 
 
    Box(, 2, 70 )
-   @ m_x + 1, m_y + 2 SAY "Broj virmana od sljedece pozicije:" GET _br_virmana PICT "999"
-   @ m_x + 2, m_y + 2 SAY "Uzeti u obzir markere            :" GET _marker PICT "@!" VALID _marker $ "DN"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj virmana od sljedece pozicije:" GET _br_virmana PICT "999"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Uzeti u obzir markere            :" GET _marker PICT "@!" VALID _marker $ "DN"
    READ
    BoxC()
 

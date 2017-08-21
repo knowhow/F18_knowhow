@@ -46,22 +46,22 @@ STATIC FUNCTION _mat_obr_params()
 
    Box(, 21, 74 )
    SET CURSOR ON
-   @ m_x + 3, m_y + 2 SAY "Polje K1  D/N" GET cK1 VALID cK1 $ "DN" PICT "@!"
-   @ m_x + 4, m_y + 2 SAY "Polje K2  D/N" GET cK2 VALID cK2 $ "DN" PICT "@!"
-   @ m_x + 5, m_y + 2 SAY "Polje K3  D/N" GET cK3 VALID cK3 $ "DN" PICT "@!"
-   @ m_x + 6, m_y + 2 SAY "Polje K4  D/N" GET cK4 VALID cK4 $ "DN" PICT "@!"
-   @ m_x + 8, m_y + 2 SAY "Privatni direktorij PORMP (KALK):" GET gDirPor PICT "@S25"
-   @ m_x + 9, m_y + 2 SAY "Potpis na kraju naloga D/N:" GET gPotpis VALID gPotpis $ "DN"
-   @ m_x + 10, m_y + 2 SAY "Nalozi realizac. prodavnice:" GET gNalPr PICT "@S25"
-   @ m_x + 11, m_y + 2 SAY "Preuzimanje cijene iz sifr.(bez/nc/vpc/mpc/prosj.) ( /1/2/3/P):" GET gCijena VALID gcijena $ " 123P"
-   @ m_x + 13, m_y + 2 SAY "Zadati datum naloga D/N:" GET gDatNal VALID gDatNal $ "DN" PICT "@!"
-   @ m_x + 14, m_y + 2 SAY "Koristiti polja partnera, lice zaduzuje D/N" GET gKupZad VALID gKupZad $ "DN" PICT "@!"
-   @ m_x + 16, m_y + 2 SAY "Prikaz dvovalutno D/N" GET g2Valute VALID g2Valute $ "DN" PICT "@!"
-   @ m_x + 17, m_y + 2 SAY "Pict " + ValPomocna() + ":" GET kalk_pic_iznos_bilo_gpicdem() PICT "@S15"
-   @ m_x + 18, m_y + 2 SAY "Pict " + ValDomaca() + ":"  GET gpicdin PICT "@S15"
-   @ m_x + 19, m_y + 2 SAY "Pict KOL :"  GET kalk_pic_kolicina_bilo_gpickol() PICT "@S15"
-   @ m_x + 20, m_y + 2 SAY "Sa sifrom je vezan konto D/N" GET gKonto VALID gKonto $ "DN" PICT "@!"
-   @ m_x + 21, m_y + 2 SAY "Sekretarski sistem (D/N) ?"  GET gSekS VALID gSekS $ "DN" PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Polje K1  D/N" GET cK1 VALID cK1 $ "DN" PICT "@!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Polje K2  D/N" GET cK2 VALID cK2 $ "DN" PICT "@!"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Polje K3  D/N" GET cK3 VALID cK3 $ "DN" PICT "@!"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Polje K4  D/N" GET cK4 VALID cK4 $ "DN" PICT "@!"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Privatni direktorij PORMP (KALK):" GET gDirPor PICT "@S25"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Potpis na kraju naloga D/N:" GET gPotpis VALID gPotpis $ "DN"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Nalozi realizac. prodavnice:" GET gNalPr PICT "@S25"
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Preuzimanje cijene iz sifr.(bez/nc/vpc/mpc/prosj.) ( /1/2/3/P):" GET gCijena VALID gcijena $ " 123P"
+   @ box_x_koord() + 13, box_y_koord() + 2 SAY "Zadati datum naloga D/N:" GET gDatNal VALID gDatNal $ "DN" PICT "@!"
+   @ box_x_koord() + 14, box_y_koord() + 2 SAY "Koristiti polja partnera, lice zaduzuje D/N" GET gKupZad VALID gKupZad $ "DN" PICT "@!"
+   @ box_x_koord() + 16, box_y_koord() + 2 SAY "Prikaz dvovalutno D/N" GET g2Valute VALID g2Valute $ "DN" PICT "@!"
+   @ box_x_koord() + 17, box_y_koord() + 2 SAY "Pict " + ValPomocna() + ":" GET kalk_pic_iznos_bilo_gpicdem() PICT "@S15"
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY "Pict " + ValDomaca() + ":"  GET gpicdin PICT "@S15"
+   @ box_x_koord() + 19, box_y_koord() + 2 SAY "Pict KOL :"  GET kalk_pic_kolicina_bilo_gpickol() PICT "@S15"
+   @ box_x_koord() + 20, box_y_koord() + 2 SAY "Sa sifrom je vezan konto D/N" GET gKonto VALID gKonto $ "DN" PICT "@!"
+   @ box_x_koord() + 21, box_y_koord() + 2 SAY "Sekretarski sistem (D/N) ?"  GET gSekS VALID gSekS $ "DN" PICT "@!"
    READ
    BoxC()
 

@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
 
 FUNCTION sastavnica_copy()
 
@@ -34,7 +33,7 @@ FUNCTION sastavnica_copy()
       cIdTek := field->id
 
       Box(, 2, 60 )
-      @ m_x + 1, m_y + 2 SAY "Kopirati u proizvod:" GET cNoviProizvod ;
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Kopirati u proizvod:" GET cNoviProizvod ;
          VALID cNoviProizvod <> cIdTek .AND. P_roba_select( @cNoviProizvod ) .AND. roba->tip == "P"
       READ
       BoxC()
@@ -118,11 +117,11 @@ FUNCTION bris_sast()
    _d_n := "0"
 
    Box(, 5, 40 )
-   @ m_x + 1, m_Y + 2 SAY8 "Odaberite željenu opciju:"
-   @ m_x + 3, m_Y + 2 SAY8 "0. Ništa !"
-   @ m_x + 4, m_Y + 2 SAY "1. Izbrisati samo sastavnice ?"
-   @ m_x + 5, m_Y + 2 SAY "2. Izbrisati i artikle i sastavnice "
-   @ m_x + 5, Col() + 2 GET _d_n VALID _d_n $ "012"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Odaberite željenu opciju:"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "0. Ništa !"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "1. Izbrisati samo sastavnice ?"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "2. Izbrisati i artikle i sastavnice "
+   @ box_x_koord() + 5, Col() + 2 GET _d_n VALID _d_n $ "012"
    READ
    BoxC()
 

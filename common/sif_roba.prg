@@ -174,7 +174,7 @@ FUNCTION roba_opis_edit( view )
 
    IF !view
 
-      @ m_x + 7, m_y + 43 SAY "Definisati opis artikla (D/N) ?" GET _op PICT "@!" VALID _op $ "DN"
+      @ box_x_koord() + 7, box_y_koord() + 43 SAY "Definisati opis artikla (D/N) ?" GET _op PICT "@!" VALID _op $ "DN"
       READ
 
       IF _op == "N"
@@ -185,10 +185,10 @@ FUNCTION roba_opis_edit( view )
 
    Box(, 14, 55 )
 
-   @ m_x + 1, m_y + 2 SAY "OPIS ARTIKLA # " + if( !view, "<c-W> za kraj unosa...", "" )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "OPIS ARTIKLA # " + if( !view, "<c-W> za kraj unosa...", "" )
 
    // otvori memo edit
-   wopis := MemoEdit( field->opis, m_x + 3, m_y + 1, m_x + 14, m_y + 55 )
+   wopis := MemoEdit( field->opis, box_x_koord() + 3, box_y_koord() + 1, box_x_koord() + 14, box_y_koord() + 55 )
 
    BoxC()
 
@@ -215,8 +215,8 @@ FUNCTION MpcIzVpc()
    SELECT roba
 
    Box(, 4, 70 )
-   @ m_x + 2, m_y + 2 SAY "Set cijena VPC ( /2)  :" GET cVPC VALID cVPC $ " 2"
-   @ m_x + 3, m_y + 2 SAY "Set cijena MPC ( /2/3):" GET cMPC VALID cMPC $ " 23"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Set cijena VPC ( /2)  :" GET cVPC VALID cVPC $ " 2"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Set cijena MPC ( /2/3):" GET cMPC VALID cMPC $ " 23"
    READ
    IF Empty( cVPC )
       cVPC := ""
@@ -227,15 +227,15 @@ FUNCTION MpcIzVpc()
    BoxC()
 
    Box(, 6, 70 )
-   @ m_X + 1, m_y + 2 SAY Trim( roba->id ) + "-" + Trim( Left( roba->naz, 40 ) )
-   @ m_X + 2, m_y + 2 SAY "TARIFA"
-   @ m_X + 2, Col() + 2 SAY _idtarifa
-   @ m_X + 3, m_y + 2 SAY "VPC" + cVPC
-   @ m_X + 3, Col() + 1 SAY _VPC&cVPC PICT kalk_pic_iznos_bilo_gpicdem()
-   @ m_X + 4, m_y + 2 SAY "Postojeca MPC" + cMPC
-   @ m_X + 4, Col() + 1 SAY roba->MPC&cMPC PICT kalk_pic_iznos_bilo_gpicdem()
-   @ m_X + 5, m_y + 2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT "9"
-   @ m_X + 6, m_y + 2 SAY "MPC" + cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT kalk_pic_iznos_bilo_gpicdem()
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY Trim( roba->id ) + "-" + Trim( Left( roba->naz, 40 ) )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "TARIFA"
+   @ box_x_koord() + 2, Col() + 2 SAY _idtarifa
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "VPC" + cVPC
+   @ box_x_koord() + 3, Col() + 1 SAY _VPC&cVPC PICT kalk_pic_iznos_bilo_gpicdem()
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Postojeca MPC" + cMPC
+   @ box_x_koord() + 4, Col() + 1 SAY roba->MPC&cMPC PICT kalk_pic_iznos_bilo_gpicdem()
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT "9"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "MPC" + cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT kalk_pic_iznos_bilo_gpicdem()
    READ
    BoxC()
    IF LastKey() <> K_ESC
@@ -653,8 +653,8 @@ FUNCTION roba_setuj_mpc_iz_vpc()
             _rec[ _mpc_set ] := _rec[ _mpc_set ] - zaokr_5pf( _rec[ _mpc_set ] )
          ENDIF
 
-         @ m_x + 1, m_y + 2 SAY PadR( "Artikal: " + _rec[ "id" ] + "-" + PadR( _rec[ "naz" ], 20 ) + "...", 50 )
-         @ m_x + 2, m_y + 2 SAY PadR( " VPC: " + AllTrim( Str( _rec[ "vpc" ], 12, 3 ) ) + ;
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "Artikal: " + _rec[ "id" ] + "-" + PadR( _rec[ "naz" ], 20 ) + "...", 50 )
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR( " VPC: " + AllTrim( Str( _rec[ "vpc" ], 12, 3 ) ) + ;
             " -> " + Upper( _mpc_set ) + ": " + AllTrim( Str( _rec[ _mpc_set ], 12, 3 ) ), 50 )
 
          lOk := update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
@@ -696,16 +696,16 @@ STATIC FUNCTION _get_params( params )
 
    Box(, 10, 65 )
 
-   @ m_x + _x, m_y + 2 SAY "VPC -> MPC..."
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "VPC -> MPC..."
 
    _x += 2
-   @ m_x + _x, m_y + 2 SAY "Setovati MPC (1/2/.../9)" GET _mpc_no VALID _mpc_no >= 1 .AND. _mpc_no < 10 PICT "9"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Setovati MPC (1/2/.../9)" GET _mpc_no VALID _mpc_no >= 1 .AND. _mpc_no < 10 PICT "9"
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Zaokruženje 0.5pf (D/N) ?" GET _zaok_5pf VALID _zaok_5pf $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Zaokruženje 0.5pf (D/N) ?" GET _zaok_5pf VALID _zaok_5pf $ "DN" PICT "@!"
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Setovati samo gdje je MPC = 0 (D/N) ?" GET _mpc_nula VALID _mpc_nula $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Setovati samo gdje je MPC = 0 (D/N) ?" GET _mpc_nula VALID _mpc_nula $ "DN" PICT "@!"
    _x += 2
-   @ m_x + _x, m_y + 2 SAY "Filter po polju ID:" GET _filter_id PICT "@S40"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Filter po polju ID:" GET _filter_id PICT "@S40"
 
    READ
 

@@ -15,7 +15,6 @@
 STATIC s_lExitBrowseOnEnter := .F.
 
 MEMVAR TB, Ch, GetList, goModul
-MEMVAR m_x, m_y
 MEMVAR bGoreREd, bDoleRed, bDodajRed, fTBNoviRed, TBCanClose, bZaglavlje, TBScatter, nTBLine, nTBLastLine, TBPomjerise
 MEMVAR TBSkipBlock
 
@@ -170,7 +169,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
       // ENDIF
       Box( hParams[ "ime" ], nHeight, nWidth, hParams[ "invert" ], hParams[ "msgs" ] )
    ELSE
-      @ m_x + hParams[ "xw" ] - hParams[ "prazno" ], m_y + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI ), hParams[ "yw" ] )
+      @ box_x_koord() + hParams[ "xw" ] - hParams[ "prazno" ], box_y_koord() + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI ), hParams[ "yw" ] )
    ENDIF
 
    // IF !lIzOBJDB
@@ -178,13 +177,13 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
    // Kol := azKol
    // ENDIF
 
-   @ m_x, m_y + 2     SAY hParams[ "msg_top" ]   // +  REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ),  42 )
-   @ m_x + hParams[ "xw" ] + 1,  m_y + 2   SAY hParams[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
+   @ box_x_koord(), box_y_koord() + 2     SAY hParams[ "msg_top" ]   // +  REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ),  42 )
+   @ box_x_koord() + hParams[ "xw" ] + 1,  box_y_koord() + 2   SAY hParams[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
 
-   // @ m_x + hParams[ "xw" ] + 1,  Col() + 1 SAY REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), 42 )
-   @ m_x + 1, m_y + hParams[ "yw" ] - 6    SAY Str( RecCount(), 5 )
+   // @ box_x_koord() + hParams[ "xw" ] + 1,  Col() + 1 SAY REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), 42 )
+   @ box_x_koord() + 1, box_y_koord() + hParams[ "yw" ] - 6    SAY Str( RecCount(), 5 )
 
-   oBrowse := TBrowseDB( m_x + 2 + hParams[ "prazno" ], m_y + 1, m_x + nHeight - nBrojRedovaZaPoruke, m_y + nWidth )
+   oBrowse := TBrowseDB( box_x_koord() + 2 + hParams[ "prazno" ], box_y_koord() + 1, box_x_koord() + nHeight - nBrojRedovaZaPoruke, box_y_koord() + nWidth )
 
    IF bSkipBlock <> NIL
       oBrowse:SkipBlock := bSkipBlock
@@ -360,7 +359,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
          oBrowse:RefreshAll()
          // TB:ForceStable()
 
-         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
+         @ box_x_koord() + 1, box_y_koord() + yw - 6 SAY Str( RecCount2(), 5 )
          EXIT
 
       CASE DE_ABORT
@@ -650,7 +649,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       IF Alias() == "PARTN"
          Box( "#Unijeti dio šifre ili naziva ili mjesta", 1, 70 )
          SET CURSOR ON
-         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         @ box_x_koord() + 1, box_y_koord() + 1 SAY "" GET cIdOrNaz PICT "@!S50"
          READ
          BoxC()
          IF LastKey() != K_ESC
@@ -664,7 +663,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       IF Alias() == "ROBA" .OR. Alias() == "ROBA_P"
          Box( "#Unijeti dio šifre / sifredob / naziva", 1, 70 )
          SET CURSOR ON
-         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         @ box_x_koord() + 1, box_y_koord() + 1 SAY "" GET cIdOrNaz PICT "@!S50"
          READ
          BoxC()
          IF LastKey() != K_ESC
@@ -682,7 +681,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       IF Alias() == "KONTO"
          Box( "#Unijeti dio šifre ili naziva", 1, 70 )
          SET CURSOR ON
-         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         @ box_x_koord() + 1, box_y_koord() + 1 SAY "" GET cIdOrNaz PICT "@!S50"
          READ
          BoxC()
          IF LastKey() != K_ESC
@@ -696,7 +695,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       IF Alias() == "RADN"
          Box( "#Unijeti dio šifre, prezimena ili imena radnika", 1, 70 )
          SET CURSOR ON
-         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         @ box_x_koord() + 1, box_y_koord() + 1 SAY "" GET cIdOrNaz PICT "@!S50"
          READ
          BoxC()
          IF LastKey() != K_ESC
@@ -710,7 +709,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       IF Alias() == "FAKT_FTXT"
          Box( "#Unijeti dio šifre ili sadržaja uzorka", 1, 70 )
          SET CURSOR ON
-         @ m_x + 1, m_y + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         @ box_x_koord() + 1, box_y_koord() + 1 SAY "" GET cIdOrNaz PICT "@!S50"
          READ
          BoxC()
          IF LastKey() != K_ESC
@@ -734,8 +733,8 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
 
       cLoc := PadR( cLoc, 40 )
       cSmj := "+"
-      @ m_x + 1, m_y + 2 SAY _tr GET cLoc PICT "@!"
-      @ m_x + 2, m_y + 2 SAY "Prema dolje (+), gore (-)" GET cSmj VALID cSmj $ "+-"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY _tr GET cLoc PICT "@!"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prema dolje (+), gore (-)" GET cSmj VALID cSmj $ "+-"
       READ
       BoxC()
       lKeyHendliran := .T.
@@ -794,7 +793,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
          Box(, 3, 60, .F. )
 
          SET CURSOR ON
-         @ m_x + 1, m_y + 2 SAY "Uzmi podatke posljednje pretrage ?" GET cLastSearchDN VALID cLastSearchDN $ "DN" PICT "@!"
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Uzmi podatke posljednje pretrage ?" GET cLastSearchDN VALID cLastSearchDN $ "DN" PICT "@!"
 
          READ
          lKeyHendliran := .T.
@@ -819,8 +818,8 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
             _pict := "@S45"
          ENDIF
 
-         @ m_x + 2, m_y + 2 SAY PadR( _tr, 12 ) GET cTraziVrijednost PICT _pict
-         @ m_x + 3, m_y + 2 SAY PadR( cZamijeni, 12 ) GET cZamijeniVrijednost PICT _pict
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR( _tr, 12 ) GET cTraziVrijednost PICT _pict
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( cZamijeni, 12 ) GET cZamijeniVrijednost PICT _pict
 
          READ
 
@@ -864,8 +863,8 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
          cTraziVrijednost := &cKolona
          cTraziUslov := Space( 80 )
 
-         @ m_x + 1, m_y + 2 SAY "Postavi na:" GET cTraziVrijednost
-         @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET cTraziUslov PICT "@S20" ;
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Postavi na:" GET cTraziVrijednost
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET cTraziUslov PICT "@S20" ;
             VALID Empty( cTraziUslov ) .OR. alt_s_provjeri_tip_uslova( cTraziUslov, "Greška! Neispravno postavljen uslov!" )
          READ
 

@@ -20,8 +20,8 @@ FUNCTION m_changes( nDoc_no )
    LOCAL opc := {}
    LOCAL opcexe := {}
    LOCAL izbor := 1
-   LOCAL _x := m_x
-   LOCAL _y := m_y
+   LOCAL _x := box_x_koord()
+   LOCAL _y := box_y_koord()
 
    __doc_no := nDoc_no
    __oper_id := f18_get_user_id( f18_user() )
@@ -45,8 +45,8 @@ FUNCTION m_changes( nDoc_no )
 
    f18_menu( "changes", .F., izbor, opc, opcexe )
 
-   m_x := _x
-   m_y := _y
+   box_x_koord() := _x
+   box_y_koord() := _y
 
    RETURN
 
@@ -108,10 +108,10 @@ STATIC FUNCTION _box_main( nCust, nPrior, cDesc )
 
    Box(, 7, 65 )
    cDesc := Space( 150 )
-   @ m_x + 1, m_y + 2 SAY8 "Osnovni podaci naloga:"
-   @ m_x + 3, m_y + 2 SAY8 "Naručioc:" GET cCust VALID {|| s_customers( @cCust, cCust ), set_var( @nCust, @cCust ), show_it( g_cust_desc( nCust ) ) }
-   @ m_x + 4, m_y + 2 SAY8 "Prioritet (1/2/3):" GET nPrior VALID nPrior > 0 .AND. nPrior < 4
-   @ m_x + 7, m_y + 2 SAY8 "Opis promjene:" GET cDesc PICT "@S40"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Osnovni podaci naloga:"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Naručioc:" GET cCust VALID {|| s_customers( @cCust, cCust ), set_var( @nCust, @cCust ), show_it( g_cust_desc( nCust ) ) }
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Prioritet (1/2/3):" GET nPrior VALID nPrior > 0 .AND. nPrior < 4
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Opis promjene:" GET cDesc PICT "@S40"
    READ
    BoxC()
 
@@ -191,13 +191,13 @@ STATIC FUNCTION _box_ship( nObj_id, cShip, cTime, dDate, cDesc, nCust_id )
 
    Box(, 8, 65 )
    cDesc := Space( 150 )
-   @ m_x + 1, m_y + 2 SAY "Promjena podataka o isporuci:"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Promjena podataka o isporuci:"
 
-   @ m_x + 3, m_y + 2 SAY PadL( "Novi objekat isporuke:", 22 ) GET cObj_id VALID {|| s_objects( @cObj_id, nCust_id, cObj_id ), set_var( @nObj_id, @cObj_id ), show_it( AllTrim( g_obj_desc( nObj_id ) ) )  }
-   @ m_x + 4, m_y + 2 SAY PadL( "Novo mjesto isporuke:", 22 ) GET cShip VALID !Empty( cShip ) PICT "@S30"
-   @ m_x + 5, m_y + 2 SAY PadL( "Novo vrijeme isporuke:", 22 ) GET cTime VALID !Empty( cTime )
-   @ m_x + 6, m_y + 2 SAY PadL( "Novi datum isporuke:", 22 ) GET dDate VALID !Empty( dDate )
-   @ m_x + 8, m_y + 2 SAY PadL( "Opis promjene:", 22 ) GET cDesc PICT "@S40"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY PadL( "Novi objekat isporuke:", 22 ) GET cObj_id VALID {|| s_objects( @cObj_id, nCust_id, cObj_id ), set_var( @nObj_id, @cObj_id ), show_it( AllTrim( g_obj_desc( nObj_id ) ) )  }
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY PadL( "Novo mjesto isporuke:", 22 ) GET cShip VALID !Empty( cShip ) PICT "@S30"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY PadL( "Novo vrijeme isporuke:", 22 ) GET cTime VALID !Empty( cTime )
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY PadL( "Novi datum isporuke:", 22 ) GET dDate VALID !Empty( dDate )
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY PadL( "Opis promjene:", 22 ) GET cDesc PICT "@S40"
    READ
    BoxC()
 
@@ -264,11 +264,11 @@ STATIC FUNCTION _box_pay( nPay_id, cPaid, cPayDesc, cDesc )
 
    Box(, 7, 65 )
    cDesc := Space( 150 )
-   @ m_x + 1, m_y + 2 SAY "Promjena podataka o placanju:"
-   @ m_x + 3, m_y + 2 SAY PadL( "Vrsta placanja:", 22 ) GET nPay_id VALID {|| nPay_id > 0 .AND. nPay_id < 3, show_it( s_pay_id( nPay_id ) )  }
-   @ m_x + 4, m_y + 2 SAY PadL( "Placeno (D/N):", 22 ) GET cPaid VALID cPaid $ "DN"
-   @ m_x + 5, m_y + 2 SAY PadL( "dod.napomene:", 22 ) GET cPayDesc PICT "@S40"
-   @ m_x + 7, m_y + 2 SAY PadL( "Opis promjene:", 22 ) GET cDesc PICT "@S40"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Promjena podataka o placanju:"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY PadL( "Vrsta placanja:", 22 ) GET nPay_id VALID {|| nPay_id > 0 .AND. nPay_id < 3, show_it( s_pay_id( nPay_id ) )  }
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY PadL( "Placeno (D/N):", 22 ) GET cPaid VALID cPaid $ "DN"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY PadL( "dod.napomene:", 22 ) GET cPayDesc PICT "@S40"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY PadL( "Opis promjene:", 22 ) GET cDesc PICT "@S40"
    READ
    BoxC()
 
@@ -355,16 +355,16 @@ STATIC FUNCTION _box_cont( nCust, nCont, cContdesc, cDesc )
    cDesc := Space( 150 )
 
    IF lNew == .T.
-      @ m_x + 1, m_y + 2 SAY "Novi kontakti naloga:"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Novi kontakti naloga:"
    ELSE
-      @ m_x + 1, m_y + 2 SAY "Ispravka kontakta naloga:"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ispravka kontakta naloga:"
    ENDIF
 
-   @ m_x + 3, m_y + 2 SAY PadL( "Kontakt:", 20 ) GET cCont VALID {|| s_contacts( @cCont, nCust, cCont ), set_var( @nCont, @cCont ), show_it( g_cont_desc( nCont ) ) }
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY PadL( "Kontakt:", 20 ) GET cCont VALID {|| s_contacts( @cCont, nCust, cCont ), set_var( @nCont, @cCont ), show_it( g_cont_desc( nCont ) ) }
 
-   @ m_x + 4, m_y + 2 SAY PadL( "Kontakt, dodatni opis:", 20 ) GET cContDesc PICT "@S30"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY PadL( "Kontakt, dodatni opis:", 20 ) GET cContDesc PICT "@S30"
 
-   @ m_x + 7, m_y + 2 SAY "Opis promjene:" GET cDesc PICT "@S40"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Opis promjene:" GET cDesc PICT "@S40"
    READ
    BoxC()
 
@@ -423,12 +423,12 @@ STATIC FUNCTION _box_descr( sh_desc, add_desc, ch_desc )
 
    Box(, 7, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "Ispravka opisa i napomena naloga:"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ispravka opisa i napomena naloga:"
 
-   @ m_x + 3, m_y + 2 SAY PadL( "Kratki opis:", 20 ) GET sh_desc PICT "@S30"
-   @ m_x + 4, m_y + 2 SAY PadL( "Dodatni opis:", 20 ) GET add_desc PICT "@S30"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY PadL( "Kratki opis:", 20 ) GET sh_desc PICT "@S30"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY PadL( "Dodatni opis:", 20 ) GET add_desc PICT "@S30"
 
-   @ m_x + 7, m_y + 2 SAY "Opis promjene:" GET ch_desc PICT "@S40"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Opis promjene:" GET ch_desc PICT "@S40"
 
    READ
 

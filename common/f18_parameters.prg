@@ -335,46 +335,46 @@ FUNCTION f18_set_active_modules()
    Box(, 10, 70 )
 
    // 1
-   @ m_x + nX, m_y + 2 SAY "*** Odabir modula za glavni meni ***" COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** Odabir modula za glavni meni ***" COLOR f18_color_i()
 
    ++ nX
    ++ nX
 
    // 3
-   @ m_x + nX, m_y + 2 SAY hb_UTF8ToStr( "Prvi put pokrećete aplikaciju, potrebno odabrati module" )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY hb_UTF8ToStr( "Prvi put pokrećete aplikaciju, potrebno odabrati module" )
 
    ++ nX
 
    // 4
-   @ m_x + nX, m_y + 2 SAY hb_UTF8ToStr( "koji će se nakon sinhronizacije pojaviti na meniju" )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY hb_UTF8ToStr( "koji će se nakon sinhronizacije pojaviti na meniju" )
 
    ++ nX
    ++ nX
 
    // 6
-   @ m_x + nX, m_y + 2 SAY PadL( "FIN:", _len ) GET _fin PICT "@!"
-   @ m_x + nX, Col() + 1 SAY PadL( "KALK:", _len ) GET _kalk PICT "@!"
-   @ m_x + nX, Col() + 1 SAY PadL( "FAKT:", _len ) GET _fakt PICT "@!"
-   @ m_x + nX, Col() + 1 SAY PadL( "ePDV:", _len ) GET _epdv PICT "@!"
-   @ m_x + nX, Col() + 1 SAY PadL( "LD:", _len ) GET _ld PICT "@!"
-   @ m_x + nX, Col() + 1 SAY PadL( "VIRM:", _len ) GET _virm PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "FIN:", _len ) GET _fin PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY PadL( "KALK:", _len ) GET _kalk PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY PadL( "FAKT:", _len ) GET _fakt PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY PadL( "ePDV:", _len ) GET _epdv PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY PadL( "LD:", _len ) GET _ld PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY PadL( "VIRM:", _len ) GET _virm PICT "@!"
 
    ++ nX
    ++ nX
 
    // 8
-   @ m_x + nX, m_y + 2 SAY PadL( "OS/SII:", _len ) GET _os PICT "@!"
-   @ m_x + nX, Col() + 1 SAY PadL( "POS:", _len ) GET _pos PICT "@!"
-   @ m_x + nX, Col() + 1 SAY PadL( "MAT:", _len ) GET _mat PICT "@!"
-   @ m_x + nX, Col() + 1 SAY PadL( "RNAL:", _len ) GET _rnal PICT "@!"
-   @ m_x + nX, Col() + 1 SAY PadL( "KADEV:", _len ) GET _kadev PICT "@!"
-   @ m_x + nX, Col() + 1 SAY PadL( "REPORTS:", _len ) GET _reports PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "OS/SII:", _len ) GET _os PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY PadL( "POS:", _len ) GET _pos PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY PadL( "MAT:", _len ) GET _mat PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY PadL( "RNAL:", _len ) GET _rnal PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY PadL( "KADEV:", _len ) GET _kadev PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY PadL( "REPORTS:", _len ) GET _reports PICT "@!"
 
    // 10
 
    ++ nX
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "Odabir korektan (D/N) ?" GET _corr VALID _corr $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Odabir korektan (D/N) ?" GET _corr VALID _corr $ "DN" PICT "@!"
 
    READ
 

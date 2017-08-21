@@ -37,7 +37,7 @@ FUNCTION rnal_unos_osnovnih_podataka_naloga( lNew )
    SELECT _docs
 
    Box(, nGetBoxX, nGetBoxY, .F., "Unos osnovnih podataka naloga" )
-   @ m_x + nGetBoxX, m_y + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
+   @ box_x_koord() + nGetBoxX, box_y_koord() + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
 
    set_opc_box( nGetBoxX, 50 )
 
@@ -109,11 +109,11 @@ FUNCTION set_opc_box( nX, nLeft, ;
    cTxt2 := PadR( cTxt2, nLeft )
    cTxt3 := PadR( cTxt3, nLeft )
 
-   @ m_x + nX - 2, m_y + 2 SAY8 cTxt1 COLOR cColor
-   @ m_x + nX - 1, m_y + 2 SAY8 cTxt2 COLOR cColor
+   @ box_x_koord() + nX - 2, box_y_koord() + 2 SAY8 cTxt1 COLOR cColor
+   @ box_x_koord() + nX - 1, box_y_koord() + 2 SAY8 cTxt2 COLOR cColor
 
    IF !Empty( cTxt3 )
-      @ m_x + nX, m_y + 2 SAY8 cTxt3 COLOR cColor
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 cTxt3 COLOR cColor
    ENDIF
 
    RETURN .T.
@@ -155,59 +155,59 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
 
    _operater_i := _oper_id
 
-   @ m_x + nX, m_y + 2 SAY8 "Datum naloga (*):" GET _doc_date WHEN set_opc_box( nBoxX, 50 )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Datum naloga (*):" GET _doc_date WHEN set_opc_box( nBoxX, 50 )
 
-   @ m_x + nX, Col() + 2 SAY8 "Tip naloga (*):" GET _doc_type WHEN set_opc_box( nBoxX, 50, "prazno - klasicni nalog, NP - neuskladjen proizvod" ) ;
+   @ box_x_koord() + nX, Col() + 2 SAY8 "Tip naloga (*):" GET _doc_type WHEN set_opc_box( nBoxX, 50, "prazno - klasicni nalog, NP - neuskladjen proizvod" ) ;
       VALID _doc_type $ "  #NP"
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 PadL( "Naručioc (*):", nLeft ) GET cCustid VALID {|| s_customers( @cCustId, cCustId ), set_var( @_cust_id, @cCustId ), show_it( g_cust_desc( _cust_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik" )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Naručioc (*):", nLeft ) GET cCustid VALID {|| s_customers( @cCustId, cCustId ), set_var( @_cust_id, @cCustId ), show_it( g_cust_desc( _cust_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik" )
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 PadL( "Datum isporuke (*):", nLeft ) GET _doc_dvr_da ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Datum isporuke (*):", nLeft ) GET _doc_dvr_da ;
         VALID must_enter( _doc_dvr_da ) .AND. valid_datum_isporuke( _doc_dvr_da, _doc_date ) ;
         WHEN set_opc_box( nBoxX, 50 )
 
-   @ m_x + nX, Col() + 2 SAY8 PadL( "Vrijeme isporuke (*):", nLeft ) GET _doc_dvr_ti VALID must_enter( _doc_dvr_ti ) WHEN set_opc_box( nBoxX, 50, "format: HH:MM" )
+   @ box_x_koord() + nX, Col() + 2 SAY8 PadL( "Vrijeme isporuke (*):", nLeft ) GET _doc_dvr_ti VALID must_enter( _doc_dvr_ti ) WHEN set_opc_box( nBoxX, 50, "format: HH:MM" )
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 PadL( "Objekat isporuke (*):", nLeft ) GET cObjId VALID {|| s_objects( @cObjid, _cust_id, cObjId ), set_var( @_obj_id, @cObjid ), show_it( g_obj_desc( _obj_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "Objekat u koji se isporučuje", "0 - otvori šifarnik" )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Objekat isporuke (*):", nLeft ) GET cObjId VALID {|| s_objects( @cObjid, _cust_id, cObjId ), set_var( @_obj_id, @cObjid ), show_it( g_obj_desc( _obj_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "Objekat u koji se isporučuje", "0 - otvori šifarnik" )
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY PadL( "Mjesto isporuke :", nLeft ) GET _doc_ship_p VALID {|| sh_place_pattern( @_doc_ship_p ) } PICT "@S46" WHEN set_opc_box( nBoxX, 50, "mjesto gdje se roba isporucuje", "/RP - rg prod. /T - tvornica nar." )
-   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Mjesto isporuke :", nLeft ) GET _doc_ship_p VALID {|| sh_place_pattern( @_doc_ship_p ) } PICT "@S46" WHEN set_opc_box( nBoxX, 50, "mjesto gdje se roba isporucuje", "/RP - rg prod. /T - tvornica nar." )
+   @ box_x_koord() + nX, Col() SAY ">" COLOR f18_color_i()
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY PadL( "Kontakt osoba (*):", nLeft ) GET cContid VALID {|| s_contacts( @cContid, _cust_id, cContId ), set_var( @_cont_id, @cContid ), show_it( g_cont_desc( _cont_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik" )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Kontakt osoba (*):", nLeft ) GET cContid VALID {|| s_contacts( @cContid, _cust_id, cContId ), set_var( @_cont_id, @cContid ), show_it( g_cont_desc( _cont_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik" )
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY PadL( "dodatni opis:", nLeft + 2 ) GET _cont_add_d PICT "@S44" WHEN set_opc_box( nBoxX, 50, "dodatni opis kontakta" )
-   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "dodatni opis:", nLeft + 2 ) GET _cont_add_d PICT "@S44" WHEN set_opc_box( nBoxX, 50, "dodatni opis kontakta" )
+   @ box_x_koord() + nX, Col() SAY ">" COLOR f18_color_i()
 
    nX += 3
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Prioritet (*):", nLeft ) GET _doc_priori VALID {|| ( _doc_priori > 0 .AND. _doc_priori < 4 ), show_it( s_priority( _doc_priori ), 40 ) } PICT "9" WHEN set_opc_box( nBoxX, 50, "1 - high, 2 - normal, 3 - low" )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Prioritet (*):", nLeft ) GET _doc_priori VALID {|| ( _doc_priori > 0 .AND. _doc_priori < 4 ), show_it( s_priority( _doc_priori ), 40 ) } PICT "9" WHEN set_opc_box( nBoxX, 50, "1 - high, 2 - normal, 3 - low" )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY8 PadL( "Vrsta plaćanja (*):", nLeft ) GET _doc_pay_id VALID {|| ( _doc_pay_id > 0 .AND. _doc_pay_id < 3 ), show_it( s_pay_id( _doc_pay_id ), 40 ) } PICT "9"  WHEN set_opc_box( nBoxX, 50, "1 - ziro racun, 2 - gotovina" )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Vrsta plaćanja (*):", nLeft ) GET _doc_pay_id VALID {|| ( _doc_pay_id > 0 .AND. _doc_pay_id < 3 ), show_it( s_pay_id( _doc_pay_id ), 40 ) } PICT "9"  WHEN set_opc_box( nBoxX, 50, "1 - ziro racun, 2 - gotovina" )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY8 PadL( "Plaćeno (D/N)? (*):", nLeft ) GET _doc_paid VALID _doc_paid $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 50 )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Plaćeno (D/N)? (*):", nLeft ) GET _doc_paid VALID _doc_paid $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 50 )
 
-   @ m_x + nX, Col() + 2 SAY8 "dod.nap.plać:" GET _doc_pay_de PICT "@S29" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za placanje" )
-   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
+   @ box_x_koord() + nX, Col() + 2 SAY8 "dod.nap.plać:" GET _doc_pay_de PICT "@S29" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za placanje" )
+   @ box_x_koord() + nX, Col() SAY ">" COLOR f18_color_i()
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Kratki opis (*):", nLeft ) GET _doc_sh_des VALID !Empty( _doc_sh_des ) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "kratki opis naloga (asocijacija)", "npr: ulazna stijena, vrata ..." )
-   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Kratki opis (*):", nLeft ) GET _doc_sh_des VALID !Empty( _doc_sh_des ) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "kratki opis naloga (asocijacija)", "npr: ulazna stijena, vrata ..." )
+   @ box_x_koord() + nX, Col() SAY ">" COLOR f18_color_i()
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Dod.opis naloga:", nLeft ) GET _doc_desc VALID chk_mandatory( _doc_desc, _doc_priori ) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "dodatni opis naloga" )
-   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dod.opis naloga:", nLeft ) GET _doc_desc VALID chk_mandatory( _doc_desc, _doc_priori ) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "dodatni opis naloga" )
+   @ box_x_koord() + nX, Col() SAY ">" COLOR f18_color_i()
 
    READ
 

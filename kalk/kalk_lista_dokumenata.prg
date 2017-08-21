@@ -68,25 +68,25 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
       IF gNW == "X"
          cIdFirma := PadR( cidfirma, 2 )
-         @ m_x + 1, m_y + 2 SAY "Firma - prazno svi" GET cIdFirma valid {|| .T. }
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma - prazno svi" GET cIdFirma valid {|| .T. }
          READ
       ENDIF
 
       IF !Empty( cidfirma )
-         @ m_x + 2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET cIdVd PICT "@!"
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET cIdVd PICT "@!"
          cIdVd := "  "
       ELSE
          cIdfirma := ""
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY8 "Od datuma "  GET dDatOd
-      @ m_x + 3, Col() + 1 SAY8 "do"  GET dDatDo
-      @ m_x + 5, m_y + 2 SAY8 "Partner" GET cIdPartner PICT "@!" VALID Empty( cIdpartner ) .OR. p_partner( @cIdPartner )
-      @ m_x + 6, m_y + 2 SAY8 " Magacinska konta:" GET _mkonto PICT "@S30"
-      @ m_x + 7, m_y + 2 SAY8 "Prodavnička konta:" GET _pkonto PICT "@S30"
-      @ m_x + 8, m_y + 2 SAY8 "Brojevi dokumenata (prazno-svi)" GET qqBrDok PICT "@!S40"
-      @ m_x + 10, m_y + 2 SAY8 "Ispis naziva partnera (D/N)?" GET _partn_naz PICT "@!" VALID _partn_naz $ "DN"
-      @ m_x + 12, m_y + 2 SAY8 "Štampanje sadržaja ovih dokumenata ?"  GET cStampaj PICT "@!" VALID cStampaj $ "DN"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Od datuma "  GET dDatOd
+      @ box_x_koord() + 3, Col() + 1 SAY8 "do"  GET dDatDo
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Partner" GET cIdPartner PICT "@!" VALID Empty( cIdpartner ) .OR. p_partner( @cIdPartner )
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 " Magacinska konta:" GET _mkonto PICT "@S30"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Prodavnička konta:" GET _pkonto PICT "@S30"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Brojevi dokumenata (prazno-svi)" GET qqBrDok PICT "@!S40"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Ispis naziva partnera (D/N)?" GET _partn_naz PICT "@!" VALID _partn_naz $ "DN"
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY8 "Štampanje sadržaja ovih dokumenata ?"  GET cStampaj PICT "@!" VALID cStampaj $ "DN"
 
       READ
 

@@ -49,11 +49,11 @@ FUNCTION kalk_ukalkulisani_porez_prodavnice()
    Box(, 5, 75 )
    SET CURSOR ON
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Konto prodavnice:" GET qqKonto PICT "@!S50"
-      @ m_x + 2, m_y + 2 SAY "Tip dokumenta (11/12/13/15/19/80/81/99):" GET cVDok  VALID cVDOK $ "11/12/13/15/19/16/22/80/81/99"
-      @ m_x + 3, m_y + 2 SAY "Kalkulacije od datuma:" GET dDat1
-      @ m_x + 3, Col() + 1 SAY "do" GET dDat2
-      // @ m_x + 4, m_y + 2 SAY "Prikaz stopa ucesca pojedinih tarifa:" GET cStope VALID cstope $ "DN" PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Konto prodavnice:" GET qqKonto PICT "@!S50"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Tip dokumenta (11/12/13/15/19/80/81/99):" GET cVDok  VALID cVDOK $ "11/12/13/15/19/16/22/80/81/99"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Kalkulacije od datuma:" GET dDat1
+      @ box_x_koord() + 3, Col() + 1 SAY "do" GET dDat2
+      // @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prikaz stopa ucesca pojedinih tarifa:" GET cStope VALID cstope $ "DN" PICT "@!"
       READ
       ESC_BCR
 

@@ -31,12 +31,12 @@ FUNCTION kalk_magacin_pregled_robe_za_dobavljaca()
 
    Box( "#PREGLED ROBE ZA DOBAVLJACA", 6, 70 )
 
-   @ m_x + 2, m_y + 2 SAY8 "Dobavljač           " GET cIdPartner VALID P_Partner( @cIdPartner ) PICT "@!"
-   @ m_x + 3, m_y + 2 SAY8 "Artikal (prazno-svi)" GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Dobavljač           " GET cIdPartner VALID P_Partner( @cIdPartner ) PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Artikal (prazno-svi)" GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
 
-   @ m_x + 4, m_y + 2 SAY8 "Za period od" GET dOd
-   @ m_x + 4, Col() + 2 SAY "do" GET dDo
-   // @ m_x + 5, m_y + 2 SAY "Koliko prethodnih sezona gledati? (0/1/2/3)" GET nPrSez VALID nPrSez < 4 PICT "9"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Za period od" GET dOd
+   @ box_x_koord() + 4, Col() + 2 SAY "do" GET dDo
+   // @ box_x_koord() + 5, box_y_koord() + 2 SAY "Koliko prethodnih sezona gledati? (0/1/2/3)" GET nPrSez VALID nPrSez < 4 PICT "9"
    READ
    ESC_BCR
    BoxC()
@@ -131,8 +131,8 @@ FUNCTION kalk_magacin_pregled_robe_za_dobavljaca()
 FUNCTION TekRec2()
 
    nSlog++
-   @ m_x + 1, m_y + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
-   @ m_x + 2, m_y + 2 SAY "Obuhvaceno: " + Str( 0 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Obuhvaceno: " + Str( 0 )
 
    RETURN ( nil )
 

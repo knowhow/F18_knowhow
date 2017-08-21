@@ -109,7 +109,7 @@ FUNCTION P_OS( cId, dx, dy )
 
 FUNCTION os_validate_vrijednost( wNabVr, wOtpVr )
 
-   @ m_x + 11, m_y + 50 say ( wNabvr - wOtpvr )
+   @ box_x_koord() + 11, box_y_koord() + 50 say ( wNabvr - wOtpvr )
 
    RETURN .T.
 

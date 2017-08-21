@@ -71,7 +71,7 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
    Box(, f18_max_rows() - 10, f18_max_cols() - 12 )
    IF lNova
       _br_dok := 0
-      _r_br := epdv_next_r_br( "P_KIF" )
+      _r_br := epdv_priprema_next_r_br( "P_KIF" )
       _id_part := Space( Len( id_part ) )
       _id_tar := PadR( "PDV17", Len( id_tar ) )
       _datum := Date()
@@ -222,7 +222,7 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
       ENDIF
 
       my_close_all_dbf()
-      epdv_otvori_kif_tabele( .T. )
+      epdv_otvori_kif_priprema()
       SELECT P_KIF
       SET ORDER TO TAG "br_dok"
 
@@ -248,10 +248,10 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
          BoxC()
 
          IF LastKey() <> K_ESC
-         
+
             epdv_povrat_kif( nBrDokP )
             my_close_all_dbf()
-            epdv_otvori_kif_tabele( .T. )
+            epdv_otvori_kif_priprema()
             SELECT P_KIF
             SET ORDER TO TAG "br_dok"
 
@@ -285,7 +285,7 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
 FUNCTION epdv_edit_kif()
 
    AltD()
-   epdv_otvori_kif_tabele( .T. )
+   epdv_otvori_kif_priprema()
    epdv_kif_tbl_priprema()
 
    RETURN .T.

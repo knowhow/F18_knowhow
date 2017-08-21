@@ -46,24 +46,24 @@ STATIC FUNCTION get_vars( hParams )
 
    Box(, 14, 72 )
 
-   @ m_x + nX, m_y + 2 SAY "*** maloprodaja - izvjestaj TKM"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** maloprodaja - izvjestaj TKM"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Datum od" GET _d_od
-   @ m_x + nX, Col() + 1 SAY "do" GET _d_do
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datum od" GET _d_od
+   @ box_x_koord() + nX, Col() + 1 SAY "do" GET _d_do
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Konto (jedan, sint, više):" GET _konta PICT "@S35"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto (jedan, sint, više):" GET _konta PICT "@S35"
    ++nX
-   @ m_x + nX, m_y + 2 SAY "jedan: 13300 sint: 133 vise: 13300;13301;"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "jedan: 13300 sint: 133 vise: 13300;13301;"
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Export XLSX (D/N) ?" GET cXlsxDN PICT "@!" VALID cXlsXDN $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Export XLSX (D/N) ?" GET cXlsxDN PICT "@!" VALID cXlsXDN $ "DN"
 
    READ
 

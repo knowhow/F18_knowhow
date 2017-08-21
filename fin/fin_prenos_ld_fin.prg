@@ -27,10 +27,10 @@ FUNCTION LdFin()
    PRIVATE broj_radnika := 0
 
    Box( "#KONTIRANJE OBRACUNA PLATE", 10, 75 )
-   @ m_x + 2, m_y + 2 SAY "GODINA:" GET _godina PICT "9999"
-   @ m_x + 3, m_y + 2 SAY "MJESEC:" GET _mjesec PICT "99"
-   @ m_x + 5, m_y + 2 SAY "Shema kontiranja:" GET cShema PICT "@!"
-   @ m_x + 6, m_y + 2 SAY "Datum knjizenja :" GET dDatum
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "GODINA:" GET _godina PICT "9999"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "MJESEC:" GET _mjesec PICT "99"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Shema kontiranja:" GET cShema PICT "@!"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Datum knjizenja :" GET dDatum
    READ
    BoxC()
 

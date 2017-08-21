@@ -300,7 +300,7 @@ METHOD F18Login:promjena_sezone_box( cSession )
    LOCAL lRet := .T.
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "Pristup podacima sezone:" GET cSession VALID !Empty( cSession )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Pristup podacima sezone:" GET cSession VALID !Empty( cSession )
    READ
    BoxC()
 

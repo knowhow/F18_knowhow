@@ -39,24 +39,24 @@ FUNCTION os_pregled_po_rj()
 
    Box(, 12, 77 )
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Radna jedinica:" GET cIdRj VALID {|| P_RJ( @cIdrj ), if ( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
-      @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
-      @ m_x + 2, m_y + 2 SAY "Prikaz svih neotpisanih (N) / otpisanih(O) /"
-      @ m_x + 3, m_y + 2 SAY "samo novonabavljenih (B)    / iz proteklih godina (G)"   GET cON PICT "@!" VALID con $ "ONBG"
-      @ m_x + 4, m_y + 2 SAY "Prikazati kolicine na popisnoj listi D/N" GET cKolP VALID cKolP $ "DN" PICT "@!"
-      @ m_x + 5, m_y + 2 SAY "Prikazati kolonu 'opis' ? (D/N)" GET cOpis VALID cOpis $ "DN" PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica:" GET cIdRj VALID {|| P_RJ( @cIdrj ), if ( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
+      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prikaz svih neotpisanih (N) / otpisanih(O) /"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "samo novonabavljenih (B)    / iz proteklih godina (G)"   GET cON PICT "@!" VALID con $ "ONBG"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prikazati kolicine na popisnoj listi D/N" GET cKolP VALID cKolP $ "DN" PICT "@!"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikazati kolonu 'opis' ? (D/N)" GET cOpis VALID cOpis $ "DN" PICT "@!"
 
       IF os_postoji_polje( "brsoba" )
          lBrojSobe := .T.
-         @ m_x + 6, m_y + 2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  PICT "@!"
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  PICT "@!"
       ENDIF
 
-      @ m_x + 7, m_y + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
-      @ m_x + 8, m_y + 2 SAY "Filter po dobavljacima:" GET cFiltDob PICT "@!S20"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Filter po dobavljacima:" GET cFiltDob PICT "@!S20"
 
-      @ m_x + 10, m_y + 2 SAY "Pregled po amortizacionim stopama (D/N) ?" GET _po_amort PICT "@!" VALID _po_amort $ "DN"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Pregled po amortizacionim stopama (D/N) ?" GET _po_amort PICT "@!" VALID _po_amort $ "DN"
 
-      @ m_x + 12, m_y + 2 SAY8 "Export izvještaja (D/N) ?" GET _export_dn PICT "@!" VALID _export_dn $ "DN"
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY8 "Export izvještaja (D/N) ?" GET _export_dn PICT "@!" VALID _export_dn $ "DN"
 
       READ
       ESC_BCR

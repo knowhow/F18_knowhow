@@ -100,7 +100,7 @@ STATIC FUNCTION epdv_create_r_pdv()
    FErase ( my_home() + "epdv_r_" +  s_cTabela + ".cdx" )
    FErase ( my_home() + "epdv_r_" +  s_cTabela + ".dbf" )
 
-   aArr := get_pdv_fields()
+   aArr := epdv_get_pdv_fields()
 
    dbcreate2( my_home() + "epdv_r_" + s_cTabela + ".dbf", aArr )
 
@@ -213,8 +213,6 @@ STATIC FUNCTION epdv_prijava_fill_kuf_kif()
    USE
 
    Beep( 1 )
-
-   select_o_epdv_kif()
 
    //cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
    find_epdv_kif_za_period( dDatOd, dDatDo, hParams, "br_dok" )
@@ -379,14 +377,16 @@ STATIC FUNCTION epdv_zaokruzenje_pdv_prijava()
 
 STATIC FUNCTION epdv_prijava_fill_iz_pdv_tabele()
 
-   select_o_epdv_pdv()
+   //select_o_epdv_pdv()
 
 
-   SET ORDER TO TAG "period"
+   //SET ORDER TO TAG "period"
 
-   SEEK DToS( dDatOd ) + DToS( dDatDo )
+   //SEEK DToS( dDatOd ) + DToS( dDatDo )
 
-   IF !Found()
+
+  // IF !Found()
+  IF !find_epdv_pdv_za_period( dDatOd, dDatDo )
       Beep( 2 )
       MsgBeep( "Ne postoji pohranjen PDV obračun #za period " + DToC( dDatOd ) + "-" + DToC( dDatDo ) )
       USE

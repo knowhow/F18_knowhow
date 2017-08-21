@@ -66,9 +66,9 @@ FUNCTION CjenR()
    PRIVATE cCjenIzbor := " "
 
    BOX (, 4, 40 )
-   @ m_x + 1, m_y + 2 SAY "Cjenovnik broj : " GET cCjenBroj
-   @ m_x + 3, m_y + 2 SAY "Cjenovnik ( /M/V) : " GET cCjenIzbor VALID cCjenIzbor $ " MV"
-   @ m_x + 4, m_y + 2 SAY "M - sa MPC,V - sa VPC,prazno - sve"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Cjenovnik broj : " GET cCjenBroj
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Cjenovnik ( /M/V) : " GET cCjenIzbor VALID cCjenIzbor $ " MV"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "M - sa MPC,V - sa VPC,prazno - sve"
    READ
    BoxC()
 

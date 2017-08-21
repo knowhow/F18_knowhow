@@ -33,16 +33,16 @@ FUNCTION os_pregled_revalorizacije()
 
    Box(, 10, 77 )
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj VALID Empty( cIdRj ) .OR. p_rj( @cIdrj )
-      @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
-      @ m_x + 2, m_y + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
-      @ m_x + 4, m_y + 2 SAY "Za sredstvo prikazati vrijednost:"
-      @ m_x + 5, m_y + 2 SAY "1 - bez promjena"
-      @ m_x + 6, m_y + 2 SAY "2 - osnovni iznos + promjene"
-      @ m_x + 7, m_y + 2 SAY "3 - samo promjene           " GET cPromj VALID cpromj $ "123"
-      @ m_x + 8, m_y + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
-      @ m_x + 9, m_y + 2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
-      @ m_x + 10, m_y + 2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" GET cON VALID con $ "ONBG " PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj VALID Empty( cIdRj ) .OR. p_rj( @cIdrj )
+      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Za sredstvo prikazati vrijednost:"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "1 - bez promjena"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "2 - osnovni iznos + promjene"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "3 - samo promjene           " GET cPromj VALID cpromj $ "123"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" GET cON VALID con $ "ONBG " PICT "@!"
       read; ESC_BCR
       aUsl1 := Parsiraj( cFiltK1, "K1" )
       IF aUsl1 <> NIL; exit; ENDIF

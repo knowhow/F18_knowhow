@@ -15,6 +15,7 @@
 
 FUNCTION p_fakt_objekti( cId, dx, dy )
 
+   LOCAL i
    LOCAL nDbfArea := Select()
    PRIVATE ImeKol
    PRIVATE Kol

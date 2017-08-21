@@ -44,9 +44,9 @@ FUNCTION browse_kalk_dokumenti()
 
    Box(, 20, 77 )
 
-   @ m_x + 18, m_y + 2 SAY ""
-   @ m_x + 19, m_y + 2 SAY ""
-   @ m_x + 20, m_y + 2 SAY ""
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY ""
+   @ box_x_koord() + 19, box_y_koord() + 2 SAY ""
+   @ box_x_koord() + 20, box_y_koord() + 2 SAY ""
 
    set_a_kol( @ImeKol, @Kol )
 
@@ -164,8 +164,8 @@ STATIC FUNCTION brow_keyhandler( Ch )
       _br_fakt := hRec[ "brfaktp" ]
 
       Box(, 3, 60 )
-      @ m_x + 1, m_y + 2 SAY "Ispravka podataka dokumenta ***"
-      @ m_x + 3, m_y + 2 SAY "Broj fakture:" GET _br_fakt
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ispravka podataka dokumenta ***"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Broj fakture:" GET _br_fakt
       READ
       BoxC()
 
@@ -202,23 +202,23 @@ STATIC FUNCTION usl_browse_kalk_dokumenti( cFirma, cIdVd, dDatOd, dDatDo, ;
 
    SET CURSOR ON
 
-   @ nX + m_x, 2 + m_y SAY "Firma" GET cFirma
+   @ nX + box_x_koord(), 2 + box_y_koord() SAY "Firma" GET cFirma
 
    ++ nX
-   @ nX + m_x, 2 + m_y SAY "Datumski period od" GET dDatOd
-   @ nX + m_x, Col() + 1 SAY "do" GET dDatDo
+   @ nX + box_x_koord(), 2 + box_y_koord() SAY "Datumski period od" GET dDatOd
+   @ nX + box_x_koord(), Col() + 1 SAY "do" GET dDatDo
 
    nX := nX + 2
-   @ nX + m_x, 2 + m_y SAY "Vrsta dokumenta (prazno-svi)" GET cIdVd PICT "@S30"
+   @ nX + box_x_koord(), 2 + box_y_koord() SAY "Vrsta dokumenta (prazno-svi)" GET cIdVd PICT "@S30"
 
    ++ nX
-   @ nX + m_x, 2 + m_y SAY "Magacinski konto (prazno-svi)" GET cMagKto PICT "@S30"
+   @ nX + box_x_koord(), 2 + box_y_koord() SAY "Magacinski konto (prazno-svi)" GET cMagKto PICT "@S30"
 
    ++ nX
-   @ nX + m_x, 2 + m_y SAY "Prodavnicki konto (prazno-svi)" GET cProdKto PICT "@S30"
+   @ nX + box_x_koord(), 2 + box_y_koord() SAY "Prodavnicki konto (prazno-svi)" GET cProdKto PICT "@S30"
 
    nX := nX + 2
-   @ nX + m_x, 2 + m_y SAY "Partner:" GET cPartner VALID Empty( cPartner ) .OR. p_partner( @cPartner )
+   @ nX + box_x_koord(), 2 + box_y_koord() SAY "Partner:" GET cPartner VALID Empty( cPartner ) .OR. p_partner( @cPartner )
 
    READ
    BoxC()
@@ -267,8 +267,8 @@ FUNCTION kalk_pregled_dokumenata_hronoloski()
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
    SET CURSOR ON
-   @ m_x + 2, m_y + 1 SAY "<SPACE> pomjeri dokument nagore"
-   BrowseKey( m_x + 4, m_y + 1, m_x + 19, m_y + 77, ImeKol, {| Ch| pregled_dokumenata_hron_keyhandler( Ch ) }, "idFirma=cidFirma", cidFirma, 2,,, {|| .F. } )
+   @ box_x_koord() + 2, box_y_koord() + 1 SAY "<SPACE> pomjeri dokument nagore"
+   BrowseKey( box_x_koord() + 4, box_y_koord() + 1, box_x_koord() + 19, box_y_koord() + 77, ImeKol, {| Ch| pregled_dokumenata_hron_keyhandler( Ch ) }, "idFirma=cidFirma", cidFirma, 2,,, {|| .F. } )
 
    BoxC()
 
@@ -395,9 +395,9 @@ STATIC FUNCTION kalk_pregled_dokumenta()
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
    SET CURSOR ON
-   @ m_x + 2, m_y + 1 SAY "Pregled dokumenta: "
+   @ box_x_koord() + 2, box_y_koord() + 1 SAY "Pregled dokumenta: "
    ?? kalk_doks->idfirma, "-", kalk_doks->idvd, "-", kalk_doks->brdok, " od", kalk_doks->datdok
-   BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| kalk_pregled_dokumenta_key_handler( Ch ) }, "idFirma+idvd+brdok=kalk_doks->(idFirma+idvd+brdok)", kalk_doks->( idFirma + idvd + brdok ), 2,,, {|| .F. } )
+   BrowseKey( box_x_koord() + 4, box_y_koord() + 1, box_x_koord() + 15, box_y_koord() + 77, ImeKol, {| Ch| kalk_pregled_dokumenta_key_handler( Ch ) }, "idFirma+idvd+brdok=kalk_doks->(idFirma+idvd+brdok)", kalk_doks->( idFirma + idvd + brdok ), 2,,, {|| .F. } )
 
    BoxC()
 
@@ -546,14 +546,14 @@ STATIC FUNCTION pregled_kartice()
   -- SELECT roba; HSEEK cidroba; SELECT kalk
    IF Empty( cPkonto )
 --      SELECT koncij; SEEK Trim( cmkonto ); SELECT kalk
-      @ m_x + 2, m_y + 1 SAY "Pregled kartice magacin: "; ?? cMkonto, "-", cidroba,"-", Left( roba->naz, 40 )
-      BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
+      @ box_x_koord() + 2, box_y_koord() + 1 SAY "Pregled kartice magacin: "; ?? cMkonto, "-", cidroba,"-", Left( roba->naz, 40 )
+      BrowseKey( box_x_koord() + 4, box_y_koord() + 1, box_x_koord() + 15, box_y_koord() + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
          "idFirma+mkonto+idroba=cidFirma+cmkonto+cidroba", ;
          cidFirma + cmkonto + cidroba, 2,,, {|| OznaciMag( .T. ) } )
    ELSE
 --      SELECT koncij; SEEK Trim( cpkonto ) ; SELECT kalk
-      @ m_x + 2, m_y + 1 SAY "Pregled kartice prodavnica: "; ?? cPkonto, "-", cidroba, "-", Left( roba->naz, 40 )
-      BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
+      @ box_x_koord() + 2, box_y_koord() + 1 SAY "Pregled kartice prodavnica: "; ?? cPkonto, "-", cidroba, "-", Left( roba->naz, 40 )
+      BrowseKey( box_x_koord() + 4, box_y_koord() + 1, box_x_koord() + 15, box_y_koord() + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
          "idFirma+pkonto+idroba=cidFirma+cpkonto+cidroba", ;
          cidFirma + cpkonto + cidroba, 2,,, {|| OznaciPro( .T. ) } )
    ENDIF

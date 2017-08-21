@@ -372,10 +372,10 @@ STATIC FUNCTION _form_data( r_br, vars )
    _ed_kolicina := vars[ "kolicina" ]
    _ed_iznos := vars[ "iznos" ]
 
-   @ m_x + 1, m_y + 2 SAY "Red.br:  " GET r_br PICT "9999"
-   @ m_x + 3, m_y + 2 SAY "Roba:    " GET _ed_id_roba VALID P_Roba( @_ed_id_roba, 3, 24 )
-   @ m_x + 4, m_y + 2 SAY "Cijena:  " GET _ed_cijena PICT PicDEM
-   @ m_x + 5, m_y + 2 SAY "Kolicina:" GET _ed_kolicina PICT PicKol ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Red.br:  " GET r_br PICT "9999"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Roba:    " GET _ed_id_roba VALID P_Roba( @_ed_id_roba, 3, 24 )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Cijena:  " GET _ed_cijena PICT PicDEM
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Kolicina:" GET _ed_kolicina PICT PicKol ;
       VALID {|| _ed_iznos := _ed_cijena * _ed_kolicina, ;
       QQOut( "  Iznos:", Transform( _ed_iznos, PicDEM ) ), Inkey( 5 ), .T. }
 
@@ -406,21 +406,21 @@ STATIC FUNCTION _get_inv_vars( vars )
 
    Box( "", 5, 60, .F. )
 
-   @ m_x + 1, m_y + 6 SAY  "PREGLED UNESENIH KOLICINA"
+   @ box_x_koord() + 1, box_y_koord() + 6 SAY  "PREGLED UNESENIH KOLICINA"
 
    IF gNW $ "DR"
-      @ m_x + 2, m_y + 2 SAY "Firma "
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma "
       ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 2, m_y + 2 SAY "Firma: " GET _id_firma ;
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma: " GET _id_firma ;
          VALID {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
    ENDIF
 
-   @ m_x + 3, m_y + 2 SAY "  Konto " GET _konto ;
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "  Konto " GET _konto ;
       VALID P_Konto( @_konto )
-   @ m_x + 4, m_y + 2 SAY "Partner " GET _partner ;
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Partner " GET _partner ;
       VALID Empty( _partner ) .OR. p_partner( @_partner )
-   @ m_x + 5, m_y + 2 SAY "  Datum " GET _datum
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "  Datum " GET _datum
 
    READ
 
@@ -577,14 +577,14 @@ FUNCTION mat_obracun_inv()
 
    o_partner(); o_konto()
    Box( "", 4, 60 )
-   @ m_x + 1, m_y + 6 SAY "OBRACUN INVENTURE"
+   @ box_x_koord() + 1, box_y_koord() + 6 SAY "OBRACUN INVENTURE"
    IF gNW $ "DR"
-      @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdF VALID {|| p_partner( @cIdF ), cidf := Left( cidf, 2 ), .T. }
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma: " GET cIdF VALID {|| p_partner( @cIdF ), cidf := Left( cidf, 2 ), .T. }
    ENDIF
-   @ m_x + 3, m_y + 2 SAY "Konto  " GET cIdK VALID P_Konto( @cIdK )
-   @ m_x + 4, m_y + 2 SAY "Datum  " GET cIdD
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Konto  " GET cIdK VALID P_Konto( @cIdK )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Datum  " GET cIdD
    READ; ESC_BCR
    BoxC()
 
@@ -719,15 +719,15 @@ FUNCTION mat_nal_inventure()
    cIdTipDok := "09"
    o_partner(); o_konto()
    Box( "", 7, 60 )
-   @ m_x + 1, m_y + 6 SAY "FORMIRANJE NALOGA IZLAZA - USAGLASAVANJE"
-   @ m_x + 2, m_y + 6 SAY "KNJIZNOG I STVARNOG STANJA"
-   @ m_x + 4, m_y + 2 SAY "Nalog  " GET cIdF
-   @ m_x + 4, Col() + 2 SAY "-" GET cIdVN
-   @ m_x + 4, Col() + 2 SAY "-" GET cBrNal
-   @ m_x + 4, Col() + 4 SAY "Datum  " GET cIdD
-   @ m_x + 5, m_y + 2 SAY "Tip dokumenta" GET cIdTipDok
-   @ m_x + 6, m_y + 2 SAY "Konto  " GET cIdK VALID P_Konto( @cIdK )
-   @ m_x + 7, m_y + 2 SAY "Zaduzuje" GET cIdZaduz VALID Empty( @cIdZaduz ) .OR. p_partner( @cIdZaduz )
+   @ box_x_koord() + 1, box_y_koord() + 6 SAY "FORMIRANJE NALOGA IZLAZA - USAGLASAVANJE"
+   @ box_x_koord() + 2, box_y_koord() + 6 SAY "KNJIZNOG I STVARNOG STANJA"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Nalog  " GET cIdF
+   @ box_x_koord() + 4, Col() + 2 SAY "-" GET cIdVN
+   @ box_x_koord() + 4, Col() + 2 SAY "-" GET cBrNal
+   @ box_x_koord() + 4, Col() + 4 SAY "Datum  " GET cIdD
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Tip dokumenta" GET cIdTipDok
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Konto  " GET cIdK VALID P_Konto( @cIdK )
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Zaduzuje" GET cIdZaduz VALID Empty( @cIdZaduz ) .OR. p_partner( @cIdZaduz )
    READ; ESC_BCR
 
    BoxC()
@@ -834,9 +834,9 @@ FUNCTION mat_inv_obr_poreza()
    o_roba()
    nMjes := Month( cIdD )
    Box( "", 7, 60 )
-   @ m_x + 1, m_y + 6 SAY "PRENOS INV. STANJA U OBRACUN POREZA MP"
-   @ m_x + 5, m_y + 2 SAY "Mjesec " GET  nMjes PICT "99"
-   @ m_x + 6, m_y + 2 SAY "Konto  " GET cIdK VALID P_Konto( @cIdK )
+   @ box_x_koord() + 1, box_y_koord() + 6 SAY "PRENOS INV. STANJA U OBRACUN POREZA MP"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Mjesec " GET  nMjes PICT "99"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Konto  " GET cIdK VALID P_Konto( @cIdK )
    READ; ESC_BCR
    BoxC()
 

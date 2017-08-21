@@ -136,6 +136,8 @@ FUNCTION show_insert_over_stanje( lSWap )
 
 FUNCTION set_global_screen_vars()
 
+   //PUBLIC box_x_koord() := 0
+   //PUBLIC box_y_koord() := 0
    PUBLIC m_x := 0
    PUBLIC m_y := 0
 

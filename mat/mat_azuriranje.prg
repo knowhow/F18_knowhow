@@ -217,7 +217,7 @@ STATIC FUNCTION _mat_azur_sql()
    _log_info := _record[ "idfirma" ] + "-" + _record[ "idvn" ] + "-" + _record[ "brnal" ]
    AAdd( _ids_suban, "#2" + _tmp_id )
 
-   @ m_x + 1, m_y + 2 SAY "mat_suban -> server: " + _tmp_id
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "mat_suban -> server: " + _tmp_id
    DO WHILE !Eof()
 
       _record := dbf_get_rec()
@@ -351,7 +351,7 @@ STATIC FUNCTION _mat_azur_dbf()
 
    Box(, 7, 30, .F. )
 
-   @ m_x + 1, m_y + 2 SAY "ANALITIKA"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "ANALITIKA"
    SELECT mat_panal
    GO TOP
 
@@ -371,7 +371,7 @@ STATIC FUNCTION _mat_azur_dbf()
    SELECT mat_panal
    my_dbf_zap()
 
-   @ m_x + 3, m_y + 2 SAY "SINTETIKA"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "SINTETIKA"
    SELECT mat_psint
    GO TOP
 
@@ -392,7 +392,7 @@ STATIC FUNCTION _mat_azur_dbf()
    SELECT mat_psint
    my_dbf_zap()
 
-   @ m_x + 5, m_y + 2 SAY "NALOZI"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "NALOZI"
    SELECT mat_pnalog
    GO TOP
 
@@ -413,7 +413,7 @@ STATIC FUNCTION _mat_azur_dbf()
    SELECT mat_pnalog
    my_dbf_zap()
 
-   @ m_x + 7, m_y + 2 SAY "SUBANALITIKA"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "SUBANALITIKA"
    SELECT mat_psuban
    GO TOP
 

@@ -515,21 +515,21 @@ STATIC FUNCTION tops_kalk_get_nacin_zamjene_barkodova()
 
    Box(, 7, 60 )
 
-   @ m_x + _x, m_y + 2 SAY "Zamjena barkod-ova"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Zamjena barkod-ova"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "0 - bez zamjene"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "0 - bez zamjene"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "1 - ubaci samo nove"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "1 - ubaci samo nove"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "2 - zamjeni sve"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "2 - zamjeni sve"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY Space( 15 ) + "=> odabir" GET _ret PICT "9"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY Space( 15 ) + "=> odabir" GET _ret PICT "9"
 
    READ
 
@@ -553,22 +553,22 @@ STATIC FUNCTION kalk_tops_get_parametri_prenosa( params )
 
    Box(, 8, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR f18_color_i()
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR f18_color_i()
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Za datum od:" GET _d_od
-   @ m_x + _x, Col() + 1 SAY "do:" GET _d_do
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Za datum od:" GET _d_od
+   @ box_x_koord() + _x, Col() + 1 SAY "do:" GET _d_do
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Prodajno mjesto:" GET _id_pm VALID !Empty( _id_pm )
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Prodajno mjesto:" GET _id_pm VALID !Empty( _id_pm )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Formiraj: [1] kalk.42, [2] kalk.11" GET _type VALID _type $ "12"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Formiraj: [1] kalk.42, [2] kalk.11" GET _type VALID _type $ "12"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Kod 11-ke konto magacina:" GET cIdKontoMagacin
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Kod 11-ke konto magacina:" GET cIdKontoMagacin
 
    READ
 
@@ -603,7 +603,7 @@ STATIC FUNCTION tops_kalk_get_magacinski_konto()
    --SELECT konto
 
    Box(, 3, 60 )
-   @ m_x + 2, m_y + 2 SAY "Magacinski konto:" GET _konto VALID P_Konto( @_konto )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Magacinski konto:" GET _konto VALID P_Konto( @_konto )
    READ
    BoxC()
 

@@ -14,11 +14,11 @@
 
 FUNCTION set_a_dbf_epdv()
 
-   set_a_dbf_epdv_pdv()
+   set_a_sql_epdv_pdv()
 
    // kuf i kif su tabele identične strukture
-   set_a_dbf_epdv_kuf_kif( "epdv_kuf", "KUF", F_KUF )
-   set_a_dbf_epdv_kuf_kif( "epdv_kif", "KIF", F_KIF )
+   set_a_sql_epdv_kuf_kif( "epdv_kuf", "KUF", F_KUF )
+   set_a_sql_epdv_kuf_kif( "epdv_kif", "KIF", F_KIF )
 
 
    set_a_sql_sifarnik( "epdv_sg_kif", "SG_KIF", F_SG_KIF )
@@ -35,7 +35,7 @@ FUNCTION set_a_dbf_epdv()
 
 
 
-FUNCTION set_a_dbf_epdv_pdv()
+FUNCTION set_a_sql_epdv_pdv()
 
    LOCAL hItem, hAlgoritam, cTable
 
@@ -47,7 +47,7 @@ FUNCTION set_a_dbf_epdv_pdv()
    hItem[ "table" ] := cTable
    hItem[ "wa" ]    := F_PDV
    hItem[ "temp" ]  := .F.
-   hItem[ "sql" ]  := .F.
+   hItem[ "sql" ]  := .T.
    hItem[ "sif" ]  := .F.
 
    hItem[ "algoritam" ] := {}
@@ -68,7 +68,7 @@ FUNCTION set_a_dbf_epdv_pdv()
    RETURN .T.
 
 
-FUNCTION set_a_dbf_epdv_kuf_kif( cTable, cAlias, nWa )
+FUNCTION set_a_sql_epdv_kuf_kif( cTable, cAlias, nWa )
 
    LOCAL hItem, hAlgoritam
 
@@ -79,7 +79,7 @@ FUNCTION set_a_dbf_epdv_kuf_kif( cTable, cAlias, nWa )
    hItem[ "table" ] := cTable
    hItem[ "wa" ]    := nWa
    hItem[ "temp" ]  := .F.
-   hItem[ "sql" ]  := .F.
+   hItem[ "sql" ]  := .T.
    hItem[ "sif" ]  := .F.
 
    hItem[ "algoritam" ] := {}

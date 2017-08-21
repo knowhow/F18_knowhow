@@ -32,11 +32,11 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
    IF dx <> NIL .AND. dy <> nil
 
       IF ( nDbf )->( FieldPos( "naz" ) ) <> 0
-         @ m_x + dx, m_y + dy SAY PadR( cTmp, 70 - dy )
+         @ box_x_koord() + dx, box_y_koord() + dy SAY PadR( cTmp, 70 - dy )
       ENDIF
 
       IF ( nDbf )->( FieldPos( "naziv" ) ) <> 0
-         @ m_x + dx, m_y + dy SAY PadR( cTmp, 70 - dy )
+         @ box_x_koord() + dx, box_y_koord() + dy SAY PadR( cTmp, 70 - dy )
       ENDIF
 
    ELSEIF dx <> NIL .AND. dx > 0 .AND. dx < 25

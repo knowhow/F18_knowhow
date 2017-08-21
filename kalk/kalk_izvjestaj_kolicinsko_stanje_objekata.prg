@@ -368,7 +368,7 @@ FUNCTION kalk_gen_rekap1( aUsl1, aUsl2, s_cUslovIdRoba, cKartica, cVarijanta, cK
       kalk_scan_prodavnicki_konto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
 
       IF ( ( ++nStavki % 100 ) == 0 )
-         @ m_x + 1, m_y + 2 SAY nStavki PICT "99999999999999"
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY nStavki PICT "99999999999999"
       ENDIF
 
       SELECT kalk
@@ -400,8 +400,8 @@ FUNCTION kalk_gen_rekap1( aUsl1, aUsl2, s_cUslovIdRoba, cKartica, cVarijanta, cK
             SKIP
          ENDDO
       ENDIF
-      @ m_x + 1, m_y + 2 SAY "***********************"
-      @ m_x + 1, Col() + 2 SAY ++nStavki PICT "99999999999999"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "***********************"
+      @ box_x_koord() + 1, Col() + 2 SAY ++nStavki PICT "99999999999999"
       SELECT roba
       SKIP
    ENDDO
@@ -884,11 +884,11 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
    SET CURSOR ON
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Konta objekata:" GET s_cUslovIdKonto PICT "@!S50"
-      @ m_x + 3, m_y + 2 SAY8 "tekući promet je period:" GET dDatOd
-      @ m_x + 3, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 4, m_y + 2 SAY "Kriterij za robu :" GET s_cUslovIdRoba PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Prikaz prodaje (D/N)" GET cPrikProd PICT "@!" VALID cPrikProd $ "DN"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Konta objekata:" GET s_cUslovIdKonto PICT "@!S50"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "tekući promet je period:" GET dDatOd
+      @ box_x_koord() + 3, Col() + 2 SAY "do" GET dDatDo
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Kriterij za robu :" GET s_cUslovIdRoba PICT "@!S50"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz prodaje (D/N)" GET cPrikProd PICT "@!" VALID cPrikProd $ "DN"
       READ
 
       IF ( LastKey() == K_ESC )

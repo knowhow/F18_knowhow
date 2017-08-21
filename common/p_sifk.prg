@@ -13,7 +13,6 @@
 
 
 
-
 FUNCTION P_Sifk( cId, nDeltaX, nDeltaY )
 
    LOCAL i
@@ -22,7 +21,7 @@ FUNCTION P_Sifk( cId, nDeltaX, nDeltaY )
    Kol := {}
 
    o_sifk() // P_SIFK
-   //o_sifv()
+   
    ImeKol := { { PadR( "Id", 15 ),      {|| id }, "id"  }, ;
       { PadR( "Naz", 25 ),     {||  naz }, "naz" }, ;
       { PadR( "Sort", 4 ),     {|| sort }, "sort" }, ;

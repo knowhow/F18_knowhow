@@ -452,7 +452,7 @@
                         [WHEN <when>]                                   ;
                         [SEND <msg>]                                    ;
                                                                         ;
-      => SetPos( m_x+<row>, m_y+<col> )                                 ;
+      => SetPos( box_x_koord()+<row>, box_y_koord()+<col> )                                 ;
        ; AAdd(                                                          ;
                GetList,                                                 ;
                _GET_( <var>, <(var)>, <pic>, <{valid}>, <{when}> )      ;
@@ -475,7 +475,7 @@
                         [PICTURE <pic>]                                 ;
                         [COLOR <color>]                                 ;
                                                                         ;
-      => DevPos( m_x+<row>, m_y+<col> )                                 ;
+      => DevPos( box_x_koord()+<row>, box_y_koord()+<col> )                                 ;
        ; DevOutPict( <xpr>, <pic> [, <color>] )
 
 #command SET MRELATION                                                  ;

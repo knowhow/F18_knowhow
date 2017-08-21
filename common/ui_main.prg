@@ -36,31 +36,32 @@ FUNCTION box_y_koord( nSet )
 
    RETURN m_y
 
-FUNCTION Calc_xy( m_x, m_y, N, nSirina )
 
-   LOCAL x, y
+FUNCTION Calc_xy( nN0, nSirina )
+
+   LOCAL nX, nY
 
    // OPIS  : Odredjuje poziciju za ispis sljedeceg menija na
    // osnovu pozicije kursora M-x i m_y
 
-   x := Row()
-   y := Col()
+   nX := Row()
+   nY := Col()
 
    // Odredi x koordinatu
-   IF ( f18_max_rows() - 2 - x ) >=  ( N + 2 )
-      m_x := x + 1
+   IF ( f18_max_rows() - 2 - nX ) >=  ( nN0 + 2 )
+      box_x_koord( nX + 1 )
 
-      IF nSirina + y + 3 <= f18_max_cols() - 4
-         m_y := y + 3
-      ELSEIF ( y + 5 ) < ( f18_max_cols() - 2 ) .AND.  ( y - nSirina > 0 )
-         m_y := y - nSirina + 5
+      IF nSirina + nY + 3 <= f18_max_cols() - 4
+         box_y_koord( nY + 3 )
+      ELSEIF ( nX + 5 ) < ( f18_max_cols() - 2 ) .AND.  ( nY - nSirina > 0 )
+         box_y_koord( nY - nSirina + 5 )
       ELSE
-         m_y := Int( ( f18_max_cols() - 2 - nSirina ) / 2 )
+         box_y_koord( Int( ( f18_max_cols() - 2 - nSirina ) / 2 ) )
       END IF
 
    ELSE
-      m_x := Int( ( f18_max_rows() - 3 - N ) / 2 + 1 )
-      m_y := Int( ( f18_max_cols() - nSirina - 2 ) / 2 )
+      box_x_koord( Int( ( f18_max_rows() - 3 - nN0 ) / 2 + 1 ) )
+      box_y_koord( Int( ( f18_max_cols() - nSirina - 2 ) / 2 ) )
    END IF
 
    RETURN .T.
@@ -238,24 +239,24 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, aOpcijeIliCPoruka, cHelpT )
 
    SET DEVICE TO SCREEN
 
-   _m_x := m_x
-   _m_y := m_y
+   //_m_x := box_x_koord()
+   //_m_y := box_y_koord()
    _nA1 := nVisina
 
-   Calc_xy( @_m_x, @_m_y, @_nA1, nSirina )
+   Calc_xy( @_nA1, nSirina )
 
    // stvori prostor za prikaz
    IF ValType( aOpcijeIliCPoruka ) == "A"
 
       cBoxId := prikaz_dostupnih_opcija( aOpcijeIliCPoruka )
 
-      IF _m_x + _NA1 > f18_max_rows() - 3 - cBoxId
+      IF box_x_koord() + _NA1 > f18_max_rows() - 3 - cBoxId
 
-         _m_x := f18_max_rows() - 4 - cBoxId - _nA1
+         box_x_koord(  f18_max_rows() - 4 - cBoxId - _nA1 )
 
-         IF _m_x < 1
+         IF box_x_koord() < 1
             _nA1 := f18_max_rows() - 5 - cBoxId
-            _m_x := 1
+            box_x_koord( 1 )
          ENDIF
 
       ENDIF
@@ -266,13 +267,14 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, aOpcijeIliCPoruka, cHelpT )
       aOpcijeIliCPoruka := ""
    ENDIF
 
-   m_x := _m_x
-   m_y := _m_y
+   //m_x := _m_x
+   //m_y := _m_y
+
    nVisina := _nA1
 
    StackPush( aBoxStack, ;
-      {  m_x, ;
-      m_y, ;
+      {  box_x_koord(), ;
+      box_y_koord(), ;
       nVisina,   ;
       nSirina, ;
       SaveScreen( m_x, m_y, m_x + nVisina + 1, m_Y + nSirina + 2 ), ;
@@ -292,11 +294,11 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, aOpcijeIliCPoruka, cHelpT )
 
    SetColor( cColor )
 
-   Scroll( m_x, m_y, m_x + nVisina + 1, m_Y + nSirina + 2 )
-   @ m_x, m_y TO m_x + nVisina + 1, m_y + nSirina + 2 DOUBLE
+   Scroll( box_x_koord(), box_y_koord(), box_x_koord() + nVisina + 1, box_y_koord() + nSirina + 2 )
+   @ box_x_koord(), box_y_koord() TO box_x_koord() + nVisina + 1, box_y_koord() + nSirina + 2 DOUBLE
 
    IF !Empty( cNaslovBoxa )
-      @ m_x, m_y + 2 SAY8 cNaslovBoxa COLOR "GR+/B"
+      @ box_x_koord(), box_y_koord() + 2 SAY8 cNaslovBoxa COLOR "GR+/B"
    ENDIF
 
    Set( _SET_DEVICE, cPom )
@@ -314,8 +316,9 @@ FUNCTION BoxC()
 
    aBoxPar := StackPop( aBoxStack )
 
-   m_x := aBoxPar[ 1 ]
-   m_y := aBoxPar[ 2 ]
+   box_x_koord( aBoxPar[ 1 ] )
+   box_y_koord( aBoxPar[ 2 ] )
+
    nVisina := aBoxPar[ 3 ]
    nSirina := aBoxPar[ 4 ]
 
@@ -332,8 +335,8 @@ FUNCTION BoxC()
 
    IF !StackIsEmpty( aBoxStack )
       aBoxPar := StackTop( aBoxStack )
-      m_x := aBoxPar[ 1 ]
-      m_y := aBoxPar[ 2 ]
+      box_x_koord( aBoxPar[ 1 ] )
+      box_y_koord( aBoxPar[ 2 ] )
       nVisina := aBoxPar[ 3 ]
       nSirina := aBoxPar[ 4 ]
    ENDIF

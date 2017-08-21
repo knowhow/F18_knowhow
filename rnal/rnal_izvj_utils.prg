@@ -45,16 +45,16 @@ FUNCTION std_vars( dD_f, dD_t, nOper, cStatus, cExport )
 
    Box(, 6, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Datum od:" GET dD_f
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum od:" GET dD_f
 
-   @ m_x + 1, Col() + 1 SAY "do:" GET dD_t
+   @ box_x_koord() + 1, Col() + 1 SAY "do:" GET dD_t
 
-   @ m_x + 2, m_y + 2 SAY "Operater (0 - svi):" GET nOper ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Operater (0 - svi):" GET nOper ;
       VALID {|| nOper == 0, iif( nOper == -99, choose_f18_user_from_list( @nOper ), .T. ) } PICT "9999999999"
 
-   @ m_x + 3, m_y + 2 SAY "(O)tvoreni / (Z)atvoreni / (S)vi" GET cStatus VALID cStatus $ "OZS" PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "(O)tvoreni / (Z)atvoreni / (S)vi" GET cStatus VALID cStatus $ "OZS" PICT "@!"
 
-   @ m_x + 5, m_y + 2 SAY8 "Export izvještaja (D/N)?" GET cExport VALID cExport $ "DN" PICT "@!"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Export izvještaja (D/N)?" GET cExport VALID cExport $ "DN" PICT "@!"
 
    READ
 

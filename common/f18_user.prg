@@ -42,7 +42,7 @@ FUNCTION f18_set_user_preferences( params )
 
       Box(, 6, 65 )
 
-      @ m_x + _x, m_y + 2 SAY "Korisnik (0 - odaberi iz liste):" GET _user_id ;
+      @ box_x_koord() + _x, box_y_koord() + 2 SAY "Korisnik (0 - odaberi iz liste):" GET _user_id ;
          VALID {|| iif( _user_id == 0, choose_f18_user_from_list( @_user_id ), .T. ), ;
          show_it( GetFullUserName( _user_id ), 30 ), .T.  }
 
@@ -53,10 +53,10 @@ FUNCTION f18_set_user_preferences( params )
 
       ++ _x
       ++ _x
-      @ m_x + _x, m_y + 2 SAY PadL( "Puno ime i prezime:", 20 ) GET _proper_name PICT "@S50"
+      @ box_x_koord() + _x, box_y_koord() + 2 SAY PadL( "Puno ime i prezime:", 20 ) GET _proper_name PICT "@S50"
 
       ++ _x
-      @ m_x + _x, m_y + 2 SAY PadL( "Email:", 20 ) GET _email PICT "@S50"
+      @ box_x_koord() + _x, box_y_koord() + 2 SAY PadL( "Email:", 20 ) GET _email PICT "@S50"
 
       READ
 

@@ -484,7 +484,7 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, dDatumPosljednjeOtpr )
 
       @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Rok plać.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, @_datdok, @hFaktTxt[ "datpl" ], "0", .T. ) ;
          VALID valid_rok_placanja( nRokPl, "1", .T. )
-      @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Datum plaćanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, @_datdok, @hFaktTxt[ "datpl" ], "2", .T. )
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Datum plaćanja :" GET hFaktTxt[ "datpl" ] VALID valid_rok_placanja( nRokPl, @_datdok, @hFaktTxt[ "datpl" ], "2", .T. )
 
       READ
    ENDIF

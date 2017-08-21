@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y, GetList, glBrojacPoKontima, gBrojacKalkulacija
+MEMVAR glBrojacPoKontima, gBrojacKalkulacija
 
 STATIC s_nLenKalkBrojac
 
@@ -437,11 +437,11 @@ FUNCTION kalk_set_param_broj_dokumenta()
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Dokument:" GET _firma
-   @ m_x + 1, Col() + 1 SAY "-" GET _tip_dok
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Dokument:" GET _firma
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET _tip_dok
 
    IF glBrojacPoKontima
-      @ m_x + 1, Col() + 1 SAY " konto:" GET _konto
+      @ box_x_koord() + 1, Col() + 1 SAY " konto:" GET _konto
    ENDIF
 
    READ
@@ -460,7 +460,7 @@ FUNCTION kalk_set_param_broj_dokumenta()
    _broj := fetch_metric( _param, nil, _broj )
    _broj_old := _broj
 
-   @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "99999999"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "99999999"
 
    READ
 
@@ -486,12 +486,12 @@ FUNCTION get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )
 
       Box( "#Glavni konto za brojač", 3, 70 )
       IF _idvd $ "10#16#18#IM#"
-         @ m_x + 2, m_y + 2 SAY8 "Magacinski konto: " GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Magacinski konto: " GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
          READ
 
          cIdKonto := _idKonto
       ELSE
-         @ m_x + 2, m_y + 2 SAY8 "Prodavnički konto: " GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Prodavnički konto: " GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
          READ
          cIdKonto := _idKonto2
       ENDIF

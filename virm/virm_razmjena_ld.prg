@@ -60,25 +60,25 @@ FUNCTION virm_prenos_ld( lPrenosLDVirm )
 
    Box(, 10, 70 )
 
-   @ m_x + 1, m_y + 2 SAY8 "GENERISANJE VIRMANA NA OSNOVU OBRAČUNA PLATE"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "GENERISANJE VIRMANA NA OSNOVU OBRAČUNA PLATE"
 
    _id_banka := PadR( _racun_upl, 3 )
 
-   @ m_x + 2, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET _id_banka VALID virm_odredi_ziro_racun( _firma, @_id_banka )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Posiljaoc (sifra banke):       " GET _id_banka VALID virm_odredi_ziro_racun( _firma, @_id_banka )
    READ
 
    _racun_upl := _id_banka
 
    SELECT virm_pripr
 
-   @ m_x + 3, m_y + 2 SAY "Poziv na broj " GET _poziv_na_broj
-   @ m_x + 4, m_y + 2 SAY "godina" GET _godina PICT "9999"
-   @ m_x + 5, m_y + 2 SAY "mjesec" GET _mjesec  PICT "99"
-   @ m_x + 7, m_y + 2 SAY "Datum" GET _dat_virm
-   @ m_x + 8, m_y + 2 SAY "Porezni period od" GET _per_od
-   @ m_x + 8, Col() + 2 SAY "do" GET _per_do
-   @ m_x + 9, m_y + 2 SAY8 "Isplate prebaciti pojedinačno za svakog radnika (D/N)?" GET _ispl_posebno VALID _ispl_posebno $ "DN" PICT "@!"
-   @ m_x + 10, m_y + 2 SAY8 "Formirati samo stavke sa iznosima većim od 0 (D/N)?" GET _bez_nula VALID _bez_nula $ "DN" PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Poziv na broj " GET _poziv_na_broj
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "godina" GET _godina PICT "9999"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "mjesec" GET _mjesec  PICT "99"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Datum" GET _dat_virm
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Porezni period od" GET _per_od
+   @ box_x_koord() + 8, Col() + 2 SAY "do" GET _per_do
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Isplate prebaciti pojedinačno za svakog radnika (D/N)?" GET _ispl_posebno VALID _ispl_posebno $ "DN" PICT "@!"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Formirati samo stavke sa iznosima većim od 0 (D/N)?" GET _bez_nula VALID _bez_nula $ "DN" PICT "@!"
 
    READ
 

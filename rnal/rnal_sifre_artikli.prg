@@ -117,7 +117,7 @@ FUNCTION s_articles( cId, lAutoFind, lQuickFind )
 
       Box(, nBoxX, nBoxY, .T. )
 
-      @ m_x + nBoxX + 1, m_y + 2 SAY cOptions
+      @ box_x_koord() + nBoxX + 1, box_y_koord() + 2 SAY cOptions
 
       my_browse(, nBoxX, nBoxY, {|| key_handler( Ch ) }, cHeader, cFooter, .T.,,,, 7 )
 
@@ -283,32 +283,32 @@ STATIC FUNCTION odaberi_tip_artikla( nType, cSchema )
 
    Box(, 10, 50 )
 
-   @ m_x + nX, m_y + 2 SAY "Odabir vrste artikla"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Odabir vrste artikla"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "   (1) jednostruko staklo"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "   (1) jednostruko staklo"
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "   (2) dvostruko staklo"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "   (2) dvostruko staklo"
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY8 "   (3) trostruko/višestruko staklo"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "   (3) trostruko/višestruko staklo"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "   (0) ostalo"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "   (0) ostalo"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY " selekcija:" GET nType VALID nType >= 0 .AND. nType <= 3 PICT "9"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " selekcija:" GET nType VALID nType >= 0 .AND. nType <= 3 PICT "9"
 
    READ
 
    IF nType <> 0
-      @ m_x + nX, m_y + 18 SAY8 "šema:" GET cSchema VALID odaberi_shemu_artikla( @cSchema, nType )
+      @ box_x_koord() + nX, box_y_koord() + 18 SAY8 "šema:" GET cSchema VALID odaberi_shemu_artikla( @cSchema, nType )
    ENDIF
 
    READ
@@ -534,11 +534,11 @@ STATIC FUNCTION brza_pretraga_uslov()
 
    Box(, nBoxX, nBoxY )
 
-   @ m_x + nX, m_y + 2 SAY "===>>> Brza pretraga artikala ===>>>"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "===>>> Brza pretraga artikala ===>>>"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "uslov:" GET __qf_cond VALID validacija_uslova( __qf_cond ) PICT "@S60!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "uslov:" GET __qf_cond VALID validacija_uslova( __qf_cond ) PICT "@S60!"
 
    READ
    BoxC()
@@ -1599,13 +1599,13 @@ STATIC FUNCTION ispravka_artikla_box( cArt_desc, cArt_full_desc, ;
 
    Box(, 6, 70 )
 
-   @ m_x + 1, m_y + 2 SAY "*** pregled/korekcija podataka artikla"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "*** pregled/korekcija podataka artikla"
 
-   @ m_x + 3, m_y + 2 SAY "Puni naziv:" GET cArt_full_desc PICT "@S57" VALID !Empty( cArt_full_desc )
-   @ m_x + 4, m_y + 2 SAY "Skr. naziv:" GET cArt_desc PICT "@S57" VALID !Empty( cArt_desc )
-   @ m_x + 5, m_y + 2 SAY "Lab. tekst:" GET cArt_lab_desc PICT "@S57"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Puni naziv:" GET cArt_full_desc PICT "@S57" VALID !Empty( cArt_full_desc )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Skr. naziv:" GET cArt_desc PICT "@S57" VALID !Empty( cArt_desc )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Lab. tekst:" GET cArt_lab_desc PICT "@S57"
 
-   @ m_x + 6, m_y + 2 SAY "Match code:" GET cArt_mcode
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Match code:" GET cArt_mcode
 
    READ
 
@@ -1811,7 +1811,7 @@ FUNCTION rpt_artikli_bez_elemenata()
       _elem := {}
       _art_id := field->art_id
 
-      @ m_x + 1, m_y + 2 SAY "Artikal: " + AllTrim( Str ( _art_id ) )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Artikal: " + AllTrim( Str ( _art_id ) )
 
       rnal_matrica_artikla( _art_id, @_elem )
 

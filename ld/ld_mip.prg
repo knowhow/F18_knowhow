@@ -366,7 +366,7 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
       cR_opc := ""
       cSifraRadnogMjestaUvecanoTrajanje := ""
 
-      @ m_x + 1, m_y + 2 SAY cIdRadnikTekuci
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY cIdRadnikTekuci
 
 
       DO WHILE !Eof() .AND. field->idradn == cIdRadnikTekuci

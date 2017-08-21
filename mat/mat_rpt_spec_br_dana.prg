@@ -578,33 +578,33 @@ STATIC FUNCTION _get_vars( params )
    Box(, 10, 70 )
 
    IF gNW == "D"
-      @ m_x + _cnt, m_y + 2 SAY "Firma "
+      @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Firma "
       ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + _cnt, m_y + 2 SAY "Firma: " GET _firma ;
+      @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Firma: " GET _firma ;
          VALID {|| p_partner( @_firma ), _firma := Left( _firma, 2 ), .T. }
    ENDIF
 
    ++ _cnt
    ++ _cnt
 
-   @ m_x + _cnt, m_y + 2 SAY "  Konto (prazno-sva):" GET _konta PICT "@S45"
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "  Konto (prazno-sva):" GET _konta PICT "@S45"
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Artikli (prazno-sva):" GET _artikli PICT "@S45"
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Artikli (prazno-sva):" GET _artikli PICT "@S45"
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Izvjestaj se pravi na dan:" GET _date
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Izvjestaj se pravi na dan:" GET _date
 
    ++ _cnt
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Interval 1 (mj):" GET _int_1 PICT "999"
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Interval 1 (mj):" GET _int_1 PICT "999"
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Interval 2 (mj):" GET _int_2 PICT "999"
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Interval 2 (mj):" GET _int_2 PICT "999"
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)?" GET _nule ;
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)?" GET _nule ;
       VALID _nule $ "DN" PICT "!@"
 
    READ

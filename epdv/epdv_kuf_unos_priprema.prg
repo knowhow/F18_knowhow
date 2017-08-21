@@ -73,7 +73,7 @@ STATIC FUNCTION epdv_kuf_edit_item( lNova )
    Box(, f18_max_rows() - 10, f18_max_cols() - 12 )
    IF lNova
       _br_dok := 0
-      _r_br := epdv_next_r_br( "P_KUF" )
+      _r_br := epdv_priprema_next_r_br( "P_KUF" )
       _id_part := Space( Len( id_part ) )
       _id_tar := PadR( "PDV17", Len( id_tar ) )
       _datum := Date()
@@ -212,7 +212,7 @@ STATIC FUNCTION epdv_kuf_key_handler( Ch )
       IF LastKey() <> K_ESC
          epdv_rpt_kuf( nBrDokP )
          my_close_all_dbf()
-         epdv_otvori_kuf_tabele( .T. )
+         epdv_otvori_kuf_priprema()
          SELECT P_KUF
          SET ORDER TO TAG "br_dok"
          RETURN DE_REFRESH
@@ -244,7 +244,7 @@ STATIC FUNCTION epdv_kuf_key_handler( Ch )
          IF LastKey() <> K_ESC
             epdv_povrat_kuf( nBrDokP )
             my_close_all_dbf()
-            epdv_otvori_kuf_tabele( .T. )
+            epdv_otvori_kuf_priprema()
             SELECT P_KUF
             SET ORDER TO TAG "br_dok"
             RETURN DE_REFRESH
@@ -275,7 +275,7 @@ STATIC FUNCTION epdv_kuf_key_handler( Ch )
 
 FUNCTION epdv_edit_kuf()
 
-   epdv_otvori_kuf_tabele( .T. )
+   epdv_otvori_kuf_priprema()
    epdv_kuf_tbl_priprema()
 
    RETURN .T.

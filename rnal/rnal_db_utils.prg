@@ -264,7 +264,7 @@ FUNCTION rnal_promjena_broja_naloga( old_doc )
    ENDIF
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "setuj novi broj:" GET _new_no VALID _new_no <> old_doc
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "setuj novi broj:" GET _new_no VALID _new_no <> old_doc
    READ
    BoxC()
 
@@ -523,7 +523,7 @@ FUNCTION rnal_set_param_broj_dokumenta()
    _broj := fetch_metric( _param, nil, _broj )
    _broj_old := _broj
 
-   @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "9999999999"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "9999999999"
 
    READ
 

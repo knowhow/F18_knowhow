@@ -1384,7 +1384,7 @@ FUNCTION prn_nal()
    LOCAL nDoc_no := 0
 
    Box(, 1, 30 )
-   @ m_x + 1, m_y + 2 SAY "Broj naloga:" GET nDoc_no PICT "999999999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj naloga:" GET nDoc_no PICT "999999999"
    READ
    BoxC()
 

@@ -28,10 +28,10 @@ FUNCTION sastavnice_lista()
 
    DO WHILE .T.
       Box(, 7, 60 )
-      @ m_x + 1, m_y + 2 SAY "Proizvodi :" GET qqProiz  PICT "@!S30"
-      @ m_x + 3, m_y + 2 SAY "Brisanje prekinutih sastavnica ? (D/N)" GET cBrisiPrekinuteSastavniceDN  PICT "@!" VALID cBrisiPrekinuteSastavniceDN $ "DN"
-      @ m_x + 5, m_y + 2 SAY "Prikazati samo proizvode bez sastavnica ? (D/N)" GET cSamoBezSast  PICT "@!" VALID cSamoBezSast $ "DN"
-      @ m_x + 7, m_y + 2 SAY "Prikazati NC i VPC ? (D/N)" GET cNCVPC VALID cNCVPC $ "DN" PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Proizvodi :" GET qqProiz  PICT "@!S30"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Brisanje prekinutih sastavnica ? (D/N)" GET cBrisiPrekinuteSastavniceDN  PICT "@!" VALID cBrisiPrekinuteSastavniceDN $ "DN"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikazati samo proizvode bez sastavnica ? (D/N)" GET cSamoBezSast  PICT "@!" VALID cSamoBezSast $ "DN"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prikazati NC i VPC ? (D/N)" GET cNCVPC VALID cNCVPC $ "DN" PICT "@!"
       READ
       BoxC()
 

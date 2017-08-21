@@ -22,8 +22,8 @@ STATIC _doc
 // ------------------------------------------
 FUNCTION e_doc_item( nDoc_no, lNew )
 
-   LOCAL nX := m_x
-   LOCAL nY := m_y
+   LOCAL nX := box_x_koord()
+   LOCAL nY := box_y_koord()
    LOCAL nGetBoxX := 18
    LOCAL nGetBoxY := 70
    LOCAL cBoxNaz := "unos nove stavke"
@@ -54,8 +54,8 @@ FUNCTION e_doc_item( nDoc_no, lNew )
    set_opc_box( nGetBoxX, 50 )
 
    // say top, bottom
-   @ m_x + 1, m_y + 2 SAY PadL( "***** " + cBoxNaz, nGetBoxY - 2 )
-   @ m_x + nGetBoxX, m_y + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadL( "***** " + cBoxNaz, nGetBoxY - 2 )
+   @ box_x_koord() + nGetBoxX, box_y_koord() + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
 
 
    DO WHILE .T.
@@ -138,8 +138,8 @@ FUNCTION e_doc_item( nDoc_no, lNew )
 
    SELECT _docs
 
-   m_x := nX
-   m_y := nY
+   box_x_koord() := nX
+   box_y_koord() := nY
 
    RETURN nRet
 
@@ -184,22 +184,22 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY, cGetDOper )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "r.br stavke (*)", nLeft ) GET _doc_it_no WHEN l_new_it ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "r.br stavke (*)", nLeft ) GET _doc_it_no WHEN l_new_it ;
       VALID _check_rbr( _doc_no, _doc_it_no )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "ARTIKAL (*):", nLeft ) GET _art_id ;
-      VALID {|| _old_x := m_x, _old_y := m_y, ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "ARTIKAL (*):", nLeft ) GET _art_id ;
+      VALID {|| _old_x := box_x_koord(), _old_y := box_y_koord(), ;
       s_articles( @_art_id, .F., .T. ), ;
-      m_x := _old_x, _old_y := m_y, ;
+      box_x_koord() := _old_x, _old_y := box_y_koord(), ;
       show_it( g_art_desc( _art_id, nil, .F. ) + "..", 35 ), ;
       check_article_valid( @_art_id ) } ;
       WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik i pretrazi" )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Tip artikla (*):", nLeft ) GET _doc_it_typ ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Tip artikla (*):", nLeft ) GET _doc_it_typ ;
       VALID {|| _doc_it_typ $ " SR" .AND. show_it( _g_doc_it_type( _doc_it_typ ) ) } ;
       WHEN set_opc_box( nBoxX, 50, "' ' - standardni, 'R' - radius, 'S' - shape" ) PICT "@!"
 
@@ -226,37 +226,37 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY, cGetDOper )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "shema u prilogu (D/N)? (*):", nLeft + 9 ) GET _doc_it_sch PICT "@!" VALID {|| _doc_it_sch $ "DN" } WHEN {|| _set_arr( _art_id, @aArtArr ), set_opc_box( nBoxX, 50, "da li postoji dodatna shema kao prilog" ) }
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "shema u prilogu (D/N)? (*):", nLeft + 9 ) GET _doc_it_sch PICT "@!" VALID {|| _doc_it_sch $ "DN" } WHEN {|| _set_arr( _art_id, @aArtArr ), set_opc_box( nBoxX, 50, "da li postoji dodatna shema kao prilog" ) }
 
-   @ m_x + nX, Col() + 2 SAY "pozicija" GET _doc_it_pos ;
+   @ box_x_koord() + nX, Col() + 2 SAY "pozicija" GET _doc_it_pos ;
       WHEN {|| set_opc_box( nBoxX, 50, "pozicija naljepnice" ) }
 
-   @ m_x + nX, Col() + 2 SAY "I/O" GET _it_lab_pos ;
+   @ box_x_koord() + nX, Col() + 2 SAY "I/O" GET _it_lab_pos ;
       WHEN {|| set_opc_box( nBoxX, 50, ;
       "labela, pozicija I - inside O - outside" ) } ;
       VALID {|| _it_lab_pos $ "IO" }
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "dod.nap.stavke:", nLeft ) GET _doc_it_des PICT "@S40" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "dod.nap.stavke:", nLeft ) GET _doc_it_des PICT "@S40" ;
       WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku" )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( cDimADesc, nLeft + 3 ) GET _doc_it_wid PICT Pic_Dim() ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( cDimADesc, nLeft + 3 ) GET _doc_it_wid PICT Pic_Dim() ;
       VALID val_width( _doc_it_wid ) .AND. rule_items( "DOC_IT_WIDTH", _doc_it_wid, aArtArr ) ;
       WHEN set_opc_box( nBoxX, 50 )
 
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( cDimBDesc, nLeft + 3 ) GET _doc_it_hei PICT Pic_Dim() ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( cDimBDesc, nLeft + 3 ) GET _doc_it_hei PICT Pic_Dim() ;
       VALID val_heigh( _doc_it_hei ) .AND. rule_items( "DOC_IT_HEIGH", _doc_it_hei, aArtArr ) ;
       WHEN set_opc_box( nBoxX, 50 )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "kolicina [kom] (*):", nLeft + 3 ) GET _doc_it_qtt PICT Pic_Qtty() VALID val_qtty( _doc_it_qtt ) .AND. rule_items( "DOC_IT_QTTY", _doc_it_qtt, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "kolicina [kom] (*):", nLeft + 3 ) GET _doc_it_qtt PICT Pic_Qtty() VALID val_qtty( _doc_it_qtt ) .AND. rule_items( "DOC_IT_QTTY", _doc_it_qtt, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
 
    nX += 1
 
@@ -266,11 +266,11 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY, cGetDOper )
 
 
    IF rule_items( "DOC_IT_ALT", _doc_it_alt, aArtArr ) <> .T.
-      @ m_x + nX, m_y + 2 SAY PadL( "nadm. visina [m] (*):", nLeft + 3 ) GET _doc_it_alt PICT "999999" VALID val_altt( _doc_it_alt ) WHEN set_opc_box( nBoxX, 50, "Nadmorska visina izrazena u metrima" )
-      @ m_x + nX, Col() + 2 SAY "grad:" GET _doc_acity VALID !Empty( _doc_acity ) PICT "@S20" WHEN set_opc_box( nBoxX, 50, "Grad u kojem se montira proizvod" )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "nadm. visina [m] (*):", nLeft + 3 ) GET _doc_it_alt PICT "999999" VALID val_altt( _doc_it_alt ) WHEN set_opc_box( nBoxX, 50, "Nadmorska visina izrazena u metrima" )
+      @ box_x_koord() + nX, Col() + 2 SAY "grad:" GET _doc_acity VALID !Empty( _doc_acity ) PICT "@S20" WHEN set_opc_box( nBoxX, 50, "Grad u kojem se montira proizvod" )
    ELSE
       // pobrisi screen na lokaciji nadmorske visine
-      @ m_x + nX, m_y + 2 SAY Space( 70 )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY Space( 70 )
 
       // ponisti vrijednosti da ne bi ostale zapamcene u bazi
       _doc_it_alt := 0
@@ -281,7 +281,7 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY, cGetDOper )
    // ako je nova stavka obezbjedi unos operacija...
    IF l_new_it
       nX += 2
-      @ m_x + nX, m_y + 2 SAY PadL( "unesi dod.oper.stavke (D/N)? (*):", nLeft + 15 ) GET cGetDOper PICT "@!" VALID cGetDOper $ "DN" WHEN set_opc_box( nBoxX, 50, "unos dodatnih operacija za stavku" )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "unesi dod.oper.stavke (D/N)? (*):", nLeft + 15 ) GET cGetDOper PICT "@!" VALID cGetDOper $ "DN" WHEN set_opc_box( nBoxX, 50, "unos dodatnih operacija za stavku" )
    ENDIF
 
    READ
@@ -482,13 +482,13 @@ STATIC FUNCTION kopiranje_box( nDoc, cQ_It, cQ_Aops )
 
    Box(, 5, 55 )
 
-   @ m_x + 1, m_y + 2 SAY "Nalog iz kojeg kopiramo:" GET nDoc ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Nalog iz kojeg kopiramo:" GET nDoc ;
       PICT "9999999999" VALID ( nDoc > 0 )
 
-   @ m_x + 3, m_y + 2 SAY "   Kopirati stavke naloga (D/N)" GET cQ_it ;
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "   Kopirati stavke naloga (D/N)" GET cQ_it ;
       PICT "@!" VALID ( cQ_it $ "DN" )
 
-   @ m_x + 4, m_y + 2 SAY "Kopirati operacije naloga (D/N)" GET cQ_Aops ;
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Kopirati operacije naloga (D/N)" GET cQ_Aops ;
       PICT "@!" VALID ( cQ_Aops $ "DN" )
 
    READ
@@ -619,18 +619,18 @@ FUNCTION get_items_article()
    LOCAL _art_id := 0
    LOCAL _box_x := 3
    LOCAL _box_y := 40
-   LOCAL _x := m_x
-   LOCAL _y := m_y
+   LOCAL _x := box_x_koord()
+   LOCAL _y := box_y_koord()
    PRIVATE GetList := {}
 
    Box(, _box_x, _box_y )
-   @ m_x + 1, m_y + 2 SAY "Odaberi artikal iz liste artikala:"
-   @ m_x + 2, m_y + 2 SAY "Artikal:" GET _art_id VALID {|| s_articles( @_art_id, .F., .T. ), .T. }
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Odaberi artikal iz liste artikala:"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Artikal:" GET _art_id VALID {|| s_articles( @_art_id, .F., .T. ), .T. }
    READ
    BoxC()
 
-   m_x := _x
-   m_y := _y
+   box_x_koord() := _x
+   box_y_koord() := _y
 
    IF LastKey() == K_ESC
       RETURN NIL

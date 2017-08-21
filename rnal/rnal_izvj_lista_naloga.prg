@@ -29,7 +29,7 @@ FUNCTION lst_tek_dan()
    nOperater := f18_get_user_id( f18_user() )
 
    Box( , 1, 60 )
-   @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
    READ
    BoxC()
 
@@ -164,9 +164,9 @@ FUNCTION lst_ch_date()
 
    Box(, 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
 
-   @ m_x + 3, m_y + 2 SAY "Listaj naloge >= datum" GET dDate
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Listaj naloge >= datum" GET dDate
 
    READ
 
@@ -258,8 +258,8 @@ FUNCTION lst_real_tek_dan()
    nOperater := f18_get_user_id( f18_user() )
 
    Box(, 3, 60 )
-   @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
-   @ m_x + 3, m_y + 2 SAY "Nalozi prispjeli samo na tekuci dan ?" GET cCurrent PICT "@!" VALID cCurrent $ "DN"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Nalozi prispjeli samo na tekuci dan ?" GET cCurrent PICT "@!" VALID cCurrent $ "DN"
    READ
    BoxC()
 
@@ -352,11 +352,11 @@ FUNCTION lst_vrok_tek_dan()
 
    Box(, 5, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
 
-   @ m_x + 3, m_y + 2 SAY "Uzeti u obzir do br.predh.dana:" GET nDays PICT "99999"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Uzeti u obzir do br.predh.dana:" GET nDays PICT "99999"
 
-   @ m_x + 5, m_y + 2 SAY "Slati report email-om ?" GET cEmail PICT "@!" VALID cEmail $ "DN"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Slati report email-om ?" GET cEmail PICT "@!" VALID cEmail $ "DN"
 
    READ
 

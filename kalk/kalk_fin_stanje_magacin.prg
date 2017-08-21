@@ -46,10 +46,10 @@ FUNCTION finansijsko_stanje_magacin()
 
    DO WHILE .T.
 
-      @ m_x + 1, m_y + 2 SAY "Firma "
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "
       ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
-      @ m_x + 3, m_y + 2 SAY "Varijanta (1/2)" GET cPapir VALID cPapir $ "12"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Varijanta (1/2)" GET cPapir VALID cPapir $ "12"
 
       READ
 
@@ -59,21 +59,21 @@ FUNCTION finansijsko_stanje_magacin()
 
       PRIVATE cViseKonta := "N"
 
-      @ m_x + 4, m_y + 2 SAY8 "Više konta (D/N)" GET cViseKonta VALID cViseKonta $ "DN" PICT "@!"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Više konta (D/N)" GET cViseKonta VALID cViseKonta $ "DN" PICT "@!"
 
       READ
 
       IF cViseKonta == "N"
-         @ m_x + 5, m_y + 2 SAY "Konto   " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Konto   " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
       ELSE
-         @ m_x + 5, m_y + 2 SAY "Konta " GET qqMKonta PICT "@!S30"
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Konta " GET qqMKonta PICT "@!S30"
       ENDIF
 
-      @ m_x + 7, m_y + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
-      @ m_x + 8, m_y + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
-      @ m_x + 9, m_y + 2 SAY "Datum od " GET dDatOd
-      @ m_x + 9, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 11, m_y + 2 SAY "Export podataka XLSX (D/N) ?" GET cExportDN VALID cExportDN $ "DN" PICT "@!"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Datum od " GET dDatOd
+      @ box_x_koord() + 9, Col() + 2 SAY "do" GET dDatDo
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Export podataka XLSX (D/N) ?" GET cExportDN VALID cExportDN $ "DN" PICT "@!"
 
       READ
 

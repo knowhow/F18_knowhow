@@ -335,26 +335,26 @@ STATIC FUNCTION GetVars( dDan, cTops, cPodvuci, cFilterDn, cFilter, dDatDo, aUsl
    cFilterDn := "N"
    Box( "#DNEVNI PROMET", 9, 60 )
 
-   @ m_x + 2, m_y + 2 SAY "Za datum od" GET dDan
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Za datum od" GET dDan
    IF ( dDatDo <> nil )
-      @ m_x + 2, m_y + 27 SAY "do" GET dDatDo
+      @ box_x_koord() + 2, box_y_koord() + 27 SAY "do" GET dDatDo
    ENDIF
-   @ m_x + 3, m_y + 2 SAY "Izvor podataka su kase tj. TOPS (D/N) ?" GET cTops VALID cTops $ "DN" PICT "@!"
-   @ m_x + 4, m_y + 2 SAY "Linija ispod svakog reda (D/N) ?" GET cPodvuci VALID cPodvuci $ "DN" PICT "@!"
-   @ m_x + 5, m_y + 2 SAY "Uzeti u obzir filter (D/N) ?" GET cFilterDn VALID cFilterDn $ "DN" PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Izvor podataka su kase tj. TOPS (D/N) ?" GET cTops VALID cTops $ "DN" PICT "@!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Linija ispod svakog reda (D/N) ?" GET cPodvuci VALID cPodvuci $ "DN" PICT "@!"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Uzeti u obzir filter (D/N) ?" GET cFilterDn VALID cFilterDn $ "DN" PICT "@!"
 
    IF ( aUslPKto <> nil )
-      @ m_x + 7, m_y + 2 SAY "Prodavnicka konta" GET aUslPKto PICT "@S40"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prodavnicka konta" GET aUslPKto PICT "@S40"
    ENDIF
 
    READ
 
    IF ( cFilterDn == "D" )
-      @ m_x + 7, m_y + 2 SAY "Pregled, ispravka filtera " GET cIspraviFilterDn VALID cIspraviFilter $ "DN" PICTURE "@!"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Pregled, ispravka filtera " GET cIspraviFilterDn VALID cIspraviFilter $ "DN" PICTURE "@!"
       READ
       cFilter := PadR( cFilter, 200 )
       IF ( cIspraviFilter == "D" )
-         @ m_x + 8, m_y + 2 SAY "Filter " GET cFilter PICTURE "@S30"
+         @ box_x_koord() + 8, box_y_koord() + 2 SAY "Filter " GET cFilter PICTURE "@S30"
          READ
       ENDIF
       cFilter := Trim( cFilter )

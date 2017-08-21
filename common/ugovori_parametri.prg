@@ -49,16 +49,16 @@ FUNCTION DFTParUg( lIni )
    IF !lIni
 
       Box(, 11, 75 )
-      @ m_x + 0, m_y + 23 SAY8 "TEKUĆI PODACI ZA NOVE UGOVORE"
-      @ m_x + 2, m_y + 2 SAY PadL( "Artikal", 20 ) GET DFTidroba VALID Empty( DFTidroba ) .OR. P_Roba( @DFTidroba, 2, 28 ) PICT "@!"
-      @ m_x + 3, m_y + 2 SAY PadL( "Kolicina", 20 ) GET DFTkolicina PICT fakt_pic_kolicina()
-      @ m_x + 4, m_y + 2 SAY PadL( "Tip ug.(1/2/G)", 20 ) GET DFTvrsta VALID DFTvrsta $ "12G"
-      @ m_x + 5, m_y + 2 SAY PadL( "Tip dokumenta", 20 ) GET DFTidtipdok
-      @ m_x + 6, m_y + 2 SAY PadL( "Valuta", 20 ) GET DFTdindem PICT "@!"
-      @ m_x + 7, m_y + 2 SAY PadL( "Napomena 1", 20 ) GET DFTidtxt VALID p_fakt_ftxt( @DFTidtxt )
-      @ m_x + 8, m_y + 2 SAY PadL( "Napomena 2", 20 ) GET DFTiddodtxt VALID p_fakt_ftxt( @DFTiddodtxt )
-      @ m_x + 9, m_y + 2 SAY PadL( "Zaokruzenje", 20 ) GET DFTzaokr PICT "9"
-      //@ m_x + 10, m_y + 2 SAY PadL( "gen.ug. ver 1/2", 20 ) GET gGenUgV2 PICT "@!" VALID gGenUgV2 $ "12"
+      @ box_x_koord() + 0, box_y_koord() + 23 SAY8 "TEKUĆI PODACI ZA NOVE UGOVORE"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY PadL( "Artikal", 20 ) GET DFTidroba VALID Empty( DFTidroba ) .OR. P_Roba( @DFTidroba, 2, 28 ) PICT "@!"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadL( "Kolicina", 20 ) GET DFTkolicina PICT fakt_pic_kolicina()
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY PadL( "Tip ug.(1/2/G)", 20 ) GET DFTvrsta VALID DFTvrsta $ "12G"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY PadL( "Tip dokumenta", 20 ) GET DFTidtipdok
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY PadL( "Valuta", 20 ) GET DFTdindem PICT "@!"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY PadL( "Napomena 1", 20 ) GET DFTidtxt VALID p_fakt_ftxt( @DFTidtxt )
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY PadL( "Napomena 2", 20 ) GET DFTiddodtxt VALID p_fakt_ftxt( @DFTiddodtxt )
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY PadL( "Zaokruzenje", 20 ) GET DFTzaokr PICT "9"
+      //@ box_x_koord() + 10, box_y_koord() + 2 SAY PadL( "gen.ug. ver 1/2", 20 ) GET gGenUgV2 PICT "@!" VALID gGenUgV2 $ "12"
       READ
       BoxC()
 

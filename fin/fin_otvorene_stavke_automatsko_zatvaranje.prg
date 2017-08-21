@@ -58,15 +58,15 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
 
       cPobST := "N"
 
-      @ m_x + 1, m_y + 2 SAY "AUTOMATSKO ZATVARANJE STAVKI"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "AUTOMATSKO ZATVARANJE STAVKI"
 
-      @ m_x + 3, m_y + 2 SAY "Firma "
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "
       ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
-      @ m_x + 4, m_y + 2 SAY "Konto: " GET cIdKonto VALID p_konto( @cIdKonto )
-      @ m_x + 5, m_y + 2 SAY "Partner (prazno-svi): " GET cIdPartner ;
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto: " GET cIdKonto VALID p_konto( @cIdKonto )
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Partner (prazno-svi): " GET cIdPartner ;
          VALID {|| Empty( cIdPartner ) .OR. p_partner( @cIdPartner ) }
-      @ m_x + 6, m_y + 2 SAY "Pobrisati stare markere zatv.stavki: " GET cPobSt PICT "@!" VALID cPobSt $ "DN"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Pobrisati stare markere zatv.stavki: " GET cPobSt PICT "@!" VALID cPobSt $ "DN"
 
       READ
       ESC_BCR
@@ -93,8 +93,8 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
 
    nCntZatvoreno := 0
 
-   @ m_x + 1, m_y + 2 SAY "Zatvoreno:"
-   @ m_x + 1, m_y + 12 SAY nCntZatvoreno
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Zatvoreno:"
+   @ box_x_koord() + 1, box_y_koord() + 12 SAY nCntZatvoreno
 
    GO TOP
    IF Eof()
@@ -133,8 +133,8 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
       IF Abs( Round( nDugBHD - nPotBHD, 3 ) ) <= gnLOSt .AND. cOtvSt == "1"
 
          GO nRbrStartBrDok
-         @ m_x + 1, m_y + 2 SAY cIdKonto + "-" + cIdPartner + "/" + cBrDok
-         @ m_x + 1, Col() + 2 SAY ++nCntZatvoreno PICT '99999'
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY cIdKonto + "-" + cIdPartner + "/" + cBrDok
+         @ box_x_koord() + 1, Col() + 2 SAY ++nCntZatvoreno PICT '99999'
 
          DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner .AND. cBrDok == BrDok
 
@@ -194,7 +194,7 @@ STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartne
 
    Box(, 3, 65 )
 
-   @ m_x + 1, m_y + 2 SAY8 "Brišem markere postojećih stavki tabele..."
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Brišem markere postojećih stavki tabele..."
 
    DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto = IdKonto
 
@@ -208,7 +208,7 @@ STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartne
       _rec := dbf_get_rec()
       _rec[ "otvst" ] := " "
 
-      @ m_x + 2, m_y + 2 SAY "nalog: " + _rec[ "idvn" ] + "-" + AllTrim( _rec[ "brnal" ] ) + " / stavka: " + Str( _rec[ "rbr" ], 5, 0 )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "nalog: " + _rec[ "idvn" ] + "-" + AllTrim( _rec[ "brnal" ] ) + " / stavka: " + Str( _rec[ "rbr" ], 5, 0 )
 
       lOk := update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
 

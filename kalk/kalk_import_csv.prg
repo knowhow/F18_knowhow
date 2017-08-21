@@ -60,13 +60,13 @@ STATIC FUNCTION kalk_auto_import_setup()
 
    Box(, 10, 70 )
 
-   @ m_x + nX, m_y + 2 SAY8 "Podešenja importa ********"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Podešenja importa ********"
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 "Štampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Štampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY8 "Automatska ravnoteža naloga na konto: " GET cAImpRKonto
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Automatska ravnoteža naloga na konto: " GET cAImpRKonto
    READ
    BoxC()
 
@@ -112,10 +112,10 @@ STATIC FUNCTION _g_params()
 
    Box(, 5, 55 )
 
-   @ m_x + 1, m_y + 2 SAY "*** parametri importa dokumenta"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "*** parametri importa dokumenta"
 
-   @ m_x + 3, m_y + 2 SAY "Konto zaduzuje  :" GET cMKto VALID P_Konto( @cMKto )
-   @ m_x + 4, m_y + 2 SAY "Sifra dobavljaca:" GET cPart VALID p_partner( @cPart )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Konto zaduzuje  :" GET cMKto VALID P_Konto( @cMKto )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Sifra dobavljaca:" GET cPart VALID p_partner( @cPart )
    READ
    BoxC()
 

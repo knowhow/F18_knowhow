@@ -23,7 +23,7 @@ FUNCTION DaTBDirektni( lIzOBJDB )
       IF !lIzOBJDB; BoxC(); ENDIF
       Box( aParametri[ 1 ], aParametri[ 2 ], aParametri[ 3 ], aParametri[ 4 ], aParametri[ 5 ] )
    ELSE
-      @ m_x + aParametri[ 2 ] -aParametri[ 9 ], m_y + 1 SAY PadC( "-", aParametri[ 3 ], "-" )
+      @ box_x_koord() + aParametri[ 2 ] -aParametri[ 9 ], box_y_koord() + 1 SAY PadC( "-", aParametri[ 3 ], "-" )
    ENDIF
 
    IF ! ( "U" $ Type( "adImeKol" ) )
@@ -33,13 +33,13 @@ FUNCTION DaTBDirektni( lIzOBJDB )
       Kol := adKol
    ENDIF
 
-   // @ m_x,m_y+2 SAY aParametri[8]+"█UPOZORENJE: Mod direktnog unosa u tabelu!"
-   @ m_x, m_y + 2 SAY aParametri[ 8 ] + IF( !lIzOBJDB, REPL( "#", 42 ), "" )
-   // @ m_x+aParametri[2]+1,m_y+2 SAY aParametri[7]+"█UPOZORENJE: Mod direktnog unosa u tabelu!"
-   @ m_x + aParametri[ 2 ] + 1, m_y + 2 SAY aParametri[ 7 ] COLOR "GR+/B"
+   // @ box_x_koord(),box_y_koord()+2 SAY aParametri[8]+"█UPOZORENJE: Mod direktnog unosa u tabelu!"
+   @ box_x_koord(), box_y_koord() + 2 SAY aParametri[ 8 ] + IF( !lIzOBJDB, REPL( "#", 42 ), "" )
+   // @ box_x_koord()+aParametri[2]+1,box_y_koord()+2 SAY aParametri[7]+"█UPOZORENJE: Mod direktnog unosa u tabelu!"
+   @ box_x_koord() + aParametri[ 2 ] + 1, box_y_koord() + 2 SAY aParametri[ 7 ] COLOR "GR+/B"
 
-   @ m_x + 1, m_y + aParametri[ 3 ] -6 SAY Str( RecCount2(), 5 )
-   TB := TBrowseDB( m_x + 2 + aParametri[ 10 ], m_y + 1, m_x + aParametri[ 2 ] -aParametri[ 9 ] -iif( aParametri[ 9 ] <> 0, 1, 0 ), m_y + aParametri[ 3 ] )
+   @ box_x_koord() + 1, box_y_koord() + aParametri[ 3 ] -6 SAY Str( RecCount2(), 5 )
+   TB := TBrowseDB( box_x_koord() + 2 + aParametri[ 10 ], box_y_koord() + 1, box_x_koord() + aParametri[ 2 ] -aParametri[ 9 ] -iif( aParametri[ 9 ] <> 0, 1, 0 ), box_y_koord() + aParametri[ 3 ] )
    Tb:skipBlock     := TBSkipBlock
    Tb:goTopBlock    := {|| GoTopDB( @nTbLine ) }
    Tb:goBottomBlock := {|| GoBottomDB( @nTBLine ) }

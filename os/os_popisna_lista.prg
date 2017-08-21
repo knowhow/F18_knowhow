@@ -55,18 +55,18 @@ STATIC FUNCTION _get_vars( params )
 
    Box(, 10, 77 )
 
-   @ m_x + 1, m_y + 2 SAY "Radna jedinica:" GET _idrj ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica:" GET _idrj ;
       VALID {|| P_RJ( @_idrj ), IF( !Empty( _idrj ), _idrj := PadR( _idrj, 4 ), .T. ), .T. }
 
-   @ m_x + 2, m_y + 2 SAY "Prikaz svih neotpisanih (N) / otpisanih(O) /"
-   @ m_x + 3, m_y + 2 SAY "samo novonabavljenih (B)    / iz proteklih godina (G)" GET _on PICT "@!" ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prikaz svih neotpisanih (N) / otpisanih(O) /"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "samo novonabavljenih (B)    / iz proteklih godina (G)" GET _on PICT "@!" ;
       VALID _on $ "ONBG"
 
-   @ m_x + 5, m_y + 2 SAY "Filter po grupaciji K1:" GET _filt_k1 PICT "@!S20"
-   @ m_x + 6, m_y + 2 SAY "Filter po dobavljacima:" GET _filt_dob PICT "@!S20"
-   @ m_x + 7, m_y + 2 SAY "Filter po jedin. mjere:" GET _filt_jmj PICT "@!S20"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Filter po grupaciji K1:" GET _filt_k1 PICT "@!S20"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Filter po dobavljacima:" GET _filt_dob PICT "@!S20"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Filter po jedin. mjere:" GET _filt_jmj PICT "@!S20"
 
-   @ m_x + 9, m_y + 2 SAY "Prikaz nab.cijene (D/N) ?" GET _cijena PICT "@!" VALID _cijena $ "DN"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prikaz nab.cijene (D/N) ?" GET _cijena PICT "@!" VALID _cijena $ "DN"
 
    READ
 

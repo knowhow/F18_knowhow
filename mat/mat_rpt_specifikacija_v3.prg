@@ -81,7 +81,7 @@ STATIC FUNCTION _get_vars( params )
 
    ++ _cnt
 
-   @ m_x + _cnt, m_y + 2 SAY "Iznos u " + ValDomaca() + "/" + ValPomocna() + "(1/2) ?" GET _fmt ;
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Iznos u " + ValDomaca() + "/" + ValPomocna() + "(1/2) ?" GET _fmt ;
       VALID _fmt $ "12"
    READ
 
@@ -95,39 +95,39 @@ STATIC FUNCTION _get_vars( params )
    ++ _cnt
 
    IF gNW $ "DR"
-      @ m_x + _cnt, m_y + 2 SAY "Firma "
+      @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Firma "
       ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + _cnt, m_y + 2 SAY "Firma: " GET _firma ;
+      @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Firma: " GET _firma ;
          VALID {|| p_partner( @_firma ), _firma := Left( _firma, 2 ), .T. }
    ENDIF
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Konta : " GET _konta PICT "@S50"
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Konta : " GET _konta PICT "@S50"
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Artikli : " GET _artikli PICT "@S50"
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Artikli : " GET _artikli PICT "@S50"
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Datum dokumenta - od:" GET _dat_od
-   @ m_x + _cnt, Col() + 1 SAY "do:" GET _dat_do VALID _dat_do >= _dat_od
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Datum dokumenta - od:" GET _dat_od
+   @ box_x_koord() + _cnt, Col() + 1 SAY "do:" GET _dat_do VALID _dat_do >= _dat_od
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Prikaz po grupacijama (D/N)?" GET _group ;
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Prikaz po grupacijama (D/N)?" GET _group ;
       VALID _group $ "DN" PICT "@!"
 
-   @ m_x + _cnt, Col() + 1 SAY "Grupu uzmi iz sifre (D/N)?" GET _group_sifra ;
+   @ box_x_koord() + _cnt, Col() + 1 SAY "Grupu uzmi iz sifre (D/N)?" GET _group_sifra ;
       VALID _group_sifra $ "DN" PICT "@!"
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Grupe:" GET _sel_groups PICT "@S50"
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Grupe:" GET _sel_groups PICT "@S50"
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Prikazati sadrzaj grupe (D/N)?" GET _group_lista ;
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Prikazati sadrzaj grupe (D/N)?" GET _group_lista ;
       VALID _group_lista $ "DN" PICT "@!"
 
    ++ _cnt
-   @ m_x + _cnt, m_y + 2 SAY "Prikaz samo vrijednosti" GET _vrijednost PICT "@!" VALID _vrijednost $ "DN"
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Prikaz samo vrijednosti" GET _vrijednost PICT "@!" VALID _vrijednost $ "DN"
 
    READ
 

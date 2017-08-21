@@ -166,10 +166,10 @@ FUNCTION chk_dok_11()
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "za datum od" GET dD_from
-   @ m_x + 1, Col() + 1 SAY "do" GET dD_to
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "za datum od" GET dD_from
+   @ box_x_koord() + 1, Col() + 1 SAY "do" GET dD_to
 
-   @ m_x + 2, m_y + 2 SAY "resetuj broj veze u RNAL (D/N)?" ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "resetuj broj veze u RNAL (D/N)?" ;
       GET cReset VALID cReset $ "DN" PICT "@!"
 
    READ
@@ -291,8 +291,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
    o_tmp1()
    INDEX ON Str( doc_no, 10 ) TAG "1"
 
-   // fakt mi otvori
-   o_fakt_dbf()
+   //o_fakt_dbf()
 
    // otvori potrebne tabele
    rnal_o_tables( .F. )
@@ -308,7 +307,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
 
       nDoc_no := field->doc_no
 
-      @ m_x + 1, m_y + 2 SAY "obradjujem nalog: " + AllTrim( Str( nDoc_no ) )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "obradjujem nalog: " + AllTrim( Str( nDoc_no ) )
 
       dDoc_date := field->doc_date
       dDvr_date := field->doc_dvr_da
@@ -331,14 +330,14 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
       cF_doc2 := "?"
       cP_doc1 := "?"
 
-      SELECT fakt
-      SEEK cFFirma + cFTipDok
+      //SELECT fakt
+      //SEEK cFFirma + cFTipDok
+      seek_fakt( cFFirma, cFTipDok )
 
       // resetuj memo vrijednost
       aMemo := {}
 
-      DO WHILE !Eof() .AND. field->idfirma + field->idtipdok == ;
-            cFFirma + cFTipDok
+      DO WHILE !Eof() .AND. field->idfirma + field->idtipdok == cFFirma + cFTipDok
 
          // gledaj samo redni broj jedan fakture
          IF AllTrim( field->rbr ) <> "1"

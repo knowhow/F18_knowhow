@@ -25,7 +25,7 @@ FUNCTION ShowIznRac( nIznos )
 
    Box (, 9, 77 )
    cIzn := AllTrim ( Transform ( nIznos, "9999999.99" ) )
-   @ m_x, m_y + 28 SAY8 "  IZNOS RAČUNA JE  " COLOR f18_color_invert()
+   @ box_x_koord(), box_y_koord() + 28 SAY8 "  IZNOS RAČUNA JE  " COLOR f18_color_invert()
 
 
    ispisi_velikim_slovima( cIzn, 0, f18_max_cols() -7 )

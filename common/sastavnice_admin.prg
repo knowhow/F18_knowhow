@@ -26,9 +26,9 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
    nKolic := 0
 
    Box(, 6, 70 )
-   @ m_x + 1, m_y + 2 SAY "'Stara' sirovina :" GET cOldS PICT "@!" VALID P_Roba_select( @cOldS )
-   @ m_x + 2, m_y + 2 SAY "'Nova'  sirovina :" GET cNewS PICT "@!" VALID cNewS <> cOldS .AND. P_Roba( @cNewS )
-   @ m_x + 4, m_y + 2 SAY "Kolicina u normama (0 - zamjeni bez obzira na kolicinu)" GET nKolic PICT "999999.99999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "'Stara' sirovina :" GET cOldS PICT "@!" VALID P_Roba_select( @cOldS )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "'Nova'  sirovina :" GET cNewS PICT "@!" VALID cNewS <> cOldS .AND. P_Roba( @cNewS )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Kolicina u normama (0 - zamjeni bez obzira na kolicinu)" GET nKolic PICT "999999.99999"
    READ
    BoxC()
 
@@ -89,9 +89,9 @@ FUNCTION pr_uces_sast() // promjena ucesca
    nKolic2 := 0
 
    Box(, 6, 65 )
-   @ m_x + 1, m_y + 2 SAY "Sirovina :" GET cOldS PICT "@!" VALID P_Roba_select( @cOldS )
-   @ m_x + 4, m_y + 2 SAY "postojeca kolicina u normama " GET nKolic PICT "999999.99999"
-   @ m_x + 5, m_y + 2 SAY "nova kolicina u normama      " GET nKolic2 PICT "999999.99999"   VALID nKolic <> nKolic2
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sirovina :" GET cOldS PICT "@!" VALID P_Roba_select( @cOldS )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "postojeca kolicina u normama " GET nKolic PICT "999999.99999"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "nova kolicina u normama      " GET nKolic2 PICT "999999.99999"   VALID nKolic <> nKolic2
    READ
    BoxC()
 

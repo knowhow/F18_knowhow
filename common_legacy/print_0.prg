@@ -500,10 +500,10 @@ FUNCTION PPrint()
    Box(, 3, 65 )
    SET CURSOR ON
    info_bar( "info", "<a-R> - preuzmi parametre štampača" )
-   @ m_x + 1, m_y + 2  SAY8 "TEKUCI STAMPAC:"
-   @ m_x + 1, Col() + 4  GET  gPrinter PICT "@!"
-   @ m_x + 3, m_y + 2 SAY "Pregled sekvenci ?"
-   @ m_x + 3, Col() + 2 GET cSekvence VALID csekvence $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2  SAY8 "TEKUCI STAMPAC:"
+   @ box_x_koord() + 1, Col() + 4  GET  gPrinter PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Pregled sekvenci ?"
+   @ box_x_koord() + 3, Col() + 2 GET cSekvence VALID csekvence $ "DN" PICT "@!"
    READ
    Boxc()
    info_bar( "info", "<a-R> - preuzmi parametre štampača" )
@@ -545,26 +545,26 @@ FUNCTION PPrint()
    All_GetPstr()
 
    SET KEY K_CTRL_P TO  PSeqv()
-   @ m_x + 3, m_y + 2  SAY "INI          " GET gPINI    PICT "@S40"
-   @ m_x + 4, m_y + 2  SAY "Kond. -17cpi " GET gPCOND   PICT "@S40"
-   @ m_x + 5, m_y + 2  SAY "Kond2.-20cpi " GET gPCond2  PICT "@S40"
-   @ m_x + 6, m_y + 2  SAY "CPI 10       " GET gP10cpi PICT "@S40"
-   @ m_x + 7, m_y + 2  SAY "CPI 12       " GET gP12CPI PICT "@S40"
-   @ m_x + 8, m_y + 2  SAY "Bold on      " GET gPB_ON   PICT "@S40"
-   @ m_x + 9, m_y + 2  SAY "Bold off     " GET gPB_OFF  PICT "@S40"
-   @ m_x + 10, m_y + 2 SAY "Podvuceno on " GET gPU_ON   PICT "@S40"
-   @ m_x + 11, m_y + 2 SAY "Podvuceno off" GET gPU_OFF  PICT "@S40"
-   @ m_x + 12, m_y + 2 SAY "Italic on    " GET gPI_ON    PICT "@S40"
-   @ m_x + 13, m_y + 2 SAY "Italic off   " GET gPI_OFF   PICT "@S40"
-   @ m_x + 14, m_y + 2 SAY "Nova strana  " GET gPFF     PICT "@S40"
-   @ m_x + 15, m_y + 2 SAY "Portret      " GET gPO_Port     PICT "@S40"
-   @ m_x + 16, m_y + 2 SAY "Lendskejp    " GET gPO_Land     PICT "@S40"
-   @ m_x + 17, m_y + 2 SAY "Red.po l./nor" GET gRPL_Normal  PICT "@S40"
-   @ m_x + 18, m_y + 2 SAY "Red.po l./gus" GET gRPL_Gusto   PICT "@S40"
-   @ m_x + 21, m_y + 2 SAY "Dodatnih redova +/- u odnosu na A4 format " GET nPStranica PICT "999"
-   @ m_x + 23, m_y + 2 SAY "LPT 1/2/3    " GET gPPort   VALID gPPort $ "12356789"
+   @ box_x_koord() + 3, box_y_koord() + 2  SAY "INI          " GET gPINI    PICT "@S40"
+   @ box_x_koord() + 4, box_y_koord() + 2  SAY "Kond. -17cpi " GET gPCOND   PICT "@S40"
+   @ box_x_koord() + 5, box_y_koord() + 2  SAY "Kond2.-20cpi " GET gPCond2  PICT "@S40"
+   @ box_x_koord() + 6, box_y_koord() + 2  SAY "CPI 10       " GET gP10cpi PICT "@S40"
+   @ box_x_koord() + 7, box_y_koord() + 2  SAY "CPI 12       " GET gP12CPI PICT "@S40"
+   @ box_x_koord() + 8, box_y_koord() + 2  SAY "Bold on      " GET gPB_ON   PICT "@S40"
+   @ box_x_koord() + 9, box_y_koord() + 2  SAY "Bold off     " GET gPB_OFF  PICT "@S40"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Podvuceno on " GET gPU_ON   PICT "@S40"
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Podvuceno off" GET gPU_OFF  PICT "@S40"
+   @ box_x_koord() + 12, box_y_koord() + 2 SAY "Italic on    " GET gPI_ON    PICT "@S40"
+   @ box_x_koord() + 13, box_y_koord() + 2 SAY "Italic off   " GET gPI_OFF   PICT "@S40"
+   @ box_x_koord() + 14, box_y_koord() + 2 SAY "Nova strana  " GET gPFF     PICT "@S40"
+   @ box_x_koord() + 15, box_y_koord() + 2 SAY "Portret      " GET gPO_Port     PICT "@S40"
+   @ box_x_koord() + 16, box_y_koord() + 2 SAY "Lendskejp    " GET gPO_Land     PICT "@S40"
+   @ box_x_koord() + 17, box_y_koord() + 2 SAY "Red.po l./nor" GET gRPL_Normal  PICT "@S40"
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY "Red.po l./gus" GET gRPL_Gusto   PICT "@S40"
+   @ box_x_koord() + 21, box_y_koord() + 2 SAY "Dodatnih redova +/- u odnosu na A4 format " GET nPStranica PICT "999"
+   @ box_x_koord() + 23, box_y_koord() + 2 SAY "LPT 1/2/3    " GET gPPort   VALID gPPort $ "12356789"
    gPPTK := PadR( gPPTK, 2 )
-   @ m_x + 23, Col() + 2 SAY "Konverzija" GET gPPTK PICT "@!" VALID subst( gPPTK, 2, 1 ) $ " 1"
+   @ box_x_koord() + 23, Col() + 2 SAY "Konverzija" GET gPPTK PICT "@!" VALID subst( gPPTK, 2, 1 ) $ " 1"
    IF csekvence == "D"
       READ
    ENDIF
@@ -625,7 +625,7 @@ STATIC FUNCTION UzmiPPr( cProc, nline, cVar )
    LOCAL cOzn := " ", GetList := {}
 
    Box(, 1, 77 )
-   @ m_x + 1, m_y + 2 SAY "Ukucajte oznaku stampaca cije parametre zelite preuzeti:" GET cOzn
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ukucajte oznaku stampaca cije parametre zelite preuzeti:" GET cOzn
    READ
    IF LastKey() != K_ESC
       SELECT gparams
@@ -643,7 +643,7 @@ STATIC FUNCTION PSeqv( cProc, nLine, cVar )
 
    Box(, 1, 70 )
 
-   @ m_x + 1, m_y + 2 SAY Odsj( &cVar )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY Odsj( &cVar )
 
    Inkey()
 

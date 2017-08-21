@@ -1,5 +1,12 @@
 # F18 klijent, lista promjena
 
+## 3.1.65-std, 2017-08-21
+### FAKT
+- fakt_open_dbf() out, fakt sql big-bang 03
+### CORE
+- box_x_koord(), box_y_koord() big-bang
+
+
 ## 3.1.64-std, 2017-08-21
 ### Developer
 - CORE: cleanup sifk-sifv

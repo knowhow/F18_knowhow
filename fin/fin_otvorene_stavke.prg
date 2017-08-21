@@ -177,13 +177,13 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
 
       Box(, 5, 60 )
       IF gNW == "D"
-         @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 2, m_y + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID p_konto( @cIdkonto )
-      @ m_x + 3, m_y + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
-      @ m_x + 5, m_y + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID p_konto( @cIdkonto )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
       READ
       ESC_BCR
       Boxc()
@@ -247,7 +247,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       ELSE
          cDugPot := "1"
          Box( , 3, 60 )
-         @ m_x + 2, m_y + 2 SAY8 "Konto " + cIdKonto + " duguje / potražuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Konto " + cIdKonto + " duguje / potražuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
          READ
          Boxc()
       ENDIF

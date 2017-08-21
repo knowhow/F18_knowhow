@@ -36,11 +36,11 @@ FUNCTION epdv_azur_kuf_kif( cKufKif )
    LOCAL nBrDok := 0
 
    IF cKufKif == "KUF"
-      epdv_otvori_kuf_tabele( .T. )
+      epdv_otvori_kuf_priprema()
       nPArea := F_P_KUF
       nKArea := F_KUF
    ELSE
-      epdv_otvori_kif_tabele( .T. )
+      epdv_otvori_kif_priprema()
       nPArea := F_P_KIF
       nKArea := F_KIF
    ENDIF
@@ -69,6 +69,7 @@ FUNCTION epdv_azur_kuf_kif( cKufKif )
 
    IF epdv_kuf_kif_azur_sql( cKufKif, nNextGRbr, nBrDok )
 
+/*
       SELECT ( nPArea )
       GO TOP
 
@@ -97,6 +98,7 @@ FUNCTION epdv_azur_kuf_kif( cKufKif )
          SELECT ( nPArea )
          SKIP
       ENDDO
+*/
 
    ELSE
 
@@ -116,9 +118,9 @@ FUNCTION epdv_azur_kuf_kif( cKufKif )
    USE
 
    IF ( cKufKif == "KUF" )
-      epdv_otvori_kuf_tabele( .T. )
+      epdv_otvori_kuf_priprema()
    ELSE
-      epdv_otvori_kif_tabele( .T. )
+      epdv_otvori_kif_priprema()
    ENDIF
 
    BoxC()
@@ -215,14 +217,14 @@ FUNCTION epdv_povrat_kuf_kif( cKufKif, nBrDok )
 
    AltD()
    IF ( cKufKif == "KUF" )
-      // epdv_otvori_kuf_tabele( .T. )
+      // epdv_otvori_kuf_priprema()
       select_o_epdv_p_kuf()
       nPrivateWA := F_P_KUF
       nKumulativWA := F_KUF
       cTable := "epdv_kuf"
       find_epdv_kuf_za_period( NIL, NIL, hParams, "br_dok" )
    ELSE
-      // epdv_otvori_kif_tabele( .T. )
+      // epdv_otvori_kif_priprema()
       select_o_epdv_p_kif()
 
       nPrivateWA := F_P_KIF
@@ -271,9 +273,9 @@ FUNCTION epdv_povrat_kuf_kif( cKufKif, nBrDok )
 
    my_close_all_dbf()
    IF ( cKufKif == "KUF" )
-      epdv_otvori_kuf_tabele( .T. )
+      epdv_otvori_kuf_priprema()
    ELSE
-      epdv_otvori_kif_tabele( .T. )
+      epdv_otvori_kif_priprema()
    ENDIF
 
    SELECT ( nKumulativWA )
@@ -298,9 +300,9 @@ FUNCTION epdv_povrat_kuf_kif( cKufKif, nBrDok )
    USE
 
    // IF ( cKufKif == "KUF" )
-   // epdv_otvori_kuf_tabele( .T. )
+   // epdv_otvori_kuf_priprema()
    // ELSE
-   // epdv_otvori_kif_tabele( .T. )
+   // epdv_otvori_kif_priprema()
    // ENDIF
 
    BoxC()
@@ -348,7 +350,8 @@ FUNCTION epdv_renumeracija_rbr( cKufKif, lShow )
    RETURN .T.
 
 
-FUNCTION renm_g_rbr( cKufKif, lShow )
+/*
+FUNCTION epdv_renum_g_rbr( cKufKif, lShow )
 
    LOCAL nRbr, hRec
    LOCAL nLRbr
@@ -358,10 +361,10 @@ FUNCTION renm_g_rbr( cKufKif, lShow )
    ENDIF
 
    IF cKufKif == "KUF"
-      select_o_epdv_kuf()
+  --    select_o_epdv_kuf()
 
    ELSEIF cKufKif == "P_KIF"
-      select_o_epdv_kif()
+  --    select_o_epdv_kif()
 
    ENDIF
 
@@ -383,13 +386,11 @@ FUNCTION renm_g_rbr( cKufKif, lShow )
    Box(, 3, 60 )
    nRbr := nLRbr
    DO WHILE !Eof()
-
       ++nRbr
       @ box_x_koord() + 1, box_y_koord() + 2 SAY cKufKif + ":" + Str( nRbr, 8, 0 )
       hRec := dbf_get_rec()
       hRec[ "g_r_br" ] := nRbr
       dbf_update_rec( hRec )
-
       ++nRbr
       SKIP
    ENDDO
@@ -402,3 +403,4 @@ FUNCTION renm_g_rbr( cKufKif, lShow )
    ENDIF
 
    RETURN .T.
+*/

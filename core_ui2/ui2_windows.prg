@@ -13,7 +13,7 @@
 
 STATIC s_nMainWindow
 
-MEMVAR m_x, m_y
+
 
 FUNCTION open_main_window()
 
@@ -35,10 +35,10 @@ FUNCTION ispisi_velikim_slovima( cIzn, nStartX, nYRight, cColor )
 
    cOldColor := SetColor( cColor )
 
-   nY := m_y + nYRight
+   nY := box_y_koord() + nYRight
    FOR nCnt := Len ( cIzn ) TO 1 STEP -1
       cChar := SubStr ( cIzn, nCnt, 1 )
-      nX := m_x + nStartX + 2
+      nX := box_x_koord() + nStartX + 2
 
       DO CASE
       CASE cChar = "1"

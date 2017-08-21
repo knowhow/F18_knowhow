@@ -195,53 +195,53 @@ STATIC FUNCTION _g_vars( dDatFrom, dDatTo, nOperater, cArticle, cExport )
 
    Box(, nBoxX, nBoxY )
 
-   @ m_x + nX, m_y + 2 SAY8 "*** Pregled učinka proizvodnje"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "*** Pregled učinka proizvodnje"
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Obuhvatiti period od:" GET dDatFrom
-   @ m_x + nX, Col() + 1 SAY "do:" GET dDatTo
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Obuhvatiti period od:" GET dDatFrom
+   @ box_x_koord() + nX, Col() + 1 SAY "do:" GET dDatTo
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Artikal/element (prazno-svi):" GET cArticle PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Artikal/element (prazno-svi):" GET cArticle PICT "@S30"
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY "-------------- operacije "
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "-------------- operacije "
 
    nX += 1
    nTmp := nX
 
    // prvi red operacija
-   @ m_x + nX, m_y + 2 SAY "op. 1:" GET cOp1 ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "op. 1:" GET cOp1 ;
       VALID {|| AllTrim( cOp1 ) == "0" .OR. s_aops( @cOp1, cOp1 ), set_var( @nOp1, @cOp1 ), ;
       show_it( g_aop_desc( nOp1 ), 10 ) }
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "op. 2:" GET cOp2 ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "op. 2:" GET cOp2 ;
       VALID {|| AllTrim( cOp2 ) == "0" .OR. s_aops( @cOp2, cOp2 ), set_var( @nOp2, @cOp2 ), ;
       show_it( g_aop_desc( nOp2 ), 10 ) }
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "op. 3:" GET cOp3 ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "op. 3:" GET cOp3 ;
       VALID {|| AllTrim( cOp3 ) == "0" .OR. s_aops( @cOp3, cOp3 ), set_var( @nOp3, @cOp3 ), ;
       show_it( g_aop_desc( nOp3 ), 10 ) }
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "op. 4:" GET cOp4 ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "op. 4:" GET cOp4 ;
       VALID {|| AllTrim( cOp4 ) == "0" .OR. s_aops( @cOp4, cOp4 ), set_var( @nOp4, @cOp4 ), ;
       show_it( g_aop_desc( nOp4 ), 10 ) }
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "op. 5:" GET cOp5 ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "op. 5:" GET cOp5 ;
       VALID {|| AllTrim( cOp5 ) == "0" .OR. s_aops( @cOp5, cOp5 ), set_var( @nOp5, @cOp5 ), ;
       show_it( g_aop_desc( nOp5 ), 10 ) }
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "op. 6:" GET cOp6 ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "op. 6:" GET cOp6 ;
       VALID {|| AllTrim( cOp6 ) == "0" .OR. s_aops( @cOp6, cOp6 ), set_var( @nOp6, @cOp6 ), ;
       show_it( g_aop_desc( nOp6 ), 10 ) }
 
@@ -249,71 +249,71 @@ STATIC FUNCTION _g_vars( dDatFrom, dDatTo, nOperater, cArticle, cExport )
 
    nTmp2 := Col() + 15
 
-   @ m_x + nTmp, nTmp2 SAY "op. 7:" GET cOp7 ;
+   @ box_x_koord() + nTmp, nTmp2 SAY "op. 7:" GET cOp7 ;
       VALID {|| AllTrim( cOp7 ) == "0" .OR. s_aops( @cOp7, cOp7 ), set_var( @nOp7, @cOp7 ), ;
       show_it( g_aop_desc( nOp7 ), 10 ) }
 
    nTmp += 1
 
-   @ m_x + nTmp, nTmp2 SAY "op. 8:" GET cOp8 ;
+   @ box_x_koord() + nTmp, nTmp2 SAY "op. 8:" GET cOp8 ;
       VALID {|| AllTrim( cOp8 ) == "0" .OR. s_aops( @cOp8, cOp8 ), set_var( @nOp8, @cOp8 ), ;
       show_it( g_aop_desc( nOp8 ), 10 ) }
 
    nTmp += 1
 
-   @ m_x + nTmp, nTmp2 SAY "op. 9:" GET cOp9 ;
+   @ box_x_koord() + nTmp, nTmp2 SAY "op. 9:" GET cOp9 ;
       VALID {|| AllTrim( cOp9 ) == "0" .OR. s_aops( @cOp9, cOp9 ), set_var( @nOp9, @cOp9 ), ;
       show_it( g_aop_desc( nOp9 ), 10 ) }
 
    nTmp += 1
 
-   @ m_x + nTmp, nTmp2 SAY "op.10:" GET cOp10 ;
+   @ box_x_koord() + nTmp, nTmp2 SAY "op.10:" GET cOp10 ;
       VALID {|| AllTrim( cOp10 ) == "0" .OR. s_aops( @cOp10, cOp10 ), set_var( @nOp10, @cOp10 ), ;
       show_it( g_aop_desc( nOp10 ), 10 ) }
 
    nTmp += 1
 
-   @ m_x + nTmp, nTmp2 SAY "op.11:" GET cOp11 ;
+   @ box_x_koord() + nTmp, nTmp2 SAY "op.11:" GET cOp11 ;
       VALID {|| AllTrim( cOp11 ) == "0" .OR. s_aops( @cOp11, cOp11 ), set_var( @nOp11, @cOp11 ), ;
       show_it( g_aop_desc( nOp11 ), 10 ) }
 
    nTmp += 1
 
-   @ m_x + nTmp, nTmp2 SAY "op.12:" GET cOp12 ;
+   @ box_x_koord() + nTmp, nTmp2 SAY "op.12:" GET cOp12 ;
       VALID {|| AllTrim( cOp12 ) == "0" .OR. s_aops( @cOp12, cOp12 ), set_var( @nOp12, @cOp12 ), ;
       show_it( g_aop_desc( nOp12 ), 10 ) }
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "-------------- ostali uslovi "
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "-------------- ostali uslovi "
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0  } PICT "9999999999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0  } PICT "9999999999"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "Izvjestaj po (1) elementima (2) artiklima" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Izvjestaj po (1) elementima (2) artiklima" ;
       GET nVar1 VALID nVar1 > 0 .AND. nVar1 < 3 PICT "9"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "Izvjestaj se formira po partnerima (D/N)?" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Izvjestaj se formira po partnerima (D/N)?" ;
       GET cPartn VALID cPartn $ "DN" PICT "@!"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "Zaokruzenje po GN-u (D/N)?" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Zaokruzenje po GN-u (D/N)?" ;
       GET cZaok VALID cZaok $ "DN" PICT "@!"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "Kontrolisati lom (D/N)?" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kontrolisati lom (D/N)?" ;
       GET cDmg VALID cDmg $ "DN" PICT "@!"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "Eksport izvjestaja (D/N)?" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Eksport izvjestaja (D/N)?" ;
       GET cExport VALID cExport $ "DN" PICT "@!"
 
 
@@ -437,7 +437,7 @@ STATIC FUNCTION _cre_sp_el( dD_from, dD_to, nOper, cArticle )
 
       nDoc_no := field->doc_no
 
-      @ m_x + 1, m_y + 2 SAY "... vrsim odabir stavki ... nalog: " + AllTrim( Str( nDoc_no ) )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "... vrsim odabir stavki ... nalog: " + AllTrim( Str( nDoc_no ) )
 
       nCust_id := field->cust_id
       nCont_id := field->cont_id
@@ -976,7 +976,7 @@ STATIC FUNCTION _cre_sp_art( dD_from, dD_to, nOper, cArticle )
 
       nDoc_no := field->doc_no
 
-      @ m_x + 1, m_y + 2 SAY8 "... vršim odabir stavki ... nalog: " + AllTrim( Str( nDoc_no ) )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "... vršim odabir stavki ... nalog: " + AllTrim( Str( nDoc_no ) )
 
       nCust_id := field->cust_id
       nCont_id := field->cont_id

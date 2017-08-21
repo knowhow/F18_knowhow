@@ -192,37 +192,37 @@ STATIC FUNCTION g_vars( dD_from, dD_to, cIdFirma, cIdKonto, cProdKto, ;
 
    Box(, 10, 65 )
 
-   @ m_x + nX, m_y + 2 SAY "Datum od" GET dD_from
-   @ m_x + nX, Col() + 1 SAY "do" GET dD_to
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datum od" GET dD_from
+   @ box_x_koord() + nX, Col() + 1 SAY "do" GET dD_to
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Firma:" GET cIdFirma
-   @ m_x + nX, Col() + 3 SAY "sast.iz sezone" GET cSezona
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Firma:" GET cIdFirma
+   @ box_x_koord() + nX, Col() + 3 SAY "sast.iz sezone" GET cSezona
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "gledaj sirovinu:" GET cSirovina ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "gledaj sirovinu:" GET cSirovina ;
       VALID Empty( cSirovina ) .OR. P_ROBA( @cSirovina )
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Mag. konta:" GET cIdKonto PICT "@S40"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Mag. konta:" GET cIdKonto PICT "@S40"
 
    ++ nX
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "(fakt) lista dokumenata:" GET cTDokList ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "(fakt) lista dokumenata:" GET cTDokList ;
       PICT "@S20"
 
    ++ nX
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "(pos) konto prodavnice:" GET cProdKto VALID p_konto( @cProdKto )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "(pos) konto prodavnice:" GET cProdKto VALID p_konto( @cProdKto )
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "(pos) filter za artikle:" GET cArtfilter PICT "@S20"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "(pos) filter za artikle:" GET cArtfilter PICT "@S20"
    READ
    BoxC()
 
@@ -256,7 +256,7 @@ STATIC FUNCTION _g_kalk_tp( cIdFirma, cKto_list, dD_from, dD_to )
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "obradjujem mag. konto: " + cIdKonto
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "obradjujem mag. konto: " + cIdKonto
 
 
 
@@ -278,7 +278,7 @@ STATIC FUNCTION _g_kalk_tp( cIdFirma, cKto_list, dD_from, dD_to )
 
          nKol_poz := 0
 
-         @ m_x + 1, m_y + 20 SAY "roba ->" + cIdRoba
+         @ box_x_koord() + 1, box_y_koord() + 20 SAY "roba ->" + cIdRoba
 
          DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( idFirma + mkonto + idroba ) )
 

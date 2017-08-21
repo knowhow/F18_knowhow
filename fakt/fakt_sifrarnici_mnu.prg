@@ -18,6 +18,7 @@ FUNCTION fakt_sifrarnik()
    LOCAL aOpcExe := {}
    LOCAL nIzbor := 1
 
+altd()
    AAdd( aOpc, "1. opći šifarnici              " )
    AAdd( aOpcExe, {|| opci_sifarnici() } )
 

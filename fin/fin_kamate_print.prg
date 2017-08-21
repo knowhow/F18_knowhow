@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
-
 FUNCTION fin_kamate_print()
 
    LOCAL cIdPartner
@@ -30,16 +28,16 @@ FUNCTION fin_kamate_print()
 
    Box(, 6, 70 )
 
-   @ m_x + 1, m_y + 2 SAY "Ne ispisuj kam.listove za iznos kamata ispod" GET _mala_kamata ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ne ispisuj kam.listove za iznos kamata ispod" GET _mala_kamata ;
       PICT "999999.99"
 
-   @ m_x + 2, m_y + 2 SAY "Varijanta (Z-zatezna kamata, P-prosti kamatni racun)" GET cVarijantaKamatnogRacuna ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Varijanta (Z-zatezna kamata, P-prosti kamatni racun)" GET cVarijantaKamatnogRacuna ;
       VALID cVarijantaKamatnogRacuna $ "ZP" PICT "@!"
 
-   @ m_x + 4, m_y + 2 SAY "Prikazivati kolonu 'kumulativ kamate' (D/N) ?" GET _kum_kam ;
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prikazivati kolonu 'kumulativ kamate' (D/N) ?" GET _kum_kam ;
       VALID _kum_kam $ "DN" PICT "@!"
 
-   @ m_x + 5, m_y + 2 SAY "Dodaj PDV na obracun kamate (D/N) ?" GET _pdv_obr ;
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Dodaj PDV na obracun kamate (D/N) ?" GET _pdv_obr ;
       VALID _pdv_obr $ "DN" PICT "@!"
 
    READ

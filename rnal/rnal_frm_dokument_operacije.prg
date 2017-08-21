@@ -29,8 +29,8 @@ STATIC _a_arr
 // ------------------------------------------
 FUNCTION e_doc_ops( nDoc_no, lNew, nArt_id, nItem_no )
 
-   LOCAL nX := m_x
-   LOCAL nY := m_y
+   LOCAL nX := box_x_koord()
+   LOCAL nY := box_y_koord()
    LOCAL nGetBoxX := 16
    LOCAL nGetBoxY := 70
    LOCAL cBoxNaz := "unos dodatnih operacija stavke"
@@ -76,8 +76,8 @@ FUNCTION e_doc_ops( nDoc_no, lNew, nArt_id, nItem_no )
 
    set_opc_box( nGetBoxX, 50 )
 
-   @ m_x + 1, m_y + 2 SAY PadL( "***** " + cBoxNaz, nGetBoxY - 2 )
-   @ m_x + nGetBoxX, m_y + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadL( "***** " + cBoxNaz, nGetBoxY - 2 )
+   @ box_x_koord() + nGetBoxX, box_y_koord() + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
 
    DO WHILE .T.
 
@@ -114,8 +114,8 @@ FUNCTION e_doc_ops( nDoc_no, lNew, nArt_id, nItem_no )
 
    SELECT _docs
 
-   m_x := nX
-   m_y := nY
+   box_x_koord() := nX
+   box_y_koord() := nY
 
    RETURN nRet
 
@@ -208,12 +208,12 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "r.br operacije (*):", nLeft ) GET _doc_op_no ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "r.br operacije (*):", nLeft ) GET _doc_op_no ;
       WHEN {|| set_opc_box( nBoxX, 50 ), _doc_op_no == 0 }
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "odnosi se na stavku (*):", nLeft ) GET _doc_it_no ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "odnosi se na stavku (*):", nLeft ) GET _doc_it_no ;
       VALID {|| _item_range( _doc_it_no ) .AND. ;
       show_it( g_item_desc( _doc_it_no ), 26 ) } ;
       WHEN {|| set_opc_box( nBoxX, 50, "ova operacija ce se odnositi", "eksplicitno na unesenu stavku" ), ;
@@ -221,7 +221,7 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( " -> element stavke (*):", nLeft ) GET _doc_it_el_ ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( " -> element stavke (*):", nLeft ) GET _doc_it_el_ ;
       VALID {|| get_it_element( @_doc_it_el_, @nElement ), ;
       show_it( get_elem_desc( _a_elem, _doc_it_el_ ), 26 ) } ;
       WHEN {|| _g_art_elements( @_a_elem, _g_art_it_no( _doc_it_no ) ), ;
@@ -229,7 +229,7 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "dodatna operacija (*):", nLeft ) GET cAop ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "dodatna operacija (*):", nLeft ) GET cAop ;
       VALID {|| s_aops( @cAop, cAop ), ;
       set_var( @_aop_id, @cAop ), ;
       show_it( g_aop_desc( _aop_id ), 20 ), ;
@@ -238,7 +238,7 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "atribut dod. operacije:", nLeft ) GET cAopAtt ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "atribut dod. operacije:", nLeft ) GET cAopAtt ;
       VALID {|| s_aops_att( @cAopAtt, _aop_id, cAopAtt ), ;
       set_var( @_aop_att_id, @cAopAtt ), ;
       show_it( g_aop_att_desc( _aop_att_id ), 20 ), ;
@@ -247,7 +247,7 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "vrijednost:", nLeft ) GET _aop_value ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "vrijednost:", nLeft ) GET _aop_value ;
       VALID {|| _g_dim_it_no( _doc_it_no, nElement, @nH, @nW, @nTick ) .AND. ;
       is_g_config( @_aop_value, _aop_att_id, nH, nW, nTick ) } ;
       PICT "@S40" ;
@@ -255,7 +255,7 @@ STATIC FUNCTION _e_box_item( nBoxX, nBoxY )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "dodatni opis:", nLeft ) GET _doc_op_des ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "dodatni opis:", nLeft ) GET _doc_op_des ;
       PICT "@S40" ;
       WHEN set_opc_box( nBoxX, 50, "dodatni opis vezan uz navedene", "operacije" )
 
@@ -296,8 +296,8 @@ FUNCTION get_elem_desc( aElem, nVal, nLen )
 // --------------------------------------------------
 FUNCTION get_it_element( nDoc_it_e_id, nElement )
 
-   LOCAL nXX := m_x
-   LOCAL nYY := m_y
+   LOCAL nXX := box_x_koord()
+   LOCAL nYY := box_y_koord()
 
    IF nDoc_it_e_id > 0
       nElement := _get_a_element( _a_elem, nDoc_it_e_id )
@@ -307,8 +307,8 @@ FUNCTION get_it_element( nDoc_it_e_id, nElement )
    // odaberi element
    nDoc_it_e_id := _pick_element( _a_elem, @nElement )
 
-   m_x := nXX
-   m_y := nYY
+   box_x_koord() := nXX
+   box_y_koord() := nYY
 
    RETURN .T.
 

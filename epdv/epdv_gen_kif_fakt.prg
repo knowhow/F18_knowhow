@@ -53,7 +53,7 @@ FUNCTION epdv_fakt_kif( cIdRj, dD1, dD2, cSezona )
    s_dDatOd := dD1
    s_dDatDo := dD2
 
-   epdv_otvori_kif_tabele( .T. )
+   epdv_otvori_kif_priprema()
 
    SELECT F_SG_KIF
    IF !Used()

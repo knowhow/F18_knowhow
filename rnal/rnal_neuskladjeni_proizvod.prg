@@ -236,7 +236,7 @@ METHOD RNALDamageDocument:configurator_box()
    // setuj kolone konfiguratora
    ::set_configurator_box_columns( @ImeKol, @Kol )
 
-   @ m_x + ( _x_pos - 1 ), m_y + 1 SAY _opts
+   @ box_x_koord() + ( _x_pos - 1 ), box_y_koord() + 1 SAY _opts
 
    my_browse( "_tmp1", _x_pos, _y_pos, {|| ::configurator_box_key_handler() }, _head, _foot,,,,, 2 )
 
@@ -277,7 +277,7 @@ METHOD RNALDamageDocument:configurator_edit_data()
 
    Box(, 3, 55 )
 
-   @ m_x + 1, m_y + 2 SAY "Postavi novi artikal:" GET _art_id ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Postavi novi artikal:" GET _art_id ;
       VALID {|| s_articles( @_art_id, .F., .T.  ), ;
       check_article_valid( _art_id ) } ;
       PICT "9999999999"

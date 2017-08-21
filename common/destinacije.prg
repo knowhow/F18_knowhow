@@ -76,15 +76,15 @@ FUNCTION EdDestBlok( Ch, cDest )
       sMOBTEL   := MOBTEL
 
       Box(, 11, 75, .F. )
-      @ m_x + 2, m_y + 2 SAY "Oznaka destinacije" GET sOZNAKA   PICT "@!"
-      @ m_x + 3, m_y + 2 SAY "NAZIV             " GET sNAZ
-      @ m_x + 4, m_y + 2 SAY "NAZIV2            " GET sNAZ2
-      @ m_x + 5, m_y + 2 SAY "PTT broj          " GET sPTT      PICT "@!"
-      @ m_x + 6, m_y + 2 SAY "Mjesto            " GET sMJESTO   PICT "@!"
-      @ m_x + 7, m_y + 2 SAY "Adresa            " GET sADRESA   PICT "@!"
-      @ m_x + 8, m_y + 2 SAY "Telefon           " GET sTELEFON  PICT "@!"
-      @ m_x + 9, m_y + 2 SAY "Fax               " GET sFAX      PICT "@!"
-      @ m_x + 10, m_y + 2 SAY "Mobitel           " GET sMOBTEL   PICT "@!"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Oznaka destinacije" GET sOZNAKA   PICT "@!"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "NAZIV             " GET sNAZ
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "NAZIV2            " GET sNAZ2
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "PTT broj          " GET sPTT      PICT "@!"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Mjesto            " GET sMJESTO   PICT "@!"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Adresa            " GET sADRESA   PICT "@!"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Telefon           " GET sTELEFON  PICT "@!"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Fax               " GET sFAX      PICT "@!"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Mobitel           " GET sMOBTEL   PICT "@!"
       READ
       BoxC()
       IF Ch == K_CTRL_N .AND. LastKey() <> K_ESC

@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y, GetList
 
 STATIC picBHD
 STATIC picDEM
@@ -72,58 +71,59 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL cIdPartnerTekuci
    LOCAL nCount, nCountLimit := 12000 // broj izgenerisanih stavki
    LOCAL cNastavak := "N"
+   LOCAL GetList := {}
 
    download_template( "ios.odt",  "0d6a8b1dade0e934536ff1173598e39d498ae9480f495d2fe618ff32e6ea71df" )
    download_template( "ios_2.odt", "6b8fa9cb492c13e3abf6d45f3bc2c262958512b1ffc8bbe5c01242894714b5c0" )
 
-   //o_konto()
+   // o_konto()
    // o_partner()
 
    Box(, 16, 65, .F. )
 
-   @ m_x + nX, m_y + 2 SAY8 " Štampa IOS-a **** "
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 " Štampa IOS-a **** "
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "       Datum IOS-a:" GET dDatumIOS
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "       Datum IOS-a:" GET dDatumIOS
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY " Gledati period do:" GET dDatumDo
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " Gledati period do:" GET dDatumDo
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Firma "
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Konto       :" GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto       :" GET cIdKonto VALID P_Konto( @cIdKonto )
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Partner     :" GET cIdPartner VALID Empty( cIdPartner ) .OR.  p_partner( @cIdPartner ) PICT "@!"
-   @ m_x + nX, Col() + 2 SAY "nastavak od ovog partnera D/N " GET cNastavak PICT "@!" VALID cNastavak $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Partner     :" GET cIdPartner VALID Empty( cIdPartner ) .OR.  p_partner( @cIdPartner ) PICT "@!"
+   @ box_x_koord() + nX, Col() + 2 SAY "nastavak od ovog partnera D/N " GET cNastavak PICT "@!" VALID cNastavak $ "DN"
 
    IF fin_dvovalutno()
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Prikaz " +   AllTrim( ValDomaca() ) + "/" +  AllTrim( ValPomocna() ) + " (1/2)" ;
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz " +   AllTrim( ValDomaca() ) + "/" +  AllTrim( ValPomocna() ) + " (1/2)" ;
          GET _din_dem VALID _din_dem $ "12"
    ENDIF
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Prikaz prebijenog stanja " GET _prelomljeno  VALID _prelomljeno $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz prebijenog stanja " GET _prelomljeno  VALID _prelomljeno $ "DN" PICT "@!"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Prikaz identično kartici " GET _kao_kartica  VALID _kao_kartica $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz identično kartici " GET _kao_kartica  VALID _kao_kartica $ "DN" PICT "@!"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Export u XLSX (D/N)?" GET lExportXLSX   VALID lExportXLSX $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Export u XLSX (D/N)?" GET lExportXLSX   VALID lExportXLSX $ "DN" PICT "@!"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Limit za broj izgenerisanih stavki ?" GET nCountLimit
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Limit za broj izgenerisanih stavki ?" GET nCountLimit
 
    // ++nX
-   // @ m_x + nX, m_y + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen  VALID _auto_gen $ "DN" PICT "@!"
+   // @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen  VALID _auto_gen $ "DN" PICT "@!"
 
    READ
 
@@ -230,7 +230,7 @@ STATIC FUNCTION mnu_ios_print()
 
       SKIP
 
-      @ m_x + 1, m_y + 2 SAY "Cnt: " + Str( nCount, 5 ) + " / limit: " + Str( nCountLimit, 5 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Cnt: " + Str( nCount, 5 ) + " / limit: " + Str( nCountLimit, 5 )
 
       IF nCount > nCountLimit
          MsgBeep( "Posljednja obuhvaćena šifra parnera: " + cIdPartnerTekuci )
@@ -583,8 +583,8 @@ STATIC FUNCTION ios_clan_setup( setup_box )
 
    IF setup_box
       Box(, 2, 70 )
-      @ m_x + 1, m_y + 2 SAY "Definisanje clan-a na IOS-u:"
-      @ m_x + 2, m_y + 2 SAY ":" GET _clan PICT "@S65"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Definisanje clan-a na IOS-u:"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY ":" GET _clan PICT "@S65"
       READ
       BoxC()
 
@@ -613,19 +613,19 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    LOCAL cPrikazSaSaldoNulaDN := "D"
    LOCAL dDatumDo := Date()
 
-   //o_konto()
+   // o_konto()
 
    Box( "", 6, 60 )
-   @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA IOS-a"
-   @ m_x + 3, m_y + 2 SAY "Firma "
+   @ box_x_koord() + 1, box_y_koord() + 6 SAY "SPECIFIKACIJA IOS-a"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
-   @ m_x + 4, m_y + 2 SAY "Konto: " GET cIdKonto VALID P_Konto( @cIdKonto )
-   @ m_x + 5, m_y + 2 SAY "Datum do kojeg se generise  :" GET dDatumDo
-   @ m_x + 6, m_y + 2 SAY "Prikaz partnera sa saldom 0 :" GET cPrikazSaSaldoNulaDN VALID cPrikazSaSaldoNulaDN $ "DN" PICT "@!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto: " GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Datum do kojeg se generise  :" GET dDatumDo
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prikaz partnera sa saldom 0 :" GET cPrikazSaSaldoNulaDN VALID cPrikazSaSaldoNulaDN $ "DN" PICT "@!"
    READ
    BoxC()
 
-   //SELECT konto
+   // SELECT konto
    USE
 
    IF LastKey() == K_ESC
@@ -910,7 +910,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    nCount := 0
    Box(, 3, 65 )
 
-   @ m_x + 1, m_y + 2 SAY8 "sačekajte ... generacija ios tabele"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "sačekajte ... generacija ios tabele"
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
@@ -969,7 +969,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
          dbf_update_rec( hRec )
 
-         @ m_x + 3, m_y + 2 SAY PadR( "Partner: " + cIdPartnerTekuci + ", saldo: " + AllTrim( Str( nSaldo1, 12, 2 ) ), 60 )
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "Partner: " + cIdPartnerTekuci + ", saldo: " + AllTrim( Str( nSaldo1, 12, 2 ) ), 60 )
 
          ++nCount
 

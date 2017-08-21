@@ -50,7 +50,7 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
    dDatOd := dD1
    dDatDo := dD2
 
-   epdv_otvori_kif_tabele( .T. )
+   epdv_otvori_kif_priprema()
 
    SELECT F_SG_KIF
    IF !Used()

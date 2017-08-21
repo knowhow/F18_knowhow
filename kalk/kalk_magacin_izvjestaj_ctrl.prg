@@ -44,7 +44,7 @@ FUNCTION r_ct_sast()
 
   // o_roba()
   -- o_sifk()
-   o_sifv()
+--   o_sifv()
 
    // uslovi izvjestaja
    IF g_vars( @dD_from, @dD_to, @cIdFirma, @cIdKonto, @cProdKto, ;

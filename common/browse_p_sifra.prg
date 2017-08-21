@@ -1215,8 +1215,10 @@ FUNCTION sifarnik_brisi_stavku()
    lOk := delete_rec_server_and_dbf( cAlias, hRecDbf, 1, "CONT" )
 
    IF lOk .AND. Alias() != "SIFK" .AND. hb_HHasKey( hRecDbf, "id" )
-      o_sifk()
-      o_sifv()
+      //o_sifk()
+      //o_sifv()
+      o_sifk_sifv_empty()
+      
       hRec := hb_Hash()
       hRec[ "id" ]    := PadR( cAlias, 8 )
       hRec[ "idsif" ] := PadR( hRecDbf[ "id" ], 15 )

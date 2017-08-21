@@ -876,20 +876,17 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    USE
    CREATE ( cDbfPath + "e_partn" ) from ( cDbfPath + "struct" )
 
-   // tabela konta
    o_konto()
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_konto" ) from ( cDbfPath + "struct" )
 
-   // tabela sifk
-   o_sifk()
+   o_sifk( "XXXX" )
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_sifk" ) from ( cDbfPath + "struct" )
 
-   // tabela sifv
-   o_sifv()
+   o_sifv( "XXXX" )
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_sifv" ) from ( cDbfPath + "struct" )

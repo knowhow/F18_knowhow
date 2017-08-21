@@ -20,7 +20,8 @@ FUNCTION P_Sifk( cId, nDeltaX, nDeltaY )
    PRIVATE imekol, kol
 
    Kol := {}
-   o_sifk()
+
+   o_sifk() // P_SIFK
    //o_sifv()
    ImeKol := { { PadR( "Id", 15 ),      {|| id }, "id"  }, ;
       { PadR( "Naz", 25 ),     {||  naz }, "naz" }, ;

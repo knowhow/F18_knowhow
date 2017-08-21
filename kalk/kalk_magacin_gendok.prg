@@ -288,7 +288,7 @@ FUNCTION MNivPoProc()
    o_konto()
    o_tarifa()
 --   o_sifk()
-   o_sifv()
+--   o_sifv()
 //   o_roba()
    cVarijanta := "3"
    Box(, 7, 60 )

@@ -460,12 +460,12 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
       RETURN .F.
    ENDIF
 
-   IF cDbf == NIL .AND. cOznaka == NIL
-      INDEX ON ID + SORT + NAZ TAG ID  TO ( cTable )
-      INDEX ON ID + OZNAKA TAG ID2  TO ( cTable )
-      INDEX ON NAZ  TAG NAZ TO ( cTable )
-      SET ORDER TO TAG ID
-   ENDIF
+   // IF cDbf == NIL .AND. cOznaka == NIL
+   INDEX ON field->ID + field->SORT + field->NAZ TAG ID  TO ( cTable )
+   INDEX ON field->ID + field->OZNAKA TAG ID2  TO ( cTable )
+   INDEX ON field->NAZ  TAG NAZ TO ( cTable )
+   SET ORDER TO TAG ID
+   // ENDIF
 
    GO TOP  // ovo obavezno inace ostane na eof() poziciji?!
 
@@ -473,12 +473,19 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
 
 
 
-FUNCTION o_sifv()
+FUNCTION o_sifv( cDbf )
 
    Select( F_SIFV )
    USE
 
-   RETURN use_sql_sifv()
+   RETURN use_sql_sifv( cDbf )
+
+FUNCTION o_sifk_sifv_empty( cDbf )
+
+   o_sifk( "XXXX" )
+   o_sifv( "XXXX" )
+
+   RETURN .T.
 
 /*
    use_sql_sifv( "ROBA", "GR1", NIL, "G000000001" ) =>  filter na ROBA/GR1/grupa1=G0000000001

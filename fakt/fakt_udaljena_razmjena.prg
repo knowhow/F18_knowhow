@@ -1010,13 +1010,13 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    CREATE ( cDbfPath + "e_partn" ) FROM ( my_home() + "struct" )
 
    // tabela sifk
-   o_sifk()
+   o_sifk( "XXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_sifk" ) FROM ( my_home() + "struct" )
 
    // tabela sifv
-   o_sifv()
+   o_sifv( "XXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_sifv" ) FROM ( my_home() + "struct" )

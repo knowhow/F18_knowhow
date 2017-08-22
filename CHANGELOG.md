@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.66-std, 2017-08-22
+## 3.1.67-std, 2017-08-22
 ### Developer
 - fakt big-ball-of-mud
 

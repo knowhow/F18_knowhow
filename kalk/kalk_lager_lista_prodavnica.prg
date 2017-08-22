@@ -14,10 +14,10 @@
 
 STATIC cTblKontrola := ""
 STATIC aPorezi := {}
-STATIC __line
-STATIC __txt1
-STATIC __txt2
-STATIC __txt3
+STATIC s_cM
+//STATIC __txt1
+//STATIC __txt2
+//STATIC __txt3
 
 
 FUNCTION kalk_lager_lista_prodavnica()
@@ -239,7 +239,7 @@ FUNCTION kalk_lager_lista_prodavnica()
       m += " " + REPL( "-", nLen )
    ENDIF
 
-   __line := m
+   s_cM := m
 
    start PRINT cret
    ?
@@ -636,7 +636,7 @@ FUNCTION kalk_lager_lista_prodavnica()
 
    ENDDO
 
-   ? __line
+   ? s_cM
    ? "UKUPNO:"
 
    @ PRow(), nCol0 - 1 SAY ""
@@ -670,7 +670,7 @@ FUNCTION kalk_lager_lista_prodavnica()
       @ PRow(), PCol() + 1 SAY nTNVU - nTNVI + nTPNV PICT kalk_pic_iznos_bilo_gpicdem()
    ENDIF
 
-   ? __line
+   ? s_cM
 
    FF
    ENDPRINT
@@ -722,7 +722,7 @@ FUNCTION kalk_zagl_lager_lista_prodavnica( lSint )
    cSC2 := ""
 
    SELECT kalk
-   ?U __line
+   ?U s_cM
 
    IF cPredhStanje == "D"
 
@@ -853,7 +853,7 @@ FUNCTION kalk_zagl_lager_lista_prodavnica( lSint )
 
    ENDIF
 
-   ?U __line
+   ?U s_cM
 
    RETURN
 

@@ -114,13 +114,13 @@ FUNCTION epdv_azur_kuf_kif( cKufKif )
 
    SELECT ( nPArea )
    my_dbf_zap()
-   //USE
+   // USE
 
-   //IF ( cKufKif == "KUF" )
-    //  epdv_otvori_kuf_priprema()
-   //ELSE
-    //  epdv_otvori_kif_priprema()
-   //ENDIF
+   // IF ( cKufKif == "KUF" )
+   // epdv_otvori_kuf_priprema()
+   // ELSE
+   // epdv_otvori_kif_priprema()
+   // ENDIF
 
    BoxC()
 
@@ -136,7 +136,7 @@ FUNCTION epdv_kuf_kif_azur_sql( cKufKif, nNextRbrGlobalno, nNextBrDok )
    LOCAL hRec := hb_Hash()
    LOCAL cTable
    LOCAL nI
-   LOCAL _tmp_id
+   LOCAL cTmpId
    LOCAL _ids := {}
    LOCAL nWA
    LOCAL hParams
@@ -173,10 +173,15 @@ FUNCTION epdv_kuf_kif_azur_sql( cKufKif, nNextRbrGlobalno, nNextBrDok )
       hRec[ "g_r_br" ] := nNextRbrGlobalno++
 
       IF cKufKif == "KIF"
+         hRec[ "part_kat_2" ] := "" // ovo je polje koje se nalazi u epdv.kif, ali se ne koristi
+      ENDIF
+
+
+      IF cKufKif == "KIF"
          hRec[ "src_pm" ] := field->src_pm
       ENDIF
 
-      _tmp_id := "#2" + PadL( AllTrim( Str( hRec[ "br_dok" ], 6 ) ), 6 )
+      cTmpId := "#2" + PadL( AllTrim( Str( hRec[ "br_dok" ], 6 ) ), 6 )
 
       IF !sql_table_update( cTable, "ins", hRec )
          lOk := .F.
@@ -192,7 +197,7 @@ FUNCTION epdv_kuf_kif_azur_sql( cKufKif, nNextRbrGlobalno, nNextBrDok )
    IF !lOk
       run_sql_query( "ROLLBACK" )
    ELSE
-      AAdd( _ids, _tmp_id )
+      AAdd( _ids, cTmpId )
       push_ids_to_semaphore( cTable, _ids )
 
       hParams := hb_Hash()

@@ -80,7 +80,7 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
       ENDIF
    ENDIF
 
-altd()
+
    fakt_kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cBrDok )
 
    hAttrId := hb_Hash()

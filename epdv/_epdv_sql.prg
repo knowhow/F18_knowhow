@@ -240,6 +240,25 @@ FUNCTION epdv_next_globalni_redni_broj( cKufKif )
    RETURN nRet + 1
 
 
+FUNCTION epdv_open_kif_empty()
+
+   LOCAL hParams := hb_Hash()
+
+   hParams[ "brdok" ] := -999 // nepostojeci brdok
+
+   RETURN find_epdv_kif_za_period( NIL, NIL, hParams, "br_dok" )
+
+
+FUNCTION epdv_open_kuf_empty()
+
+   LOCAL hParams := hb_Hash()
+
+   hParams[ "brdok" ] := -999
+
+   RETURN find_epdv_kuf_za_period( NIL, NIL, hParams, "br_dok" )
+
+
+
 FUNCTION epdv_open_all_kuf( cTag )
    RETURN find_epdv_kuf_za_period( NIL, NIL, NIL, cTag )
 
@@ -527,7 +546,7 @@ STATIC FUNCTION use_sql_epdv_pdv_where( hParams )
       ELSE
          dDatOd := hParams[ "dat_od" ]
       ENDIF
-      cWhere += iif( Empty( cWhere ), "", " AND " ) + "per_od=" + sql_quote( dDatOd ) + " AND per_do=" + sql_quote( hParams[ "dat_do"] )
+      cWhere += iif( Empty( cWhere ), "", " AND " ) + "per_od=" + sql_quote( dDatOd ) + " AND per_do=" + sql_quote( hParams[ "dat_do" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "where" )

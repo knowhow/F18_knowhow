@@ -114,18 +114,17 @@ FUNCTION epdv_azur_kuf_kif( cKufKif )
 
    SELECT ( nPArea )
    my_dbf_zap()
+   //USE
 
-   USE
-
-   IF ( cKufKif == "KUF" )
-      epdv_otvori_kuf_priprema()
-   ELSE
-      epdv_otvori_kif_priprema()
-   ENDIF
+   //IF ( cKufKif == "KUF" )
+    //  epdv_otvori_kuf_priprema()
+   //ELSE
+    //  epdv_otvori_kif_priprema()
+   //ENDIF
 
    BoxC()
 
-   MsgBeep( "Ažuriran je " + cKufKif + " dokument " + Str( nNextBrDok, 6, 0 ) )
+   MsgBeep( "Ažuriran je " + cKufKif + " dokument " + Str( nBrDok, 6, 0 ) )
 
    RETURN nLastBrDok
 
@@ -144,8 +143,10 @@ FUNCTION epdv_kuf_kif_azur_sql( cKufKif, nNextRbrGlobalno, nNextBrDok )
 
    IF cKufKif == "KIF"
       nWA := F_P_KIF
+      epdv_open_kif_empty()
    ELSEIF cKufKif == "KUF"
       nWA := F_P_KUF
+      epdv_open_kuf_empty()
    ENDIF
 
    cTable := "epdv_" + Lower( cKufKif )
@@ -214,8 +215,6 @@ FUNCTION epdv_povrat_kuf_kif( cKufKif, nBrDok )
    LOCAL hParams := hb_Hash()
 
    hParams[ "brdok" ] := nBrDok
-
-   AltD()
    IF ( cKufKif == "KUF" )
       // epdv_otvori_kuf_priprema()
       select_o_epdv_p_kuf()
@@ -235,7 +234,7 @@ FUNCTION epdv_povrat_kuf_kif( cKufKif, nBrDok )
 
    nCnt := 0
 
-   // SELECT ( nKumulativWA )
+   SELECT ( nKumulativWA )
    // SET ORDER TO TAG "BR_DOK"
    // SEEK Str( nBrdok, 6, 0 )
 
@@ -253,7 +252,7 @@ FUNCTION epdv_povrat_kuf_kif( cKufKif, nBrDok )
 
    Box(, 2, 60 )
 
-   SELECT ( nKumulativWA )
+   SELECT ( nKumulativWA ) // KUF -> P_KUF
    DO WHILE !Eof() .AND. ( field->br_dok == nBrDok )
 
       ++nCnt
@@ -271,27 +270,22 @@ FUNCTION epdv_povrat_kuf_kif( cKufKif, nBrDok )
    ENDDO
 
 
-   my_close_all_dbf()
-   IF ( cKufKif == "KUF" )
-      epdv_otvori_kuf_priprema()
-   ELSE
-      epdv_otvori_kif_priprema()
-   ENDIF
+   // my_close_all_dbf()
+   // IF ( cKufKif == "KUF" )
+   // epdv_otvori_kuf_priprema()
+   // ELSE
+   // epdv_otvori_kif_priprema()
+   // ENDIF
 
    SELECT ( nKumulativWA )
-   SET ORDER TO TAG "BR_DOK"
-   SEEK Str( nBrdok, 6, 0 )
+   // SET ORDER TO TAG "BR_DOK"
+   // SEEK Str( nBrdok, 6, 0 )
    GO TOP
-
    hRecDelete := dbf_get_rec()
-
    lOk := .T.
-
    MsgO( "del " + cKufKif )
    lOk := delete_rec_server_and_dbf( cTable, hRecDelete, 2, "FULL" )
-
    MsgC()
-
    IF !lOk
       MsgBeep( "Operacija brisanja dokumenta nije uspješna, dokument: " + AllTrim( Str( nBrDok ) ) )
    ENDIF

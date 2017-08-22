@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.66-std, 2017-08-22
+### Developer
+- fakt big-ball-of-mud
+
 ## 3.1.65-std, 2017-08-21
 ### FAKT
 - fakt_open_dbf() out, fakt sql big-bang 03

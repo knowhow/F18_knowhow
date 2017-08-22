@@ -59,7 +59,7 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
 
    cIdFirma  := hParams[ "idfirma" ]
    cIdTipDok := hParams[ "idtipdok" ]
-   cBrDok    := hParams[ "brdok" ]
+   cBrDok    := LEFT( hParams[ "brdok" ], FIELD_LEN_FAKT_BRDOK )
 
    IF Pitanje( "FAKT_POV_DOK", "Dokument " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + " vratiti u pripremu (D/N) ?", "D" ) == "N"
       my_close_all_dbf()
@@ -80,7 +80,8 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
       ENDIF
    ENDIF
 
-   kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cBrDok )
+altd()
+   fakt_kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cBrDok )
 
    hAttrId := hb_Hash()
    hAttrId[ "idfirma" ] := cIdFirma
@@ -103,6 +104,10 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
 
    IF lBrisatiKumulativ
 
+      seek_fakt( "XX" )
+      seek_fakt_doks( "XX" )
+      seek_fakt_doks2( "XX" )
+
       run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" }, .T. )
          run_sql_query( "ROLLBACK" )
@@ -115,7 +120,7 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "brisanje : fakt_fakt_atributi"
       lOk := oFaktAttr:delete_attr_from_server()
 
-      seek_fakt( "XX" )
+
       IF lOk
          cTabela := "fakt_fakt"
          @ box_x_koord() + 1, box_y_koord() + 2 SAY "brisanje : " + cTabela
@@ -123,7 +128,7 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
          lOk := delete_rec_server_and_dbf( cTabela, hParams, 2, "CONT" )
       ENDIF
 
-      seek_fakt_doks( "XX" )
+
       IF lOk
          cTabela := "fakt_doks"
          @ box_x_koord() + 2, box_y_koord() + 2 SAY "brisanje : " + cTabela
@@ -131,7 +136,7 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
          lOk := delete_rec_server_and_dbf( cTabela, hParams, 1, "CONT" )
       ENDIF
 
-      seek_fakt_doks2( "XX" )
+
       IF lOk
          cTabela := "fakt_doks2"
          @ box_x_koord() + 3, box_y_koord() + 2 SAY "brisanje : " + cTabela
@@ -189,17 +194,16 @@ STATIC FUNCTION resetuj_markere_generisanog_dokumenta( cIdFirma, cIdTipDok, cBrD
 
 
 
-STATIC FUNCTION kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cBrDok )
+STATIC FUNCTION fakt_kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL hRec
 
    select_o_fakt_pripr()
 
    SELECT fakt // ranije otvoren sa seek_fakt
-   DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdTipDok == field->idtipdok .AND. cBrDok == field->brdok
+   DO WHILE !Eof() .AND. cIdFirma == fakt->idfirma .AND. cIdTipDok == fakt->idtipdok .AND. LEFT( cBrDok, FIELD_LEN_FAKT_BRDOK ) == LEFT( fakt->brdok, FIELD_LEN_FAKT_BRDOK )
 
-      SELECT fakt
-
+      //SELECT fakt
       hRec := dbf_get_rec()
       SELECT fakt_pripr
       APPEND BLANK
@@ -321,7 +325,7 @@ FUNCTION fakt_povrat_po_kriteriju( cBrDok, dDatdok, cIdTipDok, cIdFirma )
          LOOP
       ENDIF
 
-      kopiraj_dokument_u_tabelu_pripreme( cIdFirmaTekuci, cIdTipDokTekuci, cBrDokTekuci )
+      fakt_kopiraj_dokument_u_tabelu_pripreme( cIdFirmaTekuci, cIdTipDokTekuci, cBrDokTekuci )
 
       MsgO( "Brišem dokumente iz kumulativa: " + cIdFirmaTekuci + "-" + cIdTipDokTekuci + "-" + PadR( cBrDokTekuci, 10 ) )
 

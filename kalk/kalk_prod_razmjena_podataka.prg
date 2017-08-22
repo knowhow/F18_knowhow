@@ -338,6 +338,7 @@ FUNCTION fakt_13_kalk_11()
          @ box_x_koord() + 14, box_y_koord() + 2 SAY Space( 30 )
          LOOP
       ELSE
+         seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
          aMemo := fakt_ftxt_decode( txt )
 
          SELECT kalk_pripr
@@ -355,11 +356,12 @@ FUNCTION fakt_13_kalk_11()
          ENDIF
          GO BOTTOM
          IF brdok == cBrKalk; nRbr := Val( Rbr ); ENDIF
+
          SELECT fakt
-         IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-            MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-            LOOP
-         ENDIF
+         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+        //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+        //    LOOP
+         //ENDIF
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
             select_o_roba( fakt->idroba )
             select_o_tarifa( roba->idtarifa )
@@ -493,7 +495,7 @@ FUNCTION fakt_11_kalk_41()
             @ box_x_koord() + 14, box_y_koord() + 2 SAY Space( 30 )
             LOOP
          ELSE
-
+            seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
             aMemo := fakt_ftxt_decode( txt )
 
             IF Len( aMemo ) >= 5
@@ -528,11 +530,13 @@ FUNCTION fakt_11_kalk_41()
             IF brdok == cBrKalk
                nRbr := Val( Rbr )
             ENDIF
+
             SELECT fakt
-            IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-               MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-               LOOP
-            ENDIF
+            //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+            //   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+            //   LOOP
+            //ENDIF
+
             DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
                select_o_roba( fakt->idroba )
                select_o_tarifa( roba->idtarifa )
@@ -616,12 +620,12 @@ FUNCTION fakt_11_kalk_41()
                   nRbr := Val( Rbr )
                ENDIF
 
-               SELECT fakt
+               //SELECT fakt
 
-               IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + "'==IdFirma+IdTipDok", "IDROBA", F_ROBA )
-                  MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-                  LOOP
-               ENDIF
+               //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + "'==IdFirma+IdTipDok", "IDROBA", F_ROBA )
+              //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+              //    LOOP
+               //ENDIF
 
                SELECT kalk_pripr
 
@@ -735,6 +739,7 @@ FUNCTION fakt_01_kalk_81()
          @ box_x_koord() + 14, box_y_koord() + 2 SAY Space( 30 )
          LOOP
       ELSE
+         seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
          aMemo := fakt_ftxt_decode( txt )
          IF Len( aMemo ) >= 5
             @ box_x_koord() + 10, box_y_koord() + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
@@ -758,11 +763,13 @@ FUNCTION fakt_01_kalk_81()
          ENDIF
          GO BOTTOM
          IF brdok == cBrKalk; nRbr := Val( Rbr ); ENDIF
+
          SELECT fakt
-         IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-            MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-            LOOP
-         ENDIF
+         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+        //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+          //  LOOP
+         //ENDIF
+
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
             select_o_roba( fakt->idroba )
             select_o_tarifa( roba->idtarifa )
@@ -874,6 +881,7 @@ FUNCTION fakt_13_kalk_80()
          @ box_x_koord() + 14, box_y_koord() + 2 SAY Space( 30 )
          LOOP
       ELSE
+         seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
          aMemo := fakt_ftxt_decode( txt )
 
 
@@ -892,14 +900,15 @@ FUNCTION fakt_13_kalk_80()
          ENDIF
          GO BOTTOM
          IF brdok == cBrKalk; nRbr := Val( Rbr ); ENDIF
-         SELECT fakt
-         IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-            MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-            LOOP
-         ENDIF
-         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-            select_o_roba( fakt->idroba )
 
+         SELECT fakt
+         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+        //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+        //    LOOP
+        // ENDIF
+         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
+
+            select_o_roba( fakt->idroba )
             select_o_tarifa( roba->idtarifa )
             select_o_koncij( cIdkonto )
 
@@ -1075,7 +1084,7 @@ FUNCTION fakt_15_kalk_15()
          IF brdok == cBrKalk; nRbr := Val( Rbr ); ENDIF
 
          SELECT fakt
-         IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+      --   IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
             MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
             LOOP
          ENDIF
@@ -1256,7 +1265,7 @@ FUNCTION fakt_11_kalk_42()
             @ box_x_koord() + 15, box_y_koord() + 2 SAY Space( 30 )
             LOOP
          ELSE
-
+            seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
             aMemo := fakt_ftxt_decode( txt )
 
             IF Len( aMemo ) >= 5
@@ -1292,10 +1301,10 @@ FUNCTION fakt_11_kalk_42()
             ENDIF
 
             SELECT fakt
-            IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-               MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifarniku!#Prenos nije izvrsen!" )
-               LOOP
-            ENDIF
+            //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+            //   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifarniku!#Prenos nije izvrsen!" )
+            //   LOOP
+            //ENDIF
 
 
             DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok

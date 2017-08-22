@@ -456,11 +456,7 @@ STATIC FUNCTION fakt_export_impl( hParams, aDetails )
       _change_rj := .T.
    ENDIF
 
-<<<<<<< HEAD
-   _cre_exp_tbls( s_cExportDbfPath )
-=======
    fakt_cre_tabele_razmjene( s_cExportDbfPath )
->>>>>>> origin/3
    fakt_open_e_tabele( s_cExportDbfPath )
    // _o_tables()
 
@@ -971,7 +967,6 @@ STATIC FUNCTION fakt_cre_tabele_razmjene( cDbfPath )
       cDbfPath := my_home()
    ENDIF
 
-   // provjeri da li postoji direktorij, pa ako ne - kreiraj
    direktorij_kreiraj_ako_ne_postoji( cDbfPath )
 
    seek_fakt( "XXX" )
@@ -980,10 +975,6 @@ STATIC FUNCTION fakt_cre_tabele_razmjene( cDbfPath )
    CREATE ( cDbfPath + "e_fakt" ) FROM ( my_home() + "struct" )
 
    seek_fakt_doks( "XXXX" )
-<<<<<<< HEAD
-=======
-   altd()
->>>>>>> origin/3
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_doks" ) FROM ( my_home() + "struct" )
@@ -1020,13 +1011,6 @@ STATIC FUNCTION fakt_cre_tabele_razmjene( cDbfPath )
 
 
 
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> origin/3
 STATIC FUNCTION fakt_open_e_tabele( cDbfPath, lFromFmk )
 
    LOCAL cDbfName
@@ -1039,11 +1023,7 @@ STATIC FUNCTION fakt_open_e_tabele( cDbfPath, lFromFmk )
       lFromFmk := .F.
    ENDIF
 
-<<<<<<< HEAD
-   log_write( "otvaram fakt tabele importa i pravim indekse...", 9 )
-=======
    //log_write( "FAKT tabele importa i pravim indekse...", 9 )
->>>>>>> origin/3
 
    my_close_all_dbf()
 

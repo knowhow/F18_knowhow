@@ -730,7 +730,7 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
 
       cIdFirma := field->idfirma
       cIdTipDok := field->idtipdok
-      cBrDok := Left( field->brdok, FIELD_LEN_FAKT_BRDOK )
+      cBrDok := PADR( field->brdok, FIELD_LEN_FAKT_BRDOK )
 
       IF dDatOd <> CToD( "" )
          IF field->datdok < dDatOd
@@ -828,13 +828,13 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
       SEEK cIdFirma + cIdTipDok + cBrDok // e_fakt
 
       nRedniBroj := 0
-      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. Left( field->brdok, FIELD_LEN_FAKT_BRDOK ) == cBrDok
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. PADR( field->brdok, FIELD_LEN_FAKT_BRDOK ) == cBrDok
 
          hAppendRec := dbf_get_rec()
 
          hAppendRec[ "rbr" ] := PadL( AllTrim( Str( ++nRedniBroj ) ), 3 )
          hAppendRec[ "podbr" ] := ""
-         hAppendRec[ "brdok" ] :=  Left( hAppendRec[ "brdok" ], FIELD_LEN_FAKT_BRDOK ) // fix bringout database fakt.brdok C(12)
+         hAppendRec[ "brdok" ] :=  PADR( hAppendRec[ "brdok" ], FIELD_LEN_FAKT_BRDOK ) // fix bringout database fakt.brdok C(12)
          nGlobalniBrojac += nRedniBroj
 
          @ box_x_koord() + 3, box_y_koord() + 40 SAY "stavka: " + AllTrim( Str( nGlobalniBrojac ) ) + " / " + hAppendRec[ "rbr" ]
@@ -860,7 +860,7 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
       SET ORDER TO TAG "1"
       GO TOP
       SEEK cIdFirma + cIdTipDok + cBrDok // e_doks2
-      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. Left( field->brdok, FIELD_LEN_FAKT_BRDOK ) == cBrDok
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. PADR( field->brdok, FIELD_LEN_FAKT_BRDOK ) == cBrDok
 
          hAppendRec := dbf_get_rec()
 

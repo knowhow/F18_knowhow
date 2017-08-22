@@ -186,7 +186,7 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
 
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "fakt_fakt -> server: " + cTempFaktId
 
-   DO WHILE !Eof() .AND. fakt_pripr->idfirma == cIdFirma .AND. fakt_pripr->idtipdok == cIdTipDok .AND. LEFT( fakt_pripr->brdok, FIELD_LEN_FAKT_BRDOK ) == LEFT( cBrDok, FIELD_LEN_FAKT_BRDOK )
+   DO WHILE !Eof() .AND. fakt_pripr->idfirma == cIdFirma .AND. fakt_pripr->idtipdok == cIdTipDok .AND. PADR( fakt_pripr->brdok, FIELD_LEN_FAKT_BRDOK ) == PADR( cBrDok, FIELD_LEN_FAKT_BRDOK )
       hRec := dbf_get_rec()
       IF !sql_table_update( "fakt_fakt", "ins", hRec )
          lOk := .F.

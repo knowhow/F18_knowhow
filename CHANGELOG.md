@@ -1,7 +1,8 @@
 # F18 klijent, lista promjena
 
-## 3.1.74-std, 2017-08-22
+## 3.1.75-std, 2017-08-22
 ### Developer
+- FAKT -> KALK još BUGFIX
 - FAKT 11 -> KALK 41
 - FAKT export/import polje e_doks->korisnik M(10), e_doks.fpt
 - FAKT open_fakt_doks_dbf OUT

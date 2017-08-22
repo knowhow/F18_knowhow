@@ -226,7 +226,7 @@ FUNCTION seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cTag, aWorkare
          cSql += " WHERE "
          lWhere := .T.
       ENDIF
-      cSql += "LEFT(brdok," + ALLTRIM( Str( FIELD_LEN_FAKT_BRDOK ) ) + ")=" + sql_quote( cBrDok )
+      cSql += "rpad(brdok," + ALLTRIM( Str( FIELD_LEN_FAKT_BRDOK ) ) + ")=" + sql_quote( cBrDok )
    ENDIF
 
    IF cIdPartner != NIL .AND. !Empty( cIdPartner )
@@ -322,7 +322,7 @@ FUNCTION seek_fakt( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cIdRoba, dDatDokOd,
       cSql += "idtipdok=" + sql_quote( cIdTipDok )
    ENDIF
 
-
+altd()
    IF cBrDok != NIL .AND. !Empty( cBrDok )
       IF lWhere
          cSql += " AND "
@@ -330,7 +330,7 @@ FUNCTION seek_fakt( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cIdRoba, dDatDokOd,
          cSql += " WHERE "
          lWhere := .T.
       ENDIF
-      cSql += "LEFT(brdok," + ALLTRIM( Str( FIELD_LEN_FAKT_BRDOK ) ) + ")=" + sql_quote( cBrDok )
+      cSql += "rpad(brdok," + ALLTRIM( Str( FIELD_LEN_FAKT_BRDOK ) ) + ")=" + sql_quote( cBrDok )
    ENDIF
 
 

@@ -59,7 +59,7 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
 
    cIdFirma  := hParams[ "idfirma" ]
    cIdTipDok := hParams[ "idtipdok" ]
-   cBrDok    := LEFT( hParams[ "brdok" ], FIELD_LEN_FAKT_BRDOK )
+   cBrDok    := PADR( hParams[ "brdok" ], FIELD_LEN_FAKT_BRDOK )
 
    IF Pitanje( "FAKT_POV_DOK", "Dokument " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + " vratiti u pripremu (D/N) ?", "D" ) == "N"
       my_close_all_dbf()
@@ -201,7 +201,7 @@ STATIC FUNCTION fakt_kopiraj_dokument_u_tabelu_pripreme( cIdFirma, cIdTipDok, cB
    select_o_fakt_pripr()
 
    SELECT fakt // ranije otvoren sa seek_fakt
-   DO WHILE !Eof() .AND. cIdFirma == fakt->idfirma .AND. cIdTipDok == fakt->idtipdok .AND. LEFT( cBrDok, FIELD_LEN_FAKT_BRDOK ) == LEFT( fakt->brdok, FIELD_LEN_FAKT_BRDOK )
+   DO WHILE !Eof() .AND. cIdFirma == fakt->idfirma .AND. cIdTipDok == fakt->idtipdok .AND. PADR( cBrDok, FIELD_LEN_FAKT_BRDOK ) == PADR( fakt->brdok, FIELD_LEN_FAKT_BRDOK )
 
       //SELECT fakt
       hRec := dbf_get_rec()

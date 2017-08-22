@@ -200,7 +200,7 @@ altd()
 
 altd()
          SELECT fakt
-         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + LEFT( cBrDok, FIELD_LEN_FAKT_BRDOK ) == fakt->IdFirma + fakt->IdTipDok + LEFT( fakt->BrDok, FIELD_LEN_FAKT_BRDOK )
+         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + PADR( cBrDok, FIELD_LEN_FAKT_BRDOK ) == fakt->IdFirma + fakt->IdTipDok + PADR( fakt->BrDok, FIELD_LEN_FAKT_BRDOK )
 
             select_o_roba(  fakt->idroba )
             select_o_tarifa( roba->idtarifa )
@@ -424,7 +424,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
          //ENDIF
 
          SELECT FAKT
-         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + LEFT( cBrDok, FIELD_LEN_FAKT_BRDOK ) == fakt->IdFirma + fakt->IdTipDok + LEFT( fakt->BrDok, FIELD_LEN_FAKT_BRDOK )
+         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + PADR( cBrDok, FIELD_LEN_FAKT_BRDOK ) == fakt->IdFirma + fakt->IdTipDok + PADR( fakt->BrDok, FIELD_LEN_FAKT_BRDOK )
 
             select_o_roba( fakt->idroba )
             select_o_tarifa( roba->idtarifa )

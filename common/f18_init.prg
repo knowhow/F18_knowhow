@@ -749,8 +749,11 @@ FUNCTION set_hot_keys()
    SetKey( K_SH_F1, {|| f18_kalkulator() } )
    SetKey( K_SH_F6, {|| f18_promjena_sezone() } )
 
+altd()
    hb_SetKey( K_CTRL_C, {|| set_clipboard() } )
    hb_SetKey( K_CTRL_V, {|| get_clipboard() } )
+
+   //inkey(0)
    info_bar( "init", "setting up hot keys - end" )
 
    RETURN .T.

@@ -280,6 +280,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
    LOCAL cSufix
    LOCAL hRec
    LOCAL cIdPartner := Space( 6 ), cBeze
+   LOCAL GetList := {}
 
    IF cIndik != NIL .AND. cIndik == "19"
       cIdTipDok := "19"
@@ -362,10 +363,8 @@ FUNCTION fakt_kalk_prenos( cIndik )
          EXIT
       ENDIF
 
-      SELECT fakt
-      SEEK cFaktFirma + cIdTipDok + cBrDok
-
-      IF !Found()
+      IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
+      //IF !Found()
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !"
          Inkey( 4 )
@@ -373,7 +372,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
          LOOP
       ELSE
 
-
+         seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
          aMemo := fakt_ftxt_decode( fakt->txt )  // iscupaj podatke iz memo polja
 
          IF Len( aMemo ) >= 5
@@ -392,10 +391,8 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
 
          IF cTipKalk $ "10"
-
             @ box_x_koord() + 14, box_y_koord() + 2 SAY8 "Šifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
             @ box_x_koord() + 15, box_y_koord() + 2 SAY8 "<ENTER> - prenos" GET cBeze
-
             READ
 
          ENDIF
@@ -428,7 +425,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
          SELECT FAKT
 
-         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == field->IdFirma + field->IdTipDok + field->BrDok
+         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + LEFT( cBrDok, FIELD_LEN_FAKT_BRDOK ) == fakt->IdFirma + fakt->IdTipDok + LEFT( fakt->BrDok, , FIELD_LEN_FAKT_BRDOK )
 
             select_o_roba( fakt->idroba )
             select_o_tarifa( roba->idtarifa )
@@ -478,7 +475,6 @@ FUNCTION fakt_kalk_prenos( cIndik )
             ENDIF
 
             dbf_update_rec( hRec )
-
             SELECT fakt
             SKIP
 
@@ -522,7 +518,7 @@ FUNCTION kalk_fakt_prenos_period()
    LOCAL _dat_kalk
    LOCAL _id_konto
    LOCAL _id_konto_2
-   LOCAL _sufix, _r_br, _razduzuje
+   LOCAL _sufix, nRbr, _razduzuje
    LOCAL _fakt_dobavljac := Space( 10 )
    LOCAL _artikli := Space( 150 )
    LOCAL _usl_roba
@@ -544,7 +540,7 @@ FUNCTION kalk_fakt_prenos_period()
 
    DO WHILE .T.
 
-      _r_br := 0
+      nRbr := 0
 
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj kalkulacije " + _tip_kalk + " -" GET _br_kalk_dok PICT "@!"
       @ box_x_koord() + 1, Col() + 2 SAY "Datum:" GET _dat_kalk
@@ -636,7 +632,7 @@ FUNCTION kalk_fakt_prenos_period()
             APPEND BLANK // nema artikla, dodaj novi
 
             REPLACE idfirma WITH _id_firma, ;
-               rbr WITH Str( ++_r_br, 3 ), ;
+               rbr WITH Str( ++nRbr, 3 ), ;
                idvd WITH _tip_kalk, ;
                brdok WITH _br_kalk_dok, ;
                datdok WITH _dat_kalk, ;

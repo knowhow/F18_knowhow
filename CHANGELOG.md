@@ -1,9 +1,10 @@
 # F18 klijent, lista promjena
 
-## 3.1.68-std, 2017-08-22
+## 3.1.69-std, 2017-08-22
 ### Developer
 - FAKT big-ball-of-mud
 - FAKT cre dbf fakt OUT
+- FAKT->KALK
 
 ## 3.1.65-std, 2017-08-21
 ### FAKT

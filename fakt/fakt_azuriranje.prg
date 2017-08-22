@@ -164,7 +164,6 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
    ENDIF
 
 
-
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" }, .T. )
@@ -177,9 +176,9 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
    seek_fakt( "XXX" )
    seek_fakt_doks( "XXX" )
    seek_fakt_doks2( "XXX" )
-   
-   fakt_seek_pripr_dokument( cIdFirma, cIdTipDok, cBrDok )
 
+   altd()
+   fakt_seek_pripr_dokument( cIdFirma, cIdTipDok, cBrDok )
    hRec := dbf_get_rec()
 
    cTempFaktId := hRec[ "idfirma" ] + hRec[ "idtipdok" ] + hRec[ "brdok" ]
@@ -187,12 +186,13 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
 
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "fakt_fakt -> server: " + cTempFaktId
 
-   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idtipdok == cIdTipDok .AND. field->brdok == cBrDok
+   DO WHILE !Eof() .AND. fakt_pripr->idfirma == cIdFirma .AND. fakt_pripr->idtipdok == cIdTipDok .AND. LEFT( fakt_pripr->brdok, FIELD_LEN_FAKT_BRDOK ) == LEFT( cBrDok, FIELD_LEN_FAKT_BRDOK )
       hRec := dbf_get_rec()
       IF !sql_table_update( "fakt_fakt", "ins", hRec )
          lOk := .F.
          EXIT
       ENDIF
+      SELECT FAKT_PRIPR
       SKIP
    ENDDO
 

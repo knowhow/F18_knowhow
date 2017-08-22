@@ -131,7 +131,7 @@ FUNCTION V_Podbr()
                _txt1 := ""
             ENDIF
             IF _podbr == " ." .OR.  roba->tip = "U"
-               _txt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 ) + Chr( 16 ) + _txt2 + Chr( 17 ) + ;
+      --         _txt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 ) + Chr( 16 ) + _txt2 + Chr( 17 ) + ;
                   Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
                   Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
                   Chr( 16 ) + _BrOtp + Chr( 17 ) + ;
@@ -991,7 +991,7 @@ FUNCTION IniVars()
    SET CURSOR ON
 
    // varijable koje se inicijalizuju iz baze
-   _txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""        // txt1  -  naziv robe,usluge
+--   _txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""        // txt1  -  naziv robe,usluge
    _BrOtp := Space( 8 )
    _DatOtp := CToD( "" )
    _BrNar := Space( 8 )
@@ -1003,7 +1003,7 @@ FUNCTION IniVars()
       _txt1 := aMemo[ 1 ]
    ENDIF
    IF Len( aMemo ) >= 2
-      _txt2 := aMemo[ 2 ]
+--      _txt2 := aMemo[ 2 ]
    ENDIF
    IF Len( aMemo ) >= 5
       _txt3a := aMemo[ 3 ]; _txt3b := aMemo[ 4 ]; _txt3c := aMemo[ 5 ]
@@ -1022,11 +1022,11 @@ FUNCTION SetVars()
 
    // {
    IF _podbr == " ." .OR.  roba->tip = "U" .OR. ( Val( _Rbr ) <= 1 .AND. Val( _podbr ) < 1 )
-      _txt2 := OdsjPLK( _txt2 )           // odsjeci na kraju prazne linije
-      IF ! "Faktura formirana na osnovu" $ _txt2
-         _txt2 += Chr( 13 ) + Chr( 10 ) + _VezOtpr
+--      _txt2 := OdsjPLK( _txt2 )           // odsjeci na kraju prazne linije
+--      IF ! "Faktura formirana na osnovu" $ _txt2
+--         _txt2 += Chr( 13 ) + Chr( 10 ) + _VezOtpr
       ENDIF
-      _txt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 ) + Chr( 16 ) + _txt2 + Chr( 17 ) + ;
+  --    _txt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 ) + Chr( 16 ) + _txt2 + Chr( 17 ) + ;
          Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
          Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
          Chr( 16 ) + _BrOtp + Chr( 17 ) + ;

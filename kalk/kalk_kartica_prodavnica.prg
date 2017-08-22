@@ -12,10 +12,10 @@
 #include "f18.ch"
 
 
-STATIC __line
-STATIC __txt1
-STATIC __txt2
-STATIC __txt3
+STATIC s_cLine
+STATIC s_cTxt1
+//STATIC __txt2
+//STATIC __txt3
 
 
 FUNCTION kalk_kartica_prodavnica()
@@ -148,8 +148,8 @@ FUNCTION kalk_kartica_prodavnica()
    nLen := 1
 
    _set_zagl( @cLine, @cTxt1 )
-   __line := cLine
-   __txt1 := cTxt1
+   s_cLine := cLine
+   s_cTxt1 := cTxt1
 
    nTStrana := 0
 
@@ -168,12 +168,12 @@ FUNCTION kalk_kartica_prodavnica()
       select_o_roba( cIdRoba )
       select_o_tarifa( roba->idtarifa )
 
-      ? __line
+      ? s_cLine
 
       ? "Artikal:", cIdRoba, "-", Trim( Left( roba->naz, 40 ) ) + ;
          iif( roba_barkod_pri_unosu(), " BK: " + roba->barkod, "" ) + " (" + AllTrim( roba->jmj ) + ")"
 
-      ? __line
+      ? s_cLine
 
       SELECT kalk
 
@@ -432,7 +432,7 @@ FUNCTION kalk_kartica_prodavnica()
 
       ENDDO
 
-      ? __line
+      ? s_cLine
       ? "Ukupno:"
 
       @ PRow(), nCol1 SAY say_kolicina( nUlaz )
@@ -452,7 +452,7 @@ FUNCTION kalk_kartica_prodavnica()
 
       @ PRow(), PCol() + 1 SAY kalk_say_iznos( nMpv )
 
-      ? __line
+      ? s_cLine
       ?
       ? Replicate( "-", 60 )
       ? "     Ukupna vrijednost popusta u mp:", Str( Abs( nMPVP - nMPV ), 12, 2 )
@@ -530,9 +530,9 @@ STATIC FUNCTION Zagl()
    ? "Konto: ", cidkonto, "-", konto->naz
    SELECT kalk
    P_COND
-   ? __line
-   ? __txt1
-   ? __line
+   ? s_cLine
+   ? s_cTxt1
+   ? s_cLine
 
    RETURN .T.
 

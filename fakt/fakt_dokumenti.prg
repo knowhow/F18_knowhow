@@ -495,7 +495,7 @@ FUNCTION renumeracija_fakt_pripr( cVezaOtpremnica, dDatumPosljednjeOtpr )
 
    dDatDok := _datdok
 
-   fakt_ftxt_sub_renumeracija_pripreme( @_txt2 )
+   fakt_ftxt_sub_renumeracija_pripreme( @hFaktTxt[ "txt2" ] )
 
    IF !Empty( cVezaOtpremnica )
       IF !( "Veza otpremnice:" $ hFaktTxt[ "txt2" ] )

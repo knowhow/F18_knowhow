@@ -432,6 +432,8 @@ FUNCTION fakt_13_kalk_11()
 
 FUNCTION fakt_11_kalk_41()
 
+   LOCAL GetList := {}
+
    PRIVATE cIdFirma := self_organizacija_id()
    PRIVATE cIdTipDok := "11"
    PRIVATE cBrDok := Space( 8 )
@@ -579,7 +581,7 @@ FUNCTION fakt_11_kalk_41()
             ENDDO
 
          ENDIF
-      ELSE
+      ELSE // zbirno
 
          cFaktFirma := cIdFirma
          cIdTipDok := "11"
@@ -597,20 +599,17 @@ FUNCTION fakt_11_kalk_41()
             EXIT
          ENDIF
 
-         SELECT fakt
-         GO TOP
+         find_fakt_za_period( cFaktFirma, dOdDatFakt, dDoDatFakt, NIL, NIL, "1" )
+         //SELECT fakt
+         //GO TOP
 
          DO WHILE !Eof()
 
-            IF ( idfirma == cFaktFirma .AND. ;
-                  idtipdok == cIdTipDok .AND. ;
-                  datdok >= dOdDatFakt .AND. ;
-                  datdok <= dDoDatFakt )
+            IF ( fakt->idfirma == cFaktFirma .AND. fakt->idtipdok == cIdTipDok  )
 
-               cIdPartner := IdPartner
+               cIdPartner := fakt->IdPartner
 
                @ box_x_koord() + 14, box_y_koord() + 2 SAY "Sifra partnera:" GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
-
                READ
 
                SELECT kalk_pripr
@@ -690,6 +689,7 @@ FUNCTION fakt_11_kalk_41()
 FUNCTION fakt_01_kalk_81()
 
    LOCAL cIdFirma := self_organizacija_id(), cIdTipDok := "01", cBrDok := cBrKalk := Space( 8 )
+   LOCAL GetList := {}
 
    o_kalk_pripr()
    o_kalk()
@@ -726,6 +726,7 @@ FUNCTION fakt_01_kalk_81()
       @ box_x_koord() + 6, Col() + 2 SAY "- " + cidtipdok
       @ box_x_koord() + 6, Col() + 2 SAY "-" GET cBrDok
       READ
+
       IF LastKey() == K_ESC; exit; ENDIF
 
 
@@ -826,6 +827,7 @@ FUNCTION fakt_01_kalk_81()
 FUNCTION fakt_13_kalk_80()
 
    LOCAL cIdFirma := self_organizacija_id(), cIdTipDok := "13", cBrDok := cBrKalk := Space( 8 )
+   LOCAL GetList := {}
 
    o_kalk_pripr()
    //o_koncij()

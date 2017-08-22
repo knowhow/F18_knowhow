@@ -1180,6 +1180,7 @@ FUNCTION fakt_11_kalk_42()
    LOCAL _x_dok_info := 16
    LOCAL _zbirni_prenos := "D"
    LOCAL _dat_kalk := Date()
+   LOCAL GetList := {}
 
    PRIVATE cIdFirma := self_organizacija_id()
    PRIVATE cIdTipDok := "11"
@@ -1201,7 +1202,6 @@ FUNCTION fakt_11_kalk_42()
       nRBr := 0
 
       nX := 1
-
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Generisati kalk dokument (1) 11 (2) 42 ?" GET _auto_razd PICT "9"
 
       READ
@@ -1220,10 +1220,10 @@ FUNCTION fakt_11_kalk_42()
       @ box_x_koord() + nX, Col() + 2 SAY "Datum:" GET _dat_kalk
 
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto razduzuje:" GET cIdKonto  PICT "@!"  VALID P_Konto( @cIdKonto )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto razdužuje:" GET cIdKonto  PICT "@!"  VALID P_Konto( @cIdKonto )
 
       IF _auto_razd == 1
-         @ box_x_koord() + nX, Col() + 1 SAY "zaduzuje:" GET cIdKtoZad  PICT "@!" VALID P_Konto( @cIdKtoZad )
+         @ box_x_koord() + nX, Col() + 1 SAY8 "zadužuje:" GET cIdKtoZad  PICT "@!" VALID P_Konto( @cIdKtoZad )
       ENDIF
 
       // IF gNW <> "X"
@@ -1235,9 +1235,8 @@ FUNCTION fakt_11_kalk_42()
       ++nX
       ++nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " GET _zbirni_prenos  VALID _zbirni_prenos $ "DN"  PICT "@!"
-
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Razdvoji artikle razlicitih cijena (D/N): " GET _razl_cijene VALID _razl_cijene $ "DN"  PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Razdvoji artikle različitih cijena (D/N): " GET _razl_cijene VALID _razl_cijene $ "DN"  PICT "@!"
 
       READ
 
@@ -1373,13 +1372,11 @@ FUNCTION fakt_11_kalk_42()
             EXIT
          ENDIF
 
-         SELECT fakt
-         GO TOP
+         find_fakt_za_period( cFaktIdFirma, dOdDatFakt, dDoDatFakt, NIL, NIL, "1" )
 
          DO WHILE !Eof()
 
-            IF ( field->idfirma == cFaktFirma .AND. field->idtipdok == cIdTipDok .AND. ;
-                  field->datdok >= dOdDatFakt .AND. field->datdok <= dDoDatFakt )
+            IF ( field->idfirma == cFaktFirma .AND. field->idtipdok == cIdTipDok )
 
                cIdPartner := ""
 
@@ -1480,9 +1477,7 @@ FUNCTION fakt_11_kalk_42()
 
 
 
-// ------------------------------------------------------
-// otvori tabele potrebne za prenos dokumenata
-// ------------------------------------------------------
+
 STATIC FUNCTION _o_prenos_tbls()
 
    o_kalk_pripr()

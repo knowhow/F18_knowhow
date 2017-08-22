@@ -508,31 +508,32 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
 FUNCTION kalk_fakt_prenos_period()
 
-   LOCAL _id_firma := self_organizacija_id()
-   LOCAL _fakt_id_firma := self_organizacija_id()
-   LOCAL _tip_dok_fakt := PadR( "12;", 150 )
-   LOCAL _dat_fakt_od, _dat_fakt_do
+   LOCAL cIdFirma := self_organizacija_id()
+   LOCAL cFaktIdFirma := self_organizacija_id()
+   LOCAL cUslovFaktIdTipDok := PadR( "12;", 150 )
+   LOCAL dDatOd, dDatDo
    LOCAL _br_kalk_dok := Space( 8 )
-   LOCAL _tip_kalk := "96"
+   LOCAL cIdVdKalk := "96"
    LOCAL _dat_kalk
-   LOCAL _id_konto
+   LOCAL cIdKonto
    LOCAL _id_konto_2
    LOCAL _sufix, nRbr, _razduzuje
    LOCAL _fakt_dobavljac := Space( 10 )
    LOCAL _artikli := Space( 150 )
-   LOCAL _usl_roba
+   LOCAL cFilterRoba
+   LOCAL GetList := {}
 
    _o_prenos_tbls()
 
    _dat_kalk := Date()
-   _id_konto := PadR( "", 7 )
+   cIdKonto := PadR( "", 7 )
    _id_konto_2 := PadR( "1010", 7 )
    _razduzuje := Space( 6 )
-   _dat_fakt_od := Date()
-   _dat_fakt_do := Date()
-   _br_kalk_dok := kalk_get_next_kalk_doc_uvecaj( _id_firma, _tip_kalk )
+   dDatOd := Date()
+   dDatDo := Date()
+   _br_kalk_dok := kalk_get_next_kalk_doc_uvecaj( cIdFirma, cIdVdKalk )
 
-   _id_konto := fetch_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), _id_konto )
+   cIdKonto := fetch_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
    _id_konto_2 := fetch_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), _id_konto_2 )
 
    Box(, 15, 70 )
@@ -541,22 +542,22 @@ FUNCTION kalk_fakt_prenos_period()
 
       nRbr := 0
 
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj kalkulacije " + _tip_kalk + " -" GET _br_kalk_dok PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj kalkulacije " + cIdVdKalk + " -" GET _br_kalk_dok PICT "@!"
       @ box_x_koord() + 1, Col() + 2 SAY "Datum:" GET _dat_kalk
-      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Konto zaduzuje :" GET _id_konto PICT "@!" VALID Empty( _id_konto ) .OR. P_Konto( @_id_konto )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Konto zaduzuje :" GET cIdKonto PICT "@!" VALID Empty( cIdKonto ) .OR. P_Konto( @cIdKonto )
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto razduzuje:" GET _id_konto_2 PICT "@!" VALID Empty( _id_konto_2 ) .OR. P_Konto( @_id_konto_2 )
 
       // IF gNW <> "X"
       // @ box_x_koord() + 4, Col() + 2 SAY "Razduzuje:" GET _razduzuje PICT "@!" VALID Empty( _razduzuje ) .OR. p_partner( @_razduzuje )
       // ENDIF
 
-      _fakt_id_firma := _id_firma
+      cFaktIdFirma := cIdFirma
 
       // postavi uslove za period
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "FAKT: id firma:" GET _fakt_id_firma
-      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Vrste dokumenata:" GET _tip_dok_fakt PICT "@S30"
-      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Dokumenti u periodu od" GET _dat_fakt_od
-      @ box_x_koord() + 8, Col() + 1 SAY "do" GET _dat_fakt_do
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "FAKT: id firma:" GET cFaktIdFirma
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Vrste dokumenata:" GET cUslovFaktIdTipDok PICT "@S30"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Dokumenti u periodu od" GET dDatOd
+      @ box_x_koord() + 8, Col() + 1 SAY "do" GET dDatDo
 
       // uslov za sifre artikla
       @ box_x_koord() + 10, box_y_koord() + 2 SAY "Uslov po artiklima:" GET _artikli PICT "@S30"
@@ -567,37 +568,38 @@ FUNCTION kalk_fakt_prenos_period()
          EXIT
       ENDIF
 
-      SELECT fakt
-      SET ORDER TO TAG "1"
-      SEEK _fakt_id_firma
+      //SELECT fakt
+      //SET ORDER TO TAG "1"
+      //SEEK cFaktIdFirma
+      find_fakt_za_period( cFaktIdFirma, dDatOd, dDatDo, NIL, NIL, "1" )
 
-      DO WHILE !Eof() .AND. field->idfirma == _fakt_id_firma
+      DO WHILE !Eof() .AND. field->idfirma == cFaktIdFirma
 
          // provjeri po vrsti dokumenta
-         IF !( field->idtipdok $ _tip_dok_fakt )
+         IF !( field->idtipdok $ cUslovFaktIdTipDok )
             SKIP
             LOOP
          ENDIF
 
          // provjeri po datumskom uslovu
-         IF field->datdok < _dat_fakt_od .OR. field->datdok > _dat_fakt_do
-            SKIP
-            LOOP
-         ENDIF
+         //IF field->datdok < dDatOd .OR. field->datdok > dDatDo
+        //    SKIP
+        //    LOOP
+         //ENDIF
 
 
          IF !Empty( _artikli )  // provjera po robama
 
-            _usl_roba := Parsiraj( _artikli, "idroba" )
+            cFilterRoba := Parsiraj( _artikli, "idroba" )
 
-            IF !( &_usl_roba )
+            IF !( &cFilterRoba )
                SKIP
                LOOP
             ENDIF
 
          ENDIF
 
-         select_o_koncij( _id_konto )
+         select_o_koncij( cIdKonto )
 
          //SELECT fakt
          // provjeri sifru u sifarniku
@@ -615,30 +617,28 @@ FUNCTION kalk_fakt_prenos_period()
             LOOP
          ENDIF
 
-         // dobro, sada imam prave dokumente koje treba da prebacujem
          SELECT kalk_pripr
          GO BOTTOM
 
          LOCATE FOR idroba == fakt->idroba // provjeri da li već postoji artikal prenesen, pa ga saberi sa prethodnim
 
          IF Found()
-
             RREPLACE kolicina WITH kolicina + fakt->kolicina // saberi ga sa prethodnim u pripremi
 
          ELSE
 
             APPEND BLANK // nema artikla, dodaj novi
 
-            REPLACE idfirma WITH _id_firma, ;
+            REPLACE idfirma WITH cIdFirma, ;
                rbr WITH Str( ++nRbr, 3 ), ;
-               idvd WITH _tip_kalk, ;
+               idvd WITH cIdVdKalk, ;
                brdok WITH _br_kalk_dok, ;
                datdok WITH _dat_kalk, ;
                idpartner WITH "", ;
                idtarifa WITH ROBA->idtarifa, ;
                brfaktp WITH _fakt_dobavljac, ;
                datfaktp WITH fakt->datdok, ;
-               idkonto   WITH _id_konto, ;
+               idkonto   WITH cIdKonto, ;
                idkonto2  WITH _id_konto_2, ;
                idzaduz2  WITH _razduzuje, ;
                kolicina WITH fakt->kolicina, ;
@@ -648,11 +648,11 @@ FUNCTION kalk_fakt_prenos_period()
                rabatv WITH fakt->rabat, ;
                mpc WITH fakt->porez
 
-            IF _tip_kalk $ "96" .AND. fakt->( FieldPos( "idrnal" ) ) <> 0
+            IF cIdVdKalk $ "96" .AND. fakt->( FieldPos( "idrnal" ) ) <> 0
                REPLACE idzaduz2 WITH fakt->idRNal
             ENDIF
 
-            IF _tip_kalk $ "10"
+            IF cIdVdKalk $ "10"
                REPLACE idzaduz2 WITH fakt->rabat
             ENDIF
 
@@ -665,7 +665,7 @@ FUNCTION kalk_fakt_prenos_period()
 
       @ box_x_koord() + 14, box_y_koord() + 2 SAY "Dokument je generisan !"
 
-      set_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), _id_konto )
+      set_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
       set_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), _id_konto_2 )
 
       Inkey( 4 )

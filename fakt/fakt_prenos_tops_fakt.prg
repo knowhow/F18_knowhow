@@ -43,7 +43,7 @@ FUNCTION TopsFakt()
 
    //o_roba()
    //o_partner()
-   o_fakt_doks_dbf()
+   //o_fakt_doks_dbf()
    o_fakt_pripr()
 
    USE ( Trim( cLokacija ) + "TOPSFAKT.DBF" ) new

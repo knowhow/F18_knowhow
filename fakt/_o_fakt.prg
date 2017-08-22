@@ -20,47 +20,6 @@
 // "fakt_fakt", "FAKT", F_FAKT
 
 
-FUNCTION select_o_fakt_dbf()
-
-   select_o_dbf( "FAKT", F_FAKT, "fakt_fakt", "1" )
-   IF Alias() != "FAKT"
-      Alert( "Nije FAKT ?!" )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
-
-
-
-FUNCTION o_fakt_doks_dbf()
-   RETURN o_dbf_table( F_FAKT_DOKS, "fakt_doks", "1" )
-
-
-FUNCTION select_o_fakt_doks_dbf()
-
-   select_o_dbf( "FAKT_DOKS", F_FAKT_DOKS, "fakt_doks", "1" )
-   IF Alias() != "FAKT_DOKS"
-      Alert( "Nije FAKT DOKS ?!" )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
-
-
-FUNCTION o_fakt_doks2_dbf()
-
-   RETURN o_dbf_table( F_FAKT_DOKS2, "fakt_doks2", "1" )
-
-
-FUNCTION select_o_fakt_doks2_dbf()
-
-   select_o_dbf( "FAKT_DOKS2", F_FAKT_DOKS2, "fakt_doks2", "1" )
-   IF Alias() != "FAKT_DOKS2"
-      Alert( "Nije FAKT DOKS2 ?!" )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
 
 
 

@@ -263,7 +263,7 @@ FUNCTION print_porezna_faktura( lOpcine )
    SELECT ( F_FAKT_DOKS )
    USE
 
-   o_fakt_doks_dbf()
+   //o_fakt_doks_dbf()
 
    RETURN DE_CONT
 */
@@ -284,7 +284,7 @@ FUNCTION fakt_print_odt( lOpcine )
    close_open_fakt_tabele()
    SELECT ( F_FAKT_DOKS )
    USE
-   o_fakt_doks_dbf()
+   //o_fakt_doks_dbf()
    //o_partner()
    SELECT fakt_doks
    IF cFilter == ".t."

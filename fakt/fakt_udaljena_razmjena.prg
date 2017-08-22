@@ -462,7 +462,7 @@ STATIC FUNCTION fakt_export_impl( hParams, aDetails )
    ENDIF
 
    _cre_exp_tbls( s_cExportDbfPath )
-   fakt_open_rexport_tabele( s_cExportDbfPath )
+   fakt_open_e_tabele( s_cExportDbfPath )
    // _o_tables()
 
    Box(, 2, 65 )
@@ -703,7 +703,7 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
       lFmkImport := .T.
    ENDIF
 
-   fakt_open_rexport_tabele( s_cImportDbfPath, NIL )
+   fakt_open_e_tabele( s_cImportDbfPath, NIL )
    // _o_tables()
 
    seek_fakt( "XXX" )
@@ -986,7 +986,6 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    CREATE ( cDbfPath + "e_fakt" ) FROM ( my_home() + "struct" )
 
    seek_fakt_doks( "XXXX" )
-   o_fakt_doks_dbf()
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_doks" ) FROM ( my_home() + "struct" )
@@ -1042,10 +1041,8 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
 
 
 
-// ----------------------------------------------------
-// otvranje export tabela
-// ----------------------------------------------------
-STATIC FUNCTION fakt_open_rexport_tabele( cDbfPath, lFromFmk )
+
+STATIC FUNCTION fakt_open_e_tabele( cDbfPath, lFromFmk )
 
    LOCAL cDbfName
 
@@ -1058,7 +1055,6 @@ STATIC FUNCTION fakt_open_rexport_tabele( cDbfPath, lFromFmk )
    ENDIF
 
    log_write( "otvaram fakt tabele importa i pravim indekse...", 9 )
-
 
    my_close_all_dbf()
 

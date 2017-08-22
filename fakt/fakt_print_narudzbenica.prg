@@ -26,7 +26,7 @@ FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )
    //o_partner()
    SELECT ( F_FAKT_DOKS )
    USE
-   o_fakt_doks_dbf()
+   //o_fakt_doks_dbf()
    PopWa()
 
    RETURN NIL

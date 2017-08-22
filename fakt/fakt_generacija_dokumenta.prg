@@ -47,7 +47,7 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
    LOCAL nRbr
    LOCAL lFoundUPripremi
 
-   o_fakt_doks_dbf()
+   //o_fakt_doks_dbf()
    //o_roba()
    //o_tarifa()
 

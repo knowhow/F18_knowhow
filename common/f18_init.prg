@@ -755,8 +755,8 @@ altd()
 
    //nKey := inkey(0, hb_bitOr( HB_INKEY_ALL, HB_INKEY_EXT ))
    //MsgBeep( AllTrim( Str( nKey ) ) )
-
    //hb_keyNew( "C", HB_KF_CTRL )
+
    info_bar( "init", "setting up hot keys - end" )
 
    RETURN .T.

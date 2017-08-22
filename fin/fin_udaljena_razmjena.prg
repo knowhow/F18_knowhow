@@ -138,13 +138,10 @@ STATIC FUNCTION fin_import()
    delete_exp_files( s_cImportDbfPath, "fin" )
 
    IF ( nImportovanihZapisa > 0 )
-
-      IF Pitanje(, "Pobrisati fajl razmjne ?", "D" ) == "D"
+      IF Pitanje(, "Pobrisati obrađeni zip fajl razmjene ?", "D" ) == "D"
          delete_zip_files( _imp_file )
       ENDIF
-
       MsgBeep( "Importovao " + AllTrim( Str( nImportovanihZapisa ) ) + " dokumenta." )
-
       print_imp_exp_report( _a_data )
 
    ENDIF
@@ -191,8 +188,6 @@ STATIC FUNCTION _vars_export( hVars )
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Lokacija exporta:" GET _exp_path PICT "@S50"
-
-
 
    READ
 

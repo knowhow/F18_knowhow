@@ -15,16 +15,16 @@
 // ------------------------------------------
 // kompresuj fajlove i vrati path
 // ------------------------------------------
-FUNCTION udaljenja_razmjena_compress_files( modul, export_dbf_path )
+FUNCTION udaljenja_razmjena_compress_files( cProgModul, export_dbf_path )
 
    LOCAL _files
    LOCAL _error
    LOCAL _zip_path, _zip_name, _file
    LOCAL __path, __name, __ext
 
-   _files := _file_list( export_dbf_path, modul )    // lista fajlova za kompresovanje
+   _files := _file_list( export_dbf_path, cProgModul )    // lista fajlova za kompresovanje
 
-   _file := zip_name( modul, export_dbf_path )
+   _file := zip_name( cProgModul, export_dbf_path )
 
    hb_FNameSplit( _file, @__path, @__name, @__ext )
 
@@ -63,16 +63,16 @@ FUNCTION set_file_access( file_path, mask )
 // otvara listu fajlova za import
 // vraca naziv fajla za import
 // -----------------------------------------
-FUNCTION get_import_file( modul, import_dbf_path )
+FUNCTION get_import_file( cProgModul, import_dbf_path )
 
    LOCAL _file
    LOCAL _filter
 
-   IF modul == NIL
-      modul := "kalk"
+   IF cProgModul == NIL
+      cProgModul := "kalk"
    ENDIF
 
-   _filter := AllTrim( modul ) + "*.*"
+   _filter := AllTrim( cProgModul ) + "*.*"
 
    IF get_file_list( _filter, import_dbf_path, @_file ) == 0
       _file := ""
@@ -562,15 +562,15 @@ FUNCTION update_sifk_sifv( lFullTransaction )
 
 
 
-FUNCTION direktorij_kreiraj_ako_ne_postoji( use_path )
+FUNCTION direktorij_kreiraj_ako_ne_postoji( cDbfPath )
 
    LOCAL _ret := .T.
 
-   IF DirChange( use_path ) != 0
-      _cre := MakeDir ( use_path )
+   IF DirChange( cDbfPath ) != 0
+      _cre := MakeDir ( cDbfPath )
       IF _cre != 0
-         MsgBeep( "kreiranje " + use_path + " neuspjesno ?!" )
-         log_write( "dircreate err:" + use_path, 7 )
+         MsgBeep( "kreiranje " + cDbfPath + " neuspjesno ?!" )
+         log_write( "dircreate err:" + cDbfPath, 7 )
          _ret := .F.
       ENDIF
    ENDIF
@@ -594,9 +594,9 @@ FUNCTION delete_zip_files( zip_file )
 // ---------------------------------------------------
 // brise temp fajlove razmjene
 // ---------------------------------------------------
-FUNCTION delete_exp_files( use_path, modul )
+FUNCTION delete_exp_files( cDbfPath, cProgModul )
 
-   LOCAL _files := _file_list( use_path, modul )
+   LOCAL _files := _file_list( cDbfPath, cProgModul )
    LOCAL _file, _tmp
 
    MsgO( "Brisem tmp fajlove ..." )
@@ -638,24 +638,24 @@ FUNCTION import_file_exist( imp_file )
 // --------------------------------------------
 // vraca naziv zip fajla
 // --------------------------------------------
-FUNCTION zip_name( modul, export_dbf_path )
+FUNCTION zip_name( cProgModul, export_dbf_path )
 
    LOCAL _file
    LOCAL _ext := ".zip"
    LOCAL _count := 1
    LOCAL _exist := .T.
 
-   IF modul == NIL
-      modul := "kalk"
+   IF cProgModul == NIL
+      cProgModul := "kalk"
    ENDIF
 
    IF export_dbf_path == NIL
       export_dbf_path := my_home()
    ENDIF
 
-   modul := AllTrim( Lower( modul ) )
+   cProgModul := AllTrim( Lower( cProgModul ) )
 
-   _file := export_dbf_path + modul + "_exp_" + PadL( AllTrim( Str( _count ) ), 2, "0" ) + _ext
+   _file := export_dbf_path + cProgModul + "_exp_" + PadL( AllTrim( Str( _count ) ), 2, "0" ) + _ext
 
    IF File( _file )
 
@@ -663,7 +663,7 @@ FUNCTION zip_name( modul, export_dbf_path )
       DO WHILE _exist
 
          ++_count
-         _file := export_dbf_path + modul + "_exp_" + PadL( AllTrim( Str( _count ) ), 2, "0" ) + _ext
+         _file := export_dbf_path + cProgModul + "_exp_" + PadL( AllTrim( Str( _count ) ), 2, "0" ) + _ext
 
          IF !File( _file )
             _exist := .F.
@@ -681,54 +681,55 @@ FUNCTION zip_name( modul, export_dbf_path )
 // ----------------------------------------------------
 // vraca listu fajlova koji se koriste kod prenosa
 // ----------------------------------------------------
-STATIC FUNCTION _file_list( use_path, modul )
+STATIC FUNCTION _file_list( cDbfPath, cProgModul )
 
-   LOCAL _a_files := {}
+   LOCAL aFiles := {}
 
-   IF modul == NIL
-      modul := "kalk"
+   IF cProgModul == NIL
+      cProgModul := "kalk"
    ENDIF
 
    DO CASE
 
-   CASE modul == "kalk"
+   CASE cProgModul == "kalk"
 
-      AAdd( _a_files, use_path + "e_kalk.dbf" )
-      AAdd( _a_files, use_path + "e_doks.dbf" )
-      AAdd( _a_files, use_path + "e_roba.dbf" )
-      AAdd( _a_files, use_path + "e_roba.fpt" )
-      AAdd( _a_files, use_path + "e_partn.dbf" )
-      AAdd( _a_files, use_path + "e_konto.dbf" )
-      AAdd( _a_files, use_path + "e_sifk.dbf" )
-      AAdd( _a_files, use_path + "e_sifv.dbf" )
+      AAdd( aFiles, cDbfPath + "e_kalk.dbf" )
+      AAdd( aFiles, cDbfPath + "e_doks.dbf" )
+      AAdd( aFiles, cDbfPath + "e_roba.dbf" )
+      AAdd( aFiles, cDbfPath + "e_roba.fpt" )
+      AAdd( aFiles, cDbfPath + "e_partn.dbf" )
+      AAdd( aFiles, cDbfPath + "e_konto.dbf" )
+      AAdd( aFiles, cDbfPath + "e_sifk.dbf" )
+      AAdd( aFiles, cDbfPath + "e_sifv.dbf" )
 
-   CASE modul == "fakt"
+   CASE cProgModul == "fakt"
 
-      AAdd( _a_files, use_path + "e_fakt.dbf" )
-      AAdd( _a_files, use_path + "e_fakt.fpt" )
-      AAdd( _a_files, use_path + "e_doks.dbf" )
-      AAdd( _a_files, use_path + "e_doks2.dbf" )
-      AAdd( _a_files, use_path + "e_roba.dbf" )
-      AAdd( _a_files, use_path + "e_roba.fpt" )
-      AAdd( _a_files, use_path + "e_partn.dbf" )
-      AAdd( _a_files, use_path + "e_sifk.dbf" )
-      AAdd( _a_files, use_path + "e_sifv.dbf" )
+      AAdd( aFiles, cDbfPath + "e_fakt.dbf" )
+      AAdd( aFiles, cDbfPath + "e_fakt.fpt" )
+      AAdd( aFiles, cDbfPath + "e_doks.dbf" )
+      AAdd( aFiles, cDbfPath + "e_doks.fpt" )
+      AAdd( aFiles, cDbfPath + "e_doks2.dbf" )
+      AAdd( aFiles, cDbfPath + "e_roba.dbf" )
+      AAdd( aFiles, cDbfPath + "e_roba.fpt" )
+      AAdd( aFiles, cDbfPath + "e_partn.dbf" )
+      AAdd( aFiles, cDbfPath + "e_sifk.dbf" )
+      AAdd( aFiles, cDbfPath + "e_sifv.dbf" )
 
 
-   CASE modul == "fin"
+   CASE cProgModul == "fin"
 
-      AAdd( _a_files, use_path + "e_suban.dbf" )
-      AAdd( _a_files, use_path + "e_sint.dbf" )
-      AAdd( _a_files, use_path + "e_anal.dbf" )
-      AAdd( _a_files, use_path + "e_nalog.dbf" )
-      AAdd( _a_files, use_path + "e_partn.dbf" )
-      AAdd( _a_files, use_path + "e_konto.dbf" )
-      AAdd( _a_files, use_path + "e_sifk.dbf" )
-      AAdd( _a_files, use_path + "e_sifv.dbf" )
+      AAdd( aFiles, cDbfPath + "e_suban.dbf" )
+      AAdd( aFiles, cDbfPath + "e_sint.dbf" )
+      AAdd( aFiles, cDbfPath + "e_anal.dbf" )
+      AAdd( aFiles, cDbfPath + "e_nalog.dbf" )
+      AAdd( aFiles, cDbfPath + "e_partn.dbf" )
+      AAdd( aFiles, cDbfPath + "e_konto.dbf" )
+      AAdd( aFiles, cDbfPath + "e_sifk.dbf" )
+      AAdd( aFiles, cDbfPath + "e_sifv.dbf" )
 
    ENDCASE
 
-   RETURN _a_files
+   RETURN aFiles
 
 
 

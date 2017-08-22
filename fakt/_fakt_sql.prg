@@ -83,8 +83,10 @@ CREATE TABLE fmk.fakt_doks
   partner character varying(200),
   datdok date,
   dindem character(3),
+
   iznos numeric(12,3),
   rabat numeric(12,3),
+
   rezerv character(1),
   m1 character(1),
   idpartner character(6),

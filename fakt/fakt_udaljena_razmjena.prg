@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+FIELD id, idfirma, idtipdok, brdok, rbr, idroba, oznaka, idsif, naz, SORT
+
 THREAD STATIC s_cImportDbfPath
 THREAD STATIC s_cExportDbfPath
 THREAD STATIC s_cImportZipName
@@ -87,7 +89,7 @@ STATIC FUNCTION _fakt_export()
 
 STATIC FUNCTION _fakt_import()
 
-   LOCAL _imported_rec
+   LOCAL nImportovanoZapisa
    LOCAL _vars := hb_Hash()
    LOCAL _imp_file
    LOCAL _imp_path := fetch_metric( "fakt_import_path", my_user(), PadR( "", 300 ) )
@@ -130,15 +132,15 @@ STATIC FUNCTION _fakt_import()
    set_file_access( s_cImportDbfPath )
 #endif
 
-   _imported_rec := fakt_import_impl( _vars, @_a_data )
+   nImportovanoZapisa := fakt_import_impl( _vars, @_a_data )
    my_close_all_dbf()
    delete_exp_files( s_cImportDbfPath, "fakt" )
 
-   IF ( _imported_rec > 0 )
-      IF Pitanje(, "Pobrisati fajl razmjne ?", "D" ) == "D"
+   IF ( nImportovanoZapisa > 0 )
+      IF Pitanje(, "Pobrisati obrađeni zip fajl razmjene ?", "D" ) == "D"
          delete_zip_files( _imp_file )
       ENDIF
-      MsgBeep( "Importovao " + AllTrim( Str( _imported_rec ) ) + " dokumenta." )
+      MsgBeep( "Importovao " + AllTrim( Str( nImportovanoZapisa ) ) + " dokumenta." )
       print_imp_exp_report( _a_data )
    ENDIF
 
@@ -250,7 +252,7 @@ FUNCTION print_imp_exp_report( DATA )
 
 STATIC FUNCTION _vars_export( hParams )
 
-   LOCAL _ret := .F.
+   LOCAL lRet := .F.
    LOCAL dDatOd := fetch_metric( "fakt_export_datum_od", my_user(), Date() - 30 )
    LOCAL dDatDo := fetch_metric( "fakt_export_datum_do", my_user(), Date() )
    LOCAL cIdRj := fetch_metric( "fakt_export_lista_rj", my_user(), PadR( "10;", 200 ) )
@@ -287,25 +289,21 @@ STATIC FUNCTION _vars_export( hParams )
 
    ++nX
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Uzeti u obzir sljedeće rj:" GET cIdRj PICT "@S30"
    ++nX
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Svoditi na primarnu šifru (dužina primarne šifre):" GET _prim_sif PICT "9"
 
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Promjena radne jedinice" GET _prom_rj_src
    @ box_x_koord() + nX, Col() + 1 SAY "u" GET _prom_rj_dest
 
    ++nX
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Export šifarnika (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
 
    ++nX
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Lokacija exporta:" GET _exp_path PICT "@S50"
 
    READ
@@ -314,7 +312,7 @@ STATIC FUNCTION _vars_export( hParams )
 
    IF LastKey() <> K_ESC
 
-      _ret := .T.
+      lRet := .T.
 
       set_metric( "fakt_export_datum_od", my_user(), dDatOd )
       set_metric( "fakt_export_datum_do", my_user(), dDatDo )
@@ -339,13 +337,13 @@ STATIC FUNCTION _vars_export( hParams )
 
    ENDIF
 
-   RETURN _ret
+   RETURN lRet
 
 
 
 STATIC FUNCTION _vars_import( hParams )
 
-   LOCAL _ret := .F.
+   LOCAL lRet := .F.
    LOCAL dDatOd := fetch_metric( "fakt_import_datum_od", my_user(), CToD( "" ) )
    LOCAL dDatDo := fetch_metric( "fakt_import_datum_do", my_user(), CToD( "" ) )
    LOCAL cIdRj := fetch_metric( "fakt_import_lista_rj", my_user(), PadR( "", 200 ) )
@@ -387,11 +385,9 @@ STATIC FUNCTION _vars_import( hParams )
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Zamjeniti postojeće šifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
-
-   ++nX
-   ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
-
+   //++nX
+   //++nX
+   //@ box_x_koord() + nX, box_y_koord() + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
    ++nX
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
@@ -402,8 +398,7 @@ STATIC FUNCTION _vars_import( hParams )
 
    IF LastKey() <> K_ESC
 
-      _ret := .T.
-
+      lRet := .T.
       set_metric( "fakt_import_datum_od", my_user(), dDatOd )
       set_metric( "fakt_import_datum_do", my_user(), dDatDo )
       set_metric( "fakt_import_lista_rj", my_user(), cIdRj )
@@ -427,13 +422,13 @@ STATIC FUNCTION _vars_import( hParams )
 
    ENDIF
 
-   RETURN _ret
+   RETURN lRet
 
 
 
 STATIC FUNCTION fakt_export_impl( hParams, aDetails )
 
-   LOCAL _ret := 0
+   LOCAL lRet := 0
    LOCAL cIdFirma, cIdTipDok, cBrDok
    LOCAL hAppendRec
    LOCAL nCount := 0
@@ -461,8 +456,8 @@ STATIC FUNCTION fakt_export_impl( hParams, aDetails )
       _change_rj := .T.
    ENDIF
 
-   _cre_exp_tbls( s_cExportDbfPath )
-   fakt_open_rexport_tabele( s_cExportDbfPath )
+   fakt_cre_tabele_razmjene( s_cExportDbfPath )
+   fakt_open_e_tabele( s_cExportDbfPath )
    // _o_tables()
 
    Box(, 2, 65 )
@@ -614,7 +609,6 @@ STATIC FUNCTION fakt_export_impl( hParams, aDetails )
          SELECT e_doks2
          APPEND BLANK
          dbf_update_rec( hAppendRec )
-
          SELECT fakt_doks2
          SKIP
 
@@ -641,10 +635,10 @@ STATIC FUNCTION fakt_export_impl( hParams, aDetails )
    BoxC()
 
    IF ( nCount > 0 )
-      _ret := nCount
+      lRet := nCount
    ENDIF
 
-   RETURN _ret
+   RETURN lRet
 
 
 FUNCTION export_import_add_to_details( aDetails, hRec )
@@ -663,7 +657,7 @@ FUNCTION export_import_add_to_details( aDetails, hRec )
 
 STATIC FUNCTION fakt_import_impl( hParams, aDetails )
 
-   LOCAL _ret := 0
+   LOCAL lRet := 0
    LOCAL cIdFirma, cIdTipDok, cBrDok
    LOCAL hAppendRec
    LOCAL nCount := 0
@@ -703,7 +697,7 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
       lFmkImport := .T.
    ENDIF
 
-   fakt_open_rexport_tabele( s_cImportDbfPath, NIL )
+   fakt_open_e_tabele( s_cImportDbfPath, NIL )
    // _o_tables()
 
    seek_fakt( "XXX" )
@@ -897,7 +891,6 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
    IF nCount > 0 .AND. lOk
 
       @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "", 69 )
-
       update_table_roba( _zamjeniti_sif )
       update_table_partn( _zamjeniti_sif )
       update_sifk_sifv()
@@ -907,10 +900,10 @@ STATIC FUNCTION fakt_import_impl( hParams, aDetails )
    BoxC()
 
    IF nCount > 0
-      _ret := nCount
+      lRet := nCount
    ENDIF
 
-   RETURN _ret
+   RETURN lRet
 
 
 
@@ -935,11 +928,11 @@ STATIC FUNCTION fakt_delete_dokument( cIdFirma, cIdVD, cBrDok )
 
    LOCAL nDbfArea := Select()
    LOCAL hRecDelete, nTrec
-   LOCAL _ret := .F.
+   LOCAL lRet := .F.
 
    IF seek_fakt( cIdFirma, cIdVD, cBrDok )
       // IF !Eof()
-      _ret := .T.
+      lRet := .T.
       // brisi fakt_fakt
       hRecDelete := dbf_get_rec()
       delete_rec_server_and_dbf( "fakt_fakt", hRecDelete, 2, "CONT" )
@@ -961,14 +954,12 @@ STATIC FUNCTION fakt_delete_dokument( cIdFirma, cIdVD, cBrDok )
 
    SELECT ( nDbfArea )
 
-   RETURN _ret
+   RETURN lRet
 
 
 
-// ----------------------------------------
-// kreiranje tabela razmjene
-// ----------------------------------------
-STATIC FUNCTION _cre_exp_tbls( cDbfPath )
+
+STATIC FUNCTION fakt_cre_tabele_razmjene( cDbfPath )
 
    LOCAL _cre
 
@@ -979,43 +970,39 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    // provjeri da li postoji direktorij, pa ako ne - kreiraj
    direktorij_kreiraj_ako_ne_postoji( cDbfPath )
 
-
    seek_fakt( "XXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_fakt" ) FROM ( my_home() + "struct" )
 
    seek_fakt_doks( "XXXX" )
-   o_fakt_doks_dbf()
+   altd()
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_doks" ) FROM ( my_home() + "struct" )
-
 
    seek_fakt_doks2( "XXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_doks2" ) FROM ( my_home() + "struct" )
 
-   // tabela roba
+
    o_roba( "XXXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_roba" ) FROM ( my_home() + "struct" )
 
-   // tabela partn
    o_partner( "XXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_partn" ) FROM ( my_home() + "struct" )
 
-   // tabela sifk
+
    o_sifk( "XXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_sifk" ) FROM ( my_home() + "struct" )
 
-   // tabela sifv
    o_sifv( "XXXX" )
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
@@ -1024,28 +1011,9 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    RETURN .T.
 
 
-// ----------------------------------------------------
-// otvaranje potrebnih tabela za prenos
-// ----------------------------------------------------
-// STATIC FUNCTION _o_tables()
-
-// o_fakt_dbf()
-// o_fakt_doks_dbf()
-// o_fakt_doks2_dbf()
-// o_sifk()
-// o_sifv()
-// o_partner()
-// o_roba()
-
-// RETURN .T.
 
 
-
-
-// ----------------------------------------------------
-// otvranje export tabela
-// ----------------------------------------------------
-STATIC FUNCTION fakt_open_rexport_tabele( cDbfPath, lFromFmk )
+STATIC FUNCTION fakt_open_e_tabele( cDbfPath, lFromFmk )
 
    LOCAL cDbfName
 
@@ -1057,12 +1025,15 @@ STATIC FUNCTION fakt_open_rexport_tabele( cDbfPath, lFromFmk )
       lFromFmk := .F.
    ENDIF
 
-   log_write( "otvaram fakt tabele importa i pravim indekse...", 9 )
-
+   //log_write( "FAKT tabele importa i pravim indekse...", 9 )
 
    my_close_all_dbf()
 
-   // setuj ove tabele kao temp tabele
+   cDbfName := "e_doks"
+   SELECT ( F_TMP_E_DOKS )
+   my_use_temp( "E_DOKS", cDbfPath + cDbfName, .F., .T. )
+   INDEX ON ( idfirma + idtipdok + brdok ) TAG "1"
+
    cDbfName := "e_doks2"
    SELECT ( F_TMP_E_DOKS2 )
    my_use_temp( "E_DOKS2", cDbfPath + cDbfName, .F., .T. )
@@ -1074,10 +1045,6 @@ STATIC FUNCTION fakt_open_rexport_tabele( cDbfPath, lFromFmk )
    INDEX ON ( idfirma + idtipdok + brdok + rbr ) TAG "1"
    INDEX ON ( idfirma + idtipdok + brdok + idroba ) TAG "2"
 
-   cDbfName := "e_doks"
-   SELECT ( F_TMP_E_DOKS )
-   my_use_temp( "E_DOKS", cDbfPath + cDbfName, .F., .T. )
-   INDEX ON ( idfirma + idtipdok + brdok ) TAG "1"
 
    cDbfName := "e_roba"
    SELECT ( F_TMP_E_ROBA )
@@ -1101,6 +1068,6 @@ STATIC FUNCTION fakt_open_rexport_tabele( cDbfPath, lFromFmk )
    INDEX ON ( id + oznaka + idsif + naz ) TAG "ID"
    INDEX ON ( id + idsif ) TAG "IDIDSIF"
 
-   log_write( "otvorene sve import tabele i indeksirane...", 9 )
+   //log_write( "FAKT sve import tabele i indeksirane...", 9 )
 
    RETURN .T.

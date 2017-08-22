@@ -967,7 +967,6 @@ STATIC FUNCTION fakt_cre_tabele_razmjene( cDbfPath )
       cDbfPath := my_home()
    ENDIF
 
-   // provjeri da li postoji direktorij, pa ako ne - kreiraj
    direktorij_kreiraj_ako_ne_postoji( cDbfPath )
 
    seek_fakt( "XXX" )
@@ -976,7 +975,6 @@ STATIC FUNCTION fakt_cre_tabele_razmjene( cDbfPath )
    CREATE ( cDbfPath + "e_fakt" ) FROM ( my_home() + "struct" )
 
    seek_fakt_doks( "XXXX" )
-   altd()
    COPY STRUCTURE EXTENDED TO ( my_home() + "struct" )
    USE
    CREATE ( cDbfPath + "e_doks" ) FROM ( my_home() + "struct" )

@@ -1,7 +1,8 @@
 # F18 klijent, lista promjena
 
-## 3.1.71-std, 2017-08-22
+## 3.1.72-std, 2017-08-22
 ### Developer
+- FAKT open_fakt_doks_dbf OUT
 - hb_SetKey( hb_keyNew( "C", HB_KF_CTRL ), {|| set_clipboard() } )
 - FAKT big-ball-of-mud
 - FAKT cre dbf fakt OUT

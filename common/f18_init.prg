@@ -26,7 +26,7 @@ THREAD STATIC s_cF18Home := NIL // svaki thread ima svoj my home ovisno o tekuco
 STATIC s_cRunOnStartParam
 
 
-THREAD STATIC __log_handle := NIL
+THREAD STATIC s_nF18FileHandle := NIL
 
 STATIC __test_mode := .F.
 STATIC __no_sql_mode := .F.
@@ -686,7 +686,7 @@ FUNCTION log_write( cMsg, nLevel, lSilent )
    // time ide samo u fajl, ne na server
    // ovdje ima neki problem #30139 iskljucujem dok ne skontamo
    // baca mi ove poruke u outf.txt
-   // FWRITE( __log_handle, _msg_time + cMsg + hb_eol() )
+   // FWRITE( s_nF18FileHandle, _msg_time + cMsg + hb_eol() )
 
    IF server_log()
       server_log_write( cMsg, lSilent )
@@ -717,7 +717,7 @@ FUNCTION server_log_enable()
 
 FUNCTION log_create()
 
-   IF ( __log_handle := FCreate( F18_LOG_FILE ) ) == -1
+   IF ( s_nF18FileHandle := FCreate( F18_LOG_FILE ) ) == -1
       error_bar( "log", "Cannot create log file: " + F18_LOG_FILE )
       RETURN .F.
    ENDIF
@@ -727,7 +727,7 @@ FUNCTION log_create()
 
 FUNCTION log_close()
 
-   FClose( __log_handle )
+   FClose( s_nF18FileHandle )
 
    RETURN .T.
 
@@ -736,10 +736,10 @@ FUNCTION log_close()
 FUNCTION log_handle( handle )
 
    IF handle != NIL
-      __log_handle := handle
+      s_nF18FileHandle := handle
    ENDIF
 
-   RETURN __log_handle
+   RETURN s_nF18FileHandle
 
 
 
@@ -750,10 +750,13 @@ FUNCTION set_hot_keys()
    SetKey( K_SH_F6, {|| f18_promjena_sezone() } )
 
 altd()
-   hb_SetKey( K_CTRL_C, {|| set_clipboard() } )
-   hb_SetKey( K_CTRL_V, {|| get_clipboard() } )
+   hb_SetKey( hb_keyNew( "C", HB_KF_CTRL ), {|| set_clipboard() } )
+   hb_SetKey( hb_keyNew( "V", HB_KF_CTRL ), {|| get_clipboard() } )
 
-   //inkey(0)
+   //nKey := inkey(0, hb_bitOr( HB_INKEY_ALL, HB_INKEY_EXT ))
+   //MsgBeep( AllTrim( Str( nKey ) ) )
+
+   //hb_keyNew( "C", HB_KF_CTRL )
    info_bar( "init", "setting up hot keys - end" )
 
    RETURN .T.

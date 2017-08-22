@@ -1,7 +1,8 @@
 # F18 klijent, lista promjena
 
-## 3.1.70-std, 2017-08-22
+## 3.1.71-std, 2017-08-22
 ### Developer
+- hb_SetKey( hb_keyNew( "C", HB_KF_CTRL ), {|| set_clipboard() } )
 - FAKT big-ball-of-mud
 - FAKT cre dbf fakt OUT
 - FAKT->KALK

@@ -176,7 +176,7 @@ FUNCTION find_fakt_dokument( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL lRet
 
-   seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok, "1" )
+   seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok, NIL, "1" )
 
    lRet := cIdFirma == fakt_doks->idfirma .AND. cIdTipDok == fakt_doks->idtipdok .AND. cBrDok == fakt_doks->brdok
 
@@ -226,7 +226,7 @@ FUNCTION seek_fakt_doks( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cTag, aWorkare
          cSql += " WHERE "
          lWhere := .T.
       ENDIF
-      cSql += "brdok=" + sql_quote( cBrDok )
+      cSql += "LEFT(brdok," + ALLTRIM( Str( FIELD_LEN_FAKT_BRDOK ) ) + ")=" + sql_quote( cBrDok )
    ENDIF
 
    IF cIdPartner != NIL .AND. !Empty( cIdPartner )
@@ -330,7 +330,7 @@ FUNCTION seek_fakt( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cIdRoba, dDatDokOd,
          cSql += " WHERE "
          lWhere := .T.
       ENDIF
-      cSql += "brdok=" + sql_quote( cBrDok )
+      cSql += "LEFT(brdok," + ALLTRIM( Str( FIELD_LEN_FAKT_BRDOK ) ) + ")=" + sql_quote( cBrDok )
    ENDIF
 
 

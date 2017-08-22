@@ -91,7 +91,7 @@ FUNCTION Iz47u96Norm()
       SELECT kalk2
       SEEK cIDFirma + '47' + cBrDok47
       dDatKalk := datdok
-      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cIDFirma + "47" + cBrDok47 + "'==IdFirma+IdVD+BrDok", "IDROBA", F_ROBA )
+    --  IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cIDFirma + "47" + cBrDok47 + "'==IdFirma+IdVD+BrDok", "IDROBA", F_ROBA )
          MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
          LOOP
       ENDIF

@@ -40,9 +40,9 @@ FUNCTION fakt_kalk()
  *   param: cImePoljaID - ime polja tekuce baze u kojem su sifre za ispitivanje
  *   param: nOblSif - oblast baze sifrarnika
  *   param: clFor - "for" uslov za obuhvatanje slogova tekuce baze
- */
 
-FUNCTION provjerisif_izbaciti_ovu_funkciju( clDok, cImePoljaID, nOblSif, clFor, lTest )
+
+-- FUNCTION provjerisif_izbaciti_ovu_funkciju( clDok, cImePoljaID, nOblSif, clFor, lTest )
 
    LOCAL lVrati := .T.
    LOCAL nArr := Select()
@@ -119,3 +119,4 @@ ENDIF
    ENDIF
 
    RETURN lVrati
+ */

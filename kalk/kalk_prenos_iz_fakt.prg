@@ -55,6 +55,7 @@ FUNCTION fakt_kalk_prenos_10_14()
    LOCAL dDatPl := CToD( "" )
    LOCAL _params := fakt_params()
    LOCAL GetList := {}
+   LOCAL hRec
 
    // PRIVATE lVrsteP := _params[ "fakt_vrste_placanja" ]
 
@@ -99,7 +100,7 @@ FUNCTION fakt_kalk_prenos_10_14()
 
       cFaktFirma := iif( cIdKonto2 == gKomKonto, gKomFakt, cIdFirma )
       @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj fakture: " GET cFaktFirma
-      @ box_x_koord() + 6, Col() + 2 SAY "- " + cidtipdok
+      @ box_x_koord() + 6, Col() + 2 SAY "- " + cIdtipdok
       @ box_x_koord() + 6, Col() + 2 SAY "-" GET cBrDok
 
       READ
@@ -108,6 +109,7 @@ FUNCTION fakt_kalk_prenos_10_14()
          EXIT
       ENDIF
 
+altd()
       IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
          // IF !Found()
          Beep( 4 )
@@ -117,6 +119,7 @@ FUNCTION fakt_kalk_prenos_10_14()
          LOOP
       ELSE
 
+         seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
          // IF lVrsteP
          // cIdVrsteP := idvrstep
          // ENDIF
@@ -195,8 +198,9 @@ FUNCTION fakt_kalk_prenos_10_14()
          update_rec_server_and_dbf( "kalk_doks2", hRec, 1, "FULL" )
 
 
+altd()
          SELECT fakt
-         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
+         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + LEFT( cBrDok, FIELD_LEN_FAKT_BRDOK ) == fakt->IdFirma + fakt->IdTipDok + LEFT( fakt->BrDok, FIELD_LEN_FAKT_BRDOK )
 
             select_o_roba(  fakt->idroba )
             select_o_tarifa( roba->idtarifa )
@@ -226,9 +230,9 @@ FUNCTION fakt_kalk_prenos_10_14()
                idtarifa WITH ROBA->idtarifa, ;
                brfaktp WITH fakt->brdok, ;
                datfaktp WITH fakt->datdok, ;
-               idkonto   WITH cidkonto, ;
-               idkonto2  WITH cidkonto2, ;
-               idzaduz2  WITH cidzaduz2, ;
+               idkonto   WITH cIdkonto, ;
+               idkonto2  WITH cIdkonto2, ;
+               idzaduz2  WITH cIdzaduz2, ;
                kolicina WITH fakt->kolicina, ;
                idroba WITH fakt->idroba, ;
                nc  WITH ROBA->nc, ;
@@ -415,12 +419,14 @@ FUNCTION fakt_kalk_prenos( cIndik )
 
          select_o_koncij( cIdKonto )
 
-         SELECT fakt
+         //SELECT fakt
 
-         IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-            MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-            LOOP
-         ENDIF
+         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+          //  MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+          //  LOOP
+         //ENDIF
+
+         SELECT FAKT
 
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == field->IdFirma + field->IdTipDok + field->BrDok
 
@@ -598,13 +604,12 @@ FUNCTION kalk_fakt_prenos_period()
 
          select_o_koncij( _id_konto )
 
-         SELECT fakt
-
+         //SELECT fakt
          // provjeri sifru u sifarniku
-         IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + fakt->idfirma + fakt->idtipdok + fakt->brdok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-            MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-            LOOP
-         ENDIF
+         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + fakt->idfirma + fakt->idtipdok + fakt->brdok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+        //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+          //  LOOP
+         //ENDIF
 
          select_o_roba( fakt->idroba )
          select_o_tarifa( roba->idtarifa )

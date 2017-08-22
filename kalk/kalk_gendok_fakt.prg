@@ -24,8 +24,8 @@ FUNCTION kalk_prenos_fakt()
    LOCAL cIdFakt97 := "01"
    LOCAL cIdFakt97_2 := "19"
 
-   cOldVar10 := my_get_from_ini( "PrenosKALK10_FAKT", "NazivPoljaCijeneKojaSePrenosiIzKALK", "-", KUMPATH )   // nekad bilo FCJ
-   cOldVar16 := my_get_from_ini( "PrenosKALK16_FAKT", "NazivPoljaCijeneKojaSePrenosiIzKALK", "-", KUMPATH )   // nekad bilo NC
+   //cOldVar10 := my_get_from_ini( "PrenosKALK10_FAKT", "NazivPoljaCijeneKojaSePrenosiIzKALK", "-", KUMPATH )   // nekad bilo FCJ
+   //cOldVar16 := my_get_from_ini( "PrenosKALK16_FAKT", "NazivPoljaCijeneKojaSePrenosiIzKALK", "-", KUMPATH )   // nekad bilo NC
 
    //o_fakt_dbf()
 
@@ -101,7 +101,6 @@ FUNCTION kalk_prenos_fakt()
 
             //IF Found()
             IF find_fakt_dokument( cFF97_2, cIdFakt97_2, cBrFakt )
-
                Beep( 4 )
                Box(, 1, 50 )
                @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "U FAKT već postoji ovaj dokument !!"
@@ -117,7 +116,7 @@ FUNCTION kalk_prenos_fakt()
          cBrFakt := fakt_novi_broj_dokumenta( cFaktFirma, cIdFakt )
 
          //SEEK cFaktFirma + cIdFakt + cBrFakt
-         find_fakt_dokument( cFaktFirma, cIdFakt, cBrFakt )
+         //find_fakt_dokument( cFaktFirma, cIdFakt, cBrFakt )
 
       ELSE
 
@@ -130,7 +129,7 @@ FUNCTION kalk_prenos_fakt()
          cBrFakt := fakt_novi_broj_dokumenta( cFaktFirma, cIdFakt )
 
          //SEEK cFaktFirma + cIdFakt + cBrFakt
-         find_fakt_dokument( cFaktFirma, cIdFakt, cBrFakt )
+         //find_fakt_dokument( cFaktFirma, cIdFakt, cBrFakt )
 
       ENDIF
 
@@ -138,7 +137,7 @@ FUNCTION kalk_prenos_fakt()
 
          @ box_x_koord() + 2, box_y_koord() + 2 SAY "Broj dokumenta u modulu FAKT: " + cFaktFirma + " - " + cIdFakt + " - " + cBrFakt
 
-         IF !Eof()
+         IF find_fakt_dokument( cFaktFirma, cIdFakt, cBrFakt )
             Beep( 4 )
             Box(, 1, 50 )
             @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "U FAKT već postoji ovaj dokument !!"
@@ -153,7 +152,7 @@ FUNCTION kalk_prenos_fakt()
 
       fFirst := .T.
 
-      DO WHILE !Eof() .AND. cIdFirma + cIdTipDok + cBrDok == IdFirma + IdVD + BrDok
+      DO WHILE !Eof() .AND. cIdFirma + cIdTipDok + cBrDok == kalk_pripr->IdFirma + kalk_pripr->IdVD + kalk_pripr->BrDok
 
          PRIVATE nKolicina := kalk_pripr->( kolicina - gkolicina - gkolicin2 )
 
@@ -306,11 +305,12 @@ FUNCTION kalk_prenos_fakt()
             REPLACE rabat WITH 0               // kakav crni rabat
             REPLACE dindem WITH "KM "
 
-            IF kalk_pripr->idvd == "10" .AND. cOldVar10 <> "-"
-               REPLACE cijena WITH kalk_pripr->( &cOldVar10 )
-            ELSEIF kalk_pripr->idvd == "16" .AND. cOldVar16 <> "-"
-               REPLACE cijena WITH kalk_pripr->( &cOldVar16 )
-            ELSEIF kalk_pripr->idvd $ "11#12#13"
+            //IF kalk_pripr->idvd == "10" .AND. cOldVar10 <> "-"
+            //   REPLACE cijena WITH kalk_pripr->( &cOldVar10 )
+            //ELSEIF kalk_pripr->idvd == "16" .AND. cOldVar16 <> "-"
+            //   REPLACE cijena WITH kalk_pripr->( &cOldVar16 )
+
+            IF kalk_pripr->idvd $ "11#12#13"
                REPLACE cijena WITH kalk_pripr->mpcsapp   // ove dokumente najvise interesuje mpc!
             ELSEIF kalk_pripr->idvd $ "PR#RN"
                REPLACE cijena WITH kalk_pripr->vpc

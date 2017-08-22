@@ -611,7 +611,6 @@ FUNCTION kalk_fakt_prenos_period()
          select_o_tarifa( roba->idtarifa )
 
          SELECT fakt
-
          IF AllTrim( podbr ) == "." .OR. roba->tip $ "UY" // preskoci ako su usluge ili podbroj stavke
             SKIP
             LOOP

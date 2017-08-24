@@ -369,8 +369,8 @@ FUNCTION fin_suban_kartica2( lOtvSt )
                SKIP
             ENDDO
             IF cPrelomljeno == "D"
-               Prelomi( @nDBHD, @nPBHD )
-               Prelomi( @nDDEM, @nPDEM )
+               fin_prebijeno_stanje_dug_pot( @nDBHD, @nPBHD )
+               fin_prebijeno_stanje_dug_pot( @nDDEM, @nPDEM )
             ENDIF
          ELSE
             IF D_P == "1"

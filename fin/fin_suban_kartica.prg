@@ -1278,11 +1278,11 @@ FUNCTION V_Firma( cIdFirma )
 
 
 /*
-   Prelomi(nDugX,nPotX)
+   fin_prebijeno_stanje_dug_pot(nDugX,nPotX)
  */
-FUNCTION Prelomi( nDugX, nPotX )
+FUNCTION fin_prebijeno_stanje_dug_pot( nDugX, nPotX )
 
-   IF ( ndugx - npotx ) > 0
+   IF ( nDugx - nDotx ) > 0
       nDugX := nDugX - nPotX
       nPotX := 0
    ELSE

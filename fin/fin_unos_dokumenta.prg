@@ -112,7 +112,7 @@ FUNCTION fin_knjizenje_naloga()
 
    @ box_x_koord() + _x_row - 2, box_y_koord() + 2 SAY8 aFinUnosOpcije
 
-   aFinUnosOpcije := _upadr( IIF( is_mac(), " <9>", " <c+F9>" ) + " Briši sve", _opt_d ) + _sep
+   aFinUnosOpcije := _upadr( iif( is_mac(), " <9>", " <c+F9>" ) + " Briši sve", _opt_d ) + _sep
    aFinUnosOpcije += _upadr( " <F5> Kontrola zbira", _opt_d ) + _sep
    aFinUnosOpcije += _upadr( " <a+F5> Pr.dat", _opt_d ) + _sep
    aFinUnosOpcije += _upadr( " <a+B> Blagajna", _opt_d )
@@ -187,8 +187,10 @@ FUNCTION edit_fin_priprema( lNovaStavka )
    ENDIF
 
 
-   SET KEY K_ALT_K TO konverzija_valute()
-   SET KEY K_ALT_O TO knjizenje_gen_otvorene_stavke()
+   hb_SetKey( iif( is_mac(), hb_keyNew( "K", HB_KF_CTRL ), K_ALT_K ), {|| fin_unos_konverzija_valute( "_IZNOSDEM", GetList ) } )
+   hb_SetKey( iif( is_mac(), hb_keyNew( "O", HB_KF_CTRL ), K_ALT_O ), {|| knjizenje_gen_otvorene_stavke() } )
+
+   // SET KEY K_ALT_O TO
 
    @ box_x_koord() + 3, box_y_koord() + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "Redni broj stavke naloga:" GET nFinRbr PICTURE "99999" ;
@@ -266,7 +268,7 @@ FUNCTION edit_fin_priprema( lNovaStavka )
 
    @ box_x_koord() + 16, box_y_koord() + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| .T. } VALID {|| lDugmeOtvoreneStavke := .T., .T. }
 
-   @ box_x_koord() + 17, box_y_koord() + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| konverzija_valute( , , "_IZNOSBHD" ),  .T. } ;
+   @ box_x_koord() + 17, box_y_koord() + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| fin_unos_konverzija_valute( "_IZNOSBHD", GetList ),  .T. } ;
       VALID {|| lDugmeOtvoreneStavke := .F., .T. }
 
 
@@ -290,7 +292,9 @@ FUNCTION edit_fin_priprema( lNovaStavka )
 
    ESC_RETURN 0
 
-   SET KEY K_ALT_K TO
+   // SET KEY K_ALT_K TO
+   hb_SetKey( iif( is_mac(), hb_keyNew( "K", HB_KF_CTRL ), K_ALT_K ), NIL )
+   hb_SetKey( iif( is_mac(), hb_keyNew( "O", HB_KF_CTRL ), K_ALT_O ), NIL )
 
    _k3 := K3U256( _k3 )
    _Rbr := fin_pripr_redni_broj()
@@ -613,14 +617,14 @@ FUNCTION fin_azuriraj_x()
 
 FUNCTION WRbr()
 
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _rec_2
 
-   _rec := dbf_get_rec()
+   hRec := dbf_get_rec()
 
-   IF _rec[ "rbr" ]  < 2
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Dokument:" GET _rec[ "idvn" ]
-      @ box_x_koord() + 1, Col() + 2  GET _rec[ "brnal" ]
+   IF hRec[ "rbr" ]  < 2
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Dokument:" GET hRec[ "idvn" ]
+      @ box_x_koord() + 1, Col() + 2  GET hRec[ "brnal" ]
       READ
    ENDIF
 
@@ -628,8 +632,8 @@ FUNCTION WRbr()
    GO TOP
    DO WHILE !Eof()
       _rec_2 := dbf_get_rec()
-      _rec_2[ "idvn" ]  := _rec[ "idvn" ]
-      _rec_2[ "brnal" ] := _rec[ "brnal" ]
+      _rec_2[ "idvn" ]  := hRec[ "idvn" ]
+      _rec_2[ "brnal" ] := hRec[ "brnal" ]
       dbf_update_rec( _rec_2 )
       SKIP
    ENDDO
@@ -783,39 +787,57 @@ FUNCTION V_DP()
 FUNCTION fin_konvert_valute( rec, tip )
 
    LOCAL _ok := .T.
-   LOCAL _kurs := Kurs( rec[ "datdok" ] )
+   LOCAL dKurs := Kurs( rec[ "datdok" ] )
 
    IF tip == "P"
-      rec[ "iznosbhd" ] := rec[ "iznosdem" ] * _kurs
+      rec[ "iznosbhd" ] := rec[ "iznosdem" ] * dKurs
    ELSEIF tip == "D"
-      IF Round( _kurs, 4 ) == 0
+      IF Round( dKurs, 4 ) == 0
          rec[ "iznosdem" ] := 0
       ELSE
-         rec[ "iznosdem" ] := rec[ "iznosbhd" ] / _kurs
+         rec[ "iznosdem" ] := rec[ "iznosbhd" ] / dKurs
       ENDIF
    ENDIF
 
    RETURN _ok
 
 
-FUNCTION konverzija_valute( p1, p2, cVar )
+FUNCTION fin_unos_konverzija_valute( cVar, GetList )
 
-   LOCAL _kurs
+   LOCAL dKurs
 
-   _kurs := Kurs( _datdok )
+
+   IF ValType( _datDok ) != "D"
+      RETURN .F.
+   ENDIF
+
+   dKurs := Kurs( _datdok )
 
    IF cVar == "_IZNOSDEM"
-      _iznosbhd := _iznosdem * _kurs
+      _iznosbhd := _iznosdem * dKurs
    ELSEIF cVar = "_IZNOSBHD"
-      IF Round( _kurs, 4 ) == 0
+      IF Round( dKurs, 4 ) == 0
          _iznosdem := 0
       ELSE
-         _iznosdem := _iznosbhd / _kurs
+         _iznosdem := _iznosbhd / dKurs
       ENDIF
    ENDIF
 
+   IF GetList == NIL
+      RETURN .F.
+   ENDIF
 
    AEval( GetList, {| oGet | refresh_numeric_get( oGet )  } )
+
+   RETURN .T.
+
+
+STATIC FUNCTION refresh_numeric_get( oGet )
+
+   // ?E pp( __objgetmsglist( oGet ) )
+   IF  oGet:Type()  != "U" .AND. !( "DUMMY" $ oGet:name() )
+      oGet:display()
+   ENDIF
 
    RETURN .T.
 
@@ -835,14 +857,7 @@ FUNCTION konverzija_km_dem( dDatDo, nIznosKM )
    RETURN  nIznosKM / nKurs
 
 
-STATIC FUNCTION refresh_numeric_get( oGet )
 
-   // ?E pp( __objgetmsglist( oGet ) )
-   IF  oGet:Type()  != "U" .AND. !( "DUMMY" $ oGet:name() )
-      oGet:display()
-   ENDIF
-
-   RETURN .T.
 
 /*
  poziva je ObjDbedit u fin_knjizenje_naloga
@@ -888,11 +903,11 @@ STATIC FUNCTION set_datval_datdok()
 
          _ret := .T. // bilo je promjena
 
-         _rec := dbf_get_rec()
-         _rec[ "datval" ] := field->datdok + _dana
-         _rec[ "datdok" ] := _dat_dok
+         hRec := dbf_get_rec()
+         hRec[ "datval" ] := field->datdok + _dana
+         hRec[ "datdok" ] := _dat_dok
 
-         dbf_update_rec( _rec )
+         dbf_update_rec( hRec )
 
       ENDIF
       SKIP

@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.77-std, 2017-08-24
+### FIN
+- Kompenzacija cleanup
+
 ## 3.1.76-std, 2017-08-22
 ### Developer
 - FAKT -> KALK još BUGFIX, pa popravni

@@ -106,7 +106,7 @@ FUNCTION kontrola_zbira_naloga_u_pripremi()
             _Rbr :=  _Rbr + 1
             _IdPartner := ""
             _IznosBHD := nDug - nPot
-            konverzija_valute( NIL, NIL, "_IZNOSBHD" )
+            fin_unos_konverzija_valute( "_IZNOSBHD", NIL )
             APPEND BLANK
             my_rlock()
             Gather()

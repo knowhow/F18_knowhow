@@ -609,7 +609,7 @@ FUNCTION ObracunPorezaUvoz()
             _&cPom := skol * _nc * 0.1
          ENDIF
 
-         kalk_nabcj()
+         kalk_when_valid_nc()
          my_rlock()
          Gather()
          my_unlock()
@@ -851,7 +851,7 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
    GO TOP
    DO WHILE !Eof()
       aPorezi := {}
-      fMarza := " "
+      cProracunMarzeUnaprijed := " "
       ++nBrojac
       cKonto := kalk_pripr->idKonto
       cRoba := kalk_pripr->idRoba
@@ -874,8 +874,8 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
       _marza := _vpc / ( 1 + _PORVT ) - _fcj
       _tMarza2 := "A"
       _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
-      VMPC( .F., fMarza )
-      VMPCSaPP( .F., fMarza )
+      VMPC( .F., cProracunMarzeUnaprijed )
+      VMPCSaPP( .F., cProracunMarzeUnaprijed )
       _MU_I := "5"
       _PU_I := "1"
       _mKonto := cKonto

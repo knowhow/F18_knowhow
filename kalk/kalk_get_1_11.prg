@@ -174,26 +174,26 @@ FUNCTION kalk_get_1_11()
       @ box_x_koord() + 15, box_y_koord() + 2 SAY "MP trosak:"; ?? "(" + _tPrevoz + ") "; ?? _prevoz
    ENDIF
 
-   PRIVATE fMarza := " "
+   PRIVATE cProracunMarzeUnaprijed := " "
    @ box_x_koord() + 16, box_y_koord() + 2 SAY "MP marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
    @ box_x_koord() + 16, Col() + 1  GET _Marza2 PICTURE  PicDEM ;
       VALID {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), ;
       _Tmarza := "A", ;
       _marza := _vpc / ( 1 + _PORVT ) - _fcj, .T. }
-   @ box_x_koord() + 16, Col() + 1 GET fMarza PICT "@!"   VALID {|| kalk_Marza_11( fMarza ), fMarza := " ", .T. }
+   @ box_x_koord() + 16, Col() + 1 GET cProracunMarzeUnaprijed PICT "@!"   VALID {|| kalk_Marza_11( cProracunMarzeUnaprijed ), cProracunMarzeUnaprijed := " ", .T. }
 
 
    @ box_x_koord() + 18, box_y_koord() + 2  SAY "PRODAJNA CJENA       :"
 
 
-   @ box_x_koord() + 18, box_y_koord() + 50 GET _MPC PICTURE PicDEM VALID VMpc( .F., fMarza ) WHEN WMpc( .F., fMarza )
+   @ box_x_koord() + 18, box_y_koord() + 50 GET _MPC PICTURE PicDEM VALID VMpc( .F., cProracunMarzeUnaprijed ) WHEN WMpc( .F., cProracunMarzeUnaprijed )
 
    SayPorezi( 19 )
 
 
    @ box_x_koord() + 20, box_y_koord() + 2 SAY "PROD.C. SA PDV:"
 
-   @ box_x_koord() + 20, box_y_koord() + 50 GET _MPCSaPP  PICTURE PicDEM VALID VMPCSaPP( .F., fMarza )
+   @ box_x_koord() + 20, box_y_koord() + 50 GET _MPCSaPP  PICTURE PicDEM VALID VMPCSaPP( .F., cProracunMarzeUnaprijed )
 
    READ
    ESC_RETURN K_ESC

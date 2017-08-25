@@ -247,23 +247,23 @@ FUNCTION Get2_RN()
 
    @ box_x_koord() + 6, box_y_koord() + 2     SAY cRNT5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
    @ box_x_koord() + 6, box_y_koord() + 40    GET _ZavTr PICTURE PicDEM ;
-      VALID {|| kalk_nabcj(), .T. }
+      VALID {|| kalk_when_valid_nc(), .T. }
 
    @ box_x_koord() + 8, box_y_koord() + 2     SAY "CIJENA KOST.  "
    @ box_x_koord() + 8, box_y_koord() + 50    GET _NC     PICTURE PicDEM
 
    IF koncij->naz <> "N1"  // vodi se po vpc
-      PRIVATE fMarza := " "
+      PRIVATE cProracunMarzeUnaprijed := " "
       @ box_x_koord() + 10, box_y_koord() + 2    SAY "Magacin. Marza            :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
       @ box_x_koord() + 10, box_y_koord() + 40 GET _Marza PICTURE PicDEM
-      @ box_x_koord() + 10, Col() + 1 GET fMarza PICT "@!"
+      @ box_x_koord() + 10, Col() + 1 GET cProracunMarzeUnaprijed PICT "@!"
       IF koncij->naz == "P2"
          @ box_x_koord() + 12, box_y_koord() + 2    SAY "PLANSKA CIJENA (PLC)        :"
       ELSE
          @ box_x_koord() + 12, box_y_koord() + 2    SAY "VELEPRODAJNA CJENA  (VPC)   :"
       ENDIF
       @ box_x_koord() + 12, box_y_koord() + 50 GET _VPC    PICTURE PicDEM;
-         VALID {|| kalk_10_pr_rn_valid_vpc_set_marza( @fMarza ) }
+         VALID {|| kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa( @cProracunMarzeUnaprijed ) }
 
       READ
       IF koncij->naz == "P2"
@@ -276,7 +276,7 @@ FUNCTION Get2_RN()
          ENDIF
       ELSE
          IF KoncijVPC() == 0 .OR. Round( KoncijVPC(), 4 ) <> Round( _vpc, 4 )
-            SetujVPC( _vpc, Round( KoncijVPC(), 4 ) <> Round( _vpc, 4 ) )
+            kalk_set_vpc_sifarnik( _vpc, Round( KoncijVPC(), 4 ) <> Round( _vpc, 4 ) )
          ELSE
             IF ( _vpc <> KoncijVPC() )
                Beep( 1 )

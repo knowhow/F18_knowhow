@@ -77,11 +77,9 @@ FUNCTION kalk_get_1_18()
       MsgBeep( "Za robu tipa X ne rade se nivelacije" )
    ENDIF
 
-   IF roba->tip $ "VK"
-      cNaziv := "VPCVT"
-   ELSE
-      cNaziv := "VPC"
-   ENDIF
+
+  cNaziv := "VPC"
+
    IF gmagacin == "1"
       cNaziv := "NC"
    ENDIF
@@ -100,14 +98,14 @@ FUNCTION kalk_get_1_18()
    IF _TBankTr <> "X"
 
       //SELECT roba
-      SetujVPC( nNCJ )
+      kalk_set_vpc_sifarnik( nNCJ )
 
       SELECT kalk_pripr
    ENDIF
 
 
    IF gcMpcKalk10 == "D"
-      IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcpom, 2 ) ) .AND. Round( _mpcpom, 2 ) <> 0 .AND. Pitanje(, "Staviti MPC u sifrarnik" ) == "D"
+      IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcpom, 2 ) ) .AND. Round( _mpcpom, 2 ) <> 0 .AND. Pitanje(, "Staviti MPC u šifarnik" ) == "D"
          SELECT roba
          hRec := dbf_get_rec()
          hRec[ "mpc" ] := _mpcpom

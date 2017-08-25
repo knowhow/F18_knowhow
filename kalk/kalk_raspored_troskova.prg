@@ -380,10 +380,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                SELECT kalk_pripr
                IF _idvd == "RN"
                   IF Val( _rbr ) < 900
-                     kalk_nabcj()
+                     kalk_when_valid_nc()
                   ENDIF
                ELSE
-                  kalk_nabcj()
+                  kalk_when_valid_nc()
                ENDIF
 
                IF _idvd == "16"
@@ -401,10 +401,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                ENDIF
                IF _idvd == "RN"
                   IF Val( _rbr ) < 900
-                     kalk_10_pr_rn_valid_vpc_set_marza()
+                     kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa()
                   ENDIF
                ELSE
-                  kalk_10_pr_rn_valid_vpc_set_marza()
+                  kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa()
                ENDIF
 
                IF nSetEnd == 1

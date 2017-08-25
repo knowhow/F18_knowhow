@@ -315,7 +315,7 @@ FUNCTION leg_Get2_PR()
    @ box_x_koord() + 5, box_y_koord() + 40 GET _CarDaz PICTURE PicDEM
 
    @ box_x_koord() + 6, box_y_koord() + 2 SAY cRNT5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
-   @ box_x_koord() + 6, box_y_koord() + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_nabcj(), .T. }
+   @ box_x_koord() + 6, box_y_koord() + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_when_valid_nc(), .T. }
 
    @ box_x_koord() + 8, box_y_koord() + 2 SAY "CIJENA KOST.  "
    @ box_x_koord() + 8, box_y_koord() + 50 GET _NC PICTURE PicDEM
@@ -328,10 +328,10 @@ FUNCTION leg_Get2_PR()
       @ box_x_koord() + 10, box_y_koord() + 40 GET _Marza PICTURE PicDEM
       @ box_x_koord() + 10, Col() + 1 GET fMarza PICT "@!"
       @ box_x_koord() + 12, box_y_koord() + 2 SAY "VELEPRODAJNA CJENA  (VPC)   :"
-      @ box_x_koord() + 12, box_y_koord() + 50 GET _VPC PICT PicDEM VALID {|| kalk_10_pr_rn_valid_vpc_set_marza( @fMarza ) }
+      @ box_x_koord() + 12, box_y_koord() + 50 GET _VPC PICT PicDEM VALID {|| kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa( @fMarza ) }
 
       READ
-      SetujVPC( _vpc )
+      kalk_set_vpc_sifarnik( _vpc )
 
    ELSE
 

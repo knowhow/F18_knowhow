@@ -494,8 +494,7 @@ FUNCTION fakt_ftxt_ino_klauzula()
 
       hRec[ "id" ] := "IN"
       hRec[ "naz" ] := "Porezno oslobadjanje na osnovu (nulta stopa) na osnovu clana 27. stav 1. tacka 1. ZPDV - izvoz dobara iz BIH"
-
-      update_rec_server_and_dbf( "ftxt", hRec, 1, "FULL" )
+      update_rec_server_and_dbf( "fakt_ftxt", hRec, 1, "FULL" )
 
    ENDIF
 

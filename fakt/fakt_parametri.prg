@@ -542,7 +542,7 @@ FUNCTION par_fakt_izgled_dokumenta()
    LOCAL _params := fakt_params()
    LOCAL _auto_odt := fetch_metric( "fakt_odt_template_auto", NIL, "D" )
    LOCAL GetList := {}
-     
+
    PRIVATE cIzvj := "1"
 
    o_params()
@@ -571,27 +571,17 @@ FUNCTION par_fakt_izgled_dokumenta()
    Box( , 22, 76, .F., "Izgled dokumenata" )
 
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Dodat.redovi po listu " GET gERedova ;
-      PICT "999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Dodat.redovi po listu " GET gERedova PICT "999"
    nX++
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Lijeva margina pri stampanju " GET gnLMarg PICT "99"
    nX++
 
-
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Gornja margina " GET gnTMarg PICT "99"
    nX++
-
-
-
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koristi ODT template automatski (D/N) ?" GET _auto_odt VALID _auto_odt $ "DN" PICT "!@"
-
    nX++
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "PDV Delphi RB prikaz (D/N)" GET gPDVDrb PICT "@!" VALID gPDVDrb $ "DN"
    nX++
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "PDV TXT dokument varijanta " GET gPDVDokVar PICT "@!" VALID gPDVDokVar $ "123"
    nX++
 
@@ -629,16 +619,13 @@ FUNCTION par_fakt_izgled_dokumenta()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis grupacije robe poslije naziva (D/N)" GET glRGrPrn PICT "@!" VALID glRGrPrn $ "DN"
 
    nX += 2
-
    // parametri fin.stanje na dod.txt
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz fin.salda kupca/dobavljaca na dodatnom tekstu (D/N)" GET gFaktPrikazFinSaldaKupacDobavljac PICT "@!" VALID gFaktPrikazFinSaldaKupacDobavljac $ "DN"
 
    nX += 1
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Konto duguje:", 20 ) GET gFinKtoDug VALID !Empty( gFinKtoDug ) .AND. P_Konto( @gFinKtoDug ) WHEN gFaktPrikazFinSaldaKupacDobavljac == "D"
 
    nX += 1
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Konto potrazuje:", 20 ) GET gFinKtoPot VALID !Empty( gFinKtoPot ) .AND. P_Konto( @gFinKtoPot ) WHEN gFaktPrikazFinSaldaKupacDobavljac == "D"
 
    nX += 1
@@ -706,14 +693,13 @@ FUNCTION par_fakt_izgled_dokumenta()
 
    ENDIF
 
-   RETURN
-
+   RETURN .T.
 
 
 
 FUNCTION fakt_par_nazivi_dokumenata()
 
-   PRIVATE  GetList := {}
+   LOCAL GetList := {}
 
    o_params()
 
@@ -868,86 +854,8 @@ FUNCTION fakt_par_nazivi_dokumenata()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
-
-
-FUNCTION P_WinFakt()
-
-   cIniName := EXEPATH + 'proizvj.ini'
-
-   cFirma := PadR( UzmiIzIni( cIniName, 'Varijable', 'Firma', '--', 'READ' ), 30 )
-   cAdresa := PadR( UzmiIzIni( cIniName, 'Varijable', 'Adres', '--', 'READ' ), 30 )
-   cTelefoni := PadR( UzmiIzIni( cIniName, 'Varijable', 'Tel', '--', 'READ' ), 50 )
-   cFax := PadR( UzmiIzIni( cIniName, 'Varijable', 'Fax', '--', 'READ' ), 30 )
-   cRBroj := PadR( UzmiIzIni( cIniName, 'Varijable', 'RegBroj', '--', 'READ' ), 13 )
-   cPBroj := PadR( UzmiIzIni( cIniName, 'Varijable', 'PorBroj', '--', 'READ' ), 13 )
-   cBrSudRj := PadR( UzmiIzIni( cIniName, 'Varijable', 'BrSudRj', '--', 'READ' ), 45 )
-   cBrUpisa := PadR( UzmiIzIni( cIniName, 'Varijable', 'BrUpisa', '--', 'READ' ), 45 )
-   cZRac1 := PadR( UzmiIzIni( cIniName, 'Varijable', 'ZRacun1', '--', 'READ' ), 45 )
-   cZRac2 := PadR( UzmiIzIni( cIniName, 'Varijable', 'ZRacun2', '--', 'READ' ), 45 )
-   cZRac3 := PadR( UzmiIzIni( cIniName, 'Varijable', 'ZRacun3', '--', 'READ' ), 45 )
-   cZRac4 := PadR( UzmiIzIni( cIniName, 'Varijable', 'ZRacun4', '--', 'READ' ), 45 )
-   cZRac5 := PadR( UzmiIzIni( cIniName, 'Varijable', 'ZRacun5', '--', 'READ' ), 45 )
-   cZRac6 := PadR( UzmiIzIni( cIniName, 'Varijable', 'ZRacun6', '--', 'READ' ), 45 )
-   cNazivRtm := PadR( my_get_from_ini( 'Fakt', 'NazRTM', '', EXEPATH ), 15 )
-   cNazivFRtm := PadR( my_get_from_ini( 'Fakt', 'NazRTMFax', '', EXEPATH ), 15 )
-   cPictLoc := PadR( UzmiIzIni( cIniName, 'Varijable', 'LokSlika', '--', 'READ' ), 30 )
-   cDN := "D"
-
-   Box(, 22, 63 )
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Podesavanje parametara Win stampe:"
-   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Naziv firme: " GET cFirma
-   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Adresa: " GET cAdresa
-   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Telefon: " GET cTelefoni
-   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Fax: " GET cFax
-   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Ziro racun 1: " GET cZRac1
-   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Ziro racun 2: " GET cZRac2
-   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Ziro racun 3: " GET cZRac3
-   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Ziro racun 4: " GET cZRac4
-   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Ziro racun 5: " GET cZRac5
-   @ box_x_koord() + 12, box_y_koord() + 2 SAY "Ziro racun 6: " GET cZRac6
-   @ box_x_koord() + 13, box_y_koord() + 2 SAY "Identifikac.broj: " GET cRBroj
-   @ box_x_koord() + 14, box_y_koord() + 2 SAY "Porezni dj. broj: " GET cPBroj
-   @ box_x_koord() + 15, box_y_koord() + 2 SAY "Br.sud.rjesenja: " GET cBrSudRj
-   @ box_x_koord() + 16, box_y_koord() + 2 SAY "Reg.broj upisa: " GET cBrUpisa
-
-   @ box_x_koord() + 17, box_y_koord() + 2 SAY "--------------------------------------------"
-   @ box_x_koord() + 18, box_y_koord() + 2 SAY "Lokacija slike: " GET cPictLoc
-   @ box_x_koord() + 19, box_y_koord() + 2 SAY "Naziv RTM fajla za fakture: " GET cNazivRtm
-   @ box_x_koord() + 20, box_y_koord() + 2 SAY "Naziv RTM fajla za slanje dok.faksom: " GET cNazivFRtm
-   @ box_x_koord() + 21, box_y_koord() + 2 SAY "Snimi podatke D/N? " GET cDN VALID cDN $ "DN" PICT "@!"
-   READ
-   BoxC()
-
-   IF LastKey() = K_ESC
-      RETURN
-   ENDIF
-
-   IF cDN == "D"
-      UzmiIzIni( cIniName, 'Varijable', 'Firma', cFirma, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'Adres', cAdresa, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'Tel', cTelefoni, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'Fax', cFax, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'RegBroj', cRBroj, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'PorBroj', cPBroj, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'BrSudRj', cBrSudRj, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'BrUpisa', cBrUpisa, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'ZRacun1', cZRac1, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'ZRacun2', cZRac2, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'ZRacun3', cZRac3, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'ZRacun4', cZRac4, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'ZRacun5', cZRac5, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'ZRacun6', cZRac6, 'WRITE' )
-      UzmiIzIni( EXEPATH + "fmk.ini", 'Fakt', 'NazRTM', cNazivRtm, 'WRITE' )
-      UzmiIzIni( EXEPATH + "fmk.ini", 'Fakt', 'NazRTMFax', cNazivFRtm, 'WRITE' )
-      UzmiIzIni( cIniName, 'Varijable', 'LokSlika', cPictLoc, 'WRITE' )
-      MsgBeep( "Podaci snimljeni!" )
-   ELSE
-      RETURN
-   ENDIF
-
-   RETURN
 
 
 
@@ -961,67 +869,62 @@ FUNCTION is_fakt_ugalj()
 // ----------------------------------------------------------------
 // dodatni opis na stavke u fakt dokumentu
 // ----------------------------------------------------------------
-FUNCTION fakt_opis_stavke( value )
-   RETURN get_set_global_param( "fakt_opis_stavke", value, "N" )
-
+FUNCTION fakt_opis_stavke( cValue )
+   RETURN get_set_global_param( "fakt_opis_stavke", cValue, "N" )
 
 
 // ----------------------------------------------------------------
 // unos objekata
 // ----------------------------------------------------------------
-FUNCTION fakt_objekti( value )
-   RETURN get_set_global_param( "fakt_objekti", value, "N" )
+FUNCTION fakt_objekti( cValue )
+   RETURN get_set_global_param( "fakt_objekti", cValue, "N" )
 
 
 // ----------------------------------------------------------------
 // koriste se REF/LOT oznake
 // ----------------------------------------------------------------
-FUNCTION ref_lot( value )
-   RETURN get_set_global_param( "ref_lot", value, "N" )
+FUNCTION ref_lot( cValue )
+   RETURN get_set_global_param( "ref_lot", cValue, "N" )
 
 
 // ----------------------------------------------------------------
 // prate se destinacije
 // ----------------------------------------------------------------
-FUNCTION destinacije( value )
-   RETURN get_set_global_param( "destinacije", value, "N" )
+FUNCTION destinacije( cValue )
+   RETURN get_set_global_param( "destinacije", cValue, "N" )
 
 // ----------------------------------------------------------------
 // fakturise se po prodajnim mjestima
 // ----------------------------------------------------------------
-FUNCTION fakt_prodajna_mjesta( value )
-   RETURN get_set_global_param( "fakt_prodajna_mjesta", value, "N" )
+FUNCTION fakt_prodajna_mjesta( cValue )
+   RETURN get_set_global_param( "fakt_prodajna_mjesta", cValue, "N" )
 
 
 // ----------------------------------------------------------------
 // fakturise se po prodajnim mjestima
 // ----------------------------------------------------------------
-FUNCTION fakt_dok_veze( value )
-   RETURN get_set_global_param( "fakt_dok_veze", value, "N" )
+FUNCTION fakt_dok_veze( cValue )
+   RETURN get_set_global_param( "fakt_dok_veze", cValue, "N" )
 
 
 // ----------------------------------------------------------------
 // fakturise se po vrstama placanja
 // ----------------------------------------------------------------
-FUNCTION fakt_vrste_placanja( value )
-   RETURN get_set_global_param( "fakt_unos_vrste_placanja", value, "N" )
+FUNCTION fakt_vrste_placanja( cValue )
+   RETURN get_set_global_param( "fakt_unos_vrste_placanja", cValue, "N" )
 
 
 // ----------------------------------------------------------------
 // kada pravis otpremnicu pravi je po brojacu tip-a 22
 // ----------------------------------------------------------------
-FUNCTION fakt_otpr_22_brojac( value )
-   RETURN get_set_global_param( "fakt_otpremnice_22_brojac", value, "N" )
+FUNCTION fakt_otpr_22_brojac( cValue )
+   RETURN get_set_global_param( "fakt_otpremnice_22_brojac", cValue, "N" )
 
 
-// ----------------------------------------------------------------
-// nova vrsta generisanja otpremnica...
-// ----------------------------------------------------------------
-FUNCTION fakt_otpr_gen( value )
-   RETURN get_set_global_param( "fakt_otpremnice_gen_v2", value, "D" )
 
-// ----------------------------------------------------------------
-// kontrolisanje brojaca...
-// ----------------------------------------------------------------
-FUNCTION fakt_kontrola_brojaca_par( value )
-   RETURN get_set_global_param( "fakt_kontrola_brojaca_dokumenta", value, "N" )
+FUNCTION fakt_otpr_gen( cValue )
+   RETURN get_set_global_param( "fakt_otpremnice_gen_v2", cValue, "D" )
+
+
+FUNCTION fakt_kontrola_brojaca_par( cValue )
+   RETURN get_set_global_param( "fakt_kontrola_brojaca_dokumenta", cValue, "N" )

@@ -344,9 +344,7 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
          @  box_x_koord() + nX, Col() + 1 SAY "Broj:" GET _brdok VALID !Empty( _brdok )
 
          nX += 2
-         @ nXPartner := box_x_koord() + nX, nYPartner := box_y_koord() + 2 SAY "Partner:" GET _idpartner ;
-            PICT "@!"   VALID {|| p_partner( @_idpartner ), ;
-            !Empty( _idpartner ) .AND. ispisi_partn( _idpartner, nXPartner, nYPartner + 18 ) } // izsifre izbačeno
+         @ nXPartner := box_x_koord() + nX, nYPartner := box_y_koord() + 2 SAY "Partner:" GET _idpartner PICT "@!"   VALID {|| fakt_valid_partner( @_idpartner, nXPartner, nYPartner ) }
 
          nX += 2
 
@@ -593,6 +591,22 @@ STATIC FUNCTION fakt_unos_prikaz_nab_cj()
    RETURN "00000.000"
 
 
+
+
+STATIC FUNCTION fakt_valid_partner( cIdPartner, nXPartner, nYPartner )
+
+   p_partner( @cIdPartner )
+   IF Empty( cIdPartner )
+      RETURN .F.
+   ENDIF
+
+   ispisi_partn( cIdPartner, nXPartner, nYPartner + 18 )
+
+   IF gFaktPrikazFinSaldaKupacDobavljac == "D"
+      fin_partner_prikaz_stanja_ekran( PadR( _idpartner, 6 ), gFinKtoDug, gFinKtoPot )
+   ENDIF
+
+   RETURN .T.
 
 STATIC FUNCTION fakt_pripr_keyhandler( Ch )
 

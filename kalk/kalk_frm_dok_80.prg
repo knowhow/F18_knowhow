@@ -21,7 +21,7 @@ FUNCTION kalk_get1_80( atrib )
    LOCAL _kord_x := 0
    LOCAL _unos_left := 40
    PRIVATE aPorezi := {}
-   PRIVATE fMarza := " "
+   PRIVATE cProracunMarzeUnaprijed := " "
 
    IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
@@ -142,14 +142,14 @@ FUNCTION kalk_get1_80( atrib )
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "MARZA:" GET _TMarza2 VALID _Tmarza2 $ "%AU" PICT "@!"
    @ box_x_koord() + nX, box_y_koord() + _unos_left GET _Marza2 PICT PicDEM VALID {|| _vpc := _nc, .T. }
-   @ box_x_koord() + nX, Col() + 1 GET fMarza PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 GET cProracunMarzeUnaprijed PICT "@!"
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "MALOPROD. CIJENA (MPC):"
    @ box_x_koord() + nX, box_y_koord() + _unos_left GET _mpc ;
       PICT PicDEM;
-      WHEN W_MPC_( "80", ( fMarza == "F" ), @aPorezi ) ;
-      VALID V_Mpc_( "80", ( fMarza == "F" ), @aPorezi )
+      WHEN W_MPC_( "80", ( cProracunMarzeUnaprijed == "F" ), @aPorezi ) ;
+      VALID V_Mpc_( "80", ( cProracunMarzeUnaprijed == "F" ), @aPorezi )
 
    ++nX
    SayPorezi_lv( nX, aPorezi )
@@ -232,7 +232,7 @@ FUNCTION kalk_get_1_80_protustavka()
 
    // kalk_dat_poslj_promjene_prod()
 
-   PRIVATE fMarza := " "
+   PRIVATE cProracunMarzeUnaprijed := " "
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
@@ -260,7 +260,7 @@ FUNCTION kalk_get_1_80_protustavka()
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "MARZA:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICT "@!"
    @ box_x_koord() + nX, box_y_koord() + _unos_left  GET _Marza2 PICT PicDEM valid {|| _vpc := _nc, .T. }
-   @ box_x_koord() + nX, Col() + 1 GET fMarza PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 GET cProracunMarzeUnaprijed PICT "@!"
 
    ++nX
 

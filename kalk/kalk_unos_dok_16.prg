@@ -53,7 +53,7 @@ FUNCTION kalk_get_1_16()
       @  box_x_koord() + 6, box_y_koord() + 2   SAY "KUPAC: "; ?? _IdPartner
       @  box_x_koord() + 7, box_y_koord() + 2   SAY "Faktura Broj: "; ?? _BrFaktP
       @  box_x_koord() + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
-      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Magacinski konto zaduzuje "; ?? _IdKonto
+      @  box_x_koord() + 9, box_y_koord() + 2 SAY8 "Magacinski konto zadužuje "; ?? _IdKonto
 
 
    ENDIF
@@ -153,7 +153,7 @@ FUNCTION kalk_get_16_1()
    // kalk_dat_poslj_promjene_prod()
    // DuplRoba()
 
-   PRIVATE fMarza := " "
+   PRIVATE cProracunMarzeUnaprijed := " "
 
    @ box_x_koord() + 13, box_y_koord() + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 

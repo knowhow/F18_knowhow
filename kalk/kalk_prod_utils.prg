@@ -83,7 +83,7 @@ FUNCTION MarzaMP( cIdVd, lNaprijed, aPorezi )
  *     Postavi _Marza2, _mpc, _mpcsapp
  */
 
-FUNCTION kalk_Marza_11( fMarza, lSvediVPCNaNC )
+FUNCTION kalk_Marza_11( cProracunMarzeUnaprijed, lSvediVPCNaNC )
 
    LOCAL nPrevMP, nPPP
 
@@ -97,8 +97,8 @@ FUNCTION kalk_Marza_11( fMarza, lSvediVPCNaNC )
 //   ENDIF
 
 
-   IF fMarza == nil
-      fMarza := " "
+   IF cProracunMarzeUnaprijed == nil
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
    IF lSvediVPCNaNC
@@ -117,7 +117,7 @@ FUNCTION kalk_Marza_11( fMarza, lSvediVPCNaNC )
       _FCj := _mpc
    ENDIF
 
-   IF  _Marza2 == 0 .AND. Empty( fmarza )
+   IF  _Marza2 == 0 .AND. Empty( cProracunMarzeUnaprijed )
       nMarza2 := _MPC - _VPC - nPrevMP
 
       IF _TMarza2 == "%"
@@ -134,7 +134,7 @@ FUNCTION kalk_Marza_11( fMarza, lSvediVPCNaNC )
          _Marza2 := nMarza2 * ( _Kolicina )
       ENDIF
 
-   ELSEIF _MPC == 0 .OR. !Empty( fMarza )
+   ELSEIF _MPC == 0 .OR. !Empty( cProracunMarzeUnaprijed )
 
       IF _TMarza2 == "%"
          nMarza2 := _Marza2 / 100 * ( _VPC + nPrevMP )
@@ -145,7 +145,7 @@ FUNCTION kalk_Marza_11( fMarza, lSvediVPCNaNC )
       ENDIF
       _MPC := Round( nMarza2 + _VPC, 2 )
 
-      IF !Empty( fMarza )
+      IF !Empty( cProracunMarzeUnaprijed )
          _MpcSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
       ENDIF
 
@@ -159,12 +159,12 @@ FUNCTION kalk_Marza_11( fMarza, lSvediVPCNaNC )
 
 
 
-FUNCTION Marza2O( fMarza )
+FUNCTION Marza2O( cProracunMarzeUnaprijed )
 
    LOCAL nPrevMP, nPPP
 
-   IF fMarza == nil
-      fMarza := " "
+   IF cProracunMarzeUnaprijed == nil
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
    IF roba->tip == "K"  // samo za tip k
@@ -184,7 +184,7 @@ FUNCTION Marza2O( fMarza )
       _fcj := _mpc
    ENDIF
 
-   IF  _Marza2 == 0 .AND. Empty( fmarza )
+   IF  _Marza2 == 0 .AND. Empty( cProracunMarzeUnaprijed )
       nMarza2 := _MPC - _VPC * nPPP - nPrevMP
       IF _TMarza2 == "%"
          IF Round( _vpc, 5 ) <> 0
@@ -198,7 +198,7 @@ FUNCTION Marza2O( fMarza )
          _Marza2 := nMarza2 * ( _Kolicina )
       ENDIF
 
-   ELSEIF _MPC == 0 .OR. !Empty( fMarza )
+   ELSEIF _MPC == 0 .OR. !Empty( cProracunMarzeUnaprijed )
       IF _TMarza2 == "%"
          nMarza2 := _Marza2 / 100 * ( _VPC * nPPP + nPrevMP )
       ELSEIF _TMarza2 == "A"
@@ -207,7 +207,7 @@ FUNCTION Marza2O( fMarza )
          nMarza2 := _Marza2 / ( _Kolicina )
       ENDIF
       _MPC := Round( nMarza2 + _VPC, 2 )
-      IF !Empty( fMarza )
+      IF !Empty( cProracunMarzeUnaprijed )
          IF roba->tip == "V"
             _mpcsapp := Round( _mpc * ( 1 + TARIFA->PPP / 100 ), 2 )
          ELSEIF roba->tip = "X"

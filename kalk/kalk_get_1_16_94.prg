@@ -36,7 +36,7 @@ FUNCTION kalk_get_1_94()
       @  box_x_koord() + 7, box_y_koord() + 2   SAY "Faktura/Otpremnica Broj:" GET _BrFaktP
       @  box_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   valid {|| .T. }
 
-      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Magacinski konto zaduzuje"  GET _IdKonto VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Magacinski konto zadužuje"  GET _IdKonto VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
       // IF gNW <> "X"
       // @ box_x_koord() + 9, box_y_koord() + 40 SAY "Zaduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
       // ELSE
@@ -56,7 +56,7 @@ FUNCTION kalk_get_1_94()
       @  box_x_koord() + 6, box_y_koord() + 2   SAY "KUPAC: "; ?? _IdPartner
       @  box_x_koord() + 7, box_y_koord() + 2   SAY "Faktura Broj: "; ?? _BrFaktP
       @  box_x_koord() + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
-      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Magacinski konto zaduzuje "; ?? _IdKonto
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Magacinski konto zadužuje "; ?? _IdKonto
       // IF gNW <> "X"
       // @ box_x_koord() + 9, box_y_koord() + 40 SAY "Zaduzuje: "; ?? _IdZaduz
       // ENDIF

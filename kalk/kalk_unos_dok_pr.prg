@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR nRbr, fMarza, nStrana
+MEMVAR nRbr, cProracunMarzeUnaprijed, nStrana
 MEMVAR _IdFirma, _IdVd, _BrDok, _TBankTr, _TPrevoz, _TSpedTr, _TZavTr, _TCarDaz, _SpedTr, _ZavTr, _BankTr, _CarDaz, _MArza, _Prevoz
 MEMVAR _TMarza, _IdKonto, _IdKonto2, _IdTarifa, _IDRoba, _Kolicina, _DatFaktP, _datDok, _brFaktP, _VPC, _NC, _FCJ, _FCJ2, _Rabat
 MEMVAR _MKonto, _MU_I, _Error
@@ -190,22 +190,22 @@ FUNCTION Get2_PR()
    @ box_x_koord() + 5, box_y_koord() + 40 GET _CarDaz PICTURE PicDEM
 
    @ box_x_koord() + 6, box_y_koord() + 2 SAY cRNT5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
-   @ box_x_koord() + 6, box_y_koord() + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_nabcj(), .T. }
+   @ box_x_koord() + 6, box_y_koord() + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_when_valid_nc(), .T. }
 
    @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "CIJENA KOŠTANJA  "
    @ box_x_koord() + 8, box_y_koord() + 50 GET _NC PICTURE PicDEM
 
    IF koncij->naz <> "N1"
 
-      PRIVATE fMarza := " "
+      PRIVATE cProracunMarzeUnaprijed := " "
       @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Magacin. Marza            :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
       @ box_x_koord() + 10, box_y_koord() + 40 GET _Marza PICTURE PicDEM
-      @ box_x_koord() + 10, Col() + 1 GET fMarza PICT "@!"
+      @ box_x_koord() + 10, Col() + 1 GET cProracunMarzeUnaprijed PICT "@!"
       @ box_x_koord() + 12, box_y_koord() + 2 SAY8 "VELEPRODAJNA CJENA  (VPC)   :"
-      @ box_x_koord() + 12, box_y_koord() + 50 GET _VPC PICT PicDEM VALID {|| kalk_10_pr_rn_valid_vpc_set_marza( @fMarza ) }
+      @ box_x_koord() + 12, box_y_koord() + 50 GET _VPC PICT PicDEM VALID {|| kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa( @cProracunMarzeUnaprijed ) }
 
       READ
-      SetujVPC( _vpc )
+      kalk_set_vpc_sifarnik( _vpc )
 
    ELSE
 

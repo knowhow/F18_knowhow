@@ -186,20 +186,20 @@ FUNCTION kalk_10_vaild_Marza_VP( cIdVd, lNaprijed )
 
 
 /*
- *     Proracun veleprodajne marze
+ *     veleprodajna marza
  */
 
-FUNCTION kalk_10_pr_rn_valid_vpc_set_marza( fMarza )
+FUNCTION kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa( cProracunMarzeUnaprijed )
 
    LOCAL nStvarnaKolicina := 0, nMarza
 
    AltD()
-   IF fMarza == NIL
-      fMarza := " "
+   IF cProracunMarzeUnaprijed == NIL
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
-   IF _nc == 0
-      _nc := 9999
+   IF _NC == 0
+      _NC := 9999
    ENDIF
 
 
@@ -209,18 +209,8 @@ FUNCTION kalk_10_pr_rn_valid_vpc_set_marza( fMarza )
       nStvarnaKolicina := _Kolicina
    ENDIF
 
-   IF  _Marza == 0 .OR. _VPC <> 0 .AND. Empty( fMarza )
 
-      nMarza := _VPC - _NC
-      IF _TMarza == "%"
-         _Marza := 100 * ( _VPC / _NC - 1 )
-      ELSEIF _TMarza == "A"
-         _Marza := nMarza
-      ELSEIF _TMarza == "U"
-         _Marza := nMarza * nStvarnaKolicina
-      ENDIF
-
-   ELSEIF Round( _VPC, 4 ) == 0  .OR. !Empty( fMarza )
+   IF !Empty( cProracunMarzeUnaprijed ) // proračun unaprijed od nc -> vpc
       IF _TMarza == "%"
          nMarza := _Marza / 100 * _NC
       ELSEIF _TMarza == "A"
@@ -229,31 +219,45 @@ FUNCTION kalk_10_pr_rn_valid_vpc_set_marza( fMarza )
          nMarza := _Marza / nStvarnaKolicina
       ENDIF
       _VPC := Round( nMarza + _NC, 2 )
-   ELSE
-      IF _idvd $ "14#94"
-         nMarza := _VPC * ( 1 - _Rabatv / 100 ) - _NC
-      ELSE
+
+   ELSE // proračun unazad
+      IF _Marza == 0 .OR. _VPC <> 0
+
          nMarza := _VPC - _NC
+         IF _TMarza == "%"
+            _Marza := 100 * ( _VPC / _NC - 1 )
+         ELSEIF _TMarza == "A"
+            _Marza := nMarza
+         ELSEIF _TMarza == "U"
+            _Marza := nMarza * nStvarnaKolicina
+         ENDIF
+      ELSE
+         IF _idvd $ "14#94"
+            nMarza := _VPC * ( 1 - _Rabatv / 100 ) - _NC
+         ELSE
+            nMarza := _VPC - _NC
+         ENDIF
       ENDIF
+
    ENDIF
 
-   fMarza := " "
+   cProracunMarzeUnaprijed := " "
    AEval( GetList, {| o | o:display() } )
 
    AltD()
    IF Round( _VPC, 5 ) == 0
-      error_bar( "kalk", "VPC=0" )
-      RETURN .F.
+      error_bar( "kalk_unos", "VPC=0" )
+      // RETURN .T.
    ENDIF
 
    IF Round( _NC, 9 ) == 0
       error_bar( "kalk", "NC=0" )
-      RETURN .F.
+      // RETURN .T.
    ENDIF
 
    IF ( nMarza / _NC ) > 100000
       error_bar( "kalk", "ERROR Marza > 100 000 x veća od NC: " + AllTrim( Str( nMarza, 14, 2 ) ) )
-      RETURN .F.
+      // RETURN .T.
    ENDIF
 
    RETURN .T.
@@ -420,7 +424,7 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
  *     Proracun nabavne cijene za ulaznu kalkulaciju 10
  */
 
-FUNCTION kalk_nabcj()
+FUNCTION kalk_when_valid_nc()
 
    LOCAL nStvarnaKolicina
 
@@ -485,6 +489,10 @@ FUNCTION kalk_nabcj()
 
    _NC := _FCj2 + nPrevoz + nCarDaz + nBanktr + nSpedTr + nZavTr
 
+   IF koncij->naz == "N1" // sirovine
+      _VPC := _NC
+   ENDIF
+
    RETURN .T.
 
 
@@ -516,12 +524,12 @@ FUNCTION NabCj2( n1, n2 )
 
 
 
-/* SetujVPC(nNovaVrijednost,fUvijek)
+/* kalk_set_vpc_sifarnik(nNovaVrijednost,fUvijek)
  *   param: fUvijek -.f. samo ako je vrijednost u sifrarniku 0, .t. uvijek setuj
  *     Utvrdi varijablu VPC. U sifrarnik staviti novu vrijednost
  */
 
-FUNCTION SetujVPC( nNovaVrijednost, lUvijek )
+FUNCTION kalk_set_vpc_sifarnik( nNovaVrijednost, lUvijek )
 
    LOCAL nVal
    LOCAL _vars
@@ -531,6 +539,11 @@ FUNCTION SetujVPC( nNovaVrijednost, lUvijek )
    ENDIF
 
    PRIVATE cPom := "VPC"
+
+altd()
+   IF koncij->naz == "N1"  // magacin se vodi po nabavnim cijenama
+      RETURN .T.
+   endif
 
    IF koncij->naz == "P2"
       cPom := "plc"
@@ -545,7 +558,7 @@ FUNCTION SetujVPC( nNovaVrijednost, lUvijek )
 
    IF nVal == 0  .OR. Abs( Round( nVal - nNovaVrijednost, 2 ) ) > 0 .OR. lUvijek
 
-      IF gAutoCjen == "D" .AND. Pitanje( , "Staviti Cijenu (" + cPom + ")" + " u sifrarnik ?", "D" ) == "D"
+      IF gAutoCjen == "D" .AND. Pitanje( , "Staviti cijenu (" + cPom + ")" + " u šifarnik ?", "D" ) == "D"
          SELECT roba
 
          _vars := dbf_get_rec()

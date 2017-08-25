@@ -302,7 +302,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
    LOCAL _kord_x
    LOCAL lSaTroskovima := .T.
    PRIVATE getlist := {}
-   PRIVATE fMarza := " "
+   PRIVATE cProracunMarzeUnaprijed := " "
 
    IF Empty( _TPrevoz )
       _TPrevoz := "%"
@@ -335,7 +335,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
       ++_x
       @ box_x_koord() + _x, box_y_koord() + _unos_left SAY c10T5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICT "@!"
       @ box_x_koord() + _x, Col() + 2 GET _ZavTr PICT PicDEM ;
-         VALID {|| kalk_nabcj(), .T. }
+         VALID {|| kalk_when_valid_nc(), .T. }
 
       ++_x
       ++_x
@@ -351,7 +351,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
    ++_x
    @ box_x_koord() + _x, box_y_koord() + 2 SAY "MARZA:" GET _TMarza2 VALID _Tmarza2 $ "%AU" PICT "@!"
    @ box_x_koord() + _x, box_y_koord() + _unos_left GET _marza2 PICT PicDEM VALID {|| _vpc := _nc, .T. }
-   @ box_x_koord() + _x, Col() + 1 GET fMarza PICT "@!"
+   @ box_x_koord() + _x, Col() + 1 GET cProracunMarzeUnaprijed PICT "@!"
 
    // PRODAJNA CIJENA
    ++_x
@@ -360,8 +360,8 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
    @ box_x_koord() + _x, box_y_koord() + 2 SAY "PC BEZ PDV:"
 
 
-   @ box_x_koord() + _x, box_y_koord() + _unos_left GET _mpc PICT PicDEM WHEN W_MPC_( "81", ( fMarza == "F" ), @aPorezi ) ;
-      VALID V_Mpc_( "81", ( fMarza == "F" ), @aPorezi )
+   @ box_x_koord() + _x, box_y_koord() + _unos_left GET _mpc PICT PicDEM WHEN W_MPC_( "81", ( cProracunMarzeUnaprijed == "F" ), @aPorezi ) ;
+      VALID V_Mpc_( "81", ( cProracunMarzeUnaprijed == "F" ), @aPorezi )
 
    ++_x
 
@@ -374,7 +374,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
 
 
    @ box_x_koord() + _x, box_y_koord() + _unos_left GET _mpcsapp PICT PicDEM ;
-      WHEN {|| fMarza := " ", _Marza2 := 0, .T. } VALID V_MpcSaPP_( "81", .F., @aPorezi, .T. )
+      WHEN {|| cProracunMarzeUnaprijed := " ", _Marza2 := 0, .T. } VALID V_MpcSaPP_( "81", .F., @aPorezi, .T. )
 
    READ
 

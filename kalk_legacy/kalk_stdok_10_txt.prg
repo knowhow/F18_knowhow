@@ -21,6 +21,7 @@ FUNCTION kalk_stampa_dok_10_txt()
    LOCAL nPom := 0
    LOCAL nTot, nTot1, nTot2, nTot3, nTot4, nTot5, nTot6, nTot7, nTot8, nTot9, nTotA, nTotB, nTotP, nTotM
    LOCAL hRec
+   LOCAL nPDVStopa
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
@@ -33,19 +34,19 @@ FUNCTION kalk_stampa_dok_10_txt()
 
    P_COND2
 
-   ?? "KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", DatDok
+   ?? "KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, - 2 ), Space( 2 ), "Datum:", kalk_pripr->DatDok
 
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
+   select_o_koncij( cIdPartner )
    select_o_partner( cIdPartner )
 
-   ?U  "DOBAVLJAČ:", cIdPartner, "-", PadR( field->naz, 25 ), Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
+   ?  _u( "DOBAVLJAČ:"), cIdPartner, "-", PadR( partn->naz, 25 ), Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
 
    SELECT kalk_pripr
-
    select_o_konto( cIdKonto )
 
-   ?U  "MAGACINSKI KONTO zadužuje :", cIdKonto, "-", field->naz
+   ? _u( "MAGACINSKI KONTO zadužuje :"), cIdKonto, "-", konto->naz
 
    m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
 
@@ -180,6 +181,7 @@ FUNCTION kalk_stampa_dok_10_txt()
       @ PRow(), PCol() + 1 SAY nZavTr               PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY 0                    PICTURE PicDEM
       @ PRow(), PCol() + 1 SAY nMarza               PICTURE PicCDEM
+
       IF gcMpcKalk10 == "D"
          @ PRow(), PCol() + 1 SAY 0          PICTURE PicCDEM
          @ PRow(), PCol() + 1 SAY nPDV           PICTURE PicCDEM
@@ -197,6 +199,7 @@ FUNCTION kalk_stampa_dok_10_txt()
       @ PRow(), PCol() + 1  SAY nU8         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nU9         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
+
       IF gcMpcKalk10 == "D"
          @ PRow(), PCol() + 1  SAY nUP         PICTURE         PICDEM
          @ PRow(), PCol() + 1  SAY nUM         PICTURE         PICDEM

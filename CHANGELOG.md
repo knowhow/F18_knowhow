@@ -1,8 +1,10 @@
 # F18 klijent, lista promjena
 
-## 3.1.78-std, 2017-08-25
+## 3.1.79-std, 2017-08-25
 ### KALK
 - kalk 10 unos sirovina - fix vpc=0, prikaz prodajne cijene OUT
+### FAKT
+- fakt unos prikaz stanja partnera kupac/dobavljač
 
 ## 3.1.77-std, 2017-08-24
 ### FIN

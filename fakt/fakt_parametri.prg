@@ -541,7 +541,8 @@ FUNCTION par_fakt_izgled_dokumenta()
    LOCAL nSw7 := 0
    LOCAL _params := fakt_params()
    LOCAL _auto_odt := fetch_metric( "fakt_odt_template_auto", NIL, "D" )
-   PRIVATE GetList := {}
+   LOCAL GetList := {}
+     
    PRIVATE cIzvj := "1"
 
    o_params()
@@ -595,6 +596,7 @@ FUNCTION par_fakt_izgled_dokumenta()
    nX++
 
    nX += 2
+/*
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koordinate iznad kupac/ispod kupac/nar_otp-tabela"
 
    nX++
@@ -621,13 +623,14 @@ FUNCTION par_fakt_izgled_dokumenta()
    @ box_x_koord() + nX, Col() + 2 SAY "SW-7 :" GET nSw7 ;
       PICT "9"
    nX += 2
+*/
 
-   // parametri fin.stanje na dod.txt...
+   // parametri fin.stanje na dod.txt
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis grupacije robe poslije naziva (D/N)" GET glRGrPrn PICT "@!" VALID glRGrPrn $ "DN"
 
    nX += 2
 
-   // parametri fin.stanje na dod.txt...
+   // parametri fin.stanje na dod.txt
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz fin.salda kupca/dobavljaca na dodatnom tekstu (D/N)" GET gFaktPrikazFinSaldaKupacDobavljac PICT "@!" VALID gFaktPrikazFinSaldaKupacDobavljac $ "DN"
 
    nX += 1
@@ -639,7 +642,6 @@ FUNCTION par_fakt_izgled_dokumenta()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Konto potrazuje:", 20 ) GET gFinKtoPot VALID !Empty( gFinKtoPot ) .AND. P_Konto( @gFinKtoPot ) WHEN gFaktPrikazFinSaldaKupacDobavljac == "D"
 
    nX += 1
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Varijanta prikaza podataka (1/2)" GET gFaktPrikazFinSaldaKupacDobavljacVar PICT "9" VALID gFaktPrikazFinSaldaKupacDobavljacVar > 0 .AND. gFaktPrikazFinSaldaKupacDobavljacVar < 3 WHEN gFaktPrikazFinSaldaKupacDobavljac == "D"
 
 

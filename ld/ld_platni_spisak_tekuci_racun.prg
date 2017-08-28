@@ -325,7 +325,6 @@ FUNCTION ld_zagl_spisak_tekuci_racun()
 
       ?
       ? _l( "Procenat za isplatu:" )
-
       IF nDio == 1
          @ PRow(), PCol() + 1 SAY nprocenat PICT "999.99%"
       ELSE

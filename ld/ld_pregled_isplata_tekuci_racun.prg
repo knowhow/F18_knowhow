@@ -5,7 +5,8 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
 
    LOCAL nC1 := 20
    LOCAL GetList := {}
-
+   LOCAL cFilt := ".t."
+   LOCAL cIsplata := ""
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
    nMjesec := ld_tekuci_mjesec()
@@ -13,6 +14,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    cObracun := gObracun
    cVarSort := "2"
    cIdTipPr := "  "
+
 
    // o_tippr()
    // o_kred()
@@ -25,7 +27,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    cPrikIzn := "D"
    nZkk := gZaok
 
-   PRIVATE cIsplata := ""
+   //PRIVATE cIsplata := ""
    PRIVATE cLokacija
    PRIVATE cConstBrojTR
    PRIVATE nH
@@ -35,7 +37,6 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    ELSE
       cIsplata := "SK"
    ENDIF
-
 
    cIDBanka := Space( FIELD_LD_RADN_IDBANKA )
    cVarSort := fetch_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
@@ -64,7 +65,6 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    // SELECT ld
    // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
    // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
-
 
    cObracun := Trim( cObracun )
 
@@ -121,7 +121,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
 
    nStrana := 0
    m := "----- ------ ----------------------------------- ----------- -------------------------"
-   bZagl := {|| ld_zagl_pregled_isplate_za_tekuci_racun() }
+   bZagl := {|| ld_zagl_pregled_isplate_za_tekuci_racun( cIsplata ) }
 
    select_o_ld_rj( ld->idrj )
 
@@ -213,8 +213,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
 
 
 
-
-FUNCTION ld_zagl_pregled_isplate_za_tekuci_racun()
+FUNCTION ld_zagl_pregled_isplate_za_tekuci_racun( cIsplata )
 
    ?
    P_12CPI

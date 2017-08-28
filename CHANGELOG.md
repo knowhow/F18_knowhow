@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.82-std, 2017-08-25
+### Development
+- BUGFIX: ld pregled isplata tekući račun
+
 ## 3.1.81-std, 2017-08-25
 ### Development
 - BUGFIX: cleanup fin povrat naloga: FIN_POVRAT_NALOGA / 67, Variable does not exist CIDRJ 

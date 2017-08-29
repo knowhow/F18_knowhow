@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.83-std, 2017-08-25
+### FIN
+- BUGFIX: unos RJ suban kartica
+
 ## 3.1.82-std, 2017-08-25
 ### Development
 - BUGFIX: ld pregled isplata tekući račun

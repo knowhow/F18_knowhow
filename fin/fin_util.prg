@@ -40,7 +40,7 @@ FUNCTION Izvj0()
 
 FUNCTION Preknjizenje()
 
-   RETURN Prefin_unos_naloga()
+   RETURN fin_preknjizenje_konta()
 
 
 /*

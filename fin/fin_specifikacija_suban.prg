@@ -142,7 +142,7 @@ FUNCTION fin_specifikacija_suban()
 
       @ box_x_koord() + 18, box_y_koord() + 2 SAY "Export u XLSX (D/N)?" GET cExpRptDN PICT "@!" VALID cExpRptDN $ "DN"
 
-      fin_get_k1_k4_funk_fond( 17 )
+      fin_get_k1_k4_funk_fond( @GetList, 17 )
 
       READ
       ESC_BCR

@@ -142,7 +142,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
 STATIC FUNCTION ugov_key_handler( Ch )
 
    LOCAL GetList := {}
-   LOCAL nRec := 0
+   //LOCAL nRec := 0
    LOCAL nDbfArea := Select()
 
    DO CASE
@@ -202,14 +202,14 @@ STATIC FUNCTION ugov_key_handler( Ch )
 
    CASE ( Ch == K_ALT_L )
 
-      nRec := RecNo()
+      //nRec := RecNo()
 
       ugov_stampa_naljenica()
       // o_rugov()
       // o_dest()
       // o_ugov()
 
-      GO ( nRec )
+      //GO ( nRec )
 
    ENDCASE
 

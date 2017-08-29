@@ -157,6 +157,7 @@ METHOD FinBrutoBilans:get_vars()
    LOCAL _id_rj := Space( 6 )
    LOCAL lExportXLSX := "N"
    LOCAL _tip := 1
+   LOCAL GetList := {}
 
    IF ::tip <> NIL
       _tip := ::tip
@@ -168,11 +169,9 @@ METHOD FinBrutoBilans:get_vars()
 
    ++nX
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "ODABERI VRSTU BILANSA:"
 
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "[1] subanalitički [2] analitički [3] sintetički [4] po grupama :" GET _tip PICT "9"
 
    ++nX
@@ -181,7 +180,6 @@ METHOD FinBrutoBilans:get_vars()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "VRSTA ŠTAMPE:"
 
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "[1] TXT [2] ODT (Libre Office) :" GET _var_txt PICT "@!" VALID _var_txt $ "12"
 
    READ

@@ -32,6 +32,7 @@ FUNCTION fin_bb_analitika_b( hParams )
    LOCAL nValuta := hParams[ "valuta" ]
    LOCAL nBBK := 1
    LOCAL aNaziv, nColNaz
+
    PRIVATE M6, M7, M8, M9, M10
 
    PICD := FormPicL( gPicBHD, 15 )

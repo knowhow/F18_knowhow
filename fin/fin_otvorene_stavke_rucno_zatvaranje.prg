@@ -15,6 +15,7 @@
 FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    LOCAL cSort := "D"
+   LOCAL GetList := {}
 
    open_otv_stavke_tabele()
 
@@ -40,7 +41,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    IF gFinRj == "D"
       cIdRj := Space( Len( RJ->id ) )
-      @ box_x_koord() + 7, box_y_koord() + 2 SAY "RJ" GET cIdrj PICT "@!" VALID Empty( cIdrj ) .OR. P_Rj( @cidrj )
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "RJ" GET cIdrj PICT "@!" VALID Empty( cIdrj ) .OR. P_Rj( @cIdrj )
    ENDIF
 
 

@@ -14,13 +14,14 @@
 // ----------------------------------------------------------
 // preknjizenje konta
 // ----------------------------------------------------------
-FUNCTION prefin_unos_naloga()
+FUNCTION fin_preknjizenje_konta()
 
    LOCAL fK1 := "N"
    LOCAL fk2 := "N"
    LOCAL fk3 := "N"
    LOCAL fk4 := "N"
    LOCAL cSK := "N"
+   LOCAL GetList := {}
 
    nC := 50
 

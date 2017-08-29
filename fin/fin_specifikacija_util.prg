@@ -148,13 +148,13 @@ STATIC FUNCTION TekRec()
 
 
 
-/* fin_get_k1_k4_funk_fond(mxplus,lK)
+/*
  *     Pita za polja od K1 do K4
- *   param: mxplus
+ *   param: nYDelta
  *   param: lK
  */
 
-FUNCTION fin_get_k1_k4_funk_fond( mxplus, lK )
+FUNCTION fin_get_k1_k4_funk_fond( GetList, nYDelta, lK )
 
    LOCAL _k1, _k2, _k3, _k4
    LOCAL _params := fin_params()
@@ -170,30 +170,30 @@ FUNCTION fin_get_k1_k4_funk_fond( mxplus, lK )
 
    IF lK
       IF _k1
-         @ box_x_koord() + mxplus, box_y_koord() + 2 SAY "K1 (9 svi) :" GET cK1
+         @ box_x_koord() + nYDelta, box_y_koord() + 2 SAY "K1 (9 svi) :" GET cK1
       ENDIF
       IF _k2
-         @ box_x_koord() + mxplus, Col() + 2 SAY "K2 (9 svi) :" GET cK2
+         @ box_x_koord() + nYDelta, Col() + 2 SAY "K2 (9 svi) :" GET cK2
       ENDIF
       IF _k3
-         @ box_x_koord() + mxplus + 1, box_y_koord() + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
+         @ box_x_koord() + nYDelta + 1, box_y_koord() + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
       ENDIF
       IF _k4
-         @ box_x_koord() + mxplus + 1, Col() + 1 SAY "K4 (99 svi):" GET cK4
+         @ box_x_koord() + nYDelta + 1, Col() + 1 SAY "K4 (99 svi):" GET cK4
       ENDIF
    ENDIF
 
    IF gFinRj == "D"
       //IF gDugiUslovFirmaRJFinSpecif == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER("fin_suban_kartica") )
-      //   @ box_x_koord() + mxplus + 2, box_y_koord() + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
+      //   @ box_x_koord() + nYDelta + 2, box_y_koord() + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
       //ELSE
-         @ box_x_koord() + mxplus + 2, box_y_koord() + 2 SAY "RJ:" GET cIdRj
+         @ box_x_koord() + nYDelta + 2, box_y_koord() + 2 SAY "RJ:" GET cIdRj
       //ENDIF
    ENDIF
 
    IF gFinFunkFond == "D"
-      @ box_x_koord() + mxplus + 3, box_y_koord() + 2 SAY "Funk:" GET cFunk
-      @ box_x_koord() + mxplus + 3, Col() + 2 SAY "Fond: " GET cFond
+      @ box_x_koord() + nYDelta + 3, box_y_koord() + 2 SAY "Funk:" GET cFunk
+      @ box_x_koord() + nYDelta + 3, Col() + 2 SAY "Fond: " GET cFond
    ENDIF
 
    RETURN .T.
@@ -222,7 +222,7 @@ FUNCTION CistiK1K4( lK )
    //ELSE
       IF cIdRj == REPLICATE("9", FIELD_LEN_FIN_RJ_ID ) ; cIdrj := ""; ENDIF
       IF "." $ cidrj
-         cIdrj := Trim( StrTran( cidrj, ".", "" ) )  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
+         cIdrj := Trim( StrTran( cIdrj, ".", "" ) )  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
       ENDIF
    //ENDIF
    IF cFunk == "99999"; cFunk := ""; ENDIF

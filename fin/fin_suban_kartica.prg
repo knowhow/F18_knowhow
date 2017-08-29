@@ -194,7 +194,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          @ box_x_koord() + ( ++nX ), box_y_koord() + 2 SAY8 "Raščlaniti po RJ/FUNK/FOND; "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
       ENDIF
 
-      fin_get_k1_k4_funk_fond( 14 )
+      fin_get_k1_k4_funk_fond( @GetList, 14 )
 
       @ Row() + 1, box_y_koord() + 2 SAY8 "Uslov za broj veze: " GET qqBrDok PICT "@!S30"
       @ Row() + 1, box_y_koord() + 2 SAY8 "(prazno-svi; 61_SP_2-spoji uplate za naloge tipa 61;"

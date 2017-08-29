@@ -18,6 +18,7 @@ FUNCTION fin_anal_kartica()
    LOCAL bZagl := {|| zagl_anal_kartica() }
    LOCAL oPdf, xPrintOpt
    LOCAL lKarticaNovaStrana := .F., nTmp
+   LOCAL GetList := {}
 
    cIdFirma := self_organizacija_id()
    qqKonto := ""
@@ -68,9 +69,9 @@ FUNCTION fin_anal_kartica()
          @ box_x_koord() + 6, box_y_koord() + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
       ENDIF
 
-      IF gNW == "N"
-         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prikaz tipa dokumenta (D/N)" GET cPTD PICT "@!" VALID cPTD $ "DN"
-      ENDIF
+    //  IF gNW == "N"
+    //     @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prikaz tipa dokumenta (D/N)" GET cPTD PICT "@!" VALID cPTD $ "DN"
+    //  ENDIF
 
       @ box_x_koord() + 8, box_y_koord() + 2 SAY "Datum od:" GET dDatOd
       @ box_x_koord() + 8, Col() + 2 SAY "do:" GET dDatDo
@@ -85,7 +86,9 @@ FUNCTION fin_anal_kartica()
       IF cBrza == "N" .OR. cBrza == "S"
          qqKonto := Trim( qqKonto )
          aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" )
-         IF aUsl1 <> NIL; exit; ENDIF
+         IF aUsl1 <> NIL
+          exit
+         ENDIF
       ELSE
          EXIT
       ENDIF

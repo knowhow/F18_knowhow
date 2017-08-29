@@ -51,7 +51,7 @@ FUNCTION fin_specif_otvorene_stavke()
       @ box_x_koord() + 7, box_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
       @ box_x_koord() + 8, box_y_koord() + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
 
-      fin_get_k1_k4_funk_fond( 9, .F. )
+      fin_get_k1_k4_funk_fond( @GetList, 9, .F. )
 
       READ
       ESC_BCR

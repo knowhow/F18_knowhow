@@ -34,7 +34,6 @@ FUNCTION fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
       ENDIF
 
       SELECT PANAL
-
       SEEK cIdfirma + cIdvn + cBrNal + cIdKonto
       fNasao := .F.
 
@@ -108,11 +107,13 @@ FUNCTION fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
       DugBHD WITH nD1, PotBHD WITH nP1, ;
       DugDEM WITH nD2, PotDEM WITH nP2
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
+
+   LOCAL GetList := {}
 
    Box( "", 2, 50 )
 
@@ -120,12 +121,12 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Nalog broj:"
 
-   IF gNW == "D"
-      cIdFirma := self_organizacija_id()
-      @ box_x_koord() + 1, Col() + 1 SAY cIdFirma
-   ELSE
+   //IF gNW == "D"
+  //    cIdFirma := self_organizacija_id()
+  //    @ box_x_koord() + 1, Col() + 1 SAY cIdFirma
+   //ELSE
       @ box_x_koord() + 1, Col() + 1 GET cIdFirma
-   ENDIF
+   //ENDIF
 
    @ box_x_koord() + 1, Col() + 1 SAY "-" GET cIdVn
    @ box_x_koord() + 1, Col() + 1 SAY "-" GET cBrNal

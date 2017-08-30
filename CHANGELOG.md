@@ -1,6 +1,13 @@
 # F18 klijent, lista promjena
 
-## 3.1.83-std, 2017-08-25
+## 3.1.84-std, 2017-08-30
+### FIN
+- BUGFIX: eutanazija fin ostav rucno, fin kompenz
+ 
+### CORE
+- p_sifra recno=0, empty  vrati FALSE 
+
+## 3.1.83-std, 2017-08-29
 ### FIN
 - BUGFIX: unos RJ suban kartica
 

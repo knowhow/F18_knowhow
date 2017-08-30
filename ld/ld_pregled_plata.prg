@@ -24,6 +24,7 @@ FUNCTION ld_pregled_plata()
    LOCAL nUkupnoRedovanRad, nUkupnoMinuliRad // varijanta izvjestaja 2
    LOCAL nNetoNaRuke, nUkupnoSati, nUkupnoPrimanja, nUkunoNetoPrimanja, nUkupnoZaIsplatu
    LOCAL nUkupnoIznosVanNetaOstaleNaknade, nUkupnoIznosVanNetaOdbici
+   LOCAL GetList := {}
 
    LOCAL hParams := hb_Hash()
 

@@ -20,6 +20,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
    LOCAL nC1 := 20
    LOCAL cKBenef := " ", cVPosla := "  "
+   LOCAL GetList := {}
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
@@ -39,6 +40,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "Vrsta posla (prazno-svi): "  GET  cVPosla
    @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Sortirati po(1-šifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
    READ
+
    clvbox()
    ESC_BCR
    BoxC()

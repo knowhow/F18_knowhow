@@ -646,11 +646,10 @@ FUNCTION fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, fS
    ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
    select_o_konto( cIdKonto )
-
    ? "KONTO  :", cIdKonto, field->naz
 
    select_o_partner( cIdPartner )
-   ? "PARTNER:", cIdPartner, Trim( naz ), " ", Trim( naz2 ), " ", Trim( mjesto )
+   ? "PARTNER:", cIdPartner, Trim( partn->naz ), " ", Trim( partn->naz2 ), " ", Trim( partn->mjesto )
 
    SELECT suban
    ? M

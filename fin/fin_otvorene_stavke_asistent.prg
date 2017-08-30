@@ -771,18 +771,18 @@ STATIC FUNCTION brisi_otvorene_stavke_iz_tabele_suban()
 
 FUNCTION fin_otvorene_stavke_opcije_browse_pregleda( cIdKonto )
 
-   LOCAL _x, _y
+   LOCAL nX, nY
 
-   _x := box_x_koord() + f18_max_rows() - 15
-   _y := box_y_koord() + 1
+   nX := box_x_koord() + f18_max_rows() - 15
+   nY := box_y_koord() + 1
 
-   @ _x,     _y SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
-   @ _x + 1, _y SAY8 " <K>    Uključi/isključi račun za kamate         <F5> uzmi broj dok.        "
-   @ _x + 2, _y SAY '<ENTER> Postavi/ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
+   @ nX,     nY SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
+   @ nX + 1, nY SAY8 " <K>    Uključi/isključi račun za kamate         <F5> uzmi broj dok.        "
+   @ nX + 2, nY SAY '<ENTER> Postavi/ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
 
-   @ _x + 3, _y SAY REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI), f18_max_cols() - 12 )
+   @ nX + 3, nY SAY REPL( hb_UTF8ToStrBox( BROWSE_PODVUCI), f18_max_cols() - 12 )
 
-   @ _x + 4, _y SAY ""
+   @ nX + 4, nY SAY ""
 
    ?? "Konto:", cIdKonto
 

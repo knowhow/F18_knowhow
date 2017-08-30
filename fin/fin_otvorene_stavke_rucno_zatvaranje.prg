@@ -11,12 +11,14 @@
 
 #include "f18.ch"
 
+STATIC s_cPomBrDok
 
 FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    LOCAL cSort := "D"
    LOCAL GetList := {}
    LOCAL hParams := hb_Hash()
+   LOCAL cIdFirma, cIdPartner, cIdKonto, cIdRj
 
    open_otv_stavke_tabele()
 
@@ -56,13 +58,6 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    ENDIF
 
    cIdFirma := Left( cIdFirma, 2 )
-
-   SELECT SUBAN
-   SET ORDER TO TAG "1"
-
-   IF gFinRj == "D" .AND. !Empty( cIdRJ )
-      SET FILTER TO IDRJ == cIdRj
-   ENDIF
 
    Box(, f18_max_rows() - 5, f18_max_cols() - 10 )
 
@@ -124,6 +119,14 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    find_suban_by_konto_partner( @hParams )
    MsgC()
 
+   //SELECT SUBAN
+   //SET ORDER TO TAG "1"
+
+   IF gFinRj == "D" .AND. !Empty( cIdRJ )
+      SET FILTER TO IDRJ == cIdRj
+      GO TOP
+   ENDIF
+
    // PRIVATE bBKUslov := {|| idFirma + idkonto + idpartner == cIdFirma + cIdkonto + cIdpartner }
    PRIVATE bBkTrazi := {|| cIdFirma + cIdkonto + cIdPartner }
 
@@ -133,7 +136,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    // SEEK Eval( bBkUslov )
 
-   opcije_browse_pregleda()
+   fin_otvorene_stavke_opcije_browse_pregleda( cIdKonto )
 
    my_browse( "Ost", f18_max_rows() - 10, f18_max_cols() - 10, {| nCh | fin_rucno_zatvaranje_otv_stavki_key_handler( nCh, NIL ) }, ;
       "", "", .F., NIL, 1, {|| otvst == "9" }, 6, 0, NIL, NIL )
@@ -159,6 +162,7 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
    LOCAL GetList := {}
    LOCAL cBrDok, cOpis, dDatDok, dDatVal
 
+
    IF lOSuban == NIL
       lOSuban := .F.
    ENDIF
@@ -170,7 +174,7 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
 
       IF Pitanje(, "Preći u mod direktog unosa podataka u tabelu ? (D/N)", "D" ) == "D"
          log_write( "otovrene stavke, mod direktnog unosa = D", 5 )
-         opcije_browse_pregleda()
+         fin_otvorene_stavke_opcije_browse_pregleda( cIdKonto )
          DaTBDirektni()
       ENDIF
 */
@@ -220,7 +224,7 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
       find_suban_za_period( "XX" )
       update_rec_server_and_dbf( "fin_suban", hRec, 1, "FULL" )
 
-      nReti := DE_REFRESH
+      nRet := DE_REFRESH
 
    CASE Ch == K_F2
 
@@ -254,7 +258,7 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
 
    CASE Ch == K_F5
 
-      cPomBrDok := suban_pregled->BrDok
+      s_cPomBrDok := suban_pregled->BrDok
 
    CASE Ch == K_F6
 
@@ -266,12 +270,13 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
          SELECT ( nDbfArea )
          SET FILTER TO &( cFilterRucnoZatvaranje )
          //GO ( nTrec )
+         //SELECT SUBAN_PREGLED
 
 
       ELSE
-         IF Pitanje(, "Želite li da vezni broj " + suban_pregled->BrDok + " zamijenite brojem " + cPomBrDok + " ?", "D" ) == "D"
+         IF Pitanje(, "Želite li da vezni broj " + suban_pregled->BrDok + " zamijenite brojem " + s_cPomBrDok + " ?", "D" ) == "D"
             hRec := dbf_get_rec()
-            hRec[ "brdok" ] := cPomBrDok
+            hRec[ "brdok" ] := s_cPomBrDok
             log_write( "otvorene stavke, zamjena broja veze, set=" + cPomBrDok, 5 )
             update_rec_server_and_dbf( "fin_suban", hRec, 1, "FULL" )
          ENDIF
@@ -287,7 +292,7 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
       //SELECT ( nDbfArea )
       //SET FILTER TO &( cFilterRucnoZatvaranje )
       //GO ( nTrec )
-      SELECT SUBAN_PREGLED
+      //SELECT SUBAN_PREGLED
       nRet := DE_CONT
 
    CASE Ch == iif( is_mac(), Asc( "P" ), K_ALT_P )
@@ -297,10 +302,13 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
       //SELECT ( nDbfArea )
       //SET FILTER TO &( cFilterRucnoZatvaranje )
       //GO ( nTrec )
-      SELECT SUBAN_PREGLED
+      //SELECT SUBAN_PREGLED
       nRet := DE_CONT
 
    ENDCASE
+
+
+   SELECT SUBAN_PREGLED
 
    RETURN nRet
 

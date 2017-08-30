@@ -386,11 +386,11 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( cIdFirma, cIdKonto, cIdPartn
                IF !fTiho
                   IF PRow() > 52 + dodatni_redovi_po_stranici()
                      FF
-                     fin_zagl_ostav_grupisano_po_br_veze( .T., lEx )
+                     fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, .T., lEx )
                      fPrviProlaz := .F.
                   ENDIF
                   IF fPrviProlaz
-                     fin_zagl_ostav_grupisano_po_br_veze(, lEx )
+                     fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, NIL, lEx )
                      fPrviProlaz := .F.
                   ENDIF
                   ? PadR( cBrDok, 10 )
@@ -435,7 +435,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( cIdFirma, cIdKonto, cIdPartn
 
          IF PRow() > 58 + dodatni_redovi_po_stranici()
             FF
-            fin_zagl_ostav_grupisano_po_br_veze( .T., lEx )
+            fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, .T., lEx )
          ENDIF
 
          IF !lEx .AND. !fPrviProlaz
@@ -483,9 +483,13 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( cIdFirma, cIdKonto, cIdPartn
          cIdPartner := IDPARTNER
          nUDug := nUPot := nUDug2 := nUPot2 := 0
          DO WHILE !Eof() .AND. cIdPartner == IdPartner
-            IF PRow() > 52 + dodatni_redovi_po_stranici(); FF; fin_zagl_ostav_grupisano_po_br_veze( .T., lEx ); fPrviProlaz := .F. ; ENDIF
+            IF PRow() > 52 + dodatni_redovi_po_stranici()
+              FF
+              fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, .T., lEx )
+              fPrviProlaz := .F.
+            ENDIF
             IF fPrviProlaz
-               fin_zagl_ostav_grupisano_po_br_veze(, lEx )
+               fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, NIL, lEx )
                fPrviProlaz := .F.
             ENDIF
             SELECT POM
@@ -505,7 +509,10 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( cIdFirma, cIdKonto, cIdPartn
             nUDug2 += Dug2; nUPot2 += Pot2
             SKIP 1
          ENDDO
-         IF PRow() > 58 + dodatni_redovi_po_stranici(); FF; fin_zagl_ostav_grupisano_po_br_veze( .T., lEx ); ENDIF
+         IF PRow() > 58 + dodatni_redovi_po_stranici()
+           FF
+           fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, .T., lEx )
+         ENDIF
          SELECT POM
          IF !fPrviProlaz  // bilo je stavki
             ? M
@@ -608,12 +615,9 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
 
 
 
-/* fin_zagl_ostav_grupisano_po_br_veze(fStrana,lEx)
- *     Zaglavlje kartice OS-a
- *   param: fStrana
- *   param: lEx
- */
-FUNCTION fin_zagl_ostav_grupisano_po_br_veze( fStrana, lEx )
+
+
+FUNCTION fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, fStrana, lEx )
 
    ?
    IF fin_dvovalutno()
@@ -807,9 +811,6 @@ STATIC FUNCTION fin_zagl_otv_st_za_broj_veze( cIdFirma, cIdKonto, cIdPartner, cB
 
 
 
-/* fin_ostav_stampa_azuriranih_promjena()
- *     Stampa promjena
- */
 
 FUNCTION fin_ostav_stampa_azuriranih_promjena()
 
@@ -839,8 +840,7 @@ FUNCTION fin_ostav_stampa_azuriranih_promjena()
       RETURN .F.
    ENDIF
 
-   print_lista_2( aKol,,, 0,, ;
-      , "Rezultati asistenta otvorenih stavki za: " + idkonto + "/" + idpartner + " na datum:" + DToC( Date() ) )
+   print_lista_2( aKol,,, 0,, , "Rezultati asistenta otvorenih stavki za: " + idkonto + "/" + idpartner + " na datum:" + DToC( Date() ) )
 
    end_print()
 

@@ -767,18 +767,9 @@ STATIC FUNCTION brisi_otvorene_stavke_iz_tabele_suban()
 
 
 
-
-
-
-
-
-
-
-
-
 */
 
-FUNCTION opcije_browse_pregleda()
+FUNCTION fin_otvorene_stavke_opcije_browse_pregleda( cIdKonto )
 
    LOCAL _x, _y
 

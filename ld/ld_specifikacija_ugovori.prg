@@ -94,15 +94,12 @@ FUNCTION ld_specifikacija_plate_ostali()
 
       Box(, 11, 75 )
 
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " ;
-         GET qqIdRJ PICT "@!S15"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET qqIdRJ PICT "@!S15"
 
-      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Opstina stanov.(prazno-sve): " ;
-         GET qqOpSt PICT "@!S20"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Opstina stanov.(prazno-sve): "  GET qqOpSt PICT "@!S20"
 
       @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun ;
-         WHEN HelpObr( .T., cObracun ) ;
-         VALID ValObr( .T., cObracun )
+         WHEN HelpObr( .T., cObracun )  VALID ValObr( .T., cObracun )
 
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
       @ box_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecOd PICT "99"

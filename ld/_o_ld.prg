@@ -487,6 +487,19 @@ FUNCTION select_o_tippr( cId )
    RETURN o_tippr( cId )
 
 
+FUNCTION select_o_tippr2( cId )
+
+   SELECT ( F_TIPPR2 )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE
+      ENDIF
+   ENDIF
+
+   RETURN o_tippr2( cId )
+
 
 FUNCTION o_tippr2( cId, cAlias )
 
@@ -509,6 +522,7 @@ FUNCTION o_tippr2( cId, cAlias )
    ENDIF
 
    RETURN .T.
+
 
 
 FUNCTION set_tippr_ili_tippr2( cObracun )

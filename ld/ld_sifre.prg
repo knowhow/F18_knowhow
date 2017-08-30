@@ -649,7 +649,9 @@ FUNCTION P_TipPr2( cId, nDeltaX, nDeltaY )
       }
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
-   RETURN p_sifra( F_TIPPR2, 1, f18_max_rows() - 15, f18_max_cols() - 20, _l( "Tipovi primanja za obracun 2" ),  @cId, nDeltaX, nDeltaY, ;
+   o_tippr2()
+
+   RETURN p_sifra( F_TIPPR2, 1, f18_max_rows() - 15, f18_max_cols() - 20, _l( "Tipovi primanja za obračun 2" ),  @cId, nDeltaX, nDeltaY, ;
       {| Ch | Tpr2Bl( Ch ) },,,,, { "ID" } )
 
 
@@ -729,6 +731,8 @@ FUNCTION P_Kred( cId, nDeltaX, nDeltaY )
       }
 
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
+
+   o_kred()
 
    lRet := p_sifra( F_KRED, 1, f18_max_rows() - 15, f18_max_cols() - 20, _u( "Lista kreditora" ), @cId, nDeltaX, nDeltaY )
 
@@ -838,7 +842,7 @@ FUNCTION ImaUObrac( cKljuc, cTag )
 */
 
 
-FUNCTION P_POR( cId, nDeltaX, nDeltaY )
+FUNCTION p_ld_por( cId, nDeltaX, nDeltaY )
 
    LOCAL nI, lRet
    LOCAL _st_stopa := fetch_metric( "ld_porezi_stepenasta_stopa", NIL, "N" )
@@ -848,9 +852,9 @@ FUNCTION P_POR( cId, nDeltaX, nDeltaY )
 
    AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } } )
 
-   IF POR->( FieldPos( "ALGORITAM" ) ) <> 0 .AND. _st_stopa == "D"
-      AAdd( ImeKol, { "Algor.", {|| algoritam }, "algoritam" } )
-   ENDIF
+//   IF POR->( FieldPos( "ALGORITAM" ) ) <> 0 .AND. _st_stopa == "D"
+//      AAdd( ImeKol, { "Algor.", {|| algoritam }, "algoritam" } )
+//   ENDIF
 
    AAdd( ImeKol, { PadR( "Naziv", 20 ), {|| naz }, "naz" } )
    AAdd( ImeKol, { PadR( "Iznos", 20 ), {||  Transform( iznos, "99.99" ) }, "iznos", {|| iif( POR->( FieldPos( "ALGORITAM" ) ) <> 0, wh_oldpor( walgoritam ), .T. ) } } )
@@ -958,7 +962,7 @@ FUNCTION wh_oldpor( cAlg )
 
 
 
-FUNCTION P_Dopr( cId, nDeltaX, nDeltaY )
+FUNCTION p_ld_dopr( cId, nDeltaX, nDeltaY )
 
    LOCAL lRet
    PRIVATE imekol := {}

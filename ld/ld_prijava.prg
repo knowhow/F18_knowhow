@@ -20,8 +20,9 @@ FUNCTION ld_postavi_parametre_obracuna()
    LOCAL _pad_l := 20
    LOCAL _v_obr_unos := fetch_metric( "ld_vise_obracuna_na_unosu", my_user(), "N" ) == "D"
    LOCAL nMjesec := ld_tekuci_mjesec(), nGodina := ld_tekuca_godina()
+   LOCAL GetList := {}
 
-   o_ld_rj()
+  // o_ld_rj()
 
    Box(, 6 + iif( _v_obr_unos, 1, 0 ), 50 )
 

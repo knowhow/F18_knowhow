@@ -18,6 +18,7 @@ FUNCTION ld_pregled_odredjenog_primanja()
    LOCAL bZagl
    LOCAL nC1 := 20
    LOCAL lImaJos
+   LOCAL GetList := {}
 
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica

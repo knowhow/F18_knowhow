@@ -58,7 +58,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
    LOCAL lExitBrowse := .F.
    LOCAL nKeyHandlerRetEvent
    LOCAL lKeyHandlerStarted := .F.
-   LOCAL azImeKol, azKol
+   //LOCAL azImeKol, azKol
    LOCAL lDoIdleCall, lContinue, oBrowse, nKey // extended key
    LOCAL oTCol
    LOCAL nHeight, nWidth, nBrojRedovaZaPoruke
@@ -86,9 +86,9 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
    PRIVATE bTekCol
    PRIVATE Ch := 0
 
-altd()
-   azImeKol := ImeKol
-   azKol := Kol
+
+   //azImeKol := ImeKol
+   //azKol := Kol
 
    IF nPrazno == NIL
       nPrazno := 0

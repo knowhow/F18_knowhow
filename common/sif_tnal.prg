@@ -42,11 +42,14 @@ FUNCTION p_fin_vrsta_naloga( cId, dx, dy )
    NEXT
 
 
-
    xRet := p_sifra( F_TNAL, 1, Max( f18_max_rows() - 20, 10 ), Max( f18_max_cols() - 30, 50 ), "OsnPod: Vrste naloga", @cId, dx, dy )
 
    PopWa()
+
+   
    RETURN xRet
+
+
 
 FUNCTION P_VN( cId, dx, dy )
 

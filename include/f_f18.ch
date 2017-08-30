@@ -391,3 +391,5 @@
 
 #define F_FAKT_DOKS_PREGLED  510
 #define F_FAKT_DOKS_X        511
+
+#define F_SUBAN_PREGLED 512

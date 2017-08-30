@@ -1277,12 +1277,10 @@ FUNCTION V_Firma( cIdFirma )
 
 
 
-/*
-   fin_prebijeno_stanje_dug_pot(nDugX,nPotX)
- */
+
 FUNCTION fin_prebijeno_stanje_dug_pot( nDugX, nPotX )
 
-   IF ( nDugx - nDotx ) > 0
+   IF ( nDugx - nPotX ) > 0
       nDugX := nDugX - nPotX
       nPotX := 0
    ELSE
@@ -1291,6 +1289,7 @@ FUNCTION fin_prebijeno_stanje_dug_pot( nDugX, nPotX )
    ENDIF
 
    RETURN .T.
+
 
 STATIC FUNCTION kartica_otvori_tabele()
 

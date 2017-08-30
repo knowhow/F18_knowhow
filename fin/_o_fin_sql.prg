@@ -14,6 +14,125 @@
 FIELD idfirma, idvn, brnal, datnal
 
 
+/*
+
+-- Table: fmk.fin_suban
+
+-- DROP TABLE fmk.fin_suban;
+
+CREATE TABLE fmk.fin_suban
+(
+  idfirma character varying(2) NOT NULL,
+  idvn character varying(2) NOT NULL,
+  brnal character varying(8) NOT NULL,
+  idkonto character varying(7),
+  idpartner character varying(6),
+  rbr integer NOT NULL,
+  idtipdok character(2),
+  brdok character varying(20),
+  datdok date,
+  datval date,
+  otvst character(1),
+  d_p character(1),
+  iznosbhd numeric(17,2),
+  iznosdem numeric(15,2),
+  opis character varying(500),
+  k1 character(1),
+  k2 character(1),
+  k3 character(2),
+  k4 character(2),
+  m1 character(1),
+  m2 character(1),
+  idrj character(6),
+  funk character(5),
+  fond character(4),
+  CONSTRAINT fin_suban_pkey PRIMARY KEY (idfirma, idvn, brnal, rbr)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE fmk.fin_suban
+  OWNER TO admin;
+GRANT ALL ON TABLE fmk.fin_suban TO admin;
+GRANT ALL ON TABLE fmk.fin_suban TO xtrole;
+
+-- Index: fmk.fin_suban_brnal
+
+-- DROP INDEX fmk.fin_suban_brnal;
+
+CREATE INDEX fin_suban_brnal
+  ON fmk.fin_suban
+  USING btree
+  (idfirma COLLATE pg_catalog."default", idvn COLLATE pg_catalog."default", brnal COLLATE pg_catalog."default", rbr);
+
+-- Index: fmk.fin_suban_datdok
+
+-- DROP INDEX fmk.fin_suban_datdok;
+
+CREATE INDEX fin_suban_datdok
+  ON fmk.fin_suban
+  USING btree
+  (datdok);
+
+-- Index: fmk.fin_suban_datval_datdok
+
+-- DROP INDEX fmk.fin_suban_datval_datdok;
+
+CREATE INDEX fin_suban_datval_datdok
+  ON fmk.fin_suban
+  USING btree
+  (idfirma COLLATE pg_catalog."default", idkonto COLLATE pg_catalog."default", idpartner COLLATE pg_catalog."default", (COALESCE(datval, datdok)), brdok COLLATE pg_catalog."default");
+
+-- Index: fmk.fin_suban_id1
+
+-- DROP INDEX fmk.fin_suban_id1;
+
+CREATE INDEX fin_suban_id1
+  ON fmk.fin_suban
+  USING btree
+  (idfirma COLLATE pg_catalog."default", idvn COLLATE pg_catalog."default", brnal COLLATE pg_catalog."default", rbr);
+
+-- Index: fmk.fin_suban_konto_partner
+
+-- DROP INDEX fmk.fin_suban_konto_partner;
+
+CREATE INDEX fin_suban_konto_partner
+  ON fmk.fin_suban
+  USING btree
+  (idfirma COLLATE pg_catalog."default", idkonto COLLATE pg_catalog."default", idpartner COLLATE pg_catalog."default", datdok);
+
+-- Index: fmk.fin_suban_konto_partner_brdok
+
+-- DROP INDEX fmk.fin_suban_konto_partner_brdok;
+
+CREATE INDEX fin_suban_konto_partner_brdok
+  ON fmk.fin_suban
+  USING btree
+  (idfirma COLLATE pg_catalog."default", idkonto COLLATE pg_catalog."default", idpartner COLLATE pg_catalog."default", brdok COLLATE pg_catalog."default", datdok);
+
+-- Index: fmk.fin_suban_otvrst
+
+-- DROP INDEX fmk.fin_suban_otvrst;
+
+CREATE INDEX fin_suban_otvrst
+  ON fmk.fin_suban
+  USING btree
+  (btrim(idkonto::text) COLLATE pg_catalog."default", btrim(idpartner::text) COLLATE pg_catalog."default", btrim(brdok::text) COLLATE pg_catalog."default");
+
+
+-- Trigger: suban_insert_upate_delete on fmk.fin_suban
+
+-- DROP TRIGGER suban_insert_upate_delete ON fmk.fin_suban;
+
+CREATE TRIGGER suban_insert_upate_delete
+  AFTER INSERT OR UPDATE OR DELETE
+  ON fmk.fin_suban
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.on_suban_insert_update_delete();
+
+
+
+*/
 
 FUNCTION o_sql_suban_kto_partner( cIdFirma )
 
@@ -789,7 +908,9 @@ STATIC FUNCTION use_sql_anal_where( hParams )
 
 FUNCTION use_sql_suban( hParams )
 
-   LOCAL cTable := "SUBAN"
+   LOCAL cTable := "fin_suban"
+   LOCAL cAlias := "SUBAN"
+   LOCAL nWa := F_SUBAN
    LOCAL cWhere, cOrder
    LOCAL cSql
 
@@ -840,11 +961,16 @@ FUNCTION use_sql_suban( hParams )
    ENDIF
 
    IF hb_HHasKey( hParams, "alias" )
-      cTable := hParams[ "alias" ]
+      cAlias := hParams[ "alias" ]
+   ENDIF
+   IF hb_HHasKey( hParams, "alias" )
+      nWa := hParams[ "wa" ]
+      SELECT ( nWa )
+   ELSE
+      SELECT ( F_SUBAN )
    ENDIF
 
-   SELECT ( F_SUBAN )
-   IF !use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql, cAlias )
       RETURN .F.
    ENDIF
 
@@ -906,7 +1032,7 @@ STATIC FUNCTION use_sql_suban_where( hParams )
    ENDIF
 
    IF hb_HHasKey( hParams, "brdok" )
-      cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "brdok", hParams[ "brdok" ] )
+      cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "rpad(brdok,20)", hParams[ "brdok" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "otvst" )

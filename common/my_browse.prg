@@ -86,6 +86,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
    PRIVATE bTekCol
    PRIVATE Ch := 0
 
+altd()
    azImeKol := ImeKol
    azKol := Kol
 

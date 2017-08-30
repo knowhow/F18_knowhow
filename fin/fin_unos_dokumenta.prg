@@ -186,7 +186,7 @@ FUNCTION edit_fin_priprema( lNovaStavka )
 
 
    hb_SetKey( iif( is_mac(), hb_keyNew( "K", HB_KF_CTRL ), K_ALT_K ), {|| fin_unos_konverzija_valute( "_IZNOSDEM", GetList ) } )
-   hb_SetKey( iif( is_mac(), hb_keyNew( "O", HB_KF_CTRL ), K_ALT_O ), {|| knjizenje_gen_otvorene_stavke() } )
+   hb_SetKey( iif( is_mac(), hb_keyNew( "O", HB_KF_CTRL ), K_ALT_O ), {|| fin_unos_asistent_gen_otvorene_stavke() } )
 
    // SET KEY K_ALT_O TO
 
@@ -272,7 +272,7 @@ FUNCTION edit_fin_priprema( lNovaStavka )
 
    @ box_x_koord() + 16, box_y_koord() + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "(Alt-O) Otvorene stavke"   ;
       WHEN {|| lDugmeOtvoreneStavke } ;
-      SIZE X 20 Y 2 FOCUS {|| lDugmeOtvoreneStavke := .T., knjizenje_gen_otvorene_stavke(), lDugmeOtvoreneStavke := .F. }
+      SIZE X 20 Y 2 FOCUS {|| lDugmeOtvoreneStavke := .T., fin_unos_asistent_gen_otvorene_stavke(), lDugmeOtvoreneStavke := .F. }
 
 
 

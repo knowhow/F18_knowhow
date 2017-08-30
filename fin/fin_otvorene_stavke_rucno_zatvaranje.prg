@@ -119,8 +119,8 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    find_suban_by_konto_partner( @hParams )
    MsgC()
 
-   //SELECT SUBAN
-   //SET ORDER TO TAG "1"
+   // SELECT SUBAN
+   // SET ORDER TO TAG "1"
 
    IF gFinRj == "D" .AND. !Empty( cIdRJ )
       SET FILTER TO IDRJ == cIdRj
@@ -156,7 +156,8 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
    LOCAL cDn  := "N"
    LOCAL nRet := DE_CONT
    LOCAL cOtvSt := " "
-   //LOCAL nTrec := RecNo()
+
+   // LOCAL nTrec := RecNo()
    LOCAL cFilterRucnoZatvaranje := dbFilter()
    LOCAL nDbfArea := Select()
    LOCAL GetList := {}
@@ -183,7 +184,7 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
 
       cDn := "N"
       Box(, 3, 50 )
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Ne preporučuje se koristenje ove opcije !"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Ne preporučuje se korištenje ove opcije !"
       @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Želite li ipak nastaviti D/N" GET cDN PICT "@!" VALID cDn $ "DN"
       READ
       BoxC()
@@ -203,6 +204,8 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
          find_suban_za_period( "XX" )
          update_rec_server_and_dbf( "fin_suban", hRec, 1, "FULL" )
          log_write( "otvorene stavke, set marker=" + cMark, 5 )
+         SELECT SUBAN_PREGLED
+         REPLACE otvst WITH  cOtvSt
          nRet := DE_REFRESH
 
       ELSE
@@ -223,6 +226,8 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
 
       find_suban_za_period( "XX" )
       update_rec_server_and_dbf( "fin_suban", hRec, 1, "FULL" )
+      SELECT SUBAN_PREGLED
+      REPLACE m1 WITH cOtvSt
 
       nRet := DE_REFRESH
 
@@ -251,10 +256,14 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
          log_write( "otvorene stavke, ispravka broja veze, set=" + cBrDok, 5 )
          find_suban_za_period( "XX" )
          update_rec_server_and_dbf( "fin_suban", hRec, 1, "FULL" )
+         SELECT SUBAN_PREGLED
+         REPLACE brdok WITH cBrDok, opis WITH cOpis, datval WITH dDatVal
+         nRet := DE_REFRESH
 
+      ELSE
+         nRet := DE_CONT
       ENDIF
 
-      nRet := DE_REFRESH
 
    CASE Ch == K_F5
 
@@ -262,6 +271,7 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
 
    CASE Ch == K_F6
 
+/*
       IF FieldPos( "_OBRDOK" ) <> 0
          // nalazimo se u asistentu
          fin_ostav_stampa_azuriranih_promjena()
@@ -274,13 +284,16 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
 
 
       ELSE
-         IF Pitanje(, "Želite li da vezni broj " + suban_pregled->BrDok + " zamijenite brojem " + s_cPomBrDok + " ?", "D" ) == "D"
-            hRec := dbf_get_rec()
-            hRec[ "brdok" ] := s_cPomBrDok
-            log_write( "otvorene stavke, zamjena broja veze, set=" + cPomBrDok, 5 )
-            update_rec_server_and_dbf( "fin_suban", hRec, 1, "FULL" )
-         ENDIF
+  */
+      IF Pitanje(, "Želite li da vezni broj " + suban_pregled->BrDok + " zamijenite brojem " + s_cPomBrDok + " ?", "D" ) == "D"
+         hRec := dbf_get_rec()
+         hRec[ "brdok" ] := s_cPomBrDok
+         log_write( "otvorene stavke, zamjena broja veze, set=" + cPomBrDok, 5 )
+         update_rec_server_and_dbf( "fin_suban", hRec, 1, "FULL" )
+         SELECT SUBAN_PREGLED
+         replace brdok with s_cPomBrDok
       ENDIF
+      // ENDIF
 
       nRet := DE_REFRESH
 
@@ -288,21 +301,21 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
 
       fin_kartica_otvorene_stavke_po_broju_veze(  suban_pregled->Idfirma, suban_pregled->Idkonto, suban_pregled->Idpartner, suban_pregled->BrDok  )
 
-      //open_otv_stavke_tabele( lOSuban )
-      //SELECT ( nDbfArea )
-      //SET FILTER TO &( cFilterRucnoZatvaranje )
-      //GO ( nTrec )
-      //SELECT SUBAN_PREGLED
+      // open_otv_stavke_tabele( lOSuban )
+      // SELECT ( nDbfArea )
+      // SET FILTER TO &( cFilterRucnoZatvaranje )
+      // GO ( nTrec )
+      // SELECT SUBAN_PREGLED
       nRet := DE_CONT
 
    CASE Ch == iif( is_mac(), Asc( "P" ), K_ALT_P )
 
       fin_otv_stavke_stampa_za_broj_veze(  suban_pregled->Idfirma, suban_pregled->Idkonto, suban_pregled->Idpartner, suban_pregled->BrDok )
-      //open_otv_stavke_tabele( lOSuban )
-      //SELECT ( nDbfArea )
-      //SET FILTER TO &( cFilterRucnoZatvaranje )
-      //GO ( nTrec )
-      //SELECT SUBAN_PREGLED
+      // open_otv_stavke_tabele( lOSuban )
+      // SELECT ( nDbfArea )
+      // SET FILTER TO &( cFilterRucnoZatvaranje )
+      // GO ( nTrec )
+      // SELECT SUBAN_PREGLED
       nRet := DE_CONT
 
    ENDCASE

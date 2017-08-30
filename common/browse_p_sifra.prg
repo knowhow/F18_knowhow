@@ -127,7 +127,7 @@ FUNCTION p_sifra( nWa, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY,
          ToStrU( cNaslov ), "", lInvert, aOpcije, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
-         cID := ( nWa )->( FieldGet( 1 ) )
+         cId := ( nWa )->( FieldGet( 1 ) )
       ELSE
 
          IF !( nWa )->( Used() )
@@ -164,6 +164,10 @@ FUNCTION p_sifra( nWa, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY,
 
    IF lExitOnEnter
       browse_exit_on_enter( lExit )
+   ENDIF
+
+   IF ValType( cId ) == "C" .AND. Empty( cId ) .AND. Used() .AND. RecCount() == 0
+      RETURN .F. // empty id na praznoj tabeli
    ENDIF
 
    RETURN lRet
@@ -1215,8 +1219,8 @@ FUNCTION sifarnik_brisi_stavku()
    lOk := delete_rec_server_and_dbf( cAlias, hRecDbf, 1, "CONT" )
 
    IF lOk .AND. Alias() != "SIFK" .AND. hb_HHasKey( hRecDbf, "id" )
-      //o_sifk()
-      //o_sifv()
+      // o_sifk()
+      // o_sifv()
       o_sifk_sifv_empty()
 
       hRec := hb_Hash()

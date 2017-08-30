@@ -19,9 +19,7 @@ MEMVAR Kol, ImeKol
 
 MEMVAR _idkonto, _idpartner, _funk, _fond, _idfirma, _brnal, _datval, _datdok, _otvst, _idrj, _idvn, _brdok, _k1, _k2, _k3, _k4, _rbr
 
-
-STATIC cTekucaRj := ""
-STATIC __rj_len := 6
+STATIC s_cIdRjTekuca := ""
 
 FUNCTION fin_unos_naloga()
 
@@ -34,7 +32,7 @@ FUNCTION fin_unos_naloga()
    // fin_read_params()
    // info_bar( "fin", "read_params_end" )
 
-   cTekucaRj := GetTekucaRJ()
+   s_cIdRjTekuca := GetTekucaRJ()
    lBlagAsis := .F.
    cBlagIDVN := "66"
 
@@ -161,7 +159,7 @@ FUNCTION edit_fin_priprema( lNovaStavka )
    ENDIF
 
    IF ( ( gFinRj == "D" ) .AND. fin_pripr_nova_stavka() )
-      _idrj := cTekucaRj
+      _idrj := s_cIdRjTekuca
    ENDIF
 
    SET CURSOR ON
@@ -282,9 +280,9 @@ FUNCTION edit_fin_priprema( lNovaStavka )
 
 
    Set( _SET_CONFIRM, lConfirmEnter )
-   IF ( gFinRj == "D" .AND. cTekucaRJ <> _idrj )
-      cTekucaRJ := _idrj
-      SetTekucaRJ( cTekucaRJ )
+   IF ( gFinRj == "D" .AND. s_cIdRjTekuca <> _idrj )
+      s_cIdRjTekuca := _idrj
+      SetTekucaRJ( s_cIdRjTekuca )
    ENDIF
 
    _IznosBHD := Round( _iznosbhd, 2 )
@@ -1102,7 +1100,7 @@ FUNCTION SetTekucaRJ( cRJ )
 
 
 FUNCTION GetTekucaRJ()
-   RETURN fetch_metric( "fin_knjiz_tek_rj", my_home(), PadR( "", __rj_len ) )
+   RETURN fetch_metric( "fin_knjiz_tek_rj", my_home(), PadR( "", FIELD_LEN_FIN_RJ_ID ) )
 
 
 

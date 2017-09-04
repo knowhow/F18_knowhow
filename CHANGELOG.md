@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.88-std, 2017-09-04
+### FAKT
+- BUGFIX: vrstep fakt štampa liste dokumenata
+
 ## 3.1.87-std, 2017-09-04
 ### FIN
 - BUGFIX: fin povrat - storno, kartica po brojevima veze meni

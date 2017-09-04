@@ -79,7 +79,7 @@ PROCEDURE on_idle_dbf_refresh()
       s_nIdleRefresh := 0
       RETURN
    ENDIF
-   
+
    update_fin_nalog_count()
    process_dbf_refresh_queue()
 
@@ -111,6 +111,8 @@ PROCEDURE on_idle_dbf_refresh()
 
 PROCEDURE update_fin_nalog_count()
 
+   LOCAL oQry
+
    IF my_database() != "?undefined?" .AND. my_login():lOrganizacijaSpojena
       oQry := run_sql_query( "SELECT count(*) from fmk.fin_nalog" )
       IF sql_error_in_query( oQry, "SELECT" )
@@ -118,6 +120,9 @@ PROCEDURE update_fin_nalog_count()
          QUIT
       ENDIF
       s_nFinNalogCount := oQry:FieldGet( 1 )
+      IF ValType( s_nFinNalogCount ) != "N"
+         RETURN
+      ENDIF
       hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
    ENDIF
 

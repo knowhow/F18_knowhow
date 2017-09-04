@@ -185,19 +185,15 @@ STATIC FUNCTION _ispisi_greske( a_error )
    FF
    end_print()
 
-   RETURN
+   RETURN .T.
 
 
 
 
-// ----------------------------------
-// storniranje naloga
-// ----------------------------------
-FUNCTION StornoNaloga()
 
-   fin_povrat_naloga( .T. )
+FUNCTION fin_storno_naloga()
 
-   RETURN
+   RETURN fin_povrat_naloga( .T. )
 
 
 // ---------------------------------------------
@@ -206,6 +202,7 @@ FUNCTION StornoNaloga()
 STATIC FUNCTION _g_gr_date()
 
    LOCAL dDate := Date()
+   LOCAL GetList := {}
 
    Box(, 1, 45 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unesi granicni datum" GET dDate

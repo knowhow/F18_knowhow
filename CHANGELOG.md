@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.87-std, 2017-09-04
+### FIN
+- BUGFIX: fin povrat - storno, kartica po brojevima veze meni
+
 ## 3.1.84-std, 2017-08-30
 ### FIN
 - BUGFIX: eutanazija fin ostav rucno, fin kompenz

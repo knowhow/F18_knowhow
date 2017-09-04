@@ -20,8 +20,8 @@ FUNCTION fakt_stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cIdOb
    LOCAL m, cDinDnem, cRezerv, nC, nIznos, nRab, nIznosD, nIznos3, nRabD, nRab3, nOsn_tot, nPDV_tot, nUkPDV_tot
    LOCAL gnLMarg := 0
    LOCAL nCol1 := 0
-   LOCAL _params := fakt_params()
-   LOCAL lVrstep := _params[ "fakt_vrste_placanja" ]
+   LOCAL hParams := fakt_params()
+   LOCAL lVrstep := hParams[ "fakt_vrste_placanja" ]
 
    IF cValute == NIL
       cValute := Space( 3 )
@@ -52,7 +52,7 @@ FUNCTION fakt_stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cIdOb
       ?? Space( 2 ), "za valute:", cValute
    ENDIF
 
-   IF _params[ "fakt_objekti" ] .AND. !Empty( cIdObjekat )
+   IF hParams[ "fakt_objekti" ] .AND. !Empty( cIdObjekat )
       ?? Space( 2 ), "uslov po objektu: ", Trim( cIdObjekat )
       ? fakt_objekat_naz( cIdObjekat )
    ENDIF
@@ -178,8 +178,7 @@ FUNCTION fakt_stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cIdOb
 
       ELSE
 
-         @ PRow(), PCol() + 1 SAY Str( ( fakt_doks_pregled->iznos / UBaznuValutu( fakt_doks_pregled->datdok ) ) + ;
-            fakt_doks_pregled->rabat, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( ( fakt_doks_pregled->iznos / UBaznuValutu( fakt_doks_pregled->datdok ) ) + fakt_doks_pregled->rabat, 12, 2 )
          @ PRow(), PCol() + 1 SAY Str( fakt_doks_pregled->rabat, 12, 2 )
          @ PRow(), PCol() + 1 SAY Str( Round( fakt_doks_pregled->iznos / UBaznuValutu( fakt_doks_pregled->datdok ), gFZaok ), 12, 2 )
 
@@ -191,7 +190,7 @@ FUNCTION fakt_stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cIdOb
          nIznosD   += Round( fakt_doks_pregled->iznos / UBaznuValutu( datdok ), gFZaok )
          nRabD     += fakt_doks_pregled->rabat
 
-         // total obje cValute... ovu preracunaj u KM
+         // total obje Valute... ovu preracunaj u KM
          nIznos3   += Round( fakt_doks_pregled->iznos, gFZaok )
          nRab3     += fakt_doks_pregled->rabat
 
@@ -204,15 +203,16 @@ FUNCTION fakt_stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cIdOb
       @ PRow(), PCol() + 1 SAY cDinDEM
 
       IF FieldPos( "SIFRA" ) <> 0
-         @ PRow(), PCol() + 1 SAY iif( Empty( sifra ), Space( 2 ), Left( CryptSC( sifra ), 2 ) )
+         @ PRow(), PCol() + 1 SAY iif( Empty( field->sifra ), Space( 2 ), Left( CryptSC( field->sifra ), 2 ) )
       ENDIF
 
       IF lVrsteP
-         @ PRow(), PCol() + 1 SAY idvrstep + "-" + Left( VRSTEP->naz, 4 )
+         select_o_vrstep( field->idvrstep )
+         @ PRow(), PCol() + 1 SAY field->idvrstep + "-" + Left( VRSTEP->naz, 4 )
       ENDIF
 
       IF FieldPos( "DATPL" ) <> 0
-         @ PRow(), PCol() + 1 SAY datpl
+         @ PRow(), PCol() + 1 SAY field->datpl
       ENDIF
 
       SKIP
@@ -253,7 +253,6 @@ FUNCTION fakt_stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cIdOb
    ?? m
    ? Space( gnLMarg )
 
-   // zbirno...
    ?? "UKUPNO " + AllTrim( valbazna() ) + " + " + AllTrim( valsekund() ) + ":"
    @ PRow(), nCol1    SAY  Str( nIznos3 + nRab3, 12, 2 )
    @ PRow(), PCol() + 1 SAY  Str( nRab3, 12, 2 )

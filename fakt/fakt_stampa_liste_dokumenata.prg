@@ -203,18 +203,20 @@ FUNCTION fakt_stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cIdOb
       @ PRow(), PCol() + 1 SAY cDinDEM
 
       IF FieldPos( "SIFRA" ) <> 0
-         @ PRow(), PCol() + 1 SAY iif( Empty( field->sifra ), Space( 2 ), Left( CryptSC( field->sifra ), 2 ) )
+         @ PRow(), PCol() + 1 SAY iif( Empty( fakt_doks_pregled->sifra ), Space( 2 ), Left( CryptSC( fakt_doks_pregled->sifra ), 2 ) )
       ENDIF
 
       IF lVrsteP
-         select_o_vrstep( field->idvrstep )
-         @ PRow(), PCol() + 1 SAY field->idvrstep + "-" + Left( VRSTEP->naz, 4 )
+         select_o_vrstep( fakt_doks_pregled->idvrstep )
+         @ PRow(), PCol() + 1 SAY fakt_doks_pregled->idvrstep + "-" + Left( VRSTEP->naz, 4 )
+         SELECT fakt_doks_pregled
       ENDIF
 
       IF FieldPos( "DATPL" ) <> 0
-         @ PRow(), PCol() + 1 SAY field->datpl
+         @ PRow(), PCol() + 1 SAY fakt_doks_pregled->datpl
       ENDIF
 
+      SELECT fakt_doks_pregled
       SKIP
 
    ENDDO

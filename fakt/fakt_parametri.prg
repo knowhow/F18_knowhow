@@ -15,52 +15,52 @@ STATIC s_hFaktParams := NIL
 
 
 
-FUNCTION mnu_fakt_params()
+FUNCTION fakt_params_meni()
 
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
-   PRIVATE Izbor := 1
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
+   LOCAL nIzbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
 
    //o_roba()
-   o_params()
-
-   SELECT params
-   USE
-
-
-   AAdd( opc, "1. postaviti osnovne podatke o firmi           " )
-   AAdd( opcexe, {|| parametri_organizacije() } )
-
-   AAdd( opc, "2. postaviti varijante obrade dokumenata       " )
-   AAdd( opcexe, {|| fakt_par_varijante_prikaza() } )
-
-   AAdd( opc, "3. izgled dokumenata      " )
-   AAdd( opcexe, {|| par_fakt_izgled_dokumenta() } )
+   //o_params()
+   //SELECT params
+   //USE
 
 
-   AAdd( opc, "4. izgled dokumenata - zaglavlje " )
-   AAdd( opcexe, {|| fakt_zagl_params() } )
+   AAdd( aOpc, "1. postaviti osnovne podatke o firmi           " )
+   AAdd( aOpcExe, {|| parametri_organizacije() } )
+
+   AAdd( aOpc, "2. postaviti varijante obrade dokumenata       " )
+   AAdd( aOpcExe, {|| fakt_par_varijante_prikaza() } )
+
+   AAdd( aOpc, "3. izgled dokumenata      " )
+   AAdd( aOpcExe, {|| par_fakt_izgled_dokumenta() } )
 
 
-   AAdd( opc, "5. nazivi dokumenata i teksta na kraju (potpis)" )
-   AAdd( opcexe, {|| fakt_par_nazivi_dokumenata() } )
+   AAdd( aOpc, "4. izgled dokumenata - zaglavlje " )
+   AAdd( aOpcExe, {|| fakt_zagl_params() } )
 
-   AAdd( opc, "6. prikaza cijena, iznos " )
-   AAdd( opcexe, {|| fakt_par_cijene() } )
 
-   AAdd( opc, "F. fiskalni parametri  " )
-   AAdd( opcexe, {|| fiskalni_parametri_za_korisnika() } )
+   AAdd( aOpc, "5. nazivi dokumenata i teksta na kraju (potpis)" )
+   AAdd( aOpcExe, {|| fakt_par_nazivi_dokumenata() } )
 
-   AAdd( opc, "P. parametri labeliranja, barkod stampe  " )
-   AAdd( opcexe, {|| label_params() } )
+   AAdd( aOpc, "6. prikaza cijena, iznos " )
+   AAdd( aOpcExe, {|| fakt_par_cijene() } )
 
-   AAdd( opc, "R. postaviti parametre - razno                 " )
-   AAdd( opcexe, {|| fakt_par_razno() } )
+   AAdd( aOpc, "F. fiskalni parametri  " )
+   AAdd( aOpcExe, {|| fiskalni_parametri_za_korisnika() } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "parf" )
+   AAdd( aOpc, "P. parametri labeliranja, barkod stampe  " )
+   AAdd( aOpcExe, {|| label_params() } )
+
+   AAdd( aOpc, "R. postaviti parametre - razno                 " )
+   AAdd( aOpcExe, {|| fakt_par_razno() } )
+
+
+   f18_menu( "fpar", .F., nIzbor, aOpc, aOpcExe )
 
 
    fakt_params( .T. )
@@ -224,9 +224,7 @@ FUNCTION fakt_par_razno()
       ++nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Oznaka lokalnog porta za stampu: LPT" GET gMPLocPort VALID gMPLocPort $ "1234567" PICT "@!"
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Redukcija trake (0/1/2):" ;
-         GET gMPRedTraka ;
-         VALID gMPRedTraka $ "012"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Redukcija trake (0/1/2):" GET gMPRedTraka VALID gMPRedTraka $ "012"
       ++nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis id artikla na racunu (D/N):"  GET gMPArtikal VALID gMPArtikal $ "DN" PICT "@!"
       ++nX

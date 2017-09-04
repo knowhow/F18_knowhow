@@ -90,7 +90,7 @@ METHOD programski_modul_osnovni_meni
    AAdd( aOpc, "------------------------------------" )
    AAdd( aOpcExe, {|| NIL } )
    AAdd( aOpc, "X. parametri" )
-   AAdd( aOpcExe, {|| mnu_fakt_params() } )
+   AAdd( aOpcExe, {|| fakt_params_meni() } )
 
    f18_menu( "fmai", .T., _izbor, aOpc, aOpcExe )
 

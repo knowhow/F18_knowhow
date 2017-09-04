@@ -24,7 +24,7 @@ FUNCTION MnuGenDok()
    AAdd( _opcexe, {|| GenPocStanja() } )
 */
    AAdd( _opc, "S. generisanje storna naloga " )
-   AAdd( _opcexe, {|| StornoNaloga() } )
+   AAdd( _opcexe, {|| fin_storno_naloga() } )
 
    f18_menu( "gdk", .F., _izbor, _opc, _opcexe )
 

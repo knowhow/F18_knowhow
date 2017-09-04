@@ -43,6 +43,7 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    LOCAL nX := 1
    LOCAL _k1 := fin_k1(), _k2 := fin_k2(), _k3 := fin_k3(), _k4 := fin_k4()
    LOCAL _tip_dok := fin_tip_dokumenta()
+   LOCAL GetList := {}
 
    Box(, 24, 70 )
 
@@ -66,7 +67,6 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Unos polja K1 - K4 ? (D/N)"
    ++nX
-
    read_dn_parametar( "K1", box_x_koord() + nX, box_y_koord() + 2, @_k1 )
    read_dn_parametar( "K2", box_x_koord() + nX, Col() + 2, @_k2 )
    read_dn_parametar( "K3", box_x_koord() + nX, Col() + 2, @_k3 )
@@ -77,7 +77,6 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)" GET gBrojacFinNaloga VALID gBrojacFinNaloga $ "12"
 
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Limit za unos konta? (D/N):" GET gKtoLimit PICT "@!" VALID gKtoLimit $ "DN"
 
    @ box_x_koord() + nX, Col() + 2 SAY "-> vrijednost limita:" GET gnKtoLimit PICT "9" WHEN gKtoLimit == "D"
@@ -92,11 +91,9 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Neophodna ravoteza naloga? (D/N):" GET gRavnot VALID gRavnot $ "DN" PICT "@!"
 
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Onemoguciti povrat azuriranog naloga u pripremu? (D/N)" GET gBezVracanja VALID gBezVracanja $ "DN" PICT "@!"
 
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2  SAY "Limit za otvorene stavke (" + ValDomaca() + ")" GET gnLOst PICT "99999.99"
 
    // ++ nX
@@ -104,15 +101,13 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
 
    ++nX
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Timeout kod azuriranja naloga (sec.):" ;
-      GET gAzurTimeout PICT "99999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Timeout kod azuriranja naloga (sec.):"  GET gAzurTimeout PICT "99999"
 
    nX := nX + 2
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "********************** Ostalo:"
 
    nX := nX + 2
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Automatski pozovi kontrolu zbira datoteke svakih" GET gnKZBDana PICT "999" VALID ( gnKZBDana <= 999 .AND. gnKZBDana >= 0 )
 
    @ box_x_koord() + nX, Col() + 1 SAY "dana"

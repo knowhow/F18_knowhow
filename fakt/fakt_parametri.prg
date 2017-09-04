@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-STATIC __fakt_params := NIL
+STATIC s_hFaktParams := NIL
 
 
 
@@ -24,7 +24,7 @@ FUNCTION mnu_fakt_params()
    PRIVATE opc := {}
    PRIVATE opcexe := {}
 
-   o_roba()
+   //o_roba()
    o_params()
 
    SELECT params
@@ -71,40 +71,40 @@ FUNCTION mnu_fakt_params()
 // -------------------------------------------------------------
 // postavi parametre unosa fakt_dokumenta
 // -------------------------------------------------------------
-PROCEDURE fakt_params( READ )
+PROCEDURE fakt_params( lRead )
 
-   IF READ == NIL
-      READ = .F.
+   IF lRead == NIL
+      lRead = .F.
    ENDIF
 
-   IF READ .OR. __fakt_params == NIL
+   IF lRead .OR. s_hFaktParams == NIL
 
-      __fakt_params := hb_Hash()
+      s_hFaktParams := hb_Hash()
 
       // TODO: prebaciti na get_set sistem
-      __fakt_params[ "def_rj" ] := fetch_metric( "fakt_default_radna_jedinica", my_user(), Space( 2 ) )
-      __fakt_params[ "barkod" ] := fetch_metric( "fakt_prikaz_barkod", my_user(), "0" )
+      s_hFaktParams[ "def_rj" ] := fetch_metric( "fakt_default_radna_jedinica", my_user(), Space( 2 ) )
+      s_hFaktParams[ "barkod" ] := fetch_metric( "fakt_prikaz_barkod", my_user(), "0" )
 
       // TODO: ugasiti ovaj globalni parametar
       IF destinacije() == "D"
-         __fakt_params[ "destinacije" ] := .T.
+         s_hFaktParams[ "destinacije" ] := .T.
       ELSE
-         __fakt_params[ "destinacije" ] := .F.
+         s_hFaktParams[ "destinacije" ] := .F.
       ENDIF
 
-      __fakt_params[ "fakt_dok_veze" ] := iif( fakt_dok_veze() == "D", .T., .F. )
-      __fakt_params[ "fakt_opis_stavke" ] := iif( fakt_opis_stavke() == "D", .T., .F. )
-      __fakt_params[ "fakt_prodajna_mjesta" ] := iif( fakt_prodajna_mjesta() == "D", .T., .F. )
-      __fakt_params[ "ref_lot" ] := iif( ref_lot() == "D", .T., .F. )
-      __fakt_params[ "fakt_vrste_placanja" ] := iif( fakt_vrste_placanja() == "D", .T., .F. )
-      __fakt_params[ "fakt_objekti" ] := iif( fakt_objekti() == "D", .T., .F. )
-      __fakt_params[ "fakt_otpr_22_brojac" ] := iif( fakt_otpr_22_brojac() == "D", .T., .F. )
-      __fakt_params[ "fakt_otpr_gen" ] := iif( fakt_otpr_gen() == "D", .T., .F. )
-      __fakt_params[ "kontrola_brojaca" ] := iif( fakt_kontrola_brojaca_par() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_dok_veze" ] := iif( fakt_dok_veze() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_opis_stavke" ] := iif( fakt_opis_stavke() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_prodajna_mjesta" ] := iif( fakt_prodajna_mjesta() == "D", .T., .F. )
+      s_hFaktParams[ "ref_lot" ] := iif( ref_lot() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_vrste_placanja" ] := iif( fakt_vrste_placanja() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_objekti" ] := iif( fakt_objekti() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_otpr_22_brojac" ] := iif( fakt_otpr_22_brojac() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_otpr_gen" ] := iif( fakt_otpr_gen() == "D", .T., .F. )
+      s_hFaktParams[ "kontrola_brojaca" ] := iif( fakt_kontrola_brojaca_par() == "D", .T., .F. )
 
    ENDIF
 
-   RETURN __fakt_params
+   RETURN s_hFaktParams
 
 
 
@@ -114,15 +114,15 @@ PROCEDURE fakt_params( READ )
 // ------------------------------------------
 FUNCTION fakt_set_params()
 
-   // PTXT 01.50 compatibility switch
-   PUBLIC gPtxtC50 := .T.
+
+   PUBLIC gPtxtC50 := .T.  // PTXT 01.50 compatibility switch
 
    fill_part()
 
    RETURN .T.
 
 
-/* fakt_par_razno()
+/*
  *     Podesenja parametri-razno
  */
 FUNCTION fakt_par_razno()
@@ -141,17 +141,18 @@ FUNCTION fakt_par_razno()
    LOCAL _unos_ref_lot := ref_lot()
    LOCAL _unos_opisa := fakt_opis_stavke()
    LOCAL _unos_objekta := fakt_objekti()
-   LOCAL _vr_pl := fakt_vrste_placanja()
+   LOCAL cFaktVrstePlacanja := fakt_vrste_placanja()
    LOCAL _unos_dest := destinacije()
    LOCAL _unos_br_veza := fakt_dok_veze()
    LOCAL _otpr_brojac_22 := fakt_otpr_22_brojac()
    LOCAL _otpr_gen := fakt_otpr_gen()
    LOCAL _kontrola_brojaca := fakt_kontrola_brojaca_par()
    LOCAL nRokPlDana := fakt_rok_placanja_dana()
+   LOCAL GetList := {}
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
-   PRIVATE GetList := {}
+
 
    o_params()
 
@@ -199,7 +200,7 @@ FUNCTION fakt_par_razno()
    ++nX
    read_dn_parametar( "Fakturisanje po objektima", box_x_koord() + nX, box_y_koord() + 2, @_unos_objekta )
    ++nX
-   read_dn_parametar( "Fakturisanje po vrstama placanja", box_x_koord() + nX, box_y_koord() + 2, @_vr_pl )
+   read_dn_parametar( "Fakturisanje po vrstama placanja", box_x_koord() + nX, box_y_koord() + 2, @cFaktVrstePlacanja )
    ++nX
    read_dn_parametar( "Fakt dodatni opis po stavkama", box_x_koord() + nX, box_y_koord() + 2, @_unos_opisa )
    ++nX
@@ -227,11 +228,9 @@ FUNCTION fakt_par_razno()
          GET gMPRedTraka ;
          VALID gMPRedTraka $ "012"
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis id artikla na racunu (D/N):" ;
-         GET gMPArtikal VALID gMPArtikal $ "DN" PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis id artikla na racunu (D/N):"  GET gMPArtikal VALID gMPArtikal $ "DN" PICT "@!"
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" ;
-         GET gMPCjenPDV  VALID gMPCjenPDV $ "12"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" GET gMPCjenPDV  VALID gMPCjenPDV $ "12"
 
 
       READ
@@ -263,7 +262,7 @@ FUNCTION fakt_par_razno()
       fakt_objekti( _unos_objekta )
       ref_lot( _unos_ref_lot )
       fakt_prodajna_mjesta( _pm )
-      fakt_vrste_placanja( _vr_pl )
+      fakt_vrste_placanja( cFaktVrstePlacanja )
       fakt_dok_veze( _unos_br_veza )
       fakt_otpr_22_brojac( _otpr_brojac_22 )
       fakt_otpr_gen( _otpr_gen )
@@ -286,7 +285,7 @@ FUNCTION fakt_par_razno()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -295,10 +294,12 @@ FUNCTION fakt_zagl_params()
    LOCAL nSay := 17
    LOCAL sPict := "@S55"
    LOCAL nX := 1
+   LOCAL GetList := {}
+
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
-   PRIVATE GetList := {}
+
 
    gFNaziv := PadR( gFNaziv, 250 )
    gFPNaziv := PadR( gFPNaziv, 250 )
@@ -312,48 +313,38 @@ FUNCTION fakt_zagl_params()
    Box( , 21, 77, .F., "Izgleda dokumenata - zaglavlje" )
 
    // opci podaci
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Puni naziv firme:", nSay ) GET gFNaziv ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Puni naziv firme:", nSay ) GET gFNaziv  PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dodatni opis:", nSay ) GET gFPNaziv ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dodatni opis:", nSay ) GET gFPNaziv  PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Adresa firme:", nSay ) GET gFAdresa ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Adresa firme:", nSay ) GET gFAdresa PICT sPict
    nX++
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Ident.broj:", nSay ) GET gFIdBroj
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Telefoni:", nSay ) GET gFTelefon ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Telefoni:", nSay ) GET gFTelefon  PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "email/web:", nSay ) GET gFEmailWeb ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "email/web:", nSay ) GET gFEmailWeb PICT sPict
    nX++
 
    // banke
-   @ box_x_koord() + nX,  box_y_koord() + 2 SAY PadL( "Banka 1:", nSay ) GET gFBanka1 ;
-      PICT sPict
+   @ box_x_koord() + nX,  box_y_koord() + 2 SAY PadL( "Banka 1:", nSay ) GET gFBanka1 PICT sPict
    nX++
 
-   @ box_x_koord() + nX,  box_y_koord() + 2 SAY PadL( "Banka 2:", nSay ) GET gFBanka2 ;
-      PICT sPict
+   @ box_x_koord() + nX,  box_y_koord() + 2 SAY PadL( "Banka 2:", nSay ) GET gFBanka2 PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 3:", nSay ) GET gFBanka3 ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 3:", nSay ) GET gFBanka3 PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 4:", nSay ) GET gFBanka4 ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 4:", nSay ) GET gFBanka4 PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 5:", nSay ) GET gFBanka5 ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 5:", nSay ) GET gFBanka5 PICT sPict
    nX += 2
 
    // dodatni redovi
@@ -367,8 +358,7 @@ FUNCTION fakt_zagl_params()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Red 2:", nSay ) GET gFText2 PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Red 3:", nSay ) GET gFText3 ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Red 3:", nSay ) GET gFText3 PICT sPict
    nX += 2
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koristiti tekstualno zaglavlje (D/N)?" GET gStZagl  VALID gStZagl $ "DN" PICT "@!"
@@ -412,8 +402,7 @@ FUNCTION fakt_par_cijene()
    LOCAL cCijena := fakt_pic_cijena()
    LOCAL cIznos := fakt_pic_iznos()
    LOCAL cKolicina := fakt_pic_kolicina()
-
-   PRIVATE  GetList := {}
+   LOCAL GetList := {}
 
    fakt_pic_kolicina( StrTran( fakt_pic_kolicina(), "@Z ", "" ) )
 
@@ -432,8 +421,7 @@ FUNCTION fakt_par_cijene()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Na kraju fakture izvrsiti zaokruzenje" GET gFZaok PICT "99"
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Zaokruzenje 5 pf (D/N)?" GET gZ_5pf PICT "@!" ;
-      VALID gZ_5pf $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Zaokruzenje 5 pf (D/N)?" GET gZ_5pf PICT "@!" VALID gZ_5pf $ "DN"
 
    READ
 
@@ -444,7 +432,6 @@ FUNCTION fakt_par_cijene()
       fakt_pic_cijena( cCijena )
       fakt_pic_iznos( cIznos )
       fakt_pic_kolicina( cKolicina )
-
       set_metric( "fakt_zaokruzenje", NIL, gFZaok )
       set_metric( "fakt_zaokruzenje_5_pf", NIL, gZ_5pf )
 
@@ -456,7 +443,7 @@ FUNCTION fakt_par_cijene()
 
 FUNCTION fakt_par_varijante_prikaza()
 
-   PRIVATE  GetList := {}
+   LOCAL GetList := {}
 
    o_params()
 

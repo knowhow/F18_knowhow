@@ -445,7 +445,7 @@ FUNCTION PrenosNoFakt()
             select_o_roba( fakt->idroba )
             IF roba->tip = "P"
                // radi se o proizvodu
-               select_o_sast( fakt->idroba )
+               select_o_sastavnice( fakt->idroba )
                DO WHILE !Eof() .AND. id == fakt->idroba
                   // setaj kroz sast
                 select_o_roba(sast->id2 )
@@ -608,7 +608,7 @@ FUNCTION fakt_kalk_prenos_normativi()
       GO TOP
 
       DO WHILE !Eof()
-         select_o_sast( kalk_pripr->idroba )
+         select_o_sastavnice( kalk_pripr->idroba )
          DO WHILE !Eof() .AND. id == kalk_pripr->idroba
             // setaj kroz sast
             // utvr|ivanje nabavnih cijena po sastavnici !!!!!

@@ -2,7 +2,7 @@
 
 ## 3.1.90-std, 2017-09-05
 ### FAKT
-- BUGFIX: fakt-kalk normativi select_o_sast
+- BUGFIX: fakt-kalk normativi select_o_sastavnice()
 
 ## 3.1.89-std, 2017-09-05
 ### FAKT

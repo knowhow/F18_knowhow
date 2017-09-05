@@ -564,6 +564,9 @@ STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nWa, cNaslov, bBlok, aZabrane
    ENDIF
 
    // Ch := LastKey()
+   IF !Used()
+      RETURN DE_ABORT
+   ENDIF
 
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )

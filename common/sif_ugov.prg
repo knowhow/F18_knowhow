@@ -18,6 +18,7 @@ FUNCTION p_ugov( cId, dx, dy )
    LOCAL i
    LOCAL cHeader := ""
    LOCAL cFieldId
+   LOCAL xRet
 
    PRIVATE DFTkolicina := 1
    PRIVATE DFTidroba := PadR( "", 10 )

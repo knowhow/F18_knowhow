@@ -9,6 +9,11 @@ FUNCTION fakt_real_kumulativno_po_partnerima()
    LOCAL cUslovTipDok, cUslovIdPartner, cUslovOpcina
    LOCAL bZagl
    LOCAL GetList := {}
+   LOCAL dDatOd, dDatDo
+   LOCAL cIdFirma
+   LOCAL nIznos, nRabat
+   LOCAL nTotalIznos, nTotalRabat
+   LOCAL cIdPartner
 
    //o_fakt_doks_dbf()
    // o_partner()
@@ -81,13 +86,13 @@ FUNCTION fakt_real_kumulativno_po_partnerima()
 
    cFilter := ".t."
 
-   IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
-      cFilter += ".and.  datdok>=" + dbf_quote( dDatOd ) + ".and. datdok<=" + dbf_quote( dDatDo )
-   ENDIF
+   //IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
+    //  cFilter += ".and.  datdok>=" + dbf_quote( dDatOd ) + ".and. datdok<=" + dbf_quote( dDatDo )
+   //ENDIF
 
-   IF cTabela == "D"  // prikazu unutar browse-a
-      cFilter += ".and. IdFirma=" + dbf_quote( cIdFirma )
-   ENDIF
+   //IF cTabela == "D"  // prikazu unutar browse-a
+    //  cFilter += ".and. IdFirma=" + dbf_quote( cIdFirma )
+   //ENDIF
 
    IF !Empty( cBrFakDok )
       cFilter += ".and." + cFilterBrFaktDok
@@ -106,7 +111,7 @@ FUNCTION fakt_real_kumulativno_po_partnerima()
    ENDIF
 
 
-   find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo )
+   find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, "FAKT_DOKS", "idpartner,datdok" )
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
@@ -126,14 +131,14 @@ FUNCTION fakt_real_kumulativno_po_partnerima()
    EVAL( bZagl )
 
 
-   find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "6" ) // "6","IdFirma+idpartner+idtipdok"
+   //find_fakt_za_period( cIdFirma, dDatOd, dDatDo, "idFirma,idpartner,idtipdok", NIL, "6" ) // "6","IdFirma+idpartner+idtipdok"
    altd()
 
    nC := 0
    nCol1 := 10
-   nTIznos := nTRabat := 0
+   nTotalIznos := nTotalRabat := 0
    PRIVATE cRezerv := " "
-   DO WHILE !Eof() .AND. field->IdFirma == cIdFirma
+   DO WHILE !Eof() //.AND. fakt_doks->IdFirma == cIdFirma
 
       IF !Empty( cUslovIdPartner )
          IF !( fakt_doks->partner = cUslovIdPartner )
@@ -144,11 +149,10 @@ FUNCTION fakt_real_kumulativno_po_partnerima()
 
       nIznos := 0
       nRabat := 0
-      cIdPartner := field->idpartner
+      cIdPartner := fakt_doks->idpartner
       select_o_partner( cIdPartner )
       SELECT fakt_doks
 
-      // uslov po opcini
       IF !Empty( cUslovOpcina )
          IF At( partn->idops, cUslovOpcina ) == 0
             SKIP
@@ -156,7 +160,7 @@ FUNCTION fakt_real_kumulativno_po_partnerima()
          ENDIF
       ENDIF
 
-      DO WHILE !Eof() .AND. IdFirma == cIdFirma .AND. field->idpartner == cIdpartner
+      DO WHILE !Eof() .AND. fakt_doks->idpartner == cIdpartner //IdFirma == cIdFirma .AND. field->idpartner == cIdpartner
          IF DinDem == Left( ValBazna(), 3 )
             nIznos += Round( iznos, fakt_zaokruzenje() )
             nRabat += Round( Rabat, fakt_zaokruzenje() )
@@ -166,6 +170,7 @@ FUNCTION fakt_real_kumulativno_po_partnerima()
          ENDIF
          SKIP
       ENDDO
+
       IF PRow() > 61
          FF
          Eval( bZagl )
@@ -178,8 +183,8 @@ FUNCTION fakt_real_kumulativno_po_partnerima()
       @ PRow(), PCol() + 1 SAY Str( nRabat, 12, 2 )
       @ PRow(), PCol() + 1 SAY Str( nIznos, 12, 2 )
 
-      ntIznos += nIznos
-      ntRabat += nRabat
+      nTotalIznos += nIznos
+      nTotalRabat += nRabat
    ENDDO
 
    IF PRow() > 59
@@ -191,9 +196,9 @@ FUNCTION fakt_real_kumulativno_po_partnerima()
    ?? m
    ? Space( gnLMarg )
    ?? " Ukupno"
-   @ PRow(), nCol1 SAY Str( ntIznos + ntRabat, 12, 2 )
-   @ PRow(), PCol() + 1 SAY Str( ntRabat, 12, 2 )
-   @ PRow(), PCol() + 1 SAY Str( ntIznos, 12, 2 )
+   @ PRow(), nCol1 SAY Str( nTotalIznos + nTotalRabat, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nTotalRabat, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nTotalIznos, 12, 2 )
    ? Space( gnLMarg )
    ?? m
 
@@ -214,7 +219,7 @@ FUNCTION fakt_zagl_real_partnera( cIdFirma, nStrana, dDatOd, dDatDo, cUslovTipDo
    ?
    SET CENTURY ON
    P_12CPI
-   ?U Space( gnLMarg ); ??U "FAKT: Realizacija kumulativno po partnerima na dan:", Date(), Space( 8 ), "Strana:", Str( ++nStrana, 3 )
+   ?U Space( gnLMarg ); ??U "FAKT: Realizacija kumulativno po partnerima na dan: ", Date(), Space( 4 ), "Strana:", Str( ++nStrana, 3 )
    ?U Space( gnLMarg ); ?? "      period:", dDatOd, "-", dDatDo
    IF cUslovTipDok <> "10;"
       ? Space( gnLMarg ); ??U "-izvještaj za tipove dokumenata :", Trim( cUslovTipDok )

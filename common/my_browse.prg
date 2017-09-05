@@ -230,7 +230,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       IF Ch == 0 // nije bilo nikakvog keyboard eventa
 
-         IF lDoIdleCall //
+         IF lDoIdleCall
 
             nKeyHandlerRetEvent := my_browse_f18_komande_with_my_key_handler( oBrowse, Ch, @nKeyHandlerRetEvent, nPored, aPoredak, bMyKeyHandler )
 

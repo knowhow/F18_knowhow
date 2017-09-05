@@ -11,56 +11,57 @@
 
 #include "f18.ch"
 
-STATIC __fakt_params := NIL
+STATIC s_hFaktParams := NIL
 
 
 
-FUNCTION mnu_fakt_params()
+FUNCTION fakt_params_meni()
+
+   LOCAL nIzbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
 
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
-   PRIVATE Izbor := 1
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
 
-   o_roba()
-   o_params()
-
-   SELECT params
-   USE
+   // o_roba()
+   // o_params()
+   // SELECT params
+   // USE
 
 
-   AAdd( opc, "1. postaviti osnovne podatke o firmi           " )
-   AAdd( opcexe, {|| parametri_organizacije() } )
+   AAdd( aOpc, "1. postaviti osnovne podatke o firmi           " )
+   AAdd( aOpcExe, {|| parametri_organizacije() } )
 
-   AAdd( opc, "2. postaviti varijante obrade dokumenata       " )
-   AAdd( opcexe, {|| fakt_par_varijante_prikaza() } )
+   AAdd( aOpc, "2. postaviti varijante obrade dokumenata       " )
+   AAdd( aOpcExe, {|| fakt_par_varijante_prikaza() } )
 
-   AAdd( opc, "3. izgled dokumenata      " )
-   AAdd( opcexe, {|| par_fakt_izgled_dokumenta() } )
-
-
-   AAdd( opc, "4. izgled dokumenata - zaglavlje " )
-   AAdd( opcexe, {|| fakt_zagl_params() } )
+   AAdd( aOpc, "3. izgled dokumenata      " )
+   AAdd( aOpcExe, {|| par_fakt_izgled_dokumenta() } )
 
 
-   AAdd( opc, "5. nazivi dokumenata i teksta na kraju (potpis)" )
-   AAdd( opcexe, {|| fakt_par_nazivi_dokumenata() } )
+   AAdd( aOpc, "4. izgled dokumenata - zaglavlje " )
+   AAdd( aOpcExe, {|| fakt_zagl_params() } )
 
-   AAdd( opc, "6. prikaza cijena, iznos " )
-   AAdd( opcexe, {|| fakt_par_cijene() } )
 
-   AAdd( opc, "F. fiskalni parametri  " )
-   AAdd( opcexe, {|| fiskalni_parametri_za_korisnika() } )
+   AAdd( aOpc, "5. nazivi dokumenata i teksta na kraju (potpis)" )
+   AAdd( aOpcExe, {|| fakt_par_nazivi_dokumenata() } )
 
-   AAdd( opc, "P. parametri labeliranja, barkod stampe  " )
-   AAdd( opcexe, {|| label_params() } )
+   AAdd( aOpc, "6. prikaza cijena, iznos " )
+   AAdd( aOpcExe, {|| fakt_par_cijene() } )
 
-   AAdd( opc, "R. postaviti parametre - razno                 " )
-   AAdd( opcexe, {|| fakt_par_razno() } )
+   AAdd( aOpc, "F. fiskalni parametri  " )
+   AAdd( aOpcExe, {|| fiskalni_parametri_za_korisnika() } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "parf" )
+   AAdd( aOpc, "P. parametri labeliranja, barkod stampe  " )
+   AAdd( aOpcExe, {|| label_params() } )
+
+   AAdd( aOpc, "R. postaviti parametre - razno                 " )
+   AAdd( aOpcExe, {|| fakt_par_razno() } )
+
+
+   f18_menu( "fpar", .F., nIzbor, aOpc, aOpcExe )
 
 
    fakt_params( .T. )
@@ -71,40 +72,40 @@ FUNCTION mnu_fakt_params()
 // -------------------------------------------------------------
 // postavi parametre unosa fakt_dokumenta
 // -------------------------------------------------------------
-PROCEDURE fakt_params( READ )
+PROCEDURE fakt_params( lRead )
 
-   IF READ == NIL
-      READ = .F.
+   IF lRead == NIL
+      lRead = .F.
    ENDIF
 
-   IF READ .OR. __fakt_params == NIL
+   IF lRead .OR. s_hFaktParams == NIL
 
-      __fakt_params := hb_Hash()
+      s_hFaktParams := hb_Hash()
 
       // TODO: prebaciti na get_set sistem
-      __fakt_params[ "def_rj" ] := fetch_metric( "fakt_default_radna_jedinica", my_user(), Space( 2 ) )
-      __fakt_params[ "barkod" ] := fetch_metric( "fakt_prikaz_barkod", my_user(), "0" )
+      s_hFaktParams[ "def_rj" ] := fetch_metric( "fakt_default_radna_jedinica", my_user(), Space( 2 ) )
+      s_hFaktParams[ "barkod" ] := fetch_metric( "fakt_prikaz_barkod", my_user(), "0" )
 
       // TODO: ugasiti ovaj globalni parametar
       IF destinacije() == "D"
-         __fakt_params[ "destinacije" ] := .T.
+         s_hFaktParams[ "destinacije" ] := .T.
       ELSE
-         __fakt_params[ "destinacije" ] := .F.
+         s_hFaktParams[ "destinacije" ] := .F.
       ENDIF
 
-      __fakt_params[ "fakt_dok_veze" ] := iif( fakt_dok_veze() == "D", .T., .F. )
-      __fakt_params[ "fakt_opis_stavke" ] := iif( fakt_opis_stavke() == "D", .T., .F. )
-      __fakt_params[ "fakt_prodajna_mjesta" ] := iif( fakt_prodajna_mjesta() == "D", .T., .F. )
-      __fakt_params[ "ref_lot" ] := iif( ref_lot() == "D", .T., .F. )
-      __fakt_params[ "fakt_vrste_placanja" ] := iif( fakt_vrste_placanja() == "D", .T., .F. )
-      __fakt_params[ "fakt_objekti" ] := iif( fakt_objekti() == "D", .T., .F. )
-      __fakt_params[ "fakt_otpr_22_brojac" ] := iif( fakt_otpr_22_brojac() == "D", .T., .F. )
-      __fakt_params[ "fakt_otpr_gen" ] := iif( fakt_otpr_gen() == "D", .T., .F. )
-      __fakt_params[ "kontrola_brojaca" ] := iif( fakt_kontrola_brojaca_par() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_dok_veze" ] := iif( fakt_dok_veze() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_opis_stavke" ] := iif( fakt_opis_stavke() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_prodajna_mjesta" ] := iif( fakt_prodajna_mjesta() == "D", .T., .F. )
+      s_hFaktParams[ "ref_lot" ] := iif( ref_lot() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_vrste_placanja" ] := iif( fakt_vrste_placanja() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_objekti" ] := iif( fakt_objekti() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_otpr_22_brojac" ] := iif( fakt_otpr_22_brojac() == "D", .T., .F. )
+      s_hFaktParams[ "fakt_otpr_gen" ] := iif( fakt_otpr_gen() == "D", .T., .F. )
+      s_hFaktParams[ "kontrola_brojaca" ] := iif( fakt_kontrola_brojaca_par() == "D", .T., .F. )
 
    ENDIF
 
-   RETURN __fakt_params
+   RETURN s_hFaktParams
 
 
 
@@ -114,15 +115,14 @@ PROCEDURE fakt_params( READ )
 // ------------------------------------------
 FUNCTION fakt_set_params()
 
-   // PTXT 01.50 compatibility switch
-   PUBLIC gPtxtC50 := .T.
+   PUBLIC gPtxtC50 := .T.  // PTXT 01.50 compatibility switch
 
    fill_part()
 
    RETURN .T.
 
 
-/* fakt_par_razno()
+/*
  *     Podesenja parametri-razno
  */
 FUNCTION fakt_par_razno()
@@ -141,17 +141,17 @@ FUNCTION fakt_par_razno()
    LOCAL _unos_ref_lot := ref_lot()
    LOCAL _unos_opisa := fakt_opis_stavke()
    LOCAL _unos_objekta := fakt_objekti()
-   LOCAL _vr_pl := fakt_vrste_placanja()
+   LOCAL cFaktVrstePlacanja := fakt_vrste_placanja()
    LOCAL _unos_dest := destinacije()
    LOCAL _unos_br_veza := fakt_dok_veze()
    LOCAL _otpr_brojac_22 := fakt_otpr_22_brojac()
    LOCAL _otpr_gen := fakt_otpr_gen()
    LOCAL _kontrola_brojaca := fakt_kontrola_brojaca_par()
    LOCAL nRokPlDana := fakt_rok_placanja_dana()
+   LOCAL GetList := {}
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
-   PRIVATE GetList := {}
 
    o_params()
 
@@ -169,13 +169,13 @@ FUNCTION fakt_par_razno()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Pregled zadnjih izlaza kod unosa dokumenta (D/N) ?" GET _rabat VALID _rabat $ "DN" PICT "@!"
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Dužina sifre artikla sintetički " GET gnDS VALID gnDS > 0 PICT "9"
-   //++nX
-   //@ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Voditi samo količine " GET gSamoKol PICT "@!" VALID gSamoKol $ "DN"
+   // ++nX
+   // @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Voditi samo količine " GET gSamoKol PICT "@!" VALID gSamoKol $ "DN"
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Tekuća vrijednost za rok placanja  " GET nRokPlDana PICT "999"
    ++nX
-   //@ box_x_koord() + nX, box_y_koord() + 2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
-   //++nX
+   // @ box_x_koord() + nX, box_y_koord() + 2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
+   // ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz barkod-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
 
    ++nX
@@ -199,7 +199,7 @@ FUNCTION fakt_par_razno()
    ++nX
    read_dn_parametar( "Fakturisanje po objektima", box_x_koord() + nX, box_y_koord() + 2, @_unos_objekta )
    ++nX
-   read_dn_parametar( "Fakturisanje po vrstama placanja", box_x_koord() + nX, box_y_koord() + 2, @_vr_pl )
+   read_dn_parametar( "Fakturisanje po vrstama placanja", box_x_koord() + nX, box_y_koord() + 2, @cFaktVrstePlacanja )
    ++nX
    read_dn_parametar( "Fakt dodatni opis po stavkama", box_x_koord() + nX, box_y_koord() + 2, @_unos_opisa )
    ++nX
@@ -223,15 +223,11 @@ FUNCTION fakt_par_razno()
       ++nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Oznaka lokalnog porta za stampu: LPT" GET gMPLocPort VALID gMPLocPort $ "1234567" PICT "@!"
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Redukcija trake (0/1/2):" ;
-         GET gMPRedTraka ;
-         VALID gMPRedTraka $ "012"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Redukcija trake (0/1/2):" GET gMPRedTraka VALID gMPRedTraka $ "012"
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis id artikla na racunu (D/N):" ;
-         GET gMPArtikal VALID gMPArtikal $ "DN" PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis id artikla na racunu (D/N):"  GET gMPArtikal VALID gMPArtikal $ "DN" PICT "@!"
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" ;
-         GET gMPCjenPDV  VALID gMPCjenPDV $ "12"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" GET gMPCjenPDV  VALID gMPCjenPDV $ "12"
 
 
       READ
@@ -244,9 +240,9 @@ FUNCTION fakt_par_razno()
 
    IF LastKey() <> K_ESC
 
-      //set_metric( "fakt_voditi_samo_kolicine", NIL, gSamoKol )
+      // set_metric( "fakt_voditi_samo_kolicine", NIL, gSamoKol )
       set_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), nRokPlDana )
-      //set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
+      // set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
       set_metric( "fakt_meni_tekuci", my_user(), gIMenu )
       set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
       set_metric( "fakt_prikaz_barkod", my_user(), _prik_bk )
@@ -263,7 +259,7 @@ FUNCTION fakt_par_razno()
       fakt_objekti( _unos_objekta )
       ref_lot( _unos_ref_lot )
       fakt_prodajna_mjesta( _pm )
-      fakt_vrste_placanja( _vr_pl )
+      fakt_vrste_placanja( cFaktVrstePlacanja )
       fakt_dok_veze( _unos_br_veza )
       fakt_otpr_22_brojac( _otpr_brojac_22 )
       fakt_otpr_gen( _otpr_gen )
@@ -286,7 +282,7 @@ FUNCTION fakt_par_razno()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -295,10 +291,11 @@ FUNCTION fakt_zagl_params()
    LOCAL nSay := 17
    LOCAL sPict := "@S55"
    LOCAL nX := 1
+   LOCAL GetList := {}
+
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
-   PRIVATE GetList := {}
 
    gFNaziv := PadR( gFNaziv, 250 )
    gFPNaziv := PadR( gFPNaziv, 250 )
@@ -312,48 +309,38 @@ FUNCTION fakt_zagl_params()
    Box( , 21, 77, .F., "Izgleda dokumenata - zaglavlje" )
 
    // opci podaci
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Puni naziv firme:", nSay ) GET gFNaziv ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Puni naziv firme:", nSay ) GET gFNaziv  PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dodatni opis:", nSay ) GET gFPNaziv ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dodatni opis:", nSay ) GET gFPNaziv  PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Adresa firme:", nSay ) GET gFAdresa ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Adresa firme:", nSay ) GET gFAdresa PICT sPict
    nX++
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Ident.broj:", nSay ) GET gFIdBroj
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Telefoni:", nSay ) GET gFTelefon ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Telefoni:", nSay ) GET gFTelefon  PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "email/web:", nSay ) GET gFEmailWeb ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "email/web:", nSay ) GET gFEmailWeb PICT sPict
    nX++
 
    // banke
-   @ box_x_koord() + nX,  box_y_koord() + 2 SAY PadL( "Banka 1:", nSay ) GET gFBanka1 ;
-      PICT sPict
+   @ box_x_koord() + nX,  box_y_koord() + 2 SAY PadL( "Banka 1:", nSay ) GET gFBanka1 PICT sPict
    nX++
 
-   @ box_x_koord() + nX,  box_y_koord() + 2 SAY PadL( "Banka 2:", nSay ) GET gFBanka2 ;
-      PICT sPict
+   @ box_x_koord() + nX,  box_y_koord() + 2 SAY PadL( "Banka 2:", nSay ) GET gFBanka2 PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 3:", nSay ) GET gFBanka3 ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 3:", nSay ) GET gFBanka3 PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 4:", nSay ) GET gFBanka4 ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 4:", nSay ) GET gFBanka4 PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 5:", nSay ) GET gFBanka5 ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 5:", nSay ) GET gFBanka5 PICT sPict
    nX += 2
 
    // dodatni redovi
@@ -367,8 +354,7 @@ FUNCTION fakt_zagl_params()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Red 2:", nSay ) GET gFText2 PICT sPict
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Red 3:", nSay ) GET gFText3 ;
-      PICT sPict
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Red 3:", nSay ) GET gFText3 PICT sPict
    nX += 2
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koristiti tekstualno zaglavlje (D/N)?" GET gStZagl  VALID gStZagl $ "DN" PICT "@!"
@@ -412,8 +398,7 @@ FUNCTION fakt_par_cijene()
    LOCAL cCijena := fakt_pic_cijena()
    LOCAL cIznos := fakt_pic_iznos()
    LOCAL cKolicina := fakt_pic_kolicina()
-
-   PRIVATE  GetList := {}
+   LOCAL GetList := {}
 
    fakt_pic_kolicina( StrTran( fakt_pic_kolicina(), "@Z ", "" ) )
 
@@ -432,8 +417,7 @@ FUNCTION fakt_par_cijene()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Na kraju fakture izvrsiti zaokruzenje" GET gFZaok PICT "99"
    nX++
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Zaokruzenje 5 pf (D/N)?" GET gZ_5pf PICT "@!" ;
-      VALID gZ_5pf $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Zaokruzenje 5 pf (D/N)?" GET gZ_5pf PICT "@!" VALID gZ_5pf $ "DN"
 
    READ
 
@@ -444,7 +428,6 @@ FUNCTION fakt_par_cijene()
       fakt_pic_cijena( cCijena )
       fakt_pic_iznos( cIznos )
       fakt_pic_kolicina( cKolicina )
-
       set_metric( "fakt_zaokruzenje", NIL, gFZaok )
       set_metric( "fakt_zaokruzenje_5_pf", NIL, gZ_5pf )
 
@@ -456,7 +439,7 @@ FUNCTION fakt_par_cijene()
 
 FUNCTION fakt_par_varijante_prikaza()
 
-   PRIVATE  GetList := {}
+   LOCAL GetList := {}
 
    o_params()
 
@@ -704,8 +687,8 @@ FUNCTION fakt_par_nazivi_dokumenata()
    o_params()
 
    g10Str := PadR( g10Str, 20 )
-   //g16Str := PadR( g16Str, 20 )
-   //g06Str := PadR( g06Str, 20 )
+   // g16Str := PadR( g16Str, 20 )
+   // g06Str := PadR( g06Str, 20 )
    g11Str := PadR( g11Str, 20 )
    g12Str := PadR( g12Str, 20 )
    g13Str := PadR( g13Str, 20 )
@@ -723,7 +706,7 @@ FUNCTION fakt_par_nazivi_dokumenata()
    g12ftxt := PadR( g12ftxt, 100 )
    g13ftxt := PadR( g13ftxt, 100 )
    g15ftxt := PadR( g15ftxt, 100 )
-   //g16ftxt := PadR( g16ftxt, 100 )
+   // g16ftxt := PadR( g16ftxt, 100 )
    g20ftxt := PadR( g20ftxt, 100 )
    g21ftxt := PadR( g21ftxt, 100 )
    g22ftxt := PadR( g22ftxt, 100 )
@@ -733,8 +716,8 @@ FUNCTION fakt_par_nazivi_dokumenata()
    g27ftxt := PadR( g27ftxt, 100 )
 
    g10Str2T := PadR( g10Str2T, 132 )
-   //g16Str2T := PadR( g16Str2T, 132 )
-   //g06Str2T := PadR( g06Str2T, 132 )
+   // g16Str2T := PadR( g16Str2T, 132 )
+   // g06Str2T := PadR( g06Str2T, 132 )
    g11Str2T := PadR( g11Str2T, 132 )
    g15Str2T := PadR( g15Str2T, 132 )
    g12Str2T := PadR( g12Str2T, 132 )
@@ -749,8 +732,8 @@ FUNCTION fakt_par_nazivi_dokumenata()
    gNazPotStr := PadR( gNazPotStr, 132 )
 
    Box(, 22, 76, .F., "Naziv dokumenata, potpis na kraju, str. 1" )
-   //@ box_x_koord() + 1, box_y_koord() + 2 SAY "06 - Tekst"      GET g06Str
-   //@ box_x_koord() + 2, box_y_koord() + 2 SAY "06 - Potpis TXT" GET g06Str2T PICT"@S50"
+   // @ box_x_koord() + 1, box_y_koord() + 2 SAY "06 - Tekst"      GET g06Str
+   // @ box_x_koord() + 2, box_y_koord() + 2 SAY "06 - Potpis TXT" GET g06Str2T PICT"@S50"
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "10 - Tekst"      GET g10Str
    @ box_x_koord() + 4, Col() + 1 SAY "d.txt lista:" GET g10ftxt PICT "@S25"
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "10 - Potpis TXT" GET g10Str2T PICT"@S50"
@@ -766,9 +749,9 @@ FUNCTION fakt_par_nazivi_dokumenata()
    @ box_x_koord() + 16, box_y_koord() + 2 SAY "15 - Tekst"      GET g15Str
    @ box_x_koord() + 16, Col() + 1 SAY "d.txt lista:" GET g15ftxt PICT "@S25"
    @ box_x_koord() + 17, box_y_koord() + 2 SAY "15 - Potpis TXT" GET g15Str2T PICT "@S50"
-   //@ box_x_koord() + 19, box_y_koord() + 2 SAY "16 - Tekst"      GET g16Str
-   //@ box_x_koord() + 19, Col() + 1 SAY "d.txt lista:" GET g16ftxt PICT "@S25"
-   //@ box_x_koord() + 20, box_y_koord() + 2 SAY "16 - Potpis TXT" GET g16Str2T PICT"@S50"
+   // @ box_x_koord() + 19, box_y_koord() + 2 SAY "16 - Tekst"      GET g16Str
+   // @ box_x_koord() + 19, Col() + 1 SAY "d.txt lista:" GET g16ftxt PICT "@S25"
+   // @ box_x_koord() + 20, box_y_koord() + 2 SAY "16 - Potpis TXT" GET g16Str2T PICT"@S50"
    READ
    BoxC()
 
@@ -815,9 +798,9 @@ FUNCTION fakt_par_nazivi_dokumenata()
       set_metric( "fakt_dokument_dok_13_naziv", NIL, g13Str )
       set_metric( "fakt_dokument_dok_13_potpis", NIL, g13Str2T )
       set_metric( "fakt_dokument_dok_13_txt_lista", NIL, g13ftxt )
-      //set_metric( "fakt_dokument_dok_16_naziv", NIL, g16Str )
-      //set_metric( "fakt_dokument_dok_16_potpis", NIL, g16Str2T )
-      //set_metric( "fakt_dokument_dok_16_txt_lista", NIL, g16ftxt )
+      // set_metric( "fakt_dokument_dok_16_naziv", NIL, g16Str )
+      // set_metric( "fakt_dokument_dok_16_potpis", NIL, g16Str2T )
+      // set_metric( "fakt_dokument_dok_16_txt_lista", NIL, g16ftxt )
       set_metric( "fakt_dokument_dok_20_naziv", NIL, g20Str )
       set_metric( "fakt_dokument_dok_20_potpis", NIL, g20Str2T )
       set_metric( "fakt_dokument_dok_20_txt_lista", NIL, g20ftxt )
@@ -826,7 +809,7 @@ FUNCTION fakt_par_nazivi_dokumenata()
       set_metric( "fakt_dokument_dok_22_txt_lista", NIL, g22ftxt )
 
 
-      //WPar( "r3", g06Str )
+      // WPar( "r3", g06Str )
       WPar( "xl", @g15Str )
       WPar( "x9", @g21Str )
       WPar( "xC", @g23Str )
@@ -834,7 +817,7 @@ FUNCTION fakt_par_nazivi_dokumenata()
       WPar( "xi", @g26Str )
       WPar( "xo", @g27Str )
 
-      //WPar( "r4", @g06Str2T )
+      // WPar( "r4", @g06Str2T )
       WPar( "xm", @g15Str2T )
       WPar( "xa", @g21Str2T )
       WPar( "xD", @g23Str2T )

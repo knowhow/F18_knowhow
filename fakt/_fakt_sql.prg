@@ -324,7 +324,7 @@ FUNCTION seek_fakt( cIdFirma, cIdTipDok, cBrDok, cIdPartner, cIdRoba, dDatDokOd,
       cSql += "idtipdok=" + sql_quote( cIdTipDok )
    ENDIF
 
-altd()
+
    IF cBrDok != NIL .AND. !Empty( cBrDok )
       IF lWhere
          cSql += " AND "

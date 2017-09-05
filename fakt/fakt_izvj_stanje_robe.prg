@@ -35,7 +35,7 @@ FUNCTION fakt_stanje_robe()
 
    lBezUlaza := .F.
 
-   _o_tables()
+   //_o_tables()
 
    cIdFirma := self_organizacija_id()
    qqRoba := ""
@@ -158,7 +158,7 @@ FUNCTION fakt_stanje_robe()
 
    ENDIF
 
-   seek_fakt( cIdFirma )
+   seek_fakt_3( cIdFirma )
 
    IF cFilt == ".t."
       SET FILTER TO
@@ -215,7 +215,7 @@ FUNCTION fakt_stanje_robe()
       nStanjeCR := nUl := nIzl := 0
       nRezerv := nRevers := 0
 
-      DO WHILE !Eof()  .AND. cIdRoba == IdRoba
+      DO WHILE !Eof() .AND. cIdRoba == IdRoba
 
          // provjeri datumski valutu, otpremnicu
          IF cDDokOtpr == "O"
@@ -386,7 +386,9 @@ FUNCTION fakt_stanje_robe()
 
    ENDDO
 
-   IF PRow() > 59; fakt_zagl_stanje_robe(); ENDIF
+   IF PRow() > 59
+     fakt_zagl_stanje_robe()
+   ENDIF
 
    IF !lBezUlaza
       ? Space( gnLMarg ); ?? m
@@ -469,7 +471,7 @@ FUNCTION fakt_zagl_stanje_robe()
 
 
 
-STATIC FUNCTION _o_tables()
+//STATIC FUNCTION _o_tables()
 
    // o_fakt_doks_dbf()
    // o_tarifa()
@@ -481,4 +483,4 @@ STATIC FUNCTION _o_tables()
    // o_fakt_dbf()
    //SET ORDER TO TAG "3"
 
-   RETURN .T.
+//   RETURN .T.

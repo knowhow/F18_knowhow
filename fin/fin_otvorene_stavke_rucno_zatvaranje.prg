@@ -113,7 +113,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    hParams[ "idfirma" ] := cIdFirma
    hParams[ "idkonto" ] := cIdKonto
    hParams[ "idpartner" ] := cIdPartner
-   hParams[ "order_by" ] := "IdFirma,IdKonto,IdPartner,brdok"
+   hParams[ "order_by" ] := cOrderBy
    hParams[ "alias" ] := "SUBAN_PREGLED"
    hParams[ "wa" ] := F_SUBAN_PREGLED
    find_suban_by_konto_partner( @hParams )

@@ -445,8 +445,7 @@ FUNCTION PrenosNoFakt()
             select_o_roba( fakt->idroba )
             IF roba->tip = "P"
                // radi se o proizvodu
-               SELECT sast
-               HSEEK  fakt->idroba
+               select_o_sast( fakt->idroba )
                DO WHILE !Eof() .AND. id == fakt->idroba
                   // setaj kroz sast
                 select_o_roba(sast->id2 )
@@ -503,7 +502,7 @@ FUNCTION PrenosNoFakt()
    Boxc()
    closeret
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -516,6 +515,7 @@ FUNCTION fakt_kalk_prenos_normativi()
    LOCAL cIdTipDok := "10;11;12;      "
    LOCAL cBrDok := Space( 8 )
    LOCAL cBrKalk := Space( 8 )
+   LOCAL GetList := {}
 
    o_kalk_pripr()
    // o_kalk()
@@ -608,8 +608,7 @@ FUNCTION fakt_kalk_prenos_normativi()
       GO TOP
 
       DO WHILE !Eof()
-         SELECT sast
-         HSEEK  kalk_pripr->idroba
+         select_o_sast( kalk_pripr->idroba )
          DO WHILE !Eof() .AND. id == kalk_pripr->idroba
             // setaj kroz sast
             // utvr|ivanje nabavnih cijena po sastavnici !!!!!
@@ -624,12 +623,10 @@ FUNCTION fakt_kalk_prenos_normativi()
             SKIP
          ENDDO
 
-         // nafiluj nabavne cijene proizvoda u sifrarnik robe!!!
-         select_o_roba( kalk_pripr->idroba )
 
-         IF Found()
+         IF select_o_roba( kalk_pripr->idroba )
             hRec := dbf_get_rec()
-            hRec[ "nc" ] := kalk_pripr->fcj
+            hRec[ "nc" ] := kalk_pripr->fcj // nafiluj nabavne cijene proizvoda u sifarnik robe
             update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
          ENDIF
 

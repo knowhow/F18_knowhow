@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.90-std, 2017-09-05
+### FAKT
+- BUGFIX: fakt-kalk normativi select_o_sast
+
 ## 3.1.89-std, 2017-09-05
 ### FAKT
 - BUGFIX: realizacija kumulativno po partnerima, stanje robe 

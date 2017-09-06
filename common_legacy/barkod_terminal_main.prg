@@ -45,32 +45,33 @@ FUNCTION import_BTerm_data( cI_File )
 // -----------------------------------------------------
 // Vraca podesenje putanje do exportovanih fajlova
 // -----------------------------------------------------
-STATIC FUNCTION get_export_path( PATH )
+STATIC FUNCTION get_export_path( cPath )
 
-   LOCAL _path
+   //LOCAL _path
+   LOCAL GetList := {}
 
 #ifdef __PLATFORM__WINDOWS
 
-   _path := "c:" + SLASH + "import" + SLASH
+   cPath := "c:" + SLASH + "import" + SLASH
 #else
-   _path := SLASH + "home" + SLASH + my_user() + SLASH + "import" + SLASH
+   cPath := SLASH + "home" + SLASH + my_user() + SLASH + "import" + SLASH
 #endif
 
-   _path := PadR( fetch_metric( "bterm_imp_exp_path", my_user(), AllTrim( _path ) ), 500 )
+   cPath := PadR( fetch_metric( "bterm_imp_exp_path", my_user(), AllTrim( cPath ) ), 500 )
 
    Box(, 2, 70 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Import / export lokacija:"
-   @ box_x_koord() + 2, box_y_koord() + 2 SAY "lokacija:" GET _path PICT "@S50"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "lokacija:" GET cPath PICT "@S50"
    READ
    BoxC()
 
    IF LastKey() == K_ESC
-      PATH := NIL
+      cPath := NIL
       RETURN .F.
    ENDIF
 
-   PATH := AllTrim( _path )
-   set_metric( "bterm_imp_exp_path", my_user(), PATH )
+   cPath := AllTrim( cPath )
+   set_metric( "bterm_imp_exp_path", my_user(), cPath )
 
    RETURN .T.
 
@@ -153,7 +154,7 @@ FUNCTION export_BTerm_data()
       RETURN 0
    ENDIF
 
-   cre_tmp()
+   barkod_terminal_cre_r_export()
 
    o_r_export()
    INDEX ON barkod TAG "ID"
@@ -224,10 +225,8 @@ STATIC FUNCTION get_article_tbl_struct()
    RETURN aRet
 
 
-// -------------------------------------------
-// kreiraj pomocnu tabelu
-// -------------------------------------------
-STATIC FUNCTION cre_tmp()
+
+STATIC FUNCTION barkod_terminal_cre_r_export()
 
    LOCAL aFields := {}
 

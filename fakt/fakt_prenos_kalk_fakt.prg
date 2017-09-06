@@ -22,7 +22,7 @@ FUNCTION kalk_fakt()
    AAdd( aOpc, "1. prenos kalk -> fakt            " )
    AAdd( aOpcExe, {|| kalk_2_fakt() } )
    AAdd( aOpc, "2. prenos kalk->fakt za partnera  " )
-   AAdd( aOpcExe, {|| kalkp_2_fakt() } )
+   AAdd( aOpcExe, {|| kalk_2_fakt_period() } )
    // AAdd( aOpc, "3. parametri prenosa" )
    // AAdd( aOpcExe, {|| _params() } )
 
@@ -58,9 +58,7 @@ STATIC FUNCTION _params()
    RETURN .T.
 */
 
-// -----------------------------------------
-// prenos kalk u fakt
-// -----------------------------------------
+
 FUNCTION kalk_2_fakt()
 
    LOCAL cIdFirma := self_organizacija_id()
@@ -71,11 +69,12 @@ FUNCTION kalk_2_fakt()
    LOCAL lToRacun := .F.
    LOCAL cFaktPartn := Space( 6 )
    LOCAL lFirst
+   LOCAL GetList := {}
 
-   _o_tables()
+   // _o_tables()
 
-   SELECT kalk
-   SET ORDER TO TAG "1"
+   // SELECT kalk
+   // SET ORDER TO TAG "1"
 
    Box(, 15, 60 )
 
@@ -86,11 +85,11 @@ FUNCTION kalk_2_fakt()
 
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Broj KALK dokumenta:"
 
-      IF gNW == "N"
-         @ box_x_koord() + 2, Col() + 1 GET cIdFirma PICT "@!"
-      ELSE
-         @ box_x_koord() + 2, Col() + 1 SAY cIdFirma PICT "@!"
-      ENDIF
+      // IF gNW == "N"
+      // @ box_x_koord() + 2, Col() + 1 GET cIdFirma PICT "@!"
+      // ELSE
+      @ box_x_koord() + 2, Col() + 1 SAY cIdFirma PICT "@!"
+      // ENDIF
 
       @ box_x_koord() + 2, Col() + 1 SAY "- " GET cIdTipDok
       @ box_x_koord() + 2, Col() + 1 SAY "-" GET cBrDok
@@ -110,8 +109,7 @@ FUNCTION kalk_2_fakt()
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Broj dokumenta u modulu FAKT: "
       @ box_x_koord() + 3, Col() + 1 GET cIdRJ PICT "@!"
       @ box_x_koord() + 3, Col() + 2 SAY "-" GET cTipFakt
-      @ box_x_koord() + 3, Col() + 2 SAY "-" GET cBrFakt ;
-         WHEN _set_brdok( cIdRj, cTipFakt, @cBrFakt )
+      @ box_x_koord() + 3, Col() + 2 SAY "-" GET cBrFakt WHEN _set_brdok( cIdRj, cTipFakt, @cBrFakt )
 
       READ
 
@@ -124,7 +122,7 @@ FUNCTION kalk_2_fakt()
          lToRacun := .T.
       ENDIF
 
-      // partner kojem se fakturise.....
+
       IF lToRacun == .T.
          @ box_x_koord() + 4, box_y_koord() + 2 SAY "Partner kojem se fakturise:" GET cFaktPartn VALID p_partner( @cFaktPartn )
 
@@ -136,7 +134,7 @@ FUNCTION kalk_2_fakt()
       ENDIF
 
       IF seek_fakt( cIdRj, cTipFakt, cBrFakt )
-      //IF !Eof()
+         // IF !Eof()
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "U FAKT vec postoji ovaj dokument !!"
          Inkey( 4 )
@@ -144,12 +142,12 @@ FUNCTION kalk_2_fakt()
          LOOP
       ENDIF
 
-      //SELECT KALK
-      //SEEK cIdFirma + cIdTipDok + cBrDok
+      // SELECT KALK
+      // SEEK cIdFirma + cIdTipDok + cBrDok
 
       IF !find_kalk_by_broj_dokumenta( cIdFirma, cIdTipDok, cBrDok )
 
-      //IF !Found()
+         // IF !Found()
 
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !"
@@ -202,8 +200,7 @@ FUNCTION kalk_2_fakt()
             @ box_x_koord() + 12, box_y_koord() + 2 SAY "Mjesto  " GET cTxtc
 
             IF nRokPl > 0
-               @ box_x_koord() + 14, box_y_koord() + 2 SAY "Rok placanja: " + ;
-                  AllTrim( Str( nRokPl ) ) + " dana"
+               @ box_x_koord() + 14, box_y_koord() + 2 SAY "Rok placanja: " + AllTrim( Str( nRokPl ) ) + " dana"
             ENDIF
 
             READ
@@ -270,7 +267,6 @@ FUNCTION kalk_2_fakt()
       @ box_x_koord() + 8, box_y_koord() + 2 SAY "Dokument je prenesen !"
 
       Inkey( 4 )
-
       @ box_x_koord() + 8, box_y_koord() + 2 SAY Space( 30 )
 
    ENDDO
@@ -339,19 +335,19 @@ STATIC FUNCTION _g_fakt_type( cKalkType )
 
 
 
-// -------------------------------------------------
-// prenos kalk -> fakt period
-// -------------------------------------------------
-FUNCTION kalkp_2_fakt()
+
+FUNCTION kalk_2_fakt_period()
 
    LOCAL lFirst
    LOCAL cFaktPartn
+   LOCAL GetList := {}
 
-   _o_tables()
+   //_o_tables()
 
-   SELECT fakt_pripr
-   SET ORDER TO TAG "3"
-   // idfirma+idroba+rbr
+   select_o_fakt_pripr()
+
+   //SELECT fakt_pripr
+   SET ORDER TO TAG "3" // idfirma+idroba+rbr
 
    cIdFirma   := self_organizacija_id()
    dOd := Date()
@@ -653,16 +649,16 @@ STATIC FUNCTION fakt_naredni_broj_dokumenta()
 
 
 
-STATIC FUNCTION _o_tables()
+//STATIC FUNCTION _o_tables()
 
-   //o_fakt_doks_dbf()
+   // o_fakt_doks_dbf()
    // o_roba()
    // o_rj()
    // o_kalk()
-   //o_fakt_dbf()
-   o_fakt_pripr()
+   // o_fakt_dbf()
+
    // o_sifk()
    // o_sifv()
    // o_partner()
 
-   RETURN .T.
+//   RETURN .T.

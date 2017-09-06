@@ -32,6 +32,8 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
    LOCAL nProcKorak := 0.01
    LOCAL cOdgovor := "N"
    LOCAL nDodaj, nFV, nStavkaObracunato, nDeltaStvarnoObracunato, nUkupnoObracunato, nNovaStopa
+   LOCAL nRNUkupnoProdVrijednost
+   LOCAL GetList := {}
 
    IF lSilent == NIL
       lSilent := .F.
@@ -40,8 +42,8 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
       RETURN .F.
    ENDIF
 
-   //PRIVATE qqTar := ""
-   //PRIVATE aUslTar := ""
+   // PRIVATE qqTar := ""
+   // PRIVATE aUslTar := ""
 
    IF cSet == NIL
       nSetEnd := 1
@@ -79,21 +81,21 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
    select_o_koncij( kalk_pripr->mkonto )
    SELECT kalk_pripr
 
-//   IF IsVindija()
-//      PushWA()
-  //    IF !Empty( qqTar )
-  //       aUslTar := Parsiraj( qqTar, "idTarifa" )
-  //       IF aUslTar <> NIL .AND. !aUslTar == ".t."
-  //          SET FILTER TO &aUslTar
-  //       ENDIF
-  //    ENDIF
-  // ENDIF
+// IF IsVindija()
+// PushWA()
+   // IF !Empty( qqTar )
+   // aUslTar := Parsiraj( qqTar, "idTarifa" )
+   // IF aUslTar <> NIL .AND. !aUslTar == ".t."
+   // SET FILTER TO &aUslTar
+   // ENDIF
+   // ENDIF
+   // ENDIF
 
    DO WHILE !Eof()
       nUkupanIznosFakture := 0
       nUkupnoTezina := 0
       nUkupnoKolicina := 0
-      nUkProV := 0
+      nRNUkupnoProdVrijednost := 0
 
       cIdFirma := field->idfirma
       cIdVd := field->idvd
@@ -116,7 +118,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
 
          IF cIdVd $ "RN"
             IF Val( Rbr ) < 900
-               nUkProV += Round( field->vpc * field->kolicina, gZaokr )
+               nRNUkupnoProdVrijednost += Round( field->vpc * field->kolicina, gZaokr )
             ELSE
                nUkupanIznosFakture += Round( field->nc * field->kolicina, gZaokr )  // sirovine
             ENDIF
@@ -198,7 +200,12 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                Scatter()
 
                IF _idvd $ "RN" .AND. Val( _rbr ) < 900
-                  _fcj := _fcj2 := _vpc / nUKProV * nUkupanIznosFakture // nabavne cijene izmisli proporcionalno prodajnim
+                  IF Round( nRNUkupnoProdVrijednost, 4 ) == 0
+                     error_bar( "RN", "RN stavke - ukupna prodajna vrijednost 0?!")
+                     _fcj := _fcj2 := 0
+                  ELSE
+                     _fcj := _fcj2 := _vpc / nRNUkupnoProdVrijednost * nUkupanIznosFakture // nabavne cijene proporcionalno prodajnim
+                  ENDIF
                ENDIF
 
                IF cTipPrevoz $ "RT"  // troskovi 1 - R - raspored, T - raspored po tezini
@@ -246,7 +253,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                      ENDIF
 
                      nUCarDaz += _Cardaz
-                     IF Abs( nIznosCarDaz - nUCarDaz ) < 0.1 // sitniç, baci ga na zadnju st.
+                     IF Abs( nIznosCarDaz - nUCarDaz ) < 0.1 // sitniš, baci ga na zadnju stavku
                         SKIP
                         IF !( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
                            _Cardaz += ( nIznosCarDaz - nUCarDaz )
@@ -522,10 +529,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
       ENDIF // cIdVd $ "11#12#13"
    ENDDO  // eof()
 
-//   IF IsVindija()
-//      SELECT kalk_pripr
-//      PopWA()
-//   ENDIF
+// IF IsVindija()
+// SELECT kalk_pripr
+// PopWA()
+// ENDIF
 
    GO TOP
 

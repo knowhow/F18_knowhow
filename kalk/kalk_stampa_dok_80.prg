@@ -208,7 +208,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
    nRec := RecNo()
    kalk_pripr_rekap_tarife()
 
-   // potpis na dokumentu
-   dok_potpis( 90, "L", nil, nil )
+
+   dok_potpis( 90, "L", nil, nil ) // potpis na dokumentu
 
    RETURN .F.

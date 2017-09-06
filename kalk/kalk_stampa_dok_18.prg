@@ -124,5 +124,4 @@ FUNCTION kalk_stampa_dok_18()
    ? PadL( "3. ___________________", 75 )
    ?
 
-   RETURN
-// }
+   RETURN .T.

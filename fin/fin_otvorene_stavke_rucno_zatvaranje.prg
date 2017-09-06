@@ -19,6 +19,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    LOCAL GetList := {}
    LOCAL hParams := hb_Hash()
    LOCAL cIdFirma, cIdPartner, cIdKonto, cIdRj
+   LOCAL cOrderBy
 
    open_otv_stavke_tabele()
 

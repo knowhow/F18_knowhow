@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.92-std, 2017-09-06
+### FIN
+- BUGFIX: fin otvorene stavke ručno zatvaranje F5-F6 
+
 ## 3.1.90-std, 2017-09-05
 ### FAKT
 - BUGFIX: fakt-kalk normativi select_o_sastavnice()

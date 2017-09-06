@@ -1,8 +1,8 @@
 # F18 klijent, lista promjena
 
-## 3.1.92-std, 2017-09-06
+## 3.1.93-std, 2017-09-06
 ### FIN
-- BUGFIX: fin otvorene stavke ručno zatvaranje F5-F6 
+- BUGFIX: fin otvorene stavke ručno zatvaranje F5-F6, kartica za odredjeni broj veze sort po datumu
 
 ## 3.1.90-std, 2017-09-05
 ### FAKT

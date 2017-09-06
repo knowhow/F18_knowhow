@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-STATIC s_cPomBrDok
+STATIC s_cPomBrDok := ""
 
 FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
@@ -19,7 +19,6 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    LOCAL GetList := {}
    LOCAL hParams := hb_Hash()
    LOCAL cIdFirma, cIdPartner, cIdKonto, cIdRj
-   LOCAL cOrderBy
 
    open_otv_stavke_tabele()
 
@@ -286,10 +285,10 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
 
       ELSE
   */
-      IF Pitanje(, "Želite li da vezni broj " + suban_pregled->BrDok + " zamijenite brojem " + s_cPomBrDok + " ?", "D" ) == "D"
+      IF !Empty( s_cPomBrDok ) .AND. Pitanje(, "Želite li da vezni broj " + suban_pregled->BrDok + " zamijenite brojem " + s_cPomBrDok + " ?", "D" ) == "D"
          hRec := dbf_get_rec()
          hRec[ "brdok" ] := s_cPomBrDok
-         log_write( "otvorene stavke, zamjena broja veze, set=" + cPomBrDok, 5 )
+         log_write( "otvorene stavke, zamjena broja veze, set=" + s_cPomBrDok, 5 )
          update_rec_server_and_dbf( "fin_suban", hRec, 1, "FULL" )
          SELECT SUBAN_PREGLED
          replace brdok with s_cPomBrDok

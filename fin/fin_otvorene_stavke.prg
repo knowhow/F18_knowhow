@@ -117,15 +117,6 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn
 
 
 
-
-
-/*
- *     Otvorene stavke grupisane po brojevima veze
- *   param: lUnesiPodatke
- *   param: lBezPitanjaPartnerKonto
- *   param: bFilter - npr. {|| getmjesto(cMjesto)}
- */
-
 FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( cIdFirma, cIdKonto, cIdPartner, cBrDok, lUnesiPodatke, lBezPitanjaPartnerKonto, bFilter )
 
    LOCAL nCol1 := 72, cSvi := "N", cSviD := "N", lPrikazDatumDokumentaIValutiranje := .F.
@@ -496,13 +487,9 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( cIdFirma, cIdKonto, cIdPartn
             ? datdok, datval, datzpr, PadR( brdok, 10 )
             nCol1 := PCol() + 1
             ?? " "
-            ?? Transform( dug, picbhd ), ;
-               Transform( pot, picbhd ), ;
-               Transform( dug - pot, picbhd )
+            ?? Transform( dug, picbhd ), Transform( pot, picbhd ), Transform( dug - pot, picbhd )
             IF fin_dvovalutno()
-               ?? " " + Transform( dug2, picdem ), ;
-                  Transform( pot2, picdem ), ;
-                  Transform( dug2 - pot2, picdem )
+               ?? " " + Transform( dug2, picdem ), Transform( pot2, picdem ), Transform( dug2 - pot2, picdem )
             ENDIF
             ?? "  " + otvst
             nUDug += Dug; nUPot += Pot
@@ -712,8 +699,7 @@ FUNCTION fin_otv_stavke_stampa_za_broj_veze( cIdfirma, cIdkonto, cIdPartner, cBr
    // SELECT suban; SET ORDER TO TAG "3"
    // SEEK cidfirma + cidkonto + cidpartner + cBrDok
 
-   AltD()
-   find_suban_by_konto_partner( cIdfirma, cIdkonto, cIdpartner, cBrDok, "IdFirma,IdKonto,IdPartner,brdok" )
+   find_suban_by_konto_partner( cIdfirma, cIdkonto, cIdpartner, cBrDok, "IdFirma,IdKonto,IdPartner,datdok,brdok" )
 
 
    nDug2 := nPot2 := 0
@@ -778,7 +764,7 @@ STATIC FUNCTION fin_zagl_otv_st_za_broj_veze( cIdFirma, cIdKonto, cIdPartner, cB
    ELSE
       F12CPI
    ENDIF
-   ??U "FIN.P: KARTICA ZA ODREĐENI BROJ VEZE    NA DAN "; ?? Date()
+   ??U "FIN.P: KARTICA ZA ODREĐENI BROJ VEZE  NA DAN "; ?? Date()
    @ PRow(), 110 SAY "Str:" + Str( ++nStr, 3 )
 
    select_o_partner( cIdFirma )
@@ -791,7 +777,7 @@ STATIC FUNCTION fin_zagl_otv_st_za_broj_veze( cIdFirma, cIdKonto, cIdPartner, cB
    ? "PARTNER:", cIdPartner, Trim( partn->naz ), " ", Trim( partn->naz2 ), " ", Trim( partn->mjesto )
 
    SELECT suban
-   ? "BROJ VEZE :", cBrDok
+   ? "BROJ VEZE:", cBrDok
    ? M
    // IF fin_dvovalutno()
    // ? "Dat.dok.*Dat.val." + "*NALOG * Rbr *TD*   dug " + ValDomaca() + "   *  pot " + ValDomaca() + "  *   saldo " + ValDomaca() + "*  dug " + ValPomocna() + "* pot " + ValPomocna() + " *saldo " + ValPomocna() + "* O"

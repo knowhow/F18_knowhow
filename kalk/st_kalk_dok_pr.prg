@@ -66,9 +66,9 @@ FUNCTION kalk_stampa_dok_pr()
 
 
          kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
-
          select_o_roba( kalk_pripr->IdRoba )
          select_o_tarifa( kalk_pripr->IdTarifa )
+
          SELECT kalk_pripr
 
          IF PRow() > page_length()
@@ -98,9 +98,9 @@ FUNCTION kalk_stampa_dok_pr()
          nU5 := nSpedTr * SKol
          nU6 := nCarDaz * SKol
          nU7 := nZavTr * SKol
-         nU8 := field->NC *    ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
+         nU8 := field->NC * ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
          nU9 := nMarza * ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
-         nUA := field->VPC   * ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
+         nUA := field->VPC * ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
 
          IF Val( field->Rbr ) > 99
             nTNabavna += nUnabavna; nT1 += nU1

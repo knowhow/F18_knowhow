@@ -334,7 +334,6 @@ FUNCTION kalk_stampa_dok_81_tops( lZaTops )
 */
 
       kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
-
       select_o_roba( kalk_pripr->IdRoba )
       select_o_tarifa( kalk_pripr->IdTarifa )
 

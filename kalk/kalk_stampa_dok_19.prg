@@ -133,8 +133,7 @@ FUNCTION kalk_stampa_dok_19()
 
    PrnClanoviKomisije()
 
-   RETURN
-// }
+   RETURN .T.
 
 
 FUNCTION head_19()

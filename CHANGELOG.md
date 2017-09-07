@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.95-std, 2017-09-07
+### CORE
+- upgrade pitati samo prilikom prvog ulaska u aplikaciju
+ 
 ## 3.1.94-std, 2017-09-06
 ### FIN
 - BUGFIX: fin otvorene stavke ručno zatvaranje F5-F6, kartica za odredjeni broj veze sort po datumu

@@ -145,8 +145,10 @@ FUNCTION f18_preporuci_upgrade( cVersion )
 
 FUNCTION check_updates()
 
-   IF s_cCheckUpdates == NIL
+   IF s_cCheckUpdates == NIL // prvi poziv
       s_cCheckUpdates := fetch_metric( "F18_check_updates", my_user(), "D" )
+   ELSE
+      s_cCheckUpdates := "N" // nakon prvog poziva ne nuditi vise upgrade
    ENDIF
 
    RETURN s_cCheckUpdates == "D"

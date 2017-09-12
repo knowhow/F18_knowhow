@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.96-std, 2017-09-12
+### FAKT
+- FAKT pregledo dokumenata sort (D)atdok/(B)rdok
+
 ## 3.1.95-std, 2017-09-07
 ### CORE
 - upgrade pitati samo prilikom prvog ulaska u aplikaciju

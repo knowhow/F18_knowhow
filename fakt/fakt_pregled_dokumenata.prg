@@ -35,8 +35,10 @@ FUNCTION fakt_pregled_liste_dokumenata()
    LOCAL GetList := {}
    LOCAL cUslovIdPartner, cFilterSifraKupca
    LOCAL cUslovTipDok
+   LOCAL cUslovFaktBrDok, cFilterBrFaktDok
+   LOCAL cOrderBy, cSort := "D"
 
-   PRIVATE cImekup, cIdFirma, cBrFakDok
+   PRIVATE cImekup, cIdFirma
 
    // o_vrstep()
    // o_ops()
@@ -57,7 +59,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    cUslovTipDok := ""
    cUslovIdPartner := Space( 20 )
    cTabela := "N"
-   cBrFakDok := Space( 40 )
+   cUslovFaktBrDok := Space( 40 )
    cImeKup := Space( 20 )
    cOpcina := Space( 30 )
 
@@ -65,7 +67,8 @@ FUNCTION fakt_pregled_liste_dokumenata()
       _objekat_id := Space( 10 )
    ENDIF
 
-   Box( , 13 + iif( cVrstePlacanja .OR. lOpcine .OR. lFaktObjekti, 6, 0 ), 77 )
+
+   Box( , 14 + iif( cVrstePlacanja .OR. lOpcine .OR. lFaktObjekti, 6, 0 ), 77 )
 
    cIdFirma := fetch_metric( "fakt_stampa_liste_id_firma", cF18User, cIdFirma )
    cUslovTipDok := fetch_metric( "fakt_stampa_liste_dokumenti", cF18User, cUslovTipDok )
@@ -74,7 +77,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    cTabela := fetch_metric( "fakt_stampa_liste_tabelarni_pregled", cF18User, cTabela )
    cImeKup := fetch_metric( "fakt_stampa_liste_ime_kupca", cF18User, cImeKup )
    cUslovIdPartner := fetch_metric( "fakt_stampa_liste_partner", cF18User, cUslovIdPartner )
-   cBrFakDok := fetch_metric( "fakt_stampa_liste_broj_dokumenta", cF18User, cBrFakDok )
+   cUslovFaktBrDok := fetch_metric( "fakt_stampa_liste_broj_dokumenta", cF18User, cUslovFaktBrDok )
 
    cImeKup := PadR( cImeKup, 20 )
    cUslovIdPartner := PadR( cUslovIdPartner, 20 )
@@ -98,7 +101,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Ime kupca počinje sa (prazno svi)" GET cImeKup PICT "@!"
       @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Uslov po šifri kupca (prazno svi)" GET cUslovIdPartner PICT "@!" ;
          VALID {|| valid_sifra_partner( @cUslovIdPartner, @cFilterSifraKupca ) }
-      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok PICT "@!"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Broj dokumenta (prazno svi)" GET cUslovFaktBrDok PICT "@!"
 
       @ box_x_koord() + 9, box_y_koord() + 2 SAY "Tabelarni pregled" GET cTabela VALID cTabela $ "DN" PICT "@!"
 
@@ -124,11 +127,13 @@ FUNCTION fakt_pregled_liste_dokumenata()
       @ box_x_koord() + 19, box_y_koord() + 2 SAY "Valute ( /KM/EUR)"  GET cValute
       @ box_x_koord() + 19, Col() + 2 SAY8 " samo dokumenti koji sadrže robu D/N"  GET cSamoRobaDN PICT "@!" VALID cSamoRobaDN $ "DN"
 
+      @ box_x_koord() + 20, box_y_koord() + 2 SAY8 "Sort (D)atdok/(B)rdok"  GET cSort PICT "@!" VALID cSort $ "DB"
+
       READ
 
       ESC_BCR
 
-      cFilterBrFaktDok := Parsiraj( cBrFakDok, "BRDOK", "C" )
+      cFilterBrFaktDok := Parsiraj( cUslovFaktBrDok, "BRDOK", "C" )
       cFilterSifraKupca := Parsiraj( cUslovIdPartner, "IDPARTNER", "C" )
       aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
       cFilterOpcina := Parsiraj( cOpcina, "flt_fakt_part_opc()", "C" )
@@ -149,7 +154,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    set_metric( "fakt_stampa_liste_tabelarni_pregled", f18_user(), cTabela )
    set_metric( "fakt_stampa_liste_ime_kupca", f18_user(), cImeKup )
    set_metric( "fakt_stampa_liste_partner", f18_user(), cUslovIdPartner )
-   set_metric( "fakt_stampa_liste_broj_dokumenta", f18_user(), cBrFakDok )
+   set_metric( "fakt_stampa_liste_broj_dokumenta", f18_user(), cUslovFaktBrDok )
 
    BoxC()
 
@@ -192,7 +197,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       cFilter += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
    ENDIF
 
-   IF !Empty( cBrFakDok )
+   IF !Empty( cUslovFaktBrDok )
       cFilter += ".and." + cFilterBrFaktDok
    ENDIF
 
@@ -219,7 +224,13 @@ FUNCTION fakt_pregled_liste_dokumenata()
    // ENDIF
    bFilter := {|| &cFilter }
 
-   s_bFaktDoksPeriod := {|| find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, "FAKT_DOKS_PREGLED", "idfirma,datdok,idtipdok,brdok" ), ;
+   IF cSort == "D"
+      cOrderBy :=  "idfirma,datdok,idtipdok,brdok"
+   ELSE
+      cOrderBy := "idfirma,idtipdok,brdok,datdok"
+   ENDIF
+
+   s_bFaktDoksPeriod := {|| find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, "FAKT_DOKS_PREGLED", cOrderBy ), ;
       dbSetFilter( bFilter, cFilter ), dbGoTop() }
 
    Eval( s_bFaktDoksPeriod )

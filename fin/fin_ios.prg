@@ -60,7 +60,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL _kao_kartica := fetch_metric( "ios_print_kartica", my_user(), "D" )
    LOCAL _prelomljeno := fetch_metric( "ios_print_prelom", my_user(), "N" )
    LOCAL lExportXLSX := "N"
-   LOCAL _print_tip := fetch_metric( "ios_print_tip", my_user(), "1" )
+   LOCAL cPrintTip12 := fetch_metric( "ios_print_tip", my_user(), "1" )
 
    // LOCAL _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
    LOCAL dDatumIOS := Date()
@@ -72,6 +72,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL nCount, nCountLimit := 12000 // broj izgenerisanih stavki
    LOCAL cNastavak := "N"
    LOCAL GetList := {}
+   LOCAL cPrintSaldo0DN := fetch_metric( "ios_print_saldo_0", my_user(), "D" )
 
    download_template( "ios.odt",  "0d6a8b1dade0e934536ff1173598e39d498ae9480f495d2fe618ff32e6ea71df" )
    download_template( "ios_2.odt", "6b8fa9cb492c13e3abf6d45f3bc2c262958512b1ffc8bbe5c01242894714b5c0" )
@@ -88,7 +89,6 @@ STATIC FUNCTION mnu_ios_print()
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY " Gledati period do:" GET dDatumDo
-
    nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
@@ -105,22 +105,22 @@ STATIC FUNCTION mnu_ios_print()
          GET _din_dem VALID _din_dem $ "12"
    ENDIF
 
-   ++nX
-   ++nX
+   nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz prebijenog stanja " GET _prelomljeno  VALID _prelomljeno $ "DN" PICT "@!"
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz identično kartici " GET _kao_kartica  VALID _kao_kartica $ "DN" PICT "@!"
-
-   ++nX
-   ++nX
+   nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Export u XLSX (D/N)?" GET lExportXLSX   VALID lExportXLSX $ "DN" PICT "@!"
 
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET cPrintTip12   VALID cPrintTip12 $ "12"
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Limit za broj izgenerisanih stavki ?" GET nCountLimit
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Print sa saldom 0?" GET cPrintSaldo0DN VALID cPrintSaldo0DN $ "DN" PICT "@!"
 
    // ++nX
    // @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen  VALID _auto_gen $ "DN" PICT "@!"
@@ -135,7 +135,8 @@ STATIC FUNCTION mnu_ios_print()
    set_metric( "ios_print_id_partner", my_user(), cIdPartner )
    set_metric( "ios_print_kartica", my_user(), _kao_kartica )
    set_metric( "ios_print_prelom", my_user(), _prelomljeno )
-   set_metric( "ios_print_tip", my_user(), _print_tip )
+   set_metric( "ios_print_tip", my_user(), cPrintTip12 )
+   set_metric( "ios_print_saldo_0", my_user(), cPrintSaldo0DN )
 
    cIdFirma := Left( cIdFirma, 2 )
 
@@ -157,7 +158,6 @@ STATIC FUNCTION mnu_ios_print()
 
    // ENDIF
 
-
    IF lExportXLSX == "D"    // eksport podataka u dbf tabelu
       _exp_fields := g_exp_fields()
       IF !create_dbf_r_export( _exp_fields )
@@ -178,7 +178,7 @@ STATIC FUNCTION mnu_ios_print()
 
    NFOUND CRET
 
-   IF _print_tip == "2" // txt forma
+   IF cPrintTip12 == "2" // txt forma
       IF !start_print()
          RETURN .F.
       ENDIF
@@ -209,6 +209,11 @@ STATIC FUNCTION mnu_ios_print()
          ENDIF
       ENDIF
 
+      IF cPrintSaldo0DN == "N" .AND. Round( ios->iznosbhd, 2 ) == 0 // ne prikazati saldo 0
+         SKIP
+         LOOP
+      ENDIF
+
       hParams := hb_Hash()
       hParams[ "id_partner" ] := cIdPartnerTekuci
       hParams[ "id_konto" ] := cIdKonto
@@ -222,7 +227,7 @@ STATIC FUNCTION mnu_ios_print()
       hParams[ "kartica" ] := _kao_kartica
       hParams[ "prelom" ] := _prelomljeno
 
-      IF _print_tip == "2"
+      IF cPrintTip12 == "2"
          print_ios_txt( hParams )
       ELSE
          nCount += print_ios_xml( hParams )
@@ -240,20 +245,20 @@ STATIC FUNCTION mnu_ios_print()
 
    BoxC()
 
-   IF _print_tip == "2"
+   IF cPrintTip12 == "2"
       end_print()
    ELSE
       xml_subnode( "ios", .T. )
       close_xml()
    ENDIF
 
-   IF _print_tip == "2" .AND. lExportXLSX == "D"
+   IF cPrintTip12 == "2" .AND. lExportXLSX == "D"
       open_r_export_table()
    ENDIF
 
    my_close_all_dbf()
 
-   IF _print_tip == "1"
+   IF cPrintTip12 == "1"
 
       IF Empty( cIdPartner ) .OR. cNastavak == "D" // vise partnera
          _template := "ios_2.odt"

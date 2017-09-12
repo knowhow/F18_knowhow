@@ -1,8 +1,10 @@
 # F18 klijent, lista promjena
 
-## 3.1.96-std, 2017-09-12
+## 3.1.97-std, 2017-09-12
+### FIN
+- IOS saldo 0 print D/N
 ### FAKT
-- FAKT pregledo dokumenata sort (D)atdok/(B)rdok
+- FAKT pregled dokumenata sort (D)atdok/(B)rdok
 
 ## 3.1.95-std, 2017-09-07
 ### CORE

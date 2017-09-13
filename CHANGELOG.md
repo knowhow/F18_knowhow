@@ -1,10 +1,11 @@
 # F18 klijent, lista promjena
 
-## 3.1.99-std, 2017-09-13
+## 3.1.100-std, 2017-09-13
 ### CORE
 - p_sifra empty - prikazati sve šifre
 ### FIN
 - IOS template update
+- FAKT-FIN kontiranje hack zaokruženje izbačen
 
 ## 3.1.97-std, 2017-09-12
 ### FIN

@@ -20,8 +20,10 @@ FUNCTION kamate_obracun_pojedinacni( fVise )
 
    LOCAL nKumKam := 0
    LOCAL nGlavn := 2892359.28
-   LOCAL dDatOd := CToD( "01.02.92" )
-   LOCAL dDatDo := CToD( "30.09.96" )
+   LOCAL dDatOd := CToD( "01.09.07" )
+   LOCAL dDatDo := CToD( "30.09.17" )
+   LOCAL nExp := 365
+   LOCAL GetList := {}
 
 
    PRIVATE cVarObracuna := "Z"

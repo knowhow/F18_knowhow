@@ -477,6 +477,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
          cPom := Right( Trim( fin_pripr->opis ), 1 )
 
+/*
          // na desnu stranu opisa stavim npr "ZADUZ MAGACIN          0"
          // onda ce izvrsiti zaokruzenje na 0 decimalnih mjesta
          IF cPom $ "0125"
@@ -491,6 +492,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                REPLACE iznosdem WITH round2( iznosdem, 2 )
             ENDIF
          ENDIF // cpom
+*/
          SKIP
       ENDDO // fpripr
 

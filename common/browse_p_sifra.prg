@@ -42,6 +42,7 @@ FUNCTION p_sifra( nWa, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY,
    LOCAL lOtvoriBrowse := .F.
    LOCAL lRet := .T.
 
+altd()
    IF cId != NIL
       lExit := browse_exit_on_enter()
       browse_exit_on_enter( .T. )
@@ -181,8 +182,8 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
    // LOCAL _order := IndexOrd()
    LOCAL _tezina := 0
 
-
-   IF cId == NIL
+altd()
+   IF cId == NIL .OR. Empty( cId )
       // RETURN "nil"
       RETURN .F.
    ENDIF
@@ -257,7 +258,7 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
       RETURN .F.
    ENDIF
 
-   IF field->id == cId
+   IF field->id == cId .AND. !Empty( cId )  // ako je empty cId - not found
       // cId := &( FieldName( 1 ) )
       IF Alias() == "KONTO" .AND. Len( Trim( cId ) ) < 4 // sinteticki konto
          RETURN .F.

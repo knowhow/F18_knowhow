@@ -178,19 +178,13 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    DO WHILE .T.
       Box(, 23 + iif( cLdSpec2001GrupePoslovaAutoRucno == "1", 0, 1 ), 75 )
 
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " ;
-         GET cUslovIdRj PICT "@!S15"
-      @ box_x_koord() + 1, Col() + 1 SAY "Djelatnost" GET cRTipRada ;
-         VALID val_tiprada( cRTipRada ) PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " GET cUslovIdRj PICT "@!S15"
+      @ box_x_koord() + 1, Col() + 1 SAY "Djelatnost" GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
       @ box_x_koord() + 1, Col() + 1 SAY "Spec.za RS" GET cRepSr VALID cRepSr $ "DN" PICT "@!"
-
-      @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Opština stan (prazno-sve): " ;
-         GET cUslovOpstStan PICT "@!S20"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Opština stan (prazno-sve): " GET cUslovOpstStan PICT "@!S20"
 
       IF ld_vise_obracuna()
-         @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun ;
-            WHEN HelpObr( .T., cObracun ) ;
-            VALID ValObr( .T., cObracun )
+         @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun  WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
       ENDIF
 
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
@@ -209,8 +203,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       @ box_x_koord() + 5, box_y_koord() + 52 SAY "Dat.ispl:" GET dDatIspl
 
 
-      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" ;
-         GET cPrimanjaStvariUsluge  PICT "@!S20"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" GET cPrimanjaStvariUsluge  PICT "@!S20"
 
       @ box_x_koord() + 10, box_y_koord() + 2 SAY "Dopr.pio (iz)" GET cDoprIz1
       @ box_x_koord() + 10, Col() + 2 SAY "Dopr.pio (na)" GET cDoprNa1

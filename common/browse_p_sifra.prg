@@ -182,7 +182,6 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
    // LOCAL _order := IndexOrd()
    LOCAL _tezina := 0
 
-altd()
    IF cId == NIL .OR. Empty( cId )
       // RETURN "nil"
       RETURN .F.

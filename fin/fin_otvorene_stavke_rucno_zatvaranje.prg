@@ -285,10 +285,12 @@ STATIC FUNCTION fin_rucno_zatvaranje_otv_stavki_key_handler( Ch, lOSuban )
 
       ELSE
   */
-      IF !Empty( s_cPomBrDok ) .AND. Pitanje(, "Želite li da vezni broj " + suban_pregled->BrDok + " zamijenite brojem " + s_cPomBrDok + " ?", "D" ) == "D"
+      IF !Empty( s_cPomBrDok ) .AND. Pitanje(, "Želite li da vezni broj " + Alltrim( suban_pregled->BrDok ) + " zamijenite brojem: " + Alltrim( s_cPomBrDok ) + " ?", "D" ) == "D"
+         SELECT SUBAN_PREGLED
          hRec := dbf_get_rec()
          hRec[ "brdok" ] := s_cPomBrDok
          log_write( "otvorene stavke, zamjena broja veze, set=" + s_cPomBrDok, 5 )
+         find_suban_za_period( "XX" )
          update_rec_server_and_dbf( "fin_suban", hRec, 1, "FULL" )
          SELECT SUBAN_PREGLED
          replace brdok with s_cPomBrDok

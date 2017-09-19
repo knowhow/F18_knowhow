@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.101-std, 2017-09-19
+### FIN
+- ostav F5-F6 debug
+ 
 ## 3.1.100-std, 2017-09-13
 ### CORE
 - p_sifra empty - prikazati sve šifre

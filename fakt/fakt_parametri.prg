@@ -148,7 +148,8 @@ FUNCTION fakt_par_razno()
    LOCAL _otpr_gen := fakt_otpr_gen()
    LOCAL _kontrola_brojaca := fakt_kontrola_brojaca_par()
    LOCAL nRokPlDana := fakt_rok_placanja_dana()
-   LOCAL GetList := {}
+   PRIVATE GetList := {} // ne diraj read_dn_parametar trazi da je GetList privatna var
+
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
@@ -188,7 +189,7 @@ FUNCTION fakt_par_razno()
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "   Uzorak fakture (MP):" GET _def_mp_template PICT "@S35"
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "     Uzorak otpremince:" GET _def_kol_template PICT "@S35"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "     Uzorak otpremnice:" GET _def_kol_template PICT "@S35"
 
    nX += 2
    read_dn_parametar( "Praćenje po destinacijama", box_x_koord() + nX, box_y_koord() + 2, @_unos_dest )

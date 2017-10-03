@@ -148,7 +148,7 @@ FUNCTION fakt_par_razno()
    LOCAL _otpr_gen := fakt_otpr_gen()
    LOCAL _kontrola_brojaca := fakt_kontrola_brojaca_par()
    LOCAL nRokPlDana := fakt_rok_placanja_dana()
-   LOCAL GetList := {}
+   PRIVATE GetList := {} // ne diraj read_dn_parametar trazi da je GetList privatna var
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}

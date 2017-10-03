@@ -149,7 +149,6 @@ FUNCTION fakt_par_razno()
    LOCAL _kontrola_brojaca := fakt_kontrola_brojaca_par()
    LOCAL nRokPlDana := fakt_rok_placanja_dana()
    PRIVATE GetList := {} // ne diraj read_dn_parametar trazi da je GetList privatna var
-
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}

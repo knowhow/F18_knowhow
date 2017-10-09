@@ -15,11 +15,13 @@
 FUNCTION fakt_kartica()
 
    LOCAL cIdFirma, nRezerv, nRevers
-   LOCAL nul, nizl, nRbr, cRR, nCol1 := 0, cKolona, cBrza := "D"
+   LOCAL nUl, nIzl, nRbr, cRR, nCol1 := 0, cKolona, cBrza := "D"
    LOCAL cPredh := "2"
    LOCAL lpickol := "@Z " + fakt_pic_kolicina()
-   LOCAL _params := fakt_params()
-
+   LOCAL hParams := fakt_params()
+   LOCAL GetList := {}
+   LOCAL dDatOd, dDatDo
+   LOCAL cFilter
    PRIVATE m := ""
 
    my_close_all_dbf()
@@ -31,7 +33,7 @@ FUNCTION fakt_kartica()
    // o_tarifa()
    // o_rj()
 
-   IF _params[ "fakt_objekti" ]
+   IF hParams[ "fakt_objekti" ]
       //o_fakt_objekti()
    ENDIF
 
@@ -49,11 +51,11 @@ FUNCTION fakt_kartica()
 
    cIdFirma := self_organizacija_id()
    PRIVATE qqRoba := ""
-   PRIVATE dDatOd := CToD( "" )
-   PRIVATE dDatDo := Date()
+   //PRIVATE dDatOd := CToD( "" )
+   //PRIVATE dDatDo := Date()
    PRIVATE cPPartn := "N"
 
-   IF _params[ "fakt_objekti" ]
+   IF hParams[ "fakt_objekti" ]
       _objekat_id := Space( 10 )
    ENDIF
 
@@ -134,7 +136,7 @@ FUNCTION fakt_kartica()
          cOstran := "N"
       ENDIF
 
-      IF _params[ "fakt_objekti" ]
+      IF hParams[ "fakt_objekti" ]
          @ box_x_koord() + 16, box_y_koord() + 2 SAY "Uslov po objektima (prazno-svi)" GET _objekat_id VALID Empty( _objekat_id ) .OR. P_fakt_objekti( @_objekat_id )
       ENDIF
 
@@ -197,30 +199,31 @@ FUNCTION fakt_kartica()
    BoxC()
 
 
-   PRIVATE cFilt1 := ""
-
-   cFilt1 := iif( cBrza == "N", aUsl1, ".t." )
-   // cFilt1 += IIF( Empty( dDatOd ), "", ".and. DATDOK >= " + _filter_quote( dDatOd ) )
-   // cFilt1 += IIF( Empty( dDatDo ), "", ".and. DATDOK <= " + _filter_quote( dDatDo ) )
+   //PRIVATE cFilter := ""
+altd()
+   cFilter := iif( cBrza == "N", aUsl1, ".t." )
 
    // hendliranje objekata
-   IF _params[ "fakt_objekti" ] .AND. !Empty( _objekat_id )
-      cFilt1 += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
+   IF hParams[ "fakt_objekti" ] .AND. !Empty( _objekat_id )
+      cFilter += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
    ENDIF
 
-   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
+   cFilter := StrTran( cFilter, ".t..and.", "" )
 
 
    IF cBrza == "N"
       find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "3" )
    ELSE
+      cFilter += IIF( Empty( dDatOd ), "", ".and. DATDOK >= " + _filter_quote( dDatOd ) )
+      cFilter += IIF( Empty( dDatDo ), "", ".and. DATDOK <= " + _filter_quote( dDatDo ) )
       seek_fakt_3( cIdFirma, qqRoba )
    ENDIF
 
-   IF cFilt1 == ".t."
+
+   IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER TO &cFilt1
+      SET FILTER TO &cFilter
    ENDIF
    GO TOP
 
@@ -238,7 +241,7 @@ FUNCTION fakt_kartica()
       ENDIF
    ENDIF
 
-   IF _params[ "fakt_objekti" ] .AND. !Empty( _objekat_id )
+   IF hParams[ "fakt_objekti" ] .AND. !Empty( _objekat_id )
       ? Space( gnLMarg )
       ?? "Uslov za objekat: ", AllTrim( _objekat_id ), fakt_objekat_naz( _objekat_id )
    ENDIF
@@ -325,10 +328,10 @@ FUNCTION fakt_kartica()
                cIdRoba == IdRoba ) .AND. dDatOd > datdok
 
             IF !Empty( cK1 )
-               IF ck1 <> K2 ; skip; loop; ENDIF
+               IF cK1 <> K2 ; skip; loop; ENDIF
             ENDIF
             IF !Empty( cK2 )
-               IF ck2 <> K2; skip; loop; ENDIF
+               IF cK2 <> K2; skip; loop; ENDIF
             ENDIF
             IF !Empty( cIdFirma ); IF idfirma <> cIdFirma; skip; loop; end; END
 

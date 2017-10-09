@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.104-std, 2017-10-09
+### FAKT
+- kartica od-do
+
 ## 3.1.101-std, 2017-09-19
 ### FIN
 - ostav F5-F6 debug

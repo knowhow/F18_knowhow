@@ -22,6 +22,9 @@ FUNCTION fakt_kartica()
    LOCAL GetList := {}
    LOCAL dDatOd, dDatDo
    LOCAL cFilter
+   LOCAL qqPartn := Space( 20 )
+
+   LOCAL cObjekatId
    PRIVATE m := ""
 
    my_close_all_dbf()
@@ -56,7 +59,7 @@ FUNCTION fakt_kartica()
    PRIVATE cPPartn := "N"
 
    IF hParams[ "fakt_objekti" ]
-      _objekat_id := Space( 10 )
+      cObjekatId := Space( 10 )
    ENDIF
 
    _c1 := _c2 := _c3 := Space( 20 )
@@ -82,7 +85,6 @@ FUNCTION fakt_kartica()
    PRIVATE cTipVPC := "1"
 
    PRIVATE ck1 := cK2 := Space( 4 )   // atributi
-   PRIVATE qqPartn := Space( 20 )
 
    qqTarife := ""
    qqNRobe := ""
@@ -137,7 +139,7 @@ FUNCTION fakt_kartica()
       ENDIF
 
       IF hParams[ "fakt_objekti" ]
-         @ box_x_koord() + 16, box_y_koord() + 2 SAY "Uslov po objektima (prazno-svi)" GET _objekat_id VALID Empty( _objekat_id ) .OR. P_fakt_objekti( @_objekat_id )
+         @ box_x_koord() + 16, box_y_koord() + 2 SAY "Uslov po objektima (prazno-svi)" GET cObjekatId VALID Empty( cObjekatId ) .OR. P_fakt_objekti( @cObjekatId )
       ENDIF
 
       READ
@@ -159,13 +161,13 @@ FUNCTION fakt_kartica()
 
       IF cBrza == "N"
          // IF fID_J
-         // aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
+         // cFilterRoba := Parsiraj( qqRoba, "IdRoba_J" )
          // ELSE
-         aUsl1 := Parsiraj( qqRoba, "IdRoba" )
+         cFilterRoba := Parsiraj( qqRoba, "IdRoba" )
          // ENDIF
       ENDIF
 
-      IF iif( cBrza == "N", aUsl1 <> NIL, .T. )
+      IF iif( cBrza == "N", cFilterRoba <> NIL, .T. )
          EXIT
       ENDIF
 
@@ -201,11 +203,11 @@ FUNCTION fakt_kartica()
 
    //PRIVATE cFilter := ""
 altd()
-   cFilter := iif( cBrza == "N", aUsl1, ".t." )
+   cFilter := iif( cBrza == "N", cFilterRoba, ".t." )
 
    // hendliranje objekata
-   IF hParams[ "fakt_objekti" ] .AND. !Empty( _objekat_id )
-      cFilter += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
+   IF hParams[ "fakt_objekti" ] .AND. !Empty( cObjekatId )
+      cFilter += ".and. fakt_objekat_id() == " + _filter_quote( cObjekatId )
    ENDIF
 
    cFilter := StrTran( cFilter, ".t..and.", "" )
@@ -241,9 +243,9 @@ altd()
       ENDIF
    ENDIF
 
-   IF hParams[ "fakt_objekti" ] .AND. !Empty( _objekat_id )
+   IF hParams[ "fakt_objekti" ] .AND. !Empty( cObjekatId )
       ? Space( gnLMarg )
-      ?? "Uslov za objekat: ", AllTrim( _objekat_id ), fakt_objekat_naz( _objekat_id )
+      ?? "Uslov za objekat: ", AllTrim( cObjekatId ), fakt_objekat_naz( cObjekatId )
    ENDIF
 
    ?
@@ -335,13 +337,14 @@ altd()
             ENDIF
             IF !Empty( cIdFirma ); IF idfirma <> cIdFirma; skip; loop; end; END
 
+
             IF !Empty( qqPartn )
-
                seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
-
                SELECT fakt
-               IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
-
+               IF !( fakt_doks->partner = qqPartn ) // samo jedno "=" !
+                   skip
+                   loop
+               ENDIF
             ENDIF
 
             IF !Empty( cIdRoba )
@@ -379,11 +382,12 @@ altd()
          IF !Empty( cK2 ); IF cK2 <> K2; skip; loop; end; END // uslov ck2
 
          IF !Empty( qqPartn )
-
             seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
-
             SELECT fakt
-            IF !( fakt_doks->partner == qqPartn ); skip; loop; ENDIF
+            IF !( fakt_doks->partner = qqPartn ) // "="" dio polja partner, ne stavljati "=="
+               skip
+               loop
+            ENDIF
          ENDIF
 
          IF !Empty( cIdRoba )

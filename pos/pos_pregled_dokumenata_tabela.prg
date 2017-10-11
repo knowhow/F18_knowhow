@@ -216,13 +216,15 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDatum0, dDatum1 )
          // CASE pos_doks->IdVd == VD_RZS
          // PrepisRazd()
 
+
       CASE pos_doks->IdVd == "IN"
-         PrepisInvNiv( .T. )
+         pos_prepis_inventura_nivelacija( .T. )
       CASE pos_doks->IdVd == VD_NIV
-         PrepisInvNiv( .F. )
+         pos_prepis_inventura_nivelacija( .F. )
          RETURN ( DE_REFRESH )
+
       CASE pos_doks->IdVd == VD_PRR
-         PrepisKumPr()
+         pos_kumulativ_prometa()
       CASE pos_doks->IdVd == POS_VD_POCETNO_STANJE
          pos_prepis_pocetno_stanje()
       ENDCASE
@@ -330,8 +332,7 @@ FUNCTION pos_pregled_stavki_racuna()
 
    Scatter()
 
-   //SELECT POS
-   //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
    seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd,  pos_doks->datum, pos_doks->BrDok )
 
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )

@@ -394,7 +394,7 @@ FUNCTION EditInvNiv( dat_inv_niv )
 
    CASE Ch == K_CTRL_P
 
-      StampaInv()
+      pos_stampa_zaduzenja_inventure()
 
       o_pos_tables()
       SELECT priprz
@@ -424,7 +424,7 @@ FUNCTION EditInvNiv( dat_inv_niv )
    CASE Ch == K_ALT_P
 
       IF cIdVd == VD_INV
-         StampaInv( .T. )
+         pos_stampa_zaduzenja_inventure( .T. )
          o_pos_tables()
          SELECT priprz
          GO nRec

@@ -443,9 +443,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
          LOOP
       ENDIF
 
-      SELECT pos
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
       DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + Brdok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
          IF !Empty( _usl_roba )
@@ -470,7 +468,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
          SELECT pom
          SET ORDER TO TAG "1"
          GO TOP
-         SEEK pos->idpos + pos->idroba + Str( pos->cijena, 13, 4 ) + Str( pos->ncijena, 13, 4 )
+         SEEK pos->idpos + pos->idroba + Str( pos->cijena, 13, 4 ) + Str( pos->ncijena, 13, 4 ) // POM
 
          _kol += pos->kolicina
          _iznos += ( pos->kolicina * pos->cijena )
@@ -525,7 +523,6 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
       _print_report( _dat_od, _dat_do, _kol, _iznos, _r_br )
       _file := tops_kalk_create_topska( cIdPos, _dat_od, _dat_do, cIdVd )
       MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
-
    ENDIF
 
    RETURN .T.

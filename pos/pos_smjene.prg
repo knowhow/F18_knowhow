@@ -33,12 +33,13 @@ FUNCTION OdrediSmjenu( lOdredi )
    ENDIF
 
    O__POS
-   o_pos_doks()
-   SET ORDER TO TAG "2"  // IdVd+DTOS (Datum)+Smjena
-   SEEK POS_VD_RACUN + Chr ( 254 )
+   // o_pos_doks()
+   // SET ORDER TO TAG "2"  // IdVd+DTOS (Datum)+Smjena
+   seek_pos_doks( NIL, POS_VD_RACUN, NIL, NIL, "2" ) // + Chr ( 254 )
    IF Eof() .OR. pos_doks->IdVd <> POS_VD_RACUN
       SKIP -1
    ENDIF
+
    // ako je slucajno mijenjan IdPos
    DO WHILE !Bof() .AND. pos_doks->IdVd == POS_VD_RACUN .AND. pos_doks->IdPos <> gIdPos
       SKIP -1
@@ -50,7 +51,7 @@ FUNCTION OdrediSmjenu( lOdredi )
 
    SELECT _POS
    SET ORDER TO TAG "2"
-   SEEK "42"
+   SEEK "42" // _POS
    IF Found()
       // d_Pos := _POS->Datum
       DO WHILE !Eof() .AND. _POS->IdVd == POS_VD_RACUN
@@ -98,7 +99,7 @@ FUNCTION OdrediSmjenu( lOdredi )
    pos_status_traka()
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -107,8 +108,6 @@ FUNCTION OdrediSmjenu( lOdredi )
  */
 
 STATIC FUNCTION DatumOK()
-
-   // {
 
    IF dDatum > Date()
       MsgBeep( "Morate unijeti datum jedna ili manji od danasnjeg!" )
@@ -121,7 +120,6 @@ STATIC FUNCTION DatumOK()
 
 STATIC FUNCTION SmjenaOK()
 
-   // {
    IF Empty( s_Pos )
       // nema prometa u _POS (nezakljucenog)
       IF d_Doks == dDatum .AND. cSmjena < s_Doks
@@ -216,7 +214,7 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
    // azuriraj nezakljucene
    o_pos_tables()
 
-   cVrijeme  := Left ( Time (), 5 )
+   cVrijeme  := Left ( TIME (), 5 )
    cIdVrsteP := gGotPlac
 
    SELECT _POS
@@ -279,9 +277,10 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
    ENDDO
 
    // prvo izvadim sve radnike koji su radili u predmetnoj smjeni
-   SELECT pos_doks
-   SET ORDER TO TAG "2"
-   SEEK POS_VD_RACUN + DToS ( dPrevDat )
+   // SELECT pos_doks
+   // SET ORDER TO TAG "2"
+   //-- SEEK POS_VD_RACUN + DToS ( dPrevDat )
+   seek_pos_doks( NIL, POS_VD_RACUN, dPrevDat )
    DO WHILE !Eof() .AND. pos_doks->IdVd == "42" .AND. pos_doks->Datum == dPrevDat
       nA := AScan ( aRadnici, pos_doks->IdRadnik )
       IF nA == 0
@@ -312,7 +311,7 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
    my_close_all_dbf()
 
    RETURN .T.
-// }
+
 
 
 /* ZakljRadnik()
@@ -321,7 +320,7 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
 
 FUNCTION ZakljRadnik( Ch )
 
-   // {
+
    LOCAL cIdSave
 
    // M->Ch je iz OBJDB
@@ -404,4 +403,4 @@ FUNCTION OtvoriSmjenu()
    MsgBeep( "Otvorena je smjena " + gSmjena )
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

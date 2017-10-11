@@ -132,8 +132,6 @@ FUNCTION pos_rpt_stanje_partnera()
             ENDIF
          ENDIF
 
-         //SELECT POS
-         //HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
          seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
          nIznos := 0
          nDuguje := 0

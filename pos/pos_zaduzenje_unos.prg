@@ -129,10 +129,10 @@ FUNCTION Zaduzenje
             IF cIdVd $ "16#96#95#98"
                pos_stampa_zaduzenja( cIdVd, cBrDok )
             ELSEIF cIdVd $ "IN#NI"
-               StampaInv()
+               pos_stampa_zaduzenja_inventure()
             ENDIF
 
-            o_pos_tables()
+            //o_pos_tables()
             IF Pitanje(, "Ako je sve u redu, želite li staviti dokument na stanje (D/N) ?", " " ) == "D"
                fSadAz := .T.
             ENDIF
@@ -242,12 +242,10 @@ FUNCTION Zaduzenje
          ELSE
 
             StUSif()
-
             SELECT PRIPRZ
             APPEND BLANK
 
-            SELECT roba
-
+            select_o_roba( _idRoba )
             _robanaz := roba->naz
             _jmj := roba->jmj
             _idtarifa := roba->idtarifa
@@ -282,8 +280,8 @@ FUNCTION Zaduzenje
 
    IF RecCount2() > 0
 
-      SELECT pos_doks
-      SET ORDER TO TAG "1"
+      //SELECT pos_doks
+      //SET ORDER TO TAG "1"
 
       IF !_from_kalk
          cBrDok := pos_novi_broj_dokumenta( cIdPos, iif( cIdvd == "PD", "16", cIdVd ) )

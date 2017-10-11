@@ -67,7 +67,7 @@ FUNCTION pos_izvjestaji_tops()
 
    IF gPVrsteP
       AAdd( opc, "N. pregled prometa po vrstama plaćanja" )
-      AAdd( opcexe, {|| PrometVPl() } )
+      AAdd( opcexe, {|| pos_pregled_prometa_po_vrstama_placanja() } )
    ENDIF
 
    IF fiscal_opt_active()

@@ -24,7 +24,7 @@ FUNCTION set_a_dbf_pos()
    set_a_sql_sifarnik( "pos_strad", "STRAD", F_STRAD   )
    set_a_sql_sifarnik( "pos_osob", "OSOB", F_OSOB   )
    set_a_sql_sifarnik( "pos_kase", "KASE", F_KASE  )
-   
+
    set_a_sql_sifarnik( "pos_odj", "ODJ", F_ODJ  )
 
 
@@ -49,47 +49,47 @@ FUNCTION set_a_dbf_pos()
 
 FUNCTION set_a_dbf_pos_pos()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTabela
 
-   _tbl := "pos_pos"
+   cTabela := "pos_pos"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "POS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_POS
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "POS"
+   hItem[ "table" ] := cTabela
+   hItem[ "wa" ]    := F_POS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
 
    // algoritam 1 - default
    // CREATE_INDEX ("IDS_SEM", "IdPos+IdVd+dtos(datum)+BrDok+rbr", _alias )
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idpos + field->idvd + DToS( field->datum ) + field->brdok + field->rbr }
-   _alg[ "dbf_key_empty_rec" ] := SPACE( 2 ) + SPACE( 2 ) + DToS( CTOD("") ) + SPACE( FIELD_LEN_POS_BRDOK ) + SPACE( FIELD_LEN_POS_RBR )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idpos + field->idvd + DToS( field->datum ) + field->brdok + field->rbr }
+   hAlgoritam[ "dbf_key_empty_rec" ] := SPACE( 2 ) + SPACE( 2 ) + DToS( CTOD("") ) + SPACE( FIELD_LEN_POS_BRDOK ) + SPACE( FIELD_LEN_POS_RBR )
 
-   _alg[ "dbf_key_fields" ] := { "idpos", "idvd", "datum", "brdok", "rbr" }
-   _alg[ "sql_in" ]         := "rpad( idpos,2) || rpad( idvd,2)  || to_char(datum, 'YYYYMMDD') || rpad(brdok,6) || lpad(rbr,5)"
-   _alg[ "dbf_tag" ]        := "IDS_SEM"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam[ "dbf_key_fields" ] := { "idpos", "idvd", "datum", "brdok", "rbr" }
+   hAlgoritam[ "sql_in" ]         := "rpad( idpos,2) || rpad( idvd,2)  || to_char(datum, 'YYYYMMDD') || rpad(brdok,6) || lpad(rbr,5)"
+   hAlgoritam[ "dbf_tag" ]        := "IDS_SEM"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    // algoritam 2 - dokument
    // CREATE_INDEX ("1", "IdPos+IdVd+dtos(datum)+BrDok+idroba", _alias )
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idpos + field->idvd + DToS( field->datum ) + field->brdok }
-   _alg[ "dbf_key_fields" ] := { "idpos", "idvd", "datum", "brdok" }
-   _alg[ "sql_in" ]    := "rpad(idpos,2) || rpad(idvd, 2) || to_char(datum, 'YYYYMMDD') || rpad(brdok, 6)"
-   _alg[ "dbf_tag" ]    := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idpos + field->idvd + DToS( field->datum ) + field->brdok }
+   hAlgoritam[ "dbf_key_fields" ] := { "idpos", "idvd", "datum", "brdok" }
+   hAlgoritam[ "sql_in" ]    := "rpad(idpos,2) || rpad(idvd, 2) || to_char(datum, 'YYYYMMDD') || rpad(brdok, 6)"
+   hAlgoritam[ "dbf_tag" ]    := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "idpos, idvd, datum, brdok, rbr"
+   hItem[ "sql_order" ] := "idpos, idvd, datum, brdok, rbr"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTabela, @hItem )
 
    RETURN .T.
 
@@ -97,37 +97,37 @@ FUNCTION set_a_dbf_pos_pos()
 
 FUNCTION set_a_dbf_pos_doks()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTabela
 
-   _tbl := "pos_doks"
+   cTabela := "pos_doks"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "POS_DOKS"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_POS_DOKS
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "POS_DOKS"
+   hItem[ "table" ] := cTabela
+   hItem[ "wa" ]    := F_POS_DOKS
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // CREATE_INDEX ("1", "IdPos+IdVd+dtos(datum)+BrDok", _alias )
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idpos + field->idvd + DToS( field->datum ) + field->brdok }
-   _alg[ "dbf_key_empty_rec" ] := SPACE( 2 ) + SPACE( 2 ) + DToS( CTOD("") ) + SPACE( FIELD_LEN_POS_BRDOK )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idpos + field->idvd + DToS( field->datum ) + field->brdok }
+   hAlgoritam[ "dbf_key_empty_rec" ] := SPACE( 2 ) + SPACE( 2 ) + DToS( CTOD("") ) + SPACE( FIELD_LEN_POS_BRDOK )
 
-   _alg[ "dbf_key_fields" ] := { "idpos", "idvd", "datum", "brdok" }
-   _alg[ "sql_in" ]         := "rpad( idpos,2) || rpad( idvd,2)  || to_char(datum, 'YYYYMMDD') || rpad(brdok,6)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam[ "dbf_key_fields" ] := { "idpos", "idvd", "datum", "brdok" }
+   hAlgoritam[ "sql_in" ]         := "rpad( idpos,2) || rpad( idvd,2)  || to_char(datum, 'YYYYMMDD') || rpad(brdok,6)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "idpos, idvd, datum, brdok"
+   hItem[ "sql_order" ] := "idpos, idvd, datum, brdok"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTabela, @hItem )
 
    RETURN .T.
 
@@ -136,33 +136,33 @@ FUNCTION set_a_dbf_pos_doks()
 
 FUNCTION set_a_dbf_pos_promvp()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTabela
 
-   _tbl := "pos_promvp"
+   cTabela := "pos_promvp"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "PROMVP"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_PROMVP
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "PROMVP"
+   hItem[ "table" ] := cTabela
+   hItem[ "wa" ]    := F_PROMVP
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| DToS( field->datum ) }
-   _alg[ "dbf_key_fields" ] := { "datum" }
-   _alg[ "sql_in" ]         := "to_char(datum,'YYYYMMDD')"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| DToS( field->datum ) }
+   hAlgoritam[ "dbf_key_fields" ] := { "datum" }
+   hAlgoritam[ "sql_in" ]         := "to_char(datum,'YYYYMMDD')"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "datum"
+   hItem[ "sql_order" ] := "datum"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTabela, @hItem )
 
    RETURN .T.
 
@@ -170,43 +170,43 @@ FUNCTION set_a_dbf_pos_promvp()
 
 FUNCTION set_a_dbf_pos_dokspf()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTabela
 
-   _tbl := "pos_dokspf"
+   cTabela := "pos_dokspf"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "DOKSPF"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_DOKSPF
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "DOKSPF"
+   hItem[ "table" ] := cTabela
+   hItem[ "wa" ]    := F_DOKSPF
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // CREATE_INDEX( "1", "idpos+idvd+DToS(datum)+brdok", _alias )
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idpos + field->idvd + DToS( field->datum ) + field->brdok }
-   _alg[ "dbf_key_fields" ] := { "idpos", "idvd", "datum", "brdok" }
-   _alg[ "sql_in" ]         := "rpad( idpos,2) || rpad( idvd,2)  || to_char(datum, 'YYYYMMDD') || rpad(brdok,6)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idpos + field->idvd + DToS( field->datum ) + field->brdok }
+   hAlgoritam[ "dbf_key_fields" ] := { "idpos", "idvd", "datum", "brdok" }
+   hAlgoritam[ "sql_in" ]         := "rpad( idpos,2) || rpad( idvd,2)  || to_char(datum, 'YYYYMMDD') || rpad(brdok,6)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    // algoritam 2
    // CREATE_INDEX( "2", "knaz", _alias )
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->knaz }
-   _alg[ "dbf_key_fields" ] := { "knaz" }
-   _alg[ "sql_in" ]         := "rpad( knaz, 35 )"
-   _alg[ "dbf_tag" ]        := "2"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->knaz }
+   hAlgoritam[ "dbf_key_fields" ] := { "knaz" }
+   hAlgoritam[ "sql_in" ]         := "rpad( knaz, 35 )"
+   hAlgoritam[ "dbf_tag" ]        := "2"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "idpos, idvd, datum, brdok"
+   hItem[ "sql_order" ] := "idpos, idvd, datum, brdok"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTabela, @hItem )
 
    RETURN .T.

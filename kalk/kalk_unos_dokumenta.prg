@@ -398,7 +398,6 @@ FUNCTION kalk_ispravka_postojeca_stavka()
 
       _oldvaln := _nc * _kolicina
 
-altd()
       my_rlock()
       Gather()
       my_unlock()

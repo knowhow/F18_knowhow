@@ -163,7 +163,7 @@ FUNCTION PrepisZad( cNazDok )
       cPicKol := "9999.999"
    ENDIF
 
-   seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+   seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
    IF !Empty( pos_doks->idvrstep )
       // predispozicija

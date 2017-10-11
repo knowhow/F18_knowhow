@@ -368,7 +368,6 @@ FUNCTION porezna_faktura_azur_podataka_o_kupcu( cIdPos )
       RETURN .F.
    ENDIF
 
-   o_doks_pf()
 
    IF !begin_sql_tran_lock_tables( { cTabela }  )
       RETURN .F.
@@ -378,8 +377,10 @@ FUNCTION porezna_faktura_azur_podataka_o_kupcu( cIdPos )
    SELECT drn
    GO TOP
 
-   SELECT dokspf
-   SEEK cIdPos + "42" + DToS( drn->datdok ) + drn->brdok
+   //SELECT dokspf
+   //SEEK cIdPos + "42" + DToS( drn->datdok ) + drn->brdok
+   seek_pos_dokspf( cIdPos, "42", drn->brdok, drn->datdok)
+
 
    IF !Found()
       APPEND BLANK
@@ -411,7 +412,7 @@ FUNCTION porezna_faktura_azur_podataka_o_kupcu( cIdPos )
 
 
 
-FUNCTION fnd_kup_data( cKupac ) // pretrazi tabelu kupaca i napuni matricu
+FUNCTION pos_find_kupac_podaci( cKupac ) // pretrazi tabelu kupaca i napuni matricu
 
    LOCAL aRet := {}
    LOCAL nArr
@@ -428,14 +429,9 @@ FUNCTION fnd_kup_data( cKupac ) // pretrazi tabelu kupaca i napuni matricu
 
    nArr := Select()
 
-   o_doks_pf()
-   SELECT dokspf
-
-   cFilter := Parsiraj( Lower( cKupac ), "lower(knaz)" )
-
-   SET FILTER TO &cFilter
-   SET ORDER TO TAG "2"
-   GO TOP
+   //o_pos_dokspf()
+   //SELECT dokspf
+   seek_pos_dokspf_by_naz( cKupac )
 
    cTmp := "XXX"
 
@@ -451,7 +447,6 @@ FUNCTION fnd_kup_data( cKupac ) // pretrazi tabelu kupaca i napuni matricu
          AAdd( aRet, { field->knaz, field->kadr, field->kidbr } )
 
          cTmp := cPartData
-
          SKIP
       ENDDO
    ENDIF

@@ -320,7 +320,7 @@ FUNCTION get_arr_kup_data( cKupac, cKAdr, cKIdBroj )
       RETURN .T.
    ENDIF
 
-   aKupci := fnd_kup_data( cKupac )
+   aKupci := pos_find_kupac_podaci( cKupac )
 
    IF Len( aKupci ) > 0
 

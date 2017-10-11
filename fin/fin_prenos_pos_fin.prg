@@ -46,13 +46,13 @@ FUNCTION GetPrVPParams( cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema )
       RETURN .T.
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
-/* PromVP2Fin()
+/*
  *     Centralna funkcija za prenos PROMVP u FIN
- */
+
 FUNCTION PromVP2Fin()
 
    PRIVATE cProdId
@@ -140,7 +140,7 @@ FUNCTION PromVP2Fin()
    ENDIF
 
    RETURN
-
+ */
 
 
 /* Azur2Pripr(cBrojNal, dDatNal)

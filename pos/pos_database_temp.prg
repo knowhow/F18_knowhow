@@ -56,7 +56,7 @@ FUNCTION pos2_pripr()
 
    // SELECT pos
    // SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-   seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+   seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 

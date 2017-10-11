@@ -508,7 +508,7 @@ STATIC FUNCTION ScanPromVp( dDatumOd, dDatumDo, cTKumPath )
    // {
 
    SELECT 0
-   USE ( cTKumPath + "PROMVP" )
+--   USE ( cTKumPath + "PROMVP" )
 
    IF ( FieldPos( "polog01" ) == 0 )
       MsgBeep( "Stara verzija promVp:" + cTKumPath )
@@ -516,12 +516,12 @@ STATIC FUNCTION ScanPromVp( dDatumOd, dDatumDo, cTKumPath )
    ENDIF
    // datum
    SET ORDER TO TAG "1"
-   SELECT promVp
+--   SELECT promVp
    SEEK dDatumOd
    DO WHILE ( !Eof() .AND. ( field->datum <= dDatumDo ) )
       ARFPromVp( koncij->id, field->polog01, field->polog02, field->polog03, field->polog04, field->polog05, field->polog06, field->polog07, field->polog08, field->polog09, field->polog10, field->polog11, field->polog12 )
       SELECT promVp
-      @ box_x_koord() + 3, box_y_koord() + 2 SAY "PROMVP :: Prodavnica: " + AllTrim( koncij->id ) + ", PATH: " + cTKumPath
+    --  @ box_x_koord() + 3, box_y_koord() + 2 SAY "PROMVP :: Prodavnica: " + AllTrim( koncij->id ) + ", PATH: " + cTKumPath
       SKIP
    ENDDO
 

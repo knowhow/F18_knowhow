@@ -128,21 +128,22 @@ altd()
    ENDIF
 
    IF lOk
-      brisi_pripremu_racuna()
+      pos_brisi_pripremu_racuna()
    ENDIF
 
    priprema_set_order_to()
 
+altd()
    RETURN lRet
 
 
 
-STATIC FUNCTION brisi_pripremu_racuna()
+STATIC FUNCTION pos_brisi_pripremu_racuna()
 
    SELECT _pos_pripr
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION priprema_set_order_to()

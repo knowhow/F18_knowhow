@@ -13,7 +13,7 @@ FUNCTION seek_pos_2( cIdOdj, cIdRoba, dDatum )
    RETURN seek_pos_h( hParams )
 
 
-FUNCTION  seek_pos( cIdPos, cIdVd, dDatum, cBrDok, cTag )
+FUNCTION seek_pos_pos( cIdPos, cIdVd, dDatum, cBrDok, cTag )
 
    LOCAL hParams := hb_Hash()
 
@@ -633,3 +633,148 @@ FUNCTION find_pos_kasa_naz( cIdPos )
    SELECT ( nSelect )
 
    RETURN cRet
+
+
+FUNCTION seek_pos_promvp( dDatDok )
+
+   LOCAL cSql
+   LOCAL cTable := "pos_promvp", cAlias := "PROMVP"
+   LOCAL hIndexes, cKey
+   LOCAL lWhere := .F.
+   LOCAL cTag := "1"
+
+   cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
+
+   IF dDatDok != NIL .AND. !Empty( dDatDok )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "datum=" + sql_quote( dDatDok )
+   ENDIF
+
+   SELECT F_PROMVP
+   use_sql( cTable, cSql, cAlias )
+
+   hIndexes := h_pos_promvp_indexes()
+
+   FOR EACH cKey IN hIndexes:Keys
+      INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cAlias )
+   NEXT
+
+   IF cTag == NIL
+      cTag := "1"
+   ENDIF
+   SET ORDER TO TAG ( cTag )
+   GO TOP
+
+   RETURN !Eof()
+
+
+FUNCTION h_pos_promvp_indexes()
+
+   LOCAL hIndexes := hb_Hash()
+
+   hIndexes[ "1" ] := "DATUM"
+
+   RETURN hIndexes
+
+FUNCTION seek_pos_dokspf_by_naz( cKupac )
+
+   // cFilter := Parsiraj( Lower( cKupac ), "lower(knaz)" )
+   // SET FILTER TO &cFilter
+   // SET ORDER TO TAG "2"
+   // GO TOP
+   RETURN seek_pos_dokspf( NIL, NIL, NIL, NIL, cKupac )
+
+
+FUNCTION seek_pos_dokspf( cIdPos, cIdVd, cBrDok, dDatum, cKupac )
+
+   LOCAL cSql
+   LOCAL cTable := "pos_dokspf", cAlias := "DOKSPF"
+   LOCAL hIndexes, cKey
+   LOCAL lWhere := .F.
+   LOCAL cTag := "1"
+
+   cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
+
+   IF cKupac != NIL
+      cTag := "2"
+   ENDIF
+
+   IF cIdPos != NIL .AND. !Empty( cIdPos )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "idpos=" + sql_quote( cIdPos )
+   ENDIF
+
+   IF cIdVD != NIL .AND. !Empty( cIdVD )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "idvd=" + sql_quote( cIdVd )
+   ENDIF
+
+   IF cBrDok != NIL .AND. !Empty( cBrDok )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "brdok=" + sql_quote( cBrDok )
+   ENDIF
+
+   IF dDatum != NIL .AND. !Empty( dDatum )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "datum=" + sql_quote( dDatum )
+   ENDIF
+
+   IF cKupac != NIL .AND. !Empty( cKupac )
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+         lWhere := .T.
+      ENDIF
+      cSql += "knaz like " + sql_quote( Lower( Trim( cKupac ) ) + "%" )
+   ENDIF
+
+   SELECT F_DOKSPF
+   use_sql( cTable, cSql, cAlias )
+
+   hIndexes := h_pos_dokspf_indexes()
+
+   FOR EACH cKey IN hIndexes:Keys
+      INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cAlias )
+   NEXT
+
+
+   SET ORDER TO TAG ( cTag )
+   GO TOP
+
+   RETURN !Eof()
+
+
+FUNCTION h_pos_dokspf_indexes()
+
+   LOCAL hIndexes := hb_Hash()
+
+   hIndexes[ "1" ] := "idpos+idvd+DToS(datum)+brdok"
+   hIndexes[ "2" ] := "knaz"
+
+   RETURN hIndexes

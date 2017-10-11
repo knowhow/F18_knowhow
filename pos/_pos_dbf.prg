@@ -53,6 +53,7 @@ STATIC FUNCTION cre_priprz()
 
    LOCAL cFileName := my_home() + "PRIPRZ"
    LOCAL lCreate := .F.
+   LOCAL aDbf
 
    IF !File( f18_ime_dbf( "priprz" ) )
       lCreate := .T.
@@ -251,7 +252,7 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 
    o_pos_pos()
    o_pos_doks()
-   o_doks_pf()
+   //o_pos_dokspf()
 
    RETURN .T.
 
@@ -298,7 +299,7 @@ FUNCTION pos_iznos_dokumenta( lUI )
       // ovo su ulazi ...
       IF pos_doks->IdVd $ VD_ZAD + "#" + POS_VD_POCETNO_STANJE + "#" + VD_REK
 
-         seek_pos( cIdPos, cIdVd, dDatum, cBrDok )
+         seek_pos_pos( cIdPos, cIdVd, dDatum, cBrDok )
          //SELECT pos
          //SET ORDER TO TAG "1"
          //GO TOP
@@ -321,7 +322,7 @@ FUNCTION pos_iznos_dokumenta( lUI )
          //SET ORDER TO TAG "1"
          //GO TOP
          //SEEK cIdPos + cIdVd + DToS( dDatum ) + cBrDok
-         seek_pos( cIdPos, cIdVd, dDatum, cBrDok )
+         seek_pos_pos( cIdPos, cIdVd, dDatum, cBrDok )
 
          DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == cIdPos + cIdVd + DToS( dDatum ) + cBrDok
             DO CASE
@@ -501,7 +502,7 @@ FUNCTION pos_import_fmk_roba()
 
    RETURN .T.
 
-
+/*
 
 FUNCTION pos_brisi_nepostojece_dokumente()
 
@@ -540,8 +541,8 @@ FUNCTION pos_brisi_nepostojece_dokumente()
       ENDIF
    ENDIF
 
-   o_pos_doks()
-   o_pos_pos()
+   //o_pos_doks()
+   //o_pos_pos()
 
    oQry:GoTo( 1 )
 
@@ -558,7 +559,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
 
       @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Brišem dokument: " + cIdPos + "-" + cIdVd + "-" + cBrDok + " od datuma " + DToC( dDatum )
 
-      IF !pos_brisi_dokument( cIdPos, cIdVd, dDatum, cBrDok )
+    --  IF !pos_brisi_dokument( cIdPos, cIdVd, dDatum, cBrDok )
          BoxC()
          MsgBeep( "Problem sa brisanjem dokumenta !" )
          RETURN .F.
@@ -577,3 +578,5 @@ FUNCTION pos_brisi_nepostojece_dokumente()
    ENDIF
 
    RETURN .T.
+
+*/

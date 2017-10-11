@@ -31,7 +31,7 @@ FUNCTION pos_prepis_pocetno_stanje()
       iif ( Empty ( DOKS->IdPos ), "", AllTrim ( DOKS->IdPos ) + "-" ) + ;
       AllTrim ( DOKS->BrDok ), nSir )
 
-   seek_pos( pos_doks->IdPos,  pos_doks->IdVd, pos_doks->datum,  pos_doks->BrDok )
+   seek_pos_pos( pos_doks->IdPos,  pos_doks->IdVd, pos_doks->datum,  pos_doks->BrDok )
 
    ? PadC ( FormDat1 ( DOKS->Datum ) + ;
       iif ( !Empty ( DOKS->Smjena ), " Smjena: " + DOKS->Smjena, "" ), nSir )

@@ -225,7 +225,7 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
    // // RETURN "naz"
    // RETURN .F.
    // ENDIF
-   AltD()
+  
    IF Alias() == "ROBA" .AND. Len( cId ) > 10
 
 #ifdef F18_POS

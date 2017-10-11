@@ -239,7 +239,7 @@ METHOD set_module_gvars()
    PUBLIC grbCjen := 2
    PUBLIC grbStId := "D"
    PUBLIC grbReduk := 0
-   PUBLIC gRnInfo := "N"
+   //PUBLIC gRnInfo := "N"
    PUBLIC aRabat
 
    self:cName := "POS"
@@ -331,7 +331,7 @@ METHOD set_module_gvars()
    gLocPort := fetch_metric( "OznakaLokalnogPorta", my_user(), gLocPort )
    gGotPlac := fetch_metric( "OznakaGotovinskogPlacanja", NIL, gGotPlac )
    gDugPlac := fetch_metric( "OznakaDugPlacanja", NIL, gDugPlac )
-   gRnInfo := fetch_metric( "RacunInfo", NIL, gRnInfo )
+   //gRnInfo := fetch_metric( "RacunInfo", NIL, gRnInfo )
 
    gServerPath := AllTrim( gServerPath )
    IF ( Right( gServerPath, 1 ) <> SLASH )

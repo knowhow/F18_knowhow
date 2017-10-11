@@ -410,7 +410,7 @@ FUNCTION seek_pos_db( cPosDb, cIdPos, cIdVD, dDatumRn, cBrDok )
 
    // POS
 
-   RETURN seek_pos( cIdPos, cIdVD, dDatumRn, cBrDok )
+   RETURN seek_pos_pos( cIdPos, cIdVD, dDatumRn, cBrDok )
 
 
 
@@ -470,7 +470,7 @@ FUNCTION StampaPrep( cIdPos, dDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
 
       //SELECT pos
       //SEEK ( aVezani[ nCnt ][ 1 ] + POS_VD_RACUN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
-      seek_pos( aVezani[ nCnt ][ 1 ], POS_VD_RACUN, aVezani[ nCnt ][ 4 ],  aVezani[ nCnt ][ 2 ] )
+      seek_pos_pos( aVezani[ nCnt ][ 1 ], POS_VD_RACUN, aVezani[ nCnt ][ 4 ],  aVezani[ nCnt ][ 2 ] )
       DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( aVezani[ nCnt ][ 1 ] + POS_VD_RACUN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
 
 
@@ -694,12 +694,9 @@ FUNCTION StampaPrep( cIdPos, dDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
    RETURN .T.
 
 
-// -------------------------------------------------
-// prikaz informacija o racunu
-// -------------------------------------------------
-FUNCTION _sh_rn_info( cBrRn )
+FUNCTION pos_racun_info( cBrRn )
 
-   MsgBeep( "Formiran je racun broj: " + cBrRN )
+   MsgBeep( "Formiran je račun broj: " + cBrRN )
 
    RETURN .T.
 

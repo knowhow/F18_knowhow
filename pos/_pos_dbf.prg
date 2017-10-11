@@ -224,7 +224,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    //o_pos_osob()
    //SET ORDER TO TAG "NAZ"
 
-   o_vrstep()
+   //o_vrstep()
 // o_partner()
    //O_K2C
 //   O_MJTRUR
@@ -261,15 +261,15 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 FUNCTION o_pos_sifre()
 
    //o_pos_kase()
-   o_pos_uredj()
-   o_pos_odj()
+   //o_pos_uredj()
+   //o_pos_odj()
    // o_roba()
    // o_tarifa()
-   o_vrstep()
+   //o_vrstep()
    // o_valute()
    // o_partner()
-   o_pos_osob()
-   o_pos_strad()
+   //o_pos_osob()
+   //o_pos_strad()
    // o_sifk()
    // o_sifv()
 

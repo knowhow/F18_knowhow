@@ -450,11 +450,11 @@ STATIC FUNCTION o_tables()
    // o_sifk()
    // o_sifv()
    // o_pos_kase()
-   o_pos_odj()
+   //o_pos_odj()
    // o_roba()
    // o_pos_osob()
-   SET ORDER TO TAG "NAZ"
-   o_vrstep()
+   //SET ORDER TO TAG "NAZ"
+   //o_vrstep()
    o_pos_pos()
    o_pos_doks()
 

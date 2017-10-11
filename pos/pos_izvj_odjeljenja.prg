@@ -300,9 +300,7 @@ FUNCTION pos_dio_izvuci( cIdVd )
       ENDIF
       Scatter()
 
-
       seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
-
       DO WHILE ! Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
          IF ( !Empty ( cIdOdj ) .AND. POS->IdOdj <> cIdOdj ) .OR. !Tacno ( aUsl1 )
             SKIP
@@ -352,10 +350,10 @@ FUNCTION realizacija_dio_objekta
 
    cPrikRobe := iif ( cPrikRobe == NIL, "N", cPrikRobe )
 
-   o_pos_odj()
+  // o_pos_odj()
    //o_pos_osob()
    //SET ORDER TO TAG ( "NAZ" )
-   o_vrstep()
+   //o_vrstep()
    //o_pos_kase()
    // o_sifk()
    // o_sifv()
@@ -418,11 +416,11 @@ FUNCTION realizacija_dio_objekta
    ENDDO
 
    // pravljenje izvjestaja
-   SELECT pos_doks
-   SET ORDER TO TAG "2"
+   //SELECT pos_doks
+   //SET ORDER TO TAG "2"
    // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
 
-   EOF CRET
+   //EOF CRET
 
    START PRINT CRET
    //ZagFirma()

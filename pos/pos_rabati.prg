@@ -473,7 +473,7 @@ FUNCTION Scan_PriprForRabat( aRabat )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // -----------------------------------------
 // vraca popust po vrsti placanja
@@ -487,9 +487,7 @@ FUNCTION get_vrpl_popust( cIdVrPlac, nPopust )
    LOCAL cPopust
    LOCAL i
 
-   SELECT vrstep
-   SET ORDER TO TAG "ID"
-   SEEK cIdVrPlac
+   select_o_vrstep( cIdVrPlac )
 
    // naz #P#05#
    cPom := AllTrim( field->naz )

@@ -411,16 +411,16 @@ STATIC FUNCTION _o_pos_prepis_tbl()
 // o_partner()
 // ENDIF
 
-   SELECT ( F_VRSTEP )
-   IF !Used()
-      o_vrstep()
-   ENDIF
+  // SELECT ( F_VRSTEP )
+  // IF !Used()
+  //    o_vrstep()
+  // ENDIF
 
 
-   SELECT ( F_ODJ )
-   IF !Used()
-      o_pos_odj()
-   ENDIF
+  // SELECT ( F_ODJ )
+  // IF !Used()
+  //    o_pos_odj()
+  // ENDIF
 
   // SELECT ( F_KASE )
   // IF !Used()

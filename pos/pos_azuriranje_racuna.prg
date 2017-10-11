@@ -24,6 +24,7 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
    hParams[ "tran_name" ] := "pos_rn_azur"
 
+altd()
   o_pos_tables()
 
    IF !racun_se_moze_azurirati( cIdPos, POS_VD_RACUN, gDatum, cBrojRacuna )

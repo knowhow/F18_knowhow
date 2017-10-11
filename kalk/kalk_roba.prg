@@ -83,6 +83,7 @@ STATIC FUNCTION valid_roba( cIdRoba, cIdTarifa, lNoviDokument, aPorezi )
    LOCAL _ocitani_barkod := cIdRoba
    LOCAL cTarifa
 
+altd()
    P_Roba( @cIdRoba )
 
    IF lNoviDokument

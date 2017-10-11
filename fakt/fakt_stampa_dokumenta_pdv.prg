@@ -339,7 +339,7 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
 
       cIdPartner := field->idpartner
 
-      IF Empty( cIdPartner )
+      IF Year( field->datdok ) > 2001 .AND. Empty( cIdPartner )  // podrska za godine <=2001
          MsgBeep( "Partner na fakturi - prazno - nesto nije ok !?" )
          RETURN .F.
       ENDIF

@@ -172,7 +172,7 @@ FUNCTION HistUser( Ch )
    DO CASE
    CASE Ch == K_ENTER
       RETURN DE_ABORT
-      
+
    CASE Ch = K_CTRL_T
       IF Len( aHistory ) > 1
          cHi := aHistory[ aBrowRow(), 1 ]
@@ -202,6 +202,7 @@ FUNCTION HistUser( Ch )
 FUNCTION o_params()
 
    SELECT ( F_PARAMS )
+   use
    my_use ( "params" )
    SET ORDER TO TAG  "ID"
 

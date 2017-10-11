@@ -208,8 +208,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
 
    cDokument := AllTrim( pos_doks->idpos ) + "-" + pos_doks->idvd + "-" + AllTrim( pos_doks->brdok ) + " " + DToC( pos_doks->datum )
 
-   SELECT pos
-   SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+   select_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
    DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ;
          pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
@@ -239,7 +238,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
       IF _oper == "2"
 
          SET ORDER TO TAG "1"
-         HSEEK hRec[ "idroba" ]
+         HSEEK hRec[ "idroba" ] // PRIPRZ
 
          IF !Found()
             APPEND BLANK

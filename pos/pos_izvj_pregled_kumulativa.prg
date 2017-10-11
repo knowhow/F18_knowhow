@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-FUNCTION PrepisKumPr()
+FUNCTION pos_kumulativ_prometa()
 
    LOCAL nSir := 80
    LOCAL nRobaSir := 40
@@ -67,8 +67,6 @@ FUNCTION PrepisKumPr()
       ? cLM + "       Placeno:", "NE"
    ENDIF
 
-   //SELECT POS
-   //HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
    seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
    ? cLM

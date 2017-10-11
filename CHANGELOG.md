@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.107-std, 2017-10-12
+## 3.1.108-std, 2017-10-12
 ### POS
 - pos semafori out
 

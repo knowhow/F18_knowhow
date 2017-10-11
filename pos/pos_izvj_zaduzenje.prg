@@ -180,7 +180,7 @@ FUNCTION PrepisZad( cNazDok )
 
    //IF !Empty( POS->IdDio )
     //  SELECT DIO
-    //  HSEEK POS->IdDio
+  // --  HSEEK POS->IdDio
    //ENDIF
 
    SELECT POS
@@ -255,8 +255,7 @@ FUNCTION PrepisZad( cNazDok )
 
    ?? " Primio", PadL ( "Predao", nSir - 9 )
 
-   SELECT OSOB
-   HSEEK pos_doks->IdRadnik
+   select_o_pos_osob( pos_doks->IdRadnik )
 
    ? PadL ( AllTrim ( OSOB->Naz ), nSir - 9 )
 
@@ -270,7 +269,7 @@ FUNCTION PrepisZad( cNazDok )
 
    SELECT ( nDbfArea )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------

@@ -123,7 +123,6 @@ FUNCTION pos_lista_racuna( dDatum, cBroj, fPrep, cPrefixFilter, qIdRoba )
       cFilter += ".and. pos_racun_sadrzi_artikal(IdPos, IdVd, datum, BrDok, " + dbf_quote( qIdRoba ) + ")"
    ENDIF
 
-altd()
    SET FILTER TO &cFilter
    GO TOP
 

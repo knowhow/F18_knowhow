@@ -422,10 +422,10 @@ STATIC FUNCTION _o_pos_prepis_tbl()
       o_pos_odj()
    ENDIF
 
-   SELECT ( F_KASE )
-   IF !Used()
-      o_pos_kase()
-   ENDIF
+  // SELECT ( F_KASE )
+  // IF !Used()
+  //    o_pos_kase()
+  // ENDIF
 
    SELECT ( F_OSOB )
    IF !Used()
@@ -458,14 +458,14 @@ STATIC FUNCTION _o_pos_prepis_tbl()
    // o_roba()
 // ENDIF
 
-   SELECT ( F_POS_DOKS )
-   IF !Used()
-      o_pos_doks()
-   ENDIF
+//   SELECT ( F_POS_DOKS )
+//   IF !Used()
+//      o_pos_doks()
+//   ENDIF
 
-   SELECT ( F_POS )
-   IF !Used()
-      o_pos_pos()
-   ENDIF
+//   SELECT ( F_POS )
+//   IF !Used()
+//      o_pos_pos()
+//   ENDIF
 
    RETURN .T.

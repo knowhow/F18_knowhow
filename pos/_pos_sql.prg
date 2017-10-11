@@ -193,7 +193,7 @@ CREATE INDEX pos_doks_id6
 
 */
 
-FUNCTION seek_pos_2( cIdOdj, cIdRoba, dDatum )
+FUNCTION seek_pos_pos_2( cIdOdj, cIdRoba, dDatum )
 
    LOCAL hParams := hb_Hash()
 

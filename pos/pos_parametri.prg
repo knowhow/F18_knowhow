@@ -270,7 +270,7 @@ FUNCTION pos_param_izgled_racuna()
    gOtvorStr := Odsj( gOtvorStr )
    gZagIz := Trim( gZagIz )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION pos_param_cijene()
@@ -282,7 +282,7 @@ FUNCTION pos_param_cijene()
 
    AAdd ( aNiz, { "Generalni popust % (99-gledaj sifranik)", "gPopust", , "99", } )
    AAdd ( aNiz, { "Zakruziti cijenu na (broj decimala)    ", "gPopDec", ,  "9", } )
-   AAdd ( aNiz, { "Varijanta Planika/Apoteka decimala)    ", "gPopVar", "gPopVar$' PA'", , } )
+  // AAdd ( aNiz, { "Varijanta Planika/Apoteka decimala)    ", "gPopVar", "gPopVar$' PA'", , } )
    AAdd ( aNiz, { "Popust zadavanjem nove cijene          ", "gPopZCj", "gPopZCj$'DN'", , } )
    AAdd ( aNiz, { "Popust zadavanjem procenta             ", "gPopProc", "gPopProc$'DN'", , } )
    AAdd ( aNiz, { "Popust preko odredjenog iznosa (iznos):", "gPopIzn",, "999999.99", } )
@@ -296,7 +296,7 @@ FUNCTION pos_param_cijene()
       set_metric( "Popust", nil, gPopust )
       set_metric( "PopustZadavanjemCijene", nil, gPopZCj )
       set_metric( "PopustDecimale", nil, gPopDec )
-      set_metric( "PopustVarijanta", nil, gPopVar )
+    //  set_metric( "PopustVarijanta", nil, gPopVar )
       set_metric( "PopustProcenat", nil, gPopProc )
       set_metric( "PopustIznos", nil, gPopIzn )
       set_metric( "PopustVrijednostProcenta", nil, gPopIznP )

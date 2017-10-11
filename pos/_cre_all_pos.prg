@@ -320,14 +320,16 @@ FUNCTION cre_all_pos( ver )
    AAdd ( aDbf, { "KEYCODE", "N",  4, 0 } )
    AAdd ( aDbf, { "IDROBA",  "C", 10, 0 } )
 
+/*
    _alias := "K2C"
    _table_name := "k2c"
 
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX ( "1", "STR (KeyCode, 4)", _alias )
    CREATE_INDEX ( "2", "IdRoba", _alias )
+*/
 
-
+/*
    aDbf := {}
    AAdd ( aDbf, { "IDDIO",      "C",  2, 0 } )
    AAdd ( aDbf, { "IDODJ",      "C",  2, 0 } )
@@ -338,7 +340,7 @@ FUNCTION cre_all_pos( ver )
 
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX ( "1", "IdDio+IdOdj", _alias )
-
+*/
 
 /*
    aDbf := {}

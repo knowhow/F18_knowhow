@@ -17,7 +17,7 @@ FUNCTION pos_pregled_prometa_po_vrstama_placanja()
    LOCAL GetList := {}
    LOCAL dDatOd, dDatDo
 
-   o_pos_kase()
+   //o_pos_kase()
 
    cIdPos := gIdPos
    dDatOd := dDatDo := gDatum
@@ -25,7 +25,7 @@ FUNCTION pos_pregled_prometa_po_vrstama_placanja()
    SET CURSOR ON
    Box(, 3, 60 )
    SET CURSOR ON
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prod.mjesto    :  "  GET  cIdPos  VALID Empty( cIdPos ) .OR. P_Kase( @cIdPos ) PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prod.mjesto    :  "  GET  cIdPos  VALID Empty( cIdPos ) .OR. p_pos_kase( @cIdPos ) PICT "@!"
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datum:" GET dDatOd
    // @ box_x_koord() + 2, Col() + 2 SAY "-" GET dDatDo
    READ

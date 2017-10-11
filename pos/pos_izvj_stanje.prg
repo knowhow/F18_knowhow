@@ -24,7 +24,7 @@ FUNCTION pos_stanje_artikala
    LOCAL cRSdbf
    LOCAL cVrstaRs
 
-  // PRIVATE cIdDio := Space ( 2 )
+   // PRIVATE cIdDio := Space ( 2 )
    PRIVATE cIdOdj := Space ( 2 )
    PRIVATE cRoba := Space( 60 )
    PRIVATE cLM := ""
@@ -45,7 +45,7 @@ FUNCTION pos_stanje_artikala
       cVrstaRs := "A"
    ENDIF
 
-   o_pos_kase()
+   // o_pos_kase()
    o_pos_odj()
    // o_sifk()
    // o_sifv()
@@ -61,10 +61,10 @@ FUNCTION pos_stanje_artikala
 
       aNiz := {}
       IF cVrstaRs <> "K"
-         AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cidpos='X'.or.empty(cIdPos).or. P_Kase(@cIdPos)", "@!", } )
+         AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cIdpos='X'.or.empty(cIdPos).or. p_pos_kase(@cIdPos)", "@!", } )
       ENDIF
 
-      IF gvodiodj == "D"
+      IF gVodiodj == "D"
          AAdd( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "Empty (cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )
       ENDIF
 
@@ -122,15 +122,17 @@ FUNCTION pos_stanje_artikala
       Podvuci( cVrstaRs )
    ENDIF
 
-   SELECT POS
-   SET ORDER TO TAG "2"
+   // SELECT POS
+   // SET ORDER TO TAG "2"
    // ("2", "IdOdj+idroba+DTOS(Datum)", KUMPATH+"POS")
+
+   // SEEK cIdOdj
+   seek_pos_pos_2( cIdOdj )
 
    IF !( aUsl1 == ".t." )
       SET FILTER TO &aUsl1
    ENDIF
-
-   SEEK cIdOdj
+   GO TOP
 
    EOF CRET
 
@@ -187,10 +189,10 @@ FUNCTION pos_stanje_artikala
                pos->idRoba == cIdRoba .AND. ;
                ( pos->datum < cDat .OR. ( !Empty ( cSmjena ) .AND. pos->datum == cDat .AND. pos->smjena < cSmjena ) )
 
-            //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
-            //   SKIP
-            //   LOOP
-            //ENDIF
+            // IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
+            // SKIP
+            // LOOP
+            // ENDIF
 
             IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                // (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;   // ?MS
@@ -233,10 +235,10 @@ FUNCTION pos_stanje_artikala
                pos->idroba == cIdRoba .AND. ;
                ( pos->datum == cDat .OR. ( !Empty( cSmjena ) .AND. POS->Datum == cDat .AND. POS->Smjena < cSmjena ) )
 
-            //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
-            //   SKIP
-            //   LOOP
-            //ENDIF
+            // IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
+            // SKIP
+            // LOOP
+            // ENDIF
             IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                // (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS
                SKIP
@@ -335,7 +337,7 @@ FUNCTION pos_stanje_artikala
 
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -357,7 +359,7 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
 
    START PRINT CRET
 
-   //ZagFirma()
+   // ZagFirma()
 
    P_10CPI
    ? PadC( "STANJE ODJELJENJA NA DAN " + FormDat1( dDat ), nSir )

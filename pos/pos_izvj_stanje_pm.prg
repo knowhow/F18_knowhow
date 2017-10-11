@@ -57,7 +57,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       PRIVATE cSmjena := " "
    ENDIF
 
-   o_pos_kase()
+   //o_pos_kase()
    o_pos_odj()
    // o_sifk()
    // o_sifv()
@@ -79,7 +79,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       aNiz := {}
 
       IF cVrstaRs <> "K"
-         AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cidpos='X'.or.empty(cIdPos).or. P_Kase(@cIdPos)", "@!", } )
+         AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cidpos='X'.or.empty(cIdPos).or. p_pos_kase(@cIdPos)", "@!", } )
       ENDIF
       IF gVodiOdj == "D"
          AAdd( aNiz, { "Roba/Sirovine", "cIdOdj", "cidodj $ 'R S '", "@!", } )

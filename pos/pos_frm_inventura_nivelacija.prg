@@ -148,7 +148,7 @@ FUNCTION pos_inventura_nivelacija()
          //SELECT pos
          //SET ORDER TO TAG "2"
          //SEEK cIdOdj
-         seek_pos_2( cIdOdj )
+         seek_pos_pos_2( cIdOdj )
 
          DO WHILE !Eof() .AND. field->idodj == cIdOdj
 
@@ -722,7 +722,7 @@ STATIC FUNCTION update_ip_razlika()
    //SET ORDER TO TAG "2"
    // "2", "IdOdj + idroba + DTOS(Datum)
    //SEEK cIdOdj
-   seek_pos_2( cIdOdj )
+   seek_pos_pos_2( cIdOdj )
 
    DO WHILE !Eof() .AND. field->idodj == cIdOdj
 
@@ -931,7 +931,7 @@ FUNCTION RacKol( cIdOdj, cIdRoba, nKol )
    //SET ORDER TO TAG "2"
    nKol := 0
 
-   seek_pos_2( cIdOdj, cIdRoba )
+   seek_pos_pos_2( cIdOdj, cIdRoba )
 
    DO WHILE !Eof() .AND. pos->IdOdj + pos->IdRoba  == ( cIdOdj + cIdRoba ) .AND. pos->Datum <= dDatRada
 

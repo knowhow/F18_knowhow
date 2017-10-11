@@ -32,7 +32,7 @@ FUNCTION pos_stampa_dokumenta()
       nBH := 10
       nR := 7
       cLM := Space( 5 )
-      cIdPos := Space( Len( KASE->Id ) )
+      cIdPos := Space( FIELD_LEN_POS_KASE_ID )
       nRW := 30
       nSir := 80
    ELSE
@@ -45,14 +45,14 @@ FUNCTION pos_stampa_dokumenta()
       cDoks := POS_VD_RACUN + "#" + VD_ZAD + "#" + "IN" + "#" + VD_NIV + "#" + VD_RZS
    ENDIF
 
-   cIdRadnik := Space( Len( OSOB->Id ) )
-   cIdVd := Space( Len( pos_doks->IdVd ) )
+   cIdRadnik := Space( FIELD_LEN_POS_OSOB_ID )
+   cIdVd := Space( 2 )
 
    SET CURSOR ON
    Box(, 10, 77 )
 
    IF gVrstaRS <> "K"
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY " Prodajno mjesto (prazno-sva)" GET cIdPos PICT "@!" VALID Empty( cIdPos ) .OR. P_Kase( @cIdPos, 1, 37 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY " Prodajno mjesto (prazno-sva)" GET cIdPos PICT "@!" VALID Empty( cIdPos ) .OR. p_pos_kase( @cIdPos, 1, 37 )
    ENDIF
 
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "          Radnik (prazno-svi)" GET cIdRadnik PICT "@!" VALID Empty( cIdRadnik ) .OR. P_Osob( @cIdRadnik, 2, 37 )

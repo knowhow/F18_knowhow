@@ -48,7 +48,7 @@ FUNCTION realizacija_odjeljenja()
    aNiz := {}
    cIdPos := gIdPos
    IF gVrstaRS <> "K"
-      AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.P_Kase(@cIdPos)", "@!", } )
+      AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.p_pos_kase(@cIdPos)", "@!", } )
    ELSE
       cIdPos := gIdPos
       // cIdDio := gIdDio
@@ -313,21 +313,23 @@ FUNCTION pos_dio_izvuci( cIdVd )
          select_o_pos_odj( roba->idodj )
 
          nNeplaca := 0
-         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-            nNeplaca := pos->( Kolicina * Cijena )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca := pos->( Kolicina * Cijena ) / 2
-         ENDIF
-         IF gPopVar = "P"; nNeplaca += pos->( kolicina * NCijena ); ENDIF
+      //   IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+      //      nNeplaca := pos->( Kolicina * Cijena )
+      //   ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+      //      nNeplaca := pos->( Kolicina * Cijena ) / 2
+      //   ENDIF
+      //   IF gPopVar = "P";
+      nNeplaca += pos->( kolicina * NCijena )
+      //; ENDIF
 
          Scatter()
          SELECT POM
          APPEND BLANK
          _Iznos := POS->Kolicina * POS->Cijena
          _Iznos2 := POS->( ncijena * kolicina )
-         IF gPopVar == "A"
-            _iznos3 := nNeplaca
-         ENDIF
+        // IF gPopVar == "A"
+        //    _iznos3 := nNeplaca
+        // ENDIF
          Gather()
          SELECT POS
          SKIP
@@ -351,10 +353,10 @@ FUNCTION realizacija_dio_objekta
    cPrikRobe := iif ( cPrikRobe == NIL, "N", cPrikRobe )
 
    o_pos_odj()
-   o_pos_osob()
-   SET ORDER TO TAG ( "NAZ" )
+   //o_pos_osob()
+   //SET ORDER TO TAG ( "NAZ" )
    o_vrstep()
-   o_pos_kase()
+   //o_pos_kase()
    // o_sifk()
    // o_sifv()
    // o_roba()
@@ -385,7 +387,7 @@ FUNCTION realizacija_dio_objekta
    aNiz := {}
    cIdPos := gIdPos
    IF gVrstaRS <> "K"
-      AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.P_Kase(@cIdPos)", "@!", } )
+      AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.p_pos_kase(@cIdPos)", "@!", } )
    ELSE
       cIdPos := gIdPos
    ENDIF
@@ -432,8 +434,7 @@ FUNCTION realizacija_dio_objekta
    IF gvodiodj == "D"
       ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", find_pos_odj_naziv( cIdOdj ) )
    ENDIF
-   ? "RADNIK     : " + IF( Empty( cIdRadnik ), "svi", ;
-      cIdRadnik + "-" + RTrim( find_pos_osob_naziv( cIdRadnik ) ) )
+   ? "RADNIK     : " + IF( Empty( cIdRadnik ), "svi", cIdRadnik + "-" + RTrim( find_pos_osob_naziv( cIdRadnik ) ) )
    ? "VR.PLACANJA: " + IF( Empty( cIdVrsteP ), "sve", RTrim( cIdVrsteP ) )
    ? "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
 
@@ -852,14 +853,14 @@ FUNCTION pos_odj_izvuci( cIdVd )
          ENDIF
 
          nNeplaca := 0
-         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-            nNeplaca := pos->( Kolicina * Cijena )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca := pos->( Kolicina * Cijena ) / 2
-         ENDIF
-         IF gPopVar = "P"
+        // IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+        //    nNeplaca := pos->( Kolicina * Cijena )
+        // ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+        //    nNeplaca := pos->( Kolicina * Cijena ) / 2
+         //ENDIF
+         //IF gPopVar = "P"
             nNeplaca += pos->( Kolicina * NCijena )
-         ENDIF
+         //ENDIF
 
          SELECT POM
          Hseek POS->( IdOdj + IdDio + IdPos + IdRoba + IdCijena ) // POM
@@ -868,9 +869,9 @@ FUNCTION pos_odj_izvuci( cIdVd )
             REPLACE Kolicina WITH Kolicina + POS->Kolicina, ;
                Iznos    WITH Iznos + POS->Kolicina * POS->Cijena, ;
                iznos3   WITH nNeplaca
-            IF gPopVar == "A"
-               REPLACE Iznos2   WITH pos->( ncijena )
-            ENDIF
+          //  IF gPopVar == "A"
+          //     REPLACE Iznos2   WITH pos->( ncijena )
+          //  ENDIF
 
          ELSE
             APPEND BLANK

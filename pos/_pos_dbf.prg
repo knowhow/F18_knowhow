@@ -111,11 +111,11 @@ STATIC FUNCTION dodaj_u_sifrarnik_radnika( cSifra, cLozinka, cOpis, cStatus )
    LOCAL lOk := .T.
    LOCAL hRec
 
-   IF Select( "OSOB" ) == 0
-      o_pos_osob()
-   ELSE
-      SELECT OSOB
-   ENDIF
+   //IF Select( "OSOB" ) == 0
+   select_o_pos_osob( "XXX" )
+   //ELSE
+   //    SELECT OSOB
+   //ENDIF
 
    APPEND BLANK
 
@@ -135,7 +135,7 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
    LOCAL lOk := .T., hParams
 
-   o_pos_strad()
+   select_o_pos_strad()
 
    IF ( RECCOUNT2() == 0 )
 
@@ -170,9 +170,9 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
    ENDIF
 
-   o_pos_osob()
-
-   IF ( RECCOUNT2() == 0 )
+   //o_pos_osob()
+   //IF ( RECCOUNT2() == 0 )
+   IF table_count( F18_PSQL_SCHEMA_DOT + "pos_osob" ) == 0
 
       MsgO( "Definišem šifranik radnika ..." )
 
@@ -221,14 +221,14 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    ENDIF
 
    o_pos_odj()
-   o_pos_osob()
-   SET ORDER TO TAG "NAZ"
+   //o_pos_osob()
+   //SET ORDER TO TAG "NAZ"
 
    o_vrstep()
 // o_partner()
-   O_K2C
-   O_MJTRUR
-   o_pos_kase()
+   //O_K2C
+//   O_MJTRUR
+//   o_pos_kase()
 // o_sastavnice()
 // o_roba()
    // o_tarifa()
@@ -260,7 +260,7 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 
 FUNCTION o_pos_sifre()
 
-   o_pos_kase()
+   //o_pos_kase()
    o_pos_uredj()
    o_pos_odj()
    // o_roba()
@@ -391,7 +391,7 @@ FUNCTION pos_racun_sadrzi_artikal( cIdPos, cIdVd, dDatum, cBroj, cIdRoba )
    cWhere += " AND brdok = " + sql_quote( cBroj )
    cWhere += " AND idroba = " + sql_quote( cIdRoba )
 
-   IF table_count( F18_PSQL_SCHEMA_DOT + "pos_pos", cWhere ) > 0
+   IF ( F18_PSQL_SCHEMA_DOT + "pos_pos", cWhere ) > 0
       lRet := .T.
    ENDIF
 

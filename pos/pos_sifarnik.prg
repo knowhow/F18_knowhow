@@ -15,16 +15,12 @@ MEMVAR ImeKol, Kol
 
 
 
-
-FUNCTION P_Kase( cId, dx, dy )
+FUNCTION p_pos_kase( cId, dx, dy )
 
    PRIVATE ImeKol
    PRIVATE Kol
 
-   SELECT ( F_KASE )
-   IF !Used()
-      o_pos_kase()
-   ENDIF
+   select_o_pos_kase()
 
    ImeKol := {}
    AAdd( ImeKol, { "Sifra/ID kase", {|| id }, "id" } )
@@ -32,7 +28,7 @@ FUNCTION P_Kase( cId, dx, dy )
    AAdd( ImeKol, { "Lokacija kumulativa", {|| pPath }, "pPath" } )
    Kol := { 1, 2, 3 }
 
-   RETURN p_sifra( F_KASE, 1, 10, 77, "Sifarnik kasa/prodajnih mjesta", @cId, dx, dy )
+   RETURN p_sifra( F_KASE, 1, 10, 77, "Šifanik kasa/prodajnih mjesta", @cId, dx, dy )
 
 
 
@@ -66,8 +62,8 @@ FUNCTION P_Odj( cId, dx, dy )
    RETURN p_sifra( F_ODJ, 1, 10, 40, "Sifarnik odjeljenja", @cId, dx, dy )
 
 
-
-FUNCTION P_Dio( cId, dx, dy )
+/*
+-- FUNCTION P_Dio( cId, dx, dy )
 
    PRIVATE ImeKol
    PRIVATE Kol := {}
@@ -78,11 +74,10 @@ FUNCTION P_Dio( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN p_sifra( F_DIO, 1, 10, 55, "Sifrarnik dijelova objekta", @cid, dx, dy )
+   RETURN p_sifra( F_DIO, 1, 10, 55, "Šifrarnik dijelova objekta", @cid, dx, dy )
+*/
 
-
-
-FUNCTION P_StRad( cId, dx, dy )
+FUNCTION p_pos_strad( cId, dx, dy )
 
    PRIVATE ImeKol
    PRIVATE Kol := {}
@@ -92,11 +87,13 @@ FUNCTION P_StRad( cId, dx, dy )
       { "Prioritet", {|| PadC( prioritet, 9 ) }, "prioritet", {|| .T. }, {|| ( "0" <= wPrioritet ) .AND. ( wPrioritet <= "3" ) } } ;
       }
 
+   select_o_pos_strad()
+
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
    NEXT
 
-   RETURN p_sifra( F_STRAD, 1, 10, 55, "Sifrarnik statusa radnika", @cid, dx, dy )
+   RETURN p_sifra( F_STRAD, 1, 10, 55, "Šifarnik statusa radnika", @cid, dx, dy )
 
 
 
@@ -107,10 +104,12 @@ FUNCTION P_Osob( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol := {}
 
-   SELECT F_OSOB
-   IF !Used()
-      o_pos_osob()
-   ENDIF
+   //SELECT F_OSOB
+   //IF !Used()
+    //    o_pos_osob()
+   //ENDIF
+   select_o_pos_osob()
+
 
    ImeKol := { { "ID ",          {|| id },    "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) } }, ;
       { PadC( "Naziv", 40 ), {|| naz },  "naz"    }, ;
@@ -122,13 +121,13 @@ FUNCTION P_Osob( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   xRet := p_sifra( F_OSOB, 2, 10, 55, "Šifarnik osoblja", @cid, dx, dy, {|| EdOsob() } )
+   xRet := p_sifra( F_OSOB, 2, 10, 55, "Šifarnik osoblja", @cid, dx, dy, {| nCh | pos_osob_key_handler( nCh ) } )
 
    RETURN xRet
 
+/*
 
-
-FUNCTION P_Uredj( cId, dx, dy )
+-- FUNCTION P_Uredj( cId, dx, dy )
 
    PRIVATE ImeKol
    PRIVATE Kol := {}
@@ -144,10 +143,11 @@ FUNCTION P_Uredj( cId, dx, dy )
 
    RETURN p_sifra( F_UREDJ, 1, 10, 55, "Sifrarnik uredjaja", @cid, dx, dy )
 
+*/
 
 
-
-FUNCTION P_MJTRUR( cId, dx, dy )
+/*
+-- FUNCTION P_MJTRUR( cId, dx, dy )
 
    PRIVATE ImeKol
    PRIVATE Kol := {}
@@ -162,10 +162,10 @@ FUNCTION P_MJTRUR( cId, dx, dy )
    NEXT
 
    RETURN p_sifra( F_MJTRUR, 1, 10, 55, "Sifrarnik parova uredjaj-odjeljenje", @cid, dx, dy )
+*/
 
 
-
-FUNCTION EdOsob()
+FUNCTION pos_osob_key_handler( Ch )
 
    LOCAL lSystemLevel := ( pos_admin() )
    LOCAL nVrati := DE_CONT
@@ -187,7 +187,7 @@ FUNCTION EdOsob()
 
             _korsif := Space( 6 )
 
-            IF GetOsob( .T. ) <> K_ESC
+            IF pos_get_osob( .T. ) <> K_ESC
 
                // azuriranje OSOB.DBF
                _korsif := CryptSC( _korsif )
@@ -217,7 +217,7 @@ FUNCTION EdOsob()
             set_global_memvars_from_dbf()
             _korsif := CryptSC( _korsif )
 
-            IF GetOsob( .F. ) <> K_ESC
+            IF pos_get_osob( .F. ) <> K_ESC
                // azuriranje OSOB.DBF
                _korsif := CryptSC( _korsif )
                // daj mi iz globalnih varijabli
@@ -261,9 +261,10 @@ FUNCTION EdOsob()
 
 
 
-FUNCTION GetOsob( fNovi )
+FUNCTION pos_get_osob( fNovi )
 
    LOCAL cLevel
+   LOCAL GetList := {}
 
    Box( "", 4, 60, .F., "Unos novog korisnika,sifre" )
 
@@ -279,20 +280,21 @@ FUNCTION GetOsob( fNovi )
 
    READ
 
-   SELECT strad
-   HSEEK gStRad
+   select_o_pos_strad( gStRad )
    cLevel := strad->prioritet
 
-   SELECT strad
-   HSEEK _status
-   SELECT osob
+  // SELECT strad
+   select_o_pos_strad( _status )
+
+
+   select_o_pos_osob()
 
    // level tekuceg korisnika > level
    IF ( cLevel > strad->prioritet )
       MsgBeep( "Ne mozete mjenjati sifru" )
    ELSE
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Sifra.............." GET _korsif PICTURE "@!" VALID vpsifra2( _korsif, _id )
-      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Status............." GET _status VALID P_STRAD( @_status )
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Status............." GET _status VALID p_pos_strad( @_status )
    ENDIF
 
    READ

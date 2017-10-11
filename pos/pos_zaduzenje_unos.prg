@@ -187,7 +187,7 @@ FUNCTION Zaduzenje
       _IdOdj := cIdOdj
       // _IdDio := cIdDio
       _IdVd := cIdVd
-      _BrDok := Space( Len( pos_doks->BrDok ) )
+      _BrDok := Space( FIELD_LEN_POS_BRDOK )
       _Datum := dDatRada
       _Smjena := gSmjena
       _IdRadnik := gIdRadnik

@@ -42,7 +42,6 @@ FUNCTION p_sifra( nWa, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY,
    LOCAL lOtvoriBrowse := .F.
    LOCAL lRet := .T.
 
-altd()
    IF cId != NIL
       lExit := browse_exit_on_enter()
       browse_exit_on_enter( .T. )
@@ -226,6 +225,24 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
    // // RETURN "naz"
    // RETURN .F.
    // ENDIF
+   AltD()
+   IF Alias() == "ROBA" .AND. Len( cId ) > 10
+
+#ifdef F18_POS
+      IF !tezinski_barkod( @cId, @_tezina, .F. )
+         barkod_or_roba_id( @cId )
+      ENDIF
+#else
+      barkod_or_roba_id( @cId )
+#endif
+      // ordSetFocus( _order )
+      // RETURN "barkod"
+
+      IF cId == field->id
+         RETURN .T.
+      ENDIF
+
+   ENDIF
 
    IF Alias() == "PARTN"
       find_partner_by_naz_or_id( cId )
@@ -264,25 +281,6 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
       ENDIF
 
       RETURN .T.
-   ENDIF
-
-
-   IF Alias() == "ROBA" .AND. Len( cId ) > 10
-
-#ifdef F18_POS
-      IF !tezinski_barkod( @cId, @_tezina, .F. )
-         barkod_or_roba_id( @cId )
-      ENDIF
-#else
-      barkod_or_roba_id( @cId )
-#endif
-      // ordSetFocus( _order )
-      // RETURN "barkod"
-
-      IF cId == field->id
-         RETURN .T.
-      ENDIF
-
    ENDIF
 
    RETURN .F.

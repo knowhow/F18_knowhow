@@ -234,7 +234,7 @@ FUNCTION fakt_setuj_cijenu( cTipCijene )
 
 
 
-FUNCTION fakt_v_kolicina( tip_vpc )
+FUNCTION fakt_v_kolicina( cTipVpc )
 
    LOCAL cRjTip
    LOCAL nUl := 0
@@ -249,6 +249,9 @@ FUNCTION fakt_v_kolicina( tip_vpc )
    // IF JeStorno10()
    // _kolicina := - Abs( _kolicina )
    // ENDIF
+   IF YEAR( _datdok ) < 2007 // podrska za podatke <= 2001
+      RETURN .T.
+   ENDIF
 
    IF _podbr <> " ."
 
@@ -317,7 +320,7 @@ FUNCTION fakt_v_kolicina( tip_vpc )
             _cijena := fakt_vpc_iz_sifrarnika()
 
          ELSE
-            IF tip_vpc == "1"
+            IF cTipVpc == "1"
                _Cijena := vpc
             ELSEIF FieldPos( "vpc2" ) <> 0
                IF gVarC == "1"
@@ -484,7 +487,7 @@ STATIC FUNCTION fakt_trenutno_na_stanju_kalk( cIdRj, cIdTipDok, cIdRoba )
 
    select_fakt_pripr()
 
-   IF Empty( rj->konto )
+   IF rj->( FieldPos( "konto" ) ) == 0 .OR. Empty( rj->konto )
       RETURN .T.
    ENDIF
 

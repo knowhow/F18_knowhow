@@ -102,7 +102,7 @@ CREATE INDEX pos_pos_id6
   (idroba COLLATE pg_catalog."default");
 */
 
-STATIC __device_id := 0
+STATIC s_nFiskalniUredjajId := 0
 STATIC s_hFiskalniUredjajParams
 STATIC __DRV_TREMOL := "TREMOL"
 STATIC __DRV_FPRINT := "FPRINT"
@@ -115,8 +115,8 @@ STATIC s_cFiskalniDrajverNaziv
 FUNCTION pos_fiskalni_racun( cIdPos, dDatDok, cBrojRacuna, hFiskalniParams, nUplaceniIznos )
 
    LOCAL nErrorLevel := 0
-   LOCAL _dev_drv
-   LOCAL _storno
+   LOCAL cFiskalniDravjerIme
+   LOCAL lStorno
    LOCAL aItems, _head, _cont
 
    IF nUplaceniIznos == NIL
@@ -127,13 +127,14 @@ FUNCTION pos_fiskalni_racun( cIdPos, dDatDok, cBrojRacuna, hFiskalniParams, nUpl
       RETURN nErrorLevel
    ENDIF
 
-   __device_id := hFiskalniParams[ "id" ]
+altd()
+   s_nFiskalniUredjajId := hFiskalniParams[ "id" ]
    s_hFiskalniUredjajParams := hFiskalniParams
-   _dev_drv := s_hFiskalniUredjajParams[ "drv" ]
-   s_cFiskalniDrajverNaziv := _dev_drv
+   cFiskalniDravjerIme := s_hFiskalniUredjajParams[ "drv" ]
+   s_cFiskalniDrajverNaziv := cFiskalniDravjerIme
 
-   _storno := pos_dok_is_storno( cIdPos, "42", dDatDok, cBrojRacuna )
-   aItems := pos_fiscal_stavke_racuna( cIdPos, "42", dDatDok, cBrojRacuna, _storno, nUplaceniIznos )
+   lStorno := pos_dok_is_storno( cIdPos, "42", dDatDok, cBrojRacuna )
+   aItems := pos_fiscal_stavke_racuna( cIdPos, "42", dDatDok, cBrojRacuna, lStorno, nUplaceniIznos )
 
    IF aItems == NIL
       RETURN 1
@@ -141,33 +142,33 @@ FUNCTION pos_fiskalni_racun( cIdPos, dDatDok, cBrojRacuna, hFiskalniParams, nUpl
 
    DO CASE
 
-   CASE _dev_drv == "TEST"
+   CASE cFiskalniDravjerIme == "TEST"
       nErrorLevel := 0
 
-   CASE _dev_drv == __DRV_FPRINT
-      nErrorLevel := pos_to_fprint( cIdPos, "42", dDatDok, cBrojRacuna, aItems, _storno )
+   CASE cFiskalniDravjerIme == __DRV_FPRINT
+      nErrorLevel := pos_to_fprint( cIdPos, "42", dDatDok, cBrojRacuna, aItems, lStorno )
 
-   CASE _dev_drv == __DRV_FLINK
-      nErrorLevel := pos_to_flink( cIdPos, "42", dDatDok, cBrojRacuna, aItems, _storno )
+   CASE cFiskalniDravjerIme == __DRV_FLINK
+      nErrorLevel := pos_to_flink( cIdPos, "42", dDatDok, cBrojRacuna, aItems, lStorno )
 
-   CASE _dev_drv == __DRV_TRING
-      nErrorLevel := pos_to_tring( cIdPos, "42", dDatDok, cBrojRacuna, aItems, _storno )
+   CASE cFiskalniDravjerIme == __DRV_TRING
+      nErrorLevel := pos_to_tring( cIdPos, "42", dDatDok, cBrojRacuna, aItems, lStorno )
 
-   CASE _dev_drv == __DRV_HCP
-      nErrorLevel := pos_to_hcp( cIdPos, "42", dDatDok, cBrojRacuna, aItems, _storno, nUplaceniIznos )
+   CASE cFiskalniDravjerIme == __DRV_HCP
+      nErrorLevel := pos_to_hcp( cIdPos, "42", dDatDok, cBrojRacuna, aItems, lStorno, nUplaceniIznos )
 
-   CASE _dev_drv == __DRV_TREMOL
+   CASE cFiskalniDravjerIme == __DRV_TREMOL
       _cont := NIL
-      nErrorLevel := pos_to_tremol( cIdPos, "42", dDatDok, cBrojRacuna, aItems, _storno, _cont )
+      nErrorLevel := pos_to_tremol( cIdPos, "42", dDatDok, cBrojRacuna, aItems, lStorno, _cont )
 
    ENDCASE
 
    IF nErrorLevel > 0
 
-      IF _dev_drv == __DRV_TREMOL
+      IF cFiskalniDravjerIme == __DRV_TREMOL
 
          _cont := "2"
-         nErrorLevel := pos_to_tremol( cIdPos, "42", dDatDok, cBrojRacuna, aItems, _storno, _cont )
+         nErrorLevel := pos_to_tremol( cIdPos, "42", dDatDok, cBrojRacuna, aItems, lStorno, _cont )
 
          IF nErrorLevel > 0
             MsgBeep( "Problem sa štampanjem na fiskalni uređaj !" )
@@ -183,26 +184,26 @@ FUNCTION pos_fiskalni_racun( cIdPos, dDatDok, cBrojRacuna, hFiskalniParams, nUpl
 
 STATIC FUNCTION pos_dok_is_storno( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
 
-   LOCAL _storno := .F.
+   LOCAL lStorno := .F.
 
    // SELECT pos
    // SET ORDER TO TAG "1"
    // GO TOP
    // SEEK cIdPos + cIdTipDok + DToS( dDatDok ) + cBrojRacuna
-   seek_pos( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
+   seek_pos_pos( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
 
    DO WHILE !Eof() .AND. pos->idpos == cIdPos  .AND. pos->idvd == cIdTipDok ;
          .AND. DToS( pos->Datum ) == DToS( dDatDok ) .AND. pos->brdok == cBrojRacuna
 
       IF !Empty( AllTrim( field->c_1 ) )
-         _storno := .T.
+         lStorno := .T.
          EXIT
       ENDIF
       SKIP
 
    ENDDO
 
-   RETURN _storno
+   RETURN lStorno
 
 
 
@@ -214,41 +215,31 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacun
    LOCAL _rabat, _cijena
    LOCAL _art_barkod, _art_id, _art_naz, _art_jmj
    LOCAL _rbr := 0
-   LOCAL _rn_total := 0
-   LOCAL _vr_plac
+   LOCAL nPosRacunUkupno := 0
+   LOCAL cVrstaPlacanja
    LOCAL nLevel
 
    IF nUplaceniIznos == NIL
       nUplaceniIznos := 0
    ENDIF
 
-   // SELECT pos_doks
-   // SET ORDER TO TAG "1"
-   // GO TOP
-   // SEEK cIdPos + cIdTipDok + DToS( dDatDok ) + cBrojRacuna
-   IF seek_pos_doks( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
-      // IF !Found()
+   IF !seek_pos_doks( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
       RETURN NIL
    ENDIF
 
-   _vr_plac := pos_get_vr_plac( field->idvrstep )
+   cVrstaPlacanja := pos_get_vr_plac( field->idvrstep )
 
-   IF _vr_plac <> "0"
-      _rn_total := pos_iznos_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
+   IF cVrstaPlacanja <> "0"
+      nPosRacunUkupno := pos_iznos_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
    ELSE
-      _rn_total := 0
+      nPosRacunUkupno := 0
    ENDIF
 
    IF nUplaceniIznos > 0
-      _rn_total := nUplaceniIznos
+      nPosRacunUkupno := nUplaceniIznos
    ENDIF
 
-   // SELECT pos
-   // SET ORDER TO TAG "1"
-   // GO TOP
-   // SEEK cIdPos + cIdTipDok + DToS( dDatDok ) + cBrojRacuna
-   IF seek_pos( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
-      // IF !Found()
+   IF !seek_pos_pos( cIdPos, cIdTipDok, dDatDok, cBrojRacuna )
       RETURN NIL
    ENDIF
 
@@ -301,8 +292,8 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacun
          field->cijena, ;
          _rabat, ;
          _art_barkod, ;
-         _vr_plac, ;
-         _rn_total, ;
+         cVrstaPlacanja, ;
+         nPosRacunUkupno, ;
          dDatDok, ;
          _art_jmj } )
 

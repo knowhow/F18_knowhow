@@ -180,7 +180,7 @@ FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
          LOOP
       ENDIF
 
-      seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
       IF !( cFilterRoba == ".t." )
          SET FILTER to &cFilterRoba
       ENDIF

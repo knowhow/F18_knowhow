@@ -65,11 +65,11 @@ FUNCTION pos_admin_menu()
    AAdd( opc, "1. parametri rada programa                        " )
    AAdd( opcexe, {|| pos_parametri() } )
 
-   AAdd( opc, "R. setovanje brojaca dokumenata" )
+   AAdd( opc, "R. setovanje brojača dokumenata" )
    AAdd( opcexe, {|| pos_set_param_broj_dokumenta() } )
 
-   AAdd( opc, "X. briši nepostojeće dokumente" )
-   AAdd( opcexe, {|| pos_brisi_nepostojece_dokumente() } )
+  // AAdd( opc, "X. briši nepostojeće dokumente" )
+  // AAdd( opcexe, {|| pos_brisi_nepostojece_dokumente() } )
 
    IF ( KLevel < L_UPRAVN )
 

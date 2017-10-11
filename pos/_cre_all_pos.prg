@@ -156,6 +156,7 @@ FUNCTION cre_all_pos( ver )
    _alias := "POS_DOKS"
    _table_name := "pos_doks"
 
+/*
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX ( "1", "IdPos+IdVd+dtos(datum)+BrDok", _alias )
    CREATE_INDEX ( "2", "IdVd+DTOS(Datum)+Smjena", _alias )
@@ -170,8 +171,9 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX ( "ZAK", "IdPos+idvd+STR(ZAK_BR)+STR(STO_BR)+DTOS(datum)+brdok", _alias )
    CREATE_INDEX ( "FISC", "STR(fisc_rn,10)+idpos+idvd", _alias )
    AFTER_CREATE_INDEX
+*/
 
-
+/*
    // ------- pos dokspf ------
    aDbf := {}
    AAdd( aDbf, { "DATUM", "D", 8, 0 } )
@@ -191,7 +193,7 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX( "1", "idpos+idvd+DToS(datum)+brdok", _alias )
    CREATE_INDEX( "2", "knaz", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
 
    // ----------------- pos items ---------------
@@ -221,6 +223,7 @@ FUNCTION cre_all_pos( ver )
    AAdd ( aDbf, { "C_2",        "C", 10, 0 } )
    AAdd ( aDbf, { "C_3",        "C", 50, 0 } )
 
+/*
    _alias := "POS"
    _table_name := "pos_pos"
    IF_NOT_FILE_DBF_CREATE
@@ -239,6 +242,7 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX ( "7", "IdPos+IdVd+BrDok+DTOS(Datum)+IdDio+IdOdj", _alias )
    CREATE_INDEX ( "IDS_SEM", "IdPos+IdVd+dtos(datum)+BrDok+rbr", _alias )
    AFTER_CREATE_INDEX
+*/
 
    // --- promvp - promet po vrstama placanja --
    aDbf := {}
@@ -256,14 +260,14 @@ FUNCTION cre_all_pos( ver )
    AAdd ( aDbf, { "POLOG11",   "N", 10, 2 } )
    AAdd ( aDbf, { "POLOG12",   "N", 10, 2 } )
    AAdd ( aDbf, { "UKUPNO",    "N", 10, 3 } )
-
+/*
    _alias := "PROMVP"
    _table_name := "pos_promvp"
 
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX ( "1", "DATUM", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
 
 

@@ -283,7 +283,7 @@ STATIC FUNCTION napravi_u_pripremi_storno_dokument( dDatDok, cBrDok, cBrojFiskal
    //ENDIF
    //SELECT pos
    //SEEK gIdPos + "42" + DToS( dDatDok ) + cBrDok
-   seek_pos( gIdPos, "42", dDatDok, cBrDok )
+   seek_pos_pos( gIdPos, "42", dDatDok, cBrDok )
 
    DO WHILE !Eof() .AND. field->idpos == gIdPos .AND. field->brdok == cBrDok  .AND. field->idvd == "42"
 

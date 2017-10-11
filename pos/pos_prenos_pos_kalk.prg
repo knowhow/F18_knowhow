@@ -298,7 +298,7 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dDatDok, cBrDok )
    //GO TOP
    //SEEK cIdPos + cIdTipDk + DToS( dDatDok ) + cBrDok
 
-   IF !seek_pos( cIdPos, cIdTipDk, dDatDok, cBrDok )
+   IF !seek_pos_pos( cIdPos, cIdTipDk, dDatDok, cBrDok )
    //IF !Found()
       MsgBeep( "POS tabela nema stavki !" )
       SELECT ( nDbfArea )

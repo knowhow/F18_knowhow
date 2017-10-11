@@ -134,7 +134,7 @@ FUNCTION pos_rpt_stanje_partnera()
 
          //SELECT POS
          //HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-         seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+         seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
          nIznos := 0
          nDuguje := 0
          nPotrazuje := 0
@@ -211,7 +211,7 @@ FUNCTION pos_rpt_stanje_partnera()
 
             //SELECT POS
             //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-            seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+            seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
             nDuguje := 0
             nPotrazuje := 0
             DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )

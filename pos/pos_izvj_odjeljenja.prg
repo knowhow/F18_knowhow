@@ -302,7 +302,7 @@ FUNCTION pos_dio_izvuci( cIdVd )
 
       // SELECT POS
       // SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-      seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
       DO WHILE ! Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
          IF ( !Empty ( cIdOdj ) .AND. POS->IdOdj <> cIdOdj ) .OR. !Tacno ( aUsl1 )
@@ -839,7 +839,7 @@ FUNCTION pos_odj_izvuci( cIdVd )
 
       //SELECT POS
       //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-      seek_pos( pos_doks->IdPos, pos_doks->IdVd,  pos_doks->datum, pos_doks->BrDok )
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd,  pos_doks->datum, pos_doks->BrDok )
 
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
          IF ( !Empty ( cIdOdj ) .AND. POS->IdOdj <> cIdOdj ) .OR. ;

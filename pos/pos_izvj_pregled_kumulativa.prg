@@ -69,7 +69,7 @@ FUNCTION PrepisKumPr()
 
    //SELECT POS
    //HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-   seek_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+   seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
    ? cLM
    IF gVrstaRS == "S"

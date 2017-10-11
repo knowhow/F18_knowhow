@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.107-std, 2017-10-12
+### POS
+- pos semafori out
+
 ## 3.1.106-std, 2017-10-11
 ### KALK
 - unos barkod = D, fix unos dokumenata

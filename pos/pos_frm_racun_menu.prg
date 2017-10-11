@@ -23,7 +23,7 @@ FUNCTION pos_unos_ispravka_racuna()
 
    SELECT _pos_pripr
 
-   IF reccount2() <> 0 .AND. ALLTRIM( field->brdok ) == "PRIPRE"
+   IF reccount2() <> 0 .AND. AllTrim( field->brdok ) == "PRIPRE"
       lNoviRacun := .F.
    ENDIF
 
@@ -39,7 +39,7 @@ FUNCTION pos_unos_ispravka_racuna()
 
 STATIC FUNCTION unos_stavki_racuna( lNovi )
 
-   LOCAL cSto := SPACE(3)
+   LOCAL cSto := Space( 3 )
 
    SELECT _pos_pripr
    GO TOP
@@ -125,7 +125,7 @@ STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( hParams )
 
    cBrojRacuna := pos_novi_broj_dokumenta( _id_pos, POS_VD_RACUN )
 
-   cVrijemeRacuna := PADR( TIME(), 5 )
+   cVrijemeRacuna := PadR( Time(), 5 )
    gDatum := Date()
 
    lOk := pos_azuriraj_racun( _id_pos, cBrojRacuna, cVrijemeRacuna, _id_vrsta_p, _id_partner )
@@ -135,9 +135,9 @@ STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( hParams )
       RETURN lRet
    ENDIF
 
-   IF gRnInfo == "D"
-      _sh_rn_info( cBrojRacuna )
-   ENDIF
+   // IF gRnInfo == "D"
+   pos_racun_info( cBrojRacuna )
+   // ENDIF
 
    IF fiscal_opt_active()
       pos_stampa_fiskalni_racun( _id_pos, gDatum, cBrojRacuna, _uplaceno )
@@ -176,6 +176,7 @@ STATIC FUNCTION pos_stampa_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
    ENDIF
 
    IF nError > 0
+      MsgBeep( "Greška pri štampi fiskalog računa " + cBrRn + " !?##Račun se iz tog razloga BRIŠE")
       pos_povrat_rn( cBrRn, dDatum )
    ENDIF
 
@@ -243,9 +244,9 @@ STATIC FUNCTION form_zakljuci_racun( hParams )
    LOCAL _id_vrsta_p := hParams[ "idvrstap" ]
    LOCAL _id_partner := hParams[ "idpartner" ]
    LOCAL _uplaceno := hParams[ "uplaceno" ]
+   LOCAL GetList := {}
 
-
-      _id_vrsta_p := gGotPlac
+   _id_vrsta_p := gGotPlac
 
 
    Box(, 8, 67 )
@@ -274,10 +275,9 @@ STATIC FUNCTION form_zakljuci_racun( hParams )
    ENDIF
 
    @ _x_pos := box_x_koord() + 5, _y_pos := box_y_koord() + 2 SAY8 "Kupac uplatio:" GET _uplaceno PICT "9999999.99" ;
-      VALID {|| if ( _uplaceno <> 0, ispisi_iznos_i_kusur_za_kupca( _uplaceno, koliko_treba_povrata_kupcu( hParams ), _x_pos, _y_pos ), .T. ), .T. }
+      VALID {|| IF ( _uplaceno <> 0, ispisi_iznos_i_kusur_za_kupca( _uplaceno, koliko_treba_povrata_kupcu( hParams ), _x_pos, _y_pos ), .T. ), .T. }
 
-
-   @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Ažurirati račun (D/N) ?" GET _ok PICT "@!" VALID _ok $ "DN"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Ažurirati POS račun (D/N) ?" GET _ok PICT "@!" VALID _ok $ "DN"
 
    READ
 
@@ -292,13 +292,13 @@ STATIC FUNCTION form_zakljuci_racun( hParams )
    hParams[ "idvrstap" ] := _id_vrsta_p
    hParams[ "uplaceno" ] := _uplaceno
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION RacObilj()
 
-   IF AScan ( aVezani, {| x| x[ 1 ] + DToS( x[ 4 ] ) + x[ 2 ] == pos_doks->( IdPos + DToS( datum ) + BrDok ) } ) > 0
+   IF AScan ( aVezani, {| x | x[ 1 ] + DToS( x[ 4 ] ) + x[ 2 ] == pos_doks->( IdPos + DToS( datum ) + BrDok ) } ) > 0
       RETURN .T.
    ENDIF
 

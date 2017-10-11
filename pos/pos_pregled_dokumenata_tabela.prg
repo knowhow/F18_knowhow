@@ -159,9 +159,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDatum0, dDatum1 )
       IF Pitanje(, "Želite li zaista izbrisati dokument (D/N) ?", "N" ) == "D"
 
          pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )
-
          _o_pos_prepis_tbl()
-
          SELECT ( nDbfArea )
          SET FILTER TO &_tbl_filter
          GO ( _rec_no )
@@ -334,7 +332,7 @@ FUNCTION pos_pregled_stavki_racuna()
 
    //SELECT POS
    //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-   seek_pos( pos_doks->IdPos, pos_doks->IdVd,  pos_doks->datum, pos_doks->BrDok )
+   seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd,  pos_doks->datum, pos_doks->BrDok )
 
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 

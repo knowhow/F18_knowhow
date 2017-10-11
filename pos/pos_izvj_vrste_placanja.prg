@@ -12,10 +12,12 @@
 #include "f18.ch"
 
 
-FUNCTION PrometVPl()
+FUNCTION pos_pregled_prometa_po_vrstama_placanja()
+
+   LOCAL GetList := {}
+   LOCAL dDatOd, dDatDo
 
    o_pos_kase()
-   O_PROMVP
 
    cIdPos := gIdPos
    dDatOd := dDatDo := gDatum
@@ -24,12 +26,16 @@ FUNCTION PrometVPl()
    Box(, 3, 60 )
    SET CURSOR ON
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prod.mjesto    :  "  GET  cIdPos  VALID Empty( cIdPos ) .OR. P_Kase( @cIdPos ) PICT "@!"
-   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datumski period:" GET dDatOd
-   @ box_x_koord() + 2, Col() + 2 SAY "-" GET dDatDo
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datum:" GET dDatOd
+   // @ box_x_koord() + 2, Col() + 2 SAY "-" GET dDatDo
    READ
    BoxC()
 
-   SELECT PROMVP; GO TOP
+   dDatDo := dDatOd
+   // SELECT PROMVP
+   seek_pos_promvp( dDatum )
+
+   // GO TOP
 
    nIznPKM := nIznPEURO := nIznKred := nIznVirm := nIznU := nIznU2 := nIznTrosk := 0
 
@@ -52,7 +58,7 @@ FUNCTION PrometVPl()
    // -- stampaj izvjestaj
    START PRINT CRET
 
-   //ZagFirma()
+   // ZagFirma()
 
    IF gVrstaRS == "S"
       P_INI  ; P_10CPI

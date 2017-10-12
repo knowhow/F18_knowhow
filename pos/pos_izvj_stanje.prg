@@ -160,8 +160,7 @@ FUNCTION pos_stanje_artikala
 
          xIdOdj := _IdOdj
 
-         SELECT ODJ
-         HSEEK _IdOdj
+         select_o_pos_odj( _IdOdj )
 
          ? cLM + Id + "-" + Naz
 

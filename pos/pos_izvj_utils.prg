@@ -60,10 +60,7 @@ FUNCTION RealNaDan( dDatum )
 
 
 
-// ----------------------------------------------------------------------
-// kasa izvuci - funkcija koja izvlaci iznose po tipovima dokumenata
-// ----------------------------------------------------------------------
-FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
+FUNCTION pos_kasa_pripremi_pom_za_izvjestaj( cIdVd, cDobId )
 
    // cIdVD - Id vrsta dokumenta
    // Opis: priprema pomoce baze POM.DBF za realizaciju
@@ -84,9 +81,7 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
          LOOP
       ENDIF
 
-
       seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
-
       DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
          IF ( !Empty( cIdOdj ) .AND. pos->IdOdj <> cIdOdj )
@@ -107,17 +102,16 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
          ENDIF
 
          IF roba->( FieldPos( "idodj" ) ) <> 0
-            SELECT odj
-            HSEEK roba->IdOdj
+            select_o_pos_odj( roba->IdOdj )
          ENDIF
 
          nNeplaca := 0
 
-         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-            nNeplaca := pos->( Kolicina * Cijena )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca := pos->( Kolicina * Cijena ) / 2
-         ENDIF
+      //   IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+      //      nNeplaca := pos->( Kolicina * Cijena )
+    //     ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+    //        nNeplaca := pos->( Kolicina * Cijena ) / 2
+    //     ENDIF
 
         // IF gPopVar = "P"
           nNeplaca += pos->( kolicina * nCijena )

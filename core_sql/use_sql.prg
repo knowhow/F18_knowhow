@@ -228,7 +228,7 @@ FUNCTION my_dbSelectArea( xArea )
 /*
    use_sql_valute() => otvori šifarnik valuta sa prilagođenim poljima
 */
-FUNCTION use_sql_valute()
+FUNCTION use_sql_valute( cId )
 
    LOCAL cSql
    LOCAL cTable := "valute"
@@ -245,6 +245,10 @@ FUNCTION use_sql_valute()
    cSql += "tip::char(1) "
    cSql += " FROM " + F18_PSQL_SCHEMA_DOT + "valute ORDER BY id"
 
+   IF cId != NIL
+      cSql += " WHERE id=" + sql_quote( cId )
+   ENDIF
+
    SELECT F_VALUTE
    IF !use_sql( cTable, cSql )
       RETURN .F.
@@ -255,8 +259,9 @@ FUNCTION use_sql_valute()
    INDEX ON ID + DToS( DATUM ) TAG ID2 TO ( cTable )
 
    SET ORDER TO TAG ID
+   GO TOP
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 /*

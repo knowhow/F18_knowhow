@@ -194,11 +194,11 @@ FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
             select_o_pos_odj( roba->idodj )
          ENDIF
          nNeplaca := 0
-         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-            nNeplaca := pos->( Kolicina * Cijena )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca := pos->( Kolicina * Cijena ) / 2
-         ENDIF
+      //   IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+      //      nNeplaca := pos->( Kolicina * Cijena )
+      //   ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+      //      nNeplaca := pos->( Kolicina * Cijena ) / 2
+      //   ENDIF
 
          //IF gPopVar = "P"
           nNeplaca += pos->( kolicina * NCijena )

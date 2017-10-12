@@ -107,14 +107,15 @@ FUNCTION realizacija_kase
 
    SELECT pos_doks
 
-   SetFilter( @cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId )
+   pos_set_filter_pos_doks( @cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId )
 
+altd()
    // fZaklj - zakljucenje smjene
    IF !fZaklj
-      pos_kasa_izvuci( "01", cSifraDob )
+      pos_kasa_pripremi_pom_za_izvjestaj( "01", cSifraDob )
    ENDIF
 
-   pos_kasa_izvuci( "42", cSifraDob )
+   pos_kasa_pripremi_pom_za_izvjestaj( "42", cSifraDob )
 
    PRIVATE nTotal := 0
 
@@ -130,27 +131,24 @@ FUNCTION realizacija_kase
       SET ORDER TO TAG "1"
 
       IF ( fPrik $ "PO" )
-         RealPoRadn( fPrik, @nTotal2, @nTotal3 )
+         pos_realizacija_po_radnicima( fPrik, @nTotal2, @nTotal3 )
       ENDIF
 
    ENDIF
 
    IF ( cRD $ "OB" )
-      // prikaz realizacije po odjeljenjima
-      RealPoOdj( fPrik, @nTotal2, @nTotal3 )
+
+      pos_realizacija_po_odjeljenjima( fPrik, @nTotal2, @nTotal3 )
    ENDIF
 
    IF !fZaklj
 
       // Porezi po tarifama
-
-      PDVPorPoTar( dDatum0, dDatum1, cIdPos, NIL, cIdodj )
+      pos_pdv_po_tarifama( dDatum0, dDatum1, cIdPos, NIL, cIdodj )
 
 
       IF Round( Abs( nTotal2 ) + Abs( nTotal3 ), 4 ) <> 0
-         o_pos_tables()
-
-         PDVPorPoTar( dDatum0, dDatum1, cIdPos, "3" )  // STA JE OVO? => APOTEKE!!
+         pos_pdv_po_tarifama( dDatum0, dDatum1, cIdPos, "3" )  // STA JE OVO? => APOTEKE!!
 
       ENDIF
 
@@ -315,7 +313,7 @@ STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdO
    RETURN .T.
 
 
-STATIC FUNCTION SetFilter( cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId )
+STATIC FUNCTION pos_set_filter_pos_doks( cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId )
 
 
    SELECT pos_doks
@@ -456,12 +454,7 @@ FUNCTION pos_realizacija_po_vrstama_placanja()
 
 
 
-
-/* RealPoRadn()
- *     Prikaz realizacije po radnicima
- */
-
-STATIC FUNCTION RealPoRadn()
+STATIC FUNCTION pos_realizacija_po_radnicima()
 
    ?
    ? "SIFRA PREZIME I IME RADNIKA"
@@ -699,11 +692,11 @@ STATIC FUNCTION set_zagl()
    RETURN
 
 
-/* RealPoOdj(fPrik, nTotal2, nTotal3)
+/* pos_realizacija_po_odjeljenjima(fPrik, nTotal2, nTotal3)
  *     Prikaz realizacije po odjeljenjima
  */
 
-STATIC FUNCTION RealPoOdj( fPrik, nTotal2, nTotal3 )
+STATIC FUNCTION pos_realizacija_po_odjeljenjima( fPrik, nTotal2, nTotal3 )
 
    IF ( fPrik $ "PO" )
       // daj mi pazar
@@ -741,8 +734,7 @@ STATIC FUNCTION RealPoOdj( fPrik, nTotal2, nTotal3 )
             nTotOdj2 := 0
             nTotOdj3 := 0
             _IdOdj := POM->IdOdj
-            SELECT odj
-            HSEEK _IdOdj
+            select_o_pos_odj( _IdOdj )
             ? PadL( AllTrim( _IdOdj ), 5 ), PadR( odj->naz, 22 ) + " "
             SELECT POM
             DO WHILE !Eof() .AND. pom->( IdPos + IdOdj ) == ( _IdPos + _IdOdj )
@@ -797,8 +789,7 @@ STATIC FUNCTION RealPoOdj( fPrik, nTotal2, nTotal3 )
                bOdj := {|| pom->k1 }
             ELSE
                _IdOdj := POM->IdOdj
-               SELECT ODJ
-               HSEEK _IdOdj
+               select_o_pos_odj( _IdOdj )
                bOdj := {|| pom->idodj }
                ? " ", _IdOdj, ODJ->Naz
             ENDIF

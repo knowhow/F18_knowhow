@@ -35,12 +35,10 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
 
    SELECT pos_doks
    APPEND BLANK
-
    _brdok := cBrDok
    _idvd := cIdVd
 
    cDokument := AllTrim( _idpos ) + "-" + _idvd + "-" + AllTrim( _brdok ) + " " + DToC( _datum )
-
 
    hRec := get_hash_record_from_global_vars()
    lOk := update_rec_server_and_dbf( "pos_doks", hRec, 1, "CONT" )
@@ -166,7 +164,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    SELECT PRIPRZ
    GO TOP
 
-   SELECT pos_doks
+   seek_pos_doks( "XX", "XX" )
    APPEND BLANK
 
    hRec := dbf_get_rec()
@@ -190,7 +188,10 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
 
    lOk := update_rec_server_and_dbf( "pos_doks", hRec, 1, "CONT" )
 
+
    IF lOk
+
+      seek_pos_pos( "XX", "XX" )
 
       SELECT PRIPRZ
 
@@ -251,7 +252,6 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
       hParams := hb_Hash()
       hParams[ "unlock" ] := { "pos_pos", "pos_doks" }
       run_sql_query( "COMMIT", hParams )
-
       log_write( "F18_DOK_OPER, ažuriran pos dokument: " + cDokument, 2 )
    ELSE
       run_sql_query( "ROLLBACK" )

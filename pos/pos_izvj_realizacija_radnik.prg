@@ -13,16 +13,13 @@
 
 
 
-// ------------------------------------------------
-// realizacija radnika
-// ------------------------------------------------
 FUNCTION pos_realizacija_radnik
 
    PARAMETERS lTekuci, fPrik, fZaklj
 
    PRIVATE cIdRadnik := Space( 4 )
    PRIVATE cVrsteP := Space( 60 )
-   PRIVATE aUsl1 := ".t."
+   PRIVATE cFilterVrstePlacanja := ".t."
    PRIVATE cSmjena := Space( 1 )
    PRIVATE cIdPos := gIdPos
 
@@ -32,7 +29,7 @@ FUNCTION pos_realizacija_radnik
    PRIVATE aNiz
    PRIVATE cGotZir := " "
 
-   o_tables()
+   //o_tables()
 
    fPrik := iif ( fPrik == NIL, "P", fPrik )
    fZaklj := iif ( fZaklj == NIL, .F., fZaklj )
@@ -74,10 +71,10 @@ FUNCTION pos_realizacija_radnik
          IF !VarEdit( aNiz, 10, 5, 13 + Len( aNiz ), 74, 'USLOVI ZA IZVJESTAJ "REALIZACIJA"', "B1" )
             CLOSERET
          ENDIF
-         aUsl1 := Parsiraj( cVrsteP, "IdVrsteP" )
-         IF aUsl1 <> NIL .AND. dDatOd <= dDatDo
+         cFilterVrstePlacanja := Parsiraj( cVrsteP, "IdVrsteP" )
+         IF cFilterVrstePlacanja <> NIL .AND. dDatOd <= dDatDo
             EXIT
-         ELSEIF aUsl1 == NIL
+         ELSEIF cFilterVrstePlacanja == NIL
             Msg( "Kriterij za vrstu placanja nije korektno postavljen!" )
          ELSE
             Msg( "'Datum do' ne smije biti stariji nego 'datum od'!" )
@@ -103,7 +100,6 @@ FUNCTION pos_realizacija_radnik
    ENDIF
 
    my_use_temp( "POM", my_home() + "pom", .F., .T. )
-
    INDEX ON ( idradnik + idvrstep + idroba + idcijena ) TAG "1"
    INDEX ON ( idroba + idcijena ) TAG "2"
 
@@ -161,17 +157,18 @@ FUNCTION pos_realizacija_radnik
       ? "-----", Replicate ( "-", 30 )
    ENDIF // lTekuci
 
-   SELECT pos_doks
-   SET ORDER TO TAG "2"       // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
-   IF !( aUsl1 == ".t." )
-      SET FILTER TO &aUsl1
-   ENDIF
-
    // formiram pomocnu datoteku sa podacima o realizaciji
    IF !lTekuci
       pos_radnik_izvuci ( VD_PRR )
    ENDIF
    pos_radnik_izvuci ( POS_VD_RACUN )
+
+
+   SELECT pos_doks
+   SET ORDER TO TAG "2"       // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
+   IF !( cFilterVrstePlacanja == ".t." )
+      SET FILTER TO &cFilterVrstePlacanja
+   ENDIF
 
    // ispis izvjestaja
    IF fPrik $ "PO"
@@ -409,11 +406,11 @@ FUNCTION pos_radnik_izvuci( cIdVd )
 
          nNeplaca := 0
 
-         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-            nNeplaca := pos->( Kolicina * Cijena )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca := pos->( Kolicina * Cijena ) / 2
-         ENDIF
+        // IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+        //    nNeplaca := pos->( Kolicina * Cijena )
+        // ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+        //    nNeplaca := pos->( Kolicina * Cijena ) / 2
+        // ENDIF
          //IF gPopVar = "P"
             nNeplaca += pos->( NCijena * kolicina )
          //ENDIF
@@ -455,7 +452,7 @@ STATIC FUNCTION o_tables()
    // o_pos_osob()
    //SET ORDER TO TAG "NAZ"
    //o_vrstep()
-   o_pos_pos()
-   o_pos_doks()
+   //o_pos_pos()
+   //o_pos_doks()
 
    RETURN .T.

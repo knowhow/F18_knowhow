@@ -260,11 +260,12 @@ FUNCTION dbf_ext_na_kraju( cIme )
 
 FUNCTION dbCreate2( cImeDbf, aDbf, cDbfEngine )
 
+   LOCAL cImeIndex
    cImeDbf := f18_ime_dbf( cImeDbf )
-   cImeDbf := ImeDbfCdx( cImeDbf )
+   cImeIndex := ImeDbfCdx( cImeDbf )
 
-   IF Right( cImeDbf, 4 ) == "." + INDEXEXT
-      FErase( cImeDbf )
+   IF Right( cImeIndex, 4 ) == "." + INDEXEXT
+      FErase( cImeIndex )  // izbrisati .cdx
    ENDIF
 
    dbCreate( cImeDbf, aDbf, cDbfEngine )

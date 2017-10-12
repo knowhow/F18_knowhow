@@ -21,7 +21,7 @@ FUNCTION fakt_import_bterm()
    LOCAL cFile
 
    // importuj podatke u pomocnu tabelu TEMP.DBF
-   nRet := import_BTerm_data( @cFile )
+   nRet := barkod_terminal_import_sa_terminala( @cFile )
 
    IF nRet == 0
       RETURN .F.
@@ -43,7 +43,7 @@ FUNCTION fakt_export_bterm()
 
    LOCAL nRet
 
-   nRet := export_BTerm_data()
+   nRet := barkod_terminal_export_artikle_na_terminal()
 
    RETURN .T.
 

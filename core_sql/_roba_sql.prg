@@ -145,6 +145,23 @@ FUNCTION roba_max_fiskalni_plu()
    RETURN nPlu
 
 
+/*
+   roba je aktivna ako je u u tekucoj bazi bilo prometa
+*/
+
+FUNCTION is_roba_aktivna( cIdRoba )
+
+   LOCAL nCnt
+   LOCAL cSql, oQuery
+
+   cSql := "SELECT count(idroba) AS cnt FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk"
+   cSql += " WHERE idroba=" + sql_quote( cIdRoba )
+   oQuery := run_sql_query( cSql )
+
+   nCnt := query_row( oQuery, "cnt" )
+
+   RETURN nCnt > 0
+
 
 FUNCTION find_roba_by_sifradob( cIdSifraDob, cOrderBy, cWhere )
 

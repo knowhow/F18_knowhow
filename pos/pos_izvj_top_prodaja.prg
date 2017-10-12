@@ -59,7 +59,7 @@ FUNCTION pos_top_narudzbe()
 
    PRIVATE cIdPOS := gIdPos
    IF gVrstaRS <> "K"
-      aNiz := { { "Prodajno mjesto", "cIdPos", "cidpos='X' .or. Empty(cIdPos).or.P_Kase(@cIdPos)",, } }
+      aNiz := { { "Prodajno mjesto", "cIdPos", "cidpos='X' .or. Empty(cIdPos).or.p_pos_kase(@cIdPos)",, } }
    ENDIF
    AAdd ( aNiz, { "Roba (prazno-sve)", "cRoba",, "@!S30", } )
    AAdd ( aNiz, { "Pregled po Iznosu/Kolicini/Oboje (I/K/O)", "cSta", "cSta$'IKO'", "@!", } )
@@ -200,9 +200,9 @@ FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
             nNeplaca := pos->( Kolicina * Cijena ) / 2
          ENDIF
 
-         IF gPopVar = "P"
-            nNeplaca += pos->( kolicina * NCijena )
-         ENDIF
+         //IF gPopVar = "P"
+          nNeplaca += pos->( kolicina * NCijena )
+         //ENDIF
 
          SELECT POM
          GO TOP
@@ -214,16 +214,16 @@ FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
                Kolicina WITH POS->Kolicina, ;
                Iznos    WITH POS->Kolicina * POS->Cijena, ;
                iznos3   WITH nNeplaca
-            IF gPopVar == "P"
-               REPLACE iznos2   WITH pos->ncijena * pos->kolicina
-            ENDIF
+            //IF gPopVar == "P"
+             REPLACE iznos2   WITH pos->ncijena * pos->kolicina
+            //ENDIF
          ELSE
             REPLACE Kolicina WITH Kolicina + POS->Kolicina, ;
                Iznos WITH Iznos + POS->Kolicina * POS->Cijena, ;
                iznos3 WITH iznos3 + nNePlaca
-            IF gPopVar == "P"
-               REPLACE iznos2   WITH iznos2 + pos->ncijena * pos->kolicina
-            ENDIF
+            //IF gPopVar == "P"
+             REPLACE iznos2   WITH iznos2 + pos->ncijena * pos->kolicina
+            //ENDIF
          END
 
          SELECT POS

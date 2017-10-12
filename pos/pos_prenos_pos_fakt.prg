@@ -79,7 +79,7 @@ FUNCTION Stanje2Fakt()
 //   o_sifk()
 //   o_sifv()
 //   o_partner()
-   o_pos_kase()
+//   o_pos_kase()
    o_pos_pos()
    o_pos_doks()
 
@@ -91,7 +91,7 @@ FUNCTION Stanje2Fakt()
    SET CURSOR ON
 
    Box( "#PRENOS STANJA ROBE POS->FAKT", 5, 70 )
-   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. P_Kase( @cIdPos, 2, 25 )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. p_pos_kase( @cIdPos, 2, 25 )
    @ box_x_koord() + 3, box_y_koord() + 2 SAY "Partner/dost.vozilo " GET cIdPartnG PICT "@!" VALID Empty( cIdPartnG ) .OR. p_partner( @cIdPartnG, 3, 28 )
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Stanje robe na dan" GET dDatDo
    READ

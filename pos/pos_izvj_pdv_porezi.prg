@@ -52,7 +52,7 @@ FUNCTION PDVPorPoTar
    IF fSolo
     //  o_sifk()
     //  o_sifv()
-      o_pos_kase()
+    //  o_pos_kase()
     //  o_roba()
       o_pos_odj()
       o_pos_doks()
@@ -65,7 +65,7 @@ FUNCTION PDVPorPoTar
 
    IF fSolo
       IF gVrstaRS <> "K"
-         AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.P_Kase(cIdPos)", "@!", } )
+         AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.p_pos_kase(cIdPos)", "@!", } )
       ENDIF
 
       IF gVodiOdj == "D"

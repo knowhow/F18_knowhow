@@ -50,7 +50,7 @@ FUNCTION PorPoTar
    IF fSolo
       // o_sifk()
       // o_sifv()
-      o_pos_kase()
+      //o_pos_kase()
       // o_roba()
       o_pos_odj()
       o_pos_doks()
@@ -64,7 +64,7 @@ FUNCTION PorPoTar
 
    IF fSolo
       IF gVrstaRS <> "K"
-         AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.P_Kase(cIdPos)", "@!", } )
+         AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.p_pos_kase(cIdPos)", "@!", } )
       ENDIF
 
       IF gVodiOdj == "D"
@@ -316,21 +316,21 @@ FUNCTION Porezi( cIdVd, dDatum0, aTarife, cNaplaceno )
 
             nNeplaca := 0
 
-            IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-               nNeplaca := pos->( Kolicina * Cijena )
-            ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-               nNeplaca := pos->( Kolicina * Cijena ) / 2
-            ENDIF
+            //IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+            //   nNeplaca := pos->( Kolicina * Cijena )
+            //ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+            //   nNeplaca := pos->( Kolicina * Cijena ) / 2
+            //ENDIF
 
-            IF gPopVar = "P"
+            //IF gPopVar = "P"
                nNeplaca += pos->( kolicina * NCijena )
-            ENDIF
+            //ENDIF
 
-            IF gPopVar == "A"
-               nIzn := pos->( Cijena * kolicina ) - nNeplaca + pos->ncijena
-            ELSE
+            //IF gPopVar == "A"
+            //   nIzn := pos->( Cijena * kolicina ) - nNeplaca + pos->ncijena
+            //ELSE
                nIzn := pos->( Cijena * kolicina ) - nNeplaca
-            ENDIF
+            //ENDIF
 
          ENDIF
 
@@ -393,7 +393,6 @@ FUNCTION POSRekapTar( aRekPor )
 
    nArr := Select()
 
-   o_tarifa()
 
    ASort( aRekPor,,, {| x, y | x[ 1 ] < y[ 1 ] } )
    lPP := .F. // ima posebnog poreza

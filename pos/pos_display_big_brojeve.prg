@@ -465,36 +465,35 @@ FUNCTION Godina_2( dDatum )
 
 FUNCTION NenapPop()
 
-   RETURN iif( gPopVar = "A", "NENAPLACENO:", "     POPUST:" )
+   //RETURN iif( gPopVar = "A", "NENAPLACENO:", "     POPUST:" )
+   RETURN  "     POPUST:"
 
 
 
 FUNCTION pos_set_user( cKorSif, nSifLen, cLevel )
 
-   o_pos_strad()
-   o_pos_osob()
+   //o_pos_strad()
+   //o_pos_osob()
 
    cKorSif := CryptSC( PadR( Upper( Trim( cKorSif ) ), nSifLen ) )
-   SELECT OSOB
-   SEEK cKorSif
-
-   IF Found()
+   IF select_o_pos_osob( cKorSif )
+   //IF Found()
       gIdRadnik := field->ID
       gKorIme   := field->Naz
       gSTRAD  := AllTrim ( field->Status )
-      SELECT STRAD
-      SEEK OSOB->Status
-      IF Found ()
+      //SELECT STRAD
+      IF select_o_pos_strad( OSOB->Status )
+      //IF Found ()
          cLevel := field->prioritet
       ELSE
          cLevel := L_PRODAVAC
          gSTRAD := "K"
       ENDIF
-      SELECT OSOB
+      //SELECT OSOB
       RETURN 1
    ELSE
       MsgBeep ( "Unijeta je nepostojeća lozinka !" )
-      SELECT OSOB
+      //SELECT OSOB
       RETURN 0
    ENDIF
 

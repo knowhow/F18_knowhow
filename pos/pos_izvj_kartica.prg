@@ -35,11 +35,11 @@ FUNCTION pos_kartica_artikla()
 
    nMDBrDok := 6
 
-   o_pos_kase()
+  //o_pos_kase()
   // o_sifk()
   // o_sifv()
   // o_roba()
-   o_pos_pos()
+   //o_pos_pos()
 
    cRoba := Space( 10 )
    cIdPos := gIdPos
@@ -56,7 +56,7 @@ FUNCTION pos_kartica_artikla()
    aNiz := {}
 
    IF gVrstaRS <> "K"
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prod.mjesto (prazno-svi) "  GET  cIdPos  VALID Empty( cIdPos ) .OR. P_Kase( cIdPos ) PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prod.mjesto (prazno-svi) "  GET  cIdPos  VALID Empty( cIdPos ) .OR. p_pos_kase( cIdPos ) PICT "@!"
    ENDIF
 
    READ
@@ -91,18 +91,21 @@ FUNCTION pos_kartica_artikla()
 
 
    IF cPPar == "D"
-      o_pos_doks()
-      SELECT ( F_POS_DOKS )
-      SET ORDER TO TAG "1"
+      //o_pos_doks()
+      //SELECT ( F_POS_DOKS )
+      //SET ORDER TO TAG "1"
    ENDIF
 
-   SELECT POS
-   SET ORDER TO TAG "2"
+  // SELECT POS
+  // SET ORDER TO TAG "2"
+
 
    IF Empty( cRoba )
-      Seek2( cIdOdj )
+      //Seek2( cIdOdj )
+      seek_pos_pos_2( cIdOdj )
    ELSE
-      Seek2( cIdOdj + cRoba )
+      seek_pos_pos_2( cIdOdj, cIdRoba )
+      //Seek2( cIdOdj + cRoba )
       IF pos->idroba <> cRoba
          MsgBeep( "Ne postoje traženi podaci !" )
          RETURN .F.
@@ -196,7 +199,7 @@ FUNCTION pos_kartica_artikla()
             nVrijednost := 0
 
             //SEEK cIdOdj + cIdRoba + DToS( dDatum0 )
-            seek_pos_2( cIdOdj, cIdRoba, dDatum0 )
+            seek_pos_pos_2( cIdOdj, cIdRoba, dDatum0 )
 
          ELSE
             DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum < dDatum0
@@ -415,4 +418,4 @@ FUNCTION pos_kartica_artikla()
 
    CLOSE ALL
 
-   RETURN
+   RETURN .T.

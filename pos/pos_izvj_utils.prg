@@ -119,9 +119,9 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
             nNeplaca := pos->( Kolicina * Cijena ) / 2
          ENDIF
 
-         IF gPopVar = "P"
-            nNeplaca += pos->( kolicina * nCijena )
-         ENDIF
+        // IF gPopVar = "P"
+          nNeplaca += pos->( kolicina * nCijena )
+         //ENDIF
 
          SELECT pom
          GO TOP
@@ -140,9 +140,9 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
             REPLACE Iznos WITH pos->Kolicina * POS->Cijena
             REPLACE Iznos3 WITH nNeplaca
 
-            IF gPopVar == "A"
-               REPLACE Iznos2 WITH pos->nCijena
-            ENDIF
+          //  IF gPopVar == "A"
+           REPLACE Iznos2 WITH pos->nCijena
+          //  ENDIF
 
             IF roba->( FieldPos( "K1" ) ) <> 0
                REPLACE K2 WITH roba->K2, K1 WITH roba->K1
@@ -154,9 +154,9 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
             REPLACE Iznos WITH Iznos + POS->Kolicina * POS->Cijena
             REPLACE Iznos3 WITH Iznos3 + nNeplaca
 
-            IF gPopVar == "A"
-               REPLACE Iznos2 WITH Iznos2 + pos->nCijena
-            ENDIF
+            //IF gPopVar == "A"
+            //   REPLACE Iznos2 WITH Iznos2 + pos->nCijena
+            //ENDIF
 
          ENDIF
 

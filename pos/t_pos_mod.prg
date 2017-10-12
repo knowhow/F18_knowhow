@@ -163,7 +163,7 @@ METHOD set_module_gvars()
    PUBLIC gPopust := 0
    PUBLIC gPopDec := 2
    PUBLIC gPopZcj := "N"
-   PUBLIC gPopVar := "P"
+  // PUBLIC gPopVar := "P"
    PUBLIC gPopProc := "N"
    PUBLIC gPopIzn := 0
    PUBLIC gPopIznP := 0
@@ -258,7 +258,7 @@ METHOD set_module_gvars()
 
    gDatum := Date()
 
-   PUBLIC gPopVar := "P"
+  // PUBLIC gPopVar := "P"
    PUBLIC gPopZcj := "N"
    PUBLIC gZadCij := "N"
    PUBLIC gPopProc := "N"
@@ -387,7 +387,7 @@ METHOD set_module_gvars()
    gIdCijena := fetch_metric( "SetCijena", NIL, gIdCijena )
    gPopust := fetch_metric( "Popust", NIL, gPopust )
    gPopDec := fetch_metric( "PopustDecimale", NIL, gPopDec )
-   gPopVar := fetch_metric( "PopustVarijanta", NIL, gPopVar )
+   //gPopVar := fetch_metric( "PopustVarijanta", NIL, gPopVar )
    gPopZCj := fetch_metric( "PopustZadavanjemCijene", NIL, gPopZCj )
    gPopProc := fetch_metric( "PopustProcenat", NIL, gPopProc )
    gPopIzn := fetch_metric( "PopustIznos", NIL, gPopIzn )

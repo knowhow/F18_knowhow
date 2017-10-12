@@ -90,11 +90,9 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
             nNeplaca += Kolicina * Cijena / 2 - ncijena
          ENDIF
 
-
-
-         IF ( gPopVar == "P" )
+         //IF ( gPopVar == "P" )
             nNeplaca += kolicina * NCijena
-         ENDIF
+         //ENDIF
 
          SKIP
       ENDDO
@@ -497,9 +495,9 @@ FUNCTION StampaPrep( cIdPos, dDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
          ELSEIF Right( odj->naz, 6 ) == "#1#50#"
             nNeplaca += pos->( Kolicina * Cijena / 2 - ncijena )
          ENDIF
-         IF gPopVar = "P"
-            nNeplaca += pos->( kolicina * ncijena )
-         ENDIF
+         //IF gPopVar = "P"
+         nNeplaca += pos->( kolicina * ncijena )
+         //ENDIF
          SKIP
       ENDDO
    NEXT
@@ -979,10 +977,12 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
 
       ENDIF
 
-      SELECT osob
-      SET ORDER TO TAG "NAZ"
-      HSEEK cIdRadnik
+      //SELECT osob
+      //SET ORDER TO TAG "NAZ"
+      //HSEEK cIdRadnik
+      find_pos_osob_by_naz( cIdRadnik )
       cRdnkNaz := osob->naz
+
 
       IF !select_o_vrstep( cVrstaP )
 
@@ -1033,11 +1033,10 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          nCjenBPDV := nCjenPDV / ( 1 + ( nPPDV + nStPP ) / 100 )
 
          // popust - ovo treba jos dobro pregledati
-         DO CASE
-
-         CASE gPopVar = "P"
-            nIznPop := field->ncijena
-         ENDCASE
+         //DO CASE
+         //CASE gPopVar = "P"
+          nIznPop := field->ncijena
+         //ENDCASE
 
          nPopust := 0
 

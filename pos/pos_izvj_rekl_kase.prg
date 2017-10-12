@@ -87,7 +87,7 @@ STATIC FUNCTION FrmRptVars( cIdPos, dDatum0, dDatum1 )
    cIdPos := gIdPos
 
    IF gVrstaRS <> "K"
-      AAdd( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X'.or.EMPTY(cIdPos) .or. P_Kase(@cIdPos)", "@!", } )
+      AAdd( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X'.or.EMPTY(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
    ENDIF
 
    AAdd( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
@@ -108,7 +108,6 @@ STATIC FUNCTION FrmRptVars( cIdPos, dDatum0, dDatum1 )
 
 STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos )
 
-   // {
 
    ?? gP12CPI
    IF glRetroakt
@@ -118,7 +117,7 @@ STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos )
    ENDIF
    ? PadC( "-------------------------------------", 40 )
 
-   o_pos_kase()
+  // o_pos_kase()
    IF Empty( cIdPos )
       ? "PRODAJNO MJESTO: SVA"
    ELSE
@@ -127,8 +126,7 @@ STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos )
 
    ? "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
 
-   RETURN
-// }
+   RETURN .T.
 
 
 STATIC FUNCTION SetFilter( cFilter, cIdPos, dDatum0, dDatum1 )

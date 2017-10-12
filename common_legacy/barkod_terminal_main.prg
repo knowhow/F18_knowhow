@@ -12,10 +12,8 @@
 #include "f18.ch"
 
 
-// -------------------------------------------------------
-// import barcode terminal data
-// -------------------------------------------------------
-FUNCTION import_BTerm_data( cI_File )
+
+FUNCTION barkod_terminal_import_sa_terminala( cI_File )
 
    LOCAL cPath := ""
    LOCAL aError := {}
@@ -40,42 +38,6 @@ FUNCTION import_BTerm_data( cI_File )
    ENDIF
 
    RETURN 1
-
-
-// -----------------------------------------------------
-// Vraca podesenje putanje do exportovanih fajlova
-// -----------------------------------------------------
-STATIC FUNCTION get_export_path( cPath )
-
-   //LOCAL _path
-   LOCAL GetList := {}
-
-#ifdef __PLATFORM__WINDOWS
-
-   cPath := "c:" + SLASH + "import" + SLASH
-#else
-   cPath := SLASH + "home" + SLASH + my_user() + SLASH + "import" + SLASH
-#endif
-
-   cPath := PadR( fetch_metric( "bterm_imp_exp_path", my_user(), AllTrim( cPath ) ), 500 )
-
-   Box(, 2, 70 )
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Import / export lokacija:"
-   @ box_x_koord() + 2, box_y_koord() + 2 SAY "lokacija:" GET cPath PICT "@S50"
-   READ
-   BoxC()
-
-   IF LastKey() == K_ESC
-      cPath := NIL
-      RETURN .F.
-   ENDIF
-
-   cPath := AllTrim( cPath )
-   set_metric( "bterm_imp_exp_path", my_user(), cPath )
-
-   RETURN .T.
-
-
 
 
 // ---------------------------------------
@@ -127,12 +89,10 @@ STATIC FUNCTION check_barkod_import()
 
 
 
-// ------------------------------------------------
-// generise txt fajl sa artiklima za terminal...
-// ------------------------------------------------
-FUNCTION export_BTerm_data()
 
-   LOCAL aStruct := get_article_tbl_struct()
+FUNCTION barkod_terminal_export_artikle_na_terminal()
+
+   LOCAL aStruct := barkod_terminal_set_struktura_artikli_txt()
    LOCAL nTArea := Select()
    LOCAL cSeparator := ";"
    LOCAL aData := {}
@@ -165,11 +125,17 @@ FUNCTION export_BTerm_data()
 
    DO WHILE !Eof()
 
+      IF !is_roba_aktivna( field->id )
+         SKIP
+         LOOP
+      ENDIF
+
       cBK := PadR( field->barkod, 20 )
       IF Empty( cBK )
          SKIP
          LOOP
       ENDIF
+
 
       SELECT r_export
       GO TOP
@@ -206,10 +172,7 @@ FUNCTION export_BTerm_data()
 
 
 
-// ----------------------------------------
-// artikli.txt struktura txt fajla
-// ----------------------------------------
-STATIC FUNCTION get_article_tbl_struct()
+STATIC FUNCTION barkod_terminal_set_struktura_artikli_txt()
 
    LOCAL aRet := {}
 
@@ -223,6 +186,38 @@ STATIC FUNCTION get_article_tbl_struct()
    AAdd( aRet, { "N", 8, 2 } )
 
    RETURN aRet
+
+
+STATIC FUNCTION get_export_path( cPath )
+
+   // LOCAL _path
+   LOCAL GetList := {}
+
+#ifdef __PLATFORM__WINDOWS
+
+   cPath := "c:" + SLASH + "import" + SLASH
+#else
+   cPath := SLASH + "home" + SLASH + my_user() + SLASH + "import" + SLASH
+#endif
+
+   cPath := PadR( fetch_metric( "bterm_imp_exp_path", my_user(), AllTrim( cPath ) ), 500 )
+
+   Box(, 2, 70 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Import / export lokacija:"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "lokacija:" GET cPath PICT "@S50"
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      cPath := NIL
+      RETURN .F.
+   ENDIF
+
+   cPath := AllTrim( cPath )
+   set_metric( "bterm_imp_exp_path", my_user(), cPath )
+
+   RETURN .T.
+
 
 
 

@@ -56,7 +56,7 @@ FUNCTION pos_realizacija_radnik
       cIdPos := gIdPos
       IF gVrstaRS <> "K"
 
-         AAdd( aNiz, { "Prodajno mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos) .or. P_Kase(@cIdPos)", "@!", } )
+         AAdd( aNiz, { "Prodajno mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
       ENDIF
       AAdd( aNiz, { "Sifra radnika  (prazno-svi)", "cIdRadnik", "IF(!EMPTY(cIdRadnik),P_OSOB(@cIdRadnik),.t.)",, } )
       AAdd( aNiz, { "Vrsta placanja (prazno-sve)", "cVrsteP",, "@!S30", } )
@@ -414,9 +414,9 @@ FUNCTION pos_radnik_izvuci( cIdVd )
          ELSEIF Right( odj->naz, 6 ) == "#1#50#"
             nNeplaca := pos->( Kolicina * Cijena ) / 2
          ENDIF
-         IF gPopVar = "P"
+         //IF gPopVar = "P"
             nNeplaca += pos->( NCijena * kolicina )
-         ENDIF
+         //ENDIF
 
          SELECT POM
          GO TOP
@@ -425,14 +425,14 @@ FUNCTION pos_radnik_izvuci( cIdVd )
          IF !Found()
             APPEND BLANK
             REPLACE IdRadnik WITH _IdRadnik, IdVrsteP WITH _IdVrsteP, IdRoba WITH POS->IdRoba, IdCijena WITH POS->IdCijena, Kolicina WITH POS->KOlicina, Iznos WITH POS->Kolicina * POS->Cijena, iznos3 WITH nNeplaca
-            IF gPopVar = "A"
-               REPLACE Iznos2   WITH pos->( ncijena )
-            ENDIF
+            //IF gPopVar = "A"
+            //   REPLACE Iznos2   WITH pos->( ncijena )
+            //ENDIF
          ELSE
             REPLACE Kolicina WITH Kolicina + POS->Kolicina, Iznos WITH Iznos + POS->Kolicina * POS->Cijena, iznos3 WITH iznos3 + nNeplaca
-            IF gPopVar = "A"
-               REPLACE Iznos2   WITH Iznos2 + pos->( ncijena )
-            ENDIF
+            //IF gPopVar = "A"
+            //   REPLACE Iznos2   WITH Iznos2 + pos->( ncijena )
+            //ENDIF
          ENDIF
          SELECT POS
          SKIP
@@ -450,11 +450,11 @@ STATIC FUNCTION o_tables()
    // o_sifk()
    // o_sifv()
    // o_pos_kase()
-   o_pos_odj()
+   //o_pos_odj()
    // o_roba()
    // o_pos_osob()
-   SET ORDER TO TAG "NAZ"
-   o_vrstep()
+   //SET ORDER TO TAG "NAZ"
+   //o_vrstep()
    o_pos_pos()
    o_pos_doks()
 

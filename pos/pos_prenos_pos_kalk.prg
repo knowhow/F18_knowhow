@@ -22,10 +22,10 @@ FUNCTION pos_preuzmi_iz_kalk( cIdTipDok, cBrDok )
    LOCAL _val_zaduzenje
    LOCAL _val_inventura
    LOCAL _val_nivelacija
-   LOCAL _id_pos, _prodajno_mjesto
+   LOCAL cIdPos, _prodajno_mjesto
    LOCAL lOk := .T.
 
-   _id_pos := gIdPos
+   cIdPos := gIdPos
    _prodajno_mjesto := Space( 2 )
    _val_otpremnica := "95"
    _val_zaduzenje := "11#12#13#80#81"
@@ -37,7 +37,7 @@ FUNCTION pos_preuzmi_iz_kalk( cIdTipDok, cBrDok )
    SET CURSOR ON
    o_pos_priprz()
 
-   _br_dok := Space( Len( field->brdok ) )
+   _br_dok := Space( FIELD_LEN_POS_BRDOK )
 
    IF priprz->( RecCount2() ) == 0 .AND. Pitanje( , "Preuzeti dokumente iz KALK-a", "N" ) == "N"
       RETURN .F.
@@ -53,10 +53,10 @@ FUNCTION pos_preuzmi_iz_kalk( cIdTipDok, cBrDok )
    _id_tip_dok := _get_vd( katops->idvd )
    cIdTipDok := _id_tip_dok
 
-   SELECT pos_doks
-   SET ORDER TO TAG "1"
+   //SELECT pos_doks
+   //SET ORDER TO TAG "1"
 
-   _br_dok := pos_novi_broj_dokumenta( _id_pos, cIdTipDok )
+   _br_dok := pos_novi_broj_dokumenta( cIdPos, cIdTipDok )
    cBrDok := _br_dok
 
    SELECT katops
@@ -65,7 +65,7 @@ FUNCTION pos_preuzmi_iz_kalk( cIdTipDok, cBrDok )
    MsgO( "kalk -> priprema, update roba " )
 
    DO WHILE !Eof()
-      IF ( katops->idpos == _id_pos )
+      IF ( katops->idpos == cIdPos )
          IF import_row( _id_tip_dok, _br_dok, "" ) == 0
             lOk := .F.
             EXIT
@@ -94,20 +94,21 @@ FUNCTION pos_preuzmi_iz_kalk( cIdTipDok, cBrDok )
 
 
 
-STATIC FUNCTION _get_vd( tip_dokumenta )
+STATIC FUNCTION _get_vd( cIdVd )
 
    LOCAL _ret := "16"
 
    DO CASE
-   CASE tip_dokumenta $ "11#80#81"
+   CASE cIdVd $ "11#80#81"
       _ret := "16"
-   CASE tip_dokumenta $ "19"
+   CASE cIdVd $ "19"
       _ret := "NI"
-   CASE tip_dokumenta $ "IP"
+   CASE cIdVd $ "IP"
       _ret := "IN"
    ENDCASE
 
    RETURN _ret
+
 
 STATIC FUNCTION _brisi_fajlove_importa( import_file )
 
@@ -183,7 +184,7 @@ STATIC FUNCTION import_row( cIdTipDk, cBrDok, cIdOdj )
 STATIC FUNCTION get_import_file( cBrDok, destinacija, import_fajl )
 
    LOCAL _filter
-   LOCAL _prodajno_mjesto, _id_pos, cPrefixLocal
+   LOCAL _prodajno_mjesto, cIdPos, cPrefixLocal
    LOCAL _imp_files := {}
    LOCAL _opc := {}
    LOCAL _h, nI
@@ -194,7 +195,7 @@ STATIC FUNCTION get_import_file( cBrDok, destinacija, import_fajl )
    _prodajno_mjesto := GetPm( gIdPos )
 
    IF !Empty( _prodajno_mjesto )
-      _id_pos := _prodajno_mjesto
+      cIdPos := _prodajno_mjesto
       cPrefixLocal := ( Trim( _prodajno_mjesto ) ) + SLASH
    ELSE
       cPrefixLocal := ""
@@ -258,10 +259,10 @@ STATIC FUNCTION GetPm( cIdPos )
 
 STATIC FUNCTION _o_real_table()
 
-   o_roba()
-   o_pos_kase()
-   o_pos_pos()
-   o_pos_doks()
+//   o_roba()
+//   o_pos_kase()
+//   o_pos_pos()
+//   o_pos_doks()
 
    RETURN .T.
 
@@ -376,6 +377,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
    LOCAL _tmp
    LOCAL _auto_prenos := .F.
    LOCAL hRec
+   LOCAL GetList := {}
 
    IF cIdPM <> NIL
       _auto_prenos := .T.
@@ -401,7 +403,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
 
       Box(, 4, 70, .F., " PRENOS REALIZACIJE POS->KALK   " )
 
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. P_Kase( @cIdPos, 5, 20 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. p_pos_kase( @cIdPos, 5, 20 )
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prenos za period" GET _dat_od
       @ box_x_koord() + 2, Col() + 2 SAY "-" GET _dat_do
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Uslov po artiklima:" GET _usl_roba PICT "@S40"

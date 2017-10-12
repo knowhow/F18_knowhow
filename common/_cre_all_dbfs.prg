@@ -258,18 +258,16 @@ FUNCTION dbf_ext_na_kraju( cIme )
     dbCreate2( cTable, aDbf )
 */
 
-FUNCTION dbCreate2( cImeDbf, struct_dbf, driver )
-
-   LOCAL _ime_cdx
+FUNCTION dbCreate2( cImeDbf, aDbf, cDbfEngine )
 
    cImeDbf := f18_ime_dbf( cImeDbf )
-   _ime_cdx := ImeDbfCdx( cImeDbf )
+   cImeDbf := ImeDbfCdx( cImeDbf )
 
-   IF Right( _ime_cdx, 4 ) == "." + INDEXEXT
-      FErase( _ime_cdx )
+   IF Right( cImeDbf, 4 ) == "." + INDEXEXT
+      FErase( cImeDbf )
    ENDIF
 
-   dbCreate( cImeDbf, struct_dbf, driver )
+   dbCreate( cImeDbf, aDbf, cDbfEngine )
 
    RETURN .T.
 
@@ -279,35 +277,35 @@ FUNCTION dbCreate2( cImeDbf, struct_dbf, driver )
 
 FUNCTION fill_tbl_valute()
 
-   LOCAL _rec, _tmp, _id, _qry
+   LOCAL _rec, nTmp, _id, cQuery
    LOCAL _table := F18_PSQL_SCHEMA_DOT + "valute"
 
-   _tmp := table_count( _table )
+   nTmp := table_count( _table )
 
-   IF _tmp == 0
+   IF nTmp == 0
 
-      _qry := "INSERT INTO " + _table
-      _qry += " ( id, naz, naz2, datum, tip, kurs1, kurs2, kurs3 ) "
-      _qry += " VALUES( "
-      _qry += " '000', "
-      _qry += " 'KONVERTIBILNA MARKA', "
-      _qry += " 'KM ', "
-      _qry += sql_quote( CToD( "01.01.04" ) ) + ", "
-      _qry += " 'D', "
-      _qry += " 1, 1, 1 "
-      _qry += " ); "
-      _qry += "INSERT INTO " + _table
-      _qry += " ( id, naz, naz2, datum, tip, kurs1, kurs2, kurs3 ) "
-      _qry += " VALUES( "
-      _qry += " '978', "
-      _qry += " 'EURO', "
-      _qry += " 'EUR', "
-      _qry += sql_quote( CToD( "01.01.04" ) ) + ", "
-      _qry += " 'P', "
-      _qry += " 0.51128, 0.51128, 0.51128 "
-      _qry += " ); "
+      cQuery := "INSERT INTO " + _table
+      cQuery += " ( id, naz, naz2, datum, tip, kurs1, kurs2, kurs3 ) "
+      cQuery += " VALUES( "
+      cQuery += " '000', "
+      cQuery += " 'KONVERTIBILNA MARKA', "
+      cQuery += " 'KM ', "
+      cQuery += sql_quote( CToD( "01.01.04" ) ) + ", "
+      cQuery += " 'D', "
+      cQuery += " 1, 1, 1 "
+      cQuery += " ); "
+      cQuery += "INSERT INTO " + _table
+      cQuery += " ( id, naz, naz2, datum, tip, kurs1, kurs2, kurs3 ) "
+      cQuery += " VALUES( "
+      cQuery += " '978', "
+      cQuery += " 'EURO', "
+      cQuery += " 'EUR', "
+      cQuery += sql_quote( CToD( "01.01.04" ) ) + ", "
+      cQuery += " 'P', "
+      cQuery += " 0.51128, 0.51128, 0.51128 "
+      cQuery += " ); "
 
-      run_sql_query( _qry )
+      run_sql_query( cQuery )
 
    ENDIF
 

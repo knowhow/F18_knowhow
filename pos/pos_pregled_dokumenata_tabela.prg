@@ -15,19 +15,20 @@
 FUNCTION pos_lista_azuriranih_dokumenata()
 
    LOCAL aOpc
+   LOCAL GetList := {}
    //LOCAL _prikaz_partnera := .F.
    PRIVATE cFilter := ".t."
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
-   cVrste := "  "
+   cIdVd := "  "
    dDatOd := Date() - 1
    dDatDo := Date()
 
    Box(, 3, 60 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datumski period:" GET dDatOd
    @ box_x_koord() + 1, Col() + 2 SAY "-" GET dDatDo
-   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Vrste (prazno-svi)" GET cVrste PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Vrste (prazno-svi)" GET cIdVd PICT "@!"
    READ
    BoxC()
 
@@ -35,7 +36,7 @@ FUNCTION pos_lista_azuriranih_dokumenata()
       RETURN .F.
    ENDIF
 
-   _o_pos_prepis_tbl()
+   //_o_pos_prepis_tbl()
 
    AAdd( ImeKol, { "Vrsta", {|| IdVd } } )
    AAdd( ImeKol, { "Broj ", {|| PadR( IF( !Empty( IdPos ), Trim( IdPos ) + "-", "" ) + AllTrim( BrDok ), 9 ) } } )
@@ -62,20 +63,21 @@ FUNCTION pos_lista_azuriranih_dokumenata()
       AAdd( Kol, i )
    NEXT
 
-   SELECT pos_doks
+   //SELECT pos_doks
+   seek_pos_doks_za_period( NIL, cIdVd, dDatOd, dDatDo )
    SET CURSOR ON
 
-   IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
-      cFilter += ".and. Datum>=" + dbf_quote( dDatOD ) + ".and. Datum<=" + dbf_quote( dDatDo )
-   ENDIF
-   IF !Empty( cVrste )
-      cFilter += ".and. IdVd=" + dbf_quote( cVrste )
-   ENDIF
-   IF !( cFilter == ".t." )
-      SET FILTER TO &cFilter
-   ENDIF
+  // IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
+  //    cFilter += ".and. Datum>=" + dbf_quote( dDatOD ) + ".and. Datum<=" + dbf_quote( dDatDo )
+  // ENDIF
+   //IF !Empty( cIdVd )
+  //    cFilter += ".and. IdVd=" + dbf_quote( cIdVd )
+  // ENDIF
+//   IF !( cFilter == ".t." )
+//      SET FILTER TO &cFilter
+//   ENDIF
 
-   GO TOP
+//   GO TOP
 
    aOpc := { "<ENTER> Odabir", "<E> eksport" }
 
@@ -191,8 +193,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDatum0, dDatum1 )
 
             DO WHILE !Eof() .AND. IdPos + IdVd == ctIdPos + POS_VD_RACUN
                IF ( datum <= dDatum1 )
-                  aVezani := { { IdPos, BrDok, IdVd, datum } }
-                  StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .F., glRetroakt )
+                  pos_stampa_priprema( IdPos, DToS( datum ) + BrDok, .F., glRetroakt )
                ENDIF
                SELECT pos_doks
                SKIP 1
@@ -202,8 +203,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDatum0, dDatum1 )
 
          ELSEIF cOdg == "D"
 
-            aVezani := { { IdPos, BrDok, IdVd, datum } }
-            StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T. )
+            pos_stampa_priprema( IdPos, DToS( datum ) + BrDok, .T. )
 
          ENDIF
 
@@ -231,8 +231,8 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDatum0, dDatum1 )
 
    CASE Ch == Asc( "F" ) .OR. Ch == Asc( "f" )
 
-      aVezani := { { IdPos, BrDok, IdVd, datum } }
-      StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., NIL, .T. )
+
+      pos_stampa_priprema( IdPos, DToS( datum ) + BrDok, .T., NIL, .T. )
 
       SELECT pos_doks
 
@@ -427,21 +427,21 @@ STATIC FUNCTION _o_pos_prepis_tbl()
   //    o_pos_kase()
   // ENDIF
 
-   SELECT ( F_OSOB )
-   IF !Used()
-      o_pos_osob()
-      SET ORDER TO TAG "NAZ"
-   ENDIF
+//   SELECT ( F_OSOB )
+//   IF !Used()
+  //    o_pos_osob()
+    //  SET ORDER TO TAG "NAZ"
+   //ENDIF
 
 // SELECT ( F_TARIFA )
 // IF !Used()
 // o_tarifa()
 // ENDIF
 
-   SELECT ( F_VALUTE )
-   IF !Used()
-      o_valute()
-   ENDIF
+  // SELECT ( F_VALUTE )
+//   IF !Used()
+    //  o_valute()
+   //ENDIF
 
 // SELECT ( F_SIFK )
    // IF !Used()

@@ -301,7 +301,7 @@ FUNCTION close_open_racun_tbl()
    USE
    O_RN
 
-   RETURN
+   RETURN .T.
 
 
 // provjera checksum-a

@@ -188,7 +188,6 @@ STATIC FUNCTION lista_racuna_key_handler( nCh )
    // cLevel := field->prioritet
    // USE
 
-   // altd()
    // SELECT pos_doks
 
    IF Chr( nCh ) == '\'
@@ -204,8 +203,7 @@ STATIC FUNCTION lista_racuna_key_handler( nCh )
    ENDIF
 
    IF Upper( Chr( nCh ) ) == "F"
-      aVezani := { { IdPos, BrDok, IdVd, datum } }
-      StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., NIL, .T. )
+      pos_stampa_priprema( IdPos, DToS( datum ) + BrDok, .T., NIL, .T. )
       SELECT pos_doks
       f7_pf_traka( .T. )
       SELECT pos_doks

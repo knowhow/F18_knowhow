@@ -225,7 +225,7 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
    // // RETURN "naz"
    // RETURN .F.
    // ENDIF
-  
+
    IF Alias() == "ROBA" .AND. Len( cId ) > 10
 
 #ifdef F18_POS
@@ -300,6 +300,7 @@ FUNCTION find_sifra_by_naz( cTable, cIdPart, cDjoker )
    cSqlQuery += cTable
    cIdSql := sql_quote( Upper( AllTrim( cIdPart ) ) + "%" )
 
+
    IF cDjoker $ ".>" // "." - pocetni dio naziva, ">" pocetni dio sifre
       cIdSql := sql_quote( Upper( AllTrim( cIdPart ) ) + "%" ) // NAZ%
    ELSE
@@ -319,6 +320,13 @@ FUNCTION find_sifra_by_naz( cTable, cIdPart, cDjoker )
    INDEX ON ID TAG ID
    INDEX ON NAZ TAG NAZ
    SET ORDER TO TAG "ID"
+
+   IF cDjoker $ ".$" // pretraga po nazivu, sortiraj po nazivu
+      IF !Empty( ordKey( "NAZ " ) )
+         ordSetFocus( "NAZ" )
+      ENDIF
+   ENDIF
+
    GO TOP
 
    RETURN !Eof()

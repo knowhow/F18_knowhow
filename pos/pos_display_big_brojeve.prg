@@ -478,15 +478,12 @@ FUNCTION pos_set_user( cKorSif, nSifLen, cLevel )
 
    cKorSif := CryptSC( PadR( Upper( Trim( cKorSif ) ), nSifLen ) )
 
-   altd()
    IF find_pos_osob_by_korsif( cKorSif )
-   //IF Found()
       gIdRadnik := field->ID
       gKorIme   := field->Naz
       gSTRAD  := AllTrim ( field->Status )
       //SELECT STRAD
       IF select_o_pos_strad( OSOB->Status )
-      //IF Found ()
          cLevel := field->prioritet
       ELSE
          cLevel := L_PRODAVAC

@@ -1,5 +1,8 @@
 # F18 klijent, lista promjena
 
+## 3.1.113-std, 2017-10-12
+### CORE
+- "SO.  " - traži so i sortiraj po nazivu
 ## 3.1.112-std, 2017-10-12
 ### FAKT barkod terminal import - is_roba_aktivna(), na terminal se eksportuju samo aktivni artikli, oni koji postoje u prometu kalk_kalk
 

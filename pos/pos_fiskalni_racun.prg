@@ -127,7 +127,6 @@ FUNCTION pos_fiskalni_racun( cIdPos, dDatDok, cBrojRacuna, hFiskalniParams, nUpl
       RETURN nErrorLevel
    ENDIF
 
-altd()
    s_nFiskalniUredjajId := hFiskalniParams[ "id" ]
    s_hFiskalniUredjajParams := hFiskalniParams
    cFiskalniDravjerIme := s_hFiskalniUredjajParams[ "drv" ]

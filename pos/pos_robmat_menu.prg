@@ -38,8 +38,8 @@ FUNCTION pos_menu_gendok()
 
    AAdd( opc, "1. generacija dokumenta početnog stanja     " )
    AAdd( opcexe, {|| pos_pocetno_stanje() } )
-   AAdd( opc, "2. import sifrarnika ROBA iz fmk-tops     " )
-   AAdd( opcexe, {|| pos_import_fmk_roba() } )
+   //AAdd( opc, "2. import sifrarnika ROBA iz fmk-tops     " )
+   //AAdd( opcexe, {|| pos_import_fmk_roba() } )
 
 
    Izbor := 1

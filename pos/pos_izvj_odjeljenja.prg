@@ -116,8 +116,8 @@ FUNCTION realizacija_odjeljenja()
    nTotPos3 := 0
 
    DO WHILE !Eof()
-      SELECT ODJ
-      HSEEK POM->IdOdj
+   
+      select_o_pos_odj( POM->IdOdj )
       ?
       ? POM->IdOdj, ODJ->Naz
       ? REPL ( "-", 40 )

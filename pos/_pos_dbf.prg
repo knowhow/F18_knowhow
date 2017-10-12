@@ -31,13 +31,15 @@ FUNCTION o_pos_priprg()
    RETURN .T.
 
 
-FUNCTION o_pos_uredj()
+/*
+-- FUNCTION o_pos_uredj()
 
    SELECT ( F_UREDJ )
    my_use( "uredj" )
    SET ORDER TO TAG "ID"
 
    RETURN .T.
+*/
 
 FUNCTION pos_init_dbfs()
 
@@ -86,12 +88,8 @@ STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
    LOCAL lOk := .T.
    LOCAL hRec
 
-   IF Select( "STRAD" ) == 0
-      o_pos_strad()
-   ELSE
-      SELECT STRAD
-   ENDIF
 
+   select_o_pos_strad( "XX" )
    APPEND BLANK
 
    hRec := dbf_get_rec()
@@ -135,9 +133,9 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
    LOCAL lOk := .T., hParams
 
-   select_o_pos_strad()
-
-   IF ( RECCOUNT2() == 0 )
+   //select_o_pos_strad()
+   IF table_count( F18_PSQL_SCHEMA_DOT + "pos_strad" ) == 0
+   //IF ( RECCOUNT2() == 0 )
 
       MsgO( "Definišem šifre prioriteta ..." )
 
@@ -220,7 +218,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
       o_pos_kumulativne_tabele()
    ENDIF
 
-   o_pos_odj()
+   //o_pos_odj()
    //o_pos_osob()
    //SET ORDER TO TAG "NAZ"
 
@@ -296,14 +294,10 @@ FUNCTION pos_iznos_dokumenta( lUI )
    dDatum := pos_doks->datum
 
    IF ( ( lUI == NIL ) .OR. lUI )
-      // ovo su ulazi ...
-      IF pos_doks->IdVd $ VD_ZAD + "#" + POS_VD_POCETNO_STANJE + "#" + VD_REK
+
+      IF pos_doks->IdVd $ VD_ZAD + "#" + POS_VD_POCETNO_STANJE + "#" + VD_REK // ulazi
 
          seek_pos_pos( cIdPos, cIdVd, dDatum, cBrDok )
-         //SELECT pos
-         //SET ORDER TO TAG "1"
-         //GO TOP
-         //SEEK cIdPos + cIdVd + DToS( dDatum ) + cBrDok
          DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == cIdPos + cIdVd + DToS( dDatum ) + cBrDok
             nIznos += pos->kolicina * pos->cijena
             SKIP
@@ -314,14 +308,9 @@ FUNCTION pos_iznos_dokumenta( lUI )
       ENDIF
    ENDIF
 
-   IF ( ( lUI == NIL ) .OR. !lUI )
-      // ovo su, pak, izlazi ...
+   IF ( ( lUI == NIL ) .OR. !lUI ) // izlazi
       IF pos_doks->idvd $ POS_VD_RACUN + "#" + VD_OTP + "#" + VD_RZS + "#" + VD_PRR + "#" + "IN" + "#" + VD_NIV
 
-         //SELECT pos
-         //SET ORDER TO TAG "1"
-         //GO TOP
-         //SEEK cIdPos + cIdVd + DToS( dDatum ) + cBrDok
          seek_pos_pos( cIdPos, cIdVd, dDatum, cBrDok )
 
          DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == cIdPos + cIdVd + DToS( dDatum ) + cBrDok
@@ -398,8 +387,8 @@ FUNCTION pos_racun_sadrzi_artikal( cIdPos, cIdVd, dDatum, cBroj, cIdRoba )
    RETURN lRet
 
 
-
-FUNCTION pos_import_fmk_roba()
+/*
+-- FUNCTION pos_import_fmk_roba()
 
    LOCAL _location := fetch_metric( "pos_import_fmk_roba_path", my_user(), PadR( "", 300 ) )
    LOCAL _cnt := 0
@@ -501,6 +490,7 @@ FUNCTION pos_import_fmk_roba()
    CLOSE ALL
 
    RETURN .T.
+*/
 
 /*
 

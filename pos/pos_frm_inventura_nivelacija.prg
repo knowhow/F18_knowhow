@@ -103,7 +103,7 @@ FUNCTION pos_inventura_nivelacija()
 
    ENDIF
 
-   SELECT ODJ
+   //SELECT ODJ
 
    cZaduzuje := "R"
    cRSdbf := "ROBA"

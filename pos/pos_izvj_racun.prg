@@ -84,11 +84,11 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
          select_o_pos_odj( &cPosDB->idodj )
          SELECT &cPosDB
 
-         IF Right( odj->naz, 5 ) == "#1#0#"
-            nNeplaca += Kolicina * Cijena - ncijena * Kolicina
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca += Kolicina * Cijena / 2 - ncijena
-         ENDIF
+      //   IF Right( odj->naz, 5 ) == "#1#0#"
+      //      nNeplaca += Kolicina * Cijena - ncijena * Kolicina
+      //   ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+      //      nNeplaca += Kolicina * Cijena / 2 - ncijena
+      //   ENDIF
 
          //IF ( gPopVar == "P" )
             nNeplaca += kolicina * NCijena
@@ -490,11 +490,11 @@ FUNCTION StampaPrep( cIdPos, dDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
          nIznos += pos->( kolicina * cijena )
          select_o_pos_odj( pos->idodj )
          SELECT POS
-         IF Right( odj->naz, 5 ) == "#1#0#"
-            nNeplaca += pos->( Kolicina * Cijena - ncijena * Kolicina )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca += pos->( Kolicina * Cijena / 2 - ncijena )
-         ENDIF
+      //   IF Right( odj->naz, 5 ) == "#1#0#"
+      //      nNeplaca += pos->( Kolicina * Cijena - ncijena * Kolicina )
+      //   ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+      //      nNeplaca += pos->( Kolicina * Cijena / 2 - ncijena )
+      //   ENDIF
          //IF gPopVar = "P"
          nNeplaca += pos->( kolicina * ncijena )
          //ENDIF
@@ -694,7 +694,7 @@ FUNCTION StampaPrep( cIdPos, dDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
 
 FUNCTION pos_racun_info( cBrRn )
 
-   MsgBeep( "Formiran je račun broj: " + cBrRN )
+   info_bar( "pos", "POS račun broj: " + cBrRN )
 
    RETURN .T.
 

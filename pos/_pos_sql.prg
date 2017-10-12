@@ -639,7 +639,20 @@ FUNCTION find_pos_osob_by_naz( cNaz )
    LOCAL cSqlQuery := "select * from fmk." + cTable
 
    cSqlQuery += " WHERE naz=" + sql_quote( cNaz )
+   SELECT ( F_OSOB )
+   use_sql( cTable, cSqlQuery, cAlias )
 
+   RETURN !Eof()
+
+
+
+FUNCTION find_pos_osob_by_korsif( cKorSif )
+
+   LOCAL cTable := "pos_osob", cAlias := "OSOB"
+   LOCAL cSqlQuery := "select * from fmk." + cTable
+
+   cSqlQuery += " WHERE korsif=" + sql_quote( cKorSif )
+   SELECT ( F_OSOB )
    use_sql( cTable, cSqlQuery, cAlias )
 
    RETURN !Eof()

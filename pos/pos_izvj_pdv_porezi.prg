@@ -15,7 +15,7 @@
 STATIC LEN_TRAKA := 40
 
 
-FUNCTION PDVPorPoTar
+FUNCTION pos_pdv_po_tarifama
 
    PARAMETERS dDatum0, dDatum1, cIdPos, cNaplaceno, cIdOdj
 
@@ -24,7 +24,7 @@ FUNCTION PDVPorPoTar
    LOCAL aTarife := {}
 
    PRIVATE cTarife := Space ( 30 )
-   PRIVATE aUsl := ".t."
+   PRIVATE cFilterTarifa := ".t."
 
    IF cNaplaceno == nil
       cNaplaceno := "1"
@@ -54,9 +54,9 @@ FUNCTION PDVPorPoTar
     //  o_sifv()
     //  o_pos_kase()
     //  o_roba()
-      o_pos_odj()
-      o_pos_doks()
-      o_pos_pos()
+    //  o_pos_odj()
+    //  o_pos_doks()
+    //  o_pos_pos()
    ENDIF
 
    IF gVrstaRS <> "S"
@@ -80,10 +80,10 @@ FUNCTION PDVPorPoTar
          IF !VarEdit( aNiz, 10, 5, 17, 74, 'USLOVI ZA IZVJESTAJ "POREZI PO TARIFAMA"', "B1" )
             CLOSERET
          ENDIF
-         aUsl := Parsiraj( cTarife, "IdTarifa" )
-         IF aUsl <> NIL .AND. dDatum0 <= dDatum1
+         cFilterTarifa := Parsiraj( cTarife, "IdTarifa" )
+         IF cFilterTarifa <> NIL .AND. dDatum0 <= dDatum1
             EXIT
-         ELSEIF aUsl == nil
+         ELSEIF cFilterTarifa == nil
             MsgBeep ( "Kriterij za tarife nije korektno postavljen!" )
          ELSE
             Msg( "'Datum do' ne smije biti stariji nego 'datum od'!" )
@@ -145,13 +145,14 @@ FUNCTION PDVPorPoTar
          ENDIF
       ENDIF // fsolo
 
-      SELECT POS
-      SET ORDER TO TAG "1"
+      //SELECT POS
+      //SET ORDER TO TAG "1"
+      seek_pos_pos( cIdPos )
 
       PRIVATE cFilter := ".t."
 
-      IF !( aUsl == ".t." )
-         cFilter += ".and." + aUsl
+      IF !( cFilterTarifa == ".t." )
+         cFilter += ".and." + cFilterTarifa
       ENDIF
 
       IF !Empty( cIdOdj )

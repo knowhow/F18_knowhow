@@ -270,7 +270,7 @@ STATIC FUNCTION _o_real_table()
 
 FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dDatDok, cBrDok )
 
-   LOCAL _r_br, hRec
+   LOCAL nRbr, hRec
    LOCAL _kol
    LOCAL _iznos
    LOCAL nDbfArea := Select()
@@ -290,7 +290,7 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dDatDok, cBrDok )
       RETURN .F.
    ENDIF
 
-   _r_br := 0
+   nRbr := 0
    _kol := 0
    _iznos := 0
 
@@ -336,7 +336,7 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dDatDok, cBrDok )
 
       dbf_update_rec( hRec )
 
-      ++_r_br
+      ++nRbr
 
       SELECT pos
       SKIP
@@ -345,7 +345,7 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dDatDok, cBrDok )
 
    MsgC()
 
-   IF _r_br == 0
+   IF nRbr == 0
       MsgBeep( "Ne postoji niti jedna stavka u eksport tabeli !" )
       SELECT ( nDbfArea )
       RETURN .F.
@@ -354,8 +354,8 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dDatDok, cBrDok )
    SELECT pom
    USE
 
-   _file := tops_kalk_create_topska( cIdPos, dDatDok, dDatDok, cIdTipDk, "tk_p" )
-   MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
+   cTopskaFile := tops_kalk_create_topska( cIdPos, dDatDok, dDatDok, cIdTipDk, "tk_p" )
+   MsgBeep( "Kreiran fajl " + cTopskaFile + "#broj stavki: " + AllTrim( Str( nRbr ) ) )
 
 
    SELECT ( nDbfArea )
@@ -367,20 +367,20 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dDatDok, cBrDok )
 
 FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
 
-   LOCAL _usl_roba := Space( 150 )
-   LOCAL _usl_mark := "U"
+   LOCAL cUslovRoba := Space( 150 )
+   LOCAL cUslovArtikleUkljuciIskljuci := "U"
    LOCAL aPom := {}
    LOCAL i
-   LOCAL _r_br
+   LOCAL nRbr
    LOCAL cIdPos := gIdPos
-   LOCAL _dat_od, _dat_do, _file
+   LOCAL dDatOd, dDatDo, cTopskaFile
    LOCAL _tmp
-   LOCAL _auto_prenos := .F.
+   LOCAL lAutoPrenos := .F.
    LOCAL hRec
    LOCAL GetList := {}
 
    IF cIdPM <> NIL
-      _auto_prenos := .T.
+      lAutoPrenos := .T.
    ENDIF
 
    IF ( cIdVd == NIL )
@@ -388,26 +388,26 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
    ENDIF
 
    IF ( ( dDateOd == NIL ) .AND. ( dDateDo == NIL ) )
-      _dat_od := Date()
-      _dat_do := Date()
+      dDatOd := Date()
+      dDatDo := Date()
    ELSE
-      _dat_od := dDateOd
-      _dat_do := dDateDo
+      dDatOd := dDateOd
+      dDatDo := dDateDo
    ENDIF
 
    _o_real_table()
 
    SET CURSOR ON
 
-   IF !_auto_prenos
+   IF !lAutoPrenos
 
       Box(, 4, 70, .F., " PRENOS REALIZACIJE POS->KALK   " )
 
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. p_pos_kase( @cIdPos, 5, 20 )
-      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prenos za period" GET _dat_od
-      @ box_x_koord() + 2, Col() + 2 SAY "-" GET _dat_do
-      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Uslov po artiklima:" GET _usl_roba PICT "@S40"
-      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Artikle (U)ključi / (I)sključi iz prenosa:" GET _usl_mark PICT "@!" VALID _usl_mark $ "UI"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prenos za period" GET dDatOd
+      @ box_x_koord() + 2, Col() + 2 SAY "-" GET dDatDo
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Uslov po artiklima:" GET cUslovRoba PICT "@S40"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Artikle (U)ključi / (I)sključi iz prenosa:" GET cUslovArtikleUkljuciIskljuci PICT "@!" VALID cUslovArtikleUkljuciIskljuci $ "UI"
 
       READ
       ESC_BCR
@@ -423,22 +423,22 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
    cre_pom_topska_dbf()
    _o_real_table()
 
-   SELECT pos_doks
-   SET ORDER TO TAG "2"
-   GO TOP
-   SEEK cIdVd + DToS( _dat_od )
+   seek_pos_doks_2_za_period( cIdVd, dDatOd, dDatDo )
+   //SET ORDER TO TAG "2"
+   //GO TOP
+   //SEEK cIdVd + DToS( dDatOd )
 
    EOF CRET
 
-   _r_br := 0
+   nRbr := 0
    _kol := 0
    _iznos := 0
 
-   IF !Empty( _usl_roba ) .AND. Right( AllTrim( _usl_roba ) ) <> ";"
-      _usl_roba := AllTrim( _usl_roba ) + ";"
+   IF !Empty( cUslovRoba ) .AND. Right( AllTrim( cUslovRoba ) ) <> ";"
+      cUslovRoba := AllTrim( cUslovRoba ) + ";"
    ENDIF
 
-   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= _dat_do
+   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatDo
 
       IF !Empty( cIdPos ) .AND. pos_doks->IdPos <> cIdPos
          SKIP
@@ -448,17 +448,17 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
       seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
       DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + Brdok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-         IF !Empty( _usl_roba )
-            _tmp := Parsiraj( _usl_roba, "idroba" )
+         IF !Empty( cUslovRoba )
+            _tmp := Parsiraj( cUslovRoba, "idroba" )
             if &_tmp
 
-               IF _usl_mark == "I"
+               IF cUslovArtikleUkljuciIskljuci == "I"
                   SKIP
                   LOOP
                ENDIF
 
             ELSE
-               IF _usl_mark == "U"
+               IF cUslovArtikleUkljuciIskljuci == "U"
                   SKIP
                   LOOP
                ENDIF
@@ -485,7 +485,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
                IdTarifa WITH POS->IdTarifa, ;
                mpc WITH POS->Cijena, ;
                IdCijena WITH POS->IdCijena, ;
-               Datum WITH _dat_do, ;
+               Datum WITH dDatDo, ;
                DatPos WITH pos->datum, ;
                brdok WITH pos->brdok, ;
                idvd WITH POS->IdVd, ;
@@ -497,7 +497,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
                REPLACE idpartner WITH pos_doks->idgost
             ENDIF
 
-            ++_r_br
+            ++nRbr
          ELSE
 
             hRec := dbf_get_rec()
@@ -521,16 +521,16 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
 
    my_close_all_dbf()
 
-   IF !_auto_prenos
-      _print_report( _dat_od, _dat_do, _kol, _iznos, _r_br )
-      _file := tops_kalk_create_topska( cIdPos, _dat_od, _dat_do, cIdVd )
-      MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
+   IF !lAutoPrenos
+      _print_report( dDatOd, dDatDo, _kol, _iznos, nRbr )
+      cTopskaFile := tops_kalk_create_topska( cIdPos, dDatOd, dDatDo, cIdVd )
+      MsgBeep( "Kreiran fajl " + cTopskaFile + "#broj stavki: " + AllTrim( Str( nRbr ) ) )
    ENDIF
 
    RETURN .T.
 
 
-STATIC FUNCTION _print_report( dDatOd, dDatDo, kolicina, iznos, broj_stavki )
+STATIC FUNCTION _print_report( dDatOd, dDatDo, nKolicina, nIznos, nBrojStavki )
 
    START PRINT CRET
 
@@ -538,10 +538,10 @@ STATIC FUNCTION _print_report( dDatOd, dDatDo, kolicina, iznos, broj_stavki )
    ? "PRENOS PODATAKA TOPS->KALK za ", DToC( Date() )
    ?
    ? "Datumski period od", DToC( dDatOd ), "do", DToC( dDatDo )
-   ? "Broj stavki:", AllTrim( Str( broj_stavki ) )
+   ? "Broj stavki:", AllTrim( Str( nBrojStavki ) )
    ?
-   ?U "Ukupna količina:", AllTrim( Str( kolicina, 12, 2 ) )
-   ?U "   Ukupan iznos:", AllTrim( Str( iznos, 12, 2 ) )
+   ?U "Ukupna količina:", AllTrim( Str( nKolicina, 12, 2 ) )
+   ?U "   Ukupan iznos:", AllTrim( Str( nIznos, 12, 2 ) )
 
    FF
    ENDPRINT
@@ -572,8 +572,7 @@ STATIC FUNCTION cre_pom_topska_dbf()
    AAdd( aDBF, { "BARKOD",   "C",  13, 0 } )
    AAdd( aDBF, { "JMJ",      "C",   3, 0 } )
 
-   SELECT pos_doks
-
+   //seek_pos_doks( "XX", "XX" )
    pos_cre_pom_dbf( aDbf )
 
    SELECT ( F_POM )

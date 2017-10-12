@@ -398,6 +398,10 @@ FUNCTION h_pos_pos_indexes()
 FUNCTION seek_pos_doks_2( cIdVd, dDatum )
    RETURN seek_pos_doks( NIL, cIdVd, dDatum, NIL, "2" )
 
+FUNCTION seek_pos_doks_2_za_period( cIdVd, dDatOd, dDatDo )
+   RETURN seek_pos_doks( NIL, cIdVd, NIL, NIL, "2", dDatOd, dDatDo )
+
+
 FUNCTION seek_pos_doks_za_period( cIdPos, cIdVd, dDatOd, dDatDo )
    RETURN seek_pos_doks( cIdPos, cIdVd, NIL, NIL, "1", dDatOd, dDatDo )
 

@@ -41,12 +41,12 @@ FUNCTION pos_kartica_artikla()
   // o_roba()
    //o_pos_pos()
 
-   cRoba := Space( 10 )
+   cIdRoba := Space( 10 )
    cIdPos := gIdPos
 
    dDatum0 := fetch_metric( "pos_kartica_datum_od", my_user(), dDatum0 )
    dDatum1 := fetch_metric( "pos_kartica_datum_do", my_user(), dDatum1 )
-   cRoba := fetch_metric( "pos_kartica_artikal", my_user(), cRoba )
+   cIdRoba := fetch_metric( "pos_kartica_artikal", my_user(), cIdRoba )
    cPPar := fetch_metric( "pos_kartica_prikaz_partnera", my_user(), "N" )
 
    SET CURSOR ON
@@ -61,7 +61,7 @@ FUNCTION pos_kartica_artikla()
 
    READ
 
-   @ box_x_koord() + 5, box_y_koord() + 6 SAY "Sifra artikla (prazno-svi)" GET cRoba VALID Empty( cRoba ) .OR. P_Roba( @cRoba ) PICT "@!"
+   @ box_x_koord() + 5, box_y_koord() + 6 SAY "Sifra artikla (prazno-svi)" GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
    @ box_x_koord() + 7, box_y_koord() + 2 SAY "za period " GET dDatum0
    @ box_x_koord() + 7, Col() + 2 SAY "do " GET dDatum1
    @ box_x_koord() + 9, box_y_koord() + 2 SAY "sa pocetnim stanjem D/N ?" GET cPocSt VALID cpocst $ "DN" PICT "@!"
@@ -74,7 +74,7 @@ FUNCTION pos_kartica_artikla()
 
    set_metric( "pos_kartica_datum_od", my_user(), dDatum0 )
    set_metric( "pos_kartica_datum_do", my_user(), dDatum1 )
-   set_metric( "pos_kartica_artikal", my_user(), cRoba )
+   set_metric( "pos_kartica_artikal", my_user(), cIdRoba )
    set_metric( "pos_kartica_prikaz_partnera", my_user(), "N" )
 
    BoxC()
@@ -100,13 +100,13 @@ FUNCTION pos_kartica_artikla()
   // SET ORDER TO TAG "2"
 
 
-   IF Empty( cRoba )
+   IF Empty( cIdRoba )
       //Seek2( cIdOdj )
       seek_pos_pos_2( cIdOdj )
    ELSE
       seek_pos_pos_2( cIdOdj, cIdRoba )
-      //Seek2( cIdOdj + cRoba )
-      IF pos->idroba <> cRoba
+      //Seek2( cIdOdj + cIdRoba )
+      IF pos->idroba <> cIdRoba
          MsgBeep( "Ne postoje traženi podaci !" )
          RETURN .F.
       ENDIF
@@ -129,7 +129,7 @@ FUNCTION pos_kartica_artikla()
       ENDIF
    ENDIF
 
-   ? cLM + "ARTIKAL    : " + IF( Empty( cRoba ), "SVI", RTrim( cRoba ) )
+   ? cLM + "ARTIKAL    : " + IIF( Empty( cIdRoba ), "SVI", RTrim( cIdRoba ) )
    ? cLM + "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
    ?
 
@@ -407,7 +407,7 @@ FUNCTION pos_kartica_artikla()
 
       ENDDO
 
-      IF !Empty( cRoba )
+      IF !Empty( cIdRoba )
          EXIT
       ENDIF
 

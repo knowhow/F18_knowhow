@@ -231,7 +231,7 @@ FUNCTION pos_realizacija_radnik
          ? Replicate ( "-", 40 )
          IF fPrikPrem == "D"
             ?
-            ?  PadL( "Kolicina - premirani - k7='*' ", 29, "." ), Str( nKolicPr, 10, 2 )
+            ?  PadL( "Kolicina - k7='*' ", 29, "." ), Str( nKolicPr, 10, 2 )
             ?  PadL( "Kolicina - ostali artikli", 29, ), Str( nKolicO, 10, 2 )
             ?
          ENDIF

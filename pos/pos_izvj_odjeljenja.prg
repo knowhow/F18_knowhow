@@ -79,7 +79,7 @@ FUNCTION realizacija_odjeljenja()
    // pravljenje izvjestaja
    START PRINT CRET
 
-   //ZagFirma()
+   // ZagFirma()
 
    P_10CPI
    ?
@@ -92,8 +92,8 @@ FUNCTION realizacija_odjeljenja()
    ENDIF
    ? "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
 
-   SELECT pos_doks
-   SET ORDER TO TAG "2"
+   // SELECT pos_doks
+   // SET ORDER TO TAG "2"
    // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
 
    pos_odj_izvuci ( VD_PRR )
@@ -116,7 +116,7 @@ FUNCTION realizacija_odjeljenja()
    nTotPos3 := 0
 
    DO WHILE !Eof()
-   
+
       select_o_pos_odj( POM->IdOdj )
       ?
       ? POM->IdOdj, ODJ->Naz
@@ -128,13 +128,13 @@ FUNCTION realizacija_odjeljenja()
       nTotOdj3 := 0
       DO WHILE !Eof() .AND. POM->IdOdj == _IdOdj
          _IdDio := POM->IdDio
-         //IF ! Empty ( _IdDio )
-        //    SELECT DIO
-          //  HSEEK _IdDio
-        //    ? Space ( 5 ) + DIO->Naz
-          //  ? Space ( 5 ) + REPL ( "-", 35 )
-        //    SELECT POM
-        // ENDIF
+         // IF ! Empty ( _IdDio )
+         // SELECT DIO
+         // HSEEK _IdDio
+         // ? Space ( 5 ) + DIO->Naz
+         // ? Space ( 5 ) + REPL ( "-", 35 )
+         // SELECT POM
+         // ENDIF
          nTotDio := 0
          nTotDio2 := 0
          nTotDio3 := 0
@@ -209,12 +209,12 @@ FUNCTION realizacija_odjeljenja()
          nTotOdj3 := 0
          DO WHILE !Eof() .AND. POM->IdOdj == _IdOdj
             _IdDio := POM->IdDio
-            //IF !Empty ( _IdDio )
-            //   SELECT DIO; HSEEK ( _IdDio )
-            //   ? Space ( 5 ) + DIO->Naz
-            //   ? Space ( 5 ) + REPL ( "-", 35 )
-            //   SELECT POM
-            //ENDIF
+            // IF !Empty ( _IdDio )
+            // SELECT DIO; HSEEK ( _IdDio )
+            // ? Space ( 5 ) + DIO->Naz
+            // ? Space ( 5 ) + REPL ( "-", 35 )
+            // SELECT POM
+            // ENDIF
             nTotDio := 0
             nTotDio2 := 0
             nTotDio3 := 0
@@ -290,7 +290,6 @@ FUNCTION pos_dio_izvuci( cIdVd )
    ENDIF
 
    seek_pos_doks_2( cIdVd, dDatum0 )
-
    DO WHILE ! Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
       IF ( !pos_admin() .AND. pos_doks->idpos = "X" ) .OR. ;
             ( pos_doks->IdPos = "X" .AND. AllTrim ( cIdPos ) <> "X" ) .OR. ;
@@ -311,23 +310,23 @@ FUNCTION pos_dio_izvuci( cIdVd )
          select_o_pos_odj( roba->idodj )
 
          nNeplaca := 0
-      //   IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-      //      nNeplaca := pos->( Kolicina * Cijena )
-      //   ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-      //      nNeplaca := pos->( Kolicina * Cijena ) / 2
-      //   ENDIF
-      //   IF gPopVar = "P";
-      nNeplaca += pos->( kolicina * NCijena )
-      //; ENDIF
+         // IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+         // nNeplaca := pos->( Kolicina * Cijena )
+         // ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+         // nNeplaca := pos->( Kolicina * Cijena ) / 2
+         // ENDIF
+         // IF gPopVar = "P";
+         nNeplaca += pos->( kolicina * NCijena )
+         // ; ENDIF
 
          Scatter()
          SELECT POM
          APPEND BLANK
          _Iznos := POS->Kolicina * POS->Cijena
          _Iznos2 := POS->( ncijena * kolicina )
-        // IF gPopVar == "A"
-        //    _iznos3 := nNeplaca
-        // ENDIF
+         // IF gPopVar == "A"
+         // _iznos3 := nNeplaca
+         // ENDIF
          Gather()
          SELECT POS
          SKIP
@@ -350,11 +349,11 @@ FUNCTION realizacija_dio_objekta
 
    cPrikRobe := iif ( cPrikRobe == NIL, "N", cPrikRobe )
 
-  // o_pos_odj()
-   //o_pos_osob()
-   //SET ORDER TO TAG ( "NAZ" )
-   //o_vrstep()
-   //o_pos_kase()
+   // o_pos_odj()
+   // o_pos_osob()
+   // SET ORDER TO TAG ( "NAZ" )
+   // o_vrstep()
+   // o_pos_kase()
    // o_sifk()
    // o_sifv()
    // o_roba()
@@ -416,14 +415,14 @@ FUNCTION realizacija_dio_objekta
    ENDDO
 
    // pravljenje izvjestaja
-   //SELECT pos_doks
-   //SET ORDER TO TAG "2"
+   // SELECT pos_doks
+   // SET ORDER TO TAG "2"
    // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
 
-   //EOF CRET
+   // EOF CRET
 
    START PRINT CRET
-   //ZagFirma()
+   // ZagFirma()
    ?
    ? PadC( "REALIZACIJA DIJELA OBJEKTA", 40 )
    ? PadC ( "NA DAN " + FormDat1( Date() ), 40 )
@@ -823,8 +822,8 @@ FUNCTION realizacija_dio_objekta
 
 FUNCTION pos_odj_izvuci( cIdVd )
 
-   //SELECT pos_doks
-   //SEEK cIdVd + DToS( dDatum0 )
+   // SELECT pos_doks
+   // SEEK cIdVd + DToS( dDatum0 )
    seek_pos_doks_2( cIdVd, dDatum0 )
 
    DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
@@ -851,14 +850,14 @@ FUNCTION pos_odj_izvuci( cIdVd )
          ENDIF
 
          nNeplaca := 0
-        // IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-        //    nNeplaca := pos->( Kolicina * Cijena )
-        // ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-        //    nNeplaca := pos->( Kolicina * Cijena ) / 2
-         //ENDIF
-         //IF gPopVar = "P"
-            nNeplaca += pos->( Kolicina * NCijena )
-         //ENDIF
+         // IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+         // nNeplaca := pos->( Kolicina * Cijena )
+         // ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+         // nNeplaca := pos->( Kolicina * Cijena ) / 2
+         // ENDIF
+         // IF gPopVar = "P"
+         nNeplaca += pos->( Kolicina * NCijena )
+         // ENDIF
 
          SELECT POM
          Hseek POS->( IdOdj + IdDio + IdPos + IdRoba + IdCijena ) // POM
@@ -867,9 +866,9 @@ FUNCTION pos_odj_izvuci( cIdVd )
             REPLACE Kolicina WITH Kolicina + POS->Kolicina, ;
                Iznos    WITH Iznos + POS->Kolicina * POS->Cijena, ;
                iznos3   WITH nNeplaca
-          //  IF gPopVar == "A"
-          //     REPLACE Iznos2   WITH pos->( ncijena )
-          //  ENDIF
+            // IF gPopVar == "A"
+            // REPLACE Iznos2   WITH pos->( ncijena )
+            // ENDIF
 
          ELSE
             APPEND BLANK
@@ -878,9 +877,9 @@ FUNCTION pos_odj_izvuci( cIdVd )
                IdPos  WITH pos_doks->IdPos,  Kolicina WITH POS->Kolicina, ;
                Iznos  WITH POS->Kolicina * POS->Cijena, ;
                iznos3 WITH iznos3 + nNeplaca
-            IF gPopVar == "A"
-               REPLACE iznos2 WITH iznos2 + pos->( ncijena )
-            ENDIF
+            // gPopVar == "A"
+            // REPLACE iznos2 WITH iznos2 + pos->( ncijena )
+            // ENDIF
          ENDIF
 
          SELECT POS
@@ -903,7 +902,7 @@ STATIC FUNCTION _o_tables()
 // o_sifv()
    // o_pos_kase()
 // o_roba()
-   //o_pos_pos()
-   //o_pos_doks()
+   // o_pos_pos()
+   // o_pos_doks()
 
    RETURN .T.

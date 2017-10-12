@@ -36,9 +36,7 @@ FUNCTION fakt_import_bterm()
    RETURN .T.
 
 
-// ----------------------------------------
-// export podataka za terminal
-// ----------------------------------------
+
 FUNCTION fakt_export_bterm()
 
    LOCAL nRet

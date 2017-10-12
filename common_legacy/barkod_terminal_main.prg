@@ -125,6 +125,7 @@ FUNCTION barkod_terminal_export_artikle_na_terminal()
 
    DO WHILE !Eof()
 
+      info_bar( "bterm", "roba->barkod terminal: " + field->id )
       IF !is_roba_aktivna( field->id )
          SKIP
          LOOP

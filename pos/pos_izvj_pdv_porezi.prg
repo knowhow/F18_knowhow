@@ -163,8 +163,8 @@ FUNCTION pos_pdv_po_tarifama
          SET FILTER to &cFilter
       ENDIF
 
-      SELECT pos_doks
-      SET ORDER TO TAG "2"
+      //SELECT pos_doks
+      //SET ORDER TO TAG "2"
 
       m := Replicate( "-", 12 ) + " " + Replicate( "-", 12 ) + " " + Replicate( "-", 12 )
 
@@ -189,7 +189,7 @@ FUNCTION pos_pdv_po_tarifama
 
          select_o_tarifa( aTarife[ nCnt ][ 1 ] )
          nPDV := tarifa->opp
-         SELECT pos_doks
+         //SELECT pos_doks
 
          // ispisi opis i na realizaciji kao na racunu
          ? aTarife[ nCnt ][ 1 ], "(" + Str( nPDV ) + "%)"

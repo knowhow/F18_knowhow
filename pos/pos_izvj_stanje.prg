@@ -46,11 +46,11 @@ FUNCTION pos_stanje_artikala
    ENDIF
 
    // o_pos_kase()
-   o_pos_odj()
+   //o_pos_odj()
    // o_sifk()
    // o_sifv()
    // o_roba()
-   o_pos_pos()
+   //o_pos_pos()
 
    cIdPos := gIdPos
 
@@ -113,14 +113,6 @@ FUNCTION pos_stanje_artikala
       nRob := 40
    ENDIF
 
-   // pravljenje izvjestaja
-   IF !fZaklj
-      Zagl( cIdOdj, cDat, cVrstaRs )
-   ENDIF
-
-   IF !Empty( cIdOdj )
-      Podvuci( cVrstaRs )
-   ENDIF
 
    // SELECT POS
    // SET ORDER TO TAG "2"
@@ -138,6 +130,18 @@ FUNCTION pos_stanje_artikala
 
    xIdOdj := "??"
    _n_rbr := 0
+
+
+   // pravljenje izvjestaja
+   IF !fZaklj
+      START PRINT CRET
+      Zagl( cIdOdj, cDat, cVrstaRs )
+   ENDIF
+
+
+   IF !Empty( cIdOdj )
+      Podvuci( cVrstaRs )
+   ENDIF
 
    DO WHILE !Eof()
 
@@ -356,7 +360,6 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
       dDat := gDatum
    ENDIF
 
-   START PRINT CRET
 
    // ZagFirma()
 

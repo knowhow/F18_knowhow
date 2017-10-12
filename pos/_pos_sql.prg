@@ -197,10 +197,43 @@ FUNCTION seek_pos_pos_2( cIdOdj, cIdRoba, dDatum )
 
    LOCAL hParams := hb_Hash()
 
-   hParams[ "idodj" ] := cIdOdj
-   hParams[ "idroba" ] := cIdRoba
-   hParams[ "datum" ] := dDatum
+   IF cIdOdj != NIL
+      hParams[ "idodj" ] := cIdOdj
+   ENDIF
+
+   IF cIdRoba != NIL
+      hParams[ "idroba" ] := cIdRoba
+   ENDIF
+
+   IF dDatum != NIL
+      hParams[ "datum" ] := dDatum
+   ENDIF
+
    hParams[ "tag" ] := "2"
+
+   RETURN seek_pos_h( hParams )
+
+
+FUNCTION seek_pos_pos_5( cIdPos, cIdOdj, cIdRoba, dDatum )
+
+   LOCAL hParams := hb_Hash()
+
+   IF cIdPos != NIL
+      hParams[ "idpos" ] := cIdPos
+   ENDIF
+
+   IF cIdOdj != NIL
+      hParams[ "idodj" ] := cIdOdj
+   ENDIF
+
+   IF cIdRoba != NIL
+      hParams[ "idroba" ] := cIdRoba
+   ENDIF
+
+   IF dDatum != NIL
+      hParams[ "datum" ] := dDatum
+   ENDIF
+   hParams[ "tag" ] := "5"
 
    RETURN seek_pos_h( hParams )
 
@@ -892,6 +925,7 @@ FUNCTION seek_pos_dokspf_by_naz( cKupac )
    // SET FILTER TO &cFilter
    // SET ORDER TO TAG "2"
    // GO TOP
+
    RETURN seek_pos_dokspf( NIL, NIL, NIL, NIL, cKupac )
 
 

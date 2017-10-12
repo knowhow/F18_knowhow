@@ -342,19 +342,7 @@ FUNCTION Porezi( cIdVd, dDatum0, aTarife, cNaplaceno )
 
          nPPU := ( nOsn + nPPP ) * tarifa->ppp / 100
 
-         IF gStariObrPor
-            nPoz := AScan( aTarife, {| x | x[ 1 ] == POS->IdTarifa } )
-            IF nPoz == 0
-               AAdd( aTarife, { POS->IdTarifa, nOsn, nPPP, nPPU, nPP, nIzn } )
-            ELSE
-               aTarife[ nPoz ][ 2 ] += nOsn
-               aTarife[ nPoz ][ 3 ] += nPPP
-               aTarife[ nPoz ][ 4 ] += nPPU
-               aTarife[ nPoz ][ 5 ] += nPP
-               aTarife[ nPoz ][ 6 ] += nIzn
-            ENDIF
 
-         ELSE // stari obr poreza
             aPorezi := {}
             set_pdv_array( @aPorezi )
             aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, nOsn, nIzn, 0 )
@@ -368,7 +356,7 @@ FUNCTION Porezi( cIdVd, dDatum0, aTarife, cNaplaceno )
                aTarife[ nPoz ][ 5 ] += aIPor[ 3 ]
                aTarife[ nPoz ][ 6 ] += nIzn
             ENDIF
-         ENDIF
+  
 
          SKIP
       ENDDO

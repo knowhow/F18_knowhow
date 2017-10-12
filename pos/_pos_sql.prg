@@ -254,6 +254,7 @@ FUNCTION seek_pos_pos( cIdPos, cIdVd, dDatum, cBrDok, cTag )
 FUNCTION seek_pos_h( hParams )
 
    LOCAL cIdPos, cIdVd, dDatum, cBrDok, cTag
+   LOCAL dDatOd
    LOCAL cIdOdj, cIdRoba
    LOCAL cSql
    LOCAL cTable := "pos_pos", cAlias := "POS"
@@ -269,6 +270,7 @@ FUNCTION seek_pos_h( hParams )
    IF hb_HHasKey( hParams, "datum" )
       dDatum := hParams[ "datum" ]
    ENDIF
+
    IF hb_HHasKey( hParams, "brdok" )
       cBrDok := hParams[ "brdok" ]
    ENDIF
@@ -335,6 +337,20 @@ FUNCTION seek_pos_h( hParams )
       cSql += "datum=" + sql_quote( dDatum )
    ENDIF
 
+   IF hb_HHasKey( hParams, "dat_do" )
+      IF !hb_HHasKey( hParams, "dat_od" )
+         dDatOd := CToD( "" )
+      ELSE
+         dDatOd := hParams[ "dat_od" ]
+      ENDIF
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+      ENDIF
+      cSql +=  parsiraj_sql_date_interval( "datum", dDatOd, hParams[ "dat_do" ] )
+   ENDIF
+
    IF cBrDok != NIL .AND. !Empty( cBrDok )
       IF lWhere
          cSql += " AND "
@@ -382,7 +398,10 @@ FUNCTION h_pos_pos_indexes()
 FUNCTION seek_pos_doks_2( cIdVd, dDatum )
    RETURN seek_pos_doks( NIL, cIdVd, dDatum, NIL, "2" )
 
-FUNCTION seek_pos_doks( cIdPos, cIdVd, dDatum, cBrDok, cTag )
+FUNCTION seek_pos_doks_za_period( cIdPos, cIdVd, dDatOd, dDatDo )
+   RETURN seek_pos_doks( cIdPos, cIdVd, NIL, NIL, "1", dDatOd, dDatDo )
+
+FUNCTION seek_pos_doks( cIdPos, cIdVd, dDatum, cBrDok, cTag, dDatOd, dDatDo )
 
    LOCAL cSql
    LOCAL cTable := "pos_doks", cAlias := "POS_DOKS"
@@ -418,6 +437,18 @@ FUNCTION seek_pos_doks( cIdPos, cIdVd, dDatum, cBrDok, cTag )
          cSql += " WHERE "
       ENDIF
       cSql += "datum=" + sql_quote( dDatum )
+   ENDIF
+
+   IF dDatDo != NIL
+      IF dDatOd == NIL
+         dDatOd := CToD( "" )
+      ENDIF
+      IF lWhere
+         cSql += " AND "
+      ELSE
+         cSql += " WHERE "
+      ENDIF
+      cSql +=  parsiraj_sql_date_interval( "datum", dDatOd, dDatDo )
    ENDIF
 
    IF cBrDok != NIL .AND. !Empty( cBrDok )

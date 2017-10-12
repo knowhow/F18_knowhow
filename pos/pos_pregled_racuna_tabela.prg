@@ -18,7 +18,7 @@ FUNCTION pos_pregled_racuna_tabela()
 
    LOCAL fScope := .T.
    LOCAL GetList := {}
-   LOCAL cFil0
+   LOCAL cFilterDatumOdDo
    LOCAL cTekIdPos := gIdPos
    PRIVATE aVezani := {}
    PRIVATE dMinDatProm := CToD( "" )
@@ -50,13 +50,13 @@ FUNCTION pos_pregled_racuna_tabela()
       RETURN .F.
    ENDIF
 
-   cFil0 := ""
+   cFilterDatumOdDo := ""
 
    IF !Empty( dDatOd ) .AND. !Empty( dDatDo )
-      cFil0 := "datum >= " + _filter_quote( dDatOD ) + " .and. datum <= " + _filter_quote( dDatDo ) + " .and. "
+      cFilterDatumOdDo := "datum >= " + _filter_quote( dDatOD ) + " .and. datum <= " + _filter_quote( dDatDo )
    ENDIF
 
-   pos_lista_racuna(,,, cFil0, qIdRoba )
+   pos_lista_racuna(,,, cFilterDatumOdDo, qIdRoba )
 
    my_close_all_dbf()
 

@@ -23,7 +23,7 @@ STATIC PIC_UKUPNO := "9999999.99"
 
 // glavna funkcija za stampu PDV blag.racuna na traci
 // lStartPrint - .t. - pozivaju se funkcije za stampu START PRINT itd...
-FUNCTION rb_print( lStartPrint )
+FUNCTION pos_racun_print( lStartPrint )
 
    LOCAL nIznUkupno
    LOCAL lPrintPfTraka := .F.

@@ -109,7 +109,6 @@ FUNCTION realizacija_kase
 
    pos_set_filter_pos_doks( @cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId )
 
-altd()
    // fZaklj - zakljucenje smjene
    IF !fZaklj
       pos_kasa_pripremi_pom_za_izvjestaj( "01", cSifraDob )

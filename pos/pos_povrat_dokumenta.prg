@@ -36,7 +36,6 @@ FUNCTION pos_brisi_dokument( cIdPos, cIdTipDok, dDatDok, cBrDok )
 
    cDokument := AllTrim( cIdPos ) + "-" + cIdTipDok + "-" + AllTrim( cBrDok ) + " " + DToC( dDatDok )
 
-   AltD()
    IF seek_pos_pos( cIdPos, cIdTipDok, dDatDok, cBrDok )
       // IF Found()
       hRec := dbf_get_rec()

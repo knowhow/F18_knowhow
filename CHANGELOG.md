@@ -5,6 +5,7 @@
 - cleanup f18_start_edit, editor B/W, ESC izlaz
 ### KALK
 - kalk - pos procedura cleanup
+- kalk parametrizirano (opet) kalk konverzija valute KM/EUR pri unosu dokumenata 10, 81
 
 ## 3.1.113-std, 2017-10-12
 ### CORE

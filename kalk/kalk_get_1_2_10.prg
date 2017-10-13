@@ -129,9 +129,9 @@ FUNCTION kalk_get_1_10()
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Fakturna cijena:"
 
-   // IF gDokKVal == "D"
-   @ box_x_koord() + nX, Col() + 1 SAY "EUR (D/N)->" GET s_cKonverzijaValuteDN VALID kalk_ulaz_preracun_fakturne_cijene( s_cKonverzijaValuteDN ) PICT "@!"
-   // ENDIF
+   IF is_kalk_konverzija_valute_na_unosu()
+      @ box_x_koord() + nX, Col() + 1 SAY "EUR (D/N)->" GET s_cKonverzijaValuteDN VALID kalk_ulaz_preracun_fakturne_cijene( s_cKonverzijaValuteDN ) PICT "@!"
+   ENDIF
 
    @ box_x_koord() + nX, box_y_koord() + _unos_left GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @s_cKonverzijaValuteDN ) } WHEN V_kol10()
 
@@ -180,13 +180,11 @@ STATIC FUNCTION kalk_valid_dobavljac( cIdPartner, nX )
 
 STATIC FUNCTION ino_dobavljac_set_konverzija_valute( cPartn, s_cKonverzijaValuteDN )
 
-   // IF gDokKVal == "D" .AND.
    IF kalk_is_novi_dokument() .AND. partner_is_ino( cPartn )
       s_cKonverzijaValuteDN := "D"
    ENDIF
 
    RETURN .T.
-
 
 
 // ---------------------------------------
@@ -313,7 +311,6 @@ STATIC FUNCTION kalk_get_2_10( nX, cIdPartner )
          @ box_x_koord() + nX, box_y_koord() + 2    SAY "PRODAJNA CIJENA BEZ PDV   :"
       ENDIF
 
-      AltD()
       @ box_x_koord() + nX, box_y_koord() + _unos_left GET _vpc PICT PicDEM VALID {|| kalk_10_vaild_Marza_VP( _Idvd, ( cProracunMarzeUnaprijed == "F" ) ), .T. }
 
 

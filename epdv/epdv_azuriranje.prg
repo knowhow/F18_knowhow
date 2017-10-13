@@ -65,7 +65,6 @@ FUNCTION epdv_azur_kuf_kif( cKufKif )
    ELSE
       nBrDok := field->br_dok
    ENDIF
-   AltD()
 
    IF epdv_kuf_kif_azur_sql( cKufKif, nNextGRbr, nBrDok )
 

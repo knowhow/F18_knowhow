@@ -509,7 +509,6 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
 FUNCTION Altd0()
 
-   //AltD()
 
    RETURN 0
 

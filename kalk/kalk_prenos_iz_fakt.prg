@@ -109,7 +109,6 @@ FUNCTION fakt_kalk_prenos_10_14()
          EXIT
       ENDIF
 
-altd()
       IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
          // IF !Found()
          Beep( 4 )
@@ -197,8 +196,6 @@ altd()
 
          update_rec_server_and_dbf( "kalk_doks2", hRec, 1, "FULL" )
 
-
-altd()
          SELECT fakt
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + PADR( cBrDok, FIELD_LEN_FAKT_BRDOK ) == fakt->IdFirma + fakt->IdTipDok + PADR( fakt->BrDok, FIELD_LEN_FAKT_BRDOK )
 

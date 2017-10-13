@@ -156,7 +156,7 @@ FUNCTION i_povrat_fakture()
 
    TEST_LINE( test_var( "fakt_pov" ) == 0,  .T. )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -167,7 +167,7 @@ FUNCTION i_napravi_fakturu()
    LOCAL _fakt_outf, _fakt_out_odt, _b_print
 
    // uporedi test/data/fakt_1.txt sa outf.txt koji je izgenerisan
-   _fakt_outf := my_home() + OUTF_FILE
+   _fakt_outf := txt_print_file_name()
    _fakt_out_odt := my_home() + OUT_ODT_FILE
 
 

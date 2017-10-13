@@ -15,7 +15,6 @@ FUNCTION epdv_pdv_prijava_snimi_obracun( dDatOd, dDatDo )
       // SET ORDER TO TAG "period"
       // SEEK DToS( dDatOd ) + DToS( dDatDo )
       // IF !Found()
-      AltD()
       IF !find_epdv_pdv_za_period( dDatOd, dDatDo )
          APPEND BLANK
       ELSE

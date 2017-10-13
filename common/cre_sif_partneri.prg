@@ -213,24 +213,24 @@ FUNCTION p_group()
 
 FUNCTION p_set_group( set_field )
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
    LOCAL _m_x, _m_y
 
    _m_x := box_x_koord()
    _m_y := box_y_koord()
 
-   AAdd( _Opc, "VP  - veleprodaja          " )
-   AAdd( _opcexe, {|| set_field := "VP ", _izbor := 0 } )
-   AAdd( _Opc, "AMB - ambulantna dostava  " )
-   AAdd( _opcexe, {|| set_field := "AMB", _izbor := 0 } )
-   AAdd( _Opc, "SIS - sistemska kuća      " )
-   AAdd( _opcexe, {|| set_field := "SIS", _izbor := 0 } )
-   AAdd( _Opc, "OST - ostali      " )
-   AAdd( _opcexe, {|| set_field := "OST", _izbor := 0 } )
+   AAdd( aOpc, "VP  - veleprodaja          " )
+   AAdd( aOpcExe, {|| set_field := "VP ", _izbor := 0 } )
+   AAdd( aOpc, "AMB - ambulantna dostava  " )
+   AAdd( aOpcExe, {|| set_field := "AMB", _izbor := 0 } )
+   AAdd( aOpc, "SIS - sistemska kuća      " )
+   AAdd( aOpcExe, {|| set_field := "SIS", _izbor := 0 } )
+   AAdd( aOpc, "OST - ostali      " )
+   AAdd( aOpcExe, {|| set_field := "OST", _izbor := 0 } )
 
-   f18_menu( "pgr", .F., @_izbor, _opc, _opcexe )
+   f18_menu( "pgr", .F., @_izbor, aOpc, aOpcExe )
 
    box_x_koord( _m_x )
    box_y_koord( _m_y )

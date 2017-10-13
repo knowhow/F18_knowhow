@@ -91,10 +91,8 @@ STATIC FUNCTION show_sast()
    // SET ORDER TO TAG "idrbr"
    // SET FILTER TO field->id == cIdProizvodTekuci
    // GO TOP
-   altd()
 
    o_sastavnice( cIdProizvodTekuci, "IDRBR" )
-
 
    // setuj kolone sastavnice tabele
    sast_a_kol( @ImeKol, @Kol )
@@ -162,7 +160,6 @@ FUNCTION o_roba_tip_p( cId )
    LOCAL cSqlQuery := "select * from fmk.roba"
    LOCAL cIdSql
 
-   AltD()
    cSqlQuery += " WHERE tip='P'"
    SELECT F_ROBA_P
    IF !use_sql( NIL, cSqlQuery, cAlias )

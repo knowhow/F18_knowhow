@@ -1,5 +1,11 @@
 # F18 klijent, lista promjena
 
+## 3.1.116-std, 2017-10-13
+### CORE
+- cleanup f18_start_edit, editor B/W, ESC izlaz
+### KALK
+- kalk - pos procedura cleanup
+
 ## 3.1.113-std, 2017-10-12
 ### CORE
 - Pretraga šifri: "SO. " - sortiraj po nazivu, traži sve što počinje sa "SO"

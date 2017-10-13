@@ -355,7 +355,6 @@ FUNCTION use_sql_epdv_kuf_kif( hParams )
       cTag := hParams[ "tag" ]
    ENDIF
 
-   AltD()
    SELECT ( nArea )
    IF !use_sql( cTable, cSql, cAlias )
       RETURN .F.
@@ -398,7 +397,6 @@ STATIC FUNCTION use_sql_epdv_kuf_kif_where( hParams )
    ENDIF
 
    IF hb_HHasKey( hParams, "brdok" )
-      AltD()
       cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "br_dok", hParams[ "brdok" ] )
    ENDIF
 

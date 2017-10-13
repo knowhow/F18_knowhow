@@ -193,7 +193,6 @@ FUNCTION kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa( cProracunMarzeUna
 
    LOCAL nStvarnaKolicina := 0, nMarza
 
-   AltD()
    IF cProracunMarzeUnaprijed == NIL
       cProracunMarzeUnaprijed := " "
    ENDIF
@@ -244,7 +243,6 @@ FUNCTION kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa( cProracunMarzeUna
    cProracunMarzeUnaprijed := " "
    AEval( GetList, {| o | o:display() } )
 
-   AltD()
    IF Round( _VPC, 5 ) == 0
       error_bar( "kalk_unos", "VPC=0" )
       // RETURN .T.
@@ -540,7 +538,6 @@ FUNCTION kalk_set_vpc_sifarnik( nNovaVrijednost, lUvijek )
 
    PRIVATE cPom := "VPC"
 
-altd()
    IF koncij->naz == "N1"  // magacin se vodi po nabavnim cijenama
       RETURN .T.
    endif

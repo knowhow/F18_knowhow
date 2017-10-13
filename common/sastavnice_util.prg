@@ -23,7 +23,6 @@ FUNCTION sastavnica_copy()
    LOCAL hRec
    LOCAL hParams
 
-   AltD()
 
    nTRobaRec := RecNo()
 

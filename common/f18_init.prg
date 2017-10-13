@@ -56,19 +56,19 @@ FUNCTION f18_error_block()
 
 FUNCTION f18_init_app_opts()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, hb_UTF8ToStr( "1. vpn konekcija                         " ) )
-   AAdd( _opcexe, {|| NIL } )
-   AAdd( _opc, hb_UTF8ToStr( "2. rekonfiguriši server  " ) )
-   AAdd( _opcexe, {|| NIL } )
-   AAdd( _opc, hb_UTF8ToStr( "3. otvaranje nove firme  " ) )
-   AAdd( _opcexe, {|| NIL } )
+   AAdd( aOpc, hb_UTF8ToStr( "1. vpn konekcija                         " ) )
+   AAdd( aOpcExe, {|| NIL } )
+   AAdd( aOpc, hb_UTF8ToStr( "2. rekonfiguriši server  " ) )
+   AAdd( aOpcExe, {|| NIL } )
+   AAdd( aOpc, hb_UTF8ToStr( "3. otvaranje nove firme  " ) )
+   AAdd( aOpcExe, {|| NIL } )
 
 
-   f18_menu( "mn", .F., _izbor, _opc, _opcexe  )
+   f18_menu( "mn", .F., _izbor, aOpc, aOpcExe  )
 
    RETURN .T.
 
@@ -754,8 +754,8 @@ FUNCTION set_hot_keys()
 
    //nKey := inkey(0, hb_bitOr( HB_INKEY_ALL, HB_INKEY_EXT ))
    //MsgBeep( AllTrim( Str( nKey ) ) )
-
    //hb_keyNew( "C", HB_KF_CTRL )
+
    info_bar( "init", "setting up hot keys - end" )
 
    RETURN .T.

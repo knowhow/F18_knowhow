@@ -194,7 +194,6 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( cIdFirma, cIdKonto, cIdPartn
       // onda svi
    ELSEIF !lUnesiPodatke
 
-      AltD()
 /*
       IF Type( 'TB' ) = "O"
          IF ValType( aPPos[ 1 ] ) = "C"

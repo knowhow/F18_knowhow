@@ -181,15 +181,15 @@ STATIC FUNCTION import_row( cIdTipDk, cBrDok, cIdOdj )
 
 
 
-STATIC FUNCTION get_import_file( cBrDok, destinacija, import_fajl )
+STATIC FUNCTION get_import_file( cBrDok, cDestinacijaDir, cFile )
 
    LOCAL _filter
    LOCAL _prodajno_mjesto, cIdPos, cPrefixLocal
    LOCAL _imp_files := {}
    LOCAL _opc := {}
    LOCAL _h, nI
-   LOCAL _izbor
-   LOCAL _prenesi
+   LOCAL nIzbor
+   LOCAL lPrenijeti
 
    _filter := 2
    _prodajno_mjesto := GetPm( gIdPos )
@@ -201,11 +201,11 @@ STATIC FUNCTION get_import_file( cBrDok, destinacija, import_fajl )
       cPrefixLocal := ""
    ENDIF
 
-   destinacija := AllTrim( gKalkDest ) + cPrefixLocal
+   cDestinacijaDir := AllTrim( gKalkDest ) + cPrefixLocal
 
-   brisi_stare_fajlove( destinacija )
+   brisi_stare_fajlove( cDestinacijaDir )
 
-   _imp_files := Directory( destinacija + "kt*.dbf" )
+   _imp_files := Directory( cDestinacijaDir + "kt*.dbf" )
 
    ASort( _imp_files,,, {| x, y| DToS( x[ 3 ] ) + x[ 4 ] > DToS( y[ 3 ] ) + y[ 4 ] } )
 
@@ -225,22 +225,22 @@ STATIC FUNCTION get_import_file( cBrDok, destinacija, import_fajl )
    ENDIF
 
 
-   _izbor := 1
-   _prenesi := .F.
+   nIzbor := 1
+   lPrenijeti := .F.
    DO WHILE .T.
-      _izbor := meni_0( "k2p", _opc, _izbor, .F. )
-      IF _izbor == 0
+      nIzbor := meni_0( "k2p", _opc, nIzbor, .F. )
+      IF nIzbor == 0
          EXIT
       ELSE
-         import_fajl := Trim( destinacija ) + Trim( Left( _opc[ _izbor ], 15 ) )
-         IF Pitanje(, "Želite li izvršiti prenos podataka (D/N) ?", "D" ) == "D"
-            _prenesi := .T.
-            _izbor := 0
+         cFile := Trim( cDestinacijaDir ) + Trim( Left( _opc[ nIzbor ], 15 ) )
+         IF Pitanje(, "Prenijeti " + Right( cFile, 30 ) + " ?", "D" ) == "D"
+            lPrenijeti := .T.
+            nIzbor := 0
          ENDIF
       ENDIF
    ENDDO
 
-   IF !_prenesi
+   IF !lPrenijeti
       RETURN .F.
    ENDIF
 
@@ -354,14 +354,13 @@ FUNCTION pos_prenos_inv_2_kalk( cIdPos, cIdTipDk, dDatDok, cBrDok )
    SELECT pom
    USE
 
-   cTopskaFile := tops_kalk_create_topska( cIdPos, dDatDok, dDatDok, cIdTipDk, "tk_p" )
+   cTopskaFile := pos_kalk_create_topska_dbf( cIdPos, dDatDok, dDatDok, cIdTipDk, "tk_p" )
    MsgBeep( "Kreiran fajl " + cTopskaFile + "#broj stavki: " + AllTrim( Str( nRbr ) ) )
 
 
    SELECT ( nDbfArea )
 
    RETURN .T.
-
 
 
 
@@ -522,17 +521,18 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
    my_close_all_dbf()
 
    IF !lAutoPrenos
-      _print_report( dDatOd, dDatDo, _kol, _iznos, nRbr )
-      cTopskaFile := tops_kalk_create_topska( cIdPos, dDatOd, dDatDo, cIdVd )
+      pos_kalk_prenos_report( dDatOd, dDatDo, _kol, _iznos, nRbr )
+      cTopskaFile := pos_kalk_create_topska_dbf( cIdPos, dDatOd, dDatDo, cIdVd )
       MsgBeep( "Kreiran fajl " + cTopskaFile + "#broj stavki: " + AllTrim( Str( nRbr ) ) )
    ENDIF
 
    RETURN .T.
 
 
-STATIC FUNCTION _print_report( dDatOd, dDatDo, nKolicina, nIznos, nBrojStavki )
+STATIC FUNCTION pos_kalk_prenos_report( dDatOd, dDatDo, nKolicina, nIznos, nBrojStavki )
 
-   START PRINT CRET
+   //START PRINT CRET
+   start_print_editor()
 
    ?
    ? "PRENOS PODATAKA TOPS->KALK za ", DToC( Date() )
@@ -544,7 +544,8 @@ STATIC FUNCTION _print_report( dDatOd, dDatDo, nKolicina, nIznos, nBrojStavki )
    ?U "   Ukupan iznos:", AllTrim( Str( nIznos, 12, 2 ) )
 
    FF
-   ENDPRINT
+   //ENDPRINT
+   end_print_editor()
 
    RETURN .T.
 
@@ -595,7 +596,7 @@ STATIC FUNCTION cre_pom_topska_dbf()
  kreira izlazni fajl za multi prodajna mjesta režim
 */
 
-STATIC FUNCTION tops_kalk_create_topska( cIdPos, dDatOd, dDatDo, cIdTipDok, cPrefix )
+STATIC FUNCTION pos_kalk_create_topska_dbf( cIdPos, dDatOd, dDatDo, cIdTipDok, cPrefix )
 
    LOCAL cPrefixLocal := "tk"
    LOCAL cExportDirektorij
@@ -628,7 +629,7 @@ STATIC FUNCTION tops_kalk_create_topska( cIdPos, dDatOd, dDatDo, cIdTipDok, cPre
    cFajlDestinacija := cExportDirektorij + cTableName + ".dbf"
 
    IF FileCopy( my_home() + "pom.dbf", cFajlDestinacija ) > 0
-      FileCopy( my_home() + OUTF_FILE, StrTran( cFajlDestinacija, ".dbf", ".txt" ) )
+      FileCopy( txt_print_file_name(), StrTran( cFajlDestinacija, ".dbf", ".txt" ) )
    ELSE
       MsgBeep( "Problem sa kopiranjem fajla na lokaciju #" + cExportDirektorij )
    ENDIF

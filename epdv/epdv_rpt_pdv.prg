@@ -73,7 +73,6 @@ FUNCTION epdv_pdv_prijava()
 
    ENDIF
 
-altd()
    BoxC()
 
    IF LastKey() == K_ESC

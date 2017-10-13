@@ -132,7 +132,6 @@ FUNCTION fakt_real_kumulativno_po_partnerima()
 
 
    //find_fakt_za_period( cIdFirma, dDatOd, dDatDo, "idFirma,idpartner,idtipdok", NIL, "6" ) // "6","IdFirma+idpartner+idtipdok"
-   altd()
 
    nC := 0
    nCol1 := 10

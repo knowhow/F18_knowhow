@@ -382,7 +382,6 @@ FUNCTION pos_stampa_priprema( cIdPos, dDatBrDok, fEkran, lViseOdjednom, lOnlyFil
    cIdRadnik := pos_doks->IdRadnik
    cSmjena := pos_doks->Smjena
 
-   AltD()
 
    // SELECT pos
 
@@ -832,7 +831,6 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
    LOCAL nZakBr := 0
    LOCAL nFZaokr := 0
 
-   AltD()
    // o_pos_tables()
    close_open_racun_tbl()
    zap_racun_tbl()

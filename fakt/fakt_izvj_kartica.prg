@@ -200,9 +200,7 @@ FUNCTION fakt_kartica()
 
    BoxC()
 
-
    //PRIVATE cFilter := ""
-altd()
    cFilter := iif( cBrza == "N", cFilterRoba, ".t." )
 
    // hendliranje objekata

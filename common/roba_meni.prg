@@ -16,41 +16,39 @@ MEMVAR gPregledSifriIzMenija
 
 FUNCTION sif_roba_tarife_koncij_sast()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _izbor := 1
    LOCAL lPrev := gPregledSifriIzMenija
 
    gPregledSifriIzMenija := .T.
 
-   AAdd( _opc, "1. roba                               " )
-   AAdd( _opcexe, {|| P_Roba() } )
+   AAdd( aOpc, "1. roba                               " )
+   AAdd( aOpcExe, {|| P_Roba() } )
 
-   AAdd( _opc, "2. tarife" )
-   AAdd( _opcexe, {|| P_Tarifa() } )
+   AAdd( aOpc, "2. tarife" )
+   AAdd( aOpcExe, {|| P_Tarifa() } )
 
-   AAdd( _opc, "3. konta - tipovi cijena" )
-   AAdd( _opcexe, {|| P_Koncij() } )
+   AAdd( aOpc, "3. konta - tipovi cijena" )
+   AAdd( aOpcExe, {|| P_Koncij() } )
 
-   AAdd( _opc, "4. konta - atributi / 2 " )
-   AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+   AAdd( aOpc, "4. konta - atributi / 2 " )
+   AAdd( aOpcExe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
 
-   AAdd( _opc, "5. trfp - sheme kontiranja u fin" )
-   AAdd( _opcexe, {|| P_TrFP() } )
+   AAdd( aOpc, "5. trfp - sheme kontiranja u fin" )
+   AAdd( aOpcExe, {|| P_TrFP() } )
 
-   AAdd( _opc, "6. sastavnice" )
-   AAdd( _opcexe, {|| p_roba_sastavnice() } )
-
-
-   AAdd( _opc, "8. sifk - karakteristike" )
-   AAdd( _opcexe, {|| P_SifK() } )
+   AAdd( aOpc, "6. sastavnice" )
+   AAdd( aOpcExe, {|| p_roba_sastavnice() } )
 
 
+   AAdd( aOpc, "8. sifk - karakteristike" )
+   AAdd( aOpcExe, {|| P_SifK() } )
 
    my_close_all_dbf()
    OFmkRoba()
 
-   f18_menu( "srob", .F., _izbor, _opc, _opcexe )
+   f18_menu( "srob", .F., _izbor, aOpc, aOpcExe )
 
    my_close_all_dbf()
 

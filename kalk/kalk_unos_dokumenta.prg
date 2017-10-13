@@ -599,7 +599,6 @@ FUNCTION kalk_unos_nova_stavka()
 
       _oldvaln := _nc * _kolicina
 
-altd()
       Gather()
 
       _hAttrId := hb_Hash()

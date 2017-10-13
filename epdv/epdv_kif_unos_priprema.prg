@@ -284,7 +284,6 @@ STATIC FUNCTION epdv_kif_key_handler( Ch )
 
 FUNCTION epdv_edit_kif()
 
-   AltD()
    epdv_otvori_kif_priprema()
    epdv_kif_tbl_priprema()
 

@@ -11,10 +11,10 @@
 
 #include "f18.ch"
 
-
 STATIC s_cKalkFinIstiBroj := NIL
 STATIC s_cKalkPreuzimanjeTroskovaIzSifRoba := NIL
 STATIC s_cKalkMetodaNc := NIL
+STATIC s_cKonverzijaValuteDN := NIL
 
 FUNCTION kalk_params()
 
@@ -22,21 +22,21 @@ FUNCTION kalk_params()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   //o_konto()
+   // o_konto()
 
    AAdd( _opc, "1. osnovni podaci o firmi                                 " )
    AAdd( _opcexe, {|| parametri_organizacije() } )
 
-   AAdd( _opc, "2. metoda proracuna NC, mogucnosti ispravke dokumenata " )
+   AAdd( _opc, "2. metoda proračuna NC, mogucnosti ispravke dokumenata " )
    AAdd( _opcexe, {|| kalk_par_metoda_nc( 'D' ) } )
 
    AAdd( _opc, "3. varijante obrade i prikaza pojedinih dokumenata " )
    AAdd( _opcexe, {|| kalk_par_varijante_prikaza( 'D' ) } )
 
-   AAdd( _opc, "4. nazivi troskova za 10-ku " )
+   AAdd( _opc, "4. nazivi troškova za 10-ku " )
    AAdd( _opcexe, {|| kalk_troskovi_10ka( 'D' ) } )
 
-   AAdd( _opc, "5. nazivi troskova za 24-ku" )
+   AAdd( _opc, "5. nazivi troškova za 24-ku" )
    AAdd( _opcexe, {|| kalk_par_troskovi_24( 'D' ) } )
 
    AAdd( _opc, "6. nazivi troskova za RN" )
@@ -45,7 +45,7 @@ FUNCTION kalk_params()
    AAdd( _opc, "7. prikaz cijene,%,iznosa" )
    AAdd( _opcexe, {|| kalk_par_cijene( 'D' ) } )
 
-   AAdd( _opc, "8. nacin formiranja zavisnih dokumenata" )
+   AAdd( _opc, "8. način formiranja zavisnih dokumenata" )
    AAdd( _opcexe, {|| kalk_par_zavisni_dokumenti( 'D' ) } )
 
 
@@ -84,6 +84,7 @@ FUNCTION kalk_par_varijante_prikaza()
 
    LOCAL nX := 1
    LOCAL cRobaTrosk :=  kalk_preuzimanje_troskova_iz_sif_roba()
+   LOCAL cKonverzijaValuteDn := kalk_konverzija_valute_na_unosu()
    PRIVATE  GetList := {}
 
    Box(, 23, 76, .F., "Varijante obrade i prikaza pojedinih dokumenata" )
@@ -119,15 +120,13 @@ FUNCTION kalk_par_varijante_prikaza()
 
    @ box_x_koord() + nX, Col() + 1 SAY c10T5 GET gRobaTr5Tip VALID gRobaTr5Tip $ " %URA" PICT "@!"
 
-   // nX += 1
-   // @ box_x_koord() + nX, box_y_koord() + 2 SAY "10 - pomoc sa koverzijom valute pri unosu dokumenta (D/N)" GET gDokKVal VALID gDokKVal $ "DN" PICT "@!"
+   nX += 1
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Mogućnost konverzije valute pri unosu dokumenta (D/N)" GET cKonverzijaValuteDn VALID cKonverzijaValuteDn $ "DN" PICT "@!"
 
    nX += 2
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Voditi kalo pri ulazu " GET gVodiKalo VALID gVodiKalo $ "DN" PICT "@!"
 
    nX += 1
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Program se koristi iskljucivo za vodjenje magacina po NC  Da-1 / Ne-2 " GET gMagacin VALID gMagacin $ "12"
 
    nX += 2
@@ -186,13 +185,29 @@ FUNCTION kalk_par_varijante_prikaza()
       set_metric( "kalk_trosak_3_tip", NIL, gRobaTr3Tip )
       set_metric( "kalk_trosak_4_tip", NIL, gRobaTr4Tip )
       set_metric( "kalk_trosak_5_tip", NIL, gRobaTr5Tip )
-      // set_metric( "kalk_konverzija_valute_na_unosu", nil, gDokKVal )
+      kalk_konverzija_valute_na_unosu( cKonverzijaValuteDn )
 
    ENDIF
 
    RETURN NIL
 
 
+FUNCTION kalk_konverzija_valute_na_unosu( cSet )
+
+   IF cSet != NIL
+      s_cKonverzijaValuteDN := cSet
+      set_metric( "kalk_konverzija_valute_na_unosu", NIL, cSet )
+   ENDIF
+
+   IF s_cKonverzijaValuteDN == NIL
+      s_cKonverzijaValuteDN := fetch_metric( "kalk_konverzija_valute_na_unosu", NIL, "N" )
+   ENDIF
+
+   RETURN s_cKonverzijaValuteDN
+
+
+FUNCTION is_kalk_konverzija_valute_na_unosu()
+   RETURN kalk_konverzija_valute_na_unosu() == "D"
 
 FUNCTION kalk_par_razno()
 

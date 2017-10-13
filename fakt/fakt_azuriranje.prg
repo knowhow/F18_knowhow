@@ -177,7 +177,6 @@ STATIC FUNCTION fakt_azur_sql( cIdFirma, cIdTipDok, cBrDok )
    seek_fakt_doks( "XXX" )
    seek_fakt_doks2( "XXX" )
 
-   altd()
    fakt_seek_pripr_dokument( cIdFirma, cIdTipDok, cBrDok )
    hRec := dbf_get_rec()
 

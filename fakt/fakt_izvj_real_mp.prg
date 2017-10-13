@@ -247,7 +247,6 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( hParams )
   // SELECT fakt_doks
   // SET FILTER TO &cFaktDoksFilter
   // GO TOP
-  altd()
 
    find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, "FAKT_DOKS", "idfirma,datdok,idtipdok,brdok" )
    SET FILTER TO &cFaktDoksFilter

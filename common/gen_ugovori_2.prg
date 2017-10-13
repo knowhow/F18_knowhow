@@ -81,7 +81,6 @@ FUNCTION ugov_generacija()
 
    o_fakt_pripr()
 
-   AltD()
 
    IF RecCount2() <> 0
       MsgBeep( "U pripremi postoje dokumenti#Prekidam generaciju!" )
@@ -105,7 +104,6 @@ FUNCTION ugov_generacija()
    hRec[ "opis" ] := cOpis
    update_rec_server_and_dbf( "fakt_gen_ug", hRec, 1, "FULL" )
 
-   AltD()
    o_aktivni_ugovori()
 
    nSaldo := 0

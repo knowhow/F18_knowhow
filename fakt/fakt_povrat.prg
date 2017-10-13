@@ -67,8 +67,6 @@ FUNCTION povrat_fakt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
    ENDIF
 
    IF !seek_fakt( cIdFirma, cIdTipDok, cBrDok )
-      // IF Eof()
-      AltD()
       MsgBeep( "Traženi dokument: " + cIdFirma  + "-" + cIdTipDok + "-" + cBrDok + " ne postoji ažuriran u fakt_fakt !?" )
    ENDIF
 

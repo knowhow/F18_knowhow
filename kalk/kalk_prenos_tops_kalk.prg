@@ -123,9 +123,9 @@ STATIC FUNCTION tops_kalk_import_meni()
       ENDIF
 
       cTopsKalkImeDbf := cTopsDest + AllTrim( Left( aOpcije[ nMeniOdabir ], 20 ) )
-      tops_kalk_view_txt( cTopsKalkImeDbf )
+      pos_kalk_pregled_dokumenta( cTopsKalkImeDbf )
 
-      IF Pitanje(, "Želite li izvrsiti prenos TOPS->KALK ?", "D" ) == "N"
+      IF Pitanje(, "Prenijeti " + Right( cTopsKalkImeDbf, 30 )+ " ?", "D" ) == "N"
          nMeniOdabir++
          LOOP
       ENDIF
@@ -309,7 +309,7 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
    RETURN lError
 
 
-STATIC FUNCTION tops_kalk_view_txt( cTopskaImeDbf )
+STATIC FUNCTION pos_kalk_pregled_dokumenta( cTopskaImeDbf )
 
    LOCAL cTopskaImeTxt := get_topska_ime_txt( cTopskaImeDbf )
 

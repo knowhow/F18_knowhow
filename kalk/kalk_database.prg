@@ -12,15 +12,15 @@
 #include "f18.ch"
 
 
-FUNCTION kalk_kol_stanje_artikla_magacin( m_konto, id_roba, datum_do )
+FUNCTION kalk_kol_stanje_artikla_magacin( cIdKontoMagacin, cIdRoba, dDatumDo )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
    LOCAL oRow
    LOCAL _stanje
 
-   IF datum_do == NIL
-      datum_do := Date()
+   IF dDatumDo == NIL
+      dDatumDo := Date()
    ENDIF
 
    _qry := "SELECT " + ;
@@ -34,9 +34,9 @@ FUNCTION kalk_kol_stanje_artikla_magacin( m_konto, id_roba, datum_do )
       " FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk " + ;
       " WHERE " + ;
       " idfirma = " + sql_quote( self_organizacija_id() ) + ;
-      " AND mkonto = " + sql_quote( m_konto ) + ;
-      " AND idroba = " + sql_quote( id_roba ) + ;
-      " AND " + _sql_date_parse( "datdok", CToD( "" ), datum_do )
+      " AND mkonto = " + sql_quote( cIdKontoMagacin ) + ;
+      " AND idroba = " + sql_quote( cIdRoba ) + ;
+      " AND " + _sql_date_parse( "datdok", CToD( "" ), dDatumDo )
 
    _table := run_sql_query( _qry )
 
@@ -53,15 +53,15 @@ FUNCTION kalk_kol_stanje_artikla_magacin( m_konto, id_roba, datum_do )
 
 
 
-FUNCTION kalk_kol_stanje_artikla_prodavnica( p_konto, id_roba, datum_do )
+FUNCTION kalk_kol_stanje_artikla_prodavnica( p_konto, cIdRoba, dDatumDo )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
    LOCAL oRow
    LOCAL _stanje
 
-   IF datum_do == NIL
-      datum_do := Date()
+   IF dDatumDo == NIL
+      dDatumDo := Date()
    ENDIF
 
    _qry := "SELECT SUM( CASE WHEN pu_i = '1' THEN kolicina-gkolicina-gkolicin2 " + ;
@@ -71,8 +71,8 @@ FUNCTION kalk_kol_stanje_artikla_prodavnica( p_konto, id_roba, datum_do )
       " WHERE " + ;
       " idfirma = " + sql_quote( self_organizacija_id() ) + ;
       " AND pkonto = " + sql_quote( p_konto ) + ;
-      " AND idroba = " + sql_quote( id_roba ) + ;
-      " AND " + _sql_date_parse( "datdok", CToD( "" ), datum_do )
+      " AND idroba = " + sql_quote( cIdRoba ) + ;
+      " AND " + _sql_date_parse( "datdok", CToD( "" ), dDatumDo )
 
    _table := run_sql_query( _qry )
 

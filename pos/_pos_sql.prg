@@ -512,7 +512,7 @@ FUNCTION pos_stanje_artikla( cIdPos, cIdRoba )
 
    IF !Empty( pos_kalk_konto_magacin() )
 
-// IF !Empty( AllTrim( __kalk_konto ) )
+      // IF !Empty( AllTrim( __kalk_konto ) )
       // IF PadR( __kalk_konto, 3 ) == "132"
       RETURN kalk_kol_stanje_artikla_magacin( cKalkKontoMagacin, cIdRoba, Date() )
       // ELSE

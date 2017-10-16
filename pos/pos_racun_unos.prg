@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 STATIC __max_kolicina := NIL
-STATIC __kalk_konto := NIL
+
 
 
 FUNCTION pos_unos_racuna()
@@ -22,7 +22,7 @@ FUNCTION pos_unos_racuna()
    LOCAL _max_cols := f18_max_cols()
    LOCAL _max_rows := f18_max_rows()
    LOCAL _read_barkod
-   LOCAL _stanje_robe := 0
+   LOCAL nStanjeRobe := 0
    LOCAL _stanje_art_id, _stanje_art_jmj
 
    PRIVATE ImeKol := {}
@@ -70,9 +70,9 @@ FUNCTION pos_unos_racuna()
 
    oBrowse := pos_form_browse( box_x_koord() + 7, box_y_koord() + 1, box_x_koord() + _max_rows - 12, box_y_koord() + _max_cols - 2, ;
       ImeKol, Kol, ;
-        { hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ;
-          hb_UTF8ToStrBox( BROWSE_PODVUCI ), ;
-          hb_UTF8ToStrBox( BROWSE_COL_SEP ) }, 0 )
+      { hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ;
+      hb_UTF8ToStrBox( BROWSE_PODVUCI ), ;
+      hb_UTF8ToStrBox( BROWSE_COL_SEP ) }, 0 )
 
    oBrowse:autolite := .F.
 
@@ -193,15 +193,7 @@ FUNCTION pos_unos_racuna()
 
       Gather()
 
-      IF !Empty( AllTrim( __kalk_konto ) )
-         IF PadR( __kalk_konto, 3 ) == "132"
-            _stanje_robe := kalk_kol_stanje_artikla_magacin( PadR( __kalk_konto, 7 ), field->idroba, Date() )
-         ELSE
-            _stanje_robe := kalk_kol_stanje_artikla_prodavnica( PadR( __kalk_konto, 7 ), field->idroba, Date() )
-         ENDIF
-      ELSE
-         _stanje_robe := pos_stanje_artikla( field->idpos, field->idroba )
-      ENDIF
+      nStanjeRobe := pos_stanje_artikla( field->idpos, field->idroba )
 
       _stanje_art_id := field->idroba
       _stanje_art_jmj := field->jmj
@@ -212,7 +204,7 @@ FUNCTION pos_unos_racuna()
       oBrowse:refreshAll()
       oBrowse:dehilite()
 
-      _tmp := "STANJE ARTIKLA " + AllTrim( _stanje_art_id ) + ": " + AllTrim( Str( _stanje_robe, 12, 2 ) ) + " " + _stanje_art_jmj
+      _tmp := "STANJE ARTIKLA " + AllTrim( _stanje_art_id ) + ": " + AllTrim( Str( nStanjeRobe, 12, 2 ) ) + " " + _stanje_art_jmj
       ispisi_donji_dio_forme_unosa( _tmp, 1 )
 
    ENDDO
@@ -242,13 +234,7 @@ FUNCTION max_kolicina_kod_unosa( read_par )
    RETURN __max_kolicina
 
 
-FUNCTION kalk_konto_za_stanje_pos( read_par )
 
-   IF read_par != NIL
-      __kalk_konto := fetch_metric( "pos_stanje_sa_kalk_konta", my_user(), "" )
-   ENDIF
-
-   RETURN __kalk_konto
 
 
 STATIC FUNCTION Popust( nx, ny )
@@ -398,18 +384,18 @@ STATIC FUNCTION cijena_ok( cijena )
    RETURN _ret
 
 
-STATIC FUNCTION KolicinaOK( kolicina )
+STATIC FUNCTION KolicinaOK( nKolicina )
 
    LOCAL lOk := .F.
    LOCAL _msg
-   LOCAL _stanje_robe
+   LOCAL nStanjeRobe
 
    IF LastKey() == K_UP
       lOk := .T.
       RETURN lOk
    ENDIF
 
-   IF ( kolicina == 0 )
+   IF ( nKolicina == 0 )
       MsgBeep( "Nepravilan unos količine! Ponovite unos!", 15 )
       RETURN lOk
    ENDIF
@@ -419,13 +405,13 @@ STATIC FUNCTION KolicinaOK( kolicina )
       RETURN lOk
    ENDIF
 
-   _stanje_robe := pos_stanje_artikla( _idpos, _idroba )
+   nStanjeRobe := pos_stanje_artikla( _idpos, _idroba )
 
    lOk := .T.
 
-   IF ( kolicina > _stanje_robe )
+   IF ( nKolicina > nStanjeRobe )
 
-      _msg := "Artikal: " + _idroba + " Trenutno na stanju: " + Str( _stanje_robe, 12, 2 )
+      _msg := "Artikal: " + _idroba + " Trenutno na stanju: " + Str( nStanjeRobe, 12, 2 )
 
       IF gPratiStanje = "!"
          _msg += "#Unos artikla onemogućen !!!"
@@ -544,8 +530,8 @@ FUNCTION pos_brisi_stavku_racuna( oBrowse )
 
    Beep ( 2 )
 
-   nIznNar -= _pos_pripr->( kolicina * cijena )
-   nPopust -= _pos_pripr->( kolicina * ncijena )
+   nIznNar -= _pos_pripr->kolicina * _pos_pripr->cijena
+   nPopust -= _pos_pripr->kolicina * _pos_pripr->ncijena
 
    pos_unos_show_total( nIznNar, nPopust, box_x_koord() + 2 )
    ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), box_x_koord() + ( f18_max_rows() - 12 ), f18_max_cols() - 2 )

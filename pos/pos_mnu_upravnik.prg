@@ -38,7 +38,7 @@ FUNCTION MMenuUpA()
    AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
 
    AAdd( opc, "R. prenos realizacije u KALK" )
-   AAdd( opcexe, {|| pos_prenos_pos_kalk() } )
+   AAdd( opcexe, {|| pos_kalk_prenos_realizacije() } )
 
    AAdd( opc, "D. unos dokumenata" )
    AAdd( opcexe, {|| pos_menu_dokumenti() } )

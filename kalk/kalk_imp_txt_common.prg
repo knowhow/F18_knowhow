@@ -227,7 +227,6 @@ STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
       lStampaj := .T.
    ENDIF
 
-
    // kalk_pripr_obrada_stavki_sa_asistentom()
 
    // IF lStampaj == .T.
@@ -237,7 +236,6 @@ STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
    // o_kalk_edit()
 
    kalk_asistent_pause( .F. )
-
 
    DO WHILE (  ( nRslt := provjeri_stanje_kalk_pripreme( cIdVd ) ) <> 0 )
 
@@ -257,7 +255,6 @@ STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
       IF  nRslt >= 2 // vezni dokument u pripremi ne pripada azuriranom dokumentu, sta sa njim
 
          error_bar( "kalk_auto_imp", "postoji dokument u pripremi koji je sumnjiv" )
-
          MsgBeep( "Postoji dokument u kalk_pripremi koji je sumljiv!#Radi se o veznom dokumentu ili nekoj drugoj grešci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !" )
          IF LastKey() == K_ESC
             IF Pitanje(, "Prekid operacije?", "N" ) == "D"

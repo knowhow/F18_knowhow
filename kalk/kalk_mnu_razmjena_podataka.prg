@@ -14,32 +14,42 @@
 
 FUNCTION kalk_razmjena_podataka()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. generacija zavisnih dokumenata (kontiranje)      " )
-   AAdd( _opcexe, {|| kalk_kontiranje_gen_finmat( .T. ) } )
-   AAdd( _opc, "2. fakt -> kalk" )
-   AAdd( _opcexe, {|| fakt_kalk() } )
-   AAdd( _opc, "3. tops -> kalk" )
-   AAdd( _opcexe, {|| kalk_preuzmi_tops_dokumente() } )
+   AAdd( aOpc, "1. generacija zavisnih dokumenata (kontiranje)          " )
+   AAdd( aOpcExe, {|| kalk_kontiranje_gen_finmat( .T. ) } )
+   AAdd( aOpc, "2. fakt -> kalk" )
+   AAdd( aOpcExe, {|| fakt_kalk() } )
 
-   AAdd( _opc, "4. kalk -> tops" )
-   AAdd( _opcexe, {|| kalk_tops_meni() } )
+   IF is_kalk_tops_generacija_kalk_11_na_osnovu_pos_42()
+      AAdd( aOpc, "3. pos -> kalk razduženje magacina na osnovu pos prodaje" )
+      AAdd( aOpcExe, {|| kalk_razduzi_magacin_na_osnovu_pos_prodaje() } )
 
-   AAdd( _opc, "5. import csv fajl " )
-   AAdd( _opcexe, {|| meni_import_csv() } )
-   AAdd( _opc, "-----------------------------------" )
-   AAdd( _opcexe, nil )
+      AAdd( aOpc, "4. pos -> kalk razduženje prodavnice na osnovu pos" )
+      AAdd( aOpcExe, {|| kalk_razduzi_prodavnicu_na_osnovu_pos_prodaje() } )
+  else
+     AAdd( aOpc, "4. pos -> kalk radzuženje prodavnice" )
+     AAdd( aOpcExe, {|| kalk_prenos_iz_pos_u_kalk() } )
+   ENDIF
 
-   //AAdd( _opc, "A. kontiraj dokumente za period - u pripremu" )
-   //AAdd( _opcexe, {|| kalk_kontiranje_dokumenata_period() } )
 
-   AAdd( _opc, "K. kontiranje kalk->fin za period" )
-   AAdd( _opcexe, {|| kontiranje_vise_dokumenata_period_auto() } )
+   AAdd( aOpc, "5. kalk -> pos" )
+   AAdd( aOpcExe, {|| kalk_tops_meni() } )
 
-   f18_menu( "rmod", .F., _izbor, _opc, _opcexe )
+   AAdd( aOpc, "6. import csv fajl " )
+   AAdd( aOpcExe, {|| meni_import_csv() } )
+   AAdd( aOpc, "-----------------------------------" )
+   AAdd( aOpcExe, NIL )
+
+   // AAdd( aOpc, "A. kontiraj dokumente za period - u pripremu" )
+   // AAdd( aOpcExe, {|| kalk_kontiranje_dokumenata_period() } )
+
+   AAdd( aOpc, "K. kontiranje kalk->fin za period" )
+   AAdd( aOpcExe, {|| kontiranje_vise_dokumenata_period_auto() } )
+
+   f18_menu( "rmod", .F., nIzbor, aOpc, aOpcExe )
 
    my_close_all_dbf()
 
@@ -49,21 +59,21 @@ FUNCTION kalk_razmjena_podataka()
 /*
 STATIC FUNCTION mnu_prenos_tops_u_kalk()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. prenos podataka pos->kalk                        " )
-   AAdd( _opcexe, {|| kalk_preuzmi_tops_dokumente() } )
+--   AAdd( aOpc, "1. prenos podataka pos->kalk                        " )
+--   AAdd( aOpcExe, {|| kalk_prenos_iz_pos_u_kalk() } )
 
 
-   AAdd( _opc, "2. prenos podataka pos->kalk (razduzi automatski)" )
-   AAdd( _opcexe, {|| kalk_preuzmi_tops_dokumente_auto() } )
+   AAdd( aOpc, "2. prenos podataka pos->kalk (razduzi automatski)" )
+   AAdd( aOpcExe, {|| kalk_preuzmi_tops_dokumente_auto() } )
 
-  -- AAdd( _opc, "3. pos->kalk 96 po normativima za period " )
---   AAdd( _opcexe, {|| tops_nor_96() } )
+  -- AAdd( aOpc, "3. pos->kalk 96 po normativima za period " )
+--   AAdd( aOpcExe, {|| tops_nor_96() } )
 
-   f18_menu( "rpka", .F., _izbor, _opc, _opcexe )
+   f18_menu( "rpka", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.
 */

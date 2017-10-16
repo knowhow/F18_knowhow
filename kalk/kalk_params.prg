@@ -15,46 +15,42 @@ STATIC s_cKalkFinIstiBroj := NIL
 STATIC s_cKalkPreuzimanjeTroskovaIzSifRoba := NIL
 STATIC s_cKalkMetodaNc := NIL
 STATIC s_cKonverzijaValuteDN := NIL
+STATIC s_cKalkPosGeneracijaKalk11NaOsnovuPos42DN := NIL
 
 FUNCTION kalk_params()
 
-   LOCAL _izbor := 1
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL nIzbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
 
-   // o_konto()
+   AAdd( aOpc, "1. osnovni podaci o firmi                                 " )
+   AAdd( aOpcExe, {|| parametri_organizacije() } )
 
-   AAdd( _opc, "1. osnovni podaci o firmi                                 " )
-   AAdd( _opcexe, {|| parametri_organizacije() } )
+   AAdd( aOpc, "2. metoda proračuna NC, mogucnosti ispravke dokumenata " )
+   AAdd( aOpcExe, {|| kalk_par_metoda_nc( 'D' ) } )
 
-   AAdd( _opc, "2. metoda proračuna NC, mogucnosti ispravke dokumenata " )
-   AAdd( _opcexe, {|| kalk_par_metoda_nc( 'D' ) } )
+   AAdd( aOpc, "3. varijante obrade i prikaza pojedinih dokumenata " )
+   AAdd( aOpcExe, {|| kalk_par_varijante_prikaza( 'D' ) } )
 
-   AAdd( _opc, "3. varijante obrade i prikaza pojedinih dokumenata " )
-   AAdd( _opcexe, {|| kalk_par_varijante_prikaza( 'D' ) } )
+   AAdd( aOpc, "4. nazivi troškova za 10-ku " )
+   AAdd( aOpcExe, {|| kalk_troskovi_10ka( 'D' ) } )
 
-   AAdd( _opc, "4. nazivi troškova za 10-ku " )
-   AAdd( _opcexe, {|| kalk_troskovi_10ka( 'D' ) } )
+   AAdd( aOpc, "5. nazivi troškova za 24-ku" )
+   AAdd( aOpcExe, {|| kalk_par_troskovi_24( 'D' ) } )
 
-   AAdd( _opc, "5. nazivi troškova za 24-ku" )
-   AAdd( _opcexe, {|| kalk_par_troskovi_24( 'D' ) } )
+   AAdd( aOpc, "6. nazivi troskova za RN" )
+   AAdd( aOpcExe, {|| kalk_par_troskovi_rn( 'D' ) } )
 
-   AAdd( _opc, "6. nazivi troskova za RN" )
-   AAdd( _opcexe, {|| kalk_par_troskovi_rn( 'D' ) } )
+   AAdd( aOpc, "7. prikaz cijene,%,iznosa" )
+   AAdd( aOpcExe, {|| kalk_par_cijene( 'D' ) } )
 
-   AAdd( _opc, "7. prikaz cijene,%,iznosa" )
-   AAdd( _opcexe, {|| kalk_par_cijene( 'D' ) } )
+   AAdd( aOpc, "8. način formiranja zavisnih dokumenata" )
+   AAdd( aOpcExe, {|| kalk_par_zavisni_dokumenti( 'D' ) } )
 
-   AAdd( _opc, "8. način formiranja zavisnih dokumenata" )
-   AAdd( _opcexe, {|| kalk_par_zavisni_dokumenti( 'D' ) } )
+   AAdd( aOpc, "B. parametri - razno" )
+   AAdd( aOpcExe, {|| kalk_par_razno( 'D' ) } )
 
-
-
-
-   AAdd( _opc, "B. parametri - razno" )
-   AAdd( _opcexe, {|| kalk_par_razno( 'D' ) } )
-
-   f18_menu( "pars", .F., _izbor, _opc, _opcexe )
+   f18_menu( "pars", .F., nIzbor, aOpc, aOpcExe )
 
    gNW := "X"
 
@@ -85,7 +81,7 @@ FUNCTION kalk_par_varijante_prikaza()
    LOCAL nX := 1
    LOCAL cRobaTrosk :=  kalk_preuzimanje_troskova_iz_sif_roba()
    LOCAL cKonverzijaValuteDn := kalk_konverzija_valute_na_unosu()
-   PRIVATE  GetList := {}
+   LOCAL GetList := {}
 
    Box(, 23, 76, .F., "Varijante obrade i prikaza pojedinih dokumenata" )
 
@@ -93,7 +89,6 @@ FUNCTION kalk_par_varijante_prikaza()
 
    nX += 1
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "14 - Nivelaciju izvrsiti na ukupno stanje/na prodanu kolicinu  1/2 ?" GET gNiv14  VALID gNiv14 $ "12"
-
 
    nX += 1
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "10 - prikaz ukalkulisanog poreza (D/N)" GET  g10Porez  PICT "@!" VALID g10Porez $ "DN"
@@ -105,11 +100,9 @@ FUNCTION kalk_par_varijante_prikaza()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "10 - automatsko preuzimanje troskova iz sifrarnika robe ? (0/D/N)" GET cRobaTrosk VALID cRobaTrosk $ "0DN" PICT "@!"
 
    nX += 1
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "   default tip za pojedini trosak:"
 
    nX += 1
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "   " + c10T1 GET gRobaTr1Tip VALID gRobaTr1Tip $ " %URA" PICT "@!"
 
    @ box_x_koord() + nX, Col() + 1 SAY c10T2 GET gRobaTr2Tip VALID gRobaTr2Tip $ " %URA" PICT "@!"
@@ -130,7 +123,6 @@ FUNCTION kalk_par_varijante_prikaza()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Program se koristi iskljucivo za vodjenje magacina po NC  Da-1 / Ne-2 " GET gMagacin VALID gMagacin $ "12"
 
    nX += 2
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Varijanta FAKT13->KALK11 ( 1-mpc iz sifrarnika, 2-mpc iz FAKT13)" GET  gVar13u11  PICT "@!" VALID gVar13u11 $ "12"
 
    nX += 2
@@ -140,22 +132,18 @@ FUNCTION kalk_par_varijante_prikaza()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Pri ulaznoj kalkulaciji pomoc sa C.sa PDV (D/N)" GET  gcMpcKalk10 PICT "@!" VALID gcMpcKalk10 $ "DN"
 
    nX += 1
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Varijanta popusta na dokumentima, default P-%, C-cijena" GET gRCRP
 
    nX += 1
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "80 - var.rek.po tarifama ( 1 -samo ukupno / 2 -prod.1,prod.2,ukupno)" GET  g80VRT PICT "9" VALID g80VRT $ "12"
 
    nX += 2
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kolicina za nivelaciju iz FAKT-a " GET  gKolicFakt VALID gKolicFakt $ "DN"  PICT "@!"
 
-   @ box_x_koord() + nX, Col() + 1 SAY "Auto ravnoteza naloga (FIN):" GET gAutoRavn VALID gAutoRavn $ "DN" PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY8 "Auto ravnoteža naloga (FIN):" GET gAutoRavn VALID gAutoRavn $ "DN" PICT "@!"
 
    nX += 1
-
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Automatsko azuriranje cijena u sifrarnik (D/N)" GET gAutoCjen VALID gAutoCjen $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Automatsko ažuriranje cijena u šifarnik (D/N)" GET gAutoCjen VALID gAutoCjen $ "DN" PICT "@!"
 
    READ
 
@@ -164,7 +152,6 @@ FUNCTION kalk_par_varijante_prikaza()
    IF LastKey() <> K_ESC
 
       set_metric( "kalk_magacin_po_nc", NIL, gMagacin )
-
       set_metric( "kalk_kolicina_kalo", NIL, gKalo )
       set_metric( "kalk_voditi_kalo", NIL, gVodiKalo )
       set_metric( "kalk_dokument_10_prikaz_ukalk_poreza", NIL, g10Porez )
@@ -213,7 +200,7 @@ FUNCTION kalk_par_razno()
 
    LOCAL _brojac := "N"
    LOCAL _unos_barkod := "N"
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _reset_roba := fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" )
    LOCAL _rabat := fetch_metric( "pregled_rabata_kod_ulaza", my_user(), "N" )
    LOCAL _vise_konta := fetch_metric( "kalk_dokument_vise_konta", NIL, "N" )
@@ -223,8 +210,7 @@ FUNCTION kalk_par_razno()
    LOCAL cRobaTrazi := PadR( roba_trazi_po_sifradob(), 20 )
    LOCAL nPragOdstupanjaNc := prag_odstupanja_nc_sumnjiv()
    LOCAL nStandardnaStopaMarza  := standardna_stopa_marze()
-
-   PRIVATE  GetList := {}
+   LOCAL GetList := {}
 
    IF glBrojacPoKontima
       _brojac := "D"
@@ -236,58 +222,54 @@ FUNCTION kalk_par_razno()
 
    Box(, 20, 75, .F., "RAZNO" )
 
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Brojac kalkulacija D/N     " GET gBrojacKalkulacija PICT "@!" VALID gBrojacKalkulacija $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Brojac kalkulacija D/N     " GET gBrojacKalkulacija PICT "@!" VALID gBrojacKalkulacija $ "DN"
 
-   @ box_x_koord() + _x, Col() + 2 SAY8 "dužina brojača:" GET nLenBrKalk PICT "9" VALID ( nLenBrKalk > 0 .AND. nLenBrKalk < 10 )
-   ++_x
+   @ box_x_koord() + nX, Col() + 2 SAY8 "dužina brojača:" GET nLenBrKalk PICT "9" VALID ( nLenBrKalk > 0 .AND. nLenBrKalk < 10 )
+   ++nX
 
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Brojac kalkulacija po kontima (D/N)" GET _brojac VALID _brojac $ "DN" PICT "@!"
-   ++_x
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Brojac kalkulacija po kontima (D/N)" GET _brojac VALID _brojac $ "DN" PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koristiti BARCOD pri unosu kalkulacija (D/N)" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Potpis na kraju naloga D/N     " GET gPotpis VALID gPotpis $ "DN"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Novi korisnički interfejs D/N/X" GET gNW VALID gNW $ "DNX" PICT "@!"
 
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Koristiti BARCOD pri unosu kalkulacija (D/N)" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
-   ++_x
+   nX += 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Tip tabele (0/1/2)             " GET gTabela VALID gTabela < 3 PICT "9"
 
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Potpis na kraju naloga D/N     " GET gPotpis VALID gPotpis $ "DN"
-   ++_x
+   @ box_x_koord() + nX, Col() + 2 SAY "Vise konta na dokumentu (D/N) ?" GET _vise_konta VALID _vise_konta $ "DN" PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "F-ja za odredjivanje dzokera F1 u kontiranju" GET gFunKon1 PICT "@S28"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "F-ja za odredjivanje dzokera F2 u kontiranju" GET gFunKon2 PICT "@S28"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Limit za otvorene stavke" GET gnLOst PICT "99999"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Timeout kod azuriranja dokumenta (sec.)" GET gAzurTimeout PICT "99999"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Timeout kod azuriranja fin.naloga (sec.)" GET gAzurFinTO PICT "99999"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Auto obrada dokumenata iz cache tabele (D/N)" GET gCache VALID gCache $ "DN" PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prag odstupanja NC od posljednjeg ulaza sumnjiv :" GET nPragOdstupanjaNc PICT "999.99"
+   @ box_x_koord() + nX, Col() SAY "%"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Standardna stopa marze [NC x ( 1 + ST_STOPA ) = Roba.VPC] :" GET nStandardnaStopaMarza PICT "999.99"
+   @ box_x_koord() + nX, Col() SAY "%"
 
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY8 "Novi korisnički interfejs D/N/X" GET gNW VALID gNW $ "DNX" PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Traži robu prema (prazno/SIFRADOB/)" GET cRobaTrazi PICT "@15"
 
-   _x += 2
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Tip tabele (0/1/2)             " GET gTabela VALID gTabela < 3 PICT "9"
-
-   @ box_x_koord() + _x, Col() + 2 SAY "Vise konta na dokumentu (D/N) ?" GET _vise_konta VALID _vise_konta $ "DN" PICT "@!"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "F-ja za odredjivanje dzokera F1 u kontiranju" GET gFunKon1 PICT "@S28"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "F-ja za odredjivanje dzokera F2 u kontiranju" GET gFunKon2 PICT "@S28"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Limit za otvorene stavke" GET gnLOst PICT "99999"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Timeout kod azuriranja dokumenta (sec.)" GET gAzurTimeout PICT "99999"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Timeout kod azuriranja fin.naloga (sec.)" GET gAzurFinTO PICT "99999"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Auto obrada dokumenata iz cache tabele (D/N)" GET gCache VALID gCache $ "DN" PICT "@!"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Prag odstupanja NC od posljednjeg ulaza sumnjiv :" GET nPragOdstupanjaNc PICT "999.99"
-   @ box_x_koord() + _x, Col() SAY "%"
-   ++_x
-
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Standardna stopa marze [NC x ( 1 + ST_STOPA ) = Roba.VPC] :" GET nStandardnaStopaMarza PICT "999.99"
-   @ box_x_koord() + _x, Col() SAY "%"
-   ++_x
-
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY8 "Traži robu prema (prazno/SIFRADOB/)" GET cRobaTrazi PICT "@15"
-
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Reset artikla prilikom unosa dokumenta (D/N)" GET _reset_roba PICT "@!" VALID _reset_roba $ "DN"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Pregled rabata za dobavljaca kod unosa ulaza (D/N)" GET _rabat PICT "@!" VALID _rabat $ "DN"
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Def.opisa kod unosa (D/N)" GET _opis VALID _opis $ "DN" PICT "@!"
-   @ box_x_koord() + _x, Col() + 1 SAY "Def.datuma isteka roka (D/N)" GET _rok VALID _rok $ "DN" PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Reset artikla prilikom unosa dokumenta (D/N)" GET _reset_roba PICT "@!" VALID _reset_roba $ "DN"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Pregled rabata za dobavljaca kod unosa ulaza (D/N)" GET _rabat PICT "@!" VALID _rabat $ "DN"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Def.opisa kod unosa (D/N)" GET _opis VALID _opis $ "DN" PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY "Def.datuma isteka roka (D/N)" GET _rok VALID _rok $ "DN" PICT "@!"
 
    READ
 
@@ -474,12 +456,11 @@ FUNCTION kalk_fin_isti_broj( cSet )
 FUNCTION kalk_par_zavisni_dokumenti()
 
    LOCAL cTopsDest := PadR( kalk_destinacija_topska(), 100 )
-   LOCAL _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), "N" )
+   LOCAL cKalkTopsAutoRazduzenjeDN := kalk_tops_generacija_kalk_11_na_osnovu_pos_42()
    LOCAL cKalkFinIstiBroj := kalk_fin_isti_broj()
+   LOCAL GetList := {}
 
-   PRIVATE  GetList := {}
-
-   Box(, 12, 76, .F., "NACINI FORMIRANJA ZAVISNIH DOKUMENATA" )
+   Box(, 12, 76, .F., "NAČIN FORMIRANJA ZAVISNIH DOKUMENATA" )
 
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Automatika formiranja FIN naloga D/N/0" GET gAFin PICT "@!" VALID gAFin $ "DN0"
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Automatika formiranja MAT naloga D/N/0" GET gAMAT PICT "@!" VALID gAMat $ "DN0"
@@ -490,12 +471,11 @@ FUNCTION kalk_par_zavisni_dokumenti()
    @ box_x_koord() + 6, box_y_koord() + 2 SAY "Nakon stampe zaduzenja prenos u FAKT 0-ne/1 /2 " GET gFakt  VALID gFakt $ "0 /1 /2 /3 /99" PICT "@!"
 
    @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "KALK-FIN identičan broj (D/N): " GET cKalkFinIstiBroj VALID cKalkFinIstiBroj $ "DN" PICT "@!"
-
    // READ
 
    // IF gTops <> "0 " .OR. gFakt <> "0 "
    @ box_x_koord() + 8, box_y_koord() + 2 SAY "kalk->tops destinacija: " GET cTopsDest PICT "@S40"
-   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Auto.zaduzenje prod.konta (KALK 11) (D/N) ?" GET _auto_razduzenje PICT "@!" VALID _auto_razduzenje $ "DN"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "KALK-POS generisati KALK 11 na osnovu prodaje (D/N) ?" GET cKalkTopsAutoRazduzenjeDN PICT "@!" VALID cKalkTopsAutoRazduzenjeDN $ "DN"
 
    READ
    // ENDIF
@@ -511,7 +491,7 @@ FUNCTION kalk_par_zavisni_dokumenti()
       set_metric( "kalk_prenos_pos", f18_user(), gTops )
       set_metric( "kalk_prenos_fakt", f18_user(), gFakt )
       kalk_destinacija_topska( cTopsDest )
-      set_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
+      kalk_tops_generacija_kalk_11_na_osnovu_pos_42( cKalkTopsAutoRazduzenjeDN )
       kalk_fin_isti_broj( cKalkFinIstiBroj )
 
    ENDIF
@@ -520,7 +500,21 @@ FUNCTION kalk_par_zavisni_dokumenti()
 
 
 
+FUNCTION kalk_tops_generacija_kalk_11_na_osnovu_pos_42( cSet )
 
+   IF s_cKalkPosGeneracijaKalk11NaOsnovuPos42DN == NIL
+      s_cKalkPosGeneracijaKalk11NaOsnovuPos42DN := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), "N" )
+   ENDIF
+
+   IF cSet != NIL
+      set_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), cSet )
+      s_cKalkPosGeneracijaKalk11NaOsnovuPos42DN := cSet
+   ENDIF
+
+   RETURN s_cKalkPosGeneracijaKalk11NaOsnovuPos42DN
+
+FUNCTION is_kalk_tops_generacija_kalk_11_na_osnovu_pos_42()
+   RETURN kalk_tops_generacija_kalk_11_na_osnovu_pos_42() == "D"
 
 
 FUNCTION kalk_troskovi_10ka()

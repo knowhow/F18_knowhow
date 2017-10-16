@@ -25,7 +25,7 @@ FUNCTION kalk_tops_meni()
    DO WHILE .T.
       Box(, 5, 40 )
       SET CURSOR ON
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Generacija KALK -> TOPS: "
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Generacija KALK -> POS: "
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "-------------------------------"
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Dokument: " GET cIDFirma
       @ box_x_koord() + 4, box_y_koord() + 16 SAY " - " GET cIdVd VALID !Empty( cIdVd )
@@ -99,7 +99,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
    aPosLokacije := {} // matrica pos mjesta koje kaci kalkulacija
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvd == cIdVd .AND. field->brdok == cBrDok
-
 
       cStavke += AllTrim( idroba ) + " x " + AllTrim( Str( kolicina, 8, 2 ) ) + "; "
 
@@ -416,12 +415,10 @@ STATIC FUNCTION kalk_tops_o_gen_tables( lFromKumulativ )
       o_koncij()
    ENDIF
 
-   IF lFromKumulativ == .T.
+   IF !lFromKumulativ  // == .T.
       // SELECT F_KALK
-
       // open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
-
-   ELSE
+   //ELSE
       SELECT F_KALK_PRIPR
       IF !Used()
          o_kalk_pripr()

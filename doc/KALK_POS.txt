@@ -1,6 +1,6 @@
 
 
-kalk_preuzmi_tops_dokumente()
+kalk_prenos_iz_pos_u_kalk()
 
 
 koncij
@@ -83,5 +83,3 @@ Nivelacija: ncijena-cijena (nova cijena, stara cijena)
       OTHERWISE
          nIznos += pos->kolicina * pos->cijena
       ENDCASE
-
-      

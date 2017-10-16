@@ -14,14 +14,15 @@
 STATIC cIdPos
 
 
-STATIC FUNCTION GetPm()
+/*
+-- STATIC FUNCTION GetPm()
 
    LOCAL cPm
    LOCAL cPitanje
 
    cPm := cIdPos
 
-   cPitanje := my_get_from_ini( "POS", "PrenosGetPm", "0" )
+  -- cPitanje := my_get_from_ini( "POS", "PrenosGetPm", "0" )
    IF ( ( gVrstaRs <> "S" ) .AND. ( cPitanje == "0" ) )
       RETURN ""
    ENDIF
@@ -36,7 +37,7 @@ STATIC FUNCTION GetPm()
    ENDIF
 
    RETURN cPm
-
+*/
 
 
 FUNCTION PripTOPSFAKT( cIdPartnG )

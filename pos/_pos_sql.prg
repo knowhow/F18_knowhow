@@ -508,6 +508,17 @@ FUNCTION pos_stanje_artikla( cIdPos, cIdRoba )
    LOCAL _data := {}
    LOCAL nI, oRow
    LOCAL nStanje := 0
+   LOCAL cKalkKontoMagacin := PadR( pos_kalk_konto_magacin(), 7 )
+
+   IF !Empty( pos_kalk_konto_magacin() )
+
+// IF !Empty( AllTrim( __kalk_konto ) )
+      // IF PadR( __kalk_konto, 3 ) == "132"
+      RETURN kalk_kol_stanje_artikla_magacin( cKalkKontoMagacin, cIdRoba, Date() )
+      // ELSE
+      // nStanjeRobe := kalk_kol_stanje_artikla_prodavnica( PadR( __kalk_konto, 7 ), field->idroba, Date() )
+      // ENDIF
+   ENDIF
 
    cQuery := "SELECT SUM( CASE WHEN idvd IN ('16') THEN kolicina WHEN idvd IN ('42') THEN -kolicina WHEN idvd IN ('IN') THEN -(kolicina - kol2) ELSE 0 END ) AS stanje FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos " + ;
       " WHERE idpos = " + sql_quote( cIdPos ) + ;

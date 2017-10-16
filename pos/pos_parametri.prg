@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+STATIC s_cKalkKontoMagacin := NIL
 
 FUNCTION pos_parametri()
 
@@ -156,7 +156,9 @@ FUNCTION ParPrBase()
    LOCAL cPom := ""
 
    PRIVATE _konstantni_unos := fetch_metric( "pos_konstantni_unos_racuna", my_user(), "N" )
-   PRIVATE _kalk_konto := fetch_metric( "pos_stanje_sa_kalk_konta", NIL, Space( 7 ) )
+   //PRIVATE _kalk_konto := fetch_metric( "pos_stanje_sa_kalk_konta", NIL, Space( 7 ) )
+   PRIVATE cKalkKontoMagacin := pos_kalk_konto_magacin()
+
    PRIVATE _max_qtty := fetch_metric( "pos_maksimalna_kolicina_na_unosu", NIL, 0 )
    PRIVATE cIdPosOld := gIdPos
 
@@ -181,7 +183,7 @@ FUNCTION ParPrBase()
    AAdd ( aNiz, { "Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? ", "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", } )
    AAdd ( aNiz, { "Maksimalna kolicina pri unosu racuna (0 - bez provjere) ", "_max_qtty", "_max_qtty >= 0", "999999", } )
    AAdd ( aNiz, { "Unos racuna bez izlaska iz pripreme (D/N) ", "_konstantni_unos", "_konstantni_unos$'DN'", "@!", } )
-   AAdd ( aNiz, { "Za stanje artikla gledaj KALK konto", "_kalk_konto",, "@S7", } )
+   AAdd ( aNiz, { "Za stanje artikla gledati KALK magacinski konto", "cKalkKontoMagacin",, "@S7", } )
 
    VarEdit( aNiz, 2, 2, f18_max_rows() - 10, f18_max_cols() - 5, "PARAMETRI RADA PROGRAMA - PRINCIPI RADA", "B1" )
 
@@ -208,8 +210,9 @@ FUNCTION ParPrBase()
       set_metric( "EvidentiranjeVrstaPlacanja", nil, gEvidPl )
       set_metric( "PretragaArtiklaPoNazivu", nil, gSifUvPoNaz )
 
-      set_metric( "pos_stanje_sa_kalk_konta", my_user(), _kalk_konto )
-      kalk_konto_za_stanje_pos( .T. )
+      //set_metric( "pos_stanje_sa_kalk_konta", my_user(), _kalk_konto )
+      //kalk_konto_za_stanje_pos( .T. )
+      pos_kalk_konto_magacin( cKalkKontoMagacin )
 
       set_metric( "pos_maksimalna_kolicina_na_unosu", my_user(), _max_qtty )
       max_kolicina_kod_unosa( .T. )
@@ -220,9 +223,30 @@ FUNCTION ParPrBase()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
+
+   // FUNCTION kalk_konto_za_stanje_pos( read_par )
+
+   // IF read_par != NIL
+   // __kalk_konto :=
+   // ENDIF
+
+   // RETURN __kalk_konto
+
+   FUNCTION pos_kalk_konto_magacin( cSet )
+
+      IF s_cKalkKontoMagacin == NIL
+         s_cKalkKontoMagacin := fetch_metric( "pos_stanje_sa_kalk_konta", my_user(), Space( 7 ) )
+      ENDIF
+
+      IF cSet != NIL
+         s_cKalkKontoMagacin := cSet
+         set_metric( "pos_stanje_sa_kalk_konta", my_user(), cSet )
+      ENDIF
+
+      RETURN s_cKalkKontoMagacin
 
 
 FUNCTION pos_param_izgled_racuna()

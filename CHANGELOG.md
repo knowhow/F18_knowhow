@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 3.1.117-std, 2017-10-16
+### KALK-POS
+- kalk razduženje magacina na osnovu pos realizacije
+- POS stanje robe = kalk magacin stanje
+
 ## 3.1.116-std, 2017-10-13
 ### CORE
 - cleanup f18_start_edit, editor B/W, ESC izlaz

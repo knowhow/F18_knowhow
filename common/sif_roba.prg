@@ -87,7 +87,7 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
    AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( field->NC, kalk_pic_cijena_bilo_gpiccdem() ) }, "NC", NIL, NIL, NIL, kalk_pic_cijena_bilo_gpiccdem()  } )
    AAdd( ImeKol, { "Tarifa", {|| field->IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit()  }   } )
    AAdd( ImeKol, { "Tip", {|| " " + field->Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" }, NIL, NIL, NIL, NIL, 27 } )
-   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| field->BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), valid_sifarnik_id_postoji( wbarkod, "BARKOD" ) }  } )
+   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| field->BARKOD }, "BarKod", {|| .T. }, {|| roba_valid_barkod( Ch, @wId, @wBarkod ) }  } )
 
    AAdd ( ImeKol, { PadC( "MINK", 10 ), {|| Transform( field->MINK, "999999.99" ) }, "MINK"   } )
 

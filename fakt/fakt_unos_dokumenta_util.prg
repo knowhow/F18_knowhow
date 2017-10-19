@@ -565,26 +565,24 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
    // ucitajmo dodatne parametre stanja iz FMK.INI u aDodPar
 
-   aDodPar := {}
-   FOR i := 1 TO 6
-      cI := AllTrim( Str( i ) )
-      cPomZ := my_get_from_ini( "BoxStanje", "ZaglavljeStanje" + cI, "", KUMPATH )
-      cPomF := my_get_from_ini( "BoxStanje", "FormulaStanje" + cI, "", KUMPATH )
-      IF !Empty( cPomF )
-         AAdd( aDodPar, { cPomZ, cPomF } )
-      ENDIF
-   NEXT
-   nLenDP := IF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
+   //aDodPar := {}
+   //FOR i := 1 TO 6
+      //cI := AllTrim( Str( i ) )
+      //cPomZ := my_get_from_ini( "roba_box_stanje", "ZaglavljeStanje" + cI, "", KUMPATH )
+      //cPomF := my_get_from_ini( "roba_box_stanje", "FormulaStanje" + cI, "", KUMPATH )
+      //IF !Empty( cPomF )
+      //   AAdd( aDodPar, { cPomZ, cPomF } )
+      //ENDIF
+   //NEXT
+   //nLenDP := IIF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
    select_o_roba( cIdRoba )
-   Box(, 6 + nLen + Int( ( nLenDP ) / 2 ), 75 )
+   Box(, 6 + nLen / 2, 75 )
    Beep( 1 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "ARTIKAL: "
    @ box_x_koord() + 1, Col() SAY PadR( AllTrim( cIdRoba ) + " - " + Left( roba->naz, 40 ), 51 ) COLOR "GR+/B"
    @ box_x_koord() + 3, box_y_koord() + 2 SAY cDiv + "RJ" + cDiv + PadC ( "Stanje", npd ) + cDiv + ;
-      PadC ( "Na reversu", npd ) + cDiv + ;
-      PadC ( "Rezervisano", npd ) + cDiv + PadC ( "Ostalo", npd ) ;
-      + cDiv
+      PadC ( "Na reversu", npd ) + cDiv + PadC ( "Rezervisano", npd ) + cDiv + PadC ( "Ostalo", nPd ) + cDiv
    nR := box_x_koord() + 4
    FOR nC := 1 TO nLen
       // {idfirma, nUl,nIzl,nRevers,nRezerv }

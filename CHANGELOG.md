@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 3.1.118-std, 2017-10-19
+### CORE
+- kada smo u modulu kalk stanje robe "S" - prikaz stanja magacinskih konta
+- ROBA: kod unosa nove šifre ili ispravke polja barkod ispitati da li već postoji barkod 
+
 ## 3.1.117-std, 2017-10-16
 ### KALK-POS
 - kalk razduženje magacina na osnovu pos realizacije

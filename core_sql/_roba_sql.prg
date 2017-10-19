@@ -163,6 +163,19 @@ FUNCTION is_roba_aktivna( cIdRoba )
    RETURN nCnt > 0
 
 
+FUNCTION find_roba_id_by_barkod( cBarkodId )
+
+   LOCAL nCnt
+   LOCAL cSql, oQuery
+
+   cSql := "SELECT id FROM " + F18_PSQL_SCHEMA_DOT + "roba"
+   cSql += " WHERE barkod=" + sql_quote( cBarkodId )
+   cSql += " LIMIT 1"
+   oQuery := run_sql_query( cSql )
+
+   RETURN query_row( oQuery, "id" )
+
+
 FUNCTION find_roba_by_sifradob( cIdSifraDob, cOrderBy, cWhere )
 
    LOCAL hParams := hb_Hash()
@@ -252,6 +265,125 @@ FUNCTION find_roba_by_id_sintetika( cId, lCheckOnly, cWhere )
    GO TOP
 
    RETURN ! Eof()
+
+
+
+FUNCTION find_roba_by_barkod( cBarkod, cOrderBy, cWhere )
+
+   LOCAL hParams := hb_Hash()
+
+   hb_default( @cOrderBy, "id,naz" )
+
+   IF cBarkod <> NIL
+      hParams[ "barkod" ] := cBarkod
+   ENDIF
+   hParams[ "order_by" ] := cOrderBy
+
+   hParams[ "indeks" ] := .F.
+
+   IF cWhere != NIL
+      hParams[ "where" ] := cWhere
+   ENDIF
+   IF !use_sql_roba( hParams )
+      RETURN .F.
+   ENDIF
+   GO TOP
+
+   RETURN ! Eof()
+
+
+
+FUNCTION kalk_aktivna_konta_magacin( cIdRoba )
+   RETURN kalk_aktivna_konta( "mkonto", cIdRoba )
+
+/*
+   cKontoTip - mkonto ili pkonto
+*/
+FUNCTION kalk_aktivna_konta( cKontoTip, cIdRoba )
+
+   LOCAL cSql, cKonto
+   LOCAL oQry, oRow, aKonta := {}
+
+   cSql :=  "SELECT distinct( " + cKontoTip + ") AS kto FROM "  + F18_PSQL_SCHEMA_DOT + "kalk_kalk "
+   cSql += " WHERE idroba=" + sql_quote( cIdRoba )
+   cSql += " ORDER BY " + cKontoTip
+
+   oQry := run_sql_query( cSql )
+   DO WHILE !oQry:Eof()
+      oRow := oQry:GetRow()
+      AAdd( aKonta, oRow:FieldGet( oRow:FieldPos( "kto" ) ) )
+      oQry:skip()
+   ENDDO
+
+   RETURN aKonta
+
+
+
+FUNCTION kalk_kol_stanje_artikla_magacin( cIdKontoMagacin, cIdRoba, dDatumDo )
+
+   LOCAL cSql, oQry
+   LOCAL oRow
+   LOCAL nStanje
+
+   IF dDatumDo == NIL
+      dDatumDo := Date()
+   ENDIF
+
+   cSql := "SELECT " + ;
+      " SUM( " + ;
+      " CASE " + ;
+      " WHEN mu_i = '1' AND idvd NOT IN ('12', '22', '94') THEN kolicina " + ;
+      " WHEN mu_i = '1' AND idvd IN ('12', '22', '94') THEN -kolicina " + ;
+      " WHEN mu_i = '5' THEN -kolicina " + ;
+      " WHEN mu_i = '8' THEN -kolicina " + ;
+      " END ) as stanje_m " + ;
+      " FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk " + ;
+      " WHERE " + ;
+      " idfirma = " + sql_quote( self_organizacija_id() ) + ;
+      " AND mkonto = " + sql_quote( cIdKontoMagacin ) + ;
+      " AND idroba = " + sql_quote( cIdRoba ) + ;
+      " AND " + _sql_date_parse( "datdok", CToD( "" ), dDatumDo )
+
+   oQry := run_sql_query( cSql )
+   oRow := oQry:GetRow( 1 )
+   nStanje := oRow:FieldGet( oRow:FieldPos( "stanje_m" ) )
+
+   IF ValType( nStanje ) == "L"
+      nStanje := 0
+   ENDIF
+
+   RETURN nStanje
+
+
+FUNCTION kalk_kol_stanje_artikla_prodavnica( cIdKontoProdavnica, cIdRoba, dDatumDo )
+
+   LOCAL cSql, oQry
+   LOCAL oRow
+   LOCAL nStanje
+
+   IF dDatumDo == NIL
+      dDatumDo := Date()
+   ENDIF
+
+   cSql := "SELECT SUM( CASE WHEN pu_i = '1' THEN kolicina-gkolicina-gkolicin2 " + ;
+      " WHEN pu_i = '5' THEN -kolicina " + ;
+      " WHEN pu_i = 'I' THEN -gkolicin2 ELSE 0 END ) as stanje_p " + ;
+      " FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk " + ;
+      " WHERE " + ;
+      " idfirma = " + sql_quote( self_organizacija_id() ) + ;
+      " AND pkonto = " + sql_quote( cIdKontoProdavnica ) + ;
+      " AND idroba = " + sql_quote( cIdRoba ) + ;
+      " AND " + _sql_date_parse( "datdok", CToD( "" ), dDatumDo )
+
+   oQry := run_sql_query( cSql )
+   oRow := oQry:GetRow( 1 )
+   nStanje := oRow:FieldGet( oRow:FieldPos( "stanje_p" ) )
+
+   IF ValType( nStanje ) == "L"
+      nStanje := 0
+   ENDIF
+
+   RETURN nStanje
 
 
 /*

@@ -39,7 +39,7 @@ FUNCTION kalk_sifrarnik()
 
 
 
-FUNCTION KalkRobaBlock( Ch )
+FUNCTION kalk_roba_key_handler( Ch )
 
    LOCAL cSif := ROBA->id, cSif2 := ""
    LOCAL nRet
@@ -94,11 +94,13 @@ FUNCTION KalkRobaBlock( Ch )
 
    ELSEIF Upper( Chr( Ch ) ) == "S"
 
-      TB:Stabilize()
-      PushWA()
-      KalkStanje( roba->id )
-      PopWa()
-      RETURN 6
+      //TB:Stabilize()
+      //PushWA()
+      altd()
+      sif_roba_kalk_stanje_magacin_key_handler_s( roba->id )
+      //PopWa()
+      //SELECT ROBA
+      RETURN DE_CONT
 
    ELSEIF Upper( Chr( Ch ) ) == "D"
       roba_opis_edit( .T. )

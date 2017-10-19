@@ -70,9 +70,9 @@ METHOD FaktDokumenti:Lock()
 METHOD FaktDokumenti:za_partnera( idfirma, idtipdok, idpartner )
 
    LOCAL _qry_str
-   LOCAL _cnt
+   LOCAL nCnt
    LOCAL _brdok
-   LOCAL _qry
+   LOCAL oQry
    LOCAL _item
 
    ::p_idfirma := idfirma
@@ -85,22 +85,22 @@ METHOD FaktDokumenti:za_partnera( idfirma, idtipdok, idpartner )
    ::_sql_where := "fakt_doks.idfirma=" + sql_quote( ::p_idfirma ) +  " AND fakt_doks.idtipdok=" + sql_quote( ::p_idtipdok ) + " AND fakt_doks.idpartner=" + sql_quote( ::p_idpartner )
 
    _qry_str += ::_sql_where
-   _qry := run_sql_query( _qry_str )
+   oQry := run_sql_query( _qry_str )
 
-   _cnt := 0
-   DO WHILE !_qry:Eof()
-      _brdok := _qry:FieldGet( 3 )
+   nCnt := 0
+   DO WHILE !oQry:Eof()
+      _brdok := oQry:FieldGet( 3 )
       // napunicemo aItems matricom FaktDokument objekata
       _item := FaktDokument():New( ::p_idfirma, ::p_idtipdok, _brdok )
       _item:refresh_info()
       AAdd( ::aItems, _item )
-      _cnt++
-      _qry:skip()
+      nCnt++
+      oQry:skip()
    ENDDO
 
-   ::COUNT := _cnt
+   ::COUNT := nCnt
 
-   RETURN _cnt
+   RETURN nCnt
 
 
 
@@ -111,7 +111,7 @@ METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
    LOCAL _suma := 0
    LOCAL _veza_otpr := ""
    LOCAL _datum_max := Date()
-   LOCAL _ok
+   LOCAL lOk
    LOCAL _lock_user := ""
    LOCAL _fakt_browse
 
@@ -165,14 +165,14 @@ METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
    RETURN .T.
 
 
-METHOD FaktDokumenti:generisi_fakt_pripr_vars( params )
+METHOD FaktDokumenti:generisi_fakt_pripr_vars( hParams )
 
-   LOCAL _ok := .T.
+   LOCAL lOk := .T.
    LOCAL _sumiraj := "N"
    LOCAL _tip_rn := 1
    LOCAL _valuta := PadR( ValDomaca(), 3 )
 
-   params := hb_Hash()
+   hParams := hb_Hash()
 
    Box(, 6, 65 )
 
@@ -190,36 +190,36 @@ METHOD FaktDokumenti:generisi_fakt_pripr_vars( params )
    BoxC()
 
    IF LastKey() == K_ESC
-      _ok := .F.
-      RETURN _ok
+      lOk := .F.
+      RETURN lOk
    ENDIF
 
    // snimi mi u matricu parametre
-   params[ "tip_racuna" ] := _tip_rn
-   params[ "sumiraj" ] := _sumiraj
-   params[ "valuta" ] := Upper( _valuta )
+   hParams[ "tip_racuna" ] := _tip_rn
+   hParams[ "sumiraj" ] := _sumiraj
+   hParams[ "valuta" ] := Upper( _valuta )
 
-   RETURN _ok
+   RETURN lOk
 
 
 
 METHOD FaktDokumenti:count_markirani()
 
-   LOCAL _item, _cnt
+   LOCAL _item, nCnt
 
-   _cnt := 0
+   nCnt := 0
    FOR EACH _item IN ::aItems
       IF _item:mark
-         _cnt++
+         nCnt++
       ENDIF
    NEXT
 
-   RETURN _cnt
+   RETURN nCnt
 
 
 METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
 
-   LOCAL _err, _item, _broj := "XX", _ok := .T.
+   LOCAL _err, _item, _broj := "XX", lOk := .T.
    LOCAL hParams
    LOCAL oErr
 
@@ -238,7 +238,7 @@ METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
             _broj := _item:broj
             IF !_item:change_idtipdok( cIdTipDokNew )
                run_sql_query( "ROLLBACK" )
-               _ok := .F.
+               lOk := .F.
                BREAK
             ENDIF
          ENDIF
@@ -247,12 +247,12 @@ METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
       hParams := hb_Hash()
       hParams[ "unlock" ] :=  ::p_lock_tables
       run_sql_query( "COMMIT", hParams )
-      _ok := .T.
+      lOk := .T.
 
    RECOVER USING oErr
 
       MsgBeep( "Neuspješna konverzija " + _broj + " idtpdok => " + cIdTipDokNew + " !##" + oErr:Description  )
-      _ok := .F.
+      lOk := .F.
 
    ENDSEQUENCE
 
@@ -260,7 +260,7 @@ METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
 
    ::p_idtipdok := cIdTipDokNew
 
-   RETURN _ok
+   RETURN lOk
 
 
 METHOD FaktDokumenti:generisi_fakt_pripr()
@@ -270,14 +270,14 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    LOCAL _n_tip_dok, _dat_max, nTrec, _t_fakt_rec
    LOCAL cVezaOtpremnice, _broj_dokumenta
    LOCAL _id_partner, _rec
-   LOCAL _ok := .T.
+   LOCAL lOk := .T.
    LOCAL _item, _msg
    LOCAL _gen_params, _valuta
    LOCAL _first
-   LOCAL _qry
+   LOCAL oQry
    LOCAL _datum_max
-   LOCAL _sql
-   LOCAL _fakt_rec
+   LOCAL cSql
+   LOCAL hFaktRec
 
    IF !::generisi_fakt_pripr_vars( @_gen_params ) // parametri generisanja...
       RETURN .F.
@@ -294,18 +294,18 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
       _n_tip_dok := "11"
    ENDIF
 
-   _sql := "SELECT idroba, cijena, COALESCE(substring(txt from '\x10(.*?)\x11\x10.*?\x11' ), '') AS opis_usluga, "
+   cSql := "SELECT idroba, cijena, COALESCE(substring(txt from '\x10(.*?)\x11\x10.*?\x11' ), '') AS opis_usluga, "
    IF _sumirati
-      _sql += "sum(kolicina), max(datdok), max(txt)"
+      cSql += "sum(kolicina), max(datdok), max(txt)"
    ELSE
-      _sql += "kolicina, datdok, txt"
+      cSql += "kolicina, datdok, txt"
    ENDIF
-   _sql += " FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt "
-   _sql += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + "roba "
-   _sql += " ON fakt_fakt.idroba=roba.id "
-   _sql += " WHERE "
-   _sql += "idfirma=" + sql_quote( ::p_idfirma ) + " AND  idtipdok=" + sql_quote( ::p_idtipdok )
-   _sql += " AND brdok IN ("
+   cSql += " FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt "
+   cSql += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + "roba "
+   cSql += " ON fakt_fakt.idroba=roba.id "
+   cSql += " WHERE "
+   cSql += "idfirma=" + sql_quote( ::p_idfirma ) + " AND  idtipdok=" + sql_quote( ::p_idtipdok )
+   cSql += " AND brdok IN ("
 
    cVezaOtpremnice := ""
    _first := .T.
@@ -314,58 +314,58 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
          IF _first
             _first := .F.
          ELSE
-            _sql += ","
+            cSql += ","
             cVezaOtpremnice += ","
          ENDIF
-         _sql += sql_quote( _item:brdok )
+         cSql += sql_quote( _item:brdok )
          cVezaOtpremnice += Trim( _item:brdok )
       ENDIF
    NEXT
 
-   _sql += ")"
+   cSql += ")"
 
    IF _sumirati
-      _sql += " group by idroba,cijena,opis_usluga order by idroba,cijena,opis_usluga"
+      cSql += " group by idroba,cijena,opis_usluga order by idroba,cijena,opis_usluga"
    ELSE
-      _sql += " order by idroba,cijena,opis_usluga"
+      cSql += " order by idroba,cijena,opis_usluga"
    ENDIF
 
-   _qry := run_sql_query( _sql )
+   oQry := run_sql_query( cSql )
 
    SELECT fakt_pripr
-   _fakt_rec := dbf_get_rec()
+   hFaktRec := dbf_get_rec()
 
-   _fakt_rec[ "idfirma" ]   := ::p_idfirma
-   _fakt_rec[ "idpartner" ] := ::p_idpartner
-   _fakt_rec[ "brdok" ]     := fakt_prazan_broj_dokumenta()
-   _fakt_rec[ "datdok" ]    := Date()
-   _fakt_rec[ "idtipdok" ]  := _n_tip_dok
-   _fakt_rec[ "dindem" ]    := Left( _valuta, 3 )
+   hFaktRec[ "idfirma" ]   := ::p_idfirma
+   hFaktRec[ "idpartner" ] := ::p_idpartner
+   hFaktRec[ "brdok" ]     := fakt_prazan_broj_dokumenta()
+   hFaktRec[ "datdok" ]    := Date()
+   hFaktRec[ "idtipdok" ]  := _n_tip_dok
+   hFaktRec[ "dindem" ]    := Left( _valuta, 3 )
    _datum_max := Date()
 
-   DO WHILE !_qry:Eof()
+   DO WHILE !oQry:Eof()
 
-      _fakt_rec[ "idroba" ]   :=  _to_str( _qry:FieldGet( 1 ) )
-      _fakt_rec[ "cijena" ]   := _qry:FieldGet( 2 )
+      hFaktRec[ "idroba" ]   :=  _to_str( oQry:FieldGet( 1 ) )
+      hFaktRec[ "cijena" ]   := oQry:FieldGet( 2 )
       // ovo polje ipak ne trebamo
-      // _opis_usluga := _qry:FieldGet(3)
-      _fakt_rec[ "kolicina" ] := _qry:FieldGet( 4 )
-      _fakt_rec[ "datdok" ]   := _qry:FieldGet( 5 )
-      _fakt_rec[ "txt" ]      := _to_str( _qry:FieldGet( 6 ) )
+      // _opis_usluga := oQry:FieldGet(3)
+      hFaktRec[ "kolicina" ] := oQry:FieldGet( 4 )
+      hFaktRec[ "datdok" ]   := oQry:FieldGet( 5 )
+      hFaktRec[ "txt" ]      := _to_str( oQry:FieldGet( 6 ) )
 
-      IF _fakt_rec[ "datdok" ] > _datum_max
-         _datum_max := _fakt_rec[ "datdok" ]
+      IF hFaktRec[ "datdok" ] > _datum_max
+         _datum_max := hFaktRec[ "datdok" ]
       ENDIF
 
       IF _vp_mp == 2
          // radi se o mp racunu, izracunaj cijenu sa pdv
-         _fakt_rec[ "cijena" ] := Round( _uk_sa_pdv( ::p_idtipdok, ::p_idpartner, _fakt_rec[ "cijena" ] ), 2 )
+         hFaktRec[ "cijena" ] := Round( _uk_sa_pdv( ::p_idtipdok, ::p_idpartner, hFaktRec[ "cijena" ] ), 2 )
       ENDIF
 
       APPEND BLANK
-      dbf_update_rec( _fakt_rec )
+      dbf_update_rec( hFaktRec )
 
-      _qry:skip()
+      oQry:skip()
 
    ENDDO
 
@@ -373,7 +373,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
 
    renumeracija_fakt_pripr( cVezaOtpremnice, _datum_max )
 
-   RETURN _ok
+   RETURN lOk
 
 
 

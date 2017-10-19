@@ -27,13 +27,36 @@ FUNCTION roba_ocitaj_barkod( cIdRoba )
 
 
 
-FUNCTION DodajBK( cBK )
+FUNCTION roba_valid_barkod( nCh, cIdRoba, cBarkodId )
 
-   IF Empty( cBK ) .AND. my_get_from_ini( "BARKOD", "Auto", "N", SIFPATH ) == "D" .AND. my_get_from_ini( "BARKOD", "Svi", "N", SIFPATH ) == "D" .AND. ( Pitanje(, "Formirati Barkod ?", "N" ) == "D" )
-      cBK := NoviBK_A()
+   LOCAL cIdRoba2, cMsg
+
+   // IF Empty( cBarkod ) //.AND. my_get_from_ini( "BARKOD", "Auto", "N", SIFPATH ) == "D" .AND. my_get_from_ini( "BARKOD", "Svi", "N", SIFPATH ) == "D" .AND. ( Pitanje(, "Formirati Barkod ?", "N" ) == "D" )
+   // cBK := NoviBK_A()
+   // ENDIF
+   AltD()
+   cIdRoba2 := find_roba_id_by_barkod( cBarkodId )
+
+   IF Empty( cIdRoba2 )
+      RETURN .T.
+   ENDIF
+
+   cMsg := "barkod: " + Trim( cBarKodId ) + " već postoji ?!: " + cIdRoba2
+
+   IF nCh == K_CTRL_N .OR. nCh == K_F4
+      IF !Empty( cBarKodId )
+         error_bar( "barkod", cMsg )
+         RETURN .F.
+      ENDIF
+   ELSE
+      IF cIdRoba != cIdRoba2
+         error_bar( "barkod", cMsg )
+         RETURN .F.
+      ENDIF
    ENDIF
 
    RETURN .T.
+
 
 
 
@@ -159,28 +182,6 @@ FUNCTION barkod_or_roba_id( cId )
    RETURN cBarkod
 
 
-FUNCTION find_roba_by_barkod( cBarkod, cOrderBy, cWhere )
-
-   LOCAL hParams := hb_Hash()
-
-   hb_default( @cOrderBy, "id,naz" )
-
-   IF cBarkod <> NIL
-      hParams[ "barkod" ] := cBarkod
-   ENDIF
-   hParams[ "order_by" ] := cOrderBy
-
-   hParams[ "indeks" ] := .F.
-
-   IF cWhere != NIL
-      hParams[ "where" ] := cWhere
-   ENDIF
-   IF !use_sql_roba( hParams )
-      RETURN .F.
-   ENDIF
-   GO TOP
-
-   RETURN ! Eof()
 
 
 #ifdef F18_POS
@@ -207,7 +208,7 @@ FUNCTION tezinski_barkod_get_tezina( barkod, tezina )
    // itd...
    _a_prefix := TokToNiz( _tb_prefix, ";" )
 
-   IF AScan( _a_prefix, {| var | VAR == PadR( barkod, Len( VAR ) ) } ) == 0
+   IF AScan( _a_prefix, {| VAR | VAR == PadR( barkod, Len( VAR ) ) } ) == 0
       RETURN .F.
    ENDIF
 
@@ -264,7 +265,7 @@ FUNCTION tezinski_barkod( id, tezina, pop_push )
    // itd...
    _a_prefix := TokToNiz( _tb_prefix, ";" )
 
-   IF AScan( _a_prefix, {| var | VAR == PadR( id, Len( VAR ) ) } ) <> 0
+   IF AScan( _a_prefix, {| VAR | VAR == PadR( id, Len( VAR ) ) } ) <> 0
       // ovo je ok...
    ELSE
       RETURN _ocitao

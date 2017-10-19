@@ -38,7 +38,7 @@ METHOD TKalkMod:mMenu()
    Izbor := 1
    gDuzKonto := 7
 
-   gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
+   gRobaBlock := {| Ch| kalk_roba_key_handler( Ch ) }
 
 
    ::programski_modul_osnovni_meni()
@@ -315,7 +315,7 @@ METHOD TKalkMod:set_module_gvars()
 
    //gcSlObracun := fetch_metric( "kalk_sl_obrazac", nil, gcSLObrazac )
 
-   gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
+   gRobaBlock := {| Ch| kalk_roba_key_handler( Ch ) }
 
    gNW := "D"
 

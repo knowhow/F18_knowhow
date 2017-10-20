@@ -292,7 +292,7 @@ FUNCTION P_TRFP3( cId, dx, dy )
 
    IF Pitanje(, "Želite li postaviti filter za odredjenu shemu", "N" ) == "D"
       Box(, 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Odabir sheme:" GET cShema  PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Odabir sheme:" GET cShema  PICT "@!"
       READ
       Boxc()
       SELECT trfp3

@@ -50,27 +50,27 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
 
 
    Box( "skpoi", 14, 70, .F. )
-   @ m_x + 1, m_y + 2 SAY "OTVORENE STAVKE PREKO/DO ODREDJENOG BROJA DANA"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "OTVORENE STAVKE PREKO/DO ODREDJENOG BROJA DANA"
    IF gNW == "D"
-      @ m_x + 3, m_y + 2 SAY "Firma "
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "
       ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    PRIVATE cViseManje := ">"
-   @ m_x + 4, m_y + 2 SAY "KONTO  " GET cIdKonto VALID p_konto( @cIdKonto )
-   @ m_x + 5, m_y + 2 SAY "Broj dana ?" GET cViseManje VALID cViseManje $ "><"
-   @ m_x + 5, Col() + 2 GET nDana PICTURE "9999"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "KONTO  " GET cIdKonto VALID p_konto( @cIdKonto )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Broj dana ?" GET cViseManje VALID cViseManje $ "><"
+   @ box_x_koord() + 5, Col() + 2 GET nDana PICTURE "9999"
 
-   @ m_x + 6, m_y + 2 SAY "obracun od " GET dDatumOd
-   @ m_x + 6, Col() + 2 SAY  "do datuma:" GET dDatum
-   @ m_x + 8, m_y + 2 SAY "duguje/potrazuje (1/2):" GET cD_P
-   @ m_x + 9, m_y + 2 SAY "Uzeti u obzir datum valutiranja :" GET cObzirDatVal PICT "@!" VALID cObzirDatVal $ "DN" when {|| cObzirDatVal := iif( cViseManje = ">", "D", "N" ), .T. }
-   @ m_x + 10, m_y + 2 SAY "Uzeti u obzir markere           :" GET cMarkeri     PICT "@!" VALID cObzirDatVal $ "DN"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "obracun od " GET dDatumOd
+   @ box_x_koord() + 6, Col() + 2 SAY  "do datuma:" GET dDatum
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "duguje/potrazuje (1/2):" GET cD_P
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Uzeti u obzir datum valutiranja :" GET cObzirDatVal PICT "@!" VALID cObzirDatVal $ "DN" when {|| cObzirDatVal := iif( cViseManje = ">", "D", "N" ), .T. }
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Uzeti u obzir markere           :" GET cMarkeri     PICT "@!" VALID cObzirDatVal $ "DN"
 
-   @ m_x + 12, m_y + 2 SAY "prikaz pojedinacnog racuna:" GET cPojed VALID cPojed $ "DN" PICT "@!"
-   @ m_x + 13, m_y + 2 SAY "prikaz ukupno za partnera :" GET cUkupnoPartner VALID cUkupnoPartner $ "DN" PICT "@!"
-   @ m_x + 14, m_y + 2 SAY "Uslov za broj veze (prazno-svi)" GET qqBrDok PICT "@S20"
+   @ box_x_koord() + 12, box_y_koord() + 2 SAY "prikaz pojedinacnog racuna:" GET cPojed VALID cPojed $ "DN" PICT "@!"
+   @ box_x_koord() + 13, box_y_koord() + 2 SAY "prikaz ukupno za partnera :" GET cUkupnoPartner VALID cUkupnoPartner $ "DN" PICT "@!"
+   @ box_x_koord() + 14, box_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi)" GET qqBrDok PICT "@S20"
    READ
    ESC_BCR
 

@@ -87,9 +87,10 @@ FUNCTION fiskalni_parametri_za_korisnika()
    LOCAL _fiscal_devices := PadR( fetch_metric( "fiscal_opt_usr_devices", my_user(), "" ), 50 )
    LOCAL _pos_def := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
    LOCAL _rpt_warrning := fetch_metric( "fiscal_opt_usr_daily_warrning", my_user(), "N" )
-   LOCAL _opc := {}
-   LOCAL _opc_exe := {}
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL  _izbor := 1
+   LOCAL GetList := {}
 
    _fiscal := Pitanje( , "Koristiti fiskalne funkcije (D/N) ?", _fiscal )
    set_metric( "fiscal_opt_active", my_user(), _fiscal )
@@ -104,26 +105,25 @@ FUNCTION fiskalni_parametri_za_korisnika()
 
    fiscal_opt_active()
 
-   AAdd( _opc, "1. fiskalni uređaji: globalne postavke        " )
-   AAdd( _opc_exe, {|| globalne_postavke_fiskalni_uredjaj() } )
-   AAdd( _opc, "2. fiskalni uređaji: korisničke postavke " )
-   AAdd( _opc_exe, {|| korisnik_postavke_fiskalni_uredjaj() } )
-   AAdd( _opc, "P. pregled parametara" )
-   AAdd( _opc_exe, {|| print_fiscal_params() } )
+   AAdd( aOpc, "1. fiskalni uređaji: globalne postavke        " )
+   AAdd( aOpcExe, {|| globalne_postavke_fiskalni_uredjaj() } )
+   AAdd( aOpc, "2. fiskalni uređaji: korisničke postavke " )
+   AAdd( aOpcExe, {|| korisnik_postavke_fiskalni_uredjaj() } )
+   AAdd( aOpc, "P. pregled parametara" )
+   AAdd( aOpcExe, {|| print_fiscal_params() } )
 
-   f18_menu( "fiscal", .F., _izbor, _opc, _opc_exe )
+   f18_menu( "fiscal", .F., _izbor, aOpc, aOpcExe )
 
    Box( , 6, 75 )
    nX := 2
-   @ m_x + nX, m_y + 2 SAY8 "Lista fiskanih uređaja koji se koriste:" GET _fiscal_devices VALID valid_lista_fiskalnih_uredjaja( _fiscal_devices ) PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Lista fiskanih uređaja koji se koriste:" GET _fiscal_devices VALID valid_lista_fiskalnih_uredjaja( _fiscal_devices ) PICT "@S30"
 
    IF f18_use_module( "pos" )
       ++nX
-      @ m_x + nX, m_y + 2 SAY8 "Primarni fiskalni uređaj kod štampe POS računa:" GET _pos_def VALID valid_pos_fiskalni_uredjaj( _pos_def ) PICT "99"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Primarni fiskalni uređaj kod štampe POS računa:" GET _pos_def VALID valid_pos_fiskalni_uredjaj( _pos_def ) PICT "99"
    ENDIF
-
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Upozorenje za dnevne izvještaje (D/N)?" GET _rpt_warrning PICT "@!" VALID _rpt_warrning $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Upozorenje za dnevne izvještaje (D/N)?" GET _rpt_warrning PICT "@!" VALID _rpt_warrning $ "DN"
    READ
 
    BoxC()
@@ -173,6 +173,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    LOCAL _dev_iosa, _dev_serial, _dev_plu, _dev_pdv, _dev_init_plu
    LOCAL _dev_avans, _dev_timeout, _dev_vp_sum, _dev_vp_no_customer
    LOCAL _dev_restart
+   LOCAL GetList := {}
 
    IF !s_lUseFiskalneFunkcije
       MsgBeep( "Fiskalne opcije moraju biti uključene !" )
@@ -181,8 +182,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
 
    Box(, 20, 80 )
 
-   @ m_x + nX, m_y + 2 SAY8 "Uređaj ID:" GET nDeviceId ;
-      PICT "99" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Uređaj ID:" GET nDeviceId PICT "99" ;
       VALID ( nDeviceId >= _min_id .AND. nDeviceId <= _max_id )
 
    READ
@@ -193,7 +193,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    ENDIF
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 PadR( "**** Podešenje uređaja", 60 ) COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadR( "**** Podešenje uređaja", 60 ) COLOR f18_color_i()
 
    _dev_tmp := PadL( AllTrim( Str( nDeviceId ) ), 2, "0" )
    _dev_name := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ), 100 )
@@ -212,12 +212,12 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    _dev_vp_no_customer := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_no_customer", NIL, "N" )
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Naziv uređaja:" GET _dev_name   PICT "@S40"
-   @ m_x + nX, Col() + 1 SAY8 "Aktivan (D/N):" GET _dev_act  PICT "@!"  VALID _dev_act $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Naziv uređaja:" GET _dev_name   PICT "@S40"
+   @ box_x_koord() + nX, Col() + 1 SAY8 "Aktivan (D/N):" GET _dev_act  PICT "@!"  VALID _dev_act $ "DN"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Drajver (FPRINT/HCP/TREMOL/TRING/...):" GET _dev_drv ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Drajver (FPRINT/HCP/TREMOL/TRING/...):" GET _dev_drv ;
       PICT "@S20"  VALID !Empty( _dev_drv )
 
    READ
@@ -230,50 +230,50 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    IF AllTrim( _dev_drv ) == "FPRINT"
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "IOSA broj:" GET _dev_iosa ;
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "IOSA broj:" GET _dev_iosa ;
          PICT "@S16"  VALID !Empty( _dev_iosa )
 
-      @ m_x + nX, Col() + 1 SAY "Serijski broj:" GET _dev_serial ;
+      @ box_x_koord() + nX, Col() + 1 SAY "Serijski broj:" GET _dev_serial ;
          PICT "@S20" VALID !Empty( _dev_serial )
 
    ENDIF
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Uređaj je u sistemu PDV-a (D/N):" GET _dev_pdv ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Uređaj je u sistemu PDV-a (D/N):" GET _dev_pdv ;
       PICT "@!" VALID _dev_pdv $ "DN"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Tip uređaja (K - kasa, P - printer):" GET _dev_type ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Tip uređaja (K - kasa, P - printer):" GET _dev_type ;
       PICT "@!" VALID _dev_type $ "KP"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadR( "**** Parametri artikla", 60 ) COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "**** Parametri artikla", 60 ) COLOR f18_color_i()
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Za artikal koristiti plu [D/P] (stat./dinam.) [I] id, [B] barkod:" GET _dev_plu ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Za artikal koristiti plu [D/P] (stat./dinam.) [I] id, [B] barkod:" GET _dev_plu ;
       PICT "@!" VALID _dev_plu $ "DPIB"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "(dinamički) inicijalni PLU kod:" GET _dev_init_plu PICT "999999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "(dinamički) inicijalni PLU kod:" GET _dev_init_plu PICT "999999"
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 PadR( "**** Parametri rada sa uređajem", 60 ) COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadR( "**** Parametri rada sa uređajem", 60 ) COLOR f18_color_i()
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Auto depozit:" GET _dev_avans PICT "999999.99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Auto depozit:" GET _dev_avans PICT "999999.99"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Timeout fiskalnih operacija:" GET _dev_timeout PICT "999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Timeout fiskalnih operacija:" GET _dev_timeout PICT "999"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Zbirni račun u VP (0/1/...):" GET _dev_vp_sum PICT "999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Zbirni račun u VP (0/1/...):" GET _dev_vp_sum PICT "999"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Bezgotovinski račun moguć bez partnera (D/N) ?" GET _dev_vp_no_customer PICT "!@" VALID _dev_vp_no_customer $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Bezgotovinski račun moguć bez partnera (D/N) ?" GET _dev_vp_no_customer PICT "!@" VALID _dev_vp_no_customer $ "DN"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Restart servisa nakon slanja komande (D/N) ?" GET _dev_restart ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Restart servisa nakon slanja komande (D/N) ?" GET _dev_restart ;
       PICT "@!" VALID _dev_restart $ "DN"
 
 
@@ -307,7 +307,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
 FUNCTION korisnik_postavke_fiskalni_uredjaj()
 
    LOCAL _cUserName := my_user()
-   LOCAL _user_id := GetUserId( _cUserName )
+   LOCAL _user_id := f18_get_user_id( _cUserName )
    LOCAL nDeviceId := 1
    LOCAL _max_id := 10
    LOCAL _min_id := 1
@@ -316,6 +316,7 @@ FUNCTION korisnik_postavke_fiskalni_uredjaj()
    LOCAL _out_dir, _out_file, _ans_file, _print_a4
    LOCAL _op_id, _op_pwd, _print_fiscal
    LOCAL _op_docs
+   LOCAL GetList := {}
 
    IF !s_lUseFiskalneFunkcije
       MsgBeep( "Fiskalne opcije moraju biti uključene !" )
@@ -324,14 +325,13 @@ FUNCTION korisnik_postavke_fiskalni_uredjaj()
 
    Box(, 20, 80 )
 
-   @ m_x + nX, m_y + 2 SAY8 PadL( "Uređaj ID:", 15 ) GET nDeviceId ;
-      PICT "99" ;
-      VALID {|| ( nDeviceId >= _min_id .AND. nDeviceId <= _max_id ), ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Uređaj ID:", 15 ) GET nDeviceId ;
+      PICT "99" VALID {|| ( nDeviceId >= _min_id .AND. nDeviceId <= _max_id ), ;
       show_it( get_fiscal_device_name( nDeviceId, 30 ) ), .T. }
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY8 PadL( "Korisnik:", 15 ) GET _user_id PICT "99999999" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Korisnik:", 15 ) GET _user_id PICT "99999999" ;
       VALID {|| iif( _user_id == 0, choose_f18_user_from_list( @_user_id ), .T. ), ;
       show_it( GetFullUserName( _user_id ), 30 ), .T.  }
 
@@ -345,7 +345,7 @@ FUNCTION korisnik_postavke_fiskalni_uredjaj()
    _cUserName := AllTrim( GetUserName( _user_id ) )
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 PadR( "*** Podešenja rada sa uređajem", 60 ) COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadR( "*** Podešenja rada sa uređajem", 60 ) COLOR f18_color_i()
 
    ++nX
    _dev_tmp := PadL( AllTrim( Str( nDeviceId ) ), 2, "0" )
@@ -361,22 +361,20 @@ FUNCTION korisnik_postavke_fiskalni_uredjaj()
    _print_fiscal := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _cUserName, "D" )
    _op_docs := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _cUserName, "" ), 100 )
 
-   @ m_x + nX, m_y + 2 SAY "Direktorij izlaznih fajlova:" GET _out_dir PICT "@S50" VALID _valid_fiscal_path( _out_dir )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Direktorij izlaznih fajlova:" GET _out_dir PICT "@S50" VALID _valid_fiscal_path( _out_dir )
    ++nX
-   @ m_x + nX, m_y + 2 SAY "       Naziv izlaznog fajla:" GET _out_file PICT "@S20" VALID !Empty( _out_file )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "       Naziv izlaznog fajla:" GET _out_file PICT "@S20" VALID !Empty( _out_file )
    ++nX
-   @ m_x + nX, m_y + 2 SAY "       Naziv fajla odgovora:" GET _out_answer PICT "@S20"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "       Naziv fajla odgovora:" GET _out_answer PICT "@S20"
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Operater, ID:" GET _op_id PICT "@S10"
-   @ m_x + nX, Col() + 1 SAY "lozinka:" GET _op_pwd PICT "@S10"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Operater, ID:" GET _op_id PICT "@S10"
+   @ box_x_koord() + nX, Col() + 1 SAY "lozinka:" GET _op_pwd PICT "@S10"
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 "Štampati A4 racun nakon fiskalnog (D/N/G/X):" GET _print_a4 ;
-      PICT "@!" VALID _print_a4 $ "DNGX"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Štampati A4 racun nakon fiskalnog (D/N/G/X):" GET _print_a4 PICT "@!" VALID _print_a4 $ "DNGX"
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Uredjaj koristiti za slj.tipove dokumenata:" GET _op_docs PICT "@S20"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Uredjaj koristiti za slj.tipove dokumenata:" GET _op_docs PICT "@S20"
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 "Korisnik može printati fiskalne račune (D/N/T):" GET _print_fiscal ;
-      PICT "@!" VALID _print_fiscal $ "DNT"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Korisnik može printati fiskalne račune (D/N/T):" GET _print_fiscal PICT "@!" VALID _print_fiscal $ "DNT"
 
    READ
 
@@ -638,43 +636,43 @@ FUNCTION fiskalni_uredjaj_model()
 
 
 
-STATIC FUNCTION fiskalni_uredjaji_meni( arr )
+STATIC FUNCTION fiskalni_uredjaji_meni( aOpcije )
 
-   LOCAL _ret := 0
+   LOCAL nRet := 0
    LOCAL nI, _n
    LOCAL _tmp
    LOCAL _izbor := 1
-   LOCAL _opc := {}
+   LOCAL aOpc := {}
    LOCAL _opcexe := {}
-   LOCAL _m_x := m_x
-   LOCAL _m_y := m_y
+   LOCAL _m_x := box_x_koord()
+   LOCAL _m_y := box_y_koord()
 
-   FOR nI := 1 TO Len( arr )
+   FOR nI := 1 TO Len( aOpcije )
 
       _tmp := ""
       _tmp += PadL( AllTrim( Str( nI ) ) + ")", 3 )
-      _tmp += " uredjaj " + PadL( AllTrim( Str( arr[ nI, 1 ] ) ), 2, "0" )
-      _tmp += " : " + PadR( hb_StrToUTF8( arr[ nI, 2 ] ), 40 )
+      _tmp += " uredjaj " + PadL( AllTrim( Str( aOpcije[ nI, 1 ] ) ), 2, "0" )
+      _tmp += " : " + PadR( hb_StrToUTF8( aOpcije[ nI, 2 ] ), 40 )
 
-      AAdd( _opc, _tmp )
+      AAdd( aOpc, _tmp )
       AAdd( _opcexe, {|| "" } )
 
    NEXT
 
    DO WHILE .T. .AND. LastKey() != K_ESC
-      _izbor := meni_0( "choice", _opc, _izbor, .F. )
+      _izbor := meni_0( "choice", aOpc, _izbor, .F. )
       IF _izbor == 0
          EXIT
       ELSE
-         _ret := arr[ _izbor, 1 ]
+         nRet := aOpcije[ _izbor, 1 ]
          _izbor := 0
       ENDIF
    ENDDO
 
-   m_x := _m_x
-   m_y := _m_y
+   box_x_koord( _m_x )
+   box_y_koord(  _m_y )
 
-   RETURN _ret
+   RETURN nRet
 
 
 
@@ -764,24 +762,24 @@ FUNCTION get_fiscal_device_params( nDeviceId, cUserName )
 // ---------------------------------------------------------------
 // chekiranje nakon setovanja, da li ima lokacije itd...
 // ---------------------------------------------------------------
-STATIC FUNCTION post_check( PARAM )
+STATIC FUNCTION post_check( hParams )
 
-   LOCAL _ret := .T.
+   LOCAL lRet := .T.
 
-   _ret := _valid_fiscal_path( PARAM[ "out_dir" ], .F. )
+   lRet := _valid_fiscal_path( hParams[ "out_dir" ], .F. )
 
-   IF !_ret
-      MsgBeep( "Izlazni direktorij " + AllTrim( PARAM[ "out_dir" ] ) + " nije ispravan !!!#Prekidam operaciju!" )
-      RETURN _ret
+   IF !lRet
+      MsgBeep( "Izlazni direktorij " + AllTrim( hParams[ "out_dir" ] ) + " nije ispravan !!!#Prekidam operaciju!" )
+      RETURN lRet
    ENDIF
 
-   IF Empty( PARAM[ "out_file" ] )
+   IF Empty( hParams[ "out_file" ] )
       MsgBeep( "Naziv izlaznog fajla mora biti popunjen ispravno !!!" )
-      _ret := .F.
-      RETURN _ret
+      lRet := .F.
+      RETURN lRet
    ENDIF
 
-   RETURN _ret
+   RETURN lRet
 
 
 
@@ -844,28 +842,28 @@ FUNCTION print_fiscal_params()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 
 // ------------------------------------------------------
 // printanje parametra
 // ------------------------------------------------------
-STATIC FUNCTION _print_param( PARAM )
+STATIC FUNCTION _print_param( hParams )
 
-   ? Space( 3 ), "Drajver:", PARAM[ "drv" ], "IOSA:", PARAM[ "iosa" ], "Serijski broj:", PARAM[ "serial" ], "Tip uredjaja:", PARAM[ "type" ]
-   ? Space( 3 ), "U sistemu PDV-a:", PARAM[ "pdv" ]
+   ? Space( 3 ), "Drajver:", hParams[ "drv" ], "IOSA:", hParams[ "iosa" ], "Serijski broj:", hParams[ "serial" ], "Tip uredjaja:", hParams[ "type" ]
+   ? Space( 3 ), "U sistemu PDV-a:", hParams[ "pdv" ]
    ?
-   ? Space( 3 ), "Izlazni direktorij:", AllTrim( PARAM[ "out_dir" ] )
-   ? Space( 3 ), "       naziv fajla:", AllTrim( PARAM[ "out_file" ] ), "naziv fajla odgovora:", AllTrim( PARAM[ "out_answer" ] )
-   ? Space( 3 ), "Operater ID:", PARAM[ "op_id" ], "PWD:", PARAM[ "op_pwd" ]
+   ? Space( 3 ), "Izlazni direktorij:", AllTrim( hParams[ "out_dir" ] )
+   ? Space( 3 ), "       naziv fajla:", AllTrim( hParams[ "out_file" ] ), "naziv fajla odgovora:", AllTrim( hParams[ "out_answer" ] )
+   ? Space( 3 ), "Operater ID:", hParams[ "op_id" ], "PWD:", hParams[ "op_pwd" ]
    ?
-   ? Space( 3 ), "Tip PLU kodova:", PARAM[ "plu_type" ], "Inicijalni PLU:", AllTrim( Str( PARAM[ "plu_init" ] ) )
-   ? Space( 3 ), "Auto polog:", AllTrim( Str( PARAM[ "auto_avans" ], 12, 2 ) ), ;
-      "Timeout fiskalnih operacija:", AllTrim( Str( PARAM[ "timeout" ] ) )
+   ? Space( 3 ), "Tip PLU kodova:", hParams[ "plu_type" ], "Inicijalni PLU:", AllTrim( Str( hParams[ "plu_init" ] ) )
+   ? Space( 3 ), "Auto polog:", AllTrim( Str( hParams[ "auto_avans" ], 12, 2 ) ), ;
+      "Timeout fiskalnih operacija:", AllTrim( Str( hParams[ "timeout" ] ) )
    ?
-   ?U Space( 3 ), "A4 print:", PARAM[ "print_a4" ], " dokumenti za štampu:", PARAM[ "op_docs" ]
-   ?U Space( 3 ), "Zbirni bezgotovinski račun:", AllTrim( Str( PARAM[ "vp_sum" ] ) )
-   ?U Space( 3 ), "Bezgotovinski račun moguć bez partnera:", PARAM[ "vp_no_customer" ]
+   ?U Space( 3 ), "A4 print:", hParams[ "print_a4" ], " dokumenti za štampu:", hParams[ "op_docs" ]
+   ?U Space( 3 ), "Zbirni bezgotovinski račun:", AllTrim( Str( hParams[ "vp_sum" ] ) )
+   ?U Space( 3 ), "Bezgotovinski račun moguć bez partnera:", hParams[ "vp_no_customer" ]
 
    RETURN

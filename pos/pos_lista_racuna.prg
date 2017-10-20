@@ -14,21 +14,22 @@
 FUNCTION pos_pregled_racuna( lAdmin )
 
    LOCAL dDatum := NIL
-   LOCAL _danas := "D"
+   LOCAL cDanasnjiRacuni := "D"
+   LOCAL GetList := {}
    PRIVATE aVezani := {}
 
    IF lAdmin == NIL
       lAdmin := .F.
    ENDIF
 
-   o_pos_tables()
+   // o_pos_tables()
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY8 "Samo današnji ? (D/N)" GET _danas VALID _danas $ "DN" PICT "!@"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Samo današnji ? (D/N)" GET cDanasnjiRacuni VALID cDanasnjiRacuni $ "DN" PICT "!@"
    READ
    BoxC()
 
-   IF _danas == "D"
+   IF cDanasnjiRacuni == "D"
       dDatum := Date()
    ENDIF
 
@@ -40,19 +41,22 @@ FUNCTION pos_pregled_racuna( lAdmin )
 
 
 
-FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, cPrefixFilter, qIdRoba )
+FUNCTION pos_lista_racuna( dDatum, cBroj, fPrep, cPrefixFilter, qIdRoba )
 
    LOCAL i
+   LOCAL cFilter
+   LOCAL cIdPos, cRacun
+
    PRIVATE fMark := .F.
-   PRIVATE cFilter
+
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
    IF cPrefixFilter == NIL
-      cPrefixFilter := ""
+      cPrefixFilter := ".t."
    ENDIF
 
-   cFilter := cPrefixFilter + " IdVd=='42'"
+   cFilter := cPrefixFilter
 
    IF fPrep == NIL
       fPrep := .F.
@@ -61,13 +65,15 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, cPrefixFilter, qIdRoba )
    ENDIF
 
    IF cBroj == NIL
-      cRacun := Space( Len( POS->BrDok ) )
+      cRacun := Space( FIELD_LEN_POS_BRDOK )
    ELSE
       cRacun := AllTrim( cBroj )
    ENDIF
 
    cIdPos := Left( cRacun, At( "-", cRacun ) - 1 )
    cIdPos := PadR( cIdPOS, Len( gIdPos ) )
+
+   seek_pos_doks( cIdPos, "42", dDatum, cRacun )
 
    IF gVrstaRS <> "S" .AND. !Empty( cIdPos ) .AND. cIdPOS <> gIdPos
       MsgBeep( "Račun nije napravljen na ovoj kasi!#" + "Ne možete napraviti promjenu!", 20 )
@@ -87,7 +93,6 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, cPrefixFilter, qIdRoba )
    AAdd( ImeKol, { "Vrijeme", {|| vrijeme } } )
    AAdd( ImeKol, { "Placen",     {|| iif ( Placen == PLAC_NIJE, "  NE", "  DA" ) } } )
 
-
    FOR i := 1 TO Len( ImeKol )
       AAdd( kol, i )
    NEXT
@@ -105,14 +110,14 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, cPrefixFilter, qIdRoba )
    IF gVrstaRS == "S" .OR. pos_admin()
       AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
       AAdd( Kol, Len( ImeKol ) )
-      cFilter += ".and. (Idpos=" + dbf_quote( gIdPos ) + " .or. IdPos='X ')"
+      //cFilter += ".and. (Idpos=" + dbf_quote( gIdPos ) + " .or. IdPos='X ')"
    ELSE
       cFilter += ".and. IdRadnik=" + dbf_quote( gIdRadnik ) + ".and. Idpos=" + dbf_quote( gIdPos )
    ENDIF
 
-   IF dDat <> NIL
-      cFilter += '.and. Datum=' + dbf_quote( dDat )
-   ENDIF
+   // IF dDatum <> NIL
+   // cFilter += '.and. Datum=' + dbf_quote( dDatum )
+   // ENDIF
 
    IF qIdRoba <> NIL .AND. !Empty( qIdRoba )
       cFilter += ".and. pos_racun_sadrzi_artikal(IdPos, IdVd, datum, BrDok, " + dbf_quote( qIdRoba ) + ")"
@@ -122,8 +127,9 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, cPrefixFilter, qIdRoba )
    GO TOP
 
    IF !Empty( cBroj )
-      SEEK2( cIdPos + "42" + DToS( dDat ) + cBroj )
-      IF Found()
+      // SEEK2( cIdPos + "42" + DToS( dDat ) + cBroj )
+
+      IF !Eof()
          cBroj := AllTrim( pos_doks->IdPos ) + "-" + AllTrim( pos_doks->BrDok )
          dDat := pos_doks->datum
          RETURN( .T. )
@@ -141,9 +147,8 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, cPrefixFilter, qIdRoba )
       bMarkF := NIL
    ENDIF
 
-
    KEYBOARD '\'
-   my_db_edit_sql( "pos_rn", f18_max_rows() - 12, f18_max_cols() - 25, {| nCh | lista_racuna_key_handler( nCh ) }, _u( " POS RAČUNI " ), "", NIL, cFnc,, bMarkF )
+   my_browse( "pos_rn", f18_max_rows() - 12, f18_max_cols() - 25, {| nCh | lista_racuna_key_handler( nCh ) }, _u( " POS RAČUNI " ), "", NIL, cFnc,, bMarkF )
 
    SET FILTER TO
 
@@ -183,7 +188,6 @@ STATIC FUNCTION lista_racuna_key_handler( nCh )
    // cLevel := field->prioritet
    // USE
 
-   // altd()
    // SELECT pos_doks
 
    IF Chr( nCh ) == '\'
@@ -199,8 +203,7 @@ STATIC FUNCTION lista_racuna_key_handler( nCh )
    ENDIF
 
    IF Upper( Chr( nCh ) ) == "F"
-      aVezani := { { IdPos, BrDok, IdVd, datum } }
-      StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., NIL, .T. )
+      pos_stampa_priprema( IdPos, DToS( datum ) + BrDok, .T., NIL, .T. )
       SELECT pos_doks
       f7_pf_traka( .T. )
       SELECT pos_doks
@@ -227,7 +230,7 @@ STATIC FUNCTION lista_racuna_key_handler( nCh )
       nFisc_no := pos_doks->fisc_rn
 
       Box(, 1, 40 )
-      @ m_x + 1, m_y + 2 SAY8 "Broj fiskalnog računa: " GET nFisc_no
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Broj fiskalnog računa: " GET nFisc_no
       READ
       BoxC()
 

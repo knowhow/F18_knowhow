@@ -49,13 +49,13 @@ STATIC FUNCTION _get_vars( dD_f, dD_t, nOper, ;
    cColList := Space( 200 )
 
    Box(, 6, 60 )
-   @ m_x + 1, m_y + 2 SAY "Datum od:" GET dD_f
-   @ m_x + 1, Col() + 1 SAY "do:" GET dD_t
-   @ m_x + 2, m_y + 2 SAY "Operater (0 - svi):" GET nOper ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum od:" GET dD_f
+   @ box_x_koord() + 1, Col() + 1 SAY "do:" GET dD_t
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Operater (0 - svi):" GET nOper ;
       VALID {|| nOper == 0  } ;
       PICT "9999999999"
-   @ m_x + 4, m_y + 2 SAY " RAL kodovi (prazno-svi):" GET cRList PICT "@S25"
-   @ m_x + 5, m_y + 2 SAY "boje kodovi (prazno-sve):" GET cColList PICT "@S25"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY " RAL kodovi (prazno-svi):" GET cRList PICT "@S25"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "boje kodovi (prazno-sve):" GET cColList PICT "@S25"
    READ
    BoxC()
 
@@ -181,7 +181,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
          ENDIF
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "dokument: " + docno_str( nDoc_no )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "dokument: " + docno_str( nDoc_no )
 
       SELECT doc_it
       GO TOP

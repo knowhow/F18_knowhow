@@ -134,9 +134,9 @@ STATIC FUNCTION lom_stakla_box( cDesc )
 
    setuj_browse_kolone( @ImeKol, @Kol )
 
-   @ m_x + ( nBoxX - 1 ), m_y + 1 SAY cOptions
+   @ box_x_koord() + ( nBoxX - 1 ), box_y_koord() + 1 SAY cOptions
 
-   my_db_edit_sql( "damage", nBoxX, nBoxY, {|| evidencija_loma_key_handler() }, cHeader, cFooter,,,,, 2 )
+   my_browse( "damage", nBoxX, nBoxY, {|| evidencija_loma_key_handler() }, cHeader, cFooter,,,,, 2 )
 
    BoxC()
 
@@ -283,16 +283,16 @@ STATIC FUNCTION unos_podataka_o_lomu( cDesc, nQty, nDamage, nGlass_no )
    nDamage := 0
    nGlass_no := 1
 
-   @ m_x + 1, m_y + 2 SAY " *** Unos podataka o ostecenjima " ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY " *** Unos podataka o ostecenjima " ;
       COLOR "BG+/B"
 
-   @ m_x + 3, m_y + 2 SAY "odnosi se na staklo br:" GET nGlass_no ;
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "odnosi se na staklo br:" GET nGlass_no ;
       PICT "99"
 
-   @ m_x + 4, m_y + 2 SAY8 " broj oštećenih komada:" GET nDamage ;
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 " broj oštećenih komada:" GET nDamage ;
       PICT "999999.99" VALID nDamage <= nQty
 
-   @ m_x + 6, m_y + 2 SAY "opis:" GET cDesc PICT "@S60" ;
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "opis:" GET cDesc PICT "@S60" ;
       VALID !Empty( cDesc )
 
    READ
@@ -314,9 +314,9 @@ STATIC FUNCTION unos_opisa_promjene( cDesc )
 
    cDesc := Space( 150 )
 
-   @ m_x + 1, m_y + 2 SAY " *** Unos opisa promjene " COLOR "BG+/B"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY " *** Unos opisa promjene " COLOR "BG+/B"
 
-   @ m_x + 3, m_y + 2 SAY "opis:" GET cDesc PICT "@S60"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "opis:" GET cDesc PICT "@S60"
 
    READ
    BoxC()

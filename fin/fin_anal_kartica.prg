@@ -18,6 +18,7 @@ FUNCTION fin_anal_kartica()
    LOCAL bZagl := {|| zagl_anal_kartica() }
    LOCAL oPdf, xPrintOpt
    LOCAL lKarticaNovaStrana := .F., nTmp
+   LOCAL GetList := {}
 
    cIdFirma := self_organizacija_id()
    qqKonto := ""
@@ -49,35 +50,35 @@ FUNCTION fin_anal_kartica()
    Box( "", 9, 65, .F. )
    DO WHILE .T.
       SET CURSOR ON
-      @ m_x + 1, m_y + 2 SAY8 "ANALITIČKA KARTICA"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "ANALITIČKA KARTICA"
       //IF gNW == "D"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       //ELSE
-      //   @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      //   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       //ENDIF
-      @ m_x + 3, m_y + 2 SAY "Brza kartica (D/N/S)" GET cBrza PICT "@!" VALID cBrza $ "DNS"
-      @ m_x + 4, m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Brza kartica (D/N/S)" GET cBrza PICT "@!" VALID cBrza $ "DNS"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
       READ
       ESC_BCR
 
       IF cBrza == "D"
          qqKonto := PadR( qqKonto, 7 )
-         @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto VALID P_Konto( @qqKonto )
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Konto: " GET qqKonto VALID P_Konto( @qqKonto )
       ELSE
          qqKonto := PadR( qqKonto, 60 )
-         @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
       ENDIF
 
-      IF gNW == "N"
-         @ m_x + 7, m_y + 2 SAY "Prikaz tipa dokumenta (D/N)" GET cPTD PICT "@!" VALID cPTD $ "DN"
-      ENDIF
+    //  IF gNW == "N"
+    //     @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prikaz tipa dokumenta (D/N)" GET cPTD PICT "@!" VALID cPTD $ "DN"
+    //  ENDIF
 
-      @ m_x + 8, m_y + 2 SAY "Datum od:" GET dDatOd
-      @ m_x + 8, Col() + 2 SAY "do:" GET dDatDo
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Datum od:" GET dDatOd
+      @ box_x_koord() + 8, Col() + 2 SAY "do:" GET dDatDo
       cIdRJ := ""
       IF gFinRj == "D" .AND. gSAKrIz == "D"
          cIdRJ := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
-         @ m_x + 9, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
+         @ box_x_koord() + 9, box_y_koord() + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       READ
       ESC_BCR
@@ -85,7 +86,9 @@ FUNCTION fin_anal_kartica()
       IF cBrza == "N" .OR. cBrza == "S"
          qqKonto := Trim( qqKonto )
          aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" )
-         IF aUsl1 <> NIL; exit; ENDIF
+         IF aUsl1 <> NIL
+          exit
+         ENDIF
       ELSE
          EXIT
       ENDIF
@@ -99,12 +102,12 @@ FUNCTION fin_anal_kartica()
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
    ENDIF
 
-   IF Params2()
+   //IF Params2()
       WPar( "c1", PadR( cIdFirma, 2 ) ); WPar( "c2", @qqKonto ); WPar( "d1", @dDatOd ); WPar( "d2", @dDatdo )
       WPar( "c3", cBrza )
       WPar( "c4", cPredh )
       WPar( "c8", cPTD )
-   ENDIF
+   //ENDIF
    SELECT params
    USE
 
@@ -114,7 +117,7 @@ FUNCTION fin_anal_kartica()
       m := Stuff( m, 30, 0, " -- ------------- ---------- --------------------" )
       o_sql_suban_kto_partner( cIdFirma )
       SET ORDER TO TAG 4
-      o_tdok()
+      //o_tdok()
    ENDIF
 
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
@@ -130,7 +133,7 @@ FUNCTION fin_anal_kartica()
 
    ENDIF
 
-   o_konto()
+   //o_konto()
 
    SELECT ANAL
 
@@ -247,8 +250,7 @@ FUNCTION fin_anal_kartica()
                SKIP 1
             ENDDO
             IF lPom
-               SELECT TDOK
-               HSEEK SUBAN->idtipdok
+               select_o_tdok( SUBAN->idtipdok )
             ENDIF
             SELECT ANAL
             @ PRow(), 31 + IF( cBrza == "S", 8, 0 ) SAY IF( lPom, SUBAN->idtipdok, "??"      )

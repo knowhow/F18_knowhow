@@ -12,21 +12,20 @@
 #include "f18.ch"
 
 
-
 FUNCTION epdv_admin_menu()
 
-   // {
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+
+   LOCAL aOpc := {}
+    LOCAL aOpcexe := {}
+   LOCAL nIzbor := 1
 
 
-   AAdd( opc, "1. renumeracija g_r_br KUF" )
-   AAdd( opcexe, {|| epdv_renumeracija_rbr_globalni( "KUF" ) } )
-   AAdd( opc, "2. renumeracija g_r_br KIF" )
-   AAdd( opcexe, {|| epdv_renumeracija_rbr_globalni( "KIF" ) } )
+   AAdd( aOpc, "1. renumeracija g_r_br KUF" )
+   AAdd( aOpcexe, {|| epdv_renumeracija_rbr_globalni( "KUF" ) } )
+   AAdd( aOpc, "2. renumeracija g_r_br KIF" )
+   AAdd( aOpcexe, {|| epdv_renumeracija_rbr_globalni( "KIF" ) } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "adm" )
+   f18_menu( "eadm", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.
 
@@ -34,11 +33,11 @@ FUNCTION epdv_admin_menu()
 
 STATIC FUNCTION epdv_renumeracija_rbr_globalni( cTblName )
 
-   IF Pitanje(, "Izvrsiti renumeriranje ? " + cTblName, "N" ) == "D"
+   IF Pitanje(, "Izvršiti renumeriranje ? " + cTblName, "N" ) == "D"
       IF spec_funkcije_sifra( "RNGR" )
          epdv_renumeracija_g_r_br( cTblName )
       ELSE
-         MsgBeep( "Pogresna lozinka, nista od posla ..." )
+         MsgBeep( "Pogrešna lozinka, nista od posla ..." )
       ENDIF
    ENDIF
 

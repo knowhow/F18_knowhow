@@ -40,20 +40,20 @@ FUNCTION pos_izvjestaji_tops()
       // server, samostalna kasa TOPS
 
       AAdd( opc, "2. stanje artikala ukupno" )
-      AAdd( opcexe, {|| pos_stanje_artikala_pm() } )
+      AAdd( opcexe, {|| pos_stanje_artikala() } )
 
-      IF gVodiOdj == "D"
+      //IF gVodiOdj == "D"
          AAdd( opc, "3. stanje artikala po odjeljenjima" )
-         AAdd( opcexe, {|| pos_stanje_artikala() } )
-      ELSE
-         AAdd( opc, "--------------------" )
-         AAdd( opcexe, nil )
-      ENDIF
+         AAdd( opcexe, {|| pos_stanje_artikala_po_odjeljenjima() } )
+      //ELSE
+      //   AAdd( opc, "--------------------" )
+      //   AAdd( opcexe, nil )
+      //ENDIF
 
       AAdd( opc, "4. kartice artikala" )
       AAdd( opcexe, {|| pos_kartica_artikla() } )
       AAdd( opc, "5. porezi po tarifama" )
-      AAdd( opcexe, {||  PDVPorPoTar() } )
+      AAdd( opcexe, {||  pos_pdv_po_tarifama() } )
       AAdd( opc, "6. najprometniji artikli" )
       AAdd( opcexe, {|| pos_top_narudzbe() } )
       AAdd( opc, "7. stanje partnera" )
@@ -67,7 +67,7 @@ FUNCTION pos_izvjestaji_tops()
 
    IF gPVrsteP
       AAdd( opc, "N. pregled prometa po vrstama plaćanja" )
-      AAdd( opcexe, {|| PrometVPl() } )
+      AAdd( opcexe, {|| pos_pregled_prometa_po_vrstama_placanja() } )
    ENDIF
 
    IF fiscal_opt_active()

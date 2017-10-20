@@ -104,8 +104,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
    cBBTipDok := Space( 30 ) // uzmi parametre koje ces dokumente prenositi
    Box(, 3, 70 )
-   @ 1 + m_x, 2 + m_y SAY "Prenos sljedecih tipova dokumenata ( kalk pript -> pripr) :"
-   @ 3 + m_x, 2 + m_y SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
+   @ 1 + box_x_koord(), 2 + box_y_koord() SAY "Prenos sljedecih tipova dokumenata ( kalk pript -> pripr) :"
+   @ 3 + box_x_koord(), 2 + box_y_koord() SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
    READ
    BoxC()
 
@@ -116,8 +116,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
    // SetKey(K_F3,{|| kalk_imp_set_check_point(nPTRec)})
 
    Box(, 10, 79 )
-   @ 1 + m_x, 2 + m_y SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR f18_color_i()
-   @ 2 + m_x, 2 + m_y SAY8 "======================================="
+   @ 1 + box_x_koord(), 2 + box_y_koord() SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR f18_color_i()
+   @ 2 + box_x_koord(), 2 + box_y_koord() SAY8 "======================================="
 
    DO WHILE !Eof()
 
@@ -148,7 +148,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
       SELECT ( nTekucaWA )
 
-      @ 3 + m_x, 2 + m_y SAY "KALK IMP Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok + " /"  + cNoviKalkBrDok
+      @ 3 + box_x_koord(), 2 + box_y_koord() SAY "KALK IMP Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok + " /"  + cNoviKalkBrDok
 
       nStCnt := 0
       DO WHILE !Eof() .AND. field->brdok == cBrDok .AND. field->idfirma == cFirma .AND. field->idvd == cIdVd
@@ -176,8 +176,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
          nPTRec := RecNo()
 
-         @ 5 + m_x, 13 + m_y SAY Space( 5 )
-         @ 5 + m_x, 2 + m_y SAY "Broj stavki:" + AllTrim( Str( nStCnt ) )
+         @ 5 + box_x_koord(), 13 + box_y_koord() SAY Space( 5 )
+         @ 5 + box_x_koord(), 2 + box_y_koord() SAY "Broj stavki:" + AllTrim( Str( nStCnt ) )
       ENDDO
 
 
@@ -227,7 +227,6 @@ STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
       lStampaj := .T.
    ENDIF
 
-
    // kalk_pripr_obrada_stavki_sa_asistentom()
 
    // IF lStampaj == .T.
@@ -237,7 +236,6 @@ STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
    // o_kalk_edit()
 
    kalk_asistent_pause( .F. )
-
 
    DO WHILE (  ( nRslt := provjeri_stanje_kalk_pripreme( cIdVd ) ) <> 0 )
 
@@ -257,7 +255,6 @@ STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
       IF  nRslt >= 2 // vezni dokument u pripremi ne pripada azuriranom dokumentu, sta sa njim
 
          error_bar( "kalk_auto_imp", "postoji dokument u pripremi koji je sumnjiv" )
-
          MsgBeep( "Postoji dokument u kalk_pripremi koji je sumljiv!#Radi se o veznom dokumentu ili nekoj drugoj grešci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !" )
          IF LastKey() == K_ESC
             IF Pitanje(, "Prekid operacije?", "N" ) == "D"
@@ -440,7 +437,7 @@ FUNCTION kalk_imp_partn_exist()
    DO WHILE !Eof()
       select_o_partner( kalk_imp_temp->idpartner )
       ++nCount
-      @ m_x + 1, m_y + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
       IF !Found()
          AAdd( aRet, { kalk_imp_temp->idpartner } )
       ENDIF

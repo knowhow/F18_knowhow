@@ -13,7 +13,7 @@
 
 
 
-FUNCTION v_id_tar( cIdTar, nOsnov, nPdv,  nShow, lNova )
+FUNCTION epdv_valid_id_tar( cIdTar, nOsnov, nPdv,  nShow, lNova )
 
    LOCAL nStopa
    LOCAL nPrerPdv
@@ -49,7 +49,7 @@ FUNCTION v_id_tar( cIdTar, nOsnov, nPdv,  nShow, lNova )
    RETURN .T.
 
 
-FUNCTION v_part( cIdPart, cIdTar, cTbl, lShow )
+FUNCTION epdv_valid_partner( cIdPart, cIdTar, cTbl, lShow )
 
    IF lShow == nil
       lShow := .T.
@@ -77,7 +77,7 @@ FUNCTION v_part( cIdPart, cIdTar, cTbl, lShow )
    RETURN .T.
 
 
-FUNCTION v_nazad( nNazad )
+FUNCTION valid_nazad( nNazad )
 
    LOCAL i
 

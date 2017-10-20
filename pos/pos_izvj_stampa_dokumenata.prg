@@ -12,7 +12,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION pos_stampa_dokumenta()
 
    LOCAL cIdVd
@@ -33,7 +32,7 @@ FUNCTION pos_stampa_dokumenta()
       nBH := 10
       nR := 7
       cLM := Space( 5 )
-      cIdPos := Space( Len( KASE->Id ) )
+      cIdPos := Space( FIELD_LEN_POS_KASE_ID )
       nRW := 30
       nSir := 80
    ELSE
@@ -41,25 +40,25 @@ FUNCTION pos_stampa_dokumenta()
    ENDIF
 
    IF gVrstaRS == "K"
-      cDoks := VD_RN + "#" + VD_RZS
+      cDoks := POS_VD_RACUN + "#" + VD_RZS
    ELSE
-      cDoks := VD_RN + "#" + VD_ZAD + "#" + "IN" + "#" + VD_NIV + "#" + VD_RZS
+      cDoks := POS_VD_RACUN + "#" + VD_ZAD + "#" + "IN" + "#" + VD_NIV + "#" + VD_RZS
    ENDIF
 
-   cIdRadnik := Space( Len( OSOB->Id ) )
-   cIdVd := Space( Len( pos_doks->IdVd ) )
+   cIdRadnik := Space( FIELD_LEN_POS_OSOB_ID )
+   cIdVd := Space( 2 )
 
    SET CURSOR ON
    Box(, 10, 77 )
 
    IF gVrstaRS <> "K"
-      @ m_x + 1, m_y + 2 SAY " Prodajno mjesto (prazno-sva)" GET cIdPos PICT "@!" VALID Empty( cIdPos ) .OR. P_Kase( @cIdPos, 1, 37 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY " Prodajno mjesto (prazno-sva)" GET cIdPos PICT "@!" VALID Empty( cIdPos ) .OR. p_pos_kase( @cIdPos, 1, 37 )
    ENDIF
 
-   @ m_x + 2, m_y + 2 SAY "          Radnik (prazno-svi)" GET cIdRadnik PICT "@!" VALID Empty( cIdRadnik ) .OR. P_Osob( @cIdRadnik, 2, 37 )
-   @ m_x + 3, m_y + 2 SAY "Vrste dokumenata (prazno-svi)" GET cIdVd PICT "@!" VALID Empty( cIdVd ) .OR. cIdVd $ cDoks
-   @ m_x + 4, m_y + 2 SAY8 "            Počevši od datuma" GET dDatOd PICT "@D" VALID dDatOd <= gDatum .AND. dDatOd <= dDatDo
-   @ m_x + 5, m_y + 2 SAY8 "                 zaključno sa" GET dDatDo PICT "@D" VALID dDatDo <= gDatum .AND. dDatOd <= dDatDo
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "          Radnik (prazno-svi)" GET cIdRadnik PICT "@!" VALID Empty( cIdRadnik ) .OR. P_Osob( @cIdRadnik, 2, 37 )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Vrste dokumenata (prazno-svi)" GET cIdVd PICT "@!" VALID Empty( cIdVd ) .OR. cIdVd $ cDoks
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "            Počevši od datuma" GET dDatOd PICT "@D" VALID dDatOd <= gDatum .AND. dDatOd <= dDatDo
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "                 zaključno sa" GET dDatDo PICT "@D" VALID dDatDo <= gDatum .AND. dDatOd <= dDatDo
    READ
    ESC_BCR
 
@@ -74,7 +73,7 @@ FUNCTION pos_stampa_dokumenta()
 
    START PRINT CRET
 
-   ZagFirma()
+   //ZagFirma()
    ?
 
    IF gVrstaRS <> "S"
@@ -126,13 +125,13 @@ FUNCTION pos_stampa_dokumenta()
          ?? " " + FormDat1( pos_doks->datum ), PadC( pos_doks->Smjena, 6 )
       ENDIF
 
-      SELECT OSOB
-      HSEEK pos_doks->IdRadnik
+      select_o_pos_osob( pos_doks->IdRadnik )
       ?? " " + Left( OSOB->Naz, nRW )
       nBrStav := 0
       nIznos := 0
-      SELECT POS
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      //SELECT POS
+      //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
          nBrStav++

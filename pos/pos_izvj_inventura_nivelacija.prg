@@ -12,11 +12,7 @@
 #include "f18.ch"
 
 
-// --------------------------------------------------------------------
-// Ova funkcija se koristi i za Stampu zaduzenja i za stampu inventure
-// --------------------------------------------------------------------
-FUNCTION StampaInv( fLista, lAzurirana )
-
+FUNCTION pos_stampa_zaduzenja_inventure( lPrikazStavke0Nepromjenjene, lAzurirana )
 
    LOCAL cRobaNaz
    LOCAL cJmj
@@ -32,11 +28,10 @@ FUNCTION StampaInv( fLista, lAzurirana )
 
    LOCAL cPom, cNule := "D", cNiv := "N", nSir := 80, nRobSir := 29
    LOCAL aTarife := {}
+   LOCAL lInventura := .T.
 
-   PRIVATE fInvent := .T.
-
-   IF flista == NIL
-      flista := .F.
+   IF lPrikazStavke0Nepromjenjene == NIL
+      lPrikazStavke0Nepromjenjene := .F.
    ENDIF
    IF lAzurirana == NIL
       lAzurirana := .F.
@@ -46,20 +41,25 @@ FUNCTION StampaInv( fLista, lAzurirana )
       nSir := 40
    ENDIF
 
-   SELECT PRIPRZ
+
    IF cIdVd == "IN"
-      IF ! fLista
+      IF ! lPrikazStavke0Nepromjenjene
          cNule := Pitanje(, "Stampati stavke sa popisanom kolicinom 0  (D/N)?", "D" )
       ENDIF
-      fInvent := .T.
+      lInventura := .T.
    ELSE
       cNiv := Pitanje(, "Stampati samo stavke sa promijenjenom cijenom (D/N)?", "N" )
-      fInvent := .F.
+      lInventura := .F.
    ENDIF
 
-   IF !lAzurirana
-      GO TOP
+   IF lAzurirana
+      SELECT POS
+   ELSE
+      SELECT PRIPRZ
    ENDIF
+
+   GO TOP
+
 
    START PRINT CRET
 
@@ -67,29 +67,30 @@ FUNCTION StampaInv( fLista, lAzurirana )
       INI
    ENDIF
 
-   cPom := iif ( fInvent, ;
-      iif ( fLista, "Inventurna/popisna lista ", "INVENTURA " ), ;
+   cPom := iif ( lInventura, ;
+      iif ( lPrikazStavke0Nepromjenjene, "Inventurna/popisna lista ", "INVENTURA " ), ;
       "NIVELACIJA " )
    IF gVrstaRS <> "S"
-      cPom += AllTrim ( PRIPRZ->IdPos ) + "-"
+      cPom += AllTrim ( field->IdPos ) + "-"
    ENDIF
 
-   ? PadC ( cPom + AllTrim ( PRIPRZ->BrDok ), nSir )
+   ? PadC ( cPom + AllTrim ( field->BrDok ), nSir )
    ?
-   SELECT ODJ
-   HSEEK PRIPRZ->IdOdj
-   IF gvodiodj == "D"
+   select_o_pos_odj( field->IdOdj )
+   IF gVodiodj == "D"
       ? PadC ( "Odjeljenje: " + AllTrim ( ODJ->Naz ), nSir )
    ENDIF
 
    SELECT PRIPRZ
 
-   IF gPostDO == "D" .AND. ! Empty ( PRIPRZ->IdDio )
+/*
+   IF gPostDO == "D" .AND. ! Empty ( field->IdDio )
       SELECT DIO
       HSEEK PRIPRZ->IdDio
       ? PadC ( "Dio objekta: " + AllTrim ( DIO->Naz ), nSir )
       SELECT PRIPRZ
    ENDIF
+*/
 
    ?
    IF gVrstaRS == "S"
@@ -100,12 +101,12 @@ FUNCTION StampaInv( fLista, lAzurirana )
       ?    " ------------- ---------------------- ---"
       ?    "  Sifra           Artikal             jmj"
       ?    " ------------- ---------------------- ---"
-      IF fInvent
+      IF lInventura
          ? " Knj. Kol  Pop.kol.   Cijena     +/-"
       ELSE
          ? "  Stanje          Cijena           Nova c."
       ENDIF
-      IF fInvent
+      IF lInventura
          m := "--------- --------- -------- ------------"
       ELSE
          m := "  ------------ ------------ ------------"
@@ -115,12 +116,12 @@ FUNCTION StampaInv( fLista, lAzurirana )
       ?? Space ( 22 )
       ?
       ?? "   Stanje   "                 // ima jedan space ispred Stanje
-      IF fInvent
+      IF lInventura
          ?? "Popis.kol. Cijena    +/-"
       ELSE
          ?? "Cijena  Nova c."
       ENDIF
-      IF fInvent
+      IF lInventura
          m := " -------- ----------------------------- ---------- ---------- ------- --------"
       ELSE
          m := " -------- ----------------------------- ---------- ------- -------"
@@ -133,32 +134,36 @@ FUNCTION StampaInv( fLista, lAzurirana )
    nKVr := nPopVr := 0
    nStVr := nNVR := 0
 
-   SELECT PRIPRZ
-   cBroj := DToS( datum ) + brdok   // stampaj broj
+   IF lAzurirana
+      SELECT POS
+   ELSE
+      SELECT PRIPRZ
+   ENDIF
+   cBroj := DToS( field->datum ) + field->brdok   // stampaj broj
 
-   DO WHILE !Eof() .AND. idvd == cidvd .AND.  cBroj == DToS( datum ) + brdok
-      IF fLista .OR. ;
-            ( cNiv == "N" .OR. ( cNiv == "D" .AND. PRIPRZ->cijena <> PRIPRZ->ncijena ) ) .AND. ;
-            ( cNule == "D" .OR. ( cNule == "N" .AND. Kol2 <> 0 ) ) ;
-            .AND.  ( Kolicina <> 0 .OR. Kol2 <> 0 )
+   DO WHILE !Eof() .AND. field->idvd == cIdvd .AND.  cBroj == DToS( field->datum ) + field->brdok
+      IF lPrikazStavke0Nepromjenjene .OR. ;
+            ( cNiv == "N" .OR. ( cNiv == "D" .AND. field->cijena <> field->ncijena ) ) .AND. ;
+            ( cNule == "D" .OR. ( cNule == "N" .AND. field->Kol2 <> 0 ) ) ;
+            .AND.  ( field->Kolicina <> 0 .OR. field->Kol2 <> 0 )
 
          IF gVrstaRS == "S"
-            IF PRow() > 63 -dodatni_redovi_po_stranici() - iif ( fLista, 2, 1 );  FF; ENDIF
+            IF PRow() > 63 - dodatni_redovi_po_stranici() - iif ( lPrikazStavke0Nepromjenjene, 2, 1 );  FF; ENDIF
          ENDIF
 
-
-         cIdRoba := priprz->idroba
-         nCij := PRIPRZ->cijena
-         nCij2 := priprz->ncijena
+         cIdRoba := field->idroba
+         nCij := field->cijena
+         nCij2 := field->ncijena
 
          IF lAzurirana
+            PushWa()
             select_o_roba( cIdRoba )
-            cRobaNaz := naz
-            cJmj := jmj
-            SELECT priprz
+            cRobaNaz := field->naz
+            cJmj := field->jmj
+            PopWa()
          ELSE
-            cJmj := priprz->jmj
-            cRobaNaz := priprz->robanaz
+            cJmj := field->jmj
+            cRobaNaz := field->robanaz
          ENDIF
 
          ? " " + cIdRoba
@@ -168,56 +173,56 @@ FUNCTION StampaInv( fLista, lAzurirana )
 
          IF gVrstaRS <> "S"
             ?
-            IF fLista
+            IF lPrikazStavke0Nepromjenjene
                ?? " " + "________.___", "_________.___", Str ( nCij, 8, 2 )
             ELSE
-               IF finvent
-                  ? Str( kolicina, 9, 1 ), Str( kol2, 9, 1 ), ;
-                     Str ( nCij, 8, 1 ), Str ( kolicina - kol2, 12, 2 )
+               IF lInventura
+                  ? Str( field->kolicina, 9, 1 ), Str( field->kol2, 9, 1 ), ;
+                     Str ( nCij, 8, 1 ), Str ( field->kolicina - field->kol2, 12, 2 )
                   ? m
                ELSE
                   // nivelacija
-                  ? Str( kolicina, 14, 3 ), Str ( nCij, 12, 2 ), Str ( nCij2, 12, 2 )
+                  ? Str( field->kolicina, 14, 3 ), Str ( nCij, 12, 2 ), Str ( nCij2, 12, 2 )
                   ? m
                ENDIF
-            ENDIF // flista
+            ENDIF // lPrikazStavke0Nepromjenjene
          ELSE  // idemo na server
-            IF fLista
+            IF lPrikazStavke0Nepromjenjene
                ?? " " + "______.___", "______.___", Str ( nCij, 7, 2 )
             ELSE
-               ?? " " + Str ( Kolicina, 10, 3 ), ""
-               IF fInvent
-                  ?? Str ( Kol2, 10, 3 ), ;
-                     Str ( PRIPRZ->cijena, 7, 2 ), TRANS ( Kolicina - Kol2, "9999.99" )
+               ?? " " + Str ( field->Kolicina, 10, 3 ), ""
+               IF lInventura
+                  ?? Str ( field->Kol2, 10, 3 ), ;
+                     Str ( field->cijena, 7, 2 ), TRANS ( field->Kolicina - field->Kol2, "9999.99" )
                ELSE
                   // nivelacija
                   ?? Str ( nCij, 9, 2 ), Str ( nCij2, 9, 2 )
                ENDIF
-            ENDIF // flista
+            ENDIF // lPrikazStavke0Nepromjenjene
          ENDIF // server
 
          nIzn := 0
-         IF fInvent
-            nKVr += nCij * Kolicina
-            nPopVr += nCij * Kol2        // po starim cijenama
-            nIzn := nCij * Kol2
+         IF lInventura
+            nKVr += nCij * field->Kolicina
+            nPopVr += nCij * field->Kol2        // po starim cijenama
+            nIzn := nCij * field->Kol2
          ELSE
             // nivelacija
-            nStVr += nCij * Kolicina
-            nNVr  += nCij2 * Kolicina
+            nStVr += nCij * field->Kolicina
+            nNVr  += nCij2 * field->Kolicina
             nIzn := ( nCij2 - nCij ) * Kolicina
          ENDIF
 
-         pos_setuj_tarife( PRIPRZ->IdRoba, nIzn, @aTarife )
+         pos_setuj_tarife( field->IdRoba, nIzn, @aTarife )
 
 
-      ENDIF // fLista .or. cnule=="N"
+      ENDIF // lPrikazStavke0Nepromjenjene .or. cnule=="N"
       SKIP
    ENDDO // !eof()
 
-   IF !fLista .AND. fInvent
+   IF !lPrikazStavke0Nepromjenjene .AND. lInventura
       IF gVrstaRS == "S"
-         IF PRow() > 63 -dodatni_redovi_po_stranici() - 5
+         IF PRow() > 63 - dodatni_redovi_po_stranici() - 5
             FF
          ENDIF
       ENDIF
@@ -234,11 +239,11 @@ FUNCTION StampaInv( fLista, lAzurirana )
       ENDIF
    ENDIF
 
-   IF !fLista .AND. Round( nStVr - nNVR, 3 ) <> 0
+   IF !lPrikazStavke0Nepromjenjene .AND. Round( nStVr - nNVR, 3 ) <> 0
       nStVr += nPopVr
       nNVr  += nPopVr
       IF gVrstaRS == "S"
-         IF PRow() > 63 -dodatni_redovi_po_stranici() - 7
+         IF PRow() > 63 - dodatni_redovi_po_stranici() - 7
             FF
          ENDIF
       ENDIF
@@ -266,8 +271,8 @@ FUNCTION StampaInv( fLista, lAzurirana )
 
 FUNCTION StampaPLI( cBrDok )
 
-
    LOCAL cPom
+
    SELECT PRIPRZ                // invent
    GO TOP
    START PRINT RET
@@ -293,18 +298,16 @@ FUNCTION StampaPLI( cBrDok )
    PaperFeed ()
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 
-
-
-FUNCTION PrepisInvNiv( fInvent )
+FUNCTION pos_prepis_inventura_nivelacija( lInventura )
 
    // prepisace azuriranu fakturu
 
    PRIVATE cIdOdj, cRsDBF, cRsBlok
-   IF finvent
+   IF lInventura
       PRIVATE cIdVd := "IN"
    ELSE
       PRIVATE cIdVd := "NI"
@@ -318,15 +321,15 @@ FUNCTION PrepisInvNiv( fInvent )
    SELECT pos_doks
 
    // otvori pos sa aliasom PRIPRZ, te je pozicioniraj na pravo mjesto
-   SELECT ( F_POS )
-   my_use( "priprz", "POS" )
-   SET ORDER TO TAG "1"
-   HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+   //SELECT ( F_POS )
+   //my_use( "priprz", "POS" )
 
-   cIdOdj := priprz->idodj
+   //SET ORDER TO TAG "1"
+   seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+   // ovdje treba parametar alias
+   cIdOdj := pos->idodj
 
-   SELECT ODJ
-   HSEEK cidodj
+   select_o_pos_odj( cIdodj )
 
    IF ODJ->Zaduzuje == "S"
       cRSdbf := "SIROV"
@@ -340,14 +343,14 @@ FUNCTION PrepisInvNiv( fInvent )
       cUI_I   := R_I
    ENDIF
 
-   StampaInv( .F., .T. )  // drugi parametar kaze da se radi o azuriranom dok
+   pos_stampa_zaduzenja_inventure( .F., .T. )  // drugi parametar kaze da se radi o azuriranom dok
 
-   o_pos_doks()
-   o_pos_pos()
+   //o_pos_doks()
+   //o_pos_pos()
 
    PopWa()
-   // vrati pos gdje je bio
 
    SELECT pos_doks
 
-   RETURN
+   RETURN .T.
+*/

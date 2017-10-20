@@ -50,16 +50,16 @@ FUNCTION ed_zf_params()
 
    SET CURSOR ON
 
-   @ m_x + nX, m_y + 2 SAY "1. Prikazi ***"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "1. Prikazi ***"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " kolicina ", 30 )   GET gPIC_QTTY
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( " kolicina ", 30 )   GET gPIC_QTTY
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " dimenzija ", 30 )   GET gPIC_DIM
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( " dimenzija ", 30 )   GET gPIC_DIM
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( " iznos ", 30 )   GET gPIC_VAL
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( " iznos ", 30 )   GET gPIC_VAL
 
 
    READ
@@ -89,51 +89,51 @@ FUNCTION ed_fi_params()
 
    SET CURSOR ON
 
-   @ m_x + nX, m_y + 2 SAY "1. Opci podaci ***"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "1. Opci podaci ***"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Puni naziv firme:", nLeft ) GET gFNaziv PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Puni naziv firme:", nLeft ) GET gFNaziv PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Adresa firme:", nLeft ) GET gFAdresa PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Adresa firme:", nLeft ) GET gFAdresa PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Id broj:", nLeft ) GET gFIdBroj
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Id broj:", nLeft ) GET gFIdBroj
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "2. Dodatni podaci ***"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "2. Dodatni podaci ***"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Telefoni:", nLeft ) GET gFTelefon PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Telefoni:", nLeft ) GET gFTelefon PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "email/web:", nLeft ) GET gFEmail PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "email/web:", nLeft ) GET gFEmail PICT "@S30"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Banka 1:", nLeft ) GET gFBanka1 PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 1:", nLeft ) GET gFBanka1 PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Banka 2:", nLeft ) GET gFBanka2 PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 2:", nLeft ) GET gFBanka2 PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Banka 3:", nLeft ) GET gFBanka3 PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 3:", nLeft ) GET gFBanka3 PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Banka 4:", nLeft ) GET gFBanka4 PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 4:", nLeft ) GET gFBanka4 PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Banka 5:", nLeft ) GET gFBanka5 PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Banka 5:", nLeft ) GET gFBanka5 PICT "@S30"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Dodatni red 1:", nLeft ) GET gFPrRed1 PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dodatni red 1:", nLeft ) GET gFPrRed1 PICT "@S30"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Dodatni red 2:", nLeft ) GET gFPrRed2 PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dodatni red 2:", nLeft ) GET gFPrRed2 PICT "@S30"
 
 
    READ
@@ -158,27 +158,27 @@ FUNCTION ed_ex_params()
 
    SET CURSOR ON
 
-   @ m_x + nX, m_y + 2 SAY PadL( "****** export GPS.opt Lisec parametri", nLeft )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "****** export GPS.opt Lisec parametri", nLeft )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Izlazni direktorij:", 20 ) GET gExpOutDir PICT "@S45"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Izlazni direktorij:", 20 ) GET gExpOutDir PICT "@S45"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Uvijek overwrite export fajla (D/N)?", 45 ) GET gExpAlwOvWrite PICT "@!" VALID gExpAlwOvWrite $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Uvijek overwrite export fajla (D/N)?", 45 ) GET gExpAlwOvWrite PICT "@!" VALID gExpAlwOvWrite $ "DN"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY8 PadL( "Dodaj (mm) na brušeno staklo:", 45 ) GET gBrusenoStakloDodaj PICT "9999.99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Dodaj (mm) na brušeno staklo:", 45 ) GET gBrusenoStakloDodaj PICT "9999.99"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "****** export naljepnice", nLeft )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "****** export naljepnice", nLeft )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Razdvajanje naljepnica na broj komada:", 45 ) GET nLab_broj_komada PICT "9999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Razdvajanje naljepnica na broj komada:", 45 ) GET nLab_broj_komada PICT "9999"
 
    READ
 
@@ -200,17 +200,17 @@ FUNCTION ed_doc_params()
 
    SET CURSOR ON
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Dodati redovi po listu:", 35 ) GET gDd_redovi PICT "99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dodati redovi po listu:", 35 ) GET gDd_redovi PICT "99"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Lijeva margina:", 35 ) GET gDl_margina PICT "99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Lijeva margina:", 35 ) GET gDl_margina PICT "99"
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Gornja margina:", 35 ) GET gDg_margina PICT "99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Gornja margina:", 35 ) GET gDg_margina PICT "99"
 
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Varijanta stampe ODT (D/N):", 35 ) GET gRnalOdt PICT "@!" VALID gRnalOdt $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Varijanta stampe ODT (D/N):", 35 ) GET gRnalOdt PICT "@!" VALID gRnalOdt $ "DN"
 
    READ
 
@@ -235,43 +235,43 @@ FUNCTION ed_elat_params()
 
    SET CURSOR ON
 
-   @ m_x + nX, m_y + 2 SAY "***** Parametri atributa i elemenata"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "***** Parametri atributa i elemenata"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "oznaka (staklo)         :" GET gGlassJoker VALID !Empty( gGlassJoker )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "oznaka (staklo)         :" GET gGlassJoker VALID !Empty( gGlassJoker )
 
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "oznaka (distancer)      :" GET gFrameJoker VALID !Empty( gFrameJoker )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "oznaka (distancer)      :" GET gFrameJoker VALID !Empty( gFrameJoker )
 
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "oznaka (debljina stakla):" GET gDefGlTick VALID !Empty( gDefGlTick )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "oznaka (debljina stakla):" GET gDefGlTick VALID !Empty( gDefGlTick )
 
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "oznaka (tip stakla)     :" GET gDefGlType VALID !Empty( gDefGlType )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "oznaka (tip stakla)     :" GET gDefGlType VALID !Empty( gDefGlType )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "***** Specificni parametri operacija"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "***** Specificni parametri operacija"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "oznaka (brusenje)     :" GET gAopBrusenje VALID !Empty( gAopBrusenje )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "oznaka (brusenje)     :" GET gAopBrusenje VALID !Empty( gAopBrusenje )
 
    nX ++
 
-   @ m_x + nX, m_y + 2 SAY "oznaka (kaljenje)     :" GET gAopKaljenje VALID !Empty( gAopKaljenje )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "oznaka (kaljenje)     :" GET gAopKaljenje VALID !Empty( gAopKaljenje )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "***** Specificni parametri za pojedinu vrstu stakla"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "***** Specificni parametri za pojedinu vrstu stakla"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "oznaka stakla / LAMI:" GET gGlLamiJoker VALID !Empty( gGlLamiJoker )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "oznaka stakla / LAMI:" GET gGlLamiJoker VALID !Empty( gGlLamiJoker )
 
    READ
 
@@ -298,56 +298,56 @@ FUNCTION ed_ost_params()
 
    SET CURSOR ON
 
-   @ m_x + nX, m_y + 2 SAY "1. Pretraga artikla *******"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "1. Pretraga artikla *******"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Resetuj vrijednosti u tabeli pretrage (0/1)", nLeft ) GET gFnd_reset PICT "9"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Resetuj vrijednosti u tabeli pretrage (0/1)", nLeft ) GET gFnd_reset PICT "9"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Timeout kod azuriranja dokumenata", nLeft ) GET gInsTimeOut PICT "99999"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Timeout kod azuriranja dokumenata", nLeft ) GET gInsTimeOut PICT "99999"
 
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "2. Limiti unosa *******"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "2. Limiti unosa *******"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "maksimalna sirina (mm)", nLeft - 10 ) GET gMaxWidth PICT "99999.99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "maksimalna sirina (mm)", nLeft - 10 ) GET gMaxWidth PICT "99999.99"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "maksimalna visina (mm)", nLeft - 10 ) GET gMaxHeigh PICT "99999.99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "maksimalna visina (mm)", nLeft - 10 ) GET gMaxHeigh PICT "99999.99"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "3. Default vrijednosti ********"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "3. Default vrijednosti ********"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Nadmorska visina (nv.m)", nLeft - 10 ) GET gDefNVM PICT "99999.99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Nadmorska visina (nv.m)", nLeft - 10 ) GET gDefNVM PICT "99999.99"
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "3mm zaokruzenja ?", nLeft - 20 ) GET g3mmZaokUse ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "3mm zaokruzenja ?", nLeft - 20 ) GET g3mmZaokUse ;
       PICT "@!" VALID g3mmZaokUse $ "DN"
 
-   @ m_x + nX, Col() + 1 SAY "PROFILIT zaokruzenja ?" GET gProfZaokUse ;
+   @ box_x_koord() + nX, Col() + 1 SAY "PROFILIT zaokruzenja ?" GET gProfZaokUse ;
       PICT "@!" VALID gProfZaokUse $ "DN"
 
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Koristiti GN zaokruzenja ?", nLeft - 20 ) GET gGnUse ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Koristiti GN zaokruzenja ?", nLeft - 20 ) GET gGnUse ;
       PICT "@!" VALID gGnUse $ "DN"
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "GN zaok. (min)", nLeft - 20 ) GET gGnMin ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "GN zaok. (min)", nLeft - 20 ) GET gGnMin ;
       PICT "99999"
-   @ m_x + nX, Col() + 1 SAY "(max)" GET gGnMax PICT "99999"
-   @ m_x + nX, Col() + 1 SAY "korak" GET gGnStep PICT "9999"
+   @ box_x_koord() + nX, Col() + 1 SAY "(max)" GET gGnMax PICT "99999"
+   @ box_x_koord() + nX, Col() + 1 SAY "korak" GET gGnStep PICT "9999"
 
    READ
 

@@ -70,32 +70,32 @@ FUNCTION ld_olp_gip_obrazac()
 
    Box( "#OBRAČUNSKI LISTOVI RADNIKA OLP, GIP", 17, 75 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radne jedinice: " GET cRadneJedinice PICT "@!S25"
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Period od:" GET nMjesecOd PICT "99"
-   @ get_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radne jedinice: " GET cRadneJedinice PICT "@!S25"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Period od:" GET nMjesecOd PICT "99"
+   @ box_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
 
-   @ get_x_koord() + 2, Col() + 1 SAY "do:" GET nMjesecDo PICT "99"
-   @ get_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
+   @ box_x_koord() + 2, Col() + 1 SAY "do:" GET nMjesecDo PICT "99"
+   @ box_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
 
    IF ld_vise_obracuna()
-      @ get_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
 
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cIdRadnik  VALID Empty( cIdRadnik ) .OR. P_RADN( @cIdRadnik )
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "    Isplate u usl. ili dobrima:"  GET cPrimDobra PICT "@S30"
-   @ get_x_koord() + 6, get_y_koord() + 2 SAY "Tipovi koji ne ulaze u obrazac:"  GET cTP_off PICT "@S30"
-   @ get_x_koord() + 7, get_y_koord() + 2 SAY "   Doprinos iz pio: " GET cDopr10
-   @ get_x_koord() + 8, get_y_koord() + 2 SAY "   Doprinos iz zdr: " GET cDopr11
-   @ get_x_koord() + 9, get_y_koord() + 2 SAY "   Doprinos iz nez: " GET cDopr12
-   @ get_x_koord() + 10, get_y_koord() + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cIdRadnik  VALID Empty( cIdRadnik ) .OR. P_RADN( @cIdRadnik )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "    Isplate u usl. ili dobrima:"  GET cPrimDobra PICT "@S30"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Tipovi koji ne ulaze u obrazac:"  GET cTP_off PICT "@S30"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "   Doprinos iz pio: " GET cDopr10
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "   Doprinos iz zdr: " GET cDopr11
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "   Doprinos iz nez: " GET cDopr12
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
 
-   @ get_x_koord() + 12, get_y_koord() + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
-   @ get_x_koord() + 12, Col() + 1 SAY "JID: " GET cPredJMB
-   @ get_x_koord() + 13, get_y_koord() + 2 SAY "Adresa: " GET cPredAdr PICT "@S30"
+   @ box_x_koord() + 12, box_y_koord() + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
+   @ box_x_koord() + 12, Col() + 1 SAY "JID: " GET cPredJMB
+   @ box_x_koord() + 13, box_y_koord() + 2 SAY "Adresa: " GET cPredAdr PICT "@S30"
 
-   @ get_x_koord() + 15, get_y_koord() + 2 SAY "(1) OLP-1021 / (2) GIP-1022 / (3,4) AOP:" GET cVarijantaIzvjestaja VALID cVarijantaIzvjestaja $ "1234"
-   @ get_x_koord() + 15, Col() + 2 SAY "def.rj" GET cIdRjTekuca
-   @ get_x_koord() + 15, Col() + 2 SAY "st./exp.(S/E)?" GET cWinPrint  VALID cWinPrint $ "SE" PICT "@!"
+   @ box_x_koord() + 15, box_y_koord() + 2 SAY "(1) OLP-1021 / (2) GIP-1022 / (3,4) AOP:" GET cVarijantaIzvjestaja VALID cVarijantaIzvjestaja $ "1234"
+   @ box_x_koord() + 15, Col() + 2 SAY "def.rj" GET cIdRjTekuca
+   @ box_x_koord() + 15, Col() + 2 SAY "st./exp.(S/E)?" GET cWinPrint  VALID cWinPrint $ "SE" PICT "@!"
 
    READ
 
@@ -108,11 +108,11 @@ FUNCTION ld_olp_gip_obrazac()
    IF cWinPrint == "E"
 
       nPorGodina := nGodinaDo
-      @ get_x_koord() + 16, get_y_koord() + 2 SAY "P.godina" GET nPorGodina PICT "9999"
-      @ get_x_koord() + 16, Col() + 2 SAY "Dat.podnos." GET dDatPodnosenja
-      @ get_x_koord() + 16, Col() + 2 SAY "Dat.unosa" GET dDatUnosa
+      @ box_x_koord() + 16, box_y_koord() + 2 SAY "P.godina" GET nPorGodina PICT "9999"
+      @ box_x_koord() + 16, Col() + 2 SAY "Dat.podnos." GET dDatPodnosenja
+      @ box_x_koord() + 16, Col() + 2 SAY "Dat.unosa" GET dDatUnosa
 
-      @ get_x_koord() + 17, get_y_koord() + 2 SAY "operacija: 1 (novi) 2 (izmjena) 3 (brisanje)" GET nOper PICT "9"
+      @ box_x_koord() + 17, box_y_koord() + 2 SAY "operacija: 1 (novi) 2 (izmjena) 3 (brisanje)" GET nOper PICT "9"
 
       READ
    ENDIF
@@ -534,11 +534,11 @@ STATIC FUNCTION _xml_export( cTip, mjesec, godina )
    _mjesto   := fetch_metric( "org_mjesto", NIL, PadR( "<POPUNI mjesto>", 100 ) )
 
    Box(, 6, 70 )
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY " - Firma/Organizacija - "
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY " Id broj: " GET _id_br
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
-   @ get_x_koord() + 6, get_y_koord() + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY " - Firma/Organizacija - "
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY " Id broj: " GET _id_br
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
    READ
 
    BoxC()

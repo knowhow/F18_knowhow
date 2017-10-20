@@ -11,32 +11,32 @@
 
 #include "f18.ch"
 
-
+STATIC s_cKalkKontoMagacin := NIL
 
 FUNCTION pos_parametri()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. podaci kase                    " )
-   AAdd( _opcexe, {|| pos_param_podaci_kase() } )
-   AAdd( _opc, "2. principi rada" )
-   AAdd( _opcexe, {|| parprbase() } )
-   AAdd( _opc, "3. izgled racuna" )
-   AAdd( _opcexe, {|| pos_param_izgled_racuna() } )
-   AAdd( _opc, "4. cijene" )
-   AAdd( _opcexe, {|| pos_param_cijene() } )
-   AAdd( _opc, "5. podaci firme" )
-   AAdd( _opcexe, {|| pos_param_firma() } )
-   AAdd( _opc, "6. fiskalni parametri" )
-   AAdd( _opcexe, {|| fiskalni_parametri_za_korisnika() } )
-   AAdd( _opc, "7. podešenja organizacije" )
-   AAdd( _opcexe, {|| parametri_organizacije() } )
-   AAdd( _opc, "8. podešenja barkod-a" )
-   AAdd( _opcexe, {|| label_params() } )
+   AAdd( aOpc, "1. podaci kase                    " )
+   AAdd( aOpcExe, {|| pos_param_podaci_kase() } )
+   AAdd( aOpc, "2. principi rada" )
+   AAdd( aOpcExe, {|| parprbase() } )
+   AAdd( aOpc, "3. izgled racuna" )
+   AAdd( aOpcExe, {|| pos_param_izgled_racuna() } )
+   AAdd( aOpc, "4. cijene" )
+   AAdd( aOpcExe, {|| pos_param_cijene() } )
+   AAdd( aOpc, "5. podaci firme" )
+   AAdd( aOpcExe, {|| pos_param_firma() } )
+   AAdd( aOpc, "6. fiskalni parametri" )
+   AAdd( aOpcExe, {|| fiskalni_parametri_za_korisnika() } )
+   AAdd( aOpc, "7. podešenja organizacije" )
+   AAdd( aOpcExe, {|| parametri_organizacije() } )
+   AAdd( aOpc, "8. podešenja barkod-a" )
+   AAdd( aOpcExe, {|| label_params() } )
 
-   f18_menu( "par", .F., _izbor, _opc, _opcexe )
+   f18_menu( "par", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .F.
 
@@ -156,7 +156,9 @@ FUNCTION ParPrBase()
    LOCAL cPom := ""
 
    PRIVATE _konstantni_unos := fetch_metric( "pos_konstantni_unos_racuna", my_user(), "N" )
-   PRIVATE _kalk_konto := fetch_metric( "pos_stanje_sa_kalk_konta", NIL, Space( 7 ) )
+   //PRIVATE _kalk_konto := fetch_metric( "pos_stanje_sa_kalk_konta", NIL, Space( 7 ) )
+   PRIVATE cKalkKontoMagacin := pos_kalk_konto_magacin()
+
    PRIVATE _max_qtty := fetch_metric( "pos_maksimalna_kolicina_na_unosu", NIL, 0 )
    PRIVATE cIdPosOld := gIdPos
 
@@ -181,7 +183,7 @@ FUNCTION ParPrBase()
    AAdd ( aNiz, { "Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? ", "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", } )
    AAdd ( aNiz, { "Maksimalna kolicina pri unosu racuna (0 - bez provjere) ", "_max_qtty", "_max_qtty >= 0", "999999", } )
    AAdd ( aNiz, { "Unos racuna bez izlaska iz pripreme (D/N) ", "_konstantni_unos", "_konstantni_unos$'DN'", "@!", } )
-   AAdd ( aNiz, { "Za stanje artikla gledaj KALK konto", "_kalk_konto",, "@S7", } )
+   AAdd ( aNiz, { "Za stanje artikla gledati KALK magacinski konto", "cKalkKontoMagacin",, "@S7", } )
 
    VarEdit( aNiz, 2, 2, f18_max_rows() - 10, f18_max_cols() - 5, "PARAMETRI RADA PROGRAMA - PRINCIPI RADA", "B1" )
 
@@ -208,8 +210,9 @@ FUNCTION ParPrBase()
       set_metric( "EvidentiranjeVrstaPlacanja", nil, gEvidPl )
       set_metric( "PretragaArtiklaPoNazivu", nil, gSifUvPoNaz )
 
-      set_metric( "pos_stanje_sa_kalk_konta", my_user(), _kalk_konto )
-      kalk_konto_za_stanje_pos( .T. )
+      //set_metric( "pos_stanje_sa_kalk_konta", my_user(), _kalk_konto )
+      //kalk_konto_za_stanje_pos( .T. )
+      pos_kalk_konto_magacin( cKalkKontoMagacin )
 
       set_metric( "pos_maksimalna_kolicina_na_unosu", my_user(), _max_qtty )
       max_kolicina_kod_unosa( .T. )
@@ -220,9 +223,30 @@ FUNCTION ParPrBase()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
+
+   // FUNCTION kalk_konto_za_stanje_pos( read_par )
+
+   // IF read_par != NIL
+   // __kalk_konto :=
+   // ENDIF
+
+   // RETURN __kalk_konto
+
+   FUNCTION pos_kalk_konto_magacin( cSet )
+
+      IF s_cKalkKontoMagacin == NIL
+         s_cKalkKontoMagacin := fetch_metric( "pos_stanje_sa_kalk_konta", my_user(), Space( 7 ) )
+      ENDIF
+
+      IF cSet != NIL
+         s_cKalkKontoMagacin := cSet
+         set_metric( "pos_stanje_sa_kalk_konta", my_user(), cSet )
+      ENDIF
+
+      RETURN s_cKalkKontoMagacin
 
 
 FUNCTION pos_param_izgled_racuna()
@@ -270,7 +294,7 @@ FUNCTION pos_param_izgled_racuna()
    gOtvorStr := Odsj( gOtvorStr )
    gZagIz := Trim( gZagIz )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION pos_param_cijene()
@@ -282,7 +306,7 @@ FUNCTION pos_param_cijene()
 
    AAdd ( aNiz, { "Generalni popust % (99-gledaj sifranik)", "gPopust", , "99", } )
    AAdd ( aNiz, { "Zakruziti cijenu na (broj decimala)    ", "gPopDec", ,  "9", } )
-   AAdd ( aNiz, { "Varijanta Planika/Apoteka decimala)    ", "gPopVar", "gPopVar$' PA'", , } )
+  // AAdd ( aNiz, { "Varijanta Planika/Apoteka decimala)    ", "gPopVar", "gPopVar$' PA'", , } )
    AAdd ( aNiz, { "Popust zadavanjem nove cijene          ", "gPopZCj", "gPopZCj$'DN'", , } )
    AAdd ( aNiz, { "Popust zadavanjem procenta             ", "gPopProc", "gPopProc$'DN'", , } )
    AAdd ( aNiz, { "Popust preko odredjenog iznosa (iznos):", "gPopIzn",, "999999.99", } )
@@ -296,7 +320,7 @@ FUNCTION pos_param_cijene()
       set_metric( "Popust", nil, gPopust )
       set_metric( "PopustZadavanjemCijene", nil, gPopZCj )
       set_metric( "PopustDecimale", nil, gPopDec )
-      set_metric( "PopustVarijanta", nil, gPopVar )
+    //  set_metric( "PopustVarijanta", nil, gPopVar )
       set_metric( "PopustProcenat", nil, gPopProc )
       set_metric( "PopustIznos", nil, gPopIzn )
       set_metric( "PopustVrijednostProcenta", nil, gPopIznP )

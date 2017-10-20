@@ -18,7 +18,7 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
    LOCAL cOldS
    LOCAL cNewS
    LOCAL nKolic
-   LOCAL _rec
+   LOCAL hRec
    LOCAL hParams
 
    cOldS := Space( 10 )
@@ -26,9 +26,9 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
    nKolic := 0
 
    Box(, 6, 70 )
-   @ m_x + 1, m_y + 2 SAY "'Stara' sirovina :" GET cOldS PICT "@!" VALID P_Roba( @cOldS )
-   @ m_x + 2, m_y + 2 SAY "'Nova'  sirovina :" GET cNewS PICT "@!" VALID cNewS <> cOldS .AND. P_Roba( @cNewS )
-   @ m_x + 4, m_y + 2 SAY "Kolicina u normama (0 - zamjeni bez obzira na kolicinu)" GET nKolic PICT "999999.99999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "'Stara' sirovina :" GET cOldS PICT "@!" VALID P_Roba_select( @cOldS )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "'Nova'  sirovina :" GET cNewS PICT "@!" VALID cNewS <> cOldS .AND. P_Roba( @cNewS )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Kolicina u normama (0 - zamjeni bez obzira na kolicinu)" GET nKolic PICT "999999.99999"
    READ
    BoxC()
 
@@ -41,16 +41,15 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
          RETURN .F.
       ENDIF
 
-      SELECT sast
-      SET ORDER TO
+      select_o_sastavnice()
       GO TOP
 
       DO WHILE !Eof()
          IF id2 == cOldS
             IF ( nKolic = 0 .OR. Round( nKolic - kolicina, 5 ) = 0 )
-               _rec := dbf_get_rec()
-               _rec[ "id2" ] := cNewS
-               lOk := update_rec_server_and_dbf( "sast", _rec, 1, "CONT" )
+               hRec := dbf_get_rec()
+               hRec[ "id2" ] := cNewS
+               lOk := update_rec_server_and_dbf( "sast", hRec, 1, "CONT" )
             ENDIF
          ENDIF
          IF !lOk
@@ -67,7 +66,7 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
          run_sql_query( "ROLLBACK" )
       ENDIF
 
-      SET ORDER TO TAG "idrbr"
+      //SET ORDER TO TAG "idrbr"
 
    ENDIF
 
@@ -81,7 +80,7 @@ FUNCTION pr_uces_sast() // promjena ucesca
    LOCAL cNewS
    LOCAL nKolic
    LOCAL nKolic2
-   LOCAL _rec
+   LOCAL hRec
    LOCAL hParams
 
    cOldS := Space( 10 )
@@ -90,9 +89,9 @@ FUNCTION pr_uces_sast() // promjena ucesca
    nKolic2 := 0
 
    Box(, 6, 65 )
-   @ m_x + 1, m_y + 2 SAY "Sirovina :" GET cOldS PICT "@!" VALID P_Roba( @cOldS )
-   @ m_x + 4, m_y + 2 SAY "postojeca kolicina u normama " GET nKolic PICT "999999.99999"
-   @ m_x + 5, m_y + 2 SAY "nova kolicina u normama      " GET nKolic2 PICT "999999.99999"   VALID nKolic <> nKolic2
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sirovina :" GET cOldS PICT "@!" VALID P_Roba_select( @cOldS )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "postojeca kolicina u normama " GET nKolic PICT "999999.99999"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "nova kolicina u normama      " GET nKolic2 PICT "999999.99999"   VALID nKolic <> nKolic2
    READ
    BoxC()
 
@@ -113,9 +112,9 @@ FUNCTION pr_uces_sast() // promjena ucesca
 
          IF PadR( field->id2, 10 ) == PadR( cOldS, 10 )
             IF Round( nKolic - field->kolicina, 5 ) = 0
-               _rec := dbf_get_rec()
-               _rec[ "kolicina" ] := nKolic2
-               lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+               hRec := dbf_get_rec()
+               hRec[ "kolicina" ] := nKolic2
+               lOk := update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
             ENDIF
          ENDIF
 
@@ -135,7 +134,7 @@ FUNCTION pr_uces_sast() // promjena ucesca
          run_sql_query( "ROLLBACK" )
       ENDIF
 
-      SET ORDER TO TAG "idrbr"
+      //SET ORDER TO TAG "idrbr"
    ENDIF
 
    RETURN .T.

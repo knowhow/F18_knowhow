@@ -35,14 +35,14 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
       cBrNal := Space( 8 )
 
       Box( "", 1, 35 )
-      @ m_x + 1, m_y + 2 SAY "Nalog:"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Nalog:"
       IF gNW == "D"
-         @ m_x + 1, Col() + 1 SAY cIdFirma
+         @ box_x_koord() + 1, Col() + 1 SAY cIdFirma
       ELSE
-         @ m_x + 1, Col() + 1 GET cIdFirma
+         @ box_x_koord() + 1, Col() + 1 GET cIdFirma
       ENDIF
-      @ m_x + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
-      @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID fin_fix_broj_naloga( @cBrNal )
+      @ box_x_koord() + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
+      @ box_x_koord() + 1, Col() + 1 SAY "-" GET cBrNal VALID fin_fix_broj_naloga( @cBrNal )
       READ
       ESC_BCR
       BoxC()
@@ -218,8 +218,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
       ?? dDatNal
    ENDIF
 
-   SELECT TNAL
-   HSEEK cIdVN
+   select_o_tnal( cIdVN )
    SELECT PANAL
 
    @ PRow(), PCol() + 4 SAY tnal->naz
@@ -260,7 +259,7 @@ STATIC FUNCTION close_open_panal()
 
    // o_konto()
    // o_partner()
-   o_tnal()
+   //o_tnal()
    o_nalog()
 
    RETURN .T.

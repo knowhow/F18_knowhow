@@ -13,7 +13,7 @@
 
 
 
-// -------------------------------
+/*
 // kreiranje tabela ugovora
 // -------------------------------
 FUNCTION db_cre_ugov( ver )
@@ -240,58 +240,23 @@ STATIC FUNCTION a_gug_p()
 
    RETURN aDbf
 
-
+*/
 
 FUNCTION o_ugov_tabele()
 
-   o_fakt_txt()
-   //o_sifk()
-   //o_sifv()
-   o_fakt()
-   o_fakt_doks()
-   //o_roba()
-   //o_tarifa()
-   //o_partner()
-   o_dest()
-   o_ugov()
-   o_rugov()
-   O_GEN_UG
-   O_G_UG_P
-   //o_konto()
-
-   RETURN .T.
-
-
-// --------------------------------------
-// dodaj stavku u gen_ug_p
-// --------------------------------------
-FUNCTION a_to_gen_p( dDatObr, cIdUgov, cUPartner,  ;
-      nSaldoKup, nSaldoDob, dPUplKup, ;
-      dPPromKup, dPPromDob, nFaktIzn, nFaktPdv )
-
-   LOCAL _rec
-
-   SELECT gen_ug_p
-   SET ORDER TO TAG "dat_obr"
-   SEEK DToS( dDatObr ) + cIdUgov + cUPartner
-
-   IF !Found()
-      APPEND BLANK
-   ENDIF
-
-   _rec := dbf_get_rec()
-
-   _rec[ "dat_obr" ] := dDatObr
-   _rec[ "id_ugov" ] := cIdUgov
-   _rec[ "idpartner" ] := cUPartner
-   _rec[ "saldo_kup" ] := nSaldoKup
-   _rec[ "saldo_dob" ] := nSaldoDob
-   _rec[ "d_p_upl_ku" ] := dPUplKup
-   _rec[ "d_p_prom_k" ] := dPPromKup
-   _rec[ "d_p_prom_d" ] := dPPromDob
-   _rec[ "f_iznos" ] := nFaktIzn
-   _rec[ "f_iznos_pd" ] := nFaktPDV
-
-   update_rec_server_and_dbf( "fakt_gen_ug_p", _rec, 1, "FULL" )
+   // o_fakt_txt()
+   // o_sifk()
+   // o_sifv()
+   // o_fakt_dbf()
+   // o_fakt_doks_dbf()
+   // o_roba()
+   // o_tarifa()
+   // o_partner()
+   //o_dest()
+  // o_ugov()
+   //o_rugov()
+   // o_gen_ug()
+   // o_gen_ug_p()
+   // o_konto()
 
    RETURN .T.

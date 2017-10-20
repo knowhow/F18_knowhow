@@ -31,46 +31,46 @@ FUNCTION kalk_get_1_94()
 
    IF nRbr == 1 .OR. !kalk_is_novi_dokument() .OR. gMagacin == "1"
       IF _idvd $ "94#97"
-         @  m_x + 6, m_y + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 6, 18 )
+         @  box_x_koord() + 6, box_y_koord() + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 6, 18 )
       ENDIF
-      @  m_x + 7, m_y + 2   SAY "Faktura/Otpremnica Broj:" GET _BrFaktP
-      @  m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   valid {|| .T. }
+      @  box_x_koord() + 7, box_y_koord() + 2   SAY "Faktura/Otpremnica Broj:" GET _BrFaktP
+      @  box_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   valid {|| .T. }
 
-      @ m_x + 9, m_y + 2 SAY "Magacinski konto zaduzuje"  GET _IdKonto VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Magacinski konto zadužuje"  GET _IdKonto VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
       // IF gNW <> "X"
-      // @ m_x + 9, m_y + 40 SAY "Zaduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
+      // @ box_x_koord() + 9, box_y_koord() + 40 SAY "Zaduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
       // ELSE
       IF !Empty( cRNT1 )
-         @ m_x + 9, m_y + 40 SAY "Rad.nalog:"   GET _IdZaduz2  PICT "@!"
+         @ box_x_koord() + 9, box_y_koord() + 40 SAY "Rad.nalog:"   GET _IdZaduz2  PICT "@!"
       ENDIF
       // ENDIF
 
       IF _idvd == "16"
-         @ m_x + 10, m_y + 2   SAY "Prenos na konto          " GET _IdKonto2   VALID Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) PICT "@!"
+         @ box_x_koord() + 10, box_y_koord() + 2   SAY "Prenos na konto          " GET _IdKonto2   VALID Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) PICT "@!"
          // IF gNW <> "X"
-         // @ m_x + 10, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz2  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz2, 21, 5 )
+         // @ box_x_koord() + 10, box_y_koord() + 35  SAY "Zaduzuje: "   GET _IdZaduz2  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz2, 21, 5 )
          // ENDIF
       ENDIF
 
    ELSE
-      @  m_x + 6, m_y + 2   SAY "KUPAC: "; ?? _IdPartner
-      @  m_x + 7, m_y + 2   SAY "Faktura Broj: "; ?? _BrFaktP
-      @  m_x + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
-      @ m_x + 9, m_y + 2 SAY "Magacinski konto zaduzuje "; ?? _IdKonto
+      @  box_x_koord() + 6, box_y_koord() + 2   SAY "KUPAC: "; ?? _IdPartner
+      @  box_x_koord() + 7, box_y_koord() + 2   SAY "Faktura Broj: "; ?? _BrFaktP
+      @  box_x_koord() + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Magacinski konto zadužuje "; ?? _IdKonto
       // IF gNW <> "X"
-      // @ m_x + 9, m_y + 40 SAY "Zaduzuje: "; ?? _IdZaduz
+      // @ box_x_koord() + 9, box_y_koord() + 40 SAY "Zaduzuje: "; ?? _IdZaduz
       // ENDIF
 
    ENDIF
 
-   @ m_x + 10, m_y + 66 SAY "Tarif.br "
+   @ box_x_koord() + 10, box_y_koord() + 66 SAY "Tarif.br "
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi, _idPartner )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi, _idPartner )
 
 
-   @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ box_x_koord() + 12, box_y_koord() + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
    read; ESC_RETURN K_ESC
    IF roba_barkod_pri_unosu()
       _idRoba := Left( _idRoba, 10 )
@@ -104,7 +104,7 @@ FUNCTION kalk_get_1_94()
 
    SELECT kalk_pripr
 
-   @ m_x + 13, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  WHEN V_kol10()
+   @ box_x_koord() + 13, box_y_koord() + 2    SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  WHEN V_kol10()
 
    PRIVATE _vpcsappp := 0
 

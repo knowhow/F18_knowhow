@@ -13,18 +13,26 @@
 #include "f18.ch"
 
 
-FUNCTION browse_tnal( cId, dx, dy )
+FUNCTION p_fin_vrsta_naloga( cId, dx, dy )
 
-   LOCAL nTArea
+   LOCAL xRet
+
    PRIVATE ImeKol
    PRIVATE Kol
+
 
    ImeKol := {}
    Kol := {}
 
-   nTArea := Select()
+   PushWa()
 
-   o_tnal()
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_tnal( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_tnal()
+   ENDIF
+
+   //o_tnal()
 
    AAdd( ImeKol, { "ID", {|| field->id }, "id", {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| PadR( field->naz , 30 ) }, "naz" } )
@@ -33,12 +41,16 @@ FUNCTION browse_tnal( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   SELECT ( nTArea )
 
-   RETURN p_sifra( F_TNAL, 1, Max( f18_max_rows() - 20, 10 ), Max( f18_max_cols() - 30, 50 ), "OsnPod: Vrste naloga", @cId, dx, dy )
+   xRet := p_sifra( F_TNAL, 1, Max( f18_max_rows() - 20, 10 ), Max( f18_max_cols() - 30, 50 ), "OsnPod: Vrste naloga", @cId, dx, dy )
+
+   PopWa()
+
+   
+   RETURN xRet
 
 
 
 FUNCTION P_VN( cId, dx, dy )
 
-   RETURN browse_tnal( @cId, dx, dy )
+   RETURN p_fin_vrsta_naloga( @cId, dx, dy )

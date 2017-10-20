@@ -21,11 +21,11 @@ FUNCTION kalk_pregled_smece_pripr9()
    PRIVATE dDat2 := Date()
 
    Box(, 10, 60 )
-   @ 1 + m_x, 2 + m_y SAY "Uslovi pregleda smeca:" COLOR f18_color_i()
-   @ 3 + m_x, 2 + m_y SAY "Firma (prazno-sve)" GET aUslFirma PICT "@S40"
-   @ 4 + m_x, 2 + m_y SAY "Vrste dokumenta (prazno-sve)" GET aUslDok PICT "@S20"
-   @ 5 + m_x, 2 + m_y SAY "Datum od" GET dDat1
-   @ 5 + m_x, 20 + m_y SAY "do" GET dDat2
+   @ 1 + box_x_koord(), 2 + box_y_koord() SAY "Uslovi pregleda smeca:" COLOR f18_color_i()
+   @ 3 + box_x_koord(), 2 + box_y_koord() SAY "Firma (prazno-sve)" GET aUslFirma PICT "@S40"
+   @ 4 + box_x_koord(), 2 + box_y_koord() SAY "Vrste dokumenta (prazno-sve)" GET aUslDok PICT "@S20"
+   @ 5 + box_x_koord(), 2 + box_y_koord() SAY "Datum od" GET dDat1
+   @ 5 + box_x_koord(), 20 + box_y_koord() SAY "do" GET dDat2
    READ
    BoxC()
 
@@ -56,18 +56,18 @@ FUNCTION kalk_pregled_smece_pripr9()
    NEXT
 
    Box(, 20, 77 )
-   @ m_x + 17, m_y + 2 SAY "<c-T>  Brisi stavku                              "
-   @ m_x + 18, m_y + 2 SAY "<c-F9> Brisi sve     "
-   @ m_x + 19, m_y + 2 SAY "<P> Povrat dokumenta u pripremu "
-   @ m_x + 20, m_y + 2 SAY "               "
+   @ box_x_koord() + 17, box_y_koord() + 2 SAY "<c-T>  Brisi stavku                              "
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY "<c-F9> Brisi sve     "
+   @ box_x_koord() + 19, box_y_koord() + 2 SAY "<P> Povrat dokumenta u pripremu "
+   @ box_x_koord() + 20, box_y_koord() + 2 SAY "               "
 
    IF gCijene == "1" .AND. kalk_metoda_nc() == " "
-      Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 23, 14 )
+      Soboslikar( { { box_x_koord() + 17, box_y_koord() + 1, box_x_koord() + 20, box_y_koord() + 77 } }, 23, 14 )
    ENDIF
 
    //PRIVATE lKalkAsistentAuto := .F.
 
-   my_db_edit_sql( "KALK_PRIPR9", 20, 77, {|| ka_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
+   my_browse( "KALK_PRIPR9", 20, 77, {|| ka_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
    BoxC()
 
    RETURN .T.

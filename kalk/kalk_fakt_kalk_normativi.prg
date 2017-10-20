@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION menu_fakt_kalk_prenos_normativi()
 
    LOCAL _opc := {}
@@ -24,7 +23,7 @@ FUNCTION menu_fakt_kalk_prenos_normativi()
    AAdd( _opc, "2. fakt->kalk 96 po normativima po fakturama" )
    AAdd( _opcexe, {||          PrenosNoFakt()  } )
    AAdd( _opc, "3. fakt->kalk 10 got.proizv po normativima za period" )
-   AAdd( _opcexe, {||          PrenosNo2() } )
+   AAdd( _opcexe, {||          fakt_kalk_prenos_normativi() } )
 
    f18_menu( "fkno", .F., _izbor, _opc, _opcexe )
 
@@ -75,25 +74,25 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
 
       IF lTest == .F.
 
-         @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
-         @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
-         @ m_x + 3, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
+         @ box_x_koord() + 1, box_y_koord() + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
+         @ box_x_koord() + 1, Col() + 2 SAY "Datum:" GET dDatKalk
+         @ box_x_koord() + 3, box_y_koord() + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
 
          //IF gNW <> "X"
-          //  @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
+          //  @ box_x_koord() + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
          //ENDIF
-         @ m_x + 4, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
+         @ box_x_koord() + 4, box_y_koord() + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
-         cFaktFirma := cIdFirma
+         cIdRjFakt := cIdFirma
          dDatFOd := CToD( "" )
          dDatFDo := Date()
-         @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
-         @ m_x + 7, m_Y + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
-         @ m_x + 8, m_y + 2 SAY "period od" GET dDAtFOd
-         @ m_x + 8, Col() + 2 SAY "do" GET dDAtFDo
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "RJ u FAKT: " GET  cIdRjFakt
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
+         @ box_x_koord() + 8, box_y_koord() + 2 SAY "period od" GET dDAtFOd
+         @ box_x_koord() + 8, Col() + 2 SAY "do" GET dDAtFDo
 
-         @ m_x + 10, m_y + 2 SAY "Uslov za robu:" GET cRobaUsl PICT "@S40"
-         @ m_x + 11, m_y + 2 SAY "Navedeni uslov [U]kljuciti / [I]skljuciti" GET cRobaIncl VALID cRobaIncl $ "UI" PICT "@!"
+         @ box_x_koord() + 10, box_y_koord() + 2 SAY "Uslov za robu:" GET cRobaUsl PICT "@S40"
+         @ box_x_koord() + 11, box_y_koord() + 2 SAY "Navedeni uslov [U]kljuciti / [I]skljuciti" GET cRobaIncl VALID cRobaIncl $ "UI" PICT "@!"
 
          READ
 
@@ -106,22 +105,21 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
       IF lTest == .T.
          dDatFOd := dD_from
          dDatFDo := dD_to
-         cFaktFirma := "10"
+         cIdRjFakt := "10"
       ENDIF
 
-      SELECT fakt
-      SEEK cFaktFirma
+      seek_fakt( cIdRjFakt )
 
-      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok", lTest )
+      //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cIdRjFakt + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok", lTest )
 
-         MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-         LOOP
+      //   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+      //   LOOP
 
-      ENDIF
+      //ENDIF
 
       aNotIncl := {}
 
-      DO WHILE !Eof() .AND. cFaktFirma == IdFirma
+      DO WHILE !Eof() .AND. cIdRjFakt == IdFirma
 
          IF idtipdok $ cIdTipdok .AND. dDatFOd <= datdok .AND. dDatFDo >= datdok
             // pripada odabranom intervalu
@@ -187,10 +185,8 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
 
                // radi se o proizvodu
 
-               SELECT sast
-               HSEEK  fakt->idroba
-
-               DO WHILE !Eof() .AND. id == fakt->idroba // setaj kroz sast
+               select_o_sastavnice( fakt->idroba )
+               DO WHILE !Eof() .AND. id == fakt->idroba // prolaz kroz stavke sastavnice
 
                   IF !Empty( cSirovina )
                      IF cSirovina <> sast->id2
@@ -269,12 +265,12 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
             rpt_not_incl( aNotIncl )
          ENDIF
 
-         @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !"
+         @ box_x_koord() + 10, box_y_koord() + 2 SAY "Dokumenti su preneseni !"
 
          kalk_fix_brdok_add_1( @cBrKalk )
 
          Inkey( 4 )
-         @ m_x + 8, m_y + 2 SAY Space( 30 )
+         @ box_x_koord() + 8, box_y_koord() + 2 SAY Space( 30 )
 
       ELSE
          EXIT
@@ -333,11 +329,11 @@ STATIC FUNCTION o_tables()
 
    o_kalk_pripr()
    // o_kalk()
-   o_kalk_doks()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_fakt()
+   //o_kalk_doks()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
+   //o_fakt_dbf()
 
    RETURN .T.
 
@@ -347,36 +343,36 @@ STATIC FUNCTION o_tables()
 // -------------------------------------------
 STATIC FUNCTION o_tbl_roba( lTest, cSezSif )
 
-   LOCAL cSifPath
+   //LOCAL cSifPath
 
    IF lTest == .T.
       my_close_all_dbf()
 
-      cSifPath := PadR( SIFPATH, 14 )
+      //cSifPath := PadR( SIFPATH, 14 )
       // "c:\sigma\sif1\"
 
-      IF !Empty( cSezSif ) .AND. cSezSif <> "RADP"
-         cSifPath += cSezSif + SLASH
-      ENDIF
+      //IF !Empty( cSezSif ) .AND. cSezSif <> "RADP"
+      //   cSifPath += cSezSif + SLASH
+      //ENDIF
 
-      SELECT ( F_ROBA )
-      USE
-      SELECT ( F_ROBA )
-      USE ( cSifPath + "ROBA" ) ALIAS "ROBA"
-      SET ORDER TO TAG "ID"
+      //SELECT ( F_ROBA )
+      //USE
+      //SELECT ( F_ROBA )
+      //USE ( cSifPath + "ROBA" ) ALIAS "ROBA"
+      //SET ORDER TO TAG "ID"
 
-      SELECT ( F_SAST )
-      USE
-      SELECT ( F_SAST )
-      USE ( cSifPath + "SAST" ) ALIAS "SAST"
-      SET ORDER TO TAG "ID"
+      //SELECT ( F_SAST )
+      //USE
+      //SELECT ( F_SAST )
+      //USE ( cSifPath + "SAST" ) ALIAS "SAST"
+      //SET ORDER TO TAG "ID"
 
    ELSE
     //  o_roba()
-      o_sastavnica()
+      //o_sastavnice()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -410,22 +406,22 @@ FUNCTION PrenosNoFakt()
 
       nRBr := 0
 
-      @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
-      @ m_x + 3, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
+      @ box_x_koord() + 1, box_y_koord() + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
+      @ box_x_koord() + 1, Col() + 2 SAY "Datum:" GET dDatKalk
+      @ box_x_koord() + 3, box_y_koord() + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
 
       //IF gNW <> "X"
-      //   @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
+      //   @ box_x_koord() + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
       //ENDIF
 
-      @ m_x + 4, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
+      @ box_x_koord() + 4, box_y_koord() + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
-      cFaktFirma := cIdFirma
+      cIdRjFakt := cIdFirma
 
-      @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
-      @ m_x + 7, m_Y + 2 SAY "Dokument tipa u fakt:" GET cIdTipDok
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "RJ u FAKT: " GET  cIdRjFakt
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Dokument tipa u fakt:" GET cIdTipDok
 
-      @ m_x + 8, m_Y + 2 SAY "Broj dokumenta u fakt:" GET cFaBrDok
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Broj dokumenta u fakt:" GET cFaBrDok
 
 
       READ
@@ -434,24 +430,22 @@ FUNCTION PrenosNoFakt()
          EXIT
       ENDIF
 
-      SELECT fakt
-      SEEK cFaktFirma
+      seek_fakt( cIdRjFakt )
 
-      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok = '" + cIdTipdok + "' .and. brdok = '" + cFaBrDok + "'" )
+      //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cIdRjFakt + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok = '" + cIdTipdok + "' .and. brdok = '" + cFaBrDok + "'" )
 
-         MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-         LOOP
-      ENDIF
+      //   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+      //   LOOP
+      //ENDIF
 
-      DO WHILE !Eof() .AND. cFaktFirma == IdFirma
+      DO WHILE !Eof() .AND. cIdRjFakt == IdFirma
 
          IF idtipdok = cIdTipdok .AND. cFaBrDok = brdok
 
             select_o_roba( fakt->idroba )
             IF roba->tip = "P"
                // radi se o proizvodu
-               SELECT sast
-               HSEEK  fakt->idroba
+               select_o_sastavnice( fakt->idroba )
                DO WHILE !Eof() .AND. id == fakt->idroba
                   // setaj kroz sast
                 select_o_roba(sast->id2 )
@@ -493,7 +487,7 @@ FUNCTION PrenosNoFakt()
          SKIP
       ENDDO
 
-      @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !!"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Dokumenti su preneseni !!"
 
       kalk_fix_brdok_add_1( @cBrKalk )
 
@@ -501,35 +495,36 @@ FUNCTION PrenosNoFakt()
 
       Inkey( 4 )
 
-      @ m_x + 8, m_y + 2 SAY Space( 30 )
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY Space( 30 )
 
    ENDDO
 
    Boxc()
    closeret
 
-   RETURN
+   RETURN .T.
 
 
 
 // ----------------------------------------------------------------------
 // Prenos FAKT -> KALK 10 po normativima
 // ----------------------------------------------------------------------
-FUNCTION PrenosNo2()
+FUNCTION fakt_kalk_prenos_normativi()
 
    LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdTipDok := "10;11;12;      "
    LOCAL cBrDok := Space( 8 )
    LOCAL cBrKalk := Space( 8 )
+   LOCAL GetList := {}
 
    o_kalk_pripr()
    // o_kalk()
   // o_roba()
-   o_konto()
-   o_partner()
-   o_tarifa()
-   o_sastavnica()
-   o_fakt()
+   //o_konto()
+   //o_partner()
+   //o_tarifa()
+  // o_sastavnice()
+   //o_fakt_dbf()
 
    dDatKalk := Date()
    cIdKonto := PadR( "5100", 7 )
@@ -546,31 +541,30 @@ FUNCTION PrenosNo2()
 
       nRBr := 0
       nRbr2 := 900
-      @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 10 -" GET cBrKalk PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
-      @ m_x + 4, m_y + 2   SAY "Konto got. proizvoda zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
+      @ box_x_koord() + 1, box_y_koord() + 2   SAY "Broj kalkulacije 10 -" GET cBrKalk PICT "@!"
+      @ box_x_koord() + 1, Col() + 2 SAY "Datum:" GET dDatKalk
+      @ box_x_koord() + 4, box_y_koord() + 2   SAY "Konto got. proizvoda zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
-      cFaktFirma := cIdFirma
+      cIdRjFakt := cIdFirma
       dDatFOd := CToD( "" )
       dDatFDo := Date()
-      @ m_x + 6, m_y + 2 SAY "RJ u FAKT: " GET  cFaktFirma
-      @ m_x + 7, m_Y + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
-      @ m_x + 8, m_y + 2 SAY "period od" GET dDAtFOd
-      @ m_x + 8, Col() + 2 SAY "do" GET dDAtFDo
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "RJ u FAKT: " GET  cIdRjFakt
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Dokumenti tipa iz fakt:" GET cidtipdok
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "period od" GET dDAtFOd
+      @ box_x_koord() + 8, Col() + 2 SAY "do" GET dDAtFDo
       READ
 
       IF LastKey() == K_ESC
          EXIT
       ENDIF
 
-      SELECT fakt
-      SEEK cFaktFirma
-      IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok" )
-         MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
-         LOOP
-      ENDIF
+      seek_fakt( cIdRjFakt )
+      //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cIdRjFakt + "'==IdFirma", "IDROBA", F_ROBA, "idtipdok $ '" + cIdTipdok + "' .and. dDatFOd<=datdok .and. dDatFDo>=datdok" )
+      //   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+      //   LOOP
+      //ENDIF
 
-      DO WHILE !Eof() .AND. cFaktFirma == IdFirma
+      DO WHILE !Eof() .AND. cIdRjFakt == IdFirma
 
          IF idtipdok $ cIdTipdok .AND. dDatFOd <= datdok .AND. dDatFDo >= datdok // pripada odabranom intervalu
 
@@ -614,8 +608,7 @@ FUNCTION PrenosNo2()
       GO TOP
 
       DO WHILE !Eof()
-         SELECT sast
-         HSEEK  kalk_pripr->idroba
+         select_o_sastavnice( kalk_pripr->idroba )
          DO WHILE !Eof() .AND. id == kalk_pripr->idroba
             // setaj kroz sast
             // utvr|ivanje nabavnih cijena po sastavnici !!!!!
@@ -630,12 +623,10 @@ FUNCTION PrenosNo2()
             SKIP
          ENDDO
 
-         // nafiluj nabavne cijene proizvoda u sifrarnik robe!!!
-         select_o_roba( kalk_pripr->idroba )
 
-         IF Found()
+         IF select_o_roba( kalk_pripr->idroba )
             hRec := dbf_get_rec()
-            hRec[ "nc" ] := kalk_pripr->fcj
+            hRec[ "nc" ] := kalk_pripr->fcj // nafiluj nabavne cijene proizvoda u sifarnik robe
             update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
          ENDIF
 
@@ -644,12 +635,12 @@ FUNCTION PrenosNo2()
 
       ENDDO
 
-      @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Dokumenti su preneseni !"
 
       kalk_fix_brdok_add_1( @cBrKalk )
 
       Inkey( 4 )
-      @ m_x + 8, m_y + 2 SAY Space( 30 )
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY Space( 30 )
 
    ENDDO
 

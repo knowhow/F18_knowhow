@@ -19,8 +19,8 @@ FUNCTION os_rpt_default_valute()
 
    IF ( gDrugaVal == "D" .AND. cTip == ValDomaca() )
       Box(, 5, 70 )
-      @ m_x + 2, m_y + 2 SAY "Pomocna valuta      " GET cBBV PICT "@!" VALID ImaUSifVal( cBBV )
-      @ m_x + 3, m_y + 2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK := OmjerVal( cBBV, cTip ), .T. } PICT "999999999.999999999"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Pomocna valuta      " GET cBBV PICT "@!" VALID ImaUSifVal( cBBV )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK := OmjerVal( cBBV, cTip ), .T. } PICT "999999999.999999999"
       READ
       BoxC()
    ELSE
@@ -49,7 +49,7 @@ FUNCTION os_kartica_sredstva()
    // zadajmo jedno ili sva sredstva
    // ------------------------------
    Box( "#PREGLED KARTICE SREDSTVA", 4, 77 )
-   @ m_x + 2, m_y + 2 SAY "Inventurni broj (prazno-sva sredstva)" GET cid VALID Empty( cId ) .OR. p_os( @cId ) PICT cPicSif
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Inventurni broj (prazno-sva sredstva)" GET cid VALID Empty( cId ) .OR. p_os( @cId ) PICT cPicSif
    READ
    ESC_BCR
    BoxC()

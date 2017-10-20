@@ -109,7 +109,7 @@ FUNCTION P_OS( cId, dx, dy )
 
 FUNCTION os_validate_vrijednost( wNabVr, wOtpVr )
 
-   @ m_x + 11, m_y + 50 say ( wNabvr - wOtpvr )
+   @ box_x_koord() + 11, box_y_koord() + 50 say ( wNabvr - wOtpvr )
 
    RETURN .T.
 
@@ -226,7 +226,7 @@ FUNCTION P_REVAL( cId, dx, dy )
 
 STATIC FUNCTION validacija_postoji_sifra( wid )
 
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _ret
 
    SEEK wId
@@ -237,7 +237,7 @@ STATIC FUNCTION validacija_postoji_sifra( wid )
    ELSE
       _ret := .T.
    ENDIF
-   GO _t_rec
+   GO nTrec
 
    RETURN _ret
 

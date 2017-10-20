@@ -44,8 +44,9 @@ PROCEDURE set_global_vars_0()
    PUBLIC gSezona := "    "
    PUBLIC gShemaVF := "B5"
 
-   PUBLIC m_x
-   PUBLIC m_y
+   //PUBLIC m_x
+   //PUBLIC m_y
+
    PUBLIC h[ 20 ]
    PUBLIC lInstal := .F.
    PUBLIC aRel := {}
@@ -184,7 +185,7 @@ FUNCTION set_global_vars_1()
    PUBLIC g50f := " "
    // PUBLIC gFKolor := "D"
 
-   O_GPARAMS
+   o_gparams()
    PRIVATE cSection := "1", cHistory := " "; aHistory := {}
 
    Rpar( "pt", @gPTKonv )

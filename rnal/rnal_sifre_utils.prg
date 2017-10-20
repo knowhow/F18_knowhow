@@ -114,8 +114,7 @@ FUNCTION sif_idmc( nFieldId, lOnlyMc, nRpad )
 
 FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
 
-   LOCAL nTRec
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL cTBFilter := dbFilter()
    LOCAL _alias := AllTrim( Lower( Alias() ) )
    LOCAL _param := "rnal_" + _alias + "_no"
@@ -153,7 +152,7 @@ FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
 
       SET FILTER to &cTBFilter
       SET ORDER TO TAG "1"
-      GO ( _t_rec )
+      GO ( nTrec )
 
       AEval( GetList, {| o| o:display() } )
 
@@ -203,8 +202,7 @@ STATIC FUNCTION rnal_last_id( cFieldName )
 // --------------------------------------
 FUNCTION rnal_chk_id( wId, cFieldName, cIndexTag  )
 
-   LOCAL nTRec
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL cTBFilter := dbFilter()
    LOCAL lSeek := .T.
    LOCAL nIndexOrd := IndexOrd()
@@ -228,7 +226,7 @@ FUNCTION rnal_chk_id( wId, cFieldName, cIndexTag  )
 
    SET FILTER to &cTBFilter
    SET ORDER TO TAG cTag
-   GO ( _t_rec )
+   GO ( nTrec )
 
    IF lSeek == .F.
       lSeek := rnal_uvecaj_id( @wId, cFieldName )
@@ -250,7 +248,7 @@ FUNCTION rnal_wid_edit( cField )
    nId += 1
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "Ispravi sifru na:" GET nId PICT Replicate( "9", 10 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ispravi sifru na:" GET nId PICT Replicate( "9", 10 )
    READ
    BoxC()
 

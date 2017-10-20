@@ -81,7 +81,6 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
 
    select_o_koncij( kalk_pripr->mkonto )
 
-altd()
    lVPC := is_magacin_evidencija_vpc( kalk_pripr->mkonto )
 
    SELECT kalk_pripr
@@ -108,7 +107,6 @@ altd()
       Scatter()
 
       IF lVPC
-      altd()
          nVPC := vpc_magacin_rs( .T. )
          SELECT kalk_pripr
          _VPC := nVPC
@@ -201,7 +199,6 @@ altd()
       ENDIF
       @ PRow(),  PCol() + 1 SAY  nc * kolicina      PICTURE picdem
 
-altd()
       //IF lVPC
         // nVPC := vpc_magacin_rs( .T. )
         // SELECT kalk_pripr

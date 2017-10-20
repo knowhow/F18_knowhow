@@ -25,24 +25,24 @@ FUNCTION copy_to_sifk()
    LOCAL nTekX
    LOCAL nTekY
    LOCAL nRec
+   LOCAL GetList := {}
 
    // LOCAL lSql
    LOCAL nTRec
 
    Box(, 6, 65, .F. )
 
-   PRIVATE GetList := {}
    SET CURSOR ON
 
-   nTekX := m_x
-   nTekY := m_y
+   nTekX := box_x_koord()
+   nTekY := box_y_koord()
 
-   @ m_x + 1, m_y + 2 SAY PadL( "Polje iz kojeg kopiramo (polje 1)", 40 ) GET cFldFrom VALID !Empty( cFldFrom ) .AND. val_fld( cFldFrom )
-   @ m_x + 2, m_y + 2 SAY PadL( "SifK polje u koje kopiramo (polje 2)", 40 ) GET cFldTo VALID g_sk_flist( @cFldTo )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadL( "Polje iz kojeg kopiramo (polje 1)", 40 ) GET cFldFrom VALID !Empty( cFldFrom ) .AND. val_fld( cFldFrom )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY PadL( "SifK polje u koje kopiramo (polje 2)", 40 ) GET cFldTo VALID g_sk_flist( @cFldTo )
 
-   @ m_x + 4, m_y + 2 SAY "Brisati vrijednost (polje 1) nakon kopiranja ?" GET cEraseFld VALID cEraseFld $ "DN" PICT "@!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Brisati vrijednost (polje 1) nakon kopiranja ?" GET cEraseFld VALID cEraseFld $ "DN" PICT "@!"
 
-   @ m_x + 6, m_y + 2 SAY "*** izvrsiti zamjenu ?" GET cRepl VALID cRepl $ "DN" PICT "@!"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "*** izvrsiti zamjenu ?" GET cRepl VALID cRepl $ "DN" PICT "@!"
    READ
 
    BoxC()
@@ -95,18 +95,18 @@ FUNCTION repl_sifk_item()
    LOCAL cNewVal
    LOCAL cCurrVal
    LOCAL cPtnField
+   LOCAL GetList := {}
 
    // LOCAL lSql := is_sql_table()
    LOCAL nTekX, nTekY, nTRec
 
    Box(, 3, 60, .F. )
-   PRIVATE GetList := {}
    SET CURSOR ON
 
-   nTekX := m_x
-   nTekY := m_y
+   nTekX := box_x_koord()
+   nTekY := box_y_koord()
 
-   @ m_x + 1, m_y + 2 SAY " SifK polje:" GET cField VALID g_sk_flist( @cField )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY " SifK polje:" GET cField VALID g_sk_flist( @cField )
    READ
 
    cCurrVal := "wSifk_" + cField
@@ -114,11 +114,11 @@ FUNCTION repl_sifk_item()
    cOldVal := &cCurrVal
    cNewVal := Space( Len( cOldVal ) )
 
-   m_x := nTekX
-   m_y := nTekY
+   box_x_koord( nTekX )
+   box_y_koord( nTekY )
 
-   @ m_x + 2, m_y + 2 SAY8 "      Traži:"  GET cOldVal
-   @ m_x + 3, m_y + 2 SAY8 "Zamijeni sa:" GET cNewVal
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "      Traži:"  GET cOldVal
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Zamijeni sa:" GET cNewVal
 
    READ
    BoxC()
@@ -198,11 +198,7 @@ FUNCTION get_partn_sifk_sifv( cDbfName, cOznaka, cIdSif, return_nil )
 
    LOCAL xSif
 
-   // IF ValType( cIdSif ) != "O"
-   // xSif := Unicode():New( cIdSif, is_partn_sql() )
-   // ELSE
    xSif := cIdSif
-   // ENDIF
 
    RETURN  get_sifk_sifv( "PARTN", cDbfName, cOznaka, xSif, return_nil )
 
@@ -211,11 +207,7 @@ FUNCTION IzSifkKonto( cDbfName, cOznaka, cIdSif, return_nil )
 
    LOCAL xSif
 
-   // IF ValType( cIdSif ) != "O"
-   // xSif := Unicode():New( cIdSif, is_konto_sql() )
-   // ELSE
    xSif := cIdSif
-   // ENDIF
 
    RETURN  get_sifk_sifv( "KONTO", cDbfName, cOznaka, xSif, return_nil )
 
@@ -224,11 +216,8 @@ FUNCTION IzSifkRoba( cDbfName, cOznaka, cIdSif, return_nil )
 
    LOCAL xSif
 
-   // IF ValType( cIdSif ) != "O"
-   // xSif := Unicode():New( cIdSif, is_roba_sql() )
-   // ELSE
+
    xSif := cIdSif
-   // ENDIF
 
    RETURN  get_sifk_sifv( "ROBA", cDbfName, cOznaka, xSif, return_nil )
 

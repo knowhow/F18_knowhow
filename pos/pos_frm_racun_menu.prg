@@ -23,7 +23,7 @@ FUNCTION pos_unos_ispravka_racuna()
 
    SELECT _pos_pripr
 
-   IF reccount2() <> 0 .AND. ALLTRIM( field->brdok ) == "PRIPRE"
+   IF reccount2() <> 0 .AND. AllTrim( field->brdok ) == "PRIPRE"
       lNoviRacun := .F.
    ENDIF
 
@@ -39,7 +39,7 @@ FUNCTION pos_unos_ispravka_racuna()
 
 STATIC FUNCTION unos_stavki_racuna( lNovi )
 
-   LOCAL cSto := SPACE(3)
+   LOCAL cSto := Space( 3 )
 
    SELECT _pos_pripr
    GO TOP
@@ -103,13 +103,13 @@ FUNCTION zakljuci_pos_racun()
 
 
 
-STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( params )
+STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( hParams )
 
-   LOCAL _br_dok := params[ "brdok" ]
-   LOCAL _id_pos := params[ "idpos" ]
-   LOCAL _id_vrsta_p := params[ "idvrstap" ]
-   LOCAL _id_partner := params[ "idpartner" ]
-   LOCAL _uplaceno := params[ "uplaceno" ]
+   LOCAL _br_dok := hParams[ "brdok" ]
+   LOCAL _id_pos := hParams[ "idpos" ]
+   LOCAL _id_vrsta_p := hParams[ "idvrstap" ]
+   LOCAL _id_partner := hParams[ "idpartner" ]
+   LOCAL _uplaceno := hParams[ "uplaceno" ]
    LOCAL lOk := .T.
    LOCAL lRet := .F.
    LOCAL cVrijemeRacuna
@@ -123,9 +123,9 @@ STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( params )
 
    SELECT pos_doks
 
-   cBrojRacuna := pos_novi_broj_dokumenta( _id_pos, VD_RN )
+   cBrojRacuna := pos_novi_broj_dokumenta( _id_pos, POS_VD_RACUN )
 
-   cVrijemeRacuna := PADR( TIME(), 5 )
+   cVrijemeRacuna := PadR( Time(), 5 )
    gDatum := Date()
 
    lOk := pos_azuriraj_racun( _id_pos, cBrojRacuna, cVrijemeRacuna, _id_vrsta_p, _id_partner )
@@ -135,12 +135,12 @@ STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( params )
       RETURN lRet
    ENDIF
 
-   IF gRnInfo == "D"
-      _sh_rn_info( cBrojRacuna )
-   ENDIF
+   // IF gRnInfo == "D"
+   pos_racun_info( cBrojRacuna )
+   // ENDIF
 
    IF fiscal_opt_active()
-      stampaj_fiskalni_racun( _id_pos, gDatum, cBrojRacuna, _uplaceno )
+      pos_stampa_fiskalni_racun( _id_pos, gDatum, cBrojRacuna, _uplaceno )
    ENDIF
 
    my_close_all_dbf()
@@ -150,7 +150,7 @@ STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( params )
 
 
 
-STATIC FUNCTION stampaj_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
+STATIC FUNCTION pos_stampa_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
 
    LOCAL nDeviceId
    LOCAL hDeviceParams
@@ -176,6 +176,7 @@ STATIC FUNCTION stampaj_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
    ENDIF
 
    IF nError > 0
+      MsgBeep( "Greška pri štampi fiskalog računa " + cBrRn + " !?##Račun se iz tog razloga BRIŠE")
       pos_povrat_rn( cBrRn, dDatum )
    ENDIF
 
@@ -189,14 +190,14 @@ STATIC FUNCTION stampaj_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
 // ------------------------------------------------------
 // ova funkcija treba da izracuna kusur
 // ------------------------------------------------------
-STATIC FUNCTION koliko_treba_povrata_kupcu( param )
+STATIC FUNCTION koliko_treba_povrata_kupcu( hParams )
 
    LOCAL nDbfArea := Select()
-   LOCAL _t_rec := RecNo()
-   LOCAL _id_pos := PARAM[ "idpos" ]
-   LOCAL _id_vd := PARAM[ "idvd" ]
-   LOCAL _br_dok := PARAM[ "brdok" ]
-   LOCAL _dat_dok := PARAM[ "datum" ]
+   LOCAL nTrec := RecNo()
+   LOCAL _id_pos := hParams[ "idpos" ]
+   LOCAL _id_vd := hParams[ "idvd" ]
+   LOCAL _br_dok := hParams[ "brdok" ]
+   LOCAL _dat_dok := hParams[ "datum" ]
    LOCAL _total := 0
    LOCAL _iznos := 0
    LOCAL _popust := 0
@@ -213,7 +214,7 @@ STATIC FUNCTION koliko_treba_povrata_kupcu( param )
    _total := ( _iznos - _popust )
 
    SELECT ( nDbfArea )
-   GO ( _t_rec )
+   GO ( nTrec )
 
    RETURN _total
 
@@ -232,21 +233,21 @@ STATIC FUNCTION ispisi_iznos_i_kusur_za_kupca( uplaceno, iznos_rn, pos_x, pos_y 
 
 
 
-STATIC FUNCTION form_zakljuci_racun( params )
+STATIC FUNCTION form_zakljuci_racun( hParams )
 
    LOCAL _def_partner := .F.
-   LOCAL _id_vd := params[ "idvd" ]
-   LOCAL _id_pos := params[ "idpos" ]
-   LOCAL _br_dok := params[ "brdok" ]
-   LOCAL _dat_dok := params[ "datum" ]
-   LOCAL _ok := params[ "zakljuci" ]
-   LOCAL _id_vrsta_p := params[ "idvrstap" ]
-   LOCAL _id_partner := params[ "idpartner" ]
-   LOCAL _uplaceno := params[ "uplaceno" ]
+   LOCAL _id_vd := hParams[ "idvd" ]
+   LOCAL _id_pos := hParams[ "idpos" ]
+   LOCAL _br_dok := hParams[ "brdok" ]
+   LOCAL _dat_dok := hParams[ "datum" ]
+   LOCAL _ok := hParams[ "zakljuci" ]
+   LOCAL _id_vrsta_p := hParams[ "idvrstap" ]
+   LOCAL _id_partner := hParams[ "idpartner" ]
+   LOCAL _uplaceno := hParams[ "uplaceno" ]
+   LOCAL GetList := {}
 
+   _id_vrsta_p := gGotPlac
 
-      _id_vrsta_p := gGotPlac
-   
 
    Box(, 8, 67 )
 
@@ -257,9 +258,9 @@ STATIC FUNCTION form_zakljuci_racun( params )
    // VR - virman
    // CK - cek
 
-   @ m_x + 1, m_y + 2 SAY8 "FORMA ZAKLJUČENJA RAČUNA" COLOR "BG+/B"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "FORMA ZAKLJUČENJA RAČUNA" COLOR "BG+/B"
 
-   @ m_x + 3, m_y + 2 SAY8 "Način plaćanja (01/KT/VR...):" GET _id_vrsta_p PICT "@!" VALID p_vrstep( @_id_vrsta_p )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Način plaćanja (01/KT/VR...):" GET _id_vrsta_p PICT "@!" VALID p_vrstep( @_id_vrsta_p )
 
    READ
 
@@ -268,16 +269,15 @@ STATIC FUNCTION form_zakljuci_racun( params )
    ENDIF
 
    IF _def_partner
-      @ m_x + 4, m_y + 2 SAY "Kupac:" GET _id_partner PICT "@!" VALID p_partner( @_id_partner )
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Kupac:" GET _id_partner PICT "@!" VALID p_partner( @_id_partner )
    ELSE
       _id_partner := Space( 6 )
    ENDIF
 
-   @ _x_pos := m_x + 5, _y_pos := m_y + 2 SAY8 "Kupac uplatio:" GET _uplaceno PICT "9999999.99" ;
-      VALID {|| if ( _uplaceno <> 0, ispisi_iznos_i_kusur_za_kupca( _uplaceno, koliko_treba_povrata_kupcu( params ), _x_pos, _y_pos ), .T. ), .T. }
+   @ _x_pos := box_x_koord() + 5, _y_pos := box_y_koord() + 2 SAY8 "Kupac uplatio:" GET _uplaceno PICT "9999999.99" ;
+      VALID {|| IF ( _uplaceno <> 0, ispisi_iznos_i_kusur_za_kupca( _uplaceno, koliko_treba_povrata_kupcu( hParams ), _x_pos, _y_pos ), .T. ), .T. }
 
-
-   @ m_x + 8, m_y + 2 SAY8 "Ažurirati račun (D/N) ?" GET _ok PICT "@!" VALID _ok $ "DN"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Ažurirati POS račun (D/N) ?" GET _ok PICT "@!" VALID _ok $ "DN"
 
    READ
 
@@ -287,24 +287,25 @@ STATIC FUNCTION form_zakljuci_racun( params )
       _ok := "D"
    ENDIF
 
-   params[ "zakljuci" ] := _ok
-   params[ "idpartner" ] := _id_partner
-   params[ "idvrstap" ] := _id_vrsta_p
-   params[ "uplaceno" ] := _uplaceno
+   hParams[ "zakljuci" ] := _ok
+   hParams[ "idpartner" ] := _id_partner
+   hParams[ "idvrstap" ] := _id_vrsta_p
+   hParams[ "uplaceno" ] := _uplaceno
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION RacObilj()
 
-   IF AScan ( aVezani, {| x| x[ 1 ] + DToS( x[ 4 ] ) + x[ 2 ] == pos_doks->( IdPos + DToS( datum ) + BrDok ) } ) > 0
+   IF AScan ( aVezani, {| x | x[ 1 ] + DToS( x[ 4 ] ) + x[ 2 ] == pos_doks->( IdPos + DToS( datum ) + BrDok ) } ) > 0
       RETURN .T.
    ENDIF
 
    RETURN .F.
 
 
+/*
 FUNCTION PreglNezakljRN()
 
    o_pos_tables()
@@ -314,8 +315,8 @@ FUNCTION PreglNezakljRN()
 
    Box (, 1, 60 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "Od datuma:" GET dDatOd
-   @ m_x + 1, m_y + 22 SAY "Do datuma:" GET dDatDo
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Od datuma:" GET dDatOd
+   @ box_x_koord() + 1, box_y_koord() + 22 SAY "Do datuma:" GET dDatDo
    READ
    ESC_BCR
    BoxC()
@@ -324,10 +325,11 @@ FUNCTION PreglNezakljRN()
       StampaNezakljRN( gIdRadnik, dDatOd, dDatDo )
    ENDIF
 
-   RETURN
+   RETURN .T.
+*/
 
 
-
+/*
 FUNCTION RekapViseRacuna()
 
    cBrojStola := Space( 3 )
@@ -339,20 +341,20 @@ FUNCTION RekapViseRacuna()
 
    Box (, 2, 60 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "Od datuma:" GET dDatOd
-   @ m_x + 1, m_y + 22 SAY "Do datuma:" GET dDatDo
-   @ m_x + 2, m_y + 2 SAY "Broj stola:" GET cBrojStola VALID !Empty( cBrojStola )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Od datuma:" GET dDatOd
+   @ box_x_koord() + 1, box_y_koord() + 22 SAY "Do datuma:" GET dDatDo
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Broj stola:" GET cBrojStola VALID !Empty( cBrojStola )
    READ
    ESC_BCR
    BoxC()
 
    IF Pitanje(, "Štampati zbirni račun (D/N) ?", "D" ) == "D"
-      StampaRekap( gIdRadnik, cBrojStola, dDatOd, dDatDo, .T. )
+  --    StampaRekap( gIdRadnik, cBrojStola, dDatOd, dDatDo, .T. )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
-
+*/
 
 
 FUNCTION StrValuta( cNaz2, dDat )
@@ -363,7 +365,7 @@ FUNCTION StrValuta( cNaz2, dDat )
    SELECT valute
    SET ORDER TO TAG "NAZ2"
    cNaz2 := PadR( cNaz2, 4 )
-   SEEK PadR( cnaz2, 4 ) + DToS( dDat )
+   SEEK PadR( cNaz2, 4 ) + DToS( dDat ) // valute
    IF valute->naz2 <> cnaz2
       SKIP -1
    ENDIF

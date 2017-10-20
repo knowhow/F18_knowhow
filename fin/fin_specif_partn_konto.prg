@@ -30,25 +30,25 @@ FUNCTION fin_spec_partnera_na_kontu()
    //o_partner()
 
    Box( "skpoi", 10, 70, .F. )
-   @ m_x + 1, m_y + 2 SAY "SPECIFIKACIJA PARTNERA NA KONTU"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "SPECIFIKACIJA PARTNERA NA KONTU"
    IF gNW == "D"
-      @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
-   @ m_x + 4, m_y + 2 SAY "Konto  " GET qqKonto PICTURE "@!S50"
-   @ m_x + 5, m_y + 2 SAY "Partner" GET qqPartner PICTURE "@!S50"
-   @ m_x + 6, m_y + 2 SAY "Duguje/Potrazuje (1/2) ?" GET cDP PICTURE "@!" VALID cDP $ "12"
-   @ m_x + 7, m_y + 2 SAY "IZNOS " + ValDomaca() GET nIznos  PICTURE '999999999999.99'
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto  " GET qqKonto PICTURE "@!S50"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Partner" GET qqPartner PICTURE "@!S50"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Duguje/Potrazuje (1/2) ?" GET cDP PICTURE "@!" VALID cDP $ "12"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "IZNOS " + ValDomaca() GET nIznos  PICTURE '999999999999.99'
    IF fin_dvovalutno()
-      @ m_x + 8, m_y + 2 SAY "IZNOS " + ValPomocna() GET nIznos2 PICTURE '9999999999.99'
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "IZNOS " + ValPomocna() GET nIznos2 PICTURE '9999999999.99'
    ENDIF
-   @ m_x + 9, m_y + 2 SAY "Format izvjestaja A3/A4 (1/2) :" GET cF VALID cF $ "12"
-   @ m_x + 10, m_y + 2 SAY "Prikazi grad partnera (D/N) :" GET cPG PICT "@!" VALID cPG $ "DN"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Format izvjestaja A3/A4 (1/2) :" GET cF VALID cF $ "12"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Prikazi grad partnera (D/N) :" GET cPG PICT "@!" VALID cPG $ "DN"
    READ
    IF cF == "2"
       IF fin_dvovalutno()
-         @ m_x + 10, m_y + 40 SAY AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cDD VALID cDD $ "12"
+         @ box_x_koord() + 10, box_y_koord() + 40 SAY AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cDD VALID cDD $ "12"
          READ
       ELSE
          cDD := "1"

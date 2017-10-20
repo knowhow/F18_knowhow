@@ -62,7 +62,7 @@ STATIC FUNCTION rnal_browse_azurirani_nalozi()
 
    SELECT docs
 
-   my_db_edit_sql( "lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , , 5 )
+   my_browse( "lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , , 5 )
 
    BoxC()
 
@@ -106,8 +106,8 @@ STATIC FUNCTION _set_box( nBoxX, nBoxY )
    cLine2 += "(K) kontakti "
    cLine2 += "(L) promjene"
 
-   @ m_x + ( nBoxX - 1 ), m_y + 2 SAY8 cLine1
-   @ m_x + ( nBoxX ), m_y + 2 SAY8 cLine2
+   @ box_x_koord() + ( nBoxX - 1 ), box_y_koord() + 2 SAY8 cLine1
+   @ box_x_koord() + ( nBoxX ), box_y_koord() + 2 SAY8 cLine2
 
    RETURN .T.
 
@@ -151,10 +151,10 @@ STATIC FUNCTION lst_args( nSort )
 
    Box( , nBoxX, nBoxY )
 
-   @ m_x + nX, m_y + 1 SAY PadL( "**** uslovi pregleda dokumenata", nBoxY - 2 ) COLOR cColor1
+   @ box_x_koord() + nX, box_y_koord() + 1 SAY PadL( "**** uslovi pregleda dokumenata", nBoxY - 2 ) COLOR cColor1
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY8 PadL( "Naručioc (prazno-svi):", 25 ) GET cCustomer ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Naručioc (prazno-svi):", 25 ) GET cCustomer ;
       VALID {|| Empty( cCustomer ) .OR. ;
       s_customers( @cCustomer, cCustomer ), ;
       set_var( @nCustomer, @cCustomer ),  ;
@@ -162,7 +162,7 @@ STATIC FUNCTION lst_args( nSort )
       WHEN set_opc_box( nBoxX, 60, "naručioc naloga, pretraži šifarnik", nil, nil, cHelpClr )
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY PadL( "Kontakt (prazno-svi):", 25 ) GET cContact ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Kontakt (prazno-svi):", 25 ) GET cContact ;
       VALID {|| Empty( cContact ) .OR. ;
       s_contacts( @cContact, nCustomer, cContact ), ;
       set_var( @nContact, @cContact ), ;
@@ -171,52 +171,52 @@ STATIC FUNCTION lst_args( nSort )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Objekat isporuke:", 25 ) GET cObject VALID {|| Empty( cObject ) .OR. s_objects( @cObject, nCustomer, cObject ), set_var( @nObject, @cObject ), show_it( g_obj_desc( nObject ) ) } WHEN set_opc_box( nBoxX, 60, "objekat isporuke, pretrazi sifrarnik", nil, nil, cHelpClr )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Objekat isporuke:", 25 ) GET cObject VALID {|| Empty( cObject ) .OR. s_objects( @cObject, nCustomer, cObject ), set_var( @nObject, @cObject ), show_it( g_obj_desc( nObject ) ) } WHEN set_opc_box( nBoxX, 60, "objekat isporuke, pretrazi sifrarnik", nil, nil, cHelpClr )
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY PadL( "Datum naloga od:", 18 ) GET dDateFrom WHEN set_opc_box( nBoxX, 60 )
-   @ m_x + nX, Col() + 1 SAY "do:" GET dDateTo WHEN set_opc_box( nBoxX, 60 )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Datum naloga od:", 18 ) GET dDateFrom WHEN set_opc_box( nBoxX, 60 )
+   @ box_x_koord() + nX, Col() + 1 SAY "do:" GET dDateTo WHEN set_opc_box( nBoxX, 60 )
 
    IF _status == 1
 
       nX += 1
-      @ m_x + nX, m_y + 2 SAY PadL( "Datum isporuke od:", 18 ) GET dDvrDFrom WHEN set_opc_box( nBoxX, 60 )
-      @ m_x + nX, Col() + 1 SAY "do:" GET dDvrDTo WHEN set_opc_box( nBoxX, 60 )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Datum isporuke od:", 18 ) GET dDvrDFrom WHEN set_opc_box( nBoxX, 60 )
+      @ box_x_koord() + nX, Col() + 1 SAY "do:" GET dDvrDTo WHEN set_opc_box( nBoxX, 60 )
 
    ENDIF
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Operater (prazno-svi):" GET nOperater ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Operater (prazno-svi):" GET nOperater ;
       PICT "9999999999" ;
       VALID {|| nOperater == 0, iif( nOperater == -99, choose_f18_user_from_list( @nOperater ), .T. ), ;
       show_it( getusername( nOperater ), 30 ) } ;
       WHEN set_opc_box( nBoxX, 60, "pretraga po operateru", "-99 : odaberi iz liste", nil, cHelpClr )
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY PadL( "Tip naloga:", 10 ) GET nTip ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Tip naloga:", 10 ) GET nTip ;
       VALID nTip >= 0 .AND. nTip < 3 WHEN set_opc_box( nBoxX, 60, "0 - svi nalozi / 1 - samo regularni / 2 - samo NP", nil, nil, cHelpClr ) ;
       PICT "9"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "***** sort pregleda:" GET nSort ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "***** sort pregleda:" GET nSort ;
       VALID _val_sort( nSort ) ;
       PICT "9" ;
       WHEN set_opc_box( nBoxX, 60, "način sortiranja pregleda dokumenata", nil, nil, cHelpClr )
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY " * (1) broj dokumenta" COLOR cColor1
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " * (1) broj dokumenta" COLOR cColor1
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY " * (2) prioritet + datum dokumenta + broj dokumenta" COLOR cColor1
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " * (2) prioritet + datum dokumenta + broj dokumenta" COLOR cColor1
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY " * (3) prioritet + datum isporuke + broj dokumenta" COLOR cColor1
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " * (3) prioritet + datum isporuke + broj dokumenta" COLOR cColor1
 
    IF _status == 2
 
       nX += 2
-      @ m_x + nX, m_y + 2 SAY8 "Prikaz poništenih dokumenata (D/N)?" GET cShowRejected VALID cShowRejected $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 60, "pored zatvorenih naloga", "prikazi i ponistene", nil, cHelpClr )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz poništenih dokumenata (D/N)?" GET cShowRejected VALID cShowRejected $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 60, "pored zatvorenih naloga", "prikazi i ponistene", nil, cHelpClr )
 
    ENDIF
 
@@ -676,13 +676,13 @@ STATIC FUNCTION key_handler()
 STATIC FUNCTION otpr_edit( cValue )
 
    LOCAL GetList := {}
-   LOCAL nX := m_x
-   LOCAL nY := m_y
+   LOCAL nX := box_x_koord()
+   LOCAL nY := box_y_koord()
 
    cValue := PadR( cValue, 150 )
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "Vezni dokumenti:" GET cValue PICT "@S30"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Vezni dokumenti:" GET cValue PICT "@S30"
    READ
    BoxC()
 
@@ -692,8 +692,8 @@ STATIC FUNCTION otpr_edit( cValue )
       update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
    ENDIF
 
-   m_x := nX
-   m_y := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN .T.
 
@@ -746,7 +746,7 @@ FUNCTION qf_nalog()
    LOCAL cFilter := ""
 
    Box(, 1, 30 )
-   @ m_x + 1, m_y + 2 SAY8 "Želim pronaci nalog:" GET nDoc_no PICT "999999999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Želim pronaci nalog:" GET nDoc_no PICT "999999999"
    READ
    BoxC()
 
@@ -768,7 +768,7 @@ FUNCTION ddor_nal()
    LOCAL nDoc_no := 0
 
    Box(, 1, 30 )
-   @ m_x + 1, m_y + 2 SAY8 "Broj naloga:" GET nDoc_no PICT "999999999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Broj naloga:" GET nDoc_no PICT "999999999"
    READ
    BoxC()
 
@@ -816,13 +816,13 @@ STATIC FUNCTION _quick_srch_()
 
    Box(, 5, 70, .T. )
 
-   @ m_x + nX, m_y + 2 SAY "Brza pretraga naloga *******"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Brza pretraga naloga *******"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Unesi kratki opis naloga:" GET cDesc PICT "@S40" VALID !Empty( cDesc )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Unesi kratki opis naloga:" GET cDesc PICT "@S40" VALID !Empty( cDesc )
 
-   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
+   @ box_x_koord() + nX, Col() SAY ">" COLOR f18_color_i()
 
    READ
    BoxC()
@@ -869,30 +869,30 @@ STATIC FUNCTION _g_doc_status( nDoc_status, cDesc )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY " **** Trenutni status naloga je:" COLOR cColor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " **** Trenutni status naloga je:" COLOR cColor
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(R) realizovan" COLOR cColor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY Space( 3 ) + "(R) realizovan" COLOR cColor
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY8 Space( 3 ) + "(N) realizovan, nije isporučen" COLOR cColor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 Space( 3 ) + "(N) realizovan, nije isporučen" COLOR cColor
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY8 Space( 3 ) + "(D) djelimično realizovan" COLOR cColor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 Space( 3 ) + "(D) djelimično realizovan" COLOR cColor
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY8 Space( 3 ) + "(X) poništen" COLOR cColor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 Space( 3 ) + "(X) poništen" COLOR cColor
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "postavi status na -------->" GET cStat VALID cStat $ "RXDN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "postavi status na -------->" GET cStat VALID cStat $ "RXDN" PICT "@!"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Opis:" GET cDesc VALID !Empty( cDesc ) PICT "@S50"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Opis:" GET cDesc VALID !Empty( cDesc ) PICT "@S50"
 
    READ
    BoxC()
@@ -1024,7 +1024,7 @@ STATIC FUNCTION _sh_dvr_warr( nDays, nMinutes, nX, nLen )
       cColor := cColOk
    ENDIF
 
-   @ nX, m_y + 1 SAY PadR( cTmp, nLen ) COLOR cColor
+   @ nX, box_y_koord() + 1 SAY PadR( cTmp, nLen ) COLOR cColor
 
    RETURN .T.
 
@@ -1047,9 +1047,9 @@ STATIC FUNCTION _sh_dvr_info( nDays, nX, nLen )
    IF nDays > 0
       cTmp := AllTrim( Str( nDays ) ) + " dana"
       cColor := cColOk
-      @ nX, m_y + 1 SAY PadR( cTmp, nLen ) COLOR cColor
+      @ nX, box_y_koord() + 1 SAY PadR( cTmp, nLen ) COLOR cColor
    ELSE
-      @ nX, m_y + 1 SAY Space( nLen )
+      @ nX, box_y_koord() + 1 SAY Space( nLen )
    ENDIF
 
    RETURN .T.
@@ -1239,8 +1239,8 @@ STATIC FUNCTION _get_doc_contacts( aArr, nDoc_no )
 
 STATIC FUNCTION show_c_list( aArr )
 
-   LOCAL nX := m_x
-   LOCAL nY := m_y
+   LOCAL nX := box_x_koord()
+   LOCAL nY := box_y_koord()
    LOCAL nBoxX := Len( aArr ) + 2
    LOCAL nBoxY := 70
    LOCAL i
@@ -1257,15 +1257,15 @@ STATIC FUNCTION show_c_list( aArr )
 
       FOR i := 1 TO Len( aArr )
 
-         @ m_x + i, m_y + 2 SAY "(" + AllTrim( Str( aArr[ i, 1 ] ) ) + ")"
-         @ m_x + i, Col() + 1 SAY ", " + AllTrim( aArr[ i, 2 ] )
+         @ box_x_koord() + i, box_y_koord() + 2 SAY "(" + AllTrim( Str( aArr[ i, 1 ] ) ) + ")"
+         @ box_x_koord() + i, Col() + 1 SAY ", " + AllTrim( aArr[ i, 2 ] )
 
-         @ m_x + i, Col() + 1 SAY ", " + AllTrim( aArr[ i, 3 ] )
+         @ box_x_koord() + i, Col() + 1 SAY ", " + AllTrim( aArr[ i, 3 ] )
 
 
       NEXT
 
-      @ m_x + Len( aArr ) + 1, m_y + 2 GET cGet
+      @ box_x_koord() + Len( aArr ) + 1, box_y_koord() + 2 GET cGet
 
       READ
 
@@ -1278,7 +1278,7 @@ STATIC FUNCTION show_c_list( aArr )
 
    ENDDO
 
-   m_x := nX
-   m_y := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN .T.

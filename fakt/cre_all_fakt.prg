@@ -51,15 +51,9 @@ FUNCTION cre_all_fakt( ver )
    AAdd( aDBf, { 'N2', 'N',  10,  3 } )
    AAdd( aDBf, { 'idrelac', 'C',   4,  0 } )
 
-   _alias := "FAKT"
-   _table_name := "fakt_fakt"
-
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020101 // 2.1.1 - rbr numeric
-      f18_delete_dbf( "fakt_fakt" )
-      f18_delete_dbf( "fakt_pripr" )
+     f18_delete_dbf( "fakt_pripr" )
    ENDIF
-
-   IF_NOT_FILE_DBF_CREATE
 
    // 0.8.3
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 00803
@@ -76,33 +70,21 @@ FUNCTION cre_all_fakt( ver )
 
    // 0.9.2
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 00902
-      modstru( { "*" + "fakt_fakt", "D FISC_RN I 4 0" } )
       modstru( { "*" + "fakt_pripr", "C FISC_RN I 4 0 FISC_RN N 10 0" } )
    ENDIF
 
-
-
-   CREATE_INDEX( "1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias )
-   CREATE_INDEX( "2", "IdFirma+dtos(datDok)+idtipdok+brdok+rbr", _alias )
-   CREATE_INDEX( "3", "idroba+dtos(datDok)", _alias )
-   CREATE_INDEX( "6", "idfirma+idpartner+idroba+idtipdok+dtos(datdok)", _alias )
-   CREATE_INDEX( "7", "idfirma+idpartner+idroba+dtos(datdok)", _alias )
-   CREATE_INDEX( "8", "datdok", _alias )
-   CREATE_INDEX( "IDPARTN", "idpartner", _alias )
-   AFTER_CREATE_INDEX
 
    // ----------------------------------------------------------------------------
    // FAKT_PRIPR
    // ----------------------------------------------------------------------------
 
-   // dodaj polje fiskalnog racuna ali samo za pripremu
-   AAdd( aDBf, { 'FISC_RN', 'N',   10,  0 } )
+
+   AAdd( aDBf, { 'FISC_RN', 'N',   10,  0 } ) // dodaj polje fiskalnog racuna ali samo za pripremu
 
    _alias := "FAKT_PRIPR"
    _table_name := "fakt_pripr"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias )
    CREATE_INDEX( "2", "IdFirma+dtos(datdok)", _alias )
    CREATE_INDEX( "3", "IdFirma+idroba+rbr", _alias )
@@ -162,6 +144,7 @@ FUNCTION cre_all_fakt( ver )
    AAdd( aDBf, { 'FISC_TIME', 'C',  10,  0 } )
    AAdd( aDBf, { 'FISC_DATE', 'D',   8,  0 } )
 
+/*
    _alias := "FAKT_DOKS"
    _table_name := "fakt_doks"
 
@@ -196,7 +179,10 @@ FUNCTION cre_all_fakt( ver )
    CREATE_INDEX( "5", "datdok", _alias )
    CREATE_INDEX( "6", "IdFirma+idpartner+idtipdok", _alias )
    AFTER_CREATE_INDEX
+*/
 
+
+/*
    // ---------------------------------
    // FAKT_DOKS2
    // ---------------------------------
@@ -220,8 +206,9 @@ FUNCTION cre_all_fakt( ver )
 
    CREATE_INDEX( "1", "IdFirma+idtipdok+brdok", _alias )
    AFTER_CREATE_INDEX
+*/
 
-
+/*
    // ---------------------------------------------------
    // FAKT_UPL
    // ---------------------------------------------------
@@ -240,6 +227,7 @@ FUNCTION cre_all_fakt( ver )
    CREATE_INDEX( "1", "IDPARTNER+DTOS(DATUPL)", _alias )
    CREATE_INDEX( "2", "IDPARTNER", _alias )
    AFTER_CREATE_INDEX
+*/
 
 
    /*
@@ -248,7 +236,7 @@ FUNCTION cre_all_fakt( ver )
    AAdd( aDBf, { 'ID','C',  2,0 } )
    AAdd( aDBf, { 'NAZ','C', 340,0 } )
 
---   _alias := "FTXT"
+--   _alias := "FAKT_FTXT"
    _table_name := "fakt_ftxt"
 
    IF_NOT_FILE_DBF_CREATE

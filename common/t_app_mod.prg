@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
 
 FUNCTION TAppModNew( oParent, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
@@ -79,7 +78,7 @@ METHOD New( oParent, cModul, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6,
 
 METHOD hasParent()
 
-   RETURN !( ::oParent == nil )
+   RETURN !( ::oParent == NIL )
 
 
 
@@ -92,7 +91,7 @@ METHOD setParent( oParent )
 
 
 METHOD getParent()
-   return ::oParent
+   RETURN ::oParent
 
 
 
@@ -106,20 +105,20 @@ METHOD setName()
 
 METHOD run()
 
-   if ::oDesktop == NIL
+   IF ::oDesktop == NIL
       ::oDesktop := TDesktopNew()
    ENDIF
 
-   if ::lStarted == NIL
+   IF ::lStarted == NIL
       ::lStarted := .F.
    ENDIF
 
-   add_global_idle_handlers()  //BUG_CPU100
+   add_global_idle_handlers()  // BUG_CPU100
    start_f18_program_module( self, .T. )
 
    ::lStarted := .T.
 
-   if ::lTerminate
+   IF ::lTerminate
       ::quit()
       RETURN .F.
    ENDIF
@@ -144,15 +143,15 @@ METHOD gProc( nKey, nKeyHandlerRetEvent )
    CASE ( nKey == K_INS )
 #endif
       show_insert_over_stanje( .T. )
-      //RETURN DE_CONT
+      // RETURN DE_CONT
 
    CASE nKey == Asc( "i" ) .OR. nKey == Asc( "I" )
       show_infos()
-      //RETURN DE_CONT
+      // RETURN DE_CONT
 
    CASE nKey == Asc( "e" ) .OR. nKey == Asc( "E" )
       show_errors()
-      //RETURN DE_CONT
+      // RETURN DE_CONT
 
    CASE ( nKey == K_SH_F1 )
       f18_kalkulator()
@@ -163,10 +162,10 @@ METHOD gProc( nKey, nKeyHandlerRetEvent )
    CASE ( nKey == K_SH_F2 .OR. nKey == K_CTRL_F2 )
       PPrint()
 
-   CASE nKey == K_SH_F10
+   CASE nKey == iif( is_mac(), K_F10, K_SH_F10 )
       ::gParams()
 
-   CASE nKey == K_SH_F9
+   CASE nKey == iif( is_mac(), K_F9, K_SH_F9 )
       Adresar()
 
    OTHERWISE
@@ -193,7 +192,7 @@ METHOD quit( lVratiseURP )
 
    my_close_all_dbf()
 
-   IF ( lVratiseURP == nil )
+   IF ( lVratiseURP == NIL )
       lVratiseURP := .T.
    ENDIF
 
@@ -241,35 +240,35 @@ METHOD gParams()
 
    Box(, 20, 70 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "Parametre pohraniti posebno za korisnika "  GET cPosebno VALID cPosebno $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Parametre pohraniti posebno za korisnika "  GET cPosebno VALID cPosebno $ "DN" PICT "@!"
    READ
    WPAr( "p?", cPosebno )
    SELECT params
    USE
-   IF cPosebno == "D"
-      SELECT ( F_GPARAMSP )
-      USE
-      O_GPARAMSP
-   ELSE
-      SELECT ( F_GPARAMS )
-      USE
-      O_GPARAMS
-   ENDIF
+   // IF cPosebno == "D"
+   // SELECT ( F_GPARAMSP )
+   // USE
+   // O_GPARAMSP
+   // ELSE
+   SELECT ( F_GPARAMS )
+   USE
+   o_gparams()
+   // ENDIF
 
    gPtkonv := PadR( gPtkonv, 2 )
 
-   @ m_x + 7, m_y + 2 SAY "Stroga kontrola ispravki/brisanja sifara     (D/N)"  GET gSKSif VALID gSKSif $ "DN" PICT "@!"
-   @ m_x + 8, m_y + 2 SAY "Direktorij pomocne kopije podataka" GET gArhDir PICT "@S20"
-   @ m_x + 9, m_y + 2 SAY "Default odgovor na pitanje 'Izlaz direktno na printer?' (D/N/V/E)" GET gcDirekt VALID gcDirekt $ "DNVER" PICT "@!"
-   @ m_x + 10, m_y + 2 SAY "Shema boja za prikaz na ekranu 'V' (B1/B2/.../B7):" GET gShemaVF
-   @ m_x + 12, Col() + 2 SAY "Zaok 50f (5):" GET g50f    VALID g50f    $ " 5" PICT "9"
-   //@ m_x + 14, m_y + 2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor VALID gFKolor $ "DN" PICT "@!"
-   @ m_x + 15, Col() + 2 SAY "SQL log ? (D/N)" GET gSql PICT "@!"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Stroga kontrola ispravki/brisanja sifara     (D/N)"  GET gSKSif VALID gSKSif $ "DN" PICT "@!"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Direktorij pomocne kopije podataka" GET gArhDir PICT "@S20"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Default odgovor na pitanje 'Izlaz direktno na printer?' (D/N/V/E)" GET gcDirekt VALID gcDirekt $ "DNVER" PICT "@!"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Shema boja za prikaz na ekranu 'V' (B1/B2/.../B7):" GET gShemaVF
+   @ box_x_koord() + 12, Col() + 2 SAY "Zaok 50f (5):" GET g50f    VALID g50f    $ " 5" PICT "9"
+   // @ box_x_koord() + 14, box_y_koord() + 2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor VALID gFKolor $ "DN" PICT "@!"
+   @ box_x_koord() + 15, Col() + 2 SAY "SQL log ? (D/N)" GET gSql PICT "@!"
 
-   @ m_x + 18, m_y + 2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .AND. if( gPDFPrint $ "XD", pdf_box(), .T. ) } PICT "@!"
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .AND. if( gPDFPrint $ "XD", pdf_box(), .T. ) } PICT "@!"
 
-   @ m_x + 20, m_y + 2 SAY "Ispravka FMK.INI (D/S/P/K/M/N)" GET cFMKINI VALID cFMKINI $ "DNSPKM" PICT "@!"
-   @ m_x + 20, m_y + 36 SAY "M - FMKMREZ"
+   @ box_x_koord() + 20, box_y_koord() + 2 SAY "Ispravka FMK.INI (D/S/P/K/M/N)" GET cFMKINI VALID cFMKINI $ "DNSPKM" PICT "@!"
+   @ box_x_koord() + 20, box_y_koord() + 36 SAY "M - FMKMREZ"
 
 
    READ
@@ -304,7 +303,7 @@ METHOD gParams()
       Wpar( "pt", gPTKonv )
       Wpar( "SK", gSKSif )
       Wpar( "DO", gcDirekt )
-      //Wpar( "FK", gFKolor )
+      // Wpar( "FK", gFKolor )
       Wpar( "S9", gSQL )
       Wpar( "SB", gShemaVF )
       Wpar( "Ad", Trim( gArhDir ) )
@@ -339,16 +338,16 @@ STATIC FUNCTION pdf_box()
 
    Box(, 10, 75 )
 
-   @ m_x + nX, m_y + 2 SAY "Podesavanje parametara PDF stampe *******"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Podesavanje parametara PDF stampe *******"
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "PDF preglednik:" GET gPDFViewer VALID _g_pdf_viewer( @gPDFViewer ) PICT "@S56"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "PDF preglednik:" GET gPDFViewer VALID _g_pdf_viewer( @gPDFViewer ) PICT "@S56"
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY "Printanje PDF-a bez poziva preglednika (D/N)?" GET gPDFPAuto VALID gPDFPAuto $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Printanje PDF-a bez poziva preglednika (D/N)?" GET gPDFPAuto VALID gPDFPAuto $ "DN" PICT "@!"
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "Default printer:" GET gDefPrinter PICT "@S55"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Default printer:" GET gDefPrinter PICT "@S55"
 
 
    READ
@@ -412,9 +411,9 @@ STATIC FUNCTION _g_pdf_viewer( cViewer )
       RETURN .T.
    ENDIF
 
-   ASort( aPath, {| x, y| x[ 1 ] < y[ 1 ] } )
+   ASort( aPath, {| x, y | x[ 1 ] < y[ 1 ] } )
 
-   nScan := AScan( aPath, {| xVal| Upper( xVal[ 1 ] ) = "ACRO" } )
+   nScan := AScan( aPath, {| xVal | Upper( xVal[ 1 ] ) = "ACRO" } )
 
    IF nScan > 0
       cPom := AllTrim( aPath[ nScan, 1 ] )
@@ -450,7 +449,7 @@ METHOD setTGVars()
       ::lSqlDirektno := .F.
    ENDIF
 
-   IF ( ::oDesktop != nil )
+   IF ( ::oDesktop != NIL )
       ::oDesktop := nil
    ENDIF
 

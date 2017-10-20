@@ -19,17 +19,17 @@
 /*
  *     When blok za unos MPC
  *   param: fRealizacija -
- *   param: fMarza -
+ *   param: cProracunMarzeUnaprijed -
  */
 
-FUNCTION WMpc( fRealizacija, fMarza )
+FUNCTION WMpc( fRealizacija, cProracunMarzeUnaprijed )
 
    IF fRealizacija == nil
       fRealizacija := .F.
    ENDIF
 
    IF fRealizacija
-      fMarza := " "
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
    IF _mpcsapp <> 0
@@ -49,27 +49,27 @@ FUNCTION WMpc( fRealizacija, fMarza )
 
 
 
-/* VMpc(fRealizacija,fMarza)
+/* VMpc(fRealizacija,cProracunMarzeUnaprijed)
  *     Valid blok za unos MPC
  *   param: fRealizacija -
- *   param: fMarza -
+ *   param: cProracunMarzeUnaprijed -
  */
 
-FUNCTION VMpc( fRealizacija, fMarza )
+FUNCTION VMpc( fRealizacija, cProracunMarzeUnaprijed )
 
    IF fRealizacija == NIL
       fRealizacija := .F.
    ENDIF
 
    IF fRealizacija
-      fMarza := " "
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
-   IF fMarza == NIL
-      fMarza := " "
+   IF cProracunMarzeUnaprijed == NIL
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
-   kalk_marza_11( fMarza )
+   kalk_marza_11( cProracunMarzeUnaprijed )
 
    IF _mpcsapp == 0
       _MPCSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
@@ -81,13 +81,13 @@ FUNCTION VMpc( fRealizacija, fMarza )
 
 
 
-/* VMpcSaPP(fRealizacija,fMarza)
+/* VMpcSaPP(fRealizacija,cProracunMarzeUnaprijed)
  *     Valid blok za unos MpcSaPP
  *   param: fRealizacija -
- *   param: fMarza -
+ *   param: cProracunMarzeUnaprijed -
  */
 
-FUNCTION VMpcSaPP( fRealizacija, fMarza )
+FUNCTION VMpcSaPP( fRealizacija, cProracunMarzeUnaprijed )
 
    LOCAL nRabat
 
@@ -101,11 +101,11 @@ FUNCTION VMpcSaPP( fRealizacija, fMarza )
       nRabat := 0
    ENDIF
 
-   IF fMarza == NIL
-      fMarza := " "
+   IF cProracunMarzeUnaprijed == NIL
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
-   IF _mpcsapp <> 0 .AND. Empty( fMarza )
+   IF _mpcsapp <> 0 .AND. Empty( cProracunMarzeUnaprijed )
 
       _mpc := MpcBezPor( _mpcsapp, aPorezi, nRabat, _nc )
 
@@ -122,7 +122,7 @@ FUNCTION VMpcSaPP( fRealizacija, fMarza )
       ENDIF
    ENDIF
 
-   fMarza := " "
+   cProracunMarzeUnaprijed := " "
 
    RETURN .T.
 
@@ -137,7 +137,7 @@ FUNCTION VMpcSaPP( fRealizacija, fMarza )
 
 FUNCTION SayPorezi( nRow )
 
-   @ m_x + nRow, m_y + 2  SAY "PDV (%):"
+   @ box_x_koord() + nRow, box_y_koord() + 2  SAY "PDV (%):"
    @ Row(), Col() + 2 SAY aPorezi[ POR_PPP ] PICTURE "99.99"
 
 
@@ -233,11 +233,11 @@ FUNCTION W_Mpc_( cIdVd, lNaprijed, aPorezi )
 /*
  *     When blok za unos MPC
  *   param: fRealizacija -
- *   param: fMarza -
+ *   param: cProracunMarzeUnaprijed -
  *  note koriste se lokalne varijable
  */
 
-FUNCTION WMpc_lv( fRealizacija, fMarza, aPorezi )
+FUNCTION WMpc_lv( fRealizacija, cProracunMarzeUnaprijed, aPorezi )
 
    // legacy
 
@@ -246,7 +246,7 @@ FUNCTION WMpc_lv( fRealizacija, fMarza, aPorezi )
    ENDIF
 
    IF fRealizacija
-      fMarza := " "
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
    IF _MpcSapp <> 0
@@ -266,27 +266,27 @@ FUNCTION WMpc_lv( fRealizacija, fMarza, aPorezi )
 
 
 
-/* VMpc_lv(fRealizacija, fMarza, aPorezi)
+/* VMpc_lv(fRealizacija, cProracunMarzeUnaprijed, aPorezi)
  *     Valid blok za unos MPC
  *   param: fRealizacija -
- *   param: fMarza -
+ *   param: cProracunMarzeUnaprijed -
  *  note koriste se lokalne varijable
  */
 
-FUNCTION VMpc_lv( fRealizacija, fMarza, aPorezi )
+FUNCTION VMpc_lv( fRealizacija, cProracunMarzeUnaprijed, aPorezi )
 
 
    IF fRealizacija == nil
       fRealizacija := .F.
    ENDIF
    IF fRealizacija
-      fMarza := " "
+      cProracunMarzeUnaprijed := " "
    ENDIF
-   IF fMarza == nil
-      fMarza := " "
+   IF cProracunMarzeUnaprijed == nil
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
-   kalk_marza_11( fMarza )
+   kalk_marza_11( cProracunMarzeUnaprijed )
    IF ( _mpcsapp == 0 )
       _MPCSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
    ENDIF
@@ -318,13 +318,13 @@ FUNCTION V_Mpc_( cIdVd, lNaprijed, aPorezi )
 
 
 
-/* VMpcSaPP_lv(fRealizacija, fMarza, aPorezi)
+/* VMpcSaPP_lv(fRealizacija, cProracunMarzeUnaprijed, aPorezi)
  *     Valid blok za unos MpcSaPP
  *   param: fRealizacija -
- *   param: fMarza -
+ *   param: cProracunMarzeUnaprijed -
  */
 
-FUNCTION VMpcSaPP_lv( fRealizacija, fMarza, aPorezi, lShowGets )
+FUNCTION VMpcSaPP_lv( fRealizacija, cProracunMarzeUnaprijed, aPorezi, lShowGets )
 
    LOCAL nPom
 
@@ -342,11 +342,11 @@ FUNCTION VMpcSaPP_lv( fRealizacija, fMarza, aPorezi, lShowGets )
       nPom := _mpcsapp
    ENDIF
 
-   IF fMarza == nil
-      fMarza := " "
+   IF cProracunMarzeUnaprijed == nil
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
-   IF _mpcsapp <> 0 .AND. Empty( fMarza )
+   IF _mpcsapp <> 0 .AND. Empty( cProracunMarzeUnaprijed )
       _mpc := MpcBezPor ( nPom, aPorezi, , _nc ) - _rabatv
       _marza2 := 0
       IF fRealizacija
@@ -362,7 +362,7 @@ FUNCTION VMpcSaPP_lv( fRealizacija, fMarza, aPorezi, lShowGets )
       ENDIF
    ENDIF
 
-   fMarza := " "
+   cProracunMarzeUnaprijed := " "
 
    RETURN .T.
 
@@ -416,7 +416,7 @@ FUNCTION V_MpcSaPP_( cIdVd, lNaprijed, aPorezi, lShowGets )
 FUNCTION SayPorezi_lv( nRow, aPorezi )
 
 
-      @ m_x + nRow, m_y + 2  SAY "PDV (%):"
+      @ box_x_koord() + nRow, box_y_koord() + 2  SAY "PDV (%):"
       @ Row(), Col() + 2 SAY  aPorezi[ POR_PPP ] PICTURE "99.99"
 
 

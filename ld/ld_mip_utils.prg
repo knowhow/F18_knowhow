@@ -43,12 +43,12 @@ FUNCTION MIP_View()
 
    Box(, 20, 77 )
 
-   @ get_x_koord() + 17, get_y_koord() + 2 SAY "<F2> Ispravi stavku                           "
-   @ get_x_koord() + 18, get_y_koord() + 2 SAY "<c-T> Brisi stavku     "
-   @ get_x_koord() + 19, get_y_koord() + 2 SAY "<SPACE> markiraj stavku za stampu"
-   @ get_x_koord() + 20, get_y_koord() + 2 SAY "               "
+   @ box_x_koord() + 17, box_y_koord() + 2 SAY "<F2> Ispravi stavku                           "
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY "<c-T> Brisi stavku     "
+   @ box_x_koord() + 19, box_y_koord() + 2 SAY "<SPACE> markiraj stavku za stampu"
+   @ box_x_koord() + 20, box_y_koord() + 2 SAY "               "
 
-   my_db_edit_sql( "R_EXPORT", 20, 77, {|| EdMIP() }, "", "Pregled tabele za gen.mip obrasca", , , , {|| if( bol_preko == "1", .T., .F. ) }, 4 )
+   my_browse( "R_EXPORT", 20, 77, {|| EdMIP() }, "", "Pregled tabele za gen.mip obrasca", , , , {|| if( bol_preko == "1", .T., .F. ) }, 4 )
 
    BoxC()
 
@@ -103,42 +103,42 @@ STATIC FUNCTION edititem()
 
    Box(, 20, 70 )
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY AllTrim( _idradn ) + " - " + PadR( _r_ime, 30 )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY AllTrim( _idradn ) + " - " + PadR( _r_ime, 30 )
 
    ++ nX
    ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "'kod' opcine" GET _r_opc PICT "@S3"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "'kod' opcine" GET _r_opc PICT "@S3"
 
    ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "vrsta isplate" GET _vr_ispl PICT "@S10"
-
-   ++ nX
-   ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "sati" GET _r_sati
-   @ get_x_koord() + nX, Col() + 1 SAY "sati bolov." GET _r_satib
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "vrsta isplate" GET _vr_ispl PICT "@S10"
 
    ++ nX
    ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "bruto" GET _bruto
-   @ get_x_koord() + nX, Col() + 1 SAY "opor.prih." GET _u_opor
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "sati" GET _r_sati
+   @ box_x_koord() + nX, Col() + 1 SAY "sati bolov." GET _r_satib
 
    ++ nX
    ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "dopr.pio" GET _u_d_pio
-   @ get_x_koord() + nX, Col() + 1 SAY "dopr.zdr" GET _u_d_zdr
-   @ get_x_koord() + nX, Col() + 1 SAY "dopr.nez" GET _u_d_nez
-
-   ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "uk.dopr.iz" GET _u_d_iz
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "bruto" GET _bruto
+   @ box_x_koord() + nX, Col() + 1 SAY "opor.prih." GET _u_opor
 
    ++ nX
    ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "licni odbici" GET _l_odb
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "dopr.pio" GET _u_d_pio
+   @ box_x_koord() + nX, Col() + 1 SAY "dopr.zdr" GET _u_d_zdr
+   @ box_x_koord() + nX, Col() + 1 SAY "dopr.nez" GET _u_d_nez
+
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "uk.dopr.iz" GET _u_d_iz
 
    ++ nX
    ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "osnovica poreza" GET _osn_por
-   @ get_x_koord() + nX, Col() + 1 SAY "porez" GET _izn_por
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "licni odbici" GET _l_odb
+
+   ++ nX
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "osnovica poreza" GET _osn_por
+   @ box_x_koord() + nX, Col() + 1 SAY "porez" GET _izn_por
 
    READ
    BoxC()

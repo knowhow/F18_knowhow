@@ -236,9 +236,9 @@ METHOD RNALDamageDocument:configurator_box()
    // setuj kolone konfiguratora
    ::set_configurator_box_columns( @ImeKol, @Kol )
 
-   @ m_x + ( _x_pos - 1 ), m_y + 1 SAY _opts
+   @ box_x_koord() + ( _x_pos - 1 ), box_y_koord() + 1 SAY _opts
 
-   my_db_edit_sql( "_tmp1", _x_pos, _y_pos, {|| ::configurator_box_key_handler() }, _head, _foot,,,,, 2 )
+   my_browse( "_tmp1", _x_pos, _y_pos, {|| ::configurator_box_key_handler() }, _head, _foot,,,,, 2 )
 
    BoxC()
 
@@ -277,7 +277,7 @@ METHOD RNALDamageDocument:configurator_edit_data()
 
    Box(, 3, 55 )
 
-   @ m_x + 1, m_y + 2 SAY "Postavi novi artikal:" GET _art_id ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Postavi novi artikal:" GET _art_id ;
       VALID {|| s_articles( @_art_id, .F., .T.  ), ;
       check_article_valid( _art_id ) } ;
       PICT "9999999999"
@@ -564,7 +564,7 @@ METHOD RNALDamageDocument:generate_rnal_document()
    _rec[ "doc_sh_des" ] := "NP na osnovu: " + AllTrim( docno_str( oRow:FieldGet( oRow:FieldPos( "doc_no" ) ) ) ) ;
       + ", " + hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_sh_des" ) ) )
    _rec[ "doc_desc" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_desc" ) ) )
-   _rec[ "operater_i" ] := GetUserID( f18_user() )
+   _rec[ "operater_i" ] := f18_get_user_id( f18_user() )
    _rec[ "cust_id" ] := oRow:FieldGet( oRow:FieldPos( "cust_id" ) )
    _rec[ "cont_add_d" ] := oRow:FieldGet( oRow:FieldPos( "cont_add_d" ) )
    _rec[ "cont_id" ] := oRow:FieldGet( oRow:FieldPos( "cont_id" ) )

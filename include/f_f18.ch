@@ -102,10 +102,13 @@
 
 // modul FAKT (wa 110-130)
 #define F_FAKT_PRIPR     110
+
 #define F_FAKT_DOKS     111
 #define F_FAKT_DOKS2    112
+
+
 #define F_FAKT      113
-#define F_FTXT      114
+#define F_FAKT_FTXT      114
 #define F__FAKT     115
 #define F_UPL       116
 #define F_DEST      117
@@ -134,9 +137,12 @@
 #define F__PRIPR    134
 #define F_PRIPRZ    135
 #define F_PRIPRG    136
-#define F_K2C       137
-#define F_MJTRUR    138
-#define F_ROBAIZ    139
+//#define F_K2C       137
+//#define F_MJTRUR    138
+
+//#define F_ROBAIZ    139
+#define F_ROBA_P  139  // roba za sastavnice
+
 #define F_RAZDR     140
 #define F_SIROV     141
 #define F_STRAD     142
@@ -382,3 +388,8 @@
 #define POR_I_MPC4  6
 
 #define F_NALOG_REFRESH 501
+
+#define F_FAKT_DOKS_PREGLED  510
+#define F_FAKT_DOKS_X        511
+
+#define F_SUBAN_PREGLED 512

@@ -39,7 +39,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( hParamsIn )
    LOCAL _vrste_dok := ""
    LOCAL cIdFirma := self_organizacija_id()
    LOCAL _vise_konta := .F.
-   LOCAL nDbfArea, _t_rec
+   LOCAL nDbfArea, nTrec
    LOCAL _ulaz, _izlaz, _rabatv, _rabatm
    LOCAL _nv_ulaz, _nv_izlaz, _mp_ulaz, _mp_izlaz, _mp_ulaz_p, _mp_izlaz_p
    LOCAL _tr_prevoz, _tr_prevoz_2
@@ -143,7 +143,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( hParamsIn )
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY8 PadR( "Generisanje pomoćne tabele u toku...", 58 ) COLOR f18_color_i()
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 PadR( "Generisanje pomoćne tabele u toku...", 58 ) COLOR f18_color_i()
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. IspitajPrekid()
 
@@ -328,7 +328,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( hParamsIn )
       ENDDO
 
 
-      @ m_x + 2, m_y + 2 SAY "Dokument: " + _id_d_firma + "-" + _tip_dok + "-" + _d_br_dok
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Dokument: " + _id_d_firma + "-" + _tip_dok + "-" + _d_br_dok
 
       insert_into_rexport( _id_d_firma, _tip_dok, _d_br_dok, _d_opis, _dat_dok, _tip_dok_naz, _id_partner, ;
          _partn_naziv, _partn_mjesto, _partn_ptt, _partn_adresa, _br_fakt, ;

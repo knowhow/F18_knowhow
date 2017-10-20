@@ -60,7 +60,7 @@ FUNCTION export_sifarnik()
             ENDIF
             // ELSE
             // IF aStruct[ i, 2 ] == "M"
-            // @ m_x + 6, m_y + 3 SAY8 "Štampati " + aStruct[ i, 1 ] GET cStMemo PICT "@!" VALID cStMemo $ "DN"
+            // @ box_x_koord() + 6, box_y_koord() + 3 SAY8 "Štampati " + aStruct[ i, 1 ] GET cStMemo PICT "@!" VALID cStMemo $ "DN"
             // READ
             // IF cStMemo == "D"
             // cNazMemo := aStruct[ i, 1 ]
@@ -177,6 +177,7 @@ FUNCTION export_sifarnik()
 STATIC FUNCTION r_export_fill( aKol, aDbfStruct )
 
    LOCAL hRec, nArea, nKol, hField, xValue
+   LOCAL nCnt
 
    PushWa()
 
@@ -186,6 +187,7 @@ STATIC FUNCTION r_export_fill( aKol, aDbfStruct )
    PopWA()
 
    GO TOP
+   nCnt := 0
    DO WHILE !Eof()
 
       nArea := Select()
@@ -209,6 +211,7 @@ STATIC FUNCTION r_export_fill( aKol, aDbfStruct )
 
       SELECT r_export
       dbf_update_rec( hRec )
+      info_bar( "exp_sif", (nArea)->( Alias() ) + Str( ++nCnt, 5, 0 ) )
 
       Select( nArea )
       SKIP

@@ -99,14 +99,15 @@ STATIC FUNCTION kalk_export_start()
 
 STATIC FUNCTION kalk_import_start()
 
-   LOCAL _imported_rec
+   LOCAL nImportovanoZapisa
    LOCAL _vars := hb_Hash()
    LOCAL _imp_file
    LOCAL _a_data := {}
    LOCAL _imp_path := fetch_metric( "kalk_import_path", my_user(), PadR( "", 300 ) )
+   LOCAL GetList := {}
 
    Box(, 1, 70 )
-   @ m_x + 1, m_y + 2 SAY "import path:" GET _imp_path PICT "@S50"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "import path:" GET _imp_path PICT "@S50"
    READ
    BoxC()
 
@@ -145,21 +146,20 @@ STATIC FUNCTION kalk_import_start()
 #endif
 
 
-   _imported_rec := kalk_import_podataka( _vars, @_a_data )
+   nImportovanoZapisa := kalk_import_podataka( _vars, @_a_data )
 
    my_close_all_dbf()
 
 
    delete_exp_files( __import_dbf_path, "kalk" )  // brisi fajlove importa
 
-   IF ( _imported_rec > 0 ) // nakon uspjesnog importa
+   IF ( nImportovanoZapisa > 0 ) // nakon uspjesnog importa
 
-
-      IF Pitanje(, "Pobrisati fajl razmjene ?", "D" ) == "D"
+      IF Pitanje(, "Pobrisati obrađeni zip fajl razmjene ?", "D" ) == "D"
          delete_zip_files( _imp_file )
       ENDIF
 
-      MsgBeep( "Importovao " + AllTrim( Str( _imported_rec ) ) + " dokumenta." )
+      MsgBeep( "Importovao " + AllTrim( Str( nImportovanoZapisa ) ) + " dokumenta." )
       print_imp_exp_report( _a_data ) // printaj izvjestaj
 
    ENDIF
@@ -182,7 +182,7 @@ STATIC FUNCTION _vars_export( hParams )
    LOCAL _vrste_dok := fetch_metric( "kalk_export_vrste_dokumenata", my_user(), PadR( "10;11;", 200 ) )
    LOCAL cExportSifarnika := fetch_metric( "kalk_export_sifrarnik", my_user(), "D" )
    LOCAL _exp_path := fetch_metric( "kalk_export_path", my_user(), PadR( "", 300 ) )
-   LOCAL _x := 1
+   LOCAL nX := 1
 
    IF Empty( AllTrim( _exp_path ) )
       _exp_path := PadR( __export_dbf_path, 300 )
@@ -190,24 +190,24 @@ STATIC FUNCTION _vars_export( hParams )
 
    Box(, 15, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** Uslovi exporta dokumenata"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** Uslovi exporta dokumenata"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
+   ++ nX
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datumski period od" GET _dat_od
+   @ box_x_koord() + nX, Col() + 1 SAY "do" GET _dat_do
 
-   _x += 2
-   @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
+   nX += 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
 
-   _x += 2
-   @ m_x + _x, m_y + 2 SAY8 "Eksportovati šifarnike (D/N/F) ?" GET cExportSifarnika PICT "@!" VALID cExportSifarnika $ "DNF"
+   nX += 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Eksportovati šifarnike (D/N/F) ?" GET cExportSifarnika PICT "@!" VALID cExportSifarnika $ "DNF"
 
-   _x += 2
-   @ m_x + _x, m_y + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
+   nX += 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
 
    READ
 
@@ -254,8 +254,9 @@ STATIC FUNCTION _vars_import( hParams )
    LOCAL lZamijenitiSifre := fetch_metric( "kalk_import_zamjeniti_sifre", my_user(), "N" )
    LOCAL _iz_fmk := fetch_metric( "kalk_import_iz_fmk", my_user(), "N" )
    LOCAL _imp_path := fetch_metric( "kalk_import_path", my_user(), PadR( "", 300 ) )
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL cPript := fetch_metric( "kalk_import_pript", my_user(), "N" )
+   LOCAL GetList := {}
 
    IF Empty( AllTrim( _imp_path ) )
       _imp_path := PadR( __import_dbf_path, 300 )
@@ -263,33 +264,33 @@ STATIC FUNCTION _vars_import( hParams )
 
    Box(, 15, 70 )
 
-   @ m_x + _x, m_y + 2 SAY8 "*** Uslovi importa dokumenata"
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Datumski period od" GET _dat_od
-   @ m_x + _x, Col() + 1 SAY8 "do" GET _dat_do
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Uzeti u obzir sljedeća konta:" GET _konta PICT "@S30"
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Zamijeniti postojeće dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "*** Uslovi importa dokumenata"
+   ++ nX
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Datumski period od" GET _dat_od
+   @ box_x_koord() + nX, Col() + 1 SAY8 "do" GET _dat_do
+   ++ nX
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Uzeti u obzir sljedeća konta:" GET _konta PICT "@S30"
+   ++ nX
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Zamijeniti postojeće dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
 
-   ++ _x
+   ++ nX
 
-   @ m_x + _x, m_y + 2 SAY8 "Zamijeniti postojeće šifre novim (D/N):" GET lZamijenitiSifre PICT "@!" VALID lZamijenitiSifre $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Zamijeniti postojeće šifre novim (D/N):" GET lZamijenitiSifre PICT "@!" VALID lZamijenitiSifre $ "DN"
 
-//   ++ _x
-//   ++ _x
-//   @ m_x + _x, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Lokacija importa:" GET _imp_path PICT "@S50"
+//   ++ nX
+//   ++ nX
+//   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
+   ++ nX
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Lokacija importa:" GET _imp_path PICT "@S50"
 
-   _x += 2
-   @ m_x + _x, m_y + 2 SAY "pript->obrada->kalk:" GET cPript PICT "@!" VALID cPript $ "DN"
+   nX += 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "pript->obrada->kalk:" GET cPript PICT "@!" VALID cPript $ "DN"
 
    READ
 
@@ -353,7 +354,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
 
    Box(, 2, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "... export kalk dokumenata u toku"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "... export kalk dokumenata u toku"
 
 
    find_kalk_doks_by_tip_datum( self_organizacija_id(), NIL, _dat_od, _dat_do )
@@ -410,7 +411,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
       dbf_update_rec( aDoksRec )
 
       ++ _cnt
-      @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + cIdFirma + "-" + cIdVd + "-" + AllTrim( cBrDok ), 50 )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + cIdFirma + "-" + cIdVd + "-" + AllTrim( cBrDok ), 50 )
 
       // dodaj zapis i u tabelu e_kalk
       find_kalk_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
@@ -497,7 +498,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          SET ORDER TO TAG "ID"
          APPEND BLANK
          dbf_update_rec( hRec )
-         @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( ++_cnt ) ), 6 ) + ". " + "roba: " + hRec[ "id" ] , 50 )
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR(  PadL( AllTrim( Str( ++_cnt ) ), 6 ) + ". " + "roba: " + hRec[ "id" ] , 50 )
          razmjena_fill_sifk_sifv( "ROBA", hRec[ "id" ] ) // napuni i sifk, sifv parametre
 
          SELECT ROBA
@@ -512,7 +513,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
          SET ORDER TO TAG "ID"
          APPEND BLANK
          dbf_update_rec( hRec )
-         @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( ++_cnt ) ), 6 ) + ". " + "partn: " + hRec[ "id" ] , 50 )
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR(  PadL( AllTrim( Str( ++_cnt ) ), 6 ) + ". " + "partn: " + hRec[ "id" ] , 50 )
          razmjena_fill_sifk_sifv( "PARTN", hRec[ "id" ] ) // napuni i sifk, sifv parametre
          SELECT PARTN
          SKIP
@@ -607,8 +608,8 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
 
    Box(, 3, 70 )
 
-   @ m_x + 1, m_y + 2 SAY PadR( "... import kalk dokumenata u toku ", 69 ) COLOR f18_color_i()
-   @ m_x + 2, m_y + 2 SAY "broj zapisa doks/" + AllTrim( Str( _total_doks ) ) + ", kalk/" + AllTrim( Str( _total_kalk ) )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "... import kalk dokumenata u toku ", 69 ) COLOR f18_color_i()
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "broj zapisa doks/" + AllTrim( Str( _total_doks ) ) + ", kalk/" + AllTrim( Str( _total_kalk ) )
 
    DO WHILE !Eof()
 
@@ -713,7 +714,7 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
       ENDIF
 
       ++ _cnt
-      @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + cIdFirma + "-" + cIdVd + "-" + cBrDok, 60 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + cIdFirma + "-" + cIdVd + "-" + cBrDok, 60 )
 
       SELECT e_kalk
       SET ORDER TO TAG "1"
@@ -734,7 +735,7 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
 
          _gl_brojac += nRedniRbroj
 
-         @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + aDoksRec[ "rbr" ]
+         @ box_x_koord() + 3, box_y_koord() + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + aDoksRec[ "rbr" ]
 
          IF hParams[ "pript" ]
             hRec := dbf_get_rec()
@@ -769,7 +770,7 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
 
    IF _cnt >= 0 .AND. lOk
 
-      @ m_x + 3, m_y + 2 SAY PadR( "", 69 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( "", 69 )
       update_table_roba( lZamijenitiSifre )
       update_table_partn( lZamijenitiSifre )
       update_table_konto( lZamijenitiSifre )
@@ -876,20 +877,17 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    USE
    CREATE ( cDbfPath + "e_partn" ) from ( cDbfPath + "struct" )
 
-   // tabela konta
    o_konto()
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_konto" ) from ( cDbfPath + "struct" )
 
-   // tabela sifk
-   o_sifk()
+   o_sifk( "XXXX" )
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_sifk" ) from ( cDbfPath + "struct" )
 
-   // tabela sifv
-   o_sifv()
+   o_sifv( "XXXX" )
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_sifv" ) from ( cDbfPath + "struct" )

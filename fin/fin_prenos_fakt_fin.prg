@@ -13,10 +13,14 @@
 
 FUNCTION fakt_fin_prenos()
 
+   LOCAL nNV := 0, nFV := 0
+   LOCAL nTot1, nTot2, nTot3, nTot4, nTot5, nTot6, nTot7, nTot8, nTot9, nTota, nTotb
+   LOCAL cIdRjFakt
+
    o_params()
    PRIVATE cSection := "(", cHistory := " "; aHistory := {}
 
-   lNCPoSast := ( my_get_from_ini( "FAKTFIN", "NCPoSastavnici", "N", KUMPATH ) == "D" )
+   // lNCPoSast := ( my_get_from_ini( "FAKTFIN", "NCPoSastavnici", "N", KUMPATH ) == "D" )
    cKonSir   := PadR( my_get_from_ini( "FAKTFIN", "KontoSirovinaIzSastavnice", "1010", KUMPATH ), 7 )
 
    gFaktKum := ""
@@ -37,7 +41,6 @@ FUNCTION fakt_fin_prenos()
    ENDIF
 
 
-
    cIdRjFakt := "10"
    cIdFakt := "10"
    dDAtOd := Date()
@@ -47,24 +50,22 @@ FUNCTION fakt_fin_prenos()
    cSetIdRj := "N"
 
    Box(, 10, 60 )
-   @ m_x + 1, m_y + 2 SAY "RJ u fakt:" GET cIdRjFakt
-   @ m_x + 1, Col() + 2 SAY "postaviti IdRj u FIN ?" GET cSetIdRj ;
-      PICT "@!" ;
-      VALID ( cSetIdRj $ "DN" )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "RJ u fakt:" GET cIdRjFakt
+   @ box_x_koord() + 1, Col() + 2 SAY "postaviti IdRj u FIN ?" GET cSetIdRj PICT "@!" VALID ( cSetIdRj $ "DN" )
 
-   @ m_x + 2, m_y + 2 SAY "Vrsta dokumenta u fakt:" GET cIdFakt
-   @ m_x + 3, m_y + 2 SAY "Dokumenti u periodu:" GET dDAtOd
-   @ m_x + 3, Col() + 2 SAY "do" GET dDatDo
-   @ m_x + 5, m_y + 2 SAY "Broj dokumenta" GET qqDok
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Vrsta dokumenta u fakt:" GET cIdFakt
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Dokumenti u periodu:" GET dDAtOd
+   @ box_x_koord() + 3, Col() + 2 SAY "do" GET dDatDo
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Broj dokumenta" GET qqDok
 
-   @ m_x + 6, m_y + 2 SAY "Podesiti parametre prenosa" GET cSetPAr VALID csetpar $ "DN" PICT "@!"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Podesiti parametre prenosa" GET cSetPAr VALID csetpar $ "DN" PICT "@!"
    READ
    IF cSetPar == "D"
       gFaktKum := PadR( gFaktKum, 35 )
 
       gDzokerF1 := PadR( gDzokerF1, 80 )
-      @ m_x + 8, m_y + 2 SAY "FAKT Kumulativ" GET gFaktKum  PICT "@S25"
-      @ m_x + 9, m_y + 2 SAY "Dzoker F1(formula)" GET gDzokerF1  PICT "@S25"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "FAKT Kumulativ" GET gFaktKum  PICT "@S25"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Dzoker F1(formula)" GET gDzokerF1  PICT "@S25"
 
       READ
       gFaktKum := Trim( gFaktKum )
@@ -87,25 +88,17 @@ FUNCTION fakt_fin_prenos()
 
 
    O_FINMAT
-   o_konto()
-   //o_partner()
-   o_tdok()
-   o_roba()
-   o_tarifa()
+   // o_konto()
+   // o_partner()
+   // o_tdok()
+   // o_roba()
+   // o_tarifa()
 
-   IF lNCPoSast
-      o_sastavnica()
+   // IF lNCPoSast
+   // o_sastavnice()
+   // SET ORDER TO TAG "1"
+   // ENDIF
 
-      SET ORDER TO TAG "1"
-   ENDIF
-
-   SELECT ( F_FAKT )
-   IF !Used()
-      o_fakt()
-   ENDIF
-
-
-   SET ORDER TO TAG "1"  // "1","IdFirma+idtipdok+brdok+rbr+podbr""FAKT"
 
    SELECT FINMAT
    my_dbf_zap()
@@ -118,9 +111,8 @@ FUNCTION fakt_fin_prenos()
       cFilter += ".and." + aUsl
    ENDIF
 
-
-   SELECT fakt
-   SET FILTER to &cFilter
+   find_fakt_za_period( cIdRjFakt, dDatOd, dDatDo, NIL, NIL, "3" )
+   SET FILTER TO &cFilter
    GO TOP
 
 
@@ -138,14 +130,14 @@ FUNCTION fakt_fin_prenos()
          Box(, 6, 66 )
          aMemo := fakt_ftxt_decode( txt )
          IF Len( aMemo ) >= 5
-            @ m_x + 1, m_y + 2 SAY "FAKT broj:" + BrDOK
-            @ m_x + 2, m_y + 2 SAY PadR( Trim( amemo[ 3 ] ), 30 )
-            @ m_x + 3, m_y + 2 SAY PadR( Trim( amemo[ 4 ] ), 30 )
-            @ m_x + 4, m_y + 2 SAY PadR( Trim( amemo[ 5 ] ), 30 )
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY "FAKT broj:" + BrDOK
+            @ box_x_koord() + 2, box_y_koord() + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
+            @ box_x_koord() + 3, box_y_koord() + 2 SAY PadR( Trim( aMemo[ 4 ] ), 30 )
+            @ box_x_koord() + 4, box_y_koord() + 2 SAY PadR( Trim( aMemo[ 5 ] ), 30 )
          ELSE
             cTxt := ""
          ENDIF
-         @ m_x + 6, m_y + 2 SAY "Sifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Sifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
          READ
          BoxC()
       ENDIF
@@ -160,7 +152,9 @@ FUNCTION fakt_fin_prenos()
          SELECT fakt
 
          nNV := 0
-         IF lNCPoSast .AND. ROBA->tip == "P"
+/*
+
+    --     IF lNCPoSast .AND. ROBA->tip == "P"
             SELECT SAST
             HSEEK FAKT->idroba
             DO WHILE !Eof() .AND. id == FAKT->idroba
@@ -168,7 +162,7 @@ FUNCTION fakt_fin_prenos()
                SKIP 1
             ENDDO
          ENDIF
-
+*/
          SELECT FINMAT
          APPEND BLANK
          cIdVD := fakt->IdTipdok
@@ -185,10 +179,8 @@ FUNCTION fakt_fin_prenos()
             RABATV    WITH nRabat, ;
             Porez     WITH IF( cIdVD <> "11", ( nFV - nRabat ) * fakt->( porez / 100 ), ;
             PorezMP( "PP" ) ), ;
-            POREZV    WITH IF( cIdVD <> "11", Porez, ;
-            PorezMP( "PPU" ) ), ;
-            POREZ2    WITH IF( cIdVD <> "11", 0, ;
-            PorezMP( "PPP" ) ), ;
+            POREZV    WITH IF( cIdVD <> "11", Porez, PorezMP( "PPU" ) ), ;
+            POREZ2    WITH IF( cIdVD <> "11", 0,  PorezMP( "PPP" ) ), ;
             idroba    WITH fakt->idroba, ;
             Kolicina  WITH fakt->Kolicina
 
@@ -196,9 +188,11 @@ FUNCTION fakt_fin_prenos()
             RREPLACE IdRj WITH cIdRjFakt
          ENDIF
 
+/*
          IF cIDVD == "11" .AND. lNCPoSast .AND. TARIFA->mpp <> 0 .AND. FieldPos( "POREZ3" ) > 0
             RREPLACE porez3 WITH PorezMP( "MPP" )
          ENDIF
+  */
          SELECT fakt
          SKIP
       ENDDO // brdok
@@ -212,10 +206,8 @@ FUNCTION fakt_fin_prenos()
    ELSE
       MsgBeep( "Nema dokumenata za prenos ..." )
    ENDIF
-   closeret
 
-
-
+   RETURN .T.
 
 /* PorezMp(cVar)
  *     Porez u maloprodaji
@@ -289,7 +281,7 @@ FUNCTION PorezMp( cVar )
 
 
 
-/* fin_kontiranje_naloga(dDatNal)
+/*
  *     Kontiranje naloga
  *   param: dDatNal  - datum naloga
  */
@@ -298,7 +290,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
    LOCAL cidfirma, cidvd, cbrdok, lafin, lafin2
 
-   o_roba()
+   // o_roba()
    O_FINMAT
    o_trfp2()
    o_koncij()
@@ -334,8 +326,8 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    Box( "brn?", 5, 55 )
    // dDatNal:=datdok
    SET CURSOR ON
-   @ m_x + 1, m_y + 2  SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cidvn + " -" GET cBrNalF
-   @ m_x + 5, m_y + 2 SAY "(ako je broj naloga prazan - ne vrsi se kontiranje)"
+   @ box_x_koord() + 1, box_y_koord() + 2  SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cidvn + " -" GET cBrNalF
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "(ako je broj naloga prazan - ne vrsi se kontiranje)"
    READ
    ESC_BCR
    BoxC()
@@ -353,24 +345,28 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
       cBrDok := BrDok
       IF ValType( cKonto1 ) <> "C"
          PRIVATE cKonto1 := ""; cKonto2 := "";cKonto3 := ""
-         PRIVATE cPartner1 := "";cPartner2 := cPartner3 := ""
+         PRIVATE cPartner1 := ""; cPartner2 := cPartner3 := ""
       ENDIF
       DO WHILE cIdVD == IdVD .AND. cBrDok == BrDok .AND. !Eof()
 
-         SELECT roba
-         HSEEK finmat->idroba
+         select_o_roba( finmat->idroba )
+
          SELECT trfp2
          SEEK cIdVD + " "
 
-         DO WHILE !Empty( cBrNalF ) .AND. idvd == cIDVD  .AND. shema = " " .AND. !Eof()  // nemamo vise sema kontiranja kao u kalk
+         DO WHILE !Empty( cBrNalF ) .AND. idvd == cIDVD  .AND. shema = " " .AND. !Eof()
+
             cStavka := Id
+
             SELECT finmat
-            nIz := &cStavka
+            nIz := &cStavka // evaluacija fakt->fin formule
+
             SELECT trfp2
             IF !Empty( trfp2->idtarifa ) .AND. trfp2->idtarifa <> finmat->idtarifa
                // ako u {ifrarniku parametara postoji tarifa prenosi po tarifama
                nIz := 0
             ENDIF
+
             IF nIz <> 0
 
                // ako je iznos elementa <> 0, dodaj stavku u fpripr
@@ -378,24 +374,27 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                IF trfp2->znak == "-"
                   nIz := -nIz
                ENDIF
+
                nIz := round7( nIz, Right( TRFP2->naz, 2 ) )
 
                // DEM - pomocna valuta
                nIz2 := nIz * Kurs( dDatNal, "D", "P" )
 
                cIdKonto := trfp2->Idkonto
-               cIdkonto := StrTran( cidkonto, "?1", Trim( cKonto1 ) )
-               cIdkonto := StrTran( cidkonto, "?2", Trim( cKonto2 ) )
-               cIdkonto := StrTran( cidkonto, "?3", Trim( cKonto3 ) )
+               cIdKonto := StrTran( cIdKonto, "?1", Trim( cKonto1 ) )
+               cIdKonto := StrTran( cIdKonto, "?2", Trim( cKonto2 ) )
+               cIdKonto := StrTran( cIdKonto, "?3", Trim( cKonto3 ) )
+
                IF "F1" $ cIdKonto
                   IF Empty( gDzokerF1 )
                      cPom := ""
                   ELSE
                      cPom := &gDzokerF1
                   ENDIF
-                  cIdkonto := StrTran( cidkonto, "F1", cPom )
+                  cIdKonto := StrTran( cIdKonto, "F1", cPom )
                ENDIF
-               cIdkonto := PadR( cIdkonto, 7 )
+
+               cIdKonto := PadR( cIdKonto, 7 )
                cIdPartner := Space( 6 )
                IF trfp2->Partner == "1"  // stavi Partnera
                   cIdpartner := FINMAT->IdPartner
@@ -406,6 +405,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                ELSEIF trfp2->Partner == "C"   // stavi  Lice koje se zaduz2
                   cIdpartner := PadR( cPartner3, 7 )
                ENDIF
+
                cBrDok := Space( 8 )
                dDatDok := FINMAT->datdok
                IF trfp2->Dokument == "1"
@@ -413,6 +413,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                ELSEIF trfp2->Dokument == "3"
                   dDatDok := dDatNal
                ENDIF
+
                fExist := .F.
                SEEK FINMAT->IdFirma + cIdVn + cBrNalF
                IF fin_pripr->( Found() )
@@ -473,19 +474,25 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
       my_flock()
       DO WHILE !Eof()
-         cPom := Right( Trim( opis ), 1 )
+
+         cPom := Right( Trim( fin_pripr->opis ), 1 )
+
+/*
          // na desnu stranu opisa stavim npr "ZADUZ MAGACIN          0"
          // onda ce izvrsiti zaokruzenje na 0 decimalnih mjesta
          IF cPom $ "0125"
+            info_bar( "fin_kont", "Fin kontiranje HACK Zaokr : " + Trim( fin_pripr->opis ) + " ZAOKR: " + cPom )
             nLen := Len( Trim( opis ) )
             REPLACE opis WITH Left( Trim( opis ), nLen - 1 )
-            REPLACE iznosbhd WITH Round( iznosbhd, IF( Val( cPom ) == 0 .AND. cPom != "0", 2, Val( cPom ) ) )
-            REPLACE iznosdem WITH Round( iznosdem, IF( Val( cPom ) == 0 .AND. cPom != "0", 2, Val( cPom ) ) )
+            REPLACE iznosbhd WITH Round( iznosbhd, iif( Val( cPom ) == 0 .AND. cPom != "0", 2, Val( cPom ) ) )
+            REPLACE iznosdem WITH Round( iznosdem, iif( Val( cPom ) == 0 .AND. cPom != "0", 2, Val( cPom ) ) )
+
             IF cPom = "5"
                REPLACE iznosbhd WITH round2( iznosbhd, 2 )
                REPLACE iznosdem WITH round2( iznosdem, 2 )
             ENDIF
          ENDIF // cpom
+*/
          SKIP
       ENDDO // fpripr
 
@@ -499,6 +506,11 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    RETURN .T.
 
 
+
+FUNCTION Altd0()
+
+
+   RETURN 0
 
 /* RasKon(cRoba,aSifre,aKonta)
  *     Trazi poziciju cRoba u aSifre i ako nadje vraca element iz aKonta koji je na nadjenoj poziciji

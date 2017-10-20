@@ -16,15 +16,15 @@ FUNCTION open_sif_tables_1()
 
    //o_konto()
    //o_partner()
-   o_tnal()
-   o_tdok()
-   o_valute()
+   //o_tnal()
+   //o_tdok()
+   //o_valute()
    //o_rj()
-   o_banke()
-   o_ops()
+   //o_banke()
+   //o_ops()
    //o_sifk()
    //o_sifv()
-   o_fakt_objekti()
+   //o_fakt_objekti()
 
    RETURN .T.
 
@@ -45,10 +45,11 @@ FUNCTION OSifFtxt()
    RETURN .T.
 
 
+/*
 FUNCTION OSifUgov()
 
-   o_ugov()
-   o_rugov()
+--   o_ugov()
+   //o_rugov()
    o_dest()
    //o_partner()
    //o_roba()
@@ -56,7 +57,7 @@ FUNCTION OSifUgov()
    //o_sifv()
 
    RETURN .T.
-
+*/
 
 // ---------------------------
 // dodaje polje match_code

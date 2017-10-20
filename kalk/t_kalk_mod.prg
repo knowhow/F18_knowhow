@@ -38,7 +38,7 @@ METHOD TKalkMod:mMenu()
    Izbor := 1
    gDuzKonto := 7
 
-   gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
+   gRobaBlock := {| Ch| kalk_roba_key_handler( Ch ) }
 
 
    ::programski_modul_osnovni_meni()
@@ -171,7 +171,7 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gFunKon1 := PadR( "SUBSTR(FINMAT->IDKONTO,4,2)", 80 )
    PUBLIC gFunKon2 := PadR( "SUBSTR(FINMAT->IDKONTO2,4,2)", 80 )
    PUBLIC g11bezNC := "N"
-   PUBLIC gMpcPomoc := "N"
+   PUBLIC gcMpcKalk10 := "N"
    PUBLIC gKolicFakt := "N"
 
    PUBLIC gRobaTr1Tip := "%"
@@ -180,8 +180,6 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gRobaTr4Tip := "%"
    PUBLIC gRobaTr5Tip := "%"
 
-   // dokument. koverzija valute
-   //PUBLIC gDokKVal := "N"
    // time out kod azuriranja dokumenta
    PUBLIC gAzurTimeout := 150
    // time out kod azuriranja fin dokumenta
@@ -212,7 +210,7 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC glZabraniVisakIP
    PUBLIC glBrojacPoKontima := .F.
    //PUBLIC gcSLObrazac
-   PUBLIC ZAOKRUZENJE := 2
+   //PUBLIC ZAOKRUZENJE := 2
 
    // inicijalizujem ovu varijablu uvijek pri startu
    // ona sluzi za automatsku obradu kalkulacija
@@ -262,7 +260,7 @@ METHOD TKalkMod:set_module_gvars()
    gDefNiv := fetch_metric( "kalk_promjena_cijena_odgovor", nil, gDefNiv )
    gVarEv := fetch_metric( "kalk_varijanta_evidencije", nil, gVarEv )
 
-      
+
    gPicProc := fetch_metric( "kalk_format_prikaza_procenta", nil, gPicProc )
 
 
@@ -282,7 +280,6 @@ METHOD TKalkMod:set_module_gvars()
    gRobaTr3Tip := fetch_metric( "kalk_trosak_3_tip", nil, gRobaTr3Tip )
    gRobaTr4Tip := fetch_metric( "kalk_trosak_4_tip", nil, gRobaTr4Tip )
    gRobaTr5Tip := fetch_metric( "kalk_trosak_5_tip", nil, gRobaTr5Tip )
-   //gDokKVal := fetch_metric( "kalk_konverzija_valute_na_unosu", nil, gDokKVal )
 
    g10Porez := fetch_metric( "kalk_dokument_10_prikaz_ukalk_poreza", nil, g10Porez )
    g11BezNC := fetch_metric( "kalk_dokument_11_bez_nc", nil, g11bezNC )
@@ -293,7 +290,7 @@ METHOD TKalkMod:set_module_gvars()
    gTops := fetch_metric( "kalk_prenos_pos", f18_user(), gTops )
    gFakt := fetch_metric( "kalk_prenos_fakt", f18_user(), gFakt )
 
-   gMPCPomoc := fetch_metric( "kalk_pomoc_sa_mpc", nil, gMPCPomoc )
+   gcMpcKalk10 := fetch_metric( "kalk_pomoc_sa_mpc", nil, gcMpcKalk10 )
    gKolicFakt := fetch_metric( "kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt )
    gPromTar := fetch_metric( "kalk_zabrana_promjene_tarifa", nil, gPromTar )
    gFunKon1 := fetch_metric( "kalk_djoker_f1_kod_kontiranja", nil, gFunKon1 )
@@ -318,7 +315,7 @@ METHOD TKalkMod:set_module_gvars()
 
    //gcSlObracun := fetch_metric( "kalk_sl_obrazac", nil, gcSLObrazac )
 
-   gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
+   gRobaBlock := {| Ch| kalk_roba_key_handler( Ch ) }
 
    gNW := "D"
 

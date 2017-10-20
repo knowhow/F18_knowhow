@@ -185,7 +185,7 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
       ? Space( 80 ), "Clanovi komisije: 1. ___________________"
       ? Space( 80 ), "                  2. ___________________"
       ? Space( 80 ), "                  3. ___________________"
-      RETURN
+      RETURN .T.
    ENDIF
 
    ? m
@@ -224,7 +224,7 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
       ?
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

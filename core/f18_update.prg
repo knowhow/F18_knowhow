@@ -7,8 +7,6 @@ STATIC s_cF18VerzijaKanal
 STATIC s_cDownloadVersion := NIL
 STATIC s_cCheckUpdates := NIL
 
-MEMVAR m_x, m_y, GetList
-
 /*
    lForceRefresh - force refresh verzije sa interneta
 */
@@ -30,7 +28,7 @@ FUNCTION download_version( cUrl, lForceRefresh )
    hFile := hb_vfTempFile( @cFileName, my_home_root(), "wget_", ".txt" )
    hb_vfClose( hFile )
 
-   @ m_x + 1, m_y + 2 SAY Left( cUrl, 67 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY Left( cUrl, 67 )
 
    IF !F18Admin():wget_download( cUrl, "",  cFileName )
       BoxC()
@@ -147,8 +145,10 @@ FUNCTION f18_preporuci_upgrade( cVersion )
 
 FUNCTION check_updates()
 
-   IF s_cCheckUpdates == NIL
+   IF s_cCheckUpdates == NIL // prvi poziv
       s_cCheckUpdates := fetch_metric( "F18_check_updates", my_user(), "D" )
+   ELSE
+      s_cCheckUpdates := "N" // nakon prvog poziva ne nuditi vise upgrade
    ENDIF
 
    RETURN s_cCheckUpdates == "D"

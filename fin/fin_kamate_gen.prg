@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
 
 FUNCTION prenos_fin_kam()
 
@@ -33,14 +32,14 @@ FUNCTION prenos_fin_kam()
 
    Box( "#PRENOS RACUNA ZA OBRACUN FIN->KAM", 8, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "Konto:         " GET cIdKonto VALID P_Konto( @cIdKonto )
-   @ m_x + 2, m_y + 2 SAY "Datum obracuna:" GET dDatObracuna
-   @ m_x + 3, m_y + 2 SAY "Uzeti u obzir samo racune cije je"
-   @ m_x + 4, m_y + 2 SAY "valutiranje starije od (br.dana)" GET nMinimumDanaZaObracun PICT "9999999"
-   @ m_x + 5, m_y + 2 SAY "Uzeti u obzir stavke koje su zatvorene? (D/N)" GET _zatvorene PICT "@!" VALID _zatvorene $ "DN"
-   @ m_x + 6, m_y + 2 SAY "Ukoliko nije naveden datum valutiranja"
-   @ m_x + 7, m_y + 2 SAY "na datum dokumenta dodaj (br.dana)    " GET nDodajDanaDatValEmpty PICT "99"
-   @ m_x + 8, m_y + 2 SAY "Partneri" GET _partneri PICT "@!S50"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Konto:         " GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datum obracuna:" GET dDatObracuna
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Uzeti u obzir samo racune cije je"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "valutiranje starije od (br.dana)" GET nMinimumDanaZaObracun PICT "9999999"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Uzeti u obzir stavke koje su zatvorene? (D/N)" GET _zatvorene PICT "@!" VALID _zatvorene $ "DN"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Ukoliko nije naveden datum valutiranja"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "na datum dokumenta dodaj (br.dana)    " GET nDodajDanaDatValEmpty PICT "99"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Partneri" GET _partneri PICT "@!S50"
 
    DO WHILE .T.
 

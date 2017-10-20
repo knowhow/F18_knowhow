@@ -327,13 +327,13 @@ FUNCTION prikazi_odt( cOutOdtFile )
 STATIC FUNCTION pitanje_prikazi_odt()
 
    LOCAL cRet := "D"
-   PRIVATE getList := {}
+   LOCAL GetList := {}
 
    SET CONFIRM OFF
    SET CURSOR ON
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY8 "Prikazati Libre Office izvještaj (D/N/P) ?" GET cRet PICT "@!" VALID cRet $ "DNP"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Prikazati Libre Office izvještaj (D/N/P) ?" GET cRet PICT "@!" VALID cRet $ "DNP"
    READ
    BoxC()
 

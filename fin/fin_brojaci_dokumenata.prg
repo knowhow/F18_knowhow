@@ -65,7 +65,7 @@ FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
 FUNCTION fin_set_broj_dokumenta()
 
    LOCAL _broj_dokumenta
-   LOCAL _t_rec, _rec
+   LOCAL nTrec, _rec
    LOCAL _firma, _td, _null_brdok
    LOCAL nBrojNalogDuzina := 8
 
@@ -95,7 +95,7 @@ FUNCTION fin_set_broj_dokumenta()
    DO WHILE !Eof()
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       IF field->idfirma == _firma .AND. field->idvn == _td .AND. field->brnal == _null_brdok
@@ -104,7 +104,7 @@ FUNCTION fin_set_broj_dokumenta()
          dbf_update_rec( _rec )
       ENDIF
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 
@@ -129,10 +129,10 @@ FUNCTION fin_set_param_broj_dokumenta()
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Nalog:" GET _firma
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Nalog:" GET _firma
 
    IF gBrojacFinNaloga == "1"
-      @ m_x + 1, Col() + 1 SAY "-" GET _tip_dok
+      @ box_x_koord() + 1, Col() + 1 SAY "-" GET _tip_dok
    ENDIF
 
    READ
@@ -152,7 +152,7 @@ FUNCTION fin_set_param_broj_dokumenta()
    nBroj := fetch_metric( _param, nil, nBroj )
    _broj_old := nBroj
 
-   @ m_x + 2, m_y + 2 SAY "Zadnji broj naloga:" GET nBroj PICT "99999999"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Zadnji broj naloga:" GET nBroj PICT "99999999"
 
    READ
 

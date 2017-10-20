@@ -62,9 +62,10 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
       dbUseArea( .F., "SQLMIX", cQuery,  cAlias, NIL, NIL )
 
    RECOVER USING oError
-
-      MsgBeep( "SQL ERRROR: " + cTable + "##" + Right( cQuery, f18_max_cols() - 10 ) + "##" + oError:description  )
-      QUIT_1
+      ?E cTable, cQuery, oError:description
+      RaiseError( "use_sql_sif:" + cTable + " qry=" + cQuery )
+      // MsgBeep( "SQL ERROR: " + cTable + "##" + Right( cQuery, f18_max_cols() - 10 ) + "##" + oError:description  )
+      // QUIT_1
    END SEQUENCE
 
 
@@ -89,16 +90,16 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
       ELSEIF cTable == "ops"
 
-         INDEX ON ID TAG ID TO ( cAlias )
-         INDEX ON NAZ TAG NAZ TO ( cAlias )
-         INDEX ON IDJ TAG IDJ TO ( cAlias )
-         INDEX ON IDKAN TAG IDKAN TO ( cAlias )
-         INDEX ON IDN0 TAG IDN0 TO ( cAlias )
+         INDEX ON ID TAG "ID" TO ( cAlias )
+         INDEX ON NAZ TAG "NAZ" TO ( cAlias )
+         INDEX ON IDJ TAG "IDJ" TO ( cAlias )
+         INDEX ON IDKAN TAG "IDKAN" TO ( cAlias )
+         INDEX ON IDN0 TAG "IDN0" TO ( cAlias )
          SET ORDER TO TAG "ID"
 
       ELSEIF cTable == "dest"
 
-         INDEX ON IDPARTNER + ID TAG "ID" TO ( cAlias )
+         INDEX ON field->IDPARTNER + field->ID TAG "ID" TO ( cAlias )
          INDEX ON ID TAG "IDDEST" TO ( cAlias )
          SET ORDER TO TAG "ID"
 
@@ -117,11 +118,20 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
          INDEX ON id + tip TAG "IDP" TO ( cAlias ) FOR tip = "P"
          SET ORDER TO TAG "ID"
 
+      ELSEIF cTable == "sast"
+         INDEX ON field->ID + field->ID2 TAG "ID" TO ( cAlias )
+         INDEX ON field->ID + Str( field->R_BR, 4, 0 ) + field->ID2 TAG "IDRBR" TO ( cAlias )
+         INDEX ON field->ID2 + field->ID TAG "NAZ" TO ( cAlias )
+         SET ORDER TO TAG "ID"
+
+      ELSEIF cTable == "pos_osob"
+         INDEX ON KorSif TAG "ID" TO ( cAlias )
+         INDEX ON NAZ TAG "NAZ" TO ( cAlias )
 
       ELSE
-         INDEX ON ID TAG ID TO ( cAlias )
+         INDEX ON ID TAG "ID" TO ( cAlias )
          IF FieldPos( "NAZ" ) > 0
-            INDEX ON NAZ TAG NAZ TO ( cAlias )
+            INDEX ON NAZ TAG "NAZ" TO ( cAlias )
          ENDIF
          SET ORDER TO TAG "ID"
       ENDIF
@@ -218,7 +228,7 @@ FUNCTION my_dbSelectArea( xArea )
 /*
    use_sql_valute() => otvori šifarnik valuta sa prilagođenim poljima
 */
-FUNCTION use_sql_valute()
+FUNCTION use_sql_valute( cId )
 
    LOCAL cSql
    LOCAL cTable := "valute"
@@ -235,6 +245,10 @@ FUNCTION use_sql_valute()
    cSql += "tip::char(1) "
    cSql += " FROM " + F18_PSQL_SCHEMA_DOT + "valute ORDER BY id"
 
+   IF cId != NIL
+      cSql += " WHERE id=" + sql_quote( cId )
+   ENDIF
+
    SELECT F_VALUTE
    IF !use_sql( cTable, cSql )
       RETURN .F.
@@ -245,8 +259,9 @@ FUNCTION use_sql_valute()
    INDEX ON ID + DToS( DATUM ) TAG ID2 TO ( cTable )
 
    SET ORDER TO TAG ID
+   GO TOP
 
-   RETURN .T.
+   RETURN !Eof()
 
 
 /*
@@ -445,17 +460,17 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    ENDIF
 
    cSQL += " ORDER BY id,oznaka,sort"
-   SELECT F_SIFK
+   SELECT ( F_SIFK )
    IF !use_sql( cTable, cSql )
       RETURN .F.
    ENDIF
 
-   IF cDbf == NIL .AND. cOznaka == NIL
-      INDEX ON ID + SORT + NAZ TAG ID  TO ( cTable )
-      INDEX ON ID + OZNAKA TAG ID2  TO ( cTable )
-      INDEX ON NAZ  TAG NAZ TO ( cTable )
-      SET ORDER TO TAG ID
-   ENDIF
+   // IF cDbf == NIL .AND. cOznaka == NIL
+   INDEX ON field->ID + field->SORT + field->NAZ TAG ID  TO ( cTable )
+   INDEX ON field->ID + field->OZNAKA TAG ID2  TO ( cTable )
+   INDEX ON field->NAZ  TAG NAZ TO ( cTable )
+   SET ORDER TO TAG ID
+   // ENDIF
 
    GO TOP  // ovo obavezno inace ostane na eof() poziciji?!
 
@@ -463,12 +478,19 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
 
 
 
-FUNCTION o_sifv()
+FUNCTION o_sifv( cDbf )
 
    Select( F_SIFV )
    USE
 
-   RETURN use_sql_sifv()
+   RETURN use_sql_sifv( cDbf )
+
+FUNCTION o_sifk_sifv_empty( cDbf )
+
+   o_sifk( "XXXX" )
+   o_sifv( "XXXX" )
+
+   RETURN .T.
 
 /*
    use_sql_sifv( "ROBA", "GR1", NIL, "G000000001" ) =>  filter na ROBA/GR1/grupa1=G0000000001
@@ -569,33 +591,3 @@ FUNCTION use_sql_rules()
    INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3  TAG OBJC3 TO ( _table_name )
 
    RETURN .T.
-
-
-
-
-/*
-  da li je roba sql tabela
-*/
-
-FUNCTION is_roba_sql()
-
-   RETURN .F.
-
-
-FUNCTION is_partn_sql()
-
-   RETURN .F.
-
-
-FUNCTION is_konto_sql()
-
-   RETURN .F.
-
-
-FUNCTION my_rddName()
-
-   IF Used()
-      RETURN rddName()
-   ENDIF
-
-   RETURN "unused"

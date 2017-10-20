@@ -53,10 +53,10 @@ FUNCTION f7_pf_traka( lSilent )
    st_pf_traka()
 
    IF !lPfTraka
-      AzurKupData( gIdPos )
+      porezna_faktura_azur_podataka_o_kupcu( gIdPos )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION read_kup_data()
@@ -95,21 +95,21 @@ FUNCTION get_kup_data()
 
    Box(, 7, 65 )
 
-   nMX := m_x
-   nMY := m_y
+   nMX := box_x_koord()
+   nMY := box_y_koord()
 
-   @ 1 + m_x, 2 + m_y SAY "Podaci o kupcu:" COLOR f18_color_i()
-   @ 2 + m_x, 2 + m_y SAY8 "Naziv (pravnog ili fizičkog lica):" GET cKNaziv VALID !Empty( cKNaziv ) .AND. get_arr_kup_data( @cKNaziv, @cKAdres, @cKIdBroj ) PICT "@S20"
+   @ 1 + box_x_koord(), 2 + box_y_koord() SAY "Podaci o kupcu:" COLOR f18_color_i()
+   @ 2 + box_x_koord(), 2 + box_y_koord() SAY8 "Naziv (pravnog ili fizičkog lica):" GET cKNaziv VALID !Empty( cKNaziv ) .AND. get_arr_kup_data( @cKNaziv, @cKAdres, @cKIdBroj ) PICT "@S20"
    READ
 
-   m_x := nMX
-   m_y := nMY
+   box_x_koord( nMX )
+   box_y_koord( nMY )
 
-   @ 3 + m_x, 2 + m_y SAY "Adresa:" GET cKAdres VALID !Empty( cKAdres )
-   @ 4 + m_x, 2 + m_y SAY "Identifikacijski broj:" GET cKIdBroj VALID !Empty( cKIdBroj )
-   @ 5 + m_x, 2 + m_y SAY "Datum isporuke " GET dDatIsp
+   @ 3 + box_x_koord(), 2 + box_y_koord() SAY "Adresa:" GET cKAdres VALID !Empty( cKAdres )
+   @ 4 + box_x_koord(), 2 + box_y_koord() SAY "Identifikacijski broj:" GET cKIdBroj VALID !Empty( cKIdBroj )
+   @ 5 + box_x_koord(), 2 + box_y_koord() SAY "Datum isporuke " GET dDatIsp
 
-   @ 7 + m_x, 2 + m_y SAY "Unos podataka ispravan (D/N)?" GET cUnosOk VALID cUnosOk $ "DN" PICT "@!"
+   @ 7 + box_x_koord(), 2 + box_y_koord() SAY "Unos podataka ispravan (D/N)?" GET cUnosOk VALID cUnosOk $ "DN" PICT "@!"
    READ
 
    BoxC()
@@ -306,7 +306,8 @@ FUNCTION kup_rb_traka()
 
    ?
 
-   RETURN
+   RETURN .T.
+   
 
 
 // vraca matricu sa dostupnim kupcima koji pocinju sa cKupac
@@ -319,7 +320,7 @@ FUNCTION get_arr_kup_data( cKupac, cKAdr, cKIdBroj )
       RETURN .T.
    ENDIF
 
-   aKupci := fnd_kup_data( cKupac )
+   aKupci := pos_find_kupac_podaci( cKupac )
 
    IF Len( aKupci ) > 0
 
@@ -346,7 +347,7 @@ FUNCTION list_kup_data( aKupci )
 
    LOCAL nIzbor
    LOCAL cPom
-   PRIVATE GetList := {}
+
    PRIVATE Izbor := 1
    PRIVATE opc := {}
    PRIVATE opcexe := {}

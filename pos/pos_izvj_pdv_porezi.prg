@@ -15,16 +15,16 @@
 STATIC LEN_TRAKA := 40
 
 
-FUNCTION PDVPorPoTar
+FUNCTION pos_pdv_po_tarifama
 
-   PARAMETERS cDat0, cDat1, cIdPos, cNaplaceno, cIdOdj
+   PARAMETERS dDatum0, dDatum1, cIdPos, cNaplaceno, cIdOdj
 
    LOCAL aNiz := {}
    LOCAL fSolo
    LOCAL aTarife := {}
 
    PRIVATE cTarife := Space ( 30 )
-   PRIVATE aUsl := ".t."
+   PRIVATE cFilterTarifa := ".t."
 
    IF cNaplaceno == nil
       cNaplaceno := "1"
@@ -37,8 +37,8 @@ FUNCTION PDVPorPoTar
    ENDIF
 
    IF fSolo
-      PRIVATE cDat0 := gDatum
-      PRIVATE cDat1 := gDatum
+      PRIVATE dDatum0 := gDatum
+      PRIVATE dDatum1 := gDatum
       PRIVATE cIdPos := Space( 2 )
       PRIVATE cNaplaceno := "1"
    ENDIF
@@ -52,11 +52,11 @@ FUNCTION PDVPorPoTar
    IF fSolo
     //  o_sifk()
     //  o_sifv()
-      o_pos_kase()
+    //  o_pos_kase()
     //  o_roba()
-      o_pos_odj()
-      o_pos_doks()
-      o_pos_pos()
+    //  o_pos_odj()
+    //  o_pos_doks()
+    //  o_pos_pos()
    ENDIF
 
    IF gVrstaRS <> "S"
@@ -65,7 +65,7 @@ FUNCTION PDVPorPoTar
 
    IF fSolo
       IF gVrstaRS <> "K"
-         AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.P_Kase(cIdPos)", "@!", } )
+         AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.p_pos_kase(cIdPos)", "@!", } )
       ENDIF
 
       IF gVodiOdj == "D"
@@ -73,17 +73,17 @@ FUNCTION PDVPorPoTar
       ENDIF
 
       AAdd ( aNiz, { "Tarife (prazno sve)", "cTarife",, "@S10", } )
-      AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "cDat0",,, } )
-      AAdd ( aNiz, { "                   do datuma", "cDat1",,, } )
+      AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
+      AAdd ( aNiz, { "                   do datuma", "dDatum1",,, } )
 
       DO WHILE .T.
          IF !VarEdit( aNiz, 10, 5, 17, 74, 'USLOVI ZA IZVJESTAJ "POREZI PO TARIFAMA"', "B1" )
             CLOSERET
          ENDIF
-         aUsl := Parsiraj( cTarife, "IdTarifa" )
-         IF aUsl <> NIL .AND. cDat0 <= cDat1
+         cFilterTarifa := Parsiraj( cTarife, "IdTarifa" )
+         IF cFilterTarifa <> NIL .AND. dDatum0 <= dDatum1
             EXIT
-         ELSEIF aUsl == nil
+         ELSEIF cFilterTarifa == nil
             MsgBeep ( "Kriterij za tarife nije korektno postavljen!" )
          ELSE
             Msg( "'Datum do' ne smije biti stariji nego 'datum od'!" )
@@ -91,7 +91,7 @@ FUNCTION PDVPorPoTar
       ENDDO
 
       START PRINT CRET
-      ZagFirma()
+      //ZagFirma()
 
    ENDIF // fsolo
 
@@ -129,7 +129,7 @@ FUNCTION PDVPorPoTar
          ENDIF
 
          ? "     Tarife:", iif ( Empty ( cTarife ), "SVE", cTarife )
-         ? "PERIOD: " + FormDat1( cDat0 ) + " - " + FormDat1( cDat1 )
+         ? "PERIOD: " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
          ?
 
       ELSE // fsolo
@@ -145,13 +145,14 @@ FUNCTION PDVPorPoTar
          ENDIF
       ENDIF // fsolo
 
-      SELECT POS
-      SET ORDER TO TAG "1"
+      //SELECT POS
+      //SET ORDER TO TAG "1"
+      seek_pos_pos( cIdPos )
 
       PRIVATE cFilter := ".t."
 
-      IF !( aUsl == ".t." )
-         cFilter += ".and." + aUsl
+      IF !( cFilterTarifa == ".t." )
+         cFilter += ".and." + cFilterTarifa
       ENDIF
 
       IF !Empty( cIdOdj )
@@ -162,8 +163,8 @@ FUNCTION PDVPorPoTar
          SET FILTER to &cFilter
       ENDIF
 
-      SELECT pos_doks
-      SET ORDER TO TAG "2"
+      //SELECT pos_doks
+      //SET ORDER TO TAG "2"
 
       m := Replicate( "-", 12 ) + " " + Replicate( "-", 12 ) + " " + Replicate( "-", 12 )
 
@@ -172,8 +173,8 @@ FUNCTION PDVPorPoTar
 
       // matrica je lok var : aTarife:={}
       // filuj za poreze, VD_PRR - realizacija iz predhodnih sezona
-      aTarife := Porezi( VD_RN, cDat0, aTarife, cNaplaceno )
-      aTarife := Porezi( VD_PRR, cDat0, aTarife, cNaplaceno )
+      aTarife := Porezi( POS_VD_RACUN, dDatum0, aTarife, cNaplaceno )
+      aTarife := Porezi( VD_PRR, dDatum0, aTarife, cNaplaceno )
 
       ASort ( aTarife,,, {| x, y| x[ 1 ] < y[ 1 ] } )
 
@@ -188,7 +189,7 @@ FUNCTION PDVPorPoTar
 
          select_o_tarifa( aTarife[ nCnt ][ 1 ] )
          nPDV := tarifa->opp
-         SELECT pos_doks
+         //SELECT pos_doks
 
          // ispisi opis i na realizaciji kao na racunu
          ? aTarife[ nCnt ][ 1 ], "(" + Str( nPDV ) + "%)"

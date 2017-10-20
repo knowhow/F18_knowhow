@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR picdem, piccdem, pickol
+MEMVAR picdem, piccdem, pickol, m
 
 FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
@@ -61,7 +61,6 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
    select_o_konto( cKto1 )
 
-
    ? PadL( cPom, 14 ), AllTrim( cKto1 ) + " - " + PadR( konto->naz, 60 )
 
    IF !Empty( cKto2 )
@@ -80,10 +79,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
    IF !Empty( cIdZaduz2 )
 
-      select_o_fakt_objekti()
-      GO TOP
-      hseek cIdZaduz2
-
+      select_o_fakt_objekti( cIdZaduz2 )
       ? PadL( "Rad.nalog:", 14 ), AllTrim( cIdZaduz2 ) + " - " + AllTrim( fakt_objekti->naz )
 
    ENDIF
@@ -135,7 +131,6 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
          SELECT kalk_pripr
 
          kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
-
          print_nova_strana( 125, @nStr, 5 )
 
          sKol := field->kolicina
@@ -153,8 +148,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
          @ PRow(), 6 SAY ""
 
-         ?? PadR( cNKonto, 7 ), PadR( AllTrim( field->idroba ) + "-" + ;
-            AllTrim( roba->naz ) + " (" + AllTrim( roba->jmj ) + ")", 60 )
+         ?? PadR( cNKonto, 7 ), PadR( AllTrim( field->idroba ) + "-" + AllTrim( roba->naz ) + " (" + AllTrim( roba->jmj ) + ")", 60 )
 
          @ PRow(), nC1 := PCol() + 1 SAY field->kolicina PICT PicKol
          @ PRow(), PCol() + 1 SAY field->nc PICT piccdem

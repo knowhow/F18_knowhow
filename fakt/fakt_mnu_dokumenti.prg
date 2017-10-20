@@ -16,18 +16,18 @@
 
 FUNCTION fakt_pregled_dokumenata()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. štampa azuriranog dokumenta                               " )
-   AAdd( _opcexe, {|| fakt_stampa_azuriranog() } )
-   AAdd( _opc, "2. pregled liste dokumenata" )
-   AAdd( _opcexe, {|| fakt_pregled_liste_dokumenata() } )
-   AAdd( _opc, "3. štampa/export odt dokumenata po zadanom uslovu" )
-   AAdd( _opcexe, {|| stdokodt_grupno() } )
+   AAdd( aOpc, "1. štampa azuriranog dokumenta                               " )
+   AAdd( aOpcExe, {|| fakt_stampa_azuriranog() } )
+   AAdd( aOpc, "2. pregled liste dokumenata" )
+   AAdd( aOpcExe, {|| fakt_pregled_liste_dokumenata() } )
+   AAdd( aOpc, "3. štampa/export odt dokumenata po zadanom uslovu" )
+   AAdd( aOpcExe, {|| stdokodt_grupno() } )
 
-   f18_menu( "stfak", .F., _izbor, _opc, _opcexe )
+   f18_menu( "stfak", .F., nIzbor, aOpc, aOpcExe )
 
    my_close_all_dbf()
 
@@ -36,23 +36,21 @@ FUNCTION fakt_pregled_dokumenata()
 
 FUNCTION fakt_ostale_operacije_doks()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. povrat dokumenta u pripremu       " )
-   AAdd( _opcexe, {|| Povrat_fakt_dokumenta() } )
+   AAdd( aOpc, "1. povrat dokumenta u pripremu       " )
+   AAdd( aOpcExe, {|| Povrat_fakt_dokumenta() } )
 
-   AAdd( _opc, "2. povrat dokumenata prema kriteriju " )
-   AAdd( _opcexe, {|| if( spec_funkcije_sifra(), Povrat_fakt_po_kriteriju(), nil ) } )
-
-   AAdd( _opc, "3. prekid rezervacije" )
-   AAdd( _opcexe, {|| Povrat_fakt_dokumenta( .T. ) } )
-
-   AAdd( _opc, "A. administrativne opcije " )
-   AAdd( _opcexe, {|| fakt_admin_menu() } )
+   AAdd( aOpc, "2. povrat dokumenata prema kriteriju " )
+   AAdd( aOpcExe, {|| IIF( spec_funkcije_sifra(), fakt_povrat_po_kriteriju(), nil ) } )
 
 
-   f18_menu( "ostop", .F., _izbor, _opc, _opcexe )
+   AAdd( aOpc, "A. administrativne opcije " )
+   AAdd( aOpcExe, {|| fakt_admin_menu() } )
+
+
+   f18_menu( "ostop", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .F.

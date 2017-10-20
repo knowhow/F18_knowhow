@@ -12,6 +12,9 @@
 #include "f18.ch"
 
 
+MEMVAR cLinija, cRelation, gnLMarg, cSvediJmj, cPrikaz, dDatOd, dDatDo, nStrana, lGroup
+
+MEMVAR cSection, cHistory, aHistory
 
 FUNCTION fakt_specif_prodaje_real_kolicina()
 
@@ -20,6 +23,10 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    LOCAL lExpRpt := .F.
    LOCAL lRelations := .F.
    LOCAL cDDokOtpr := "D"
+   LOCAL GetList := {}
+   LOCAL cFilter
+   LOCAL cIdFirma
+
    PRIVATE cPrikaz
    PRIVATE cSection := "N"
    PRIVATE cHistory := " "
@@ -32,15 +39,15 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    PRIVATE cSvediJmj := "N"
 
    // da li se koriste relacije
-   o_fakt()
-   SELECT fakt
+   // o_fakt_dbf()
+   // SELECT fakt
 
-   IF fakt->( FieldPos( "idrelac" ) ) <> 0
-      lRelations := .T.
-   ENDIF
+   // IF fakt->( FieldPos( "idrelac" ) ) <> 0
+   lRelations := .T.
+   // ENDIF
 
-   _o_tables()
-   o_ops()
+   // _o_tables()
+   // o_ops()
 
    // partneri po grupama
    lGroup := p_group()
@@ -74,45 +81,44 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
       cIdFirma := PadR( cIdFirma, 2 )
 
-      fakt_getlist_rj_read( m_x + nX, m_y + 2, @cIdFirma )
+      fakt_getlist_rj_read( box_x_koord() + nX, box_y_koord() + 2, @GetList, @cIdFirma )
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Od datuma "  GET dDatOd
-      @ m_x + nX, Col() + 1 SAY "do"  GET dDatDo
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Od datuma "  GET dDatOd
+      @ box_x_koord() + nX, Col() + 1 SAY "do"  GET dDatDo
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "gledati dat. (D)dok. (O)otpr. (V)valute:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "gledati dat. (D)dok. (O)otpr. (V)valute:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
 
       nX := nX + 3
-      @ m_x + nX, m_y + 2 SAY "Uslov po sifri partnera (prazno svi) "  GET qqPartn PICT "@!" VALID {|| Empty( qqPartn ) .OR. p_partner( @qqPartn ) }
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Uslov po sifri partnera (prazno svi) "  GET qqPartn PICT "@!" VALID {|| Empty( qqPartn ) .OR. p_partner( @qqPartn ) }
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Uslov po artiklu (prazno svi) "  GET qqIdRoba PICT "@S30"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Uslov po artiklu (prazno svi) "  GET qqIdRoba PICT "@S30"
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Uslov po opcini (prazno sve) "  GET cOpcina PICT "@S30"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Uslov po opcini (prazno sve) "  GET cOpcina PICT "@S30"
 
 
-      IF lRelations == .T.
-         ++nX
-         @ m_x + nX, m_y + 2 SAY "Relacija (prazno sve):" GET cRelation
-      ENDIF
+      // IF lRelations == .T.
+      ++nX
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Relacija (prazno sve):" GET cRelation
+      // ENDIF
 
       IF lGroup
          PRIVATE cPGroup := Space( 3 )
          ++nX
-         @ m_x + nX, m_y + 2 SAY "Grupa partnera (prazno sve):" GET cPGroup VALID Empty( cPGroup ) .OR. cPGroup $ "VP #AMB#SIS#OST"
-
+         @ box_x_koord() + nX, box_y_koord() + 2 SAY "Grupa partnera (prazno sve):" GET cPGroup VALID Empty( cPGroup ) .OR. cPGroup $ "VP #AMB#SIS#OST"
       ENDIF
 
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Svedi na jedinicu mjere ?" GET cSvediJmj VALID cSvediJmj $ "DN" PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Svedi na jedinicu mjere ?" GET cSvediJmj VALID cSvediJmj $ "DN" PICT "@!"
 
       nX := nX + 2
 
-      @ m_x + nX, m_y + 2 SAY "Export u XLSX?" GET cExport VALID cExport $ "DN" PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Export u XLSX?" GET cExport VALID cExport $ "DN" PICT "@!"
 
 
       READ
@@ -120,9 +126,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       ESC_BCR
 
       aUslRB := Parsiraj( qqIdRoba, "IDROBA", "C" )
-
       aUslOpc := Parsiraj( cOpcina, "IDOPS", "C" )
-
       aUslTD := Parsiraj( qqTipdok, "IdTipdok", "C" )
 
       IF ( aUslTD <> NIL )
@@ -136,7 +140,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    qqPartn := Trim( qqPartn )
    qqIdRoba := Trim( qqIdRoba )
    qqTipDok := Trim( qqTipDok )
-   Params2()
+
    WPar( "c1", cIdFirma )
    WPar( "d1", dDatOd )
    WPar( "d2", dDatDo )
@@ -159,15 +163,12 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       ENDIF
    ENDIF
 
-   _o_tables()
+   // _o_tables()
 
-   IF fakt_doks->( FieldPos( "dat_isp" ) ) = 0 // ako nema ovog polja, samo gledaj po dokumentima
-      cDDokOtpr := "D"
-   ENDIF
 
-   SELECT fakt
+   // SELECT fakt
 
-   PRIVATE cFilter := ".t."
+   cFilter := ".t."
 
    IF ( !Empty( dDatOd ) .OR. !Empty( dDatDo ) )
 
@@ -176,9 +177,9 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       ENDIF
    ENDIF
 
-   IF ( !Empty( cIdFirma ) )
-      cFilter += " .and. IdFirma=" + dbf_quote( cIdFirma )
-   ENDIF
+   // IF ( !Empty( cIdFirma ) )
+   // cFilter += " .and. IdFirma=" + dbf_quote( cIdFirma )
+   // ENDIF
 
    IF ( !Empty( qqPartn ) )
       cFilter += " .and. IdPartner=" + dbf_quote( qqPartn )
@@ -200,11 +201,19 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       cFilter := SubStr( cFilter, 9 )
    ENDIF
 
+
+   IF cPrikaz == "1"
+      find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "6" ) // hIndexes[ "6" ] := "idfirma+idpartner+idroba+idtipdok+dtos(datdok)"
+   ELSE
+      find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "3" ) // idroba, datdok
+   ENDIF
+
    IF ( cFilter == ".t." )
       SET FILTER TO
    ELSE
       SET FILTER TO &cFilter
    ENDIF
+   GO TOP
 
    EOF CRET
 
@@ -223,21 +232,19 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    cIdPartner := idPartner
 
-   zagl_sp_prod()
+   fakt_zagl_specif_prodaje( cIdFirma )
 
    IF cPrikaz == "1"
 
-      SET ORDER TO TAG "1"
-      SEEK cIdFirma
+      seek_fakt( cIdFirma )
       nC := 0
       nCol1 := 10
       nTKolicina := 0
 
-      DO WHILE !Eof() .AND. IdFirma = cIdFirma
+      DO WHILE !Eof() .AND. IdFirma == cIdFirma
 
          IF cDDokOtpr == "O"
-            SELECT fakt_doks
-            SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+            seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
             IF fakt_doks->dat_otpr < dDatOd .OR. fakt_doks->dat_otpr > dDatDo
                SELECT fakt
                SKIP
@@ -247,8 +254,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          ENDIF
 
          IF cDDokOtpr == "V"
-            SELECT fakt_doks
-            SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+            seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
             IF fakt_doks->dat_val < dDatOd .OR. fakt_doks->dat_val > dDatDo
                SELECT fakt
                SKIP
@@ -260,14 +266,11 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          nKolicina := 0
          cIdPartner := IdPartner
 
-         DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. idpartner == cIdpartner
+         DO WHILE !Eof() .AND. IdFirma == cIdFirma .AND. idpartner == cIdpartner
 
             IF cDDokOtpr == "O"
-               SELECT fakt_doks
-               SEEK fakt->idfirma + fakt->idtipdok + ;
-                  fakt->brdok
-               IF fakt_doks->dat_otpr < dDatOd .OR. ;
-                     fakt_doks->dat_otpr > dDatDo
+               seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
+               IF fakt_doks->dat_otpr < dDatOd .OR.  fakt_doks->dat_otpr > dDatDo
                   SELECT fakt
                   SKIP
                   LOOP
@@ -276,11 +279,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             ENDIF
 
             IF cDDokOtpr == "V"
-               SELECT fakt_doks
-               SEEK fakt->idfirma + fakt->idtipdok + ;
-                  fakt->brdok
-               IF fakt_doks->dat_val < dDatOd .OR. ;
-                     fakt_doks->dat_val > dDatDo
+               seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
+               IF fakt_doks->dat_val < dDatOd .OR. fakt_doks->dat_val > dDatDo
                   SELECT fakt
                   SKIP
                   LOOP
@@ -304,7 +304,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
          IF PRow() > 61
             FF
-            zagl_sp_prod()
+            fakt_zagl_specif_prodaje( cIdFirma )
          ENDIF
 
          select_o_partner( cIdPartner )
@@ -323,9 +323,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          ENDIF
       ENDDO
    ELSE
-      // ako je izabrano "2"
-      SET ORDER TO TAG "3"
-      GO TOP
+
+
       nC := 0
       nCol1 := 10
       nTKolicina := 0
@@ -339,9 +338,9 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       Box(, 3, 60 )
 
       SET DEVICE TO SCREEN
-      @ 1 + m_x, 2 + m_y SAY "formiranje izvjestaja u toku..."
-      nMX := 3 + m_x
-      nMY := 2 + m_y
+      @ 1 + box_x_koord(), 2 + box_y_koord() SAY8 "formiranje izvještaja u toku..."
+      nMX := 3 + box_x_koord()
+      nMY := 2 + box_y_koord()
       SET DEVICE TO PRINTER
 
       DO WHILE !Eof()
@@ -355,8 +354,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          cIdRoba := IdRoba
 
          IF cDDokOtpr == "O"
-            SELECT fakt_doks
-            SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+            seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
             IF fakt_doks->dat_otpr < dDatOd .OR. fakt_doks->dat_otpr > dDatDo
                SELECT fakt
                SKIP
@@ -366,8 +364,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          ENDIF
 
          IF cDDokOtpr == "V"
-            SELECT fakt_doks
-            SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
+            seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
             IF fakt_doks->dat_val < dDatOd .OR. fakt_doks->dat_val > dDatDo
                SELECT fakt
                SKIP
@@ -379,11 +376,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          DO WHILE !Eof() .AND. idRoba == cIdRoba
 
             IF cDDokOtpr == "O"
-               SELECT fakt_doks
-               SEEK fakt->idfirma + fakt->idtipdok + ;
-                  fakt->brdok
-               IF fakt_doks->dat_otpr < dDatOd .OR. ;
-                     fakt_doks->dat_otpr > dDatDo
+               seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
+               IF fakt_doks->dat_otpr < dDatOd .OR. fakt_doks->dat_otpr > dDatDo
                   SELECT fakt
                   SKIP
                   LOOP
@@ -392,11 +386,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             ENDIF
 
             IF cDDokOtpr == "V"
-               SELECT fakt_doks
-               SEEK fakt->idfirma + fakt->idtipdok + ;
-                  fakt->brdok
-               IF fakt_doks->dat_val < dDatOd .OR. ;
-                     fakt_doks->dat_val > dDatDo
+               seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
+               IF fakt_doks->dat_val < dDatOd .OR. fakt_doks->dat_val > dDatDo
                   SELECT fakt
                   SKIP
                   LOOP
@@ -429,7 +420,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             ENDIF
 
             // pojedinacna osnova
-            nPojOsn := Round( kolicina * Cijena * ( 1 - Rabat / 100 ) * ( 1 + Porez / 100 ), ZAOKRUZENJE )
+            nPojOsn := Round( kolicina * Cijena * ( 1 - Rabat / 100 ) * ( 1 + Porez / 100 ), fakt_zaokruzenje() )
 
 
             nPojUk := nPojOsn // ukupni iznos sa PDV
@@ -439,18 +430,14 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             // jer se radi o cijeni sa PDV-om
 
             IF field->idtipdok $ "11#13#23"
-
-               nPojOsn := _osnovica( field->idtipdok, ;
-                  field->idpartner, nPojOsn )
-
+               nPojOsn := _osnovica( field->idtipdok, field->idpartner, nPojOsn )
             ENDIF
 
             // ako je rijec o VP dokumentima, treba izracunati
             // ukupno sa PDV
 
             IF field->idtipdok $ "10#12"
-               nPojUk := _uk_sa_pdv( field->idtipdok, ;
-                  field->idpartner, nPojUk )
+               nPojUk := _uk_sa_pdv( field->idtipdok, field->idpartner, nPojUk )
             ENDIF
 
             // dodaj na total
@@ -471,7 +458,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
          IF PRow() > 61
             FF
-            zagl_sp_prod()
+            fakt_zagl_specif_prodaje( cIdFirma )
          ENDIF
 
          select_o_roba( cIdRoba )
@@ -497,8 +484,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
          ENDIF
 
          IF lExpRpt
-            fill_exp_tbl( cIdRoba, Left( roba->naz, 40 ), ;
-               nKolicina, nOsn, nUkupno )
+            fill_exp_tbl( cIdRoba, Left( roba->naz, 40 ), nKolicina, nOsn, nUkupno )
          ENDIF
 
       ENDDO
@@ -509,7 +495,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    IF PRow() > 59
       FF
-      zagl_sp_prod()
+      fakt_zagl_specif_prodaje( cIdFirma )
    ENDIF
 
    ? Space( gnLMarg )
@@ -543,10 +529,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    RETURN .T.
 
 
-// ---------------------------------------------
-// zaglavlje izvjestaja specifikacija prodaje
-// ---------------------------------------------
-STATIC FUNCTION zagl_sp_prod()
+
+STATIC FUNCTION fakt_zagl_specif_prodaje( cIdFirma )
 
    ?
    P_12CPI
@@ -625,18 +609,18 @@ STATIC FUNCTION zagl_sp_prod()
 // ---------------------------------
 // otvara potrebne tabele
 // ---------------------------------
-STATIC FUNCTION _o_tables()
+//STATIC FUNCTION _o_tables()
 
-   o_fakt()
-   o_fakt_doks()
-  // o_partner()
-   o_valute()
-   //o_rj()
-   //o_sifk()
-   //o_sifv()
-   //o_roba()
+   // o_fakt_dbf()
+   // o_fakt_doks_dbf()
+   // o_partner()
+   // o_valute()
+   // o_rj()
+   // o_sifk()
+   // o_sifv()
+   // o_roba()
 
-   RETURN .T.
+//   RETURN .T.
 
 
 

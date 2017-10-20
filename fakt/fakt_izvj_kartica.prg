@@ -12,15 +12,19 @@
 #include "f18.ch"
 
 
-
 FUNCTION fakt_kartica()
 
-   LOCAL cIdfirma, nRezerv, nRevers
-   LOCAL nul, nizl, nRbr, cRR, nCol1 := 0, cKolona, cBrza := "D"
+   LOCAL cIdFirma, nRezerv, nRevers
+   LOCAL nUl, nIzl, nRbr, cRR, nCol1 := 0, cKolona, cBrza := "D"
    LOCAL cPredh := "2"
    LOCAL lpickol := "@Z " + fakt_pic_kolicina()
-   LOCAL _params := fakt_params()
+   LOCAL hParams := fakt_params()
+   LOCAL GetList := {}
+   LOCAL dDatOd, dDatDo
+   LOCAL cFilter
+   LOCAL qqPartn := Space( 20 )
 
+   LOCAL cObjekatId
    PRIVATE m := ""
 
    my_close_all_dbf()
@@ -32,30 +36,30 @@ FUNCTION fakt_kartica()
    // o_tarifa()
    // o_rj()
 
-   IF _params[ "fakt_objekti" ]
-      o_fakt_objekti()
+   IF hParams[ "fakt_objekti" ]
+      //o_fakt_objekti()
    ENDIF
 
-   o_fakt_doks()
-   o_fakt()
+   // o_fakt_doks_dbf()
+   // o_fakt_dbf()
 
-   SELECT fakt
+   // SELECT fakt
    // IF fId_J
    // SET ORDER TO TAG "3J"
    // idroba_J+Idroba+dtos(datDok)
    // ELSE
-   SET ORDER TO TAG "3"
+   // SET ORDER TO TAG "3"
    // idroba+dtos(datDok)
    // ENDIF
 
-   cIdfirma := self_organizacija_id()
+   cIdFirma := self_organizacija_id()
    PRIVATE qqRoba := ""
-   PRIVATE dDatOd := CToD( "" )
-   PRIVATE dDatDo := Date()
+   //PRIVATE dDatOd := CToD( "" )
+   //PRIVATE dDatDo := Date()
    PRIVATE cPPartn := "N"
 
-   IF _params[ "fakt_objekti" ]
-      _objekat_id := Space( 10 )
+   IF hParams[ "fakt_objekti" ]
+      cObjekatId := Space( 10 )
    ENDIF
 
    _c1 := _c2 := _c3 := Space( 20 )
@@ -81,62 +85,61 @@ FUNCTION fakt_kartica()
    PRIVATE cTipVPC := "1"
 
    PRIVATE ck1 := cK2 := Space( 4 )   // atributi
-   PRIVATE qqPartn := Space( 20 )
 
    qqTarife := ""
    qqNRobe := ""
    // cSort:="S"
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
       READ
 
       // IF gNW $ "DR"
-      fakt_getlist_rj_read( m_x + 2, m_y + 2, @cIdFirma )
+      fakt_getlist_rj_read( box_x_koord() + 2, box_y_koord() + 2, @GetList, @cIdFirma )
 
       // ELSE
-      // @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      // @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       // ENDIF
 
       IF cBrza == "D"
          RPar( "c3", @qqRoba )
          qqRoba := PadR( qqRoba, 10 )
          // IF fID_J
-         // @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!" valid {|| P_Roba( @qqRoba ), qqRoba := roba->id_j, .T. }
+         // @ box_x_koord() + 3, box_y_koord() + 2 SAY "Roba " GET qqRoba PICT "@!" valid {|| P_Roba( @qqRoba ), qqRoba := roba->id_j, .T. }
          // ELSE
-         @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!" VALID P_Roba( @qqRoba )
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Roba " GET qqRoba PICT "@!" VALID P_Roba( @qqRoba )
          // ENDIF
       ELSE
          RPar( "c2", @qqRoba )
          qqRoba := PadR( qqRoba, 60 )
-         @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!S40"
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Roba " GET qqRoba PICT "@!S40"
       ENDIF
 
-      @ m_x + 4, m_y + 2 SAY "Od datuma "  GET dDatOd
-      @ m_x + 4, Col() + 1 SAY "do"  GET dDatDo
-      @ m_x + 5, m_y + 2 SAY "Prikaz rezervacija, reversa (D/N)   "  GET cRR   PICT "@!" VALID cRR $ "DN"
-      @ m_x + 6, m_y + 2 SAY "Prethodno stanje (1-BEZ, 2-SA)      "  GET cPredh PICT"9" VALID cPredh $ "12"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Od datuma "  GET dDatOd
+      @ box_x_koord() + 4, Col() + 1 SAY "do"  GET dDatDo
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz rezervacija, reversa (D/N)   "  GET cRR   PICT "@!" VALID cRR $ "DN"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prethodno stanje (1-BEZ, 2-SA)      "  GET cPredh PICT"9" VALID cPredh $ "12"
       IF gVarC $ "12"
-         @ m_x + 7, m_y + 2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
       ENDIF
 
-      @ m_x + 8, m_y + 2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   PICT "@!"
-      IF fakt->( FieldPos( "K1" ) ) <> 0 .AND. gDK1 == "D"
-         @ m_x + 9, m_y + 2 SAY "K1" GET  cK1 PICT "@!"
-         @ m_x + 10, m_y + 2 SAY "K2" GET  cK2 PICT "@!"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   PICT "@!"
+      IF gDK1 == "D"
+         @ box_x_koord() + 9, box_y_koord() + 2 SAY "K1" GET  cK1 PICT "@!"
+         @ box_x_koord() + 10, box_y_koord() + 2 SAY "K2" GET  cK2 PICT "@!"
       ENDIF
 
-      @ m_x + 12, m_y + 2 SAY "Prikaz kretanja cijena D/N"  GET cPPC PICT "@!" VALID cPPC $ "DN"
-      @ m_x + 13, m_y + 2 SAY8 "Prikaži partnera za svaku stavku"  GET cPPartn PICT "@!" VALID cPPartn $ "DN"
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY "Prikaz kretanja cijena D/N"  GET cPPC PICT "@!" VALID cPPC $ "DN"
+      @ box_x_koord() + 13, box_y_koord() + 2 SAY8 "Prikaži partnera za svaku stavku"  GET cPPartn PICT "@!" VALID cPPartn $ "DN"
 
       IF cBrza == "N"
-         @ m_x + 15, m_y + 2 SAY "Svaka kartica na novu stranicu? (D/N)"  GET cOstran VALID cOstran $ "DN" PICT "@!"
+         @ box_x_koord() + 15, box_y_koord() + 2 SAY "Svaka kartica na novu stranicu? (D/N)"  GET cOstran VALID cOstran $ "DN" PICT "@!"
       ELSE
          cOstran := "N"
       ENDIF
 
-      IF _params[ "fakt_objekti" ]
-         @ m_x + 16, m_y + 2 SAY "Uslov po objektima (prazno-svi)" GET _objekat_id VALID Empty( _objekat_id ) .OR. P_fakt_objekti( @_objekat_id )
+      IF hParams[ "fakt_objekti" ]
+         @ box_x_koord() + 16, box_y_koord() + 2 SAY "Uslov po objektima (prazno-svi)" GET cObjekatId VALID Empty( cObjekatId ) .OR. P_fakt_objekti( @cObjekatId )
       ENDIF
 
       READ
@@ -149,21 +152,22 @@ FUNCTION fakt_kartica()
 
       cSintetika := "N"
       IF cSintetika == "D" .AND.  IF( cBrza == "D", ROBA->tip == "S", .T. )
-         @ m_x + 17, m_y + 2 SAY8 "Sintetički prikaz? (D/N) " GET  cSintetika PICT "@!" VALID cSintetika $ "DN"
+         @ box_x_koord() + 17, box_y_koord() + 2 SAY8 "Sintetički prikaz? (D/N) " GET  cSintetika PICT "@!" VALID cSintetika $ "DN"
       ELSE
          cSintetika := "N"
       ENDIF
-      read;ESC_BCR
+      READ
+      ESC_BCR
 
       IF cBrza == "N"
          // IF fID_J
-         // aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
+         // cFilterRoba := Parsiraj( qqRoba, "IdRoba_J" )
          // ELSE
-         aUsl1 := Parsiraj( qqRoba, "IdRoba" )
+         cFilterRoba := Parsiraj( qqRoba, "IdRoba" )
          // ENDIF
       ENDIF
 
-      IF iif( cBrza == "N", aUsl1 <> NIL, .T. )
+      IF iif( cBrza == "N", cFilterRoba <> NIL, .T. )
          EXIT
       ENDIF
 
@@ -179,7 +183,7 @@ FUNCTION fakt_kartica()
       m += " ----------- ----- -----------"
    ENDIF
 
-   Params2()
+
    WPar( "c1", cIdFirma )
    WPar( "d1", dDatOd )
    WPar( "d2", dDatDo )
@@ -196,43 +200,40 @@ FUNCTION fakt_kartica()
 
    BoxC()
 
-   IF cPPArtn == "D"
-      o_fakt_doks()
-   ENDIF
-
-   SELECT FAKT
-
-   PRIVATE cFilt1 := ""
-
-   cFilt1 := IF( cBrza == "N", aUsl1, ".t." )
-   cFilt1 += IF( Empty( dDatOd ), "", ".and. DATDOK >= " + _filter_quote( dDatOd ) )
-   cFilt1 += IF( Empty( dDatDo ), "", ".and. DATDOK <= " + _filter_quote( dDatDo ) )
+   //PRIVATE cFilter := ""
+   cFilter := iif( cBrza == "N", cFilterRoba, ".t." )
 
    // hendliranje objekata
-   IF _params[ "fakt_objekti" ] .AND. !Empty( _objekat_id )
-      cFilt1 += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
+   IF hParams[ "fakt_objekti" ] .AND. !Empty( cObjekatId )
+      cFilter += ".and. fakt_objekat_id() == " + _filter_quote( cObjekatId )
    ENDIF
 
-   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
+   cFilter := StrTran( cFilter, ".t..and.", "" )
 
-   IF cFilt1 == ".t."
-      SET FILTER TO
-   ELSE
-      SET FILTER TO &cFilt1
-   ENDIF
 
    IF cBrza == "N"
-      GO TOP
-      EOF CRET
+      find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "3" )
    ELSE
-      SEEK qqRoba
+      cFilter += IIF( Empty( dDatOd ), "", ".and. DATDOK >= " + _filter_quote( dDatOd ) )
+      cFilter += IIF( Empty( dDatDo ), "", ".and. DATDOK <= " + _filter_quote( dDatDo ) )
+      seek_fakt_3( cIdFirma, qqRoba )
    ENDIF
+
+
+   IF cFilter == ".t."
+      SET FILTER TO
+   ELSE
+      SET FILTER TO &cFilter
+   ENDIF
+   GO TOP
+
+   EOF CRET
 
    START PRINT CRET
    ?
    P_12CPI
    ?? Space( gnLMarg ); ?? "FAKT: Kartice artikala na dan", Date(), "      za period od", dDatOd, "-", dDatDo
-   ? Space( gnLMarg ); IspisFirme( cidfirma )
+   ? Space( gnLMarg ); IspisFirme( cIdFirma )
    IF !Empty( qqRoba )
       ? Space( gnLMarg )
       IF !Empty( qqRoba ) .AND. cBrza = "N"
@@ -240,9 +241,9 @@ FUNCTION fakt_kartica()
       ENDIF
    ENDIF
 
-   IF _params[ "fakt_objekti" ] .AND. !Empty( _objekat_id )
+   IF hParams[ "fakt_objekti" ] .AND. !Empty( cObjekatId )
       ? Space( gnLMarg )
-      ?? "Uslov za objekat: ", AllTrim( _objekat_id ), fakt_objekat_naz( _objekat_id )
+      ?? "Uslov za objekat: ", AllTrim( cObjekatId ), fakt_objekat_naz( cObjekatId )
    ENDIF
 
    ?
@@ -319,27 +320,29 @@ FUNCTION fakt_kartica()
          PushWA()
          SELECT fakt
          SET FILTER TO
-         // IF fID_J
-         // // TODO : pogledati
-         // SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
-         // ELSE
-         SEEK cIdFirma + IF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba )
-         // ENDIF
+
+         SEEK cIdFirma + IIF( cSintetika == "D" .AND. ROBA->tip == "S", RTrim( ROBA->id ), cIdRoba ) // fakt - ranije otvoreno
+
          // DO-WHILE za cPredh=2
-         DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", ;
-               Left( cIdRoba, gnDS ) == Left( IdROba, gnDS ), ;
+         DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", Left( cIdRoba, gnDS ) == Left( IdROba, gnDS ), ;
                cIdRoba == IdRoba ) .AND. dDatOd > datdok
 
             IF !Empty( cK1 )
-               IF ck1 <> K2 ; skip; loop; ENDIF
+               IF cK1 <> K2 ; skip; loop; ENDIF
             ENDIF
             IF !Empty( cK2 )
-               IF ck2 <> K2; skip; loop; ENDIF
+               IF cK2 <> K2; skip; loop; ENDIF
             ENDIF
-            IF !Empty( cidfirma ); IF idfirma <> cidfirma; skip; loop; end; END
+            IF !Empty( cIdFirma ); IF idfirma <> cIdFirma; skip; loop; end; END
+
+
             IF !Empty( qqPartn )
-               SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok )
-               SELECT fakt; IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
+               seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
+               SELECT fakt
+               IF !( fakt_doks->partner = qqPartn ) // samo jedno "=" !
+                   skip
+                   loop
+               ENDIF
             ENDIF
 
             IF !Empty( cIdRoba )
@@ -360,7 +363,7 @@ FUNCTION fakt_kartica()
             SKIP 1
          ENDDO  // za do-while za cPredh="2"
          ? Space( gnLMarg ); ?? Str( nRbr, 3 ) + ".   " + idfirma + PadR( "  PRETHODNO STANJE", 23 )
-         IF cppartn == "D"
+         IF cPpartn == "D"
             @ PRow(), PCol() + 1 SAY Space( 20 )
          ENDIF
          @ PRow(), PCol() + 1 SAY nUl PICT lpickol
@@ -369,17 +372,20 @@ FUNCTION fakt_kartica()
          PopWA()
       ENDIF
 
-      DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", ;
-            Left( cIdRoba, gnDS ) == Left( IdRoba, gnDS ), cIdRoba == IdRoba )
+      DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S",  Left( cIdRoba, gnDS ) == Left( IdRoba, gnDS ), cIdRoba == IdRoba )
          cKolona := "N"
 
-         IF !Empty( cidfirma ); IF idfirma <> cidfirma; skip; loop; end; END
-         IF !Empty( cK1 ); IF ck1 <> K1 ; skip; loop; end; END // uslov ck1
-         IF !Empty( cK2 ); IF ck2 <> K2; skip; loop; end; END // uslov ck2
+         IF !Empty( cIdFirma ); IF idfirma <> cIdFirma; skip; loop; end; END
+         IF !Empty( cK1 ); IF cK1 <> K1 ; skip; loop; end; END // uslov ck1
+         IF !Empty( cK2 ); IF cK2 <> K2; skip; loop; end; END // uslov ck2
 
          IF !Empty( qqPartn )
-            SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok )
-            SELECT fakt; IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
+            seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
+            SELECT fakt
+            IF !( fakt_doks->partner = qqPartn ) // "="" dio polja partner, ne stavljati "=="
+               skip
+               loop
+            ENDIF
          ENDIF
 
          IF !Empty( cIdRoba )
@@ -408,8 +414,8 @@ FUNCTION fakt_kartica()
                ? Space( gnLMarg ); ?? Str( ++nRbr, 3 ) + ".   " + idfirma + "-" + idtipdok + "-" + brdok + Left( serbr, 1 ) + "  " + DToC( datdok )
 
                IF cPPartn == "D"
-                  SELECT fakt_doks
-                  HSEEK fakt->( IdFirma + idtipdok + brdok )
+                  seek_fakt_doks( fakt->idfirma, fakt->idtipdok, fakt->brdok )
+
                   SELECT fakt
                   @ PRow(), PCol() + 1 SAY PadR( fakt_doks->Partner, 20 )
                ENDIF
@@ -424,10 +430,10 @@ FUNCTION fakt_kartica()
                ENDIF
             ENDIF
 
-            IF FieldPos( "k1" ) <> 0  .AND. gDK1 == "D"
+            IF gDK1 == "D"
                @ PRow(), PCol() + 1 SAY k1
             ENDIF
-            IF FieldPos( "k2" ) <> 0  .AND. gDK2 == "D"
+            IF gDK2 == "D"
                @ PRow(), PCol() + 1 SAY k2
             ENDIF
 
@@ -476,7 +482,7 @@ FUNCTION fakt_kartica()
    ENDPRINT
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION ZaglKart( lIniStrana )
@@ -493,7 +499,7 @@ STATIC FUNCTION ZaglKart( lIniStrana )
    ? Space( gnLMarg )
    ?? m
    ? Space( gnLMarg )
-   ?? "ŠIFRA:"
+   ??U "ŠIFRA:"
    // IF fID_J
    // ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->ID_J, Left( cidroba, 10 ) ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
    // ELSE
@@ -502,16 +508,18 @@ STATIC FUNCTION ZaglKart( lIniStrana )
    ? Space( gnLMarg ); ?? m
    B_OFF
    ? Space( gnLMarg )
-   ?? "R.br  RJ Br.dokumenta   Dat.dok."
+   ??U "R.br  RJ Br.dokumenta   Dat.dok."
    IF cPPartn == "D"
       ?? PadC( "Partner", 21 )
    ENDIF
-   ?? "     Ulaz       Izlaz      Stanje  "
+   ??U "     Ulaz       Izlaz      Stanje  "
    IF cPPC == "D"
       ?? "     Cijena   Rab%   C-Rab"
    ENDIF
 
-   ? Space( gnLMarg ); ?? m
-   nZStrana = nStrana
+   ?U Space( gnLMarg )
+   ?? m
 
-   RETURN
+   nZStrana := nStrana
+
+   RETURN .T.

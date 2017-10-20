@@ -163,15 +163,7 @@ FUNCTION Params1()
    RETURN NIL
 
 
-FUNCTION Params2()
 
-   LOCAL ncx, ncy, nOldC
-
-   // TODO: skloni
-   // f18_tone( 320, 1 )
-   // f18_tone( 320, 1 )
-
-   RETURN .T.
 
 FUNCTION HistUser( Ch )
 
@@ -180,11 +172,13 @@ FUNCTION HistUser( Ch )
    DO CASE
    CASE Ch == K_ENTER
       RETURN DE_ABORT
+
    CASE Ch = K_CTRL_T
       IF Len( aHistory ) > 1
          cHi := aHistory[ aBrowRow(), 1 ]
          ADel( aHistory, aBrowRow() )
          ASize( aHistory, Len( aHistory ) - 1 )
+
          SEEK cSection + cHi
          DO WHILE !Eof() .AND. cSection + cHi == Fsec + Fh
             SKIP
@@ -205,10 +199,20 @@ FUNCTION HistUser( Ch )
    RETURN NIL
 
 
-FUNCTION  o_params()
+FUNCTION o_params()
 
    SELECT ( F_PARAMS )
+   use
    my_use ( "params" )
+   SET ORDER TO TAG  "ID"
+
+   RETURN .T.
+
+
+FUNCTION o_gparams()
+
+   SELECT ( F_GPARAMS )
+   my_use ( "gparams" )
    SET ORDER TO TAG  "ID"
 
    RETURN .T.

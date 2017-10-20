@@ -13,14 +13,12 @@
 
 THREAD STATIC aMenuStack := {} // thread safe
 
-
-MEMVAR m_x, m_y, goModul
+MEMVAR goModul
 
 FUNCTION f18_menu( cIzp, lOsnovniMeni, nIzbor, aOpc, aOpcExe )
 
    LOCAL cOdgovor
    LOCAL nMenuExeOpcija
-
    IF lOsnovniMeni == NIL
       lOsnovniMeni := .F.
    ENDIF
@@ -154,25 +152,25 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    // Ako se meni zove prvi put, upisi ga na stek
    IF Len( aMenuStack ) == 0 .OR. ( Len( aMenuStack ) <> 0 .AND. cMeniId <> ( StackTop( aMenuStack ) )[ 1 ] )
       IF lFiksneKoordinate
-         m_x := aFixKoo[ 1 ]
-         m_y := aFixKoo[ 2 ]
+         box_x_koord( aFixKoo[ 1 ] )
+         box_y_koord(  aFixKoo[ 2 ] )
       ELSE
 
-         Calc_xy( @m_x, @m_y, nN1, nLength ) // odredi koordinate menija
+         Calc_xy( nN1, nLength ) // odredi koordinate menija
       ENDIF
 
       StackPush( aMenuStack, { cMeniId, ;
-         m_x, ;
-         m_y, ;
-         SaveScreen( m_x, m_y, m_x + nN1 + 2 - iif( lFiksneKoordinate, 1, 0 ), m_y + nLength + 4 - iif( lFiksneKoordinate, 1, 0 ) ), ;
+         box_x_koord(), ;
+         box_y_koord(), ;
+         SaveScreen( box_x_koord(), box_y_koord(), box_x_koord() + nN1 + 2 - iif( lFiksneKoordinate, 1, 0 ), box_y_koord() + nLength + 4 - iif( lFiksneKoordinate, 1, 0 ) ), ;
          nItemNo, ;
          cHelpT;
          } )
 
    ELSE
       aMenu := StackTop( aMenuStack ) // Ako se meni ne zove prvi put, uzmi koordinate sa steka
-      m_x := aMenu[ 2 ]
-      m_y := aMenu[ 3 ]
+      box_x_koord( aMenu[ 2 ] )
+      box_y_koord(  aMenu[ 3 ] )
 
    END IF
 
@@ -185,32 +183,32 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    SetColor( cLocalColor )
 
 
-   nItemNo := meni_0_inkey(  m_x + 1, m_y + 2, m_x + nN1 + 1, m_y + nLength + 1, aItems, nItemNo, ;
+   nItemNo := meni_0_inkey(  box_x_koord() + 1, box_y_koord() + 2, box_x_koord() + nN1 + 1, box_y_koord() + nLength + 1, aItems, nItemNo, ;
       .T., lFiksneKoordinate )
 
 
    nTItemNo := nItemNo // nTItemNo := RetItem( nItemNo )
 
    aMenu := StackTop( aMenuStack )
-   m_x := aMenu[ 2 ]
-   m_y := aMenu[ 3 ]
+   box_x_koord( aMenu[ 2 ] )
+   box_y_koord( aMenu[ 3 ] )
    aMenu[ 5 ] := nTItemNo
 
-   @ m_x, m_y TO m_x + nN1 + 1, m_y + nLength + 3
+   @ box_x_koord(), box_y_koord() TO box_x_koord() + nN1 + 1, box_y_koord() + nLength + 3
 
    IF nTItemNo <> 0 // Ako nije pritisnuto ESC, <-, ->, oznaci izabranu opciju
       SetColor( cLocalInvertedColor )
-      @ m_x + Min( nTItemNo, nMaxVR ), m_y + 1 SAY8 " " + aItems[ nTItemNo ] + " "
-      @ m_x + Min( nTItemNo, nMaxVR ), m_y + 2 SAY ""
+      @ box_x_koord() + Min( nTItemNo, nMaxVR ), box_y_koord() + 1 SAY8 " " + aItems[ nTItemNo ] + " "
+      @ box_x_koord() + Min( nTItemNo, nMaxVR ), box_y_koord() + 2 SAY ""
    END IF
 
    nChar := LastKey()
 
    IF nChar == K_ESC .OR. nTItemNo == 0 .OR. nTItemNo == nPovratak  // Ako je ESC meni treba odmah izbrisati (nItemNo=0),  skini meni sa steka
-      @ m_x, m_y CLEAR TO m_x + nN1 + 2 - iif( lFiksneKoordinate, 1, 0 ), m_y + nLength + 4 - iif( lFiksneKoordinate, 1, 0 )
+      @ box_x_koord(), box_y_koord() CLEAR TO box_x_koord() + nN1 + 2 - iif( lFiksneKoordinate, 1, 0 ), box_y_koord() + nLength + 4 - iif( lFiksneKoordinate, 1, 0 )
       aMenu := StackPop( aMenuStack )
 
-      RestScreen( m_x, m_y, m_x + nN1 + 2 -iif( lFiksneKoordinate, 1, 0 ), m_y + nLength + 4 - iif( lFiksneKoordinate, 1, 0 ), aMenu[ 4 ] )
+      RestScreen( box_x_koord(), box_y_koord(), box_x_koord() + nN1 + 2 -iif( lFiksneKoordinate, 1, 0 ), box_y_koord() + nLength + 4 - iif( lFiksneKoordinate, 1, 0 ), aMenu[ 4 ] )
    END IF
 
    SetColor( cOldColor )

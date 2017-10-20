@@ -34,15 +34,15 @@ FUNCTION SpecTrosRN()
    Box( "#SPECIFIKACIJA TROSKOVA PO RADNIM NALOZIMA", 10, 75 )
 
    IF gNW == "D"
-      @ m_x + 2, m_y + 2 SAY "Firma "
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma "
       ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
 
-   @ m_x + 4, m_y + 2 SAY "Radni nalozi (uslov):" GET qqRN
-   @ m_x + 5, m_y + 2 SAY "Period: od datuma" GET dOd
-   @ m_x + 5, Col() + 2 SAY "do datuma" GET dDo
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Radni nalozi (uslov):" GET qqRN
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Period: od datuma" GET dOd
+   @ box_x_koord() + 5, Col() + 2 SAY "do datuma" GET dDo
 
    DO WHILE .T.
       READ
@@ -58,7 +58,7 @@ FUNCTION SpecTrosRN()
 
    cIdFirma := Left( cIdFirma, 2 )
 
-   select_o_fakt_objekti()
+   //select_o_fakt_objekti()
    //o_konto()
    o_suban()
 

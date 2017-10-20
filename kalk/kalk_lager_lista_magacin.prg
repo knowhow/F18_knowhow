@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR gZaokr, m_x, m_y, GetList
+MEMVAR gZaokr
 
 STATIC s_cLinija
 STATIC s_cTxt1
@@ -30,6 +30,7 @@ FUNCTION kalk_lager_lista_magacin()
    LOCAL cMoreInfo := "N"
    LOCAL cVpcIzSifarnikaDN := "D"
    LOCAL _print := "1"
+   LOCAL GetList := {}
 
    LOCAL nTUlazP  // ulaz, izlaz parovno
    LOCAL nTIzlazP
@@ -88,7 +89,7 @@ FUNCTION kalk_lager_lista_magacin()
       o_kalk_pripr()
       cBrPSt := "00001   "
       Box(, 3, 60 )
-      @ m_x + 1, m_y + 2 SAY8 "Generacija poč.stanja  - broj dokumenta 16 -" GET cBrPSt
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Generacija poč.stanja  - broj dokumenta 16 -" GET cBrPSt
       READ
       ESC_BCR
       BoxC()
@@ -132,59 +133,59 @@ FUNCTION kalk_lager_lista_magacin()
 
    DO WHILE .T.
 
-      @ m_x + 1, m_y + 2 SAY "Firma "
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "
       ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
-      @ m_x + 2, m_y + 2 SAY "Konto   " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
-      @ m_x + 3, m_y + 2 SAY "Artikli " GET qqRoba PICT "@!S50"
-      @ m_x + 4, m_y + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Vrste dokumenata " GET qqIDVD PICT "@!S30"
-      @ m_x + 6, m_y + 2 SAY "Partneri " GET qqIdPartner PICT "@!S20"
-      @ m_x + 6, Col() + 1 SAY "Br.fakture " GET cFaBrDok  PICT "@!S15"
-      @ m_x + 7, m_y + 2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  VALID cpnab $ "DN" PICT "@!"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto   " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Artikli " GET qqRoba PICT "@!S50"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Vrste dokumenata " GET qqIDVD PICT "@!S30"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Partneri " GET qqIdPartner PICT "@!S20"
+      @ box_x_koord() + 6, Col() + 1 SAY "Br.fakture " GET cFaBrDok  PICT "@!S15"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  VALID cpnab $ "DN" PICT "@!"
 
-      @ m_x + 7, Col() + 1 SAY "Prikaz samo do nab.vr. D/N" GET cDoNab  VALID cDoNab $ "DN" PICT "@!"
+      @ box_x_koord() + 7, Col() + 1 SAY "Prikaz samo do nab.vr. D/N" GET cDoNab  VALID cDoNab $ "DN" PICT "@!"
 
-      @ m_x + 8, m_y + 2 SAY8 "Pr.stavki kojima je NV 0 D/N" GET cNulaDN  VALID cNulaDN $ "DN" PICT "@!"
-      @ m_x + 9, m_y + 2 SAY8 "Prikaz 'ERR' ako je NV/Kolicina<>NC " GET cErr PICT "@!" VALID cErr $ "DN"
-      @ m_x + 9, Col() + 1 SAY8 "VPC iz sifrarnika robe (D/N)?" GET cVpcIzSifarnikaDN PICT "@!" VALID cVpcIzSifarnikaDN $ "DN"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Pr.stavki kojima je NV 0 D/N" GET cNulaDN  VALID cNulaDN $ "DN" PICT "@!"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Prikaz 'ERR' ako je NV/Kolicina<>NC " GET cErr PICT "@!" VALID cErr $ "DN"
+      @ box_x_koord() + 9, Col() + 1 SAY8 "VPC iz sifrarnika robe (D/N)?" GET cVpcIzSifarnikaDN PICT "@!" VALID cVpcIzSifarnikaDN $ "DN"
 
-      @ m_x + 10, m_y + 2 SAY8 "Datum od " GET dDatOd
-      @ m_x + 10, Col() + 2 SAY8 "do" GET dDatDo
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Datum od " GET dDatOd
+      @ box_x_koord() + 10, Col() + 2 SAY8 "do" GET dDatDo
 
-      @ m_x + 11, m_y + 2 SAY8 "Vrsta štampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY8 "Vrsta štampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
 
-      @ m_x + 12, m_y + 2 SAY8 "Postaviti srednju NC u sifrarnik" GET cNCSif PICT "@!" VALID ( ( cpnab == "D" .AND. cncsif == "D" ) .OR. cNCSif == "N" )
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY8 "Postaviti srednju NC u sifrarnik" GET cNCSif PICT "@!" VALID ( ( cpnab == "D" .AND. cncsif == "D" ) .OR. cNCSif == "N" )
 
       IF fPocStanje
-         @ m_x + 13, m_y + 2 SAY8 "Sredi samo stavke kol=0, nv<>0 (0/1/2)"  GET cSrKolNula VALID cSrKolNula $ "012" PICT "@!"
+         @ box_x_koord() + 13, box_y_koord() + 2 SAY8 "Sredi samo stavke kol=0, nv<>0 (0/1/2)"  GET cSrKolNula VALID cSrKolNula $ "012" PICT "@!"
       ENDIF
 
-      @ m_x + 14, m_y + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
+      @ box_x_koord() + 14, box_y_koord() + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
 
 /*
       // IF IsVindija()
       cGr := Space( 10 )
       cPSPDN := "N"
-      @ m_x + 15, m_y + 2 SAY8 "Grupa:" GET cGr
-      @ m_x + 16, m_y + 2 SAY8 "Pregled samo prodaje (D/N)" GET cPSPDN VALID cPSPDN $ "DN" PICT "@!"
-      @ m_x + 17, m_y + 2 SAY8 "Uslov po opcinama:" GET cOpcine PICT "@!S40"
+      @ box_x_koord() + 15, box_y_koord() + 2 SAY8 "Grupa:" GET cGr
+      @ box_x_koord() + 16, box_y_koord() + 2 SAY8 "Pregled samo prodaje (D/N)" GET cPSPDN VALID cPSPDN $ "DN" PICT "@!"
+      @ box_x_koord() + 17, box_y_koord() + 2 SAY8 "Uslov po opcinama:" GET cOpcine PICT "@!S40"
       // ENDIF
 */
 
       // ako je roba - grupacija
-      @ m_x + 17, m_y + 2 SAY "Grupa artikla:" GET qqRGr PICT "@S10"
-      @ m_x + 17, m_y + 30 SAY "Podgrupa artikla:" GET qqRGr2 PICT "@S10"
+      @ box_x_koord() + 17, box_y_koord() + 2 SAY "Grupa artikla:" GET qqRGr PICT "@S10"
+      @ box_x_koord() + 17, box_y_koord() + 30 SAY "Podgrupa artikla:" GET qqRGr2 PICT "@S10"
 
-      @ m_x + 18, m_y + 2 SAY8 "Naziv artikla sadrži"  GET cArtikalNaz
+      @ box_x_koord() + 18, box_y_koord() + 2 SAY8 "Naziv artikla sadrži"  GET cArtikalNaz
 
       IF !Empty( cRNT1 )
-         @ m_x + 19, m_y + 2 SAY "Broj radnog naloga:"  GET cRNalBroj PICT "@S20"
+         @ box_x_koord() + 19, box_y_koord() + 2 SAY "Broj radnog naloga:"  GET cRNalBroj PICT "@S20"
       ENDIF
 
-      @ m_x + 20, m_y + 2 SAY8 "Export izvještaja u XLSX?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
+      @ box_x_koord() + 20, box_y_koord() + 2 SAY8 "Export izvještaja u XLSX?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
 
-      @ m_x + 20, Col() + 1 SAY "Pr.dodatnih informacija ?" GET cMoreInfo VALID cMoreInfo $ "DN" PICT "@!"
+      @ box_x_koord() + 20, Col() + 1 SAY "Pr.dodatnih informacija ?" GET cMoreInfo VALID cMoreInfo $ "DN" PICT "@!"
 
       READ
       ESC_BCR
@@ -478,7 +479,7 @@ FUNCTION kalk_lager_lista_magacin()
          IF mu_i == "1"
 
             IF !( idvd $ "12#22#94" )
-            
+
                nKolicina := field->kolicina - field->gkolicina - field->gkolicin2
                nUlaz += nKolicina
                kalk_sumiraj_kolicinu( nKolicina, 0, @nTUlazP, @nTIzlazP )

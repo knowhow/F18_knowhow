@@ -48,32 +48,32 @@ STATIC FUNCTION uslovi_pregleda_loga( hParams )
 
    Box(, 12, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "Uslovi za pregled log-a..."
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Uslovi za pregled log-a..."
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Datum od" GET _datum_od
-   @ m_x + _x, Col() + 1 SAY "do" GET _datum_do
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Datum od" GET _datum_od
+   @ box_x_koord() + _x, Col() + 1 SAY "do" GET _datum_do
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Korisnik (prazno svi):" GET cUser PICT "@S40"
-
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "LIKE uslovi:"
-
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "  sadrži:" GET _conds_true PICT "@S40"
-
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "nesadrži:" GET _conds_false PICT "@S40"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Korisnik (prazno svi):" GET cUser PICT "@S40"
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Pregledaj samo operacije nad dokumentima (D/N)?" GET _f18_doc_oper VALID _f18_doc_oper $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "LIKE uslovi:"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Limit na broj zapisa (0-bez limita)" GET _limit PICT "999999"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY8 "  sadrži:" GET _conds_true PICT "@S40"
+
+   ++ _x
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY8 "nesadrži:" GET _conds_false PICT "@S40"
+
+   ++ _x
+   ++ _x
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Pregledaj samo operacije nad dokumentima (D/N)?" GET _f18_doc_oper VALID _f18_doc_oper $ "DN" PICT "@!"
+
+   ++ _x
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Limit na broj zapisa (0-bez limita)" GET _limit PICT "999999"
 
    READ
 

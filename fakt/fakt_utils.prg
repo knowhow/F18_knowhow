@@ -79,13 +79,7 @@ FUNCTION fakt_objekat_naz( id_obj )
 
    PushWA()
 
-   o_fakt_objekti()
-
-   SELECT fakt_objekti
-   SET ORDER TO TAG "ID"
-   SEEK id_obj
-
-   IF Found()
+   IF select_o_fakt_objekti( id_obj )
       _ret := AllTrim( field->naz )
    ENDIF
 
@@ -100,30 +94,26 @@ FUNCTION fakt_objekat_naz( id_obj )
 // ako se zadaje bez parametara pretpostavlja se da je
 // napravljena tabela relacije fakt_doks->fakt
 // --------------------------------------------------
-FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
+FUNCTION fakt_objekat_id( cIdFirma, id_tipdok, cBrDok )
 
    LOCAL _ret := ""
    LOCAL aMemo
 
    PushWA()
-   IF id_firma == NIL
-      id_firma = fakt->idfirma
+   IF cIdFirma == NIL
+      cIdFirma = fakt->idfirma
       id_tipdok = fakt->idtipdok
-      br_dok = fakt->brdok
+      cBrDok = fakt->brdok
    ENDIF
 
-   SELECT ( F_FAKT )
+   //SELECT ( F_FAKT )
 
-   IF !Used()
-      o_fakt()
-   ENDIF
+   //IF !Used()
+    //  o_fakt_dbf()
+   //ENDIF
 
-   SELECT fakt
-   SET FILTER TO
-   SET ORDER TO TAG "1"
-   SEEK id_firma + id_tipdok + br_dok + "  1"
-
-   IF !Found()
+   IF !seek_fakt( cIdFirma, id_tipdok, cBrDok ) // + "  1"
+   //IF Eof()
       _ret := Space( 10 )
    ELSE
       aMemo := fakt_ftxt_decode( fakt->txt )
@@ -164,23 +154,16 @@ FUNCTION fakt_memo_field_to_txt( memo_field )
 
 
 
-FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
+FUNCTION get_fakt_vezni_dokumenti( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL _t_arr := Select()
    LOCAL _ret := ""
    LOCAL aMemo
 
-   SELECT ( F_FAKT )
-   IF !Used()
-      o_fakt()
-   ENDIF
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + tip_dok + br_dok
 
-   IF !Found()
+   IF !seek_fakt( cIdFirma, cIdTipDok, cBrDok )
+   //IF Eof()
       RETURN _ret
    ENDIF
 

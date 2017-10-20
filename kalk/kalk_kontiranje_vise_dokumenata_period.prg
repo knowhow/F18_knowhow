@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y, GetList
-
 FUNCTION kontiranje_vise_dokumenata_period_auto()
 
    LOCAL dDatOd := Date() - 30
@@ -22,21 +20,22 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
    LOCAL cId_pkto := PadR( "", 100 )
    LOCAL cAutomatskiSetBrojNaloga := "N"
    LOCAL lAutomatskiSetBrojNaloga := .F.
+   LOCAL GetList := {}
 
    Box( , 6, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "Datum od:" GET dDatOd
-   @ m_x + 1, Col() + 1 SAY "do:" GET dDatDo
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum od:" GET dDatOd
+   @ box_x_koord() + 1, Col() + 1 SAY "do:" GET dDatDo
 
-   @ m_x + 2, m_y + 2 SAY "tipovi dokumenata (prazno siv):" GET cIdVD  PICT "@S20"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "tipovi dokumenata (prazno siv):" GET cIdVD  PICT "@S20"
 
-   @ m_x + 3, m_y + 2 SAY "mag.konta (prazno-sva):" GET cId_mkto PICT "@S20"
-   @ m_x + 4, m_y + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto PICT "@S20"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "mag.konta (prazno-sva):" GET cId_mkto PICT "@S20"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto PICT "@S20"
 
    IF is_kalk_fin_isti_broj() // ako je parametar fin-kalk broj identican, onda uvijek
       cAutomatskiSetBrojNaloga := "D"
    ELSE
-      @ m_x + 6, m_y + 2 SAY "Automatska generacija brojeva FIN naloga ?" GET cAutomatskiSetBrojNaloga PICT "@!"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Automatska generacija brojeva FIN naloga ?" GET cAutomatskiSetBrojNaloga PICT "@!"
    ENDIF
 
    READ
@@ -159,15 +158,15 @@ FUNCTION kalk_kontiranje_dokumenata_period()
 
    SET CURSOR ON
    Box(, 6, 60 )
-   @ m_x + 1, m_y + 2 SAY  "Vrsta kalkulacije " GET cVrsta PICT "@!" VALID !Empty( cVrsta )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY  "Vrsta kalkulacije " GET cVrsta PICT "@!" VALID !Empty( cVrsta )
 
-   @ m_x + 3, m_y + 2 SAY  "Magacinski konto (prazno svi) " GET cMKonto  PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY  "Magacinski konto (prazno svi) " GET cMKonto  PICT "@!"
 
-   @ m_x + 4, m_y + 2 SAY "Prodavnicki kto (prazno svi)  " GET cPKonto PICT "@!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prodavnicki kto (prazno svi)  " GET cPKonto PICT "@!"
 
 
-   @ m_x + 6, m_y + 2 SAY  "Kontirati za period od " GET dDatOd
-   @ m_x + 6, Col() + 2  SAY  " do " GET dDatDo
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY  "Kontirati za period od " GET dDatOd
+   @ box_x_koord() + 6, Col() + 2  SAY  " do " GET dDatDo
 
    READ
 

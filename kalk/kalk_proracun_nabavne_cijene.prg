@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-MEMVAR _mkonto, _idroba, _Kolicina, m_x, m_y, GetList
+MEMVAR _mkonto, _idroba, _Kolicina
 
 STATIC s_nPragOdstupanjaNCSumnjiv := NIL
 STATIC s_nStandarnaStopaMarze := NIL
@@ -99,15 +99,15 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjiUlazKol,
          nX := 2
          Box( "#" + "== Odstupanje NC " + AllTrim( _mkonto ) + "/" + AllTrim( _idroba ) + " ===", 12, 70, .T. )
 
-         @ m_x + nX, m_y + 2   SAY     "Artikal: " + AllTrim( _idroba ) + "-" + PadR( roba->naz, 20 )
+         @ box_x_koord() + nX, box_y_koord() + 2   SAY     "Artikal: " + AllTrim( _idroba ) + "-" + PadR( roba->naz, 20 )
          nX += 2
-         @ m_x + nX++, m_y + 2 SAY8 "  količina na stanju: " + AllTrim( say_kolicina( nKolicina ) )
-         @ m_x + nX, m_y + 2 SAY8 "            Srednja NC: " + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + " <"
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "  količina na stanju: " + AllTrim( say_kolicina( nKolicina ) )
+         @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "            Srednja NC: " + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + " <"
          nX  += 2
-         @ m_x + nX++, m_y + 2 SAY8 "količina zadnji ulaz: " + AllTrim( say_kolicina( nZadnjiUlazKol ) )
-         @ m_x + nX++, m_y + 2 SAY8 "      NC Zadnji ulaz: " + AllTrim( say_cijena( nZadnjaUlaznaNC ) ) + " <"
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "količina zadnji ulaz: " + AllTrim( say_kolicina( nZadnjiUlazKol ) )
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "      NC Zadnji ulaz: " + AllTrim( say_cijena( nZadnjaUlaznaNC ) ) + " <"
          nX += 2
-         @ m_x + nX++, m_y + 2 SAY8 " Korigovati NC na zadnju ulaznu: D/N ?"  GET cDn VALID cDn $ "DN" PICT "@!"
+         @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 " Korigovati NC na zadnju ulaznu: D/N ?"  GET cDn VALID cDn $ "DN" PICT "@!"
 
          READ
          BoxC()
@@ -136,9 +136,10 @@ FUNCTION korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )
 
 
 
-FUNCTION MarzaVP( cIdVd, lNaprijed )
+FUNCTION kalk_10_vaild_Marza_VP( cIdVd, lNaprijed )
 
    LOCAL nStvarnaKolicina := 0
+   LOCAL nMarza
 
    IF ( _nc == 0 )
       _nc := 9999
@@ -150,9 +151,9 @@ FUNCTION MarzaVP( cIdVd, lNaprijed )
       nStvarnaKolicina := _Kolicina
    ENDIF
 
-   IF  _Marza == 0 .OR. _VPC <> 0 .AND. !lNaprijed
-      // unazad formiraj marzu
-      nMarza := _VPC - _NC
+   IF _Marza == 0 .OR. _VPC <> 0 .AND. !lNaprijed
+
+      nMarza := _VPC - _NC // unazad formiraj marzu
       IF _TMarza == "%"
          _Marza := 100 * ( _VPC / _NC - 1 )
       ELSEIF _TMarza == "A"
@@ -185,22 +186,21 @@ FUNCTION MarzaVP( cIdVd, lNaprijed )
 
 
 /*
- *     Proracun veleprodajne marze
+ *     veleprodajna marza
  */
 
-FUNCTION kalk_Marza( fMarza )
+FUNCTION kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa( cProracunMarzeUnaprijed )
 
-   LOCAL nStvarnaKolicina := 0, nPPP
+   LOCAL nStvarnaKolicina := 0, nMarza
 
-   IF fMarza == NIL
-      fMarza := " "
+   IF cProracunMarzeUnaprijed == NIL
+      cProracunMarzeUnaprijed := " "
    ENDIF
 
-   IF _nc == 0
-      _nc := 9999
+   IF _NC == 0
+      _NC := 9999
    ENDIF
 
-   nPPP := 1
 
    IF gKalo == "1" .AND. _idvd == "10"
       nStvarnaKolicina := _Kolicina - _GKolicina - _GKolicin2
@@ -208,17 +208,8 @@ FUNCTION kalk_Marza( fMarza )
       nStvarnaKolicina := _Kolicina
    ENDIF
 
-   IF  _Marza == 0 .OR. _VPC <> 0 .AND. Empty( fMarza )
-      nMarza := _VPC * nPPP - _NC
-      IF _TMarza == "%"
-         _Marza := 100 * ( _VPC * nPPP / _NC - 1 )
-      ELSEIF _TMarza == "A"
-         _Marza := nMarza
-      ELSEIF _TMarza == "U"
-         _Marza := nMarza * nStvarnaKolicina
-      ENDIF
 
-   ELSEIF Round( _VPC, 4 ) == 0  .OR. !Empty( fMarza )
+   IF !Empty( cProracunMarzeUnaprijed ) // proračun unaprijed od nc -> vpc
       IF _TMarza == "%"
          nMarza := _Marza / 100 * _NC
       ELSEIF _TMarza == "A"
@@ -226,15 +217,46 @@ FUNCTION kalk_Marza( fMarza )
       ELSEIF _TMarza == "U"
          nMarza := _Marza / nStvarnaKolicina
       ENDIF
-      _VPC := Round( ( nMarza + _NC ) / nPPP, 2 )
-   ELSE
-      IF _idvd $ "14#94"
-         nMarza := _VPC * nPPP * ( 1 - _Rabatv / 100 ) - _NC
+      _VPC := Round( nMarza + _NC, 2 )
+
+   ELSE // proračun unazad
+      IF _Marza == 0 .OR. _VPC <> 0
+
+         nMarza := _VPC - _NC
+         IF _TMarza == "%"
+            _Marza := 100 * ( _VPC / _NC - 1 )
+         ELSEIF _TMarza == "A"
+            _Marza := nMarza
+         ELSEIF _TMarza == "U"
+            _Marza := nMarza * nStvarnaKolicina
+         ENDIF
       ELSE
-         nMarza := _VPC * nPPP - _NC
+         IF _idvd $ "14#94"
+            nMarza := _VPC * ( 1 - _Rabatv / 100 ) - _NC
+         ELSE
+            nMarza := _VPC - _NC
+         ENDIF
       ENDIF
+
    ENDIF
+
+   cProracunMarzeUnaprijed := " "
    AEval( GetList, {| o | o:display() } )
+
+   IF Round( _VPC, 5 ) == 0
+      error_bar( "kalk_unos", "VPC=0" )
+      // RETURN .T.
+   ENDIF
+
+   IF Round( _NC, 9 ) == 0
+      error_bar( "kalk", "NC=0" )
+      // RETURN .T.
+   ENDIF
+
+   IF ( nMarza / _NC ) > 100000
+      error_bar( "kalk", "ERROR Marza > 100 000 x veća od NC: " + AllTrim( Str( nMarza, 14, 2 ) ) )
+      // RETURN .T.
+   ENDIF
 
    RETURN .T.
 
@@ -384,12 +406,12 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
 
    LOCAL nCV := 0, nArr := Select()
 
-   //IF lKoncij = NIL; lKoncij := .F. ; ENDIF
+   // IF lKoncij = NIL; lKoncij := .F. ; ENDIF
    select_o_koncij( cMKonto )
    nCV := KoncijVPC()
-   //IF !lKoncij
-    //  GO ( nRec )
-   //ENDIF
+   // IF !lKoncij
+   // GO ( nRec )
+   // ENDIF
    SELECT ( nArr )
 
    RETURN nCV
@@ -400,7 +422,7 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
  *     Proracun nabavne cijene za ulaznu kalkulaciju 10
  */
 
-FUNCTION kalk_nabcj()
+FUNCTION kalk_when_valid_nc()
 
    LOCAL nStvarnaKolicina
 
@@ -465,6 +487,10 @@ FUNCTION kalk_nabcj()
 
    _NC := _FCj2 + nPrevoz + nCarDaz + nBanktr + nSpedTr + nZavTr
 
+   IF koncij->naz == "N1" // sirovine
+      _VPC := _NC
+   ENDIF
+
    RETURN .T.
 
 
@@ -496,12 +522,12 @@ FUNCTION NabCj2( n1, n2 )
 
 
 
-/* SetujVPC(nNovaVrijednost,fUvijek)
+/* kalk_set_vpc_sifarnik(nNovaVrijednost,fUvijek)
  *   param: fUvijek -.f. samo ako je vrijednost u sifrarniku 0, .t. uvijek setuj
  *     Utvrdi varijablu VPC. U sifrarnik staviti novu vrijednost
  */
 
-FUNCTION SetujVPC( nNovaVrijednost, lUvijek )
+FUNCTION kalk_set_vpc_sifarnik( nNovaVrijednost, lUvijek )
 
    LOCAL nVal
    LOCAL _vars
@@ -511,6 +537,10 @@ FUNCTION SetujVPC( nNovaVrijednost, lUvijek )
    ENDIF
 
    PRIVATE cPom := "VPC"
+
+   IF koncij->naz == "N1"  // magacin se vodi po nabavnim cijenama
+      RETURN .T.
+   endif
 
    IF koncij->naz == "P2"
       cPom := "plc"
@@ -525,7 +555,7 @@ FUNCTION SetujVPC( nNovaVrijednost, lUvijek )
 
    IF nVal == 0  .OR. Abs( Round( nVal - nNovaVrijednost, 2 ) ) > 0 .OR. lUvijek
 
-      IF gAutoCjen == "D" .AND. Pitanje( , "Staviti Cijenu (" + cPom + ")" + " u sifrarnik ?", "D" ) == "D"
+      IF gAutoCjen == "D" .AND. Pitanje( , "Staviti cijenu (" + cPom + ")" + " u šifarnik ?", "D" ) == "D"
          SELECT roba
 
          _vars := dbf_get_rec()
@@ -685,8 +715,8 @@ FUNCTION V_RabatV()
       IF nRVPC == 0
          Beep( 1 )
          Box(, 3, 60 )
-         @ m_x + 1, m_Y + 2 SAY "Roba u sifrarniku ima " + cPom + " = 0 !??"
-         @ m_x + 3, m_y + 2 SAY "Unesi " + cPom + " u sifrarnik:" GET _vpc PICT picdem
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Roba u sifrarniku ima " + cPom + " = 0 !??"
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Unesi " + cPom + " u sifrarnik:" GET _vpc PICT picdem
 
          READ
 
@@ -711,15 +741,15 @@ FUNCTION V_RabatV()
    ENDIF
 
 
-   @ m_x + 15, m_y + 41  SAY "PC b.pdv.-RAB:"
+   @ box_x_koord() + 15, box_y_koord() + 41  SAY "PC b.pdv.-RAB:"
 
 
    IF roba->tip == "V"
-      @ m_x + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) - _VPC * _RabatV / 100 PICT picdem
+      @ box_x_koord() + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) - _VPC * _RabatV / 100 PICT picdem
    ELSEIF roba->tip == "X"
-      @ m_x + 15, Col() + 1 SAY _Vpc * ( 1 - _RabatV / 100 ) - _MPCSAPP / ( 1 + _PORVT ) * _PORVT PICT picdem
+      @ box_x_koord() + 15, Col() + 1 SAY _Vpc * ( 1 - _RabatV / 100 ) - _MPCSAPP / ( 1 + _PORVT ) * _PORVT PICT picdem
    ELSE
-      @ m_x + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) * ( 1 - _RabatV / 100 ) PICT picdem
+      @ box_x_koord() + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) * ( 1 - _RabatV / 100 ) PICT picdem
    ENDIF
 
    ShowGets()

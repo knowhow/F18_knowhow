@@ -28,12 +28,9 @@ FUNCTION pos_novi_broj_dokumenta( cIdPos, cIdTipDokumenta, dDatDok )
    cPosBrojacParam := "pos" + "/" + cIdPos + "/" + cIdTipDokumenta
    nBrojDokumenta := fetch_metric( cPosBrojacParam, nil, nBrojDokumenta )
 
-   o_pos_doks()
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK cIdPos + cIdTipDokumenta + DToS( dDatDok ) + "Ž"
-   SKIP -1
 
+   seek_pos_doks( cIdPos, cIdTipDokumenta, dDatDok )
+   GO BOTTOM
    IF field->idpos == cIdPos .AND. field->idvd == cIdTipDokumenta .AND. DToS( field->datum ) == DToS( dDatDok )
       _broj_doks := Val( field->brdok )
    ELSE
@@ -43,7 +40,6 @@ FUNCTION pos_novi_broj_dokumenta( cIdPos, cIdTipDokumenta, dDatDok )
    nBrojDokumenta := Max( nBrojDokumenta, _broj_doks )
 
    ++nBrojDokumenta
-
    _ret := PadL( AllTrim( Str( nBrojDokumenta ) ), 6  )
 
    set_metric( cPosBrojacParam, nil, nBrojDokumenta )
@@ -60,11 +56,12 @@ FUNCTION pos_set_param_broj_dokumenta()
    LOCAL _broj_old
    LOCAL _id_pos := gIdPos
    LOCAL _tip_dok := "42"
+   LOCAL GetList := {}
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Dokument:" GET _id_pos
-   @ m_x + 1, Col() + 1 SAY "-" GET _tip_dok
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Dokument:" GET _id_pos
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET _tip_dok
 
    READ
 
@@ -77,7 +74,7 @@ FUNCTION pos_set_param_broj_dokumenta()
    nBrojDokumenta := fetch_metric( cPosBrojacParam, nil, nBrojDokumenta )
    _broj_old := nBrojDokumenta
 
-   @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET nBrojDokumenta PICT "999999"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Zadnji broj dokumenta:" GET nBrojDokumenta PICT "999999"
 
    READ
 

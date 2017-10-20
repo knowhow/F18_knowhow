@@ -14,22 +14,22 @@
 STATIC s_cKalkDestinacijaTopska := NIL
 STATIC s_cTxtPrint
 
-MEMVAR m_x, m_y, GetList
 
 FUNCTION kalk_tops_meni()
 
    LOCAL cIDFirma := self_organizacija_id()
    LOCAL cIdVd := "80"
    LOCAL cBrDok := Space( 8 )
+   LOCAL GetList := {}
 
    DO WHILE .T.
       Box(, 5, 40 )
       SET CURSOR ON
-      @ m_x + 1, m_y + 2 SAY "Generacija KALK -> TOPS: "
-      @ m_x + 2, m_y + 2 SAY "-------------------------------"
-      @ m_x + 4, m_y + 2 SAY "Dokument: " GET cIDFirma
-      @ m_x + 4, m_y + 16 SAY " - " GET cIdVd VALID !Empty( cIdVd )
-      @ m_x + 4, m_y + 23 SAY " - " GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Generacija KALK -> POS: "
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "-------------------------------"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Dokument: " GET cIDFirma
+      @ box_x_koord() + 4, box_y_koord() + 16 SAY " - " GET cIdVd VALID !Empty( cIdVd )
+      @ box_x_koord() + 4, box_y_koord() + 23 SAY " - " GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
       READ
       ESC_BCR
       BoxC()
@@ -51,10 +51,10 @@ FUNCTION kalk_tops_meni()
 
 FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
-   LOCAL _katops_table := "katops.dbf"
+   LOCAL cKalkTopsDbf := "katops.dbf"
    LOCAL nRbr, dDatDok
    LOCAL aPosLokacije
-   LOCAL _lFromKumulativ := .T.
+   LOCAL lFromKumulativ := .T.
    LOCAL _total := 0
    LOCAL cStavke := ""
    LOCAL cPm, cPKonto
@@ -62,29 +62,29 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
    my_close_all_dbf()
 
    IF PCount() == 0
-      _lFromKumulativ := .F. // generisanje iz pripreme
+      lFromKumulativ := .F. // generisanje iz pripreme
    ENDIF
 
 
    IF !kalk_tops_prenos_prerequisites()
-      // kalk_tops_o_gen_tables( _lFromKumulativ )
+      // kalk_tops_o_gen_tables( lFromKumulativ )
       RETURN .F.
    ENDIF
 
-   kalk_tops_o_gen_tables( _lFromKumulativ ) // otvori tabele
+   kalk_tops_o_gen_tables( lFromKumulativ ) // otvori tabele
 
-   IF _lFromKumulativ
+   IF lFromKumulativ
       open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
    ENDIF
 
-   _cre_katops_dbf( my_home() + _katops_table, _lFromKumulativ ) // kreiraj tabelu katops, ona ce se kreirati u privatnom direktoriju
+   kalk_tops_create_katops_dbf( my_home() + cKalkTopsDbf, lFromKumulativ ) // kreiraj tabelu katops, ona ce se kreirati u privatnom direktoriju
 
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
    GO TOP
 
-   IF !_lFromKumulativ
+   IF !lFromKumulativ
       cIdFirma := field->idfirma
       cIdVd := field->idvd
       cBrDok := field->brdok
@@ -100,11 +100,9 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvd == cIdVd .AND. field->brdok == cBrDok
 
-
       cStavke += AllTrim( idroba ) + " x " + AllTrim( Str( kolicina, 8, 2 ) ) + "; "
 
       select_o_roba(  kalk_pripr->idroba )
-
       select_o_koncij( kalk_pripr->pkonto )
       cPKonto := kalk_pripr->pkonto
 
@@ -182,12 +180,8 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
    IF nRbr > 0
       kalk_tops_print_report( cIdFirma, cIdVd, cBrDok, nRbr, _total, cStavke, cPm, cPKonto ) // , _exp_file ) // ispisi report
-
-      // _exp_file :=
       kalk_tops_kreiraj_fajl_prenosa( dDatDok, aPosLokacije, nRbr ) // napravi i prebaci izlazne fajlove gdje trebaju
-
       my_close_all_dbf()
-
 
    ENDIF
 
@@ -247,7 +241,7 @@ FUNCTION kalk_destinacija_topska( cSet )
 
 
 
-STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki )
+STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( dDatum, aPosLokacije, nBrojStavki )
 
    LOCAL nI, _n
    LOCAL _dest_file, _dest_patt
@@ -273,7 +267,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
 
       DirChange( my_home() ) // nakon dir create prebaci se na my_local_folder
 
-      _dest_patt := get_tops_kalk_export_file( "2", cExporPosDir, datum ) // pronadji naziv fajla koji je dozvoljen
+      _dest_patt := get_tops_kalk_export_file( "2", cExporPosDir, dDatum ) // pronadji naziv fajla koji je dozvoljen
 
       _dest_file := cExporPosDir + StrTran( _table_name, "katops.", _dest_patt + "." ) // kopiraj katops.dbf na destinaciju
       cRet := _dest_file
@@ -294,21 +288,21 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
 // ---------------------------------------------------------------
 // vraca naziv fajla za export
 // ---------------------------------------------------------------
-FUNCTION get_tops_kalk_export_file( topskalk, export_path, datum, prefix )
+FUNCTION get_tops_kalk_export_file( cTkOrKt, cPath, dDatum, cPrefix )
 
    LOCAL _file := ""
-   LOCAL _prefix := "kt"
+   //LOCAL _prefix := "kt"
    LOCAL nI, _tmp
-   LOCAL _tmp_date := Right( DToS( datum ), 4 )
+   LOCAL _tmp_date := Right( DToS( dDatum ), 4 )
 
-   IF topskalk == "1"
-      _prefix := "tk"
-   ELSE
-      _prefix := "kt"
-   ENDIF
 
-   IF prefix != NIL
-      _prefix := prefix
+
+   IF cPrefix == NIL
+      IF cTkOrKt == "1"
+         cPrefix := "tk"
+      ELSE
+         cPrefix := "kt"
+      ENDIF
    ENDIF
 
    // naziv fajla treba da bude
@@ -317,9 +311,9 @@ FUNCTION get_tops_kalk_export_file( topskalk, export_path, datum, prefix )
    FOR nI := 1 TO 99
 
       _tmp := PadL( AllTrim( Str( nI ) ), 2, "0" ) // nastavak na fajl
-      _file := _prefix + _tmp_date + _tmp
+      _file := cPrefix + _tmp_date + _tmp
 
-      IF !File( export_path + _file + ".dbf" )
+      IF !File( cPath + _file + ".dbf" )
          // ovaj fajl moze da se koristi
          EXIT
       ENDIF
@@ -330,13 +324,9 @@ FUNCTION get_tops_kalk_export_file( topskalk, export_path, datum, prefix )
 
 
 
+STATIC FUNCTION kalk_tops_create_katops_dbf( cDbfName, lFromKumulativ )
 
-// -------------------------------------------
-// kreiraj tabelu za prenos u TOPS
-// -------------------------------------------
-STATIC FUNCTION _cre_katops_dbf( dbf_table, lFromKumulativ )
-
-   LOCAL _dbf
+   LOCAL aDbf
 
    IF lFromKumulativ == NIL
       lFromKumulativ := .F.
@@ -347,37 +337,37 @@ STATIC FUNCTION _cre_katops_dbf( dbf_table, lFromKumulativ )
    SELECT kalk_pripr
    GO TOP
 
-   _dbf := {}
-   AAdd( _dbf, { "IDFIRMA", "C", 2, 0 } )
-   AAdd( _dbf, { "BRDOK", "C", 8, 0 } )
-   AAdd( _dbf, { "IDVD", "C", 2, 0 } )
-   AAdd( _dbf, { "DATDOK", "D", 8, 0 } )
-   AAdd( _dbf, { "IDKONTO", "C", 7, 0 } )
-   AAdd( _dbf, { "IDKONTO2", "C", 7, 0 } )
-   AAdd( _dbf, { "IDPARTNER", "C", 6, 0 } )
-   AAdd( _dbf, { "IDPOS", "C", 2, 0 } )
-   AAdd( _dbf, { "IDROBA", "C", 10, 0 } )
-   AAdd( _dbf, { "kolicina", "N", 13, 4 } )
-   AAdd( _dbf, { "kol2", "N", 13, 4 } )
-   AAdd( _dbf, { "MPC", "N", 13, 4 } )
-   AAdd( _dbf, { "MPC2", "N", 13, 4 } )
-   AAdd( _dbf, { "NAZIV", "C", 250, 0 } )
-   AAdd( _dbf, { "IDTARIFA", "C", 6, 0 } )
-   AAdd( _dbf, { "JMJ", "C", 3, 0 } )
-   AAdd( _dbf, { "K1", "C", 4, 0 } )
-   AAdd( _dbf, { "K2", "C", 4, 0 } )
-   AAdd( _dbf, { "K7", "C", 1, 0 } )
-   AAdd( _dbf, { "K8", "C", 2, 0 } )
-   AAdd( _dbf, { "K9", "C", 3, 0 } )
-   AAdd( _dbf, { "N1", "N", 12, 2 } )
-   AAdd( _dbf, { "N2", "N", 12, 2 } )
-   AAdd( _dbf, { "BARKOD", "C", 13, 0 } )
+   aDbf := {}
+   AAdd( aDbf, { "IDFIRMA", "C", 2, 0 } )
+   AAdd( aDbf, { "BRDOK", "C", 8, 0 } )
+   AAdd( aDbf, { "IDVD", "C", 2, 0 } )
+   AAdd( aDbf, { "DATDOK", "D", 8, 0 } )
+   AAdd( aDbf, { "IDKONTO", "C", 7, 0 } )
+   AAdd( aDbf, { "IDKONTO2", "C", 7, 0 } )
+   AAdd( aDbf, { "IDPARTNER", "C", 6, 0 } )
+   AAdd( aDbf, { "IDPOS", "C", 2, 0 } )
+   AAdd( aDbf, { "IDROBA", "C", 10, 0 } )
+   AAdd( aDbf, { "kolicina", "N", 13, 4 } )
+   AAdd( aDbf, { "kol2", "N", 13, 4 } )
+   AAdd( aDbf, { "MPC", "N", 13, 4 } )
+   AAdd( aDbf, { "MPC2", "N", 13, 4 } )
+   AAdd( aDbf, { "NAZIV", "C", 250, 0 } )
+   AAdd( aDbf, { "IDTARIFA", "C", 6, 0 } )
+   AAdd( aDbf, { "JMJ", "C", 3, 0 } )
+   AAdd( aDbf, { "K1", "C", 4, 0 } )
+   AAdd( aDbf, { "K2", "C", 4, 0 } )
+   AAdd( aDbf, { "K7", "C", 1, 0 } )
+   AAdd( aDbf, { "K8", "C", 2, 0 } )
+   AAdd( aDbf, { "K9", "C", 3, 0 } )
+   AAdd( aDbf, { "N1", "N", 12, 2 } )
+   AAdd( aDbf, { "N2", "N", 12, 2 } )
+   AAdd( aDbf, { "BARKOD", "C", 13, 0 } )
 
    // kreiraj tabelu
-   dbCreate( dbf_table, _dbf )
+   dbCreate( cDbfName, aDbf )
 
    SELECT ( F_TMP_KATOPS )
-   my_use_temp( "KATOPS", dbf_table )
+   my_use_temp( "KATOPS", cDbfName )
 
    RETURN .T.
 
@@ -386,23 +376,23 @@ STATIC FUNCTION _cre_katops_dbf( dbf_table, lFromKumulativ )
 
 STATIC FUNCTION kalk_tops_prenos_prerequisites()
 
-   LOCAL _ret := .F., cTopsDest
+   LOCAL lRet := .F., cTopsDest
 
    cTopsDest := kalk_destinacija_topska()
 
    IF Empty( cTopsDest )
       MsgBeep( "Nije podesen direktorij za prenos podataka !" )
    ELSE
-      _ret := .T.
+      lRet := .T.
    ENDIF
 
-   IF _ret
+   IF lRet
       IF Pitanje(, "Generisati datoteku prenosa za modul TOPS (D/N) ?", "D" ) == "N"
-         _ret := .F.
+         lRet := .F.
       ENDIF
    ENDIF
 
-   RETURN _ret
+   RETURN lRet
 
 
 /*
@@ -425,12 +415,10 @@ STATIC FUNCTION kalk_tops_o_gen_tables( lFromKumulativ )
       o_koncij()
    ENDIF
 
-   IF lFromKumulativ == .T.
+   IF !lFromKumulativ  // == .T.
       // SELECT F_KALK
-
       // open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
-
-   ELSE
+   //ELSE
       SELECT F_KALK_PRIPR
       IF !Used()
          o_kalk_pripr()

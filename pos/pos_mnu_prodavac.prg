@@ -16,7 +16,7 @@ FUNCTION pos_main_menu_prodavac()
 
    LOCAL aOpc := {}
    LOCAL aOpcExe := {}
-   LOCAL _izbor := 1
+   LOCAL nIzbor := 1
 
    AAdd( aOpc, "1. priprema računa                        " )
    AAdd( aOpcExe, {|| _pos_prodavac_racun() } )
@@ -30,15 +30,12 @@ FUNCTION pos_main_menu_prodavac()
    AAdd( aOpc, "A. trenutna realizacija po artiklima" )
    AAdd( aOpcExe, {|| pos_realizacija_radnik( .T., "R", .F. ) } )
 
-
    IF fiscal_opt_active()
-
       AAdd( aOpc, "F. fiskalne funkcije - prodavac" )
       AAdd( aOpcExe, {|| fiskalni_izvjestaji_komande( .T., .T. ) } )
-
    ENDIF
 
-   f18_menu( "prod", .F., _izbor, aOpc, aOpcExe )
+   f18_menu( "prod", .F., nIzbor, aOpc, aOpcExe )
 
    CLOSE ALL
 
@@ -54,7 +51,7 @@ STATIC FUNCTION _pos_prodavac_racun()
    RETURN .T.
 
 
-
+/*
 FUNCTION MnuZakljRacuna()
 
    PRIVATE opc := {}
@@ -71,3 +68,4 @@ FUNCTION MnuZakljRacuna()
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "zrn" )
 
    RETURN .T.
+*/

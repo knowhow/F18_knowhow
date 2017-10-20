@@ -51,30 +51,30 @@ FUNCTION fin_spec_prebijeno_konto_konto2( lOtvSt )
 
    Box( "", 17, 65 )
    SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "SPECIFIKACIJA SUBANALITIKE KONTO/KONTO2"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "SPECIFIKACIJA SUBANALITIKE KONTO/KONTO2"
    READ
    // DO WHILE .T.
 
 
-   @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
    cIdKonto := PadR( cIdKonto, 7 )
    cIdKonto2 := PadR( cIdKonto2, 7 )
-   @ m_x + 5, m_y + 2 SAY "Konto   " GET cIdKonto  VALID p_konto( @cIdKonto )
-   @ m_x + 6, m_y + 2 SAY "Konto 2 " GET cIdKonto2  VALID p_konto( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
-   @ m_x + 7, m_y + 2 SAY "Partner " GET cUslovPartneri PICT "@!S50"
-   @ m_x + 8, m_y + 2 SAY "Datum dokumenta od:" GET dDatod
-   @ m_x + 8, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
-   @ m_x + 9, m_y + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG PICT "@!" VALID cPG $ "DN"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Konto   " GET cIdKonto  VALID p_konto( @cIdKonto )
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Konto 2 " GET cIdKonto2  VALID p_konto( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Partner " GET cUslovPartneri PICT "@!S50"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Datum dokumenta od:" GET dDatod
+   @ box_x_koord() + 8, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG PICT "@!" VALID cPG $ "DN"
    IF fin_dvovalutno()
-      @ m_x + 10, m_y + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)" GET cDinDem PICT "@!" VALID cDinDem $ "12"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)" GET cDinDem PICT "@!" VALID cDinDem $ "12"
    ENDIF
-   @ m_x + 11, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N/2/4" GET cNula PICT "@!" VALID cNula  $ "DN24"
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Prikaz stavki sa saldom 0 D/N/2/4" GET cNula PICT "@!" VALID cNula  $ "DN24"
 
-   IF fk1 == "D"; @ m_x + 14, m_y + 2 SAY "K1 (9 svi) :" GET cK1; ENDIF
-   IF fk2 == "D"; @ m_x + 15, m_y + 2 SAY "K2 (9 svi) :" GET cK2; ENDIF
-   IF fk3 == "D"; @ m_x + 16, m_y + 2 SAY "K3 (" + ck3 + " svi):" GET cK3; ENDIF
-   IF fk4 == "D"; @ m_x + 17, m_y + 2 SAY "K4 (99 svi):" GET cK4; ENDIF
+   IF fk1 == "D"; @ box_x_koord() + 14, box_y_koord() + 2 SAY "K1 (9 svi) :" GET cK1; ENDIF
+   IF fk2 == "D"; @ box_x_koord() + 15, box_y_koord() + 2 SAY "K2 (9 svi) :" GET cK2; ENDIF
+   IF fk3 == "D"; @ box_x_koord() + 16, box_y_koord() + 2 SAY "K3 (" + ck3 + " svi):" GET cK3; ENDIF
+   IF fk4 == "D"; @ box_x_koord() + 17, box_y_koord() + 2 SAY "K4 (99 svi):" GET cK4; ENDIF
 
    READ
 

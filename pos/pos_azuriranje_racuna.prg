@@ -26,7 +26,7 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
   o_pos_tables()
 
-   IF !racun_se_moze_azurirati( cIdPos, VD_RN, gDatum, cBrojRacuna )
+   IF !racun_se_moze_azurirati( cIdPos, POS_VD_RACUN, gDatum, cBrojRacuna )
       RETURN lRet
    ENDIF
 
@@ -50,11 +50,11 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
    APPEND BLANK
 
-   cDokument := ALLTRIM( cIdPos ) + "-" + VD_RN + "-" + ALLTRIM( cBrojRacuna ) + " " + DTOC( gDatum )
+   cDokument := ALLTRIM( cIdPos ) + "-" + POS_VD_RACUN + "-" + ALLTRIM( cBrojRacuna ) + " " + DTOC( gDatum )
 
    hRec := dbf_get_rec()
    hRec[ "idpos" ] := cIdPos
-   hRec[ "idvd" ] := VD_RN
+   hRec[ "idvd" ] := POS_VD_RACUN
    hRec[ "datum" ] := gDatum
    hRec[ "brdok" ] := cBrojRacuna
    hRec[ "vrijeme" ] := cVrijeme
@@ -79,7 +79,7 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
          hRec := dbf_get_rec()
 
          hRec[ "idpos" ] := cIdPos
-         hRec[ "idvd" ] := VD_RN
+         hRec[ "idvd" ] := POS_VD_RACUN
          hRec[ "datum" ] := gDatum
          hRec[ "brdok" ] := cBrojRacuna
          hRec[ "rbr" ] := PadL( AllTrim( Str( ++ nCount ) ), 5 )
@@ -127,7 +127,7 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    ENDIF
 
    IF lOk
-      brisi_pripremu_racuna()
+      pos_brisi_pripremu_racuna()
    ENDIF
 
    priprema_set_order_to()
@@ -136,12 +136,12 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
 
 
-STATIC FUNCTION brisi_pripremu_racuna()
+STATIC FUNCTION pos_brisi_pripremu_racuna()
 
    SELECT _pos_pripr
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION priprema_set_order_to()

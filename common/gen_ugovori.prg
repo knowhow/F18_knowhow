@@ -66,37 +66,11 @@
 // string FmkIni_ExePath_Fakt_Ugovori_UNapomenuSamoBrUgovora;
 
 
-// ----------------------------------------------
-// funkcija za poziv generacije ugovora
-// ----------------------------------------------
-FUNCTION m_gen_ug()
-
-   PRIVATE DFTkolicina := 1
-   PRIVATE DFTidroba := PadR( "", 10 )
-   PRIVATE DFTvrsta := "1"
-   PRIVATE DFTidtipdok := "10"
-   PRIVATE DFTdindem := "KM "
-   PRIVATE DFTidtxt := "10"
-   PRIVATE DFTzaokr := 2
-   PRIVATE DFTiddodtxt := "  "
-   PRIVATE gGenUgV2 := "1"
-   PRIVATE gFinKPath := Space( 50 )
-
-   DFTParUg( .T. )
-
-   IF gGenUgV2 == "1"
-      gen_ug()
-   ELSE
-      // nova varijanta generisanja ugovora
-      gen_ug_2()
-   ENDIF
-
-   RETURN .T.
 
 
-// -----------------------------------------
+/*
 // generacija ugovora varijanta 1
-// -----------------------------------------
+
 FUNCTION gen_ug()
 
    o_ugov_tabele()
@@ -129,21 +103,21 @@ FUNCTION gen_ug()
 
    Box( "#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA", 7, 70 )
 
-   @ m_X + 1, m_y + 2 SAY "Datum fakture" GET dDAtDok
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum fakture" GET dDAtDok
 
    IF my_get_from_ini( 'Fakt_Ugovori', "N1", 'D' ) == "D"
-      @ m_X + 2, m_y + 2 SAY "Parametar N1 " GET nn1 PICT "999999.999"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Parametar N1 " GET nn1 PICT "999999.999"
    ENDIF
    IF my_get_from_ini( 'Fakt_Ugovori', "N2", 'D' ) == "D"
-      @ m_X + 3, m_y + 2 SAY "Parametar N2 " GET nn2 PICT "999999.999"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Parametar N2 " GET nn2 PICT "999999.999"
    ENDIF
    IF my_get_from_ini( 'Fakt_Ugovori', "N3", 'D' ) == "D"
-      @ m_X + 4, m_y + 2 SAY "Parametar N3 " GET nn3 PICT "999999.999"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Parametar N3 " GET nn3 PICT "999999.999"
    ENDIF
 
-   @ m_x + 5, m_y + 2 SAY "Predracun ili racun (0/1) ? " GET nn3  PICT "@!"
-   @ m_x + 6, m_y + 2 SAY "Artikal (prazno-svi)" GET cFUArtikal VALID Empty( cFUArtikal ) .OR. P_Roba( @cFUArtikal ) PICT "@!"
-   @ m_x + 7, m_y + 2 SAY "Generisati fakture samo na osnovu aktivnih ugovora? (D/N)" GET cSamoAktivni VALID cSamoAktivni $ "DN" PICT "@!"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Predracun ili racun (0/1) ? " GET nn3  PICT "@!"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Artikal (prazno-svi)" GET cFUArtikal VALID Empty( cFUArtikal ) .OR. P_Roba( @cFUArtikal ) PICT "@!"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Generisati fakture samo na osnovu aktivnih ugovora? (D/N)" GET cSamoAktivni VALID cSamoAktivni $ "DN" PICT "@!"
 
    READ
    BoxC()
@@ -181,7 +155,7 @@ FUNCTION gen_ug()
          cUPartner := ugov->( naz )
       ENDIF
 
-      o_fakt()
+    --  o_fakt_dbf()
       o_fakt_pripr()
       IF reccount2() <> 0 .AND. nTekug = 1
          Msg( "Neki dokument vec postoji u pripremi" )
@@ -209,14 +183,14 @@ FUNCTION gen_ug()
       ENDIF
 
       SELECT fakt_pripr
-      SEEK self_organizacija_id() + cidtipdok + "È"
+  --    SEEK self_organizacija_id() + cidtipdok + "È"
       SKIP -1
       IF idtipdok <> cIdTipdok
          SEEK "È" // idi na kraj, nema zeljenih dokumenata
       ENDIF
 
       SELECT fakt
-      SEEK self_organizacija_id() + cidtipdok + "È"
+    --  SEEK self_organizacija_id() + cidtipdok + "È"
       SKIP -1
 
       IF idtipdok <> cIdTipdok
@@ -296,7 +270,7 @@ FUNCTION gen_ug()
             _txt3b := _txt3c := ""
             _txt3a := PadR( ugov->idpartner + ".", 30 )
 
-            IzSifre( .T. )
+            //IzSifre( .T. )
 
             select_o_fakt_txt( ugov->iddodtxt )
             cDodTxt := Trim( naz )
@@ -312,7 +286,7 @@ FUNCTION gen_ug()
 
             cVezaUgovor := "Veza: " + Trim( ugov->id )
 
-            _txt := fakt_ftxt_encode( ftxt->naz, _Txt1, _Txt3a, _Txt3b, _Txt3c, cVezaUgovor, cDodTxt )
+          --  _txt := fakt_ftxt_encode_gen_ugovori( ftxt->naz, _Txt1, _Txt3a, _Txt3b, _Txt3c, cVezaUgovor, cDodTxt )
 
 
          ENDIF
@@ -324,9 +298,9 @@ FUNCTION gen_ug()
          IF rugov->k1 = "A"  // onda je kolicina= A2-A1  (novo stanje - staro stanje)
             nA2 := 0
             Box(, 5, 60 )
-            @ M_X + 1, M_Y + 2 SAY ugov->naz
-            @ m_x + 3, m_y + 2 SAY "A: Stara vrijednost:"; ?? ugov->A2
-            @ m_x + 5, m_y + 2 SAY "A: Nova vrijednost (0 ne mjenjaj):" GET nA2 PICT "999999.99"
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY ugov->naz
+            @ box_x_koord() + 3, box_y_koord() + 2 SAY "A: Stara vrijednost:"; ?? ugov->A2
+            @ box_x_koord() + 5, box_y_koord() + 2 SAY "A: Nova vrijednost (0 ne mjenjaj):" GET nA2 PICT "999999.99"
             READ
             BoxC()
             IF na2 <> 0
@@ -339,9 +313,9 @@ FUNCTION gen_ug()
          ELSEIF rugov->k1 = "B"
             nB2 := 0
             Box(, 5, 60,, ugov->naz )
-            @ M_X + 1, M_Y + 2 SAY ugov->naz
-            @ m_x + 3, m_y + 2 SAY "B: Stara vrijednost:"; ?? ugov->B2
-            @ m_x + 5, m_y + 2 SAY "B: Nova vrijednost (0 ne mjenjaj):" GET nB2 PICT "999999.99"
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY ugov->naz
+            @ box_x_koord() + 3, box_y_koord() + 2 SAY "B: Stara vrijednost:"; ?? ugov->B2
+            @ box_x_koord() + 5, box_y_koord() + 2 SAY "B: Nova vrijednost (0 ne mjenjaj):" GET nB2 PICT "999999.99"
             READ
             BoxC()
             IF nB2 <> 0
@@ -369,7 +343,7 @@ FUNCTION gen_ug()
             _txt := Chr( 16 ) + _txt1 + Chr( 17 )
          ENDIF
 
-         _idfirma := self_organizacija_id()
+    --     _idfirma := self_organizacija_id()
          _zaokr := ugov->zaokr
          _rbr := Str( ++nRbr, 3 )
          _idtipdok := cidtipdok
@@ -403,3 +377,5 @@ FUNCTION gen_ug()
    closeret
 
    RETURN .T.
+
+*/

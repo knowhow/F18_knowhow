@@ -25,7 +25,6 @@ THREAD STATIC s_nKalkEditLastKey := 0
 MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPICPROC
 MEMVAR ImeKol, Kol
 MEMVAR picv
-MEMVAR m_x, m_y
 // MEMVAR lKalkAsistentUToku, lAutoObr, lAsist, lAAzur, lAAsist
 MEMVAR Ch
 MEMVAR opc, Izbor, h
@@ -107,29 +106,29 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    _opt_row +=  _upadr( "<c+T> Briši stavku", _opt_d ) + _sep
    _opt_row +=  _upadr( "<K> Kalk.cijena",  _opt_d ) + _sep
 
-   @ m_x + nMaxRow - 3, m_y + 2 SAY8 _opt_row
+   @ box_x_koord() + nMaxRow - 3, box_y_koord() + 2 SAY8 _opt_row
    _opt_row :=  _upadr( "<c+A> Ispravka", _opt_d ) + _sep
    _opt_row +=  _upadr( "<c+P> Štampa dok.", _opt_d ) + _sep
    _opt_row +=  _upadr( "<a+A>|<X> Ažuriranje", _opt_d ) + _sep
    _opt_row +=  _upadr( "<Q> Etikete", _opt_d )  + _sep
 
-   @ m_x + nMaxRow - 2, m_y + 2 SAY8 _opt_row
+   @ box_x_koord() + nMaxRow - 2, box_y_koord() + 2 SAY8 _opt_row
    _opt_row := _upadr( "<a+K> Kontiranje", _opt_d ) + _sep
    _opt_row += _upadr( "<c+F9> Briši sve", _opt_d ) + _sep
    _opt_row += _upadr( "<a+P> Štampa pripreme", _opt_d ) + _sep
    _opt_row += _upadr( "<E> greške, <I> info", _opt_d ) + _sep
 
-   @ m_x + nMaxRow - 1, m_y + 2 SAY8 _opt_row
+   @ box_x_koord() + nMaxRow - 1, box_y_koord() + 2 SAY8 _opt_row
    _opt_row := _upadr( "<c+F8> Rasp.troškova", _opt_d ) + _sep
    _opt_row += _upadr( "<A> Asistent", _opt_d ) + _sep
    _opt_row += _upadr( "<F10> Dodatne opc.", _opt_d ) + _sep
 
 
-   @ m_x + nMaxRow, m_y + 2 SAY8 _opt_row
+   @ box_x_koord() + nMaxRow, box_y_koord() + 2 SAY8 _opt_row
 
 /*
    IF gCijene == "1" .AND. kalk_metoda_nc() == " "
-      Soboslikar( { { nMaxRow - 3, m_y + 1, nMaxRow, m_y + 77 } }, 23, 14 )
+      Soboslikar( { { nMaxRow - 3, box_y_koord() + 1, nMaxRow, box_y_koord() + 77 } }, 23, 14 )
    ENDIF
 */
    // PRIVATE lKalkAsistentAuto := .F.
@@ -139,7 +138,7 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    IF lAsistentObrada
       KEYBOARD Chr( K_LEFT )
    ENDIF
-   my_db_edit_sql( "PNal", nMaxRow, nMaxCol, {| lPrviPoziv | kalk_pripr_key_handler( lAsistentObrada ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
+   my_browse( "PNal", nMaxRow, nMaxCol, {| lPrviPoziv | kalk_pripr_key_handler( lAsistentObrada ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
 
    BoxC()
 
@@ -203,7 +202,7 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
    CASE Ch == K_ALT_L
 
       my_close_all_dbf()
-      label_bkod()
+      fakt_labeliranje_barkodova()
       o_kalk_edit()
 
       RETURN DE_REFRESH
@@ -338,7 +337,7 @@ FUNCTION kalk_ispravka_postojeca_stavka()
    LOCAL _dok
    LOCAL _rok, _opis, _hAttrId
    LOCAL _old_dok, _new_dok
-   LOCAL oAttr, _t_rec
+   LOCAL oAttr, nTrec
 
    _old_dok := hb_Hash()
 
@@ -416,11 +415,11 @@ FUNCTION kalk_ispravka_postojeca_stavka()
       SELECT kalk_pripr
 
       IF nRbr == 1
-         _t_rec := RecNo()
+         nTrec := RecNo()
          _new_dok := dbf_get_rec()
          kalk_izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
          SELECT kalk_pripr
-         GO ( _t_rec )
+         GO ( nTrec )
       ENDIF
 
       IF _idvd $ "16#80" .AND. !Empty( _idkonto2 )
@@ -614,11 +613,11 @@ FUNCTION kalk_unos_nova_stavka()
 
       IF nRbr == 1
          SELECT kalk_pripr
-         _t_rec := RecNo()
+         nTrec := RecNo()
          _new_dok := dbf_get_rec()
          kalk_izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
          SELECT kalk_pripr
-         GO ( _t_rec )
+         GO ( nTrec )
       ENDIF
 
       IF _idvd $ "16#80" .AND. !Empty( _idkonto2 )
@@ -672,7 +671,7 @@ FUNCTION kalk_edit_sve_stavke( lAsistentObrada, lStartPocetak )
    LOCAL oAttr, _hAttrId, _old_dok, _new_dok
    LOCAL _rok, _opis
    LOCAL nTr2
-   LOCAL nDug, nPot, _t_rec
+   LOCAL nDug, nPot, nTrec
 
    PushWA()
 
@@ -765,11 +764,11 @@ FUNCTION kalk_edit_sve_stavke( lAsistentObrada, lStartPocetak )
       SELECT kalk_pripr
 
       IF nRbr == 1
-         _t_rec := RecNo()
+         nTrec := RecNo()
          _new_dok := dbf_get_rec()
          kalk_izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
          SELECT kalk_pripr
-         GO ( _t_rec )
+         GO ( nTrec )
       ENDIF
 
       IF _idvd $ "16#80" .AND. !Empty( _idkonto2 )
@@ -935,7 +934,7 @@ FUNCTION kalk_edit_stavka( lNoviDokument, hParams )
 
    DO WHILE .T.
 
-      @ m_x + 1, m_y + 1 CLEAR TO m_x + BOX_HEIGHT, m_y + BOX_WIDTH
+      @ box_x_koord() + 1, box_y_koord() + 1 CLEAR TO box_x_koord() + BOX_HEIGHT, box_y_koord() + BOX_WIDTH
 
       SetKey( K_PGDN, {|| NIL } )
       SetKey( K_PGUP, {|| NIL } )
@@ -1125,14 +1124,14 @@ FUNCTION kalk_header_get1( lNoviDokument )
    ENDIF
 
    IF gNW $ "DX"
-      @  m_x + 1, m_y + 2 SAY "Firma: "
+      @  box_x_koord() + 1, box_y_koord() + 2 SAY "Firma: "
       ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID p_partner( @_IdFirma, 1, 25 ) .AND. Len( Trim( _idFirma ) ) <= 2
+      @  box_x_koord() + 1, box_y_koord() + 2 SAY "Firma:" GET _IdFirma VALID p_partner( @_IdFirma, 1, 25 ) .AND. Len( Trim( _idFirma ) ) <= 2
    ENDIF
 
-   @  m_x + 2, m_y + 2 SAY "KALKULACIJA: "
-   @  m_x + 2, Col() SAY "Vrsta:" GET _idvd VALID P_TipDok( @_idvd, 2, 25 ) PICT "@!"
+   @  box_x_koord() + 2, box_y_koord() + 2 SAY "KALKULACIJA: "
+   @  box_x_koord() + 2, Col() SAY "Vrsta:" GET _idvd VALID P_TipDok( @_idvd, 2, 25 ) PICT "@!"
 
    READ
 
@@ -1147,14 +1146,14 @@ FUNCTION kalk_header_get1( lNoviDokument )
 
    ENDIF
 
-   @ m_x + 2, m_y + 40  SAY "Broj:" GET _brdok ;
+   @ box_x_koord() + 2, box_y_koord() + 40  SAY "Broj:" GET _brdok ;
       VALID {|| !kalk_dokument_postoji( _idfirma, _idvd, _brdok ) }
 
-   @ m_x + 2, Col() + 2 SAY "Datum:" GET _datdok ;
+   @ box_x_koord() + 2, Col() + 2 SAY "Datum:" GET _datdok ;
       VALID {||  datum_not_empty_upozori_godina( _datDok, "Datum KALK" ) }
 
 
-   @ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999' ;
+   @ box_x_koord() + 3, box_y_koord() + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999' ;
       VALID {|| valid_kalk_rbr_stavke( _idvd ) }
 
 
@@ -1175,7 +1174,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    LOCAL _old_firma := old_dok[ "idfirma" ]
    LOCAL _old_brdok := old_dok[ "brdok" ]
    LOCAL _old_tipdok := old_dok[ "idvd" ]
-   LOCAL hRec, _tek_dok, _t_rec
+   LOCAL hRec, _tek_dok, nTrec
    LOCAL _new_firma := new_dok[ "idfirma" ]
    LOCAL _new_brdok := new_dok[ "brdok" ]
    LOCAL _new_tipdok := new_dok[ "idvd" ]
@@ -1204,7 +1203,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
          _old_firma + _old_tipdok + _old_brdok
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       hRec := dbf_get_rec()
@@ -1226,7 +1225,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
 
       dbf_update_rec( hRec )
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
    GO TOP
@@ -1239,7 +1238,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    DO WHILE !Eof()
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       hRec := dbf_get_rec()
@@ -1249,7 +1248,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       hRec[ "brdok" ] := _tek_dok[ "brdok" ]
 
       dbf_update_rec( hRec )
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 
@@ -1451,8 +1450,8 @@ FUNCTION MPCSAPPiz80uSif()
    cBrDokU  := Space( Len( kalk_pripr->brdok ) )
 
    Box(, 4, 75 )
-   @ m_x + 0, m_y + 5 SAY8 "FORMIRANJE MPC U šifarnikU OD MPCSAPP DOKUMENTA TIPA 80"
-   @ m_x + 2, m_y + 2 SAY8 "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
+   @ box_x_koord() + 0, box_y_koord() + 5 SAY8 "FORMIRANJE MPC U šifarnikU OD MPCSAPP DOKUMENTA TIPA 80"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
    @ Row(), Col() GET cBrDokU VALID is_kalk_postoji_dokument( cIdFirma + cIdVdU + cBrDokU )
    READ
    ESC_BCR
@@ -1540,7 +1539,7 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
    LOCAL cOk := ""
    LOCAL _area := Select()
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
 
    DO WHILE !Eof() .AND. field->idfirma + field->idvd + field->brdok == firma + tip_dok + br_dok
 
@@ -1563,7 +1562,7 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
    ENDDO
 
    SELECT ( _area )
-   GO ( _t_rec )
+   GO ( nTrec )
 
    RETURN cOk
 

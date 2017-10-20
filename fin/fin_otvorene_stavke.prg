@@ -30,7 +30,7 @@ FUNCTION fin_otvorene_stavke_meni()
    AAdd( aOpc, "3. kartica otvorenih stavki" )
    AAdd( aOpcExe, {|| fin_suban_kartica( .T. ) } )
 
-   AAdd( aOpc, "4. usporedna kartica dva konta" )
+   AAdd( aOpc, "4. uporedna kartica dva konta" )
    AAdd( aOpcExe, {|| fin_suban_kartica2( .T. ) } )
 
    AAdd( aOpc, "5. specifikacija otvorenih stavki" )
@@ -39,7 +39,7 @@ FUNCTION fin_otvorene_stavke_meni()
    AAdd( aOpc, "6. ios" )
    AAdd( aOpcExe, {|| fin_ios_meni() } )
    AAdd( aOpc, "7. kartice grupisane po brojevima veze" )
-   AAdd( aOpcExe, {|| fin_kartica_otvorene_stavke_po_broju_veze( .T. ) } )
+   AAdd( aOpcExe, {|| fin_kartica_otvorene_stavke_po_broju_veze( NIL, NIL, NIL, NIL, .T. ) } )
 
    AAdd( aOpc, "8. kompenzacija" )
    AAdd( aOpcExe, {|| Kompenzacija() } )
@@ -117,35 +117,28 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn
 
 
 
+FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( cIdFirma, cIdKonto, cIdPartner, cBrDok, lUnesiPodatke, lBezPitanjaPartnerKonto, bFilter )
 
+   LOCAL nCol1 := 72, cSvi := "N", cSviD := "N", lPrikazDatumDokumentaIValutiranje := .F.
+   LOCAL GetList := {}
+   LOCAL cPrelomljeno
 
-/* fin_kartica_otvorene_stavke_po_broju_veze(fSolo,fTiho,bFilter)
- *     Otvorene stavke grupisane po brojevima veze
- *   param: fSolo
- *   param: fTiho
- *   param: bFilter - npr. {|| getmjesto(cMjesto)}
- */
-
-FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
-
-   LOCAL nCol1 := 72, cSvi := "N", cSviD := "N", lEx := .F.
-
-   IF fTiho == NIL
-      fTiho := .F.
+   IF lBezPitanjaPartnerKonto == NIL
+      lBezPitanjaPartnerKonto := .F.
    ENDIF
 
-   PRIVATE cIdPartner
+   // PRIVATE cIdPartner
 
    cDokument := Space( 8 )
    picBHD := FormPicL( gPicBHD, 14 )
    picDEM := FormPicL( pic_iznos_eur(), 10 )
 
-   IF fTiho .OR. Pitanje(, "Želite li prikaz sa datumima dokumenta i valutiranja ? (D/N)", "D" ) == "D"
-      lEx := .T.
+   IF lBezPitanjaPartnerKonto .OR. Pitanje(, "Želite li prikaz sa datumima dokumenta i valutiranja ? (D/N)", "D" ) == "D"
+      lPrikazDatumDokumentaIValutiranje := .T.
    ENDIF
 
-   IF fsolo == NIL
-      fSolo := .F.
+   IF lUnesiPodatke == NIL
+      lUnesiPodatke := .F.
    ENDIF
 
    IF fin_dvovalutno()
@@ -154,7 +147,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       M := "----------- ------------- -------------- -------------- --"
    ENDIF
 
-   IF lEx
+   IF lPrikazDatumDokumentaIValutiranje
       m := "-------- -------- -------- " + m
    ENDIF
 
@@ -162,28 +155,28 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
    fVeci := .F.
    cPrelomljeno := "N"
 
-   IF fTiho
+   IF lBezPitanjaPartnerKonto
 
       cSvi := "D"
 
-   ELSEIF fsolo
+   ELSEIF lUnesiPodatke
 
-      o_suban()
+      // o_suban()
       // o_partner()
-      o_konto()
+      // o_konto()
       cIdFirma := self_organizacija_id()
       cIdkonto := Space( 7 )
       cIdPartner := Space( 6 )
 
       Box(, 5, 60 )
-      IF gNW == "D"
-         @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
-      ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      ENDIF
-      @ m_x + 2, m_y + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID p_konto( @cIdkonto )
-      @ m_x + 3, m_y + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cidpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
-      @ m_x + 5, m_y + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
+      // IF gNW == "D"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      // ELSE
+      // @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      // ENDIF
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID p_konto( @cIdkonto )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Partner (prazno svi):" GET cIdpartner PICT "@!"  VALID Empty( cIdpartner )  .OR. ( "." $ cIdpartner ) .OR. ( ">" $ cidpartner ) .OR. p_partner( @cIdPartner )
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cPrelomljeno $ "DN" PICT "@!"
       READ
       ESC_BCR
       Boxc()
@@ -193,44 +186,46 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       ENDIF
    ENDIF
 
-   IF !fTiho .AND. Pitanje(, "Prikazati dokumente sa saldom 0 ?", "N" ) == "D"
+   IF !lBezPitanjaPartnerKonto .AND. Pitanje(, "Prikazati dokumente sa saldom 0 ?", "N" ) == "D"
       cSviD := "D"
    ENDIF
 
-   IF fTiho
+   IF lBezPitanjaPartnerKonto
       // onda svi
-   ELSEIF !fsolo
+   ELSEIF !lUnesiPodatke
 
+/*
       IF Type( 'TB' ) = "O"
          IF ValType( aPPos[ 1 ] ) = "C"
-            PRIVATE cIdPartner := aPPos[ 1 ]
+            cIdPartner := aPPos[ 1 ]
          ELSE
-            PRIVATE cIdPartner := Eval( TB:getColumn( aPPos[ 1 ] ):Block )
+            cIdPartner := Eval( TB:getColumn( aPPos[ 1 ] ):Block )
          ENDIF
       ENDIF
+*/
 
    ELSE
 
-      IF "." $ cidpartner
-         cidpartner := StrTran( cidpartner, ".", "" )
-         cIdPartner := Trim( cidPartner )
+      IF "." $ cIdpartner
+         cIdpartner := StrTran( cIdpartner, ".", "" )
+         cIdPartner := Trim( cIdPartner )
       ENDIF
 
-      IF ">" $ cidpartner
-         cidpartner := StrTran( cidpartner, ">", "" )
-         cIdPartner := Trim( cidPartner )
+      IF ">" $ cIdpartner
+         cIdpartner := StrTran( cIdpartner, ">", "" )
+         cIdPartner := Trim( cIdPartner )
          fVeci := .T.
       ENDIF
 
       IF Empty( cIdpartner )
-         cidpartner := ""
+         cIdpartner := ""
       ENDIF
 
       cSvi := cIdpartner
 
    ENDIF
 
-   IF fTiho .OR. lEx
+   IF lBezPitanjaPartnerKonto .OR. lPrikazDatumDokumentaIValutiranje
 
       SELECT ( F_TRFP2 )
       IF !Used()
@@ -247,17 +242,17 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       ELSE
          cDugPot := "1"
          Box( , 3, 60 )
-         @ m_x + 2, m_y + 2 SAY8 "Konto " + cIdKonto + " duguje / potražuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Konto " + cIdKonto + " duguje / potražuje (1/2)" GET cDugpot  VALID cdugpot $ "12" PICT "9"
          READ
          Boxc()
       ENDIF
 
-      fin_create_pom_table( fTiho )
+      fin_create_pom_table( lBezPitanjaPartnerKonto )
 
    ENDIF
 
 
-   IF !fTiho
+   IF !lBezPitanjaPartnerKonto
       START PRINT RET
    ENDIF
 
@@ -288,7 +283,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       nUDug := nUPot := 0
       fPrviprolaz := .T.
 
-      DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner
+      DO WHILE !Eof() .AND. idfirma == cIdfirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner
 
          IF bFilter <> NIL
             IF !Eval( bFilter )
@@ -303,8 +298,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
          nDug := nPot := 0
          aFaktura := { CToD( "" ), CToD( "" ), CToD( "" ) }
 
-         DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner ;
-               .AND. brdok == cBrDok
+         DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner .AND. brdok == cBrDok
             IF D_P == "1"
                nDug += IznosBHD
                nDug2 += IznosDEM
@@ -313,12 +307,12 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
                nPot2 += IznosDEM
             ENDIF
 
-            IF lEx .AND. D_P == cDugPot
+            IF lPrikazDatumDokumentaIValutiranje .AND. D_P == cDugPot
                aFaktura[ 1 ] := DATDOK
                aFaktura[ 2 ] := fix_dat_var( DATVAL, .T. )
             ENDIF
 
-            IF fTiho
+            IF lBezPitanjaPartnerKonto
                // poziv iz procedure RekPPG()
                // za izvjestaj maksuz radjen za Opresu³22.03.01.³
                // ------------------------------------ÀÄ MSÄÄÄÄÄÙ
@@ -341,7 +335,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
          IF cSvid == "N" .AND. Round( nDug - nPot, 2 ) == 0
             // nista
          ELSE
-            IF lEx
+            IF lPrikazDatumDokumentaIValutiranje
                fPrviProlaz := .F.
                IF cPrelomljeno == "D"
                   IF ( ndug - npot ) > 0
@@ -379,14 +373,14 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
                Gather()
                SELECT SUBAN
             ELSE
-               IF !fTiho
+               IF !lBezPitanjaPartnerKonto
                   IF PRow() > 52 + dodatni_redovi_po_stranici()
                      FF
-                     fin_zagl_ostav_grupisano_po_br_veze( .T., lEx )
+                     fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, .T., lPrikazDatumDokumentaIValutiranje )
                      fPrviProlaz := .F.
                   ENDIF
                   IF fPrviProlaz
-                     fin_zagl_ostav_grupisano_po_br_veze(, lEx )
+                     fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, NIL, lPrikazDatumDokumentaIValutiranje )
                      fPrviProlaz := .F.
                   ENDIF
                   ? PadR( cBrDok, 10 )
@@ -408,7 +402,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
                      nDug2 := 0
                   ENDIF
                ENDIF
-               IF !fTiho
+               IF !lBezPitanjaPartnerKonto
                   @ PRow(), nCol1 SAY nDug PICTURE picBHD
                   @ PRow(), PCol() + 1  SAY nPot PICTURE picBHD
                   @ PRow(), PCol() + 1  SAY nDug - nPot PICTURE picBHD
@@ -427,14 +421,14 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       ENDDO
       // partner
 
-      IF !fTiho
+      IF !lBezPitanjaPartnerKonto
 
          IF PRow() > 58 + dodatni_redovi_po_stranici()
             FF
-            fin_zagl_ostav_grupisano_po_br_veze( .T., lEx )
+            fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, .T., lPrikazDatumDokumentaIValutiranje )
          ENDIF
 
-         IF !lEx .AND. !fPrviProlaz
+         IF !lPrikazDatumDokumentaIValutiranje .AND. !fPrviProlaz
             // bilo je stavki
             ? M
             ? "UKUPNO:"
@@ -450,11 +444,11 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
          ENDIF
       ENDIF
 
-      IF fTiho
+      IF lBezPitanjaPartnerKonto
          // idu svi
-      ELSEIF fsolo // iz menija
+      ELSEIF lUnesiPodatke // iz menija
          IF ( !fveci .AND. idpartner = cSvi ) .OR. fVeci
-            IF !lEx .AND. !fPrviProlaz
+            IF !lPrikazDatumDokumentaIValutiranje .AND. !fPrviProlaz
                ? ;  ? ; ?
             ENDIF
          ELSE
@@ -464,14 +458,14 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
          IF cSvi <> "D"
             EXIT
          ELSE
-            IF !lEx .AND. !fPrviProlaz
+            IF !lPrikazDatumDokumentaIValutiranje .AND. !fPrviProlaz
                ? ;  ? ; ?
             ENDIF
          ENDIF
-      ENDIF // fsolo
+      ENDIF // lUnesiPodatke
    ENDDO
 
-   IF !fTiho .AND. lEx   // ako je EXCLUSIVE, sada tek stampaj
+   IF !lBezPitanjaPartnerKonto .AND. lPrikazDatumDokumentaIValutiranje   // ako je EXCLUSIVE, sada tek stampaj
       SELECT POM
       GO TOP
       DO WHILE !Eof()
@@ -479,29 +473,32 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
          cIdPartner := IDPARTNER
          nUDug := nUPot := nUDug2 := nUPot2 := 0
          DO WHILE !Eof() .AND. cIdPartner == IdPartner
-            IF PRow() > 52 + dodatni_redovi_po_stranici(); FF; fin_zagl_ostav_grupisano_po_br_veze( .T., lEx ); fPrviProlaz := .F. ; ENDIF
+            IF PRow() > 52 + dodatni_redovi_po_stranici()
+              FF
+              fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, .T., lPrikazDatumDokumentaIValutiranje )
+              fPrviProlaz := .F.
+            ENDIF
             IF fPrviProlaz
-               fin_zagl_ostav_grupisano_po_br_veze(, lEx )
+               fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, NIL, lPrikazDatumDokumentaIValutiranje )
                fPrviProlaz := .F.
             ENDIF
             SELECT POM
             ? datdok, datval, datzpr, PadR( brdok, 10 )
             nCol1 := PCol() + 1
             ?? " "
-            ?? Transform( dug, picbhd ), ;
-               Transform( pot, picbhd ), ;
-               Transform( dug - pot, picbhd )
+            ?? Transform( dug, picbhd ), Transform( pot, picbhd ), Transform( dug - pot, picbhd )
             IF fin_dvovalutno()
-               ?? " " + Transform( dug2, picdem ), ;
-                  Transform( pot2, picdem ), ;
-                  Transform( dug2 - pot2, picdem )
+               ?? " " + Transform( dug2, picdem ), Transform( pot2, picdem ), Transform( dug2 - pot2, picdem )
             ENDIF
             ?? "  " + otvst
             nUDug += Dug; nUPot += Pot
             nUDug2 += Dug2; nUPot2 += Pot2
             SKIP 1
          ENDDO
-         IF PRow() > 58 + dodatni_redovi_po_stranici(); FF; fin_zagl_ostav_grupisano_po_br_veze( .T., lEx ); ENDIF
+         IF PRow() > 58 + dodatni_redovi_po_stranici()
+           FF
+           fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, .T., lPrikazDatumDokumentaIValutiranje )
+         ENDIF
          SELECT POM
          IF !fPrviProlaz  // bilo je stavki
             ? M
@@ -520,7 +517,7 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       ENDDO
    ENDIF
 
-   IF fTiho
+   IF lBezPitanjaPartnerKonto
       RETURN ( NIL )
    ENDIF
 
@@ -528,15 +525,25 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
 
    end_print()
 
-   SELECT ( F_POM ); USE
+   SELECT ( F_POM )
+   USE
+   SELECT SUBAN
+   USE
 
-   IF fSolo
-      CLOSERET
-   ELSE
+   /*
+   IF lUnesiPodatke
+      //CLOSERET
+      SELECT SUBAN
+      USE
+   ENDIF
       RETURN ( NIL )
    ENDIF
+   */
 
-FUNCTION fin_create_pom_table( fTiho, nParLen )
+   RETURN .T.
+
+
+FUNCTION fin_create_pom_table( lBezPitanjaPartnerKonto, nParLen )
 
    LOCAL i
    LOCAL nPartLen
@@ -544,8 +551,8 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
    LOCAL _ime_dbf := my_home() + my_dbf_prefix() + "pom"
    LOCAL aDbf, aGod
 
-   IF fTiho == NIL
-      fTiho := .F.
+   IF lBezPitanjaPartnerKonto == NIL
+      lBezPitanjaPartnerKonto := .F.
    ENDIF
 
    SELECT ( F_POM )
@@ -570,7 +577,7 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
    AAdd( aDBf, { 'OTVST', 'C',  1,  0 } )
    AAdd( aDBf, { 'DATZPR', 'D',  8,  0 } )
 
-   IF fTiho
+   IF lBezPitanjaPartnerKonto
       FOR i := 1 TO Len( aGod )
          AAdd( aDBf, { 'GOD' + aGod[ i, 1 ], 'N', 15,  2 } )
       NEXT
@@ -594,16 +601,13 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
 
 
 
-/* fin_zagl_ostav_grupisano_po_br_veze(fStrana,lEx)
- *     Zaglavlje kartice OS-a
- *   param: fStrana
- *   param: lEx
- */
-FUNCTION fin_zagl_ostav_grupisano_po_br_veze( fStrana, lEx )
+
+
+FUNCTION fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, fStrana, lPrikazDatumDokumentaIValutiranje )
 
    ?
    IF fin_dvovalutno()
-      IF lEx
+      IF lPrikazDatumDokumentaIValutiranje
          P_COND
       ELSE
          F12CPI
@@ -628,16 +632,15 @@ FUNCTION fin_zagl_ostav_grupisano_po_br_veze( fStrana, lEx )
    ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
    select_o_konto( cIdKonto )
-
    ? "KONTO  :", cIdKonto, field->naz
 
    select_o_partner( cIdPartner )
-   ? "PARTNER:", cIdPartner, Trim( naz ), " ", Trim( naz2 ), " ", Trim( mjesto )
+   ? "PARTNER:", cIdPartner, Trim( partn->naz ), " ", Trim( partn->naz2 ), " ", Trim( partn->mjesto )
 
    SELECT suban
    ? M
    ?
-   IF lEx
+   IF lPrikazDatumDokumentaIValutiranje
       ?? "Dat.dok.*Dat.val.*Dat.ZPR.* "
    ELSE
       ?? "*"
@@ -656,29 +659,29 @@ FUNCTION fin_zagl_ostav_grupisano_po_br_veze( fStrana, lEx )
 
 
 
-/* StBrVeze()
- *     Stampa broja veze
- */
-
-FUNCTION StBrVeze()
+FUNCTION fin_otv_stavke_stampa_za_broj_veze( cIdfirma, cIdkonto, cIdPartner, cBrDok )
 
    LOCAL nCol1 := 35
-   PRIVATE bZagl := {|| ZagBrVeze() }
+   LOCAL nStr
+   LOCAL bZagl := {|| fin_zagl_otv_st_za_broj_veze( cIdFirma, cIdKonto, cIdPartner, cBrDok, nStr ) }
 
    cDokument := Space( 8 )
    picBHD := FormPicL( gPicBHD, 13 )
    picDEM := FormPicL( pic_iznos_eur(), 10 )
-   IF fin_dvovalutno()
-      M := "-------- -------- " + "------- ---- -- ------------- ------------- ------------- ---------- ---------- ---------- --"
-   ELSE
-      M := "-------- -------- " + "------- ---- -- ------------- ------------- ------------- --"
-   ENDIF
+   // IF fin_dvovalutno()
+   // M := "-------- -------- " + "------- ---- -- ------------- ------------- ------------- ---------- ---------- ---------- --"
+   // ELSE
+   // M := "-------- -------- " + "------- ---- -- ------------- ------------- ------------- --"
+   M := "-------- -------- -- -------- ----- ---------------- ------------- ------------- --"
+
+   // ENDIF
 
    nStr := 0
 
    START PRINT RET
 
 
+/*
    IF ValType( aPPos[ 1 ] ) = "C"
       PRIVATE cIdPartner := aPPos[ 1 ]
    ELSE
@@ -689,11 +692,13 @@ FUNCTION StBrVeze()
    ELSE
       PRIVATE cBrDok := Eval( TB:getColumn( aPPos[ 2 ] ):Block )
    ENDIF
+*/
 
    nUkDugBHD := nUkPotBHD := 0
    // SELECT suban; SET ORDER TO TAG "3"
    // SEEK cidfirma + cidkonto + cidpartner + cBrDok
-   find_suban_by_konto_partner( cIdfirma, cIdkonto, cIdpartner, cBrDok, "IdFirma,IdKonto,IdPartner,brdok" )
+
+   find_suban_by_konto_partner( cIdfirma, cIdkonto, cIdpartner, cBrDok, "IdFirma,IdKonto,IdPartner,datdok,brdok" )
 
 
    nDug2 := nPot2 := 0
@@ -701,8 +706,7 @@ FUNCTION StBrVeze()
 
    Eval( bZagl )
 
-   DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner ;
-         .AND. brdok == cBrDok
+   DO WHILE !Eof() .AND. idfirma == cIdfirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner .AND. brdok == cBrDok
 
       NovaStrana( bZagl )
       ? datdok, datval, idvn, brnal, Str( rbr, 5, 0 ), idtipdok
@@ -751,13 +755,7 @@ FUNCTION StBrVeze()
    FF
    end_print()
 
-
-
-/* ZagBRVeze()
- *     Zaglavlje izvjestaja broja veze
- */
-
-FUNCTION ZagBRVeze()
+STATIC FUNCTION fin_zagl_otv_st_za_broj_veze( cIdFirma, cIdKonto, cIdPartner, cBrDok, nStr )
 
    ?
    IF fin_dvovalutno()
@@ -765,26 +763,26 @@ FUNCTION ZagBRVeze()
    ELSE
       F12CPI
    ENDIF
-   ?? "FIN.P: KARTICA ZA ODREDJENI BROJ VEZE      NA DAN "; ?? Date()
+   ??U "FIN.P: KARTICA ZA ODREĐENI BROJ VEZE  NA DAN "; ?? Date()
    @ PRow(), 110 SAY "Str:" + Str( ++nStr, 3 )
 
    select_o_partner( cIdFirma )
-   ? "FIRMA:", cIdFirma, naz, naz2
+   ? "FIRMA:", cIdFirma, partn->naz, partn->naz2
 
    select_o_konto( cIdKonto )
-   ? "KONTO  :", cIdKonto, naz
+   ? "KONTO  :", cIdKonto, konto->naz
 
    select_o_partner( cIdPartner )
-   ? "PARTNER:", cIdPartner, Trim( naz ), " ", Trim( naz2 ), " ", Trim( mjesto )
+   ? "PARTNER:", cIdPartner, Trim( partn->naz ), " ", Trim( partn->naz2 ), " ", Trim( partn->mjesto )
 
    SELECT suban
-   ? "BROJ VEZE :", cBrDok
+   ? "BROJ VEZE:", cBrDok
    ? M
-   IF fin_dvovalutno()
-      ? "Dat.dok.*Dat.val." + "*NALOG * Rbr *TD*   dug " + ValDomaca() + "   *  pot " + ValDomaca() + "  *   saldo " + ValDomaca() + "*  dug " + ValPomocna() + "* pot " + ValPomocna() + " *saldo " + ValPomocna() + "* O"
-   ELSE
-      ? "Dat.dok.*Dat.val." + "*NALOG * Rbr *TD*   dug " + ValDomaca() + "   *  pot " + ValDomaca() + "  *   saldo " + ValDomaca() + "* O"
-   ENDIF
+   // IF fin_dvovalutno()
+   // ? "Dat.dok.*Dat.val." + "*NALOG * Rbr *TD*   dug " + ValDomaca() + "   *  pot " + ValDomaca() + "  *   saldo " + ValDomaca() + "*  dug " + ValPomocna() + "* pot " + ValPomocna() + " *saldo " + ValPomocna() + "* O"
+   // ELSE
+   ? "Dat.dok.*Dat.val.*VN* NALOG  * Rbr *      dug KM    *   pot KM    *   saldo KM  * O"
+   // ENDIF
    ? M
 
    SELECT SUBAN
@@ -797,9 +795,6 @@ FUNCTION ZagBRVeze()
 
 
 
-/* fin_ostav_stampa_azuriranih_promjena()
- *     Stampa promjena
- */
 
 FUNCTION fin_ostav_stampa_azuriranih_promjena()
 
@@ -829,8 +824,7 @@ FUNCTION fin_ostav_stampa_azuriranih_promjena()
       RETURN .F.
    ENDIF
 
-   print_lista_2( aKol,,, 0,, ;
-      , "Rezultati asistenta otvorenih stavki za: " + idkonto + "/" + idpartner + " na datum:" + DToC( Date() ) )
+   print_lista_2( aKol,,, 0,, , "Rezultati asistenta otvorenih stavki za: " + idkonto + "/" + idpartner + " na datum:" + DToC( Date() ) )
 
    end_print()
 

@@ -21,14 +21,14 @@ FUNCTION fakt_import_bterm()
    LOCAL cFile
 
    // importuj podatke u pomocnu tabelu TEMP.DBF
-   nRet := import_BTerm_data( @cFile )
+   nRet := barkod_terminal_import_sa_terminala( @cFile )
 
-   IF nRet = 0
-      RETURN
+   IF nRet == 0
+      RETURN .F.
    ENDIF
 
-   // prebaci podatke u pripremu FAKT
-   bterm_to_pripr()
+
+   bterm_to_fakt_priprema()    // prebaci podatke u pripremu FAKT
 
    // pobrisi txt fajl
    kalk_imp_brisi_txt( cFile, .T. )
@@ -36,14 +36,12 @@ FUNCTION fakt_import_bterm()
    RETURN .T.
 
 
-// ----------------------------------------
-// export podataka za terminal
-// ----------------------------------------
+
 FUNCTION fakt_export_bterm()
 
    LOCAL nRet
 
-   nRet := export_BTerm_data()
+   nRet := barkod_terminal_export_artikle_na_terminal()
 
    RETURN .T.
 
@@ -51,7 +49,7 @@ FUNCTION fakt_export_bterm()
 // -----------------------------------------------
 // kopira TEMP.DBF -> PRIPR.DBF
 // -----------------------------------------------
-STATIC FUNCTION bterm_to_pripr()
+STATIC FUNCTION bterm_to_fakt_priprema()
 
    LOCAL aParams := {}
    LOCAL nCnt := 0
@@ -59,9 +57,9 @@ STATIC FUNCTION bterm_to_pripr()
 
    PRIVATE cTipVPC := "1"
 
-   o_fakt_doks()
+   //o_fakt_doks_dbf()
    o_fakt_pripr()
-   o_fakt()
+   //o_fakt_dbf()
    //o_roba()
    //o_rj()
    //o_partner()
@@ -116,29 +114,29 @@ STATIC FUNCTION bterm_to_pripr()
       _txt := "" // fakt_txt
 
       // ovo setuje cijenu
-      v_kolicina( "1" )
+      fakt_v_kolicina( "1" )
       SELECT fakt_pripr
 
       // 1 roba tip U - nista
-      fakt_a_to_public_var_txt( "", .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
       // 2 dodatni tekst otpremnice - nista
-      fakt_a_to_public_var_txt( "", .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
       // 3 naziv partnera
-      fakt_a_to_public_var_txt( aParams[ 9 ], .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( aParams[ 9 ], .T. )
       // 4 adresa
-      fakt_a_to_public_var_txt( aParams[ 10 ], .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( aParams[ 10 ], .T. )
       // 5 ptt i mjesto
-      fakt_a_to_public_var_txt( aParams[ 11 ], .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( aParams[ 11 ], .T. )
       // 6 broj otpremnice
-      fakt_a_to_public_var_txt( "", .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
       // 7 datum  otpremnice
-      fakt_a_to_public_var_txt( DToC( aParams[ 6 ] ), .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( DToC( aParams[ 6 ] ), .T. )
       // 8 broj ugovora - nista
-      fakt_a_to_public_var_txt( "", .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
       // 9 datum isporuke - nista
-      fakt_a_to_public_var_txt( DToC( aParams[ 7 ] ), .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( DToC( aParams[ 7 ] ), .T. )
       // 10 datum valute - nista
-      fakt_a_to_public_var_txt( "", .T. )
+      fakt_add_to_public_var_txt_uokviri_sa_chr16_chr17( "", .T. )
 
       gather()
 
@@ -176,18 +174,15 @@ STATIC FUNCTION _gForm( aParam )
 
    Box(, 15, 67 )
 
-   @ m_x + nX, m_y + 2 SAY "Generisanje podataka iz barkod terminala:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Generisanje podataka iz barkod terminala:"
 
    ++nX
    ++nX
-
-   @ m_x + nX, m_y + 2 SAY "(1) Veleprodaja"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "(1) Veleprodaja"
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "(2) Maloprodaja" GET cVpMp ;
-      VALID cVpMp $ "12"
-
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "(2) Maloprodaja" GET cVpMp VALID cVpMp $ "12"
    READ
 
    ++ nX
@@ -195,9 +190,9 @@ STATIC FUNCTION _gForm( aParam )
 
    // datum dokumenta
 
-   @ m_x + nX, m_y + 2 SAY "Datum dok.:" GET dDatDok
-   @ m_x + nX, Col() + 1 SAY "Datum otpr.:" GET dDatOtpr
-   @ m_x + nX, Col() + 1 SAY "Datum isp.:" GET dDatIsp
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datum dok.:" GET dDatDok
+   @ box_x_koord() + nX, Col() + 1 SAY "Datum otpr.:" GET dDatOtpr
+   @ box_x_koord() + nX, Col() + 1 SAY "Datum isp.:" GET dDatIsp
 
    ++ nX
    ++ nX
@@ -207,16 +202,16 @@ STATIC FUNCTION _gForm( aParam )
    // koji je tip dokumenta
    cTipDok := _gtdok( cVpMp )
 
-   @ m_x + nX, m_y + 2 SAY "Dokument broj:" GET cFirma
-   @ m_x + nX, Col() + 1 SAY "-" GET cTipDok ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Dokument broj:" GET cFirma
+   @ box_x_koord() + nX, Col() + 1 SAY "-" GET cTipDok ;
       VALID _nBrDok( cFirma, cTipDok, @cBrDok )
-   @ m_x + nX, Col() + 1 SAY "-" GET cBrDok
+   @ box_x_koord() + nX, Col() + 1 SAY "-" GET cBrDok
 
    ++nX
    ++nX
 
    // partner
-   @ m_x + nX, m_y + 2 SAY "Partner:" GET cPartner ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Partner:" GET cPartner ;
       VALID Empty( cPartner ) .OR. p_partner( @cPartner )
 
    ++ nX
@@ -225,17 +220,13 @@ STATIC FUNCTION _gForm( aParam )
    IF cVpMp == "2"
 
       // tip cijena
-      @ m_x + nX, m_y + 2 SAY "Koristiti MPC ( /1/2/3...)" ;
-         GET cMPCSet ;
-         VALID cMPCSet $ " 123456"
-
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koristiti MPC ( /1/2/3...)"  GET cMPCSet VALID cMPCSet $ " 123456"
       ++ nX
       ++ nX
 
    ENDIF
 
-   @ m_x + nX, m_y + 2 SAY "Izvrsiti transfer (D/N)?" GET cGen ;
-      VALID cGen $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Izvrsiti transfer (D/N)?" GET cGen  VALID cGen $ "DN" PICT "@!"
 
    READ
    BoxC()

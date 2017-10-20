@@ -111,7 +111,7 @@ FUNCTION rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    LOCAL nTArea := Select()
    LOCAL lRet
 
-   nOperId := GetUserID( f18_user() )
+   nOperId := f18_get_user_id( f18_user() )
 
    use_sql_doc_log( 0 )
 

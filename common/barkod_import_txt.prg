@@ -39,6 +39,7 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
    LOCAL cDelimiter := ";"
    LOCAL aDbf := {}
    LOCAL _o_file
+   LOCAL cTmp
 
    cTxtFile := AllTrim( cTxtFile )
 
@@ -57,7 +58,7 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
    ENDIF
 
    // otvori tabele
-   o_roba()
+   //o_roba()
 
    SELECT ( F_TMP_1 )
    USE
@@ -94,12 +95,14 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
       cTmp := PadR( AllTrim( aRow[ 1 ] ), 13 )
       nTmp := Val ( AllTrim( aRow[ 2 ] ) )
 
-      SELECT roba
-      SET ORDER TO TAG "BARKOD"
-      GO TOP
-      SEEK cTmp
+      //SELECT roba
+      //SET ORDER TO TAG "BARKOD"
+      //GO TOP
+      //SEEK cTmp
 
-      IF Found()
+
+      //IF Found()
+      IF find_roba_by_barkod( cTmp )
          cRoba_id := field->id
          nStatus := 1
       ELSE

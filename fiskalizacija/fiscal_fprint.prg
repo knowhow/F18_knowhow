@@ -100,7 +100,7 @@ FUNCTION fprint_polog( hFiskalniParams, nPolog, lShowBox )
    IF nPolog == 0 .OR. lShowBox
 
       Box(, 1, 60 )
-      @ m_x + 1, m_y + 2 SAY8 "Zadužujem kasu za:" GET nPolog ;
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Zadužujem kasu za:" GET nPolog ;
          PICT "999999.99" VALID _max_polog( nPolog )
       READ
       BoxC()
@@ -153,22 +153,22 @@ FUNCTION fprint_dupliciraj_racun( hFiskalniParams, rn_params )
 
       SET CURSOR ON
 
-      @ m_x + 1, m_y + 2 SAY "Za datum od:" GET dD_from
-      @ m_x + 1, Col() + 1 SAY "vrijeme od (hh:mm):" GET cTH_from
-      @ m_x + 1, Col() SAY ":" GET cTM_from
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Za datum od:" GET dD_from
+      @ box_x_koord() + 1, Col() + 1 SAY "vrijeme od (hh:mm):" GET cTH_from
+      @ box_x_koord() + 1, Col() SAY ":" GET cTM_from
 
-      @ m_x + 2, m_y + 2 SAY "         do:" GET dD_to
-      @ m_x + 2, Col() + 1 SAY "vrijeme do (hh:mm):" GET cTH_to
-      @ m_x + 2, Col() SAY ":" GET cTM_to
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "         do:" GET dD_to
+      @ box_x_koord() + 2, Col() + 1 SAY "vrijeme do (hh:mm):" GET cTH_to
+      @ box_x_koord() + 2, Col() SAY ":" GET cTM_to
 
-      @ m_x + 3, m_y + 2 SAY "--------------------------------------"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "--------------------------------------"
 
-      @ m_x + 4, m_y + 2 SAY "A - duplikat svih dokumenata"
-      @ m_x + 5, m_y + 2 SAY8 "F - duplikat fiskalnog računa"
-      @ m_x + 6, m_y + 2 SAY8 "R - duplikat reklamnog računa"
-      @ m_x + 7, m_y + 2 SAY8 "Z - duplikat Z izvještaja"
-      @ m_x + 8, m_y + 2 SAY8 "X - duplikat X izvještaja"
-      @ m_x + 9, m_y + 2 SAY8 "P - duplikat periodičnog izvještaja" ;
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "A - duplikat svih dokumenata"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "F - duplikat fiskalnog računa"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "R - duplikat reklamnog računa"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Z - duplikat Z izvještaja"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "X - duplikat X izvještaja"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "P - duplikat periodičnog izvještaja" ;
          GET cType ;
          VALID cType $ "AFRZXP" PICT "@!"
 
@@ -300,7 +300,7 @@ FUNCTION fprint_delete_plu( hFiskalniParams, silent )
       ENDIF
 
       Box(, 1, 50 )
-      @ m_x + 1, m_y + 2 SAY "Unesi max.plu vrijednost:" GET nMaxPlu PICT "9999999999"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unesi max.plu vrijednost:" GET nMaxPlu PICT "9999999999"
       READ
       BoxC()
 
@@ -352,13 +352,13 @@ FUNCTION fprint_manual_cmd( hFiskalniParams )
 
    Box(, 4, 65 )
 
-   @ m_x + 1, m_y + 2 SAY8 "**** PROIZVOLJNE KOMANDE ****"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "**** PROIZVOLJNE KOMANDE ****"
 
-   @ m_x + 2, m_y + 2 SAY "   broj komande:" GET nCmd PICT "999" ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "   broj komande:" GET nCmd PICT "999" ;
       VALID nCmd > 0
-   @ m_x + 3, m_y + 2 SAY "        komanda:" GET cCond PICT "@S40"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "        komanda:" GET cCond PICT "@S40"
 
-   @ m_x + 4, m_y + 2 SAY8 "provjera greške:" GET cErr PICT "@!" ;
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "provjera greške:" GET cErr PICT "@!" ;
       VALID cErr $ "DN"
    READ
    BoxC()
@@ -391,9 +391,9 @@ FUNCTION fprint_sold_plu( hFiskalniParams )
    LOCAL cType := "0"
 
    Box(, 4, 50 )
-   @ m_x + 1, m_y + 2 SAY "**** uslovi pregleda artikala ****" COLOR f18_color_i()
-   @ m_x + 3, m_y + 2 SAY8 "0 - samo u današnjem prometu "
-   @ m_x + 4, m_y + 2 SAY "1 - svi programirani          -> " GET cType ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "**** uslovi pregleda artikala ****" COLOR f18_color_i()
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "0 - samo u današnjem prometu "
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "1 - svi programirani          -> " GET cType ;
       VALID cType $ "01"
    READ
    BoxC()
@@ -426,9 +426,9 @@ FUNCTION fprint_daily_rpt( hFiskalniParams )
    cType := fetch_metric( "fiscal_fprint_daily_type", my_user(), cType )
 
    Box(, 4, 55 )
-   @ m_x + 1, m_y + 2 SAY8 "**** varijanta dnevnog izvještaja ****" COLOR f18_color_i()
-   @ m_x + 3, m_y + 2 SAY8 "0 - z-report (dnevni izvještaj)"
-   @ m_x + 4, m_y + 2 SAY8 "2 - x-report   (presjek stanja) -> " GET cType ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "**** varijanta dnevnog izvještaja ****" COLOR f18_color_i()
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "0 - z-report (dnevni izvještaj)"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "2 - x-report   (presjek stanja) -> " GET cType ;
       VALID cType $ "02"
    READ
    BoxC()
@@ -517,8 +517,8 @@ FUNCTION fprint_per_rpt( hFiskalniParams )
    PRIVATE GetList := {}
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "Za period od" GET dD_from
-   @ m_x + 1, Col() + 1 SAY "do" GET dD_to
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Za period od" GET dD_from
+   @ box_x_koord() + 1, Col() + 1 SAY "do" GET dD_to
    READ
    BoxC()
 
@@ -922,7 +922,7 @@ STATIC FUNCTION _fp_del_plu( nMaxPlu, hFiskalniParams )
       nLastPlu := nMaxPlu
    ELSE
       // uzmi zadnji PLU iz parametara
-      nLastPlu := last_plu( hFiskalniParams[ "id" ] )
+      nLastPlu := fiskalni_get_last_plu( hFiskalniParams[ "id" ] )
    ENDIF
 
    SELECT ( nTArea )
@@ -1413,12 +1413,12 @@ FUNCTION fprint_read_error( hFiskalniParams, fiscal_no, storno, time_out )
 
    Box( , 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY8 "Uređaj ID:" + AllTrim( Str( hFiskalniParams[ "id" ] ) ) +  " : " + PadR( hFiskalniParams[ "name" ], 40 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Uređaj ID:" + AllTrim( Str( hFiskalniParams[ "id" ] ) ) +  " : " + PadR( hFiskalniParams[ "name" ], 40 )
 
    DO WHILE _time > 0
 
       -- _time
-      @ m_x + 3, m_y + 2 SAY8 PadR( "Čeka se odgovor fiskalnog uređaja: " + AllTrim( Str( _time ) ), 48 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY8 PadR( "Čeka se odgovor fiskalnog uređaja: " + AllTrim( Str( _time ) ), 48 )
 
       Sleep( 1 )
 

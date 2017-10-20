@@ -87,6 +87,8 @@
     ;  END                                        ;
     ; NEXT
 
+#define FIELD_LEN_FAKT_BRDOK    8
+
 #define FIELD_LEN_KALK_BRDOK    8
 #define FIELD_LEN_KALK_RBR      3
 #define FIELD_PARTNER_ID_LENGTH 6
@@ -450,7 +452,7 @@
                         [WHEN <when>]                                   ;
                         [SEND <msg>]                                    ;
                                                                         ;
-      => SetPos( m_x+<row>, m_y+<col> )                                 ;
+      => SetPos( box_x_koord()+<row>, box_y_koord()+<col> )                                 ;
        ; AAdd(                                                          ;
                GetList,                                                 ;
                _GET_( <var>, <(var)>, <pic>, <{valid}>, <{when}> )      ;
@@ -473,7 +475,7 @@
                         [PICTURE <pic>]                                 ;
                         [COLOR <color>]                                 ;
                                                                         ;
-      => DevPos( m_x+<row>, m_y+<col> )                                 ;
+      => DevPos( box_x_koord()+<row>, box_y_koord()+<col> )                                 ;
        ; DevOutPict( <xpr>, <pic> [, <color>] )
 
 #command SET MRELATION                                                  ;
@@ -548,14 +550,14 @@
 #define SP_N      "N"           // nivelacija
 
 // vrste dokumenata
-#define VD_RN        "42"       // racuni
+#define POS_VD_RACUN        "42"       // racuni
 #define VD_ZAD       "16"       // zaduzenje
 #define VD_OTP       "95"       // otpis
 #define VD_REK       "98"       // reklamacija
 #define VD_INV       "IN"       // inventura
 #define VD_NIV       "NI"       // nivelacija
 #define VD_RZS       "96"       // razduzenje sirovina-otprema pr. magacina
-#define VD_PCS       "00"       // pocetno stanje
+#define POS_VD_POCETNO_STANJE       "00"       // pocetno stanje
 #define VD_PRR       "01"       // prenos realizacije iz prethodnih sezona
 #define VD_CK        "90"       // dokument cek
 #define VD_SK        "91"       // dokument sindikalni kredit
@@ -589,7 +591,7 @@
 
 #define F18_DOWNLOAD_BASE_URL "https://raw.github.com/knowhow/F18_knowhow"
 #define F18_VERZIJA "3"
-#define F18_VARIJANTA "vindi"
+#define F18_VARIJANTA "std"
 
 
 #define FIELD_LENGTH_LD_RADKR_NA_OSNOVU 20

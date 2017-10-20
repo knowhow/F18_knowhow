@@ -22,7 +22,7 @@ STATIC nCurrLine := 0
 
 STATIC cRptNaziv := "Izvještaj KIF na dan "
 
-STATIC cTbl := "kif"
+STATIC s_cTabela := "kif"
 
 STATIC cTar := ""
 STATIC cPart := ""
@@ -30,7 +30,7 @@ STATIC cPart := ""
 STATIC cRptBrDok := 0
 
 
-FUNCTION rpt_kif( nBrDok, cIdTarifa )
+FUNCTION epdv_rpt_kif( nBrDok, cIdTarifa )
 
    LOCAL cHeader
    LOCAL cPom
@@ -39,8 +39,10 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    LOCAL cPom21
    LOCAL cPom22
    LOCAL nLenIzn
-   LOCAL _export := "N"
+   LOCAL cExportDN := "N"
    LOCAL cExportDbf
+   LOCAL nX
+   LOCAL GetList := {}
 
    // 1 - red.br / ili br.dok
    // 2 - br.dok / ili r.br
@@ -72,7 +74,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    cPart := ""
 
 
-   aDInt := rpt_d_interval ( Date() )
+   aDInt := epdv_rpt_d_interval ( Date() )
 
    dDate := Date()
 
@@ -87,30 +89,23 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
       nX := 1
       Box(, 11, 60 )
 
-      @ m_x + nX, m_y + 2 SAY "Period"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Period"
       nX++
 
-      @ m_x + nX, m_y + 2 SAY "od " GET dDatOd
-      @ m_x + nX, Col() + 2 SAY "do " GET dDatDo
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "od " GET dDatOd
+      @ box_x_koord() + nX, Col() + 2 SAY "do " GET dDatDo
 
       nX += 2
 
-      @ m_x + nX, m_y + 2 SAY "Tarifa (prazno svi)  ? " GET cTar ;
-         VALID {|| Empty( cTar ) .OR. P_Tarifa( @cTar ) }  PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Tarifa (prazno svi)  ? " GET cTar VALID {|| Empty( cTar ) .OR. P_Tarifa( @cTar ) }  PICT "@!"
       nX += 1
-
-      @ m_x + nX, m_y + 2 SAY "Partner (prazno svi) ? " GET cPart ;
-         VALID {|| Empty( cPart ) .OR. p_partner( @cPart ) } PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Partner (prazno svi) ? " GET cPart VALID {|| Empty( cPart ) .OR. p_partner( @cPart ) } PICT "@!"
 
       nX += 2
-
-      @ m_x + nX, m_y + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET _export ;
-         VALID _export $ "DN" PICT "@!"
-
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET cExportDN VALID cExportDN $ "DN" PICT "@!"
 
       nX += 2
-
-      @ m_x + nX, m_y + 2 SAY Replicate( "-", 30 )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY Replicate( "-", 30 )
       nX++
 
       READ
@@ -171,14 +166,13 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
 
    AAdd( aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Kupac", "Broj",  "Opis",  "iznos", "iznos",    "iznos" } )
    AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, PDV / identifikacijski broj)",      "RN",     "",    "bez PDV", "PDV", "sa PDV" } )
-   AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)", "(10) = (8+9)" } )
+   AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)", "(10)=8+9" } )
 
-
-   fill_rpt( nBrDok )
+   epdv_fill_rpt_kif( nBrDok )
 
    my_close_all_dbf()
 
-   IF _export == "D"
+   IF cExportDN == "D"
       cExportDbf := my_home() + "epdv_r_kif.dbf"
       open_r_export_table( cExportDbf )
 
@@ -191,43 +185,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
 
 
 
-STATIC FUNCTION get_r_fields( aArr )
-
-   AAdd( aArr, { "r_br",   "N",  8, 0 } )
-   AAdd( aArr, { "br_dok",   "N",  6, 0 } )
-   AAdd( aArr, { "datum",   "D",  8, 0 } )
-
-   AAdd( aArr, { "id_tar",   "C",  6, 0 } )
-   AAdd( aArr, { "id_part",   "C",  6, 0 } )
-
-   AAdd( aArr, { "kup_rn",   "C",  12, 0 } )
-   AAdd( aArr, { "kup_naz",   "C",  200, 0 } )
-   AAdd( aArr, { "opis",   "C",  80, 0 } )
-
-   AAdd( aArr, { "i_b_pdv",   "N",  18, 2 } )
-   AAdd( aArr, { "i_pdv",   "N",  18, 2 } )
-   AAdd( aArr, { "i_uk",   "N",  18, 2 } )
-
-   RETURN .T.
-
-STATIC FUNCTION cre_r_tbl()
-
-   LOCAL aArr := {}
-
-   my_close_all_dbf()
-
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
-
-   get_r_fields( @aArr )
-
-   dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr )
-
-   CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  cTbl, .T. )
-
-   RETURN .T.
-
-STATIC FUNCTION fill_rpt( nBrDok )
+STATIC FUNCTION epdv_fill_rpt_kif( nBrDok )
 
    LOCAL nIzArea
    LOCAL nBPdv
@@ -239,39 +197,29 @@ STATIC FUNCTION fill_rpt( nBrDok )
    LOCAL cIdTar
    LOCAL cOpis
    LOCAL cIdPart
+   LOCAL nCount
+   LOCAL cFilter := ""
 
-   cre_r_tbl()
+   epdv_create_r_kif()
 
-   O_R_KIF
+   select_o_epdv_r_kif()
 
-   IF ( nBrDok == 0 )
-
+   IF ( nBrDok == 0 ) // priprema
       nIzArea := F_P_KIF
-
-      SELECT ( F_P_KIF )
-      IF !Used()
-         O_P_KIF
-      ENDIF
+      select_o_epdv_p_kif()
       SET ORDER TO TAG "br_dok"
 
-   ELSE
-
+   ELSE // kumulativ
       nIzArea := F_KIF
-
-      SELECT ( F_KIF )
-      IF !Used()
-         O_KIF
-      ENDIF
-      SET ORDER TO TAG "g_r_br"
-
+      // select_o_epdv_kif()
+      // SET ORDER TO TAG "g_r_br"
+      find_epdv_kif_za_period( dDatOd, dDatDo )
 
    ENDIF
 
    SELECT ( nIzArea )
 
-   PRIVATE cFilter := ""
-
-   IF ( nBrdok == - 999 )
+   IF ( nBrdok == -999 )
       cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
    ENDIF
 
@@ -293,7 +241,6 @@ STATIC FUNCTION fill_rpt( nBrDok )
 
    GO TOP
 
-
    Box(, 3, 60 )
 
    nCount := 0
@@ -303,29 +250,27 @@ STATIC FUNCTION fill_rpt( nBrDok )
 
       ++nCount
 
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY Str( nCount, 6, 0 )
 
-      @ m_x + 2, m_y + 2 SAY Str( nCount, 6, 0 )
-
-      nBrDok := br_dok
-      nBPdv := i_b_pdv
-      nPdv := i_pdv
+      nBrDok := field->br_dok
+      nBPdv := field->i_b_pdv
+      nPdv := field->i_pdv
 
       IF ( nRptBrDok == -999 )
-         nRbr := g_r_br
+         nRbr := field->g_r_br
       ELSE
-         nRbr := r_br
+         nRbr := field->r_br
       ENDIF
 
-      dDatum := datum
-      cKupRn := src_br_2
-      cKupNaz := s_partner( id_part )
-      cIdTar := id_tar
-      cOpis := opis
-      cIdPart := id_part
+      dDatum := field->datum
+      cKupRn := field->src_br_2
+      cKupNaz := s_partner( field->id_part )
+      cIdTar := field->id_tar
+      cOpis := field->opis
+      cIdPart := field->id_part
 
       SELECT r_kif
       APPEND BLANK
-
 
       REPLACE br_dok WITH nBrDok
       REPLACE r_br WITH nRbr
@@ -338,7 +283,7 @@ STATIC FUNCTION fill_rpt( nBrDok )
 
       REPLACE i_b_pdv WITH nBPdv
       REPLACE i_pdv WITH nPdv
-      REPLACE i_uk WITH ( i_b_pdv + i_pdv )
+      REPLACE i_uk WITH ( field->i_b_pdv + field->i_pdv )
 
       SELECT ( nIzArea )
 
@@ -373,7 +318,7 @@ STATIC FUNCTION show_rpt()
 
    zaglavlje_kif()
 
-   O_R_KIF
+   select_o_epdv_r_kif()
    SELECT r_kif
    SET ORDER TO TAG "1"
    GO TOP
@@ -383,7 +328,7 @@ STATIC FUNCTION show_rpt()
    nPdv :=  0
    DO WHILE !Eof()
 
-      ++ nCurrLine
+      ++nCurrLine
 
       IF nRptBrDok == -999
          nPom1 := r_br
@@ -393,7 +338,7 @@ STATIC FUNCTION show_rpt()
          nPom2 := r_br
       ENDIF
 
-      aKupacNaziv := SjeciStr( kup_naz, aZaglLen[5] )
+      aKupacNaziv := SjeciStr( kup_naz, aZaglLen[ 5 ] )
 
       ?
       // 1. broj dokumenta
@@ -413,10 +358,10 @@ STATIC FUNCTION show_rpt()
       ?? PadR( id_tar, aZaglLen[ 4 ] )
       ?? " "
 
-      nPos := pcol()
+      nPos := PCol()
 
       // 5. kupac naziv
-      ?? PadR( aKupacNaziv[1], aZaglLen[ 5 ] )
+      ?? PadR( aKupacNaziv[ 1 ], aZaglLen[ 5 ] )
       ?? " "
 
       // 6. dobavljac rn
@@ -439,11 +384,11 @@ STATIC FUNCTION show_rpt()
       ?? Transform( i_b_pdv + i_pdv,  PIC_IZN() )
       ?? " "
 
-      IF LEN( aKupacNaziv ) > 1
+      IF Len( aKupacNaziv ) > 1
          nCurrLine := nCurrLine + 1
          kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
          ?
-         @ prow(), nPos SAY aKupacNaziv[2]
+         @ PRow(), nPos SAY aKupacNaziv[ 2 ]
       ENDIF
 
       nBPdv += i_b_pdv
@@ -489,6 +434,27 @@ STATIC FUNCTION show_rpt()
 
 
 
+STATIC FUNCTION get_r_fields( aArr )
+
+   AAdd( aArr, { "r_br",   "N",  8, 0 } )
+   AAdd( aArr, { "br_dok",   "N",  6, 0 } )
+   AAdd( aArr, { "datum",   "D",  8, 0 } )
+
+   AAdd( aArr, { "id_tar",   "C",  6, 0 } )
+   AAdd( aArr, { "id_part",   "C",  6, 0 } )
+
+   AAdd( aArr, { "kup_rn",   "C",  12, 0 } )
+   AAdd( aArr, { "kup_naz",   "C",  200, 0 } )
+   AAdd( aArr, { "opis",   "C",  80, 0 } )
+
+   AAdd( aArr, { "i_b_pdv",   "N",  18, 2 } )
+   AAdd( aArr, { "i_pdv",   "N",  18, 2 } )
+   AAdd( aArr, { "i_uk",   "N",  18, 2 } )
+
+   RETURN .T.
+
+
+
 STATIC FUNCTION kif_nova_stranica( nCurrLine, nPageLimit, lSvakaHeader )
 
    IF nCurrLine > nPageLimit
@@ -504,6 +470,8 @@ STATIC FUNCTION kif_nova_stranica( nCurrLine, nPageLimit, lSvakaHeader )
 
 
 STATIC FUNCTION zaglavlje_kif()
+
+   LOCAL i
 
    P_COND
    B_ON
@@ -524,11 +492,11 @@ STATIC FUNCTION zaglavlje_kif()
          IF Left( aZagl[ i, nCol ], 1 ) = "#"
 
             nMergirano := Val( SubStr( aZagl[ i, nCol ], 2, 1 ) )
-            cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) -2 )
+            cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) - 2 )
             nMrgWidth := 0
             FOR nMrg := 1 TO nMergirano
                nMrgWidth += aZaglLen[ nCol + nMrg - 1 ]
-               nMrgWidth ++
+               nMrgWidth++
             NEXT
             ??U PadC( cPom, nMrgWidth )
             ?? " "
@@ -545,7 +513,10 @@ STATIC FUNCTION zaglavlje_kif()
    RETURN .T.
 
 
+
 STATIC FUNCTION kif_linija()
+
+   LOCAL i
 
    ++nCurrLine
    ?
@@ -553,5 +524,25 @@ STATIC FUNCTION kif_linija()
       ?? PadR( "-", aZaglLen[ i ], "-" )
       ?? " "
    NEXT
+
+   RETURN .T.
+
+
+
+
+STATIC FUNCTION epdv_create_r_kif()
+
+   LOCAL aArr := {}
+
+   my_close_all_dbf()
+
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".cdx" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".dbf" )
+
+   get_r_fields( @aArr )
+
+   dbcreate2( my_home() + "epdv_r_" + s_cTabela + ".dbf", aArr )
+
+   CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  s_cTabela, .T. )
 
    RETURN .T.

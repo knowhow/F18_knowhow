@@ -118,8 +118,7 @@ FUNCTION i_zaglavlje_fakture()
    RETURN
 
 
-// / --------------------------------------
-// / --------------------------------------
+
 FUNCTION i_povrat_fakture()
 
    LOCAL _tmp, _a_polja, _stavka_dok
@@ -149,7 +148,7 @@ FUNCTION i_povrat_fakture()
    test_procedure_with_keystrokes( {|| povrat_fakt_dokumenta() },  gen_test_keystrokes( _stavke ) )
 
    CLOSE ALL
-   o_fakt()
+  // o_fakt_dbf()
    // rec_99 treba da sadrzi broj zapisa
    COUNT FOR ( IdFirma == "99" .AND. IdTipDok == "10" .AND. brdok == PadR( "77777", 8 ) ) TO _tmp
    // setuj test var rec_99 sa _tmp
@@ -157,11 +156,10 @@ FUNCTION i_povrat_fakture()
 
    TEST_LINE( test_var( "fakt_pov" ) == 0,  .T. )
 
-   RETURN
+   RETURN .T.
 
 
-// / --------------------------------------
-// / --------------------------------------
+
 FUNCTION i_napravi_fakturu()
 
    LOCAL _tmp, _a_polja, _stavka_dok
@@ -169,7 +167,7 @@ FUNCTION i_napravi_fakturu()
    LOCAL _fakt_outf, _fakt_out_odt, _b_print
 
    // uporedi test/data/fakt_1.txt sa outf.txt koji je izgenerisan
-   _fakt_outf := my_home() + OUTF_FILE
+   _fakt_outf := txt_print_file_name()
    _fakt_out_odt := my_home() + OUT_ODT_FILE
 
 
@@ -316,7 +314,7 @@ AADD(_stavke['get'], '_IDVRSTEP')
    test_procedure_with_keystrokes( {|| fakt_unos_dokumenta() },  gen_test_keystrokes( _stavke ) )
 
    CLOSE ALL
-   o_fakt()
+  // o_fakt_dbf()
    // rec_99 treba da sadrzi broj zapisa
    COUNT FOR ( IdFirma == "99" .AND. IdTipDok == "10" .AND. brdok == PadR( "77777", 8 ) ) TO _tmp
    // setuj test var rec_99 sa _tmp

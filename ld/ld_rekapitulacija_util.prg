@@ -88,19 +88,19 @@ FUNCTION ld_rekap_get_svi()
    Box(, 11 + iif( IsRamaGlas(), 1, 0 ), 75 )
    DO WHILE .T.
 
-      @ get_x_koord() + 2, get_y_koord() + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
 
-      @ get_x_koord() + 3, get_y_koord() + 2 SAY8 "Radne jedinice: "  GET  qqRJ PICT "@!S25"
-      @ get_x_koord() + 4, get_y_koord() + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
-      @ get_x_koord() + 4, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
-      @ get_x_koord() + 4, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-      @ get_x_koord() + 5, get_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
-      @ get_x_koord() + 7, get_y_koord() + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
-      @ get_x_koord() + 8, get_y_koord() + 2 SAY8 "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
-      @ get_x_koord() + 9, get_y_koord() + 2 SAY8 "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Radne jedinice: "  GET  qqRJ PICT "@!S25"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
+      @ box_x_koord() + 4, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
+      @ box_x_koord() + 4, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
 
-      @ get_x_koord() + 10, get_y_koord() + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
-      @ get_x_koord() + 11, get_y_koord() + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
       READ
       ClvBox()
@@ -125,18 +125,18 @@ FUNCTION ld_rekap_get_rj()
 
    Box(, 10 + iif( IsRamaGlas(), 1, 0 ), 75 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY8 "Radna jedinica: "  GET cIdRJ
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
-   @ get_x_koord() + 3, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
-   @ get_x_koord() + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
-   @ get_x_koord() + 6, get_y_koord() + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
-   @ get_x_koord() + 7, get_y_koord() + 2 SAY8 "Opština stanovanja:  "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
-   @ get_x_koord() + 8, get_y_koord() + 2 SAY8 "Opština rada:        "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Radna jedinica: "  GET cIdRJ
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
+   @ box_x_koord() + 3, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
+   @ box_x_koord() + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Opština stanovanja:  "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Opština rada:        "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
 
-   @ get_x_koord() + 9, get_y_koord() + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
-   @ get_x_koord() + 10, get_y_koord() + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
    READ
 
@@ -953,7 +953,7 @@ STATIC FUNCTION IspisKred( lSvi )
    LOCAL _kr_partija
    LOCAL lFoundKreditI30 := .F.
    LOCAL nMjesecFor, nMjesecRadKr
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL cIdKred, cNaOsnovu, nUkKred, nUkKrRad, cOpis2
    LOCAL cFilter
 
@@ -1007,7 +1007,7 @@ STATIC FUNCTION IspisKred( lSvi )
                         GO TOP
                      ENDIF
 
-                     _t_rec := RecNo()
+                     nTrec := RecNo()
                      DO WHILE !Eof() .AND. ld->godina == nGodina .AND. ld->mjesec == nMjesec .AND. ld->obr == cObracun .AND. ld->idradn == radkr->idradn
                         IF ld->i30 <> 0
                            lFoundKreditI30 := .T.
@@ -1015,7 +1015,7 @@ STATIC FUNCTION IspisKred( lSvi )
                         ENDIF
                         SKIP
                      ENDDO
-                     GO ( _t_rec )
+                     GO ( nTrec )
 
                   ELSE
                      // rekap za jednu rj

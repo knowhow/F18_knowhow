@@ -80,17 +80,17 @@ FUNCTION Zaduzenje
    SET CURSOR ON
 
    IF gVrstaRS == "S"
-      @ m_x + 1, m_y + 3 SAY "Prodajno mjesto:" GET cIdPos PICT "@!" VALID cIdPos <= "X " .AND. !Empty( cIdPos )
+      @ box_x_koord() + 1, box_y_koord() + 3 SAY "Prodajno mjesto:" GET cIdPos PICT "@!" VALID cIdPos <= "X " .AND. !Empty( cIdPos )
    ENDIF
 
    IF gvodiodj == "D"
-      @ m_x + 3, m_y + 3 SAY   " Odjeljenje:" GET cIdOdj VALID P_Odj ( @cIdOdj, 3, 28 )
+      @ box_x_koord() + 3, box_y_koord() + 3 SAY   " Odjeljenje:" GET cIdOdj VALID P_Odj ( @cIdOdj, 3, 28 )
       IF cIdVD == "PD"
-         @ m_x + 4, m_y + 3 SAY " Prenos na :" GET cIdOdj2 VALID P_Odj ( @cIdOdj2, 4, 28 )
+         @ box_x_koord() + 4, box_y_koord() + 3 SAY " Prenos na :" GET cIdOdj2 VALID P_Odj ( @cIdOdj2, 4, 28 )
       ENDIF
    ENDIF
 
-   @ m_x + 6, m_y + 3 SAY " Datum dok:" GET dDatRada PICT "@D" VALID dDatRada <= Date()
+   @ box_x_koord() + 6, box_y_koord() + 3 SAY " Datum dok:" GET dDatRada PICT "@D" VALID dDatRada <= Date()
 
    READ
    ESC_BCR
@@ -127,12 +127,12 @@ FUNCTION Zaduzenje
          IF cBrDok <> NIL .AND. Pitanje(, "Odštampati prenesni dokument na štampac (D/N) ?", "N" ) == "D"
 
             IF cIdVd $ "16#96#95#98"
-               StampZaduz( cIdVd, cBrDok )
+               pos_stampa_zaduzenja( cIdVd, cBrDok )
             ELSEIF cIdVd $ "IN#NI"
-               StampaInv()
+               pos_stampa_zaduzenja_inventure()
             ENDIF
 
-            o_pos_tables()
+            //o_pos_tables()
             IF Pitanje(, "Ako je sve u redu, želite li staviti dokument na stanje (D/N) ?", " " ) == "D"
                fSadAz := .T.
             ENDIF
@@ -169,10 +169,10 @@ FUNCTION Zaduzenje
       GO  TOP
 
       BOX (, 20, 77,, { "<*> - Ispravka stavke ", "Storno - negativna kolicina" } )
-      @ m_x, m_y + 4 SAY8 PadC( "PRIPREMA " + NaslovDok( cIdVd ) + " NA ODJELJENJE " + ;
+      @ box_x_koord(), box_y_koord() + 4 SAY8 PadC( "PRIPREMA " + NaslovDok( cIdVd ) + " NA ODJELJENJE " + ;
          AllTrim( ODJ->Naz ), 60 ) COLOR f18_color_invert()
 
-      oBrowse := pos_form_browse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, ;
+      oBrowse := pos_form_browse( box_x_koord() + 6, box_y_koord() + 1, box_x_koord() + 19, box_y_koord() + 77, ImeKol, Kol, ;
          { hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), hb_UTF8ToStrBox( BROWSE_PODVUCI ), hb_UTF8ToStrBox( BROWSE_COL_SEP ) }, 0 )
       oBrowse:autolite := .F.
 
@@ -187,7 +187,7 @@ FUNCTION Zaduzenje
       _IdOdj := cIdOdj
       // _IdDio := cIdDio
       _IdVd := cIdVd
-      _BrDok := Space( Len( pos_doks->BrDok ) )
+      _BrDok := Space( FIELD_LEN_POS_BRDOK )
       _Datum := dDatRada
       _Smjena := gSmjena
       _IdRadnik := gIdRadnik
@@ -213,7 +213,7 @@ FUNCTION Zaduzenje
          _TMarza2 := "%"
          fMarza := " "
 
-         @ m_x + 2, m_y + 25 SAY Space( 40 )
+         @ box_x_koord() + 2, box_y_koord() + 25 SAY Space( 40 )
 
          IF gDuzSifre <> NIL .AND. gDuzSifre > 0
             cDSFINI := AllTrim( Str( gDuzSifre ) )
@@ -221,18 +221,18 @@ FUNCTION Zaduzenje
             cDSFINI := my_get_from_ini( 'SifRoba', 'DuzSifra', '10' )
          ENDIF
 
-         @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba PICT "@!S" + cDSFINI ;
+         @ box_x_koord() + 2, box_y_koord() + 5 SAY " Artikal:" GET _idroba PICT "@!S" + cDSFINI ;
             WHEN {|| _idroba := PadR( _idroba, Val( cDSFINI ) ), .T. } ;
             VALID Eval ( bRSblok, 2, 25 ) .AND. ( gDupliArt == "D" .OR. ZadProvDuple( _idroba ) )
-         @ m_x + 4, m_y + 5 SAY8 "Količina:" GET _Kolicina PICT "999999.999" ;
+         @ box_x_koord() + 4, box_y_koord() + 5 SAY8 "Količina:" GET _Kolicina PICT "999999.999" ;
             WHEN{|| ShowGets(), .T. } VALID ZadKolOK( _Kolicina )
 
          IF gZadCij == "D"
-            @ m_x + 3, m_y + 35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"
-            @ m_x + 3, m_y + 56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
-            @ m_x + 3, Col() + 2 GET _Marza2 PICTURE "9999.99"
-            @ m_x + 3, Col() + 1 GET fMarza PICT "@!" VALID {|| _marza2 := iif( _cijena <> 0 .AND. Empty( fMarza ), 0, _marza2 ), kalk_marza_11( fmarza ), _cijena := iif( _cijena == 0, _cijena := _nCijena * ( tarifa->zpp / 100 + ( 1 + TARIFA->Opp / 100 ) * ( 1 + TARIFA->PPP / 100 ) ), _cijena ), fMarza := " ", .T. }
-            @ m_x + 4, m_y + 35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" VALID {|| _marza2 := 0, kalk_marza_11(), ShowGets(), .T. }
+            @ box_x_koord() + 3, box_y_koord() + 35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"
+            @ box_x_koord() + 3, box_y_koord() + 56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
+            @ box_x_koord() + 3, Col() + 2 GET _Marza2 PICTURE "9999.99"
+            @ box_x_koord() + 3, Col() + 1 GET fMarza PICT "@!" VALID {|| _marza2 := iif( _cijena <> 0 .AND. Empty( fMarza ), 0, _marza2 ), kalk_marza_11( fmarza ), _cijena := iif( _cijena == 0, _cijena := _nCijena * ( tarifa->zpp / 100 + ( 1 + TARIFA->Opp / 100 ) * ( 1 + TARIFA->PPP / 100 ) ), _cijena ), fMarza := " ", .T. }
+            @ box_x_koord() + 4, box_y_koord() + 35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" VALID {|| _marza2 := 0, kalk_marza_11(), ShowGets(), .T. }
          ENDIF
 
          READ
@@ -242,12 +242,10 @@ FUNCTION Zaduzenje
          ELSE
 
             StUSif()
-
             SELECT PRIPRZ
             APPEND BLANK
 
-            SELECT roba
-
+            select_o_roba( _idRoba )
             _robanaz := roba->naz
             _jmj := roba->jmj
             _idtarifa := roba->idtarifa
@@ -282,8 +280,8 @@ FUNCTION Zaduzenje
 
    IF RecCount2() > 0
 
-      SELECT pos_doks
-      SET ORDER TO TAG "1"
+      //SELECT pos_doks
+      //SET ORDER TO TAG "1"
 
       IF !_from_kalk
          cBrDok := pos_novi_broj_dokumenta( cIdPos, iif( cIdvd == "PD", "16", cIdVd ) )
@@ -294,7 +292,7 @@ FUNCTION Zaduzenje
       Beep( 4 )
 
       IF !fSadAz .AND. Pitanje(, "Želite li odštampati dokument (D/N) ?", "N" ) == "D"
-         StampZaduz( cIdVd, cBrDok )
+         pos_stampa_zaduzenja( cIdVd, cBrDok )
          o_pos_tables()
       ENDIF
 
@@ -472,8 +470,8 @@ FUNCTION EditStavZaduz()
    PrevRoba := _IdRoba := PRIPRZ->idroba
    _Kolicina := PRIPRZ->Kolicina
    Box(, 3, 60 )
-   @ m_x + 1, m_y + 3 SAY "Novi artikal:" GET _idroba PICTURE "@K" VALID Eval ( bRSblok, 1, 27 ) .AND. ( _IdRoba == PrevRoba .OR. ZadProvDuple ( _idroba ) )
-   @ m_x + 2, m_y + 3 SAY8 "Nova količina:" GET _Kolicina VALID ZadKolOK ( _Kolicina )
+   @ box_x_koord() + 1, box_y_koord() + 3 SAY "Novi artikal:" GET _idroba PICTURE "@K" VALID Eval ( bRSblok, 1, 27 ) .AND. ( _IdRoba == PrevRoba .OR. ZadProvDuple ( _idroba ) )
+   @ box_x_koord() + 2, box_y_koord() + 3 SAY8 "Nova količina:" GET _Kolicina VALID ZadKolOK ( _Kolicina )
    READ
 
    IF LastKey() <> K_ESC

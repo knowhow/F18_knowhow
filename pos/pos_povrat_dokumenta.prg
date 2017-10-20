@@ -34,36 +34,30 @@ FUNCTION pos_brisi_dokument( cIdPos, cIdTipDok, dDatDok, cBrDok )
 
    MsgO( "Brisanje dokumenta iz glavne tabele u toku ..." )
 
-   cDokument := ALLTRIM( cIdPos ) + "-" + cIdTipDok + "-" + ALLTRIM( cBrDok ) + " " + DTOC( dDatDok )
+   cDokument := AllTrim( cIdPos ) + "-" + cIdTipDok + "-" + AllTrim( cBrDok ) + " " + DToC( dDatDok )
 
-   SELECT pos
-   SET ORDER TO TAG "1"
-   GO TOP
-
-   SEEK cIdPos + cIdTipDok + DToS( dDatDok ) + cBrDok
-
-   IF Found()
+   IF seek_pos_pos( cIdPos, cIdTipDok, dDatDok, cBrDok )
+      // IF Found()
       hRec := dbf_get_rec()
       lOk := delete_rec_server_and_dbf( "pos_pos", hRec, 2, "CONT" )
    ENDIF
 
-   IF lOk
-      SELECT pos_doks
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK cIdPos + cIdTipDok + DToS( dDatDok ) + cBrDok
-
-      IF Found()
-         hRec := dbf_get_rec()
-         lOk := delete_rec_server_and_dbf( "pos_doks", hRec, 1, "CONT" )
-      ENDIF
+   // IF lOk
+   // SELECT pos_doks
+   // SET ORDER TO TAG "1"
+   // GO TOP
+   IF seek_pos_doks( cIdPos, cIdTipDok, dDatDok, cBrDok )
+      // IF Found()
+      hRec := dbf_get_rec()
+      lOk := delete_rec_server_and_dbf( "pos_doks", hRec, 1, "CONT" )
    ENDIF
+   // ENDIF
 
    MsgC()
 
    IF lOk
       lRet := .T.
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "pos_doks", "pos_pos" }
       run_sql_query( "COMMIT", hParams )
 
@@ -76,7 +70,6 @@ FUNCTION pos_brisi_dokument( cIdPos, cIdTipDok, dDatDok, cBrDok )
    SELECT ( nDbfArea )
 
    RETURN lRet
-
 
 
 
@@ -106,29 +99,26 @@ FUNCTION pos_dokument_postoji( cIdPos, cIdvd, dDatum, cBroj )
 
 
 
-
-FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
+FUNCTION pos_povrat_rn( cPosBrDok, dDatumPosRacun )
 
    LOCAL nTArea := Select()
    LOCAL hRec
    LOCAL nCount := 0
-   PRIVATE GetList := {}
 
-   IF Empty( cSt_rn )
+   // LOCAL GetList := {}
+
+   IF Empty( cPosBrDok )
       SELECT ( nTArea )
-      RETURN
+      RETURN .F.
    ENDIF
 
-   cSt_rn := PadL( AllTrim( cSt_rn ), 6 )
+   cPosBrDok := PadL( AllTrim( cPosBrDok ), 6 )
 
-   SELECT pos
-   SEEK gIdPos + "42" + DToS( dSt_date ) + cSt_rn
+   seek_pos_pos( gIdPos, "42",  dDatumPosRacun,  cPosBrDok )
 
-   MsgO( "Povrat dokumenta u pripremu ... " )
+   MsgO( "Povrat dokumenta " + cPosBrDok + " u pripremu ... " )
 
-   DO WHILE !Eof() .AND. field->idpos == gIdPos ;
-         .AND. field->brdok == cSt_rn ;
-         .AND. field->idvd == "42"
+   DO WHILE !Eof() .AND. field->idpos == gIdPos .AND. field->brdok == cPosBrDok .AND. field->idvd == "42"
 
       cT_roba := field->idroba
       select_o_roba( cT_roba )
@@ -145,10 +135,9 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
 
       dbf_update_rec( hRec )
 
-      ++ nCount
+      ++nCount
 
       SELECT pos
-
       SKIP
 
    ENDDO
@@ -157,14 +146,14 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
 
    IF nCount > 0
       log_write( "F18_DOK_OPER, povrat dokumenta u pripremu: " + ;
-             ALLTRIM( gIdPos ) + "-" + VD_RN + "-" + ALLTRIM( cSt_rn ) + " " + DTOC( dSt_date), 2 )
+         AllTrim( gIdPos ) + "-" + POS_VD_RACUN + "-" + AllTrim( cPosBrDok ) + " " + DToC( dDatumPosRacun ), 2 )
    ENDIF
 
-   pos_brisi_dokument( gIdPos, VD_RN, dSt_date, cSt_rn )
+   pos_brisi_dokument( gIdPos, POS_VD_RACUN, dDatumPosRacun, cPosBrDok )
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -174,9 +163,9 @@ STATIC FUNCTION odaberi_opciju_povrata_dokumenta()
    LOCAL _ch := "1"
 
    Box(, 3, 50 )
-   @ m_x + 1, m_y + 2 SAY8 "Priprema nije prazna, šta dalje ? "
-   @ m_x + 2, m_y + 2 SAY " (1) brisati pripremu  "
-   @ m_x + 3, m_y + 2 SAY8 " (2) spojiti na postojeći dokument " GET _ch VALID _ch $ "12"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Priprema nije prazna, šta dalje ? "
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY " (1) brisati pripremu  "
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 " (2) spojiti na postojeći dokument " GET _ch VALID _ch $ "12"
    READ
    BoxC()
 
@@ -199,7 +188,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
    LOCAL _oper := "1"
    LOCAL _exist, _rec2
 
-   O_PRIPRZ
+   o_pos_priprz()
    SELECT priprz
 
    IF RecCount() <> 0
@@ -216,10 +205,9 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
 
    MsgO( "Vršim povrat dokumenta u pripremu ..." )
 
-   cDokument := ALLTRIM( pos_doks->idpos ) + "-" + pos_doks->idvd + "-" + ALLTRIM( pos_doks->brdok ) + " " + DToC( pos_doks->datum )
+   cDokument := AllTrim( pos_doks->idpos ) + "-" + pos_doks->idvd + "-" + AllTrim( pos_doks->brdok ) + " " + DToC( pos_doks->datum )
 
-   SELECT pos
-   SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+   seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
    DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ;
          pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
@@ -249,7 +237,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
       IF _oper == "2"
 
          SET ORDER TO TAG "1"
-         HSEEK hRec[ "idroba" ]
+         HSEEK hRec[ "idroba" ] // PRIPRZ
 
          IF !Found()
             APPEND BLANK
@@ -262,7 +250,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
 
       dbf_update_rec( hRec )
 
-      ++ nCount
+      ++nCount
 
       SELECT pos
       SKIP

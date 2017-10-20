@@ -15,8 +15,8 @@
 
 STATIC FUNCTION _o_tables()
 
-   o_pos_odj()
-   o_pos_kase()
+   //o_pos_odj()
+   //o_pos_kase()
 //   o_sifk()
 //   o_sifv()
 //   o_roba()
@@ -30,9 +30,9 @@ STATIC FUNCTION _o_tables()
 FUNCTION pos_top_narudzbe()
 
    LOCAL aNiz := {}, cPor, cZaduz, aVrsteP
-   PRIVATE cIdPos, cRoba := Space( 60 ), dDat0, dDat1, nTop := 10, cSta := "I"
+   PRIVATE cIdPos, cRoba := Space( 60 ), dDatum0, dDatum1, nTop := 10, cSta := "I"
 
-   dDat0 := dDat1 := Date ()
+   dDatum0 := dDatum1 := Date ()
 
    aDbf := {}
    AAdd ( aDbf, { "IdRoba",   "C", 10, 0 } )
@@ -59,12 +59,12 @@ FUNCTION pos_top_narudzbe()
 
    PRIVATE cIdPOS := gIdPos
    IF gVrstaRS <> "K"
-      aNiz := { { "Prodajno mjesto", "cIdPos", "cidpos='X' .or. Empty(cIdPos).or.P_Kase(@cIdPos)",, } }
+      aNiz := { { "Prodajno mjesto", "cIdPos", "cidpos='X' .or. Empty(cIdPos).or.p_pos_kase(@cIdPos)",, } }
    ENDIF
    AAdd ( aNiz, { "Roba (prazno-sve)", "cRoba",, "@!S30", } )
    AAdd ( aNiz, { "Pregled po Iznosu/Kolicini/Oboje (I/K/O)", "cSta", "cSta$'IKO'", "@!", } )
-   AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDat0",,, } )
-   AAdd ( aNiz, { "                   do datuma", "dDat1",,, } )
+   AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
+   AAdd ( aNiz, { "                   do datuma", "dDatum1",,, } )
    AAdd ( aNiz, { "Koliko artikala ispisati?", "nTop", "nTop > 0",, } )
    DO WHILE .T.
       IF !VarEdit( aNiz, 10, 5, 19, 74, ;
@@ -72,10 +72,10 @@ FUNCTION pos_top_narudzbe()
             "B1" )
          CLOSERET
       ENDIF
-      aUsl1 := Parsiraj( cRoba, "IdRoba", "C" )
-      IF aUsl1 <> NIL .AND. dDat0 <= dDat1
+      cFilterRoba := Parsiraj( cRoba, "IdRoba", "C" )
+      IF cFilterRoba <> NIL .AND. dDatum0 <= dDatum1
          EXIT
-      ELSEIF aUsl1 == NIL
+      ELSEIF cFilterRoba == NIL
          Msg( "Kriterij za robu nije korektno postavljen!" )
       ELSE
          Msg( "'Datum do' ne smije biti stariji nego 'datum od'!" )
@@ -84,28 +84,21 @@ FUNCTION pos_top_narudzbe()
 
    nTotal := 0
 
-   SELECT POS
-   IF !( aUsl1 == ".t." )
-      SET FILTER to &aUsl1
-   ENDIF
 
-   SELECT pos_doks
-   SET ORDER TO TAG "2"
-   // IdVd+DTOS (Datum)+Smjena
 
    START PRINT CRET
    ?
-   ZagFirma()
+   //ZagFirma()
 
    ? PadC ( "NAJPROMETNIJI ARTIKLI", 40 )
    ? PadC ( "-----------------------", 40 )
    ? PadC ( "NA DAN: " + FormDat1 ( gDatum ), 40 )
    ?
-   ? PadC ( "Za period od " + FormDat1 ( dDat0 ) + " do " + FormDat1 ( dDat1 ), 40 )
+   ? PadC ( "Za period od " + FormDat1 ( dDatum0 ) + " do " + FormDat1 ( dDatum1 ), 40 )
    ?
 
-   TopNizvuci ( VD_RN, dDat0 )
-   TopNizvuci ( VD_PRR, dDat0 )
+   pos_top_n_izvuci ( POS_VD_RACUN, dDatum0, cFilterRoba )
+   pos_top_n_izvuci ( VD_PRR, dDatum0, cFilterRoba )
 
    // stampa izvjestaja
    SELECT POM
@@ -161,20 +154,24 @@ FUNCTION pos_top_narudzbe()
 
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
 
 
 
-/* TopNizvuci(cIdVd,dDat0)
+/*
  *     Punjenje pomocne baze realizacijom po robama
  */
 
-FUNCTION TopNizvuci( cIdVd, dDat0 )
+FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
 
-   SELECT pos_doks
-   SEEK cIdVd + DToS ( dDat0 )
+  LOCAL nNeplaca
 
-   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDat1
+  seek_pos_doks_2( cIdVd, dDatum0 )
+
+  //SELECT pos_doks
+   //SEEK cIdVd + DToS ( dDatum0 )
+
+   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
 
       IF ( !pos_admin() .AND. pos_doks->idpos = "X" ) .OR. ;
             ( pos_doks->IdPos = "X" .AND. AllTrim( cIdPos ) <> "X" ) .OR. ;
@@ -183,30 +180,33 @@ FUNCTION TopNizvuci( cIdVd, dDat0 )
          LOOP
       ENDIF
 
-      SELECT POS
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
+      IF !( cFilterRoba == ".t." )
+         SET FILTER to &cFilterRoba
+      ENDIF
+      GO TOP
 
-      WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
+      DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
          select_o_roba( pos->idroba )
          IF roba->( FieldPos( "idodj" ) ) <> 0
-            SELECT odj
-            HSEEK roba->idodj
+            select_o_pos_odj( roba->idodj )
          ENDIF
          nNeplaca := 0
-         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-            nNeplaca := pos->( Kolicina * Cijena )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca := pos->( Kolicina * Cijena ) / 2
-         ENDIF
+      //   IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+      //      nNeplaca := pos->( Kolicina * Cijena )
+      //   ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+      //      nNeplaca := pos->( Kolicina * Cijena ) / 2
+      //   ENDIF
 
-         IF gPopVar = "P"
-            nNeplaca += pos->( kolicina * NCijena )
-         ENDIF
+         //IF gPopVar = "P"
+          nNeplaca += pos->( kolicina * NCijena )
+         //ENDIF
 
          SELECT POM
          GO TOP
-         HSEEK POS->IdRoba
+         HSEEK POS->IdRoba // POM
 
          IF !Found ()
             APPEND BLANK
@@ -214,16 +214,16 @@ FUNCTION TopNizvuci( cIdVd, dDat0 )
                Kolicina WITH POS->Kolicina, ;
                Iznos    WITH POS->Kolicina * POS->Cijena, ;
                iznos3   WITH nNeplaca
-            IF gPopVar == "P"
-               REPLACE iznos2   WITH pos->ncijena * pos->kolicina
-            ENDIF
+            //IF gPopVar == "P"
+             REPLACE iznos2   WITH pos->ncijena * pos->kolicina
+            //ENDIF
          ELSE
             REPLACE Kolicina WITH Kolicina + POS->Kolicina, ;
                Iznos WITH Iznos + POS->Kolicina * POS->Cijena, ;
                iznos3 WITH iznos3 + nNePlaca
-            IF gPopVar == "P"
-               REPLACE iznos2   WITH iznos2 + pos->ncijena * pos->kolicina
-            ENDIF
+            //IF gPopVar == "P"
+             REPLACE iznos2   WITH iznos2 + pos->ncijena * pos->kolicina
+            //ENDIF
          END
 
          SELECT POS
@@ -235,5 +235,4 @@ FUNCTION TopNizvuci( cIdVd, dDat0 )
 
    ENDDO
 
-   RETURN
-// }
+   RETURN .T.

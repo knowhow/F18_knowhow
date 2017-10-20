@@ -14,7 +14,7 @@
 
 FUNCTION PorPoTar
 
-   PARAMETERS cDat0, cDat1, cIdPos, cNaplaceno, cIdOdj
+   PARAMETERS dDatum0, dDatum1, cIdPos, cNaplaceno, cIdOdj
 
    LOCAL aNiz := {}
    LOCAL fSolo
@@ -34,24 +34,24 @@ FUNCTION PorPoTar
    ENDIF
 
    IF fSolo
-      PRIVATE cDat0 := gDatum
-      PRIVATE cDat1 := gDatum
+      PRIVATE dDatum0 := gDatum
+      PRIVATE dDatum1 := gDatum
       PRIVATE cIdPos := Space( 2 )
       PRIVATE cNaplaceno := "1"
    ENDIF
 
-   IF ( cIdOdj == nil )
+   IF ( cIdOdj == NIL )
       cIdOdj := Space( 2 )
    ENDIF
 
    // otvaranje potrebnih baza
-  // o_tarifa()
+   // o_tarifa()
 
    IF fSolo
-    //  o_sifk()
-    //  o_sifv()
-      o_pos_kase()
-    //  o_roba()
+      // o_sifk()
+      // o_sifv()
+      //o_pos_kase()
+      // o_roba()
       o_pos_odj()
       o_pos_doks()
       o_pos_pos()
@@ -64,7 +64,7 @@ FUNCTION PorPoTar
 
    IF fSolo
       IF gVrstaRS <> "K"
-         AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.P_Kase(cIdPos)", "@!", } )
+         AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.p_pos_kase(cIdPos)", "@!", } )
       ENDIF
 
       IF gVodiOdj == "D"
@@ -72,15 +72,16 @@ FUNCTION PorPoTar
       ENDIF
 
       AAdd ( aNiz, { "Tarife (prazno sve)", "cTarife",, "@S10", } )
-      AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "cDat0",,, } )
-      AAdd ( aNiz, { "                   do datuma", "cDat1",,, } )
+      AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
+      AAdd ( aNiz, { "                   do datuma", "dDatum1",,, } )
 
       DO WHILE .T.
+
          IF !VarEdit( aNiz, 10, 5, 17, 74, 'USLOVI ZA IZVJESTAJ "POREZI PO TARIFAMA"', "B1" )
             CLOSERET
          ENDIF
          aUsl := Parsiraj( cTarife, "IdTarifa" )
-         IF aUsl <> NIL .AND. cDat0 <= cDat1
+         IF aUsl <> NIL .AND. dDatum0 <= dDatum1
             EXIT
          ELSEIF aUsl == nil
             MsgBeep ( "Kriterij za tarife nije korektno postavljen!" )
@@ -91,7 +92,7 @@ FUNCTION PorPoTar
 
       // pravljenje izvjestaja
       START PRINT CRET
-      ZagFirma()
+      //ZagFirma()
 
    ENDIF // fsolo
 
@@ -129,7 +130,7 @@ FUNCTION PorPoTar
          ENDIF
 
          ? "      Tarife:", iif ( Empty ( cTarife ), "SVE", cTarife )
-         ? "PERIOD: " + FormDat1( cDat0 ) + " - " + FormDat1( cDat1 )
+         ? "PERIOD: " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
          ?
 
       ELSE // fsolo
@@ -156,7 +157,7 @@ FUNCTION PorPoTar
       ENDIF
 
       IF !( cFilter == ".t." )
-         SET FILTER to &cFilter
+         SET FILTER TO &cFilter
       ENDIF
 
       SELECT pos_doks
@@ -175,10 +176,10 @@ FUNCTION PorPoTar
 
       // matrica je lok var : aTarife:={}
       // filuj za poreze, VD_PRR - realizacija iz predhodnih sezona
-      aTarife := Porezi( VD_RN, cDat0, aTarife, cNaplaceno )
-      aTarife := Porezi( VD_PRR, cDat0, aTarife, cNaplaceno )
+      aTarife := Porezi( POS_VD_RACUN, dDatum0, aTarife, cNaplaceno )
+      aTarife := Porezi( VD_PRR, dDatum0, aTarife, cNaplaceno )
 
-      ASort ( aTarife,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+      ASort ( aTarife,,, {| x, y | x[ 1 ] < y[ 1 ] } )
       fPP := .F.
 
       FOR nCnt := 1 TO Len( aTarife )
@@ -220,7 +221,7 @@ FUNCTION PorPoTar
          ENDIF
 
          // nTotOsn += round(aTarife [nCnt][2],2)
-         nTotOsn += Round( aTarife[ nCnt ][ 6 ], 2 ) -Round( aTarife[ nCnt ][ 3 ], 2 ) -Round( aTarife[ nCnt ][ 4 ], 2 ) -Round( aTarife[ nCnt ][ 5 ], 2 )
+         nTotOsn += Round( aTarife[ nCnt ][ 6 ], 2 ) - Round( aTarife[ nCnt ][ 3 ], 2 ) - Round( aTarife[ nCnt ][ 4 ], 2 ) - Round( aTarife[ nCnt ][ 5 ], 2 )
          nTotPPP += Round( aTarife[ nCnt ][ 3 ], 2 )
          nTotPPU += Round( aTarife[ nCnt ][ 4 ], 2 )
          nTotPP += Round( aTarife[ nCnt ][ 5 ], 2 )
@@ -266,36 +267,37 @@ FUNCTION PorPoTar
 
 
    // cIdvd - tip dokumenta za koji se obracun poreza vrsi
-   // cDat0 - pocetni datum
+   // dDatum0 - pocetni datum
    // aTarife - puni se matrica aTarife
    //
-   // private: cDat1 - krajnji datum
+   // private: dDatum1 - krajnji datum
    //
 
-/* Porezi(cIdVd,cDat0,aTarife,cNaplaceno)
+/* Porezi(cIdVd,dDatum0,aTarife,cNaplaceno)
  *     Pravi matricu sa izracunatim porezima za zadani period
  *  return aTarife - matrica izracunatih poreza po tarifama
  */
 
-FUNCTION Porezi( cIdVd, cDat0, aTarife, cNaplaceno )
+FUNCTION Porezi( cIdVd, dDatum0, aTarife, cNaplaceno )
 
    IF cNaplaceno == nil
       cNaplaceno := "1"
    ENDIF
 
-   SELECT pos_doks
-   SEEK cIdVd + DToS( cDat0 )              // realizaciju skidam sa racuna
+   //SELECT pos_doks
+   //SEEK cIdVd + DToS( dDatum0 )   // realizaciju skidam sa racuna
+   seek_pos_doks_2( cIdVd, dDatum0 )
 
-   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= cDat1
+
+   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
 
       IF ( !pos_admin() .AND. pos_doks->idpos = "X" ) .OR. ( pos_doks->IdPos = "X" .AND. AllTrim( cIdPos ) <> "X" ) .OR. ( !Empty( cIdPos ) .AND. cIdPos <> pos_doks->IdPos )
          SKIP
          LOOP
       ENDIF
 
-      SELECT POS
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
          select_o_tarifa( POS->IdTarifa )
@@ -309,27 +311,26 @@ FUNCTION Porezi( cIdVd, cDat0, aTarife, cNaplaceno )
             select_o_roba( pos->idroba )
 
             IF roba->( FieldPos( "idodj" ) ) <> 0
-               SELECT odj
-               HSEEK roba->idodj
+               select_o_pos_odj( roba->idodj )
             ENDIF
 
             nNeplaca := 0
 
-            IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-               nNeplaca := pos->( Kolicina * Cijena )
-            ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-               nNeplaca := pos->( Kolicina * Cijena ) / 2
-            ENDIF
+            //IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+            //   nNeplaca := pos->( Kolicina * Cijena )
+            //ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+            //   nNeplaca := pos->( Kolicina * Cijena ) / 2
+            //ENDIF
 
-            IF gPopVar = "P"
+            //IF gPopVar = "P"
                nNeplaca += pos->( kolicina * NCijena )
-            ENDIF
+            //ENDIF
 
-            IF gPopVar == "A"
-               nIzn := pos->( Cijena * kolicina ) -nNeplaca + pos->ncijena
-            ELSE
-               nIzn := pos->( Cijena * kolicina ) -nNeplaca
-            ENDIF
+            //IF gPopVar == "A"
+            //   nIzn := pos->( Cijena * kolicina ) - nNeplaca + pos->ncijena
+            //ELSE
+               nIzn := pos->( Cijena * kolicina ) - nNeplaca
+            //ENDIF
 
          ENDIF
 
@@ -341,23 +342,11 @@ FUNCTION Porezi( cIdVd, cDat0, aTarife, cNaplaceno )
 
          nPPU := ( nOsn + nPPP ) * tarifa->ppp / 100
 
-         IF gStariObrPor
-            nPoz := AScan( aTarife, {| x| x[ 1 ] == POS->IdTarifa } )
-            IF nPoz == 0
-               AAdd( aTarife, { POS->IdTarifa, nOsn, nPPP, nPPU, nPP, nIzn } )
-            ELSE
-               aTarife[ nPoz ][ 2 ] += nOsn
-               aTarife[ nPoz ][ 3 ] += nPPP
-               aTarife[ nPoz ][ 4 ] += nPPU
-               aTarife[ nPoz ][ 5 ] += nPP
-               aTarife[ nPoz ][ 6 ] += nIzn
-            ENDIF
 
-         ELSE // stari obr poreza
             aPorezi := {}
             set_pdv_array( @aPorezi )
             aIPor := kalk_porezi_maloprodaja_legacy_array( aPorezi, nOsn, nIzn, 0 )
-            nPoz := AScan( aTarife, {| x| x[ 1 ] == POS->IdTarifa } )
+            nPoz := AScan( aTarife, {| x | x[ 1 ] == POS->IdTarifa } )
             IF nPoz == 0
                AAdd( aTarife, { POS->IdTarifa, nOsn, aIPor[ 1 ], aIPor[ 2 ], aIPor[ 3 ], nIzn } )
             ELSE
@@ -367,7 +356,7 @@ FUNCTION Porezi( cIdVd, cDat0, aTarife, cNaplaceno )
                aTarife[ nPoz ][ 5 ] += aIPor[ 3 ]
                aTarife[ nPoz ][ 6 ] += nIzn
             ENDIF
-         ENDIF
+  
 
          SKIP
       ENDDO
@@ -377,13 +366,12 @@ FUNCTION Porezi( cIdVd, cDat0, aTarife, cNaplaceno )
    ENDDO
 
    RETURN aTarife
-// }
+
 
 
 
 FUNCTION POSRekapTar( aRekPor )
 
-   // {
    LOCAL lPP
    LOCAL nPPP
    LOCAL nPPU
@@ -393,9 +381,8 @@ FUNCTION POSRekapTar( aRekPor )
 
    nArr := Select()
 
-   o_tarifa()
 
-   ASort( aRekPor,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+   ASort( aRekPor,,, {| x, y | x[ 1 ] < y[ 1 ] } )
    lPP := .F. // ima posebnog poreza
 
    FOR i := 1 TO Len( aRekPor )
@@ -429,5 +416,4 @@ FUNCTION POSRekapTar( aRekPor )
    ? " " + Replicate ( "-", 38 )
    ? " UKUPNO" + Str( nPPP, 7, N_ROUNDTO ) + " " + Str( nPPU, 7, N_ROUNDTO ) + " " + Str( nPP, 7, N_ROUNDTO ) + " " + Str( nPPP + nPPU + nPP, 7, N_ROUNDTO )
 
-   RETURN
-// }
+   RETURN .T.

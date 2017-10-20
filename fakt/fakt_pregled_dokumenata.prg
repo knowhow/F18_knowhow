@@ -11,33 +11,44 @@
 
 #include "f18.ch"
 
+STATIC s_bFaktDoksPeriod
+
 FUNCTION fakt_pregled_liste_dokumenata()
 
-   LOCAL _curr_user := "<>"
+   LOCAL cF18User :=  f18_user() // "<>"
    LOCAL nCol1 := 0
-   LOCAL nul, nizl, nRbr
+   LOCAL nUl, nIzl, nRbr
    LOCAL m
    LOCAL _objekat_id
    LOCAL dDatod, dDatdo
-   LOCAL _params := fakt_params()
-   LOCAL _vrste_pl := _params[ "fakt_vrste_placanja" ]
-   LOCAL _objekti := _params[ "fakt_objekti" ]
-   LOCAL _vezni_dokumenti := _params[ "fakt_dok_veze" ]
+   LOCAL hParams := fakt_params()
+   LOCAL cVrstePlacanja := hParams[ "fakt_vrste_placanja" ]
+   LOCAL lFaktObjekti := hParams[ "fakt_objekti" ]
+
+   // LOCAL _vezni_dokumenti := hParams[ "fakt_dok_veze" ]
    LOCAL lOpcine := .T.
-   LOCAL valute := Space( 3 )
+   LOCAL cValute := Space( 3 )
    LOCAL cFilter := ".t."
    LOCAL cFilterOpcina
    LOCAL cSamoRobaDN := "N"
-   PRIVATE cImekup, cIdFirma, cUslovTipDok, cBrFakDok, cUslovIdPartner
+   LOCAL bFilter
+   LOCAL GetList := {}
+   LOCAL cUslovIdPartner, cFilterSifraKupca
+   LOCAL cUslovTipDok
+   LOCAL cUslovFaktBrDok, cFilterBrFaktDok
+   LOCAL cOrderBy, cSort := "D"
 
-   o_vrstep()
-   o_ops()
-   o_valute()
+   PRIVATE cImekup, cIdFirma
+
+   // o_vrstep()
+   // o_ops()
+   // o_valute()
    // o_rj()
-   o_fakt_objekti()
-   o_fakt()
+   // o_fakt_objekti()
+
+   // o_fakt_dbf()
    // o_partner()
-   o_fakt_doks()
+   // o_fakt_doks_dbf()
 
    qqVrsteP := Space( 20 )
    dDatVal0 := dDatVal1 := CToD( "" )
@@ -48,24 +59,25 @@ FUNCTION fakt_pregled_liste_dokumenata()
    cUslovTipDok := ""
    cUslovIdPartner := Space( 20 )
    cTabela := "N"
-   cBrFakDok := Space( 40 )
+   cUslovFaktBrDok := Space( 40 )
    cImeKup := Space( 20 )
    cOpcina := Space( 30 )
 
-   IF _objekti
+   IF lFaktObjekti
       _objekat_id := Space( 10 )
    ENDIF
 
-   Box( , 13 + iif( _vrste_pl .OR. lOpcine .OR. _objekti, 6, 0 ), 77 )
 
-   cIdFirma := fetch_metric( "fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
-   cUslovTipDok := fetch_metric( "fakt_stampa_liste_dokumenti", _curr_user, cUslovTipDok )
-   dDatOd := fetch_metric( "fakt_stampa_liste_datum_od", _curr_user, dDatOd )
-   dDatDo := fetch_metric( "fakt_stampa_liste_datum_do", _curr_user, dDatDo )
-   cTabela := fetch_metric( "fakt_stampa_liste_tabelarni_pregled", _curr_user, cTabela )
-   cImeKup := fetch_metric( "fakt_stampa_liste_ime_kupca", _curr_user, cImeKup )
-   cUslovIdPartner := fetch_metric( "fakt_stampa_liste_partner", _curr_user, cUslovIdPartner )
-   cBrFakDok := fetch_metric( "fakt_stampa_liste_broj_dokumenta", _curr_user, cBrFakDok )
+   Box( , 14 + iif( cVrstePlacanja .OR. lOpcine .OR. lFaktObjekti, 6, 0 ), 77 )
+
+   cIdFirma := fetch_metric( "fakt_stampa_liste_id_firma", cF18User, cIdFirma )
+   cUslovTipDok := fetch_metric( "fakt_stampa_liste_dokumenti", cF18User, cUslovTipDok )
+   dDatOd := fetch_metric( "fakt_stampa_liste_datum_od", cF18User, dDatOd )
+   dDatDo := fetch_metric( "fakt_stampa_liste_datum_do", cF18User, dDatDo )
+   cTabela := fetch_metric( "fakt_stampa_liste_tabelarni_pregled", cF18User, cTabela )
+   cImeKup := fetch_metric( "fakt_stampa_liste_ime_kupca", cF18User, cImeKup )
+   cUslovIdPartner := fetch_metric( "fakt_stampa_liste_partner", cF18User, cUslovIdPartner )
+   cUslovFaktBrDok := fetch_metric( "fakt_stampa_liste_broj_dokumenta", cF18User, cUslovFaktBrDok )
 
    cImeKup := PadR( cImeKup, 20 )
    cUslovIdPartner := PadR( cUslovIdPartner, 20 )
@@ -76,55 +88,57 @@ FUNCTION fakt_pregled_liste_dokumenata()
       // IF gNW $ "DR"
       cIdFirma := PadR( cIdFirma, 2 )
 
-      fakt_getlist_rj_read( get_x_koord() + 1, get_y_koord() + 2, @cIdFirma )
+      fakt_getlist_rj_read( box_x_koord() + 1, box_y_koord() + 2, @GetList, @cIdFirma )
 
       READ
       // ELSE
-      // @ get_x_koord() + 1, get_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      // @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       // ENDIF
 
-      @ get_x_koord() + 2, get_y_koord() + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET cUslovTipDok PICT "@!"
-      @ get_x_koord() + 3, get_y_koord() + 2 SAY "Od datuma " GET dDatOd
-      @ get_x_koord() + 3, Col() + 1 SAY "do" GET dDatDo
-      @ get_x_koord() + 5, get_y_koord() + 2 SAY8 "Ime kupca počinje sa (prazno svi)" GET cImeKup PICT "@!"
-      @ get_x_koord() + 6, get_y_koord() + 2 SAY8 "Uslov po šifri kupca (prazno svi)" GET cUslovIdPartner PICT "@!" ;
-         VALID {|| cFilterSifraKupca := Parsiraj( cUslovIdPartner, "IDPARTNER", "C", NIL, F_PARTN ), .T. }
-      @ get_x_koord() + 7, get_y_koord() + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok PICT "@!"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET cUslovTipDok PICT "@!"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Od datuma " GET dDatOd
+      @ box_x_koord() + 3, Col() + 1 SAY "do" GET dDatDo
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Ime kupca počinje sa (prazno svi)" GET cImeKup PICT "@!"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Uslov po šifri kupca (prazno svi)" GET cUslovIdPartner PICT "@!" ;
+         VALID {|| valid_sifra_partner( @cUslovIdPartner, @cFilterSifraKupca ) }
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Broj dokumenta (prazno svi)" GET cUslovFaktBrDok PICT "@!"
 
-      @ get_x_koord() + 9, get_y_koord() + 2 SAY "Tabelarni pregled" GET cTabela VALID cTabela $ "DN" PICT "@!"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Tabelarni pregled" GET cTabela VALID cTabela $ "DN" PICT "@!"
 
       cRTarifa := "N"
 
-      @ get_x_koord() + 11, get_y_koord() + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa VALID cRtarifa $ "DN" PICT "@!"
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa VALID cRtarifa $ "DN" PICT "@!"
 
-      IF _vrste_pl
-         @ get_x_koord() + 12, get_y_koord() + 2 SAY "----------------------------------------"
-         @ get_x_koord() + 13, get_y_koord() + 2 SAY "Za fakture (Tip dok.10):"
-         @ get_x_koord() + 14, get_y_koord() + 2 SAY8 "Način placanja:" GET qqVrsteP
-         @ get_x_koord() + 15, get_y_koord() + 2 SAY8 "Datum valutiranja od" GET dDatVal0
-         @ get_x_koord() + 15, Col() + 2 SAY "do" GET dDatVal1
-         @ get_x_koord() + 16, get_y_koord() + 2 SAY "----------------------------------------"
+      IF cVrstePlacanja
+         @ box_x_koord() + 12, box_y_koord() + 2 SAY "----------------------------------------"
+         @ box_x_koord() + 13, box_y_koord() + 2 SAY "Za fakture (Tip dok.10):"
+         @ box_x_koord() + 14, box_y_koord() + 2 SAY8 "Način placanja:" GET qqVrsteP
+         @ box_x_koord() + 15, box_y_koord() + 2 SAY8 "Datum valutiranja od" GET dDatVal0
+         @ box_x_koord() + 15, Col() + 2 SAY "do" GET dDatVal1
+         @ box_x_koord() + 16, box_y_koord() + 2 SAY "----------------------------------------"
       ENDIF
 
-      @ get_x_koord() + 17, get_y_koord() + 2 SAY8 "Općina (prazno-sve): "  GET cOpcina
+      @ box_x_koord() + 17, box_y_koord() + 2 SAY8 "Općina (prazno-sve): "  GET cOpcina
 
-      IF _objekti
-         @ get_x_koord() + 18, get_y_koord() + 2 SAY "Objekat (prazno-svi): "  GET _objekat_id VALID Empty( _objekat_id ) .OR. P_fakt_objekti( @_objekat_id )
+      IF lFaktObjekti
+         @ box_x_koord() + 18, box_y_koord() + 2 SAY "Objekat (prazno-svi): "  GET _objekat_id VALID Empty( _objekat_id ) .OR. p_fakt_objekti( @_objekat_id )
       ENDIF
 
-      @ get_x_koord() + 19, get_y_koord() + 2 SAY "Valute ( /KM/EUR)"  GET valute
-      @ get_x_koord() + 19, Col() + 2 SAY8 " samo dokumenti koji sadrže robu D/N"  GET cSamoRobaDN PICT "@!" VALID cSamoRobaDN $ "DN"
+      @ box_x_koord() + 19, box_y_koord() + 2 SAY "Valute ( /KM/EUR)"  GET cValute
+      @ box_x_koord() + 19, Col() + 2 SAY8 " samo dokumenti koji sadrže robu D/N"  GET cSamoRobaDN PICT "@!" VALID cSamoRobaDN $ "DN"
+
+      @ box_x_koord() + 20, box_y_koord() + 2 SAY8 "Sort (D)atdok/(B)rdok"  GET cSort PICT "@!" VALID cSort $ "DB"
 
       READ
 
       ESC_BCR
 
-      cFilterBrFaktDok := Parsiraj( cBrFakDok, "BRDOK", "C" )
+      cFilterBrFaktDok := Parsiraj( cUslovFaktBrDok, "BRDOK", "C" )
       cFilterSifraKupca := Parsiraj( cUslovIdPartner, "IDPARTNER", "C" )
       aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
       cFilterOpcina := Parsiraj( cOpcina, "flt_fakt_part_opc()", "C" )
 
-      IF ( !lOpcine .OR. cFilterOpcina <> NIL ) .AND. cFilterBrFaktDok <> NIL .AND. cFilterSifraKupca <> NIL .AND. ( !_vrste_pl .OR. aUslVrsteP <> NIL )
+      IF ( !lOpcine .OR. cFilterOpcina <> NIL ) .AND. cFilterBrFaktDok <> NIL .AND. cFilterSifraKupca <> NIL .AND. ( !cVrstePlacanja .OR. aUslVrsteP <> NIL )
          EXIT
       ENDIF
 
@@ -140,7 +154,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    set_metric( "fakt_stampa_liste_tabelarni_pregled", f18_user(), cTabela )
    set_metric( "fakt_stampa_liste_ime_kupca", f18_user(), cImeKup )
    set_metric( "fakt_stampa_liste_partner", f18_user(), cUslovIdPartner )
-   set_metric( "fakt_stampa_liste_broj_dokumenta", f18_user(), cBrFakDok )
+   set_metric( "fakt_stampa_liste_broj_dokumenta", f18_user(), cUslovFaktBrDok )
 
    BoxC()
 
@@ -148,9 +162,8 @@ FUNCTION fakt_pregled_liste_dokumenata()
    // radi filtera cFilterOpcina partneri trebaju biti na ID-u indeksirani
    // SET ORDER TO TAG "ID"
 
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
+   // SET ORDER TO TAG "1"
+   // GO TOP
 
    IF !Empty( dDatVal0 ) .OR. !Empty( dDatVal1 )
       cFilter += ".and. ( !idtipdok='10' .or. datpl>=" + _filter_quote( dDatVal0 ) + ".and. datpl<=" + _filter_quote( dDatVal1 ) + ")"
@@ -180,11 +193,11 @@ FUNCTION fakt_pregled_liste_dokumenata()
       cFilter += ".and. " + cFilterOpcina
    ENDIF
 
-   IF _objekti .AND. !Empty( _objekat_id )
+   IF lFaktObjekti .AND. !Empty( _objekat_id )
       cFilter += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
    ENDIF
 
-   IF !Empty( cBrFakDok )
+   IF !Empty( cUslovFaktBrDok )
       cFilter += ".and." + cFilterBrFaktDok
    ENDIF
 
@@ -192,8 +205,8 @@ FUNCTION fakt_pregled_liste_dokumenata()
       cFilter += ".and." + cFilterSifraKupca
    ENDIF
 
-   IF !Empty( valute )
-      cFilter += ".and. dindem = " + _filter_quote( valute )
+   IF !Empty( cValute )
+      cFilter += ".and. dindem = " + _filter_quote( cValute )
    ENDIF
 
    IF cSamoRobaDN == "D"
@@ -204,25 +217,36 @@ FUNCTION fakt_pregled_liste_dokumenata()
       cFilter := SubStr( cFilter, 9 )
    ENDIF
 
-   IF cFilter == ".t."
-      SET FILTER TO
+   // IF cFilter == ".t."
+   // SET FILTER TO
+   // ELSE
+   // SET FILTER TO &cFilter
+   // ENDIF
+   bFilter := {|| &cFilter }
+
+   IF cSort == "D"
+      cOrderBy :=  "idfirma,datdok,idtipdok,brdok"
    ELSE
-      SET FILTER TO &cFilter
+      cOrderBy := "idfirma,idtipdok,brdok,datdok"
    ENDIF
+
+   s_bFaktDoksPeriod := {|| find_fakt_doks_za_period( cIdFirma, dDatOd, dDatDo, "FAKT_DOKS_PREGLED", cOrderBy ), ;
+      dbSetFilter( bFilter, cFilter ), dbGoTop() }
+
+   Eval( s_bFaktDoksPeriod )
 
    @ f18_max_rows() - 4, f18_max_cols() - 3 SAY Str( rloptlevel(), 2 )
 
    cUslovTipDok := Trim( cUslovTipDok )
 
-   SEEK cIdFirma + cUslovTipDok
 
    EOF CRET
 
    IF cTabela == "D"
-      fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
+      fakt_lista_dokumenata_tabelarni_pregled( cVrstePlacanja, lOpcine )
    ELSE
       gaZagFix := { 3, 3 }
-      stampa_liste_dokumenata( dDatOd, dDatDo, cUslovTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, cFilterOpcina, valute )
+      fakt_stampa_liste_dokumenata( dDatOd, dDatDo, cUslovTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, cFilterOpcina, cValute )
    ENDIF
 
    my_close_all_dbf()
@@ -250,28 +274,28 @@ FUNCTION print_porezna_faktura( lOpcine )
    SELECT ( F_FAKT_DOKS )
    USE
 
-   o_fakt_doks()
+   o_fakt_doks_dbf()
 
    RETURN DE_CONT
 */
 
 FUNCTION fakt_print_odt( lOpcine )
 
-   SELECT fakt_doks
+   LOCAL cIdFirma := fakt_doks_pregled->idfirma
+   LOCAL cIdTipDok := fakt_doks_pregled->idtipdok
+   LOCAL cBrDok := fakt_doks_pregled->brdok
 
-   nTrec := RecNo()
-   _cIdFirma := idfirma
-   _cIdTipDok := idtipdok
-   _cBrDok := brdok
-   my_close_all_dbf()
+   // LOCAL nTrec := RecNo()
 
-   fakt_stampa_dok_odt( _cidfirma, _cIdTipdok, _cbrdok )
+   // my_close_all_dbf()
+
+   fakt_stampa_dok_odt( cIdFirma, cIdTipDok, cBrDok )
 
 /*
    close_open_fakt_tabele()
    SELECT ( F_FAKT_DOKS )
    USE
-   o_fakt_doks()
+   o_fakt_doks_dbf()
    //o_partner()
    SELECT fakt_doks
    IF cFilter == ".t."
@@ -286,11 +310,8 @@ FUNCTION fakt_print_odt( lOpcine )
 
 
 
-FUNCTION generisi_fakturu( is_opcine )
+FUNCTION fakt_generisi_fakturu_10_iz_20( cIdFirma, cIdTipDok, cBrDok )
 
-   LOCAL cTipDok
-   LOCAL cFirma
-   LOCAL cBrFakt
    LOCAL nCnt := 0
    LOCAL dDatFakt
    LOCAL dDatVal
@@ -298,30 +319,22 @@ FUNCTION generisi_fakturu( is_opcine )
    LOCAL i
    LOCAL cPart
    LOCAL aMemo := {}
-   LOCAL _rec
-   LOCAL nDbfArea := Select()
+   LOCAL hRec
+   LOCAL cNBrFakt
+   LOCAL GetList := {}
 
    IF Pitanje(, "Generisati fakturu na osnovu ponude ?", "D" ) == "N"
       RETURN DE_CONT
    ENDIF
 
    o_fakt_pripr()
-   o_fakt()
 
    IF fakt_pripr->( RecCount() ) <> 0
       MsgBeep( "Priprema mora biti prazna !" )
-      SELECT ( nDbfArea )
       RETURN DE_CONT
    ENDIF
 
-   SELECT fakt_doks
 
-   nTrec := RecNo()
-
-   cTipDok := field->idtipdok
-   cFirma := field->idfirma
-   cBrFakt := field->brdok
-   cPart := field->idpartner
    dDatFakt := Date()
    dDatVal := Date()
    dDatIsp := Date()
@@ -329,54 +342,49 @@ FUNCTION generisi_fakturu( is_opcine )
 
    Box(, 5, 55 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "*** Parametri fakture "
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "*** Parametri fakture "
 
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "  Datum fakture: " GET dDatFakt VALID !Empty( dDatFakt )
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "   Datum valute: " GET dDatVal VALID !Empty( dDatVal )
-   @ get_x_koord() + 5, get_y_koord() + 2 SAY " Datum isporuke: " GET dDatIsp VALID !Empty( dDatIsp )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "  Datum fakture: " GET dDatFakt VALID !Empty( dDatFakt )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "   Datum valute: " GET dDatVal VALID !Empty( dDatVal )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY " Datum isporuke: " GET dDatIsp VALID !Empty( dDatIsp )
 
    READ
 
    BoxC()
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK cFirma + cTipDok + cBrFakt
+   seek_fakt( cIdFirma, cIdTipDok, cBrDok )
 
-   DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + field->brdok == cFirma + cTipDok + cBrFakt
+   DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + field->brdok == cIdFirma + cIdTipDok + cBrDok
 
       ++nCnt
 
-      _rec := dbf_get_rec()
-      aMemo := fakt_ftxt_decode( _rec[ "txt" ] )
+      hRec := dbf_get_rec()
+      aMemo := fakt_ftxt_decode( hRec[ "txt" ] )
 
-      _rec[ "idtipdok" ] := "10"
-      _rec[ "brdok" ] := cNBrFakt
-      _rec[ "datdok" ] := dDatFakt
+      hRec[ "idtipdok" ] := "10"
+      hRec[ "brdok" ] := cNBrFakt
+      hRec[ "datdok" ] := dDatFakt
 
-      IF nCnt = 1
+      IF nCnt == 1
 
-         _rec[ "txt" ] := ""
-         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 1 ] + Chr( 17 )
-         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 2 ] + Chr( 17 )
-         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 3 ] + Chr( 17 )
-         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 4 ] + Chr( 17 )
-         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 5 ] + Chr( 17 )
-         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 6 ] + Chr( 17 )
+         hRec[ "txt" ] := ""
+         hRec[ "txt" ] += Chr( 16 ) + aMemo[ 1 ] + Chr( 17 )
+         hRec[ "txt" ] += Chr( 16 ) + aMemo[ 2 ] + Chr( 17 )
+         hRec[ "txt" ] += Chr( 16 ) + aMemo[ 3 ] + Chr( 17 )
+         hRec[ "txt" ] += Chr( 16 ) + aMemo[ 4 ] + Chr( 17 )
+         hRec[ "txt" ] += Chr( 16 ) + aMemo[ 5 ] + Chr( 17 )
+         hRec[ "txt" ] += Chr( 16 ) + aMemo[ 6 ] + Chr( 17 )
          // datum otpremnice
-         _rec[ "txt" ] += Chr( 16 ) + DToC( dDatIsp ) + Chr( 17 )
-         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 8 ] + Chr( 17 )
+         hRec[ "txt" ] += Chr( 16 ) + DToC( dDatIsp ) + Chr( 17 )
+         hRec[ "txt" ] += Chr( 16 ) + aMemo[ 8 ] + Chr( 17 )
          // datum narudzbe / amemo[9]
-         _rec[ "txt" ] += Chr( 16 ) + DToC( dDatVal ) + Chr( 17 )
+         hRec[ "txt" ] += Chr( 16 ) + DToC( dDatVal ) + Chr( 17 )
          // datum valute / amemo[10]
-         _rec[ "txt" ] += Chr( 16 ) + DToC( dDatVal ) + Chr( 17 )
-
-         // dodaj i ostala polja
+         hRec[ "txt" ] += Chr( 16 ) + DToC( dDatVal ) + Chr( 17 )
 
          IF Len( aMemo ) > 10
             FOR i := 11 TO Len( aMemo )
-               _rec[ "txt" ] += Chr( 16 ) + aMemo[ i ] + Chr( 17 )
+               hRec[ "txt" ] += Chr( 16 ) + aMemo[ i ] + Chr( 17 )
             NEXT
          ENDIF
 
@@ -384,7 +392,7 @@ FUNCTION generisi_fakturu( is_opcine )
 
       SELECT fakt_pripr
       APPEND BLANK
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       SELECT fakt
       SKIP
@@ -399,290 +407,25 @@ FUNCTION generisi_fakturu( is_opcine )
 
       IF pitanje(, "Setovati datum uplate za partnera ?", "N" ) == "D"
 
-         o_ugov()
-         SELECT ugov
-         SET ORDER TO TAG "PARTNER"
-         GO TOP
-         SEEK cPart
+         IF o_ugov_partner( cPart )
+            // SELECT ugov
+            // SET ORDER TO TAG "PARTNER"
+            // GO TOP
+            // SEEK cPart // ugov
 
-         IF Found() .AND. field->idpartner == cPart
-            _rec := dbf_get_rec()
-            _rec[ "dat_l_fakt" ] := Date()
-            update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "FULL" )
+            // IF Found() .AND. field->idpartner == cPart
+            hRec := dbf_get_rec()
+            hRec[ "dat_l_fakt" ] := Date()
+            update_rec_server_and_dbf( "fakt_ugov", hRec, 1, "FULL" )
          ENDIF
 
       ENDIF
 
    ENDIF
-
-   SELECT fakt_doks
-
-/*
-   //o_partner()
-   SELECT fakt_doks
-
-   IF cFilter == ".t."
-      SET FILTER TO
-   ELSE
-      SET FILTER TO &cFilter
-   ENDIF
-
-   GO nTrec
-*/
 
    RETURN DE_REFRESH
 
 
-
-FUNCTION fakt_pregled_reopen_fakt_tabele( cFilter )
-
-   my_close_all_dbf()
-
-   o_vrstep()
-   o_ops()
-   o_fakt_doks2()
-   o_valute()
-   // o_rj()
-   o_fakt_objekti()
-   o_fakt()
-   // o_partner()
-   o_fakt_doks()
-
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
-
-   SET FILTER TO &( cFilter )
-
-   RETURN .T.
-
-
-
-
-FUNCTION fakt_real_partnera()
-
-   LOCAL cFilter
-   LOCAL cFilterBrFaktDok, cFilterSifraKupca, cFilterTipDok
-   LOCAL cUslovTipDok, cUslovIdPartner, cUslovOpcina
-
-   o_fakt_doks()
-   // o_partner()
-   o_valute()
-   // o_rj()
-
-   cIdFirma := self_organizacija_id()
-   dDatOd := CToD( "" )
-   dDatDo := Date()
-
-   cUslovTipDok := "10;"
-
-   Box(, 11, 77 )
-
-   cTabela := "N"
-   cBrFakDok := Space( 40 )
-   cImeKup := Space( 20 )
-
-   cUslovIdPartner := Space( 20 )
-   cUslovOpcina := Space( 20 )
-
-   cTabela := fetch_metric( "fakt_real_tabela", my_user(), cTabela )
-   cImeKup := fetch_metric( "fakt_real_ime_kupca", my_user(), cImeKup )
-   cUslovIdPartner := fetch_metric( "fakt_real_partner", my_user(), cUslovIdPartner )
-   cBrFakDok := fetch_metric( "fakt_real_broj_dok", my_user(), cBrFakDok )
-   cIdFirma := fetch_metric( "fakt_real_id_firma", my_user(), cIdFirma )
-   dDatOd := fetch_metric( "fakt_real_datum_od", my_user(), dDatOd )
-   dDatDo := fetch_metric( "fakt_real_datum_do", my_user(), dDatDo )
-
-   cUslovIdPartner := PadR( cUslovIdPartner, 20 )
-   cUslovTipDok := PadR( cUslovTipDok, 40 )
-   cUslovOpcina := PadR( cUslovOpcina, 20 )
-
-   DO WHILE .T.
-      cIdFirma := PadR( cIdFirma, 2 )
-
-      fakt_getlist_rj_read( get_x_koord() + 1, get_y_koord() + 2, @cIdFirma )
-
-      @ get_x_koord() + 2, get_y_koord() + 2 SAY "Tip dokumenta " GET cUslovTipDok PICT "@!S20"
-      @ get_x_koord() + 3, get_y_koord() + 2 SAY "Od datuma "  GET dDatOd
-      @ get_x_koord() + 3, Col() + 1 SAY "do"  GET dDatDo
-      @ get_x_koord() + 6, get_y_koord() + 2 SAY "Uslov po nazivu kupca (prazno svi)"  GET cUslovIdPartner PICT "@!"
-      @ get_x_koord() + 7, get_y_koord() + 2 SAY "Broj dokumenta (prazno svi)"  GET cBrFakDok PICT "@!"
-      @ get_x_koord() + 9, get_y_koord() + 2 SAY8 "Općina (prazno sve)" GET cUslovOpcina PICT "@!"
-      READ
-      ESC_BCR
-
-      cFilterBrFaktDok := Parsiraj( cBrFakDok, "BRDOK", "C" )
-      cFilterSifraKupca := Parsiraj( cUslovIdPartner, "IDPARTNER" )
-      cFilterTipDok := Parsiraj( cUslovTipDok, "IdTipdok", "C" )
-      IF cFilterBrFaktDok <> NIL .AND. cFilterTipDok <> NIL
-         EXIT
-      ENDIF
-   ENDDO
-
-
-   cUslovTipDok := Trim( cUslovTipDok )
-   cUslovIdPartner := Trim( cUslovIdPartner )
-
-   set_metric( "fakt_real_tabela", my_user(), cTabela )
-   set_metric( "fakt_real_ime_kupca", my_user(), cImeKup )
-   set_metric( "fakt_real_partner", my_user(), cUslovIdPartner )
-   set_metric( "fakt_real_broj_dok", my_user(), cBrFakDok )
-   set_metric( "fakt_real_id_firma", my_user(), cIdFirma )
-   set_metric( "fakt_real_datum_od", my_user(), dDatOd )
-   set_metric( "fakt_real_datum_do", my_user(), dDatDo )
-
-   BoxC()
-
-   SELECT fakt_doks
-
-   cFilter := ".t."
-
-   IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
-      cFilter += ".and.  datdok>=" + dbf_quote( dDatOd ) + ".and. datdok<=" + dbf_quote( dDatDo )
-   ENDIF
-
-   IF cTabela == "D"  // prikazu unutar browse-a
-      cFilter += ".and. IdFirma=" + dbf_quote( cIdFirma )
-   ENDIF
-
-   IF !Empty( cBrFakDok )
-      cFilter += ".and." + cFilterBrFaktDok
-   ENDIF
-
-   IF !Empty( cUslovIdPartner )
-      cFilter += ".and." + cFilterSifraKupca
-   ENDIF
-
-   IF !Empty( cUslovTipDok )
-      cFilter += ".and." + cFilterTipDok
-   ENDIF
-
-   IF cFilter = ".t..and."
-      cFilter := SubStr( cFilter, 9 )
-   ENDIF
-
-   IF cFilter == ".t."
-      SET FILTER TO
-   ELSE
-      SET FILTER TO &cFilter
-   ENDIF
-
-   EOF CRET
-
-   // gaZagFix:={3,3}
-   START PRINT CRET
-
-   PRIVATE nStrana := 0
-   PRIVATE m := "---- ------ -------------------------- ------------ ------------ ------------"
-
-   fakt_zagl_real_partnera()
-
-   SET ORDER TO TAG "6" // "6","IdFirma+idpartner+idtipdok",KUMPATH+"DOKS"
-   SEEK cIdFirma
-
-   nC := 0
-   ncol1 := 10
-   nTIznos := nTRabat := 0
-   PRIVATE cRezerv := " "
-   DO WHILE !Eof() .AND. IdFirma = cIdFirma
-      // uslov po partneru
-      IF !Empty( cUslovIdPartner )
-         IF !( fakt_doks->partner = cUslovIdPartner )
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
-
-      nIznos := 0
-      nRabat := 0
-      cIdPartner := idpartner
-      select_o_partner( cIdPartner )
-      SELECT fakt_doks
-
-      // uslov po opcini
-      IF !Empty( cUslovOpcina )
-         IF At( partn->idops, cUslovOpcina ) == 0
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
-
-      DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. idpartner == cIdpartner
-         IF DinDem == Left( ValBazna(), 3 )
-            nIznos += Round( iznos, ZAOKRUZENJE )
-            nRabat += Round( Rabat, ZAOKRUZENJE )
-         ELSE
-            nIznos += Round( iznos * UBaznuValutu( datdok ), ZAOKRUZENJE )
-            nRabat += Round( Rabat * UBaznuValutu( datdok ), ZAOKRUZENJE )
-         ENDIF
-         SKIP
-      ENDDO
-      IF PRow() > 61
-         FF
-         fakt_zagl_real_partnera()
-      ENDIF
-
-      ? Space( gnLMarg )
-      ?? Str( ++nC, 4 ) + ".", cIdPartner, PadR( partn->naz, 25 )
-      nCol1 := PCol() + 1
-      @ PRow(), PCol() + 1 SAY Str( nIznos + nRabat, 12, 2 )
-      @ PRow(), PCol() + 1 SAY Str( nRabat, 12, 2 )
-      @ PRow(), PCol() + 1 SAY Str( nIznos, 12, 2 )
-
-      ntIznos += nIznos
-      ntRabat += nRabat
-   ENDDO
-
-   IF PRow() > 59
-      FF
-      fakt_zagl_real_partnera()
-   ENDIF
-
-   ? Space( gnLMarg )
-   ?? m
-   ? Space( gnLMarg )
-   ?? " Ukupno"
-   @ PRow(), nCol1 SAY Str( ntIznos + ntRabat, 12, 2 )
-   @ PRow(), PCol() + 1 SAY Str( ntRabat, 12, 2 )
-   @ PRow(), PCol() + 1 SAY Str( ntIznos, 12, 2 )
-   ? Space( gnLMarg )
-   ?? m
-
-   SET FILTER TO  // ukini filter
-
-   FF
-   ENDPRINT
-
-   RETURN .T.
-
-
-// --------------------------------------------------------
-// fakt_zagl_real_partnera()
-// Zaglavlje izvjestaja realizacije partnera
-// --------------------------------------------------------
-FUNCTION fakt_zagl_real_partnera()
-
-   ?
-   P_12CPI
-   ?? Space( gnLMarg )
-   IspisFirme( cIdFirma )
-   ?
-   SET CENTURY ON
-   P_12CPI
-   ? Space( gnLMarg ); ?? "FAKT: Stampa prometa partnera na dan:", Date(), Space( 8 ), "Strana:", Str( ++nStrana, 3 )
-   ? Space( gnLMarg ); ?? "      period:", dDatOd, "-", dDatDo
-   IF cUslovTipDok <> "10;"
-      ? Space( gnLMarg ); ?? "-izvjestaj za tipove dokumenata :", Trim( cUslovTipDok )
-   ENDIF
-
-   SET CENTURY OFF
-   P_12CPI
-   ? Space( gnLMarg ); ?? m
-   ? Space( gnLMarg ); ?? " Rbr  Sifra     Partner                  Ukupno        Rabat          UKUPNO"
-   ? Space( gnLMarg ); ?? "                                           (1)          (2)            (1-2)"
-   ? Space( gnLMarg ); ?? m
-
-   RETURN .T.
 
 
 /*
@@ -696,9 +439,9 @@ FUNCTION flt_fakt_part_opc()
 
    LOCAL cRet
 
-   select_o_partner( fakt_doks->idpartner )
+   select_o_partner( fakt_doks_pregled->idpartner )
    cRet := partn->idops
-   SELECT fakt_doks
+   SELECT fakt_doks_pregled
 
    RETURN cRet
 
@@ -710,9 +453,9 @@ FUNCTION fakt_dokument_sadrzi_robu()
    cQuery := "SELECT count(fakt_fakt.idroba) AS CNT FROM fmk.fakt_fakt"
    cQuery += " LEFT JOIN fmk.roba ON fakt_fakt.idroba = roba.id"
    cQuery += " WHERE roba.tip <> 'U'"
-   cQuery += " AND fmk.fakt_fakt.idfirma=" + sql_quote( fakt_doks->idfirma )
-   cQuery += " AND fmk.fakt_fakt.idtipdok=" + sql_quote( fakt_doks->idtipdok )
-   cQuery += " AND fmk.fakt_fakt.brdok=" + sql_quote( fakt_doks->brdok )
+   cQuery += " AND fmk.fakt_fakt.idfirma=" + sql_quote( fakt_doks_pregled->idfirma )
+   cQuery += " AND fmk.fakt_fakt.idtipdok=" + sql_quote( fakt_doks_pregled->idtipdok )
+   cQuery += " AND fmk.fakt_fakt.brdok=" + sql_quote( fakt_doks_pregled->brdok )
 
    SELECT F_FAKT
    use_sql( "fakt_cnt", cQuery )
@@ -721,6 +464,49 @@ FUNCTION fakt_dokument_sadrzi_robu()
       lRet := .T. // ima robe unutar fakture
    ENDIF
    USE
-   SELECT fakt_doks
+   SELECT fakt_doks_pregled
 
    RETURN lRet
+
+
+
+FUNCTION fakt_pregled_reload_tables()
+
+   LOCAL nRec
+
+   IF Select( "FAKT_DOKS_PREGLED" ) > 0
+      SELECT FAKT_DOKS_PREGLED
+      nRec := RecNo()
+   ENDIF
+
+   my_close_all_dbf()
+   Eval( s_bFaktDoksPeriod )
+
+   ?E Time(), "fakt_pregled_reload_tables"
+   // SET FILTER TO &( cFilter )
+   // GO TOP
+
+   IF nRec != NIL
+      GO nRec
+   ENDIF
+
+   RETURN .T.
+
+
+
+STATIC FUNCTION valid_sifra_partner( cUslovIdPartner, cFilterSifraKupca )
+
+   LOCAL cPom
+   LOCAL nPartnera
+
+   nPartnera := NumToken( cUslovIdPartner, ";" )
+
+   IF nPartnera == 1 // "BRING    " -> 1, "BRING;  " -> 2
+      cPom := Token( cUslovIdPartner, ";", 1 )
+      P_partner( @cPom )
+      cUslovIdPartner := PadR( cPom + ";", 20 )
+   ENDIF
+
+   cFilterSifraKupca := Parsiraj( cUslovIdPartner, "IDPARTNER", "C", NIL, F_PARTN )
+
+   RETURN .T.

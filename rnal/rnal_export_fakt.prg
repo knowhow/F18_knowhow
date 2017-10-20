@@ -26,29 +26,29 @@ STATIC FUNCTION _export_cond( params )
 
    Box(, 8, 65 )
 
-   @ m_x + _x, m_y + 2 SAY "Uslovi prenosa naloga u otpremnicu:"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Uslovi prenosa naloga u otpremnicu:"
 
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY " Tip otpremnice: [V] vp (dok 12)"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY " Tip otpremnice: [V] vp (dok 12)"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "                 [M] mp (dok 13)" GET _tip VALID _tip $ "VM" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "                 [M] mp (dok 13)" GET _tip VALID _tip $ "VM" PICT "@!"
 
    ++_x
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Sumirati stavke naloga (D/N)" GET _suma VALID _suma $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Sumirati stavke naloga (D/N)" GET _suma VALID _suma $ "DN" PICT "@!"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Valuta u koju mjenjamo otpremnicu (KM/EUR)" GET _valuta PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Valuta u koju mjenjamo otpremnicu (KM/EUR)" GET _valuta PICT "@!"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Promjeniti podatke isporuke naloga (D/N)" GET _pr_isp VALID _pr_isp $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Promjeniti podatke isporuke naloga (D/N)" GET _pr_isp VALID _pr_isp $ "DN" PICT "@!"
 
    READ
 
@@ -769,12 +769,12 @@ STATIC FUNCTION fnd_partn( xPartn, nCustId, cDesc  )
    xPartn := Space( 6 )
 
    Box(, 5, f18_max_cols() -15 )
-   @ m_x + 1, m_y + 2 SAY8 "Naručioc: "
-   @ m_x + 1, Col() + 1 SAY AllTrim( Str( nCustId ) ) COLOR f18_color_i()
-   @ m_x + 1, Col() + 1 SAY " -> "
-   @ m_x + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR f18_color_i()
-   @ m_x + 2, m_y + 2 SAY8 "nije definisan u relacijama, pronađite njegov par !"
-   @ m_x + 4, m_y + 2 SAY8 "šifra u knjigovodstvu: " GET xPartn VALID p_partner( @xPartn )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Naručioc: "
+   @ box_x_koord() + 1, Col() + 1 SAY AllTrim( Str( nCustId ) ) COLOR f18_color_i()
+   @ box_x_koord() + 1, Col() + 1 SAY " -> "
+   @ box_x_koord() + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR f18_color_i()
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "nije definisan u relacijama, pronađite njegov par !"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "šifra u knjigovodstvu: " GET xPartn VALID p_partner( @xPartn )
    READ
    BoxC()
 
@@ -800,12 +800,12 @@ STATIC FUNCTION fnd_roba( xRoba, nArtId, cDesc )
    xRoba := Space( 10 )
 
    Box(, 5, 70 )
-   @ m_x + 1, m_y + 2 SAY "Artikal:"
-   @ m_x + 1, Col() + 1 SAY AllTrim( Str( nArtId ) ) COLOR f18_color_i()
-   @ m_x + 1, Col() + 1 SAY " -> "
-   @ m_x + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR f18_color_i()
-   @ m_x + 2, m_y + 2 SAY "nije definisan u tabeli relacija, pronadjite njegov par !!!"
-   @ m_x + 4, m_y + 2 SAY "sifra u FMK =" GET xRoba VALID p_roba( @xRoba )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Artikal:"
+   @ box_x_koord() + 1, Col() + 1 SAY AllTrim( Str( nArtId ) ) COLOR f18_color_i()
+   @ box_x_koord() + 1, Col() + 1 SAY " -> "
+   @ box_x_koord() + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR f18_color_i()
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "nije definisan u tabeli relacija, pronadjite njegov par !!!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "sifra u FMK =" GET xRoba VALID p_roba( @xRoba )
    READ
    BoxC()
 

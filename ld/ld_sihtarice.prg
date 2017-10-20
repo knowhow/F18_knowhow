@@ -36,23 +36,23 @@ FUNCTION def_siht( lNew )
 
    DO WHILE .T.
 
-      @ get_x_koord() + nX, get_y_koord() + 2 SAY "*** Unos / obrada sihtarica po grupama"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** Unos / obrada sihtarica po grupama"
 
       ++nX
       ++nX
-      @ get_x_koord() + nX, get_y_koord() + 2 SAY "godina" GET nGodina PICT "9999"
-      @ get_x_koord() + nX, Col() + 2 SAY "mjesec" GET nMjesec PICT "99"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "godina" GET nGodina PICT "9999"
+      @ box_x_koord() + nX, Col() + 2 SAY "mjesec" GET nMjesec PICT "99"
 
       ++nX
-      @ get_x_koord() + nX, get_y_koord() + 2 SAY "grupa:" GET cGroup ;
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "grupa:" GET cGroup ;
          VALID {|| p_konto( @cGroup ), ;
          _show_get_item_value( g_gr_naz( cGroup ), 40 ) }
 
       ++nX
-      @ get_x_koord() + nX, get_y_koord() + 2 SAY "opis:" GET cOpis PICT "@S40"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "opis:" GET cOpis PICT "@S40"
 
       ++nX
-      @ get_x_koord() + nX, get_y_koord() + 2 SAY "radnik:" GET cIdRadn ;
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "radnik:" GET cIdRadn ;
          VALID {|| p_radn( @cIdRadn ), ;
          _show_get_item_value( _rad_ime( cIdRadn ), 30 ) }
 
@@ -89,10 +89,10 @@ FUNCTION def_siht( lNew )
 
       ++nX
       ++nX
-      @ get_x_koord() + nX, get_y_koord() + 2 SAY "broj odradjenih sati:" GET _izvrseno PICT "99999.99"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "broj odradjenih sati:" GET _izvrseno PICT "99999.99"
 
       ++nX
-      @ get_x_koord() + nX, get_y_koord() + 2 SAY "od toga nocni rad:" GET _bodova PICT "99999.99"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "od toga nocni rad:" GET _bodova PICT "99999.99"
 
       READ
 
@@ -125,11 +125,11 @@ STATIC FUNCTION g_vars( nGod, nMj, cRadn, cGroup )
    PRIVATE GetList := {}
 
    Box(, 2, 60 )
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY "Godina" GET nGod PICT "9999"
-   @ get_x_koord() + 1, Col() + 2 SAY "Godina" GET nMj PICT "99"
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY "Grupa" GET cGroup ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Godina" GET nGod PICT "9999"
+   @ box_x_koord() + 1, Col() + 2 SAY "Godina" GET nMj PICT "99"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Grupa" GET cGroup ;
       VALID Empty( cGroup ) .OR. p_konto( @cGroup )
-   @ get_x_koord() + 2, Col() + 2 SAY "Radnik" GET cRadn ;
+   @ box_x_koord() + 2, Col() + 2 SAY "Radnik" GET cRadn ;
       VALID Empty( cRadn ) .OR. p_radn( @cRadn )
    READ
    BoxC()
@@ -430,7 +430,7 @@ FUNCTION del_siht()
    LOCAL cIdRadn := Space( 6 )
    LOCAL nTArea := Select()
    LOCAL cFilter := ""
-   LOCAL _rec, _t_rec
+   LOCAL _rec, nTrec
 
    IF g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
       RETURN .F.
@@ -451,13 +451,13 @@ FUNCTION del_siht()
       ++nCnt
 
       SKIP 1
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       _rec := dbf_get_rec()
       delete_rec_server_and_dbf( "ld_radsiht", _rec )
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 

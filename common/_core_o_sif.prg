@@ -14,21 +14,6 @@
 FIELD id, naz
 
 
-
-FUNCTION o_sastavnica()
-
-   SELECT ( F_SAST )
-   my_use  ( "sast" )
-   SET ORDER TO TAG "ID"
-
-   RETURN .T.
-
-FUNCTION select_o_sastavnica()
-   RETURN select_o_dbf( "SAST", F_SAST, "sast", "ID" )
-
-
-
-
 FUNCTION find_partner_by_naz_or_id( cId )
 
    LOCAL cAlias := "PARTN"
@@ -193,19 +178,35 @@ FUNCTION o_vrnal()
 */
 
 
-FUNCTION o_tdok()
+FUNCTION o_tdok( cId )
 
    LOCAL cTabela := "tdok"
 
    SELECT ( F_TDOK )
-   IF !use_sql_sif  ( cTabela )
+   IF !use_sql_sif  ( cTabela, .T., "TDOK", cId  )
       error_bar( "o_sql", "open sql " + cTabela )
       RETURN .F.
    ENDIF
-
    SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
 
    RETURN !Eof()
+
+
+FUNCTION select_o_tdok( cId )
+
+   SELECT ( F_TDOK )
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_tdok( cId )
 
 
 
@@ -243,13 +244,37 @@ FUNCTION select_o_tnal( cId )
 
 
 
-FUNCTION o_valute()
+FUNCTION o_valute( cId )
+
+   LOCAL cTabela := "valute"
+
+   SELECT ( F_TNAL )
+   // IF !use_sql_sif  ( cTabela, .T., "VALUTE", cId  )
+   IF !use_sql_valute( cId )
+      error_bar( "o_sql", "open sql " + cTabela )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+   IF cId != NIL
+      SEEK cId
+   ENDIF
+
+   RETURN !Eof()
+
+
+
+FUNCTION select_o_valute( cId )
 
    SELECT ( F_VALUTE )
-   use_sql_valute()
-   SET ORDER TO TAG "ID"
+   IF Used()
+      IF RecCount() > 1 .AND. cId == NIL
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
 
-   RETURN .T.
+   RETURN o_valute( cId )
 
 
 FUNCTION o_refer()

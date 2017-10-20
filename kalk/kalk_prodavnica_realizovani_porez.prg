@@ -36,10 +36,10 @@ FUNCTION kalk_realizovani_porez_prodavnice()
    SET CURSOR ON
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Konto prodavnice/magacina:" GET qqKonto PICT "@!S30"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Konto prodavnice/magacina:" GET qqKonto PICT "@!S30"
 
-      @ m_x + 3, m_y + 2 SAY "Kalkulacije od datuma:" GET dDat1
-      @ m_x + 3, Col() + 1 SAY "do" GET dDat2
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Kalkulacije od datuma:" GET dDat1
+      @ box_x_koord() + 3, Col() + 1 SAY "do" GET dDat2
 
 
       READ

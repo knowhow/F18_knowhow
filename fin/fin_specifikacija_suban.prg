@@ -14,10 +14,9 @@
 MEMVAR gPicBHD, picBHD, qqKonto, qqPartner, qqBrDok
 //MEMVAR gDugiUslovFirmaRJFinSpecif
 MEMVAR cIdFirma, cIdRj, dDatOd, dDatDo, cFunk, cFond, cNula
-MEMVAR cSkVar, cRasclaniti, cRascFunkFond, cN2Fin
+MEMVAR cSpecifSkracenaVarijantaDN, cRasclaniti, cRascFunkFond, cN2Fin
 MEMVAR cFilter
 MEMVAR fK1, fK2, fK3, fK4, cK1, cK2, cSection, cHistory, aHistory
-MEMVAR m_x, m_y
 
 FIELD idkonto, idpartner, idrj
 
@@ -35,7 +34,7 @@ FUNCTION fin_specifikacija_suban()
    LOCAL cVN := Space( 20 )
    LOCAL cUslovPartnerTelefon := Space( 100 ), cFilterPartnerTelefon
    LOCAL cTipDomacaStranaObje
-   LOCAL bZagl :=  {|| zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon, cTipDomacaStranaObje ) }
+   LOCAL bZagl :=  {|| zagl_fin_specif( cSpecifSkracenaVarijantaDN, cOpcine, cUslovPartnerTelefon, cTipDomacaStranaObje ) }
    LOCAL oPDF, xPrintOpt
    LOCAL cSqlWhere
    LOCAL nTArea
@@ -43,7 +42,7 @@ FUNCTION fin_specifikacija_suban()
    LOCAL lExpRpt
 
 
-   PRIVATE cSkVar := "N"
+   PRIVATE cSpecifSkracenaVarijantaDN := "N"
    PRIVATE fK1 := fk2 := fk3 := fk4 := "N"
    PRIVATE cRasclaniti := "N"
    PRIVATE cRascFunkFond := "N"
@@ -104,46 +103,46 @@ FUNCTION fin_specifikacija_suban()
    cFond := "9999"
    cNula := "N"
    DO WHILE .T.
-      @ m_x + 1, m_y + 6 SAY8 "SPECIFIKACIJA SUBANALITIČKIH KONTA"
+      @ box_x_koord() + 1, box_y_koord() + 6 SAY8 "SPECIFIKACIJA SUBANALITIČKIH KONTA"
       // IF gDugiUslovFirmaRJFinSpecif == "D"
       // cIdFirma := PadR( self_organizacija_id() + ";", 30 )
-      // @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
+      // @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
       // ELSE
 
-      @ m_x + 3, m_y + 2 SAY "Firma "
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "
       ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
       // ENDIF
-      @ m_x + 4, m_y + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
-      @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
-      @ m_x + 6, Col() + 2 SAY "do" GET dDatDo
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Partner " GET qqPartner PICT "@!S50"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Datum dokumenta od" GET dDatOd
+      @ box_x_koord() + 6, Col() + 2 SAY "do" GET dDatDo
 
       IF fin_dvovalutno()
-         @ m_x + 7, m_y + 2 SAY8 "Obračun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTipDomacaStranaObje VALID cTipDomacaStranaObje $ "123"
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Obračun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTipDomacaStranaObje VALID cTipDomacaStranaObje $ "123"
       ELSE
          cTipDomacaStranaObje := "1"
       ENDIF
 
-      @ m_x + 8, m_y + 2 SAY8 "Prikaz sintetičkih konta (D/N) ?" GET cSK  PICT "@!" VALID csk $ "DN"
-      @ m_x + 9, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
-      @ m_x + 10, m_y + 2 SAY "Skracena varijanta (D/N) ?" GET cSkVar PICT "@!" VALID cSkVar $ "DN"
-      @ m_x + 11, m_y + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
-      @ m_x + 12, m_y + 2 SAY "Uslov za vrstu naloga (prazno-svi) " GET cVN PICT "@!S20"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Prikaz sintetičkih konta (D/N) ?" GET cSK  PICT "@!" VALID csk $ "DN"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Skracena varijanta (D/N) ?" GET cSpecifSkracenaVarijantaDN PICT "@!" VALID cSpecifSkracenaVarijantaDN $ "DN"
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-svi) " GET cVN PICT "@!S20"
 
       cRasclaniti := "N"
 
       IF gFinRj == "D"
-         @ m_x + 13, m_y + 2 SAY8 "Rašclaniti po RJ (D/N) "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
-         @ m_x + 14, m_y + 2 SAY8 "Rašclaniti po RJ/FUNK/FOND? (D/N) "  GET cRascFunkFond PICT "@!" VALID cRascFunkFond $ "DN"
+         @ box_x_koord() + 13, box_y_koord() + 2 SAY8 "Rašclaniti po RJ (D/N) "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
+         @ box_x_koord() + 14, box_y_koord() + 2 SAY8 "Rašclaniti po RJ/FUNK/FOND? (D/N) "  GET cRascFunkFond PICT "@!" VALID cRascFunkFond $ "DN"
       ENDIF
 
-      @ m_x + 15, m_y + 2 SAY8 " PARTNER: Općina (prazno-sve):" GET cOpcine
-      @ m_x + 16, m_y + 2 SAY8 " Telefon (prazno-svi, uslov: '033;032;'):" GET cUslovPartnerTelefon PICT "@!S30"
+      @ box_x_koord() + 15, box_y_koord() + 2 SAY8 " PARTNER: Općina (prazno-sve):" GET cOpcine
+      @ box_x_koord() + 16, box_y_koord() + 2 SAY8 " Telefon (prazno-svi, uslov: '033;032;'):" GET cUslovPartnerTelefon PICT "@!S30"
 
-      @ m_x + 18, m_y + 2 SAY "Export u XLSX (D/N)?" GET cExpRptDN PICT "@!" VALID cExpRptDN $ "DN"
+      @ box_x_koord() + 18, box_y_koord() + 2 SAY "Export u XLSX (D/N)?" GET cExpRptDN PICT "@!" VALID cExpRptDN $ "DN"
 
-      fin_get_k1_k4_funk_fond( 17 )
+      fin_get_k1_k4_funk_fond( @GetList, 17 )
 
       READ
       ESC_BCR
@@ -258,7 +257,6 @@ FUNCTION fin_specifikacija_suban()
       cFilter += ( ".and. k4='" + ck4 + "'" )
    ENDIF
 
-altd()
    IF gFinRj == "D" .AND. Len( cIdrj ) <> 0
       //IF gDugiUslovFirmaRJFinSpecif == "D"
       //   cFilter += ( ".and." + aUsl4 )
@@ -296,7 +294,7 @@ altd()
       RETURN .F.
    ENDIF
 
-   IF cSkVar == "D"
+   IF cSpecifSkracenaVarijantaDN == "D"
       nDOpis := 25
       nDIznos := 12
       pic := Right( picbhd, nDIznos )
@@ -642,22 +640,23 @@ STATIC FUNCTION FSvaki1()
 
 
 
-/* fn fin_specif_zagl6
- *  brief Zaglavlje specifikacije
- *  param cSkVar
+/*
+ *   Zaglavlje specifikacije
+ *   koriste fin_specif, fin_specif_suban_proizv_sort
+ *
  */
 
-FUNCTION zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon, cTipDomacaStranaObje )
+FUNCTION zagl_fin_specif( cSpecifSkracenaVarijantaDN, cOpcine, cUslovPartnerTelefon, cTipDomacaStranaObje )
 
    ?
    IF is_legacy_ptxt()
-
       B_ON
       P_COND
    ENDIF
 
    hb_default( @cOpcine, "" )
    hb_default( @cUslovPartnerTelefon, "" )
+   hb_default( @cTipDomacaStranaObje, "1" ) // jednovalutni prikaz - KM
 
    ??U "FIN: SPECIFIKACIJA SUBANALITIČKIH KONTA  ZA "
 
@@ -699,7 +698,7 @@ FUNCTION zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon, cTipDomacaStran
    SELECT SUBAN
 
    IF is_legacy_ptxt()
-      IF cSkVar == "D"
+      IF cSpecifSkracenaVarijantaDN == "D"
          F12CPI
       ELSE
          P_COND
@@ -709,13 +708,13 @@ FUNCTION zagl_fin_specif( cSkVar, cOpcine, cUslovPartnerTelefon, cTipDomacaStran
    ? m
 
    IF cTipDomacaStranaObje $ "12"
-      IF cSkVar != "D"
+      IF cSpecifSkracenaVarijantaDN != "D"
          ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  NAZIV KONTA / PARTNERA                                          duguje            potrazuje                saldo"
       ELSE
          ? "KONTO  " + PadC( "PARTN", FIELD_PARTNER_ID_LENGTH ) + "  " +  PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "duguje", nDIznos ) + " " + PadC( "potrazuje", nDIznos ) + " " + PadC( "saldo", nDIznos )
       ENDIF
    ELSE
-      IF cSkVar != "D"
+      IF cSpecifSkracenaVarijantaDN != "D"
          ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  NAZIV KONTA / PARTNERA                                       saldo " + ValDomaca() + "           saldo " + AllTrim( ValPomocna() )
       ELSE
          ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  " + PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "saldo " + ValDomaca(), nDIznos ) + " " + PadC( "saldo " + AllTrim( ValPomocna() ), nDIznos )

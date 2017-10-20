@@ -40,7 +40,7 @@ FUNCTION Izvj0()
 
 FUNCTION Preknjizenje()
 
-   RETURN Prefin_unos_naloga()
+   RETURN fin_preknjizenje_konta()
 
 
 /*
@@ -185,19 +185,15 @@ STATIC FUNCTION _ispisi_greske( a_error )
    FF
    end_print()
 
-   RETURN
+   RETURN .T.
 
 
 
 
-// ----------------------------------
-// storniranje naloga
-// ----------------------------------
-FUNCTION StornoNaloga()
 
-   fin_povrat_naloga( .T. )
+FUNCTION fin_storno_naloga()
 
-   RETURN
+   RETURN fin_povrat_naloga( .T. )
 
 
 // ---------------------------------------------
@@ -206,9 +202,10 @@ FUNCTION StornoNaloga()
 STATIC FUNCTION _g_gr_date()
 
    LOCAL dDate := Date()
+   LOCAL GetList := {}
 
    Box(, 1, 45 )
-   @ m_x + 1, m_y + 2 SAY "Unesi granicni datum" GET dDate
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unesi granicni datum" GET dDate
    READ
    BoxC()
 
@@ -446,8 +443,8 @@ FUNCTION BBMnoziSaK( cTip )
 
    IF cTip == ValDomaca() .AND. my_get_from_ini( "FIN", "BrutoBilansUDrugojValuti", "N", KUMPATH ) == "D"
       Box(, 5, 70 )
-      @ m_x + 2, m_y + 2 SAY "Pomocna valuta      " GET cBBV PICT "@!" VALID ImaUSifVal( cBBV )
-      @ m_x + 3, m_y + 2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK := OmjerVal2( cBBV, cTip ), .T. } PICT "999999999.999999999"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Pomocna valuta      " GET cBBV PICT "@!" VALID ImaUSifVal( cBBV )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK := OmjerVal2( cBBV, cTip ), .T. } PICT "999999999.999999999"
       READ
       BoxC()
    ELSE

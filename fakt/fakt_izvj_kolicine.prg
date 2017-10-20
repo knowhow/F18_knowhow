@@ -37,7 +37,7 @@ STATIC FUNCTION set_articles()
 
    Box(, ( _count / 2 ) + 3, 65 )
 
-   @ m_x + _x, m_y + 2 SAY "Izvjestaj se pravi za sljedece artikle:"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Izvjestaj se pravi za sljedece artikle:"
 
    ++_x
    ++_x
@@ -51,10 +51,10 @@ STATIC FUNCTION set_articles()
       _valid_block := "EMPTY(_art_" + AllTrim( Str( nI ) ) + ") .or. P_Roba(@_art_" + AllTrim( Str( nI ) ) + ")"
 
       IF nI % 2 == 0
-         @ m_x + _x, Col() + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
+         @ box_x_koord() + _x, Col() + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
          ++_x
       ELSE
-         @ m_x + _x, m_y + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
+         @ box_x_koord() + _x, box_y_koord() + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
       ENDIF
 
    NEXT
@@ -199,23 +199,20 @@ FUNCTION spec_kol_partn()
 
    cIdFirma := PadR( cIdFirma, 2 )
 
-   @ m_x + _x, m_y + 2 SAY "RJ            " GET cIdFirma ;
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "RJ            " GET cIdFirma ;
       VALID {|| Empty( cIdFirma ) .OR. ;
       cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
    ++_x
-
-   @ m_x + _x, m_y + 2 SAY "Od datuma " GET dDatOd
-   @ m_x + _x, Col() + 1 SAY "do" GET dDatDo
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Od datuma " GET dDatOd
+   @ box_x_koord() + _x, Col() + 1 SAY "do" GET dDatDo
 
    ++_x
-
-   @ m_x + _x, m_y + 2 SAY "Distributer   " GET cDistrib VALID p_partner( @cDistrib )
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Distributer   " GET cDistrib VALID p_partner( @cDistrib )
 
    ++_x
    ++_x
-
-   @ m_x + _x, m_y + 2 SAY "Definisi artikle za izvjestaj (D/N) ?" GET _define VALID _define $ "DN" PICT "@!"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Definisi artikle za izvjestaj (D/N) ?" GET _define VALID _define $ "DN" PICT "@!"
 
    READ
 
@@ -243,13 +240,12 @@ FUNCTION spec_kol_partn()
 
    _o_tables()
 
-   SELECT partn
-   SEEK cDistrib
+   select_o_partner( cDistrib )
    cDistNaz := field->naz
 
-   SELECT fakt
-   SET ORDER TO TAG "6"
-   // idfirma + idpartner + idroba + idtipdok + dtos(datum)
+
+
+   find_fakt_za_period( cIdFirma, dDatOd, dDatDo, NIL, NIL, "6" ) // idfirma + idpartner + idroba + idtipdok + dtos(datum)
 
    // postavi filter
    cFilter := "idtipdok == '10' "
@@ -272,7 +268,7 @@ FUNCTION spec_kol_partn()
 
    Box( , 2, 50 )
 
-   @ m_x + 1, m_y + 2 SAY "generisem podatke za xls...."
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "generisem podatke za xls...."
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma
 
@@ -299,7 +295,7 @@ FUNCTION spec_kol_partn()
 
             aRoba[ nScan, 3 ] := aRoba[ nScan, 3 ] + nKol
 
-            @ m_x + 2, m_y + 2 SAY "  scan: " + cRoba
+            @ box_x_koord() + 2, box_y_koord() + 2 SAY "  scan: " + cRoba
 
          ENDIF
 
@@ -318,8 +314,7 @@ FUNCTION spec_kol_partn()
             partn->mjesto, ;
             partn->ptt, ;
             partn->adresa, ;
-            _k_br( cPartner ), ;
-            aRoba )
+            _k_br( cPartner ), aRoba )
 
       ENDIF
 
@@ -329,7 +324,7 @@ FUNCTION spec_kol_partn()
 
    open_r_export_table()
 
-   RETURN
+   RETURN .T.
 
 // ----------------------------------------
 // vraca broj kuce partnera
@@ -366,13 +361,13 @@ STATIC FUNCTION _reset_aroba( arr )
 
 STATIC FUNCTION _o_tables()
 
-   o_fakt()
+   //o_fakt_dbf()
    //o_partner()
-   o_valute()
+   //o_valute()
    //o_rj()
    //o_sifk()
    //o_sifv()
    //o_roba()
-   o_ops()
+   //o_ops()
 
    RETURN .T.

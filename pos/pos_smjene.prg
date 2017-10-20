@@ -33,27 +33,28 @@ FUNCTION OdrediSmjenu( lOdredi )
    ENDIF
 
    O__POS
-   o_pos_doks()
-   SET ORDER TO TAG "2"  // IdVd+DTOS (Datum)+Smjena
-   SEEK VD_RN + Chr ( 254 )
-   IF Eof() .OR. pos_doks->IdVd <> VD_RN
+   // o_pos_doks()
+   // SET ORDER TO TAG "2"  // IdVd+DTOS (Datum)+Smjena
+   seek_pos_doks( NIL, POS_VD_RACUN, NIL, NIL, "2" ) // + Chr ( 254 )
+   IF Eof() .OR. pos_doks->IdVd <> POS_VD_RACUN
       SKIP -1
    ENDIF
+
    // ako je slucajno mijenjan IdPos
-   DO WHILE !Bof() .AND. pos_doks->IdVd == VD_RN .AND. pos_doks->IdPos <> gIdPos
+   DO WHILE !Bof() .AND. pos_doks->IdVd == POS_VD_RACUN .AND. pos_doks->IdPos <> gIdPos
       SKIP -1
    ENDDO
-   IF pos_doks->IdVd == VD_RN
+   IF pos_doks->IdVd == POS_VD_RACUN
       d_Doks := pos_doks->Datum     // posljednji datum i smjena u kojoj
       s_Doks := pos_doks->Smjena    // je kasa radila, prema DOKS
    ENDIF
 
    SELECT _POS
    SET ORDER TO TAG "2"
-   SEEK "42"
+   SEEK "42" // _POS
    IF Found()
       // d_Pos := _POS->Datum
-      DO WHILE !Eof() .AND. _POS->IdVd == VD_RN
+      DO WHILE !Eof() .AND. _POS->IdVd == POS_VD_RACUN
          IF _POS->m1 <> "Z"
             // racun nije zakljucen, a samo mi je to interesantno
             d_Pos := _POS->Datum
@@ -73,14 +74,14 @@ FUNCTION OdrediSmjenu( lOdredi )
 
 
    Box(, 8, 50 )
-   @ m_x, m_y + 1 SAY " DEFINISANJE DATUMA" + iif ( gVsmjene == "D", " I SMJENE ", " " ) COLOR f18_color_invert()
+   @ box_x_koord(), box_y_koord() + 1 SAY " DEFINISANJE DATUMA" + iif ( gVsmjene == "D", " I SMJENE ", " " ) COLOR f18_color_invert()
 
    DO WHILE !( cOK $ "Dd" )
       BoxCLS()
-      @ m_x + 2, m_y + 5 SAY " DATUM:" GET dDatum VALID DatumOK ()
-      @ m_x + 4, m_y + 5 SAY "SMJENA:" GET cSmjena VALID cSmjena $ "123"
+      @ box_x_koord() + 2, box_y_koord() + 5 SAY " DATUM:" GET dDatum VALID DatumOK ()
+      @ box_x_koord() + 4, box_y_koord() + 5 SAY "SMJENA:" GET cSmjena VALID cSmjena $ "123"
       SET CURSOR ON
-      @ m_x + 6, m_y + 5 SAY "Unos u redu (D/N)" GET cOK VALID cOK $ "DN" PICT "@!"
+      @ box_x_koord() + 6, box_y_koord() + 5 SAY "Unos u redu (D/N)" GET cOK VALID cOK $ "DN" PICT "@!"
       READ
       IF LastKey() == K_ESC
          LOOP
@@ -98,7 +99,7 @@ FUNCTION OdrediSmjenu( lOdredi )
    pos_status_traka()
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -107,8 +108,6 @@ FUNCTION OdrediSmjenu( lOdredi )
  */
 
 STATIC FUNCTION DatumOK()
-
-   // {
 
    IF dDatum > Date()
       MsgBeep( "Morate unijeti datum jedna ili manji od danasnjeg!" )
@@ -121,7 +120,6 @@ STATIC FUNCTION DatumOK()
 
 STATIC FUNCTION SmjenaOK()
 
-   // {
    IF Empty( s_Pos )
       // nema prometa u _POS (nezakljucenog)
       IF d_Doks == dDatum .AND. cSmjena < s_Doks
@@ -216,17 +214,17 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
    // azuriraj nezakljucene
    o_pos_tables()
 
-   cVrijeme  := Left ( Time (), 5 )
+   cVrijeme  := Left ( TIME (), 5 )
    cIdVrsteP := gGotPlac
 
    SELECT _POS
    SET ORDER TO TAG "1"
    SEEK gIdPos
-   DO WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + VD_RN )
+   DO WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + POS_VD_RACUN )
       cRadRac := _POS->BrDok
       Scatter ()
       SELECT pos_doks
-      cBrDok := _BrDok := pos_novi_broj_dokumenta( gIdPos, VD_RN )
+      cBrDok := _BrDok := pos_novi_broj_dokumenta( gIdPos, POS_VD_RACUN )
       _Vrijeme  := cVrijeme
       _IdVrsteP := cIdVrsteP
       _IdOdj    := Space ( Len ( _IdOdj ) )
@@ -234,7 +232,7 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
       APPEND BLANK
       Gather()
       SELECT _POS
-      WHILE !Eof() .AND. _POS->( IdPos + IdVd + BrDok ) == ( gIdPos + VD_RN + cRadRac )
+      WHILE !Eof() .AND. _POS->( IdPos + IdVd + BrDok ) == ( gIdPos + POS_VD_RACUN + cRadRac )
          IF _POS->m1 == "Z"
             SKIP
             LOOP
@@ -242,7 +240,7 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
          nRec := RecNo()
          Scatter ()
          _Kolicina := 0
-         DO WHILE !Eof() .AND. _POS->( IdPos + IdVd + BrDok ) == ( gIdPos + VD_RN + cRadRac ) .AND. _POS->( IdRoba + IdCijena ) == ( _IdRoba + _IdCijena ) .AND. ;
+         DO WHILE !Eof() .AND. _POS->( IdPos + IdVd + BrDok ) == ( gIdPos + POS_VD_RACUN + cRadRac ) .AND. _POS->( IdRoba + IdCijena ) == ( _IdRoba + _IdCijena ) .AND. ;
                _POS->Cijena == _Cijena
             IF _POS->m1 == "Z"
                SKIP
@@ -260,7 +258,7 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
          Gather()
          SELECT _POS
          GO nRec
-         DO WHILE ! Eof() .AND. _POS->( IdPos + IdVd + BrDok ) == ( gIdPos + VD_RN + cRadRac ) .AND. _POS->( IdRoba + IdCijena ) == ( _IdRoba + _IdCijena ) .AND. ;
+         DO WHILE ! Eof() .AND. _POS->( IdPos + IdVd + BrDok ) == ( gIdPos + POS_VD_RACUN + cRadRac ) .AND. _POS->( IdRoba + IdCijena ) == ( _IdRoba + _IdCijena ) .AND. ;
                _POS->Cijena == _Cijena
             IF _POS->m1 == "Z"
                SKIP
@@ -273,15 +271,16 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
    ENDDO
 
    SELECT _POS
-   SEEK gIdPos + VD_RN
-   DO WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + VD_RN )
+   SEEK gIdPos + POS_VD_RACUN
+   DO WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + POS_VD_RACUN )
       Del_Skip()
    ENDDO
 
    // prvo izvadim sve radnike koji su radili u predmetnoj smjeni
-   SELECT pos_doks
-   SET ORDER TO TAG "2"
-   SEEK VD_RN + DToS ( dPrevDat )
+   // SELECT pos_doks
+   // SET ORDER TO TAG "2"
+   //-- SEEK POS_VD_RACUN + DToS ( dPrevDat )
+   seek_pos_doks( NIL, POS_VD_RACUN, dPrevDat )
    DO WHILE !Eof() .AND. pos_doks->IdVd == "42" .AND. pos_doks->Datum == dPrevDat
       nA := AScan ( aRadnici, pos_doks->IdRadnik )
       IF nA == 0
@@ -312,7 +311,7 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
    my_close_all_dbf()
 
    RETURN .T.
-// }
+
 
 
 /* ZakljRadnik()
@@ -321,7 +320,7 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
 
 FUNCTION ZakljRadnik( Ch )
 
-   // {
+
    LOCAL cIdSave
 
    // M->Ch je iz OBJDB
@@ -377,7 +376,7 @@ FUNCTION OtvoriSmjenu()
    // potrazi ima li nezakljucenih radnika i obavjesti
 
    O__POS
-   SEEK gIdPos + VD_RN
+   SEEK gIdPos + POS_VD_RACUN
 
    IF Found()
       fImaNezak := .T.
@@ -404,4 +403,4 @@ FUNCTION OtvoriSmjenu()
    MsgBeep( "Otvorena je smjena " + gSmjena )
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

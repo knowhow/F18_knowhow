@@ -96,8 +96,8 @@ FUNCTION preracunaj_kolicinu_repromaterijala( kolicina, duzina, jmj, jmj_art )
 FUNCTION valid_repro_jmj( jmj, jmj_art )
 
    LOCAL _ok := .T.
-   LOCAL _x := m_x
-   LOCAL _y := m_y
+   LOCAL _x := box_x_koord()
+   LOCAL _y := box_y_koord()
 
    IF jmj_is_metric( jmj ) .AND. !jmj_is_metric( jmj_art )
       // primjer: M -> KG
@@ -112,8 +112,8 @@ FUNCTION valid_repro_jmj( jmj, jmj_art )
 
    IF !_ok
       MsgBeep( "Ne postoji konverzija [" + AllTrim( jmj )  + "] u [" + AllTrim( jmj_art ) + "] !" )
-      m_x := _x
-      m_y := _y
+      box_x_koord( _x )
+      box_y_koord( _y )
    ENDIF
 
    RETURN _ok

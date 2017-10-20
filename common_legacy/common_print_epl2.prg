@@ -27,7 +27,7 @@ STATIC last_nY
 // --------------------------------------------------
 // print string
 // nRotate - 0 - bez rotiranja, 3 - 270 stepeni
-// nInvert - 0 - ne f18_color_invert() uj background, 1 - f18_color_invert() 
+// nInvert - 0 - ne f18_color_invert() uj background, 1 - f18_color_invert()
 // nFontSize - 1 - najmanji, 5 - najveci
 // --------------------------------------------------
 FUNCTION epl2_string( nX, nY, cString, lAbsolute, nFontSize, nRotate, nInvert )
@@ -163,7 +163,7 @@ FUNCTION epl2_cp852()
 
    ? 'I8,2,049'
 
-   RETURN
+   RETURN .T.
 
 // --------------------------
 // start print na EPL2
@@ -181,7 +181,7 @@ FUNCTION epl2_start()
    // uzmi parametre iz printera "L"
    SELECT F_GPARAMS
    IF !Used()
-      O_GPARAMS
+      o_gparams()
    ENDIF
 
    // gcDirekt := "D"
@@ -197,7 +197,7 @@ FUNCTION epl2_start()
 
    START PRINT CRET
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -218,7 +218,7 @@ FUNCTION epl2_end()
 
    SELECT F_GPARAMS
    IF !Used()
-      O_GPARAMS
+      o_gparams()
    ENDIF
 
    PRIVATE cSection := "P"
@@ -230,4 +230,4 @@ FUNCTION epl2_end()
    SELECT gparams
    USE
 
-   RETURN
+   RETURN .T.

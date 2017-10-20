@@ -153,8 +153,8 @@ METHOD F18Backup:do_backup_now()
    LOCAL nY
 
    Box( "#Backup NOW", 7, 60 )
-   nX := m_x + 1
-   nY := m_y + 2
+   nX := box_x_koord() + 1
+   nY := box_y_koord() + 2
 
    @ nX, nY SAY "*** BACKUP procedura *** " + DToC( Date() )
 

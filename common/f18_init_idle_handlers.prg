@@ -37,18 +37,7 @@ PROCEDURE on_idle_dbf_refresh()
 
    LOCAL cAlias, aDBfRec, oQry
 
-   IF my_database() != "?undefined?" .AND. my_login():lOrganizacijaSpojena
-         oQry := run_sql_query( "SELECT count(*) from fmk.fin_nalog" )
-         IF sql_error_in_query( oQry, "SELECT" )
-            MsgBeep( "ERR fin_nalog ne postoji?! " + my_database() )
-            QUIT
-         ENDIF
-         s_nFinNalogCount := oQry:FieldGet( 1 )
-         hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
-   ENDIF
-
    IF s_nIdleRefresh > 0
-
       IF Seconds() - s_nIdleDisplayCounter > 15
          ?E "already in idle dbf refresh", Seconds(), s_nIdleRefresh
          s_nIdleDisplayCounter := Seconds()
@@ -91,6 +80,7 @@ PROCEDURE on_idle_dbf_refresh()
       RETURN
    ENDIF
 
+   update_fin_nalog_count()
    process_dbf_refresh_queue()
 
    cAlias := Alias()
@@ -119,6 +109,24 @@ PROCEDURE on_idle_dbf_refresh()
    RETURN
 
 
+PROCEDURE update_fin_nalog_count()
+
+   LOCAL oQry
+
+   IF my_database() != "?undefined?" .AND. my_login():lOrganizacijaSpojena
+      oQry := run_sql_query( "SELECT count(*) from fmk.fin_nalog" )
+      IF sql_error_in_query( oQry, "SELECT" )
+         MsgBeep( "ERR fin_nalog ne postoji?! " + my_database() )
+         QUIT
+      ENDIF
+      s_nFinNalogCount := oQry:FieldGet( 1 )
+      IF ValType( s_nFinNalogCount ) != "N"
+         RETURN
+      ENDIF
+      hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
+   ENDIF
+
+   RETURN
 
 FUNCTION fin_nalog_count()
    RETURN s_nFinNalogCount

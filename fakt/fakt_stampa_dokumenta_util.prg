@@ -24,6 +24,7 @@ FUNCTION KatBr()
    RETURN ""
 */
 
+/*
 FUNCTION GetRegion()
 
    LOCAL cRegion := " "
@@ -41,11 +42,14 @@ FUNCTION GetRegion()
    SELECT ( nArr )
 
    RETURN cRegion
+*/
 
 /* GetRtmFile(cDefRtm)
  *     Vraca naziv rtm fajla za stampu
  */
 FUNCTION GetRtmFile( cDefRtm )
+
+   LOCAL GetList := {}
 
    aRtm := {}
    AAdd( aRtm, { my_get_from_ini( "DelphiRb", "Rtm1", "", KUMPATH ) } )
@@ -57,12 +61,12 @@ FUNCTION GetRtmFile( cDefRtm )
       RETURN cDefRtm
    ENDIF
 
-   PRIVATE GetList := {}
+   //PRIVATE GetList := {}
 
    Box(, 6, 30 )
-   @ 1 + m_x, 2 + m_y GET aRtm[ 1, 1 ]
-   @ 2 + m_x, 2 + m_y GET aRtm[ 1, 2 ]
-   @ 3 + m_x, 2 + m_y GET aRtm[ 1, 3 ]
+   @ 1 + box_x_koord(), 2 + box_y_koord() GET aRtm[ 1, 1 ]
+   @ 2 + box_x_koord(), 2 + box_y_koord() GET aRtm[ 1, 2 ]
+   @ 3 + box_x_koord(), 2 + box_y_koord() GET aRtm[ 1, 3 ]
    READ
    BoxC()
 
@@ -92,8 +96,8 @@ FUNCTION zavrsi_stampu()
 
 FUNCTION fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
-   PRIVATE InPicDEM := fakt_pic_iznos()
-   PRIVATE InPicCDEM := fakt_pic_cijena()
+   //PRIVATE InPicDEM := fakt_pic_iznos()
+   //PRIVATE InPicCDEM := fakt_pic_cijena()
 
    IF lJFill == nil
       lJFill := .F.
@@ -105,7 +109,7 @@ FUNCTION fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok, lJFill )
       fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------------
 // fakt_zagl_firma()
@@ -123,8 +127,8 @@ FUNCTION fakt_zagl_firma()
    ?? "Subjekt:"; U_ON; ?? PadC( Trim( tip_organizacije() ) + " " + Trim( self_organizacija_naziv() ), 39 ); U_OFF
    ?  "Prodajni objekat:"; U_ON; ?? PadC( AllTrim( NazProdObj() ), 30 ) ; U_OFF
    ?  "(poslovnica-poslovna jedinica)"
-   ?  "Datum:"; U_ON; ?? PadC( SrediDat( DATDOK ), 18 ); U_OFF
+   ?  "Datum:"; U_ON; ?? PadC( SrediDat( field->DATDOK ), 18 ); U_OFF
    ?
    ?
 
-   RETURN
+   RETURN .T.

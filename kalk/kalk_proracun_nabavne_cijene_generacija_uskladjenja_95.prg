@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
-
 FUNCTION kalk_gen_uskladjenje_nc_95( hParams )
 
    LOCAL cIdFirma := self_organizacija_id(), cIdRoba
@@ -155,9 +153,9 @@ FUNCTION kalk_gen_uskladjenje_nc_95( hParams )
 STATIC FUNCTION get_vars( hParams )
 
    Box( "bv", 5, 75 )
-   @ m_x + 1, m_y + 2 SAY "  Magacinski konto: " GET  hParams[ "idkonto" ]
-   @ m_x + 2, m_y + 2 SAY "   Datum dokumenta: " GET hParams[ "datdok" ]
-   @ m_x + 3, m_y + 2 SAY "prag odstupanja NC: " GET hParams[ "prag" ]
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "  Magacinski konto: " GET  hParams[ "idkonto" ]
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "   Datum dokumenta: " GET hParams[ "datdok" ]
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "prag odstupanja NC: " GET hParams[ "prag" ]
 
    READ
    BoxC()

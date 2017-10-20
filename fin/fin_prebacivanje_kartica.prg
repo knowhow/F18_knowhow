@@ -119,9 +119,9 @@ FUNCTION fin_prekart()
    DO WHILE .T.
 
       Box(, 20, 77 )
-      @ m_x + 19, m_y + 2 SAY "                         �                        �                   "
-      @ m_x + 20, m_y + 2 SAY " <c-T>  Brisi stavku     � <ENTER>  Ispravi konto � <a-A> Azuriraj    "
-      my_db_edit_sql( "PPK", 20, 77, {|| EPPK() }, "", "Priprema za prebacivanje stavki", , , , , 2 )
+      @ box_x_koord() + 19, box_y_koord() + 2 SAY "                         �                        �                   "
+      @ box_x_koord() + 20, box_y_koord() + 2 SAY " <c-T>  Brisi stavku     � <ENTER>  Ispravi konto � <a-A> Azuriraj    "
+      my_browse( "PPK", 20, 77, {|| EPPK() }, "", "Priprema za prebacivanje stavki", , , , , 2 )
       BoxC()
 
       IF RECCOUNT2() > 0

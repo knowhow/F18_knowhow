@@ -12,11 +12,10 @@
 #include "f18.ch"
 
 
+
 // ----------------------------------------------------
-// zaglavlje firme treba uzeti iz parametara firme
-// ----------------------------------------------------
-FUNCTION ZagFirma()
-   RETURN
+//FUNCTION ZagFirma()
+//   RETURN
 
 
 
@@ -61,10 +60,7 @@ FUNCTION RealNaDan( dDatum )
 
 
 
-// ----------------------------------------------------------------------
-// kasa izvuci - funkcija koja izvlaci iznose po tipovima dokumenata
-// ----------------------------------------------------------------------
-FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
+FUNCTION pos_kasa_pripremi_pom_za_izvjestaj( cIdVd, cDobId )
 
    // cIdVD - Id vrsta dokumenta
    // Opis: priprema pomoce baze POM.DBF za realizaciju
@@ -75,18 +71,17 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
 
    MsgO( "formiram pomocnu tabelu izvjestaja..." )
 
-   SEEK cIdVd + DToS( dDat0 )
+   //SEEK cIdVd + DToS( dDatum0 )
+   seek_pos_doks_2( cIdVd, dDatum0 )
 
-   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDat1
+   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
 
       IF ( !Empty( cIdPos ) .AND. pos_doks->IdPos <> cIdPos ) .OR. ( !Empty( cSmjena ) .AND. pos_doks->Smjena <> cSmjena )
          SKIP
          LOOP
       ENDIF
 
-      SELECT pos
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
       DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
          IF ( !Empty( cIdOdj ) .AND. pos->IdOdj <> cIdOdj )
@@ -107,25 +102,24 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
          ENDIF
 
          IF roba->( FieldPos( "idodj" ) ) <> 0
-            SELECT odj
-            HSEEK roba->IdOdj
+            select_o_pos_odj( roba->IdOdj )
          ENDIF
 
          nNeplaca := 0
 
-         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-            nNeplaca := pos->( Kolicina * Cijena )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca := pos->( Kolicina * Cijena ) / 2
-         ENDIF
+      //   IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+      //      nNeplaca := pos->( Kolicina * Cijena )
+    //     ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+    //        nNeplaca := pos->( Kolicina * Cijena ) / 2
+    //     ENDIF
 
-         IF gPopVar = "P"
-            nNeplaca += pos->( kolicina * nCijena )
-         ENDIF
+        // IF gPopVar = "P"
+          nNeplaca += pos->( kolicina * nCijena )
+         //ENDIF
 
          SELECT pom
          GO TOP
-         SEEK pos_doks->IdPos + pos_doks->IdRadnik + pos_doks->IdVrsteP + pos->IdOdj + pos->IdRoba + pos->IdCijena
+         SEEK pos_doks->IdPos + pos_doks->IdRadnik + pos_doks->IdVrsteP + pos->IdOdj + pos->IdRoba + pos->IdCijena // POM
 
          IF !Found()
 
@@ -140,9 +134,9 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
             REPLACE Iznos WITH pos->Kolicina * POS->Cijena
             REPLACE Iznos3 WITH nNeplaca
 
-            IF gPopVar == "A"
-               REPLACE Iznos2 WITH pos->nCijena
-            ENDIF
+          //  IF gPopVar == "A"
+           REPLACE Iznos2 WITH pos->nCijena
+          //  ENDIF
 
             IF roba->( FieldPos( "K1" ) ) <> 0
                REPLACE K2 WITH roba->K2, K1 WITH roba->K1
@@ -154,9 +148,9 @@ FUNCTION pos_kasa_izvuci( cIdVd, cDobId )
             REPLACE Iznos WITH Iznos + POS->Kolicina * POS->Cijena
             REPLACE Iznos3 WITH Iznos3 + nNeplaca
 
-            IF gPopVar == "A"
-               REPLACE Iznos2 WITH Iznos2 + pos->nCijena
-            ENDIF
+            //IF gPopVar == "A"
+            //   REPLACE Iznos2 WITH Iznos2 + pos->nCijena
+            //ENDIF
 
          ENDIF
 

@@ -10,11 +10,13 @@
  */
 
 #include "f18.ch"
+#include "f18_color.ch"
 
 MEMVAR GetList, gModul
 
 THREAD STATIC s_cF18Txt
 THREAD STATIC s_xPrintOpt
+THREAD STATIC s_cColor
 
 STATIC s_nDodatniRedoviPoStranici
 
@@ -235,6 +237,10 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 
 
 FUNCTION start_print_editor()
+
+   info_bar( "edit", "<ESC> izlaz iz pregleda dokumenta" )
+   s_cColor := SetColor( F18_COLOR_NORMAL_BW )
+
    RETURN start_print( "0" )
 
 
@@ -260,7 +266,13 @@ FUNCTION start_print( xPrintOpt, lCloseDbf )
 
 FUNCTION end_print_editor()
 
-   RETURN f18_end_print( NIL, "0" )
+   LOCAL lRet
+
+   lRet := f18_end_print( NIL, "0" )
+   SetColor( s_cColor )
+   info_bar( "edit", "")
+
+   RETURN lRet
 
 
 FUNCTION end_print( xPrintOpt )
@@ -706,15 +718,15 @@ FUNCTION SetGParams( cs, ch, cid, cvar, cval )
    SELECT params
    USE
 
-   IF cPosebno == "D"
-      SELECT ( F_GPARAMSP )
-      USE
-      O_GPARAMSP
-   ELSE
-      SELECT ( F_GPARAMS )
-      USE
-      O_GPARAMS
-   ENDIF
+   // IF cPosebno == "D"
+   // SELECT ( F_GPARAMSP )
+   // USE
+// O_GPARAMSP
+// ELSE
+   SELECT ( F_GPARAMS )
+   USE
+   o_gparams()
+// ENDIF
 
    &cVar := cVal
    Wpar( cId, &cVar )

@@ -40,11 +40,11 @@ FUNCTION PrPromRn()
 
    Box( "#PREGLED PROMJENA NA RACUNU", 8, 75 )
    DO WHILE .T.
-      @ m_x + 2, m_y + 2 SAY "Vrste naloga za knjizenje izvoda:" GET qqIDVN  PICT "@S20"
-      @ m_x + 3, m_y + 2 SAY "Konto/konta ziro racuna         :" GET qqKonto PICT "@S20"
-      @ m_x + 4, m_y + 2 SAY "Period od datuma:" GET dOd
-      @ m_x + 4, Col() + 2 SAY "do datuma:" GET dDo
-      @ m_x + 5, m_y + 2 SAY "Puni naziv firme:" GET cNazivFirme PICT "@S35"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Vrste naloga za knjizenje izvoda:" GET qqIDVN  PICT "@S20"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Konto/konta ziro racuna         :" GET qqKonto PICT "@S20"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Period od datuma:" GET dOd
+      @ box_x_koord() + 4, Col() + 2 SAY "do datuma:" GET dDo
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Puni naziv firme:" GET cNazivFirme PICT "@S35"
       READ; ESC_BCR
       aUsl1 := Parsiraj( qqIDVN, "IDVN" )
       aUsl2 := Parsiraj( qqKonto, "IDKONTO" )

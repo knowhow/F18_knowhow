@@ -13,8 +13,8 @@
 
 FUNCTION rnal_export_menu( nDoc_no, aDocList, lTemp, lWriteRel )
 
-   LOCAL mX := m_x
-   LOCAL mY := m_y
+   LOCAL mX := box_x_koord()
+   LOCAL mY := box_y_koord()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
@@ -28,7 +28,7 @@ FUNCTION rnal_export_menu( nDoc_no, aDocList, lTemp, lWriteRel )
 
    f18_menu( "export", .f., @_izbor, _opc, _opcexe )
 
-   m_x := mX
-   m_y := mY
+   box_x_koord( mX )
+   box_y_koord( mY )
 
    RETURN

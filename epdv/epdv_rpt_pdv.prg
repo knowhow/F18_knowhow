@@ -24,18 +24,20 @@ STATIC RPT_GAP := 4
 STATIC RPT_BOLD_DELTA := 2
 STATIC nCurrLine := 0
 STATIC cRptNaziv := "PDV prijava"
-STATIC cTbl := "pdv"
+STATIC s_cTabela := "pdv"
 STATIC cSource := "1"
 STATIC dDatOd
 STATIC dDatDo
 
 
 
-FUNCTION rpt_p_pdv()
+FUNCTION epdv_pdv_prijava()
 
    LOCAL cAzurirati
+   LOCAL nX
+   LOCAL GetList := {}
 
-   aDInt := rpt_d_interval ( Date() )
+   aDInt := epdv_rpt_d_interval ( Date() )
 
    dDate := Date()
 
@@ -47,30 +49,26 @@ FUNCTION rpt_p_pdv()
    nX := 1
    Box(, 12, 60 )
 
-   @ m_x + nX, m_y + 2 SAY "Period"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Period"
    nX++
 
-   @ m_x + nX, m_y + 2 SAY "od " GET dDatOd
-   @ m_x + nX, Col() + 2 SAY "do " GET dDatDo
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "od " GET dDatOd
+   @ box_x_koord() + nX, Col() + 2 SAY "do " GET dDatDo
 
    nX += 2
-   @ m_x + nX, m_y + 2 SAY "obrazac se pravi na osnovu :"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "obrazac se pravi na osnovu :"
    nX++
-   @ m_x + nX, m_y + 2 SAY " 1 - kuf/kif"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " 1 - kuf/kif"
    nX++
-   @ m_x + nX, m_y + 2 SAY " 2 - pdv baze"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " 2 - pdv baze"
    nX++
-   @ m_x + nX, m_y + 2 SAY " izbor ?" GET cSource ;
-      PICT "@!" ;
-      VALID cSource $ "12"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY " izbor ?" GET cSource PICT "@!" VALID cSource $ "12"
 
    READ
-   nX ++
+   nX++
 
    IF cSource == "1"
-      @ m_x + nX, m_y + 2 SAY8 " Ažurirati podatke u PDV bazu (D/N) ?" GET cAzurirati ;
-         PICT "@!" ;
-         VALID cAzurirati $ "DN"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 " Ažurirati podatke u PDV bazu (D/N) ?" GET cAzurirati PICT "@!" VALID cAzurirati $ "DN"
       READ
 
    ENDIF
@@ -79,60 +77,63 @@ FUNCTION rpt_p_pdv()
 
    IF LastKey() == K_ESC
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
-   fill_rpt()
+   epdv_fill_rpt()
    show_rpt(  .F.,  .F. )
 
-   save_pdv_obracun( dDatOd, dDatDo )
+   epdv_pdv_prijava_snimi_obracun( dDatOd, dDatDo )
 
-   RETURN
-
-
+   RETURN .T.
 
 
-STATIC FUNCTION cre_r_tbl()
+
+
+STATIC FUNCTION epdv_create_r_pdv()
 
    LOCAL aArr := {}
 
    my_close_all_dbf()
 
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".cdx" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".dbf" )
 
-   aArr := get_pdv_fields()
+   aArr := epdv_get_pdv_fields()
 
-   dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr )
+   dbcreate2( my_home() + "epdv_r_" + s_cTabela + ".dbf", aArr )
 
-   RETURN
+   RETURN .T.
 
 
 
-STATIC FUNCTION fill_rpt()
+STATIC FUNCTION epdv_fill_rpt()
 
-   cre_r_tbl()
+   epdv_create_r_pdv()
 
    IF cSource == "1"
-      f_iz_kuf_kif()
+      epdv_prijava_fill_kuf_kif()
    ELSE
-      f_iz_pdv()
+      epdv_prijava_fill_iz_pdv_tabele()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
-STATIC FUNCTION f_iz_kuf_kif()
+STATIC FUNCTION epdv_prijava_fill_kuf_kif()
 
    LOCAL nBPdv
    LOCAL nUkIzPdv := 0
    LOCAL nUkUlPdv := 0
    LOCAL nUlPdvKp := 0
+   LOCAL nCount
+   LOCAL GetList := {}
+     LOCAL hParams
 
    aMyFirma := my_firma( .T. )
 
-   O_R_PDV
+   select_o_epdv_r_pdv()
    APPEND BLANK
 
    Scatter()
@@ -145,21 +146,23 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    PRIVATE cFilter := ""
 
-   cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
+   //cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
 
-   select_o_epdv_kuf()
-   SET FILTER TO &cFilter
+   //select_o_epdv_kuf()
+   hParams := hb_hash()
+   find_epdv_kuf_za_period( dDatOd, dDatDo, hParams, "br_dok" )
+   //SET FILTER TO &cFilter
    GO TOP
 
    Box(, 3, 60 )
 
    nCount := 0
 
-   DO WHILE !Eof()
+   DO WHILE !Eof() // kuf
 
       ++nCount
 
-      @ m_x + 2, m_y + 2 SAY "KUF" + Str( nCount, 6, 0 )
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "KUF" + Str( nCount, 6, 0 )
 
       cIdTar := id_tar
       nBPdv := i_b_pdv
@@ -172,7 +175,7 @@ STATIC FUNCTION f_iz_kuf_kif()
          _u_pdv_41 += nPdv
          nUkUlPdv += nPdv
 
-      CASE t_u_uvoz( cIdTar )
+      CASE epdv_tarifa_nabavke_uvoz( cIdTar )
          _u_uvoz += nBPdv
          _u_pdv_uv += nPdv
          nUkUlPdv += nPdv
@@ -182,7 +185,7 @@ STATIC FUNCTION f_iz_kuf_kif()
          _u_pdv_43 += nPdv
          nUkUlPdv += nPdv
 
-      CASE t_u_polj_0( cIdTar )
+      CASE epdv_tarifa_nabavke_od_poljoprivrednika( cIdTar )
          _u_nab_23 += nBPdv
 
       CASE t_u_n_poup( cIdTar )
@@ -210,12 +213,11 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    Beep( 1 )
 
-   O_KIF
+   //cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
+   find_epdv_kif_za_period( dDatOd, dDatDo, hParams, "br_dok" )
+   // select_o_epdv_kif()
+   //SET FILTER TO &cFilter
 
-   cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
-
-   O_KIF
-   SET FILTER TO &cFilter
    GO TOP
 
    IF !Empty( gUlPdvKp() )
@@ -229,12 +231,11 @@ STATIC FUNCTION f_iz_kuf_kif()
       ENDCASE
    ENDIF
 
-   DO WHILE !Eof()
+   DO WHILE !Eof() // kif
 
       ++nCount
 
-      @ m_x + 2, m_y + 2 SAY "KIF" + Str( nCount, 6, 0 )
-
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "KIF" + Str( nCount, 6, 0 )
 
       cIdTar := id_tar
       nBPdv := i_b_pdv
@@ -245,24 +246,23 @@ STATIC FUNCTION f_iz_kuf_kif()
       CASE t_i_opor( cIdTar )
          _i_opor += nBPdv
 
-      CASE t_i_izvoz( cIdTar )
+      CASE epdv_tarifa_isporuke_izvoz( cIdTar )
          _i_izvoz += nBPdv
-      CASE t_i_neop( cIdTar )
+      CASE epdv_tarifa_isporuke_neoporezivo_osim_izvoza( cIdTar )
          _i_neop += nBPdv
 
       ENDCASE
 
 
-      IF Round( g_pdv_stopa( cIdTar ), 2 ) > 0
+      IF Round( get_stopa_pdv_za_tarifu( cIdTar ), 2 ) > 0
 
          nUkIzPdv += nPdv
 
-         IF partner_is_pdv_obveznik( id_part )
-
+         IF partner_is_pdv_obveznik( kif->id_part )
             _i_pdv_r += nPdv
 
          ELSE
-            cRejon := part_rejon( id_part )
+            cRejon := part_rejon( kif->id_part )
 
             DO CASE
             CASE cRejon == "2"
@@ -283,34 +283,27 @@ STATIC FUNCTION f_iz_kuf_kif()
       ENDIF
 
       SELECT KIF
-
       SKIP
 
    ENDDO
 
    SELECT r_pdv
-
    read_pdv_pars( @_pot_datum, @_pot_mjesto, @_pot_ob, @_pdv_povrat )
 
    _pot_datum := Date()
 
    Box(, 8, 65 )
-   @ m_x + 1, m_y + 2 SAY "Prenos PDV-a iz predhodnog perioda (KM) ?" GET _u_pdv_pp ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prenos PDV-a iz predhodnog perioda (KM) ?" GET _u_pdv_pp ;
       PICT PIC_IZN()
 
-   @ m_x + 3, m_y + 2 SAY "- Potpis -----------------"
-   @ m_x + 4, m_y + 2 SAY "Datum :" GET _pot_datum ;
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "- Potpis -----------------"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Datum :" GET _pot_datum ;
       VALID {|| _pot_mjesto := PadR( _po_mjesto, Len( _pot_mjesto ) ), .T. }
-   @ m_x + 5, m_y + 2 SAY "Mjesto :" GET _pot_mjesto  ;
-      VALID {|| _pot_datum := Date(), .T. }
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Mjesto :" GET _pot_mjesto  VALID {|| _pot_datum := Date(), .T. }
 
-   @ m_x + 6, m_y + 2 SAY "Ime i prezime ? " GET _pot_ob ;
-      PICT "@S30" ;
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Ime i prezime ? " GET _pot_ob  PICT "@S30"
 
-
-      @ m_x + 8, m_y + 2 SAY "Zahtjev za povrat ako je preplata (D/N) ? " GET _pdv_povrat ;
-      VALID _pdv_povrat $ "DN" ;
-      PICT "@!"
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Zahtjev za povrat ako je preplata (D/N) ? " GET _pdv_povrat VALID _pdv_povrat $ "DN" PICT "@!"
 
    READ
 
@@ -330,7 +323,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    _i_pdv_uk := nUkIzPdv
 
-   zaok_p_pdv()
+   epdv_zaokruzenje_pdv_prijava()
 
    nPdvSaldo := _i_pdv_uk -  _u_pdv_uk
    _pdv_uplati := nPdvSaldo
@@ -347,9 +340,11 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
-STATIC FUNCTION zaok_p_pdv()
+
+
+STATIC FUNCTION epdv_zaokruzenje_pdv_prijava()
 
    _u_nab_21 := Round( _u_nab_21, ZAO_PDV() )
    _u_uvoz := Round( _u_uvoz, ZAO_PDV() )
@@ -376,28 +371,28 @@ STATIC FUNCTION zaok_p_pdv()
    _u_pdv_uk := Round( _u_pdv_uk, ZAO_PDV() )
    _i_pdv_uk := Round( _i_pdv_uk, ZAO_PDV() )
 
-   RETURN
+   RETURN .T.
 
-STATIC FUNCTION f_iz_pdv()
 
-   SELECT F_PDV
+STATIC FUNCTION epdv_prijava_fill_iz_pdv_tabele()
 
-   IF !Used()
-      O_PDV
-   ENDIF
+   //select_o_epdv_pdv()
 
-   SET ORDER TO TAG "period"
 
-   SEEK DToS( dDatOd ) + DToS( dDatDo )
+   //SET ORDER TO TAG "period"
 
-   IF !Found()
+   //SEEK DToS( dDatOd ) + DToS( dDatDo )
+
+
+  // IF !Found()
+  IF !find_epdv_pdv_za_period( dDatOd, dDatDo )
       Beep( 2 )
       MsgBeep( "Ne postoji pohranjen PDV obračun #za period " + DToC( dDatOd ) + "-" + DToC( dDatDo ) )
       USE
       RETURN .F.
    ENDIF
 
-   O_R_PDV
+   select_o_epdv_r_pdv()
    APPEND BLANK
 
    SELECT ( F_PDV )
@@ -411,7 +406,7 @@ STATIC FUNCTION f_iz_pdv()
    SELECT ( F_PDV )
    USE
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -732,16 +727,21 @@ STATIC FUNCTION show_rpt()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
+
+
 
 STATIC FUNCTION show_raz_1()
 
    ?
    ?
 
-   RETURN
+   RETURN .T.
+
 
 STATIC FUNCTION r_zagl()
+
+   LOCAL i
 
    P_COND
    B_ON
@@ -760,11 +760,11 @@ STATIC FUNCTION r_zagl()
          IF Left( aZagl[ i, nCol ], 1 ) = "#"
 
             nMergirano := Val( SubStr( aZagl[ i, nCol ], 2, 1 ) )
-            cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) -2 )
+            cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) - 2 )
             nMrgWidth := 0
             FOR nMrg := 1 TO nMergirano
                nMrgWidth += aZaglLen[ nCol + nMrg - 1 ]
-               nMrgWidth ++
+               nMrgWidth++
             NEXT
             ?? PadC( cPom, nMrgWidth )
             ?? " "
@@ -776,7 +776,8 @@ STATIC FUNCTION r_zagl()
       NEXT
    NEXT
 
-   RETURN
+   RETURN .T.
+
 
 STATIC FUNCTION rpt_lm()
    RETURN Space( RPT_LM )

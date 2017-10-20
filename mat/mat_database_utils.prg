@@ -54,29 +54,29 @@ FUNCTION mat_povrat_naloga( lStorno )
 
    Box( "", iif( lStorno, 3, 1 ), iif( lStorno, 65, 35 ) )
 
-   @ m_x + 1, m_y + 2 SAY "Nalog:"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Nalog:"
 
    IF gNW == "D"
-      @ m_x + 1, Col() + 1 SAY cIdFirma PICT "@!"
+      @ box_x_koord() + 1, Col() + 1 SAY cIdFirma PICT "@!"
    ELSE
-      @ m_x + 1, Col() + 1 GET cIdFirma PICT "@!"
+      @ box_x_koord() + 1, Col() + 1 GET cIdFirma PICT "@!"
    ENDIF
 
-   @ m_x + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
-   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID !Empty( cBrNal )
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET cBrNal VALID !Empty( cBrNal )
 
    IF lStorno
 
-      @ m_x + 3, m_y + 2 SAY "Broj novog naloga (naloga storna):"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Broj novog naloga (naloga storna):"
 
       IF gNW == "D"
-         @ m_x + 3, Col() + 1 SAY cIdFirma2
+         @ box_x_koord() + 3, Col() + 1 SAY cIdFirma2
       ELSE
-         @ m_x + 3, Col() + 1 GET cIdFirma2
+         @ box_x_koord() + 3, Col() + 1 GET cIdFirma2
       ENDIF
 
-      @ m_x + 3, Col() + 1 SAY "-" GET cIdVN2 PICT "@!"
-      @ m_x + 3, Col() + 1 SAY "-" GET cBrNal2
+      @ box_x_koord() + 3, Col() + 1 SAY "-" GET cIdVN2 PICT "@!"
+      @ box_x_koord() + 3, Col() + 1 SAY "-" GET cBrNal2
 
    ENDIF
 
@@ -239,9 +239,9 @@ FUNCTION mat_prenos_podataka()
    Box(, 5, 60 )
    nMjesta := 3
    dDatDo := Date()
-   @ m_x + 2, m_y + 2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
-   @ m_x + 3, m_y + 2 SAY "Prenositi stavke sa saldom 0 (D/N)" GET _nule VALID _nule $ "DN" PICT "!@"
-   @ m_x + 4, m_y + 2 SAY "Prenos raditi po partneru (D/N)" GET _po_partneru VALID _po_partneru $ "DN" PICT "!@"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Prenositi stavke sa saldom 0 (D/N)" GET _nule VALID _nule $ "DN" PICT "!@"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prenos raditi po partneru (D/N)" GET _po_partneru VALID _po_partneru $ "DN" PICT "!@"
 
    READ
    ESC_BCR

@@ -3,7 +3,7 @@
 MEMVAR GetList
 
 
-FUNCTION fakt_getlist_rj_read( nX, nY, cIdFirma, lPraznoOk )
+FUNCTION fakt_getlist_rj_read( nX, nY, GetList, cIdFirma, lPraznoOk )
 
    hb_default( @lPraznoOk, .T. )
 

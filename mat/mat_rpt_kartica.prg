@@ -55,13 +55,13 @@ FUNCTION KSintKont()
    qqKonto := Space( 100 )
    Box( "KSK", 4, 60, .F. )
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "SINTETICKA KARTICA"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "SINTETICKA KARTICA"
       IF gNW $ "DR"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 4, m_y + 2 SAY KonSeks( "KONTO" ) + ":  " GET qqKonto PICTURE "@S50"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY KonSeks( "KONTO" ) + ":  " GET qqKonto PICTURE "@S50"
       READ;  ESC_BCR
       aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" )
       IF aUsl1 <> NIL
@@ -233,14 +233,14 @@ FUNCTION KAnKPoj()
    Box( "KANP", 3, 70, .F. )
 
    DO WHILE .T.
-      @ m_x + 1, m_y + 6 SAY "ANALITICKA KARTICA"
+      @ box_x_koord() + 1, box_y_koord() + 6 SAY "ANALITICKA KARTICA"
       IF gNW $ "DR"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
          cIdFirma := self_organizacija_id()
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 3, m_y + 2 SAY KonSeks( "KONTO  " ) + "  : " GET qqKonto  PICTURE "@S50"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY KonSeks( "KONTO  " ) + "  : " GET qqKonto  PICTURE "@S50"
       READ;  ESC_BCR
 
       aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" )
@@ -370,12 +370,12 @@ FUNCTION KAnKKonto()
    O_MAT_ANAL
 
    Box( "kankko", 2, 60, .F. )
-   @ m_x + 1, m_y + 2 SAY "ANALITICKA KARTICA - PO " + KonSeks( "KONT" ) + "IMA"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "ANALITICKA KARTICA - PO " + KonSeks( "KONT" ) + "IMA"
    IF gNW $ "DR"
-      @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       cIdFirma := self_organizacija_id()
    ELSE
-      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    READ;  ESC_BCR
    BoxC()
@@ -514,11 +514,11 @@ FUNCTION KSuban()
    LOCAL _dat_od := CToD( "" )
    LOCAL _dat_do := CToD( "" )
 
-   o_partner()
-   o_konto()
+   //o_partner()
+   //o_konto()
    o_sifk()
    o_sifv()
-   o_roba()
+   //o_roba()
 
    Box( "", 10, 70, .F. )
 
@@ -538,44 +538,44 @@ FUNCTION KSuban()
       _id_firma := self_organizacija_id()
    ENDIF
 
-   @ m_x + 1, m_y + 2 SAY "SUBANALITICKA KARTICA"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "SUBANALITICKA KARTICA"
 
-   @ m_x + 2, m_y + 2 SAY "Brza kartica (D/N)" GET _brza_k PICT "@!" VALID _brza_k $ "DN"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Brza kartica (D/N)" GET _brza_k PICT "@!" VALID _brza_k $ "DN"
 
    READ
 
    DO WHILE .T.
 
       IF gNW $ "DR"
-         @ m_x + 3, m_y + 2 SAY "Firma "
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET _id_firma ;
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY "Firma: " GET _id_firma ;
             VALID {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
       ENDIF
 
       IF _brza_k == "D"
          _konto := PadR( _konto, 7 )
          cIdRoba := PadR( cIdRoba, 10 )
-         @ m_x + 4, m_y + 2 SAY KonSeks( "Konto  " ) + "        " GET _konto ;
+         @ box_x_koord() + 4, box_y_koord() + 2 SAY KonSeks( "Konto  " ) + "        " GET _konto ;
             PICT "@!" VALID P_Konto( @_konto )
-         @ m_x + 5, m_y + 2 SAY "Sifra artikla  " GET cIdRoba ;
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Sifra artikla  " GET cIdRoba ;
             PICT "@!" VALID P_Roba( @cIdRoba )
       ELSE
          _konto := PadR( _konto, 60 )
          _partner := PadR( _partner, 60 )
          cIdRoba := PadR( cIdRoba, 80 )
-         @ m_x + 4, m_y + 2 SAY KonSeks( "Konto  " ) + "        " GET _konto ;
+         @ box_x_koord() + 4, box_y_koord() + 2 SAY KonSeks( "Konto  " ) + "        " GET _konto ;
             PICT "@S50"
-         @ m_x + 5, m_y + 2 SAY "Partner        " GET _partner ;
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Partner        " GET _partner ;
             PICT "@S50"
-         @ m_x + 6, m_y + 2 SAY "Sifra artikla  " GET cIdRoba ;
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Sifra artikla  " GET cIdRoba ;
             PICT "@S50"
       ENDIF
 
-      @ m_x + 8, m_y + 2 SAY "BEZ/SA predhodnim prometom (1/2):" GET _preth_p VALID _preth_p $ "12"
-      @ m_x + 10, m_y + 2 SAY "Datum dokumenta od:" GET _dat_od
-      @ m_x + 10, Col() + 2 SAY "do" GET _dat_do VALID _dat_do >= _dat_do
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "BEZ/SA predhodnim prometom (1/2):" GET _preth_p VALID _preth_p $ "12"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Datum dokumenta od:" GET _dat_od
+      @ box_x_koord() + 10, Col() + 2 SAY "do" GET _dat_do VALID _dat_do >= _dat_do
 
       READ
       ESC_BCR
@@ -595,16 +595,15 @@ FUNCTION KSuban()
 
    BoxC()
 
-   IF Params2()
-      WPar( "c1", _brza_k )
-      WPar( "c2", PadR( _id_firma, 2 ) )
-      WPar( "c3", _konto )
-      WPar( "c4", _partner )
-      WPar( "c5", cIdRoba )
-      WPar( "c6", _preth_p )
-      WPar( "d1", _dat_od )
-      WPar( "d2", _dat_do )
-   ENDIF
+
+   WPar( "c1", _brza_k )
+   WPar( "c2", PadR( _id_firma, 2 ) )
+   WPar( "c3", _konto )
+   WPar( "c4", _partner )
+   WPar( "c5", cIdRoba )
+   WPar( "c6", _preth_p )
+   WPar( "d1", _dat_od )
+   WPar( "d2", _dat_do )
    SELECT params
    USE
 

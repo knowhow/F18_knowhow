@@ -12,23 +12,23 @@
 #include "f18.ch"
 
 
-
-FUNCTION gen_kuf()
+FUNCTION epdv_gen_kuf()
 
    LOCAL dDatOd
    LOCAL dDatDo
    LOCAL cSezona := Space( 4 )
+   LOCAL GetList := {}
 
    dDatOd := Date()
    dDatDo := Date()
 
    Box(, 6, 40 )
-   @ m_x + 1, m_y + 2 SAY "Generacija KUF"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Generacija KUF"
 
-   @ m_x + 3, m_y + 2 SAY "Datum do " GET dDatOd
-   @ m_x + 4, m_y + 2 SAY "      do " GET dDatDo
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Datum do " GET dDatOd
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "      do " GET dDatDo
 
-   @ m_x + 6, m_y + 2 SAY "sezona" GET cSezona
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "sezona" GET cSezona
    READ
    BoxC()
 
@@ -37,17 +37,13 @@ FUNCTION gen_kuf()
    ENDIF
 
 
-   // ima li nesto u kif pripremi ?
-   SELECT F_P_KUF
-   IF !Used()
-      O_P_KUF
-   ENDIF
+   select_o_epdv_p_kuf()
 
    IF RECCOUNT2() <> 0
       MsgBeep( "KUF Priprema nije prazna !" )
       IF Pitanje(, "Isprazniti KUF pripremu ?", "N" ) == "D"
          SELECT p_kuf
-         ZAP
+         my_dbf_zap()
       ENDIF
    ENDIF
 
@@ -55,7 +51,7 @@ FUNCTION gen_kuf()
    Box(, 5, 60 )
 
    kalk_kuf( dDatOd, dDatDo, cSezona )
-   fin_kuf( dDatOd, dDatDo, cSezona )
+   epdv_generacija_fin_kuf( dDatOd, dDatDo, cSezona )
 
    epdv_renumeracija_rbr( "P_KUF", .F. )
    BoxC()
@@ -64,43 +60,45 @@ FUNCTION gen_kuf()
 
 
 
-FUNCTION gen_kif()
+FUNCTION epdv_gen_kif()
 
    LOCAL dDatOd
    LOCAL dDatDo
    LOCAL cSezona
+   LOCAL cIdRj := self_organizacija_id()
+   LOCAL GetList := {}
 
    dDatOd := Date()
    dDatDo := Date()
    cSezona := Space( 4 )
 
-   Box(, 3, 40 )
-   @ m_x + 1, m_y + 2 SAY "Datum do " GET dDatOd
-   @ m_x + 2, m_y + 2 SAY "      do " GET dDatDo
-   @ m_x + 3, m_y + 2 SAY "sezona" GET cSezona
+   Box(, 4, 40 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "FAKT RJ " GET cIdRj
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datum od: " GET dDatOd
+   @ box_x_koord() + 2, Col() + 2 SAY "do:" GET dDatDo
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "sezona" GET cSezona
 
    READ
+
    BoxC()
 
    IF LastKey() == K_ESC
       RETURN .F.
    ENDIF
 
-   SELECT F_P_KIF
-   IF !Used()
-      O_P_KIF
-   ENDIF
+
+   select_o_epdv_p_kif()
 
    IF RECCOUNT2() <> 0
       MsgBeep( "KIF Priprema nije prazna !" )
       IF Pitanje(, "Isprazniti KIF pripremu ?", "N" ) == "D"
          SELECT p_kif
-         ZAP
+         my_dbf_zap()
       ENDIF
    ENDIF
 
    Box(, 5, 60 )
-   fakt_kif( dDatOd, dDatDo, cSezona )
+   epdv_fakt_kif( cIdRj, dDatOd, dDatDo, cSezona )
 
    kalk_kif( dDatOd, dDatDo, cSezona )
 

@@ -10,12 +10,15 @@
  */
 
 #include "f18.ch"
-
+#include "f18_color.ch"
 
 
 FUNCTION editor( cFile )
 
-   LOCAL oEditor, cScr
+   LOCAL oEditor, cScr, cColor
+
+   info_bar( "edit", "<ESC> izlaz iz pregleda dokumenta" )
+   cColor := SetColor( F18_COLOR_NORMAL_BW )
 
    SAVE SCREEN TO cScr
    oEditor := HBEditor():New( "editor", 1, 1, f18_max_rows() -1, f18_max_cols() -1, .F., 120, ;
@@ -25,5 +28,8 @@ FUNCTION editor( cFile )
    oEditor:Display()
    oEditor:edit()
    RESTORE SCREEN FROM cScr
+
+   SetColor( cColor )
+   info_bar( "edit", "")
 
    RETURN cFile

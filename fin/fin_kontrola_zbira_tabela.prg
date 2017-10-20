@@ -47,27 +47,27 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
    _line := Replicate( "=", 10 ) + " " + Replicate( "=", 16 ) + " " + ;
       Replicate( "=", 16 ) + " " + Replicate( "=", 16 ) + " " + Replicate( "=", 16 )
 
-   @ m_x + 1, m_y + 11 SAY "|" + PadC( "NALOZI", 16 ) + ;
+   @ box_x_koord() + 1, box_y_koord() + 11 SAY "|" + PadC( "NALOZI", 16 ) + ;
       "|" + PadC( "SINTETIKA", 16 ) + ;
       "|" + PadC( "ANALITIKA", 16 ) + ;
       "|" + PadC( "SUBANALITIKA", 16 )
 
-   @ m_x + 2, m_y + 1 SAY _line
+   @ box_x_koord() + 2, box_y_koord() + 1 SAY _line
 
-   @ m_x + 3, m_y + 1 SAY "duguje " + ValDomaca()
-   @ m_x + 4, m_y + 1 SAY "potraz." + ValDomaca()
-   @ m_x + 5, m_y + 1 SAY "saldo  " + ValDomaca()
-   @ m_x + 7, m_y + 1 SAY "duguje " + ValPomocna()
-   @ m_x + 8, m_y + 1 SAY "potraz." + ValPomocna()
-   @ m_x + 9, m_y + 1 SAY "saldo  " + ValPomocna()
+   @ box_x_koord() + 3, box_y_koord() + 1 SAY "duguje " + ValDomaca()
+   @ box_x_koord() + 4, box_y_koord() + 1 SAY "potraz." + ValDomaca()
+   @ box_x_koord() + 5, box_y_koord() + 1 SAY "saldo  " + ValDomaca()
+   @ box_x_koord() + 7, box_y_koord() + 1 SAY "duguje " + ValPomocna()
+   @ box_x_koord() + 8, box_y_koord() + 1 SAY "potraz." + ValPomocna()
+   @ box_x_koord() + 9, box_y_koord() + 1 SAY "saldo  " + ValPomocna()
 
-   @ m_x + 10, m_y + 1 SAY _line
+   @ box_x_koord() + 10, box_y_koord() + 1 SAY _line
 
-   @ m_x + 11, m_y + 1 SAY "<ANYKEY> - kontrola"
+   @ box_x_koord() + 11, box_y_koord() + 1 SAY "<ANYKEY> - kontrola"
 
    FOR i := 11 TO 65 STEP 17
       FOR j := 3 TO 9
-         @ m_x + j, m_y + i SAY "|"
+         @ box_x_koord() + j, box_y_koord() + i SAY "|"
       NEXT
    NEXT
 
@@ -82,23 +82,23 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
       BoxC()
       CLOSERET
    ENDIF
-   @ m_x + 3, m_y + 12 SAY duguje PICTURE picBHD
-   @ m_x + 4, m_y + 12 SAY potrazuje PICTURE picBHD
-   @ m_x + 5, m_y + 12 SAY duguje - potrazuje PICTURE picBHD
-   @ m_x + 7, m_y + 12 SAY duguje2 PICTURE picDEM
-   @ m_x + 8, m_y + 12 SAY potrazuje2 PICTURE picDEM
-   @ m_x + 9, m_y + 12 SAY duguje2 - potrazuje2 PICTURE picDEM
+   @ box_x_koord() + 3, box_y_koord() + 12 SAY duguje PICTURE picBHD
+   @ box_x_koord() + 4, box_y_koord() + 12 SAY potrazuje PICTURE picBHD
+   @ box_x_koord() + 5, box_y_koord() + 12 SAY duguje - potrazuje PICTURE picBHD
+   @ box_x_koord() + 7, box_y_koord() + 12 SAY duguje2 PICTURE picDEM
+   @ box_x_koord() + 8, box_y_koord() + 12 SAY potrazuje2 PICTURE picDEM
+   @ box_x_koord() + 9, box_y_koord() + 12 SAY duguje2 - potrazuje2 PICTURE picDEM
 
 
    fin_kontrola_zbira_sintetika()
 
    ESC_BCR
-   @ m_x + 3, m_y + 29 SAY duguje PICTURE picBHD
-   @ m_x + 4, m_y + 29 SAY potrazuje PICTURE picBHD
-   @ m_x + 5, m_y + 29 SAY duguje - potrazuje PICTURE picBHD
-   @ m_x + 7, m_y + 29 SAY duguje2 PICTURE picDEM
-   @ m_x + 8, m_y + 29 SAY potrazuje2 PICTURE picDEM
-   @ m_x + 9, m_y + 29 SAY duguje2 - potrazuje2 PICTURE picDEM
+   @ box_x_koord() + 3, box_y_koord() + 29 SAY duguje PICTURE picBHD
+   @ box_x_koord() + 4, box_y_koord() + 29 SAY potrazuje PICTURE picBHD
+   @ box_x_koord() + 5, box_y_koord() + 29 SAY duguje - potrazuje PICTURE picBHD
+   @ box_x_koord() + 7, box_y_koord() + 29 SAY duguje2 PICTURE picDEM
+   @ box_x_koord() + 8, box_y_koord() + 29 SAY potrazuje2 PICTURE picDEM
+   @ box_x_koord() + 9, box_y_koord() + 29 SAY duguje2 - potrazuje2 PICTURE picDEM
 
 
    fin_kontrola_zbira_analitika()
@@ -106,12 +106,12 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
    ESC_BCR
 
 
-   @ m_x + 3, m_y + 46 SAY duguje PICTURE picBHD
-   @ m_x + 4, m_y + 46 SAY potrazuje PICTURE picBHD
-   @ m_x + 5, m_y + 46 SAY duguje - potrazuje PICTURE picBHD
-   @ m_x + 7, m_y + 46 SAY duguje2 PICTURE picDEM
-   @ m_x + 8, m_y + 46 SAY potrazuje2 PICTURE picDEM
-   @ m_x + 9, m_y + 46 SAY duguje2 - potrazuje2 PICTURE picDEM
+   @ box_x_koord() + 3, box_y_koord() + 46 SAY duguje PICTURE picBHD
+   @ box_x_koord() + 4, box_y_koord() + 46 SAY potrazuje PICTURE picBHD
+   @ box_x_koord() + 5, box_y_koord() + 46 SAY duguje - potrazuje PICTURE picBHD
+   @ box_x_koord() + 7, box_y_koord() + 46 SAY duguje2 PICTURE picDEM
+   @ box_x_koord() + 8, box_y_koord() + 46 SAY potrazuje2 PICTURE picDEM
+   @ box_x_koord() + 9, box_y_koord() + 46 SAY duguje2 - potrazuje2 PICTURE picDEM
 
 
 
@@ -119,12 +119,12 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
 
    // ESC_BCR
 
-   @ m_x + 3, m_y + 63 SAY duguje PICTURE picBHD
-   @ m_x + 4, m_y + 63 SAY potrazuje PICTURE picBHD
-   @ m_x + 5, m_y + 63 SAY duguje - potrazuje PICTURE picBHD
-   @ m_x + 7, m_y + 63 SAY duguje2 PICTURE picDEM
-   @ m_x + 8, m_y + 63 SAY potrazuje2 PICTURE picDEM
-   @ m_x + 9, m_y + 63 SAY duguje2 - potrazuje2 PICTURE picDEM
+   @ box_x_koord() + 3, box_y_koord() + 63 SAY duguje PICTURE picBHD
+   @ box_x_koord() + 4, box_y_koord() + 63 SAY potrazuje PICTURE picBHD
+   @ box_x_koord() + 5, box_y_koord() + 63 SAY duguje - potrazuje PICTURE picBHD
+   @ box_x_koord() + 7, box_y_koord() + 63 SAY duguje2 PICTURE picDEM
+   @ box_x_koord() + 8, box_y_koord() + 63 SAY potrazuje2 PICTURE picDEM
+   @ box_x_koord() + 9, box_y_koord() + 63 SAY duguje2 - potrazuje2 PICTURE picDEM
 
    // WHILE Inkey( 0.1 ) != K_ESC
    // END
@@ -136,8 +136,8 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
       dDatOd := CToD( "01.01." + Str( tekuca_sezona(), 4, 0 ) )
       dDatDo := CToD( "31.12." + Str( tekuca_sezona(), 4, 0 ) )
       Box(, 1, 45 )
-      @ 1 + m_x, 2 + m_y SAY "Kontrola za period: " GET dDatOd
-      @ 1 + m_x, Col() + 2 SAY "-" GET dDatDo
+      @ 1 + box_x_koord(), 2 + box_y_koord() SAY "Kontrola za period: " GET dDatOd
+      @ 1 + box_x_koord(), Col() + 2 SAY "-" GET dDatDo
       READ
       BoxC()
 

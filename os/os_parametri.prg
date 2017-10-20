@@ -38,8 +38,8 @@ FUNCTION os_set_datum_obrade()
 
    Box(, 4, 50 )
    SET CURSOR ON
-   @ m_x + 2, m_y + 2 SAY "Obrada (O) OS / (S) SII" GET _os_sii VALID _os_sii $ "OS" PICT "@!"
-   @ m_x + 3, m_y + 2 SAY "Datum obrade  " GET _dat_obr
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Obrada (O) OS / (S) SII" GET _os_sii VALID _os_sii $ "OS" PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Datum obrade  " GET _dat_obr
    READ
    BoxC()
 
@@ -125,23 +125,23 @@ FUNCTION _os_sii_parametri()
 
    SET CURSOR ON
 
-   @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET _os_rj
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Radna jedinica" GET _os_rj
 
-   @ m_x + 4, m_y + 2 SAY "Datum obrade  " GET _dat_obr
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Datum obrade  " GET _dat_obr
 
-   @ m_x + 5, m_y + 2 SAY "Prikaz iznosa " GET _pic_iznos
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz iznosa " GET _pic_iznos
 
-   @ m_x + 7, m_y + 2 SAY "Inv. broj je unikatan(jedinstven) D/N" GET _id_unikat VALID _id_unikat $ "DN" PICT "@!"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Inv. broj je unikatan(jedinstven) D/N" GET _id_unikat VALID _id_unikat $ "DN" PICT "@!"
 
-   @ m_x + 9, m_y + 2 SAY "Izvjestaji mogu i u drugoj valuti ? (D/N)" GET _druga_valuta VALID _druga_valuta $ "DN" PICT "@!"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Izvjestaji mogu i u drugoj valuti ? (D/N)" GET _druga_valuta VALID _druga_valuta $ "DN" PICT "@!"
 
-   @ m_x + 11, m_y + 2 SAY "Obracun pocinje od (1) odmah / (2) od 1.u narednom mjesecu" GET _metoda VALID _metoda $ "12"
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Obracun pocinje od (1) odmah / (2) od 1.u narednom mjesecu" GET _metoda VALID _metoda $ "12"
 
-   @ m_x + 15, m_y + 2 SAY "Varijanta 1 - sredstvo rashodovano npr 10.05, "
-   @ m_x + 16, m_y + 2 SAY "              obracun se NE vrsi za 05 mjesec"
-   @ m_x + 17, m_y + 2 SAY "Varijanta 2 - obracun se vrsi za 05. mjesec  " GET _varijanta  VALID _varijanta $ "12" PICT "@!"
-   @ m_x + 19, m_y + 2 SAY "Obracun pocinje od datuma razlicitog od 01.01. tekuce godine (D/N)" GET _obr_pocetak VALID _obr_pocetak $ "DN" PICT "@!"
-   @ m_x + 20, m_y + 2 SAY "Obracun pocinje od datuma" GET _obr_pocetak_datum WHEN _obr_pocetak == "D"
+   @ box_x_koord() + 15, box_y_koord() + 2 SAY "Varijanta 1 - sredstvo rashodovano npr 10.05, "
+   @ box_x_koord() + 16, box_y_koord() + 2 SAY "              obracun se NE vrsi za 05 mjesec"
+   @ box_x_koord() + 17, box_y_koord() + 2 SAY "Varijanta 2 - obracun se vrsi za 05. mjesec  " GET _varijanta  VALID _varijanta $ "12" PICT "@!"
+   @ box_x_koord() + 19, box_y_koord() + 2 SAY "Obracun pocinje od datuma razlicitog od 01.01. tekuce godine (D/N)" GET _obr_pocetak VALID _obr_pocetak $ "DN" PICT "@!"
+   @ box_x_koord() + 20, box_y_koord() + 2 SAY "Obracun pocinje od datuma" GET _obr_pocetak_datum WHEN _obr_pocetak == "D"
 
    READ
 

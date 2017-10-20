@@ -18,8 +18,8 @@ FUNCTION realizacija_odjeljenja()
 
    LOCAL   nSir := iif ( gVrstaRS == "S", 80, 40 )
    PRIVATE cIdOdj := Space( 2 ), cPrikRobe := "D"
-   PRIVATE cSmjena := Space( 1 ), cIdPos := gIdPos //, cIdDio := gIdDio
-   PRIVATE dDat0 := gDatum, dDat1 := gDatum, aNiz, cRoba := Space ( 60 )
+   PRIVATE cSmjena := Space( 1 ), cIdPos := gIdPos // , cIdDio := gIdDio
+   PRIVATE dDatum0 := gDatum, dDatum1 := gDatum, aNiz, cRoba := Space ( 60 )
 
    aDbf := {}
    AAdd ( aDbf, { "IdOdj", "C",  2, 0 } )
@@ -48,17 +48,17 @@ FUNCTION realizacija_odjeljenja()
    aNiz := {}
    cIdPos := gIdPos
    IF gVrstaRS <> "K"
-      AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.P_Kase(@cIdPos)", "@!", } )
+      AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.p_pos_kase(@cIdPos)", "@!", } )
    ELSE
       cIdPos := gIdPos
-      //cIdDio := gIdDio
+      // cIdDio := gIdDio
    ENDIF
    IF gvodiodj == "D"
       AAdd ( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "empty(cIdOdj) .or. P_Odj(@cIdOdj)", "@!", } )
    ENDIF
    AAdd ( aNiz, { "Roba (prazno-sve)", "cRoba",, "@!S30", } )
-   AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDat0",,, } )
-   AAdd ( aNiz, { "                   do datuma", "dDat1",,, } )
+   AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
+   AAdd ( aNiz, { "                   do datuma", "dDatum1",,, } )
    AAdd( aNiz,  { "Prikazi robe D/N",            "cPrikRobe", "cPrikRobe$'DN'", "@!", } )
    DO WHILE .T.
       IF !VarEdit( aNiz, 10, 5, 20, 74, ;
@@ -67,7 +67,7 @@ FUNCTION realizacija_odjeljenja()
          CLOSERET
       ENDIF
       aUsl1 := Parsiraj( cRoba, "idroba" )
-      IF aUsl1 <> NIL .AND. dDat0 <= dDat1
+      IF aUsl1 <> NIL .AND. dDatum0 <= dDatum1
          EXIT
       ELSEIF aUsl1 == NIL
          Msg( "Kriterij za robu nije korektno postavljen!" )
@@ -79,7 +79,7 @@ FUNCTION realizacija_odjeljenja()
    // pravljenje izvjestaja
    START PRINT CRET
 
-   ZagFirma()
+   // ZagFirma()
 
    P_10CPI
    ?
@@ -90,14 +90,14 @@ FUNCTION realizacija_odjeljenja()
    IF gvodiodj == "D"
       ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", find_pos_odj_naziv( cIdOdj ) )
    ENDIF
-   ? "PERIOD     : " + FormDat1( dDat0 ) + " - " + FormDat1( dDat1 )
+   ? "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
 
-   SELECT pos_doks
-   SET ORDER TO TAG "2"
+   // SELECT pos_doks
+   // SET ORDER TO TAG "2"
    // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
 
-   OdjIzvuci ( VD_PRR )
-   OdjIzvuci ( VD_RN )
+   pos_odj_izvuci ( VD_PRR )
+   pos_odj_izvuci ( POS_VD_RACUN )
 
    // stampa izvjestaja
    SELECT POM
@@ -116,8 +116,8 @@ FUNCTION realizacija_odjeljenja()
    nTotPos3 := 0
 
    DO WHILE !Eof()
-      SELECT ODJ
-      HSEEK POM->IdOdj
+
+      select_o_pos_odj( POM->IdOdj )
       ?
       ? POM->IdOdj, ODJ->Naz
       ? REPL ( "-", 40 )
@@ -128,13 +128,13 @@ FUNCTION realizacija_odjeljenja()
       nTotOdj3 := 0
       DO WHILE !Eof() .AND. POM->IdOdj == _IdOdj
          _IdDio := POM->IdDio
-         IF ! Empty ( _IdDio )
-            SELECT DIO
-            HSEEK _IdDio
-            ? Space ( 5 ) + DIO->Naz
-            ? Space ( 5 ) + REPL ( "-", 35 )
-            SELECT POM
-         ENDIF
+         // IF ! Empty ( _IdDio )
+         // SELECT DIO
+         // HSEEK _IdDio
+         // ? Space ( 5 ) + DIO->Naz
+         // ? Space ( 5 ) + REPL ( "-", 35 )
+         // SELECT POM
+         // ENDIF
          nTotDio := 0
          nTotDio2 := 0
          nTotDio3 := 0
@@ -179,12 +179,11 @@ FUNCTION realizacija_odjeljenja()
       nTotal2 += nTotOdj2
       nTotal3 += nTotOdj3
    END
+
    IF Empty ( cIdOdj )
       ? REPL ( "=", 40 )
       ? PadC ( "SVA ODJELJENJA", 20 ) + Str ( nTotal, 20, 2 )
-      IF nTotal2 <> 0
-         ? PadL ( "PARTICIPACIJA:", 20 ), Str ( nTotal2, 20, 2 )
-      ENDIF
+
       IF nTotal3 <> 0
          ? PadL ( NenapPop(), 20 ), Str ( nTotal3, 20, 2 )
          ? PadL ( "UKUPNO NAPLATA:", 20 ), Str ( nTotal - nTotal3 + nTotal2, 20, 2 )
@@ -201,8 +200,7 @@ FUNCTION realizacija_odjeljenja()
       GO TOP
       DO WHILE !Eof()
          _IdOdj := POM->IdOdj
-         SELECT ODJ
-         HSEEK _IdOdj
+         select_o_pos_odj( _IdOdj )
          ? ODJ->Naz
          ? REPL ( "-", 40 )
          SELECT POM
@@ -211,12 +209,12 @@ FUNCTION realizacija_odjeljenja()
          nTotOdj3 := 0
          DO WHILE !Eof() .AND. POM->IdOdj == _IdOdj
             _IdDio := POM->IdDio
-            IF !Empty ( _IdDio )
-               SELECT DIO; HSEEK ( _IdDio )
-               ? Space ( 5 ) + DIO->Naz
-               ? Space ( 5 ) + REPL ( "-", 35 )
-               SELECT POM
-            ENDIF
+            // IF !Empty ( _IdDio )
+            // SELECT DIO; HSEEK ( _IdDio )
+            // ? Space ( 5 ) + DIO->Naz
+            // ? Space ( 5 ) + REPL ( "-", 35 )
+            // SELECT POM
+            // ENDIF
             nTotDio := 0
             nTotDio2 := 0
             nTotDio3 := 0
@@ -253,9 +251,7 @@ FUNCTION realizacija_odjeljenja()
          END
          ? REPL ( "-", 40 )
          ? PadC ( "UKUPNO ODJELJENJE", 25 ) + Str ( nTotOdj, 15, 2 )
-         IF nTotOdj2 <> 0
-            ? PadL ( "PARTICIPACIJA:", 20 ), Str ( nTotOdj2, 15, 2 )
-         ENDIF
+
          IF nTotOdj3 <> 0
             ? PadL ( NenapPop(), 20 ), Str ( nTotOdj3, 15, 2 )
             ? PadL ( "UKUPNO NAPLATA:", 20 ), Str ( nTotOdj - nTotOdj3 + nTotOdj2, 15, 2 )
@@ -266,18 +262,16 @@ FUNCTION realizacija_odjeljenja()
          nTotal3 += nTotOdj3
       END
 
-      //IF Empty ( cIdDio )
-         ? REPL ( "=", 40 )
-         ? PadC ( "SVA ODJELJENJA", 25 ) + Str ( nTotal, 15, 2 )
-         IF nTotal2 <> 0
-            ? PadL ( "PARTICIPACIJA:", 20 ), Str ( nTotal2, 15, 2 )
-         ENDIF
-         IF nTotal3 <> 0
-            ? PadL ( NenapPop(), 20 ), Str ( nTotal3, 15, 2 )
-            ? PadL ( "UKUPNO NAPLATA:", 20 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
-         ENDIF
-         ? REPL ( "=", 40 )
-      //ENDIF
+      // IF Empty ( cIdDio )
+      ? REPL ( "=", 40 )
+      ? PadC ( "SVA ODJELJENJA", 25 ) + Str ( nTotal, 15, 2 )
+
+      IF nTotal3 <> 0
+         ? PadL ( NenapPop(), 20 ), Str ( nTotal3, 15, 2 )
+         ? PadL ( "UKUPNO NAPLATA:", 20 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
+      ENDIF
+      ? REPL ( "=", 40 )
+      // ENDIF
    ENDIF
    ENDPRINT
 
@@ -285,17 +279,18 @@ FUNCTION realizacija_odjeljenja()
 
 
 
-/* DioIzvuci(cIdVd)
+/*
  *     Punjenje pomocne baze realizacijom dijelova odjeljenja
  */
 
-FUNCTION DioIzvuci( cIdVd )
+FUNCTION pos_dio_izvuci( cIdVd )
 
    IF cGotZir == nil
       cGotZir := " "
    ENDIF
-   SEEK cIdVd + DToS ( dDat0 )
-   DO WHILE ! Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDat1
+
+   seek_pos_doks_2( cIdVd, dDatum0 )
+   DO WHILE ! Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
       IF ( !pos_admin() .AND. pos_doks->idpos = "X" ) .OR. ;
             ( pos_doks->IdPos = "X" .AND. AllTrim ( cIdPos ) <> "X" ) .OR. ;
             ( ! Empty ( cIdPos ) .AND. pos_doks->IdPos <> cIdPos ) .OR. ;
@@ -304,30 +299,34 @@ FUNCTION DioIzvuci( cIdVd )
       ENDIF
       Scatter()
 
-      SELECT POS
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
       DO WHILE ! Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
          IF ( !Empty ( cIdOdj ) .AND. POS->IdOdj <> cIdOdj ) .OR. !Tacno ( aUsl1 )
-            Skip; LOOP
+            SKIP
+            LOOP
          ENDIF
 
          select_o_roba( pos->idroba )
-         SELECT odj; HSEEK roba->idodj
+         select_o_pos_odj( roba->idodj )
+
          nNeplaca := 0
-         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-            nNeplaca := pos->( Kolicina * Cijena )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca := pos->( Kolicina * Cijena ) / 2
-         ENDIF
-         IF gPopVar = "P"; nNeplaca += pos->( kolicina * NCijena ); ENDIF
+         // IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+         // nNeplaca := pos->( Kolicina * Cijena )
+         // ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+         // nNeplaca := pos->( Kolicina * Cijena ) / 2
+         // ENDIF
+         // IF gPopVar = "P";
+         nNeplaca += pos->( kolicina * NCijena )
+         // ; ENDIF
 
          Scatter()
-         SELECT POM; APPEND BLANK
+         SELECT POM
+         APPEND BLANK
          _Iznos := POS->Kolicina * POS->Cijena
          _Iznos2 := POS->( ncijena * kolicina )
-         IF gPopVar == "A"
-            _iznos3 := nNeplaca
-         ENDIF
+         // IF gPopVar == "A"
+         // _iznos3 := nNeplaca
+         // ENDIF
          Gather()
          SELECT POS
          SKIP
@@ -342,18 +341,19 @@ FUNCTION DioIzvuci( cIdVd )
 FUNCTION realizacija_dio_objekta
 
    PARAMETERS cPrikRobe
-   //PRIVATE cIdDio := Space( 2 )
+
+   // PRIVATE cIdDio := Space( 2 )
    PRIVATE cSmjena := Space( 1 ), cIdPos := gIdPos, cIdOdj := Space ( 2 )
-   PRIVATE dDat0 := gDatum, dDat1 := gDatum, aNiz, cRoba := Space ( 60 )
+   PRIVATE dDatum0 := gDatum, dDatum1 := gDatum, aNiz, cRoba := Space ( 60 )
    PRIVATE cIdRadnik := Space ( 4 ), cIdVrsteP := Space ( 2 ), cGotZir := " "
 
    cPrikRobe := iif ( cPrikRobe == NIL, "N", cPrikRobe )
 
-   o_pos_odj()
-   o_pos_osob()
-   SET ORDER TO TAG ( "NAZ" )
-   o_vrstep()
-   o_pos_kase()
+   // o_pos_odj()
+   // o_pos_osob()
+   // SET ORDER TO TAG ( "NAZ" )
+   // o_vrstep()
+   // o_pos_kase()
    // o_sifk()
    // o_sifv()
    // o_roba()
@@ -384,19 +384,19 @@ FUNCTION realizacija_dio_objekta
    aNiz := {}
    cIdPos := gIdPos
    IF gVrstaRS <> "K"
-      AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.P_Kase(@cIdPos)", "@!", } )
+      AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.p_pos_kase(@cIdPos)", "@!", } )
    ELSE
       cIdPos := gIdPos
    ENDIF
-   //AAdd ( aNiz, { "Dio objekta (prazno-svi)", "cIdDio", "Empty (cIdDio).or.P_Dio(@cIdDio)", "@!", } )
+   // AAdd ( aNiz, { "Dio objekta (prazno-svi)", "cIdDio", "Empty (cIdDio).or.P_Dio(@cIdDio)", "@!", } )
    IF gvodiodj == "D"
       AAdd ( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "Empty (cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )
    ENDIF
    AAdd ( aNiz, { "Radnik (prazno-svi)", "cIdRadnik", "Empty (cIdRadnik).or.P_Osob(@cIdRadnik)", "@!", } )
    AAdd ( aNiz, { "Vrste placanja(prazno-sve)", "cIdVrsteP", "Empty (cIdVrsteP).or.P_Osob(@cIdVrsteP)", "@!", } )
    AAdd ( aNiz, { "Roba (prazno-sve)", "cRoba",, "@!S30", } )
-   AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDat0",,, } )
-   AAdd ( aNiz, { "                   do datuma", "dDat1",,, } )
+   AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
+   AAdd ( aNiz, { "                   do datuma", "dDatum1",,, } )
    AAdd( aNiz,  { "Prikazi robe D/N",            "cPrikRobe",, "@!", } )
    DO WHILE .T.
       IF !VarEdit( aNiz, 9, 5, 21, 74, ;
@@ -405,7 +405,7 @@ FUNCTION realizacija_dio_objekta
          CLOSERET
       ENDIF
       aUsl1 := Parsiraj( cRoba, "idroba" )
-      IF aUsl1 <> NIL .AND. dDat0 <= dDat1
+      IF aUsl1 <> NIL .AND. dDatum0 <= dDatum1
          EXIT
       ELSEIF aUsl1 == NIL
          Msg( "Kriterij za robu nije korektno postavljen!" )
@@ -415,14 +415,14 @@ FUNCTION realizacija_dio_objekta
    ENDDO
 
    // pravljenje izvjestaja
-   SELECT pos_doks
-   SET ORDER TO TAG "2"
+   // SELECT pos_doks
+   // SET ORDER TO TAG "2"
    // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
 
-   EOF CRET
+   // EOF CRET
 
    START PRINT CRET
-   ZagFirma()
+   // ZagFirma()
    ?
    ? PadC( "REALIZACIJA DIJELA OBJEKTA", 40 )
    ? PadC ( "NA DAN " + FormDat1( Date() ), 40 )
@@ -431,13 +431,12 @@ FUNCTION realizacija_dio_objekta
    IF gvodiodj == "D"
       ? "ODJELJENJA : " + IF( Empty( cIdOdj ), "SVA", find_pos_odj_naziv( cIdOdj ) )
    ENDIF
-   ? "RADNIK     : " + IF( Empty( cIdRadnik ), "svi", ;
-      cIdRadnik + "-" + RTrim( find_pos_osob_naziv( cIdRadnik ) ) )
+   ? "RADNIK     : " + IF( Empty( cIdRadnik ), "svi", cIdRadnik + "-" + RTrim( find_pos_osob_naziv( cIdRadnik ) ) )
    ? "VR.PLACANJA: " + IF( Empty( cIdVrsteP ), "sve", RTrim( cIdVrsteP ) )
-   ? "PERIOD     : " + FormDat1( dDat0 ) + " - " + FormDat1( dDat1 )
+   ? "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
 
-   DioIzvuci ( VD_PRR )
-   DioIzvuci ( VD_RN )
+   pos_dio_izvuci ( VD_PRR )
+   pos_dio_izvuci ( POS_VD_RACUN )
 
    // stampa izvjestaja
    // ////////////////////
@@ -453,11 +452,11 @@ FUNCTION realizacija_dio_objekta
    SET ORDER TO TAG "1"
    GO TOP
    DO WHILE !Eof()
-      //_IdDio := POM->IdDio
+      // _IdDio := POM->IdDio
       /*
     --  IF Empty ( cIdDio )
          SELECT DIO
-         HSEEK ( _IdDio )
+  --       HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
          ? DIO->Naz
          ? REPL ( "-", 40 )
@@ -517,18 +516,18 @@ FUNCTION realizacija_dio_objekta
       nTotal2 += nTotDio2
       nTotal2 += nTotDio3
    ENDDO
-   //IF Empty ( cIdDio )
-      ? REPL ( "=", 40 )
-      ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
-      IF nTotal2 <> 0
-         ? PadL ( "PARTICIPACIJA:", 25 ), Str ( nTotal2, 15, 2 )
-      ENDIF
-      IF nTotPos3 <> 0
-         ? PadL ( NenapPop(), 25 ), Str ( nTotal3, 15, 2 )
-         ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
-      ENDIF
-      ? REPL ( "=", 40 )
-   //ENDIF
+   // IF Empty ( cIdDio )
+   ? REPL ( "=", 40 )
+   ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
+   IF nTotal2 <> 0
+      ? PadL ( "PARTICIPACIJA:", 25 ), Str ( nTotal2, 15, 2 )
+   ENDIF
+   IF nTotPos3 <> 0
+      ? PadL ( NenapPop(), 25 ), Str ( nTotal3, 15, 2 )
+      ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
+   ENDIF
+   ? REPL ( "=", 40 )
+   // ENDIF
 
    // 2) Rekapitulacija po radnicima i vrstama placanja
    ?
@@ -538,6 +537,7 @@ FUNCTION realizacija_dio_objekta
    nTotal := 0
    nTotal2 := 0
    nTotal3 := 0
+
    SELECT POM
    SET ORDER TO TAG "2"
    GO TOP
@@ -546,7 +546,7 @@ FUNCTION realizacija_dio_objekta
       /*
       //IF Empty ( cIdDio )
          SELECT DIO
-         HSEEK ( _IdDio )
+    --     HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
          ? DIO->Naz
          ? REPL ( "-", 40 )
@@ -558,8 +558,7 @@ FUNCTION realizacija_dio_objekta
       nTotDio3 := 0
       DO WHILE !Eof() .AND. POM->IdDio == _IdDio
          _IdRadnik := POM->IdRadnik
-         SELECT OSOB
-         HSEEK _IdRadnik
+         select_o_pos_osob( _IdRadnik )
          ? Space ( 5 ) + OSOB->Naz
          ? Space ( 5 ) + REPL ( "-", 35 )
          SELECT POM
@@ -600,18 +599,18 @@ FUNCTION realizacija_dio_objekta
       nTotal2 += nTotDio2
       nTotal3 += nTotDio3
    ENDDO
-   //IF Empty ( cIdDio )
-      ? REPL ( "=", 40 )
-      ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
-      IF nTotal2 <> 0
-         ? PadL ( "PARTICIPACIJA:", 25 ) + Str ( nTotal2, 15, 2 )
-      ENDIF
-      IF nTotal3 <> 0
-         ? PadL ( NenapPop(), 25 ) + Str ( nTotal3, 15, 2 )
-         ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
-      ENDIF
-      ? REPL ( "=", 40 )
-   //ENDIF
+   // IF Empty ( cIdDio )
+   ? REPL ( "=", 40 )
+   ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
+   IF nTotal2 <> 0
+      ? PadL ( "PARTICIPACIJA:", 25 ) + Str ( nTotal2, 15, 2 )
+   ENDIF
+   IF nTotal3 <> 0
+      ? PadL ( NenapPop(), 25 ) + Str ( nTotal3, 15, 2 )
+      ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
+   ENDIF
+   ? REPL ( "=", 40 )
+   // ENDIF
 
    // 3) Rekapitulacija po vrstama placanja
    ?
@@ -621,6 +620,7 @@ FUNCTION realizacija_dio_objekta
    nTotal := 0
    nTotal2 := 0
    nTotal3 := 0
+
    SELECT POM
    SET ORDER TO TAG "3"
    GO TOP
@@ -629,7 +629,7 @@ FUNCTION realizacija_dio_objekta
       /*
     --  IF Empty ( cIdDio )
          SELECT DIO
-         HSEEK ( _IdDio )
+    --     HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
          ? DIO->Naz
          ? REPL ( "-", 40 )
@@ -665,18 +665,18 @@ FUNCTION realizacija_dio_objekta
       nTotal2 += nTotDio2
       nTotal3 += nTotDio3
    ENDDO
-   //IF Empty ( cIdDio )
-      ? REPL ( "=", 40 )
-      ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
-      IF nTotal2 <> 0
-         ? PadL ( "PARTICIPACIJA:", 25 ) + Str ( nTotal2, 15, 2 )
-      ENDIF
-      IF nTotal3 <> 0
-         ? PadL ( NenapPop(), 25 ) + Str ( nTotal3, 15, 2 )
-         ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
-      ENDIF
-      ? REPL ( "=", 40 )
-   //ENDIF
+   // IF Empty ( cIdDio )
+   ? REPL ( "=", 40 )
+   ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
+   IF nTotal2 <> 0
+      ? PadL ( "PARTICIPACIJA:", 25 ) + Str ( nTotal2, 15, 2 )
+   ENDIF
+   IF nTotal3 <> 0
+      ? PadL ( NenapPop(), 25 ) + Str ( nTotal3, 15, 2 )
+      ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
+   ENDIF
+   ? REPL ( "=", 40 )
+   // ENDIF
 
    // 4) Rekapitulacija po odjeljenjima
    ?
@@ -691,7 +691,7 @@ FUNCTION realizacija_dio_objekta
       _IdDio := POM->IdDio
       /* IF Empty ( cIdDio )
          SELECT DIO
-         HSEEK ( _IdDio )
+    --     HSEEK ( _IdDio )
          ? REPL ( "-", 40 )
          ? DIO->Naz
          ? REPL ( "-", 40 )
@@ -717,18 +717,18 @@ FUNCTION realizacija_dio_objekta
       ? REPL ( "-", 40 )
       nTotal += nTotDio
    ENDDO
-   //IF Empty ( cIdDio )
-      ? REPL ( "=", 40 )
-      ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
-      IF nTotal2 <> 0
-         ? PadL ( "PARTICIPACIJA:", 25 ) + Str ( nTotal2, 15, 2 )
-      ENDIF
-      IF nTotal3 <> 0
-         ? PadL ( NenapPop(), 25 ) + Str ( nTotal3, 15, 2 )
-         ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
-      ENDIF
-      ? REPL ( "=", 40 )
-   //ENDIF
+   // IF Empty ( cIdDio )
+   ? REPL ( "=", 40 )
+   ? PadC ( "UKUPNO OBJEKAT", 25 ) + Str ( nTotal, 15, 2 )
+   IF nTotal2 <> 0
+      ? PadL ( "PARTICIPACIJA:", 25 ) + Str ( nTotal2, 15, 2 )
+   ENDIF
+   IF nTotal3 <> 0
+      ? PadL ( NenapPop(), 25 ) + Str ( nTotal3, 15, 2 )
+      ? PadL ( "UKUPNO NAPLATA:", 25 ), Str ( nTotal - nTotal3 + nTotal2, 15, 2 )
+   ENDIF
+   ? REPL ( "=", 40 )
+   // ENDIF
 
    // 5) Rekapitulacija po robama
    IF cPrikRobe == "D"
@@ -744,7 +744,7 @@ FUNCTION realizacija_dio_objekta
          /*
       --   IF Empty ( cIdDio )
             SELECT DIO
-            HSEEK _IdDio
+        --    HSEEK _IdDio
             ? DIO->Naz
             ? REPL ( "-", 40 )
             SELECT POM
@@ -798,34 +798,35 @@ FUNCTION realizacija_dio_objekta
          nTotal2 += nTotDio2
          nTotal3 += nTotDio3
       END
-      //IF Empty ( cIdDio )
-         ? REPL ( "*", 40 )
-         ? PadC ( "UKUPNO OBJEKAT", 24 ), Str ( nTotDio, 15, 2 )
-         IF nTotDio2 <> 0
-            ? PadL ( "PARTICIPACIJA:", 29 ), Str ( nTotDio2, 10, 2 )
-         ENDIF
-         IF nTotDio3 <> 0
-            ? PadL ( NenapPop(), 29 ), Str ( nTotDio3, 10, 2 )
-            ? PadL ( "UKUPNO NAPLATA:", 29 ), Str ( nTotDio - nTotDio3 + nTotDio2, 10, 2 )
-         ENDIF
-         ? REPL ( "*", 40 )
-      //ENDIF
+      // IF Empty ( cIdDio )
+      ? REPL ( "*", 40 )
+      ? PadC ( "UKUPNO OBJEKAT", 24 ), Str ( nTotDio, 15, 2 )
+      IF nTotDio2 <> 0
+         ? PadL ( "PARTICIPACIJA:", 29 ), Str ( nTotDio2, 10, 2 )
+      ENDIF
+      IF nTotDio3 <> 0
+         ? PadL ( NenapPop(), 29 ), Str ( nTotDio3, 10, 2 )
+         ? PadL ( "UKUPNO NAPLATA:", 29 ), Str ( nTotDio - nTotDio3 + nTotDio2, 10, 2 )
+      ENDIF
+      ? REPL ( "*", 40 )
+      // ENDIF
    ENDIF
    ENDPRINT
    CLOSERET
-   // }
 
 
-/* OdjIzvuci(cIdVd)
+
+/* pos_odj_izvuci(cIdVd)
  *     Punjenje pomocne baze realizacijom odjeljenja
  */
 
-FUNCTION OdjIzvuci( cIdVd )
+FUNCTION pos_odj_izvuci( cIdVd )
 
-   SELECT pos_doks
-   SEEK cIdVd + DToS( dDat0 )
+   // SELECT pos_doks
+   // SEEK cIdVd + DToS( dDatum0 )
+   seek_pos_doks_2( cIdVd, dDatum0 )
 
-   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDat1
+   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
 
       IF ( pos_doks->IdPos = "X" .AND. AllTrim ( cIdPos ) <> "X" ) .OR. ;
             ( ! Empty ( cIdPos ) .AND. pos_doks->IdPos <> cIdPos )
@@ -833,8 +834,8 @@ FUNCTION OdjIzvuci( cIdVd )
          LOOP
       ENDIF
 
-      SELECT POS
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd,  pos_doks->datum, pos_doks->BrDok )
+
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
          IF ( !Empty ( cIdOdj ) .AND. POS->IdOdj <> cIdOdj ) .OR. ;
                !Tacno ( aUsl1 )
@@ -849,25 +850,25 @@ FUNCTION OdjIzvuci( cIdVd )
          ENDIF
 
          nNeplaca := 0
-         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-            nNeplaca := pos->( Kolicina * Cijena )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca := pos->( Kolicina * Cijena ) / 2
-         ENDIF
-         IF gPopVar = "P"
-            nNeplaca += pos->( Kolicina * NCijena )
-         ENDIF
+         // IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+         // nNeplaca := pos->( Kolicina * Cijena )
+         // ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+         // nNeplaca := pos->( Kolicina * Cijena ) / 2
+         // ENDIF
+         // IF gPopVar = "P"
+         nNeplaca += pos->( Kolicina * NCijena )
+         // ENDIF
 
          SELECT POM
-         Hseek POS->( IdOdj + IdDio + IdPos + IdRoba + IdCijena )
+         Hseek POS->( IdOdj + IdDio + IdPos + IdRoba + IdCijena ) // POM
 
          IF Found()
             REPLACE Kolicina WITH Kolicina + POS->Kolicina, ;
                Iznos    WITH Iznos + POS->Kolicina * POS->Cijena, ;
                iznos3   WITH nNeplaca
-            IF gPopVar == "A"
-               REPLACE Iznos2   WITH pos->( ncijena )
-            ENDIF
+            // IF gPopVar == "A"
+            // REPLACE Iznos2   WITH pos->( ncijena )
+            // ENDIF
 
          ELSE
             APPEND BLANK
@@ -876,9 +877,9 @@ FUNCTION OdjIzvuci( cIdVd )
                IdPos  WITH pos_doks->IdPos,  Kolicina WITH POS->Kolicina, ;
                Iznos  WITH POS->Kolicina * POS->Cijena, ;
                iznos3 WITH iznos3 + nNeplaca
-            IF gPopVar == "A"
-               REPLACE iznos2 WITH iznos2 + pos->( ncijena )
-            ENDIF
+            // gPopVar == "A"
+            // REPLACE iznos2 WITH iznos2 + pos->( ncijena )
+            // ENDIF
          ENDIF
 
          SELECT POS
@@ -901,7 +902,7 @@ STATIC FUNCTION _o_tables()
 // o_sifv()
    // o_pos_kase()
 // o_roba()
-   o_pos_pos()
-   o_pos_doks()
+   // o_pos_pos()
+   // o_pos_doks()
 
    RETURN .T.

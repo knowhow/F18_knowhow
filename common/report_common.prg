@@ -69,39 +69,39 @@ METHOD ReportCommon:set_picture_codes( _set, params )
 
 
 
-METHOD ReportCommon:get_company( id_firma )
+METHOD ReportCommon:get_company( cIdFirma )
 
    LOCAL _data, oRow
-   LOCAL _comp
+   LOCAL cCompany
 
-   _comp := AllTrim( tip_organizacije() ) + ": "
+   cCompany := AllTrim( tip_organizacije() ) + ": "
 
-   IF gNW == "D"
-      _comp += self_organizacija_id() + " - " + AllTrim( self_organizacija_naziv() )
-   ELSE
-      IF id_firma == NIL
-         id_firma := self_organizacija_id()
-      ENDIF
-      _data := select_all_records_from_table( F18_PSQL_SCHEMA_DOT + "partn", { "naz", "naz2" }, { "id = " + sql_quote( id_firma ) } )
-      oRow := _data:GetRow( 1 )
-      _comp += id_firma + " " + ;
-         hb_UTF8ToStr( AllTrim( oRow:FieldGet( oRow:FieldPos( "naz" ) ) ) ) + " " + ;
-         hb_UTF8ToStr( AllTrim( oRow:FieldGet( oRow:FieldPos( "naz2" ) ) ) )
-   ENDIF
+   // IF gNW == "D"
+   cCompany += self_organizacija_id() + " - " + AllTrim( self_organizacija_naziv() )
+   // ELSE
+   // IF cIdFirma == NIL
+   // cIdFirma := self_organizacija_id()
+   // ENDIF
+// _data := select_all_records_from_table( F18_PSQL_SCHEMA_DOT + "partn", { "naz", "naz2" }, { "id = " + sql_quote( cIdFirma ) } )
+   // oRow := _data:GetRow( 1 )
+   // cCompany += cIdFirma + " " + ;
+   // hb_UTF8ToStr( AllTrim( oRow:FieldGet( oRow:FieldPos( "naz" ) ) ) ) + " " + ;
+   // hb_UTF8ToStr( AllTrim( oRow:FieldGet( oRow:FieldPos( "naz2" ) ) ) )
+   // ENDIF
 
-   RETURN _comp
-
-
+   RETURN cCompany
 
 
-METHOD ReportCommon:show_company( id_firma )
 
-   LOCAL _comp := ::get_company( id_firma )
+
+METHOD ReportCommon:show_company( cIdFirma )
+
+   LOCAL cCompany := ::get_company( cIdFirma )
 
    P_10CPI
    B_ON
 
-   ? _comp
+   ? cCompany
 
    B_OFF
    ?

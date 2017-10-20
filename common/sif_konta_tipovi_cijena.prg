@@ -49,14 +49,14 @@ FUNCTION P_KonCij( cId, dx, dy )
       AAdd ( ImeKol, { "KALK14->FINxx", {|| fn14 }, "fn14", {|| .T. }, {|| .T. } } )
    ENDIF
 
-   IF KONCIJ->( FieldPos( "KK1" ) ) <> 0
+   //IF KONCIJ->( FieldPos( "KK1" ) ) <> 0
       AAdd ( ImeKol, { "KK1", {|| dbf_get_rec()[ "kk1" ] }, "KK1" } )
       AAdd ( ImeKol, { PadC( "KK2", 7 ), {|| KK2 }, "KK2", {|| .T. }, {|| Empty( wKK2 ) .OR. P_Konto( @wKK2 ) } } )
       AAdd ( ImeKol, { PadC( "KK3", 7 ), {|| KK3 }, "KK3", {|| .T. }, {|| Empty( wKK3 ) .OR. P_Konto( @wKK3 ) } } )
       AAdd ( ImeKol, { PadC( "KK4", 7 ), {|| KK4 }, "KK4", {|| .T. }, {|| Empty( wKK4 ) .OR. P_Konto( @wKK4 ) } } )
       AAdd ( ImeKol, { PadC( "KK5", 7 ), {|| KK5 }, "KK5", {|| .T. }, {|| Empty( wKK5 ) .OR. P_Konto( @wKK5 ) } } )
       AAdd ( ImeKol, { PadC( "KK6", 7 ), {|| KK6 }, "KK6", {|| .T. }, {|| Empty( wKK6 ) .OR. P_Konto( @wKK6 ) } } )
-   ENDIF
+   //ENDIF
 
    IF KONCIJ->( FieldPos( "KP1" ) ) <> 0
       AAdd ( ImeKol, { PadC( "KP1", 7 ), {|| KP1 }, "KP1", {|| .T. }, {|| Empty( wKP1 ) .OR. P_Konto( @wKP1 ) } } )

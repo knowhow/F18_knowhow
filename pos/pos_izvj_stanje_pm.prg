@@ -16,10 +16,8 @@ STATIC cKontrolnaTabela := ""
 STATIC lCekaj := .T.
 
 
-// ---------------------------------------------
-// Stanje prodajnog mjesta
-// ---------------------------------------------
-FUNCTION pos_stanje_artikala_pm( cD, cS )
+
+FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
 
    LOCAL nStanje
    LOCAL nSign := 1
@@ -57,12 +55,12 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       PRIVATE cSmjena := " "
    ENDIF
 
-   o_pos_kase()
-   o_pos_odj()
+   //o_pos_kase()
+   // o_pos_odj()
    // o_sifk()
    // o_sifv()
    // o_roba()
-   o_pos_pos()
+   // o_pos_pos()
 
    cIdPos := gIdPos
 
@@ -79,7 +77,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       aNiz := {}
 
       IF cVrstaRs <> "K"
-         AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cidpos='X'.or.empty(cIdPos).or. P_Kase(@cIdPos)", "@!", } )
+         AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cIdpos='X'.or.empty(cIdPos).or. p_pos_kase(@cIdPos)", "@!", } )
       ENDIF
       IF gVodiOdj == "D"
          AAdd( aNiz, { "Roba/Sirovine", "cIdOdj", "cidodj $ 'R S '", "@!", } )
@@ -132,26 +130,20 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
    ENDIF
 
 
-   SELECT POS
-   IF index_tag_num( "5" ) == 0
-      USE
-      CREATE_INDEX( "5", "IdPos+idroba+DTOS(Datum)", KUMPATH + "POS" )
-      SELECT ( F_POS )
-      USE
-      o_pos_pos()
-   ENDIF
-
    cFilt := ""
 
    IF Empty( cIdPos )
 
       // "2": "IdOdj+idroba+DTOS(Datum)"
-      SET ORDER TO TAG "2"
+      //SET ORDER TO TAG "2"
+      seek_pos_pos_2( NIL )
       // 1 artikal, 1 stavka u izvjestaju (samo TOPS)
 
    ELSE
-      SET ORDER TO TAG "5"
-      cFilt := "IDPOS=='" + cIdPos + "'"
+      //SET ORDER TO TAG "5"
+      //cFilt := "IDPOS=='" + cIdPos + "'"
+      seek_pos_pos_5( cIdPos )
+
    ENDIF
 
    IF Len( aUsl1 ) > 0
@@ -162,7 +154,6 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       ENDIF
    ENDIF
 
-
    IF !Empty( cFilt )
       SET FILTER TO &cFilt
    ENDIF
@@ -172,11 +163,8 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
    nH := 0
 
    IF !fZaklj
-
       START PRINT CRET
-
       Zagl( cIdOdj, cDat, cVrstaRs )
-
    ENDIF
 
    Podvuci( cVrstaRs )
@@ -429,7 +417,7 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
    ENDIF
 
    ?
-   ZagFirma()
+   //ZagFirma()
 
    P_10CPI
    ? PadC( "STANJE ODJELJENJA NA DAN " + FormDat1( dDat ), nSir )

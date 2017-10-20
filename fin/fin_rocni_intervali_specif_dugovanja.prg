@@ -57,20 +57,20 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
 
    Box(, 13, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Firma "
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
 
-   @ m_x + 2, m_y + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_konto( @cIdkonto )
-   @ m_x + 3, m_y + 2 SAY "Izvjestaj se pravi na dan:" GET dNaDan
-   @ m_x + 4, m_y + 2 SAY "Interval 1: do (dana)" GET nDoDana1 PICT "999"
-   @ m_x + 5, m_y + 2 SAY "Interval 2: do (dana)" GET nDoDana2 PICT "999"
-   @ m_x + 6, m_y + 2 SAY "Interval 3: do (dana)" GET nDoDana3 PICT "999"
-   @ m_x + 7, m_y + 2 SAY "Interval 4: do (dana)" GET nDoDana4 PICT "999"
-   @ m_x + 10, m_y + 2 SAY "Prikaz iznosa (format)" GET PICPIC PICT "@!"
-   @ m_x + 11, m_y + 2 SAY "Uslov po opcini (prazno - nista)" GET cOpcine
-   @ m_x + 12, m_y + 2 SAY "Partner (prazno-svi):" GET _partner VALID Empty( _partner ) .OR. p_partner( @_partner )
-   @ m_x + 13, m_y + 2 SAY "Izvjestaj za (1)KM (2)EURO" GET cValuta VALID cValuta $ "12"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_konto( @cIdkonto )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Izvjestaj se pravi na dan:" GET dNaDan
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Interval 1: do (dana)" GET nDoDana1 PICT "999"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Interval 2: do (dana)" GET nDoDana2 PICT "999"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Interval 3: do (dana)" GET nDoDana3 PICT "999"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Interval 4: do (dana)" GET nDoDana4 PICT "999"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Prikaz iznosa (format)" GET PICPIC PICT "@!"
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Uslov po opcini (prazno - nista)" GET cOpcine
+   @ box_x_koord() + 12, box_y_koord() + 2 SAY "Partner (prazno-svi):" GET _partner VALID Empty( _partner ) .OR. p_partner( @_partner )
+   @ box_x_koord() + 13, box_y_koord() + 2 SAY "Izvjestaj za (1)KM (2)EURO" GET cValuta VALID cValuta $ "12"
 
    READ
    ESC_BCR
@@ -99,7 +99,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
    ELSE
       cDugPot := "1"
       Box(, 3, 60 )
-      @ m_x + 2, m_y + 2 SAY "Konto " + cIdKonto + " duguje / potrazuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto " + cIdKonto + " duguje / potrazuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
       READ
       Boxc()
    ENDIF

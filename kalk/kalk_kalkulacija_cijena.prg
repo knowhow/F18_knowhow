@@ -194,10 +194,10 @@ STATIC FUNCTION get_vars( vars )
    LOCAL _ret := .F.
 
    Box(, 1, 40 )
-   @ m_x + 1, m_y + 2 SAY "Broj dokumenta:"
-   @ m_x + 1, Col() + 1 GET _firma
-   @ m_x + 1, Col() + 1 SAY "-" GET _tip VALID !Empty( _tip )
-   @ m_x + 1, Col() + 1 SAY "-" GET _broj VALID !Empty( _broj )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj dokumenta:"
+   @ box_x_koord() + 1, Col() + 1 GET _firma
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET _tip VALID !Empty( _tip )
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET _broj VALID !Empty( _broj )
    READ
    BoxC()
 
@@ -245,7 +245,7 @@ STATIC FUNCTION gen_kalk_predispozicija_xml( vars )
    LOCAL _br_dok := vars[ "br_dok" ]
    LOCAL _generated := 0
    LOCAL _xml_file := my_home() + "data.xml"
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _redni_broj := 0
    LOCAL _porezna_stopa, _porez
    LOCAL _s_kolicina, _tmp, _a_porezi
@@ -272,7 +272,7 @@ STATIC FUNCTION gen_kalk_predispozicija_xml( vars )
 
    SELECT kalk_pripr
 
-   _t_rec := RecNo()
+   nTrec := RecNo()
 
    create_xml( _xml_file )
    xml_head()
@@ -419,7 +419,7 @@ STATIC FUNCTION gen_kalk_mp_xml( vars )
    LOCAL _br_dok := vars[ "br_dok" ]
    LOCAL _generated := 0
    LOCAL _xml_file := my_home() + "data.xml"
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _redni_broj := 0
    LOCAL _porezna_stopa, _porez
    LOCAL _s_kolicina, _tmp, _a_porezi
@@ -439,7 +439,7 @@ STATIC FUNCTION gen_kalk_mp_xml( vars )
 
    SELECT kalk_pripr
 
-   _t_rec := RecNo()
+   nTrec := RecNo()
 
    create_xml( _xml_file )
    xml_head()
@@ -622,7 +622,7 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
    LOCAL _br_dok := vars[ "br_dok" ]
    LOCAL _generated := 0
    LOCAL _xml_file := my_home() + "data.xml"
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _redni_broj := 0
    LOCAL _porezna_stopa, _porez
    LOCAL _s_kolicina, _tmp
@@ -642,7 +642,7 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
 
    SELECT kalk_pripr
 
-   _t_rec := RecNo()
+   nTrec := RecNo()
 
    create_xml( _xml_file )
    xml_head()

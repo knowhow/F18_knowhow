@@ -17,7 +17,7 @@ FIELD idfirma, idtipdok, brdok, rezerv, idvrstep, datdok, partner, iznos, rabat
 
 STATIC s_lBrowseInitialized  := .F.
 
-FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
+FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine )
 
    LOCAL i
    LOCAL nWidthMeni := 30
@@ -26,6 +26,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    LOCAL cFiskalniUredjajModel := fiskalni_uredjaj_model()
 
    ImeKol := {}
+<<<<<<< HEAD
    AAdd( ImeKol, { "F",            {|| select_o_fakt_doks(), get_fiscal_info( cFiskalniUredjajModel ) } } )
    AAdd( ImeKol, { "RJ",           {|| fakt_doks->idfirma }  } )
    AAdd( ImeKol, { "VD",           {|| fakt_doks->idtipdok } } )
@@ -36,17 +37,29 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    AAdd( ImeKol, { "Ukupno",       {|| fakt_doks->iznos + fakt_doks->rabat } } )
    AAdd( ImeKol, { "Rabat",        {|| fakt_doks->rabat } } )
    AAdd( ImeKol, { "Ukupno-Rab ",  {|| fakt_doks->iznos } } )
+=======
+   AAdd( ImeKol, { "F",            {|| is_fiskaliziran( cFiskalniUredjajModel ) } } )
+   AAdd( ImeKol, { "RJ",           {|| fakt_doks_pregled->idfirma }  } )
+   AAdd( ImeKol, { "VD",           {|| fakt_doks_pregled->idtipdok } } )
+   AAdd( ImeKol, { "Brdok",        {|| fakt_doks_pregled->brdok + fakt_doks_pregled->rezerv } } )
+   AAdd( ImeKol, { "VP",           {|| fakt_doks_pregled->idvrstep } } )
+   AAdd( ImeKol, { "Datum",        {|| fakt_doks_pregled->Datdok } } )
+   AAdd( ImeKol, { "Partner",      {|| PadR( fakt_doks_pregled->partner, 45 ) } } )
+   AAdd( ImeKol, { "Ukupno",       {|| fakt_doks_pregled->iznos + fakt_doks_pregled->rabat } } )
+   AAdd( ImeKol, { "Rabat",        {|| fakt_doks_pregled->rabat } } )
+   AAdd( ImeKol, { "Ukupno-Rab ",  {|| fakt_doks_pregled->iznos } } )
+>>>>>>> 3
 
    IF lVrsteP
-      AAdd( ImeKol, { _u( "Način placanja" ), {|| fakt_doks->idvrstep } } )
+      AAdd( ImeKol, { _u( "Način placanja" ), {|| fakt_doks_pregled->idvrstep } } )
    ENDIF
 
    // datum otpremnice datum valute
-   AAdd( ImeKol, { _u( "Datum plaćanja" ), {|| fakt_doks->datpl } } )
-   AAdd( ImeKol, { "Dat.otpr",       {|| fakt_doks->dat_otpr } } )
-   AAdd( ImeKol, { "Dat.val.",       {|| fakt_doks->dat_val } } )
+   AAdd( ImeKol, { _u( "Datum plaćanja" ), {|| fakt_doks_pregled->datpl } } )
+   AAdd( ImeKol, { "Dat.otpr",       {|| fakt_doks_pregled->dat_otpr } } )
+   AAdd( ImeKol, { "Dat.val.",       {|| fakt_doks_pregled->dat_val } } )
 
-   //AAdd( ImeKol, { "Fisk.rn",        {|| PadR( prikazi_brojeve_fiskalnog_racuna( fisc_rn, fisc_st ), 20 ) } } )
+   // AAdd( ImeKol, { "Fisk.rn",        {|| PadR( prikazi_brojeve_fiskalnog_racuna( fisc_rn, fisc_st ), 20 ) } } )
    AAdd( ImeKol, { "Fisk.vr",        {|| PadR( DToC( fisc_date ) + " " + AllTrim( fisc_time ), 20 ) } } )
 
    // prikaz operatera
@@ -67,16 +80,16 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    Box( , nX, nY )
 
-   @ get_x_koord() + nX - 4, get_y_koord() + 2 SAY8 _upadr( " <ENTER> Štampa TXT", nWidthMeni ) + ;
+   @ box_x_koord() + nX - 4, box_y_koord() + 2 SAY8 _upadr( " <ENTER> Štampa TXT", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < P > Povrat dokumenta", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < I > Informacije", nWidthMeni )
-   @ get_x_koord() + nX - 3, get_y_koord() + 2 SAY8 _upadr( " <a+P> ili <L> Štampa ODT", nWidthMeni ) + ;
+   @ box_x_koord() + nX - 3, box_y_koord() + 2 SAY8 _upadr( " <a+P> ili <L> Štampa ODT", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < S > Storno dokument", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < c+V > Postavi vezu fisk.", nWidthMeni )
-   @ get_x_koord() + nX - 2, get_y_koord() + 2 SAY8 _upadr( " < R > Štampa fisk.računa", nWidthMeni ) + ;
+   @ box_x_koord() + nX - 2, box_y_koord() + 2 SAY8 _upadr( " < R > Štampa fisk.računa", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < F > ponuda->račun", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < F5 > osvježi ", nWidthMeni )
-   @ get_x_koord() + nX - 1, get_y_koord() + 2 SAY8 _upadr( " < W > Dupliciraj", nWidthMeni ) + ;
+   @ box_x_koord() + nX - 1, box_y_koord() + 2 SAY8 _upadr( " < W > Dupliciraj", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < K > Ispravka podataka", nWidthMeni ) + ;
       BROWSE_COL_SEP + _upadr( " < T > Duplikat fiskalnog rn.", nWidthMeni )
 
@@ -117,8 +130,13 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    NEXT
 
 
+<<<<<<< HEAD
    my_db_edit_sql( "", nX - 3, nY, {| nCh | fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
       NIL, NIL, NIL, 2,  NIL, NIL ) //, {| nSkip | fakt_pregled_dokumenata_skip_block( nSkip ) } ) // aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock
+=======
+   my_browse( "", nX - 3, nY, {| nCh | fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
+      NIL, NIL, NIL, 2,  NIL, NIL ) // , {| nSkip | fakt_pregled_dokumenata_skip_block( nSkip ) } ) // aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock
+>>>>>>> 3
 
 
    BoxC()
@@ -138,8 +156,9 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    LOCAL nRet := DE_CONT
    LOCAL hRec
-   LOCAL cFilter
-   LOCAL _dev_id, hFiskalniParams
+
+   // LOCAL cFilter
+   LOCAL nFiskDeviceId, hFiskalniParams
    LOCAL lRefresh
    LOCAL nFaktDokTekuciZapis := RecNo()
 
@@ -155,7 +174,11 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    s_lBrowseInitialized := .T.
 
-   cFilter := fakt_doks->( dbFilter() )
+   // cFilter := fakt_doks_pregled->( dbFilter() )
+   SELECT F_FAKT_DOKS_PREGLED
+   IF !Used()
+      fakt_pregled_reload_tables()
+   ENDIF
 
    prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
@@ -167,12 +190,8 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
    CASE nCh == K_ENTER
 
       // nRet := print_porezna_faktura( lOpcine )
-      SELECT F_FAKT_DOKS
-      IF !Used()
-         MsgBeep( "ERROR FAKT_DOKS nije otvoren ?!" )
-      ELSE
-         fakt_stamp_txt_dokumenta( fakt_doks->IdFirma, fakt_doks->IdTipdok, fakt_doks->Brdok )
-      ENDIF
+
+      fakt_stamp_txt_dokumenta( fakt_doks_pregled->IdFirma, fakt_doks_pregled->IdTipdok, fakt_doks_pregled->brdok )
       lRefresh := .T.
       lReload := .T.
 
@@ -184,9 +203,9 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    CASE nCh == K_F5
 
-      SELECT fakt_doks
-      USE
-      o_fakt_doks()
+      // SELECT fakt_doks_pregled
+      // USE
+      // o_fakt_doks_dbf()
 
       nRet := DE_REFRESH
       lRefresh := .T.
@@ -195,9 +214,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    CASE nCh == K_CTRL_V
 
-      SELECT fakt_doks
-
-      IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, cFiskalniUredjajModel )
+      IF postoji_fiskalni_racun( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok, cFiskalniUredjajModel )
 
          MsgBeep( "veza: fiskalni račun već setovana !" )
          IF Pitanje( "FAKT_PROM_VEZU", "Promjeniti postojeću vezu (D/N)?", "N" ) == "N"
@@ -209,37 +226,37 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
          RETURN DE_CONT
       ENDIF
 
-      nFiscal := field->fisc_rn
-      nRekl := field->fisc_st
-      dFiscal_date := field->fisc_date
-      cFiscal_time := PadR( field->fisc_time, 10 )
+      nFiscal := fakt_doks_pregled->fisc_rn
+      nRekl := fakt_doks_pregled->fisc_st
+      dFiscal_date := fakt_doks_pregled->fisc_date
+      cFiscal_time := PadR( fakt_doks_pregled->fisc_time, 10 )
 
-      Box(, 4, 40 )
-      @ get_x_koord() + 1, get_y_koord() + 2 SAY8 "   fiskalni račun:" GET nFiscal PICT "9999999999"
-      @ get_x_koord() + 2, get_y_koord() + 2 SAY8 "reklamirani račun:" GET nRekl PICT "9999999999"
-      @ get_x_koord() + 3, get_y_koord() + 2 SAY8 "            datum:" GET dFiscal_date
-      @ get_x_koord() + 4, get_y_koord() + 2 SAY8 "          vrijeme:" GET cFiscal_time PICT "@S10"
+      Box( "#" + fakt_doks_pregled->idfirma + "-" + fakt_doks_pregled->idtipdok + "-" + fakt_doks_pregled->brdok, 4, 40 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "   fiskalni račun:" GET nFiscal PICT "9999999999"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "reklamirani račun:" GET nRekl PICT "9999999999"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "            datum:" GET dFiscal_date
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "          vrijeme:" GET cFiscal_time PICT "@S10"
       READ
       BoxC()
 
       IF nFiscal <> field->fisc_rn .OR. nRekl <> field->fisc_st
 
-         hRec := dbf_get_rec()
+         hRec := hb_Hash()
          hRec[ "fisc_rn" ] := nFiscal
          hRec[ "fisc_st" ] := nRekl
          hRec[ "fisc_time" ] := cFiscal_time
          hRec[ "fisc_date" ] := dFiscal_date
-
-         update_rec_server_and_dbf( "fakt_doks", hRec, 1, "FULL" )
+         fakt_doks_update_fisk_parametri_by_id( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok, hRec )
 
          nRet := DE_REFRESH
          lRefresh := .T.
-         lReload := .F.
+         lReload := .T.
       ENDIF
 
-   CASE Upper( Chr( nCh ) ) $ "K"
 
-      IF fakt_ispravka_podataka_azuriranog_dokumenta( field->idfirma, field->idtipdok, field->brdok )
+   CASE Upper( Chr( nCh ) ) == "K"
+
+      IF fakt_ispravka_podataka_azuriranog_dokumenta( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
          nRet := DE_REFRESH
          lRefresh := .T.
          lReload := .T.
@@ -256,10 +273,10 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
          RETURN DE_CONT
       ENDIF
 
-      _dev_id := odaberi_fiskalni_uredjaj( field->idtipdok, .F., .F. )
+      nFiskDeviceId := odaberi_fiskalni_uredjaj( field->idtipdok, .F., .F. )
 
-      IF _dev_id > 0
-         hFiskalniParams := get_fiscal_device_params( _dev_id, my_user() )
+      IF nFiskDeviceId > 0
+         hFiskalniParams := get_fiscal_device_params( nFiskDeviceId, my_user() )
          IF hFiskalniParams == NIL
             RETURN DE_CONT
          ENDIF
@@ -299,7 +316,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
       IF field->idtipdok $ "10#11"
 
-         IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, cFiskalniUredjajModel )
+         IF postoji_fiskalni_racun( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok, cFiskalniUredjajModel )
             MsgBeep( "Fiskalni račun već štampan za ovaj dokument !#Ako je potrebna ponovna štampa resetujte broj veze." )
             RETURN DE_CONT
          ENDIF
@@ -309,10 +326,10 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
                AllTrim( field->idtipdok ) + "-" + ;
                AllTrim( field->brdok ) + " (D/N) ?", "D" ) == "D"
 
-            _dev_id := odaberi_fiskalni_uredjaj( field->idtipdok, .F., .F. )
+            nFiskDeviceId := odaberi_fiskalni_uredjaj( field->idtipdok, .F., .F. )
 
-            IF _dev_id > 0
-               hFiskalniParams := get_fiscal_device_params( _dev_id, my_user() )
+            IF nFiskDeviceId > 0
+               hFiskalniParams := get_fiscal_device_params( nFiskDeviceId, my_user() )
                IF hFiskalniParams == NIL
                   RETURN DE_CONT
                ENDIF
@@ -324,7 +341,7 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
                RETURN DE_CONT
             ENDIF
 
-            fakt_fiskalni_racun( field->idfirma, field->idtipdok, field->brdok, .F., hFiskalniParams )
+            fakt_fiskalni_racun( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok, .F., hFiskalniParams )
 
             // SELECT ( nDbfArea )
             // nRet := DE_REFRESH
@@ -337,12 +354,12 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    CASE Upper( Chr( nCh ) ) == "W"
 
-      fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
-      SELECT fakt_doks
+      fakt_napravi_duplikat( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
+
 
    CASE Upper( Chr( nCh ) ) == "S"
 
-      fakt_generisi_storno_dokument( field->idfirma, field->idtipdok, field->brDok )
+      fakt_generisi_storno_dokument( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
 
       IF Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.
@@ -356,24 +373,25 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    CASE Upper( Chr( nCh ) ) == "N"
 
-      SELECT fakt_doks
-      fakt_print_narudzbenica( field->idFirma, field->IdTipDok, field->BrDok )
+      fakt_print_narudzbenica( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
       nRet := DE_CONT
       lRefresh := .T.
 
    CASE Upper( Chr( nCh ) ) == "F"
 
-      IF idtipdok $ "20"
-         nRet := generisi_fakturu( lOpcine )
+      IF fakt_doks_pregled->idtipdok == "20"
+         nRet := fakt_generisi_fakturu_10_iz_20( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
          lRefresh := .T.
          lReload := .T.
+      ELSE
+         MsgBeep( "Dokument mora biti tip 20!" )
       ENDIF
 
-   CASE Upper( Chr( nCh ) ) = "P"
+   CASE Upper( Chr( nCh ) ) == "P"
 
-      nPovrat := povrat_fakt_dokumenta( .F., field->idfirma, field->idtipdok, field->brdok )
+      nPovrat := povrat_fakt_dokumenta( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
 
-      o_fakt_doks()
+      // o_fakt_doks_dbf()
       IF nPovrat <> 0 .AND. Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.
          lRefresh := .F.
@@ -392,9 +410,9 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
       // SELECT ( nDbfArea )
       // SET ORDER TO TAG "1"
       IF lReload
-         fakt_pregled_reload_tables( cFilter )
+         fakt_pregled_reload_tables()
       ENDIF
-      SELECT FAKT_DOKS
+      SELECT FAKT_DOKS_PREGLED
       GO ( nFaktDokTekuciZapis )
       nRet := DE_REFRESH
 
@@ -451,6 +469,7 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
    LOCAL _total
    LOCAL cTxt := "", cRn
 
+<<<<<<< HEAD
    IF fakt_doks->idtipdok $ "10#11"
       cRN := fakt_doks->idfirma + "-" + fakt_doks->idtipdok + "-" + Trim( fakt_doks->brdok )
       IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, cFiskalniUredjajModel )
@@ -459,32 +478,50 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
       ELSE
          cFiskalniRacun := AllTrim( Str( fakt_doks->fisc_rn ) )
          cReklamiraniRacun := AllTrim( Str( fakt_doks->fisc_st ) )
+=======
+   IF fakt_doks_pregled->idtipdok $ "10#11"
+      cRN := fakt_doks_pregled->idfirma + "-" + fakt_doks_pregled->idtipdok + "-" + Trim( fakt_doks_pregled->brdok )
+      IF !postoji_fiskalni_racun( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok, cFiskalniUredjajModel )
+         cTxt := cRn + ": nema fiskalnog računa !"
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY8 PadR( cTxt, 60 ) COLOR "W/R+"
+      ELSE
+         cFiskalniRacun := AllTrim( Str( fakt_doks_pregled->fisc_rn ) )
+         cReklamiraniRacun := AllTrim( Str( fakt_doks_pregled->fisc_st ) )
+>>>>>>> 3
          cTxt := cRn + ": "
          IF cReklamiraniRacun <> "0"
             cTxt += "reklamirani račun: " + cReklamiraniRacun + ", "
          ENDIF
          cTxt += "fiskalni račun: " + cFiskalniRacun
+<<<<<<< HEAD
          @ get_x_koord() + 1, get_y_koord() + 2 SAY8 PadR( cTxt, 60 ) COLOR "GR+/B"
+=======
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY8 PadR( cTxt, 60 ) COLOR "GR+/B"
+>>>>>>> 3
       ENDIF
    ELSE
-      @ get_x_koord() + 1, get_y_koord() + 2 SAY PadR( "", 60 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "", 60 )
    ENDIF
 
    RETURN .T.
 
 
 
+<<<<<<< HEAD
 STATIC FUNCTION get_fiscal_info( cFiskalniUredjajModel )
+=======
+STATIC FUNCTION is_fiskaliziran( cFiskalniUredjajModel )
+>>>>>>> 3
 
    LOCAL cInfo := " "
 
-   IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, cFiskalniUredjajModel )
+   IF !postoji_fiskalni_racun( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok, cFiskalniUredjajModel )
       cInfo := " "
    ELSE
       cInfo := "F"
    ENDIF
 
-   prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
+   // prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
    RETURN cInfo
 
@@ -499,6 +536,7 @@ STATIC FUNCTION prikazi_brojeve_fiskalnog_racuna( _f_rn, _s_rn )
    IF _s_rn > 0
       cTxt += " / "
       cTxt += AllTrim( Str( _s_rn ) )
+<<<<<<< HEAD
    ENDIF
 
    RETURN cTxt
@@ -537,6 +575,8 @@ FUNCTION fakt_pregled_reload_tables( cFilter )
    GO TOP
    IF nRec != NIL
       GO nRec
+=======
+>>>>>>> 3
    ENDIF
 
-   RETURN .T.
+   RETURN cTxt

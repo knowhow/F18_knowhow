@@ -60,8 +60,8 @@ FUNCTION PlFill_Sezona()
 
    IF .F.
       Box(, 3, 60 )
-      @ m_x + 1, m_y + 2 SAY "Sezona PF-Sa   :" GET cSezonaPf
-      @ m_x + 2, m_y + 2 SAY "Sezona Pl-Kranj:" GET cSezonaPk
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sezona PF-Sa   :" GET cSezonaPf
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Sezona Pl-Kranj:" GET cSezonaPk
       READ
       BoxC()
    ENDIF
@@ -76,7 +76,7 @@ FUNCTION PlFill_Sezona()
       Box(, 3, 60 )
       DO WHILE !Eof()
          cSez := IzSifKRoba( "SEZ", roba->id, .F. )
-         @ m_x + 1, m_y + 2 SAY roba->id + " " + cSez
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY roba->id + " " + cSez
 
          cSezonaPf = cSez
          // if EMPTY(roba->sezona) .and. ;
@@ -104,8 +104,8 @@ FUNCTION PlFill_Vrsta()
    cVrstaPf := Space( 10 )
    cVrstaPk := Space( 1 )
    Box(, 3, 60 )
-   @ m_x + 1, m_y + 2 SAY "Sifra artikla sadrzi ($):" GET cVrstaPf
-   @ m_x + 2, m_y + 2 SAY "Vrsta Pl-Kranj:" GET cVrstaPk
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sifra artikla sadrzi ($):" GET cVrstaPf
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Vrsta Pl-Kranj:" GET cVrstaPk
    READ
    BoxC()
 

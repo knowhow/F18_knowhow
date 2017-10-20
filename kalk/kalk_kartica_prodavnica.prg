@@ -12,10 +12,10 @@
 #include "f18.ch"
 
 
-STATIC __line
-STATIC __txt1
-STATIC __txt2
-STATIC __txt3
+STATIC s_cLine
+STATIC s_cTxt1
+//STATIC __txt2
+//STATIC __txt3
 
 
 FUNCTION kalk_kartica_prodavnica()
@@ -41,12 +41,12 @@ FUNCTION kalk_kartica_prodavnica()
 
    _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
-   //o_tarifa()
-//   o_sifk()
-//   o_sifv()
-  // o_roba()
-   //o_konto()
-   //o_partner()
+   // o_tarifa()
+// o_sifk()
+// o_sifv()
+   // o_roba()
+   // o_konto()
+   // o_partner()
 
    cPredh := "N"
    dDatOd := Date()
@@ -70,22 +70,22 @@ FUNCTION kalk_kartica_prodavnica()
 
       DO WHILE .T.
 
-         @ m_x + 1, m_y + 2 SAY "Firma "
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
 
-         @ m_x + 2, m_y + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
 
-         form_get_roba_id( @cIdRoba, m_x + 3, m_y + 2 )
+         form_get_roba_id( @cIdRoba, box_x_koord() + 3, box_y_koord() + 2 )
 
-         @ m_x + 5, m_y + 2 SAY "Datum od " GET dDatOd
-         @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
-         @ m_x + 6, m_y + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"
-         @ m_x + 7, m_y + 2 SAY "Tip dokumenta (;) :"  GET cIdVd PICT "@S20"
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Datum od " GET dDatOd
+         @ box_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Tip dokumenta (;) :"  GET cIdVd PICT "@S20"
 
-         @ m_x + 9, m_y + 2 SAY "Prikaz srednje nabavne cijene ?" GET cPrikSredNc VALID cPrikSredNc $ "DN" PICT "@!"
+         @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prikaz srednje nabavne cijene ?" GET cPrikSredNc VALID cPrikSredNc $ "DN" PICT "@!"
 
-         @ m_x + 11, m_y + 2 SAY "Export XLSX:"  GET cExportDn PICT "@!" VALID cExportDN $ "DN"
+         @ box_x_koord() + 11, box_y_koord() + 2 SAY "Export XLSX:"  GET cExportDn PICT "@!" VALID cExportDN $ "DN"
 
          READ
          ESC_BCR
@@ -134,7 +134,7 @@ FUNCTION kalk_kartica_prodavnica()
    PRIVATE cFilt := ".t."
 
    IF !( cFilt == ".t." )
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
    ENDIF
 
    GO TOP
@@ -148,8 +148,8 @@ FUNCTION kalk_kartica_prodavnica()
    nLen := 1
 
    _set_zagl( @cLine, @cTxt1 )
-   __line := cLine
-   __txt1 := cTxt1
+   s_cLine := cLine
+   s_cTxt1 := cTxt1
 
    nTStrana := 0
 
@@ -168,12 +168,12 @@ FUNCTION kalk_kartica_prodavnica()
       select_o_roba( cIdRoba )
       select_o_tarifa( roba->idtarifa )
 
-      ? __line
+      ? s_cLine
 
       ? "Artikal:", cIdRoba, "-", Trim( Left( roba->naz, 40 ) ) + ;
          iif( roba_barkod_pri_unosu(), " BK: " + roba->barkod, "" ) + " (" + AllTrim( roba->jmj ) + ")"
 
-      ? __line
+      ? s_cLine
 
       SELECT kalk
 
@@ -340,7 +340,7 @@ FUNCTION kalk_kartica_prodavnica()
             IF field->datdok >= dDatod
                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
                nCol1 := PCol() + 1
-               @ PRow(), PCol() + 1 SAY say_kolicina( -( field->kolicina ) )
+               @ PRow(), PCol() + 1 SAY say_kolicina( - ( field->kolicina ) )
                @ PRow(), PCol() + 1 SAY say_kolicina( 0 )
                @ PRow(), PCol() + 1 SAY say_kolicina( nUlaz - nIzlaz )
                nNc := field->nc
@@ -432,7 +432,7 @@ FUNCTION kalk_kartica_prodavnica()
 
       ENDDO
 
-      ? __line
+      ? s_cLine
       ? "Ukupno:"
 
       @ PRow(), nCol1 SAY say_kolicina( nUlaz )
@@ -452,7 +452,7 @@ FUNCTION kalk_kartica_prodavnica()
 
       @ PRow(), PCol() + 1 SAY kalk_say_iznos( nMpv )
 
-      ? __line
+      ? s_cLine
       ?
       ? Replicate( "-", 60 )
       ? "     Ukupna vrijednost popusta u mp:", Str( Abs( nMPVP - nMPV ), 12, 2 )
@@ -530,9 +530,9 @@ STATIC FUNCTION Zagl()
    ? "Konto: ", cidkonto, "-", konto->naz
    SELECT kalk
    P_COND
-   ? __line
-   ? __txt1
-   ? __line
+   ? s_cLine
+   ? s_cTxt1
+   ? s_cLine
 
    RETURN .T.
 
@@ -584,17 +584,16 @@ FUNCTION naprometniji_artikli_prodavnica()
       ENDIF
    ENDDO
 
-   IF Params2()
-      WPar( "c2", qqKonto )
-      WPar( "c5", qqRoba )
-      WPar( "d1", dDat0 )
-      WPar( "d2", dDat1 )
-   ENDIF
+
+   WPar( "c2", qqKonto )
+   WPar( "c5", qqRoba )
+   WPar( "d1", dDat0 )
+   WPar( "d2", dDat1 )
 
    SELECT params
    USE
 
-  // o_roba()
+   // o_roba()
 
    find_kalk_za_period( self_organizacija_id(), NIL, NIL, NIL, dDat0, dDat1, "idroba,idvd" )
 
@@ -624,32 +623,32 @@ FUNCTION naprometniji_artikli_prodavnica()
          AAdd( aTopI, { cIdRoba, nIznos } )
          nMinI := Min( nIznos, nMinI )
       ELSEIF nIznos > nMinI
-         nPom := AScan( aTopI, {| x| x[ 2 ] <= nMinI } )
+         nPom := AScan( aTopI, {| x | x[ 2 ] <= nMinI } )
          IF nPom < 1 .OR. nPom > Len( aTopI )
             MsgBeep( "nPom=" + Str( nPom ) + " ?!" )
          ENDIF
          aTopI[ nPom ] := { cIdRoba, nIznos }
          nMinI := nIznos
-         AEval( aTopI, {| x| nMinI := Min( nMinI, x[ 2 ] ) } )
+         AEval( aTopI, {| x | nMinI := Min( nMinI, x[ 2 ] ) } )
       ENDIF
       IF Len( aTopK ) < nTop
          AAdd( aTopK, { cIdRoba, nKolicina } )
          nMinK := Min( nKolicina, nMinK )
       ELSEIF nKolicina > nMinK
-         nPom := AScan( aTopK, {| x| x[ 2 ] <= nMinK } )
+         nPom := AScan( aTopK, {| x | x[ 2 ] <= nMinK } )
          IF nPom < 1 .OR. nPom > Len( aTopK )
             MsgBeep( "nPom=" + Str( nPom ) + " ?!" )
          ENDIF
          aTopK[ nPom ] := { cIdRoba, nKolicina }
          nMinK := nKolicina
-         AEval( aTopK, {| x| nMinK := Min( nMinK, x[ 2 ] ) } )
+         AEval( aTopK, {| x | nMinK := Min( nMinK, x[ 2 ] ) } )
       ENDIF
    ENDDO
 
    MsgC()
 
-   ASort( aTopI,,, {| x, y| x[ 2 ] > y[ 2 ] } )
-   ASort( aTopK,,, {| x, y| x[ 2 ] > y[ 2 ] } )
+   ASort( aTopI,,, {| x, y | x[ 2 ] > y[ 2 ] } )
+   ASort( aTopK,,, {| x, y | x[ 2 ] > y[ 2 ] } )
 
 
 

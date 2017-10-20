@@ -84,7 +84,6 @@ FUNCTION update_idbr_pdvb_from_regb()
 
    SELECT PARTN
 
-   // oPartnId := Unicode():New( partn->id, is_partn_sql() )
    cPartnId := partn->id
 
    cRegB := get_partn_regb( cPartnId )
@@ -136,12 +135,17 @@ FUNCTION find_sifk_by_id_oznaka_naz_sort( cId, cOznaka, cNaz, cSort )
    cSql += " AND sort=" + sql_quote( cSort )
    cSql += " AND naz=" + sql_quote( PadR( cNaz, FIELD_LEN_SIFK_NAZ ) )
 
+   SELECT F_SIFK
    IF !use_sql( "sifk", cSql )
       ?E "ERRRRRRRRR find_sifk_by_id_oznaka_naz_sort", cSql
    ENDIF
 
    RETURN !Eof()
 
+
+/*
+   fill_sifk_partn( "IDBR", "IDENT br:", "07", 13 )
+*/
 
 FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
 

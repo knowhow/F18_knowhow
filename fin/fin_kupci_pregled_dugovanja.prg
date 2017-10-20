@@ -24,11 +24,11 @@ FUNCTION fin_kupci_pregled_dugovanja()
    LOCAL cAvans := "N"
 
    Box(, 5, 60 )
-   @ m_x + 1, m_y + 2  SAY "Datum od " GET dDatOd
-   @ m_x + 1, Col() + 2 SAY "do" GET dDatDo
-   @ m_x + 3, m_y + 2  SAY "Konto% duguje: " GET cIdKonto
-   @ m_x + 4, m_y + 2  SAY "Partner% (prazno svi): " GET cIdPartner
-   @ m_x + 5, m_y + 2  SAY8 "Prikaz kupaca koji su u avansu D/N?" GET cAvans PICT "@!" VALID cAvans $ "DN"
+   @ box_x_koord() + 1, box_y_koord() + 2  SAY "Datum od " GET dDatOd
+   @ box_x_koord() + 1, Col() + 2 SAY "do" GET dDatDo
+   @ box_x_koord() + 3, box_y_koord() + 2  SAY "Konto% duguje: " GET cIdKonto
+   @ box_x_koord() + 4, box_y_koord() + 2  SAY "Partner% (prazno svi): " GET cIdPartner
+   @ box_x_koord() + 5, box_y_koord() + 2  SAY8 "Prikaz kupaca koji su u avansu D/N?" GET cAvans PICT "@!" VALID cAvans $ "DN"
 
    READ
    BoxC()

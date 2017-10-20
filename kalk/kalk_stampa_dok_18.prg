@@ -20,9 +20,9 @@ FUNCTION kalk_stampa_dok_18()
 
    // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-   IF cSeek != 'IZDOKS'  // stampa se vise dokumenata odjednom
+   //IF cSeek != 'IZDOKS'  // stampa se vise dokumenata odjednom
       nStr := 1
-   ENDIF
+   //ENDIF
 
    cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
 
@@ -124,5 +124,4 @@ FUNCTION kalk_stampa_dok_18()
    ? PadL( "3. ___________________", 75 )
    ?
 
-   RETURN
-// }
+   RETURN .T.

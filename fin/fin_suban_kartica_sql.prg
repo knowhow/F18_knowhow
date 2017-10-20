@@ -98,12 +98,12 @@ STATIC FUNCTION _get_vars( rpt_vars )
    SET CURSOR ON
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Brza kartica (D/N)" GET _brza PICT "@!" VALID _brza $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Brza kartica (D/N)" GET _brza PICT "@!" VALID _brza $ "DN"
    READ
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Firma "
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Firma "
    ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++nX
@@ -113,9 +113,9 @@ STATIC FUNCTION _get_vars( rpt_vars )
       _konto := PadR( _konto, 7 )
       _partner := PadR( _partner, FIELD_LEN_PARTNER_ID )
 
-      @ m_x + nX, m_y + 2 SAY "Konto   " GET _konto VALID !Empty( _konto ) .AND. p_konto( @_konto )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto   " GET _konto VALID !Empty( _konto ) .AND. p_konto( @_konto )
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Partner " GET _partner VALID Empty( _partner ) .OR. ;
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Partner " GET _partner VALID Empty( _partner ) .OR. ;
          RTrim( _partner ) == ";" .OR. p_partner( @_partner ) PICT "@!"
 
    ELSE
@@ -123,38 +123,38 @@ STATIC FUNCTION _get_vars( rpt_vars )
       _konto := PadR( _konto, 200 )
       _partner := PadR( _partner, 200 )
 
-      @ m_x + nX, m_y + 2 SAY "Konto   " GET _konto PICT "@!S50"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto   " GET _konto PICT "@!S50"
       ++nX
-      @ m_x + nX, m_y + 2 SAY "Partner " GET _partner PICT "@!S50"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Partner " GET _partner PICT "@!S50"
 
    ENDIF
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Kartica za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Kartica za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Datum dokumenta od:" GET _datum_od
-   @ m_x + nX, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datum dokumenta od:" GET _datum_od
+   @ box_x_koord() + nX, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
 
    ++nX
-   @ m_x + nX, m_y + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
-
-   ++nX
-   ++nX
-   @ m_x + nX, m_y + 2 SAY "Prikaz kartica sa saldom nula (D/N)?" GET _nula VALID _nula $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
 
    ++nX
    ++nX
-   @ m_x + nX, m_y + 2 SAY "Export u XLSX (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz kartica sa saldom nula (D/N)?" GET _nula VALID _nula $ "DN" PICT "@!"
+
+   ++nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Export u XLSX (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
 
    READ
 
@@ -337,7 +337,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
    LOCAL _u_saldo2 := 0
    LOCAL _val
    LOCAL _id_konto, _id_partner
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _saldo_nula := rpt_vars[ "saldo_nula" ]
 
    IF table:LastRec() == 0
@@ -369,7 +369,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
    DO WHILE !table:Eof()
 
       oItem := table:GetRow()
-      _t_rec := table:RecNo()
+      nTrec := table:RecNo()
 
       _id_konto := oItem:FieldGet( oItem:FieldPos( "idkonto" ) )
       _id_partner := oItem:FieldGet( oItem:FieldPos( "idpartner" ) )
@@ -378,7 +378,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
          IF _fin_kartica_saldo_nula( table, _id_konto, _id_partner )
             LOOP
          ELSE
-            table:GoTo( _t_rec )
+            table:GoTo( nTrec )
          ENDIF
       ENDIF
 

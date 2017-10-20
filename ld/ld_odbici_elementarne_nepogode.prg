@@ -87,11 +87,11 @@ STATIC FUNCTION obracunaj_odbitak()
 
    Box(, 7, 67 )
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "*** ODBITAK ZA ELEMENTARNE NEPOGODE"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** ODBITAK ZA ELEMENTARNE NEPOGODE"
 
    nX := nX + 2
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 "Tip obračuna (1) procentualni iznos (2) jedna neto dnevnica" GET nTipObracuna PICT "9"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Tip obračuna (1) procentualni iznos (2) jedna neto dnevnica" GET nTipObracuna PICT "9"
 
    READ
 
@@ -103,10 +103,10 @@ STATIC FUNCTION obracunaj_odbitak()
    nX := nX + 2
 
    IF nTipObracuna == 1
-      @ get_x_koord() + nX, get_y_koord() + 2 SAY "u procentualnom iznosu od:" GET nProcIznos PICT "999.99"
-      @ get_x_koord() + nX, col() + 1 SAY "%"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "u procentualnom iznosu od:" GET nProcIznos PICT "999.99"
+      @ box_x_koord() + nX, col() + 1 SAY "%"
    ELSE
-      @ get_x_koord() + nX, get_y_koord() + 2 SAY "na osnovu jedne neto dnevnice."
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "na osnovu jedne neto dnevnice."
    ENDIF
 
    READ
@@ -127,7 +127,7 @@ STATIC FUNCTION obracunaj_odbitak()
 
    ++ nX
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 "Iznos odbitka = " + AllTrim( Str( nIznos, 12, 2 ) ) + ", obračunati odbitak (D/N) ?" GET cObr ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Iznos odbitka = " + AllTrim( Str( nIznos, 12, 2 ) ) + ", obračunati odbitak (D/N) ?" GET cObr ;
              VALID cObr $ "DN" PICT "@!"
 
    READ
@@ -153,21 +153,21 @@ FUNCTION ld_elementarne_nepogode_parametri()
 
    Box(, 5, 66 )
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY "Tip primanja posebnog odbitka za elementarne nepogode:" GET cTipPrimanja ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Tip primanja posebnog odbitka za elementarne nepogode:" GET cTipPrimanja ;
              VALID valid_tip_primanja_elementarne_nepogode( @cTipPrimanja )
 
    ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 "Način obračuna odbitka za elementarne nepogode:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Način obračuna odbitka za elementarne nepogode:"
 
    ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 " (1) procenat od neto plate uposlenika"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 " (1) procenat od neto plate uposlenika"
 
    ++ nX
 
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 " (2) iznos jedne neto dnevnice uposlenika"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 " (2) iznos jedne neto dnevnice uposlenika"
 
    ++ nX
-   @ get_x_koord() + nX, get_y_koord() + 2 SAY8 "     tekući odabir:" GET nTipObracuna PICT "9" VALID nTipObracuna > 0 .AND. nTipObracuna < 3
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "     tekući odabir:" GET nTipObracuna PICT "9" VALID nTipObracuna > 0 .AND. nTipObracuna < 3
 
    READ
 

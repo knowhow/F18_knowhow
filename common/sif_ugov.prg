@@ -18,6 +18,7 @@ FUNCTION p_ugov( cId, dx, dy )
    LOCAL i
    LOCAL cHeader := ""
    LOCAL cFieldId
+   LOCAL xRet
 
    PRIVATE DFTkolicina := 1
    PRIVATE DFTidroba := PadR( "", 10 )
@@ -27,7 +28,8 @@ FUNCTION p_ugov( cId, dx, dy )
    PRIVATE DFTidtxt := "10"
    PRIVATE DFTzaokr := 2
    PRIVATE DFTiddodtxt := Space( 2 )
-   PRIVATE gGenUgV2 := "1"
+
+   // PRIVATE gGenUgV2 := "1"
    PRIVATE gFinKPath := Space( 50 )
 
    PRIVATE ImeKol
@@ -38,21 +40,22 @@ FUNCTION p_ugov( cId, dx, dy )
    cHeader += "Ugovori: "
    cHeader += "<F3> ispravi id, "
    cHeader += "<F5> stavke ugovora, "
-   cHeader += "<F6> lista za K1='G', "
+   // cHeader += "<F6> lista za K1='G', "
    cHeader += "<R> set.poslj.fakt, "
    cHeader += "<P> pregl.destin."
 
-   o_ugov_tabele()
+   // o_ugov_tabele()
 
    DFTParUg( .T. )
 
-   // setuj kolone tabele
+   o_ugov() // browse svi ugovori
+
    set_a_kol( @ImeKol, @Kol )
 
-   // setuj polje pri otvaranju za sortiranje
-   set_fld_id( @cFieldId, cId )
 
-   xRet := p_sifra( F_UGOV, cFieldId, f18_max_rows() - 10, f18_max_cols() - 3, cHeader, @cId, dx, dy, {| Ch | ug_key_handler( Ch ) } )
+   set_fld_id( @cFieldId, cId )  // setuj polje pri otvaranju za sortiranje
+
+   xRet := p_sifra( F_UGOV, cFieldId, f18_max_rows() - 10, f18_max_cols() - 3, cHeader, @cId, dx, dy, {| Ch | ugov_key_handler( Ch ) } )
 
    PopWa()
 
@@ -75,10 +78,10 @@ STATIC FUNCTION set_fld_id( cVal, cId )
    RETURN .T.
 
 
-// -----------------------------------------
-// setovanje kolona prikaza
-// -----------------------------------------
+
 STATIC FUNCTION set_a_kol( aImeKol, aKol )
+
+   LOCAL i
 
    aImeKol := {}
    aKol := {}
@@ -97,7 +100,6 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
       AAdd( aImeKol, { "Nivo.f", {|| f_nivo }, "f_nivo" } )
       AAdd( aImeKol, { "P.nivo.dana", {|| f_p_d_nivo }, "f_p_d_nivo",,, "99999" } )
       AAdd( aImeKol, { "Fakturisano do", {|| fakt_do() }, "zaokr"  } )
-
       AAdd( aImeKol, { "Poslj.faktur.", {|| dat_l_fakt }, "dat_l_fakt"  } )
    ENDIF
 
@@ -115,20 +117,20 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
    AAdd( aImeKol, { "KM/EUR", {|| DINDEM }, "DINDEM" } )
 
-   IF ( ugov->( FieldPos( "A1" ) ) <> 0 )
-      IF my_get_from_ini( 'Fakt_Ugovori', "A1", 'D' ) == "D"
-         AAdd( aImeKol, { "A1", {|| A1 }, "A1" } )
-      ENDIF
-      IF my_get_from_ini( 'Fakt_Ugovori', "A2", 'D' ) == "D"
-         AAdd( aImeKol, { "A2", {|| A2 }, "A2" } )
-      ENDIF
-      IF my_get_from_ini( 'Fakt_Ugovori', "B1", 'D' ) == "D"
-         AAdd( aImeKol, { "B1", {|| B1 }, "B1" } )
-      ENDIF
-      IF my_get_from_ini( 'Fakt_Ugovori', "B2", 'D' ) == "D"
-         AAdd( aImeKol, { "B2", {|| B2 }, "B2" } )
-      ENDIF
-   ENDIF
+   // IF ( ugov->( FieldPos( "A1" ) ) <> 0 )
+   // IF my_get_from_ini( 'Fakt_Ugovori', "A1", 'D' ) == "D"
+   AAdd( aImeKol, { "A1", {|| A1 }, "A1" } )
+   // ENDIF
+   // IF my_get_from_ini( 'Fakt_Ugovori', "A2", 'D' ) == "D"
+   AAdd( aImeKol, { "A2", {|| A2 }, "A2" } )
+   // ENDIF
+   // IF my_get_from_ini( 'Fakt_Ugovori', "B1", 'D' ) == "D"
+   AAdd( aImeKol, { "B1", {|| B1 }, "B1" } )
+   // ENDIF
+   // IF my_get_from_ini( 'Fakt_Ugovori', "B2", 'D' ) == "D"
+   AAdd( aImeKol, { "B2", {|| B2 }, "B2" } )
+   // ENDIF
+   // ENDIF
 
    FOR i := 1 TO Len( aImeKol )
       AAdd( aKol, i )
@@ -137,13 +139,11 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    RETURN .T.
 
 
-// --------------------------------
-// key handler
-// --------------------------------
-STATIC FUNCTION ug_key_handler( Ch )
+
+STATIC FUNCTION ugov_key_handler( Ch )
 
    LOCAL GetList := {}
-   LOCAL nRec := 0
+   //LOCAL nRec := 0
    LOCAL nDbfArea := Select()
 
    DO CASE
@@ -156,7 +156,6 @@ STATIC FUNCTION ug_key_handler( Ch )
       RETURN DE_CONT
 
    CASE Upper( Chr( Ch ) ) == "R" // setuj datum do kojeg si fakturisao
-
 
       IF set_datl_fakt() == 1
          RETURN DE_REFRESH
@@ -196,22 +195,22 @@ STATIC FUNCTION ug_key_handler( Ch )
 
    CASE ( Ch == K_F5 )
 
-      V_RUgov( ugov->id )
+      browse_rugov( ugov->id )
       RETURN 6 // DE_CONT2
 
-   CASE ( Ch == K_F6 )
-      I_ListaUg()
+      // CASE ( Ch == K_F6 )
+      // I_ListaUg()
 
    CASE ( Ch == K_ALT_L )
 
-      nRec := RecNo()
+      //nRec := RecNo()
 
       ugov_stampa_naljenica()
-      o_rugov()
-      o_dest()
-      o_ugov()
+      // o_rugov()
+      // o_dest()
+      // o_ugov()
 
-      GO ( nRec )
+      //GO ( nRec )
 
    ENDCASE
 
@@ -229,9 +228,9 @@ FUNCTION set_datl_fakt()
 
    Box(, 5, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "SETOVANJE DATUMA POSLJEDNJEG FAKTURISANJA:"
-   @ m_x + 3, m_y + 2 SAY "Postavi datum na:" GET dDatL
-   @ m_x + 5, m_y + 2 SAY8 "Izvršiti promjenu (D/N)?" GET cProm VALID cProm $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "SETOVANJE DATUMA POSLJEDNJEG FAKTURISANJA:"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Postavi datum na:" GET dDatL
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Izvršiti promjenu (D/N)?" GET cProm VALID cProm $ "DN" PICT "@!"
 
    READ
    BoxC()
@@ -270,9 +269,9 @@ FUNCTION gen_ug_part()
       cArtikalOld := idroba
       cDN := "N"
       Box(, 3, 50 )
-      @ m_x + 1, m_y + 5 SAY8 "Generiši ugovore za artikal: " GET cArtikal
-      @ m_x + 2, m_y + 5 SAY8 "Preuzmi podatke artikla: " GET cArtikalOld
-      @ m_x + 3, m_y + 5 SAY8 "Zamjenu vršiti samo za aktivne (D/N): " GET cDN VALID cDN $ "DN"
+      @ box_x_koord() + 1, box_y_koord() + 5 SAY8 "Generiši ugovore za artikal: " GET cArtikal
+      @ box_x_koord() + 2, box_y_koord() + 5 SAY8 "Preuzmi podatke artikla: " GET cArtikalOld
+      @ box_x_koord() + 3, box_y_koord() + 5 SAY8 "Zamjenu vršiti samo za aktivne (D/N): " GET cDN VALID cDN $ "DN"
       READ
       BoxC()
 
@@ -293,7 +292,7 @@ FUNCTION gen_ug_part()
             APPEND BLANK
             _idroba := cArtikal
             Gather()
-            @ m_x + 1, m_y + 2 SAY8 "Obuhvaćeno: " + Str( nTrec )
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Obuhvaćeno: " + Str( nTrec )
             GO nTrec
          ELSE
             GO nTrec
@@ -314,7 +313,7 @@ FUNCTION br_ugovor()
 
    LOCAL lOk := .T.
    LOCAL _id_ugov
-   LOCAL _t_rec
+   LOCAL nTrec
    LOCAL _rec
    LOCAL _ret := 0
    LOCAL hParams
@@ -341,7 +340,7 @@ FUNCTION br_ugovor()
    DO WHILE !Eof() .AND. _id_ugov == field->id
 
       SKIP
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
 
       _rec := dbf_get_rec()
@@ -351,7 +350,7 @@ FUNCTION br_ugovor()
          EXIT
       ENDIF
 
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 
@@ -370,9 +369,7 @@ FUNCTION br_ugovor()
 
 
 
-// -----------------------------------
-// promjena broja ugovora
-// -----------------------------------
+
 FUNCTION edit_ugovor( lNovi )
 
    LOCAL cIdOld
@@ -380,139 +377,110 @@ FUNCTION edit_ugovor( lNovi )
    LOCAL nTRec
    LOCAL nBoxLen := 20
    LOCAL nX := 1
-   LOCAL _fakt_do_mj := 0
-   LOCAL _fakt_do_go := 0
+   LOCAL nFaktDoMjeseca := 0
+   LOCAL nFaktDoGodine := 0
+   LOCAL GetList := {}
+   LOCAL hRec
 
    IF lNovi
-      nRec := RecNo()
+      nTRec := RecNo()
       GO BOTTOM
       SKIP 1
    ENDIF
 
-   Scatter()
+   // Scatter()
+
+   hRec := dbf_get_rec()
 
    IF lNovi
+      hRec[ "datod" ] := Date()
+      hRec[ "datdo" ] := CToD( "31.12.2059" )
+      hRec[ "aktivan" ] := "D"
+      hRec[ "lab_prn" ] := "D"
+      hRec[ "dindem" ] := DFTdindem
+      hRec[ "idtipdok" ] := DFTidtipdok
+      hRec[ "zaokr" ] := DFTzaokr
+      hRec[ "vrsta" ] := DFTvrsta
+      hRec[ "idtxt" ] := DFTidtxt
+      hRec[ "iddodtxt" ] := DFTiddodtxt
 
-      _datod := Date()
-      _datdo := CToD( "31.12.2059" )
-      _aktivan := "D"
-      _lab_prn := "D"
-      _dindem := DFTdindem
-      _idtipdok := DFTidtipdok
-      _zaokr := DFTzaokr
-      _vrsta := DFTvrsta
-      _idtxt := DFTidtxt
-      _iddodtxt := DFTiddodtxt
-
-      IF ugov->( FieldPos( "F_NIVO" ) ) <> 0
-         _f_nivo := "M"
-         _f_p_d_nivo := 0
-         _dat_l_fakt := CToD( "" )
-      ENDIF
+      hRec[ "f_nivo" ] := "M"
+      hRec[ "f_p_d_nivo" ] := 0
+      hRec[ "dat_l_fakt" ] := CToD( "" )
 
    ENDIF
 
    Box(, 20, 75, .F. )
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Ugovor", nBoxLen ) GET _id ;
-      WHEN lNovi ;
-      PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Ugovor", nBoxLen ) GET hRec[ "id" ] WHEN lNovi PICT "@!"
 
    ++nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Partner", nBoxLen ) GET _idpartner VALID {|| x := p_partner( @_IdPartner ), MSAY2( m_x + 2, m_y + 35, get_partner_naziv( _IdPartner ), 40 ), x } PICT "@!"
-
-   //IF is_dest()
-
-      ++nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Def.dest", nBoxLen ) GET _def_dest  PICT "@!" VALID {|| Empty( _def_dest ) .OR. p_destinacije( @_def_dest, _idpartner ) }
-
-   //ENDIF
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Partner", nBoxLen ) GET hRec[ "idpartner" ] VALID {|| x := p_partner( @hRec[ "idpartner" ] ), MSAY2( box_x_koord() + 2, box_y_koord() + 35, get_partner_naziv( hRec[ "idpartner" ] ), 40 ), x } PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Def.dest", nBoxLen ) GET hRec[ "def_dest" ]  PICT "@!" VALID {|| Empty( hRec[ "def_dest" ] ) .OR. p_destinacije( @hRec[ "def_dest" ], hRec[ "idpartner" ] ) }
 
    ++nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Opis ugovora", nBoxLen ) GET _naz PICT "@!"
-
-   ++nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Datum ugovora", nBoxLen ) GET _datod
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Opis ugovora", nBoxLen ) GET hRec[ "naz" ] PICT "@!"
 
    ++nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Datum kraja ugov.", nBoxLen ) GET _datdo
-
-   ++nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Aktivan (D/N)", nBoxLen ) GET _aktivan VALID _aktivan $ "DN" PICT "@!"
-   @ m_x + nX, Col() + 2 SAY PadL( "labela print (D/N)", nBoxLen ) GET _lab_prn VALID _lab_prn $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Datum ugovora", nBoxLen ) GET hRec[ "datod" ]
 
    ++nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Tip dokumenta", nBoxLen ) GET _idtipdok PICT "@!"
-
-   ++nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Vrsta", nBoxLen ) GET _vrsta PICT "@!"
-
-
-   IF ugov->( FieldPos( "F_NIVO" ) ) <> 0
-
-      ++nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Nivo fakt.", nBoxLen ) GET _f_nivo PICT "@!" VALID _f_nivo $ "MPG"
-
-      ++nX
-      @ m_x + nX, m_y + 2 SAY PadL( "Pr.nivo dana", nBoxLen ) GET _f_p_d_nivo PICT "99999" WHEN _f_nivo == "P"
-
-      ++nX
-      // mjesec
-      @ m_x + nX, m_y + 2 SAY PadL( "Fakturisano do", nBoxLen ) GET _fakt_do_mj WHEN  {||  _fakt_do_mj := Month( ugov->dat_l_fakt ), .T. }  PICT "99"
-
-      // godina
-      @ m_x + nX, m_y + 2 + 28  SAY "/" GET _fakt_do_go  WHEN {||  _fakt_do_go := Year( ugov->dat_l_fakt ), .T. } ;
-         VALID {||   _dat_l_fakt := mo_ye( _fakt_do_mj, _fakt_do_go ), .T. } PICT "9999"
-
-   ENDIF
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Datum kraja ugov.", nBoxLen ) GET hRec[ "datdo" ]
 
    ++nX
-
-   @ m_x + nX, m_y + 2 SAY PadL( "Valuta (KM/EUR)", nBoxLen ) GET _dindem PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Aktivan (D/N)", nBoxLen ) GET hRec[ "aktivan" ] VALID hRec[ "aktivan" ] $ "DN" PICT "@!"
+   @ box_x_koord() + nX, Col() + 2 SAY PadL( "labela print (D/N)", nBoxLen ) GET hRec[ "lab_prn" ] VALID hRec[ "lab_prn" ] $ "DN" PICT "@!"
 
    ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Tip dokumenta", nBoxLen ) GET hRec[ "idtipdok" ] PICT "@!"
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 1", nBoxLen ) GET _idtxt VALID p_fakt_ftxt( @_IdTxt ) PICT "@!"
-
-   IF ugov->( FieldPos( "IDDODTXT" ) ) <> 0
-
-      ++nX
-
-      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 2", nBoxLen ) GET _iddodtxt VALID p_fakt_ftxt( @_IdDodTxt ) PICT "@!"
-   ENDIF
-
-   IF ugov->( FieldPos( "TXT2" ) ) <> 0
-
-      ++nX
-
-      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 3", nBoxLen ) GET _txt2 VALID p_fakt_ftxt( @_Txt2 ) PICT "@!"
-
-      ++nX
-
-      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 4", nBoxLen ) GET _txt3 VALID p_fakt_ftxt( @_Txt3 ) PICT "@!"
-
-      ++nX
-
-      @ m_x + nX, m_y + 2 SAY PadL( "Dod.txt 5", nBoxLen ) GET _txt4 VALID p_fakt_ftxt( @_Txt4 ) PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Vrsta", nBoxLen ) GET hRec[ "vrsta" ] PICT "@!"
 
 
-   ENDIF
+   // IF ugov->( FieldPos( "F_NIVO" ) ) <> 0
 
-   IF ugov->( FieldPos( "A1" ) ) <> 0
-      ++nX
-      @ m_x + nX, m_y + 2 SAY PadL( "A1", nBoxLen ) GET _a1
-      @ m_x + nX, Col() + 2 SAY PadL( "A2", nBoxLen ) GET _a2
-      ++nX
-      @ m_x + nX, m_y + 2 SAY PadL( "B1", nBoxLen ) GET _b1
-      @ m_x + nX, Col() + 2 SAY PadL( "B2", nBoxLen ) GET _b2
-   ENDIF
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Nivo fakt.", nBoxLen ) GET hRec[ "f_nivo" ] PICT "@!" VALID hRec[ "f_nivo" ] $ "MPG"
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Pr.nivo dana", nBoxLen ) GET hRec[ "f_p_d_nivo" ] PICT "99999" WHEN hRec[ "f_nivo" ] == "P"
+
+   ++nX
+   // mjesec
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Fakturisano do", nBoxLen ) GET nFaktDoMjeseca WHEN  {||  nFaktDoMjeseca := Month( ugov->dat_l_fakt ), .T. }  PICT "99"
+
+   // godina
+   @ box_x_koord() + nX, box_y_koord() + 2 + 28  SAY "/" GET nFaktDoGodine  WHEN {||  nFaktDoGodine := Year( ugov->dat_l_fakt ), .T. } ;
+      VALID {||   _dat_l_fakt := mo_ye( nFaktDoMjeseca, nFaktDoGodine ), .T. } PICT "9999"
+
+   // ENDIF
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Valuta (KM/EUR)", nBoxLen ) GET hRec[ "dindem" ] PICT "@!"
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dod.txt 1", nBoxLen ) GET hRec[ "idtxt" ] VALID p_fakt_ftxt( @hRec[ "idtxt" ] ) PICT "@!"
+
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dod.txt 2", nBoxLen ) GET hRec[ "iddodtxt" ] VALID p_fakt_ftxt( @hRec[ "iddodtxt" ] ) PICT "@!"
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dod.txt 3", nBoxLen ) GET hRec[ "txt2" ] VALID p_fakt_ftxt( @hRec[ "txt2" ] ) PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dod.txt 4", nBoxLen ) GET hRec[ "txt3" ] VALID p_fakt_ftxt( @hRec[ "txt3" ] ) PICT "@!"
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "Dod.txt 5", nBoxLen ) GET hRec[ "txt4" ] VALID p_fakt_ftxt( @hRec[ "txt4" ] ) PICT "@!"
+
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "A1", nBoxLen ) GET hRec[ "a1" ]
+   @ box_x_koord() + nX, Col() + 2 SAY PadL( "A2", nBoxLen ) GET hRec[ "a2" ]
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "B1", nBoxLen ) GET hRec[ "b1" ]
+   @ box_x_koord() + nX, Col() + 2 SAY PadL( "B2", nBoxLen ) GET hRec[ "b2" ]
 
    READ
 
@@ -526,17 +494,18 @@ FUNCTION edit_ugovor( lNovi )
       APPEND BLANK
    ENDIF
 
-   _vars := get_hash_record_from_global_vars()
+   // := get_hash_record_from_global_vars()
 
-   IF !update_rec_server_and_dbf( Alias(), _vars, 1, "FULL" )
+   IF !update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
       delete_with_rlock()
    ELSE
       IF lNovi
-         GO ( nRec )
+         GO ( nTRec )
       ENDIF
    ENDIF
 
    RETURN 7
+
 
 // ---------------------------------------------
 // promjeni broj ugovora
@@ -547,7 +516,7 @@ STATIC FUNCTION ugovor_promjeni_id( cId )
 
    cIdOld := cId
    Box(, 2, 50 )
-   @ m_x + 1, m_y + 2 SAY "Broj ugovora" GET cID VALID !Empty( cId ) .AND. cId <> cIdOld
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Broj ugovora" GET cID VALID !Empty( cId ) .AND. cId <> cIdOld
    READ
    BoxC()
 
@@ -584,7 +553,7 @@ STATIC FUNCTION ugovor_promjeni_id( cId )
    RETURN .T.
 
 
-
+/*
 
 FUNCTION P_Ugov2( cIdPartner )
 
@@ -633,8 +602,8 @@ FUNCTION P_Ugov2( cIdPartner )
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
    Box(, 20, 72 )
-   @ m_x + 19, m_y + 1 SAY "<PgDn> sljedeci, <PgUp> prethodni ³<c-N> nova stavka          "
-   @ m_x + 20, m_y + 1 SAY "<TAB>  podaci o ugovoru           ³<c-L> novi ugovor          "
+   @ box_x_koord() + 19, box_y_koord() + 1 SAY "<PgDn> sljedeci, <PgUp> prethodni ³<c-N> nova stavka          "
+   @ box_x_koord() + 20, box_y_koord() + 1 SAY "<TAB>  podaci o ugovoru           ³<c-L> novi ugovor          "
 
    PRIVATE  bGoreRed := NIL
    PRIVATE  bDoleRed := NIL
@@ -675,7 +644,7 @@ FUNCTION P_Ugov2( cIdPartner )
       EdUgov2()
    ELSE
       TempIni( 'Fakt_Ugovori_Novi', 'Partner', '_NIL_', "WRITE" )
-      my_db_edit_sql( "", 20, 72, {|| EdUgov2() }, "", "Stavke ugovora...", , , , , 2, 6 )
+      my_browse( "", 20, 72, {|| EdUgov2() }, "", "Stavke ugovora...", , , , , 2, 6 )
    ENDIF
 
    BoxC()
@@ -687,13 +656,12 @@ FUNCTION P_Ugov2( cIdPartner )
    RETURN
 
 
-// --------------------------------------------------
-// --------------------------------------------------
+
 FUNCTION EdUgov2()
 
    LOCAL _ret := -77
    LOCAL GetList := {}
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _t_arr := Select()
    LOCAL _rec
 
@@ -818,22 +786,22 @@ FUNCTION EdUgov2()
       _id := cIdUg
 
       Box(, 8, 77 )
-      @ m_x + 2, m_y + 2 SAY8 "ŠIFRA ARTIKLA:" GET _idroba ;
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "ŠIFRA ARTIKLA:" GET _idroba ;
          VALID ( glDistrib .AND. Right( Trim( _idroba ), 1 ) == ";" ) .OR. P_Roba( @_idroba ) ;
          PICT "@!"
-      @ m_x + 3, m_y + 2 SAY8 "Količina      " GET _Kolicina  ;
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Količina      " GET _Kolicina  ;
          PICT "99999999.999"
 
 
       IF FieldPos( "K1" ) <> 0
          IF my_get_from_ini( 'Fakt_Ugovori', "K1", 'D' ) == "D"
-            @ m_x + 6, m_y + 2 SAY "K1            " GET _K1 PICT "@!"
+            @ box_x_koord() + 6, box_y_koord() + 2 SAY "K1            " GET _K1 PICT "@!"
          ENDIF
          IF my_get_from_ini( 'Fakt_Ugovori', "K2", 'D' ) == "D"
-            @ m_x + 7, m_y + 2 SAY "K2            " GET _K2 PICT "@!"
+            @ box_x_koord() + 7, box_y_koord() + 2 SAY "K2            " GET _K2 PICT "@!"
          ENDIF
       ENDIF
-      @ m_x + 8, m_y + 2 SAY "Destinacija   " GET _destin ;
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Destinacija   " GET _destin ;
          PICT "@!" VALID Empty( _destin ) .OR. P_Destin( @_destin )
       READ
       BoxC()
@@ -848,7 +816,7 @@ FUNCTION EdUgov2()
 
          lTrebaOsvUg := .T.
       ELSE
-         GO ( _t_rec )
+         GO ( nTrec )
          RETURN DE_CONT
       ENDIF
 
@@ -901,9 +869,9 @@ FUNCTION OsvjeziPrikUg( lWhen, lNew )
    SELECT UGOV
 
    IF lNew
-      cEkran := SaveScreen( m_x + 10, m_y + 1, m_x + 17, m_y + 72 )
-      @ m_x + 10, m_y + 1 CLEAR TO m_x + 17, m_y + 72
-      @ m_x + 13, m_y + 1 SAY PadC( "N O V I    U G O V O R", 72 )
+      cEkran := SaveScreen( box_x_koord() + 10, box_y_koord() + 1, box_x_koord() + 17, box_y_koord() + 72 )
+      @ box_x_koord() + 10, box_y_koord() + 1 CLEAR TO box_x_koord() + 17, box_y_koord() + 72
+      @ box_x_koord() + 13, box_y_koord() + 1 SAY PadC( "N O V I    U G O V O R", 72 )
       nRecUg := RecNo()
       GO BOTTOM
       SKIP 1
@@ -938,36 +906,36 @@ FUNCTION OsvjeziPrikUg( lWhen, lNew )
       cPom := TempIni( 'Fakt_Ugovori_Novi', 'Partner', '_NIL_', "WRITE" )
    ENDIF
 
-   @ m_x + 1, m_y + 1 SAY "Ugovor broj    :" GET wid WHEN lWhen VALID !lWhen .OR. !Empty( wid ) .AND. valid_sifarnik_id_postoji( wid )
-   @ m_x + 1, m_y + 30 SAY "Opis ugovora   :" GET wnaz WHEN lWhen
-   @ m_x + 2, m_y + 1 SAY "PARTNER        :" GET widpartner ;
+   @ box_x_koord() + 1, box_y_koord() + 1 SAY "Ugovor broj    :" GET wid WHEN lWhen VALID !lWhen .OR. !Empty( wid ) .AND. valid_sifarnik_id_postoji( wid )
+   @ box_x_koord() + 1, box_y_koord() + 30 SAY "Opis ugovora   :" GET wnaz WHEN lWhen
+   @ box_x_koord() + 2, box_y_koord() + 1 SAY "PARTNER        :" GET widpartner ;
       WHEN lWhen ;
-      VALID !lWhen .OR. p_partner( @widpartner ) .AND. MSAY2( m_x + 2, 30, get_partner_naziv( wIdPartner ), 40 ) PICT "@!"
+      VALID !lWhen .OR. p_partner( @widpartner ) .AND. MSAY2( box_x_koord() + 2, 30, get_partner_naziv( wIdPartner ), 40 ) PICT "@!"
 
-   @ m_x + 3, m_y + 1 SAY "DATUM UGOVORA  :" GET wdatod ;
+   @ box_x_koord() + 3, box_y_koord() + 1 SAY "DATUM UGOVORA  :" GET wdatod ;
       WHEN lWhen
-   @ m_x + 3, m_y + 30 SAY "DATUM PRESTANKA:" GET wdatdo ;
+   @ box_x_koord() + 3, box_y_koord() + 30 SAY "DATUM PRESTANKA:" GET wdatdo ;
       WHEN lWhen
-   @ m_x + 4, m_y + 1 SAY "VRSTA UGOV.(1/2/G):" GET wvrsta ;
+   @ box_x_koord() + 4, box_y_koord() + 1 SAY "VRSTA UGOV.(1/2/G):" GET wvrsta ;
       WHEN lWhen ;
       VALID !lWhen .OR. wvrsta $ "12G"
-   @ m_x + 4, m_y + 30 SAY "TIP DOKUMENTA  :" GET widtipdok WHEN lWhen
-   @ m_x + 5, m_y + 1 SAY "AKTIVAN (D/N)  :" GET waktivan ;
+   @ box_x_koord() + 4, box_y_koord() + 30 SAY "TIP DOKUMENTA  :" GET widtipdok WHEN lWhen
+   @ box_x_koord() + 5, box_y_koord() + 1 SAY "AKTIVAN (D/N)  :" GET waktivan ;
       WHEN lWhen ;
       VALID !lWhen .OR. waktivan $ "DN" ;
       PICT "@!"
-   @ m_x + 5, m_y + 30 SAY "VALUTA (KM/DEM):" GET wdindem ;
+   @ box_x_koord() + 5, box_y_koord() + 30 SAY "VALUTA (KM/DEM):" GET wdindem ;
       WHEN lWhen ;
       PICT "@!"
-   @ m_x + 6, m_y + 1 SAY "TXT-NAPOMENA   :" GET widtxt ;
+   @ box_x_koord() + 6, box_y_koord() + 1 SAY "TXT-NAPOMENA   :" GET widtxt ;
       WHEN lWhen
-   @ m_x + 6, m_y + 30 SAY "TXT-NAPOMENA2  :" GET widdodtxt ;
+   @ box_x_koord() + 6, box_y_koord() + 30 SAY "TXT-NAPOMENA2  :" GET widdodtxt ;
       WHEN lWhen
 
    READ
 
    IF !lWhen
-      @ m_x + 2, m_y + 24 SAY "---->(" + get_partner_naziv( wIdPartner ) + ")"
+      @ box_x_koord() + 2, box_y_koord() + 24 SAY "---->(" + get_partner_naziv( wIdPartner ) + ")"
    ENDIF
 
    IF lNew .AND. !LastKey() == K_ESC
@@ -1005,7 +973,7 @@ FUNCTION OsvjeziPrikUg( lWhen, lNew )
    ENDIF
 
    IF lNew
-      RestScreen( m_x + 10, m_y + 1, m_x + 17, m_y + 72, cEkran )
+      RestScreen( box_x_koord() + 10, box_y_koord() + 1, box_x_koord() + 17, box_y_koord() + 72, cEkran )
    ENDIF
 
    SELECT ( nArr )
@@ -1111,6 +1079,7 @@ STATIC FUNCTION ZaOdgovarajuci()
 
    RETURN .T.
 
+*/
 
 /*
 
@@ -1121,12 +1090,12 @@ FUNCTION IzfUgovor()
 
       SELECT ( F_UGOV )
       IF !Used()
-         o_ugov()
+  --       o_ugov()
       ENDIF
 
       SELECT ( F_RUGOV )
       IF !Used()
-         o_rugov()
+  --       o_rugov()
       ENDIF
 
       SELECT ( F_DEST )
@@ -1163,10 +1132,10 @@ FUNCTION IzfUgovor()
          MsgBeep( "Ne postoje definisani ugovori za korisnika" )
          IF pitanje(, "Želite li definisati novi ugovor ?", "N" ) == "D"
             SET FILTER TO
-            P_UGov2( partn->id )
+    --        P_UGov2( partn->id )
 
             SELECT partn
-            P_Ugov2()
+    --        P_Ugov2()
          ELSE
             PopWa()
             RETURN .T.
@@ -1174,7 +1143,7 @@ FUNCTION IzfUgovor()
 
       ELSE
          SELECT partn
-         P_Ugov2()
+    --     P_Ugov2()
       ENDIF
 
 

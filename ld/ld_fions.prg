@@ -119,26 +119,41 @@ FUNCTION ld_pozicija_parobr( nMjesec, nGodina, cObr, cIdRj )
  *   param: fPrikaz - prikazi .t.
  */
 
-FUNCTION ld_eval_formula( nInputF ) //, fPrikaz )
+FUNCTION ld_eval_formula( nInputF ) // , fPrikaz )
+
+   LOCAL oErr
 
    PRIVATE cFormula
 
-   //IF PCount() == 1
-  //    fPrikaz := .T.
-   //ENDIF
+   // IF PCount() == 1
+   // fPrikaz := .T.
+   // ENDIF
+   BEGIN SEQUENCE WITH {| err | Break( err ) }
 
-   cFormula := Trim( tippr->formula )
+      cFormula := Trim( tippr->formula )
 
-   IF ( tippr->fiksan <> "D" )
+      IF ( tippr->fiksan <> "D" )
 
-      IF Empty( cFormula ) // ako je fiksan iznos nista ne izracunavaj!
-         nInputF := 0
-      ELSE
-         ?E "ld_eval_formula:", cFormula
-         nInputF := &cFormula
+         IF Empty( cFormula ) // ako je fiksan iznos nista ne izracunavaj!
+            nInputF := 0
+         ELSE
+            ?E "ld_eval_formula:", cFormula
+            nInputF := &cFormula
+         ENDIF
+         nInputF := Round( nInputF, gZaok )
       ENDIF
-      nInputF := Round( nInputF, gZaok )
-   ENDIF
+
+
+   RECOVER USING oErr
+
+      cMsg := RECI_GDJE_SAM + " " + oErr:description + " LD FORMULA: " + cFormula
+      ?E cMsg
+
+      // log_write( cMsg, 1 )
+      Alert( cMsg )
+      RaiseError( cMsg )
+
+   END SEQUENCE
 
    RETURN .T.
 
@@ -333,16 +348,16 @@ FUNCTION Prosj3( cTip, cTip2 )
    nSumsat := iif( nSS1 + nSS2 + nSS3 <> 0, nSS1 + nSS2 + nSS3, 99999999 )
 
    Box( "#" + IF( cTip $ "57", "UKUPNA PRIMANJA", "Prosjek" ) + " ZA MJESECE UNAZAD:", 6, 60 )
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
    IF cTip $ "126"; ?? "  primanja/sati:"; ?? nSP1, "/", nSS1; ENDIF
    IF cTip $ "57"; ?? "  sati:"; ?? nSS1; ENDIF
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY cmj2; @ Row(), Col() + 2 SAY nMj2 PICT "999999.999"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY cmj2; @ Row(), Col() + 2 SAY nMj2 PICT "999999.999"
    IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp2, "/", nSS2; ENDIF
    IF cTip $ "57"; ?? "  sati:"; ?? nSS2; ENDIF
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY cmj3; @ Row(), Col() + 2 SAY nMj3 PICT "999999.999"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY cmj3; @ Row(), Col() + 2 SAY nMj3 PICT "999999.999"
    IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp3, "/", nSS3; ENDIF
    IF cTip $ "57"; ?? "  sati:"; ?? nSS3; ENDIF
-   @ get_x_koord() + 6, get_y_koord() + 2 SAY "Prosjek"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prosjek"
    @ Row(), Col() + 2 SAY ( nMj3 + nMj2 + nMj1 ) / iif( cTip $ "57", nSumsat, nDijeli ) PICT "999999.999"
 
    Inkey( 0 )
@@ -524,9 +539,9 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
    ENDDO
 
    Box(, 4, 50 )
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY8 "PRIMANJE ZA PROŠLI MJESEC:"
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY  cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
-   @ get_x_koord() + 4, get_y_koord() + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "PRIMANJE ZA PROŠLI MJESEC:"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY  cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
    Inkey( 0 )
    BoxC()
 
@@ -674,7 +689,7 @@ FUNCTION GETR( cPrompt, xValue )
    nRezult := &xValue
 
    Box(, 2, 60 )
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY cPrompt GET nRezult
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY cPrompt GET nRezult
    READ
    BoxC()
 

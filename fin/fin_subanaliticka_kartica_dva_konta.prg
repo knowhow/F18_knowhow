@@ -68,58 +68,58 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    Box( "", 18, 65 )
    SET CURSOR ON
    IF lOtvoreneStavke
-      @ m_x + 1, m_y + 2 SAY "KARTICA OTVORENIH STAVKI KONTO/KONTO2"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "KARTICA OTVORENIH STAVKI KONTO/KONTO2"
    ELSE
-      @ m_x + 1, m_y + 2 SAY8 "SUBANALITIČKA KARTICA"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "SUBANALITIČKA KARTICA"
    ENDIF
-   @ m_x + 2, m_y + 2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
-   @ m_x + 4, m_y + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
    READ
    DO WHILE .T.
       //IF gNW == "D"
-         @ m_x + 5, m_y + 2 SAY "Firma "
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
       //ELSE
-      //   @ m_x + 5, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      //   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       //ENDIF
       cPrelomljeno := "N"
       IF cBrza = "D"
          qqKonto := PadR( qqKonto, 7 )
          qqKonto2 := PadR( qqKonto2, 7 )
          qqPartner := PadR( qqPartner, 6 )
-         @ m_x + 6, m_y + 2 SAY "Konto   " GET qqKonto  VALID p_konto( @qqKonto )
-         @ m_x + 7, m_y + 2 SAY "Konto 2 " GET qqKonto2  VALID p_konto( @qqKonto2 ) .AND. qqKonto2 > qqkonto
-         @ m_x + 8, m_y + 2 SAY "Partner (prazno svi)" GET qqPartner valid ( ";" $ qqpartner ) .OR. Empty( qqPartner ) .OR. p_partner( @qqPartner )  PICT "@!"
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Konto   " GET qqKonto  VALID p_konto( @qqKonto )
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Konto 2 " GET qqKonto2  VALID p_konto( @qqKonto2 ) .AND. qqKonto2 > qqkonto
+         @ box_x_koord() + 8, box_y_koord() + 2 SAY "Partner (prazno svi)" GET qqPartner valid ( ";" $ qqpartner ) .OR. Empty( qqPartner ) .OR. p_partner( @qqPartner )  PICT "@!"
       ENDIF
 
-      @ m_x + 9, m_y + 2 SAY "Datum dokumenta od:" GET dDatod
-      @ m_x + 9, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Datum dokumenta od:" GET dDatod
+      @ box_x_koord() + 9, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
 
       IF fin_dvovalutno()
-         @ m_x + 10, m_y + 2 SAY "Kartica za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3)"  GET cDinDem VALID cDinDem $ "123"
+         @ box_x_koord() + 10, box_y_koord() + 2 SAY "Kartica za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3)"  GET cDinDem VALID cDinDem $ "123"
       ENDIF
 
-      @ m_x + 11, m_y + 2 SAY "Sabrati po brojevima veze D/N ?"  GET cPoVezi VALID cPoVezi $ "DN" PICT "@!"
-      @ m_x + 11, Col() + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cprelomljeno $ "DN" PICT "@!"
-      @ m_x + 12, m_y + 2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)"  GET cK14 VALID cK14 $ "123"
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Sabrati po brojevima veze D/N ?"  GET cPoVezi VALID cPoVezi $ "DN" PICT "@!"
+      @ box_x_koord() + 11, Col() + 2 SAY "Prikaz prebijenog stanja " GET cPrelomljeno VALID cprelomljeno $ "DN" PICT "@!"
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)"  GET cK14 VALID cK14 $ "123"
 
       IF _fin_params[ "fin_k1" ]
-         @ m_x + 14, m_y + 2 SAY "K1 (9 svi) :" GET cK1
+         @ box_x_koord() + 14, box_y_koord() + 2 SAY "K1 (9 svi) :" GET cK1
       ENDIF
 
       IF _fin_params[ "fin_k2" ]
-         @ m_x + 15, m_y + 2 SAY "K2 (9 svi) :" GET cK2
+         @ box_x_koord() + 15, box_y_koord() + 2 SAY "K2 (9 svi) :" GET cK2
       ENDIF
 
       IF _fin_params[ "fin_k3" ]
-         @ m_x + 16, m_y + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
+         @ box_x_koord() + 16, box_y_koord() + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
       ENDIF
 
       IF _fin_params[ "fin_k4" ]
-         @ m_x + 17, m_y + 2 SAY "K4 (99 svi):" GET cK4
+         @ box_x_koord() + 17, box_y_koord() + 2 SAY "K4 (99 svi):" GET cK4
       ENDIF
 
-      @ m_x + 18, m_Y + 2 SAY "Prikaz kartica sa 0 stanjem " GET cNula VALID cNula $ "DN" PICT "@!"
+      @ box_x_koord() + 18, box_y_koord() + 2 SAY "Prikaz kartica sa 0 stanjem " GET cNula VALID cNula $ "DN" PICT "@!"
       READ
       ESC_BCR
 
@@ -192,11 +192,11 @@ FUNCTION fin_suban_kartica2( lOtvSt )
 
    IF _fakt_params[ "fakt_vrste_placanja" ]
       lVrsteP := .T.
-      o_vrstep()
+      //o_vrstep()
    ENDIF
 
 
-   o_tdok()
+   //o_tdok()
 
    // SELECT SUBAN
 
@@ -326,8 +326,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
                @ PRow(), PCol() + 1 SAY RBr PICT '9999'
                IF gNW == "N"
                   @ PRow(), PCol() + 1 SAY IdTipDok
-                  SELECT TDOK
-                  HSEEK SUBAN->IdTipDok
+                  select_o_tdok( SUBAN->IdTipDok )
                   @ PRow(), PCol() + 1 SAY naz
                ENDIF
             ENDIF
@@ -370,8 +369,8 @@ FUNCTION fin_suban_kartica2( lOtvSt )
                SKIP
             ENDDO
             IF cPrelomljeno == "D"
-               Prelomi( @nDBHD, @nPBHD )
-               Prelomi( @nDDEM, @nPDEM )
+               fin_prebijeno_stanje_dug_pot( @nDBHD, @nPBHD )
+               fin_prebijeno_stanje_dug_pot( @nDDEM, @nPDEM )
             ENDIF
          ELSE
             IF D_P == "1"

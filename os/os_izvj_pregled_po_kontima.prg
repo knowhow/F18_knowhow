@@ -59,33 +59,33 @@ FUNCTION os_pregled_po_kontima()
 
    Box(, 20, 77 )
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
          VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
-      @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
-      @ m_x + 2, m_y + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
-      @ m_x + 2, Col() + 2 SAY "grupisati konto na broj mjesta" GET nKontoLen PICT "9" valid ( nKontoLen > 0 .AND. nKontoLen < 8 )
-      @ m_x + 3, m_y + 2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
-      @ m_x + 4, m_y + 2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" GET cON VALID con $ "ONBG " PICT "@!"
-      @ m_x + 5, m_y + 2 SAY "Za sredstvo prikazati vrijednost:"
-      @ m_x + 6, m_y + 2 SAY "1 - bez promjena"
-      @ m_x + 7, m_y + 2 SAY "2 - osnovni iznos + promjene"
-      @ m_x + 8, m_y + 2 SAY "3 - samo promjene           " GET cPromj VALID cpromj $ "123"
-      @ m_x + 10, m_y + 2 SAY "1 - prikaz bez uracunate amortizacije i revalor:"
-      @ m_x + 11, m_y + 2 SAY "2 - sa uracunatom amortizacijom i revalor      :"
-      @ m_x + 12, m_y + 2 SAY "3 - samo amortizacije                          :"
-      @ m_x + 13, m_y + 2 SAY "4 - samo revalorizacije                        :"  GET cDodaj VALID cDodaj $ "1234"
-      @ m_x + 14, m_y + 2 SAY "Prikazi samo rekapitulaciju konta (D/N)" GET cRekapKonta VALID cRekapKonta $ "DN" PICT "@!"
-      @ m_x + 15, m_y + 2 SAY "Pregled za datumski period :" GET cDatPer VALID cdatper $ "DN" PICT "@!"
-      @ m_x + 16, m_y + 2 SAY "Filter po sadasnjoj vr.(0-sve,1-samo koja je imaju,2-samo koja je nemaju):" GET cFiltSadVr VALID cFiltSadVr $ "012" PICT "9"
-      @ m_x + 17, m_y + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
-      @ m_x + 18, m_y + 2 SAY "Filter po K3:" GET cFiltK3 PICT "@!S10"
-      @ m_x + 18, m_y + 30 SAY "Izbaciti(I) / Ubaciti(U)" GET cIzbUbac PICT "@!" VALID cIzbUbac $ "IU"
-      @ m_x + 19, m_y + 2 SAY "Prikazati kolonu 'amort.grupa'? D/N" GET cAmoGr VALID cAmoGr $ "DN" PICT "@!"
+      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
+      @ box_x_koord() + 2, Col() + 2 SAY "grupisati konto na broj mjesta" GET nKontoLen PICT "9" valid ( nKontoLen > 0 .AND. nKontoLen < 8 )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" GET cON VALID con $ "ONBG " PICT "@!"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Za sredstvo prikazati vrijednost:"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "1 - bez promjena"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "2 - osnovni iznos + promjene"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "3 - samo promjene           " GET cPromj VALID cpromj $ "123"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "1 - prikaz bez uracunate amortizacije i revalor:"
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "2 - sa uracunatom amortizacijom i revalor      :"
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY "3 - samo amortizacije                          :"
+      @ box_x_koord() + 13, box_y_koord() + 2 SAY "4 - samo revalorizacije                        :"  GET cDodaj VALID cDodaj $ "1234"
+      @ box_x_koord() + 14, box_y_koord() + 2 SAY "Prikazi samo rekapitulaciju konta (D/N)" GET cRekapKonta VALID cRekapKonta $ "DN" PICT "@!"
+      @ box_x_koord() + 15, box_y_koord() + 2 SAY "Pregled za datumski period :" GET cDatPer VALID cdatper $ "DN" PICT "@!"
+      @ box_x_koord() + 16, box_y_koord() + 2 SAY "Filter po sadasnjoj vr.(0-sve,1-samo koja je imaju,2-samo koja je nemaju):" GET cFiltSadVr VALID cFiltSadVr $ "012" PICT "9"
+      @ box_x_koord() + 17, box_y_koord() + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
+      @ box_x_koord() + 18, box_y_koord() + 2 SAY "Filter po K3:" GET cFiltK3 PICT "@!S10"
+      @ box_x_koord() + 18, box_y_koord() + 30 SAY "Izbaciti(I) / Ubaciti(U)" GET cIzbUbac PICT "@!" VALID cIzbUbac $ "IU"
+      @ box_x_koord() + 19, box_y_koord() + 2 SAY "Prikazati kolonu 'amort.grupa'? D/N" GET cAmoGr VALID cAmoGr $ "DN" PICT "@!"
       READ
       ESC_BCR
       IF cDatPer == "D"
-         @ m_x + 20, m_y + 2 SAY "Od datuma " GET dDatOd
-         @ m_x + 20, Col() + 2 SAY "do" GET dDatDo
+         @ box_x_koord() + 20, box_y_koord() + 2 SAY "Od datuma " GET dDatOd
+         @ box_x_koord() + 20, Col() + 2 SAY "do" GET dDatDo
          READ
          ESC_BCR
       ENDIF

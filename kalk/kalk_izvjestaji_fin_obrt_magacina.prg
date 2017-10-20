@@ -47,9 +47,9 @@ FUNCTION kalk_finansijski_obrt()
    PRIVATE cPrDatOd := "N"
    PRIVATE PREDOVA2 := 62
 
-  // o_sifk()
-//   o_sifv()
-//   o_roba()
+   // o_sifk()
+// o_sifv()
+// o_roba()
 
    cLegenda := "D"
 
@@ -75,23 +75,23 @@ FUNCTION kalk_finansijski_obrt()
    cNObjekat := Space( 20 )
    cKartica := "D"
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Konta prodavnice:" GET qqKonto PICT "@!S50"
-      @ m_x + 3, m_y + 2 SAY "tekuci promet je period:" GET dDatOd
-      @ m_x + 3, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 4, m_y + 2 SAY "Kriterij za robu :" GET qqRoba PICT "@!S50"
-      @ m_x + 6, m_y + 2 SAY "Magacin u koji se vrsi povrat rekl. robe:" GET cIdKPovrata PICT "@!"
-      @ m_x + 8, m_y + 2 SAY "Prikaz kolicina:" GET cKolDN PICT "@!" VALID cKolDN $ "DN"
-      @ m_x + 9, m_y + 2 SAY "Cijena (P-prodajna,N-nabavna):" GET cCijena PICT "@!" VALID cCijena $ "PN"
-      @ m_x + 10, m_y + 2 SAY "VP sa uracunatim rabatom (D/N)?" GET cVpRab PICT "@!" VALID cVpRab $ "DN"
-      @ m_x + 11, m_y + 2 SAY "Prodaja pocinje od 'Datum od' (D/N)?" GET cPrDatOd PICT "@!" VALID cPrDatOd $ "DN"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Konta prodavnice:" GET qqKonto PICT "@!S50"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "tekuci promet je period:" GET dDatOd
+      @ box_x_koord() + 3, Col() + 2 SAY "do" GET dDatDo
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Kriterij za robu :" GET qqRoba PICT "@!S50"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Magacin u koji se vrsi povrat rekl. robe:" GET cIdKPovrata PICT "@!"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Prikaz kolicina:" GET cKolDN PICT "@!" VALID cKolDN $ "DN"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Cijena (P-prodajna,N-nabavna):" GET cCijena PICT "@!" VALID cCijena $ "PN"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "VP sa uracunatim rabatom (D/N)?" GET cVpRab PICT "@!" VALID cVpRab $ "DN"
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Prodaja pocinje od 'Datum od' (D/N)?" GET cPrDatOd PICT "@!" VALID cPrDatOd $ "DN"
       READ
-      nKorekcija := 12 / ( Month( dDatDo ) -Month( dDatOd ) + 1 )
-      @ m_x + 12, m_y + 2 SAY "Korekcija (12/broj radnih mjeseci):" GET nKorekcija PICT "999.99"
-      @ m_x + 13, m_y + 2 SAY "Ostampati legendu za kolone " GET cLegenda PICT "@!" VALID cLegenda $ "DN"
-      @ m_x + 14, m_y + 2 SAY "Uslov po pl.vrsta " GET cPlVrsta PICT "@!"
-      @ m_x + 15, m_y + 2 SAY "Izdvoji grupe: " GET cGrupeK1
-      @ m_x + 16, m_y + 2 SAY "(npr. 0001;0006;0019;)"
-      @ m_x + 17, m_y + 2 SAY "Uslov po K9 " GET cK9 PICT "@!"
+      nKorekcija := 12 / ( Month( dDatDo ) - Month( dDatOd ) + 1 )
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY "Korekcija (12/broj radnih mjeseci):" GET nKorekcija PICT "999.99"
+      @ box_x_koord() + 13, box_y_koord() + 2 SAY "Ostampati legendu za kolone " GET cLegenda PICT "@!" VALID cLegenda $ "DN"
+      @ box_x_koord() + 14, box_y_koord() + 2 SAY "Uslov po pl.vrsta " GET cPlVrsta PICT "@!"
+      @ box_x_koord() + 15, box_y_koord() + 2 SAY "Izdvoji grupe: " GET cGrupeK1
+      @ box_x_koord() + 16, box_y_koord() + 2 SAY "(npr. 0001;0006;0019;)"
+      @ box_x_koord() + 17, box_y_koord() + 2 SAY "Uslov po K9 " GET cK9 PICT "@!"
       READ
       ESC_BCR
       aUsl1 := Parsiraj( qqKonto, "pkonto" )
@@ -103,15 +103,14 @@ FUNCTION kalk_finansijski_obrt()
    ENDDO
    BoxC()
 
-   IF Params2()
-      WPar( "c1", cidKPovrata )
-      WPar( "c2", qqKonto )
-      WPar( "c4", cCijena )
-      WPar( "d1", dDatOd )
-      WPar( "d2", dDatDo )
-      WPar( "d3", cVpRab )
-      WPar( "d4", cPrDatOd )
-   ENDIF
+   WPar( "c1", cidKPovrata )
+   WPar( "c2", qqKonto )
+   WPar( "c4", cCijena )
+   WPar( "d1", dDatOd )
+   WPar( "d2", dDatDo )
+   WPar( "d3", cVpRab )
+   WPar( "d4", cPrDatOd )
+
    SELECT params
    USE
 
@@ -125,10 +124,10 @@ FUNCTION kalk_finansijski_obrt()
    O_REKAP2
    O_REKA22
    o_koncij()
-  // o_roba()
+   // o_roba()
    o_konto()
    o_tarifa()
-   //o_kalk()
+   // o_kalk()
    o_k1()
    kalk_o_objekti()
 
@@ -615,7 +614,7 @@ FUNCTION ZagOPoMF()
       ?  "Obracun prometa utvrdjen po nabavnim cijenama"
    ENDIF
    ?
-   IF ( qqRoba == nil )
+   IF ( qqRoba == NIL )
       qqRoba := ""
    ENDIF
    ? "Kriterij za Objekat:", Trim( qqKonto ), "Robu:", Trim( qqRoba )

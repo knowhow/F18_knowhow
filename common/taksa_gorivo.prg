@@ -212,7 +212,7 @@ STATIC FUNCTION dodaj_sifru_takse_u_sifarnik_robe()
    hRec := dbf_get_rec()
 
    hRec["id"] := s_cId_taksa
-   hRec["fisc_plu"] := posljednji_plu_artikla() + 1
+   hRec["fisc_plu"] := roba_max_fiskalni_plu() + 1
    hRec["naz"] := "TAKSA M NAFTNI DERIVATI"
    hRec["jmj"] := "KOM"
    hRec["idtarifa"] := PadR( "PDVM0", 6 )

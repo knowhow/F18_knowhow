@@ -70,10 +70,10 @@ FUNCTION kamate_unos()
    NEXT
 
    Box(, _x, _y )
-   @ m_x + ( _x - 2 ), m_y + 2 SAY " <c-N>  Nove Stavke      | <ENT> Ispravi stavku   | <c-T> Brisi Stavku"
-   @ m_x + ( _x - 1 ), m_y + 2 SAY " <c-A>  Ispravka Dokum.  | <c-P> Stampa svi KL    | <c-U> Lista uk.dug"
-   @ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   | <a-P> Stampa pojedinac.³                   "
-   my_db_edit_sql( "PNal", _x, _y, {|| fin_kamate_key_handler() }, "", "KAMATE Priprema.....", , , , , 3 )
+   @ box_x_koord() + ( _x - 2 ), box_y_koord() + 2 SAY " <c-N>  Nove Stavke      | <ENT> Ispravi stavku   | <c-T> Brisi Stavku"
+   @ box_x_koord() + ( _x - 1 ), box_y_koord() + 2 SAY " <c-A>  Ispravka Dokum.  | <c-P> Stampa svi KL    | <c-U> Lista uk.dug"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY " <c-F9> Brisi pripremu   | <a-P> Stampa pojedinac.³                   "
+   my_browse( "PNal", _x, _y, {|| fin_kamate_key_handler() }, "", "KAMATE Priprema.....", , , , , 3 )
    BoxC()
 
    my_close_all_dbf()
@@ -107,11 +107,11 @@ STATIC FUNCTION ispravka_unosa( l_novi )
 
    SET CURSOR ON
 
-   @ m_x + 1, m_y + 2  SAY "Partner  :" GET _IdPartner PICT "@!" VALID p_partner( @_idpartner )
-   @ m_x + 3, m_y + 2  SAY "Broj Veze:" GET _BrDok
-   @ m_x + 5, m_y + 2  SAY "Datum od  " GET _datOd VALID PostojiLi( _idPartner, _brDok, _datOd, l_novi )
-   @ m_x + 5, Col() + 2 SAY "do" GET _datDo
-   @ m_x + 7, m_y + 2  SAY "Osnovica  " GET _Osnovica PICT "999999999.99"
+   @ box_x_koord() + 1, box_y_koord() + 2  SAY "Partner  :" GET _IdPartner PICT "@!" VALID p_partner( @_idpartner )
+   @ box_x_koord() + 3, box_y_koord() + 2  SAY "Broj Veze:" GET _BrDok
+   @ box_x_koord() + 5, box_y_koord() + 2  SAY "Datum od  " GET _datOd VALID PostojiLi( _idPartner, _brDok, _datOd, l_novi )
+   @ box_x_koord() + 5, Col() + 2 SAY "do" GET _datDo
+   @ box_x_koord() + 7, box_y_koord() + 2  SAY "Osnovica  " GET _Osnovica PICT "999999999.99"
 
    READ
 
@@ -122,7 +122,7 @@ STATIC FUNCTION ispravka_unosa( l_novi )
 
 
 // postoji li zapis vec
-STATIC FUNCTION PostojiLi( idp, brd, dod, fNovi )
+STATIC FUNCTION PostojiLi( idp, brd, dod, lNovi )
 
    LOCAL _vrati := .T.
    LOCAL _rec_no
@@ -134,7 +134,7 @@ STATIC FUNCTION PostojiLi( idp, brd, dod, fNovi )
    GO TOP
 
    DO WHILE !Eof()
-      IF idpartner == idp .AND. brdok == brd .AND. DToC( datod ) == DToC( dod ) .AND. ( RecNo() != _rec_no .OR. fNovi )
+      IF idpartner == idp .AND. brdok == brd .AND. DToC( datod ) == DToC( dod ) .AND. ( RecNo() != _rec_no .OR. lNovi )
          _vrati := .F.
          Msg( "Greska! Vec ste unijeli ovaj podatak!", 3 )
          EXIT
@@ -208,7 +208,7 @@ STATIC FUNCTION fin_kamate_key_handler()
          nTR2 := RecNo()
          SKIP - 1
          Scatter()
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + 12, m_y + 74
+         @ box_x_koord() + 1, box_y_koord() + 1 CLEAR TO box_x_koord() + 12, box_y_koord() + 74
          IF ispravka_unosa( .F. ) == 0
             EXIT
          ENDIF
@@ -238,7 +238,7 @@ STATIC FUNCTION fin_kamate_key_handler()
 
       DO WHILE .T.
          Scatter()
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + 12, m_y + 76
+         @ box_x_koord() + 1, box_y_koord() + 1 CLEAR TO box_x_koord() + 12, box_y_koord() + 76
          IF ispravka_unosa( .T. ) == 0
             EXIT
          ENDIF
@@ -320,7 +320,7 @@ STATIC FUNCTION fin_kamate_key_handler()
       cIdpartner := Eval( ( TB:getColumn( 2 ) ):Block )
 
       Box(, 2, 70 )
-      @ m_x + 1, m_y + 2 SAY "Varijanta (Z-zatezna kamata,P-prosti kamatni racun)" GET cVarObrac VALID cVarObrac $ "ZP" PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Varijanta (Z-zatezna kamata,P-prosti kamatni racun)" GET cVarObrac VALID cVarObrac $ "ZP" PICT "@!"
       READ
       BoxC()
 
@@ -353,13 +353,13 @@ STATIC FUNCTION fin_kamate_key_handler()
 FUNCTION fin_kamate_rekalkulisi_osnovni_dug()
 
    LOCAL _date := Date()
-   LOCAL _t_rec, _id_partner
+   LOCAL nTrec, _id_partner
    LOCAL _osn_dug, _br_dok, _racun
    LOCAL _predhodni
    LOCAL _l_prvi
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "Ukucaj tacan datum:" GET _date
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ukucaj tacan datum:" GET _date
    READ
    BoxC()
 
@@ -374,7 +374,7 @@ FUNCTION fin_kamate_rekalkulisi_osnovni_dug()
 
       SELECT kam_pripr
 
-      _t_rec := RecNo()
+      nTrec := RecNo()
       _osn_dug := 0
 
       DO WHILE !Eof() .AND. _id_partner == field->idpartner
@@ -401,7 +401,7 @@ FUNCTION fin_kamate_rekalkulisi_osnovni_dug()
          _osn_dug += _racun
       ENDDO
 
-      GO _t_rec
+      GO nTrec
 
       DO WHILE !Eof() .AND. _id_partner == field->idpartner
          my_rlock()

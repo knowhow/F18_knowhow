@@ -33,9 +33,9 @@ FUNCTION kalk_kartica_prodavnica_f6()
    IF Empty( kalk_pripr->pkonto )
       Box(, 2, 50 )
       cIdFirma := self_organizacija_id()
-      @ m_x + 1, m_y + 2 SAY "KARTICA PRODAVNICA"
-      @ m_x + 2, m_y + 2 SAY "Kartica konto-artikal" GET cKonto
-      @ m_x + 2, Col() + 2 SAY "-" GET cIdRoba
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "KARTICA PRODAVNICA"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Kartica konto-artikal" GET cKonto
+      @ box_x_koord() + 2, Col() + 2 SAY "-" GET cIdRoba
       READ
       BoxC()
    ELSE

@@ -13,36 +13,36 @@
 
 FUNCTION fakt_izvjestaji()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. stanje robe                                          " )
-   AAdd( _opcexe, {|| fakt_stanje_robe() } )
-   AAdd( _opc, "2. lager lista - specifikacija   " )
-   AAdd( _opcexe, {|| fakt_lager_lista() } )
-   AAdd( _opc, "3. kartica" )
-   AAdd( _opcexe, {|| fakt_kartica() } )
-   AAdd( _opc, "5. usporedna lager lista fakt <-> kalk" )
-   AAdd( _opcexe, {|| usporedna_lista_fakt_kalk( .F. ) } )
-   AAdd( _opc, "6. realizacija kumulativno po partnerima" )
-   AAdd( _opcexe, {|| fakt_real_partnera() } )
+   AAdd( aOpc, "1. stanje robe                                          " )
+   AAdd( aOpcExe, {|| fakt_stanje_robe() } )
+   AAdd( aOpc, "2. lager lista - specifikacija   " )
+   AAdd( aOpcExe, {|| fakt_lager_lista() } )
+   AAdd( aOpc, "3. kartica" )
+   AAdd( aOpcExe, {|| fakt_kartica() } )
+   AAdd( aOpc, "5. uporedna lager lista fakt <-> kalk" )
+   AAdd( aOpcExe, {|| fakt_uporedna_lista_fakt_kalk( .F. ) } )
+   AAdd( aOpc, "6. realizacija kumulativno po partnerima" )
+   AAdd( aOpcExe, {|| fakt_real_kumulativno_po_partnerima() } )
 
-   AAdd( _opc, "7. specifikacija prodaje - realizacija po kolicinama" )
-   AAdd( _opcexe, {|| fakt_specif_prodaje_real_kolicina() } )
+   AAdd( aOpc, "7. specifikacija prodaje - realizacija po količinama" )
+   AAdd( aOpcExe, {|| fakt_specif_prodaje_real_kolicina() } )
 
-   AAdd( _opc, "8. količinski pregled isporuke robe po partnerima " )
-   AAdd( _opcexe, {|| spec_kol_partn() } )
-   AAdd( _opc, "9. realizacija maloprodaje " )
-   AAdd( _opcexe, {|| fakt_real_maloprodaje() } )
+   AAdd( aOpc, "8. količinski pregled isporuke robe po partnerima " )
+   AAdd( aOpcExe, {|| spec_kol_partn() } )
+   AAdd( aOpc, "9. realizacija maloprodaje " )
+   AAdd( aOpcExe, {|| fakt_real_maloprodaje() } )
 
    IF fiscal_opt_active()
-      AAdd( _opc, "F. fiskalni izvještaji i komande " )
-      AAdd( _opcexe, {|| fiskalni_izvjestaji_komande() } )
+      AAdd( aOpc, "F. fiskalni izvještaji i komande " )
+      AAdd( aOpcExe, {|| fiskalni_izvjestaji_komande() } )
    ENDIF
 
    //PRIVATE fID_J := .F.
 
-   f18_menu( "izvj", .F., _izbor, _opc, _opcexe )
+   f18_menu( "izvj", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN .T.

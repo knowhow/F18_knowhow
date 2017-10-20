@@ -159,7 +159,7 @@ STATIC FUNCTION _nalog()
    LOCAL _nalog := 0
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY "Pregledati za nalog:" GET _nalog PICT "9999999999" VALID _nalog > 0
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Pregledati za nalog:" GET _nalog PICT "9999999999" VALID _nalog > 0
    READ
    BoxC()
 
@@ -212,7 +212,7 @@ FUNCTION rnal_pregled_statusa_operacija( r_doc_no )
    SELECT _doc_opst
    GO TOP
 
-   my_db_edit_sql( "nalst", _box_x, _box_y, {|| key_handler( r_doc_no ) }, _header, _footer, , , , , 5 )
+   my_browse( "nalst", _box_x, _box_y, {|| key_handler( r_doc_no ) }, _header, _footer, , , , , 5 )
 
    BoxC()
 
@@ -257,25 +257,25 @@ STATIC FUNCTION _setuj_status( rec )
 
    Box(, 10, 70 )
 
-   @ m_x + _x, m_y + 2 SAY8 "Postavi status tekuće stavke na "
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY8 "Postavi status tekuće stavke na "
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY8 "  - '1' - završeno "
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY8 "  - '1' - završeno "
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "  - prazno - u izradi"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "  - prazno - u izradi"
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "           -> odabrani status: " GET _op_status VALID _op_status $ " #1#2"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "           -> odabrani status: " GET _op_status VALID _op_status $ " #1#2"
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Napomena:" GET _op_notes PICT "@S50"
+   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Napomena:" GET _op_notes PICT "@S50"
 
    READ
 
@@ -301,8 +301,8 @@ STATIC FUNCTION _set_box( box_x, box_y )
    _line_1 := "(F2) setuj status"
    _line_2 := "-- "
 
-   @ m_x + ( box_x - 1 ), m_y + 2 SAY _line_1
-   @ m_x + box_x, m_y + 2 SAY _line_2
+   @ box_x_koord() + ( box_x - 1 ), box_y_koord() + 2 SAY _line_1
+   @ box_x_koord() + box_x, box_y_koord() + 2 SAY _line_2
 
    RETURN
 

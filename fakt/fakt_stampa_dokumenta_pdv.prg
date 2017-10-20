@@ -16,18 +16,15 @@ THREAD STATIC __KTO_DUG
 THREAD STATIC __KTO_POT
 THREAD STATIC __SH_SLD_VAR
 
-// ----------------------------------------------------
-// lJFill - samo se pune rn, drn pomocne tabele
-// ----------------------------------------------------
+
 FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    LOCAL cFax
    LOCAL lPrepisDok := .F.
-   LOCAL _dok := hb_Hash(), _fill_params := hb_Hash()
-   LOCAL _fakt_params := fakt_params()
+   LOCAL hDok := hb_Hash(), hParamsFill := hb_Hash()
+   LOCAL hFaktParams := fakt_params()
+   LOCAL lSamoKol := .F.  // samo kolicine
 
-   // samo kolicine
-   LOCAL lSamoKol := .F.
 
    IF lJFill == NIL
       lJFill := .F.
@@ -35,10 +32,11 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    IF PCount() == 4 .AND. ( cIdtipDok <> NIL )
       lPrepisDok := .T.
-      _fill_params[ "from_server" ] := .T.
+      hParamsFill[ "from_server" ] := .T.
       close_open_fakt_tabele( .T. )
+      seek_fakt( cIdFirma, cIdTipDok, cBrDok, NIL, NIL, NIL, NIL, "FAKT_PRIPR" )
    ELSE
-      _fill_params[ "from_server" ] := .F.
+      hParamsFill[ "from_server" ] := .F.
       close_open_fakt_tabele()
    ENDIF
 
@@ -50,8 +48,8 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
    // barkod artikla
    PRIVATE lPBarkod := .F.
 
-   IF _fakt_params[ "barkod" ] $ "12"  // pitanje, default "N"
-      lPBarkod := ( Pitanje( , "Želite li ispis barkodova ?", iif( _fakt_params[ "barkod" ] == "1", "N", "D" ) ) == "D" )
+   IF hFaktParams[ "barkod" ] $ "12"  // pitanje, default "N"
+      lPBarkod := ( Pitanje( , "Želite li ispis barkodova ?", iif( hFaktParams[ "barkod" ] == "1", "N", "D" ) ) == "D" )
    ENDIF
 
    IF PCount() == 0 .OR. ( cIdTipDok == NIL .AND. lJFill == .T. )
@@ -60,7 +58,7 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
       cBrDok := field->BrDok
    ENDIF
 
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   SEEK cIdFirma + cIdTipDok + cBrDok // fakt_pripr
    NFOUND CRET
 
    IF PCount() <= 1 .OR. ( cIdTipDok == NIL .AND. lJFill == .T. )
@@ -68,12 +66,12 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
    ENDIF
 
    // napuni podatke za stampu
-   _dok[ "idfirma" ] := field->IdFirma
-   _dok[ "idtipdok" ] := field->IdTipDok
-   _dok[ "brdok" ] := field->BrDok
-   _dok[ "datdok" ] := field->DatDok
+   hDok[ "idfirma" ] := field->IdFirma
+   hDok[ "idtipdok" ] := field->IdTipDok
+   hDok[ "brdok" ] := field->BrDok
+   hDok[ "datdok" ] := field->DatDok
 
-   cDocumentName := doc_name( _dok, fakt_pripr->IdPartner )
+   cDocumentName := doc_name( hDok, fakt_pripr->IdPartner )
 
    // prikaz samo kolicine
    IF cIdTipDok $ "01#00#12#13#19#21#22#23#26"
@@ -89,10 +87,10 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
       RETURN .F.
    ENDIF
 
-   _fill_params[ "barkod" ] := lPBarkod
-   _fill_params[ "samo_kolicine" ] := lSamoKol
+   hParamsFill[ "barkod" ] := lPBarkod
+   hParamsFill[ "samo_kolicine" ] := lSamoKol
 
-   IF !fill_porfakt_data( _dok, _fill_params )
+   IF !fill_porfakt_data( hDok, hParamsFill )
       RETURN .F.
    ENDIF
 
@@ -149,15 +147,17 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
 // ----------------------------------------------------------------------
 // puni  pomocne tabele rn drn
 // ----------------------------------------------------------------------
-STATIC FUNCTION fill_porfakt_data( dok, params )
+STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
 
    LOCAL cTxt1, cTxt2, cTxt3, cTxt4, cTxt5
    LOCAL cIdPartner
    LOCAL dDatDok
-   LOCAL cDestinacija
+
+   // LOCAL cDestinacija
    LOCAL dDatVal
-   LOCAL dDatIsp
-   LOCAL aMemo
+   LOCAL dDatumIsporuke
+   // LOCAL aMemo
+
    LOCAL cIdRoba := ""
    LOCAL cRobaNaz := ""
    LOCAL cRbr := ""
@@ -186,7 +186,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    LOCAL nUkPopNaTeretProdavca := 0
    LOCAL cTime := ""
    LOCAL cDinDem
-   LOCAL nRec
+   LOCAL nRec1zapis
    LOCAL nZaokr
    LOCAL nFZaokr := 0
    LOCAL nDrnZaokr := 0
@@ -201,9 +201,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    LOCAL nPom5
    LOCAL cOpis := ""
    LOCAL _a_tmp, _tmp
-
    LOCAL lPdvObveznik := .F.
-
    LOCAL nDx1 := 0
    LOCAL nDx2 := 0
    LOCAL nDx3 := 0
@@ -214,8 +212,10 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    LOCAL nSw5 := 1
    LOCAL nSw6 := 1
    LOCAL nSw7 := 0
+   LOCAL aDokumentVeze
 
-   LOCAL _fakt_params := fakt_params()
+   LOCAL hFaktParams := fakt_params()
+   LOCAL hFaktTxt
 
    // radi citanja parametara
    PRIVATE cSection := "F"
@@ -245,32 +245,32 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    fill_firm_data()
 
 
-   select_o_roba()
+   //select_o_roba()
 
    SELECT fakt_pripr
 
    // napuni podatke partnera
 
    lPdvObveznik := is_pdv_obveznik( field->idpartner )
-   fill_part_data( field->idpartner, @lPdvObveznik )
+   porezna_faktura_fill_partner_data( field->idpartner, @lPdvObveznik )
 
    // popuni ostale podatke, radni nalog i slicno
-   fill_other()
+   porezna_faktura_fill_ostali_podaci()
 
    SELECT fakt_pripr
 
    // vrati naziv dokumenta
-   get_dok_naz( @cDokNaz, field->idtipdok, field->idvrstep, params[ "samo_kolicine" ] )
+   fakt_get_dok_naziv( @cDokNaz, field->idtipdok, field->idvrstep, hFillParams[ "samo_kolicine" ] )
 
    SELECT fakt_pripr
 
-   dDatDok := dok[ "datdok" ]
+   dDatDok := hDokument[ "datdok" ]
 
    dDatVal := dDatDok
-   dDatIsp := dDatDok
+   dDatumIsporuke := dDatDok
    cDinDem := dindem
 
-   nRec := RecNo()
+   nRec1zapis := RecNo()
 
    // ukupna kolicina
    nUkKol := 0
@@ -279,31 +279,30 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    DEC_VRIJEDNOST( ZAO_VRIJEDNOST() )
 
    lIno := .F.
-   DO WHILE !Eof() .AND. field->idfirma == dok[ "idfirma" ] .AND. ;
-         field->idtipdok == dok[ "idtipdok" ] .AND. ;
-         field->brdok == dok[ "brdok" ]
+   DO WHILE !Eof() .AND. field->idfirma == hDokument[ "idfirma" ] .AND. field->idtipdok == hDokument[ "idtipdok" ] .AND. ;
+         field->brdok == hDokument[ "brdok" ]
 
 
       IF !select_o_roba( fakt_pripr->idroba )
-         Msgbeep( "Artikal " + fakt_pripr->idroba + " ne postoji u sifrarniku !!!" )
+         Msgbeep( "Artikal " + fakt_pripr->idroba + " ne postoji u šifarniku !?" )
          RETURN .F.
       ENDIF
 
       IF !select_o_tarifa( roba->idtarifa )
-         MsgBeep( "Tarifa " + roba->idtarifa + " ne postoji u sifraniku !!!" )
+         MsgBeep( "Tarifa " + roba->idtarifa + " ne postoji u šifaniku !?" )
          RETURN .F.
       ENDIF
 
       SELECT fakt_pripr
 
-      aMemo := fakt_ftxt_decode( field->txt )
+      hFaktTxt := fakt_ftxt_decode_string( field->txt )
       cIdRoba := field->idroba
 
-      IF roba->tip == "U"
-         cRobaNaz := aMemo[ 1 ]
+      IF roba->tip == "U" // usluge su pohranjene u fakt->txt sekcija txt1
+         cRobaNaz := hFaktTxt[ "opis_usluga" ]
       ELSE
          cRobaNaz := AllTrim( roba->naz )
-         IF params[ "barkod" ]
+         IF hFillParams[ "barkod" ]
             cRobaNaz := cRobaNaz + " (BK: " + roba->barkod + ")"
          ENDIF
       ENDIF
@@ -318,8 +317,8 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
          SELECT fakt_pripr
       ENDIF
 
-      // dodaj i vrijednost iz polja SERBR
-      IF !Empty( AllTrim( fakt_pripr->serbr ) )
+
+      IF !Empty( AllTrim( fakt_pripr->serbr ) )   // dodaj i vrijednost iz polja SERBR
          cRobaNaz := cRobaNaz + ", " + AllTrim( fakt_pripr->serbr )
       ENDIF
 
@@ -340,23 +339,22 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
       cIdPartner := field->idpartner
 
-      IF Empty( cIdPartner )
-         MsgBeep( "Partner na fakturi - prazno - nesto nije ok !????" )
+      IF Year( field->datdok ) > 2001 .AND. Empty( cIdPartner )  // podrska za godine <=2001
+         MsgBeep( "Partner na fakturi - prazno - nesto nije ok !?" )
          RETURN .F.
       ENDIF
 
-      IF _fakt_params[ "fakt_opis_stavke" ]
-         dok[ "rbr" ] := rbr
-         cOpis := get_fakt_attr_opis( dok, params[ "from_server" ] )
+      IF hFaktParams[ "fakt_opis_stavke" ]
+         hDokument[ "rbr" ] := rbr
+         cOpis := get_fakt_attr_opis( hDokument, hFillParams[ "from_server" ] )
          SELECT fakt_pripr
       ELSE
          cOpis := ""
       ENDIF
 
       // rn Veleprodaje
-      IF dok[ "idtipdok" ] $ "10#11#12#13#20#22#25"
+      IF hDokument[ "idtipdok" ] $ "10#11#12#13#20#22#25"
 
-         // ino faktura
          IF partner_is_ino( cIdPartner )
             nPPDV := 0
             lIno := .T.
@@ -371,12 +369,11 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
       ENDIF
 
-      IF dok[ "idtipdok" ] == "12"
-         IF IsProfil( cIdPartner, "KMS" )
-            // radi se o komisionaru
-            nPPDV := 0
-         ENDIF
-      ENDIF
+      // IF hDokument[ "idtipdok" ] == "12"
+      // IF IsProfil( cIdPartner, "KMS" )  // radi se o komisionaru
+      // nPPDV := 0
+      // ENDIF
+      // ENDIF
 
       // kolicina
       nKol := field->kolicina
@@ -429,22 +426,18 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
       // izacunaj vrijednost popusta na teret prodavca
       IF Round( nPopNaTeretProdavca, 4 ) <> 0
-         // vrijednost popusta
-         nVPopNaTeretProdavca := ( nCjBPDV * ( nPopNaTeretProdavca / 100 ) )
+         nVPopNaTeretProdavca := ( nCjBPDV * ( nPopNaTeretProdavca / 100 ) ) // vrijednost popusta
       ENDIF
 
-
-      // cijena sa popustom bez pdv-a
-      nCj2BPDV := ( nCjBPDV - nVPopust )
-      // izracuna PDV na cijenu sa popustom
-      nCj2PDV := ( nCj2BPDV * ( 1 + nPPDV / 100 ) )
+      nCj2BPDV := ( nCjBPDV - nVPopust ) // cijena sa popustom bez pdv-a
+      nCj2PDV := ( nCj2BPDV * ( 1 + nPPDV / 100 ) )   // izracuna PDV na cijenu sa popustom
 
       // ukupno stavka
       nUkStavka := nKol * nCj2PDV
-      nUkStavke := Round( nUkStavka, ZAO_VRIJEDNOST() + iif( idtipdok $ "11#13", 4, 0 ) )
+      nUkStavke := Round( nUkStavka, ZAO_VRIJEDNOST() + iif( field->idtipdok $ "11#13", 4, 0 ) )
 
       nPom1 := nKol * nCjBPDV
-      nPom1 := Round( nPom1, ZAO_VRIJEDNOST() + iif( idtipdok $ "11#13", 4, 0 ) )
+      nPom1 := Round( nPom1, ZAO_VRIJEDNOST() + iif( field->idtipdok $ "11#13", 4, 0 ) )
       // ukupno bez pdv
       nUkBPDV += nPom1
 
@@ -481,18 +474,18 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
       nUkKol += nKol
 
-      dodaj_stavku_racuna( dok[ "brdok" ], cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, "", "", "", cOpis )
+      dodaj_stavku_racuna( hDokument[ "brdok" ], cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, ;
+         nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, ;
+         nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, "", "", "", cOpis )
 
       SELECT fakt_pripr
       SKIP
 
    ENDDO
 
-   // zaokruzi pdv na zao_vrijednost()
-   nUkPDV := Round( nUkPDV, ZAO_VRIJEDNOST() )
+   nUkPDV := Round( nUkPDV, ZAO_VRIJEDNOST() )    // zaokruzi pdv na zao_vrijednost()
 
    nTotal := ( nUkBPDVPop + nUkPDV )
-
 
    nFZaokr := zaokr_5pf( nTotal )
    IF gZ_5pf == "N"
@@ -511,23 +504,32 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    nUkVPop := Round( nUkVPop, ZAO_VRIJEDNOST() )
 
    SELECT fakt_pripr
-   GO ( nRec )
+   GO ( nRec1zapis )
 
    // nafiluj ostale podatke vazne za sam dokument
-   aMemo := fakt_ftxt_decode( txt )
-   dDatDok := datdok
+   // aMemo := fakt_ftxt_decode( fakt_pripr->txt )
+   hFaktTxt := fakt_ftxt_decode_string( fakt_pripr->txt )
 
-   IF Len( aMemo ) <= 5
+   dDatDok := fakt_pripr->datdok
+   dDatumIsporuke := hFaktTxt[ "datotp" ]
+   dDatVal := hFaktTxt[ "datpl" ]
+
+/*
+IF hb_HHasKey( hFaktTxt, "brnar")
+   //IF Len( aMemo ) <= 5
       dDatVal := dDatDok
-      dDatIsp := dDatDok
+      dDatumIsporuke := dDatDok
       cBrOtpr := ""
       cBrNar  := ""
    ELSE
-      dDatVal := CToD( aMemo[ 9 ] )
-      dDatIsp := CToD( aMemo[ 7 ] )
-      cBrOtpr := aMemo[ 6 ]
-      cBrNar  := aMemo[ 8 ]
+      //dDatVal := CToD( aMemo[ 9 ] )
+      //dDatumIsporuke := CToD( aMemo[ 7 ] )
+      //cBrOtpr := aMemo[ 6 ]
+      //cBrNar  := aMemo[ 8 ]
+      dDatVal := hFaktTxt[ "datpl"]
+      dDatumIsporuke :=
    ENDIF
+
 
    // destinacija na fakturi
    IF Len( aMemo ) >= 18
@@ -548,66 +550,55 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    ELSE
       cObjekti := ""
    ENDIF
+*/
 
-   // mjesto
-   add_drntext( "D01", gMjStr )
-   // naziv dokumenta
-   add_drntext( "D02", cDokNaz )
 
-   // slovima iznos fakture
-   add_drntext( "D04", Slovima( nTotal - nUkPopNaTeretProdavca, cDinDem ) )
+   add_drntext( "D01", gMjStr )    // mjesto
+   add_drntext( "D02", cDokNaz )    // naziv dokumenta
 
-   // broj otpremnice
-   add_drntext( "D05", cBrOtpr )
-
-   // broj narudzbenice
-   add_drntext( "D06", cBrNar )
-
-   // DM/EURO
-   add_drntext( "D07", cDinDem )
-
-   // Destinacija
-   add_drntext( "D08", cDestinacija )
+   add_drntext( "D04", Slovima( nTotal - nUkPopNaTeretProdavca, cDinDem ) )  // slovima iznos fakture
+   add_drntext( "D05", hFaktTxt[ "brotp" ] )    // broj otpremnice
+   add_drntext( "D06", hFaktTxt[ "brnar" ] )    // broj narudzbenice
+   add_drntext( "D07", cDinDem )    // DM/EURO
+   add_drntext( "D08", hFaktTxt[ "destinacija" ] )    // Destinacija
 
    // objekakt
-   IF !Empty( cObjekti )
-      add_drntext( "O01", cObjekti )
-      add_drntext( "O02", fakt_objekat_naz( cObjekti ) )
+   IF !Empty( hFaktTxt[ "objekti" ] )
+      add_drntext( "O01", hFaktTxt[ "objekti" ] )
+      add_drntext( "O02", fakt_objekat_naz( hFaktTxt[ "objekti" ] ) )
    ENDIF
 
    // tip dokumenta
-   add_drntext( "D09", dok[ "idtipdok" ] )
+   add_drntext( "D09", hDokument[ "idtipdok" ] )
 
    // radna jedinica
-   add_drntext( "D10", dok[ "idfirma" ] )
+   add_drntext( "D10", hDokument[ "idfirma" ] )
 
-   // dokument veza
-   cTmp := cM_d_veza
 
-   aTmp := SjeciStr( cTmp, 200 )
+   aDokumentVeze := SjeciStr( hFaktTxt[ "dokument_veza" ], 200 )
    nTmp := 30
 
    // koliko ima redova
-   add_drntext( "D30", AllTrim( Str( Len( aTmp ) ) ) )
-   FOR i := 1 TO Len( aTmp )
-      add_drntext( "D" + AllTrim( Str( nTmp + i ) ), aTmp[ i ] )
+   add_drntext( "D30", AllTrim( Str( Len( aDokumentVeze ) ) ) )
+   FOR i := 1 TO Len( aDokumentVeze )
+      add_drntext( "D" + AllTrim( Str( nTmp + i ) ), aDokumentVeze[ i ] )
    NEXT
 
    // tekst na kraju fakture F04, F05, F06
-   fill_dod_text( aMemo[ 2 ], fakt_pripr->idpartner )
+   porezna_faktura_dodatni_tekst( hFaktTxt[ "txt2" ], fakt_pripr->idpartner )
 
-   // potpis na kraju
-   fill_potpis( dok[ "idtipdok" ] )
+
+   fill_potpis( hDokument[ "idtipdok" ] )  // potpis na kraju
 
    // parametri generalni za stampu dokuemnta
    // lijeva margina
    add_drntext( "P01", AllTrim( Str( gnLMarg ) ) )
 
    // zaglavlje na svakoj stranici
-   add_drntext( "P04", if( gZagl == "1", "D", "N" ) )
+   add_drntext( "P04", iif( gZagl == "1", "D", "N" ) )
 
    // prikaz dodatnih podataka
-   add_drntext( "P05", if( gDodPar == "1", "D", "N" ) )
+   add_drntext( "P05", iif( gDodPar == "1", "D", "N" ) )
    // dodati redovi po listu
 
    add_drntext( "P06", AllTrim( Str( gERedova ) ) )
@@ -672,9 +663,11 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
 
    // dodaj total u DRN
-   add_drn( dok[ "brdok" ], dok[ "datdok" ], dDatVal, dDatIsp, cTime, nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol )
+   add_drn( hDokument[ "brdok" ], hDokument[ "datdok" ], dDatVal, dDatumIsporuke, cTime, ;
+      nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, ;
+      nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol )
 
-   IF ( dok[ "idtipdok" ] $ "10#11" ) .AND. Round( nUkPDV, 2 ) == 0
+   IF ( hDokument[ "idtipdok" ] $ "10#11" ) .AND. Round( nUkPDV, 2 ) == 0
       IF Pitanje(, "Faktura je bez iznosa PDV-a! Da li je to uredu (D/N)", "D" ) == "N"
          RETURN .F.
       ENDIF
@@ -691,7 +684,7 @@ STATIC FUNCTION roba_sifk_opis_grupe( cId, cSifK )
    LOCAL nTArea := Select()
    LOCAL cRet := ""
 
-   o_sifk()
+   o_sifk( "ROBA" )
    SELECT sifk
    SET ORDER TO TAG "ID2"
    GO TOP
@@ -737,16 +730,15 @@ STATIC FUNCTION fill_potpis( cIdVD )
       cPotpis := &cPom
    ENDIF
 
-   // potpis
-   add_drntext( "F10", cPotpis )
+   add_drntext( "F10", cPotpis )  // potpis
 
-   RETURN
+   RETURN .T.
 
 
-// -----------------------------------------------
-// popunjavanje ostalih podataka fakture
-// -----------------------------------------------
-STATIC FUNCTION fill_other()
+
+STATIC FUNCTION porezna_faktura_fill_ostali_podaci()
+
+   LOCAL cPom
 
    // broj fiskalnog isjecka
    add_drntext( "O10", fisc_isjecak( fakt_pripr->idfirma, fakt_pripr->idtipdok, ;
@@ -774,7 +766,7 @@ STATIC FUNCTION fill_other()
 
    IF gSecurity == "D"
       // naziv operatera
-      cPom := getfullusername( getuserid() )
+      cPom := getfullusername( f18_get_user_id() )
       add_drntext( "R02", cPom )
    ENDIF
 
@@ -808,13 +800,13 @@ STATIC FUNCTION fill_other()
    cPom := "prod. 1"
    add_drntext( "I04", cPom )
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------------------
 // daj naziv dokumenta iz parametara
 // --------------------------------------------------------------
-FUNCTION get_dok_naz( cNaz, cIdVd, cVP, lSamoKol )
+FUNCTION fakt_get_dok_naziv( cNaz, cIdVd, cVP, lSamoKol )
 
    LOCAL cPom
    LOCAL cSamoKol
@@ -840,245 +832,8 @@ FUNCTION get_dok_naz( cNaz, cIdVd, cVP, lSamoKol )
 
    add_drntext( "P03", cSamoKol )
 
-   RETURN
+   RETURN .T.
 
-// -----------------------------------------------
-// filovanje dodatnog teksta
-// cTxt - dodatni tekst
-// cPartn - id partner
-// -----------------------------------------------
-STATIC FUNCTION fill_dod_text( cTxt, cPartn )
-
-   LOCAL aLines // matrica sa linijama teksta
-   LOCAL nFId // polje Fnn counter od 20 pa nadalje
-   LOCAL nCnt // counter upisa u DRNTEXT
-   LOCAL aTxt, n, i
-
-   // obradi djokere...
-   _txt_djokeri( @cTxt, cPartn )
-
-   // slobodni tekst se upisuje u DRNTEXT od F20 -- F50
-   cTxt := StrTran( cTxt, "" + Chr( 10 ), "" )
-   // daj mi matricu sa tekstom line1, line2 itd...
-   aLines := TokToNiz( cTxt, Chr( 13 ) + Chr( 10 ) )
-
-   nFId := 20
-   nCnt := 0
-   FOR i := 1 TO Len( aLines )
-      aTxt := SjeciStr( aLines[ i ], 250 )
-      FOR n := 1 TO Len( aTxt )
-         add_drntext( "F" + AllTrim( Str( nFId ) ), aTxt[ n ] )
-         ++nFId
-         ++nCnt
-      NEXT
-   NEXT
-
-   // dodaj i parametar koliko ima linija texta
-   add_drntext( "P02", AllTrim( Str( nCnt ) ) )
-
-   RETURN
-
-
-
-// ----------------------------------------
-// obradi djokere
-// cTxt - txt polje
-// cPartn - id partner
-// ----------------------------------------
-FUNCTION _txt_djokeri( cTxt, cPartn )
-
-   LOCAL cPom
-   LOCAL cPom2
-   LOCAL nSaldoKup
-   LOCAL nSaldoDob
-   LOCAL dPUplKup
-   LOCAL dPPromKup
-   LOCAL dPPromDob
-   LOCAL cStrSlKup := "#SALDO_KUP#"
-   LOCAL cStrSlDob := "#SALDO_DOB#"
-   LOCAL cStrSlKD := "#SALDO_KUP_DOB#"
-   LOCAL cStrDUpKup := "#D_P_UPLATA_KUP#"
-   LOCAL cStrDPrKup := "#D_P_PROMJENA_KUP#"
-   LOCAL cStrDPrDob := "#D_P_PROMJENA_DOB#"
-
-   IF gShSld == "N"
-      RETURN
-   ENDIF
-
-   IF gFinKtoDug <> nil
-
-      __KTO_DUG := gFinKtoDug
-      __KTO_POT := gFinKtoPot
-
-   ENDIF
-
-   // varijanta prikaza salda... 1 ili 2
-   __SH_SLD_VAR := gShSldVar
-
-   // saldo kupca
-   nSaldoKup := get_fin_partner_saldo( cPartn, __KTO_DUG, self_organizacija_id() )
-
-   // saldo dobavljaca
-   nSaldoDob := get_fin_partner_saldo( cPartn, __KTO_POT, self_organizacija_id() )
-
-   // datum zadnje uplate kupca
-   dPUplKup := g_dpupl_part( cPartn, __KTO_DUG, self_organizacija_id() )
-
-   // datum zadnje promjene kupac
-   dPPromKup := datum_posljednje_promjene_kupac_dobavljac( cPartn, __KTO_DUG, self_organizacija_id() )
-
-   // datum zadnje promjene dobavljac
-   dPPromDob := datum_posljednje_promjene_kupac_dobavljac( cPartn, __KTO_POT, self_organizacija_id() )
-
-
-   // -------------------------------------------------------
-   // SALDO KUPCA
-   // -------------------------------------------------------
-   IF At( cStrSlKup, cTxt ) <> 0
-
-      IF gShSld == "D"
-
-         cPom := AllTrim( Str( Round( nSaldoKup, 2 ) ) ) + " KM"
-         cPom2 := ""
-
-         IF __SH_SLD_VAR == 2
-            cPom2 := "Va posljednji saldo iznosi: "
-         ENDIF
-      ELSE
-
-         cPom := ""
-         cPom2 := ""
-
-      ENDIF
-
-      cTxt := StrTran( cTxt, cStrSlKup, cPom2 + " " + cPom )
-   ENDIF
-
-
-   // -------------------------------------------------------
-   // SALDO DOBAVLJACA
-   // -------------------------------------------------------
-   IF At( cStrSlDob, cTxt ) <> 0
-
-      IF gShSld == "D"
-
-         cPom := AllTrim( Str( Round( nSaldoDob, 2 ) ) ) + " KM"
-         cPom2 := ""
-
-         IF __SH_SLD_VAR == 2
-            cPom2 := "Na posljednji saldo iznosi: "
-         ENDIF
-      ELSE
-
-         cPom := ""
-         cPom2 := ""
-
-      ENDIF
-
-      cTxt := StrTran( cTxt, cStrSlDob, cPom2 + " " + cPom )
-   ENDIF
-
-   // -------------------------------------------------------
-   // SALDO KUPCA/DOBAVLJACA prebijeno
-   // -------------------------------------------------------
-   IF At( cStrSlKD, cTxt ) <> 0
-
-      IF gShSld == "D"
-
-         cPom := AllTrim( Str( Round( nSaldoKup, 2 ) - Round( nSaldoDob, 2 ) ) ) + " KM"
-         cPom2 := ""
-
-         IF __SH_SLD_VAR == 2
-            cPom2 := "Prebijeno stanje kupac/dobavljac : "
-         ENDIF
-      ELSE
-
-         cPom := ""
-         cPom2 := ""
-
-      ENDIF
-
-      cTxt := StrTran( cTxt, cStrSlKD, cPom2 + " " + cPom )
-   ENDIF
-
-
-   // -------------------------------------------------------
-   // DATUM POSLJEDNJE UPLATE KUPCA/DOBAVLJACA
-   // -------------------------------------------------------
-   IF At( cStrDUpKup, cTxt ) <> 0
-
-      IF gShSld == "D"
-
-
-         // datum posljednje uplate kupca
-         cPom := DToC( dPUplKup )
-         cPom2 := ""
-         IF __SH_SLD_VAR == 2
-            cPom2 := "Datum posljednje uplate: "
-         ENDIF
-      ELSE
-
-         cPom := ""
-         cPom2 := ""
-
-      ENDIF
-
-      cTxt := StrTran( cTxt, cStrDUpKup, cPom2 + " " + cPom )
-
-   ENDIF
-
-   // -------------------------------------------------------
-   // DATUM POSLJEDNJE PROMJENE NA KONTU KUPCA
-   // -------------------------------------------------------
-   IF At( cStrDPrKup, cTxt ) <> 0
-
-      IF gShSld == "D"
-
-         // datum posljednje promjene kupac
-         cPom := DToC( dPPromKup )
-         cPom2 := ""
-         IF __SH_SLD_VAR == 2
-            cPom2 := "Datum posljednje promjene na kontu kupca: "
-         ENDIF
-
-      ELSE
-
-         cPom := ""
-         cPom2 := ""
-
-      ENDIF
-
-      cTxt := StrTran( cTxt, cStrDPrKup, cPom2 + " " + cPom )
-
-   ENDIF
-
-   // -------------------------------------------------------
-   // DATUM POSLJEDNJE PROMJENE NA KONTU DOBAVLJACA
-   // -------------------------------------------------------
-   IF At( cStrDPrDob, cTxt ) <> 0
-
-      IF gShSld == "D"
-
-
-         // datum posljednje promjene dobavljac
-         cPom := DToC( dPPromDob )
-         cPom2 := ""
-         IF __SH_SLD_VAR == 2
-            cPom2 := "Datum posljednje promjene na kontu dobavljaca: "
-         ENDIF
-
-      ELSE
-
-         cPom := ""
-         cPom2 := ""
-
-      ENDIF
-
-      cTxt := StrTran( cTxt, cStrDPrDob, cPom2 + " " + cPom )
-
-   ENDIF
-
-   RETURN
 
 
 
@@ -1097,7 +852,7 @@ STATIC FUNCTION set_partner_id_broj( cId )
    RETURN cBroj
 
 
-STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
+STATIC FUNCTION porezna_faktura_fill_partner_data( cId, lPdvObveznik )
 
    LOCAL cIdBroj := ""
    LOCAL cPdvBroj := ""
@@ -1114,9 +869,9 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    LOCAL lFromMemo := .F.
    LOCAL nDbfArea := Select()
 
-   IF Empty( AllTrim( cID ) )
+   IF Empty( AllTrim( cId ) )
       // ako je prazan partner uzmi iz memo polja
-      aMemo := fakt_ftxt_decode( txt )
+      aMemo := fakt_ftxt_decode( fakt_pripr->txt )
       lFromMemo := .T.
    ELSE
       select_o_partner( cId )
@@ -1291,16 +1046,16 @@ FUNCTION ZAO_CIJENA()
 // -------------------------------------------
 // cDocName
 // -------------------------------------------
-STATIC FUNCTION doc_name( dok, partner )
+STATIC FUNCTION doc_name( hDokument, cIdPartner )
 
    LOCAL cFax
    LOCAL cPartner
    LOCAL cDocumentName
 
    // primjer cDocumentName = FAKT_DOK_10-10-00050_planika-flex-sarajevo_29.05.06_FAX:032440173
-   cDocumentName := gModul + "_DOK_" + dok[ "idfirma" ]  + "-" + dok[ "idtipdok" ] + "-" + Trim( dok[ "brdok" ] ) + "-" + Trim( partner ) + "_" + DToC( DatDok )
+   cDocumentName := gModul + "_DOK_" + hDokument[ "idfirma" ]  + "-" + hDokument[ "idtipdok" ] + "-" + Trim( hDokument[ "brdok" ] ) + "-" + Trim( cIdPartner ) + "_" + DToC( DatDok )
 
-   cPartner := AllTrim( get_partner_name_mjesto( partner ) )
+   cPartner := AllTrim( get_partner_name_mjesto( cIdPartner ) )
 
    cPartner := StrTran( cPartner, " ", "-" )
    cPartner := StrTran( cPartner, '"', "" )
@@ -1310,7 +1065,7 @@ STATIC FUNCTION doc_name( dok, partner )
    cDocumentName += "_" + cPartner
 
    // 032/440-170 => 032440170
-   cFax := StrTran( g_part_fax( partner ), "-", "" )
+   cFax := StrTran( g_part_fax( cIdPartner ), "-", "" )
    cFax := StrTran( cFax, "/", "" )
    cFax := StrTran( cFax, " ", "" )
 

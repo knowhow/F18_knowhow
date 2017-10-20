@@ -370,7 +370,7 @@ FUNCTION FrmGetPopProc()
    LOCAL nPopProc := 0
 
    Box(, 1, 23 )
-   @ m_x + 1, m_y + 2 SAY "Popust (%)" GET nPopProc PICT "999.99"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Popust (%)" GET nPopProc PICT "999.99"
    READ
    BoxC()
 
@@ -473,7 +473,7 @@ FUNCTION Scan_PriprForRabat( aRabat )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // -----------------------------------------
 // vraca popust po vrsti placanja
@@ -487,9 +487,7 @@ FUNCTION get_vrpl_popust( cIdVrPlac, nPopust )
    LOCAL cPopust
    LOCAL i
 
-   SELECT vrstep
-   SET ORDER TO TAG "ID"
-   SEEK cIdVrPlac
+   select_o_vrstep( cIdVrPlac )
 
    // naz #P#05#
    cPom := AllTrim( field->naz )

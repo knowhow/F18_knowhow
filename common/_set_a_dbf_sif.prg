@@ -15,9 +15,11 @@ FUNCTION set_a_dbf_sif()
 
    LOCAL hRec
 
-   set_a_sql_sifarnik( "adres", "ADRES", F_ADRES      )
+   set_a_sql_sifarnik( "adres", "ADRES", F_ADRES    )
 
-   set_a_sql_sifarnik( "roba", "ROBA", F_ROBA       )
+   set_a_sql_sifarnik( "roba", "ROBA", F_ROBA    )
+   set_a_sql_sifarnik( "roba _p", "ROBA_P", F_ROBA_P   )
+
    set_a_sql_sifarnik( "konto", "KONTO", F_KONTO      )
    set_a_sql_sifarnik( "partn", "PARTN", F_PARTN    )
 
@@ -26,7 +28,7 @@ FUNCTION set_a_dbf_sif()
    hRec[ "dbf_tag" ]        := "ID"
    hRec[ "sql_in" ]        := "rpad( id, 10 ) || rpad(id2, 10)"
    hRec[ "dbf_key_block" ] := {|| field->id + field->id2 }
-   set_a_dbf_sifarnik( "sast", "SAST", F_SAST, hRec  )
+   set_a_sql_sifarnik( "sast", "SAST", F_SAST, hRec  )
 
 
    hRec := hb_Hash()
@@ -35,8 +37,8 @@ FUNCTION set_a_dbf_sif()
    hRec[ "sql" ]            := .T.
    hRec[ "sql_in" ]        := "rpad(rule_id::char(10),10)"
    hRec[ "dbf_key_block" ] := {|| Str( field->rule_id, 10, 0 ) }
-   set_a_sql_sifarnik( "f18_rules", "FMKRULES", F_RULES, hRec  )
 
+   set_a_sql_sifarnik( "f18_rules", "FMKRULES", F_RULES, hRec  )
    set_a_sql_sifarnik( "rj", "RJ", F_RJ         )
    set_a_sql_sifarnik( "lokal", "LOKAL", F_LOKAL  )
    set_a_sql_sifarnik( "ops", "OPS", F_OPS        )
@@ -52,11 +54,8 @@ FUNCTION set_a_dbf_sif()
    set_a_sql_sifarnik( "fakt_objekti", "FAKT_OBJEKTI", F_FAKT_OBJEKTI   )
 
 
+
    set_a_dbf_temp     ( "relation",  "RELATION", F_RELATION   )
-
-   // kolizija sa fakt_roba
-   // set_a_dbf_temp     ( "cIdRoba"      ,  "cIdRoba"       , F__ROBA      )
-
    set_a_dbf_temp     ( "barkod",  "BARKOD", F_BARKOD  )
    //set_a_dbf_temp     ( "strings",  "STRINGS", F_STRINGS    )
 

@@ -29,7 +29,7 @@ FUNCTION pos_main_menu_admin()
    AAdd( opc, "R. robno-materijalno poslovanje" )
    AAdd( opcexe, {|| pos_menu_robmat() } )
    AAdd( opc, "K. prenos realizacije u KALK" )
-   AAdd( opcexe, {|| pos_prenos_pos_kalk() } )
+   AAdd( opcexe, {|| pos_kalk_prenos_realizacije() } )
    AAdd( opc, "S. šifarnici                  " )
    AAdd( opcexe, {|| pos_sifarnici() } )
    AAdd( opc, "A. administracija pos-a" )
@@ -65,11 +65,11 @@ FUNCTION pos_admin_menu()
    AAdd( opc, "1. parametri rada programa                        " )
    AAdd( opcexe, {|| pos_parametri() } )
 
-   AAdd( opc, "R. setovanje brojaca dokumenata" )
+   AAdd( opc, "R. setovanje brojača dokumenata" )
    AAdd( opcexe, {|| pos_set_param_broj_dokumenta() } )
 
-   AAdd( opc, "X. briši nepostojeće dokumente" )
-   AAdd( opcexe, {|| pos_brisi_nepostojece_dokumente() } )
+  // AAdd( opc, "X. briši nepostojeće dokumente" )
+  // AAdd( opcexe, {|| pos_brisi_nepostojece_dokumente() } )
 
    IF ( KLevel < L_UPRAVN )
 

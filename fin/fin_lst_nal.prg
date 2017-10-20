@@ -29,7 +29,7 @@ FUNCTION st_sv_nal()
 
    Box(, 4, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "Exportujem naloge......"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Exportujem naloge......"
 
    DO WHILE !Eof() .AND. self_organizacija_id() == idfirma
 
@@ -48,7 +48,7 @@ FUNCTION st_sv_nal()
          field->d_p, field->iznosbhd, field->datdok, ;
          field->datval, field->brdok, field->opis )
 
-      @ m_x + 3, m_y + 2 SAY "nalog-> " + idvn + "-" + brnal
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "nalog-> " + idvn + "-" + brnal
 
       SKIP
    ENDDO

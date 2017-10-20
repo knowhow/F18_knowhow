@@ -38,7 +38,7 @@ FUNCTION MMenuUpA()
    AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
 
    AAdd( opc, "R. prenos realizacije u KALK" )
-   AAdd( opcexe, {|| pos_prenos_pos_kalk() } )
+   AAdd( opcexe, {|| pos_kalk_prenos_realizacije() } )
 
    AAdd( opc, "D. unos dokumenata" )
    AAdd( opcexe, {|| pos_menu_dokumenti() } )
@@ -52,8 +52,8 @@ FUNCTION MMenuUpA()
    AAdd( opcexe, {|| pos_sifarnici() } )
    AAdd( opc, "W. administracija pos-a" )
    AAdd( opcexe, {|| pos_admin_menu() } )
-   AAdd( opc, "P. promjena seta cijena" )
-   AAdd( opcexe, {|| PromIDCijena() } )
+   //AAdd( opc, "P. promjena seta cijena" )
+   //AAdd( opcexe, {|| PromIDCijena() } )
 
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "upra" )
 

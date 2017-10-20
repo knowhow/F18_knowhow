@@ -196,7 +196,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
          AAdd( _ids_nalog, _tmp_id )
 
-         @ m_x + 1, m_y + 2 SAY "fin_suban -> server: " + _tmp_id
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "fin_suban -> server: " + _tmp_id
 
       ENDIF
 
@@ -212,7 +212,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
    IF lOkAzuriranje
 
-      @ m_x + 2, m_y + 2 SAY "fin_anal -> server"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "fin_anal -> server"
 
       SELECT panal
       SET ORDER TO TAG "1"
@@ -237,7 +237,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
    IF lOkAzuriranje
 
-      @ m_x + 3, m_y + 2 SAY "fin_sint -> server"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "fin_sint -> server"
 
       SELECT psint
       SET ORDER TO TAG "1"
@@ -261,7 +261,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
    IF lOkAzuriranje
 
-      @ m_x + 4, m_y + 2 SAY "fin_nalog -> server"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "fin_nalog -> server"
 
       SELECT pnalog
       SET ORDER TO TAG "1"
@@ -300,7 +300,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
 STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, aListaNaloga )
 
-   LOCAL nSelectArea, nI, _t_rec
+   LOCAL nSelectArea, nI, nTrec
    LOCAL cIdFirma, cIdVn, cBrNal
    LOCAL _vise_naloga := .F.
    LOCAL lOkAzuriranje := .F.
@@ -346,7 +346,7 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, aListaNaloga )
       GO TOP
       SEEK cIdFirma + cIdVn + cBrNal
 
-      _t_rec := RecNo()
+      nTrec := RecNo()
 
       IF Len( AllTrim( field->brnal ) ) < 8
          MsgBeep( "Broj naloga mora biti sa vodećim nulama !" )
@@ -651,7 +651,7 @@ FUNCTION panal_anal( cNalogId )
 
    LOCAL hRec
 
-   @ m_x + 3, m_y + 2 SAY "ANALITIKA       "
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "ANALITIKA       "
 
    SELECT panal
    SEEK cNalogId
@@ -679,7 +679,7 @@ FUNCTION psint_sint( cNalogId )
 
    LOCAL hRec
 
-   @ m_x + 3, m_y + 2 SAY "SINTETIKA       "
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "SINTETIKA       "
    SELECT PSINT
    SEEK cNalogId
 
@@ -735,7 +735,7 @@ FUNCTION psuban_suban( cNalogId )
    LOCAL nC := 0
    LOCAL hRec, hRec2
 
-   @ m_x + 3, m_y + 2 SAY "SUBANALITIKA   "
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "SUBANALITIKA   "
 
 
    SELECT PSUBAN
@@ -749,7 +749,7 @@ FUNCTION psuban_suban( cNalogId )
 
    DO WHILE !Eof() .AND. cNalogId == IdFirma + IdVn + BrNal
 
-      @ m_x + 3, m_y + 25 SAY ++nC  PICT "99999999999"
+      @ box_x_koord() + 3, box_y_koord() + 25 SAY ++nC  PICT "99999999999"
 
       hRec := dbf_get_rec()
 
@@ -803,22 +803,22 @@ FUNCTION psuban_suban( cNalogId )
 
 FUNCTION fin_pripr_delete( cNalogId )
 
-   LOCAL _t_rec
+   LOCAL nTrec
 
    SELECT fin_pripr
    SEEK cNalogId
 
-   // @ m_x + 3, m_y + 2 SAY8 "BRIŠEM PRIPREMU "
+   // @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "BRIŠEM PRIPREMU "
    MsgO( "Brisanje fin_pripr" )
    my_flock()
 
    DO WHILE !Eof() .AND. cNalogId == IdFirma + IdVn + BrNal
 
       SKIP
-      _t_rec := RecNo()
+      nTrec := RecNo()
       SKIP -1
       DELETE
-      GO ( _t_rec )
+      GO ( nTrec )
 
    ENDDO
 
@@ -862,9 +862,9 @@ FUNCTION o_fin_za_azuriranje()
    o_nalog()
 
    o_fin_psuban()
-   O_PANAL
-   O_PSINT
-   O_PNALOG
+   o_fin_panal()
+   o_fin_psint()
+   o_fin_pnalog()
 
    o_fin_pripr()
 

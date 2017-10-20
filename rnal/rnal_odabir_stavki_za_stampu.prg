@@ -41,11 +41,11 @@ FUNCTION rnal_print_odabir_stavki( lPriprema )
    cBoxOpt += " "
    cBoxOpt += "<I> unos isporuke"
 
-   @ m_x + nBoxX, m_y + 2 SAY cBoxOpt
+   @ box_x_koord() + nBoxX, box_y_koord() + 2 SAY cBoxOpt
 
    set_a_kol( @ImeKol, @Kol )
 
-   my_db_edit_sql( "t_docit", nBoxX, nBoxY, {|| rnal_odabir_key_handler( lPriprema ) }, cHeader, cFooter,,,,, 1 )
+   my_browse( "t_docit", nBoxX, nBoxY, {|| rnal_odabir_key_handler( lPriprema ) }, cHeader, cFooter,,,,, 1 )
 
    BoxC()
 
@@ -61,7 +61,7 @@ FUNCTION rnal_print_odabir_stavki( lPriprema )
 
 STATIC FUNCTION rnal_odabir_key_handler( lPriprema )
 
-   LOCAL _t_rec := RecNo()
+   LOCAL nTrec := RecNo()
    LOCAL _ret := DE_CONT
    LOCAL _rec
 
@@ -104,7 +104,7 @@ STATIC FUNCTION setuj_broj_komada_za_isporuku( lPriprema )
    LOCAL _rec
 
    Box(, 1, 25 )
-   @ m_x + 1, m_y + 2 SAY8 "isporučeno ?" GET _deliver PICT "9999999.99"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "isporučeno ?" GET _deliver PICT "9999999.99"
    READ
    BoxC()
 

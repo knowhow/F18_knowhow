@@ -11,9 +11,8 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
 
-FUNCTION copy_sast()
+FUNCTION sastavnica_copy()
 
    LOCAL lOk := .T.
    LOCAL nTRobaRec
@@ -21,8 +20,9 @@ FUNCTION copy_sast()
    LOCAL cIdTek
    LOCAL nTRec
    LOCAL nCnt := 0
-   LOCAL _rec
+   LOCAL hRec
    LOCAL hParams
+
 
    nTRobaRec := RecNo()
 
@@ -32,7 +32,8 @@ FUNCTION copy_sast()
       cIdTek := field->id
 
       Box(, 2, 60 )
-      @ m_x + 1, m_y + 2 SAY "Kopirati u proizvod:" GET cNoviProizvod VALID cNoviProizvod <> cIdTek .AND. p_roba( @cNoviProizvod ) .AND. roba->tip == "P"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Kopirati u proizvod:" GET cNoviProizvod ;
+         VALID cNoviProizvod <> cIdTek .AND. P_roba_select( @cNoviProizvod ) .AND. roba->tip == "P"
       READ
       BoxC()
 
@@ -45,21 +46,20 @@ FUNCTION copy_sast()
             RETURN .F.
          ENDIF
 
-         SELECT sast
-         SET ORDER TO TAG "idrbr"
-         SEEK cIdTek
+         AltD()
+         // SELECT sast
+         // SET ORDER TO TAG "idrbr"
+         o_sastavnice( cIdTek, "IDRBR" )
          nCnt := 0
 
-
          DO WHILE !Eof() .AND. ( id == cIdTek )
-            ++ nCnt
+            ++nCnt
             nTRec := RecNo()
-            _rec := dbf_get_rec()
-            _rec[ "id" ] := cNoviProizvod
+            hRec := dbf_get_rec()
+            hRec[ "id" ] := cNoviProizvod
             APPEND BLANK
 
-            lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
+            lOk := update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
             IF !lOk
                EXIT
             ENDIF
@@ -77,8 +77,8 @@ FUNCTION copy_sast()
             run_sql_query( "ROLLBACK" )
          ENDIF
 
-         SELECT roba
-         SET ORDER TO TAG "idun"
+         SELECT roba_p
+         // SET ORDER TO TAG "idun"
 
       ENDIF
    ENDIF
@@ -86,7 +86,7 @@ FUNCTION copy_sast()
    GO ( nTrobaRec )
 
    IF ( nCnt > 0 )
-      MsgBeep( "Kopirano sastavnica: " + AllTrim( Str( nCnt ) ) )
+      MsgBeep( "Kopirano stavki: " + AllTrim( Str( nCnt ) ) + "# iz proizvoda " + cIdTek + " -> " + cNoviProizvod )
    ELSE
       MsgBeep( "Ne postoje sastavnice na uzorku za kopiranje!" )
    ENDIF
@@ -94,23 +94,33 @@ FUNCTION copy_sast()
    RETURN .T.
 
 
+FUNCTION sastavnice_delete_empty_id()
+
+   LOCAL cSql := "delete from fmk.sast where ( id is null or trim(id) = '') or ( id2 is null or trim(id2) = '') "
+   LOCAL oRet
+
+   oRet := run_sql_query( cSql )
+   IF sql_error_in_query( oRet, "DELETE" )
+      info_bar( "sql", cSql )
+      RETURN .F.
+   ENDIF
 
 FUNCTION bris_sast()
 
    LOCAL lOk := .T.
    LOCAL _d_n
-   LOCAL _t_rec
-   LOCAL _rec
+   LOCAL _thRec
+   LOCAL hRec
    LOCAL hParams
 
    _d_n := "0"
 
    Box(, 5, 40 )
-   @ m_x + 1, m_Y + 2 SAY8 "Odaberite željenu opciju:"
-   @ m_x + 3, m_Y + 2 SAY8 "0. Ništa !"
-   @ m_x + 4, m_Y + 2 SAY "1. Izbrisati samo sastavnice ?"
-   @ m_x + 5, m_Y + 2 SAY "2. Izbrisati i artikle i sastavnice "
-   @ m_x + 5, Col() + 2 GET _d_n VALID _d_n $ "012"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Odaberite željenu opciju:"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "0. Ništa !"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "1. Izbrisati samo sastavnice ?"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "2. Izbrisati i artikle i sastavnice "
+   @ box_x_koord() + 5, Col() + 2 GET _d_n VALID _d_n $ "012"
    READ
    BoxC()
 
@@ -119,11 +129,11 @@ FUNCTION bris_sast()
    ENDIF
 
    run_sql_query( "BEGIN" )
-   IF !f18_lock_tables( { "roba", "sast" }, .T. )
+   IF !f18_lock_tables( {  "sast" }, .T. )
       run_sql_query( "ROLLBACK" )
       MsgBeep( "lock roba, sast neuspjeno !" )
       RETURN 7
-   ENDIF .T.
+   ENDIF
 
 
    IF _d_n $ "12" .AND. Pitanje(, "Sigurno želite izbrisati definisane sastavnice (D/N) ?", "N" ) == "D"
@@ -131,43 +141,41 @@ FUNCTION bris_sast()
       SELECT sast
       DO WHILE !Eof()
          SKIP 1
-         _t_rec := RecNo()
+         _thRec := RecNo()
          SKIP -1
-         _rec := dbf_get_rec()
-         lOk := delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+         hRec := dbf_get_rec()
+         lOk := delete_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
          IF !lOk
             EXIT
          ENDIF
-         GO ( _t_rec )
+         GO ( _thRec )
       ENDDO
 
    ENDIF
 
    IF lOk .AND. _d_n $ "2" .AND. Pitanje(, "Sigurno želite izbrisati proizvode (D/N) ?", "N" ) == "D"
 
-      SELECT roba
-
+      SELECT roba_p
       DO WHILE !Eof()
          SKIP
-         _t_rec := RecNo()
+         _thRec := RecNo()
          SKIP -1
 
-         _rec := dbf_get_rec()
-         lOk := delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+         hRec := dbf_get_rec()
+         lOk := delete_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
 
          IF !lOk
             EXIT
          ENDIF
 
-         GO ( _t_rec )
-
+         GO ( _thRec )
       ENDDO
 
    ENDIF
 
    IF lOk
       hParams := hb_Hash()
-      hParams[ "unlock" ] :=  { "roba", "sast" }
+      hParams[ "unlock" ] :=  { "sast" }
       run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )

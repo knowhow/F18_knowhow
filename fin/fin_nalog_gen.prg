@@ -34,7 +34,6 @@ FUNCTION fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
       ENDIF
 
       SELECT PANAL
-
       SEEK cIdfirma + cIdvn + cBrNal + cIdKonto
       fNasao := .F.
 
@@ -108,30 +107,32 @@ FUNCTION fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
       DugBHD WITH nD1, PotBHD WITH nP1, ;
       DugDEM WITH nD2, PotDEM WITH nP2
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 
+   LOCAL GetList := {}
+
    Box( "", 2, 50 )
 
    SET CURSOR ON
 
-   @ m_x + 1, m_y + 2 SAY "Nalog broj:"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Nalog broj:"
 
-   IF gNW == "D"
-      cIdFirma := self_organizacija_id()
-      @ m_x + 1, Col() + 1 SAY cIdFirma
-   ELSE
-      @ m_x + 1, Col() + 1 GET cIdFirma
-   ENDIF
+   //IF gNW == "D"
+  //    cIdFirma := self_organizacija_id()
+  //    @ box_x_koord() + 1, Col() + 1 SAY cIdFirma
+   //ELSE
+      @ box_x_koord() + 1, Col() + 1 GET cIdFirma
+   //ENDIF
 
-   @ m_x + 1, Col() + 1 SAY "-" GET cIdVn
-   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET cIdVn
+   @ box_x_koord() + 1, Col() + 1 SAY "-" GET cBrNal
 
    IF gDatNal == "D"
-      @ m_x + 2, m_y + 2 SAY "Datum naloga:" GET dDatNal
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Datum naloga:" GET dDatNal
    ENDIF
 
    READ
@@ -151,10 +152,10 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 FUNCTION fin_open_psuban_and_ostalo()
 
    o_vrstep()
-   o_konto()
+   //o_konto()
    //o_partner()
-   o_tnal()
-   o_tdok()
+   //o_tnal()
+   //o_tdok()
    o_fin_psuban()
    o_fin_pripr()
 
@@ -165,14 +166,14 @@ FUNCTION fin_open_psuban_and_ostalo()
 */
 FUNCTION fin_open_lock_panal( lZap )
 
-   O_PSUBAN
-   O_PANAL
-   O_PSINT
-   O_PNALOG
+   o_fin_psuban()
+   o_fin_panal()
+   o_fin_psint()
+   o_fin_pnalog()
 
    //o_partner()
-   o_konto()
-   o_tnal()
+   //o_konto()
+   //o_tnal()
 
    IF !lock_fin_priprema( lZap )
       Alert( "lock fin priprema error ?" )
@@ -257,12 +258,12 @@ STATIC FUNCTION lock_fin_priprema( lZap )
 
 FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
 
-   O_PANAL
-   O_PSINT
-   O_PNALOG
-   O_PSUBAN
-   o_konto()
-   o_tnal()
+   o_fin_panal()
+   o_fin_psint()
+   o_fin_pnalog()
+   o_fin_psuban()
+   //o_konto()
+   //o_tnal()
 
    IF lAuto == NIL
       lAuto := .F.

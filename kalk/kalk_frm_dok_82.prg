@@ -24,37 +24,37 @@ FUNCTION Get1_82()
    SET KEY K_ALT_K TO kalk_kartica_magacin_pomoc_unos_14()
 
    IF nRbr == 1 .OR. !kalk_is_novi_dokument()
-      @  m_x + 7, m_y + 2   SAY "Faktura Broj:" GET _BrFaktP
-      @  m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   ;
+      @  box_x_koord() + 7, box_y_koord() + 2   SAY "Faktura Broj:" GET _BrFaktP
+      @  box_x_koord() + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   ;
          valid {|| .T. }
       _IdZaduz := ""
 
       _Idkonto2 := ""
 
-      @ m_x + 9, m_y + 2 SAY "Magacinski konto razduzuje"  GET _IdKonto ;
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Magacinski konto razduzuje"  GET _IdKonto ;
          VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
       // IF gNW <> "X"
-      // @ m_x + 9, m_y + 40 SAY "Razduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
+      // @ box_x_koord() + 9, box_y_koord() + 40 SAY "Razduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
       // ENDIF
    ELSE
-      // @  m_x+6,m_y+2   SAY "KUPAC: "; ?? _IdPartner
-      @  m_x + 7, m_y + 2   SAY "Faktura Broj: "; ?? _BrFaktP
-      @  m_x + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
+      // @  box_x_koord()+6,box_y_koord()+2   SAY "KUPAC: "; ?? _IdPartner
+      @  box_x_koord() + 7, box_y_koord() + 2   SAY "Faktura Broj: "; ?? _BrFaktP
+      @  box_x_koord() + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
       _IdZaduz := ""
       _Idkonto2 := ""
-      @ m_x + 9, m_y + 2 SAY "Magacinski konto razduzuje "; ?? _IdKonto
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Magacinski konto razduzuje "; ?? _IdKonto
       // IF gNW <> "X"
-      // @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz
+      // @ box_x_koord() + 9, box_y_koord() + 40 SAY "Razduzuje: "; ?? _IdZaduz
       // ENDIF
    ENDIF
 
-   @ m_x + 10, m_y + 66 SAY "Tarif.br->"
+   @ box_x_koord() + 10, box_y_koord() + 66 SAY "Tarif.br->"
 
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi )
 
 
-   @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -71,7 +71,7 @@ FUNCTION Get1_82()
    // DuplRoba()
    // check_datum_posljednje_kalkulacije()
 
-   @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ box_x_koord() + 12, box_y_koord() + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    _GKolicina := 0
 
@@ -102,23 +102,23 @@ FUNCTION Get1_82()
    ENDIF
    SELECT kalk_pripr
 
-   @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
-   @ m_x + 13, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE PicDEM      VALID kalk_valid_kolicina_mag()
+   @ box_x_koord() + 12, box_y_koord() + 30   SAY "Ukupno na stanju "; @ box_x_koord() + 12, Col() + 2 SAY nkols PICT pickol
+   @ box_x_koord() + 13, box_y_koord() + 2    SAY "NAB.CJ   "  GET _NC  PICTURE PicDEM      VALID kalk_valid_kolicina_mag()
 
    PRIVATE _vpcsappp := 0
 
-   @ m_x + 14, m_y + 2   SAY "VPC      " GET _VPC    PICTURE PicDEM ;
+   @ box_x_koord() + 14, box_y_koord() + 2   SAY "VPC      " GET _VPC    PICTURE PicDEM ;
       valid {|| iif( gVarVP == "2" .AND. ( _vpc - _nc ) > 0, cisMarza := ( _vpc - _nc ) / ( 1 + tarifa->vpp ), _vpc - _nc ), ;
       _mpcsapp := _MPCSaPP := ( 1 + _OPP ) * _VPC * ( 1 -_Rabatv / 100 ) * ( 1 + _PPP ), ;
       _mpcsapp := Round( _mpcsapp, 2 ), .T. }
 
    _RabatV := 0
 
-   @ m_x + 19, m_y + 2  SAY "PPP (%):"; @ Row(), Col() + 2 SAY  _OPP * 100 PICTURE "99.99"
-   @ m_x + 19, Col() + 8  SAY "PPU (%):"; @ Row(), Col() + 2  SAY _PPP * 100 PICTURE "99.99"
+   @ box_x_koord() + 19, box_y_koord() + 2  SAY "PPP (%):"; @ Row(), Col() + 2 SAY  _OPP * 100 PICTURE "99.99"
+   @ box_x_koord() + 19, Col() + 8  SAY "PPU (%):"; @ Row(), Col() + 2  SAY _PPP * 100 PICTURE "99.99"
 
-   @ m_x + 20, m_y + 2 SAY "MPC SA POREZOM:"
-   @ m_x + 20, m_y + 50 GET _MPCSaPP  PICTURE PicDEM ;
+   @ box_x_koord() + 20, box_y_koord() + 2 SAY "MPC SA POREZOM:"
+   @ box_x_koord() + 20, box_y_koord() + 50 GET _MPCSaPP  PICTURE PicDEM ;
       valid {|| _mpc := iif( _mpcsapp <> 0, _mpcsapp / ( 1 + _opp ) / ( 1 + _PPP ), _mpc ), ;
       _marza2 := 0, ;
       Marza2R(), ShowGets(), .T. }

@@ -113,14 +113,14 @@ FUNCTION kalk_povrat_dokumenta_iz_pripr9( cIdFirma, cIdVd, cBrDok )
 
    IF !lSilent
       Box( "", 1, 35 )
-      @ m_x + 1, m_y + 2 SAY "Dokument:"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Dokument:"
       IF gNW $ "DX"
-         @ m_x + 1, Col() + 1 SAY cIdFirma
+         @ box_x_koord() + 1, Col() + 1 SAY cIdFirma
       ELSE
-         @ m_x + 1, Col() + 1 GET cIdFirma
+         @ box_x_koord() + 1, Col() + 1 GET cIdFirma
       ENDIF
-      @ m_x + 1, Col() + 1 SAY "-" GET cIdVD
-      @ m_x + 1, Col() + 1 SAY "-" GET cBrDok
+      @ box_x_koord() + 1, Col() + 1 SAY "-" GET cIdVD
+      @ box_x_koord() + 1, Col() + 1 SAY "-" GET cBrDok
       READ
       ESC_BCR
       BoxC()
@@ -130,9 +130,9 @@ FUNCTION kalk_povrat_dokumenta_iz_pripr9( cIdFirma, cIdVd, cBrDok )
          qqIdVD := PadR( cidvd + ";", 80 )
          Box(, 3, 60 )
          DO WHILE .T.
-            @ m_x + 1, m_y + 2 SAY "Vrste dokum.   "  GET qqIdVD PICT "@S40"
-            @ m_x + 2, m_y + 2 SAY "Broj dokumenata"  GET qqBrDok PICT "@S40"
-            @ m_x + 3, m_y + 2 SAY "Datumi         " GET  qqDatDok PICT "@S40"
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY "Vrste dokum.   "  GET qqIdVD PICT "@S40"
+            @ box_x_koord() + 2, box_y_koord() + 2 SAY "Broj dokumenata"  GET qqBrDok PICT "@S40"
+            @ box_x_koord() + 3, box_y_koord() + 2 SAY "Datumi         " GET  qqDatDok PICT "@S40"
             READ
             PRIVATE aUsl1 := Parsiraj( qqBrDok, "BrDok", "C" )
             PRIVATE aUsl2 := Parsiraj( qqDatDok, "DatDok", "D" )

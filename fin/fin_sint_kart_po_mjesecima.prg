@@ -37,20 +37,20 @@ FUNCTION fin_sint_kart_po_mjesecima()
    Box( "", 5, 75 )
    DO WHILE .T.
       SET CURSOR ON
-      @ m_x + 1, m_y + 2 SAY8 "KARTICA (SINTETIČKI KONTO) PO MJESECIMA"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "KARTICA (SINTETIČKI KONTO) PO MJESECIMA"
 
       IF gNW == "D"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 3, m_y + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
-      @ m_x + 4, m_y + 2 SAY "Datum od:" GET dDatOd
-      @ m_x + 4, Col() + 2 SAY "do:" GET dDatDo
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Datum od:" GET dDatOd
+      @ box_x_koord() + 4, Col() + 2 SAY "do:" GET dDatDo
       cIdRJ := ""
       IF gFinRj == "D" .AND. gSAKrIz == "D"
          cIdRJ := REPLICATE("9", FIELD_LEN_FIN_RJ_ID )
-         @ m_x + 5, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       READ;  ESC_BCR
 
@@ -68,9 +68,9 @@ FUNCTION fin_sint_kart_po_mjesecima()
    cIdFirma := Left( cIdFirma, 2 )
    qqKonto := Trim( qqKonto )
 
-   IF Params2()
+   //IF Params2()
       WPar( "c1", @cIdFirma ); WPar( "c2", @qqKonto ); WPar( "d1", @dDatOd ); WPar( "d2", @dDatDo )
-   ENDIF
+   //ENDIF
    SELECT params
    USE
 

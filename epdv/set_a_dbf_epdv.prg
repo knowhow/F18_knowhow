@@ -14,11 +14,11 @@
 
 FUNCTION set_a_dbf_epdv()
 
-   set_a_dbf_epdv_pdv()
+   set_a_sql_epdv_pdv()
 
    // kuf i kif su tabele identične strukture
-   set_a_dbf_epdv_kuf_kif( "epdv_kuf", "KUF", F_KUF )
-   set_a_dbf_epdv_kuf_kif( "epdv_kif", "KIF", F_KIF )
+   set_a_sql_epdv_kuf_kif( "epdv_kuf", "KUF", F_KUF )
+   set_a_sql_epdv_kuf_kif( "epdv_kif", "KIF", F_KIF )
 
 
    set_a_sql_sifarnik( "epdv_sg_kif", "SG_KIF", F_SG_KIF )
@@ -35,76 +35,75 @@ FUNCTION set_a_dbf_epdv()
 
 
 
-FUNCTION set_a_dbf_epdv_pdv()
+FUNCTION set_a_sql_epdv_pdv()
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam, cTable
 
-   _tbl := "epdv_pdv"
+   cTable := "epdv_pdv"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "PDV"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_PDV
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ]  := .F.
-   _item[ "sif" ]  := .F.
+   hItem[ "alias" ] := "PDV"
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := F_PDV
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ]  := .T.
+   hItem[ "sif" ]  := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| DToS( field->per_od ) + DToS( field->per_do ) }
-   _alg[ "dbf_key_fields" ] := { "per_od", "per_do" }
-   _alg[ "sql_in" ]         := "to_char(per_od, 'YYYYMMDD') || to_char(per_do, 'YYYYMMDD')"
-   _alg[ "dbf_tag" ]        := "PERIOD"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| DToS( field->per_od ) + DToS( field->per_do ) }
+   hAlgoritam[ "dbf_key_fields" ] := { "per_od", "per_do" }
+   hAlgoritam[ "sql_in" ]         := "to_char(per_od, 'YYYYMMDD') || to_char(per_do, 'YYYYMMDD')"
+   hAlgoritam[ "dbf_tag" ]        := "PERIOD"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "per_od, per_do"
+   hItem[ "sql_order" ] := "per_od, per_do"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.
 
 
-FUNCTION set_a_dbf_epdv_kuf_kif( table, alias, wa )
+FUNCTION set_a_sql_epdv_kuf_kif( cTable, cAlias, nWa )
 
-   LOCAL _item, _alg, _tbl
+   LOCAL hItem, hAlgoritam
 
-   _tbl := table
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := alias
-   _item[ "table" ] := table
-   _item[ "wa" ]    := wa
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ]  := .F.
-   _item[ "sif" ]  := .F.
+   hItem[ "alias" ] := cAlias
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := nWa
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ]  := .T.
+   hItem[ "sif" ]  := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| Str( field->br_dok, 6 ) + Str( field->r_br, 6 ) }
-   _alg[ "dbf_key_fields" ] := { { "br_dok", 6 }, { "r_br", 6 } }
-   _alg[ "sql_in" ]         := "lpad(br_dok::char(6), 6) || lpad(r_br::char(6),6)"
-   _alg[ "dbf_tag" ]        := "BR_DOK"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| Str( field->br_dok, 6 ) + Str( field->r_br, 6 ) }
+   hAlgoritam[ "dbf_key_fields" ] := { { "br_dok", 6 }, { "r_br", 6 } }
+   hAlgoritam[ "sql_in" ]         := "lpad(br_dok::char(6), 6) || lpad(r_br::char(6),6)"
+   hAlgoritam[ "dbf_tag" ]        := "BR_DOK"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    // algoritam 2 - povrat dokumenta
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| Str( field->br_dok, 6 ) }
-   _alg[ "dbf_key_fields" ] := { { "br_dok", 6 } }
-   _alg[ "sql_in" ]         := "lpad( br_dok::char(6), 6 )"
-   _alg[ "dbf_tag" ]        := "BR_DOK"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| Str( field->br_dok, 6 ) }
+   hAlgoritam[ "dbf_key_fields" ] := { { "br_dok", 6 } }
+   hAlgoritam[ "sql_in" ]         := "lpad( br_dok::char(6), 6 )"
+   hAlgoritam[ "dbf_tag" ]        := "BR_DOK"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "br_dok, r_br, datum"
+   hItem[ "sql_order" ] := "br_dok, r_br, datum"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.

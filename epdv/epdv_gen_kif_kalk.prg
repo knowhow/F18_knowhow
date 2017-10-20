@@ -39,7 +39,7 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
    dDatOd := dD1
    dDatDo := dD2
 
-   epdv_otvori_kif_tabele( .T. )
+   epdv_otvori_kif_priprema()
 
    SELECT F_SG_KIF
    IF !Used()
@@ -61,7 +61,7 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "SG_KIF : " + Str( nCount )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "SG_KIF : " + Str( nCount )
 
       IF g_src_modul( src ) == "KALK"
 
@@ -287,10 +287,10 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
          nCount ++
 
          cPom := "KALK : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-         @ m_x + 3, m_y + 2 SAY cPom
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY cPom
 
          cPom := "KALK cnt : " + Str( nCount, 6 )
-         @ m_x + 4, m_y + 2 SAY cPom
+         @ box_x_koord() + 4, box_y_koord() + 2 SAY cPom
 
 
 
@@ -412,7 +412,7 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
 
 
 
-      PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa( _id_tar ) / 100 )
+      PRIVATE _uk_pdv :=  _uk_b_pdv * (  get_stopa_pdv_za_tarifu( _id_tar ) / 100 )
 
       IF !Empty( cFormBPDV )
          _i_b_pdv := &cFormBPdv

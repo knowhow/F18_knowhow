@@ -15,22 +15,18 @@
 
 
 
-FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id, cImeKup, lOpcine, aUslOpc, valute )
+FUNCTION fakt_stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, cIdObjekat, cImeKup, lOpcine, aUslOpc, cValute )
 
    LOCAL m, cDinDnem, cRezerv, nC, nIznos, nRab, nIznosD, nIznos3, nRabD, nRab3, nOsn_tot, nPDV_tot, nUkPDV_tot
    LOCAL gnLMarg := 0
    LOCAL nCol1 := 0
-   LOCAL _params := fakt_params()
-   LOCAL lVrstep := _params[ "fakt_vrste_placanja" ]
+   LOCAL hParams := fakt_params()
+   LOCAL lVrstep := hParams[ "fakt_vrste_placanja" ]
 
-   IF valute == NIL
-      valute := Space( 3 )
+   IF cValute == NIL
+      cValute := Space( 3 )
    ENDIF
 
-   SELECT F_FAKT_DOKS
-   IF !Used()
-      o_fakt_doks()
-   ENDIF
 
    START PRINT CRET
    ?
@@ -52,13 +48,13 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
       ?? Space( 2 ), "za tipove dokumenta:", Trim( qqTipDok )
    ENDIF
 
-   IF !Empty( valute )
-      ?? Space( 2 ), "za valute:", valute
+   IF !Empty( cValute )
+      ?? Space( 2 ), "za valute:", cValute
    ENDIF
 
-   IF _params[ "fakt_objekti" ] .AND. !Empty( objekat_id )
-      ?? Space( 2 ), "uslov po objektu: ", Trim( objekat_id )
-      ? fakt_objekat_naz( objekat_id )
+   IF hParams[ "fakt_objekti" ] .AND. !Empty( cIdObjekat )
+      ?? Space( 2 ), "uslov po objektu: ", Trim( cIdObjekat )
+      ? fakt_objekat_naz( cIdObjekat )
    ENDIF
 
    m := "----- -------- -- -- ---------"
@@ -124,9 +120,9 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
 
    cImeKup := Trim( cImeKup )
 
-   DO WHILE !Eof() .AND. if( !Empty( cIdFirma ), IdFirma == cIdFirma, .T. )
+   DO WHILE !Eof()  // .AND. if( !Empty( cIdFirma ), IdFirma == cIdFirma, .T. )
 
-      cDinDem := fakt_doks->dindem
+      cDinDem := fakt_doks_pregled->dindem
 
       IF !Empty( AllTrim( cImekup ) )
          IF !( field->partner = AllTrim( cImeKup ) )
@@ -136,22 +132,22 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
       ENDIF
 
       IF lOpcine
-         select_o_partner( fakt_doks->idpartner )
-         SELECT fakt_doks
+         select_o_partner( fakt_doks_pregled->idpartner )
+         SELECT fakt_doks_pregled
          IF !( PARTN->( &aUslOpc ) )
             SKIP
             LOOP
          ENDIF
       ENDIF
 
-      SELECT fakt_doks
+      SELECT fakt_doks_pregled
 
       ? Space( gnLMarg )
 
       ?? Str( ++nC, 4 ) + ".", datdok, idfirma, idtipdok, brdok + Rezerv + " "
 
       IF m1 <> "Z"
-         ?? PadR( Trim( fakt_doks->idpartner ) + " - " + fakt_doks->partner, PARTNER_LEN )
+         ?? PadR( Trim( fakt_doks_pregled->idpartner ) + " - " + fakt_doks_pregled->partner, PARTNER_LEN )
       ELSE
          ?? PadC ( "<<dokument u pripremi>>", PARTNER_LEN )
       ENDIF
@@ -169,12 +165,12 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
          @ PRow(), PCol() + 1 SAY Str( nPdv_izn := Round( _pdv( idtipdok, idpartner, iznos ), gFZaok ),  12, 2 )
          @ PRow(), PCol() + 1 SAY Str( nUkPdv_izn := Round( _uk_sa_pdv( idtipdok, idpartner, iznos ), gFZaok ), 12, 2 )
 
-         nIznos     += Round( fakt_doks->iznos, gFZaok )
-         nRab       += fakt_doks->rabat
+         nIznos     += Round( fakt_doks_pregled->iznos, gFZaok )
+         nRab       += fakt_doks_pregled->rabat
 
-         // iznos obje valute... u KM
-         nIznos3    += Round( fakt_doks->iznos,  gFZaok )
-         nRab3      += fakt_doks->rabat
+         // iznos obje cValute... u KM
+         nIznos3    += Round( fakt_doks_pregled->iznos,  gFZaok )
+         nRab3      += fakt_doks_pregled->rabat
 
          nOsn_tot   += nOsn_izn
          nPdv_tot   += nPdv_izn
@@ -182,22 +178,21 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
 
       ELSE
 
-         @ PRow(), PCol() + 1 SAY Str( ( fakt_doks->iznos / UBaznuValutu( fakt_doks->datdok ) ) + ;
-            fakt_doks->rabat, 12, 2 )
-         @ PRow(), PCol() + 1 SAY Str( fakt_doks->rabat, 12, 2 )
-         @ PRow(), PCol() + 1 SAY Str( Round( fakt_doks->iznos / UBaznuValutu( fakt_doks->datdok ), gFZaok ), 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( ( fakt_doks_pregled->iznos / UBaznuValutu( fakt_doks_pregled->datdok ) ) + fakt_doks_pregled->rabat, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( fakt_doks_pregled->rabat, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( Round( fakt_doks_pregled->iznos / UBaznuValutu( fakt_doks_pregled->datdok ), gFZaok ), 12, 2 )
 
          // osnovica i pdv na prikazu
          @ PRow(), PCol() + 1 SAY Str( nOsn_izn := Round( _osnovica( idtipdok, idpartner, iznos / UBaznuValutu( datdok ) ), gFZaok ),  12, 2 )
          @ PRow(), PCol() + 1 SAY Str( nPDV_izn := Round( _pdv( idtipdok, idpartner, iznos / UBaznuValutu( datdok ) ), gFZaok ),  12, 2 )
          @ PRow(), PCol() + 1 SAY Str( nUkPdv_izn := Round( _uk_sa_pdv( idtipdok, idpartner, iznos / UBaznuValutu( datdok ) ), gFZaok ), 12, 2 )
 
-         nIznosD   += Round( fakt_doks->iznos / UBaznuValutu( datdok ), gFZaok )
-         nRabD     += fakt_doks->rabat
+         nIznosD   += Round( fakt_doks_pregled->iznos / UBaznuValutu( datdok ), gFZaok )
+         nRabD     += fakt_doks_pregled->rabat
 
-         // total obje valute... ovu preracunaj u KM
-         nIznos3   += Round( fakt_doks->iznos, gFZaok )
-         nRab3     += fakt_doks->rabat
+         // total obje Valute... ovu preracunaj u KM
+         nIznos3   += Round( fakt_doks_pregled->iznos, gFZaok )
+         nRab3     += fakt_doks_pregled->rabat
 
          nOsn_tot_s  += nOsn_izn
          nPdv_tot_s  += nPdv_izn
@@ -208,17 +203,20 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
       @ PRow(), PCol() + 1 SAY cDinDEM
 
       IF FieldPos( "SIFRA" ) <> 0
-         @ PRow(), PCol() + 1 SAY iif( Empty( sifra ), Space( 2 ), Left( CryptSC( sifra ), 2 ) )
+         @ PRow(), PCol() + 1 SAY iif( Empty( fakt_doks_pregled->sifra ), Space( 2 ), Left( CryptSC( fakt_doks_pregled->sifra ), 2 ) )
       ENDIF
 
       IF lVrsteP
-         @ PRow(), PCol() + 1 SAY idvrstep + "-" + Left( VRSTEP->naz, 4 )
+         select_o_vrstep( fakt_doks_pregled->idvrstep )
+         @ PRow(), PCol() + 1 SAY fakt_doks_pregled->idvrstep + "-" + Left( VRSTEP->naz, 4 )
+         SELECT fakt_doks_pregled
       ENDIF
 
       IF FieldPos( "DATPL" ) <> 0
-         @ PRow(), PCol() + 1 SAY datpl
+         @ PRow(), PCol() + 1 SAY fakt_doks_pregled->datpl
       ENDIF
 
+      SELECT fakt_doks_pregled
       SKIP
 
    ENDDO
@@ -257,7 +255,6 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
    ?? m
    ? Space( gnLMarg )
 
-   // zbirno...
    ?? "UKUPNO " + AllTrim( valbazna() ) + " + " + AllTrim( valsekund() ) + ":"
    @ PRow(), nCol1    SAY  Str( nIznos3 + nRab3, 12, 2 )
    @ PRow(), PCol() + 1 SAY  Str( nRab3, 12, 2 )

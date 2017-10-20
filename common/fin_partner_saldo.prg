@@ -130,32 +130,32 @@ FUNCTION fin_partner_prikaz_stanja_ekran( cPartner, cKKup, cKDob )
 
    Box(, 9, 50 )
 
-   @ m_x + nX, m_y + 2 SAY "Trenutno stanje partnera:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Trenutno stanje partnera:"
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "-----------------------------------------------"
 
    ++ nX
    IF cKKUP <> NIL
-      @ m_x + nX, m_y + 2 SAY PadR( "(1) stanje na kontu " + cKKup + ": " + AllTrim( Str( nSKup, 12, 2 ) ) + " KM", 45 ) COLOR IF( nSKup > 100, "W/R+", "W/G+" )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "(1) stanje na kontu " + cKKup + ": " + AllTrim( Str( nSKup, 12, 2 ) ) + " KM", 45 ) COLOR IF( nSKup > 100, "W/R+", "W/G+" )
    ENDIF
 
    ++ nX
    IF cKDOB <> NIL
-      @ m_x + nX, m_y + 2 SAY PadR( "(2) stanje na kontu " + cKDob + ": " + AllTrim( Str( nSDob, 12, 2 ) ) + " KM", 45 ) COLOR "W/GB+"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "(2) stanje na kontu " + cKDob + ": " + AllTrim( Str( nSDob, 12, 2 ) ) + " KM", 45 ) COLOR "W/GB+"
    ENDIF
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "-----------------------------------------------"
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "Total (1+2) = " + AllTrim( Str( nSaldo, 12, 2 ) ) + " KM" COLOR IF( nSaldo > 100, "W/R+", "W/G+" )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Total (1+2) = " + AllTrim( Str( nSaldo, 12, 2 ) ) + " KM" COLOR IF( nSaldo > 100, "W/R+", "W/G+" )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Datum zadnje uplate: " + DToC( dDate )
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datum zadnje uplate: " + DToC( dDate )
 
    Inkey( 0 )
 

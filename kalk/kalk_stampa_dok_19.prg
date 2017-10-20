@@ -133,8 +133,7 @@ FUNCTION kalk_stampa_dok_19()
 
    PrnClanoviKomisije()
 
-   RETURN
-// }
+   RETURN .T.
 
 
 FUNCTION head_19()
@@ -169,8 +168,8 @@ FUNCTION Obraz19()
    cProred := "N"
    cPodvuceno := "N"
    Box(, 2, 60 )
-   @ m_x + 1, m_y + 2 SAY "Prikazati sa proredom:" GET cProred VALID cprored $ "DN" PICT "@!"
-   @ m_x + 2, m_y + 2 SAY "Prikazati podvuceno  :" GET cPodvuceno VALID cpodvuceno $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prikazati sa proredom:" GET cProred VALID cprored $ "DN" PICT "@!"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prikazati podvuceno  :" GET cPodvuceno VALID cpodvuceno $ "DN" PICT "@!"
    READ
    ESC_BCR
    BoxC()

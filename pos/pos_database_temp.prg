@@ -33,7 +33,7 @@ FUNCTION pos_cre_pom_dbf( aDbf, cPom )
       FErase( Upper( cPomDBF ) )
    ENDIF
 
-   IF File ( Upper( cPomCDX ) )
+   IF FILE ( Upper( cPomCDX ) )
       FErase( Upper( cPomCDX ) )
    ENDIF
 
@@ -54,8 +54,7 @@ FUNCTION pos2_pripr()
    GO TOP
    scatter()
 
-   SELECT pos
-   SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+   seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
@@ -86,8 +85,8 @@ FUNCTION UkloniRadne( cIdRadnik )
 
    SELECT _POS
    SET ORDER TO TAG "1"
-   SEEK gIdPos + VD_RN
-   WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + VD_RN )
+   SEEK gIdPos + POS_VD_RACUN  // _POS
+   DO WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + POS_VD_RACUN )
       IF _POS->IdRadnik == cIdRadnik .AND. _POS->M1 == "Z"
          Del_Skip ()
       ELSE
@@ -96,7 +95,7 @@ FUNCTION UkloniRadne( cIdRadnik )
    END
    SELECT ZAKSM
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -121,8 +120,7 @@ FUNCTION pos_vrati_dokument_iz_pripr( cIdVd, cIdRadnik, cIdOdj )
    SELECT _pos
    SET ORDER TO TAG "2"
 
-   SEEK cIdVd + cIdOdj 
-
+   SEEK cIdVd + cIdOdj
    IF Found()
       IF _pos->idradnik <> cIdRadnik
          MsgBeep ( "Drugi radnik je počeo raditi pripremu " + cSta + "#" + "AKO NASTAVITE, PRIPREMA SE BRIŠE !", 30 )

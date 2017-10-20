@@ -65,15 +65,15 @@ FUNCTION os_obracun_amortizacije()
 
    DO WHILE .T.
 
-      @ m_x + 1, m_y + 2 SAY "Datum obracuna:" GET dDatObr
-      @ m_x + 2, m_y + 2 SAY "Varijanta ubrzane amortizacije po grupama ?" GET cAGrupe PICT "@!"
-      @ m_x + 4, m_y + 2 SAY "Pomnoziti obracun sa koeficijentom (%)" GET nGStopa PICT "999.99"
-      @ m_x + 5, m_y + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum obracuna:" GET dDatObr
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Varijanta ubrzane amortizacije po grupama ?" GET cAGrupe PICT "@!"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Pomnoziti obracun sa koeficijentom (%)" GET nGStopa PICT "999.99"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
 
-      @ m_x + 6, m_y + 2 SAY "Varijanta prikaza"
-      @ m_x + 7, m_y + 2 SAY "pred.amort + tek.amort (D/N)?" GET cVarPrik PICT "@!" VALID cVarPrik $ "DN"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Varijanta prikaza"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "pred.amort + tek.amort (D/N)?" GET cVarPrik PICT "@!" VALID cVarPrik $ "DN"
 
-      @ m_x + 9, m_y + 2 SAY "Obracunavati sanacije na sredstvima (D/N) ?" GET _san VALID _san $ "DN" PICT "@!"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Obracunavati sanacije na sredstvima (D/N) ?" GET _san VALID _san $ "DN" PICT "@!"
       READ
 
       ESC_BCR
@@ -801,8 +801,8 @@ FUNCTION os_obracun_revalorizacije()
 
    Box( "#OBRACUN REVALORIZACIJE", 3, 60 )
    DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "Datum obracuna:" GET dDatObr
-      @ m_x + 2, m_y + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum obracuna:" GET dDatObr
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
       read; ESC_BCR
       aUsl1 := Parsiraj( cFiltK1, "K1" )
       IF aUsl1 <> NIL; exit; ENDIF

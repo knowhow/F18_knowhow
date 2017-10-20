@@ -15,21 +15,21 @@
 STATIC REP1_LEN
 STATIC PICD
 
-FUNCTION fin_bb_subanalitika_b( params )
+FUNCTION fin_bb_subanalitika_b( hParams )
 
-   LOCAL cIdFirma := params[ "idfirma" ]
-   LOCAL dDatOd := params[ "datum_od" ]
-   LOCAL dDatDo := params[ "datum_do" ]
-   LOCAL qqKonto := params[ "konto" ]
-   LOCAL cIdRj := params[ "id_rj" ]
-   LOCAL lExpRpt := params[ "export_dbf" ]
-   LOCAL lNule := params[ "saldo_nula" ]
-   LOCAL lPodKlas := params[ "podklase" ]
-   LOCAL cFormat := params[ "format" ]
+   LOCAL cIdFirma := hParams[ "idfirma" ]
+   LOCAL dDatOd := hParams[ "datum_od" ]
+   LOCAL dDatDo := hParams[ "datum_do" ]
+   LOCAL qqKonto := hParams[ "konto" ]
+   LOCAL cIdRj := hParams[ "id_rj" ]
+   LOCAL lExpRpt := hParams[ "export_dbf" ]
+   LOCAL lNule := hParams[ "saldo_nula" ]
+   LOCAL lPodKlas := hParams[ "podklase" ]
+   LOCAL cFormat := hParams[ "format" ]
    LOCAL aExpFields, cLaunch, cKlKonto, cSinKonto, cIdKonto, cIdPartner
    LOCAL cFilter, aUsl1, nStr := 0
    LOCAL b, b1, b2
-   LOCAL nValuta := params[ "valuta" ]
+   LOCAL nValuta := hParams[ "valuta" ]
    LOCAL nBBK := 1
    PRIVATE M6, M7, M8, M9, M10
 
@@ -139,7 +139,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    DO WHILE !Eof() .AND. IdFirma = cIdFirma
 
       IF PRow() == 0
-         zagl_bb_suban( params, @nStr )
+         zagl_bb_suban( hParams, @nStr )
       ENDIF
 
       // PS - pocetno stanje
@@ -214,7 +214,7 @@ FUNCTION fin_bb_subanalitika_b( params )
                   SKIP
                ENDDO
 
-               nova_strana( params, @nStr, 61 )
+               nova_strana( hParams, @nStr, 61 )
 
                IF ( !lNule .AND. Round( D0KP - P0KP, 2 ) == 0 )
 
@@ -270,7 +270,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
             ENDDO
 
-            nova_strana( params, @nStr )
+            nova_strana( hParams, @nStr )
 
             @ PRow() + 1, 2 SAY Replicate( "-", REP1_LEN - 2 )
             @ PRow() + 1, 2 SAY ++B1 PICTURE '999999'
@@ -330,7 +330,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
          ENDDO
 
-         nova_strana( params, @nStr, 61 )
+         nova_strana( hParams, @nStr, 61 )
 
          @ PRow() + 1, 4 SAY Replicate( "=", REP1_LEN - 4 )
          @ PRow() + 1, 4 SAY ++B2 PICTURE '999999'; ?? "."
@@ -419,7 +419,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    ENDDO
 
-   nova_strana( params, @nStr )
+   nova_strana( hParams, @nStr )
 
    ?U th5
    @ PRow() + 1, 8 SAY "UKUPNO:"
@@ -518,7 +518,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
 
 
-STATIC FUNCTION nova_strana( params, nStr, duz )
+STATIC FUNCTION nova_strana( hParams, nStr, duz )
 
    IF duz == NIL
       duz := 59
@@ -526,26 +526,26 @@ STATIC FUNCTION nova_strana( params, nStr, duz )
 
    IF PRow() > ( duz + dodatni_redovi_po_stranici() )
       FF
-      zagl_bb_suban( params, @nStr )
+      zagl_bb_suban( hParams, @nStr )
    ENDIF
 
    RETURN .T.
 
 
 
-STATIC FUNCTION zagl_bb_suban( params, nStr )
+STATIC FUNCTION zagl_bb_suban( hParams, nStr )
 
    ?
 
-   IF params[ "format" ] $ "1#3"
+   IF hParams[ "format" ] $ "1#3"
       ? "#%LANDS#"
    ENDIF
 
    P_COND2
 
-   ??U "FIN: SUBANALITIČKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
-   IF !( Empty( params[ "datum_od" ] ) .AND. Empty( params[ "datum_do" ] ) )
-      ?? " ZA PERIOD OD", params[ "datum_od" ], "-", params[ "datum_do" ]
+   ??U "FIN: SUBANALITIČKI BRUTO BILANS U VALUTI '" + IF( hParams[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
+   IF !( Empty( hParams[ "datum_od" ] ) .AND. Empty( hParams[ "datum_do" ] ) )
+      ?? " ZA PERIOD OD", hParams[ "datum_od" ], "-", hParams[ "datum_do" ]
    ENDIF
    ?? " NA DAN: "
    ?? Date()
@@ -556,18 +556,18 @@ STATIC FUNCTION zagl_bb_suban( params, nStr )
       ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
       ? "Firma:"
-      @ PRow(), PCol() + 2 SAY params[ "idfirma" ]
-      select_o_partner( params[ "idfirma" ] )
+      @ PRow(), PCol() + 2 SAY hParams[ "idfirma" ]
+      select_o_partner( hParams[ "idfirma" ] )
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF
 
-   IF !Empty( params[ "konto" ] )
-      ? "Odabrana konta: " + AllTrim( params[ "konto" ] )
+   IF !Empty( hParams[ "konto" ] )
+      ? "Odabrana konta: " + AllTrim( hParams[ "konto" ] )
    ENDIF
 
-   IF gFinRj == "D" .AND. Len( params[ "id_rj" ] ) <> 0
-      ? "Radna jedinica ='" + params[ "id_rj" ] + "'"
+   IF gFinRj == "D" .AND. Len( hParams[ "id_rj" ] ) <> 0
+      ? "Radna jedinica ='" + hParams[ "id_rj" ] + "'"
    ENDIF
 
    ?U th1

@@ -33,10 +33,10 @@ FUNCTION ABrowse( aArray, xw, yw, bUserF )
    nOldNRow := nRow
    nRow := 1
 
-   nT := m_x + 1
-   nL := m_y + 1
-   nB := m_x + xw
-   nR := m_y + yw
+   nT := box_x_koord() + 1
+   nL := box_y_koord() + 1
+   nB := box_x_koord() + xw
+   nR := box_y_koord() + yw
 
 
    // Create the TBrowse object

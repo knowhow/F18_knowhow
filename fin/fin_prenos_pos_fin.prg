@@ -30,13 +30,13 @@ FUNCTION GetPrVPParams( cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema )
    cShema := " "
 
    Box( "#Kontiranje evidencije vrsta placanja", 7, 60 )
-   @ m_x + 2, m_y + 2 SAY "TOPS - prodajno mjesto:" GET cProdId VALID !Empty( cProdId )
-   @ m_x + 3, m_y + 2 SAY "Datum od" GET dDatOd VALID !Empty( dDatOd )
-   @ m_x + 3, m_y + 20 SAY "do" GET dDatDo VALID !Empty( dDatDo )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "TOPS - prodajno mjesto:" GET cProdId VALID !Empty( cProdId )
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Datum od" GET dDatOd VALID !Empty( dDatOd )
+   @ box_x_koord() + 3, box_y_koord() + 20 SAY "do" GET dDatDo VALID !Empty( dDatDo )
 
-   @ m_x + 5, m_y + 2 SAY "Vrsta naloga:" GET cTipNal VALID !Empty( cTipNal )
-   @ m_x + 6, m_y + 2 SAY "Datum knjizenja:" GET dDatDok VALID !Empty( dDatDok )
-   @ m_x + 7, m_y + 2 SAY "Shema:" GET cShema
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Vrsta naloga:" GET cTipNal VALID !Empty( cTipNal )
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Datum knjizenja:" GET dDatDok VALID !Empty( dDatDok )
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Shema:" GET cShema
    READ
    BoxC()
 
@@ -46,13 +46,13 @@ FUNCTION GetPrVPParams( cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema )
       RETURN .T.
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
-/* PromVP2Fin()
+/*
  *     Centralna funkcija za prenos PROMVP u FIN
- */
+
 FUNCTION PromVP2Fin()
 
    PRIVATE cProdId
@@ -140,7 +140,7 @@ FUNCTION PromVP2Fin()
    ENDIF
 
    RETURN
-
+ */
 
 
 /* Azur2Pripr(cBrojNal, dDatNal)
@@ -249,11 +249,11 @@ STATIC FUNCTION GetVrPlIznos( cField )
  */
 STATIC FUNCTION O_PrVP_DB()
 
-   o_koncij()
+  //o_koncij()
    //o_partner()
    o_suban()
-   o_konto()
-   select_o_fakt_objekti()
+   //o_konto()
+   //select_o_fakt_objekti()
    o_nalog()
    o_fin_pripr()
    o_trfp2()

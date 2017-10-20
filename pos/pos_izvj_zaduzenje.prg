@@ -13,7 +13,7 @@
 
 
 
-FUNCTION StampZaduz( cIdVd, cBrDok )
+FUNCTION pos_stampa_zaduzenja( cIdVd, cBrDok )
 
    LOCAL nPrevRec
    LOCAL cKoje
@@ -124,7 +124,7 @@ FUNCTION StampZaduz( cIdVd, cBrDok )
 
       ENDPRINT
 
-      O_PRIPRZ
+      o_pos_priprz()
       GO nPrevRec
 
    ELSE
@@ -163,8 +163,7 @@ FUNCTION PrepisZad( cNazDok )
       cPicKol := "9999.999"
    ENDIF
 
-   SELECT POS
-   HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+   seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
    IF !Empty( pos_doks->idvrstep )
       // predispozicija
@@ -177,13 +176,12 @@ FUNCTION PrepisZad( cNazDok )
    ? PadC( cNazDok + iif( Empty( pos_doks->IdPos ), "", AllTrim( pos_doks->IdPos ) + "-" ) + ;
       AllTrim( pos_doks->BrDok ), nSir )
 
-   SELECT ODJ
-   HSEEK POS->IdOdj
+   select_o_pos_odj( POS->IdOdj )
 
-   IF !Empty( POS->IdDio )
-      SELECT DIO
-      HSEEK POS->IdDio
-   ENDIF
+   //IF !Empty( POS->IdDio )
+    //  SELECT DIO
+  // --  HSEEK POS->IdDio
+   //ENDIF
 
    SELECT POS
    IF fpred
@@ -257,8 +255,7 @@ FUNCTION PrepisZad( cNazDok )
 
    ?? " Primio", PadL ( "Predao", nSir - 9 )
 
-   SELECT OSOB
-   HSEEK pos_doks->IdRadnik
+   select_o_pos_osob( pos_doks->IdRadnik )
 
    ? PadL ( AllTrim ( OSOB->Naz ), nSir - 9 )
 
@@ -272,7 +269,7 @@ FUNCTION PrepisZad( cNazDok )
 
    SELECT ( nDbfArea )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------

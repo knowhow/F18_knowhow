@@ -14,10 +14,22 @@
 #define D_MAX_FILES     150
 
 
-FUNCTION kalk_preuzmi_tops_dokumente()
+FUNCTION kalk_prenos_iz_pos_u_kalk()
+
+   LOCAL aOpcije := {}
+   LOCAL cPosImportLokacija
+   LOCAL aProdajnaMjesta, cProdajnaMjesta
+   LOCAL lReturn := .T.
+   LOCAL nI, aTopskaDbfs, aH
+   LOCAL cDbfImportUslov := "tk*.dbf"
+   LOCAL lIzvrsitiPrenos, nMeniOdabir, _a_tmp1, _a_tmp2
+   LOCAL cTopsDest := kalk_destinacija_topska()
+   LOCAL cPosKalkDbf
+   LOCAL lStampaj
+
+   // LOCAL cBrKalk
 
    // cTopskaImeDbf, lAutoRazduzenje, nBarkodoviIzmjena, cIdKontoMagacin )
-
 
    // opcija za automatko svodjeje prodavnice na 0
    // ---------------------------------------------
@@ -30,44 +42,30 @@ FUNCTION kalk_preuzmi_tops_dokumente()
    tops_kalk_o_import_tabele() // otvori tabele bitne za import podataka
 
    // IF cTopskaImeDbf == NIL
-   tops_kalk_import_meni()
+   // tops_kalk_import_meni()
 
 
-  /*
-     IF ( cIdVdPos == "42" .AND. lAutoRazduzenje == "D" )
-        cBrKalk  := kalk_get_next_broj_v5( self_organizacija_id(), "11", NIL )
-     ELSE
+   // IF ( cIdVdPos == "42" .AND. is_kalk_tops_generacija_kalk_11_na_osnovu_pos_42() )
+   // cBrKalk  := kalk_get_next_broj_v5( self_organizacija_id(), "11", NIL )
+   // ELSE
 
-        IF find_kalk_doks_by_broj_dokumenta( self_organizacija_id(), cIdVdPos, cBrKalk )
-           Msg( "Vec postoji dokument pod brojem " + self_organizacija_id() + "-" + cIdVdPos + "-" + cBrKalk + "#Prenos nece biti izvrsen" )
-           my_close_all_dbf()
-           RETURN .F.
-        ENDIF
+   // IF find_kalk_doks_by_broj_dokumenta( self_organizacija_id(), cIdVdPos, cBrKalk )
+   // Msg( "Već postoji dokument pod brojem " + self_organizacija_id() + "-" + cIdVdPos + "-" + cBrKalk + "#Prenos nece biti izvrsen" )
+   // my_close_all_dbf()
+   // RETURN .F.
+   // ENDIF
 
-     ENDIF
+   // ENDIF
 
-         my_close_all_dbf()
-         RETURN .F.
-      ENDIF
-   ENDIF
-*/
+   // my_close_all_dbf()
+   // RETURN .F.
+   // ENDIF
+   // ENDIF
 
-   RETURN .T.
+   // RETURN .T.
 
 
-
-STATIC FUNCTION tops_kalk_import_meni()
-
-   LOCAL aOpcije := {}
-   LOCAL cPosImportLokacija
-   LOCAL aProdajnaMjesta, cProdajnaMjesta
-   LOCAL lReturn := .T.
-   LOCAL nI, aTopskaDbfs, _opt, _h, _n
-   LOCAL cDbfImportUslov := "tk*.dbf"
-   LOCAL lIzvrsitiPrenos, nMeniOdabir, _a_tmp1, _a_tmp2
-   LOCAL cTopsDest := kalk_destinacija_topska()
-   LOCAL cTopsKalkImeDbf
-   LOCAL lStampaj
+// STATIC FUNCTION tops_kalk_import_meni()
 
    aProdajnaMjesta := get_sva_prodajna_mjesta_iz_koncij()
 
@@ -90,7 +88,7 @@ STATIC FUNCTION tops_kalk_import_meni()
 
       // ASort( aTopskaDbfs,,, { | x, y | DToS( x[ 3 ] ) + x[ 4 ] < DToS( y[ 3 ] ) + y[ 4 ] } ) // datum + vrijeme
 
-      AEval( aTopskaDbfs, {| aElem| AAdd( aOpcije, ;
+      AEval( aTopskaDbfs, {| aElem | AAdd( aOpcije, ;
          PadR( AllTrim( aProdajnaMjesta[ nI ] ) + SLASH + Trim( aElem[ 1 ] ), 20 ) + " " + ;
          UChkPostoji() + " " + DToC( aElem[ 3 ] ) + " " + aElem[ 4 ] ;
          ) }, 1, D_MAX_FILES ) // dodaj u matricu za odabir
@@ -98,18 +96,15 @@ STATIC FUNCTION tops_kalk_import_meni()
 
    NEXT
 
-   ASort( aOpcije,,, {| x, y| Right( x, 19 ) < Right( y, 19 ) } ) // R/X + datum + vrijeme
-
-   _h := Array( Len( aOpcije ) )
-   FOR _n := 1 TO Len( _h )
-      _h[ _n ] := ""
+   ASort( aOpcije,,, {| x, y | Right( x, 19 ) < Right( y, 19 ) } ) // R/X + datum + vrijeme
+   aH := Array( Len( aOpcije ) )
+   FOR nI := 1 TO Len( aH )
+      aH[ nI ] := ""
    NEXT
 
    IF Len( aOpcije ) == 0 // ima li stavki za preuzimanje ?
-
-      MsgBeep( "U direktoriju za prenos TOPS->KALK nema podataka ?##" + cTopsDest + "## ProdMj: " + cProdajnaMjesta )
+      MsgBeep( "U direktoriju za prenos POS->KALK nema podataka ?##" + cTopsDest + "## ProdMj: " + cProdajnaMjesta )
       RETURN .F.
-
    ENDIF
 
    nMeniOdabir := 1
@@ -122,15 +117,15 @@ STATIC FUNCTION tops_kalk_import_meni()
          EXIT
       ENDIF
 
-      cTopsKalkImeDbf := cTopsDest + AllTrim( Left( aOpcije[ nMeniOdabir ], 20 ) )
-      tops_kalk_view_txt( cTopsKalkImeDbf )
+      cPosKalkDbf := cTopsDest + AllTrim( Left( aOpcije[ nMeniOdabir ], 20 ) )
+      pos_kalk_pregled_dokumenta( cPosKalkDbf )
 
-      IF Pitanje(, "Želite li izvrsiti prenos TOPS->KALK ?", "D" ) == "N"
+      IF Pitanje(, "Prenijeti " + Right( cPosKalkDbf, 30 ) + " ?", "D" ) == "N"
          nMeniOdabir++
          LOOP
       ENDIF
 
-      IF !tops_kalk_fill_kalk_pripr( cTopsKalkImeDbf )
+      IF !pos_kalk_napuni_kalk_pripr( cPosKalkDbf, "42" )
          nMeniOdabir := 0
          lIzvrsitiPrenos := .F.
          LOOP
@@ -150,18 +145,25 @@ STATIC FUNCTION tops_kalk_import_meni()
    RETURN lReturn
 
 
-FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
+
+FUNCTION pos_kalk_napuni_kalk_pripr( cTopskaImeDbf, cIdVdKalk ) // , lAutoRazduzenje )
 
    LOCAL cBrKalk, cIdVdPos
    LOCAL cRedniBroj, nRedniBroj
-   LOCAL cBrDok, cIdKontoProdavnica
+   LOCAL cIdKontoProdavnica
    LOCAL _bk_tmp
    LOCAL _app_rec
    LOCAL lError := .F.
+   LOCAL cIdKontoMagacin
 
    // LOCAL aRobaReportData := {}
    LOCAL nCount := 0
 
+   IF cIdVdKalk == NIL
+      cIdVdKalk := "42" // pos realizacija -> kalk 42
+   ENDIF
+
+   AltD()
    // LOCAL _razd_type := "1"
 
    select_o_kalk_pripr()
@@ -175,7 +177,12 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
 
    GO BOTTOM
 
-   cBrKalk := Left( StrTran( DToC( field->datum ), ".", "" ), 4 ) + "/" + AllTrim( field->idpos ) // utvrditi broj kalkulacije
+   IF cIdVdKalk == "42"
+      cBrKalk := Left( StrTran( DToC( field->datum ), ".", "" ), 4 ) + "/" + AllTrim( field->idpos ) // utvrditi broj kalkulacije
+   ELSE
+      cBrKalk := cBrKalk  := kalk_get_next_broj_v5( self_organizacija_id(), cIdVdKalk, NIL )
+   ENDIF
+
    cIdVdPos := field->idvd
 
    o_koncij()
@@ -185,6 +192,12 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
       MsgBeep( "U šifarniku KONTA-TIPOVI CIJENA nije postavljeno#nigdje prodajno mjesto :" + field->idprodmjes + "#Prenos nije izvrsen." )
       my_close_all_dbf()
       RETURN .F.
+   ELSE
+      cIdKontoMagacin := koncij->kk1 // magacinski konto koji ova pos kasa koristi kao izvor robe
+      IF cIdvdKalk == "11" .AND. Empty( cIdKontoMagacin )
+         MsgBeep( "U tabelu koncij id=" + koncij->id + "postaviti koncij.kk1 = magacinski konto!#STOP" )
+         RETURN .F.
+      ENDIF
    ENDIF
 
    // SELECT topska
@@ -231,21 +244,18 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
       IF !find_roba_by_id( topska->idroba )
          // IF !Found()
          MsgBeep( "artikal " + topska->idroba + " ne postoji u KALK roba ?!#STOP operacije!" )
-         //my_close_all_dbf()
-         //RETURN .F.
+         // my_close_all_dbf()
+         // RETURN .F.
          lError := .T.
       ENDIF
       SELECT topska
       SKIP
-
    ENDDO
-
 
    SELECT TOPSKA
    GO TOP
    DO WHILE !Eof()
 
-      // cBrDok := cBrKalk
       cIdKontoProdavnica := koncij->id
       nRedniBroj := RbrUNum( cRedniBroj ) + 1
       cRedniBroj := RedniBroj( nRedniBroj )
@@ -255,17 +265,12 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
       tops_kalk_import_roba( AllTrim( koncij->naz ) )
 */
 
-      IF ( cIdVdPos == "42" .OR. cIdVdPos == "12" )
-
-         // IF lAutoRazduzenje == "D" .AND. _razd_type == "2"
-         // tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, cRedniBroj )
-         // ELSE
+      IF cIdVdKalk == "11"
+         tops_kalk_import_row_11( cBrKalk, cIdKontoProdavnica, cIdKontoMagacin, cRedniBroj )
+      ELSEIF cIdVdKalk == "42"
          tops_kalk_import_row_42( cBrKalk, cIdKontoProdavnica, cRedniBroj )
-         // ENDIF
-
-      ELSEIF ( cIdVdPos == "IN" )
+      ELSEIF cIdVdPos == "IN"
          tops_kalk_import_row_ip( cBrKalk, cIdKontoProdavnica, cRedniBroj )  // inventura
-
       ENDIF
 
 /*
@@ -295,21 +300,28 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
 
    MsgC()
 
+   info_bar( "pos_kalk", cTopskaImeDbf + " cnt: " + AllTrim( Str( nCount, 10, 0 ) ) )
    my_close_all_dbf()
    // tops_kalk_show_report_roba( aRobaReportData )  // prikazi report o razlikama cijena pos-kalk
 
-   IF ( nCount > 0 ) // .AND. lAutoRazduzenje == "N"
-      IF FErase( cTopskaImeDbf ) == -1 // pobrisi fajlove
-         MsgBeep( "Problem sa brisanjem fajla !" )
-         lError := .T.
-      ENDIF
-      FErase( get_topska_ime_txt( cTopskaImeDbf ) )
+   IF cIdVdKalk == "11"
+      info_bar( "pos_kalk", cTopskaImeDbf + " ostavljen za obradu realizacije" )
+      RETURN .T.
    ENDIF
 
-   RETURN lError
+   IF ( nCount > 0 )
+      IF FErase( cTopskaImeDbf ) == -1  // pobrisati dbf
+         error_bar( "pos_kalk", cTopskaImeDbf + " problem sa brisanjem!" )
+         lError := .T.
+      ENDIF
+      FErase( get_topska_ime_txt( cTopskaImeDbf ) ) // pobrisati txt
+      info_bar( "pos_kalk", cTopskaImeDbf + " + .txt izbrisani" )
+   ENDIF
+
+   RETURN !lError
 
 
-STATIC FUNCTION tops_kalk_view_txt( cTopskaImeDbf )
+STATIC FUNCTION pos_kalk_pregled_dokumenta( cTopskaImeDbf )
 
    LOCAL cTopskaImeTxt := get_topska_ime_txt( cTopskaImeDbf )
 
@@ -369,7 +381,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, nRbr )
       REPLACE field->datfaktp WITH topska->datum
       REPLACE field->kolicina WITH topska->kol2
       REPLACE field->gkolicina WITH _kolicina
-      REPLACE field->gkolicin2 with ( gkolicina - kolicina )
+      REPLACE field->gkolicin2 WITH ( gkolicina - kolicina )
       REPLACE field->idkonto WITH cIdKontoProdavnica
       // REPLACE field->idkonto2 WITH cIdKontoProdavnica
       REPLACE field->pkonto WITH cIdKontoProdavnica
@@ -385,7 +397,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, nRbr )
    ELSE
 
       REPLACE field->kolicina WITH field->kolicina + topska->kol2
-      REPLACE field->gkolicin2 with ( gkolicina - kolicina )
+      REPLACE field->gkolicin2 WITH ( gkolicina - kolicina )
 
    ENDIF
 
@@ -429,7 +441,7 @@ STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, nRbr )
 
    IF Round( topska->stmpc, 2 ) <> 0
       IF cTarifaPDVD > 0
-         REPLACE field->rabatv with ( topska->stmpc / ( 1 + ( cTarifaPDVD / 100 ) ) )  // izbijamo PDV iz ove stavke ako je tarifa PDV17
+         REPLACE field->rabatv WITH ( topska->stmpc / ( 1 + ( cTarifaPDVD / 100 ) ) )  // izbijamo PDV iz ove stavke ako je tarifa PDV17
       ELSE
          REPLACE field->rabatv WITH topska->stmpc // tarifa nije PDV17
       ENDIF
@@ -447,7 +459,7 @@ STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, nRbr )
 /*
 FUNCTION kalk_preuzmi_tops_dokumente_auto()
 
-   LOCAL _file := my_home() + "tk_auto.dbf"
+   LOCAL cPosKalkDbf := my_home() + "tk_auto.dbf"
    LOCAL _tip_prenosa
    LOCAL _datum_od, _datum_do
    LOCAL _id_vd_pos := "42"
@@ -473,28 +485,28 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
    MsgO( "Formiranje fajla prenosa u toku... " )
 
    // obrisi neki postojeci
-   FileDelete( _file )
-   FileDelete( StrTran( _file, ".dbf", ".txt" ) )
+   FileDelete( cPosKalkDbf )
+   FileDelete( StrTran( cPosKalkDbf, ".dbf", ".txt" ) )
 
 #ifdef POS_PRENOS_POS_KALK
-   pos_prenos_pos_kalk( _datum_od, _datum_do, _id_vd_pos, _id_pm ) // 1)  napraviti prenos u POS-u...
+   pos_kalk_prenos_realizacije( _id_pm, _datum_od, _datum_do, _id_vd_pos ) // 1)  napraviti prenos u POS-u...
 #endif
 
-   FileCopy( my_home() + "pom.dbf", _file ) // 2) kopiraj fajl u potrebni...
+   FileCopy( my_home() + "pom.dbf", cPosKalkDbf ) // 2) kopiraj fajl u potrebni...
 
-   IF !File( _file )
+   IF !File( cPosKalkDbf )
       MsgC()
       MsgBeep( "Neki problem !?" )
       RETURN .F.
    ENDIF
 
-   kalk_preuzmi_tops_dokumente( _file, _tip_prenosa, _barkod_zamjena, cIdKontoMagacin ) // 3) pa zatim isti preuzmi iz POS-a
+  -- kalk_prenos_iz_pos_u_kalk( cPosKalkDbf, _tip_prenosa, _barkod_zamjena, cIdKontoMagacin ) // 3) pa zatim isti preuzmi iz POS-a
 
    MsgC()
 
    // 4) nakon preuzimanja pobrisi fajl razmjene
-   FileDelete( _file )
-   FileDelete( StrTran( _file, ".dbf", ".txt" ) )
+   FileDelete( cPosKalkDbf )
+   FileDelete( StrTran( cPosKalkDbf, ".dbf", ".txt" ) )
 
    o_kalk_pripr()
    IF RecCount() <> 0
@@ -507,29 +519,141 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
 
 */
 
+
+FUNCTION kalk_razduzi_magacin_na_osnovu_pos_prodaje()
+
+   LOCAL cPosKalkDbf := pos_kalk_dbf_auto()
+
+   // LOCAL _tip_prenosa
+   LOCAL dDatumOd := Date(), dDatumDo := Date()
+   LOCAL nX := 2, GetList := {}
+   LOCAL cIDPos
+
+   // LOCAL _id_vd_pos := "42"
+   // LOCAL _id_pm
+   // LOCAL _barkod_zamjena
+
+   LOCAL cIdKontoMagacin
+
+   PRIVATE gIdPos := fetch_metric( "IDPos", my_user(), "1 " ) // pos funkcije traže ovu globalnu varijablu
+   cIDPos := gIdPos
+
+
+   Box( "#KALK RAZDUŽENJE MAGACINA NA OSNOVU POS REALIZACIJE", 4, 70 )
+
+   // @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR f18_color_i()
+
+   // nX += 2
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Za datum od:" GET dDatumOd
+   @ box_x_koord() + nX, Col() + 1 SAY "do:" GET dDatumDo
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prodajno mjesto:" GET cIdPos VALID !Empty( cIdPos )
+
+   // ++ nX
+   // ++ nX
+   // @ box_x_koord() + nX, box_y_koord() + 2 SAY "Formiraj: [1] kalk.42, [2] kalk.11" GET _type VALID _type $ "12"
+
+   // ++ nX
+   // @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kod 11-ke konto magacina:" GET cIdKontoMagacin
+
+   READ
+
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN .F.
+   ENDIF
+
+   // MsgO( "Formiranje fajla prenosa u toku... " )
+
+
+   FileDelete( cPosKalkDbf )
+   FileDelete( StrTran( cPosKalkDbf, ".dbf", ".txt" ) )
+
+// #ifdef POS_PRENOS_POS_KALK
+   pos_kalk_prenos_realizacije( cIdPos, dDatumOd, dDatumDo ) // , _id_vd_pos ) // 1)  napraviti prenos u POS-u...
+// #endif
+   FileCopy( my_home() + "pom.dbf", cPosKalkDbf ) // 2) kopiraj fajl u potrebni...
+
+   IF !File( cPosKalkDbf )
+      MsgC()
+      MsgBeep( "POS->KALK dbf nije kreiran ?! #(" + cPosKalkDbf + ")##STOP!" )
+      RETURN .F.
+   ENDIF
+
+   info_bar( "pos_kalk", "start pos_kalk: " + cPosKalkDbf )
+
+   // kalk_prenos_iz_pos_u_kalk( "11", cPosKalkDbf ) // _tip_prenosa, _barkod_zamjena, cIdKontoMagacin ) // 3) pa zatim isti preuzmi iz POS-a
+   IF !pos_kalk_napuni_kalk_pripr( cPosKalkDbf, "11" )
+      RETURN .F.
+   ENDIF
+
+   // MsgC()
+   // FileDelete( cPosKalkDbf )
+   // FileDelete( StrTran( cPosKalkDbf, ".dbf", ".txt" ) )
+
+   RETURN show_kalk_pripr()
+
+
+
+FUNCTION kalk_razduzi_prodavnicu_na_osnovu_pos_prodaje()
+
+   LOCAL cPosKalkDbf := pos_kalk_dbf_auto()
+
+   IF !File( pos_kalk_dbf_auto() )
+      MsgBeep( "Fajl za transfer ne postoji: " + cPosKalkDbf + "# ponoviti generaciju KALK 11#STOP!" )
+      RETURN .F.
+   ENDIF
+
+   IF !pos_kalk_napuni_kalk_pripr( cPosKalkDbf, "42" )
+      RETURN .F.
+   ENDIF
+
+   RETURN show_kalk_pripr()
+
+
+STATIC FUNCTION pos_kalk_dbf_auto()
+   RETURN my_home() + "tk_auto.dbf"
+
+
+
+STATIC FUNCTION show_kalk_pripr()
+
+   LOCAL lRet := o_kalk_pripr()
+
+   IF RecCount() <> 0
+      MsgBeep( "U pripremi se nalazi KALK " + kalk_pripr->idvd + "-" + Trim( kalk_pripr->brdok ) + " ( "  + AllTrim( Str( reccount2(), 10, 0  ) ) + " ) !" )
+   ENDIF
+
+   my_close_all_dbf()
+
+   RETURN lRet
+
+
 /*
 STATIC FUNCTION tops_kalk_get_nacin_zamjene_barkodova()
 
    LOCAL _ret := 0
-   LOCAL _x := 1
+   LOCAL nX := 1
 
    Box(, 7, 60 )
 
-   @ m_x + _x, m_y + 2 SAY "Zamjena barkod-ova"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Zamjena barkod-ova"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "0 - bez zamjene"
+   ++ nX
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "0 - bez zamjene"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "1 - ubaci samo nove"
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "1 - ubaci samo nove"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "2 - zamjeni sve"
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "2 - zamjeni sve"
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY Space( 15 ) + "=> odabir" GET _ret PICT "9"
+   ++ nX
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY Space( 15 ) + "=> odabir" GET _ret PICT "9"
 
    READ
 
@@ -545,7 +669,7 @@ STATIC FUNCTION kalk_tops_get_parametri_prenosa( params )
    LOCAL _ok := .F.
    LOCAL _d_od := Date()
    LOCAL _d_do := Date()
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _id_pm := PadR( fetch_metric( "IDPos", NIL, "1 " ), 2 )
    LOCAL cIdKontoMagacin := PadR( "1320", 7 )
    LOCAL _type := "1"
@@ -553,22 +677,22 @@ STATIC FUNCTION kalk_tops_get_parametri_prenosa( params )
 
    Box(, 8, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR f18_color_i()
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Za datum od:" GET _d_od
-   @ m_x + _x, Col() + 1 SAY "do:" GET _d_do
+   ++ nX
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Za datum od:" GET _d_od
+   @ box_x_koord() + nX, Col() + 1 SAY "do:" GET _d_do
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Prodajno mjesto:" GET _id_pm VALID !Empty( _id_pm )
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prodajno mjesto:" GET _id_pm VALID !Empty( _id_pm )
 
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Formiraj: [1] kalk.42, [2] kalk.11" GET _type VALID _type $ "12"
+   ++ nX
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Formiraj: [1] kalk.42, [2] kalk.11" GET _type VALID _type $ "12"
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Kod 11-ke konto magacina:" GET cIdKontoMagacin
+   ++ nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kod 11-ke konto magacina:" GET cIdKontoMagacin
 
    READ
 
@@ -603,7 +727,7 @@ STATIC FUNCTION tops_kalk_get_magacinski_konto()
    --SELECT konto
 
    Box(, 3, 60 )
-   @ m_x + 2, m_y + 2 SAY "Magacinski konto:" GET _konto VALID P_Konto( @_konto )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Magacinski konto:" GET _konto VALID P_Konto( @_konto )
    READ
    BoxC()
 
@@ -722,7 +846,7 @@ STATIC FUNCTION tops_kalk_import_roba( cTipMpc )
 */
 
 
-/*
+
 STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, nRbr )
 
    LOCAL _tip_dok := "11"
@@ -758,7 +882,6 @@ STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMag
    SELECT ( nDbfArea )
 
    RETURN .T.
-*/
 
 
 
@@ -775,7 +898,7 @@ STATIC FUNCTION get_sva_prodajna_mjesta_iz_koncij()
       // ako nije prazno
       // ako je maloprodaja
       IF !Empty( field->idprodmjes ) .AND. Left( field->naz, 1 ) == "M"
-         _scan := AScan( _a_pm, {| x| AllTrim( x ) == AllTrim( field->idprodmjes ) } )
+         _scan := AScan( _a_pm, {| x | AllTrim( x ) == AllTrim( field->idprodmjes ) } )
          IF _scan == 0
             AAdd( _a_pm, AllTrim( field->idprodmjes ) )
          ENDIF
@@ -790,17 +913,16 @@ STATIC FUNCTION get_sva_prodajna_mjesta_iz_koncij()
 
 STATIC FUNCTION tops_kalk_o_import_tabele()
 
-  // SELECT ( F_ROBA )
-   //IF !Used()
-  //    o_roba()
-  // ENDIF
+   // SELECT ( F_ROBA )
+   // IF !Used()
+   // o_roba()
+   // ENDIF
 
 
    SELECT ( F_KALK_PRIPR )
    IF !Used()
       o_kalk_pripr()
    ENDIF
-
 
    RETURN .T.
 
@@ -826,8 +948,7 @@ FUNCTION kalk_roba_prodavnica_stanje( cIdKontoProdavnica, cIdRoba, dDatDok, nKol
    nMaloprodajnaCijena := 0
 
 
-   // SELECT roba
-   // HSEEK cIdRoba
+
    IF !find_roba_by_id( cIdRoba )
       RETURN .F.
    ENDIF

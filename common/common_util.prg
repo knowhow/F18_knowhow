@@ -74,8 +74,7 @@ FUNCTION Sleep( nSleep )
 
 
 
-// ----------------------------------------
-// ----------------------------------------
+
 FUNCTION NotImp()
 
    MsgBeep( "Not implemented ?" )
@@ -134,8 +133,8 @@ FUNCTION Run( cmd )
 // ---------------------------------------------------------------
 FUNCTION get_file_list_array( cPath, cFilter, cFile, lSilent )
 
-   LOCAL nPx := m_x
-   LOCAL nPy := m_y
+   LOCAL nPx := box_x_koord()
+   LOCAL nPy := box_y_koord()
 
    IF lSilent == nil
       lSilent := .F.
@@ -190,8 +189,8 @@ FUNCTION get_file_list_array( cPath, cFilter, cFile, lSilent )
       IzbF := 0
    ENDIF
 
-   m_x := nPx
-   m_y := nPy
+   box_x_koord( nPx )
+   box_y_koord(  nPy )
 
    IF lRet
       RETURN 1

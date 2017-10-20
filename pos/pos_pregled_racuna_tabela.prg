@@ -17,30 +17,31 @@
 FUNCTION pos_pregled_racuna_tabela()
 
    LOCAL fScope := .T.
-   LOCAL cFil0
+   LOCAL GetList := {}
+   LOCAL cFilterDatumOdDo
    LOCAL cTekIdPos := gIdPos
    PRIVATE aVezani := {}
    PRIVATE dMinDatProm := CToD( "" )
 
   // o_sifk()
   // o_sifv()
-   o_pos_kase()
+  // o_pos_kase()
 //   o_roba()
    O__POS_PRIPR
-   o_pos_doks()
-   o_pos_pos()
+   //o_pos_doks()
+   //o_pos_pos()
 
    dDatOd := Date()
    dDatDo := Date()
 
-   qIdRoba := Space( Len( POS->idroba ) )
+   qIdRoba := Space( FIELD_ROBA_ID_LENGTH )
 
    SET CURSOR ON
 
    Box(, 2, 60 )
-   @ m_x + 1, m_y + 2 SAY "Datumski period:" GET dDatOd
-   @ m_x + 1, Col() + 2 SAY "-" GET dDatDo
-   @ m_x + 2, m_y + 2 SAY "Prodajno mjesto:" GET gIdPos VALID P_Kase( @gIdPos )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datumski period:" GET dDatOd
+   @ box_x_koord() + 1, Col() + 2 SAY "-" GET dDatDo
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prodajno mjesto:" GET gIdPos VALID p_pos_kase( @gIdPos )
    READ
    BoxC()
 
@@ -49,13 +50,13 @@ FUNCTION pos_pregled_racuna_tabela()
       RETURN .F.
    ENDIF
 
-   cFil0 := ""
+   cFilterDatumOdDo := ""
 
    IF !Empty( dDatOd ) .AND. !Empty( dDatDo )
-      cFil0 := "datum >= " + _filter_quote( dDatOD ) + " .and. datum <= " + _filter_quote( dDatDo ) + " .and. "
+      cFilterDatumOdDo := "datum >= " + _filter_quote( dDatOD ) + " .and. datum <= " + _filter_quote( dDatDo )
    ENDIF
 
-   pos_lista_racuna(,,, cFil0, qIdRoba )
+   pos_lista_racuna(,,, cFilterDatumOdDo, qIdRoba )
 
    my_close_all_dbf()
 

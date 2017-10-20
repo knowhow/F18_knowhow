@@ -13,15 +13,15 @@
 
 
 
-
 FUNCTION P_Sifk( cId, nDeltaX, nDeltaY )
 
    LOCAL i
    PRIVATE imekol, kol
 
    Kol := {}
-   o_sifk()
-   //o_sifv()
+
+   o_sifk() // P_SIFK
+   
    ImeKol := { { PadR( "Id", 15 ),      {|| id }, "id"  }, ;
       { PadR( "Naz", 25 ),     {||  naz }, "naz" }, ;
       { PadR( "Sort", 4 ),     {|| sort }, "sort" }, ;

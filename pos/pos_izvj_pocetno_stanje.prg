@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION PrepisPCS()
+FUNCTION pos_prepis_pocetno_stanje()
 
    LOCAL nSir := 80, nRobaSir := 30, cLm := Space ( 5 ), cPicKol := "999999.999"
 
@@ -31,8 +31,7 @@ FUNCTION PrepisPCS()
       iif ( Empty ( DOKS->IdPos ), "", AllTrim ( DOKS->IdPos ) + "-" ) + ;
       AllTrim ( DOKS->BrDok ), nSir )
 
-   SELECT POS
-   HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+   seek_pos_pos( pos_doks->IdPos,  pos_doks->IdVd, pos_doks->datum,  pos_doks->BrDok )
 
    ? PadC ( FormDat1 ( DOKS->Datum ) + ;
       iif ( !Empty ( DOKS->Smjena ), " Smjena: " + DOKS->Smjena, "" ), nSir )
@@ -74,8 +73,9 @@ Sifra    Naziv              JMJ Kolicina
 ****/
 
    nFin := 0
+
    SELECT POS
-   WHILE ! Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == DOKS->( IdPos + IdVd + DToS( datum ) + BrDok )
+   DO WHILE ! Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == DOKS->( IdPos + IdVd + DToS( datum ) + BrDok )
       IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici()
          FF
       ENDIF

@@ -45,25 +45,25 @@ FUNCTION PoMjeTros()
 
    Box(, 12, 70 )
    DO WHILE .T.
-      @ m_X + 1, m_Y + 15 SAY "NAZIV               USLOV"
-      @ m_X + 2, m_Y + 2 SAY "Asortiman 1" GET cRoba1
-      @ m_X + 2, m_Y + 26 GET qqRoba1    PICT "@!S30"
-      @ m_X + 3, m_Y + 2 SAY "Asortiman 2" GET cRoba2
-      @ m_X + 3, m_Y + 26 GET qqRoba2    PICT "@!S30"
-      @ m_X + 4, m_Y + 2 SAY "Asortiman 3" GET cRoba3
-      @ m_X + 4, m_Y + 26 GET qqRoba3    PICT "@!S30"
-      @ m_X + 5, m_Y + 2 SAY "Asortiman 4" GET cRoba4
-      @ m_X + 5, m_Y + 26 GET qqRoba4    PICT "@!S30"
-      @ m_X + 6, m_Y + 2 SAY "Asortiman 5" GET cRoba5
-      @ m_X + 6, m_Y + 26 GET qqRoba5    PICT "@!S30"
-      @ m_X + 7, m_Y + 2 SAY "Asortiman 6" GET cRoba6
-      @ m_X + 7, m_Y + 26 GET qqRoba6    PICT "@!S30"
+      @ box_x_koord() + 1, box_y_koord() + 15 SAY "NAZIV               USLOV"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Asortiman 1" GET cRoba1
+      @ box_x_koord() + 2, box_y_koord() + 26 GET qqRoba1    PICT "@!S30"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Asortiman 2" GET cRoba2
+      @ box_x_koord() + 3, box_y_koord() + 26 GET qqRoba2    PICT "@!S30"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Asortiman 3" GET cRoba3
+      @ box_x_koord() + 4, box_y_koord() + 26 GET qqRoba3    PICT "@!S30"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Asortiman 4" GET cRoba4
+      @ box_x_koord() + 5, box_y_koord() + 26 GET qqRoba4    PICT "@!S30"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Asortiman 5" GET cRoba5
+      @ box_x_koord() + 6, box_y_koord() + 26 GET qqRoba5    PICT "@!S30"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Asortiman 6" GET cRoba6
+      @ box_x_koord() + 7, box_y_koord() + 26 GET qqRoba6    PICT "@!S30"
 
-      @ m_X + 9, m_Y + 2 SAY "Za period od" GET dDatOD
-      @ m_X + 9, Col() + 2 SAY "do" GET dDatDo
-      @ m_X + 10, m_y + 2 SAY "Uslov za vrstu naloga" GET qqIDVN PICT "@!"
-      @ m_X + 11, m_y + 2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr $ "DN" PICT "@!"
-      @ m_X + 11, m_y + 38 SAY "Tip tabele (0/1/2)" GET gTabela VALID gTabela < 3 .AND. gTabela >= 0 PICT "9"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Za period od" GET dDatOD
+      @ box_x_koord() + 9, Col() + 2 SAY "do" GET dDatDo
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Uslov za vrstu naloga" GET qqIDVN PICT "@!"
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr $ "DN" PICT "@!"
+      @ box_x_koord() + 11, box_y_koord() + 38 SAY "Tip tabele (0/1/2)" GET gTabela VALID gTabela < 3 .AND. gTabela >= 0 PICT "9"
       read; ESC_BCR
       aUsl1 := Parsiraj( qqRoba1, "IDROBA" )
       aUsl2 := Parsiraj( qqRoba2, "IDROBA" )
@@ -79,7 +79,7 @@ FUNCTION PoMjeTros()
    ENDDO
    BoxC()
 
-   Params2()
+
    qqRoba1 := Trim( qqRoba1 ); qqRoba2 := Trim( qqRoba2 ); qqRoba3 := Trim( qqRoba3 )
    qqRoba4 := Trim( qqRoba4 ); qqRoba5 := Trim( qqRoba5 ); qqRoba6 := Trim( qqRoba6 )
    qqIDVN := Trim( qqIDVN )
@@ -159,8 +159,8 @@ STATIC FUNCTION FSvaki1()
 STATIC FUNCTION TekRec()
 
    nSlog++
-   @ m_x + 1, m_y + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
-   @ m_x + 2, m_y + 2 SAY "Obuhvaceno: " + Str( 0 )
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Obuhvaceno: " + Str( 0 )
 
    RETURN ( NIL )
 
@@ -190,12 +190,12 @@ FUNCTION CArDob()
    Box(, 7, 70 )
    DO WHILE .T.
       qqRoba := PadR( qqRoba, 10 )
-      @ m_x + 1, m_y + 2   SAY "Sifra artikla  " GET qqRoba    PICT "@!" VALID P_Roba( @qqRoba )
-      @ m_X + 3, m_Y + 2 SAY "Za period od" GET dDatOD
-      @ m_X + 3, Col() + 2 SAY "do" GET dDatDo
-      @ m_X + 5, m_y + 2 SAY "Uslov za vrstu naloga" GET qqIDVN PICT "@!"
-      @ m_X + 7, m_y + 2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr $ "DN" PICT "@!"
-      @ m_X + 7, m_y + 38 SAY "Tip tabele (0/1/2)" GET gTabela VALID gTabela < 3 .AND. gTabela >= 0 PICT "9"
+      @ box_x_koord() + 1, box_y_koord() + 2   SAY "Sifra artikla  " GET qqRoba    PICT "@!" VALID P_Roba( @qqRoba )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Za period od" GET dDatOD
+      @ box_x_koord() + 3, Col() + 2 SAY "do" GET dDatDo
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Uslov za vrstu naloga" GET qqIDVN PICT "@!"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr $ "DN" PICT "@!"
+      @ box_x_koord() + 7, box_y_koord() + 38 SAY "Tip tabele (0/1/2)" GET gTabela VALID gTabela < 3 .AND. gTabela >= 0 PICT "9"
       read; ESC_BCR
       aUsl7 := Parsiraj( qqIDVN, "IDVN" )
       IF aUsl7 <> NIL
@@ -204,7 +204,7 @@ FUNCTION CArDob()
    ENDDO
    BoxC()
 
-   Params2()
+
    qqIDVN := Trim( qqIDVN )
 
    WPar( "d1", dDatOd ) ; WPar( "d2", dDatDo )

@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
 
 FUNCTION pos_get_lozinka( nSiflen )
 
@@ -19,7 +18,7 @@ FUNCTION pos_get_lozinka( nSiflen )
 
    cKorsif := ""
    Box(, 2, 30 )
-   @ m_x + 2, m_y + 2 SAY "POS Lozinka: "
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "POS Lozinka: "
 
    DO WHILE .T.
 
@@ -52,7 +51,7 @@ FUNCTION pos_get_lozinka( nSiflen )
 
       ENDIF
 
-      @ m_x + 2, m_y + 15 SAY PadR( Replicate( "*", Len( cKorSif ) ), nSifLen )
+      @ box_x_koord() + 2, box_y_koord() + 15 SAY PadR( Replicate( "*", Len( cKorSif ) ), nSifLen )
       IF ( nChar == K_ESC )
          LOOP
       ENDIF

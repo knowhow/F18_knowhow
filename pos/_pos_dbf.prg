@@ -12,6 +12,35 @@
 #include "f18.ch"
 
 
+FUNCTION o_pos_priprz()
+
+   SELECT ( F_PRIPRZ )
+   my_use( "priprz" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+
+FUNCTION o_pos_priprg()
+
+   SELECT ( F_PRIPRG )
+   my_use( "priprg" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+/*
+-- FUNCTION o_pos_uredj()
+
+   SELECT ( F_UREDJ )
+   my_use( "uredj" )
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+*/
+
 FUNCTION pos_init_dbfs()
 
    my_close_all_dbf()
@@ -26,12 +55,13 @@ STATIC FUNCTION cre_priprz()
 
    LOCAL cFileName := my_home() + "PRIPRZ"
    LOCAL lCreate := .F.
+   LOCAL aDbf
 
    IF !File( f18_ime_dbf( "priprz" ) )
       lCreate := .T.
    ELSE
       CLOSE ALL
-      O_PRIPRZ
+      o_pos_priprz()
       IF reccount2() > 0
          RETURN .F.
       ENDIF
@@ -58,12 +88,8 @@ STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
    LOCAL lOk := .T.
    LOCAL hRec
 
-   IF Select( "STRAD" ) == 0
-      o_pos_strad()
-   ELSE
-      SELECT STRAD
-   ENDIF
 
+   select_o_pos_strad( "XX" )
    APPEND BLANK
 
    hRec := dbf_get_rec()
@@ -83,11 +109,11 @@ STATIC FUNCTION dodaj_u_sifrarnik_radnika( cSifra, cLozinka, cOpis, cStatus )
    LOCAL lOk := .T.
    LOCAL hRec
 
-   IF Select( "OSOB" ) == 0
-      o_pos_osob()
-   ELSE
-      SELECT OSOB
-   ENDIF
+   //IF Select( "OSOB" ) == 0
+   select_o_pos_osob( "XXX" )
+   //ELSE
+   //    SELECT OSOB
+   //ENDIF
 
    APPEND BLANK
 
@@ -107,9 +133,9 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
    LOCAL lOk := .T., hParams
 
-   o_pos_strad()
-
-   IF ( RECCOUNT2() == 0 )
+   //select_o_pos_strad()
+   IF table_count( F18_PSQL_SCHEMA_DOT + "pos_strad" ) == 0
+   //IF ( RECCOUNT2() == 0 )
 
       MsgO( "Definišem šifre prioriteta ..." )
 
@@ -142,9 +168,9 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
    ENDIF
 
-   o_pos_osob()
-
-   IF ( RECCOUNT2() == 0 )
+   //o_pos_osob()
+   //IF ( RECCOUNT2() == 0 )
+   IF table_count( F18_PSQL_SCHEMA_DOT + "pos_osob" ) == 0
 
       MsgO( "Definišem šifranik radnika ..." )
 
@@ -192,22 +218,22 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
       o_pos_kumulativne_tabele()
    ENDIF
 
-   o_pos_odj()
-   o_pos_osob()
-   SET ORDER TO TAG "NAZ"
+   //o_pos_odj()
+   //o_pos_osob()
+   //SET ORDER TO TAG "NAZ"
 
-   o_vrstep()
+   //o_vrstep()
 // o_partner()
-   O_K2C
-   O_MJTRUR
-   o_pos_kase()
-   o_sastavnica()
+   //O_K2C
+//   O_MJTRUR
+//   o_pos_kase()
+// o_sastavnice()
 // o_roba()
    // o_tarifa()
    // o_sifk()
    // o_sifv()
-   O_PRIPRZ
-   O_PRIPRG
+   o_pos_priprz()
+   o_pos_priprg()
    O__POS
    O__POS_PRIPR
 
@@ -224,7 +250,7 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 
    o_pos_pos()
    o_pos_doks()
-   O_DOKSPF
+   //o_pos_dokspf()
 
    RETURN .T.
 
@@ -232,16 +258,16 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 
 FUNCTION o_pos_sifre()
 
-   o_pos_kase()
-   O_UREDJ
-   o_pos_odj()
+   //o_pos_kase()
+   //o_pos_uredj()
+   //o_pos_odj()
    // o_roba()
    // o_tarifa()
-   o_vrstep()
+   //o_vrstep()
    // o_valute()
    // o_partner()
-   o_pos_osob()
-   o_pos_strad()
+   //o_pos_osob()
+   //o_pos_strad()
    // o_sifk()
    // o_sifv()
 
@@ -249,63 +275,6 @@ FUNCTION o_pos_sifre()
 
 
 
-FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
-
-   LOCAL cSql, oData, oRow
-   LOCAL nTotal := 0
-
-   PushWA()
-
-   IF PCount() == 0
-      cIdPos := pos_doks->IdPos
-      cIdVD := pos_doks->IdVD
-      dDatum := pos_doks->Datum
-      cBrDok := pos_doks->BrDok
-   ENDIF
-
-   cSql := "SELECT "
-   cSql += " SUM( ( kolicina * cijena ) - ( kolicina * ncijena ) ) AS total "
-   cSql += "FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos "
-   cSql += "WHERE "
-   cSql += " idpos = " + sql_quote( cIdPos )
-   cSql += " AND idvd = " + sql_quote( cIdVd )
-   cSql += " AND brdok = " + sql_quote( cBrDok )
-   cSql += " AND datum = " + sql_quote( dDatum )
-
-   oData := run_sql_query( cSql )
-
-   PopWa()
-
-   IF !is_var_objekat_tpqquery( oData )
-      RETURN nTotal
-   ENDIF
-
-   nTotal := oData:FieldGet( 1 )
-
-   RETURN nTotal
-
-
-
-FUNCTION pos_stanje_artikla( cIdPos, cIdRoba )
-
-   LOCAL _qry, _qry_ret, _table
-   LOCAL _data := {}
-   LOCAL nI, oRow
-   LOCAL _stanje := 0
-
-   _qry := "SELECT SUM( CASE WHEN idvd IN ('16') THEN kolicina WHEN idvd IN ('42') THEN -kolicina WHEN idvd IN ('IN') THEN -(kolicina - kol2) ELSE 0 END ) AS stanje FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos " + ;
-      " WHERE idpos = " + sql_quote( cIdPos ) + ;
-      " AND idroba = " + sql_quote( cIdRoba )
-
-   _table := run_sql_query( _qry )
-   oRow := _table:GetRow( 1 )
-   _stanje := oRow:FieldGet( oRow:FieldPos( "stanje" ) )
-
-   IF ValType( _stanje ) == "L"
-      _stanje := 0
-   ENDIF
-
-   RETURN _stanje
 
 
 
@@ -325,12 +294,10 @@ FUNCTION pos_iznos_dokumenta( lUI )
    dDatum := pos_doks->datum
 
    IF ( ( lUI == NIL ) .OR. lUI )
-      // ovo su ulazi ...
-      IF pos_doks->IdVd $ VD_ZAD + "#" + VD_PCS + "#" + VD_REK
-         SELECT pos
-         SET ORDER TO TAG "1"
-         GO TOP
-         SEEK cIdPos + cIdVd + DToS( dDatum ) + cBrDok
+
+      IF pos_doks->IdVd $ VD_ZAD + "#" + POS_VD_POCETNO_STANJE + "#" + VD_REK // ulazi
+
+         seek_pos_pos( cIdPos, cIdVd, dDatum, cBrDok )
          DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == cIdPos + cIdVd + DToS( dDatum ) + cBrDok
             nIznos += pos->kolicina * pos->cijena
             SKIP
@@ -341,13 +308,11 @@ FUNCTION pos_iznos_dokumenta( lUI )
       ENDIF
    ENDIF
 
-   IF ( ( lUI == NIL ) .OR. !lUI )
-      // ovo su, pak, izlazi ...
-      IF pos_doks->idvd $ VD_RN + "#" + VD_OTP + "#" + VD_RZS + "#" + VD_PRR + "#" + "IN" + "#" + VD_NIV
-         SELECT pos
-         SET ORDER TO TAG "1"
-         GO TOP
-         SEEK cIdPos + cIdVd + DToS( dDatum ) + cBrDok
+   IF ( ( lUI == NIL ) .OR. !lUI ) // izlazi
+      IF pos_doks->idvd $ POS_VD_RACUN + "#" + VD_OTP + "#" + VD_RZS + "#" + VD_PRR + "#" + "IN" + "#" + VD_NIV
+
+         seek_pos_pos( cIdPos, cIdVd, dDatum, cBrDok )
+
          DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == cIdPos + cIdVd + DToS( dDatum ) + cBrDok
             DO CASE
             CASE pos_doks->idvd == "IN"
@@ -415,15 +380,15 @@ FUNCTION pos_racun_sadrzi_artikal( cIdPos, cIdVd, dDatum, cBroj, cIdRoba )
    cWhere += " AND brdok = " + sql_quote( cBroj )
    cWhere += " AND idroba = " + sql_quote( cIdRoba )
 
-   IF table_count( F18_PSQL_SCHEMA_DOT + "pos_pos", cWhere ) > 0
+   IF ( F18_PSQL_SCHEMA_DOT + "pos_pos", cWhere ) > 0
       lRet := .T.
    ENDIF
 
    RETURN lRet
 
 
-
-FUNCTION pos_import_fmk_roba()
+/*
+-- FUNCTION pos_import_fmk_roba()
 
    LOCAL _location := fetch_metric( "pos_import_fmk_roba_path", my_user(), PadR( "", 300 ) )
    LOCAL _cnt := 0
@@ -436,7 +401,7 @@ FUNCTION pos_import_fmk_roba()
    _location := PadR( AllTrim( _location ), 300 )
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY "lokacija:" GET _location PICT "@S50"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "lokacija:" GET _location PICT "@S50"
    READ
    BoxC()
 
@@ -493,7 +458,7 @@ FUNCTION pos_import_fmk_roba()
       ENDIF
 
       ++_cnt
-      @ m_x + 1, m_y + 2 SAY "import roba: " + hRec[ "id" ] + ":" + PadR( hRec[ "naz" ], 20 ) + "..."
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "import roba: " + hRec[ "id" ] + ":" + PadR( hRec[ "naz" ], 20 ) + "..."
       lOk := update_rec_server_and_dbf( "roba", hRec, 1, "CONT" )
 
       IF !lOk
@@ -525,8 +490,9 @@ FUNCTION pos_import_fmk_roba()
    CLOSE ALL
 
    RETURN .T.
+*/
 
-
+/*
 
 FUNCTION pos_brisi_nepostojece_dokumente()
 
@@ -565,8 +531,8 @@ FUNCTION pos_brisi_nepostojece_dokumente()
       ENDIF
    ENDIF
 
-   o_pos_doks()
-   o_pos_pos()
+   //o_pos_doks()
+   //o_pos_pos()
 
    oQry:GoTo( 1 )
 
@@ -581,9 +547,9 @@ FUNCTION pos_brisi_nepostojece_dokumente()
       cIdVd := query_row( oRow, "idvd" )
       cBrDok := query_row( oRow, "brdok" )
 
-      @ m_x + 1, m_y + 2 SAY8 "Brišem dokument: " + cIdPos + "-" + cIdVd + "-" + cBrDok + " od datuma " + DToC( dDatum )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Brišem dokument: " + cIdPos + "-" + cIdVd + "-" + cBrDok + " od datuma " + DToC( dDatum )
 
-      IF !pos_brisi_dokument( cIdPos, cIdVd, dDatum, cBrDok )
+    --  IF !pos_brisi_dokument( cIdPos, cIdVd, dDatum, cBrDok )
          BoxC()
          MsgBeep( "Problem sa brisanjem dokumenta !" )
          RETURN .F.
@@ -602,3 +568,5 @@ FUNCTION pos_brisi_nepostojece_dokumente()
    ENDIF
 
    RETURN .T.
+
+*/

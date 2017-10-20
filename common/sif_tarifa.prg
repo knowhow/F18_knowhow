@@ -219,10 +219,10 @@ FUNCTION KorekTar()
    cPriprema := "D"
 
    Box(, 3, 60 )
-   @ m_x + 1, m_y + 2 SAY "Vrsta dokumenta (prazno svi)" GET cIdVD
-   @ m_x + 2, m_y + 2 SAY "Tarifa koju treba zamijeniti (prazno svi)" GET cIdTarifa PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Vrsta dokumenta (prazno svi)" GET cIdVD
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Tarifa koju treba zamijeniti (prazno svi)" GET cIdTarifa PICT "@!"
    IF gModul == "KALK"
-      @ m_x + 3, m_y + 2 SAY "Izvrsiti korekciju nad pripremom D/N ? " GET cPriprema PICT "@!" VALID cPriprema  $ "DN"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Izvrsiti korekciju nad pripremom D/N ? " GET cPriprema PICT "@!" VALID cPriprema  $ "DN"
    ENDIF
 
    READ
@@ -265,10 +265,10 @@ FUNCTION KorekTar()
             ENDIF
             IF ( nKumArea )->IdTarifa <> cTekIdTarifa
                SELECT ( nKumArea )
-               @ m_x + 1, m_y + 2 SAY ++Nc PICT "999999"
-               @ m_x + 1, Col() + 2 SAY IdTarifa
-               @ m_x + 1, Col() + 2 SAY "->"
-               @ m_x + 1, Col() + 2 SAY cTekIdTarifa
+               @ box_x_koord() + 1, box_y_koord() + 2 SAY ++Nc PICT "999999"
+               @ box_x_koord() + 1, Col() + 2 SAY IdTarifa
+               @ box_x_koord() + 1, Col() + 2 SAY "->"
+               @ box_x_koord() + 1, Col() + 2 SAY cTekIdTarifa
 
                REPLACE IdTarifa WITH cTekIdTarifa
                // REPLSQL IdTarifa with cTekIdTarifa

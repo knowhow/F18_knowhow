@@ -35,7 +35,7 @@ FUNCTION fakt_mnu_generacija_dokumenta()
    RETURN .T.
 
 
-
+/*
 FUNCTION fakt_generisi_inventuru( cIdRj )
 
    LOCAL cIdRoba
@@ -47,13 +47,15 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
    LOCAL nRbr
    LOCAL lFoundUPripremi
 
-   o_fakt_doks()
-   o_roba()
-   o_tarifa()
+   o_fakt_doks_dbf()
+   //o_roba()
+   //o_tarifa()
+
    o_fakt_pripr()
    SET ORDER TO TAG "3"
 
-   o_fakt()
+  -- o_fakt_dbf()
+
    MsgO( "scaniram tabelu fakt" )
    nRbr := 0
 
@@ -65,12 +67,12 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
          SKIP
          LOOP
       ENDIF
+
       SELECT fakt_pripr
       cIdRoba := fakt->idRoba
-      // vidi imali ovo u pripremi; ako ima stavka je obradjena
-      SEEK cIdRj + cIdRoba
+      SEEK cIdRj + cIdRoba // vidi imali ovo u pripremi; ako ima stavka je obradjena
       lFoundUPripremi := Found()
-      SELECT fakt
+
       PushWA()
       IF !( lFoundUPripremi )
          fakt_stanje_artikla( cIdRj, cIdroba, @nUl, @nIzl, @nRezerv, @nRevers, .T. )
@@ -79,22 +81,23 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
             nRbr++
             ShowKorner( nRbr, 10 )
             cRbr := RedniBroj( nRbr )
-            dodaj_stavku_inventure( cIdRj, cIdRoba, cBrDok, nUl - nIzl - nRevers, cRbr )
+            fakt_dodaj_stavku_inventura( cIdRj, cIdRoba, cBrDok, nUl - nIzl - nRevers, cRbr )
          ENDIF
       ENDIF
       PopWa()
+
       SKIP
    ENDDO
    MsgC()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
 
-STATIC FUNCTION dodaj_stavku_inventure( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr )
+STATIC FUNCTION fakt_dodaj_stavku_inventura( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr )
 
    APPEND BLANK
    REPLACE idFirma WITH cIdRj
@@ -118,14 +121,14 @@ STATIC FUNCTION dodaj_stavku_inventure( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr 
    REPLACE brDok WITH cBrDok
    REPLACE dinDem WITH ValDomaca()
 
-   SELECT roba
-   SEEK cIdRoba
+   select_o_roba( cIdRoba )
 
    SELECT fakt_pripr
    REPLACE cijena WITH roba->vpc
 
-   RETURN
+   RETURN .T.
 
+*/
 
 STATIC FUNCTION AddTxt( cTxt, cStr )
 
@@ -144,21 +147,16 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
 
    nRBr := 0
 
-   o_fakt()
    o_fakt_pripr()
-   o_roba()
+   //o_roba()
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   HSEEK cIdRj + "IM" + cBrDok
-
+   seek_fakt( cIdRj, "IM", cBrDok )
    DO WHILE ( !Eof() .AND. cIdRj + "IM" + cBrDok == fakt->( idFirma + idTipDok + brDok ) )
       nRazlikaKol := Val( fakt->serBr ) -fakt->kolicina
       IF ( Round( nRazlikaKol, 5 ) > 0 )
-         SELECT roba
-         HSEEK fakt->idRoba
+         select_o_roba( fakt->idRoba )
          SELECT fakt_pripr
          nRBr++
          cRBr := RedniBroj( nRBr )
@@ -176,7 +174,7 @@ FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -205,7 +203,7 @@ STATIC FUNCTION dodaj_stavku_inventure_manjka( cIdRj, cIdRoba, cBrDok, nKolicina
    REPLACE dinDem WITH ValDomaca()
    REPLACE cijena WITH roba->vpc
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -218,20 +216,16 @@ FUNCTION fakt_inventura_visak( cIdRj, cBrDok )
 
    nRBr := 0
 
-   o_fakt()
    o_fakt_pripr()
-   o_roba()
+   //o_roba()
 
    cNoviBrDok := PadR( Replicate( "0", gNumDio ), 8 )
 
-   SELECT fakt
-   SET ORDER TO TAG "1"
-   HSEEK cIdRj + "IM" + cBrDok
+   seek_fakt( cIdRj, "IM", cBrDok )
    DO WHILE ( !Eof() .AND. cIdRj + "IM" + cBrDok == fakt->( idFirma + idTipDok + brDok ) )
       nRazlikaKol := Val( fakt->serBr ) -fakt->kolicina
       IF ( Round( nRazlikaKol, 5 ) < 0 )
-         SELECT roba
-         HSEEK fakt->idRoba
+         select_o_roba( fakt->idRoba )
          SELECT fakt_pripr
          nRBr++
          cRBr := RedniBroj( nRBr )
@@ -249,7 +243,7 @@ FUNCTION fakt_inventura_visak( cIdRj, cBrDok )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -278,19 +272,15 @@ STATIC FUNCTION dodaj_stavku_inventure_viska( cIdRj, cIdRoba, cBrDok, nKolicina,
    REPLACE dinDem WITH ValDomaca()
    REPLACE cijena WITH roba->vpc
 
-   RETURN
+   RETURN .T.
 
 
 
 
-
-// -----------------------------------------------------------
-// generise racun na osnovu podataka iz pripreme
-// -----------------------------------------------------------
 FUNCTION fakt_generisi_racun_iz_pripreme()
 
    LOCAL _novi_tip, _tip_dok, _br_dok
-   LOCAL _t_rec
+   LOCAL nTekRec
 
    IF !( field->idtipdok $ "12#20#13#01#27" )
       Msg( "Ova opcija je za promjenu 20,12,13 -> 10 i 27 -> 11 " )
@@ -318,14 +308,14 @@ FUNCTION fakt_generisi_racun_iz_pripreme()
    PushWA()
 
    GO TOP
-   _t_rec := 0
+   nTekRec := 0
 
    my_flock()
 
    DO WHILE !Eof()
 
       SKIP
-      _t_rec := RecNo()
+      nTekRec := RecNo()
       SKIP -1
 
       REPLACE field->brdok WITH _br_dok
@@ -341,7 +331,7 @@ FUNCTION fakt_generisi_racun_iz_pripreme()
          REPLACE kolicina WITH -kolicina
       ENDIF
 
-      GO ( _t_rec )
+      GO ( nTekRec )
 
    ENDDO
 

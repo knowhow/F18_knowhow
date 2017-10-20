@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
-
 
 FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
 

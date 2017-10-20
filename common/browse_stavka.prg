@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR ImeKol, m_x, m_y
+MEMVAR ImeKol
 
 FUNCTION browse_stavka_formiraj_getlist( cVariableName, GetList, lZabIsp, aZabIsp, lShowPGroup, Ch, nGet, nI, nTekRed )
 
@@ -55,7 +55,7 @@ FUNCTION browse_stavka_formiraj_getlist( cVariableName, GetList, lZabIsp, aZabIs
 
    IF cGetPictureCode ==  "@S50" .OR. Len( ToStr( Eval( bVariableEval ) ) ) > 50
       cGetPictureCode :=  "@S50"
-      @ m_x + nTekRed + 1, m_y + 67 SAY Chr( 16 )
+      @ box_x_koord() + nTekRed + 1, box_y_koord() + 67 SAY Chr( 16 )
    ENDIF
 
    IF Len( ImeKol[ nI ] ) >= 7 .AND. ImeKol[ nI, 7 ] <> NIL // picture kod zadan u ImeKol
@@ -81,7 +81,7 @@ FUNCTION browse_stavka_formiraj_getlist( cVariableName, GetList, lZabIsp, aZabIs
 
 
    IF lShowPGroup  // stampaj grupu za stavku "GRUP"
-      p_gr( &cVariableName, m_x + nXP, m_y + nYP + 1 )
+      p_gr( &cVariableName, box_x_koord() + nXP, box_y_koord() + nYP + 1 )
    ENDIF
 
    IF "wSifk_" $ cVariableName
@@ -104,7 +104,7 @@ FUNCTION browse_stavka_formiraj_getlist( cVariableName, GetList, lZabIsp, aZabIs
       bValidSifk := bValid
    ENDIF
 
-   @ m_x + nTekRed, m_y + nKolona SAY  iif( nKolona > 1, "  " + AllTrim( ImeKol[ nI, 1 ] ), PadL( AllTrim( ImeKol[ nI, 1 ] ), 15 ) )  + " "
+   @ box_x_koord() + nTekRed, box_y_koord() + nKolona SAY  iif( nKolona > 1, "  " + AllTrim( ImeKol[ nI, 1 ] ), PadL( AllTrim( ImeKol[ nI, 1 ] ), 15 ) )  + " "
 
    IF &cVariableName == NIL
       tmpRec = RecNo()

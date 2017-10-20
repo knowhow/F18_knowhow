@@ -51,19 +51,19 @@ FUNCTION PrenosFin()
    nMjesta := 3
    ddatDo := Date()
 
-   @ m_x + 1, m_y + 2 SAY "Navedite koje grupacije konta se isto ponasaju:"
-   @ m_x + 3, m_y + 2 SAY "Grupisem konte na (broj mjesta)" GET nMjesta PICT "9"
-   @ m_x + 5, m_y + 2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Navedite koje grupacije konta se isto ponasaju:"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Grupisem konte na (broj mjesta)" GET nMjesta PICT "9"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
 
-   IF fk1 == "D"; @ m_x + 7, m_y + 2   SAY "K1 (9 svi) :" GET cK1; ENDIF
-   IF fk2 == "D"; @ m_x + 7, Col() + 2 SAY "K2 (9 svi) :" GET cK2; ENDIF
-   IF fk3 == "D"; @ m_x + 8, m_y + 2   SAY "K3 (" + ck3 + " svi):" GET cK3; ENDIF
-   IF fk4 == "D"; @ m_x + 8, Col() + 1 SAY "K4 (99 svi):" GET cK4; ENDIF
+   IF fk1 == "D"; @ box_x_koord() + 7, box_y_koord() + 2   SAY "K1 (9 svi) :" GET cK1; ENDIF
+   IF fk2 == "D"; @ box_x_koord() + 7, Col() + 2 SAY "K2 (9 svi) :" GET cK2; ENDIF
+   IF fk3 == "D"; @ box_x_koord() + 8, box_y_koord() + 2   SAY "K3 (" + ck3 + " svi):" GET cK3; ENDIF
+   IF fk4 == "D"; @ box_x_koord() + 8, Col() + 1 SAY "K4 (99 svi):" GET cK4; ENDIF
 
-   @ m_x + 9, m_y + 2 SAY "Klasa konta duguje " GET cKlDuguje PICT "9"
-   @ m_x + 10, m_y + 2 SAY "Klasa konta potraz " GET cKlPotraz PICT "9"
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY "Klasa konta duguje " GET cKlDuguje PICT "9"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Klasa konta potraz " GET cKlPotraz PICT "9"
 
-   @ m_x + 12, m_y + 2 SAY "Saldo strane valute je bitan ?" GET cStranaBitna ;
+   @ box_x_koord() + 12, box_y_koord() + 2 SAY "Saldo strane valute je bitan ?" GET cStranaBitna ;
       PICT "@!" ;
       VALID cStranaBitna $ "DN"
 

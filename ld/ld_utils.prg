@@ -95,25 +95,25 @@ FUNCTION MsgTipRada()
    LOCAL x := 1
 
    Box(, 10, 66 )
-   @ get_x_koord() + x, get_y_koord() + 2 SAY _l( "Vazece sifre su: ' ' - zateceni neto (bez promjene ugovora o radu)" )
+   @ box_x_koord() + x, box_y_koord() + 2 SAY _l( "Vazece sifre su: ' ' - zateceni neto (bez promjene ugovora o radu)" )
    ++x
-   @ get_x_koord() + x, get_y_koord() + 2 SAY _l( "                 'N' - neto placa (neto + porez)" )
+   @ box_x_koord() + x, box_y_koord() + 2 SAY _l( "                 'N' - neto placa (neto + porez)" )
    ++x
-   @ get_x_koord() + x, get_y_koord() + 2 SAY _l( "                 'I' - neto-neto placa (zagarantovana)" )
+   @ box_x_koord() + x, box_y_koord() + 2 SAY _l( "                 'I' - neto-neto placa (zagarantovana)" )
    ++x
-   @ get_x_koord() + x, get_y_koord() + 2 SAY _l( "                 -------------------------------------------------" )
+   @ box_x_koord() + x, box_y_koord() + 2 SAY _l( "                 -------------------------------------------------" )
    ++x
-   @ get_x_koord() + x, get_y_koord() + 2 SAY _l( "                 'S' - samostalni poslodavci" )
+   @ box_x_koord() + x, box_y_koord() + 2 SAY _l( "                 'S' - samostalni poslodavci" )
    ++x
-   @ get_x_koord() + x, get_y_koord() + 2 SAY _l( "                 'U' - ugovor o djelu" )
+   @ box_x_koord() + x, box_y_koord() + 2 SAY _l( "                 'U' - ugovor o djelu" )
    ++x
-   @ get_x_koord() + x, get_y_koord() + 2 SAY _l( "                 'A' - autorski honorar" )
+   @ box_x_koord() + x, box_y_koord() + 2 SAY _l( "                 'A' - autorski honorar" )
    ++x
-   @ get_x_koord() + x, get_y_koord() + 2 SAY _l( "                 'P' - clan.predsj., upr.odbor, itd..." )
+   @ box_x_koord() + x, box_y_koord() + 2 SAY _l( "                 'P' - clan.predsj., upr.odbor, itd..." )
    ++x
-   @ get_x_koord() + x, get_y_koord() + 2 SAY _l( "                 -------------------------------------------------" )
+   @ box_x_koord() + x, box_y_koord() + 2 SAY _l( "                 -------------------------------------------------" )
    ++x
-   @ get_x_koord() + x, get_y_koord() + 2 SAY _l( "                 'R' - obracun za rs" )
+   @ box_x_koord() + x, box_y_koord() + 2 SAY _l( "                 'R' - obracun za rs" )
 
    Inkey( 0 )
    BoxC()
@@ -528,9 +528,9 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    Box(, 3, 50 )
 
-   @ get_x_koord() + 1, get_y_koord() + 2 SAY " Mjesec: " GET nMjesec PICT "99"
-   @ get_x_koord() + 2, get_y_koord() + 2 SAY " Godina: " GET nGodina PICT "9999"
-   @ get_x_koord() + 3, get_y_koord() + 2 SAY "Obracun: " GET cObracun
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY " Mjesec: " GET nMjesec PICT "99"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY " Godina: " GET nGodina PICT "9999"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Obracun: " GET cObracun
 
    READ
 
@@ -551,7 +551,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
       nProlaz := 0
 
       ++nCount
-      @ get_x_koord() + 1, get_y_koord() + 2 SAY "Radnik: " + cIdRadn
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radnik: " + cIdRadn
       DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun == Str( ld->godina, 4, 0 ) + Str( ld->mjesec, 2, 0 ) + ld->obr .AND. ld->idradn == cIdradn
          ++nProlaz
          SKIP

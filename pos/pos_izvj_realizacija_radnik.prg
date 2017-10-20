@@ -13,16 +13,13 @@
 
 
 
-// ------------------------------------------------
-// realizacija radnika
-// ------------------------------------------------
 FUNCTION pos_realizacija_radnik
 
    PARAMETERS lTekuci, fPrik, fZaklj
 
    PRIVATE cIdRadnik := Space( 4 )
    PRIVATE cVrsteP := Space( 60 )
-   PRIVATE aUsl1 := ".t."
+   PRIVATE cFilterVrstePlacanja := ".t."
    PRIVATE cSmjena := Space( 1 )
    PRIVATE cIdPos := gIdPos
 
@@ -32,7 +29,7 @@ FUNCTION pos_realizacija_radnik
    PRIVATE aNiz
    PRIVATE cGotZir := " "
 
-   o_tables()
+   //o_tables()
 
    fPrik := iif ( fPrik == NIL, "P", fPrik )
    fZaklj := iif ( fZaklj == NIL, .F., fZaklj )
@@ -56,7 +53,7 @@ FUNCTION pos_realizacija_radnik
       cIdPos := gIdPos
       IF gVrstaRS <> "K"
 
-         AAdd( aNiz, { "Prodajno mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos) .or. P_Kase(@cIdPos)", "@!", } )
+         AAdd( aNiz, { "Prodajno mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
       ENDIF
       AAdd( aNiz, { "Sifra radnika  (prazno-svi)", "cIdRadnik", "IF(!EMPTY(cIdRadnik),P_OSOB(@cIdRadnik),.t.)",, } )
       AAdd( aNiz, { "Vrsta placanja (prazno-sve)", "cVrsteP",, "@!S30", } )
@@ -74,10 +71,10 @@ FUNCTION pos_realizacija_radnik
          IF !VarEdit( aNiz, 10, 5, 13 + Len( aNiz ), 74, 'USLOVI ZA IZVJESTAJ "REALIZACIJA"', "B1" )
             CLOSERET
          ENDIF
-         aUsl1 := Parsiraj( cVrsteP, "IdVrsteP" )
-         IF aUsl1 <> NIL .AND. dDatOd <= dDatDo
+         cFilterVrstePlacanja := Parsiraj( cVrsteP, "IdVrsteP" )
+         IF cFilterVrstePlacanja <> NIL .AND. dDatOd <= dDatDo
             EXIT
-         ELSEIF aUsl1 == NIL
+         ELSEIF cFilterVrstePlacanja == NIL
             Msg( "Kriterij za vrstu placanja nije korektno postavljen!" )
          ELSE
             Msg( "'Datum do' ne smije biti stariji nego 'datum od'!" )
@@ -103,7 +100,6 @@ FUNCTION pos_realizacija_radnik
    ENDIF
 
    my_use_temp( "POM", my_home() + "pom", .F., .T. )
-
    INDEX ON ( idradnik + idvrstep + idroba + idcijena ) TAG "1"
    INDEX ON ( idroba + idcijena ) TAG "2"
 
@@ -118,7 +114,7 @@ FUNCTION pos_realizacija_radnik
          STARTPRINT CRET
       ENDIF
 
-      ZagFirma()
+      //ZagFirma()
 
       ?
       IF fPrik $ "PO"
@@ -138,7 +134,7 @@ FUNCTION pos_realizacija_radnik
       ?
    ELSE
       START PRINT CRET
-      ZagFirma()
+      //ZagFirma()
       ?? gP12cpi
       ?
       IF glRetroakt
@@ -161,17 +157,18 @@ FUNCTION pos_realizacija_radnik
       ? "-----", Replicate ( "-", 30 )
    ENDIF // lTekuci
 
-   SELECT pos_doks
-   SET ORDER TO TAG "2"       // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
-   IF !( aUsl1 == ".t." )
-      SET FILTER TO &aUsl1
-   ENDIF
-
    // formiram pomocnu datoteku sa podacima o realizaciji
    IF !lTekuci
-      RadnIzvuci ( VD_PRR )
+      pos_radnik_izvuci ( VD_PRR )
    ENDIF
-   RadnIzvuci ( VD_RN )
+   pos_radnik_izvuci ( POS_VD_RACUN )
+
+
+   SELECT pos_doks
+   SET ORDER TO TAG "2"       // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
+   IF !( cFilterVrstePlacanja == ".t." )
+      SET FILTER TO &cFilterVrstePlacanja
+   ENDIF
 
    // ispis izvjestaja
    IF fPrik $ "PO"
@@ -234,7 +231,7 @@ FUNCTION pos_realizacija_radnik
          ? Replicate ( "-", 40 )
          IF fPrikPrem == "D"
             ?
-            ?  PadL( "Kolicina - premirani - k7='*' ", 29, "." ), Str( nKolicPr, 10, 2 )
+            ?  PadL( "Kolicina - k7='*' ", 29, "." ), Str( nKolicPr, 10, 2 )
             ?  PadL( "Kolicina - ostali artikli", 29, ), Str( nKolicO, 10, 2 )
             ?
          ENDIF
@@ -373,23 +370,26 @@ FUNCTION C_RealRadn()
    RETURN .T.
 
 
-/* RadnIzvuci(cIdVd)
+/* pos_radnik_izvuci(cIdVd)
  *     Punjenje pomocne baze realizacijom po radnicima
  */
 
-FUNCTION RadnIzvuci( cIdVd )
+FUNCTION pos_radnik_izvuci( cIdVd )
 
-   SEEK cIdVd + DToS ( dDatOd )
+   //SEEK cIdVd + DToS ( dDatOd )
+   seek_pos_doks_2( cIdVd, dDatOd )
    DO WHILE ! Eof() .AND. IdVd == cIdVd .AND. pos_doks->Datum <= dDatDo
 
       IF ( !pos_admin() .AND. pos_doks->idpos = "X" ) .OR. ( pos_doks->IdPos = "X" .AND. AllTrim ( cIdPos ) <> "X" ) .OR. ( !Empty( cIdPos ) .AND. pos_doks->IdPos <> cIdPos ) .OR. ( !Empty( cSmjena ) .AND. pos_doks->Smjena <> cSmjena ) .OR. ( !Empty( cIdRadnik ) .AND. pos_doks->IdRadnik <> cIdRadnik )
          SKIP
          LOOP
       ENDIF
+
       _IdVrsteP := pos_doks->IdVrsteP
       _IdRadnik := pos_doks->IdRadnik
-      SELECT POS
-      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
+
+      seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
          // IF ( !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio )
@@ -400,36 +400,36 @@ FUNCTION RadnIzvuci( cIdVd )
          select_o_roba( pos->idroba )
 
          IF roba->( FieldPos( "idodj" ) ) <> 0
-            SELECT odj
-            HSEEK roba->idodj
+            //SELECT odj
+            select_o_pos_odj( roba->idodj )
          ENDIF
 
          nNeplaca := 0
 
-         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-            nNeplaca := pos->( Kolicina * Cijena )
-         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-            nNeplaca := pos->( Kolicina * Cijena ) / 2
-         ENDIF
-         IF gPopVar = "P"
+        // IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+        //    nNeplaca := pos->( Kolicina * Cijena )
+        // ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+        //    nNeplaca := pos->( Kolicina * Cijena ) / 2
+        // ENDIF
+         //IF gPopVar = "P"
             nNeplaca += pos->( NCijena * kolicina )
-         ENDIF
+         //ENDIF
 
          SELECT POM
          GO TOP
-         HSEEK _IdRadnik + _IdVrsteP + POS->IdRoba + POS->IdCijena
+         HSEEK _IdRadnik + _IdVrsteP + POS->IdRoba + POS->IdCijena // POM
 
          IF !Found()
             APPEND BLANK
             REPLACE IdRadnik WITH _IdRadnik, IdVrsteP WITH _IdVrsteP, IdRoba WITH POS->IdRoba, IdCijena WITH POS->IdCijena, Kolicina WITH POS->KOlicina, Iznos WITH POS->Kolicina * POS->Cijena, iznos3 WITH nNeplaca
-            IF gPopVar = "A"
-               REPLACE Iznos2   WITH pos->( ncijena )
-            ENDIF
+            //IF gPopVar = "A"
+            //   REPLACE Iznos2   WITH pos->( ncijena )
+            //ENDIF
          ELSE
             REPLACE Kolicina WITH Kolicina + POS->Kolicina, Iznos WITH Iznos + POS->Kolicina * POS->Cijena, iznos3 WITH iznos3 + nNeplaca
-            IF gPopVar = "A"
-               REPLACE Iznos2   WITH Iznos2 + pos->( ncijena )
-            ENDIF
+            //IF gPopVar = "A"
+            //   REPLACE Iznos2   WITH Iznos2 + pos->( ncijena )
+            //ENDIF
          ENDIF
          SELECT POS
          SKIP
@@ -447,12 +447,12 @@ STATIC FUNCTION o_tables()
    // o_sifk()
    // o_sifv()
    // o_pos_kase()
-   o_pos_odj()
+   //o_pos_odj()
    // o_roba()
    // o_pos_osob()
-   SET ORDER TO TAG "NAZ"
-   o_vrstep()
-   o_pos_pos()
-   o_pos_doks()
+   //SET ORDER TO TAG "NAZ"
+   //o_vrstep()
+   //o_pos_pos()
+   //o_pos_doks()
 
    RETURN .T.

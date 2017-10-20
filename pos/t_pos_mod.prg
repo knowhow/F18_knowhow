@@ -57,8 +57,8 @@ METHOD mMenu()
 #ifdef F18_DEBUG
       ?E ">>>>>>>>>>>>>>>>>> pos_prijava while <<<<<<<<<<<<<<<<<<<<<"
 #endif
-      m_x := Fx
-      m_y := Fy
+      box_x_koord( Fx)
+      box_y_koord( Fy )
 
       KLevel := pos_prijava( Fx, Fy )
 
@@ -86,8 +86,8 @@ METHOD mMenu()
 
    DO WHILE ( .T. )
 
-      m_x := Fx
-      m_y := Fy
+      box_x_koord( Fx )
+      box_y_koord( Fy )
 
       // unesi prijavu korisnika
       IF fPRviPut .AND. gVSmjene == "N" // ne vodi vise smjena
@@ -163,7 +163,7 @@ METHOD set_module_gvars()
    PUBLIC gPopust := 0
    PUBLIC gPopDec := 2
    PUBLIC gPopZcj := "N"
-   PUBLIC gPopVar := "P"
+  // PUBLIC gPopVar := "P"
    PUBLIC gPopProc := "N"
    PUBLIC gPopIzn := 0
    PUBLIC gPopIznP := 0
@@ -239,7 +239,7 @@ METHOD set_module_gvars()
    PUBLIC grbCjen := 2
    PUBLIC grbStId := "D"
    PUBLIC grbReduk := 0
-   PUBLIC gRnInfo := "N"
+   //PUBLIC gRnInfo := "N"
    PUBLIC aRabat
 
    self:cName := "POS"
@@ -258,7 +258,7 @@ METHOD set_module_gvars()
 
    gDatum := Date()
 
-   PUBLIC gPopVar := "P"
+  // PUBLIC gPopVar := "P"
    PUBLIC gPopZcj := "N"
    PUBLIC gZadCij := "N"
    PUBLIC gPopProc := "N"
@@ -331,7 +331,7 @@ METHOD set_module_gvars()
    gLocPort := fetch_metric( "OznakaLokalnogPorta", my_user(), gLocPort )
    gGotPlac := fetch_metric( "OznakaGotovinskogPlacanja", NIL, gGotPlac )
    gDugPlac := fetch_metric( "OznakaDugPlacanja", NIL, gDugPlac )
-   gRnInfo := fetch_metric( "RacunInfo", NIL, gRnInfo )
+   //gRnInfo := fetch_metric( "RacunInfo", NIL, gRnInfo )
 
    gServerPath := AllTrim( gServerPath )
    IF ( Right( gServerPath, 1 ) <> SLASH )
@@ -387,7 +387,7 @@ METHOD set_module_gvars()
    gIdCijena := fetch_metric( "SetCijena", NIL, gIdCijena )
    gPopust := fetch_metric( "Popust", NIL, gPopust )
    gPopDec := fetch_metric( "PopustDecimale", NIL, gPopDec )
-   gPopVar := fetch_metric( "PopustVarijanta", NIL, gPopVar )
+   //gPopVar := fetch_metric( "PopustVarijanta", NIL, gPopVar )
    gPopZCj := fetch_metric( "PopustZadavanjemCijene", NIL, gPopZCj )
    gPopProc := fetch_metric( "PopustProcenat", NIL, gPopProc )
    gPopIzn := fetch_metric( "PopustIznos", NIL, gPopIzn )
@@ -446,7 +446,7 @@ METHOD set_module_gvars()
    SetNazDVal() // set valuta
    param_tezinski_barkod( .T. ) // setuj parametar tezinski_barkod
    max_kolicina_kod_unosa( .T. ) // maksimalna kolicina kod unosa racuna
-   kalk_konto_za_stanje_pos( .T. ) // kalk konto za stanje pos artikla
+   //kalk_konto_za_stanje_pos( .T. ) // kalk konto za stanje pos artikla
    fiscal_opt_active() // koristenje fiskalnih opcija
 
    gRobaBlock := {| Ch | pos_roba_block( Ch ) }

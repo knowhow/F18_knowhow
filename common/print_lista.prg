@@ -89,8 +89,8 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
       nSort := "ID       "
       Box(, 8, 76, .T. )
       SET CURSOR ON
-      @ m_x + 1, m_y + 20 SAY8 "Tekst koji se štampa kao naslov:"
-      @ m_x + 2, m_y + 3  GET Zaglavlje
+      @ box_x_koord() + 1, box_y_koord() + 20 SAY8 "Tekst koji se štampa kao naslov:"
+      @ box_x_koord() + 2, box_y_koord() + 3  GET Zaglavlje
       cValid := ""
       IF fIndex
          FOR i := 1 TO 10
@@ -98,10 +98,10 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
                cValid += "#" + Upper( ordName( i ) )
             ENDIF
          NEXT
-         @ m_x + 3, m_y + 3  SAY8 "Način sortiranja (ID/NAZ):" GET nSort VALID   AllTrim( nSort ) $ cValid PICT "@!"
+         @ box_x_koord() + 3, box_y_koord() + 3  SAY8 "Način sortiranja (ID/NAZ):" GET nSort VALID   AllTrim( nSort ) $ cValid PICT "@!"
       ENDIF
-      @ m_x + 4, m_y + 3  SAY8 "Odvajati redove linijom (D/N) ?" GET gOdvTab VALID gOdvTab $ "DN" PICTURE "@!"
-      @ m_x + 5, m_y + 3  SAY8 "Razmak između redova    (D/N) ?" GET cRazmak VALID cRazmak $ "DN" PICTURE "@!"
+      @ box_x_koord() + 4, box_y_koord() + 3  SAY8 "Odvajati redove linijom (D/N) ?" GET gOdvTab VALID gOdvTab $ "DN" PICTURE "@!"
+      @ box_x_koord() + 5, box_y_koord() + 3  SAY8 "Razmak između redova    (D/N) ?" GET cRazmak VALID cRazmak $ "DN" PICTURE "@!"
       READ
 
    ENDIF
@@ -133,7 +133,7 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
             ENDIF
          ELSE
             IF aStruct[ i, 2 ] == "M"
-               @ m_x + 6, m_y + 3 SAY8 "Štampati " + aStruct[ i, 1 ] GET cStMemo PICT "@!" VALID cStMemo $ "DN"
+               @ box_x_koord() + 6, box_y_koord() + 3 SAY8 "Štampati " + aStruct[ i, 1 ] GET cStMemo PICT "@!" VALID cStMemo $ "DN"
                READ
                IF cStMemo == "D"
                   cNazMemo := aStruct[ i, 1 ]
@@ -360,7 +360,7 @@ FUNCTION sifarnik_izbor_polja( Kol, cImef )
          ? "Preveliki broj kolona ...(izl.prg)"
          QUIT_1
       ENDIF
-      aObjG[ i ] := GetNew( m_x + j + 1, m_y + yStep )
+      aObjG[ i ] := GetNew( box_x_koord() + j + 1, box_y_koord() + yStep )
       @ aObjG[ i ]:row, ( aObjG[ i ]:col ) - 22 SAY PadR( AllTrim( ImeKol[ i, 1 ] ), 20 )
       aObjG[ i ]:name := "Kl[" + cIdx + "]"
 
@@ -374,12 +374,12 @@ FUNCTION sifarnik_izbor_polja( Kol, cImef )
    NEXT
 
    aObjG[ Len( Kl ) + 1 ] := GetNew()
-   aObjG[ Len( Kl ) + 1 ]:row := m_x + wx
-   aObjG[ Len( Kl ) + 1 ]:col := m_y + 40
+   aObjG[ Len( Kl ) + 1 ]:row := box_x_koord() + wx
+   aObjG[ Len( Kl ) + 1 ]:col := box_y_koord() + 40
    aObjG[ Len( Kl ) + 1 ]:name := "Odg"
    aObjG[ Len( Kl ) + 1 ]:block := {| cVal | iif( cVal == NIL, Odg, Odg := cVal ) }
    aObjG[ Len( Kl ) + 1 ]:display()
-   @ m_x + wx, m_y + 8 SAY 'Kraj - <PgDown>, Nuliraj-<F5>'
+   @ box_x_koord() + wx, box_y_koord() + 8 SAY 'Kraj - <PgDown>, Nuliraj-<F5>'
    SET KEY K_F5  TO Nuliraj()
    ReadModal( aObjG )
    SET KEY K_F5

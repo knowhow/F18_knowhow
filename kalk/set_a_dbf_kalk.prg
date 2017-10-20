@@ -14,12 +14,12 @@
 
 FUNCTION set_a_dbf_kalk()
 
-   set_a_dbf_kalk_kalk()
+   set_a_sql_kalk_kalk()
 
-   set_a_dbf_kalk_doks_doks2( "kalk_doks", "KALK_DOKS", F_KALK_DOKS  )
-   set_a_dbf_kalk_doks_doks2( "kalk_doks2", "KALK_DOKS2", F_KALK_DOKS2 )
-   set_a_dbf_trfp( "trfp", "TRFP", F_TRFP )
-   set_a_dbf_trfp( "trfp2", "TRFP2", F_TRFP2 )
+   set_a_sql_kalk_doks_doks2( "kalk_doks", "KALK_DOKS", F_KALK_DOKS  )
+   set_a_sql_kalk_doks_doks2( "kalk_doks2", "KALK_DOKS2", F_KALK_DOKS2 )
+   set_a_sql_trfp( "trfp", "TRFP", F_TRFP )
+   set_a_sql_trfp( "trfp2", "TRFP2", F_TRFP2 )
 
   // set_a_sql_sifarnik( "trfp3", "TRFP3", F_TRFP3      )
    set_a_sql_sifarnik( "objekti", "OBJEKTI", F_OBJEKTI    )
@@ -63,7 +63,7 @@ FUNCTION set_a_dbf_kalk()
 
 
 
-FUNCTION set_a_dbf_kalk_kalk()
+FUNCTION set_a_sql_kalk_kalk()
 
    LOCAL _item, _alg, _tbl
 
@@ -105,7 +105,7 @@ FUNCTION set_a_dbf_kalk_kalk()
 
    RETURN .T.
 
-FUNCTION set_a_dbf_kalk_doks_doks2( table, alias, wa )
+FUNCTION set_a_sql_kalk_doks_doks2( table, alias, wa )
 
    LOCAL _item, _alg, _tbl
 
@@ -140,7 +140,7 @@ FUNCTION set_a_dbf_kalk_doks_doks2( table, alias, wa )
    RETURN .T.
 
 
-FUNCTION set_a_dbf_trfp( table, alias, wa )
+FUNCTION set_a_sql_trfp( table, alias, wa )
 
    LOCAL _item, _alg, _tbl
 

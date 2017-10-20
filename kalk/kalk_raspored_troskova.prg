@@ -32,6 +32,8 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
    LOCAL nProcKorak := 0.01
    LOCAL cOdgovor := "N"
    LOCAL nDodaj, nFV, nStavkaObracunato, nDeltaStvarnoObracunato, nUkupnoObracunato, nNovaStopa
+   LOCAL nRNUkupnoProdVrijednost
+   LOCAL GetList := {}
 
    IF lSilent == NIL
       lSilent := .F.
@@ -40,8 +42,8 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
       RETURN .F.
    ENDIF
 
-   //PRIVATE qqTar := ""
-   //PRIVATE aUslTar := ""
+   // PRIVATE qqTar := ""
+   // PRIVATE aUslTar := ""
 
    IF cSet == NIL
       nSetEnd := 1
@@ -67,9 +69,9 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
    IF field->idvd $ "16#80"
       Box(, 1, 55 )
       IF idvd == "16"
-         @ m_x + 1, m_y + 2 SAY8 "Stopa marže (vpc - stopa*vpc)=nc:" GET nStUc PICT "999.999"
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Stopa marže (vpc - stopa*vpc)=nc:" GET nStUc PICT "999.999"
       ELSE
-         @ m_x + 1, m_y + 2 SAY8 "Stopa marže (mpc-stopa*mpcsapp)=nc:" GET nStUc PICT "999.999"
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Stopa marže (mpc-stopa*mpcsapp)=nc:" GET nStUc PICT "999.999"
       ENDIF
       READ
       BoxC()
@@ -79,21 +81,21 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
    select_o_koncij( kalk_pripr->mkonto )
    SELECT kalk_pripr
 
-//   IF IsVindija()
-//      PushWA()
-  //    IF !Empty( qqTar )
-  //       aUslTar := Parsiraj( qqTar, "idTarifa" )
-  //       IF aUslTar <> NIL .AND. !aUslTar == ".t."
-  //          SET FILTER TO &aUslTar
-  //       ENDIF
-  //    ENDIF
-  // ENDIF
+// IF IsVindija()
+// PushWA()
+   // IF !Empty( qqTar )
+   // aUslTar := Parsiraj( qqTar, "idTarifa" )
+   // IF aUslTar <> NIL .AND. !aUslTar == ".t."
+   // SET FILTER TO &aUslTar
+   // ENDIF
+   // ENDIF
+   // ENDIF
 
    DO WHILE !Eof()
       nUkupanIznosFakture := 0
       nUkupnoTezina := 0
       nUkupnoKolicina := 0
-      nUkProV := 0
+      nRNUkupnoProdVrijednost := 0
 
       cIdFirma := field->idfirma
       cIdVd := field->idvd
@@ -116,7 +118,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
 
          IF cIdVd $ "RN"
             IF Val( Rbr ) < 900
-               nUkProV += Round( field->vpc * field->kolicina, gZaokr )
+               nRNUkupnoProdVrijednost += Round( field->vpc * field->kolicina, gZaokr )
             ELSE
                nUkupanIznosFakture += Round( field->nc * field->kolicina, gZaokr )  // sirovine
             ENDIF
@@ -186,7 +188,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
 
             ENDIF
 
-            @ m_x + 1, m_y + 2 SAY "Step set " + cSet + " step: " + AllTrim( kalk_say_iznos( nSet ) )
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY "Step set " + cSet + " step: " + AllTrim( kalk_say_iznos( nSet ) )
 
             IF !Empty( cSet )
                ??  " / " +  AllTrim( kalk_say_iznos( hTrosakSet[ cSet + "_step" ] ) )
@@ -198,7 +200,12 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                Scatter()
 
                IF _idvd $ "RN" .AND. Val( _rbr ) < 900
-                  _fcj := _fcj2 := _vpc / nUKProV * nUkupanIznosFakture // nabavne cijene izmisli proporcionalno prodajnim
+                  IF Round( nRNUkupnoProdVrijednost, 4 ) == 0
+                     error_bar( "RN", "RN stavke - ukupna prodajna vrijednost 0?!")
+                     _fcj := _fcj2 := 0
+                  ELSE
+                     _fcj := _fcj2 := _vpc / nRNUkupnoProdVrijednost * nUkupanIznosFakture // nabavne cijene proporcionalno prodajnim
+                  ENDIF
                ENDIF
 
                IF cTipPrevoz $ "RT"  // troskovi 1 - R - raspored, T - raspored po tezini
@@ -246,7 +253,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                      ENDIF
 
                      nUCarDaz += _Cardaz
-                     IF Abs( nIznosCarDaz - nUCarDaz ) < 0.1 // sitniç, baci ga na zadnju st.
+                     IF Abs( nIznosCarDaz - nUCarDaz ) < 0.1 // sitniš, baci ga na zadnju stavku
                         SKIP
                         IF !( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
                            _Cardaz += ( nIznosCarDaz - nUCarDaz )
@@ -380,10 +387,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                SELECT kalk_pripr
                IF _idvd == "RN"
                   IF Val( _rbr ) < 900
-                     kalk_nabcj()
+                     kalk_when_valid_nc()
                   ENDIF
                ELSE
-                  kalk_nabcj()
+                  kalk_when_valid_nc()
                ENDIF
 
                IF _idvd == "16"
@@ -401,10 +408,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                ENDIF
                IF _idvd == "RN"
                   IF Val( _rbr ) < 900
-                     kalk_marza()
+                     kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa()
                   ENDIF
                ELSE
-                  kalk_marza()
+                  kalk_10_pr_rn_valid_vpc_set_marza_polje_nakon_iznosa()
                ENDIF
 
                IF nSetEnd == 1
@@ -416,7 +423,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
             ENDDO
 
 
-            @ m_x + 3, m_y + 2 SAY "Step set " + cSet + " iznos: "
+            @ box_x_koord() + 3, box_y_koord() + 2 SAY "Step set " + cSet + " iznos: "
             SWITCH cSet
             CASE "prevoz"
                ?? kalk_say_iznos( nUPrevoz )
@@ -522,10 +529,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
       ENDIF // cIdVd $ "11#12#13"
    ENDDO  // eof()
 
-//   IF IsVindija()
-//      SELECT kalk_pripr
-//      PopWA()
-//   ENDIF
+// IF IsVindija()
+// SELECT kalk_pripr
+// PopWA()
+// ENDIF
 
    GO TOP
 
@@ -569,32 +576,32 @@ FUNCTION raspored_procent_tr( cTipPrevoz, nIznosPrevoz, cTipCarDaz, nIznosCarDaz
    IF cTipPrevoz == "%"  .AND. Round(  nIznosPrevoz, 3 ) >  0
       hRet[ "prevoz_0" ] := nIznosPrevoz
       hRet[ "prevoz" ] := nIznosPrevoz
-      @ m_x + 1, m_y + 2 SAY  " [T1] : " + kalk_say_iznos( nIznosPrevoz ) GET hRet[ "prevoz" ]
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY  " [T1] : " + kalk_say_iznos( nIznosPrevoz ) GET hRet[ "prevoz" ]
 
    ENDIF
 
    IF cTipBankTr == "%" .AND. Round(  nIznosBankTr, 3 ) >  0
       hRet[ "banktr_0" ] := nIznosBankTr
       hRet[ "banktr" ] := nIznosBankTr
-      @ m_x + 2, m_y + 2 SAY  " [T2]  " + kalk_say_iznos( nIznosBankTr ) GET hRet[ "banktr" ]
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY  " [T2]  " + kalk_say_iznos( nIznosBankTr ) GET hRet[ "banktr" ]
    ENDIF
 
    IF cTipSpedTr == "%" .AND. Round(  nIznosSpedTr, 3 ) >  0
       hRet[ "spedtr_0" ] := nIznosSpedTr
       hRet[ "spedtr" ] := nIznosSpedTr
-      @ m_x + 3, m_y + 2 SAY  " [T3]  " + kalk_say_iznos( nIznosSpedTr ) GET hRet[ "spedtr" ]
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY  " [T3]  " + kalk_say_iznos( nIznosSpedTr ) GET hRet[ "spedtr" ]
    ENDIF
 
    IF cTipCarDaz == "%" .AND. Round(  nIznosCarDaz, 3 ) >  0
       hRet[ "cardaz_0" ] := nIznosCarDaz
       hRet[ "cardaz" ] := nIznosCarDaz
-      @ m_x + 4, m_y + 2 SAY  " [T4]  " + kalk_say_iznos( nIznosCarDaz ) GET hRet[ "cardaz" ]
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY  " [T4]  " + kalk_say_iznos( nIznosCarDaz ) GET hRet[ "cardaz" ]
    ENDIF
 
    IF cTipZavTr == "%" .AND. Round(  nIznosZavTr, 3 ) >  0
       hRet[ "zavtr_0" ] := nIznosCarDaz
       hRet[ "zavtr" ] := nIznosZavTr
-      @ m_x + 5, m_y + 2 SAY  " [T5]  " + kalk_say_iznos( nIznosZavTr ) GET hRet[ "zavtr" ]
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY  " [T5]  " + kalk_say_iznos( nIznosZavTr ) GET hRet[ "zavtr" ]
    ENDIF
 
    READ

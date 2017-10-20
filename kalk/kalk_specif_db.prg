@@ -293,7 +293,7 @@ FUNCTION GenRekap2( lK2X, cC, lPrDatOd, lVpRab, lMarkiranaRoba )
       Sca2MKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, @lMagacin, lVpRab, lPrDatOd )
       Sca2PKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, @lProdavnica, lPrDatOd )
 
-      @ m_x + 1, m_y + 2 SAY ++nStavki PICT "999999999999"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY ++nStavki PICT "999999999999"
 
       SELECT kalk
       SKIP
@@ -737,21 +737,21 @@ FUNCTION kalk_prod_generacija_dokumenataNc()
          LOOP
       ENDIF
 
-      @ m_x + 1, m_y + 2 SAY "Prodavnica: " + cPKonto
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prodavnica: " + cPKonto
       SELECT roba
       GO TOP
       DO WHILE !Eof()
 
          cIdRoba := roba->id
          IF IsRobaInProdavnica( cPKonto, cIdRoba )
-            @ m_x + 2, m_y + 2 SAY "Roba " + cIdRoba
+            @ box_x_koord() + 2, box_y_koord() + 2 SAY "Roba " + cIdRoba
             nNc := GetNcForProdavnica( cPKonto, cIdRoba )
             cBrDok := "00000000"
             cIdVd := "00"
             dDatDok := Date()
             SetProdNc( cPKonto, cIdRoba, cIdVd, cBrDok, dDatDok, nNc )
          ELSE
-            @ m_x + 2, m_y + 2 SAY "!Roba " + cIdRoba
+            @ box_x_koord() + 2, box_y_koord() + 2 SAY "!Roba " + cIdRoba
          ENDIF
 
          SELECT roba
@@ -877,12 +877,12 @@ FUNCTION SetIdPartnerRoba()
       SET ORDER TO TAG "1"
 
 
-      @ m_x + 1, m_y + 2 SAY iif( cGodina == "", "2003", cGodina )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY iif( cGodina == "", "2003", cGodina )
 
       SEEK self_organizacija_id() + "10"
       DO WHILE !Eof() .AND. ( IdVd == "10" )
 
-         @ m_x + 2, m_y + 2 SAY kalk->IdRoba
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY kalk->IdRoba
 
          SELECT ROBA
          cIdPartner = kalk->IdPartner

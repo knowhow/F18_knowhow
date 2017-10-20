@@ -20,13 +20,13 @@ STATIC PicKol := "999999.999"
 
 FUNCTION mat_specifikacija()
 
-  // o_roba()
-//   o_sifk()
-//   o_sifv()
-  // o_tarifa()
+   // o_roba()
+// o_sifk()
+// o_sifv()
+   // o_tarifa()
    O_MAT_SUBAN
-  // o_partner()
-  // o_konto()
+   // o_partner()
+   // o_konto()
 
    cIdFirma := self_organizacija_id()
    qqKonto := qqPartn := Space( 55 )
@@ -37,13 +37,13 @@ FUNCTION mat_specifikacija()
 
    Box( "Spec", 8, 65, .F. )
 
-   @ m_x + 1, m_y + 2 SAY "SPECIFIKACIJA - Izvjestaj formata A3/A4 (1/2)" GET cFmt VALID cFmt $ "12"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "SPECIFIKACIJA - Izvjestaj formata A3/A4 (1/2)" GET cFmt VALID cFmt $ "12"
 
    READ
 
    IF cFmt == "2"
       cFmt := "1"
-      @ m_x + 2, m_y + 2 SAY "Iznos u " + ValDomaca() + "/" + ValPomocna() + "(1/2) ?" GET cFmt VALID cFmt $ "12"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Iznos u " + ValDomaca() + "/" + ValPomocna() + "(1/2) ?" GET cFmt VALID cFmt $ "12"
       READ
       IF cFmt == "1"
          cFmt := "2"
@@ -53,16 +53,16 @@ FUNCTION mat_specifikacija()
    ENDIF
 
    IF gNW $ "DR"
-      @ m_x + 4, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
-      @ m_x + 4, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Firma: " GET cIdFirma VALID {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
 
-   @ m_x + 5, m_y + 2 SAY KonSeks( "Konta  " ) + " : " GET qqKonto  PICTURE "@S50"
-   @ m_x + 6, m_y + 2 SAY "Partner : " GET qqPartn  PICTURE "@S50"
-   @ m_x + 7, m_y + 2 SAY "Tarifa (prazno-sve) : " GET cidTarifa  VALID Empty( cidtarifa ) .OR. P_Tarifa( @cIdTarifa )
-   @ m_x + 8, m_y + 2 SAY "Datum dokumenta - od datuma:"    GET dDatOd
-   @ m_x + 8, Col() + 1 SAY "do:"    GET dDatDo VALID dDatDo >= dDatOd
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY KonSeks( "Konta  " ) + " : " GET qqKonto  PICTURE "@S50"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Partner : " GET qqPartn  PICTURE "@S50"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Tarifa (prazno-sve) : " GET cidTarifa  VALID Empty( cidtarifa ) .OR. P_Tarifa( @cIdTarifa )
+   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Datum dokumenta - od datuma:"    GET dDatOd
+   @ box_x_koord() + 8, Col() + 1 SAY "do:"    GET dDatDo VALID dDatDo >= dDatOd
 
    DO WHILE .T.
 
@@ -311,10 +311,10 @@ FUNCTION KonSekS( cNaz )
 
 FUNCTION IArtPoPogonima()
 
-  // o_partner()         // pogoni
-  // o_roba()          // artikli
-  // o_sifk()
-//   o_sifv()
+   // o_partner()         // pogoni
+   // o_roba()          // artikli
+   // o_sifk()
+// o_sifv()
    O_MAT_SUBAN         // dokumenti
 
    cIdRoba := Space( Len( ROBA->id ) )
@@ -337,11 +337,11 @@ FUNCTION IArtPoPogonima()
    qqPartner := PadR( qqPartner, 60 )
 
    Box(, 7, 70 )
-   @ m_x + 2, m_y + 2 SAY "Artikal (prazno-svi): " GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba, 2, 24 ) PICT "@!"
-   @ m_x + 3, m_y + 2 SAY "Za period od:" GET dOd
-   @ m_x + 3, Col() + 2 SAY "do:" GET dDo
-   @ m_x + 4, m_y + 2 SAY "Prikazati iznose? (D/N)" GET cSaIznosima VALID cSaIznosima $ "DN" PICT "@!"
-   @ m_x + 5, m_y + 2 SAY "Uslov za pogone (prazno-svi)" GET qqPartner PICT "@S30"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Artikal (prazno-svi): " GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba, 2, 24 ) PICT "@!"
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY "Za period od:" GET dOd
+   @ box_x_koord() + 3, Col() + 2 SAY "do:" GET dDo
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prikazati iznose? (D/N)" GET cSaIznosima VALID cSaIznosima $ "DN" PICT "@!"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Uslov za pogone (prazno-svi)" GET qqPartner PICT "@S30"
    DO WHILE .T.
       READ; ESC_BCR
       aUsl1 := Parsiraj( qqPartner, "IDPARTNER", "C" )
@@ -351,13 +351,11 @@ FUNCTION IArtPoPogonima()
 
    qqPartner := Trim( qqPartner )
 
-   IF Params2()
-      WPar( "c1", cIdRoba )
-      WPar( "c2", dOd )
-      WPar( "c3", dDo )
-      WPar( "c4", cSaIznosima )
-      WPar( "c5", qqPartner )
-   ENDIF
+   WPar( "c1", cIdRoba )
+   WPar( "c2", dOd )
+   WPar( "c3", dDo )
+   WPar( "c4", cSaIznosima )
+   WPar( "c5", qqPartner )
    SELECT params; USE
 
    SELECT mat_suban
@@ -373,7 +371,7 @@ FUNCTION IArtPoPogonima()
          cFilt += ( ".and." + aUsl1 )
       ENDIF
 
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
       GO TOP
 
       IF Eof()
@@ -408,7 +406,7 @@ FUNCTION IArtPoPogonima()
 
       print_lista_2( aKol, {|| FSvaki2s() },, gTabela,, ;
          , "Specifikacija svih artikala - pregled za period od " + DToC( dod ) + " do " + DToC( ddo ), ;
-         {|| FFor2s() }, IF( gOstr == "D",, -1 ),,,,, )
+         {|| FFor2s() }, IF( gOstr == "D",, - 1 ),,,,, )
       FF
       ENDPRINT
 
@@ -421,7 +419,7 @@ FUNCTION IArtPoPogonima()
       IF !Empty( qqPartner )
          cFilt += ( ".and." + aUsl1 )
       ENDIF
-      SET FILTER to &cFilt
+      SET FILTER TO &cFilt
       GO TOP
 
       IF Eof()
@@ -456,7 +454,7 @@ FUNCTION IArtPoPogonima()
 
       print_lista_2( aKol, {|| FSvaki1s() },, gTabela,, ;
          , "Specifikacija artikla - pregled po pogonima za period od " + DToC( dod ) + " do " + DToC( ddo ), ;
-         {|| FFor1s() }, IF( gOstr == "D",, -1 ),,,,, )
+         {|| FFor1s() }, IF( gOstr == "D",, - 1 ),,,,, )
       FF
       ENDPRINT
    ENDIF

@@ -106,7 +106,7 @@ FUNCTION download_file( cUrl, cDestFile )
 
    IF is_in_main_thread()
       Box( "#Download: " + AllTrim( Right( cUrl, 60 ) ), 2, 75 )
-      @ m_x + 1, m_y + 2 SAY Left( cUrl, 72 )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY Left( cUrl, 72 )
    ELSE
       ?E "Download", cURL
    ENDIF
@@ -132,6 +132,7 @@ FUNCTION download_file( cUrl, cDestFile )
 
    RETURN ""
 
+
 FUNCTION get_platform()
 
    LOCAL cPlatform
@@ -151,3 +152,18 @@ FUNCTION get_platform()
 FUNCTION f18_exe_path()
 
    RETURN hb_FNameDir( hb_ProgName() )
+
+
+
+
+/*
+   my_rddname() -> "DBFCDX" ili "SQLMIX", IF default area used()
+                   "unused", if !used()
+*/
+FUNCTION my_rddName()
+
+   IF Used()
+      RETURN rddName()
+   ENDIF
+
+   RETURN "unused"

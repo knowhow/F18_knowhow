@@ -13,17 +13,17 @@
 
 
 MEMVAR Ch
-MEMVAR m_x, m_y
 MEMVAR _idfirma, _opis, _d_p, _iznosbhd, _idrj, _idpartner, _idkonto
 
+STATIC s_lFinNalogNovaStavka := .F.
 
-FUNCTION knjizenje_gen_otvorene_stavke()
+FUNCTION fin_unos_asistent_gen_otvorene_stavke()
 
    LOCAL lGenerisano
    LOCAL nNaz := 1
    LOCAL nRec := RecNo()
-   LOCAL _col, _row
-   LOCAL _rec, nI
+   LOCAL nBoxCol, nBoxRow
+   LOCAL hRec, nI
    LOCAL nCnt
    LOCAL cBrDok, cOtvSt, dDatDok
    LOCAL hParams
@@ -95,7 +95,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
    Box(, 20, 77 )  // main box ostav
 
-   @ m_x, m_y + 10 SAY8 "KONSULTOVANJE OTVORENIH STAVKI PRI KNJŽENJU"
+   @ box_x_koord(), box_y_koord() + 10 SAY8 "KONSULTOVANJE OTVORENIH STAVKI PRI KNJŽENJU"
 
 #ifdef F18_DEBUG_FIN_AZUR
    AltD() // F18_DEBUG_FIN_AZUR
@@ -169,8 +169,8 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
       ++nCnt
       IF nCnt % 500 == 0
-         @ m_x + 1, m_y + 2 SAY "suban: "
-         @ m_x + 1, Col() + 2 SAY nCnt PICT "99999"
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "suban: "
+         @ box_x_koord() + 1, Col() + 2 SAY nCnt PICT "99999"
       ENDIF
       aFaktura := { CToD( "" ), CToD( "" ), CToD( "" ) }
 
@@ -241,15 +241,15 @@ FUNCTION knjizenje_gen_otvorene_stavke()
       AAdd( Kol, nI )
    NEXT
 
-   _row := f18_max_rows() - 10
-   _col := f18_max_cols() - 8
+   nBoxRow := f18_max_rows() - 10
+   nBoxCol := f18_max_cols() - 8
 
-   Box(, _row, _col, .T. ) // rucni asistent
+   Box(, nBoxRow, nBoxCol, .T. ) // rucni asistent
 
    SET CURSOR ON
-   @ m_x + _row - 2, m_y + 1 SAY "<Enter> Izaberi/ostavi stavku"
-   @ m_x + _row - 1, m_y + 1 SAY "<F10>   Asistent"
-   @ m_x + _row,    m_y + 1 SAY ""
+   @ box_x_koord() + nBoxRow - 2, box_y_koord() + 1 SAY "<Enter> Izaberi/ostavi stavku"
+   @ box_x_koord() + nBoxRow - 1, box_y_koord() + 1 SAY "<F10>   Asistent"
+   @ box_x_koord() + nBoxRow,    box_y_koord() + 1 SAY ""
 
    ?? "  IZNOS Koji zatvaramo: " + iif( cDugPot == "1", "duguje", "potrazuje" ) + " " + AllTrim( Str( nIznos ) )
 
@@ -258,7 +258,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    SELECT ostav
    GO TOP
 
-   my_db_edit_sql( "KOStav", _row, _col, {|| oasist_key_handler( nIznos, cDugPot ) }, "", "Otvorene stavke.", , , , {|| field->m2 = '3' }, 3 )
+   my_browse( "KOStav", nBoxRow, nBoxCol, {|| oasist_key_handler( nIznos, cDugPot ) }, "", "Otvorene stavke.", , , , {|| field->m2 = '3' }, 3 )
 
    BoxC() // rucni asistent
 
@@ -420,9 +420,14 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    RETURN .T.
 
 
-FUNCTION fin_pripr_nova_stavka()
 
-   RETURN fNovi
+FUNCTION fin_pripr_nova_stavka( lSet )
+
+   IF lSet != NIL
+      s_lFinNalogNovaStavka := lSet
+   ENDIF
+
+   RETURN s_lFinNalogNovaStavka
 
 
 
@@ -462,7 +467,7 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
    LOCAL cDn := "N"
    LOCAL nRet := DE_CONT
    LOCAL GetList := {}
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nUplaceno
    LOCAL nPredhodniIznos
 
@@ -476,7 +481,7 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
          cBrDok := field->BRDOK
 
          Box(, 2, 60 )
-         @ m_x + 1, m_Y + 2 SAY "Novi broj veze:" GET cBRDok
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Novi broj veze:" GET cBRDok
          READ
          BoxC()
 
@@ -491,10 +496,9 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
                nTrec := RecNo()
                SKIP -1
 
-               _rec := dbf_get_rec()
-               _rec[ "brdok" ] := cBrDok
-
-               update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
+               hRec := dbf_get_rec()
+               hRec[ "brdok" ] := cBrDok
+               update_rec_server_and_dbf( "fin_suban", hRec, 1, "FULL" )
                GO nTRec
 
             ENDDO
@@ -502,9 +506,9 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
             PopWa()
 
             SELECT ostav
-            _rec := dbf_get_rec()
-            _rec[ "brdok" ] := cBrDok
-            dbf_update_rec( _rec )
+            hRec := dbf_get_rec()
+            hRec[ "brdok" ] := cBrDok
+            dbf_update_rec( hRec )
 
             nRet := DE_ABORT
 
@@ -536,7 +540,7 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
       ENDIF
 
       Box(, 2, 60 )
-      @ m_x + 1, m_y + 2 SAY "Uplaceno po ovom dokumentu:" GET nUplaceno PICT "999999999.99"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Uplaceno po ovom dokumentu:" GET nUplaceno PICT "999999999.99"
       READ
       Boxc()
 
@@ -593,7 +597,7 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
             wm2 := "3"
 
             Box(, 2, 60 )
-            @ m_x + 1, m_y + 2 SAY  "Ostatak sredstava knjiziti na dokument:" GET wbrdok
+            @ box_x_koord() + 1, box_y_koord() + 2 SAY  "Ostatak sredstava knjiziti na dokument:" GET wbrdok
             READ
             Boxc()
 
@@ -666,28 +670,25 @@ STATIC FUNCTION oasist_provjeri_duple_stavke_za_partnera( cIdPartner, cIdKonto, 
 
 STATIC FUNCTION fin_cre_open_dbf_ostav()
 
-   LOCAL _dbf
-   LOCAL _ret := .T.
-   LOCAL _table := "ostav"
+   LOCAL aDbf
+   LOCAL cDbfName := "ostav"
 
-   // formiraj datoteku ostav
-   _dbf := {}
-   AAdd( _dbf, { 'DATDOK', 'D',   8,  0 } )
-   AAdd( _dbf, { 'DATVAL', 'D',   8,  0 } )
-   AAdd( _dbf, { 'DATZPR', 'D',   8,  0 } )
-   AAdd( _dbf, { 'BRDOK', 'C',   10,  0 } )
-   AAdd( _dbf, { 'D_P', 'C',   1,  0 } )
-   AAdd( _dbf, { 'IZNOSBHD', 'N',  21,  2 } )
-   AAdd( _dbf, { 'UPLACENO', 'N',  21,  2 } )
-   AAdd( _dbf, { 'M2', 'C',  1, 0 } )
+   aDbf := {}
+   AAdd( aDbf, { 'DATDOK', 'D',   8,  0 } )
+   AAdd( aDbf, { 'DATVAL', 'D',   8,  0 } )
+   AAdd( aDbf, { 'DATZPR', 'D',   8,  0 } )
+   AAdd( aDbf, { 'BRDOK', 'C',   10,  0 } )
+   AAdd( aDbf, { 'D_P', 'C',   1,  0 } )
+   AAdd( aDbf, { 'IZNOSBHD', 'N',  21,  2 } )
+   AAdd( aDbf, { 'UPLACENO', 'N',  21,  2 } )
+   AAdd( aDbf, { 'M2', 'C',  1, 0 } )
 
-   dbCreate( my_home() + my_dbf_prefix() + _table + ".dbf", _dbf )
+   dbCreate( my_home() + my_dbf_prefix() + cDbfName + ".dbf", aDbf )
 
    SELECT ( F_OSTAV )
    USE
 
-   my_use_temp( "OSTAV", my_home() + my_dbf_prefix() + _table, .F., .T. )
-
+   my_use_temp( "OSTAV", my_home() + my_dbf_prefix() + cDbfName, .F., .T. )
    INDEX ON DToS( DatDok ) + DToS( iif( Empty( datval ), datdok, datval ) ) + brdok TAG "1"
 
-   RETURN _ret
+   RETURN .T.

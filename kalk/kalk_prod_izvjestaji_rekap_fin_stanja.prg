@@ -47,18 +47,18 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    Box(, 9, 60 )
    DO WHILE .T.
       IF gNW $ "DX"
-         @ m_x + 1, m_y + 2 SAY "Firma "
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
-      @ m_x + 2, m_y + 2 SAY "Konto   " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
-      @ m_x + 4, m_y + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
-      @ m_x + 5, m_y + 2 SAY "Artikli " GET qqRoba   PICT "@!S50"
-      @ m_x + 6, m_y + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
-      @ m_x + 7, m_y + 2 SAY "Datum od " GET dDatOd
-      @ m_x + 7, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 8, m_y + 2  SAY "Prikaz: roba tipa T / dokumenata IP (1/2)" GET cTU  VALID cTU $ "12"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto   " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Artikli " GET qqRoba   PICT "@!S50"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Datum od " GET dDatOd
+      @ box_x_koord() + 7, Col() + 2 SAY "do" GET dDatDo
+      @ box_x_koord() + 8, box_y_koord() + 2  SAY "Prikaz: roba tipa T / dokumenata IP (1/2)" GET cTU  VALID cTU $ "12"
       READ
       ESC_BCR
       PRIVATE aUsl2 := Parsiraj( qqTarifa, "IdTarifa" )

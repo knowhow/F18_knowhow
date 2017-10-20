@@ -67,22 +67,22 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
    Box(, __box_x, __box_y )
 
-   @ m_x, m_y + 15 SAY " DEFINISANJE ELEMENATA ARTIKLA: " + artid_str( art_id ) + " "
+   @ box_x_koord(), box_y_koord() + 15 SAY " DEFINISANJE ELEMENATA ARTIKLA: " + artid_str( art_id ) + " "
 
-   @ m_x + __box_x -1, m_y + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI ), __box_y + 1 ) COLOR cLineClr
+   @ box_x_koord() + __box_x -1, box_y_koord() + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI ), __box_y + 1 ) COLOR cLineClr
 
-   @ m_x + __box_x -4, m_y + 1 SAY "<c+N> nova"
-   @ m_x + __box_x -3, m_y + 1 SAY "<F2> ispravka"
-   @ m_x + __box_x -2, m_y + 1 SAY8 "<c+T> briši"
-   @ m_x + __box_x, m_y + 1 SAY "<TAB>-brow.tabela | <ESC> snimi "
+   @ box_x_koord() + __box_x -4, box_y_koord() + 1 SAY "<c+N> nova"
+   @ box_x_koord() + __box_x -3, box_y_koord() + 1 SAY "<F2> ispravka"
+   @ box_x_koord() + __box_x -2, box_y_koord() + 1 SAY8 "<c+T> briši"
+   @ box_x_koord() + __box_x, box_y_koord() + 1 SAY "<TAB>-brow.tabela | <ESC> snimi "
 
    _sh_piccode( __el_schema )
 
    FOR i := 1 to ( __box_x -2 )
-      @ m_x + i, m_y + __box_x SAY BROWSE_COL_SEP COLOR cLineClr
+      @ box_x_koord() + i, box_y_koord() + __box_x SAY BROWSE_COL_SEP COLOR cLineClr
    NEXT
 
-   @ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ( __box_y - __box_x ) + 1 ) COLOR cLineClr
+   @ box_x_koord() + ( __box_x / 2 ), box_y_koord() + __box_x + 1 SAY Replicate( hb_UTF8ToStrBox( BROWSE_PODVUCI_2 ), ( __box_y - __box_x ) + 1 ) COLOR cLineClr
 
    SELECT e_att
    GO TOP
@@ -91,7 +91,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
    SELECT elements
    GO TOP
 
-   m_y += __box_x
+   box_y_koord( box_y_koord() + __box_x )
 
    DO WHILE .T.
 
@@ -103,9 +103,9 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
          nY := __box_x -1
 
          // bilo: 21
-         m_y -= __box_x
+         box_y_koord( box_y_koord() - __box_x )
 
-         _say_tbl_desc( m_x + 1, m_y + 1, cCol2, "** elementi", 11 )
+         _say_tbl_desc( box_x_koord() + 1, box_y_koord() + 1, cCol2, "** elementi", 11 )
 
          elem_kol( @ImeKol, @Kol )
 
@@ -119,9 +119,9 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
          nY := ( __box_y - __box_x ) + 1
 
          // bilo: 21
-         m_y += __box_x
+         box_y_koord( box_y_koord() + __box_x )
 
-         _say_tbl_desc( m_x + 1, m_y + 1, cCol2, "** atributi", 20 )
+         _say_tbl_desc( box_x_koord() + 1, box_y_koord() + 1, cCol2, "** atributi", 20 )
 
          e_att_kol( @ImeKol, @Kol )
 
@@ -136,10 +136,10 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
          nY := ( __box_y - __box_x ) + 1
 
          // bilo: 10
-         m_x += (  __box_x / 2 )
+         box_x_koord( box_x_koord() +  __box_x / 2 )
 
-         _say_tbl_desc( m_x + 1, ;
-            m_y + 1, ;
+         _say_tbl_desc( box_x_koord() + 1, ;
+            box_y_koord() + 1, ;
             cCol2, ;
             "** dod.operacije", ;
             20 )
@@ -149,7 +149,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
       ENDIF
 
-      my_db_edit_sql( "elem", nX, nY, {| Ch| elem_hand( Ch ) }, "", "",,,,, 1 )
+      my_browse( "elem", nX, nY, {| Ch| elem_hand( Ch ) }, "", "",,,,, 1 )
 
       aTmp := {}
       nTmpArea := Select()
@@ -159,14 +159,14 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
       SELECT ( nTmpArea )
 
       IF LastKey() <> K_ESC
-         nTmpX := m_x
+         nTmpX := box_x_koord()
          lRuleRet := rule_articles( aTmp )
-         m_x := nTmpX
+         box_x_koord( nTmpX )
          SELECT ( nTmpArea )
       ENDIF
 
       IF Alias() == "ELEMENTS"
-         m_x -= ( __box_x / 2 )
+         box_x_koord( box_x_koord() - __box_x / 2 )
       ENDIF
 
       IF LastKey() == K_ESC
@@ -463,8 +463,8 @@ FUNCTION elid_str( nId )
 // -----------------------------------------
 STATIC FUNCTION elem_hand()
 
-   LOCAL nX := m_x
-   LOCAL nY := m_y
+   LOCAL nX := box_x_koord()
+   LOCAL nY := box_y_koord()
    LOCAL GetList := {}
    LOCAL nRec := RecNo()
    LOCAL nTRec := 0
@@ -484,8 +484,8 @@ STATIC FUNCTION elem_hand()
 
       IF Alias() == "E_ATT"
 
-         _say_tbl_desc( m_x + 1, ;
-            m_y + 1, ;
+         _say_tbl_desc( box_x_koord() + 1, ;
+            box_y_koord() + 1, ;
             nil, ;
             "** atributi", ;
             20 )
@@ -503,8 +503,8 @@ STATIC FUNCTION elem_hand()
 
          ELSE
 
-            _say_tbl_desc( m_x + 1, ;
-               m_y + 1, ;
+            _say_tbl_desc( box_x_koord() + 1, ;
+               box_y_koord() + 1, ;
                nil, ;
                "** elementi", ;
                11 )
@@ -520,8 +520,8 @@ STATIC FUNCTION elem_hand()
 
       ELSEIF Alias() == "E_AOPS"
 
-         _say_tbl_desc( m_x + 1, ;
-            m_y + 1, ;
+         _say_tbl_desc( box_x_koord() + 1, ;
+            box_y_koord() + 1, ;
             nil, ;
             "** dod.operacije", ;
             20 )
@@ -663,8 +663,8 @@ STATIC FUNCTION elem_hand()
    ENDIF
 
 
-   m_x := nX
-   m_y := nY
+   box_x_koord( nX )
+   box_y_koord( nY )
 
    RETURN nRet
 
@@ -745,15 +745,15 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
 
    Box(, 10, 60 )
 
-   @ m_x + nX, m_y + 2 SAY "***** konvertovanje stavke artikla"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "***** konvertovanje stavke artikla"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "(1) staklo -> lami staklo sa folijom"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "(1) staklo -> lami staklo sa folijom"
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "selekcija:" GET cSelect VALID cSelect $ "1"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "selekcija:" GET cSelect VALID cSelect $ "1"
 
    READ
 
@@ -761,7 +761,7 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
 
       nX += 2
 
-      @ m_x + nX, m_y + 2 SAY "broj folija lami stakla:" GET nFolNr PICT "9"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "broj folija lami stakla:" GET nFolNr PICT "9"
 
       READ
 
@@ -856,16 +856,16 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
       Box(, 7, 60 )
 
       IF lNewRec
-         @ m_x + 1, m_y + 2 SAY "Unos novog elementa *******" COLOR cColor
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unos novog elementa *******" COLOR cColor
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Ispravka elementa *******" COLOR cColor
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ispravka elementa *******" COLOR cColor
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY PadL( "pozicija (rbr) elementa:", nLeft ) GET _el_no VALID _el_no > 0
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY PadL( "pozicija (rbr) elementa:", nLeft ) GET _el_no VALID _el_no > 0
 
-      @ m_x + 5, m_y + 2 SAY PadL( "element pripada grupi:", nLeft ) GET _e_gr_id VALID s_e_groups( @_e_gr_id, .T. )
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY PadL( "element pripada grupi:", nLeft ) GET _e_gr_id VALID s_e_groups( @_e_gr_id, .T. )
 
-      @ m_x + 6, m_y + 2 SAY8 PadL( "(0 - otvori šifarnik)", nLeft )
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 PadL( "(0 - otvori šifarnik)", nLeft )
 
       READ
 
@@ -916,7 +916,7 @@ STATIC FUNCTION e_no_edit()
 
    Box(, 1, 40 )
 
-   @ m_x + 1, m_y + 2 SAY "postavi na:" GET _el_no VALID _el_no > 0 PICT "99"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "postavi na:" GET _el_no VALID _el_no > 0 PICT "99"
    READ
 
    BoxC()
@@ -1043,16 +1043,16 @@ STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
    Box(, 6, 65 )
 
    IF lNewRec
-      @ m_x + 1, m_y + 2 SAY "Unos novog atributa elementa *******" COLOR cColor
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unos novog atributa elementa *******" COLOR cColor
    ELSE
-      @ m_x + 1, m_y + 2 SAY "Ispravka atributa elementa *******" COLOR cColor
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ispravka atributa elementa *******" COLOR cColor
    ENDIF
 
-   @ m_x + 3, m_y + 2 SAY PadL( "izaberi atribut elementa", nLeft ) GET _e_gr_at_id VALID {|| s_e_gr_att( @_e_gr_at_id, el_gr_id, nil, .T. ), show_it( g_gr_at_desc( _e_gr_at_id ) ) } WHEN lNewRec == .T.
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY PadL( "izaberi atribut elementa", nLeft ) GET _e_gr_at_id VALID {|| s_e_gr_att( @_e_gr_at_id, el_gr_id, nil, .T. ), show_it( g_gr_at_desc( _e_gr_at_id ) ) } WHEN lNewRec == .T.
 
-   @ m_x + 4, m_y + 2 SAY PadL( "izaberi vrijednost atributa", nLeft ) GET cElGrVal VALID {|| s_e_gr_val( @cElGrVal, _e_gr_at_id, cElGrVal, .T. ), set_var( @_e_gr_vl_id, @cElGrVal ) }
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY PadL( "izaberi vrijednost atributa", nLeft ) GET cElGrVal VALID {|| s_e_gr_val( @cElGrVal, _e_gr_at_id, cElGrVal, .T. ), set_var( @_e_gr_vl_id, @cElGrVal ) }
 
-   @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifarnik", nLeft )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY8 PadL( "0 - otvori šifarnik", nLeft )
 
    READ
    BoxC()
@@ -1105,16 +1105,16 @@ STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
    Box(, 6, 65 )
 
    IF lNewRec
-      @ m_x + 1, m_y + 2 SAY "Unos dodatnih operacija elementa *******" COLOR cColor
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unos dodatnih operacija elementa *******" COLOR cColor
    ELSE
-      @ m_x + 1, m_y + 2 SAY "Ispravka dodatnih operacija elementa *******" COLOR cColor
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Ispravka dodatnih operacija elementa *******" COLOR cColor
    ENDIF
 
-   @ m_x + 3, m_y + 2 SAY PadL( "izaberi dodatnu operaciju", nLeft ) GET _aop_id VALID {|| s_aops( @_aop_id, nil, .T. ), show_it( g_aop_desc( _aop_id ) ) }
+   @ box_x_koord() + 3, box_y_koord() + 2 SAY PadL( "izaberi dodatnu operaciju", nLeft ) GET _aop_id VALID {|| s_aops( @_aop_id, nil, .T. ), show_it( g_aop_desc( _aop_id ) ) }
 
-   @ m_x + 4, m_y + 2 SAY PadL( "izaberi atribut operacije", nLeft ) GET _aop_att_id VALID {|| s_aops_att( @_aop_att_id, _aop_id, nil, .T. ), show_it( g_aop_att_desc( _aop_att_id ) )  }
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY PadL( "izaberi atribut operacije", nLeft ) GET _aop_att_id VALID {|| s_aops_att( @_aop_att_id, _aop_id, nil, .T. ), show_it( g_aop_att_desc( _aop_att_id ) )  }
 
-   @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifarnik", nLeft )
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY8 PadL( "0 - otvori šifarnik", nLeft )
 
    READ
    BoxC()

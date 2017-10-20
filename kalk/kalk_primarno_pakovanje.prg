@@ -37,9 +37,9 @@ FUNCTION NaPrimPak()
 
    Box( "#USLOVI ZA GENERISANJE DOKUMENTA SVODJENJA NA PRIMARNO PAKOVANJE", 5, 70 )
    DO WHILE .T.
-      @ m_x + 2, m_y + 2 SAY "PRODAVNICE:" GET qqProd PICT "@S30"
-      @ m_x + 3, m_y + 2 SAY "ROBA      :" GET qqRoba PICT "@S30"
-      @ m_x + 4, m_y + 2 SAY "DATUM DOK.:" GET dDatKalk
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "PRODAVNICE:" GET qqProd PICT "@S30"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "ROBA      :" GET qqRoba PICT "@S30"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY "DATUM DOK.:" GET dDatKalk
       READ; ESC_BCR
       aUsl1 := Parsiraj( qqProd, "PKONTO" )
       // aUsl1 := Parsiraj(qqProd,"MKONTO")
@@ -211,12 +211,12 @@ FUNCTION NaPrPak2()
    -- o_kalk_doks()
    -- o_kalk()
 --   o_sifk()
-   o_sifv()
+--   o_sifv()
 
    dDatKalk := kalk_pripr->datdok
 
    Box( "#USLOVI ZA GENERISANJE DOKUMENTA SVODJENJA NA PRIMARNO PAKOVANJE", 5, 70 )
-   @ m_x + 2, m_y + 2 SAY "DATUM DOK.:" GET dDatKalk
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY "DATUM DOK.:" GET dDatKalk
    READ; ESC_BCR
    BoxC()
 

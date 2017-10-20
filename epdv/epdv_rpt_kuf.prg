@@ -1,15 +1,3 @@
-/*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
- * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
- * root directory of this source code archive.
- * By using this software, you agree to be bound by its terms.
- */
-
-
 #include "f18.ch"
 
 STATIC aHeader := {}
@@ -22,17 +10,16 @@ STATIC nCurrLine := 0
 
 STATIC cRptNaziv := "Izvještaj KUF na dan "
 
-STATIC cTbl := "kuf"
+STATIC s_cTabela := "kuf"
 
 STATIC cTar := ""
 STATIC cPart := ""
 
 STATIC cRptBrDok := 0
 
-// -------------------------------------------
-// kuf izvjestaj
-// -------------------------------------------
-FUNCTION rpt_kuf( nBrDok, cIdTarifa )
+
+
+FUNCTION epdv_rpt_kuf( nBrDok, cIdTarifa )
 
    LOCAL cHeader
    LOCAL cPom
@@ -43,7 +30,8 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
    LOCAL nLenIzn
    LOCAL cExportDN := "N"
    LOCAL cExportDbf
-
+   LOCAL GetList := {}
+   LOCAL nX
 
    // 1 - red.br / ili br.dok
    // 2 - br.dok / ili r.br
@@ -74,7 +62,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
    cPart := ""
 
-   aDInt := rpt_d_interval ( Date() )
+   aDInt := epdv_rpt_d_interval ( Date() )
 
    dDate := Date()
 
@@ -91,30 +79,25 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
       Box(, 11, 60 )
 
-      @ m_x + nX, m_y + 2 SAY "Period"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Period"
+
       nX++
-
-      @ m_x + nX, m_y + 2 SAY "od " GET dDatOd
-      @ m_x + nX, Col() + 2 SAY "do " GET dDatDo
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "od " GET dDatOd
+      @ box_x_koord() + nX, Col() + 2 SAY "do " GET dDatDo
 
       nX += 2
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Tarifa (prazno svi) ?  " GET cTar ;
+         VALID {|| Empty( cTar ) .OR. P_Tarifa( @cTar ) } PICT "@!"
 
-      @ m_x + nX, m_y + 2 SAY "Tarifa (prazno svi) ?  " GET cTar ;
-         VALID {|| Empty( cTar ) .OR. P_Tarifa( @cTar ) } ;
-         PICT "@!"
       nX += 1
-
-      @ m_x + nX, m_y + 2 SAY "Partner (prazno svi) ? " GET cPart ;
-         VALID {|| Empty( cPart ) .OR. p_partner( @cPart ) } ;
-         PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Partner (prazno svi) ? " GET cPart ;
+         VALID {|| Empty( cPart ) .OR. p_partner( @cPart ) } PICT "@!"
 
       nX += 2
-
-      @ m_x + nX, m_y + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET cExportDN  VALID cExportDN $ "DN" PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET cExportDN  VALID cExportDN $ "DN" PICT "@!"
 
       nX += 2
-
-      @ m_x + nX, m_y + 2 SAY Replicate( "-", 30 )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY Replicate( "-", 30 )
 
       nX++
 
@@ -173,9 +156,9 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
    AAdd( aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Dobavljač", "Broj",  "Opis",  "iznos", "izn.",    "izn. 2", "iznos" } )
    AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, PDV / identifikacijski broj)",      "RN",     "",    "bez PDV", "PDV", "PDV NP", "sa PDV" } )
-   AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)",  "(10)",  "(11) = (8+9+10)" } )
+   AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)",  "(10)",  "11=8+9+10" } )
 
-   fill_rpt( nBrDok )
+   epdv_fill_rpt( nBrDok )
 
    my_close_all_dbf()
 
@@ -209,29 +192,28 @@ STATIC FUNCTION get_r_fields( aArr )
    AAdd( aArr, { "i_pdv2",   "N",  18, 2 } )
    AAdd( aArr, { "i_uk",   "N",  18, 2 } )
 
-   RETURN
+   RETURN .T.
 
 
-STATIC FUNCTION cre_r_tbl()
+STATIC FUNCTION epdv_create_r_kuf()
 
    LOCAL aArr := {}
 
    my_close_all_dbf()
 
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
-   FErase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".cdx" )
+   FErase ( my_home() + "epdv_r_" +  s_cTabela + ".dbf" )
 
    get_r_fields( @aArr )
 
-   dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr )
-
-   CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  cTbl, .T. )
+   dbcreate2( my_home() + "epdv_r_" + s_cTabela + ".dbf", aArr )
+   CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  s_cTabela, .T. )
 
    RETURN .T.
 
 
 
-STATIC FUNCTION fill_rpt( nBrDok )
+STATIC FUNCTION epdv_fill_rpt( nBrDok )
 
    LOCAL nIzArea
    LOCAL nBPdv
@@ -243,28 +225,22 @@ STATIC FUNCTION fill_rpt( nBrDok )
    LOCAL cIdTar
    LOCAL cOpis
    LOCAL cIdPart
+   LOCAL nCount
 
-   cre_r_tbl()
+   epdv_create_r_kuf()
 
-   O_R_KUF
+   select_o_epdv_r_kuf()
 
    IF ( nBrDok == 0 )
-      // tabela pripreme
-
       nIzArea := F_P_KUF
-
-      SELECT ( F_P_KUF )
-      IF !Used()
-         O_P_KUF
-      ENDIF
+      select_o_epdv_p_kuf()
       SET ORDER TO TAG "br_dok"
 
    ELSE
-
       nIzArea := F_KUF
-
-      select_o_epdv_kuf()
-      SET ORDER TO TAG "g_r_br"
+      // select_o_epdv_kuf()
+      // SET ORDER TO TAG "g_r_br"
+      find_epdv_kuf_za_period( dDatOd, dDatDo )
 
    ENDIF
 
@@ -272,7 +248,7 @@ STATIC FUNCTION fill_rpt( nBrDok )
 
    PRIVATE cFilter := ""
 
-   IF ( nBrdok == - 999 )
+   IF ( nBrdok == -999 )
       cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
    ENDIF
 
@@ -291,7 +267,6 @@ STATIC FUNCTION fill_rpt( nBrDok )
    ENDIF
 
    SET FILTER TO &cFilter
-
    GO TOP
 
    Box(, 3, 60 )
@@ -299,31 +274,28 @@ STATIC FUNCTION fill_rpt( nBrDok )
    nCount := 0
 
 
-   DO WHILE !Eof()
+   DO WHILE !Eof() // kuf ili p_kuf
 
       ++nCount
 
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY Str( nCount, 6, 0 )
 
-      @ m_x + 2, m_y + 2 SAY Str( nCount, 6, 0 )
-
-      nBrDok := br_dok
-      nBPdv := i_b_pdv
-      nPdv := i_pdv
+      nBrDok := field->br_dok
+      nBPdv := field->i_b_pdv
+      nPdv := field->i_pdv
 
       IF ( nRptBrDok == -999 )
-         // za vise dokumenata
-         nRbr := g_r_br
+         nRbr := field->g_r_br // za vise dokumenata
       ELSE
-         // za jedan dokument
-         nRbr := r_br
+         nRbr := field->r_br // za jedan dokument
       ENDIF
 
-      dDatum := datum
-      cDobRn := src_br_2
-      cDobNaz := s_partner( id_part )
-      cIdTar := id_tar
-      cIdPart := id_part
-      cOpis := opis
+      dDatum := field->datum
+      cDobRn := field->src_br_2
+      cDobNaz := s_partner( field->id_part )
+      cIdTar := field->id_tar
+      cIdPart := field->id_part
+      cOpis := field->opis
 
       SELECT r_kuf
       APPEND BLANK
@@ -348,17 +320,15 @@ STATIC FUNCTION fill_rpt( nBrDok )
          REPLACE i_pdv2 WITH 0
       ENDIF
 
-      REPLACE i_uk WITH ( i_b_pdv + i_pdv + i_pdv2 )
+      REPLACE i_uk WITH ( field->i_b_pdv + field->i_pdv + field->i_pdv2 )
 
       SELECT ( nIzArea )
-
       SKIP
 
    ENDDO
 
    BoxC()
 
-   // skini filter
    SELECT ( nIzArea )
    SET FILTER TO
 
@@ -374,6 +344,7 @@ STATIC FUNCTION show_rpt()
    LOCAL nPdv
    LOCAL nPdv2
    LOCAL aDobavljacNaziv
+   LOCAL cPom
 
    nCurrLine := 0
 
@@ -387,7 +358,7 @@ STATIC FUNCTION show_rpt()
 
    zaglavlje_kuf()
 
-   O_R_KUF
+   select_o_epdv_r_kuf()
    SELECT r_kuf
    SET ORDER TO TAG "1"
    GO TOP
@@ -399,7 +370,7 @@ STATIC FUNCTION show_rpt()
 
    DO WHILE !Eof()
 
-      ++ nCurrLine
+      ++nCurrLine
 
       // 3 - dat dok
       // 4 - tarifna kategorija
@@ -410,7 +381,7 @@ STATIC FUNCTION show_rpt()
       // 9 - izn  pdv
       // 10 - izn sa pdv
 
-      aDobavljacNaziv := SjeciStr( dob_naz, aZaglLen[5] )
+      aDobavljacNaziv := SjeciStr( dob_naz, aZaglLen[ 5 ] )
 
       IF nRptBrDok == -999
          nPom1 := r_br
@@ -431,36 +402,36 @@ STATIC FUNCTION show_rpt()
 
 
       // 3. datum
-      ?? PadR( datum, aZaglLen[ 3 ] )
+      ?? PadR( field->datum, aZaglLen[ 3 ] )
       ?? " "
 
       // 4. tarifa
-      ?? PadR( id_tar, aZaglLen[ 4 ] )
+      ?? PadR( field->id_tar, aZaglLen[ 4 ] )
       ?? " "
 
       nPos := PCol()
 
       // 5. dobavljac naziv
-      ?? PadR( aDobavljacNaziv[1], aZaglLen[ 5 ] )
+      ?? PadR( aDobavljacNaziv[ 1 ], aZaglLen[ 5 ] )
       ?? " "
 
       // 6. dobavljac rn
-      ?? PadR( dob_rn, aZaglLen[ 6 ] )
+      ?? PadR( field->dob_rn, aZaglLen[ 6 ] )
       ?? " "
 
       // 7. opis
-      ?? PadR( opis, aZaglLen[ 7 ] )
+      ?? PadR( field->opis, aZaglLen[ 7 ] )
       ?? " "
 
       // 8. bez pdv
-      ?? Transform( i_b_pdv,  PIC_IZN() )
+      ?? Transform( field->i_b_pdv,  PIC_IZN() )
       ?? " "
 
-      IF t_u_n_poup( id_tar )
+      IF t_u_n_poup( field->id_tar )
          nPdv := 0
-         nPdv2 := i_pdv2
+         nPdv2 := field->i_pdv2
       ELSE
-         nPdv := i_pdv
+         nPdv := field->i_pdv
          nPdv2 := 0
       ENDIF
 
@@ -474,21 +445,21 @@ STATIC FUNCTION show_rpt()
       ?? " "
 
       // 10. sa pdv
-      ?? Transform( i_b_pdv + ( i_pdv + i_pdv2 ),  PIC_IZN() )
+      ?? Transform( field->i_b_pdv + ( field->i_pdv + field->i_pdv2 ),  PIC_IZN() )
       ?? " "
 
-      IF LEN( aDobavljacNaziv ) > 1
+      IF Len( aDobavljacNaziv ) > 1
 
-          nCurrLine := nCurrLine + 1
+         nCurrLine := nCurrLine + 1
 
-          kuf_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
+         kuf_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
 
-          ?
-          @ prow(), nPos SAY aDobavljacNaziv[2]
+         ?
+         @ PRow(), nPos SAY aDobavljacNaziv[ 2 ]
 
       ENDIF
 
-      nUBPdv += i_b_pdv
+      nUBPdv += field->i_b_pdv
       nUPdv += nPdv
       nUPdv2 += nPdv2
 
@@ -530,7 +501,7 @@ STATIC FUNCTION show_rpt()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION kuf_nova_stranica( nCurrLine, nPageLimit, lSvakaHeader )
@@ -543,7 +514,7 @@ STATIC FUNCTION kuf_nova_stranica( nCurrLine, nPageLimit, lSvakaHeader )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -568,11 +539,11 @@ STATIC FUNCTION zaglavlje_kuf()
          IF Left( aZagl[ i, nCol ], 1 ) = "#"
 
             nMergirano := Val( SubStr( aZagl[ i, nCol ], 2, 1 ) )
-            cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) -2 )
+            cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) - 2 )
             nMrgWidth := 0
             FOR nMrg := 1 TO nMergirano
                nMrgWidth += aZaglLen[ nCol + nMrg - 1 ]
-               nMrgWidth ++
+               nMrgWidth++
             NEXT
             ??U PadC( cPom, nMrgWidth )
             ?? " "
@@ -586,10 +557,12 @@ STATIC FUNCTION zaglavlje_kuf()
 
    kuf_linija()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION kuf_linija()
+
+   LOCAL i
 
    ++nCurrLine
    ?

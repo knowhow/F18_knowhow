@@ -14,10 +14,10 @@
 
 FUNCTION set_a_dbf_fin()
 
-   set_a_dbf_fin_suban()
-   set_a_dbf_fin_anal()
-   set_a_dbf_fin_sint()
-   set_a_dbf_fin_nalog()
+   set_a_sql_fin_suban()
+   set_a_sql_fin_anal()
+   set_a_sql_fin_sint()
+   set_a_sql_fin_nalog()
 
    //set_a_dbf_fin_parek()
    //set_a_dbf_fin_koliz()
@@ -54,7 +54,7 @@ FUNCTION set_a_dbf_fin()
 
 
 
-FUNCTION set_a_dbf_fin_suban()
+FUNCTION set_a_sql_fin_suban()
 
    LOCAL _alg, _tbl, _item
 
@@ -97,7 +97,7 @@ FUNCTION set_a_dbf_fin_suban()
    RETURN .T.
 
 
-FUNCTION set_a_dbf_fin_anal()
+FUNCTION set_a_sql_fin_anal()
 
    LOCAL _item
    LOCAL _alg, _tbl
@@ -143,7 +143,7 @@ FUNCTION set_a_dbf_fin_anal()
 
 
 
-FUNCTION set_a_dbf_fin_sint()
+FUNCTION set_a_sql_fin_sint()
 
    LOCAL _alg, _tbl, _item
 
@@ -189,7 +189,7 @@ FUNCTION set_a_dbf_fin_sint()
 
 
 
-FUNCTION set_a_dbf_fin_nalog()
+FUNCTION set_a_sql_fin_nalog()
 
    LOCAL _alg, _tbl, _item
    LOCAL _itm

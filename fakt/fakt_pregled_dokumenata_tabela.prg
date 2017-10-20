@@ -26,18 +26,6 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine )
    LOCAL cFiskalniUredjajModel := fiskalni_uredjaj_model()
 
    ImeKol := {}
-<<<<<<< HEAD
-   AAdd( ImeKol, { "F",            {|| select_o_fakt_doks(), get_fiscal_info( cFiskalniUredjajModel ) } } )
-   AAdd( ImeKol, { "RJ",           {|| fakt_doks->idfirma }  } )
-   AAdd( ImeKol, { "VD",           {|| fakt_doks->idtipdok } } )
-   AAdd( ImeKol, { "Brdok",        {|| fakt_doks->brdok + fakt_doks->rezerv } } )
-   AAdd( ImeKol, { "VP",           {|| fakt_doks->idvrstep } } )
-   AAdd( ImeKol, { "Datum",        {|| fakt_doks->Datdok } } )
-   AAdd( ImeKol, { "Partner",      {|| PadR( fakt_doks->partner, 45 ) } } )
-   AAdd( ImeKol, { "Ukupno",       {|| fakt_doks->iznos + fakt_doks->rabat } } )
-   AAdd( ImeKol, { "Rabat",        {|| fakt_doks->rabat } } )
-   AAdd( ImeKol, { "Ukupno-Rab ",  {|| fakt_doks->iznos } } )
-=======
    AAdd( ImeKol, { "F",            {|| is_fiskaliziran( cFiskalniUredjajModel ) } } )
    AAdd( ImeKol, { "RJ",           {|| fakt_doks_pregled->idfirma }  } )
    AAdd( ImeKol, { "VD",           {|| fakt_doks_pregled->idtipdok } } )
@@ -48,7 +36,6 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine )
    AAdd( ImeKol, { "Ukupno",       {|| fakt_doks_pregled->iznos + fakt_doks_pregled->rabat } } )
    AAdd( ImeKol, { "Rabat",        {|| fakt_doks_pregled->rabat } } )
    AAdd( ImeKol, { "Ukupno-Rab ",  {|| fakt_doks_pregled->iznos } } )
->>>>>>> 3
 
    IF lVrsteP
       AAdd( ImeKol, { _u( "Način placanja" ), {|| fakt_doks_pregled->idvrstep } } )
@@ -130,13 +117,8 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine )
    NEXT
 
 
-<<<<<<< HEAD
-   my_db_edit_sql( "", nX - 3, nY, {| nCh | fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
-      NIL, NIL, NIL, 2,  NIL, NIL ) //, {| nSkip | fakt_pregled_dokumenata_skip_block( nSkip ) } ) // aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock
-=======
    my_browse( "", nX - 3, nY, {| nCh | fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUredjajModel ) }, "", "", .F., ;
       NIL, NIL, NIL, 2,  NIL, NIL ) // , {| nSkip | fakt_pregled_dokumenata_skip_block( nSkip ) } ) // aOpcije, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, bSkipBlock
->>>>>>> 3
 
 
    BoxC()
@@ -469,16 +451,6 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
    LOCAL _total
    LOCAL cTxt := "", cRn
 
-<<<<<<< HEAD
-   IF fakt_doks->idtipdok $ "10#11"
-      cRN := fakt_doks->idfirma + "-" + fakt_doks->idtipdok + "-" + Trim( fakt_doks->brdok )
-      IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, cFiskalniUredjajModel )
-         cTxt := cRn + ": nema fiskalnog računa !"
-         @ get_x_koord() + 1, get_y_koord() + 2 SAY8 PadR( cTxt, 60 ) COLOR "W/R+"
-      ELSE
-         cFiskalniRacun := AllTrim( Str( fakt_doks->fisc_rn ) )
-         cReklamiraniRacun := AllTrim( Str( fakt_doks->fisc_st ) )
-=======
    IF fakt_doks_pregled->idtipdok $ "10#11"
       cRN := fakt_doks_pregled->idfirma + "-" + fakt_doks_pregled->idtipdok + "-" + Trim( fakt_doks_pregled->brdok )
       IF !postoji_fiskalni_racun( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok, cFiskalniUredjajModel )
@@ -487,17 +459,12 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
       ELSE
          cFiskalniRacun := AllTrim( Str( fakt_doks_pregled->fisc_rn ) )
          cReklamiraniRacun := AllTrim( Str( fakt_doks_pregled->fisc_st ) )
->>>>>>> 3
          cTxt := cRn + ": "
          IF cReklamiraniRacun <> "0"
             cTxt += "reklamirani račun: " + cReklamiraniRacun + ", "
          ENDIF
          cTxt += "fiskalni račun: " + cFiskalniRacun
-<<<<<<< HEAD
-         @ get_x_koord() + 1, get_y_koord() + 2 SAY8 PadR( cTxt, 60 ) COLOR "GR+/B"
-=======
          @ box_x_koord() + 1, box_y_koord() + 2 SAY8 PadR( cTxt, 60 ) COLOR "GR+/B"
->>>>>>> 3
       ENDIF
    ELSE
       @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "", 60 )
@@ -507,11 +474,7 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( cFiskalniUredjajModel )
 
 
 
-<<<<<<< HEAD
-STATIC FUNCTION get_fiscal_info( cFiskalniUredjajModel )
-=======
 STATIC FUNCTION is_fiskaliziran( cFiskalniUredjajModel )
->>>>>>> 3
 
    LOCAL cInfo := " "
 
@@ -536,47 +499,6 @@ STATIC FUNCTION prikazi_brojeve_fiskalnog_racuna( _f_rn, _s_rn )
    IF _s_rn > 0
       cTxt += " / "
       cTxt += AllTrim( Str( _s_rn ) )
-<<<<<<< HEAD
-   ENDIF
-
-   RETURN cTxt
-
-
-
-FUNCTION fakt_pregled_reload_tables( cFilter )
-
-   LOCAL nRec
-
-   IF Select( "FAKT_DOKS" ) > 0
-      SELECT FAKT_DOKS
-      nRec := RecNo()
-   ENDIF
-
-   my_close_all_dbf()
-
-   // o_vrstep()
-   // o_ops()
-
-   // o_valute()
-   // o_rj()
-   select_o_fakt_objekti()
-
-   o_fakt()
-   // o_partner()
-   o_fakt_doks2()
-   o_fakt_doks()
-
-   SELECT fakt_doks
-   SET ORDER TO TAG "1"
-   GO TOP
-
-   ?E time(), "fakt_pregled_reload_tables"
-   SET FILTER TO &( cFilter )
-   GO TOP
-   IF nRec != NIL
-      GO nRec
-=======
->>>>>>> 3
    ENDIF
 
    RETURN cTxt

@@ -249,10 +249,10 @@ FUNCTION kalk_destinacija_topska( cSet )
 STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( dDatum, aPosLokacije, nBrojStavki )
 
    LOCAL nI, _n
-   LOCAL _destcFileNameDbf, _dest_patt
-   LOCAL _integ := {}
-   LOCAL _table_name := "katops.dbf"
-   LOCAL _table_path := my_home()
+   LOCAL cDestFileNameDbf, cDestPathKaTops
+   //LOCAL _integ := {}
+   LOCAL cKaTopsDbfName := "katops.dbf"
+   LOCAL cKaTopsPath := my_home()
    LOCAL cExportHomeDir, cExporPosDir
    LOCAL cRet := ""
    LOCAL cTopsDest
@@ -271,15 +271,15 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( dDatum, aPosLokacije, nBrojStavk
 
       DirChange( my_home() ) // nakon dir create prebaci se na my_local_folder
 
-      _dest_patt := get_tops_kalk_exportcFileNameDbf( "2", cExporPosDir, dDatum ) // pronadji naziv fajla koji je dozvoljen
+      cDestPathKaTops := get_tops_kalk_export_file( "2", cExporPosDir, dDatum ) // pronadji naziv fajla koji je dozvoljen
 
-      _destcFileNameDbf := cExporPosDir + StrTran( _table_name, "katops.", _dest_patt + "." ) // kopiraj katops.dbf na destinaciju
-      cRet := _destcFileNameDbf
+      cDestFileNameDbf := cExporPosDir + StrTran( cKaTopsDbfName, "katops.", cDestPathKaTops + "." ) // kopiraj katops.dbf na destinaciju
+      cRet := cDestFileNameDbf
 
-      IF FileCopy( _table_path + _table_name, _destcFileNameDbf ) > 0
-         _destcFileNameDbf := StrTran( _destcFileNameDbf, ".dbf", ".txt" ) // kopiraj txt fajl
-         // FileCopy( my_home() + OUTFcFileNameDbf, _destcFileNameDbf )
-         FileCopy( s_cTxtPrint, _destcFileNameDbf )
+      IF FileCopy( cKaTopsPath + cKaTopsDbfName, cDestFileNameDbf ) > 0
+         cDestFileNameDbf := StrTran( cDestFileNameDbf, ".dbf", ".txt" ) // kopiraj txt fajl
+         // FileCopy( my_home() + OUTFcFileNameDbf, cDestFileNameDbf )
+         FileCopy( s_cTxtPrint, cDestFileNameDbf )
       ELSE
          MsgBeep( "Problem sa kopiranjem fajla na destinaciju #" + cExporPosDir )
       ENDIF
@@ -292,7 +292,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( dDatum, aPosLokacije, nBrojStavk
 // ---------------------------------------------------------------
 // vraca naziv fajla za export
 // ---------------------------------------------------------------
-FUNCTION get_tops_kalk_exportcFileNameDbf( cTkOrKt, cPath, dDatum, cPrefix )
+FUNCTION get_tops_kalk_export_file( cTkOrKt, cPath, dDatum, cPrefix )
 
    LOCAL cFileNameDbf := ""
 

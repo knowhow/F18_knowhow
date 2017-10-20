@@ -29,7 +29,7 @@ FUNCTION kalk_tops_meni()
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "-------------------------------"
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Dokument: " GET cIDFirma
       @ box_x_koord() + 4, box_y_koord() + 16 SAY " - " GET cIdVd VALID !Empty( cIdVd )
-      @ box_x_koord() + 4, box_y_koord() + 23 SAY " - " GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
+      @ box_x_koord() + 4, box_y_koord() + 23 SAY " - " GET cBrDok VALID {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
       READ
       ESC_BCR
       BoxC()
@@ -55,7 +55,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
    LOCAL nRbr, dDatDok
    LOCAL aPosLokacije
    LOCAL lFromKumulativ := .T.
-   LOCAL _total := 0
+   LOCAL nTotal := 0
    LOCAL cStavke := ""
    LOCAL cPm, cPKonto
 
@@ -116,7 +116,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
       APPEND BLANK
 
       cPm := koncij->idprodmjes
-      IF AScan( aPosLokacije, {| x| x == koncij->idprodmjes } ) == 0
+      IF AScan( aPosLokacije, {| x | x == koncij->idprodmjes } ) == 0
          AAdd( aPosLokacije, koncij->idprodmjes )
       ENDIF
 
@@ -133,10 +133,15 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
       REPLACE field->kolicina WITH kalk_pripr->kolicina
 
-
-      IF field->idvd == "IP"   // kod inventure
-         REPLACE field->kol2 WITH kalk_pripr->gkolicina
+      IF field->idvd == "IP"   // u katops bude IP vrsta ali u POS postane tip 16 - zaduzenje
+         // KALK IP: knjizna kolicina = gkolicina; popisana kolicina = kolicina
+         // REPLACE field->kol2 WITH kalk_pripr->gkolicina
+         // treba da bude - knjizna + popisana kolicina
+         REPLACE field->kolicina WITH - kalk_pripr->gkolicina + kalk_pripr->kolicina
+         REPLACE field->kol2 WITH 0
       ENDIF
+
+
 
       REPLACE field->mpc WITH kalk_pripr->mpcsapp
       REPLACE field->naziv WITH roba->naz
@@ -166,8 +171,8 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
          REPLACE field->idpos WITH gTops
       ENDIF
 
-      _total += ( field->kolicina * field->mpc ) // saberi total
-      ++ nRbr
+      nTotal += ( field->kolicina * field->mpc ) // saberi total
+      ++nRbr
 
       SELECT kalk_pripr
       SKIP
@@ -179,7 +184,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
    USE
 
    IF nRbr > 0
-      kalk_tops_print_report( cIdFirma, cIdVd, cBrDok, nRbr, _total, cStavke, cPm, cPKonto ) // , _exp_file ) // ispisi report
+      kalk_tops_print_report( cIdFirma, cIdVd, cBrDok, nRbr, nTotal, cStavke, cPm, cPKonto ) // , _expcFileNameDbf ) // ispisi report
       kalk_tops_kreiraj_fajl_prenosa( dDatDok, aPosLokacije, nRbr ) // napravi i prebaci izlazne fajlove gdje trebaju
       my_close_all_dbf()
 
@@ -244,14 +249,13 @@ FUNCTION kalk_destinacija_topska( cSet )
 STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( dDatum, aPosLokacije, nBrojStavki )
 
    LOCAL nI, _n
-   LOCAL _dest_file, _dest_patt
+   LOCAL _destcFileNameDbf, _dest_patt
    LOCAL _integ := {}
    LOCAL _table_name := "katops.dbf"
    LOCAL _table_path := my_home()
    LOCAL cExportHomeDir, cExporPosDir
    LOCAL cRet := ""
    LOCAL cTopsDest
-
 
    cTopsDest := kalk_destinacija_topska( cTopsDest )
 
@@ -267,15 +271,15 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( dDatum, aPosLokacije, nBrojStavk
 
       DirChange( my_home() ) // nakon dir create prebaci se na my_local_folder
 
-      _dest_patt := get_tops_kalk_export_file( "2", cExporPosDir, dDatum ) // pronadji naziv fajla koji je dozvoljen
+      _dest_patt := get_tops_kalk_exportcFileNameDbf( "2", cExporPosDir, dDatum ) // pronadji naziv fajla koji je dozvoljen
 
-      _dest_file := cExporPosDir + StrTran( _table_name, "katops.", _dest_patt + "." ) // kopiraj katops.dbf na destinaciju
-      cRet := _dest_file
+      _destcFileNameDbf := cExporPosDir + StrTran( _table_name, "katops.", _dest_patt + "." ) // kopiraj katops.dbf na destinaciju
+      cRet := _destcFileNameDbf
 
-      IF FileCopy( _table_path + _table_name, _dest_file ) > 0
-         _dest_file := StrTran( _dest_file, ".dbf", ".txt" ) // kopiraj txt fajl
-         // FileCopy( my_home() + OUTF_FILE, _dest_file )
-         FileCopy( s_cTxtPrint, _dest_file )
+      IF FileCopy( _table_path + _table_name, _destcFileNameDbf ) > 0
+         _destcFileNameDbf := StrTran( _destcFileNameDbf, ".dbf", ".txt" ) // kopiraj txt fajl
+         // FileCopy( my_home() + OUTFcFileNameDbf, _destcFileNameDbf )
+         FileCopy( s_cTxtPrint, _destcFileNameDbf )
       ELSE
          MsgBeep( "Problem sa kopiranjem fajla na destinaciju #" + cExporPosDir )
       ENDIF
@@ -288,13 +292,13 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( dDatum, aPosLokacije, nBrojStavk
 // ---------------------------------------------------------------
 // vraca naziv fajla za export
 // ---------------------------------------------------------------
-FUNCTION get_tops_kalk_export_file( cTkOrKt, cPath, dDatum, cPrefix )
+FUNCTION get_tops_kalk_exportcFileNameDbf( cTkOrKt, cPath, dDatum, cPrefix )
 
-   LOCAL _file := ""
-   //LOCAL _prefix := "kt"
-   LOCAL nI, _tmp
-   LOCAL _tmp_date := Right( DToS( dDatum ), 4 )
+   LOCAL cFileNameDbf := ""
 
+   // LOCAL _prefix := "kt"
+   LOCAL nI, cNastavak
+   LOCAL cNastavakDatum := Right( DToS( dDatum ), 4 )
 
 
    IF cPrefix == NIL
@@ -310,16 +314,16 @@ FUNCTION get_tops_kalk_export_file( cTkOrKt, cPath, dDatum, cPrefix )
 
    FOR nI := 1 TO 99
 
-      _tmp := PadL( AllTrim( Str( nI ) ), 2, "0" ) // nastavak na fajl
-      _file := cPrefix + _tmp_date + _tmp
+      cNastavak := PadL( AllTrim( Str( nI ) ), 2, "0" ) // nastavak na fajl
+      cFileNameDbf := cPrefix + cNastavakDatum + cNastavak
 
-      IF !File( cPath + _file + ".dbf" )
+      IF !File( cPath + cFileNameDbf + ".dbf" )
          // ovaj fajl moze da se koristi
          EXIT
       ENDIF
    NEXT
 
-   RETURN _file
+   RETURN cFileNameDbf
 
 
 
@@ -405,10 +409,10 @@ STATIC FUNCTION kalk_tops_o_gen_tables( lFromKumulativ )
       lFromKumulativ := .F.
    ENDIF
 
-  // SELECT F_ROBA
-//   IF !Used()
-  //    o_roba()
-//   ENDIF
+   // SELECT F_ROBA
+// IF !Used()
+   // o_roba()
+// ENDIF
 
    SELECT F_KONCIJ
    IF !Used()
@@ -418,7 +422,7 @@ STATIC FUNCTION kalk_tops_o_gen_tables( lFromKumulativ )
    IF !lFromKumulativ  // == .T.
       // SELECT F_KALK
       // open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
-   //ELSE
+      // ELSE
       SELECT F_KALK_PRIPR
       IF !Used()
          o_kalk_pripr()

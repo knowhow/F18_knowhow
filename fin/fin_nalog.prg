@@ -112,7 +112,7 @@ FUNCTION fin_nalog_priprema_auto_import( lAuto, lStampa )
       RETURN .F.
    ENDIF
 
-   IF lAuto == .F. .OR. ( lAuto == .T. .AND. lStampa )
+   IF !lAuto .OR. ( lAuto .AND. lStampa )
       fin_gen_ptabele_stampa_nalozi( lAuto ) // stampa
    ELSE
       fin_gen_psuban_stavke_auto_import()

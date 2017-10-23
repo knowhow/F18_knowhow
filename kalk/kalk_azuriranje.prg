@@ -11,6 +11,12 @@
 
 #include "f18.ch"
 
+
+
+FUNCTION kalk_azuriraj_sve_u_pripremi( lStampaj )
+   RETURN kalk_azuriranje_dokumenta( .T., lStampaj )
+
+
 FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
 
    LOCAL lViseDok := .F.
@@ -20,7 +26,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
 
    // LOCAL lBrStDoks := .F.
 
-   IF ( lAuto == nil )
+   IF ( lAuto == NIL )
       lAuto := .F.
    ENDIF
 
@@ -202,7 +208,7 @@ STATIC FUNCTION kalk_gen_zavisni_fin_fakt_nakon_azuriranja( lGenerisi, lAuto, lS
 
    o_kalk_za_azuriranje()
 
-   IF Generisati11_ku()
+   IF kalk_generisati_11()
       lForm11 := .T.
       cNext11 := kalk_get_next_broj_v5( self_organizacija_id(), "11", NIL )
       kalk_gen_11_iz_10( cNext11 )
@@ -210,14 +216,13 @@ STATIC FUNCTION kalk_gen_zavisni_fin_fakt_nakon_azuriranja( lGenerisi, lAuto, lS
 
    // SELECT KALK
 
-   IF lGenerisi == .T.
+   IF lGenerisi
 
       kalk_kontiranje_gen_finmat()
       kalk_generisi_finansijski_nalog( lAuto, lStampa )
 
       gAFin := lgAFin
       gAMat := lgAMat
-
       kalk_generisi_fakt_dokument()
 
    ENDIF
@@ -362,7 +367,7 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
 
    DO WHILE !Eof()
 
-      ++ nBrDoks
+      ++nBrDoks
 
       cIdFirma := field->idfirma
       cIdVd := field->idvd
@@ -530,11 +535,11 @@ STATIC FUNCTION kalk_raspored_troskova_azuriranje()
          field->TSpedTr == "R" .OR. field->TZavTr == "R" ) .AND. field->idvd $ "10#81" )  .OR. ;
          field->idvd $ "RN"
 
-    //  o_sifk()
-  //    o_sifv()
-    //  select_o_roba()
-    //  o_tarifa()
-    //  o_koncij()
+      // o_sifk()
+      // o_sifv()
+      // select_o_roba()
+      // o_tarifa()
+      // o_koncij()
 
       SELECT kalk_pripr
       kalk_raspored_troskova( .T. )

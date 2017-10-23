@@ -19,8 +19,9 @@
 FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
    LOCAL oNalog, oNalozi := FinNalozi():New()
-
-   PRIVATE aNalozi := {}
+   LOCAL cIdFirma, cIdVN, cBrNal
+   LOCAL aNalozi
+   //PRIVATE aNalozi := {}
 
    IF lAuto == NIL
       lAuto := .F.
@@ -60,7 +61,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
          ENDIF
       ENDIF
 
-      HSEEK cIdFirma + cIdVN + cBrNal
+      HSEEK cIdFirma + cIdVN + cBrNal // psuban
       IF Eof()
          my_close_all_dbf()
          RETURN .F.

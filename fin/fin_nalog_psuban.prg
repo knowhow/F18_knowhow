@@ -21,9 +21,11 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
    LOCAL nArr := Select()
    LOCAL aRez := {}
    LOCAL aOpis := {}
-   LOCAL _vrste_placanja
-   LOCAL _fin_params := fin_params()
-   LOCAL nColI
+   LOCAL lVrstePlacanja
+   LOCAL hParams := fin_params()
+   LOCAL nColI, i
+   LOCAL cIdFirma, cIdVN, cBrNal
+   LOCAL b2
 
 #ifdef F18_DEBUG_FIN_AZUR
 
@@ -38,7 +40,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
       dDatNal := Date()
    ENDIF
 
-   _vrste_placanja := .F.
+   lVrstePlacanja := .F.
 
    //o_partner()
 
@@ -46,7 +48,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
    PicDEM := "@Z " + FormPicL( pic_iznos_eur(), 10 )
 
    M := iif( cInd == "3", "------ -------------- --- ", "" )
-   IF _fin_params[ "fin_tip_dokumenta" ]
+   IF hParams[ "fin_tip_dokumenta" ]
 
       M +=  + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------"
       M +=  " -- ------------- ----------- -------- -------- --------------- ---------------"
@@ -73,10 +75,10 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
    cIdVN := field->IdVN
    cBrNal := field->BrNal
 
-   b2 := {|| cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal }
+   b2 := {|| cIdFirma == field->IdFirma .AND. cIdVN == field->IdVN .AND. cBrNal == field->BrNal }
 
    IF cInd $ "1#2" .AND. !lAuto
-      fin_nalog_zaglavlje( dDatNal )
+      fin_nalog_zaglavlje( dDatNal, cIdFirma, cIdVN, cBrNal )
    ENDIF
 
 
@@ -99,7 +101,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
             ELSE
                FF
             ENDIF
-            fin_nalog_zaglavlje( dDatnal )
+            fin_nalog_zaglavlje( dDatnal, cIdFirma, cIdVN, cBrNal )
          ENDIF
          P_NRED
 
@@ -167,10 +169,9 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
          @  PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 28 )
          nColDok := PCol() + 1
 
-         IF _fin_params[ "fin_tip_dokumenta" ]
+         IF hParams[ "fin_tip_dokumenta" ]
 
             @ PRow(), PCol() + 1 SAY IdTipDok
-
             select_o_tdok( ( nArr )->idtipdok )
             @ PRow(), PCol() + 1 SAY PadR( naz, 13 )
 
@@ -254,7 +255,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
             @ PRow() + pok, nColDok SAY iif( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
             IF i == 2 .AND. ( !Empty( k1 + k2 + k3 + k4 ) .OR. gFinRj == "D" .OR. gFinFunkFond == "D" )
                ?? " " + k1 + "-" + k2 + "-" + K3Iz256( k3 ) + "-" + k4
-               IF _vrste_placanja
+               IF lVrstePlacanja
                   ?? "(" + get_vrstep_naz( k4 ) + ")"
                ENDIF
                IF gFinRj == "D"
@@ -291,7 +292,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
       IF PRow() > 58 + dodatni_redovi_po_stranici()
          FF
-         fin_nalog_zaglavlje( dDatNal )
+         fin_nalog_zaglavlje( dDatNal, cIdFirma, cIdVN, cBrNal )
       ENDIF
 
       P_NRED
@@ -315,7 +316,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
       IF gPotpis == "D"
          IF PRow() > 58 + dodatni_redovi_po_stranici()
             FF
-            fin_nalog_zaglavlje( dDatNal )
+            fin_nalog_zaglavlje( dDatNal, cIdFirma, cIdVN, cBrNal )
          ENDIF
          P_NRED
          P_NRED
@@ -338,14 +339,13 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
 
 /*
-       fin_nalog_zaglavlje()
        Zaglavlje (sub)analitickog naloga
 */
 
-FUNCTION fin_nalog_zaglavlje( dDatNal )
+FUNCTION fin_nalog_zaglavlje( dDatNal, cIdFirma, cIdVN, cBrNal )
 
    LOCAL nArr, lDnevnik := is_stampa_dnevnika_naloga()
-   LOCAL _fin_params := fin_params()
+   LOCAL hParams := fin_params()
    LOCAL cTmp
 
    //IF "DNEVNIKN" == PadR( Upper( ProcName( 1 ) ), 8 ) .OR. "DNEVNIKN" == PadR( Upper( ProcName( 2 ) ), 8 )
@@ -354,7 +354,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
 
 
    ?
-   IF _fin_params[ "fin_tip_dokumenta" ] .AND. fin_dvovalutno()
+   IF hParams[ "fin_tip_dokumenta" ] .AND. fin_dvovalutno()
       P_COND2
    ELSE
       P_COND
@@ -366,7 +366,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    ?
    nArr := Select()
 
-   IF _fin_params[ "fin_tip_dokumenta" ]
+   IF hParams[ "fin_tip_dokumenta" ]
       select_o_partner( cIdfirma )
       SELECT ( nArr )
       ? cIdfirma, "-", AllTrim( partn->naz )
@@ -388,8 +388,8 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    ENDIF
 
    IF !lDnevnik
-      select_o_tnal( cIdvn )
-      @ PRow(), PCol() + 4 SAY naz
+      select_o_tnal( cIdVN )
+      @ PRow(), PCol() + 4 SAY tnal->naz
    ENDIF
 
    @ PRow(), PCol() + 15 SAY "Str:" + Str( ++nStr, 4 )
@@ -398,7 +398,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
 
    ?? M
 
-   IF !_fin_params[ "fin_tip_dokumenta" ]
+   IF !hParams[ "fin_tip_dokumenta" ]
       P_NRED
 
       cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R.   * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH )
@@ -456,6 +456,9 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
 */
 FUNCTION fin_gen_psuban_stavke_auto_import()
 
+   LOCAL b2
+   LOCAL cIdFirma, cIdVN, cBrNal
+
    my_close_all_dbf()
 
    o_fin_pripr()
@@ -479,11 +482,11 @@ FUNCTION fin_gen_psuban_stavke_auto_import()
 
    DO WHILE !Eof()
 
-      cIdFirma := IdFirma
-      cIdVN := IdVN
-      cBrNal := BrNal
+      cIdFirma := fin_pripr->IdFirma
+      cIdVN := fin_pripr->IdVN
+      cBrNal := fin_pripr->BrNal
 
-      b2 := {|| cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal }
+      b2 := {|| cIdFirma == field->IdFirma .AND. cIdVN == field->IdVN .AND. cBrNal == field->BrNal }
 
       DO WHILE !Eof() .AND. Eval( b2 )
 

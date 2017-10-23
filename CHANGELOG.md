@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.125-vindi, 2017-10-23
+## 3.1.126-vindi, 2017-10-23
 ### KALK
 - pos-kalk-fin cleanup stampa fin naloga
 

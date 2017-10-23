@@ -21,12 +21,12 @@
 
 FUNCTION pos_admin()
 
-   RETURN KLevel == "0"
+   RETURN field->KLevel == "0"
 
 FUNCTION pos_upravnik()
 
-   RETURN KLevel == "1" .OR. Klevel == "2"
+   RETURN field->KLevel == "1" .OR. field->Klevel == "2"
 
-FUNCTION pos_prodavac
+FUNCTION pos_prodavac()
 
-   RETURN Klevel == "3"
+   RETURN field->Klevel == "3"

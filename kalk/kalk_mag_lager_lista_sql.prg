@@ -236,7 +236,7 @@ FUNCTION kalk_pocetno_stanje_magacin()
    IF nCount > 0
       renumeracija_kalk_pripr( nil, nil, .T. )
       my_close_all_dbf()
-      kalk_azuriranje_dokumenta( .T. )
+      kalk_azuriranje_dokumenta_auto_bez_stampe()
       MsgBeep( "Formiran dokument početnog stanja i automatski ažuriran !" )
    ENDIF
 

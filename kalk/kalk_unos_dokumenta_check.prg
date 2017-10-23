@@ -923,7 +923,7 @@ FUNCTION kalk_get_11_from_pripr9_smece( cBrDok )
 
 
 
-FUNCTION Generisati11_ku()
+FUNCTION kalk_generisati_11()
 
    // {
    // daj mi vrstu dokumenta kalk_pripreme

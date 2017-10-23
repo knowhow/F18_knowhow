@@ -46,8 +46,7 @@ METHOD mMenu()
    ENDIF
 */
 
-   // predradnje
-   pos_init_dbfs()
+   pos_init()
 
    CLOSE ALL
 
@@ -70,9 +69,9 @@ METHOD mMenu()
 
       IF gVsmjene == "N"
          gSmjena := "1"
-         OdrediSmjenu( .F. )
+         pos_odredi_smjenu( .F. )
       ELSE
-         OdrediSmjenu( .T. )
+         pos_odredi_smjenu( .T. )
       ENDIF
 
       EXIT

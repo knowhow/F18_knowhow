@@ -22,14 +22,16 @@ MEMVAR M
 FUNCTION fin_nalog_azurirani()
 
    LOCAL dDatNal
+   LOCAL GetList := {}
+
    PRIVATE fK1 := fk2 := fk3 := fk4 := "N", gnLOst := 0, gPotpis := "N"
 
    fin_read_params()
 
-   //o_konto()
-   //o_partner()
-   //o_tnal()
-   //o_tdok()
+   // o_konto()
+   // o_partner()
+   // o_tnal()
+   // o_tdok()
 
    cIdVN := Space( 2 )
    cIdFirma := self_organizacija_id()
@@ -62,7 +64,7 @@ FUNCTION fin_nalog_azurirani()
       RETURN .F.
    ENDIF
 
-   fin_nalog_stampa_fill_psuban( "2", NIL, dDatNal )
+   fin_nalog_stampa_fill_psuban( "2", .T., dDatNal, NIL, NIL )
    my_close_all_dbf()
 
    end_print()
@@ -85,7 +87,7 @@ FUNCTION kalk_generisi_finansijski_nalog( lAuto, lStampa )
    ENDIF
 
    IF kalk_kontiranje_fin_naloga( .T., lAuto )
-      RETURN fin_nalog_priprema_auto_import( lAuto, lStampa )
+      RETURN fin_nalog_stampa_nakon_kontiranja( lAuto, lStampa )
    ENDIF
 
    RETURN .F.
@@ -95,7 +97,7 @@ FUNCTION kalk_generisi_finansijski_nalog( lAuto, lStampa )
    Koristi se u KALK za štampu finansijskog naloga
 */
 
-FUNCTION fin_nalog_priprema_auto_import( lAuto, lStampa )
+FUNCTION fin_nalog_stampa_nakon_kontiranja( lAuto, lStampa )
 
    PRIVATE gDatNal := "N"
    PRIVATE gRavnot := "D"
@@ -107,13 +109,13 @@ FUNCTION fin_nalog_priprema_auto_import( lAuto, lStampa )
 
    hb_default( @lStampa, .F. )
 
-
+altd()
    IF !fin_nalog_fix_greska_zaokruzenja_fin_pripr( NIL, NIL, NIL, lAuto )
       RETURN .F.
    ENDIF
 
-   IF lAuto == .F. .OR. ( lAuto == .T. .AND. lStampa )
-      fin_gen_ptabele_stampa_nalozi( lAuto ) // stampa
+   IF !lAuto .OR. ( lAuto .AND. lStampa )
+      fin_gen_ptabele_stampa_nalozi( lAuto, lStampa ) // stampa
    ELSE
       fin_gen_psuban_stavke_auto_import()
       fin_gen_sint_stavke_auto_import()
@@ -158,7 +160,7 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
    DO WHILE  !Eof() .AND. ( field->IdFirma + field->IdVn + field->BrNal == cIdFirma + cIdVn + cBrNal )
 
       REPLACE field->iznosbhd WITH Round( field->iznosbhd, 2 ), ; // iznos KM dvije decimale
-      field->iznosdem WITH Round( field->iznosdem, 2 )
+         field->iznosdem WITH Round( field->iznosdem, 2 )
 
       IF field->D_P == "1"
          nDuguje += Round( field->IznosBHD, 2 )
@@ -206,16 +208,33 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
    RETURN lRet
 
 
+
+
+FUNCTION fin_gen_ptabele_auto_bez_stampe()
+   RETURN fin_gen_ptabele_stampa_nalozi( .T., .F. )
+
 /*
    generisi psuban, psint, pnalog, štampaj sve naloge
 */
 
-FUNCTION fin_gen_ptabele_stampa_nalozi( lAuto )
+FUNCTION fin_gen_ptabele_stampa_nalozi( lAuto, lStampa )
 
    LOCAL dDatNal := Date()
 
-   IF fin_gen_psuban_stampa_nalozi( lAuto, @dDatNal )
-      fin_gen_sint_stavke( lAuto, dDatNal )
+   IF lAuto == NIL
+      lAuto := .F.
+   ENDIF
+
+   IF lStampa == NIL
+      lStampa := .T.
+   ENDIF
+
+altd()
+   IF fin_gen_psuban_stampa_nalozi( lAuto, lStampa, @dDatNal )
+      IF lAuto
+         lStampa := .F. // kada je auto, ne stampati sintetiku
+      ENDIF
+      fin_gen_sint_stavke( lStampa, dDatNal )
    ENDIF
 
    RETURN .T.

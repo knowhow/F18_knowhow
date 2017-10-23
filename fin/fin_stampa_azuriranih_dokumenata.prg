@@ -23,7 +23,7 @@ FUNCTION fin_stampa_azur_naloga_menu()
    AADD( _opc, "1. subanalitika                 ")
    AADD( _opcexe, {|| fin_nalog_azurirani() } )
    AADD( _opc, "2. sintetika  ")
-   AADD( _opcexe, {|| fin_sinteticki_nalog() } )
+   AADD( _opcexe, {|| fin_sinteticki_nalog_stampa() } )
 
    f18_menu( "fst", .f., _izbor, _opc, _opcexe  )
 

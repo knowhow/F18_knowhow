@@ -13,6 +13,10 @@
 
 MEMVAR cIdfirma, cIdvd, cBrdok
 
+
+FUNCTION kalk_stampa_svih_dokumenata_u_pripremi()
+   RETURN kalk_stampa_dokumenta( .F., NIL, .T. )
+
 FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
    LOCAL nCol1
@@ -20,6 +24,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    LOCAL nPom
    LOCAL cOk
    LOCAL cNaljepniceDN := "N"
+   LOCAL GetList := {}
    PRIVATE cIdfirma, cIdvd, cBrdok
 
    nCol1 := 0
@@ -237,7 +242,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
          ENDPRINT
       ENDIF
 
-     // ------------------- kraj stampe jedne kalkulacije
+      // ------------------- kraj stampe jedne kalkulacije
 
 
       kalk_open_tables_unos( lAzuriraniDokument )

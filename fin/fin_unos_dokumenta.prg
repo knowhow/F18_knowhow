@@ -604,7 +604,7 @@ FUNCTION fin_azuriraj_x()
    fin_set_broj_dokumenta()
 
    my_close_all_dbf()
-   fin_gen_ptabele_stampa_nalozi( .T. )
+   fin_gen_ptabele_auto_bez_stampe()
    my_close_all_dbf()
 
    fin_azuriranje_naloga( .T. )

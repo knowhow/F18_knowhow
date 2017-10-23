@@ -47,7 +47,7 @@ FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
    ENDIF
 
    IF lViseNalogaUPripremi
-      fin_gen_ptabele_stampa_nalozi( .T. )
+      fin_gen_ptabele_auto_bez_stampe()
       o_fin_za_azuriranje()
    ENDIF
 
@@ -90,13 +90,11 @@ FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
          IF !lViseNalogaUPripremi
             run_sql_query( "ROLLBACK" )
             RETURN .F.
-
          ELSE
             LOOP
          ENDIF
 
       ENDIF
-
 
       IF !fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
@@ -108,9 +106,7 @@ FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
       ENDIF
 
       fin_pripr_delete( cIdFirma + cIdVn + cBrNal )
-
       run_sql_query( "COMMIT" )
-
       log_write( "F18_DOK_OPER: azuriranje fin naloga: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
 
    NEXT
@@ -130,8 +126,8 @@ FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
 
 STATIC FUNCTION fin_nalozi_iz_pripreme_u_matricu()
 
-   LOCAL _data := {}
-   LOCAL _scan
+   LOCAL aNalozi := {}
+   LOCAL nPos
 
    SELECT fin_pripr
    SET ORDER TO TAG "1"
@@ -139,12 +135,12 @@ STATIC FUNCTION fin_nalozi_iz_pripreme_u_matricu()
 
    DO WHILE !Eof()
 
-      _scan := AScan( _data, {| var| VAR[ 1 ] == field->idfirma .AND. ;
+      nPos := AScan( aNalozi, {| var| VAR[ 1 ] == field->idfirma .AND. ;
          VAR[ 2 ] == field->idvn .AND. ;
          VAR[ 3 ] == field->brnal  } )
 
-      IF _scan == 0
-         AAdd( _data, { field->idfirma, field->idvn, field->brnal } )
+      IF nPos == 0
+         AAdd( aNalozi, { field->idfirma, field->idvn, field->brnal } )
       ENDIF
 
       SKIP
@@ -152,7 +148,7 @@ STATIC FUNCTION fin_nalozi_iz_pripreme_u_matricu()
 
    GO TOP
 
-   RETURN _data
+   RETURN aNalozi
 
 
 
@@ -578,7 +574,7 @@ STATIC FUNCTION fin_brisi_p_tabele( close_all )
 FUNCTION psuban_partner_check( arr, silent )
 
    LOCAL lOkAzuriranje := .T.
-   LOCAL _scan
+   LOCAL nPos
 
    IF Empty( psuban->idpartner )
       RETURN lOkAzuriranje
@@ -594,9 +590,9 @@ FUNCTION psuban_partner_check( arr, silent )
 
       lOkAzuriranje := .F.
 
-      _scan := AScan( arr, {| val| val[ 1 ] + val[ 2 ] == "PARTN" + psuban->idpartner } )
+      nPos := AScan( arr, {| val| val[ 1 ] + val[ 2 ] == "PARTN" + psuban->idpartner } )
 
-      IF _scan == 0
+      IF nPos == 0
          AAdd( arr, { "PARTN", psuban->idpartner, Str( psuban->rbr, 5, 0 ) } )
       ENDIF
 
@@ -615,7 +611,7 @@ FUNCTION psuban_partner_check( arr, silent )
 FUNCTION psuban_konto_check( arr, silent )
 
    LOCAL lOkAzuriranje := .T.
-   LOCAL _scan
+   LOCAL nPos
 
    IF Empty( psuban->idkonto )
       RETURN lOkAzuriranje
@@ -629,9 +625,9 @@ FUNCTION psuban_konto_check( arr, silent )
 
       lOkAzuriranje := .F.
 
-      _scan := AScan( arr, {| val| val[ 1 ] + val[ 2 ] == "KONTO" + psuban->idkonto } )
+      nPos := AScan( arr, {| val| val[ 1 ] + val[ 2 ] == "KONTO" + psuban->idkonto } )
 
-      IF _scan == 0
+      IF nPos == 0
          AAdd( arr, { "KONTO", psuban->idkonto, Str( psuban->rbr, 5, 0 ) } )
       ENDIF
 

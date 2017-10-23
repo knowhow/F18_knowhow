@@ -132,7 +132,7 @@ FUNCTION fin_dnevnik_naloga()
       cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
 
       find_suban_by_broj_dokumenta( cIdFirma, cIdVn, cBrNal )
-      fin_nalog_stampa_fill_psuban( "3", NIL, dDatNal )
+      fin_nalog_stampa_fill_psuban( "3", .T., dDatNal, NIL, {} )
 
       SELECT NALOG_DNEVNIK
 

@@ -151,7 +151,7 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 */
 FUNCTION fin_open_psuban_and_ostalo()
 
-   o_vrstep()
+   //o_vrstep()
    //o_konto()
    //o_partner()
    //o_tnal()
@@ -256,7 +256,7 @@ STATIC FUNCTION lock_fin_priprema( lZap )
 
 
 
-FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
+FUNCTION fin_gen_sint_stavke_auto_import() // lAuto )
 
    o_fin_panal()
    o_fin_psint()
@@ -265,9 +265,9 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
    //o_konto()
    //o_tnal()
 
-   IF lAuto == NIL
-      lAuto := .F.
-   ENDIF
+   //IF lAuto == NIL
+  //    lAuto := .F.
+  // ENDIF
 
    SELECT PANAL
    my_dbf_zap()
@@ -283,11 +283,11 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
    GO TOP
 
    IF Empty( BrNal )
-      IF lAuto == .T.
-         closeret
-      ELSE
+      //IF lAuto == .T.
+      //   closeret
+      //ELSE
          closeret2
-      ENDIF
+      //ENDIF
    ENDIF
 
    A := 0
@@ -305,9 +305,7 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
       cIDVn := IdVN
       cBrNal := BrNal
 
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma ;
-            .AND. cIdVN == IdVN ;
-            .AND. cBrNal == BrNal
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN  .AND. cBrNal == BrNal
 
          cIdkonto := idkonto
 
@@ -324,8 +322,7 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
             nPotDEM := IznosDEM
          ENDIF
 
-         SELECT PANAL
-         // analitika
+         SELECT PANAL // analitika
          SEEK cIdFirma + cIdVn + cBrNal + cIdKonto
 
          fNasao := .F.
@@ -434,7 +431,9 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
    my_flock()
    DO WHILE !Eof()
       nRbr := 0
-      cIdFirma := IdFirma;cIDVn = IdVN;cBrNal := BrNal
+      cIdFirma := IdFirma
+      cIDVn := IdVN
+      cBrNal := BrNal
       DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal     // jedan nalog
          REPLACE rbr WITH Str( ++nRbr, 3 )
          SKIP
@@ -457,4 +456,4 @@ FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

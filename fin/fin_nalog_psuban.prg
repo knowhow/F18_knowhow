@@ -16,7 +16,7 @@
    - ako smo na fin_pripr onda puni psuban sa sadržajem fin_pripr
 */
 
-FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
+FUNCTION fin_nalog_stampa_fill_psuban( cInd, lStampa, dDatNal, oNalog, aNaloziObradjeni )
 
    LOCAL nArr := Select()
    LOCAL aRez := {}
@@ -26,14 +26,19 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
    LOCAL nColI, i
    LOCAL cIdFirma, cIdVN, cBrNal
    LOCAL b2
+   LOCAL nPOk
 
 #ifdef F18_DEBUG_FIN_AZUR
 
    AltD() // F18_DEBUG_FIN_AZUR
 #endif
 
-   IF lAuto = NIL
-      lAuto := .F.
+   IF aNaloziObradjeni == NIL
+      aNaloziObradjeni := {}
+   endif
+
+   IF lStampa == NIL
+      lStampa := .T.
    ENDIF
 
    IF dDatNal == NIL
@@ -77,7 +82,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
    b2 := {|| cIdFirma == field->IdFirma .AND. cIdVN == field->IdVN .AND. cBrNal == field->BrNal }
 
-   IF cInd $ "1#2" .AND. !lAuto
+   IF cInd $ "1#2" .AND. lStampa
       fin_nalog_zaglavlje( dDatNal, cIdFirma, cIdVN, cBrNal )
    ENDIF
 
@@ -93,7 +98,8 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
          oNalog:addStavka( field->datDok )
       ENDIF
 
-      IF !lAuto
+
+      IF lStampa
 
          IF PRow() > 61 + iif( cInd == "3", -7, 0 ) + dodatni_redovi_po_stranici()
             IF cInd == "3"
@@ -194,7 +200,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
       IF D_P == "1"
 
-         IF !lAuto
+         IF lStampa
             @ PRow(), PCol() + 1 SAY IznosBHD PICTURE PicBHD
             @ PRow(), PCol() + 1 SAY 0 PICTURE PicBHD
          ENDIF
@@ -205,7 +211,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
       ELSE
 
-         IF !lAuto
+         IF lStampa
             @ PRow(), PCol() + 1 SAY 0 PICTURE PicBHD
             @ PRow(), PCol() + 1 SAY IznosBHD PICTURE PicBHD
          ENDIF
@@ -219,7 +225,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
       IF fin_dvovalutno()
 
          IF D_P == "1"
-            IF !lAuto
+            IF lStampa
                @ PRow(), PCol() + 1 SAY IznosDEM PICTURE PicDEM
                @ PRow(), PCol() + 1 SAY 0 PICTURE PicDEM
             ENDIF
@@ -230,7 +236,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
          ELSE
 
-            IF !lAuto
+            IF lStampa
                @ PRow(), PCol() + 1 SAY 0 PICTURE PicDEM
                @ PRow(), PCol() + 1 SAY IznosDEM PICTURE PicDEM
             ENDIF
@@ -242,17 +248,17 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
       ENDIF
 
-      IF !lAuto
+      IF lStampa
 
-         Pok := 0
+         nPok := 0
          FOR i := 2 TO Max( Len( aRez ), Len( aOpis ) + 1 )
             IF i <= Len( aRez )
                @ PRow() + 1, nColStr SAY aRez[ i ]
             ELSE
-               pok := 1
+               nPok := 1
             ENDIF
 
-            @ PRow() + pok, nColDok SAY iif( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
+            @ PRow() + nPok, nColDok SAY iif( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
             IF i == 2 .AND. ( !Empty( k1 + k2 + k3 + k4 ) .OR. gFinRj == "D" .OR. gFinFunkFond == "D" )
                ?? " " + k1 + "-" + k2 + "-" + K3Iz256( k3 ) + "-" + k4
                IF lVrstePlacanja
@@ -270,14 +276,12 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
       ENDIF
 
-      IF cInd == "1" .AND. AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0
+      IF cInd == "1" .AND. AScan( aNaloziObradjeni, cIdFirma + cIdVN + cBrNal ) == 0
 
          SELECT ( nArr ) // fin_pripr
          Scatter()
-
          SELECT PSUBAN
          APPEND BLANK   // fin_pripr - > psuban
-
          Gather()
 
       ENDIF
@@ -288,7 +292,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
    my_unlock()
 
-   IF cInd $ "1#2" .AND. !lAuto
+   IF cInd $ "1#2" .AND. lStampa
 
       IF PRow() > 58 + dodatni_redovi_po_stranici()
          FF

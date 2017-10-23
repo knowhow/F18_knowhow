@@ -16,15 +16,21 @@
    Generiše psuban, pa štampa sve naloge
 */
 
-FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
+FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, lStampa, dDatNal )
 
    LOCAL oNalog, oNalozi := FinNalozi():New()
    LOCAL cIdFirma, cIdVN, cBrNal
-   LOCAL aNalozi
-   //PRIVATE aNalozi := {}
+
+   LOCAL aNaloziObradjeni := {}
+
+   // PRIVATE aNalozi := {}
 
    IF lAuto == NIL
       lAuto := .F.
+   ENDIF
+
+   IF lStampa == NIL
+      lStampa := .T.
    ENDIF
 
 #ifdef F18_DEBUG_FIN_AZUR
@@ -38,7 +44,6 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
    SELECT fin_pripr
    SET ORDER TO TAG "1"
-
    GO TOP
 
    EOF CRET .F.
@@ -49,7 +54,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
       @ box_x_koord() + 0, box_y_koord() + 2 SAY8 "Formiranje sintetičkih i analitičkih stavki"
    ENDIF
 
-   DO WHILE !Eof()
+   DO WHILE !Eof() // fin_pripr
 
       cIdFirma := field->IdFirma
       cIdVN := field->IdVN
@@ -67,7 +72,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
          RETURN .F.
       ENDIF
 
-      IF !lAuto
+      IF lStampa
          IF !start_print()
             my_close_all_dbf()
             RETURN .F.
@@ -77,11 +82,11 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
       oNalog := FinNalog():New( cIdFirma, cIdVn, cBrNal )
 
       fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, .F. )
-      fin_nalog_stampa_fill_psuban( "1", lAuto, dDatNal, @oNalog )
+      fin_nalog_stampa_fill_psuban( "1", lStampa, dDatNal, @oNalog, aNaloziObradjeni )
 
       oNalozi:addNalog( oNalog )
 
-      IF !lAuto
+      IF lStampa
          PushWA()
          my_close_all_dbf()
          end_print()
@@ -90,9 +95,9 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
       ENDIF
 
 
-      IF AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0
+      IF AScan( aNaloziObradjeni, cIdFirma + cIdVN + cBrNal ) == 0
 
-         AAdd( aNalozi, cIdFirma + cIdVN + cBrNal ) // lista naloga koji su otisli
+         AAdd( aNaloziObradjeni, cIdFirma + cIdVN + cBrNal ) // lista naloga koji su otisli
          IF lAuto
             @ box_x_koord() + 2, box_y_koord() + 2 SAY "Formirana sintetika i analitika za nalog:" + cIdFirma + "-" + cIdVN + "-" + cBrNal
          ENDIF
@@ -114,17 +119,18 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
 
 
-
-FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
+FUNCTION fin_gen_sint_stavke( lStampa, dDatNal )
 
    LOCAL A, cDN := "N"
    LOCAL nStr, nD1, nD2, nP1, nP2
    LOCAL cIdFirma, cIDVn, cBrNal
    LOCAL nDugBHD, nDugDEM, nPotBHD, nPotDEM
    LOCAL nRbr
+   LOCAL GetList := {}
 
-   IF lAuto == NIL
-      lAuto := .F.
+
+   IF lStampa == NIL
+      lStampa := .T.
    ENDIF
 
    IF !fin_open_lock_panal( .T. )
@@ -149,7 +155,7 @@ FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
 
       fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
 
-      IF !lAuto
+      IF lStampa
          Box(, 2, 58 )
          @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Štampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN PICT "@!" VALID cDN $ "DN"
          READ
@@ -162,7 +168,7 @@ FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
       IF cDN == "D"
          SELECT PANAL
          SEEK cIdfirma + cIdvn + cBrnal
-         fin_sinteticki_nalog( .F. )
+         fin_sinteticki_nalog_stampa( .F. )
       ENDIF
 
       my_close_all_dbf()
@@ -178,10 +184,11 @@ FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
    GO TOP
    DO WHILE !Eof()
       nRbr := 0
-      cIdFirma := IdFirma
-      cIDVn = IdVN
-      cBrNal := BrNal
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
+      cIdFirma := panal->IdFirma
+      cIDVn := panal->IdVN
+      cBrNal := panal->BrNal
+
+      DO WHILE !Eof() .AND. cIdFirma == panal->IdFirma .AND. cIdVN == panal->IdVN .AND. cBrNal == panal->BrNal
          REPLACE rbr WITH Str( ++nRbr, 3 )
          SKIP
       ENDDO
@@ -193,10 +200,10 @@ FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
    GO TOP
    DO WHILE !Eof()
       nRbr := 0
-      cIdFirma := IdFirma
-      cIDVn = IdVN
-      cBrNal := BrNal
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
+      cIdFirma := psint->IdFirma
+      cIDVn := psint->IdVN
+      cBrNal := psint->BrNal
+      DO WHILE !Eof() .AND. cIdFirma == psint->IdFirma .AND. cIdVN == psint->IdVN .AND. cBrNal == psint->BrNal
          REPLACE rbr WITH Str( ++nRbr, 3 )
          SKIP
       ENDDO

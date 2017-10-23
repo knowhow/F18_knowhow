@@ -30,7 +30,7 @@ FUNCTION kalk_razmjena_podataka()
       AAdd( aOpc, "4. pos -> kalk razduženje prodavnice na osnovu pos" )
       AAdd( aOpcExe, {|| kalk_razduzi_prodavnicu_na_osnovu_pos_prodaje() } )
   else
-     AAdd( aOpc, "4. pos -> kalk radzuženje prodavnice" )
+     AAdd( aOpc, "4. pos -> kalk razduženje prodavnice" )
      AAdd( aOpcExe, {|| kalk_prenos_iz_pos_u_kalk() } )
    ENDIF
 

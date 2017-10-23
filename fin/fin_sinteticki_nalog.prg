@@ -13,7 +13,7 @@
 
 MEMVAR m, PicBHD, PicDEM
 
-FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
+FUNCTION fin_sinteticki_nalog_stampa( lAzuriraniDokument )
 
    LOCAL dDatNal
 
@@ -24,7 +24,7 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
    PicBHD := "@Z " + FormPicL( gPicBHD, 17 )
    PicDEM := "@Z " + FormPicL( pic_iznos_eur(), 12 )
 
-   M := "---- -------- ------- --------------------------------------------- ----------------- -----------------" + IF( fin_jednovalutno(), "-", " ------------ ------------" )
+   M := "---- -------- ------- --------------------------------------------- ----------------- -----------------" + IIF( fin_jednovalutno(), "-", " ------------ ------------" )
 
    IF lAzuriraniDokument
 

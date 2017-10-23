@@ -224,7 +224,7 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
 
       hRec := dbf_get_rec()
       my_close_all_dbf()
-      kalk_azuriranje_dokumenta( .F. )  // .F. - lAuto - postaviit pitanja, hoces-neces uravnoteziti, stampati
+      kalk_azuriranje_dokumenta( .F. )  // .F. - lAuto - postaviti pitanja, hoces-neces uravnoteziti, stampati
       kalk_last_dok_info( hRec )
       o_kalk_edit()
 

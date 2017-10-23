@@ -41,10 +41,11 @@ FUNCTION o_pos_priprg()
    RETURN .T.
 */
 
-FUNCTION pos_init_dbfs()
+FUNCTION pos_init()
 
    my_close_all_dbf()
 
+   AltD()
    pos_definisi_inicijalne_podatke()
    cre_priprz()
 
@@ -83,47 +84,50 @@ STATIC FUNCTION cre_priprz()
 
 
 
-STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
+STATIC FUNCTION pos_dodaj_u_sifarnik_prioriteta( cId, cPrioritet, cOpis )
 
    LOCAL lOk := .T.
    LOCAL hRec
 
-
-   select_o_pos_strad( "XX" )
-   APPEND BLANK
+   IF select_o_pos_strad( PadR( cId, 2 ) )
+      RETURN .F.
+   ENDIF
 
    hRec := dbf_get_rec()
-   hRec[ "id" ] := PadR( cSifra, Len( hRec[ "id" ] ) )
+   hRec[ "id" ] := PadR( cId, 2 )
    hRec[ "prioritet" ] := PadR( cPrioritet, Len( hRec[ "prioritet" ] ) )
    hRec[ "naz" ] := PadR( cOpis, Len( hRec[ "naz" ] ) )
 
-   lOk := update_rec_server_and_dbf( "pos_strad", hRec, 1, "CONT" )
+   APPEND BLANK
+   lOk := update_rec_server_and_dbf( "pos_strad", hRec, 1, "FULL" )
 
    RETURN lOk
 
 
 
 
-STATIC FUNCTION dodaj_u_sifrarnik_radnika( cSifra, cLozinka, cOpis, cStatus )
+STATIC FUNCTION pos_dodaj_u_sifarnik_radnika( cId, cLozinka, cOpis, cStatus )
 
    LOCAL lOk := .T.
    LOCAL hRec
 
-   //IF Select( "OSOB" ) == 0
-   select_o_pos_osob( "XXX" )
-   //ELSE
-   //    SELECT OSOB
-   //ENDIF
+   // IF Select( "OSOB" ) == 0
+   IF select_o_pos_osob( cId )
+      RETURN .F.
+   ENDIF
+   // ELSE
+   // SELECT OSOB
+   // ENDIF
 
-   APPEND BLANK
 
    hRec := dbf_get_rec()
-   hRec[ "id" ] := PadR( cSifra, Len( hRec[ "id" ] ) )
+   hRec[ "id" ] := PadR( cId, Len( hRec[ "id" ] ) )
    hRec[ "korsif" ] := PadR( CryptSc( PadR( cLozinka, 6 ) ), 6 )
    hRec[ "naz" ] := PadR( cOpis, Len( hRec[ "naz" ] ) )
    hRec[ "status" ] := PadR( cStatus, Len( hRec[ "status" ] ) )
 
-   lOk := update_rec_server_and_dbf( "pos_osob", hRec, 1, "CONT" )
+   APPEND BLANK
+   lOk := update_rec_server_and_dbf( "pos_osob", hRec, 1, "FULL" )
 
    RETURN lOk
 
@@ -133,73 +137,73 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
    LOCAL lOk := .T., hParams
 
-   //select_o_pos_strad()
-   IF table_count( F18_PSQL_SCHEMA_DOT + "pos_strad" ) == 0
-   //IF ( RECCOUNT2() == 0 )
+   // select_o_pos_strad()
+   // IF table_count( F18_PSQL_SCHEMA_DOT + "pos_strad" ) == 0
+   // IF ( RECCOUNT2() == 0 )
 
-      MsgO( "Definišem šifre prioriteta ..." )
+   // MsgO( "Definišem šifre prioriteta ..." )
 
-      run_sql_query( "BEGIN" )
-      IF !f18_lock_tables( { "pos_strad" }, .T. )
-         run_sql_query( "ROLLBACK" )
-         RETURN .F.
-      ENDIF
+   // run_sql_query( "BEGIN" )
+   // IF !f18_lock_tables( { "pos_strad" }, .T. )
+   // run_sql_query( "ROLLBACK" )
+   // RETURN .F.
+   // ENDIF
 
-      lOk := dodaj_u_sifrarnik_prioriteta( "0", "0", "Nivo adm." )
+   lOk := pos_dodaj_u_sifarnik_prioriteta( "0", "0", "Nivo adm." )
 
-      IF lOk
-         lOk := dodaj_u_sifrarnik_prioriteta( "1", "1", "Nivo upr." )
-      ENDIF
+   // IF lOk
+   lOk := pos_dodaj_u_sifarnik_prioriteta( "1", "1", "Nivo upr." )
+   // ENDIF
 
-      IF lOk
-         lOk := dodaj_u_sifrarnik_prioriteta( "3", "3", "Nivo prod." )
-      ENDIF
+   // IF lOk
+   lOk := pos_dodaj_u_sifarnik_prioriteta( "3", "3", "Nivo prod." )
+   // ENDIF
 
-      MsgC()
+   // MsgC()
 
-      IF lOk
-         hParams := hb_Hash()
-         hParams[ "unlock" ] := { "pos_strad" }
-         run_sql_query( "COMMIT", hParams )
+   // IF lOk
+   // hParams := hb_Hash()
+   // hParams[ "unlock" ] := { "pos_strad" }
+   // run_sql_query( "COMMIT", hParams )
 
-      ELSE
-         run_sql_query( "ROLLBACK" )
-      ENDIF
+   // ELSE
+   // run_sql_query( "ROLLBACK" )
+   // ENDIF
 
-   ENDIF
+   // ENDIF
 
-   //o_pos_osob()
-   //IF ( RECCOUNT2() == 0 )
-   IF table_count( F18_PSQL_SCHEMA_DOT + "pos_osob" ) == 0
+   // o_pos_osob()
+   // IF ( RECCOUNT2() == 0 )
+   // IF table_count( F18_PSQL_SCHEMA_DOT + "pos_osob" ) == 0
 
-      MsgO( "Definišem šifranik radnika ..." )
+   // MsgO( "Definišem šifranik radnika ..." )
 
-      // run_sql_query( "BEGIN" )
-      IF !f18_lock_tables( { "pos_osob" }, .T. )
-         // run_sql_query( "COMMIT" )
-         RETURN .F.
-      ENDIF
+   // run_sql_query( "BEGIN" )
+   // IF !f18_lock_tables( { "pos_osob" }, .T. )
+   // run_sql_query( "COMMIT" )
+   // RETURN .F.
+   // ENDIF
 
-      lOk := dodaj_u_sifrarnik_radnika( "0001", "PARSON", "Admin", "0" )
+   lOk := pos_dodaj_u_sifarnik_radnika( "0001", "PARSON", "Admin", "0" )
 
-      IF lOk
-         lOk := dodaj_u_sifrarnik_radnika( "0010", "P1", "Prodavac 1", "3" )
-      ENDIF
+   // IF lOk
+   lOk := pos_dodaj_u_sifarnik_radnika( "0010", "P1", "Prodavac 1", "3" )
+   // ENDIF
 
-      IF lOk
-         lOk := dodaj_u_sifrarnik_radnika( "0011", "P2", "Prodavac 2", "3" )
-      ENDIF
+   // IF lOk
+   lOk := pos_dodaj_u_sifarnik_radnika( "0011", "P2", "Prodavac 2", "3" )
+   // ENDIF
 
-      MsgC()
+   // MsgC()
 
-      IF lOk
-         f18_unlock_tables( { "pos_osob" } )
-         // run_sql_query( "COMMIT" )
-      ELSE
-         // run_sql_query( "ROLLBACK" )
-      ENDIF
+   // IF lOk
+   // f18_unlock_tables( { "pos_osob" } )
+   // run_sql_query( "COMMIT" )
+   // ELSE
+   // run_sql_query( "ROLLBACK" )
+   // ENDIF
 
-   ENDIF
+   // ENDIF
 
    my_close_all_dbf()
 
@@ -218,15 +222,15 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
       o_pos_kumulativne_tabele()
    ENDIF
 
-   //o_pos_odj()
-   //o_pos_osob()
-   //SET ORDER TO TAG "NAZ"
+   // o_pos_odj()
+   // o_pos_osob()
+   // SET ORDER TO TAG "NAZ"
 
-   //o_vrstep()
+   // o_vrstep()
 // o_partner()
-   //O_K2C
-//   O_MJTRUR
-//   o_pos_kase()
+   // O_K2C
+// O_MJTRUR
+// o_pos_kase()
 // o_sastavnice()
 // o_roba()
    // o_tarifa()
@@ -250,7 +254,7 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 
    o_pos_pos()
    o_pos_doks()
-   //o_pos_dokspf()
+   // o_pos_dokspf()
 
    RETURN .T.
 
@@ -258,16 +262,16 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
 
 FUNCTION o_pos_sifre()
 
-   //o_pos_kase()
-   //o_pos_uredj()
-   //o_pos_odj()
+   // o_pos_kase()
+   // o_pos_uredj()
+   // o_pos_odj()
    // o_roba()
    // o_tarifa()
-   //o_vrstep()
+   // o_vrstep()
    // o_valute()
    // o_partner()
-   //o_pos_osob()
-   //o_pos_strad()
+   // o_pos_osob()
+   // o_pos_strad()
    // o_sifk()
    // o_sifv()
 

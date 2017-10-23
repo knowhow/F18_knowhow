@@ -17,6 +17,9 @@ FUNCTION kalk_azuriraj_sve_u_pripremi( lStampaj )
    RETURN kalk_azuriranje_dokumenta( .T., lStampaj )
 
 
+FUNCTION kalk_azuriranje_dokumenta_auto_bez_stampe()
+   RETURN kalk_azuriranje_dokumenta( .T., .F. )
+
 FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
 
    LOCAL lViseDok := .F.
@@ -26,8 +29,12 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
 
    // LOCAL lBrStDoks := .F.
 
-   IF ( lAuto == NIL )
+   IF lAuto == NIL
       lAuto := .F.
+   ENDIF
+
+   IF lStampaj == NIL
+      lStampaj := .T.
    ENDIF
 
    IF !lAuto .AND. Pitanje(, "Želite li izvršiti ažuriranje KALK dokumenta (D/N) ?", "N" ) == "N"
@@ -217,7 +224,6 @@ STATIC FUNCTION kalk_gen_zavisni_fin_fakt_nakon_azuriranja( lGenerisi, lAuto, lS
    // SELECT KALK
 
    IF lGenerisi
-
       kalk_kontiranje_gen_finmat()
       kalk_generisi_finansijski_nalog( lAuto, lStampa )
 

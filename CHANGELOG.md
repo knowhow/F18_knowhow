@@ -1,6 +1,10 @@
 # F18 klijent, lista promjena
 
-## 3.1.119-vindi, 2017-10-20
+## 3.1.125-vindi, 2017-10-23
+### KALK
+- pos-kalk-fin cleanup stampa fin naloga
+
+## 3.1.114-vindi, 2017-10-20
 ### CORE
 - merge 3 za period 8,9,10
  

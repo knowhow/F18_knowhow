@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.129-std, 2017-10-24
+### LD
+- debug specif 2001
+ 
 ## 3.1.118-std, 2017-10-19
 ### CORE
 - kada smo u modulu kalk stanje robe "S" - prikaz stanja magacinskih konta

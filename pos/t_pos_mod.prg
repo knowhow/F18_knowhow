@@ -59,9 +59,9 @@ METHOD mMenu()
       box_x_koord( Fx)
       box_y_koord( Fy )
 
-      KLevel := pos_prijava( Fx, Fy )
+      g_cUserLevel := pos_prijava( Fx, Fy )
 
-      IF KLevel == "X"
+      IF g_cUserLevel == "X"
          RETURN .F.
       ENDIF
 
@@ -92,7 +92,7 @@ METHOD mMenu()
       IF fPRviPut .AND. gVSmjene == "N" // ne vodi vise smjena
          fPrviPut := .F.
       ELSE
-         KLevel := pos_prijava( Fx, Fy )
+         g_cUserLevel := pos_prijava( Fx, Fy )
          pos_status_traka()
       ENDIF
 

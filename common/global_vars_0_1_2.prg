@@ -58,7 +58,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC gRadnoPodr := "RADP"
    PUBLIC ImeKorisn := ""
    PUBLIC SifraKorisn := ""
-   PUBLIC KLevel := "3"
+   PUBLIC g_cUserLevel := "3"
    PUBLIC gArhDir := ""
    PUBLIC gPFont := "Arial"
    PUBLIC gKodnaS := "8"

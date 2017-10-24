@@ -48,7 +48,7 @@ FUNCTION MIP_View()
    @ box_x_koord() + 19, box_y_koord() + 2 SAY "<SPACE> markiraj stavku za stampu"
    @ box_x_koord() + 20, box_y_koord() + 2 SAY "               "
 
-   my_browse( "R_EXPORT", 20, 77, {|| EdMIP() }, "", "Pregled tabele za gen.mip obrasca", , , , {|| if( bol_preko == "1", .T., .F. ) }, 4 )
+   my_browse( "R_EXPORT", 20, 77, {|| EdMIP() }, "", "Pregled tabele za gen.mip obrasca", , , , {|| IIF( bol_preko == "1", .T., .F. ) }, 4 )
 
    BoxC()
 

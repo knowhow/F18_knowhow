@@ -96,8 +96,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL nKoefDopr1X, nKoefDopr2X //, nKoefDopr3X
    LOCAL nKoefDopr5X, nKoefDopr6X //, nKoefDopr7X
    LOCAL nKoefDodatniDoprinosZdravstvo, nKoefDodatniDoprinosPio
-   LOCAL nDopr1X, nDopr2X, nDopr3X  // iznosi dopr IZ
-   LOCAL nDopr5X, nDopr6X, nDopr7X  // iznosi dopr NA
+   LOCAL nDopr1X, nDopr2X //, nDopr3X  // iznosi dopr IZ
+   LOCAL nDopr5X, nDopr6X //, nDopr7X  // iznosi dopr NA
 
    LOCAL nRadnikPoreznaOsnovica := 0
    LOCAL nPojDoprIz := 0
@@ -125,6 +125,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL nBrojZaposlenih
    LOCAL nUNeto
    LOCAL cRTR
+   LOCAL nDodDoprZ, nDodDoprP
+
 
    cMatBR := PadR( cMatBr, 13 )
 
@@ -427,7 +429,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    nDodDoprZ := 0
    nDodDoprP := 0
 
-   DO WHILE Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) == Str( godina, 4, 0 ) + Str( mjesec, 2, 0 )
+   DO WHILE Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) == Str( ld->godina, 4, 0 ) + Str( ld->mjesec, 2, 0 )
 
       select_o_radn( LD->idradn )
       cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
@@ -712,7 +714,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    //nDopr3X := round2( nUkupnoBrutoOsnovicaSaMinLimit * nKoefDopr3X / 100, gZaok2 ) // iznos nez iz
    //hRec[ "iznos_18" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr3X, cVrstaIsplate ), 16, cPictureIznos )
 
-   nUkDoprIZ := nDopr1X + nDopr2X + nDopr3X
+   nUkDoprIZ := nDopr1X + nDopr2X //+ nDopr3X
    hRec[ "iznos_19" ] := FormNum2( isplata_dopr_kontrola_iznosa( nUkDoprIZ, cVrstaIsplate ), 16, cPictureIznos )
 
    nDopr5X := round2( nUkupnoBrutoOsnovicaSaMinLimit * nKoefDopr5X / 100, gZaok2 )  // iznos pio na
@@ -728,7 +730,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    hRec[ "iznos_23" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDodDoprP, cVrstaIsplate ), 16, cPictureIznos )
    hRec[ "iznos_24" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDodDoprZ, cVrstaIsplate ), 16, cPictureIznos )
 
-   hRec[ "iznos_25" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr5X + nDopr6X + nDopr7X + nDodDoprP + nDodDoprZ, cVrstaIsplate ), 16, cPictureIznos )
+   hRec[ "iznos_25" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr5X + nDopr6X + nDodDoprP + nDodDoprZ, cVrstaIsplate ), 16, cPictureIznos )
 
 
    hRec[ "broj_zaposlenih" ] := AllTrim( Str( nBrojZaposlenih, 6, 0 ) )
@@ -819,11 +821,11 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
    IF cVrstaIsplate == "A"
       // sve obaveze
-      nPom := nDopr1X + nDopr2x + nDopr3x + nDopr5x + nDopr6x + nDopr7x + nPorNaPlatu + nPorezOstali - nPorOlaksice + nOstaleOBaveze + nDodDoprP + nDodDoprZ
+      nPom := nDopr1X + nDopr2x + nDopr5x + nDopr6x + nPorNaPlatu + nPorezOstali - nPorOlaksice + nOstaleOBaveze + nDodDoprP + nDodDoprZ
 
    ELSEIF cVrstaIsplate == "B"
       // samo doprinosi
-      nPom := nDopr1X + nDopr2x + nDopr3x + nDopr5x + nDopr6x + nDopr7x + nDodDoprP + nDodDoprZ
+      nPom := nDopr1X + nDopr2x + nDopr5x + nDopr6x + nDodDoprP + nDodDoprZ
 
    ELSEIF cVrstaIsplate == "C"
       // samo porez
@@ -871,8 +873,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    //nD21a := nPom
 
    // nezaposlenost iz + nezaposlenost na placu
-   nPom := nDopr3x + nDopr7x
-   nPom2 := nPom
+   //nPom := nDopr3x + nDopr7x
+   //nPom2 := nPom
 
    // nezaposlenost za RS
    //nPom := nPom2 * ( nOmjerNezaposlenost / 100 )

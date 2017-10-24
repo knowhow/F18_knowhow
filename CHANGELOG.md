@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.129-std, 2017-10-24
+## 3.1.130-std, 2017-10-24
 ### LD
 - debug specif 2001
  

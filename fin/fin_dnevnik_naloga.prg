@@ -22,6 +22,7 @@ FUNCTION fin_dnevnik_naloga()
    LOCAL cMjGod := ""
    LOCAL _filter := ""
    LOCAL dOd, dDo
+   LOCAL GetList := {}
 
    PRIVATE cIdFirma, cIdVN, cBrNal, dDatNal  // fin stampa naloga ocekuje ove priv varijable
 
@@ -49,7 +50,7 @@ FUNCTION fin_dnevnik_naloga()
 
    SET KEY K_F5 TO
 
-   o_vrstep()
+   //o_vrstep()
    // o_tnal()
    // o_tdok()
    // o_partner()
@@ -108,14 +109,14 @@ FUNCTION fin_dnevnik_naloga()
 
    cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
 
-   fin_nalog_zaglavlje( dDatNal )
+   fin_nalog_zaglavlje( dDatNal, cIdFirma, cIdVN, cBrNal )
 
    nTSDugBHD := nTSPotBHD := nTSDugDEM := nTSPotDEM := 0   // tekuca strana
 
    DO WHILE !Eof()
 
       IF PRow() < 6  // nije odstampano zaglavlje
-         fin_nalog_zaglavlje( dDatNal )
+         fin_nalog_zaglavlje( dDatNal, cIdFirma, cIdVN, cBrNal )
       ENDIF
 
       cIdFirma := field->IDFIRMA
@@ -125,13 +126,13 @@ FUNCTION fin_dnevnik_naloga()
 
       IF cMjGod != Str( Month( dDatNal ), 2, 0 ) + Str( Year( dDatNal ), 4, 0 )
          PrenosDNal() // završi stranu
-         fin_nalog_zaglavlje( dDatNal ) // stampaj zaglavlje (nova stranica)
+         fin_nalog_zaglavlje( dDatNal, cIdFirma, cIdVN, cBrNal ) // stampaj zaglavlje (nova stranica)
       ENDIF
 
       cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
 
       find_suban_by_broj_dokumenta( cIdFirma, cIdVn, cBrNal )
-      fin_nalog_stampa_fill_psuban( "3", NIL, dDatNal )
+      fin_nalog_stampa_fill_psuban( "3", .T., dDatNal, NIL, {} )
 
       SELECT NALOG_DNEVNIK
 

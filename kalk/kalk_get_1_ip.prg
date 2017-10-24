@@ -16,30 +16,30 @@
 FUNCTION kalk_get_1_ip()
 
    LOCAL nFaktVPC
-   LOCAL _x := 8
+   LOCAL nX := 8
    LOCAL _pos_x, _pos_y
    LOCAL _left := 25
    PRIVATE aPorezi := {}
 
    _datfaktp := _datdok
 
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY "Konto koji zaduzuje" GET _IdKonto  VALID P_Konto( @_IdKonto, _x, 35 ) PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto koji zaduzuje" GET _IdKonto  VALID P_Konto( @_IdKonto, nX, 35 ) PICT "@!"
 
    // IF gNW <> "X"
-   // @ box_x_koord() + _x, box_y_koord() + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
-   // VALID Empty( _idzaduz ) .OR. p_partner( @_idzaduz, _x, 35 )
+   // @ box_x_koord() + nX, box_y_koord() + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
+   // VALID Empty( _idzaduz ) .OR. p_partner( @_idzaduz, nX, 35 )
    // ENDIF
 
    READ
    ESC_RETURN K_ESC
 
-   _x += 2
-   _pos_x := box_x_koord() + _x
+   nX += 2
+   _pos_x := box_x_koord() + nX
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + _x, box_y_koord() + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + nX, box_y_koord() + 2, @aPorezi )
 
 
-   @ box_x_koord() + _x, box_y_koord() + ( f18_max_cols() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
+   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
 
    READ
 
@@ -67,25 +67,23 @@ FUNCTION kalk_get_1_ip()
 
    // DuplRoba()
 
-   ++_x
-   ++_x
+   ++nX
+   ++nX
 
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY PadL( "KNJIZNA KOLICINA:", _left ) GET _gkolicina PICT PicKol  ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "KNJIŽNA KOLICINA:", _left ) GET _gkolicina PICT PicKol  ;
       WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
 
-   @ box_x_koord() + _x, Col() + 2 SAY "POPISANA KOLICINA:" GET _kolicina VALID VKol() PICT PicKol
-
+   @ box_x_koord() + nX, Col() + 2 SAY8 "POPISANA KOLIČINA:" GET _kolicina VALID VKol() PICT PicKol
 
    _tmp := "P.CIJENA (SA PDV):"
 
+   ++nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "NABAVNA CIJENA:", _left ) GET _nc PICT picdem
 
-   ++_x
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY PadL( "NABAVNA CIJENA:", _left ) GET _nc PICT picdem
-
-   ++_x
-   ++_x
-   @ box_x_koord() + _x, box_y_koord() + 2 SAY PadL( _tmp, _left ) GET _mpcsapp PICT picdem
+   ++nX
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( _tmp, _left ) GET _mpcsapp PICT picdem
 
    READ
 

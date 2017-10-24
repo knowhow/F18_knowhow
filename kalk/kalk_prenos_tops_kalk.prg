@@ -136,6 +136,9 @@ FUNCTION kalk_prenos_iz_pos_u_kalk()
       // nMeniOdabir := 0
       nMeniOdabir++
 
+      IF nMeniOdabir > Len( aOpcije )
+         nMeniOdabir := 0
+      ENDIF
    ENDDO
 
    IF !lIzvrsitiPrenos
@@ -163,7 +166,7 @@ FUNCTION pos_kalk_napuni_kalk_pripr( cTopskaImeDbf, cIdVdKalk ) // , lAutoRazduz
       cIdVdKalk := "42" // pos realizacija -> kalk 42
    ENDIF
 
-   AltD()
+   // AltD()
    // LOCAL _razd_type := "1"
 
    select_o_kalk_pripr()

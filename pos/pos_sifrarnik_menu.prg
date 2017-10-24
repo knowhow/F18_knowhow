@@ -14,14 +14,6 @@
 
 FUNCTION pos_sifarnici()
 
-   tops_sifarnici()
-
-   RETURN .T.
-
-
-
-FUNCTION tops_sifarnici()
-
    PRIVATE opc := {}
    PRIVATE opcexe := {}
    PRIVATE Izbor := {}

@@ -240,11 +240,9 @@ STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
    DO WHILE (  ( nRslt := provjeri_stanje_kalk_pripreme( cIdVd ) ) <> 0 )
 
       IF lPrvi .OR. ( nRslt == 1 ) // vezni dokument u kalk_pripremi je ok
-
          IF !kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
             RETURN .F.
          ENDIF
-
       ENDIF
 
       IF lPrvi
@@ -479,10 +477,13 @@ FUNCTION kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
       RETURN .F.
    ENDIF
 
-   IF lStampaj == .T.
-      kalk_stampa_dokumenta( NIL, NIL, .T. )
+   IF lStampaj
+      //kalk_stampa_dokumenta( NIL, NIL, .T. )
+      kalk_stampa_svih_dokumenata_u_pripremi()
    ENDIF
-   kalk_azuriranje_dokumenta( .T., lStampaj )
+
+   //kalk_azuriranje_dokumenta( .T., lStampaj )
+   kalk_azuriraj_sve_u_pripremi( lStampaj )
    o_kalk_edit()
 
    RETURN .T.

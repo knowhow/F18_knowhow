@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION OdrediSmjenu( lOdredi )
+FUNCTION pos_odredi_smjenu( lOdredi )
 
    LOCAL cOK := " "
    PRIVATE dDatum := gDatum

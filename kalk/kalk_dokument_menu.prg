@@ -15,33 +15,33 @@
 
 FUNCTION kalk_pregled_dokumenata()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. štampa ažuriranog dokumenta              " )
-   AAdd( _opcexe, {|| kalk_stampa_dokumenta( .T. ) } )
+   AAdd( aOpc, "1. štampa ažuriranog dokumenta              " )
+   AAdd( aOpcExe, {|| kalk_stampa_dokumenta( .T. ) } )
 
-   AAdd( _opc, "2. štampa liste dokumenata" )
-   AAdd( _opcexe, {|| kalk_stampa_liste_dokumenata() } )
-
-/*
-   AAdd( _opc, "3. pregled dokumenata po hronologiji obrade" )
-   AAdd( _opcexe, {|| kalk_pregled_dokumenata_hronoloski() } )
-*/
-
-   AAdd( _opc, "4. pregled dokumenata - tabelarni pregled" )
-   AAdd( _opcexe, {|| browse_kalk_dokumenti() } )
+   AAdd( aOpc, "2. štampa liste dokumenata" )
+   AAdd( aOpcExe, {|| kalk_stampa_liste_dokumenata() } )
 
 /*
-   AAdd( _opc, "5. radni nalozi " )
-   AAdd( _opcexe, {|| BrowseRn() } )
+   AAdd( aOpc, "3. pregled dokumenata po hronologiji obrade" )
+   AAdd( aOpcExe, {|| kalk_pregled_dokumenata_hronoloski() } )
 */
 
-   AAdd( _opc, "8. kalkulacija cijena" )
-   AAdd( _opcexe, {|| kalkulacija_cijena() } )
+   AAdd( aOpc, "4. pregled dokumenata - tabelarni pregled" )
+   AAdd( aOpcExe, {|| browse_kalk_dokumenti() } )
 
-   f18_menu( "razp", .F., _izbor, _opc, _opcexe )
+/*
+   AAdd( aOpc, "5. radni nalozi " )
+   AAdd( aOpcExe, {|| BrowseRn() } )
+*/
+
+   AAdd( aOpc, "8. kalkulacija cijena" )
+   AAdd( aOpcExe, {|| kalkulacija_cijena() } )
+
+   f18_menu( "razp", .F., nIzbor, aOpc, aOpcExe )
 
    //my_close_all_dbf()
 
@@ -50,19 +50,19 @@ FUNCTION kalk_pregled_dokumenata()
 
 FUNCTION kalk_ostale_operacije_doks()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. povrat dokumenta u pripremu" )
-   AAdd( _opcexe, {|| kalk_povrat_dokumenta() } )
-
-
-   AAdd( _opc, "S. pregled smeća " )
-   AAdd( _opcexe, {|| kalk_pregled_smece_pripr9() } )
+   AAdd( aOpc, "1. povrat dokumenta u pripremu" )
+   AAdd( aOpcExe, {|| kalk_povrat_dokumenta() } )
 
 
-   f18_menu( "mazd", .F., _izbor, _opc, _opcexe )
+   AAdd( aOpc, "S. pregled smeća " )
+   AAdd( aOpcExe, {|| kalk_pregled_smece_pripr9() } )
+
+
+   f18_menu( "mazd", .F., nIzbor, aOpc, aOpcExe )
 
    //my_close_all_dbf()
 

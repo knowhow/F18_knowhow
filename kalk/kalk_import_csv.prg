@@ -869,9 +869,7 @@ STATIC FUNCTION TTbl2Kalk()
 
    RETURN 1
 
-// ---------------------------------------------
-// Obrada jednog dokumenta
-// ---------------------------------------------
+
 STATIC FUNCTION kalk_import_csv_obradi_dokument( lAsPokreni, lStampaj )
 
    LOCAL lTrosk := .F.
@@ -905,7 +903,7 @@ STATIC FUNCTION kalk_import_csv_obradi_dokument( lAsPokreni, lStampaj )
       kalk_stampa_dokumenta( NIL, NIL, .T. ) // odstampaj kalk
    ENDIF
 
-   kalk_azuriranje_dokumenta( .T. ) // azuriraj kalk
+   kalk_azuriranje_dokumenta_auto_bez_stampe() // azuriraj kalk
 
    o_kalk_edit()
 

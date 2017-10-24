@@ -93,8 +93,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    // LOCAL nP78
    LOCAL nP79
    LOCAL nPrimanjaStvariUsluge, nUNet, nNetoOsn, nUNetoOsnova
-   LOCAL nKoefDopr1X, nKoefDopr2X, nKoefDopr3X
-   LOCAL nKoefDopr5X, nKoefDopr6X, nKoefDopr7X
+   LOCAL nKoefDopr1X, nKoefDopr2X //, nKoefDopr3X
+   LOCAL nKoefDopr5X, nKoefDopr6X //, nKoefDopr7X
    LOCAL nKoefDodatniDoprinosZdravstvo, nKoefDodatniDoprinosPio
    LOCAL nDopr1X, nDopr2X, nDopr3X  // iznosi dopr IZ
    LOCAL nDopr5X, nDopr6X, nDopr7X  // iznosi dopr NA
@@ -248,7 +248,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    set_metric( "ld_firma_adresa", NIL, cFirmAdresa )
    set_metric( "ld_firma_opcina", NIL, cFirmOpc )
    set_metric( "ld_firma_vrsta_djelatnosti", NIL, cVrstaDjelatnosti )
-   set_metric( "ld_specifikacija_minuli_rad", NIL, cMRad )
+   set_metrgic( "ld_specifikacija_minuli_rad", NIL, cMRad )
    set_metric( "ld_specifikacija_primanja_dobra", NIL, cPrimanjaStvariUsluge )
    set_metric( "ld_specifikacija_doprinos_1", NIL, cDoprIz1 )
    set_metric( "ld_specifikacija_doprinos_2", NIL, cDoprIz2 )
@@ -601,7 +601,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       nKoefDopr6X := find_field_by_id( "dopr", cDoprNa2, "iznos" )
       //nKoefDopr7X := find_field_by_id( "dopr", cDoprNa3, "iznos" )
 
-      nPom := nKoefDopr1X + nKoefDopr2X + nKoefDopr3X
+      nPom := nKoefDopr1X + nKoefDopr2X //+ nKoefDopr3X
 
 
       nPom := nKoefDopr1X
@@ -610,8 +610,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       nPom := nKoefDopr2X
       hRec[ "stopa_17" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // zdravstvo iz
 
-      nPom := nKoefDopr3X
-      hRec[ "stopa_18" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezaposlenost iz
+      //nPom := nKoefDopr3X
+      //hRec[ "stopa_18" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezaposlenost iz
 
 
       nPom := nKoefDopr5X
@@ -620,10 +620,10 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       nPom := nKoefDopr6X
       hRec[ "stopa_21" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // zdrav na
 
-      nPom := nKoefDopr7X
-      hRec[ "stopa_22" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezap na
+      //nPom := nKoefDopr7X
+      //hRec[ "stopa_22" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezap na
 
-      nPom := nKoefDopr5X + nKoefDopr6X + nKoefDopr7X + nKoefDodatniDoprinosZdravstvo + nKoefDodatniDoprinosPio
+      nPom := nKoefDopr5X + nKoefDopr6X + nKoefDodatniDoprinosZdravstvo + nKoefDodatniDoprinosPio
 
 
       nPom := nKoefDodatniDoprinosPio
@@ -634,8 +634,9 @@ FUNCTION ld_specifikacija_plate_obr_2001()
 
 
 
-      nPojDoprIZ := round2( ( nMPojBrOsn * nKoefDopr1X / 100 ), gZaok2 ) + round2( ( nMPojBrOsn * nKoefDopr2X / 100 ), gZaok2 ) + ;
-         round2( ( nMPojBrOsn * nKoefDopr3X / 100 ), gZaok2 )
+      nPojDoprIZ := round2( ( nMPojBrOsn * nKoefDopr1X / 100 ), gZaok2 ) + ;
+         round2( ( nMPojBrOsn * nKoefDopr2X / 100 ), gZaok2 )
+         //round2( ( nMPojBrOsn * nKoefDopr3X / 100 ), gZaok2 )
 
 
       nRadnikPoreznaOsnovica := ( nRadnikBrutoOsnovica - nPojDoprIz ) - nKoefLicniOdbici
@@ -708,8 +709,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    nDopr2X := round2( nUkupnoBrutoOsnovicaSaMinLimit * nKoefDopr2X / 100, gZaok2 ) // iznos zdr iz
    hRec[ "iznos_17" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr2X, cVrstaIsplate ), 16, cPictureIznos )
 
-   nDopr3X := round2( nUkupnoBrutoOsnovicaSaMinLimit * nKoefDopr3X / 100, gZaok2 ) // iznos nez iz
-   hRec[ "iznos_18" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr3X, cVrstaIsplate ), 16, cPictureIznos )
+   //nDopr3X := round2( nUkupnoBrutoOsnovicaSaMinLimit * nKoefDopr3X / 100, gZaok2 ) // iznos nez iz
+   //hRec[ "iznos_18" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr3X, cVrstaIsplate ), 16, cPictureIznos )
 
    nUkDoprIZ := nDopr1X + nDopr2X + nDopr3X
    hRec[ "iznos_19" ] := FormNum2( isplata_dopr_kontrola_iznosa( nUkDoprIZ, cVrstaIsplate ), 16, cPictureIznos )
@@ -720,8 +721,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    nDopr6X := round2( nUkupnoBrutoOsnovicaSaMinLimit * nKoefDopr6X / 100, gZaok2 )
    hRec[ "iznos_21" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr6X, cVrstaIsplate ), 16, cPictureIznos )
 
-   nDopr7X := round2( nUkupnoBrutoOsnovicaSaMinLimit * nKoefDopr7X / 100, gZaok2 )
-   hRec[ "iznos_22" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr7X, cVrstaIsplate ), 16, cPictureIznos )
+   //nDopr7X := round2( nUkupnoBrutoOsnovicaSaMinLimit * nKoefDopr7X / 100, gZaok2 )
+   //hRec[ "iznos_22" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDopr7X, cVrstaIsplate ), 16, cPictureIznos )
 
    // dodatni doprinos zdr i pio
    hRec[ "iznos_23" ] := FormNum2( isplata_dopr_kontrola_iznosa( nDodDoprP, cVrstaIsplate ), 16, cPictureIznos )

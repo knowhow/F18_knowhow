@@ -140,16 +140,16 @@ FUNCTION set_metric( cSection, cUser, xValue )
 
 STATIC FUNCTION str_to_val( xValue, xDefaultValue )
 
-   LOCAL _val_type := ValType( xDefaultValue )
+   LOCAL cValType := ValType( xDefaultValue )
 
    DO CASE
-   CASE _val_type == "C"
+   CASE cValType == "C"
       RETURN hb_UTF8ToStr( xValue )
-   CASE _val_type == "N"
+   CASE cValType == "N"
       RETURN Val( xValue )
-   CASE _val_type == "D"
+   CASE cValType == "D"
       RETURN CToD( xValue )
-   CASE _val_type == "L"
+   CASE cValType == "L"
       IF Lower( xValue ) == ".t."
          RETURN .T.
       ELSE

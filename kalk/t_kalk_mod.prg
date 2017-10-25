@@ -128,7 +128,6 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gAMat := "0"
    PUBLIC gAFakt := "D"
    PUBLIC gVodiKalo := "N"
-   PUBLIC gAutoRavn := "N"
    PUBLIC gAutoCjen := "D"
    PUBLIC gVarEv := "1"  // 1-sa cijenama   2-bez cijena
    PUBLIC c24T1 := PadR( "Tr 1", 15 )
@@ -273,7 +272,7 @@ METHOD TKalkMod:set_module_gvars()
 
    gPotpis := fetch_metric( "kalk_potpis_na_kraju_naloga", nil, gPotpis )
    gRCRP := fetch_metric( "kalk_varijanta_popusta_na_dokumentima", nil, gRCRP )
-   gAutoRavn := fetch_metric( "kalk_kontiranje_automatska_ravnoteza_naloga", nil, gAutoRavn )
+
    gAutoCjen := fetch_metric( "kalk_automatsko_azuriranje_cijena", nil, gAutoCjen )
    gRobaTr1Tip := fetch_metric( "kalk_trosak_1_tip", nil, gRobaTr1Tip )
    gRobaTr2Tip := fetch_metric( "kalk_trosak_2_tip", nil, gRobaTr2Tip )

@@ -26,6 +26,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
    LOCAL nTot1 := 0, nTot2 := 0, nTot3 := 0, nTot4 := 0, nTot5 := 0, nTot6 := 0, nTot7 := 0, nTot8 := 0, nTot9 := 0, nTota := 0, nTotb := 0, nTotC := 0
    LOCAL nCol1 := 0, nCol2 := 0, nCol3 := 0
    LOCAL cFinAutoBrojDN := "N"
+   LOCAL GetList := {}
 
    // LOCAL nZaokruzenje := gZaokr
    LOCAL nZaokruzenje := 12
@@ -134,7 +135,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
       Box( "#DOKUMENT " + cIdFirma + "-" + cIdVd + "-" + cBrDok, 9, 77 )
 
       cDalje := "D"
-      cAutoRav := gAutoRavn
+      cAutoRav := param_fin_automatska_ravnoteza_kod_azuriranja()
 
       select_o_partner( KALK_PRIPR->IDPARTNER )
       select_o_konto( KALK_PRIPR->MKONTO )
@@ -149,9 +150,9 @@ FUNCTION kalk_kontiranje_gen_finmat()
       @ box_x_koord() + 4, Col() + 1 SAY MKONTO + "-" + PadR( cPom, 49 )       COLOR "N/W"
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "KONTO PRODAVNICE->"             COLOR "W+/B"
       @ box_x_koord() + 5, Col() + 1 SAY PKONTO + "-" + PadR( KONTO->naz, 49 ) COLOR "N/W"
-      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Automatski uravnotezi dokument? (D/N)" GET cAutoRav VALID cAutoRav $ "DN" PICT "@!"
-      @ box_x_koord() + 8, box_y_koord() + 2 SAY "Zelite li kontirati dokument? (D/N)" GET cDalje VALID cDalje $ "DN" PICT "@!"
-      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Automatski broj fin.naloga? (D/N)" GET cFinAutoBrojDN VALID cFinAutoBrojDN $ "DN" PICT "@!"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Automatski uravnoteži dokument? (D/N)" GET cAutoRav VALID cAutoRav $ "DN" PICT "@!"
+      @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Želite li kontirati dokument? (D/N)" GET cDalje VALID cDalje $ "DN" PICT "@!"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Automatski broj fin.naloga? (D/N)" GET cFinAutoBrojDN VALID cFinAutoBrojDN $ "DN" PICT "@!"
 
       READ
 

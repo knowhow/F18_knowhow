@@ -125,7 +125,7 @@ FUNCTION fin_nalog_stampa_nakon_kontiranja( lAuto, lStampa )
    ENDIF
 
    IF lStampa  // ako se nalog stampa, onda pitati korisnika za azuriranje
-       lAuto := .F.
+      lAuto := .F.
    ENDIF
 
    RETURN fin_azuriranje_naloga( lAuto )
@@ -140,6 +140,7 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
    LOCAL nPotrazuje2 := 0
    LOCAL lRet := .T.
    LOCAL hRec
+   LOCAL cUravnotezitiDN := "N"
 
    hb_default( @lAuto, .F. ) // .T. - ispravka se vrsi bez pitanja
    PushWa()
@@ -181,11 +182,17 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
 
    hRec := dbf_get_rec()
 
+   IF fin_automatska_ravnoteza_kod_azuriranja()
+      cUravnotezitiDN := "D"
+   ELSE
+      cUravnotezitiDN := "N"
+   ENDIF
+
    IF Round( nDuguje - nPotrazuje, 2 ) == 0
       lRet := .T.
    ELSE
 
-      IF  ( lAuto .OR. ( Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "N" ) == "D" ) )
+      IF  ( lAuto .OR. ( Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", cUravnotezitiDN ) == "D" ) )
 
          hRec[ "opis" ] := "GRESKA ZAOKRUZ."
          hRec[ "brdok" ] := ""

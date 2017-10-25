@@ -1,8 +1,8 @@
 # F18 klijent, lista promjena
 
-## 3.1.131-std, 2017-10-24
+## 3.1.135-std, 2017-10-25
 ### LD
-- debug specif 2001
+- debug5 specif 2001
  
 ## 3.1.118-std, 2017-10-19
 ### CORE

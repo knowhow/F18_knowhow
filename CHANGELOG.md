@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.136-vindi, 2017-10-25
+### KALK
+- kalk - pos - fin, ako se štampa nalog onda se korisnik pita za ažuriranje FIN dokumenta
+
 ## 3.1.126-vindi, 2017-10-23
 ### KALK
 - pos-kalk-fin cleanup stampa fin naloga

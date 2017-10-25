@@ -22,7 +22,7 @@ FUNCTION kalk_prenos_iz_pos_u_kalk()
    LOCAL lReturn := .T.
    LOCAL nI, aTopskaDbfs, aH
    LOCAL cDbfImportUslov := "tk*.dbf"
-   LOCAL lIzvrsitiPrenos, nMeniOdabir, _a_tmp1, _a_tmp2
+   LOCAL lIzvrsitiPrenos, nMeniOdabir  //, _a_tmp1, _a_tmp2
    LOCAL cTopsDest := kalk_destinacija_topska()
    LOCAL cPosKalkDbf
    LOCAL lStampaj

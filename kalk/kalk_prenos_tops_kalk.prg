@@ -13,6 +13,8 @@
 
 #define D_MAX_FILES     150
 
+STATIC s_cKalkPosKalkAutoDN := NIL
+STATIC s_cKalkPosKalkStampaDN := NIL
 
 FUNCTION kalk_prenos_iz_pos_u_kalk()
 
@@ -22,10 +24,13 @@ FUNCTION kalk_prenos_iz_pos_u_kalk()
    LOCAL lReturn := .T.
    LOCAL nI, aTopskaDbfs, aH
    LOCAL cDbfImportUslov := "tk*.dbf"
-   LOCAL lIzvrsitiPrenos, nMeniOdabir  //, _a_tmp1, _a_tmp2
+   LOCAL lIzvrsitiPrenos, nMeniOdabir  // , _a_tmp1, _a_tmp2
    LOCAL cTopsDest := kalk_destinacija_topska()
    LOCAL cPosKalkDbf
    LOCAL lStampaj
+   LOCAL cKalkPosKalkAutoDN := param_kalk_pos_kalk_auto()
+   LOCAL cKalkPosKalkStampaDN := param_kalk_pos_kalk_stampa()
+   LOCAL GetList := {}
 
    // LOCAL cBrKalk
 
@@ -69,7 +74,27 @@ FUNCTION kalk_prenos_iz_pos_u_kalk()
 
    aProdajnaMjesta := get_sva_prodajna_mjesta_iz_koncij()
 
-   lStampaj := ( Pitanje( NIL, "Želite li štampati kalk dokumente?", "D" ) == "D" )
+   Box( "#Parametri prenosa POS-KALK", 3, 65 )
+   @  box_x_koord() + 1, box_y_koord() + 2   SAY8 "Automatska obrada (D)/ Ne - odlazak u KALK priprema (N) " GET cKalkPosKalkAutoDN PICT "@!" VALID cKalkPosKalkStampaDN $ "DN"
+   READ
+
+   IF cKalkPosKalkAutoDN == "D"
+      @  box_x_koord() + 2, box_y_koord() + 2 SAY8 "Štampa KALK/FIN (D/N):" GET cKalkPosKalkStampaDN PICT "@!" VALID cKalkPosKalkStampaDN $ "DN"
+      READ
+   ELSE
+      cKalkPosKalkStampaDN := "N"
+   ENDIF
+
+   BoxC()
+
+   param_kalk_pos_kalk_auto( cKalkPosKalkAutoDN )
+   param_kalk_pos_kalk_stampa( cKalkPosKalkStampaDN )
+
+   IF LastKey() == K_ESC
+      RETURN .F.
+   ENDIF
+
+   lStampaj := ( cKalkPosKalkStampaDN == "D" )
 
    IF Len( aProdajnaMjesta ) == 0
       MsgBeep( "U tabeli koncij nisu definisana prodajna mjesta !" ) // imamo problem, nema prodajnih mjesta
@@ -131,7 +156,12 @@ FUNCTION kalk_prenos_iz_pos_u_kalk()
          LOOP
       ENDIF
 
-      kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
+      IF cKalkPosKalkAutoDN == "N"
+         kalk_pripr_obrada( .F. )
+      ELSE
+         kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
+      ENDIF
+
       lIzvrsitiPrenos := .T.
       // nMeniOdabir := 0
       nMeniOdabir++
@@ -147,6 +177,36 @@ FUNCTION kalk_prenos_iz_pos_u_kalk()
 
    RETURN lReturn
 
+
+STATIC FUNCTION param_kalk_pos_kalk_auto( cSet )
+
+   LOCAL cParamKey := "kalk_pos_kalk_auto"
+   IF cSet != NIL
+      s_cKalkPosKalkAutoDN := cSet
+      set_metric( cParamKey, my_user(), cSet )
+   ENDIF
+
+   IF s_cKalkPosKalkAutoDN == NIL
+      s_cKalkPosKalkAutoDN := fetch_metric( cParamKey, my_user(), "D" )
+   ENDIF
+
+   RETURN s_cKalkPosKalkAutoDN
+
+
+STATIC FUNCTION param_kalk_pos_kalk_stampa( cSet )
+
+   LOCAL cParamKey := "kalk_pos_kalk_stampa"
+
+   IF cSet != NIL
+      s_cKalkPosKalkStampaDN := cSet
+      set_metric( cParamKey, my_user(), cSet )
+   ENDIF
+
+   IF s_cKalkPosKalkStampaDN == NIL
+      s_cKalkPosKalkStampaDN := fetch_metric( cParamKey, my_user(), "D" )
+   ENDIF
+
+   RETURN s_cKalkPosKalkStampaDN
 
 
 FUNCTION pos_kalk_napuni_kalk_pripr( cTopskaImeDbf, cIdVdKalk ) // , lAutoRazduzenje )

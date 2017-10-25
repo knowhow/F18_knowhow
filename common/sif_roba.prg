@@ -237,6 +237,7 @@ FUNCTION MpcIzVpc()
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT "9"
    @ box_x_koord() + 6, box_y_koord() + 2 SAY "MPC" + cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC := Round( _VPC&cVPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 + tarifa->zpp / 100 ), nZaokNa ), .T. } PICT kalk_pic_iznos_bilo_gpicdem()
    READ
+
    BoxC()
    IF LastKey() <> K_ESC
       Gather()

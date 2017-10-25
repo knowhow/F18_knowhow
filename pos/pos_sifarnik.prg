@@ -53,6 +53,8 @@ FUNCTION P_Odj( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol := {}
 
+   select_o_pos_odj()
+
    ImeKol := { { "ID ", {|| id }, "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) } }, { PadC( "Naziv", 25 ), {|| naz }, "naz" }, { "Konto u KALK", {|| IdKonto }, "IdKonto" } }
 
    FOR i := 1 TO Len( ImeKol )

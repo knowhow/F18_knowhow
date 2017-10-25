@@ -71,7 +71,7 @@ FUNCTION pos_admin_menu()
   // AAdd( opc, "X. briši nepostojeće dokumente" )
   // AAdd( opcexe, {|| pos_brisi_nepostojece_dokumente() } )
 
-   IF ( KLevel < L_UPRAVN )
+   IF ( g_cUserLevel < L_UPRAVN )
 
       AAdd( opc, "---------------------------" )
       AAdd( opcexe, nil )

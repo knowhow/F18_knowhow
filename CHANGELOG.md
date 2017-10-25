@@ -1,5 +1,8 @@
 # F18 klijent, lista promjena
 
+## 3.1.137-vindi, 2017-10-25
+- kalk - pos automatski/manuelno, uzeti u obzir parametar za automatsku ravnotežu FIN naloga
+
 ## 3.1.136-vindi, 2017-10-25
 ### KALK
 - kalk - pos - fin, ako se štampa nalog onda se korisnik pita za ažuriranje FIN dokumenta

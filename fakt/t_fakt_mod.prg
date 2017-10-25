@@ -527,7 +527,7 @@ METHOD set_module_gvars()
    //PUBLIC glDistrib := .F.
    PUBLIC gPovDob := "0"
 
-   PUBLIC gUVarPP := "M"
+   //PUBLIC gUVarPP := "M"
 
    gModul := "FAKT"
 

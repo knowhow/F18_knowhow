@@ -46,7 +46,6 @@ FUNCTION sastavnica_copy()
             RETURN .F.
          ENDIF
 
-         AltD()
          // SELECT sast
          // SET ORDER TO TAG "idrbr"
          o_sastavnice( cIdTek, "IDRBR" )

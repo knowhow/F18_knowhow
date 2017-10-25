@@ -45,7 +45,6 @@ FUNCTION pos_init()
 
    my_close_all_dbf()
 
-   AltD()
    pos_definisi_inicijalne_podatke()
    cre_priprz()
 

@@ -34,7 +34,7 @@ FUNCTION roba_valid_barkod( nCh, cIdRoba, cBarkodId )
    // IF Empty( cBarkod ) //.AND. my_get_from_ini( "BARKOD", "Auto", "N", SIFPATH ) == "D" .AND. my_get_from_ini( "BARKOD", "Svi", "N", SIFPATH ) == "D" .AND. ( Pitanje(, "Formirati Barkod ?", "N" ) == "D" )
    // cBK := NoviBK_A()
    // ENDIF
-   AltD()
+
    cIdRoba2 := find_roba_id_by_barkod( cBarkodId )
 
    IF Empty( cIdRoba2 )

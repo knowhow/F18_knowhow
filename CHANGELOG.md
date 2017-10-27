@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.140-std, 2017-10-27
+### VIRM
+- bugfix cre virm_pripr.dbf
+
 ## 3.1.135-std, 2017-10-25
 ### LD
 - debug5 specif 2001

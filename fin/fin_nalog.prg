@@ -109,13 +109,12 @@ FUNCTION fin_nalog_stampa_nakon_kontiranja( lAuto, lStampa )
 
    hb_default( @lStampa, .F. )
 
-altd()
    IF !fin_nalog_fix_greska_zaokruzenja_fin_pripr( NIL, NIL, NIL, lAuto )
       RETURN .F.
    ENDIF
 
    IF !lAuto .OR. ( lAuto .AND. lStampa )
-      fin_gen_ptabele_stampa_nalozi( lAuto, lStampa ) // stampa
+      fin_gen_ptabele_stampa_nalozi( lAuto, lStampa ) // nije auti, ili jeste auto + stampa da
    ELSE
       fin_gen_psuban_stavke_auto_import()
       fin_gen_sint_stavke_auto_import()
@@ -123,6 +122,10 @@ altd()
 
    IF !is_fin_nalog_u_ravnotezi() // pretpostavlja da je u fin_pripr jedan fin nalog
       RETURN .F.
+   ENDIF
+
+   IF lStampa  // ako se nalog stampa, onda pitati korisnika za azuriranje
+      lAuto := .F.
    ENDIF
 
    RETURN fin_azuriranje_naloga( lAuto )
@@ -137,6 +140,7 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
    LOCAL nPotrazuje2 := 0
    LOCAL lRet := .T.
    LOCAL hRec
+   LOCAL cUravnotezitiDN := "N"
 
    hb_default( @lAuto, .F. ) // .T. - ispravka se vrsi bez pitanja
    PushWa()
@@ -178,11 +182,17 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
 
    hRec := dbf_get_rec()
 
+   IF fin_automatska_ravnoteza_kod_azuriranja()
+      cUravnotezitiDN := "D"
+   ELSE
+      cUravnotezitiDN := "N"
+   ENDIF
+
    IF Round( nDuguje - nPotrazuje, 2 ) == 0
       lRet := .T.
    ELSE
 
-      IF  ( lAuto .OR. ( Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "N" ) == "D" ) )
+      IF  ( lAuto .OR. ( Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", cUravnotezitiDN ) == "D" ) )
 
          hRec[ "opis" ] := "GRESKA ZAOKRUZ."
          hRec[ "brdok" ] := ""
@@ -229,7 +239,6 @@ FUNCTION fin_gen_ptabele_stampa_nalozi( lAuto, lStampa )
       lStampa := .T.
    ENDIF
 
-altd()
    IF fin_gen_psuban_stampa_nalozi( lAuto, lStampa, @dDatNal )
       IF lAuto
          lStampa := .F. // kada je auto, ne stampati sintetiku

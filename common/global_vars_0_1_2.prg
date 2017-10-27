@@ -247,7 +247,7 @@ FUNCTION set_global_vars_2()
 
 FUNCTION set_global_vars_roba()
 
-   PUBLIC gUVarPP
+   //PUBLIC gUVarPP
    PUBLIC gRobaBlock
    PUBLIC gPicProc
 
@@ -271,7 +271,7 @@ FUNCTION set_global_vars_roba()
    // RMarza_DLimit - osnovica realizovana marza ili donji limit
    // MpcSaPor - Maloprodajna cijena sa porezom
    gUgostVarijanta := "Rmarza_DLimit"
-   gUVarPP := "N"
+   //gUVarPP := "N"
    gRobaBlock := NIL
 
 

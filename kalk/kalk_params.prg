@@ -16,6 +16,7 @@ STATIC s_cKalkPreuzimanjeTroskovaIzSifRoba := NIL
 STATIC s_cKalkMetodaNc := NIL
 STATIC s_cKonverzijaValuteDN := NIL
 STATIC s_cKalkPosGeneracijaKalk11NaOsnovuPos42DN := NIL
+STATIC s_cFinAutomatskaRavnotezaKodAzuriranjaDN := NIL
 
 FUNCTION kalk_params()
 
@@ -81,6 +82,8 @@ FUNCTION kalk_par_varijante_prikaza()
    LOCAL nX := 1
    LOCAL cRobaTrosk :=  kalk_preuzimanje_troskova_iz_sif_roba()
    LOCAL cKonverzijaValuteDn := kalk_konverzija_valute_na_unosu()
+   LOCAL cFinAutoAzurDN := param_fin_automatska_ravnoteza_kod_azuriranja()
+
    LOCAL GetList := {}
 
    Box(, 23, 76, .F., "Varijante obrade i prikaza pojedinih dokumenata" )
@@ -140,7 +143,7 @@ FUNCTION kalk_par_varijante_prikaza()
    nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Kolicina za nivelaciju iz FAKT-a " GET  gKolicFakt VALID gKolicFakt $ "DN"  PICT "@!"
 
-   @ box_x_koord() + nX, Col() + 1 SAY8 "Auto ravnoteža naloga (FIN):" GET gAutoRavn VALID gAutoRavn $ "DN" PICT "@!"
+   @ box_x_koord() + nX, Col() + 1 SAY8 "Auto ravnoteža naloga (FIN):" GET cFinAutoAzurDN VALID cFinAutoAzurDN $ "DN" PICT "@!"
 
    nX += 1
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Automatsko ažuriranje cijena u šifarnik (D/N)" GET gAutoCjen VALID gAutoCjen $ "DN" PICT "@!"
@@ -165,7 +168,7 @@ FUNCTION kalk_par_varijante_prikaza()
 
       kalk_preuzimanje_troskova_iz_sif_roba( cRobaTrosk )
       set_metric( "kalk_varijanta_popusta_na_dokumentima", NIL, gRCRP )
-      set_metric( "kalk_kontiranje_automatska_ravnoteza_naloga", NIL, gAutoRavn )
+
       set_metric( "kalk_automatsko_azuriranje_cijena", NIL, gAutoCjen )
       set_metric( "kalk_trosak_1_tip", NIL, gRobaTr1Tip )
       set_metric( "kalk_trosak_2_tip", NIL, gRobaTr2Tip )
@@ -173,10 +176,33 @@ FUNCTION kalk_par_varijante_prikaza()
       set_metric( "kalk_trosak_4_tip", NIL, gRobaTr4Tip )
       set_metric( "kalk_trosak_5_tip", NIL, gRobaTr5Tip )
       kalk_konverzija_valute_na_unosu( cKonverzijaValuteDn )
+      param_fin_automatska_ravnoteza_kod_azuriranja( cFinAutoAzurDN )
 
    ENDIF
 
    RETURN NIL
+
+
+FUNCTION param_fin_automatska_ravnoteza_kod_azuriranja( cSet )
+
+   LOCAL cParamKey := "kalk_kontiranje_automatska_ravnoteza_naloga"
+   LOCAL cUserGlobal := NIL
+   LOCAL xDefault := "N"
+
+   IF cSet != NIL
+      s_cFinAutomatskaRavnotezaKodAzuriranjaDN := cSet
+      set_metric( cParamKey, cUserGlobal, cSet )
+   ENDIF
+
+   IF s_cFinAutomatskaRavnotezaKodAzuriranjaDN == NIL
+      s_cFinAutomatskaRavnotezaKodAzuriranjaDN := fetch_metric( cParamKey, cUserGlobal, xDefault )
+   ENDIF
+
+   RETURN s_cFinAutomatskaRavnotezaKodAzuriranjaDN
+
+
+FUNCTION fin_automatska_ravnoteza_kod_azuriranja()
+   RETURN  param_fin_automatska_ravnoteza_kod_azuriranja() == "D"
 
 
 FUNCTION kalk_konverzija_valute_na_unosu( cSet )

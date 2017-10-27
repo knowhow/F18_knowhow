@@ -21,7 +21,8 @@ FUNCTION fakt_fin_prenos()
    PRIVATE cSection := "(", cHistory := " "; aHistory := {}
 
    // lNCPoSast := ( my_get_from_ini( "FAKTFIN", "NCPoSastavnici", "N", KUMPATH ) == "D" )
-   cKonSir   := PadR( my_get_from_ini( "FAKTFIN", "KontoSirovinaIzSastavnice", "1010", KUMPATH ), 7 )
+   // cKonSir   := PadR( my_get_from_ini( "FAKTFIN", "KontoSirovinaIzSastavnice", "1010", KUMPATH ), 7 )
+   cKonSir := "1010"
 
    gFaktKum := ""
 
@@ -177,12 +178,13 @@ FUNCTION fakt_fin_prenos()
             Marza     WITH 0, ;
             VPV       WITH nFV, ;
             RABATV    WITH nRabat, ;
-            Porez     WITH IF( cIdVD <> "11", ( nFV - nRabat ) * fakt->( porez / 100 ), ;
-            PorezMP( "PP" ) ), ;
-            POREZV    WITH IF( cIdVD <> "11", Porez, PorezMP( "PPU" ) ), ;
-            POREZ2    WITH IF( cIdVD <> "11", 0,  PorezMP( "PPP" ) ), ;
+            Porez     WITH IIF( cIdVD <> "11", ( nFV - nRabat ) * fakt->( porez / 100 ), ;
+            fakt_porez_11( nFV, nRabat ) ), ;
             idroba    WITH fakt->idroba, ;
             Kolicina  WITH fakt->Kolicina
+
+            //POREZV    WITH IOF( cIdVD <> "11", Porez, fakt_porez_11( "PPU" ) ), ;
+            //POREZ2    WITH IOF( cIdVD <> "11", 0,  fakt_porez_11( "PPP" ) ), ;
 
          IF ( cSetIdRj == "D" )
             RREPLACE IdRj WITH cIdRjFakt
@@ -190,7 +192,7 @@ FUNCTION fakt_fin_prenos()
 
 /*
          IF cIDVD == "11" .AND. lNCPoSast .AND. TARIFA->mpp <> 0 .AND. FieldPos( "POREZ3" ) > 0
-            RREPLACE porez3 WITH PorezMP( "MPP" )
+            RREPLACE porez3 WITH fakt_porez_11( "MPP" )
          ENDIF
   */
          SELECT fakt
@@ -209,24 +211,23 @@ FUNCTION fakt_fin_prenos()
 
    RETURN .T.
 
-/* PorezMp(cVar)
- *     Porez u maloprodaji
- *   param: cVar
- */
 
-FUNCTION PorezMp( cVar )
 
-   LOCAL nVrati, nCSP, nD, nMBVBP
-   LOCAL nPor1, nPor2, nPor3
-   LOCAL nMPP, nPPP, nPP, nPPU
+FUNCTION fakt_porez_11( nFV, nRabat )
 
-   nMPP := tarifa->mpp / 100
-   nPPP := tarifa->opp / 100
-   nPP := tarifa->zpp / 100
-   nPPU := tarifa->ppp / 100
+   LOCAL nVrati, nCSP
+   LOCAL nPDV
+
+  // nMPP := tarifa->mpp / 100
+  nPDV := tarifa->opp / 100
+  // nPP := tarifa->zpp / 100
+  // nPPU := tarifa->ppp / 100
 
    nCSP := nFV - nRabat     // cijena sa porezima
 
+   nVrati := nCSP * ( nPDV / 100 ) / ( 1 + nPDV / 100 )
+
+/*
    IF gUVarPP == "T"
       nPor1 := nCSP * nPPP / ( 1 + nPPP )
       nPor2 := ( nCSP - nPor1 - nNV ) * nMPP / ( 1 + nMPP )
@@ -243,13 +244,17 @@ FUNCTION PorezMp( cVar )
       ENDCASE
       RETURN nVrati
    ENDIF
+*/
 
+/*
    IF  gUVarPP == "D"
       nD := 1 + TARIFA->zpp / 100 + TARIFA->ppp / 100
    ELSE
       nD := ( 1 + TARIFA->opp / 100 ) * ( 1 + TARIFA->ppp / 100 ) + TARIFA->zpp / 100
    ENDIF
+*/
 
+/*
    DO CASE
    CASE cVar == "PP"
       nVrati := nCSP * ( TARIFA->zpp / 100 ) / nD
@@ -275,7 +280,7 @@ FUNCTION PorezMp( cVar )
       nPom   := nMPVBP - nNV
       nVrati := Max( nCSP * ( TARIFA->dlruc / 100 ) * ( TARIFA->mpp / 100 ), TARIFA->mpp * nPom / ( 100 + TARIFA->mpp ) )
    END CASE
-
+*/
    RETURN nVrati
 
 

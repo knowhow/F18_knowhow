@@ -43,9 +43,9 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
       lLock := .F.
    ENDIF
 
-   IF "roba_p" $ cTabela
-      AltD()
-   ENDIF
+  // IF "roba_p" $ cTabela
+  //    AltD()
+  // ENDIF
 
    // trebamo where str za hRecord rec
    set_table_values_algoritam_vars( @cTabela, @hRecord, @nAlgoritam, @cTransaction, @hDbfRec, @hAlgoritam, @cWhereString, @_alg_tag )

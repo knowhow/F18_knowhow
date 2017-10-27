@@ -96,7 +96,6 @@ FUNCTION kalk_roba_key_handler( Ch )
 
       //TB:Stabilize()
       //PushWA()
-      altd()
       sif_roba_kalk_stanje_magacin_key_handler_s( roba->id )
       //PopWa()
       //SELECT ROBA

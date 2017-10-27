@@ -87,7 +87,7 @@ FUNCTION kontrola_zbira_naloga_u_pripremi()
 
       cDN := "N"
       SET CURSOR ON
-      @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Želite li uravnoteziti nalog (D/N) ?" GET cDN valid ( cDN $ "DN" ) PICT "@!"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Želite li uravnotežiti nalog (D/N) ?" GET cDN valid ( cDN $ "DN" ) PICT "@!"
       READ
 
       IF cDN == "D"

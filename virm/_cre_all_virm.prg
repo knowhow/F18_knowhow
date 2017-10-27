@@ -42,7 +42,7 @@ FUNCTION cre_all_virm_sif( ver )
    CREATE_INDEX( "NAZ", "naz", _alias )
    CREATE_INDEX( "IDKONTO", "idkonto+idpartner", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    /* -------------------
 
@@ -160,7 +160,6 @@ FUNCTION cre_all_virm( ver )
    _table_name := "virm_pripr"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "1", "STR(rbr,3)", _alias )
    CREATE_INDEX( "2", "DTOS(dat_upl)+STR(rbr,3)", _alias )
 

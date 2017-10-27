@@ -24,7 +24,6 @@ FUNCTION sif_roba_kalk_stanje_magacin_key_handler_s( cIdRoba )
 
    //PushWA()
 
-altd()
    aKonta := kalk_aktivna_konta_magacin( cIdRoba )
    FOR nI := 1 TO Len( aKonta )
       nStanje := kalk_kol_stanje_artikla_magacin( aKonta[ nI ], cIdRoba, Date() )

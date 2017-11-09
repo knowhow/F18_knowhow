@@ -24,22 +24,23 @@ FUNCTION unos_virmana()
    ImeKol := {}
    Kol := {}
 
-   AAdd( ImeKol, { "R.br.", {|| _st_ + Str( rbr, 3 ) } } )
-   AAdd( ImeKol, { _u( "Pošaljioc ŽR" ), {|| ko_zr },   "ko_zr" } )
-   AAdd( ImeKol, { _u( "Primalac br ŽR" ), {|| kome_zr }, "kome_zr" } )
-   AAdd( ImeKol, { _u( "ŽR Opis" ), {|| Left( kome_txt, 30 ) } } )
-   AAdd( ImeKol, { "Iznos", {|| Iznos }, "Iznos" } )
-   AAdd( ImeKol, { "Dat.Upl", {|| dat_upl }, "dat_upl" } )
-   AAdd( ImeKol, { "POd", {|| POd }, "POd" } )
-   AAdd( ImeKol, { "PDo", {|| PDo }, "PDo" } )
-   AAdd( ImeKol, { "PNABR", {|| PNABR }, "PNABR" } )
-   AAdd( ImeKol, { "Hitno", {|| Hitno }, "Hitno" } )
-   AAdd( ImeKol, { "IdJPrih", {|| IdJprih }, "IdJPrih" } )
-   AAdd( ImeKol, { "VUPl", {|| VUPl }, "VUPl" } )
-   AAdd( ImeKol, { "IdOps", {|| IdOps }, "IdOps" } )
-   AAdd( ImeKol, { PadR( "Pos.opis", 30 ), {|| ko_txt }, "ko_txt" } )
-   AAdd( ImeKol, { PadR( "Prim.opis", 30 ), {|| kome_txt }, "kome_txt" } )
-   AAdd( ImeKol, { "IznosSTR", {|| IznosSTR }, "Iznos S" } )
+   // _st_ - stavke markirane kao odštampane(*)/neodštampane
+   AAdd( ImeKol, { "R.br.", {|| virm_pripr->_st_ + Str( virm_pripr->rbr, 3 ) } } )
+   AAdd( ImeKol, { _u( "Pošaljioc ŽR" ), {|| virm_pripr->ko_zr },   "ko_zr" } )
+   AAdd( ImeKol, { _u( "Primalac br ŽR" ), {|| virm_pripr->kome_zr }, "kome_zr" } )
+   AAdd( ImeKol, { _u( "ŽR Opis" ), {|| Left( virm_pripr->kome_txt, 30 ) } } )
+   AAdd( ImeKol, { "Iznos", {|| virm_pripr->Iznos }, "Iznos" } )
+   AAdd( ImeKol, { "Dat.Upl", {|| virm_pripr->dat_upl }, "dat_upl" } )
+   AAdd( ImeKol, { "POd", {|| virm_pripr->POd }, "POd" } )
+   AAdd( ImeKol, { "PDo", {|| virm_pripr->PDo }, "PDo" } )
+   AAdd( ImeKol, { "PNABR", {|| virm_pripr->PNABR }, "PNABR" } )
+   AAdd( ImeKol, { "Hitno", {|| virm_pripr->Hitno }, "Hitno" } )
+   AAdd( ImeKol, { "IdJPrih", {|| virm_pripr->IdJprih }, "IdJPrih" } )
+   AAdd( ImeKol, { "VUPl", {|| virm_pripr->VUPl }, "VUPl" } )
+   AAdd( ImeKol, { "IdOps", {|| virm_pripr->IdOps }, "IdOps" } )
+   AAdd( ImeKol, { PadR( "Pos.opis", 30 ), {|| virm_pripr->ko_txt }, "ko_txt" } )
+   AAdd( ImeKol, { PadR( "Prim.opis", 30 ), {|| virm_pripr->kome_txt }, "kome_txt" } )
+   AAdd( ImeKol, { "IznosSTR", {|| virm_pripr->IznosSTR }, "Iznos S" } )
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
@@ -209,7 +210,7 @@ STATIC FUNCTION virm_browse_key_handler()
    CASE Ch == K_ALT_M
       cDN := " "
       Box(, 2, 70 )
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Zelite sve stavke oznaciti odstampane/neodstampane ( /*) ?" ;
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Želite sve stavke označiti odštampane/neodštampane ( /*) ?" ;
          GET  cDN VALID cdn $ " *" PICT "@!"
       READ
       BoxC()

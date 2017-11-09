@@ -583,7 +583,7 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
             // ostao si u avansu
             APPEND BLANK
             Scatter( "w" )
-            wbrdok := PadR( "AVANS", 10 )
+            wbrdok := avans_br_dok()
 
             IF cDugPot == "1"
                wd_p := "1"
@@ -614,6 +614,12 @@ STATIC FUNCTION oasist_key_handler( nIznos, cDugPot )
    RETURN nRet
 
 
+FUNCTION avans_br_dok()
+
+LOCAL cPom := "AV_"
+
+    cPom += STRTRAN( DTOC( Date() ), ".", "" )
+    RETURN PadR( cPom, 10 )
 
 STATIC FUNCTION oasist_provjeri_duple_stavke_za_partnera( cIdPartner, cIdKonto, cDp, lAsistJednaStavka, lSumirano )
 

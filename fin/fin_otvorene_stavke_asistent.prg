@@ -133,7 +133,7 @@ FUNCTION fin_asistent_otv_st()
 
             IF ( ( nSaldo > 0 .AND. cDugPot = "2" ) ) .AND. _rec[ "d_p" ] <> cDugPot
                // neko je bez veze zatvorio uplate (ili se mozda radi o avansima)
-               _rec[ "brdok" ] := "AVANS"
+               _rec[ "brdok" ] := avans_br_dok()
             ENDIF
 
             dbf_update_rec( _rec )
@@ -311,7 +311,7 @@ FUNCTION fin_asistent_otv_st()
                      // prebacujem ostatak uplate na novu stavku
                      APPEND BLANK
 
-                     _rec[ "brdok" ] := "AVANS"
+                     _rec[ "brdok" ] := avans_br_dok()
                      _rec[ "_ppk1" ] := ""
 
                      // resetuj broj zapisa iz suban tabele !
@@ -368,7 +368,7 @@ FUNCTION fin_asistent_otv_st()
 
                         APPEND BLANK
 
-                        _rec[ "brdok" ] := "AVANS"
+                        _rec[ "brdok" ] := avans_br_dok()
                         _rec[ "_ppk1" ] := ""
 
                         // resetuj broj zapisa iz suban tabele !

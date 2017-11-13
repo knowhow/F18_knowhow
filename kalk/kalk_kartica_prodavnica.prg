@@ -78,7 +78,7 @@ FUNCTION kalk_kartica_prodavnica()
 
          @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
 
-         form_get_roba_id( @cIdRoba, box_x_koord() + 3, box_y_koord() + 2 )
+         form_get_roba_id( @cIdRoba, box_x_koord() + 3, box_y_koord() + 2, @GetList )
 
          @ box_x_koord() + 5, box_y_koord() + 2 SAY "Datum od " GET dDatOd
          @ box_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo
@@ -135,11 +135,12 @@ FUNCTION kalk_kartica_prodavnica()
 
    nKolicina := 0
 
-   IF server_db_version() >= 25
-      cOrderBy := "idfirma,pkonto,idroba,datdok,obradjeno,mu_i,idvd"
-   ELSE
-      cOrderBy := "idfirma,pkonto,idroba,datdok,mu_i,idvd"
-   ENDIF
+altd()
+   //IF server_db_version() >= 25
+    //  cOrderBy := "idfirma,pkonto,idroba,datdok,obradjeno,pu_i,idvd"
+   //ELSE
+      cOrderBy := "idfirma,pkonto,idroba,datdok,pu_i,idvd"
+   //ENDIF
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
 

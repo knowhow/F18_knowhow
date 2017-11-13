@@ -348,7 +348,7 @@ FUNCTION find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    RETURN !Eof()
 
 
-FUNCTION find_kalk_by_pkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba )
+FUNCTION find_kalk_by_pkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cOrderBy )
 
    LOCAL hParams := hb_Hash()
 
@@ -365,7 +365,11 @@ FUNCTION find_kalk_by_pkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba )
       hParams[ "idvd" ] := cIdVd
    ENDIF
 
-   hParams[ "order_by" ] := "idfirma,pkonto,idroba,datdok,podbr,pu_i,idvd"
+   IF cOrderBy != NIL
+      hParams[ "order_by" ] := cOrderBy
+   ELSE
+      hParams[ "order_by" ] := "idfirma,pkonto,idroba,datdok,podbr,pu_i,idvd"
+   ENDIF
 
    use_sql_kalk( hParams )
    GO TOP

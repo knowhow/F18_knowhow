@@ -222,8 +222,8 @@ FUNCTION tezinski_barkod_get_tezina( barkod, tezina )
 
    _tb_tezina := PadR( Right( barkod, _tez_len ), _tez_len - 1 )
 
-   // sredi mi i tezinu...
-   IF !Empty( _tb_tezina )
+ 
+   IF !Empty( _tb_tezina ) // sredi i tezinu
       _val_tezina := Val( _tb_tezina )
       tezina := Round( ( _val_tezina / _tez_div ), 4 )
       RETURN .T.

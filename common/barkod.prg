@@ -35,13 +35,18 @@ FUNCTION roba_valid_barkod( nCh, cIdRoba, cBarkodId )
    // cBK := NoviBK_A()
    // ENDIF
 
+   IF Empty( cBarKodId ) // artikal bez barkod-a je dopusten
+         RETURN .T.
+   ENDIF
+
    cIdRoba2 := find_roba_id_by_barkod( cBarkodId )
+
 
    IF Empty( cIdRoba2 )
       RETURN .T.
    ENDIF
 
-   cMsg := "barkod: " + Trim( cBarKodId ) + " već postoji ?!: " + cIdRoba2
+   cMsg := "barkod: '" + Trim( cBarKodId ) + "' već postoji ?!: " + cIdRoba2
 
    IF nCh == K_CTRL_N .OR. nCh == K_F4
       IF !Empty( cBarKodId )
@@ -56,10 +61,6 @@ FUNCTION roba_valid_barkod( nCh, cIdRoba, cBarkodId )
    ENDIF
 
    RETURN .T.
-
-
-
-
 
 
 
@@ -222,7 +223,7 @@ FUNCTION tezinski_barkod_get_tezina( barkod, tezina )
 
    _tb_tezina := PadR( Right( barkod, _tez_len ), _tez_len - 1 )
 
- 
+
    IF !Empty( _tb_tezina ) // sredi i tezinu
       _val_tezina := Val( _tb_tezina )
       tezina := Round( ( _val_tezina / _tez_div ), 4 )

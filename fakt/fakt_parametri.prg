@@ -130,7 +130,7 @@ FUNCTION fakt_par_razno()
    LOCAL _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), Space( 2 ) )
    LOCAL _prik_bk := fetch_metric( "fakt_prikaz_barkod", my_user(), "0" )
    LOCAL _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), PadR( "", 300 ) )
-   LOCAL _unos_barkod := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), "N" )
+   LOCAL cUnosBarKodDN := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), "N" )
    LOCAL _pm := fakt_prodajna_mjesta()
    LOCAL _rabat := fetch_metric( "pregled_rabata_kod_izlaza", my_user(), "N" )
    LOCAL _racun_na_email := PadR( fetch_metric( "fakt_dokument_na_email", my_user(), "" ), 300 )
@@ -164,7 +164,7 @@ FUNCTION fakt_par_razno()
    nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Tekuća radna jedinica kod unosa dokumenta:" GET _def_rj
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Unos dokumenata pomoću barkod-a (D/N) ?" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Unos dokumenata pomoću barkod-a (D/N) ?" GET cUnosBarKodDN VALID cUnosBarKodDN $ "DN" PICT "@!"
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Pregled zadnjih izlaza kod unosa dokumenta (D/N) ?" GET _rabat VALID _rabat $ "DN" PICT "@!"
    ++nX
@@ -247,7 +247,7 @@ FUNCTION fakt_par_razno()
       set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
       set_metric( "fakt_prikaz_barkod", my_user(), _prik_bk )
       set_metric( "fakt_dokument_pdf_lokacija", my_user(), _ext_pdf )
-      set_metric( "fakt_unos_artikala_po_barkodu", my_user(), _unos_barkod )
+      set_metric( "fakt_unos_artikala_po_barkodu", my_user(), cUnosBarKodDN )
       set_metric( "pregled_rabata_kod_izlaza", my_user(), _rabat )
       set_metric( "fakt_dokument_na_email", my_user(), AllTrim( _racun_na_email ) )
       set_metric( "fakt_default_odt_template", my_user(), AllTrim( _def_vp_template ) )

@@ -32,6 +32,7 @@ FUNCTION kalk_kartica_magacin()
    LOCAL hParams := hb_Hash(), cExportDN := "N", lExport := .F.
    LOCAL lRobaTackaZarez := .F.
    LOCAL cIdRobaTackaZarez := cIdRoba
+   LOCAL GetList := {}
 
    PRIVATE fKNabC := .F.
 
@@ -215,7 +216,7 @@ FUNCTION kalk_kartica_magacin()
 
    zagl_mag_kart()
 
-   DO WHILE !Eof() .AND. iif( lRobaTackaZarez, idfirma + mkonto + field->idroba >= cIdFirma + cIdKonto + cIdRobaTackaZarez, idfirma + mkonto + field->idroba == cIdFirma + cIdKonto + cIdRobaTackaZarez )
+   DO WHILE !Eof() .AND. iif( lRobaTackaZarez, field->idfirma + field->mkonto + field->idroba >= cIdFirma + cIdKonto + cIdRobaTackaZarez, field->idfirma + field->mkonto + field->idroba == cIdFirma + cIdKonto + cIdRobaTackaZarez )
 
       IF field->mkonto <> cIdKonto .OR. field->idfirma <> cIdFirma
          EXIT
@@ -285,7 +286,6 @@ FUNCTION kalk_kartica_magacin()
                @ PRow(), PCol() + 1 SAY kalk_say_iznos( tnNVp )
             ENDIF
 
-
             @ PRow(), PCol() + 1 SAY kalk_say_iznos( nNV ) // NV
             @ PRow(), PCol() + 1 SAY say_kolicina( nRabat ) // RABAT
 
@@ -293,7 +293,6 @@ FUNCTION kalk_kartica_magacin()
             IF Round( nUlaz - nIzlaz, 4 ) <> 0
                @ PRow(), PCol() + 1 SAY say_cijena( nVPV / ( nUlaz - nIzlaz ) ) // VPC
             ENDIF
-
 
          ENDIF
 

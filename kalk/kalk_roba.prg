@@ -14,7 +14,7 @@
 STATIC s_lRobaBarkodPriUnosu := NIL
 
 
-FUNCTION form_get_roba_id( cIdRoba, nX, nY )
+FUNCTION form_get_roba_id( cIdRoba, nX, nY, GetList )
 
    LOCAL bWhen, bValid
 

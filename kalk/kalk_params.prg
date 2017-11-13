@@ -225,7 +225,7 @@ FUNCTION is_kalk_konverzija_valute_na_unosu()
 FUNCTION kalk_par_razno()
 
    LOCAL _brojac := "N"
-   LOCAL _unos_barkod := "N"
+   LOCAL cUnosBarKodDN := "N"
    LOCAL nX := 1
    LOCAL _reset_roba := fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" )
    LOCAL _rabat := fetch_metric( "pregled_rabata_kod_ulaza", my_user(), "N" )
@@ -243,7 +243,7 @@ FUNCTION kalk_par_razno()
    ENDIF
 
    IF roba_barkod_pri_unosu()
-      _unos_barkod := "D"
+      cUnosBarKodDN := "D"
    ENDIF
 
    Box(, 20, 75, .F., "RAZNO" )
@@ -255,7 +255,7 @@ FUNCTION kalk_par_razno()
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Brojac kalkulacija po kontima (D/N)" GET _brojac VALID _brojac $ "DN" PICT "@!"
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koristiti BARCOD pri unosu kalkulacija (D/N)" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koristiti BARKOD pri unosu kalkulacija (D/N)" GET cUnosBarKodDN VALID cUnosBarKodDN $ "DN" PICT "@!"
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Potpis na kraju naloga D/N     " GET gPotpis VALID gPotpis $ "DN"
    ++nX
@@ -310,7 +310,7 @@ FUNCTION kalk_par_razno()
       ENDIF
 
 
-      roba_barkod_pri_unosu( _unos_barkod == "D" )
+      roba_barkod_pri_unosu( cUnosBarKodDN == "D" )
       set_metric( "kalk_brojac_kalkulacija", NIL, gBrojacKalkulacija )
       set_metric( "kalk_brojac_dokumenta_po_kontima", NIL, glBrojacPoKontima )
       set_metric( "kalk_potpis_na_kraju_naloga", NIL, gPotpis )

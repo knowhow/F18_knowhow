@@ -26,12 +26,15 @@ FUNCTION kalk_kartica_prodavnica()
    LOCAL cTxt1
    LOCAL cTxt2
    LOCAL cTxt3
-   LOCAL _is_rok, _hAttrId, _item_istek_roka
-   LOCAL cIdR := ""
+   LOCAL lRokTrajanja, hAttriId, _item_istek_roka
    LOCAL nNc, nSredNc, nOdstupanje, cTransakcija
    LOCAL cPrikSredNc := "N"
    LOCAL cIdvd := Space( 100 )
    LOCAL hParams := hb_Hash(), cExportDN := "N", lExport := .F.
+   LOCAL GetList := {}
+   LOCAL cIdRobaTackaZarez := cIdRoba
+   LOCAL lRobaTackaZarez := .F.
+   LOCAL cOrderBy
 
    PRIVATE PicCDEM := kalk_prosiri_pic_cjena_za_2()
    PRIVATE PicProc := gPicProc
@@ -39,7 +42,7 @@ FUNCTION kalk_kartica_prodavnica()
    PRIVATE PicKol := kalk_prosiri_pic_kolicina_za_2()
    PRIVATE nMarza, nMarza2, nPRUC, aPorezi
 
-   _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
+   lRokTrajanja := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
    // o_tarifa()
 // o_sifk()
@@ -54,7 +57,7 @@ FUNCTION kalk_kartica_prodavnica()
    aPorezi := {}
    nMarza := nMarza2 := nPRUC := 0
 
-   IF PCount() == 0
+   IF cIdKonto == NIL
 
       cIdFirma := self_organizacija_id()
       cIdRoba := Space( 10 )
@@ -73,10 +76,9 @@ FUNCTION kalk_kartica_prodavnica()
          @ box_x_koord() + 1, box_y_koord() + 2 SAY "Firma "
          ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
-
          @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
 
-         form_get_roba_id( @cIdRoba, box_x_koord() + 3, box_y_koord() + 2 )
+         form_get_roba_id( @cIdRoba, box_x_koord() + 3, box_y_koord() + 2, @GetList )
 
          @ box_x_koord() + 5, box_y_koord() + 2 SAY "Datum od " GET dDatOd
          @ box_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo
@@ -97,13 +99,11 @@ FUNCTION kalk_kartica_prodavnica()
       BoxC()
 
       IF LastKey() != K_ESC
-
          set_metric( "kalk_kartica_prod_id_roba", my_user(), cIdRoba )
          set_metric( "kalk_kartica_prod_id_konto", my_user(), cIdKonto )
          set_metric( "kalk_kartica_prod_datum_od", my_user(), dDatOd )
          set_metric( "kalk_kartica_prod_datum_do", my_user(), dDatDo )
          set_metric( "kalk_kartica_prod_prethodni_promet", my_user(), cPredh )
-
       ENDIF
 
       IF cExportDN == "D"
@@ -115,20 +115,41 @@ FUNCTION kalk_kartica_prodavnica()
          IF Pitanje(, "Niste zadali šifru artikla, izlistati sve kartice (D/N) ?", "N" ) == "N"
             my_close_all_dbf()
             RETURN .F.
+         ELSE
+            cIdRobaTackaZarez := ""
+            lRobaTackaZarez := .T.
          ENDIF
+
       ELSE
-         cIdr := cIdRoba
+         cIdRobaTackaZarez := cIdRoba
+         lRobaTackaZarez := .F.
       ENDIF
 
-   ELSE
-      cIdR := cIdRoba
-      dDatOd := CToD( "" )
+      IF Right( Trim( cIdroba ), 1 ) == ";"
+         lRobaTackaZarez := .T.
+         cIdRobaTackaZarez := Trim( StrTran( cIdroba, ";", "" ) )
+      ENDIF
+
+
    ENDIF
 
    nKolicina := 0
 
+altd()
+   //IF server_db_version() >= 25
+    //  cOrderBy := "idfirma,pkonto,idroba,datdok,obradjeno,pu_i,idvd"
+   //ELSE
+      cOrderBy := "idfirma,pkonto,idroba,datdok,pu_i,idvd"
+   //ENDIF
+
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
-   find_kalk_by_pkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, iif( Empty( cIdRoba ), NIL, cIdRoba ) )
+
+   IF Empty( cIdRoba )
+      find_kalk_by_pkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, NIL, cOrderBy )
+   ELSE
+      find_kalk_by_pkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cOrderBy )
+   ENDIF
+
    MsgC()
 
    PRIVATE cFilt := ".t."
@@ -161,7 +182,7 @@ FUNCTION kalk_kartica_prodavnica()
    nMPVP := 0
    fPrviProl := .T.
 
-   DO WHILE !Eof() .AND. field->idfirma + field->pkonto + field->idroba == cIdFirma + cIdKonto + cIdR
+   DO WHILE !Eof() .AND. iif( lRobaTackaZarez, field->idfirma + field->pkonto + field->idroba >= cIdFirma + cIdKonto + cIdRobaTackaZarez, field->idfirma + field->pkonto + field->idroba == cIdFirma + cIdKonto + cIdRobaTackaZarez )
 
       cIdRoba := field->idroba
 
@@ -257,13 +278,13 @@ FUNCTION kalk_kartica_prodavnica()
                @ PRow(), PCol() + 1 SAY kalk_say_iznos( nMpv )
             ENDIF
 
-            IF _is_rok
-               _hAttrId := hb_Hash()
-               _hAttrId[ "idfirma" ] := field->idfirma
-               _hAttrId[ "idtipdok" ] := field->idvd
-               _hAttrId[ "brdok" ] := field->brdok
-               _hAttrId[ "rbr" ] := field->rbr
-               _item_istek_roka := CToD( get_kalk_attr_rok( _hAttrId, .T. ) )
+            IF lRokTrajanja
+               hAttriId := hb_Hash()
+               hAttriId[ "idfirma" ] := field->idfirma
+               hAttriId[ "idtipdok" ] := field->idvd
+               hAttriId[ "brdok" ] := field->brdok
+               hAttriId[ "rbr" ] := field->rbr
+               _item_istek_roka := CToD( get_kalk_attr_rok( hAttriId, .T. ) )
                IF DToC( _item_istek_roka ) <> DToC( CToD( "" ) )
                   @ PRow(), PCol() + 1 SAY  "rok: " + DToC( _item_istek_roka )
                ENDIF

@@ -1,5 +1,8 @@
 # F18 klijent, lista promjena
 
+## 3.1.144-vindi, 2017-13-11
+- kalk prodavnica kartica svi artikli
+
 ## 3.1.138-vindi, 2017-10-25
 - kalk - pos automatski/manuelno, uzeti u obzir parametar za automatsku ravnotežu FIN naloga
 

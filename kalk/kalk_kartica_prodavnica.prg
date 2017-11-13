@@ -182,7 +182,7 @@ altd()
    nMPVP := 0
    fPrviProl := .T.
 
-   DO WHILE !Eof() .AND. iif( lRobaTackaZarez, field->idfirma + field->pkonto + field->idroba >= cIdFirma + cIdKonto + cIdRobaTackaZarez, field->idfirma + field->konto + field->idroba == cIdFirma + cIdKonto + cIdRobaTackaZarez )
+   DO WHILE !Eof() .AND. iif( lRobaTackaZarez, field->idfirma + field->pkonto + field->idroba >= cIdFirma + cIdKonto + cIdRobaTackaZarez, field->idfirma + field->pkonto + field->idroba == cIdFirma + cIdKonto + cIdRobaTackaZarez )
 
       cIdRoba := field->idroba
 

@@ -14,13 +14,13 @@
 
 FUNCTION RPar( cImeVar, xArg )
 
-   LOCAL cPom, clTip
+   LOCAL cPom, cTip
 
    SEEK cSection + cHistory + cImeVar + "1"
 
    IF Found()
       cPom := ""
-      clTip := tip
+      cTip := tip
 
       DO WHILE !Eof() .AND. ( cSection + cHistory + cImeVar == Fsec + cHistory + Fvar )
          cPom += Fv
@@ -28,13 +28,13 @@ FUNCTION RPar( cImeVar, xArg )
       ENDDO
 
       cPom := Left( cPom, At( Chr( CHR254 ), cPom ) - 1 )
-      IF clTip = "C"
+      IF cTip == "C"
          xArg := cPom
-      ELSEIF clTip == "N"
+      ELSEIF cTip == "N"
          xArg := Val( cPom )
-      ELSEIF clTip == "D"
+      ELSEIF cTip == "D"
          xArg := CToD( cPom )
-      ELSEIF clTip == "L"
+      ELSEIF cTip == "L"
          xArg := iif( cPom == "0", .F., .T. )
       ENDIF
 
@@ -47,7 +47,7 @@ FUNCTION RPar( cImeVar, xArg )
 
 FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
 
-   LOCAL cPom, nRec
+   LOCAL cPom, nRec, cTip
 
    IF Type( "gSql" ) <> "C"
       gSql := "N"
@@ -89,15 +89,17 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
    ENDIF
 
 
-   clTip := ValType( xArg )
-   IF clTip == "C"
+   cTip := ValType( xArg )
+   IF cTip == "C"
       cPom := xArg
-   ELSEIF clTip == "N"
+   ELSEIF cTip == "N"
       cPom := Str( xArg )
-   ELSEIF clTip == "D"
+   ELSEIF cTip == "D"
       cPom := DToC( xArg )
-   ELSEIF clTip == "L"
+   ELSEIF cTip == "L"
       cPom := iif( xArg, "1", "0" )
+   ELSE
+      cPom := ""
    ENDIF
    cPom += Chr( CHR254 )
 
@@ -110,7 +112,7 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
       REPLACE Fh WITH chistory, ;
          Fsec WITH cSection, ;
          Fvar WITH cImeVar, ;
-         tip WITH clTip, ;
+         tip WITH cTip, ;
          rBr WITH cRbr, ;
          Fv   WITH Left( cPom, 15 )
 

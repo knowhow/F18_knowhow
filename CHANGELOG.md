@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 3.1.146-std, 2017-11-16
+### CORE
+- Wpar +bug NIL var
+- LD obr 2001 cleanup bug * koef NIL
+
 ## 3.1.140-std, 2017-10-27
 ### VIRM
 - bugfix cre virm_pripr.dbf

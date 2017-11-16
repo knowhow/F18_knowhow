@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
+FUNCTION GlobalErrorHandler( oError, lShowErrorReport, lQuitApp )
 
    LOCAL cCmd
    LOCAL cOutFile
@@ -21,7 +21,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    LOCAL bErr
    LOCAL nI
 
-   IF err_obj:GenCode == 45 .AND. err_obj:SubCode == 1302
+   IF oError:GenCode == 45 .AND. oError:SubCode == 1302
    /*
    Verzija programa: 1.7.770 13.03.2016 8.5.0
 
@@ -72,8 +72,8 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
    IF is_in_main_thread()
 #ifdef F18_DEBUG
-      Alert( err_obj:Description + " " + err_obj:operation )
-      AltD() // err_obj:Description
+      Alert( oError:Description + " " + oError:operation )
+      AltD() // oError:Description
 #endif
 
       SET CONSOLE OFF
@@ -95,32 +95,32 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    cLogMsg += cMsg
    OutBug()
 
-   cMsg := "SubSystem/severity    : " + err_obj:SubSystem + " " + to_str( err_obj:severity )
+   cMsg := "SubSystem/severity    : " + oError:SubSystem + " " + to_str( oError:severity )
    OutBug( cMsg )
    cLogMsg += " ; " + cMsg
 
-   cMsg := "GenCod/SubCode/OsCode : " + to_str( err_obj:GenCode ) + " " + to_str( err_obj:SubCode ) + " " + to_str( err_obj:OsCode )
+   cMsg := "GenCod/SubCode/OsCode : " + to_str( oError:GenCode ) + " " + to_str( oError:SubCode ) + " " + to_str( oError:OsCode )
    OutBug( cMsg )
    cLogMsg += " ; " + cMsg
 
-   cMsg := "Opis                  : " + err_obj:description
+   cMsg := "Opis                  : " + oError:description
    OutBug( cMsg )
    cLogMsg += " ; " + cMsg
 
-   cMsg := "ImeFajla              : " + err_obj:filename
+   cMsg := "ImeFajla              : " + oError:filename
    OutBug( cMsg )
    cLogMsg += " ; " + cMsg
 
 
-   cMsg := "Operacija             : " + err_obj:operation
+   cMsg := "Operacija             : " + oError:operation
    OutBug( cMsg )
    cLogMsg += " ; " + cMsg
 
-   cMsg := "Argumenti             : " + to_str( err_obj:args )
+   cMsg := "Argumenti             : " + to_str( oError:args )
    OutBug( cMsg )
    cLogMsg += " ; " + cMsg
 
-   cMsg := "canRetry/canDefault   : " + to_str( err_obj:canRetry ) + " " + to_str( err_obj:canDefault )
+   cMsg := "canRetry/canDefault   : " + to_str( oError:canRetry ) + " " + to_str( oError:canDefault )
    OutBug( cMsg )
    cLogMsg += " ; " + cMsg
 
@@ -151,12 +151,12 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    OutBug( cMsg )
    cLogMsg += " ; " + cMsg
 
-   IF err_obj:cargo <> NIL
+   IF oError:cargo <> NIL
 
       OutBug( "== CARGO", Replicate( "=", 50 ) )
-      FOR nI := 1 TO Len( err_obj:cargo )
-         IF err_obj:cargo[ nI ] == "var"
-            cMsg :=  "* var " + to_str( err_obj:cargo[ ++nI ] )  + " : " + to_str( pp( err_obj:cargo[ ++nI ] ) )
+      FOR nI := 1 TO Len( oError:cargo )
+         IF oError:cargo[ nI ] == "var"
+            cMsg :=  "* var " + to_str( oError:cargo[ ++nI ] )  + " : " + to_str( pp( oError:cargo[ ++nI ] ) )
             ? cMsg
             cLogMsg += " ; " + cMsg
          ENDIF
@@ -180,7 +180,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       ENDIF
       log_write( cLogMsg, 1 )
 #ifndef F18_DEBUG
-      send_email( err_obj, lNotify )
+      send_email( oError, lNotify )
 #endif
    ENDIF
 
@@ -316,14 +316,14 @@ FUNCTION RaiseError( cErrMsg )
 
 
 
-STATIC FUNCTION send_email( err_obj, lNotify )
+STATIC FUNCTION send_email( oError, lNotify )
 
-   LOCAL _mail_params
+   LOCAL hParamsEmail
    LOCAL cBody, cSubject
-   LOCAL _attachment
+   LOCAL cAttachment
    LOCAL _answ := fetch_metric( "bug_report_email", my_user(), "A" )
    LOCAL cDatabase
-   LOCAL _attach
+   LOCAL aAttach
 
    IF lNotify == NIL
       lNotify := .F.
@@ -357,28 +357,28 @@ STATIC FUNCTION send_email( err_obj, lNotify )
    cSubject += ", " + cDatabase + "/" + AllTrim( f18_user() )
    cSubject += ", " + DToC( Date() ) + " " + PadR( Time(), 8 )
 
-   IF err_obj != NIL
-      cSubject += ", " + AllTrim( err_obj:description ) + "/" + AllTrim( err_obj:operation )
+   IF oError != NIL
+      cSubject += ", " + AllTrim( oError:description ) + "/" + AllTrim( oError:operation )
    ENDIF
 
    cBody := "U prilogu zip fajl sa sadrzajem trenutne greske i log fajlom servera"
 
-   _mail_params := email_hash_za_podrska_bring_out( cSubject, cBody )
+   hParamsEmail := email_hash_za_podrska_bring_out( cSubject, cBody )
 
-   _attachment := send_email_attachment()
+   cAttachment := send_email_attachment()
 
-   IF ValType( _attachment ) == "L"
+   IF ValType( cAttachment ) == "L"
       RETURN .F.
    ENDIF
 
-   _attach := { _attachment }
+   aAttach := { cAttachment }
 
    info_bar( "err-sync", "Slanje greške podršci bring.out ..." )
 
-   f18_email_send( _mail_params, _attach )
+   f18_email_send( hParamsEmail, aAttach )
 
 
-   FErase( _attachment )
+   FErase( cAttachment )
 
    RETURN .T.
 

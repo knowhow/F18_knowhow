@@ -20,7 +20,7 @@ FUNCTION fakt_kartica()
    LOCAL lpickol := "@Z " + fakt_pic_kolicina()
    LOCAL hParams := fakt_params()
    LOCAL GetList := {}
-   LOCAL dDatOd, dDatDo
+   LOCAL dDatOd := CTOD(""), dDatDo := CTOD( "" )
    LOCAL cFilter
    LOCAL qqPartn := Space( 20 )
 

@@ -93,8 +93,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    // LOCAL nP78
    LOCAL nP79
    LOCAL nPrimanjaStvariUsluge, nUNet, nNetoOsn, nUNetoOsnova
-   LOCAL nKoefDopr1X, nKoefDopr2X, nKoefDopr3X
-   LOCAL nKoefDopr5X, nKoefDopr6X, nKoefDopr7X
+   LOCAL nKoefDopr1X := 0, nKoefDopr2X := 0, nKoefDopr3X := 0
+   LOCAL nKoefDopr5X := 0, nKoefDopr6X := 0, nKoefDopr7X := 0
    LOCAL nKoefDodatniDoprinosZdravstvo, nKoefDodatniDoprinosPio
    LOCAL nDopr1X, nDopr2X, nDopr3X  // iznosi dopr IZ
    LOCAL nDopr5X, nDopr6X, nDopr7X  // iznosi dopr NA
@@ -597,36 +597,20 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       nKoefDopr6X := find_field_by_id( "dopr", cDoprNa2, "iznos" )
       nKoefDopr7X := find_field_by_id( "dopr", cDoprNa3, "iznos" )
 
-      nPom := nKoefDopr1X + nKoefDopr2X //+ nKoefDopr3X
+      //nPom := nKoefDopr1X + nKoefDopr2X //+ nKoefDopr3X
 
 
-      nPom := nKoefDopr1X
-      hRec[ "stopa_16" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // PIO iz
-
-      nPom := nKoefDopr2X
-      hRec[ "stopa_17" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // zdravstvo iz
-
-      nPom := nKoefDopr3X
-      hRec[ "stopa_18" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezaposlenost iz
-
-
-      nPom := nKoefDopr5X
-      hRec[ "stopa_20" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // PIO na
-
-      nPom := nKoefDopr6X
-      hRec[ "stopa_21" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // zdrav na
-
-      nPom := nKoefDopr7X
-      hRec[ "stopa_22" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezap na
+      hRec[ "stopa_16" ] := FormNum2( nKoefDopr1X, 16, cPictureIznos ) + "%"  // PIO iz
+      hRec[ "stopa_17" ] := FormNum2( nKoefDopr2X, 16, cPictureIznos ) + "%"  // zdravstvo iz
+      hRec[ "stopa_18" ] := FormNum2( nKoefDopr3X, 16, cPictureIznos ) + "%"  // nezaposlenost iz
+      hRec[ "stopa_20" ] := FormNum2( nKoefDopr5X, 16, cPictureIznos ) + "%"  // PIO na
+      hRec[ "stopa_21" ] := FormNum2( nKoefDopr6X, 16, cPictureIznos ) + "%"  // zdrav na
+      hRec[ "stopa_22" ] := FormNum2( nKoefDopr7X, 16, cPictureIznos ) + "%"  // nezap na
 
       nPom := nKoefDopr5X + nKoefDopr6X + nKoefDodatniDoprinosZdravstvo + nKoefDodatniDoprinosPio
 
-
-      nPom := nKoefDodatniDoprinosPio
-      hRec[ "stopa_23" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // dodatni PIO i invalid
-
-      nPom := nKoefDodatniDoprinosZdravstvo
-      hRec[ "stopa_24" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // dodatni zdravstvo
+      hRec[ "stopa_23" ] := FormNum2( nKoefDodatniDoprinosPio, 16, cPictureIznos ) + "%"  // dodatni PIO i invalid
+      hRec[ "stopa_24" ] := FormNum2( nKoefDodatniDoprinosZdravstvo, 16, cPictureIznos ) + "%"  // dodatni zdravstvo
 
 
 

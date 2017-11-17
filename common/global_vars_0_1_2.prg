@@ -27,7 +27,6 @@ PROCEDURE set_global_vars_0()
    PUBLIC ZGwPoruka := ""
    PUBLIC GW_STATUS := "-"
    PUBLIC GW_HANDLE := 0
-   PUBLIC gReadOnly := .F.
    PUBLIC gProcPrenos := "N"
    PUBLIC gInstall := .F.
    // PUBLIC gfKolor := "D"
@@ -102,7 +101,6 @@ PROCEDURE set_global_vars_0()
    PUBLIC gMjRj := "N"
 
    PUBLIC gFinRj         := "N"
-   PUBLIC gReadOnly   := .F.
    PUBLIC gOModul     := NIL
    PUBLIC cDirPriv    := ""
    PUBLIC cDirRad     := ""
@@ -236,8 +234,6 @@ FUNCTION set_global_vars_2()
 
    gSql := "N"
    gSqlLogBase := ""
-   gReadOnly := .F.
-
 
    info_bar( "init", "set global_vars_2 - end" )
 

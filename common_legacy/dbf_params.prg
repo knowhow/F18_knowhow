@@ -56,9 +56,6 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
       goModul:lSqlDirektno := .T.
    ENDIF
 
-   IF gReadonly
-      RETURN .T.
-   ENDIF
 
    // ako gSQL nije D onda u svakom slucaju ne radi SQL azuriranja
    IF ( gSQL == "N" )

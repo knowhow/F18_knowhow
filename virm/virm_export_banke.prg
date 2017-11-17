@@ -260,7 +260,7 @@ METHOD VirmExportTxt:copy_existing_formula( id_formula, var )
       IF !Empty( _tmp  )
          id_formula := PadR( _tmp, 500 )
       ELSE
-         MsgBeep( "Zadata formula ne postoji !!!" )
+         MsgBeep( "Zadata formula ne postoji !?" )
       ENDIF
 
    ENDIF
@@ -276,8 +276,8 @@ METHOD VirmExportTxt:copy_existing_formula( id_formula, var )
 METHOD VirmExportTxt:fill_data_from_virm()
 
    LOCAL _ok := .F.
-   LOCAL _count, _rec
-   LOCAL _total := 0
+   LOCAL _count, hRec
+   LOCAL nTotal := 0
 
    SELECT ( F_VIPRIPR )
    IF !Used()
@@ -297,88 +297,87 @@ METHOD VirmExportTxt:fill_data_from_virm()
 
    DO WHILE !Eof()
 
-      _total += field->iznos
+      nTotal += field->iznos
       ++ _count
 
       SELECT exp_bank
       APPEND BLANK
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      // popuni sada _rec
-
-      _rec[ "rbr" ] := virm_pripr->rbr
+      // popuni sada hRec
+      hRec[ "rbr" ] := virm_pripr->rbr
 
       // mjesto
-      _rec[ "mjesto" ] := Upper( virm_pripr->mjesto )
+      hRec[ "mjesto" ] := Upper( virm_pripr->mjesto )
 
       // podaci posiljaoca i primaoca
-      _rec[ "prim_rn" ] := virm_pripr->kome_zr
-      _rec[ "prim_naz" ] := Upper( virm_pripr->kome_txt )
-      _rec[ "prim_mj" ] := Upper( virm_pripr->kome_sj )
+      hRec[ "prim_rn" ] := virm_pripr->kome_zr
+      hRec[ "prim_naz" ] := Upper( virm_pripr->kome_txt )
+      hRec[ "prim_mj" ] := Upper( virm_pripr->kome_sj )
 
-      IF Empty( _rec[ "prim_mj" ] )
-         _rec[ "prim_mj" ] := _rec[ "mjesto" ]
+      IF Empty( hRec[ "prim_mj" ] )
+         hRec[ "prim_mj" ] := hRec[ "mjesto" ]
       ENDIF
 
-      _rec[ "pos_rn" ] := virm_pripr->ko_zr
-      _rec[ "pos_naz" ] := Upper( virm_pripr->ko_txt )
-      _rec[ "pos_mj" ] := Upper( virm_pripr->ko_sj )
+      hRec[ "pos_rn" ] := virm_pripr->ko_zr
+      hRec[ "pos_naz" ] := Upper( virm_pripr->ko_txt )
+      hRec[ "pos_mj" ] := Upper( virm_pripr->ko_sj )
 
-      IF Empty( _rec[ "pos_mj" ] )
-         _rec[ "pos_mj" ] := _rec[ "mjesto" ]
+      IF Empty( hRec[ "pos_mj" ] )
+         hRec[ "pos_mj" ] := hRec[ "mjesto" ]
       ENDIF
 
       // svrha uplate
-      _rec[ "svrha" ] := Upper( virm_pripr->svrha_doz )
+      hRec[ "svrha" ] := Upper( virm_pripr->svrha_doz )
 
       // sifra placanja po sifraniku TRN.DAT
       // ako je sifra duzine 4 za sifru se popuni sa 2 karaktera prazna
-      _rec[ "sifra_pl" ] := virm_pripr->svrha_pl
+      hRec[ "sifra_pl" ] := virm_pripr->svrha_pl
 
       // datum valute
-      _rec[ "dat_val" ] := virm_pripr->dat_upl
+      hRec[ "dat_val" ] := virm_pripr->dat_upl
 
       // porezni period od-do
-      _rec[ "per_od" ] := virm_pripr->pod
-      _rec[ "per_do" ] := virm_pripr->pdo
+      hRec[ "per_od" ] := virm_pripr->pod
+      hRec[ "per_do" ] := virm_pripr->pdo
 
       // tip stavke, fiskno "1"
-      _rec[ "tip_st" ] := "1"
+      hRec[ "tip_st" ] := "1"
 
       // tip dokumenta:
       // 0 - nalog za prenos
       // 1 - nalog za placanje JP
-      _rec[ "tip_dok" ] := "1"
+      hRec[ "tip_dok" ] := "1"
 
       // vrsta uplate:
       // 0, 1 ili 2
-      _rec[ "v_upl" ] := "0"
+      hRec[ "v_upl" ] := "0"
 
       // broj poreznog obveznika
-      _rec[ "bpo" ] := virm_pripr->bpo
+      hRec[ "bpo" ] := virm_pripr->bpo
 
       // opcina
-      _rec[ "opcina" ] := virm_pripr->idops
+      hRec[ "opcina" ] := virm_pripr->idops
 
       // vrsta prihoda
-      _rec[ "v_prih" ] := virm_pripr->idjprih
+      hRec[ "v_prih" ] := virm_pripr->idjprih
 
       // budzetska organizacija
-      _rec[ "budzet" ] := virm_pripr->budzorg
+      hRec[ "budzet" ] := virm_pripr->budzorg
 
       // poziv na broj
-      _rec[ "pnabr" ] := virm_pripr->pnabr
+      hRec[ "pnabr" ] := virm_pripr->pnabr
 
       // iznos virmana
-      _rec[ "iznos" ] := virm_pripr->iznos
+      hRec[ "iznos" ] := virm_pripr->iznos
 
       // total stavki...
-      _rec[ "tot_st" ] := 0
+      hRec[ "tot_st" ] := 0
 
       // total iznos...
-      _rec[ "tot_izn" ] := 0
+      hRec[ "tot_izn" ] := 0
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       SELECT virm_pripr
       SKIP
@@ -392,11 +391,11 @@ METHOD VirmExportTxt:fill_data_from_virm()
 
    DO WHILE !Eof()
 
-      _rec := dbf_get_rec()
-      _rec[ "tot_izn" ] := _total
-      _rec[ "tot_st" ] := _count
+      hRec := dbf_get_rec()
+      hRec[ "tot_izn" ] := nTotal
+      hRec[ "tot_st" ] := _count
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       SKIP
 
@@ -404,7 +403,7 @@ METHOD VirmExportTxt:fill_data_from_virm()
 
    GO TOP
 
-   ::export_total := _total
+   ::export_total := nTotal
    ::export_count := _count
 
    _ok := .T.
@@ -450,7 +449,7 @@ METHOD VirmExportTxt:get_export_line_macro( var )
 
 METHOD VirmExportTxt:get_macro_line( var )
 
-   LOCAL _macro := ""
+   LOCAL cMacro := ""
    LOCAL nI, _curr_struct
    LOCAL cSeparator, cSeparatorFormula
    LOCAL _a_struct
@@ -459,7 +458,7 @@ METHOD VirmExportTxt:get_macro_line( var )
    _curr_struct := ::get_export_line_macro( var )
 
    IF Empty( _curr_struct )
-      RETURN _macro
+      RETURN cMacro
    ENDIF
 
    cSeparator := ::export_params[ "separator" ]
@@ -473,22 +472,21 @@ METHOD VirmExportTxt:get_macro_line( var )
 
       IF !Empty( _a_struct[ nI ] )
 
-
          IF nI > 1 // plusevi izmedju
-            _macro += " + "
+            cMacro += " + "
          ENDIF
 
-         _macro += _a_struct[ nI ] // makro
+         cMacro += _a_struct[ nI ] // makro
 
          IF nI < Len( _a_struct )
-            _macro += ' + "' + cSeparator + '" '
+            cMacro += ' + "' + cSeparator + '" '
          ENDIF
 
       ENDIF
 
    NEXT
 
-   RETURN _macro
+   RETURN cMacro
 
 
 
@@ -502,7 +500,7 @@ METHOD VirmExportTxt:create_txt_from_dbf()
    LOCAL _ok := .F.
    LOCAL _output_filename
    LOCAL _output_dir
-   LOCAL _line
+   LOCAL cLine
    LOCAL _head_1, _head_2
    LOCAL _footer_1, _footer_2
    LOCAL _force_eol
@@ -512,7 +510,6 @@ METHOD VirmExportTxt:create_txt_from_dbf()
    IF DirChange( _output_dir ) != 0
       MakeDir( _output_dir )
    ENDIF
-
 
    _output_filename := _output_dir + AllTrim( ::export_params[ "fajl" ] )  // fajl ide u my_home/export/
 
@@ -547,8 +544,8 @@ METHOD VirmExportTxt:create_txt_from_dbf()
       ENDIF
    ENDIF
 
-   // sada stavke...
-   _line := ::get_macro_line( "i" )
+   // sada stavke.
+   cLine := ::get_macro_line( "i" )
 
    // predji na upis podataka
    SELECT exp_bank
@@ -556,18 +553,16 @@ METHOD VirmExportTxt:create_txt_from_dbf()
    GO TOP
 
    DO WHILE !Eof()
-      // upisi u fajl...
-      ?? to_win1250_encoding( hb_StrToUTF8( &( _line ) ), .T. )
+      // upisi u fajl
+      ?? to_win1250_encoding( hb_StrToUTF8( &( cLine ) ), .T. )
       IF _force_eol
          ?
       ENDIF
       SKIP
    ENDDO
 
-   // vrati se na vrh tabele
    GO TOP
 
-   // footer 1
    _footer_1 := ::get_macro_line( "f1" )
 
    IF !Empty( _footer_1 )
@@ -577,7 +572,6 @@ METHOD VirmExportTxt:create_txt_from_dbf()
       ENDIF
    ENDIF
 
-   // footer 2
    _footer_2 := ::get_macro_line( "f2" )
 
    IF !Empty( _footer_2 )
@@ -586,7 +580,6 @@ METHOD VirmExportTxt:create_txt_from_dbf()
          ?
       ENDIF
    ENDIF
-
 
    SET PRINTER TO
    SET PRINTER OFF
@@ -597,7 +590,7 @@ METHOD VirmExportTxt:create_txt_from_dbf()
       MsgBeep( "Fajl uspjesno kreiran !" )
       _ok := .T.
    ELSE
-      MsgBeep( "Postoji problem sa operacijom kreiranja fajla !!!" )
+      MsgBeep( "Postoji problem sa operacijom kreiranja fajla ?!" )
    ENDIF
 
    // zatvori tabelu...
@@ -624,9 +617,7 @@ METHOD VirmExportTxt:export()
       RETURN _ok
    ENDIF
 
-
    ::create_export_dbf() // kreiraj tabelu exporta
-
 
    IF ! ::fill_data_from_virm() // napuni je podacima iz obračuna
       MsgBeep( "Problem sa eksportom podataka !" )
@@ -863,12 +854,12 @@ METHOD VirmExportTxt:get_export_list()
    LOCAL _id := 0
    LOCAL nI
    LOCAL _param_name := "virm_export_"
-   LOCAL _opc, _opcexe, _izbor := 1
+   LOCAL aOpc, aOpcExe, nIzbor := 1
    LOCAL _m_x := box_x_koord()
    LOCAL _m_y := box_y_koord()
 
-   _opc := {}
-   _opcexe := {}
+   aOpc := {}
+   aOpcExe := {}
 
    FOR nI := 1 TO 20
 
@@ -880,20 +871,20 @@ METHOD VirmExportTxt:get_export_list()
          _tmp += PadL( AllTrim( Str( nI ) ) + ".", 4 )
          _tmp += PadR( ::formula_params[ "name" ], 40 )
 
-         AAdd( _opc, _tmp )
-         AAdd( _opcexe, {|| "" } )
+         AAdd( aOpc, _tmp )
+         AAdd( aOpcExe, {|| "" } )
 
       ENDIF
 
    NEXT
 
    DO WHILE .T. .AND. LastKey() != K_ESC
-      _izbor := meni_0( "choice", _opc, _izbor, .F. )
-      IF _izbor == 0
+      nIzbor := meni_0( "choice", aOpc, nIzbor, .F. )
+      IF nIzbor == 0
          EXIT
       ELSE
-         _id := Val( Left ( _opc[ _izbor ], 3 ) )
-         _izbor := 0
+         _id := Val( Left ( aOpc[ nIzbor ], 3 ) )
+         nIzbor := 0
       ENDIF
    ENDDO
 
@@ -907,18 +898,18 @@ METHOD VirmExportTxt:get_export_list()
 
 FUNCTION virm_export_banke()
 
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( _opc, "1. export podataka za banku                " )
-   AAdd( _opcexe, {|| virm_export_txt_banka()  } )
-   AAdd( _opc, "2. postavke formula exporta   " )
-   AAdd( _opcexe, {|| virm_export_txt_setup()  } )
-   AAdd( _opc, "3. dupliciranje postojecih postavaki " )
-   AAdd( _opcexe, {|| VirmExportTxt():New():export_setup_duplicate()  } )
+   AAdd( aOpc, "1. export podataka za banku                " )
+   AAdd( aOpcExe, {|| virm_export_txt_banka()  } )
+   AAdd( aOpc, "2. postavke formula exporta   " )
+   AAdd( aOpcExe, {|| virm_export_txt_setup()  } )
+   AAdd( aOpc, "3. dupliciranje postojecih postavaki " )
+   AAdd( aOpcExe, {|| VirmExportTxt():New():export_setup_duplicate()  } )
 
-   f18_menu( "el", .F., _izbor, _opc, _opcexe )
+   f18_menu( "el", .F., nIzbor, aOpc, aOpcExe )
 
    RETURN
 

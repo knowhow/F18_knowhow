@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.146-std, 2017-11-16
+## 3.1.147-std, 2017-11-17
 ### CORE
 - Wpar +bug NIL var
 - LD obr 2001 cleanup bug * koef NIL

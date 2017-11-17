@@ -201,7 +201,7 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
 // ENDIF
 
 
-   IF AllTrim( cId ) == "?"
+   IF ValType( cId ) == "C" .AND. AllTrim( cId ) == "?"
       Box( NIL, 7, 60, .T. )
 
       @ box_x_koord() + 1, box_y_koord() + 2 SAY8 'Džokeri za pretragu naziv: ".$", id: ">#"'

@@ -19,7 +19,7 @@ FUNCTION fin_izvjestaji_ostali()
    LOCAL nIzbor := 1
 
    AAdd( aOpc, "1. pregled promjena na računu               " )
-   AAdd( aOpcExe, {|| PrPromRn() } )
+   AAdd( aOpcExe, {|| fin_pregled_promjena_na_racunu() } )
 
    IF ( IsRamaGlas() )
       AAdd( aOpc, "P. specifikacije za pogonsko knjigovodstvo" )

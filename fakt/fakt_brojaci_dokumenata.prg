@@ -309,25 +309,29 @@ FUNCTION fakt_unos_set_broj_dokumenta()
 // -----------------------------------------------------------
 // provjerava postoji li rupa u brojacu dokumenata
 // -----------------------------------------------------------
-FUNCTION fakt_postoji_li_rupa_u_brojacu( cIdFirma, id_tip_dok, priprema_broj )
+FUNCTION fakt_postoji_li_rupa_u_brojacu( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL nRet := 0
    LOCAL _qry, _table
    LOCAL _max_dok, _par_dok, _param
-   LOCAL _params := fakt_params()
+   LOCAL hParams := fakt_params()
    LOCAL cIdTipDokTrazi, _tmp
    LOCAL _inc_error
 
-   // .... parametar ako treba
-   IF !_params[ "kontrola_brojaca" ]
-      RETURN nRet
+   // parametar ako treba
+   IF !hParams[ "kontrola_brojaca" ]
+      RETURN 0 // 0-nema greska
+   ENDIF
+
+   IF "/S" $ cBrDok // storno dokument ne kontrolisi
+      RETURN 0
    ENDIF
 
    // brojaci otpremnica po tip-u "22"
-   IF id_tip_dok == "12" .AND. _params[ "fakt_otpr_22_brojac" ]
+   IF cIdTipDok == "12" .AND. hParams[ "fakt_otpr_22_brojac" ]
       cIdTipDokTrazi := "22"
    ELSE
-      cIdTipDokTrazi := id_tip_dok
+      cIdTipDokTrazi := cIdTipDok
    ENDIF
 
    _qry := " SELECT MAX( brdok ) FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks " + ;
@@ -360,12 +364,12 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( cIdFirma, id_tip_dok, priprema_broj )
    ENDIF
 
    // provjera priprema <> server
-   _tmp := TokToNiz( priprema_broj, "/" )
+   _tmp := TokToNiz( cBrDok, "/" )
    _inc_error := Abs( _max_dok - Val( AllTrim( _tmp[ 1 ] ) ) )
 
    IF _inc_error > 30
 
-      MsgBeep( "Postoji greška sa brojačem dokumenta#Priprema: " + AllTrim( priprema_broj ) + ;
+      MsgBeep( "Postoji greška sa brojačem dokumenta#Priprema: " + AllTrim( cBrDok ) + ;
          ", server dokument: " + AllTrim( Str( _max_dok ) ) + "#" + ;
          "Provjerite brojač" )
       nRet := 1

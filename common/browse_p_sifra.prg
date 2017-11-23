@@ -896,6 +896,9 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
    ENDDO
 
    IF nCh == K_CTRL_N .OR. nCh == K_F2
+      IF !Used()
+         RETURN 0
+      ENDIF
       ordSetFocus( cOrderTag )
    ENDIF
 

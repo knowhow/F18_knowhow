@@ -560,7 +560,7 @@ FUNCTION fakt_stanje_roba( cIdRoba )
    fakt_box_stanje( aStanje, cIdRoba )      // nUl,nIzl,nRevers,nRezerv)
 
    PopWa()
-   
+
    RETURN .T.
 
 
@@ -641,6 +641,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    @ nR, Col() SAY nTOst PICT fakt_pic_iznos()
    @ nR, Col() SAY cDiv
 
+/*
    // ispis dodatnih parametara stanja
 
    IF nLenDP > 0
@@ -665,6 +666,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
       NEXT
    ENDIF
+*/
 
    Inkey( 0 )
    BoxC()

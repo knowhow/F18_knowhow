@@ -602,7 +602,10 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    //NEXT
    //nLenDP := IIF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
-   select_o_roba( cIdRoba )
+   IF Select( "ROBA" ) == 0  .OR. cIdRoba != roba->id
+      select_o_roba( cIdRoba )
+   ENDIF
+
    Box(, 6 + nLen / 2, 75 )
    Beep( 1 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "ARTIKAL: "

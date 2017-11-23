@@ -1709,7 +1709,7 @@ FUNCTION sifarnik_f9_nova_sifra()
       RETURN .F.
    ENDIF
 
-   cMaxId := AllTrim( find_partner_max_id() )
+   cMaxId := AllTrim( find_partner_max_numeric_id() )
    //nSifraLength := Len( cMaxId )
 
    IF !Empty( cMaxId )

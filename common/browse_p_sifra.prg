@@ -849,9 +849,9 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
 
          ENDDO
 
-         SET KEY K_F8 TO k_f8_nadji_novu_sifru()
+         //SET KEY K_F8 TO k_f8_nadji_novu_sifru()
          SET KEY K_F9 TO sifarnik_f9_nova_sifra()
-         SET KEY K_F5 TO k_f5_nadji_novu_sifru()
+         //SET KEY K_F5 TO k_f5_nadji_novu_sifru()
 
          READ
 

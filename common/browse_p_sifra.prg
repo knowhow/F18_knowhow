@@ -1688,14 +1688,14 @@ FUNCTION sifarnik_f9_nova_sifra()
    //LOCAL nLId
    //LOCAL lCheck
    //LOCAL lLoop
-   LOCAL nSifraLength := 4       // '0100  ' -> cSifraLength := 4,  nFieldLength := 6
+   //LOCAL nSifraLength := 4       // '0100  ' -> cSifraLength := 4,  nFieldLength := 6
    LOCAL nFieldLength := 6
    LOCAL cPom
    LOCAL cImeVar
 
    cImeVar := ReadVar()  // WID
 
-   cPom := &( cImeVar )  // 0100
+   cPom := &( cImeVar )  // '0100  '
    nFieldLength := LEN( cPom )
 
    IF cImeVar != "WID"
@@ -1707,11 +1707,11 @@ FUNCTION sifarnik_f9_nova_sifra()
    ENDIF
 
    cMaxId := AllTrim( find_partner_max_id() )
-   nSifraLength := Len( cMaxId )
+   //nSifraLength := Len( cMaxId )
 
    IF !Empty( cMaxId )
       //&( cImeVar ) := PadR( NovaSifra( IF( Empty( id ), id, RTrim( id ) ) ), nDuzSif, " " )
-      &( cImeVar ) := PadR( Val( cMaxId ) + 1, nFieldLength, " " )
+      &( cImeVar ) := PadR( NovaSifra( RTrim( cMaxId) ), nFieldLength, " " )
    ENDIF
 
 /*

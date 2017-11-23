@@ -136,10 +136,10 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
    //bRoba := gRobaBlock
 
    DO CASE
-   CASE goModul == "KALK"
+   CASE gModul == "KALK"
        bRoba := {| Ch| kalk_roba_key_handler( Ch ) }
 
-   CASE goModul == "FAKT"
+   CASE gModul == "FAKT"
        bRoba := {| Ch| fakt_roba_key_handler( Ch ) }
 
    OTHERWISE

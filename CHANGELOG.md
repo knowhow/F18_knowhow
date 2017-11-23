@@ -1,6 +1,9 @@
 # F18 klijent, lista promjena
 
-## 3.1.150-std, 2017-11-23
+## 3.1.152-std, 2017-11-23
+### CORE
+- sif partner F9 - auto novi id
+
 ### FAKT
 - fakt pratiti stanje roba, S - sifarnik FAKT stanje pregled
 

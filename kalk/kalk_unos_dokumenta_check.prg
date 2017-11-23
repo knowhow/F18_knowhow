@@ -83,7 +83,7 @@ FUNCTION KalkNaF( cIdroba, nKols )
    //SET ORDER TO TAG "3" // fakt idroba
    nKols := 0
    //SEEK cidroba
-   seek_fakt_3( cIdRoba )
+   seek_fakt_3( NIL, cIdRoba )
 
    DO WHILE !Eof() .AND. cIdroba == idroba
       IF idtipdok = "0"  // ulaz

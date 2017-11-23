@@ -394,6 +394,8 @@ FUNCTION fakt_v_kolicina( cTipVpc )
          //    RETURN .F.
          //ENDIF
 
+      ELSE
+          info_bar( "fakt_stanje", "Artikal: " + _idRoba + " stanje: " + Alltrim( Str(nUl - nIzl - nRevers - nRezerv, 12, 3) ) )
       ENDIF
    ENDIF
 
@@ -531,14 +533,16 @@ FUNCTION fakt_stanje_roba( cIdRoba )
    LOCAL nPos, nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
 
    PushWa()
-   seek_fakt_3( cIdRoba )
+   altd()
+   seek_fakt_3( NIL, cIdRoba )
 
    aStanje := {}  // {idfirma, nUl,nIzl,nRevers,nRezerv }
+
    nUl := nIzl := nRezerv := nRevers := 0
-   DO WHILE !Eof()  .AND. cIdRoba == IdRoba
-      nPos := AScan ( aStanje, {| x | x[ 1 ] == FAKT->IdFirma } )
+   DO WHILE !Eof() .AND. cIdRoba == IdRoba
+      nPos := AScan ( aStanje, {| x | x[ 1 ] == field->IdFirma } )
       IF nPos == 0
-         AAdd ( aStanje, { IdFirma, 0, 0, 0, 0 } )
+         AAdd ( aStanje, { field->IdFirma, 0, 0, 0, 0 } )
          nPos := Len ( aStanje )
       ENDIF
       IF Left( field->idtipdok, 1 ) == "0"  // ulaz
@@ -547,20 +551,21 @@ FUNCTION fakt_stanje_roba( cIdRoba )
          IF !( Left( serbr, 1 ) == "*" .AND. idtipdok == "10" )  // za fakture na osnovu optpremince ne ra~unaj izlaz
             aStanje[ nPos ][ 3 ] += kolicina
          ENDIF
-      ELSEIF idtipdok $ "20#27"
+      ELSEIF field->idtipdok $ "20#27"
          IF serbr = "*"
             aStanje[ nPos ][ 5 ] += kolicina
          ENDIF
-      ELSEIF idtipdok == "21"
+      ELSEIF field->idtipdok == "21"
          aStanje[ nPos ][ 4 ] += kolicina
       ENDIF
       SKIP
    ENDDO
 
+
    fakt_box_stanje( aStanje, cIdRoba )      // nUl,nIzl,nRevers,nRezerv)
 
    PopWa()
-   
+
    RETURN .T.
 
 
@@ -579,7 +584,7 @@ FUNCTION fakt_roba_key_handler( Ch )
 FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
    LOCAL i, nR, nC, nTSta := 0, nTRev := 0, nTRez := 0, ;
-      nTOst := 0, npd, cDiv := " ³ ", nLen
+      nTOst := 0, npd, cDiv := " | ", nLen
 
    nPd := Len ( fakt_pic_iznos() )
    nLen := Len ( aStanje )
@@ -597,7 +602,10 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    //NEXT
    //nLenDP := IIF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
+
    select_o_roba( cIdRoba )
+
+
    Box(, 6 + nLen / 2, 75 )
    Beep( 1 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "ARTIKAL: "
@@ -641,6 +649,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    @ nR, Col() SAY nTOst PICT fakt_pic_iznos()
    @ nR, Col() SAY cDiv
 
+/*
    // ispis dodatnih parametara stanja
 
    IF nLenDP > 0
@@ -665,6 +674,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
       NEXT
    ENDIF
+*/
 
    Inkey( 0 )
    BoxC()

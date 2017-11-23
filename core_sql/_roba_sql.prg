@@ -108,6 +108,8 @@ FUNCTION select_o_roba( cId )
    IF Used()
       IF RecCount() > 1 .AND. cId == NIL
          RETURN .T.
+      ELSEIF cId != NIL .AND. cId == roba->id
+         RETURN .T. // vec pozicionirani na roba.id
       ELSE
          USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
       ENDIF

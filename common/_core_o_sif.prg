@@ -40,10 +40,10 @@ FUNCTION find_partner_by_naz_or_id( cId )
    RETURN !Eof()
 
 
-FUNCTION find_partner_max_id()
+FUNCTION find_partner_max_numeric_id()
 
       LOCAL cAlias := "PARTN_MAX"
-      LOCAL cSqlQuery := "select MAX(id) AS MAXID from fmk.partn"
+      LOCAL cSqlQuery := "select MAX(id) AS MAXID from fmk.partn WHERE id ~ '\d+\s*'" // where zadovoljava: '0001  ', '000100'
       LOCAL cMaxId := ""
 
       PushWa()
@@ -56,7 +56,7 @@ FUNCTION find_partner_max_id()
       cMaxId := field->MAXID
       USE
       PopWa()
-      
+
       RETURN cMaxId
 
 FUNCTION o_partner( cId )

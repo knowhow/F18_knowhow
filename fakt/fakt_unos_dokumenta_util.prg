@@ -532,7 +532,7 @@ FUNCTION fakt_stanje_roba( cIdRoba )
 
    PushWa()
    altd()
-   seek_fakt_3( cIdRoba )
+   seek_fakt_3( NIL, cIdRoba )
 
    aStanje := {}  // {idfirma, nUl,nIzl,nRevers,nRezerv }
 

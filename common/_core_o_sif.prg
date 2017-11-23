@@ -43,14 +43,25 @@ FUNCTION find_partner_by_naz_or_id( cId )
 FUNCTION find_partner_max_numeric_id()
 
       LOCAL cAlias := "PARTN_MAX"
-      // where zadovoljava: '0001  ', '000100', NE zadovoljava 'A05  ' 
-      LOCAL cSqlQuery := "select MAX(id) AS MAXID from fmk.partn WHERE id ~ '^\d+\s*'"
+
+      // where zadovoljava: '0001  ', '000100', NE zadovoljava 'A05  '
+      // ako imaju sifre '1   ', '9    '  pravice probleme, pa prvo trazimo max integer
+      LOCAL cSqlQueryInt := select max(id::integer) MAXID_INT  from fmk.partn where id ~ '^\d+\s*'
+      LOCAL nMaxId
+
 
       LOCAL cMaxId := ""
 
       PushWa()
       SELECT F_POM
-      IF !use_sql( "partn", cSqlQuery, cAlias )
+      IF !use_sql( "pom", cSqlQueryInt, cAlias )  // prvo trazimo najveci integer
+         PopWa()
+         RETURN ""
+      ENDIF
+      nMaxId := field->MAXID_INT
+
+      // kada nadjenmo najveci integer, lociramo polje id koje odgovara tom integeru
+      IF !use_sql( "pom", "select id AS MAXID from fmk.partn WHERE id ~ '^\d+\s*' and id::integer = " + Str( nMaxId ), cAlias )
          PopWa()
          RETURN ""
       ENDIF
@@ -60,6 +71,7 @@ FUNCTION find_partner_max_numeric_id()
       PopWa()
 
       RETURN cMaxId
+
 
 FUNCTION o_partner( cId )
 

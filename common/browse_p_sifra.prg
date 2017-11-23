@@ -1711,6 +1711,7 @@ FUNCTION sifarnik_f9_nova_sifra()
 
    cMaxId := AllTrim( find_partner_max_numeric_id() )
    //nSifraLength := Len( cMaxId )
+   altd()
 
    IF !Empty( cMaxId )
       //&( cImeVar ) := PadR( NovaSifra( IF( Empty( id ), id, RTrim( id ) ) ), nDuzSif, " " )

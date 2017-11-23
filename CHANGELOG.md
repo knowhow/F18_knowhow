@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.150-std, 2017-11-23
+### FAKT
+- fakt pratiti stanje roba, S - sifarnik FAKT stanje pregled
+
 ## 3.1.147-std, 2017-11-17
 ### CORE
 - Wpar +bug NIL var

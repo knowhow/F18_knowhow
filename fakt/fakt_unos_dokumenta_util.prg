@@ -602,9 +602,9 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    //NEXT
    //nLenDP := IIF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
-   IF Select( "ROBA" ) == 0  .OR. cIdRoba != roba->id
-      select_o_roba( cIdRoba )
-   ENDIF
+
+   select_o_roba( cIdRoba )
+
 
    Box(, 6 + nLen / 2, 75 )
    Beep( 1 )

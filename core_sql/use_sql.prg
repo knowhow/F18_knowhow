@@ -173,15 +173,14 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
       lError := .T.
    ENDIF
 
-   nWa := Select( cTable )
-   IF nWa > 0
-      SELECT ( nWa )
-      USE
-      dbSelectArea( nWa )
-   ENDIF
-
    IF cAlias == NIL
       cAlias := cTable
+      nWa := Select( cTable )
+      IF nWa > 0
+         SELECT ( nWa )
+         USE
+         dbSelectArea( nWa )
+      ENDIF
    ELSE
       IF cAlias == "_NEW_WA_"
          lOpenInNewArea := .T.

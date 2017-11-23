@@ -46,10 +46,8 @@ FUNCTION find_partner_max_numeric_id()
 
       // where zadovoljava: '0001  ', '000100', NE zadovoljava 'A05  '
       // ako imaju sifre '1   ', '9    '  pravice probleme, pa prvo trazimo max integer
-      LOCAL cSqlQueryInt := select max(id::integer) MAXID_INT  from fmk.partn where id ~ '^\d+\s*'
-      LOCAL nMaxId
-
-
+      LOCAL cSqlQueryInt := "select max(id::integer) MAXID_INT  from fmk.partn where id ~ '^\d+\s*'"
+      LOCAL nMaxId := 0
       LOCAL cMaxId := ""
 
       PushWa()

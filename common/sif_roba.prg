@@ -144,7 +144,6 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
 
    OTHERWISE
        bRoba := {| Ch | pos_roba_block( Ch ) }
-
    ENDCASE
 
 

@@ -487,7 +487,7 @@ METHOD set_module_gvars()
    RPar( "rs", @gcRabDef )
    RPar( "ir", @gcRabIDef )
    RPar( "id", @gcRabDok )
-   RPar( "Fi", @gIspPart )
+   // RPar( "Fi", @gIspPart )
    // RPar( "Fz", @gAzurTimeOut )
 
    cSection := "1"

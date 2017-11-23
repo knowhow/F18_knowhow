@@ -850,7 +850,7 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
          ENDDO
 
          SET KEY K_F8 TO k_f8_nadji_novu_sifru()
-         SET KEY K_F9 TO n_num_sif()
+         SET KEY K_F9 TO sifarnik_f9_nova_sifra()
          SET KEY K_F5 TO k_f5_nadji_novu_sifru()
 
          READ
@@ -1681,19 +1681,40 @@ FUNCTION valid_sifarnik_id_postoji( wId, cTag )
 
 
 
-FUNCTION n_num_sif()
+FUNCTION sifarnik_f9_nova_sifra()
 
-   LOCAL cFilter := "val(id) <> 0"
-   LOCAL nI
-   LOCAL nLId
-   LOCAL lCheck
-   LOCAL lLoop
+   //LOCAL cFilter := "val(id) <> 0"
+   //LOCAL nI
+   //LOCAL nLId
+   //LOCAL lCheck
+   //LOCAL lLoop
+   LOCAL nSifraLength := 4       // '0100  ' -> cSifraLength := 4,  nFieldLength := 6
+   LOCAL nFieldLength := 6
+   LOCAL cPom
+   LOCAL cImeVar
 
-   // ime polja : "wid"
-   PRIVATE cImeVar := ReadVar()
-   // vrijednost unjeta u polje
-   cPom := &( cImeVar )
+   cImeVar := ReadVar()  // WID
 
+   cPom := &( cImeVar )  // 0100
+   nFieldLength := LEN( cPom )
+
+   IF cImeVar != "WID"
+      RETURN .F.
+   ENDIF
+
+   IF Alias() != "PARTN"
+      RETURN .F.
+   ENDIF
+
+   cMaxId := AllTrim( find_partner_max_id() )
+   nSifraLength := Len( cMaxId )
+
+   IF !Empty( cMaxId )
+      //&( cImeVar ) := PadR( NovaSifra( IF( Empty( id ), id, RTrim( id ) ) ), nDuzSif, " " )
+      &( cImeVar ) := PadR( Val( cMaxId ) + 1, nFieldLength, " " )
+   ENDIF
+
+/*
    IF cImeVar == "WID"
 
       PushWA()
@@ -1769,7 +1790,11 @@ FUNCTION n_num_sif()
 
    ENDIF
 
-   AEval( GetList, {| o | o:display() } )
+
    PopWA()
+*/
+
+   AEval( GetList, {| o | o:display() } )
+
 
    RETURN NIL

@@ -40,6 +40,25 @@ FUNCTION find_partner_by_naz_or_id( cId )
    RETURN !Eof()
 
 
+FUNCTION find_partner_max_id()
+
+      LOCAL cAlias := "PARTN_MAX"
+      LOCAL cSqlQuery := "select MAX(id) AS MAXID from fmk.partn"
+      LOCAL cMaxId := ""
+
+      PushWa()
+      SELECT F_POM
+      IF !use_sql( "partn", cSqlQuery, cAlias )
+         PopWa()
+         RETURN ""
+      ENDIF
+
+      cMaxId := field->MAXID
+      USE
+      PopWa()
+      
+      RETURN cMaxId
+
 FUNCTION o_partner( cId )
 
    LOCAL cTabela := "partn"

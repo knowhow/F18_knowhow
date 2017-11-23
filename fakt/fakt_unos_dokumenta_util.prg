@@ -394,6 +394,8 @@ FUNCTION fakt_v_kolicina( cTipVpc )
          //    RETURN .F.
          //ENDIF
 
+      ELSE
+          info_bar( "fakt_stanje", "Artikal: " + _idRoba + " stanje: " + Alltrim( Str(nUl - nIzl - nRevers - nRezerv, 12, 3) ) )
       ENDIF
    ENDIF
 

@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.152-std, 2017-11-23
+## 3.1.153-std, 2017-11-23
 ### CORE
 - sif partner F9 - auto novi id
 

@@ -57,7 +57,7 @@ FUNCTION FaRobaBlock( Ch )
    ELSEIF Upper( Chr( Ch ) ) == "S"
       TB:Stabilize()
       PushWA()
-      FaktStanje( roba->id )
+      fakt_stanje_roba( roba->id )
       PopWa()
       RETURN 6
 

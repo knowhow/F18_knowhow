@@ -244,7 +244,7 @@ FUNCTION set_global_vars_2()
 FUNCTION set_global_vars_roba()
 
    //PUBLIC gUVarPP
-   PUBLIC gRobaBlock
+   //PUBLIC gRobaBlock
    PUBLIC gPicProc
 
    // PUBLIC gFPicCDem
@@ -268,7 +268,7 @@ FUNCTION set_global_vars_roba()
    // MpcSaPor - Maloprodajna cijena sa porezom
    gUgostVarijanta := "Rmarza_DLimit"
    //gUVarPP := "N"
-   gRobaBlock := NIL
+   //gRobaBlock := NIL
 
 
    gPicProc := "999999.99%"

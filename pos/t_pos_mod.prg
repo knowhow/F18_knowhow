@@ -448,6 +448,6 @@ METHOD set_module_gvars()
    //kalk_konto_za_stanje_pos( .T. ) // kalk konto za stanje pos artikla
    fiscal_opt_active() // koristenje fiskalnih opcija
 
-   gRobaBlock := {| Ch | pos_roba_block( Ch ) }
+   //gRobaBlock := {| Ch | pos_roba_block( Ch ) }
 
    RETURN .T.

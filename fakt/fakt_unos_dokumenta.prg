@@ -425,14 +425,13 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
                lAvansniRacun := "D"
             ENDIF
 
-            @ box_x_koord() + nX, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET lAvansniRacun PICT "@!" ;
-               VALID lAvansniRacun $ "DN"
+            @ box_x_koord() + nX, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET lAvansniRacun PICT "@!" VALID lAvansniRacun $ "DN"
 
          ENDIF
 
-         IF ( gIspPart == "N" )
+         //IF ( gIspPart == "N" )
             READ
-         ENDIF
+         //ENDIF
 
          ESC_RETURN 0
 

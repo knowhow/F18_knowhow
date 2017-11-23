@@ -128,7 +128,7 @@ METHOD set_module_gvars()
    PUBLIC gnTMarg2 := 3 // vertik.pomj. stavki u fakturi var.9
    PUBLIC gnTMarg3 := 0 // vertik.pomj. totala fakture var.9
    PUBLIC gnTMarg4 := 0 // vertik.pomj. za donji dio fakture var.9
-   PUBLIC gIspPart := "N" // ispravka partnera u unosu novog dokumenta
+  // PUBLIC gIspPart := "N" // ispravka partnera u unosu novog dokumenta
   // PUBLIC gResetRoba := "D" // resetuj uvijek artikal, pri unosu stavki dokumenta
 
    PUBLIC g10Str := hb_UTF8ToStr( "POREZNA FAKTURA br." )
@@ -202,7 +202,7 @@ METHOD set_module_gvars()
    PUBLIC gKriz := 0
    PUBLIC gKrizA5 := 2
    PUBLIC gERedova := 9 // extra redova
-   PUBLIC gPratiK := "N"
+   PUBLIC gFaktPratitiKolicinuDN := "N"
    PUBLIC gPratiC := "N"
    PUBLIC gFZaok := 2
    PUBLIC gImeF := "N"
@@ -423,7 +423,7 @@ METHOD set_module_gvars()
    Rpar( "rR", @gRabIzRobe )
    Rpar( "ds", @gnDS )
    Rpar( "ot", @gOdvT2 )
-   RPar( "pk", @gPratik )
+   RPar( "pk", @gFaktPratitiKolicinuDN )
    RPar( "pc", @gPratiC )
    RPar( "56", @gnLMargA5 )
    //RPar( "r3", @g06Str )
@@ -488,7 +488,7 @@ METHOD set_module_gvars()
    RPar( "ir", @gcRabIDef )
    RPar( "id", @gcRabDok )
    RPar( "Fi", @gIspPart )
-   RPar( "Fz", @gAzurTimeOut )
+   // RPar( "Fz", @gAzurTimeOut )
 
    cSection := "1"
 

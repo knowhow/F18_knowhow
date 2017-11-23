@@ -133,7 +133,20 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
    SELECT ROBA
    sifk_fill_ImeKol( "ROBA", @ImeKol, @Kol )
 
-   bRoba := gRobaBlock
+   //bRoba := gRobaBlock
+
+   DO CASE
+   CASE goModul == "KALK"
+       bRoba := {| Ch| kalk_roba_key_handler( Ch ) }
+
+   CASE goModul == "FAKT"
+       bRoba := {| Ch| fakt_roba_key_handler( Ch ) }
+
+   OTHERWISE
+       bRoba := {| Ch | pos_roba_block( Ch ) }
+
+   ENDCASE
+
 
    IF is_roba_trazi_po_sifradob() .AND. !Empty( cTagTraziPoSifraDob )
 
@@ -311,7 +324,7 @@ FUNCTION OFmkRoba()
    o_trfp()
    // o_tarifa()
    // o_roba()
-   o_sastavnice()
+   //o_sastavnice()
 
    RETURN .T.
 

@@ -273,7 +273,7 @@ FUNCTION fakt_par_razno()
       Wpar( "ds", gnDS )
       WPar( "if", gImeF )
       WPar( "95", gKomLin )
-      WPar( "Fi", @gIspPart )
+      //WPar( "Fi", @gIspPart )
       WPar( "mP", gMpPrint )
       WPar( "mL", gMpLocPort )
       WPar( "mT", gMpRedTraka )
@@ -444,13 +444,13 @@ FUNCTION fakt_par_varijante_prikaza()
    o_params()
 
    Box(, 23, 76, .F., "VARIJANTE OBRADE DOKUMENATA" )
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unos Dat.pl, otpr., narudzbe D/N (1/2) ?" GET gDoDPar VALID gDodPar $ "12" PICT "@!"
-   @ box_x_koord() + 1, box_y_koord() + 46 SAY "Dat.pl.u svim v.f.9 (D/N)?" GET gDatVal VALID gDatVal $ "DN" PICT "@!"
-   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Generacija ulaza prilikom izlaza 13" GET gProtu13 VALID gProtu13 $ "DN" PICT "@!"
-   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Maloprod.cijena za 13-ku ( /1/2/3/4/5/6)   " GET g13dcij VALID g13dcij $ " 123456"
-   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Varijanta dokumenta 13 (1/2)   " GET gVar13 VALID gVar13 $ "12"
-   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Varijanta numeracije dokumenta 13 (1/2)   " GET gVarNum VALID gVarNum $ "12"
-   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Pratiti trenutnu kolicinu D/N ?" GET gPratiK PICT "@!" VALID gPratiK $ "DN"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Unos Dat.pl, otpr., narudzbe D/N (1/2) ?" GET gDoDPar VALID gDodPar $ "12" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 46 SAY8 "Dat.pl.u svim v.f.9 (D/N)?" GET gDatVal VALID gDatVal $ "DN" PICT "@!"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Generacija ulaza prilikom izlaza 13" GET gProtu13 VALID gProtu13 $ "DN" PICT "@!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Maloprod.cijena za 13-ku ( /1/2/3/4/5/6)   " GET g13dcij VALID g13dcij $ " 123456"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Varijanta dokumenta 13 (1/2)   " GET gVar13 VALID gVar13 $ "12"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Varijanta numeracije dokumenta 13 (1/2)   " GET gVarNum VALID gVarNum $ "12"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Pratiti trenutnu količinu D/N ?" GET gFaktPratitiKolicinuDN PICT "@!" VALID gFaktPratitiKolicinuDN $ "DN"
    @ box_x_koord() + 7, Col() + 1 SAY "Pratiti cijene na unosu D/N ?" GET gPratiC PICT "@!" VALID gPratiC $ "DN"
    @ box_x_koord() + 8, box_y_koord() + 2 SAY  "Koristenje VP cijene:"
    @ box_x_koord() + 9, box_y_koord() + 2 SAY  "  ( ) samo VPC   (X) koristiti samo MPC    (1) VPC1/VPC2 "
@@ -486,7 +486,7 @@ FUNCTION fakt_par_varijante_prikaza()
       WPar( "pd", gProtu13 )
       WPar( "dc", g13dcij )
       WPar( "vn", gVarNum )
-      WPar( "pk", gPratik )
+      WPar( "pk", gFaktPratitiKolicinuDN )
       WPar( "pc", gPratiC )
       WPar( "50", gVarC )
       WPar( "mp", gMP )
@@ -508,6 +508,8 @@ FUNCTION fakt_par_varijante_prikaza()
    RETURN .T.
 
 
+FUNCTION is_fakt_pratiti_kolicinu()
+   RETURN gFaktPratitiKolicinuDN == "D"
 
 FUNCTION par_fakt_izgled_dokumenta()
 

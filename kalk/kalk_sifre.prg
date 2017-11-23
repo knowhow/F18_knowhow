@@ -69,14 +69,14 @@ FUNCTION kalk_roba_key_handler( Ch )
          RETURN 99
       ENDIF
 
-   ELSEIF Ch == K_F8
+//   ELSEIF Ch == K_F8
 
-      PushWA()
-      nRet := CjenR()
-      OSifBaze()
-      SELECT ROBA
-      PopWA()
-      RETURN nRet
+  //    PushWA()
+    //  nRet := CjenR()
+      //OSifBaze()
+      //SELECT ROBA
+      //PopWA()
+      //RETURN nRet
 
 /*
    ELSEIF Upper( Chr( Ch ) ) == "O"
@@ -109,13 +109,13 @@ FUNCTION kalk_roba_key_handler( Ch )
 
    RETURN DE_CONT
 
+/*
 
+-- FUNCTION OSifBaze()
 
-FUNCTION OSifBaze()
-
-   o_konto()
-   o_koncij()
-   o_partner()
+   //o_konto()
+   //o_koncij()
+   //o_partner()
    o_tnal()
    o_tdok()
    o_trfp()
@@ -127,7 +127,7 @@ FUNCTION OSifBaze()
 
    RETURN .T.
 
-
+*/
 
 FUNCTION P_Objekti()
 

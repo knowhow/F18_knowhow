@@ -787,7 +787,7 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
 
       IF lGroup == .T.
 
-         DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) == field->nGodina .AND. Str( nMjesec, 2, 0 ) == field->nMjesec  .AND. id = cId
+         DO WHILE !Eof() .AND. Str( nGodina, 4, 0 ) == field->godina .AND. Str( nMjesec, 2, 0 ) == field->mjesec  .AND. id = cId
 
             nIzn1 += field->iznos1
             nIzn2 += field->iznos2
@@ -814,7 +814,7 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
 
       SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cId
 
-      DO WHILE !Eof() .AND. field->nGodina + field->nMjesec + field->id = Str( nGodina, 4, 0 ) + Str( nMjesec, 2 ) + cId
+      DO WHILE !Eof() .AND. field->Godina + field->Mjesec + field->id = Str( nGodina, 4, 0 ) + Str( nMjesec, 2 ) + cId
 
          IF &aUslP
 

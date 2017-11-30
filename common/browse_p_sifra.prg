@@ -181,9 +181,14 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
    // LOCAL _order := IndexOrd()
    LOCAL _tezina := 0
 
+
    IF cId == NIL .OR. Empty( cId )
       // RETURN "nil"
       RETURN .F.
+   ENDIF
+
+   IF ValType( cId ) != "C" // u RNAL modulu postoje numericke sifre
+       RETURN .F.
    ENDIF
 
    /*
@@ -201,7 +206,7 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
 // ENDIF
 
 
-   IF ValType( cId ) == "C" .AND. AllTrim( cId ) == "?"
+   IF AllTrim( cId ) == "?"
       Box( NIL, 7, 60, .T. )
 
       @ box_x_koord() + 1, box_y_koord() + 2 SAY8 'Džokeri za pretragu naziv: ".$", id: ">#"'

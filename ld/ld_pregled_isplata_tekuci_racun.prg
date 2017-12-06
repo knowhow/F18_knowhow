@@ -39,7 +39,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    ENDIF
 
    cIDBanka := Space( FIELD_LD_RADN_IDBANKA )
-   cVarSort := fetch_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
+   //cVarSort := fetch_metric( "ld_platni_spisak_sortiranje", my_user(), "2" )
 
    Box(, 10, 50 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
@@ -50,7 +50,8 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
    @ box_x_koord() + 6, box_y_koord() + 2 SAY "Primanje (prazno-sve ukupno):" GET cIdTipPr VALID Empty( cIdTipPr ) .OR. P_TipPr( @cIdTipPr )
    @ box_x_koord() + 7, box_y_koord() + 2 SAY "Banka (prazno-sve) :" GET cIdBanka VALID Empty( cIdBanka ) .OR. P_Kred( @cIdBanka )
-   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   // box_x_koord() + 8, box_y_koord() + 2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   // mislim da ako sortiranje ne bi bilo po prezimenu filter ne bi funkcionisao ...  ovo je grozno napravljeno (sort + filter) :(
 
    READ
 
@@ -80,9 +81,9 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
          cSort1 := "radn->idbanka+SortPrez(IDRADN)"
       ENDIF
       IF Empty( cIdBanka )
-         cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and."
+         cFilt := "radn->isplata==" + _filter_quote( cIsplata )
       ELSE
-         cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka ) + ".and."
+         cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka )
       ENDIF
       // cFilt := cFilt + IIF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + IIF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
 
@@ -104,9 +105,9 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
          cSort1 := "radn->idbanka+SortPrez(IDRADN)"
       ENDIF
       IF Empty( cIdBanka )
-         cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and."
+         cFilt := "radn->isplata==" + _filter_quote( cIsplata )
       ELSE
-         cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka ) + ".and."
+         cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka )
       ENDIF
       // cFilt := cFilt + "IDRJ==" + _filter_quote( cIdRj ) + ".and." + IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
       IF ld_vise_obracuna()

@@ -188,7 +188,7 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
    ENDIF
 
    IF ValType( cId ) != "C" // u RNAL modulu postoje numericke sifre
-       RETURN .F.
+      RETURN .F.
    ENDIF
 
    /*
@@ -854,9 +854,9 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
 
          ENDDO
 
-         //SET KEY K_F8 TO k_f8_nadji_novu_sifru()
+         // SET KEY K_F8 TO k_f8_nadji_novu_sifru()
          SET KEY K_F9 TO sifarnik_f9_nova_sifra()
-         //SET KEY K_F5 TO k_f5_nadji_novu_sifru()
+         // SET KEY K_F5 TO k_f5_nadji_novu_sifru()
 
          READ
 
@@ -1691,12 +1691,12 @@ FUNCTION valid_sifarnik_id_postoji( wId, cTag )
 
 FUNCTION sifarnik_f9_nova_sifra()
 
-   //LOCAL cFilter := "val(id) <> 0"
-   //LOCAL nI
-   //LOCAL nLId
-   //LOCAL lCheck
-   //LOCAL lLoop
-   //LOCAL nSifraLength := 4       // '0100  ' -> cSifraLength := 4,  nFieldLength := 6
+   // LOCAL cFilter := "val(id) <> 0"
+   // LOCAL nI
+   // LOCAL nLId
+   // LOCAL lCheck
+   // LOCAL lLoop
+   // LOCAL nSifraLength := 4       // '0100  ' -> cSifraLength := 4,  nFieldLength := 6
    LOCAL nFieldLength := 6
    LOCAL cPom
    LOCAL cImeVar
@@ -1704,7 +1704,7 @@ FUNCTION sifarnik_f9_nova_sifra()
    cImeVar := ReadVar()  // WID
 
    cPom := &( cImeVar )  // '0100  '
-   nFieldLength := LEN( cPom )
+   nFieldLength := Len( cPom )
 
    IF cImeVar != "WID"
       RETURN .F.
@@ -1715,12 +1715,12 @@ FUNCTION sifarnik_f9_nova_sifra()
    ENDIF
 
    cMaxId := AllTrim( find_partner_max_numeric_id() )
-   //nSifraLength := Len( cMaxId )
-   altd()
+   // nSifraLength := Len( cMaxId )
+   AltD()
 
    IF !Empty( cMaxId )
-      //&( cImeVar ) := PadR( NovaSifra( IF( Empty( id ), id, RTrim( id ) ) ), nDuzSif, " " )
-      &( cImeVar ) := PadR( NovaSifra( RTrim( cMaxId) ), nFieldLength, " " )
+      // &( cImeVar ) := PadR( NovaSifra( IF( Empty( id ), id, RTrim( id ) ) ), nDuzSif, " " )
+      &( cImeVar ) := PadR( NovaSifra( RTrim( cMaxId ) ), nFieldLength, " " )
    ENDIF
 
 /*
@@ -1804,6 +1804,5 @@ FUNCTION sifarnik_f9_nova_sifra()
 */
 
    AEval( GetList, {| o | o:display() } )
-
 
    RETURN NIL

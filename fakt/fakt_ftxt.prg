@@ -180,7 +180,7 @@ FUNCTION fakt_ftxt_decode_string( cFaktTxt )
    hFaktTxt[ "datpl" ] := CToD( "" )
    hFaktTxt[ "veza_otpremnice" ] := ""
    hFaktTxt[ "destinacija" ] := SPACE( 100 )
-   hFaktTxt[ "dokument_veza" ] := ""
+   hFaktTxt[ "dokument_veza" ] := PadR( "", 500 )
    hFaktTxt[ "objekti" ] := ""
 
    hFaktTxt[ "d2k1" ] := Space( 15 )

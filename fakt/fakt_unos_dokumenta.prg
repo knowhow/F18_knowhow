@@ -349,7 +349,7 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
          nX += 2
 
          IF hFaktParams[ "fakt_dok_veze" ]
-            @ box_x_koord() + nX, box_y_koord() + 2 SAY "Vezni dok.:" GET hFaktTxt[ "dokument_veza" ]  PICT "@S20"
+            @ box_x_koord() + nX, box_y_koord() + 2 SAY "Vezni dok:" GET hFaktTxt[ "dokument_veza" ]  PICT "@S20"
          ENDIF
 
          ++nX

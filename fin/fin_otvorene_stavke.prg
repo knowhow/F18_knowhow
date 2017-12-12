@@ -12,6 +12,8 @@
 
 #include "f18.ch"
 
+STATIC s_cKupciLike := NIL // konta koja se prilikom azuriranja koriste za brisanje markera otvorenih stavki
+
 
 FUNCTION fin_otvorene_stavke_meni()
 
@@ -82,6 +84,21 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 
 
 
+FUNCTION param_otvorene_stavke_kupci_konto_like( cSet )
+
+      LOCAL cParamName := "fin_ostav_kupci_konto_like"
+
+      IF s_cKupciLike == NIL
+         s_cKupciLike := fetch_metric( cParamName, NIL,  "211%" )
+      ENDIF
+
+      IF cSet != NIL
+         s_cKupciLike := Trim( cSet )
+         set_metric( cParamName, NIL, cSet )
+      ENDIF
+
+      RETURN s_cKupciLike
+
 
    /*
 
@@ -97,7 +114,11 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 FUNCTION fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn, cBrNal )
 
    LOCAL cSql
-   LOCAL cKupciLike := "211%"
+   LOCAL cKupciLike := param_otvorene_stavke_kupci_konto_like()
+
+   IF Empty( cKupciLike ) // markeri otvorenih stavki se ne diraju prilikom povrata dokumenta u pripremu
+      RETURN .T.
+   ENDIF
 
    MsgO( "Brisanje markera otvorenih stavki " + cKupciLike )
    cSql := "UPDATE fmk.fin_suban set otvst=' ' FROM "

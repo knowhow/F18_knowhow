@@ -1,3 +1,4 @@
+
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
@@ -43,6 +44,9 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    LOCAL nX := 1
    LOCAL _k1 := fin_k1(), _k2 := fin_k2(), _k3 := fin_k3(), _k4 := fin_k4()
    LOCAL _tip_dok := fin_tip_dokumenta()
+   LOCAL cKontoLike := PADR( param_otvorene_stavke_kupci_konto_like( cSet ), 10 )
+
+
    LOCAL GetList := {}
 
    Box(, 24, 70 )
@@ -73,7 +77,6 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    read_dn_parametar( "K4", box_x_koord() + nX, Col() + 2, @_k4 )
 
    nX := nX + 2
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)" GET gBrojacFinNaloga VALID gBrojacFinNaloga $ "12"
 
    ++nX
@@ -87,7 +90,6 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "********************** Obrada naloga:"
 
    nX := nX + 2
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Neophodna ravoteza naloga? (D/N):" GET gRavnot VALID gRavnot $ "DN" PICT "@!"
 
    ++nX
@@ -113,10 +115,11 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    @ box_x_koord() + nX, Col() + 1 SAY "dana"
 
    ++nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz stanja konta kod knjizenja naloga" GET g_knjiz_help PICT "@!" ;
       VALID g_knjiz_help $ "DN"
 
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Otvorene stavke, konta za koja se brišu markeri:" GET cKontoLike PICT "@S10"
    READ
 
    BoxC()
@@ -129,6 +132,7 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
       fin_k3( _k3 )
       fin_k4( _k4 )
       fin_tip_dokumenta( _tip_dok )
+      param_otvorene_stavke_kupci_konto_like( Trime( cKontoLike ) )
 
    ENDIF
 

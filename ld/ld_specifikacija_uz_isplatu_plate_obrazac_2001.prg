@@ -53,6 +53,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL dDatIspl
    LOCAL cMRad := fetch_metric( "ld_specifikacija_minuli_rad", NIL, cMRad )
    LOCAL cPrimanjaStvariUsluge := fetch_metric( "ld_specifikacija_primanja_dobra", NIL, cPrimanjaStvariUsluge )
+
    LOCAL cDoprIz1 := PadR( fetch_metric( "ld_specifikacija_doprinos_1", NIL, "10" ), 2 )
    LOCAL cDoprIz2 := PadR( fetch_metric( "ld_specifikacija_doprinos_2", NIL, "11" ), 2 )
    LOCAL cDoprIz3 := fetch_metric( "ld_specifikacija_doprinos_3", NIL, "12" )
@@ -60,6 +61,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cDoprNa1 := PadR( fetch_metric( "ld_specifikacija_doprinos_5", NIL, "20" ), 2 )
    LOCAL cDoprNa2 := PadR( fetch_metric( "ld_specifikacija_doprinos_6", NIL, "21" ), 2 )
    LOCAL cDoprNa3 := fetch_metric( "ld_specifikacija_doprinos_7", NIL, "22" )
+
    LOCAL cDodatniDoprPio := PadR( fetch_metric( "ld_specifikacija_doprinos_pio", NIL, "  " ), 2 )
    LOCAL cDodatniDoprZdravstvo := PadR( fetch_metric( "ld_specifikacija_doprinos_zdr", NIL, "  " ), 2 )
    LOCAL nUkDoprIZ := 0
@@ -79,6 +81,17 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cVrstaIsplate := fetch_metric( "ld_specifikacija_vrsta_isplate", NIL, "A" )
    LOCAL cCheck11_14 :=  fetch_metric( "ld_specifikacija_check_11_14", NIL, "  " )
    LOCAL cFilt := ".t."
+
+   IF ValType( cDoprIz3 ) != "C"
+      cDoprIz3 := "12"
+   ENDIF
+   IF ValType( cDoprNa3 ) != "C"
+     cDoprNa3 := "22"
+   ENDIF
+
+   cDoprIz3 := PADR( cDopIz3, 2 )  // fix pogresno pohranjene parametre
+   cDoprNa3 := PADR( cDoprNa3, 3 )
+
 
    LOCAL cDoprOO1
    LOCAL cDoprOO2
@@ -196,27 +209,27 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       @ box_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecDo PICT "99"
       @ box_x_koord() + 3, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
 
-      @ box_x_koord() + 4, box_y_koord() + 2 SAY " Naziv: " GET cFirmNaz
-      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Adresa: " GET cFirmAdresa
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Opcina: " GET cFirmOpc
-      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Vrsta djelatnosti: " GET cVrstaDjelatnosti
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 " Naziv: " GET cFirmNaz
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Adresa: " GET cFirmAdresa
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Općina: " GET cFirmOpc
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Vrsta djelatnosti: " GET cVrstaDjelatnosti
 
       @ box_x_koord() + 4, box_y_koord() + 52 SAY "ID.broj :" GET cMatBR
       @ box_x_koord() + 5, box_y_koord() + 52 SAY "Dat.ispl:" GET dDatIspl
 
       @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" GET cPrimanjaStvariUsluge  PICT "@!S20"
 
-      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Dopr.pio (iz)" GET cDoprIz1
-      @ box_x_koord() + 10, Col() + 2 SAY "Dopr.pio (na)" GET cDoprNa1
-      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Dopr.zdr (iz)" GET cDoprIz2
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Dopr. pio (iz)" GET cDoprIz1
+      @ box_x_koord() + 10, Col() + 2 SAY "Dopr. pio (na)" GET cDoprNa1
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Dopr. zdr (iz)" GET cDoprIz2
       @ box_x_koord() + 11, Col() + 2 SAY "Dopr.zdr (na)" GET cDoprNa2
       //@ box_x_koord() + 11, Col() + 1 SAY "Omjer dopr.zdr (%):" GET nOmjerZdravstvo PICT "999.99999"
       @ box_x_koord() + 12, box_y_koord() + 2 SAY "Dopr.nez (iz)" GET cDoprIz3
       @ box_x_koord() + 12, Col() + 2 SAY "Dopr.nez (na)" GET cDoprNa3
       //@ box_x_koord() + 12, Col() + 1 SAY "Omjer dopr.nez (%):" GET nOmjerNezaposlenost PICT "999.99999"
 
-      @ box_x_koord() + 13, box_y_koord() + 2 SAY "Dod.dopr.pio" GET cDodatniDoprPio PICT "@S35"
-      @ box_x_koord() + 14, box_y_koord() + 2 SAY "Dod.dopr.zdr" GET cDodatniDoprZdravstvo PICT "@S35"
+      @ box_x_koord() + 13, box_y_koord() + 2 SAY "Dod.dopr. pio" GET cDodatniDoprPio PICT "@S35"
+      @ box_x_koord() + 14, box_y_koord() + 2 SAY "Dod.dopr. zdr" GET cDodatniDoprZdravstvo PICT "@S35"
 
       @ box_x_koord() + 15, box_y_koord() + 2 SAY "Ost.obaveze: NAZIV                  USLOV"
       @ box_x_koord() + 16, box_y_koord() + 2 SAY " 1." GET cCOO1
@@ -252,10 +265,12 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    set_metric( "ld_specifikacija_primanja_dobra", NIL, cPrimanjaStvariUsluge )
    set_metric( "ld_specifikacija_doprinos_1", NIL, cDoprIz1 )
    set_metric( "ld_specifikacija_doprinos_2", NIL, cDoprIz2 )
-   //set_metric( "ld_specifikacija_doprinos_3", NIL, cDoprIz3 )
+   set_metric( "ld_specifikacija_doprinos_3", NIL, cDoprIz3 )
+
    set_metric( "ld_specifikacija_doprinos_5", NIL, cDoprNa1 )
    set_metric( "ld_specifikacija_doprinos_6", NIL, cDoprNa2 )
-   //set_metric( "ld_specifikacija_doprinos_7", NIL, cDoprNa3 )
+   set_metric( "ld_specifikacija_doprinos_7", NIL, cDoprNa3 )
+
    set_metric( "ld_specifikacija_doprinos_pio", NIL, cDodatniDoprPio )
    set_metric( "ld_specifikacija_doprinos_zdr", NIL, cDodatniDoprZdravstvo )
    set_metric( "ld_specifikacija_c1", NIL, cCOO1 )

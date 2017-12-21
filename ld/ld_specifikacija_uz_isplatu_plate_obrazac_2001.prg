@@ -82,17 +82,6 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cCheck11_14 :=  fetch_metric( "ld_specifikacija_check_11_14", NIL, "  " )
    LOCAL cFilt := ".t."
 
-   IF ValType( cDoprIz3 ) != "C"
-      cDoprIz3 := "12"
-   ENDIF
-   IF ValType( cDoprNa3 ) != "C"
-     cDoprNa3 := "22"
-   ENDIF
-
-   cDoprIz3 := PADR( cDopIz3, 2 )  // fix pogresno pohranjene parametre
-   cDoprNa3 := PADR( cDoprNa3, 3 )
-
-
    LOCAL cDoprOO1
    LOCAL cDoprOO2
    LOCAL cDoprOO3
@@ -140,6 +129,16 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cRTR
    LOCAL nDodDoprZ, nDodDoprP
 
+
+   IF ValType( cDoprIz3 ) != "C"
+     cDoprIz3 := "12"
+   ENDIF
+   IF ValType( cDoprNa3 ) != "C"
+     cDoprNa3 := "22"
+   ENDIF
+
+   cDoprIz3 := PADR( cDopIz3, 2 )  // fix pogresno pohranjene parametre
+   cDoprNa3 := PADR( cDoprNa3, 3 )
 
    cMatBR := PadR( cMatBr, 13 )
 

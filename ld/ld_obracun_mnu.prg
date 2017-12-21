@@ -36,7 +36,7 @@ FUNCTION ld_obracun_mnu_admin()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. brisanje obračuna                             " )
+   AAdd( _opc, "1. brisanje obračuna                                            " )
    AAdd( _opcexe, {|| ld_brisanje_obr() } )
 
 
@@ -52,6 +52,10 @@ FUNCTION ld_obracun_mnu_admin()
       AAdd( _opc, "R. pregled/ispravka radnih sati radnika" )
       AAdd( _opcexe, {|| edRadniSati() } )
    ENDIF
+
+
+   AAdd( _opc, "X. rekalkulacija nakon promjene vrijednosti boda" )
+   AAdd( _opcexe, {|| ld_rekalkulacija_primanja() } ) 
 
    f18_menu( "ao", .F., _izbor, _opc, _opcexe )
 

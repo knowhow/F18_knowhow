@@ -189,7 +189,7 @@
 #define F_IZDANJA  185
 #define F_FAKT_OBJEKTI 186
 #define F_PRIPNO   187
-#define F_LDNO     188
+#define F_LD_2     188
 #define F_RJES     189
 #define F_PK_RADN  190
 #define F_PK_DATA  191

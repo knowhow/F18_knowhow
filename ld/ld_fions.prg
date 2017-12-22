@@ -187,10 +187,10 @@ FUNCTION Prosj3( cTip, cTip2 )
 
    PushWA()
 
-   SELECT LD
+   //SELECT LD
    // "1","str(godina)+idrj+str(mjesec)+idradn"
    // "2","str(godina)+str(mjesec)+idradn"
-   SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
+   //SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
 
    i := 0
    IF cTip2 == "2" // "2"  -> vracam se mjesec unazad u kome nije bilo godisnjeg
@@ -347,7 +347,7 @@ FUNCTION Prosj3( cTip, cTip2 )
 
    nSumsat := iif( nSS1 + nSS2 + nSS3 <> 0, nSS1 + nSS2 + nSS3, 99999999 )
 
-   Box( "#" + IF( cTip $ "57", "UKUPNA PRIMANJA", "Prosjek" ) + " ZA MJESECE UNAZAD:", 6, 60 )
+   Box( "#" +  _idradn + " " + IIF( cTip $ "57", "UKUPNA PRIMANJA", "Prosjek" ) + " ZA MJESECE UNAZAD:", 6, 60 )
    @ box_x_koord() + 2, box_y_koord() + 2 SAY cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
    IF cTip $ "126"; ?? "  primanja/sati:"; ?? nSP1, "/", nSS1; ENDIF
    IF cTip $ "57"; ?? "  sati:"; ?? nSS1; ENDIF
@@ -360,12 +360,15 @@ FUNCTION Prosj3( cTip, cTip2 )
    @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prosjek"
    @ Row(), Col() + 2 SAY ( nMj3 + nMj2 + nMj1 ) / iif( cTip $ "57", nSumsat, nDijeli ) PICT "999999.999"
 
-   Inkey( 0 )
+   IF SELECT( "LD_2" ) == 0  // nije pokrenuto iz rekalkulacije Primanja
+      Inkey( 0 )
+   ENDIF
+
    BoxC()
 
    PopWa()
 
-   RETURN  ( nMj3 + nMj2 + nMj1 ) / iif( cTip $ "57", nSumsat, nDijeli )
+   RETURN ( nMj3 + nMj2 + nMj1 ) / iif( cTip $ "57", nSumsat, nDijeli )
 
 
 
@@ -455,7 +458,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
       cFormula := cF0
    ENDIF
 
-   SELECT LD
+   //SELECT LD
    // "1","str(godina)+idrj+str(mjesec)+idradn"
    // "2","str(godina)+str(mjesec)+idradn"
    // SET ORDER TO TAG ( ld_index_tag_vise_obracuna( "2", "I" ) )
@@ -542,7 +545,11 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "PRIMANJE ZA PROŠLI MJESEC:"
    @ box_x_koord() + 2, box_y_koord() + 2 SAY  cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
-   Inkey( 0 )
+
+   IF SELECT( "LD_2" ) == 0  // nije pokrenuto iz rekalkulacije primanja
+      Inkey( 0 )
+   ENDIF
+   
    BoxC()
 
    PopWa()

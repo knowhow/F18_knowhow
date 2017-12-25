@@ -137,7 +137,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
      cDoprNa3 := "22"
    ENDIF
 
-   cDoprIz3 := PADR( cDopIz3, 2 )  // fix pogresno pohranjene parametre
+   cDoprIz3 := PADR( cDoprIz3, 2 )  // fix pogresno pohranjene parametre
    cDoprNa3 := PADR( cDoprNa3, 3 )
 
    cMatBR := PadR( cMatBr, 13 )

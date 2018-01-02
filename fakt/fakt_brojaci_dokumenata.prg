@@ -342,15 +342,17 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( cIdFirma, cIdTipDok, cBrDok )
    _table := run_sql_query( _qry )
    _dok := _table:FieldGet( 1 )
    _tmp := TokToNiz( _dok, "/" )
-   _max_dok := Val( AllTrim( _tmp[ 1 ] ) )
+   IF Len( _tmp ) > 0
+     _max_dok := Val( AllTrim( _tmp[ 1 ] ) )
+   ELSE
+     _max_dok := 0
+   endif
 
-   // ovo je iz parametara...
    // param: fakt/10/10
    _param := "fakt" + "/" + cIdFirma + "/" + cIdTipDokTrazi
    _par_dok := fetch_metric( _param, NIL, 0 )
 
-   // provjera brojaca server dokument <> server param
-   _inc_error := _par_dok - _max_dok
+   _inc_error := _par_dok - _max_dok // provjera brojaca server dokument <> server param
 
    IF _inc_error > 30
 
@@ -365,6 +367,10 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( cIdFirma, cIdTipDok, cBrDok )
 
    // provjera priprema <> server
    _tmp := TokToNiz( cBrDok, "/" )
+   IF Len( _tmp  ) == 0
+      RETURN 0
+   ENDIF
+  
    _inc_error := Abs( _max_dok - Val( AllTrim( _tmp[ 1 ] ) ) )
 
    IF _inc_error > 30

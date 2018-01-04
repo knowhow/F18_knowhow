@@ -264,6 +264,10 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
                LOOP
             ENDIF
 
+            IF cTipPrenosaPS == "3" .AND. cOtvSt == "9" // otvorene stavke bez sabiranja, ova stavka je zatvorena
+               LOOP
+            ENDIF
+
             IF cTipPrenosaPS == "0"
                cIdPartner := Space( 6 )
             ENDIF

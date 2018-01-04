@@ -571,7 +571,7 @@ STATIC FUNCTION fin_pocetno_stanje_get_data( hParam, oFinQuery, oKontoDataset, o
 */
 
    cQuery := "SELECT " + ;
-      "idkonto,idpartner,datdok,datval,brdok,COALESCE(opis,''::text) AS opis,otvst,d_p,iznoshbd,iznosdem " + ;
+      "idkonto,idpartner,datdok,datval,brdok,COALESCE(opis,''::text) AS opis,otvst,d_p,iznoshbd,iznosdem, " + ;
       "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo, " + ;
       "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosdem ELSE -sub.iznosdem END ) AS saldo_eur " + ;
       " FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban sub "

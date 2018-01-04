@@ -161,12 +161,11 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
 
    oDataset:GoTo( 1 )
    bEvalPartnerAndBrojVeze :=  {|| !oDataset:Eof() .AND. PadR( oRow:FieldGet( oRow:FieldPos( "idkonto" ) ), 7 ) == cIdKonto ;
-      .AND. iif( cTipPrenosaPS $ "12", PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idpartner" ) ) ), 6 ) == cIdPartner, .T. ) ;
+      .AND. iif( cTipPrenosaPS $ "123", PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idpartner" ) ) ), 6 ) == cIdPartner, .T. ) ;
       .AND. iif( cTipPrenosaPS == "1", PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "brdok" ) ) ), 20 ) == cBrojVeze, .T. ) ;
       }
 
    nCnt := 0
-
 
    DO WHILE !oDataset:Eof()
 
@@ -208,6 +207,7 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
 
                IF cTipPrenosaPS == "3" // po otvorenim stavkama bez sabiranja
                   dDatVal := oRow:FieldGet( oRow:FieldPos( "datval" ) )
+                  cOpis := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
 
                ELSEIF cTipPrenosaPS == "1" // po otvorenim stavkama
 
@@ -252,6 +252,10 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
                nIznosDEM := oRow:FieldGet( oRow:FieldPos( "iznosdem" ) )
                oDataset:Skip()
                oRow := oDataset:GetRow() // nakon skip refresh oRow podaci
+
+               IF cTipPrenosaPS == "3" //  prenos po otvorenim stavkama bez sabiranja - stavka po stavka
+                  EXIT
+               ENDIF
 
             ENDDO // partner i broj veze ako je konto po otvorenim stavkama
 
@@ -571,7 +575,7 @@ STATIC FUNCTION fin_pocetno_stanje_get_data( hParam, oFinQuery, oKontoDataset, o
 */
 
    cQuery := "SELECT " + ;
-      "idkonto,idpartner,datdok,datval,brdok,COALESCE(opis,''::text) AS opis,otvst,d_p,iznoshbd,iznosdem, " + ;
+      "idkonto,idpartner,datdok,datval,brdok,COALESCE(opis,''::text) AS opis,otvst,d_p,iznosbhd,iznosdem, " + ;
       "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo, " + ;
       "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosdem ELSE -sub.iznosdem END ) AS saldo_eur " + ;
       " FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban sub "
@@ -591,7 +595,7 @@ STATIC FUNCTION fin_pocetno_stanje_get_data( hParam, oFinQuery, oKontoDataset, o
 
    cQuery += cWhere
 
-   cQuery += " GROUP BY idkonto,idpartner,brdok,datdok,datval,otvst,opis "
+   cQuery += " GROUP BY idkonto,idpartner,brdok,datdok,datval,otvst,opis,d_p,iznosbhd,iznosdem "
    cQuery += " ORDER BY idkonto,idpartner,brdok,datdok,datval,otvst "
 
    switch_to_database( hServerParams, cDatabase, nYearSezona )

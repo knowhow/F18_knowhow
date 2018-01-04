@@ -312,7 +312,7 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
                ENDIF
                hRecord[ "opis" ] := cOpis
 
-            ELSEIF cTipPrenosaPS == "2" // saldo partnera
+            ELSE // 0 - saldo konta,  2 - saldo partnera
                IF Round( nSaldoKM, 2 ) > 0
                   hRecord[ "d_p" ] := "1"
                   hRecord[ "iznosbhd" ] := Abs( nSaldoKM )

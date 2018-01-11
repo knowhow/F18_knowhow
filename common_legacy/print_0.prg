@@ -483,7 +483,7 @@ FUNCTION PPrint()
    SET CURSOR ON
 
    SetKey( K_SH_F2, NIL )
-   SetKey( K_ALT_R, {|| UzmiPPr(), AEval( GetList, {| o | o:display() } ) } )
+   SetKey( k_alt_r(), {|| UzmiPPr(), AEval( GetList, {| o | o:display() } ) } )
    PRIVATE GetList := {}
 
    o_gparams()
@@ -610,7 +610,7 @@ FUNCTION PPrint()
    ENDIF
 
    SetKey( K_SH_F2, {|| PPrint() } )
-   SetKey( K_ALT_R, NIL )
+   SetKey( k_alt_r(), NIL )
    PopWa()
 
    IF !Empty( gPPTK )

@@ -58,7 +58,8 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
    LOCAL lExitBrowse := .F.
    LOCAL nKeyHandlerRetEvent
    LOCAL lKeyHandlerStarted := .F.
-   //LOCAL azImeKol, azKol
+
+   // LOCAL azImeKol, azKol
    LOCAL lDoIdleCall, lContinue, oBrowse, nKey // extended key
    LOCAL oTCol
    LOCAL nHeight, nWidth, nBrojRedovaZaPoruke
@@ -87,8 +88,8 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
    PRIVATE Ch := 0
 
 
-   //azImeKol := ImeKol
-   //azKol := Kol
+   // azImeKol := ImeKol
+   // azKol := Kol
 
    IF nPrazno == NIL
       nPrazno := 0
@@ -450,7 +451,7 @@ STATIC FUNCTION tb_editabilna_kolona( oTb, aImeKol )
 STATIC FUNCTION StandTBTipke()
 
    IF Ch == K_ESC .OR. Ch == K_CTRL_T .OR. Ch = K_CTRL_P .OR. Ch = K_CTRL_N .OR. ;
-         Ch == K_ALT_A .OR. Ch == K_ALT_P .OR. Ch = K_ALT_S .OR. Ch = K_ALT_R .OR. ;
+         Ch == K_ALT_A .OR. Ch == K_ALT_P .OR. Ch = k_alt_s() .OR. Ch = k_alt_r() .OR. ;
          Ch == K_DEL .OR. Ch = K_F2 .OR. Ch = K_F4 .OR. Ch = k_ctrl_f9() .OR. Ch = 0
       RETURN .T.
    ENDIF
@@ -630,7 +631,6 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
    LOCAL GetList := {}
    LOCAL lKeyHendliran := .F.
 
-
    IF bMyKeyHandler != NIL
       nKeyHandlerRetEvent := Eval( bMyKeyHandler, Ch )
       IF nKeyHandlerRetEvent != DE_CONT // samo ako je DE_CONT nastavi procesiranje
@@ -774,7 +774,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       RETURN DE_REFRESH
 
 
-   CASE nKey == K_ALT_R
+   CASE nKey == k_alt_r()
 
       PRIVATE cKolona
 
@@ -842,7 +842,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       RETURN DE_CONT
 
 
-   CASE nKey == K_ALT_S
+   CASE nKey == k_alt_s()
 
       PRIVATE cKolona
 
@@ -918,6 +918,23 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
 
    RETURN nKeyHandlerRetEvent
 
+
+FUNCTION k_alt_r()
+
+   IF is_mac()
+      RETURN 1124073646
+   ENDIF
+
+   RETURN K_ALT_R
+
+
+FUNCTION k_alt_s()
+
+   IF is_mac()
+      RETURN 225
+   ENDIF
+
+   RETURN K_ALT_S
 
 
 FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )

@@ -135,8 +135,8 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
    LOCAL cKontoKlasaDuguje := hParam[ "klasa_duguje" ]
    LOCAL cKontoKlasaPotrazuje := hParam[ "klasa_potrazuje" ]
    LOCAL cPrenosCopySifarnikeDN := hParam[ "copy_sif" ]
-   LOCAL _ret := .F.
-   LOCAL oRow, _duguje, _potrazuje, cIdKonto, cIdPartner
+   LOCAL lRet := .F.
+   LOCAL oRow, cIdKonto, cIdPartner
    LOCAL dDatDok, dDatVal, cOtvSt, cBrojVeze
    LOCAL hRecord, nSaldoKM, nSaldoEUR
    LOCAL nRbr := 0
@@ -151,7 +151,7 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
    open_tabele_za_pocetno_stanje()
 
    IF !prazni_fin_priprema()
-      RETURN _ret
+      RETURN lRet
    ENDIF
 
 
@@ -192,6 +192,11 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
 
             oRow := oDataSet:GetRow()
             cBrojVeze := PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "brdok" ) ) ), 20 )
+            dDatVal := CTOD( "" )
+
+            //IF Alltrim( cBrojVeze ) == "52584"
+            //   altd()
+            //   endif
 
             nSaldoKM := 0
             nSaldoEUR := 0
@@ -383,7 +388,7 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
       IF !f18_lock_tables( { "partn", "konto" }, .T. )
          run_sql_query( "ROLLBACK" )
          MsgBeep( "Problem sa zaključavanjem tabela !#Prekidam operaciju." )
-         RETURN _ret
+         RETURN lRet
       ENDIF
 
       DO WHILE !Eof()
@@ -435,10 +440,10 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
    ENDIF
 
    IF nRbr > 0
-      _ret := .T.
+      lRet := .T.
    ENDIF
 
-   RETURN _ret
+   RETURN lRet
 
 
 STATIC FUNCTION append_sif_konto( cIdKonto, oKontoDataset )
@@ -539,22 +544,22 @@ STATIC FUNCTION append_sif_partn( cIdPartner, oPartnerDataset )
 
 STATIC FUNCTION prazni_fin_priprema()
 
-   LOCAL _ret := .T.
+   LOCAL lRet := .T.
 
    SELECT fin_pripr
    IF RECCOUNT2() == 0
-      RETURN _ret
+      RETURN lRet
    ENDIF
 
    IF Pitanje(, "Priprema FIN nije prazna ! Izbrisati postojeće stavke (D/N) ?", "D" ) == "D"
       my_dbf_zap()
-      RETURN _ret
+      RETURN lRet
    ELSE
-      _ret := .F.
-      RETURN _ret
+      lRet := .F.
+      RETURN lRet
    ENDIF
 
-   RETURN _ret
+   RETURN lRet
 
 
 
@@ -606,7 +611,7 @@ STATIC FUNCTION fin_pocetno_stanje_get_data( hParam, oFinQuery, oKontoDataset, o
 
    MsgO( "početno stanje - sql query u toku..." )
 
-   oFinQuery := run_sql_query( cQuery )
+   oFinQuery := run_sql_query( cQuery  )
 
    IF cPrenosCopySifarnikeDN == "D"
       cQuery2 := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "konto ORDER BY id"

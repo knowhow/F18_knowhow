@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.171-std, 2018-01-11
+### FIN
+- datval fix, početno stanje po otvorenim stavkama
+
 ## 3.1.153-std, 2017-11-23
 ### CORE
 - sif partner F9 - auto novi id

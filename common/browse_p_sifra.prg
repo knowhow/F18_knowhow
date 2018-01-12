@@ -249,7 +249,11 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
 
    ENDIF
 
-   IF Alias() == "PARTN"
+   IF Alias() == "REVAL"
+      find_reval_by_id( cId )
+   ELSEIF Alias() == "AMORT"
+      find_amort_by_id( cId )       
+   ELSEIF Alias() == "PARTN"
       find_partner_by_naz_or_id( cId )
    ELSEIF Alias() == "ROBA"
       find_roba_by_naz_or_id( cId )

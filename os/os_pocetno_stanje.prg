@@ -12,36 +12,33 @@
 #include "f18.ch"
 
 
-STATIC __table_os
-STATIC __table_promj
-STATIC __table_os_alias
-STATIC __table_promj_alias
+//STATIC __table_os
+//STATIC __table_promj
+//STATIC __table_os_alias
+//STATIC __table_promj_alias
 
 
 
-// -----------------------------------------------------
-// generisanje pocetnog stanja
-// -----------------------------------------------------
 FUNCTION os_generacija_pocetnog_stanja()
 
-   LOCAL _info := {}
-   LOCAL _ok
-   LOCAL _pos_x, _pos_y
-   LOCAL _dat_ps := Date()
-   LOCAL _db_params := my_server_params()
-   LOCAL _tek_database := my_server_params()[ "database" ]
-   LOCAL _year_tek := Year( _dat_ps )
-   LOCAL _year_sez := _year_tek - 1
+   LOCAL aInformacije := {}
+   LOCAL lOk
+   LOCAL nX, nY
+   //LOCAL _dat_ps := Date()
+   LOCAL hDatabaseParams := my_server_params()
+   LOCAL cTekucaDatabaseName := my_server_params()[ "database" ]
+  // LOCAL _year_tek := Year( _dat_ps )
+  // LOCAL _year_sez := _year_tek - 1
 
    ps_info()
 
-   IF AllTrim( Str( _year_sez ) ) $ _tek_database
-      // ne moze se raditi razdvajanje u 2012
-      MsgBeep( "Ne mogu vrsti prenos u sezonskim podacima..." )
-      RETURN _ok
-   ENDIF
+//   IF AllTrim( Str( _year_sez ) ) $ cTekucaDatabaseName
+//      // ne moze se raditi razdvajanje u 2012
+//      MsgBeep( "Ne mogu vrsti prenos u sezonskim podacima..." )
+//      RETURN lOk
+//   ENDIF
 
-   IF Pitanje(, "Generisati pocetno stanje (D/N) ?", "N" ) == "N"
+   IF Pitanje(, "Generisati početno unutar baze " + cTekucaDatabaseName + " (D/N) ?", "N" ) == "N"
       RETURN .F.
    ENDIF
 
@@ -52,38 +49,38 @@ FUNCTION os_generacija_pocetnog_stanja()
    ENDIF
 
    // setuj staticke varijable na koje se tabele odnosi, nakon ovoga su nam dostupne,__table_os, __table_promj
-   open_sii_tabele_init_static_vars()
+   //open_sii_tabele_init_static_vars()
 
    Box(, 10, 60 )
 
-   @ _pos_x := box_x_koord() + 1, _pos_y := box_y_koord() + 2 SAY "... prenos pocetnog stanja u toku" COLOR f18_color_i()
+   @ nX := box_x_koord() + 1, nY := box_y_koord() + 2 SAY "... prenos pocetnog stanja u toku" COLOR f18_color_i()
 
-   // 1) pobrisati tekucu godinu
-   _ok := _os_brisi_tekucu_godinu( @_info )
+
+   lOk := os_pocstanje_brisi_tekucu_godinu( @aInformacije )
 
    // prebaciti iz prethodne godine tabele os/promj
-   IF _ok
-      _ok := _os_prebaci_iz_prethodne( @_info )
+   IF lOk
+      lOk := os_pocstanje_prebaci_stanje_iz_predhodne_godine( @aInformacije )
    ENDIF
 
-   // napraviti generaciju podataka
-   IF _ok
-      _ok := _os_generacija_nakon_ps( @_info )
+
+   IF lOk
+      lOk := os_pocstanje_dodati_amortizaciju_u_otpisanu_vrijednost( @aInformacije )
    ENDIF
 
    // pakuj tabele...
-   IF _ok
-      _pakuj_tabelu( __table_os_alias, __table_os )
-      _pakuj_tabelu( __table_promj_alias, __table_promj )
-   ENDIF
+   //IF lOk
+    //  _pakuj_tabelu( __table_os_alias, __table_os )
+    //  _pakuj_tabelu( __table_promj_alias, __table_promj )
+   //ENDIF
 
-   IF _ok
-      @ _pos_x + 8, box_y_koord() + 2 SAY "... operacija uspjesna"
+   IF lOk
+      @ nX + 8, box_y_koord() + 2 SAY "... operacija uspjesna"
    ELSE
-      @ _pos_x + 8, box_y_koord() + 2 SAY "... operacija NEUSPJESNA !!!"
+      @ nX + 8, box_y_koord() + 2 SAY "... operacija NEUSPJEŠNA !?"
    ENDIF
 
-   @ _pos_x + 9, box_y_koord() + 2 SAY "Pritisnite <ESC> za izlazak i pregled rezulatata."
+   @ nX + 9, box_y_koord() + 2 SAY "Pritisnite <ESC> za izlazak i pregled rezulatata."
 
    // cekam ESC
    WHILE Inkey( 0.1 ) != K_ESC
@@ -93,8 +90,8 @@ FUNCTION os_generacija_pocetnog_stanja()
 
    my_close_all_dbf()
 
-   IF Len( _info ) > 0
-      _rpt_info( _info )
+   IF Len( aInformacije ) > 0
+      _rpt_info( aInformacije )
    ENDIF
 
    RETURN .T.
@@ -103,15 +100,21 @@ FUNCTION os_generacija_pocetnog_stanja()
 
 STATIC FUNCTION ps_info()
 
-   LOCAL _msg := "Opcija vrsi prebacivanje pocetnog stanja iz prethodne godine.#1. opcija se vrsi iz nove sezone 2. brisu se podaci tekuce godine#3. prebacuju se podaci iz prethodne godine"
+   LOCAL cMsg := "Ovom operacijom se vrši formiranje početnog stanja."
 
-   RETURN MsgBeep( _msg )
+   cMsg += "##1. Pokrenuti u novoj sezoni "
+   cMsg += "##2. brišu se podaci tekuće godine "
+   cMsg += "##3. prebacuju se podaci#"
+   cMsg += "   iz prethodne godine#  sa uračunatom amortizacijom"
+
+   RETURN MsgBeep( cMsg )
 
 
-
+/*
 STATIC FUNCTION open_sii_tabele_init_static_vars()
 
    my_close_all_dbf()
+
 
    o_os_sii()
    o_os_sii_promj()
@@ -119,23 +122,23 @@ STATIC FUNCTION open_sii_tabele_init_static_vars()
 
    select_os_sii()  // tabela OS_OS/SII_SII
 
-   __table_os := get_os_table_name( Alias() )
-   __table_os_alias := Alias()
+   //__table_os := get_os_table_name()
+   //__table_os_alias := Alias()
 
    // tabela OS_PROMJ/SII_PROMJ
    select_promj()
-   __table_promj := get_promj_table_name( Alias() )
-   __table_promj_alias := Alias()
+   //__table_promj := get_promj_table_name()
+   //__table_promj_alias := Alias()
 
    my_close_all_dbf()
 
    RETURN .T.
-
+*/
 
 // ------------------------------------------------------
 // pregled efekata prenosa pocetnog stanja
 // ------------------------------------------------------
-STATIC FUNCTION _rpt_info( info )
+STATIC FUNCTION _rpt_info( aInformacije )
 
    LOCAL nI
 
@@ -147,28 +150,28 @@ STATIC FUNCTION _rpt_info( info )
    ? "Operacija                        Iznos       Ostalo"
    ? Replicate( "-", 70 )
 
-   FOR nI := 1 TO Len( info )
-      ? PadR( info[ nI, 1 ], 50 ), info[ nI, 2 ], PadR( info[ nI, 3 ], 30 )
+   FOR nI := 1 TO Len( aInformacije )
+      ? PadR( aInformacije[ nI, 1 ], 50 ), aInformacije[ nI, 2 ], PadR( aInformacije[ nI, 3 ], 30 )
    NEXT
 
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
-// ---------------------------------------------------
-// brisanje podataka tekuce godine
-// ---------------------------------------------------
-STATIC FUNCTION _os_brisi_tekucu_godinu( info )
 
-   LOCAL _ok := .F.
+STATIC FUNCTION os_pocstanje_brisi_tekucu_godinu( aInformacije )
+
+   LOCAL lOk := .F.
    LOCAL _table, _table_promj
    LOCAL _count := 0
    LOCAL _count_promj := 0
    LOCAL nTrec
-   LOCAL _pos_x, _pos_y
+   LOCAL nX, nY
    LOCAL hParams
+   LOCAL hRec
+
 
    my_close_all_dbf()
 
@@ -176,19 +179,18 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
    o_os_sii_promj()
 
    run_sql_query( "BEGIN" )
-   IF !f18_lock_tables( { __table_os, __table_promj } )
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Problem sa lokovanjem tabela " + __table_os + ", " + __table_promj + " !!!#Prekidamo proceduru." )
-      RETURN _ok
-   ENDIF
-
+   //IF !f18_lock_tables( { __table_os, __table_promj } )
+    //  run_sql_query( "ROLLBACK" )
+    //  MsgBeep( "Problem sa lokovanjem tabela " + __table_os + ", " + __table_promj + " !!!#Prekidamo proceduru." )
+    //  RETURN lOk
+   //ENDIF
 
 
    select_os_sii()
    SET ORDER TO TAG "1"
    GO TOP
 
-   @ _pos_x := box_x_koord() + 2, _pos_y := box_y_koord() + 2 SAY PadR( "1) Brisem podatke tekuce godine ", 40, "." )
+   @ nX := box_x_koord() + 2, nY := box_y_koord() + 2 SAY8 PadR( "1) Brisanje podataka tekuće godine ", 40, "." )
 
    DO WHILE !Eof()
 
@@ -196,11 +198,10 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
       nTrec := RecNo()
       SKIP -1
 
-      _rec := dbf_get_rec()
-      delete_rec_server_and_dbf( __table_os, _rec, 1, "CONT" )
+      hRec := dbf_get_rec()
+      delete_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
 
       ++ _count
-
       GO ( nTrec )
 
    ENDDO
@@ -215,9 +216,9 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
       nTrec := RecNo()
       SKIP -1
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      delete_rec_server_and_dbf( __table_promj, _rec, 1, "CONT" )
+      delete_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
 
       ++ _count_promj
 
@@ -227,64 +228,60 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
 
 
    hParams := hb_Hash()
-   hParams[ "unlock" ] :=  { __table_os, __table_promj }
+   //hParams[ "unlock" ] :=  { __table_os, __table_promj }
    run_sql_query( "COMMIT", hParams )
 
-   @ _pos_x, _pos_y + 55 SAY "OK"
+   @ nX, nY + 55 SAY "OK"
 
-   AAdd( info, { "1) izbrisano sredstava:", _count, ""  } )
-   AAdd( info, { "2) izbrisano promjena:", _count_promj, ""  } )
+   AAdd( aInformacije, { "1) izbrisano sredstava:", _count, ""  } )
+   AAdd( aInformacije, { "2) izbrisano promjena:", _count_promj, ""  } )
 
-   _ok := .T.
+   lOk := .T.
 
    my_close_all_dbf()
 
-   RETURN _ok
+   RETURN lOk
 
 
 
 
-// -------------------------------------------------------
-// prebaci podatke iz prethodne sezone u tekucu
-// -------------------------------------------------------
-STATIC FUNCTION _os_prebaci_iz_prethodne( info )
+STATIC FUNCTION os_pocstanje_prebaci_stanje_iz_predhodne_godine( aInformacije )
 
-   LOCAL _ok := .F.
-   LOCAL _data_os, _data_promj
-   LOCAL _qry_os, _qry_promj, _where
-   LOCAL _dat_ps := Date()
-   LOCAL _db_params := my_server_params()
-   LOCAL _tek_database := my_server_params()[ "database" ]
-   LOCAL _year_tek := Year( _dat_ps )
-   LOCAL _year_sez := _year_tek - 1
+   LOCAL lOk := .F.
+   LOCAL oDataOS, oDataPromj
+   LOCAL cQueryOS, cQueryPromj, _where
+   //LOCAL _dat_ps := Date()
+   LOCAL hDatabaseParams := my_server_params()
+   LOCAL cTekucaDatabaseName := my_server_params()[ "database" ]
+   //LOCAL _year_tek := Year( _dat_ps )
+   //LOCAL _year_sez := _year_tek - 1
+   LOCAL nTekucaSezona := tekuca_sezona()
    LOCAL _table, _table_promj
-   LOCAL _pos_x, _pos_y
+   LOCAL nX, nY
    LOCAL hParams
 
    // query za OS/PROMJ
-   _qry_os := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "" + __table_os
-   _qry_promj := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "" + __table_promj
+   cQueryOS := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "" + os_sii_table_name()
+   cQueryPromj := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "" + promj_table_name()
 
-   // 1) predji u sezonsko podrucje
-   // ------------------------------------------------------------
-   // prebaci se u sezonu
-   switch_to_database( _db_params, _tek_database, _year_sez )
+   // 1) predji u sezonsko podrucje -1
+   // PRIMJER: nalazimo se u bringout_2017 => nTekucaSezona = 2017
+   // prebaciti se u sezonu 2016
+   switch_to_database( hDatabaseParams, cTekucaDatabaseName, nTekucaSezona - 1 )
 
 
+   @ nX := box_x_koord() + 3, nY := box_y_koord() + 2 SAY PadR( "2) vrsim sql upit ", 40, "." )
 
-   @ _pos_x := box_x_koord() + 3, _pos_y := box_y_koord() + 2 SAY PadR( "2) vrsim sql upit ", 40, "." )
 
-   // podaci pocetnog stanja su ovdje....
-   _data_os := run_sql_query( _qry_os )
-   _data_promj := run_sql_query( _qry_promj )
+   oDataOS := run_sql_query( cQueryOS )
+   oDataPromj := run_sql_query( cQueryPromj )
 
-   @ _pos_x, _pos_y + 55 SAY "OK"
+   @ nX, nY + 55 SAY "OK"
 
-   // 3) vrati se u tekucu bazu...
-   // ------------------------------------------------------------
-   switch_to_database( _db_params, _tek_database, _year_tek )
+   // 3) povratak u tekucu sezonu 2017
+   switch_to_database( hDatabaseParams, cTekucaDatabaseName, nTekucaSezona )
 
-   IF sql_error_in_query ( _data_os )
+   IF sql_error_in_query ( oDataOS )
       MsgBeep( "SQL ERR OS" )
       RETURN .F.
    ENDIF
@@ -293,156 +290,147 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
 
    run_sql_query( "BEGIN" )
 
-   IF !f18_lock_tables( { __table_os, __table_promj } )
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Problem sa lokovanjem tabela..." )
-      RETURN _ok
-   ENDIF
+  // IF !f18_lock_tables( { __table_os, __table_promj } )
+  //    run_sql_query( "ROLLBACK" )
+  //    MsgBeep( "Problem sa lokovanjem tabela..." )
+  //    RETURN lOk
+  // ENDIF
 
-   @ _pos_x := box_x_koord() + 4, _pos_y := box_y_koord() + 2 SAY PadR( "3) insert podataka u novoj sezoni ", 40, "." )
+   @ nX := box_x_koord() + 4, nY := box_y_koord() + 2 SAY PadR( "3) insert podataka u novoj sezoni ", 40, "." )
 
-   _insert_into_os( _data_os )
-   _insert_into_promj( _data_promj )
+   os_insert_into_os_sii( oDataOS )
+   os_insert_into_promj( oDataPromj )
 
 
    hParams := hb_Hash()
-   hParams[ "unlock" ] :=  { __table_os, __table_promj }
+  // hParams[ "unlock" ] :=  { __table_os, __table_promj }
    run_sql_query( "COMMIT", hParams )
 
-   @ _pos_x, _pos_y + 55 SAY "OK"
+   @ nX, nY + 55 SAY "OK"
 
-   AAdd( info, { "3) prebacio iz prethodne godine sredstva", _data_os:LastRec(), "" } )
-   AAdd( info, { "4) prebacio iz prethodne godine promjene", _data_promj:LastRec(), "" } )
+   AAdd( aInformacije, { "3) prebacio iz prethodne godine sredstva", oDataOS:LastRec(), "" } )
+   AAdd( aInformacije, { "4) prebacio iz prethodne godine promjene", oDataPromj:LastRec(), "" } )
 
-   _ok := .T.
+   lOk := .T.
 
-   RETURN _ok
+   RETURN lOk
 
 
 
-// -----------------------------------------------------
-// uzima row i vraca kao hb_hash
-// -----------------------------------------------------
-STATIC FUNCTION _row_to_rec( row )
+STATIC FUNCTION _row_to_rec( oRow )
 
-   LOCAL _rec := hb_Hash()
-   LOCAL _field_name
-   LOCAL _field_val
+   LOCAL hRec := hb_Hash()
+   LOCAL cFieldName
+   LOCAL cFieldValue
+   LOCAL nI
 
-   FOR nI := 1 TO row:FCount()
+   FOR nI := 1 TO oRow:FCount()
 
-      _field_name := row:FieldName( nI )
-      _field_value := row:FieldGet( nI )
+      cFieldName := oRow:FieldName( nI )
+      cFieldValue := oRow:FieldGet( nI )
 
-      IF ValType( _field_value ) == "C"
-         _field_value := hb_UTF8ToStr( _field_value )
+      IF ValType( cFieldValue ) == "C"
+         cFieldValue := hb_UTF8ToStr( cFieldValue )
       ENDIF
 
-      _rec[ _field_name ] := _field_value
+      hRec[ cFieldName ] := cFieldValue
 
    NEXT
 
-   hb_HDel( _rec, "match_code" )
+   hb_HDel( hRec, "match_code" )
 
-   RETURN _rec
+   RETURN hRec
 
 
 
-// -----------------------------------------------------
-// insert podataka u tabelu os
-// -----------------------------------------------------
-STATIC FUNCTION _insert_into_os( data )
+
+STATIC FUNCTION os_insert_into_os_sii( oDataset )
 
    LOCAL nI
    LOCAL _table
-   LOCAL _row, _rec
+   LOCAL oRow, hRec
 
-   my_close_all_dbf()
+altd()
+   //my_close_all_dbf()
    o_os_sii()
 
-   data:GoTo( 1 )
+   oDataset:GoTo( 1 )
 
-   DO WHILE !data:Eof()
+   DO WHILE !oDataset:Eof()
 
-      _row := data:GetRow()
-      _rec := _row_to_rec( _row )
+      oRow := oDataset:GetRow()
+      hRec := _row_to_rec( oRow )
 
-      // sredi neka polja...
-      _rec[ "naz" ] := PadR( _rec[ "naz" ], 30 )
+      hRec[ "naz" ] := PadR( hRec[ "naz" ], 30 )
 
       select_os_sii()
       APPEND BLANK
 
-      update_rec_server_and_dbf( __table_os, _rec, 1, "CONT" )
+      update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
 
-      @ box_x_koord() + 5, box_y_koord() + 2 SAY "  " + __table_os + "/ sredstvo: " + _rec[ "id" ]
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY "  " + os_sii_table_name() + "/ sredstvo: " + hRec[ "id" ]
 
-      data:Skip()
+      oDataset:Skip()
 
    ENDDO
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
-// -----------------------------------------------------
-// insert podataka u tabelu os_promj
-// -----------------------------------------------------
-STATIC FUNCTION _insert_into_promj( data )
+
+STATIC FUNCTION os_insert_into_promj( oDataset )
 
    LOCAL nI
    LOCAL _table
-   LOCAL _row, _rec
+   LOCAL oRow, hRec
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
    o_os_sii_promj()
 
-   data:GoTo( 1 )
+   oDataset:GoTo( 1 )
 
-   DO WHILE !data:Eof()
+   DO WHILE !oDataset:Eof()
 
-      _row := data:GetRow()
-      _rec := _row_to_rec( _row )
+      oRow := oDataset:GetRow()
+      hRec := _row_to_rec( oRow )
 
       select_promj()
       APPEND BLANK
 
-      update_rec_server_and_dbf( __table_promj, _rec, 1, "CONT" )
+      update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
 
-      @ box_x_koord() + 5, box_y_koord() + 2 SAY __table_promj + "/ promjena za sredstvo: " + _rec[ "id" ]
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY promj_table_name() + "/ promjena za sredstvo: " + hRec[ "id" ]
 
-      data:Skip()
+      oDataset:Skip()
 
    ENDDO
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
-   RETURN
-
-
+   RETURN .T.
 
 
-// ------------------------------------------------------
-// regenerisanje podataka u novoj sezoni
-// ------------------------------------------------------
-STATIC FUNCTION _os_generacija_nakon_ps( info )
+
+
+STATIC FUNCTION os_pocstanje_dodati_amortizaciju_u_otpisanu_vrijednost( aInformacije )
 
    LOCAL nTrec
-   LOCAL _rec, _r_br
-   LOCAL _sr_id
+   LOCAL hRec, _r_br
+   LOCAL cSredstvoId
    LOCAL _table
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
    LOCAL _table_promj
    LOCAL _data := {}
-   LOCAL nI, _count, _otpis_count
-   LOCAL _pos_x, _pos_y
+   LOCAL nI, _count, nOtpisCount
+   LOCAL nX, nY
    LOCAL hParams
 
    // nalazim se u tekucoj godini, zelim "slijepiti" promjene i izbrisati
    // otpisana sredstva u protekloj godini
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
    o_os_sii()
    o_os_sii_promj()
 
@@ -450,42 +438,41 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
    GO TOP
 
    run_sql_query( "BEGIN" )
-   IF !f18_lock_tables( { __table_os, __table_promj } )
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Problem sa zaključavanjem OS tabela !" )
-      RETURN _ok
-   ENDIF
+   //IF !f18_lock_tables( { __table_os, __table_promj } )
+    //  run_sql_query( "ROLLBACK" )
+    //  MsgBeep( "Problem sa zaključavanjem OS tabela !" )
+    //  RETURN lOk
+   //ENDIF
 
 
-   _otpis_count := 0
+   nOtpisCount := 0
 
-   @ _pos_x := box_x_koord() + 6, _pos_y := box_y_koord() + 2 SAY PadR( "4) generacija podataka za novu sezonu ", 40, "." )
+   @ nX := box_x_koord() + 6, nY := box_y_koord() + 2 SAY PadR( "4) generacija podataka za novu sezonu ", 40, "." )
 
    DO WHILE !Eof()
 
-      _sr_id := field->id
+      cSredstvoId := field->id
       _r_br := 0
 
       SKIP
       nTrec := RecNo()
       SKIP -1
 
-      // uzmi zapis...
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "nabvr" ] := _rec[ "nabvr" ] + _rec[ "revd" ]
-      _rec[ "otpvr" ] := _rec[ "otpvr" ] + _rec[ "revp" ] + _rec[ "amp" ]
-      _rec[ "datotp" ] := fix_dat_var( _rec[ "datotp" ] )
+      hRec[ "nabvr" ] := hRec[ "nabvr" ] + hRec[ "revd" ]
+      hRec[ "otpvr" ] := hRec[ "otpvr" ] + hRec[ "revp" ] + hRec[ "amp" ]
+      hRec[ "datotp" ] := fix_dat_var( hRec[ "datotp" ] )
 
       // brisi sta je otpisano
       // ali samo osnovna sredstva, sitan inventar ostaje u bazi...
-      IF !Empty( _rec[ "datotp" ] ) .AND. gOsSii == "O"
+      IF !Empty( hRec[ "datotp" ] ) .AND. gOsSii == "O"
 
-         AAdd( info, { "     sredstvo: " + _rec[ "id" ] + "-" + PadR( _rec[ "naz" ], 30 ), 0, "OTPIS" } )
+         AAdd( aInformacije, { "     sredstvo: " + hRec[ "id" ] + "-" + PadR( hRec[ "naz" ], 30 ), 0, "OTPIS" } )
 
-         ++ _otpis_count
-
-         delete_rec_server_and_dbf( __table_os, _rec, 1, "CONT" )
+         ++ nOtpisCount
+         select_os_sii()
+         delete_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
 
          GO nTrec
          LOOP
@@ -495,38 +482,37 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
       select_promj()
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK _sr_id
+      SEEK cSredstvoId
 
-      DO WHILE !Eof() .AND. field->id == _sr_id
-         _rec[ "nabvr" ] += field->nabvr + field->revd
-         _rec[ "otpvr" ] += field->otpvr + field->revp + field->amp
+      DO WHILE !Eof() .AND. field->id == cSredstvoId
+         hRec[ "nabvr" ] += field->nabvr + field->revd
+         hRec[ "otpvr" ] += field->otpvr + field->revp + field->amp
          SKIP
       ENDDO
 
       select_os_sii()
 
-      _rec[ "amp" ] := 0
-      _rec[ "amd" ] := 0
-      _rec[ "revd" ] := 0
-      _rec[ "revp" ] := 0
+      hRec[ "amp" ] := 0
+      hRec[ "amd" ] := 0
+      hRec[ "revd" ] := 0
+      hRec[ "revp" ] := 0
 
-      // update zapisa...
-      update_rec_server_and_dbf( __table_os, _rec, 1, "CONT" )
+      update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
 
       GO nTrec
 
    ENDDO
 
-   @ _pos_x, _pos_y + 55 SAY "OK"
+   @ nX, nY + 55 SAY "OK"
 
-   AAdd( info, { "5) broj otpisanih sredstava u novoj godini", _otpis_count, "" } )
+   AAdd( aInformacije, { "5) broj otpisanih sredstava u novoj godini", nOtpisCount, "" } )
 
-   // pobrisi sve promjene...
+   // pobrisi sve promjene:
    select_promj()
    SET ORDER TO TAG "1"
    GO TOP
 
-   @ _pos_x := box_x_koord() + 7, _pos_y := box_y_koord() + 2 SAY PadR( "5) brisem promjene u novoj sezoni ", 40, "." )
+   @ nX := box_x_koord() + 7, nY := box_y_koord() + 2 SAY PadR( "5) brisem promjene u novoj sezoni ", 40, "." )
 
    DO WHILE !Eof()
 
@@ -534,29 +520,27 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
       nTrec := RecNo()
       SKIP -1
 
-      _rec := dbf_get_rec()
-      delete_rec_server_and_dbf( __table_promj,  _rec, 1, "CONT" )
+      hRec := dbf_get_rec()
+      delete_rec_server_and_dbf( Alias(),  hRec, 1, "CONT" )
 
       GO ( nTrec )
 
    ENDDO
 
-   @ _pos_x, _pos_y + 55 SAY "OK"
+   @ nX, nY + 55 SAY "OK"
 
    hParams := hb_Hash()
-   hParams[ "unlock" ] :=  { __table_os, __table_promj }
+   //hParams[ "unlock" ] :=  { __table_os, __table_promj }
    run_sql_query( "COMMIT", hParams )
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
-   _ok := .T.
+   lOk := .T.
 
-   RETURN _ok
+   RETURN lOk
 
 
-// -------------------------------------------------------------
-// pakovanje tabele...
-// -------------------------------------------------------------
+/*
 STATIC FUNCTION _pakuj_tabelu( alias, table )
 
    SELECT ( F_TMP_1 )
@@ -567,4 +551,5 @@ STATIC FUNCTION _pakuj_tabelu( alias, table )
    PACK
    USE
 
-   RETURN
+   RETURN .T.
+*/

@@ -15,7 +15,7 @@ MEMVAR gModul
 
 FUNCTION P_RJ( cId, nDeltaX, nDeltaY )
 
-   LOCAL nTArea, nI
+   LOCAL nTArea, nI, lRet
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -29,7 +29,13 @@ FUNCTION P_RJ( cId, nDeltaX, nDeltaY )
       cId := PadR( cId, 7 )
    ENDIF
 
-   o_rj()
+   PushWa()
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_rj( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_rj()
+   ENDIF
+
 
    AAdd( ImeKol, { PadR( "Id",  2 ),       {|| id },   "id",     {|| .T. }, {|| valid_sifarnik_id_postoji( wId ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ),    {|| PadR( naz, 35 ) },  "naz" } )
@@ -47,5 +53,7 @@ FUNCTION P_RJ( cId, nDeltaX, nDeltaY )
    IF gModul == "OS" // modul OS  - IdRj char(4)
       cId := PadR( cId, 4 )
    ENDIF
+
+   PopWA()
 
    RETURN lRet

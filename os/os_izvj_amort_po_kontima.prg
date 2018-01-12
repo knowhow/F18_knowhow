@@ -25,14 +25,14 @@ FUNCTION os_amortizacija_po_kontima()
       _mod_name := "SII"
    ENDIF
 
-   O_AMORT
+   //o_amort()
    //o_konto()
-   o_rj()
+   //o_rj()
 
    o_os_sii_promj()
    o_os_sii()
 
-   cIdrj := Space( 4 )
+   cIdRj := Space( 4 )
    cPromj := "2"
    cPocinju := "N"
    cFiltSadVr := "0"
@@ -42,10 +42,10 @@ FUNCTION os_amortizacija_po_kontima()
 
    Box(, 12, 77 )
    DO WHILE .T.
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
-         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cIdRj ;
+         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdRj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
 
-      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cPocinju VALID cPocinju $ "DN" PICT "@!"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Grupa amort.stope (prazno - sve):" GET qIdAm PICT "@!" VALID Empty( qidAm ) .OR. P_Amort( @qIdAm )
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Za sredstvo prikazati vrijednost:"
@@ -67,9 +67,9 @@ FUNCTION os_amortizacija_po_kontima()
 
    IF Empty( qidAm ); qidAm := ""; ENDIF
    IF Empty( qidkonto ); qidkonto := ""; ENDIF
-   IF Empty( cIdrj ); cidrj := ""; ENDIF
-   IF cpocinju == "D"
-      cIdRj := Trim( cidrj )
+   IF Empty( cIdRj ); cIdRj := ""; ENDIF
+   IF cPocinju == "D"
+      cIdRj := Trim( cIdRj )
    ENDIF
 
 
@@ -77,9 +77,9 @@ FUNCTION os_amortizacija_po_kontima()
    cSort1 := "idkonto+idam+id"
 
    aUslS := ".t."
-   IF !Empty( cIdRJ )
+   IF !Empty( cIdRj )
       aUslS := aUslS + ".and." + ;
-         "IDRJ=" + dbf_quote( cIdRJ )
+         "IDRJ=" + dbf_quote( cIdRj )
    ENDIF
    IF !Empty( qIdKonto )
       aUslS := aUslS + ".and." + ;
@@ -121,10 +121,10 @@ FUNCTION os_amortizacija_po_kontima()
 
    ? tip_organizacije() + ":", self_organizacija_naziv()
 
-   IF !Empty( cIdrj )
-      select_o_rj( cIdrj )
+   IF !Empty( cIdRj )
+      select_o_rj( cIdRj )
       select_os_sii()
-      ? "Radna jedinica:", cIdrj, rj->naz
+      ? "Radna jedinica:", cIdRj, rj->naz
    ENDIF
 
    ? _mod_name + ": Pregled obracuna amortizacije po kontima i amortizacionim grupama "

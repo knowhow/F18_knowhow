@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+MEMVAR gModul
 
 FUNCTION P_RJ( cId, nDeltaX, nDeltaY )
 
@@ -24,6 +24,10 @@ FUNCTION P_RJ( cId, nDeltaX, nDeltaY )
    Kol := {}
 
    nTArea := Select()
+
+   IF gModul == "OS" .AND. ValType( cId ) == "C" // modul OS  - IdRj char(4)
+      cId := PadR( cId, 7 )
+   ENDIF
 
    o_rj()
 
@@ -38,4 +42,10 @@ FUNCTION P_RJ( cId, nDeltaX, nDeltaY )
 
    SELECT ( nTArea )
 
-   RETURN p_sifra( F_RJ, 1, f18_max_rows() - 15, f18_max_cols() - 30,"MatPod: Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
+   lRet := p_sifra( F_RJ, 1, f18_max_rows() - 15, f18_max_cols() - 30, "MatPod: Lista radnih jedinica", @cId, nDeltaX, nDeltaY )
+
+   IF gModul == "OS" // modul OS  - IdRj char(4)
+      cId := PadR( cId, 4 )
+   ENDIF
+
+   RETURN lRet

@@ -12,11 +12,9 @@
 #include "f18.ch"
 
 
-
-
 FUNCTION unos_osnovnih_sredstava()
 
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _id_am
    PRIVATE cId := Space( 10 )
    PRIVATE cIdRj := Space( 4 )
@@ -36,7 +34,6 @@ FUNCTION unos_osnovnih_sredstava()
       IF gIBJ == "D"
 
          @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sredstvo:       " GET cId VALID P_OS( @cId, 1, 35 ) PICT cPicSif
-
          READ
 
          nDbfArea := Select()
@@ -68,11 +65,11 @@ FUNCTION unos_osnovnih_sredstava()
             SEEK cId
             _id_am := field->idam
 
-            DO WHILE !Eof() .AND. cId == field->id .AND. cIdRJ != field->idrj
+            DO WHILE !Eof() .AND. cId == field->id .AND. cIdRj != field->idrj
                SKIP 1
             ENDDO
 
-            IF cID != field->id .OR. cIdRJ != field->idrj
+            IF cID != field->id .OR. cIdRj != field->idrj
                Msg( "Izabrano sredstvo ne postoji!", 5 )
             ELSE
                select_o_rj( cIdRj )
@@ -93,17 +90,16 @@ FUNCTION unos_osnovnih_sredstava()
 
       ENDIF
 
-      SELECT amort
-      HSEEK _id_am
+      select_o_amort( _id_am )
 
       select_os_sii()
 
-      IF ( cIdrj <> field->idrj )
+      IF ( cIdRj <> field->idrj )
 
          IF Pitanje(, "Jeste li sigurni da zelite promijeniti radnu jedinicu ovom sredstvu? (D/N)", " " ) == "D"
-            _rec := dbf_get_rec()
-            _rec[ "idrj" ] := cIdRj
-            update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+            hRec := dbf_get_rec()
+            hRec[ "idrj" ] := cIdRj
+            update_rec_server_and_dbf( get_os_table_name( Alias() ), hRec, 1, "FULL" )
          ELSE
             cIdRj := field->idrj
             select_o_rj( cIdRj )
@@ -179,7 +175,7 @@ FUNCTION unos_osnovnih_sredstava()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION unos_os_key_handler( Ch )
@@ -187,9 +183,9 @@ FUNCTION unos_os_key_handler( Ch )
    LOCAL cDn := "N"
    LOCAL nRet := DE_CONT
    LOCAL nRec0 := RecNo()
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nTrec
-   LOCAL _novi
+   LOCAL cNoviInventurniBroj
    LOCAL _prom_dat, _prom_opis, _prom_nv, _prom_ov
 
    DO CASE
@@ -201,12 +197,12 @@ FUNCTION unos_os_key_handler( Ch )
          SKIP 1
       ENDIF
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _prom_dat := _rec[ "datum" ]
-      _prom_opis := _rec[ "opis" ]
-      _prom_nv := _rec[ "nabvr" ]
-      _prom_ov := _rec[ "otpvr" ]
+      _prom_dat := hRec[ "datum" ]
+      _prom_opis := hRec[ "opis" ]
+      _prom_nv := hRec[ "nabvr" ]
+      _prom_ov := hRec[ "otpvr" ]
 
       Box(, 5, 50 )
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum:" GET _prom_dat VALID os_validate_date( @_prom_dat )
@@ -225,13 +221,13 @@ FUNCTION unos_os_key_handler( Ch )
             APPEND BLANK
          ENDIF
 
-         _rec[ "id" ] := cId
-         _rec[ "opis" ] := _prom_opis
-         _rec[ "datum" ] := _prom_dat
-         _rec[ "nabvr" ] := _prom_nv
-         _rec[ "otpvr" ] := _prom_ov
+         hRec[ "id" ] := cId
+         hRec[ "opis" ] := _prom_opis
+         hRec[ "datum" ] := _prom_dat
+         hRec[ "nabvr" ] := _prom_nv
+         hRec[ "otpvr" ] := _prom_ov
 
-         update_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
+         update_rec_server_and_dbf( get_promj_table_name( Alias() ), hRec, 1, "FULL" )
 
          ShowSadVr()
 
@@ -242,8 +238,8 @@ FUNCTION unos_os_key_handler( Ch )
    CASE Ch == K_CTRL_T
 
       IF pitanje(, "Sigurno zelite izbrisati promjenu ?", "N" ) == "D"
-         _rec := dbf_get_rec()
-         delete_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
+         hRec := dbf_get_rec()
+         delete_rec_server_and_dbf( get_promj_table_name( Alias() ), hRec, 1, "FULL" )
          ShowSadVr()
       ENDIF
 
@@ -279,31 +275,31 @@ FUNCTION unos_os_key_handler( Ch )
 
          select_os_sii()
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         nNabVrJ := _rec[ "nabvr" ] / _rec[ "kolicina" ]
-         nOtpVrJ := _rec[ "otpvr" ] / _rec[ "kolicina" ]
+         nNabVrJ := hRec[ "nabvr" ] / hRec[ "kolicina" ]
+         nOtpVrJ := hRec[ "otpvr" ] / hRec[ "kolicina" ]
 
          // postojeci inv broj
-         _rec[ "kolicina" ] := _rec[ "kolicina" ] - nKolOtp
-         _rec[ "nabvr" ] := nNabVrj * _rec[ "kolicina" ]
-         _rec[ "otpvr" ] := nOtpVrj * _rec[ "kolicina" ]
+         hRec[ "kolicina" ] := hRec[ "kolicina" ] - nKolOtp
+         hRec[ "nabvr" ] := nNabVrj * hRec[ "kolicina" ]
+         hRec[ "otpvr" ] := nOtpVrj * hRec[ "kolicina" ]
 
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+         update_rec_server_and_dbf( get_os_table_name( Alias() ), hRec, 1, "FULL" )
 
          // dodaj novi zapis...
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
          APPEND BLANK
 
-         _rec[ "kolicina" ] := nKolOtp
-         _rec[ "nabvr" ] := nNabvrj * nKolotp
-         _rec[ "otpvr" ] := nOtpvrj * nKolotp
-         _rec[ "id" ] := Left( _rec[ "id" ], 9 ) + "O"
-         _rec[ "datotp" ] := dDatotp
-         _rec[ "opisotp" ] := cOpisOtp
+         hRec[ "kolicina" ] := nKolOtp
+         hRec[ "nabvr" ] := nNabvrj * nKolotp
+         hRec[ "otpvr" ] := nOtpvrj * nKolotp
+         hRec[ "id" ] := Left( hRec[ "id" ], 9 ) + "O"
+         hRec[ "datotp" ] := dDatotp
+         hRec[ "opisotp" ] := cOpisOtp
 
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+         update_rec_server_and_dbf( get_os_table_name( Alias() ), hRec, 1, "FULL" )
 
          fRastavljeno := .T.
 
@@ -311,11 +307,11 @@ FUNCTION unos_os_key_handler( Ch )
 
          select_os_sii()
 
-         _rec := dbf_get_rec()
-         _rec[ "datotp" ] := dDatOtp
-         _rec[ "opisotp" ] := cOpisOtp
+         hRec := dbf_get_rec()
+         hRec[ "datotp" ] := dDatOtp
+         hRec[ "opisotp" ] := cOpisOtp
 
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+         update_rec_server_and_dbf( get_os_table_name( Alias() ), hRec, 1, "FULL" )
 
       ENDIF
 
@@ -339,9 +335,9 @@ FUNCTION unos_os_key_handler( Ch )
    CASE Ch == K_CTRL_I
 
       Box(, 4, 50 )
-      _novi := Space( 10 )
+      cNoviInventurniBroj := Space( 10 )
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Promjena inventurnog broja:"
-      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Novi inventurni broj:" GET _novi VALID !Empty( _novi )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Novi inventurni broj:" GET cNoviInventurniBroj VALID !Empty( cNoviInventurniBroj )
       READ
       BoxC()
 
@@ -349,7 +345,7 @@ FUNCTION unos_os_key_handler( Ch )
 
       select_os_sii()
 
-      SEEK _novi
+      SEEK cNoviInventurniBroj
 
       IF Found()
          Beep( 1 )
@@ -365,19 +361,19 @@ FUNCTION unos_os_key_handler( Ch )
             SKIP
             nTrec := RecNo()
             SKIP -1
-            _rec := dbf_get_rec()
-            _rec[ "id" ] := _novi
-            update_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
+            hRec := dbf_get_rec()
+            hRec[ "id" ] := cNoviInventurniBroj
+            update_rec_server_and_dbf( get_promj_table_name( Alias() ), hRec, 1, "FULL" )
             GO ( nTrec )
          ENDDO
-         SEEK _novi
+         SEEK cNoviInventurniBroj
 
          select_os_sii()
          SEEK cId
-         _rec := dbf_get_rec()
-         _rec[ "id" ] := _novi
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
-         cId := _novi
+         hRec := dbf_get_rec()
+         hRec[ "id" ] := cNoviInventurniBroj
+         update_rec_server_and_dbf( get_os_table_name( Alias() ), hRec, 1, "FULL" )
+         cId := cNoviInventurniBroj
       ENDIF
 
       select_promj()
@@ -508,8 +504,8 @@ STATIC FUNCTION _o_tables()
 //   o_k1()
    //o_rj()
   // o_konto()
-   O_AMORT
-   O_REVAL
+   //o_amort()
+   //o_reval()
    o_os_sii()
    o_os_sii_promj()
 

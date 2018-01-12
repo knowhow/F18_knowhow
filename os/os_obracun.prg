@@ -52,7 +52,7 @@ FUNCTION os_obracun_amortizacije()
    LOCAL _t_nab := _t_otp := _t_amp := 0
    PRIVATE nGStopa := 100
 
-   O_AMORT
+   //o_amort()
 
    o_os_sii()
    o_os_sii_promj()
@@ -114,8 +114,7 @@ FUNCTION os_obracun_amortizacije()
 
       cIdam := field->idam
 
-      SELECT amort
-      HSEEK cIdAm
+      select_o_amort( cIdAm )
 
       select_os_sii()
 
@@ -142,8 +141,7 @@ FUNCTION os_obracun_amortizacije()
 
          _datum_otpisa := fix_dat_var( _datotp ) // setuj datum otpisa ako postoji
 
-         SELECT amort
-         HSEEK _idam
+         select_o_amort( _idam )
 
          select_os_sii()
 
@@ -792,7 +790,7 @@ FUNCTION os_obracun_revalorizacije()
    LOCAL  cAGrupe := "D", nRec, dDatObr, nMjesOd, nMjesDo
    LOCAL nKoef
 
-   O_REVAL
+   //o_reval()
    o_os_sii()
    o_os_sii_promj()
 
@@ -846,8 +844,7 @@ FUNCTION os_obracun_revalorizacije()
          SKIP
          LOOP
       ENDIF
-      SELECT reval
-      HSEEK _idrev
+      select_o_reval( _idrev )
       select_os_sii()
 
       nRevAm := 0
@@ -918,11 +915,11 @@ FUNCTION izracunaj_os_reval( d1, d2, nRevAm )
    LOCAL nMjesOD, nMjesDo, nIzn, nIzn2, nk1, nk2, nkoef
 
    IF Year( d1 ) < Year( d2 )
-      PushWA()
-      SELECT reval
-      nTrecRev := RecNo()
-      SEEK Str( Year( d1 ), 4 )
-      IF Found()
+      //PushWA()
+      //SELECT reval
+      //nTrecRev := RecNo()
+      IF select_o_reval( Str( Year( d1 ), 4 ) )
+      //IF Found()
          nMjesOd := Month( d1 ) + 1
          c1 := "I" + AllTrim( Str( nMjesOd - 1 ) )
          nk1 := reval->&c1
@@ -930,8 +927,8 @@ FUNCTION izracunaj_os_reval( d1, d2, nRevAm )
       ELSE
          nMjesOd := 1
       ENDIF
-      GO nTrecRev // vrati se na tekucu poziciju
-      PopWa()
+      //GO nTrecRev // vrati se na tekucu poziciju
+      //PopWa()
    ELSE
       // nMjesOd:=iif(day(d1)>1,month(d1)+1,month(d1))
       nMjesOd := Month( d1 ) + 1
@@ -953,9 +950,9 @@ FUNCTION izracunaj_os_reval( d1, d2, nRevAm )
    ENDIF
 
    IF ( nMjesdo - 1 ) < 1
-      nk2 := 0
+      nK2 := 0
    ELSE
-      nk2 := reval->&c2
+      nK2 := reval->&c2
    ENDIF
    nkoef := ( nk2 + 1 ) / ( nk1 + 1 ) - 1
    nIzn := Round( _nabvr * nkoef, 2 )
@@ -969,4 +966,4 @@ FUNCTION izracunaj_os_reval( d1, d2, nRevAm )
       nkoef := 0
    ENDIF
 
-   RETURN nkoef
+   RETURN nKoef

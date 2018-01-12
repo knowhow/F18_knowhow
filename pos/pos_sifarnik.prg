@@ -254,7 +254,7 @@ FUNCTION pos_osob_key_handler( Ch )
       nVrati := DE_ABORT
    ENDCASE
 
-   IF ch == K_ALT_R .OR. ch == K_ALT_S .OR. ch == K_CTRL_N .OR. ch == K_F2 .OR. ch == K_F4 .OR. ch == K_CTRL_A .OR. ch == K_CTRL_T .OR. ch == K_ENTER
+   IF ch == k_alt_r() .OR. ch == k_alt_s() .OR. ch == K_CTRL_N .OR. ch == K_F2 .OR. ch == K_F4 .OR. ch == K_CTRL_A .OR. ch == K_CTRL_T .OR. ch == K_ENTER
       ch := 0
    ENDIF
 

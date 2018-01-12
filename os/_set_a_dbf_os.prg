@@ -14,7 +14,7 @@
 
 FUNCTION set_a_dbf_os()
 
-   LOCAL _alg
+   LOCAL hAlgoritam
 
    // kumulativne tabele
    set_a_dbf_os_sii_promj( "os_promj", "PROMJ", F_PROMJ )
@@ -24,36 +24,33 @@ FUNCTION set_a_dbf_os()
    // u našem slučaju to su i os i sii (glavne tabele)
 
    // OS CREATE_INDEX("1", "id+idam+dtos(datum)", _alias )
-   _alg := hb_Hash()
-   _alg[ "dbf_key_fields" ] := { "id" }
-   _alg[ "dbf_tag" ]        := "1"
-   _alg[ "sql_in" ]        := "ID"
-   _alg[ "dbf_key_block" ] := {|| field->id }
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_fields" ] := { "id" }
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   hAlgoritam[ "sql_in" ]        := "ID"
+   hAlgoritam[ "dbf_key_block" ] := {|| field->id }
 
 
-   set_a_dbf_sifarnik( "os_os", "OS", F_OS, _alg )
-   set_a_dbf_sifarnik( "sii_sii", "SII", F_SII, _alg )
+   set_a_sql_sifarnik( "os_os", "OS", F_OS, hAlgoritam )
+   set_a_sql_sifarnik( "sii_sii", "SII", F_SII, hAlgoritam )
 
    set_a_sql_sifarnik( "os_k1", "K1", F_K1 )
-   set_a_dbf_sifarnik( "os_amort", "AMORT", F_AMORT )
-   set_a_dbf_sifarnik( "os_reval", "REVAL", F_REVAL )
+   set_a_sql_sifarnik( "os_amort", "AMORT", F_AMORT )
+   set_a_sql_sifarnik( "os_reval", "REVAL", F_REVAL )
 
    // temp epdv tabele - ne idu na server
-   set_a_dbf_temp( "os_invent", "INVENT", F_INVENT )
+   //set_a_dbf_temp( "os_invent", "INVENT", F_INVENT )
 
    RETURN .T.
 
 
 
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
 STATIC FUNCTION set_a_dbf_os_sii_promj( table, alias, area )
 
-   LOCAL _item, _alg, _tbl
+   LOCAL _item, hAlgoritam, _tbl
 
    _tbl := table
-
    _item := hb_Hash()
 
    _item[ "alias" ] := alias
@@ -62,17 +59,16 @@ STATIC FUNCTION set_a_dbf_os_sii_promj( table, alias, area )
 
    // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
-
    _item[ "algoritam" ] := {}
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->id + field->tip + DToS( field->datum ) + field->opis }
-   _alg[ "dbf_key_fields" ] := { "id", "tip", "datum", "opis" }
-   _alg[ "sql_in" ]         := " rpad(id, 10) || rpad(tip, 2) || to_char(datum, 'YYYYMMDD') || rpad(opis, 30)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->id + field->tip + DToS( field->datum ) + field->opis }
+   hAlgoritam[ "dbf_key_fields" ] := { "id", "tip", "datum", "opis" }
+   hAlgoritam[ "sql_in" ]         := " rpad(id, 10) || rpad(tip, 2) || to_char(datum, 'YYYYMMDD') || rpad(opis, 30)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( _item[ "algoritam" ], hAlgoritam )
 
    _item[ "sql_order" ] := "id, tip, datum, opis"
 

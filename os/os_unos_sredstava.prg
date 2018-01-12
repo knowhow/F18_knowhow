@@ -99,7 +99,7 @@ FUNCTION unos_osnovnih_sredstava()
          IF Pitanje(, "Jeste li sigurni da zelite promijeniti radnu jedinicu ovom sredstvu? (D/N)", " " ) == "D"
             hRec := dbf_get_rec()
             hRec[ "idrj" ] := cIdRj
-            update_rec_server_and_dbf( get_os_table_name( Alias() ), hRec, 1, "FULL" )
+            update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
          ELSE
             cIdRj := field->idrj
             select_o_rj( cIdRj )
@@ -197,6 +197,7 @@ FUNCTION unos_os_key_handler( Ch )
          SKIP 1
       ENDIF
 
+      select_promj()
       hRec := dbf_get_rec()
 
       _prom_dat := hRec[ "datum" ]
@@ -210,6 +211,7 @@ FUNCTION unos_os_key_handler( Ch )
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "nab vr" GET _prom_nv PICT "9999999.99"
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "OTP vr" GET _prom_ov PICT "9999999.99"
       READ
+
       BoxC()
 
       IF LastKey() == K_ESC
@@ -227,7 +229,7 @@ FUNCTION unos_os_key_handler( Ch )
          hRec[ "nabvr" ] := _prom_nv
          hRec[ "otpvr" ] := _prom_ov
 
-         update_rec_server_and_dbf( get_promj_table_name( Alias() ), hRec, 1, "FULL" )
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
          ShowSadVr()
 
@@ -238,8 +240,9 @@ FUNCTION unos_os_key_handler( Ch )
    CASE Ch == K_CTRL_T
 
       IF pitanje(, "Sigurno zelite izbrisati promjenu ?", "N" ) == "D"
+         select_promj()
          hRec := dbf_get_rec()
-         delete_rec_server_and_dbf( get_promj_table_name( Alias() ), hRec, 1, "FULL" )
+         delete_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
          ShowSadVr()
       ENDIF
 
@@ -285,11 +288,10 @@ FUNCTION unos_os_key_handler( Ch )
          hRec[ "nabvr" ] := nNabVrj * hRec[ "kolicina" ]
          hRec[ "otpvr" ] := nOtpVrj * hRec[ "kolicina" ]
 
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), hRec, 1, "FULL" )
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
-         // dodaj novi zapis...
+
          hRec := dbf_get_rec()
-
          APPEND BLANK
 
          hRec[ "kolicina" ] := nKolOtp
@@ -299,7 +301,7 @@ FUNCTION unos_os_key_handler( Ch )
          hRec[ "datotp" ] := dDatotp
          hRec[ "opisotp" ] := cOpisOtp
 
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), hRec, 1, "FULL" )
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
          fRastavljeno := .T.
 
@@ -311,7 +313,7 @@ FUNCTION unos_os_key_handler( Ch )
          hRec[ "datotp" ] := dDatOtp
          hRec[ "opisotp" ] := cOpisOtp
 
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), hRec, 1, "FULL" )
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
       ENDIF
 
@@ -363,7 +365,7 @@ FUNCTION unos_os_key_handler( Ch )
             SKIP -1
             hRec := dbf_get_rec()
             hRec[ "id" ] := cNoviInventurniBroj
-            update_rec_server_and_dbf( get_promj_table_name( Alias() ), hRec, 1, "FULL" )
+            update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
             GO ( nTrec )
          ENDDO
          SEEK cNoviInventurniBroj
@@ -372,7 +374,7 @@ FUNCTION unos_os_key_handler( Ch )
          SEEK cId
          hRec := dbf_get_rec()
          hRec[ "id" ] := cNoviInventurniBroj
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), hRec, 1, "FULL" )
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
          cId := cNoviInventurniBroj
       ENDIF
 

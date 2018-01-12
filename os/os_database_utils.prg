@@ -18,54 +18,38 @@
 // -----------------------------------------------------
 FUNCTION os_postoji_polje( naziv_polja )
 
-   LOCAL _ret := .F.
+   LOCAL lRet := .F.
 
    IF gOsSii == "O"
       IF os->( FieldPos( naziv_polja ) ) <> 0
-         _ret := .T.
+         lRet := .T.
       ENDIF
    ELSE
       IF sii->( FieldPos( naziv_polja ) ) <> 0
-         _ret := .T.
+         lRet := .T.
       ENDIF
    ENDIF
 
-   RETURN _ret
+   RETURN lRet
 
 
 
-// -----------------------------------------
-// vraca naziv tabele na osnovu alias-a
-// -----------------------------------------
-FUNCTION get_os_table_name( alias )
+FUNCTION os_sii_table_name()
 
-   LOCAL _ret := "os_os"
-
-   IF Upper( alias ) == "OS"
-      _ret := "os_os"
-   ELSE
-      _ret := "sii_sii"
+   IF gOsSii == "O"
+      RETURN "os_os"
    ENDIF
 
-   RETURN _ret
+   RETURN "sii_sii"
 
 
+FUNCTION promj_table_name()
 
-// -----------------------------------------
-// vraca naziv tabele na osnovu alias-a
-// -----------------------------------------
-FUNCTION get_promj_table_name( alias )
-
-   LOCAL _ret := "os_promj"
-
-   IF Upper( alias ) == "PROMJ"
-      _ret := "os_promj"
-   ELSE
-      _ret := "sii_promj"
+   IF gOsSii == "O"
+      RETURN "os_promj"
    ENDIF
 
-   RETURN _ret
-
+   RETURN "sii_promj"
 
 
 
@@ -89,7 +73,7 @@ FUNCTION Unifid()
       nIsti := 0
 
       DO WHILE !Eof() .AND. field->id == cId
-         ++ nIsti
+         ++nIsti
          SKIP
       ENDDO
 

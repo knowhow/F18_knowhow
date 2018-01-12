@@ -113,6 +113,7 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, nAlgoritam, cTransaction )
 
    ENDIF
 
+
    IF lRet .AND. !sql_table_update( cTabela, "ins", hRecord )
 
       IF cTransaction == "FULL"

@@ -45,7 +45,7 @@ FUNCTION os_obracun_amortizacije()
    LOCAL nMjesOd
    LOCAL nMjesDo
    LOCAL cLine := ""
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _san := fetch_metric( "os_obracun_sanacija", NIL, "N" )
    LOCAL _datum_otpisa
    LOCAL _iznos_sanacije := hb_Hash()
@@ -206,11 +206,12 @@ FUNCTION os_obracun_amortizacije()
 
          PRIVATE cId := _id
 
-         _rec := get_hash_record_from_global_vars()
+         hRec := get_hash_record_from_global_vars()
 
          SET DEVICE TO SCREEN
 
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+         select_os_sii()
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
          SET DEVICE TO PRINTER
 
@@ -257,11 +258,12 @@ FUNCTION os_obracun_amortizacije()
 
             ENDIF
 
-            _rec := get_hash_record_from_global_vars()
+            hRec := get_hash_record_from_global_vars()
 
             SET DEVICE TO SCREEN
 
-            update_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
+            select_promj()
+            update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
             SET DEVICE TO PRINTER
 
@@ -348,11 +350,12 @@ FUNCTION os_obracun_amortizacije()
             PRIVATE cId := _id
 
             // sinhronizuj podatke sql/server
-            _rec := get_hash_record_from_global_vars()
+            hRec := get_hash_record_from_global_vars()
 
             SET DEVICE TO SCREEN
 
-            update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+            select_os_sii()
+            update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
             SET DEVICE TO PRINTER
 
@@ -400,11 +403,12 @@ FUNCTION os_obracun_amortizacije()
                nUkupno += Round( _amp, 2 )
 
                // sinhronizuj podatke sql/server
-               _rec := get_hash_record_from_global_vars()
+               hRec := get_hash_record_from_global_vars()
 
                SET DEVICE TO SCREEN
 
-               update_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
+               select_promj()
+               update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
                SET DEVICE TO PRINTER
 

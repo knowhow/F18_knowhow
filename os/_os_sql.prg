@@ -62,6 +62,32 @@ FUNCTION select_o_amort( cId )
    RETURN o_amort( cId )
 
 
+FUNCTION find_amort_by_id( cId )
+
+   LOCAL cAlias := "AMORT"
+   LOCAL cTable := "os_amort"
+   LOCAL cSqlQuery := "select * from fmk." + cTable
+   LOCAL cIdSql
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+
+   IF !use_sql( cTable, cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN !Eof()
+
+   
+
 FUNCTION o_reval( cId )
 
    LOCAL cTable := "os_reval"
@@ -74,6 +100,31 @@ FUNCTION o_reval( cId )
 
    IF cId != NIL
       SEEK cId
+   ENDIF
+
+   RETURN !Eof()
+
+
+FUNCTION find_reval_by_id( cId )
+
+   LOCAL cAlias := "REVAL"
+   LOCAL cTable := "os_reval"
+   LOCAL cSqlQuery := "select * from fmk." + cTable
+   LOCAL cIdSql
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+
+   IF !use_sql( cTable, cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
    ENDIF
 
    RETURN !Eof()

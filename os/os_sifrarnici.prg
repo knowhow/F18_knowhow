@@ -35,7 +35,7 @@ FUNCTION os_sifarnici()
    AAdd( _opc, "4. radne jedinice" )
    AAdd( _opcexe, {|| p_rj() } )
    AAdd( _opc, "---------------------------" )
-   AAdd( _opcexe, {|| nil } )
+   AAdd( _opcexe, {|| NIL } )
    AAdd( _opc, "6. konta" )
    AAdd( _opcexe, {|| p_konto() } )
    AAdd( _opc, "7. grupacije K1" )
@@ -82,7 +82,7 @@ FUNCTION P_OS( cId, dx, dy )
 
    IF os_postoji_polje( "K1" )
       AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| P_K1( @wK1 ) } } )
-      AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| .T. } } )
+    //  AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { PadC( "K2", 2 ), {|| k2 }, "k2"   } )
       AAdd ( ImeKol, { PadC( "K3", 2 ), {|| k3 }, "k3"   } )
       AAdd ( ImeKol, { PadC( "Opis", 2 ), {|| opis }, "opis"   } )
@@ -102,14 +102,14 @@ FUNCTION P_OS( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN p_sifra( _n_area, 1, f18_max_rows() -15, f18_max_cols() -15, "Lista stalnih sredstava", @cId, dx, dy, {| Ch| os_sif_key_handler( Ch, @lNovi ) } )
+   RETURN p_sifra( _n_area, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista stalnih sredstava", @cId, dx, dy, {| Ch | os_sif_key_handler( Ch, @lNovi ) } )
 
 
 
 
 FUNCTION os_validate_vrijednost( wNabVr, wOtpVr )
 
-   @ box_x_koord() + 11, box_y_koord() + 50 say ( wNabvr - wOtpvr )
+   @ box_x_koord() + 11, box_y_koord() + 50 SAY ( wNabvr - wOtpvr )
 
    RETURN .T.
 
@@ -118,7 +118,7 @@ FUNCTION os_validate_vrijednost( wNabVr, wOtpVr )
 FUNCTION os_sif_key_handler( Ch, lNovi )
 
    LOCAL _n_area := F_PROMJ
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _sr_id
 
    lNovi := .T.
@@ -151,8 +151,8 @@ FUNCTION os_sif_key_handler( Ch, lNovi )
       ELSE
          select_os_sii()
          IF Pitanje(, "Sigurno zelite izbrisati ovo sredstvo ?", "N" ) == "D"
-            _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+            hRec := dbf_get_rec()
+            delete_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
          ENDIF
       ENDIF
       IF !lUsedPromj
@@ -187,7 +187,16 @@ FUNCTION os_promjena_id_zabrana( lNovi )
 
 FUNCTION P_AMORT( cId, dx, dy )
 
-   PRIVATE ImeKol, Kol
+   LOCAL lRet
+   //PRIVATE ImeKol, Kol
+
+   PushWA()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_amort( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_amort( cId )
+   ENDIF
 
    ImeKol := { { PadR( "Id", 8 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;
       { PadR( "Naziv", 25 ), {|| naz },     "naz"      }, ;
@@ -195,13 +204,25 @@ FUNCTION P_AMORT( cId, dx, dy )
       }
    Kol := { 1, 2, 3 }
 
-   RETURN p_sifra( F_AMORT, 1, f18_max_rows() -15, f18_max_cols() -15, "Lista koeficijenata amortizacije", @cId, dx, dy )
+   lRet := p_sifra( F_AMORT, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista koeficijenata amortizacije", @cId, dx, dy )
 
+   PopWa()
+
+   RETURN lRet
 
 
 FUNCTION P_REVAL( cId, dx, dy )
 
-   PRIVATE ImeKol, Kol
+   LOCAL lRet
+   //PRIVATE ImeKol, Kol
+
+   PushWA()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_reval( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_reval()
+   ENDIF
 
    ImeKol := { { PadR( "Id", 4 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;
       { PadR( "Naziv", 10 ), {|| naz },     "naz"      }, ;
@@ -220,7 +241,10 @@ FUNCTION P_REVAL( cId, dx, dy )
       }
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }
 
-   RETURN p_sifra( F_REVAL, 1, f18_max_rows() -15, f18_max_cols() -15, "Lista koeficijenata revalorizacije", @cId, dx, dy )
+   lRet := p_sifra( F_REVAL, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista koeficijenata revalorizacije", @cId, dx, dy )
+   PopWA()
+
+   RETURN lRet
 
 
 
@@ -254,16 +278,16 @@ FUNCTION os_fld_partn_exist()
 STATIC FUNCTION _o_sif_tables()
 
    o_valute()
-//   o_konto()
+// o_konto()
 
    o_os_sii()
 
-   //o_amort()
-   //o_reval()
-   //o_rj()
-//   o_k1()
-  // o_partner()
-   //o_sifk()
-   //o_sifv()
+   // o_amort()
+   // o_reval()
+   // o_rj()
+// o_k1()
+   // o_partner()
+   // o_sifk()
+   // o_sifv()
 
    RETURN .T.

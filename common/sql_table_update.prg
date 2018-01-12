@@ -115,6 +115,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
       ENDIF
       cQuery += ")  VALUES ("
 
+
       FOR nI := 1 TO Len( hDbfRec[ "dbf_fields" ] )
 
          cTmp := hDbfRec[ "dbf_fields" ][ nI ]
@@ -129,6 +130,12 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
             MsgBeep( cMsg )
             RaiseError( cMsg + " " + pp( hRecord ) )
             RETURN .F.
+         ENDIF
+
+
+         IF !hb_HHasKey( hRecord, cTmp )
+             log_write( "polje " + cTmp + " ne postoji ?!", 2 )
+             LOOP
          ENDIF
 
          IF ValType( hRecord[ cTmp ] ) == "N"

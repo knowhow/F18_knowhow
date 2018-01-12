@@ -34,7 +34,7 @@ FUNCTION os_obracuni()
 
    f18_menu( "obracun", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION os_obracun_amortizacije()
@@ -187,7 +187,7 @@ FUNCTION os_obracun_amortizacije()
          _amd := hAmortizacija[ "duguje" ]
          _amp := hAmortizacija[ "potrazuje" ]
          _nabvr := hAmortizacija[ "nabvr" ]
-         _otpvr := hAmortizacija[ "otvpr" ]
+         _otpvr := hAmortizacija[ "otpvr" ]
          nOstalo := hAmortizacija[ "ostalo" ]
 
 
@@ -256,7 +256,7 @@ FUNCTION os_obracun_amortizacije()
                _amd := hAmortizacija[ "duguje" ]
                _amp := hAmortizacija[ "potrazuje" ]
                _nabvr := hAmortizacija[ "nabvr" ]
-               _otpvr := hAmortizacija[ "otvpr" ]
+               _otpvr := hAmortizacija[ "otpvr" ]
                nOstalo := hAmortizacija[ "ostalo" ]
 
             ENDIF
@@ -660,8 +660,9 @@ FUNCTION os_izracunaj_amortizaciju( nNabVr, nOtpVr, nOstalo, d1, d2, nGAmort, sa
    LOCAL _san_otp
    LOCAL hAmortizacija
 
-   // ako je metoda obracuna 1 - odmah
-   IF gMetodObr == "1"
+
+
+   IF gMetodObr == "1" // tekuca metoda
       RETURN os_proracun_amortizacija_od_do( nNabVr, nOtpvr, nOstalo, d1, d2, nGAmort, sanacije )
    ENDIF
 

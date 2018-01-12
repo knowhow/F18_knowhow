@@ -350,7 +350,6 @@ STATIC FUNCTION os_insert_into_os_sii( oDataset )
    LOCAL _table
    LOCAL oRow, hRec
 
-altd()
    //my_close_all_dbf()
    o_os_sii()
 

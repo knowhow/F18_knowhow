@@ -58,16 +58,24 @@ FUNCTION os_sifarnici()
 
 FUNCTION P_OS( cId, dx, dy )
 
-   LOCAL lNovi := .T.
-   LOCAL _n_area := F_OS
+   LOCAL lNovi := .T., lRet
+   LOCAL nWa := F_OS
    PRIVATE ImeKol
    PRIVATE Kol
 
    IF gOsSii == "S"
-      _n_area := F_SII
+      nWa := F_SII
    ENDIF
 
-   ImeKol := { { PadR( "Inv.Broj", 15 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) .AND. os_promjena_id_zabrana( lNovi ) } }, ;
+   PushWA()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_os( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_os()
+   ENDIF
+
+   ImeKol := { { PadR( "Inv.Broj", 15 ), {|| id },     "id", {|| select_o_os_or_sii(), .T. }, {|| validacija_postoji_sifra( wId ) .AND. os_promjena_id_zabrana( lNovi ) } }, ;
       { PadR( "Naziv", 30 ), {|| naz },     "naz"      }, ;
       { PadR( "Kolicina", 8 ), {|| kolicina },    "kolicina"     }, ;
       { PadR( "jmj", 3 ), {|| jmj },    "jmj"     }, ;
@@ -102,8 +110,11 @@ FUNCTION P_OS( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN p_sifra( _n_area, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista stalnih sredstava", @cId, dx, dy, {| Ch | os_sif_key_handler( Ch, @lNovi ) } )
+   lRet := p_sifra( nWa, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista stalnih sredstava", @cId, dx, dy, {| Ch | os_sif_key_handler( Ch, @lNovi ) } )
 
+   PopWA()
+
+   return lRet
 
 
 
@@ -117,14 +128,14 @@ FUNCTION os_validate_vrijednost( wNabVr, wOtpVr )
 
 FUNCTION os_sif_key_handler( Ch, lNovi )
 
-   LOCAL _n_area := F_PROMJ
+   LOCAL nWa := F_PROMJ
    LOCAL hRec
    LOCAL _sr_id
 
    lNovi := .T.
 
    IF gOsSii == "S"
-      _n_area := F_SII_PROMJ
+      nWa := F_SII_PROMJ
    ENDIF
 
    _sr_id := field->id
@@ -133,7 +144,7 @@ FUNCTION os_sif_key_handler( Ch, lNovi )
 
    CASE ( Ch == K_CTRL_T )
 
-      SELECT ( _n_area )
+      SELECT ( nWa )
       lUsedPromj := .T.
 
       IF !Used()
@@ -149,7 +160,7 @@ FUNCTION os_sif_key_handler( Ch, lNovi )
          Beep( 1 )
          Msg( "Sredstvo se ne moze brisati - prvo izbrisi promjene !" )
       ELSE
-         select_os_sii()
+         select_o_os_or_sii()
          IF Pitanje(, "Sigurno zelite izbrisati ovo sredstvo ?", "N" ) == "D"
             hRec := dbf_get_rec()
             delete_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
@@ -159,7 +170,7 @@ FUNCTION os_sif_key_handler( Ch, lNovi )
          select_promj()
          USE
       ENDIF
-      select_os_sii()
+      select_o_os_or_sii()
 
       RETURN 7
       // kao de_refresh, ali se zavrsava izvrsenje f-ja iz ELIB-a
@@ -188,7 +199,7 @@ FUNCTION os_promjena_id_zabrana( lNovi )
 FUNCTION P_AMORT( cId, dx, dy )
 
    LOCAL lRet
-   //PRIVATE ImeKol, Kol
+   PRIVATE ImeKol, Kol
 
    PushWA()
 
@@ -214,7 +225,7 @@ FUNCTION P_AMORT( cId, dx, dy )
 FUNCTION P_REVAL( cId, dx, dy )
 
    LOCAL lRet
-   //PRIVATE ImeKol, Kol
+   PRIVATE ImeKol, Kol
 
    PushWA()
 
@@ -224,7 +235,7 @@ FUNCTION P_REVAL( cId, dx, dy )
       select_o_reval()
    ENDIF
 
-   ImeKol := { { PadR( "Id", 4 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;
+   ImeKol := { { PadR( "Id", 4 ), {|| id },  "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;
       { PadR( "Naziv", 10 ), {|| naz },     "naz"      }, ;
       { PadR( "I1", 7 ), {|| i1 },    "i1"     }, ;
       { PadR( "I2", 7 ), {|| i2 },    "i2"     }, ;

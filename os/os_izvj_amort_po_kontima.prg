@@ -73,7 +73,7 @@ FUNCTION os_amortizacija_po_kontima()
    ENDIF
 
 
-   select_os_sii()
+   select_o_os_or_sii()
    cSort1 := "idkonto+idam+id"
 
    aUslS := ".t."
@@ -94,7 +94,7 @@ FUNCTION os_amortizacija_po_kontima()
          aUsl1
    ENDIF
 
-   select_os_sii()
+   select_o_os_or_sii()
    SET ORDER TO
    SET FILTER TO
    GO TOP
@@ -123,7 +123,7 @@ FUNCTION os_amortizacija_po_kontima()
 
    IF !Empty( cIdRj )
       select_o_rj( cIdRj )
-      select_os_sii()
+      select_o_os_or_sii()
       ? "Radna jedinica:", cIdRj, rj->naz
    ENDIF
 
@@ -271,7 +271,7 @@ STATIC FUNCTION FFor1()
             SKIP 1
          ENDDO
       ENDIF
-      select_os_sii()
+      select_o_os_or_sii()
    ENDIF
 
    cIdSK    := Left( IDKONTO, 3 )
@@ -388,7 +388,7 @@ STATIC FUNCTION FFor1s()
             SKIP 1
          ENDDO
       ENDIF
-      select_os_sii()
+      select_o_os_or_sii()
    ENDIF
 
    cIdSK    := Left( IDKONTO, 3 )

@@ -41,7 +41,7 @@ FUNCTION os_rekapitulacija_po_k1()
 
    m := "----- ---------- ------------------------- -------------"
 
-   select_os_sii()
+   select_o_os_or_sii()
    SET ORDER TO TAG "2"
    // idrj+id+dtos(datum)
 
@@ -62,17 +62,17 @@ FUNCTION os_rekapitulacija_po_k1()
 
    DO WHILE !Eof()
 
-      select_os_sii()
+      select_o_os_or_sii()
       nKol := 0
       cK1 := field->k1
       DO WHILE !Eof() .AND. cK1 = field->k1
 
-         select_os_sii()
+         select_o_os_or_sii()
          nKolRJ := 0
          nRbr := 0
          cTRj := field->idrj
          DO WHILE !Eof() .AND. cK1 == field->k1 .AND. cTRj == field->idrj
-            select_os_sii()
+            select_o_os_or_sii()
             IF ( cON = "B" .AND. Year( os_datum_obracuna() ) <> Year( field->datum ) )
                // nije novonabavljeno
                SKIP
@@ -100,7 +100,7 @@ FUNCTION os_rekapitulacija_po_k1()
             ENDIF
 
             SKIP
-            select_os_sii()
+            select_o_os_or_sii()
 
          ENDDO
 
@@ -125,7 +125,7 @@ FUNCTION os_rekapitulacija_po_k1()
       SELECT k1
       HSEEK cK1
 
-      select_os_sii()
+      select_o_os_or_sii()
 
       ? "UKUPNO ZA GRUPU", cK1, k1->naz
       @ PRow(), nCol1 SAY nKol PICT os_pic_kolicina()
@@ -173,7 +173,7 @@ STATIC FUNCTION ZglK1()
    ?? "     Datum:", os_datum_obracuna()
 
    select_o_rj( cIdRj )
-   select_os_sii()
+   select_o_os_or_sii()
 
    ? "Radna jedinica:", cIdRj, rj->naz
 

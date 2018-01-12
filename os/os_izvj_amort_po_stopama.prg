@@ -89,12 +89,12 @@ FUNCTION os_amortizacija_po_stopama()
    ENDIF
 
    IF Empty( cIdRj )
-      select_os_sii()
+      select_o_os_or_sii()
       cSort1 := "idam+idrj+id"
       INDEX ON &cSort1 TO "TMPOS" FOR &aUsl1
       SEEK qidAm
    ELSE
-      select_os_sii()
+      select_o_os_or_sii()
       cSort1 := "idrj+idam+id"
       INDEX ON &cSort1 TO "TMPOS" FOR &aUsl1
       SEEK cIdRj + qidAm
@@ -111,7 +111,7 @@ FUNCTION os_amortizacija_po_stopama()
 
    select_o_rj( cIdRj )
 
-   select_os_sii()
+   select_o_os_or_sii()
 
    P_10CPI
    ? tip_organizacije() + ":", self_organizacija_naziv()
@@ -169,7 +169,7 @@ FUNCTION os_amortizacija_po_stopama()
                   fIma := .T.
                   SKIP
                ENDDO
-               select_os_sii()
+               select_o_os_or_sii()
             ENDIF
 
 
@@ -194,7 +194,7 @@ FUNCTION os_amortizacija_po_stopama()
                   ENDIF
                   SKIP
                ENDDO
-               select_os_sii()
+               select_o_os_or_sii()
             ENDIF
 
             // ispis stavki
@@ -248,7 +248,7 @@ FUNCTION os_amortizacija_po_stopama()
                      nPot32 += amp
                      SKIP
                   ENDDO
-                  select_os_sii()
+                  select_o_os_or_sii()
                ENDIF
 
                IF lExpRpt

@@ -31,6 +31,40 @@ FUNCTION get_datotp()
    RETURN field->datotp
 
 
+
+FUNCTION find_os_sii_by_naz_or_id( cId )
+
+   LOCAL cAlias := "OS", cTable := "os_os"
+   LOCAL cSqlQuery
+   LOCAL cIdSql
+
+   IF gOsSii != "O"
+      cAlias := "SII"
+      cTable := "sii_sii"
+   ENDIF
+
+   cSqlQuery := "select * from fmk." + cTable
+
+   cIdSql := sql_quote( "%" + Upper( AllTrim( cId ) ) + "%" )
+   cSqlQuery += " WHERE id ilike " + cIdSql
+   cSqlQuery += " OR naz ilike " + cIdSql
+
+   IF !use_sql( os_sii_table_name(), cSqlQuery, cAlias )
+      RETURN .F.
+   ENDIF
+   INDEX ON ID TAG ID TO ( cAlias )
+   INDEX ON NAZ TAG NAZ TO ( cAlias )
+   SET ORDER TO TAG "ID"
+
+   SEEK cId
+   IF !Found()
+      GO TOP
+   ENDIF
+
+   RETURN !Eof()
+
+
+
 FUNCTION o_amort( cId )
 
    LOCAL cTable := "os_amort"
@@ -86,7 +120,7 @@ FUNCTION find_amort_by_id( cId )
 
    RETURN !Eof()
 
-   
+
 
 FUNCTION o_reval( cId )
 
@@ -267,45 +301,40 @@ FUNCTION select_o_sii_promj( cId )
 
 
 
-FUNCTION select_os_sii( cId )
+FUNCTION select_o_os_or_sii( cId )
 
    IF gOsSii == "O"
-      select_o_os( cId )
-   ELSE
-      select_o_sii( cId )
+      RETURN select_o_os( cId )
    ENDIF
 
-   RETURN .T.
+   RETURN select_o_sii( cId )
+
 
 
 FUNCTION select_promj( cId )
 
    IF gOsSii == "O"
-      select_o_os_promj( cId )
-   ELSE
-      select_o_sii_promj( cId )
-   ENDIF
+      RETURN select_o_os_promj( cId )
+    ENDIF
 
-   RETURN .T.
+   RETURN select_o_sii_promj( cId )
 
 
-FUNCTION o_os_sii()
+FUNCTION o_os_sii( cId )
 
    IF gOsSii == "O"
-      RETURN o_os()
-   ELSE
-      RETURN o_sii()
+      RETURN o_os( cId )
    ENDIF
 
-   RETURN .T.
+   RETURN o_sii( cId )
 
 
-FUNCTION o_os_sii_promj()
+
+
+FUNCTION o_os_sii_promj( cId )
 
    IF gOsSii == "O"
-      RETURN o_os_promj()
-   ELSE
-      RETURN o_sii_promj()
+      RETURN o_os_promj( cId )
    ENDIF
 
-   RETURN .T.
+   RETURN o_sii_promj( cId )

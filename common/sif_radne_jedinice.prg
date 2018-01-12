@@ -17,8 +17,7 @@ FUNCTION P_RJ( cId, nDeltaX, nDeltaY )
 
    LOCAL nTArea, nI, lRet
 
-   PRIVATE ImeKol
-   PRIVATE Kol
+   PRIVATE ImeKol, Kol
 
    ImeKol := {}
    Kol := {}

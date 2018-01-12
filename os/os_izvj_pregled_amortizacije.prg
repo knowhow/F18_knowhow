@@ -27,13 +27,13 @@ FUNCTION os_pregled_amortizacije()
       _mod_name := "SII"
    ENDIF
 
-   o_konto()
+   //o_konto()
    o_rj()
 
    o_os_sii_promj()
    o_os_sii()
 
-   cIdrj := Space( 4 )
+   cIdRj := Space( 4 )
    cPromj := "2"
    cPocinju := "N"
    cKPocinju := "N"
@@ -48,10 +48,10 @@ FUNCTION os_pregled_amortizacije()
 
    Box(, 13, 77 )
    DO WHILE .T.
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
-         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cIdRj ;
+         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdRj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
 
-      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cPocinju VALID cPocinju $ "DN" PICT "@!"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
       @ box_x_koord() + 2, Col() + 2 SAY "sva koja pocinju " GET cKpocinju VALID cKpocinju $ "DN" PICT "@!"
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Za sredstvo prikazati vrijednost:"
@@ -75,14 +75,16 @@ FUNCTION os_pregled_amortizacije()
 
    cIdRj := PadR( cIdRj, 4 )
 
-   IF Empty( qidkonto ); qidkonto := ""; ENDIF
+   IF Empty( qidkonto )
+     qidkonto := ""
+   ENDIF
    IF cKPocinju == "D"
       qIdKonto := Trim( qIdKonto )
    ENDIF
 
-   IF Empty( cIdrj ); cidrj := ""; ENDIF
-   IF cpocinju == "D"
-      cIdRj := Trim( cidrj )
+   IF Empty( cIdRj ); cIdRj := ""; ENDIF
+   IF cPocinju == "D"
+      cIdRj := Trim( cIdRj )
    ENDIF
 
    os_rpt_default_valute()
@@ -91,14 +93,14 @@ FUNCTION os_pregled_amortizacije()
 
    PRIVATE nStr := 0
    // strana
-   select_o_rj( cIdrj )
+   select_o_rj( cIdRj )
    select_os_sii()
 
    P_10CPI
    ? tip_organizacije() + ":", self_organizacija_naziv()
 
-   IF !Empty( cIdrj )
-      ? "Radna jedinica:", cIdrj, rj->naz
+   IF !Empty( cIdRj )
+      ? "Radna jedinica:", cIdRj, rj->naz
    ENDIF
 
    ? _mod_name + ": Pregled obracuna amortizacije po kontima "
@@ -132,7 +134,7 @@ FUNCTION os_pregled_amortizacije()
       SET FILTER TO &cFilter
    ENDIF
 
-   IF Empty( cidrj ) .OR. cPocinju == "D"
+   IF Empty( cIdRj ) .OR. cPocinju == "D"
       select_os_sii()
       SET ORDER TO TAG "4"
       // "OSi4","idkonto+idrj+id"
@@ -141,7 +143,7 @@ FUNCTION os_pregled_amortizacije()
       select_os_sii()
       SET ORDER TO TAG "3"
       // "OSi3","idrj+idkonto+id"
-      SEEK cidrj + qidkonto
+      SEEK cIdRj + qIdkonto
    ENDIF
 
    PRIVATE nRbr := 0
@@ -153,20 +155,20 @@ FUNCTION os_pregled_amortizacije()
    nA1 := 0
    nA2 := 0
 
-   DO WHILE !Eof() .AND. ( field->idrj = cIdrj .OR. Empty( cidrj ) )
+   DO WHILE !Eof() .AND. ( field->idrj = cIdRj .OR. Empty( cIdRj ) )
 
       cIdSK := Left( idkonto, 3 )
       nDug2 := nPot21 := nPot22 := 0
       _t_nab := _t_otp := _t_amp := 0
       _sanacija := .F.
 
-      DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. Left( idkonto, 3 ) == cidsk
+      DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )  .AND. Left( idkonto, 3 ) == cidsk
 
          cIdKonto := idkonto
          nDug3 := nPot31 := nPot32 := 0
          _t_nab := _t_otp := _t_amp := 0
 
-         DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. idkonto == cidkonto
+         DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )  .AND. idkonto == cidkonto
 
             IF PRow() > RPT_PAGE_LEN
                FF
@@ -331,7 +333,7 @@ FUNCTION os_pregled_amortizacije()
       ? m
       nTArea := Select()
       select_o_konto( cIdSK )
-      
+
       SELECT ( nTArea )
       ? " UKUPNO ", cIdSK, PadR( konto->naz, 50 )
       @ PRow(), ncol1    SAY ndug2 * nBBK PICT gpici

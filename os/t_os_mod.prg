@@ -11,9 +11,6 @@
 
 #include "f18.ch"
 
-
-
-
 CLASS TOsMod FROM TAppMod
 
    METHOD NEW

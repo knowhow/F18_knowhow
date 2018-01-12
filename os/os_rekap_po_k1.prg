@@ -20,23 +20,23 @@ FUNCTION os_rekapitulacija_po_k1()
 
    o_os_sii()
 
-   cIdrj := Space( 4 )
+   cIdRj := Space( 4 )
    cON := "N"
    cKolP := "N"
    cPocinju := "N"
    cDNOS := "D"
 
    Box(, 4, 77 )
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno svi):" GET cidrj VALID Empty( cIdRj ) .OR. p_rj( @cIdrj )
-   @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno svi):" GET cIdRj VALID Empty( cIdRj ) .OR. p_rj( @cIdRj )
+   @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cPocinju VALID cPocinju $ "DN" PICT "@!"
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prikaz svih neotpisanih/otpisanih/samo novonabavljenih (N/O/B) sredstava:" GET cON PICT "@!" VALID con $ "ONB"
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prikaz sredstava D/N:" GET cDNOs PICT "@!" VALID cDNOs $ "DN"
    READ
    ESC_BCR
    BoxC()
 
-   IF cPocinju == "D" .OR. Empty( cIdrj )
-      cIdRj := Trim( cIdrj )
+   IF cPocinju == "D" .OR. Empty( cIdRj )
+      cIdRj := Trim( cIdRj )
    ENDIF
 
    m := "----- ---------- ------------------------- -------------"
@@ -45,7 +45,7 @@ FUNCTION os_rekapitulacija_po_k1()
    SET ORDER TO TAG "2"
    // idrj+id+dtos(datum)
 
-   cFilt1 := "idrj=cidrj"
+   cFilt1 := "idrj=cIdRj"
    cSort1 := "k1+idrj"
 
    Box(, 1, 30 )
@@ -175,7 +175,7 @@ STATIC FUNCTION ZglK1()
    select_o_rj( cIdRj )
    select_os_sii()
 
-   ? "Radna jedinica:", cIdrj, rj->naz
+   ? "Radna jedinica:", cIdRj, rj->naz
 
    IF cPocinju == "D"
       ?? "(SVEUKUPNO)"

@@ -25,13 +25,13 @@ FUNCTION os_amortizacija_po_stopama()
       _mod_name := "SII"
    ENDIF
 
-   O_AMORT
-   o_rj()
+   //o_amort()
+   //o_rj()
 
    o_os_sii_promj()
    o_os_sii()
 
-   cIdrj := Space( 4 )
+   cIdRj := Space( 4 )
    cPromj := "2"
    cPocinju := "N"
    cFiltSadVr := "0"
@@ -45,10 +45,10 @@ FUNCTION os_amortizacija_po_stopama()
 
    Box(, 12, 77 )
    DO WHILE .T.
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
-         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cIdRj ;
+         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdRj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
 
-      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cPocinju VALID cPocinju $ "DN" PICT "@!"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Grupa amort.stope (prazno - sve):" GET qIdAm PICT "@!" VALID Empty( qidAm ) .OR. P_Amort( @qIdAm )
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Za sredstvo prikazati vrijednost:"
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "1 - bez promjena"
@@ -75,20 +75,20 @@ FUNCTION os_amortizacija_po_stopama()
       create_dbf_r_export( aDbfFields )
    ENDIF
 
-   O_AMORT
-   o_rj()
+   //o_amort()
+   //o_rj()
 
    o_os_sii_promj()
    o_os_sii()
 
    IF Empty( qidAm ); qidAm := ""; ENDIF
-   IF Empty( cIdrj ); cidrj := ""; ENDIF
+   IF Empty( cIdRj ); cIdRj := ""; ENDIF
 
-   IF cpocinju == "D"
-      cIdRj := Trim( cidrj )
+   IF cPocinju == "D"
+      cIdRj := Trim( cIdRj )
    ENDIF
 
-   IF Empty( cidrj )
+   IF Empty( cIdRj )
       select_os_sii()
       cSort1 := "idam+idrj+id"
       INDEX ON &cSort1 TO "TMPOS" FOR &aUsl1
@@ -97,7 +97,7 @@ FUNCTION os_amortizacija_po_stopama()
       select_os_sii()
       cSort1 := "idrj+idam+id"
       INDEX ON &cSort1 TO "TMPOS" FOR &aUsl1
-      SEEK cidrj + qidAm
+      SEEK cIdRj + qidAm
    ENDIF
    IF !Empty( qIdAm ) .AND. !( idam == qIdAm )
       MsgBeep( "Ne postoje trazeni podaci!" )
@@ -109,15 +109,15 @@ FUNCTION os_amortizacija_po_stopama()
    start PRINT cRet
    PRIVATE nStr := 0  // strana
 
-   select_o_rj( cIdrj )
+   select_o_rj( cIdRj )
 
    select_os_sii()
 
    P_10CPI
    ? tip_organizacije() + ":", self_organizacija_naziv()
 
-   IF !Empty( cidrj )
-      ? "Radna jedinica:", cidrj, rj->naz
+   IF !Empty( cIdRj )
+      ? "Radna jedinica:", cIdRj, rj->naz
    ENDIF
 
    ? _mod_name + ": Pregled obracuna amortizacije po grupama amortizacionih stopa"
@@ -140,13 +140,13 @@ FUNCTION os_amortizacija_po_stopama()
    nA1 := 0
    nA2 := 0
 
-   DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )
+   DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )
       cIdAm := idam
       nDug2 := nPot21 := nPot22 := 0
-      DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) ) .AND. idam == cidam
+      DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) ) .AND. idam == cidam
          cIdAmort := idam
          nDug3 := nPot31 := nPot32 := 0
-         DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. idam == cidamort
+         DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )  .AND. idam == cidamort
             IF PRow() > 60; FF; os_zagl_amort(); ENDIF
             IF !( ( cON == "N" .AND. datotp_prazan() ) .OR. ;
                   ( con == "O" .AND. !datotp_prazan() ) .OR. ;
@@ -220,8 +220,7 @@ FUNCTION os_amortizacija_po_stopama()
                   _sr_id_am := field->idam
                   nArr := Select()
 
-                  SELECT amort
-                  SEEK _sr_id_am
+                  select_o_amort( _sr_id_am )
                   nAmIznos := amort->iznos
 
                   SELECT ( nArr )

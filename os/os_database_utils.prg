@@ -33,53 +33,6 @@ FUNCTION os_postoji_polje( naziv_polja )
    RETURN _ret
 
 
-// ----------------------------------------
-// selektuje potrebnu tabelu
-// ----------------------------------------
-FUNCTION select_os_sii()
-
-   IF gOsSii == "O"
-      SELECT os
-   ELSE
-      SELECT sii
-   ENDIF
-
-   RETURN .T.
-
-
-FUNCTION select_promj()
-
-   IF gOsSii == "O"
-      SELECT promj
-   ELSE
-      SELECT sii_promj
-   ENDIF
-
-   RETURN .T.
-
-
-FUNCTION o_os_sii()
-
-   IF gOsSii == "O"
-      O_OS
-   ELSE
-      O_SII
-   ENDIF
-
-   RETURN .T.
-
-
-
-FUNCTION o_os_sii_promj()
-
-   IF gOsSii == "O"
-      O_PROMJ
-   ELSE
-      O_SII_PROMJ
-   ENDIF
-
-   RETURN .T.
-
 
 // -----------------------------------------
 // vraca naziv tabele na osnovu alias-a

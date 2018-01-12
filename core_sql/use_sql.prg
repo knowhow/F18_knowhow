@@ -71,7 +71,22 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
    IF lMakeIndex
 
-      IF cTable == "ld_radn" // RADN je izuzetak sa imenima tagova "1", "2"
+      IF cTable == "os_os" .OR. cTable == "sii_sii"
+
+         INDEX ON id + idam + DToS( datum ) TAG "1" TO ( cAlias )
+         INDEX ON idrj + id + DToS( datum ) TAG "2" TO ( cAlias )
+         INDEX ON idrj + idkonto + id TAG "3" TO ( cAlias )
+         INDEX ON idkonto + idrj + id TAG "4" TO ( cAlias )
+         INDEX ON idam + idrj + id TAG "5" TO ( cAlias )
+
+         SET ORDER TO TAG "1"
+
+      ELSEIF cTable == "os_promj" .OR. cTable == "sii_promj"
+
+         INDEX ON id + tip + DToS( datum ) + opis  TAG "1" TO ( cAlias )
+         SET ORDER TO TAG "1"
+
+      ELSEIF cTable == "ld_radn" // RADN je izuzetak sa imenima tagova "1", "2"
          INDEX ON ID TAG "1" TO ( cAlias )
          IF FieldPos( "NAZ" ) > 0
             INDEX ON NAZ TAG "2" TO ( cAlias )

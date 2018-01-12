@@ -258,8 +258,8 @@ STATIC FUNCTION _o_sif_tables()
 
    o_os_sii()
 
-   O_AMORT
-   O_REVAL
+   //o_amort()
+   //o_reval()
    //o_rj()
 //   o_k1()
   // o_partner()

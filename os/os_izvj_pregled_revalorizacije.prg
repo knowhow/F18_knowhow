@@ -25,7 +25,7 @@ FUNCTION os_pregled_revalorizacije()
    o_os_sii_promj()
    o_os_sii()
 
-   cIdrj := Space( 4 )
+   cIdRj := Space( 4 )
    cPromj := "2"
    cPocinju := "N"
    cFiltK1 := Space( 40 )
@@ -33,8 +33,8 @@ FUNCTION os_pregled_revalorizacije()
 
    Box(, 10, 77 )
    DO WHILE .T.
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj VALID Empty( cIdRj ) .OR. p_rj( @cIdrj )
-      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cIdRj VALID Empty( cIdRj ) .OR. p_rj( @cIdRj )
+      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cPocinju VALID cPocinju $ "DN" PICT "@!"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Za sredstvo prikazati vrijednost:"
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "1 - bez promjena"
@@ -50,16 +50,16 @@ FUNCTION os_pregled_revalorizacije()
    BoxC()
 
    IF Empty( qidkonto ); qidkonto := ""; ENDIF
-   IF Empty( cIdrj ); cidrj := ""; ENDIF
-   IF cpocinju == "D"
-      cIdRj := Trim( cidrj )
+   IF Empty( cIdRj ); cIdRj := ""; ENDIF
+   IF cPocinju == "D"
+      cIdRj := Trim( cIdRj )
    ENDIF
 
    os_rpt_default_valute()
 
    start PRINT cret
    PRIVATE nStr := 0  // strana
-   select_o_rj( cIdrj )
+   select_o_rj( cIdRj )
    select_os_sii()
 
    IF !Empty( cFiltK1 )
@@ -68,8 +68,8 @@ FUNCTION os_pregled_revalorizacije()
 
    P_10CPI
    ? tip_organizacije() + ":", self_organizacija_naziv()
-   IF !Empty( cidrj )
-      ? "Radna jedinica:", cidrj, rj->naz
+   IF !Empty( cIdRj )
+      ? "Radna jedinica:", cIdRj, rj->naz
    ENDIF
    ? "OS: Pregled obracuna revalorizacije po kontima "
    ?? "", PrikazVal(), "    Datum:", os_datum_obracuna()
@@ -79,14 +79,14 @@ FUNCTION os_pregled_revalorizacije()
 
    select_os_sii()
 
-   IF Empty( cidrj )
+   IF Empty( cIdRj )
       SET ORDER TO TAG "4"
       // "OSi4","idkonto+idrj+id"
       SEEK qidkonto
    ELSE
       SET ORDER TO TAG "3"
       // "OSi3","idrj+idkonto+id"
-      SEEK cIdrj + qIdkonto
+      SEEK cIdRj + qIdkonto
    ENDIF
 
    PRIVATE nrbr := 0
@@ -98,7 +98,7 @@ FUNCTION os_pregled_revalorizacije()
    nA1 := 0
    nA2 := 0
 
-   DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )
+   DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )
 
       cIdSK := Left( idkonto, 3 )
       nDug21 := 0
@@ -106,7 +106,7 @@ FUNCTION os_pregled_revalorizacije()
       nPot21 := 0
       nPot22 := 0
 
-      DO WHILE !Eof() .AND. ( field->idrj = cIdrj .OR. Empty( cIdrj ) ) .AND. Left( field->idkonto, 3 ) == cIdSK
+      DO WHILE !Eof() .AND. ( field->idrj = cIdRj .OR. Empty( cIdRj ) ) .AND. Left( field->idkonto, 3 ) == cIdSK
 
          cIdKonto := field->idkonto
          nDug31 := 0
@@ -114,7 +114,7 @@ FUNCTION os_pregled_revalorizacije()
          nPot31 := 0
          nPot32 := 0
 
-         DO WHILE !Eof() .AND. ( field->idrj = cIdrj .OR. Empty( cIdrj ) ) .AND. field->idkonto == cIdkonto
+         DO WHILE !Eof() .AND. ( field->idrj = cIdRj .OR. Empty( cIdRj ) ) .AND. field->idkonto == cIdkonto
 
             IF PRow() > 60
                FF

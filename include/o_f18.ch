@@ -208,13 +208,8 @@
 
 
 // modul OS
-#xcommand O_OS => select (F_OS) ; my_use ( "os" ) ;  set order to tag "1"
-#xcommand O_SII => select (F_SII) ; my_use ( "sii" ) ; set order to tag "1"
-#xcommand O_PROMJ => select (F_PROMJ) ; my_use ( "promj" ) ; set order to tag "1"
-#xcommand O_SII_PROMJ => select (F_SII_PROMJ) ; my_use ( "sii_promj" ) ; set order to tag "1"
-#xcommand O_INVENT       => select (F_INVENT)  ; my_use ("invent") ; set order to tag "1"
-#xcommand O_AMORT        => select (F_AMORT)   ; my_use ("amort")  ; set order to tag "ID"
-#xcommand O_REVAL        => select (F_REVAL)   ; my_use ("reval")  ; set order to tag "ID"
+//#xcommand O_INVENT       => select (F_INVENT)  ; my_use ("invent") ; set order to tag "1"
+
 
 
 // modul POS

@@ -36,13 +36,13 @@ FUNCTION os_pregled_po_kontima()
       _mod_name := "SII"
    ENDIF
 
-   o_konto()
+   //o_konto()
    o_rj()
 
    o_os_sii_promj()
    o_os_sii()
 
-   cIdrj := Space( 4 )
+   cIdRj := Space( 4 )
    cAmoGr := "N"
    cON := "N"
    cPromj := "2"
@@ -59,9 +59,9 @@ FUNCTION os_pregled_po_kontima()
 
    Box(, 20, 77 )
    DO WHILE .T.
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
-         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
-      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cIdRj ;
+         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdRj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
+      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cPocinju VALID cPocinju $ "DN" PICT "@!"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
       @ box_x_koord() + 2, Col() + 2 SAY "grupisati konto na broj mjesta" GET nKontoLen PICT "9" valid ( nKontoLen > 0 .AND. nKontoLen < 8 )
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
@@ -126,7 +126,7 @@ FUNCTION os_pregled_po_kontima()
    IF Empty( qIdKonto )
       qIdKonto := ""
    ENDIF
-   IF Empty( cIdrj )
+   IF Empty( cIdRj )
       cIdRj := ""
    ENDIF
    IF cPocinju == "D"
@@ -140,14 +140,14 @@ FUNCTION os_pregled_po_kontima()
    PRIVATE nStr := 0
    // strana
 
-   select_o_rj( cIdrj )
+   select_o_rj( cIdRj )
 
    select_os_sii()
 
    P_10CPI
    ? tip_organizacije() + ":", self_organizacija_naziv()
 
-   IF !Empty( cIdrj )
+   IF !Empty( cIdRj )
       ? "Radna jedinica:", cIdRj, rj->naz
    ENDIF
 
@@ -179,10 +179,9 @@ FUNCTION os_pregled_po_kontima()
       ENDIF
    ENDIF
 
-
    PRIVATE m := "----- ---------- ----" + IF( cAmoGr == "D", " " + REPL( "-", Len( field->idam ) ), "" ) + " -------- ------------------------------ --- ------" + REPL( " " + REPL( "-", Len( gPicI ) ), 3 )
 
-   IF Empty( cIdrj )
+   IF Empty( cIdRj )
       select_os_sii()
       SET ORDER TO TAG "4"
       // "idkonto+idrj+id"
@@ -233,7 +232,7 @@ FUNCTION os_pregled_po_kontima()
          select_os_sii()
          nDug3 := nPot3 := nUKol := 0
 
-         DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. idkonto == cidkonto
+         DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )  .AND. idkonto == cidkonto
 
             IF datum > os_datum_obracuna()
                // preskoci sredstva van obracuna
@@ -562,9 +561,7 @@ FUNCTION os_pregled_po_kontima()
    RETURN
 
 
-// -------------------------------------
-// zaglavlje izvjestaja
-// -------------------------------------
+
 FUNCTION os_zagl_konta()
 
    LOCAL nDbfArea := Select()
@@ -595,4 +592,4 @@ FUNCTION os_zagl_konta()
 
    SELECT ( nDbfArea )
 
-   RETURN
+   RETURN .T.

@@ -110,16 +110,16 @@ FUNCTION os_pregled_po_kontima()
       select_promj()
       PRIVATE cFilt1 := "DATUM>=" + dbf_quote( dDatOd ) + ".and.DATUM<=" + dbf_quote( dDatDo )
       SET FILTER to &cFilt1
-      select_os_sii()
+      select_o_os_or_sii()
    ENDIF
 
    IF !Empty( cFiltK1 )
-      select_os_sii()
+      select_o_os_or_sii()
       SET FILTER to &aUsl1
    ENDIF
 
    IF !Empty( cFiltK3 )
-      select_os_sii()
+      select_o_os_or_sii()
       SET FILTER to &aUsl2
    ENDIF
 
@@ -142,7 +142,7 @@ FUNCTION os_pregled_po_kontima()
 
    select_o_rj( cIdRj )
 
-   select_os_sii()
+   select_o_os_or_sii()
 
    P_10CPI
    ? tip_organizacije() + ":", self_organizacija_naziv()
@@ -182,12 +182,12 @@ FUNCTION os_pregled_po_kontima()
    PRIVATE m := "----- ---------- ----" + IF( cAmoGr == "D", " " + REPL( "-", Len( field->idam ) ), "" ) + " -------- ------------------------------ --- ------" + REPL( " " + REPL( "-", Len( gPicI ) ), 3 )
 
    IF Empty( cIdRj )
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "4"
       // "idkonto+idrj+id"
       SEEK qIdKonto
    ELSE
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "3"
       // "idrj+idkonto+id"
       SEEK cIdRj + qIdKonto
@@ -213,7 +213,7 @@ FUNCTION os_pregled_po_kontima()
          cNazSKonto := AllTrim( konto->naz )
       ENDIF
 
-      select_os_sii()
+      select_o_os_or_sii()
 
       nDug2 := nPot2 := 0
       nUUKol := 0
@@ -229,7 +229,7 @@ FUNCTION os_pregled_po_kontima()
             cNazKonto := AllTrim( konto->naz )
          ENDIF
 
-         select_os_sii()
+         select_o_os_or_sii()
          nDug3 := nPot3 := nUKol := 0
 
          DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )  .AND. idkonto == cidkonto
@@ -272,7 +272,7 @@ FUNCTION os_pregled_po_kontima()
                      ENDIF
                      SKIP
                   ENDDO
-                  select_os_sii()
+                  select_o_os_or_sii()
                ENDIF
 
                IF cpromj == "3"
@@ -295,7 +295,7 @@ FUNCTION os_pregled_po_kontima()
                      ENDIF
                      SKIP
                   ENDDO
-                  select_os_sii()
+                  select_o_os_or_sii()
                ENDIF
 
                // ovaj dio nam sad sluzi samo da saznamo ima li sredstvo
@@ -359,7 +359,7 @@ FUNCTION os_pregled_po_kontima()
                      ENDIF
                      SKIP
                   ENDDO
-                  select_os_sii()
+                  select_o_os_or_sii()
                ENDIF
 
                // ispis stavki
@@ -462,7 +462,7 @@ FUNCTION os_pregled_po_kontima()
                         SKIP
 
                      ENDDO
-                     select_os_sii()
+                     select_o_os_or_sii()
 
                   ENDIF
 
@@ -566,7 +566,7 @@ FUNCTION os_zagl_konta()
 
    LOCAL nDbfArea := Select()
 
-   select_os_sii()
+   select_o_os_or_sii()
 
    ?
    P_12CPI

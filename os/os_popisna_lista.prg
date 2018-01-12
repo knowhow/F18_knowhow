@@ -104,7 +104,7 @@ STATIC FUNCTION _gen_xml( params )
    LOCAL _rbr := 0
    LOCAL _ok := .F.
 
-   select_os_sii()
+   select_o_os_or_sii()
    SET ORDER TO TAG "2"
 
    IF !Empty( _idrj )

@@ -20,7 +20,7 @@ FUNCTION os_pregled_amortizacije()
    LOCAL cIdKonto := qidkonto := Space( 7 ), cidsk := "", ndug := ndug2 := npot := npot2 := ndug3 := npot3 := 0
    LOCAL nCol1 := 10
    LOCAL _mod_name := "OS"
-   LOCAL _t_nab, _t_otp, _t_amp
+   LOCAL nTNab, nTOtp, nTAmortizacijaP
    LOCAL _sanacija := .F.
 
    IF gOsSii == "S"
@@ -94,7 +94,7 @@ FUNCTION os_pregled_amortizacije()
    PRIVATE nStr := 0
    // strana
    select_o_rj( cIdRj )
-   select_os_sii()
+   select_o_os_or_sii()
 
    P_10CPI
    ? tip_organizacije() + ":", self_organizacija_naziv()
@@ -130,17 +130,17 @@ FUNCTION os_pregled_amortizacije()
    ENDIF
 
    IF !cFilter == ".t."
-      select_os_sii()
+      select_o_os_or_sii()
       SET FILTER TO &cFilter
    ENDIF
 
    IF Empty( cIdRj ) .OR. cPocinju == "D"
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "4"
       // "OSi4","idkonto+idrj+id"
       SEEK qidkonto
    ELSE
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "3"
       // "OSi3","idrj+idkonto+id"
       SEEK cIdRj + qIdkonto
@@ -159,14 +159,14 @@ FUNCTION os_pregled_amortizacije()
 
       cIdSK := Left( idkonto, 3 )
       nDug2 := nPot21 := nPot22 := 0
-      _t_nab := _t_otp := _t_amp := 0
+      nTNab := nTOtp := nTAmortizacijaP := 0
       _sanacija := .F.
 
       DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )  .AND. Left( idkonto, 3 ) == cidsk
 
          cIdKonto := idkonto
          nDug3 := nPot31 := nPot32 := 0
-         _t_nab := _t_otp := _t_amp := 0
+         nTNab := nTOtp := nTAmortizacijaP := 0
 
          DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )  .AND. idkonto == cidkonto
 
@@ -197,7 +197,7 @@ FUNCTION os_pregled_amortizacije()
                   fIma := .T.
                   SKIP
                ENDDO
-               select_os_sii()
+               select_o_os_or_sii()
             ENDIF
 
             // utvrdjivanje da li sredstvo ima sada�nju vrijednost
@@ -224,7 +224,7 @@ FUNCTION os_pregled_amortizacije()
                   ENDIF
                   SKIP
                ENDDO
-               select_os_sii()
+               select_o_os_or_sii()
             ENDIF
 
             // ispis stavki
@@ -247,9 +247,9 @@ FUNCTION os_pregled_amortizacije()
                   nDug3 += nabvr
                   nPot31 += otpvr
                   nPot32 += amp
-                  _t_nab += nabvr
-                  _t_otp += otpvr
-                  _t_amp += amp
+                  nTNab += nabvr
+                  nTOtp += otpvr
+                  nTAmortizacijaP += amp
                ENDIF
                IF cPromj $ "23"  // prikaz promjena
                   _sr_id := field->id
@@ -265,9 +265,9 @@ FUNCTION os_pregled_amortizacije()
 
                      IF Left( field->opis, 2 ) == "#S"
                         _sanacija := .T.
-                        _t_amp += amp
-                        _t_otp += otpvr
-                        _t_nab += nabvr
+                        nTAmortizacijaP += amp
+                        nTOtp += otpvr
+                        nTNab += nabvr
                      ENDIF
 
                      @ PRow(), ncol1    SAY nabvr * nBBK PICT gpici
@@ -284,7 +284,7 @@ FUNCTION os_pregled_amortizacije()
                      SKIP
                   ENDDO
 
-                  select_os_sii()
+                  select_o_os_or_sii()
 
                ENDIF
 
@@ -296,9 +296,9 @@ FUNCTION os_pregled_amortizacije()
                // ispisati stanje sanacija ako treba....
                ? Space( 20 ) + Replicate( "-", 88 )
                ? PadL( "Ukupni obracun sanacija:", nCol1 )
-               @ PRow(), nCol1 SAY _t_nab PICT gPicI
-               @ PRow(), PCol() + 1 SAY _t_otp PICT gPicI
-               @ PRow(), PCol() + 1 SAY _t_amp PICT gPicI
+               @ PRow(), nCol1 SAY nTNab PICT gPicI
+               @ PRow(), PCol() + 1 SAY nTOtp PICT gPicI
+               @ PRow(), PCol() + 1 SAY nTAmortizacijaP PICT gPicI
                ?
                _sanacija := .F.
             ENDIF

@@ -120,7 +120,7 @@ STATIC FUNCTION open_sii_tabele_init_static_vars()
    o_os_sii_promj()
 
 
-   select_os_sii()  // tabela OS_OS/SII_SII
+   select_o_os_or_sii()  // tabela OS_OS/SII_SII
 
    //__table_os := get_os_table_name()
    //__table_os_alias := Alias()
@@ -186,7 +186,7 @@ STATIC FUNCTION os_pocstanje_brisi_tekucu_godinu( aInformacije )
    //ENDIF
 
 
-   select_os_sii()
+   select_o_os_or_sii()
    SET ORDER TO TAG "1"
    GO TOP
 
@@ -363,7 +363,7 @@ altd()
 
       hRec[ "naz" ] := PadR( hRec[ "naz" ], 30 )
 
-      select_os_sii()
+      select_o_os_or_sii()
       APPEND BLANK
 
       update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
@@ -434,7 +434,7 @@ STATIC FUNCTION os_pocstanje_dodati_amortizaciju_u_otpisanu_vrijednost( aInforma
    o_os_sii()
    o_os_sii_promj()
 
-   select_os_sii()
+   select_o_os_or_sii()
    GO TOP
 
    run_sql_query( "BEGIN" )
@@ -471,7 +471,7 @@ STATIC FUNCTION os_pocstanje_dodati_amortizaciju_u_otpisanu_vrijednost( aInforma
          AAdd( aInformacije, { "     sredstvo: " + hRec[ "id" ] + "-" + PadR( hRec[ "naz" ], 30 ), 0, "OTPIS" } )
 
          ++ nOtpisCount
-         select_os_sii()
+         select_o_os_or_sii()
          delete_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
 
          GO nTrec
@@ -490,7 +490,7 @@ STATIC FUNCTION os_pocstanje_dodati_amortizaciju_u_otpisanu_vrijednost( aInforma
          SKIP
       ENDDO
 
-      select_os_sii()
+      select_o_os_or_sii()
 
       hRec[ "amp" ] := 0
       hRec[ "amd" ] := 0

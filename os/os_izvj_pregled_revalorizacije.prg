@@ -60,7 +60,7 @@ FUNCTION os_pregled_revalorizacije()
    start PRINT cret
    PRIVATE nStr := 0  // strana
    select_o_rj( cIdRj )
-   select_os_sii()
+   select_o_os_or_sii()
 
    IF !Empty( cFiltK1 )
       SET FILTER to &aUsl1
@@ -77,7 +77,7 @@ FUNCTION os_pregled_revalorizacije()
 
    PRIVATE m := "----- ---------- ---- -------- ------------------------------ --- ------" + REPL( " " + REPL( "-", Len( gPicI ) ), 5 )
 
-   select_os_sii()
+   select_o_os_or_sii()
 
    IF Empty( cIdRj )
       SET ORDER TO TAG "4"
@@ -149,7 +149,7 @@ FUNCTION os_pregled_revalorizacije()
                   SKIP
                ENDDO
 
-               select_os_sii()
+               select_o_os_or_sii()
 
             ENDIF
 
@@ -194,7 +194,7 @@ FUNCTION os_pregled_revalorizacije()
                   nPot32 += revp
                   SKIP
                ENDDO
-               select_os_sii()
+               select_o_os_or_sii()
             ENDIF
 
             SKIP

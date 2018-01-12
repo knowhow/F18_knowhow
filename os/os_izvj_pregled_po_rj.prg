@@ -104,7 +104,7 @@ FUNCTION os_pregled_po_rj()
 
    IF lPoAmortStopama
 
-      select_os_sii()
+      select_o_os_or_sii()
 
       IF cIdRj == ""
          SET ORDER TO TAG "5"
@@ -117,25 +117,25 @@ FUNCTION os_pregled_po_rj()
 
       m := "----- ------ ---------- ----------------------------" + IF( cOpis == "D", " " + REPL( "-", Len( field->opis ) ), "" ) + "  ---- ------- -------------"
 
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "2"
       // idrj+id+dtos(datum)
       INDEX ON idrj + brsoba + id + DToS( datum ) TO "TMPOS"
 
    ELSEIF lPoKontima
 
-      select_os_sii()
+      select_o_os_or_sii()
       INDEX ON idkonto + id TO "TMPOS"
 
    ELSEIF cIdRj == ""
 
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "1"
       // id+idam+dtos(datum)
 
    ELSE
 
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "2"
       // idrj+id+dtos(datum)
 
@@ -143,7 +143,7 @@ FUNCTION os_pregled_po_rj()
 
    IF !Empty( cFiltK1 ) .OR. !Empty( cFiltDob )
       cFilter := aUsl1 + ".and." + aUsl2
-      select_os_sii()
+      select_o_os_or_sii()
       SET FILTER to &cFilter
    ENDIF
 

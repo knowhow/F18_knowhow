@@ -84,7 +84,7 @@ FUNCTION os_kartica_sredstva()
       SET ORDER TO TAG "1"
    NEXT
 
-   select_os_sii()
+   select_o_os_or_sii()
    IF Empty( cId )
       // sve kartice
       GO TOP
@@ -149,7 +149,7 @@ FUNCTION os_kartica_sredstva()
             NEXT
          ENDIF
       NEXT
-      select_os_sii()
+      select_o_os_or_sii()
 
       IF Len( aPom ) > 0
          ASort( aPom,,, {| x, y| x[ 1 ] < y[ 1 ] } )

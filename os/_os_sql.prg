@@ -244,7 +244,6 @@ FUNCTION o_os_promj( cId )
    LOCAL cTable := "os_promj", cAlias := "PROMJ"
 
    SELECT ( F_PROMJ )
-   altd()
    IF !use_sql_sif( cTable, .T., cAlias, cId )
       RETURN .F.
    ENDIF

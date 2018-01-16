@@ -125,12 +125,12 @@ METHOD F18Admin:sql_cleanup_all()
 
    LOCAL cQuery, oQuery, cQueryForDb // ovaj query radi posao na pojedinoj bazi
 
-   //hDbServerParams := my_server_params()
+   // hDbServerParams := my_server_params()
 
    stop_refresh_operations()
 
    IF Pitanje(, "Konekcije svih korisnika na bazu biti prekinute! Nastaviti?", " " ) == "N"
-      //start_refresh_operations()
+      // start_refresh_operations()
       RETURN .F.
    ENDIF
 
@@ -143,6 +143,50 @@ METHOD F18Admin:sql_cleanup_all()
    pg_terminate_all_data_db_connections()
 
    info_bar( "admin", "db_cleanup_all START" )
+
+
+   cQueryForDb := "DROP SCHEMA IF EXISTS sem CASCADE;"
+   cQueryForDb += "DROP SCHEMA IF EXISTS fmk_reports CASCADE;"
+   cQueryForDb += "DROP SCHEMA IF EXISTS api CASCADE;"
+   cQueryForDb += "DROP table IF EXISTS fmk.brojac;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_0;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_1;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_cin;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_defrjes;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_globusl;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_k1;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_k2;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_mz;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_nac;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_nerdan;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_obrazdef;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_promj;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_rj;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_rjes;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_rmj;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_rrasp;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_uslovi;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_ves;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_zanim;"
+   cQueryForDb += "DROP table IF EXISTS fmk.kadev_doks;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_aops;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_aops_att;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_articles;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_contacts;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_customs;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_doc_it;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_doc_it2;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_doc_lit;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_doc_log;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_ops;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_docs;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_e_aops;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_e_att;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_e_gr_val;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_e_groups;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_elements;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_objects;"
+   cQueryForDb += "DROP table IF EXISTS fmk.rnal_ral;"
 
    cQuery := ""
    cQuery += "CREATE EXTENSION IF NOT EXISTS dblink;" + hb_eol()
@@ -159,12 +203,6 @@ METHOD F18Admin:sql_cleanup_all()
    cQuery += "         raise notice 'Database: %', v_db;" + hb_eol()
 
    cQuery += "         cQuery := $Q$SELECT dblink_connect('dbname=$Q$ || v_db || $Q$');$Q$;" + hb_eol()
-
-   cQueryForDb := "DROP SCHEMA IF EXISTS sem CASCADE;"
-   cQueryForDb += "DROP SCHEMA IF EXISTS fmk_reports CASCADE;"
-   cQueryForDb += "DROP SCHEMA IF EXISTS api CASCADE;"
-
-
    cQuery += "         cQuery := cQuery || $Q$SELECT dblink_exec('" + cQueryForDb + "');$Q$;" + hb_eol()
    cQuery += "         cQuery := cQuery || $Q$SELECT dblink_disconnect();$Q$;" + hb_eol()
    cQuery += "         EXECUTE cQuery;" + hb_eol()
@@ -174,7 +212,7 @@ METHOD F18Admin:sql_cleanup_all()
    cQuery += " LANGUAGE 'plpgsql';" + hb_eol()
 
 
-   //editor( NIL, cQuery )
+   // editor( NIL, cQuery )
    oQuery := postgres_sql_query( cQuery )
 
    cQuery := "select F18_cleanup_databases();" + hb_eol()
@@ -186,8 +224,8 @@ METHOD F18Admin:sql_cleanup_all()
 
    info_bar( "admin", "db_cleanup_all END" )
 
-   //::relogin_as( hDbServerParams[ "user" ],  hDbServerParams[ "password" ], hDbServerParams[ "database" ] )
-   //start_refresh_operations()
+   // ::relogin_as( hDbServerParams[ "user" ],  hDbServerParams[ "password" ], hDbServerParams[ "database" ] )
+   // start_refresh_operations()
 
    RETURN .T.
 
@@ -1131,8 +1169,8 @@ METHOD F18Admin:relogin_as_admin( cDatabase )
    hSqlParams[ "database" ] := cDatabase
 
    IF my_server_login( hSqlParams, nConnType )
-      IF cDatabase != "postgres" .and. "_" $ cDatabase // database koja sadrzi F18 podatke
-       set_sql_search_path()
+      IF cDatabase != "postgres" .AND. "_" $ cDatabase // database koja sadrzi F18 podatke
+         set_sql_search_path()
       ENDIF
 
       RETURN .T.
@@ -1312,9 +1350,7 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, nDataType )
 
 
 
-// -------------------------------------------------------------------
-// kreiranje baze, parametri
-// -------------------------------------------------------------------
+
 METHOD F18Admin:create_new_pg_db_params( hParams )
 
    LOCAL lOk := .F.
@@ -1394,9 +1430,7 @@ METHOD F18Admin:create_new_pg_db_params( hParams )
 
 
 
-// ----------------------------------------------------------
-// dodavanje nove baze - validator
-// ----------------------------------------------------------
+
 STATIC FUNCTION _new_db_valid( cDatabaseName )
 
    LOCAL lOk := .F.

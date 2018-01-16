@@ -160,7 +160,7 @@ PROCEDURE print_sql_connections()
 
 FUNCTION my_server_params( hSqlParams )
 
-   LOCAL  cKey
+   LOCAL cKey
 
    IF !is_in_main_thread()
       IF hSqlParams <> NIL
@@ -181,7 +181,7 @@ FUNCTION my_server_params( hSqlParams )
       NEXT
    ENDIF
 
-   RETURN s_psqlServer_params
+   RETURN hb_hClone( s_psqlServer_params )
 
 
 FUNCTION f18_baza_server_host()

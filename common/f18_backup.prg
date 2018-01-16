@@ -161,7 +161,7 @@ METHOD F18Backup:do_backup_now()
    @ nX++, nY SAY "*** BACKUP procedura *** " + DToC( Date() )
 
    nX++
-   
+
    @ nX++, nY SAY "Dostupne opcije:"
    @ nX++, nY SAY8 "   1 - backup trenutne organizacije"
    @ nX++, nY SAY8 "   0 - backup kompletnog servera"
@@ -390,6 +390,7 @@ METHOD F18Backup:backup_server()
    ::get_backup_filename()
    ::get_windows_ping_time()
    ::get_removable_drive()
+
    F18Admin():sql_cleanup_all()
 
    F18Admin():relogin_as( hServerParams[ "user" ],  hServerParams[ "password" ], hServerParams[ "database" ] )

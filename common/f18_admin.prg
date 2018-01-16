@@ -190,6 +190,7 @@ METHOD F18Admin:sql_cleanup_all()
    cQueryForDb += "DROP table IF EXISTS fmk.rnal_elements;"
    cQueryForDb += "DROP table IF EXISTS fmk.rnal_objects;"
    cQueryForDb += "DROP table IF EXISTS fmk.rnal_ral;"
+   cQueryForDb += "DROP table IF EXISTS public.locale;"
 
    cQuery := ""
    cQuery += "CREATE EXTENSION IF NOT EXISTS dblink;" + hb_eol()

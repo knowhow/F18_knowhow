@@ -23,15 +23,12 @@ FUNCTION harbour_init()
 
    f18_init_threads()
 
-
    Set( _SET_OSCODEPAGE, hb_cdpOS() )
 
 // ? SET( _SET_OSCODEPAGE )
 
-
    hb_cdpSelect( "SL852" )
    // hb_SetTermCP( "SLISO" )
-
 
 
    SET DELETED ON

@@ -21,7 +21,7 @@ CLASS F18Backup
    METHOD do_backup()
 
    METHOD backup_organizacija()
-   METHOD Backup_server()
+   METHOD backup_server()
 
    METHOD backup_to_removable()
 
@@ -151,6 +151,7 @@ METHOD F18Backup:do_backup_now()
    LOCAL nType := 1
    LOCAL nX
    LOCAL nY
+   LOCAL GetList := {}
 
    Box( "#Backup NOW", 7, 60 )
    nX := box_x_koord() + 1
@@ -233,17 +234,17 @@ METHOD F18Backup:backup_organizacija()
 
    LOCAL lOk := .F.
    LOCAL cCmd := ""
-   LOCAL _server_params := my_server_params()
-   LOCAL _host := _server_params[ "host" ]
-   LOCAL _port := _server_params[ "port" ]
-   LOCAL cDataBase := _server_params[ "database" ]
+   LOCAL hServerParams := my_server_params()
+   LOCAL _host := hServerParams[ "host" ]
+   LOCAL _port := hServerParams[ "port" ]
+   LOCAL cDataBase := hServerParams[ "database" ]
    LOCAL _admin_user := "admin"
    LOCAL nX := 7
    LOCAL nY := 2
    LOCAL nI, cBackupFile
    LOCAL _color_ok := F18_COLOR_BACKUP_OK
    LOCAL _color_err := F18_COLOR_BACKUP_ERROR
-   LOCAL _line := Replicate( "-", 70 )
+   LOCAL cLine := Replicate( "-", 70 )
 
    ::get_backup_filename()
    ::get_windows_ping_time()
@@ -292,11 +293,11 @@ METHOD F18Backup:backup_organizacija()
       ++nX
       @ nX, nY SAY "              na prozor aplikacije i nastavite raditi."
       ++nX
-      @ nX, nY SAY _line
+      @ nX, nY SAY cLine
       ++nX
       @ nX, nY SAY "Backup podataka u toku...."
       ++nX
-      @ nX, nY SAY _line
+      @ nX, nY SAY cLine
       ++nX
       @ nX, nY SAY "   Lokacija backup-a: " + ::cPath
       ++nX
@@ -371,21 +372,22 @@ METHOD F18Backup:backup_server()
 
    LOCAL lOk := .F.
    LOCAL cCmd := ""
-   LOCAL _server_params := my_server_params()
-   LOCAL _host := _server_params[ "host" ]
-   LOCAL _port := _server_params[ "port" ]
-   LOCAL cDataBase := _server_params[ "database" ]
+   LOCAL hServerParams := my_server_params()
+   LOCAL _host := hServerParams[ "host" ]
+   LOCAL _port := hServerParams[ "port" ]
+   LOCAL cDataBase := hServerParams[ "database" ]
    LOCAL _admin_user := "admin"
    LOCAL nX := 7
    LOCAL nY := 2
    LOCAL nI, cBackupFile
-   LOCAL _line := Replicate( "-", 70 )
+   LOCAL cLine := Replicate( "-", 70 )
    LOCAL _color_ok := "W+/B+"
    LOCAL _color_err := "W+/R+"
 
    ::get_backup_filename()
    ::get_windows_ping_time()
    ::get_removable_drive()
+   F18Admin():sql_cleanup_all()
 
    FErase( ::cPath + ::cFileName )
    Sleep( 1 )
@@ -423,7 +425,7 @@ METHOD F18Backup:backup_server()
       ++nX
       @ nX, nY SAY8 "              na prozor aplikacije i nastavite raditi."
       ++nX
-      @ nX, nY SAY _line
+      @ nX, nY SAY cLine
       ++nX
       @ nX, nY SAY8 "Backup podataka u toku...."
       ++nX
@@ -551,13 +553,13 @@ METHOD F18Backup:get_backup_filename()
 
    LOCAL _name
    LOCAL _tmp
-   LOCAL _server_params := my_server_params()
+   LOCAL hServerParams := my_server_params()
    LOCAL nI
 
    _tmp := "server"
 
    IF ::nBackupType == 1
-      _tmp := AllTrim( _server_params[ "database" ] )
+      _tmp := AllTrim( hServerParams[ "database" ] )
    ENDIF
 
    FOR nI := 1 TO 99

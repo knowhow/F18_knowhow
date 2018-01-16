@@ -28,7 +28,7 @@ CLASS F18Login
    METHOD promjena_sezone_box()
    METHOD browse_odabir_organizacije()
    METHOD manual_enter_company_data()
-   METHOD administrative_options()
+   METHOD administratorske_opcije()
    METHOD database_array()
    METHOD get_database_browse_array()
    METHOD get_database_top_session()
@@ -723,29 +723,48 @@ METHOD F18Login:database_array()
 
 
 
-METHOD F18Login:administrative_options( x_pos, y_pos )
+METHOD F18Login:administratorske_opcije( x_pos, y_pos )
 
    LOCAL nX, _y
-   LOCAL aMeniOpcije, _menuexec, _mnu_choice
+   LOCAL aMeni := {}, aMeniExec := {}, nIzbor
 
    nX := x_pos
    _y := ( f18_max_cols() / 2 ) - 5
 
 
-   aMeniOpcije := {} // resetuj
-   _menuexec := {}
+   // print_sql_connections()
 
-   _set_menu_choices( @aMeniOpcije, @_menuexec )
+   AAdd( aMeni, hb_UTF8ToStr( "1. rekonfiguracija servera        " ) )
+   AAdd( aMeniExec, {|| f18_login_loop( .F. ), .T. } )
+
+   AAdd( aMeni, hb_UTF8ToStr( "2. update F18" ) )
+   AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
+
+   // AAdd( aMeni, hb_UTF8ToStr( "3. update baze" ) )
+   // AAdd( aMeniExec, {|| F18Admin():New():update_db(), .T. } )
+
+   AAdd( aMeni, hb_UTF8ToStr( "3. nova baza" ) )
+   AAdd( aMeniExec, {|| F18Admin():New():create_new_pg_db(), .T. } )
+
+   AAdd( aMeni, hb_UTF8ToStr( "5. brisanje baze" ) )
+   AAdd( aMeniExec, {|| F18Admin():New():drop_pg_db(), .T. } )
+
+   AAdd( aMeni, hb_UTF8ToStr( "6. otvaranje nove godine" ) )
+   AAdd( aMeniExec, {|| F18Admin():New():razdvajanje_sezona(), .T. } )
+
+   AAdd( aMeni, hb_UTF8ToStr( "7. sql_cleanup_all" ) )
+   AAdd( aMeniExec, {|| F18Admin():sql_cleanup_all(), .T. } )
+
 
    DO WHILE .T.
 
-      _mnu_choice := meni_0_inkey( nX, _y + 1, nX + 5, _y + 40, aMeniOpcije, 1 )
+      nIzbor := meni_0_inkey( nX, _y + 1, nX + 5, _y + 40, aMeni, 1 )
 
       DO CASE
-      CASE _mnu_choice == 0
+      CASE nIzbor == 0
          EXIT
-      CASE _mnu_choice > 0
-         Eval( _menuexec[ _mnu_choice ] )
+      CASE nIzbor > 0
+         Eval( aMeniExec[ nIzbor ] )
       ENDCASE
 
       LOOP
@@ -754,31 +773,6 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
 
    RETURN .T.
 
-
-
-STATIC FUNCTION _set_menu_choices( menuop, menuexec )
-
-   // print_sql_connections()
-
-   AAdd( menuop, hb_UTF8ToStr( "1. rekonfiguracija servera        " ) )
-   AAdd( menuexec, {|| f18_login_loop( .F. ), .T. } )
-
-   AAdd( menuop, hb_UTF8ToStr( "2. update F18" ) )
-   AAdd( menuexec, {|| F18Admin():update_app(), .T. } )
-
-   //AAdd( menuop, hb_UTF8ToStr( "3. update baze" ) )
-   //AAdd( menuexec, {|| F18Admin():New():update_db(), .T. } )
-
-   AAdd( menuop, hb_UTF8ToStr( "3. nova baza" ) )
-   AAdd( menuexec, {|| F18Admin():New():create_new_pg_db(), .T. } )
-
-   AAdd( menuop, hb_UTF8ToStr( "5. brisanje baze" ) )
-   AAdd( menuexec, {|| F18Admin():New():drop_pg_db(), .T. } )
-
-   AAdd( menuop, hb_UTF8ToStr( "6. otvaranje nove godine" ) )
-   AAdd( menuexec, {|| F18Admin():New():razdvajanje_sezona(), .T. } )
-
-   RETURN .T.
 
 
 
@@ -920,7 +914,7 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
          CASE ( _key == K_LEFT )
             oTBrowse:Left()
          CASE ( _key == K_F10 )
-            ::administrative_options( _pos_bottom + 4, _pos_left )
+            ::administratorske_opcije( _pos_bottom + 4, _pos_left )
             RETURN -1
          CASE ( _key == K_TAB )
             IF ::manual_enter_company_data( _pos_bottom + 4, _pos_left )

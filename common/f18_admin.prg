@@ -23,8 +23,8 @@ CLASS F18Admin
 
    METHOD new()
 
-   //METHOD update_db()
-   //DATA update_db_result
+   // METHOD update_db()
+   // DATA update_db_result
 
    METHOD create_new_pg_db()
    METHOD drop_pg_db()
@@ -34,33 +34,32 @@ CLASS F18Admin
 
    METHOD relogin_as()
    METHOD relogin_as_admin()
-
    METHOD update_app()
-
    METHOD get_os_name()
-
    METHOD wget_download()
+   METHOD sql_cleanup()
+   METHOD sql_cleanup_all()
 
    DATA create_db_result
 
    PROTECTED:
 
-   //METHOD update_db_download()
-   //METHOD update_db_all()
-   //METHOD update_db_company()
-   //METHOD update_db_command()
+   // METHOD update_db_download()
+   // METHOD update_db_all()
+   // METHOD update_db_company()
+   // METHOD update_db_command()
    METHOD create_new_pg_db_params()
 
    METHOD update_app_form()
    METHOD f18_upd_download()
-   //METHOD update_app_get_versions()
+   // METHOD update_app_get_versions()
    METHOD update_app_run_script()
    METHOD update_app_run_app_update()
-   //METHOD update_app_run_templates_update()
+   // METHOD update_app_run_templates_update()
    METHOD update_app_unzip_templates()
 
-   DATA _new_db_params
-   DATA _update_params
+   // DATA _new_db_params
+   // DATA _update_params
 
 ENDCLASS
 
@@ -68,7 +67,7 @@ ENDCLASS
 
 METHOD F18Admin:New()
 
-   //::update_db_result := {}
+   // ::update_db_result := {}
    ::create_db_result := {}
 
    IF ! ::relogin_as_admin( "postgres" )
@@ -79,15 +78,123 @@ METHOD F18Admin:New()
    RETURN self
 
 
+METHOD F18Admin:sql_cleanup()
+
+   LOCAL cQuery, oQuery, hDbServerParams, dCleanup
+
+   hDbServerParams := my_server_params()
+
+   dCleanup := fetch_metric( "db_cleanup", NIL, CToD( "" ) )
+
+   IF dCleanup >= Date()
+      info_bar( "admin", "db_cleanup vec napravljen " + DToC( dCleanup ) )
+      RETURN .F.
+   ELSE
+      info_bar( "admin", "db_cleanup START" )
+   ENDIF
+
+   IF ! ::relogin_as_admin( hDbServerParams[ "database" ] )
+      MsgBeep( "relogin as admin user neuspjesno " )
+      RETURN .F.
+   ENDIF
+
+   cQuery := "" // select max(version) from public.schema_migrations;"
+
+   IF Left( hDbServerParams[ "database" ], 3 ) != "rg_" // ne dirati ramaglas radi RNAL koristenja semafora
+      cQuery += "DROP SCHEMA IF EXISTS sem CASCADE;"
+   ENDIF
+
+   IF !Empty ( cQuery )
+      oQuery := run_sql_query( cQuery )
+
+      IF sql_error_in_query( oQuery, "DROP", sql_postgres_conn() )
+         error_bar( "drop_db", "drop schema sem" )
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   info_bar( "admin", "db_cleanup END" )
+   ::relogin_as( hDbServerParams[ "user" ],  hDbServerParams[ "password" ], hDbServerParams[ "database" ] )
+   set_metric( "db_cleanup", NIL, Date() )
+
+   RETURN self
+
+
+
+METHOD F18Admin:sql_cleanup_all()
+
+   LOCAL cQuery, oQuery  //, hDbServerParams
+
+   //hDbServerParams := my_server_params()
+
+   stop_refresh_operations()
+
+   IF Pitanje(, "Konekcije svih korisnika na bazu biti prekinute! Nastaviti?", " " ) == "N"
+      //start_refresh_operations()
+      RETURN .F.
+   ENDIF
+
+   IF ! ::relogin_as_admin()
+      MsgBeep( "relogin as admin user neuspjesno " )
+      RETURN .F.
+   ENDIF
+
+
+   pg_terminate_all_data_db_connections()
+
+   info_bar( "admin", "db_cleanup_all START" )
+
+   cQuery := ""
+   cQuery += "CREATE EXTENSION IF NOT EXISTS dblink;" + hb_eol()
+   cQuery += "CREATE OR REPLACE FUNCTION F18_cleanup_databases()" + hb_eol()
+   cQuery += " RETURNS VOID AS  " + hb_eol()
+   cQuery += " $$" + hb_eol()
+   cQuery += " DECLARE" + hb_eol()
+   cQuery += "     v_db NAME; " + hb_eol()
+   cQuery += "     cQuery VARCHAR;" + hb_eol()
+   cQuery += " BEGIN" + hb_eol()
+   cQuery += "     FOR v_db IN" + hb_eol()
+   cQuery += "         SELECT datname FROM pg_catalog.pg_database WHERE datname NOT LIKE 'postgres' AND datname NOT LIKE 'rg_%' AND datname NOT LIKE 'ramaglas_%' AND datname NOT LIKE 'template_%'" + hb_eol()
+   cQuery += "     LOOP" + hb_eol()
+   cQuery += "         raise notice 'Database: %', v_db;" + hb_eol()
+
+   cQuery += "         cQuery := $Q$SELECT dblink_connect('dbname=$Q$ || v_db || $Q$');$Q$;" + hb_eol()
+   cQuery += "         cQuery := cQuery || $Q$SELECT dblink_exec('DROP SCHEMA IF EXISTS sem CASCADE');$Q$;" + hb_eol()
+   cQuery += "         cQuery := cQuery || $Q$SELECT dblink_disconnect();$Q$;" + hb_eol()
+   cQuery += "         EXECUTE cQuery;" + hb_eol()
+   cQuery += "     END LOOP;" + hb_eol()
+   cQuery += " END;" + hb_eol()
+   cQuery += " $$" + hb_eol()
+   cQuery += " LANGUAGE 'plpgsql';" + hb_eol()
+
+
+   //editor( NIL, cQuery )
+   oQuery := postgres_sql_query( cQuery )
+
+   cQuery := "select F18_cleanup_databases();" + hb_eol()
+   oQuery := postgres_sql_query( cQuery )
+   IF sql_error_in_query( oQuery, "SELECT", sql_postgres_conn() )
+      error_bar( "admin", "sql_cleanup_all" )
+      RETURN .F.
+   ENDIF
+
+   info_bar( "admin", "db_cleanup_all END" )
+
+   //::relogin_as( hDbServerParams[ "user" ],  hDbServerParams[ "password" ], hDbServerParams[ "database" ] )
+   //start_refresh_operations()
+
+   RETURN .T.
+
 
 METHOD F18Admin:update_app()
 
    LOCAL hF18UpdateParams := hb_Hash()
-   //LOCAL _hF18UpdateParams := hb_Hash()
+
+   // LOCAL _hF18UpdateParams := hb_Hash()
    LOCAL cUpdateFile := ""
    LOCAL lOk := .F.
 
-   //::update_app_info_file := "UPDATE_INFO"
+   // ::update_app_info_file := "UPDATE_INFO"
    ::update_app_script_file := "f18_upd.sh"
 
 #ifdef __PLATFORM__WINDOWS
@@ -99,7 +206,7 @@ METHOD F18Admin:update_app()
       RETURN SELF
    ENDIF
 
-   //hF18UpdateParams := ::update_app_get_versions()
+   // hF18UpdateParams := ::update_app_get_versions()
 
    hF18UpdateParams[ "f18" ] := f18_available_version()
    hF18UpdateParams[ "url" ] := F18_DOWNLOAD_URL_BASE
@@ -122,7 +229,7 @@ METHOD F18Admin:update_app()
       ::update_app_run_app_update( hF18UpdateParams )
    ENDIF
 
-   s_cDownloadVersion := NIL
+   // s_cDownloadVersion := NIL
 
    RETURN SELF
 
@@ -258,9 +365,10 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    LOCAL cUpdateF18, cUpdateTemplate, nPos
    LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
    LOCAL aMatch
+   LOCAL GetList := {}
 
    cUpdateF18 := "D"
-   //cUpdateTemplate := "N"
+   // cUpdateTemplate := "N"
    cColorApp := "W/G+"
    cColorTemplate := "W/G+"
 
@@ -276,7 +384,7 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    cColorApp := "W/R+"
    // ENDIF
    // IF f18_template_ver() < hF18UpdateParams[ "templates" ]
-   //cColorTemplate := "W/R+"
+   // cColorTemplate := "W/R+"
    // ENDIF
 
    Box(, 10, 65 )
@@ -345,7 +453,7 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    ENDIF
 
    ::update_app_f18 := ( cUpdateF18 == "D" ) // setuj postavke
-   //::update_app_templates := ( cUpdateTemplate == "D" )
+   // ::update_app_templates := ( cUpdateTemplate == "D" )
 
    IF ::update_app_f18
       IF !Empty( nVerzijaPatch )
@@ -492,7 +600,7 @@ METHOD F18Admin:wget_download( cUrl, cFileName, cLocalFileName, lEraseFile, sile
    // Sleep( 1 )
    // ENDIF
 
-  cCmd := "wget "
+   cCmd := "wget "
 
 // #ifdef __PLATFORM__WINDOWS
    cCmd += " -q  --tries=4 --timeout=4  --no-cache --no-check-certificate "
@@ -1017,7 +1125,10 @@ METHOD F18Admin:relogin_as_admin( cDatabase )
    hSqlParams[ "database" ] := cDatabase
 
    IF my_server_login( hSqlParams, nConnType )
-      set_sql_search_path()
+      IF cDatabase != "postgres" .and. "_" $ cDatabase // database koja sadrzi F18 podatke
+       set_sql_search_path()
+      ENDIF
+
       RETURN .T.
    ENDIF
 
@@ -1049,6 +1160,7 @@ METHOD F18Admin:drop_pg_db( cDatabaseName )
 
    LOCAL cQry, oQry
    LOCAL hDbServerParams
+   LOCAL GetList := {}
 
    IF cDatabaseName == NIL
 
@@ -1207,7 +1319,8 @@ METHOD F18Admin:create_new_pg_db_params( hParams )
    LOCAL cDatabaseComment := Space( 100 )
    LOCAL lDbDrop := "N"
    LOCAL nDatabaseType := 1
-  // LOCAL cDatabaseName
+
+   // LOCAL cDatabaseName
    LOCAL GetList := {}
 
    Box(, 12, 70 )

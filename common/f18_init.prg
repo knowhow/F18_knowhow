@@ -111,6 +111,8 @@ FUNCTION post_login()
       RETURN .F.
    ENDIF
 
+   F18Admin():sql_cleanup()
+
    server_log_enable()
    set_init_fiscal_params()
 

@@ -123,7 +123,7 @@ METHOD F18Admin:sql_cleanup()
 
 METHOD F18Admin:sql_cleanup_all()
 
-   LOCAL cQuery, oQuery  //, hDbServerParams
+   LOCAL cQuery, oQuery, cQueryForDb // ovaj query radi posao na pojedinoj bazi
 
    //hDbServerParams := my_server_params()
 
@@ -159,7 +159,13 @@ METHOD F18Admin:sql_cleanup_all()
    cQuery += "         raise notice 'Database: %', v_db;" + hb_eol()
 
    cQuery += "         cQuery := $Q$SELECT dblink_connect('dbname=$Q$ || v_db || $Q$');$Q$;" + hb_eol()
-   cQuery += "         cQuery := cQuery || $Q$SELECT dblink_exec('DROP SCHEMA IF EXISTS sem CASCADE');$Q$;" + hb_eol()
+
+   cQueryForDb := "DROP SCHEMA IF EXISTS sem CASCADE;"
+   cQueryForDb += "DROP SCHEMA IF EXISTS fmk_reports CASCADE;"
+   cQueryForDb += "DROP SCHEMA IF EXISTS api CASCADE;"
+
+
+   cQuery += "         cQuery := cQuery || $Q$SELECT dblink_exec('" + cQueryForDb + "');$Q$;" + hb_eol()
    cQuery += "         cQuery := cQuery || $Q$SELECT dblink_disconnect();$Q$;" + hb_eol()
    cQuery += "         EXECUTE cQuery;" + hb_eol()
    cQuery += "     END LOOP;" + hb_eol()

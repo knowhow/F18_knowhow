@@ -154,10 +154,13 @@ METHOD F18Backup:do_backup_now()
    LOCAL GetList := {}
 
    Box( "#Backup NOW", 7, 60 )
-   nX := box_x_koord() + 1
+   nX := box_x_koord() + 2
    nY := box_y_koord() + 2
 
-   @ nX, nY SAY "*** BACKUP procedura *** " + DToC( Date() )
+
+   @ nX++, nY SAY "*** BACKUP procedura *** " + DToC( Date() )
+
+   nX++
 
    @ nX++, nY SAY "Dostupne opcije:"
    @ nX++, nY SAY8 "   1 - backup trenutne organizacije"
@@ -235,10 +238,10 @@ METHOD F18Backup:backup_organizacija()
    LOCAL lOk := .F.
    LOCAL cCmd := ""
    LOCAL hServerParams := my_server_params()
-   LOCAL _host := hServerParams[ "host" ]
-   LOCAL _port := hServerParams[ "port" ]
+   LOCAL cHost := hServerParams[ "host" ]
+   LOCAL nPort := hServerParams[ "port" ]
    LOCAL cDataBase := hServerParams[ "database" ]
-   LOCAL _admin_user := "admin"
+   LOCAL cAdminUser := "admin"
    LOCAL nX := 7
    LOCAL nY := 2
    LOCAL nI, cBackupFile
@@ -271,8 +274,8 @@ METHOD F18Backup:backup_organizacija()
 #endif
 
    cCmd += pg_dump_cmd() + " "
-   cCmd += " -h " + AllTrim( _host )
-   cCmd += " -p " + AllTrim( Str( _port ) )
+   cCmd += " -h " + AllTrim( cHost )
+   cCmd += " -p " + AllTrim( Str( nPort ) )
    cCmd += " -U " + f18_user()
    cCmd += " -w "
    cCmd += " -F c "
@@ -373,10 +376,10 @@ METHOD F18Backup:backup_server()
    LOCAL lOk := .F.
    LOCAL cCmd := ""
    LOCAL hServerParams := my_server_params()
-   LOCAL _host := hServerParams[ "host" ]
-   LOCAL _port := hServerParams[ "port" ]
-   LOCAL cDataBase := hServerParams[ "database" ]
-   LOCAL _admin_user := "admin"
+   LOCAL cHost := hServerParams[ "host" ]
+   LOCAL nPort := hServerParams[ "port" ]
+   //LOCAL cDataBase := hServerParams[ "database" ]
+   LOCAL cAdminUser := "admin"
    LOCAL nX := 7
    LOCAL nY := 2
    LOCAL nI, cBackupFile
@@ -387,7 +390,10 @@ METHOD F18Backup:backup_server()
    ::get_backup_filename()
    ::get_windows_ping_time()
    ::get_removable_drive()
+
    F18Admin():sql_cleanup_all()
+
+   F18Admin():relogin_as( hServerParams[ "user" ],  hServerParams[ "password" ], hServerParams[ "database" ] )
 
    FErase( ::cPath + ::cFileName )
    Sleep( 1 )
@@ -413,9 +419,9 @@ METHOD F18Backup:backup_server()
 #endif
 
    cCmd += "pg_dumpall"
-   cCmd += " -h " + AllTrim( _host )
-   cCmd += " -p " + AllTrim( Str( _port ) )
-   cCmd += " -U " + AllTrim( _admin_user )
+   cCmd += " -h " + AllTrim( cHost )
+   cCmd += " -p " + AllTrim( Str( nPort ) )
+   cCmd += " -U " + AllTrim( cAdminUser )
    cCmd += " -w "
    cCmd += ' -f "' + cBackupFile + '"'
 

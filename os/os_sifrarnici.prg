@@ -14,9 +14,9 @@
 
 FUNCTION os_sifarnici()
 
-   LOCAL _izbor := 1
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL nIzbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _opis
 
    _opis := "osnovna sredstva"
@@ -25,30 +25,30 @@ FUNCTION os_sifarnici()
       _opis := "sitan inventar"
    ENDIF
 
-   AAdd( _opc, PadR( "1. " + _opis, 40 ) )
-   AAdd( _opcexe, {|| p_os() } )
+   AAdd( aOpc, PadR( "1. " + _opis, 40 ) )
+   AAdd( aOpcExe, {|| p_os() } )
 
-   AAdd( _opc, "2. koeficijenti amortizacije"  )
-   AAdd( _opcexe, {|| p_amort() } )
-   AAdd( _opc, "3. koeficijenti revalorizacije" )
-   AAdd( _opcexe, {|| p_reval() } )
-   AAdd( _opc, "4. radne jedinice" )
-   AAdd( _opcexe, {|| p_rj() } )
-   AAdd( _opc, "---------------------------" )
-   AAdd( _opcexe, {|| NIL } )
-   AAdd( _opc, "6. konta" )
-   AAdd( _opcexe, {|| p_konto() } )
-   AAdd( _opc, "7. grupacije K1" )
-   AAdd( _opcexe, {|| p_k1() } )
+   AAdd( aOpc, "2. koeficijenti amortizacije"  )
+   AAdd( aOpcExe, {|| p_amort() } )
+   AAdd( aOpc, "3. koeficijenti revalorizacije" )
+   AAdd( aOpcExe, {|| p_reval() } )
+   AAdd( aOpc, "4. radne jedinice" )
+   AAdd( aOpcExe, {|| p_rj() } )
+   AAdd( aOpc, "---------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
+   AAdd( aOpc, "6. konta" )
+   AAdd( aOpcExe, {|| p_konto() } )
+   AAdd( aOpc, "7. grupacije K1" )
+   AAdd( aOpcExe, {|| p_k1() } )
 
-   AAdd( _opc, "8. partneri" )
-   AAdd( _opcexe, {|| p_partner() } )
-   AAdd( _opc, "9. valute" )
-   AAdd( _opcexe, {|| p_valuta() } )
+   AAdd( aOpc, "8. partneri" )
+   AAdd( aOpcExe, {|| p_partner() } )
+   AAdd( aOpc, "9. valute" )
+   AAdd( aOpcExe, {|| p_valuta() } )
 
    _o_sif_tables()
 
-   f18_menu( "sifre", .F., _izbor, _opc, _opcexe )
+   f18_menu( "sifre", .F., nIzbor, aOpc, aOpcExe )
 
    my_close_all_dbf()
 
@@ -112,6 +112,7 @@ FUNCTION P_OS( cId, dx, dy )
 
    lRet := p_sifra( nWa, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista stalnih sredstava", @cId, dx, dy, {| Ch | os_sif_key_handler( Ch, @lNovi ) } )
 
+altd()
    PopWA()
 
    return lRet

@@ -97,7 +97,7 @@ METHOD set_module_gvars()
    PUBLIC gPicI := "99999999.99"
 
    PUBLIC gVObracun := "2"
-   PUBLIC gIBJ := "D"
+   //PUBLIC gIBJ := "D"
    PUBLIC gDrugaVal := "N"
    PUBLIC gVarDio := "N"
    PUBLIC gDatDio := CToD( "01.01.1999" )
@@ -110,7 +110,7 @@ METHOD set_module_gvars()
    os_datum_obracuna( fetch_metric( "os_datum_obrade", my_user(), Date() ) )
    gPicI := fetch_metric( "os_prikaz_iznosa", nil, gPicI )
    gMetodObr := fetch_metric( "os_metoda_obracuna", nil, gMetodObr )
-   gIBJ := fetch_metric( "os_id_broj_je_unikatan", nil, gIBJ )
+   //gIBJ := fetch_metric( "os_id_broj_je_unikatan", nil, gIBJ )
    gDrugaVal := fetch_metric( "os_prikaz_u_dvije_valute", nil, gDrugaVal )
    gVObracun := fetch_metric( "os_varijanta_obracuna", nil, gVObracun )
    gVarDio := fetch_metric( "os_pocetak_obracuna", nil, gVarDio )

@@ -49,12 +49,13 @@ FUNCTION find_os_sii_by_naz_or_id( cId )
    cSqlQuery += " WHERE id ilike " + cIdSql
    cSqlQuery += " OR naz ilike " + cIdSql
 
-   IF !use_sql( os_sii_table_name(), cSqlQuery, cAlias )
+   IF !use_sql( cTable, cSqlQuery, cAlias )
+      AltD()
       RETURN .F.
    ENDIF
-   INDEX ON ID TAG ID TO ( cAlias )
-   INDEX ON NAZ TAG NAZ TO ( cAlias )
-   SET ORDER TO TAG "ID"
+
+   index_os_sii( cAlias )
+
 
    SEEK cId
    IF !Found()
@@ -62,6 +63,19 @@ FUNCTION find_os_sii_by_naz_or_id( cId )
    ENDIF
 
    RETURN !Eof()
+
+
+
+FUNCTION index_os_sii( cAlias )
+
+   INDEX ON field->id + field->idam + DToS( field->datum ) TAG "1" TO ( cAlias )
+   INDEX ON field->idrj + field->id + DToS( field->datum ) TAG "2" TO ( cAlias )
+   INDEX ON field->idrj + field->idkonto + field->id TAG "3" TO ( cAlias )
+   INDEX ON field->idkonto + field->idrj + field->id TAG "4" TO ( cAlias )
+   INDEX ON field->idam + field->idrj + field->id TAG "5" TO ( cAlias )
+
+   SET ORDER TO TAG "1"
+   RETURN .T.
 
 
 
@@ -315,7 +329,7 @@ FUNCTION select_promj( cId )
 
    IF gOsSii == "O"
       RETURN select_o_os_promj( cId )
-    ENDIF
+   ENDIF
 
    RETURN select_o_sii_promj( cId )
 

@@ -102,7 +102,7 @@ FUNCTION _os_sii_parametri()
    LOCAL _dat_obr := os_datum_obracuna()
    LOCAL _pic_iznos := gPicI
    LOCAL _metoda := gMetodObr
-   LOCAL _id_unikat := gIBJ
+   //LOCAL _id_unikat := gIBJ
    LOCAL _druga_valuta := gDrugaVal
    LOCAL _varijanta := gVObracun
    LOCAL _obr_pocetak := gVarDio
@@ -112,7 +112,7 @@ FUNCTION _os_sii_parametri()
    _dat_obr := fetch_metric( "os_datum_obrade", my_user(), _dat_obr )
    _pic_iznos := fetch_metric( "os_prikaz_iznosa", nil, _pic_iznos )
    _metoda := fetch_metric( "os_metoda_obracuna", nil, _metoda )
-   _id_unikat := fetch_metric( "os_id_broj_je_unikatan", nil, _id_unikat )
+   //_id_unikat := fetch_metric( "os_id_broj_je_unikatan", nil, _id_unikat )
    _druga_valuta := fetch_metric( "os_prikaz_u_dvije_valute", nil, _druga_valuta )
    _varijanta := fetch_metric( "os_varijanta_obracuna", nil, _varijanta )
    _obr_pocetak := fetch_metric( "os_pocetak_obracuna", nil, _obr_pocetak )
@@ -131,7 +131,7 @@ FUNCTION _os_sii_parametri()
 
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz iznosa " GET _pic_iznos
 
-   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Inv. broj je unikatan(jedinstven) D/N" GET _id_unikat VALID _id_unikat $ "DN" PICT "@!"
+   //@ box_x_koord() + 7, box_y_koord() + 2 SAY "Inv. broj je unikatan(jedinstven) D/N" GET _id_unikat VALID _id_unikat $ "DN" PICT "@!"
 
    @ box_x_koord() + 9, box_y_koord() + 2 SAY "Izvjestaji mogu i u drugoj valuti ? (D/N)" GET _druga_valuta VALID _druga_valuta $ "DN" PICT "@!"
 
@@ -165,8 +165,8 @@ FUNCTION _os_sii_parametri()
       set_metric( "os_metoda_obracuna", nil, _metoda )
       gMetodObr := _metoda
 
-      set_metric( "os_id_broj_je_unikatan", nil, _id_unikat )
-      gIBJ := _id_unikat
+      //set_metric( "os_id_broj_je_unikatan", nil, _id_unikat )
+      //gIBJ := _id_unikat
 
       set_metric( "os_prikaz_u_dvije_valute", nil, _druga_valuta )
       gDrugaVal := _druga_valuta

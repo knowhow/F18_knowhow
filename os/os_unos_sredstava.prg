@@ -15,7 +15,9 @@
 FUNCTION unos_osnovnih_sredstava()
 
    LOCAL hRec
-   LOCAL _id_am
+   LOCAL cIdAmortizacija
+   LOCAL GetList := {}
+
    PRIVATE cIdSredstvo := Space( 10 )
    PRIVATE cIdRj := Space( 4 )
 
@@ -31,18 +33,19 @@ FUNCTION unos_osnovnih_sredstava()
 
       cPicSif := "@!"
 
-      IF gIBJ == "D"
+      //IF gIBJ == "D"
 
          @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sredstvo:       " GET cIdSredstvo VALID P_OS( @cIdSredstvo, 1, 35 ) PICT cPicSif
          READ
 
          nDbfArea := Select()
 
+altd()
          select_o_os_or_sii()
          GO TOP
          SEEK cIdSredstvo
          cIdRj := field->idrj
-         _id_am := field->idam
+         cIdAmortizacija := field->idam
 
          SELECT ( nDbfArea )
 
@@ -51,47 +54,47 @@ FUNCTION unos_osnovnih_sredstava()
 
          ESC_BCR
 
-      ELSE
+      //ELSE
 
-         DO WHILE .T.
+      //   DO WHILE .T.
 
-            @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sredstvo:       " GET cIdSredstvo PICT cPicSif
-            @ box_x_koord() + 2, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
-            READ
+      //      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sredstvo:       " GET cIdSredstvo PICT cPicSif
+      //      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
+      //      READ
 
-            ESC_BCR
+      //      ESC_BCR
 
-            select_o_os_or_sii()
+      //      select_o_os_or_sii()
 
-            SEEK cIdSredstvo
-            _id_am := field->idam
+      //      SEEK cIdSredstvo
+      //      cIdAmortizacija := field->idam
 
-            DO WHILE !Eof() .AND. cIdSredstvo == field->id .AND. cIdRj != field->idrj
-               SKIP 1
-            ENDDO
+      //      DO WHILE !Eof() .AND. cIdSredstvo == field->id .AND. cIdRj != field->idrj
+      //         SKIP 1
+      //      ENDDO
 
-            IF cIdSredstvo != field->id .OR. cIdRj != field->idrj
-               Msg( "Izabrano sredstvo ne postoji!", 5 )
-            ELSE
-               select_o_rj( cIdRj )
+        //    IF cIdSredstvo != field->id .OR. cIdRj != field->idrj
+      //         Msg( "Izabrano sredstvo ne postoji!", 5 )
+        //    ELSE
+        //       select_o_rj( cIdRj )
 
-               IF gOsSii == "O"
-                  @ box_x_koord() + 1, box_y_koord() + 35 SAY os->naz
-               ELSE
-                  @ box_x_koord() + 1, box_y_koord() + 35 SAY sii->naz
-               ENDIF
+        //       IF gOsSii == "O"
+        //          @ box_x_koord() + 1, box_y_koord() + 35 SAY os->naz
+        //       ELSE
+        //          @ box_x_koord() + 1, box_y_koord() + 35 SAY sii->naz
+        //       ENDIF
 
-               @ box_x_koord() + 2, box_y_koord() + 35 SAY RJ->naz
+          //     @ box_x_koord() + 2, box_y_koord() + 35 SAY RJ->naz
 
-               EXIT
+          //     EXIT
 
-            ENDIF
+        //    ENDIF
 
-         ENDDO
+        // ENDDO
 
-      ENDIF
+      //ENDIF
 
-      select_o_amort( _id_am )
+      select_o_amort( cIdAmortizacija )
 
       select_o_os_or_sii()
 

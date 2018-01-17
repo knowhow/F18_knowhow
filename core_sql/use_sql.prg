@@ -73,11 +73,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
       IF cTable == "os_os" .OR. cTable == "sii_sii"
 
-         INDEX ON id + idam + DToS( datum ) TAG "1" TO ( cAlias )
-         INDEX ON idrj + id + DToS( datum ) TAG "2" TO ( cAlias )
-         INDEX ON idrj + idkonto + id TAG "3" TO ( cAlias )
-         INDEX ON idkonto + idrj + id TAG "4" TO ( cAlias )
-         INDEX ON idam + idrj + id TAG "5" TO ( cAlias )
+         index_os_sii( cAlias )
 
          SET ORDER TO TAG "1"
 

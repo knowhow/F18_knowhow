@@ -656,22 +656,20 @@ FUNCTION os_izracunaj_amortizaciju( nNabVr, nOtpVr, nOstalo, d1, d2, nGAmort, sa
    LOCAL nMjesDo
    LOCAL nIzn
    LOCAL fStorno
-   LOCAL _san_nab
-   LOCAL _san_otp
-   LOCAL hAmortizacija
-
-
-
+   LOCAL nSanacijeNab
+   LOCAL nSanacijeOtp
+   LOCAL hAmortizacija := hb_hash()
+   
    IF gMetodObr == "1" // tekuca metoda
       RETURN os_proracun_amortizacija_od_do( nNabVr, nOtpvr, nOstalo, d1, d2, nGAmort, sanacije )
    ENDIF
 
    IF sanacije == NIL
-      _san_nab := 0
-      _san_otp := 0
+      nSanacijeNab := 0
+      nSanacijeOtp := 0
    ELSE
-      _san_nab := sanacije[ "nabvr" ]
-      _san_otp := sanacije[ "otpvr" ]
+      nSanacijeNab := sanacije[ "nabvr" ]
+      nSanacijeOtp := sanacije[ "otpvr" ]
    ENDIF
 
    // ako je metoda obracuna od 1 u narednom mjesecu
@@ -700,7 +698,7 @@ FUNCTION os_izracunaj_amortizaciju( nNabVr, nOtpVr, nOstalo, d1, d2, nGAmort, sa
       nOtpVr := - nOtpvr
    ENDIF
 
-   nIzn := Round( ( nNabvr - _san_nab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ;
+   nIzn := Round( ( nNabvr - nSanacijeNab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ;
       ( nMjesDo - nMjesOD ) / 12, 2 )
 
    hAmortizacija[ "duguje" ] := 0
@@ -741,16 +739,16 @@ FUNCTION os_proracun_amortizacija_od_do( nNabVr, nOtpVr, nOstalo, d1, d2, nGAmor
    LOCAL nMjesDo
    LOCAL nIzn
    LOCAL fStorno
-   LOCAL _san_nab := 0
-   LOCAL _san_otp := 0
+   LOCAL nSanacijeNab := 0
+   LOCAL nSanacijeOtp := 0
    LOCAL hAmortizacija := hb_hash()
 
    IF sanacije == NIL
-      _san_nab := 0
-      _san_otp := 0
+      nSanacijeNab := 0
+      nSanacijeOtp := 0
    ELSE
-      _san_nab := sanacije[ "nabvr" ]
-      _san_otp := sanacije[ "otpvr" ]
+      nSanacijeNab := sanacije[ "nabvr" ]
+      nSanacijeOtp := sanacije[ "otpvr" ]
    ENDIF
 
    fStorno := .F.
@@ -787,11 +785,11 @@ FUNCTION os_proracun_amortizacija_od_do( nNabVr, nOtpVr, nOstalo, d1, d2, nGAmor
    IF Year( d1 ) == Year( d2 )
       // tekuci mjesec
       // samo za tekucu sezonu
-      nIzn += Round( ( nNabvr - _san_nab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ( ( ( nTekBrDana - nTekDan ) / nTekBrDana ) / 12 ), 2 )
+      nIzn += Round( ( nNabvr - nSanacijeNab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ( ( ( nTekBrDana - nTekDan ) / nTekBrDana ) / 12 ), 2 )
    ENDIF
 
    // ostali mjeseci
-   nIzn += Round( ( nNabvr - _san_nab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ( nMjesDo - nMjesOd ) / 12, 2 )
+   nIzn += Round( ( nNabvr - nSanacijeNab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ( nMjesDo - nMjesOd ) / 12, 2 )
 
    hAmortizacija[ "duguje" ] := 0
 

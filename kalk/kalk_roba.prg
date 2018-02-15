@@ -29,7 +29,7 @@ FUNCTION form_get_roba_id( cIdRoba, nX, nY, GetList )
       bValid := {|| Empty( cIdroba ) .OR. Right( Trim( cIdRoba ), 1 ) == ";" .OR. P_Roba( @cIdRoba ) }
    ENDIF
 
-   @ nX, nY SAY "Roba  " GET cIdRoba WHEN Eval( bWhen )  VALID  Eval( bValid ) PICT "@!"
+   @ nX, nY SAY "Roba  " GET cIdRoba WHEN Eval( bWhen )  VALID  Eval( bValid ) PICT "@!S10"
 
    RETURN .T.
 

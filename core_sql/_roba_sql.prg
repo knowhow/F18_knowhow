@@ -57,6 +57,10 @@ FUNCTION find_roba_by_naz_or_id( cId )
    cSqlQuery += " OR naz ilike " + cIdSql
    cSqlQuery += " OR sifradob ilike " + cIdSql
 
+   IF roba_barkod_pri_unosu()
+      cSqlQuery += " OR barkod ilike " + cIdSql
+   ENDIF
+
    IF !use_sql( "roba", cSqlQuery, cAlias )
       RETURN .F.
    ENDIF

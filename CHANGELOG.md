@@ -1,5 +1,12 @@
 # F18 klijent, lista promjena
 
+## 3.1.179-std, 2018-02-15
+### OS
+- unos OS, amort prikaz sve stope
+### KALK
+- ulazna kalkulacija, provjera odstupanja nabavne cijene iznad praga 99.99%
+- kartica magacin, prodavnica - unos po barkodovima fix
+
 ## 3.1.171-std, 2018-01-11
 ### FIN
 - datval fix, početno stanje po otvorenim stavkama
@@ -23,11 +30,11 @@
 ## 3.1.135-std, 2017-10-25
 ### LD
 - debug5 specif 2001
- 
+
 ## 3.1.118-std, 2017-10-19
 ### CORE
 - kada smo u modulu kalk stanje robe "S" - prikaz stanja magacinskih konta
-- ROBA: kod unosa nove šifre ili ispravke polja barkod ispitati da li već postoji barkod 
+- ROBA: kod unosa nove šifre ili ispravke polja barkod ispitati da li već postoji barkod
 
 ## 3.1.117-std, 2017-10-16
 ### KALK-POS
@@ -46,7 +53,7 @@
 - Pretraga šifri: "SO. " - sortiraj po nazivu, traži sve što počinje sa "SO"
 
 ## 3.1.112-std, 2017-10-12
-### FAKT 
+### FAKT
 - barkod terminal import - is_roba_aktivna(), na terminal se eksportuju samo aktivni artikli, oni koji postoje u prometu kalk_kalk
 
 ## 3.1.108-std, 2017-10-12
@@ -64,7 +71,7 @@
 ## 3.1.101-std, 2017-09-19
 ### FIN
 - ostav F5-F6 debug
- 
+
 ## 3.1.100-std, 2017-09-13
 ### CORE
 - p_sifra empty - prikazati sve šifre
@@ -81,7 +88,7 @@
 ## 3.1.95-std, 2017-09-07
 ### CORE
 - upgrade pitati samo prilikom prvog ulaska u aplikaciju
- 
+
 ## 3.1.94-std, 2017-09-06
 ### FIN
 - BUGFIX: fin otvorene stavke ručno zatvaranje F5-F6, kartica za odredjeni broj veze sort po datumu
@@ -94,7 +101,7 @@
 
 ## 3.1.89-std, 2017-09-05
 ### FAKT
-- BUGFIX: realizacija kumulativno po partnerima, stanje robe 
+- BUGFIX: realizacija kumulativno po partnerima, stanje robe
 
 ## 3.1.88-std, 2017-09-04
 ### FAKT
@@ -107,9 +114,9 @@
 ## 3.1.84-std, 2017-08-30
 ### FIN
 - BUGFIX: eutanazija fin ostav rucno, fin kompenz
- 
+
 ### CORE
-- p_sifra recno=0, empty  vrati FALSE 
+- p_sifra recno=0, empty  vrati FALSE
 
 ## 3.1.83-std, 2017-08-29
 ### FIN
@@ -121,7 +128,7 @@
 
 ## 3.1.81-std, 2017-08-25
 ### Development
-- BUGFIX: cleanup fin povrat naloga: FIN_POVRAT_NALOGA / 67, Variable does not exist CIDRJ 
+- BUGFIX: cleanup fin povrat naloga: FIN_POVRAT_NALOGA / 67, Variable does not exist CIDRJ
 
 ## 3.1.80-std, 2017-08-25
 ### KALK
@@ -209,7 +216,7 @@
 ## 3.1.45-std, 2017-08-11
 ### Developer
 - THREAD STATIC self_organizacija_id( cId )
-- FAKT OUT_VAR: gResetRoba 
+- FAKT OUT_VAR: gResetRoba
 
 ## 3.1.44-std, 2017-08-11
 ### Developer
@@ -273,15 +280,15 @@
 
 ### Developer
 #### FIN, FAKT-FIN kontiranje
-- Skontao HACK: trfp2 zbog kojeg je zaokruzivao fakt-fin na jednu decimalu. 
+- Skontao HACK: trfp2 zbog kojeg je zaokruzivao fakt-fin na jednu decimalu.
   - Ako se na kraju opisa trfp2, odnosno fin_pripr stavi jedan od znakova "0125", izvrsice se zaokruzenje round 0,1,2 ili round5. Uh.
- 
+
 
 ## 3.1.36-std, 2017-07-31
 
 ### Korisnik
 #### FIN
-- FIX p_fin_vrsta_naloga 
+- FIX p_fin_vrsta_naloga
 
 ### Developer
 #### Korisnik
@@ -296,7 +303,7 @@
 ### Developer
 #### FIN
 - FIN nalog unos !prazan konto
-- FIN priprema cleanup, OUT_PRIV_VAR: fNovi 
+- FIN priprema cleanup, OUT_PRIV_VAR: fNovi
 
 ## 3.1.34-std, 2017-07-31
 
@@ -316,9 +323,9 @@
 ## 3.1.32-std, 2017-07-30
 
 - fix stanje, lager, uporedna kalk - fakt
-- commit x 2 "FAKT sql big-bang-02" trijebljenje svih seek-ova fakt, fakt_doks, fakt_doks2 
+- commit x 2 "FAKT sql big-bang-02" trijebljenje svih seek-ova fakt, fakt_doks, fakt_doks2
  - 74 files +1861 -1862
- - 16 files +255 - 347 
+ - 16 files +255 - 347
 
 
 ## 3.1.31-std, 2017-07-29

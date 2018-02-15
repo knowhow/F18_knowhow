@@ -207,7 +207,7 @@ FUNCTION P_AMORT( cId, dx, dy )
    IF cId != NIL .AND. !Empty( cId )
       select_o_amort( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
    ELSE
-      select_o_amort( cId )
+      select_o_amort()
    ENDIF
 
    ImeKol := { { PadR( "Id", 8 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;

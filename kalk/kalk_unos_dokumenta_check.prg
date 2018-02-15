@@ -609,7 +609,7 @@ FUNCTION ObracunPorezaUvoz()
             _&cPom := skol * _nc * 0.1
          ENDIF
 
-         kalk_when_valid_nc()
+         kalk_when_valid_nc_ulaz()
          my_rlock()
          Gather()
          my_unlock()

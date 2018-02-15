@@ -148,6 +148,7 @@ FUNCTION kalk_kartica_magacin()
       //   cIdRobaTackaZarez := Trim( StrTran( cIdroba, ">", "" ) )
       //   lRobaTackaZarez := .T.
       //ENDIF
+      altd()
 
       IF LastKey() <> K_ESC
          set_metric( "kalk_kartica_magacin_id_roba", my_user(), cIdRoba )

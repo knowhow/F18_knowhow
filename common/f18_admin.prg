@@ -202,7 +202,7 @@ METHOD F18Admin:sql_cleanup_all()
    cQuery += "     cQuery VARCHAR;" + hb_eol()
    cQuery += " BEGIN" + hb_eol()
    cQuery += "     FOR v_db IN" + hb_eol()
-   cQuery += "         SELECT datname FROM pg_catalog.pg_database WHERE datname NOT LIKE 'postgres' AND datname NOT LIKE 'rg_%' AND datname NOT LIKE 'ramaglas_%' AND datname NOT LIKE 'template_%'" + hb_eol()
+   cQuery += "         SELECT datname FROM pg_catalog.pg_database WHERE datname NOT LIKE 'postgres' AND datname NOT LIKE 'rg_%' AND datname NOT LIKE 'ramaglas_%' AND datname NOT LIKE 'template_%' AND datname NOT LIKE 'rmu_%'" + hb_eol()
    cQuery += "     LOOP" + hb_eol()
    cQuery += "         raise notice 'Database: %', v_db;" + hb_eol()
 

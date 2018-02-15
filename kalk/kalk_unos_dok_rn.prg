@@ -247,7 +247,7 @@ FUNCTION Get2_RN()
 
    @ box_x_koord() + 6, box_y_koord() + 2     SAY cRNT5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
    @ box_x_koord() + 6, box_y_koord() + 40    GET _ZavTr PICTURE PicDEM ;
-      VALID {|| kalk_when_valid_nc(), .T. }
+      VALID {|| kalk_when_valid_nc_ulaz(), .T. }
 
    @ box_x_koord() + 8, box_y_koord() + 2     SAY "CIJENA KOST.  "
    @ box_x_koord() + 8, box_y_koord() + 50    GET _NC     PICTURE PicDEM

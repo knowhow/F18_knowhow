@@ -29,6 +29,7 @@ STATIC s_nStandarnaStopaMarze := NIL
 */
 FUNCTION prag_odstupanja_nc_sumnjiv( nSet )
 
+altd()
    IF  s_nPragOdstupanjaNCSumnjiv == NIL
       s_nPragOdstupanjaNCSumnjiv := fetch_metric( "prag_odstupanja_nc_sumnjiv", NIL, 99.99 ) // 99,99%
    ENDIF
@@ -422,16 +423,20 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
  *     Proracun nabavne cijene za ulaznu kalkulaciju 10
  */
 
-FUNCTION kalk_when_valid_nc()
+FUNCTION kalk_when_valid_nc_ulaz()
 
    LOCAL nStvarnaKolicina
+   LOCAL nKolS := 0
+   LOCAL nKolZN := 0
+   LOCAL nNabCjZadnjaNabavka
+   LOCAL nNabCj2 := 0
+   LOCAL dDatNab := CToD( "" )
 
    IF gKalo == "1"
       nStvarnaKolicina := _Kolicina - _GKolicina - _GKolicin2
    ELSE
       nStvarnaKolicina := _Kolicina
    ENDIF
-
 
    IF _TPrevoz == "%"
       nPrevoz := _Prevoz / 100 * _FCj2
@@ -490,6 +495,11 @@ FUNCTION kalk_when_valid_nc()
    IF koncij->naz == "N1" // sirovine
       _VPC := _NC
    ENDIF
+
+altd()
+   nNabCjZadnjaNabavka := _nc // proslijediti nabavnu cijenu
+   // proracun nabavne cijene radi utvrdjivanja odstupanja ove nabavne cijene od posljednje
+   kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, nNabCjZadnjaNabavka, @nNabCj2, @dDatNab )
 
    RETURN .T.
 

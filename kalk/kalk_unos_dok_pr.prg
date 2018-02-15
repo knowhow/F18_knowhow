@@ -190,7 +190,7 @@ FUNCTION Get2_PR()
    @ box_x_koord() + 5, box_y_koord() + 40 GET _CarDaz PICTURE PicDEM
 
    @ box_x_koord() + 6, box_y_koord() + 2 SAY cRNT5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
-   @ box_x_koord() + 6, box_y_koord() + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_when_valid_nc(), .T. }
+   @ box_x_koord() + 6, box_y_koord() + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_when_valid_nc_ulaz(), .T. }
 
    @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "CIJENA KOŠTANJA  "
    @ box_x_koord() + 8, box_y_koord() + 50 GET _NC PICTURE PicDEM

@@ -387,10 +387,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                SELECT kalk_pripr
                IF _idvd == "RN"
                   IF Val( _rbr ) < 900
-                     kalk_when_valid_nc()
+                     kalk_when_valid_nc_ulaz()
                   ENDIF
                ELSE
-                  kalk_when_valid_nc()
+                  kalk_when_valid_nc_ulaz()
                ENDIF
 
                IF _idvd == "16"

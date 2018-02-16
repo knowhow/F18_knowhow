@@ -17,8 +17,8 @@ FUNCTION set_a_dbf_os()
    LOCAL hAlgoritam
 
    // kumulativne tabele
-   set_a_dbf_os_sii_promj( "os_promj", "PROMJ", F_PROMJ )
-   set_a_dbf_os_sii_promj( "sii_promj", "SII_PROMJ", F_SII_PROMJ )
+   set_a_sql_os_sii_promj( "os_promj", "PROMJ", F_PROMJ )
+   set_a_sql_os_sii_promj( "sii_promj", "SII_PROMJ", F_SII_PROMJ )
 
    // tabele sa strukturom sifarnika (id je primarni ključ)
    // u našem slučaju to su i os i sii (glavne tabele)
@@ -46,20 +46,21 @@ FUNCTION set_a_dbf_os()
 
 
 
-STATIC FUNCTION set_a_dbf_os_sii_promj( table, alias, area )
+STATIC FUNCTION set_a_dbf_os_sii_promj( cTable, alias, area )
 
-   LOCAL _item, hAlgoritam, _tbl
+   LOCAL hItem, hAlgoritam
 
-   _tbl := table
-   _item := hb_Hash()
 
-   _item[ "alias" ] := alias
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := area
+   hItem := hb_Hash()
+
+   hItem[ "alias" ] := alias
+   hItem[ "table" ] := cTable
+   hItem[ "wa" ]    := area
 
    // temporary tabela - nema semafora
-   _item[ "temp" ]  := .F.
-   _item[ "algoritam" ] := {}
+   hItem[ "temp" ]  := .F.
+   hItem[ "algoritam" ] := {}
+   hItem[ "sql" ] := .T.
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
@@ -68,10 +69,10 @@ STATIC FUNCTION set_a_dbf_os_sii_promj( table, alias, area )
    hAlgoritam[ "dbf_key_fields" ] := { "id", "tip", "datum", "opis" }
    hAlgoritam[ "sql_in" ]         := " rpad(id, 10) || rpad(tip, 2) || to_char(datum, 'YYYYMMDD') || rpad(opis, 30)"
    hAlgoritam[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], hAlgoritam )
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "id, tip, datum, opis"
+   hItem[ "sql_order" ] := "id, tip, datum, opis"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( cTable, @hItem )
 
    RETURN .T.

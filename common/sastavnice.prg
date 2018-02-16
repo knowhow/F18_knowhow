@@ -234,8 +234,8 @@ STATIC FUNCTION ost_opc_sast() // ostale opcije nad sastavnicama
    AAdd( hOpc, "1. zamjena sirovine u svim sastavnicama                 " )
    AAdd( hOpcExe, {|| sast_repl_all() } )
 
-   AAdd( hOpc, "2. promjena ucesca pojedine sirovine u svim sastavnicama" )
-   AAdd( hOpcExe, {|| pr_uces_sast() } )
+   AAdd( hOpc, "2. promjena učesća pojedine sirovine u svim sastavnicama" )
+   AAdd( hOpcExe, {|| sast_promjena_ucesca_materijala() } )
    AAdd( hOpc, "------------------------------------" )
    AAdd( hOpcExe, {|| notimp() } )
    AAdd( hOpc, "L. pregled sastavnica sa pretpostavkama sirovina" )

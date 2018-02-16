@@ -20,6 +20,7 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
    LOCAL nKolic
    LOCAL hRec
    LOCAL hParams
+   LOCAL GetList := {}
 
    cOldS := Space( 10 )
    cNewS := Space( 10 )
@@ -35,18 +36,18 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
    IF ( LastKey() <> K_ESC )
 
       run_sql_query( "BEGIN" )
-      IF !f18_lock_tables( { "sast" }, .T. )
-         run_sql_query( "ROLLBACK" )
-         MsgBeep( "Greska sa lock-om tabele sast !" )
-         RETURN .F.
-      ENDIF
+      //IF !f18_lock_tables( { "sast" }, .T. )
+      //   run_sql_query( "ROLLBACK" )
+      //   MsgBeep( "Greska sa lock-om tabele sast !" )
+      //   RETURN .F.
+      //ENDIF
 
-      select_o_sastavnice()
+      o_sastavnice()
       GO TOP
 
       DO WHILE !Eof()
          IF id2 == cOldS
-            IF ( nKolic = 0 .OR. Round( nKolic - kolicina, 5 ) = 0 )
+            IF ( nKolic = 0 .OR. Round( nKolic - field->kolicina, 5 ) = 0 )
                hRec := dbf_get_rec()
                hRec[ "id2" ] := cNewS
                lOk := update_rec_server_and_dbf( "sast", hRec, 1, "CONT" )
@@ -60,7 +61,7 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
 
       IF lOk
          hParams := hb_Hash()
-         hParams[ "unlock" ] :=  { "sast" }
+         //hParams[ "unlock" ] :=  { "sast" }
          run_sql_query( "COMMIT", hParams )
       ELSE
          run_sql_query( "ROLLBACK" )
@@ -73,7 +74,7 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
    RETURN .T.
 
 
-FUNCTION pr_uces_sast() // promjena ucesca
+FUNCTION sast_promjena_ucesca_materijala() // promjena ucesca
 
    LOCAL lOk := .T.
    LOCAL cOldS
@@ -82,6 +83,7 @@ FUNCTION pr_uces_sast() // promjena ucesca
    LOCAL nKolic2
    LOCAL hRec
    LOCAL hParams
+   LOCAL GetList := {}
 
    cOldS := Space( 10 )
    cNewS := Space( 10 )
@@ -89,22 +91,23 @@ FUNCTION pr_uces_sast() // promjena ucesca
    nKolic2 := 0
 
    Box(, 6, 65 )
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sirovina :" GET cOldS PICT "@!" VALID P_Roba_select( @cOldS )
-   @ box_x_koord() + 4, box_y_koord() + 2 SAY "postojeca kolicina u normama " GET nKolic PICT "999999.99999"
-   @ box_x_koord() + 5, box_y_koord() + 2 SAY "nova kolicina u normama      " GET nKolic2 PICT "999999.99999"   VALID nKolic <> nKolic2
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Sirovina :" GET cOldS PICT "@!" VALID P_Roba_select( @cOldS )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "postojeca količina u normama " GET nKolic PICT "999999.99999"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "nova količina u normama      " GET nKolic2 PICT "999999.99999"   VALID nKolic <> nKolic2
    READ
    BoxC()
 
    IF ( LastKey() <> K_ESC )
 
       run_sql_query( "BEGIN" )
-      IF !f18_lock_tables( { "sast" }, .T. )
-         run_sql_query( "ROLLBACK" )
-         MsgBeep( "Greska sa lock-om tabele sast !" )
-         RETURN .F.
-      ENDIF
+      //IF !f18_lock_tables( { "sast" }, .T. )
+      //   run_sql_query( "ROLLBACK" )
+      //   MsgBeep( "Greska sa lock-om tabele sast !" )
+      //   RETURN .F.
+      //ENDIF
 
-      SELECT sast
+      //SELECT sast
+      o_sastavnice()
       SET ORDER TO
       GO TOP
 
@@ -128,7 +131,7 @@ FUNCTION pr_uces_sast() // promjena ucesca
 
       IF lOk
          hParams := hb_Hash()
-         hParams[ "unlock" ] :=  { "sast" }
+         //hParams[ "unlock" ] :=  { "sast" }
          run_sql_query( "COMMIT", hParams )
       ELSE
          run_sql_query( "ROLLBACK" )

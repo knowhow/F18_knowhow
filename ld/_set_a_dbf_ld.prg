@@ -64,69 +64,69 @@ FUNCTION set_a_dbf_ld()
 
 FUNCTION set_a_dbf_ld_ld()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, _tbl, hItem
 
    _tbl := "ld_ld"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "LD"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_LD
-   _item[ "temp" ]  := .F.
-   _item[ "sif" ] := .F.
-   _item[ "sql" ] := .T.
-   _item[ "algoritam" ] := {}
+   hItem[ "alias" ] := "LD"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_LD
+   hItem[ "temp" ]  := .F.
+   hItem[ "sif" ] := .F.
+   hItem[ "sql" ] := .T.
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| Str( field->godina, 4, 0 ) + field->idrj + Str( field->mjesec, 2, 0 ) + field->obr + field->idradn }
-   _alg[ "dbf_key_empty_rec" ] := Str( 0, 4, 0 ) + Space( 2 ) + Str( 0, 2, 0 ) + " " + Space( 6 )
-   _alg[ "dbf_key_fields" ] := { { "godina", 4 }, "idrj", { "mjesec", 2 }, "obr", "idradn" }
-   _alg[ "sql_in" ]         := "lpad(godina::char(4), 4) || rpad(idrj, 2) || lpad(mjesec::char(2),2) || rpad(obr,1) || rpad(idradn,6)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| Str( field->godina, 4, 0 ) + field->idrj + Str( field->mjesec, 2, 0 ) + field->obr + field->idradn }
+   hAlgoritam[ "dbf_key_empty_rec" ] := Str( 0, 4, 0 ) + Space( 2 ) + Str( 0, 2, 0 ) + " " + Space( 6 )
+   hAlgoritam[ "dbf_key_fields" ] := { { "godina", 4 }, "idrj", { "mjesec", 2 }, "obr", "idradn" }
+   hAlgoritam[ "sql_in" ]         := "lpad(godina::char(4), 4) || rpad(idrj, 2) || lpad(mjesec::char(2),2) || rpad(obr,1) || rpad(idradn,6)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    // algoritam 2 - brisanje
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| Str( field->godina, 4, 0) + field->idrj + Str( field->mjesec, 2, 0 ) + field->obr }
-   _alg[ "dbf_key_fields" ] := { { "godina", 4 }, "idrj", { "mjesec", 2 }, "obr" }
-   _alg[ "sql_in" ]         := "lpad(godina::char(4), 4) || rpad(idrj, 2) || lpad(mjesec::char(2),2) || rpad(obr,1)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| Str( field->godina, 4, 0) + field->idrj + Str( field->mjesec, 2, 0 ) + field->obr }
+   hAlgoritam[ "dbf_key_fields" ] := { { "godina", 4 }, "idrj", { "mjesec", 2 }, "obr" }
+   hAlgoritam[ "sql_in" ]         := "lpad(godina::char(4), 4) || rpad(idrj, 2) || lpad(mjesec::char(2),2) || rpad(obr,1)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   _item[ "sql_order" ] := "godina, idrj, mjesec, obr"
+   hItem[ "sql_order" ] := "godina, idrj, mjesec, obr"
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
 
 FUNCTION set_a_dbf_ld_radn()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, _tbl, hItem
 
    _tbl := "ld_radn"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "RADN"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_RADN
-   _item[ "temp" ]  := .F.
-   _item[ "algoritam" ] := {}
-   _item[ "sql" ] := .T.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "RADN"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_RADN
+   hItem[ "temp" ]  := .F.
+   hItem[ "algoritam" ] := {}
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .T.
 
    // algoritam 1 - default
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->id }
-   _alg[ "dbf_key_fields" ] := { "id" }
-   _alg[ "sql_in" ]         := "rpad(id, 6)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->id }
+   hAlgoritam[ "dbf_key_fields" ] := { "id" }
+   hAlgoritam[ "sql_in" ]         := "rpad(id, 6)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -134,29 +134,29 @@ FUNCTION set_a_dbf_ld_radn()
 
 FUNCTION set_a_dbf_ld_parobr()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, _tbl, hItem
 
    _tbl := "ld_parobr"
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "PAROBR"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_PAROBR
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .T.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "PAROBR"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_PAROBR
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->id + field->godina + field->obr }
-   _alg[ "dbf_key_fields" ] := { "id", "godina", "obr" }
-   _alg[ "sql_in" ]         := "rpad(id, 2) || rpad(godina, 4) || rpad(obr, 1)"
-   _alg[ "dbf_tag" ]        := "ID"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->id + field->godina + field->obr }
+   hAlgoritam[ "dbf_key_fields" ] := { "id", "godina", "obr" }
+   hAlgoritam[ "sql_in" ]         := "rpad(id, 2) || rpad(godina, 4) || rpad(obr, 1)"
+   hAlgoritam[ "dbf_tag" ]        := "ID"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -164,31 +164,31 @@ FUNCTION set_a_dbf_ld_parobr()
 
 FUNCTION set_a_dbf_ld_dopr()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, _tbl, hItem
 
    _tbl := "dopr"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "DOPR"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_DOPR
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .T.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "DOPR"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_DOPR
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->id + field->naz + field->tiprada }
-   _alg[ "dbf_key_fields" ] := { "id", "naz", "tiprada" }
-   _alg[ "sql_in" ]         := "rpad(id, 2) || rpad(naz, 20) || rpad(tiprada, 1)"
-   _alg[ "dbf_tag" ]        := "1"
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->id + field->naz + field->tiprada }
+   hAlgoritam[ "dbf_key_fields" ] := { "id", "naz", "tiprada" }
+   hAlgoritam[ "sql_in" ]         := "rpad(id, 2) || rpad(naz, 20) || rpad(tiprada, 1)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
 
-   AAdd( _item[ "algoritam" ], _alg )
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -197,61 +197,61 @@ FUNCTION set_a_dbf_ld_dopr()
 
 FUNCTION set_a_dbf_ld_obracuni()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, _tbl, hItem
 
    _tbl := "ld_obracuni"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "OBRACUNI"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_OBRACUNI
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .T.
-   _item[ "sif" ] := .T.
+   hItem[ "alias" ] := "OBRACUNI"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_OBRACUNI
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .T.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->rj + Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) + field->status + field->obr }
-   _alg[ "dbf_key_fields" ] := { "rj", { "godina", 4 }, { "mjesec", 2 }, "status", "obr" }
-   _alg[ "sql_in" ]         := "rpad(rj, 2) || lpad(godina::char(4),4) || lpad(mjesec::char(2),2) || rpad(status, 1) || rpad(obr, 1)"
-   _alg[ "dbf_tag" ]        := "RJ"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->rj + Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) + field->status + field->obr }
+   hAlgoritam[ "dbf_key_fields" ] := { "rj", { "godina", 4 }, { "mjesec", 2 }, "status", "obr" }
+   hAlgoritam[ "sql_in" ]         := "rpad(rj, 2) || lpad(godina::char(4),4) || lpad(mjesec::char(2),2) || rpad(status, 1) || rpad(obr, 1)"
+   hAlgoritam[ "dbf_tag" ]        := "RJ"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
 /*
 FUNCTION set_a_dbf_ld_pk_radn()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, _tbl, hItem
 
    _tbl := "ld_pk_radn"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "PK_RADN"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_PK_RADN
-   _item[ "sql" ] := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "PK_RADN"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_PK_RADN
+   hItem[ "sql" ] := .F.
+   hItem[ "sif" ] := .F.
 
-   _item[ "temp" ]  := .F.
+   hItem[ "temp" ]  := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idradn }
-   _alg[ "dbf_key_fields" ] := { "idradn" }
-   _alg[ "sql_in" ]         := "rpad(idradn, 6)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idradn }
+   hAlgoritam[ "dbf_key_fields" ] := { "idradn" }
+   hAlgoritam[ "sql_in" ]         := "rpad(idradn, 6)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -259,70 +259,70 @@ FUNCTION set_a_dbf_ld_pk_radn()
 
 FUNCTION set_a_dbf_ld_pk_data()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, _tbl, hItem
 
    _tbl := "ld_pk_data"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "PK_DATA"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_PK_DATA
-   _item[ "sql" ] := .F.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "PK_DATA"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_PK_DATA
+   hItem[ "sql" ] := .F.
+   hItem[ "sif" ] := .F.
 
-   _item[ "temp" ]  := .F.
+   hItem[ "temp" ]  := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idradn + field->ident + Str( field->rbr, 2 ) }
-   _alg[ "dbf_key_fields" ] := { "idradn", "ident", { "rbr", 2 } }
-   _alg[ "sql_in" ]         := "rpad(idradn, 6) || rpad(ident, 1) || lpad(rbr::char(2),2)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idradn + field->ident + Str( field->rbr, 2 ) }
+   hAlgoritam[ "dbf_key_fields" ] := { "idradn", "ident", { "rbr", 2 } }
+   hAlgoritam[ "sql_in" ]         := "rpad(idradn, 6) || rpad(ident, 1) || lpad(rbr::char(2),2)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    // algoritam 2 - brisanje podataka
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idradn }
-   _alg[ "dbf_key_fields" ] := { "idradn" }
-   _alg[ "sql_in" ]         := "rpad(idradn, 6)"
-   _alg[ "dbf_tag" ]        := "1"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idradn }
+   hAlgoritam[ "dbf_key_fields" ] := { "idradn" }
+   hAlgoritam[ "sql_in" ]         := "rpad(idradn, 6)"
+   hAlgoritam[ "dbf_tag" ]        := "1"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 */
 
 FUNCTION set_a_dbf_ld_radsat()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, _tbl, hItem
 
    _tbl := "ld_radsat"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "RADSAT"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_RADSAT
-   _item[ "sql" ] := .T.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "RADSAT"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_RADSAT
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .F.
 
-   _item[ "temp" ]  := .F.
+   hItem[ "temp" ]  := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idradn }
-   _alg[ "dbf_key_fields" ] := { "idradn" }
-   _alg[ "sql_in" ]         := "rpad(idradn, 6)"
-   _alg[ "dbf_tag" ]        := "IDRADN"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idradn }
+   hAlgoritam[ "dbf_key_fields" ] := { "idradn" }
+   hAlgoritam[ "sql_in" ]         := "rpad(idradn, 6)"
+   hAlgoritam[ "dbf_tag" ]        := "IDRADN"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -330,30 +330,30 @@ FUNCTION set_a_dbf_ld_radsat()
 
 FUNCTION set_a_dbf_ld_radsiht()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, _tbl, hItem
 
    _tbl := "ld_radsiht"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "RADSIHT"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_RADSIHT
-   _item[ "temp" ]  := .F.
-   _item[ "sql" ] := .T.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "RADSIHT"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_RADSIHT
+   hItem[ "temp" ]  := .F.
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .F.
 
-   _item[ "algoritam" ] := {}
+   hItem[ "algoritam" ] := {}
 
    // algoritam 1 - default
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idkonto + Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->idradn }
-   _alg[ "dbf_key_fields" ] := { "idkonto", { "godina", 4 }, { "mjesec", 2 }, "idradn" }
-   _alg[ "sql_in" ]         := "rpad(idkonto, 7) || lpad(godina::char(4),4) || lpad(mjesec::char(2),2) || rpad(idradn, 6)"
-   _alg[ "dbf_tag" ]        := "2"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idkonto + Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->idradn }
+   hAlgoritam[ "dbf_key_fields" ] := { "idkonto", { "godina", 4 }, { "mjesec", 2 }, "idradn" }
+   hAlgoritam[ "sql_in" ]         := "rpad(idkonto, 7) || lpad(godina::char(4),4) || lpad(mjesec::char(2),2) || rpad(idradn, 6)"
+   hAlgoritam[ "dbf_tag" ]        := "2"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.
 
@@ -361,36 +361,36 @@ FUNCTION set_a_dbf_ld_radsiht()
 
 FUNCTION set_a_dbf_ld_radkr()
 
-   LOCAL _alg, _tbl, _item
+   LOCAL hAlgoritam, _tbl, hItem
 
    _tbl := "ld_radkr"
 
-   _item := hb_Hash()
+   hItem := hb_Hash()
 
-   _item[ "alias" ] := "RADKR"
-   _item[ "table" ] := _tbl
-   _item[ "wa" ]    := F_RADKR
-   _item[ "temp" ]  := .F.
-   _item[ "algoritam" ] := {}
-   _item[ "sql" ] := .T.
-   _item[ "sif" ] := .F.
+   hItem[ "alias" ] := "RADKR"
+   hItem[ "table" ] := _tbl
+   hItem[ "wa" ]    := F_RADKR
+   hItem[ "temp" ]  := .F.
+   hItem[ "algoritam" ] := {}
+   hItem[ "sql" ] := .T.
+   hItem[ "sif" ] := .F.
 
    // algoritam 1
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idradn + field->idkred + field->naosnovu + Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) }
-   _alg[ "dbf_key_fields" ] := { "idradn", "idkred", "naosnovu", { "godina", 4 }, { "mjesec", 2 } }
-   _alg[ "sql_in" ]         := "rpad(idradn,6) || rpad(idkred,6) || rpad(naosnovu, 20) || lpad(godina::char(4),4) || lpad(mjesec::char(2),2)"
-   _alg[ "dbf_tag" ]        := "2"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idradn + field->idkred + field->naosnovu + Str( field->godina, 4, 0 ) + Str( field->mjesec, 2, 0 ) }
+   hAlgoritam[ "dbf_key_fields" ] := { "idradn", "idkred", "naosnovu", { "godina", 4 }, { "mjesec", 2 } }
+   hAlgoritam[ "sql_in" ]         := "rpad(idradn,6) || rpad(idkred,6) || rpad(naosnovu, 20) || lpad(godina::char(4),4) || lpad(mjesec::char(2),2)"
+   hAlgoritam[ "dbf_tag" ]        := "2"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    // algoritam 2
-   _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idradn + field->idkred + field->naosnovu }
-   _alg[ "dbf_key_fields" ] := { "idradn", "idkred", "naosnovu" }
-   _alg[ "sql_in" ]         := "rpad(idradn,6) || rpad(idkred,6) || rpad(naosnovu, 20) "
-   _alg[ "dbf_tag" ]        := "2"
-   AAdd( _item[ "algoritam" ], _alg )
+   hAlgoritam := hb_Hash()
+   hAlgoritam[ "dbf_key_block" ]  := {|| field->idradn + field->idkred + field->naosnovu }
+   hAlgoritam[ "dbf_key_fields" ] := { "idradn", "idkred", "naosnovu" }
+   hAlgoritam[ "sql_in" ]         := "rpad(idradn,6) || rpad(idkred,6) || rpad(naosnovu, 20) "
+   hAlgoritam[ "dbf_tag" ]        := "2"
+   AAdd( hItem[ "algoritam" ], hAlgoritam )
 
-   f18_dbfs_add( _tbl, @_item )
+   f18_dbfs_add( _tbl, @hItem )
 
    RETURN .T.

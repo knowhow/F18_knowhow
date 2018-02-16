@@ -1,5 +1,11 @@
 # F18 klijent, lista promjena
 
+## 3.1.180-std, 2018-02-16
+### OS
+- fix os_promj sem
+### KALK
+- fix sast admin promjena učešća sirovine u sastavnicama
+
 ## 3.1.179-std, 2018-02-15
 ### OS
 - unos OS, amort prikaz sve stope

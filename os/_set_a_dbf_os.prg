@@ -46,7 +46,7 @@ FUNCTION set_a_dbf_os()
 
 
 
-STATIC FUNCTION set_a_dbf_os_sii_promj( cTable, alias, area )
+STATIC FUNCTION set_a_sql_os_sii_promj( cTable, alias, area )
 
    LOCAL hItem, hAlgoritam
 

@@ -72,6 +72,7 @@ FUNCTION unos_datuma_isplate_place()
    LOCAL cRj := "  "
    LOCAL nX := 1
    LOCAL cOk := "D"
+   LOCAL GetList := {}
 
    my_close_all_dbf()
 
@@ -81,7 +82,7 @@ FUNCTION unos_datuma_isplate_place()
 
    Box(, 20, 65 )
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "*** Unos datuma isplata placa" COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "*** Unos datuma isplata plata" COLOR f18_color_i()
 
    ++nX
    ++nX
@@ -90,7 +91,7 @@ FUNCTION unos_datuma_isplate_place()
    @ box_x_koord() + nX, Col() + 2 SAY "Radna jedinica:" GET cRJ PICT "99" ;
       VALID Empty( cRJ ) .OR. P_LD_RJ( @cRJ )
 
-   @ box_x_koord() + nX, Col() + 2 SAY8 "Obračun:" GET cObr VALID cObr $ " 123456789"
+   @ box_x_koord() + nX, Col() + 2 SAY8 "Obračun (1/2):" GET cObr VALID cObr $ "12"
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "----------------------------------------"
@@ -332,14 +333,34 @@ STATIC FUNCTION ld_obracun_set_datum_isplate( cRj, nGod, nMjesec, cObr, dDatIspl
 
 
 
-FUNCTION ld_provjeri_dat_isplate_za_mjesec( nGodina, nMjesec, cIdRj )
+FUNCTION ld_provjeri_dat_isplate_za_mjesec( cIdRj, nGodina, nMjesec, cObracun )
 
-   LOCAL cQuery, _data, _count
+   LOCAL cQuery, oQuery, nCount
 
+   cQuery := "SELECT count(*) FROM ld_obracuni where godina=" + sql_quote( nGodina) + " AND mjesec=" + sql_quote( nMjesec )
+
+
+   IF cIdRj <> NIL .AND. !Empty( cIdRj )
+      cQuery += " AND rj = " + sql_quote( cIdRj )
+   ENDIF
+
+   IF !Empty( cObracun )
+         cQuery += " AND obr = " + sql_quote( cObracun )
+   ENDIF
+
+   oQuery := run_sql_query( cQuery )
+
+   nCount := oQuery:FieldGet( 1 )
+   altd()
+
+/*
    cQuery := "SELECT "
    cQuery += "  COUNT(*) "
-   cQuery += "FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld ld "
-   cQuery += "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_obracuni obr ON ld.godina = obr.godina AND ld.mjesec = obr.mjesec AND obr.status = 'G' "
+   cQuery += "FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld ld"
+   cQuery += " LEFT JOIN "
+   cQuery += F18_PSQL_SCHEMA_DOT + "ld_obracuni obr ON ld.godina = obr.godina AND ld.mjesec = obr.mjesec"
+
+   // AND obr.status = 'G' "
 
    IF cIdRj <> NIL .AND. !Empty( cIdRj )
       cQuery += " AND obr.rj = " + sql_quote( cIdRj )
@@ -347,14 +368,23 @@ FUNCTION ld_provjeri_dat_isplate_za_mjesec( nGodina, nMjesec, cIdRj )
       cQuery += " AND ld.idrj = obr.rj"
    ENDIF
 
+
    cQuery += " WHERE "
    cQuery += " ld.godina = " + AllTrim( Str( nGodina ) )
    cQuery += " AND ld.mjesec = " + AllTrim( Str( nMjesec ) )
-   cQuery += " AND obr.dat_ispl IS NULL "
-   cQuery += "GROUP BY ld.godina, ld.mjesec, ld.idrj, obr.dat_ispl  "
+   //cQuery += " AND obr.dat_ispl IS NULL "
+   cQuery += "  GROUP BY ld.godina, ld.mjesec, ld.idrj, obr.obr  "
 
-   _data := run_sql_query( cQuery )
+   IF !Empty( cObracun )
+         cQuery += " AND ld.obr = " + sql_quote( cObracun )
+   ENDIF
 
-   _count := _data:FieldGet( 1 )
+   MsgBeep( cQuery )
 
-   RETURN _count
+   oQuery := run_sql_query( cQuery )
+
+   nCount := oQuery:FieldGet( 1 )
+   altd()
+*/
+
+   RETURN nCount

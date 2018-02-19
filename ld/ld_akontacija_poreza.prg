@@ -53,7 +53,7 @@ FUNCTION ld_asd_aug_obrazac()
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Za mjesec:" GET nMjesec PICT "99"
    @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
-   @ box_x_koord() + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "   Radnik (prazno-svi):" GET cIdRadn VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
 
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "   Doprinos zdr: " GET cDopr1X

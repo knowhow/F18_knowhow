@@ -86,7 +86,7 @@ FUNCTION ld_mip_obrazac_1023()
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Za period:" GET nMjesec PICT "99"
    @ box_x_koord() + 2, Col() + 1 SAY "/" GET nGodina PICT "9999"
 
-   @ box_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
 
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cIdRadnik VALID Empty( cIdRadnik ) .OR. P_RADN( @cIdRadnik )
 
@@ -149,10 +149,11 @@ FUNCTION ld_mip_obrazac_1023()
       RETURN .F.
    ENDIF
 
-   IF ld_provjeri_dat_isplate_za_mjesec( nGodina, nMjesec, iif( !Empty( cIdRjTekuca ), cIdRjTekuca, NIL ) ) > 0
+   IF ld_provjeri_dat_isplate_za_mjesec( iif( !Empty( cIdRjTekuca ), cIdRjTekuca, NIL ), nGodina, nMjesec, cObracun ) == 0
+
 
       IF !Empty( cIdRjTekuca )
-         cErr := "Nije definisan datum isplate za radnu jedinicu '" + cIdRjTekuca +  "'."
+         cErr := "Nije definisan datum isplate za radnu jedinicu =" + cIdRjTekuca + ", obr =" + cObracun
       ELSE
          cErr := "Za pojedine radne jedinice nije definisan datum isplate.#Podesiti u <Obračun/Administracija obračuna>"
       ENDIF

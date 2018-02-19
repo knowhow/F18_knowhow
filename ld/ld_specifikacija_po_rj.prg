@@ -46,7 +46,7 @@ FUNCTION ld_specifikacija_po_rj()
       @ box_x_koord() + 3, Col() + 2 SAY "do"                              GET cMjesecDo PICT "99"
       @ box_x_koord() + 4, box_y_koord() + 2   SAY "Godina: "                        GET nGodina   PICT "9999"
       IF ld_vise_obracuna()
-         @ box_x_koord() + 4, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+         @ box_x_koord() + 4, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
       ENDIF
       @ box_x_koord() + 5, box_y_koord() + 2   SAY8 "Šifre primanja (prazno-sve):"   GET qqPrimanja PICT "@S30"
       READ

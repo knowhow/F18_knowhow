@@ -116,7 +116,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Opstina stanov.(prazno-sve): "  GET qqOpSt PICT "@!S20"
 
-      @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun   WHEN HelpObr( .T., cObracun )  VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun   WHEN ld_help_broj_obracuna( .T., cObracun )  VALID ld_valid_obracun( .T., cObracun )
 
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
       @ box_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecOd PICT "99"

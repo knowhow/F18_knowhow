@@ -203,9 +203,9 @@ FUNCTION set_a_dbf_ld_obracuni()
 
    hItem := hb_Hash()
 
-   hItem[ "alias" ] := "OBRACUNI"
+   hItem[ "alias" ] := "LD_OBRACUNI"
    hItem[ "table" ] := _tbl
-   hItem[ "wa" ]    := F_OBRACUNI
+   hItem[ "wa" ]    := F_LD_OBRACUNI
    hItem[ "temp" ]  := .F.
    hItem[ "sql" ] := .T.
    hItem[ "sif" ] := .T.

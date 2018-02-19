@@ -268,7 +268,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    IF ld_vise_obracuna()
       // IF gUNMjesec == "D"
-      // @ box_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+      // @ box_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN ld_help_broj_obracuna( .F., cObracun ) VALID ld_valid_obracun( .F., cObracun )
       // ELSE
       @ box_x_koord() + 1, Col() + 2 SAY8  "Obračun: "
       QQOutC( cObracun, "GR+/N" )

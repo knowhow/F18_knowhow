@@ -76,7 +76,7 @@ FUNCTION ld_kartica_plate( cIdRj, nMjesec, nGodina, cIdRadn, cObrac )
       @ box_x_koord() + 1, box_y_koord() + 2 SAY _l( "Radna jedinica (prazno-sve rj): " )  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
       @ box_x_koord() + 2, box_y_koord() + 2 SAY _l( "Mjesec: " ) GET nMjesec PICT "99"
       IF ld_vise_obracuna()
-         @ box_x_koord() + 2, Col() + 2 SAY _l( "Obracun: " ) GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+         @ box_x_koord() + 2, Col() + 2 SAY _l( "Obracun: " ) GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
       ENDIF
       @ box_x_koord() + 3, box_y_koord() + 2 SAY _l( "Godina: " ) GET nGodina PICT "9999"
       @ box_x_koord() + 4, box_y_koord() + 2 SAY _l( "Radnik (prazno-svi radnici): " )  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )

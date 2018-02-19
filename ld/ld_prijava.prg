@@ -41,7 +41,7 @@ FUNCTION ld_postavi_parametre_obracuna()
 
    IF _v_obr_unos
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Obračun broj", _pad_l ) GET gObracun WHEN HelpObr( .F., gObracun ) VALID ValObr( .F., gObracun )
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "Obračun broj", _pad_l ) GET gObracun WHEN ld_help_broj_obracuna( .F., gObracun ) VALID ld_valid_obracun( .F., gObracun )
 
    ENDIF
 

@@ -194,8 +194,8 @@ FUNCTION ld_specifikacija_plate_2001_stari()
 
       IF ld_vise_obracuna()
          @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun ;
-            WHEN HelpObr( .T., cObracun ) ;
-            VALID ValObr( .T., cObracun )
+            WHEN ld_help_broj_obracuna( .T., cObracun ) ;
+            VALID ld_valid_obracun( .T., cObracun )
       ENDIF
 
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"

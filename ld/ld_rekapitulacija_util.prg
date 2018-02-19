@@ -93,7 +93,7 @@ FUNCTION ld_rekap_get_svi()
       @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Radne jedinice: "  GET  qqRJ PICT "@!S25"
       @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
       @ box_x_koord() + 4, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
-      @ box_x_koord() + 4, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 4, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
       @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
       @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
       @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
@@ -129,7 +129,7 @@ FUNCTION ld_rekap_get_rj()
    @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Radna jedinica: "  GET cIdRJ
    @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
    @ box_x_koord() + 3, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
-   @ box_x_koord() + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
    @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
    @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
    @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Opština stanovanja:  "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )

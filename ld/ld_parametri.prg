@@ -153,7 +153,7 @@ FUNCTION ld_set_firma()
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica :" GET _rj VALID P_LD_Rj( @_rj ) PICT "@!"
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Mjesec         :" GET _mjesec PICT "99"
    @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina         :" GET _godina PICT "9999"
-   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Obracun        :" GET _obracun WHEN HelpObr( .F., _obracun ) VALID ValObr( .F., _obracun )
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Obracun        :" GET _obracun WHEN ld_help_broj_obracuna( .F., _obracun ) VALID ld_valid_obracun( .F., _obracun )
 
    READ
 
@@ -412,7 +412,7 @@ FUNCTION LDPoljaINI()
 
 
 
-FUNCTION helpobr( lIzv, cObracun )
+FUNCTION ld_help_broj_obracuna( lIzv, cObracun )
 
    IF lIzv == nil
       lIzv := .F.
@@ -420,12 +420,12 @@ FUNCTION helpobr( lIzv, cObracun )
 
    IF gNHelpObr = 0
       Box(, 3 + IF( lIzv, 1, 0 ), 40 )
-      @ box_x_koord() + 0, box_y_koord() + 2 SAY PadC( " POMOC: ", 36, "�" )
+      @ box_x_koord() + 0, box_y_koord() + 2 SAY8 PadC( " POMOĆ: ", 36, " " )
       IF lIzv
-         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Ukucajte broj obracuna (1/2/.../9)"
-         @ box_x_koord() + 3, box_y_koord() + 2 SAY "ili prazno ako zelite sve obracune"
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Ukucajte broj obračuna (1/2/.../9)"
+         @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "ili prazno ako želite sve obracune"
       ELSE
-         @ box_x_koord() + 2, box_y_koord() + 2 SAY "Ukucajte broj obracuna (1/2/.../9)"
+         @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Ukucajte broj obračuna (1/2/.../9)"
       ENDIF
       ++gnHelpObr
    ENDIF
@@ -435,7 +435,7 @@ FUNCTION helpobr( lIzv, cObracun )
 
 
 
-FUNCTION ValObr( lIzv, cObracun )
+FUNCTION ld_valid_obracun( lIzv, cObracun )
 
    LOCAL lVrati := .T.
 

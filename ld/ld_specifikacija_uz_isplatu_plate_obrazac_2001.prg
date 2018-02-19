@@ -198,7 +198,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Opština stan (prazno-sve): " GET cUslovOpstStan PICT "@!S20"
 
       IF ld_vise_obracuna()
-         @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun  WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+         @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun  WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
       ENDIF
 
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"

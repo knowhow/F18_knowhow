@@ -129,7 +129,7 @@ FUNCTION os_validate_vrijednost( wNabVr, wOtpVr )
 
 FUNCTION os_sif_key_handler( Ch, lNovi )
 
-   LOCAL nWa := F_PROMJ
+   LOCAL nWa := F_OS_PROMJ
    LOCAL hRec
    LOCAL _sr_id
 

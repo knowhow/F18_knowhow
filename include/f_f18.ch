@@ -202,7 +202,7 @@
 #define F_OS       200
 #define F_AMORT    201
 #define F_REVAL    202
-#define F_PROMJ    203
+#define F_OS_PROMJ    203
 #define F_INVENT   204
 #define F_SII      205
 #define F_SII_PROMJ 206

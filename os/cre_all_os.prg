@@ -85,7 +85,7 @@ FUNCTION cre_all_os( ver )
    AAdd( aDBf, { 'RevP', 'N',  18,  2 } )
 
 
-   _alias := "promj"
+   _alias := "OS_PROMJ"
    _table_name := "os_promj"
 
 /*

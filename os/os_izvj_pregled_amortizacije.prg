@@ -190,8 +190,8 @@ FUNCTION os_pregled_amortizacije()
                // ako zelim samo promjene vidi ima li za sr.
                // uopste promjena
                _sr_id := field->id
-               select_promj()
-               HSEEK _sr_id
+               os_select_promj( _sr_id )
+               //HSEEK _sr_id
                fIma := .F.
                DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                   fIma := .T.
@@ -214,8 +214,8 @@ FUNCTION os_pregled_amortizacije()
             IF cPromj $ "23"
                // prikaz promjena
                _sr_id := field->id
-               select_promj()
-               HSEEK _sr_id
+               os_select_promj( _sr_id )
+               //HSEEK _sr_id
                DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                   nA1 := 0
                   nA2 := amp
@@ -254,8 +254,8 @@ FUNCTION os_pregled_amortizacije()
                IF cPromj $ "23"  // prikaz promjena
                   _sr_id := field->id
                   _sr_id_rj := field->idrj
-                  select_promj()
-                  HSEEK _sr_id
+                  os_select_promj( _sr_id )
+                  //HSEEK _sr_id
                   DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
 
                      ? Space( 5 ), Space( Len( id ) ), Space( Len( _sr_id_rj ) ), datum, opis

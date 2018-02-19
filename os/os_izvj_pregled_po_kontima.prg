@@ -107,9 +107,9 @@ FUNCTION os_pregled_po_kontima()
    cIdRj := PadR( cIdRj, 4 )
 
    IF cDatPer == "D"
-      select_promj()
-      PRIVATE cFilt1 := "DATUM>=" + dbf_quote( dDatOd ) + ".and.DATUM<=" + dbf_quote( dDatDo )
-      SET FILTER to &cFilt1
+      //os_select_promj()
+      //PRIVATE cFilt1 := "DATUM>=" + dbf_quote( dDatOd ) + ".and.DATUM<=" + dbf_quote( dDatDo )
+      //SET FILTER to &cFilt1
       select_o_os_or_sii()
    ENDIF
 
@@ -262,9 +262,9 @@ FUNCTION os_pregled_po_kontima()
                   ENDIF
 
                   _sr_id := field->id
-                  select_promj()
+                  os_select_promj( _sr_id )
                   // provjeri promjene unutar datuma
-                  HSEEK _sr_id
+                  //HSEEK _sr_id
 
                   DO WHILE !Eof() .AND. _sr_id = field->id
                      IF datum >= dDatOd .AND. datum <= dDatDo
@@ -282,8 +282,8 @@ FUNCTION os_pregled_po_kontima()
                   _sr_dat_otp := get_datotp()
                   _sr_datum := field->datum
 
-                  select_promj()
-                  HSEEK _sr_id
+                  os_select_promj( _sr_id )
+                  //HSEEK _sr_id
                   fIma := .F.
                   DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                      IF ( cON == "N" .AND. Empty( _sr_dat_otp ) ) .OR. ;
@@ -332,8 +332,8 @@ FUNCTION os_pregled_po_kontima()
                   _sr_dat_otp := get_datotp()
                   _sr_datum := field->datum
 
-                  select_promj()
-                  HSEEK _sr_id
+                  os_select_promj( _sr_id )
+                  //HSEEK _sr_id
                   DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                      IF ( cON == "N" .AND. Empty( _sr_dat_otp ) ) .OR. ;
                            ( con = "O"  .AND. !Empty( _sr_dat_otp ) ) .OR. ;
@@ -418,8 +418,8 @@ FUNCTION os_pregled_po_kontima()
                      _sr_id_rj := field->idrj
                      _sr_id_am := field->idam
 
-                     select_promj()
-                     HSEEK _sr_id
+                     os_select_promj( _sr_id )
+                     //HSEEK _sr_id
 
                      DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                         IF ( cON == "N" .AND. Empty( _sr_dat_otp ) ) .OR. ;

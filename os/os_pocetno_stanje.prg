@@ -126,7 +126,7 @@ STATIC FUNCTION open_sii_tabele_init_static_vars()
    //__table_os_alias := Alias()
 
    // tabela OS_PROMJ/SII_PROMJ
-   select_promj()
+  -- os_select_promj()
    //__table_promj := get_promj_table_name()
    //__table_promj_alias := Alias()
 
@@ -206,7 +206,7 @@ STATIC FUNCTION os_pocstanje_brisi_tekucu_godinu( aInformacije )
 
    ENDDO
 
-   select_promj()
+   o_os_sii_promj()
    SET ORDER TO TAG "1"
    GO TOP
 
@@ -395,7 +395,7 @@ STATIC FUNCTION os_insert_into_promj( oDataset )
       oRow := oDataset:GetRow()
       hRec := _row_to_rec( oRow )
 
-      select_promj()
+      os_select_promj()
       APPEND BLANK
 
       update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
@@ -478,10 +478,10 @@ STATIC FUNCTION os_pocstanje_dodati_amortizaciju_u_otpisanu_vrijednost( aInforma
 
       ENDIF
 
-      select_promj()
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK cSredstvoId
+      os_select_promj( cSredstvoId )
+      //SET ORDER TO TAG "1"
+      //GO TOP
+      //SEEK cSredstvoId
 
       DO WHILE !Eof() .AND. field->id == cSredstvoId
          hRec[ "nabvr" ] += field->nabvr + field->revd
@@ -507,7 +507,7 @@ STATIC FUNCTION os_pocstanje_dodati_amortizaciju_u_otpisanu_vrijednost( aInforma
    AAdd( aInformacije, { "5) broj otpisanih sredstava u novoj godini", nOtpisCount, "" } )
 
    // pobrisi sve promjene:
-   select_promj()
+   o_os_sii_promj()
    SET ORDER TO TAG "1"
    GO TOP
 

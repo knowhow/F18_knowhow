@@ -153,9 +153,9 @@ FUNCTION os_sif_key_handler( Ch, lNovi )
          o_os_sii_promj()
       ENDIF
 
-      select_promj()
-
-      SEEK _sr_id
+      os_select_promj( _sr_id )
+      //
+      //SEEK _sr_id
 
       IF Found()
          Beep( 1 )
@@ -168,7 +168,7 @@ FUNCTION os_sif_key_handler( Ch, lNovi )
          ENDIF
       ENDIF
       IF !lUsedPromj
-         select_promj()
+         os_select_promj()
          USE
       ENDIF
       select_o_os_or_sii()

@@ -15,6 +15,8 @@
 
 FUNCTION os_rpt_default_valute()
 
+   LOCAL GetList := {}
+     
    LOCAL nArr := Select()
 
    IF ( gDrugaVal == "D" .AND. cTip == valuta_domaca_skraceni_naziv() )

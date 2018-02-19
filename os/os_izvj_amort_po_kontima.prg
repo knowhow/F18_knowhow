@@ -251,8 +251,8 @@ STATIC FUNCTION FFor1()
       _sr_datum := field->datum
       _sr_kol := field->kolicina
 
-      select_promj()
-      HSEEK _sr_id
+      os_select_promj( _sr_id )
+      //HSEEK _sr_id
 
       IF cPromj == "2" .AND. !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna() .OR. cPromj == "3"
          IF cPromj == "3"
@@ -366,8 +366,8 @@ STATIC FUNCTION FFor1s()
       _sr_jmj := field->jmj
       _sr_kol := field->kolicina
 
-      select_promj()
-      HSEEK _sr_id
+      os_select_promj( _sr_id )
+      //HSEEK _sr_id
 
       IF cPromj == "2" .AND. !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna() .OR. cPromj == "3"
 
@@ -485,8 +485,8 @@ FUNCTION fsvpromj()
       // promjene:ispitujemo ima li sadasnju vrijednost
       _sr_id := field->id
 
-      select_promj()
-      SEEK _sr_id
+      os_select_promj( _sr_id )
+      //SEEK _sr_id
 
       IF Found()
          DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()

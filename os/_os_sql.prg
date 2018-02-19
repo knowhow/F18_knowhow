@@ -325,7 +325,7 @@ FUNCTION select_o_os_or_sii( cId )
 
 
 
-FUNCTION select_promj( cId )
+FUNCTION os_select_promj( cId )
 
    IF gOsSii == "O"
       RETURN select_o_os_promj( cId )

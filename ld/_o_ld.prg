@@ -561,9 +561,9 @@ FUNCTION set_tippr_ili_tippr2( cObracun )
 
 FUNCTION o_ld_obracuni( cSeek )
 
-   LOCAL cAlias := "OBRACUNI"
+   LOCAL cAlias := "LD_OBRACUNI"
 
-   SELECT ( F_OBRACUNI )
+   SELECT ( F_LD_OBRACUNI )
    IF !use_sql_sif ( "ld_obracuni", .T., cAlias )
       RETURN .F.
    ENDIF

@@ -54,7 +54,7 @@ FUNCTION ld_pregled_plata_za_period()
    @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: " GET nGodina PICT "9999"
 
    IF ld_vise_obracuna()
-      @ box_x_koord() + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
    ENDIF
 
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;

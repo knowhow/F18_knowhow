@@ -543,7 +543,7 @@ STATIC FUNCTION zagl_bb_suban( hParams, nStr )
 
    P_COND2
 
-   ??U "FIN: SUBANALITIČKI BRUTO BILANS U VALUTI '" + IF( hParams[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
+   ??U "FIN: SUBANALITIČKI BRUTO BILANS U VALUTI '" + IF( hParams[ "valuta" ] == 1, valuta_domaca_skraceni_naziv(), ValPomocna() ) + "'"
    IF !( Empty( hParams[ "datum_od" ] ) .AND. Empty( hParams[ "datum_do" ] ) )
       ?? " ZA PERIOD OD", hParams[ "datum_od" ], "-", hParams[ "datum_do" ]
    ENDIF

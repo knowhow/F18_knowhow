@@ -67,7 +67,7 @@ FUNCTION ld_utrosak_po_sihtaricama()
    @ box_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
    @ box_x_koord() + 2, Col() + 1 SAY "do:" GET nMjesecDo PICT "99"
    @ box_x_koord() + 2, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
-   @ box_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik VALID Empty( cRadnik ) .OR. p_radn( @cRadnik )
 
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "Grupa (prazno-sve): " GET cGroup  VALID Empty( cGroup ) .OR. p_konto( @cGroup )

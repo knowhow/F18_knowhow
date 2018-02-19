@@ -135,11 +135,11 @@ altd()
       PRIVATE dDatOtp := field->datotp
       PRIVATE cOpisOtp := field->opisotp
 
-      select_promj()
+      os_select_promj()
 
       ImeKol := {}
 
-      AAdd( ImeKol, { "DATUM",            {|| select_promj(), field->datum }                          } )
+      AAdd( ImeKol, { "DATUM",            {|| os_select_promj(), field->datum }                          } )
       AAdd( ImeKol, { "OPIS",             {|| field->opis }                          } )
       AAdd( ImeKol, { PadR( "Nabvr", 11 ),   {|| Transform( field->nabvr, gpici ) }     } )
       AAdd( ImeKol, { PadR( "OtpVr", 11 ),   {|| Transform( field->otpvr, gpici ) }     } )
@@ -160,7 +160,6 @@ altd()
       DO WHILE .T.
          BrowseKey( box_x_koord() + 8, box_y_koord() + 1, box_x_koord() + f18_max_rows() - 5, box_y_koord() + f18_max_cols() -5, ;
              ImeKol, {| Ch| unos_os_promj_key_handler( Ch ) }, "id==cIdSredstvo", cIdSredstvo, 2, NIL, NIL, {|| os_sadasnja_vrijednost( @aSred ) < 0 } )
-
 
 
          IF ( aVr[ 1 ] -aVr[ 2 ] >= 0 )
@@ -205,7 +204,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
          SKIP 1
       ENDIF
 
-      select_promj()
+      os_select_promj()
       hRec := dbf_get_rec()
 
       _prom_dat := hRec[ "datum" ]
@@ -248,7 +247,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
    CASE Ch == K_CTRL_T
 
       IF pitanje(, "Sigurno zelite izbrisati promjenu ?", "N" ) == "D"
-         select_promj()
+         os_select_promj()
          hRec := dbf_get_rec()
          delete_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
          os_unos_show_sadasnja_vrijednost( cIdSredstvo, @aVr, @aSred )
@@ -276,7 +275,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
       BoxC()
 
       IF LastKey() == K_ESC
-         select_promj()
+         os_select_promj()
          RETURN DE_CONT
       ENDIF
 
@@ -325,7 +324,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
 
       ENDIF
 
-      select_promj()
+      os_select_promj()
 
       @ box_x_koord() + 5, box_y_koord() + 38 SAY "Datum otpisa: "
 
@@ -362,9 +361,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
          Msg( "Vec postoji sredstvo sa istim inventurnim brojem !" )
       ELSE
 
-         select_promj( cIdSredstvo )
-
-
+         os_select_promj( cIdSredstvo )
          nTrec := 0
 
          DO WHILE !Eof() .AND. cIdSredstvo == field->id
@@ -386,7 +383,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
          cIdSredstvo := cNoviInventurniBroj
       ENDIF
 
-      select_promj()
+      os_select_promj()
       RETURN DE_REFRESH
 
    OTHERWISE
@@ -411,7 +408,7 @@ FUNCTION os_unos_show_sadasnja_vrijednost( cIdSredstvo, aVr, aSred )
 
    dDatOtp := field->datOtp
 
-   select_promj( cIdSredstvo )
+   os_select_promj( cIdSredstvo )
 
    FOR nI := Len( aSred ) TO 1 STEP -1
       IF aSred[ nI, 1 ] > 0 .AND. aSred[ nI, 1 ] < 999999

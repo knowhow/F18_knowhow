@@ -415,7 +415,7 @@ FUNCTION cre_all_ld( ver )
    AAdd( aDBf, { 'ISPL_ZA', 'C', 50, 0 } )
    AAdd( aDBf, { 'VR_ISPL', 'C', 50, 0 } )
 
-   _alias := "OBRACUNI"
+   _alias := "LD_OBRACUNI"
    _table_name := "ld_obracuni"
 
    IF_NOT_FILE_DBF_CREATE

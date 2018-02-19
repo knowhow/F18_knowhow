@@ -150,7 +150,7 @@ METHOD LDExportTxt:params()
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datumski period / mjesec:" GET _mjesec PICT "99"
    @ box_x_koord() + nX, Col() + 1 SAY "godina:" GET _godina PICT "9999"
-   @ box_x_koord() + nX, Col() + 1 SAY "obracun:" GET _obr WHEN HelpObr( .T., _obr ) VALID ValObr( .T., _obr )
+   @ box_x_koord() + nX, Col() + 1 SAY "obracun:" GET _obr WHEN ld_help_broj_obracuna( .T., _obr ) VALID ld_valid_obracun( .T., _obr )
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve):" GET _rj PICT "@S35"

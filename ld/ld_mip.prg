@@ -50,7 +50,7 @@ FUNCTION ld_mip_obrazac_1023()
    LOCAL cIsplSaberi := "D"
    LOCAL cNulePrikazatiDN := "D" // ako je bolovanje preko 42dana samo, trebamo
    LOCAL cMipView := "N"
-   LOCAL _pojed := .F.
+   LOCAL lPojedinacno := .F.
    LOCAL cErr := ""
    LOCAL nX
    LOCAL nMjesec :=  fetch_metric( "ld_izv_mjesec_od", my_user(), ld_tekuci_mjesec() )
@@ -82,11 +82,11 @@ FUNCTION ld_mip_obrazac_1023()
 
    Box( "#MIP OBRAZAC ZA RADNIKE", 22, 75 )
 
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radne jedinice: " GET cIdRjUslov PICT "@!S25"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radne jedinice: " GET cIdRjUslov PICT "@!S25"  // uobičajeno ostavi se prazno - sve rj
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Za period:" GET nMjesec PICT "99"
    @ box_x_koord() + 2, Col() + 1 SAY "/" GET nGodina PICT "9999"
 
-   @ box_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
 
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Radnik (prazno-svi radnici): " GET cIdRadnik VALID Empty( cIdRadnik ) .OR. P_RADN( @cIdRadnik )
 
@@ -111,7 +111,7 @@ FUNCTION ld_mip_obrazac_1023()
    @ box_x_koord() + nX++, box_y_koord() + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
    @ box_x_koord() + nX++, box_y_koord() + 2 SAY " dod.dopr. benef.: " GET cDoprDod PICT "@S30"
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Naziv preduzeća: " GET cPredNaz PICT "@S30"
    @ box_x_koord() + nX++, Col() + 1 SAY "JID: " GET cPredJMB
 
    @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Šifra djelatnosti: " GET cPredSDJ PICT "@S20"
@@ -125,7 +125,7 @@ FUNCTION ld_mip_obrazac_1023()
    READ
 
    IF cStampaExport == "E"
-      @ box_x_koord() + nX++, box_y_koord() + 2 SAY "Datum podnosenja:" GET dDatPodn
+      @ box_x_koord() + nX++, box_y_koord() + 2 SAY8 "Datum podnošenja:" GET dDatPodn
       READ
 
    ENDIF
@@ -149,10 +149,11 @@ FUNCTION ld_mip_obrazac_1023()
       RETURN .F.
    ENDIF
 
-   IF ld_provjeri_dat_isplate_za_mjesec( nGodina, nMjesec, iif( !Empty( cIdRjTekuca ), cIdRjTekuca, NIL ) ) > 0
+   IF ld_provjeri_dat_isplate_za_mjesec( iif( !Empty( cIdRjTekuca ), cIdRjTekuca, NIL ), nGodina, nMjesec, cObracun ) == 0
+
 
       IF !Empty( cIdRjTekuca )
-         cErr := "Nije definisan datum isplate za radnu jedinicu '" + cIdRjTekuca +  "'."
+         cErr := "Nije definisan datum isplate za radnu jedinicu =" + cIdRjTekuca + ", obr =" + cObracun
       ELSE
          cErr := "Za pojedine radne jedinice nije definisan datum isplate.#Podesiti u <Obračun/Administracija obračuna>"
       ENDIF
@@ -191,7 +192,7 @@ FUNCTION ld_mip_obrazac_1023()
    set_metric( "obracun_plata_mip_def_rj_isplata", NIL, cIdRjTekuca )
 
    IF !Empty( cIdRadnik )
-      _pojed := .T.
+      lPojedinacno := .T.
       s_lExportXml := .F.
       MsgBeep( "Za jednog radnika se ne vrši export, samo štampa!" )
    ENDIF
@@ -210,7 +211,7 @@ FUNCTION ld_mip_obrazac_1023()
       cNulePrikazatiDN )
 
    IF cMipView == "D"
-      mip_view()
+      ld_mip_view()
    ENDIF
 
    IF s_lExportXml
@@ -218,7 +219,7 @@ FUNCTION ld_mip_obrazac_1023()
       mip_xml_export( nMjesec, nGodina )
       MsgBeep( "Obrađeno " + AllTrim( Str( nBrZahtjeva ) ) + " radnika." )
    ELSE
-      mip_print_odt( _pojed )
+      mip_print_odt( lPojedinacno )
    ENDIF
 
    RETURN .T.
@@ -499,7 +500,7 @@ FUNCTION mip_fill_data( cIdRjTekuca, nGodina, nMjesec, ;
 
          ENDIF
 
-  
+
          nDopr10 := get_dopr( cDopr10, cTipRada )
          nDopr11 := get_dopr( cDopr11, cTipRada )
          nDopr12 := get_dopr( cDopr12, cTipRada )

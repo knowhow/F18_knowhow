@@ -20,7 +20,7 @@ STATIC FUNCTION _export_cond( params )
    LOCAL _ok := .T.
    LOCAL _tip := "V"
    LOCAL _suma := "N"
-   LOCAL _valuta := PadR( AllTrim( ValDomaca() ), 3 )
+   LOCAL _valuta := PadR( AllTrim( valuta_domaca_skraceni_naziv() ), 3 )
    LOCAL _pr_isp := "N"
    PRIVATE GetList := {}
 
@@ -116,7 +116,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
    _valuta := _exp_params[ "exp_valuta" ]
 
    IF Empty( _valuta )
-      _valuta := PadR( ValDomaca(), 3 )
+      _valuta := PadR( valuta_domaca_skraceni_naziv(), 3 )
    ENDIF
 
    IF _isporuka

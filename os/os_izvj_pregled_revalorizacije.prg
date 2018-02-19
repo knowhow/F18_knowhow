@@ -139,8 +139,8 @@ FUNCTION os_pregled_revalorizacije()
                // id sredstva
                _sr_id := field->id
 
-               select_promj()
-               HSEEK _sr_id
+               os_select_promj( _sr_id )
+               //HSEEK _sr_id
 
                fIma := .F.
 
@@ -176,8 +176,8 @@ FUNCTION os_pregled_revalorizacije()
                _sr_id := field->id
                _sr_id_rj := field->idrj
 
-               select_promj()
-               HSEEK os->id
+               os_select_promj( os->id )
+               //HSEEK os->id
 
                DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                   ? Space( 5 ), Space( Len( _sr_id ) ), Space( Len( _sr_id_rj ) ), field->datum, field->opis

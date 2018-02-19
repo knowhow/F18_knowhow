@@ -170,7 +170,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr_vars( hParams )
    LOCAL lOk := .T.
    LOCAL _sumiraj := "N"
    LOCAL _tip_rn := 1
-   LOCAL _valuta := PadR( ValDomaca(), 3 )
+   LOCAL _valuta := PadR( valuta_domaca_skraceni_naziv(), 3 )
 
    hParams := hb_Hash()
 

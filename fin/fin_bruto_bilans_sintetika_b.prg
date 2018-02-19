@@ -390,7 +390,7 @@ STATIC FUNCTION zagl_bb_sint( params, nStr )
 
    P_COND2
 
-   ??U "FIN: SINTETIČKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
+   ??U "FIN: SINTETIČKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, valuta_domaca_skraceni_naziv(), ValPomocna() ) + "'"
 
    IF !( Empty( params[ "datum_od" ] ) .AND. Empty( params[ "datum_do" ] ) )
       ?? " ZA PERIOD OD", params[ "datum_od" ], "-", params[ "datum_do" ]

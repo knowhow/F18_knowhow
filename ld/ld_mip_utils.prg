@@ -16,8 +16,9 @@
 // --------------------------------------------
 // pregled tabele za MIP obrazac
 // --------------------------------------------
-FUNCTION MIP_View()
+FUNCTION ld_mip_view()
 
+   LOCAL i
    PRIVATE Kol
    PRIVATE ImeKol
 

@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-STATIC __sanacije
+STATIC s_lSanacije
 
 
 FUNCTION os_obracuni()
@@ -21,9 +21,9 @@ FUNCTION os_obracuni()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   __sanacije := .F.
+   s_lSanacije := .F.
 
-   cTip := IF( gDrugaVal == "D", ValDomaca(), "" )
+   cTip := IF( gDrugaVal == "D", valuta_domaca_skraceni_naziv(), "" )
    cBBV := cTip
    nBBK := 1
 
@@ -53,30 +53,32 @@ FUNCTION os_obracun_amortizacije()
    LOCAL nTOtp := 0
    LOCAL nTAmortizacijaP := 0
    LOCAL hAmortizacija
+   LOCAL GetList := {}
+
    PRIVATE nGStopa := 100
 
    //o_amort()
 
-   o_os_sii()
-   o_os_sii_promj()
+   //o_os_sii()
+   //o_os_sii_promj()
 
    dDatObr := os_datum_obracuna()
    cFiltK1 := Space( 40 )
    cVarPrik := "N"
 
-   Box( "#OBRACUN AMORTIZACIJE", 10, 60 )
+   Box( "#OBRAČUN AMORTIZACIJE", 10, 60 )
 
    DO WHILE .T.
 
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum obracuna:" GET dDatObr
-      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Varijanta ubrzane amortizacije po grupama ?" GET cAGrupe PICT "@!"
-      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Pomnoziti obracun sa koeficijentom (%)" GET nGStopa PICT "999.99"
-      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Datum obračuna:" GET dDatObr
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Varijanta ubrzane amortizacije po grupama ?" GET cAGrupe PICT "@!"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Pomnožiti obracun sa koeficijentom (%)" GET nGStopa PICT "999.99"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
 
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Varijanta prikaza"
-      @ box_x_koord() + 7, box_y_koord() + 2 SAY "pred.amort + tek.amort (D/N)?" GET cVarPrik PICT "@!" VALID cVarPrik $ "DN"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Varijanta prikaza"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "pred.amort + tek.amort (D/N)?" GET cVarPrik PICT "@!" VALID cVarPrik $ "DN"
 
-      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Obracunavati sanacije na sredstvima (D/N) ?" GET _san VALID _san $ "DN" PICT "@!"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Obračunavati sanacije na sredstvima (D/N) ?" GET _san VALID _san $ "DN" PICT "@!"
       READ
 
       ESC_BCR
@@ -90,7 +92,7 @@ FUNCTION os_obracun_amortizacije()
    set_metric( "os_obracun_sanacija", NIL, _san )
 
    IF _san == "D"
-      __sanacije := .T.
+      s_lSanacije := .T.
    ENDIF
 
    select_o_os_or_sii()
@@ -113,6 +115,7 @@ FUNCTION os_obracun_amortizacije()
    PRIVATE nOstalo := 0
    PRIVATE nUkupno := 0
 
+altd()
    DO WHILE !Eof()
 
       cIdam := field->idam
@@ -140,7 +143,6 @@ FUNCTION os_obracun_amortizacije()
       DO WHILE !Eof() .AND. field->idam == cIdAm
 
          set_global_memvars_from_dbf()
-
 
          _datum_otpisa := fix_dat_var( _datotp ) // setuj datum otpisa ako postoji
 
@@ -222,20 +224,25 @@ FUNCTION os_obracun_amortizacije()
 
          SET DEVICE TO SCREEN
 
+//if left( cId, 6 ) == "022015"
+//altd()
+//endif
          select_o_os_or_sii()
          update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
          SET DEVICE TO PRINTER
 
+//if left( cId, 4 ) == "0140"
+//altd()
+//endif
          // amortizacija promjena
-         select_promj( cId )
-
+         os_select_promj( cId )
 
          DO WHILE !Eof() .AND. field->id == cId .AND. field->datum <= dDatObr
 
             set_global_memvars_from_dbf()
 
-            IF __sanacije .AND. Left( field->opis, 2 ) == "#S"
+            IF s_lSanacije .AND. Left( field->opis, 2 ) == "#S"
                // ovo preskacemo za obracun...
                nPredAm := 0
                _amp := 0
@@ -284,7 +291,7 @@ FUNCTION os_obracun_amortizacije()
 
             SET DEVICE TO SCREEN
 
-            select_promj()
+            os_select_promj()
             update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
             SET DEVICE TO PRINTER
@@ -381,9 +388,10 @@ FUNCTION os_obracun_amortizacije()
 
             SET DEVICE TO PRINTER
 
+//altd()
             // amortizacija promjena
-            select_promj()
-            HSEEK cId
+            os_select_promj( cId )
+            //HSEEK cId
 
             DO WHILE !Eof() .AND. field->id == cId .AND. field->datum <= dDatObr
 
@@ -429,7 +437,8 @@ FUNCTION os_obracun_amortizacije()
 
                SET DEVICE TO SCREEN
 
-               select_promj()
+//altd()
+               os_select_promj()
                update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
                SET DEVICE TO PRINTER
@@ -463,7 +472,7 @@ FUNCTION os_obracun_amortizacije()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -549,7 +558,7 @@ STATIC FUNCTION _p_header( cLine, dDatObr, nGStopa, cFiltK1, cVar )
    ? cLine
    ?
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -591,36 +600,34 @@ FUNCTION dana_u_mjesecu( dDate )
 
 
 
-// -----------------------------------------------------
-// iznos sanacije...
-// -----------------------------------------------------
+
 FUNCTION os_sii_iznos_sanacije( id, datum_od, datum_do )
 
    LOCAL _nab := 0
    LOCAL _otp := 0
-   LOCAL _qry, _data, oRow
+   LOCAL cQuery, _data, oRow
    LOCAL _hash := hb_Hash()
 
    _hash[ "otpvr" ] := 0
    _hash[ "nabvr" ] := 0
 
-   IF gOsSII == "S" .OR. __sanacije == .F.
+   IF gOsSII == "S" .OR. s_lSanacije == .F.
       RETURN _hash
    ENDIF
 
-   _qry := "SELECT "
-   _qry += " id, "
-   _qry += " opis, "
-   _qry += " datum, "
-   _qry += " nabvr, "
-   _qry += " otpvr "
-   _qry += "FROM " + F18_PSQL_SCHEMA_DOT + "os_promj "
-   _qry += "WHERE id = " + sql_quote( id )
-   _qry += "  AND opis LIKE '#S%' "
-   _qry += "  AND " + _sql_date_parse( "datum", datum_od, datum_do )
-   _qry += "ORDER BY datum "
+   cQuery := "SELECT "
+   cQuery += " id, "
+   cQuery += " opis, "
+   cQuery += " datum, "
+   cQuery += " nabvr, "
+   cQuery += " otpvr "
+   cQuery += "FROM " + F18_PSQL_SCHEMA_DOT + "os_promj "
+   cQuery += "WHERE id = " + sql_quote( id )
+   cQuery += "  AND opis LIKE '#S%' "
+   cQuery += "  AND " + _sql_date_parse( "datum", datum_od, datum_do )
+   cQuery += "ORDER BY datum "
 
-   _data := run_sql_query( _qry )
+   _data := run_sql_query( cQuery )
 
    IF !is_var_objekat_tpqquery( _data )
       RETURN _hash
@@ -659,7 +666,7 @@ FUNCTION os_izracunaj_amortizaciju( nNabVr, nOtpVr, nOstalo, d1, d2, nGAmort, sa
    LOCAL nSanacijeNab
    LOCAL nSanacijeOtp
    LOCAL hAmortizacija := hb_hash()
-   
+
    IF gMetodObr == "1" // tekuca metoda
       RETURN os_proracun_amortizacija_od_do( nNabVr, nOtpvr, nOstalo, d1, d2, nGAmort, sanacije )
    ENDIF
@@ -826,7 +833,7 @@ FUNCTION os_obracun_revalorizacije()
 
    //o_reval()
    o_os_sii()
-   o_os_sii_promj()
+   //o_os_sii_promj()
 
    dDatObr := os_datum_obracuna()
    cFiltK1 := Space( 40 )
@@ -895,7 +902,9 @@ FUNCTION os_obracun_revalorizacije()
       nURevAm += nRevAm
       Gather()
       PRIVATE cId := _id
-      select_promj(); HSEEK cid
+
+      os_select_promj( cId )
+      // HSEEK cid
       DO WHILE !Eof() .AND. id == cid .AND. datum <= dDatObr
          Scatter()
          nRevAm := 0

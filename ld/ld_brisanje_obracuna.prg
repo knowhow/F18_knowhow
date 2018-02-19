@@ -181,7 +181,7 @@ FUNCTION BrisiMjesec()
       Box(, 4, 60 )
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRJ
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Mjesec: "  GET nMjesec PICT "99"
-      @ box_x_koord() + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+      @ box_x_koord() + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN ld_help_broj_obracuna( .F., cObracun ) VALID ld_valid_obracun( .F., cObracun )
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: "  GET nGodina PICT "9999"
       READ
       ClvBox()

@@ -496,12 +496,12 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
    // IF gSamokol != "D"
 
    @ box_x_koord() + nX, Col() + 2 SAY IF( _idtipdok $ "13#23" .AND. ( gVar13 == "2" .OR. glCij13Mpc ), ;
-      "MPC.s.PDV", "Cijena (" + AllTrim( ValDomaca() ) + ")" ) GET _cijena PICT fakt_pic_cijena() ;
+      "MPC.s.PDV", "Cijena (" + AllTrim( valuta_domaca_skraceni_naziv() ) + ")" ) GET _cijena PICT fakt_pic_cijena() ;
       WHEN  _podbr <> " ." ;
       VALID fakt_valid_cijena( _cijena, _idtipdok, lFaktNoviRec )
 
 
-   IF ( PadR( _dindem, 3 ) <> PadR( ValDomaca(), 3 ) )
+   IF ( PadR( _dindem, 3 ) <> PadR( valuta_domaca_skraceni_naziv(), 3 ) )
       @ box_x_koord() + nX, Col() + 2 SAY "Pr"  GET cConvertDN ;
          PICT "@!"  VALID fakt_valid_preracun_cijene_u_valutu_dokumenta( @cConvertDN, _dindem, _datdok, @_cijena )
    ENDIF

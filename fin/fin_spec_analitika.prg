@@ -43,7 +43,7 @@ FUNCTION specifikacija_po_analitickim_kontima()
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "Datum od" GET dDatOd
       @ box_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo
       IF fin_dvovalutno()
-         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cTip VALID ctip $ "12"
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Obracun za " + AllTrim( valuta_domaca_skraceni_naziv() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cTip VALID ctip $ "12"
       ENDIF
       @ box_x_koord() + 7, box_y_koord() + 2 SAY "Prikaz sintetickih konta (D/N):" GET cSK PICT "@!" VALID cSK $ "DN"
       @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
@@ -175,7 +175,7 @@ STATIC FUNCTION zagl_spec_anal()
 
    ?
    P_COND
-   ?? "FIN.P:SPECIFIKACIJA ANALITICKIH KONTA  ZA", AllTrim( iif( cTip == "1", ValDomaca(), ValPomocna() ) )
+   ?? "FIN.P:SPECIFIKACIJA ANALITICKIH KONTA  ZA", AllTrim( iif( cTip == "1", valuta_domaca_skraceni_naziv(), ValPomocna() ) )
    IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
       ?? "  ZA NALOGE U PERIODU ", dDatOd, "-", dDatDo
    ENDIF

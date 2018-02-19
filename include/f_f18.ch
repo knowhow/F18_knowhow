@@ -183,7 +183,7 @@
 #define F_TPRSIHT  179
 #define F_RADSIHT  180
 #define F_BANKE    181
-#define F_OBRACUNI 182
+#define F_LD_OBRACUNI 182
 #define F_RADSAT   183
 #define F_REKLDP   184
 #define F_IZDANJA  185

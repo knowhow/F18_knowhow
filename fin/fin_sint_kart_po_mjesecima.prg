@@ -231,11 +231,11 @@ FUNCTION ZaglSink2()
    IF fin_jednovalutno(); F10CPI; ENDIF
    ?  m
    IF fin_dvovalutno()
-      ?  "*  MJESEC    *             I Z N O S     U     " + ValDomaca() + "               *       I Z N O S     U     " + ValPomocna() + "         *"
+      ?  "*  MJESEC    *             I Z N O S     U     " + valuta_domaca_skraceni_naziv() + "               *       I Z N O S     U     " + ValPomocna() + "         *"
       ?  "              ---------------------------------------------------- -----------------------------------------"
       ?U  "*            *    DUGUJE      *     POTRAŽUJE   *      SALDO      *   DUGUJE    *  POTRA@UJE  *    SALDO   *"
    ELSE
-      ?  "*  MJESEC    *             I Z N O S     U     " + ValDomaca() + "               *"
+      ?  "*  MJESEC    *             I Z N O S     U     " + valuta_domaca_skraceni_naziv() + "               *"
       ?  "              -----------------------------------------------------"
       ?U  "*            *    DUGUJE      *     POTRAŽUJE   *      SALDO      *"
    ENDIF

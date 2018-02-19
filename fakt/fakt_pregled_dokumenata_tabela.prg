@@ -356,8 +356,9 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
    CASE Upper( Chr( nCh ) ) == "N"
 
       fakt_print_narudzbenica( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
-      nRet := DE_CONT
+      nRet := DE_REFRESH
       lRefresh := .T.
+      lReload := .T.
 
    CASE Upper( Chr( nCh ) ) == "F"
 
@@ -389,11 +390,11 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    IF lRefresh
 
-      // SELECT ( nDbfArea )
-      // SET ORDER TO TAG "1"
-      IF lReload
+      SELECT F_FAKT_DOKS_PREGLED
+      IF !Used() .OR. lReload
          fakt_pregled_reload_tables()
       ENDIF
+
       SELECT FAKT_DOKS_PREGLED
       GO ( nFaktDokTekuciZapis )
       nRet := DE_REFRESH

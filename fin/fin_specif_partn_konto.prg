@@ -39,7 +39,7 @@ FUNCTION fin_spec_partnera_na_kontu()
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Konto  " GET qqKonto PICTURE "@!S50"
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "Partner" GET qqPartner PICTURE "@!S50"
    @ box_x_koord() + 6, box_y_koord() + 2 SAY "Duguje/Potrazuje (1/2) ?" GET cDP PICTURE "@!" VALID cDP $ "12"
-   @ box_x_koord() + 7, box_y_koord() + 2 SAY "IZNOS " + ValDomaca() GET nIznos  PICTURE '999999999999.99'
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY "IZNOS " + valuta_domaca_skraceni_naziv() GET nIznos  PICTURE '999999999999.99'
    IF fin_dvovalutno()
       @ box_x_koord() + 8, box_y_koord() + 2 SAY "IZNOS " + ValPomocna() GET nIznos2 PICTURE '9999999999.99'
    ENDIF
@@ -48,7 +48,7 @@ FUNCTION fin_spec_partnera_na_kontu()
    READ
    IF cF == "2"
       IF fin_dvovalutno()
-         @ box_x_koord() + 10, box_y_koord() + 40 SAY AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cDD VALID cDD $ "12"
+         @ box_x_koord() + 10, box_y_koord() + 40 SAY AllTrim( valuta_domaca_skraceni_naziv() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cDD VALID cDD $ "12"
          READ
       ELSE
          cDD := "1"
@@ -260,9 +260,9 @@ FUNCTION ZaglDPK()
    ENDIF
    IF nIznos <> 0
       IF cDP == "1"
-         ?? "KOJI DUGUJU PREKO", nIznos, AllTrim( ValDomaca() )
+         ?? "KOJI DUGUJU PREKO", nIznos, AllTrim( valuta_domaca_skraceni_naziv() )
       ELSE
-         ?? "KOJI POTRA�UJU PREKO", nIznos, AllTrim( ValDomaca() )
+         ?? "KOJI POTRA�UJU PREKO", nIznos, AllTrim( valuta_domaca_skraceni_naziv() )
       ENDIF
    ELSEIF nIznos2 <> 0
       IF cDP == "1"
@@ -277,7 +277,7 @@ FUNCTION ZaglDPK()
    ELSE
       @ PRow(), 100 SAY "Str:" + Str( ++nStr, 3 )
       IF cDD == "1"
-         @ PRow() + 1, 4 SAY "*** OBRA�UN ZA " + ValDomaca() + "****"
+         @ PRow() + 1, 4 SAY "*** OBRA�UN ZA " + valuta_domaca_skraceni_naziv() + "****"
       ELSE
          @ PRow() + 1, 4 SAY "*** OBRA�UN ZA " + ValPomocna() + "****"
       ENDIF
@@ -292,7 +292,7 @@ FUNCTION ZaglDPK()
       ? "----- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------------------ ----- ----------------- ----------------------------------------------------------------------- -----------------------------------------------------------------------"
       ? "*RED.*" + PadC( "�IFRA", FIELD_PARTNER_ID_LENGTH ) + "*     NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *       K  U  M  U  L  A  T  I  V  N  I       P  R  O  M  E  T           *                 S      A      L      D       O                       *"
       ? "      " + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "                                                              ----------------------------------------------------------------------- -----------------------------------------------------------------------"
-      ? "*BROJ*" + Replicate( " ", FIELD_PARTNER_ID_LENGTH ) + "*                                   * BROJ*                 *   DUGUJE   " + ValDomaca() + "  *  POTRA�UJE " + ValDomaca() + " *   DUGUJE  " + ValPomocna() + "  *   POTRA�. " + ValPomocna() + "  *    DUGUJE " + ValDomaca() + "  *  POTRA�UJE " + ValDomaca() + " *   DUGUJE  " + ValPomocna() + "  *   POTRA�." + ValPomocna() + "  *"
+      ? "*BROJ*" + Replicate( " ", FIELD_PARTNER_ID_LENGTH ) + "*                                   * BROJ*                 *   DUGUJE   " + valuta_domaca_skraceni_naziv() + "  *  POTRA�UJE " + valuta_domaca_skraceni_naziv() + " *   DUGUJE  " + ValPomocna() + "  *   POTRA�. " + ValPomocna() + "  *    DUGUJE " + valuta_domaca_skraceni_naziv() + "  *  POTRA�UJE " + valuta_domaca_skraceni_naziv() + " *   DUGUJE  " + ValPomocna() + "  *   POTRA�." + ValPomocna() + "  *"
       ? m
    ELSEIF cPG == "D"
       ? "----- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------ ---------------- ----------------------------------- -----------------------------------"

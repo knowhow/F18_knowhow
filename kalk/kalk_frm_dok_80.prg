@@ -35,7 +35,7 @@ FUNCTION kalk_get1_80( atrib )
       @ box_x_koord() + nX, Col() + 1 SAY "Datum:" GET _DatFaktP
 
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x -1, 40, 20 ) } PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto zadužuje/razdužuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_konto( _kord_x - 1, 40, 20 ) } PICT "@!"
 
       // IF gNW <> "X"
       // @ box_x_koord() + nX, box_y_koord() + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
@@ -44,7 +44,7 @@ FUNCTION kalk_get1_80( atrib )
       ++nX
       _kord_x := box_x_koord() + nX
 
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_sifre( F_KONTO, _idkonto2, _kord_x, 30, 20 )  } PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_konto( _kord_x, 30, 20 )  } PICT "@!"
 
       // IF gNW <> "X"
       // @ box_x_koord() + nX, box_y_koord() + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz2 )

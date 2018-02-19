@@ -227,11 +227,11 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
    P_NRED
    ?? m
    P_NRED
-   ?? "*RED*" + PadC( iif( gDatNal == "D", "", "DATUM" ), 8 ) + "*           NAZIV KONTA                               *            IZNOS U " + ValDomaca() + "           *" + IF( fin_jednovalutno(), "", "     IZNOS U " + ValPomocna() + "       *" )
+   ?? "*RED*" + PadC( iif( gDatNal == "D", "", "DATUM" ), 8 ) + "*           NAZIV KONTA                               *            IZNOS U " + valuta_domaca_skraceni_naziv() + "           *" + IF( fin_jednovalutno(), "", "     IZNOS U " + ValPomocna() + "       *" )
    P_NRED
    ?? "    *        *                                                      ----------------------------------- " + IF( fin_jednovalutno(), "", "-------------------------" )
    P_NRED
-   ?? "*BR *        *                                                     * DUGUJE  " + ValDomaca() + "    * POTRAZUJE  " + ValDomaca() + " *" + IF( fin_jednovalutno(), "", " DUG. " + ValPomocna() + "  * POT. " + ValPomocna() + " *" )
+   ?? "*BR *        *                                                     * DUGUJE  " + valuta_domaca_skraceni_naziv() + "    * POTRAZUJE  " + valuta_domaca_skraceni_naziv() + " *" + IF( fin_jednovalutno(), "", " DUG. " + ValPomocna() + "  * POT. " + ValPomocna() + " *" )
    P_NRED
    ?? m
 

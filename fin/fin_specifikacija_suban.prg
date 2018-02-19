@@ -119,7 +119,7 @@ FUNCTION fin_specifikacija_suban()
       @ box_x_koord() + 6, Col() + 2 SAY "do" GET dDatDo
 
       IF fin_dvovalutno()
-         @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Obračun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTipDomacaStranaObje VALID cTipDomacaStranaObje $ "123"
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Obračun za " + AllTrim( valuta_domaca_skraceni_naziv() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( valuta_domaca_skraceni_naziv() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTipDomacaStranaObje VALID cTipDomacaStranaObje $ "123"
       ELSE
          cTipDomacaStranaObje := "1"
       ENDIF
@@ -661,11 +661,11 @@ FUNCTION zagl_fin_specif( cSpecifSkracenaVarijantaDN, cOpcine, cUslovPartnerTele
    ??U "FIN: SPECIFIKACIJA SUBANALITIČKIH KONTA  ZA "
 
    IF cTipDomacaStranaObje == "1"
-      ?? ValDomaca()
+      ?? valuta_domaca_skraceni_naziv()
    ELSEIF cTipDomacaStranaObje == "2"
       ?? ValPomocna()
    ELSE
-      ?? AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() )
+      ?? AllTrim( valuta_domaca_skraceni_naziv() ) + "-" + AllTrim( ValPomocna() )
    ENDIF
 
    IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
@@ -715,9 +715,9 @@ FUNCTION zagl_fin_specif( cSpecifSkracenaVarijantaDN, cOpcine, cUslovPartnerTele
       ENDIF
    ELSE
       IF cSpecifSkracenaVarijantaDN != "D"
-         ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  NAZIV KONTA / PARTNERA                                       saldo " + ValDomaca() + "           saldo " + AllTrim( ValPomocna() )
+         ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  NAZIV KONTA / PARTNERA                                       saldo " + valuta_domaca_skraceni_naziv() + "           saldo " + AllTrim( ValPomocna() )
       ELSE
-         ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  " + PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "saldo " + ValDomaca(), nDIznos ) + " " + PadC( "saldo " + AllTrim( ValPomocna() ), nDIznos )
+         ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  " + PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "saldo " + valuta_domaca_skraceni_naziv(), nDIznos ) + " " + PadC( "saldo " + AllTrim( ValPomocna() ), nDIznos )
       ENDIF
    ENDIF
    ? m

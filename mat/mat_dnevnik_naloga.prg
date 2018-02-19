@@ -122,10 +122,10 @@ STATIC FUNCTION _zaglavlje( line )
    _r_line_2 += PadR( "* NAL", 9 )
 
    _r_line_1 += PadR( "*   DUGUJE", 13 )
-   _r_line_2 += PadR( "*   " + ValDomaca(), 13 )
+   _r_line_2 += PadR( "*   " + valuta_domaca_skraceni_naziv(), 13 )
 
    _r_line_1 += PadR( "* POTRAZUJE", 13 )
-   _r_line_2 += PadR( "*   " + ValDomaca(), 13 )
+   _r_line_2 += PadR( "*   " + valuta_domaca_skraceni_naziv(), 13 )
 
    _r_line_1 += PadR( "*   DUGUJE", 13 )
    _r_line_2 += PadR( "*   " + ValPomocna(), 13 )

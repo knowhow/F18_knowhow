@@ -45,7 +45,7 @@ FUNCTION PregNDP()
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "Period:" GET dDatOd
    @ box_x_koord() + 5, Col() + 2 SAY "do" GET dDatDo VALID dDatDo >= dDatOd
    IF fin_dvovalutno()
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)"  GET cDinDEM VALID cdindem $ "12"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Prikaz " + AllTrim( valuta_domaca_skraceni_naziv() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)"  GET cDinDEM VALID cdindem $ "12"
    ENDIF
    @ box_x_koord() + 8, box_y_koord() + 2 SAY "Prikaz: (1) stavki kod kojih nije bilo promjena u toku tekuce godine"
    @ box_x_koord() + 9, box_y_koord() + 2 SAY "        (2) stavki kod kojih nije bilo promjena u zadanom periodu"

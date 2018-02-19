@@ -116,7 +116,7 @@ METHOD open()
          ::getPartner( 5 )
       ENDIF
 
-      @ box_x_koord() + 9, box_y_koord() + 2  SAY Valdomaca() + "/" + VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ ValDomaca() + "#" + ValPomocna()
+      @ box_x_koord() + 9, box_y_koord() + 2  SAY valuta_domaca_skraceni_naziv() + "/" + VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ valuta_domaca_skraceni_naziv() + "#" + ValPomocna()
 
       READ
       ESC_RETURN 0

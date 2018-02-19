@@ -1066,6 +1066,87 @@ FUNCTION kalk_unos_1( lNoviDokument, hParams )
    RETURN .T.
 
 
+
+FUNCTION ispisi_naziv_konto( x, y, len )
+
+   LOCAL cNaz := ""
+
+   // LOCAL nDbfArea := Select()
+
+   PushWa()
+   SELECT F_KONTO
+
+   IF !Used()
+      PopWa()
+      RETURN .F.
+   ENDIF
+
+
+   cNaz := AllTrim( field->naz )
+
+   @ x, y SAY PadR( cNaz, len )
+
+   PopWa()
+
+   RETURN .T.
+
+
+
+FUNCTION ispisi_naziv_partner( x, y, len )
+
+   LOCAL cNaz := ""
+
+   // LOCAL nDbfArea := Select()
+
+   PushWa()
+   SELECT F_PARTN
+
+   IF !Used()
+      PopWa()
+      RETURN .F.
+   ENDIF
+
+   cNaz := AllTrim( field->naz )
+
+   @ x, y SAY PadR( cNaz, len )
+
+   PopWa()
+
+   RETURN .T.
+
+
+FUNCTION ispisi_naziv_roba( x, y, len )
+
+   LOCAL cNaz := ""
+
+   // LOCAL nDbfArea := Select()
+
+   PushWa()
+   SELECT F_ROBA
+
+   IF !Used()
+      PopWa()
+      RETURN .F.
+   ENDIF
+
+
+   cNaz := AllTrim( field->naz )
+
+   IF Len( cNaz ) >= len
+      cNaz := PadR( cNaz, len - 6 )
+   ENDIF
+   cNaz += " (" + AllTrim( field->jmj ) + ")"
+
+   @ x, y SAY PadR( cNaz, len )
+
+   PopWa()
+
+   RETURN .T.
+
+
+
+
+/*
 FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
 
    LOCAL _naz := ""
@@ -1098,7 +1179,7 @@ FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
 
    RETURN .T.
 
-
+*/
 
 
 FUNCTION kalk_unos_2()
@@ -1578,10 +1659,10 @@ FUNCTION o_kalk_edit()
    // select_o_konto()
    o_tdok()
    o_valute()
-   //o_tarifa()
+   // o_tarifa()
    o_koncij()
-   //o_sifk()
-   //o_sifv()
+   // o_sifk()
+   // o_sifv()
    o_kalk_pripr()
 
    SELECT kalk_pripr

@@ -23,7 +23,7 @@ FUNCTION os_obracuni()
 
    __sanacije := .F.
 
-   cTip := IF( gDrugaVal == "D", ValDomaca(), "" )
+   cTip := IF( gDrugaVal == "D", valuta_domaca_skraceni_naziv(), "" )
    cBBV := cTip
    nBBK := 1
 

@@ -96,7 +96,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
       @ box_x_koord() + 9, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
 
       IF fin_dvovalutno()
-         @ box_x_koord() + 10, box_y_koord() + 2 SAY "Kartica za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3)"  GET cDinDem VALID cDinDem $ "123"
+         @ box_x_koord() + 10, box_y_koord() + 2 SAY "Kartica za " + AllTrim( valuta_domaca_skraceni_naziv() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( valuta_domaca_skraceni_naziv() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3)"  GET cDinDem VALID cDinDem $ "123"
       ENDIF
 
       @ box_x_koord() + 11, box_y_koord() + 2 SAY "Sabrati po brojevima veze D/N ?"  GET cPoVezi VALID cPoVezi $ "DN" PICT "@!"
@@ -593,7 +593,7 @@ FUNCTION ZaglSif2( fStrana )
       ??U "FIN: SUBANALITIČKA KARTICA  ZA "
    ENDIF
 
-   ?? iif( cDinDem == "1", AllTrim( ValDomaca() ), iif( cDinDem == "2", AllTrim( ValPomocna() ), AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) ) ), " NA DAN:", Date()
+   ?? iif( cDinDem == "1", AllTrim( valuta_domaca_skraceni_naziv() ), iif( cDinDem == "2", AllTrim( ValPomocna() ), AllTrim( valuta_domaca_skraceni_naziv() ) + "-" + AllTrim( ValPomocna() ) ) ), " NA DAN:", Date()
    IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
       ?? "   ZA PERIOD OD", dDatOd, "DO", dDatDo
    ENDIF
@@ -617,22 +617,22 @@ FUNCTION ZaglSif2( fStrana )
    IF cDinDem == "3"
       IF cSazeta == "D"
          ?  "------- ----------- --------------------------- ---------------------------- -------------- -------------------------- ------------"
-         ?  "*KONTO * NALOG     *     D O K U M E N T        *      PROMET  " + ValDomaca() + "          *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO   *"
-         ?  "*       ----------- ------------------- -------- -----------------------------     " + ValDomaca() + "     * -------------------------    " + ValPomocna() + "    *"
+         ?  "*KONTO * NALOG     *     D O K U M E N T        *      PROMET  " + valuta_domaca_skraceni_naziv() + "          *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO   *"
+         ?  "*       ----------- ------------------- -------- -----------------------------     " + valuta_domaca_skraceni_naziv() + "     * -------------------------    " + ValPomocna() + "    *"
          ?  "*      * V.* BR    *   BROJ   * DATUM  *" + iif( cK14 == "1", " K1-K4 ", " VALUTA" ) + ;
             "*     DUG     *      POT     *              *      DUG    *   POT      *           *"
          ?  "*      * N.*       *          *        *       *                            *              *             *            *           *"
       ELSE
          IF gNW == "N"
             ?  "------- ----------------- -------------------------------------------------------------- --------------------------------- -------------- -------------------------- --------------"
-            ?  "*KONTO *   NALOG         *                    D  O  K  U  M  E  N  T                    *          PROMET  " + ValDomaca() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO     *"
-            ?  "*       ----------------- ------------------------------------ -------- ---------------- ----------------------------------      " + ValDomaca() + "    * --------------------------    " + ValPomocna() + "     *"
+            ?  "*KONTO *   NALOG         *                    D  O  K  U  M  E  N  T                    *          PROMET  " + valuta_domaca_skraceni_naziv() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO     *"
+            ?  "*       ----------------- ------------------------------------ -------- ---------------- ----------------------------------      " + valuta_domaca_skraceni_naziv() + "    * --------------------------    " + ValPomocna() + "     *"
             ?  "*      * V.*BR     * R.  *     TIP I      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS        *     DUG       *       POT       *              *      DUG    *   POT      *             *"
             ?  "*      * N.*       * Br. *     NAZIV      *          *        *        *                *               *                 *              *             *            *             *"
          ELSE
             ?  "------- ----------------- --------------------------------------------- --------------------------------- -------------- -------------------------- -------------"
-            ?  "*KONTO *   NALOG         *           D O K U M E N T                   *          PROMET  " + ValDomaca() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO     *"
-            ?  "*       ----------------- ------------------- -------- ---------------- ----------------------------------      " + ValDomaca() + "    * --------------------------    " + ValPomocna() + "     *"
+            ?  "*KONTO *   NALOG         *           D O K U M E N T                   *          PROMET  " + valuta_domaca_skraceni_naziv() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO     *"
+            ?  "*       ----------------- ------------------- -------- ---------------- ----------------------------------      " + valuta_domaca_skraceni_naziv() + "    * --------------------------    " + ValPomocna() + "     *"
             ?  "*      * V.*BR     * R.  *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS        *     DUG       *       POT       *              *      DUG    *   POT      *             *"
             ?  "*      * N.*       * Br. *          *        *        *                *               *                 *              *             *            *             *"
          ENDIF

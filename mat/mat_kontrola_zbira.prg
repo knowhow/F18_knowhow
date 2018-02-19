@@ -36,8 +36,8 @@ FUNCTION mat_kzb()
    LOCAL _header
 
    _header := PadR( "* NAZIV", 13 )
-   _header += PadR( "* DUGUJE " + ValDomaca(), 13 )
-   _header += PadR( "* POTRAZ." + ValDomaca(), 13 )
+   _header += PadR( "* DUGUJE " + valuta_domaca_skraceni_naziv(), 13 )
+   _header += PadR( "* POTRAZ." + valuta_domaca_skraceni_naziv(), 13 )
    _header += PadR( "* DUGUJE " + ValPomocna(), 13 )
    _header += PadR( "* POTRAZ." + ValPomocna(), 13 )
 

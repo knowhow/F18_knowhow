@@ -334,7 +334,7 @@ FUNCTION ZaglSpBrDana()
    ELSE
       cPom += "   POTRA�. "
    ENDIF
-   cPom += ValDomaca() + "  * "
+   cPom += valuta_domaca_skraceni_naziv() + "  * "
 
    IF fin_dvovalutno() // dvovalutno
       IF cD_P = "1"

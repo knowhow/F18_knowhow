@@ -96,7 +96,7 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Onemogućiti povrat azuriranog naloga u pripremu? (D/N)" GET gBezVracanja VALID gBezVracanja $ "DN" PICT "@!"
 
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2  SAY8 "Limit za otvorene stavke (" + ValDomaca() + ")" GET gnLOst PICT "99999.99"
+   @ box_x_koord() + nX, box_y_koord() + 2  SAY8 "Limit za otvorene stavke (" + valuta_domaca_skraceni_naziv() + ")" GET gnLOst PICT "99999.99"
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Otvorene stavke, konta za koja se brišu markeri:" GET cKontoLike
@@ -162,7 +162,7 @@ STATIC FUNCTION fin_parametri_izgleda()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz iznosa u " + ValPomocna() GET cPicEuro
 
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz iznosa u " + ValDomaca() GET gPicBHD
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz iznosa u " + valuta_domaca_skraceni_naziv() GET gPicBHD
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Sintetika i analitika se kreiraju u izvještajima? (D/N)" GET gSAKrIz VALID gSAKrIz $ "DN" PICT "@!"

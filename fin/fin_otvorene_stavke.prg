@@ -667,9 +667,9 @@ FUNCTION fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, fS
       ?? "*"
    ENDIF
    IF fin_dvovalutno()
-      ?? "  BrDok   *   dug " + ValDomaca() + "  *   pot " + ValDomaca() + "   *  saldo  " + ValDomaca() + " * dug " + ValPomocna() + " * pot " + ValPomocna() + " *saldo " + ValPomocna() + "*O*"
+      ?? "  BrDok   *   dug " + valuta_domaca_skraceni_naziv() + "  *   pot " + valuta_domaca_skraceni_naziv() + "   *  saldo  " + valuta_domaca_skraceni_naziv() + " * dug " + ValPomocna() + " * pot " + ValPomocna() + " *saldo " + ValPomocna() + "*O*"
    ELSE
-      ?? "  BrDok   *   dug " + ValDomaca() + "  *   pot " + ValDomaca() + "   *  saldo  " + ValDomaca() + " *O*"
+      ?? "  BrDok   *   dug " + valuta_domaca_skraceni_naziv() + "  *   pot " + valuta_domaca_skraceni_naziv() + "   *  saldo  " + valuta_domaca_skraceni_naziv() + " *O*"
    ENDIF
    ? M
 
@@ -800,7 +800,7 @@ STATIC FUNCTION fin_zagl_otv_st_za_broj_veze( cIdFirma, cIdKonto, cIdPartner, cB
    ? "BROJ VEZE:", cBrDok
    ? M
    // IF fin_dvovalutno()
-   // ? "Dat.dok.*Dat.val." + "*NALOG * Rbr *TD*   dug " + ValDomaca() + "   *  pot " + ValDomaca() + "  *   saldo " + ValDomaca() + "*  dug " + ValPomocna() + "* pot " + ValPomocna() + " *saldo " + ValPomocna() + "* O"
+   // ? "Dat.dok.*Dat.val." + "*NALOG * Rbr *TD*   dug " + valuta_domaca_skraceni_naziv() + "   *  pot " + valuta_domaca_skraceni_naziv() + "  *   saldo " + valuta_domaca_skraceni_naziv() + "*  dug " + ValPomocna() + "* pot " + ValPomocna() + " *saldo " + ValPomocna() + "* O"
    // ELSE
    ? "Dat.dok.*Dat.val.*VN* NALOG  * Rbr *      dug KM    *   pot KM    *   saldo KM  * O"
    // ENDIF

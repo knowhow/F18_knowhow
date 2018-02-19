@@ -332,28 +332,28 @@ STATIC FUNCTION ld_obracun_set_datum_isplate( cRj, nGod, nMjesec, cObr, dDatIspl
 
 
 
-FUNCTION ld_provjeri_dat_isplate_za_mjesec( godina, mjesec, rj )
+FUNCTION ld_provjeri_dat_isplate_za_mjesec( nGodina, nMjesec, cIdRj )
 
-   LOCAL _qry, _data, _count
+   LOCAL cQuery, _data, _count
 
-   _qry := "SELECT "
-   _qry += "  COUNT(*) "
-   _qry += "FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld ld "
-   _qry += "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_obracuni obr ON ld.godina = obr.godina AND ld.mjesec = obr.mjesec AND obr.status = 'G' "
+   cQuery := "SELECT "
+   cQuery += "  COUNT(*) "
+   cQuery += "FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld ld "
+   cQuery += "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_obracuni obr ON ld.godina = obr.godina AND ld.mjesec = obr.mjesec AND obr.status = 'G' "
 
-   IF rj <> NIL .AND. !Empty( rj )
-      _qry += " AND obr.rj = " + sql_quote( rj )
+   IF cIdRj <> NIL .AND. !Empty( cIdRj )
+      cQuery += " AND obr.rj = " + sql_quote( cIdRj )
    ELSE
-      _qry += " AND ld.idrj = obr.rj"
+      cQuery += " AND ld.idrj = obr.rj"
    ENDIF
 
-   _qry += " WHERE "
-   _qry += " ld.godina = " + AllTrim( Str( godina ) )
-   _qry += " AND ld.mjesec = " + AllTrim( Str( mjesec ) )
-   _qry += " AND obr.dat_ispl IS NULL "
-   _qry += "GROUP BY ld.godina, ld.mjesec, ld.idrj, obr.dat_ispl  "
+   cQuery += " WHERE "
+   cQuery += " ld.godina = " + AllTrim( Str( nGodina ) )
+   cQuery += " AND ld.mjesec = " + AllTrim( Str( nMjesec ) )
+   cQuery += " AND obr.dat_ispl IS NULL "
+   cQuery += "GROUP BY ld.godina, ld.mjesec, ld.idrj, obr.dat_ispl  "
 
-   _data := run_sql_query( _qry )
+   _data := run_sql_query( cQuery )
 
    _count := _data:FieldGet( 1 )
 

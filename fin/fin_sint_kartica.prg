@@ -280,11 +280,11 @@ FUNCTION SinKZagl()
    ENDIF
    ?  m
    IF fin_dvovalutno()
-      ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + ValDomaca() + "             *      I  Z  N  O  S     U     " + ValPomocna() + "      *"
+      ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + valuta_domaca_skraceni_naziv() + "             *      I  Z  N  O  S     U     " + ValPomocna() + "      *"
       ?  "                               ---------------------------------------------------- -----------------------------------------"
       ?U  "*NALOGA*NALOGA  *BROJ*        *    DUGUJE      *     POTRAŽUJE   *      SALDO      *   DUGUJE    *  POTRAZUJE  *    SALDO   *"
    ELSE
-      ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + ValDomaca() + "             *"
+      ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + valuta_domaca_skraceni_naziv() + "             *"
       ?  "                               -----------------------------------------------------"
       ?U  "*NALOGA*NALOGA  *BROJ*        *    DUGUJE      *     POTRAŽUJE   *      SALDO      *"
    ENDIF

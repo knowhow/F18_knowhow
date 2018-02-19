@@ -165,7 +165,7 @@ STATIC FUNCTION ZglSpSifK()
    ?U "----- ------- ----------------------------- ------------------------------------------------------------ -----------------------------"
    ?U "*RED.* KONTO *       N A Z I V             *     K U M U L A T I V N I    P R O M E T                   *      S A L D O              "
    ?U "                                            ------------------------------------------------------------ -----------------------------"
-   ?U "*BROJ*       *       K O N T A             *  DUGUJE   " + ValDomaca() + "  *  POTRAŽUJE " + ValDomaca() + "* DUGUJE " + ValPomocna() + "* POTRAŽ " + ValPomocna() + "*    " + ValDomaca() + "        *    " + ValPomocna() + "   *"
+   ?U "*BROJ*       *       K O N T A             *  DUGUJE   " + valuta_domaca_skraceni_naziv() + "  *  POTRAŽUJE " + valuta_domaca_skraceni_naziv() + "* DUGUJE " + ValPomocna() + "* POTRAŽ " + ValPomocna() + "*    " + valuta_domaca_skraceni_naziv() + "        *    " + ValPomocna() + "   *"
    ? M
 
    SELECT SUBAN

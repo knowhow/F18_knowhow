@@ -71,7 +71,7 @@ FUNCTION fin_knjizenje_naloga()
       { "Br.veze ",      {|| field->BrDok   }, "BrDok" }, ;
       { "Datum",         {|| field->DatDok  }, "DatDok" }, ;
       { "D/P",           {|| field->D_P     }, "D_P" }, ;
-      { "Iznos " + AllTrim( ValDomaca() ), {|| Transform( field->IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznosbhd" }, ;
+      { "Iznos " + AllTrim( valuta_domaca_skraceni_naziv() ), {|| Transform( field->IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznosbhd" }, ;
       { "Iznos " + AllTrim( ValPomocna() ), {|| Transform( field->IznosDEM, FormPicL( pic_iznos_eur(), 10 ) ) }, "iznosdem" }, ;
       { "Opis",          {|| PadR( Left( field->Opis, 37 ) + iif( Len( AllTrim( field->Opis ) ) > 37, "...", "" ), 40 )  }, "OPIS" }, ;
       { "K1",            {|| field->k1      }, "k1" }, ;
@@ -763,7 +763,7 @@ FUNCTION V_DP()
       ??U "POTRAŽUJE"
    ENDIF
 
-   ?? " " + ValDomaca()
+   ?? " " + valuta_domaca_skraceni_naziv()
 
    SetPos( box_x_koord() + 17, box_y_koord() + 30 )
 

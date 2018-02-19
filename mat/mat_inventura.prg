@@ -212,7 +212,7 @@ FUNCTION mat_inv_tabela()
    AAdd( ImeKol, { PadR( "Roba", 60 ), {|| pr_roba( idroba ) } } )
    AAdd( ImeKol, { "Cijena", {|| cijena } } )
    AAdd( ImeKol, { "Kolicina", {|| kolicina } } )
-   AAdd( ImeKol, { "Iznos " + ValDomaca(), {|| iznos } } )
+   AAdd( ImeKol, { "Iznos " + valuta_domaca_skraceni_naziv(), {|| iznos } } )
    AAdd( ImeKol, { "Partner", {|| idpartner } } )
 
    FOR _cnt := 1 TO Len( ImeKol )

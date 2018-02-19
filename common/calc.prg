@@ -156,7 +156,7 @@ FUNCTION a_val_convert()
 
       // cIzraz := ALLTRIM( STR( nIzraz ) )
 
-      nIzraz := Round( nIzraz * omjerval( ValDomaca(), ValPomocna(), Date() ), 5 )
+      nIzraz := Round( nIzraz * omjerval( valuta_domaca_skraceni_naziv(), ValPomocna(), Date() ), 5 )
       // konvertuj ali bez ENTER-a
       // konv( .f. )
 

@@ -19,7 +19,7 @@ FUNCTION os_izvjestaji()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   cTip := IF( gDrugaVal == "D", ValDomaca(), "" )
+   cTip := IF( gDrugaVal == "D", valuta_domaca_skraceni_naziv(), "" )
    cBBV := cTip
    nBBK := 1
 

@@ -49,7 +49,7 @@ FUNCTION kalk_get_1_10()
 
       ++nX
       nBoxKoordX := box_x_koord() + nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Magacinski Konto zadužuje" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, nBoxKoordX, 40, 30 ) } PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Magacinski Konto zadužuje" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_konto( nBoxKoordX, 40, 30 ) } PICT "@!"
 
       // IF gNW <> "X"
       // @ box_x_koord() + nX, box_y_koord() + 42  SAY "Zaduzuje: " GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
@@ -166,7 +166,7 @@ STATIC FUNCTION kalk_valid_dobavljac( cIdPartner, nX )
 
    p_partner( @cIdPartner )
 
-   ispisi_naziv_sifre( F_PARTN, cIdPartner, nX - 1, 22, 20 )
+   ispisi_naziv_partner( nX - 1, 22, 20 )
    ino_dobavljac_set_konverzija_valute( cIdpartner, @s_cKonverzijaValuteDN )
 
    IF Empty( cIdPartner )
@@ -194,7 +194,7 @@ FUNCTION kalk_ulaz_preracun_fakturne_cijene( cDn )
    IF cDN $ "DN"
       RETURN lRet
    ELSE
-      MsgBeep( "Preračun: " + valpomocna() + "=>" + valdomaca() + "#Unijeti 'D' ili 'N' !" )
+      MsgBeep( "Preračun: " + valpomocna() + "=>" + valuta_domaca_skraceni_naziv() + "#Unijeti 'D' ili 'N' !" )
       lRet := .F.
       RETURN lRet
    ENDIF

@@ -17,7 +17,7 @@ FUNCTION os_rpt_default_valute()
 
    LOCAL nArr := Select()
 
-   IF ( gDrugaVal == "D" .AND. cTip == ValDomaca() )
+   IF ( gDrugaVal == "D" .AND. cTip == valuta_domaca_skraceni_naziv() )
       Box(, 5, 70 )
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Pomocna valuta      " GET cBBV PICT "@!" VALID ImaUSifVal( cBBV )
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK := OmjerVal( cBBV, cTip ), .T. } PICT "999999999.999999999"

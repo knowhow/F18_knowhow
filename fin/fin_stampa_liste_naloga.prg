@@ -251,7 +251,7 @@ STATIC FUNCTION zagl( nBrNalLen, cInteg )
       ?? "  1  * 2 * 3 *"
    ENDIF
 
-   ? Space( PRINT_LEFT_SPACE ) + "*      *MA * N *" + PadR( " NAL", nBrNalLen + 1 ) + "* NAL    *    " + ValDomaca() + "        *      " + ValDomaca() + "     *"
+   ? Space( PRINT_LEFT_SPACE ) + "*      *MA * N *" + PadR( " NAL", nBrNalLen + 1 ) + "* NAL    *    " + valuta_domaca_skraceni_naziv() + "        *      " + valuta_domaca_skraceni_naziv() + "     *"
 
    IF fin_dvovalutno()
       ?? "    " + ValPomocna() + "    *    " + ValPomocna() + "   *"

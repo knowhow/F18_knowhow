@@ -441,7 +441,7 @@ FUNCTION BBMnoziSaK( cTip )
 
    LOCAL nArr := Select()
 
-   IF cTip == ValDomaca() .AND. my_get_from_ini( "FIN", "BrutoBilansUDrugojValuti", "N", KUMPATH ) == "D"
+   IF cTip == valuta_domaca_skraceni_naziv() .AND. my_get_from_ini( "FIN", "BrutoBilansUDrugojValuti", "N", KUMPATH ) == "D"
       Box(, 5, 70 )
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Pomocna valuta      " GET cBBV PICT "@!" VALID ImaUSifVal( cBBV )
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK := OmjerVal2( cBBV, cTip ), .T. } PICT "999999999.999999999"

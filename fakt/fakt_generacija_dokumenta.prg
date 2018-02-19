@@ -119,7 +119,7 @@ STATIC FUNCTION fakt_dodaj_stavku_inventura( cIdRj, cIdRoba, cBrDok, nKolicina, 
    ENDIF
 
    REPLACE brDok WITH cBrDok
-   REPLACE dinDem WITH ValDomaca()
+   REPLACE dinDem WITH valuta_domaca_skraceni_naziv()
 
    select_o_roba( cIdRoba )
 
@@ -200,7 +200,7 @@ STATIC FUNCTION dodaj_stavku_inventure_manjka( cIdRj, cIdRoba, cBrDok, nKolicina
    ENDIF
 
    REPLACE brDok WITH cBrDok
-   REPLACE dinDem WITH ValDomaca()
+   REPLACE dinDem WITH valuta_domaca_skraceni_naziv()
    REPLACE cijena WITH roba->vpc
 
    RETURN .T.
@@ -269,7 +269,7 @@ STATIC FUNCTION dodaj_stavku_inventure_viska( cIdRj, cIdRoba, cBrDok, nKolicina,
    ENDIF
 
    REPLACE brDok WITH cBrDok
-   REPLACE dinDem WITH ValDomaca()
+   REPLACE dinDem WITH valuta_domaca_skraceni_naziv()
    REPLACE cijena WITH roba->vpc
 
    RETURN .T.

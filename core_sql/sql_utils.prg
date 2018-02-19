@@ -230,7 +230,7 @@ FUNCTION _sql_cond_parse( cField, aConditions, not )
 
 FUNCTION sql_get_field_za_uslov( cTableName, cField, aConditions )
 
-   LOCAL _val
+   LOCAL xValue
    LOCAL cQuery := ""
    LOCAL oTable
    LOCAL _server := sql_data_conn()
@@ -276,17 +276,17 @@ FUNCTION sql_get_field_za_uslov( cTableName, cField, aConditions )
    ENDIF
 
    oRow := oTable:GetRow( 1 )
-   _val := oRow:FieldGet( 1 )
+   xValue := oRow:FieldGet( 1 )
 
-   IF ValType( _val ) == "L"
-      _val := NIL
+   IF ValType( xValue ) == "L"
+      xValue := NIL
    ENDIF
 
-   IF ValType( _val ) == "C"
-      _val := hb_UTF8ToStr( _val )
+   IF ValType( xValue ) == "C"
+      xValue := hb_UTF8ToStr( xValue )
    ENDIF
 
-   RETURN _val
+   RETURN xValue
 
 
 
@@ -785,7 +785,7 @@ FUNCTION sql_from_adbf( aDbf, cTable )
       OTHERWISE
          //MsgBeep( "ERROR sql_from_adbf field type !" )
          //RETURN NIL
-          cRet += cField 
+          cRet += cField
       ENDCASE
       cRet += " AS " + aDbf[ i, 1 ]
 

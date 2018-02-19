@@ -43,7 +43,7 @@ FUNCTION mat_specifikacija()
 
    IF cFmt == "2"
       cFmt := "1"
-      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Iznos u " + ValDomaca() + "/" + ValPomocna() + "(1/2) ?" GET cFmt VALID cFmt $ "12"
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Iznos u " + valuta_domaca_skraceni_naziv() + "/" + ValPomocna() + "(1/2) ?" GET cFmt VALID cFmt $ "12"
       READ
       IF cFmt == "1"
          cFmt := "2"
@@ -128,11 +128,11 @@ FUNCTION mat_specifikacija()
 
          ?? "MAT.P: SPECIFIKACIJA STANJA (U "
          IF cFmt == "1"
-            ?? ValDomaca() + "/" + ValPomocna() + ") "
+            ?? valuta_domaca_skraceni_naziv() + "/" + ValPomocna() + ") "
          ELSEIF cFmt == "2"
-            ?? ValDomaca() + ") "
+            ?? valuta_domaca_skraceni_naziv() + ") "
          ELSE
-            ?? ValDomaca() + ") "
+            ?? valuta_domaca_skraceni_naziv() + ") "
          ENDIF
          IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
             ?? "ZA PERIOD OD", dDatOd, "-", dDatDo
@@ -159,7 +159,7 @@ FUNCTION mat_specifikacija()
          SELECT mat_suban
          ?  m
          IF cFmt == "1"
-            ? "*R. *  SIFRA   *       N A Z I V                        *J. *   ZADNJA *  ZADNJA  *  ZADNJA  *       K O L I C I N A          *     V R I J E D N O S T    " + ValDomaca() + "   *        V R I J E D N O S T   " + ValPomocna() + "   *"
+            ? "*R. *  SIFRA   *       N A Z I V                        *J. *   ZADNJA *  ZADNJA  *  ZADNJA  *       K O L I C I N A          *     V R I J E D N O S T    " + valuta_domaca_skraceni_naziv() + "   *        V R I J E D N O S T   " + ValPomocna() + "   *"
             ? " Br.                                                    *   *    NC    *    VPC   *   MPC     ------------------------------- ------------------------------------ --------------------------------------"
             ? "*   *          *                                        *MJ.*          *          *          *   ULAZ   *  IZLAZ   *  STANJE  *  DUGUJE   * POTRAZUJE *   SALDO   *  DUGUJE    *  POTRAZUJE *  SALDO    *"
          ELSEIF cFmt == "2"

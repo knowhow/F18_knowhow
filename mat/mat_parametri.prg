@@ -58,7 +58,7 @@ STATIC FUNCTION _mat_obr_params()
    @ box_x_koord() + 14, box_y_koord() + 2 SAY "Koristiti polja partnera, lice zaduzuje D/N" GET gKupZad VALID gKupZad $ "DN" PICT "@!"
    @ box_x_koord() + 16, box_y_koord() + 2 SAY "Prikaz dvovalutno D/N" GET g2Valute VALID g2Valute $ "DN" PICT "@!"
    @ box_x_koord() + 17, box_y_koord() + 2 SAY "Pict " + ValPomocna() + ":" GET kalk_pic_iznos_bilo_gpicdem() PICT "@S15"
-   @ box_x_koord() + 18, box_y_koord() + 2 SAY "Pict " + ValDomaca() + ":"  GET gpicdin PICT "@S15"
+   @ box_x_koord() + 18, box_y_koord() + 2 SAY "Pict " + valuta_domaca_skraceni_naziv() + ":"  GET gpicdin PICT "@S15"
    @ box_x_koord() + 19, box_y_koord() + 2 SAY "Pict KOL :"  GET kalk_pic_kolicina_bilo_gpickol() PICT "@S15"
    @ box_x_koord() + 20, box_y_koord() + 2 SAY "Sa sifrom je vezan konto D/N" GET gKonto VALID gKonto $ "DN" PICT "@!"
    @ box_x_koord() + 21, box_y_koord() + 2 SAY "Sekretarski sistem (D/N) ?"  GET gSekS VALID gSekS $ "DN" PICT "@!"

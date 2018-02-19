@@ -56,7 +56,6 @@ FUNCTION find_os_sii_by_naz_or_id( cId )
 
    index_os_sii( cAlias )
 
-
    SEEK cId
    IF !Found()
       GO TOP
@@ -255,9 +254,9 @@ FUNCTION select_o_sii( cId )
 
 FUNCTION o_os_promj( cId )
 
-   LOCAL cTable := "os_promj", cAlias := "PROMJ"
+   LOCAL cTable := "os_promj", cAlias := "OS_PROMJ"
 
-   SELECT ( F_PROMJ )
+   SELECT ( F_OS_PROMJ )
    IF !use_sql_sif( cTable, .T., cAlias, cId )
       RETURN .F.
    ENDIF
@@ -271,7 +270,7 @@ FUNCTION o_os_promj( cId )
 
 FUNCTION select_o_os_promj( cId )
 
-   SELECT ( F_PROMJ )
+   SELECT ( F_OS_PROMJ )
    IF Used()
       IF RecCount() > 1 .AND. cId == NIL
          RETURN .T.
@@ -324,6 +323,16 @@ FUNCTION select_o_os_or_sii( cId )
    RETURN select_o_sii( cId )
 
 
+FUNCTION select_o_os_or_sii_area()
+
+  IF gOsSii == "O"
+     SELECT( F_OS )
+     RETURN .T.
+  ENDIF
+
+  SELECT( F_SII )
+  RETURN .T.
+
 
 FUNCTION os_select_promj( cId )
 
@@ -332,6 +341,17 @@ FUNCTION os_select_promj( cId )
    ENDIF
 
    RETURN select_o_sii_promj( cId )
+
+
+FUNCTION os_select_promj_area()
+
+   IF gOsSII == "O"
+      SELECT ( F_OS_PROMJ )
+      RETURN .T.
+   ENDIF
+
+   SELECT( F_SII_PROMJ )
+   RETURN .F.
 
 
 FUNCTION o_os_sii( cId )

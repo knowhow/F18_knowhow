@@ -16,7 +16,7 @@
 FUNCTION os_rpt_default_valute()
 
    LOCAL GetList := {}
-     
+
    LOCAL nArr := Select()
 
    IF ( gDrugaVal == "D" .AND. cTip == valuta_domaca_skraceni_naziv() )
@@ -38,8 +38,8 @@ FUNCTION PrikazVal()
    RETURN ( IIF( gDrugaVal == "D", " VALUTA:'" + Trim( cBBV ) + "'", "" ) )
 
 
-
-FUNCTION os_kartica_sredstva()
+/*
+-- FUNCTION os_kartica_sredstva()
 
    o_os_sii_promj()
    o_os_sii()
@@ -215,7 +215,7 @@ FUNCTION os_kartica_sredstva()
 
    RETURN
 // }
-
+*/
 
 
 // -----------------------------------------------------------

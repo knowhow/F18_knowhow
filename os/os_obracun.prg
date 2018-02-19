@@ -54,6 +54,7 @@ FUNCTION os_obracun_amortizacije()
    LOCAL nTAmortizacijaP := 0
    LOCAL hAmortizacija
    LOCAL GetList := {}
+   LOCAL cIdSredstvo
 
    PRIVATE nGStopa := 100
 
@@ -193,8 +194,8 @@ altd()
          nOstalo := hAmortizacija[ "ostalo" ]
 
 
-         // napuni _amp
-         IF cAGrupe == "N"
+
+         IF cAGrupe == "N" // napuni _amp
 
             ? _id, _datum, naz
 
@@ -218,13 +219,13 @@ altd()
          nTOtp += _otpvr
          nTAmortizacijaP += _amp
 
-         PRIVATE cId := _id
+         cIdSredstvo := _id
 
          hRec := get_hash_record_from_global_vars()
 
          SET DEVICE TO SCREEN
 
-//if left( cId, 6 ) == "022015"
+//if left( cIdSredstvo, 6 ) == "022015"
 //altd()
 //endif
          select_o_os_or_sii()
@@ -232,13 +233,13 @@ altd()
 
          SET DEVICE TO PRINTER
 
-//if left( cId, 4 ) == "0140"
+//if left( cIdSredstvo, 4 ) == "0140"
 //altd()
 //endif
          // amortizacija promjena
-         os_select_promj( cId )
+         os_select_promj( cIdSredstvo )
 
-         DO WHILE !Eof() .AND. field->id == cId .AND. field->datum <= dDatObr
+         DO WHILE !Eof() .AND. field->id == cIdSredstvo .AND. field->datum <= dDatObr
 
             set_global_memvars_from_dbf()
 
@@ -291,7 +292,7 @@ altd()
 
             SET DEVICE TO SCREEN
 
-            os_select_promj()
+            os_select_promj_area()
             update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
             SET DEVICE TO PRINTER
@@ -376,24 +377,23 @@ altd()
 
             nUkupno += Round( _amp, 2 )
 
-            PRIVATE cId := _id
+            cIdSredstvo := _id
 
-            // sinhronizuj podatke sql/server
             hRec := get_hash_record_from_global_vars()
 
             SET DEVICE TO SCREEN
 
-            select_o_os_or_sii()
+            select_o_os_or_sii_area()
             update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
             SET DEVICE TO PRINTER
 
 //altd()
             // amortizacija promjena
-            os_select_promj( cId )
-            //HSEEK cId
+            os_select_promj( cIdSredstvo )
+            //HSEEK cIdSredstvo
 
-            DO WHILE !Eof() .AND. field->id == cId .AND. field->datum <= dDatObr
+            DO WHILE !Eof() .AND. field->id == cIdSredstvo .AND. field->datum <= dDatObr
 
                set_global_memvars_from_dbf()
 
@@ -438,7 +438,7 @@ altd()
                SET DEVICE TO SCREEN
 
 //altd()
-               os_select_promj()
+               os_select_promj_area()
                update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
                SET DEVICE TO PRINTER
@@ -830,6 +830,7 @@ FUNCTION os_obracun_revalorizacije()
 
    LOCAL  cAGrupe := "D", nRec, dDatObr, nMjesOd, nMjesDo
    LOCAL nKoef
+   LOCAL cIdSredstvo
 
    //o_reval()
    o_os_sii()
@@ -901,11 +902,12 @@ FUNCTION os_obracun_revalorizacije()
       nURevPot += _revp
       nURevAm += nRevAm
       Gather()
-      PRIVATE cId := _id
 
-      os_select_promj( cId )
-      // HSEEK cid
-      DO WHILE !Eof() .AND. id == cid .AND. datum <= dDatObr
+      cIdSredstvo := _id
+
+      os_select_promj( cIdSredstvo )
+      // HSEEK cIdSredstvo
+      DO WHILE !Eof() .AND. id == cIdSredstvo .AND. datum <= dDatObr
          Scatter()
          nRevAm := 0
          nKoef := izracunaj_os_reval( _datum, iif( !Empty( _datotp ), Min( dDatOBr, _datotp ), dDatObr ), @nRevAm )

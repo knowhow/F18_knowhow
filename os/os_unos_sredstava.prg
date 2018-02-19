@@ -139,7 +139,7 @@ altd()
 
       ImeKol := {}
 
-      AAdd( ImeKol, { "DATUM",            {|| os_select_promj(), field->datum }                          } )
+      AAdd( ImeKol, { "DATUM",            {|| os_select_promj_area(), field->datum }                          } )
       AAdd( ImeKol, { "OPIS",             {|| field->opis }                          } )
       AAdd( ImeKol, { PadR( "Nabvr", 11 ),   {|| Transform( field->nabvr, gpici ) }     } )
       AAdd( ImeKol, { PadR( "OtpVr", 11 ),   {|| Transform( field->otpvr, gpici ) }     } )
@@ -194,6 +194,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
    LOCAL nTrec
    LOCAL cNoviInventurniBroj
    LOCAL _prom_dat, _prom_opis, _prom_nv, _prom_ov
+   LOCAL GetList := {}
 
    DO CASE
 
@@ -246,8 +247,8 @@ FUNCTION unos_os_promj_key_handler( Ch )
 
    CASE Ch == K_CTRL_T
 
-      IF pitanje(, "Sigurno zelite izbrisati promjenu ?", "N" ) == "D"
-         os_select_promj()
+      IF pitanje(, "Sigurno želite izbrisati promjenu ?", "N" ) == "D"
+         os_select_promj_area()
          hRec := dbf_get_rec()
          delete_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
          os_unos_show_sadasnja_vrijednost( cIdSredstvo, @aVr, @aSred )
@@ -267,7 +268,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Opis : " GET cOpisOtp
 
       IF field->kolicina > 1
-         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Kolicina koja se otpisuje:" GET nKolotp PICT "999999.99" VALID ( nKolotp <= field->kolicina .AND. nKolotp >= 1 )
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Količina koja se otpisuje:" GET nKolotp PICT "999999.99" VALID ( nKolotp <= field->kolicina .AND. nKolotp >= 1 )
       ENDIF
 
       READ
@@ -275,7 +276,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
       BoxC()
 
       IF LastKey() == K_ESC
-         os_select_promj()
+         os_select_promj_area()
          RETURN DE_CONT
       ENDIF
 
@@ -315,7 +316,6 @@ FUNCTION unos_os_promj_key_handler( Ch )
       ELSE
 
          select_o_os_or_sii()
-
          hRec := dbf_get_rec()
          hRec[ "datotp" ] := dDatOtp
          hRec[ "opisotp" ] := cOpisOtp
@@ -335,7 +335,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
       ENDIF
 
       IF fRastavljeno
-         Msg( "Postojeci inv broj je rastavljen na dva-otpisani i neotpisani" )
+         Msg( "Postojeći inv broj je rastavljen na dva-otpisani i neotpisani" )
          RETURN DE_ABORT
       ELSE
          RETURN DE_REFRESH
@@ -383,7 +383,7 @@ FUNCTION unos_os_promj_key_handler( Ch )
          cIdSredstvo := cNoviInventurniBroj
       ENDIF
 
-      os_select_promj()
+      os_select_promj_area()
       RETURN DE_REFRESH
 
    OTHERWISE

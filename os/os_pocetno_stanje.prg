@@ -397,7 +397,6 @@ STATIC FUNCTION os_insert_into_promj( oDataset )
 
       os_select_promj()
       APPEND BLANK
-
       update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
 
       @ box_x_koord() + 5, box_y_koord() + 2 SAY promj_table_name() + "/ promjena za sredstvo: " + hRec[ "id" ]

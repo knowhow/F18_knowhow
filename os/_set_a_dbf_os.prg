@@ -17,7 +17,7 @@ FUNCTION set_a_dbf_os()
    LOCAL hAlgoritam
 
    // kumulativne tabele
-   set_a_sql_os_sii_promj( "os_promj", "PROMJ", F_PROMJ )
+   set_a_sql_os_sii_promj( "os_promj", "OS_PROMJ", F_OS_PROMJ )
    set_a_sql_os_sii_promj( "sii_promj", "SII_PROMJ", F_SII_PROMJ )
 
    // tabele sa strukturom sifarnika (id je primarni ključ)

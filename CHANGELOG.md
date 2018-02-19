@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.183-std, 2018-02-19
+### OS
+- os_promj crna rupa fix
+
 ## 3.1.180-std, 2018-02-16
 ### OS
 - fix os_promj sem

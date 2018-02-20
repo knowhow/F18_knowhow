@@ -40,7 +40,6 @@ FUNCTION unos_osnovnih_sredstava()
 
          nDbfArea := Select()
 
-altd()
          select_o_os_or_sii()
          GO TOP
          SEEK cIdSredstvo
@@ -180,7 +179,7 @@ altd()
 
    BoxC()
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    RETURN .T.
 
@@ -198,14 +197,21 @@ FUNCTION unos_os_promj_key_handler( Ch )
 
    DO CASE
 
-   CASE ( Ch == K_ENTER .AND. !( Eof() .OR. Bof() ) ) .OR. Ch == K_CTRL_N
+   CASE Ch == K_ENTER  .OR. Ch == K_CTRL_N
+
+      IF Ch == K_ENTER
+          IF Empty( field->Id )
+             RETURN DE_CONT
+          ENDIF
+      ENDIF
 
       IF Ch == K_CTRL_N
          GO BOTTOM
          SKIP 1
       ENDIF
 
-      os_select_promj()
+      os_select_promj_area()
+
       hRec := dbf_get_rec()
 
       _prom_dat := hRec[ "datum" ]

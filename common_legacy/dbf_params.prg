@@ -16,6 +16,7 @@ FUNCTION RPar( cImeVar, xArg )
 
    LOCAL cPom, cTip
 
+   select_o_params()
    SEEK cSection + cHistory + cImeVar + "1"
 
    IF Found()
@@ -49,25 +50,7 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
 
    LOCAL cPom, nRec, cTip
 
-   IF Type( "gSql" ) <> "C"
-      gSql := "N"
-   ENDIF
-   IF ( goModul:lSqlDirektno == NIL )
-      goModul:lSqlDirektno := .T.
-   ENDIF
-
-
-   // ako gSQL nije D onda u svakom slucaju ne radi SQL azuriranja
-   IF ( gSQL == "N" )
-      fSQL := .F.
-   ENDIF
-   IF ( fSQL == NIL )
-      fSQL := .F.
-   ENDIF
-   IF ( cAkcija == NIL )
-      cAkcija := "A"
-   ENDIF
-
+   select_o_params()
    SEEK cSection + cHistory + cImeVar
 
    IF Found()
@@ -80,7 +63,7 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
             GO nRec
          ENDDO
       ELSE
-         MsgBeep( "FLOCK:parametri nedostupni!!" )
+         MsgBeep( "FLOCK:parametri nedostupni!?" )
       ENDIF
       my_unlock()
    ENDIF
@@ -133,12 +116,12 @@ STATIC FUNCTION NextAkcija( cAkcija )
       cAkcija := "Z"
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION Params1()
 
-   LOCAL ncx, ncy, nOldc
+   LOCAL nCx, nCy, nOldc
 
    IF cHistory == "*"
 
@@ -198,10 +181,27 @@ FUNCTION HistUser( Ch )
    RETURN NIL
 
 
+
+
+FUNCTION select_o_params()
+
+   SELECT ( F_PARAMS )
+
+   IF Used()
+      IF RecCount() > 1
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_params()
+
+
 FUNCTION o_params()
 
    SELECT ( F_PARAMS )
-   use
+   USE
    my_use ( "params" )
    SET ORDER TO TAG  "ID"
 

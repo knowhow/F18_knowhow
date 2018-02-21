@@ -11,12 +11,16 @@
 
 #include "f18.ch"
 
+/*
+    tabela moze biti params ili gparams
+*/
 
 FUNCTION RPar( cImeVar, xArg )
 
    LOCAL cPom, cTip
 
-   select_o_params()
+
+   o_params_ako_treba()
    SEEK cSection + cHistory + cImeVar + "1"
 
    IF Found()
@@ -44,13 +48,15 @@ FUNCTION RPar( cImeVar, xArg )
    RETURN NIL
 
 
-
+/*
+   tabela moze biti params ili gparams
+*/
 
 FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
 
    LOCAL cPom, nRec, cTip
 
-   select_o_params()
+   o_params_ako_treba()
    SEEK cSection + cHistory + cImeVar
 
    IF Found()
@@ -100,6 +106,16 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
    ENDDO
 
    RETURN NIL
+
+
+STATIC FUNCTION o_params_ako_treba()
+
+IF Alias() == "GPARAMS" .OR. Alias() == "PARAMS"
+   RETURN .F.
+ENDIF
+
+select_o_params()
+RETURN .T.
 
 
 STATIC FUNCTION NextAkcija( cAkcija )

@@ -150,7 +150,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, 
       @ PRow(), 60 + Len( cLMSK ) SAY nRPrKoef PICT gpici
 
       ? cMainLine
-      ? cLMSK + "3. BRUTO OSNOVA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
+      ? cLMSK + "3. BRUTO OSNOVA :  ", ld_bruto_isplata_ispis( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
 
       @ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
 

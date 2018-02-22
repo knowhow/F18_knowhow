@@ -137,7 +137,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNe
    // bruto placa iz neta...
 
    ? cMainLine
-   ? cLMSK + "1. BRUTO SA TROSKOVIMA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
+   ? cLMSK + "1. BRUTO SA TROSKOVIMA :  ", ld_bruto_isplata_ispis( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
 
    @ PRow(), 60 + Len( cLMSK ) SAY nBSaTr PICT gpici
 

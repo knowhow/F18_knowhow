@@ -152,7 +152,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, nMjesec, nGodina, cIdRadn, cObra
    // bruto placa iz neta...
 
    ? cMainLine
-   ? cLMSK + "1. BRUTO NAKNADA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
+   ? cLMSK + "1. BRUTO NAKNADA :  ", ld_bruto_isplata_ispis( nOsnZaBr, cRTipRada, nLicOdbitak )
 
    @ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
 

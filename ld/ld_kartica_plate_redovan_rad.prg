@@ -336,14 +336,15 @@ FUNCTION ld_kartica_redovan_rad( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNeta
       IF gPrBruto == "X"
          ? cLMSK + "1. BRUTO PLATA :  "
       ELSE
-         ? cLMSK + "1. BRUTO PLATA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
+         ? cLMSK + "1. BRUTO PLATA :  ", ld_bruto_isplata_ispis( nOsnZaBr, cRTipRada, nLicOdbitak )
       ENDIF
 
       IF cRTipRada == "nI"
          ?
       ENDIF
 
-      @ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
+      //@ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
+      @ PRow(), PCol() + 1 SAY nBo PICT gpici
 
       ? cMainLine
 

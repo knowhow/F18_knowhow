@@ -216,12 +216,11 @@ FUNCTION select_o_params()
 
 FUNCTION o_params()
 
-   SELECT ( F_PARAMS )
-   USE
-   my_use ( "params" )
-   SET ORDER TO TAG  "ID"
+   //SELECT ( F_PARAMS )
+   //USE
+   //my_use ( "params" )
+   RETURN o_dbf_table( F_PARAMS, { "PARAMS", "params" }, "ID" )
 
-   RETURN .T.
 
 
 FUNCTION o_gparams()

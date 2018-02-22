@@ -113,7 +113,7 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, nMjesec, nGodina, cIdRadn, cO
    @ PRow(), 60 + Len( cLMSK ) SAY nTrosk PICT gpici
 
    ? cMainLine
-   ? cLMSK + "3. BRUTO BEZ TROSKOVA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
+   ? cLMSK + "3. BRUTO BEZ TROSKOVA :  ", ld_bruto_isplata_ispis( nOsnZaBr, cRTipRada, nLicOdbitak )
 
    @ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
 

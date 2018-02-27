@@ -29,7 +29,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cLin
    LOCAL nPom
    LOCAL cRepSr := "N"
-   LOCAL cRTipRada := " "
+   LOCAL cDjelatnost := " "
    LOCAL oReport, hRec, cKey
 
    // PRIVATE gPici := "9,999,999,999,999,999" + iif( gZaok > 0, PadR( ".", gZaok + 1, "9" ), "" )
@@ -126,7 +126,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
    LOCAL nBrojZaposlenih
    LOCAL nUNeto
-   LOCAL cRTR
+   LOCAL cTekuciRadnikTipRada
    LOCAL nDodDoprZ, nDodDoprP
 
 
@@ -193,7 +193,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       Box(, 23 + iif( cLdSpec2001GrupePoslovaAutoRucno == "1", 0, 1 ), 75 )
 
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " GET cUslovIdRj PICT "@!S15"
-      @ box_x_koord() + 1, Col() + 1 SAY "Djelatnost" GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
+      @ box_x_koord() + 1, Col() + 1 SAY "Djelatnost" GET cDjelatnost VALID val_tiprada( cDjelatnost ) PICT "@!"
       @ box_x_koord() + 1, Col() + 1 SAY "Spec.za RS" GET cRepSr VALID cRepSr $ "DN" PICT "@!"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Opština stan (prazno-sve): " GET cUslovOpstStan PICT "@!S20"
 
@@ -440,14 +440,17 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    DO WHILE Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) == Str( ld->godina, 4, 0 ) + Str( ld->mjesec, 2, 0 )
 
       select_o_radn( LD->idradn )
-      cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
+      cTekuciRadnikTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
       nRSpr_koef := 0
-      IF cRTR == "S"
+      IF cTekuciRadnikTipRada == "S"
          nRSpr_koef := radn->sp_koef
       ENDIF
 
-      IF cRTR $ "I#N" .AND. Empty( cRTipRada )
-      ELSEIF cRTipRada <> cRTR
+      //IF cTekuciRadnikTipRada $ "I#N" .AND.
+         //
+      //ELSE
+      IF !Empty( cDjelatnost ) .AND. cDjelatnost <> cTekuciRadnikTipRada
+         info_bar( "ld_spec", ld->idradn + " djelatnost:" + cDjelatnost + " <>  radn: " + cTekuciRadnikTipRada + " SKIP!" )
          SELECT ld
          SKIP
          LOOP
@@ -522,11 +525,11 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       nUNetoOsnova += nNetoOsn
 
       // prvo doprinosi i bruto osnova
-      nRadnikBrutoOsnovica := ld_get_bruto_osnova( nNetoOsn, cRTR, nKoefLicniOdbici, nRSpr_koef )
+      nRadnikBrutoOsnovica := ld_get_bruto_osnova( nNetoOsn, cTekuciRadnikTipRada, nKoefLicniOdbici, nRSpr_koef )
 
       nRadnikBrutoStvariUsluge := 0
       IF nPrimanjaStvariUsluge > 0
-         nRadnikBrutoStvariUsluge := ld_get_bruto_osnova( nPrimanjaStvariUsluge, cRTR, nKoefLicniOdbici, nRSpr_koef )
+         nRadnikBrutoStvariUsluge := ld_get_bruto_osnova( nPrimanjaStvariUsluge, cTekuciRadnikTipRada, nKoefLicniOdbici, nRSpr_koef )
       ENDIF
 
       nMPojBrOsn := nRadnikBrutoOsnovica
@@ -547,7 +550,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
          cFFTmp := gBFForm
          gBFForm := StrTran( gBFForm, "_", "" )
 
-         nPojBrBenef := ld_get_bruto_osnova( nNetoOsn - IF( !Empty( gBFForm ), &gBFForm, 0 ), cRTR, nKoefLicniOdbici, nRSpr_koef )
+         nPojBrBenef := ld_get_bruto_osnova( nNetoOsn - IF( !Empty( gBFForm ), &gBFForm, 0 ), cTekuciRadnikTipRada, nKoefLicniOdbici, nRSpr_koef )
 
          nBrutoOsBenef += nPojBrBenef
          _benef_st := BenefStepen()
@@ -574,7 +577,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
                   nBOO += aOps[ i, 3 ]
                ENDIF
             NEXT
-            nBOO := ld_get_bruto_osnova( nBOO, cRTR, nKoefLicniOdbici )
+            nBOO := ld_get_bruto_osnova( nBOO, cTekuciRadnikTipRada, nKoefLicniOdbici )
          ELSE
          */
          nBOO := nUkupnoBrutoOsnovicaSaMinLimit

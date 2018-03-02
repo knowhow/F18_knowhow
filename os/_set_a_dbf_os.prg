@@ -72,6 +72,7 @@ STATIC FUNCTION set_a_sql_os_sii_promj( cTable, alias, area )
    AAdd( hItem[ "algoritam" ], hAlgoritam )
 
    hItem[ "sql_order" ] := "id, tip, datum, opis"
+   hItem[ "blacklisted" ] := { "match_code" } // match_code se vise ne koristi
 
    f18_dbfs_add( cTable, @hItem )
 

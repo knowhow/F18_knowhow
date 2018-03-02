@@ -337,7 +337,7 @@ FUNCTION ld_provjeri_dat_isplate_za_mjesec( cIdRj, nGodina, nMjesec, cObracun )
 
    LOCAL cQuery, oQuery, nCount
 
-   cQuery := "SELECT count(*) FROM ld_obracuni where godina=" + sql_quote( nGodina) + " AND mjesec=" + sql_quote( nMjesec )
+   cQuery := "SELECT count(*) FROM fmk.ld_obracuni where godina=" + sql_quote( nGodina) + " AND mjesec=" + sql_quote( nMjesec )
 
 
    IF cIdRj <> NIL .AND. !Empty( cIdRj )
@@ -351,7 +351,6 @@ FUNCTION ld_provjeri_dat_isplate_za_mjesec( cIdRj, nGodina, nMjesec, cObracun )
    oQuery := run_sql_query( cQuery )
 
    nCount := oQuery:FieldGet( 1 )
-   altd()
 
 /*
    cQuery := "SELECT "

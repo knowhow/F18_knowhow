@@ -194,10 +194,9 @@ FUNCTION set_a_dbf_sifarnik( cTabela, cAlias, nWorkarea, hRec, lSql )
    ENDIF
 
    AAdd( hItem[ "algoritam" ], hAlgoritam )
+   hItem[ "blacklisted" ] := { "match_code" } // match_code se vise ne koristi
 
    f18_dbfs_add( cTabela, @hItem )
-
-   hItem[ "blacklisted" ] := { "match_code" } // match_code se vise ne koristi
 
    RETURN .T.
 

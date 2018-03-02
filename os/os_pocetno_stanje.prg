@@ -317,7 +317,7 @@ STATIC FUNCTION os_pocstanje_prebaci_stanje_iz_predhodne_godine( aInformacije )
 
 
 
-STATIC FUNCTION _row_to_rec( oRow )
+STATIC FUNCTION o_row_to_h_rec( oRow )
 
    LOCAL hRec := hb_Hash()
    LOCAL cFieldName
@@ -358,7 +358,7 @@ STATIC FUNCTION os_insert_into_os_sii( oDataset )
    DO WHILE !oDataset:Eof()
 
       oRow := oDataset:GetRow()
-      hRec := _row_to_rec( oRow )
+      hRec := o_row_to_h_rec( oRow )
 
       hRec[ "naz" ] := PadR( hRec[ "naz" ], 30 )
 
@@ -393,7 +393,7 @@ STATIC FUNCTION os_insert_into_promj( oDataset )
    DO WHILE !oDataset:Eof()
 
       oRow := oDataset:GetRow()
-      hRec := _row_to_rec( oRow )
+      hRec := o_row_to_h_rec( oRow )
 
       os_select_promj()
       APPEND BLANK

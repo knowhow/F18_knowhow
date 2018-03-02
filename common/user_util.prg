@@ -178,7 +178,7 @@ FUNCTION get_list_f18_users()
 
    LOCAL cQuery, oTable
    LOCAL _list := {}
-   LOCAL _row, nI
+   LOCAL oRow, nI
 
    cQuery := "set search_path to fmk,public; SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
       "FROM public.usr " + ;
@@ -194,12 +194,12 @@ FUNCTION get_list_f18_users()
 
    FOR nI := 1 TO oTable:LastRec()
 
-      _row := oTable:GetRow( nI )
+      oRow := oTable:GetRow( nI )
 
-      AAdd( _list, { _row:FieldGet( _row:FieldPos( "id" ) ), ;
-         _row:FieldGet( _row:FieldPos( "name" ) ), ;
-         _row:FieldGet( _row:FieldPos( "fullname" ) ), ;
-         _row:FieldGet( _row:FieldPos( "email" ) ) } )
+      AAdd( _list, { oRow:FieldGet( oRow:FieldPos( "id" ) ), ;
+         oRow:FieldGet( oRow:FieldPos( "name" ) ), ;
+         oRow:FieldGet( oRow:FieldPos( "fullname" ) ), ;
+         oRow:FieldGet( oRow:FieldPos( "email" ) ) } )
 
    NEXT
 

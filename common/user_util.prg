@@ -20,7 +20,7 @@ FUNCTION f18_get_user_id()
    LOCAL nResult
    LOCAL cUser   := AllTrim( my_user() )
 
-   cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + sql_quote( cUser )
+   cTmpQry := "set search_path to fmk,public; SELECT usr_id FROM " + cTable + " WHERE usr_username = " + sql_quote( cUser )
    oTable := run_sql_query( cTmpQry )
 
    IF sql_error_in_query( oTable, "SELECT" )
@@ -93,7 +93,7 @@ FUNCTION GetUserName( nUser_id )
    LOCAL oTable
    LOCAL cResult
 
-   cTmpQry := "SELECT usr_username FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
+   cTmpQry := "set search_path to fmk,public; SELECT usr_username FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
    oTable := run_sql_query( cTmpQry )
 
    IF sql_error_in_query( oTable, "SELECT" )
@@ -110,7 +110,7 @@ FUNCTION GetFullUserName( nUser_id )
    LOCAL cTable := "public.usr" // view
    LOCAL oTable
 
-   cTmpQry := "SELECT usr_propername FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
+   cTmpQry := "set search_path to fmk,public; SELECT usr_propername FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
    oTable := run_sql_query( cTmpQry )
 
    IF sql_error_in_query( oTable, "SELECT" )
@@ -180,7 +180,7 @@ FUNCTION get_list_f18_users()
    LOCAL _list := {}
    LOCAL _row, nI
 
-   cQuery := "SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
+   cQuery := "set search_path to fmk,public; SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
       "FROM public.usr " + ;
       "WHERE usr_username NOT IN ( 'postgres', 'admin' ) " + ;
       "ORDER BY usr_username;"

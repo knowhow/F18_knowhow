@@ -11,8 +11,8 @@
 
 #include "f18.ch"
 
-
-FUNCTION f18_set_user_preferences( params )
+/*
+FUNCTION f18_set_user_preferences( hParams )
 
    LOCAL _user_id := 0
    LOCAL _x := 1
@@ -23,15 +23,15 @@ FUNCTION f18_set_user_preferences( params )
    LOCAL _qry, _table
    LOCAL _show_box := .F.
 
-   IF params == NIL
+   IF hParams == NIL
       _proper_name := Space( 50 )
       _email := Space( 50 )
       _user_name := ""
       _show_box := .T.
    ELSE
-      _proper_name := params[ "proper_name" ]
-      _email := params[ "email" ]
-      _user_name := params[ "user_name" ]
+      _proper_name := hParams[ "proper_name" ]
+      _email := hParams[ "email" ]
+      _user_name := hParams[ "user_name" ]
    ENDIF
 
    IF !Empty( _user_name )
@@ -80,3 +80,5 @@ FUNCTION f18_set_user_preferences( params )
    _table := run_sql_query( _qry )
 
    RETURN .T.
+
+*/

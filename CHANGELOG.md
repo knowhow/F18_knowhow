@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.190-std, 2018-03-02
+### CORE
+- Prefix u svim sql upitima gdje se pojavljuje public.usr: `set search_path to fmk,public;` select ... from public.usr
+
 ## 3.1.183-std, 2018-02-19
 ### OS
 - os_promj crna rupa fix

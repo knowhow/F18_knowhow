@@ -193,7 +193,7 @@ STATIC FUNCTION valid_da_ili_n( cDn )
 // --------------------------------------------------------
 // funkcija vraca .t. ako je definisana grupa partnera
 // --------------------------------------------------------
-FUNCTION p_group()
+FUNCTION p_sifk_partn_group()
 
    LOCAL lRet := .F.
 

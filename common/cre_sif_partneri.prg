@@ -15,11 +15,15 @@ MEMVAR ImeKol, Kol
 MEMVAR wIdrefer, wId, wIdops
 FIELD ziror, id, naz, dziror
 
-
+/*
 FUNCTION cre_sif_partn( ver )
 
    LOCAL aDbf := {}
    LOCAL _created, _table_name, _alias
+
+
+   RETURN .T.
+*/
 
 /*
    AAdd( aDBf, { 'ID', 'C',   6,  0 } )
@@ -67,7 +71,6 @@ FUNCTION cre_sif_partn( ver )
    CREATE_INDEX( "ID", "id", _alias )
 */
 
-   RETURN .T.
 
 
 /*

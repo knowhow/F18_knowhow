@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+/*
 FUNCTION cre_sif_roba( ver )
 
    LOCAL aDbf
@@ -59,6 +59,9 @@ FUNCTION cre_sif_roba( ver )
    AAdd( aDBf, { 'TROSK4', 'N',  15,  5 } )
    AAdd( aDBf, { 'TROSK5', 'N',  15,  5 } )
    AAdd( aDBf, { 'IDKONTO', 'C',   7,  5 } )
+
+   RETURN .T.
+*/
 
 /*
    _alias := "ROBA"
@@ -173,7 +176,6 @@ FUNCTION cre_sif_roba( ver )
 
 */
 
-   RETURN .T.
 
 STATIC FUNCTION g_str_fields()
 

@@ -99,7 +99,7 @@ FUNCTION fakt_11_kalk_prenos_11()
       @ box_x_koord() + nX++, box_y_koord() + 2  SAY8 "            Magacinski konto razdužuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
       @ box_x_koord() + nX++, box_y_koord() + 2  SAY8 "Prodavnički konto (diskonto) zadužuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
-      cFaktFirma := cIdFirma
+      cFaktIdFirma := cIdFirma
 
       nX++
 
@@ -128,8 +128,8 @@ FUNCTION fakt_11_kalk_prenos_11()
       //SET ORDER TO TAG "1"
       //GO TOP
 
-      //SEEK cFaktFirma + cIdTipDok
-      seek_fakt( cFaktFirma, cIdTipDok )
+      //SEEK cFaktIdFirma + cIdTipDok
+      seek_fakt( cFaktIdFirma, cIdTipDok )
 
       cArtPocinju := Trim( cArtPocinju )
       nLeftArt := Len( cArtPocinju )
@@ -142,10 +142,10 @@ FUNCTION fakt_11_kalk_prenos_11()
          cFilterBrDok := ".t."
       ENDIF
 
-      MsgO( "Generacija podataka: " + cFaktFirma + "-" + cIdTipDok )
+      MsgO( "Generacija podataka: " + cFaktIdFirma + "-" + cIdTipDok )
 
       aDokumenti := {}
-      DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok == field->IdFirma + field->IdTipDok
+      DO WHILE !Eof() .AND. cFaktIdFirma + cIdTipDok == field->IdFirma + field->IdTipDok
 
 
          IF cFilterBrDok == ".t."
@@ -319,8 +319,8 @@ FUNCTION fakt_13_kalk_11()
       // @ box_x_koord() + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. p_partner( @cIdZaduz )
       // ENDIF
 
-      cFaktFirma := cIdFirma
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj otpremnice u MP: " GET cFaktFirma
+      cFaktIdFirma := cIdFirma
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj otpremnice u MP: " GET cFaktIdFirma
       @ box_x_koord() + 6, Col() + 1 SAY "- " + cidtipdok
       @ box_x_koord() + 6, Col() + 1 SAY "-" GET cBrDok
       READ
@@ -328,17 +328,17 @@ FUNCTION fakt_13_kalk_11()
 
 
       //SELECT fakt
-      //SEEK cFaktFirma + cIdTipDok + cBrDok
+      //SEEK cFaktIdFirma + cIdTipDok + cBrDok
 
       //IF !Found()
-      IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
+      IF !find_fakt_dokument( cFaktIdFirma, cIdTipDok, cBrDok )
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
          Inkey( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY Space( 30 )
          LOOP
       ELSE
-         seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
+         seek_fakt( cFaktIdFirma, cIdTipDok, cBrDok )
          aMemo := fakt_ftxt_decode( txt )
 
          SELECT kalk_pripr
@@ -358,11 +358,11 @@ FUNCTION fakt_13_kalk_11()
          IF brdok == cBrKalk; nRbr := Val( Rbr ); ENDIF
 
          SELECT fakt
-         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktIdFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
         //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
         //    LOOP
          //ENDIF
-         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
+         DO WHILE !Eof() .AND. cFaktIdFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
             select_o_roba( fakt->idroba )
             select_o_tarifa( roba->idtarifa )
             select_o_koncij( cidkonto )
@@ -438,7 +438,7 @@ FUNCTION fakt_11_kalk_41()
    PRIVATE cIdTipDok := "11"
    PRIVATE cBrDok := Space( 8 )
    PRIVATE cBrKalk := Space( 8 )
-   PRIVATE cFaktFirma
+   PRIVATE cFaktIdFirma
 
    o_kalk_pripr()
 //   o_kalk()
@@ -474,9 +474,9 @@ FUNCTION fakt_11_kalk_41()
 
       IF cZbirno == "N"
 
-         cFaktFirma := cIdFirma
+         cFaktIdFirma := cIdFirma
 
-         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj fakture: " GET cFaktFirma
+         @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj fakture: " GET cFaktIdFirma
          @ box_x_koord() + 6, Col() + 2 SAY "- " + cIdTipDok
          @ box_x_koord() + 6, Col() + 2 SAY "-" GET cBrDok
 
@@ -487,17 +487,17 @@ FUNCTION fakt_11_kalk_41()
          ENDIF
 
          //SELECT fakt
-         //SEEK cFaktFirma + cIdTipDok + cBrDok
+         //SEEK cFaktIdFirma + cIdTipDok + cBrDok
 
          //IF !Found()
-         IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
+         IF !find_fakt_dokument( cFaktIdFirma, cIdTipDok, cBrDok )
             Beep( 4 )
             @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !"
             Inkey( 4 )
             @ box_x_koord() + 14, box_y_koord() + 2 SAY Space( 30 )
             LOOP
          ELSE
-            seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
+            seek_fakt( cFaktIdFirma, cIdTipDok, cBrDok )
             aMemo := fakt_ftxt_decode( txt )
 
             IF Len( aMemo ) >= 5
@@ -534,12 +534,12 @@ FUNCTION fakt_11_kalk_41()
             ENDIF
 
             SELECT fakt
-            //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+            //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktIdFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
             //   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
             //   LOOP
             //ENDIF
 
-            DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
+            DO WHILE !Eof() .AND. cFaktIdFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
                select_o_roba( fakt->idroba )
                select_o_tarifa( roba->idtarifa )
                SELECT fakt
@@ -583,15 +583,15 @@ FUNCTION fakt_11_kalk_41()
          ENDIF
       ELSE // zbirno
 
-         cFaktFirma := cIdFirma
+         cFaktIdFirma := cIdFirma
          cIdTipDok := "11"
-         dOdDatFakt := Date()
-         dDoDatFakt := Date()
+         dDatOd := Date()
+         dDatDo := Date()
 
-         @ box_x_koord() + 7, box_y_koord() + 2 SAY "ID firma FAKT: " GET cFaktFirma
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY "ID firma FAKT: " GET cFaktIdFirma
          @ box_x_koord() + 8, box_y_koord() + 2 SAY "Datum fakture: "
-         @ box_x_koord() + 8, Col() + 2 SAY "od " GET dOdDatFakt
-         @ box_x_koord() + 8, Col() + 2 SAY "do " GET dDoDatFakt
+         @ box_x_koord() + 8, Col() + 2 SAY "od " GET dDatOd
+         @ box_x_koord() + 8, Col() + 2 SAY "do " GET dDatDo
 
          READ
 
@@ -599,13 +599,13 @@ FUNCTION fakt_11_kalk_41()
             EXIT
          ENDIF
 
-         find_fakt_za_period( cFaktFirma, dOdDatFakt, dDoDatFakt, NIL, NIL, "1" )
+         find_fakt_za_period( cFaktIdFirma, dDatOd, dDatDo, NIL, NIL, "1" )
          //SELECT fakt
          //GO TOP
 
          DO WHILE !Eof()
 
-            IF ( fakt->idfirma == cFaktFirma .AND. fakt->idtipdok == cIdTipDok  )
+            IF ( fakt->idfirma == cFaktIdFirma .AND. fakt->idtipdok == cIdTipDok  )
 
                cIdPartner := fakt->IdPartner
 
@@ -621,7 +621,7 @@ FUNCTION fakt_11_kalk_41()
 
                //SELECT fakt
 
-               //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + "'==IdFirma+IdTipDok", "IDROBA", F_ROBA )
+               //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktIdFirma + cIdTipDok + "'==IdFirma+IdTipDok", "IDROBA", F_ROBA )
               //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
               //    LOOP
                //ENDIF
@@ -721,8 +721,8 @@ FUNCTION fakt_01_kalk_81()
       // @ box_x_koord() + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. p_partner( @cIdZaduz )
       // ENDIF
 
-      cFaktFirma := cIdFirma
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj fakture: " GET cFaktFirma
+      cFaktIdFirma := cIdFirma
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj fakture: " GET cFaktIdFirma
       @ box_x_koord() + 6, Col() + 2 SAY "- " + cidtipdok
       @ box_x_koord() + 6, Col() + 2 SAY "-" GET cBrDok
       READ
@@ -731,8 +731,8 @@ FUNCTION fakt_01_kalk_81()
 
 
       //SELECT fakt
-      //SEEK cFaktFirma + cIdTipDok + cBrDok
-      IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
+      //SEEK cFaktIdFirma + cIdTipDok + cBrDok
+      IF !find_fakt_dokument( cFaktIdFirma, cIdTipDok, cBrDok )
       //IF !Found()
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
@@ -740,7 +740,7 @@ FUNCTION fakt_01_kalk_81()
          @ box_x_koord() + 14, box_y_koord() + 2 SAY Space( 30 )
          LOOP
       ELSE
-         seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
+         seek_fakt( cFaktIdFirma, cIdTipDok, cBrDok )
          aMemo := fakt_ftxt_decode( txt )
          IF Len( aMemo ) >= 5
             @ box_x_koord() + 10, box_y_koord() + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
@@ -766,12 +766,12 @@ FUNCTION fakt_01_kalk_81()
          IF brdok == cBrKalk; nRbr := Val( Rbr ); ENDIF
 
          SELECT fakt
-         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktIdFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
         //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
           //  LOOP
          //ENDIF
 
-         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
+         DO WHILE !Eof() .AND. cFaktIdFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
             select_o_roba( fakt->idroba )
             select_o_tarifa( roba->idtarifa )
 
@@ -864,8 +864,8 @@ FUNCTION fakt_13_kalk_80()
       // @ box_x_koord() + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
       // ENDIF
 
-      cFaktFirma := cIdFirma
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj otpremnice u MP: " GET cFaktFirma
+      cFaktIdFirma := cIdFirma
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj otpremnice u MP: " GET cFaktIdFirma
       @ box_x_koord() + 6, Col() + 1 SAY "- " + cidtipdok
       @ box_x_koord() + 6, Col() + 1 SAY "-" GET cBrDok
       READ
@@ -873,9 +873,9 @@ FUNCTION fakt_13_kalk_80()
 
 
       //SELECT fakt
-      //SEEK cFaktFirma + cIdTipDok + cBrDok
+      //SEEK cFaktIdFirma + cIdTipDok + cBrDok
       //IF !Found()
-      IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
+      IF !find_fakt_dokument( cFaktIdFirma, cIdTipDok, cBrDok )
 
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
@@ -883,7 +883,7 @@ FUNCTION fakt_13_kalk_80()
          @ box_x_koord() + 14, box_y_koord() + 2 SAY Space( 30 )
          LOOP
       ELSE
-         seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
+         seek_fakt( cFaktIdFirma, cIdTipDok, cBrDok )
          aMemo := fakt_ftxt_decode( txt )
 
 
@@ -904,11 +904,11 @@ FUNCTION fakt_13_kalk_80()
          IF brdok == cBrKalk; nRbr := Val( Rbr ); ENDIF
 
          SELECT fakt
-         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+         //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktIdFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
         //    MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
         //    LOOP
         // ENDIF
-         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
+         DO WHILE !Eof() .AND. cFaktIdFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
 
             select_o_roba( fakt->idroba )
             select_o_tarifa( roba->idtarifa )
@@ -1035,15 +1035,15 @@ FUNCTION fakt_15_kalk_15()
       // @ box_x_koord() + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. p_partner( @cIdZaduz )
       // ENDIF
 
-      cFaktFirma := cIdFirma
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj fakture: " GET cFaktFirma
+      cFaktIdFirma := cIdFirma
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj fakture: " GET cFaktIdFirma
       @ box_x_koord() + 6, Col() + 1 SAY "- " + cidtipdok
       @ box_x_koord() + 6, Col() + 1 SAY "-" GET cBrDok
       READ
       IF LastKey() == K_ESC; exit; ENDIF
 
       SELECT fakt
-      SEEK cFaktFirma + cIdTipDok + cBrDok
+      SEEK cFaktIdFirma + cIdTipDok + cBrDok
       IF !Found()
          Beep( 4 )
          @ box_x_koord() + 14, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
@@ -1086,7 +1086,7 @@ FUNCTION fakt_15_kalk_15()
          IF brdok == cBrKalk; nRbr := Val( Rbr ); ENDIF
 
          SELECT fakt
-      --   IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+      --   IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktIdFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
             MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
             LOOP
          ENDIF
@@ -1105,7 +1105,7 @@ FUNCTION fakt_15_kalk_15()
             SELECT fakt
          ENDIF
 
-         DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
+         DO WHILE !Eof() .AND. cFaktIdFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
         --    SELECT ROBA; HSEEK fakt->idroba
 
           --  SELECT tarifa; HSEEK roba->idtarifa
@@ -1173,20 +1173,24 @@ FUNCTION fakt_15_kalk_15()
 
 FUNCTION fakt_11_kalk_42()
 
-   LOCAL _razl_cijene := "D"
+   LOCAL cRazdvojiRazliciteCijeneDN := "D"
    LOCAL _kalk_tip_dok := "42"
-   LOCAL _auto_razd := 2
+   LOCAL nAutoRazd := 2
    LOCAL nX := 1
    LOCAL _x_dok_info := 16
-   LOCAL _zbirni_prenos := "D"
+   LOCAL cZbirniPrenosDN := "D"
    LOCAL _dat_kalk := Date()
    LOCAL GetList := {}
+   LOCAL dDatOd
+   LOCAL dDatDo
+   LOCAL cIdFirma := self_organizacija_id(), cFaktIdFirma
 
-   PRIVATE cIdFirma := self_organizacija_id()
-   PRIVATE cIdTipDok := "11"
-   PRIVATE cBrDok := Space( 8 )
-   PRIVATE cBrKalk := Space( 8 )
-   PRIVATE cFaktFirma
+   LOCAL cIdTipDok := "11"
+   LOCAL  cBrDok := Space( 8 )
+   LOCAL cBrKalk := Space( 8 )
+   LOCAL cIdKonto, cIdKtoZad, cIdZaduz, nRbr
+   LOCAL aMemo, cIdPartner
+
 
    cIdKonto := PadR( "1330", 7 )
    cIdKtoZad := PadR( "1330", 7 )
@@ -1200,13 +1204,12 @@ FUNCTION fakt_11_kalk_42()
    DO WHILE .T.
 
       nRBr := 0
-
       nX := 1
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Generisati kalk dokument (1) 11 (2) 42 ?" GET _auto_razd PICT "9"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Generisati kalk dokument (1) 11 (2) 42 ?" GET nAutoRazd PICT "9"
 
       READ
 
-      IF _auto_razd == 1
+      IF nAutoRazd == 1
          _kalk_tip_dok := "11"
       ELSE
          _kalk_tip_dok := "42"
@@ -1222,7 +1225,7 @@ FUNCTION fakt_11_kalk_42()
       ++nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto razdužuje:" GET cIdKonto  PICT "@!"  VALID P_Konto( @cIdKonto )
 
-      IF _auto_razd == 1
+      IF nAutoRazd == 1
          @ box_x_koord() + nX, Col() + 1 SAY8 "zadužuje:" GET cIdKtoZad  PICT "@!" VALID P_Konto( @cIdKtoZad )
       ENDIF
 
@@ -1234,19 +1237,19 @@ FUNCTION fakt_11_kalk_42()
 
       ++nX
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " GET _zbirni_prenos  VALID _zbirni_prenos $ "DN"  PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " GET cZbirniPrenosDN  VALID cZbirniPrenosDN $ "DN"  PICT "@!"
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Razdvoji artikle različitih cijena (D/N): " GET _razl_cijene VALID _razl_cijene $ "DN"  PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Razdvoji artikle različitih cijena (D/N): " GET cRazdvojiRazliciteCijeneDN VALID cRazdvojiRazliciteCijeneDN $ "DN"  PICT "@!"
 
       READ
 
       ++nX
 
-      IF _zbirni_prenos == "N"
+      IF cZbirniPrenosDN == "N"
 
-         cFaktFirma := cIdFirma
+         cFaktIdFirma := cIdFirma
 
-         @ box_x_koord() + nX, box_y_koord() + 2 SAY "Broj fakture: " GET cFaktFirma
+         @ box_x_koord() + nX, box_y_koord() + 2 SAY "Broj fakture: " GET cFaktIdFirma
          @ box_x_koord() + nX, Col() + 2 SAY "- " + cIdTipDok
          @ box_x_koord() + nX, Col() + 2 SAY "-" GET cBrDok
 
@@ -1257,8 +1260,8 @@ FUNCTION fakt_11_kalk_42()
          ENDIF
 
          //SELECT fakt
-         //SEEK cFaktFirma + cIdTipDok + cBrDok
-         IF !find_fakt_dokument( cFaktFirma, cIdTipDok, cBrDok )
+         //SEEK cFaktIdFirma + cIdTipDok + cBrDok
+         IF !find_fakt_dokument( cFaktIdFirma, cIdTipDok, cBrDok )
          //IF !Found()
             Beep( 4 )
             @ box_x_koord() + 15, box_y_koord() + 2 SAY "Ne postoji ovaj dokument !!"
@@ -1266,7 +1269,7 @@ FUNCTION fakt_11_kalk_42()
             @ box_x_koord() + 15, box_y_koord() + 2 SAY Space( 30 )
             LOOP
          ELSE
-            seek_fakt( cFaktFirma, cIdTipDok, cBrDok )
+            seek_fakt( cFaktIdFirma, cIdTipDok, cBrDok )
             aMemo := fakt_ftxt_decode( txt )
 
             IF Len( aMemo ) >= 5
@@ -1302,13 +1305,13 @@ FUNCTION fakt_11_kalk_42()
             ENDIF
 
             SELECT fakt
-            //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
+            //IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktIdFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
             //   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifarniku!#Prenos nije izvrsen!" )
             //   LOOP
             //ENDIF
 
 
-            DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
+            DO WHILE !Eof() .AND. cFaktIdFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
 
                select_o_roba( fakt->idroba )
                select_o_tarifa( roba->idtarifa )
@@ -1354,17 +1357,17 @@ FUNCTION fakt_11_kalk_42()
 
       ELSE
 
-         cFaktFirma := cIdFirma
+         cFaktIdFirma := cIdFirma
          cIdTipDok := "11"
-         dOdDatFakt := Date()
-         dDoDatFakt := Date()
+         dDatOd := Date()
+         dDatDo := Date()
 
-         @ box_x_koord() + nX, box_y_koord() + 2 SAY "ID firma FAKT: " GET cFaktFirma
+         @ box_x_koord() + nX, box_y_koord() + 2 SAY "ID firma FAKT: " GET cFaktIdFirma
 
          ++nX
          @ box_x_koord() + nX, box_y_koord() + 2 SAY "Datum fakture: "
-         @ box_x_koord() + nX, Col() + 2 SAY "od " GET dOdDatFakt
-         @ box_x_koord() + nX, Col() + 2 SAY "do " GET dDoDatFakt
+         @ box_x_koord() + nX, Col() + 2 SAY "od " GET dDatOd
+         @ box_x_koord() + nX, Col() + 2 SAY "do " GET dDatDo
 
          READ
 
@@ -1372,11 +1375,11 @@ FUNCTION fakt_11_kalk_42()
             EXIT
          ENDIF
 
-         find_fakt_za_period( cFaktIdFirma, dOdDatFakt, dDoDatFakt, NIL, NIL, "1" )
+         find_fakt_za_period( cFaktIdFirma, dDatOd, dDatDo, NIL, NIL, "1" )
 
          DO WHILE !Eof()
 
-            IF ( field->idfirma == cFaktFirma .AND. field->idtipdok == cIdTipDok )
+            IF ( field->idfirma == cFaktIdFirma .AND. field->idtipdok == cIdTipDok )
 
                cIdPartner := ""
 
@@ -1389,7 +1392,7 @@ FUNCTION fakt_11_kalk_42()
 
                SELECT fakt
 
-               // IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktFirma + cIdTipDok + "'==IdFirma+IdTipDok", "IDROBA", F_ROBA )
+               // IF !provjerisif_izbaciti_ovu_funkciju( "!eof() .and. '" + cFaktIdFirma + cIdTipDok + "'==IdFirma+IdTipDok", "IDROBA", F_ROBA )
                // MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
                // LOOP
                // ENDIF
@@ -1402,7 +1405,7 @@ FUNCTION fakt_11_kalk_42()
 
                IF Found() .AND. ;
                      ( Round( fakt->rabat, 2 ) == 0 .AND. Round( field->rabatv, 2 ) == 0 ) .AND. ;
-                     ( _razl_cijene == "N" .OR. ( _razl_cijene == "D" .AND. mpcsapp == fakt->cijena ) )
+                     ( cRazdvojiRazliciteCijeneDN == "N" .OR. ( cRazdvojiRazliciteCijeneDN == "D" .AND. mpcsapp == fakt->cijena ) )
 
                   RREPLACE field->kolicina WITH field->kolicina + fakt->kolicina
 
@@ -1425,7 +1428,7 @@ FUNCTION fakt_11_kalk_42()
                      brfaktp WITH fakt->brdok, ;
                      datfaktp WITH fakt->datdok
 
-                  IF _auto_razd == 1
+                  IF nAutoRazd == 1
                      REPLACE idkonto WITH cIdKtoZad
                      REPLACE idkonto2 WITH cIdKonto
                   ELSE
@@ -1437,7 +1440,7 @@ FUNCTION fakt_11_kalk_42()
                   REPLACE idroba WITH fakt->idroba
                   REPLACE mpcsapp WITH fakt->cijena
 
-                  IF _auto_razd == 1
+                  IF nAutoRazd == 1
                      REPLACE tprevoz WITH "R"
                      REPLACE tmarza2 WITH "A"
                   ELSE

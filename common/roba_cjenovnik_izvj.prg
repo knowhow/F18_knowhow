@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+/*
 FUNCTION CjenR()
 
    LOCAL cIniName
@@ -23,7 +23,7 @@ FUNCTION CjenR()
    ENDIF
 
    SELECT ROBA
-   SELECT ( F_BARKOD )
+  -- SELECT ( F_BARKOD )
 
    IF !Used()
       o_barkod()
@@ -83,3 +83,5 @@ FUNCTION CjenR()
    f18_rtm_print( "cjen", "barkod", "id" )
 
    RETURN DE_CONT
+
+*/

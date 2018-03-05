@@ -50,7 +50,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    // o_ops()
 
    // partneri po grupama
-   lGroup := p_group()
+   lGroup := p_sifk_partn_group()
 
    cIdfirma := self_organizacija_id()
    dDatOd := CToD( "" )

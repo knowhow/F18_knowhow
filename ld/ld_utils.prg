@@ -261,10 +261,7 @@ FUNCTION ld_get_bruto_osnova( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
    RETURN nBrt
 
 
-// ----------------------------------------
-// ispisuje bruto obracun
-// ----------------------------------------
-FUNCTION bruto_isp( nNeto, cTipRada, nLOdb, nSKoef, cTrosk )
+FUNCTION ld_bruto_isplata_ispis( nNeto, cTipRada, nLOdb, nSKoef, cTrosk )
 
    LOCAL cPrn := ""
 

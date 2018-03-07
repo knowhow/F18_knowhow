@@ -230,6 +230,7 @@ METHOD F18Admin:sql_cleanup_all()
 
    // ::relogin_as( hDbServerParams[ "user" ],  hDbServerParams[ "password" ], hDbServerParams[ "database" ] )
    // start_refresh_operations()
+   set_sql_search_path()
 
    RETURN .T.
 

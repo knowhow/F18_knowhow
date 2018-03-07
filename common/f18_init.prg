@@ -113,6 +113,7 @@ FUNCTION post_login()
 
    F18Admin():sql_cleanup()
 
+   set_sql_search_path()
    server_log_enable()
    set_init_fiscal_params()
 

@@ -52,13 +52,15 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
 */
 FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
 
-   LOCAL hRec, aRecords, ii
+   LOCAL hRec, aRecords, ii, nIKol
 
    IF !use_sql_sifk( cDbf, NIL )
       ?E "ERROR SIFK ", cDbf
       RETURN .F.
    ENDIF
    //use_sql_sifv()
+
+   nIKol := LEN( Kol )
 
    cDbf := PadR( cDbf, FIELD_LEN_SIFK_ID )
 
@@ -100,7 +102,7 @@ FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
          ENDIF
       ENDIF
 
-      AAdd  ( Kol, iif( hRec[ "ubrowsu" ] == '1', ++i, 0 ) )
+      AAdd( Kol, iif( hRec[ "ubrowsu" ] == '1', ++nIKol, 0 ) )
 
    NEXT
 

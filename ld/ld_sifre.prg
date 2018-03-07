@@ -964,7 +964,7 @@ FUNCTION wh_oldpor( cAlg )
 
 FUNCTION p_ld_dopr( cId, nDeltaX, nDeltaY )
 
-   LOCAL lRet
+   LOCAL lRet, nI
    PRIVATE imekol := {}
    PRIVATE kol := {}
 

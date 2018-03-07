@@ -13,9 +13,10 @@
 
 
 /*
-   // -------------------------------------------------
-   // BARKOD
-   // -------------------------------------------------
+   FAKT delphirb labele koriste tabelu barkod
+*/
+
+FUNCTION cre_barkod( ver )
 
    _alias := "BARKOD"
    _table_name := "barkod"
@@ -35,7 +36,8 @@
    CREATE_INDEX( "1", "barkod+id", _alias )
    CREATE_INDEX( "ID", "id+LEFT(naziv,40)", _alias )
    CREATE_INDEX( "Naziv", "LEFT(Naziv,40)+id", _alias )
-*/
+
+   RETURN .T.
 
 /*
 FUNCTION cre_sif_roba( ver )

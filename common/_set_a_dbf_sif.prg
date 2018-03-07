@@ -30,7 +30,6 @@ FUNCTION set_a_dbf_sif()
    hRec[ "dbf_key_block" ] := {|| field->id + field->id2 }
    set_a_sql_sifarnik( "sast", "SAST", F_SAST, hRec  )
 
-
    hRec := hb_Hash()
    hRec[ "dbf_key_fields" ] := { { "rule_id", 10, 0 } }
    hRec[ "dbf_tag" ]        := "1"
@@ -52,7 +51,6 @@ FUNCTION set_a_dbf_sif()
    set_a_sql_sifarnik( "pkonto", "PKONTO", F_PKONTO     )
    set_a_sql_sifarnik( "valute", "VALUTE", F_VALUTE     )
    set_a_sql_sifarnik( "fakt_objekti", "FAKT_OBJEKTI", F_FAKT_OBJEKTI   )
-
 
 
    set_a_dbf_temp     ( "relation",  "RELATION", F_RELATION   )

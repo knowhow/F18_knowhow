@@ -45,7 +45,7 @@ FUNCTION cre_all_dbfs( ver )
    fill_tbl_valute() // upisi default valute ako ne postoje
    //db_cre_ugov( ver ) // kreiranje tabela ugovora
 
-   //cre_sif_roba( ver )
+   cre_barkod( ver )
    //cre_sif_partn( ver )
    //cre_sif_adrese( ver )
 

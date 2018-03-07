@@ -99,7 +99,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
 /*
    temp tabela koja se puni na osnovu fakt pripr
-   set_a_dbf_temp     ( "barkod",  "BARKOD", F_BARKOD  )
+   koristi fakt labele delphirb
 */
 
 FUNCTION o_barkod()

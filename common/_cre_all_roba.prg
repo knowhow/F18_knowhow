@@ -11,12 +11,15 @@
 
 #include "f18.ch"
 
-
 /*
    FAKT delphirb labele koriste tabelu barkod
 */
 
 FUNCTION cre_barkod( ver )
+
+   LOCAL aDbf
+   LOCAL _table_name, _alias
+   LOCAL _created
 
    _alias := "BARKOD"
    _table_name := "barkod"

@@ -25,7 +25,7 @@
 #define F_VALUTE    22
 #define F_KONCIJ    23
 #define F_SAST      24
-#define F_BARKOD    25
+//#define F_BARKOD    25
 #define F__VALUTE   26
 #define F_RJ        27
 #define F_OPS       28

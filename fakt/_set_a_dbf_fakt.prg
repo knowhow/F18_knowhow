@@ -39,7 +39,6 @@ FUNCTION set_a_dbf_fakt()
    set_a_dbf_temp( "_fakt_partn",   "_PARTN", F__PARTN  )
    set_a_dbf_temp( "fakt_logk",   "LOGK", F_LOGK    )
    set_a_dbf_temp( "fakt_logkd",   "LOGKD", F_LOGKD   )
-   set_a_dbf_temp( "barkod",   "BARKOD", F_BARKOD  ) // fakt labele delphirb koristi
    set_a_dbf_temp( "fakt_upl",   "UPL", F_UPL     )
    set_a_dbf_temp( "fakt_s_pripr",   "FAKT_S_PRIPR", F_FAKT    )
    set_a_dbf_temp( "fakt__fakt",   "_FAKT", F__FAKT   )

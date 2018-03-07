@@ -18,6 +18,10 @@ FAKT delphirb labele koristi ovaj dbf
 */
 FUNCTION cre_barkod( ver )
 
+   LOCAL aDbf
+   LOCAL _table_name, _alias
+   LOCAL _created
+
    _alias := "BARKOD"
    _table_name := "barkod"
 

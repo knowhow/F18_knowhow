@@ -97,8 +97,10 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
    RETURN .T.
 
-// temp tabela koja se puni na osnovu fakt pripr
-// set_a_dbf_temp     ( "barkod",  "BARKOD", F_BARKOD  )
+/*
+  fakt labele delphirb koristi:
+  temp tabela koja se puni na osnovu fakt pripr
+*/
 
 FUNCTION o_barkod()
 

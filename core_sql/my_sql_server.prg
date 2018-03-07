@@ -314,7 +314,7 @@ FUNCTION f18_promjena_sezone()
 
 
 
-
+/*
 FUNCTION my_server_search_path()
 
    LOCAL cKey := "search_path"
@@ -324,7 +324,7 @@ FUNCTION my_server_search_path()
    ENDIF
 
    RETURN s_psqlServer_params[ cKey ]
-
+*/
 
 FUNCTION f18_user()
    RETURN s_psqlServer_params[ "user" ]

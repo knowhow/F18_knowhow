@@ -895,7 +895,7 @@ FUNCTION fakt_lager_lista_sql( hParams, lPocetnoStanje )
 
    LOCAL _table
    LOCAL _tek_database := my_server_params()[ "database" ]
-   LOCAL _db_params := my_server_params()
+   LOCAL hDbParams := my_server_params()
 
    IF hParams == NIL
       IF fakt_lager_lista_vars( @hParams ) == 0
@@ -916,7 +916,7 @@ FUNCTION fakt_lager_lista_sql( hParams, lPocetnoStanje )
 STATIC FUNCTION fakt_lager_lista_get_data( hParams, lPocetnoStanje )
 
    LOCAL _tek_database := my_server_params()[ "database" ]
-   LOCAL _db_params := my_server_params()
+   LOCAL hDbParams := my_server_params()
    LOCAL _table, cQuery, _server
    LOCAL _date_from, _date_to, _data_ps
    LOCAL _id_firma, _usl_roba, _usl_partn, _usl_tip_dok
@@ -935,9 +935,9 @@ STATIC FUNCTION fakt_lager_lista_get_data( hParams, lPocetnoStanje )
 
    IF lPocetnoStanje
       my_server_logout()
-      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_from ) ) )
-      my_server_params( _db_params )
-      my_server_login( _db_params )
+      hDbParams[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_from ) ) )
+      my_server_params( hDbParams )
+      my_server_login( hDbParams )
       set_sql_search_path()
    ENDIF
 
@@ -982,9 +982,9 @@ STATIC FUNCTION fakt_lager_lista_get_data( hParams, lPocetnoStanje )
 
    IF lPocetnoStanje
       my_server_logout()
-      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )
-      my_server_params( _db_params )
-      my_server_login( _db_params )
+      hDbParams[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )
+      my_server_params( hDbParams )
+      my_server_login( hDbParams )
       set_sql_search_path()
    ENDIF
 

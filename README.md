@@ -1,5 +1,7 @@
 # F18
 
+[![Build status](https://ci.appveyor.com/api/projects/status/eg8qsklygduukk87?svg=true)](https://ci.appveyor.com/project/hernad/f18-knowhow)
+
 ## F18 log promjena
 
 [F18 CHANGELOG.md](CHANGELOG.md)

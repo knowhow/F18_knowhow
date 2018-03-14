@@ -57,9 +57,9 @@ before_test:
 
 test_script:  
 - cmd: cd %APPVEYOR_BUILD_FOLDER%
-- cmd: hello.exe
+- cmd: F18.exe -h localhost -u postgres -p Password12! -d F18_test --show-postgresql-version
 
-- sh: LD_LIBRARY_PATH=. ./hello
+- sh: LD_LIBRARY_PATH=. ./F18 -h localhost -u postgres -p Password12! -d F18_test --show-postgresql-version
 
 on_success:
 #- cmd: cd C:\

@@ -326,6 +326,6 @@ ENDIF
 
 
 dbUseArea( .T., , "SELECT version() AS ver", "INFO" )
-? field->ver
+OutStd( field->ver )
 
 RETURN

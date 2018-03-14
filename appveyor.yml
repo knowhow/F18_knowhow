@@ -78,7 +78,7 @@ deploy:
   name: bintray hernad windows
   username: hernad
   subject: hernad
-  repo: appveyor
+  repo: F18
   package: F18-windows-x86
   version: '$(APPVEYOR_REPO_TAG_NAME)'
   #artifact: 'hello_windows_x86_$(APPVEYOR_REPO_TAG_NAME).zip'
@@ -94,7 +94,7 @@ deploy:
   name: bintray hernad ubuntu
   username: hernad
   subject: hernad
-  repo: appveyor
+  repo: F18
   package: F18-linux-x86
   version: '$(APPVEYOR_REPO_TAG_NAME)'
   #artifact: 'hello_linux_x86_$(APPVEYOR_REPO_TAG_NAME).zip'

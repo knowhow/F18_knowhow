@@ -56,7 +56,6 @@ before_test:
 - sh: sudo apt-get install -y xvfb
 
 
-
 test_script:  
 - cmd: cd %APPVEYOR_BUILD_FOLDER%
 - cmd: F18.exe -h localhost -u postgres -p Password12! -d F18_test --show-postgresql-version

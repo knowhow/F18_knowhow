@@ -40,3 +40,12 @@
        #pacman -Sy git  mingw-w64-i686-make
        pacman -Sy   mingw-w64-i686-postgresql mingw-w64-i686-openssl
        pacman  -Sy base-devel msys2-devel mingw-w64-i686-toolchain upx p7zip
+
+
+## F18
+
+
+show postgresql server version:
+
+       ./F18 -h 192.168.168.112 -u postgres -p Password12! -d F18_test --show-postgresql-version
+

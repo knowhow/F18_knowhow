@@ -33,8 +33,7 @@ export F18_VER=${APPVEYOR_REPO_TAG_NAME:=0.0.0}
 scripts/update_f18_ver_ch.sh $F18_VER
 
 export LX_UBUNTU=1
-source scripts/linux.sh
-source scripts/set_envars.sh
+#source scripts/set_envars.sh
 
 export F18_POS=1
 export F18_RNAL=1

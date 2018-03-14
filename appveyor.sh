@@ -28,11 +28,19 @@ sudo apt install -y g++-multilib gcc-multilib libc6:i386 \
 PATH=$HB_ROOT/bin:$PATH
 
 echo $PATH
-#ls -lh hb-linux-i386/bin
 
-#hbmk2 -version
-hbmk2 hello.hbp
-#./hello
+export F18_VER=${APPVEYOR_REPO_TAG_NAME:=0.0.0}
+scripts/update_f18_ver_ch.sh $F18_VER
+
+export LX_UBUNTU=1
+source scripts/linux.sh
+source scripts/set_envars.sh
+
+export F18_POS=1
+export F18_RNAL=1
+hbmk2 -workdir=.h F18.hbp
+
+
 cp -av /usr/lib/i386-linux-gnu/libpq.so* .
 
-zip F18_${BUILD_ARTIFACT}_${APPVEYOR_REPO_TAG_NAME}.zip hello
+zip F18_${BUILD_ARTIFACT}_${APPVEYOR_REPO_TAG_NAME}.zip F18

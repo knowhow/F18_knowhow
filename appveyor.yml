@@ -53,7 +53,7 @@ before_test:
 - sh: sudo apt install -y postgresql postgresql-contrib
 - sh: sudo service postgresql start
 - sh: sudo -u postgres ${APPVEYOR_BUILD_FOLDER}/F18_test_db.sh
-- sh: sudo apt-get install xvfb
+- sh: sudo apt-get install -y xvfb
 
 
 

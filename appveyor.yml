@@ -53,13 +53,15 @@ before_test:
 - sh: sudo apt install -y postgresql postgresql-contrib
 - sh: sudo service postgresql start
 - sh: sudo -u postgres ${APPVEYOR_BUILD_FOLDER}/F18_test_db.sh
+- sh: sudo apt-get install xvfb
+
 
 
 test_script:  
 - cmd: cd %APPVEYOR_BUILD_FOLDER%
 - cmd: F18.exe -h localhost -u postgres -p Password12! -d F18_test --show-postgresql-version
 
-- sh: LD_LIBRARY_PATH=. ./F18 -h localhost -u postgres -p Password12! -d F18_test --show-postgresql-version
+- sh: xvfb-run --server-args="-screen 0 1024x768x24" LD_LIBRARY_PATH=. ./F18 -h localhost -u postgres -p Password12! -d F18_test --show-postgresql-version
 
 on_success:
 #- cmd: cd C:\

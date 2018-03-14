@@ -76,7 +76,7 @@ FUNCTION set_f18_params()
 
       CASE cTok == "--help"
          f18_help()
-         QUIT_1
+         __Quit()
 
       CASE cTok == "--dbf-prefix"   // prefix privatni dbf
 
@@ -117,6 +117,7 @@ FUNCTION set_f18_params()
       
       case cTok == "--show-postgresql-version"
           show_postgresql_version( hParams )
+          __Quit()
 
       ENDCASE
 
@@ -310,10 +311,12 @@ PROCEDURE show_postgresql_version( hParams )
 
 LOCAL oServer, pConn
 
-oServer := TPQServer():New( hParams[ "host" ], hParams[ "database" ] , hParams[ "user" ] , hParams[ "password"] )
+oServer := TPQServer():New( hParams[ "host" ], hParams[ "database" ] , hParams[ "user" ] , hParams[ "password" ] )
 
 pConn := oServer:pDB
-? "oServer", oServer, "pConn", pConn
+//? "oServer", oServer, "pConn", pConn
+
+rddSetDefault( "SQLMIX" )
 
 // postgresql://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]
 IF rddInfo( 1001, { "POSTGRESQL", pConn } ) == 0
@@ -324,4 +327,5 @@ ENDIF
 
 dbUseArea( .T., , "SELECT version() AS ver", "INFO" )
 ? field->ver
-RETUNR
+
+RETURN

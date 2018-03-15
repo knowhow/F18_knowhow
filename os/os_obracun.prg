@@ -116,7 +116,6 @@ FUNCTION os_obracun_amortizacije()
    PRIVATE nOstalo := 0
    PRIVATE nUkupno := 0
 
-altd()
    DO WHILE !Eof()
 
       cIdam := field->idam

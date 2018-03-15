@@ -383,7 +383,6 @@ FUNCTION ld_provjeri_dat_isplate_za_mjesec( cIdRj, nGodina, nMjesec, cObracun )
    oQuery := run_sql_query( cQuery )
 
    nCount := oQuery:FieldGet( 1 )
-   altd()
 */
 
    RETURN nCount

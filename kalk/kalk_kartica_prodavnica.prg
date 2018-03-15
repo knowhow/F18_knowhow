@@ -135,7 +135,6 @@ FUNCTION kalk_kartica_prodavnica()
 
    nKolicina := 0
 
-altd()
    //IF server_db_version() >= 25
     //  cOrderBy := "idfirma,pkonto,idroba,datdok,obradjeno,pu_i,idvd"
    //ELSE

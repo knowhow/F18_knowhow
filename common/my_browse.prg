@@ -255,11 +255,9 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       lDoIdleCall := .T.
 
-
       IF Ch == 0
          LOOP
       ENDIF
-
 
 
       // DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
@@ -295,8 +293,6 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       // ENDIF
       // hb_idleSleep( 0.2 )
-
-
 
 
       DO CASE
@@ -348,7 +344,6 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       CASE DE_REFRESH
 
-
          IF Deleted()
             SKIP
             IF Eof()
@@ -366,7 +361,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       CASE DE_ABORT
          IF nPrazno == 0
-            BoxC()
+            browse_stabilize_boxc( oBrowse )
          ENDIF
          lExitBrowse := .T.
          EXIT
@@ -380,7 +375,19 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
    ENDDO
 
+
+
    RETURN .T.
+
+
+STATIC FUNCTION browse_stabilize_boxc( oBrowse )
+
+DO WHILE !oBrowse:stabilize() // ENTER keystorm unos nove sifre prevenirati
+   oBrowse:stabilize()
+ENDDO
+BoxC()
+
+RETURN .T.
 
 
 FUNCTION browse_exit_on_enter( lSet )

@@ -648,7 +648,8 @@ STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nWa, cNaslov, bBlok, aZabrane
       ENDIF
       Tb:RefreshCurrent()
 
-      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .T. ) == 1
+      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .T. )
+         //altd() ENTER keystorm
          RETURN DE_REFRESH
       ENDIF
 
@@ -657,7 +658,7 @@ STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nWa, cNaslov, bBlok, aZabrane
    CASE ( Ch == K_F2 .OR. Ch == K_CTRL_A )
 
       Tb:RefreshCurrent()
-      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .F. ) == 1
+      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .F. )
          RETURN DE_REFRESH
       ENDIF
 
@@ -871,7 +872,7 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
          SET KEY K_F9 TO
          SET KEY K_F5 TO
 
-         IF ( Len( imeKol ) < nI )
+         IF ( Len( ImeKol ) < nI )
             EXIT
          ENDIF
 
@@ -908,7 +909,7 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
 
    IF nCh == K_CTRL_N .OR. nCh == K_F2
       IF !Used()
-         RETURN 0
+         RETURN .F.
       ENDIF
       ordSetFocus( cOrderTag )
    ENDIF
@@ -917,10 +918,10 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
       IF lNovi
          GO ( nPrevRecNo )
       ENDIF
-      RETURN 0
+      RETURN .F.
    ENDIF
 
-   snimi_promjene_sifarnika( lNovi, cTekuciZapis )
+   browse_snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    IF nCh == K_F4 .AND. Pitanje( , "Vratiti se na predhodni zapis (D/N) ?", "D" ) == "D"
       GO ( nPrevRecNo )
@@ -928,11 +929,11 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
 
    ordSetFocus( cOrderTag )
 
-   RETURN 1
+   RETURN .T.
 
 
 
-FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
+FUNCTION browse_snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.

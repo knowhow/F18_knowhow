@@ -112,7 +112,6 @@ FUNCTION P_OS( cId, dx, dy )
 
    lRet := p_sifra( nWa, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista stalnih sredstava", @cId, dx, dy, {| Ch | os_sif_key_handler( Ch, @lNovi ) } )
 
-altd()
    PopWA()
 
    return lRet

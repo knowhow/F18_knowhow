@@ -51,7 +51,7 @@ FUNCTION kalk_pripr_form_get_roba( cIdRoba, cIdTarifa, cIdVd, lNoviDokument, nKo
 
    bValid := {|| valid_roba( @cIdRoba, @cIdTarifa, lNoviDokument, @aPorezi ), ;
       ispisi_naziv_roba( nKoordX, 25, 40 ), ;
-      kalk_zadnji_ulazi_info( cIdpartner, cIdroba, cProdMag ) }
+      kalk_zadnji_ulazi_info( cIdpartner, cIdroba, cProdMag ), !Empty( cIdRoba) }
 
 
    // _ocitani_barkod := _idroba, ;

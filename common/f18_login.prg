@@ -663,7 +663,7 @@ METHOD F18Login:get_database_browse_array( aOrganizacije )
    LOCAL nCount, nRedova, nUkupnoKolona, nRed, nKolona
    LOCAL cLen := 20
 
-   nUkupnoKolona := Round( (f18_max_cols() - 5) / ( cLen + 2), 0 )
+   nUkupnoKolona := Round( (f18_max_cols() - 14 ) / ( cLen + 1 ), 0 ) - 1
    altd()
    nRedova := Round( Len( aOrganizacije ) / nUkupnoKolona, 0 ) + 1
 
@@ -820,7 +820,7 @@ METHOD F18Login:manual_enter_company_data( nXPos, nYPos )
 
 METHOD F18Login:browse_odabir_organizacije( aOrganizacije, nTableType )
 
-   LOCAL nI, _l
+   LOCAL nI, nL
    LOCAL nKey
    LOCAL oTBrowse
    LOCAL _opt := 0
@@ -837,7 +837,7 @@ METHOD F18Login:browse_odabir_organizacije( aOrganizacije, nTableType )
 
    // SetColor( F18_COLOR_ORGANIZACIJA )
 
-   PRIVATE _row := 1
+   PRIVATE nRow := 1
 
    IF aOrganizacije == NIL
       MsgBeep( "Nema podataka za prikaz..." )
@@ -893,12 +893,12 @@ METHOD F18Login:browse_odabir_organizacije( aOrganizacije, nTableType )
       oTBrowse:ColSep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    ENDIF
 
-   oTBrowse:skipBlock := {| _skip | _skip := _skip_it( aOrganizacije, _row, _skip ), _row += _skip, _skip }
-   oTBrowse:goTopBlock := {|| _row := 1 }
-   oTBrowse:goBottomBlock := {|| _row := Len( aOrganizacije ) }
+   oTBrowse:skipBlock := {| _skip | _skip := _skip_it( aOrganizacije, nRow, _skip ), nRow += _skip, _skip }
+   oTBrowse:goTopBlock := {|| nRow := 1 }
+   oTBrowse:goBottomBlock := {|| nRow := Len( aOrganizacije ) }
 
-   FOR _l := 1 TO Len( aOrganizacije[ 1 ] )
-      oTBrowse:addColumn( TBColumnNew( "", _browse_block( aOrganizacije, _l ) ) )
+   FOR nL := 1 TO Len( aOrganizacije[ 1 ] )
+      oTBrowse:addColumn( TBColumnNew( "", _browse_block( aOrganizacije, nL ) ) )
    NEXT
 
 
@@ -993,7 +993,7 @@ STATIC FUNCTION get_broj_organizacija( aOrganizacije )
 
 
 STATIC FUNCTION _browse_block( aOrganizacije, nX )
-   RETURN ( {| p | iif( PCount() == 0, aOrganizacije[ _row, nX ], aOrganizacije[ _row, nX ] := p ) } )
+   RETURN ( {| p | iif( PCount() == 0, aOrganizacije[ nRow, nX ], aOrganizacije[ nRow, nX ] := p ) } )
 
 
 

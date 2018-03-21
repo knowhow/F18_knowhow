@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.201-std, 2018-03-20
+### CORE
+- fix: Odabir organizacija > 120
+
 ## 3.1.199-std, 2018-03-20
 ### CORE
 - ENTER keystorm fix

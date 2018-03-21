@@ -734,7 +734,7 @@ METHOD F18Admin:update_db()
    IF !Empty( cDatabase )
       AAdd( _db_list, { AllTrim( cDatabase ) } )
    ELSE
-      _db_list := my_login():database_array()
+      _db_list := my_login():organizacije_array()
    ENDIF
 
    IF _upd_empty == "D"   // dodaj i empty template tabele u update shemu

@@ -1,6 +1,6 @@
 # F18 klijent, lista promjena
 
-## 3.1.201-std, 2018-03-20
+## 3.1.203-std, 2018-03-21
 ### CORE
 - fix: Odabir organizacija > 120
 

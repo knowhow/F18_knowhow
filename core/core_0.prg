@@ -48,7 +48,7 @@ FUNCTION harbour_init()
    SetColor( f18_color_normal() )
 
    // Set( _SET_IDLEREPEAT, .F. ) // .T. default
-   hb_idleAdd( {|| on_idle_dbf_refresh() } )  // BUG_CPU100
+   // GT_CONSOLE WINDOWS_ELECTRON_SLOW hb_idleAdd( {|| on_idle_dbf_refresh() } )  // BUG_CPU100
    // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
 
    RETURN .T.

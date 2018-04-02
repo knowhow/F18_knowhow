@@ -220,7 +220,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
 
       DO WHILE .T.
-         Ch := hb_keyStd( Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) )
+         Ch := hb_keyStd( Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_ALL ) ) )
          IF oBrowse:stabilize()
             EXIT // browse renderiran
          ENDIF
@@ -243,7 +243,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
          IF lContinue   // .AND. lFlag
             oBrowse:hiLite()
-            Ch := hb_keyStd( nKey := Inkey( 0, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) )
+            Ch := hb_keyStd( nKey := Inkey( 0, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_ALL ) ) )
             oBrowse:deHilite()
             // ELSE
             // lFlag := .T.

@@ -15,18 +15,18 @@ FUNCTION f18_gt()
 
 #ifdef __PLATFORM__WINDOWS
    RETURN "WVT"
+
+   #ifdef GT_DEFAULT_CONSOLE
+      RETURN "WIN"
+    #endif
 #else
 
 #ifdef GT_DEFAULT_CONSOLE
    RETURN "TRM"
 #else
 
-   #ifdef GT_DEFAULT_QT
-
-      RETURN "QTC"
-   #else
-      RETURN "XWC"
-   #endif
+    RETURN "XWC"
+ 
 
 #endif
 

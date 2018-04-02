@@ -6,12 +6,12 @@ libs=hbmzip minizip
 libs=hbtip
 
 {F18_GT_CONSOLE&unix}gt=gtnul
-{F18_GT_CONSOLE&unix}gt=gttrm
-{!F18_GT_CONSOLE&mingw}gt=gtwin
 
+{F18_GT_CONSOLE&unix}gt=gttrm
 {!F18_GT_CONSOLE&unix}gt=gtxwc
 
-{allwin}gt=gtwvt
+{F18_GT_CONSOLE&allwin}gt=gtwin
+{!F18_GT_CONSOLE&allwin}gt=gtwvt
 
 libs=hbpgsql
 {unix}libs=pq
@@ -22,6 +22,3 @@ libs=sddpg
 {darwin}libpaths=/Library/PostgreSQL/9.1/lib
 
 mt=yes
-
-
-{GT_DEFAULT_QT}gt=gtqtc

@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.204-std, 2018-05-16
+### OS
+- fix: OS export datopt
+
 ## 3.1.203-std, 2018-03-21
 ### CORE
 - fix: Odabir organizacija > 120

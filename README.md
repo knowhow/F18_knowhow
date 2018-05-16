@@ -4,12 +4,14 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/eg8qsklygduukk87?svg=true)](https://ci.appveyor.com/project/hernad/f18-knowhow)
 
-Push 2.3.205 release
+Push 3.1.204 release
 
-     git commit -am "BUILD_RELEASE 2.3.205"
-     git tag 2.3.205
+     git commit -am "BUILD_RELEASE 3.1.204"
+     git tag 3.1.204
      git push origin 3-std --tags
 
+
+     curl -LO https://bintray.com/hernad/F18/download_file?file_path=F18_windows_x86_2.3.205.zip
 
 ## F18 log promjena
 

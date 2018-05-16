@@ -62,6 +62,7 @@ On greenbox-1 as root(https://redmine.bring.out.ba/issues/36922):
     gzip -c F18 > F18_Ubuntu_i686_${VER}.gz
     mv F18_Ubuntu_i686_${VER}.gz /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/
     ls -lh /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/F18_Ubuntu_i686_${VER}.gz
+    echo kraj linux
 
 
 

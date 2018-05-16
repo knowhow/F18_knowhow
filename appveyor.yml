@@ -104,5 +104,4 @@ deploy:
   publish: true
   override: true
   on:
-    appveyor_repo_tag: true
     BUILD_ARTIFACT: linux_x86

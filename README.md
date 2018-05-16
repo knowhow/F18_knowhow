@@ -11,7 +11,7 @@ Push 3.1.204 release
      git push origin 3-std --tags
 
 
-     curl -LO https://bintray.com/hernad/F18/download_file?file_path=F18_windows_x86_2.3.205.zip
+     curl -LO https://bintray.com/hernad/F18/download_file?file_path=F18_windows_x86_3.1.204.zip
 
 ## F18 log promjena
 

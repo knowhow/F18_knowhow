@@ -344,8 +344,7 @@ STATIC FUNCTION get_exp_fields()
 // -------------------------------------------
 // filuje tabelu R_EXP
 // -------------------------------------------
-STATIC FUNCTION fill_rpt_exp( cId, cNaz, dDatum, dDatOtp, ;
-      cIdKto, nKol, cJmj, nStAm, nNab, nOtp, nAmp )
+STATIC FUNCTION fill_rpt_exp( cId, cNaz, dDatum, dDatOtp, cIdKto, nKol, cJmj, nStAm, nNab, nOtp, nAmp )
 
    LOCAL nArr
 
@@ -356,7 +355,7 @@ STATIC FUNCTION fill_rpt_exp( cId, cNaz, dDatum, dDatOtp, ;
    REPLACE field->id WITH cId
    REPLACE field->naziv WITH cNaz
    REPLACE field->datum WITH dDatum
-   REPLACE field->datopt WITH fix_dat_var( dDatOtp )
+   REPLACE field->datotp WITH fix_dat_var( dDatOtp )
    REPLACE field->idkonto WITH cIdKto
    REPLACE field->kolicina WITH nKol
    REPLACE field->jmj WITH cJmj
@@ -367,4 +366,4 @@ STATIC FUNCTION fill_rpt_exp( cId, cNaz, dDatum, dDatOtp, ;
 
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.

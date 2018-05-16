@@ -44,6 +44,7 @@ On greenbox-1 as root(https://redmine.bring.out.ba/issues/36922):
 
     VER=3.1.204
 
+    cd /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/tmp
     rm *.zip F18 F18.exe
     curl -L  https://bintray.com/hernad/F18/download_file?file_path=F18_windows_x86_${VER}.zip  > win.zip
     unzip win.zip
@@ -51,16 +52,16 @@ On greenbox-1 as root(https://redmine.bring.out.ba/issues/36922):
     gzip -c F18.exe > F18_Windows_${VER}.gz
     mv F18_Windows_${VER}.gz /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/
     ls -lh /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/F18_Windows_${VER}.gz
-    echo kraj
+    echo kraj windows
 
-     cd /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/tmp
-     rm *.zip F18 F18.exe
-     curl -L  https://bintray.com/hernad/F18/download_file?file_path=F18_linux_x86_${VER}.zip  > linux.zip
-     unzip linux.zip
-     ls -lh F18
-     gzip -c F18 > F18_Ubuntu_i686_${VER}.gz
-     mv F18_Ubuntu_i686_${VER}.gz /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/
-     ls -lh /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/F18_Ubuntu_i686_${VER}.gz
+    cd /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/tmp
+    rm *.zip F18 F18.exe
+    curl -L  https://bintray.com/hernad/F18/download_file?file_path=F18_linux_x86_${VER}.zip  > linux.zip
+    unzip linux.zip
+    ls -lh F18
+    gzip -c F18 > F18_Ubuntu_i686_${VER}.gz
+    mv F18_Ubuntu_i686_${VER}.gz /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/
+    ls -lh /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/F18_Ubuntu_i686_${VER}.gz
 
 
 

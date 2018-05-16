@@ -20,6 +20,7 @@ environment:
 
   - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
     BUILD_ARTIFACT: linux_x86
+    appveyor_repo_tag: true
 
 
 only_commits:
@@ -107,3 +108,4 @@ deploy:
   on:
     BUILD_ARTIFACT: linux_x86
     CI_LINUX: true
+    appveyor_repo_tag: true

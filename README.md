@@ -1,6 +1,15 @@
 # F18
 
+## build
+
 [![Build status](https://ci.appveyor.com/api/projects/status/eg8qsklygduukk87?svg=true)](https://ci.appveyor.com/project/hernad/f18-knowhow)
+
+Push 2.3.205 release
+
+     git commit -am "BUILD_RELEASE 2.3.205"
+     git tag 2.3.205
+     git push origin 3-std --tags
+
 
 ## F18 log promjena
 

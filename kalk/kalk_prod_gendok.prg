@@ -102,8 +102,8 @@ STATIC FUNCTION kalk_prod_gen_ip()
 
    AAdd( _opc, "1. dokument inventura prodavnica               " )
    AAdd( _opcexe, {|| kalk_generisi_ip() } )
-   AAdd( _opc, "2. inventura-razlika prema postojecoj IP " )
-   AAdd( _opcexe, {|| gen_ip_razlika() } )
+  // AAdd( _opc, "2. inventura-razlika prema postojecoj IP " )
+  // AAdd( _opcexe, {|| gen_ip_razlika() } )
    AAdd( _opc, "3. na osnovu IP generisi 80-ku " )
    AAdd( _opcexe, {|| gen_ip_80() } )
 

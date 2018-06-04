@@ -298,7 +298,7 @@ RETURN .T.
 // postojeca inventura se kopira u pomocnu tabelu i sluzi kao usporedba
 // svi artikli koji se nadju unutar ove inventure ce biti preskoceni
 // i zanemareni u novoj inventuri
-
+*/
 
 FUNCTION gen_ip_razlika()
 
@@ -507,7 +507,6 @@ FUNCTION gen_ip_razlika()
 
    RETURN .T.
 
-*/
 
 
 

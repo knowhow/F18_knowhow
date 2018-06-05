@@ -664,7 +664,6 @@ METHOD F18Login:get_database_browse_array( aOrganizacije )
    LOCAL cLen := 20
 
    nUkupnoKolona := Round( (f18_max_cols() - 14 ) / ( cLen + 1 ), 0 ) - 1
-   altd()
    nRedova := Round( Len( aOrganizacije ) / nUkupnoKolona, 0 ) + 1
 
 

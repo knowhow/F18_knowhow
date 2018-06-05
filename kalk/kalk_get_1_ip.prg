@@ -148,7 +148,7 @@ FUNCTION kalk_generisi_ip()
    DO WHILE !Eof() .AND. cIdfirma + cIdkonto == field->idfirma + field->pkonto
 
       cIdRoba := kalk->idroba
-      kalk_generisi_ip_stavka( cIdFirma, cIdKonto, cBrDok, cIdRoba, dDatDok, cNulirati, .F., @nRbr )
+      kalk_generisi_ip_stavka( cIdFirma, cBrDok, cIdKonto, cIdRoba, dDatDok, cNulirati, .F., @nRbr )
 
    ENDDO
 
@@ -161,17 +161,20 @@ FUNCTION kalk_generisi_ip()
 
 FUNCTION kalk_ip_when_knjizna_kolicina()
 
-  LOCAL cIdFirma, cBrDok, cIdKonto, cIdRoba 
+  LOCAL cIdFirma, cBrDok, cIdKonto, cIdRoba, dDatDok, cNulirati
 
   cIdFirma := _idfirma
   cBrdok := _brdok
   cIdKonto := _idKonto
   cIdRoba := _idroba
+  dDatDok := _datdok
+  cNulirati := "N"
 
-  IF  Round( _mpcsapp, 2) == 0 .AND. Round(_gkolicina, 2) == 0 // jos nisu setovane mpc niti knjizna kolicina
+altd()
+  IF  Round( _nc, 2) == 0 .AND. Round(_gkolicina, 2) == 0 // jos nisu setovane mpc niti knjizna kolicina
 
     find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
-    kalk_generisi_ip_stavka( cIdFirma, cIdKonto, cBrDok, cIdRoba, dDatDok, cNulirati, .T., @nRbr )
+    kalk_generisi_ip_stavka( cIdFirma, cBrDok, cIdKonto, cIdRoba, dDatDok, cNulirati, .T., @nRbr )
     SELECT kalk_pripr
 
   ENDIF

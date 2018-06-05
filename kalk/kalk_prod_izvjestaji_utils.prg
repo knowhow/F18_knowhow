@@ -27,10 +27,14 @@ FUNCTION kalk_pripr_rekap_tarife()
    ENDIF
 
    nRec := RecNo()
-
    SELECT kalk_pripr
-   SET ORDER TO TAG "2"
-   SEEK cIdFirma + cIdVd + cBrDok
+
+   IF my_rddName() == "SQLMIX" // hernad hack, azurirani dokument
+       go top
+   ELSE
+      SET ORDER TO TAG "2"
+      SEEK cIdFirma + cIdVd + cBrDok
+   ENDIF
 
    m := "------ ----------"
 
@@ -185,7 +189,7 @@ FUNCTION kalk_pripr_rekap_tarife()
    SET ORDER TO TAG "1"
    GO nRec
 
-   RETURN
+   RETURN .T.
 
 
 

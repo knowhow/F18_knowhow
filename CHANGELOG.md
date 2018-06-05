@@ -1,5 +1,10 @@
 # F18 klijent, lista promjena
 
+## 3.1.212-std, 2018-06-04
+### KALK
+- fix: KALK IP ručni unos(popisana količina, mpc, nc)
+- fix: KALK prodavnice rekapitulacija tarifa ažurirani dokument
+
 ## 3.1.204-std, 2018-05-16
 ### OS
 - fix: OS export datopt

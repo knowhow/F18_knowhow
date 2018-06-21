@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.213-std, 2018-06-21
+### CORE
+- F18_ELECTRON_HOST - HB_INKEY_ALL / F18_GUI - HB_INKEY_EXT
+
 ## 3.1.212-std, 2018-06-04
 ### KALK
 - fix: KALK IP ručni unos(popisana količina, mpc, nc)

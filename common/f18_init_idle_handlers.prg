@@ -20,8 +20,7 @@ STATIC s_nFinNalogCount := 0
 
 FUNCTION add_global_idle_handlers()
 
-   //GT_CONSOLE WINDOWS_ELECTRON_SLOW  
-   
+
    if is_electron_host()
        RETURN .T.
    endif

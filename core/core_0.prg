@@ -47,9 +47,9 @@ FUNCTION harbour_init()
 
    SetColor( f18_color_normal() )
 
-   // Set( _SET_IDLEREPEAT, .F. ) // .T. default
-   // GT_CONSOLE WINDOWS_ELECTRON_SLOW hb_idleAdd( {|| on_idle_dbf_refresh() } )  // BUG_CPU100
-   // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
+   if !is_electron_host() 
+       hb_idleAdd( {|| on_idle_dbf_refresh() } )  // BUG_CPU100
+   endif
 
    RETURN .T.
 
@@ -151,7 +151,22 @@ FUNCTION f18_exe_path()
    RETURN hb_FNameDir( hb_ProgName() )
 
 
+FUNCTION is_gt_console()
 
+#ifdef GT_DEFAULT_CONSOLE
+    return .T.
+#else
+    return .F.
+#endif
+
+
+FUNCTION is_electron_host()
+
+#ifdef ELECTRON_HOST
+   return .T.
+#else
+   return .F.
+#endif
 
 /*
    my_rddname() -> "DBFCDX" ili "SQLMIX", IF default area used()

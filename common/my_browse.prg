@@ -12,6 +12,8 @@
 #include "f18.ch"
 #include "f18_color.ch"
 
+
+
 STATIC s_lExitBrowseOnEnter := .F.
 
 MEMVAR TB, Ch, GetList, goModul
@@ -220,7 +222,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
 
       DO WHILE .T.
-         Ch := hb_keyStd( Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_ALL ) ) )
+         Ch := hb_keyStd( Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), f18_browse_inkey() ) ) )
          IF oBrowse:stabilize()
             EXIT // browse renderiran
          ENDIF
@@ -243,7 +245,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
          IF lContinue   // .AND. lFlag
             oBrowse:hiLite()
-            Ch := hb_keyStd( nKey := Inkey( 0, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_ALL ) ) )
+            Ch := hb_keyStd( nKey := Inkey( 0, hb_bitOr( Set( _SET_EVENTMASK ), f18_browse_inkey() ) ) )
             oBrowse:deHilite()
             // ELSE
             // lFlag := .T.
@@ -451,6 +453,16 @@ STATIC FUNCTION tb_editabilna_kolona( oTb, aImeKol )
    ENDIF
 
    RETURN Len( aImeKol[ TB:colPos ] ) > 2
+
+
+STATIC FUNCTION f18_browse_inkey()
+
+if is_electron_host()
+   return HB_INKEY_ALL 
+else
+   return HB_INKEY_EXT
+endif
+
 
 
 /*

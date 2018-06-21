@@ -10,6 +10,8 @@ echo ">> debug:"
 echo "export F18_DEBUG=1"
 echo ">>console:"
 echo "export F18_GT_CONSOLE=1"
+echo ">>electron host:"
+echo "export F18_ELECTRON_HOST=1"
 
 #export F18_FIN=1
 #export F18_KALK=1

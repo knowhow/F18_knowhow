@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.214-std, 2018-06-27
+### CORE
+- f18_editor linux async
+
 ## 3.1.213-std, 2018-06-21
 ### CORE
 - F18_ELECTRON_HOST - HB_INKEY_ALL / F18_GUI - HB_INKEY_EXT

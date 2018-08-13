@@ -1,122 +1,115 @@
-/*
- * This file is part of the bring.out FMK, a free and open source
+/* 
+ * This file is part of the bring.out FMK, a free and open source 
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
-#include "f18.ch"
+#include "kalk.ch"
 
-FUNCTION fakt_kalk()
+function FaktKalk()
+private Opc:={}
+private opcexe:={}
 
-   PRIVATE Opc := {}
-   PRIVATE opcexe := {}
-
-   AAdd( Opc, "1. magacin fakt->kalk         " )
-   AAdd( opcexe, {|| prenos_fakt_kalk_magacin() } )
-   AAdd( Opc, "2. prodavnica fakt->kalk" )
-   AAdd( opcexe, {||  prenos_fakt_kalk_prodavnica()  } )
-
-   AAdd( Opc, "3. proizvodnja fakt->kalk" )
-   AAdd( opcexe, {||  menu_fakt_kalk_prenos_normativi() } )
-
-
-   PRIVATE Izbor := 1
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "faka" )
-   CLOSERET
-
-   RETURN .T.
+AADD(Opc,"1. magacin fakt->kalk         ")
+AADD(opcexe,{|| prenos_fakt_kalk_magacin() })
+AADD(Opc,"2. prodavnica fakt->kalk")
+AADD(opcexe,{||  prenos_fakt_kalk_prodavnica()  })
+AADD(Opc,"3. proizvodnja fakt->kalk")
+AADD(opcexe,{||  FaKaProizvodnja() })        
+AADD(Opc,"4. konsignacija fakt->kalk")
+AADD(opcexe, {|| FaktKonsig() }) 
+private Izbor:=1
+Menu_SC("faka")
+CLOSERET
+return
 
 
 
-/* provjerisif_izbaciti_ovu_funkciju(clDok,cImePoljaID,nOblSif,clFor)
- *     Provjera postojanja sifara
- *   param: clDok - "while" uslov za obuhvatanje slogova tekuce baze
- *   param: cImePoljaID - ime polja tekuce baze u kojem su sifre za ispitivanje
- *   param: nOblSif - oblast baze sifrarnika
- *   param: clFor - "for" uslov za obuhvatanje slogova tekuce baze
+/*! \fn ProvjeriSif(clDok,cImePoljaID,nOblSif,clFor)
+ *  \brief Provjera postojanja sifara
+ *  \param clDok - "while" uslov za obuhvatanje slogova tekuce baze
+ *  \param cImePoljaID - ime polja tekuce baze u kojem su sifre za ispitivanje
+ *  \param nOblSif - oblast baze sifrarnika
+ *  \param clFor - "for" uslov za obuhvatanje slogova tekuce baze
+ */
 
+function ProvjeriSif(clDok,cImePoljaID,nOblSif,clFor,lTest)
+local lVrati := .t.
+local nArr := SELECT()
+local nRec := RECNO()
+local lStartPrint := .f.
+local cPom3 := ""
+LOCAL nR := 0
 
--- FUNCTION provjerisif_izbaciti_ovu_funkciju( clDok, cImePoljaID, nOblSif, clFor, lTest )
+if lTest == nil
+	lTest := .f.
+endif
 
-   LOCAL lVrati := .T.
-   LOCAL nArr := Select()
-   LOCAL nRec := RecNo()
-   LOCAL lStartPrint := .F.
-   LOCAL cPom3 := ""
-   LOCAL nR := 0
-
-   IF lTest == nil
-      lTest := .F.
-   ENDIF
-
-   IF clFor == NIL
-      clFor := ".t."
-   ENDIF
-
-// TODO izbaciti ovu funkciju
-
-IF .T.
-       RETURN .T.
+IF clFor == NIL
+	clFor:=".t."
 ENDIF
 
-   PRIVATE cPom := clDok
-   PRIVATE cPom2 := cImePoljaID
-   PRIVATE cPom4 := clFor
+private cPom := clDok
+private cPom2 := cImePoljaID
+private cPom4 := clFor
 
-   DO while &cPom
-      if &cPom4
-         SELECT ( nOblSif )
-         cPom3 := ( nArr )->( &cPom2 )
-         SEEK cPom3
-         IF !Found()  .AND.  !(  fakt->( AllTrim( podbr ) == "." )  .AND. Empty( fakt->idroba ) )
+do while &cPom
+    if &cPom4
+        SELECT (nOblSif)
+        cPom3 := (nArr)->(&cPom2)
+        SEEK cPom3
+        if !FOUND()  .and.  !(  fakt->(alltrim(podbr)==".")  .and. empty(fakt->idroba))
             // ovo je kada se ide 1.  1.1 1.2
             ++nR
-            lVrati := .F.
-            IF lTest == .F.
-               IF !lStartPrint
-                  lStartPrint := .T.
-                  IF !start_print()
-                     RETURN .F.
-                  ENDIF
-                  ? "NEPOSTOJECE SIFRE:"
-                  ? "------------------"
-               ENDIF
-               ? Str( nR ) + ") SIFRA '" + cPom3 + "'"
-            ELSE
+            lVrati:=.f.
+            if lTest == .f.
+                if !lStartPrint
+                    lStartPrint:=.t.
+                    StartPrint()
+                    ? "NEPOSTOJECE SIFRE:"
+                    ? "------------------"
+                ENDIF
+                ? STR(nR)+") SIFRA '"+cPom3+"'"
+            else
 
-               nTArea := Select()
+      	        nTArea := SELECT()
 
-               SELECT roba
-               GO TOP
-               SEEK fakt->idroba
+	            select roba
+	            go top
+	            seek fakt->idroba
 
-               IF !Found()
-                  APPEND BLANK
-                  hRec := dbf_get_rec()
-                  hRec[ "id" ] := fakt->idroba
-                  hRec[ "naz" ] :=  "!!! KONTROLOM UTVRDJENO"
-                  update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
-               ENDIF
-               SELECT ( nTArea )
+	            if !FOUND()
+	                append blank
+                    _rec := dbf_get_rec()
+	                _rec["id"] := fakt->idroba
+	                _rec["naz"] :=  "!!! KONTROLOM UTVRDJENO"
+                    update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+	            endif
+	            select (nTArea)
 
-            ENDIF
-         ENDIF
-      ENDIF
-      SELECT ( nArr )
-      SKIP 1
-   ENDDO
+            endif
+        ENDIF
+    ENDIF
+    SELECT (nArr)
+    SKIP 1
+ENDDO
 
-   GO ( nRec )
-   IF lStartPrint
-      ?
-      end_print()
-   ENDIF
+GO (nRec)
+IF lStartPrint
+    ?
+    EndPrint()
+ENDIF
 
-   RETURN lVrati
- */
+return lVrati
+
+
+
+
+
+

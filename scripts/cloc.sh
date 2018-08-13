@@ -80,7 +80,7 @@ $EXE  virm/ \
 
 MODULE=F18_mat
 echo ==== $MODULE =============
-$EXE  virm/ \
+$EXE  mat/ \
    --report-file=$MODULE.cloc
 
 $EXE --sum-report \

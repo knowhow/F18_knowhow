@@ -6,7 +6,11 @@ MODULE=F18_core
 echo ==== $MODULE =============
 $EXE core/ core_ui2/ core_sql/ core_dbf/ core_pdf/ \
    core_reporting/ core_string/ \
-   core_semafori/ \
+   --report-file=$MODULE.cloc
+
+MODULE=F18_core_semafori
+echo ==== $MODULE =============
+$EXE  core_semafori/ \
    --report-file=$MODULE.cloc
 
 MODULE=F18_common
@@ -67,6 +71,7 @@ $EXE  virm/ \
 
 $EXE --sum-report \
     F18_core.cloc \
+    F18_core_semafori.cloc \
     F18_scripts.cloc \
     F18_common.cloc  \
     F18_fiskalizacija.cloc \

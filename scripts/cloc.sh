@@ -22,6 +22,9 @@ $EXE  core_semafori/ \
 MODULE=F18_common
 echo ==== $MODULE =============
 $EXE F18.prg \
+   CHANGELOG.md  README.md  README_developer.md \
+   appveyor.sh appveyor.bat \
+   build.sh  \
    common/ common_legacy/ \
    --report-file=$MODULE.cloc
 
@@ -75,6 +78,11 @@ echo ==== $MODULE =============
 $EXE  virm/ \
    --report-file=$MODULE.cloc
 
+MODULE=F18_mat
+echo ==== $MODULE =============
+$EXE  virm/ \
+   --report-file=$MODULE.cloc
+
 $EXE --sum-report \
     F18_SQL.cloc \
     F18_core.cloc \
@@ -90,8 +98,8 @@ $EXE --sum-report \
     F18_os.cloc \
     F18_epdv.cloc \
     F18_virm.cloc \
+    F18_mat.cloc \
     --report-file=F18_all.cloc
 
 #{F18_RNAL}rnal/*.prg
-#{F18_MAT}mat/*.prg
 #{F18_KADEV}kadev/*.prg

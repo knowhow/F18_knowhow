@@ -19,9 +19,7 @@ STATIC PicUN := "999999999.99"
 STATIC __unos_x
 STATIC __unos_y
 
-// -----------------------------------------------------
-// knjizenje naloga
-// -----------------------------------------------------
+
 FUNCTION mat_knjizenje_naloga()
 
    PUBLIC gPotpis := "N"

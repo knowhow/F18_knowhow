@@ -18,7 +18,6 @@
 //STATIC __table_promj_alias
 
 
-
 FUNCTION os_generacija_pocetnog_stanja()
 
    LOCAL aInformacije := {}

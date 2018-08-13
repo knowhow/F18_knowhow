@@ -88,7 +88,7 @@ FUNCTION P_OS( cId, dx, dy )
       { PadR( "OtpVr", 15 ), {|| otpvr },  "otpvr", {|| .T. },  {|| os_validate_vrijednost( wnabvr, wotpvr ) }  };
       }
 
-   IF os_postoji_polje( "K1" )
+   IF os_sii_da_li_postoji_polje( "K1" )
       AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| P_K1( @wK1 ) } } )
     //  AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { PadC( "K2", 2 ), {|| k2 }, "k2"   } )
@@ -100,7 +100,7 @@ FUNCTION P_OS( cId, dx, dy )
       AAdd ( ImeKol, { "Dobavljac", {|| idPartner }, "idPartner", {|| .T. }, {|| p_partner( @wIdPartner ) }   } )
    ENDIF
 
-   IF os_postoji_polje( "brsoba" )
+   IF os_sii_da_li_postoji_polje( "brsoba" )
       AAdd ( ImeKol, { PadC( "BrSoba", 6 ), {|| brsoba }, "brsoba"   } )
    ENDIF
 
@@ -282,7 +282,7 @@ STATIC FUNCTION validacija_postoji_sifra( wid )
 // provjerava postojanje polja idpartner u os/sii tabelama
 // --------------------------------------------------------------
 FUNCTION os_fld_partn_exist()
-   RETURN os_postoji_polje( "idpartner" )
+   RETURN os_sii_da_li_postoji_polje( "idpartner" )
 
 
 

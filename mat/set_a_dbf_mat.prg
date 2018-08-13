@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION set_a_dbf_mat()
 
    // kumulativne tabele
@@ -32,7 +31,7 @@ FUNCTION set_a_dbf_mat()
    set_a_dbf_temp( "mat_panal", "MAT_PANAL",       F_MAT_PANAL   )
    set_a_dbf_temp( "mat_psuban", "MAT_PSUBAN",       F_MAT_PSUBAN   )
 
-   RETURN
+   RETURN .T.
 
 
 

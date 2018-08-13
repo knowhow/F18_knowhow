@@ -11,21 +11,18 @@
 
 #include "f18.ch"
 
+MEMVAR gOsSii
 
-
-// -----------------------------------------------------
-// provjerava da li postoji polje u tabelama os/sii
-// -----------------------------------------------------
-FUNCTION os_postoji_polje( naziv_polja )
+FUNCTION os_sii_da_li_postoji_polje( cField )
 
    LOCAL lRet := .F.
 
    IF gOsSii == "O"
-      IF os->( FieldPos( naziv_polja ) ) <> 0
+      IF os->( FieldPos( cField ) ) <> 0
          lRet := .T.
       ENDIF
    ELSE
-      IF sii->( FieldPos( naziv_polja ) ) <> 0
+      IF sii->( FieldPos( cField ) ) <> 0
          lRet := .T.
       ENDIF
    ENDIF

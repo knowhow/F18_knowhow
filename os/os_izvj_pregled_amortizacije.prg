@@ -60,7 +60,7 @@ FUNCTION os_pregled_amortizacije()
       @ box_x_koord() + 7, box_y_koord() + 2 SAY "3 - samo promjene           " GET cPromj VALID cpromj $ "123"
       @ box_x_koord() + 8, box_y_koord() + 2 SAY "Filter po sadasnjoj vr.(0-sve,1-samo koja je imaju,2-samo koja je nemaju):" GET cFiltSadVr VALID cFiltSadVr $ "012" PICT "9"
       @ box_x_koord() + 9, box_y_koord() + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
-      IF os_postoji_polje( "brsoba" )
+      IF os_sii_da_li_postoji_polje( "brsoba" )
          lBrojSobe := .T.
          @ box_x_koord() + 10, box_y_koord() + 2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  PICT "@!"
       ENDIF

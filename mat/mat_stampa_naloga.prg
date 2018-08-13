@@ -30,7 +30,7 @@ FUNCTION mat_stampa_naloga()
 
    f18_menu( "onal", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 

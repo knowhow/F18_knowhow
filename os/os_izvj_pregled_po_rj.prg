@@ -46,7 +46,7 @@ FUNCTION os_pregled_po_rj()
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prikazati kolicine na popisnoj listi D/N" GET cKolP VALID cKolP $ "DN" PICT "@!"
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikazati kolonu 'opis' ? (D/N)" GET cOpis VALID cOpis $ "DN" PICT "@!"
 
-      IF os_postoji_polje( "brsoba" )
+      IF os_sii_da_li_postoji_polje( "brsoba" )
          lBrojSobe := .T.
          @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  PICT "@!"
       ENDIF

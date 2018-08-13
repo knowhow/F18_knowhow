@@ -81,8 +81,7 @@ FUNCTION Stanje2Fakt()
 //   o_sifv()
 //   o_partner()
 //   o_pos_kase()
-   o_pos_pos()
-   o_pos_doks()
+   o_pos_kumulativne_tabele()
 
    cIdPos := gIdPos
    dDatOd := CToD( "" )

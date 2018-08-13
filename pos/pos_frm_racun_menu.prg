@@ -59,8 +59,6 @@ STATIC FUNCTION unos_stavki_racuna( lNovi )
 
 
 
-
-
 FUNCTION zakljuci_pos_racun()
 
    LOCAL lRet := .F.

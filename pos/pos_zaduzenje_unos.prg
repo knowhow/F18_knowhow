@@ -249,7 +249,7 @@ FUNCTION Zaduzenje
             _robanaz := roba->naz
             _jmj := roba->jmj
             _idtarifa := roba->idtarifa
-            _cijena := if( Empty( _cijena ), pos_get_mpc(), _cijena )
+            _cijena := IIF( Empty( _cijena ), pos_get_mpc(), _cijena )
             _barkod := roba->barkod
             _n1 := roba->n1
             _n2 := roba->n2

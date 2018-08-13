@@ -20,8 +20,7 @@ STATIC FUNCTION _o_tables()
 //   o_sifk()
 //   o_sifv()
 //   o_roba()
-   o_pos_pos()
-   o_pos_doks()
+   o_pos_kumulativne_tabele()
 
    RETURN .T.
 

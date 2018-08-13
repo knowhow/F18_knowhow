@@ -249,7 +249,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    RETURN .T.
 
 
-STATIC FUNCTION o_pos_kumulativne_tabele()
+FUNCTION o_pos_kumulativne_tabele()
 
    o_pos_pos()
    o_pos_doks()

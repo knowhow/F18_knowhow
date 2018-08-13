@@ -357,8 +357,7 @@ FUNCTION realizacija_dio_objekta
    // o_sifk()
    // o_sifv()
    // o_roba()
-   o_pos_pos()
-   o_pos_doks()
+   o_pos_kumulativne_tabele()
 
    aDbf := {}
    AAdd ( aDbf, { "IdDio", "C",  2, 0 } )

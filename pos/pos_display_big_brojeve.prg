@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION gSjeciStr()
 
    IF gPrinter == "R"

@@ -45,8 +45,7 @@ FUNCTION pos_rpt_stanje_partnera()
    ENDDO
 
    //o_roba()
-   o_pos_pos()
-   o_pos_doks()
+   o_pos_kumulativne_tabele()
    //o_partner()
 
    START PRINT CRET

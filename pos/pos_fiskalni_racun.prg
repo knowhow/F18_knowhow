@@ -359,7 +359,6 @@ STATIC FUNCTION pos_to_fprint( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeR
 
 
 
-
 STATIC FUNCTION pos_to_flink( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeRacuna, lStorno )
 
    LOCAL nErrorLevel := 0
@@ -368,8 +367,6 @@ STATIC FUNCTION pos_to_flink( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeRa
    nErrorLevel := fc_pos_rn( s_hFiskalniUredjajParams, aStavkeRacuna, lStorno )
 
    RETURN nErrorLevel
-
-
 
 
 

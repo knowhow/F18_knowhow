@@ -15,7 +15,7 @@
 FUNCTION o_pos_doks()
 
    // RETURN o_dbf_table( F_POS_DOKS, "pos_doks", "1" )
-   seek_pos_pos( "XX", "XX" )
+   seek_pos_doks( "XX", "XX" )
 
    RETURN .T.
 
@@ -23,7 +23,7 @@ FUNCTION o_pos_doks()
 FUNCTION o_pos_pos()
 
    // RETURN o_dbf_table( F_POS_POS, "pos_pos", "1" )
-   seek_pos_doks( "XX", "XX" )
+   seek_pos_pos( "XX", "XX" )
 
    RETURN .T.
 

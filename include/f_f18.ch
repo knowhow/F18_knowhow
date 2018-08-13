@@ -143,7 +143,7 @@
 //#define F_ROBAIZ    139
 #define F_ROBA_P  139  // roba za sastavnice
 
-#define F_RAZDR     140
+//#define F_RAZDR     140
 #define F_SIROV     141
 #define F_STRAD     142
 #define F_OSOB      143

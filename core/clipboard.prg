@@ -1,6 +1,5 @@
 #include "f18.ch"
 
-
 STATIC s_hClipBoard
 
 PROCEDURE get_clipboard()

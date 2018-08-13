@@ -2,6 +2,12 @@
 
 EXE=cloc #/d/devel/cloc-1.76.exe 
 
+MODULE=F18_SQL
+echo ==== $MODULE =============
+$EXE sql_scripts/ \
+   --report-file=$MODULE.cloc
+
+
 MODULE=F18_core
 echo ==== $MODULE =============
 $EXE core/ core_ui2/ core_sql/ core_dbf/ core_pdf/ \
@@ -70,6 +76,7 @@ $EXE  virm/ \
    --report-file=$MODULE.cloc
 
 $EXE --sum-report \
+    F18_SQL.cloc \
     F18_core.cloc \
     F18_core_semafori.cloc \
     F18_scripts.cloc \

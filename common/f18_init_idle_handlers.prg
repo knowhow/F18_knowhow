@@ -125,7 +125,7 @@ PROCEDURE update_fin_nalog_count()
       IF ValType( s_nFinNalogCount ) != "N"
          RETURN
       ENDIF
-      hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
+      hb_DispOutAt( f18_max_rows() + 1,  f18_max_cols() - 20, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
    ENDIF
 
    RETURN

@@ -26,6 +26,7 @@ $EXE F18.prg \
    appveyor.sh appveyor.bat \
    build.sh  \
    common/ common_legacy/ \
+   include/ \
    --report-file=$MODULE.cloc
 
 MODULE=F18_scripts

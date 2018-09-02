@@ -229,12 +229,14 @@ FUNCTION set_screen_dimensions()
 
    DO CASE
 
-   CASE nPixWidth >= 3000 .AND. nPixHeight >= 1500
+   CASE nPixWidth >= 3000 .AND. nPixHeight >= 1800
 
        IF is_linux()
          font_name("Liberation Mono")
-         font_size(48)
-         font_width(20)
+         font_weight_bold()
+         font_size(40)
+         font_width(24)  
+         // linux zavrsi 45x24, 37 rows x 132 cols
          ?E cMsg + "HiDPI"
        ENDIF
               

@@ -229,6 +229,15 @@ FUNCTION set_screen_dimensions()
 
    DO CASE
 
+   CASE nPixWidth >= 3000 .AND. nPixHeight >= 1500
+
+       IF is_linux()
+         font_name("Liberation Mono")
+         font_size(48)
+         font_width(20)
+         ?E cMsg + "HiDPI"
+       ENDIF
+              
    CASE nPixWidth >= 1440 .AND. nPixHeight >= 900
 
       IF is_mac()

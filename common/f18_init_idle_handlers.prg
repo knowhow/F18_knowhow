@@ -125,7 +125,7 @@ PROCEDURE update_fin_nalog_count()
       s_nFinNalogCount := oQry:FieldGet( 1 )
       IF ValType( s_nFinNalogCount ) != "N"
          RETURN
-      ENDIF
+      ENDIF 
       hb_DispOutAt( f18_max_rows() + 1,  f18_max_cols() - 10, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
    ENDIF
    */

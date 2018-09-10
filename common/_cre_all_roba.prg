@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -11,7 +11,38 @@
 
 #include "f18.ch"
 
+/*
+   FAKT delphirb labele koriste tabelu barkod
+*/
 
+FUNCTION cre_barkod( ver )
+
+   LOCAL aDbf
+   LOCAL _table_name, _alias
+   LOCAL _created
+
+   _alias := "BARKOD"
+   _table_name := "barkod"
+
+   aDBf := {}
+   AAdd( aDBf, { 'ID', 'C',   10,  0 } )
+   AAdd( aDBf, { 'BARKOD', 'C',   13,  0 } )
+   AAdd( aDBf, { 'NAZIV', 'C',  250,  0 } )
+   AAdd( aDBf, { 'L1', 'C',   40,   0 } )
+   AAdd( aDBf, { 'L2', 'C',   40,   0 } )
+   AAdd( aDBf, { 'L3', 'C',   40,  0 } )
+   AAdd( aDBf, { 'VPC', 'N',   12,  2 } )
+   AAdd( aDBf, { 'MPC', 'N',   12,  2 } )
+
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX( "1", "barkod+id", _alias )
+   CREATE_INDEX( "ID", "id+LEFT(naziv,40)", _alias )
+   CREATE_INDEX( "Naziv", "LEFT(Naziv,40)+id", _alias )
+
+   RETURN .T.
+
+/*
 FUNCTION cre_sif_roba( ver )
 
    LOCAL aDbf
@@ -59,6 +90,9 @@ FUNCTION cre_sif_roba( ver )
    AAdd( aDBf, { 'TROSK4', 'N',  15,  5 } )
    AAdd( aDBf, { 'TROSK5', 'N',  15,  5 } )
    AAdd( aDBf, { 'IDKONTO', 'C',   7,  5 } )
+
+   RETURN .T.
+*/
 
 /*
    _alias := "ROBA"
@@ -130,28 +164,8 @@ FUNCTION cre_sif_roba( ver )
    AFTER_CREATE_INDEX
 */
 
-   // -------------------------------------------------
-   // BARKOD
-   // -------------------------------------------------
 
-   _alias := "BARKOD"
-   _table_name := "barkod"
 
-   aDBf := {}
-   AAdd( aDBf, { 'ID', 'C',   10,  0 } )
-   AAdd( aDBf, { 'BARKOD', 'C',   13,  0 } )
-   AAdd( aDBf, { 'NAZIV', 'C',  250,  0 } )
-   AAdd( aDBf, { 'L1', 'C',   40,   0 } )
-   AAdd( aDBf, { 'L2', 'C',   40,   0 } )
-   AAdd( aDBf, { 'L3', 'C',   40,  0 } )
-   AAdd( aDBf, { 'VPC', 'N',   12,  2 } )
-   AAdd( aDBf, { 'MPC', 'N',   12,  2 } )
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX( "1", "barkod+id", _alias )
-   CREATE_INDEX( "ID", "id+LEFT(naziv,40)", _alias )
-   CREATE_INDEX( "Naziv", "LEFT(Naziv,40)+id", _alias )
 
 
    /*
@@ -173,7 +187,6 @@ FUNCTION cre_sif_roba( ver )
 
 */
 
-   RETURN .T.
 
 STATIC FUNCTION g_str_fields()
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -71,7 +71,18 @@ FUNCTION use_sql_sif( cTable, lMakeIndex, cAlias, cId )
 
    IF lMakeIndex
 
-      IF cTable == "ld_radn" // RADN je izuzetak sa imenima tagova "1", "2"
+      IF cTable == "os_os" .OR. cTable == "sii_sii"
+
+         index_os_sii( cAlias )
+
+         SET ORDER TO TAG "1"
+
+      ELSEIF cTable == "os_promj" .OR. cTable == "sii_promj"
+
+         INDEX ON id + tip + DToS( datum ) + opis  TAG "1" TO ( cAlias )
+         SET ORDER TO TAG "1"
+
+      ELSEIF cTable == "ld_radn" // RADN je izuzetak sa imenima tagova "1", "2"
          INDEX ON ID TAG "1" TO ( cAlias )
          IF FieldPos( "NAZ" ) > 0
             INDEX ON NAZ TAG "2" TO ( cAlias )
@@ -173,15 +184,14 @@ FUNCTION use_sql( cTable, cSqlQuery, cAlias )
       lError := .T.
    ENDIF
 
-   nWa := Select( cTable )
-   IF nWa > 0
-      SELECT ( nWa )
-      USE
-      dbSelectArea( nWa )
-   ENDIF
-
    IF cAlias == NIL
       cAlias := cTable
+      nWa := Select( cTable )
+      IF nWa > 0
+         SELECT ( nWa )
+         USE
+         dbSelectArea( nWa )
+      ENDIF
    ELSE
       IF cAlias == "_NEW_WA_"
          lOpenInNewArea := .T.

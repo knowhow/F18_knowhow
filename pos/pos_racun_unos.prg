@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 STATIC __max_kolicina := NIL
-
 
 
 FUNCTION pos_unos_racuna()
@@ -224,7 +223,6 @@ FUNCTION pos_unos_racuna()
 
 
 
-
 FUNCTION max_kolicina_kod_unosa( read_par )
 
    IF read_par != NIL
@@ -232,7 +230,6 @@ FUNCTION max_kolicina_kod_unosa( read_par )
    ENDIF
 
    RETURN __max_kolicina
-
 
 
 
@@ -302,7 +299,7 @@ STATIC FUNCTION _refresh_total()
    RETURN .T.
 
 
-STATIC FUNCTION _calc_current_total( iznos, popust )
+STATIC FUNCTION _calc_current_total( iznos, nPopust )
 
    LOCAL nDbfArea := Select()
    LOCAL _iznos := 0
@@ -313,14 +310,14 @@ STATIC FUNCTION _calc_current_total( iznos, popust )
 
    DO WHILE !Eof()
       _iznos += _pos_pripr->( kolicina * cijena )
-      _popust += _pos_pripr->( kolicina * ncijena )
+      _popust += _pos_pripr->( kolicina * nCijena )
       SKIP
    ENDDO
 
    GO TOP
 
    iznos := _iznos
-   popust := _popust
+   nPopust := _popust
 
    SELECT ( nDbfArea )
 
@@ -359,13 +356,11 @@ FUNCTION pos_set_key_handler_ispravka_racuna()
    RETURN .T.
 
 
-
 FUNCTION pos_unset_key_handler_ispravka_racuna()
 
    SetKey( Asc ( "*" ), NIL )
 
    RETURN .F.
-
 
 
 STATIC FUNCTION cijena_ok( cijena )
@@ -377,7 +372,7 @@ STATIC FUNCTION cijena_ok( cijena )
    ENDIF
 
    IF cijena == 0
-      MsgBeep( "Nepravilan unos cijene, cijena mora biti <> 0 !!!" )
+      MsgBeep( "Nepravilan unos cijene, cijena mora biti <> 0 !?" )
       _ret := .F.
    ENDIF
 

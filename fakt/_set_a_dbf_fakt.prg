@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -39,7 +39,6 @@ FUNCTION set_a_dbf_fakt()
    set_a_dbf_temp( "_fakt_partn",   "_PARTN", F__PARTN  )
    set_a_dbf_temp( "fakt_logk",   "LOGK", F_LOGK    )
    set_a_dbf_temp( "fakt_logkd",   "LOGKD", F_LOGKD   )
-   set_a_dbf_temp( "barkod",   "BARKOD", F_BARKOD  )
    set_a_dbf_temp( "fakt_upl",   "UPL", F_UPL     )
    set_a_dbf_temp( "fakt_s_pripr",   "FAKT_S_PRIPR", F_FAKT    )
    set_a_dbf_temp( "fakt__fakt",   "_FAKT", F__FAKT   )

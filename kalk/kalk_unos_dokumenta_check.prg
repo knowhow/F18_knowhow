@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -83,7 +83,7 @@ FUNCTION KalkNaF( cIdroba, nKols )
    //SET ORDER TO TAG "3" // fakt idroba
    nKols := 0
    //SEEK cidroba
-   seek_fakt_3( cIdRoba )
+   seek_fakt_3( NIL, cIdRoba )
 
    DO WHILE !Eof() .AND. cIdroba == idroba
       IF idtipdok = "0"  // ulaz
@@ -609,7 +609,7 @@ FUNCTION ObracunPorezaUvoz()
             _&cPom := skol * _nc * 0.1
          ENDIF
 
-         kalk_when_valid_nc()
+         kalk_when_valid_nc_ulaz()
          my_rlock()
          Gather()
          my_unlock()

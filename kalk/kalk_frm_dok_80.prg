@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -35,7 +35,7 @@ FUNCTION kalk_get1_80( atrib )
       @ box_x_koord() + nX, Col() + 1 SAY "Datum:" GET _DatFaktP
 
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x -1, 40, 20 ) } PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto zadužuje/razdužuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_konto( _kord_x - 1, 40, 20 ) } PICT "@!"
 
       // IF gNW <> "X"
       // @ box_x_koord() + nX, box_y_koord() + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
@@ -44,7 +44,7 @@ FUNCTION kalk_get1_80( atrib )
       ++nX
       _kord_x := box_x_koord() + nX
 
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_sifre( F_KONTO, _idkonto2, _kord_x, 30, 20 )  } PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_konto( _kord_x, 30, 20 )  } PICT "@!"
 
       // IF gNW <> "X"
       // @ box_x_koord() + nX, box_y_koord() + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz2 )

@@ -42,8 +42,9 @@ FUNCTION p_epdv_sheme_generacije( cTabela, cId, dx, dy )
 
 STATIC FUNCTION set_a_kol( aKol, aImeKol )
 
-   aImeKol := {}
+   LOCAL i
 
+   aImeKol := {}
    AAdd( aImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Opis", {|| naz }, "naz", {|| .T. }, {|| .T. } } )
 

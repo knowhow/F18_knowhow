@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -29,7 +29,7 @@ FUNCTION form_get_roba_id( cIdRoba, nX, nY, GetList )
       bValid := {|| Empty( cIdroba ) .OR. Right( Trim( cIdRoba ), 1 ) == ";" .OR. P_Roba( @cIdRoba ) }
    ENDIF
 
-   @ nX, nY SAY "Roba  " GET cIdRoba WHEN Eval( bWhen )  VALID  Eval( bValid ) PICT "@!"
+   @ nX, nY SAY "Roba  " GET cIdRoba WHEN Eval( bWhen )  VALID  Eval( bValid ) PICT "@!S10"
 
    RETURN .T.
 
@@ -50,8 +50,8 @@ FUNCTION kalk_pripr_form_get_roba( cIdRoba, cIdTarifa, cIdVd, lNoviDokument, nKo
    ENDIF
 
    bValid := {|| valid_roba( @cIdRoba, @cIdTarifa, lNoviDokument, @aPorezi ), ;
-      ispisi_naziv_sifre( F_ROBA, cIdRoba, nKoordX, 25, 40 ), ;
-      kalk_zadnji_ulazi_info( cIdpartner, cIdroba, cProdMag ) }
+      ispisi_naziv_roba( nKoordX, 25, 40 ), ;
+      kalk_zadnji_ulazi_info( cIdpartner, cIdroba, cProdMag ), !Empty( cIdRoba) }
 
 
    // _ocitani_barkod := _idroba, ;

@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -20,32 +20,32 @@ FUNCTION os_rekapitulacija_po_k1()
 
    o_os_sii()
 
-   cIdrj := Space( 4 )
+   cIdRj := Space( 4 )
    cON := "N"
    cKolP := "N"
    cPocinju := "N"
    cDNOS := "D"
 
    Box(, 4, 77 )
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno svi):" GET cidrj VALID Empty( cIdRj ) .OR. p_rj( @cIdrj )
-   @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno svi):" GET cIdRj VALID Empty( cIdRj ) .OR. p_rj( @cIdRj )
+   @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cPocinju VALID cPocinju $ "DN" PICT "@!"
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prikaz svih neotpisanih/otpisanih/samo novonabavljenih (N/O/B) sredstava:" GET cON PICT "@!" VALID con $ "ONB"
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prikaz sredstava D/N:" GET cDNOs PICT "@!" VALID cDNOs $ "DN"
    READ
    ESC_BCR
    BoxC()
 
-   IF cPocinju == "D" .OR. Empty( cIdrj )
-      cIdRj := Trim( cIdrj )
+   IF cPocinju == "D" .OR. Empty( cIdRj )
+      cIdRj := Trim( cIdRj )
    ENDIF
 
    m := "----- ---------- ------------------------- -------------"
 
-   select_os_sii()
+   select_o_os_or_sii()
    SET ORDER TO TAG "2"
    // idrj+id+dtos(datum)
 
-   cFilt1 := "idrj=cidrj"
+   cFilt1 := "idrj=cIdRj"
    cSort1 := "k1+idrj"
 
    Box(, 1, 30 )
@@ -62,17 +62,17 @@ FUNCTION os_rekapitulacija_po_k1()
 
    DO WHILE !Eof()
 
-      select_os_sii()
+      select_o_os_or_sii()
       nKol := 0
       cK1 := field->k1
       DO WHILE !Eof() .AND. cK1 = field->k1
 
-         select_os_sii()
+         select_o_os_or_sii()
          nKolRJ := 0
          nRbr := 0
          cTRj := field->idrj
          DO WHILE !Eof() .AND. cK1 == field->k1 .AND. cTRj == field->idrj
-            select_os_sii()
+            select_o_os_or_sii()
             IF ( cON = "B" .AND. Year( os_datum_obracuna() ) <> Year( field->datum ) )
                // nije novonabavljeno
                SKIP
@@ -100,7 +100,7 @@ FUNCTION os_rekapitulacija_po_k1()
             ENDIF
 
             SKIP
-            select_os_sii()
+            select_o_os_or_sii()
 
          ENDDO
 
@@ -125,7 +125,7 @@ FUNCTION os_rekapitulacija_po_k1()
       SELECT k1
       HSEEK cK1
 
-      select_os_sii()
+      select_o_os_or_sii()
 
       ? "UKUPNO ZA GRUPU", cK1, k1->naz
       @ PRow(), nCol1 SAY nKol PICT os_pic_kolicina()
@@ -173,9 +173,9 @@ STATIC FUNCTION ZglK1()
    ?? "     Datum:", os_datum_obracuna()
 
    select_o_rj( cIdRj )
-   select_os_sii()
+   select_o_os_or_sii()
 
-   ? "Radna jedinica:", cIdrj, rj->naz
+   ? "Radna jedinica:", cIdRj, rj->naz
 
    IF cPocinju == "D"
       ?? "(SVEUKUPNO)"

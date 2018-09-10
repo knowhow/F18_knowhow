@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -254,7 +254,7 @@ FUNCTION pos_osob_key_handler( Ch )
       nVrati := DE_ABORT
    ENDCASE
 
-   IF ch == K_ALT_R .OR. ch == K_ALT_S .OR. ch == K_CTRL_N .OR. ch == K_F2 .OR. ch == K_F4 .OR. ch == K_CTRL_A .OR. ch == K_CTRL_T .OR. ch == K_ENTER
+   IF ch == k_alt_r() .OR. ch == k_alt_s() .OR. ch == K_CTRL_N .OR. ch == K_F2 .OR. ch == K_F4 .OR. ch == K_CTRL_A .OR. ch == K_CTRL_T .OR. ch == K_ENTER
       ch := 0
    ENDIF
 

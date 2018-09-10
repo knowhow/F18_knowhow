@@ -124,15 +124,17 @@ FUNCTION Kurs( datum, val_iz, val_u )
 
 
 
-// -----------------------------------------------
-// vraca skraceni naziv domace valute
-// -----------------------------------------------
-FUNCTION ValDomaca()
+FUNCTION valuta_domaca_skraceni_naziv()
 
-   LOCAL _ret
-   _ret := hb_UTF8ToStr( sql_get_field_za_uslov( F18_PSQL_SCHEMA + ".valute", "naz2", { { "tip", "D" } } ) )
+   LOCAL cRet := sql_get_field_za_uslov( F18_PSQL_SCHEMA + ".valute", "naz2", { { "tip", "D" } } )
 
-   RETURN _ret
+   IF ValType( cRet ) == "C"
+     cRet := hb_UTF8ToStr( cRet )
+   ELSE
+     cRet := "???"
+   ENDIF
+
+   RETURN cRet
 
 
 
@@ -185,7 +187,7 @@ FUNCTION ValSekund()
    IF gBaznaV == "D"
       RETURN ValPomocna()
    ELSE
-      RETURN ValDomaca()
+      RETURN valuta_domaca_skraceni_naziv()
    ENDIF
 
 
@@ -274,7 +276,7 @@ FUNCTION ValBazna()
    IF gBaznaV == "P"
       RETURN ValPomocna()
    ELSE
-      RETURN ValDomaca()
+      RETURN valuta_domaca_skraceni_naziv()
    ENDIF
 
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -93,7 +93,7 @@ FUNCTION ld_rekap_get_svi()
       @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Radne jedinice: "  GET  qqRJ PICT "@!S25"
       @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
       @ box_x_koord() + 4, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
-      @ box_x_koord() + 4, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 4, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
       @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
       @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
       @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
@@ -129,7 +129,7 @@ FUNCTION ld_rekap_get_rj()
    @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Radna jedinica: "  GET cIdRJ
    @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
    @ box_x_koord() + 3, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
-   @ box_x_koord() + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
    @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
    @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
    @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Opština stanovanja:  "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )

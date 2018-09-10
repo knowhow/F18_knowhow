@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -27,7 +27,7 @@ FUNCTION fin_ios_meni()
 
    picBHD := "@Z " + ( R1 := FormPicL( "9 " + gPicBHD, 16 ) )
    picDEM := "@Z " + ( R2 := FormPicL( "9 " + pic_iznos_eur(), 12 ) )
-   R1 := R1 + " " + ValDomaca()
+   R1 := R1 + " " + valuta_domaca_skraceni_naziv()
    R2 := R2 + " " + ValPomocna()
 
    // AAdd( _opc, "1. specifikacija IOS-a (pregled podataka prije štampe) " )
@@ -101,7 +101,7 @@ STATIC FUNCTION mnu_ios_print()
 
    IF fin_dvovalutno()
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz " +   AllTrim( ValDomaca() ) + "/" +  AllTrim( ValPomocna() ) + " (1/2)" ;
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz " +   AllTrim( valuta_domaca_skraceni_naziv() ) + "/" +  AllTrim( ValPomocna() ) + " (1/2)" ;
          GET _din_dem VALID _din_dem $ "12"
    ENDIF
 
@@ -342,7 +342,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
    IF _din_dem == "1"
       xml_node( "total", AllTrim( Str( _total_bhd, 12, 2 ) ) )
-      xml_node( "valuta", to_xml_encoding ( ValDomaca() ) )
+      xml_node( "valuta", to_xml_encoding ( valuta_domaca_skraceni_naziv() ) )
    ELSE
       xml_node( "total", AllTrim( Str( _total_dem, 12, 2 ) ) )
       xml_node( "valuta", to_xml_encoding ( ValPomocna() ) )
@@ -855,7 +855,7 @@ STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
 
    ? line
 
-   ?U "*RED.* ŠIFRA*      NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *   KUMULATIVNI PROMET  U  " + ValDomaca() + "  *    S A L D O   U   " + ValDomaca() + "         " + IF( fin_dvovalutno(), "*  KUMULAT. PROMET U " + ValPomocna() + " *  S A L D O   U   " + ValPomocna() + "  ", "" ) + "*"
+   ?U "*RED.* ŠIFRA*      NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *   KUMULATIVNI PROMET  U  " + valuta_domaca_skraceni_naziv() + "  *    S A L D O   U   " + valuta_domaca_skraceni_naziv() + "         " + IF( fin_dvovalutno(), "*  KUMULAT. PROMET U " + ValPomocna() + " *  S A L D O   U   " + ValPomocna() + "  ", "" ) + "*"
    ?U "                                                                          ________________________________ _________________________________" + IF( fin_dvovalutno(), "*_________________________ ________________________", "" ) + "_"
    ? "*BROJ*      *                                    * BROJ*                 *    DUGUJE     *   POTRAZUJE    *    DUGUJE      *   POTRAZUJE    " + IF( fin_dvovalutno(), "*    DUGUJE  * POTRAZUJE  *   DUGUJE   * POTRAZUJE ", "" ) + "*"
    ?U line
@@ -1144,7 +1144,7 @@ STATIC FUNCTION print_ios_txt( hParams )
    m := "       ---- ---------- -------------------- -------- -------- ---------------- ----------------"
 
    ? m
-   ? "       *R. *   BROJ   *    OPIS            * DATUM  * VALUTA *       IZNOS  U  " + iif( _din_dem == "1", ValDomaca(), ValPomocna() ) + "            *"
+   ? "       *R. *   BROJ   *    OPIS            * DATUM  * VALUTA *       IZNOS  U  " + iif( _din_dem == "1", valuta_domaca_skraceni_naziv(), ValPomocna() ) + "            *"
    ? "       *Br.*          *                    *                 * --------------------------------"
    ?U "       *   *  RAČUNA  *                    * RA�UNA * RAČUNA *     DUGUJE     *   POTRAŽUJE   *"
    ? m
@@ -1455,7 +1455,7 @@ STATIC FUNCTION print_ios_txt( hParams )
    ?
 
    @ PRow(), 0 SAY "NAPOMENA: OSPORAVAMO ISKAZANO STANJE U CJELINI _______________ DJELIMI�NO"
-   @ PRow() + 1, 0 SAY "ZA IZNOS OD  " + ValDomaca() + "= _______________ IZ SLIJEDE�IH RAZLOGA:"
+   @ PRow() + 1, 0 SAY "ZA IZNOS OD  " + valuta_domaca_skraceni_naziv() + "= _______________ IZ SLIJEDE�IH RAZLOGA:"
    @ PRow() + 1, 0 SAY "_________________________________________________________________________"
 
    ?

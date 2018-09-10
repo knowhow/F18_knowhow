@@ -7,6 +7,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    LOCAL GetList := {}
    LOCAL cFilt := ".t."
    LOCAL cIsplata := ""
+
    cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gLDRadnaJedinica
    nMjesec := ld_tekuci_mjesec()
@@ -27,7 +28,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    cPrikIzn := "D"
    nZkk := gZaok
 
-   //PRIVATE cIsplata := ""
+   // PRIVATE cIsplata := ""
    PRIVATE cLokacija
    PRIVATE cConstBrojTR
    PRIVATE nH
@@ -39,18 +40,19 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    ENDIF
 
    cIDBanka := Space( FIELD_LD_RADN_IDBANKA )
-   cVarSort := fetch_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
+   // cVarSort := fetch_metric( "ld_platni_spisak_sortiranje", my_user(), "2" )
 
    Box(, 10, 50 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Mjesec: "  GET  nMjesec  PICT "99"
-   @ box_x_koord() + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
    @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
    @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
    @ box_x_koord() + 6, box_y_koord() + 2 SAY "Primanje (prazno-sve ukupno):" GET cIdTipPr VALID Empty( cIdTipPr ) .OR. P_TipPr( @cIdTipPr )
    @ box_x_koord() + 7, box_y_koord() + 2 SAY "Banka (prazno-sve) :" GET cIdBanka VALID Empty( cIdBanka ) .OR. P_Kred( @cIdBanka )
-   @ box_x_koord() + 8, box_y_koord() + 2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   // box_x_koord() + 8, box_y_koord() + 2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   // mislim da ako sortiranje ne bi bilo po prezimenu filter ne bi funkcionisao ...  ovo je grozno napravljeno (sort + filter) :(
 
    READ
 
@@ -75,14 +77,14 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
       nSlog := 0
       nUkupno := RECCOUNT2()
       IF cVarSort == "1"
-         cSort1 := "radn->idbanka+IDRADN"
+         cSort1 := "ld_radn_idbanka()+ld->IDRADN"
       ELSE
-         cSort1 := "radn->idbanka+SortPrez(IDRADN)"
+         cSort1 := "ld_radn_idbanka()+SortPrez(ld->IDRADN)"
       ENDIF
       IF Empty( cIdBanka )
-         cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and."
+         cFilt := "ld_radn_isplata()==" + _filter_quote( cIsplata )
       ELSE
-         cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka ) + ".and."
+         cFilt := "ld_radn_isplata()==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka )
       ENDIF
       // cFilt := cFilt + IIF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + IIF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
 
@@ -99,14 +101,14 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
       nSlog := 0
       nUkupno := RECCOUNT2()
       IF cVarSort == "1"
-         cSort1 := "radn->idbanka+IDRADN"
+         cSort1 := "ld_radn_idbanka()+ld->IDRADN"
       ELSE
-         cSort1 := "radn->idbanka+SortPrez(IDRADN)"
+         cSort1 := "ld_radn_idbanka()+SortPrez(ld->IDRADN)"
       ENDIF
       IF Empty( cIdBanka )
-         cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and."
+         cFilt := "ld_radn_isplata()==" + _filter_quote( cIsplata )
       ELSE
-         cFilt := "radn->isplata==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka ) + ".and."
+         cFilt := "ld_radn_isplata()==" + _filter_quote( cIsplata ) + ".and.radn->idBanka==" + _filter_quote( cIdBanka )
       ENDIF
       // cFilt := cFilt + "IDRJ==" + _filter_quote( cIdRj ) + ".and." + IF( Empty( nMjesec ), ".t.", "MJESEC==" + _filter_quote( nMjesec ) ) + ".and." + IF( Empty( nGodina ), ".t.", "GODINA==" + _filter_quote( nGodina ) )
       IF ld_vise_obracuna()
@@ -130,6 +132,9 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    START PRINT CRET
 
    DO WHILE !Eof()
+
+      select_o_radn( idradn )
+      SELECT LD
 
       cIdTBanka := radn->idBanka
       nStrana := 0
@@ -211,6 +216,20 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    RETURN .T.
 
 
+STATIC FUNCTION ld_radn_idbanka()
+
+   select_o_radn( ld->idradn )
+   SELECT LD
+
+   RETURN radn->idbanka
+
+
+STATIC FUNCTION ld_radn_isplata()
+
+   select_o_radn( ld->idradn )
+   SELECT LD
+
+   RETURN radn->isplata
 
 
 FUNCTION ld_zagl_pregled_isplate_za_tekuci_racun( cIsplata )

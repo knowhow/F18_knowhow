@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -181,8 +181,13 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
    // LOCAL _order := IndexOrd()
    LOCAL _tezina := 0
 
+
    IF cId == NIL .OR. Empty( cId )
       // RETURN "nil"
+      RETURN .F.
+   ENDIF
+
+   IF ValType( cId ) != "C" // u RNAL modulu postoje numericke sifre
       RETURN .F.
    ENDIF
 
@@ -244,7 +249,13 @@ FUNCTION p_sifra_da_li_vec_postoji_sifra( cId, cIdBK, cUslovSrch, cNazSrch ) // 
 
    ENDIF
 
-   IF Alias() == "PARTN"
+   IF Alias() == "OS" .OR. Alias() == "SII"
+       find_os_sii_by_naz_or_id( cId )
+   ELSEIF Alias() == "REVAL"
+      find_reval_by_id( cId )
+   ELSEIF Alias() == "AMORT"
+      find_amort_by_id( cId )
+   ELSEIF Alias() == "PARTN"
       find_partner_by_naz_or_id( cId )
    ELSEIF Alias() == "ROBA"
       find_roba_by_naz_or_id( cId )
@@ -637,7 +648,8 @@ STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nWa, cNaslov, bBlok, aZabrane
       ENDIF
       Tb:RefreshCurrent()
 
-      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .T. ) == 1
+      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .T. )
+         //altd() ENTER keystorm
          RETURN DE_REFRESH
       ENDIF
 
@@ -646,7 +658,7 @@ STATIC FUNCTION my_browse_p_sifra_key_handler( Ch, nWa, cNaslov, bBlok, aZabrane
    CASE ( Ch == K_F2 .OR. Ch == K_CTRL_A )
 
       Tb:RefreshCurrent()
-      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .F. ) == 1
+      IF my_browse_edit_red( Ch, cOrderTag, aZabIsp, .F. )
          RETURN DE_REFRESH
       ENDIF
 
@@ -849,9 +861,9 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
 
          ENDDO
 
-         SET KEY K_F8 TO k_f8_nadji_novu_sifru()
-         SET KEY K_F9 TO n_num_sif()
-         SET KEY K_F5 TO k_f5_nadji_novu_sifru()
+         // SET KEY K_F8 TO k_f8_nadji_novu_sifru()
+         SET KEY K_F9 TO sifarnik_f9_nova_sifra()
+         // SET KEY K_F5 TO k_f5_nadji_novu_sifru()
 
          READ
 
@@ -860,7 +872,7 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
          SET KEY K_F9 TO
          SET KEY K_F5 TO
 
-         IF ( Len( imeKol ) < nI )
+         IF ( Len( ImeKol ) < nI )
             EXIT
          ENDIF
 
@@ -896,6 +908,9 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
    ENDDO
 
    IF nCh == K_CTRL_N .OR. nCh == K_F2
+      IF !Used()
+         RETURN .F.
+      ENDIF
       ordSetFocus( cOrderTag )
    ENDIF
 
@@ -903,10 +918,10 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
       IF lNovi
          GO ( nPrevRecNo )
       ENDIF
-      RETURN 0
+      RETURN .F.
    ENDIF
 
-   snimi_promjene_sifarnika( lNovi, cTekuciZapis )
+   browse_snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    IF nCh == K_F4 .AND. Pitanje( , "Vratiti se na predhodni zapis (D/N) ?", "D" ) == "D"
       GO ( nPrevRecNo )
@@ -914,11 +929,11 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
 
    ordSetFocus( cOrderTag )
 
-   RETURN 1
+   RETURN .T.
 
 
 
-FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
+FUNCTION browse_snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.
@@ -1681,19 +1696,41 @@ FUNCTION valid_sifarnik_id_postoji( wId, cTag )
 
 
 
-FUNCTION n_num_sif()
+FUNCTION sifarnik_f9_nova_sifra()
 
-   LOCAL cFilter := "val(id) <> 0"
-   LOCAL nI
-   LOCAL nLId
-   LOCAL lCheck
-   LOCAL lLoop
+   // LOCAL cFilter := "val(id) <> 0"
+   // LOCAL nI
+   // LOCAL nLId
+   // LOCAL lCheck
+   // LOCAL lLoop
+   // LOCAL nSifraLength := 4       // '0100  ' -> cSifraLength := 4,  nFieldLength := 6
+   LOCAL nFieldLength := 6
+   LOCAL cPom
+   LOCAL cImeVar
 
-   // ime polja : "wid"
-   PRIVATE cImeVar := ReadVar()
-   // vrijednost unjeta u polje
-   cPom := &( cImeVar )
+   cImeVar := ReadVar()  // WID
 
+   cPom := &( cImeVar )  // '0100  '
+   nFieldLength := Len( cPom )
+
+   IF cImeVar != "WID"
+      RETURN .F.
+   ENDIF
+
+   IF Alias() != "PARTN"
+      RETURN .F.
+   ENDIF
+
+   cMaxId := AllTrim( find_partner_max_numeric_id() )
+   // nSifraLength := Len( cMaxId )
+   AltD()
+
+   IF !Empty( cMaxId )
+      // &( cImeVar ) := PadR( NovaSifra( IF( Empty( id ), id, RTrim( id ) ) ), nDuzSif, " " )
+      &( cImeVar ) := PadR( NovaSifra( RTrim( cMaxId ) ), nFieldLength, " " )
+   ENDIF
+
+/*
    IF cImeVar == "WID"
 
       PushWA()
@@ -1769,7 +1806,10 @@ FUNCTION n_num_sif()
 
    ENDIF
 
-   AEval( GetList, {| o | o:display() } )
+
    PopWA()
+*/
+
+   AEval( GetList, {| o | o:display() } )
 
    RETURN NIL

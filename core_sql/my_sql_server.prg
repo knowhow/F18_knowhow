@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -160,7 +160,7 @@ PROCEDURE print_sql_connections()
 
 FUNCTION my_server_params( hSqlParams )
 
-   LOCAL  cKey
+   LOCAL cKey
 
    IF !is_in_main_thread()
       IF hSqlParams <> NIL
@@ -181,7 +181,7 @@ FUNCTION my_server_params( hSqlParams )
       NEXT
    ENDIF
 
-   RETURN s_psqlServer_params
+   RETURN hb_hClone( s_psqlServer_params )
 
 
 FUNCTION f18_baza_server_host()
@@ -314,7 +314,7 @@ FUNCTION f18_promjena_sezone()
 
 
 
-
+/*
 FUNCTION my_server_search_path()
 
    LOCAL cKey := "search_path"
@@ -324,7 +324,7 @@ FUNCTION my_server_search_path()
    ENDIF
 
    RETURN s_psqlServer_params[ cKey ]
-
+*/
 
 FUNCTION f18_user()
    RETURN s_psqlServer_params[ "user" ]

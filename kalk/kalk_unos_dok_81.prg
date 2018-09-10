@@ -59,14 +59,14 @@ FUNCTION kalk_unos_dok_81( hParams )
       _kord_x := box_x_koord() + nX
 
       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "DOBAVLJAČ:" GET _IdPartner PICT "@!" ;
-         VALID {|| Empty( _IdPartner ) .OR. p_partner( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ) }
+         VALID {|| Empty( _IdPartner ) .OR. p_partner( @_IdPartner ), ispisi_naziv_partner( _kord_x - 1, 22, 20 ) }
       @ box_x_koord() + nX, 50 SAY "Broj fakture:" GET _brfaktp
       @ box_x_koord() + nX, Col() + 1 SAY "Datum:" GET _datfaktp
 
       ++nX
       _kord_x := box_x_koord() + nX
 
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto zadužuje:" GET _idkonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto zadužuje:" GET _idkonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_konto( _kord_x, 40, 30 ) } PICT "@!"
 
       // IF gNW <> "X"
       // @ box_x_koord() + nX, box_y_koord() + 42 SAY8 "Zadužuje: " GET _idzaduz PICT "@!" VALID Empty( _idzaduz ) .OR. p_partner( @_idzaduz )
@@ -334,7 +334,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
       ++nX
       @ box_x_koord() + nX, box_y_koord() + _unos_left SAY c10T5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICT "@!"
       @ box_x_koord() + nX, Col() + 2 GET _ZavTr PICT PicDEM ;
-         VALID {|| kalk_when_valid_nc(), .T. }
+         VALID {|| kalk_when_valid_nc_ulaz(), .T. }
 
       ++nX
       ++nX

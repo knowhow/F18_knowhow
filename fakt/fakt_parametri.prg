@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -130,7 +130,7 @@ FUNCTION fakt_par_razno()
    LOCAL _def_rj := fetch_metric( "fakt_default_radna_jedinica", my_user(), Space( 2 ) )
    LOCAL _prik_bk := fetch_metric( "fakt_prikaz_barkod", my_user(), "0" )
    LOCAL _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), PadR( "", 300 ) )
-   LOCAL _unos_barkod := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), "N" )
+   LOCAL cUnosBarKodDN := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), "N" )
    LOCAL _pm := fakt_prodajna_mjesta()
    LOCAL _rabat := fetch_metric( "pregled_rabata_kod_izlaza", my_user(), "N" )
    LOCAL _racun_na_email := PadR( fetch_metric( "fakt_dokument_na_email", my_user(), "" ), 300 )
@@ -164,7 +164,7 @@ FUNCTION fakt_par_razno()
    nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Tekuća radna jedinica kod unosa dokumenta:" GET _def_rj
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Unos dokumenata pomoću barkod-a (D/N) ?" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Unos dokumenata pomoću barkod-a (D/N) ?" GET cUnosBarKodDN VALID cUnosBarKodDN $ "DN" PICT "@!"
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Pregled zadnjih izlaza kod unosa dokumenta (D/N) ?" GET _rabat VALID _rabat $ "DN" PICT "@!"
    ++nX
@@ -188,7 +188,7 @@ FUNCTION fakt_par_razno()
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "   Uzorak fakture (MP):" GET _def_mp_template PICT "@S35"
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "     Uzorak otpremince:" GET _def_kol_template PICT "@S35"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY "     Uzorak otpremnice:" GET _def_kol_template PICT "@S35"
 
    nX += 2
    read_dn_parametar( "Praćenje po destinacijama", box_x_koord() + nX, box_y_koord() + 2, @_unos_dest )
@@ -247,7 +247,7 @@ FUNCTION fakt_par_razno()
       set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
       set_metric( "fakt_prikaz_barkod", my_user(), _prik_bk )
       set_metric( "fakt_dokument_pdf_lokacija", my_user(), _ext_pdf )
-      set_metric( "fakt_unos_artikala_po_barkodu", my_user(), _unos_barkod )
+      set_metric( "fakt_unos_artikala_po_barkodu", my_user(), cUnosBarKodDN )
       set_metric( "pregled_rabata_kod_izlaza", my_user(), _rabat )
       set_metric( "fakt_dokument_na_email", my_user(), AllTrim( _racun_na_email ) )
       set_metric( "fakt_default_odt_template", my_user(), AllTrim( _def_vp_template ) )
@@ -273,7 +273,7 @@ FUNCTION fakt_par_razno()
       Wpar( "ds", gnDS )
       WPar( "if", gImeF )
       WPar( "95", gKomLin )
-      WPar( "Fi", @gIspPart )
+      //WPar( "Fi", @gIspPart )
       WPar( "mP", gMpPrint )
       WPar( "mL", gMpLocPort )
       WPar( "mT", gMpRedTraka )
@@ -444,13 +444,13 @@ FUNCTION fakt_par_varijante_prikaza()
    o_params()
 
    Box(, 23, 76, .F., "VARIJANTE OBRADE DOKUMENATA" )
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Unos Dat.pl, otpr., narudzbe D/N (1/2) ?" GET gDoDPar VALID gDodPar $ "12" PICT "@!"
-   @ box_x_koord() + 1, box_y_koord() + 46 SAY "Dat.pl.u svim v.f.9 (D/N)?" GET gDatVal VALID gDatVal $ "DN" PICT "@!"
-   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Generacija ulaza prilikom izlaza 13" GET gProtu13 VALID gProtu13 $ "DN" PICT "@!"
-   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Maloprod.cijena za 13-ku ( /1/2/3/4/5/6)   " GET g13dcij VALID g13dcij $ " 123456"
-   @ box_x_koord() + 5, box_y_koord() + 2 SAY "Varijanta dokumenta 13 (1/2)   " GET gVar13 VALID gVar13 $ "12"
-   @ box_x_koord() + 6, box_y_koord() + 2 SAY "Varijanta numeracije dokumenta 13 (1/2)   " GET gVarNum VALID gVarNum $ "12"
-   @ box_x_koord() + 7, box_y_koord() + 2 SAY "Pratiti trenutnu kolicinu D/N ?" GET gPratiK PICT "@!" VALID gPratiK $ "DN"
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Unos Dat.pl, otpr., narudzbe D/N (1/2) ?" GET gDoDPar VALID gDodPar $ "12" PICT "@!"
+   @ box_x_koord() + 1, box_y_koord() + 46 SAY8 "Dat.pl.u svim v.f.9 (D/N)?" GET gDatVal VALID gDatVal $ "DN" PICT "@!"
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Generacija ulaza prilikom izlaza 13" GET gProtu13 VALID gProtu13 $ "DN" PICT "@!"
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Maloprod.cijena za 13-ku ( /1/2/3/4/5/6)   " GET g13dcij VALID g13dcij $ " 123456"
+   @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Varijanta dokumenta 13 (1/2)   " GET gVar13 VALID gVar13 $ "12"
+   @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Varijanta numeracije dokumenta 13 (1/2)   " GET gVarNum VALID gVarNum $ "12"
+   @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Pratiti trenutnu količinu D/N ?" GET gFaktPratitiKolicinuDN PICT "@!" VALID gFaktPratitiKolicinuDN $ "DN"
    @ box_x_koord() + 7, Col() + 1 SAY "Pratiti cijene na unosu D/N ?" GET gPratiC PICT "@!" VALID gPratiC $ "DN"
    @ box_x_koord() + 8, box_y_koord() + 2 SAY  "Koristenje VP cijene:"
    @ box_x_koord() + 9, box_y_koord() + 2 SAY  "  ( ) samo VPC   (X) koristiti samo MPC    (1) VPC1/VPC2 "
@@ -486,7 +486,7 @@ FUNCTION fakt_par_varijante_prikaza()
       WPar( "pd", gProtu13 )
       WPar( "dc", g13dcij )
       WPar( "vn", gVarNum )
-      WPar( "pk", gPratik )
+      WPar( "pk", gFaktPratitiKolicinuDN )
       WPar( "pc", gPratiC )
       WPar( "50", gVarC )
       WPar( "mp", gMP )
@@ -508,6 +508,8 @@ FUNCTION fakt_par_varijante_prikaza()
    RETURN .T.
 
 
+FUNCTION is_fakt_pratiti_kolicinu()
+   RETURN gFaktPratitiKolicinuDN == "D"
 
 FUNCTION par_fakt_izgled_dokumenta()
 

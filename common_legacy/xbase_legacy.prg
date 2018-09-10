@@ -440,7 +440,7 @@ FUNCTION EofFndRet( lEof, lClose )
  * treba da zna, tj koje obicni korisniku
  * nece biti dokumentovane
  *
- * \note Default cSif=SIGMAXXX
+ *  Default cSif=SIGMAXXX
  *
  * \return .t. kada je lozinka ispravna
 */
@@ -464,6 +464,10 @@ FUNCTION spec_funkcije_sifra( cSif )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Šifra za korištenje specijalnih funkcija:"
    cSifra := Upper( GetSecret( cSifra ) )
    BoxC()
+
+   IF LASTKEY() == K_ESC
+      return .F.
+   ENDIF
 
    GW_STATUS := lGW_Status
 

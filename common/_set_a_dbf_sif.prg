@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -30,7 +30,6 @@ FUNCTION set_a_dbf_sif()
    hRec[ "dbf_key_block" ] := {|| field->id + field->id2 }
    set_a_sql_sifarnik( "sast", "SAST", F_SAST, hRec  )
 
-
    hRec := hb_Hash()
    hRec[ "dbf_key_fields" ] := { { "rule_id", 10, 0 } }
    hRec[ "dbf_tag" ]        := "1"
@@ -52,7 +51,6 @@ FUNCTION set_a_dbf_sif()
    set_a_sql_sifarnik( "pkonto", "PKONTO", F_PKONTO     )
    set_a_sql_sifarnik( "valute", "VALUTE", F_VALUTE     )
    set_a_sql_sifarnik( "fakt_objekti", "FAKT_OBJEKTI", F_FAKT_OBJEKTI   )
-
 
 
    set_a_dbf_temp     ( "relation",  "RELATION", F_RELATION   )

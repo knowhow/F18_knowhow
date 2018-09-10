@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -23,7 +23,7 @@ FUNCTION os_pregled_po_rj()
    o_rj()
    o_os_sii()
 
-   cIdrj := Space( Len( field->idrj ) )
+   cIdRj := Space( Len( field->idrj ) )
 
    lPartner := os_fld_partn_exist()
 
@@ -39,14 +39,14 @@ FUNCTION os_pregled_po_rj()
 
    Box(, 12, 77 )
    DO WHILE .T.
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica:" GET cIdRj VALID {|| P_RJ( @cIdrj ), if ( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
-      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica:" GET cIdRj VALID {|| P_RJ( @cIdRj ), if ( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
+      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cPocinju VALID cPocinju $ "DN" PICT "@!"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Prikaz svih neotpisanih (N) / otpisanih(O) /"
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "samo novonabavljenih (B)    / iz proteklih godina (G)"   GET cON PICT "@!" VALID con $ "ONBG"
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Prikazati kolicine na popisnoj listi D/N" GET cKolP VALID cKolP $ "DN" PICT "@!"
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "Prikazati kolonu 'opis' ? (D/N)" GET cOpis VALID cOpis $ "DN" PICT "@!"
 
-      IF os_postoji_polje( "brsoba" )
+      IF os_sii_da_li_postoji_polje( "brsoba" )
          lBrojSobe := .T.
          @ box_x_koord() + 6, box_y_koord() + 2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  PICT "@!"
       ENDIF
@@ -95,7 +95,7 @@ FUNCTION os_pregled_po_rj()
    ENDIF
 
    IF cPocinju == "D"
-      cIdRj := Trim( cIdrj )
+      cIdRj := Trim( cIdRj )
    ENDIF
 
    START PRINT CRET
@@ -104,7 +104,7 @@ FUNCTION os_pregled_po_rj()
 
    IF lPoAmortStopama
 
-      select_os_sii()
+      select_o_os_or_sii()
 
       IF cIdRj == ""
          SET ORDER TO TAG "5"
@@ -117,25 +117,25 @@ FUNCTION os_pregled_po_rj()
 
       m := "----- ------ ---------- ----------------------------" + IF( cOpis == "D", " " + REPL( "-", Len( field->opis ) ), "" ) + "  ---- ------- -------------"
 
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "2"
       // idrj+id+dtos(datum)
       INDEX ON idrj + brsoba + id + DToS( datum ) TO "TMPOS"
 
    ELSEIF lPoKontima
 
-      select_os_sii()
+      select_o_os_or_sii()
       INDEX ON idkonto + id TO "TMPOS"
 
    ELSEIF cIdRj == ""
 
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "1"
       // id+idam+dtos(datum)
 
    ELSE
 
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "2"
       // idrj+id+dtos(datum)
 
@@ -143,7 +143,7 @@ FUNCTION os_pregled_po_rj()
 
    IF !Empty( cFiltK1 ) .OR. !Empty( cFiltDob )
       cFilter := aUsl1 + ".and." + aUsl2
-      select_os_sii()
+      select_o_os_or_sii()
       SET FILTER to &cFilter
    ENDIF
 
@@ -153,15 +153,15 @@ FUNCTION os_pregled_po_rj()
    ZglPrj()
 
    IF !lPoKontima
-      SEEK cIdrj
+      SEEK cIdRj
    ENDIF
 
    PRIVATE nRbr := 0
    cLastKonto := ""
 
-   DO WHILE !Eof() .AND. ( field->idrj = cIdrj .OR. lPoKontima )
+   DO WHILE !Eof() .AND. ( field->idrj = cIdRj .OR. lPoKontima )
 
-      IF lPoKontima .AND. !( field->idrj = cidrj )
+      IF lPoKontima .AND. !( field->idrj = cIdRj )
          SKIP
          LOOP
       ENDIF
@@ -346,15 +346,15 @@ FUNCTION ZglPrj()
       ?? "sredstava otpisanih u toku godine"
    ENDIF
 
-   select_o_rj( cIdrj )
+   select_o_rj( cIdRj )
 
    SELECT ( nArr )
 
    ?? "     Datum:", os_datum_obracuna()
 
-   ? "Radna jedinica:", cIdrj, rj->naz
+   ? "Radna jedinica:", cIdRj, rj->naz
 
-   IF cpocinju == "D"
+   IF cPocinju == "D"
       ?? Space( 6 ), "(SVEUKUPNO)"
    ENDIF
 

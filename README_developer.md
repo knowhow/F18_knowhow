@@ -40,3 +40,15 @@
        #pacman -Sy git  mingw-w64-i686-make
        pacman -Sy   mingw-w64-i686-postgresql mingw-w64-i686-openssl
        pacman  -Sy base-devel msys2-devel mingw-w64-i686-toolchain upx p7zip
+
+
+## Appveyor CI
+
+
+show postgresql server version:
+
+       ./F18 -h 192.168.168.112 -u postgres -p Password12! -d F18_test --show-postgresql-version
+
+
+
+[![Build status](https://ci.appveyor.com/api/projects/status/eg8qsklygduukk87?svg=true)](https://ci.appveyor.com/project/hernad/f18-knowhow)

@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -12,13 +12,13 @@
 #include "f18.ch"
 
 
-
-
 FUNCTION unos_osnovnih_sredstava()
 
-   LOCAL _rec
-   LOCAL _id_am
-   PRIVATE cId := Space( 10 )
+   LOCAL hRec
+   LOCAL cIdAmortizacija
+   LOCAL GetList := {}
+
+   PRIVATE cIdSredstvo := Space( 10 )
    PRIVATE cIdRj := Space( 4 )
 
    Box( "#UNOS PROMJENA NAD STALNIM SREDSTVIMA", f18_max_rows() -5, f18_max_cols() -5 )
@@ -33,19 +33,18 @@ FUNCTION unos_osnovnih_sredstava()
 
       cPicSif := "@!"
 
-      IF gIBJ == "D"
+      //IF gIBJ == "D"
 
-         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sredstvo:       " GET cId VALID P_OS( @cId, 1, 35 ) PICT cPicSif
-
+         @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sredstvo:       " GET cIdSredstvo VALID P_OS( @cIdSredstvo, 1, 35 ) PICT cPicSif
          READ
 
          nDbfArea := Select()
 
-         select_os_sii()
+         select_o_os_or_sii()
          GO TOP
-         SEEK cId
+         SEEK cIdSredstvo
          cIdRj := field->idrj
-         _id_am := field->idam
+         cIdAmortizacija := field->idam
 
          SELECT ( nDbfArea )
 
@@ -54,60 +53,60 @@ FUNCTION unos_osnovnih_sredstava()
 
          ESC_BCR
 
-      ELSE
+      //ELSE
 
-         DO WHILE .T.
+      //   DO WHILE .T.
 
-            @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sredstvo:       " GET cId PICT cPicSif
-            @ box_x_koord() + 2, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
-            READ
+      //      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sredstvo:       " GET cIdSredstvo PICT cPicSif
+      //      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
+      //      READ
 
-            ESC_BCR
+      //      ESC_BCR
 
-            select_os_sii()
-            SEEK cId
-            _id_am := field->idam
+      //      select_o_os_or_sii()
 
-            DO WHILE !Eof() .AND. cId == field->id .AND. cIdRJ != field->idrj
-               SKIP 1
-            ENDDO
+      //      SEEK cIdSredstvo
+      //      cIdAmortizacija := field->idam
 
-            IF cID != field->id .OR. cIdRJ != field->idrj
-               Msg( "Izabrano sredstvo ne postoji!", 5 )
-            ELSE
-               select_o_rj( cIdRj )
+      //      DO WHILE !Eof() .AND. cIdSredstvo == field->id .AND. cIdRj != field->idrj
+      //         SKIP 1
+      //      ENDDO
 
-               IF gOsSii == "O"
-                  @ box_x_koord() + 1, box_y_koord() + 35 SAY os->naz
-               ELSE
-                  @ box_x_koord() + 1, box_y_koord() + 35 SAY sii->naz
-               ENDIF
+        //    IF cIdSredstvo != field->id .OR. cIdRj != field->idrj
+      //         Msg( "Izabrano sredstvo ne postoji!", 5 )
+        //    ELSE
+        //       select_o_rj( cIdRj )
 
-               @ box_x_koord() + 2, box_y_koord() + 35 SAY RJ->naz
+        //       IF gOsSii == "O"
+        //          @ box_x_koord() + 1, box_y_koord() + 35 SAY os->naz
+        //       ELSE
+        //          @ box_x_koord() + 1, box_y_koord() + 35 SAY sii->naz
+        //       ENDIF
 
-               EXIT
+          //     @ box_x_koord() + 2, box_y_koord() + 35 SAY RJ->naz
 
-            ENDIF
+          //     EXIT
 
-         ENDDO
+        //    ENDIF
 
-      ENDIF
+        // ENDDO
 
-      SELECT amort
-      HSEEK _id_am
+      //ENDIF
 
-      select_os_sii()
+      select_o_amort( cIdAmortizacija )
 
-      IF ( cIdrj <> field->idrj )
+      select_o_os_or_sii()
+
+      IF ( cIdRj <> field->idrj )
 
          IF Pitanje(, "Jeste li sigurni da zelite promijeniti radnu jedinicu ovom sredstvu? (D/N)", " " ) == "D"
-            _rec := dbf_get_rec()
-            _rec[ "idrj" ] := cIdRj
-            update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+            hRec := dbf_get_rec()
+            hRec[ "idrj" ] := cIdRj
+            update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
          ELSE
             cIdRj := field->idrj
             select_o_rj( cIdRj )
-            select_os_sii()
+            select_o_os_or_sii()
             @ box_x_koord() + 2, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRj
             @ box_x_koord() + 2, box_y_koord() + 35 SAY RJ->naz
             CLEAR GETS
@@ -135,15 +134,15 @@ FUNCTION unos_osnovnih_sredstava()
       PRIVATE dDatOtp := field->datotp
       PRIVATE cOpisOtp := field->opisotp
 
-      select_promj()
+      os_select_promj()
 
       ImeKol := {}
 
-      AAdd( ImeKol, { "DATUM",            {|| datum }                          } )
-      AAdd( ImeKol, { "OPIS",             {|| opis }                          } )
-      AAdd( ImeKol, { PadR( "Nabvr", 11 ),   {|| Transform( nabvr, gpici ) }     } )
-      AAdd( ImeKol, { PadR( "OtpVr", 11 ),   {|| Transform( otpvr, gpici ) }     } )
-      AAdd( ImeKol, { PadR( "Kumul.SadVr", 11 ), {|| Transform( PSadVr(), gpici ) }     } )
+      AAdd( ImeKol, { "DATUM",            {|| os_select_promj_area(), field->datum }                          } )
+      AAdd( ImeKol, { "OPIS",             {|| field->opis }                          } )
+      AAdd( ImeKol, { PadR( "Nabvr", 11 ),   {|| Transform( field->nabvr, gpici ) }     } )
+      AAdd( ImeKol, { PadR( "OtpVr", 11 ),   {|| Transform( field->otpvr, gpici ) }     } )
+      //AAdd( ImeKol, { PadR( "Kumul.SadVr", 11 ), {|| Transform( os_sadasnja_vrijednost(), gpici ) }     } )
 
       Kol := {}
 
@@ -155,10 +154,13 @@ FUNCTION unos_osnovnih_sredstava()
 
       @ box_x_koord() + 20, box_y_koord() + 2 SAY "<ENT> Ispravka, <c-T> Brisi, <c-N> Nove prom, <c-O> Otpis, <c-I> Novi ID"
 
-      ShowSadVr()
+      os_unos_show_sadasnja_vrijednost( cIdSredstvo, @aVr, @aSred )
 
       DO WHILE .T.
-         BrowseKey( box_x_koord() + 8, box_y_koord() + 1, box_x_koord() + f18_max_rows() - 5, box_y_koord() + f18_max_cols() -5, ImeKol, {| Ch| unos_os_key_handler( Ch ) }, "id==cid", cId, 2, NIL, NIL, {|| PSadVr() < 0 } )
+         BrowseKey( box_x_koord() + 8, box_y_koord() + 1, box_x_koord() + f18_max_rows() - 5, box_y_koord() + f18_max_cols() -5, ;
+             ImeKol, {| Ch| unos_os_promj_key_handler( Ch ) }, "id==cIdSredstvo", cIdSredstvo, 2, NIL, NIL, {|| os_sadasnja_vrijednost( @aSred ) < 0 } )
+
+
          IF ( aVr[ 1 ] -aVr[ 2 ] >= 0 )
             IF aVr[ 3 ] < 0
                MsgBeep( "Greska: sadasnja vrijednost sa uracunatom amortizacijom manja od nule! #Ispravite gresku!" )
@@ -177,36 +179,45 @@ FUNCTION unos_osnovnih_sredstava()
 
    BoxC()
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
-FUNCTION unos_os_key_handler( Ch )
+FUNCTION unos_os_promj_key_handler( Ch )
 
    LOCAL cDn := "N"
    LOCAL nRet := DE_CONT
    LOCAL nRec0 := RecNo()
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nTrec
-   LOCAL _novi
+   LOCAL cNoviInventurniBroj
    LOCAL _prom_dat, _prom_opis, _prom_nv, _prom_ov
+   LOCAL GetList := {}
 
    DO CASE
 
-   CASE ( Ch == K_ENTER .AND. !( Eof() .OR. Bof() ) ) .OR. Ch == K_CTRL_N
+   CASE Ch == K_ENTER  .OR. Ch == K_CTRL_N
+
+      IF Ch == K_ENTER
+          IF Empty( field->Id )
+             RETURN DE_CONT
+          ENDIF
+      ENDIF
 
       IF Ch == K_CTRL_N
          GO BOTTOM
          SKIP 1
       ENDIF
 
-      _rec := dbf_get_rec()
+      os_select_promj_area()
 
-      _prom_dat := _rec[ "datum" ]
-      _prom_opis := _rec[ "opis" ]
-      _prom_nv := _rec[ "nabvr" ]
-      _prom_ov := _rec[ "otpvr" ]
+      hRec := dbf_get_rec()
+
+      _prom_dat := hRec[ "datum" ]
+      _prom_opis := hRec[ "opis" ]
+      _prom_nv := hRec[ "nabvr" ]
+      _prom_ov := hRec[ "otpvr" ]
 
       Box(, 5, 50 )
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum:" GET _prom_dat VALID os_validate_date( @_prom_dat )
@@ -214,6 +225,7 @@ FUNCTION unos_os_key_handler( Ch )
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "nab vr" GET _prom_nv PICT "9999999.99"
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "OTP vr" GET _prom_ov PICT "9999999.99"
       READ
+
       BoxC()
 
       IF LastKey() == K_ESC
@@ -225,15 +237,15 @@ FUNCTION unos_os_key_handler( Ch )
             APPEND BLANK
          ENDIF
 
-         _rec[ "id" ] := cId
-         _rec[ "opis" ] := _prom_opis
-         _rec[ "datum" ] := _prom_dat
-         _rec[ "nabvr" ] := _prom_nv
-         _rec[ "otpvr" ] := _prom_ov
+         hRec[ "id" ] := cIdSredstvo
+         hRec[ "opis" ] := _prom_opis
+         hRec[ "datum" ] := _prom_dat
+         hRec[ "nabvr" ] := _prom_nv
+         hRec[ "otpvr" ] := _prom_ov
 
-         update_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
-         ShowSadVr()
+         os_unos_show_sadasnja_vrijednost( cIdSredstvo, @aVr, @aSred )
 
          nRet := DE_REFRESH
 
@@ -241,17 +253,18 @@ FUNCTION unos_os_key_handler( Ch )
 
    CASE Ch == K_CTRL_T
 
-      IF pitanje(, "Sigurno zelite izbrisati promjenu ?", "N" ) == "D"
-         _rec := dbf_get_rec()
-         delete_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
-         ShowSadVr()
+      IF pitanje(, "Sigurno želite izbrisati promjenu ?", "N" ) == "D"
+         os_select_promj_area()
+         hRec := dbf_get_rec()
+         delete_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
+         os_unos_show_sadasnja_vrijednost( cIdSredstvo, @aVr, @aSred )
       ENDIF
 
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_O
 
-      select_os_sii()
+      select_o_os_or_sii()
       nKolotp := field->kolicina
 
       Box(, 5, 50 )
@@ -261,7 +274,7 @@ FUNCTION unos_os_key_handler( Ch )
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "Opis : " GET cOpisOtp
 
       IF field->kolicina > 1
-         @ box_x_koord() + 5, box_y_koord() + 2 SAY "Kolicina koja se otpisuje:" GET nKolotp PICT "999999.99" VALID ( nKolotp <= field->kolicina .AND. nKolotp >= 1 )
+         @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Količina koja se otpisuje:" GET nKolotp PICT "999999.99" VALID ( nKolotp <= field->kolicina .AND. nKolotp >= 1 )
       ENDIF
 
       READ
@@ -269,7 +282,7 @@ FUNCTION unos_os_key_handler( Ch )
       BoxC()
 
       IF LastKey() == K_ESC
-         select_promj()
+         os_select_promj_area()
          RETURN DE_CONT
       ENDIF
 
@@ -277,49 +290,47 @@ FUNCTION unos_os_key_handler( Ch )
 
       IF nKolotp < field->kolicina
 
-         select_os_sii()
+         select_o_os_or_sii()
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         nNabVrJ := _rec[ "nabvr" ] / _rec[ "kolicina" ]
-         nOtpVrJ := _rec[ "otpvr" ] / _rec[ "kolicina" ]
+         nNabVrJ := hRec[ "nabvr" ] / hRec[ "kolicina" ]
+         nOtpVrJ := hRec[ "otpvr" ] / hRec[ "kolicina" ]
 
          // postojeci inv broj
-         _rec[ "kolicina" ] := _rec[ "kolicina" ] - nKolOtp
-         _rec[ "nabvr" ] := nNabVrj * _rec[ "kolicina" ]
-         _rec[ "otpvr" ] := nOtpVrj * _rec[ "kolicina" ]
+         hRec[ "kolicina" ] := hRec[ "kolicina" ] - nKolOtp
+         hRec[ "nabvr" ] := nNabVrj * hRec[ "kolicina" ]
+         hRec[ "otpvr" ] := nOtpVrj * hRec[ "kolicina" ]
 
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
-         // dodaj novi zapis...
-         _rec := dbf_get_rec()
 
+         hRec := dbf_get_rec()
          APPEND BLANK
 
-         _rec[ "kolicina" ] := nKolOtp
-         _rec[ "nabvr" ] := nNabvrj * nKolotp
-         _rec[ "otpvr" ] := nOtpvrj * nKolotp
-         _rec[ "id" ] := Left( _rec[ "id" ], 9 ) + "O"
-         _rec[ "datotp" ] := dDatotp
-         _rec[ "opisotp" ] := cOpisOtp
+         hRec[ "kolicina" ] := nKolOtp
+         hRec[ "nabvr" ] := nNabvrj * nKolotp
+         hRec[ "otpvr" ] := nOtpvrj * nKolotp
+         hRec[ "id" ] := Left( hRec[ "id" ], 9 ) + "O"
+         hRec[ "datotp" ] := dDatotp
+         hRec[ "opisotp" ] := cOpisOtp
 
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
          fRastavljeno := .T.
 
       ELSE
 
-         select_os_sii()
+         select_o_os_or_sii()
+         hRec := dbf_get_rec()
+         hRec[ "datotp" ] := dDatOtp
+         hRec[ "opisotp" ] := cOpisOtp
 
-         _rec := dbf_get_rec()
-         _rec[ "datotp" ] := dDatOtp
-         _rec[ "opisotp" ] := cOpisOtp
-
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
       ENDIF
 
-      select_promj()
+      os_select_promj()
 
       @ box_x_koord() + 5, box_y_koord() + 38 SAY "Datum otpisa: "
 
@@ -330,7 +341,7 @@ FUNCTION unos_os_key_handler( Ch )
       ENDIF
 
       IF fRastavljeno
-         Msg( "Postojeci inv broj je rastavljen na dva-otpisani i neotpisani" )
+         Msg( "Postojeći inv broj je rastavljen na dva-otpisani i neotpisani" )
          RETURN DE_ABORT
       ELSE
          RETURN DE_REFRESH
@@ -339,48 +350,46 @@ FUNCTION unos_os_key_handler( Ch )
    CASE Ch == K_CTRL_I
 
       Box(, 4, 50 )
-      _novi := Space( 10 )
+      cNoviInventurniBroj := Space( 10 )
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Promjena inventurnog broja:"
-      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Novi inventurni broj:" GET _novi VALID !Empty( _novi )
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Novi inventurni broj:" GET cNoviInventurniBroj VALID !Empty( cNoviInventurniBroj )
       READ
       BoxC()
 
       ESC_RETURN DE_CONT
 
-      select_os_sii()
+      select_o_os_or_sii()
 
-      SEEK _novi
+      SEEK cNoviInventurniBroj
 
       IF Found()
          Beep( 1 )
          Msg( "Vec postoji sredstvo sa istim inventurnim brojem !" )
       ELSE
 
-         select_promj()
-         SEEK cId
-
+         os_select_promj( cIdSredstvo )
          nTrec := 0
 
-         DO WHILE !Eof() .AND. cId == field->id
+         DO WHILE !Eof() .AND. cIdSredstvo == field->id
             SKIP
             nTrec := RecNo()
             SKIP -1
-            _rec := dbf_get_rec()
-            _rec[ "id" ] := _novi
-            update_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
+            hRec := dbf_get_rec()
+            hRec[ "id" ] := cNoviInventurniBroj
+            update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
             GO ( nTrec )
          ENDDO
-         SEEK _novi
+         SEEK cNoviInventurniBroj
 
-         select_os_sii()
-         SEEK cId
-         _rec := dbf_get_rec()
-         _rec[ "id" ] := _novi
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
-         cId := _novi
+         select_o_os_or_sii()
+         SEEK cIdSredstvo
+         hRec := dbf_get_rec()
+         hRec[ "id" ] := cNoviInventurniBroj
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
+         cIdSredstvo := cNoviInventurniBroj
       ENDIF
 
-      select_promj()
+      os_select_promj_area()
       RETURN DE_REFRESH
 
    OTHERWISE
@@ -391,25 +400,21 @@ FUNCTION unos_os_key_handler( Ch )
    RETURN nRet
 
 
-// ------------------------------------------------------------------------
-// 1) izracunaj i prikazi sadasnju vrijednost
-// 2) izracunaj i kumulativ amortizacije u aSred
-// ------------------------------------------------------------------------
-FUNCTION ShowSadVr()
+FUNCTION os_unos_show_sadasnja_vrijednost( cIdSredstvo, aVr, aSred )
 
    LOCAL _arr := Select()
    LOCAL nTrec := 0
    LOCAL nI := 0
+   LOCAL hAmortizacija
+   LOCAL dDatOtp
 
-   // polja os/sii
+   select_o_os_or_sii()
    aVr[ 1 ] := field->nabvr
    aVr[ 2 ] := field->otpvr
 
-   select_promj()
+   dDatOtp := field->datOtp
 
-   nTrec := RecNo()
-
-   SEEK cId
+   os_select_promj( cIdSredstvo )
 
    FOR nI := Len( aSred ) TO 1 STEP -1
       IF aSred[ nI, 1 ] > 0 .AND. aSred[ nI, 1 ] < 999999
@@ -418,10 +423,10 @@ FUNCTION ShowSadVr()
       ENDIF
    NEXT
 
-   DO WHILE !Eof() .AND. field->id == cID
+   DO WHILE !Eof() .AND. field->id == cIdSredstvo
       aVr[ 1 ] += field->nabvr
       aVr[ 2 ] += field->otpvr
-      AAdd( aSred, { RecNo(), field->datum, IF( gOsSii == "O", os->datotp, sii->datotp ), field->nabvr, field->otpvr, 0 } )
+      AAdd( aSred, { RecNo(), field->datum, dDatOtp, field->nabvr, field->otpvr, 0 } )
       SKIP 1
    ENDDO
 
@@ -430,55 +435,67 @@ FUNCTION ShowSadVr()
    nI := 1
 
    FOR nI := 1 TO Len( aSred )
+
       _nabvr := aSred[ nI, 4 ]
       _otpvr := aSred[ nI, 5 ]
-      _amd := 0
-      _amp := 0
+
+      //_amd := 0
+      //_amp := 0
+
       nOstalo := 0
       _datum := aSred[ nI, 2 ]
       _datotp := aSred[ nI, 3 ]
-      izracunaj_os_amortizaciju( _datum, iif( !Empty( _datotp ), Min( os_datum_obracuna(), _datotp ), os_datum_obracuna() ), 100 )
+
+      hAmortizacija := os_izracunaj_amortizaciju( _nabvr, _otpvr, nOstalo, _datum, iif( !Empty( _datotp ), Min( os_datum_obracuna(), _datotp ), os_datum_obracuna() ), 100 )
+
+      _amd := hAmortizacija[ "duguje" ]
+      _amp := hAmortizacija[ "potrazuje" ]
+
       // napuni _amp
-      aSred[ nI, 6 ] = _amp
+      aSred[ nI, 6 ] := _amp
    NEXT
 
    SKIP -1
-   IF field->id == cId
-      aVr[ 3 ] := PSadVr()
+   IF field->id == cIdSredstvo
+      aVr[ 3 ] := os_sadasnja_vrijednost( @aSred )
    ENDIF
 
    @ box_x_koord() + 6, box_y_koord() + 1 SAY " UKUPNO:   Nab.vr.="         COLOR "W+/B"
    @ Row(), Col()  SAY TRANS( aVr[ 1 ], "9999999.99" )        COLOR "GR+/B"
+
    @ Row(), Col()  SAY ",    Otp.vr.="         COLOR "W+/B"
    @ Row(), Col()  SAY TRANS( aVr[ 2 ], "9999999.99" )        COLOR "GR+/B"
-   @ Row(), Col()  SAY ",    Sad.vr.="         COLOR "W+/B"
-   @ Row(), Col()  SAY TRANS( aVr[ 1 ] - aVr[ 2 ], "9999999.99" ) COLOR IF( aVr[ 1 ] - aVr[ 2 ] < 0, "GR+/R", "GR+/B" )
-   @ box_x_koord() + 7, box_y_koord() + 1 SAY "           Sadasnja vrijednost sa uracunatom amortizacijom=" COLOR "W+/B"
-   @ Row(), Col()  SAY TRANS( aVr[ 3 ], "9999999.99" )        COLOR IF( aVr[ 3 ] < 0, "GR+/R", "GR+/B" )
 
-   GO ( nTrec )
-   SELECT ( _arr )
+   @ Row(), Col()  SAY ",    Sad.vr.="         COLOR "W+/B"
+   @ Row(), Col()  SAY TRANS( aVr[ 1 ] - aVr[ 2 ], "9999999.99" ) COLOR IIF( aVr[ 1 ] - aVr[ 2 ] < 0, "GR+/R", "GR+/B" )
+
+//   @ box_x_koord() + 7, box_y_koord() + 1 SAY8 "           Sadašnja vrijednost sa uračunatom amortizacijom=" COLOR "W+/B"
+//   @ Row(), Col()  SAY TRANS( aVr[ 3 ], "9999999.99" )        COLOR IIF( aVr[ 3 ] < 0, "GR+/R", "GR+/B" )
+
+   //GO ( nTrec )
+   //SELECT ( _arr )
+   select_o_os_or_sii()
 
    RETURN .T.
 
 
 
-FUNCTION PSadVr()
+FUNCTION os_sadasnja_vrijednost( aSred )
 
-   LOCAL _n := 0
+   LOCAL nSadasnjaVr := 0
    LOCAL nI := 0
 
    FOR nI := 1 TO Len( aSred )
-      _n += ( aSred[ nI, 4 ] -aSred[ nI, 5 ] -aSred[ nI, 6 ] )
+      nSadasnjaVr += ( aSred[ nI, 4 ] - aSred[ nI, 5 ] -aSred[ nI, 6 ] )
       IF nI == Len( aSred )
-         aVr[ 3 ] := _n
+         aVr[ 3 ] := nSadasnjaVr
       ENDIF
       IF aSred[ nI, 1 ] == RecNo()
          EXIT
       ENDIF
    NEXT
 
-   RETURN _n
+   RETURN nSadasnjaVr
 
 
 
@@ -508,8 +525,8 @@ STATIC FUNCTION _o_tables()
 //   o_k1()
    //o_rj()
   // o_konto()
-   O_AMORT
-   O_REVAL
+   //o_amort()
+   //o_reval()
    o_os_sii()
    o_os_sii_promj()
 

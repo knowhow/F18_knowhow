@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -20,47 +20,6 @@
 // "fakt_fakt", "FAKT", F_FAKT
 
 
-FUNCTION select_o_fakt_dbf()
-
-   select_o_dbf( "FAKT", F_FAKT, "fakt_fakt", "1" )
-   IF Alias() != "FAKT"
-      Alert( "Nije FAKT ?!" )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
-
-
-
-FUNCTION o_fakt_doks_dbf()
-   RETURN o_dbf_table( F_FAKT_DOKS, "fakt_doks", "1" )
-
-
-FUNCTION select_o_fakt_doks_dbf()
-
-   select_o_dbf( "FAKT_DOKS", F_FAKT_DOKS, "fakt_doks", "1" )
-   IF Alias() != "FAKT_DOKS"
-      Alert( "Nije FAKT DOKS ?!" )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
-
-
-FUNCTION o_fakt_doks2_dbf()
-
-   RETURN o_dbf_table( F_FAKT_DOKS2, "fakt_doks2", "1" )
-
-
-FUNCTION select_o_fakt_doks2_dbf()
-
-   select_o_dbf( "FAKT_DOKS2", F_FAKT_DOKS2, "fakt_doks2", "1" )
-   IF Alias() != "FAKT_DOKS2"
-      Alert( "Nije FAKT DOKS2 ?!" )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
 
 
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -137,7 +137,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, nMjesec, nGodina, cIdRadn, cObrac, aNe
    // bruto placa iz neta...
 
    ? cMainLine
-   ? cLMSK + "1. BRUTO SA TROSKOVIMA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
+   ? cLMSK + "1. BRUTO SA TROSKOVIMA :  ", ld_bruto_isplata_ispis( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
 
    @ PRow(), 60 + Len( cLMSK ) SAY nBSaTr PICT gpici
 

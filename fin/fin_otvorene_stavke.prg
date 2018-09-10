@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -11,6 +11,8 @@
 
 
 #include "f18.ch"
+
+STATIC s_cKupciLike := NIL // konta koja se prilikom azuriranja koriste za brisanje markera otvorenih stavki
 
 
 FUNCTION fin_otvorene_stavke_meni()
@@ -82,6 +84,21 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 
 
 
+FUNCTION param_otvorene_stavke_kupci_konto_like( cSet )
+
+      LOCAL cParamName := "fin_ostav_kupci_konto_like"
+
+      IF s_cKupciLike == NIL
+         s_cKupciLike := fetch_metric( cParamName, NIL,  "211%" )
+      ENDIF
+
+      IF cSet != NIL
+         s_cKupciLike := Trim( cSet )
+         set_metric( cParamName, NIL, cSet )
+      ENDIF
+
+      RETURN s_cKupciLike
+
 
    /*
 
@@ -97,7 +114,11 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 FUNCTION fin_brisanje_markera_otvorenih_stavki_vezanih_za_nalog( cIdFirma, cIdVn, cBrNal )
 
    LOCAL cSql
-   LOCAL cKupciLike := "211%"
+   LOCAL cKupciLike := param_otvorene_stavke_kupci_konto_like()
+
+   IF Empty( cKupciLike ) // markeri otvorenih stavki se ne diraju prilikom povrata dokumenta u pripremu
+      RETURN .T.
+   ENDIF
 
    MsgO( "Brisanje markera otvorenih stavki " + cKupciLike )
    cSql := "UPDATE fmk.fin_suban set otvst=' ' FROM "
@@ -646,9 +667,9 @@ FUNCTION fin_zagl_ostav_grupisano_po_br_veze( cIdFirma, cIdKonto, cIdPartner, fS
       ?? "*"
    ENDIF
    IF fin_dvovalutno()
-      ?? "  BrDok   *   dug " + ValDomaca() + "  *   pot " + ValDomaca() + "   *  saldo  " + ValDomaca() + " * dug " + ValPomocna() + " * pot " + ValPomocna() + " *saldo " + ValPomocna() + "*O*"
+      ?? "  BrDok   *   dug " + valuta_domaca_skraceni_naziv() + "  *   pot " + valuta_domaca_skraceni_naziv() + "   *  saldo  " + valuta_domaca_skraceni_naziv() + " * dug " + ValPomocna() + " * pot " + ValPomocna() + " *saldo " + ValPomocna() + "*O*"
    ELSE
-      ?? "  BrDok   *   dug " + ValDomaca() + "  *   pot " + ValDomaca() + "   *  saldo  " + ValDomaca() + " *O*"
+      ?? "  BrDok   *   dug " + valuta_domaca_skraceni_naziv() + "  *   pot " + valuta_domaca_skraceni_naziv() + "   *  saldo  " + valuta_domaca_skraceni_naziv() + " *O*"
    ENDIF
    ? M
 
@@ -779,7 +800,7 @@ STATIC FUNCTION fin_zagl_otv_st_za_broj_veze( cIdFirma, cIdKonto, cIdPartner, cB
    ? "BROJ VEZE:", cBrDok
    ? M
    // IF fin_dvovalutno()
-   // ? "Dat.dok.*Dat.val." + "*NALOG * Rbr *TD*   dug " + ValDomaca() + "   *  pot " + ValDomaca() + "  *   saldo " + ValDomaca() + "*  dug " + ValPomocna() + "* pot " + ValPomocna() + " *saldo " + ValPomocna() + "* O"
+   // ? "Dat.dok.*Dat.val." + "*NALOG * Rbr *TD*   dug " + valuta_domaca_skraceni_naziv() + "   *  pot " + valuta_domaca_skraceni_naziv() + "  *   saldo " + valuta_domaca_skraceni_naziv() + "*  dug " + ValPomocna() + "* pot " + ValPomocna() + " *saldo " + ValPomocna() + "* O"
    // ELSE
    ? "Dat.dok.*Dat.val.*VN* NALOG  * Rbr *      dug KM    *   pot KM    *   saldo KM  * O"
    // ENDIF

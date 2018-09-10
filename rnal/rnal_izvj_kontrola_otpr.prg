@@ -180,7 +180,7 @@ FUNCTION chk_dok_11()
    ENDIF
 
    // otvori fakt doks
-   o_fakt_doks_dbf()
+   //o_fakt_doks_dbf()
 
    // otvori potrebne tabele
    rnal_o_tables( .F. )

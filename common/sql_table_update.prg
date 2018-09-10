@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -28,7 +28,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
    LOCAL _dec
    LOCAL _len
    LOCAL hDbfRec, _alg
-   LOCAL _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, _sql_tbl
+   LOCAL _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, cSqlTable
 
    // LOCAL lSqlDbf := .F. hRecord je uvijek 852 enkodiran!
 
@@ -56,7 +56,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
       _dbf_wa    := hDbfRec[ "wa" ]
       _dbf_alias := hDbfRec[ "alias" ]
       lSqlTable := hDbfRec[ "sql" ]
-      _sql_tbl   := F18_PSQL_SCHEMA_DOT + cTable
+      cSqlTable   := F18_PSQL_SCHEMA_DOT + cTable
 
       // uvijek je algoritam 1 nivo recorda
       _alg := hDbfRec[ "algoritam" ][ 1 ]
@@ -90,11 +90,11 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
          log_write( cMsg, 2, lSilent )
          QUIT_1
       ENDIF
-      cQuery := "DELETE FROM " + _sql_tbl + " WHERE " + cWhereStr
+      cQuery := "DELETE FROM " + cSqlTable + " WHERE " + cWhereStr
 
    CASE cSqlOperator == "ins"
 
-      cQuery := "INSERT INTO " + _sql_tbl +  "("
+      cQuery := "INSERT INTO " + cSqlTable +  "("
 
       FOR nI := 1 TO Len( hDbfRec[ "dbf_fields" ] )
 
@@ -115,6 +115,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
       ENDIF
       cQuery += ")  VALUES ("
 
+
       FOR nI := 1 TO Len( hDbfRec[ "dbf_fields" ] )
 
          cTmp := hDbfRec[ "dbf_fields" ][ nI ]
@@ -129,6 +130,12 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
             MsgBeep( cMsg )
             RaiseError( cMsg + " " + pp( hRecord ) )
             RETURN .F.
+         ENDIF
+
+
+         IF !hb_HHasKey( hRecord, cTmp )
+             log_write( "polje " + cTmp + " ne postoji ?!", 2 )
+             LOOP
          ENDIF
 
          IF ValType( hRecord[ cTmp ] ) == "N"

@@ -1,5 +1,5 @@
 #-oF18
--static
+#-static
 #-request=ARRAYRDD
 F18.prg
 fin/*.prg
@@ -39,3 +39,5 @@ reports/*.prg
 #{mingw}-L./win32
 {LX_64&linux}-lz
 {!LX_64&linux}-lz
+{win}-Lc:/postgresql/pgsql_10_32/lib
+{linux}-lm

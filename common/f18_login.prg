@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -28,8 +28,8 @@ CLASS F18Login
    METHOD promjena_sezone_box()
    METHOD browse_odabir_organizacije()
    METHOD manual_enter_company_data()
-   METHOD administrative_options()
-   METHOD database_array()
+   METHOD administratorske_opcije()
+   METHOD organizacije_array()
    METHOD get_database_browse_array()
    METHOD get_database_top_session()
    METHOD get_database_sessions()
@@ -79,7 +79,7 @@ FUNCTION my_login()
 
 METHOD F18Login:New()
 
-   LOCAL _key, hDbParamsIni
+   LOCAL nKey, hDbParamsIni
 
    ::hDbPostgresConnectionParams := hb_Hash()
    ::hDbDataConnectionParams := hb_Hash()
@@ -415,7 +415,7 @@ METHOD F18Login:server_login_form()
    LOCAL _left := 7
    LOCAL _srv_config := "N"
    LOCAL cSezona
-   LOCAL _key, hDbParamsIni := hb_Hash()
+   LOCAL nKey, hDbParamsIni := hb_Hash()
 
    cUser := ::hDbPostgresConnectionParams[ "user" ]
    cPassword := ""
@@ -525,7 +525,7 @@ METHOD F18Login:odabir_organizacije()
       RETURN .T.
    ENDIF
 
-   aOrganizacije := ::database_array()
+   aOrganizacije := ::organizacije_array()
 
    IF HB_ISNIL( aOrganizacije ) .OR. Len( aOrganizacije ) == 0
       MsgBeep( "Na serveru ne postoji definisana nijedna baza !" )
@@ -562,17 +562,17 @@ METHOD F18Login:odabir_organizacije()
 
 
 
-METHOD F18Login:get_database_sessions( DATABASE )
+METHOD F18Login:get_database_sessions( cDatabase )
 
    LOCAL cSezona := ""
-   LOCAL oDataSet, oRow, _db, cQuery
+   LOCAL oDataSet, oRow, cQuery
    LOCAL aOrganizacijeZaBrowse := {}
 
-   IF Empty( DATABASE )
+   IF Empty( cDatabase )
       RETURN NIL
    ENDIF
 
-   cQuery := "SELECT DISTINCT substring( datname, '" + AllTrim( DATABASE ) +  "_([0-9]+)') AS godina " + ;
+   cQuery := "SELECT DISTINCT substring( datname, '" + AllTrim( cDatabase ) +  "_([0-9]+)') AS godina " + ;
       "FROM pg_database " + ;
       "ORDER BY godina"
 
@@ -601,12 +601,12 @@ METHOD F18Login:get_database_sessions( DATABASE )
 
 
 
-METHOD F18Login:get_database_top_session( DATABASE )
+METHOD F18Login:get_database_top_session( cDatabase )
 
    LOCAL cSezona := ""
-   LOCAL oDataSet, oRow, _db, cQuery
+   LOCAL oDataSet, oRow, cQuery
 
-   cQuery := "SELECT MAX( DISTINCT substring( datname, '" + AllTrim( DATABASE ) +  "_([0-9]+)') ) AS godina " + ;
+   cQuery := "SELECT MAX( DISTINCT substring( datname, '" + AllTrim( cDatabase ) +  "_([0-9]+)') ) AS godina " + ;
       "FROM pg_database " + ;
       "ORDER BY godina"
 
@@ -622,17 +622,17 @@ METHOD F18Login:get_database_top_session( DATABASE )
 
 
 
-METHOD F18Login:get_database_description( database, cSezona )
+METHOD F18Login:get_database_description( cDatabase, cSezona )
 
    LOCAL _descr := ""
    LOCAL oDataSet, oRow, cQuery
    LOCAL _database_name := ""
 
-   IF Empty( DATABASE )
+   IF Empty( cDatabase )
       RETURN _descr
    ENDIF
 
-   _database_name := DATABASE + iif( !Empty( cSezona ), "_" + cSezona, "" )
+   _database_name := cDatabase + iif( !Empty( cSezona ), "_" + cSezona, "" )
 
    cQuery := "SELECT description AS opis " + ;
       "FROM pg_shdescription " + ;
@@ -657,20 +657,25 @@ METHOD F18Login:get_database_description( database, cSezona )
 
 
 
-METHOD F18Login:get_database_browse_array( aArray )
+METHOD F18Login:get_database_browse_array( aOrganizacije )
 
    LOCAL aOrganizacijeZaBrowse := {}
-   LOCAL _count, _n, nX
-   LOCAL _len := 20
+   LOCAL nCount, nRedova, nUkupnoKolona, nRed, nKolona
+   LOCAL cLen := 20
 
-   _count := 0
-   FOR _n := 1 TO 30
+   nUkupnoKolona := Round( (f18_max_cols() - 14 ) / ( cLen + 1 ), 0 ) - 1
+   nRedova := Round( Len( aOrganizacije ) / nUkupnoKolona, 0 ) + 1
 
-      AAdd( aOrganizacijeZaBrowse, { "", "", "", "" } )
 
-      FOR nX := 1 TO 4
-         ++_count
-         aOrganizacijeZaBrowse[ _n, nX ] := IF( _count > Len( aArray ), PadR( "", _len ), PadR( aArray[ _count, 1 ], _len ) )
+
+   nCount := 0
+   FOR nRed := 1 TO nRedova
+
+      AAdd( aOrganizacijeZaBrowse, Array( nUkupnoKolona ) )
+
+      FOR nKolona := 1 TO nUkupnoKolona
+         ++nCount
+         aOrganizacijeZaBrowse[ nRed, nKolona ] := iif( nCount > Len( aOrganizacije ), PadR( "", cLen ), PadR( aOrganizacije[ nCount, 1 ], cLen ) )
       NEXT
 
    NEXT
@@ -679,22 +684,22 @@ METHOD F18Login:get_database_browse_array( aArray )
 
 
 
-METHOD F18Login:database_array()
+METHOD F18Login:organizacije_array()
 
-   LOCAL oDataSet, oRow, _db, cQuery
+   LOCAL oDataSet, oRow, cDatabase, cQuery
    LOCAL aOrganizacije := {}
    LOCAL _filter_db := "empty#empty_sezona"
-   LOCAL _where := ""
+   LOCAL cWhere := ""
 
-   _where := " WHERE has_database_privilege( CURRENT_USER, datname, 'connect' ) "
+   cWhere := " WHERE has_database_privilege( CURRENT_USER, datname, 'connect' ) "
 
    IF !Empty( ::cIncludeDbFilter )
-      _where += " AND " + _sql_cond_parse( "datname", ::cIncludeDbFilter + " " )
+      cWhere += " AND " + _sql_cond_parse( "datname", ::cIncludeDbFilter + " " )
    ENDIF
 
    cQuery := "SELECT DISTINCT substring( datname, '(.*)_[0-9]+') AS datab " + ;
       " FROM pg_database " + ;
-      _where + ;
+      cWhere + ;
       " ORDER BY datab "
 
    oDataSet := postgres_sql_query( cQuery )
@@ -707,11 +712,11 @@ METHOD F18Login:database_array()
    DO WHILE !oDataSet:Eof()
 
       oRow := oDataSet:GetRow()
-      _db := oRow:FieldGet( oRow:FieldPos( "datab" ) )
+      cDatabase := oRow:FieldGet( oRow:FieldPos( "datab" ) )
 
       // filter za tabele
-      IF !Empty( _db ) .AND. !( AllTrim( _db ) $ _filter_db )
-         AAdd( aOrganizacije, { _db } )
+      IF !Empty( cDatabase ) .AND. !( AllTrim( cDatabase ) $ _filter_db )
+         AAdd( aOrganizacije, { cDatabase } )
       ENDIF
 
       oDataSet:Skip()
@@ -723,29 +728,48 @@ METHOD F18Login:database_array()
 
 
 
-METHOD F18Login:administrative_options( x_pos, y_pos )
+METHOD F18Login:administratorske_opcije( nXPos, nYPos )
 
-   LOCAL nX, _y
-   LOCAL aMeniOpcije, _menuexec, _mnu_choice
+   LOCAL nX, nY
+   LOCAL aMeni := {}, aMeniExec := {}, nIzbor
 
-   nX := x_pos
-   _y := ( f18_max_cols() / 2 ) - 5
+   nX := nXPos
+   nY := ( f18_max_cols() / 2 ) - 5
 
 
-   aMeniOpcije := {} // resetuj
-   _menuexec := {}
+   // print_sql_connections()
 
-   _set_menu_choices( @aMeniOpcije, @_menuexec )
+   AAdd( aMeni, hb_UTF8ToStr( "1. rekonfiguracija servera        " ) )
+   AAdd( aMeniExec, {|| f18_login_loop( .F. ), .T. } )
+
+   AAdd( aMeni, hb_UTF8ToStr( "2. update F18" ) )
+   AAdd( aMeniExec, {|| F18Admin():update_app(), .T. } )
+
+   // AAdd( aMeni, hb_UTF8ToStr( "3. update baze" ) )
+   // AAdd( aMeniExec, {|| F18Admin():New():update_db(), .T. } )
+
+   AAdd( aMeni, hb_UTF8ToStr( "3. nova baza" ) )
+   AAdd( aMeniExec, {|| F18Admin():New():create_new_pg_db(), .T. } )
+
+   AAdd( aMeni, hb_UTF8ToStr( "5. brisanje baze" ) )
+   AAdd( aMeniExec, {|| F18Admin():New():drop_pg_db(), .T. } )
+
+   AAdd( aMeni, hb_UTF8ToStr( "6. otvaranje nove godine" ) )
+   AAdd( aMeniExec, {|| F18Admin():New():razdvajanje_sezona(), .T. } )
+
+   AAdd( aMeni, hb_UTF8ToStr( "7. sql_cleanup_all" ) )
+   AAdd( aMeniExec, {|| F18Admin():sql_cleanup_all(), .T. } )
+
 
    DO WHILE .T.
 
-      _mnu_choice := meni_0_inkey( nX, _y + 1, nX + 5, _y + 40, aMeniOpcije, 1 )
+      nIzbor := meni_0_inkey( nX, nY + 1, nX + 5, nY + 40, aMeni, 1 )
 
       DO CASE
-      CASE _mnu_choice == 0
+      CASE nIzbor == 0
          EXIT
-      CASE _mnu_choice > 0
-         Eval( _menuexec[ _mnu_choice ] )
+      CASE nIzbor > 0
+         Eval( aMeniExec[ nIzbor ] )
       ENDCASE
 
       LOOP
@@ -756,51 +780,26 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
 
 
 
-STATIC FUNCTION _set_menu_choices( menuop, menuexec )
-
-   // print_sql_connections()
-
-   AAdd( menuop, hb_UTF8ToStr( "1. rekonfiguracija servera        " ) )
-   AAdd( menuexec, {|| f18_login_loop( .F. ), .T. } )
-
-   AAdd( menuop, hb_UTF8ToStr( "2. update F18" ) )
-   AAdd( menuexec, {|| F18Admin():update_app(), .T. } )
-
-   //AAdd( menuop, hb_UTF8ToStr( "3. update baze" ) )
-   //AAdd( menuexec, {|| F18Admin():New():update_db(), .T. } )
-
-   AAdd( menuop, hb_UTF8ToStr( "3. nova baza" ) )
-   AAdd( menuexec, {|| F18Admin():New():create_new_pg_db(), .T. } )
-
-   AAdd( menuop, hb_UTF8ToStr( "5. brisanje baze" ) )
-   AAdd( menuexec, {|| F18Admin():New():drop_pg_db(), .T. } )
-
-   AAdd( menuop, hb_UTF8ToStr( "6. otvaranje nove godine" ) )
-   AAdd( menuexec, {|| F18Admin():New():razdvajanje_sezona(), .T. } )
-
-   RETURN .T.
 
 
 
-
-
-METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
+METHOD F18Login:manual_enter_company_data( nXPos, nYPos )
 
    LOCAL nX
-   LOCAL _y := 3
-   LOCAL _db := Space( 20 )
+   LOCAL nY := 3
+   LOCAL cDatabase := Space( 20 )
    LOCAL cSezona := AllTrim( Str( Year( Date() ) ) )
 
-   nX := x_pos
+   nX := nXPos
 
-   @ nX, _y + 1 SAY hb_UTF8ToStr( "Pristupiti sljedećoj bazi:" )
+   @ nX, nY + 1 SAY hb_UTF8ToStr( "Pristupiti sljedećoj bazi:" )
 
    nX += 2
-   @ nX, _y + 3 SAY Space( 30 )
-   @ nX, _y + 3 SAY "  Baza:" GET _db VALID !Empty( _db )
+   @ nX, nY + 3 SAY Space( 30 )
+   @ nX, nY + 3 SAY "  Baza:" GET cDatabase VALID !Empty( cDatabase )
 
    ++nX
-   @ nX, _y  + 3 SAY "Sezona:" GET cSezona
+   @ nX, nY  + 3 SAY "Sezona:" GET cSezona
 
    READ
 
@@ -809,7 +808,7 @@ METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
    ENDIF
 
    IF LastKey() == K_ENTER
-      ::cOrganizacijaOdabranaUBrowse := AllTrim( _db )
+      ::cOrganizacijaOdabranaUBrowse := AllTrim( cDatabase )
       ::cTekucaSezona := AllTrim( cSezona )
    ENDIF
 
@@ -818,33 +817,34 @@ METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
 
 
 
-METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
+METHOD F18Login:browse_odabir_organizacije( aOrganizacije, nTableType )
 
-   LOCAL nI, _l
-   LOCAL _key
+   LOCAL nI, nL
+   LOCAL nKey
    LOCAL oTBrowse
    LOCAL _opt := 0
-   LOCAL _pos_left := 3
-   LOCAL _pos_top := 5
-   LOCAL _pos_bottom := _pos_top + 12
-   LOCAL _pos_right := f18_max_cols() - 12
-   LOCAL _company_count
+   LOCAL nPosLijevo := 3
+   LOCAL nPosGore := 5
+   LOCAL nPosDno := nPosGore + 12
+   LOCAL nPosDesno := f18_max_cols() - 12
 
-   IF table_type == NIL
-      table_type := 0
+   // LOCAL nOrganizacijeCount
+
+   IF nTableType == NIL
+      nTableType := 0
    ENDIF
 
    // SetColor( F18_COLOR_ORGANIZACIJA )
 
-   PRIVATE _row := 1
+   PRIVATE nRow := 1
 
-   IF aArray == NIL
+   IF aOrganizacije == NIL
       MsgBeep( "Nema podataka za prikaz..." )
       RETURN NIL
    ENDIF
 
 
-   _company_count := _get_company_count( aArray )    // stvarni broj aktuelenih firmi
+   // nOrganizacijeCount := get_broj_organizacija( aOrganizacije )    // stvarni broj aktuelenih firmi
 
    CLEAR SCREEN
 
@@ -858,77 +858,77 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
 
 
    // box za selekciju firme....
-   @ 4, 2, _pos_bottom + 1, _pos_right + 2 BOX B_DOUBLE_SINGLE
+   @ 4, 2, nPosDno + 1, nPosDesno + 2 BOX B_DOUBLE_SINGLE
 
    // opcija 2
    // =========================
    // ispis opisa
-   @ _pos_bottom + 2, 3 SAY hb_UTF8ToStr( "[2] Ručna konekcija na bazu" )
+   @ nPosDno + 2, 3 SAY hb_UTF8ToStr( "[2] Ručna konekcija na bazu" )
 
    // box za rucni odabir firme
-   @ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) - 3 BOX B_DOUBLE_SINGLE
-   @ _pos_bottom + 6, 11 SAY hb_UTF8ToStr( "<<< pritisni TAB >>>" )
+   @ nPosDno + 3, 2, nPosDno + 10, ( nPosDesno / 2 ) - 3 BOX B_DOUBLE_SINGLE
+   @ nPosDno + 6, 11 SAY hb_UTF8ToStr( "<<< pritisni TAB >>>" )
 
    // opcija 3
-   @ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_UTF8ToStr( "[3] Administrativne opcije" )
+   @ nPosDno + 2, ( nPosDesno / 2 ) + 1 SAY hb_UTF8ToStr( "[3] Administrativne opcije" )
 
    // box za administrativne opcije
-   @ _pos_bottom + 3,  ( _pos_right / 2 ), _pos_bottom + 10, _pos_right + 2 BOX B_DOUBLE_SINGLE
-   @ _pos_bottom + 6, ( _pos_right / 2 ) + 12 SAY hb_UTF8ToStr( "<<< pritisni F10 >>>" )
+   @ nPosDno + 3,  ( nPosDesno / 2 ), nPosDno + 10, nPosDesno + 2 BOX B_DOUBLE_SINGLE
+   @ nPosDno + 6, ( nPosDesno / 2 ) + 12 SAY hb_UTF8ToStr( "<<< pritisni F10 >>>" )
 
-   oTBrowse := TBrowseNew( _pos_top, _pos_left, _pos_bottom, _pos_right )
+   oTBrowse := TBrowseNew( nPosGore, nPosLijevo, nPosDno, nPosDesno )
 
-   IF table_type == 0
+   IF nTableType == 0
       oTBrowse:HeadSep := ""
       oTBrowse:FootSep := ""
       oTBrowse:ColSep := " "
-   ELSEIF table_type == 1
+   ELSEIF nTableType == 1
       oTBrowse:headSep := "-"
       oTBrowse:footSep := "-"
       oTBrowse:colSep := "|"
-   ELSEIF table_type == 2
+   ELSEIF nTableType == 2
       oTBrowse:HeadSep := hb_UTF8ToStrBox( BROWSE_HEAD_SEP )
       oTBrowse:FootSep := hb_UTF8ToStrBox( BROWSE_FOOT_SEP )
       oTBrowse:ColSep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    ENDIF
 
-   oTBrowse:skipBlock := {| _skip | _skip := _skip_it( aArray, _row, _skip ), _row += _skip, _skip }
-   oTBrowse:goTopBlock := {|| _row := 1 }
-   oTBrowse:goBottomBlock := {|| _row := Len( aArray ) }
+   oTBrowse:skipBlock := {| _skip | _skip := _skip_it( aOrganizacije, nRow, _skip ), nRow += _skip, _skip }
+   oTBrowse:goTopBlock := {|| nRow := 1 }
+   oTBrowse:goBottomBlock := {|| nRow := Len( aOrganizacije ) }
 
-   FOR _l := 1 TO Len( aArray[ 1 ] )
-      oTBrowse:addColumn( TBColumnNew( "", _browse_block( aArray, _l ) ) )
+   FOR nL := 1 TO Len( aOrganizacije[ 1 ] )
+      oTBrowse:addColumn( TBColumnNew( "", _browse_block( aOrganizacije, nL ) ) )
    NEXT
 
 
-   DO WHILE ( _key <> K_ESC ) .AND. ( _key <> K_RETURN ) // main key handler loop
+   DO WHILE ( nKey <> K_ESC ) .AND. ( nKey <> K_RETURN ) // main key handler loop
 
       oTBrowse:forcestable() // stabilize the browse and wait for a keystroke
-      ::show_info_bar( AllTrim( Eval( oTBrowse:GetColumn( oTBrowse:colpos ):block ) ), _pos_bottom + 4 )
-      _key := Inkey( 0 )
+      ::show_info_bar( AllTrim( Eval( oTBrowse:GetColumn( oTBrowse:colpos ):block ) ), nPosDno + 4 )
+      nKey := Inkey( 0 )
 
       IF oTBrowse:stable
 
          DO CASE
 
-         CASE ( _key == K_DOWN )
+         CASE ( nKey == K_DOWN )
             oTBrowse:down()
-         CASE ( _key == K_UP )
+         CASE ( nKey == K_UP )
             oTBrowse:up()
-         CASE ( _key == K_RIGHT )
+         CASE ( nKey == K_RIGHT )
             oTBrowse:Right()
-         CASE ( _key == K_LEFT )
+         CASE ( nKey == K_LEFT )
             oTBrowse:Left()
-         CASE ( _key == K_F10 )
-            ::administrative_options( _pos_bottom + 4, _pos_left )
+         CASE ( nKey == K_F10 )
+            ::administratorske_opcije( nPosDno + 4, nPosLijevo )
             RETURN -1
-         CASE ( _key == K_TAB )
-            IF ::manual_enter_company_data( _pos_bottom + 4, _pos_left )
+         CASE ( nKey == K_TAB )
+            IF ::manual_enter_company_data( nPosDno + 4, nPosLijevo )
                RETURN 1
             ELSE
                RETURN -1
             ENDIF
-         CASE ( _key == K_ENTER )
+         CASE ( nKey == K_ENTER )
 
             ::cOrganizacijaOdabranaUBrowse := AllTrim( Eval( oTBrowse:GetColumn( oTBrowse:colpos ):block ) ) // ovo je firma koju smo odabrali
             ::cTekucaSezona := NIL // sezona treba da bude uzeta kao TOP sezona
@@ -943,18 +943,18 @@ METHOD F18Login:browse_odabir_organizacije( aArray, table_type )
 
 
 
-METHOD F18Login:show_info_bar( database, x_pos )
+METHOD F18Login:show_info_bar( cDatabase, nXPos )
 
-   LOCAL nX := x_pos + 7
-   LOCAL _y := 3
+   LOCAL nX := nXPos + 7
+   LOCAL nY := 3
    LOCAL _info := ""
-   LOCAL aOrganizacijeZaBrowse := ::get_database_sessions( DATABASE )
+   LOCAL aOrganizacijeZaBrowse := ::get_database_sessions( cDatabase )
    LOCAL _max_len := f18_max_cols() - 2
    LOCAL _descr := ""
 
    IF !aOrganizacijeZaBrowse == NIL .AND. Len( aOrganizacijeZaBrowse ) > 0
 
-      _descr := ::get_database_description( database, aOrganizacijeZaBrowse[ Len( aOrganizacijeZaBrowse ), 1 ] )
+      _descr := ::get_database_description( cDatabase, aOrganizacijeZaBrowse[ Len( aOrganizacijeZaBrowse ), 1 ] )
 
       _info += AllTrim( _descr )
 
@@ -966,44 +966,44 @@ METHOD F18Login:show_info_bar( database, x_pos )
 
    ENDIF
 
-   @ nX, _y SAY PadR( "Info: " + _info, _max_len )
+   @ nX, nY SAY PadR( "Info: " + _info, _max_len )
    ++nX
-   @ nX, _y SAY "F18 version: " + f18_ver() + " lib: " + f18_lib_ver()
+   @ nX, nY SAY "F18 version: " + f18_ver() + " lib: " + f18_lib_ver()
 
    RETURN .T.
 
 
+/*
+STATIC FUNCTION get_broj_organizacija( aOrganizacije )
 
-STATIC FUNCTION _get_company_count( aArray )
+   LOCAL nCount := 0, nI, nJ
 
-   LOCAL _count := 0, nI, _n
-
-   FOR nI := 1 TO Len( aArray )
-      FOR _n := 1 TO 4
-         IF !Empty( aArray[ nI, _n ] )
-            ++_count
+   FOR nI := 1 TO Len( aOrganizacije )
+      FOR nJ := 1 TO 4
+         IF !Empty( aOrganizacije[ nI, nJ ] )
+            ++nCount
          ENDIF
       NEXT
    NEXT
 
-   RETURN _count
+   RETURN nCount
+*/
 
 
 
-
-STATIC FUNCTION _browse_block( aArray, nX )
-   RETURN ( {| p | iif( PCount() == 0, aArray[ _row, nX ], aArray[ _row, nX ] := p ) } )
-
+STATIC FUNCTION _browse_block( aOrganizacije, nX )
+   RETURN ( {| p | iif( PCount() == 0, aOrganizacije[ nRow, nX ], aOrganizacije[ nRow, nX ] := p ) } )
 
 
-STATIC FUNCTION _skip_it( aArray, curr, skiped )
+
+STATIC FUNCTION _skip_it( aOrganizacije, curr, skiped )
 
    IF ( curr + skiped < 1 )
       // Would skip past the top...
       RETURN( - curr + 1 )
-   ELSEIF ( curr + skiped > Len( aArray ) )
+   ELSEIF ( curr + skiped > Len( aOrganizacije ) )
       // Would skip past the bottom...
-      RETURN ( Len( aArray ) - curr )
+      RETURN ( Len( aOrganizacije ) - curr )
    ENDIF
 
    RETURN( skiped )

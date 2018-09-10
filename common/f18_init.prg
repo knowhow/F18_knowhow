@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -111,6 +111,9 @@ FUNCTION post_login()
       RETURN .F.
    ENDIF
 
+   F18Admin():sql_cleanup()
+
+   set_sql_search_path()
    server_log_enable()
    set_init_fiscal_params()
 
@@ -226,6 +229,17 @@ FUNCTION set_screen_dimensions()
 
    DO CASE
 
+   CASE nPixWidth >= 3000 .AND. nPixHeight >= 1800
+
+       IF is_linux()
+         font_name("Liberation Mono")
+         font_weight_bold()
+         font_size(40)
+         font_width(24)  
+         // linux zavrsi 45x24, 37 rows x 132 cols
+         ?E cMsg + "HiDPI"
+       ENDIF
+              
    CASE nPixWidth >= 1440 .AND. nPixHeight >= 900
 
       IF is_mac()

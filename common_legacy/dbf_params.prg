@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -11,16 +11,21 @@
 
 #include "f18.ch"
 
+/*
+    tabela moze biti params ili gparams
+*/
 
 FUNCTION RPar( cImeVar, xArg )
 
-   LOCAL cPom, clTip
+   LOCAL cPom, cTip
 
+
+   o_params_ako_treba()
    SEEK cSection + cHistory + cImeVar + "1"
 
    IF Found()
       cPom := ""
-      clTip := tip
+      cTip := tip
 
       DO WHILE !Eof() .AND. ( cSection + cHistory + cImeVar == Fsec + cHistory + Fvar )
          cPom += Fv
@@ -28,13 +33,13 @@ FUNCTION RPar( cImeVar, xArg )
       ENDDO
 
       cPom := Left( cPom, At( Chr( CHR254 ), cPom ) - 1 )
-      IF clTip = "C"
+      IF cTip == "C"
          xArg := cPom
-      ELSEIF clTip == "N"
+      ELSEIF cTip == "N"
          xArg := Val( cPom )
-      ELSEIF clTip == "D"
+      ELSEIF cTip == "D"
          xArg := CToD( cPom )
-      ELSEIF clTip == "L"
+      ELSEIF cTip == "L"
          xArg := iif( cPom == "0", .F., .T. )
       ENDIF
 
@@ -43,34 +48,15 @@ FUNCTION RPar( cImeVar, xArg )
    RETURN NIL
 
 
-
+/*
+   tabela moze biti params ili gparams
+*/
 
 FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
 
-   LOCAL cPom, nRec
+   LOCAL cPom, nRec, cTip
 
-   IF Type( "gSql" ) <> "C"
-      gSql := "N"
-   ENDIF
-   IF ( goModul:lSqlDirektno == NIL )
-      goModul:lSqlDirektno := .T.
-   ENDIF
-
-   IF gReadonly
-      RETURN .T.
-   ENDIF
-
-   // ako gSQL nije D onda u svakom slucaju ne radi SQL azuriranja
-   IF ( gSQL == "N" )
-      fSQL := .F.
-   ENDIF
-   IF ( fSQL == NIL )
-      fSQL := .F.
-   ENDIF
-   IF ( cAkcija == NIL )
-      cAkcija := "A"
-   ENDIF
-
+   o_params_ako_treba()
    SEEK cSection + cHistory + cImeVar
 
    IF Found()
@@ -83,21 +69,23 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
             GO nRec
          ENDDO
       ELSE
-         MsgBeep( "FLOCK:parametri nedostupni!!" )
+         MsgBeep( "FLOCK:parametri nedostupni!?" )
       ENDIF
       my_unlock()
    ENDIF
 
 
-   clTip := ValType( xArg )
-   IF clTip == "C"
+   cTip := ValType( xArg )
+   IF cTip == "C"
       cPom := xArg
-   ELSEIF clTip == "N"
+   ELSEIF cTip == "N"
       cPom := Str( xArg )
-   ELSEIF clTip == "D"
+   ELSEIF cTip == "D"
       cPom := DToC( xArg )
-   ELSEIF clTip == "L"
+   ELSEIF cTip == "L"
       cPom := iif( xArg, "1", "0" )
+   ELSE
+      cPom := ""
    ENDIF
    cPom += Chr( CHR254 )
 
@@ -110,7 +98,7 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
       REPLACE Fh WITH chistory, ;
          Fsec WITH cSection, ;
          Fvar WITH cImeVar, ;
-         tip WITH clTip, ;
+         tip WITH cTip, ;
          rBr WITH cRbr, ;
          Fv   WITH Left( cPom, 15 )
 
@@ -118,6 +106,16 @@ FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
    ENDDO
 
    RETURN NIL
+
+
+STATIC FUNCTION o_params_ako_treba()
+
+IF Alias() == "GPARAMS" .OR. Alias() == "PARAMS"
+   RETURN .F.
+ENDIF
+
+select_o_params()
+RETURN .T.
 
 
 STATIC FUNCTION NextAkcija( cAkcija )
@@ -134,12 +132,12 @@ STATIC FUNCTION NextAkcija( cAkcija )
       cAkcija := "Z"
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION Params1()
 
-   LOCAL ncx, ncy, nOldc
+   LOCAL nCx, nCy, nOldc
 
    IF cHistory == "*"
 
@@ -199,14 +197,30 @@ FUNCTION HistUser( Ch )
    RETURN NIL
 
 
-FUNCTION o_params()
+
+
+FUNCTION select_o_params()
 
    SELECT ( F_PARAMS )
-   use
-   my_use ( "params" )
-   SET ORDER TO TAG  "ID"
 
-   RETURN .T.
+   IF Used()
+      IF RecCount() > 1
+         RETURN .T.
+      ELSE
+         USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
+      ENDIF
+   ENDIF
+
+   RETURN o_params()
+
+
+FUNCTION o_params()
+
+   //SELECT ( F_PARAMS )
+   //USE
+   //my_use ( "params" )
+   RETURN o_dbf_table( F_PARAMS, { "PARAMS", "params" }, "ID" )
+
 
 
 FUNCTION o_gparams()

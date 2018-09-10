@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -17,10 +17,10 @@ FUNCTION fakt_kartica()
    LOCAL cIdFirma, nRezerv, nRevers
    LOCAL nUl, nIzl, nRbr, cRR, nCol1 := 0, cKolona, cBrza := "D"
    LOCAL cPredh := "2"
-   LOCAL lpickol := "@Z " + fakt_pic_kolicina()
+   LOCAL cPicKol := "@Z " + fakt_pic_kolicina()
    LOCAL hParams := fakt_params()
    LOCAL GetList := {}
-   LOCAL dDatOd, dDatDo
+   LOCAL dDatOd := CTOD( ""), dDatDo := Date()
    LOCAL cFilter
    LOCAL qqPartn := Space( 20 )
 
@@ -79,6 +79,13 @@ FUNCTION fakt_kartica()
    RPar( "d2", @dDatDo )
    RPar( "cP", @cPPC )
    RPar( "Cp", @cPPartn )
+
+   IF ValType( dDatOd ) != "D"
+       dDatOd := CTOD( "" )
+   ENDIF
+   IF ValType( dDatDo ) != "D"
+       dDatDo := Date()
+   ENDIF
 
    cRR := "N"
 
@@ -366,9 +373,9 @@ FUNCTION fakt_kartica()
          IF cPpartn == "D"
             @ PRow(), PCol() + 1 SAY Space( 20 )
          ENDIF
-         @ PRow(), PCol() + 1 SAY nUl PICT lpickol
-         @ PRow(), PCol() + 1 SAY ( nIzl + nRevers + nRezerv ) PICT lpickol
-         @ PRow(), PCol() + 1 SAY nUl - ( nIzl + nRevers + nRezerv ) PICT lpickol
+         @ PRow(), PCol() + 1 SAY nUl PICT cPicKol
+         @ PRow(), PCol() + 1 SAY ( nIzl + nRevers + nRezerv ) PICT cPicKol
+         @ PRow(), PCol() + 1 SAY nUl - ( nIzl + nRevers + nRezerv ) PICT cPicKol
          PopWA()
       ENDIF
 
@@ -420,9 +427,9 @@ FUNCTION fakt_kartica()
                   @ PRow(), PCol() + 1 SAY PadR( fakt_doks->Partner, 20 )
                ENDIF
 
-               @ PRow(), PCol() + 1 SAY IF( cKolona == "U", kolicina, 0 ) PICT lpickol
-               @ PRow(), PCol() + 1 SAY IF( cKolona != "U", kolicina, 0 ) PICT lpickol
-               @ PRow(), PCol() + 1 SAY nUl - ( nIzl + nRevers + nRezerv ) PICT lpickol
+               @ PRow(), PCol() + 1 SAY IF( cKolona == "U", kolicina, 0 ) PICT cPicKol
+               @ PRow(), PCol() + 1 SAY IF( cKolona != "U", kolicina, 0 ) PICT cPicKol
+               @ PRow(), PCol() + 1 SAY nUl - ( nIzl + nRevers + nRezerv ) PICT cPicKol
                IF cPPC == "D"
                   @ PRow(), PCol() + 1 SAY Cijena PICT fakt_pic_iznos()
                   @ PRow(), PCol() + 1 SAY Rabat  PICT "99.99"

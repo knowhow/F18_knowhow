@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -483,7 +483,7 @@ FUNCTION PPrint()
    SET CURSOR ON
 
    SetKey( K_SH_F2, NIL )
-   SetKey( K_ALT_R, {|| UzmiPPr(), AEval( GetList, {| o | o:display() } ) } )
+   SetKey( k_alt_r(), {|| UzmiPPr(), AEval( GetList, {| o | o:display() } ) } )
    PRIVATE GetList := {}
 
    o_gparams()
@@ -610,7 +610,7 @@ FUNCTION PPrint()
    ENDIF
 
    SetKey( K_SH_F2, {|| PPrint() } )
-   SetKey( K_ALT_R, NIL )
+   SetKey( k_alt_r(), NIL )
    PopWa()
 
    IF !Empty( gPPTK )

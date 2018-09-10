@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -349,7 +349,7 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
          nX += 2
 
          IF hFaktParams[ "fakt_dok_veze" ]
-            @ box_x_koord() + nX, box_y_koord() + 2 SAY "Vezni dok.:" GET hFaktTxt[ "dokument_veza" ]  PICT "@S20"
+            @ box_x_koord() + nX, box_y_koord() + 2 SAY "Vezni dok:" GET hFaktTxt[ "dokument_veza" ]  PICT "@S20"
          ENDIF
 
          ++nX
@@ -425,14 +425,13 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
                lAvansniRacun := "D"
             ENDIF
 
-            @ box_x_koord() + nX, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET lAvansniRacun PICT "@!" ;
-               VALID lAvansniRacun $ "DN"
+            @ box_x_koord() + nX, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET lAvansniRacun PICT "@!" VALID lAvansniRacun $ "DN"
 
          ENDIF
 
-         IF ( gIspPart == "N" )
+         //IF ( gIspPart == "N" )
             READ
-         ENDIF
+         //ENDIF
 
          ESC_RETURN 0
 
@@ -497,12 +496,12 @@ STATIC FUNCTION edit_fakt_priprema( lFaktNoviRec, hFaktItemsAttributi )
    // IF gSamokol != "D"
 
    @ box_x_koord() + nX, Col() + 2 SAY IF( _idtipdok $ "13#23" .AND. ( gVar13 == "2" .OR. glCij13Mpc ), ;
-      "MPC.s.PDV", "Cijena (" + AllTrim( ValDomaca() ) + ")" ) GET _cijena PICT fakt_pic_cijena() ;
+      "MPC.s.PDV", "Cijena (" + AllTrim( valuta_domaca_skraceni_naziv() ) + ")" ) GET _cijena PICT fakt_pic_cijena() ;
       WHEN  _podbr <> " ." ;
       VALID fakt_valid_cijena( _cijena, _idtipdok, lFaktNoviRec )
 
 
-   IF ( PadR( _dindem, 3 ) <> PadR( ValDomaca(), 3 ) )
+   IF ( PadR( _dindem, 3 ) <> PadR( valuta_domaca_skraceni_naziv(), 3 ) )
       @ box_x_koord() + nX, Col() + 2 SAY "Pr"  GET cConvertDN ;
          PICT "@!"  VALID fakt_valid_preracun_cijene_u_valutu_dokumenta( @cConvertDN, _dindem, _datdok, @_cijena )
    ENDIF

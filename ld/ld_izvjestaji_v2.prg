@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -34,7 +34,7 @@ FUNCTION ld_pregled_primanja_za_period()
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Mjesec od: "  GET  cMjesecOd  PICT "99"
    @ box_x_koord() + 2, Col() + 2 SAY "do" GET cMjesecDO  PICT "99"
    IF ld_vise_obracuna()
-      @ box_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
    ENDIF
    @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: "  GET  nGodina  PICT "9999"
    @ box_x_koord() + 4, box_y_koord() + 2 SAY "Tip primanja: "  GET  cTip

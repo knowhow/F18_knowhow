@@ -19,9 +19,7 @@ STATIC PicUN := "999999999.99"
 STATIC __unos_x
 STATIC __unos_y
 
-// -----------------------------------------------------
-// knjizenje naloga
-// -----------------------------------------------------
+
 FUNCTION mat_knjizenje_naloga()
 
    PUBLIC gPotpis := "N"
@@ -68,7 +66,7 @@ FUNCTION mat_unos_naloga()
       AAdd( ImeKol, { "Datum",               {|| DatDok                       }, "datdok" } )
    ELSE
       AAdd( ImeKol, { "Cijena ",             {|| Transform( Cijena, "99999.999" ) }           } )
-      AAdd( ImeKol, { "Iznos " + ValDomaca(), {|| Transform( Iznos, "9999999.9" ) }           } )
+      AAdd( ImeKol, { "Iznos " + valuta_domaca_skraceni_naziv(), {|| Transform( Iznos, "9999999.9" ) }           } )
       AAdd( ImeKol, { "Iznos " + ValPomocna(),  {|| Transform( Iznos2, "9999999.9" ) }           } )
       AAdd( ImeKol, { "Datum",               {|| DatDok                       }, "datdok" } )
    ENDIF
@@ -179,7 +177,7 @@ STATIC FUNCTION mat_edit_priprema( fNovi )
    @  box_x_koord() + 11, box_y_koord() + 2  SAY "Datum dok.:"   GET  _DatDok valid {|| _datkurs := _DatDok, .T. }
    IF gNW == "N"
       @  box_x_koord() + 11, box_y_koord() + 24 SAY "Datum kursa:" GET _DatKurs ;
-         VALID {|| nKurs := Kurs( _DatKurs ), QQOut( " " + ValDomaca() + "/" + ValPomocna(), Transform( nKurs, PicUn ) ), .T. }
+         VALID {|| nKurs := Kurs( _DatKurs ), QQOut( " " + valuta_domaca_skraceni_naziv() + "/" + ValPomocna(), Transform( nKurs, PicUn ) ), .T. }
    ENDIF
 
    IF gkonto <> "D"
@@ -198,7 +196,7 @@ STATIC FUNCTION mat_edit_priprema( fNovi )
       @ box_x_koord() + 16, box_y_koord() + 50 SAY "CIJENA   :" GET _Cijena PICTURE PicUn + "9" ;
          when {|| IF( _cijena <> 0, .T., Cijena() ) } ;
          valid {|| _Iznos := iif( _Cijena <> 0, Round( _Cijena * _Kolicina, 2 ), _Iznos ), .T. }
-      @ box_x_koord() + 17, box_y_koord() + 50 SAY "IZNOS " + ValDomaca() + ":" GET _Iznos PICTURE PicUn ;
+      @ box_x_koord() + 17, box_y_koord() + 50 SAY "IZNOS " + valuta_domaca_skraceni_naziv() + ":" GET _Iznos PICTURE PicUn ;
          when {|| iif( gkonto == "D", .F., .T. ) }  valid  {|| _Iznos2 := _Iznos / nKurs, .T. }
       @ box_x_koord() + 18, box_y_koord() + 50 SAY "IZNOS " + ValPomocna() + ":" GET _Iznos2 PICTURE PicUn ;
          when {|| _iznos2 := iif( gkonto == "D", _iznos, _iznos2 ), .T. }
@@ -786,7 +784,7 @@ FUNCTION mat_st_anal_nalog( fnovi )
                IF Kolicina <> 0 .AND. gNW != "R"
                   @ PRow(), nCK SAY "Cijena:"
                   @ PRow(), PCol() + 1 SAY  Iznos / Kolicina PICTURE "*****.***"
-                  @ PRow(), PCol() + 1 SAY ValDomaca()
+                  @ PRow(), PCol() + 1 SAY valuta_domaca_skraceni_naziv()
                ENDIF
             ENDIF
 
@@ -880,11 +878,11 @@ STATIC FUNCTION Zagl11()
    @ PRow(), 120 SAY "Str " + Str( ++nStr, 3 )
    ? M
    IF gkonto == "N" .AND. g2Valute == "D"
-      ? "*R. *" + KonSeks( "KONTO  " ) + "*  ROBA    *  NAZIV ROBE      *  D O K U M E N T   *      KOLICINA       *" + IF( gNW == "R", "", "  I Z N O S   " + ValDomaca() + "   *   I Z N O S   " + ValPomocna() + "     *" )
+      ? "*R. *" + KonSeks( "KONTO  " ) + "*  ROBA    *  NAZIV ROBE      *  D O K U M E N T   *      KOLICINA       *" + IF( gNW == "R", "", "  I Z N O S   " + valuta_domaca_skraceni_naziv() + "   *   I Z N O S   " + ValPomocna() + "     *" )
       ? "             ----------  ---------------  --------------------- --------------------- " + IF( gNW == "R", "", "--------------------- -------------------------" )
       ? "*BR.*       * PARTNER  *  ZADUZUJE        *TIP* BROJ  * DATUM  *  ULAZ    *  IZLAZ   *" + IF( gNW == "R", "", "   DUG    *   POT    *    DUG     *    POT    *" )
    ELSE
-      ? "*R. *" + KonSeks( "KONTO  " ) + "*Partn.*  SIFRA   *            NAZIV                       * DOKUMENT   *" + IF( gNW == "R", "", "  Cijena *" ) + "      KOLICINA       *" + IF( gNW == "R", "", "   I Z N O S   " + ValDomaca() + "     *" )
+      ? "*R. *" + KonSeks( "KONTO  " ) + "*Partn.*  SIFRA   *            NAZIV                       * DOKUMENT   *" + IF( gNW == "R", "", "  Cijena *" ) + "      KOLICINA       *" + IF( gNW == "R", "", "   I Z N O S   " + valuta_domaca_skraceni_naziv() + "     *" )
       ? "            *      *                                                   --------------" + IF( gNW == "R", "", "         *" ) + "--------------------- " + IF( gNW == "R", "", "-------------------------" )
       ? "*BR.*       *      *          *                                        *TIP* DATUM  *" + IF( gNW == "R", "", "         *" ) + "  ULAZ    *  IZLAZ   *" + IF( gNW == "R", "", "    DUG     *    POT    *" )
    ENDIF

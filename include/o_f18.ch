@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -208,13 +208,8 @@
 
 
 // modul OS
-#xcommand O_OS => select (F_OS) ; my_use ( "os" ) ;  set order to tag "1"
-#xcommand O_SII => select (F_SII) ; my_use ( "sii" ) ; set order to tag "1"
-#xcommand O_PROMJ => select (F_PROMJ) ; my_use ( "promj" ) ; set order to tag "1"
-#xcommand O_SII_PROMJ => select (F_SII_PROMJ) ; my_use ( "sii_promj" ) ; set order to tag "1"
-#xcommand O_INVENT       => select (F_INVENT)  ; my_use ("invent") ; set order to tag "1"
-#xcommand O_AMORT        => select (F_AMORT)   ; my_use ("amort")  ; set order to tag "ID"
-#xcommand O_REVAL        => select (F_REVAL)   ; my_use ("reval")  ; set order to tag "ID"
+//#xcommand O_INVENT       => select (F_INVENT)  ; my_use ("invent") ; set order to tag "1"
+
 
 
 // modul POS
@@ -227,7 +222,7 @@
 //#xcommand O_K2C       => SELECT (F_K2C)   ; my_use("k2c")   ; set order to tag "1"
 //#xcommand O_MJTRUR    => SELECT (F_MJTRUR); my_use("mjtrur"); set order to tag "1"
 //#xcommand O_ROBAIZ    => SELECT (F_ROBAIZ); my_use("robaiz"); set order to tag "1"
-#xcommand O_RAZDR     => SELECT (F_RAZDR) ; my_use("razdr")
+//#xcommand O_RAZDR     => SELECT (F_RAZDR) ; my_use("razdr")
 #xcommand O_STRAD     => o_pos_strad()
 
 

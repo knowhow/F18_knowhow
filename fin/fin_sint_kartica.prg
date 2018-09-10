@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -280,11 +280,11 @@ FUNCTION SinKZagl()
    ENDIF
    ?  m
    IF fin_dvovalutno()
-      ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + ValDomaca() + "             *      I  Z  N  O  S     U     " + ValPomocna() + "      *"
+      ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + valuta_domaca_skraceni_naziv() + "             *      I  Z  N  O  S     U     " + ValPomocna() + "      *"
       ?  "                               ---------------------------------------------------- -----------------------------------------"
       ?U  "*NALOGA*NALOGA  *BROJ*        *    DUGUJE      *     POTRAŽUJE   *      SALDO      *   DUGUJE    *  POTRAZUJE  *    SALDO   *"
    ELSE
-      ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + ValDomaca() + "             *"
+      ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + valuta_domaca_skraceni_naziv() + "             *"
       ?  "                               -----------------------------------------------------"
       ?U  "*NALOGA*NALOGA  *BROJ*        *    DUGUJE      *     POTRAŽUJE   *      SALDO      *"
    ENDIF

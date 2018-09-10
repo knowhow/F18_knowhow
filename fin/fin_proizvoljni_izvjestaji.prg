@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -12,10 +12,8 @@
 #include "f18.ch"
 
 
-// ----------------------------------------------
-// pregled promjena na racunu
-// ----------------------------------------------
-FUNCTION PrPromRn()
+
+FUNCTION fin_pregled_promjena_na_racunu()
 
    qqIDVN  := "I1;I2;"
    qqKonto := "2000;"
@@ -32,7 +30,8 @@ FUNCTION PrPromRn()
    RPar( "q3", @dOd )
    RPar( "q4", @dDo )
    RPar( "q5", @cNazivFirme )
-   SELECT PARAMS; USE
+   SELECT PARAMS
+   USE
 
    qqIDVN      := PadR( qqIDVN, 60 )
    qqKonto     := PadR( qqKonto, 60 )
@@ -40,15 +39,18 @@ FUNCTION PrPromRn()
 
    Box( "#PREGLED PROMJENA NA RACUNU", 8, 75 )
    DO WHILE .T.
-      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Vrste naloga za knjizenje izvoda:" GET qqIDVN  PICT "@S20"
-      @ box_x_koord() + 3, box_y_koord() + 2 SAY "Konto/konta ziro racuna         :" GET qqKonto PICT "@S20"
-      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Period od datuma:" GET dOd
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Vrste naloga za knjizenje izvoda:" GET qqIDVN  PICT "@S20"
+      @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Konto/konta ziro racuna         :" GET qqKonto PICT "@S20"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Period od datuma:" GET dOd
       @ box_x_koord() + 4, Col() + 2 SAY "do datuma:" GET dDo
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "Puni naziv firme:" GET cNazivFirme PICT "@S35"
-      READ; ESC_BCR
-      aUsl1 := Parsiraj( qqIDVN, "IDVN" )
-      aUsl2 := Parsiraj( qqKonto, "IDKONTO" )
-      IF aUsl1 <> NIL .AND. aUsl2 <> NIL; EXIT; ENDIF
+      READ
+      ESC_BCR
+      cUslovIDVN := Parsiraj( qqIDVN, "IDVN" )
+      cUslovKonto := Parsiraj( qqKonto, "IDKONTO" )
+      IF cUslovIDVN <> NIL .AND. cUslovKonto <> NIL
+         EXIT
+      ENDIF
    ENDDO
    BoxC()
 
@@ -63,28 +65,33 @@ FUNCTION PrPromRn()
    WPar( "q3", dOd )
    WPar( "q4", dDo )
    WPar( "q5", cNazivFirme )
-   SELECT PARAMS; USE
+   SELECT PARAMS
+   USE
 
-   o_konto()
+   //o_konto()
    //o_partner()
-   o_suban()
+   //o_suban()
 
 
+   //IF !Empty( dOd ); cFilter += ( ".and. DATDOK>=" + dbf_quote( dOd ) ); ENDIF
+   //IF !Empty( dDo ); cFilter += ( ".and. DATDOK<=" + dbf_quote( dDo ) ); ENDIF
 
-   cFilter := aUsl1
-   IF !Empty( dOd ); cFilter += ( ".and. DATDOK>=" + dbf_quote( dOd ) ); ENDIF
-   IF !Empty( dDo ); cFilter += ( ".and. DATDOK<=" + dbf_quote( dDo ) ); ENDIF
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+   find_suban_za_period( NIL, dOd, dDo, "idfirma,datdok,idkonto,idpartner,brdok" )
+   Msgc()
 
-   cSort := "dtos(datdok)"
-   INDEX ON &cSort TO "SUBTMP" FOR &cFilter
+   //cSort := "dtos(datdok)"
+   cFilter := cUslovIDVN
+   //INDEX ON &cSort TO "SUBTMP" FOR &cFilter
+   SET FILTER TO &cFilter
    // SET FILTER TO &cFilter
+   GO TOP
 
    nDug := 0
    nPot := 0
 
    m := "------ -------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " " + REPL( "-", 40 ) + " " + REPL( "-", 16 )
    z := "R.BR. * DATUM  *" + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "*" + PadC( "NAZIV PARTNERA ILI OPIS PROMJENE", 40 ) + "*" + PadC( "UPLATA KM", 16 )
-
 
    IF !start_print()
       RETURN .F.
@@ -102,7 +109,7 @@ FUNCTION PrPromRn()
          ZagPPR( "U" )
       ENDIF
 
-      IF &aUsl2
+      IF &cUslovKonto
          SKIP 1
          LOOP
       ENDIF
@@ -140,7 +147,7 @@ FUNCTION PrPromRn()
          ZagPPR( "I" )
       ENDIF
 
-      IF &aUsl2
+      IF &cUslovKonto
          SKIP 1
          LOOP
       ENDIF
@@ -171,7 +178,7 @@ FUNCTION PrPromRn()
  *
  */
 
-FUNCTION RedIspisa()
+STATIC FUNCTION RedIspisa()
 
    LOCAL cVrati := ""
 
@@ -194,7 +201,7 @@ FUNCTION RedIspisa()
  *     Zaglavlje pregleda promjena na racunu
  *   param: cI
  */
-FUNCTION ZagPPR( cI )
+STATIC FUNCTION ZagPPR( cI )
 
    ? cNazivFirme
    ? PadL( "Str." + AllTrim( Str( ++nStranica ) ), 80 )

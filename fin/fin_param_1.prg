@@ -1,7 +1,8 @@
+
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -43,6 +44,9 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    LOCAL nX := 1
    LOCAL _k1 := fin_k1(), _k2 := fin_k2(), _k3 := fin_k3(), _k4 := fin_k4()
    LOCAL _tip_dok := fin_tip_dokumenta()
+   LOCAL cKontoLike := PADR( param_otvorene_stavke_kupci_konto_like(), 10 )
+
+
    LOCAL GetList := {}
 
    Box(, 24, 70 )
@@ -73,7 +77,6 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    read_dn_parametar( "K4", box_x_koord() + nX, Col() + 2, @_k4 )
 
    nX := nX + 2
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)" GET gBrojacFinNaloga VALID gBrojacFinNaloga $ "12"
 
    ++nX
@@ -84,28 +87,28 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
 
    nX := nX + 2
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "********************** Obrada naloga:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "********************** Obrada naloga:"
 
    nX := nX + 2
-
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Neophodna ravoteza naloga? (D/N):" GET gRavnot VALID gRavnot $ "DN" PICT "@!"
-
-   ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Onemoguciti povrat azuriranog naloga u pripremu? (D/N)" GET gBezVracanja VALID gBezVracanja $ "DN" PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Neophodna ravoteža naloga? (D/N):" GET gRavnot VALID gRavnot $ "DN" PICT "@!"
 
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2  SAY "Limit za otvorene stavke (" + ValDomaca() + ")" GET gnLOst PICT "99999.99"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Onemogućiti povrat azuriranog naloga u pripremu? (D/N)" GET gBezVracanja VALID gBezVracanja $ "DN" PICT "@!"
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2  SAY8 "Limit za otvorene stavke (" + valuta_domaca_skraceni_naziv() + ")" GET gnLOst PICT "99999.99"
+
+   ++nX
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Otvorene stavke, konta za koja se brišu markeri:" GET cKontoLike
 
    // ++ nX
    // @ box_x_koord() + nX, box_y_koord() + 2 SAY "Koristiti konta-izuzetke u FIN-BUDZET-u? (D/N)" GET gBuIz VALID gBuIz $ "DN" PICT "@!"
 
-   ++nX
-
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Timeout kod azuriranja naloga (sec.):"  GET gAzurTimeout PICT "99999"
+   //++nX
+   //@ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Timeout kod ažuriranja naloga (sec.):"  GET gAzurTimeout PICT "99999"
 
    nX := nX + 2
-
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "********************** Ostalo:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "********************** Ostalo:"
 
    nX := nX + 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Automatski pozovi kontrolu zbira datoteke svakih" GET gnKZBDana PICT "999" VALID ( gnKZBDana <= 999 .AND. gnKZBDana >= 0 )
@@ -113,9 +116,9 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    @ box_x_koord() + nX, Col() + 1 SAY "dana"
 
    ++nX
-
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Prikaz stanja konta kod knjizenja naloga" GET g_knjiz_help PICT "@!" ;
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz stanja konta kod knjiženja naloga" GET g_knjiz_help PICT "@!" ;
       VALID g_knjiz_help $ "DN"
+
 
    READ
 
@@ -129,6 +132,7 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
       fin_k3( _k3 )
       fin_k4( _k4 )
       fin_tip_dokumenta( _tip_dok )
+      param_otvorene_stavke_kupci_konto_like( Trim( cKontoLike ) )
 
    ENDIF
 
@@ -158,7 +162,7 @@ STATIC FUNCTION fin_parametri_izgleda()
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz iznosa u " + ValPomocna() GET cPicEuro
 
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz iznosa u " + ValDomaca() GET gPicBHD
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Prikaz iznosa u " + valuta_domaca_skraceni_naziv() GET gPicBHD
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Sintetika i analitika se kreiraju u izvještajima? (D/N)" GET gSAKrIz VALID gSAKrIz $ "DN" PICT "@!"

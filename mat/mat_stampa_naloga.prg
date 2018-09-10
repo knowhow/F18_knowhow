@@ -30,7 +30,7 @@ FUNCTION mat_stampa_naloga()
 
    f18_menu( "onal", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -184,11 +184,11 @@ STATIC FUNCTION Zagl12()
    @ a, PCol() + 3 SAY "Str " + Str( ++nStr, 3 )
    @ ++A, 0 SAY M
    IF gkonto == "N" .AND. g2Valute == "D"
-      @ ++A, 0 SAY "*R.*  Datum  *         K O N T O                                              *  I Z N O S   " + ValDomaca() + "   *   I Z N O S   " + ValPomocna() + "     *"
+      @ ++A, 0 SAY "*R.*  Datum  *         K O N T O                                              *  I Z N O S   " + valuta_domaca_skraceni_naziv() + "   *   I Z N O S   " + ValPomocna() + "     *"
       @ ++A, 0 SAY "*Br*                                                                           --------------------- -------------------------"
       @ ++A, 0 SAY "*  *         *                                                                *   DUG    *    POT   *    DUG     *    POT    *"
    ELSE
-      @ ++A, 0 SAY "*R.*  Datum  *         K O N T O                                              *   I Z N O S   " + ValDomaca() + "     *"
+      @ ++A, 0 SAY "*R.*  Datum  *         K O N T O                                              *   I Z N O S   " + valuta_domaca_skraceni_naziv() + "     *"
       @ ++A, 0 SAY "*Br*                                                                           -------------------------"
       @ ++A, 0 SAY "*  *         *                                                                *    DUG     *    POT    *"
    ENDIF

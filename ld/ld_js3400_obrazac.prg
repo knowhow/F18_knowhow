@@ -94,7 +94,7 @@ FUNCTION ld_js3400_obrazac()
    @ box_x_koord() + _x, Col() + 1 SAY "/" GET cGod_od PICT "9999"
    @ box_x_koord() + _x, Col() + 1 SAY "do:" GET cMj_do PICT "99"
    @ box_x_koord() + _x, Col() + 1 SAY "/" GET cGod_do PICT "9999"
-   @ box_x_koord() + _x, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ box_x_koord() + _x, Col() + 2 SAY "Obracun:" GET cObracun WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
 
    ++ _x
    ++ _x

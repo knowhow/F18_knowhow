@@ -165,7 +165,7 @@ STATIC FUNCTION ZaglKSintK()
    _line2 := "*      * Br *            "
    _line3 := "*      *    *  NALOGA   *"
 
-   _line1 += PadC( "I Z N O S  U  " + ValDomaca(), ( Len( PicDEM ) * 2 ) + 1 )
+   _line1 += PadC( "I Z N O S  U  " + valuta_domaca_skraceni_naziv(), ( Len( PicDEM ) * 2 ) + 1 )
    _line1 += "*"
    _line1 += PadC( "I Z N O S  U  " + ValPomocna(), ( Len( PicDEM ) * 2 ) + 1 )
    _line1 += "*"
@@ -329,7 +329,7 @@ STATIC FUNCTION ZaglKAnalK()
    _line2 := "* *NAL *           "
    _line3 := "*N*    *  NALOGA  *"
 
-   _line1 += PadC( "I Z N O S  U  " + ValDomaca(), ( Len( PicDEM ) * 2 ) + 2 ) + "*"
+   _line1 += PadC( "I Z N O S  U  " + valuta_domaca_skraceni_naziv(), ( Len( PicDEM ) * 2 ) + 2 ) + "*"
    _line1 += PadC( "I Z N O S  U  " + ValPomocna(), ( Len( PicDEM ) * 2 ) + 2 )
 
    _line2 += Replicate( "-", ( Len( PICDEM ) * 2 ) + 1 )
@@ -464,7 +464,7 @@ FUNCTION ZagKKAnalK()
    _line2 := "                                          "
    _line3 := "*       *                                 *"
 
-   _line1 += PadC( "I Z N O S  U  " + ValDomaca(), ( Len( PicDEM ) * 2 ) + 3 ) + "*"
+   _line1 += PadC( "I Z N O S  U  " + valuta_domaca_skraceni_naziv(), ( Len( PicDEM ) * 2 ) + 3 ) + "*"
    _line1 += PadC( "I Z N O S  U  " + ValPomocna(), ( Len( PicDEM ) * 2 ) + 3 )
 
    _line2 += Replicate( "-", ( Len( PICDEM ) * 3 ) + 1 )
@@ -902,7 +902,7 @@ STATIC FUNCTION ZaglKSif( id_firma, id_roba, id_konto, line )
       "*" + PadC( "KOLICINA", Len( PICKOL ) * 2 + 1 ) + ;
       "*" + PadC( "STANJE", Len( PICKOL ) ) + ;
       "*" + PadC( "CIJENA", Len( PICDEM ) ) + ;
-      "*" + PadC( "I Z N O S  U " + ValDomaca(), ( Len( PICDEM ) * 2 ) + 1 ) + ;
+      "*" + PadC( "I Z N O S  U " + valuta_domaca_skraceni_naziv(), ( Len( PICDEM ) * 2 ) + 1 ) + ;
       "*" + PadC( "I Z N O S  U " + ValPomocna(), ( Len( PICDEM ) * 2 ) + 1 ) + ;
       "*"
 
@@ -917,7 +917,7 @@ STATIC FUNCTION ZaglKSif( id_firma, id_roba, id_konto, line )
       PadC( "ULAZ", Len( PICKOL ) ) + ;
       "*" + PadC( "IZLAZ", Len( PICKOL ) ) + ;
       "*" + PadC( "STANJE", Len( PICKOL ) ) + ;
-      "*" + PadC( ValDomaca(), Len( PICDEM ) ) + ;
+      "*" + PadC( valuta_domaca_skraceni_naziv(), Len( PICDEM ) ) + ;
       "*" + PadC( "DUGUJE", Len( PICDEM ) ) + ;
       "*" + PadC( "POTRAZUJE", Len( PICDEM ) ) + ;
       "*" + PadC( "DUGUJE", Len( PICDEM ) ) + ;

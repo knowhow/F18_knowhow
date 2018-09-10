@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -20,10 +20,12 @@ STATIC s_nFinNalogCount := 0
 
 FUNCTION add_global_idle_handlers()
 
-   AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
-   // AAdd( aIdleHandlers, hb_idleAdd( {||  calc_on_idle_handler() } ) )
 
-   // hb_idleAdd( aIdleHandlers, hb_idleAdd( {|| hb_DispOutAt( f18_max_rows(), 1, "< PAUSE >", F18_COLOR_INFO_PANEL ), kalk_asistent_pause() } ) )
+   if is_electron_host()
+       RETURN .T.
+   endif
+
+   AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
 
    RETURN .T.
 
@@ -111,6 +113,7 @@ PROCEDURE on_idle_dbf_refresh()
 
 PROCEDURE update_fin_nalog_count()
 
+   /*
    LOCAL oQry
 
    IF my_database() != "?undefined?" .AND. my_login():lOrganizacijaSpojena
@@ -122,9 +125,10 @@ PROCEDURE update_fin_nalog_count()
       s_nFinNalogCount := oQry:FieldGet( 1 )
       IF ValType( s_nFinNalogCount ) != "N"
          RETURN
-      ENDIF
-      hb_DispOutAt( f18_max_rows(),  f18_max_cols() - 30, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
+      ENDIF 
+      hb_DispOutAt( f18_max_rows() + 1,  f18_max_cols() - 10, "FIN.Nal.Cnt: " + AllTrim( Str( fin_nalog_count() ) ), F18_COLOR_INFO_PANEL )
    ENDIF
+   */
 
    RETURN
 

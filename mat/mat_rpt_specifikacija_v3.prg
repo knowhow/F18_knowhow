@@ -81,7 +81,7 @@ STATIC FUNCTION _get_vars( params )
 
    ++ _cnt
 
-   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Iznos u " + ValDomaca() + "/" + ValPomocna() + "(1/2) ?" GET _fmt ;
+   @ box_x_koord() + _cnt, box_y_koord() + 2 SAY "Iznos u " + valuta_domaca_skraceni_naziv() + "/" + ValPomocna() + "(1/2) ?" GET _fmt ;
       VALID _fmt $ "12"
    READ
 
@@ -792,11 +792,11 @@ STATIC FUNCTION _zaglavlje( param, line )
    @ PRow(), 0 SAY "MAT.P: SPECIFIKACIJA ROBE (U "
 
    IF PARAM[ "format" ] == "1"
-      ?? ValPomocna() + "/" + ValDomaca() + ") "
+      ?? ValPomocna() + "/" + valuta_domaca_skraceni_naziv() + ") "
    ELSEIF PARAM[ "format" ] == "2"
       ?? ValPomocna() + ") "
    ELSE
-      ?? ValDomaca() + ") "
+      ?? valuta_domaca_skraceni_naziv() + ") "
    ENDIF
 
    IF !Empty( PARAM[ "dat_od" ] ) .OR. !Empty( PARAM[ "dat_do" ] )

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-git push origin 3-std --tags
+git push origin 3-vindi --tags

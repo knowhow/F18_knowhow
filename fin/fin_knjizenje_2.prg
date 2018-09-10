@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -85,22 +85,22 @@ FUNCTION OiNIsplate()
       ? Space( gnLMONI ) + REPL( "-", 105 )
       ?
       ? Space( gnLMONI ) + REPL( "-", 105 )
-      ? Space( gnLMONI ) + "na teret ovog organa - slu" + IF( gKodnaS == "8", "�", "`" ) + "be i to:        " + ValDomaca() + " "; gPI_ON()
+      ? Space( gnLMONI ) + "na teret ovog organa - slu" + IF( gKodnaS == "8", "�", "`" ) + "be i to:        " + valuta_domaca_skraceni_naziv() + " "; gPI_ON()
       ?? Transform( iznosbhd, gPicBHD ); gPI_OFF()
       ? Space( gnLMONI ) + Space( 43 ) + "     " + REPL( "-", 17 )
-      ? Space( gnLMONI ) + Space( 43 ) + ValDomaca()
+      ? Space( gnLMONI ) + Space( 43 ) + valuta_domaca_skraceni_naziv()
       ? Space( gnLMONI ) + Space( 43 ) + "     " + REPL( "-", 17 )
-      ? Space( gnLMONI ) + Space( 43 ) + ValDomaca()
+      ? Space( gnLMONI ) + Space( 43 ) + valuta_domaca_skraceni_naziv()
       ? Space( gnLMONI ) + Space( 43 ) + "     " + REPL( "-", 17 )
-      ? Space( gnLMONI ) + Space( 43 ) + ValDomaca()
+      ? Space( gnLMONI ) + Space( 43 ) + valuta_domaca_skraceni_naziv()
       ? Space( gnLMONI ) + Space( 43 ) + "     " + REPL( "-", 17 )
-      ? Space( gnLMONI ) + Space( 43 ) + ValDomaca()
+      ? Space( gnLMONI ) + Space( 43 ) + valuta_domaca_skraceni_naziv()
       ? Space( gnLMONI ) + Space( 43 ) + "     " + REPL( "-", 17 )
-      ? Space( gnLMONI ) + Space( 32 ) + "UKUPNO     " + ValDomaca() + " "; gPI_ON()
+      ? Space( gnLMONI ) + Space( 32 ) + "UKUPNO     " + valuta_domaca_skraceni_naziv() + " "; gPI_ON()
       ?? Transform( iznosbhd, gPicBHD ); gPI_OFF()
       ? Space( gnLMONI ) + Space( 43 ) + "     " + REPL( "-", 17 )
       ? Space( gnLMONI ) + Space( 32 ) + REPL( "-", 33 )
-      ? Space( gnLMONI ) + Space( 32 ) + "ZA ISPLATU " + ValDomaca() + " "; gPI_ON()
+      ? Space( gnLMONI ) + Space( 32 ) + "ZA ISPLATU " + valuta_domaca_skraceni_naziv() + " "; gPI_ON()
       ?? Transform( iznosbhd, gPicBHD ); gPI_OFF()
       ? Space( gnLMONI ) + Space( 43 ) + "     " + REPL( "-", 17 )
       ? Space( gnLMONI ) + Space( 32 ) + REPL( "-", 33 )

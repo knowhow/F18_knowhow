@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -38,6 +38,37 @@ FUNCTION find_partner_by_naz_or_id( cId )
    ENDIF
 
    RETURN !Eof()
+
+
+FUNCTION find_partner_max_numeric_id()
+
+      LOCAL cAlias := "PARTN_MAX"
+
+      // where zadovoljava: '0001  ', '000100', NE zadovoljava 'A05  '
+      // ako imaju sifre '1   ', '9    '  pravice probleme, pa prvo trazimo max integer
+      LOCAL cSqlQueryInt := "select max(id::integer) MAXID_INT  from fmk.partn where id ~ '^\d+\s*'"
+      LOCAL nMaxId := 0
+      LOCAL cMaxId := ""
+
+      PushWa()
+      SELECT F_POM
+      IF !use_sql( "pom", cSqlQueryInt, cAlias )  // prvo trazimo najveci integer
+         PopWa()
+         RETURN ""
+      ENDIF
+      nMaxId := field->MAXID_INT
+
+      // kada nadjenmo najveci integer, lociramo polje id koje odgovara tom integeru
+      IF !use_sql( "pom", "select id AS MAXID from fmk.partn WHERE id ~ '^\d+\s*' and id::integer = " + Str( nMaxId ), cAlias )
+         PopWa()
+         RETURN ""
+      ENDIF
+
+      cMaxId := field->MAXID
+      USE
+      PopWa()
+
+      RETURN cMaxId
 
 
 FUNCTION o_partner( cId )

@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -30,7 +30,7 @@ FUNCTION kalk_get_1_10()
 
    LOCAL nX := 5
    LOCAL nBoxKoordX := 0
-   LOCAL _unos_left := 40
+   LOCAL nSayDeltaY := 40
 
    gVarijanta := "2"
    s_cKonverzijaValuteDN := "N"
@@ -49,7 +49,7 @@ FUNCTION kalk_get_1_10()
 
       ++nX
       nBoxKoordX := box_x_koord() + nX
-      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Magacinski Konto zadužuje" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, nBoxKoordX, 40, 30 ) } PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Magacinski Konto zadužuje" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_konto( nBoxKoordX, 40, 30 ) } PICT "@!"
 
       // IF gNW <> "X"
       // @ box_x_koord() + nX, box_y_koord() + 42  SAY "Zaduzuje: " GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
@@ -127,26 +127,26 @@ FUNCTION kalk_get_1_10()
    ENDIF
 
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Fakturna cijena:"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Fakturna cijena:"
 
    IF is_kalk_konverzija_valute_na_unosu()
       @ box_x_koord() + nX, Col() + 1 SAY "EUR (D/N)->" GET s_cKonverzijaValuteDN VALID kalk_ulaz_preracun_fakturne_cijene( s_cKonverzijaValuteDN ) PICT "@!"
    ENDIF
 
-   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @s_cKonverzijaValuteDN ) } WHEN V_kol10()
+   @ box_x_koord() + nX, box_y_koord() + nSayDeltaY GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @s_cKonverzijaValuteDN ) } WHEN V_kol10()
 
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "Rabat (%):"
-   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _Rabat PICT PicDEM
+   @ box_x_koord() + nX, box_y_koord() + nSayDeltaY GET _Rabat PICT PicDEM
 
    /*
    IF gNW <> "X" .OR. gVodiKalo == "D"
       ++ nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Normalni . kalo:"
-      @ box_x_koord() + nX, box_y_koord() + _unos_left GET _GKolicina PICTURE PicKol
+      @ box_x_koord() + nX, box_y_koord() + nSayDeltaY GET _GKolicina PICTURE PicKol
       ++ nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Preko  kalo:    "
-      @ box_x_koord() + nX, box_y_koord() + _unos_left GET _GKolicin2 PICTURE PicKol
+      @ box_x_koord() + nX, box_y_koord() + nSayDeltaY GET _GKolicin2 PICTURE PicKol
    ENDIF
    */
 
@@ -166,8 +166,7 @@ STATIC FUNCTION kalk_valid_dobavljac( cIdPartner, nX )
 
    p_partner( @cIdPartner )
 
-   ispisi_naziv_sifre( F_PARTN, cIdPartner, nX - 1, 22, 20 )
-
+   ispisi_naziv_partner( nX - 1, 22, 20 )
    ino_dobavljac_set_konverzija_valute( cIdpartner, @s_cKonverzijaValuteDN )
 
    IF Empty( cIdPartner )
@@ -187,9 +186,7 @@ STATIC FUNCTION ino_dobavljac_set_konverzija_valute( cPartn, s_cKonverzijaValute
    RETURN .T.
 
 
-// ---------------------------------------
-// validacija unosa preracuna
-// ---------------------------------------
+
 FUNCTION kalk_ulaz_preracun_fakturne_cijene( cDn )
 
    LOCAL lRet := .T.
@@ -197,7 +194,7 @@ FUNCTION kalk_ulaz_preracun_fakturne_cijene( cDn )
    IF cDN $ "DN"
       RETURN lRet
    ELSE
-      MsgBeep( "Preracun: " + valpomocna() + "=>" + valdomaca() + "#Unjeti 'D' ili 'N' !" )
+      MsgBeep( "Preračun: " + valpomocna() + "=>" + valuta_domaca_skraceni_naziv() + "#Unijeti 'D' ili 'N' !" )
       lRet := .F.
       RETURN lRet
    ENDIF
@@ -226,7 +223,7 @@ STATIC FUNCTION kalk_get_2_10( nX, cIdPartner )
    LOCAL cSPom := " (%,A,U,R,T) "
 
    // LOCAL nX := x_kord + 4
-   LOCAL _unos_left := 40
+   LOCAL nSayDeltaY := 40
    LOCAL nBoxKoordX
    LOCAL lSaTroskovima := .T., cTroskoviDN := "D"
    PRIVATE getlist := {}
@@ -268,23 +265,23 @@ STATIC FUNCTION kalk_get_2_10( nX, cIdPartner )
       // TROSKOVNIK
       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Raspored troškova kalkulacije ->"
 
-      @ box_x_koord() + nX, box_y_koord() + _unos_left + 10 SAY c10T1 + cSPom GET _TPrevoz VALID _TPrevoz $ "%AURT" PICTURE "@!"
+      @ box_x_koord() + nX, box_y_koord() + nSayDeltaY + 10 SAY c10T1 + cSPom GET _TPrevoz VALID _TPrevoz $ "%AURT" PICTURE "@!"
       @ box_x_koord() + nX, Col() + 2 GET _Prevoz PICT  PicDEM
 
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + _unos_left + 10 SAY c10T2 + cSPom  GET _TBankTr VALID _TBankTr $ "%AURT" PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + nSayDeltaY + 10 SAY c10T2 + cSPom  GET _TBankTr VALID _TBankTr $ "%AURT" PICT "@!"
       @ box_x_koord() + nX, Col() + 2 GET _BankTr PICT PicDEM
 
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + _unos_left + 10 SAY c10T3 + cSPom GET _TSpedTr VALID _TSpedTr $ "%AURT" PICT "@!"
+      @ box_x_koord() + nX, box_y_koord() + nSayDeltaY + 10 SAY c10T3 + cSPom GET _TSpedTr VALID _TSpedTr $ "%AURT" PICT "@!"
       @ box_x_koord() + nX, Col() + 2 GET _SpedTr PICT PicDEM
 
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + _unos_left + 10 SAY c10T4 + cSPom GET _TCarDaz VALID _TCarDaz $ "%AURT" PICTURE "@!"
+      @ box_x_koord() + nX, box_y_koord() + nSayDeltaY + 10 SAY c10T4 + cSPom GET _TCarDaz VALID _TCarDaz $ "%AURT" PICTURE "@!"
       @ box_x_koord() + nX, Col() + 2 GET _CarDaz PICT PicDEM
 
       ++nX
-      @ box_x_koord() + nX, box_y_koord() + _unos_left + 10 SAY c10T5 + cSPom GET _TZavTr VALID _TZavTr $ "%AURT" PICTURE "@!"
+      @ box_x_koord() + nX, box_y_koord() + nSayDeltaY + 10 SAY c10T5 + cSPom GET _TZavTr VALID _TZavTr $ "%AURT" PICTURE "@!"
       @ box_x_koord() + nX, Col() + 2 GET _ZavTr PICT PicDEM
 
       nX += 2
@@ -292,7 +289,7 @@ STATIC FUNCTION kalk_get_2_10( nX, cIdPartner )
    ENDIF
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "NABAVNA CJENA:"
-   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _nc PICT gPicNC WHEN {|| kalk_when_valid_nc(), .T. }
+   @ box_x_koord() + nX, box_y_koord() + nSayDeltaY GET _nc PICT gPicNC WHEN {|| kalk_when_valid_nc_ulaz(), .T. }
 
    IF koncij->naz != "N1" // magacin po nabavnim cijenama
 
@@ -311,7 +308,7 @@ STATIC FUNCTION kalk_get_2_10( nX, cIdPartner )
          @ box_x_koord() + nX, box_y_koord() + 2    SAY "PRODAJNA CIJENA BEZ PDV   :"
       ENDIF
 
-      @ box_x_koord() + nX, box_y_koord() + _unos_left GET _vpc PICT PicDEM VALID {|| kalk_10_vaild_Marza_VP( _Idvd, ( cProracunMarzeUnaprijed == "F" ) ), .T. }
+      @ box_x_koord() + nX, box_y_koord() + nSayDeltaY GET _vpc PICT PicDEM VALID {|| kalk_10_vaild_Marza_VP( _Idvd, ( cProracunMarzeUnaprijed == "F" ) ), .T. }
 
 
       IF ( gcMpcKalk10 == "D" )   // VPC se izracunava pomocu MPC cijene
@@ -319,7 +316,7 @@ STATIC FUNCTION kalk_get_2_10( nX, cIdPartner )
          _mpcsapp := roba->mpc
          ++nX
          @ box_x_koord() + nX, box_y_koord() + 2 SAY "PRODAJNA CIJENA SA PDV:"
-         @ box_x_koord() + nX, box_y_koord() + _unos_left GET _mpcsapp PICT PicDEM ;
+         @ box_x_koord() + nX, box_y_koord() + nSayDeltaY GET _mpcsapp PICT PicDEM ;
             VALID {|| _mpcsapp := iif( _mpcsapp = 0, Round( _vpc * ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), 2 ), _mpcsapp ), _mpc := _mpcsapp / ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), ;
             iif( _mpc <> 0, _vpc := Round( _mpc, 2 ), _vpc ), ShowGets(), .T. }
 
@@ -343,7 +340,6 @@ STATIC FUNCTION kalk_get_2_10( nX, cIdPartner )
    ENDIF
 
    kalk_set_vpc_sifarnik( _vpc )
-
 
    _MKonto := _Idkonto
    _MU_I := "1"

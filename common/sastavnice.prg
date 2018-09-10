@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
@@ -234,8 +234,8 @@ STATIC FUNCTION ost_opc_sast() // ostale opcije nad sastavnicama
    AAdd( hOpc, "1. zamjena sirovine u svim sastavnicama                 " )
    AAdd( hOpcExe, {|| sast_repl_all() } )
 
-   AAdd( hOpc, "2. promjena ucesca pojedine sirovine u svim sastavnicama" )
-   AAdd( hOpcExe, {|| pr_uces_sast() } )
+   AAdd( hOpc, "2. promjena učesća pojedine sirovine u svim sastavnicama" )
+   AAdd( hOpcExe, {|| sast_promjena_ucesca_materijala() } )
    AAdd( hOpc, "------------------------------------" )
    AAdd( hOpcExe, {|| notimp() } )
    AAdd( hOpc, "L. pregled sastavnica sa pretpostavkama sirovina" )

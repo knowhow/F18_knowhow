@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -23,15 +23,12 @@ FUNCTION harbour_init()
 
    f18_init_threads()
 
-
    Set( _SET_OSCODEPAGE, hb_cdpOS() )
 
 // ? SET( _SET_OSCODEPAGE )
 
-
    hb_cdpSelect( "SL852" )
    // hb_SetTermCP( "SLISO" )
-
 
 
    SET DELETED ON
@@ -50,9 +47,9 @@ FUNCTION harbour_init()
 
    SetColor( f18_color_normal() )
 
-   // Set( _SET_IDLEREPEAT, .F. ) // .T. default
-   hb_idleAdd( {|| on_idle_dbf_refresh() } )  // BUG_CPU100
-   // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
+   if !is_electron_host() 
+       hb_idleAdd( {|| on_idle_dbf_refresh() } )  // BUG_CPU100
+   endif
 
    RETURN .T.
 
@@ -154,7 +151,22 @@ FUNCTION f18_exe_path()
    RETURN hb_FNameDir( hb_ProgName() )
 
 
+FUNCTION is_gt_console()
 
+#ifdef GT_DEFAULT_CONSOLE
+    return .T.
+#else
+    return .F.
+#endif
+
+
+FUNCTION is_electron_host()
+
+#ifdef ELECTRON_HOST
+   return .T.
+#else
+   return .F.
+#endif
 
 /*
    my_rddname() -> "DBFCDX" ili "SQLMIX", IF default area used()

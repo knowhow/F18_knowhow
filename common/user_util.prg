@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -20,7 +20,7 @@ FUNCTION f18_get_user_id()
    LOCAL nResult
    LOCAL cUser   := AllTrim( my_user() )
 
-   cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + sql_quote( cUser )
+   cTmpQry := "set search_path to fmk,public; SELECT usr_id FROM " + cTable + " WHERE usr_username = " + sql_quote( cUser )
    oTable := run_sql_query( cTmpQry )
 
    IF sql_error_in_query( oTable, "SELECT" )
@@ -93,7 +93,7 @@ FUNCTION GetUserName( nUser_id )
    LOCAL oTable
    LOCAL cResult
 
-   cTmpQry := "SELECT usr_username FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
+   cTmpQry := "set search_path to fmk,public; SELECT usr_username FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
    oTable := run_sql_query( cTmpQry )
 
    IF sql_error_in_query( oTable, "SELECT" )
@@ -110,7 +110,7 @@ FUNCTION GetFullUserName( nUser_id )
    LOCAL cTable := "public.usr" // view
    LOCAL oTable
 
-   cTmpQry := "SELECT usr_propername FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
+   cTmpQry := "set search_path to fmk,public; SELECT usr_propername FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
    oTable := run_sql_query( cTmpQry )
 
    IF sql_error_in_query( oTable, "SELECT" )
@@ -178,9 +178,9 @@ FUNCTION get_list_f18_users()
 
    LOCAL cQuery, oTable
    LOCAL _list := {}
-   LOCAL _row, nI
+   LOCAL oRow, nI
 
-   cQuery := "SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
+   cQuery := "set search_path to fmk,public; SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
       "FROM public.usr " + ;
       "WHERE usr_username NOT IN ( 'postgres', 'admin' ) " + ;
       "ORDER BY usr_username;"
@@ -194,12 +194,12 @@ FUNCTION get_list_f18_users()
 
    FOR nI := 1 TO oTable:LastRec()
 
-      _row := oTable:GetRow( nI )
+      oRow := oTable:GetRow( nI )
 
-      AAdd( _list, { _row:FieldGet( _row:FieldPos( "id" ) ), ;
-         _row:FieldGet( _row:FieldPos( "name" ) ), ;
-         _row:FieldGet( _row:FieldPos( "fullname" ) ), ;
-         _row:FieldGet( _row:FieldPos( "email" ) ) } )
+      AAdd( _list, { oRow:FieldGet( oRow:FieldPos( "id" ) ), ;
+         oRow:FieldGet( oRow:FieldPos( "name" ) ), ;
+         oRow:FieldGet( oRow:FieldPos( "fullname" ) ), ;
+         oRow:FieldGet( oRow:FieldPos( "email" ) ) } )
 
    NEXT
 

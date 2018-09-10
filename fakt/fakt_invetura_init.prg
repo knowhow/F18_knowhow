@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -116,7 +116,7 @@ METHOD open()
          ::getPartner( 5 )
       ENDIF
 
-      @ box_x_koord() + 9, box_y_koord() + 2  SAY Valdomaca() + "/" + VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ ValDomaca() + "#" + ValPomocna()
+      @ box_x_koord() + 9, box_y_koord() + 2  SAY valuta_domaca_skraceni_naziv() + "/" + VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ valuta_domaca_skraceni_naziv() + "#" + ValPomocna()
 
       READ
       ESC_RETURN 0

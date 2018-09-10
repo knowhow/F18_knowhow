@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -69,14 +69,14 @@ FUNCTION kalk_roba_key_handler( Ch )
          RETURN 99
       ENDIF
 
-   ELSEIF Ch == K_F8
+//   ELSEIF Ch == K_F8
 
-      PushWA()
-      nRet := CjenR()
-      OSifBaze()
-      SELECT ROBA
-      PopWA()
-      RETURN nRet
+  //    PushWA()
+    //  nRet := CjenR()
+      //OSifBaze()
+      //SELECT ROBA
+      //PopWA()
+      //RETURN nRet
 
 /*
    ELSEIF Upper( Chr( Ch ) ) == "O"
@@ -109,13 +109,13 @@ FUNCTION kalk_roba_key_handler( Ch )
 
    RETURN DE_CONT
 
+/*
 
+-- FUNCTION OSifBaze()
 
-FUNCTION OSifBaze()
-
-   o_konto()
-   o_koncij()
-   o_partner()
+   //o_konto()
+   //o_koncij()
+   //o_partner()
    o_tnal()
    o_tdok()
    o_trfp()
@@ -127,7 +127,7 @@ FUNCTION OSifBaze()
 
    RETURN .T.
 
-
+*/
 
 FUNCTION P_Objekti()
 

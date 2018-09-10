@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -22,7 +22,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    LOCAL _objekat_id
    LOCAL dDatod, dDatdo
    LOCAL hParams := fakt_params()
-   LOCAL cVrstePlacanja := hParams[ "fakt_vrste_placanja" ]
+   LOCAL lVrstePlacanja := hParams[ "fakt_vrste_placanja" ]
    LOCAL lFaktObjekti := hParams[ "fakt_objekti" ]
 
    // LOCAL _vezni_dokumenti := hParams[ "fakt_dok_veze" ]
@@ -68,7 +68,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    ENDIF
 
 
-   Box( , 14 + iif( cVrstePlacanja .OR. lOpcine .OR. lFaktObjekti, 6, 0 ), 77 )
+   Box( , 14 + iif( lVrstePlacanja .OR. lOpcine .OR. lFaktObjekti, 6, 0 ), 77 )
 
    cIdFirma := fetch_metric( "fakt_stampa_liste_id_firma", cF18User, cIdFirma )
    cUslovTipDok := fetch_metric( "fakt_stampa_liste_dokumenti", cF18User, cUslovTipDok )
@@ -109,7 +109,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
       @ box_x_koord() + 11, box_y_koord() + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa VALID cRtarifa $ "DN" PICT "@!"
 
-      IF cVrstePlacanja
+      IF lVrstePlacanja
          @ box_x_koord() + 12, box_y_koord() + 2 SAY "----------------------------------------"
          @ box_x_koord() + 13, box_y_koord() + 2 SAY "Za fakture (Tip dok.10):"
          @ box_x_koord() + 14, box_y_koord() + 2 SAY8 "Način placanja:" GET qqVrsteP
@@ -138,7 +138,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
       cFilterOpcina := Parsiraj( cOpcina, "flt_fakt_part_opc()", "C" )
 
-      IF ( !lOpcine .OR. cFilterOpcina <> NIL ) .AND. cFilterBrFaktDok <> NIL .AND. cFilterSifraKupca <> NIL .AND. ( !cVrstePlacanja .OR. aUslVrsteP <> NIL )
+      IF ( !lOpcine .OR. cFilterOpcina <> NIL ) .AND. cFilterBrFaktDok <> NIL .AND. cFilterSifraKupca <> NIL .AND. ( !lVrstePlacanja .OR. aUslVrsteP <> NIL )
          EXIT
       ENDIF
 
@@ -243,7 +243,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    EOF CRET
 
    IF cTabela == "D"
-      fakt_lista_dokumenata_tabelarni_pregled( cVrstePlacanja, lOpcine )
+      fakt_lista_dokumenata_tabelarni_pregled( lVrstePlacanja, lOpcine )
    ELSE
       gaZagFix := { 3, 3 }
       fakt_stampa_liste_dokumenata( dDatOd, dDatDo, cUslovTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, cFilterOpcina, cValute )
@@ -274,7 +274,7 @@ FUNCTION print_porezna_faktura( lOpcine )
    SELECT ( F_FAKT_DOKS )
    USE
 
-   o_fakt_doks_dbf()
+   //o_fakt_doks_dbf()
 
    RETURN DE_CONT
 */
@@ -295,7 +295,7 @@ FUNCTION fakt_print_odt( lOpcine )
    close_open_fakt_tabele()
    SELECT ( F_FAKT_DOKS )
    USE
-   o_fakt_doks_dbf()
+   //o_fakt_doks_dbf()
    //o_partner()
    SELECT fakt_doks
    IF cFilter == ".t."

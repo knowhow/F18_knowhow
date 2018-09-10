@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -133,7 +133,19 @@ FUNCTION P_Roba( cId, dx, dy, cTagTraziPoSifraDob )
    SELECT ROBA
    sifk_fill_ImeKol( "ROBA", @ImeKol, @Kol )
 
-   bRoba := gRobaBlock
+   //bRoba := gRobaBlock
+
+   DO CASE
+   CASE gModul == "KALK"
+       bRoba := {| Ch| kalk_roba_key_handler( Ch ) }
+
+   CASE gModul == "FAKT"
+       bRoba := {| Ch| fakt_roba_key_handler( Ch ) }
+
+   OTHERWISE
+       bRoba := {| Ch | pos_roba_block( Ch ) }
+   ENDCASE
+
 
    IF is_roba_trazi_po_sifradob() .AND. !Empty( cTagTraziPoSifraDob )
 
@@ -311,7 +323,7 @@ FUNCTION OFmkRoba()
    o_trfp()
    // o_tarifa()
    // o_roba()
-   o_sastavnice()
+   //o_sastavnice()
 
    RETURN .T.
 

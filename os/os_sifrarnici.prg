@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -14,9 +14,9 @@
 
 FUNCTION os_sifarnici()
 
-   LOCAL _izbor := 1
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
+   LOCAL nIzbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
    LOCAL _opis
 
    _opis := "osnovna sredstva"
@@ -25,30 +25,30 @@ FUNCTION os_sifarnici()
       _opis := "sitan inventar"
    ENDIF
 
-   AAdd( _opc, PadR( "1. " + _opis, 40 ) )
-   AAdd( _opcexe, {|| p_os() } )
+   AAdd( aOpc, PadR( "1. " + _opis, 40 ) )
+   AAdd( aOpcExe, {|| p_os() } )
 
-   AAdd( _opc, "2. koeficijenti amortizacije"  )
-   AAdd( _opcexe, {|| p_amort() } )
-   AAdd( _opc, "3. koeficijenti revalorizacije" )
-   AAdd( _opcexe, {|| p_reval() } )
-   AAdd( _opc, "4. radne jedinice" )
-   AAdd( _opcexe, {|| p_rj() } )
-   AAdd( _opc, "---------------------------" )
-   AAdd( _opcexe, {|| nil } )
-   AAdd( _opc, "6. konta" )
-   AAdd( _opcexe, {|| p_konto() } )
-   AAdd( _opc, "7. grupacije K1" )
-   AAdd( _opcexe, {|| p_k1() } )
+   AAdd( aOpc, "2. koeficijenti amortizacije"  )
+   AAdd( aOpcExe, {|| p_amort() } )
+   AAdd( aOpc, "3. koeficijenti revalorizacije" )
+   AAdd( aOpcExe, {|| p_reval() } )
+   AAdd( aOpc, "4. radne jedinice" )
+   AAdd( aOpcExe, {|| p_rj() } )
+   AAdd( aOpc, "---------------------------" )
+   AAdd( aOpcExe, {|| NIL } )
+   AAdd( aOpc, "6. konta" )
+   AAdd( aOpcExe, {|| p_konto() } )
+   AAdd( aOpc, "7. grupacije K1" )
+   AAdd( aOpcExe, {|| p_k1() } )
 
-   AAdd( _opc, "8. partneri" )
-   AAdd( _opcexe, {|| p_partner() } )
-   AAdd( _opc, "9. valute" )
-   AAdd( _opcexe, {|| p_valuta() } )
+   AAdd( aOpc, "8. partneri" )
+   AAdd( aOpcExe, {|| p_partner() } )
+   AAdd( aOpc, "9. valute" )
+   AAdd( aOpcExe, {|| p_valuta() } )
 
    _o_sif_tables()
 
-   f18_menu( "sifre", .F., _izbor, _opc, _opcexe )
+   f18_menu( "sifre", .F., nIzbor, aOpc, aOpcExe )
 
    my_close_all_dbf()
 
@@ -58,16 +58,24 @@ FUNCTION os_sifarnici()
 
 FUNCTION P_OS( cId, dx, dy )
 
-   LOCAL lNovi := .T.
-   LOCAL _n_area := F_OS
+   LOCAL lNovi := .T., lRet
+   LOCAL nWa := F_OS
    PRIVATE ImeKol
    PRIVATE Kol
 
    IF gOsSii == "S"
-      _n_area := F_SII
+      nWa := F_SII
    ENDIF
 
-   ImeKol := { { PadR( "Inv.Broj", 15 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wId ) .AND. os_promjena_id_zabrana( lNovi ) } }, ;
+   PushWA()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_os( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_os()
+   ENDIF
+
+   ImeKol := { { PadR( "Inv.Broj", 15 ), {|| id },     "id", {|| select_o_os_or_sii(), .T. }, {|| validacija_postoji_sifra( wId ) .AND. os_promjena_id_zabrana( lNovi ) } }, ;
       { PadR( "Naziv", 30 ), {|| naz },     "naz"      }, ;
       { PadR( "Kolicina", 8 ), {|| kolicina },    "kolicina"     }, ;
       { PadR( "jmj", 3 ), {|| jmj },    "jmj"     }, ;
@@ -80,9 +88,9 @@ FUNCTION P_OS( cId, dx, dy )
       { PadR( "OtpVr", 15 ), {|| otpvr },  "otpvr", {|| .T. },  {|| os_validate_vrijednost( wnabvr, wotpvr ) }  };
       }
 
-   IF os_postoji_polje( "K1" )
+   IF os_sii_da_li_postoji_polje( "K1" )
       AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| P_K1( @wK1 ) } } )
-      AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| .T. } } )
+    //  AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { PadC( "K2", 2 ), {|| k2 }, "k2"   } )
       AAdd ( ImeKol, { PadC( "K3", 2 ), {|| k3 }, "k3"   } )
       AAdd ( ImeKol, { PadC( "Opis", 2 ), {|| opis }, "opis"   } )
@@ -92,7 +100,7 @@ FUNCTION P_OS( cId, dx, dy )
       AAdd ( ImeKol, { "Dobavljac", {|| idPartner }, "idPartner", {|| .T. }, {|| p_partner( @wIdPartner ) }   } )
    ENDIF
 
-   IF os_postoji_polje( "brsoba" )
+   IF os_sii_da_li_postoji_polje( "brsoba" )
       AAdd ( ImeKol, { PadC( "BrSoba", 6 ), {|| brsoba }, "brsoba"   } )
    ENDIF
 
@@ -102,14 +110,17 @@ FUNCTION P_OS( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN p_sifra( _n_area, 1, f18_max_rows() -15, f18_max_cols() -15, "Lista stalnih sredstava", @cId, dx, dy, {| Ch| os_sif_key_handler( Ch, @lNovi ) } )
+   lRet := p_sifra( nWa, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista stalnih sredstava", @cId, dx, dy, {| Ch | os_sif_key_handler( Ch, @lNovi ) } )
 
+   PopWA()
+
+   return lRet
 
 
 
 FUNCTION os_validate_vrijednost( wNabVr, wOtpVr )
 
-   @ box_x_koord() + 11, box_y_koord() + 50 say ( wNabvr - wOtpvr )
+   @ box_x_koord() + 11, box_y_koord() + 50 SAY ( wNabvr - wOtpvr )
 
    RETURN .T.
 
@@ -117,14 +128,14 @@ FUNCTION os_validate_vrijednost( wNabVr, wOtpVr )
 
 FUNCTION os_sif_key_handler( Ch, lNovi )
 
-   LOCAL _n_area := F_PROMJ
-   LOCAL _rec
+   LOCAL nWa := F_OS_PROMJ
+   LOCAL hRec
    LOCAL _sr_id
 
    lNovi := .T.
 
    IF gOsSii == "S"
-      _n_area := F_SII_PROMJ
+      nWa := F_SII_PROMJ
    ENDIF
 
    _sr_id := field->id
@@ -133,7 +144,7 @@ FUNCTION os_sif_key_handler( Ch, lNovi )
 
    CASE ( Ch == K_CTRL_T )
 
-      SELECT ( _n_area )
+      SELECT ( nWa )
       lUsedPromj := .T.
 
       IF !Used()
@@ -141,25 +152,25 @@ FUNCTION os_sif_key_handler( Ch, lNovi )
          o_os_sii_promj()
       ENDIF
 
-      select_promj()
-
-      SEEK _sr_id
+      os_select_promj( _sr_id )
+      //
+      //SEEK _sr_id
 
       IF Found()
          Beep( 1 )
          Msg( "Sredstvo se ne moze brisati - prvo izbrisi promjene !" )
       ELSE
-         select_os_sii()
+         select_o_os_or_sii()
          IF Pitanje(, "Sigurno zelite izbrisati ovo sredstvo ?", "N" ) == "D"
-            _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+            hRec := dbf_get_rec()
+            delete_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
          ENDIF
       ENDIF
       IF !lUsedPromj
-         select_promj()
+         os_select_promj()
          USE
       ENDIF
-      select_os_sii()
+      select_o_os_or_sii()
 
       RETURN 7
       // kao de_refresh, ali se zavrsava izvrsenje f-ja iz ELIB-a
@@ -187,7 +198,16 @@ FUNCTION os_promjena_id_zabrana( lNovi )
 
 FUNCTION P_AMORT( cId, dx, dy )
 
+   LOCAL lRet
    PRIVATE ImeKol, Kol
+
+   PushWA()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_amort( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_amort()
+   ENDIF
 
    ImeKol := { { PadR( "Id", 8 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;
       { PadR( "Naziv", 25 ), {|| naz },     "naz"      }, ;
@@ -195,15 +215,27 @@ FUNCTION P_AMORT( cId, dx, dy )
       }
    Kol := { 1, 2, 3 }
 
-   RETURN p_sifra( F_AMORT, 1, f18_max_rows() -15, f18_max_cols() -15, "Lista koeficijenata amortizacije", @cId, dx, dy )
+   lRet := p_sifra( F_AMORT, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista koeficijenata amortizacije", @cId, dx, dy )
 
+   PopWa()
+
+   RETURN lRet
 
 
 FUNCTION P_REVAL( cId, dx, dy )
 
+   LOCAL lRet
    PRIVATE ImeKol, Kol
 
-   ImeKol := { { PadR( "Id", 4 ), {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;
+   PushWA()
+
+   IF cId != NIL .AND. !Empty( cId )
+      select_o_reval( "XXXXXXX" ) // cId je zadan, otvoriti samo dummy tabelu sa 0 zapisa
+   ELSE
+      select_o_reval()
+   ENDIF
+
+   ImeKol := { { PadR( "Id", 4 ), {|| id },  "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) }    }, ;
       { PadR( "Naziv", 10 ), {|| naz },     "naz"      }, ;
       { PadR( "I1", 7 ), {|| i1 },    "i1"     }, ;
       { PadR( "I2", 7 ), {|| i2 },    "i2"     }, ;
@@ -220,7 +252,10 @@ FUNCTION P_REVAL( cId, dx, dy )
       }
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }
 
-   RETURN p_sifra( F_REVAL, 1, f18_max_rows() -15, f18_max_cols() -15, "Lista koeficijenata revalorizacije", @cId, dx, dy )
+   lRet := p_sifra( F_REVAL, 1, f18_max_rows() - 15, f18_max_cols() - 15, "Lista koeficijenata revalorizacije", @cId, dx, dy )
+   PopWA()
+
+   RETURN lRet
 
 
 
@@ -247,23 +282,23 @@ STATIC FUNCTION validacija_postoji_sifra( wid )
 // provjerava postojanje polja idpartner u os/sii tabelama
 // --------------------------------------------------------------
 FUNCTION os_fld_partn_exist()
-   RETURN os_postoji_polje( "idpartner" )
+   RETURN os_sii_da_li_postoji_polje( "idpartner" )
 
 
 
 STATIC FUNCTION _o_sif_tables()
 
    o_valute()
-//   o_konto()
+// o_konto()
 
    o_os_sii()
 
-   O_AMORT
-   O_REVAL
-   //o_rj()
-//   o_k1()
-  // o_partner()
-   //o_sifk()
-   //o_sifv()
+   // o_amort()
+   // o_reval()
+   // o_rj()
+// o_k1()
+   // o_partner()
+   // o_sifk()
+   // o_sifv()
 
    RETURN .T.

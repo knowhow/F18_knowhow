@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -116,7 +116,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Opstina stanov.(prazno-sve): "  GET qqOpSt PICT "@!S20"
 
-      @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun   WHEN HelpObr( .T., cObracun )  VALID ValObr( .T., cObracun )
+      @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun   WHEN ld_help_broj_obracuna( .T., cObracun )  VALID ld_valid_obracun( .T., cObracun )
 
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
       @ box_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecOd PICT "99"

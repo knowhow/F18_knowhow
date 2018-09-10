@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -52,13 +52,15 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
 */
 FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
 
-   LOCAL hRec, aRecords, ii
+   LOCAL hRec, aRecords, ii, nIKol
 
    IF !use_sql_sifk( cDbf, NIL )
       ?E "ERROR SIFK ", cDbf
       RETURN .F.
    ENDIF
    //use_sql_sifv()
+
+   nIKol := LEN( Kol )
 
    cDbf := PadR( cDbf, FIELD_LEN_SIFK_ID )
 
@@ -100,7 +102,7 @@ FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
          ENDIF
       ENDIF
 
-      AAdd  ( Kol, iif( hRec[ "ubrowsu" ] == '1', ++i, 0 ) )
+      AAdd( Kol, iif( hRec[ "ubrowsu" ] == '1', ++nIKol, 0 ) )
 
    NEXT
 

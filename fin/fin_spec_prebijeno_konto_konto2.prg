@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -67,7 +67,7 @@ FUNCTION fin_spec_prebijeno_konto_konto2( lOtvSt )
    @ box_x_koord() + 8, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
    @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG PICT "@!" VALID cPG $ "DN"
    IF fin_dvovalutno()
-      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)" GET cDinDem PICT "@!" VALID cDinDem $ "12"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Prikaz " + AllTrim( valuta_domaca_skraceni_naziv() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)" GET cDinDem PICT "@!" VALID cDinDem $ "12"
    ENDIF
    @ box_x_koord() + 11, box_y_koord() + 2 SAY "Prikaz stavki sa saldom 0 D/N/2/4" GET cNula PICT "@!" VALID cNula  $ "DN24"
 
@@ -272,7 +272,7 @@ STATIC FUNCTION zagl_prebijeno_konto_konto2( cIdKonto, cIdKonto2 )
    P_COND
    ?? "FIN: SPECIFIKACIJA SUBANALITIKE ", cIdKonto, "-", cIdKonto2, " ZA "
    IF cDinDem == "1"
-      ?? ValDomaca()
+      ?? valuta_domaca_skraceni_naziv()
    ELSEIF cDinDem == "2"
       ?? ValPomocna()
    ENDIF

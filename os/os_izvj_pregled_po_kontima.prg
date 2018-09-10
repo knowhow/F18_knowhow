@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -36,13 +36,13 @@ FUNCTION os_pregled_po_kontima()
       _mod_name := "SII"
    ENDIF
 
-   o_konto()
+   //o_konto()
    o_rj()
 
    o_os_sii_promj()
    o_os_sii()
 
-   cIdrj := Space( 4 )
+   cIdRj := Space( 4 )
    cAmoGr := "N"
    cON := "N"
    cPromj := "2"
@@ -59,9 +59,9 @@ FUNCTION os_pregled_po_kontima()
 
    Box(, 20, 77 )
    DO WHILE .T.
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
-         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
-      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno - svi):" GET cIdRj ;
+         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdRj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
+      @ box_x_koord() + 1, Col() + 2 SAY "sve koje pocinju " GET cPocinju VALID cPocinju $ "DN" PICT "@!"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
       @ box_x_koord() + 2, Col() + 2 SAY "grupisati konto na broj mjesta" GET nKontoLen PICT "9" valid ( nKontoLen > 0 .AND. nKontoLen < 8 )
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
@@ -107,26 +107,26 @@ FUNCTION os_pregled_po_kontima()
    cIdRj := PadR( cIdRj, 4 )
 
    IF cDatPer == "D"
-      select_promj()
-      PRIVATE cFilt1 := "DATUM>=" + dbf_quote( dDatOd ) + ".and.DATUM<=" + dbf_quote( dDatDo )
-      SET FILTER to &cFilt1
-      select_os_sii()
+      //os_select_promj()
+      //PRIVATE cFilt1 := "DATUM>=" + dbf_quote( dDatOd ) + ".and.DATUM<=" + dbf_quote( dDatDo )
+      //SET FILTER to &cFilt1
+      select_o_os_or_sii()
    ENDIF
 
    IF !Empty( cFiltK1 )
-      select_os_sii()
+      select_o_os_or_sii()
       SET FILTER to &aUsl1
    ENDIF
 
    IF !Empty( cFiltK3 )
-      select_os_sii()
+      select_o_os_or_sii()
       SET FILTER to &aUsl2
    ENDIF
 
    IF Empty( qIdKonto )
       qIdKonto := ""
    ENDIF
-   IF Empty( cIdrj )
+   IF Empty( cIdRj )
       cIdRj := ""
    ENDIF
    IF cPocinju == "D"
@@ -140,14 +140,14 @@ FUNCTION os_pregled_po_kontima()
    PRIVATE nStr := 0
    // strana
 
-   select_o_rj( cIdrj )
+   select_o_rj( cIdRj )
 
-   select_os_sii()
+   select_o_os_or_sii()
 
    P_10CPI
    ? tip_organizacije() + ":", self_organizacija_naziv()
 
-   IF !Empty( cIdrj )
+   IF !Empty( cIdRj )
       ? "Radna jedinica:", cIdRj, rj->naz
    ENDIF
 
@@ -179,16 +179,15 @@ FUNCTION os_pregled_po_kontima()
       ENDIF
    ENDIF
 
-
    PRIVATE m := "----- ---------- ----" + IF( cAmoGr == "D", " " + REPL( "-", Len( field->idam ) ), "" ) + " -------- ------------------------------ --- ------" + REPL( " " + REPL( "-", Len( gPicI ) ), 3 )
 
-   IF Empty( cIdrj )
-      select_os_sii()
+   IF Empty( cIdRj )
+      select_o_os_or_sii()
       SET ORDER TO TAG "4"
       // "idkonto+idrj+id"
       SEEK qIdKonto
    ELSE
-      select_os_sii()
+      select_o_os_or_sii()
       SET ORDER TO TAG "3"
       // "idrj+idkonto+id"
       SEEK cIdRj + qIdKonto
@@ -214,7 +213,7 @@ FUNCTION os_pregled_po_kontima()
          cNazSKonto := AllTrim( konto->naz )
       ENDIF
 
-      select_os_sii()
+      select_o_os_or_sii()
 
       nDug2 := nPot2 := 0
       nUUKol := 0
@@ -230,10 +229,10 @@ FUNCTION os_pregled_po_kontima()
             cNazKonto := AllTrim( konto->naz )
          ENDIF
 
-         select_os_sii()
+         select_o_os_or_sii()
          nDug3 := nPot3 := nUKol := 0
 
-         DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. idkonto == cidkonto
+         DO WHILE !Eof() .AND. ( idrj = cIdRj .OR. Empty( cIdRj ) )  .AND. idkonto == cidkonto
 
             IF datum > os_datum_obracuna()
                // preskoci sredstva van obracuna
@@ -263,9 +262,9 @@ FUNCTION os_pregled_po_kontima()
                   ENDIF
 
                   _sr_id := field->id
-                  select_promj()
+                  os_select_promj( _sr_id )
                   // provjeri promjene unutar datuma
-                  HSEEK _sr_id
+                  //HSEEK _sr_id
 
                   DO WHILE !Eof() .AND. _sr_id = field->id
                      IF datum >= dDatOd .AND. datum <= dDatDo
@@ -273,7 +272,7 @@ FUNCTION os_pregled_po_kontima()
                      ENDIF
                      SKIP
                   ENDDO
-                  select_os_sii()
+                  select_o_os_or_sii()
                ENDIF
 
                IF cpromj == "3"
@@ -283,8 +282,8 @@ FUNCTION os_pregled_po_kontima()
                   _sr_dat_otp := get_datotp()
                   _sr_datum := field->datum
 
-                  select_promj()
-                  HSEEK _sr_id
+                  os_select_promj( _sr_id )
+                  //HSEEK _sr_id
                   fIma := .F.
                   DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                      IF ( cON == "N" .AND. Empty( _sr_dat_otp ) ) .OR. ;
@@ -296,7 +295,7 @@ FUNCTION os_pregled_po_kontima()
                      ENDIF
                      SKIP
                   ENDDO
-                  select_os_sii()
+                  select_o_os_or_sii()
                ENDIF
 
                // ovaj dio nam sad sluzi samo da saznamo ima li sredstvo
@@ -333,8 +332,8 @@ FUNCTION os_pregled_po_kontima()
                   _sr_dat_otp := get_datotp()
                   _sr_datum := field->datum
 
-                  select_promj()
-                  HSEEK _sr_id
+                  os_select_promj( _sr_id )
+                  //HSEEK _sr_id
                   DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                      IF ( cON == "N" .AND. Empty( _sr_dat_otp ) ) .OR. ;
                            ( con = "O"  .AND. !Empty( _sr_dat_otp ) ) .OR. ;
@@ -360,7 +359,7 @@ FUNCTION os_pregled_po_kontima()
                      ENDIF
                      SKIP
                   ENDDO
-                  select_os_sii()
+                  select_o_os_or_sii()
                ENDIF
 
                // ispis stavki
@@ -419,8 +418,8 @@ FUNCTION os_pregled_po_kontima()
                      _sr_id_rj := field->idrj
                      _sr_id_am := field->idam
 
-                     select_promj()
-                     HSEEK _sr_id
+                     os_select_promj( _sr_id )
+                     //HSEEK _sr_id
 
                      DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                         IF ( cON == "N" .AND. Empty( _sr_dat_otp ) ) .OR. ;
@@ -463,7 +462,7 @@ FUNCTION os_pregled_po_kontima()
                         SKIP
 
                      ENDDO
-                     select_os_sii()
+                     select_o_os_or_sii()
 
                   ENDIF
 
@@ -562,14 +561,12 @@ FUNCTION os_pregled_po_kontima()
    RETURN
 
 
-// -------------------------------------
-// zaglavlje izvjestaja
-// -------------------------------------
+
 FUNCTION os_zagl_konta()
 
    LOCAL nDbfArea := Select()
 
-   select_os_sii()
+   select_o_os_or_sii()
 
    ?
    P_12CPI
@@ -595,4 +592,4 @@ FUNCTION os_zagl_konta()
 
    SELECT ( nDbfArea )
 
-   RETURN
+   RETURN .T.

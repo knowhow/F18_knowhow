@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -109,6 +109,122 @@ FUNCTION ld_unos_obracuna()
 
 
 
+
+FUNCTION ld_rekalkulacija_primanja()
+
+   LOCAL lSaveObracun
+   LOCAL hLdRec
+   LOCAL _fields
+   LOCAL nI
+   LOCAL nCount := 0
+
+   // ove varijable koriste formule garant ?
+   PRIVATE lNovi := .F.
+   PRIVATE GetList
+   PRIVATE nPlacenoRSati
+   PRIVATE cIdRadn, cIdRj, nGodina, nMjesec, cObracun
+   PRIVATE cPom, nPom, cIdPrimanje
+
+   cIdRj := gLDRadnaJedinica
+
+   cIdRadn := Space( LEN_IDRADNIK )
+   GetList := {}
+
+   IF !spec_funkcije_sifra( "LD21" )
+      MsgBeep( "Opcija onemogućena !" )
+      RETURN .F.
+   ENDIF
+
+   nGodina := ld_tekuca_godina()
+   nMjesec := ld_tekuci_mjesec()
+   cObracun := gObracun
+
+   ld_pozicija_parobr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ), cIdRj )
+
+   seek_ld( cIdRj,  nGodina,  nMjesec,  iif( ld_vise_obracuna(), cObracun, "" ), NIL, NIL, "LD_2" )
+   Box( , 5, 70 )
+
+   DO WHILE !Eof()
+      select_o_ld_radn( ld_2->idRadn )
+
+      SELECT LD_2
+      set_global_vars_from_dbf() // _i01, _s01, _i03, etc ...
+
+      @ box_x_koord() + 1, box_y_koord() + 2  SAY8 "IDRADN: " + ld_2->idradn
+
+      FOR nI := 1 TO cLDPolja // PUBLIC cLDPolja := 60
+
+         cIdPrimanje := PadL( AllTrim( Str( nI ) ), 2, "0" )
+         select_o_tippr( cIdPrimanje )
+
+
+         IF tippr->aktivan == "D" .AND. "PAROBR" $ Upper( tippr->formula )
+
+            _UIznos := _UIznos - _i&cIdPrimanje
+            IF tippr->uneto == "D"           // izbij ovu stavku iz postojeceg obracuna
+               _Uneto := _UNeto - _i&cIdPrimanje
+            ELSE
+               _UOdbici := _UOdbici - _i&cIdPrimanje
+            ENDIF
+
+            // preracunaj ovu stavku prema formuli
+
+            cFormula := Trim( tippr->formula )
+            IF ( tippr->fiksan <> "D" ) // ako je fiksan iznos nista ne izracunavaj!
+               IF Empty( cFormula )
+                  _i&cIdPrimanje := 0
+               ELSE
+                  _i&cIdPrimanje := &cFormula
+               ENDIF
+               _i&cIdPrimanje := Round( _i&cIdPrimanje, gZaok )
+            ENDIF
+
+            _UIznos += _i&cIdPrimanje               // vratiti preracunati iznos
+            IF tippr->uneto == "D"
+               _Uneto += _i&cIdPrimanje
+            ELSE
+               _UOdbici += _i&cIdPrimanje
+            ENDIF
+
+         ENDIF
+
+      NEXT
+
+      kalkulacija_obracuna_plate_za_radnika( lNovi )
+
+      SELECT LD_2
+      hLdRec := get_hash_record_from_global_vars()
+      hLdRec[ "varobr" ] := gVarObracun
+
+      // nPom := 0
+      // FOR nI := 1 TO cLDPolja
+      // cPom := PadL( AllTrim( Str( nI ) ), 2, "0" )  // cPom := 01, 02, 03 ...
+      // nPom += Abs( _I&cPom ) + Abs( _S&cPom )
+      // NEXT
+      // IF ( nPom <> 0 ) // iznos ili vrijeme
+
+
+      seek_ld( cIdRj,  nGodina,  nMjesec,  iif( ld_vise_obracuna(), cObracun, "" ), ld_2->idradn )
+      IF update_rec_server_and_dbf( "ld_ld",  hLdRec, 1, "FULL" )
+         // delete_with_rlock()
+         // ELSE
+         log_write( "REKALK obracuna plate - radnik: " + ld_2->idradn + ", mjesec: " + AllTrim( Str( ld_2->mjesec ) ) + ", godina: " + AllTrim( Str( ld_2->godina ) ), 2 )
+      ENDIF
+      // ENDIF
+      nCount++
+      SELECT LD_2
+      SKIP
+   ENDDO
+   BoxC()
+
+   SELECT LD_2
+   USE
+
+   MsgBeep( "rekalkulacija izvršena za " + AllTrim( Str( nCount ) ) + " radnika" )
+
+   RETURN .T.
+
+
 FUNCTION QQOUTC( cTekst, cBoja )
 
    @ Row(), Col() SAY cTekst COLOR cBoja
@@ -152,7 +268,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    IF ld_vise_obracuna()
       // IF gUNMjesec == "D"
-      // @ box_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+      // @ box_x_koord() + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN ld_help_broj_obracuna( .F., cObracun ) VALID ld_valid_obracun( .F., cObracun )
       // ELSE
       @ box_x_koord() + 1, Col() + 2 SAY8  "Obračun: "
       QQOutC( cObracun, "GR+/N" )
@@ -214,7 +330,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       APPEND BLANK
       set_global_vars_from_dbf()
 
-      _Godina := nGodina
+      _godina := nGodina
       _idrj   := cIdRj
       _idradn := cIdRadn
       _mjesec := nMjesec
@@ -241,7 +357,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    ld_pozicija_parobr( nMjesec, nGodina, iif( ld_vise_obracuna(), cObracun, ), cIdRj )
 
    IF gTipObr == "1"
-      @ box_x_koord() + 3, box_y_koord() + 2   SAY IF( gBodK == "1", _l( "Broj bodova" ), _l( "Koeficijent" ) ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
+      @ box_x_koord() + 3, box_y_koord() + 2   SAY iif( gBodK == "1", _l( "Broj bodova" ), _l( "Koeficijent" ) ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
    ELSE
       @ box_x_koord() + 3, box_y_koord() + 2   SAY _l( "Plan.osnov ld" ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
    ENDIF
@@ -354,7 +470,7 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
    lInRS := .F.
    lInRs := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
-   FOR nI := 1 TO 40
+   FOR nI := 1 TO cLDPolja // 40
 
       cTp := PadL( AllTrim( Str( nI ) ), 2, "0" )
       xVar := "_I" + cTp
@@ -454,8 +570,9 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
       _uodbici := hData[ "uodbici" ]
       izracunaj_ukupno_za_isplatu_za_radnika( cTipRada, cTrosk, nTrosk, lInRs )
 
-      MsgBeep( "Za radnika je obračnuat odbitak radi elementarnih nepogoda." )
-
+      IF lNovi
+         MsgBeep( "Za radnika je obračnuat odbitak radi elementarnih nepogoda." )
+      ENDIF
    ENDIF
 
    RETURN .T.

@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -44,7 +44,8 @@ FUNCTION f18_editor( cTxt )
       RETURN windows_run_invisible( cCmd, cTxt ) // ovaj poziv trebamo radi windows xp, run invisible vbs konvertuje pathove sa spaceovima u short name
    ENDIF
 
-   RETURN f18_run( cCmd + " " + file_path_quote( cTxt ) )
+   RETURN f18_run( cCmd + " " + file_path_quote( cTxt ), NIL, .T. )
+
 
 
 STATIC FUNCTION check_prog_download()

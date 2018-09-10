@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 #include "f18_color.ch"
+
+
 
 STATIC s_lExitBrowseOnEnter := .F.
 
@@ -58,7 +60,8 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
    LOCAL lExitBrowse := .F.
    LOCAL nKeyHandlerRetEvent
    LOCAL lKeyHandlerStarted := .F.
-   //LOCAL azImeKol, azKol
+
+   // LOCAL azImeKol, azKol
    LOCAL lDoIdleCall, lContinue, oBrowse, nKey // extended key
    LOCAL oTCol
    LOCAL nHeight, nWidth, nBrojRedovaZaPoruke
@@ -87,8 +90,8 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
    PRIVATE Ch := 0
 
 
-   //azImeKol := ImeKol
-   //azKol := Kol
+   // azImeKol := ImeKol
+   // azKol := Kol
 
    IF nPrazno == NIL
       nPrazno := 0
@@ -219,7 +222,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
 
       DO WHILE .T.
-         Ch := hb_keyStd( Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) )
+         Ch := hb_keyStd( Inkey(, hb_bitOr( Set( _SET_EVENTMASK ), f18_browse_inkey() ) ) )
          IF oBrowse:stabilize()
             EXIT // browse renderiran
          ENDIF
@@ -242,7 +245,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
          IF lContinue   // .AND. lFlag
             oBrowse:hiLite()
-            Ch := hb_keyStd( nKey := Inkey( 0, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) )
+            Ch := hb_keyStd( nKey := Inkey( 0, hb_bitOr( Set( _SET_EVENTMASK ), f18_browse_inkey() ) ) )
             oBrowse:deHilite()
             // ELSE
             // lFlag := .T.
@@ -254,11 +257,9 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       lDoIdleCall := .T.
 
-
       IF Ch == 0
          LOOP
       ENDIF
-
 
 
       // DO WHILE !TB:stabilize() .AND. ( NextKey() == 0 )
@@ -294,8 +295,6 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       // ENDIF
       // hb_idleSleep( 0.2 )
-
-
 
 
       DO CASE
@@ -347,7 +346,6 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       CASE DE_REFRESH
 
-
          IF Deleted()
             SKIP
             IF Eof()
@@ -365,7 +363,7 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
       CASE DE_ABORT
          IF nPrazno == 0
-            BoxC()
+            browse_stabilize_boxc( oBrowse )
          ENDIF
          lExitBrowse := .T.
          EXIT
@@ -379,7 +377,19 @@ FUNCTION my_browse( cImeBoxa, xw, yw, bMyKeyHandler, cMessTop, cMessBot, lInvert
 
    ENDDO
 
+
+
    RETURN .T.
+
+
+STATIC FUNCTION browse_stabilize_boxc( oBrowse )
+
+DO WHILE !oBrowse:stabilize() // ENTER keystorm unos nove sifre prevenirati
+   oBrowse:stabilize()
+ENDDO
+BoxC()
+
+RETURN .T.
 
 
 FUNCTION browse_exit_on_enter( lSet )
@@ -445,12 +455,22 @@ STATIC FUNCTION tb_editabilna_kolona( oTb, aImeKol )
    RETURN Len( aImeKol[ TB:colPos ] ) > 2
 
 
+STATIC FUNCTION f18_browse_inkey()
+
+if is_electron_host()
+   return HB_INKEY_ALL 
+else
+   return HB_INKEY_EXT
+endif
+
+
+
 /*
 
 STATIC FUNCTION StandTBTipke()
 
    IF Ch == K_ESC .OR. Ch == K_CTRL_T .OR. Ch = K_CTRL_P .OR. Ch = K_CTRL_N .OR. ;
-         Ch == K_ALT_A .OR. Ch == K_ALT_P .OR. Ch = K_ALT_S .OR. Ch = K_ALT_R .OR. ;
+         Ch == K_ALT_A .OR. Ch == K_ALT_P .OR. Ch = k_alt_s() .OR. Ch = k_alt_r() .OR. ;
          Ch == K_DEL .OR. Ch = K_F2 .OR. Ch = K_F4 .OR. Ch = k_ctrl_f9() .OR. Ch = 0
       RETURN .T.
    ENDIF
@@ -630,7 +650,6 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
    LOCAL GetList := {}
    LOCAL lKeyHendliran := .F.
 
-
    IF bMyKeyHandler != NIL
       nKeyHandlerRetEvent := Eval( bMyKeyHandler, Ch )
       IF nKeyHandlerRetEvent != DE_CONT // samo ako je DE_CONT nastavi procesiranje
@@ -646,6 +665,21 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       RETURN DE_REFRESH
 
    CASE Upper( Chr( nKey ) ) == "F"
+
+
+      IF Alias() == "OS" .OR. Alias() == "SII"
+         Box( "#Unijeti dio šifre ili naziva ili mjesta", 1, 70 )
+         SET CURSOR ON
+         @ box_x_koord() + 1, box_y_koord() + 1 SAY "" GET cIdOrNaz PICT "@!S50"
+         READ
+         BoxC()
+         IF LastKey() != K_ESC
+            find_os_sii_by_naz_or_id( cIdOrNaz )
+            oBrowse:RefreshAll()
+            RETURN DE_REFRESH
+         ENDIF
+         lKeyHendliran := .T.
+      ENDIF
 
       IF Alias() == "PARTN"
          Box( "#Unijeti dio šifre ili naziva ili mjesta", 1, 70 )
@@ -774,7 +808,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       RETURN DE_REFRESH
 
 
-   CASE nKey == K_ALT_R
+   CASE nKey == k_alt_r()
 
       PRIVATE cKolona
 
@@ -842,7 +876,7 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
       RETURN DE_CONT
 
 
-   CASE nKey == K_ALT_S
+   CASE nKey == k_alt_s()
 
       PRIVATE cKolona
 
@@ -918,6 +952,23 @@ FUNCTION my_browse_f18_komande_with_my_key_handler( oBrowse, nKey, nKeyHandlerRe
 
    RETURN nKeyHandlerRetEvent
 
+
+FUNCTION k_alt_r()
+
+   IF is_mac()
+      RETURN 1124073646
+   ENDIF
+
+   RETURN K_ALT_R
+
+
+FUNCTION k_alt_s()
+
+   IF is_mac()
+      RETURN 225
+   ENDIF
+
+   RETURN K_ALT_S
 
 
 FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )

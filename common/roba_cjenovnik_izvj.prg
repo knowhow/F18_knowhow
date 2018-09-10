@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+/*
 FUNCTION CjenR()
 
    LOCAL cIniName
@@ -23,7 +23,7 @@ FUNCTION CjenR()
    ENDIF
 
    SELECT ROBA
-   SELECT ( F_BARKOD )
+  -- SELECT ( F_BARKOD )
 
    IF !Used()
       o_barkod()
@@ -83,3 +83,5 @@ FUNCTION CjenR()
    f18_rtm_print( "cjen", "barkod", "id" )
 
    RETURN DE_CONT
+
+*/

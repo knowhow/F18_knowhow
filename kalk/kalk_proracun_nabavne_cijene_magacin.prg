@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -44,6 +44,7 @@ FUNCTION kalk_get_nabavna_mag( dDatDo, cIdFirma, cIdRoba, cIdKonto, ;
    LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
    LOCAL cIdVd, nLen
    LOCAL nUlaziNV := 0, nUlaziKolicina := 0
+   LOCAL lZadataNabavnaCijenaNabavka := .F.
 
    nKolicina := 0
 
@@ -79,7 +80,14 @@ FUNCTION kalk_get_nabavna_mag( dDatDo, cIdFirma, cIdRoba, cIdKonto, ;
    nUlNV := 0
    nIzlKol := 0 // ukupna izlazna kolicina
    nUlKol := 0 // ulazna kolicina
-   nNcZadnjaNabavka := 0
+
+   IF ValType( nNcZadnjaNabavka ) != "N"
+      nNcZadnjaNabavka := 0
+   ENDIF
+   IF ROUND( nNcZadnjaNabavka, 8 ) > 0   // kod ulazne kalkulacije prosljeđujemo zadnju nabavnu cijenu kao parametar
+      lZadataNabavnaCijenaNabavka := .T.
+   ENDIF
+
    nKolZN := 0
    nSrednjaNcPoUlazima := 0 // srednja nc gledajuci samo ulaze
 
@@ -103,7 +111,9 @@ FUNCTION kalk_get_nabavna_mag( dDatDo, cIdFirma, cIdRoba, cIdKonto, ;
             nUlNV     += ( nKolicinaAbs * field->nc )
 
             IF field->idvd $ "10#16" .AND. field->kolicina > 0 // zapamtiti uvijek zadnju ulaznu NC
-               nNcZadnjaNabavka := field->nc
+               IF !lZadataNabavnaCijenaNabavka
+                   nNcZadnjaNabavka := field->nc
+               ENDIF
                nKolZn := field->kolicina
                nUlaziNV += field->nc * nKolicinaAbs
                nUlaziKolicina += nKolicinaAbs

@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * ERP software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -27,10 +27,14 @@ FUNCTION kalk_pripr_rekap_tarife()
    ENDIF
 
    nRec := RecNo()
-
    SELECT kalk_pripr
-   SET ORDER TO TAG "2"
-   SEEK cIdFirma + cIdVd + cBrDok
+
+   IF my_rddName() == "SQLMIX" // hernad hack, azurirani dokument
+       go top
+   ELSE
+      SET ORDER TO TAG "2"
+      SEEK cIdFirma + cIdVd + cBrDok
+   ENDIF
 
    m := "------ ----------"
 
@@ -185,7 +189,7 @@ FUNCTION kalk_pripr_rekap_tarife()
    SET ORDER TO TAG "1"
    GO nRec
 
-   RETURN
+   RETURN .T.
 
 
 

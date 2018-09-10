@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -422,16 +422,20 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
  *     Proracun nabavne cijene za ulaznu kalkulaciju 10
  */
 
-FUNCTION kalk_when_valid_nc()
+FUNCTION kalk_when_valid_nc_ulaz()
 
    LOCAL nStvarnaKolicina
+   LOCAL nKolS := 0
+   LOCAL nKolZN := 0
+   LOCAL nNabCjZadnjaNabavka
+   LOCAL nNabCj2 := 0
+   LOCAL dDatNab := CToD( "" )
 
    IF gKalo == "1"
       nStvarnaKolicina := _Kolicina - _GKolicina - _GKolicin2
    ELSE
       nStvarnaKolicina := _Kolicina
    ENDIF
-
 
    IF _TPrevoz == "%"
       nPrevoz := _Prevoz / 100 * _FCj2
@@ -490,6 +494,10 @@ FUNCTION kalk_when_valid_nc()
    IF koncij->naz == "N1" // sirovine
       _VPC := _NC
    ENDIF
+
+   nNabCjZadnjaNabavka := _nc // proslijediti nabavnu cijenu
+   // proracun nabavne cijene radi utvrdjivanja odstupanja ove nabavne cijene od posljednje
+   kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, nNabCjZadnjaNabavka, @nNabCj2, @dDatNab )
 
    RETURN .T.
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -29,7 +29,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cLin
    LOCAL nPom
    LOCAL cRepSr := "N"
-   LOCAL cRTipRada := " "
+   LOCAL cDjelatnost := " "
    LOCAL oReport, hRec, cKey
 
    // PRIVATE gPici := "9,999,999,999,999,999" + iif( gZaok > 0, PadR( ".", gZaok + 1, "9" ), "" )
@@ -53,6 +53,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL dDatIspl
    LOCAL cMRad := fetch_metric( "ld_specifikacija_minuli_rad", NIL, cMRad )
    LOCAL cPrimanjaStvariUsluge := fetch_metric( "ld_specifikacija_primanja_dobra", NIL, cPrimanjaStvariUsluge )
+
    LOCAL cDoprIz1 := PadR( fetch_metric( "ld_specifikacija_doprinos_1", NIL, "10" ), 2 )
    LOCAL cDoprIz2 := PadR( fetch_metric( "ld_specifikacija_doprinos_2", NIL, "11" ), 2 )
    LOCAL cDoprIz3 := fetch_metric( "ld_specifikacija_doprinos_3", NIL, "12" )
@@ -60,6 +61,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cDoprNa1 := PadR( fetch_metric( "ld_specifikacija_doprinos_5", NIL, "20" ), 2 )
    LOCAL cDoprNa2 := PadR( fetch_metric( "ld_specifikacija_doprinos_6", NIL, "21" ), 2 )
    LOCAL cDoprNa3 := fetch_metric( "ld_specifikacija_doprinos_7", NIL, "22" )
+
    LOCAL cDodatniDoprPio := PadR( fetch_metric( "ld_specifikacija_doprinos_pio", NIL, "  " ), 2 )
    LOCAL cDodatniDoprZdravstvo := PadR( fetch_metric( "ld_specifikacija_doprinos_zdr", NIL, "  " ), 2 )
    LOCAL nUkDoprIZ := 0
@@ -93,8 +95,8 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    // LOCAL nP78
    LOCAL nP79
    LOCAL nPrimanjaStvariUsluge, nUNet, nNetoOsn, nUNetoOsnova
-   LOCAL nKoefDopr1X, nKoefDopr2X, nKoefDopr3X
-   LOCAL nKoefDopr5X, nKoefDopr6X, nKoefDopr7X
+   LOCAL nKoefDopr1X := 0, nKoefDopr2X := 0, nKoefDopr3X := 0
+   LOCAL nKoefDopr5X := 0, nKoefDopr6X := 0, nKoefDopr7X := 0
    LOCAL nKoefDodatniDoprinosZdravstvo, nKoefDodatniDoprinosPio
    LOCAL nDopr1X, nDopr2X, nDopr3X  // iznosi dopr IZ
    LOCAL nDopr5X, nDopr6X, nDopr7X  // iznosi dopr NA
@@ -124,9 +126,19 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    LOCAL cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", NIL, cMatBr )
    LOCAL nBrojZaposlenih
    LOCAL nUNeto
-   LOCAL cRTR
+   LOCAL cTekuciRadnikTipRada
    LOCAL nDodDoprZ, nDodDoprP
 
+
+   IF ValType( cDoprIz3 ) != "C"
+     cDoprIz3 := "12"
+   ENDIF
+   IF ValType( cDoprNa3 ) != "C"
+     cDoprNa3 := "22"
+   ENDIF
+
+   cDoprIz3 := PADR( cDoprIz3, 2 )  // fix pogresno pohranjene parametre
+   cDoprNa3 := PADR( cDoprNa3, 3 )
 
    cMatBR := PadR( cMatBr, 13 )
 
@@ -181,12 +193,12 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       Box(, 23 + iif( cLdSpec2001GrupePoslovaAutoRucno == "1", 0, 1 ), 75 )
 
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica (prazno-sve): " GET cUslovIdRj PICT "@!S15"
-      @ box_x_koord() + 1, Col() + 1 SAY "Djelatnost" GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
+      @ box_x_koord() + 1, Col() + 1 SAY "Djelatnost" GET cDjelatnost VALID val_tiprada( cDjelatnost ) PICT "@!"
       @ box_x_koord() + 1, Col() + 1 SAY "Spec.za RS" GET cRepSr VALID cRepSr $ "DN" PICT "@!"
       @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Opština stan (prazno-sve): " GET cUslovOpstStan PICT "@!S20"
 
       IF ld_vise_obracuna()
-         @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun  WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+         @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun  WHEN ld_help_broj_obracuna( .T., cObracun ) VALID ld_valid_obracun( .T., cObracun )
       ENDIF
 
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
@@ -196,27 +208,27 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       @ box_x_koord() + 3, Col() + 1 SAY "/" GET nMjesecDo PICT "99"
       @ box_x_koord() + 3, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
 
-      @ box_x_koord() + 4, box_y_koord() + 2 SAY " Naziv: " GET cFirmNaz
-      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Adresa: " GET cFirmAdresa
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Opcina: " GET cFirmOpc
-      @ box_x_koord() + 7, box_y_koord() + 2 SAY "Vrsta djelatnosti: " GET cVrstaDjelatnosti
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 " Naziv: " GET cFirmNaz
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Adresa: " GET cFirmAdresa
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Općina: " GET cFirmOpc
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "Vrsta djelatnosti: " GET cVrstaDjelatnosti
 
       @ box_x_koord() + 4, box_y_koord() + 52 SAY "ID.broj :" GET cMatBR
       @ box_x_koord() + 5, box_y_koord() + 52 SAY "Dat.ispl:" GET dDatIspl
 
       @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" GET cPrimanjaStvariUsluge  PICT "@!S20"
 
-      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Dopr.pio (iz)" GET cDoprIz1
-      @ box_x_koord() + 10, Col() + 2 SAY "Dopr.pio (na)" GET cDoprNa1
-      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Dopr.zdr (iz)" GET cDoprIz2
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Dopr. pio (iz)" GET cDoprIz1
+      @ box_x_koord() + 10, Col() + 2 SAY "Dopr. pio (na)" GET cDoprNa1
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Dopr. zdr (iz)" GET cDoprIz2
       @ box_x_koord() + 11, Col() + 2 SAY "Dopr.zdr (na)" GET cDoprNa2
       //@ box_x_koord() + 11, Col() + 1 SAY "Omjer dopr.zdr (%):" GET nOmjerZdravstvo PICT "999.99999"
       @ box_x_koord() + 12, box_y_koord() + 2 SAY "Dopr.nez (iz)" GET cDoprIz3
       @ box_x_koord() + 12, Col() + 2 SAY "Dopr.nez (na)" GET cDoprNa3
       //@ box_x_koord() + 12, Col() + 1 SAY "Omjer dopr.nez (%):" GET nOmjerNezaposlenost PICT "999.99999"
 
-      @ box_x_koord() + 13, box_y_koord() + 2 SAY "Dod.dopr.pio" GET cDodatniDoprPio PICT "@S35"
-      @ box_x_koord() + 14, box_y_koord() + 2 SAY "Dod.dopr.zdr" GET cDodatniDoprZdravstvo PICT "@S35"
+      @ box_x_koord() + 13, box_y_koord() + 2 SAY "Dod.dopr. pio" GET cDodatniDoprPio PICT "@S35"
+      @ box_x_koord() + 14, box_y_koord() + 2 SAY "Dod.dopr. zdr" GET cDodatniDoprZdravstvo PICT "@S35"
 
       @ box_x_koord() + 15, box_y_koord() + 2 SAY "Ost.obaveze: NAZIV                  USLOV"
       @ box_x_koord() + 16, box_y_koord() + 2 SAY " 1." GET cCOO1
@@ -252,10 +264,12 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    set_metric( "ld_specifikacija_primanja_dobra", NIL, cPrimanjaStvariUsluge )
    set_metric( "ld_specifikacija_doprinos_1", NIL, cDoprIz1 )
    set_metric( "ld_specifikacija_doprinos_2", NIL, cDoprIz2 )
-   //set_metric( "ld_specifikacija_doprinos_3", NIL, cDoprIz3 )
+   set_metric( "ld_specifikacija_doprinos_3", NIL, cDoprIz3 )
+
    set_metric( "ld_specifikacija_doprinos_5", NIL, cDoprNa1 )
    set_metric( "ld_specifikacija_doprinos_6", NIL, cDoprNa2 )
-   //set_metric( "ld_specifikacija_doprinos_7", NIL, cDoprNa3 )
+   set_metric( "ld_specifikacija_doprinos_7", NIL, cDoprNa3 )
+
    set_metric( "ld_specifikacija_doprinos_pio", NIL, cDodatniDoprPio )
    set_metric( "ld_specifikacija_doprinos_zdr", NIL, cDodatniDoprZdravstvo )
    set_metric( "ld_specifikacija_c1", NIL, cCOO1 )
@@ -426,14 +440,17 @@ FUNCTION ld_specifikacija_plate_obr_2001()
    DO WHILE Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) == Str( ld->godina, 4, 0 ) + Str( ld->mjesec, 2, 0 )
 
       select_o_radn( LD->idradn )
-      cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
+      cTekuciRadnikTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
       nRSpr_koef := 0
-      IF cRTR == "S"
+      IF cTekuciRadnikTipRada == "S"
          nRSpr_koef := radn->sp_koef
       ENDIF
 
-      IF cRTR $ "I#N" .AND. Empty( cRTipRada )
-      ELSEIF cRTipRada <> cRTR
+      //IF cTekuciRadnikTipRada $ "I#N" .AND.
+         //
+      //ELSE
+      IF !Empty( cDjelatnost ) .AND. cDjelatnost <> cTekuciRadnikTipRada
+         info_bar( "ld_spec", ld->idradn + " djelatnost:" + cDjelatnost + " <>  radn: " + cTekuciRadnikTipRada + " SKIP!" )
          SELECT ld
          SKIP
          LOOP
@@ -508,11 +525,11 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       nUNetoOsnova += nNetoOsn
 
       // prvo doprinosi i bruto osnova
-      nRadnikBrutoOsnovica := ld_get_bruto_osnova( nNetoOsn, cRTR, nKoefLicniOdbici, nRSpr_koef )
+      nRadnikBrutoOsnovica := ld_get_bruto_osnova( nNetoOsn, cTekuciRadnikTipRada, nKoefLicniOdbici, nRSpr_koef )
 
       nRadnikBrutoStvariUsluge := 0
       IF nPrimanjaStvariUsluge > 0
-         nRadnikBrutoStvariUsluge := ld_get_bruto_osnova( nPrimanjaStvariUsluge, cRTR, nKoefLicniOdbici, nRSpr_koef )
+         nRadnikBrutoStvariUsluge := ld_get_bruto_osnova( nPrimanjaStvariUsluge, cTekuciRadnikTipRada, nKoefLicniOdbici, nRSpr_koef )
       ENDIF
 
       nMPojBrOsn := nRadnikBrutoOsnovica
@@ -533,7 +550,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
          cFFTmp := gBFForm
          gBFForm := StrTran( gBFForm, "_", "" )
 
-         nPojBrBenef := ld_get_bruto_osnova( nNetoOsn - IF( !Empty( gBFForm ), &gBFForm, 0 ), cRTR, nKoefLicniOdbici, nRSpr_koef )
+         nPojBrBenef := ld_get_bruto_osnova( nNetoOsn - IF( !Empty( gBFForm ), &gBFForm, 0 ), cTekuciRadnikTipRada, nKoefLicniOdbici, nRSpr_koef )
 
          nBrutoOsBenef += nPojBrBenef
          _benef_st := BenefStepen()
@@ -560,7 +577,7 @@ FUNCTION ld_specifikacija_plate_obr_2001()
                   nBOO += aOps[ i, 3 ]
                ENDIF
             NEXT
-            nBOO := ld_get_bruto_osnova( nBOO, cRTR, nKoefLicniOdbici )
+            nBOO := ld_get_bruto_osnova( nBOO, cTekuciRadnikTipRada, nKoefLicniOdbici )
          ELSE
          */
          nBOO := nUkupnoBrutoOsnovicaSaMinLimit
@@ -597,36 +614,20 @@ FUNCTION ld_specifikacija_plate_obr_2001()
       nKoefDopr6X := find_field_by_id( "dopr", cDoprNa2, "iznos" )
       nKoefDopr7X := find_field_by_id( "dopr", cDoprNa3, "iznos" )
 
-      nPom := nKoefDopr1X + nKoefDopr2X //+ nKoefDopr3X
+      //nPom := nKoefDopr1X + nKoefDopr2X //+ nKoefDopr3X
 
 
-      nPom := nKoefDopr1X
-      hRec[ "stopa_16" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // PIO iz
-
-      nPom := nKoefDopr2X
-      hRec[ "stopa_17" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // zdravstvo iz
-
-      nPom := nKoefDopr3X
-      hRec[ "stopa_18" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezaposlenost iz
-
-
-      nPom := nKoefDopr5X
-      hRec[ "stopa_20" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // PIO na
-
-      nPom := nKoefDopr6X
-      hRec[ "stopa_21" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // zdrav na
-
-      nPom := nKoefDopr7X
-      hRec[ "stopa_22" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // nezap na
+      hRec[ "stopa_16" ] := FormNum2( nKoefDopr1X, 16, cPictureIznos ) + "%"  // PIO iz
+      hRec[ "stopa_17" ] := FormNum2( nKoefDopr2X, 16, cPictureIznos ) + "%"  // zdravstvo iz
+      hRec[ "stopa_18" ] := FormNum2( nKoefDopr3X, 16, cPictureIznos ) + "%"  // nezaposlenost iz
+      hRec[ "stopa_20" ] := FormNum2( nKoefDopr5X, 16, cPictureIznos ) + "%"  // PIO na
+      hRec[ "stopa_21" ] := FormNum2( nKoefDopr6X, 16, cPictureIznos ) + "%"  // zdrav na
+      hRec[ "stopa_22" ] := FormNum2( nKoefDopr7X, 16, cPictureIznos ) + "%"  // nezap na
 
       nPom := nKoefDopr5X + nKoefDopr6X + nKoefDodatniDoprinosZdravstvo + nKoefDodatniDoprinosPio
 
-
-      nPom := nKoefDodatniDoprinosPio
-      hRec[ "stopa_23" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // dodatni PIO i invalid
-
-      nPom := nKoefDodatniDoprinosZdravstvo
-      hRec[ "stopa_24" ] := FormNum2( nPom, 16, cPictureIznos ) + "%"  // dodatni zdravstvo
+      hRec[ "stopa_23" ] := FormNum2( nKoefDodatniDoprinosPio, 16, cPictureIznos ) + "%"  // dodatni PIO i invalid
+      hRec[ "stopa_24" ] := FormNum2( nKoefDodatniDoprinosZdravstvo, 16, cPictureIznos ) + "%"  // dodatni zdravstvo
 
 
 

@@ -166,7 +166,7 @@ FUNCTION ZglSpOstP()
    ? "----- ------- ----------------------------- ------------------------------------------------------------ -----------------------------"
    ? "*RED.* KONTO *       N A Z I V             *     K U M U L A T I V N I    P R O M E T                   *      S A L D O              "
    ? "                                            ------------------------------------------------------------ -----------------------------"
-   ? "*BROJ*       *       K O N T A             *  DUGUJE   " + ValDomaca() + "  *  POTRA�UJE " + ValDomaca() + "* DUGUJE " + ValPomocna() + "* POTRA� " + ValPomocna() + "*    " + ValDomaca() + "        *    " + ValPomocna() + "   *"
+   ? "*BROJ*       *       K O N T A             *  DUGUJE   " + valuta_domaca_skraceni_naziv() + "  *  POTRA�UJE " + valuta_domaca_skraceni_naziv() + "* DUGUJE " + ValPomocna() + "* POTRA� " + ValPomocna() + "*    " + valuta_domaca_skraceni_naziv() + "        *    " + ValPomocna() + "   *"
    ? M
 
    SELECT SUBAN

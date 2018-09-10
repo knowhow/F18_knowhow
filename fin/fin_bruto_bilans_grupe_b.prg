@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -323,7 +323,7 @@ STATIC FUNCTION zagl_bb_grupe( hParams, nStr )
    ?
    P_COND2
 
-   ??U "FIN.P:BRUTO BILANS PO GRUPAMA KONTA U VALUTI '" + IF( hParams[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
+   ??U "FIN.P:BRUTO BILANS PO GRUPAMA KONTA U VALUTI '" + IF( hParams[ "valuta" ] == 1, valuta_domaca_skraceni_naziv(), ValPomocna() ) + "'"
 
    IF !( Empty( hParams[ "datum_od" ] ) .AND. Empty( hParams[ "datum_do" ] ) )
       ?? " ZA PERIOD OD", hParams[ "datum_od" ], "-", hParams[ "datum_do" ]

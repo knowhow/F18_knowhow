@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -156,7 +156,7 @@ FUNCTION a_val_convert()
 
       // cIzraz := ALLTRIM( STR( nIzraz ) )
 
-      nIzraz := Round( nIzraz * omjerval( ValDomaca(), ValPomocna(), Date() ), 5 )
+      nIzraz := Round( nIzraz * omjerval( valuta_domaca_skraceni_naziv(), ValPomocna(), Date() ), 5 )
       // konvertuj ali bez ENTER-a
       // konv( .f. )
 

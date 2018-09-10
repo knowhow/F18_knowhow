@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ "$HB_INC_INSTALL" == "" ]; then
-    echo "setuj envars"
-    exit -1
-fi
+#if [ "$HB_INC_INSTALL" == "" ]; then
+#    echo "setuj envars"
+#    exit -1
+#fi
 
 if [ "$1" != "--no-rm" ] ; then
    rm -r -f .h

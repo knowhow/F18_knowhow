@@ -143,7 +143,7 @@
 //#define F_ROBAIZ    139
 #define F_ROBA_P  139  // roba za sastavnice
 
-#define F_RAZDR     140
+//#define F_RAZDR     140
 #define F_SIROV     141
 #define F_STRAD     142
 #define F_OSOB      143
@@ -183,13 +183,13 @@
 #define F_TPRSIHT  179
 #define F_RADSIHT  180
 #define F_BANKE    181
-#define F_OBRACUNI 182
+#define F_LD_OBRACUNI 182
 #define F_RADSAT   183
 #define F_REKLDP   184
 #define F_IZDANJA  185
 #define F_FAKT_OBJEKTI 186
 #define F_PRIPNO   187
-#define F_LDNO     188
+#define F_LD_2     188
 #define F_RJES     189
 #define F_PK_RADN  190
 #define F_PK_DATA  191
@@ -202,7 +202,7 @@
 #define F_OS       200
 #define F_AMORT    201
 #define F_REVAL    202
-#define F_PROMJ    203
+#define F_OS_PROMJ    203
 #define F_INVENT   204
 #define F_SII      205
 #define F_SII_PROMJ 206

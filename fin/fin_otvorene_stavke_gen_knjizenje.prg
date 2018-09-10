@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -231,8 +231,8 @@ FUNCTION fin_unos_asistent_gen_otvorene_stavke()
    AAdd( ImeKol, { "Dat.Dok.",   {|| field->DatDok }  } )
    AAdd( ImeKol, { "Dat.Val.",   {|| field->DatVal }  } )
    AAdd( ImeKol, { "Dat.ZPR.",   {|| field->DatZPR }   } )
-   AAdd( ImeKol, { PadR( "Duguje " + AllTrim( ValDomaca() ), 14 ), {|| Str( ( iif( D_P == "1", iznosbhd, 0 ) ), 14, 2 ) }     } )
-   AAdd( ImeKol, { PadR( "Potraz." + AllTrim( ValDomaca() ), 14 ), {|| Str( ( iif( D_P == "2", iznosbhd, 0 ) ), 14, 2 ) }     } )
+   AAdd( ImeKol, { PadR( "Duguje " + AllTrim( valuta_domaca_skraceni_naziv() ), 14 ), {|| Str( ( iif( D_P == "1", iznosbhd, 0 ) ), 14, 2 ) }     } )
+   AAdd( ImeKol, { PadR( "Potraz." + AllTrim( valuta_domaca_skraceni_naziv() ), 14 ), {|| Str( ( iif( D_P == "2", iznosbhd, 0 ) ), 14, 2 ) }     } )
    AAdd( ImeKol, { PadR( "Uplaceno", 14 ), {|| Str( field->uplaceno, 14, 2 ) }     } )
 
    Kol := {}

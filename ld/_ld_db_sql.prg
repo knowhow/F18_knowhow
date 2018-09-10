@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -17,13 +17,21 @@ SEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + ld_broj_obracuna() + cIdRad
 seek_ld( cIdRj, nGodina, nMjesec, cObracun, cIdRadn )
 */
 
-FUNCTION seek_ld( cIdRj, xGodina, nMjesec, cObracun, cIdRadn, cTag )
+FUNCTION seek_ld( cIdRj, xGodina, nMjesec, cObracun, cIdRadn, cTag, cAlias )
 
    LOCAL cSql
    LOCAL cTable := "ld_ld"
    LOCAL hIndexes, cKey
    LOCAL lWhere := .F.
    LOCAL nGodinaOd, nGodinaDo
+   LOCAL nArea
+
+   IF cAlias == NIL
+      cAlias := "LD"
+      nArea := F_LD
+   ELSE
+      nArea := F_LD_2
+   ENDIF
 
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + cTable
 
@@ -83,8 +91,8 @@ FUNCTION seek_ld( cIdRj, xGodina, nMjesec, cObracun, cIdRadn, cTag )
       cSql += "idradn=" + sql_quote( cIdRadn )
    ENDIF
 
-   SELECT F_LD
-   use_sql( cTable, cSql, "LD" )
+   SELECT ( nArea )
+   use_sql( cTable, cSql, cAlias )
 
    hIndexes := h_ld_ld_indexes()
 

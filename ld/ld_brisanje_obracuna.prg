@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -181,7 +181,7 @@ FUNCTION BrisiMjesec()
       Box(, 4, 60 )
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Radna jedinica: " GET cIdRJ
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Mjesec: "  GET nMjesec PICT "99"
-      @ box_x_koord() + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+      @ box_x_koord() + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN ld_help_broj_obracuna( .F., cObracun ) VALID ld_valid_obracun( .F., cObracun )
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Godina: "  GET nGodina PICT "9999"
       READ
       ClvBox()

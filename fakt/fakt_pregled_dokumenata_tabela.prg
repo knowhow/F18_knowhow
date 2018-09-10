@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -356,8 +356,9 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
    CASE Upper( Chr( nCh ) ) == "N"
 
       fakt_print_narudzbenica( fakt_doks_pregled->idfirma, fakt_doks_pregled->idtipdok, fakt_doks_pregled->brdok )
-      nRet := DE_CONT
+      nRet := DE_REFRESH
       lRefresh := .T.
+      lReload := .T.
 
    CASE Upper( Chr( nCh ) ) == "F"
 
@@ -389,11 +390,11 @@ FUNCTION fakt_pregled_dokumenata_browse_key_handler( nCh, lOpcine, cFiskalniUred
 
    IF lRefresh
 
-      // SELECT ( nDbfArea )
-      // SET ORDER TO TAG "1"
-      IF lReload
+      SELECT F_FAKT_DOKS_PREGLED
+      IF !Used() .OR. lReload
          fakt_pregled_reload_tables()
       ENDIF
+
       SELECT FAKT_DOKS_PREGLED
       GO ( nFaktDokTekuciZapis )
       nRet := DE_REFRESH

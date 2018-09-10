@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -23,7 +23,7 @@ FUNCTION kalk_get_1_ip()
 
    _datfaktp := _datdok
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Konto koji zaduzuje" GET _IdKonto  VALID P_Konto( @_IdKonto, nX, 35 ) PICT "@!"
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Konto koji zadužuje" GET _IdKonto  VALID P_Konto( @_IdKonto, nX, 35 ) PICT "@!"
 
    // IF gNW <> "X"
    // @ box_x_koord() + nX, box_y_koord() + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
@@ -67,22 +67,20 @@ FUNCTION kalk_get_1_ip()
 
    // DuplRoba()
 
-   ++nX
-   ++nX
+   nX += 2
+  
 
    @ box_x_koord() + nX, box_y_koord() + 2 SAY8 PadL( "KNJIŽNA KOLICINA:", _left ) GET _gkolicina PICT PicKol  ;
-      WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
+      WHEN {|| kalk_ip_when_knjizna_kolicina() }
 
    @ box_x_koord() + nX, Col() + 2 SAY8 "POPISANA KOLIČINA:" GET _kolicina VALID VKol() PICT PicKol
 
    _tmp := "P.CIJENA (SA PDV):"
 
-   ++nX
-   ++nX
+   nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( "NABAVNA CIJENA:", _left ) GET _nc PICT picdem
 
-   ++nX
-   ++nX
+   nX += 2
    @ box_x_koord() + nX, box_y_koord() + 2 SAY PadL( _tmp, _left ) GET _mpcsapp PICT picdem
 
    READ
@@ -108,6 +106,7 @@ FUNCTION kalk_get_1_ip()
 FUNCTION kalk_generisi_ip()
 
    LOCAL cIdFirma, cIdKonto, cIdRoba, dDatDok, cNulirati
+   LOCAL nRbr
 
   // o_konto()
 //   o_tarifa()
@@ -137,7 +136,7 @@ FUNCTION kalk_generisi_ip()
 
    PRIVATE cBrDok := kalk_get_next_broj_v5( cIdFirma, "IP", NIL )
 
-   nRbr := 0
+   nRbr := 1
 
    SET ORDER TO TAG "4"
 
@@ -146,21 +145,68 @@ FUNCTION kalk_generisi_ip()
    select_o_koncij( cIdkonto )
 
    find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto )
-
    DO WHILE !Eof() .AND. cIdfirma + cIdkonto == field->idfirma + field->pkonto
 
       cIdRoba := kalk->idroba
-      nUlaz := nIzlaz := 0
-      nMPVU := nMPVI := nNVU := nNVI := 0
-      nRabat := 0
+      kalk_generisi_ip_stavka( cIdFirma, cBrDok, cIdKonto, cIdRoba, dDatDok, cNulirati, .F., @nRbr )
 
-      select_o_roba( cIdroba )
+   ENDDO
 
-      SELECT kalk
+   MsgC()
 
-      DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == idFirma + pkonto + idroba
+   my_close_all_dbf()
 
-         IF ddatdok < datdok  // preskoci
+   RETURN .T.
+
+
+FUNCTION kalk_ip_when_knjizna_kolicina()
+
+  LOCAL cIdFirma, cBrDok, cIdKonto, cIdRoba, dDatDok, cNulirati
+
+  cIdFirma := _idfirma
+  cBrdok := _brdok
+  cIdKonto := _idKonto
+  cIdRoba := _idroba
+  dDatDok := _datdok
+  cNulirati := "N"
+
+altd()
+  IF  Round( _nc, 2) == 0 .AND. Round(_gkolicina, 2) == 0 // jos nisu setovane mpc niti knjizna kolicina
+
+    find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
+    kalk_generisi_ip_stavka( cIdFirma, cBrDok, cIdKonto, cIdRoba, dDatDok, cNulirati, .T., @nRbr )
+    SELECT kalk_pripr
+
+  ENDIF
+
+  IF kalk_metoda_nc() == " "
+     RETURN .T.
+  ENDIF
+
+  RETURN .F. // bez ispravke popisane kolicine
+
+
+FUNCTION kalk_generisi_ip_stavka( cIdFirma, cBrDok, cIdKonto, cIdRoba, dDatDok, cNulirati, lRucniUnosIP, nRbr )
+
+  LOCAL nUlaz := 0
+  LOCAL nIzlaz := 0
+  LOCAL nMPVU := 0
+  LOCAL nMPVI := 0
+  LOCAL nNVU := 0
+  LOCAL nNVI := 0
+  LOCAL nRabat := 0
+  
+  select_o_roba( cIdroba )
+
+  IF dDatdok == NIL
+     dDatDok := DATE()
+  ENDIF
+
+  SELECT kalk
+
+  DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == kalk->idFirma + kalk->pkonto + kalk->idroba
+
+         IF dDatdok < kalk->datdok  // preskoci
             SKIP
             LOOP
          ENDIF
@@ -195,22 +241,38 @@ FUNCTION kalk_generisi_ip()
             nNVI += field->nc * field->gkolicin2
          ENDIF
          SKIP
-      ENDDO
 
-      IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
+  ENDDO
+
+  IF lRucniUnosIP // nalazimo se u pripremi, vrsimo rucni unos ip stavke, potrebno samo utvrditi popisanu kolicinu
+      _gkolicina := nUlaz - nIzlaz // popisana kolicina
+      _fcj := nMpvu - nMpvi // stanje mpvsapp
+      IF Round( nUlaz - nIzlaz, 4 ) <> 0
+         _mpcsapp := Round( ( nMPVU - nMPVI ) / ( nUlaz - nIzlaz ), 3 )
+         _nc := Round( ( nNvu - nNvi ) / ( nUlaz - nIzlaz ), 3 )
+      ELSE
+         _mpcsapp := 0
+      ENDIF
+      RETURN .T.
+  ENDIF
+
+  IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
 
          select_o_roba(  cIdroba )
 
          SELECT kalk_pripr
          scatter()
          APPEND ncnl
-         _idfirma := cIdfirma; _idkonto := cIdkonto; _pkonto := cIdkonto; _pu_i := "I"
+         _idfirma := cIdfirma
+         _idkonto := cIdkonto
+         _pkonto := cIdkonto
+         _pu_i := "I"
          _idroba := cIdroba
          _idtarifa := roba->idtarifa
          _idvd := "IP"
          _brdok := cBrdok
 
-         _rbr := RedniBroj( ++nRbr )
+         _rbr := RedniBroj( nRbr++ )
          _kolicina := _gkolicina := nUlaz - nIzlaz
          IF cNulirati == "D"
             _kolicina := 0
@@ -226,21 +288,13 @@ FUNCTION kalk_generisi_ip()
             _mpcsapp := 0
          ENDIF
          Gather2()
-         SELECT kalk
-      ENDIF
 
-   ENDDO
-
-   MsgC()
-
-   my_close_all_dbf()
-
-   RETURN .T.
+         SELECT KALK
+         
+  ENDIF
 
 
-
-
-
+RETURN .T.
 
 /* --------------------------------------------------------------------------
 // generacija inventure - razlike postojece inventure
@@ -261,7 +315,7 @@ FUNCTION gen_ip_razlika()
    LOCAL nRabat
    LOCAL _cnt := 0
 
-   o_konto()
+   //o_konto()
 
    Box(, 4, 50 )
 
@@ -455,7 +509,6 @@ FUNCTION gen_ip_razlika()
    my_close_all_dbf()
 
    RETURN .T.
-
 
 
 

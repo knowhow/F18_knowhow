@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -113,7 +113,7 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, nMjesec, nGodina, cIdRadn, cO
    @ PRow(), 60 + Len( cLMSK ) SAY nTrosk PICT gpici
 
    ? cMainLine
-   ? cLMSK + "3. BRUTO BEZ TROSKOVA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
+   ? cLMSK + "3. BRUTO BEZ TROSKOVA :  ", ld_bruto_isplata_ispis( nOsnZaBr, cRTipRada, nLicOdbitak )
 
    @ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
 

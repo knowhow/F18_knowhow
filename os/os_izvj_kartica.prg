@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -15,9 +15,11 @@
 
 FUNCTION os_rpt_default_valute()
 
+   LOCAL GetList := {}
+
    LOCAL nArr := Select()
 
-   IF ( gDrugaVal == "D" .AND. cTip == ValDomaca() )
+   IF ( gDrugaVal == "D" .AND. cTip == valuta_domaca_skraceni_naziv() )
       Box(, 5, 70 )
       @ box_x_koord() + 2, box_y_koord() + 2 SAY "Pomocna valuta      " GET cBBV PICT "@!" VALID ImaUSifVal( cBBV )
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK := OmjerVal( cBBV, cTip ), .T. } PICT "999999999.999999999"
@@ -36,8 +38,8 @@ FUNCTION PrikazVal()
    RETURN ( IIF( gDrugaVal == "D", " VALUTA:'" + Trim( cBBV ) + "'", "" ) )
 
 
-
-FUNCTION os_kartica_sredstva()
+/*
+-- FUNCTION os_kartica_sredstva()
 
    o_os_sii_promj()
    o_os_sii()
@@ -84,7 +86,7 @@ FUNCTION os_kartica_sredstva()
       SET ORDER TO TAG "1"
    NEXT
 
-   select_os_sii()
+   select_o_os_or_sii()
    IF Empty( cId )
       // sve kartice
       GO TOP
@@ -149,7 +151,7 @@ FUNCTION os_kartica_sredstva()
             NEXT
          ENDIF
       NEXT
-      select_os_sii()
+      select_o_os_or_sii()
 
       IF Len( aPom ) > 0
          ASort( aPom,,, {| x, y| x[ 1 ] < y[ 1 ] } )
@@ -213,7 +215,7 @@ FUNCTION os_kartica_sredstva()
 
    RETURN
 // }
-
+*/
 
 
 // -----------------------------------------------------------

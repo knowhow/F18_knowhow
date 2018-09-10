@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -90,7 +90,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
 
    Box(, 3, 60 )
 
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY ValDomaca() + "/" + ValPomocna() + " blagajnicki izvjestaj (1/2):" GET cDinDem
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY valuta_domaca_skraceni_naziv() + "/" + ValPomocna() + " blagajnicki izvjestaj (1/2):" GET cDinDem
 
    READ
 
@@ -135,7 +135,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
    ?? Space( 12 )
 
    IF cDinDem == "1"
-      ?? "(" + ValDomaca() + ")"
+      ?? "(" + valuta_domaca_skraceni_naziv() + ")"
    ELSE
       ?? "DEVIZNI (" + ValPomocna() + ")"
    ENDIF
@@ -301,7 +301,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
    @ PRow(), ncol1 SAY PadL( Transform( ndugst - npotst + ndug - npot, pici ), 14 )
    ? m
    @ PRow() + 1, 10 SAY "Slovima:"
-   @ PRow(), PCol() + 1 SAY Slovima( Round( ndugst - npotst + ndug - npot, 2 ), iif( cdindem == "1", ValDomaca(), ValPomocna() ) )
+   @ PRow(), PCol() + 1 SAY Slovima( Round( ndugst - npotst + ndug - npot, 2 ), iif( cdindem == "1", valuta_domaca_skraceni_naziv(), ValPomocna() ) )
    ? m
    ?
    ?
@@ -327,7 +327,7 @@ FUNCTION PZagBlag( nDug, nPot, m, cBrDok, pici, cDinDem, dDatDok )
    F12CPI
    ?? Space( 12 )
    IF cDinDem == "1"
-      ?? "(" + ValDomaca() + ")"
+      ?? "(" + valuta_domaca_skraceni_naziv() + ")"
    ELSE
       ?? "DEVIZNI (" + ValPomocna() + ")"
    ENDIF
@@ -372,7 +372,7 @@ FUNCTION blag_azur()
    cDinDem := "1"
 
    Box(, 4, 60 )
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY ValDomaca() + "/" + ValPomocna() + " blagajnicki izvjestaj (1/2):" GET cDinDem
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY valuta_domaca_skraceni_naziv() + "/" + ValPomocna() + " blagajnicki izvjestaj (1/2):" GET cDinDem
    READ
    IF cDinDem == "1"
       cIdKonto := PadR( "2020", 7 )
@@ -565,7 +565,7 @@ FUNCTION blag_azur()
    @ PRow(), ncol1 SAY PadL( Transform( nDugSt - nPotSt + nDug - nPot, pici ), 14 )
    ? cLine
    @ PRow() + 1, 10 SAY "Slovima:"
-   @ PRow(), PCol() + 1 SAY Slovima( Round( ndugst - npotst + ndug - npot, 2 ), iif( cdindem == "1", ValDomaca(), ValPomocna() ) )
+   @ PRow(), PCol() + 1 SAY Slovima( Round( ndugst - npotst + ndug - npot, 2 ), iif( cdindem == "1", valuta_domaca_skraceni_naziv(), ValPomocna() ) )
    ? cLine
    ?
    ?
@@ -642,7 +642,7 @@ FUNCTION st_bl_zagl( cLine, cDinDem, cIdFirma, cTipDok, cBrDok, dDatDok )
    ?? Space( 12 )
 
    IF cDinDem == "1"
-      ?? "(" + ValDomaca() + ")"
+      ?? "(" + valuta_domaca_skraceni_naziv() + ")"
    ELSE
       ?? "DEVIZNI (" + ValPomocna() + ")"
    ENDIF

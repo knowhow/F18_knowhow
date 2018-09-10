@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -69,31 +69,31 @@ METHOD FaktDokumenti:Lock()
 
 METHOD FaktDokumenti:za_partnera( idfirma, idtipdok, idpartner )
 
-   LOCAL _qry_str
+   LOCAL cQuery
    LOCAL nCnt
    LOCAL _brdok
    LOCAL oQry
-   LOCAL _item
+   LOCAL oItem
 
    ::p_idfirma := idfirma
    ::p_idtipdok := idtipdok
    ::p_idpartner := idpartner
 
-   _qry_str := "SELECT fakt_doks.idfirma, fakt_doks.idtipdok, fakt_doks.brdok FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks "
-   _qry_str += "WHERE "
+   cQuery := "SELECT fakt_doks.idfirma, fakt_doks.idtipdok, fakt_doks.brdok FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks "
+   cQuery += "WHERE "
 
    ::_sql_where := "fakt_doks.idfirma=" + sql_quote( ::p_idfirma ) +  " AND fakt_doks.idtipdok=" + sql_quote( ::p_idtipdok ) + " AND fakt_doks.idpartner=" + sql_quote( ::p_idpartner )
 
-   _qry_str += ::_sql_where
-   oQry := run_sql_query( _qry_str )
+   cQuery += ::_sql_where
+   oQry := run_sql_query( cQuery )
 
    nCnt := 0
    DO WHILE !oQry:Eof()
       _brdok := oQry:FieldGet( 3 )
       // napunicemo aItems matricom FaktDokument objekata
-      _item := FaktDokument():New( ::p_idfirma, ::p_idtipdok, _brdok )
-      _item:refresh_info()
-      AAdd( ::aItems, _item )
+      oItem := FaktDokument():New( ::p_idfirma, ::p_idtipdok, _brdok )
+      oItem:refresh_info()
+      AAdd( ::aItems, oItem )
       nCnt++
       oQry:skip()
    ENDDO
@@ -170,7 +170,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr_vars( hParams )
    LOCAL lOk := .T.
    LOCAL _sumiraj := "N"
    LOCAL _tip_rn := 1
-   LOCAL _valuta := PadR( ValDomaca(), 3 )
+   LOCAL _valuta := PadR( valuta_domaca_skraceni_naziv(), 3 )
 
    hParams := hb_Hash()
 
@@ -205,11 +205,11 @@ METHOD FaktDokumenti:generisi_fakt_pripr_vars( hParams )
 
 METHOD FaktDokumenti:count_markirani()
 
-   LOCAL _item, nCnt
+   LOCAL oItem, nCnt
 
    nCnt := 0
-   FOR EACH _item IN ::aItems
-      IF _item:mark
+   FOR EACH oItem IN ::aItems
+      IF oItem:mark
          nCnt++
       ENDIF
    NEXT
@@ -219,7 +219,7 @@ METHOD FaktDokumenti:count_markirani()
 
 METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
 
-   LOCAL _err, _item, _broj := "XX", lOk := .T.
+   LOCAL oItem, cBroj := "XX", lOk := .T.
    LOCAL hParams
    LOCAL oErr
 
@@ -233,10 +233,10 @@ METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
 
    BEGIN SEQUENCE WITH {| err | err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
 
-      FOR EACH _item IN ::aItems
-         IF _item:mark
-            _broj := _item:broj
-            IF !_item:change_idtipdok( cIdTipDokNew )
+      FOR EACH oItem IN ::aItems
+         IF oItem:mark
+            cBroj := oItem:broj
+            IF !oItem:change_idtipdok( cIdTipDokNew )
                run_sql_query( "ROLLBACK" )
                lOk := .F.
                BREAK
@@ -251,7 +251,7 @@ METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
 
    RECOVER USING oErr
 
-      MsgBeep( "Neuspješna konverzija " + _broj + " idtpdok => " + cIdTipDokNew + " !##" + oErr:Description  )
+      MsgBeep( "Neuspješna konverzija " + cBroj + " idtpdok => " + cIdTipDokNew + " !##"  )
       lOk := .F.
 
    ENDSEQUENCE
@@ -265,37 +265,37 @@ METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
 
 METHOD FaktDokumenti:generisi_fakt_pripr()
 
-   LOCAL _sumirati := .F.
-   LOCAL _vp_mp := 1
+   LOCAL lSumirati := .F.
+   LOCAL nVPiliMPRacun := 1
    LOCAL _n_tip_dok, _dat_max, nTrec, _t_fakt_rec
    LOCAL cVezaOtpremnice, _broj_dokumenta
    LOCAL _id_partner, _rec
    LOCAL lOk := .T.
-   LOCAL _item, _msg
-   LOCAL _gen_params, _valuta
+   LOCAL oItem, _msg
+   LOCAL hGenParams, _valuta
    LOCAL _first
    LOCAL oQry
    LOCAL _datum_max
    LOCAL cSql
    LOCAL hFaktRec
 
-   IF !::generisi_fakt_pripr_vars( @_gen_params ) // parametri generisanja...
+   IF !::generisi_fakt_pripr_vars( @hGenParams ) // parametri generisanja...
       RETURN .F.
    ENDIF
 
-   // uzmi parametre matrice...
-   _sumirati := _gen_params[ "sumiraj" ] == "D"
-   _vp_mp := _gen_params[ "tip_racuna" ]
-   _valuta := _gen_params[ "valuta" ]
 
-   IF _vp_mp == 1
+   lSumirati := hGenParams[ "sumiraj" ] == "D"
+   nVPiliMPRacun := hGenParams[ "tip_racuna" ]
+   _valuta := hGenParams[ "valuta" ]
+
+   IF nVPiliMPRacun == 1
       _n_tip_dok := "10"
    ELSE
       _n_tip_dok := "11"
    ENDIF
 
    cSql := "SELECT idroba, cijena, COALESCE(substring(txt from '\x10(.*?)\x11\x10.*?\x11' ), '') AS opis_usluga, "
-   IF _sumirati
+   IF lSumirati
       cSql += "sum(kolicina), max(datdok), max(txt)"
    ELSE
       cSql += "kolicina, datdok, txt"
@@ -309,22 +309,22 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
 
    cVezaOtpremnice := ""
    _first := .T.
-   FOR EACH _item IN ::aItems
-      IF _item:mark
+   FOR EACH oItem IN ::aItems
+      IF oItem:mark
          IF _first
             _first := .F.
          ELSE
             cSql += ","
             cVezaOtpremnice += ","
          ENDIF
-         cSql += sql_quote( _item:brdok )
-         cVezaOtpremnice += Trim( _item:brdok )
+         cSql += sql_quote( oItem:brdok )
+         cVezaOtpremnice += Trim( oItem:brdok )
       ENDIF
    NEXT
 
    cSql += ")"
 
-   IF _sumirati
+   IF lSumirati
       cSql += " group by idroba,cijena,opis_usluga order by idroba,cijena,opis_usluga"
    ELSE
       cSql += " order by idroba,cijena,opis_usluga"
@@ -357,7 +357,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
          _datum_max := hFaktRec[ "datdok" ]
       ENDIF
 
-      IF _vp_mp == 2
+      IF nVPiliMPRacun == 2
          // radi se o mp racunu, izracunaj cijenu sa pdv
          hFaktRec[ "cijena" ] := Round( _uk_sa_pdv( ::p_idtipdok, ::p_idpartner, hFaktRec[ "cijena" ] ), 2 )
       ENDIF

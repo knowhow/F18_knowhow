@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -231,11 +231,11 @@ FUNCTION ZaglSink2()
    IF fin_jednovalutno(); F10CPI; ENDIF
    ?  m
    IF fin_dvovalutno()
-      ?  "*  MJESEC    *             I Z N O S     U     " + ValDomaca() + "               *       I Z N O S     U     " + ValPomocna() + "         *"
+      ?  "*  MJESEC    *             I Z N O S     U     " + valuta_domaca_skraceni_naziv() + "               *       I Z N O S     U     " + ValPomocna() + "         *"
       ?  "              ---------------------------------------------------- -----------------------------------------"
       ?U  "*            *    DUGUJE      *     POTRAŽUJE   *      SALDO      *   DUGUJE    *  POTRA@UJE  *    SALDO   *"
    ELSE
-      ?  "*  MJESEC    *             I Z N O S     U     " + ValDomaca() + "               *"
+      ?  "*  MJESEC    *             I Z N O S     U     " + valuta_domaca_skraceni_naziv() + "               *"
       ?  "              -----------------------------------------------------"
       ?U  "*            *    DUGUJE      *     POTRAŽUJE   *      SALDO      *"
    ENDIF

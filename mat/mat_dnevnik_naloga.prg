@@ -1,20 +1,17 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-
 STATIC _pict := "@Z 999999999.99"
-
 
 // --------------------------------------------
 // stampa liste naloga
@@ -122,10 +119,10 @@ STATIC FUNCTION _zaglavlje( line )
    _r_line_2 += PadR( "* NAL", 9 )
 
    _r_line_1 += PadR( "*   DUGUJE", 13 )
-   _r_line_2 += PadR( "*   " + ValDomaca(), 13 )
+   _r_line_2 += PadR( "*   " + valuta_domaca_skraceni_naziv(), 13 )
 
    _r_line_1 += PadR( "* POTRAZUJE", 13 )
-   _r_line_2 += PadR( "*   " + ValDomaca(), 13 )
+   _r_line_2 += PadR( "*   " + valuta_domaca_skraceni_naziv(), 13 )
 
    _r_line_1 += PadR( "*   DUGUJE", 13 )
    _r_line_2 += PadR( "*   " + ValPomocna(), 13 )

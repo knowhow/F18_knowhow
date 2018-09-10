@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -194,8 +194,8 @@ FUNCTION ld_specifikacija_plate_2001_stari()
 
       IF ld_vise_obracuna()
          @ box_x_koord() + 2, Col() + 1 SAY "Obr.:" GET cObracun ;
-            WHEN HelpObr( .T., cObracun ) ;
-            VALID ValObr( .T., cObracun )
+            WHEN ld_help_broj_obracuna( .T., cObracun ) ;
+            VALID ld_valid_obracun( .T., cObracun )
       ENDIF
 
       @ box_x_koord() + 3, box_y_koord() + 2 SAY "Period od:" GET nDanOd PICT "99"
@@ -214,17 +214,16 @@ FUNCTION ld_specifikacija_plate_2001_stari()
       @ box_x_koord() + 5, box_y_koord() + 52 SAY "Dat.ispl:" GET dDatIspl
 
 
-      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" ;
-         GET cPrimDobra  PICT "@!S20"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" GET cPrimDobra  PICT "@!S20"
 
-      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Dopr.pio (iz)" GET cDopr1
-      @ box_x_koord() + 10, Col() + 2 SAY "Dopr.pio (na)" GET cDopr5
-      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Dopr.zdr (iz)" GET cDopr2
-      @ box_x_koord() + 11, Col() + 2 SAY "Dopr.zdr (na)" GET cDopr6
-      @ box_x_koord() + 11, Col() + 1 SAY "Omjer dopr.zdr (%):" GET _omjer_zdravstvo PICT "999.99999"
+      @ box_x_koord() + 10, box_y_koord() + 2 SAY "Dopr. pio (iz)" GET cDopr1
+      @ box_x_koord() + 10, Col() + 2 SAY "Dopr. pio (na)" GET cDopr5
+      @ box_x_koord() + 11, box_y_koord() + 2 SAY "Dopr. zdr (iz)" GET cDopr2
+      @ box_x_koord() + 11, Col() + 2 SAY "Dopr. zdr (na)" GET cDopr6
+      @ box_x_koord() + 11, Col() + 1 SAY "Omjer dopr. zdr (%):" GET _omjer_zdravstvo PICT "999.99999"
       @ box_x_koord() + 12, box_y_koord() + 2 SAY "Dopr.nez (iz)" GET cDopr3
       @ box_x_koord() + 12, Col() + 2 SAY "Dopr.nez (na)" GET cDopr7
-      @ box_x_koord() + 12, Col() + 1 SAY "Omjer dopr.nez (%):" GET _omjer_nezap PICT "999.99999"
+      @ box_x_koord() + 12, Col() + 1 SAY "Omjer dopr. nez (%):" GET _omjer_nezap PICT "999.99999"
 
       @ box_x_koord() + 13, box_y_koord() + 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
       @ box_x_koord() + 14, box_y_koord() + 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"

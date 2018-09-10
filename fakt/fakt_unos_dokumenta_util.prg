@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -241,6 +241,8 @@ FUNCTION fakt_v_kolicina( cTipVpc )
    LOCAL nIzl := 0
    LOCAL nRezerv := 0
    LOCAL nRevers := 0
+   LOCAL lRoba := .T.
+   LOCAL lFaktIzlaz := .T.
 
    IF _kolicina == 0
       RETURN .F.
@@ -253,15 +255,18 @@ FUNCTION fakt_v_kolicina( cTipVpc )
       RETURN .T.
    ENDIF
 
-   IF _podbr <> " ."
+   //IF _podbr <> " ."
 
       select_o_rj( _idfirma )
 
       cRjTip := rj->tip
 
-      fakt_set_pozicija_sif_roba( _IDROBA )
+      fakt_set_pozicija_sif_roba( _IdRoba )
+      lRoba := ( roba->tip != "U" )
+      lFaktIzlaz := Left( _idtipdok, 1 ) $ "12"
 
-      IF !( roba->tip = "U" )
+
+      IF lRoba
          IF _idtipdok == "13" .AND. ( gVar13 == "2" .OR. glCij13Mpc ) .AND. gVarNum == "1"
             IF gVar13 == "2" .AND. _idtipdok == "13"
                _cijena := fakt_mpc_iz_sifrarnika()
@@ -338,14 +343,15 @@ FUNCTION fakt_v_kolicina( cTipVpc )
             ENDIF
          ENDIF
       ENDIF
-   ENDIF
+   //ENDIF
 
 
-   lBezMinusa := .F.
+   //lBezMinusa := .F.
+   //select_o_roba( _IdRoba )
 
-   IF !( roba->tip = "U" ) .AND. !Empty( _IdRoba ) .AND.  Left( _idtipdok, 1 ) $ "12" .AND. ( gPratiK == "D" .OR. lBezMinusa = .T. ) .AND. !( Left( _idtipdok, 1 ) == "1" .AND. Left( _serbr, 1 ) = "*" )
+   IF lRoba .AND. lFaktIzlaz .AND. is_fakt_pratiti_kolicinu()   //.AND. !( Left( _idtipdok, 1 ) == "1" .AND. Left( _serbr, 1 ) == "*" )
 
-      MsgO( "Izračunavam trenutno stanje ..." )
+      MsgO( "Izračunavam trenutno stanje FAKT ..." )
 
       seek_fakt_3( NIL, _idroba )
 
@@ -354,7 +360,7 @@ FUNCTION fakt_v_kolicina( cTipVpc )
       nRezerv := 0
       nRevers := 0
 
-      DO WHILE !Eof()  .AND. roba->id == IdRoba
+      DO WHILE !Eof() .AND. roba->id == IdRoba
 
          IF fakt->IdFirma <> _IdFirma
             SKIP
@@ -383,11 +389,13 @@ FUNCTION fakt_v_kolicina( cTipVpc )
 
          fakt_box_stanje( { { _IdFirma, nUl, nIzl, nRevers, nRezerv } }, _idroba )
 
-         IF _idtipdok = "1" .AND. lBezMinusa = .T.
-            SELECT fakt_pripr
-            RETURN .F.
-         ENDIF
+         //IF LEFT( _idtipdok, 1 ) == "1"  //.AND. lBezMinusa = .T.
+         //    SELECT fakt_pripr
+         //    RETURN .F.
+         //ENDIF
 
+      ELSE
+          info_bar( "fakt_stanje", "Artikal: " + _idRoba + " stanje: " + Alltrim( Str(nUl - nIzl - nRevers - nRezerv, 12, 3) ) )
       ENDIF
    ENDIF
 
@@ -422,9 +430,9 @@ FUNCTION fakt_valid_roba( cIdFirma, cIdTipDok, cIdRoba, cTxt1, cIdPartner, lFakt
    LOCAL cPom
    LOCAL lPrikTar := .T.
    LOCAL nArr
-   PRIVATE cVarIDROBA
+   //PRIVATE cVarIDROBA
 
-   cVarIDROBA := "_IDROBA"
+   //cVarIDROBA := "_IDROBA"
 
    // IF lPrikTar == nil
    // lPrikTar := .T.
@@ -434,16 +442,17 @@ FUNCTION fakt_valid_roba( cIdFirma, cIdTipDok, cIdRoba, cTxt1, cIdPartner, lFakt
       cIdroba :=  Left( cIdroba, Val( gDuzSifIni ) )
    ENDIF
 
-
+/*
    IF Right( Trim ( &cVarIdRoba ), 2 ) = "--"
       cPom := PadR( Left( &cVarIdRoba, Len( Trim( &cVarIdRoba ) ) - 2 ), Len( &cVarIdRoba ) )
       IF select_o_roba( cPom )
-         FaktStanje( roba->id )    // prelistaj kalkulacije
+         fakt_stanje_roba( roba->id )    // prelistaj kalkulacije
          &cVarIdRoba := cPom
       ENDIF
    ENDIF
-
+*/
    P_Roba( @cIdroba, NIL, NIL, roba_trazi_po_sifradob() )
+
 
    SELECT fakt_pripr
 
@@ -519,46 +528,63 @@ STATIC FUNCTION fakt_trenutno_na_stanju_kalk( cIdRj, cIdTipDok, cIdRoba )
 
 
 
-FUNCTION FaktStanje( cIdRoba )
+FUNCTION fakt_stanje_roba( cIdRoba )
 
    LOCAL nPos, nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
 
-   seek_fakt_3( cIdRoba )
+   PushWa()
+   altd()
+   seek_fakt_3( NIL, cIdRoba )
 
    aStanje := {}  // {idfirma, nUl,nIzl,nRevers,nRezerv }
+
    nUl := nIzl := nRezerv := nRevers := 0
-   DO WHILE !Eof()  .AND. cIdRoba == IdRoba
-      nPos := AScan ( aStanje, {| x | x[ 1 ] == FAKT->IdFirma } )
+   DO WHILE !Eof() .AND. cIdRoba == IdRoba
+      nPos := AScan ( aStanje, {| x | x[ 1 ] == field->IdFirma } )
       IF nPos == 0
-         AAdd ( aStanje, { IdFirma, 0, 0, 0, 0 } )
+         AAdd ( aStanje, { field->IdFirma, 0, 0, 0, 0 } )
          nPos := Len ( aStanje )
       ENDIF
       IF Left( field->idtipdok, 1 ) == "0"  // ulaz
          aStanje[ nPos ][ 2 ] += kolicina
-      ELSEIF Left( idtipdok, 1 ) == "1"   // izlazni dokument
+      ELSEIF Left( field->idtipdok, 1 ) == "1"   // izlazni dokument
          IF !( Left( serbr, 1 ) == "*" .AND. idtipdok == "10" )  // za fakture na osnovu optpremince ne ra~unaj izlaz
             aStanje[ nPos ][ 3 ] += kolicina
          ENDIF
-      ELSEIF idtipdok $ "20#27"
+      ELSEIF field->idtipdok $ "20#27"
          IF serbr = "*"
             aStanje[ nPos ][ 5 ] += kolicina
          ENDIF
-      ELSEIF idtipdok == "21"
+      ELSEIF field->idtipdok == "21"
          aStanje[ nPos ][ 4 ] += kolicina
       ENDIF
       SKIP
    ENDDO
 
+
    fakt_box_stanje( aStanje, cIdRoba )      // nUl,nIzl,nRevers,nRezerv)
 
+   PopWa()
+
    RETURN .T.
+
+
+
+FUNCTION fakt_roba_key_handler( Ch )
+
+      IF Upper( Chr( Ch ) ) == "S"
+         fakt_stanje_roba( roba->id )
+         RETURN DE_CONT
+      ENDIF
+
+      RETURN DE_CONT
 
 
 
 FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
    LOCAL i, nR, nC, nTSta := 0, nTRev := 0, nTRez := 0, ;
-      nTOst := 0, npd, cDiv := " ³ ", nLen
+      nTOst := 0, npd, cDiv := " | ", nLen
 
    nPd := Len ( fakt_pic_iznos() )
    nLen := Len ( aStanje )
@@ -576,7 +602,10 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    //NEXT
    //nLenDP := IIF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
+
    select_o_roba( cIdRoba )
+
+
    Box(, 6 + nLen / 2, 75 )
    Beep( 1 )
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "ARTIKAL: "
@@ -620,6 +649,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    @ nR, Col() SAY nTOst PICT fakt_pic_iznos()
    @ nR, Col() SAY cDiv
 
+/*
    // ispis dodatnih parametara stanja
 
    IF nLenDP > 0
@@ -644,6 +674,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
       NEXT
    ENDIF
+*/
 
    Inkey( 0 )
    BoxC()

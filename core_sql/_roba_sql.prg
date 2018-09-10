@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -57,6 +57,10 @@ FUNCTION find_roba_by_naz_or_id( cId )
    cSqlQuery += " OR naz ilike " + cIdSql
    cSqlQuery += " OR sifradob ilike " + cIdSql
 
+   IF roba_barkod_pri_unosu()
+      cSqlQuery += " OR barkod ilike " + cIdSql
+   ENDIF
+
    IF !use_sql( "roba", cSqlQuery, cAlias )
       RETURN .F.
    ENDIF
@@ -108,6 +112,8 @@ FUNCTION select_o_roba( cId )
    IF Used()
       IF RecCount() > 1 .AND. cId == NIL
          RETURN .T.
+      ELSEIF cId != NIL .AND. cId == roba->id
+         RETURN .T. // vec pozicionirani na roba.id
       ELSE
          USE // samo zatvoriti postojecu tabelu, pa ponovo otvoriti sa cId
       ENDIF

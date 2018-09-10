@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -11,108 +11,42 @@
 
 #include "f18.ch"
 
+MEMVAR gOsSii
 
+FUNCTION os_sii_da_li_postoji_polje( cField )
 
-// -----------------------------------------------------
-// provjerava da li postoji polje u tabelama os/sii
-// -----------------------------------------------------
-FUNCTION os_postoji_polje( naziv_polja )
-
-   LOCAL _ret := .F.
+   LOCAL lRet := .F.
 
    IF gOsSii == "O"
-      IF os->( FieldPos( naziv_polja ) ) <> 0
-         _ret := .T.
+      IF os->( FieldPos( cField ) ) <> 0
+         lRet := .T.
       ENDIF
    ELSE
-      IF sii->( FieldPos( naziv_polja ) ) <> 0
-         _ret := .T.
+      IF sii->( FieldPos( cField ) ) <> 0
+         lRet := .T.
       ENDIF
    ENDIF
 
-   RETURN _ret
+   RETURN lRet
 
 
-// ----------------------------------------
-// selektuje potrebnu tabelu
-// ----------------------------------------
-FUNCTION select_os_sii()
+
+FUNCTION os_sii_table_name()
 
    IF gOsSii == "O"
-      SELECT os
-   ELSE
-      SELECT sii
+      RETURN "os_os"
    ENDIF
 
-   RETURN .T.
+   RETURN "sii_sii"
 
 
-FUNCTION select_promj()
+FUNCTION promj_table_name()
 
    IF gOsSii == "O"
-      SELECT promj
-   ELSE
-      SELECT sii_promj
+      RETURN "os_promj"
    ENDIF
 
-   RETURN .T.
-
-
-FUNCTION o_os_sii()
-
-   IF gOsSii == "O"
-      O_OS
-   ELSE
-      O_SII
-   ENDIF
-
-   RETURN .T.
-
-
-
-FUNCTION o_os_sii_promj()
-
-   IF gOsSii == "O"
-      O_PROMJ
-   ELSE
-      O_SII_PROMJ
-   ENDIF
-
-   RETURN .T.
-
-
-// -----------------------------------------
-// vraca naziv tabele na osnovu alias-a
-// -----------------------------------------
-FUNCTION get_os_table_name( alias )
-
-   LOCAL _ret := "os_os"
-
-   IF Upper( alias ) == "OS"
-      _ret := "os_os"
-   ELSE
-      _ret := "sii_sii"
-   ENDIF
-
-   RETURN _ret
-
-
-
-// -----------------------------------------
-// vraca naziv tabele na osnovu alias-a
-// -----------------------------------------
-FUNCTION get_promj_table_name( alias )
-
-   LOCAL _ret := "os_promj"
-
-   IF Upper( alias ) == "PROMJ"
-      _ret := "os_promj"
-   ELSE
-      _ret := "sii_promj"
-   ENDIF
-
-   RETURN _ret
-
+   RETURN "sii_promj"
 
 
 
@@ -136,7 +70,7 @@ FUNCTION Unifid()
       nIsti := 0
 
       DO WHILE !Eof() .AND. field->id == cId
-         ++ nIsti
+         ++nIsti
          SKIP
       ENDDO
 

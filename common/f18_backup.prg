@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -21,7 +21,7 @@ CLASS F18Backup
    METHOD do_backup()
 
    METHOD backup_organizacija()
-   METHOD Backup_server()
+   METHOD backup_server()
 
    METHOD backup_to_removable()
 
@@ -151,12 +151,16 @@ METHOD F18Backup:do_backup_now()
    LOCAL nType := 1
    LOCAL nX
    LOCAL nY
+   LOCAL GetList := {}
 
    Box( "#Backup NOW", 7, 60 )
-   nX := box_x_koord() + 1
+   nX := box_x_koord() + 2
    nY := box_y_koord() + 2
 
-   @ nX, nY SAY "*** BACKUP procedura *** " + DToC( Date() )
+
+   @ nX++, nY SAY "*** BACKUP procedura *** " + DToC( Date() )
+
+   nX++
 
    @ nX++, nY SAY "Dostupne opcije:"
    @ nX++, nY SAY8 "   1 - backup trenutne organizacije"
@@ -233,17 +237,17 @@ METHOD F18Backup:backup_organizacija()
 
    LOCAL lOk := .F.
    LOCAL cCmd := ""
-   LOCAL _server_params := my_server_params()
-   LOCAL _host := _server_params[ "host" ]
-   LOCAL _port := _server_params[ "port" ]
-   LOCAL cDataBase := _server_params[ "database" ]
-   LOCAL _admin_user := "admin"
+   LOCAL hServerParams := my_server_params()
+   LOCAL cHost := hServerParams[ "host" ]
+   LOCAL nPort := hServerParams[ "port" ]
+   LOCAL cDataBase := hServerParams[ "database" ]
+   LOCAL cAdminUser := "admin"
    LOCAL nX := 7
    LOCAL nY := 2
    LOCAL nI, cBackupFile
    LOCAL _color_ok := F18_COLOR_BACKUP_OK
    LOCAL _color_err := F18_COLOR_BACKUP_ERROR
-   LOCAL _line := Replicate( "-", 70 )
+   LOCAL cLine := Replicate( "-", 70 )
 
    ::get_backup_filename()
    ::get_windows_ping_time()
@@ -270,8 +274,8 @@ METHOD F18Backup:backup_organizacija()
 #endif
 
    cCmd += pg_dump_cmd() + " "
-   cCmd += " -h " + AllTrim( _host )
-   cCmd += " -p " + AllTrim( Str( _port ) )
+   cCmd += " -h " + AllTrim( cHost )
+   cCmd += " -p " + AllTrim( Str( nPort ) )
    cCmd += " -U " + f18_user()
    cCmd += " -w "
    cCmd += " -F c "
@@ -292,11 +296,11 @@ METHOD F18Backup:backup_organizacija()
       ++nX
       @ nX, nY SAY "              na prozor aplikacije i nastavite raditi."
       ++nX
-      @ nX, nY SAY _line
+      @ nX, nY SAY cLine
       ++nX
       @ nX, nY SAY "Backup podataka u toku...."
       ++nX
-      @ nX, nY SAY _line
+      @ nX, nY SAY cLine
       ++nX
       @ nX, nY SAY "   Lokacija backup-a: " + ::cPath
       ++nX
@@ -371,21 +375,25 @@ METHOD F18Backup:backup_server()
 
    LOCAL lOk := .F.
    LOCAL cCmd := ""
-   LOCAL _server_params := my_server_params()
-   LOCAL _host := _server_params[ "host" ]
-   LOCAL _port := _server_params[ "port" ]
-   LOCAL cDataBase := _server_params[ "database" ]
-   LOCAL _admin_user := "admin"
+   LOCAL hServerParams := my_server_params()
+   LOCAL cHost := hServerParams[ "host" ]
+   LOCAL nPort := hServerParams[ "port" ]
+   //LOCAL cDataBase := hServerParams[ "database" ]
+   LOCAL cAdminUser := "admin"
    LOCAL nX := 7
    LOCAL nY := 2
    LOCAL nI, cBackupFile
-   LOCAL _line := Replicate( "-", 70 )
+   LOCAL cLine := Replicate( "-", 70 )
    LOCAL _color_ok := "W+/B+"
    LOCAL _color_err := "W+/R+"
 
    ::get_backup_filename()
    ::get_windows_ping_time()
    ::get_removable_drive()
+
+   F18Admin():sql_cleanup_all()
+
+   F18Admin():relogin_as( hServerParams[ "user" ],  hServerParams[ "password" ], hServerParams[ "database" ] )
 
    FErase( ::cPath + ::cFileName )
    Sleep( 1 )
@@ -411,9 +419,9 @@ METHOD F18Backup:backup_server()
 #endif
 
    cCmd += "pg_dumpall"
-   cCmd += " -h " + AllTrim( _host )
-   cCmd += " -p " + AllTrim( Str( _port ) )
-   cCmd += " -U " + AllTrim( _admin_user )
+   cCmd += " -h " + AllTrim( cHost )
+   cCmd += " -p " + AllTrim( Str( nPort ) )
+   cCmd += " -U " + AllTrim( cAdminUser )
    cCmd += " -w "
    cCmd += ' -f "' + cBackupFile + '"'
 
@@ -423,7 +431,7 @@ METHOD F18Backup:backup_server()
       ++nX
       @ nX, nY SAY8 "              na prozor aplikacije i nastavite raditi."
       ++nX
-      @ nX, nY SAY _line
+      @ nX, nY SAY cLine
       ++nX
       @ nX, nY SAY8 "Backup podataka u toku...."
       ++nX
@@ -551,13 +559,13 @@ METHOD F18Backup:get_backup_filename()
 
    LOCAL _name
    LOCAL _tmp
-   LOCAL _server_params := my_server_params()
+   LOCAL hServerParams := my_server_params()
    LOCAL nI
 
    _tmp := "server"
 
    IF ::nBackupType == 1
-      _tmp := AllTrim( _server_params[ "database" ] )
+      _tmp := AllTrim( hServerParams[ "database" ] )
    ENDIF
 
    FOR nI := 1 TO 99

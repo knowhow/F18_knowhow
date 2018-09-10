@@ -102,7 +102,7 @@ FUNCTION fin_prekart()
       { "Br.veze ",      {|| BrDok   }, "BrDok" }, ;
       { "Datum",         {|| DatDok  }, "DatDok" }, ;
       { "D/P",           {|| D_P     }, "D_P" }, ;
-      { ValDomaca(),     {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznos " + AllTrim( ValDomaca() ) }, ;
+      { valuta_domaca_skraceni_naziv(),     {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznos " + AllTrim( valuta_domaca_skraceni_naziv() ) }, ;
       { ValPomocna(),    {|| Transform( IznosDEM, FormPicL( pic_iznos_eur(), 10 ) ) }, "iznos " + AllTrim( ValPomocna() ) }, ;
       { "Opis",          {|| Opis      }, "OPIS" }, ;
       { "K1",            {|| k1      }, "k1" }, ;

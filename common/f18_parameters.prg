@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -231,7 +231,7 @@ FUNCTION set_parametre_f18_aplikacije( lUpravoSetovani )
       // set_metric( "legacy_ld_rekap_dbf", NIL, cLdRekapDbf )
       set_metric( "legacy_kalk_pr", NIL, cLegacyKalkPr )
       set_metric( "legacy_ptxt", NIL, cLegacyPTxt )
-      set_metric( "F18_LO", NIL, cDownloadF18LO )
+      set_metric( "F18_LO", my_user(), cDownloadF18LO )
       set_metric( "F18_check_updates", my_user(), cCheckUpdates )
       set_metric( "F18_verzija", NIL, cF18Verzija )
       set_metric( "F18_varijanta", NIL, cF18Varijanta )

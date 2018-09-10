@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -54,9 +54,9 @@ FUNCTION fin_kontrola_zbira_tabele_prometa( lKontrolaZaDatumskiPeriod )
 
    @ box_x_koord() + 2, box_y_koord() + 1 SAY _line
 
-   @ box_x_koord() + 3, box_y_koord() + 1 SAY "duguje " + ValDomaca()
-   @ box_x_koord() + 4, box_y_koord() + 1 SAY "potraz." + ValDomaca()
-   @ box_x_koord() + 5, box_y_koord() + 1 SAY "saldo  " + ValDomaca()
+   @ box_x_koord() + 3, box_y_koord() + 1 SAY "duguje " + valuta_domaca_skraceni_naziv()
+   @ box_x_koord() + 4, box_y_koord() + 1 SAY "potraz." + valuta_domaca_skraceni_naziv()
+   @ box_x_koord() + 5, box_y_koord() + 1 SAY "saldo  " + valuta_domaca_skraceni_naziv()
    @ box_x_koord() + 7, box_y_koord() + 1 SAY "duguje " + ValPomocna()
    @ box_x_koord() + 8, box_y_koord() + 1 SAY "potraz." + ValPomocna()
    @ box_x_koord() + 9, box_y_koord() + 1 SAY "saldo  " + ValPomocna()

@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -20,7 +20,7 @@ STATIC FUNCTION _export_cond( params )
    LOCAL _ok := .T.
    LOCAL _tip := "V"
    LOCAL _suma := "N"
-   LOCAL _valuta := PadR( AllTrim( ValDomaca() ), 3 )
+   LOCAL _valuta := PadR( AllTrim( valuta_domaca_skraceni_naziv() ), 3 )
    LOCAL _pr_isp := "N"
    PRIVATE GetList := {}
 
@@ -116,7 +116,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
    _valuta := _exp_params[ "exp_valuta" ]
 
    IF Empty( _valuta )
-      _valuta := PadR( ValDomaca(), 3 )
+      _valuta := PadR( valuta_domaca_skraceni_naziv(), 3 )
    ENDIF
 
    IF _isporuka

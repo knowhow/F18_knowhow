@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -190,7 +190,7 @@ FUNCTION Get2_PR()
    @ box_x_koord() + 5, box_y_koord() + 40 GET _CarDaz PICTURE PicDEM
 
    @ box_x_koord() + 6, box_y_koord() + 2 SAY cRNT5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
-   @ box_x_koord() + 6, box_y_koord() + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_when_valid_nc(), .T. }
+   @ box_x_koord() + 6, box_y_koord() + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_when_valid_nc_ulaz(), .T. }
 
    @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "CIJENA KOŠTANJA  "
    @ box_x_koord() + 8, box_y_koord() + 50 GET _NC PICTURE PicDEM

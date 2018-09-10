@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -47,6 +47,7 @@ FUNCTION cre_all_os( ver )
    _alias := "os"
    _table_name := "os_os"
 
+/*
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "1", "id+idam+dtos(datum)", _alias )
    CREATE_INDEX( "2", "idrj+id+dtos(datum)", _alias )
@@ -54,10 +55,11 @@ FUNCTION cre_all_os( ver )
    CREATE_INDEX( "4", "idkonto+idrj+id", _alias )
    CREATE_INDEX( "5", "idam+idrj+id", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    // kreiraj tabelu SII
 
+/*
    _alias := "sii"
    _table_name := "sii_sii"
 
@@ -68,7 +70,7 @@ FUNCTION cre_all_os( ver )
    CREATE_INDEX( "4", "idkonto+idrj+id", _alias )
    CREATE_INDEX( "5", "idam+idrj+id", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    aDbf := {}
    AAdd( aDBf, { 'ID', 'C',  10,  0 } )
@@ -83,20 +85,24 @@ FUNCTION cre_all_os( ver )
    AAdd( aDBf, { 'RevP', 'N',  18,  2 } )
 
 
-   _alias := "promj"
+   _alias := "OS_PROMJ"
    _table_name := "os_promj"
 
+/*
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "1", "id+tip+dtos(datum)+opis", _alias )
    AFTER_CREATE_INDEX
+*/
 
    _alias := "sii_promj"
    _table_name := "sii_promj"
 
 
+/*
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "1", "id+tip+dtos(datum)+opis", _alias )
    AFTER_CREATE_INDEX
+*/
 
    aDbf := {}
    AAdd( aDBf, { 'ID', 'C',   8,  0 } )
@@ -106,10 +112,11 @@ FUNCTION cre_all_os( ver )
    _alias := "amort"
    _table_name := "os_amort"
 
+/*
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "ID", "id", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    aDbf := {}
    AAdd( aDBf, { 'ID', 'C',   4,  0 } )
@@ -127,13 +134,14 @@ FUNCTION cre_all_os( ver )
    AAdd( aDBf, { 'I11', 'N',   7,  3 } )
    AAdd( aDBf, { 'I12', 'N',   7,  3 } )
 
+/*
    _alias := "reval"
    _table_name := "os_reval"
 
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "ID", "id", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    aDBf := {}
    AAdd( aDBf, { 'ID', 'C',   4,  0 } )
@@ -148,6 +156,8 @@ FUNCTION cre_all_os( ver )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
    AFTER_CREATE_INDEX
 */
+
+/*
    IF !File( f18_ime_dbf( "invent" ) )
       aDbf := {}
       AAdd( aDBf, { 'ID', 'C',  10,  0 } )
@@ -158,5 +168,6 @@ FUNCTION cre_all_os( ver )
 
    ENDIF
    CREATE_INDEX( "ID", "Id", "INVENT" ) // Inventura
+*/
 
    RETURN .T.

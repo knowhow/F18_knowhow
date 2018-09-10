@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -50,59 +50,6 @@ FUNCTION P_Konto( cId, dx, dy )
 
 
 
-
-/*
-    *     Otvara sifrarnik konta spec. za FIN
-    *   param: cId
-    *   param: dx
-    *   param: dy
-    *   param: lBlag
-
--- FUNCTION p_konto( cId, dx, dy, lBlag )
-
-   LOCAL i
-   LOCAL nDbfArea := Select()
-   PRIVATE ImeKol := {}
-   PRIVATE Kol := {}
-
-   o_konto()
-
-   ImeKol := { { PadR( "ID", 7 ),  {|| id },     "id", {|| .T. }, {|| validacija_postoji_sifra( wid ) } }, ;
-      { "Naziv",       {|| naz },     "naz"      };
-      }
-
-   IF KONTO->( FieldPos( "POZBILS" ) ) <> 0
-      AAdd ( ImeKol, { PadR( "Poz.u bil.st.", 20 ), {|| pozbils }, "pozbils" } )
-   ENDIF
-   IF KONTO->( FieldPos( "POZBILU" ) ) <> 0
-      AAdd ( ImeKol, { PadR( "Poz.u bil.usp.", 20 ), {|| pozbilu }, "pozbilu" } )
-   ENDIF
-   IF KONTO->( FieldPos( "OZNAKA" ) ) <> 0
-      AAdd ( ImeKol, { PadR( "Oznaka", 20 ), {|| oznaka }, "oznaka" } )
-   ENDIF
-
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
-   NEXT
-
-   IF lBlag == NIL
-      lBlag := .F.
-   ENDIF
-
-  -- SELECT konto
-   sifk_fill_ImeKol( "KONTO", @ImeKol, @Kol )
-
-
---   SELECT KONTO
-   SET ORDER TO TAG "ID"
-
-   p_sifra( F_KONTO, 1, f18_max_rows() -17, f18_max_cols() -10, "LKTF Lista: Konta ", @cId, dx, dy, {| Ch| KontoBlok( Ch ) },,,,, { "ID" } )
-
-   SELECT ( nDbfArea )
-
-   RETURN .T.
-
-   */
 
 
 

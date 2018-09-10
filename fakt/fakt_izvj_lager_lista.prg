@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -895,7 +895,7 @@ FUNCTION fakt_lager_lista_sql( hParams, lPocetnoStanje )
 
    LOCAL _table
    LOCAL _tek_database := my_server_params()[ "database" ]
-   LOCAL _db_params := my_server_params()
+   LOCAL hDbParams := my_server_params()
 
    IF hParams == NIL
       IF fakt_lager_lista_vars( @hParams ) == 0
@@ -916,8 +916,8 @@ FUNCTION fakt_lager_lista_sql( hParams, lPocetnoStanje )
 STATIC FUNCTION fakt_lager_lista_get_data( hParams, lPocetnoStanje )
 
    LOCAL _tek_database := my_server_params()[ "database" ]
-   LOCAL _db_params := my_server_params()
-   LOCAL _table, _qry, _server
+   LOCAL hDbParams := my_server_params()
+   LOCAL _table, cQuery, _server
    LOCAL _date_from, _date_to, _data_ps
    LOCAL _id_firma, _usl_roba, _usl_partn, _usl_tip_dok
 
@@ -935,15 +935,15 @@ STATIC FUNCTION fakt_lager_lista_get_data( hParams, lPocetnoStanje )
 
    IF lPocetnoStanje
       my_server_logout()
-      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_from ) ) )
-      my_server_params( _db_params )
-      my_server_login( _db_params )
+      hDbParams[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_from ) ) )
+      my_server_params( hDbParams )
+      my_server_login( hDbParams )
       set_sql_search_path()
    ENDIF
 
    _server := sql_data_conn()
 
-   _qry := "SELECT " + ;
+   cQuery := "SELECT " + ;
       "f.idroba, r.naz, " + ;
       "SUM( CASE " + ;
       "WHEN idtipdok LIKE '0%' THEN kolicina  " + ;
@@ -956,35 +956,35 @@ STATIC FUNCTION fakt_lager_lista_get_data( hParams, lPocetnoStanje )
       "FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt f " + ;
       "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + "roba r ON f.idroba = r.id "
 
-   _qry += " WHERE "
-   _qry += _sql_cond_parse( "idfirma", _id_firma )
-   _qry += " AND " + _sql_date_parse( "datdok", _date_from, _date_to )
+   cQuery += " WHERE "
+   cQuery += _sql_cond_parse( "idfirma", _id_firma )
+   cQuery += " AND " + _sql_date_parse( "datdok", _date_from, _date_to )
 
    IF !Empty( _usl_roba )
-      _qry += " AND " + _sql_cond_parse( "idroba", _usl_roba )
+      cQuery += " AND " + _sql_cond_parse( "idroba", _usl_roba )
    ENDIF
 
    IF !Empty( _usl_partn )
-      _qry += " AND " + _sql_cond_parse( "idpartner", _usl_partn )
+      cQuery += " AND " + _sql_cond_parse( "idpartner", _usl_partn )
    ENDIF
 
    IF !Empty( _usl_tip_dok )
-      _qry += " AND " + _sql_cond_parse( "idtipdok", _usl_tip_dok )
+      cQuery += " AND " + _sql_cond_parse( "idtipdok", _usl_tip_dok )
    ENDIF
 
-   _qry += " GROUP BY f.idroba, r.naz, r.jmj, r.vpc "
-   _qry += " ORDER BY f.idroba "
+   cQuery += " GROUP BY f.idroba, r.naz, r.jmj, r.vpc "
+   cQuery += " ORDER BY f.idroba "
 
-   _table := run_sql_query( _qry )
+   _table := run_sql_query( cQuery )
    IF sql_error_in_query( _table )
       _table := NIL
    ENDIF
 
    IF lPocetnoStanje
       my_server_logout()
-      _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )
-      my_server_params( _db_params )
-      my_server_login( _db_params )
+      hDbParams[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )
+      my_server_params( hDbParams )
+      my_server_login( hDbParams )
       set_sql_search_path()
    ENDIF
 

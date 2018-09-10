@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -36,7 +36,7 @@ FUNCTION ld_obracun_mnu_admin()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. brisanje obračuna                             " )
+   AAdd( _opc, "1. brisanje obračuna                                            " )
    AAdd( _opcexe, {|| ld_brisanje_obr() } )
 
 
@@ -52,6 +52,10 @@ FUNCTION ld_obracun_mnu_admin()
       AAdd( _opc, "R. pregled/ispravka radnih sati radnika" )
       AAdd( _opcexe, {|| edRadniSati() } )
    ENDIF
+
+
+   AAdd( _opc, "X. rekalkulacija nakon promjene vrijednosti boda" )
+   AAdd( _opcexe, {|| ld_rekalkulacija_primanja() } ) 
 
    f18_menu( "ao", .F., _izbor, _opc, _opcexe )
 

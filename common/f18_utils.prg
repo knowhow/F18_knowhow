@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning suite,
- * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -39,13 +39,13 @@ FUNCTION f18_help()
 
    ? "F18 parametri"
    ? "parametri"
-   ? "-h hostname (default: localhost)"
-   ? "-y port (default: 5432)"
-   ? "-u user (default: root)"
-   ? "-p password (default no password)"
-   ? "-d name of database to use"
-   ? "-e schema (default: public)"
-   ? "-t fmk tables path"
+   ? "-h host"
+   //? "-y port (default: 5432)"
+   ? "-u user"
+   ? "-p password"
+   ? "-d database"
+   //? "-e schema (default: public)"
+   //? "-t fmk tables path"
    ? ""
 
    RETURN .T.
@@ -58,7 +58,7 @@ FUNCTION set_f18_params()
 
    LOCAL nI := 1
 
-   cParams := "" // setuj ulazne parametre
+   hParams := hb_hash()
 
    DO WHILE nI <= PCount()
 
@@ -76,7 +76,7 @@ FUNCTION set_f18_params()
 
       CASE cTok == "--help"
          f18_help()
-         QUIT_1
+         __Quit()
 
       CASE cTok == "--dbf-prefix"   // prefix privatni dbf
 
@@ -87,31 +87,38 @@ FUNCTION set_f18_params()
 
       CASE cTok == "-h"
          cHostName := hb_PValue( nI++ )
-         cParams += Space( 1 ) + "hostname=" + cHostName
+         hParams[ "host" ] := cHostName
 
       CASE cTok == "-y"
          nPort := Val( hb_PValue( nI++ ) )
-         cParams += Space( 1 ) + "port=" + AllTrim( Str( nPort ) )
+         //cParams += Space( 1 ) + "port=" + AllTrim( Str( nPort ) )
+         hParams[ "port" ] := nPort
 
       CASE cTok == "-d"
          cDataBase := hb_PValue( nI++ )
-         cParams += Space( 1 ) + "database=" + cDatabase
+         hParams[ "database" ] := cDatabase
 
       CASE cTok == "-u"
          cUser := hb_PValue( nI++ )
-         cParams += Space( 1 ) + "user=" + cUser
+         hParams[ "user" ] := cUser
 
       CASE cTok == "-p"
          cPassWord := hb_PValue( nI++ )
-         cParams += Space( 1 ) + "password=" + cPassword
+         hParams[ "password" ]  := cPassword
 
-      CASE cTok == "-t"
-         cDBFDataPath := hb_PValue( nI++ )
-         cParams += Space( 1 ) + "dbf data path=" + cDBFDataPath
+      //CASE cTok == "-t"
+      //   cDBFDataPath := hb_PValue( nI++ )
+      //   hParams[ "dbf_path" ]  := cDBFDataPath
 
-      CASE cTok == "-e"
-         cSchema := hb_PValue( nI++ )
-         cParams += Space( 1 ) + "schema=" + cSchema
+      //CASE cTok == "-e"
+      //   cSchema := hb_PValue( nI++ )
+      //   hParams[ "schema" ] := cSchema
+      
+      
+      case cTok == "--show-postgresql-version"
+          show_postgresql_version( hParams )
+          __Quit()
+
       ENDCASE
 
 
@@ -296,3 +303,29 @@ FUNCTION create_f18_dokumenti_on_desktop( s_cDesktopPath )
    DirChange( my_home() )
 
    RETURN .T.
+
+
+
+
+PROCEDURE show_postgresql_version( hParams )
+
+LOCAL oServer, pConn
+
+oServer := TPQServer():New( hParams[ "host" ], hParams[ "database" ] , hParams[ "user" ] , hParams[ "password" ] )
+
+pConn := oServer:pDB
+//? "oServer", oServer, "pConn", pConn
+
+rddSetDefault( "SQLMIX" )
+
+// postgresql://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]
+IF rddInfo( 1001, { "POSTGRESQL", pConn } ) == 0
+      ? "Could not connect to the server"
+      RETURN
+ENDIF
+
+
+dbUseArea( .T., , "SELECT version() AS ver", "INFO" )
+OutStd( field->ver )
+
+RETURN

@@ -56,7 +56,7 @@ FUNCTION SpecSubPro()
       @ box_x_koord() + 6, box_y_koord() + 2 SAY "Datum dokumenta od" GET dDatOd
       @ box_x_koord() + 6, Col() + 2 SAY "do" GET dDatDo
       IF fin_dvovalutno()
-         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTip VALID ctip $ "123"
+         @ box_x_koord() + 7, box_y_koord() + 2 SAY "Obracun za " + AllTrim( valuta_domaca_skraceni_naziv() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( valuta_domaca_skraceni_naziv() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTip VALID ctip $ "123"
       ENDIF
 
       @ box_x_koord() + 9, box_y_koord() + 2 SAY "Kriterij za telefon" GET qqTel PICT "@!S30"

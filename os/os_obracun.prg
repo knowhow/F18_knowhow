@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-STATIC __sanacije
+STATIC s_lSanacije
 
 
 FUNCTION os_obracuni()
@@ -21,9 +21,9 @@ FUNCTION os_obracuni()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   __sanacije := .F.
+   s_lSanacije := .F.
 
-   cTip := IF( gDrugaVal == "D", ValDomaca(), "" )
+   cTip := IF( gDrugaVal == "D", valuta_domaca_skraceni_naziv(), "" )
    cBBV := cTip
    nBBK := 1
 
@@ -34,7 +34,7 @@ FUNCTION os_obracuni()
 
    f18_menu( "obracun", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION os_obracun_amortizacije()
@@ -45,35 +45,41 @@ FUNCTION os_obracun_amortizacije()
    LOCAL nMjesOd
    LOCAL nMjesDo
    LOCAL cLine := ""
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _san := fetch_metric( "os_obracun_sanacija", NIL, "N" )
    LOCAL _datum_otpisa
    LOCAL _iznos_sanacije := hb_Hash()
-   LOCAL _t_nab := _t_otp := _t_amp := 0
+   LOCAL nTNab := 0
+   LOCAL nTOtp := 0
+   LOCAL nTAmortizacijaP := 0
+   LOCAL hAmortizacija
+   LOCAL GetList := {}
+   LOCAL cIdSredstvo
+
    PRIVATE nGStopa := 100
 
-   O_AMORT
+   //o_amort()
 
-   o_os_sii()
-   o_os_sii_promj()
+   //o_os_sii()
+   //o_os_sii_promj()
 
    dDatObr := os_datum_obracuna()
    cFiltK1 := Space( 40 )
    cVarPrik := "N"
 
-   Box( "#OBRACUN AMORTIZACIJE", 10, 60 )
+   Box( "#OBRAČUN AMORTIZACIJE", 10, 60 )
 
    DO WHILE .T.
 
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Datum obracuna:" GET dDatObr
-      @ box_x_koord() + 2, box_y_koord() + 2 SAY "Varijanta ubrzane amortizacije po grupama ?" GET cAGrupe PICT "@!"
-      @ box_x_koord() + 4, box_y_koord() + 2 SAY "Pomnoziti obracun sa koeficijentom (%)" GET nGStopa PICT "999.99"
-      @ box_x_koord() + 5, box_y_koord() + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Datum obračuna:" GET dDatObr
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Varijanta ubrzane amortizacije po grupama ?" GET cAGrupe PICT "@!"
+      @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Pomnožiti obracun sa koeficijentom (%)" GET nGStopa PICT "999.99"
+      @ box_x_koord() + 5, box_y_koord() + 2 SAY8 "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
 
-      @ box_x_koord() + 6, box_y_koord() + 2 SAY "Varijanta prikaza"
-      @ box_x_koord() + 7, box_y_koord() + 2 SAY "pred.amort + tek.amort (D/N)?" GET cVarPrik PICT "@!" VALID cVarPrik $ "DN"
+      @ box_x_koord() + 6, box_y_koord() + 2 SAY8 "Varijanta prikaza"
+      @ box_x_koord() + 7, box_y_koord() + 2 SAY8 "pred.amort + tek.amort (D/N)?" GET cVarPrik PICT "@!" VALID cVarPrik $ "DN"
 
-      @ box_x_koord() + 9, box_y_koord() + 2 SAY "Obracunavati sanacije na sredstvima (D/N) ?" GET _san VALID _san $ "DN" PICT "@!"
+      @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Obračunavati sanacije na sredstvima (D/N) ?" GET _san VALID _san $ "DN" PICT "@!"
       READ
 
       ESC_BCR
@@ -87,10 +93,10 @@ FUNCTION os_obracun_amortizacije()
    set_metric( "os_obracun_sanacija", NIL, _san )
 
    IF _san == "D"
-      __sanacije := .T.
+      s_lSanacije := .T.
    ENDIF
 
-   select_os_sii()
+   select_o_os_or_sii()
    SET ORDER TO TAG "5"
    IF !Empty( cFiltK1 )
       SET FILTER to &aUsl1
@@ -114,10 +120,9 @@ FUNCTION os_obracun_amortizacije()
 
       cIdam := field->idam
 
-      SELECT amort
-      HSEEK cIdAm
+      select_o_amort( cIdAm )
 
-      select_os_sii()
+      select_o_os_or_sii()
 
       ? cLine
 
@@ -133,19 +138,17 @@ FUNCTION os_obracun_amortizacije()
       nRGr := RecNo()
       nOstalo := 0
 
-      _t_nab := _t_otp := _t_amp := 0
+      nTNab := nTOtp := nTAmortizacijaP := 0
 
       DO WHILE !Eof() .AND. field->idam == cIdAm
 
          set_global_memvars_from_dbf()
 
-
          _datum_otpisa := fix_dat_var( _datotp ) // setuj datum otpisa ako postoji
 
-         SELECT amort
-         HSEEK _idam
+         select_o_amort( _idam )
 
-         select_os_sii()
+         select_o_os_or_sii()
 
          IF !Empty( _datotp ) .AND. Year( _datotp ) < Year( dDatObr )
 
@@ -163,11 +166,13 @@ FUNCTION os_obracun_amortizacije()
             )
 
          // izracunaj amortizaciju do predh.mjeseca...
-         nPredAm := izracunaj_os_amortizaciju( _datum, ;
+         hAmortizacija := os_izracunaj_amortizaciju( _nabvr, _otpvr, nOstalo, _datum, ;
             iif( !Empty( _datotp ), Min( dDatOBr, _datotp ), dDatObr - dana_u_mjesecu( dDatObr ) ), ;
             nGStopa, ;
             _iznos_sanacije ;
             )
+
+          nPredAm := hAmortizacija[ "potrazuje" ]
 
          // izracunaj iznos sanacije ... ako postoji ?
          _iznos_sanacije := os_sii_iznos_sanacije( field->id, ;
@@ -175,14 +180,21 @@ FUNCTION os_obracun_amortizacije()
             iif( !Empty( _datotp ), Min( dDatOBr, _datotp ), dDatObr ) ;
             )
 
-         izracunaj_os_amortizaciju( _datum, ;
+         hAmortizacija := os_izracunaj_amortizaciju( _nabvr, _otpvr, nOstalo, _datum, ;
             iif( !Empty( _datotp ), Min( dDatOBr, _datotp ), dDatObr ), ;
             nGStopa, ;
             _iznos_sanacije ;
             )
 
-         // napuni _amp
-         IF cAGrupe == "N"
+         _amd := hAmortizacija[ "duguje" ]
+         _amp := hAmortizacija[ "potrazuje" ]
+         _nabvr := hAmortizacija[ "nabvr" ]
+         _otpvr := hAmortizacija[ "otpvr" ]
+         nOstalo := hAmortizacija[ "ostalo" ]
+
+
+
+         IF cAGrupe == "N" // napuni _amp
 
             ? _id, _datum, naz
 
@@ -202,42 +214,58 @@ FUNCTION os_obracun_amortizacije()
 
          ENDIF
 
-         _t_nab += _nabvr
-         _t_otp += _otpvr
-         _t_amp += _amp
+         nTNab += _nabvr
+         nTOtp += _otpvr
+         nTAmortizacijaP += _amp
 
-         PRIVATE cId := _id
+         cIdSredstvo := _id
 
-         _rec := get_hash_record_from_global_vars()
+         hRec := get_hash_record_from_global_vars()
 
          SET DEVICE TO SCREEN
 
-         update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+//if left( cIdSredstvo, 6 ) == "022015"
+//altd()
+//endif
+         select_o_os_or_sii()
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
          SET DEVICE TO PRINTER
 
+//if left( cIdSredstvo, 4 ) == "0140"
+//altd()
+//endif
          // amortizacija promjena
-         select_promj()
-         HSEEK cId
+         os_select_promj( cIdSredstvo )
 
-         DO WHILE !Eof() .AND. field->id == cId .AND. field->datum <= dDatObr
+         DO WHILE !Eof() .AND. field->id == cIdSredstvo .AND. field->datum <= dDatObr
 
             set_global_memvars_from_dbf()
 
-            IF __sanacije .AND. Left( field->opis, 2 ) == "#S"
+            IF s_lSanacije .AND. Left( field->opis, 2 ) == "#S"
                // ovo preskacemo za obracun...
                nPredAm := 0
                _amp := 0
 
                // suma sumarum sanacije... jer moze biti i drugih sredstava i promjena
-               _t_amp += _amp
-               _t_nab += _nabvr
-               _t_otp += _otpvr
+               nTAmortizacijaP += _amp
+               nTNab += _nabvr
+               nTOtp += _otpvr
 
             ELSE
+
                // izracunaj za predh.mjesec...
-               nPredAm := izracunaj_os_amortizaciju( _datum, dDatObr - dana_u_mjesecu( dDatObr ), nGStopa )
-               izracunaj_os_amortizaciju( _datum, dDatObr, nGStopa )
+               hAmortizacija := os_izracunaj_amortizaciju( _nabvr, _otpvr, nOstalo, _datum, dDatObr - dana_u_mjesecu( dDatObr ), nGStopa )
+               nPredAm := hAmortizacija[ "potrazuje" ]
+
+               hAmortizacija := os_izracunaj_amortizaciju( _nabvr, _otpvr, nOstalo, _datum, dDatObr, nGStopa )
+
+               _amd := hAmortizacija[ "duguje" ]
+               _amp := hAmortizacija[ "potrazuje" ]
+               _nabvr := hAmortizacija[ "nabvr" ]
+               _otpvr := hAmortizacija[ "otpvr" ]
+               nOstalo := hAmortizacija[ "ostalo" ]
+
             ENDIF
 
             IF cAGrupe == "N"
@@ -259,11 +287,12 @@ FUNCTION os_obracun_amortizacije()
 
             ENDIF
 
-            _rec := get_hash_record_from_global_vars()
+            hRec := get_hash_record_from_global_vars()
 
             SET DEVICE TO SCREEN
 
-            update_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
+            os_select_promj_area()
+            update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
             SET DEVICE TO PRINTER
 
@@ -271,16 +300,16 @@ FUNCTION os_obracun_amortizacije()
 
          ENDDO
 
-         select_os_sii()
+         select_o_os_or_sii()
          SKIP
 
          // prikaz ukupnog obracuna sanacije...
          IF cAGrupe == "N" .AND. _iznos_sanacije[ "nabvr" ] <> 0
             ? Space( 35 ) + Replicate( "-", 60 )
             ? PadL( "Ukupni obracun sanacija:", 50 )
-            @ PRow(), PCol() + 1 SAY _t_nab PICT gpici
-            @ PRow(), PCol() + 1 SAY _t_otp PICT gpici
-            @ PRow(), PCol() + 1 SAY _t_amp PICT gpici
+            @ PRow(), PCol() + 1 SAY nTNab PICT gpici
+            @ PRow(), PCol() + 1 SAY nTOtp PICT gpici
+            @ PRow(), PCol() + 1 SAY nTAmortizacijaP PICT gpici
             ?
          ENDIF
 
@@ -289,7 +318,7 @@ FUNCTION os_obracun_amortizacije()
       // drugi prolaz
       IF cAGrupe == "D"
 
-         select_os_sii()
+         select_o_os_or_sii()
          GO nRGr
 
          DO WHILE !Eof() .AND. field->idam == cIdAm
@@ -347,22 +376,23 @@ FUNCTION os_obracun_amortizacije()
 
             nUkupno += Round( _amp, 2 )
 
-            PRIVATE cId := _id
+            cIdSredstvo := _id
 
-            // sinhronizuj podatke sql/server
-            _rec := get_hash_record_from_global_vars()
+            hRec := get_hash_record_from_global_vars()
 
             SET DEVICE TO SCREEN
 
-            update_rec_server_and_dbf( get_os_table_name( Alias() ), _rec, 1, "FULL" )
+            select_o_os_or_sii_area()
+            update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
             SET DEVICE TO PRINTER
 
+//altd()
             // amortizacija promjena
-            select_promj()
-            HSEEK cId
+            os_select_promj( cIdSredstvo )
+            //HSEEK cIdSredstvo
 
-            DO WHILE !Eof() .AND. field->id == cId .AND. field->datum <= dDatObr
+            DO WHILE !Eof() .AND. field->id == cIdSredstvo .AND. field->datum <= dDatObr
 
                set_global_memvars_from_dbf()
 
@@ -402,11 +432,13 @@ FUNCTION os_obracun_amortizacije()
                nUkupno += Round( _amp, 2 )
 
                // sinhronizuj podatke sql/server
-               _rec := get_hash_record_from_global_vars()
+               hRec := get_hash_record_from_global_vars()
 
                SET DEVICE TO SCREEN
 
-               update_rec_server_and_dbf( get_promj_table_name( Alias() ), _rec, 1, "FULL" )
+//altd()
+               os_select_promj_area()
+               update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
                SET DEVICE TO PRINTER
 
@@ -414,7 +446,7 @@ FUNCTION os_obracun_amortizacije()
 
             ENDDO
 
-            select_os_sii()
+            select_o_os_or_sii()
             SKIP
 
          ENDDO
@@ -439,7 +471,7 @@ FUNCTION os_obracun_amortizacije()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -525,7 +557,7 @@ STATIC FUNCTION _p_header( cLine, dDatObr, nGStopa, cFiltK1, cVar )
    ? cLine
    ?
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -567,36 +599,34 @@ FUNCTION dana_u_mjesecu( dDate )
 
 
 
-// -----------------------------------------------------
-// iznos sanacije...
-// -----------------------------------------------------
+
 FUNCTION os_sii_iznos_sanacije( id, datum_od, datum_do )
 
    LOCAL _nab := 0
    LOCAL _otp := 0
-   LOCAL _qry, _data, oRow
+   LOCAL cQuery, _data, oRow
    LOCAL _hash := hb_Hash()
 
    _hash[ "otpvr" ] := 0
    _hash[ "nabvr" ] := 0
 
-   IF gOsSII == "S" .OR. __sanacije == .F.
+   IF gOsSII == "S" .OR. s_lSanacije == .F.
       RETURN _hash
    ENDIF
 
-   _qry := "SELECT "
-   _qry += " id, "
-   _qry += " opis, "
-   _qry += " datum, "
-   _qry += " nabvr, "
-   _qry += " otpvr "
-   _qry += "FROM " + F18_PSQL_SCHEMA_DOT + "os_promj "
-   _qry += "WHERE id = " + sql_quote( id )
-   _qry += "  AND opis LIKE '#S%' "
-   _qry += "  AND " + _sql_date_parse( "datum", datum_od, datum_do )
-   _qry += "ORDER BY datum "
+   cQuery := "SELECT "
+   cQuery += " id, "
+   cQuery += " opis, "
+   cQuery += " datum, "
+   cQuery += " nabvr, "
+   cQuery += " otpvr "
+   cQuery += "FROM " + F18_PSQL_SCHEMA_DOT + "os_promj "
+   cQuery += "WHERE id = " + sql_quote( id )
+   cQuery += "  AND opis LIKE '#S%' "
+   cQuery += "  AND " + _sql_date_parse( "datum", datum_od, datum_do )
+   cQuery += "ORDER BY datum "
 
-   _data := run_sql_query( _qry )
+   _data := run_sql_query( cQuery )
 
    IF !is_var_objekat_tpqquery( _data )
       RETURN _hash
@@ -626,27 +656,26 @@ FUNCTION os_sii_iznos_sanacije( id, datum_od, datum_do )
 // nOstalo se uvecava za onaj dio koji se na
 // nekom sredstvu ne moze amortizovati
 // --------------------------------------------
-FUNCTION izracunaj_os_amortizaciju( d1, d2, nGAmort, sanacije )
+FUNCTION os_izracunaj_amortizaciju( nNabVr, nOtpVr, nOstalo, d1, d2, nGAmort, sanacije )
 
    LOCAL nMjesOd
    LOCAL nMjesDo
    LOCAL nIzn
    LOCAL fStorno
-   LOCAL _san_nab
-   LOCAL _san_otp
+   LOCAL nSanacijeNab
+   LOCAL nSanacijeOtp
+   LOCAL hAmortizacija := hb_hash()
 
-   // ako je metoda obracuna 1 - odmah
-   IF gMetodObr == "1"
-      izr_am_od_dana( d1, d2, nGAmort, sanacije )
-      RETURN
+   IF gMetodObr == "1" // tekuca metoda
+      RETURN os_proracun_amortizacija_od_do( nNabVr, nOtpvr, nOstalo, d1, d2, nGAmort, sanacije )
    ENDIF
 
    IF sanacije == NIL
-      _san_nab := 0
-      _san_otp := 0
+      nSanacijeNab := 0
+      nSanacijeOtp := 0
    ELSE
-      _san_nab := sanacije[ "nabvr" ]
-      _san_otp := sanacije[ "otpvr" ]
+      nSanacijeNab := sanacije[ "nabvr" ]
+      nSanacijeOtp := sanacije[ "otpvr" ]
    ENDIF
 
    // ako je metoda obracuna od 1 u narednom mjesecu
@@ -668,36 +697,40 @@ FUNCTION izracunaj_os_amortizaciju( d1, d2, nGAmort, sanacije )
       nMjesDo := Month( d2 )
    ENDIF
 
-   IF _nabvr < 0
+   IF nNabVr < 0
       // stornirani dio
       fStorno := .T.
-      _nabvr := - _nabvr
-      _otpvr := - _otpvr
+      nNabVr := - nNabvr
+      nOtpVr := - nOtpvr
    ENDIF
 
-   nIzn := Round( ( _nabvr - _san_nab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ;
+   nIzn := Round( ( nNabvr - nSanacijeNab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ;
       ( nMjesDo - nMjesOD ) / 12, 2 )
 
-   _amd := 0
+   hAmortizacija[ "duguje" ] := 0
 
-   IF ( _nabvr - _otpvr - nIzn ) < 0
-      _amp := _nabvr - _otpvr
-      nOstalo += nIzn - ( _nabvr - _otpvr )
+   IF ( nNabvr - nOtpvr - nIzn ) < 0
+      hAmortizacija[ "potrazuje" ] := nNabvr - nOtpvr
+      nOstalo += nIzn - ( nNabvr - nOtpvr )
    ELSE
-      _amp := nIzn
+      hAmortizacija[ "potrazuje" ] := nIzn
    ENDIF
 
-   IF _amp < 0
-      _amp := 0
+   IF hAmortizacija[ "potrazuje"]  < 0
+      hAmortizacija[ "potrazuje" ] := 0
    ENDIF
 
    IF fStorno
-      _nabvr := -_nabvr
-      _optvr := -_otpvr
-      _amp := -_amp
+      nNabvr := - nNabvr
+      nOtpvr := - nOtpvr
+      hAmortizacija[ "potrazuje" ] := - hAmortizacija[ "potrazuje" ]
    ENDIF
 
-   RETURN _amp
+   hAmortizacija[ "nabvr" ] := nNabVr
+   hAmortizacija[ "otpvr" ] := nOtpVr
+   hAmortizacija[ "ostalo" ] := nOstalo
+
+   RETURN hAmortizacija
 
 
 
@@ -706,21 +739,22 @@ FUNCTION izracunaj_os_amortizaciju( d1, d2, nGAmort, sanacije )
 // d1 - od mjeseca
 // d2 - do mjeseca
 // --------------------------------------------
-FUNCTION izr_am_od_dana( d1, d2, nGAmort, sanacije )
+FUNCTION os_proracun_amortizacija_od_do( nNabVr, nOtpVr, nOstalo, d1, d2, nGAmort, sanacije )
 
    LOCAL nMjesOd
    LOCAL nMjesDo
    LOCAL nIzn
    LOCAL fStorno
-   LOCAL _san_nab := 0
-   LOCAL _san_otp := 0
+   LOCAL nSanacijeNab := 0
+   LOCAL nSanacijeOtp := 0
+   LOCAL hAmortizacija := hb_hash()
 
    IF sanacije == NIL
-      _san_nab := 0
-      _san_otp := 0
+      nSanacijeNab := 0
+      nSanacijeOtp := 0
    ELSE
-      _san_nab := sanacije[ "nabvr" ]
-      _san_otp := sanacije[ "otpvr" ]
+      nSanacijeNab := sanacije[ "nabvr" ]
+      nSanacijeOtp := sanacije[ "otpvr" ]
    ENDIF
 
    fStorno := .F.
@@ -745,11 +779,11 @@ FUNCTION izr_am_od_dana( d1, d2, nGAmort, sanacije )
       nMjesDo := Month( d2 )
    ENDIF
 
-   IF _nabvr < 0
+   IF nNabvr < 0
       // stornirani dio
       fStorno := .T.
-      _nabvr := -_nabvr
-      _otpvr := -_otpvr
+      nNabvr := - nNabvr
+      nOtpvr := - nOtpvr
    ENDIF
 
    nIzn := 0
@@ -757,32 +791,36 @@ FUNCTION izr_am_od_dana( d1, d2, nGAmort, sanacije )
    IF Year( d1 ) == Year( d2 )
       // tekuci mjesec
       // samo za tekucu sezonu
-      nIzn += Round( ( _nabvr - _san_nab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ( ( ( nTekBrDana - nTekDan ) / nTekBrDana ) / 12 ), 2 )
+      nIzn += Round( ( nNabvr - nSanacijeNab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ( ( ( nTekBrDana - nTekDan ) / nTekBrDana ) / 12 ), 2 )
    ENDIF
 
    // ostali mjeseci
-   nIzn += Round( ( _nabvr - _san_nab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ( nMjesDo - nMjesOd ) / 12, 2 )
+   nIzn += Round( ( nNabvr - nSanacijeNab ) * Round( amort->iznos * iif( nGamort <> 100, nGamort / 100, 1 ), 3 ) / 100 * ( nMjesDo - nMjesOd ) / 12, 2 )
 
-   _amd := 0
+   hAmortizacija[ "duguje" ] := 0
 
-   IF ( _nabvr - _otpvr - nIzn ) < 0
-      _amp := _nabvr - _otpvr
-      nOstalo += nIzn - ( _nabvr - _otpvr )
+   IF ( nNabvr - nOtpvr - nIzn ) < 0
+      hAmortizacija[ "potrazuje" ] := nNabvr - nOtpvr
+      nOstalo +=  nIzn - ( nNabvr - nOtpvr )
    ELSE
-      _amp := nIzn
+      hAmortizacija[ "potrazuje" ] := nIzn
    ENDIF
 
-   IF _amp < 0
-      _amp := 0
+   IF hAmortizacija[ "potrazuje" ] < 0
+      hAmortizacija[ "potrazuje" ] := 0
    ENDIF
 
    IF fStorno
-      _nabvr := -_nabvr
-      _optvr := -_otpvr
-      _amp := -_amp
+      nNabvr := - nNabvr
+      nOtpvr := - nOtpvr
+      hAmortizacija[ "potrazuje" ] := - hAmortizacija[ "potrazuje" ]
    ENDIF
 
-   RETURN _amp
+   hAmortizacija[ "nabvr" ] := nNabVr
+   hAmortizacija[ "otpvr" ] := nOtpVr
+   hAmortizacija[ "ostalo" ] := nOstalo
+
+   RETURN hAmortizacija
 
 
 
@@ -791,10 +829,11 @@ FUNCTION os_obracun_revalorizacije()
 
    LOCAL  cAGrupe := "D", nRec, dDatObr, nMjesOd, nMjesDo
    LOCAL nKoef
+   LOCAL cIdSredstvo
 
-   O_REVAL
+   //o_reval()
    o_os_sii()
-   o_os_sii_promj()
+   //o_os_sii_promj()
 
    dDatObr := os_datum_obracuna()
    cFiltK1 := Space( 40 )
@@ -809,7 +848,7 @@ FUNCTION os_obracun_revalorizacije()
    ENDDO
    BoxC()
 
-   select_os_sii()
+   select_o_os_or_sii()
    SET ORDER TO TAG "5"
 
    IF !Empty( cFiltK1 )
@@ -846,9 +885,8 @@ FUNCTION os_obracun_revalorizacije()
          SKIP
          LOOP
       ENDIF
-      SELECT reval
-      HSEEK _idrev
-      select_os_sii()
+      select_o_reval( _idrev )
+      select_o_os_or_sii()
 
       nRevAm := 0
       nKoef := izracunaj_os_reval( _datum, iif( !Empty( _datotp ), Min( dDatOBr, _datotp ), dDatObr ), @nRevAm )     // napuni _revp,_revd
@@ -863,9 +901,12 @@ FUNCTION os_obracun_revalorizacije()
       nURevPot += _revp
       nURevAm += nRevAm
       Gather()
-      PRIVATE cId := _id
-      select_promj(); HSEEK cid
-      DO WHILE !Eof() .AND. id == cid .AND. datum <= dDatObr
+
+      cIdSredstvo := _id
+
+      os_select_promj( cIdSredstvo )
+      // HSEEK cIdSredstvo
+      DO WHILE !Eof() .AND. id == cIdSredstvo .AND. datum <= dDatObr
          Scatter()
          nRevAm := 0
          nKoef := izracunaj_os_reval( _datum, iif( !Empty( _datotp ), Min( dDatOBr, _datotp ), dDatObr ), @nRevAm )
@@ -883,7 +924,7 @@ FUNCTION os_obracun_revalorizacije()
          SKIP
       ENDDO
 
-      select_os_sii()
+      select_o_os_or_sii()
       SKIP
    ENDDO
    ? m
@@ -918,11 +959,11 @@ FUNCTION izracunaj_os_reval( d1, d2, nRevAm )
    LOCAL nMjesOD, nMjesDo, nIzn, nIzn2, nk1, nk2, nkoef
 
    IF Year( d1 ) < Year( d2 )
-      PushWA()
-      SELECT reval
-      nTrecRev := RecNo()
-      SEEK Str( Year( d1 ), 4 )
-      IF Found()
+      //PushWA()
+      //SELECT reval
+      //nTrecRev := RecNo()
+      IF select_o_reval( Str( Year( d1 ), 4 ) )
+      //IF Found()
          nMjesOd := Month( d1 ) + 1
          c1 := "I" + AllTrim( Str( nMjesOd - 1 ) )
          nk1 := reval->&c1
@@ -930,8 +971,8 @@ FUNCTION izracunaj_os_reval( d1, d2, nRevAm )
       ELSE
          nMjesOd := 1
       ENDIF
-      GO nTrecRev // vrati se na tekucu poziciju
-      PopWa()
+      //GO nTrecRev // vrati se na tekucu poziciju
+      //PopWa()
    ELSE
       // nMjesOd:=iif(day(d1)>1,month(d1)+1,month(d1))
       nMjesOd := Month( d1 ) + 1
@@ -953,9 +994,9 @@ FUNCTION izracunaj_os_reval( d1, d2, nRevAm )
    ENDIF
 
    IF ( nMjesdo - 1 ) < 1
-      nk2 := 0
+      nK2 := 0
    ELSE
-      nk2 := reval->&c2
+      nK2 := reval->&c2
    ENDIF
    nkoef := ( nk2 + 1 ) / ( nk1 + 1 ) - 1
    nIzn := Round( _nabvr * nkoef, 2 )
@@ -969,4 +1010,4 @@ FUNCTION izracunaj_os_reval( d1, d2, nRevAm )
       nkoef := 0
    ENDIF
 
-   RETURN nkoef
+   RETURN nKoef

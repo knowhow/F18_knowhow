@@ -1,7 +1,7 @@
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
  * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
@@ -10,9 +10,6 @@
  */
 
 #include "f18.ch"
-
-
-
 
 CLASS TOsMod FROM TAppMod
 
@@ -100,7 +97,7 @@ METHOD set_module_gvars()
    PUBLIC gPicI := "99999999.99"
 
    PUBLIC gVObracun := "2"
-   PUBLIC gIBJ := "D"
+   //PUBLIC gIBJ := "D"
    PUBLIC gDrugaVal := "N"
    PUBLIC gVarDio := "N"
    PUBLIC gDatDio := CToD( "01.01.1999" )
@@ -113,7 +110,7 @@ METHOD set_module_gvars()
    os_datum_obracuna( fetch_metric( "os_datum_obrade", my_user(), Date() ) )
    gPicI := fetch_metric( "os_prikaz_iznosa", nil, gPicI )
    gMetodObr := fetch_metric( "os_metoda_obracuna", nil, gMetodObr )
-   gIBJ := fetch_metric( "os_id_broj_je_unikatan", nil, gIBJ )
+   //gIBJ := fetch_metric( "os_id_broj_je_unikatan", nil, gIBJ )
    gDrugaVal := fetch_metric( "os_prikaz_u_dvije_valute", nil, gDrugaVal )
    gVObracun := fetch_metric( "os_varijanta_obracuna", nil, gVObracun )
    gVarDio := fetch_metric( "os_pocetak_obracuna", nil, gVarDio )

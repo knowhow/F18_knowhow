@@ -1,20 +1,9 @@
 # F18 klijent, lista promjena
 
-<<<<<<< HEAD
-## 3.1.144-vindi, 2017-13-11
-- kalk prodavnica kartica svi artikli
+## 3.1.216-vindi, 2018-09-10
+### CORE
+- merge 3-vindi <- 3-std
 
-## 3.1.138-vindi, 2017-10-25
-- kalk - pos automatski/manuelno, uzeti u obzir parametar za automatsku ravnotežu FIN naloga
-
-## 3.1.136-vindi, 2017-10-25
-### KALK
-- kalk - pos - fin, ako se štampa nalog onda se korisnik pita za ažuriranje FIN dokumenta
-
-## 3.1.126-vindi, 2017-10-23
-### KALK
-- pos-kalk-fin cleanup stampa fin naloga
-=======
 ## 3.1.214-std, 2018-06-27
 ### CORE
 - f18_editor linux async
@@ -76,6 +65,21 @@
 ### CORE
 - Wpar +bug NIL var
 - LD obr 2001 cleanup bug * koef NIL
+
+
+
+## 3.1.144-vindi, 2017-13-11
+- kalk prodavnica kartica svi artikli
+
+## 3.1.138-vindi, 2017-10-25
+- kalk - pos automatski/manuelno, uzeti u obzir parametar za automatsku ravnotežu FIN naloga
+
+## 3.1.136-vindi, 2017-10-25
+### KALK
+- kalk - pos - fin, ako se štampa nalog onda se korisnik pita za ažuriranje FIN dokumenta
+
+## 3.1.126-vindi, 2017-10-23
+### KALK
 
 ## 3.1.140-std, 2017-10-27
 ### VIRM

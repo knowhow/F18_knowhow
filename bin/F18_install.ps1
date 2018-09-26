@@ -79,7 +79,7 @@ $Path = "$Env:USERPROFILE\F18\F18_" + $F18_VER + ".zip"
 Write-Host "bintray: $Url"
 
 $hashFromFile = Get-FileHash -Path $Path -Algorithm MD5
-Write-Host '### Hash from File $hashFromFile'
+Write-Host "### Hash from downloaded file $Path = $hashFromFile"
 
 
 if ($hashFromFile.Hash -ne $F18_VER_HASH) {

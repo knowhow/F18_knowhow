@@ -1,5 +1,9 @@
 $F18_VER="3.1.215"
 
+# iex (new-object net.webclient).downloadstring('https://raw.githubusercontent.com/knowhow/F18_knowhow/3/bin/F18_install.ps1')
+
+New-Item -ItemType Directory -Force -Path $Env:USERPROFILE\F18
+
 
 #Create a wscript.shell object
 $ComObj = New-Object -ComObject WScript.Shell

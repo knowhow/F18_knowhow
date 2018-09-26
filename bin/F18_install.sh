@@ -1,4 +1,3 @@
-hernad@hernad-ubuntu-14:~$ cat F18_install.sh
 #!/bin/bash
 
 
@@ -9,7 +8,7 @@ APT_INSTALL_FILES="libpq5 curl vim vim-gnome  xfonts-terminus-oblique xfonts-ter
 
 OS="CENTOS7"
 
-
+curl https://raw.githubusercontent.com/knowhow/F18_knowhow/3/bin/F18_install.sh | bash
 if lsb_release -d | grep "Ubuntu 14" ; then
   OS="UBUNTU14"
 elif lsb_release -d | grep "Ubuntu 16" ; then

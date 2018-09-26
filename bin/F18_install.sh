@@ -81,10 +81,12 @@ if [[ $OS == UBUNTU14 || $OS == UBUNTU16 ]] ; then
 cat > F18.sh <<- EOM
 #!/bin/sh
 
+# --- echo ubuntu -----
 dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-hide-mode 1
 
 cd ${HOME}/F18
 export LD_LIBRARY_PATH=.
+export PATH=${HOME}/F18:\$PATH
 ./F18
 
 dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-hide-mode 0
@@ -95,6 +97,8 @@ else
 
 cat > F18.sh <<- EOM
 #!/bin/sh
+
+# ---- echo centos ---
 
 cd ${HOME}/F18
 export LD_LIBRARY_PATH=.

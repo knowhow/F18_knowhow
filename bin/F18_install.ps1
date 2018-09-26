@@ -1,4 +1,5 @@
 $F18_VER="3.1.215"
+$F18_VER_HASH="b9ff1d8e8bb6968a804d86cfbd27679d"
 
 # iex (new-object net.webclient).downloadstring('https://raw.githubusercontent.com/knowhow/F18_knowhow/3/bin/F18_install.ps1')
 
@@ -44,27 +45,7 @@ $ShortCut.Hotkey = "CTRL+SHIFT+F5"
 $ShortCut.Save()
 
 
-#Create a wscript.shell object
-#$ComObj = New-Object -ComObject WScript.Shell
-
-#Use the createshortcut method and assign to a variable
-#$ShortCut = $ComObj.CreateShortcut("$Env:USERPROFILE\desktop\F18_klijent.url")
-
-#Path to URL
-#$ShortCut.TargetPath = "c:\Users\hernad\F18\F18.exe"
-
-#$ShortCut.Save()
-
-#$url = ""
-#$output = "$Env:USERPROFILE\F18\postgresql_windows_x86_dlls.zip"
-
 Set-Location -Path "$Env:USERPROFILE\F18"
-
-#Invoke-Expression "curl.exe -L $url > postgresql_windows_x86_dlls.zip"
-#Invoke-WebRequest -MaximumRedirection 20 -Uri $url -OutFile $output
-
-#$Url = "https://dl.bintray.com/hernad/F18/postgresql_windows_x86_dlls.zip"
-
 
 
 $Url = "https://github.com/knowhow/F18_knowhow/raw/3/bin/win32/postgresql_windows_x86_dlls.zip"
@@ -87,10 +68,6 @@ if (-not (Test-Path $Path)) {
  if (-not (Test-Path $Path)) { 
      [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
      Invoke-WebRequest -Uri $Url -OutFile $Path
-     #[Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
-     #$webClient = new-object System.Net.WebClient
-     #$webClient.DownloadFile( $Url, $Path )
- 
      Expand-Archive $Path -DestinationPath "$Env:USERPROFILE\F18"
  
 }
@@ -101,12 +78,21 @@ $Path = "$Env:USERPROFILE\F18\F18_" + $F18_VER + ".zip"
 
 Write-Host "bintray: $Url"
 
- if (-not (Test-Path $Path)) { 
+$hashFromFile = Get-FileHash -Path $Path -Algorithm MD5
+Write-Host '### Hash from File ###' -NoNewline
+$hashFromFile | Format-List
+
+
+# Check both hashes are the same
+if ($hashFromFile.Hash -neq $F18_VER_HASH) {
+   Write-Host "$Path hash error!"
+   Remove-Item -Path $Path -Force
+}
+
+if (-not (Test-Path $Path)) { 
      [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
      Invoke-WebRequest -Uri $Url -OutFile $Path
-     #[Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
-     #$webClient = new-object System.Net.WebClient
-     #$webClient.DownloadFile( $Url, $Path )
+
  
      Expand-Archive $Path -Force -DestinationPath "$Env:USERPROFILE\F18"
  

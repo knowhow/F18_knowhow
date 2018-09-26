@@ -92,8 +92,10 @@ if (-not (Test-Path $Path)) {
 }
 
 
-$Url = "https://dl.bintray.com/hernad/F18/:F18_windows_x86_" + $F18_VER + ".zip"
+$Url = "https://dl.bintray.com/hernad/F18/F18_windows_x86_" + $F18_VER + ".zip"
 $Path = "$Env:USERPROFILE\F18\F18_" + $F18_VER + ".zip"
+
+Write-Host "bintray: $Url"
 
  if (-not (Test-Path $Path)) { 
      [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
@@ -102,6 +104,14 @@ $Path = "$Env:USERPROFILE\F18\F18_" + $F18_VER + ".zip"
      #$webClient = new-object System.Net.WebClient
      #$webClient.DownloadFile( $Url, $Path )
  
-     Expand-Archive $Path -DestinationPath "$Env:USERPROFILE\F18"
+     Expand-Archive $Path -Force -DestinationPath "$Env:USERPROFILE\F18"
  
 }
+
+
+$Url = "https://github.com/knowhow/F18_knowhow/raw/3/bin/F18.ps1"
+$Path = "$Env:USERPROFILE\F18\F18.ps1"
+
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+Invoke-WebRequest -Uri $Url -OutFile $Path
+

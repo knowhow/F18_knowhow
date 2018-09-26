@@ -46,7 +46,7 @@ ubuntu_install() {
       curl -L https://bintray.com/hernad/F18/download_file?file_path=F18_linux_x86_$F18_VER.zip > $F18_GZ
   fi
 
-  if [ $OS == UBUNTU14 ] ; then
+  if [[ $OS == UBUNTU14 ]] ; then
       curl -L https://github.com/knowhow/F18_knowhow/raw/3/bin/UBUNTU14/libstdc%2B%2B.so.6 > libstdc++.so.6 
       chmod +x libstdc++.so.6
   fi

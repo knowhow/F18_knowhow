@@ -79,8 +79,8 @@ $Path = "$Env:USERPROFILE\F18\F18_" + $F18_VER + ".zip"
 Write-Host "bintray: $Url"
 
 $hashFromFile = Get-FileHash -Path $Path -Algorithm MD5
-Write-Host '### Hash from File ###' -NoNewline
-$hashFromFile | Format-List
+Write-Host '### Hash from File $hashFromFile'
+
 
 
 # Check both hashes are the same

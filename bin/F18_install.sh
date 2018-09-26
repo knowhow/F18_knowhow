@@ -51,8 +51,9 @@ ubuntu_install() {
       chmod +x libstdc++.so.6
   fi
 
-  curl -L https://github.com/knowhow/F18_knowhow/raw/3/bin/F18.png > F18.png
-
+  if [ ! -f F18.png ] ; then
+      curl -L https://github.com/knowhow/F18_knowhow/raw/3/bin/F18.png > F18.png
+  fi
 
   cp $F18_GZ F18.gz
   gunzip -f F18.gz
@@ -105,15 +106,18 @@ fi
 
 cat > F18.desktop <<- EOM
 [Desktop Entry]
-Name=F18
+Name=F18 klijent
+Comment=F18 - knjigovodstvo za bosance
+Icon=application.png
 Exec=/home/hernad/F18/F18.sh
 Icon=${HOME}/F18/F18.png
 Type=Application
 Categories=GTK;GNOME;Utility;
+Terminal=false
 EOM
 
 chmod +x F18.sh
-
-
+chmod +x F18.desktop
+xdg-open .
 
 cd $HOME

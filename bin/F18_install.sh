@@ -51,6 +51,9 @@ ubuntu_install() {
       chmod +x libstdc++.so.6
   fi
 
+  curl -L https://github.com/knowhow/F18_knowhow/raw/3/bin/F18.png > F18.png
+
+
   cp $F18_GZ F18.gz
   gunzip -f F18.gz
   chmod +x F18
@@ -71,8 +74,9 @@ if [[ $OS == UBUNTU* ]] ; then
 fi
 
 
-if [ $OS == UBUNTU* ] ; then
+if [ $OS == UBUNTU14 || $OS == UBUNTU16 ] ; then
 
+# unity autohide
 cat > F18.sh <<- EOM
 #!/bin/sh
 
@@ -83,6 +87,18 @@ export LD_LIBRARY_PATH=.
 ./F18
 
 dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-hide-mode 0
+EOM
+
+else
+
+
+cat > F18.sh <<- EOM
+#!/bin/sh
+
+cd ${HOME}/F18
+export LD_LIBRARY_PATH=.
+./F18
+
 EOM
 
 fi

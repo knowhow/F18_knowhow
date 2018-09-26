@@ -74,7 +74,7 @@ if [[ $OS == UBUNTU* ]] ; then
 fi
 
 
-if [ $OS == UBUNTU14 || $OS == UBUNTU16 ] ; then
+if [[ $OS == UBUNTU14 || $OS == UBUNTU16 ]] ; then
 
 # unity autohide
 cat > F18.sh <<- EOM

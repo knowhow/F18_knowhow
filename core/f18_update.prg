@@ -14,7 +14,7 @@ STATIC s_cCheckUpdates := NIL
 FUNCTION download_version( cUrl, lForceRefresh )
 
    LOCAL hFile
-   LOCAL cFileName, oFile, cRead := ""
+   LOCAL cFileName, oFile, cRead
    LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
    LOCAL aMatch
 
@@ -142,7 +142,6 @@ FUNCTION f18_preporuci_upgrade( cVersion )
 
 
 
-
 FUNCTION check_updates()
 
    IF s_cCheckUpdates == NIL // prvi poziv
@@ -200,7 +199,7 @@ FUNCTION f18_varijanta_builtin()
 
 FUNCTION f18_download_url()
 
-   RETURN F18_DOWNLOAD_BASE_URL + "/" + f18_verzija() + "-" + f18_varijanta()
+   RETURN F18_GITHUB_DOWNLOAD_BASE_URL + f18_verzija() + "-" + f18_varijanta()
 
 
 /*

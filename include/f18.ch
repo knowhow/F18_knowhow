@@ -70,6 +70,7 @@
 #define F18_UTIL_VER  "1.0.0"
 #define F18_UTIL_URL_BASE "https://github.com/hernad/F18_util/releases/download/"
 #define F18_DOWNLOAD_URL_BASE "http://download.bring.out.ba/"
+#define F18_GITHUB_DOWNLOAD_BASE_URL "https://raw.github.com/knowhow/F18_knowhow/"
 
 
 #define INFO_MESSAGES_LENGTH       40
@@ -589,7 +590,7 @@
 #define PICT_POS_ARTIKAL "@!S10"
 
 
-#define F18_DOWNLOAD_BASE_URL "https://raw.github.com/knowhow/F18_knowhow"
+
 #define F18_VERZIJA "3"
 #define F18_VARIJANTA "std"
 

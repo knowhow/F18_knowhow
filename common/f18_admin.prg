@@ -371,19 +371,19 @@ METHOD F18Admin:update_app_run_app_update( hF18Params )
 
 
 
-METHOD F18Admin:update_app_run_script( update_file )
+METHOD F18Admin:update_app_run_script( cUpdate )
 
    LOCAL cUrl := my_home_root() + ::update_app_script_file
 
 #ifdef __PLATFORM__WINDOWS
 
    cUrl := 'start cmd /C ""' + cUrl
-   cUrl += '" "' + update_file + '""'
+   cUrl += '" "' + cUpdate + '""'
 #else
 #ifdef __PLATFORM__LINUX
    cUrl := "bash " + cUrl
 #endif
-   cUrl += " " + update_file
+   cUrl += " " + cUpdate
 #endif
 
 #ifdef __PLATFORM__UNIX
@@ -438,7 +438,7 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
 
    Box(, 10, 65 )
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "## UPGRADE F18 aplikacije ##", 64 ) COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "## UPGRADE F18 klijenta ##", 64 ) COLOR f18_color_i()
    ++nX
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY cLine := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
@@ -461,10 +461,8 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY cLine
 
-   ++nX
-   ++nX
+   nX += 2
    nPos := nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "       Update F18 ?" GET cUpdateF18 PICT "@!" VALID cUpdateF18 $ "DN"
 
    READ

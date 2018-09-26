@@ -98,6 +98,7 @@ cat > F18.sh <<- EOM
 
 cd ${HOME}/F18
 export LD_LIBRARY_PATH=.
+export PATH=${HOME}/F18:\$PATH
 ./F18
 
 EOM
@@ -116,8 +117,20 @@ Categories=GTK;GNOME;Utility;
 Terminal=false
 EOM
 
+
+cat > f18_editor <<- EOM
+#!/bin/bash
+
+
+cat \$1 | sed 's/#%.*#//g' | iconv -c -f IBM852 -t UTF-8 > \$1.conv.txt
+
+export BANG=\!  
+gvim -c "nmap <C-P> :exe '\$BANG ptxt ' . substitute(@%, '.conv.txt', '', 'y') . ' /p'<CR>" \$1.conv.txt
+EOM
+
 chmod +x F18.sh
 chmod +x F18.desktop
+chmod +x f18_editor
 xdg-open .
 
 cd $HOME

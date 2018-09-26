@@ -1,3 +1,6 @@
+$F18_VER="3.1.215"
+
+
 #Create a wscript.shell object
 $ComObj = New-Object -ComObject WScript.Shell
 
@@ -88,14 +91,17 @@ if (-not (Test-Path $Path)) {
  
 }
 
-#Add-Type -AssemblyName System.IO.Compression.FileSystem
-#function Unzip
-#{
-#    param([string]$zipfile, [string]$outpath)
 
-#    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
-#}
+$Url = "https://dl.bintray.com/hernad/F18/:F18_windows_x86_" + $F18_VER + ".zip"
+$Path = "$Env:USERPROFILE\F18\F18_" + $F18_VER + ".zip"
 
-#Unzip "$Env:USERPROFILE\F18\postgresql_windows_x86_dlls.zip" "$Env:USERPROFILE\F18\"
-# https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.archive/Expand-Archive?view=powershell-6
-
+ if (-not (Test-Path $Path)) { 
+     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+     Invoke-WebRequest -Uri $Url -OutFile $Path
+     #[Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+     #$webClient = new-object System.Net.WebClient
+     #$webClient.DownloadFile( $Url, $Path )
+ 
+     Expand-Archive $Path -DestinationPath "$Env:USERPROFILE\F18"
+ 
+}

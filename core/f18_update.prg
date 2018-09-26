@@ -14,7 +14,7 @@ STATIC s_cCheckUpdates := NIL
 FUNCTION download_version( cUrl, lForceRefresh )
 
    LOCAL hFile
-   LOCAL cFileName, oFile, cRead := ""
+   LOCAL cFileName, oFile, cRead
    LOCAL pRegex := hb_regexComp( "(\d+).(\d+).(\d+)" )
    LOCAL aMatch
 
@@ -139,7 +139,6 @@ FUNCTION f18_preporuci_upgrade( cVersion )
    ENDIF
 
    RETURN .T.
-
 
 
 

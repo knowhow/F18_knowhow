@@ -82,9 +82,7 @@ $hashFromFile = Get-FileHash -Path $Path -Algorithm MD5
 Write-Host '### Hash from File $hashFromFile'
 
 
-
-# Check both hashes are the same
-if ($hashFromFile.Hash -neq $F18_VER_HASH) {
+if ($hashFromFile.Hash -ne $F18_VER_HASH) {
    Write-Host "$Path hash error!"
    Remove-Item -Path $Path -Force
 }
@@ -98,10 +96,8 @@ if (-not (Test-Path $Path)) {
  
 }
 
-
 $Url = "https://github.com/knowhow/F18_knowhow/raw/3/bin/F18.ps1"
 $Path = "$Env:USERPROFILE\F18\F18.ps1"
 
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
 Invoke-WebRequest -Uri $Url -OutFile $Path
-

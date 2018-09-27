@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+//MEMVAR gCijene, gDefNiv
+
 STATIC s_cKalkFinIstiBroj := NIL
 STATIC s_cKalkPreuzimanjeTroskovaIzSifRoba := NIL
 STATIC s_cKalkMetodaNc := NIL
@@ -340,7 +342,6 @@ FUNCTION kalk_par_razno()
 
 
 
-
 /*
  *     Ispravka parametara "METODA NC, ISPRAVKA DOKUMENATA"
  */
@@ -360,6 +361,8 @@ FUNCTION kalk_par_metoda_nc()
       VALID  gDefNiv $ "DN" PICT "@!"
    READ
    BoxC()
+
+
 
    IF LastKey() <> K_ESC
 
@@ -571,7 +574,7 @@ FUNCTION kalk_troskovi_10ka()
 
 FUNCTION kalk_par_troskovi_rn()
 
-   PRIVATE  GetList := {}
+   PRIVATE GetList := {}
 
    Box(, 5, 76, .T., "RADNI NALOG" )
    @ box_x_koord() + 1, box_y_koord() + 2  SAY "T 1:" GET cRNT1

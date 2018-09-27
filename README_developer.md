@@ -10,8 +10,11 @@
 
     ./start_pgsql_server.sh
 
+
     # po ulasku u kontejner (root), kreiranje bjasko korisnika, hernad vec inicijalno postoji
     /scripts/create_user.sh
+    # admin user obavlja administrativne poslove i ima pune privilegije
+    /scripts/create_admin.sh <poseban_admin_password>
 
     # lista baza
     /scripts/list_databases.sh

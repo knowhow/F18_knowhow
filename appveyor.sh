@@ -36,7 +36,7 @@ export LX_UBUNTU=1
 #source scripts/set_envars.sh
 
 export F18_POS=1
-export F18_RNAL=1
+#export F18_RNAL=1
 hbmk2 -workdir=.h F18.hbp
 
 cp -av /usr/lib/i386-linux-gnu/libpq.so* .

@@ -38,7 +38,7 @@ bash -xlc "set pwd"
 
 REM build hello.hbp
 
-bash -xlc "export HB_ARCHITECTURE=win; export HB_COMPILER=mingw; export F18_VER=${APPVEYOR_REPO_TAG_NAME:=0.0.0} ; scripts/update_f18_ver_ch.sh $F18_VER; export F18_POS=1; export F18_RNAL=1; source scripts/mingw_appveyor_set_envars.sh ; hbmk2 -workdir=.h F18.hbp"
+bash -xlc "export HB_ARCHITECTURE=win; export HB_COMPILER=mingw; export F18_VER=${APPVEYOR_REPO_TAG_NAME:=0.0.0} ; scripts/update_f18_ver_ch.sh $F18_VER; export F18_POS=1; source scripts/mingw_appveyor_set_envars.sh ; hbmk2 -workdir=.h F18.hbp"
 
 
 REM postgresql dlls libpq.dll i kompanija

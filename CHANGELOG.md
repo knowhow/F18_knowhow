@@ -1,5 +1,9 @@
 # F18 klijent, lista promjena
 
+## 3.1.216-std, 2018-09-26
+
+- naša slova "prosječna ..."
+
 ## 3.1.214-std, 2018-06-27
 ### CORE
 - f18_editor linux async

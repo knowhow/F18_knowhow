@@ -19,7 +19,6 @@ STATIC s_hTemplates
 
 
 
-
 FUNCTION download_template_ld_obr_2002()
 
    RETURN download_template( "ld_obr_2002.xlsx", "b7f74944d0f30e0e3eed82a67ffff0f9cef943a79dd2fdc788bc05f2a6aac228" )

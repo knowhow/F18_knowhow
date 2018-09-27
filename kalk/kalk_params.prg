@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-//MEMVAR gCijene, gDefNiv
+MEMVAR gCijene, gDefNiv, gNw
 
 STATIC s_cKalkFinIstiBroj := NIL
 STATIC s_cKalkPreuzimanjeTroskovaIzSifRoba := NIL
@@ -353,11 +353,11 @@ FUNCTION kalk_par_metoda_nc()
    PRIVATE  GetList := {}
 
    Box(, 4, 75, .F., "METODA NC, ISPRAVKA DOKUMENATA" )
-   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Metoda nabavne cijene: bez kalk./zadnja/prosjecna/prva ( /1/2/3)" GET cMetodaNc ;
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Metoda nabavne cijene: bez kalk./zadnja/prosječna/prva ( /1/2/3)" GET cMetodaNc ;
       VALID cMetodaNC $ " 123" .AND. metodanc_info()
-   @ box_x_koord() + 2, box_y_koord() + 2 SAY "Program omogucava /ne omogucava azuriranje sumnjivih dokumenata (1/2)" GET gCijene ;
+   @ box_x_koord() + 2, box_y_koord() + 2 SAY8 "Program omogućava /ne omogućava azuriranje sumnjivih dokumenata (1/2)" GET gCijene ;
       VALID  gCijene $ "12"
-   @ box_x_koord() + 4, box_y_koord() + 2 SAY "Tekuci odgovor na pitanje o promjeni cijena ?" GET gDefNiv ;
+   @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "Tekuci odgovor na pitanje o promjeni cijena ?" GET gDefNiv ;
       VALID  gDefNiv $ "DN" PICT "@!"
    READ
    BoxC()

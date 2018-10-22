@@ -90,20 +90,16 @@ FUNCTION pos_stanje_artikala
 
    ENDIF
 
-   PRIVATE cZaduzuje := "R"
-
    IF !Empty ( cIdOdj )
       select_o_pos_odj( cIdOdj )
       IF Zaduzuje == "S"
          cU := S_U
          cI := S_I
          cRSdbf := "SIROV"
-         cZaduzuje := "S"
       ELSE
          cU := R_U
          cI := R_I
          cRSdbf := "ROBA"
-         cZaduzuje := "R"
       ENDIF
    ENDIF
 
@@ -170,7 +166,6 @@ FUNCTION pos_stanje_artikala
 
          Podvuci( cVrstaRs )
 
-         cZaduzuje := "R"
          cU := R_U
          cI := R_I
          cRSdbf := "ROBA"
@@ -203,7 +198,7 @@ FUNCTION pos_stanje_artikala
                LOOP
             ENDIF
 
-            IF ( cZaduzuje == "R" .AND. pos->idvd == "96" ) .OR. ( cZaduzuje == "S" .AND. pos->idvd $ "42#01" )
+            IF ( pos->idvd == "96" )
                SKIP
                LOOP
                // preskoci
@@ -249,11 +244,7 @@ FUNCTION pos_stanje_artikala
             ENDIF
             //
 
-            IF cZaduzuje == "S" .AND. pos->idvd $ "42#01"
-               SKIP
-               LOOP  // racuni za sirovine - zdravo
-            ENDIF
-            IF cZaduzuje == "R" .AND. pos->idvd == "96"
+            IF pos->idvd == "96"
                SKIP
                LOOP   // otpremnice za robu - zdravo
             ENDIF

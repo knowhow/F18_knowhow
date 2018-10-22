@@ -58,16 +58,14 @@ FUNCTION pos_kartica_artikla()
    IF gVrstaRS <> "K"
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prod.mjesto (prazno-svi) "  GET  cIdPos  VALID Empty( cIdPos ) .OR. p_pos_kase( cIdPos ) PICT "@!"
    ENDIF
-
    READ
 
    @ box_x_koord() + 5, box_y_koord() + 6 SAY "Sifra artikla (prazno-svi)" GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
    @ box_x_koord() + 7, box_y_koord() + 2 SAY "za period " GET dDatum0
    @ box_x_koord() + 7, Col() + 2 SAY "do " GET dDatum1
-   @ box_x_koord() + 9, box_y_koord() + 2 SAY "sa pocetnim stanjem D/N ?" GET cPocSt VALID cpocst $ "DN" PICT "@!"
-   @ box_x_koord() + 10, box_y_koord() + 2 SAY "Prikaz partnera D/N ?" GET cPPar VALID cPPar $ "DN" PICT "@!"
-   @ box_x_koord() + 11, box_y_koord() + 2 SAY "Siroki papir    D/N ?" GET cSiroki VALID cSiroki $ "DN" PICT "@!"
-
+   @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "sa početnim stanjem D/N ?" GET cPocSt VALID cpocst $ "DN" PICT "@!"
+   @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Prikaz partnera D/N ?" GET cPPar VALID cPPar $ "DN" PICT "@!"
+   @ box_x_koord() + 11, box_y_koord() + 2 SAY8 "Široki papir    D/N ?" GET cSiroki VALID cSiroki $ "DN" PICT "@!"
    READ
 
    ESC_BCR
@@ -76,10 +74,9 @@ FUNCTION pos_kartica_artikla()
    set_metric( "pos_kartica_datum_do", my_user(), dDatum1 )
    set_metric( "pos_kartica_artikal", my_user(), cIdRoba )
    set_metric( "pos_kartica_prikaz_partnera", my_user(), "N" )
-
    BoxC()
 
-   cZaduzuje := "R"
+
    cU := R_U
    cI := R_I
    //cRSdbf := "ROBA"
@@ -88,7 +85,6 @@ FUNCTION pos_kartica_artikla()
       cLM := Space( 5 )
       nSir := 80
    ENDIF
-
 
    IF cPPar == "D"
       //o_pos_doks()
@@ -186,7 +182,7 @@ FUNCTION pos_kartica_artikla()
       SELECT POS
 
       DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba )
-         IF ( cZaduzuje == "R" .AND. pos->idvd == "96" ) .OR. ( cZaduzuje == "S" .AND. pos->idvd $ "42#01" )
+         IF ( pos->idvd == "96" )
             SKIP
             LOOP
          ENDIF
@@ -212,7 +208,7 @@ FUNCTION pos_kartica_artikla()
                   LOOP
                ENDIF
 
-               IF ( cZaduzuje == "R" .AND. pos->idvd == "96" ) .OR. ( cZaduzuje == "S" .AND. pos->idvd $ "42#01" )
+               IF ( pos->idvd == "96" )
                   SKIP
                   LOOP
                ENDIF
@@ -278,7 +274,7 @@ FUNCTION pos_kartica_artikla()
                LOOP
             ENDIF
 
-            IF ( cZaduzuje == "R" .AND. pos->idvd == "96" ) .OR. ( cZaduzuje == "S" .AND. pos->idvd $ "42#01" )
+            IF ( pos->idvd == "96" )
                SKIP
                LOOP
             ENDIF

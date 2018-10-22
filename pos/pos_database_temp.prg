@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION pos_cre_pom_dbf( aDbf, cPom )
 
    IF cPom == nil
@@ -50,12 +49,10 @@ FUNCTION pos2_pripr()
    SELECT _pos_pripr
 
    my_dbf_zap()
-
    GO TOP
    scatter()
 
    seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
-
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
       hRec := dbf_get_rec()
@@ -80,8 +77,7 @@ FUNCTION pos2_pripr()
    RETURN .T.
 
 
-
-FUNCTION UkloniRadne( cIdRadnik )
+FUNCTION pos_ukloni_radne_racune( cIdRadnik )
 
    SELECT _POS
    SET ORDER TO TAG "1"

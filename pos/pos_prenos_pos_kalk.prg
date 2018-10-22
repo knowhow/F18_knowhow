@@ -468,7 +468,6 @@ FUNCTION pos_kalk_prenos_realizacije( cIdPos, dDatumOd, dDatumDo ) //, cIdVd )
          IF !Found() .OR. pom->IdTarifa <> POS->IdTarifa .OR. pom->MPC <> POS->Cijena
 
             APPEND BLANK
-
             REPLACE IdPos WITH POS->IdPos, ;
                IdRoba WITH POS->IdRoba, ;
                Kolicina WITH POS->Kolicina, ;

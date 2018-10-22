@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
 
    LOCAL lOk := .T.

@@ -155,7 +155,6 @@ FUNCTION kalk_par_varijante_prikaza()
    BoxC()
 
    IF LastKey() <> K_ESC
-
       set_metric( "kalk_magacin_po_nc", NIL, gMagacin )
       set_metric( "kalk_kolicina_kalo", NIL, gKalo )
       set_metric( "kalk_voditi_kalo", NIL, gVodiKalo )
@@ -179,7 +178,6 @@ FUNCTION kalk_par_varijante_prikaza()
       set_metric( "kalk_trosak_5_tip", NIL, gRobaTr5Tip )
       kalk_konverzija_valute_na_unosu( cKonverzijaValuteDn )
       param_fin_automatska_ravnoteza_kod_azuriranja( cFinAutoAzurDN )
-
    ENDIF
 
    RETURN NIL
@@ -339,9 +337,6 @@ FUNCTION kalk_par_razno()
    RETURN .T.
 
 
-
-
-
 /*
  *     Ispravka parametara "METODA NC, ISPRAVKA DOKUMENATA"
  */
@@ -362,15 +357,11 @@ FUNCTION kalk_par_metoda_nc()
    READ
    BoxC()
 
-
-
    IF LastKey() <> K_ESC
-
       kalk_metoda_nc ( cMetodaNC )
       set_metric( "kalk_promjena_cijena_odgovor", NIL, gDefNiv )
       set_metric( "kalk_azuriranje_sumnjivih_dokumenata", NIL, gCijene )
       set_metric( "kalk_broj_decimala_za_kolicinu", NIL, gDecKol )
-
    ENDIF
 
    RETURN .F.

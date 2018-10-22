@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION o_pos_priprz()
 
    SELECT ( F_PRIPRZ )
@@ -31,6 +30,14 @@ FUNCTION o_pos_priprg()
    RETURN .T.
 
 
+FUNCTION o_pos__pos()
+
+   SELECT ( F__POS )
+   my_use( "_pos" )
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
 /*
 -- FUNCTION o_pos_uredj()
 
@@ -44,7 +51,6 @@ FUNCTION o_pos_priprg()
 FUNCTION pos_init()
 
    my_close_all_dbf()
-
    pos_definisi_inicijalne_podatke()
    cre_priprz()
 
@@ -237,7 +243,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    // o_sifv()
    o_pos_priprz()
    o_pos_priprg()
-   O__POS
+   o_pos__pos()
    O__POS_PRIPR
 
    IF lOtvoriKumulativ

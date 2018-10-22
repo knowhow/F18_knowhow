@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION pos_novi_broj_dokumenta( cIdPos, cIdTipDokumenta, dDatDok )
 
    LOCAL nBrojDokumenta := 0
@@ -62,7 +61,6 @@ FUNCTION pos_set_param_broj_dokumenta()
 
    @ box_x_koord() + 1, box_y_koord() + 2 SAY "Dokument:" GET _id_pos
    @ box_x_koord() + 1, Col() + 1 SAY "-" GET _tip_dok
-
    READ
 
    IF LastKey() == K_ESC
@@ -87,7 +85,6 @@ FUNCTION pos_set_param_broj_dokumenta()
    ENDIF
 
    RETURN .T.
-
 
 
 FUNCTION pos_reset_broj_dokumenta( cIdPos, tip_dok, broj_dok )

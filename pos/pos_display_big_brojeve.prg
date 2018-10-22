@@ -49,9 +49,7 @@ FUNCTION PaperFeed()
       ENDIF
    ENDIF
 
-   RETURN
-
-
+   RETURN .T.
 
 
 

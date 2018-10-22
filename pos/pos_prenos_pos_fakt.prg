@@ -125,7 +125,6 @@ FUNCTION Stanje2Fakt()
    GO TOP
 
    cIdOdj := Space( 2 )
-   cZaduzuje := "R"
    nRBr := 0
    SEEK cIdOdj
    // do while !eof()
@@ -143,12 +142,7 @@ FUNCTION Stanje2Fakt()
             LOOP
          ENDIF
 
-         IF cZaduzuje == "S" .AND. pos->idvd $ "42#01"
-            // racuni za sirovine - zdravo
-            SKIP
-            LOOP
-         ENDIF
-         IF cZaduzuje == "R" .AND. pos->idvd == "96"
+         IF pos->idvd == "96"
             // otpremnice za robu - zdravo
             SKIP
             LOOP

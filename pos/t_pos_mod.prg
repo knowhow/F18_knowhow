@@ -139,7 +139,6 @@ METHOD setScreen()
    RETURN .T.
 
 
-
 METHOD set_module_gvars()
 
    // gPrevIdPos - predhodna vrijednost gIdPos
@@ -247,7 +246,6 @@ METHOD set_module_gvars()
    gKorIme := ""
    gIdRadnik := ""
    gStRad := ""
-
 
    SC_Opisi[ 1 ] := "1"
    SC_Opisi[ 2 ] := "2"

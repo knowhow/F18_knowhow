@@ -17,22 +17,16 @@ FUNCTION pos_prepis_pocetno_stanje()
    LOCAL nSir := 80, nRobaSir := 30, cLm := Space ( 5 ), cPicKol := "999999.999"
 
    START PRINT CRET
-   IF gVrstaRS == "S"
-      P_INI
-      P_10CPI
-   ELSE
-      nSir := 40
-      nRobaSir := 18
-      cLM := ""
-      cPicKol := "9999.999"
-   ENDIF
 
+   nSir := 40
+   nRobaSir := 18
+   cLM := ""
+   cPicKol := "9999.999"
    ? PadC ( "POCETNO STANJE " + ;
       iif ( Empty ( DOKS->IdPos ), "", AllTrim ( DOKS->IdPos ) + "-" ) + ;
       AllTrim ( DOKS->BrDok ), nSir )
 
    seek_pos_pos( pos_doks->IdPos,  pos_doks->IdVd, pos_doks->datum,  pos_doks->BrDok )
-
    ? PadC ( FormDat1 ( DOKS->Datum ) + ;
       iif ( !Empty ( DOKS->Smjena ), " Smjena: " + DOKS->Smjena, "" ), nSir )
    ?
@@ -44,16 +38,9 @@ FUNCTION pos_prepis_pocetno_stanje()
    ENDIF
 
    ? cLM
-   IF gVrstaRS == "S"
-      ?? "Sifra    Naziv                          JMJ Cijena  Kolicina   ODJ"
-      m := cLM + "-------- ------------------------------ --- ------- ---------- ---"
-      IF gPostDO == "D"
-         m += " ---"
-      ENDIF
-   ELSE
-      ?? "Sifra    Naziv              JMJ Kolicina"
-      m := cLM + "-------- ------------------ --- --------"
-   ENDIF
+
+   ?? "Sifra    Naziv              JMJ Kolicina"
+   m := cLM + "-------- ------------------ --- --------"
    IF gPostDO == "D"
       ?? " DIO"
    ENDIF
@@ -76,39 +63,26 @@ Sifra    Naziv              JMJ Kolicina
 
    SELECT POS
    DO WHILE ! Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == DOKS->( IdPos + IdVd + DToS( datum ) + BrDok )
-      IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici()
-         FF
-      ENDIF
+
       ? cLM
       ?? IdRoba, ""
       select_o_roba( POS->IdRoba )
       ?? PadR ( _field->Naz, nRobaSir ), _field->Jmj, ""
       SELECT POS
-      IF gVrstaRS == "S"
-         ?? TRANS ( POS->Cijena, "9999.99" ), ""
-      ENDIF
       ?? TRANS ( POS->Kolicina, cPicKol )
-      IF gVrstaRS <> "S"
-         ? cLM + Space ( Len ( POS->IdRoba ) )
-      ENDIF
+      ? cLM + Space ( Len ( POS->IdRoba ) )
       ?? " " + POS->IdOdj, " " + POS->IdDio
       nFin += POS->( Kolicina * Cijena )
       SKIP
    ENDDO
-   IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 7
-      FF
-   ENDIF
+
    ? m
    ? cLM
-   ?? PadL ( "IZNOS DOKUMENTA (" + Trim ( gDomValuta ) + ")", ;
-      iif ( gVrstaRS == "S", 13, 10 ) + nRobaSir ), ;
-      TRANS ( nFin, iif ( gVrstaRS == "S", "999,999,999,999.99", "9,999,999.99" ) )
+   ?? PadL ( "IZNOS DOKUMENTA (" + Trim ( gDomValuta ) + ")",  10  + nRobaSir ), TRANS ( nFin, "9,999,999.99" )
    ? m
-   IF gVrstaRS == "S"
-      FF
-   ELSE
-      PaperFeed()
-   ENDIF
+
+   PaperFeed()
+
    ENDPRINT
    SELECT pos_doks
 

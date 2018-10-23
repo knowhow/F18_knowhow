@@ -42,7 +42,7 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
 
    cKontrolisi := "N"
    cK9 := Space( 3 )
-   cVrstaRs := gVrstaRs
+   //cVrstaRs := gVrstaRs
 
    IF ( PCount() == 0 )
       fZaklj := .F.
@@ -76,9 +76,9 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
       cIdPos := gIdPos
       aNiz := {}
 
-      IF cVrstaRs <> "K"
+      //IF cVrstaRs <> "K"
          AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cIdpos='X'.or.empty(cIdPos).or. p_pos_kase(@cIdPos)", "@!", } )
-      ENDIF
+      //ENDIF
       IF gVodiOdj == "D"
          AAdd( aNiz, { "Roba/Sirovine", "cIdOdj", "cidodj $ 'R S '", "@!", } )
       ENDIF
@@ -120,11 +120,11 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
       cRSdbf := "SIROV"
    ENDIF
 
-   IF cVrstaRs == "S"
-      cLM := Space( 5 )
-      nSir := 80
-      nRob := 40
-   ENDIF
+   //IF cVrstaRs == "S"
+    //  cLM := Space( 5 )
+    //  nSir := 80
+    //  nRob := 40
+   //ENDIF
 
 
    cFilt := ""
@@ -161,10 +161,10 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
 
    IF !fZaklj
       START PRINT CRET
-      Zagl( cIdOdj, cDat, cVrstaRs )
+      Zagl( cIdOdj, cDat, "A" )
    ENDIF
 
-   Podvuci( cVrstaRs )
+   Podvuci()
 
    nVrijednost := 0
    _n_rbr := 0
@@ -357,9 +357,9 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
 
    ENDDO
 
-   IF cVrstaRs <> "S"
+   //IF cVrstaRs <> "S"
 
-      Podvuci( cVrstaRs )
+      Podvuci()
 
       ? "Ukupno stanje zaduzenja: "
       ? cLM + Space( 5 ), ;
@@ -370,29 +370,28 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
          Str( 0, 10, 2 ), ;
          Str( nVrijednost, 10, 2 )
 
-      Podvuci( cVrstaRs )
+      Podvuci()
 
-   ENDIF
+   //ENDIF
 
    FF
    ENDPRINT
 
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
 
 
-
-/* Podvuci(cVrstaRs)
+/*
  *     Podvlaci red u izvjestaju stanje odjeljenja/dijela objekta
  */
 
-FUNCTION Podvuci( cVrstaRs )
+STATIC FUNCTION Podvuci()
 
    ?
    ?? REPL( "-", 6 ), REPL ( "-", 9 ), REPL ( "-", 9 ), REPL ( "-", 9 ), REPL ( "-", 10 ), REPL( "-", 10 ), REPL( "-", 10 )
 
-   RETURN
+   RETURN .T.
 
 
 /* Zagl(cIdOdj,dDat, cVrstaRs)

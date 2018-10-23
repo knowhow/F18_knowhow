@@ -16,7 +16,7 @@
 
 FUNCTION realizacija_odjeljenja()
 
-   LOCAL   nSir := iif ( gVrstaRS == "S", 80, 40 )
+   LOCAL  nSir := 40
    PRIVATE cIdOdj := Space( 2 ), cPrikRobe := "D"
    PRIVATE cSmjena := Space( 1 ), cIdPos := gIdPos // , cIdDio := gIdDio
    PRIVATE dDatum0 := gDatum, dDatum1 := gDatum, aNiz, cRoba := Space ( 60 )
@@ -47,12 +47,12 @@ FUNCTION realizacija_odjeljenja()
 
    aNiz := {}
    cIdPos := gIdPos
-   IF gVrstaRS <> "K"
-      AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.p_pos_kase(@cIdPos)", "@!", } )
-   ELSE
-      cIdPos := gIdPos
-      // cIdDio := gIdDio
-   ENDIF
+   // IF gVrstaRS <> "K"
+   AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.p_pos_kase(@cIdPos)", "@!", } )
+   // ELSE
+   // cIdPos := gIdPos
+   // cIdDio := gIdDio
+   // ENDIF
    IF gvodiodj == "D"
       AAdd ( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "empty(cIdOdj) .or. P_Odj(@cIdOdj)", "@!", } )
    ENDIF
@@ -382,11 +382,11 @@ FUNCTION realizacija_dio_objekta
 
    aNiz := {}
    cIdPos := gIdPos
-   IF gVrstaRS <> "K"
-      AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.p_pos_kase(@cIdPos)", "@!", } )
-   ELSE
-      cIdPos := gIdPos
-   ENDIF
+   // IF gVrstaRS <> "K"
+   AAdd ( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos).or.p_pos_kase(@cIdPos)", "@!", } )
+   // ELSE
+   // cIdPos := gIdPos
+   // ENDIF
    // AAdd ( aNiz, { "Dio objekta (prazno-svi)", "cIdDio", "Empty (cIdDio).or.P_Dio(@cIdDio)", "@!", } )
    IF gvodiodj == "D"
       AAdd ( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "Empty (cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )

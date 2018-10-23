@@ -51,10 +51,8 @@ FUNCTION pos_realizacija_radnik
    ELSE
       aNiz := {}
       cIdPos := gIdPos
-      IF gVrstaRS <> "K"
 
-         AAdd( aNiz, { "Prodajno mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
-      ENDIF
+      AAdd( aNiz, { "Prodajno mjesto (prazno-sve)", "cIdPos", "cidpos='X' .or. empty(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
       AAdd( aNiz, { "Sifra radnika  (prazno-svi)", "cIdRadnik", "IF(!EMPTY(cIdRadnik),P_OSOB(@cIdRadnik),.t.)",, } )
       AAdd( aNiz, { "Vrsta placanja (prazno-sve)", "cVrsteP",, "@!S30", } )
       AAdd( aNiz, { "Smjena (prazno-sve)", "cSmjena",,, } )

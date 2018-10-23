@@ -14,13 +14,13 @@
 
 FUNCTION pos_main_menu_upravnik()
 
-   IF gVrstaRS == "A"
+   //IF gVrstaRS == "A"
       MMenuUpA()
-   ELSEIF gVrstaRS == "K"
-      MMenuUpK()
-   ELSE
-      MMenuUpS()
-   ENDIF
+   //ELSEIF gVrstaRS == "K"
+    //  MMenuUpK()
+   //ELSE
+    //  MMenuUpS()
+   //ENDIF
 
    RETURN .T.
 
@@ -62,7 +62,7 @@ FUNCTION MMenuUpA()
    RETURN .F.
 
 
-
+/*
 FUNCTION MMenuUpK()
 
    PRIVATE opc := {}
@@ -105,7 +105,7 @@ FUNCTION MMenuUpS()
    closeret
 
    RETURN .F.
-
+*/
 
 FUNCTION pos_menu_dokumenti()
 

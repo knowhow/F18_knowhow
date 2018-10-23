@@ -28,22 +28,9 @@ FUNCTION pos_stampa_dokumenta()
 
    SET CURSOR ON
 
-   IF gVrstaRS == "S"
-      nBH := 10
-      nR := 7
-      cLM := Space( 5 )
-      cIdPos := Space( FIELD_LEN_POS_KASE_ID )
-      nRW := 30
-      nSir := 80
-   ELSE
-      cIdPos := gIdPos
-   ENDIF
 
-   IF gVrstaRS == "K"
-      cDoks := POS_VD_RACUN + "#" + VD_RZS
-   ELSE
-      cDoks := POS_VD_RACUN + "#" + VD_ZAD + "#" + "IN" + "#" + VD_NIV + "#" + VD_RZS
-   ENDIF
+   cIdPos := gIdPos
+   cDoks := POS_VD_RACUN + "#" + VD_ZAD + "#" + "IN" + "#" + VD_NIV + "#" + VD_RZS
 
    cIdRadnik := Space( FIELD_LEN_POS_OSOB_ID )
    cIdVd := Space( 2 )
@@ -51,10 +38,8 @@ FUNCTION pos_stampa_dokumenta()
    SET CURSOR ON
    Box(, 10, 77 )
 
-   IF gVrstaRS <> "K"
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY " Prodajno mjesto (prazno-sva)" GET cIdPos PICT "@!" VALID Empty( cIdPos ) .OR. p_pos_kase( @cIdPos, 1, 37 )
-   ENDIF
 
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY " Prodajno mjesto (prazno-sva)" GET cIdPos PICT "@!" VALID Empty( cIdPos ) .OR. p_pos_kase( @cIdPos, 1, 37 )
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "          Radnik (prazno-svi)" GET cIdRadnik PICT "@!" VALID Empty( cIdRadnik ) .OR. P_Osob( @cIdRadnik, 2, 37 )
    @ box_x_koord() + 3, box_y_koord() + 2 SAY "Vrste dokumenata (prazno-svi)" GET cIdVd PICT "@!" VALID Empty( cIdVd ) .OR. cIdVd $ cDoks
    @ box_x_koord() + 4, box_y_koord() + 2 SAY8 "            Počevši od datuma" GET dDatOd PICT "@D" VALID dDatOd <= gDatum .AND. dDatOd <= dDatDo
@@ -66,44 +51,27 @@ FUNCTION pos_stampa_dokumenta()
 
    SELECT pos_doks
    cFilt1 := "DATUM>=" + dbf_quote( dDatOd ) + ".and.DATUM<=" + dbf_quote( dDatDo )
-   SET FILTER to &cFilt1
+   SET FILTER TO &cFilt1
    SEEK cIdPos + cIdVd
 
    EOF CRET
 
    START PRINT CRET
 
-   //ZagFirma()
+   // ZagFirma()
    ?
 
-   IF gVrstaRS <> "S"
-      ? PadC( "KASA " + gIdPos, 40 )
-   ELSE
-      P_10CPI
-   ENDIF
 
+   ? PadC( "KASA " + gIdPos, 40 )
    ?U PadC( "ŠTAMPA LISTE DOKUMENATA", nSir )
    ? PadC( "NA DAN " + FormDat1 ( gDatum ), nSir )
    ? PadC( "-------------------------", nSir )
    ? PadC( "Za period od " + FormDat1( dDatOd ) + " do " + FormDat1( dDatDo ), nSir )
    ?
 
-   IF gVrstaRS == "S"
-      P_12CPI
-   ENDIF
-
    ? cLM + "VD", PadR( "Broj", 9 )
-
-   IF gVrstaRS == "S"
-      ?? " " + PadC( "Datum", 11 ), "Smjena"
-   ENDIF
-
    ?? " " + PadR( "Radnik", nRW ), "BrS", " Iznos"
    ? cLM + "--", REPL( "-", 9 )
-
-   IF gVrstaRS == "S"
-      ?? " " + REPL( "-", 11 ), REPL( "-", 6 )
-   ENDIF
 
    ?? " " + REPL( "-", nRW ), "---", REPL( "-", 10 )
 
@@ -121,16 +89,12 @@ FUNCTION pos_stampa_dokumenta()
       ? cLM
       ?? pos_doks->IdVd, PadR( AllTrim( pos_doks->IdPos ) + "-" + AllTrim( pos_doks->BrDok ), 9 )
 
-      IF gVrstaRS == "S"
-         ?? " " + FormDat1( pos_doks->datum ), PadC( pos_doks->Smjena, 6 )
-      ENDIF
-
       select_o_pos_osob( pos_doks->IdRadnik )
       ?? " " + Left( OSOB->Naz, nRW )
       nBrStav := 0
       nIznos := 0
-      //SELECT POS
-      //SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      // SELECT POS
+      // SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
       seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
 
       DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
@@ -151,18 +115,8 @@ FUNCTION pos_stampa_dokumenta()
 
    IF !Empty( cIdVd )
       ? cLM + "--", REPL ( "-", 9 )
-
-      IF gVrstaRS == "S"
-         ?? " " + REPL( "-", 11 ), REPL( "-", 6 )
-      ENDIF
-
       ?? " " + REPL( "-", nRW ), "---", REPL( "-", 8 )
-
-      IF gVrstaRS == "S"
-         ? cLM + PadL( "U K U P N O  (" + gDomValuta + ")", 3 + 9 + 19 + 1 + nRW ), Str( nSuma, 12, 2 )
-      ELSE
-         ? cLM + PadL( "U K U P N O  (" + gDomValuta + ")", 3 + 9 + 0 + 1 + nRW ), Str( nSuma, 12, 2 )
-      ENDIF
+      ? cLM + PadL( "U K U P N O  (" + gDomValuta + ")", 3 + 9 + 0 + 1 + nRW ), Str( nSuma, 12, 2 )
    ENDIF
 
    ENDPRINT

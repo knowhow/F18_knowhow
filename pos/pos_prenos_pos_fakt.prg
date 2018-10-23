@@ -23,12 +23,12 @@ STATIC cIdPos
    cPm := cIdPos
 
   -- cPitanje := my_get_from_ini( "POS", "PrenosGetPm", "0" )
-   IF ( ( gVrstaRs <> "S" ) .AND. ( cPitanje == "0" ) )
+  ----x----- IF ( ( gVrstaRs <> "S" ) .AND. ( cPitanje == "0" ) )
       RETURN ""
    ENDIF
 
 
-   IF ( gVrstaRs == "S" ) .OR. ( ( cPitanje == "D" ) .OR. Pitanje(, "Postaviti oznaku prodajnog mjesta? (D/N)", "N" ) == "D" )
+----x-----   IF ( gVrstaRs == "S" ) .OR. ( ( cPitanje == "D" ) .OR. Pitanje(, "Postaviti oznaku prodajnog mjesta? (D/N)", "N" ) == "D" )
       Box(, 1, 30 )
       SET CURSOR ON
       @ box_x_koord() + 1, box_y_koord() + 2 SAY "Oznaka prodajnog mjesta:" GET cPm
@@ -76,11 +76,11 @@ FUNCTION PripTOPSFAKT( cIdPartnG )
 
 FUNCTION Stanje2Fakt()
 
-  // o_roba()
-//   o_sifk()
-//   o_sifv()
-//   o_partner()
-//   o_pos_kase()
+   // o_roba()
+// o_sifk()
+// o_sifv()
+// o_partner()
+// o_pos_kase()
    o_pos_kumulativne_tabele()
 
    cIdPos := gIdPos
@@ -98,12 +98,7 @@ FUNCTION Stanje2Fakt()
    ESC_BCR
    BoxC()
 
-   IF gVrstaRS <> "S"
-      cIdPos := gIdPos
-   ELSE
-      // ako je server
-      gIdPos := cIdPos
-   ENDIF
+   cIdPos := gIdPos
 
    IF !Empty( cIdPartnG )
       select_o_partner( cIdPartnG )

@@ -60,10 +60,6 @@ FUNCTION pos_pregled_prometa_po_vrstama_placanja()
 
    // ZagFirma()
 
-   IF gVrstaRS == "S"
-      P_INI  ; P_10CPI
-   ENDIF
-
    ? "PREGLED PROMETA PO VRSTI PLACANJA NA DAN " + DToC( gDatum )
    ? "-------------------------------------------------"
    ?

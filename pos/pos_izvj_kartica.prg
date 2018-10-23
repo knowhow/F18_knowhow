@@ -20,14 +20,15 @@ FUNCTION pos_kartica_artikla()
    LOCAL cSt
    LOCAL nVrijednost
    LOCAL nCijena := 0
-   //LOCAL cRSdbf
+
+   // LOCAL cRSdbf
    LOCAL cLM := ""
    LOCAL nSir := 40
    LOCAL cSiroki := "D"
    LOCAL cPPar
    LOCAL GetList := {}
 
-   //PRIVATE cIdDio := Space( 2 )
+   // PRIVATE cIdDio := Space( 2 )
    PRIVATE cIdOdj := Space( 2 )
    PRIVATE dDatum0 := gDatum
    PRIVATE dDatum1 := gDatum
@@ -35,11 +36,11 @@ FUNCTION pos_kartica_artikla()
 
    nMDBrDok := 6
 
-  //o_pos_kase()
-  // o_sifk()
-  // o_sifv()
-  // o_roba()
-   //o_pos_pos()
+   // o_pos_kase()
+   // o_sifk()
+   // o_sifv()
+   // o_roba()
+   // o_pos_pos()
 
    cIdRoba := Space( 10 )
    cIdPos := gIdPos
@@ -55,9 +56,7 @@ FUNCTION pos_kartica_artikla()
 
    aNiz := {}
 
-   IF gVrstaRS <> "K"
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prod.mjesto (prazno-svi) "  GET  cIdPos  VALID Empty( cIdPos ) .OR. p_pos_kase( cIdPos ) PICT "@!"
-   ENDIF
+   @ box_x_koord() + 1, box_y_koord() + 2 SAY "Prod.mjesto (prazno-svi) "  GET  cIdPos  VALID Empty( cIdPos ) .OR. p_pos_kase( cIdPos ) PICT "@!"
    READ
 
    @ box_x_koord() + 5, box_y_koord() + 6 SAY "Sifra artikla (prazno-svi)" GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
@@ -79,29 +78,24 @@ FUNCTION pos_kartica_artikla()
 
    cU := R_U
    cI := R_I
-   //cRSdbf := "ROBA"
-
-   IF gVrstaRS == "S"
-      cLM := Space( 5 )
-      nSir := 80
-   ENDIF
+   // cRSdbf := "ROBA"
 
    IF cPPar == "D"
-      //o_pos_doks()
-      //SELECT ( F_POS_DOKS )
-      //SET ORDER TO TAG "1"
+      // o_pos_doks()
+      // SELECT ( F_POS_DOKS )
+      // SET ORDER TO TAG "1"
    ENDIF
 
-  // SELECT POS
-  // SET ORDER TO TAG "2"
+   // SELECT POS
+   // SET ORDER TO TAG "2"
 
 
    IF Empty( cIdRoba )
-      //Seek2( cIdOdj )
+      // Seek2( cIdOdj )
       seek_pos_pos_2( cIdOdj )
    ELSE
       seek_pos_pos_2( cIdOdj, cIdRoba )
-      //Seek2( cIdOdj + cIdRoba )
+      // Seek2( cIdOdj + cIdRoba )
       IF pos->idroba <> cIdRoba
          MsgBeep( "Ne postoje traženi podaci !" )
          RETURN .F.
@@ -112,30 +106,25 @@ FUNCTION pos_kartica_artikla()
 
    START PRINT CRET
 
-   //ZagFirma()
+   // ZagFirma()
 
    ? PadC( "KARTICE ARTIKALA NA DAN " + FormDat1( gDatum ), nSir )
    ? PadC( "-----------------------------------", nSir )
 
-   IF gVrstaRS <> "K"
-      IF Empty( cIdPos )
-         ? cLM + "PROD.MJESTO: " + cIdpos + "-" + "SVE"
-      ELSE
-         ? cLM + "PROD.MJESTO: " + cIdpos + "-" + find_pos_kasa_naz( cIdPos )
-      ENDIF
+
+   IF Empty( cIdPos )
+      ? cLM + "PROD.MJESTO: " + cIdpos + "-" + "SVE"
+   ELSE
+      ? cLM + "PROD.MJESTO: " + cIdpos + "-" + find_pos_kasa_naz( cIdPos )
    ENDIF
 
-   ? cLM + "ARTIKAL    : " + IIF( Empty( cIdRoba ), "SVI", RTrim( cIdRoba ) )
+
+   ? cLM + "ARTIKAL    : " + iif( Empty( cIdRoba ), "SVI", RTrim( cIdRoba ) )
    ? cLM + "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
    ?
 
-   IF gVrstaRS == "S"
-      cLM := Space( 5 )
-      ? cLM
-   ELSE
-      cLM := ""
-      ?
-   ENDIF
+   cLM := ""
+   ?
 
    ?? "Artikal"
 
@@ -145,27 +134,16 @@ FUNCTION pos_kartica_artikla()
       ? cLM + "Dokum." + Space( nMDBrDok - 4 ) + "     Ulaz       Izlaz     Stanje"
    ENDIF
 
-   IF gVrstaRS == "S"
-      ?? "    Vrijednost"
-   ENDIF
 
    IF cPPar == "D"
       ?? "   Partner"
    ENDIF
 
-   IF gVrstaRS == "S"
-      m := cLM
-      IF cSiroki == "D"
-         m := m + Replicate( "-", 8 ) + " "  // datum
-      ENDIF
-      m := m + "---" + REPL( "-", nMDBrDok ) + " ---------- ---------- ---------- ------------"
-   ELSE
-      m := ""
-      IF cSiroki == "D"
-         m := m + Replicate( "-", 8 ) + " "  // datum
-      ENDIF
-      m := m + "---" + REPL( "-", nMDBrDok ) + " ---------- ---------- ----------"
+   m := ""
+   IF cSiroki == "D"
+      m := m + Replicate( "-", 8 ) + " "  // datum
    ENDIF
+   m := m + "---" + REPL( "-", nMDBrDok ) + " ---------- ---------- ----------"
 
    IF cPPar == "D"
       m += " --------"
@@ -190,19 +168,19 @@ FUNCTION pos_kartica_artikla()
          IF cPocSt == "N"
             select_o_roba( cIdRoba )
             nCijena1 := pos_get_mpc()
-            //SELECT POS
+            // SELECT POS
             nStanje := 0
             nVrijednost := 0
 
-            //SEEK cIdOdj + cIdRoba + DToS( dDatum0 )
+            // SEEK cIdOdj + cIdRoba + DToS( dDatum0 )
             seek_pos_pos_2( cIdOdj, cIdRoba, dDatum0 )
 
          ELSE
             DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum < dDatum0
-               //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
-                //  SKIP
-                //  LOOP
-               //ENDIF
+               // IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
+               // SKIP
+               // LOOP
+               // ENDIF
                IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                   SKIP
                   LOOP
@@ -235,9 +213,6 @@ FUNCTION pos_kartica_artikla()
             nCijena1 := pos_get_mpc()
 
             IF fSt
-               IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 3
-                  FF
-               ENDIF
                ? m
                ? cLM
                IF cSiroki == "D"
@@ -246,16 +221,9 @@ FUNCTION pos_kartica_artikla()
                ?? cIdRoba, PadR ( AllTrim ( Naz ) + " (" + AllTrim ( Jmj ) + ")", 32 )
                ? m
                nVrijednost := nStanje * nCijena1
-               IF gVrstaRS == "S"
-                  ? cLM
-               ELSE
-                  ?
-               ENDIF
+               ?
                ?? PadL ( "Stanje do " + FormDat1 ( dDatum0 ), 29 ), ""
                ?? Str ( nStanje, 10, 3 )
-               IF gVrstaRS == "S"
-                  ?? " " + Str ( nCijena1 * nStanje, 12, 3 )
-               ENDIF
                fSt := .F.
             ENDIF
             SELECT POS
@@ -263,10 +231,10 @@ FUNCTION pos_kartica_artikla()
 
          DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum <= dDatum1
 
-            //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
-              // SKIP
-              // LOOP
-            //ENDIF
+            // IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
+            // SKIP
+            // LOOP
+            // ENDIF
 
             IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                // (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS
@@ -280,11 +248,8 @@ FUNCTION pos_kartica_artikla()
             ENDIF
 
             IF fSt
-               //SELECT ( cRSdbf )
+               // SELECT ( cRSdbf )
                select_o_roba( cIdRoba )
-               IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 3
-                  FF
-               ENDIF
                ? m
                ? cLM + cIdRoba, PadR( AllTrim( Naz ) + " (" + AllTrim( Jmj ) + ")", 32 )
                ? m
@@ -308,10 +273,6 @@ FUNCTION pos_kartica_artikla()
                nStanje += POS->Kolicina
                ?? Str ( nStanje, 10, 3 )
 
-               IF gVrstaRS == "S"
-                  ?? "", Str ( nCijena1 * nStanje, 12, 3 )
-               ENDIF
-
             ELSEIF POS->IdVd == "NI"
 
                ? cLM
@@ -324,9 +285,6 @@ FUNCTION pos_kartica_artikla()
                ?? "S:", Str ( POS->Cijena, 7, 2 ), "N:", Str ( POS->Ncijena, 7, 2 ), ;
                   Str ( nStanje, 10, 3 )
 
-               IF gVrstaRS == "S"
-                  ?? "", Str ( nCijena1 * nStanje, 12, 3 )
-               ENDIF
 
                SKIP
                LOOP
@@ -347,22 +305,13 @@ FUNCTION pos_kartica_artikla()
                   nStanje -= nKol
                ENDIF
 
-               IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 3
-                  FF
-               ENDIF
-
                ? cLM
-
                IF cSiroki == "D"
                   ?? DToC( pos->datum ) + " "
                ENDIF
 
                ?? POS->IdVd + "-" + PadR( AllTrim( POS->BrDok ), nMDBrDok ), ""
                ?? Space ( 10 ), Str ( nKol, 10, 3 ), Str ( nStanje, 10, 3 )
-
-               IF gVrstaRS == "S"
-                  ?? "", Str ( nCijena1 * nStanje, 12, 3 )
-               ENDIF
 
             ENDIF // izlaz, in
 
@@ -384,19 +333,14 @@ FUNCTION pos_kartica_artikla()
 
          ?? " UKUPNO", Str( nUlaz, 10, 3 ), Str( nIzlaz, 10, 3 ), Str( nStanje, 10, 3 )
 
-         IF gVrstaRS == "S"
-            ?? "", Str ( nCijena1 * nStanje, 12, 3 )
+         IF cSiroki == "D"
+            ?  Space( 9 ) + "  Cij:", Str( nCijena1, 8, 2 ), "Ukupno:", Str ( nCijena1 * nStanje, 12, 3 )
          ELSE
-            IF cSiroki == "D"
-               ?  Space( 9 ) + "  Cij:", Str( nCijena1, 8, 2 ), "Ukupno:", Str ( nCijena1 * nStanje, 12, 3 )
-            ELSE
-               ?  "  Cij:", Str( nCijena1, 8, 2 ), "Ukupno:", Str ( nCijena1 * nStanje, 12, 3 )
-            ENDIF
+            ?  "  Cij:", Str( nCijena1, 8, 2 ), "Ukupno:", Str ( nCijena1 * nStanje, 12, 3 )
          ENDIF
 
          ? m
          ?
-
          DO WHILE !Eof() .AND. POS->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. POS->Datum > dDatum1
             SKIP
          ENDDO

@@ -57,9 +57,9 @@ FUNCTION pos_top_narudzbe()
    _o_tables()
 
    PRIVATE cIdPOS := gIdPos
-   IF gVrstaRS <> "K"
+   //IF gVrstaRS <> "K"
       aNiz := { { "Prodajno mjesto", "cIdPos", "cidpos='X' .or. Empty(cIdPos).or.p_pos_kase(@cIdPos)",, } }
-   ENDIF
+   //ENDIF
    AAdd ( aNiz, { "Roba (prazno-sve)", "cRoba",, "@!S30", } )
    AAdd ( aNiz, { "Pregled po Iznosu/Kolicini/Oboje (I/K/O)", "cSta", "cSta$'IKO'", "@!", } )
    AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
@@ -145,9 +145,6 @@ FUNCTION pos_top_narudzbe()
 
    ?
 
-   IF gVrstaRS == "K"
-      PaperFeed ()
-   ENDIF
 
    ENDPRINT
 

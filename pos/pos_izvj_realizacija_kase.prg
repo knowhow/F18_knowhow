@@ -172,18 +172,14 @@ FUNCTION FrmRptVars( cK1, cIdPos, dDatum0, dDatum1, cSmjena, cRD, cVrijOd, cVrij
    aNiz := {}
    cIdPos := gIdPos
 
-   IF gVrstaRS <> "K"
-      AAdd( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X'.or.EMPTY(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
-   ENDIF
 
+   AAdd( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X'.or.EMPTY(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
    AAdd( aNiz, { "Radnici (prazno-svi)", "cRadnici",, "@!S30", } )
    AAdd( aNiz, { "Vrste placanja (prazno-sve)", "cVrsteP",, "@!S30", } )
-
 
    IF gVodiOdj == "D"
       AAdd( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "EMPTY(cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )
    ENDIF
-
 
    AAdd( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
    AAdd( aNiz, { "                   do datuma", "dDatum1",,, } )
@@ -245,7 +241,7 @@ STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdO
 
    ? PadC( "-------------------------------------", LEN_TRAKA )
 
-   //o_pos_kase()
+   // o_pos_kase()
 
    IF Empty( cIdPos )
       IF ( grbReduk < 2 )
@@ -313,7 +309,6 @@ STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdO
 
 
 STATIC FUNCTION pos_set_filter_pos_doks( cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId )
-
 
    SELECT pos_doks
    SET ORDER TO TAG "2"  // "2" - "IdVd+DTOS (Datum)+Smjena"

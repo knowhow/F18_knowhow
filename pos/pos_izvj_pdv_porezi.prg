@@ -43,30 +43,30 @@ FUNCTION pos_pdv_po_tarifama
       PRIVATE cNaplaceno := "1"
    ENDIF
 
-   IF ( cIdOdj == nil )
+   IF ( cIdOdj == NIL )
       cIdOdj := Space( 2 )
    ENDIF
 
-  // o_tarifa()
+   // o_tarifa()
 
    IF fSolo
-    //  o_sifk()
-    //  o_sifv()
-    //  o_pos_kase()
-    //  o_roba()
-    //  o_pos_odj()
-    //  o_pos_doks()
-    //  o_pos_pos()
+      // o_sifk()
+      // o_sifv()
+      // o_pos_kase()
+      // o_roba()
+      // o_pos_odj()
+      // o_pos_doks()
+      // o_pos_pos()
    ENDIF
 
-   IF gVrstaRS <> "S"
-      cIdPos := gIdPos
-   ENDIF
+   // IF gVrstaRS <> "S"
+   cIdPos := gIdPos
+   // ENDIF
 
    IF fSolo
-      IF gVrstaRS <> "K"
-         AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.p_pos_kase(cIdPos)", "@!", } )
-      ENDIF
+      // IF gVrstaRS <> "K"
+      AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.p_pos_kase(cIdPos)", "@!", } )
+      // ENDIF
 
       IF gVodiOdj == "D"
          AAdd ( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", ".t.", "@!", } )
@@ -91,7 +91,7 @@ FUNCTION pos_pdv_po_tarifama
       ENDDO
 
       START PRINT CRET
-      //ZagFirma()
+      // ZagFirma()
 
    ENDIF // fsolo
 
@@ -113,15 +113,11 @@ FUNCTION pos_pdv_po_tarifama
          ?
          ? "PROD.MJESTO: "
 
-         IF gVrstaRS <> "K"
-            ?? cIdPos + "-"
-            IF ( Empty( cIdPos ) )
-               ?? "SVA"
-            ELSE
-               ?? cIdPos + "-" + AllTrim ( find_pos_kasa_naz( cIdPos ) )
-            ENDIF
+         ?? cIdPos + "-"
+         IF ( Empty( cIdPos ) )
+            ?? "SVA"
          ELSE
-            ?? gPosNaz
+            ?? cIdPos + "-" + AllTrim ( find_pos_kasa_naz( cIdPos ) )
          ENDIF
 
          IF !Empty( cIdOdj )
@@ -145,8 +141,8 @@ FUNCTION pos_pdv_po_tarifama
          ENDIF
       ENDIF // fsolo
 
-      //SELECT POS
-      //SET ORDER TO TAG "1"
+      // SELECT POS
+      // SET ORDER TO TAG "1"
       seek_pos_pos( cIdPos )
 
       PRIVATE cFilter := ".t."
@@ -160,11 +156,11 @@ FUNCTION pos_pdv_po_tarifama
       ENDIF
 
       IF !( cFilter == ".t." )
-         SET FILTER to &cFilter
+         SET FILTER TO &cFilter
       ENDIF
 
-      //SELECT pos_doks
-      //SET ORDER TO TAG "2"
+      // SELECT pos_doks
+      // SET ORDER TO TAG "2"
 
       m := Replicate( "-", 12 ) + " " + Replicate( "-", 12 ) + " " + Replicate( "-", 12 )
 
@@ -176,7 +172,7 @@ FUNCTION pos_pdv_po_tarifama
       aTarife := Porezi( POS_VD_RACUN, dDatum0, aTarife, cNaplaceno )
       aTarife := Porezi( VD_PRR, dDatum0, aTarife, cNaplaceno )
 
-      ASort ( aTarife,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+      ASort ( aTarife,,, {| x, y | x[ 1 ] < y[ 1 ] } )
 
       ? m
 
@@ -189,14 +185,14 @@ FUNCTION pos_pdv_po_tarifama
 
          select_o_tarifa( aTarife[ nCnt ][ 1 ] )
          nPDV := tarifa->opp
-         //SELECT pos_doks
+         // SELECT pos_doks
 
          // ispisi opis i na realizaciji kao na racunu
          ? aTarife[ nCnt ][ 1 ], "(" + Str( nPDV ) + "%)"
 
          ? Str( aTarife[ nCnt ][ 2 ], 12, 2 ), Str( aTarife[ nCnt ][ 3 ], 12, 2 ), Str( Round( aTarife[ nCnt ][ 6 ], 2 ), 12, 2 )
 
-         nTotOsn += Round( aTarife[ nCnt ][ 6 ], 2 ) -Round( aTarife[ nCnt ][ 3 ], 2 )
+         nTotOsn += Round( aTarife[ nCnt ][ 6 ], 2 ) - Round( aTarife[ nCnt ][ 3 ], 2 )
          nTotPDV += Round( aTarife[ nCnt ][ 3 ], 2 )
       NEXT
 
@@ -223,9 +219,9 @@ FUNCTION pos_pdv_po_tarifama
    SELECT pos
    SET FILTER TO
 
-   IF gVrstaRS <> "S"
-      PaperFeed ()
-   ENDIF
+   // IF gVrstaRS <> "S"
+   PaperFeed ()
+   // ENDIF
 
    IF fSolo
       ENDPRINT

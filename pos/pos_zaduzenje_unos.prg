@@ -79,11 +79,7 @@ FUNCTION Zaduzenje
 
    SET CURSOR ON
 
-   IF gVrstaRS == "S"
-      @ box_x_koord() + 1, box_y_koord() + 3 SAY "Prodajno mjesto:" GET cIdPos PICT "@!" VALID cIdPos <= "X " .AND. !Empty( cIdPos )
-   ENDIF
-
-   IF gvodiodj == "D"
+   IF gVodiOdj == "D"
       @ box_x_koord() + 3, box_y_koord() + 3 SAY   " Odjeljenje:" GET cIdOdj VALID P_Odj ( @cIdOdj, 3, 28 )
       IF cIdVD == "PD"
          @ box_x_koord() + 4, box_y_koord() + 3 SAY " Prenos na :" GET cIdOdj2 VALID P_Odj ( @cIdOdj2, 4, 28 )

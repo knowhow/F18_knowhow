@@ -165,7 +165,7 @@ METHOD set_module_gvars()
    PUBLIC gSmjena := " "   // identifikator smjene
    PUBLIC gDatum           // datum
 
-   PUBLIC gVodiOdj
+   //PUBLIC gVodiOdj
    PUBLIC gRadniRac        // da li se koristi princip radnih racuna ili se
    // racuni furaju kao u trgovini
    PUBLIC gDupliArt        // da li dopusta unos duplih artikala na racunu
@@ -292,7 +292,7 @@ METHOD set_module_gvars()
    PUBLIC gFirTel := Space( 20 )
 
    // fiskalni parametri
-   gVodiOdj := "N"
+   //gVodiOdj := "N"
    gRnSpecOpc := "N"
    gRadniRac := "N"
    gDirZaklj := "D"
@@ -333,7 +333,7 @@ METHOD set_module_gvars()
    cPrevPSS := gPocStaSmjene
 
    gZadCij := fetch_metric( "AzuriranjeCijena", NIL, gZadCij )
-   gVodiOdj := fetch_metric( "VodiOdjeljenja", NIL, gVodiOdj )
+   //gVodiOdj := fetch_metric( "VodiOdjeljenja", NIL, gVodiOdj )
    gRadniRac := fetch_metric( "RadniRacuni", NIL, gRadniRac )
    gDirZaklj := fetch_metric( "DirektnoZakljucivanjeRacuna", NIL, gDirZaklj )
    gRnSpecOpc := fetch_metric( "RacunSpecifOpcije", NIL, gRnSpecOpc )

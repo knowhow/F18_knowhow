@@ -62,9 +62,9 @@ FUNCTION PorPoTar
 
       AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.p_pos_kase(cIdPos)", "@!", } )
 
-      IF gVodiOdj == "D"
-         AAdd ( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", ".t.", "@!", } )
-      ENDIF
+    //  IF gVodiOdj == "D"
+      //   AAdd ( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", ".t.", "@!", } )
+      //ENDIF
 
       AAdd ( aNiz, { "Tarife (prazno sve)", "cTarife",, "@S10", } )
       AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )

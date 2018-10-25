@@ -31,7 +31,7 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
    // ovo su ulazni parametri
    PRIVATE cDat := cD
    PRIVATE cSmjena := cS
-  // PRIVATE cIdDio := Space( 2 )
+   // PRIVATE cIdDio := Space( 2 )
    PRIVATE cIdOdj := Space( 2 )
    PRIVATE cRoba := Space( 60 )
    PRIVATE cLM := ""
@@ -42,7 +42,7 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
 
    cKontrolisi := "N"
    cK9 := Space( 3 )
-   //cVrstaRs := gVrstaRs
+   // cVrstaRs := gVrstaRs
 
    IF ( PCount() == 0 )
       fZaklj := .F.
@@ -55,7 +55,7 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
       PRIVATE cSmjena := " "
    ENDIF
 
-   //o_pos_kase()
+   // o_pos_kase()
    // o_pos_odj()
    // o_sifk()
    // o_sifv()
@@ -76,12 +76,12 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
       cIdPos := gIdPos
       aNiz := {}
 
-      //IF cVrstaRs <> "K"
-         AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cIdpos='X'.or.empty(cIdPos).or. p_pos_kase(@cIdPos)", "@!", } )
-      //ENDIF
-      IF gVodiOdj == "D"
-         AAdd( aNiz, { "Roba/Sirovine", "cIdOdj", "cidodj $ 'R S '", "@!", } )
-      ENDIF
+      // IF cVrstaRs <> "K"
+      AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cIdpos='X'.or.empty(cIdPos).or. p_pos_kase(@cIdPos)", "@!", } )
+      // ENDIF
+      // IF gVodiOdj == "D"
+      // AAdd( aNiz, { "Roba/Sirovine", "cIdOdj", "cidodj $ 'R S '", "@!", } )
+      // ENDIF
 
       AAdd ( aNiz, { "Artikli  (prazno-svi)", "cRoba",, "@!S30", } )
       AAdd ( aNiz, { "Izvjestaj se pravi za datum", "cDat",,, } )
@@ -120,11 +120,11 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
       cRSdbf := "SIROV"
    ENDIF
 
-   //IF cVrstaRs == "S"
-    //  cLM := Space( 5 )
-    //  nSir := 80
-    //  nRob := 40
-   //ENDIF
+   // IF cVrstaRs == "S"
+   // cLM := Space( 5 )
+   // nSir := 80
+   // nRob := 40
+   // ENDIF
 
 
    cFilt := ""
@@ -132,13 +132,13 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
    IF Empty( cIdPos )
 
       // "2": "IdOdj+idroba+DTOS(Datum)"
-      //SET ORDER TO TAG "2"
+      // SET ORDER TO TAG "2"
       seek_pos_pos_2( NIL )
       // 1 artikal, 1 stavka u izvjestaju (samo TOPS)
 
    ELSE
-      //SET ORDER TO TAG "5"
-      //cFilt := "IDPOS=='" + cIdPos + "'"
+      // SET ORDER TO TAG "5"
+      // cFilt := "IDPOS=='" + cIdPos + "'"
       seek_pos_pos_5( cIdPos )
 
    ENDIF
@@ -198,10 +198,10 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
          ENDIF
          SELECT POS
 
-         //IF !Empty ( cIdDio ) .AND. POS->IdDio <> cIdDio
-          //  SKIP
-          //  LOOP
-         //ENDIF
+         // IF !Empty ( cIdDio ) .AND. POS->IdDio <> cIdDio
+         // SKIP
+         // LOOP
+         // ENDIF
          IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. pos->IdPos <> cIdPos )
             // (POS->IdPos="X".and.AllTrim(cIdPos)<>"X").or.;// ?MS
             SKIP
@@ -246,10 +246,10 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
          ENDIF
          SELECT POS
 
-         //IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
-        //    SKIP
-          //  LOOP
-         //ENDIF
+         // IF !Empty( cIdDio ) .AND. POS->IdDio <> cIdDio
+         // SKIP
+         // LOOP
+         // ENDIF
 
          IF pos->idvd == "96"
             SKIP
@@ -357,22 +357,22 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
 
    ENDDO
 
-   //IF cVrstaRs <> "S"
+   // IF cVrstaRs <> "S"
 
-      Podvuci()
+   Podvuci()
 
-      ? "Ukupno stanje zaduzenja: "
-      ? cLM + Space( 5 ), ;
-         Str( _total_pst, 10, 2 ), ;
-         Str( _total_ulaz, 10, 2 ), ;
-         Str( _total_izlaz, 10, 2 ), ;
-         Str( _total_stanje, 10, 2 ), ;
-         Str( 0, 10, 2 ), ;
-         Str( nVrijednost, 10, 2 )
+   ? "Ukupno stanje zaduzenja: "
+   ? cLM + Space( 5 ), ;
+      Str( _total_pst, 10, 2 ), ;
+      Str( _total_ulaz, 10, 2 ), ;
+      Str( _total_izlaz, 10, 2 ), ;
+      Str( _total_stanje, 10, 2 ), ;
+      Str( 0, 10, 2 ), ;
+      Str( nVrijednost, 10, 2 )
 
-      Podvuci()
+   Podvuci()
 
-   //ENDIF
+   // ENDIF
 
    FF
    ENDPRINT
@@ -405,7 +405,7 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
    ENDIF
 
    ?
-   //ZagFirma()
+   // ZagFirma()
 
    P_10CPI
    ? PadC( "STANJE ODJELJENJA NA DAN " + FormDat1( dDat ), nSir )
@@ -414,9 +414,9 @@ STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )
    IF cVrstaRs <> "K"
       ? cLM + "Prod. mjesto:" + iif ( Empty( cIdPos ), "SVE", find_pos_kasa_naz( cIdPos ) )
    ENDIF
-   IF gvodiodj == "D"
-      ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( find_pos_odj_naziv( cIdOdj ) )
-   ENDIF
+   //IF gvodiodj == "D"
+  //    ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( find_pos_odj_naziv( cIdOdj ) )
+   //ENDIF
 
    ? cLM + "Artikal    : " + IF( Empty( cRoba ), "SVI", RTrim( cRoba ) )
    ?

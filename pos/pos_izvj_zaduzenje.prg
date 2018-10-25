@@ -181,7 +181,7 @@ FUNCTION PrepisZad( cNazDok )
    IF fpred
       ? PadC( "PRENOS IZ ODJ: " + pos->idodj + "  U ODJ:" + pos_doks->idvrstep, nSir )
    ELSE
-      ? PadC ( AllTrim ( ODJ->Naz ) + iif ( !Empty ( POS->IdDio ), "-" + AllTrim ( DIO->Naz ), "" );
+      ? PadC ( iif ( !Empty ( POS->IdDio ), "-" + AllTrim ( DIO->Naz ), "" );
          , nSir )
    ENDIF
 

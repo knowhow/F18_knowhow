@@ -82,9 +82,9 @@ FUNCTION pos_inventura_nivelacija()
 
       aNiz := {}
 
-      IF gVodiOdj == "D"
-         AAdd( aNiz, { "Sifra odjeljenja", "cIdOdj", "P_Odj(@cIdOdj)",, } )
-      ENDIF
+      //IF gVodiOdj == "D"
+      //   AAdd( aNiz, { "Sifra odjeljenja", "cIdOdj", "P_Odj(@cIdOdj)",, } )
+      //ENDIF
 
       //IF gPostDO == "D" .AND. fInvent
       //   AAdd( aNiz, { "Sifra dijela objekta", "cIdDio", "P_Dio(@cIdDio)",, } )

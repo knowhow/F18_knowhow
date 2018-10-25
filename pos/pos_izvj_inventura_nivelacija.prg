@@ -69,9 +69,6 @@ FUNCTION pos_stampa_zaduzenja_inventure( lPrikazStavke0Nepromjenjene, lAzurirana
    ? PadC ( cPom + AllTrim ( field->BrDok ), nSir )
    ?
    select_o_pos_odj( field->IdOdj )
-   IF gVodiodj == "D"
-      ? PadC ( "Odjeljenje: " + AllTrim ( ODJ->Naz ), nSir )
-   ENDIF
 
    SELECT PRIPRZ
 
@@ -220,9 +217,9 @@ FUNCTION StampaPLI( cBrDok )
    cPom += AllTrim ( PRIPRZ->IdPos ) + "-"
    ? PadC ( cPom + AllTrim ( cBrDok ), 40 )
    ?
-   IF gvodiodj == "D"
-      ? "Odjeljenje: " + PRIPRZ->IdOdj + "-" + find_pos_odj_naziv( IdOdj )
-   ENDIF
+   // IF gvodiodj == "D"
+   // ? "Odjeljenje: " + PRIPRZ->IdOdj + "-" + find_pos_odj_naziv( IdOdj )
+   // ENDIF
    ?
    ? "Sifra    Naziv robe"
    ? "            Stanje    Popisana kolicina"
@@ -267,19 +264,13 @@ FUNCTION pos_prepis_inventura_nivelacija( lInventura )
    // ovdje treba parametar alias
    cIdOdj := pos->idodj
 
-   select_o_pos_odj( cIdodj )
+   //select_o_pos_odj( cIdodj )
 
-   IF ODJ->Zaduzuje == "S"
-      cRSdbf := "SIROV"
-      cRSblok := "P_Roba(@_IdRoba)"
-      cUI_U   := S_U
-      cUI_I   := S_I
-   ELSE
-      cRSdbf := "ROBA"
-      cRSblok := "P_Roba(@_IdRoba)"
-      cUI_U   := R_U
-      cUI_I   := R_I
-   ENDIF
+   cRSdbf := "ROBA"
+   cRSblok := "P_Roba(@_IdRoba)"
+   cUI_U   := R_U
+   cUI_I   := R_I
+
 
    pos_stampa_zaduzenja_inventure( .F., .T. )  // drugi parametar kaze da se radi o azuriranom dok
 

@@ -56,9 +56,9 @@ FUNCTION pos_stanje_artikala
       AAdd ( aNiz, { "Prodajno mjesto (prazno-svi)", "cIdPos", "cIdpos='X'.or.empty(cIdPos).or. p_pos_kase(@cIdPos)", "@!", } )
       // ENDIF
 
-      IF gVodiodj == "D"
-         AAdd( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "Empty (cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )
-      ENDIF
+      // IF gVodiodj == "D"
+      // AAdd( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "Empty (cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )
+      // ENDIF
 
       AAdd ( aNiz, { "Artikli  (prazno-svi)", "cRoba",, "@!S30", } )
       AAdd ( aNiz, { "Izvjestaj se pravi za datum", "cDat",,, } )
@@ -340,9 +340,9 @@ STATIC FUNCTION Zagl( cIdOdj, dDat )
 
    ? cLM + "Prod. mjesto:" + iif ( Empty( cIdPos ), "SVE", find_pos_kasa_naz( cIdPos ) )
 
-   IF gvodiodj == "D"
-      ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( find_pos_odj_naziv( cIdOdj ) )
-   ENDIF
+   //IF gvodiodj == "D"
+    //  ? cLM + "Odjeljenje : " + cIdOdj + "-" + RTrim( find_pos_odj_naziv( cIdOdj ) )
+   //ENDIF
 
    ? cLM + "Artikal    : " + IF( Empty( cRoba ), "SVI", RTrim( cRoba ) )
    ?

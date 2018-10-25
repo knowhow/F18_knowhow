@@ -20,8 +20,8 @@ FUNCTION pos_menu_realizacija()
 
    AAdd( opc, "1. kase             " )
    AAdd( opcexe, {|| realizacija_kase( .F. ) } )
-   AAdd( opc, "2. odjeljenja" )
-   AAdd( opcexe, {|| realizacija_odjeljenja() } )
+   //AAdd( opc, "2. odjeljenja" )
+   //AAdd( opcexe, {|| realizacija_odjeljenja() } )
    AAdd( opc, "3. radnici" )
    AAdd( opcexe, {|| pos_realizacija_radnik( .F. ) } )
 

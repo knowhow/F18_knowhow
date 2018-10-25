@@ -38,7 +38,6 @@ FUNCTION pos_stampa_dokumenta()
    SET CURSOR ON
    Box(, 10, 77 )
 
-
    @ box_x_koord() + 1, box_y_koord() + 2 SAY " Prodajno mjesto (prazno-sva)" GET cIdPos PICT "@!" VALID Empty( cIdPos ) .OR. p_pos_kase( @cIdPos, 1, 37 )
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "          Radnik (prazno-svi)" GET cIdRadnik PICT "@!" VALID Empty( cIdRadnik ) .OR. P_Osob( @cIdRadnik, 2, 37 )
    @ box_x_koord() + 3, box_y_koord() + 2 SAY "Vrste dokumenata (prazno-svi)" GET cIdVd PICT "@!" VALID Empty( cIdVd ) .OR. cIdVd $ cDoks
@@ -60,8 +59,6 @@ FUNCTION pos_stampa_dokumenta()
 
    // ZagFirma()
    ?
-
-
    ? PadC( "KASA " + gIdPos, 40 )
    ?U PadC( "ŠTAMPA LISTE DOKUMENATA", nSir )
    ? PadC( "NA DAN " + FormDat1 ( gDatum ), nSir )

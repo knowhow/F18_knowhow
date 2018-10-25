@@ -110,25 +110,38 @@
   tags:
     - init
 
-- name: "create_table_widgets_publication.sh"
+- name: "create_tables_1.sh"
   template:
-    src: create_table_widgets_publication.sh
-    dest: "/srv/docker/{{ container }}/docker-entrypoint-initdb.d/create_table_widgets_publication.sh"
+    src: "{{ item }}.sh"
+    dest: "/srv/docker/{{ container }}/docker-entrypoint-initdb.d/{{ item }}.sh"
     mode: 0770
   when: "inventory_hostname == 'centos1'"
+  with_items:
+   - create_tables_1
+   - create_pub_sub_1
 
-- name: "run /srv/docker/{{ container }}/docker-entrypoint-initdb.d/create_table_widgets_publication.sh"
-  shell: "(docker exec {{ container }} /docker-entrypoint-initdb.d/create_table_widgets_publication.sh)"
-  when: "inventory_hostname == 'centos1'"
-
-
-- name: "create_table_widgets_subscription.sh"
+- name: "create_tables_2.sh"
   template:
-    src: create_table_widgets_subscription.sh
-    dest: "/srv/docker/{{ container }}/docker-entrypoint-initdb.d/create_table_widgets_subscription.sh"
+    src: "{{ item }}.sh"
+    dest: "/srv/docker/{{ container }}/docker-entrypoint-initdb.d/{{ item }}.sh"
     mode: 0770
   when: "inventory_hostname == 'centos2'"
+  with_items:
+   - create_tables_2
+   - create_pub_sub_2
 
-- name: "run /srv/docker/{{ container }}/docker-entrypoint-initdb.d/create_table_widgets_subscription.sh"
-  shell: "(docker exec {{ container }} /docker-entrypoint-initdb.d/create_table_widgets_subscription.sh)"
+- name: "run /srv/docker/{{ container }}/docker-entrypoint-initdb.d/create_tables_1.sh"
+  shell: "docker exec {{ container }} /docker-entrypoint-initdb.d/create_tables_1.sh"
+  when: "inventory_hostname == 'centos1'"
+
+- name: "run /srv/docker/{{ container }}/docker-entrypoint-initdb.d/create_tables_2.sh"
+  shell: "docker exec {{ container }} /docker-entrypoint-initdb.d/create_tables_2.sh"
+  when: "inventory_hostname == 'centos2'"
+
+- name: "run /srv/docker/{{ container }}/docker-entrypoint-initdb.d/create_pub_sub_1.sh"
+  shell: "docker exec {{ container }} /docker-entrypoint-initdb.d/create_pub_sub_1.sh"
+  when: "inventory_hostname == 'centos1'"
+
+- name: "run /srv/docker/{{ container }}/docker-entrypoint-initdb.d/create_pub_sub_2.sh"
+  shell: "docker exec {{ container }} /docker-entrypoint-initdb.d/create_pub_sub_2.sh"
   when: "inventory_hostname == 'centos2'"

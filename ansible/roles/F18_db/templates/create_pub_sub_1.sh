@@ -1,14 +1,6 @@
 #!/bin/bash
-set -e
 
 psql -v ON_ERROR_STOP=1 --username "$PG_USER" --dbname "test_2018" <<-EOSQL
-CREATE TABLE IF NOT EXISTS widgets
-(
-    id SERIAL,
-    name TEXT,
-    price DECIMAL,
-    CONSTRAINT widgets_pkey PRIMARY KEY (id)
-);
 
 DROP PUBLICATION IF EXISTS publication_1;
 REVOKE ALL PRIVILEGES ON DATABASE test_2018 FROM replikant;
@@ -20,12 +12,11 @@ CREATE ROLE replikant WITH REPLICATION LOGIN PASSWORD 'repliciram';
 GRANT ALL PRIVILEGES ON DATABASE test_2018 TO replikant;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO replikant;
 
-GRANT ALL PRIVILEGES ON DATABASE test_2018 TO xtrole;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO xtrole;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO xtrole;
-
-
 CREATE PUBLICATION publication_1;
 ALTER PUBLICATION publication_1 ADD TABLE widgets;
+ALTER PUBLICATION publication_1 ADD TABLE promet;
+
+DROP SUBSCRIPTION IF EXISTS subscription_2;
+CREATE SUBSCRIPTION subscription_2 CONNECTION 'host=192.168.124.80 port=5432 user=replikant2 password=repliciram2 dbname=test_2018' PUBLICATION publication_2;
 
 EOSQL

@@ -10,14 +10,26 @@ CREATE TABLE IF NOT EXISTS widgets
     CONSTRAINT widgets_pkey PRIMARY KEY (id)
 );
 
--- DROP ROLE IF EXISTS replikant;
--- CREATE ROLE replikant WITH REPLICATION LOGIN PASSWORD 'repliciram';
+CREATE TABLE IF NOT EXISTS promet
+(
+    id SERIAL,
+    name TEXT,
+    price DECIMAL,
+    CONSTRAINT promet_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS roba
+(
+    id varchar(12),
+    naz varchar(100),
+    price DECIMAL,
+    CONSTRAINT roba_pkey PRIMARY KEY (id)
+);
+
 
 GRANT ALL PRIVILEGES ON DATABASE test_2018 TO xtrole;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO xtrole;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO xtrole;
 
-DROP SUBSCRIPTION IF EXISTS subscription_1;
-CREATE SUBSCRIPTION subscription_1 CONNECTION 'host=192.168.124.245 port=5432 password=repliciram user=replikant dbname=test_2018' PUBLICATION publication_1;
 
 EOSQL

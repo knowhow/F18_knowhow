@@ -233,7 +233,6 @@ FUNCTION max_kolicina_kod_unosa( read_par )
 
 
 
-
 STATIC FUNCTION Popust( nx, ny )
 
    LOCAL nC1 := 0

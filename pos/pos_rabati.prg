@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 /* FrmGetRabat(aRabat, nCijena)
  *     Puni matricu aRabat popustima, u zavisnosti od varijante
  *   param: aRabat - matrica rabata: type array
@@ -296,7 +295,7 @@ FUNCTION CalcArrRabat( aRabat, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5,
  */
 FUNCTION CalcRabatForArticle( aRabat, cIdRoba, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6 )
 
-   // {
+
    LOCAL nIznos := 0
    LOCAL nPosition := 0
 

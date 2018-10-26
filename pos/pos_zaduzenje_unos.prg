@@ -426,7 +426,7 @@ FUNCTION IspraviZaduzenje()
 
    pos_set_key_handler_ispravka_zaduzenja()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -498,4 +498,4 @@ FUNCTION NaslovDok( cIdVd )
       RETURN "????"
    ENDCASE
 
-   RETURN
+   RETURN .T.

@@ -80,18 +80,20 @@ METHOD F18Admin:New()
 
 METHOD F18Admin:sql_cleanup()
 
-   LOCAL cQuery, oQuery, hDbServerParams, dCleanup
+   LOCAL cQuery, oQuery, hDbServerParams, dCleanup, aQueries
 
    hDbServerParams := my_server_params()
 
    dCleanup := fetch_metric( "db_cleanup", NIL, CToD( "" ) )
 
+#ifndef F18_DEBUG
    IF dCleanup >= Date()
       info_bar( "admin", "db_cleanup vec napravljen " + DToC( dCleanup ) )
       RETURN .F.
    ELSE
       info_bar( "admin", "db_cleanup START" )
    ENDIF
+#endif
 
    IF ! ::relogin_as_admin( hDbServerParams[ "database" ] )
       MsgBeep( "relogin as admin user neuspjesno " )
@@ -106,12 +108,23 @@ METHOD F18Admin:sql_cleanup()
 
    IF !Empty ( cQuery )
       oQuery := run_sql_query( cQuery )
-
       IF sql_error_in_query( oQuery, "DROP", sql_postgres_conn() )
          error_bar( "drop_db", "drop schema sem" )
          RETURN .F.
       ENDIF
    ENDIF
+
+   aQueries := { ;
+      "ALTER TABLE fmk.pos_doks  DROP COLUMN IF EXISTS funk;", ;
+      "ALTER TABLE fmk.pos_doks  DROP COLUMN IF EXISTS fisc_st;"  ;
+   }
+   FOR EACH cQuery IN aQueries
+      oQuery := run_sql_query( cQuery )
+      IF sql_error_in_query( oQuery, "DROP", sql_postgres_conn() )
+         error_bar( "alter_table", cQuery )
+         RETURN .F.
+      ENDIF
+   NEXT
 
    info_bar( "admin", "db_cleanup END" )
    ::relogin_as( hDbServerParams[ "user" ],  hDbServerParams[ "password" ], hDbServerParams[ "database" ] )
@@ -1275,7 +1288,6 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, nDataType )
       RETURN .F.
    ENDIF
 
-
    // bitne tabele za reset podataka baze
    cQuery := ""
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk;"
@@ -1322,8 +1334,8 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, nDataType )
 
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "log;"
 
-   // ako je potrebno brisati sve onda dodaj i sljedece...
-   IF nDataType > 1
+
+   IF nDataType > 1 // ako je potrebno brisati sve
 
       cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_os;"
       cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_promj;"
@@ -1350,8 +1362,6 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, nDataType )
    ENDIF
 
    RETURN .T.
-
-
 
 
 METHOD F18Admin:create_new_pg_db_params( hParams )

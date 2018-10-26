@@ -126,8 +126,7 @@ kljuc:
   fisc_rn numeric(10,0),
   zak_br numeric(6,0),
   sto_br numeric(3,0),
-  funk numeric(3,0),
-  fisc_st character(10),
+  -- fisc_st character(10),
   rabat numeric(15,5),
   ukupno numeric(15,5),
   CONSTRAINT pos_doks_pkey PRIMARY KEY (idpos, idvd, brdok)

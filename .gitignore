@@ -36,3 +36,9 @@ include/f18_ver.ch
 /keyrings/live/secring.gpg
 /test_secret.txt
 F18_util
+*.retry
+docker/tds_fdw/
+*.conv.txt
+CHANGELOG_MERGE.md
+template/
+docker/

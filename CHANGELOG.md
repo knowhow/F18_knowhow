@@ -1,8 +1,14 @@
 # F18 klijent, lista promjena
 
+<<<<<<< HEAD
 ## 3.1.216-vindi, 2018-09-10
 ### CORE
 - merge 3-vindi <- 3-std
+=======
+## 3.1.216-std, 2018-09-26
+
+- naša slova "prosječna ..."
+>>>>>>> 3
 
 ## 3.1.214-std, 2018-06-27
 ### CORE

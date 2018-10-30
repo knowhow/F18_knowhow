@@ -63,7 +63,7 @@ FUNCTION FaRobaBlock( Ch )
 
    ELSEIF Upper( Chr( ch ) ) == "P"
 
-      IF gen_all_plu()
+  --    IF gen_all_plu()
          RETURN DE_REFRESH
       ENDIF
 

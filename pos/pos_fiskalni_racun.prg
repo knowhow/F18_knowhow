@@ -412,8 +412,6 @@ STATIC FUNCTION pos_to_tremol( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeR
    RETURN nErrorLevel
 
 
-
-
 STATIC FUNCTION pos_to_hcp( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeRacuna, lStorno, nUplaceniIznos )
 
    LOCAL nErrorLevel := 0
@@ -424,8 +422,7 @@ STATIC FUNCTION pos_to_hcp( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeRacu
    ENDIF
 
    nErrorLevel := hcp_rn( s_hFiskalniUredjajParams, aStavkeRacuna, NIL, lStorno, nUplaceniIznos )
-
-   IF nErrorLevel = 0
+   IF nErrorLevel == 0
 
       // vrati broj racuna
       _fiscal_no := hcp_fisc_no( s_hFiskalniUredjajParams, lStorno )
@@ -440,9 +437,7 @@ STATIC FUNCTION pos_to_hcp( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeRacu
    RETURN nErrorLevel
 
 
-// ------------------------------------------------
-// update broj fiskalnog racuna
-// ------------------------------------------------
+
 STATIC FUNCTION pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, nFiskalniBroj )
 
    LOCAL hRec
@@ -466,9 +461,6 @@ STATIC FUNCTION pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna
 
 
 
-// --------------------------------------------
-// vrati vrstu placanja
-// --------------------------------------------
 STATIC FUNCTION pos_get_vr_plac( cIdVrstePlacanja )
 
    LOCAL cRet := "0"
@@ -479,14 +471,9 @@ STATIC FUNCTION pos_get_vr_plac( cIdVrstePlacanja )
       RETURN cRet
    ENDIF
 
-   //o_vrstep()
-   //SELECT vrstep
-   //SET ORDER TO TAG "ID"
-
    select_o_vrstep( cIdVrstePlacanja )
 
    _naz := Upper( AllTrim( vrstep->naz ) )
-
    DO CASE
    CASE "KARTICA" $ _naz
       cRet := "1"
@@ -517,10 +504,9 @@ STATIC FUNCTION pos_to_tring( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeRa
 
 
 
-
 /* -------------------------------------------
  popravlja naziv artikla
-*/
+
 
 STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
 
@@ -535,7 +521,7 @@ STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
    ENDCASE
 
    RETURN .T.
-
+*/
 
 /*
    Opis: u slučaju greške sa fajlom odgovora, kada nema broja fiskalnog računa
@@ -568,7 +554,6 @@ FUNCTION pos_da_li_je_racun_fiskalizovan( nFiskalniBroj )
       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Program ne može da dobije odgovor od fiskalnog uređaja !"
       ++nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Da li je račun ispravno odštampan na fiskalni uređaj (D/N) ?" GET cStampano VALID cStampano $ "DN" PICT "@!"
-
       READ
 
       IF LastKey() == K_ESC
@@ -583,10 +568,8 @@ FUNCTION pos_da_li_je_racun_fiskalizovan( nFiskalniBroj )
          EXIT
       ENDIF
 
-      ++nX
-      ++nX
+      nX += 2
       @ box_x_koord() + nX, box_y_koord() + 2 SAY8 "Molimo unesite broj računa koji je fiskalni račun ispisao:" GET nFiskalniBroj VALID nFiskalniBroj > 0 PICT "9999999999"
-
       READ
 
       BoxC()

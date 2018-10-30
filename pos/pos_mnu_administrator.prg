@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION pos_main_menu_admin()
 
    LOCAL nSetPosPM

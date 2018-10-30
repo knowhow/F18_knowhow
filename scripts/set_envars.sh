@@ -17,6 +17,7 @@ echo "export F18_ELECTRON_HOST=1"
 #export F18_KALK=1
 #export F18_FAKT=1
 #export F18_FIN_OSTAVKE=1
+#export F18_DEBUG=1
 #export F18_POS=1
 #export F18_EPDV=1
 #export F18_CORE_ONLY=1

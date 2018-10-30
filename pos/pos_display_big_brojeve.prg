@@ -26,7 +26,6 @@ FUNCTION gSjeciStr()
 
 FUNCTION gOtvorStr()
 
-
    IF gPrinter <> "R"
       QQOut( gOtvorStr )
    ENDIF
@@ -37,21 +36,17 @@ FUNCTION gOtvorStr()
 
 FUNCTION PaperFeed()
 
-   IF gVrstaRS <> "S"
-      FOR i := 1 TO nFeedLines
-         ?
-      NEXT
-      IF gPrinter == "R"
-         Beep( 1 )
-         FF
-      ELSE
-         gSjeciStr()
-      ENDIF
+   FOR i := 1 TO nFeedLines
+      ?
+   NEXT
+   IF gPrinter == "R"
+      Beep( 1 )
+      FF
+   ELSE
+      gSjeciStr()
    ENDIF
 
-   RETURN
-
-
+   RETURN .T.
 
 
 
@@ -74,41 +69,39 @@ FUNCTION DecID( cId, cPadCh )
       cPadCh := cPadCh
    ENDIF
 
-   RETURN ( PadL( Val( AllTrim( cID ) ) -1, Len( cID ), cPadCh ) )
+   RETURN ( PadL( Val( AllTrim( cID ) ) - 1, Len( cID ), cPadCh ) )
 
 
 
 FUNCTION SetNazDVal()
 
-  // LOCAL lOpened
+   // LOCAL lOpened
 
    select_o_valute()
 
    PushWA()
 
-  // lOpened := .T.
+   // lOpened := .T.
 
-   //IF !Used()
-    //  o_valute()
-  //    lOpened := .F.
-  // ENDIF
+   // IF !Used()
+   // o_valute()
+   // lOpened := .F.
+   // ENDIF
 
    SET ORDER TO TAG "NAZ"
    GO TOP
 
    Seek2( "D" )
-
    gDomValuta := AllTrim( naz2 )
 
    GO TOP
 
    Seek2( "P" )
-
    gStrValuta := AllTrim( naz2 )
 
-   //IF !lOpened
-    //  USE
-   //ENDIF
+   // IF !lOpened
+   // USE
+   // ENDIF
 
    PopWA()
 
@@ -155,7 +148,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "1"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 " ██"
          @ box_x_koord() + row + 1, nNextY SAY8 "  █"
          @ box_x_koord() + row + 2, nNextY SAY8 "  █"
@@ -165,7 +157,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "2"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "   █"
          @ box_x_koord() + row + 2, nNextY SAY8 "████"
@@ -175,7 +166,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "3"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "   █"
          @ box_x_koord() + row + 2, nNextY SAY8 " ███"
@@ -185,7 +175,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "4"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "█"
          @ box_x_koord() + row + 1, nNextY SAY8 "█  █"
          @ box_x_koord() + row + 2, nNextY SAY8 "████"
@@ -195,7 +184,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "5"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "█"
          @ box_x_koord() + row + 2, nNextY SAY8 "████"
@@ -205,7 +193,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "6"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "█"
          @ box_x_koord() + row + 2, nNextY SAY8 "████"
@@ -215,7 +202,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "7"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "   █"
          @ box_x_koord() + row + 2, nNextY SAY8 "  █"
@@ -225,7 +211,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "8"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "█  █"
          @ box_x_koord() + row + 2, nNextY SAY8 " ██ "
@@ -235,7 +220,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "9"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "█  █"
          @ box_x_koord() + row + 2, nNextY SAY8 "████"
@@ -245,7 +229,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "0"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "█  █"
          @ box_x_koord() + row + 2, nNextY SAY8 "█  █"
@@ -255,13 +238,11 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "."
 
          nNextY -= 2
-
          @ box_x_koord() + row + 4, nNextY SAY8 "█"
 
       CASE cChar = "-"
 
          nNextY -= 4
-
          @ box_x_koord() + row + 2, nNextY SAY8 "███"
 
       ENDCASE
@@ -280,7 +261,7 @@ FUNCTION ispisi_iznos_racuna_box( iznos )
 
    SetPos ( 0, 0 )
 
-   Box (, 9, 77 )
+   BOX (, 9, 77 )
 
    cIzn := AllTrim ( Transform ( iznos, "9999999.99" ) )
 
@@ -410,7 +391,7 @@ FUNCTION SkloniIznRac()
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -464,34 +445,35 @@ FUNCTION Godina_2( dDatum )
 
 FUNCTION NenapPop()
 
-   //RETURN iif( gPopVar = "A", "NENAPLACENO:", "     POPUST:" )
+   // RETURN iif( gPopVar = "A", "NENAPLACENO:", "     POPUST:" )
+
    RETURN  "     POPUST:"
 
 
 
 FUNCTION pos_set_user( cKorSif, nSifLen, cLevel )
 
-   //o_pos_strad()
-   //o_pos_osob()
+   // o_pos_strad()
+   // o_pos_osob()
 
    cKorSif := CryptSC( PadR( Upper( Trim( cKorSif ) ), nSifLen ) )
 
    IF find_pos_osob_by_korsif( cKorSif )
       gIdRadnik := field->ID
       gKorIme   := field->Naz
-      gSTRAD  := AllTrim ( field->Status )
-      //SELECT STRAD
-      IF select_o_pos_strad( OSOB->Status )
+      gSTRAD  := AllTrim ( field->STATUS )
+      // SELECT STRAD
+      IF select_o_pos_strad( OSOB->STATUS )
          cLevel := field->prioritet
       ELSE
          cLevel := L_PRODAVAC
          gSTRAD := "K"
       ENDIF
-      //SELECT OSOB
+      // SELECT OSOB
       RETURN 1
    ELSE
       MsgBeep ( "Unijeta je nepostojeća lozinka !" )
-      //SELECT OSOB
+      // SELECT OSOB
       RETURN 0
    ENDIF
 
@@ -503,7 +485,7 @@ FUNCTION pos_status_traka()
    LOCAL _x := f18_max_rows() - 3
    LOCAL _y := 0
 
-   @ 1, _y + 1 SAY8 "RADI:" + PadR( LTrim( gKorIme ), 31 ) + " SMJENA:" + gSmjena + " CIJENE:" + gIdCijena + " DATUM:" + DToC( gDatum ) + IF( gVrstaRS == "S", "   SERVER  ", " KASA-PM:" + gIdPos )
+   @ 1, _y + 1 SAY8 "RADI:" + PadR( LTrim( gKorIme ), 31 ) + " SMJENA:" + gSmjena + " CIJENE:" + gIdCijena + " DATUM:" + DToC( gDatum ) + " KASA-PM:" + gIdPos
 
    IF gIdPos == "X "
       @ _x, _y + 1 SAY8 PadC( "$$$ --- PRODAJNO MJESTO X ! --- $$$", f18_max_cols() - 2, "█" )

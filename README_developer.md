@@ -2,16 +2,79 @@
 
 ## database
 
-### kreiranje inicijalnih rola test1, test2, admin (zastarjelo):
+### docker F18_test_db
 
-    scripts/init_postgresql.sh `whoami`
+    cd docker
+    # ako postoje podaci, zelimo ispocetka
+    ./cleanup.sh
 
-### kreiranje f18_test baze (zastarjelo)
+    ./start_pgsql_server.sh
 
-    export DB=f18_test
-    echo "create database ${DB}" | psql -h localhost
-    psql -h localhost ${DB} < test/data/${DB}.sql
-    echo "SELECT u2.knowhow_package_version('fmk')" | psql -h localhost ${DB}
+
+    # po ulasku u kontejner (root), kreiranje bjasko korisnika, hernad vec inicijalno postoji
+    /scripts/create_user.sh
+    # admin user obavlja administrativne poslove i ima pune privilegije
+    /scripts/create_admin.sh <poseban_admin_password>
+
+    # lista baza
+    /scripts/list_databases.sh
+
+## build notes, appveyor, bintray, downloads.bring.out.ba
+
+
+### github push
+
+
+Push 3.1.204 release
+
+     git commit -am "BUILD_RELEASE 3.1.204"
+     git tag 3.1.204
+     git push origin 3-std --tags
+
+
+#### bintray zip-ovi publikovanje na greenbox downloads.bring.out.ba
+
+  * https://bintray.com/hernad/F18/F18-linux-x86
+  * https://bintray.com/hernad/F18/F18-windows-x86
+
+On greenbox-1 as root(https://redmine.bring.out.ba/issues/36922):
+
+    VER=3.1.204
+
+    cd /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/tmp
+    rm *.zip F18 F18.exe
+    curl -L  https://bintray.com/hernad/F18/download_file?file_path=F18_windows_x86_${VER}.zip  > win.zip
+    unzip win.zip
+    ls -lh F18.exe
+    gzip -c F18.exe > F18_Windows_${VER}.gz
+    mv F18_Windows_${VER}.gz /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/
+    ls -lh /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/F18_Windows_${VER}.gz
+    echo kraj windows
+
+    cd /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/tmp
+    rm *.zip F18 F18.exe
+    curl -L  https://bintray.com/hernad/F18/download_file?file_path=F18_linux_x86_${VER}.zip  > linux.zip
+    unzip linux.zip
+    ls -lh F18
+    gzip -c F18 > F18_Ubuntu_i686_${VER}.gz
+    mv F18_Ubuntu_i686_${VER}.gz /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/
+    ls -lh /data_0/f18-downloads_0/downloads.bring.out.ba/www/files/F18_Ubuntu_i686_${VER}.gz
+    echo kraj linux
+
+
+## Update
+
+### Update kanal
+
+* S - stabilne
+* E - edge, posljednje verzije
+* X - eksperimentalne - razvoj
+
+
+
+
+
+
 
 
 ## git

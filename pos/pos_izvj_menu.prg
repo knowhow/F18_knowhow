@@ -12,15 +12,7 @@
 #include "f18.ch"
 
 
-
 FUNCTION pos_izvjestaji()
-
-   pos_izvjestaji_tops()
-
-   RETURN .F.
-
-
-FUNCTION pos_izvjestaji_tops()
 
    PRIVATE Izbor := 1
    PRIVATE opc := {}
@@ -29,41 +21,41 @@ FUNCTION pos_izvjestaji_tops()
    AAdd( opc, "1. realizacija                               " )
    AAdd( opcexe, {|| pos_menu_realizacija() } )
 
-   IF gVrstaRS == "K"
-      AAdd( opc, "----------------------------" )
-      AAdd( opcexe, nil )
-      AAdd( opc, "3. najprometniji artikli" )
-      AAdd( opcexe, {|| pos_top_narudzbe() } )
-      AAdd( opc, "4. štampa azuriranih dokumenata" )
-      AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
-   ELSE
-      // server, samostalna kasa TOPS
+   // IF gVrstaRS == "K"
+   // AAdd( opc, "----------------------------" )
+   // AAdd( opcexe, nil )
+   // AAdd( opc, "3. najprometniji artikli" )
+   // AAdd( opcexe, {|| pos_top_narudzbe() } )
+   // AAdd( opc, "4. štampa azuriranih dokumenata" )
+   // AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
+   // ELSE
+   // server, samostalna kasa TOPS
 
-      AAdd( opc, "2. stanje artikala ukupno" )
-      AAdd( opcexe, {|| pos_stanje_artikala() } )
+   AAdd( opc, "2. stanje artikala ukupno" )
+   AAdd( opcexe, {|| pos_stanje_artikala() } )
 
-      //IF gVodiOdj == "D"
-         AAdd( opc, "3. stanje artikala po odjeljenjima" )
-         AAdd( opcexe, {|| pos_stanje_artikala_po_odjeljenjima() } )
-      //ELSE
-      //   AAdd( opc, "--------------------" )
-      //   AAdd( opcexe, nil )
-      //ENDIF
+   // IF gVodiOdj == "D"
+   AAdd( opc, "3. stanje artikala po odjeljenjima" )
+   AAdd( opcexe, {|| pos_stanje_artikala_po_odjeljenjima() } )
+   // ELSE
+   // AAdd( opc, "--------------------" )
+   // AAdd( opcexe, nil )
+   // ENDIF
 
-      AAdd( opc, "4. kartice artikala" )
-      AAdd( opcexe, {|| pos_kartica_artikla() } )
-      AAdd( opc, "5. porezi po tarifama" )
-      AAdd( opcexe, {||  pos_pdv_po_tarifama() } )
-      AAdd( opc, "6. najprometniji artikli" )
-      AAdd( opcexe, {|| pos_top_narudzbe() } )
-      AAdd( opc, "7. stanje partnera" )
-      AAdd( opcexe, {|| pos_rpt_stanje_partnera() } )
-      AAdd( opc, "A. štampa azuriranih dokumenata" )
-      AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
-   ENDIF
+   AAdd( opc, "4. kartice artikala" )
+   AAdd( opcexe, {|| pos_kartica_artikla() } )
+   AAdd( opc, "5. porezi po tarifama" )
+   AAdd( opcexe, {||  pos_pdv_po_tarifama() } )
+   AAdd( opc, "6. najprometniji artikli" )
+   AAdd( opcexe, {|| pos_top_narudzbe() } )
+   AAdd( opc, "7. stanje partnera" )
+   AAdd( opcexe, {|| pos_rpt_stanje_partnera() } )
+   AAdd( opc, "A. štampa azuriranih dokumenata" )
+   AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
+   // ENDIF
 
    AAdd( opc, "-------------------" )
-   AAdd( opcexe, nil )
+   AAdd( opcexe, NIL )
 
    IF gPVrsteP
       AAdd( opc, "N. pregled prometa po vrstama plaćanja" )
@@ -77,4 +69,4 @@ FUNCTION pos_izvjestaji_tops()
 
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "izvt" )
 
-   RETURN .F.
+   RETURN .T.

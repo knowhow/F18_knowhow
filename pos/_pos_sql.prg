@@ -104,10 +104,13 @@ CREATE INDEX pos_pos_id6
 
 CREATE TABLE fmk.pos_doks
 (
+kljuc:
+---
   idpos character varying(2) NOT NULL,
   idvd character varying(2) NOT NULL,
   brdok character varying(6) NOT NULL,
   datum date,
+---
   idgost character varying(8),
   idradnik character varying(4),
   idvrstep character(2),
@@ -123,8 +126,7 @@ CREATE TABLE fmk.pos_doks
   fisc_rn numeric(10,0),
   zak_br numeric(6,0),
   sto_br numeric(3,0),
-  funk numeric(3,0),
-  fisc_st character(10),
+  -- fisc_st character(10),
   rabat numeric(15,5),
   ukupno numeric(15,5),
   CONSTRAINT pos_doks_pkey PRIMARY KEY (idpos, idvd, brdok)

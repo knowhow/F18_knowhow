@@ -23,13 +23,13 @@ FUNCTION pos_inventura_nivelacija()
    LOCAL fPocInv := .F.
    LOCAL fPreuzeo := .F.
    LOCAL cNazDok
+   LOCAL nCnt
 
    PRIVATE cRSdbf
    PRIVATE cRSblok
    PRIVATE cUI_U
    PRIVATE cUI_I
    PRIVATE cIdVd
-   PRIVATE cZaduzuje := "R"
 
    IF gSamoProdaja == "D"
       MsgBeep( "Ne možete vršiti unos zaduženja !" )
@@ -82,9 +82,9 @@ FUNCTION pos_inventura_nivelacija()
 
       aNiz := {}
 
-      IF gVodiOdj == "D"
-         AAdd( aNiz, { "Sifra odjeljenja", "cIdOdj", "P_Odj(@cIdOdj)",, } )
-      ENDIF
+      //IF gVodiOdj == "D"
+      //   AAdd( aNiz, { "Sifra odjeljenja", "cIdOdj", "P_Odj(@cIdOdj)",, } )
+      //ENDIF
 
       //IF gPostDO == "D" .AND. fInvent
       //   AAdd( aNiz, { "Sifra dijela objekta", "cIdDio", "P_Dio(@cIdDio)",, } )
@@ -105,7 +105,6 @@ FUNCTION pos_inventura_nivelacija()
 
    //SELECT ODJ
 
-   cZaduzuje := "R"
    cRSdbf := "ROBA"
    cUI_U := R_U
    cUI_I := R_I
@@ -142,14 +141,12 @@ FUNCTION pos_inventura_nivelacija()
          MsgO( "GENERIŠEM DATOTEKU " + cNazDok + "E" )
 
          SELECT priprz
-
          Scatter()
 
          //SELECT pos
          //SET ORDER TO TAG "2"
          //SEEK cIdOdj
          seek_pos_pos_2( cIdOdj )
-
          DO WHILE !Eof() .AND. field->idodj == cIdOdj
 
             IF pos->datum > dDatRada
@@ -159,7 +156,6 @@ FUNCTION pos_inventura_nivelacija()
 
             nKolicina := 0
             _idroba := pos->idroba
-
             DO WHILE !Eof() .AND. pos->( idodj + idroba ) == ( cIdOdj + _idroba ) .AND. pos->datum <= dDatRada
 
                //IF !Empty( cIdDio ) .AND. pos->iddio <> cIdDio
@@ -167,12 +163,7 @@ FUNCTION pos_inventura_nivelacija()
                   //LOOP
                //ENDIF
 
-               IF cZaduzuje == "S" .AND. pos->idvd $ "42#01"
-                  SKIP
-                  LOOP
-               ENDIF
-
-               IF cZaduzuje == "R" .AND. pos->idvd == "96"
+               IF pos->idvd == "96"
                   SKIP
                   LOOP
                ENDIF
@@ -195,7 +186,6 @@ FUNCTION pos_inventura_nivelacija()
             IF Round( nKolicina, 3 ) <> 0
 
                select_o_roba( _idroba )
-
                _cijena := pos_get_mpc()
                _ncijena := pos_get_mpc()
                _robanaz := _field->naz
@@ -219,7 +209,6 @@ FUNCTION pos_inventura_nivelacija()
 
                APPEND BLANK
                Gather()
-
                SELECT pos
 
             ENDIF
@@ -247,14 +236,12 @@ FUNCTION pos_inventura_nivelacija()
 
       AAdd( ImeKol, { "Sifra i naziv", {|| idroba + "-" + Left( robanaz, 25 ) } } )
       AAdd( ImeKol, { "BARKOD", {|| barkod } } )
-
       IF cIdVd == VD_INV
          AAdd( ImeKol, { "Knj.kol.", {|| Str( kolicina, 9, 3 ) } } )
          AAdd( ImeKol, { "Pop.kol.", {|| Str( kol2, 9, 3 ) }, "kol2" } )
       ELSE
          AAdd( ImeKol, { "Kolicina", {|| Str( kolicina, 9, 3 ) } } )
       ENDIF
-
       AAdd( ImeKol, { "Cijena ", {|| Str( cijena, 7, 2 ) } } )
 
       IF cIdVd == VD_NIV
@@ -303,7 +290,6 @@ FUNCTION pos_inventura_nivelacija()
 
             SELECT _POS
             AppFrom( "PRIPRZ", .F. )
-
             SELECT PRIPRZ
             my_dbf_zap()
             my_close_all_dbf()
@@ -349,7 +335,6 @@ FUNCTION pos_inventura_nivelacija()
    check_before_azur( dDatRada )
 
    pos_azuriraj_inventura_nivelacija()
-
    my_close_all_dbf()
 
    RETURN .T.
@@ -399,7 +384,6 @@ FUNCTION EditInvNiv( dat_inv_niv )
       o_pos_tables()
       SELECT priprz
       GO nRec
-
       lVrati := DE_REFRESH
 
 
@@ -434,7 +418,6 @@ FUNCTION EditInvNiv( dat_inv_niv )
    CASE Ch == K_ENTER
 
       _calc_priprz()
-
       IF !( pos_ed_priprema_inventura( 1, dat_inv_niv ) == 0 )
          lVrati := DE_REFRESH
       ENDIF
@@ -468,15 +451,12 @@ FUNCTION EditInvNiv( dat_inv_niv )
    CASE Ch == K_CTRL_N
 
       _calc_priprz()
-
       pos_ed_priprema_inventura( 0, dat_inv_niv )
-
       lVrati := DE_REFRESH
 
    CASE Ch == K_CTRL_T
 
       lVrati := DE_CONT
-
       IF Pitanje(, "Stavku " + AllTrim( priprz->idroba ) + " izbrisati ?", "N" ) == "D"
          my_delete_with_pack()
          lVrati := DE_REFRESH
@@ -485,7 +465,6 @@ FUNCTION EditInvNiv( dat_inv_niv )
    ENDCASE
 
    RETURN lVrati
-
 
 
 STATIC FUNCTION _calc_priprz()
@@ -517,7 +496,6 @@ STATIC FUNCTION _calc_priprz()
    PopWa()
 
    RETURN .T.
-
 
 
 
@@ -589,7 +567,6 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
          PICT PICT_POS_ARTIKAL ;
          WHEN {|| _idroba := PadR( _idroba, Val( _duz_sif ) ), .T. } ;
          VALID valid_pos_inv_niv( cIdVd, nInd )
-
 
       nLX++
 
@@ -685,7 +662,6 @@ FUNCTION pos_ed_priprema_inventura( nInd, datum )
          ENDDO
 
       ENDIF
-
 
       IF nInd == 1
          nVrati := 1
@@ -867,8 +843,6 @@ STATIC FUNCTION valid_pos_inv_niv( cIdVd, ind )
    SELECT ( _area )
 
    RETURN .T.
-
-
 
 
 FUNCTION _pop_kol( kol )

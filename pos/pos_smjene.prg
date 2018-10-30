@@ -32,7 +32,7 @@ FUNCTION pos_odredi_smjenu( lOdredi )
       lOdredi := .T.
    ENDIF
 
-   O__POS
+   o_pos__pos()
    // o_pos_doks()
    // SET ORDER TO TAG "2"  // IdVd+DTOS (Datum)+Smjena
    seek_pos_doks( NIL, POS_VD_RACUN, NIL, NIL, "2" ) // + Chr ( 254 )
@@ -349,7 +349,7 @@ FUNCTION ZakljRadnik( Ch )
          SELECT ZAKSM
          RETURN ( DE_CONT )
       ENDIF
-      UkloniRadne( ZAKSM->IdRadnik )
+      pos_ukloni_radne_racune( ZAKSM->IdRadnik )
       gIdRadnik := cIdSave
       SELECT ZAKSM
       my_delete_with_pack()
@@ -375,7 +375,7 @@ FUNCTION OtvoriSmjenu()
 
    // potrazi ima li nezakljucenih radnika i obavjesti
 
-   O__POS
+   o_pos__pos()
    SEEK gIdPos + POS_VD_RACUN
 
    IF Found()

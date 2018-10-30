@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION pos_get_lozinka( nSiflen )
 
    LOCAL cKorsif, nChar

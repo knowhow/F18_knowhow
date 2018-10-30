@@ -222,9 +222,9 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
    // stari obracun poreza
 
 
-   IF gPoreziRaster == "D"
-      POSRekapTar( aRekPor )
-   ENDIF
+  // IF gPoreziRaster == "D"
+  //    POSRekapTar( aRekPor )
+  // ENDIF
 
 
    RacFuter( cIdRadnik, cSmjena )
@@ -552,8 +552,7 @@ FUNCTION pos_stampa_priprema( cIdPos, dDatBrDok, fEkran, lViseOdjednom, lOnlyFil
    ENDIF
 
    // porezi
-   ? " U iznos uracunati porezi "
-   IF gPoreziRaster == "D"
+--   IF gPoreziRaster == "D"
       ASort ( aPorezi,,, {| x, y | x[ 1 ] < y[ 1 ] } )
       fPP := .F. // ima posebnog poreza
       FOR i := 1 TO Len ( aPorezi )

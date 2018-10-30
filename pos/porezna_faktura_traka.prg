@@ -38,7 +38,7 @@ FUNCTION f7_pf_traka( lSilent )
 
    isPfTraka( @lPfTraka )
 
-   IF !lSilent .AND. Pitanje(, "Stampati poresku fakturu za zadnji racun (D/N)?", "D" ) == "N"
+   IF !lSilent .AND. Pitanje(, "Štampati poresku fakturu za zadnji račun (D/N)?", "D" ) == "N"
       RETURN .F.
    ENDIF
 
@@ -158,7 +158,7 @@ FUNCTION st_pf_traka()
 
    cLine := pf_traka_line( 1 )
 
-   get_rb_vars( @nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija )
+   pos_get_racun_broj_varijable( @nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija )
 
    hd_rb_traka( nRedukcija )
 
@@ -307,7 +307,7 @@ FUNCTION kup_rb_traka()
    ?
 
    RETURN .T.
-   
+
 
 
 // vraca matricu sa dostupnim kupcima koji pocinju sa cKupac

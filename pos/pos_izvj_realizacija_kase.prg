@@ -86,7 +86,7 @@ FUNCTION realizacija_kase
       aUsl2 := ".t."
    ELSE
 
-      IF FrmRptVars( @cK1, @cIdPos, @dDatum0, @dDatum1, @cSmjena, @cRD, @cVrijOd, @cVrijDo, @aUsl1, @aUsl2, @cVrsteP, @cAPrometa, @cGotZir, @cSifraDob, @cPartId ) == 0
+      IF pos_get_vars_izvjestaj_realizacija( @cK1, @cIdPos, @dDatum0, @dDatum1, @cSmjena, @cRD, @cVrijOd, @cVrijDo, @aUsl1, @aUsl2, @cVrsteP, @cAPrometa, @cGotZir, @cSifraDob, @cPartId ) == 0
          RETURN 0
       ENDIF
 
@@ -165,25 +165,21 @@ FUNCTION realizacija_kase
    RETURN .T.
 
 
-FUNCTION FrmRptVars( cK1, cIdPos, dDatum0, dDatum1, cSmjena, cRD, cVrijOd, cVrijDo, aUsl1, aUsl2, cVrsteP, cAPrometa, cGotZir, cSifraDob, cPartId )
+STATIC FUNCTION pos_get_vars_izvjestaj_realizacija( cK1, cIdPos, dDatum0, dDatum1, cSmjena, cRD, cVrijOd, cVrijDo, aUsl1, aUsl2, cVrsteP, cAPrometa, cGotZir, cSifraDob, cPartId )
 
    LOCAL aNiz
 
    aNiz := {}
    cIdPos := gIdPos
 
-   IF gVrstaRS <> "K"
-      AAdd( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X'.or.EMPTY(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
-   ENDIF
 
+   AAdd( aNiz, { "Prod. mjesto (prazno-sve)", "cIdPos", "cidpos='X'.or.EMPTY(cIdPos) .or. p_pos_kase(@cIdPos)", "@!", } )
    AAdd( aNiz, { "Radnici (prazno-svi)", "cRadnici",, "@!S30", } )
    AAdd( aNiz, { "Vrste placanja (prazno-sve)", "cVrsteP",, "@!S30", } )
 
-
-   IF gVodiOdj == "D"
-      AAdd( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "EMPTY(cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )
-   ENDIF
-
+   //IF gVodiOdj == "D"
+    //  AAdd( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", "EMPTY(cIdOdj).or.P_Odj(@cIdOdj)", "@!", } )
+  // ENDIF
 
    AAdd( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
    AAdd( aNiz, { "                   do datuma", "dDatum1",,, } )
@@ -245,7 +241,7 @@ STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdO
 
    ? PadC( "-------------------------------------", LEN_TRAKA )
 
-   //o_pos_kase()
+   // o_pos_kase()
 
    IF Empty( cIdPos )
       IF ( grbReduk < 2 )
@@ -289,15 +285,15 @@ STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdO
       ? "PLACANJE: " + IF( cGotZir <> "Z", "gotovinsko", "ziralno" )
    ENDIF
 
-   IF gVodiOdj == "D"
-      IF Empty( cIdOdj )
-         IF ( grbReduk < 2 )
-            ? "ODJELJENJE : SVA"
-         ENDIF
-      ELSE
-         ? "ODJELJENJE : " + find_pos_odj_naziv( cIdOdj )
-      ENDIF
-   ENDIF
+//   IF gVodiOdj == "D"
+    //  IF Empty( cIdOdj )
+    //     IF ( grbReduk < 2 )
+    //        ? "ODJELJENJE : SVA"
+      //   ENDIF
+    //  ELSE
+    //     ? "ODJELJENJE : " + find_pos_odj_naziv( cIdOdj )
+    //  ENDIF
+   //ENDIF
 
    ? "PERIOD     : " + FormDat1( dDatum0 ) + " - " + FormDat1( dDatum1 )
 
@@ -313,7 +309,6 @@ STATIC FUNCTION Zagl( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cIdO
 
 
 STATIC FUNCTION pos_set_filter_pos_doks( cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId )
-
 
    SELECT pos_doks
    SET ORDER TO TAG "2"  // "2" - "IdVd+DTOS (Datum)+Smjena"
@@ -733,8 +728,8 @@ STATIC FUNCTION pos_realizacija_po_odjeljenjima( fPrik, nTotal2, nTotal3 )
             nTotOdj2 := 0
             nTotOdj3 := 0
             _IdOdj := POM->IdOdj
-            select_o_pos_odj( _IdOdj )
-            ? PadL( AllTrim( _IdOdj ), 5 ), PadR( odj->naz, 22 ) + " "
+            //select_o_pos_odj( _IdOdj )
+            //? PadL( AllTrim( _IdOdj ), 5 ), PadR( odj->naz, 22 ) + " "
             SELECT POM
             DO WHILE !Eof() .AND. pom->( IdPos + IdOdj ) == ( _IdPos + _IdOdj )
                nTotOdj += pom->Iznos
@@ -788,9 +783,9 @@ STATIC FUNCTION pos_realizacija_po_odjeljenjima( fPrik, nTotal2, nTotal3 )
                bOdj := {|| pom->k1 }
             ELSE
                _IdOdj := POM->IdOdj
-               select_o_pos_odj( _IdOdj )
+               //select_o_pos_odj( _IdOdj )
                bOdj := {|| pom->idodj }
-               ? " ", _IdOdj, ODJ->Naz
+               //? " ", _IdOdj, ODJ->Naz
             ENDIF
             ? Replicate ( "-", LEN_TRAKA )
             ? "SIFRA    NAZIV", Space ( 19 ), "(JMJ)"

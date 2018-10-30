@@ -37,10 +37,7 @@ FUNCTION pos_stampa_zaduzenja_inventure( lPrikazStavke0Nepromjenjene, lAzurirana
       lAzurirana := .F.
    ENDIF
 
-   IF gVrstaRS <> "S"
-      nSir := 40
-   ENDIF
-
+   nSir := 40
 
    IF cIdVd == "IN"
       IF ! lPrikazStavke0Nepromjenjene
@@ -63,23 +60,15 @@ FUNCTION pos_stampa_zaduzenja_inventure( lPrikazStavke0Nepromjenjene, lAzurirana
 
    START PRINT CRET
 
-   IF gVrstaRS == "S"
-      INI
-   ENDIF
 
    cPom := iif ( lInventura, ;
       iif ( lPrikazStavke0Nepromjenjene, "Inventurna/popisna lista ", "INVENTURA " ), ;
       "NIVELACIJA " )
-   IF gVrstaRS <> "S"
-      cPom += AllTrim ( field->IdPos ) + "-"
-   ENDIF
+   cPom += AllTrim ( field->IdPos ) + "-"
 
    ? PadC ( cPom + AllTrim ( field->BrDok ), nSir )
    ?
    select_o_pos_odj( field->IdOdj )
-   IF gVodiodj == "D"
-      ? PadC ( "Odjeljenje: " + AllTrim ( ODJ->Naz ), nSir )
-   ENDIF
 
    SELECT PRIPRZ
 
@@ -93,39 +82,19 @@ FUNCTION pos_stampa_zaduzenja_inventure( lPrikazStavke0Nepromjenjene, lAzurirana
 */
 
    ?
-   IF gVrstaRS == "S"
-      P_10CPI
-   ENDIF
 
-   IF gVrstaRS <> "S"
-      ?    " ------------- ---------------------- ---"
-      ?    "  Sifra           Artikal             jmj"
-      ?    " ------------- ---------------------- ---"
-      IF lInventura
-         ? " Knj. Kol  Pop.kol.   Cijena     +/-"
-      ELSE
-         ? "  Stanje          Cijena           Nova c."
-      ENDIF
-      IF lInventura
-         m := "--------- --------- -------- ------------"
-      ELSE
-         m := "  ------------ ------------ ------------"
-      ENDIF
-   ELSE  // server
-      ? " Sifra    Artikal"
-      ?? Space ( 22 )
-      ?
-      ?? "   Stanje   "                 // ima jedan space ispred Stanje
-      IF lInventura
-         ?? "Popis.kol. Cijena    +/-"
-      ELSE
-         ?? "Cijena  Nova c."
-      ENDIF
-      IF lInventura
-         m := " -------- ----------------------------- ---------- ---------- ------- --------"
-      ELSE
-         m := " -------- ----------------------------- ---------- ------- -------"
-      ENDIF
+   ?    " ------------- ---------------------- ---"
+   ?    "  Sifra           Artikal             jmj"
+   ?    " ------------- ---------------------- ---"
+   IF lInventura
+      ? " Knj. Kol  Pop.kol.   Cijena     +/-"
+   ELSE
+      ? "  Stanje          Cijena           Nova c."
+   ENDIF
+   IF lInventura
+      m := "--------- --------- -------- ------------"
+   ELSE
+      m := "  ------------ ------------ ------------"
    ENDIF
 
    ? m
@@ -147,10 +116,6 @@ FUNCTION pos_stampa_zaduzenja_inventure( lPrikazStavke0Nepromjenjene, lAzurirana
             ( cNule == "D" .OR. ( cNule == "N" .AND. field->Kol2 <> 0 ) ) ;
             .AND.  ( field->Kolicina <> 0 .OR. field->Kol2 <> 0 )
 
-         IF gVrstaRS == "S"
-            IF PRow() > 63 - dodatni_redovi_po_stranici() - iif ( lPrikazStavke0Nepromjenjene, 2, 1 );  FF; ENDIF
-         ENDIF
-
          cIdRoba := field->idroba
          nCij := field->cijena
          nCij2 := field->ncijena
@@ -171,35 +136,21 @@ FUNCTION pos_stampa_zaduzenja_inventure( lPrikazStavke0Nepromjenjene, lAzurirana
          ?? " " + PadR ( "(" + cJmj + ")", 5 )
 
 
-         IF gVrstaRS <> "S"
-            ?
-            IF lPrikazStavke0Nepromjenjene
-               ?? " " + "________.___", "_________.___", Str ( nCij, 8, 2 )
+         ?
+         IF lPrikazStavke0Nepromjenjene
+            ?? " " + "________.___", "_________.___", Str ( nCij, 8, 2 )
+         ELSE
+            IF lInventura
+               ? Str( field->kolicina, 9, 1 ), Str( field->kol2, 9, 1 ), ;
+                  Str ( nCij, 8, 1 ), Str ( field->kolicina - field->kol2, 12, 2 )
+               ? m
             ELSE
-               IF lInventura
-                  ? Str( field->kolicina, 9, 1 ), Str( field->kol2, 9, 1 ), ;
-                     Str ( nCij, 8, 1 ), Str ( field->kolicina - field->kol2, 12, 2 )
-                  ? m
-               ELSE
-                  // nivelacija
-                  ? Str( field->kolicina, 14, 3 ), Str ( nCij, 12, 2 ), Str ( nCij2, 12, 2 )
-                  ? m
-               ENDIF
-            ENDIF // lPrikazStavke0Nepromjenjene
-         ELSE  // idemo na server
-            IF lPrikazStavke0Nepromjenjene
-               ?? " " + "______.___", "______.___", Str ( nCij, 7, 2 )
-            ELSE
-               ?? " " + Str ( field->Kolicina, 10, 3 ), ""
-               IF lInventura
-                  ?? Str ( field->Kol2, 10, 3 ), ;
-                     Str ( field->cijena, 7, 2 ), TRANS ( field->Kolicina - field->Kol2, "9999.99" )
-               ELSE
-                  // nivelacija
-                  ?? Str ( nCij, 9, 2 ), Str ( nCij2, 9, 2 )
-               ENDIF
-            ENDIF // lPrikazStavke0Nepromjenjene
-         ENDIF // server
+               // nivelacija
+               ? Str( field->kolicina, 14, 3 ), Str ( nCij, 12, 2 ), Str ( nCij2, 12, 2 )
+               ? m
+            ENDIF
+         ENDIF // lPrikazStavke0Nepromjenjene
+
 
          nIzn := 0
          IF lInventura
@@ -221,11 +172,6 @@ FUNCTION pos_stampa_zaduzenja_inventure( lPrikazStavke0Nepromjenjene, lAzurirana
    ENDDO // !eof()
 
    IF !lPrikazStavke0Nepromjenjene .AND. lInventura
-      IF gVrstaRS == "S"
-         IF PRow() > 63 - dodatni_redovi_po_stranici() - 5
-            FF
-         ENDIF
-      ENDIF
       ?
       ? "Ukupno knjizna  vrijednost:", Str( nKVr, 10, 2 )
       ? "Ukupno popisana vrijednost:", Str( nPopVr, 10, 2 )
@@ -242,11 +188,6 @@ FUNCTION pos_stampa_zaduzenja_inventure( lPrikazStavke0Nepromjenjene, lAzurirana
    IF !lPrikazStavke0Nepromjenjene .AND. Round( nStVr - nNVR, 3 ) <> 0
       nStVr += nPopVr
       nNVr  += nPopVr
-      IF gVrstaRS == "S"
-         IF PRow() > 63 - dodatni_redovi_po_stranici() - 7
-            FF
-         ENDIF
-      ENDIF
       ?
       ? "PROMJENA CIJENA :"
       ?
@@ -258,11 +199,7 @@ FUNCTION pos_stampa_zaduzenja_inventure( lPrikazStavke0Nepromjenjene, lAzurirana
 
    pos_rekapitulacija_tarifa( aTarife )
 
-   IF gVrstaRS == "S"
-      FF
-   ELSE
-      PaperFeed ()
-   ENDIF
+   PaperFeed ()
 
    ENDPRINT
 
@@ -277,14 +214,12 @@ FUNCTION StampaPLI( cBrDok )
    GO TOP
    START PRINT RET
    cPom := "INVENTURNA-POPISNA LISTA BR. "
-   IF gVrstaRS <> "S"
-      cPom += AllTrim ( PRIPRZ->IdPos ) + "-"
-   ENDIF
+   cPom += AllTrim ( PRIPRZ->IdPos ) + "-"
    ? PadC ( cPom + AllTrim ( cBrDok ), 40 )
    ?
-   IF gvodiodj == "D"
-      ? "Odjeljenje: " + PRIPRZ->IdOdj + "-" + find_pos_odj_naziv( IdOdj )
-   ENDIF
+   // IF gvodiodj == "D"
+   // ? "Odjeljenje: " + PRIPRZ->IdOdj + "-" + find_pos_odj_naziv( IdOdj )
+   // ENDIF
    ?
    ? "Sifra    Naziv robe"
    ? "            Stanje    Popisana kolicina"
@@ -321,36 +256,30 @@ FUNCTION pos_prepis_inventura_nivelacija( lInventura )
    SELECT pos_doks
 
    // otvori pos sa aliasom PRIPRZ, te je pozicioniraj na pravo mjesto
-   //SELECT ( F_POS )
-   //my_use( "priprz", "POS" )
+   // SELECT ( F_POS )
+   // my_use( "priprz", "POS" )
 
-   //SET ORDER TO TAG "1"
+   // SET ORDER TO TAG "1"
    seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
    // ovdje treba parametar alias
    cIdOdj := pos->idodj
 
-   select_o_pos_odj( cIdodj )
+   //select_o_pos_odj( cIdodj )
 
-   IF ODJ->Zaduzuje == "S"
-      cRSdbf := "SIROV"
-      cRSblok := "P_Roba(@_IdRoba)"
-      cUI_U   := S_U
-      cUI_I   := S_I
-   ELSE
-      cRSdbf := "ROBA"
-      cRSblok := "P_Roba(@_IdRoba)"
-      cUI_U   := R_U
-      cUI_I   := R_I
-   ENDIF
+   cRSdbf := "ROBA"
+   cRSblok := "P_Roba(@_IdRoba)"
+   cUI_U   := R_U
+   cUI_I   := R_I
+
 
    pos_stampa_zaduzenja_inventure( .F., .T. )  // drugi parametar kaze da se radi o azuriranom dok
 
-   //o_pos_doks()
-   //o_pos_pos()
+   // o_pos_doks()
+   // o_pos_pos()
 
    PopWa()
 
    SELECT pos_doks
 
    RETURN .T.
-*/
+// /

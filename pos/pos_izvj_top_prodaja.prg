@@ -12,26 +12,12 @@
 #include "f18.ch"
 
 
-
-STATIC FUNCTION _o_tables()
-
-   //o_pos_odj()
-   //o_pos_kase()
-//   o_sifk()
-//   o_sifv()
-//   o_roba()
-   o_pos_kumulativne_tabele()
-
-   RETURN .T.
-
-
-
 FUNCTION pos_top_narudzbe()
 
    LOCAL aNiz := {}, cPor, cZaduz, aVrsteP
    PRIVATE cIdPos, cRoba := Space( 60 ), dDatum0, dDatum1, nTop := 10, cSta := "I"
 
-   dDatum0 := dDatum1 := Date ()
+   dDatum0 := dDatum1 := DATE ()
 
    aDbf := {}
    AAdd ( aDbf, { "IdRoba",   "C", 10, 0 } )
@@ -48,18 +34,18 @@ FUNCTION pos_top_narudzbe()
 
    my_use_temp( "POM", my_home() + "pom", .F., .T. )
 
-   INDEX on ( idroba ) TAG "1"
-   INDEX on ( Str( iznos, 20, 3 ) ) TAG "2"
-   INDEX on ( Str( kolicina, 15, 3 ) ) TAG "3"
+   INDEX ON ( idroba ) TAG "1"
+   INDEX ON ( Str( iznos, 20, 3 ) ) TAG "2"
+   INDEX ON ( Str( kolicina, 15, 3 ) ) TAG "3"
 
    SET ORDER TO TAG "1"
 
    _o_tables()
 
    PRIVATE cIdPOS := gIdPos
-   IF gVrstaRS <> "K"
-      aNiz := { { "Prodajno mjesto", "cIdPos", "cidpos='X' .or. Empty(cIdPos).or.p_pos_kase(@cIdPos)",, } }
-   ENDIF
+   // IF gVrstaRS <> "K"
+   aNiz := { { "Prodajno mjesto", "cIdPos", "cidpos='X' .or. Empty(cIdPos).or.p_pos_kase(@cIdPos)",, } }
+   // ENDIF
    AAdd ( aNiz, { "Roba (prazno-sve)", "cRoba",, "@!S30", } )
    AAdd ( aNiz, { "Pregled po Iznosu/Kolicini/Oboje (I/K/O)", "cSta", "cSta$'IKO'", "@!", } )
    AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDatum0",,, } )
@@ -87,7 +73,7 @@ FUNCTION pos_top_narudzbe()
 
    START PRINT CRET
    ?
-   //ZagFirma()
+   // ZagFirma()
 
    ? PadC ( "NAJPROMETNIJI ARTIKLI", 40 )
    ? PadC ( "-----------------------", 40 )
@@ -114,7 +100,7 @@ FUNCTION pos_top_narudzbe()
          select_o_roba( POM->IdRoba )
          ? roba->Id, Left ( roba->Naz, 20 ), Str ( POM->Iznos, 19, 2 )
          SELECT POM
-         nCnt ++
+         nCnt++
          SKIP -1
       ENDDO
    ENDIF
@@ -137,7 +123,7 @@ FUNCTION pos_top_narudzbe()
          select_o_roba( POM->IdRoba )
          ? roba->Id, Left ( roba->Naz, 20 ), Str ( POM->Kolicina, 15, 3 )
          SELECT POM
-         nCnt ++
+         nCnt++
          SKIP -1
       ENDDO
 
@@ -145,9 +131,6 @@ FUNCTION pos_top_narudzbe()
 
    ?
 
-   IF gVrstaRS == "K"
-      PaperFeed ()
-   ENDIF
 
    ENDPRINT
 
@@ -163,12 +146,12 @@ FUNCTION pos_top_narudzbe()
 
 FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
 
-  LOCAL nNeplaca
+   LOCAL nNeplaca
 
-  seek_pos_doks_2( cIdVd, dDatum0 )
+   seek_pos_doks_2( cIdVd, dDatum0 )
 
-  //SELECT pos_doks
-   //SEEK cIdVd + DToS ( dDatum0 )
+   // SELECT pos_doks
+   // SEEK cIdVd + DToS ( dDatum0 )
 
    DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
 
@@ -181,7 +164,7 @@ FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
 
       seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd, pos_doks->datum, pos_doks->BrDok )
       IF !( cFilterRoba == ".t." )
-         SET FILTER to &cFilterRoba
+         SET FILTER TO &cFilterRoba
       ENDIF
       GO TOP
 
@@ -193,15 +176,15 @@ FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
             select_o_pos_odj( roba->idodj )
          ENDIF
          nNeplaca := 0
-      //   IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-      //      nNeplaca := pos->( Kolicina * Cijena )
-      //   ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-      //      nNeplaca := pos->( Kolicina * Cijena ) / 2
-      //   ENDIF
+         // IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+         // nNeplaca := pos->( Kolicina * Cijena )
+         // ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+         // nNeplaca := pos->( Kolicina * Cijena ) / 2
+         // ENDIF
 
-         //IF gPopVar = "P"
-          nNeplaca += pos->( kolicina * NCijena )
-         //ENDIF
+         // IF gPopVar = "P"
+         nNeplaca += pos->( kolicina * NCijena )
+         // ENDIF
 
          SELECT POM
          GO TOP
@@ -213,16 +196,16 @@ FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
                Kolicina WITH POS->Kolicina, ;
                Iznos    WITH POS->Kolicina * POS->Cijena, ;
                iznos3   WITH nNeplaca
-            //IF gPopVar == "P"
-             REPLACE iznos2   WITH pos->ncijena * pos->kolicina
-            //ENDIF
+            // IF gPopVar == "P"
+            REPLACE iznos2   WITH pos->ncijena * pos->kolicina
+            // ENDIF
          ELSE
             REPLACE Kolicina WITH Kolicina + POS->Kolicina, ;
                Iznos WITH Iznos + POS->Kolicina * POS->Cijena, ;
                iznos3 WITH iznos3 + nNePlaca
-            //IF gPopVar == "P"
-             REPLACE iznos2   WITH iznos2 + pos->ncijena * pos->kolicina
-            //ENDIF
+            // IF gPopVar == "P"
+            REPLACE iznos2   WITH iznos2 + pos->ncijena * pos->kolicina
+            // ENDIF
          END
 
          SELECT POS
@@ -233,5 +216,12 @@ FUNCTION pos_top_n_izvuci( cIdVd, dDatum0, cFilterRoba )
       SKIP
 
    ENDDO
+
+   RETURN .T.
+
+
+STATIC FUNCTION _o_tables()
+
+   o_pos_kumulativne_tabele()
 
    RETURN .T.

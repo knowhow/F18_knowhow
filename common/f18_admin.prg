@@ -80,18 +80,20 @@ METHOD F18Admin:New()
 
 METHOD F18Admin:sql_cleanup()
 
-   LOCAL cQuery, oQuery, hDbServerParams, dCleanup
+   LOCAL cQuery, oQuery, hDbServerParams, dCleanup, aQueries, cItem
 
    hDbServerParams := my_server_params()
 
    dCleanup := fetch_metric( "db_cleanup", NIL, CToD( "" ) )
 
+#ifndef F18_DEBUG
    IF dCleanup >= Date()
       info_bar( "admin", "db_cleanup vec napravljen " + DToC( dCleanup ) )
       RETURN .F.
    ELSE
       info_bar( "admin", "db_cleanup START" )
    ENDIF
+#endif
 
    IF ! ::relogin_as_admin( hDbServerParams[ "database" ] )
       MsgBeep( "relogin as admin user neuspjesno " )
@@ -102,16 +104,39 @@ METHOD F18Admin:sql_cleanup()
 
    IF Left( hDbServerParams[ "database" ], 3 ) != "rg_" // ne dirati ramaglas radi RNAL koristenja semafora
       cQuery += "DROP SCHEMA IF EXISTS sem CASCADE;"
+
+      FOR EACH cItem IN { "banke", "dest", "dopr", "epdv_kif", "epdv_kuf", "epdv_pdv", "epdv_sg_kif", "epdv_sg_kuf", ;
+         "f18_rules", "fakt_doks", "fakt_doks2", "fakt_fakt", "fakt_ftxt", "fakt_gen_ug", "fakt_gen_ug_p", "fakt_rugov", ;
+         "fakt_ugov", "fakt_upl", "fin_anal", "fin_sint", "fin_suban", "fin_nalog", "kalk_doks", "kalk_kalk", ;
+         "kbenef", "koncij", "konto", "kred", "ld_ld", "ld_norsiht", "ld_obracuni", "ld_parobr", "ld_pk_data", "ld_pk_radn",;
+         "ld_radkr", "ld_radn", "ld_radsat", "ld_radsiht", "ld_rj", "ld_tprsiht", "lokal", "ops", "os_amort", "os_k1",;
+         "os_os", "os_promj", "os_reval", "partn", "por", "refer", "rj", "roba", "sast", "sifk", "sifv", ;
+         "strspr", "tarifa", "tdok", "tippr", "tippr2", "tnal", "trfp", "trfp2", "trfp3", "valute", "vposla", "vprih" ;
+         }
+         cQuery += "DROP SEQUENCE IF EXISTS fmk.sem_ver_" + cItem + ";"
+      NEXT
+
    ENDIF
 
    IF !Empty ( cQuery )
       oQuery := run_sql_query( cQuery )
-
       IF sql_error_in_query( oQuery, "DROP", sql_postgres_conn() )
          error_bar( "drop_db", "drop schema sem" )
          RETURN .F.
       ENDIF
    ENDIF
+
+   aQueries := { ;
+      "ALTER TABLE fmk.pos_doks  DROP COLUMN IF EXISTS funk;", ;
+      "ALTER TABLE fmk.pos_doks  DROP COLUMN IF EXISTS fisc_st;"  ;
+      }
+   FOR EACH cQuery IN aQueries
+      oQuery := run_sql_query( cQuery )
+      IF sql_error_in_query( oQuery, "DROP", sql_postgres_conn() )
+         error_bar( "alter_table", cQuery )
+         RETURN .F.
+      ENDIF
+   NEXT
 
    info_bar( "admin", "db_cleanup END" )
    ::relogin_as( hDbServerParams[ "user" ],  hDbServerParams[ "password" ], hDbServerParams[ "database" ] )
@@ -371,19 +396,19 @@ METHOD F18Admin:update_app_run_app_update( hF18Params )
 
 
 
-METHOD F18Admin:update_app_run_script( update_file )
+METHOD F18Admin:update_app_run_script( cUpdate )
 
    LOCAL cUrl := my_home_root() + ::update_app_script_file
 
 #ifdef __PLATFORM__WINDOWS
 
    cUrl := 'start cmd /C ""' + cUrl
-   cUrl += '" "' + update_file + '""'
+   cUrl += '" "' + cUpdate + '""'
 #else
 #ifdef __PLATFORM__LINUX
    cUrl := "bash " + cUrl
 #endif
-   cUrl += " " + update_file
+   cUrl += " " + cUpdate
 #endif
 
 #ifdef __PLATFORM__UNIX
@@ -438,7 +463,7 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
 
    Box(, 10, 65 )
 
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "## UPGRADE F18 aplikacije ##", 64 ) COLOR f18_color_i()
+   @ box_x_koord() + nX, box_y_koord() + 2 SAY PadR( "## UPGRADE F18 klijenta ##", 64 ) COLOR f18_color_i()
    ++nX
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY cLine := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
@@ -461,10 +486,8 @@ METHOD F18Admin:update_app_form( hF18UpdateParams )
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY cLine
 
-   ++nX
-   ++nX
+   nX += 2
    nPos := nX
-
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "       Update F18 ?" GET cUpdateF18 PICT "@!" VALID cUpdateF18 $ "DN"
 
    READ
@@ -1277,7 +1300,6 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, nDataType )
       RETURN .F.
    ENDIF
 
-
    // bitne tabele za reset podataka baze
    cQuery := ""
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk;"
@@ -1324,8 +1346,8 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, nDataType )
 
    cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "log;"
 
-   // ako je potrebno brisati sve onda dodaj i sljedece...
-   IF nDataType > 1
+
+   IF nDataType > 1 // ako je potrebno brisati sve
 
       cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_os;"
       cQuery += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "os_promj;"
@@ -1352,8 +1374,6 @@ METHOD F18Admin:delete_db_data_all( cDatabaseName, nDataType )
    ENDIF
 
    RETURN .T.
-
-
 
 
 METHOD F18Admin:create_new_pg_db_params( hParams )

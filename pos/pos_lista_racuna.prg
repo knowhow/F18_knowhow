@@ -75,7 +75,7 @@ FUNCTION pos_lista_racuna( dDatum, cBroj, fPrep, cPrefixFilter, qIdRoba )
 
    seek_pos_doks( cIdPos, "42", dDatum, cRacun )
 
-   IF gVrstaRS <> "S" .AND. !Empty( cIdPos ) .AND. cIdPOS <> gIdPos
+   IF !Empty( cIdPos ) .AND. cIdPOS <> gIdPos
       MsgBeep( "Račun nije napravljen na ovoj kasi!#" + "Ne možete napraviti promjenu!", 20 )
       RETURN ( .F. )
    ENDIF
@@ -107,13 +107,13 @@ FUNCTION pos_lista_racuna( dDatum, cBroj, fPrep, cPrefixFilter, qIdRoba )
    // SET SCOPEBOTTOM TO "W"
    // ENDIF
 
-   IF gVrstaRS == "S" .OR. pos_admin()
-      AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
-      AAdd( Kol, Len( ImeKol ) )
+   //IF gVrstaRS == "S" .OR. pos_admin()
+    //  AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
+    //  AAdd( Kol, Len( ImeKol ) )
       //cFilter += ".and. (Idpos=" + dbf_quote( gIdPos ) + " .or. IdPos='X ')"
-   ELSE
+   //ELSE
       cFilter += ".and. IdRadnik=" + dbf_quote( gIdRadnik ) + ".and. Idpos=" + dbf_quote( gIdPos )
-   ENDIF
+   //ENDIF
 
    // IF dDatum <> NIL
    // cFilter += '.and. Datum=' + dbf_quote( dDatum )

@@ -168,21 +168,21 @@ FUNCTION ParPrBase()
 
    aNiz := {}
 
-   AAdd ( aNiz, { "Racun se zakljucuje dikretno bez upita (D/N)", "gDirZaklj", "gDirZaklj$'DN'", "@!", } )
-   AAdd ( aNiz, { "Dopustiti dupli unos artikala na racunu (D/N)", "gDupliArt", "gDupliArt$'DN'", "@!", } )
+   AAdd ( aNiz, { "Račun se zakljucuje dikretno bez upita (D/N)", "gDirZaklj", "gDirZaklj$'DN'", "@!", } )
+   AAdd ( aNiz, { "Dopustiti dupli unos artikala na računu (D/N)", "gDupliArt", "gDupliArt$'DN'", "@!", } )
    AAdd ( aNiz, { "Ako se dopusta dupli unos, da li se radnik upozorava(D/N)", "gDupliUpoz", "gDupliUpoz$'DN'", "@!", } )
    AAdd ( aNiz, { "Da li se prati stanje artikla na unosu (D/N/!)", "gPratiStanje", "gPratiStanje$'DN!'", "@!", } )
 
    IF pos_admin()
-      AAdd ( aNiz, { "Upravnik moze ispravljati cijene", "gSifUpravn", "gSifUpravn$'DN'", "@!", } )
+      AAdd ( aNiz, { "Upravnik može ispravljati cijene", "gSifUpravn", "gSifUpravn$'DN'", "@!", } )
    ENDIF
 
    AAdd ( aNiz, { "Ako je Bar Cod generisi <ENTER> ", "gEntBarCod", "gEntBarCod$'DN'", "@!", } )
    AAdd ( aNiz, { "Pri unosu zaduzenja azurirati i cijene (D/N)? ", "gZadCij", "gZadCij$'DN'", "@!", } )
    AAdd ( aNiz, { "Pri azuriranju pitati za nacin placanja (D/N)? ", "gUpitNP", "gUpitNP$'DN'", "@!", } )
    AAdd ( aNiz, { "Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? ", "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", } )
-   AAdd ( aNiz, { "Maksimalna kolicina pri unosu racuna (0 - bez provjere) ", "_max_qtty", "_max_qtty >= 0", "999999", } )
-   AAdd ( aNiz, { "Unos racuna bez izlaska iz pripreme (D/N) ", "_konstantni_unos", "_konstantni_unos$'DN'", "@!", } )
+   AAdd ( aNiz, { "Maksimalna količina pri unosu racuna (0 - bez provjere) ", "_max_qtty", "_max_qtty >= 0", "999999", } )
+   AAdd ( aNiz, { "Unos računa bez izlaska iz pripreme (D/N) ", "_konstantni_unos", "_konstantni_unos$'DN'", "@!", } )
    AAdd ( aNiz, { "Za stanje artikla gledati KALK magacinski konto", "cKalkKontoMagacin",, "@S7", } )
 
    VarEdit( aNiz, 2, 2, f18_max_rows() - 10, f18_max_cols() - 5, "PARAMETRI RADA PROGRAMA - PRINCIPI RADA", "B1" )
@@ -192,7 +192,7 @@ FUNCTION ParPrBase()
       MsgO( "Azuriram parametre" )
 
       set_metric( "AzuriranjeCijena", nil, gZadCij )
-      set_metric( "VodiOdjeljenja", nil, gVodiOdj )
+    //  set_metric( "VodiOdjeljenja", nil, gVodiOdj )
 
       set_metric( "DirektnoZakljucivanjeRacuna", nil, gDirZaklj )
       set_metric( "RacunSpecifOpcije", nil, gRnSpecOpc )
@@ -218,7 +218,6 @@ FUNCTION ParPrBase()
       max_kolicina_kod_unosa( .T. )
 
       set_metric( "pos_konstantni_unos_racuna", my_user(), _konstantni_unos )
-
       MsgC()
 
    ENDIF
@@ -265,7 +264,7 @@ FUNCTION pos_param_izgled_racuna()
    gOtvorStr := PadR( gOtvorStr, 30 )
    gZagIz := PadR( gZagIz, 20 )
 
-   AAdd( aNiz, { "Stampa poreza pojedinacno (D-pojedinacno,N-zbirno)", "gPoreziRaster", "gPoreziRaster$'DN'", "@!", } )
+  // AAdd( aNiz, { "Stampa poreza pojedinacno (D-pojedinacno,N-zbirno)", "gPoreziRaster", "gPoreziRaster$'DN'", "@!", } )
    AAdd( aNiz, { "Broj redova potrebnih da se racun otcijepi", "nFeedLines", "nFeedLines>=0", "99", } )
    AAdd( aNiz, { "Sekvenca za cijepanje trake", "gSjeciStr", , "@S20", } )
    AAdd( aNiz, { "Sekvenca za otvaranje kase ", "gOtvorStr", , "@S20", } )
@@ -277,7 +276,7 @@ FUNCTION pos_param_izgled_racuna()
 
    IF LastKey() <> K_ESC
       MsgO( "Azuriram parametre" )
-      set_metric( "PorezniRaster", nil, gPoreziRaster )
+      //set_metric( "PorezniRaster", nil, gPoreziRaster )
       set_metric( "BrojLinijaZaKrajRacuna", nil, nFeedLines )
       set_metric( "SekvencaSjeciTraku", nil, gSjeciStr )
       set_metric( "SekvencaOtvoriLadicu", nil, gOtvorStr )

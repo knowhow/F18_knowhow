@@ -39,7 +39,7 @@ FUNCTION Pripr9View()
    // postavi filter
    P9SetFilter( aUslFirma, aUslDok, dDat1, dDat2 )
 
-   PRIVATE gVarijanta := "2"
+   //PRIVATE gVarijanta := "2"
 
    PRIVATE PicV := "99999999.9"
    ImeKol := { ;

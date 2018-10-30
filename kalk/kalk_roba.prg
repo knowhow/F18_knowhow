@@ -151,7 +151,7 @@ FUNCTION kalk_zadnji_ulazi_info( cIdPartner, cIdRoba, cProdMag )
 
 
 
-FUNCTION zadnji_izlazi_info( cIdPartner, cIdRoba )
+FUNCTION fakt_zadnji_izlazi_info( cIdPartner, cIdRoba )
 
    LOCAL _data := {}
    LOCAL _count := 3
@@ -160,7 +160,7 @@ FUNCTION zadnji_izlazi_info( cIdPartner, cIdRoba )
       RETURN .T.
    ENDIF
 
-   _data := _fakt_get_izlazi( cIdPartner, cIdRoba )
+   _data := fakt_get_izlazi_10_11( cIdPartner, cIdRoba )
 
    IF Len( _data ) > 0
       _prikazi_info( _data, "F", _count )
@@ -170,7 +170,7 @@ FUNCTION zadnji_izlazi_info( cIdPartner, cIdRoba )
 
 
 
-STATIC FUNCTION _fakt_get_izlazi( cIdPartner, cIdRoba )
+STATIC FUNCTION fakt_get_izlazi_10_11( cIdPartner, cIdRoba )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}

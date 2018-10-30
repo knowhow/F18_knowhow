@@ -37,7 +37,6 @@ FUNCTION kalk_get_1_14()
       PRIVATE cNBrDok := _brdok
       @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2  valid ( Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) )
 
-
    ELSE
       @ box_x_koord() + 6, box_y_koord() + 2   SAY8 "KUPAC: "; ?? _IdPartner
       @ box_x_koord() + 7, box_y_koord() + 2   SAY8 "Faktura Broj: "; ?? _BrFaktP
@@ -54,10 +53,7 @@ FUNCTION kalk_get_1_14()
    @ box_x_koord() + 10, box_y_koord() + 66 SAY "Tarif.br "
 
    kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi )
-
-
    @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
-
    @ box_x_koord() + 12, box_y_koord() + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    READ
@@ -70,9 +66,7 @@ FUNCTION kalk_get_1_14()
    ENDIF
 
    select_o_tarifa( _IdTarifa )
-
    select_o_roba(_IdRoba )
-
    select_o_koncij( _idkonto2 )
    SELECT kalk_pripr
 
@@ -111,7 +105,6 @@ FUNCTION kalk_get_1_14()
       IF !Empty( kalk_metoda_nc() )
 
          kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nNabCj1, @nNabCj2, @dDatNab )
-
          @ box_x_koord() + 12, box_y_koord() + 30   SAY "Ukupno na stanju "
          @ box_x_koord() + 12, Col() + 2 SAY nKols PICT pickol
       ENDIF
@@ -143,7 +136,6 @@ FUNCTION kalk_get_1_14()
    @ box_x_koord() + 15, Col() + 2  GET cTRabat  PICT "@!"  valid {|| PrerRab(), V_RabatV(), ctrabat $ "%AU" }
 
    _PNAP := 0
-
    _MPC := tarifa->opp
 
    @ box_x_koord() + 16, box_y_koord() + 2 SAY8 "PDV (%)  " + Transform( _MPC, "99.99" )
@@ -166,7 +158,6 @@ FUNCTION kalk_get_1_14()
    READ
 
    nStrana := 2
-
    IF roba->tip == "X"
       _marza := _vpc - _mpcsapp / ( 1 + _PORVT ) * _PORVT - _nc
    ELSE
@@ -174,11 +165,11 @@ FUNCTION kalk_get_1_14()
       _marza := _vpc / ( 1 + _PORVT ) -_nc
    ENDIF
 
-
    // izlaz iz magacina
    _MKonto := _Idkonto2
    _MU_I := "5"
-   _PKonto := ""; _PU_I := ""
+   _PKonto := ""
+   _PU_I := ""
 
    IF _idvd == "KO"
       _MU_I := "4" // ne utice na stanje
@@ -221,8 +212,6 @@ FUNCTION kalk_get_1_14()
    SET KEY K_ALT_K TO
 
    RETURN LastKey()
-
-
 
 
 /*

@@ -12,10 +12,6 @@
 #include "f18.ch"
 
 
-
-
-
-
 /*
  *     When blok za unos MPC
  *   param: fRealizacija -
@@ -47,14 +43,11 @@ FUNCTION WMpc( fRealizacija, cProracunMarzeUnaprijed )
 
 
 
-
-
 /* VMpc(fRealizacija,cProracunMarzeUnaprijed)
  *     Valid blok za unos MPC
  *   param: fRealizacija -
  *   param: cProracunMarzeUnaprijed -
  */
-
 FUNCTION VMpc( fRealizacija, cProracunMarzeUnaprijed )
 
    IF fRealizacija == NIL
@@ -79,14 +72,11 @@ FUNCTION VMpc( fRealizacija, cProracunMarzeUnaprijed )
 
 
 
-
-
 /* VMpcSaPP(fRealizacija,cProracunMarzeUnaprijed)
  *     Valid blok za unos MpcSaPP
  *   param: fRealizacija -
  *   param: cProracunMarzeUnaprijed -
  */
-
 FUNCTION VMpcSaPP( fRealizacija, cProracunMarzeUnaprijed )
 
    LOCAL nRabat
@@ -127,9 +117,6 @@ FUNCTION VMpcSaPP( fRealizacija, cProracunMarzeUnaprijed )
    RETURN .T.
 
 
-
-
-
 /* SayPorezi(nRow)
  *     Ispisuje poreze
  *   param: nRow - relativna kooordinata reda u kojem se ispisuju porezi
@@ -142,8 +129,6 @@ FUNCTION SayPorezi( nRow )
 
 
    RETURN .T.
-
-
 
 
 
@@ -194,11 +179,6 @@ FUNCTION kalk_puni_polja_za_izgenerisane_stavke( pIzgStavke )
    RETURN .T.
 
 
-
-
-
-
-
 // -----------------------------------------------------------
 // WHEN validator na polju MPC
 // -----------------------------------------------------------
@@ -229,14 +209,12 @@ FUNCTION W_Mpc_( cIdVd, lNaprijed, aPorezi )
    RETURN .T.
 
 
-
 /*
  *     When blok za unos MPC
  *   param: fRealizacija -
  *   param: cProracunMarzeUnaprijed -
  *  note koriste se lokalne varijable
  */
-
 FUNCTION WMpc_lv( fRealizacija, cProracunMarzeUnaprijed, aPorezi )
 
    // legacy
@@ -264,15 +242,12 @@ FUNCTION WMpc_lv( fRealizacija, cProracunMarzeUnaprijed, aPorezi )
 
 
 
-
-
 /* VMpc_lv(fRealizacija, cProracunMarzeUnaprijed, aPorezi)
  *     Valid blok za unos MPC
  *   param: fRealizacija -
  *   param: cProracunMarzeUnaprijed -
  *  note koriste se lokalne varijable
  */
-
 FUNCTION VMpc_lv( fRealizacija, cProracunMarzeUnaprijed, aPorezi )
 
 
@@ -292,7 +267,6 @@ FUNCTION VMpc_lv( fRealizacija, cProracunMarzeUnaprijed, aPorezi )
    ENDIF
 
    RETURN .T.
-
 
 
 
@@ -316,14 +290,11 @@ FUNCTION V_Mpc_( cIdVd, lNaprijed, aPorezi )
 
 
 
-
-
 /* VMpcSaPP_lv(fRealizacija, cProracunMarzeUnaprijed, aPorezi)
  *     Valid blok za unos MpcSaPP
  *   param: fRealizacija -
  *   param: cProracunMarzeUnaprijed -
  */
-
 FUNCTION VMpcSaPP_lv( fRealizacija, cProracunMarzeUnaprijed, aPorezi, lShowGets )
 
    LOCAL nPom
@@ -370,7 +341,7 @@ FUNCTION VMpcSaPP_lv( fRealizacija, cProracunMarzeUnaprijed, aPorezi, lShowGets 
 // ---------------------------------------------------------------
 // racuna mpc sa porezom
 // ---------------------------------------------------------------
-FUNCTION V_MpcSaPP_( cIdVd, lNaprijed, aPorezi, lShowGets )
+FUNCTION kalk_valid_mpcsapdv( cIdVd, lNaprijed, aPorezi, lShowGets )
 
    LOCAL nPom
 

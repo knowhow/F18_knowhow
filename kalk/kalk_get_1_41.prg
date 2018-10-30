@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION kalk_get_1_41()
 
    LOCAL lRet
@@ -35,7 +34,6 @@ FUNCTION kalk_get_1_41()
       @  box_x_koord() + 6,  box_y_koord() + 2 SAY "DOBAVLJAC KOMIS.ROBE:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 5, 30 )
 
    ELSE
-
       _idpartner := ""
       _brfaktP := ""
 
@@ -83,7 +81,6 @@ FUNCTION kalk_get_1_41()
 
    _PKonto := _Idkonto
 
-
    // check_datum_posljednje_kalkulacije()
    // kalk_dat_poslj_promjene_prod()
 
@@ -124,7 +121,6 @@ FUNCTION kalk_get_1_41()
 
    IF ( ( _idvd <> "47" ) .AND. roba->tip != "T" )
 
-
       nKolS := 0
       nKolZN := 0
       nc1 := 0
@@ -163,10 +159,7 @@ FUNCTION kalk_get_1_41()
 
    ENDIF
 
-
    @ box_x_koord() + 17, box_y_koord() + 2 SAY "PRODAJNA CJENA  (PC):"
-
-
    @ box_x_koord() + 17, box_y_koord() + 50 GET _mpc PICT PicDEM WHEN W_MPC_( IdVd, .F., @aPorezi ) VALID V_Mpc_( _IdVd, .F., @aPorezi )
 
    PRIVATE cRCRP := gRCRP
@@ -177,13 +170,11 @@ FUNCTION kalk_get_1_41()
    SayPorezi( 19 )
 
    @ box_x_koord() + 20, box_y_koord() + 2 SAY "MPC SA PDV    :"
-
-   @ box_x_koord() + 20, box_y_koord() + 50 GET _mpcsapp PICT PicDEM VALID V_MpcSaPP_( _IdVd, .F., @aPorezi, .T. )
+   @ box_x_koord() + 20, box_y_koord() + 50 GET _mpcsapp PICT PicDEM VALID kalk_valid_mpcsapdv( _IdVd, .F., @aPorezi, .T. )
 
    READ
 
    ESC_RETURN K_ESC
-
 
    _PKonto := _Idkonto
    _PU_I := "5" // izlaz iz prodavnice
@@ -194,10 +185,6 @@ FUNCTION kalk_get_1_41()
    RETURN LastKey()
 
 
-
-// ------------------------------------------
-// racuna rabat za stavku...
-// ------------------------------------------
 STATIC FUNCTION RabProcToC()
 
    IF cRCRP == "P"

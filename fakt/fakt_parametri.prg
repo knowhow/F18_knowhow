@@ -207,10 +207,8 @@ FUNCTION fakt_par_razno()
    ++nX
    read_dn_parametar( "Brojač otpremnica po dokumentu 22 (D/N)", box_x_koord() + nX, box_y_koord() + 2, @_otpr_brojac_22 )
    ++nX
-
    read_dn_parametar( "Generacija otpremnica ver.2 (D/N)", box_x_koord() + nX, box_y_koord() + 2, @_otpr_gen )
    ++nX
-
    read_dn_parametar( "Kontrola brojača dokumenta (D/N)", box_x_koord() + nX, box_y_koord() + 2, @_kontrola_brojaca )
    ++nX
 
@@ -228,8 +226,6 @@ FUNCTION fakt_par_razno()
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis id artikla na racunu (D/N):"  GET gMPArtikal VALID gMPArtikal $ "DN" PICT "@!"
       ++nX
       @ box_x_koord() + nX, box_y_koord() + 2 SAY "Ispis cjene sa pdv (2) ili bez (1):" GET gMPCjenPDV  VALID gMPCjenPDV $ "12"
-
-
       READ
 
    ENDIF

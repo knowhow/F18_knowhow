@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION kalk_get_1_19()
 
    _DatFaktP := _datdok
@@ -23,8 +22,8 @@ FUNCTION kalk_get_1_19()
    // IF gNW <> "X"
    // @ box_x_koord() + 8, box_y_koord() + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
    // ENDIF
-
    READ
+
    ESC_RETURN K_ESC
 
    @ box_x_koord() + 10, box_y_koord() + 66 SAY "Tarif.br->"

@@ -520,7 +520,6 @@ FUNCTION NabCj2( n1, n2 )
 
    IF Abs( n1 - n2 ) > 0.00001
       // tj. ako je ukucana drugacija NC
-
       _rabat := 100 - 100 * _NC / _FCJ
       _FCJ2 := _NC
       ShowGets()

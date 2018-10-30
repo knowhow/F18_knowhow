@@ -159,7 +159,7 @@ FUNCTION kalk_get1_80( atrib )
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "PC SA PDV:"
 
 
-   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _MPCSaPP PICT PicDEM VALID V_MpcSaPP_( "80", .F., @aPorezi, .T. )
+   @ box_x_koord() + nX, box_y_koord() + _unos_left GET _MPCSaPP PICT PicDEM VALID kalk_valid_mpcsapdv( "80", .F., @aPorezi, .T. )
 
    READ
    ESC_RETURN K_ESC

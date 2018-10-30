@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION kalk_get_1_11()
 
    LOCAL lRet
@@ -38,12 +37,13 @@ FUNCTION kalk_get_1_11()
       // @ box_x_koord() + 8, box_y_koord() + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 24 )
       // ENDIF
 
-      @ box_x_koord() + 9, box_y_koord() + 2   SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
-         VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
+      @ box_x_koord() + 9, box_y_koord() + 2   SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
       // IF gNW <> "X"
       // @ box_x_koord() + 9, box_y_koord() + 42 SAY "Razduzuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. p_partner( @_IdZaduz2, 24 )
       // ENDIF
-      read; ESC_RETURN K_ESC
+      READ
+      ESC_RETURN K_ESC
+
    ELSE
       IF _IdVD $ "11#12#13#22"
          @  box_x_koord() + 6, box_y_koord() + 2   SAY "Otpremnica - Broj: "; ?? _BrFaktP
@@ -70,7 +70,6 @@ FUNCTION kalk_get_1_11()
    ENDIF
 */
    @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
-
    @ box_x_koord() + 12, box_y_koord() + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    READ
@@ -82,16 +81,13 @@ FUNCTION kalk_get_1_11()
 
    _MKonto := _Idkonto2
    _PKonto := _Idkonto
-
    select_o_koncij( _pkonto )
-
 
    SELECT kalk_pripr  // napuni tarifu
 
    // check_datum_posljednje_kalkulacije()
    // kalk_dat_poslj_promjene_prod()
    // DuplRoba()
-
 
    _GKolicina := _GKolicin2 := 0
    IF kalk_is_novi_dokument()
@@ -117,7 +113,6 @@ FUNCTION kalk_get_1_11()
    ENDIF
 
    set_pdv_public_vars()
-
    nKolS := 0
    nKolZN := 0
    nc1 := 0
@@ -131,17 +126,25 @@ FUNCTION kalk_get_1_11()
             kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
          ELSE
             kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
-
          ENDIF
-         IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
-         IF kalk_metoda_nc() $ "13"; _fcj := nc1; ELSEIF kalk_metoda_nc() == "2"; _fcj := nc2; ENDIF
+         IF dDatNab > _DatDok
+            Beep( 1 )
+            Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )
+         ENDIF
+         IF kalk_metoda_nc() $ "13"
+            _fcj := nc1
+         ELSEIF kalk_metoda_nc() == "2"
+            _fcj := nc2
+         ENDIF
       ENDIF
    ENDIF
 
    IF _kolicina > 0
-      @ box_x_koord() + 12, box_y_koord() + 30   SAY "Na stanju magacin "; @ box_x_koord() + 12, Col() + 2 SAY nkols PICT pickol
+      @ box_x_koord() + 12, box_y_koord() + 30   SAY "Na stanju magacin "
+      @ box_x_koord() + 12, Col() + 2 SAY nkols PICT pickol
    ELSE
-      @ box_x_koord() + 12, box_y_koord() + 30   SAY "Na stanju prodavn "; @ box_x_koord() + 12, Col() + 2 SAY nkols PICT pickol
+      @ box_x_koord() + 12, box_y_koord() + 30   SAY "Na stanju prodavn "
+      @ box_x_koord() + 12, Col() + 2 SAY nkols PICT pickol
    ENDIF
 
    select_o_koncij( _idkonto2 )
@@ -177,22 +180,16 @@ FUNCTION kalk_get_1_11()
    PRIVATE cProracunMarzeUnaprijed := " "
    @ box_x_koord() + 16, box_y_koord() + 2 SAY "MP marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
    @ box_x_koord() + 16, Col() + 1  GET _Marza2 PICTURE  PicDEM ;
-      VALID {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), ;
-      _Tmarza := "A", ;
-      _marza := _vpc / ( 1 + _PORVT ) - _fcj, .T. }
+      VALID {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), _Tmarza := "A", _marza := _vpc / ( 1 + _PORVT ) - _fcj, .T. }
    @ box_x_koord() + 16, Col() + 1 GET cProracunMarzeUnaprijed PICT "@!"   VALID {|| kalk_Marza_11( cProracunMarzeUnaprijed ), cProracunMarzeUnaprijed := " ", .T. }
 
 
    @ box_x_koord() + 18, box_y_koord() + 2  SAY "PRODAJNA CJENA       :"
-
-
    @ box_x_koord() + 18, box_y_koord() + 50 GET _MPC PICTURE PicDEM VALID VMpc( .F., cProracunMarzeUnaprijed ) WHEN WMpc( .F., cProracunMarzeUnaprijed )
 
    SayPorezi( 19 )
 
-
    @ box_x_koord() + 20, box_y_koord() + 2 SAY "PROD.C. SA PDV:"
-
    @ box_x_koord() + 20, box_y_koord() + 50 GET _MPCSaPP  PICTURE PicDEM VALID VMPCSaPP( .F., cProracunMarzeUnaprijed )
 
    READ

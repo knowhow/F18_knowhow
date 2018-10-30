@@ -35,7 +35,7 @@ FUNCTION kalk_pregled_smece_pripr9()
 
    ka_pripr9_set_filter( aUslFirma, aUslDok, dDat1, dDat2 )
 
-   PRIVATE gVarijanta := "2"
+   //PRIVATE gVarijanta := "2"
 
    PRIVATE PicV := "99999999.9"
    ImeKol := { ;

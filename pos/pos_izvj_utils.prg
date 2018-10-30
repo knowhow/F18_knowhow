@@ -50,6 +50,7 @@ FUNCTION RealNaDan( dDatum )
 
    RETURN nUkupno
 
+*/
 
 
 FUNCTION pos_kasa_pripremi_pom_za_izvjestaj( cIdVd, cDobId )
@@ -57,13 +58,13 @@ FUNCTION pos_kasa_pripremi_pom_za_izvjestaj( cIdVd, cDobId )
    // cIdVD - Id vrsta dokumenta
    // Opis: priprema pomoce baze POM.DBF za realizaciju
 
-   IF ( cDobId == nil )
+   IF ( cDobId == NIL )
       cDobId := ""
    ENDIF
 
    MsgO( "formiram pomocnu tabelu izvjestaja..." )
 
-   //SEEK cIdVd + DToS( dDatum0 )
+   // SEEK cIdVd + DToS( dDatum0 )
    seek_pos_doks_2( cIdVd, dDatum0 )
 
    DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDatum1
@@ -99,15 +100,15 @@ FUNCTION pos_kasa_pripremi_pom_za_izvjestaj( cIdVd, cDobId )
 
          nNeplaca := 0
 
-      //   IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
-      //      nNeplaca := pos->( Kolicina * Cijena )
-    //     ELSEIF Right( odj->naz, 6 ) == "#1#50#"
-    //        nNeplaca := pos->( Kolicina * Cijena ) / 2
-    //     ENDIF
+         // IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+         // nNeplaca := pos->( Kolicina * Cijena )
+         // ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+         // nNeplaca := pos->( Kolicina * Cijena ) / 2
+         // ENDIF
 
-        // IF gPopVar = "P"
-          nNeplaca += pos->( kolicina * nCijena )
-         //ENDIF
+         // IF gPopVar = "P"
+         nNeplaca += pos->( kolicina * nCijena )
+         // ENDIF
 
          SELECT pom
          GO TOP
@@ -126,9 +127,9 @@ FUNCTION pos_kasa_pripremi_pom_za_izvjestaj( cIdVd, cDobId )
             REPLACE Iznos WITH pos->Kolicina * POS->Cijena
             REPLACE Iznos3 WITH nNeplaca
 
-          //  IF gPopVar == "A"
-           REPLACE Iznos2 WITH pos->nCijena
-          //  ENDIF
+            // IF gPopVar == "A"
+            REPLACE Iznos2 WITH pos->nCijena
+            // ENDIF
 
             IF roba->( FieldPos( "K1" ) ) <> 0
                REPLACE K2 WITH roba->K2, K1 WITH roba->K1
@@ -140,9 +141,9 @@ FUNCTION pos_kasa_pripremi_pom_za_izvjestaj( cIdVd, cDobId )
             REPLACE Iznos WITH Iznos + POS->Kolicina * POS->Cijena
             REPLACE Iznos3 WITH Iznos3 + nNeplaca
 
-            //IF gPopVar == "A"
-            //   REPLACE Iznos2 WITH Iznos2 + pos->nCijena
-            //ENDIF
+            // IF gPopVar == "A"
+            // REPLACE Iznos2 WITH Iznos2 + pos->nCijena
+            // ENDIF
 
          ENDIF
 
@@ -159,5 +160,3 @@ FUNCTION pos_kasa_pripremi_pom_za_izvjestaj( cIdVd, cDobId )
    MsgC()
 
    RETURN .T.
-
-*/

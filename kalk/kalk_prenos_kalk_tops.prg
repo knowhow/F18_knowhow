@@ -35,7 +35,7 @@ FUNCTION kalk_tops_meni()
       BoxC()
 
       IF kalk_dokument_postoji( cIDFirma, cIdVd, cBrDok, .F. )
-         kalk_generisi_tops_dokumente( cIDFirma, cIdVd, cBrDok ) // generisi datoteku prenosa
+         kalk_generisi_tops_dokumente( cIDFirma, cIdVd, cBrDok )
       ENDIF
 
       cBrDok := kalk_fix_brdok_add_1( cBrDok )
@@ -43,11 +43,6 @@ FUNCTION kalk_tops_meni()
 
    RETURN .T.
 
-
-
-/*
-      generacija tops dokumenata na osnovu kalk dokumenata
-*/
 
 FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
@@ -61,10 +56,9 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
    my_close_all_dbf()
 
-   IF PCount() == 0
-      lFromKumulativ := .F. // generisanje iz pripreme
+   IF PCount() == 0  // generisanje iz pripreme
+      lFromKumulativ := .F.
    ENDIF
-
 
    IF !kalk_tops_prenos_prerequisites()
       // kalk_tops_o_gen_tables( lFromKumulativ )
@@ -78,7 +72,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
    ENDIF
 
    kalk_tops_create_katops_dbf( my_home() + cKalkTopsDbf, lFromKumulativ ) // kreiraj tabelu katops, ona ce se kreirati u privatnom direktoriju
-
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
@@ -94,7 +87,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
    nRbr := 0
    dDatDok := Date()
-
 
    aPosLokacije := {} // matrica pos mjesta koje kaci kalkulacija
 
@@ -130,7 +122,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
       REPLACE field->idkonto2 WITH kalk_pripr->idkonto2
       REPLACE field->idpartner WITH kalk_pripr->idpartner
       REPLACE field->idroba WITH kalk_pripr->idroba
-
       REPLACE field->kolicina WITH kalk_pripr->kolicina
 
       IF field->idvd == "IP"   // u katops bude IP vrsta ali u POS postane tip 16 - zaduzenje
@@ -140,7 +131,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
          REPLACE field->kolicina WITH - kalk_pripr->gkolicina + kalk_pripr->kolicina
          REPLACE field->kol2 WITH 0
       ENDIF
-
 
 
       REPLACE field->mpc WITH kalk_pripr->mpcsapp
@@ -156,7 +146,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
       REPLACE field->n1 WITH roba->n1
       REPLACE field->n2 WITH roba->n2
       REPLACE field->barkod WITH roba->barkod
-
 
       IF kalk_pripr->pu_i == "3" // radi se o nivelaciji,  mpc - stara cijena
          REPLACE field->mpc WITH kalk_pripr->fcj
@@ -187,7 +176,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
       kalk_tops_print_report( cIdFirma, cIdVd, cBrDok, nRbr, nTotal, cStavke, cPm, cPKonto ) // , _expcFileNameDbf ) // ispisi report
       kalk_tops_kreiraj_fajl_prenosa( dDatDok, aPosLokacije, nRbr ) // napravi i prebaci izlazne fajlove gdje trebaju
       my_close_all_dbf()
-
    ENDIF
 
    my_close_all_dbf()
@@ -218,7 +206,6 @@ STATIC FUNCTION kalk_tops_print_report( cIdFirma, cIdVd, cBrDok, nBrojStavki, nS
 
    ?
 
-   // ENDPRINT
    s_cTxtPrint := end_print_editor()
 
    RETURN .T.

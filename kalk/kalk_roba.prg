@@ -35,7 +35,7 @@ FUNCTION form_get_roba_id( cIdRoba, nX, nY, GetList )
 
 
 
-FUNCTION kalk_pripr_form_get_roba( cIdRoba, cIdTarifa, cIdVd, lNoviDokument, nKoordX, nKoordY, aPorezi, cIdPartner )
+FUNCTION kalk_pripr_form_get_roba( GetList, cIdRoba, cIdTarifa, cIdVd, lNoviDokument, nKoordX, nKoordY, aPorezi, cIdPartner )
 
    LOCAL bWhen, bValid, cProdMag := "M"
 
@@ -49,10 +49,9 @@ FUNCTION kalk_pripr_form_get_roba( cIdRoba, cIdTarifa, cIdVd, lNoviDokument, nKo
       cProdMag := "P"
    ENDIF
 
-   bValid := {|| valid_roba( @cIdRoba, @cIdTarifa, lNoviDokument, @aPorezi ), ;
+   bValid := {|| kalk_valid_roba( @cIdRoba, @cIdTarifa, lNoviDokument, @aPorezi ), ;
       ispisi_naziv_roba( nKoordX, 25, 40 ), ;
       kalk_zadnji_ulazi_info( cIdpartner, cIdroba, cProdMag ), !Empty( cIdRoba) }
-
 
    // _ocitani_barkod := _idroba, ;
    // P_Roba( @_IdRoba ), ;
@@ -72,12 +71,8 @@ FUNCTION roba_duzina_sifre()
 
    RETURN 10
 
-/*
- *     Setuje tarifu i poreze na osnovu sifrarnika robe i tarifa
 
- */
-
-STATIC FUNCTION valid_roba( cIdRoba, cIdTarifa, lNoviDokument, aPorezi )
+STATIC FUNCTION kalk_valid_roba( cIdRoba, cIdTarifa, lNoviDokument, aPorezi )
 
    LOCAL _tezina := 0
    LOCAL _ocitani_barkod := cIdRoba
@@ -109,37 +104,7 @@ STATIC FUNCTION valid_roba( cIdRoba, cIdTarifa, lNoviDokument, aPorezi )
 
    RETURN .T.
 
-/*
 
-FUNCTION VRoba( lSay )
-
-   P_Roba( @_IdRoba )
-
-   IF lSay == NIL
-      lSay := .T.
-   ENDIF
-
-   IF lSay
-      say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + AllTrim( roba->jmj ) + ")", 40 )
-   ENDIF
-
-   IF xx--fNovi
-      cTarifa := set_pdv_array_by_koncij_region_roba_idtarifa_2_3( _idkonto, _idroba, @aPorezi )
-   ELSE
-      // za postojece dokumente uzmi u obzir unesenu tarifu
-    --  SELECT TARIFA
-    --  SEEK _idtarifa
-      set_pdv_array( @aPorezi )
-   ENDIF
-
-   IF xx--fNovi
-      _idtarifa := cTarifa
-   ENDIF
-
-   RETURN .T.
-
-
-*/
 
 FUNCTION roba_barkod_pri_unosu( lSet )
 
@@ -156,7 +121,6 @@ FUNCTION roba_barkod_pri_unosu( lSet )
    // set_metric( "kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiB-K )
 
    RETURN s_lRobaBarkodPriUnosu
-
 
 
 
@@ -187,7 +151,7 @@ FUNCTION kalk_zadnji_ulazi_info( cIdPartner, cIdRoba, cProdMag )
 
 
 
-FUNCTION zadnji_izlazi_info( partner, id_roba )
+FUNCTION zadnji_izlazi_info( cIdPartner, cIdRoba )
 
    LOCAL _data := {}
    LOCAL _count := 3
@@ -196,7 +160,7 @@ FUNCTION zadnji_izlazi_info( partner, id_roba )
       RETURN .T.
    ENDIF
 
-   _data := _fakt_get_izlazi( partner, id_roba )
+   _data := _fakt_get_izlazi( cIdPartner, cIdRoba )
 
    IF Len( _data ) > 0
       _prikazi_info( _data, "F", _count )
@@ -206,15 +170,15 @@ FUNCTION zadnji_izlazi_info( partner, id_roba )
 
 
 
-STATIC FUNCTION _fakt_get_izlazi( partner, roba )
+STATIC FUNCTION _fakt_get_izlazi( cIdPartner, cIdRoba )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
    LOCAL nI, oRow
 
    _qry := "SELECT idfirma, idtipdok, brdok, datdok, cijena, rabat FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt " + ;
-      " WHERE idpartner = " + sql_quote( partner ) + ;
-      " AND idroba = " + sql_quote( roba ) + ;
+      " WHERE idpartner = " + sql_quote( cIdPartner ) + ;
+      " AND idroba = " + sql_quote( cIdRoba ) + ;
       " AND ( idtipdok = " + sql_quote( "10" ) + " OR idtipdok = " + sql_quote( "11" ) + " ) " + ;
       " ORDER BY datdok"
 
@@ -239,21 +203,21 @@ STATIC FUNCTION _fakt_get_izlazi( partner, roba )
 
 
 
-STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
+STATIC FUNCTION _kalk_get_ulazi( cIdPartner, cIdRoba, cMagIliProd )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
    LOCAL nI, oRow
    LOCAL _u_i := "pu_i"
 
-   IF mag_prod == "M"
+   IF cMagIliProd == "M"
       _u_i := "mu_i"
    ENDIF
 
    _qry := "SELECT idkonto, idvd, brdok, datdok, fcj, rabat FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk WHERE idfirma = " + ;
       sql_quote( self_organizacija_id() ) + ;
-      " AND idpartner = " + sql_quote( partner ) + ;
-      " AND idroba = " + sql_quote( roba ) + ;
+      " AND idpartner = " + sql_quote( cIdPartner ) + ;
+      " AND idroba = " + sql_quote( cIdRoba ) + ;
       " AND " + _u_i + " = " + sql_quote( "1" ) + ;
       " ORDER BY datdok"
 
@@ -277,50 +241,50 @@ STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
 
 
 
-STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
+STATIC FUNCTION _prikazi_info( aUlazi, cMagIliProd, nUlaziCount )
 
    LOCAL GetList := {}
    LOCAL cLine := ""
-   LOCAL _head := ""
+   LOCAL cHeader := ""
    LOCAL _ok := " "
    LOCAL nX := 4
-   LOCAL nI, _len
+   LOCAL nI, nLen
 
-   _len := Len( ulazi )
+   nLen := Len( aUlazi )
 
-   _head := PadR( iif( mag_prod == "F", "FIRMA", "KONTO" ), 7 )
-   _head += " "
-   _head += PadR( "DOKUMENT", 10 )
-   _head += " "
-   _head += PadR( "DATUM", 8 )
-   _head += " "
-   _head += PadL( IF ( mag_prod == "F", "CIJENA", "NC" ), 12 )
-   _head += " "
-   _head += PadL( "RABAT", 13 )
+   cHeader := PadR( iif( cMagIliProd == "F", "FIRMA", "KONTO" ), 7 )
+   cHeader += " "
+   cHeader += PadR( "DOKUMENT", 10 )
+   cHeader += " "
+   cHeader += PadR( "DATUM", 8 )
+   cHeader += " "
+   cHeader += PadL( IF ( cMagIliProd == "F", "CIJENA", "NC" ), 12 )
+   cHeader += " "
+   cHeader += PadL( "RABAT", 13 )
 
    DO WHILE .T.
 
       nX := 4
 
-      Box(, 5 + ul_count, 60 )
+      Box(, 5 + nUlaziCount, 60 )
 
       @ box_x_koord() + 1, box_y_koord() + 2 SAY PadR( "*** Pregled rabata", 59 ) COLOR f18_color_i()
-      @ box_x_koord() + 2, box_y_koord() + 2 SAY _head
+      @ box_x_koord() + 2, box_y_koord() + 2 SAY cHeader
       @ box_x_koord() + 3, box_y_koord() + 2 SAY Replicate( "-", 59 )
 
-      FOR nI := _len TO ( _len - ul_count ) STEP -1
+      FOR nI := nLen TO ( nLen - nUlaziCount ) STEP -1
 
          IF nI > 0
 
-            cLine := PadR( ulazi[ nI, 1 ], 7 )
+            cLine := PadR( aUlazi[ nI, 1 ], 7 )
             cLine += " "
-            cLine += PadR( ulazi[ nI, 2 ], 10 )
+            cLine += PadR( aUlazi[ nI, 2 ], 10 )
             cLine += " "
-            cLine += DToC( ulazi[ nI, 3 ] )
+            cLine += DToC( aUlazi[ nI, 3 ] )
             cLine += " "
-            cLine += Str( ulazi[ nI, 4 ], 12, 3 )
+            cLine += Str( aUlazi[ nI, 4 ], 12, 3 )
             cLine += " "
-            cLine += Str( ulazi[ nI, 5 ], 12, 3 ) + "%"
+            cLine += Str( aUlazi[ nI, 5 ], 12, 3 ) + "%"
 
             @ box_x_koord() + nX, box_y_koord() + 2 SAY cLine
             ++nX

@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION pos_preuzmi_iz_kalk( cIdTipDok, cBrDok )
 
    LOCAL _imp_table := ""
@@ -92,8 +91,6 @@ FUNCTION pos_preuzmi_iz_kalk( cIdTipDok, cBrDok )
 
 
 
-
-
 STATIC FUNCTION _get_vd( cIdVd )
 
    LOCAL _ret := "16"
@@ -110,10 +107,10 @@ STATIC FUNCTION _get_vd( cIdVd )
    RETURN _ret
 
 
-STATIC FUNCTION _brisi_fajlove_importa( import_file )
+STATIC FUNCTION _brisi_fajlove_importa( cImportFile )
 
-   FileDelete( import_file )
-   FileDelete( StrTran( import_file, ".dbf", ".txt" ) )
+   FileDelete( cImportFile )
+   FileDelete( StrTran( cImportFile, ".dbf", ".txt" ) )
 
    RETURN .T.
 

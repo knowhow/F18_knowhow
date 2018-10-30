@@ -8,7 +8,7 @@
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
- 
+
 #include "f18.ch"
 
 MEMVAR cSection, cHistory, aHistory, izbor, opc, opcexe, gAImpPrint
@@ -259,14 +259,13 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
    LOCAL cFakt, cTDok, cIdProdajnoMjesto
    LOCAL nFExist, nT_scan, cIdRobaSifraDob
    LOCAL cIdKontoTmp, cSifraDobavljaca, cIdRobaTmp
+   LOCAL i
 
    my_close_all_dbf()
 
    o_kalk_pripr()
-   o_koncij()
-
-
-   select_o_roba()
+   // o_koncij()
+   // select_o_roba()
    o_kalk_pript()
 
    select_o_kalk_imp_temp()
@@ -377,7 +376,6 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
 
       select_o_kalk_pript()
-
       APPEND BLANK // pript
       REPLACE idfirma WITH self_organizacija_id(), ;
          rBr WITH Str( ++nRbr, 3 ), ;
@@ -388,13 +386,12 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
          idtarifa WITH ROBA->idtarifa, ;
          brfaktp WITH cFakt, ;
          datfaktp WITH kalk_imp_temp->datdok, ;
-         datval WITH kalk_imp_temp->datval
+         datval WITH kalk_imp_temp->datval, ;
+         idkonto WITH cIdKontoZaduzuje, ;
+         idkonto2 WITH cIdKontoRazduzuje, ;
+         idzaduz2 WITH ""
 
-      REPLACE idkonto WITH cIdKontoZaduzuje // konto zaduzuje
-      REPLACE idkonto2 WITH cIdKontoRazduzuje // konto razduzuje
-      REPLACE idzaduz2 WITH ""
-
-      IF cTDok $ "11#41" // spec.za tip dok 11
+      IF cTDok $ "11#41"
 
          REPLACE tmarza2 WITH "A"
          REPLACE tprevoz WITH "A"
@@ -512,7 +509,6 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
 
 
-
 // == SEKCIJA ====================== provjere - validacije =========================================
 
 
@@ -547,7 +543,6 @@ STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
          ? aFakt[ i, 1 ] + " => " + aFakt[ i, 2 ]
       NEXT
 
-
       end_print_editor()
 
       RETURN .T.
@@ -557,10 +552,6 @@ STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
    RETURN .F. // ne postoje azurirane fakture
 
 
-
-/*
- *     Provjera da li postoje sve sifre u sifarnicima za dokumente
- */
 
 STATIC FUNCTION kalk_imp_check_partn_roba_exist()
 
@@ -591,7 +582,7 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
          ? "-------------------------------------------"
          ?
          FOR i := 1 TO Len( aPomRoba )
-            ? Str( i, 4), aPomRoba[ i, 1 ]
+            ? Str( i, 4 ), aPomRoba[ i, 1 ]
          NEXT
          ?
       ENDIF
@@ -604,13 +595,6 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
    RETURN .T.
 
 
-
-
-
-/*
- Provjera da li postoje sifre artikla u sifraniku
- lSifraDob - pretraga po sifri dobavljaca
-*/
 
 FUNCTION kalk_imp_roba_exist_sifradob()
 
@@ -643,17 +627,6 @@ FUNCTION kalk_imp_roba_exist_sifradob()
       IF kalk_imp_temp->( FieldPos( "nazroba" ) ) <> 0
          cNazRoba := AllTrim( kalk_imp_temp->nazroba )
       ENDIF
-
-/*
-  --    SELECT roba
-
-      // IF lSifraDob == .T.
-      -- SET ORDER TO TAG "ID_VSD"  // sifra dobavljaca
-      // ENDIF
-      GO TOP
-      SEEK cIdRobaSifraDobavljaca
-*/
-
 
       IF !find_roba_by_sifradob( cIdRobaSifraDobavljaca, .T. )
          nRes := AScan( aRet, {| aVal | aVal[ 1 ] == cIdRobaSifraDobavljaca } )
@@ -720,7 +693,6 @@ STATIC FUNCTION kalk_postoji_faktura_a()
    ENDDO
 
    RETURN aRet
-
 
 
 
@@ -807,7 +779,6 @@ STATIC FUNCTION kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica,
       RETURN "XXXXX"
    ENDIF
 
-
    cRet := fetch_metric(  "kalk_imp_prod_zad_" + cPoslovnica + "_" + cProd, NIL,  Space( 7 ) )
 
    IF Empty( cRet )
@@ -823,9 +794,7 @@ STATIC FUNCTION kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica,
 
 
 /*
-
    040 poslovnica, prodajno mjesto 0001, konto 13300
-
 */
 STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cIdProdajnoMjesto )
 
@@ -1380,14 +1349,10 @@ STATIC FUNCTION cre_kalk_imp_temp( aDbf )
    DbCreate2( cTmpTbl, aDbf )
 
    IF aDbf[ 1, 1 ] == "idpartner" // provjeri jesu li partneri ili dokumenti ili je roba
-
       create_index( "1", "idpartner", cTmpTbl ) // partner
-
    ELSEIF aDbf[ 1, 1 ] == "idpm"
-
       create_index( "1", "sifradob", cTmpTbl ) // roba
    ELSE
-
       create_index( "1", "idfirma+idtipdok+brdok+rbr", cTmpTbl ) // dokumenti
       create_index( "2", "dtype+idfirma+idtipdok+brdok+rbr", cTmpTbl )
    ENDIF

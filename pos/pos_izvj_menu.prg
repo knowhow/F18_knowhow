@@ -12,15 +12,7 @@
 #include "f18.ch"
 
 
-
 FUNCTION pos_izvjestaji()
-
-   pos_izvjestaji_tops()
-
-   RETURN .F.
-
-
-FUNCTION pos_izvjestaji_tops()
 
    PRIVATE Izbor := 1
    PRIVATE opc := {}

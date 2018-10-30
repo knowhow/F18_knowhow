@@ -16,7 +16,6 @@ STATIC cKontrolnaTabela := ""
 STATIC lCekaj := .T.
 
 
-
 FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
 
    LOCAL nStanje

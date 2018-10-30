@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION pos_realizacija_radnik
 
    PARAMETERS lTekuci, fPrik, fZaklj
@@ -336,7 +335,7 @@ FUNCTION pos_realizacija_radnik
    ENDIF
 
    IF fZaklj
-      C_RealRadn()
+      pos_close_dbfs_real_radnici()
    ELSE
       CLOSE ALL
    ENDIF
@@ -344,11 +343,7 @@ FUNCTION pos_realizacija_radnik
    RETURN .T.
 
 
-/* fn C_RealRadn()
- *     Zatvaranje baza koristenih u izvjestaju realizacije po radnicima
- */
-
-FUNCTION C_RealRadn()
+FUNCTION pos_close_dbfs_real_radnici()
 
    SELECT DIO
    USE

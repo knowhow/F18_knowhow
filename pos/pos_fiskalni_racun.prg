@@ -461,9 +461,6 @@ STATIC FUNCTION pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna
 
 
 
-// --------------------------------------------
-// vrati vrstu placanja
-// --------------------------------------------
 STATIC FUNCTION pos_get_vr_plac( cIdVrstePlacanja )
 
    LOCAL cRet := "0"
@@ -474,14 +471,9 @@ STATIC FUNCTION pos_get_vr_plac( cIdVrstePlacanja )
       RETURN cRet
    ENDIF
 
-   //o_vrstep()
-   //SELECT vrstep
-   //SET ORDER TO TAG "ID"
-
    select_o_vrstep( cIdVrstePlacanja )
 
    _naz := Upper( AllTrim( vrstep->naz ) )
-
    DO CASE
    CASE "KARTICA" $ _naz
       cRet := "1"

@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION pos_stampa_zaduzenja( cIdVd, cBrDok )
 
    LOCAL nPrevRec

@@ -158,7 +158,7 @@ FUNCTION st_pf_traka()
 
    cLine := pf_traka_line( 1 )
 
-   get_rb_vars( @nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija )
+   pos_get_racun_broj_varijable( @nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija )
 
    hd_rb_traka( nRedukcija )
 

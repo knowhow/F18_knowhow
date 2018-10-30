@@ -221,7 +221,6 @@ FUNCTION AddToArrRabat( aRabat, cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4,
  */
 FUNCTION RptArrRabat( aRabat )
 
-   // {
    START PRINT CRET
 
    ? "Test :: matrica rabata"

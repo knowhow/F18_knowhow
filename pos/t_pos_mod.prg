@@ -174,8 +174,7 @@ METHOD set_module_gvars()
    PUBLIC gDirZaklj        // ako se ne koristi princip radnih racuna, da li se
    // racuni zakljucuju odmah po unosu stavki
 
-   PUBLIC gPoreziRaster    // da li se porezi stampaju pojedinacno ili
-   // zbirno
+  // PUBLIC gPoreziRaster    // da li se porezi stampaju pojedinacno ili zbirno
    PUBLIC gPocStaSmjene    // da li se uvodi pocetno stanje smjene
    // (da li se radnicima dodjeljuju pocetna sredstva)
    PUBLIC gIdPos           // id prodajnog mjesta
@@ -258,7 +257,7 @@ METHOD set_module_gvars()
    PUBLIC gKolDec := 2
    PUBLIC gCijDec := 2
    PUBLIC gStariObrPor := .F.
-   PUBLIC gPoreziRaster := "D"
+  // PUBLIC gPoreziRaster := "D"
    PUBLIC gPratiStanje := "N"
    PUBLIC gIdPos := "1 "
    PUBLIC gPostDO := "N"
@@ -356,7 +355,7 @@ METHOD set_module_gvars()
    gSjecistr := PadR( GETPStr( gSjeciStr ), 20 )
    gOtvorstr := PadR( GETPStr( gOtvorStr ), 20 )
 
-   gPoreziRaster := fetch_metric( "PorezniRaster", NIL, gPoreziRaster )
+  // gPoreziRaster := fetch_metric( "PorezniRaster", NIL, gPoreziRaster )
    nFeedLines := fetch_metric( "BrojLinijaZaKrajRacuna", NIL, nFeedLines )
    gSjeciStr := fetch_metric( "SekvencaSjeciTraku", NIL, gSjeciStr )
    gOtvorStr := fetch_metric( "SekvencaOtvoriLadicu", NIL, gOtvorStr )

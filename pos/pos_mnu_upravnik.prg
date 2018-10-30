@@ -59,7 +59,7 @@ FUNCTION MMenuUpA()
 
    closeret
 
-   RETURN .F.
+   //RETURN .F.
 
 
 /*

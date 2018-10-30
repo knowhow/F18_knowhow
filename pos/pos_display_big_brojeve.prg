@@ -92,13 +92,11 @@ FUNCTION SetNazDVal()
    GO TOP
 
    Seek2( "D" )
-
    gDomValuta := AllTrim( naz2 )
 
    GO TOP
 
    Seek2( "P" )
-
    gStrValuta := AllTrim( naz2 )
 
    // IF !lOpened
@@ -150,7 +148,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "1"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 " ██"
          @ box_x_koord() + row + 1, nNextY SAY8 "  █"
          @ box_x_koord() + row + 2, nNextY SAY8 "  █"
@@ -160,7 +157,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "2"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "   █"
          @ box_x_koord() + row + 2, nNextY SAY8 "████"
@@ -170,7 +166,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "3"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "   █"
          @ box_x_koord() + row + 2, nNextY SAY8 " ███"
@@ -180,7 +175,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "4"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "█"
          @ box_x_koord() + row + 1, nNextY SAY8 "█  █"
          @ box_x_koord() + row + 2, nNextY SAY8 "████"
@@ -190,7 +184,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "5"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "█"
          @ box_x_koord() + row + 2, nNextY SAY8 "████"
@@ -200,7 +193,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "6"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "█"
          @ box_x_koord() + row + 2, nNextY SAY8 "████"
@@ -210,7 +202,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "7"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "   █"
          @ box_x_koord() + row + 2, nNextY SAY8 "  █"
@@ -220,7 +211,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "8"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "█  █"
          @ box_x_koord() + row + 2, nNextY SAY8 " ██ "
@@ -230,7 +220,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "9"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "█  █"
          @ box_x_koord() + row + 2, nNextY SAY8 "████"
@@ -240,7 +229,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "0"
 
          nNextY -= 5
-
          @ box_x_koord() + row + 0, nNextY SAY8 "████"
          @ box_x_koord() + row + 1, nNextY SAY8 "█  █"
          @ box_x_koord() + row + 2, nNextY SAY8 "█  █"
@@ -250,13 +238,11 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       CASE cChar = "."
 
          nNextY -= 2
-
          @ box_x_koord() + row + 4, nNextY SAY8 "█"
 
       CASE cChar = "-"
 
          nNextY -= 4
-
          @ box_x_koord() + row + 2, nNextY SAY8 "███"
 
       ENDCASE
@@ -405,7 +391,7 @@ FUNCTION SkloniIznRac()
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 

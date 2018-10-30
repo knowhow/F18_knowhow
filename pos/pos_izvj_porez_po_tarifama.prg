@@ -359,7 +359,7 @@ FUNCTION Porezi( cIdVd, dDatum0, aTarife, cNaplaceno )
 
 
 
-
+/*
 FUNCTION POSRekapTar( aRekPor )
 
    LOCAL lPP
@@ -407,3 +407,4 @@ FUNCTION POSRekapTar( aRekPor )
    ? " UKUPNO" + Str( nPPP, 7, N_ROUNDTO ) + " " + Str( nPPU, 7, N_ROUNDTO ) + " " + Str( nPP, 7, N_ROUNDTO ) + " " + Str( nPPP + nPPU + nPP, 7, N_ROUNDTO )
 
    RETURN .T.
+*/

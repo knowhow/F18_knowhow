@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR m
 
 STATIC LEN_TRAKA := 40
 
@@ -49,15 +50,6 @@ FUNCTION pos_pdv_po_tarifama
 
    // o_tarifa()
 
-   IF fSolo
-      // o_sifk()
-      // o_sifv()
-      // o_pos_kase()
-      // o_roba()
-      // o_pos_odj()
-      // o_pos_doks()
-      // o_pos_pos()
-   ENDIF
 
    // IF gVrstaRS <> "S"
    cIdPos := gIdPos

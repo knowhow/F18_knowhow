@@ -163,7 +163,6 @@ FUNCTION pos_inventura_nivelacija()
                   //LOOP
                //ENDIF
 
-
                IF pos->idvd == "96"
                   SKIP
                   LOOP

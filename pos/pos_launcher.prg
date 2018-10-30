@@ -16,7 +16,6 @@ FUNCTION MainPos( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    LOCAL oPos
    LOCAL cModul
 
-
    cModul := "TOPS"
    PUBLIC goModul
 

@@ -264,7 +264,7 @@ FUNCTION pos_param_izgled_racuna()
    gOtvorStr := PadR( gOtvorStr, 30 )
    gZagIz := PadR( gZagIz, 20 )
 
-   AAdd( aNiz, { "Stampa poreza pojedinacno (D-pojedinacno,N-zbirno)", "gPoreziRaster", "gPoreziRaster$'DN'", "@!", } )
+  // AAdd( aNiz, { "Stampa poreza pojedinacno (D-pojedinacno,N-zbirno)", "gPoreziRaster", "gPoreziRaster$'DN'", "@!", } )
    AAdd( aNiz, { "Broj redova potrebnih da se racun otcijepi", "nFeedLines", "nFeedLines>=0", "99", } )
    AAdd( aNiz, { "Sekvenca za cijepanje trake", "gSjeciStr", , "@S20", } )
    AAdd( aNiz, { "Sekvenca za otvaranje kase ", "gOtvorStr", , "@S20", } )
@@ -276,7 +276,7 @@ FUNCTION pos_param_izgled_racuna()
 
    IF LastKey() <> K_ESC
       MsgO( "Azuriram parametre" )
-      set_metric( "PorezniRaster", nil, gPoreziRaster )
+      //set_metric( "PorezniRaster", nil, gPoreziRaster )
       set_metric( "BrojLinijaZaKrajRacuna", nil, nFeedLines )
       set_metric( "SekvencaSjeciTraku", nil, gSjeciStr )
       set_metric( "SekvencaOtvoriLadicu", nil, gOtvorStr )

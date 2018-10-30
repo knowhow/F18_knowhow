@@ -13,16 +13,8 @@
 
 
 
-// ----------------------------------------------------
-//FUNCTION ZagFirma()
-//   RETURN
 
-
-
-
-// -----------------------------------------------------------
-// izvlaci realizacija kase na dan = dDatum u pom tabelu
-// -----------------------------------------------------------
+/*
 FUNCTION RealNaDan( dDatum )
 
    LOCAL nUkupno
@@ -167,3 +159,5 @@ FUNCTION pos_kasa_pripremi_pom_za_izvjestaj( cIdVd, cDobId )
    MsgC()
 
    RETURN .T.
+
+*/

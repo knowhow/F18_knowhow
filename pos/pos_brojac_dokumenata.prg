@@ -27,7 +27,6 @@ FUNCTION pos_novi_broj_dokumenta( cIdPos, cIdTipDokumenta, dDatDok )
    cPosBrojacParam := "pos" + "/" + cIdPos + "/" + cIdTipDokumenta
    nBrojDokumenta := fetch_metric( cPosBrojacParam, nil, nBrojDokumenta )
 
-
    seek_pos_doks( cIdPos, cIdTipDokumenta, dDatDok )
    GO BOTTOM
    IF field->idpos == cIdPos .AND. field->idvd == cIdTipDokumenta .AND. DToS( field->datum ) == DToS( dDatDok )

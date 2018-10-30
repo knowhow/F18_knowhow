@@ -51,8 +51,6 @@ STATIC FUNCTION unos_stavki_racuna( lNovi )
       cSto := _pos_pripr->sto
    ENDIF
 
-
-
    pos_unos_racuna( cBrojRacuna, cSto )
 
    RETURN .T.
@@ -63,7 +61,7 @@ FUNCTION zakljuci_pos_racun()
 
    LOCAL lRet := .F.
    LOCAL lOtvoriUnos := fetch_metric( "pos_konstantni_unos_racuna", my_user(), "N" ) == "D"
-   LOCAL _param := hb_Hash()
+   LOCAL hParam := hb_Hash()
 
    O__POS_PRIPR
    my_dbf_pack()
@@ -75,19 +73,19 @@ FUNCTION zakljuci_pos_racun()
 
    GO TOP
 
-   _param[ "idpos" ] := _pos_pripr->idpos
-   _param[ "idvd" ] := _pos_pripr->idvd
-   _param[ "datum" ] := _pos_pripr->datum
-   _param[ "brdok" ] := _pos_pripr->brdok
-   _param[ "idpartner" ] := Space( 6 )
-   _param[ "idvrstap" ] := "01"
-   _param[ "zakljuci" ] := "D"
-   _param[ "uplaceno" ] := 0
+   hParam[ "idpos" ] := _pos_pripr->idpos
+   hParam[ "idvd" ] := _pos_pripr->idvd
+   hParam[ "datum" ] := _pos_pripr->datum
+   hParam[ "brdok" ] := _pos_pripr->brdok
+   hParam[ "idpartner" ] := Space( 6 )
+   hParam[ "idvrstap" ] := "01"
+   hParam[ "zakljuci" ] := "D"
+   hParam[ "uplaceno" ] := 0
 
-   form_zakljuci_racun( @_param )
+   form_zakljuci_racun( @hParam )
 
-   IF _param[ "zakljuci" ] == "D"
-      lRet := azuriraj_stavke_racuna_i_napravi_fiskalni_racun( _param )
+   IF hParam[ "zakljuci" ] == "D"
+      lRet := azuriraj_stavke_racuna_i_napravi_fiskalni_racun( hParam )
    ENDIF
 
    my_close_all_dbf()
@@ -184,10 +182,6 @@ STATIC FUNCTION pos_stampa_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
 
 
 
-
-// ------------------------------------------------------
-// ova funkcija treba da izracuna kusur
-// ------------------------------------------------------
 STATIC FUNCTION koliko_treba_povrata_kupcu( hParams )
 
    LOCAL nDbfArea := Select()
@@ -202,7 +196,6 @@ STATIC FUNCTION koliko_treba_povrata_kupcu( hParams )
 
    SELECT _pos_pripr
    GO TOP
-
    DO WHILE !Eof() .AND. AllTrim( field->brdok ) == "PRIPRE"
       _iznos += field->kolicina * field->cijena
       _popust += field->kolicina * field->ncijena
@@ -257,7 +250,6 @@ STATIC FUNCTION form_zakljuci_racun( hParams )
    // CK - cek
 
    @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "FORMA ZAKLJUČENJA RAČUNA" COLOR "BG+/B"
-
    @ box_x_koord() + 3, box_y_koord() + 2 SAY8 "Način plaćanja (01/KT/VR...):" GET _id_vrsta_p PICT "@!" VALID p_vrstep( @_id_vrsta_p )
 
    READ

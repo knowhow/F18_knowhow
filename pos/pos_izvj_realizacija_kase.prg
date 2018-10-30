@@ -86,7 +86,7 @@ FUNCTION realizacija_kase
       aUsl2 := ".t."
    ELSE
 
-      IF FrmRptVars( @cK1, @cIdPos, @dDatum0, @dDatum1, @cSmjena, @cRD, @cVrijOd, @cVrijDo, @aUsl1, @aUsl2, @cVrsteP, @cAPrometa, @cGotZir, @cSifraDob, @cPartId ) == 0
+      IF pos_get_vars_izvjestaj_realizacija( @cK1, @cIdPos, @dDatum0, @dDatum1, @cSmjena, @cRD, @cVrijOd, @cVrijDo, @aUsl1, @aUsl2, @cVrsteP, @cAPrometa, @cGotZir, @cSifraDob, @cPartId ) == 0
          RETURN 0
       ENDIF
 
@@ -165,7 +165,7 @@ FUNCTION realizacija_kase
    RETURN .T.
 
 
-FUNCTION FrmRptVars( cK1, cIdPos, dDatum0, dDatum1, cSmjena, cRD, cVrijOd, cVrijDo, aUsl1, aUsl2, cVrsteP, cAPrometa, cGotZir, cSifraDob, cPartId )
+STATIC FUNCTION pos_get_vars_izvjestaj_realizacija( cK1, cIdPos, dDatum0, dDatum1, cSmjena, cRD, cVrijOd, cVrijDo, aUsl1, aUsl2, cVrsteP, cAPrometa, cGotZir, cSifraDob, cPartId )
 
    LOCAL aNiz
 

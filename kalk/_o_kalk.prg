@@ -11,12 +11,9 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION o_kalk()
 
    RETURN use_sql_kalk()
-
 
 
 FUNCTION o_kalk_doks()
@@ -29,7 +26,6 @@ FUNCTION o_kalk_doks2()
    RETURN use_sql_kalk_doks2()
 
 
-
 FUNCTION select_o_kalk_doks2()
 
    SELECT ( F_KALK_DOKS2 )
@@ -38,8 +34,6 @@ FUNCTION select_o_kalk_doks2()
    ENDIF
 
    RETURN o_kalk_doks2()
-
-
 
 
 FUNCTION o_kalk_imp_temp()
@@ -58,7 +52,6 @@ FUNCTION o_kalk_pript()
 
 FUNCTION select_o_kalk_pript()
    RETURN select_o_dbf( "PRIPT", F_PRIPT, { "PRIPT", "kalk_pript" }, "1" )
-
 
 
 

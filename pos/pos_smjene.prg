@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION pos_odredi_smjenu( lOdredi )
 
    LOCAL cOK := " "

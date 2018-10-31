@@ -12,9 +12,6 @@
 #include "f18.ch"
 
 
-// --------------------------------------------------
-// get atribut opis
-// --------------------------------------------------
 FUNCTION get_kalk_attr_opis( dok, from_server )
 
    LOCAL oAttr := DokAttr():new( "kalk", F_KALK_ATTR )

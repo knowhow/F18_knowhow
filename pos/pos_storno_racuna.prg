@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( cFiskalniBroj, cBrojRacuna, dDatumRacuna )
 
    LOCAL cQuery, _qry_ret, oTable

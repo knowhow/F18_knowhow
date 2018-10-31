@@ -15,7 +15,6 @@
 /*
    finansijsko stanje prodavnice
 */
-
 FUNCTION finansijsko_stanje_prodavnica()
 
    LOCAL nKolUlaz

@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 CLASS TKalkMod FROM TAppMod
 
    METHOD NEW
@@ -30,7 +28,6 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
    RETURN self
 
 
-
 METHOD TKalkMod:mMenu()
 
    PRIVATE Izbor
@@ -39,8 +36,6 @@ METHOD TKalkMod:mMenu()
    gDuzKonto := 7
 
    //gRobaBlock := {| Ch| kalk_roba_key_handler( Ch ) }
-
-
    ::programski_modul_osnovni_meni()
 
    RETURN NIL

@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 /* Zaduzenje(cIdVd)
  *     Dokument zaduzenja
  *
@@ -26,8 +25,6 @@
  *       lForsSir .T. - radi se o forsiranom zaduzenju odjeljenja
  *                           sirovinama
  */
-
-
 FUNCTION Zaduzenje
 
    PARAMETERS cIdVd

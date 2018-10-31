@@ -20,7 +20,7 @@
  */
 FUNCTION FrmGetRabat( aRabat, nCijena )
 
-   // {
+
    // prodji kroz svaku varijantu popusta i napuni matricu aRabat{}
 
    // 1. varijanta

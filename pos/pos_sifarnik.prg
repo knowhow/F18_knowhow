@@ -13,7 +13,6 @@
 
 MEMVAR ImeKol, Kol
 
-
 FUNCTION p_pos_kase( cId, dx, dy )
 
    PRIVATE ImeKol

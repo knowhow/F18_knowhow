@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 STATIC LEN_TRAKA  := 40
 
 STATIC LEN_RAZMAK :=  0

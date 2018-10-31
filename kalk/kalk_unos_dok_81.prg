@@ -107,7 +107,7 @@ FUNCTION kalk_unos_dok_81( hParams )
 
 
 
-   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N"  VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() - 20 ) SAY "Tarifa:" GET _idtarifa VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -373,7 +373,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
 
    select_o_koncij( _idkonto )
 
-   StaviMPCSif( _mpcsapp, .T. )
+   roba_set_mcsapp_na_osnovu_koncij_pozicije( _mpcsapp, .T. )
 
    SELECT kalk_pripr
 

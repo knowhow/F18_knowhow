@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2018 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -46,9 +45,8 @@ FUNCTION Get1_82()
 
    @ box_x_koord() + 10, box_y_koord() + 66 SAY "Tarif.br->"
 
-
    kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi )
-   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
@@ -65,7 +63,7 @@ FUNCTION Get1_82()
    // DuplRoba()
    // check_datum_posljednje_kalkulacije()
 
-   @ box_x_koord() + 12, box_y_koord() + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ box_x_koord() + 12, box_y_koord() + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    _GKolicina := 0
 

@@ -65,7 +65,7 @@ FUNCTION kalk_get_1_41()
       --@ box_x_koord() + 11, box_y_koord() + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
    ENDIF
 */
-   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
    @ box_x_koord() + 12, box_y_koord() + 2  SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    READ

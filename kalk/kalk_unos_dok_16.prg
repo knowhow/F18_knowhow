@@ -63,7 +63,7 @@ FUNCTION kalk_get_1_16()
    kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 11, box_y_koord() + 2, @aPorezi )
 
 
-   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
 
    @ box_x_koord() + 12, box_y_koord() + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
@@ -134,13 +134,12 @@ FUNCTION kalk_get_16_1()
 
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "PROTUSTAVKA   (svedi na staru vrijednost - kucaj S):"
    @ box_x_koord() + 2, Col() + 2 GET cSvedi VALID csvedi $ " S" PICT "@!"
-
    READ
 
    @ box_x_koord() + 11, box_y_koord() + 66 SAY "Tarif.brĿ"
    @ box_x_koord() + 12, box_y_koord() + 2  SAY "Artikal  " GET _IdRoba PICT "@!" ;
       VALID  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := ROBA->idtarifa, .T. }
-   @ box_x_koord() + 12, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + 12, box_y_koord() + 70 GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC

@@ -266,8 +266,8 @@ FUNCTION kalk_par_razno()
 
    @ box_x_koord() + nX, Col() + 2 SAY "Vise konta na dokumentu (D/N) ?" GET _vise_konta VALID _vise_konta $ "DN" PICT "@!"
    ++nX
-   @ box_x_koord() + nX, box_y_koord() + 2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
-   ++nX
+   //@ box_x_koord() + nX, box_y_koord() + 2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
+   //++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "F-ja za odredjivanje dzokera F1 u kontiranju" GET gFunKon1 PICT "@S28"
    ++nX
    @ box_x_koord() + nX, box_y_koord() + 2 SAY "F-ja za odredjivanje dzokera F2 u kontiranju" GET gFunKon2 PICT "@S28"
@@ -316,7 +316,7 @@ FUNCTION kalk_par_razno()
       set_metric( "kalk_potpis_na_kraju_naloga", NIL, gPotpis )
       set_metric( "kalk_tip_tabele", NIL, gTabela )
       set_metric( "kalk_novi_korisnicki_interfejs", NIL, gNW )
-      set_metric( "kalk_zabrana_promjene_tarifa", NIL, gPromTar )
+      //set_metric( "kalk_zabrana_promjene_tarifa", NIL, gPromTar )
       set_metric( "kalk_djoker_f1_kod_kontiranja", NIL, gFunKon1 )
       set_metric( "kalk_djoker_f2_kod_kontiranja", NIL, gFunKon2 )
       set_metric( "kalk_timeout_kod_azuriranja", NIL, gAzurTimeout )

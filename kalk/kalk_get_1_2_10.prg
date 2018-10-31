@@ -90,7 +90,7 @@ FUNCTION kalk_get_1_10()
    nBoxKoordX := box_x_koord() + nX
 
    kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), nBoxKoordX, box_y_koord() + 2, @aPorezi, _idPartner )
-   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() - 20  ) SAY "Tarifa:" GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + nX, box_y_koord() + ( f18_max_cols() - 20  ) SAY "Tarifa:" GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
 
    READ
 

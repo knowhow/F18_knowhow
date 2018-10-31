@@ -400,9 +400,9 @@ FUNCTION kalk_get_mpc_by_koncij_pravilo( cIdKonto )
 
 
 // ------------------------------------
-// StaviMPCSif(nCijena, lUpit)
+// roba_set_mcsapp_na_osnovu_koncij_pozicije(nCijena, lUpit)
 // ------------------------------------
-FUNCTION StaviMPCSif( nCijena, lUpit )
+FUNCTION roba_set_mcsapp_na_osnovu_koncij_pozicije( nCijena, lUpit )
 
    LOCAL lAzuriraj
    LOCAL lRet := .F.

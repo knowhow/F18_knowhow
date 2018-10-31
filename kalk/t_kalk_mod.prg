@@ -166,7 +166,6 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gKomKonto := "5611   "     // zakomision definisemo
    // konto i posebnu sifru firme u FAKT-u
    PUBLIC gVar13u11 := "1"     // varijanta za otpremu u prodavnicu
-   PUBLIC gPromTar := "N"
    PUBLIC gFunKon1 := PadR( "SUBSTR(FINMAT->IDKONTO,4,2)", 80 )
    PUBLIC gFunKon2 := PadR( "SUBSTR(FINMAT->IDKONTO2,4,2)", 80 )
    PUBLIC g11bezNC := "N"
@@ -291,7 +290,7 @@ METHOD TKalkMod:set_module_gvars()
 
    gcMpcKalk10 := fetch_metric( "kalk_pomoc_sa_mpc", nil, gcMpcKalk10 )
    gKolicFakt := fetch_metric( "kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt )
-   gPromTar := fetch_metric( "kalk_zabrana_promjene_tarifa", nil, gPromTar )
+   //gPromTar := fetch_metric( "kalk_zabrana_promjene_tarifa", nil, gPromTar )
    gFunKon1 := fetch_metric( "kalk_djoker_f1_kod_kontiranja", nil, gFunKon1 )
    gFunKon2 := fetch_metric( "kalk_djoker_f2_kod_kontiranja", nil, gFunKon2 )
 

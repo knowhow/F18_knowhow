@@ -30,7 +30,7 @@ FUNCTION kalk_get_1_im()
 
    kalk_pripr_form_get_roba( @GetList, @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), box_x_koord() + 10, box_y_koord() + 2, @aPorezi )
 
-   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   @ box_x_koord() + 11, box_y_koord() + 70 GET _IdTarifa VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC

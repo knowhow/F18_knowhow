@@ -1455,7 +1455,7 @@ FUNCTION MPCSAPPuSif()
       DO WHILE !Eof() .AND. pkonto == cIdKonto
          select_o_roba(  kalk_pripr->idroba )
          IF Found()
-            StaviMPCSif( kalk_pripr->mpcsapp, .F. )
+            roba_set_mcsapp_na_osnovu_koncij_pozicije( kalk_pripr->mpcsapp, .F. )
          ENDIF
          SELECT kalk_pripr
          SKIP 1
@@ -1496,7 +1496,7 @@ FUNCTION MPCSAPPiz80uSif()
    DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
       select_o_roba( KALK->idroba )
       IF Found()
-         StaviMPCSif( KALK->mpcsapp, .F. )
+         roba_set_mcsapp_na_osnovu_koncij_pozicije( KALK->mpcsapp, .F. )
       ENDIF
       SELECT KALK
       SKIP 1

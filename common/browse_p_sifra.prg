@@ -1627,14 +1627,18 @@ FUNCTION validacija_postoji_sifra( wId, cTag )
 
 
 
-FUNCTION valid_sifarnik_id_postoji( wId )
+FUNCTION valid_sifarnik_id_postoji( cId )
 
    LOCAL hRec
 
+   __mvPublic( "wId" )
+   Eval( MemVarBlock( "wId" ), cId ) // wId <-- cId
+
    IF ( Ch == K_CTRL_N .OR. Ch == K_F4 )
       hRec := get_hash_record_from_global_vars( "w", .F., .F. ) // uvijek napraviti cp852 enkodiran string
+      altd()
       IF is_sifra_postoji_u_sifarniku( hRec )
-         MsgBeep( "Šifarnik: " + Alias() + ", ID vec postoji: " + Trim( ToStr( wId ) ) + " !" )
+         MsgBeep( "Šifarnik: " + Alias() + ", ID već postoji: " + Trim( ToStr( cId ) ) + " !" )
          RETURN .F.
       ENDIF
    ENDIF

@@ -11,30 +11,32 @@
 
 #include "f18.ch"
 
-
 FUNCTION pos_main_menu_admin()
 
    LOCAL nSetPosPM
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcExe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( opc, "1. izvještaji                       " )
-   AAdd( opcexe, {|| pos_izvjestaji() } )
-   AAdd( opc, "2. pregled računa" )
-   AAdd( opcexe, {|| pos_pregled_racuna_tabela() } )
-   AAdd( opc, "L. lista ažuriranih dokumenata" )
-   AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
-   AAdd( opc, "R. robno-materijalno poslovanje" )
-   AAdd( opcexe, {|| pos_menu_robmat() } )
-   AAdd( opc, "K. prenos realizacije u KALK" )
-   AAdd( opcexe, {|| pos_kalk_prenos_realizacije() } )
-   AAdd( opc, "S. šifarnici                  " )
-   AAdd( opcexe, {|| pos_sifarnici() } )
-   AAdd( opc, "A. administracija pos-a" )
-   AAdd( opcexe, {|| pos_admin_menu() } )
+   AAdd( aOpc, "1. izvještaji                       " )
+   AAdd( aOpcexe, {|| pos_izvjestaji() } )
+   AAdd( aOpc, "2. pregled računa" )
+   AAdd( aOpcexe, {|| pos_pregled_racuna_tabela() } )
+   AAdd( aOpc, "L. lista ažuriranih dokumenata" )
+   AAdd( aOpcexe, {|| pos_lista_azuriranih_dokumenata() } )
+   AAdd( aOpc, "R. robno-materijalno poslovanje" )
+   AAdd( aOpcexe, {|| pos_menu_robmat() } )
+   AAdd( aOpc, "K. prenos realizacije u KALK" )
+   AAdd( aOpcexe, {|| pos_kalk_prenos_realizacije() } )
+   AAdd( aOpc, "S. šifarnici                  " )
+   AAdd( aOpcexe, {|| pos_sifarnici() } )
+   AAdd( aOpc, "A. administracija pos-a" )
+   AAdd( aOpcexe, {|| pos_admin_menu() } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "adm" )
+   f18_menu( "posa", .F., nIzbor, aOpc, aOpcExe )
+
+
+RETURN .T.
 
 
 FUNCTION SetPM( nPosSetPM )

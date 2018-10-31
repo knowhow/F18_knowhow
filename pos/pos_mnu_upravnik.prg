@@ -14,48 +14,31 @@
 
 FUNCTION pos_main_menu_upravnik()
 
-   //IF gVrstaRS == "A"
-      MMenuUpA()
-   //ELSEIF gVrstaRS == "K"
-    //  MMenuUpK()
-   //ELSE
-    //  MMenuUpS()
-   //ENDIF
 
-   RETURN .T.
+   LOCAL aOpc := {}
+   LOCAL aOpcexe := {}
+   LOCAL nIzbor := 1
 
-
-
-FUNCTION MMenuUpA()
-
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
-
-   AAdd( opc, "1. izvještaji                        " )
-   AAdd( opcexe, {|| pos_izvjestaji() } )
-   AAdd( opc, "L. lista ažuriranih dokumenata" )
-   AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
-
-   AAdd( opc, "R. prenos realizacije u KALK" )
-   AAdd( opcexe, {|| pos_kalk_prenos_realizacije() } )
-
-   AAdd( opc, "D. unos dokumenata" )
-   AAdd( opcexe, {|| pos_menu_dokumenti() } )
-
-   AAdd( opc, "R. robno-materijalno poslovanje" )
-   AAdd( opcexe, {|| pos_menu_robmat() } )
-
-   AAdd( opc, "--------------" )
-   AAdd( opcexe, nil )
-   AAdd( opc, "S. šifarnici" )
-   AAdd( opcexe, {|| pos_sifarnici() } )
-   AAdd( opc, "W. administracija pos-a" )
-   AAdd( opcexe, {|| pos_admin_menu() } )
+   AAdd( aOpc, "1. izvještaji                        " )
+   AAdd( aOpcexe, {|| pos_izvjestaji() } )
+   AAdd( aOpc, "L. lista ažuriranih dokumenata" )
+   AAdd( aOpcexe, {|| pos_lista_azuriranih_dokumenata() } )
+   AAdd( aOpc, "R. prenos realizacije u KALK" )
+   AAdd( aOpcexe, {|| pos_kalk_prenos_realizacije() } )
+   AAdd( aOpc, "D. unos dokumenata" )
+   AAdd( aOpcexe, {|| pos_menu_dokumenti() } )
+   AAdd( aOpc, "R. robno-materijalno poslovanje" )
+   AAdd( aOpcexe, {|| pos_menu_robmat() } )
+   AAdd( aOpc, "--------------" )
+   AAdd( aOpcexe, nil )
+   AAdd( aOpc, "S. šifarnici" )
+   AAdd( aOpcexe, {|| pos_sifarnici() } )
+   AAdd( aOpc, "W. administracija pos-a" )
+   AAdd( aOpcexe, {|| pos_admin_menu() } )
    //AAdd( opc, "P. promjena seta cijena" )
    //AAdd( opcexe, {|| PromIDCijena() } )
 
-   f18_menu_sa_priv_vars_opc_opcexe_izbor( "upra" )
+   f18_menu( "posu", .F., nIzbor, aOpc, aOpcExe )
 
    closeret
 

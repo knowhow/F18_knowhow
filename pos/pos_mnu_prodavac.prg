@@ -35,7 +35,7 @@ FUNCTION pos_main_menu_prodavac()
       AAdd( aOpcExe, {|| fiskalni_izvjestaji_komande( .T., .T. ) } )
    ENDIF
 
-   f18_menu( "prod", .F., nIzbor, aOpc, aOpcExe )
+   f18_menu( "posp", .F., nIzbor, aOpc, aOpcExe )
 
    CLOSE ALL
 

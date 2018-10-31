@@ -84,9 +84,9 @@ FUNCTION pos_stanje_artikala_po_odjeljenjima( cD, cS )
 
       AAdd ( aNiz, { "Artikli  (prazno-svi)", "cRoba",, "@!S30", } )
       AAdd ( aNiz, { "Izvjestaj se pravi za datum", "cDat",,, } )
-      IF gVSmjene == "D"
-         AAdd ( aNiz, { "Smjena", "cSmjena",,, } )
-      ENDIF
+      //IF gVSmjene == "D"
+      //   AAdd ( aNiz, { "Smjena", "cSmjena",,, } )
+      //ENDIF
       AAdd ( aNiz, { "Stampati artikle sa stanjem 0", "cNule", "cNule$'DN'", "@!", } )
       AAdd ( aNiz, { "Prikaz kolone ukupno D/N ", "cUkupno", "cUkupno$'DN'", "@!", } )
       AAdd ( aNiz, { "Prikaz samo kriticnih zaliha (D/N/O) ?", "cMinK", "cMinK$'DNO'", "@!", } )

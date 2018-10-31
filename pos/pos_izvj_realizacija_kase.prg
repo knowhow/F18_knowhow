@@ -351,11 +351,11 @@ STATIC FUNCTION ZaglZ( dDatum0, dDatum1, cIdPos, cSmjena, cRadnici, cVrsteP, cId
    ? PadC( gPosNaz )
 
 
-   IF gVSmjene == "D"
-      ? PadC( FormDat1( gDatum ) + " Smjena: " + gSmjena, LEN_TRAKA )
-   ELSE
+   //IF gVSmjene == "D"
+  //    ? PadC( FormDat1( gDatum ) + " Smjena: " + gSmjena, LEN_TRAKA )
+   //ELSE
       ? PadC( FormDat1( gDatum ), LEN_TRAKA )
-   ENDIF
+   //ENDIF
    ?
 
    RETURN .T.

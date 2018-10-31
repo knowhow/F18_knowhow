@@ -40,23 +40,14 @@ METHOD mMenu()
    Fx := 4
    Fy := 8
 
-/*
-   IF gSamoProdaja == "N"
-      --cre_doksrc()
-   ENDIF
-*/
-
    pos_init()
-
    CLOSE ALL
 
-
+/*
    DO WHILE ( .T. )
-
 
       box_x_koord( Fx )
       box_y_koord( Fy )
-
       g_cUserLevel := pos_prijava( Fx, Fy )
 
       IF g_cUserLevel == "X"
@@ -64,36 +55,39 @@ METHOD mMenu()
       ENDIF
 
       SetPos ( Fx, Fy )
-
-      IF gVsmjene == "N"
-         gSmjena := "1"
-         pos_odredi_smjenu( .F. )
-      ELSE
-         pos_odredi_smjenu( .T. )
-      ENDIF
-
+      //IF gVsmjene == "N"
+      gSmjena := "1"
+      pos_odredi_smjenu( .F. )
+      //ELSE
+      //   pos_odredi_smjenu( .T. )
+      //ENDIF
       EXIT
 
    ENDDO
+*/
 
-   pos_status_traka()
-
-   SetPos( Fx, Fy )
-   fPrviPut := .T.
+   //SetPos( Fx, Fy )
+   //fPrviPut := .T.
 
    DO WHILE ( .T. )
 
       box_x_koord( Fx )
       box_y_koord( Fy )
+      g_cUserLevel := pos_prijava( Fx, Fy )
 
-      // unesi prijavu korisnika
-      IF fPRviPut .AND. gVSmjene == "N" // ne vodi vise smjena
-         fPrviPut := .F.
-      ELSE
-         g_cUserLevel := pos_prijava( Fx, Fy )
-         pos_status_traka()
+      IF g_cUserLevel == "X"
+         RETURN .F.
       ENDIF
 
+      // unesi prijavu korisnika
+    //  IF fPRviPut //.AND. gVSmjene == "N"
+      //   fPrviPut := .F.
+      //ELSE
+      //   g_cUserLevel := pos_prijava( Fx, Fy )
+      //   pos_status_traka()
+      //ENDIF
+
+      pos_status_traka()
       SetPos( Fx, Fy )
       pos_main_menu_level( Fx, Fy )
 
@@ -204,7 +198,7 @@ METHOD set_module_gvars()
    PUBLIC gRnSpecOpc  // HOPS - rn specificne opcije
    PUBLIC gSjeciStr := ""
    PUBLIC gOtvorStr := ""
-   PUBLIC gVSmjene := "N"
+   //PUBLIC gVSmjene := "N"
    PUBLIC gSezonaTip := "M"
    PUBLIC gSifUpravn := "D"
    PUBLIC gEntBarCod := "D"
@@ -342,7 +336,7 @@ METHOD set_module_gvars()
    gPocStaSmjene := fetch_metric( "PratiPocetnoStanjeSmjene", NIL, gPocStaSmjene )
    gStamPazSmj := fetch_metric( "StampanjePazara", NIL, gStamPazSmj )
    gStamStaPun := fetch_metric( "StampanjePunktova", NIL, gStamStaPun )
-   gVSmjene := fetch_metric( "VoditiPoSmjenama", NIL, gVsmjene )
+   //gVSmjene := fetch_metric( "VoditiPoSmjenama", NIL, gVsmjene )
    gSezonaTip := fetch_metric( "TipSezone", NIL, gSezonaTip )
    gSifUpravn := fetch_metric( "UpravnikIspravljaCijene", NIL, gSifUpravn )
    gDisplay := fetch_metric( "DisplejOpcije", NIL, gDisplay )

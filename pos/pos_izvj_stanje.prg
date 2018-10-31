@@ -62,9 +62,9 @@ FUNCTION pos_stanje_artikala
       AAdd ( aNiz, { "Artikli  (prazno-svi)", "cRoba",, "@!S30", } )
       AAdd ( aNiz, { "Izvjestaj se pravi za datum", "cDat",,, } )
 
-      IF gVSmjene == "D"
-         AAdd ( aNiz, { "Smjena", "cSmjena",,, } )
-      ENDIF
+      //IF gVSmjene == "D"
+      //   AAdd ( aNiz, { "Smjena", "cSmjena",,, } )
+      //ENDIF
 
       AAdd ( aNiz, { "Stampati artikle sa stanjem 0", "cNule", "cNule$'DN'", "@!", } )
       DO WHILE .T.

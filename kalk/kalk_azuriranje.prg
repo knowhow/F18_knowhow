@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION kalk_azuriraj_sve_u_pripremi( lStampaj )
    RETURN kalk_azuriranje_dokumenta( .T., lStampaj )
 
@@ -115,11 +114,6 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
 
 
 
-// ---------------------------------------------------------------------
-// vraca iz tabele kalk_pripr2 sve sto je generisano
-// da bi se moglo naknadno obraditi
-// recimo kalk 16/96 itd...
-// ---------------------------------------------------------------------
 STATIC FUNCTION kalk_vrati_iz_pripr2()
 
    LOCAL lPrebaci := .F.
@@ -221,7 +215,6 @@ STATIC FUNCTION kalk_gen_zavisni_fin_fakt_nakon_azuriranja( lGenerisi, lAuto, lS
       kalk_gen_11_iz_10( cNext11 )
    ENDIF
 
-   // SELECT KALK
 
    IF lGenerisi
       kalk_kontiranje_gen_finmat()
@@ -238,7 +231,6 @@ STATIC FUNCTION kalk_gen_zavisni_fin_fakt_nakon_azuriranja( lGenerisi, lAuto, lS
    ENDIF
 
    RETURN .T.
-
 
 
 
@@ -317,7 +309,6 @@ STATIC FUNCTION kalk_check_generisati_zavisne_dokumente( lAuto )
    ENDIF
 
    RETURN lGen
-
 
 
 
@@ -513,20 +504,19 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
 
 
 
-FUNCTION o_kalk_za_azuriranje( raspored_tr )
+FUNCTION o_kalk_za_azuriranje( lRasporedTr )
 
-   IF raspored_tr == NIL
-      raspored_tr := .F.
+   IF lRasporedTr == NIL
+      lRasporedTr := .F.
    ENDIF
 
    my_close_all_dbf()
-
    o_kalk_pripr()
    // o_kalk()
    // o_kalk_doks2()
    // o_kalk_doks()
 
-   IF raspored_tr
+   IF lRasporedTr
       kalk_raspored_troskova_azuriranje()
    ENDIF
 
@@ -558,7 +548,7 @@ STATIC FUNCTION kalk_raspored_troskova_azuriranje()
 
 STATIC FUNCTION kalk_azur_sql()
 
-   LOCAL _ok := .T.
+   LOCAL lOk := .T.
    LOCAL lRet := .F.
    LOCAL hRecKalkDok, hRecKalkKalk
    LOCAL _doks_nv := 0
@@ -609,11 +599,9 @@ STATIC FUNCTION kalk_azur_sql()
 
    DO WHILE !Eof()
 
-
       cIdFirma := field->idFirma
       cIdVd := field->idVd
       cBrDok := field->brDok
-
       hRecKalkDok := hb_Hash()
       hRecKalkDok[ "idfirma" ] := cIdFirma
       hRecKalkDok[ "idvd" ] := cIdVd
@@ -638,7 +626,7 @@ STATIC FUNCTION kalk_azur_sql()
 
          hRecKalkKalk := dbf_get_rec()
          IF !sql_table_update( "kalk_kalk", "ins", hRecKalkKalk )
-            _ok := .F.
+            lOk := .F.
             EXIT
          ENDIF
 
@@ -649,7 +637,7 @@ STATIC FUNCTION kalk_azur_sql()
             hRecKalkKalk[ "rbr" ] := PadL( Str( 900 + Val( AllTrim( hRecKalkKalk[ "rbr" ] ) ), 3 ), 3 )
 
             IF !sql_table_update( "kalk_kalk", "ins", hRecKalkKalk )
-               _ok := .F.
+               lOk := .F.
                EXIT
             ENDIF
          ENDIF
@@ -657,7 +645,7 @@ STATIC FUNCTION kalk_azur_sql()
       ENDDO
 
 
-      IF _ok = .T.
+      IF lOk
 
          hRecKalkDok[ "nv" ] := _doks_nv
          hRecKalkDok[ "vpv" ] := _doks_vpv
@@ -669,30 +657,26 @@ STATIC FUNCTION kalk_azur_sql()
 
          @ box_x_koord() + 2, box_y_koord() + 2 SAY "kalk_doks -> server: " + _tmp_id
          IF !sql_table_update( "kalk_doks", "ins", hRecKalkDok )
-            _ok := .F.
+            lOk := .F.
          ENDIF
 
       ENDIF
 
-      IF _ok == .T.
-
+      IF lOk
          @ box_x_koord() + 3, box_y_koord() + 2 SAY "kalk_atributi -> server "
          oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
          oAttr:hAttrId[ "idfirma" ] := hRecKalkDok[ "idfirma" ]
          oAttr:hAttrId[ "idtipdok" ] := hRecKalkDok[ "idvd" ]
          oAttr:hAttrId[ "brdok" ] := hRecKalkDok[ "brdok" ]
-
-         _ok := oAttr:push_attr_from_dbf_to_server()
-
+         lOk := oAttr:push_attr_from_dbf_to_server()
       ENDIF
 
    ENDDO
 
 
-   IF !_ok
+   IF !lOk
 
       run_sql_query( "ROLLBACK" )
-
       _msg := "kalk ažuriranje, trasakcija " + _tmp_id + " neuspješna ?!"
       log_write( _msg, 2 )
       MsgBeep( _msg )
@@ -702,9 +686,7 @@ STATIC FUNCTION kalk_azur_sql()
       @ box_x_koord() + 4, box_y_koord() + 2 SAY "push ids to semaphore"
       push_ids_to_semaphore( _tbl_kalk, _ids_kalk )
       push_ids_to_semaphore( _tbl_doks, _ids_doks  )
-
       @ box_x_koord() + 5, box_y_koord() + 2 SAY "update semaphore version"
-
 
       hParams := hb_Hash()
       hParams[ "unlock" ] := { _tbl_kalk, _tbl_doks }
@@ -716,7 +698,7 @@ STATIC FUNCTION kalk_azur_sql()
 
    BoxC()
 
-   RETURN _ok
+   RETURN lOk
 
 
 
@@ -731,9 +713,7 @@ FUNCTION kalk_dokumenti_iz_pripreme_u_matricu()
 
    DO WHILE !Eof()
 
-      nScan := AScan( aKalkDokumenti, {| aVar | aVar[ 1 ] == field->idfirma .AND. ;
-         aVar[ 2 ] == field->idvd .AND. ;
-         aVar[ 3 ] == field->brdok  } )
+      nScan := AScan( aKalkDokumenti, {| aVar | aVar[ 1 ] == field->idfirma .AND. aVar[ 2 ] == field->idvd .AND. aVar[ 3 ] == field->brdok  } )
 
       IF nScan == 0
          AAdd( aKalkDokumenti, { field->idfirma, field->idvd, field->brdok, 0 } )

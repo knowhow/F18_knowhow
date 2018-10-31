@@ -60,7 +60,7 @@ FUNCTION P_Odj( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN p_sifra( F_ODJ, 1, 10, 40, "Sifarnik odjeljenja", @cId, dx, dy )
+   RETURN p_sifra( F_ODJ, 1, 10, 40, "Šifarnik odjeljenja", @cId, dx, dy )
 
 
 /*
@@ -80,6 +80,8 @@ FUNCTION P_Odj( cId, dx, dy )
 
 FUNCTION p_pos_strad( cId, dx, dy )
 
+   LOCAL lRet
+
    PRIVATE ImeKol
    PRIVATE Kol := {}
 
@@ -88,14 +90,17 @@ FUNCTION p_pos_strad( cId, dx, dy )
       { "Prioritet", {|| PadC( prioritet, 9 ) }, "prioritet", {|| .T. }, {|| ( "0" <= wPrioritet ) .AND. ( wPrioritet <= "3" ) } } ;
       }
 
+   PushWa()
    select_o_pos_strad()
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
    NEXT
 
-   RETURN p_sifra( F_STRAD, 1, 10, 55, "Šifarnik statusa radnika", @cid, dx, dy )
+   lRet := p_sifra( F_STRAD, 1, 10, 55, "Šifarnik statusa radnika", @cid, dx, dy )
+   PopWA()
 
+   RETURN lRet
 
 
 FUNCTION P_Osob( cId, dx, dy )
@@ -109,6 +114,8 @@ FUNCTION P_Osob( cId, dx, dy )
    //IF !Used()
     //    o_pos_osob()
    //ENDIF
+   PushWa()
+
    select_o_pos_osob()
 
 
@@ -123,6 +130,7 @@ FUNCTION P_Osob( cId, dx, dy )
    NEXT
 
    xRet := p_sifra( F_OSOB, 2, 10, 55, "Šifarnik osoblja", @cid, dx, dy, {| nCh | pos_osob_key_handler( nCh ) } )
+   PopWa()
 
    RETURN xRet
 
@@ -194,10 +202,8 @@ FUNCTION pos_osob_key_handler( Ch )
                _korsif := CryptSC( _korsif )
 
                APPEND BLANK
-
-               // daj mi iz globalnih varijabli
                hRec := get_hash_record_from_global_vars()
-
+               altd()
                update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
                nVrati := DE_REFRESH
@@ -272,9 +278,9 @@ FUNCTION pos_get_osob( fNovi )
    SET CURSOR ON
 
    IF fNovi .OR. pos_admin()
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sifra radnika (ID)." GET _id VALID validacija_postoji_sifra( _id )
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Šifra radnika (ID)." GET _id VALID validacija_postoji_sifra( _id )
    ELSE
-      @ box_x_koord() + 1, box_y_koord() + 2 SAY "Sifra radnika (ID). " + _id
+      @ box_x_koord() + 1, box_y_koord() + 2 SAY8 "Šifra radnika (ID). " + _id
    ENDIF
 
    @ box_x_koord() + 2, box_y_koord() + 2 SAY "Ime radnika........" GET _naz
@@ -317,8 +323,6 @@ STATIC FUNCTION VPSifra2( cSifra, cIme )
    ENDIF
 
    RETURN lRet
-
-
 
 
 FUNCTION PomMenu1( aNiz )

@@ -117,7 +117,7 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gDirFakt := ""
    PUBLIC gDirFaKK := ""
    PUBLIC gBrojacKalkulacija := "D"
-   PUBLIC gRokTr := "N"
+   //PUBLIC gRokTr := "N"
    PUBLIC gVarVP := "1"
    PUBLIC gAFin := "D"
    PUBLIC gAMat := "0"

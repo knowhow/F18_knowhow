@@ -151,7 +151,7 @@ FUNCTION p_sifra( nWa, xIndex, nVisina, nSirina, cNaslov, cID, nDeltaX, nDeltaY,
 
    __A_SIFV__[ __PSIF_NIVO__, 2 ] := RecNo()
 
-   sif_ispisi_naziv( nWa, nDeltaX, nDeltaY )
+   sifra_ispis_naziva( nWa, nDeltaX, nDeltaY )
 
    SELECT ( nWa )
    IF Used()

@@ -117,12 +117,7 @@ FUNCTION VMpcSaPP( fRealizacija, cProracunMarzeUnaprijed )
    RETURN .T.
 
 
-/* SayPorezi(nRow)
- *     Ispisuje poreze
- *   param: nRow - relativna kooordinata reda u kojem se ispisuju porezi
- */
-
-FUNCTION SayPorezi( nRow )
+FUNCTION kalk_say_pdv_a_porezi_var( nRow )
 
    @ box_x_koord() + nRow, box_y_koord() + 2  SAY "PDV (%):"
    @ Row(), Col() + 2 SAY aPorezi[ POR_PPP ] PICTURE "99.99"

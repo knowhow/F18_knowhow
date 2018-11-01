@@ -125,7 +125,7 @@ FUNCTION kalk_get_1_12()
    @ box_x_koord() + 17, box_y_koord() + 2  SAY "MALOPROD. CJENA (MPC):"
    @ box_x_koord() + 17, box_y_koord() + 50 GET _MPC PICT PicDEM WHEN WMpc() VALID VMpc()
 
-   SayPorezi( 19 )
+   kalk_say_pdv_a_porezi_var( 19 )
 
    @ box_x_koord() + 19, box_y_koord() + 2 SAY "MPC SA PDV    :"
    @ box_x_koord() + 19, box_y_koord() + 50 GET _MPCSaPP PICT PicDEM VALID VMpcSaPP()

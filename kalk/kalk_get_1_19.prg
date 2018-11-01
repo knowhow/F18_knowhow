@@ -97,7 +97,7 @@ FUNCTION kalk_get_1_19()
    @ box_x_koord() + 17, box_y_koord() + 2  SAY "NOVA CIJENA  " +  "(MPCSAPDV):"
    @ box_x_koord() + 17, box_y_koord() + 50 GET nNCj     PICT "999999.9999"
 
-   SayPorezi( 19 )
+   kalk_say_pdv_a_porezi_var( 19 )
 
    READ
    ESC_RETURN K_ESC

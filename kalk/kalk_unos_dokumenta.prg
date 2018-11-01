@@ -46,8 +46,8 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    LOCAL nMaxCol := f18_max_cols() - 3
    LOCAL nMaxRow := f18_max_rows() - 4
    LOCAL nI
-   LOCAL _opt_row, _opt_d
-   LOCAL _sep := hb_UTF8ToStrBox( BROWSE_COL_SEP )
+   LOCAL cOpcijaRed, nWidth
+   LOCAL cSeparator := hb_UTF8ToStrBox( BROWSE_COL_SEP )
    LOCAL cPicKol := "999999.999"
    LOCAL bPodvuci := {|| iif( field->ERROR == "1", .T., .F. ) }
 
@@ -81,17 +81,17 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    AAdd( ImeKol, { _u( "Količina" ), {|| say_kolicina( field->Kolicina, "99999.999" ) }, "kolicina"    } )
    AAdd( ImeKol, { "IdTarifa", {|| field->idtarifa }, "idtarifa"    } )
    AAdd( ImeKol, { "F.Cj.", {|| say_cijena( field->FCJ, "99999.999" ) }, "fcj"         } )
-   AAdd( ImeKol, { "F.Cj2.", {|| say_cijena( field->FCJ2, "99999.999" ) }, "fcj2"        } )
+   //AAdd( ImeKol, { "F.Cj2.", {|| say_cijena( field->FCJ2, "99999.999" ) }, "fcj2"        } )
    AAdd( ImeKol, { "Nab.Cj.", {|| say_cijena( field->NC, "99999.999" ) }, "nc"          } )
    AAdd( ImeKol, { "VPC", {|| say_cijena( field->VPC, "99999.999" ) }, "vpc"         } )
    // AAdd( ImeKol, { "VPCj.sa P.", {|| say_cijena( field->VPCsaP )   }, "vpcsap"      } )
    AAdd( ImeKol, { "MPC", {|| say_cijena( field->MPC, "99999.999" )  }, "mpc"         } )
-   AAdd( ImeKol, { "MPC sa PP", {|| say_cijena( field->MPCSaPP, "99999.999" )  }, "mpcsapp"     } )
-   AAdd( ImeKol, { "RN", {|| field->idzaduz2 }, "idzaduz2"    } )
+   AAdd( ImeKol, { "MPCsaPDV", {|| say_cijena( field->MPCSaPP, "99999.999" )  }, "mpcsapp"     } )
+   //AAdd( ImeKol, { "RN", {|| field->idzaduz2 }, "idzaduz2"    } )
    AAdd( ImeKol, { "Br.Fakt", {|| field->brfaktp }, "brfaktp"     } )
    AAdd( ImeKol, { "Partner", {|| field->idpartner }, "idpartner"   } )
-   AAdd( ImeKol, { "Marza", {|| field->tmarza }, "tmarza"   } )
-   AAdd( ImeKol, { "Marza 2", {|| field->tmarza2 }, "tmarza2"   } )
+   //AAdd( ImeKol, { "Marza", {|| field->tmarza }, "tmarza"   } )
+   //AAdd( ImeKol, { "Marza 2", {|| field->tmarza2 }, "tmarza2"   } )
    AAdd( ImeKol, { "E", {|| field->error },  "error"       } )
 
    FOR nI := 1 TO Len( ImeKol )
@@ -100,30 +100,30 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
 
    Box(, nMaxRow, nMaxCol )
 
-   _opt_d := ( nMaxCol / 4 )
-   _opt_row :=  _upadr( "<c+N> Nova stavka", _opt_d ) + _sep
-   _opt_row +=  _upadr( "<ENT> Ispravka", _opt_d ) + _sep
-   _opt_row +=  _upadr( "<c+T> Briši stavku", _opt_d ) + _sep
-   _opt_row +=  _upadr( "<K> Kalk.cijena",  _opt_d ) + _sep
+   nWidth := nMaxCol / 4  - 1
+   cOpcijaRed :=  _upadr( "<c+N> Nova stavka", nWidth ) + cSeparator
+   cOpcijaRed +=  _upadr( "<ENT> Ispravka", nWidth ) + cSeparator
+   cOpcijaRed +=  _upadr( "<c+T> Briši stavku", nWidth ) + cSeparator
+   cOpcijaRed +=  _upadr( "<K> Kalk.cijena",  nWidth ) + cSeparator
 
-   @ box_x_koord() + nMaxRow - 3, box_y_koord() + 2 SAY8 _opt_row
-   _opt_row :=  _upadr( "<c+A> Ispravka", _opt_d ) + _sep
-   _opt_row +=  _upadr( "<c+P> Štampa dok.", _opt_d ) + _sep
-   _opt_row +=  _upadr( "<a+A>|<X> Ažuriranje", _opt_d ) + _sep
-   _opt_row +=  _upadr( "<Q> Etikete", _opt_d )  + _sep
+   @ box_x_koord() + nMaxRow - 3, box_y_koord() + 2 SAY8 cOpcijaRed
+   cOpcijaRed :=  _upadr( "<c+A> Ispravka", nWidth ) + cSeparator
+   cOpcijaRed +=  _upadr( "<c+P> Štampa dok.", nWidth ) + cSeparator
+   cOpcijaRed +=  _upadr( "<a+A>|<X> Ažuriranje", nWidth ) + cSeparator
+   cOpcijaRed +=  _upadr( "<Q> Etikete", nWidth )  + cSeparator
 
-   @ box_x_koord() + nMaxRow - 2, box_y_koord() + 2 SAY8 _opt_row
-   _opt_row := _upadr( "<a+K> Kontiranje", _opt_d ) + _sep
-   _opt_row += _upadr( "<c+F9> Briši sve", _opt_d ) + _sep
-   _opt_row += _upadr( "<a+P> Štampa pripreme", _opt_d ) + _sep
-   _opt_row += _upadr( "<E> greške, <I> info", _opt_d ) + _sep
+   @ box_x_koord() + nMaxRow - 2, box_y_koord() + 2 SAY8 cOpcijaRed
+   cOpcijaRed := _upadr( "<a+K> Kontiranje", nWidth ) + cSeparator
+   cOpcijaRed += _upadr( "<c+F9> Briši sve", nWidth ) + cSeparator
+   cOpcijaRed += _upadr( "<a+P> Štampa pripreme", nWidth ) + cSeparator
+   cOpcijaRed += _upadr( "<E> greške, <I> info", nWidth ) + cSeparator
 
-   @ box_x_koord() + nMaxRow - 1, box_y_koord() + 2 SAY8 _opt_row
-   _opt_row := _upadr( "<c+F8> Rasp.troškova", _opt_d ) + _sep
-   _opt_row += _upadr( "<A> Asistent", _opt_d ) + _sep
-   _opt_row += _upadr( "<F10> Dodatne opc.", _opt_d ) + _sep
+   @ box_x_koord() + nMaxRow - 1, box_y_koord() + 2 SAY8 cOpcijaRed
+   cOpcijaRed := _upadr( "<c+F8> Rasp.troškova", nWidth ) + cSeparator
+   cOpcijaRed += _upadr( "<A> Asistent", nWidth ) + cSeparator
+   cOpcijaRed += _upadr( "<F10> Dodatne opc.", nWidth ) + cSeparator
 
-   @ box_x_koord() + nMaxRow, box_y_koord() + 2 SAY8 _opt_row
+   @ box_x_koord() + nMaxRow, box_y_koord() + 2 SAY8 cOpcijaRed
 
 /*
    IF gCijene == "1" .AND. kalk_metoda_nc() == " "

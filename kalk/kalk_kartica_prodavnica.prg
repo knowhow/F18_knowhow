@@ -14,8 +14,8 @@
 
 STATIC s_cLine
 STATIC s_cTxt1
-//STATIC __txt2
-//STATIC __txt3
+// STATIC __txt2
+// STATIC __txt3
 
 
 FUNCTION kalk_kartica_prodavnica()
@@ -36,13 +36,17 @@ FUNCTION kalk_kartica_prodavnica()
    LOCAL lRobaTackaZarez := .F.
    LOCAL cOrderBy
 
+   LOCAL nUlaz, nIzlaz
+   LOCAL nMPV, nNV
+   //LOCAL nMPVP
+
    PRIVATE PicCDEM := kalk_prosiri_pic_cjena_za_2()
    PRIVATE PicProc := gPicProc
    PRIVATE PicDEM := kalk_prosiri_pic_iznos_za_2()
    PRIVATE PicKol := kalk_prosiri_pic_kolicina_za_2()
    PRIVATE nMarza, nMarza2, nPRUC, aPorezi
 
-   lRokTrajanja := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
+   //lRokTrajanja := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
    // o_tarifa()
 // o_sifk()
@@ -135,11 +139,11 @@ FUNCTION kalk_kartica_prodavnica()
 
    nKolicina := 0
 
-   //IF server_db_version() >= 25
-    //  cOrderBy := "idfirma,pkonto,idroba,datdok,obradjeno,pu_i,idvd"
-   //ELSE
-      cOrderBy := "idfirma,pkonto,idroba,datdok,pu_i,idvd"
-   //ENDIF
+   // IF server_db_version() >= 25
+   // cOrderBy := "idfirma,pkonto,idroba,datdok,obradjeno,pu_i,idvd"
+   // ELSE
+   cOrderBy := "idfirma,pkonto,idroba,datdok,pu_i,idvd"
+   // ENDIF
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
 
@@ -178,7 +182,7 @@ FUNCTION kalk_kartica_prodavnica()
    nCol1 := 10
    nUlaz := nIzlaz := 0
    nMPV := nNV := 0
-   nMPVP := 0
+   //nMPVP := 0
    fPrviProl := .T.
 
    DO WHILE !Eof() .AND. iif( lRobaTackaZarez, field->idfirma + field->pkonto + field->idroba >= cIdFirma + cIdKonto + cIdRobaTackaZarez, field->idfirma + field->pkonto + field->idroba == cIdFirma + cIdKonto + cIdRobaTackaZarez )
@@ -269,7 +273,7 @@ FUNCTION kalk_kartica_prodavnica()
 
             ENDIF
 
-            nMPVP += field->mpcsapp * field->kolicina
+            //nMPVP += field->mpcsapp * field->kolicina
             nMPV += field->mpcsapp * field->kolicina
             nNV += field->nc * field->kolicina
 
@@ -277,7 +281,8 @@ FUNCTION kalk_kartica_prodavnica()
                @ PRow(), PCol() + 1 SAY kalk_say_iznos( nMpv )
             ENDIF
 
-            IF lRokTrajanja
+/*
+        --    IF lRokTrajanja
                hAttriId := hb_Hash()
                hAttriId[ "idfirma" ] := field->idfirma
                hAttriId[ "idtipdok" ] := field->idvd
@@ -288,7 +293,7 @@ FUNCTION kalk_kartica_prodavnica()
                   @ PRow(), PCol() + 1 SAY  "rok: " + DToC( _item_istek_roka )
                ENDIF
             ENDIF
-
+*/
 
          ELSEIF field->pu_i == "5" .AND. !( field->idvd $ "12#13#22" )
 
@@ -306,7 +311,6 @@ FUNCTION kalk_kartica_prodavnica()
                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
 
                nCol1 := PCol() + 1
-
                @ PRow(), PCol() + 1 SAY say_kolicina( 0 )
                @ PRow(), PCol() + 1 SAY say_kolicina( field->kolicina )
                @ PRow(), PCol() + 1 SAY say_kolicina( nUlaz - nIzlaz )
@@ -321,7 +325,7 @@ FUNCTION kalk_kartica_prodavnica()
 
             ENDIF
 
-            nMPVP -= ( field->mpc + nPor1 ) * field->kolicina
+            //nMPVP -= ( field->mpc + nPor1 ) * field->kolicina
             nMPV -= field->mpcsapp * field->kolicina
             nNV -= field->nc * field->kolicina
 
@@ -345,7 +349,7 @@ FUNCTION kalk_kartica_prodavnica()
                @ PRow(), PCol() + 1 SAY say_cijena( field->mpcsapp )
             ENDIF
 
-            nMPVP -= field->mpcsapp * field->gkolicin2
+            //nMPVP -= field->mpcsapp * field->gkolicin2
             nMPV -= field->mpcsapp * field->gkolicin2
             nNV -= field->nc * field->gkolicin2
 
@@ -373,7 +377,7 @@ FUNCTION kalk_kartica_prodavnica()
                @ PRow(), PCol() + 1 SAY say_cijena( field->mpcsapp )
             ENDIF
 
-            nMPVP -= field->mpcsapp * field->kolicina
+            //nMPVP -= field->mpcsapp * field->kolicina
             nMPV -= field->mpcsapp * field->kolicina
             nNV -= field->nc * field->kolicina
 
@@ -396,7 +400,7 @@ FUNCTION kalk_kartica_prodavnica()
                @ PRow(), PCol() + 1 SAY say_cijena( field->fcj + field->mpcsapp )
             ENDIF
 
-            nMPVP += field->mpcsapp * field->kolicina
+            //nMPVP += field->mpcsapp * field->kolicina
             nMPV += field->mpcsapp * field->kolicina
 
             IF field->datdok >= dDatod
@@ -475,8 +479,9 @@ FUNCTION kalk_kartica_prodavnica()
       ? s_cLine
       ?
       ? Replicate( "-", 60 )
-      ? "     Ukupna vrijednost popusta u mp:", Str( Abs( nMPVP - nMPV ), 12, 2 )
-      ? "Ukupna prodajna vrijednost - popust:", Str( nMPVP, 12, 2 )
+      //? "     Ukupna vrijednost popusta u mp:", Str( Abs( nMPVP - nMPV ), 12, 2 )
+      //? "Ukupna prodajna vrijednost - popust:", Str( nMPVP, 12, 2 )
+      ? "  Ukupna maloprodajna vrijednost:", Str( nMPV, 12, 2 )
       ? Replicate( "-", 60 )
       ?
 
@@ -604,7 +609,6 @@ FUNCTION naprometniji_artikli_prodavnica()
       ENDIF
    ENDDO
 
-
    WPar( "c2", qqKonto )
    WPar( "c5", qqRoba )
    WPar( "d1", dDat0 )
@@ -614,7 +618,6 @@ FUNCTION naprometniji_artikli_prodavnica()
    USE
 
    // o_roba()
-
    find_kalk_za_period( self_organizacija_id(), NIL, NIL, NIL, dDat0, dDat1, "idroba,idvd" )
 
    cFilt := aUsl1 + " .and. " + aUsl2 + ' .and. PU_I=="5"' + ' .and. !(IDVD $ "12#13#22")'

@@ -167,7 +167,7 @@ FUNCTION kalk_get_1_41()
    @ box_x_koord() + 18, box_y_koord() + 2 SAY "POPUST (C-CIJENA,P-%)" GET cRCRP VALID cRCRP $ "CP" PICT "@!"
    @ box_x_koord() + 18, box_y_koord() + 50 GET _Rabatv PICT picdem VALID RabProcToC()
 
-   SayPorezi( 19 )
+   kalk_say_pdv_a_porezi_var( 19 )
 
    @ box_x_koord() + 20, box_y_koord() + 2 SAY "MPC SA PDV    :"
    @ box_x_koord() + 20, box_y_koord() + 50 GET _mpcsapp PICT PicDEM VALID kalk_valid_mpcsapdv( _IdVd, .F., @aPorezi, .T. )

@@ -13,7 +13,7 @@
 
 
 
-FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
+FUNCTION sifra_ispis_naziva( nDbf, dx, dy )
 
    LOCAL cTmp  := ""
 

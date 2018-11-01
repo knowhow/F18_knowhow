@@ -24,7 +24,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
    nlPI := Len( s_cPictIznos )
 
    cIdFirma := self_organizacija_id()
-   cIdKonto := PadR( "1310", gDuzKonto )
+   cIdKonto := PadR( "1310", FIELD_LENGTH_IDKONTO )
 
    PRIVATE nVPVU := nVPVI := nNVU := nNVI := 0
 

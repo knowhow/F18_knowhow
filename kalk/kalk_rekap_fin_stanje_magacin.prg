@@ -18,7 +18,7 @@ FUNCTION rekap_finansijsko_stanje_magacin()
    LOCAL nKolIzlaz
 
    cIdFirma := self_organizacija_id()
-   cidKonto := PadR( "132", gDuzKonto )
+   cidKonto := PadR( "132", FIELD_LENGTH_IDKONTO )
    o_kalk_tabele_izvj()
 
    dDatOd := CToD( "" )

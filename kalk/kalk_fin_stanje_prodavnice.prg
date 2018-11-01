@@ -27,7 +27,7 @@ FUNCTION finansijsko_stanje_prodavnica()
    cPicCijena := kalk_prosiri_pic_cjena_za_2()
 
    cIdFirma := self_organizacija_id()
-   cIdKonto := PadR( "133", gDuzKonto )
+   cIdKonto := PadR( "133", FIELD_LENGTH_IDKONTO )
 
    o_koncij()
    // o_roba()

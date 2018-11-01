@@ -33,7 +33,6 @@ METHOD TKalkMod:mMenu()
    PRIVATE Izbor
 
    Izbor := 1
-   gDuzKonto := 7
 
    //gRobaBlock := {| Ch| kalk_roba_key_handler( Ch ) }
    ::programski_modul_osnovni_meni()
@@ -194,10 +193,10 @@ METHOD TKalkMod:set_module_gvars()
    // PUBLIC gAImpRight := 0  // kod provjere prebacenih dokumenata odrezi sa desne strane broj karaktera
    PUBLIC gKalks := .F.
    PUBLIC lPrikPRUC := .F.
-   PUBLIC gDuzKonto
+   //PUBLIC FIELD_LENGTH_IDKONTO
 
-   o_kalk_pripr()
-   gDuzKonto := Len( mkonto )
+   //o_kalk_pripr()
+   //FIELD_LENGTH_IDKONTO := Len( mkonto )
 
 
    PUBLIC glZabraniVisakIP
@@ -255,8 +254,6 @@ METHOD TKalkMod:set_module_gvars()
 
 
    gPicProc := fetch_metric( "kalk_format_prikaza_procenta", nil, gPicProc )
-
-
 
    gPicNc := fetch_metric( "kalk_format_prikaza_nabavne_cijene", nil, gPicNC )
 

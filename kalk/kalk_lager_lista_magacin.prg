@@ -51,6 +51,7 @@ FUNCTION kalk_lager_lista_magacin()
    LOCAL dL_izlaz := CToD( "" )
    LOCAL hParams
    LOCAL nVPC
+   LOCAL cIdKonto
 
    // pPicDem := kalk_prosiri_pic_iznos_za_2()
    // pPicCDem := kalk_prosiri_pic_cjena_za_2()
@@ -58,7 +59,7 @@ FUNCTION kalk_lager_lista_magacin()
 
    cIdFirma := self_organizacija_id()
    cPrikazDob := "N"
-   cIdKonto := PadR( "1310", gDuzKonto )
+   cIdKonto := PadR( "1320", FIELD_LENGTH_IDKONTO )
 
    PRIVATE nVPVU := 0
    PRIVATE nVPVI := 0
@@ -148,14 +149,14 @@ FUNCTION kalk_lager_lista_magacin()
 
       @ box_x_koord() + 8, box_y_koord() + 2 SAY8 "Pr.stavki kojima je NV 0 D/N" GET cNulaDN  VALID cNulaDN $ "DN" PICT "@!"
       @ box_x_koord() + 9, box_y_koord() + 2 SAY8 "Prikaz 'ERR' ako je NV/Kolicina<>NC " GET cErr PICT "@!" VALID cErr $ "DN"
-      @ box_x_koord() + 9, Col() + 1 SAY8 "VPC iz sifrarnika robe (D/N)?" GET cVpcIzSifarnikaDN PICT "@!" VALID cVpcIzSifarnikaDN $ "DN"
+      @ box_x_koord() + 9, Col() + 1 SAY8 "VPC iz šifarnika robe (D/N)?" GET cVpcIzSifarnikaDN PICT "@!" VALID cVpcIzSifarnikaDN $ "DN"
 
       @ box_x_koord() + 10, box_y_koord() + 2 SAY8 "Datum od " GET dDatOd
       @ box_x_koord() + 10, Col() + 2 SAY8 "do" GET dDatDo
 
       @ box_x_koord() + 11, box_y_koord() + 2 SAY8 "Vrsta štampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
 
-      @ box_x_koord() + 12, box_y_koord() + 2 SAY8 "Postaviti srednju NC u sifrarnik" GET cNCSif PICT "@!" VALID ( ( cpnab == "D" .AND. cncsif == "D" ) .OR. cNCSif == "N" )
+      @ box_x_koord() + 12, box_y_koord() + 2 SAY8 "Postaviti srednju NC u šifarnik?" GET cNCSif PICT "@!" VALID ( ( cpnab == "D" .AND. cncsif == "D" ) .OR. cNCSif == "N" )
 
       IF fPocStanje
          @ box_x_koord() + 13, box_y_koord() + 2 SAY8 "Sredi samo stavke kol=0, nv<>0 (0/1/2)"  GET cSrKolNula VALID cSrKolNula $ "012" PICT "@!"
@@ -227,9 +228,9 @@ FUNCTION kalk_lager_lista_magacin()
 
    lSvodi := .F.
 
-   //IF my_get_from_ini( "KALK_LLM", "SvodiNaJMJ", "N", KUMPATH ) == "D"
-  //    lSvodi := ( Pitanje(, "Svesti količine na osnovne jedinice mjere? (D/N)", "N" ) == "D" )
-   //ENDIF
+   // IF my_get_from_ini( "KALK_LLM", "SvodiNaJMJ", "N", KUMPATH ) == "D"
+   // lSvodi := ( Pitanje(, "Svesti količine na osnovne jedinice mjere? (D/N)", "N" ) == "D" )
+   // ENDIF
 
    // sinteticki konto
    fSint := .F.
@@ -347,7 +348,7 @@ FUNCTION kalk_lager_lista_magacin()
    ?
 
    PRIVATE nTStrana := 0
-   PRIVATE bZagl := {|| Zagllager_lista_magacin() }
+   PRIVATE bZagl := {|| kalk_zagl_lager_lista_magacin( cIdKonto ) }
 
    Eval( bZagl )
 
@@ -966,9 +967,7 @@ STATIC FUNCTION fill_exp_tbl( nVar, cIdRoba, cSifDob, cNazRoba, cTarifa, ;
    RETURN .T.
 
 
-// -------------------------------------------------------------
-// setovanje linije i teksta
-// -------------------------------------------------------------
+
 STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    LOCAL aLLM := {}
@@ -1042,9 +1041,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
    RETURN .T.
 
 
-
-
-FUNCTION Zagllager_lista_magacin()
+STATIC FUNCTION kalk_zagl_lager_lista_magacin( cIdKonto )
 
    LOCAL nTArea := Select()
 
@@ -1121,7 +1118,6 @@ FUNCTION IsInGroup( cGr, cPodGr, cIdRoba )
    ENDIF
 
    RETURN bRet
-
 
 
 

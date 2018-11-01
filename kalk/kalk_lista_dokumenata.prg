@@ -169,11 +169,11 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
    Preduzece()
 
-   IF gDuzKonto > 7
-      P_COND2
-   ELSE
+   //IF FIELD_LENGTH_IDKONTO > 7
+  //    P_COND2
+   //ELSE
       P_COND
-   ENDIF
+   //ENDIF
 
    ??U "KALK: Štampa dokumenata na dan:", Date(), Space( 10 ), "za period", dDatOd, "-", dDatDo
 

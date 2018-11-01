@@ -69,7 +69,7 @@ FUNCTION kalk_kartica_magacin()
 
       cIdFirma := self_organizacija_id()
       cIdRoba := Space( 10 )
-      cIdKonto := PadR( "1320", gDuzKonto )
+      cIdKonto := PadR( "1320", FIELD_LENGTH_IDKONTO )
 
       cIdRoba := fetch_metric( "kalk_kartica_magacin_id_roba", my_user(), cIdRoba )
       cIdKonto := fetch_metric( "kalk_kartica_magacin_id_konto", my_user(), cIdKonto )
@@ -79,7 +79,7 @@ FUNCTION kalk_kartica_magacin()
       cBrFDa := fetch_metric( "kalk_kartica_magacin_prikaz_broja_fakture", my_user(), cBrFDa )
       cPrikFCJ2 := fetch_metric( "kalk_kartica_magacin_prikaz_fakturne_cijene", my_user(), cPrikFCJ2 )
       cPVSS := fetch_metric( "kalk_kartica_magacin_prikaz_samo_saldo", my_user(), cPVSS )
-      cIdKonto := PadR( cIdKonto, gDuzKonto )
+      cIdKonto := PadR( cIdKonto, FIELD_LENGTH_IDKONTO )
 
       Box(, 16, 60 )
       DO WHILE .T.

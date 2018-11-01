@@ -30,7 +30,7 @@ FUNCTION finansijsko_stanje_magacin()
    PicDEM := kalk_prosiri_pic_iznos_za_2()
    PicCDEM := kalk_prosiri_pic_cjena_za_2()
 
-   cIdKonto := PadR( "1320", gDuzKonto )
+   cIdKonto := PadR( "1320", FIELD_LENGTH_IDKONTO )
    dDatOd := CToD( "" )
    dDatDo := Date()
    qqRoba := Space( 60 )

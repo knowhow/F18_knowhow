@@ -1,4 +1,4 @@
 #!/bin/sh
 
-find . -name "*.bak" -exec echo \{\} \; -exec rm \{\} \;
+find .   -name "*.bak"  ! -path docker -exec echo \{\} \; -exec rm \{\} \;
 

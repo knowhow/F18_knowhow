@@ -14,7 +14,6 @@
 STATIC s_nMainWindow
 
 
-
 FUNCTION open_main_window()
 
    IF s_nMainWindow != NIL

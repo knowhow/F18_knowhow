@@ -305,7 +305,6 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDatum0, dDatum1 )
 
 
 
-
 FUNCTION pos_pregled_stavki_racuna()
 
    LOCAL oBrowse
@@ -329,21 +328,16 @@ FUNCTION pos_pregled_stavki_racuna()
    SELECT _pos_pripr
 
    my_dbf_zap()
-
    Scatter()
 
-
    seek_pos_pos( pos_doks->IdPos, pos_doks->IdVd,  pos_doks->datum, pos_doks->BrDok )
-
    DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
       hRec := dbf_get_rec()
 
       select_o_roba( hRec[ "idroba" ] )
-
       hRec[ "robanaz" ] := roba->naz
       hRec[ "jmj" ] := roba->jmj
-
       hb_HDel( hRec, "rbr" )
 
       SELECT _pos_pripr
@@ -358,7 +352,7 @@ FUNCTION pos_pregled_stavki_racuna()
    SELECT _pos_pripr
    GO TOP
 
-   browse_kolone( @ImeKol, @Kol )
+   pos_racun_browse_kolone( @ImeKol, @Kol )
 
    Box(, nMaxRow, nMaxCol )
 
@@ -382,18 +376,19 @@ FUNCTION pos_pregled_stavki_racuna()
 
 
 
-STATIC FUNCTION browse_kolone( aImeKol, aKol )
+STATIC FUNCTION pos_racun_browse_kolone( aImeKol, aKol )
 
    LOCAL i
 
    aImeKol := {}
    aKol := {}
 
-   AAdd( aImeKol, { _u( "Šifra" ), {|| idroba } } )
-   AAdd( aImeKol, { "Naziv", {|| Left( robanaz, 30 ) } } )
-   AAdd( aImeKol, { _u( "Količina" ), {|| Str( kolicina, 7, 3 ) } } )
-   AAdd( aImeKol, { "Cijena", {|| Str( cijena, 7, 2 ) } } )
-   AAdd( aImeKol, { "Ukupno", {|| Str( kolicina * cijena, 11, 2 ) } } )
+   AAdd( aImeKol, { _u( "Šifra" ), {|| field->idroba } } )
+   AAdd( aImeKol, { "Naziv", {|| Left( field->robanaz, 30 ) } } )
+   AAdd( aImeKol, { _u( "Količina" ), {|| Str( field->kolicina, 7, 3 ) } } )
+   AAdd( aImeKol, { "Cijena", {|| Str( field->cijena, 7, 2 ) } } )
+   AAdd( aImeKol, { "Popust", {|| Str( field->ncijena, 7, 2 ) } } )
+   AAdd( aImeKol, { "Ukupno", {|| Str( (field->kolicina * field->cijena) - (field->kolicina * field->ncijena) , 11, 2 ) } } )
    AAdd( aImeKol, { "Tarifa", {|| idtarifa } } )
 
    FOR i := 1 TO Len( aImeKol )

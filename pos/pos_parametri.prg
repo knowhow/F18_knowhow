@@ -22,7 +22,7 @@ FUNCTION pos_parametri()
    AAdd( aOpc, "1. podaci kase                    " )
    AAdd( aOpcExe, {|| pos_param_podaci_kase() } )
    AAdd( aOpc, "2. principi rada" )
-   AAdd( aOpcExe, {|| parprbase() } )
+   AAdd( aOpcExe, {|| pos_principi_rada_kase() } )
    AAdd( aOpc, "3. izgled racuna" )
    AAdd( aOpcExe, {|| pos_param_izgled_racuna() } )
    AAdd( aOpc, "4. cijene" )
@@ -81,7 +81,7 @@ FUNCTION pos_param_podaci_kase()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -121,13 +121,11 @@ FUNCTION pos_param_firma()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
-// -------------------------------------------------------------
-// principi rada kase
-// -------------------------------------------------------------
+
 FUNCTION pos_param_principi_rada()
 
    PRIVATE opc := {}
@@ -135,7 +133,7 @@ FUNCTION pos_param_principi_rada()
    PRIVATE Izbor := 1
 
    AAdd( opc, "1. osnovna podešenja              " )
-   AAdd( opcexe, {|| ParPrBase() } )
+   AAdd( opcexe, {|| pos_principi_rada_kase() } )
 
 
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "prr" )
@@ -144,12 +142,7 @@ FUNCTION pos_param_principi_rada()
 
 
 
-
-
-// --------------------------------------------
-// osnovni prinicipi rada kase
-// --------------------------------------------
-FUNCTION ParPrBase()
+FUNCTION pos_principi_rada_kase()
 
    LOCAL aNiz := {}
    LOCAL cPrevPSS
@@ -168,7 +161,7 @@ FUNCTION ParPrBase()
 
    aNiz := {}
 
-   AAdd ( aNiz, { "Račun se zakljucuje dikretno bez upita (D/N)", "gDirZaklj", "gDirZaklj$'DN'", "@!", } )
+   AAdd ( aNiz, { "Račun se zaključuje dikretno bez upita (D/N)", "gDirZaklj", "gDirZaklj$'DN'", "@!", } )
    AAdd ( aNiz, { "Dopustiti dupli unos artikala na računu (D/N)", "gDupliArt", "gDupliArt$'DN'", "@!", } )
    AAdd ( aNiz, { "Ako se dopusta dupli unos, da li se radnik upozorava(D/N)", "gDupliUpoz", "gDupliUpoz$'DN'", "@!", } )
    AAdd ( aNiz, { "Da li se prati stanje artikla na unosu (D/N/!)", "gPratiStanje", "gPratiStanje$'DN!'", "@!", } )
@@ -178,18 +171,18 @@ FUNCTION ParPrBase()
    ENDIF
 
    AAdd ( aNiz, { "Ako je Bar Cod generisi <ENTER> ", "gEntBarCod", "gEntBarCod$'DN'", "@!", } )
-   AAdd ( aNiz, { "Pri unosu zaduzenja azurirati i cijene (D/N)? ", "gZadCij", "gZadCij$'DN'", "@!", } )
-   AAdd ( aNiz, { "Pri azuriranju pitati za nacin placanja (D/N)? ", "gUpitNP", "gUpitNP$'DN'", "@!", } )
-   AAdd ( aNiz, { "Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? ", "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", } )
+   AAdd ( aNiz, { "Pri unosu zaduženja azurirati i cijene (D/N)? ", "gZadCij", "gZadCij$'DN'", "@!", } )
+   AAdd ( aNiz, { "Pri ažuriranju pitati za nacin placanja (D/N)? ", "gUpitNP", "gUpitNP$'DN'", "@!", } )
+   AAdd ( aNiz, { "Kod unosa računa uvijek pretraga art.po nazivu (D/N)? ", "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", } )
    AAdd ( aNiz, { "Maksimalna količina pri unosu racuna (0 - bez provjere) ", "_max_qtty", "_max_qtty >= 0", "999999", } )
    AAdd ( aNiz, { "Unos računa bez izlaska iz pripreme (D/N) ", "_konstantni_unos", "_konstantni_unos$'DN'", "@!", } )
    AAdd ( aNiz, { "Za stanje artikla gledati KALK magacinski konto", "cKalkKontoMagacin",, "@S7", } )
 
-   VarEdit( aNiz, 2, 2, f18_max_rows() - 10, f18_max_cols() - 5, "PARAMETRI RADA PROGRAMA - PRINCIPI RADA", "B1" )
+   VarEdit( aNiz, 2, 2, f18_max_rows() - 10, f18_max_cols() - 5, "POS PARAMETRI RADA - PRINCIPI RADA", "B1" )
 
    IF LastKey() <> K_ESC
 
-      MsgO( "Azuriram parametre" )
+      MsgO( "Ažuriranje parametara" )
 
       set_metric( "AzuriranjeCijena", nil, gZadCij )
     //  set_metric( "VodiOdjeljenja", nil, gVodiOdj )
@@ -272,10 +265,10 @@ FUNCTION pos_param_izgled_racuna()
    AAdd( aNiz, { "Racun, prikaz id artikla na racunu (D/N)", "grbStId", "grbStId$'DN'", "@!", } )
    AAdd( aNiz, { "Redukcija potrosnje trake kod stampe racuna i izvjestaja (0/1/2)", "grbReduk", "grbReduk>=0 .and. grbReduk<=2", "9", } )
 
-   VarEdit( aNiz, 9, 1, 19, 78, "PARAMETRI RADA PROGRAMA - IZGLED RACUNA", "B1" )
+   VarEdit( aNiz, 9, 1, 19, 78, "PARAMETRI RADA PROGRAMA - IZGLED RAČUNA", "B1" )
 
    IF LastKey() <> K_ESC
-      MsgO( "Azuriram parametre" )
+      MsgO( "Ažuriranje parametara" )
       //set_metric( "PorezniRaster", nil, gPoreziRaster )
       set_metric( "BrojLinijaZaKrajRacuna", nil, nFeedLines )
       set_metric( "SekvencaSjeciTraku", nil, gSjeciStr )
@@ -304,11 +297,11 @@ FUNCTION pos_param_cijene()
    SET CURSOR ON
 
    AAdd ( aNiz, { "Generalni popust % (99-gledaj sifranik)", "gPopust", , "99", } )
-   AAdd ( aNiz, { "Zakruziti cijenu na (broj decimala)    ", "gPopDec", ,  "9", } )
+   AAdd ( aNiz, { "Zakružiti cijenu na (broj decimala)    ", "gPopDec", ,  "9", } )
   // AAdd ( aNiz, { "Varijanta Planika/Apoteka decimala)    ", "gPopVar", "gPopVar$' PA'", , } )
    AAdd ( aNiz, { "Popust zadavanjem nove cijene          ", "gPopZCj", "gPopZCj$'DN'", , } )
    AAdd ( aNiz, { "Popust zadavanjem procenta             ", "gPopProc", "gPopProc$'DN'", , } )
-   AAdd ( aNiz, { "Popust preko odredjenog iznosa (iznos):", "gPopIzn",, "999999.99", } )
+   AAdd ( aNiz, { "Popust preko određenog iznosa (iznos):", "gPopIzn",, "999999.99", } )
    AAdd ( aNiz, { "                  procenat popusta (%):", "gPopIznP",, "999.99", } )
    AAdd ( aNiz, { "Koristiti set cijena                  :", "gSetMPCijena",, "9", } )
    VarEdit( aNiz, 9, 2, 20, 78, "PARAMETRI RADA PROGRAMA - CIJENE", "B1" )
@@ -326,4 +319,4 @@ FUNCTION pos_param_cijene()
       set_metric( "pos_set_cijena", nil, gSetMPCijena )
    ENDIF
 
-   RETURN
+   RETURN .T.

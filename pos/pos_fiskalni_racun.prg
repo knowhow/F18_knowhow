@@ -318,28 +318,28 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( cIdPos, cIdTipDok, dDatDok, cBrojRacun
 STATIC FUNCTION pos_to_fprint( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeRacuna, lStorno )
 
    LOCAL nErrorLevel := 0
-   LOCAL _fiscal_no := 0
+   LOCAL nBrojFiskalnoRacuna := 0
 
    fprint_delete_answer( s_hFiskalniUredjajParams )
    fiskalni_fprint_racun( s_hFiskalniUredjajParams, aStavkeRacuna, NIL, lStorno )
 
-   nErrorLevel := fprint_read_error( s_hFiskalniUredjajParams, @_fiscal_no )
+   nErrorLevel := fprint_read_error( s_hFiskalniUredjajParams, @nBrojFiskalnoRacuna )
 
    IF nErrorLevel = -9
       IF Pitanje(, "Da li je nestalo trake ?", "N" ) == "D"
          IF Pitanje(, "Zamjenite traku i pritisnite 'D'", "D" ) == "D"
-            nErrorLevel := fprint_read_error( s_hFiskalniUredjajParams, @_fiscal_no )
+            nErrorLevel := fprint_read_error( s_hFiskalniUredjajParams, @nBrojFiskalnoRacuna )
          ENDIF
       ENDIF
    ENDIF
 
-   IF _fiscal_no <= 0
+   IF nBrojFiskalnoRacuna <= 0
       nErrorLevel := 1
    ENDIF
 
    IF nErrorLevel <> 0
 
-      IF pos_da_li_je_racun_fiskalizovan( @_fiscal_no )
+      IF pos_da_li_je_racun_fiskalizovan( @nBrojFiskalnoRacuna )
          nErrorLevel := 0
       ELSE
          fprint_delete_out( s_hFiskalniUredjajParams )
@@ -348,9 +348,9 @@ STATIC FUNCTION pos_to_fprint( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeR
 
    ENDIF
 
-   IF ( _fiscal_no > 0 .AND. nErrorLevel == 0 )
-      pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, _fiscal_no )
-      MsgO( "Kreiran fiskalni račun broj: " + AllTrim( Str( _fiscal_no ) ) )
+   IF ( nBrojFiskalnoRacuna > 0 .AND. nErrorLevel == 0 )
+      pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, nBrojFiskalnoRacuna )
+      MsgO( "Kreiran fiskalni račun broj: " + AllTrim( Str( nBrojFiskalnoRacuna ) ) )
       Sleep( 2 )
       MsgC()
    ENDIF
@@ -374,7 +374,7 @@ STATIC FUNCTION pos_to_tremol( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeR
 
    LOCAL nErrorLevel := 0
    LOCAL _f_name
-   LOCAL _fiscal_no := 0
+   LOCAL nBrojFiskalnoRacuna := 0
 
    IF cContinue == NIL
       cContinue := "0"
@@ -391,13 +391,13 @@ STATIC FUNCTION pos_to_tremol( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeR
       IF tremol_read_out( s_hFiskalniUredjajParams, _f_name )
 
          // procitaj poruku greske
-         nErrorLevel := tremol_read_error( s_hFiskalniUredjajParams, _f_name, @_fiscal_no )
+         nErrorLevel := tremol_read_error( s_hFiskalniUredjajParams, _f_name, @nBrojFiskalnoRacuna )
 
-         IF nErrorLevel = 0 .AND. !lStorno .AND. _fiscal_no > 0
+         IF nErrorLevel = 0 .AND. !lStorno .AND. nBrojFiskalnoRacuna > 0
 
-            pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, _fiscal_no )
+            pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, nBrojFiskalnoRacuna )
 
-            MsgBeep( "Kreiran fiskalni račun: " + AllTrim( Str( _fiscal_no ) ) )
+            MsgBeep( "Kreiran fiskalni račun: " + AllTrim( Str( nBrojFiskalnoRacuna ) ) )
 
          ENDIF
 
@@ -415,7 +415,7 @@ STATIC FUNCTION pos_to_tremol( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeR
 STATIC FUNCTION pos_to_hcp( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeRacuna, lStorno, nUplaceniIznos )
 
    LOCAL nErrorLevel := 0
-   LOCAL _fiscal_no := 0
+   LOCAL nBrojFiskalnoRacuna := 0
 
    IF nUplaceniIznos == NIL
       nUplaceniIznos := 0
@@ -425,11 +425,11 @@ STATIC FUNCTION pos_to_hcp( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, aStavkeRacu
    IF nErrorLevel == 0
 
       // vrati broj racuna
-      _fiscal_no := hcp_fisc_no( s_hFiskalniUredjajParams, lStorno )
+      nBrojFiskalnoRacuna := hcp_fisc_no( s_hFiskalniUredjajParams, lStorno )
 
-      IF _fiscal_no > 0
-         pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, _fiscal_no )
-         MsgBeep( "Kreiran fiskalni racun: " + AllTrim( Str( _fiscal_no ) ) )
+      IF nBrojFiskalnoRacuna > 0
+         pos_doks_update_fisc_rn( cIdPos, cIdTipDok, dDatDok, cBrojRacuna, nBrojFiskalnoRacuna )
+         MsgBeep( "Kreiran fiskalni racun: " + AllTrim( Str( nBrojFiskalnoRacuna ) ) )
       ENDIF
 
    ENDIF

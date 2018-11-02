@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION pos_main_menu_prodavac()
 
    LOCAL aOpc := {}
@@ -21,7 +20,7 @@ FUNCTION pos_main_menu_prodavac()
    AAdd( aOpc, "1. priprema računa                        " )
    AAdd( aOpcExe, {|| _pos_prodavac_racun() } )
 
-   AAdd( aOpc, "2. pregled ažuriranih racuna  " )
+   AAdd( aOpc, "2. pregled ažuriranih računa  " )
    AAdd( aOpcExe, {|| pos_pregled_racuna( .F. ) } )
 
    AAdd( aOpc, "R. trenutna realizacija radnika" )

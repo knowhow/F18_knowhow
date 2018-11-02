@@ -81,7 +81,7 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, lPozivFromPOS )
          AAdd( aOpcExe, {|| fprint_daily_rpt( s_hFiskalniDeviceParams ) } )
 
          AAdd( aOpc, "2. periodični izvještaj" )
-         AAdd( aOpcExe, {|| fprint_per_rpt( s_hFiskalniDeviceParams ) } )
+         AAdd( aOpcExe, {|| fprint_izvjestaj_za_period( s_hFiskalniDeviceParams ) } )
 
          AAdd( aOpc, "3. pregled artikala " )
          AAdd( aOpcExe, {|| fprint_sold_plu( s_hFiskalniDeviceParams ) } )
@@ -92,7 +92,7 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, lPozivFromPOS )
       AAdd( aOpcExe, {|| NIL } )
 
       AAdd( aOpc, "5. unos depozita u uredjaj       " )
-      AAdd( aOpcExe, {|| fprint_polog( s_hFiskalniDeviceParams ) } )
+      AAdd( aOpcExe, {|| fprint_unos_pologa( s_hFiskalniDeviceParams ) } )
 
       AAdd( aOpc, "6. štampanje duplikata       " )
       AAdd( aOpcExe, {|| fprint_dupliciraj_racun( s_hFiskalniDeviceParams ) } )
@@ -117,7 +117,7 @@ FUNCTION fiskalni_izvjestaji_komande( lLowLevel, lPozivFromPOS )
          AAdd( aOpcExe, {|| auto_plu( .T., NIL, s_hFiskalniDeviceParams ) } )
 
          AAdd( aOpc, "12. non-fiscal racun - test" )
-         AAdd( aOpcExe, {|| fprint_nf_txt( s_hFiskalniDeviceParams, "ČčĆćŽžĐđŠš" ) } )
+         AAdd( aOpcExe, {|| fprint_non_fiscal_text( s_hFiskalniDeviceParams, "ČčĆćŽžĐđŠš" ) } )
 
          AAdd( aOpc, "13. test email" )
          AAdd( aOpcExe, {|| f18_email_test() } )

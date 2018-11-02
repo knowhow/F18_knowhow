@@ -8,7 +8,7 @@
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
- 
+
 #include "f18.ch"
 
 /*
@@ -592,7 +592,7 @@ FUNCTION pos_get_mpc()
    LOCAL oData, cQry
 
    IF !pos_get_mpc_valid()
-      MsgBeep( "Set cijena nije podesen ispravno !" )
+      MsgBeep( "Set cijena nije podešen ispravno !" )
       RETURN 0
    ENDIF
 

@@ -752,8 +752,8 @@ FUNCTION hcp_s_rpt( hFiskalniParams )
       RETURN
    ENDIF
 
-   _txt_date_from := _fix_date( _date_from )
-   _txt_date_to := _fix_date( _date_to )
+   _txt_date_from := fprint_formatiranje_datuma( _date_from )
+   _txt_date_to := fprint_formatiranje_datuma( _date_to )
 
    _cmd := 'CMD="SUMMARY_REPORT" FROM="' + _txt_date_from + '" TO="' + _txt_date_to + '"'
    _err := hcp_cmd( hFiskalniParams, _cmd, _tr_cmd )

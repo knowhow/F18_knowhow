@@ -12,14 +12,13 @@
 #include "f18.ch"
 
 
-/* FrmGetRabat(aRabat, nCijena)
+/* pos_get_popust_sve_varijante(aRabat, nCijena)
  *     Puni matricu aRabat popustima, u zavisnosti od varijante
  *   param: aRabat - matrica rabata: type array
   {idroba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6}
  *   param: nCijena - cijena artikla
  */
-FUNCTION FrmGetRabat( aRabat, nCijena )
-
+FUNCTION pos_get_popust_sve_varijante( aRabat, nCijena )
 
    // prodji kroz svaku varijantu popusta i napuni matricu aRabat{}
 
@@ -40,10 +39,9 @@ FUNCTION FrmGetRabat( aRabat, nCijena )
    GetPopPrekoOdrIznosa( aRabat, nCijena )
 
 
-
    // 6. varijanta
    // Popust zadavanjem procenta
-   GetPopProcent( aRabat, nCijena )
+   pos_popust_varijanta_procenat( aRabat, nCijena )
 
    RETURN .T.
 
@@ -65,7 +63,7 @@ FUNCTION GetPopZadavanjemNoveCijene( aRabat, nCijena )
       AddToArrRabat( aRabat, roba->id, nNovaCijena )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 /* GetPopGeneral(aRabat, nCijena)
@@ -116,7 +114,6 @@ FUNCTION GetPopFromN2( aRabat, nCijena )
  */
 FUNCTION GetPopPrekoOdrIznosa( aRabat, nCijena )
 
-   // {
    LOCAL nNovaCijena := 0
 
    IF VarPopPrekoOdrIzn() .AND. ispopprekoodrizn( nCijena )
@@ -128,23 +125,18 @@ FUNCTION GetPopPrekoOdrIznosa( aRabat, nCijena )
 
 
 
-/* GetPopProcent(aRabat, nCijena)
- *     Popust zadavanjem procenta
- *   param: aRabat
- *   param: nCijena
- */
-FUNCTION GetPopProcent( aRabat, nCijena )
 
+FUNCTION pos_popust_varijanta_procenat( aRabat, nCijena )
 
    LOCAL nNovaCijena := 0
 
    IF gPopProc == "D"
-      nPopProc := FrmGetPopProc()
+      nPopProc := pos_get_popust_procenat()
       nNovaCijena = Round( nCijena * nPopProc / 100, gPopDec )
       AddToArrRabat( aRabat, roba->id, nil, nil, nil, nil, nil, nNovaCijena )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -358,12 +350,10 @@ FUNCTION VarPopPrekoOdrIzn()
 
 
 
-/* FrmGetPopProc()
- *     Prikaz forme za unos procenta popusta
- */
-FUNCTION FrmGetPopProc()
 
-   // {
+FUNCTION pos_get_popust_procenat()
+
+
    LOCAL GetList := {}
    LOCAL nPopProc := 0
 
@@ -373,7 +363,7 @@ FUNCTION FrmGetPopProc()
    BoxC()
 
    RETURN nPopProc
-// }
+
 
 
 /* ShowRabatOnForm(nx, ny)
@@ -465,7 +455,7 @@ FUNCTION Scan_PriprForRabat( aRabat )
    SELECT _pos_pripr
    IF ( RecCount() > 0 )
       DO WHILE !Eof()
-         FrmGetRabat( aRabat, field->cijena )
+         pos_get_popust_sve_varijante( aRabat, field->cijena )
          SKIP
       ENDDO
 

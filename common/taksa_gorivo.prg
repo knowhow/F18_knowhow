@@ -119,11 +119,9 @@ FUNCTION valid_dodaj_taksu_za_gorivo()
 
 
 
-
 STATIC FUNCTION error_dodaj_stavku_takse_goriva()
    MsgBeep( "Pobrisati stavku TAKGORI-M iz pripreme pa ponoviti operciju ažuriranja !" )
    RETURN .T.
-
 
 
 
@@ -194,7 +192,6 @@ STATIC FUNCTION dodaj_taksu_za_gorivo_na_fakt_racun( nKolicina )
    MsgBeep( "Prema zakonu o naftnim derivatima potrebno je na svaki izdati litar goriva#dodati na račun i posebnu stavku TAKGORI-M za istu količinu !" )
 
    RETURN .T.
-
 
 
 

@@ -265,7 +265,7 @@ METHOD gParams()
    // @ box_x_koord() + 14, box_y_koord() + 2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor VALID gFKolor $ "DN" PICT "@!"
    @ box_x_koord() + 15, Col() + 2 SAY "SQL log ? (D/N)" GET gSql PICT "@!"
 
-   @ box_x_koord() + 18, box_y_koord() + 2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .AND. if( gPDFPrint $ "XD", pdf_box(), .T. ) } PICT "@!"
+   //@ box_x_koord() + 18, box_y_koord() + 2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .AND. if( gPDFPrint $ "XD", pdf_box(), .T. ) } PICT "@!"
 
    @ box_x_koord() + 20, box_y_koord() + 2 SAY "Ispravka FMK.INI (D/S/P/K/M/N)" GET cFMKINI VALID cFMKINI $ "DNSPKM" PICT "@!"
    @ box_x_koord() + 20, box_y_koord() + 36 SAY "M - FMKMREZ"
@@ -310,7 +310,7 @@ METHOD gParams()
       Wpar( "FO", Trim( gPFont ) )
       Wpar( "KS", gKodnaS )
       Wpar( "5f", g50f )
-      Wpar( "pR", gPDFPrint )
+      //Wpar( "pR", gPDFPrint )
    ENDIF
 
 

@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION fakt_labeliranje_barkodova()
 
    LOCAL cIBK
@@ -179,15 +177,12 @@ FUNCTION label_params()
 
    ++_x
    ++_x
-
    @ box_x_koord() + _x, box_y_koord() + 2 SAY "Prikaz broja dokumenta na naljepnici    (D/N)" GET _br_dok VALID _br_dok $ "DN" PICT "@!"
 
    ++_x
-
    @ box_x_koord() + _x, box_y_koord() + 2 SAY "Prikaz jedinice mjere kod opisa artikla (D/N)" GET _jmj VALID _jmj $ "DN" PICT "@!"
 
    ++_x
-
    @ box_x_koord() + _x, box_y_koord() + 2 SAY "Barkod prefix" GET _prefix
 
    ++_x
@@ -195,7 +190,6 @@ FUNCTION label_params()
    @ box_x_koord() + _x, box_y_koord() + 2 SAY "Automatsko generisanje barkod-a (D/N)" GET _auto_gen VALID _auto_gen $ "DN" PICT "@!"
 
    ++_x
-
    @ box_x_koord() + _x, box_y_koord() + 2 SAY "Automatsko generisanje, auto formula:" GET _auto_formula
    @ box_x_koord() + _x, Col() + 1 SAY "EAN:" GET _ean_code
 

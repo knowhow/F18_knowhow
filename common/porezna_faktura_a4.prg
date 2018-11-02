@@ -72,8 +72,7 @@ STATIC nPicFRow
 // -----------------------------------------------------
 FUNCTION pf_a4_print( lStartPrint, cDocumentName )
 
-
-   IF lStartPrint == nil   // ako je nil onda je uvijek .t.
+   IF lStartPrint == NIL   // ako je nil onda je uvijek .t.
       lStartPrint := .T.
    ENDIF
 
@@ -169,14 +168,14 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
       // zaglavlje por.fakt
       a4_header()
    ELSE
-      IF gPDFPrint <> "D"
-         // ostavi prostor umjesto automatskog zaglavlja
-         FOR i := 1 TO nGMargina
-            ?
-         NEXT
-      ELSE
+      // IF gPDFPrint <> "D"
+      // ostavi prostor umjesto automatskog zaglavlja
+      FOR i := 1 TO nGMargina
          ?
-      ENDIF
+      NEXT
+      // ELSE
+      // ?
+      // ENDIF
    ENDIF
 
    // podaci kupac i broj dokumenta itd....
@@ -278,7 +277,7 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
       IF PRow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - PICT_KOREKCIJA( nStr )
          ++nStr
          Nstr_a4( nStr, .T. )
-      endif
+      ENDIF
 
       SELECT rn
       SKIP
@@ -291,7 +290,7 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
       ++nStr
       Nstr_a4( nStr, .T. )
 
-   endif
+   ENDIF
 
    ? cLine
 
@@ -311,7 +310,7 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
       ++nStr
       Nstr_a4( nStr, .T. )
 
-   endif
+   ENDIF
 
    ?
 
@@ -390,9 +389,9 @@ STATIC FUNCTION st_zagl_data()
 
    cRed1 := RAZMAK
    cRed1 += PadC( "R.br", LEN_RBR )
-   cRed1 += " " + PadR( "Trgovački naziv dobra/usluge (sifra, naziv, jmj)" , LEN_NAZIV )
+   cRed1 += " " + PadR( "Trgovački naziv dobra/usluge (sifra, naziv, jmj)", LEN_NAZIV )
    cRed1 += " " + PadC( "količina", LEN_KOLICINA )
-   cRed1 += " " + PadC( "C.b.PDV" , LEN_CIJENA )
+   cRed1 += " " + PadC( "C.b.PDV", LEN_CIJENA )
    IF lShowPopust
       cRed1 += " " + PadC( "Pop.%", LEN_PROC2 )
       cRed1 += " " + PadC( "C.2.b.PDV", LEN_CIJENA )
@@ -420,7 +419,7 @@ STATIC FUNCTION pf_a4_sltxt()
 
    IF PRow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - PICT_KOREKCIJA( nStr )
       ++nStr
-      Nstr_a4( nil, .F. )
+      Nstr_a4( NIL, .F. )
    ENDIF
 
 
@@ -434,14 +433,14 @@ STATIC FUNCTION pf_a4_sltxt()
       IF nFTip < 51
          cTxt := AllTrim( field->opis )
          aTxt := SjeciStr( cTxt, 120 )
-         FOR n := 1 TO LEN( aTxt )
-            p_line( aTxt[n], 17, .F., .T. )
+         FOR n := 1 TO Len( aTxt )
+            p_line( aTxt[ n ], 17, .F., .T. )
          NEXT
       ENDIF
 
       IF PRow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - PICT_KOREKCIJA( nStr )
          ++nStr
-         Nstr_a4( nil, .F. )
+         Nstr_a4( NIL, .F. )
       ENDIF
 
       SKIP
@@ -799,7 +798,7 @@ FUNCTION pf_a4_kupac( cRazmak )
          cPom := _l( "Partner" )
       ENDCASE
 
-   endcase
+   ENDCASE
 
    I_ON
    p_line( cPom, 10, .T. )
@@ -845,7 +844,7 @@ FUNCTION pf_a4_kupac( cRazmak )
    cPom := _l( "ID broj: " ) + cPom
    p_line( Space( 2 ) + PadR( cPom, LEN_KUPAC ), 10, .F. )
 
-   IF !EMPTY( cKPdvBroj )
+   IF !Empty( cKPdvBroj )
       cPom := AllTrim( cKPdvBroj )
       IF Empty( cPom )
          cPom := "-"
@@ -1437,7 +1436,7 @@ STATIC FUNCTION DSTR_KOREKCIJA()
 
    nPom := Round( nDuzStrKorekcija, 0 )
    IF Round( nDuzStrKorekcija - nPom, 1 ) > 0.2
-      nPom ++
+      nPom++
    ENDIF
 
    RETURN nPom

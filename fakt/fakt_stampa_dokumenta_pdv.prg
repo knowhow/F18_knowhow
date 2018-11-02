@@ -25,7 +25,6 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
    LOCAL hFaktParams := fakt_params()
    LOCAL lSamoKol := .F.  // samo kolicine
 
-
    IF lJFill == NIL
       lJFill := .F.
    ENDIF
@@ -245,7 +244,7 @@ STATIC FUNCTION fill_porfakt_data( hDokument, hFillParams )
    fill_firm_data()
 
 
-   //select_o_roba()
+   // select_o_roba()
 
    SELECT fakt_pripr
 
@@ -640,14 +639,14 @@ IF hb_HHasKey( hFaktTxt, "brnar")
    add_drntext( "X10", Str( nSw7, 1, 0 ) )
 
    // header i footer - broj redova
-   IF gPDFPrint == "D"
-      add_drntext( "X11", Str( gFPicHRow, 2, 0 ) )
-      add_drntext( "X12", Str( gFPicFRow, 1, 0 ) )
-   ELSE
-      // ako nije pdf stampa - nema parametara....
-      add_drntext( "X11", Str( 0 ) )
-      add_drntext( "X12", Str( 0 ) )
-   ENDIF
+   // IF gPDFPrint == "D"
+   // add_drntext( "X11", Str( gFPicHRow, 2, 0 ) )
+   // add_drntext( "X12", Str( gFPicFRow, 1, 0 ) )
+   // ELSE
+   // ako nije pdf stampa - nema parametara....
+   add_drntext( "X11", Str( 0 ) )
+   add_drntext( "X12", Str( 0 ) )
+   // ENDIF
 
 
    gPtxtC50 := .F. // fakturu stampaj u ne-compatibility modu
@@ -661,14 +660,13 @@ IF hb_HHasKey( hFaktTxt, "brnar")
       gPtxtSw := NIL // citaj ini fajl
    ENDCASE
 
-
    // dodaj total u DRN
    add_drn( hDokument[ "brdok" ], hDokument[ "datdok" ], dDatVal, dDatumIsporuke, cTime, ;
       nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, ;
       nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol )
 
    IF ( hDokument[ "idtipdok" ] $ "10#11" ) .AND. Round( nUkPDV, 2 ) == 0
-      IF Pitanje(, "Faktura je bez iznosa PDV-a! Da li je to uredu (D/N)", "D" ) == "N"
+      IF Pitanje(, "Faktura je bez iznosa PDV-a! Da li je to u redu (D/N)", "D" ) == "N"
          RETURN .F.
       ENDIF
    ENDIF
@@ -676,9 +674,7 @@ IF hb_HHasKey( hFaktTxt, "brnar")
    RETURN .T.
 
 
-// -------------------------------------
-// vraca opis grupe iz sifK
-// -------------------------------------
+
 STATIC FUNCTION roba_sifk_opis_grupe( cId, cSifK )
 
    LOCAL nTArea := Select()

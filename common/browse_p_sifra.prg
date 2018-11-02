@@ -803,7 +803,6 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
          ENDIF
       NEXT
 
-
       nI := 1
       FOR nForJg := 1 TO 3
 
@@ -818,7 +817,6 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
          PRIVATE Getlist := {}
 
          nGet := 1
-
          nNestampati := 0
 
          nTekRed := 1
@@ -867,7 +865,6 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
 
          READ
 
-
          SET KEY K_F8 TO
          SET KEY K_F9 TO
          SET KEY K_F5 TO
@@ -879,7 +876,6 @@ STATIC FUNCTION my_browse_edit_red( nCh, cOrderTag, aZabIsp, lNovi )
       NEXT
 
       BoxC()
-
 
       IF nCh != K_CTRL_A
          EXIT

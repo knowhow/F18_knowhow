@@ -71,7 +71,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC cBnaslova
    PUBLIC cBshema := "B1"
 
-   PUBLIC gPDFPrint := "N"
+   //PUBLIC gPDFPrint := "N"
    PUBLIC gPDFPAuto := "D"
    PUBLIC gPDFViewer := Space( 150 )
    PUBLIC gDefPrinter := Space( 150 )
@@ -194,7 +194,7 @@ FUNCTION set_global_vars_1()
    Rpar( "FO", @gPFont )
    Rpar( "KS", @gKodnaS )
    Rpar( "5f", @g50f )
-   Rpar( "pR", @gPDFPrint )
+   //Rpar( "pR", @gPDFPrint )
    Rpar( "pV", @gPDFViewer )
    Rpar( "pA", @gPDFPAuto )
    Rpar( "dP", @gDefPrinter )

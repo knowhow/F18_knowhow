@@ -68,7 +68,6 @@ FUNCTION kalk_stampa_dok_81()
 
    SELECT kalk_pripr
 
-altd()
    aPorezi := {}
    PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD

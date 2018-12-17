@@ -51,7 +51,6 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
-altd()
    IF to_run_f18_module()
       run_module()
    ELSE

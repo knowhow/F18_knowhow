@@ -133,8 +133,6 @@ METHOD F18Login:New()
    hDbParamsIni[ "database" ] := "postgres"
    ::set_postgresql_connection_params( hDbParamsIni )
 
-   altd()
-
    RETURN SELF
 
 

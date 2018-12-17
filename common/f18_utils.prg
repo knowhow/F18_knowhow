@@ -134,6 +134,9 @@ FUNCTION set_f18_params()
       case cTok == "--fin"
           set_f18_param("run", "fin")
 
+      case LEFT(cTok, 7) == "--json_"
+          set_f18_param("run", SUBSTR(cTok, 3)) // json_konto, json_roba ... 
+
       ENDCASE
 
 
@@ -350,6 +353,7 @@ PROCEDURE run_module()
 
    LOCAL cModul := get_f18_param("run")
    LOCAL oLogin
+   LOCAL aRet, hRec
 
    harbour_init()
 
@@ -363,6 +367,39 @@ PROCEDURE run_module()
 
    oLogin := my_login()
    oLogin:connect_user_database()
+
+   IF cModul == "json_konto"
+       select_o_konto()
+       aRet := {}
+       DO WHILE !EOF()
+          hRec := hb_hash()
+          hRec[ "id" ] := hb_StrToUtf8(field->id)
+          hRec[ "naz" ] := hb_StrToUtf8(field->naz)
+          AADD( aRet, hRec ) 
+          SKIP
+       ENDDO
+       OutErr( e"\n")
+       OutErr( e"========F18_json:======\n")
+       OutErr(hb_jsonEncode( aRet ))
+       RETURN NIL
+   ENDIF
+
+   IF cModul == "json_roba"
+       select_o_roba()
+       aRet := {}
+       DO WHILE !EOF()
+          hRec := hb_hash()
+          hRec[ "id" ] := hb_StrToUtf8(field->id)
+          hRec[ "naz" ] := hb_StrToUtf8(field->naz)
+          AADD( aRet, hRec ) 
+          SKIP
+       ENDDO
+       OutErr(e"\n")
+       OutErr(e"========F18_json:======\n")
+       OutErr( hb_jsonEncode( aRet ) )
+       RETURN NIL
+   ENDIF
+
 
    IF cModul == "pos"
        RETURN MainPos( my_user(), "dummy", get_f18_param("p3"),  get_f18_param("p4"),  get_f18_param("p5"),  get_f18_param("p6"),  get_f18_param("p7") )

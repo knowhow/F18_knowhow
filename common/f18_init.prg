@@ -812,8 +812,6 @@ FUNCTION run_on_start()
       RETURN .F.
    ENDIF
 
-
-   altd()
    
    info_bar( "init", "run_on_start" )
 

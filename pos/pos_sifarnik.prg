@@ -201,8 +201,7 @@ FUNCTION pos_osob_key_handler( Ch )
                _korsif := CryptSC( _korsif )
 
                APPEND BLANK
-               hRec := get_hash_record_from_global_vars()
-               altd()
+               hRec := get_hash_record_from_global_vars()          
                update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
                nVrati := DE_REFRESH

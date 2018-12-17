@@ -113,9 +113,10 @@ FUNCTION set_f18_params()
       //CASE cTok == "-e"
       //   cSchema := hb_PValue( nI++ )
       //   hParams[ "schema" ] := cSchema
-      
-      
+
+
       case cTok == "--show-postgresql-version"
+          altd()
           show_postgresql_version( hParams )
           __Quit()
 
